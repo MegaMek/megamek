@@ -1,6 +1,5 @@
-Version:1.1
-Malak
-C-MK-O Invictus
+chassis:Malak
+model:C-MK-O Invictus
 mul id:1994
 
 Config:Biped Omnimech
@@ -8,6 +7,15 @@ techbase:Inner Sphere
 era:3069
 source:TRO: 3075
 rules level:2
+role:Striker
+
+
+
+
+quirk:imp_com
+quirk:imp_sensors
+quirk:bad_rep_is
+
 
 mass:30
 engine:210 Light Engine(IS)

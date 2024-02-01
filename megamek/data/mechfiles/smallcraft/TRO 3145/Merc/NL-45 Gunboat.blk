@@ -36,6 +36,10 @@ NL-45 Gunboat
 Clan Level 4
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Spheroid
 </motion_type>
@@ -174,4 +178,10 @@ TRO: 3145 Mercenaries
 <escape_pod>
 0
 </escape_pod>
+
+
+<quirks>
+combat_computer
+atmo_instability
+</quirks>
 

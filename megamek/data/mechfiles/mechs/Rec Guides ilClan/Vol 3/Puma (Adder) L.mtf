@@ -1,6 +1,6 @@
-Version:1.0
-Puma (Adder)
-L
+chassis:Puma
+clanname:Adder
+model:L
 mul id:7482
 
 Config:Biped Omnimech
@@ -8,6 +8,10 @@ techbase:Clan
 era:3147
 source:Rec Guide:ilClan #3
 rules level:2
+role:Striker
+
+quirk:low_profile
+
 
 mass:35
 engine:210 XL (Clan) Engine(IS)

@@ -1,6 +1,5 @@
-Version:1.1
-Vanquisher
-VQR-5V
+chassis:Vanquisher
+model:VQR-5V
 mul id:5340
 
 Config:Biped
@@ -8,6 +7,15 @@ TechBase:Inner Sphere
 Era:3069
 Source:TRO: Jihad
 Rules Level:2
+role:Juggernaut
+
+
+
+quirk:stable
+quirk:bad_rep_clan
+quirk:bad_rep_is
+quirk:no_arms
+
 
 Mass:100
 Engine:300 Compact Engine(IS)

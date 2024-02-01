@@ -1,6 +1,5 @@
-Version:1.0
-Battle Cobra
-I
+chassis:Battle Cobra
+model:I
 mul id:8391
 
 Config:Biped Omnimech
@@ -8,6 +7,10 @@ techbase:Clan
 era:3147
 source:Rec Guide:ilClan #22
 rules level:2
+role:Missile Boat
+
+quirk:ext_twist
+
 
 mass:40
 engine:240 Fusion (Clan) Engine(IS)

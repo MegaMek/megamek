@@ -1,5 +1,5 @@
 Lyran Commonwealth Dropships C
-Dictator (Standard),1
+Dictator,1
 Leopard (2537),2
 Fortress (2613),3
 Leopard CV (2581),4

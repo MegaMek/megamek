@@ -86,14 +86,13 @@ public abstract class HeatTrackingBVCalculator extends BVCalculator {
         }
 
         weaponRecords.sort(heatSorter);
-        boolean exceededEfficiency = false;
         int heatEfficiency = heatEfficiency();
+        heatEfficiencyExceeded = heatEfficiency <= 0;
 
         for (WeaponBvHeatRecord weaponRecord : weaponRecords) {
             heatSum += weaponRecord.heat;
             processWeapon(weaponRecord.weapon, true, true);
-            if ((!exceededEfficiency) && (heatSum >= heatEfficiency)) {
-                exceededEfficiency = true;
+            if (heatSum >= heatEfficiency) {
                 heatEfficiencyExceeded = true;
             }
         }

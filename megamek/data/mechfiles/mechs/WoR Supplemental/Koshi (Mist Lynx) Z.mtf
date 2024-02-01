@@ -1,6 +1,6 @@
-Version:1.0
-Koshi (Mist Lynx)
-Z
+chassis:Koshi
+clanname:Mist Lynx
+model:Z
 mul id:5643
 
 Config:Biped Omnimech
@@ -8,6 +8,11 @@ TechBase:Mixed (Clan Chassis)
 Era:3072
 source:Wars of Reaving
 Rules Level:4
+role:Striker
+
+quirk:imp_sensors
+quirk:low_profile
+
 
 Mass:25
 Engine:175 XL (Clan) Engine

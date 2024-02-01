@@ -84,7 +84,13 @@ public final class InsulatedCargoBay extends Bay {
 
     @Override
     public String toString() {
-        return "insulatedcargobay:" + totalSpace + ":" + doors + ":"+ bayNumber;
+        String bayType = "insulatedcargobay";
+        return this.bayString(
+                bayType,
+                totalSpace,
+                doors,
+                bayNumber
+        );
     }
     
     @Override

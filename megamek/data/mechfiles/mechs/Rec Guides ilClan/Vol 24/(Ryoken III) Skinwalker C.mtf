@@ -1,6 +1,6 @@
-Version:1.1
-Ryoken III (Skinwalker)
-C
+chassis:Ryoken III
+clanname:Skinwalker
+model:C
 mul id:8451
 
 Config:Biped Omnimech
@@ -8,6 +8,7 @@ techbase:Mixed (Clan Chassis)
 era:3147
 source:Rec Guide:ilClan #24
 rules level:4
+role:Striker
 
 mass:55
 engine:330 XL (Clan) Engine

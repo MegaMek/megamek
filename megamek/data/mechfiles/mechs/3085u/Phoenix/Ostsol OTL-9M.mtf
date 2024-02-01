@@ -1,6 +1,5 @@
-Version:1.0
-Ostsol
-OTL-9M
+chassis:Ostsol
+model:OTL-9M
 mul id:2379
 
 Config:Biped
@@ -8,6 +7,13 @@ TechBase:Inner Sphere
 Era:3079
 source:TRO: 3085
 Rules Level:2
+role:Skirmisher
+
+
+
+quirk:imp_sensors
+quirk:low_profile
+
 
 Mass:60
 Engine:360 XL Engine(IS)

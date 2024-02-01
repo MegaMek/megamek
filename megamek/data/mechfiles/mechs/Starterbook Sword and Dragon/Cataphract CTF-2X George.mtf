@@ -1,6 +1,5 @@
-Version:1.0
-Cataphract
-CTF-2X (George)
+chassis:Cataphract
+model:CTF-2X (George)
 mul id:468
 
 Config:Biped
@@ -8,6 +7,12 @@ TechBase:Inner Sphere
 Era:3039
 Source:Starterbook: Sword and Dragon
 Rules Level:4
+role:Brawler
+
+
+
+quirk:pro_actuator
+
 
 Mass:70
 Engine:280 Fusion Engine(IS)

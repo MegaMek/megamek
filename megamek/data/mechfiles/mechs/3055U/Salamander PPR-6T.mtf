@@ -1,6 +1,5 @@
-Version:1.0
-Salamander
-PPR-6T
+chassis:Salamander
+model:PPR-6T
 mul id:2785
 
 Config:Biped
@@ -8,6 +7,12 @@ TechBase:Inner Sphere
 Era:3060
 Source:TRO: 3055
 Rules Level:2
+role:Missile Boat
+
+
+
+quirk:difficult_maintain
+
 
 Mass:80
 Engine:320 XL Engine

@@ -1,6 +1,5 @@
-Version:1.0
-Lineholder
-KW1-LH2
+chassis:Lineholder
+model:KW1-LH2
 mul id:1893
 
 Config:Biped
@@ -8,6 +7,13 @@ TechBase:Inner Sphere
 Era:3058
 Source:TRO: 3058
 Rules Level:1
+role:Skirmisher
+
+
+
+
+quirk:easy_maintain
+
 
 Mass:55
 Engine:275 Fusion Engine

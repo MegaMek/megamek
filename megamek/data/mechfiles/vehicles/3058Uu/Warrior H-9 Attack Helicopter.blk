@@ -36,6 +36,10 @@ H-9
 IS Level 2
 </type>
 
+<role>
+Scout
+</role>
+
 <motion_type>
 VTOL
 </motion_type>
@@ -125,4 +129,9 @@ TRO: 3058
 <tonnage>
 20.0
 </tonnage>
+
+
+<quirks>
+vtol_rotor_coaxial
+</quirks>
 

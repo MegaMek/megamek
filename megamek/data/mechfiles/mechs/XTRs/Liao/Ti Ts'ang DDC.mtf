@@ -1,6 +1,5 @@
-Version:1.1
-Ti Ts'ang
-TSG-9DDC 'Prototype'
+chassis:Ti Ts'ang
+model:TSG-9DDC 'Prototype'
 mul id:5242
 
 Config:Biped
@@ -8,6 +7,11 @@ TechBase:Inner Sphere
 Era:3076
 Source:XTR: Liao
 Rules Level:4
+
+
+
+quirk:hyper_actuator
+
 
 Mass:60
 Engine:360 XL Engine(IS)

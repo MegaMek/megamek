@@ -32,6 +32,10 @@ Shun Transport VTOL
 IS Level 3
 </type>
 
+<role>
+Scout
+</role>
+
 <motion_type>
 VTOL
 </motion_type>
@@ -95,3 +99,8 @@ TRO: 3145 Capellan Confederation
 <tonnage>
 40.0
 </tonnage>
+
+<quirks>
+variable_range_long
+</quirks>
+

@@ -1,6 +1,5 @@
-Version:1.0
-Owens
-OW-1R
+chassis:Owens
+model:OW-1R
 mul id:2391
 
 Config:Biped Omnimech
@@ -8,6 +7,12 @@ TechBase:Mixed (IS Chassis)
 Era:3059
 Source:TRO: 3058
 Rules Level:4
+role:Striker
+
+
+
+quirk:imp_sensors
+
 
 Mass:35
 Engine:280 XL Engine(IS)

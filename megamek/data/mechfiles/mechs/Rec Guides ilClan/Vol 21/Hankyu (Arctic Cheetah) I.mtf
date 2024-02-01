@@ -1,6 +1,6 @@
-Version:1.0
-Hankyu (Arctic Cheetah)
-I
+chassis:Hankyu
+clanname:Arctic Cheetah
+model:I
 mul id:8350
 
 Config:Biped Omnimech
@@ -8,6 +8,10 @@ techbase:Clan
 era:3099
 source:Rec Guide:ilClan #21
 rules level:2
+role:Striker
+
+quirk:pro_actuator
+
 
 mass:30
 engine:240 XL (Clan) Engine(IS)

@@ -1,6 +1,5 @@
-Version:1.0
-Charger
-CGR-1A5
+chassis:Charger
+model:CGR-1A5
 mul id:560
 
 Config:Biped
@@ -8,6 +7,14 @@ TechBase:Inner Sphere
 Era:3023
 Source:TRO: 3039
 Rules Level:1
+role:Juggernaut
+
+
+
+quirk:barrel_fists_la
+quirk:easy_maintain
+quirk:bad_rep_is
+
 
 Mass:80
 Engine:320 Fusion Engine

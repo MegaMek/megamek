@@ -1,6 +1,5 @@
-Version:1.0
-Doom Courser
-C
+chassis:Doom Courser
+model:C
 mul id:8396
 
 Config:Quad Omnimech
@@ -8,6 +7,11 @@ techbase:Clan
 era:3147
 source:Rec Guide:ilClan #22
 rules level:3
+role:Missile Boat
+
+quirk:imp_com
+quirk:exp_actuator
+
 
 mass:70
 engine:280 Fusion (Clan) Engine(IS)

@@ -1,12 +1,7 @@
-#building block data file
+#Saved from version 0.49.18-SNAPSHOT on 2024-01-13
 <BlockVersion>
 1
 </BlockVersion>
-
-##Write the version number just in case...
-<Version>
-MAM0
-</Version>
 
 <UnitType>
 BattleArmor
@@ -21,7 +16,7 @@ Cavalier Battle Armor
 </Model>
 
 <mul id:>
-8483
+9534
 </mul id:>
 
 <year>
@@ -39,9 +34,6 @@ IS Level 2
 <motion_type>
 Jump
 </motion_type>
-
-<transporters>
-</transporters>
 
 <cruiseMP>
 1
@@ -64,29 +56,23 @@ LegAttack
 BABattleClaw:LA
 </Squad Equipment>
 
-<source>
-TRO: 3058 Upgrade
-</source>
+<Trooper 1 Equipment>
+</Trooper 1 Equipment>
 
-<chassis>
-biped
-</chassis>
+<Trooper 2 Equipment>
+</Trooper 2 Equipment>
 
-<jumpingMP>
-3
-</jumpingMP>
+<Trooper 3 Equipment>
+</Trooper 3 Equipment>
 
-<armor>
-9
-</armor>
+<Trooper 4 Equipment>
+</Trooper 4 Equipment>
 
-<Trooper Count>
-6
-</Trooper Count>
+<Trooper 5 Equipment>
+</Trooper 5 Equipment>
 
-<weightclass>
-2
-</weightclass>
+<Trooper 6 Equipment>
+</Trooper 6 Equipment>
 
 <capabilities>
 Like the Inner Sphere Standard, the Cavalier has a Modular Weapon Mount in its right arm and a Battle Claw in the left. This mount can carry one standard battle armor weapon such as a Flamer, a Small Laser, a Machine Gun, or an SRM-1 with four missiles. Also like the Inner Sphere Standard, this weapon mount can instead accept two "secondary" weapons, such as Laser Rifles or Needler Rifles, for use against infantry. The Cavalier can run as fast as the Inner Sphere Standard, use jump jets to leap the same 90 meter distance, and is just as strong as the Standard. It's also protected by the same 450kg of armoring, although the shifting of armor plating between the two has increased protection around the thighs and calves while leaving the hand and arm joints more exposed to shrapnel. This armor configuration does give the Cavalier superior manual dexterity however.
@@ -115,3 +101,28 @@ New Avalon,Talcott
 <notes>
 In German products the unit's proper name was translated to Chevalier, regardless to the resulting mix-up with the Chevalier light tank, whose proper name used unaltered in German products.
 </notes>
+
+<source>
+TRO: 3058 Upgrade
+</source>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+3
+</jumpingMP>
+
+<armor>
+9
+</armor>
+
+<Trooper Count>
+6
+</Trooper Count>
+
+<weightclass>
+2
+</weightclass>
+

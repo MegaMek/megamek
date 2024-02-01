@@ -32,6 +32,10 @@ D(Sqd5)
 Mixed (IS Chassis) Advanced
 </type>
 
+<role>
+Missile Boat
+</role>
+
 <motion_type>
 Leg
 </motion_type>
@@ -116,3 +120,8 @@ JUMPJET:Unknown
 COMMUNICATIONS:Unknown
 TARGETING:Unknown
 </systemManufacturers>
+
+<quirks>
+difficult_maintain
+</quirks>
+

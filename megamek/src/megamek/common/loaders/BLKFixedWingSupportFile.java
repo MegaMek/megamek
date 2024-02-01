@@ -44,27 +44,7 @@ public class BLKFixedWingSupportFile extends BLKFile implements IMechLoader {
     public Entity getEntity() throws EntityLoadingException {
 
         FixedWingSupport a = new FixedWingSupport();
-
-        if (!dataFile.exists("Name")) {
-            throw new EntityLoadingException("Could not find name block.");
-        }
-        a.setChassis(dataFile.getDataAsString("Name")[0]);
-        if (dataFile.exists("Model") && (dataFile.getDataAsString("Model")[0] != null)) {
-            a.setModel(dataFile.getDataAsString("Model")[0]);
-        } else {
-            a.setModel("");
-        }
-        if (dataFile.exists(MtfFile.MUL_ID)) {
-            a.setMulId(dataFile.getDataAsInt(MtfFile.MUL_ID)[0]);
-        }
-
-        setTechLevel(a);
-        setFluff(a);
-        checkManualBV(a);
-
-        if (dataFile.exists("source")) {
-            a.setSource(dataFile.getDataAsString("source")[0]);
-        }
+        setBasicEntityData(a);
 
         if (!dataFile.exists("tonnage")) {
             throw new EntityLoadingException("Could not find weight block.");
@@ -138,11 +118,11 @@ public class BLKFixedWingSupportFile extends BLKFile implements IMechLoader {
             throw new EntityLoadingException("Incorrect armor array length");
         }
 
-        a.initializeArmor(armor[BLKAeroFile.NOSE], Aero.LOC_NOSE);
-        a.initializeArmor(armor[BLKAeroFile.RW], Aero.LOC_RWING);
-        a.initializeArmor(armor[BLKAeroFile.LW], Aero.LOC_LWING);
-        a.initializeArmor(armor[BLKAeroFile.AFT], Aero.LOC_AFT);
-        
+        a.initializeArmor(armor[BLKAeroSpaceFighterFile.NOSE], Aero.LOC_NOSE);
+        a.initializeArmor(armor[BLKAeroSpaceFighterFile.RW], Aero.LOC_RWING);
+        a.initializeArmor(armor[BLKAeroSpaceFighterFile.LW], Aero.LOC_LWING);
+        a.initializeArmor(armor[BLKAeroSpaceFighterFile.AFT], Aero.LOC_AFT);
+
         // Set the structural tech rating
         if (!dataFile.exists("structural_tech_rating")) {
             throw new EntityLoadingException("Could not find " +
@@ -153,17 +133,16 @@ public class BLKFixedWingSupportFile extends BLKFile implements IMechLoader {
         // Set armor tech rating, if it exists (defaults to structural tr)
         if (dataFile.exists("armor_tech_rating")) {
             a.setArmorTechRating(dataFile
-                    .getDataAsInt("armor_tech_rating")[0]);            
+                    .getDataAsInt("armor_tech_rating")[0]);
         }
-        // Set engine tech rating, if it exists (defaults to structural tr)        
+        // Set engine tech rating, if it exists (defaults to structural tr)
         if (dataFile.exists("engine_tech_rating")) {
             a.setEngineTechRating(dataFile
-                    .getDataAsInt("engine_tech_rating")[0]);            
+                    .getDataAsInt("engine_tech_rating")[0]);
         }
 
         a.autoSetInternal();
         a.recalculateTechAdvancement();
-        a.autoSetSI();
         // This is not working right for arrays for some reason
         a.autoSetThresh();
 
@@ -187,6 +166,7 @@ public class BLKFixedWingSupportFile extends BLKFile implements IMechLoader {
             a.setBaseChassisFireConWeight((dataFile.getDataAsDouble("baseChassisFireConWeight")[0]));
         }
 
+        loadQuirks(a);
         return a;
     }
 
@@ -245,7 +225,7 @@ public class BLKFixedWingSupportFile extends BLKFile implements IMechLoader {
                     facing = 2;
                     equipName = equipName.substring(0, equipName.length() - 4)
                             .trim();
-                } 
+                }
 
                 EquipmentType etype = EquipmentType.get(equipName);
 
@@ -262,7 +242,7 @@ public class BLKFixedWingSupportFile extends BLKFile implements IMechLoader {
                         Mounted mount = t.addEquipment(etype, nLoc, rearMount);
                         mount.setOmniPodMounted(omniMounted);
                         // Need to set facing for VGLs
-                        if ((etype instanceof WeaponType) 
+                        if ((etype instanceof WeaponType)
                                 && etype.hasFlag(WeaponType.F_VGL)) {
                             if (facing == -1) {
                                 mount.setFacing(defaultAeroVGLFacing(nLoc, rearMount));

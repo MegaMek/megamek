@@ -1,6 +1,6 @@
-Version:1.0
-Viper (Black Python)
-5
+chassis:Viper
+clanname:Black Python
+model:5
 mul id:7792
 
 Config:Biped
@@ -8,6 +8,10 @@ techbase:Clan
 era:3055
 source:Rec Guide:ilClan #12
 rules level:2
+role:Skirmisher
+
+quirk:imp_target_short
+
 
 mass:75
 engine:375 XL (Clan) Engine(IS)

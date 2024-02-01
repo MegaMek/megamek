@@ -1,6 +1,5 @@
-Version:1.1
-Warlord
-BLR-2XC
+chassis:Warlord
+model:BLR-2XC
 mul id:5602
 
 Config:Biped
@@ -8,6 +7,14 @@ TechBase:Inner Sphere
 Era:3075
 Source:XTR: Phantoms
 Rules Level:4
+role:Brawler
+
+
+
+quirk:easy_maintain
+quirk:battle_computer
+quirk:imp_com
+
 
 Mass:75
 Engine:300 XL Engine(IS)

@@ -1,6 +1,5 @@
-Version:1.0
-Marauder
-MAD-5S
+chassis:Marauder
+model:MAD-5S
 mul id:2043
 
 Config:Biped
@@ -8,6 +7,16 @@ techbase:Inner Sphere
 era:3051
 source:Rec Guide:ilClan #6
 rules level:2
+role:Sniper
+
+
+
+quirk:command_mech
+quirk:hyper_actuator
+quirk:low_profile
+weaponquirk:direct_torso_mount:RT:3:ISGaussRifle
+weaponquirk:exposed_linkage:RT:3:ISGaussRifle
+
 
 mass:75
 engine:300 XL Engine(IS)

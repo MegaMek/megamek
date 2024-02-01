@@ -1,13 +1,18 @@
-Version:1.0
-King Crab
-KGC-011
+chassis:King Crab
+model:KGC-011
 mul id:7514
 
 Config:Biped
 techbase:Inner Sphere
 era:3143
 rules level:3
+role:Juggernaut
 source:Rec Guide:ilClan #5
+
+
+
+quirk:command_mech
+
 
 mass:100
 engine:400 XXL Engine(IS)

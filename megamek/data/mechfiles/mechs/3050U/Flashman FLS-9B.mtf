@@ -1,6 +1,5 @@
-Version:1.0
-Flashman
-FLS-9B
+chassis:Flashman
+model:FLS-9B
 mul id:1125
 
 Config:Biped
@@ -8,6 +7,12 @@ TechBase:Inner Sphere
 Era:3070
 Source:TRO: 3050
 Rules Level:2
+role:Skirmisher
+
+
+
+quirk:rugged_1
+
 
 Mass:75
 Engine:375 Light Engine

@@ -32,6 +32,10 @@ Randolph Support Vehicle
 IS Level 2
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -95,3 +99,14 @@ cargobay:9:1
 <tonnage>
 35.0
 </tonnage>
+
+<quirks>
+easy_maintain
+obsolete
+</quirks>
+
+<weaponQuirks>
+mod_weapons:FR:0:Machine Gun
+mod_weapons:RS:0:Machine Gun
+mod_weapons:LS:0:Machine Gun
+</weaponQuirks>

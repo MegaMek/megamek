@@ -1,6 +1,5 @@
-Version:1.0
-Maelstrom
-MTR-7K
+chassis:Maelstrom
+model:MTR-7K
 mul id:6867
 
 Config:Biped
@@ -8,6 +7,12 @@ TechBase:Mixed (IS Chassis)
 Era:3112
 Source:Record Sheets: 3145 New Tech New Upgrades
 Rules Level:3
+role:Skirmisher
+
+
+
+quirk:good_rep_1
+
 
 Mass:75
 Engine:375 XL Engine(IS)

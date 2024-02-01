@@ -1,6 +1,5 @@
-Version:1.1
-Harvester
-HVR-199 AgroMech
+chassis:Harvester
+model:HVR-199 AgroMech
 mul id:7860
 
 Config:Biped
@@ -8,6 +7,7 @@ techbase:Inner Sphere
 era:3128
 source:TRO: Irregulars
 rules level:2
+role:None
 
 mass:40
 engine:160 ICE Engine(IS)

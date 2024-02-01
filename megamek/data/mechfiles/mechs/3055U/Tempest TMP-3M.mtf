@@ -1,6 +1,5 @@
-Version:1.0
-Tempest
-TMP-3M
+chassis:Tempest
+model:TMP-3M
 mul id:3169
 
 Config:Biped
@@ -8,6 +7,13 @@ TechBase:Inner Sphere
 Era:3055
 Source:TRO: 3055
 Rules Level:2
+role:Brawler
+
+
+
+
+weaponquirk:direct_torso_mount:HD:3:Medium Laser
+
 
 Mass:65
 Engine:260 XL Engine

@@ -32,6 +32,10 @@ Configuration #3
 IS Level 4
 </type>
 
+<role>
+Ambusher
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -102,3 +106,8 @@ refrigeratedcargobay:17.4:1
 <tonnage>
 50.0
 </tonnage>
+
+<quirks>
+non_standard
+</quirks>
+

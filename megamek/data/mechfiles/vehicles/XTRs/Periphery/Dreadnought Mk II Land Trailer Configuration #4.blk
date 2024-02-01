@@ -32,6 +32,10 @@ Configuration #4
 IS Level 4
 </type>
 
+<role>
+Sniper
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -96,3 +100,8 @@ livestockcargobay:16.6:1
 <tonnage>
 50.0
 </tonnage>
+
+<quirks>
+non_standard
+</quirks>
+

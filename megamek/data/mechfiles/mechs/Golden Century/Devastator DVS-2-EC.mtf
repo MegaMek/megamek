@@ -1,12 +1,19 @@
-Version:1.3
-Devastator
-DVS-2-EC
+chassis:Devastator
+model:DVS-2-EC
 mul id:7686
 Config:Biped
 techbase:Mixed (Clan Chassis)
 era:2827
 source:TRO: Golden Century
 rules level:3
+role:Sniper
+
+
+
+
+quirk:hyper_actuator
+quirk:searchlight
+
 
 mass:100
 engine:300 XL Engine(IS)

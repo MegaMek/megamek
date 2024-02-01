@@ -32,6 +32,10 @@ Destrier Siege Vehicle
 IS Level 3
 </type>
 
+<role>
+Sniper
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -130,3 +134,11 @@ TRO: 3145 Federated Suns
 <tonnage>
 200.0
 </tonnage>
+
+<quirks>
+imp_target_long
+oversized
+poor_performance
+non_standard
+</quirks>
+

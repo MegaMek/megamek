@@ -1,6 +1,5 @@
-Version:1.1
-Toro
-TR-A-1
+chassis:Toro
+model:TR-A-1
 mul id:3276
 
 Config:Biped
@@ -8,6 +7,16 @@ techbase:Inner Sphere
 era:2481
 source:XTR: Primitives IV
 rules level:4
+role:Brawler
+
+
+
+
+quirk:low_profile
+quirk:cramped_cockpit
+quirk:obsolete
+weaponquirk:poor_cooling:LA:3:Large Laser
+
 
 mass:35
 engine:170 Fusion Engine(IS)

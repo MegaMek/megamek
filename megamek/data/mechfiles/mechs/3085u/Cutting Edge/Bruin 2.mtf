@@ -1,6 +1,5 @@
-Version:1.0
-Bruin
-2
+chassis:Bruin
+model:2
 mul id:429
 
 Config:Biped
@@ -8,6 +7,11 @@ TechBase:Clan
 Era:3083
 source:TRO: 3085
 Rules Level:2
+role:Sniper
+
+quirk:rugged_1
+quirk:exp_actuator
+
 
 Mass:80
 Engine:320 XL (Clan) Engine

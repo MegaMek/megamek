@@ -16,6 +16,7 @@ package megamek.common.verifier;
 
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
+import megamek.common.equipment.ArmorType;
 import megamek.common.util.StringUtil;
 import megamek.common.weapons.flamers.VehicleFlamerWeapon;
 import megamek.common.weapons.lasers.CLChemicalLaserWeapon;
@@ -358,13 +359,17 @@ public class TestTank extends TestEntity {
             correct = false;
         }
         if (tank instanceof VTOL) {
-            if (!tank.hasWorkingMisc(MiscType.F_MAST_MOUNT)) {
+            long mastMountCount = tank.countEquipment(EquipmentTypeLookup.MAST_MOUNT);
+            if (mastMountCount > 1) {
+                buff.append("Cannot mount more than one mast mount\n");
+                correct = false;
+            } else if (mastMountCount == 0) {
                 for (Mounted m : tank.getEquipment()) {
                     // Units with patchwork armor place any armor slots in the same location
                     // as the armor. This is for accounting convenience.
                     if ((m.getLocation() == VTOL.LOC_ROTOR)
                             && EquipmentType.getArmorType(m.getType()) == EquipmentType.T_ARMOR_UNKNOWN) {
-                        buff.append("rotor equipment must be placed in mast mount");
+                        buff.append("rotor equipment must be placed in mast mount\n");
                         correct = false;
                     }
                 }
@@ -545,15 +550,19 @@ public class TestTank extends TestEntity {
 
     @Override
     public boolean correctWeight(StringBuffer buff, boolean showO, boolean showU) {
-        boolean correct = super.correctWeight(buff, showO, showU);
-        double max = maxTonnage(getEntity().getMovementMode(), getEntity().isSuperHeavy());
-        if (getEntity().getWeight() > max) {
-            correct = false;
-            buff.append("Exceeds maximum tonnage of ").append(max).append(" for ")
-                    .append(getEntity().getMovementModeAsString())
-                    .append(" combat vehicle.\n");
+        if (!(getEntity() instanceof GunEmplacement)) {
+            boolean correct = super.correctWeight(buff, showO, showU);
+            double max = maxTonnage(getEntity().getMovementMode(), getEntity().isSuperHeavy());
+            if (getEntity().getWeight() > max) {
+                correct = false;
+                buff.append("Exceeds maximum tonnage of ").append(max).append(" for ")
+                        .append(getEntity().getMovementModeAsString())
+                        .append(" combat vehicle.\n");
+            }
+            return correct;
+        } else {
+            return true;
         }
-        return correct;
     }
 
     public boolean correctCriticals(StringBuffer buff) {
@@ -647,10 +656,8 @@ public class TestTank extends TestEntity {
                     buff.append(StringUtil.makeLength(mount.getName(), 30));
                     buff.append(mount.getType().getTankSlots(tank)).append("\n");
                     addedCargo = true;
-                    continue;
-                } else {
-                    continue;
                 }
+                continue;
             }
             if (!((mount.getType() instanceof AmmoType) || Arrays.asList(
                     EquipmentType.armorNames).contains(
@@ -664,43 +671,15 @@ public class TestTank extends TestEntity {
             buff.append(tank.getExtraCrewSeats()).append("\n");
         }
         // different armor types take different amount of slots
-        int armorSlots = 0;
         if (!tank.hasPatchworkArmor()) {
-            int type = tank.getArmorType(1);
-            switch (type) {
-                case EquipmentType.T_ARMOR_FERRO_FIBROUS:
-                    if (TechConstants.isClan(tank.getArmorTechLevel(1))) {
-                        armorSlots++;
-                    } else {
-                        armorSlots += 2;
-                    }
-                    break;
-                case EquipmentType.T_ARMOR_HEAVY_FERRO:
-                    armorSlots += 3;
-                    break;
-                case EquipmentType.T_ARMOR_LIGHT_FERRO:
-                case EquipmentType.T_ARMOR_FERRO_LAMELLOR:
-                case EquipmentType.T_ARMOR_REFLECTIVE:
-                case EquipmentType.T_ARMOR_HARDENED:
-                    armorSlots++;
-                    break;
-                case EquipmentType.T_ARMOR_STEALTH:
-                    armorSlots += 2;
-                    break;
-                case EquipmentType.T_ARMOR_REACTIVE:
-                    if (TechConstants.isClan(tank.getArmorTechLevel(1))) {
-                        armorSlots++;
-                    } else {
-                        armorSlots += 2;
-                    }
-                    break;
-                default:
-                    break;
-            }
-            if (armorSlots != 0) {
-                buff.append(StringUtil.makeLength(EquipmentType.getArmorTypeName(type,
-                        TechConstants.isClan(tank.getArmorTechLevel(1))), 30));
-                buff.append(armorSlots).append("\n");
+            ArmorType armor = ArmorType.of(tank.getArmorType(tank.firstArmorIndex()),
+                    TechConstants.isClan(tank.getArmorTechLevel(tank.firstArmorIndex())));
+            if (armor != null) {
+                int armorSlots = armor.getTankSlots(tank);
+                if (armorSlots != 0) {
+                    buff.append(StringUtil.makeLength(armor.getName(), 30));
+                    buff.append(armorSlots).append("\n");
+                }
             }
         }
 
@@ -891,10 +870,11 @@ public class TestTank extends TestEntity {
      */
     public static boolean isValidTankLocation(Tank tank, EquipmentType eq, int location,
                                               @Nullable StringBuffer buffer) {
-        if (isBodyEquipment(eq) && (location != Tank.LOC_BODY)) {
-            if (buffer != null) {
-                buffer.append(eq.getName()).append(" must be mounted in the body.\n");
-            }
+        if (buffer == null) {
+            buffer = new StringBuffer();
+        }
+        if ((isBodyEquipment(eq) || (tank instanceof GunEmplacement)) && (location != Tank.LOC_BODY)) {
+            buffer.append(eq.getName()).append(" must be mounted in the body.\n");
             return false;
         }
         final boolean isRearLocation;
@@ -914,96 +894,71 @@ public class TestTank extends TestEntity {
                     || eq.hasFlag(MiscType.F_MANIPULATOR) || eq.hasFlag(MiscType.F_FLUID_SUCTION_SYSTEM)
                     || eq.hasFlag(MiscType.F_LIGHT_FLUID_SUCTION_SYSTEM) || eq.hasFlag(MiscType.F_SPRAYER))
                     && (tank instanceof VTOL) && (location == VTOL.LOC_ROTOR)) {
-                if (buffer != null) {
-                    buffer.append(eq.getName()).append(" cannot be mounted in the rotor.\n");
-                }
+                buffer.append(eq.getName()).append(" cannot be mounted in the rotor.\n");
                 return false;
             }
             if ((eq.hasFlag(MiscType.F_HARJEL) || eq.hasFlag(MiscType.F_LIGHT_FLUID_SUCTION_SYSTEM)
                     || eq.hasFlag(MiscType.F_SPRAYER)
                     || (eq.hasFlag(MiscType.F_LIFTHOIST) && !(tank instanceof VTOL)))
                     && (location == Tank.LOC_BODY)) {
-                if (buffer != null) {
-                    buffer.append(eq.getName()).append(" cannot be mounted in the body.\n");
-                }
+                buffer.append(eq.getName()).append(" cannot be mounted in the body.\n");
                 return false;
             }
             if (eq.hasFlag(MiscType.F_BULLDOZER) && ((location != Tank.LOC_FRONT) && (location != Tank.LOC_REAR))) {
-                if (buffer != null) {
-                    buffer.append(eq.getName()).append(" must be mounted on the front or rear.\n");
-                }
+                buffer.append(eq.getName()).append(" must be mounted on the front or rear.\n");
                 return false;
             }
             if (eq.hasFlag(MiscType.F_CLUB) && eq.hasSubType(MiscType.S_PILE_DRIVER)
                     && (location != Tank.LOC_FRONT) && !isRearLocation) {
-                if (buffer != null) {
-                    buffer.append(eq.getName()).append(" must be mounted on the front or rear.\n");
-                }
+                buffer.append(eq.getName()).append(" must be mounted on the front or rear.\n");
                 return false;
             }
             if (eq.hasFlag(MiscType.F_CLUB) && eq.hasSubType(MiscType.S_WRECKING_BALL) && !isTurretLocation) {
-                if (buffer != null) {
-                    buffer.append(eq.getName()).append(" must be mounted on a turret.\n");
-                }
+                buffer.append(eq.getName()).append(" must be mounted on a turret.\n");
                 return false;
             }
             if (eq.hasFlag(MiscType.F_CLUB) && !eq.hasSubType(MiscType.S_PILE_DRIVER | MiscType.S_SPOT_WELDER
                     | MiscType.S_WRECKING_BALL)
                     && (location != Tank.LOC_FRONT) && !isRearLocation && !isTurretLocation) {
-                if (buffer != null) {
-                    buffer.append(eq.getName()).append(" must be mounted on the front, rear, or turret.\n");
-                }
+                buffer.append(eq.getName()).append(" must be mounted on the front, rear, or turret.\n");
                 return false;
             }
             if (eq.hasFlag(MiscType.F_LADDER) && ((location == Tank.LOC_FRONT) || isRearLocation
                     || ((tank instanceof VTOL) && (location == VTOL.LOC_ROTOR)))) {
-                if (buffer != null) {
-                    buffer.append(eq.getName()).append(" must be mounted on the side or turret.\n");
-                }
+                buffer.append(eq.getName()).append(" must be mounted on the side or turret.\n");
                 return false;
             }
             if (eq.hasFlag(MiscType.F_MAST_MOUNT) && (location != VTOL.LOC_ROTOR)) {
-                if (buffer != null) {
-                    buffer.append(eq.getName()).append(" must be mounted on the rotor.\n");
-                }
+                buffer.append(eq.getName()).append(" must be mounted on the rotor.\n");
                 return false;
             }
             // The minesweeper is also permitted in the front-side/rear-side location for "particularly
             // large vehicles" (TacOps, 326) but it is not clear how large this needs to be. Superheavy?
             // multi-hex large naval support?
             if (eq.hasFlag(MiscType.F_MINESWEEPER) && (location != Tank.LOC_FRONT) && !isRearLocation) {
-                if (buffer != null) {
-                    buffer.append(eq.getName()).append(" must be mounted on the front or rear.\n");
-                }
+                buffer.append(eq.getName()).append(" must be mounted on the front or rear.\n");
                 return false;
             }
         } else if (eq instanceof WeaponType) {
             if ((((WeaponType) eq).getAmmoType() == AmmoType.T_GAUSS_HEAVY)
                     && (location != Tank.LOC_FRONT) && !isRearLocation) {
-                if (buffer != null) {
-                    buffer.append(eq.getName()).append(" cannot be mounted on the sides or turret.\n");
-                }
+                buffer.append(eq.getName()).append(" cannot be mounted on the sides or turret.\n");
                 return false;
             }
             if ((((WeaponType) eq).getAmmoType() == AmmoType.T_IGAUSS_HEAVY)
                     && isTurretLocation) {
-                if (buffer != null) {
-                    buffer.append(eq.getName()).append(" cannot be mounted on a turret.\n");
-                }
+                buffer.append(eq.getName()).append(" cannot be mounted on a turret.\n");
                 return false;
             }
             if (!eq.hasFlag(WeaponType.F_C3M) && !eq.hasFlag(WeaponType.F_C3MBS)
-                    && !eq.hasFlag(WeaponType.F_TAG) && (location == Tank.LOC_BODY)) {
-                if (buffer != null) {
-                    buffer.append(eq.getName()).append(" cannot be mounted in the body.\n");
-                }
+                    && !eq.hasFlag(WeaponType.F_TAG) && (location == Tank.LOC_BODY)
+                    && !(tank instanceof GunEmplacement)) {
+                buffer.append(eq.getName()).append(" cannot be mounted in the body.\n");
                 return false;
             }
             if ((tank instanceof VTOL) && (location == VTOL.LOC_ROTOR)
                     && !eq.hasFlag(WeaponType.F_TAG)) {
-                if (buffer != null) {
-                    buffer.append(eq.getName()).append(" cannot be mounted in the rotor.\n");
-                }
+                buffer.append(eq.getName()).append(" cannot be mounted in the rotor.\n");
                 return false;
             }
         }

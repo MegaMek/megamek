@@ -1,6 +1,5 @@
-Version:1.1
-BattleMaster
-BLR-2C
+chassis:BattleMaster
+model:BLR-2C
 mul id:290
 
 Config:Biped
@@ -8,6 +7,13 @@ TechBase:Inner Sphere
 Era:2925
 Source:Rec Guide:ilClan #3
 Rules Level:3
+role:Brawler
+
+
+
+quirk:command_mech
+quirk:weak_head_1
+
 
 Mass:85
 Engine:340 Fusion Engine(IS)

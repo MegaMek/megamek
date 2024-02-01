@@ -1,6 +1,5 @@
-Version:1.0
-Lightning
-LHN-C5
+chassis:Lightning
+model:LHN-C5
 mul id:8170
 
 Config:Biped
@@ -8,6 +7,10 @@ techbase:Inner Sphere
 era:3119
 source:Rec Guide:ilClan #14
 rules level:2
+role:Sniper
+
+quirk:cowl
+
 
 mass:70
 engine:350 XL Engine(IS)

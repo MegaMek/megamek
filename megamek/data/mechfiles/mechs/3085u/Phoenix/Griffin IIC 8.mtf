@@ -1,6 +1,5 @@
-Version:1.0
-Griffin IIC
-8
+chassis:Griffin IIC
+model:8
 mul id:1317
 
 Config:Biped
@@ -8,6 +7,11 @@ TechBase:Clan
 Era:3078
 source:TRO: 3085
 Rules Level:2
+role:Striker
+
+quirk:battle_fists_la
+quirk:battle_fists_ra
+
 
 Mass:40
 Engine:240 XL (Clan) Engine

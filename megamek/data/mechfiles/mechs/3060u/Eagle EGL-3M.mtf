@@ -1,6 +1,5 @@
-Version:1.0
-Eagle
-EGL-3M
+chassis:Eagle
+model:EGL-3M
 mul id:938
 
 Config:Biped
@@ -8,6 +7,11 @@ TechBase:Inner Sphere
 Era:3076
 Source:TRO: 3060
 Rules Level:3
+role:Brawler
+
+quirk:ext_twist
+quirk:weak_head_1
+
 
 Mass:25
 Engine:125 XL Engine

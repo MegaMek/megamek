@@ -1,6 +1,5 @@
-Version:1.0
-Phoenix Hawk
-PXH-3S
+chassis:Phoenix Hawk
+model:PXH-3S
 mul id:2502
 
 Config:Biped
@@ -8,6 +7,16 @@ techbase:Inner Sphere
 era:3042
 source:Rec Guide:ilClan #11
 rules level:2
+role:Striker
+
+
+
+quirk:command_mech
+quirk:imp_com
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+weaponquirk:jettison_capable:RA:4:ISLargePulseLaser
+
 
 mass:45
 engine:270 XL Engine(IS)

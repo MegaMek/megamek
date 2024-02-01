@@ -1,6 +1,5 @@
-Version:1.0
-Orion
-ON1-K
+chassis:Orion
+model:ON1-K
 mul id:2332
 
 Config:Biped
@@ -8,6 +7,14 @@ techbase:Inner Sphere
 era:2525
 source:TRO: 3039
 rules level:1
+role:Brawler
+
+
+
+quirk:anti_air
+quirk:easy_maintain
+quirk:rugged_1
+
 
 mass:75
 engine:300 Fusion Engine(IS)

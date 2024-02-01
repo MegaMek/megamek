@@ -1,6 +1,5 @@
-Version:1.2
-Stinger
-STG-6S
+chassis:Stinger
+model:STG-6S
 mul id:3067
 
 Config:Biped
@@ -8,6 +7,15 @@ TechBase:Inner Sphere
 Era:3069
 source:TRO: 3085
 Rules Level:2
+role:Scout
+
+
+
+quirk:rugged_1
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+quirk:cramped_cockpit
+
 
 Mass:20
 Engine:140 Light Engine(IS)

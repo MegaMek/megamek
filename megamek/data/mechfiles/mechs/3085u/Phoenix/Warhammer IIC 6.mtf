@@ -1,6 +1,5 @@
-Version:1.0
-Warhammer IIC
-6
+chassis:Warhammer IIC
+model:6
 mul id:3505
 
 Config:Biped
@@ -8,6 +7,11 @@ TechBase:Clan
 Era:3071
 Source:Record Sheets: 3085 Unabridged - Project Phoenix
 Rules Level:2
+role:Sniper
+
+quirk:searchlight
+quirk:stable
+
 
 Mass:80
 Engine:320 Fusion (Clan) Engine(IS)

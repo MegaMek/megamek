@@ -1,6 +1,5 @@
-Version:1.0
-Charger
-CGR-C
+chassis:Charger
+model:CGR-C
 mul id:567
 
 Config:Biped
@@ -8,6 +7,14 @@ TechBase:Inner Sphere
 Era:3052
 Source:TRO: 3050
 Rules Level:2
+role:Skirmisher
+
+
+
+quirk:barrel_fists_la
+quirk:easy_maintain
+quirk:bad_rep_is
+
 
 Mass:80
 Engine:400 XL Engine

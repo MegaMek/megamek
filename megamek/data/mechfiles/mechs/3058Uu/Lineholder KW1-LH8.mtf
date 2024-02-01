@@ -1,6 +1,5 @@
-Version:1.0
-Lineholder
-KW1-LH8 'Linebreaker'
+chassis:Lineholder
+model:KW1-LH8 'Linebreaker'
 mul id:1895
 
 Config:Biped
@@ -8,6 +7,12 @@ TechBase:Inner Sphere
 Era:3065
 Source:TRO: 3058
 Rules Level:2
+role:Sniper
+
+
+
+quirk:easy_maintain
+
 
 Mass:55
 Engine:275 Fusion Engine

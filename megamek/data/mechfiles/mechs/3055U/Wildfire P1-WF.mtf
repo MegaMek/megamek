@@ -1,6 +1,5 @@
-Version:1.1
-Wildfire
-P1-WF
+chassis:Wildfire
+model:P1-WF
 mul id:5409
 
 Config:Biped
@@ -8,6 +7,14 @@ TechBase:Inner Sphere
 Era:3053
 Source:Unbound
 Rules Level:4
+role:Skirmisher
+
+
+
+
+quirk:non_standard
+quirk:prototype
+
 
 Mass:65
 Engine:390 XL Fusion Engine

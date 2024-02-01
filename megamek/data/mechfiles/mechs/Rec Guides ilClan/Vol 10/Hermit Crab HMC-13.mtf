@@ -1,6 +1,5 @@
-Version:1.0
-Hermit Crab
-HMC-13
+chassis:Hermit Crab
+model:HMC-13
 mul id:7721
 
 Config:Biped
@@ -8,6 +7,13 @@ techbase:Inner Sphere
 era:3104
 source:Rec Guide:ilClan #10
 rules level:2
+role:Scout
+
+
+
+
+quirk:easy_maintain
+
 
 mass:25
 engine:175 Fusion Engine(IS)

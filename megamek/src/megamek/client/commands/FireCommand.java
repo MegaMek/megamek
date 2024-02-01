@@ -1,7 +1,7 @@
 /*
  * MegaMek -
  * Copyright (C) 2007 Ben Mazur (bmazur@sev.org)
- * 
+ *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
  *  Software Foundation; either version 2 of the License, or (at your option)
@@ -23,6 +23,7 @@ import megamek.common.enums.AimingMode;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.Weapon;
 
+import java.util.EnumSet;
 import java.util.Enumeration;
 import java.util.Vector;
 
@@ -44,7 +45,7 @@ public class FireCommand extends ClientCommand {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.client.commands.ClientCommand#run(java.lang.String[])
      */
     @Override
@@ -182,12 +183,14 @@ public class FireCommand extends ClientCommand {
         getClient().getGame().removeActionsFor(cen);
 
         // restore any other movement to default
-        ce().setSecondaryFacing(ce().getFacing());
-        ce().setArmsFlipped(false);
+        if (!ce().getAlreadyTwisted()) {
+            ce().setSecondaryFacing(ce().getFacing());
+            ce().setArmsFlipped(false);
 
-        int direction = ce().clipSecondaryFacing(target);
-        attacks.addElement(new TorsoTwistAction(cen, direction));
-        ce().setSecondaryFacing(direction);
+            int direction = ce().clipSecondaryFacing(target);
+            attacks.addElement(new TorsoTwistAction(cen, direction));
+            ce().setSecondaryFacing(direction);
+        }
     }
 
     private void fire(int weaponNum, Targetable target) {
@@ -212,14 +215,14 @@ public class FireCommand extends ClientCommand {
             Mounted ammoMount = mounted.getLinked();
             AmmoType ammoType = (AmmoType) ammoMount.getType();
             waa.setAmmoId(ammoMount.getEntity().getEquipmentNum(ammoMount));
-            long ammoMunitionType = ammoType.getMunitionType();
+            EnumSet<AmmoType.Munitions> ammoMunitionType = ammoType.getMunitionType();
             waa.setAmmoMunitionType(ammoMunitionType);
             waa.setAmmoCarrier(ammoMount.getEntity().getId());
-            if (((ammoMunitionType == AmmoType.M_THUNDER_VIBRABOMB)
-                    && (ammoType.getAmmoType() == AmmoType.T_LRM 
+            if (((ammoMunitionType.contains(AmmoType.Munitions.M_THUNDER_VIBRABOMB))
+                    && (ammoType.getAmmoType() == AmmoType.T_LRM
                     || ammoType.getAmmoType() == AmmoType.T_MML
                     || ammoType.getAmmoType() == AmmoType.T_LRM_IMP))
-                    || ammoType.getMunitionType() == AmmoType.M_VIBRABOMB_IV) {
+                    || ammoType.getMunitionType().contains(AmmoType.Munitions.M_VIBRABOMB_IV)) {
 
                 waa.setOtherAttackInfo(50); // /hardcode vibrobomb setting for
                 // now.
@@ -273,7 +276,7 @@ public class FireCommand extends ClientCommand {
                 str += " Can't shoot: "
                        + Messages.getString("FiringDisplay.alreadyFired");
             } else if ((m.getType().hasFlag(WeaponType.F_AUTO_TARGET) && !m.curMode().equals(Weapon.MODE_AMS_MANUAL))
-                    || (m.getType().hasModes() && m.curMode().equals("Point Defense"))) {
+                    || (m.hasModes() && m.curMode().equals("Point Defense"))) {
                 str += " Can't shoot: "
                        + Messages.getString("FiringDisplay.autoFiringWeapon");
             } else if (getClient().getGame().getPhase().isFiring() && m.isInBearingsOnlyMode()) {

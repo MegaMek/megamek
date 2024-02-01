@@ -1,6 +1,5 @@
-Version:1.0
-JagerMech III
-JM6-D4
+chassis:JagerMech III
+model:JM6-D4
 mul id:1673
 
 Config:Biped
@@ -8,6 +7,13 @@ TechBase:Inner Sphere
 Era:3073
 Source:TRO: 3060
 Rules Level:2
+role:Skirmisher
+
+
+
+quirk:anti_air
+quirk:overhead_arms
+
 
 Mass:65
 Engine:325 XL Engine

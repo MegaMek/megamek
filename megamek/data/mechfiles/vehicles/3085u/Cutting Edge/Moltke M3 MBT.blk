@@ -48,6 +48,10 @@ ISPlasmaRifle Ammo
 <type>
 IS Level 2
 </type>
+
+<role>
+Sniper
+</role>
 <year>
 3080
 </year>

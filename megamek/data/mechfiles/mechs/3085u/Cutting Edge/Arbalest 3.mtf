@@ -1,6 +1,5 @@
-Version:1.0
-Arbalest
-3
+chassis:Arbalest
+model:3
 mul id:61
 
 Config:Biped
@@ -8,6 +7,10 @@ TechBase:Clan
 Era:3081
 source:TRO: 3085
 Rules Level:2
+role:Brawler
+
+quirk:easy_maintain
+
 
 Mass:25
 Engine:125 Fusion (Clan) Engine

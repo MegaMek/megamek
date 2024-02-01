@@ -1,13 +1,18 @@
-Version:1.1
-Blood Kite
-
+chassis:Blood Kite
+model:
 mul id:3836
 
 Config:Biped
 TechBase:Clan
 Era:2907
 Rules Level:2
+role:Sniper
 source:TRO: 3067
+
+
+quirk:easy_maintain
+quirk:rugged_2
+
 
 Mass:85
 Engine:255 Fusion Engine

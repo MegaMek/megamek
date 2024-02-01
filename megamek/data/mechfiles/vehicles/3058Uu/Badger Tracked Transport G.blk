@@ -32,15 +32,16 @@ G
 IS Level 2
 </type>
 
+<role>
+Sniper
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
 
 <transporters>
 troopspace:4.0
-</transporters>
-
-<transporters>
 BattleArmorHandles - troopers:-1
 </transporters>
 

@@ -1,6 +1,5 @@
-Version:1.0
-Marauder
-MAD-7R
+chassis:Marauder
+model:MAD-7R
 mul id:7532
 
 Config:Biped
@@ -8,6 +7,16 @@ techbase:Inner Sphere
 era:3103
 source:Rec Guide:ilClan #6
 rules level:4
+role:Sniper
+
+
+
+quirk:command_mech
+quirk:hyper_actuator
+quirk:low_profile
+weaponquirk:direct_torso_mount:RT:3:ISLightGaussRifle
+weaponquirk:exposed_linkage:RT:3:ISLightGaussRifle
+
 
 mass:75
 engine:300 XL Engine(IS)

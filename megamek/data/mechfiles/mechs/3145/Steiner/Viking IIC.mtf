@@ -1,6 +1,5 @@
-Version:1.0
-Viking IIC
-
+chassis:Viking IIC
+model:
 mul id:6634
 
 Config:Biped
@@ -8,6 +7,14 @@ TechBase:Clan
 Era:3095
 Source:TRO: 3145 Lyran Commonwealth
 Rules Level:3
+role:Missile Boat
+
+
+quirk:difficult_maintain
+quirk:imp_target_long
+quirk:no_arms
+quirk:poor_target_short
+
 
 Mass:90
 Engine:270 Fusion (Clan) Engine(IS)

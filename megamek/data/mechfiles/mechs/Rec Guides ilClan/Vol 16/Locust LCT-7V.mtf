@@ -1,6 +1,5 @@
-Version:1.0
-Locust
-LCT-7V
+chassis:Locust
+model:LCT-7V
 mul id:8201
 
 Config:Biped
@@ -8,6 +7,16 @@ techbase:Inner Sphere
 era:3102
 source:Rec Guide:ilClan #16
 rules level:2
+role:Scout
+
+
+
+quirk:compact_mech
+quirk:low_profile
+quirk:cramped_cockpit
+quirk:no_arms
+quirk:weak_legs
+
 
 mass:20
 engine:200 Light Engine(IS)

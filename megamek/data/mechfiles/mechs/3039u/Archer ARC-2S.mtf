@@ -1,6 +1,5 @@
-Version:1.0
-Archer
-ARC-2S
+chassis:Archer
+model:ARC-2S
 mul id:76
 
 Config:Biped
@@ -8,6 +7,16 @@ TechBase:Inner Sphere
 Era:2915
 Source:TRO: 3039
 Rules Level:1
+role:Missile Boat
+
+
+
+quirk:battle_fists_la
+quirk:battle_fists_ra
+quirk:command_mech
+quirk:stable
+quirk:ubiquitous_is
+
 
 Mass:70
 Engine:280 Fusion Engine

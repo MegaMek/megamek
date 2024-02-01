@@ -1,6 +1,5 @@
-Version:1.1
-Hermes II
-HER-7S
+chassis:Hermes II
+model:HER-7S
 mul id:1505
 
 Config:Biped
@@ -8,6 +7,13 @@ TechBase:Mixed (IS Chassis)
 Era:3077
 Source:XTR: Marik
 Rules Level:4
+role:Sniper
+
+
+
+quirk:easy_maintain
+quirk:imp_com
+
 
 Mass:40
 Engine:320 XXL Fusion Engine (Inner Sphere)

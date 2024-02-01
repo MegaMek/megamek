@@ -1,6 +1,5 @@
-Version:1.0
-Hellstar
-3
+chassis:Hellstar
+model:3
 mul id:1480
 
 Config:Biped
@@ -8,6 +7,12 @@ TechBase:Clan
 Era:3079
 source:TRO: 3085
 Rules Level:2
+role:Brawler
+
+quirk:barrel_fists_la
+quirk:barrel_fists_ra
+quirk:exp_actuator
+
 
 Mass:95
 Engine:380 XL (Clan) Engine

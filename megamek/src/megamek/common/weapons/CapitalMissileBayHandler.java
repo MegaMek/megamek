@@ -1,11 +1,11 @@
 /*
  * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
  * Software Foundation; either version 2 of the License, or (at your option)
  * any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
  * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
@@ -40,7 +40,7 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
         super(t, w, g, m);
         advancedPD = g.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADV_POINTDEF);
     }
-    
+
     /*
      * (non-Javadoc)
      *
@@ -48,16 +48,16 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
      */
     @Override
     public boolean handle(GamePhase phase, Vector<Report> vPhaseReport) {
-        
+
         if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
             return handleAeroSanity(phase, vPhaseReport);
         }
-        
+
         int numAttacks = 1;
-        
+
         Entity entityTarget = (target.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) target
                 : null;
-        
+
         if (entityTarget != null) {
             ae.setLastTarget(entityTarget.getId());
             ae.setLastTargetDisplayName(entityTarget.getDisplayName());
@@ -77,7 +77,7 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
                         && (weapon.getLinked() != null)
                         && (weapon.getLinked().getType() instanceof AmmoType)) {
                     AmmoType atype = (AmmoType) weapon.getLinked().getType();
-                    if (atype.getMunitionType() != AmmoType.M_STANDARD) {
+                    if (!atype.getMunitionType().contains(AmmoType.Munitions.M_STANDARD)) {
                         r.messageId = 3116;
                         r.add(atype.getSubMunitionName());
                     }
@@ -88,38 +88,38 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
                 r.add(target.getDisplayName(), true);
             }
             vPhaseReport.addElement(r);
-                
+
         //Point Defense fire vs Capital Missiles
-        
+
         // are we a glancing hit?  Check for this here, report it later
             setGlancingBlowFlags(entityTarget);
-        
+
         // Set Margin of Success/Failure and check for Direct Blows
-        toHit.setMoS(roll - Math.max(2, toHit.getValue()));
+        toHit.setMoS(roll.getIntValue() - Math.max(2, toHit.getValue()));
         bDirect = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_DIRECT_BLOW)
                 && ((toHit.getMoS() / 3) >= 1) && (entityTarget != null);
 
         //This has to be up here so that we don't screw up glancing/direct blow reports
         attackValue = calcAttackValue();
-        
+
         //CalcAttackValue triggers counterfire, so now we can safely get this
         CapMissileAMSMod = getCapMissileAMSMod();
-        
+
         //Only do this if the missile wasn't destroyed
         if (CapMissileAMSMod > 0 && CapMissileArmor > 0) {
             toHit.addModifier(CapMissileAMSMod, "Damage from Point Defenses");
-            if (roll < toHit.getValue()) {
+            if (roll.getIntValue() < toHit.getValue()) {
                 CapMissileMissed = true;
             }
         }
-        
+
         // Report any AMS bay action against Capital missiles that doesn't destroy them all.
         if (amsBayEngagedCap && CapMissileArmor > 0) {
             r = new Report(3358);
             r.add(CapMissileAMSMod);
             r.subject = subjectId;
             vPhaseReport.addElement(r);
-                    
+
         // Report any PD bay action against Capital missiles that doesn't destroy them all.
         } else if (pdBayEngagedCap && CapMissileArmor > 0) {
             r = new Report(3357);
@@ -127,7 +127,7 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
             r.subject = subjectId;
             vPhaseReport.addElement(r);
         }
-        
+
         if (toHit.getValue() == TargetRoll.IMPOSSIBLE) {
             r = new Report (3135);
             r.subject = subjectId;
@@ -163,12 +163,12 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
         vPhaseReport.addElement(r);
 
         // do we hit?
-        bMissed = roll < toHit.getValue();
+        bMissed = roll.getIntValue() < toHit.getValue();
 
         //Report Glancing/Direct Blow here because of Capital Missile weirdness
         if (!(amsBayEngagedCap || pdBayEngagedCap)) {
             addGlancingBlowReports(vPhaseReport);
-    
+
             if (bDirect) {
                 r = new Report(3189);
                 r.subject = ae.getId();
@@ -176,7 +176,7 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
                 vPhaseReport.addElement(r);
             }
         }
-        
+
         CounterAV = getCounterAV();
         //use this if AMS counterfire destroys all the Capital missiles
         if (amsBayEngagedCap && (CapMissileArmor <= 0)) {
@@ -225,7 +225,7 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
             }
             nCluster = aeroResults[1];
         }
-        
+
         //Capital missiles shouldn't be able to target buildings, being space-only weapons
         // but if they aren't defined, handleEntityDamage() doesn't work.
         int bldgAbsorbs = 0;
@@ -257,7 +257,7 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
         Report.addNewline(vPhaseReport);
         return false;
     }
-    
+
     @Override
     protected int calcAttackValue() {
 
@@ -310,11 +310,11 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
                 } else if (range == WeaponType.RANGE_EXT) {
                     current_av = bayWType.getExtAV();
                 }
-                
+
                 if (atype.hasFlag(AmmoType.F_NUCLEAR)) {
                     nukeS2S = true;
                 }
-                
+
                 current_av = updateAVforAmmo(current_av, atype, bayWType,
                         range, wId);
                 av = av + current_av;
@@ -336,11 +336,11 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
                 }
             }
         }
-        
+
         CapMissileArmor = armor - (int) counterAV;
         CapMissileAMSMod = calcCapMissileAMSMod();
-        
-        
+
+
             if (bDirect) {
                 av = Math.min(av + (toHit.getMoS() / 3), av * 2);
             }
@@ -349,20 +349,20 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
             return (int) Math.ceil(av);
         // }
     }
-    
-    
-        
+
+
+
     @Override
     protected int calcCapMissileAMSMod() {
         CapMissileAMSMod = (int) Math.ceil(CounterAV / 10.0);
         return CapMissileAMSMod;
     }
-    
+
     @Override
     protected int getCapMissileAMSMod() {
         return CapMissileAMSMod;
     }
-    
+
     /**
      * Calculate the starting armor value of a flight of Capital Missiles
      * Used for Aero Sanity. This is done in calcAttackValue() otherwise
@@ -444,7 +444,7 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
             return 11;
         }
     }
-    
+
     @Override
     protected double updateAVforAmmo(double current_av, AmmoType atype,
             WeaponType bayWType, int range, int wId) {
@@ -469,7 +469,7 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
             current_av = 1000;
         }
         return current_av;
-    } 
+    }
     /**
      * Insert any additional attacks that should occur before this attack
      */
@@ -498,7 +498,7 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
             vPhaseReport.addAll(newReports);
         }
     }
-    
+
     /**
      * Checks to see if this point defense/AMS bay can engage a capital missile
      * This should return true. Only when handling capital missile attacks can this be false.
@@ -507,7 +507,7 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
     protected boolean canEngageCapitalMissile(Mounted counter) {
         return counter.getBayWeapons().size() >= 2;
     }
-    
+
     /**
      * Sets the appropriate AMS Bay reporting flag depending on what type of missile this is
      */
@@ -515,7 +515,7 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
     protected void setAMSBayReportingFlag() {
         amsBayEngagedCap = true;
     }
-    
+
     /**
      * Sets the appropriate PD Bay reporting flag depending on what type of missile this is
      */
@@ -523,7 +523,7 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
     protected void setPDBayReportingFlag() {
         pdBayEngagedCap = true;
     }
-    
+
     @Override
     public boolean handleAeroSanity(GamePhase phase, Vector<Report> vPhaseReport) {
         if (!cares(phase)) {
@@ -555,7 +555,7 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
                     && (weapon.getLinked() != null)
                     && (weapon.getLinked().getType() instanceof AmmoType)) {
                 AmmoType atype = (AmmoType) weapon.getLinked().getType();
-                if (atype.getMunitionType() != AmmoType.M_STANDARD) {
+                if (!atype.getMunitionType().contains(AmmoType.Munitions.M_STANDARD)) {
                     r.messageId = 3116;
                     r.add(atype.getSubMunitionName());
                 }
@@ -566,42 +566,42 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
             r.add(target.getDisplayName(), true);
         }
         vPhaseReport.addElement(r);
-        
+
         // are we a glancing hit?  Check for this here, report it later
         setGlancingBlowFlags(entityTarget);
-        
+
         // Set Margin of Success/Failure and check for Direct Blows
-        toHit.setMoS(roll - Math.max(2, toHit.getValue()));
+        toHit.setMoS(roll.getIntValue() - Math.max(2, toHit.getValue()));
         bDirect = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_DIRECT_BLOW)
                 && ((toHit.getMoS() / 3) >= 1) && (entityTarget != null);
-        
+
         // Point Defense fire vs Capital Missiles
         CounterAV = calcCounterAV();
-        
+
         // CalcAttackValue triggers counterfire, so now we can safely get this
         CapMissileAMSMod = calcCapMissileAMSMod();
-        
+
         // Set up Capital Missile armor
         CapMissileArmor = initializeCapMissileArmor();
-        
+
         // and now damage it
         CapMissileArmor = (CapMissileArmor - CounterAV);
-        
+
         // Only do this if the missile wasn't destroyed
         if (CapMissileAMSMod > 0 && CapMissileArmor > 0) {
             toHit.addModifier(CapMissileAMSMod, "Damage from Point Defenses");
-            if (roll < toHit.getValue()) {
+            if (roll.getIntValue() < toHit.getValue()) {
                 CapMissileMissed = true;
             }
         }
-        
+
         // Report any AMS bay action against Capital missiles that doesn't destroy them all.
         if (amsBayEngagedCap && CapMissileArmor > 0) {
             r = new Report(3358);
             r.add(CapMissileAMSMod);
             r.subject = subjectId;
             vPhaseReport.addElement(r);
-                    
+
         // Report any PD bay action against Capital missiles that doesn't destroy them all.
         } else if (pdBayEngagedCap && CapMissileArmor > 0) {
             r = new Report(3357);
@@ -645,12 +645,12 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
         vPhaseReport.addElement(r);
 
         // do we hit?
-        bMissed = roll < toHit.getValue();
+        bMissed = roll.getIntValue() < toHit.getValue();
 
         // Report Glancing/Direct Blow here because of Capital Missile weirdness
         if (!(amsBayEngagedCap || pdBayEngagedCap)) {
             addGlancingBlowReports(vPhaseReport);
-    
+
             if (bDirect) {
                 r = new Report(3189);
                 r.subject = ae.getId();
@@ -658,7 +658,7 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
                 vPhaseReport.addElement(r);
             }
         }
-        
+
         // use this if AMS counterfire destroys all the Capital missiles
         if (amsBayEngagedCap && (CapMissileArmor <= 0)) {
             r = new Report(3356);
@@ -677,7 +677,7 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
         }
 
         // Don't add heat here, because that will be handled by individual weapons (even if heat by arc)
-        
+
         // Any necessary PSRs, jam checks, etc.
         // If this boolean is true, don't report
         // the miss later, as we already reported

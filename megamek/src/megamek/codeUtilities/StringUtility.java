@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2022-2023 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -22,7 +22,7 @@ import megamek.common.annotations.Nullable;
 
 public class StringUtility {
     /**
-     * @param text The string to be evaluated.
+     * @param text The string to be evaluated, which may be null
      * @return true if the passed in value is either null or a blank string
      */
     public static boolean isNullOrBlank(final @Nullable String text) {
@@ -30,7 +30,7 @@ public class StringUtility {
     }
 
     /**
-     * @param text The string to be evaluated.
+     * @param text The string to be evaluated, which may be null
      * @return true if the passed in <code>StringBuilder</code> is null, or its contents are null
      * or blank
      */

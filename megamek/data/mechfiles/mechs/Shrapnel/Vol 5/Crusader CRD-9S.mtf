@@ -1,6 +1,5 @@
-Version:1.0
-Crusader
-CRD-9S
+chassis:Crusader
+model:CRD-9S
 mul id:8263
 
 Config:Biped
@@ -8,6 +7,15 @@ techbase:Inner Sphere
 era:3086
 source:Shrapnel #5
 rules level:3
+role:Sniper
+
+
+
+quirk:easy_maintain
+quirk:rugged_1
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+
 
 mass:65
 engine:260 XL Engine(IS)

@@ -36,6 +36,10 @@ XP
 Clan Level 4
 </type>
 
+<role>
+Juggernaut
+</role>
+
 <motion_type>
 Biped
 </motion_type>
@@ -133,3 +137,9 @@ JUMPJET:Unspecified
 COMMUNICATIONS:Unspecified
 TARGETING:Unspecified
 </systemManufacturers>
+
+<quirks>
+prototype
+distracting
+</quirks>
+

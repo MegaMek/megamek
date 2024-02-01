@@ -61,8 +61,12 @@ public class BombAttackHandler extends WeaponHandler {
                 for (Mounted bomb : ae.getBombs()) {
                     if (!bomb.isDestroyed()
                             && (bomb.getUsableShotsLeft() > 0)
-                            && (((BombType) bomb.getType()).getBombType() == type)) {
+                            && (((BombType) bomb.getType()).getBombType() == type)
+                    ) {
                         bomb.setShotsLeft(0);
+                        if (bomb.isInternalBomb()) {
+                            ((IBomber) ae).increaseUsedInternalBombs(1);
+                        }
                         break;
                     }
                 }
@@ -73,7 +77,7 @@ public class BombAttackHandler extends WeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.AttackHandler#handle(int, java.util.Vector)
      */
     @Override
@@ -90,10 +94,18 @@ public class BombAttackHandler extends WeaponHandler {
             typeModifiedToHit.setSideTable(toHit.getSideTable());
 
             // currently, only type of bomb with type-specific to-hit mods
+            // Laser-Guided Bombs are getting errata'ed to get bonus from either A) a tagged hex or B) a tagged target
             boolean laserGuided = false;
             if (type == BombType.B_LG) {
                 for (TagInfo ti : game.getTagInfo()) {
-                    if (target.getId() == ti.target.getId()) {
+                    if (ti.missed || game.getEntity(waa.getEntityId()).isEnemyOf(game.getEntity(ti.attackerId))) {
+                        // Not a usable friendly TAG
+                        continue;
+                    }
+                    if (target.getId() == ti.target.getId()
+                        || ((ti.targetType != Targetable.TYPE_HEX_TAG)
+                            && target.getPosition().equals(ti.target.getPosition()))
+                    ) {
                         typeModifiedToHit.addModifier(-2,
                                 "laser-guided bomb against tagged target");
                         laserGuided = true;
@@ -161,10 +173,9 @@ public class BombAttackHandler extends WeaponHandler {
                 vPhaseReport.addElement(r);
 
                 // do we hit?
-                bMissed = roll < typeModifiedToHit.getValue();
+                bMissed = roll.getIntValue() < typeModifiedToHit.getValue();
                 // Set Margin of Success/Failure.
-                typeModifiedToHit.setMoS(
-                        roll - Math.max(2, typeModifiedToHit.getValue()));
+                typeModifiedToHit.setMoS(roll.getIntValue() - Math.max(2, typeModifiedToHit.getValue()));
 
                 if (!bMissed) {
                     r = new Report(3190);
@@ -246,7 +257,7 @@ public class BombAttackHandler extends WeaponHandler {
                     gameManager.deliverBombDamage(drop, type, subjectId, ae, vPhaseReport);
                 }
                 // Finally, we need a new attack roll for the next bomb, if any.
-                roll = Compute.d6(2);
+                roll = Compute.rollD6(2);
             }
         }
 

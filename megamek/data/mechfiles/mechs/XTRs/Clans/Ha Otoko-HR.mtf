@@ -1,6 +1,5 @@
-Version:1.1
-Ha Otoko-HR
-
+chassis:Ha Otoko-HR
+model:
 mul id:4258
 
 Config:Biped
@@ -8,6 +7,14 @@ TechBase:Mixed (Clan Chassis)
 Era:3077
 Source:XTR: Clans
 Rules Level:4
+role:Missile Boat
+
+
+quirk:pro_actuator
+quirk:bad_rep_clan
+quirk:non_standard
+quirk:prototype
+
 
 Mass:65
 Engine:260 Light Engine(IS)

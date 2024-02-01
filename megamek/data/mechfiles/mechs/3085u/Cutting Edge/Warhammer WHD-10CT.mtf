@@ -1,6 +1,5 @@
-Version:1.1
-Warhammer
-WHD-10CT
+chassis:Warhammer
+model:WHD-10CT
 mul id:3480
 
 Config:Biped
@@ -8,6 +7,16 @@ TechBase:Inner Sphere
 Era:3085
 Source:Record Sheets: 3085 Unabridged - Cutting Edge 
 Rules Level:2
+role:Brawler
+
+
+
+quirk:rugged_2
+quirk:searchlight
+quirk:stable
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+
 
 Mass:70
 Engine:280 Light Engine(IS)

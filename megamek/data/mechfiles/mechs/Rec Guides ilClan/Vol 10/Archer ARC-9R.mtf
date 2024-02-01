@@ -1,6 +1,5 @@
-Version:1.0
-Archer
-ARC-9R
+chassis:Archer
+model:ARC-9R
 mul id:7732
 
 Config:Biped
@@ -8,6 +7,16 @@ techbase:Inner Sphere
 era:3134
 source:Rec Guide:ilClan #10
 rules level:2
+role:Missile Boat
+
+
+
+quirk:battle_fists_la
+quirk:battle_fists_ra
+quirk:command_mech
+quirk:stable
+quirk:ubiquitous_is
+
 
 mass:70
 engine:280 Light Engine(IS)

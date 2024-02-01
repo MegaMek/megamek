@@ -1,6 +1,6 @@
-Version:1.0
-Koshi (Mist Lynx)
-M
+chassis:Koshi
+clanname:Mist Lynx
+model:M
 mul id:7561
 
 Config:Biped Omnimech
@@ -8,6 +8,11 @@ techbase:Clan
 era:3140
 source:Rec Guide:ilClan #7
 rules level:2
+role:Striker
+
+quirk:imp_sensors
+quirk:low_profile
+
 
 mass:25
 engine:175 XL (Clan) Engine(IS)

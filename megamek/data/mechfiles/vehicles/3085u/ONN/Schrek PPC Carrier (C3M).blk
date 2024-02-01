@@ -62,6 +62,10 @@ ISC3MasterComputer
 IS Level 2
 </type>
 
+<role>
+Sniper
+</role>
+
 <year>
 3076
 </year>
@@ -116,3 +120,8 @@ ARMOR:ArcShield VII Mk 5
 COMMUNICATIONS:Olmstead 3000 with ECM
 TARGETING:Omicron IX
 </systemManufacturers>
+
+<quirks>
+low_profile
+</quirks>
+

@@ -32,6 +32,10 @@ Axel Heavy Tank IIC
 Clan Level 2
 </type>
 
+<role>
+Brawler
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -130,6 +134,8 @@ Spittal
 Rec Guide:ilClan #27
 </source>
 
-<tonnage>
-65.0
-</tonnage>
+<quirks>
+low_profile
+poor_target_short
+</quirks>
+

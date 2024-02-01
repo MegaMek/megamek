@@ -32,6 +32,10 @@ Browning Mobile HQ
 IS Level 2
 </type>
 
+<role>
+Scout
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -104,3 +108,9 @@ Rec Guide:ilClan #29
 <mul id:>
 9386
 </mul id:>
+
+<quirks>
+imp_com
+difficult_maintain
+</quirks>
+

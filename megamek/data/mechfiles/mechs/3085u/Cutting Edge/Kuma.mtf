@@ -1,6 +1,5 @@
-Version:1.0
-Kuma
-
+chassis:Kuma
+model:
 mul id:1849
 
 Config:Biped
@@ -8,6 +7,12 @@ TechBase:Clan
 Era:3082
 source:TRO: 3085
 Rules Level:2
+role:Skirmisher
+
+
+quirk:hard_pilot
+weaponquirk:accurate:LA:3:CLHeavyLargeLaser
+
 
 Mass:60
 Engine:360 XL (Clan) Engine

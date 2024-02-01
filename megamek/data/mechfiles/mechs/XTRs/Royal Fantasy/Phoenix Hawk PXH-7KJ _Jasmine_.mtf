@@ -1,6 +1,5 @@
-Version:1.2
-Phoenix Hawk
-PXH-7KJ 'Jasmine'
+chassis:Phoenix Hawk
+model:PXH-7KJ 'Jasmine'
 mul id:8372
 
 Config:Biped
@@ -8,6 +7,7 @@ techbase:Inner Sphere
 era:3125
 source:XTR: Royal Fantasy
 rules level:3
+role:Striker
 
 mass:45
 engine:270 Light Engine(IS)

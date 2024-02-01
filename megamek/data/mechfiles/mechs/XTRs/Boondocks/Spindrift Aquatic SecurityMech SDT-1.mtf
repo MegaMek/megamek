@@ -1,6 +1,5 @@
-Version:1.0
-Spindrift Aquatic SecurityMech
-SDT-1
+chassis:Spindrift Aquatic SecurityMech
+model:SDT-1
 mul id:3021
 
 Config:Biped
@@ -8,6 +7,7 @@ TechBase:Inner Sphere
 Era:3069
 Source:XTR: Boondocks
 Rules Level:4
+role:Ambusher
 
 Mass:30
 Engine:120 Fusion Engine(IS)

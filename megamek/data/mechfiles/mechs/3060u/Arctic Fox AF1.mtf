@@ -1,36 +1,41 @@
-Version:1.0
-Arctic Fox
-AF1
+chassis:Arctic Fox
+model:AF1
 mul id:91
-
 Config:Biped Omnimech
-TechBase:Inner Sphere
-Era:3059
-Source:TRO: 3060
-Rules Level:2
+techbase:Inner Sphere
+era:3059
+source:TRO: 3060
+rules level:2
+role:Striker
 
-Mass:30
-Engine:180 XL Engine(IS)
-Structure:IS Endo Steel
-Myomer:Standard
 
-Heat Sinks:10 Double
-Base Chassis Heat Sinks:7
-Walk MP:6
-Jump MP:0
 
-Armor:Standard(Inner Sphere)
-LA Armor:10
-RA Armor:10
-LT Armor:11
-RT Armor:11
-CT Armor:15
-HD Armor:9
-LL Armor:10
-RL Armor:10
-RTL Armor:3
-RTR Armor:3
-RTC Armor:4
+
+quirk:weak_head_1
+
+
+mass:30
+engine:180 XL Engine(IS)
+structure:IS Endo Steel
+myomer:Standard
+
+heat sinks:10 IS Double
+base chassis heat sinks:7
+walk mp:6
+jump mp:0
+
+armor:Standard(Inner Sphere)
+LA armor:10
+RA armor:10
+LT armor:11
+RT armor:11
+CT armor:15
+HD armor:9
+LL armor:10
+RL armor:10
+RTL armor:3
+RTR armor:3
+RTC armor:4
 
 Weapons:5
 Medium Laser, Left Arm
@@ -44,7 +49,7 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-Medium Laser (omnipod)
+Medium Laser (OMNIPOD)
 IS Endo Steel
 IS Endo Steel
 IS Endo Steel
@@ -58,7 +63,7 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-Medium Laser (omnipod)
+Medium Laser (OMNIPOD)
 IS Endo Steel
 IS Endo Steel
 IS Endo Steel
@@ -74,11 +79,11 @@ Fusion Engine
 ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
-ISERPPC (omnipod)
-ISERPPC (omnipod)
-ISERPPC (omnipod)
-SRM 4 (omnipod)
-IS Ammo SRM-4 (omnipod)
+ISERPPC (OMNIPOD)
+ISERPPC (OMNIPOD)
+ISERPPC (OMNIPOD)
+SRM 4 (OMNIPOD)
+IS Ammo SRM-4 (OMNIPOD)
 -Empty-
 
 Right Torso:
@@ -91,7 +96,7 @@ ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
-SRM 4 (omnipod)
+SRM 4 (OMNIPOD)
 -Empty-
 -Empty-
 
@@ -151,4 +156,18 @@ IS Endo Steel
 -Empty-
 -Empty-
 
+overview:<P>The Kell Hounds' first OmniMech came with their salvage from Luthien, and recognizing the value of a reconfigurable 'Mech, they sought to replicate the machine. The Arctic Fox is their successful attempt, embodying versatility and adaptability in battle.</P>
+
+capabilities:<P>Well armored for a light ’Mech, the Arctic Fox can stand up to most Inner Sphere designs of similar weight. Upon reaching an efficient range for its weapons load, the OmniMech is best used holding that range and taking advantage of natural cover. For warriors with a penchant for up-close-and-personal combat, however, the Arctic Fox does not disappoint. The Arctic Fox’s snarling visage is backed by fourteen tons of pod space for weapons.</P>	
+
+Deployment:<!-- Primary Variant -->The Arctic Fox Prime is equipped with an extended-range PPC, backed by an array of medium-range weapons. This configuration ensures a potent mix of range and firepower, enabling it to engage enemies effectively at various distances.
+history:<P>Morgan Kell had the Arc-Royal facilities attempt a clone of the machine. However, only after Phelan Kell and his Wolves-In-Exile arrived were the final bugs worked out. In return for the Kell Hounds' material support for Phelan's Wolves, Clan technical advisors helped the Kells finish reverse-engineering a Clan Uller (known to the Clans as a Kit Fox). Though the Kells have access to Clan materials, the Arctic Fox is built with only Inner Sphere technology, for logistical as well as strategic reasons. The Kell Hounds use most of the Clan material they get for the upkeep of their captured Clan 'Mechs. Also, with their support of "training farm" units and ARDC defense regiments, the Kells wished to offer this versatile design to those who could afford it, but had no Clan technology. The Kell Hounds do not use the designation of AF1. In Clan fashion, they refer to the basic machine as the Arctic Fox Prime. The name evokes the 'Mech's progenitor, the Clan Kit Fox, as well as the new Wolf-in-Exile Clan 'Mech, the Arctic Wolf. Variants are designated A, B, C and D.</P>
+
+manufacturer:Arc-Royal MechWorks
+primaryfactory:Arc-Royal 
+systemmanufacturer:CHASSIS:AR-3 Endo Steel
+systemmanufacturer:ENGINE:GM 180 XL
+systemmanufacturer:ARMOR:Royal-7 Standard
+systemmanufacturer:COMMUNICATIONS:K9 Communications System
+systemmanufacturer:TARGETING:Type IV Bloodhound T & T System
 

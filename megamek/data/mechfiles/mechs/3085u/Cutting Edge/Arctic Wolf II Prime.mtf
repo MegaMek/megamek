@@ -1,6 +1,5 @@
-Version:1.0
-Arctic Wolf II
-Prime
+chassis:Arctic Wolf II
+model:Prime
 mul id:107
 
 Config:Biped Omnimech
@@ -8,6 +7,11 @@ TechBase:Clan
 Era:3085
 source:TRO: 3085
 Rules Level:2
+role:Striker
+
+
+quirk:imp_target_short
+
 
 Mass:40
 Engine:280 XL (Clan) Engine(IS)

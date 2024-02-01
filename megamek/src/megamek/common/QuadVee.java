@@ -91,7 +91,7 @@ public class QuadVee extends QuadMech {
 
     public String getMotiveTypeString(int motiveType) {
         if (motiveType < 0 || motiveType >= MOTIVE_STRING.length) {
-            return MOTIVE_STRING[MOTIVE_UNKNOWN];
+            return "Unknown";
         }
         return MOTIVE_STRING[motiveType];
     }
@@ -132,6 +132,10 @@ public class QuadVee extends QuadMech {
         return false;
     }
 
+    @Override
+    public CrewType defaultCrewType() {
+        return CrewType.QUADVEE;
+    }
 
     @Override
     public int getWalkMP(MPCalculationSetting mpCalculationSetting) {
@@ -373,12 +377,12 @@ public class QuadVee extends QuadMech {
     @Override
     public boolean canFall(boolean gyroLegDamage) {
         // QuadVees cannot fall due to failed PSR in vehicle mode.
-        return getConversionMode() == CONV_MODE_MECH || convertingNow;
+        return getConversionMode() == CONV_MODE_MECH || (convertingNow && game.getPhase().isMovement());
     }
 
     /**
-     * The cost to convert between quad and vehicle modes.
-     * @return
+     * Computes conversion cost.
+     * @return The cost to convert between quad and vehicle modes.
      */
     public int conversionCost() {
         int cost = 2;

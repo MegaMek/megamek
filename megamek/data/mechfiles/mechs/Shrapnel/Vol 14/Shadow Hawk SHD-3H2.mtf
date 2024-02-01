@@ -1,0 +1,180 @@
+generator:MegaMek Suite 0.49.17-SNAPSHOT on 2023-12-31
+chassis:Shadow Hawk
+model:SHD-3H2
+mul id:9538
+Config:Biped
+techbase:Inner Sphere
+era:2775
+source:Shrapnel #14
+rules level:3
+role:Skirmisher
+
+quirk:battle_fists_la
+quirk:battle_fists_ra
+quirk:imp_life_support
+quirk:ubiquitous_clan
+quirk:rugged_1
+quirk:ubiquitous_is
+
+mass:55
+engine:220 Fusion Engine(IS)
+structure:IS Standard
+myomer:Standard
+
+heat sinks:10 Single
+walk mp:4
+jump mp:3
+
+armor:Ferro-Fibrous(Inner Sphere)
+LA armor:16
+RA armor:16
+LT armor:18
+RT armor:18
+CT armor:23
+HD armor:9
+LL armor:16
+RL armor:16
+RTL armor:6
+RTR armor:6
+RTC armor:8
+
+Weapons:12
+Medium Laser, Right Arm
+AC/5, Left Torso
+LRM 5, Right Torso
+Machine Gun, Head
+Machine Gun, Center Torso
+SRM 4, Right Torso
+SRM 4, Right Leg
+SRM 4, Left Leg
+Small Laser, Right Arm
+Small Laser, Left Arm
+Vehicular Grenade Launcher, Left Torso
+Vehicular Grenade Launcher, Right Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+Small Laser
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+Medium Laser
+Small Laser
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Heat Sink
+Jump Jet
+Autocannon/5
+Autocannon/5
+Autocannon/5
+Autocannon/5
+ISVehicularGrenadeLauncher
+IS Ammo AC/5
+IS Ammo MG - Full
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+
+Right Torso:
+Heat Sink
+Jump Jet
+SRM 4
+LRM 5
+ISVehicularGrenadeLauncher
+IS Ammo SRM-4
+IS Ammo LRM-5
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+Machine Gun
+
+Head:
+Life Support
+Sensors
+Cockpit
+Machine Gun
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+SRM 4
+IS Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+SRM 4
+IS Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+overview: The Shadow Hawk, from its inception, was designed to be a multi-purpose generalist. One of the fabled "trio" of 55-ton 'Mechs, its comrades are much more specialized designs. The Griffin is a long-ranged support platform, the Wolverine a heavy scout and skirmisher. The Shadow Hawk, however, can accomplish both roles—albeit, not as well as the two other designs. This has not hampered its popularity, and it has offered sterling service from the first days it entered battle.
+capabilities: Most Shadow Hawks carry a varied array of weaponry. With both short and long-ranged weapons, missiles, lasers, and autocannons, the Shadow Hawk is never on a battlefield where it cannot contribute at least some firepower. Its speed is average for a design of its size, while the jump jets give it some maneuverability even if broken terrain. If the Shadow Hawk has one limitation, it is that it has difficulty bringing forward overwhelming firepower in any specific situation, causing some to disparage it as badly designed and flawed.
+deployment: The Shadow Hawk is a widespread design. Every Successor State makes good use of the BattleMech, while the factories on Dunianshire ensure that a steady number enter periphery forces every year. As such a flexible design, it has a home in nearly every type of command, and few are the commanders who cannot find a use for their Shadow Hawk. Neither the massive number of upgrade kits nor the Jihad managed to put a dent in the number of SHD-2H's in service. Even today, the militaries from the greatest house to the lowliest mercenary group still use this venerable variant.
+systemmanufacturer:CHASSIS:Earthwerks
+systemmode:CHASSIS:SHD
+systemmanufacturer:ENGINE:CoreTek
+systemmode:ENGINE:275
+systemmanufacturer:ARMOR:Maximilian
+systemmode:ARMOR:43
+systemmanufacturer:COMMUNICATIONS:O/P
+systemmode:COMMUNICATIONS:300 COMSET
+systemmanufacturer:TARGETING:O/P
+systemmode:TARGETING:2000A
+

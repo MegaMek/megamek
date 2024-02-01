@@ -1,6 +1,5 @@
-Version:1.0
-Shugenja
-SJA-7D
+chassis:Shugenja
+model:SJA-7D
 mul id:2942
 
 Config:Biped
@@ -8,6 +7,15 @@ TechBase:Inner Sphere
 Era:3061
 Source:TRO: 3060
 Rules Level:2
+role:Brawler
+
+
+
+
+quirk:cowl
+quirk:hyper_actuator
+quirk:exp_actuator
+
 
 Mass:75
 Engine:300 XL Engine

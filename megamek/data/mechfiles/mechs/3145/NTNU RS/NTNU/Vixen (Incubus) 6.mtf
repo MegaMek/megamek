@@ -1,12 +1,16 @@
-Version:1.3
-Vixen (Incubus)
-6
+generator:MegaMek Suite 0.49.16-SNAPSHOT on 2023-12-29
+chassis:Vixen
+clanname:Incubus
+model:6
 mul id:8008
 Config:Biped
 techbase:Clan
 era:3113
 source:Record Sheets: 3150
 rules level:3
+role:Brawler
+
+weaponquirk:jettison_capable:RA:3:CLERPPC
 
 mass:30
 engine:270 XXL (Clan) Engine(IS)

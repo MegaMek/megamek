@@ -36,6 +36,10 @@ Dreadnought Mk II Land Train
 IS Level 4
 </type>
 
+<role>
+Missile Boat
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -144,3 +148,9 @@ XTR: Periphery
 <fuel>
 0.0
 </fuel>
+
+<quirks>
+prototype
+non_standard
+</quirks>
+

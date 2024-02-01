@@ -1,6 +1,5 @@
-Version:1.0
-Hellion
-E
+chassis:Hellion
+model:E
 mul id:5658
 
 Config:Biped Omnimech
@@ -8,6 +7,10 @@ TechBase:Clan
 Era:3070
 source:Rec Guide:ilClan #20
 Rules Level:2
+role:Striker
+
+quirk:weak_head_1
+
 
 Mass:30
 Engine:210 XL (Clan) Engine(IS)

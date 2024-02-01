@@ -1,13 +1,22 @@
-Version:1.1
-Thunderbolt IIC
-2
+generator:MegaMek Suite 0.49.16-SNAPSHOT on 2023-12-29
+chassis:Thunderbolt IIC
+model:2
 mul id:5240
-
 Config:Biped
 techbase:Mixed (IS Chassis)
 era:3088
 source:Iron Wind Metals
-rules level:4
+rules level:2
+role:Skirmisher
+
+quirk:difficult_maintain
+quirk:pro_actuator
+weaponquirk:mod_weapons:LA:6:CLSmallPulseLaser
+weaponquirk:mod_weapons:RA:4:CLERLargePulseLaser
+weaponquirk:mod_weapons:LT:4:CLMediumPulseLaser
+weaponquirk:mod_weapons:LT:5:CLMediumPulseLaser
+weaponquirk:mod_weapons:LT:6:CLMediumPulseLaser
+weaponquirk:mod_weapons:RT:4:CLImprovedHeavyLargeLaser
 
 mass:70
 engine:280 Fusion Engine(IS)
@@ -34,12 +43,12 @@ RTR armor:6
 RTC armor:10
 
 Weapons:6
-Improved Heavy Large Laser, Right Torso
-Medium Pulse Laser, Left Torso
-Medium Pulse Laser, Left Torso
-Medium Pulse Laser, Left Torso
-ER Large Pulse Laser, Right Arm
 Small Pulse Laser, Left Arm
+ER Large Pulse Laser, Right Arm
+Medium Pulse Laser, Left Torso
+Medium Pulse Laser, Left Torso
+Medium Pulse Laser, Left Torso
+Improved Heavy Large Laser, Right Torso
 
 Left Arm:
 Shoulder
@@ -153,14 +162,10 @@ Clan Ferro-Fibrous
 -Empty-
 -Empty-
 
-overview:The Thunderbolt IIC is a second-line heavy BattleMech that was originally developed for Clan Jade Falcon in 3085. 
-
+overview:The Thunderbolt IIC is a second-line heavy BattleMech that was originally developed for Clan Jade Falcon in 3085.
 capabilities:The Thunderbolt IIC is a blend of standard and Advanced Clan technology. Due to the then-experimental nature of its weaponry, its MechWarriors were required to keep detailed logs noting the equipment's performance.
-
 deployment:Introduced in 3088, this advanced variant of the Thunderbolt IIC is built with durability in mind. This variant's engine is downgraded to a less fragile 280 Standard Fusion, however its lost speed is compensated with the mobility of four Jump Jets. These jump Jets did cost the 'Mech two of its Double Heatsinks. Further durability is provided with the incorporation of a Heavy-Duty Gyro. Its hull is protected by 11 tons of Ferro Fibrous Armor, and an ECM Suite is included. The Thunderbolt IIC 2 is armed with an Extended Range Large Pulse Laser in its right arm, a standard Heavy Large Laser in place of the Standard's missile launcher, a trio of Medium Pulse Lasers that replaces the extended range trio, and a single Small Pulse Laser in its left arm.
-
 history:The design came into existence due to that Clan's need to re-purpose surplus components being produced for their Loki and Thor OmniMech designs. Using one of Olivetti Weaponry's previous Inner Sphere designs, the classic Thunderbolt, they reworked it as a replacement for second-line 'Mechs lost during the Jihad.
-
 manufacturer:Olivetti Weaponry
 primaryfactory:Sudeten
 systemmanufacturer:CHASSIS:Olivetti TDR-II

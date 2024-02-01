@@ -1,6 +1,5 @@
-Version:1.1
-Crosscut 
-ED-X2M LoggerMech MOD
+chassis:Crosscut 
+model:ED-X2M LoggerMech MOD
 mul id:7167
 
 Config:Biped

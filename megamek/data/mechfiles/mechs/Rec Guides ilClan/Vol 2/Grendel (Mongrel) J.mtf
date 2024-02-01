@@ -1,6 +1,6 @@
-Version:1.1
-Grendel (Mongrel)
-J
+chassis:Grendel
+clanname:Mongrel
+model:J
 mul id:7460
 
 Config:Biped Omnimech
@@ -8,6 +8,10 @@ techbase:Clan
 era:3140
 source:Rec Guide:ilClan #2
 rules level:2
+role:Striker
+
+quirk:rugged_1
+
 
 mass:45
 engine:315 XL (Clan) Engine(IS)

@@ -1,6 +1,5 @@
-Version:1.0
-Perseus
-P1P
+chassis:Perseus
+model:P1P
 mul id:5698
 
 Config:Biped Omnimech
@@ -8,6 +7,13 @@ TechBase:Inner Sphere
 Era:3078
 Source:TRO: Jihad
 Rules Level:2
+role:Brawler
+
+
+
+quirk:anti_air
+quirk:easy_maintain
+
 
 Mass:75
 Engine:300 XL Engine(IS)

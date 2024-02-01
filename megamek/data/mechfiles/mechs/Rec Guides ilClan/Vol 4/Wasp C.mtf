@@ -1,12 +1,12 @@
-Version:1.0
-Wasp
-C
+chassis:Wasp
+model:C
 mul id:7496
 
 Config:Biped
 techbase:Mixed (IS Chassis)
 era:3143
 rules level:3
+role:Sniper
 source:Rec Guide:ilClan #4
 
 mass:20

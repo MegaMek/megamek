@@ -1,6 +1,5 @@
-Version:1.2
-Valkyrie
-VLK-QW5
+chassis:Valkyrie
+model:VLK-QW5
 mul id:3381
 
 Config:Biped
@@ -8,6 +7,13 @@ TechBase:Inner Sphere
 Era:3072
 source:TRO: 3085
 Rules Level:2
+role:Missile Boat
+
+
+
+quirk:easy_maintain
+quirk:imp_com
+
 
 Mass:30
 Engine:150 Light Engine(IS)

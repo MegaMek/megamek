@@ -1,6 +1,5 @@
-Version:1.0
-Warhammer IIC
-11
+chassis:Warhammer IIC
+model:11
 mul id:6858
 
 Config:Biped
@@ -8,6 +7,11 @@ TechBase:Clan
 Era:3124
 Source:Record Sheets: 3145 New Tech New Upgrades 
 Rules Level:2
+role:Juggernaut
+
+quirk:searchlight
+quirk:stable
+
 
 Mass:80
 Engine:320 Fusion (Clan) Engine(IS)

@@ -1,6 +1,5 @@
-Version:1.0
-Rampage
-RMP-2G
+chassis:Rampage
+model:RMP-2G
 mul id:2635
 source:Jihad Conspiracies: Interstellar Players 2
 
@@ -8,6 +7,16 @@ Config:Biped
 TechBase:Inner Sphere
 Era:2735
 Rules Level:1
+role:Juggernaut
+
+
+
+
+quirk:vestigial_hands_ra
+quirk:bad_rep_clan
+quirk:bad_rep_is
+quirk:obsolete
+
 
 Mass:85
 Engine:255 Fusion Engine

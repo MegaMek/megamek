@@ -1,6 +1,5 @@
-Version:1.1
-Helepolis
-HEP-1H
+chassis:Helepolis
+model:HEP-1H
 mul id:1460
 
 Config:Biped
@@ -8,6 +7,14 @@ techbase:Inner Sphere
 era:2460
 source:XTR: Primitives I
 rules level:3
+role:Missile Boat
+
+
+
+
+quirk:reinforced_legs
+quirk:stable
+
 
 mass:75
 engine:180 Fusion Engine(IS)

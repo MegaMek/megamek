@@ -1,6 +1,5 @@
-Version:1.0
-BattleMaster
-BLR-CM
+chassis:BattleMaster
+model:BLR-CM
 mul id:299
 
 Config:Biped
@@ -8,6 +7,13 @@ techbase:Inner Sphere
 era:3064
 source:TRO: Clan Invasion
 rules level:2
+role:Juggernaut
+
+
+
+quirk:command_mech
+quirk:weak_head_1
+
 
 mass:85
 engine:255 Fusion Engine(IS)

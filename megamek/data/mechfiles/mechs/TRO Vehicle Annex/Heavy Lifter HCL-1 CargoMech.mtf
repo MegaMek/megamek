@@ -1,6 +1,5 @@
-Version:1.1
-Heavy Lifter HCL-1 CargoMech
-
+chassis:Heavy Lifter
+model:HCL-1 CargoMech
 mul id:4274
 
 Config:Quad
@@ -8,6 +7,7 @@ techbase:Inner Sphere
 era:3066
 source:Record Sheets: Vehicle Annex - IndustrialMechs & Exoskeletons
 rules level:2
+role:Ambusher
 
 mass:60
 engine:240 Fusion Engine(IS)

@@ -1,6 +1,5 @@
-Version:1.0
-Firestarter
-FS9-M3
+chassis:Firestarter
+model:FS9-M3
 mul id:6610
 
 Config:Biped
@@ -8,6 +7,14 @@ TechBase:Inner Sphere
 Era:3104
 Source:TRO: 3145 Lyran Commonwealth
 Rules Level:2
+role:Scout
+
+
+
+weaponquirk:exposed_linkage:RA:6:Flamer
+weaponquirk:exposed_linkage:RA:7:Flamer
+weaponquirk:exposed_linkage:RA:8:Flamer
+
 
 Mass:35
 Engine:210 Fusion Engine(IS)

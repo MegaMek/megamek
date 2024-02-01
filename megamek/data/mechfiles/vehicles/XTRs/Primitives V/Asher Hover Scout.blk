@@ -36,6 +36,10 @@ Asher Hover Scout
 IS Level 4
 </type>
 
+<role>
+Scout
+</role>
+
 <motion_type>
 Hover
 </motion_type>
@@ -118,3 +122,9 @@ XTR: Primitives V
 <fuelType>
 PETROCHEMICALS
 </fuelType>
+
+<quirks>
+hard_pilot
+non_standard
+</quirks>
+

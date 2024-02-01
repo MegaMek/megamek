@@ -36,6 +36,10 @@ S 2772 Airplane
 IS Level 2
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>

@@ -1,6 +1,5 @@
-Version:1.0
-Crockett
-CRK-5003-0
+chassis:Crockett
+model:CRK-5003-0
 mul id:724
 
 Config:Biped
@@ -8,6 +7,13 @@ TechBase:Inner Sphere
 Era:2881
 Source:TRO: 3039
 Rules Level:1
+role:Juggernaut
+
+
+
+quirk:easy_pilot
+quirk:poor_life_support
+
 
 Mass:85
 Engine:255 Fusion Engine

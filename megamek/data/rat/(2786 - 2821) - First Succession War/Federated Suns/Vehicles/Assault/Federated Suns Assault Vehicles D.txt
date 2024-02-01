@@ -4,7 +4,7 @@ Fury Command Tank (Fury II),2
 Mobile Long Tom Artillery LT-MOB-25,3
 Rhino Fire Support Tank (MG),4
 Puma Assault Tank PAT-005,5
-Rhino Fire Support Tank (Standard),6
+Rhino Fire Support Tank,6
 Puma Assault Tank PAT-005,5
 Fury Command Tank (Fury II),4
 Puma Assault Tank PAT-005,3

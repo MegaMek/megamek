@@ -1,6 +1,6 @@
-Version:1.0
-Behemoth (Stone Rhino)
-4
+chassis:Behemoth
+clanname:Stone Rhino
+model:4
 mul id:3814
 
 Config:Biped
@@ -8,6 +8,15 @@ TechBase:Clan
 Era:2846
 Source:TRO: 3055
 Rules Level:2
+role:Juggernaut
+
+quirk:barrel_fists_la
+quirk:barrel_fists_ra
+quirk:pro_actuator
+quirk:oversized
+quirk:poor_performance
+quirk:weak_head_1
+
 
 Mass:100
 Engine:300 XL (Clan) Engine(IS)

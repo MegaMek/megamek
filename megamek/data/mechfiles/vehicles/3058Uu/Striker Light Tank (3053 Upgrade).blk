@@ -1,17 +1,16 @@
-#building block data file
+#Saved from version 0.49.18-SNAPSHOT on 2024-01-07
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
-<Version>
-MAM0
-</Version>
+
 <UnitType>
 Tank
 </UnitType>
+
 <Name>
 Striker Light Tank
 </Name>
+
 <Model>
 (3053 Upgrade)
 </Model>
@@ -19,47 +18,114 @@ Striker Light Tank
 <mul id:>
 3098
 </mul id:>
-<Tonnage>
-35
-</Tonnage>
+
+<year>
+3053
+</year>
+
+<originalBuildYear>
+3053
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<role>
+Missile Boat
+</role>
+
+<motion_type>
+Wheeled
+</motion_type>
+
 <cruiseMP>
 5
 </cruiseMP>
-<Armor>
+
+<engine_type>
+0
+</engine_type>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
 26
 23
 23
 20
 24
-</Armor>
+</armor>
+
+<Body Equipment>
+IS Ammo LRM-15 Artemis-capable
+IS Streak SRM 2 Ammo
+</Body Equipment>
+
+<Front Equipment>
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
 <Turret Equipment>
-ISLRM15
+LRM 15
 ISArtemisIV
 ISStreakSRM2
 ISStreakSRM2
 </Turret Equipment>
-<Body Equipment>
-ISLRM15 Ammo Artemis-capable
-ISStreakSRM2 Ammo
-</Body Equipment>
-<type>
-IS Level 2
-</type>
-<year>
-3053
-</year>
-<internal_type>
-0
-</internal_type>
-<armor_type>
-1
-</armor_type>
-<engine_type>
-0
-</engine_type>
-<motion_type>
-Wheeled
-</motion_type>
+
+<capabilities>
+The Striker is designed for fire-support across all ranges. Its key features include a swift wheeled motive system and two turret-mounted missile systems, providing both long-range indirect fire and short-range barrages. This combination, along with the Striker’s mobility, makes it particularly effective in urban settings. Cost-cutting measures and technology decline during the Succession Wars led to integrated communication and targeting systems, creating vulnerabilities. However, post-Helm Memory Core upgrades significantly enhanced the electronics suite, improving maintainability and combat resilience.
+</capabilities>
+
+<overview>
+The Striker Light Tank, a collaborative venture between Valiant and Wunderland, emerged as a novel addition to the AFFS’s armored forces. Initially doubted for its wheeled design, the Striker surpassed expectations in field tests in 3006, demonstrating a balance of durability and agility. The Striker's successful deployment in various environments led to its adoption by several military factions beyond the AFFS. The Striker’s versatility and cost-effectiveness have been key factors in its widespread use.
+</overview>
+
+<deployment>
+A major refit that introduces a fusion engine and ferro-fibrous armor for enhanced mobility and protection. Weaponry upgrades include an LRM-15 with Artemis IV FCS for improved missile accuracy and two Streak SRM-2 launchers for efficient close-range defense, each with a single ton of ammunition.
+</deployment>
+
+<history>
+The Striker Light Tank, a collaborative creation of Valiant Systems and Wunderland Enterprises, emerged in the early 3000s as a versatile, cost-effective military vehicle. Initially met with skepticism by the AFFS due to its wheeled design and perceived durability issues, extensive field testing in 3006 yielded impressive results. This, combined with the strategic decision by Valiant and Wunderland to virtually donate the first production run of Strikers, solidified the AFFS's interest in the tank.
+<p>Designed for fire support at all ranges, the Striker quickly proved its worth with a combination of LRM and SRM systems, making it an excellent cavalry unit, particularly in urban settings. However, during the Succession Wars, a cost-saving measure combined the communication and targeting electronics into one suite, making the Striker vulnerable to disabling hits.</p><p>The 3040s brought significant changes with the introduction of a fusion engine and ferro-fibrous armor, enhancing the Striker's combat effectiveness. The upgraded Striker featured an Artemis IV-enhanced LRM-15 and two Streak SRM-2s, balancing firepower and efficiency.</p><p>Throughout its service, the Striker has been a mainstay in the AFFS, with widespread deployment across armored regiments and planetary militias. The Lyran Commonwealth also heavily adopted the Striker, leading to increased production and popularity. The Striker's deployment in various military and mercenary units has contributed to its diverse operational history.</p><p>Post-Star League, the Striker's presence diminished but persisted, especially in the hands of Snord's Irregulars and other mercenary groups. The Word of Blake era saw a brief attempt at revitalizing the Spartan, with production efforts on Terra, but these efforts had limited impact.</p><p>In the post-Jihad era, the Striker's blueprints, discovered by the Capellan Confederation, led to a renewed interest and the development of new variants like the SPT-N4. This modernized version, equipped with contemporary technologies, indicated the Striker's enduring legacy as a versatile and reliable combat vehicle, adapting to the evolving dynamics of mech warfare.</p>
+</history>
+
+
+<manufacturer>
+Valiant Systems
+</manufacturer>
+
+<primaryFactory>
+Johnsondale
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:InterFus 155
+ARMOR:Valiant Scutum Ferro-Fibrous
+COMMUNICATIONS:Wunderland XXXV-1 Series
+TARGETING:Wunderland XXXV-1 Series with Artemis FCS
+</systemManufacturers>
+
 <source>
 TRO: 3058
 </source>
+
+<tonnage>
+35.0
+</tonnage>
+

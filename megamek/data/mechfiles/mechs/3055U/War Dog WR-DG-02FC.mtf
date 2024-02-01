@@ -1,6 +1,5 @@
-Version:1.0
-War Dog
-WR-DG-02FC
+chassis:War Dog
+model:WR-DG-02FC
 mul id:3476
 
 Config:Biped
@@ -8,6 +7,16 @@ TechBase:Inner Sphere
 Era:3052
 Source:TRO: 3055
 Rules Level:2
+role:Brawler
+
+
+
+
+weaponquirk:accurate:RL:4:ISStreakSRM2OS
+weaponquirk:fast_reload:RL:4:ISStreakSRM2OS
+weaponquirk:accurate:LL:4:ISStreakSRM2OS
+weaponquirk:fast_reload:LL:4:ISStreakSRM2OS
+
 
 Mass:75
 Engine:300 XL Engine

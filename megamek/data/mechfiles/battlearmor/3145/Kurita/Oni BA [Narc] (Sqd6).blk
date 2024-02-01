@@ -32,6 +32,10 @@ Oni Battle Armor
 Mixed (IS Chassis)
 </type>
 
+<role>
+Ambusher
+</role>
+
 <motion_type>
 Jump
 </motion_type>
@@ -150,3 +154,9 @@ JUMPJET:Unknown
 COMMUNICATIONS:Unknown
 TARGETING:Unknown
 </systemManufacturers>
+
+<quirks>
+fast_reload
+non_standard
+</quirks>
+

@@ -1,6 +1,5 @@
-Version:1.1
-HawkWolf
-HWK-3F
+chassis:HawkWolf
+model:HWK-3F
 mul id:4273
 
 Config:Biped
@@ -8,6 +7,7 @@ TechBase:Inner Sphere
 Era:3076
 Source:XTR: RetroTech
 Rules Level:4
+role:Missile Boat
 
 Mass:80
 Engine:290 Primitive Fusion Engine

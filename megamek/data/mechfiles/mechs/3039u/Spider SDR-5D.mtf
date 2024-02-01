@@ -1,6 +1,5 @@
-Version:1.0
-Spider
-SDR-5D
+chassis:Spider
+model:SDR-5D
 mul id:3008
 
 Config:Biped
@@ -8,6 +7,14 @@ TechBase:Inner Sphere
 Era:2853
 Source:TRO: 3039
 Rules Level:1
+role:Scout
+
+
+
+quirk:easy_maintain
+quirk:nimble_jumper
+quirk:no_eject
+
 
 Mass:30
 Engine:240 Fusion Engine

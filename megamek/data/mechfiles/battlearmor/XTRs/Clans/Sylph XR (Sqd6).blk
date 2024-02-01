@@ -55,6 +55,10 @@ BASearchlight:Body
 Clan Level 3
 </type>
 
+<role>
+Scout
+</role>
+
 <year>
 3077
 </year>
@@ -106,3 +110,9 @@ JUMPJET:Unknown
 COMMUNICATIONS:Unknown
 TARGETING:Unknown
 </systemManufacturers>
+
+<quirks>
+hard_pilot
+prototype
+</quirks>
+

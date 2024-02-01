@@ -32,6 +32,10 @@ Skanda Light Tank
 Clan Level 2
 </type>
 
+<role>
+Striker
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -87,3 +91,8 @@ TRO: 3145 The Clans
 <tonnage>
 35.0
 </tonnage>
+
+<quirks>
+imp_target_long
+</quirks>
+

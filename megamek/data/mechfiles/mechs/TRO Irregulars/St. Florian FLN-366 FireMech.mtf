@@ -1,6 +1,5 @@
-Version:1.1
-St. Florian
-FLN-366 FireMech
+chassis:St. Florian
+model:FLN-366 FireMech
 mul id:5118
 
 Config:Biped
@@ -8,6 +7,7 @@ techbase:Inner Sphere
 era:3100
 source:TRO: 3085u
 rules level:3
+role:None
 
 mass:90
 engine:270 Fusion Engine(IS)

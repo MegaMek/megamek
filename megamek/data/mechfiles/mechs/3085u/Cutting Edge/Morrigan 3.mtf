@@ -1,54 +1,57 @@
-Version:1.0
-Morrigan
-3
+generator:MegaMek Suite 0.49.16-SNAPSHOT on 2023-12-29
+chassis:Morrigan
+model:3
 mul id:2230
-
 Config:Biped
-TechBase:Mixed (Clan Chassis)
-Era:3085
+techbase:Mixed (Clan Chassis)
+era:3085
 source:TRO: 3085
-Rules Level:4
+rules level:3
+role:Striker
 
-Mass:35
-Engine:280 XL (Clan) Engine
-Structure:Endo Steel
-Myomer:Standard
+quirk:weak_legs
+weaponquirk:stable_weapon:RA:3:Mek Taser
 
-Heat Sinks:11 Double
-Walk MP:8
-Jump MP:0
+mass:35
+engine:280 XL (Clan) Engine
+structure:Clan Endo Steel
+myomer:Standard
 
-Armor:Ferro-Fibrous(Clan)
-LA Armor:10
-RA Armor:10
-LT Armor:11
-RT Armor:11
-CT Armor:15
-HD Armor:9
-LL Armor:16
-RL Armor:16
-RTL Armor:5
-RTR Armor:5
-RTC Armor:7
+heat sinks:11 Clan Double
+walk mp:8
+jump mp:0
+
+armor:Ferro-Fibrous(Clan)
+LA armor:10
+RA armor:10
+LT armor:11
+RT armor:11
+CT armor:15
+HD armor:9
+LL armor:16
+RL armor:16
+RTL armor:5
+RTR armor:5
+RTC armor:7
 
 Weapons:9
-Small Pulse Laser, Right Torso
-Small Pulse Laser, Left Torso
-ER Small Laser, Right Torso
-ER Small Laser, Right Torso
-ER Small Laser, Left Torso
-ER Small Laser, Left Torso
-ER Medium Laser, Right Torso
 ER Medium Laser, Left Torso
-Mech Taser, Right Arm
+ER Small Laser, Left Torso
+ER Small Laser, Left Torso
+Small Pulse Laser, Left Torso
+ER Medium Laser, Right Torso
+ER Small Laser, Right Torso
+ER Small Laser, Right Torso
+Small Pulse Laser, Right Torso
+BattleMech Taser, Right Arm
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-Endo Steel
-Ferro-Fibrous
+Clan Endo Steel
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -63,8 +66,8 @@ Lower Arm Actuator
 Mek Taser
 Mek Taser
 Mek Taser
-Endo Steel
-Ferro-Fibrous
+Clan Endo Steel
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -77,9 +80,9 @@ CLERMediumLaser
 CLERSmallLaser
 CLERSmallLaser
 CLSmallPulseLaser
-Endo Steel
-Endo Steel
-Ferro-Fibrous
+Clan Endo Steel
+Clan Endo Steel
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -93,8 +96,8 @@ CLERSmallLaser
 CLSmallPulseLaser
 Taser Ammo
 Taser Ammo
-Endo Steel
-Ferro-Fibrous
+Clan Endo Steel
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 
@@ -116,7 +119,7 @@ Head:
 Life Support
 Sensors
 Cockpit
-Ferro-Fibrous
+Clan Ferro-Fibrous
 Sensors
 Life Support
 -Empty-
@@ -131,8 +134,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Ferro-Fibrous
+Clan Endo Steel
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -145,8 +148,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Ferro-Fibrous
+Clan Endo Steel
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-

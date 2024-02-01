@@ -36,6 +36,10 @@ GAL-200R
 IS Level 2
 </type>
 
+<role>
+Ambusher
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -128,4 +132,9 @@ Rec Guide:ilClan #27
 <fuelType>
 PETROCHEMICALS
 </fuelType>
+
+
+<quirks>
+ubiquitous_is
+</quirks>
 

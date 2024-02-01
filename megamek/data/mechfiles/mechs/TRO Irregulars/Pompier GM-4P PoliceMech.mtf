@@ -1,6 +1,5 @@
-Version:1.0
-Pompier PoliceMech
-GM-4P 
+chassis:Pompier
+model:GM-4P PoliceMech 
 mul id:7837
 
 Config:Biped

@@ -1,6 +1,5 @@
-Version:1.0
-Titan
-TI-1A
+chassis:Titan
+model:TI-1A
 mul id:3257
 
 Config:Biped
@@ -8,6 +7,10 @@ TechBase:Inner Sphere
 Era:2765
 source:TRO: 3075
 Rules Level:1
+role:Juggernaut
+
+quirk:pro_actuator
+
 
 Mass:100
 Engine:300 Fusion Engine

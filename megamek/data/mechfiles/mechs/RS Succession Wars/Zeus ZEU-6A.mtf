@@ -1,6 +1,5 @@
-Version:1.0
-Zeus
-ZEU-6A
+chassis:Zeus
+model:ZEU-6A
 mul id:7432
 
 Config:Biped
@@ -8,6 +7,13 @@ TechBase:Inner Sphere
 Era:2940
 Source:Record Sheets: Succession Wars
 Rules Level:1
+role:Brawler
+
+
+
+quirk:barrel_fists_ra
+quirk:easy_maintain
+
 
 Mass:80
 Engine:320 Fusion Engine(IS)

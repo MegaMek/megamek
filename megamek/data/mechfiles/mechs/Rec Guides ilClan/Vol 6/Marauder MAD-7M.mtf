@@ -1,13 +1,22 @@
-Version:1.0
-Marauder
-MAD-7M
+chassis:Marauder
+model:MAD-7M
 mul id:7531
 
 Config:Biped
 techbase:Inner Sphere
 era:3074
 rules level:2
+role:Brawler
 source:Rec Guide:ilClan #6
+
+
+
+quirk:command_mech
+quirk:hyper_actuator
+quirk:low_profile
+weaponquirk:direct_torso_mount:RT:6:ISLBXAC5
+weaponquirk:exposed_linkage:RT:6:ISLBXAC5
+
 
 mass:75
 engine:300 XL Engine(IS)

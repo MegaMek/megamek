@@ -1,6 +1,5 @@
-Version:1.0
-JagerMech
-JM6-DG
+chassis:JagerMech
+model:JM6-DG
 mul id:1668
 
 Config:Biped
@@ -8,6 +7,12 @@ TechBase:Inner Sphere
 Era:3054
 Source:TRO: 3050
 Rules Level:2
+role:Sniper
+
+
+
+quirk:anti_air
+
 
 Mass:65
 Engine:260 XL Engine(IS)

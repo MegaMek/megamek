@@ -1,6 +1,6 @@
-Version:1.0
-Vulture (Mad Dog)
-C
+chassis:Vulture
+clanname:Mad Dog
+model:C
 mul id:3468
 
 Config:Biped Omnimech
@@ -8,6 +8,10 @@ TechBase:Clan
 Era:2963
 Source:TRO: 3050
 Rules Level:2
+role:Sniper
+
+quirk:imp_target_med
+
 
 Mass:60
 Engine:300 XL (Clan) Engine(IS)

@@ -36,6 +36,10 @@ Aegis Point Defense Suit
 IS Level 3
 </type>
 
+<role>
+Scout
+</role>
+
 <motion_type>
 Leg
 </motion_type>
@@ -137,4 +141,9 @@ biped
 <weightclass>
 2
 </weightclass>
+
+
+<quirks>
+imp_com
+</quirks>
 

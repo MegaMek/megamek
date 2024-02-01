@@ -173,7 +173,7 @@ public class ChatterBox implements KeyListener, IPreferenceChangeListener {
         gbc.fill = GridBagConstraints.BOTH;
         gbc.weightx = .13; gbc.weighty = .05;
         chatPanel.add(butDone, gbc);
-        butDone.setSize(AbstractPhaseDisplay.DONE_BUTTON_WIDTH, butDone.getHeight());
+        butDone.setSize(UIUtil.scaleForGUI(AbstractPhaseDisplay.DONE_BUTTON_WIDTH), butDone.getHeight());
         butDone.setPreferredSize(butDone.getSize());
         butDone.setMinimumSize(butDone.getSize());
         chatPanel.setMinimumSize(chatPanel.getPreferredSize());

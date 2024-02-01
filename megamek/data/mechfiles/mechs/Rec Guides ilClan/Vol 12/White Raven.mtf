@@ -1,6 +1,5 @@
-Version:1.0
-White Raven
-
+chassis:White Raven
+model:
 mul id:7794
 
 Config:Biped
@@ -8,6 +7,11 @@ techbase:Clan
 era:3127
 source:Rec Guide:ilClan #12
 rules level:2
+role:Skirmisher
+
+
+quirk:imp_target_short
+
 
 mass:75
 engine:375 XL (Clan) Engine(IS)

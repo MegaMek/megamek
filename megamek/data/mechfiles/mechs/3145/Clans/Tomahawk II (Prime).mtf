@@ -1,6 +1,5 @@
-Version:1.0
-Tomahawk II
-(Prime)
+chassis:Tomahawk II
+model:(Prime)
 mul id:6303
 
 Config:Biped Omnimech
@@ -8,6 +7,13 @@ techbase:Clan
 era:3088
 source:TRO: 3145 The Clans
 rules level:4
+role:Sniper
+
+
+
+
+quirk:difficult_eject
+
 
 mass:100
 engine:300 XL (Clan) Engine(IS)

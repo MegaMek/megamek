@@ -1,6 +1,6 @@
-Version:1.1
-Cauldron-Born (Ebon Jaguar)
-H
+chassis:Cauldron-Born
+clanname:Ebon Jaguar
+model:H
 mul id:495
 
 Config:Biped Omnimech
@@ -8,6 +8,10 @@ TechBase:Clan
 Era:3062
 source:TRO: Clan Invasion
 Rules Level:2
+role:Skirmisher
+
+quirk:low_profile
+
 
 Mass:65
 Engine:325 XL (Clan) Engine(IS)

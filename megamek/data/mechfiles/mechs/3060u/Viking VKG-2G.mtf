@@ -1,6 +1,5 @@
-Version:1.0
-Viking
-VKG-2G
+chassis:Viking
+model:VKG-2G
 mul id:3418
 
 Config:Biped
@@ -8,6 +7,14 @@ TechBase:Inner Sphere
 Era:3060
 Source:TRO: 3060
 Rules Level:2
+role:Juggernaut
+
+
+
+quirk:easy_maintain
+quirk:multi_trac
+quirk:no_arms
+
 
 Mass:90
 Engine:270 Fusion Engine

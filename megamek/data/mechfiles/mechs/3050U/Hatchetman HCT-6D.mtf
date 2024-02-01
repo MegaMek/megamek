@@ -1,6 +1,5 @@
-Version:1.2
-Hatchetman
-HCT-6D
+chassis:Hatchetman
+model:HCT-6D
 mul id:1415
 
 Config:Biped
@@ -8,6 +7,13 @@ techbase:Inner Sphere
 era:3062
 source:TRO: 3050
 rules level:2
+role:Skirmisher
+
+
+
+quirk:anti_air
+weaponquirk:fast_reload:RT:3:ISRotaryAC5
+
 
 mass:45
 engine:225 XL Engine(IS)

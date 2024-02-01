@@ -36,6 +36,10 @@ Falcon Hover Tank
 IS Level 1
 </type>
 
+<role>
+Striker
+</role>
+
 <motion_type>
 Hover
 </motion_type>
@@ -107,4 +111,9 @@ Rec Guide:ilClan #27
 <fuelType>
 PETROCHEMICALS
 </fuelType>
+
+
+<quirks>
+ramshackle
+</quirks>
 

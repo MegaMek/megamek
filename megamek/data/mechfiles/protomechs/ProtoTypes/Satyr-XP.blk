@@ -36,6 +36,10 @@ XP
 Clan Level 2
 </type>
 
+<role>
+Striker
+</role>
+
 <motion_type>
 Biped
 </motion_type>
@@ -136,3 +140,8 @@ JUMPJET:Unspecified
 COMMUNICATIONS:Unspecified
 TARGETING:Unspecified
 </systemManufacturers>
+
+<quirks>
+difficult_maintain
+</quirks>
+

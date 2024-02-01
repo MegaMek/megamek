@@ -32,6 +32,10 @@ Predator Tank Destroyer
 IS Level 2
 </type>
 
+<role>
+Striker
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -84,3 +88,9 @@ TRO: 3145 Capellan Confederation
 <tonnage>
 45.0
 </tonnage>
+
+<quirks>
+easy_maintain
+low_profile
+</quirks>
+

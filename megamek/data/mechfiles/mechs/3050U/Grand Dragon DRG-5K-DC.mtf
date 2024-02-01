@@ -1,6 +1,5 @@
-Version:1.1
-Grand Dragon
-DRG-5K-DC
+chassis:Grand Dragon
+model:DRG-5K-DC
 mul id:4230
 
 Config:Biped
@@ -8,6 +7,14 @@ TechBase:Inner Sphere
 Era:3050
 Source:TRO: 3050
 Rules Level:3
+role:Skirmisher
+
+
+
+quirk:ext_twist
+quirk:low_profile
+quirk:stable
+
 
 Mass:60
 Engine:360 XL Engine(IS)

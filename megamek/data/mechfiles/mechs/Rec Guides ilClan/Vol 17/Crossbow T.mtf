@@ -1,6 +1,5 @@
-Version:1.0
-Crossbow
-T
+chassis:Crossbow
+model:T
 mul id:8235
 
 Config:Biped Omnimech
@@ -8,6 +7,7 @@ techbase:Clan
 era:3142
 source:Rec Guide:ilClan #17
 rules level:2
+role:Skirmisher
 
 mass:65
 engine:325 Fusion (Clan) Engine(IS)

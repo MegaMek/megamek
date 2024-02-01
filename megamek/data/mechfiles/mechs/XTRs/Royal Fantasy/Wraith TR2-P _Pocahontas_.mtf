@@ -1,6 +1,5 @@
-Version:1.0
-Wraith
-TR2-P 'Pocahontas'
+chassis:Wraith
+model:TR2-P 'Pocahontas'
 mul id:8381
 
 Config:Biped
@@ -8,6 +7,13 @@ techbase:Mixed (IS Chassis)
 era:3130
 source:XTR: Royal Fantasy
 rules level:3
+role:Skirmisher
+
+
+
+quirk:ubiquitous_is
+quirk:difficult_maintain
+
 
 mass:55
 engine:385 XL (Clan) Engine

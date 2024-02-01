@@ -155,8 +155,8 @@ public abstract class AbstractAttackAction extends AbstractEntityAction implemen
                     || (atype.getAmmoType() == AmmoType.T_LAC)
                     || (atype.getAmmoType() == AmmoType.T_AC_IMP)
                     || (atype.getAmmoType() == AmmoType.T_PAC))
-                    && ((atype.getMunitionType() == AmmoType.M_INCENDIARY_AC)
-                            || (atype.getMunitionType() == AmmoType.M_TRACER))) {
+                    && ((atype.getMunitionType().contains(AmmoType.Munitions.M_INCENDIARY_AC))
+                            || (atype.getMunitionType().contains(AmmoType.Munitions.M_TRACER)))) {
                 toHit.addModifier(-1, "incendiary/tracer ammo");
                 night_modifier--;
             }

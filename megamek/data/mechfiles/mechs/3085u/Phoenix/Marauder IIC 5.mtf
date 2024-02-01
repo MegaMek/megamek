@@ -1,6 +1,5 @@
-Version:1.0
-Marauder IIC
-5
+chassis:Marauder IIC
+model:5
 mul id:2069
 
 Config:Biped
@@ -8,6 +7,12 @@ techbase:Clan
 era:3070
 Source:Record Sheets: 3085 Unabridged - Project Phoenix
 rules level:2
+role:Sniper
+
+quirk:command_mech
+quirk:hyper_actuator
+quirk:exp_actuator
+
 
 mass:85
 engine:340 Fusion (Clan) Engine(IS)

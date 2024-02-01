@@ -56,6 +56,10 @@ Environmental Sealing
 <type>
 IS Level 3
 </type>
+
+<role>
+Sniper
+</role>
 <year>
 3076
 </year>
@@ -111,3 +115,9 @@ TRO: 3085
 <tonnage>
 65.0
 </tonnage>
+
+<quirks>
+low_profile
+poor_target_short
+</quirks>
+

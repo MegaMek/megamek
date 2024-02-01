@@ -1,6 +1,5 @@
-Version:1.0
-Wasp
-WSP-1K
+chassis:Wasp
+model:WSP-1K
 mul id:3522
 
 Config:Biped
@@ -8,6 +7,15 @@ TechBase:Inner Sphere
 Era:2818
 Source:TRO: 3039
 Rules Level:1
+role:Scout
+
+
+
+quirk:easy_maintain
+quirk:ext_twist
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+
 
 Mass:20
 Engine:120 Fusion Engine

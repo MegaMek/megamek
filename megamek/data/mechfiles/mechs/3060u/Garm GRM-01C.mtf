@@ -1,6 +1,5 @@
-Version:1.0
-Garm
-GRM-01C
+chassis:Garm
+model:GRM-01C
 mul id:1192
 
 Config:Biped
@@ -8,6 +7,12 @@ TechBase:Inner Sphere
 Era:3062
 Source:TRO: 3060
 Rules Level:2
+role:Brawler
+
+
+
+quirk:ext_twist
+
 
 Mass:35
 Engine:175 Fusion Engine

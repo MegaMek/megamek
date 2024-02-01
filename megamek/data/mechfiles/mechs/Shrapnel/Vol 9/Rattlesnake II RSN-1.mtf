@@ -1,12 +1,12 @@
-Version:1.3
-Rattlesnake II
-RSN-1
+chassis:Rattlesnake II
+model:RSN-1
 mul id:9241
 Config:Biped
 techbase:Mixed (IS Chassis)
 era:3150
 source:Shrapnel #9
 rules level:2
+role:Striker
 
 mass:45
 engine:315 XL (Clan) Engine

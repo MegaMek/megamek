@@ -1,6 +1,5 @@
-Version:1.1
-Pathfinder
-PFF-2T
+chassis:Pathfinder
+model:PFF-2T
 mul id:4791
 
 Config:Biped
@@ -8,6 +7,12 @@ TechBase:Inner Sphere
 Era:3075
 Source:XTR: RetroTech
 Rules Level:4
+role:None
+
+
+
+quirk:imp_sensors
+
 
 Mass:25
 Engine:180 Fusion Engine(IS)

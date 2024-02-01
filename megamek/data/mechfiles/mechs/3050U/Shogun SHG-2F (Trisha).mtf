@@ -1,6 +1,5 @@
-Version:1.0
-Shogun
-SHG-2F (Trisha)
+chassis:Shogun
+model:SHG-2F (Trisha)
 mul id:5058
 
 Config:Biped
@@ -8,6 +7,15 @@ TechBase:Inner Sphere
 Era:3071
 Source:TRO: 3050
 Rules Level:2
+role:Juggernaut
+
+
+
+quirk:barrel_fists_la
+quirk:barrel_fists_ra
+quirk:difficult_maintain
+quirk:non_standard
+
 
 Mass:85
 Engine:255 Fusion Engine(IS)

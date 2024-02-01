@@ -1,12 +1,18 @@
-Version:1.3
-Hermes II
-HER-7A
+chassis:Hermes II
+model:HER-7A
 mul id:9314
 Config:Biped
 techbase:Mixed (IS Chassis)
 era:3120
 source:Rec Guide:ilClan #26
 rules level:2
+role:Sniper
+
+
+
+quirk:easy_maintain
+quirk:imp_com
+
 
 mass:40
 engine:240 Light Engine(IS)

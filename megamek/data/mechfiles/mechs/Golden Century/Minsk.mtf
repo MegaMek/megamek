@@ -1,6 +1,5 @@
-Version:1.1
-Minsk
-
+chassis:Minsk
+model:
 mul id:7640
 
 Config:Biped
@@ -8,6 +7,7 @@ techbase:Clan
 era:2862
 source:TRO: Golden Century
 rules level:2
+role:Sniper
 
 mass:70
 engine:210 Fusion (Clan) Engine(IS)

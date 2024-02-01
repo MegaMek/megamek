@@ -1,6 +1,5 @@
-Version:1.0
-Black Knight
-BL-10-KNT (Ross)
+chassis:Black Knight
+model:BL-10-KNT (Ross)
 mul id:355
 
 Config:Biped
@@ -8,6 +7,12 @@ TechBase:Inner Sphere
 Era:3055
 Source:Starterbook: Sword and Dragon
 Rules Level:2
+role:Brawler
+
+
+
+quirk:command_mech
+
 
 Mass:75
 Engine:300 Fusion Engine

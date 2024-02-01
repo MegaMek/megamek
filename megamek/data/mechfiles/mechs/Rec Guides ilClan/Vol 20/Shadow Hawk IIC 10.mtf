@@ -1,12 +1,17 @@
-Version:1.3
-Shadow Hawk IIC
-10
+chassis:Shadow Hawk IIC
+model:10
 mul id:8328
 Config:Biped
 techbase:Clan
 era:3068
 source:Rec Guide:ilClan #20
 rules level:2
+role:Striker
+
+quirk:battle_fists_la
+quirk:battle_fists_ra
+quirk:imp_life_support
+
 
 mass:45
 engine:270 XL (Clan) Engine(IS)

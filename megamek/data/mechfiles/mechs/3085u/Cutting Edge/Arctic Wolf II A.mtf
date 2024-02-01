@@ -1,6 +1,5 @@
-Version:1.0
-Arctic Wolf II
-A
+chassis:Arctic Wolf II
+model:A
 mul id:104
 
 Config:Biped Omnimech
@@ -8,6 +7,10 @@ techbase:Clan
 era:3085
 source:TRO: 3085
 rules level:2
+role:Scout
+
+quirk:imp_target_short
+
 
 mass:40
 engine:280 XL (Clan) Engine(IS)

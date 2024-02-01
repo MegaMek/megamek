@@ -1,6 +1,5 @@
-Version:1.0
-Atlas
-AS7-A
+chassis:Atlas
+model:AS7-A
 mul id:7433
 
 Config:Biped
@@ -8,6 +7,16 @@ TechBase:Inner Sphere
 Era:2954
 Source:Record Sheets: Succession Wars
 Rules Level:1
+role:Juggernaut
+
+
+
+quirk:battle_fists_la
+quirk:battle_fists_ra
+quirk:command_mech
+quirk:distracting
+quirk:imp_com
+
 
 Mass:100
 Engine:300 Fusion Engine(IS)

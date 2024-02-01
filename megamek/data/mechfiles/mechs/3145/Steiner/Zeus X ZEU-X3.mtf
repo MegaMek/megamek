@@ -1,12 +1,18 @@
-Version:1.3
-Zeus-X
-ZEU-X3
+chassis:Zeus-X
+model:ZEU-X3
 mul id:6633
 Config:Biped
 techbase:Inner Sphere
 era:3089
 source:TRO: 3145 Lyran Commonwealth
 rules level:4
+role:Skirmisher
+
+
+
+quirk:command_mech
+quirk:difficult_maintain
+
 
 mass:80
 engine:400 XXL Engine(IS)

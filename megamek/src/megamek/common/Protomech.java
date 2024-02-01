@@ -16,6 +16,7 @@ package megamek.common;
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.common.cost.ProtoMekCostCalculator;
 import megamek.common.enums.AimingMode;
+import megamek.common.equipment.ArmorType;
 import megamek.common.preference.PreferenceManager;
 import org.apache.logging.log4j.LogManager;
 
@@ -90,19 +91,19 @@ public class Protomech extends Entity {
     private int grappled_id = Entity.NONE;
 
     private boolean isGrappleAttacker = false;
-    
+
     private boolean grappledThisRound = false;
 
     private boolean edpCharged = true;
 
     private int edpChargeTurns = 0;
-    
+
     // jump types
     public static final int JUMP_UNKNOWN = -1;
     public static final int JUMP_NONE = 0;
     public static final int JUMP_STANDARD = 1;
     public static final int JUMP_IMPROVED = 2;
-    
+
     private int jumpType = JUMP_UNKNOWN;
 
     private boolean isQuad = false;
@@ -300,7 +301,7 @@ public class Protomech extends Entity {
     public PilotingRollData addEntityBonuses(PilotingRollData roll) {
         return roll;
     }
-    
+
     /**
      * Returns the number of total critical slots in a location
      */
@@ -322,7 +323,7 @@ public class Protomech extends Entity {
         }
         return 0;
     }
-    
+
     public static final TechAdvancement TA_STANDARD_PROTOMECH = new TechAdvancement(TECH_BASE_CLAN)
             .setClanAdvancement(3055, 3059, 3060).setClanApproximate(true, false, false)
             .setPrototypeFactions(F_CSJ).setProductionFactions(F_CSJ)
@@ -393,9 +394,9 @@ public class Protomech extends Entity {
             }
         }
         setSecondaryFacing(getFacing());
-        
+
         grappledThisRound = false;
-        
+
         super.newRound(roundNumber);
 
     } // End public void newRound()
@@ -506,7 +507,7 @@ public class Protomech extends Entity {
 
     @Override
     public boolean canChangeSecondaryFacing() {
-        return !(getCritsHit(LOC_LEG) > 2) && !isBracing();
+        return !((getCritsHit(LOC_LEG) > 2) || isBracing() || getAlreadyTwisted());
     }
 
     @Override
@@ -545,8 +546,7 @@ public class Protomech extends Entity {
 
     @Override
     public double getArmorWeight() {
-        return RoundWeight.standard(EquipmentType.getProtomechArmorWeightPerPoint(getArmorType(LOC_TORSO))
-                * getTotalOArmor(), this);
+        return RoundWeight.standard(ArmorType.forEntity(this).getWeightPerPoint() * getTotalOArmor(), this);
     }
 
     @Override
@@ -748,7 +748,7 @@ public class Protomech extends Entity {
 
         return LOC_NONE;
     }
-    
+
     @Override
     public int firstArmorIndex() {
         return LOC_HEAD;
@@ -1170,12 +1170,12 @@ public class Protomech extends Entity {
     public int getGrappled() {
         return grappled_id;
     }
-    
+
     @Override
     public boolean isGrappledThisRound() {
         return grappledThisRound;
     }
-    
+
     @Override
     public void setGrappledThisRound(boolean grappled) {
         grappledThisRound = grappled;
@@ -1246,11 +1246,11 @@ public class Protomech extends Entity {
         }
         return 0;
     }
-    
+
     public int getWingHits() {
         return wingHits;
     }
-    
+
     public void setWingHits(int hits) {
         wingHits = hits;
     }
@@ -1281,29 +1281,29 @@ public class Protomech extends Entity {
     public void setIsQuad(boolean isQuad) {
         this.isQuad = isQuad;
     }
-    
+
     public boolean isGlider() {
         return isGlider;
     }
-    
+
     public void setIsGlider(boolean isGlider) {
         this.isGlider = isGlider;
     }
-    
+
     /**
      * WoB protomech interface allows it to be piloted by a quadruple amputee with a VDNI implant.
      * No effect on game play.
-     * 
+     *
      * @return Whether the protomech is equipped with an Inner Sphere Protomech Interface.
      */
     public boolean hasInterfaceCockpit() {
         return interfaceCockpit;
     }
-    
+
     /**
      * Sets whether the protomech has an Inner Sphere Protomech Interface. This will also determine
      * whether it is a mixed tech unit.
-     * 
+     *
      * @param interfaceCockpit Whether the protomech has an IS interface
      */
     public void setInterfaceCockpit(boolean interfaceCockpit) {
@@ -1331,7 +1331,7 @@ public class Protomech extends Entity {
         }
         return true;
     }
-    
+
     @Override
     public boolean isCrippled(boolean checkCrew) {
         return isCrippled();
@@ -1422,7 +1422,7 @@ public class Protomech extends Entity {
     public long getEntityType() {
         return Entity.ETYPE_PROTOMECH;
     }
-    
+
     @Override
     public PilotingRollData checkLandingInHeavyWoods(EntityMovementType overallMoveType,
                                                      Hex curHex) {
@@ -1430,21 +1430,21 @@ public class Protomech extends Entity {
         roll.addModifier(TargetRoll.CHECK_FALSE, "ProtoMeks cannot fall");
         return roll;
     }
-    
+
     /**
      * Based on the ProtoMek's current damage status, return valid brace locations.
      */
     @Override
     public List<Integer> getValidBraceLocations() {
         List<Integer> validLocations = new ArrayList<>();
-        
+
         if (!isLocationBad(Protomech.LOC_MAINGUN)) {
             validLocations.add(Protomech.LOC_MAINGUN);
         }
-        
+
         return validLocations;
     }
-    
+
     /**
      * Protomechs can brace if not prone, crew conscious and have a main gun
      */
@@ -1454,7 +1454,7 @@ public class Protomech extends Entity {
                 getCrew().isActive() &&
                 !isLocationBad(Protomech.LOC_MAINGUN);
     }
-    
+
     @Override
     public int getBraceMPCost() {
         return 0;
@@ -1465,7 +1465,7 @@ public class Protomech extends Entity {
         return true;
     }
 
-    
+
     /**
      * Returns the type of jump jet system the Protomech has.
      */
@@ -1483,6 +1483,6 @@ public class Protomech extends Entity {
 
         }
         return jumpType;
-    }    
-  
+    }
+
 }

@@ -1,6 +1,5 @@
-Version:1.0
-Tundra Wolf
-4
+chassis:Tundra Wolf
+model:4
 mul id:3318
 
 Config:Biped
@@ -8,6 +7,11 @@ TechBase:Clan
 Era:3077
 source:TRO: 3085
 Rules Level:2
+role:Brawler
+
+quirk:easy_maintain
+quirk:weak_head_1
+
 
 Mass:75
 Engine:300 XL (Clan) Engine

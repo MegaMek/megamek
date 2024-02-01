@@ -1,6 +1,5 @@
-Version:1.0
-Dig King RCL-1 MiningMech
-MOD
+chassis:Dig King
+model:RCL-1 MiningMech MOD
 mul id:7172
 
 Config:Biped
@@ -8,6 +7,7 @@ techbase:Inner Sphere
 era:2802
 source:Record Sheets: Vehicle Annex - IndustrialMechs & Exoskeletons
 rules level:3
+role:Brawler
 
 mass:35
 engine:105 Fuel Cell Engine(IS)

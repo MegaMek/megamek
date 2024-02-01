@@ -1,13 +1,16 @@
-Version:1.0
-Ryoken II
-(Tassa)
+chassis:Ryoken II
+model:(Tassa)
 mul id:8219
 
 Config:Biped
 TechBase:Clan
 Era:3132
 Rules Level:2
+role:None
 source:TRO: Dark Age
+
+quirk:stable
+
 
 Mass:75
 Engine:375 XL Engine

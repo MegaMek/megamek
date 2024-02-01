@@ -32,6 +32,10 @@ Sheriff Infantry Support Tank
 IS Level 3
 </type>
 
+<role>
+Brawler
+</role>
+
 <motion_type>
 Wheeled
 </motion_type>
@@ -96,3 +100,8 @@ TRO: 3145 Capellan Confederation
 <tonnage>
 50.0
 </tonnage>
+
+<quirks>
+easy_maintain
+</quirks>
+

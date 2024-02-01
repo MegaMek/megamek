@@ -36,6 +36,10 @@ SKR-4M
 Mixed (IS Chassis) Advanced
 </type>
 
+<role>
+Fire Support
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -122,3 +126,9 @@ TRO: 3145 Free Worlds League
 <tonnage>
 90.0
 </tonnage>
+
+<quirks>
+difficult_maintain
+non_standard
+</quirks>
+

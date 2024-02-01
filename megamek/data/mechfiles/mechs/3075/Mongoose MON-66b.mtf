@@ -1,6 +1,5 @@
-Version:1.0
-Mongoose
-MON-66b
+chassis:Mongoose
+model:MON-66b
 mul id:2209
 
 Config:Biped
@@ -8,6 +7,14 @@ TechBase:Inner Sphere
 Era:2740
 source:TRO: 3075
 Rules Level:2
+role:Striker
+
+
+
+quirk:command_mech
+quirk:easy_pilot
+weaponquirk:stable_weapon:HD:3:Small Laser
+
 
 Mass:25
 Engine:200 XL Engine

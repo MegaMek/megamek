@@ -1,6 +1,5 @@
-Version:1.2
-Wasp
-WSP-3X
+chassis:Wasp
+model:WSP-3X
 mul id:8103
 
 Config:Biped
@@ -8,6 +7,15 @@ techbase:Inner Sphere
 era:3088
 source:XTR: Caveat Emptor
 rules level:4
+role:Missile Boat
+
+
+
+quirk:easy_maintain
+quirk:ext_twist
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+
 
 mass:20
 engine:120 XL Engine(IS)

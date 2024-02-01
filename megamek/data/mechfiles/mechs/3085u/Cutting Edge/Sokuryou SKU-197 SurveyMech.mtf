@@ -1,6 +1,5 @@
-Version:1.0
-Sokuryou
-SKU-197 SurveyMech
+chassis:Sokuryou
+model:SKU-197 SurveyMech
 mul id:2983
 
 Config:Biped
@@ -8,6 +7,7 @@ TechBase:Inner Sphere
 Era:3084
 source:TRO: 3085
 Rules Level:2
+role:Scout
 
 Mass:25
 Engine:150 Fusion Engine(IS)

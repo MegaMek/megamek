@@ -1,6 +1,5 @@
-Version:1.0
-Silver Fox
-SVR-5Y
+chassis:Silver Fox
+model:SVR-5Y
 mul id:2945
 
 Config:Biped
@@ -8,6 +7,13 @@ TechBase:Inner Sphere
 Era:3067
 Source:TRO: 3055
 Rules Level:4
+role:Striker
+
+
+
+quirk:non_standard
+quirk:weak_head_1
+
 
 Mass:35
 Engine:245 Light Engine

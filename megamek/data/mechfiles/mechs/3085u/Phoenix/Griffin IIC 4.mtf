@@ -1,6 +1,5 @@
-Version:1.0
-Griffin IIC
-4
+chassis:Griffin IIC
+model:4
 mul id:1313
 
 Config:Biped
@@ -8,6 +7,11 @@ TechBase:Clan
 Era:3060
 source:TRO: 3085
 Rules Level:2
+role:Striker
+
+quirk:battle_fists_la
+quirk:battle_fists_ra
+
 
 Mass:40
 Engine:240 Fusion (Clan) Engine

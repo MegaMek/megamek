@@ -1,6 +1,5 @@
-Version:1.1
-Stalker
-STK-6M
+chassis:Stalker
+model:STK-6M
 mul id:5121
 
 Config:Biped
@@ -8,6 +7,14 @@ TechBase:Inner Sphere
 Era:3062
 Source:TRO: 3050
 Rules Level:2
+role:Sniper
+
+
+
+quirk:combat_computer
+quirk:ubiquitous_is
+quirk:no_arms
+
 
 Mass:85
 Engine:255 Fusion Engine

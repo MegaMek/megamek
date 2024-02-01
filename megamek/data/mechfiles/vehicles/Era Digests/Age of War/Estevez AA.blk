@@ -75,6 +75,10 @@ ISVehicularGrenadeLauncher (FL)
 IS Level 4
 </type>
 
+<role>
+Sniper
+</role>
+
 <year>
 2360
 </year>
@@ -106,3 +110,9 @@ Era Digest: Age of War
 <motion_type>
 Tracked
 </motion_type>
+
+<quirks>
+gas_hog
+obsolete
+</quirks>
+

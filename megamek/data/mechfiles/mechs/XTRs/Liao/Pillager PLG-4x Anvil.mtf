@@ -1,12 +1,18 @@
-Version:1.3
-Pillager
-PLG-4X 'Anvil'
+chassis:Pillager
+model:PLG-4X 'Anvil'
 mul id:2526
 Config:Biped
 techbase:Inner Sphere
 era:3077
 source:XTR: Liao
 rules level:3
+role:Missile Boat
+
+
+
+quirk:battle_fists_la
+quirk:battle_fists_ra
+
 
 mass:100
 engine:300 Light Engine(IS)

@@ -1,6 +1,5 @@
-Version:1.0
-Locust
-LCT-3D
+chassis:Locust
+model:LCT-3D
 mul id:1904
 
 Config:Biped
@@ -8,6 +7,16 @@ techbase:Inner Sphere
 era:3049
 source:Rec Guide:ilClan #16
 rules level:2
+role:Missile Boat
+
+
+
+quirk:compact_mech
+quirk:low_profile
+quirk:cramped_cockpit
+quirk:no_arms
+quirk:weak_legs
+
 
 mass:20
 engine:160 Fusion Engine(IS)

@@ -1,6 +1,5 @@
-Version:1.0
-Savage Coyote
-Prime
+chassis:Savage Coyote
+model:Prime
 mul id:4985
 
 Config:Biped Omnimech
@@ -8,6 +7,11 @@ TechBase:Clan
 Era:3059
 Source:TRO: 3067
 Rules Level:2
+role:Juggernaut
+
+
+quirk:oversized
+
 
 Mass:85
 Engine:255 XL (Clan) Engine(IS)

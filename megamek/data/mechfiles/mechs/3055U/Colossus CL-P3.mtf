@@ -1,6 +1,5 @@
-Version:1.0
-Colossus
-CL-P3
+chassis:Colossus
+model:CL-P3
 mul id:661
 
 Config:Biped
@@ -8,6 +7,11 @@ TechBase:Inner Sphere
 Era:3053
 Source:TRO: 3055
 Rules Level:4
+role:Juggernaut
+
+quirk:stable
+quirk:low_arms
+
 
 Mass:95
 Engine:285 Fusion Engine

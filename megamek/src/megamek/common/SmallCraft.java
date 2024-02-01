@@ -13,6 +13,7 @@ package megamek.common;
 
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.common.cost.SmallCraftCostCalculator;
+import megamek.common.equipment.ArmorType;
 import megamek.common.options.OptionsConstants;
 
 import java.util.HashMap;
@@ -25,35 +26,35 @@ import java.util.Map;
 public class SmallCraft extends Aero {
 
     private static final long serialVersionUID = 6708788176436555036L;
-    
+
     public static final int LOC_HULL = 4;
-    
-    private static String[] LOCATION_ABBRS = { "NOS", "LS", "RS", "AFT", "HULL" };
-    private static String[] LOCATION_NAMES = { "Nose", "Left Side", "Right Side", "Aft", "Hull" };
+
+    private static String[] LOCATION_ABBRS = {"NOS", "LS", "RS", "AFT", "HULL"};
+    private static String[] LOCATION_NAMES = {"Nose", "Left Side", "Right Side", "Aft", "Hull"};
 
     // crew and passengers
     private int nOfficers = 0;
     private int nGunners = 0;
     private int nBattleArmor = 0;
     private int nOtherPassenger = 0;
-    
+
     // Maps transported crew, passengers, marines to a host ship so we can match them up again post-game
-    private Map<String,Integer> nOtherCrew = new HashMap<>();
-    private Map<String,Integer> passengers = new HashMap<>();
-    
+    private Map<String, Integer> nOtherCrew = new HashMap<>();
+    private Map<String, Integer> passengers = new HashMap<>();
+
     // escape pods and lifeboats
     private int escapePods = 0;
     private int lifeBoats = 0;
     private int escapePodsLaunched = 0;
     private int lifeBoatsLaunched = 0;
-    
+
     private static final TechAdvancement TA_SM_CRAFT = new TechAdvancement(TECH_BASE_ALL)
             .setAdvancement(DATE_NONE, 2350, 2400).setISApproximate(false, true, false)
             .setProductionFactions(F_TH).setTechRating(RATING_D)
             .setAvailability(RATING_D, RATING_E, RATING_D, RATING_D)
             .setStaticTechLevel(SimpleTechLevel.STANDARD);
     private static final TechAdvancement TA_SM_CRAFT_PRIMITIVE = new TechAdvancement(TECH_BASE_IS)
-    		//Per MUL team and per availability codes should exist to around 2781
+            //Per MUL team and per availability codes should exist to around 2781
             .setISAdvancement(DATE_ES, 2200, DATE_NONE, 2781, DATE_NONE)
             .setISApproximate(false, true, false, true, false)
             .setProductionFactions(F_TA).setTechRating(RATING_D)
@@ -73,7 +74,7 @@ public class SmallCraft extends Aero {
             return TA_SM_CRAFT;
         }
     }
-    
+
     /**
      * @return Returns the autoEject setting (always off for large craft)
      */
@@ -81,7 +82,7 @@ public class SmallCraft extends Aero {
     public boolean isAutoEject() {
         return false;
     }
-    
+
     @Override
     public boolean isPrimitive() {
         return getArmorType(LOC_NOSE) == EquipmentType.T_ARMOR_PRIMITIVE_AERO;
@@ -96,15 +97,15 @@ public class SmallCraft extends Aero {
     public void setNCrew(int crew) {
         nCrew = crew;
     }
-    
+
     public void setNOfficers(int officer) {
         nOfficers = officer;
     }
-    
+
     public void setNGunners(int gunners) {
         nGunners = gunners;
     }
-    
+
     @Override
     public void setNPassenger(int pass) {
         nPassenger = pass;
@@ -132,17 +133,17 @@ public class SmallCraft extends Aero {
     public int getNPassenger() {
         return nPassenger;
     }
-    
+
     @Override
     public int getNOfficers() {
         return nOfficers;
     }
-    
+
     @Override
     public int getNGunners() {
         return nGunners;
     }
-    
+
     @Override
     public int getNBattleArmor() {
         return nBattleArmor;
@@ -156,15 +157,15 @@ public class SmallCraft extends Aero {
     public int getNOtherPassenger() {
         return nOtherPassenger;
     }
-    
+
     /**
      * Returns a mapping of how many crewmembers from other units this unit is carrying
-     * and what ship they're from by external ID 
+     * and what ship they're from by external ID
      */
-    public Map<String,Integer> getNOtherCrew() {
+    public Map<String, Integer> getNOtherCrew() {
         return nOtherCrew;
     }
-    
+
     /**
      * Convenience method to return all crew from other craft aboard from the above Map
      * @return
@@ -176,28 +177,28 @@ public class SmallCraft extends Aero {
         }
         return toReturn;
     }
-    
+
     /**
      * Adds a number of crewmembers from another ship keyed by that ship's external ID
      * @param id The external ID of the ship these crew came from
      * @param n The number to add
      */
     public void addNOtherCrew(String id, int n) {
-       if (nOtherCrew.containsKey(id)) {
-           nOtherCrew.replace(id, nOtherCrew.get(id) + n);
-       } else {
-           nOtherCrew.put(id, n);
-       }
+        if (nOtherCrew.containsKey(id)) {
+            nOtherCrew.replace(id, nOtherCrew.get(id) + n);
+        } else {
+            nOtherCrew.put(id, n);
+        }
     }
-    
+
     /**
      * Returns a mapping of how many passengers from other units this unit is carrying
-     * and what ship they're from by external ID 
+     * and what ship they're from by external ID
      */
-    public Map<String,Integer> getPassengers() {
+    public Map<String, Integer> getPassengers() {
         return passengers;
     }
-    
+
     /**
      * Convenience method to return all passengers aboard from the above Map
      * @return
@@ -209,20 +210,20 @@ public class SmallCraft extends Aero {
         }
         return toReturn;
     }
-    
+
     /**
      * Adds a number of passengers from another ship keyed by that ship's external ID
      * @param id The external ID of the ship these passengers came from
      * @param n The number to add
      */
     public void addPassengers(String id, int n) {
-       if (passengers.containsKey(id)) {
-           passengers.replace(id, passengers.get(id) + n);
-       } else {
-           passengers.put(id, n);
-       }
+        if (passengers.containsKey(id)) {
+            passengers.replace(id, passengers.get(id) + n);
+        } else {
+            passengers.put(id, n);
+        }
     }
-    
+
     public void setEscapePods(int n) {
         escapePods = n;
     }
@@ -231,7 +232,7 @@ public class SmallCraft extends Aero {
     public int getEscapePods() {
         return escapePods;
     }
-    
+
     /**
      * Returns the total number of escape pods launched so far
      */
@@ -239,7 +240,7 @@ public class SmallCraft extends Aero {
     public int getLaunchedEscapePods() {
         return escapePodsLaunched;
     }
-    
+
     /**
      * Updates the total number of escape pods launched so far
      * @param n The number to change
@@ -257,7 +258,7 @@ public class SmallCraft extends Aero {
     public int getLifeBoats() {
         return lifeBoats;
     }
-    
+
     /**
      * Returns the total number of lifeboats launched so far
      */
@@ -265,7 +266,7 @@ public class SmallCraft extends Aero {
     public int getLaunchedLifeBoats() {
         return lifeBoatsLaunched;
     }
-    
+
     /**
      * Updates the total number of lifeboats launched so far
      * @param n The number to change
@@ -274,7 +275,7 @@ public class SmallCraft extends Aero {
     public void setLaunchedLifeBoats(int n) {
         lifeBoatsLaunched = n;
     }
-    
+
     @Override
     public double getStrategicFuelUse() {
         if (isPrimitive()) {
@@ -336,7 +337,7 @@ public class SmallCraft extends Aero {
 
         // special rules for spheroids in atmosphere
         // http://www.classicbattletech.com/forums/index.php/topic,54077.0.html
-        if (isSpheroid() && table != ToHitData.HIT_SPHEROID_CRASH && 
+        if (isSpheroid() && table != ToHitData.HIT_SPHEROID_CRASH &&
                 !game.getBoard().inSpace()) {
             int preroll = Compute.d6(1);
             if ((table == ToHitData.HIT_ABOVE) && (preroll < 4)) {
@@ -724,52 +725,10 @@ public class SmallCraft extends Aero {
         } else {
             armorPoints -= freeSI;
         }
-        double armorPerTon = SmallCraft.armorPointsPerTon(getWeight(), isSpheroid(),
-                getArmorType(0), TechConstants.isClan(getArmorTechLevel(0)));
+        ArmorType armor = ArmorType.forEntity(this);
+        double armorPerTon = armor.getPointsPerTon(this);
 
         return RoundWeight.nextHalfTon(armorPoints / armorPerTon);
-    }
-    
-    public static double armorPointsPerTon(double craftWeight, boolean spheroid, int at, boolean isClan) {
-        double base = 16.0;
-        if (spheroid) {
-            if (craftWeight >= 65000) {
-                base = 6.0;
-            } else if (craftWeight >= 50000) {
-                base = 8.0;
-            } else if (craftWeight >= 35000) {
-                base = 10.0;
-            } else if (craftWeight >= 20000) {
-                base = 12.0;
-            } else if (craftWeight >= 12500) {
-                base = 14.0;
-            }
-        } else {
-            if (craftWeight >= 25000) {
-                base = 6.0;
-            } else if (craftWeight >= 17500) {
-                base = 8.0;
-            } else if (craftWeight >= 12500) {
-                base = 10.0;
-            } else if (craftWeight >= 9500) {
-                base = 12.0;
-            } else if (craftWeight >= 6000) {
-                base = 14.0;
-            }
-        }
-        if (isClan) {
-            if (base > 14) {
-                base += 4;
-            } else if (base > 12) {
-                base += 3;
-            } else if (base > 6) {
-                base += 2;
-            } else {
-                base += 1;
-            }
-        }
-
-        return base * EquipmentType.getArmorPointMultiplier(at, isClan);
     }
 
     @Override
@@ -891,11 +850,22 @@ public class SmallCraft extends Aero {
     public long getEntityType() {
         return Entity.ETYPE_AERO | Entity.ETYPE_SMALL_CRAFT;
     }
-    
+
     @Override
     public boolean isFighter() {
         return false;
     }
+
+    /**
+     * Fighters may carry external ordnance;
+     * Other Aerospace units with cargo bays and the Internal Bomb Bay quirk may carry bombs internally.
+     * @return boolean
+     */
+    @Override
+    public boolean isBomber() {
+        return (hasQuirk(OptionsConstants.QUIRK_POS_INTERNAL_BOMB));
+    }
+
 
     @Override
     public boolean isAerospaceFighter() {
@@ -918,5 +888,13 @@ public class SmallCraft extends Aero {
     @Override
     public int getLandingLength() {
         return 8;
+    }
+
+    @Override
+    public void autoSetMaxBombPoints() {
+        // Only internal cargo bays can be considered for this type of unit.
+        maxIntBombPoints = getTransportBays().stream().mapToInt(
+                    tb -> (tb instanceof CargoBay) ? (int) Math.floor(tb.getUnused()) : 0
+                ).sum();
     }
 }

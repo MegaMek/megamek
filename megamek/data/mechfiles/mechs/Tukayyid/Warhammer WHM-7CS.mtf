@@ -1,12 +1,21 @@
-Version:1.3
-Warhammer
-WHM-7CS
+chassis:Warhammer
+model:WHM-7CS
 mul id:7599
 Config:Biped
 techbase:Inner Sphere
 era:3052
 source:Battle of Tukayyid
 rules level:2
+role:Brawler
+
+
+
+quirk:rugged_2
+quirk:searchlight
+quirk:stable
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+
 
 mass:70
 engine:280 XL Engine(IS)

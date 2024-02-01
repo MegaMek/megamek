@@ -1,6 +1,5 @@
-Version:1.0
-Hellspawn
-HSN-9F
+chassis:Hellspawn
+model:HSN-9F
 mul id:4309
 
 Config:Biped
@@ -8,6 +7,12 @@ techbase:Inner Sphere
 era:3068
 source:TRO: 3067
 rules level:2
+role:Striker
+
+
+
+quirk:bad_rep_is
+
 
 mass:45
 engine:270 XL Engine(IS)

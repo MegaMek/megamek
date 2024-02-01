@@ -1,12 +1,21 @@
-Version:1.3
-Clint
-CLNT-2-3T
+chassis:Clint
+model:CLNT-2-3T
 mul id:644
 Config:Biped
 techbase:Inner Sphere
 era:2608
 source:TRO: 3039
 rules level:1
+role:Striker
+
+
+
+quirk:imp_target_long
+quirk:imp_target_med
+quirk:difficult_maintain
+quirk:exp_actuator
+quirk:non_standard
+
 
 mass:40
 engine:240 Fusion Engine(IS)

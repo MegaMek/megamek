@@ -1,6 +1,5 @@
-Version:1.1
-Spindrift Aquatic SecurityMech
-SDT-1A
+chassis:Spindrift Aquatic SecurityMech
+model:SDT-1A
 mul id:5106
 
 Config:Biped
@@ -8,6 +7,13 @@ TechBase:Inner Sphere
 Era:3083
 Source:TRO: Prototypes
 Rules Level:4
+role:Scout
+
+
+
+quirk:no_eject
+quirk:multi_trac
+
 
 Mass:30
 Engine:120 Fusion Engine

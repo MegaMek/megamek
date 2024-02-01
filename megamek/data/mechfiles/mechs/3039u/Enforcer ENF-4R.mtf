@@ -1,6 +1,5 @@
-Version:1.0
-Enforcer
-ENF-4R
+chassis:Enforcer
+model:ENF-4R
 mul id:976
 
 Config:Biped
@@ -8,6 +7,17 @@ techbase:Inner Sphere
 era:2777
 source:TRO: 3039
 rules level:1
+role:Skirmisher
+
+
+
+
+quirk:barrel_fists_la
+quirk:barrel_fists_ra
+weaponquirk:ammo_feed_problems:RA:3:Autocannon/10
+weaponquirk:fast_reload:RA:3:Autocannon/10
+weaponquirk:imp_cooling:RA:3:Autocannon/10
+
 
 mass:50
 engine:200 Fusion Engine(IS)

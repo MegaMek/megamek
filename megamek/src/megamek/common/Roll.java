@@ -13,6 +13,8 @@
  */
 package megamek.common;
 
+import java.io.Serializable;
+
 /**
  * Encapsulate all information known about a requested roll. This information
  * can be logged for full statistical analysis and auditing, so hopefully people
@@ -21,7 +23,7 @@ package megamek.common;
  * @author Suvarov454
  * @since July 20, 2004, 4:21 PM
  */
-public abstract class Roll {
+public abstract class Roll implements Serializable {
 
     /**
      * Make sure that all rolls are uniquely identified.

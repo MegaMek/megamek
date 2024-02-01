@@ -1,6 +1,5 @@
-Version:1.0
-Black Knight
-BL-18-KNT
+chassis:Black Knight
+model:BL-18-KNT
 mul id:7791
 
 Config:Biped
@@ -8,6 +7,7 @@ techbase:Mixed (IS Chassis)
 era:3130
 source:Rec Guide:ilClan #12
 rules level:2
+role:Brawler
 
 mass:75
 engine:300 Light Engine(IS)

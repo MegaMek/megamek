@@ -36,6 +36,10 @@ Prime
 Clan Level 2
 </type>
 
+<role>
+Fast Dogfighter
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -107,3 +111,11 @@ TRO: Golden Century
 <tonnage>
 80.0
 </tonnage>
+
+<quirks>
+atmo_flyer
+easy_pilot
+obsolete
+weak_undercarriage
+</quirks>
+

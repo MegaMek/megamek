@@ -1,6 +1,5 @@
-Version:1.0
-Whitworth
-WTH-2A
+chassis:Whitworth
+model:WTH-2A
 mul id:3542
 
 Config:Biped
@@ -8,6 +7,13 @@ TechBase:Inner Sphere
 Era:3068
 Source:TRO: 3050
 Rules Level:2
+role:Juggernaut
+
+
+
+quirk:rugged_1
+quirk:weak_legs
+
 
 Mass:40
 Engine:160 Fusion Engine

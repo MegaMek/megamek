@@ -52,7 +52,7 @@ public abstract class FluidGunWeapon extends AmmoWeapon {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
      * megamek.common.actions.WeaponAttackAction, megamek.common.Game,
@@ -63,7 +63,7 @@ public abstract class FluidGunWeapon extends AmmoWeapon {
             WeaponAttackAction waa, Game game, GameManager manager) {
         AmmoType atype = (AmmoType) game.getEntity(waa.getEntityId())
                 .getEquipment(waa.getWeaponId()).getLinked().getType();
-        if (atype.getMunitionType() == AmmoType.M_COOLANT) {
+        if (atype.getMunitionType().contains(AmmoType.Munitions.M_COOLANT)) {
             return new FluidGunCoolHandler(toHit, waa, game, manager);
         }
         return super.getCorrectHandler(toHit, waa, game, manager);

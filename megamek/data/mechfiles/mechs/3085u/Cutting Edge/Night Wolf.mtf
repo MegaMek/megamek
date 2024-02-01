@@ -1,6 +1,5 @@
-Version:1.0
-Night Wolf
-
+chassis:Night Wolf
+model:
 mul id:2273
 
 Config:Biped
@@ -8,6 +7,12 @@ TechBase:Clan
 Era:3084
 source:TRO: 3085
 Rules Level:2
+role:Skirmisher
+
+
+quirk:hyper_actuator
+weaponquirk:direct_torso_mount:HD:3:CLAntiMissileSystem
+
 
 Mass:90
 Engine:360 XL (Clan) Engine

@@ -1,6 +1,5 @@
-Version:1.0
-Phantom
-A
+chassis:Phantom
+model:A
 mul id:2481
 
 Config:Biped Omnimech
@@ -8,6 +7,10 @@ TechBase:Clan
 Era:3052
 Source:TRO: 3055
 Rules Level:2
+role:Striker
+
+quirk:imp_sensors
+
 
 Mass:40
 Engine:360 XL (Clan) Engine(IS)

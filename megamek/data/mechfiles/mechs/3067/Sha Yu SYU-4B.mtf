@@ -1,6 +1,5 @@
-Version:1.0
-Sha Yu
-SYU-4B
+chassis:Sha Yu
+model:SYU-4B
 mul id:5027
 
 Config:Biped
@@ -8,6 +7,12 @@ techbase:Inner Sphere
 era:3065
 source:TRO: 3067
 rules level:2
+role:Striker
+
+
+
+quirk:imp_com
+
 
 mass:40
 engine:280 XL Engine(IS)

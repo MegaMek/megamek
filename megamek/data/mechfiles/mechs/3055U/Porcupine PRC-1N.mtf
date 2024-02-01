@@ -1,6 +1,5 @@
-Version:1.0
-Porcupine
-PRC-1N
+chassis:Porcupine
+model:PRC-1N
 mul id:2555
 
 Config:Biped
@@ -8,6 +7,13 @@ TechBase:Inner Sphere
 Era:3063
 Source:TRO: 3055
 Rules Level:4
+role:Striker
+
+
+
+
+quirk:distracting
+
 
 Mass:20
 Engine:180 XL Engine

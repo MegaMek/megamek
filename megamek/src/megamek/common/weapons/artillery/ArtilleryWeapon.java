@@ -34,9 +34,19 @@ public abstract class ArtilleryWeapon extends AmmoWeapon {
         atClass = CLASS_ARTILLERY;
     }
 
+    @Override
+    public boolean isAlphaStrikeIndirectFire() {
+        return false;
+    }
+
+    @Override
+    public boolean hasIndirectFire() {
+        return true;
+    }
+
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
      * megamek.common.actions.WeaponAttackAction, megamek.common.Game,

@@ -1,6 +1,5 @@
-Version:1.0
-King Crab
-KGC-0000
+chassis:King Crab
+model:KGC-0000
 mul id:1771
 
 Config:Biped
@@ -8,6 +7,12 @@ TechBase:Inner Sphere
 Era:2815
 Source:TRO: 3039
 Rules Level:1
+role:Juggernaut
+
+
+
+quirk:command_mech
+
 
 Mass:100
 Engine:300 Fusion Engine

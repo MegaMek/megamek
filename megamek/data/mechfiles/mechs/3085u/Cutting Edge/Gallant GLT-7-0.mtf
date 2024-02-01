@@ -1,6 +1,5 @@
-Version:1.0
-Gallant
-GLT-7-0
+chassis:Gallant
+model:GLT-7-0
 mul id:1173
 
 Config:Biped
@@ -8,6 +7,14 @@ TechBase:Inner Sphere
 Era:3078
 source:TRO: 3085
 Rules Level:2
+role:Skirmisher
+
+
+
+
+weaponquirk:stable_weapon:RA:8:ISLargePulseLaser
+weaponquirk:stable_weapon:RA:10:ISLargePulseLaser
+
 
 Mass:70
 Engine:210 XL Engine

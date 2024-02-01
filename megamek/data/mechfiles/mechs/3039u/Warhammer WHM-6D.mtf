@@ -1,6 +1,5 @@
-Version:1.0
-Warhammer
-WHM-6D
+chassis:Warhammer
+model:WHM-6D
 mul id:3485
 
 Config:Biped
@@ -8,6 +7,16 @@ TechBase:Inner Sphere
 Era:2835
 Source:TRO: 3039
 Rules Level:1
+role:Brawler
+
+
+
+quirk:rugged_2
+quirk:searchlight
+quirk:stable
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+
 
 Mass:70
 Engine:280 Fusion Engine(IS)

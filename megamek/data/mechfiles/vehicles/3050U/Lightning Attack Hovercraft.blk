@@ -32,6 +32,10 @@ Lightning Attack Hovercraft
 IS Level 2
 </type>
 
+<role>
+Striker
+</role>
+
 <motion_type>
 Hover
 </motion_type>

@@ -36,6 +36,10 @@ SMG-OA
 IS Level 3
 </type>
 
+<role>
+Dogfighter
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -127,4 +131,11 @@ TRO: 3145 Republic of the Sphere
 <tonnage>
 85.0
 </tonnage>
+
+
+<quirks>
+easy_pilot
+non_standard
+difficult_maintain
+</quirks>
 

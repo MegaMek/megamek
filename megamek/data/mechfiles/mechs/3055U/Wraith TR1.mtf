@@ -1,12 +1,19 @@
-Version:1.3
-Wraith
-TR1
+chassis:Wraith
+model:TR1
 mul id:3588
 Config:Biped
 techbase:Inner Sphere
 era:3055
 source:TRO: 3055
 rules level:2
+role:Skirmisher
+
+
+
+
+quirk:ubiquitous_is
+quirk:difficult_maintain
+
 
 mass:55
 engine:385 XL Engine(IS)

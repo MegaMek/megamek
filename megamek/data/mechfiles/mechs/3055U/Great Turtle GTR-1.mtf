@@ -1,6 +1,5 @@
-Version:1.1
-Great Turtle
-GTR-1
+chassis:Great Turtle
+model:GTR-1
 mul id:1281
 
 Config:Quad
@@ -8,6 +7,14 @@ TechBase:Inner Sphere
 Era:3067
 Source:TRO: 3055
 Rules Level:4
+role:Juggernaut
+
+
+
+
+quirk:imp_target_short
+quirk:poor_performance
+
 
 Mass:100
 Engine:300 Fusion Engine

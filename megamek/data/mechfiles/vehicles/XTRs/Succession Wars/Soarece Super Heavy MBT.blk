@@ -36,6 +36,10 @@ Soarece Superheavy MBT
 IS Level 4
 </type>
 
+<role>
+Juggernaut
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -109,3 +113,14 @@ XTR: Succession Wars
 <tonnage>
 175.0
 </tonnage>
+
+<quirks>
+difficult_maintain
+non_standard
+obsolete
+poor_performance
+</quirks>
+
+<weaponQuirks>
+accurate:TU:1:Autocannon/2
+</weaponQuirks>

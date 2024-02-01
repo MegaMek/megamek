@@ -1,6 +1,5 @@
-Version:1.1
-Uziel
-UZL-2S (Jacob)
+chassis:Uziel
+model:UZL-2S (Jacob)
 mul id:3367
 
 Config:Biped
@@ -8,6 +7,14 @@ TechBase:Inner Sphere
 Era:3070
 Source:Starterbook: Wolf & Blake
 Rules Level:2
+role:Striker
+
+
+
+quirk:cowl
+quirk:bad_rep_is
+quirk:exp_actuator
+
 
 Mass:50
 Engine:250 XL Engine

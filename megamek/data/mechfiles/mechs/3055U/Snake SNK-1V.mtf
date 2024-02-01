@@ -1,6 +1,5 @@
-Version:1.0
-Snake
-SNK-1V
+chassis:Snake
+model:SNK-1V
 mul id:2974
 
 Config:Biped
@@ -8,6 +7,14 @@ TechBase:Inner Sphere
 Era:3053
 Source:TRO: 3055
 Rules Level:2
+role:Striker
+
+
+
+
+quirk:imp_target_short
+quirk:pro_actuator
+
 
 Mass:45
 Engine:225 XL Engine

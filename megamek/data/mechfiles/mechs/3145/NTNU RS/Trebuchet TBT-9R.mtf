@@ -1,6 +1,5 @@
-Version:1.0
-Trebuchet
-TBT-9R
+chassis:Trebuchet
+model:TBT-9R
 mul id:6901
 
 Config:Biped
@@ -8,6 +7,13 @@ TechBase:Mixed (IS Chassis)
 Era:3131
 Source:Record Sheets: 3145 New Tech New Upgrades
 Rules Level:3
+role:Missile Boat
+
+
+
+quirk:easy_maintain
+weaponquirk:fast_reload:RT:6:CLLRM15
+
 
 Mass:50
 Engine:350 XXL Engine(IS)

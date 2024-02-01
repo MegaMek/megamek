@@ -1,6 +1,5 @@
-Version:1.1
-Dola
-DOL-1A
+chassis:Dola
+model:DOL-1A
 mul id:903
 
 Config:Biped
@@ -8,6 +7,7 @@ TechBase:Inner Sphere
 Era:3079
 Source:XTR: Liao
 Rules Level:4
+role:Scout
 
 Mass:30
 Engine:240 XL Engine(IS)

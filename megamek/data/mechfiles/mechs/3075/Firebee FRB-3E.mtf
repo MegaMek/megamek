@@ -1,6 +1,5 @@
-Version:1.1
-Firebee
-FRB-3E
+chassis:Firebee
+model:FRB-3E
 mul id:1080
 
 Config:Biped
@@ -8,6 +7,13 @@ TechBase:Inner Sphere
 Era:3071
 Source:TRO: 3075
 Rules Level:2
+role:Brawler
+
+
+
+quirk:poor_life_support
+quirk:weak_legs
+
 
 Mass:35
 Engine:175 Fusion Engine

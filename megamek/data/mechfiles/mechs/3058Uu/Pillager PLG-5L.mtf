@@ -1,6 +1,5 @@
-Version:1.0
-Pillager
-PLG-5L
+chassis:Pillager
+model:PLG-5L
 mul id:2528
 
 Config:Biped
@@ -8,6 +7,13 @@ TechBase:Inner Sphere
 Era:3068
 Source:TRO: 3058
 Rules Level:3
+role:Missile Boat
+
+
+
+quirk:battle_fists_la
+quirk:battle_fists_ra
+
 
 Mass:100
 Engine:300 XL Engine

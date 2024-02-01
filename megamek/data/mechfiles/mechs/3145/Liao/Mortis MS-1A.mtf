@@ -1,6 +1,5 @@
-Version:1.0
-Mortis
-MS-1A
+chassis:Mortis
+model:MS-1A
 mul id:6466
 
 Config:Biped
@@ -8,6 +7,13 @@ TechBase:Inner Sphere
 Era:3109
 Source:TRO: 3145 Capellan Confederation
 Rules Level:3
+role:Skirmisher
+
+
+
+
+quirk:distracting
+
 
 Mass:75
 Engine:375 XL Engine(IS)

@@ -1,6 +1,5 @@
-Version:1.1
-Orion
-ON1-M-DC
+chassis:Orion
+model:ON1-M-DC
 mul id:4760
 
 Config:Biped
@@ -8,6 +7,14 @@ TechBase:Inner Sphere
 Era:3053
 Source:TRO: 3050
 Rules Level:3
+role:Brawler
+
+
+
+quirk:anti_air
+quirk:easy_maintain
+quirk:rugged_1
+
 
 Mass:75
 Engine:300 XL Engine(IS)

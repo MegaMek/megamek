@@ -1,12 +1,12 @@
-Version:1.1
-Reconquista
-
+chassis:Reconquista
+model:
 mul id:7472
 
 Config:Biped
 techbase:Inner Sphere
 era:2862
 rules level:4
+role:Brawler
 source:Touring the Stars: Valencia
 
 mass:75

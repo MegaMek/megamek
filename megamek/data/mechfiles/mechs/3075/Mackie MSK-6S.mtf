@@ -1,12 +1,21 @@
-Version:1.3
-Mackie
-MSK-6S
+chassis:Mackie
+model:MSK-6S
 mul id:1973
 Config:Biped
 techbase:Inner Sphere
 era:2439
 source:TRO: 3075
 rules level:4
+role:Juggernaut
+
+
+
+
+quirk:easy_maintain
+quirk:pro_actuator
+quirk:rugged_1
+quirk:oversized
+
 
 mass:100
 engine:360 Fusion Engine(IS)

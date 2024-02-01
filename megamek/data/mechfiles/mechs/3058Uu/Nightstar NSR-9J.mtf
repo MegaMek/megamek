@@ -1,6 +1,5 @@
-Version:1.0
-Nightstar
-NSR-9J
+chassis:Nightstar
+model:NSR-9J
 mul id:2286
 
 Config:Biped
@@ -8,6 +7,16 @@ TechBase:Inner Sphere
 Era:2767
 Source:TRO: 3058
 Rules Level:2
+role:Juggernaut
+
+
+
+
+quirk:command_mech
+quirk:good_rep_1
+quirk:variable_range_long
+quirk:difficult_maintain
+
 
 Mass:95
 Engine:285 XL Engine

@@ -30,8 +30,6 @@ import megamek.common.util.fileUtils.MegaMekFile;
 import javax.swing.*;
 import java.awt.*;
 
-import static megamek.client.ui.swing.tooltip.TipUtil.*;
-
 /**
  * Displays a summary info for a unit, using the same html formatting as use by the board view map tooltips.
  * It is intended to be a tab in the UnitDisplay panel.
@@ -40,6 +38,8 @@ public class SummaryPanel extends PicMap {
 
     private UnitDisplay unitDisplay;
     private JLabel unitInfo;
+
+    private static final GUIPreferences GUIP = GUIPreferences.getInstance();
 
     /**
      * @param unitDisplay the UnitDisplay UI to attach to
@@ -124,42 +124,40 @@ public class SummaryPanel extends PicMap {
      */
     public void displayMech(Entity entity) {
         Player localPlayer = unitDisplay.getClientGUI().getClient().getLocalPlayer();
+        String txt = "";
 
         if (entity == null) {
-            unitInfo.setText(HTML_BEGIN + padLeft("No Unit") +HTML_END);
-            return;
-        }
-
-        if (EntityVisibilityUtils.onlyDetectedBySensors(localPlayer, entity)) {
-            unitInfo.setText( HTML_BEGIN + padLeft( Messages.getString("BoardView1.sensorReturn")) +HTML_END);
+            txt = padLeft("No Unit");
+        } else if (EntityVisibilityUtils.onlyDetectedBySensors(localPlayer, entity)) {
+            txt = padLeft(Messages.getString("BoardView1.sensorReturn"));
         } else {
             // This is html tables inside tables to maintain transparency to the bg image but
             // also allow cells do have bg colors
             StringBuffer hexTxt = new StringBuffer("");
             hexTxt.append(PilotToolTip.getPilotTipDetailed(entity, true));
             hexTxt.append(UnitToolTip.getEntityTipUnitDisplay(entity, localPlayer));
-
             String col = "";
             String row = "";
-
             BoardView bv = unitDisplay.getClientGUI().getBoardView();
             Hex mhex = entity.getGame().getBoard().getHex(entity.getPosition());
+
             if (bv != null && mhex != null) {
                 StringBuffer sb = new StringBuffer();
-                bv.appendTerrainTooltip(sb, mhex);
+                bv.appendTerrainTooltip(sb, mhex, GUIP);
                 col = "<TD>" + sb + "</TD>";
                 row = "<TR>" + col + "</TR>";
-                hexTxt.append("<TABLE BORDER=0 BGCOLOR=" + TERRAIN_BGCOLOR + " width=100%>" + row + "</TABLE>");
+                hexTxt.append("<TABLE BORDER=0 BGCOLOR=" + GUIP.hexColor(GUIP.getUnitToolTipTerrainBGColor()) + " width=100%>" + row + "</TABLE>");
                 bv.appendBuildingsTooltip(hexTxt, mhex);
             }
 
             String t = PilotToolTip.getCrewAdvs(entity, true).toString();
             col = "<TD>" + t + "</TD>";
             row = "<TR>" + col + "</TR>";
-            hexTxt.append("<TABLE BGCOLOR=#313131 width=100%>" + row + "</TABLE>");
-
-            unitInfo.setText(HTML_BEGIN + padLeft(hexTxt.toString()) + HTML_END);
+            hexTxt.append("<TABLE width=100%>" + row + "</TABLE>");
+            txt = padLeft(hexTxt.toString());
         }
+
+        unitInfo.setText(UnitToolTip.wrapWithHTML(txt));
         unitInfo.setOpaque(false);
     }
 

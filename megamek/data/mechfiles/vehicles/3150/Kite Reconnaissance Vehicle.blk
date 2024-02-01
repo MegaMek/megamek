@@ -32,6 +32,10 @@ Kite Reconnaissance Vehicle
 Clan Level 3
 </type>
 
+<role>
+Scout
+</role>
+
 <motion_type>
 Hover
 </motion_type>
@@ -95,3 +99,8 @@ TRO: 3145 Mercenaries
 <tonnage>
 30.0
 </tonnage>
+
+<quirks>
+imp_sensors
+</quirks>
+

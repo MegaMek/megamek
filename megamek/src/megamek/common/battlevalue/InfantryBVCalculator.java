@@ -137,22 +137,6 @@ public class InfantryBVCalculator extends BVCalculator {
 
         List<String> modifierList = new ArrayList<>();
         double typeModifier = 1;
-        switch (infantry.getMovementMode()) {
-            case INF_MOTORIZED:
-            case WHEELED:
-                typeModifier = 0.8;
-                break;
-            case TRACKED:
-                typeModifier = 0.9;
-                break;
-            case HOVER:
-            case VTOL:
-                typeModifier = 0.7;
-                break;
-            case SUBMARINE:
-                typeModifier = 0.6;
-                break;
-        }
 
         if (infantry.hasSpecialization(Infantry.COMBAT_ENGINEERS)) {
             typeModifier += 0.1;
@@ -184,14 +168,13 @@ public class InfantryBVCalculator extends BVCalculator {
             modifierList.add("XCT");
         }
 
-        String calculation = formatForReport(baseBV) + " x " + formatForReport(typeModifier);
-        if (!modifierList.isEmpty()) {
+        if (typeModifier != 1) {
+            String calculation = formatForReport(baseBV) + " x " + formatForReport(typeModifier);
             calculation += " (" + String.join(", ", modifierList) + ")";
+            bvReport.addLine("Type Modifier:", calculation,
+                    "= " + formatForReport(baseBV * typeModifier));
+            baseBV *= typeModifier;
         }
-
-        bvReport.addLine("Type Modifier:", calculation,
-                "= " + formatForReport(baseBV * typeModifier));
-        baseBV *= typeModifier;
         bvReport.addLine("--- Base Unit BV:", "" + (int) Math.round(baseBV));
     }
 

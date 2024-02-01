@@ -1,6 +1,5 @@
-Version:1.0
-Warhammer
-WHM-8D2
+chassis:Warhammer
+model:WHM-8D2
 mul id:6868
 
 Config:Biped
@@ -8,6 +7,16 @@ TechBase:Inner Sphere
 Era:3087
 Source:Record Sheets: 3145 New Tech New Upgrades
 Rules Level:3
+role:Brawler
+
+
+
+quirk:rugged_2
+quirk:searchlight
+quirk:stable
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+
 
 Mass:70
 Engine:280 Fusion Engine(IS)

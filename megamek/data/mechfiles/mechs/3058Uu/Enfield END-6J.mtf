@@ -1,6 +1,5 @@
-Version:1.0
-Enfield
-END-6J
+chassis:Enfield
+model:END-6J
 mul id:972
 
 Config:Biped
@@ -8,6 +7,12 @@ TechBase:Inner Sphere
 Era:3060
 Source:TRO: 3058
 Rules Level:2
+role:Skirmisher
+
+
+
+quirk:ext_twist
+
 
 Mass:50
 Engine:250 XL Engine

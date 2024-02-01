@@ -1,6 +1,5 @@
-Version:1.0
-Wyvern IIC
-
+chassis:Wyvern IIC
+model:
 mul id:3601
 
 Config:Biped
@@ -8,6 +7,11 @@ TechBase:Clan
 Era:2843
 Source:TRO: 3060
 Rules Level:2
+role:Skirmisher
+
+
+quirk:pro_actuator
+
 
 Mass:45
 Engine:180 Fusion (Clan) Engine

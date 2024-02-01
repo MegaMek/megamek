@@ -1,6 +1,5 @@
-Version:1.0
-Bushwacker
-BSW-X4
+chassis:Bushwacker
+model:BSW-X4
 mul id:7454
 
 Config:Biped
@@ -8,6 +7,13 @@ techbase:Inner Sphere
 era:3125
 source:Rec Guide:ilClan #2
 rules level:2
+role:Sniper
+
+
+
+quirk:low_profile
+weaponquirk:stable_weapon:CT:10:ISERLargeLaser
+
 
 mass:55
 engine:275 XL Engine(IS)

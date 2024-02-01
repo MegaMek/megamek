@@ -1,6 +1,5 @@
-Version:1.1
-Naja
-
+chassis:Naja
+model:
 mul id:7621
 
 Config:Biped
@@ -8,6 +7,11 @@ techbase:Clan
 era:2826
 source:TRO: Golden Century
 rules level:4
+role:Brawler
+
+
+quirk:easy_maintain
+
 
 mass:55
 engine:275 XL (Clan) Engine(IS)

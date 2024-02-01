@@ -1,6 +1,5 @@
-Version:1.0
-Stinger
-STG-5M
+chassis:Stinger
+model:STG-5M
 mul id:3063
 
 Config:Biped
@@ -8,6 +7,15 @@ techbase:Inner Sphere
 era:3050
 source:Rec Guide:ilClan #13
 rules level:2
+role:Scout
+
+
+
+quirk:rugged_1
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+quirk:cramped_cockpit
+
 
 mass:20
 engine:120 Fusion Engine(IS)

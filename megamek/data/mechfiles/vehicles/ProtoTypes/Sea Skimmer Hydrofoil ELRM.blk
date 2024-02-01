@@ -36,6 +36,10 @@ TRO: Prototypes
 IS Level 4
 </type>
 
+<role>
+Missile Boat
+</role>
+
 <tonnage>
 25.0
 </tonnage>
@@ -90,3 +94,12 @@ ISExtendedLRM10
 </Rear Equipment>
 
 
+
+<quirks>
+poor_performance
+searchlight
+</quirks>
+
+<weaponQuirks>
+accurate:TU:0:ISExtendedLRM10
+</weaponQuirks>

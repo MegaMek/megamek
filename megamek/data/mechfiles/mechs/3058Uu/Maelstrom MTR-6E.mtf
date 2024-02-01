@@ -1,6 +1,5 @@
-Version:1.0
-Maelstrom
-MTR-6E
+chassis:Maelstrom
+model:MTR-6E
 mul id:1989
 
 Config:Biped
@@ -8,6 +7,12 @@ TechBase:Inner Sphere
 Era:3062
 Source:TRO: 3058
 Rules Level:2
+role:Skirmisher
+
+
+
+quirk:good_rep_1
+
 
 Mass:75
 Engine:375 XL Engine

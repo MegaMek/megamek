@@ -1,13 +1,19 @@
-Version:1.0
-Zeus
-(Leonidas)
+chassis:Zeus
+model:(Leonidas)
 mul id:3638
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3056
 Rules Level:2
+role:Sniper
 source:Historical Turning Points: Glengary
+
+
+
+quirk:barrel_fists_ra
+quirk:easy_maintain
+
 
 Mass:80
 Engine:320 XL Engine(IS)

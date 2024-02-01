@@ -1,6 +1,6 @@
-Version:1.1
-Loki (Hellbringer)
-T
+chassis:Loki
+clanname:Hellbringer
+model:T
 mul id:7441
 
 Config:Biped Omnimech
@@ -8,6 +8,10 @@ techbase:Clan
 era:3142
 source:Rec Guide:ilClan #1
 rules level:2
+role:Sniper
+
+quirk:searchlight
+
 
 mass:65
 engine:325 XL (Clan) Engine(IS)

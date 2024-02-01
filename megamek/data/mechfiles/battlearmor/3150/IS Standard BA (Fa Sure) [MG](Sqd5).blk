@@ -20,12 +20,20 @@ IS Standard Battle Armor
 (Fa Sure) [MG](Sqd5)
 </Model>
 
+<mul id:>
+9527
+</mul id:>
+
+<role>
+Ambusher
+</role>
+
 <year>
-3150
+3140
 </year>
 
 <originalBuildYear>
-3150
+3140
 </originalBuildYear>
 
 <type>

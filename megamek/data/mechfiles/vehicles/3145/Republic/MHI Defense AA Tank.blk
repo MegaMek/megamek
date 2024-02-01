@@ -32,6 +32,10 @@ MHI Defense AA Tank
 IS Level 3
 </type>
 
+<role>
+Sniper
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -97,3 +101,8 @@ TRO: 3145 Republic of the Sphere
 <tonnage>
 60.0
 </tonnage>
+
+<quirks>
+anti_air
+</quirks>
+

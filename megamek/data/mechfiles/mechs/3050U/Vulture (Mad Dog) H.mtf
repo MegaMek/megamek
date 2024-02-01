@@ -1,6 +1,6 @@
-Version:1.0
-Vulture (Mad Dog)
-H
+chassis:Vulture
+clanname:Mad Dog
+model:H
 mul id:3472
 
 Config:Biped Omnimech
@@ -8,6 +8,10 @@ TechBase:Clan
 Era:3059
 Source:TRO: 3050
 Rules Level:2
+role:Missile Boat
+
+quirk:imp_target_med
+
 
 Mass:60
 Engine:300 XL (Clan) Engine(IS)

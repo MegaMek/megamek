@@ -1,6 +1,5 @@
-Version:1.2
-Shadow Hawk
-SHD-12C
+chassis:Shadow Hawk
+model:SHD-12C
 mul id:2897
 
 Config:Biped
@@ -8,6 +7,17 @@ TechBase:Inner Sphere
 Era:3079
 source:TRO: 3085
 Rules Level:2
+role:Sniper
+
+
+
+quirk:battle_fists_la
+quirk:battle_fists_ra
+quirk:imp_life_support
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+quirk:rugged_1
+
 
 Mass:55
 Engine:330 XL Engine(IS)

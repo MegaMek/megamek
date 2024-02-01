@@ -1,6 +1,5 @@
-Version:1.0
-Ha Otoko
-HKO-1C
+chassis:Ha Otoko
+model:HKO-1C
 mul id:1357
 
 Config:Biped
@@ -8,6 +7,10 @@ TechBase:Inner Sphere
 Era:3061
 Source:TRO: 3060
 Rules Level:2
+role:Missile Boat
+
+quirk:bad_rep_clan
+
 
 Mass:65
 Engine:260 XL Engine

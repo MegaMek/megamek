@@ -32,6 +32,10 @@ Sturmblitz Assault Gun
 IS Level 4
 </type>
 
+<role>
+Juggernaut
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -92,3 +96,11 @@ XTR: Primitives IV
 <tonnage>
 75.0
 </tonnage>
+
+<quirks>
+distracting
+easy_maintain
+obsolete
+variable_range_long
+</quirks>
+

@@ -1,6 +1,5 @@
-Version:1.1
-Sling
-SL-1H
+chassis:Sling
+model:SL-1H
 mul id:2968
 source:Historical: Operation Klondike
 
@@ -8,6 +7,12 @@ Config:Biped
 TechBase:Inner Sphere
 Era:2766
 Rules Level:2
+role:Striker
+
+
+
+quirk:cramped_cockpit
+
 
 Mass:25
 Engine:175 XL Engine

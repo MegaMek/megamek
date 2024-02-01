@@ -100,6 +100,11 @@ public class TripodMech extends Mech {
         return true;
     }
 
+    @Override
+    public CrewType defaultCrewType() {
+        return isSuperHeavy() ? CrewType.SUPERHEAVY_TRIPOD : CrewType.TRIPOD;
+    }
+
     /**
      * Returns true if the entity can flip its arms
      */

@@ -32,6 +32,10 @@ Hephaestus Jump Tank
 Clan Level 4
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Hover
 </motion_type>
@@ -105,3 +109,11 @@ TRO: Prototypes
 <tonnage>
 35.0
 </tonnage>
+
+<quirks>
+difficult_maintain
+hard_pilot
+non_standard
+distracting
+</quirks>
+

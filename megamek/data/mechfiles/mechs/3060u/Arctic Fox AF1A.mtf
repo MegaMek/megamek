@@ -1,6 +1,5 @@
-Version:1.0
-Arctic Fox
-AF1A
+chassis:Arctic Fox
+model:AF1A
 mul id:92
 
 Config:Biped Omnimech
@@ -8,6 +7,12 @@ TechBase:Inner Sphere
 Era:3059
 Source:TRO: 3060
 Rules Level:2
+role:Striker
+
+
+
+quirk:weak_head_1
+
 
 Mass:30
 Engine:180 XL Engine(IS)
@@ -153,4 +158,18 @@ IS Endo Steel
 -Empty-
 -Empty-
 
+overview:<P>The Kell Hounds' first OmniMech came with their salvage from Luthien, and recognizing the value of a reconfigurable 'Mech, they sought to replicate the machine. The Arctic Fox is their successful attempt, embodying versatility and adaptability in battle.</P>
 
+capabilities:<P>Well armored for a light ’Mech, the Arctic Fox can stand up to most Inner Sphere designs of similar weight. Upon reaching an efficient range for its weapons load, the OmniMech is best used holding that range and taking advantage of natural cover. For warriors with a penchant for up-close-and-personal combat, however, the Arctic Fox does not disappoint. The Arctic Fox’s snarling visage is backed by fourteen tons of pod space for weapons.</P>	
+
+Deployment:<!-- Variant A --><P>Short range engagements specialization, carrying four medium pulse lasers and three small pulse lasers, with added jump jets for increased mobility. Borrows from the Clan Black Hawk, mounting a blistering array of medium and short-range lasers.</P>
+
+history:<P>Morgan Kell had the Arc-Royal facilities attempt a clone of the machine. However, only after Phelan Kell and his Wolves-In-Exile arrived were the final bugs worked out. In return for the Kell Hounds' material support for Phelan's Wolves, Clan technical advisors helped the Kells finish reverse-engineering a Clan Uller (known to the Clans as a Kit Fox). Though the Kells have access to Clan materials, the Arctic Fox is built with only Inner Sphere technology, for logistical as well as strategic reasons. The Kell Hounds use most of the Clan material they get for the upkeep of their captured Clan 'Mechs. Also, with their support of "training farm" units and ARDC defense regiments, the Kells wished to offer this versatile design to those who could afford it, but had no Clan technology. The Kell Hounds do not use the designation of AF1. In Clan fashion, they refer to the basic machine as the Arctic Fox Prime. The name evokes the 'Mech's progenitor, the Clan Kit Fox, as well as the new Wolf-in-Exile Clan 'Mech, the Arctic Wolf. Variants are designated A, B, C and D.</P>
+
+manufacturer:Arc-Royal MechWorks
+primaryfactory:Arc-Royal 
+systemmanufacturer:CHASSIS:AR-3 Endo Steel
+systemmanufacturer:ENGINE:GM 180 XL
+systemmanufacturer:ARMOR:Royal-7 Standard
+systemmanufacturer:COMMUNICATIONS:K9 Communications System
+systemmanufacturer:TARGETING:Type IV Bloodhound T & T System

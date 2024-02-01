@@ -1,6 +1,5 @@
-Version:1.0
-Pacifier SecurityMech
-CCU-40
+chassis:Pacifier SecurityMech
+model:CCU-40
 mul id:7824
 
 Config:Biped
@@ -8,6 +7,7 @@ techbase:Inner Sphere
 era:3130
 source:TRO: Irregulars
 rules level:2
+role:Ambusher
 
 mass:30
 engine:90 Fuel Cell Engine(IS)

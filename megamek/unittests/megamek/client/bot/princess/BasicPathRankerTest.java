@@ -1248,7 +1248,7 @@ public class BasicPathRankerTest {
         when(mockPath.isJumping()).thenReturn(false);
         when(mockHexThree.getTerrainTypes()).thenReturn(new int[]{Terrains.ICE, Terrains.WATER});
         when(mockHexThree.depth()).thenReturn(1);
-        assertEquals(166.7, testRanker.checkPathForHazards(mockPath, mockInfantry, mockGame), TOLERANCE);
+        assertEquals(1000, testRanker.checkPathForHazards(mockPath, mockInfantry, mockGame), TOLERANCE);
         when(mockHexThree.getTerrainTypes()).thenReturn(new int[0]);
         when(mockHexThree.depth()).thenReturn(0);
 
@@ -1280,10 +1280,10 @@ public class BasicPathRankerTest {
         when(mockHexThree.depth()).thenReturn(1);
         when(mockFinalHex.depth()).thenReturn(2);
         when(mockUnit.getArmor(Mech.LOC_CT)).thenReturn(0);
-        assertEquals(166.7, testRanker.checkPathForHazards(mockPath, mockUnit, mockGame), TOLERANCE);
+        assertEquals(2000, testRanker.checkPathForHazards(mockPath, mockUnit, mockGame), TOLERANCE);
         when(mockUnit.getArmor(Mech.LOC_CT)).thenReturn(10);
         when(mockUnit.getArmor(Mech.LOC_RARM)).thenReturn(0);
-        assertEquals(8.334, testRanker.checkPathForHazards(mockPath, mockUnit, mockGame), TOLERANCE);
+        assertEquals(2000, testRanker.checkPathForHazards(mockPath, mockUnit, mockGame), TOLERANCE);
         when(mockUnit.getArmor(Mech.LOC_RARM)).thenReturn(10);
         when(mockHexTwo.getTerrainTypes()).thenReturn(new int[0]);
         when(mockHexThree.getTerrainTypes()).thenReturn(new int[0]);
@@ -1335,7 +1335,7 @@ public class BasicPathRankerTest {
         when(mockFinalHex.terrainLevel(Terrains.WATER)).thenReturn(2);
         when(mockFinalHex.depth()).thenReturn(2);
         when(mockUnit.getArmor(eq(Mech.LOC_LLEG))).thenReturn(0);
-        assertEquals(25.0, testRanker.checkPathForHazards(mockPath, mockUnit, mockGame), TOLERANCE);
+        assertEquals(1000.0, testRanker.checkPathForHazards(mockPath, mockUnit, mockGame), TOLERANCE);
         when(mockUnit.getArmor(eq(Mech.LOC_LLEG))).thenReturn(10);
         when(mockFinalHex.terrainLevel(Terrains.WATER)).thenReturn(0);
         when(mockFinalHex.depth()).thenReturn(0);

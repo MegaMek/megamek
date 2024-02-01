@@ -32,6 +32,10 @@ Fulmar Patrol Craft
 IS Level 3
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 WiGE
 </motion_type>

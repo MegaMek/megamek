@@ -36,6 +36,10 @@ Bardiche Heavy Strike Tank
 IS Level 3
 </type>
 
+<role>
+Brawler
+</role>
+
 <motion_type>
 Wheeled
 </motion_type>
@@ -108,4 +112,10 @@ TRO: 3145 Free Worlds League
 <tonnage>
 70.0
 </tonnage>
+
+
+<quirks>
+power_reverse
+poor_sealing
+</quirks>
 

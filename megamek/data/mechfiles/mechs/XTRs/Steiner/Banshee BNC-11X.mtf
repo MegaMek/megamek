@@ -1,35 +1,38 @@
-Version:1.0
-Banshee
-BNC-11X
+chassis:Banshee
+model:BNC-11X
 mul id:3784
-
 Config:Biped
-TechBase:Mixed (IS Chassis)
-Era:3076
-Source:XTR: Steiner
-Rules Level:4
+techbase:Mixed (IS Chassis)
+era:3076
+source:XTR: Steiner
+rules level:4
+role:Juggernaut
 
-Mass:95
-Engine:380 XL (Clan) Engine
-Structure:Endo Steel
-Myomer:Standard
+quirk:rugged_1
+quirk:bad_rep_is
 
-Heat Sinks:14 Double
-Walk MP:4
-Jump MP:0
 
-Armor:Standard(Inner Sphere)
-LA Armor:32
-RA Armor:32
-LT Armor:30
-RT Armor:30
-CT Armor:40
-HD Armor:9
-LL Armor:38
-RL Armor:38
-RTL Armor:10
-RTR Armor:10
-RTC Armor:19
+mass:95
+engine:380 XL (Clan) Engine
+structure:IS Endo Steel
+myomer:Standard
+
+heat sinks:14 IS Double
+walk mp:4
+jump mp:0
+
+armor:Standard(Inner Sphere)
+LA armor:32
+RA armor:32
+LT armor:30
+RT armor:30
+CT armor:40
+HD armor:9
+LL armor:38
+RL armor:38
+RTL armor:10
+RTR armor:10
+RTC armor:19
 
 Weapons:4
 Silver Bullet Gauss Rifle, Left Torso
@@ -38,31 +41,31 @@ Bombast Laser, Right Torso
 ER Small Laser, Head
 
 Left Arm:
-Shoulder (armored)
+Shoulder (ARMORED)
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-IS Modular Armor
--Empty-
--Empty-
--Empty-
--Empty-
--Empty-
--Empty-
+ISModularArmor
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 
 Right Arm:
-Shoulder (armored)
+Shoulder (ARMORED)
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-IS Modular Armor
--Empty-
--Empty-
--Empty-
--Empty-
--Empty-
--Empty-
+ISModularArmor
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 
 Left Torso:
@@ -76,8 +79,8 @@ ISSBGR
 ISSBGR
 ISSBGR
 Silver Bullet Gauss Ammo
-IS Modular Armor
--Empty-
+ISModularArmor
+IS Endo Steel
 
 Right Torso:
 Fusion Engine
@@ -88,8 +91,8 @@ Bombast Laser
 Bombast Laser
 Bombast Laser
 Bombast Laser
-IS Modular Armor
--Empty-
+ISModularArmor
+IS Endo Steel
 -Empty-
 -Empty-
 
@@ -104,13 +107,13 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-IS Modular Armor
+ISModularArmor
 -Empty-
 
 Head:
 Life Support
 Sensors
-Cockpit (armored)
+Cockpit (ARMORED)
 ISERSmallLaser
 Sensors
 Life Support
@@ -122,11 +125,11 @@ Life Support
 -Empty-
 
 Left Leg:
-Hip (armored)
+Hip (ARMORED)
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-IS Modular Armor
+ISModularArmor
 -Empty-
 -Empty-
 -Empty-
@@ -136,11 +139,11 @@ IS Modular Armor
 -Empty-
 
 Right Leg:
-Hip (armored)
+Hip (ARMORED)
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-IS Modular Armor
+ISModularArmor
 -Empty-
 -Empty-
 -Empty-
@@ -150,16 +153,11 @@ IS Modular Armor
 -Empty-
 
 overview:The Banshee, introduced in 2445 by the Terran Hegemony, is a 'Mech that was designed specifically for close-assault operations during the early years of BattleMech warfare.
-
 capabilities:A contemporary of the Mackie and Emperor, the Banshee is undeniably fast for one of the heaviest 'Mechs ever produced, and with fifteen tons of armor it is better protected than most other assault 'Mechs. However the use of a massive GM 380 fusion engine left little room for weaponry, and even at the time of its introduction the Banshee was considered undergunned compared to its privately-built competition. As critics noted, what use was impressive armor and mobility if a better-armed enemy could overwhelm and destroy it? The result was a mediocre 'Mech which even the lowly Rifleman could beat as long as it prevented the Banshee's mass from coming into play.
-
-deployment:Limited to three chassis, this Banshee model was a thought experiment by Defiance Industries engineers at Kwangjong-ni. Seeking to maximize protection, these engineers installed Armored Shoulder and Armored Hip actuators to prevent the 'Mech from losing a limb. The MechWarrior is protected by an Armored Cockpit. They also maximized protection by adding a ton of Modular Armor to each arm, leg, and forward torso. To make room for this equipment, they used an Endo Steel chassis and a Clan-spec XL engine. For weapons, the engineers installed a Silver Bullet Gauss Rifle and a pair of Bombast Lasers, while an ER Small Laser fills the head as an afterthought. Though not particularly quick (max speed 54 km/h) this Banshee variant can take massive amounts of damage before it falls. 
-
+deployment:Limited to three chassis, this Banshee model was a thought experiment by Defiance Industries engineers at Kwangjong-ni. Seeking to maximize protection, these engineers installed Armored Shoulder and Armored Hip actuators to prevent the 'Mech from losing a limb. The MechWarrior is protected by an Armored Cockpit. They also maximized protection by adding a ton of Modular Armor to each arm, leg, and forward torso. To make room for this equipment, they used an Endo Steel chassis and a Clan-spec XL engine. For weapons, the engineers installed a Silver Bullet Gauss Rifle and a pair of Bombast Lasers, while an ER Small Laser fills the head as an afterthought. Though not particularly quick (max speed 54 km/h) this Banshee variant can take massive amounts of damage before it falls.
 history: The Hegemony soldiered on though, producing five thousand Banshees in a decade before its poor combat performance finally forced them to stop production in 2455 and the 'Mech was relegated to training and militia units for the next few centuries. Even during the Succession Wars the 'Mech's poor reputation meant many commanders saw it as a liability rather than an asset; unless they were fighting on a backwater Periphery world or as part of a poorly-equipped outfit, most Banshees were placed in second-line reserves to provide fire support or fulfill the role of brawlers so that better-armed 'Mechs need not engage in hand-to-hand combat. In this way fully a third of the original Banshee production run remained operational by the dawn of the thirty-first century and could be found throughout the Inner Sphere and Periphery, with the lion's share residing within the Lyran Commonwealth. Though a few attempts had been made over the years to improve the Banshee, Defiance Industries was the first to produce a variant which markedly improved on the original and was suggested by many of its original critics. With help from the Federated Suns and access to blueprints from the original Hesperus II factories, the BNC-3S proved to be such a success the Lyrans began fielding them in front line units, surprising their enemies who ignored them to focus on "real" threats with thoroughly unexpected firepower. Under the Federated Commonwealth improvements would continue to be made, though not at the same priority level as other projects, and the much-improved BNC-5S was active in time to meet the Clan Invasion.
-
 manufacturer:Defiance Manufacturing Annex
 primaryfactory:Kwangjong-ni
-
 systemmanufacturer:CHASSIS:Foundation
 systemmode:CHASSIS:210 Endo
 systemmanufacturer:ENGINE:Edasich Motors
@@ -170,3 +168,4 @@ systemmanufacturer:COMMUNICATIONS:Angst
 systemmode:COMMUNICATIONS:Clear Channel 3
 systemmanufacturer:TARGETING:Angst
 systemmode:TARGETING:Clear View 2A
+

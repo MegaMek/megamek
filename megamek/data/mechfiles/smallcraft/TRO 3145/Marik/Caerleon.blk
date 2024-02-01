@@ -36,6 +36,10 @@ Caerleon
 IS Level 3
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -164,4 +168,11 @@ TRO: 3145 Free Worlds League
 <escape_pod>
 0
 </escape_pod>
+
+
+<quirks>
+easy_maintain
+fast_reload
+atmo_instability
+</quirks>
 

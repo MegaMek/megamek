@@ -36,6 +36,10 @@ Tiamat Pocket Warship
 IS Level 4
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Spheroid
 </motion_type>

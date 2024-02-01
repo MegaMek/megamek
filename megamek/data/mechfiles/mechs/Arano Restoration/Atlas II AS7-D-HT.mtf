@@ -1,6 +1,5 @@
-Version:1.0
-Atlas II
-AS7-D-HT
+chassis:Atlas II
+model:AS7-D-HT
 mul id:7618
 
 Config:Biped
@@ -8,6 +7,16 @@ techbase:Inner Sphere
 era:2780
 source:Arano Restoration
 rules level:2
+role:Juggernaut
+
+
+
+quirk:battle_fists_la
+quirk:battle_fists_ra
+quirk:command_mech
+quirk:distracting
+quirk:imp_com
+
 
 mass:100
 engine:300 Fusion Engine(IS)

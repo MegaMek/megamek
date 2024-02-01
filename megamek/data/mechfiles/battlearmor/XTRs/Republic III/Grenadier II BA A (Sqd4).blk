@@ -36,6 +36,10 @@ A(Sqd4)
 Mixed (IS Chassis)
 </type>
 
+<role>
+Ambusher
+</role>
+
 <motion_type>
 Leg
 </motion_type>
@@ -135,4 +139,9 @@ biped
 <weightclass>
 3
 </weightclass>
+
+
+<quirks>
+difficult_maintain
+</quirks>
 

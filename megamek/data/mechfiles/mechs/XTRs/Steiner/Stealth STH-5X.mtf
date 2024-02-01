@@ -1,6 +1,5 @@
-Version:1.0
-Stealth
-STH-5X
+chassis:Stealth
+model:STH-5X
 mul id:5130
 
 Config:Biped
@@ -8,6 +7,12 @@ techbase:Mixed (IS Chassis)
 era:3076
 source:XTR: Steiner
 rules level:4
+role:Striker
+
+
+
+quirk:imp_sensors
+
 
 mass:45
 engine:315 XL Engine(IS)

@@ -1,6 +1,5 @@
-Version:1.0
-Marauder
-MAD-4X
+chassis:Marauder
+model:MAD-4X
 mul id:5768
 
 Config:Biped
@@ -8,6 +7,22 @@ TechBase:Inner Sphere
 Era:3039
 Source:XTR: Succession Wars
 Rules Level:4
+role:Brawler
+
+
+
+quirk:combat_computer
+quirk:command_mech
+quirk:hyper_actuator
+quirk:low_profile
+quirk:cramped_cockpit
+quirk:difficult_maintain
+quirk:no_eject
+weaponquirk:direct_torso_mount:RT:6:SRM 6
+weaponquirk:exposed_linkage:RT:6:SRM 6
+weaponquirk:imp_cooling:RA:6:Binary Laser (Blazer) Cannon
+weaponquirk:imp_cooling:LA:6:Binary Laser (Blazer) Cannon
+
 
 Mass:75
 Engine:300 Fusion Engine(IS)

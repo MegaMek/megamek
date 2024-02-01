@@ -32,15 +32,16 @@ B
 IS Level 4
 </type>
 
+<role>
+Missile Boat
+</role>
+
 <motion_type>
 Wheeled
 </motion_type>
 
 <transporters>
 troopspace:4.0
-</transporters>
-
-<transporters>
 BattleArmorHandles - troopers:-1
 </transporters>
 
@@ -117,3 +118,19 @@ TRO: 3085
 <baseChassisTurretWeight>
 1.5
 </baseChassisTurretWeight>
+
+<manufacturer>
+Maxwell-Pulaski Motors Krupp Armaments Works
+</manufacturer>
+
+<primaryFactory>
+Terra Terra
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:280 VOX XL Fusion
+ARMOR:Krupp Stealth
+COMMUNICATIONS:GPT Multi-Track Enhanced
+TARGETING:Baltex K590
+</systemManufacturers>

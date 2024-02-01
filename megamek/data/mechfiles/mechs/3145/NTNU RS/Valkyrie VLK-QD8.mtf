@@ -1,6 +1,5 @@
-Version:1.2
-Valkyrie
-VLK-QD8
+chassis:Valkyrie
+model:VLK-QD8
 mul id:6930
 
 Config:Biped
@@ -8,6 +7,13 @@ TechBase:Inner Sphere
 Era:3102
 Source:Record Sheets: 3145 New Tech New Upgrades
 Rules Level:2
+role:Missile Boat
+
+
+
+quirk:easy_maintain
+quirk:imp_com
+
 
 Mass:30
 Engine:180 XL Engine(IS)

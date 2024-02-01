@@ -1,6 +1,5 @@
-Version:1.1
-Warhammer
-WHM-X7 'The Lich'
+chassis:Warhammer
+model:WHM-X7 'The Lich'
 mul id:3499
 
 Config:Biped
@@ -8,6 +7,16 @@ TechBase:Mixed (IS Chassis)
 Era:3077
 Source:XTR: Gladiators
 Rules Level:4
+role:Brawler
+
+
+
+
+quirk:rugged_2
+quirk:searchlight
+quirk:stable
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
 
 
 Mass:70

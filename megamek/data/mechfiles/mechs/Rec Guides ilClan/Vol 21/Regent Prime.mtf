@@ -1,6 +1,5 @@
-Version:1.0
-Regent
-Prime
+chassis:Regent
+model:Prime
 mul id:8359
 
 Config:Biped Omnimech
@@ -8,6 +7,11 @@ techbase:Clan
 era:3145
 source:Rec Guide:ilClan #21
 rules level:2
+role:Juggernaut
+
+
+quirk:easy_maintain
+
 
 mass:90
 engine:270 Fusion (Clan) Engine(IS)

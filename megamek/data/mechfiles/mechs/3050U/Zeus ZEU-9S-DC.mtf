@@ -1,6 +1,5 @@
-Version:1.1
-Zeus
-ZEU-9S-DC
+chassis:Zeus
+model:ZEU-9S-DC
 mul id:5438
 
 Config:Biped
@@ -8,6 +7,13 @@ TechBase:Inner Sphere
 Era:3049
 Source:TRO: 3050
 Rules Level:3
+role:Sniper
+
+
+
+quirk:barrel_fists_ra
+quirk:easy_maintain
+
 
 Mass:80
 Engine:320 Fusion Engine(IS)

@@ -1,6 +1,5 @@
-Version:1.1
-BattleMaster
-BLR-6G
+chassis:BattleMaster
+model:BLR-6G
 mul id:7475
 
 Config:Biped
@@ -8,6 +7,13 @@ techbase:Inner Sphere
 era:3088
 source:Rec Guide:ilClan #3
 rules level:2
+role:Brawler
+
+
+
+quirk:command_mech
+quirk:weak_head_1
+
 
 mass:85
 engine:340 Light Engine(IS)

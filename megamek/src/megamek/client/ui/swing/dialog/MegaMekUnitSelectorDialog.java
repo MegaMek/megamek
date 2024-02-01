@@ -63,6 +63,7 @@ public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
         canonOnly = gameOptions.booleanOption(OptionsConstants.ALLOWED_CANON_ONLY);
         allowInvalid = gameOptions.booleanOption(OptionsConstants.ALLOWED_ALLOW_ILLEGAL_UNITS);
         gameTechLevel = TechConstants.getSimpleLevel(gameOptions.stringOption("techlevel"));
+        eraBasedTechLevel = gameOptions.booleanOption(OptionsConstants.ALLOWED_ERA_BASED);
     }
 
     //region Button Methods
@@ -103,7 +104,7 @@ public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
             String name = (String) comboPlayer.getSelectedItem();
 
             if (comboPlayer.getSelectedIndex() > 0) {
-                client = clientGUI.getBots().get(name);
+                client = clientGUI.getLocalBots().get(name);
             }
 
             if (client == null) {
@@ -145,7 +146,7 @@ public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
         comboPlayer.removeAllItems();
         comboPlayer.setEnabled(true);
         comboPlayer.addItem(clientName);
-        for (Client client : clientGUI.getBots().values()) {
+        for (Client client : clientGUI.getLocalBots().values()) {
             comboPlayer.addItem(client.getName());
         }
         if (comboPlayer.getItemCount() == 1) {

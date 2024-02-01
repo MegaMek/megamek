@@ -1,12 +1,18 @@
-Version:1.3
-Cicada
-CDA-2A
+chassis:Cicada
+model:CDA-2A
 mul id:591
 Config:Biped
 techbase:Inner Sphere
 era:2740
 source:TRO: 3039
 rules level:1
+role:Scout
+
+
+
+
+quirk:no_arms
+
 
 mass:40
 engine:320 Fusion Engine(IS)

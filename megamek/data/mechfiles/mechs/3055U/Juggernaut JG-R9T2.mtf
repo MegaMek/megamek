@@ -1,6 +1,5 @@
-Version:1.0
-Juggernaut
-JG-R9T2
+chassis:Juggernaut
+model:JG-R9T2
 mul id:1714
 
 Config:Biped
@@ -8,6 +7,13 @@ TechBase:Inner Sphere
 Era:3057
 Source:TRO: 3055
 Rules Level:4
+role:Juggernaut
+
+
+
+quirk:imp_life_support
+quirk:difficult_maintain
+
 
 Mass:90
 Engine:270 Fusion Engine

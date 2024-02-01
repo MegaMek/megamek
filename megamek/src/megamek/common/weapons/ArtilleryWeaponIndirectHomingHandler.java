@@ -148,14 +148,14 @@ public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirec
         vPhaseReport.addElement(r);
 
         // do we hit?
-        bMissed = roll < toHit.getValue();
+        bMissed = roll.getIntValue() < toHit.getValue();
 
         // are we a glancing hit?
         setGlancingBlowFlags(entityTarget);
         addGlancingBlowReports(vPhaseReport);
 
         // Set Margin of Success/Failure.
-        toHit.setMoS(roll - Math.max(2, toHit.getValue()));
+        toHit.setMoS(roll.getIntValue() - Math.max(2, toHit.getValue()));
         bDirect = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_DIRECT_BLOW)
                 && ((toHit.getMoS() / 3) >= 1) && (entityTarget != null);
         if (bDirect) {
@@ -179,9 +179,11 @@ public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirec
             bMissed = true;
         }
         nDamPerHit = wtype.getRackSize();
+        
+        AmmoType ammoType = (AmmoType) ammo.getType();
 
         // copperhead gets 10 damage less than standard
-        if (((AmmoType) ammo.getType()).getAmmoType() != AmmoType.T_ARROW_IV) {
+        if (ammoType.getAmmoType() != AmmoType.T_ARROW_IV) {
             nDamPerHit -= 10;
         }
 
@@ -282,24 +284,18 @@ public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirec
         bldgAbsorbs = Math.min(bldgAbsorbs, ratedDamage);
         handleClearDamage(vPhaseReport, bldg, hexDamage, false);
         ratedDamage -= bldgAbsorbs;
+        
         if (ratedDamage > 0) {
+            Hex hex = game.getBoard().getHex(coords);
+            
             for (Entity entity : game.getEntitiesVector(coords)) {
-                if (!bMissed) {
-                    if (entity == entityTarget) {
-                        continue; // don't splash the target unless missile
-                        // missed
-                    }
+                if (!bMissed && (entity == entityTarget)) {
+                        continue; // don't splash the original target unless it's a miss
                 }
-                toHit.setSideTable(entity.sideTable(aaa.getCoords()));
-                HitData hit = entity.rollHitLocation(toHit.getHitTable(),
-                        toHit.getSideTable(), waa.getAimedLocation(),
-                        waa.getAimingMode(), toHit.getCover());
-                hit.setAttackerId(getAttackerId());
-                // BA gets damage to all troopers
-                vPhaseReport.addAll(gameManager.damageEntity(entity, hit,
-                            ratedDamage, false, DamageType.NONE, false, true,
-                            throughFront, underWater));
-                gameManager.creditKill(entity, ae);
+                
+                AreaEffectHelper.artilleryDamageEntity(entity, ratedDamage, bldg, bldgAbsorbs, 
+                        targetInBuilding, bldgDamagedOnMiss, missReported, ratedDamage, coords, ammoType, 
+                        coords, targetingHex, entityTarget, hex, hexDamage, vPhaseReport, gameManager);
             }
         }
         Report.addNewline(vPhaseReport);
@@ -499,7 +495,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirec
                     vPhaseReport.add(r);
                     toHit.addModifier(CapMissileAMSMod, "damage from AMS");
                     // If the damage was enough to make us miss, record it for reporting and set 0 hits
-                    if (roll < toHit.getValue()) {
+                    if (roll.getIntValue() < toHit.getValue()) {
                         bMissed = true;
                         nDamPerHit = 0;
                         hits = 0;

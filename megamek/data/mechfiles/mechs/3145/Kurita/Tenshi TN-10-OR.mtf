@@ -1,6 +1,5 @@
-Version:1.1
-Tenshi
-TN-10-OR
+chassis:Tenshi
+model:TN-10-OR
 mul id:6424
 
 Config:Biped Omnimech
@@ -8,6 +7,14 @@ techbase:Mixed (IS Chassis)
 era:3101
 source:TRO: 3145 Draconis Combine
 rules level:4
+role:Missile Boat
+
+
+
+quirk:distracting
+quirk:searchlight
+quirk:difficult_eject
+
 
 mass:95
 engine:285 Light Engine(IS)

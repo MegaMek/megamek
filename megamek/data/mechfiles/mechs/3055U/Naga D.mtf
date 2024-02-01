@@ -1,6 +1,5 @@
-Version:1.0
-Naga
-D
+chassis:Naga
+model:D
 mul id:2250
 
 Config:Biped Omnimech
@@ -8,6 +7,12 @@ TechBase:Clan
 Era:2869
 Source:TRO: 3055
 Rules Level:3
+role:Missile Boat
+
+quirk:ext_twist
+quirk:bad_rep_clan
+quirk:no_arms
+
 
 Mass:80
 Engine:400 XL (Clan) Engine(IS)
@@ -150,3 +155,19 @@ Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-
+
+overview:The Naga BattleMech, named for its resemblance to a mythological cobra, stands as an unusual design in a culture that values personal glory and ritual combat. Originating from Clan Wolf, the Naga was developed from a modified Woodsman chassis, equipped to carry a pair of Arrow IV launchers. Despite initial skepticism due to its focus on indirect fire support rather than direct combat, the Naga quickly demonstrated its strategic value on the battlefield.
+
+capabilities:The primary role of the Naga is to provide sustained artillery support while maintaining a degree of mobility. Its standard configuration emphasizes this role, equipped with six tons of missile ammunition but minimal short-range defense.
+
+deployment:The Naga D variant is an 80-ton Clan OmniMech, known for its role as an artillery support unit. It is powered by a 400 XL (Clan) Engine and constructed using Clan Endo Steel, providing it with a balance of speed and durability.<p>This variant is armed with two Arrow IV launchers in the torso, maintaining its primary role in long-range missile support. Additionally, the Naga D is equipped with an SRM 4 launcher, enhancing its close-quarters combat capabilities. This is further complemented by an ER Medium Laser and an ER Small Laser, offering a more versatile offensive approach. The Naga D’s ability to engage at various ranges makes it a flexible asset on the battlefield, capable of adapting to changing combat situations and providing effective fire support, both from a distance and in more direct engagements.</p>
+
+history:First deployed in the mid-2900s, the Naga's adoption across various Clans was gradual. Its effectiveness was convincingly demonstrated during the battle for Tukayyid, where Clan Wolf's Naga-equipped artillery Stars played a pivotal role. Notably, the Nagas were instrumental in Wolf’s victory at Brzo and Skupo, significantly weakening ComStar’s Tenth Army. This success led to its wider acceptance and deployment among several other Clans, including the Hell’s Horses, Snow Ravens, Star Adders, Cloud Cobras, and in limited numbers, the Jade Falcons.
+
+manufacturer:Manufacturing Plant WA3 
+primaryfactory:Arcadia 
+systemmanufacturer:CHASSIS:Type BMH-7 Endo Steel
+systemmanufacturer:ENGINE:Fusion 400 XL
+systemmanufacturer:ARMOR:Forged Type 34 Standard
+systemmanufacturer:COMMUNICATIONS:Type G3, Mk. XII
+systemmanufacturer:TARGETING:ArTrack 2 TTS

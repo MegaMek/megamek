@@ -1,6 +1,5 @@
-Version:1.0
-Raven
-RVN-SS 'Shattered Raven'
+chassis:Raven
+model:RVN-SS 'Shattered Raven'
 mul id:2671
 
 Config:Biped
@@ -8,6 +7,12 @@ TechBase:Inner Sphere
 Era:3069
 Source:TRO: 3050
 Rules Level:2
+role:Striker
+
+
+
+quirk:no_arms
+
 
 Mass:35
 Engine:210 XL Engine

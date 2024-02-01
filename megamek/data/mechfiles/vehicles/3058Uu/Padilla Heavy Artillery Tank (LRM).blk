@@ -32,6 +32,10 @@ Padilla Heavy Artillery Tank
 IS Level 2
 </type>
 
+<role>
+Missile Boat
+</role>
+
 <tonnage>
 75
 </tonnage>

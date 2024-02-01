@@ -1,6 +1,5 @@
-Version:1.0
-Osiris
-OSR-4D
+chassis:Osiris
+model:OSR-4D
 mul id:4764
 
 Config:Biped
@@ -8,6 +7,13 @@ techbase:Inner Sphere
 era:3067
 source:TRO: 3067
 rules level:2
+role:Striker
+
+
+
+quirk:ext_twist
+weaponquirk:direct_torso_mount:CT:10:ISERMediumLaser
+
 
 mass:30
 engine:240 XL Engine(IS)

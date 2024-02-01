@@ -1,6 +1,5 @@
-Version:1.0
-Avalanche
-AVL-1OR
+chassis:Avalanche
+model:AVL-1OR
 mul id:6401
 
 Config:Biped Omnimech
@@ -8,6 +7,12 @@ TechBase:Mixed (IS Chassis)
 Era:3133
 Source:TRO: 3145 Draconis Combine
 Rules Level:4
+role:Missile Boat
+
+
+
+quirk:bad_rep_is
+
 
 Mass:50
 Engine:250 Fusion Engine(IS)

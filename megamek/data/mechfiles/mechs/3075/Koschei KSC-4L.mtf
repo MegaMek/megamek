@@ -1,6 +1,5 @@
-Version:1.0
-Koschei
-KSC-4L
+chassis:Koschei
+model:KSC-4L
 mul id:1823
 
 Config:Biped
@@ -8,6 +7,13 @@ TechBase:Inner Sphere
 Era:2723
 source:TRO: 3075
 Rules Level:2
+role:Missile Boat
+
+
+
+quirk:imp_life_support
+quirk:weak_head_1
+
 
 Mass:65
 Engine:325 Fusion Engine

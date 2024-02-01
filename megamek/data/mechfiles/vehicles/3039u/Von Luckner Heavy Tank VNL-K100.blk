@@ -32,6 +32,10 @@ VNL-K100
 IS Level 1
 </type>
 
+<role>
+Juggernaut
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -116,3 +120,8 @@ ARMOR:StarSlab/3
 COMMUNICATIONS:O/P 300
 TARGETING:O/P GRNDSTAT 50A
 </systemManufacturers>
+
+<quirks>
+difficult_maintain
+</quirks>
+

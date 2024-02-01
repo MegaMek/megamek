@@ -32,6 +32,10 @@ Angel
 IS Level 3
 </type>
 
+<role>
+Missile Boat
+</role>
+
 <motion_type>
 Wheeled
 </motion_type>
@@ -87,3 +91,8 @@ TRO: Prototypes
 <tonnage>
 60.0
 </tonnage>
+
+<quirks>
+trailer_hitch
+</quirks>
+

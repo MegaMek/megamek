@@ -36,6 +36,10 @@ HX-9
 IS Level 4
 </type>
 
+<role>
+Scout
+</role>
+
 <motion_type>
 VTOL
 </motion_type>
@@ -128,4 +132,9 @@ XTR: Mercenaries
 <tonnage>
 21.0
 </tonnage>
+
+
+<quirks>
+vtol_rotor_coaxial
+</quirks>
 

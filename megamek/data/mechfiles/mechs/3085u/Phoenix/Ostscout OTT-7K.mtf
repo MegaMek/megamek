@@ -1,6 +1,5 @@
-Version:1.0
-Ostscout
-OTT-7K
+chassis:Ostscout
+model:OTT-7K
 mul id:2368
 
 Config:Biped
@@ -8,6 +7,15 @@ TechBase:Inner Sphere
 Era:3049
 source:TRO: 3085
 Rules Level:2
+role:Scout
+
+
+
+quirk:imp_com
+quirk:imp_sensors
+quirk:low_profile
+quirk:rugged_1
+
 
 Mass:35
 Engine:280 Fusion Engine(IS)

@@ -1,6 +1,5 @@
-Version:1.2
-Phoenix Hawk
-PXH-4L
+chassis:Phoenix Hawk
+model:PXH-4L
 mul id:2503
 
 Config:Biped
@@ -8,6 +7,16 @@ techbase:Inner Sphere
 era:3066
 source:TRO: Project Pheonix
 rules level:2
+role:Striker
+
+
+
+quirk:command_mech
+quirk:imp_com
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+weaponquirk:jettison_capable:RA:4:ISERLargeLaser
+
 
 mass:45
 engine:270 Fusion Engine(IS)

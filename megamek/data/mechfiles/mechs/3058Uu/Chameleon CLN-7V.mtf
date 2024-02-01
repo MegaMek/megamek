@@ -1,6 +1,5 @@
-Version:1.0
-Chameleon
-CLN-7V
+chassis:Chameleon
+model:CLN-7V
 mul id:543
 
 Config:Biped
@@ -8,6 +7,12 @@ TechBase:Inner Sphere
 Era:3056
 Source:TRO: 3058
 Rules Level:1
+role:Scout
+
+
+
+quirk:easy_pilot
+
 
 Mass:50
 Engine:300 Fusion Engine

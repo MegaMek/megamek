@@ -36,6 +36,10 @@ V3
 IS Level 3
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -180,3 +184,9 @@ TRO: Prototypes
 <escape_pod>
 0
 </escape_pod>
+
+<quirks>
+bad_rep_is
+atmo_flyer
+</quirks>
+

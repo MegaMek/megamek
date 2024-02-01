@@ -1,6 +1,5 @@
-Version:1.0
-Hunchback
-HBK-5SS
+chassis:Hunchback
+model:HBK-5SS
 mul id:1566
 
 Config:Biped
@@ -8,6 +7,13 @@ TechBase:Inner Sphere
 Era:3068
 Source:TRO: 3050
 Rules Level:2
+role:Missile Boat
+
+
+
+quirk:battle_fists_la
+quirk:battle_fists_ra
+
 
 Mass:50
 Engine:200 Light Engine

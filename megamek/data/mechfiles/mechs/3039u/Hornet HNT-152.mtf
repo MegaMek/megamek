@@ -1,6 +1,5 @@
-Version:1.0
-Hornet
-HNT-152
+chassis:Hornet
+model:HNT-152
 mul id:1546
 
 Config:Biped
@@ -8,6 +7,13 @@ TechBase:Inner Sphere
 Era:2997
 Source:TRO: 3039
 Rules Level:1
+role:Striker
+
+
+
+quirk:low_profile
+quirk:no_arms
+
 
 Mass:20
 Engine:100 Fusion Engine

@@ -1,6 +1,5 @@
-Version:1.0
-Koto
-KT-P2
+chassis:Koto
+model:KT-P2
 mul id:1840
 
 Config:Biped
@@ -8,6 +7,13 @@ TechBase:Inner Sphere
 Era:3052
 Source:TRO: 3055
 Rules Level:2
+role:Scout
+
+
+
+
+quirk:em_inter_whole
+
 
 Mass:25
 Engine:200 XL Engine

@@ -1,13 +1,19 @@
-Version:1.1
-Juggernaut
-JG-R9TX1 'Leapin' Lil'
+chassis:Juggernaut
+model:JG-R9TX1 'Leapin' Lil'
 mul id:1716
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3074
 Rules Level:4
+role:Juggernaut
 Source:XTR: Gladiators
+
+
+
+quirk:imp_life_support
+quirk:difficult_maintain
+
 
 Mass:90
 Engine:270 Light Fusion Engine

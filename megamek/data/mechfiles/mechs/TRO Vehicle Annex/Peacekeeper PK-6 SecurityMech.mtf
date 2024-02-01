@@ -1,6 +1,5 @@
-Version:1.0
-Peacekeeper
-PK-6 SecurityMech
+chassis:Peacekeeper
+model:PK-6 SecurityMech
 mul id:7159
 
 Config:Biped
@@ -8,6 +7,13 @@ TechBase:Inner Sphere
 Era:2522
 Source:Record Sheets: Vehicle Annex - IndustrialMechs & Exoskeletons
 Rules Level:2
+role:Brawler
+
+
+
+
+quirk:rugged_1
+
 
 Mass:25
 Engine:100 Fusion Engine(IS)

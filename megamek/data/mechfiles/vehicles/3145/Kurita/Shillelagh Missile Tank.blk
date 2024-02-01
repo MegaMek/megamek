@@ -32,6 +32,10 @@ Shillelagh Missile Tank
 IS Level 2
 </type>
 
+<role>
+Missile Boat
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -87,3 +91,15 @@ TRO: 3145 Draconis Combine
 <tonnage>
 40.0
 </tonnage>
+
+<quirks>
+easy_maintain
+hard_pilot
+sensor_ghosts
+</quirks>
+
+<weaponQuirks>
+accurate:TU:0:ISMML5
+accurate:TU:1:ISMML5
+accurate:TU:2:ISMML5
+</weaponQuirks>

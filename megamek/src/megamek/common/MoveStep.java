@@ -292,10 +292,11 @@ public class MoveStep implements Serializable {
     }
 
     public MoveStep(MovePath path, MoveStepType type, boolean noCost,
-                    boolean isManeuver) {
+                    boolean isManeuver, int maneuverType) {
         this(path, type);
         this.noCost = noCost;
         maneuver = isManeuver;
+        this.maneuverType = maneuverType;
     }
 
     public MoveStep(MovePath path, MoveStepType type, int recovery,
@@ -556,12 +557,21 @@ public class MoveStep implements Serializable {
                     .getBoard().getHex(entity.getPosition()).getLevel()) - hex.getLevel();
             int building = hex.terrainLevel(Terrains.BLDG_ELEV);
             int depth = -hex.depth(true);
-            // need to adjust depth for potential ice over water
-            if ((hex.containsTerrain(Terrains.ICE) && hex
-                    .containsTerrain(Terrains.WATER))
-                    || (entity.getMovementMode() == EntityMovementMode.HOVER)) {
-                depth = 0;
+
+            // Set depth to 0 (surface level) in several cases:
+            // 1. Jumping onto ice-covered water hex,
+            // 2. Jumping onto water with Hover move mode,
+            // 3. Jumping onto water with WiGE move mode
+            if (hex.containsTerrain(Terrains.WATER)) {
+                if (
+                    hex.containsTerrain(Terrains.ICE) ||
+                    entity.getMovementMode() == EntityMovementMode.HOVER ||
+                    entity.getMovementMode() == EntityMovementMode.WIGE
+                ) {
+                  depth = 0;
+                }
             }
+
             // grounded DropShips are treated as level 10 buildings for purposes
             // of jumping over
             boolean grdDropship = false;
@@ -581,7 +591,14 @@ public class MoveStep implements Serializable {
                 // infantry can jump into a building
                 setElevation(Math.max(depth, Math.min(building, maxElevation)));
             } else {
-                setElevation(Math.max(depth, building));
+                int subDepth = Math.max(depth, building);
+                // Put jumping Hover or WiGE at their elevation above the substrate level,
+                // or they get implicitly landed (which affects their movement next turn)
+                if (entity.getMovementMode().isHoverOrWiGE()) {
+                    setElevation(elevation + subDepth);
+                } else {
+                    setElevation(subDepth);
+                }
             }
             if (climbMode()
                     && (maxElevation >= hex.terrainLevel(Terrains.BRIDGE_ELEV))) {
@@ -938,6 +955,7 @@ public class MoveStep implements Serializable {
                                 mpUsed += 1;
                             }
                         }
+                        setHasJustStood(true);
                     } else {
                         for (int location = Mech.LOC_RARM; location <= Mech.LOC_LLEG; location++) {
                             if (entity.isLocationBad(location)) {
@@ -1113,7 +1131,7 @@ public class MoveStep implements Serializable {
 
         // Check for a stacking violation.
         final Entity violation = Compute.stackingViolation(game,
-                entity, getElevation(), getPosition(), null);
+                entity, getElevation(), getPosition(), null, climbMode);
         if ((violation != null) && (getType() != MoveStepType.CHARGE)
                 && (getType() != MoveStepType.DFA)) {
             setStackingViolation(true);
@@ -1940,6 +1958,13 @@ public class MoveStep implements Serializable {
                         && (velocity != 0) && (getNTurns() > 1)) {
                     return;
                 }
+
+                // Jumpships cannot change velocity and use attitude jets in the same turn.
+                if ((a instanceof Jumpship) && ((Jumpship) a).hasStationKeepingDrive()
+                        && (prev.getMovementType(false) == EntityMovementType.MOVE_OVER_THRUST)
+                        && ((type == MoveStepType.TURN_LEFT) || (type == MoveStepType.TURN_RIGHT))) {
+                    return;
+                }
             }
 
             // atmosphere has its own rules about turning
@@ -2316,7 +2341,8 @@ public class MoveStep implements Serializable {
         if ((getEntity().getMovementMode() == EntityMovementMode.BIPED_SWIM)
                 || (getEntity().getMovementMode() == EntityMovementMode.QUAD_SWIM)
                 || ((getEntity() instanceof Infantry
-                        && getEntity().getMovementMode() == EntityMovementMode.SUBMARINE))) {
+                        && getEntity().getMovementMode().isSubmarine()
+                        && (currHex.terrainLevel(Terrains.WATER) > 0)))) {
             tmpWalkMP = entity.getActiveUMUCount();
         }
 
@@ -2619,7 +2645,7 @@ public class MoveStep implements Serializable {
                     }
                     Entity other = (Entity) target;
                     if ((null != Compute.stackingViolation(game, other, curPos,
-                            entity)) || other.isLocationProhibited(curPos, getElevation())) {
+                            entity, climbMode)) || other.isLocationProhibited(curPos, getElevation())) {
                         movementType = EntityMovementType.MOVE_ILLEGAL;
                     }
                 } else {
@@ -2645,7 +2671,7 @@ public class MoveStep implements Serializable {
             if (target instanceof Entity) {
                 Entity other = (Entity) target;
                 if ((null != Compute.stackingViolation(game, other, curPos,
-                        entity)) || other.isLocationProhibited(curPos, getElevation())) {
+                        entity, climbMode)) || other.isLocationProhibited(curPos, getElevation())) {
                     movementType = EntityMovementType.MOVE_ILLEGAL;
                 }
             } else {
@@ -2876,7 +2902,9 @@ public class MoveStep implements Serializable {
      */
     private void UseEitherMASCOrSupercharger(boolean hasMASCBeenUsed, boolean hasSuperchargerBeenUsed) {
         MPBoosters mpBoosters = entity.getArmedMPBoosters();
-        if (!hasMASCBeenUsed && !hasSuperchargerBeenUsed) {
+        if (mpBoosters.isJetBooster() && !hasMASCBeenUsed) {
+            setUsingMASC(true);
+        } else if (!hasMASCBeenUsed && !hasSuperchargerBeenUsed) {
             int scTarget = mpBoosters.hasSupercharger() ? entity.getSuperchargerTarget() : 2000;
             int mascTarget = mpBoosters.hasMASC() ? entity.getMASCTarget() : 2000;
             if (mascTarget < scTarget) {
@@ -2942,7 +2970,8 @@ public class MoveStep implements Serializable {
         // 0 MP infantry units can move 1 hex
         if (isInfantry
                 && (cachedEntityState.getWalkMP() == 0)
-                && (moveMode != EntityMovementMode.SUBMARINE)
+                && !moveMode.isSubmarine()
+                && !moveMode.isVTOL()
                 && getEntity().getPosition().equals(prev)
                 && (getEntity().getPosition().distance(getPosition()) == 1)
                 && (!isJumping())) {
@@ -3169,6 +3198,8 @@ public class MoveStep implements Serializable {
             } else if (isMechanizedInfantry) {
                 // mechanized infantry pays 1 extra
                 mp += 1;
+            } else if (isInfantry && (((Infantry) entity).getMount() != null)) {
+                mp += ((Infantry) entity).getMount().getSize().buildingMP;
             }
         }
 
@@ -3238,6 +3269,11 @@ public class MoveStep implements Serializable {
 
         // If you want to flee, and you can flee, flee.
         if ((type == MoveStepType.FLEE) && entity.canFlee()) {
+            return true;
+        }
+
+        // Motive hit has immobilized CV, but it still wants to (and can) jump: okay!
+        if (movementType == EntityMovementType.MOVE_JUMP && (entity instanceof Tank) && !entity.isImmobileForJump()) {
             return true;
         }
 
@@ -3917,9 +3953,10 @@ public class MoveStep implements Serializable {
         }
 
         // if its part of a maneuver then you can turn
-        if (isManeuver()) {
+        if (isFacingChangeManeuver()) {
             return true;
         }
+
 
         if (en instanceof ConvFighter) {
             // conventional fighters can only turn on free turns or maneuvers
@@ -4030,6 +4067,16 @@ public class MoveStep implements Serializable {
 
     public boolean isManeuver() {
         return maneuver;
+    }
+
+    /**
+     * @return Whether this step is a maneuver that allows a free facing change.
+     */
+    public boolean isFacingChangeManeuver() {
+        return maneuver && (
+                maneuverType == ManeuverType.MAN_IMMELMAN
+                || maneuverType == ManeuverType.MAN_SPLIT_S
+            );
     }
 
     public Minefield getMinefield() {

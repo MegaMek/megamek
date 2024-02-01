@@ -1,12 +1,18 @@
-Version:1.3
-Awesome
-AWS-8Q
+chassis:Awesome
+model:AWS-8Q
 mul id:174
 Config:Biped
 techbase:Inner Sphere
 era:2665
 source:TRO: 3039
 rules level:1
+role:Sniper
+
+
+
+
+quirk:battle_fists_la
+
 
 mass:80
 engine:240 Fusion Engine(IS)

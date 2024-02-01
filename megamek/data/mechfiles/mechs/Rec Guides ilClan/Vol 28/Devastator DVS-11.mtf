@@ -1,12 +1,18 @@
-Version:1.3
-Devastator
-DVS-11
+chassis:Devastator
+model:DVS-11
 mul id:9377
 Config:Biped
 techbase:Mixed (IS Chassis)
 era:3146
 source:Rec Guide:ilClan #28
 rules level:3
+role:Juggernaut
+
+
+
+quirk:hyper_actuator
+quirk:searchlight
+
 
 mass:100
 engine:300 XL Engine(IS)

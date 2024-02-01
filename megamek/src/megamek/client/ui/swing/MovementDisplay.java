@@ -23,7 +23,6 @@ import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
 import megamek.client.ui.SharedUtility;
 import megamek.client.ui.swing.boardview.AbstractBoardViewOverlay;
-import megamek.client.ui.swing.boardview.TurnDetailsOverlay;
 import megamek.client.ui.swing.util.CommandAction;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.MegaMekController;
@@ -57,11 +56,9 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static megamek.client.ui.swing.util.UIUtil.colorString;
 import static megamek.common.MiscType.F_CHAFF_POD;
 import static megamek.common.options.OptionsConstants.ADVGRNDMOV_TACOPS_ZIPLINES;
 
-import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
 
 public class MovementDisplay extends ActionPhaseDisplay {
     private static final long serialVersionUID = -7246715124042905688L;
@@ -196,6 +193,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
          * Priority that determines this buttons order
          */
         public int priority;
+
         MoveCommand(String c, int f) {
             cmd = c;
             flag = f;
@@ -225,7 +223,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         public String getHotKeyDesc() {
             String result = "";
 
-            String msg_next= Messages.getString("Next");
+            String msg_next = Messages.getString("Next");
             String msg_previous = Messages.getString("Previous");
             String msg_left = Messages.getString("Left");
             String msg_right = Messages.getString("Right");
@@ -415,9 +413,8 @@ public class MovementDisplay extends ActionPhaseDisplay {
                                 || display.isIgnoringEvents()
                                 || !display.isVisible()) {
                             return false;
-                        } else {
-                            return true;
                         }
+                        return true;
                     }
 
                     @Override
@@ -445,9 +442,8 @@ public class MovementDisplay extends ActionPhaseDisplay {
                                 || display.isIgnoringEvents()
                                 || !display.isVisible()) {
                             return false;
-                        } else {
-                            return true;
                         }
+                        return true;
                     }
 
                     @Override
@@ -477,8 +473,38 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
                     @Override
                     public void performAction() {
+                        // Remove all illegal steps, if none, then do normal backspace function.
+                        if (!removeIllegalSteps()) {
+                            removeLastStep();
+                        }
+
+                        if (ce() != null && ce().isAero()) {
+                            computeAeroMovementEnvelope(ce());
+                        } else {
+                            computeMovementEnvelope(ce());
+                        }
+                    }
+                });
+
+        // Register the action for UNDO_ILLEGAL_STEPS
+        controller.registerCommandAction(KeyCommandBind.UNDO_SINGLE_STEP.cmd,
+                new CommandAction() {
+                    @Override
+                    public boolean shouldPerformAction() {
+                        return clientgui.getClient().isMyTurn()
+                                && !clientgui.getBoardView().getChatterBoxActive()
+                                && !display.isIgnoringEvents()
+                                && display.isVisible();
+                    }
+
+                    @Override
+                    public void performAction() {
                         removeLastStep();
-                        computeMovementEnvelope(ce());
+                        if (ce() != null && ce().isAero()) {
+                            computeAeroMovementEnvelope(ce());
+                        } else {
+                            computeMovementEnvelope(ce());
+                        }
                     }
                 });
 
@@ -493,9 +519,8 @@ public class MovementDisplay extends ActionPhaseDisplay {
                                 || !display.isVisible()
                                 || display.isIgnoringEvents()) {
                             return false;
-                        } else {
-                            return true;
                         }
+                        return true;
                     }
 
                     @Override
@@ -515,9 +540,8 @@ public class MovementDisplay extends ActionPhaseDisplay {
                                 || !display.isVisible()
                                 || display.isIgnoringEvents()) {
                             return false;
-                        } else {
-                            return true;
                         }
+                        return true;
                     }
 
                     @Override
@@ -537,9 +561,8 @@ public class MovementDisplay extends ActionPhaseDisplay {
                                 || !display.isVisible()
                                 || display.isIgnoringEvents()) {
                             return false;
-                        } else {
-                            return true;
                         }
+                        return true;
                     }
 
                     @Override
@@ -560,9 +583,8 @@ public class MovementDisplay extends ActionPhaseDisplay {
                                 || !display.isVisible()
                                 || display.isIgnoringEvents()) {
                             return false;
-                        } else {
-                            return true;
                         }
+                        return true;
                     }
 
                     @Override
@@ -570,7 +592,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                         final Entity ce = ce();
                         boolean isAero = ce.isAero();
                         // first check if jumping is available at all
-                        if (!isAero && !ce.isImmobile() && (ce.getJumpMP() > 0)
+                        if (!isAero && !ce.isImmobileForJump() && (ce.getJumpMP() > 0)
                                 && !(ce.isStuck() && !ce.canUnstickByJumping())) {
                             if (gear != MovementDisplay.GEAR_JUMP) {
                                 if (!((cmd.getLastStep() != null)
@@ -598,7 +620,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                         }
                         computeMovementEnvelope(ce);
                     }
-        });
+                });
 
         // Register the action for mode conversion
         controller.registerCommandAction(KeyCommandBind.TOGGLE_CONVERSIONMODE.cmd,
@@ -751,16 +773,16 @@ public class MovementDisplay extends ActionPhaseDisplay {
         cen = en;
         clientgui.setSelectedEntityNum(en);
         gear = MovementDisplay.GEAR_LAND;
-        Color walkColor = GUIP.getMoveDefaultColor();
-        clientgui.getBoardView().setHighlightColor(walkColor);
+
+        clientgui.getBoardView().setHighlightColor(GUIP.getMoveDefaultColor());
         clear();
 
-        updateButtons();
+        updateButtonsLater();
+
         clientgui.getBoardView().highlight(ce.getPosition());
         clientgui.getBoardView().select(null);
         clientgui.getBoardView().cursor(null);
-        clientgui.getUnitDisplay().displayEntity(ce);
-        clientgui.getUnitDisplay().showPanel("movement");
+        updateUnitDisplayLater(ce);
         if (!clientgui.getBoardView().isMovingUnits()) {
             clientgui.getBoardView().centerOnHex(ce.getPosition());
         }
@@ -780,8 +802,8 @@ public class MovementDisplay extends ActionPhaseDisplay {
             setStatusBarText(yourTurnMsg);
         }
         clientgui.getBoardView().clearFieldOfFire();
-        clientgui.getBoardView().clearSensorsRanges();
         computeMovementEnvelope(ce);
+        computeCFWarningHexes(ce);
     }
 
     private MegamekButton getBtn(MoveCommand c) {
@@ -790,6 +812,38 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
     private boolean isEnabled(MoveCommand c) {
         return buttons.get(c).isEnabled();
+    }
+
+    /**
+     * Signals Unit Display to update later on the AWT event stack.
+     * See Issue:#4876 and #4444.  This is done to prevent blank general tab when switching
+     * units when the map is zoomed all the way out.
+     */
+    private void updateUnitDisplayLater(Entity ce) {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                clientgui.getUnitDisplay().displayEntity(ce);
+                clientgui.getUnitDisplay().showPanel("movement");
+            }
+        });
+    }
+
+    /**
+     * Sets buttons to their proper state, but lets Swing do this later after all the
+     * current BoardView repaints and updates are complete.  This is done to prevent some
+     * buttons from painting correctly when the maps is zoomed way out. See Issue: #4444
+     */
+    private void updateButtonsLater() {
+        SwingUtilities.invokeLater(new Runnable() {
+
+            @Override
+            public void run() {
+                updateButtons();
+            }
+
+            ;
+        });
     }
 
     /**
@@ -813,7 +867,9 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
         setWalkEnabled(!ce.isImmobile() && ((ce.getWalkMP() > 0) || (ce.getRunMP() > 0))
                 && !ce.isStuck());
-        setJumpEnabled(!isAero && !ce.isImmobile() && !ce.isProne() && (ce.getJumpMP() > 0)
+        setJumpEnabled(!isAero && !ce.isImmobileForJump() && !ce.isProne()
+                // Conventional infantry also uses jump MP for VTOL and UMU MP
+                && ((ce.getJumpMP() > 0) && (!ce.isConventionalInfantry() || ce.getMovementMode().isJumpInfantry()))
                 && !(ce.isStuck() && !ce.canUnstickByJumping()));
         setSwimEnabled(!isAero && !ce.isImmobile() && (ce.getActiveUMUCount() > 0)
                 && ce.isUnderwater());
@@ -872,7 +928,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
         // Infantry and Tank - Fortify
         if (isInfantry
-            && ce.hasWorkingMisc(MiscType.F_TRENCH_CAPABLE)) {
+                && ce.hasWorkingMisc(MiscType.F_TRENCH_CAPABLE)) {
             // Crews adrift in space or atmosphere can't do this
             if (ce instanceof EjectedCrew && (ce.isSpaceborne() || ce.isAirborne())) {
                 getBtn(MoveCommand.MOVE_DIG_IN).setEnabled(false);
@@ -917,7 +973,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
         getBtn(MoveCommand.MOVE_SHAKE_OFF).setEnabled(
                 (ce instanceof Tank)
-                && (ce.getSwarmAttackerId() != Entity.NONE));
+                        && (ce.getSwarmAttackerId() != Entity.NONE));
 
         setFleeEnabled(ce.canFlee());
         if (gOpts.booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLES_CAN_EJECT) && (ce instanceof Tank)) {
@@ -965,7 +1021,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         updateMove();
     }
 
-    private void addStepsToMovePath(MoveStepType ... moveSteps ) {
+    private void addStepsToMovePath(MoveStepType... moveSteps) {
         for (MoveStepType moveStep : moveSteps) {
             cmd.addStep(moveStep);
         }
@@ -977,7 +1033,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         updateMove();
     }
 
-    private void addStepToMovePath(MoveStepType moveStep, TreeMap<Integer,Vector<Integer>> targets) {
+    private void addStepToMovePath(MoveStepType moveStep, TreeMap<Integer, Vector<Integer>> targets) {
         cmd.addStep(moveStep, targets);
         updateMove();
     }
@@ -987,14 +1043,14 @@ public class MovementDisplay extends ActionPhaseDisplay {
         updateMove();
     }
 
-    private void addStepToMovePath(MoveStepType moveStep, boolean noCost,  boolean isManeuver) {
-        cmd.addStep(moveStep, noCost, isManeuver);
+    private void addStepToMovePath(MoveStepType moveStep, boolean noCost, boolean isManeuver, int maneuverType) {
+        cmd.addStep(moveStep, noCost, isManeuver, maneuverType);
         updateMove();
     }
 
-    private void addStepsToMovePath(boolean noCost, boolean isManeuver, MoveStepType ... moveSteps) {
+    private void addStepsToMovePath(boolean noCost, boolean isManeuver, int maneuverType, MoveStepType... moveSteps) {
         for (MoveStepType moveStep : moveSteps) {
-            cmd.addStep(moveStep, noCost, isManeuver);
+            cmd.addStep(moveStep, noCost, isManeuver, maneuverType);
         }
         updateMove();
     }
@@ -1014,7 +1070,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         updateMove();
     }
 
-    private void addStepToMovePath(MoveStepType moveStep, int recover ,int mineToLay) {
+    private void addStepToMovePath(MoveStepType moveStep, int recover, int mineToLay) {
         cmd.addStep(moveStep, recover, mineToLay);
         updateMove();
     }
@@ -1056,24 +1112,23 @@ public class MovementDisplay extends ActionPhaseDisplay {
         if (cmd == null || cmd.length() == 0) {
             updateDonePanelButtons(Messages.getString("MovementDisplay.Move"), Messages.getString("MovementDisplay.Skip"), false, null);
             return;
+        }
+        MovePath possible = cmd.clone();
+        possible.clipToPossible();
+        if (possible.length() == 0) {
+            updateDonePanelButtons(Messages.getString("MovementDisplay.Move"), Messages.getString("MovementDisplay.Skip"), false, null);
+        } else if (!possible.isMoveLegal()) {
+            updateDonePanelButtons(Messages.getString("MovementDisplay.IllegalMove"), Messages.getString("MovementDisplay.Skip"), false, null);
         } else {
-            MovePath possible = cmd.clone();
-            possible.clipToPossible();
-            if (possible.length() == 0) {
-                updateDonePanelButtons(Messages.getString("MovementDisplay.Move"), Messages.getString("MovementDisplay.Skip"), false, null);
-            } else if (!possible.isMoveLegal()) {
-                updateDonePanelButtons(Messages.getString("MovementDisplay.IllegalMove"), Messages.getString("MovementDisplay.Skip"), false, null);
-            } else {
-                int mp = possible.countMp(possible.isJumping());
-                boolean psrCheck = (!SharedUtility.doPSRCheck(cmd.clone()).isBlank()) || (!SharedUtility.doThrustCheck(cmd.clone(), clientgui.getClient()).isBlank());
-                boolean damageCheck = cmd.shouldMechanicalJumpCauseFallDamage() || cmd.hasActiveMASC() || (!(ce() instanceof VTOL) && cmd.hasActiveSupercharger()) || cmd.willCrushBuildings();
-                String moveMsg = Messages.getString("MovementDisplay.Move") + " (" + mp + "MP)" + (psrCheck ? "*" : "") + (damageCheck ? "!" : "");
-                updateDonePanelButtons(moveMsg, Messages.getString("MovementDisplay.Skip"), true, computeTurnDetails());
-            }
+            int mp = possible.countMp(possible.isJumping());
+            boolean psrCheck = (!SharedUtility.doPSRCheck(cmd.clone()).isBlank()) || (!SharedUtility.doThrustCheck(cmd.clone(), clientgui.getClient()).isBlank());
+            boolean damageCheck = cmd.shouldMechanicalJumpCauseFallDamage() || cmd.hasActiveMASC() || (!(ce() instanceof VTOL) && cmd.hasActiveSupercharger()) || cmd.willCrushBuildings();
+            String moveMsg = Messages.getString("MovementDisplay.Move") + " (" + mp + "MP)" + (psrCheck ? "*" : "") + (damageCheck ? "!" : "");
+            updateDonePanelButtons(moveMsg, Messages.getString("MovementDisplay.Skip"), true, computeTurnDetails());
         }
     }
 
-    private List<String> computeTurnDetails(){
+    private List<String> computeTurnDetails() {
         String validTextColor = AbstractBoardViewOverlay.colorToHex(AbstractBoardViewOverlay.getTextColor());
         String invalidTextColor = AbstractBoardViewOverlay.colorToHex(AbstractBoardViewOverlay.getTextColor(), 0.7f);
 
@@ -1084,7 +1139,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         boolean accumLegal = true;
         String unicodeIcon = "";
         ArrayList<String> turnDetails = new ArrayList<>();
-        for( final Enumeration<MoveStep> step = cmd.getSteps(); step.hasMoreElements();) {
+        for (final Enumeration<MoveStep> step = cmd.getSteps(); step.hasMoreElements(); ) {
             MoveStep currentStep = step.nextElement();
             MoveStepType currentType = currentStep.getType();
             int currentDanger = currentStep.isDanger() ? 1 : 0;
@@ -1188,6 +1243,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         clientgui.getBoardView().clearMovementData();
         clientgui.getBoardView().clearFieldOfFire();
         clientgui.getBoardView().clearSensorsRanges();
+        clientgui.getBoardView().clearCFWarningData();
     }
 
     /**
@@ -1402,6 +1458,28 @@ public class MovementDisplay extends ActionPhaseDisplay {
     }
 
     /**
+     * Removes all the trailing illegal movement steps and the end of the current entities movement path.
+     * (This is helpful for Aero movement, overshooting MP and wanting to evade etc.)
+     *
+     * @return - Returns true if the call removed any illegal steps otherwise returns false.
+     */
+    private boolean removeIllegalSteps() {
+        if (cmd == null) {
+            return false;
+        }
+
+        boolean removed = false;
+
+        // Keep removing last step until it's a valid movement step.
+        while (cmd.getLastStepMovementType() == EntityMovementType.MOVE_ILLEGAL) {
+            removeLastStep();
+            removed = true;
+        }
+
+        return removed;
+    }
+
+    /**
      * Sends a data packet indicating the chosen movement.
      */
     @Override
@@ -1410,7 +1488,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             return;
         }
 
-        if ((ce().canUnjamRAC()) && (GUIP.getNagForNoUnJamRAC()) && (!isUnJammingRAC)){
+        if ((ce().canUnjamRAC()) && (GUIP.getNagForNoUnJamRAC()) && (!isUnJammingRAC)) {
             // confirm this action
             String title = Messages.getString("MovementDisplay.ConfirmUnJamRACDlg.title");
             String body = Messages.getString("MovementDisplay.ConfirmUnJamRACDlg.message");
@@ -1425,7 +1503,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         }
 
         cmd.clipToPossible();
-        if ( (cmd.length() == 0) && (!ce().isAirborne()) && needNagForNoAction()) {
+        if ((cmd.length() == 0) && (!ce().isAirborne()) && needNagForNoAction()) {
             // Hmm... no movement steps, confirm this action
             String title = Messages.getString("MovementDisplay.ConfirmNoMoveDlg.title");
             String body = Messages.getString("MovementDisplay.ConfirmNoMoveDlg.message");
@@ -1438,7 +1516,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             }
         }
 
-        if (GUIP.getNagForMASC() && cmd.hasActiveMASC()) {
+        if (GUIP.getNagForMASC() && cmd.hasActiveMASC() && !(ce() instanceof VTOL)) {
             // pop up are you sure dialog
             ConfirmDialog nag = new ConfirmDialog(clientgui.frame,
                     Messages.getString("MovementDisplay.areYouSure"),
@@ -1476,9 +1554,9 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 && GUIP.getNagForSprint()
                 // no need to nag for vehicles using overdrive if they already get a PSR nag
                 && !((cmd.getEntity() instanceof Tank
-                        || (cmd.getEntity() instanceof QuadVee
-                                && cmd.getEntity().getConversionMode() == QuadVee.CONV_MODE_VEHICLE)
-                        && GUIP.getNagForPSR()))) {
+                || (cmd.getEntity() instanceof QuadVee
+                && cmd.getEntity().getConversionMode() == QuadVee.CONV_MODE_VEHICLE)
+                && GUIP.getNagForPSR()))) {
             ConfirmDialog nag = new ConfirmDialog(clientgui.frame,
                     Messages.getString("MovementDisplay.areYouSure"),
                     Messages.getString("MovementDisplay.ConfirmSprint"), true);
@@ -1608,7 +1686,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                     boolean flyoff = false;
                     if ((null != cmd)
                             && (cmd.contains(MoveStepType.OFF) || cmd
-                                    .contains(MoveStepType.RETURN))) {
+                            .contains(MoveStepType.RETURN))) {
                         flyoff = true;
                     }
                     boolean landing = false;
@@ -1671,9 +1749,9 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 && !cmd.contains(MoveStepType.FORWARDS) && !cmd.contains(MoveStepType.FLEE)
                 && cmd.getFinalElevation() > 0
                 && ce().getGame().getBoard().getHex(cmd.getFinalCoords())
-                    .terrainLevel(Terrains.BLDG_ELEV) < cmd.getFinalElevation()
+                .terrainLevel(Terrains.BLDG_ELEV) < cmd.getFinalElevation()
                 && ce().getGame().getBoard().getHex(cmd.getFinalCoords())
-                    .terrainLevel(Terrains.BRIDGE_ELEV) < cmd.getFinalElevation()) {
+                .terrainLevel(Terrains.BRIDGE_ELEV) < cmd.getFinalElevation()) {
             String title = Messages.getString("MovementDisplay.MicroliteMove.title");
             String body = Messages.getString("MovementDisplay.MicroliteMove.message");
             clientgui.doAlertDialog(title, body);
@@ -1697,9 +1775,40 @@ public class MovementDisplay extends ActionPhaseDisplay {
             }
         }
 
+        if (cmd.contains(MoveStepType.LAND) || cmd.contains(MoveStepType.VLAND)) {
+            Set<Coords> landingPath = ((IAero) ce()).getLandingCoords(cmd.contains(MoveStepType.VLAND),
+                    cmd.getFinalCoords(), cmd.getFinalFacing());
+            if (landingPath.stream().map(c -> game().getBoard().getHex(c)).filter(Objects::nonNull)
+                    .anyMatch(h -> h.containsTerrain(Terrains.ROUGH) || h.containsTerrain(Terrains.RUBBLE))) {
+                ConfirmDialog nag = new ConfirmDialog(clientgui.frame,
+                        Messages.getString("MovementDisplay.areYouSure"),
+                        Messages.getString("MovementDisplay.ConfirmLandingGearDamage"),
+                        false);
+                nag.setVisible(true);
+                if (!nag.getAnswer()) {
+                    return;
+                }
+            }
+        }
+
         if (isUsingChaff) {
             addStepToMovePath(MoveStepType.CHAFF);
             isUsingChaff = false;
+        }
+
+        if (ce() instanceof Infantry) {
+            InfantryMount mount = ((Infantry) ce()).getMount();
+            if ((mount != null) && ce().getMovementMode().isSubmarine() && (ce().underwaterRounds >= mount.getUWEndurance())
+                    && cmd.isAllUnderwater(game())) {
+                ConfirmDialog nag = new ConfirmDialog(clientgui.frame,
+                        Messages.getString("MovementDisplay.areYouSure"),
+                        Messages.getString("MovementDisplay.ConfirmMountSuffocation"),
+                        false);
+                nag.setVisible(true);
+                if (!nag.getAnswer()) {
+                    return;
+                }
+            }
         }
 
         disableButtons();
@@ -1721,9 +1830,8 @@ public class MovementDisplay extends ActionPhaseDisplay {
     private synchronized Entity ce() {
         if (clientgui != null) {
             return clientgui.getClient().getGame().getEntity(cen);
-        } else {
-            return null;
         }
+        return null;
     }
 
     /**
@@ -1731,9 +1839,9 @@ public class MovementDisplay extends ActionPhaseDisplay {
      */
     private void currentMove(Coords dest) {
         if (shiftheld || (gear == GEAR_TURN)) {
-            cmd.rotatePathfinder(cmd.getFinalCoords().direction(dest), false);
+            cmd.rotatePathfinder(cmd.getFinalCoords().direction(dest), false, ManeuverType.MAN_NONE);
         } else if ((gear == GEAR_JUMP)
-                   && (ce().getJumpType() == Mech.JUMP_BOOSTER)) {
+                && (ce().getJumpType() == Mech.JUMP_BOOSTER)) {
             // Jumps with mechanical jump boosters are special
             Coords src;
             if (cmd.getLastStep() != null) {
@@ -1803,7 +1911,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             cmd.findPathTo(dest, MoveStepType.CHARGE);
             // The path planner shouldn't actually add the charge step
             if (cmd.getFinalCoords().equals(dest)
-                && (cmd.getLastStep().getType() != MoveStepType.CHARGE)) {
+                    && (cmd.getLastStep().getType() != MoveStepType.CHARGE)) {
                 cmd.removeLastStep();
                 addStepToMovePath(MoveStepType.CHARGE);
             }
@@ -1811,7 +1919,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             cmd.findPathTo(dest, MoveStepType.DFA);
             // The path planner shouldn't actually add the DFA step
             if (cmd.getFinalCoords().equals(dest)
-                && (cmd.getLastStep().getType() != MoveStepType.DFA)) {
+                    && (cmd.getLastStep().getType() != MoveStepType.DFA)) {
                 cmd.removeLastStep();
                 addStepToMovePath(MoveStepType.DFA);
             }
@@ -1820,19 +1928,19 @@ public class MovementDisplay extends ActionPhaseDisplay {
         } else if (gear == GEAR_RAM) {
             cmd.findPathTo(dest, MoveStepType.FORWARDS);
         } else if (gear == GEAR_IMMEL) {
-            addStepsToMovePath(true, true,
+            addStepsToMovePath(true, true, ManeuverType.MAN_IMMELMAN,
                     MoveStepType.UP,
                     MoveStepType.UP,
                     MoveStepType.DEC,
                     MoveStepType.DEC);
-            cmd.rotatePathfinder(cmd.getFinalCoords().direction(dest), true);
+            cmd.rotatePathfinder(cmd.getFinalCoords().direction(dest), true, ManeuverType.MAN_IMMELMAN);
             gear = GEAR_LAND;
         } else if (gear == GEAR_SPLIT_S) {
-            addStepsToMovePath(true, true,
+            addStepsToMovePath(true, true, ManeuverType.MAN_SPLIT_S,
                     MoveStepType.DOWN,
                     MoveStepType.DOWN,
                     MoveStepType.ACC);
-            cmd.rotatePathfinder(cmd.getFinalCoords().direction(dest), true);
+            cmd.rotatePathfinder(cmd.getFinalCoords().direction(dest), true, ManeuverType.MAN_SPLIT_S);
             gear = GEAR_LAND;
         }
         if (gear == GEAR_LONGEST_WALK || gear == GEAR_LONGEST_RUN) {
@@ -2022,9 +2130,9 @@ public class MovementDisplay extends ActionPhaseDisplay {
                         toDefender = AirmechRamAttackAction.getDamageFor(ce, cmd.getHexesMoved());
                     } else {
                         toDefender = ChargeAttackAction.getDamageFor(
-                                        ce, clientgui.getClient().getGame().getOptions()
-                                                .booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_CHARGE_DAMAGE),
-                                        cmd.getHexesMoved());
+                                ce, clientgui.getClient().getGame().getOptions()
+                                        .booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_CHARGE_DAMAGE),
+                                cmd.getHexesMoved());
                         if (target.getTargetType() == Targetable.TYPE_ENTITY) {
                             Entity te = (Entity) target;
                             toAttacker = ChargeAttackAction.getDamageTakenBy(ce, te,
@@ -2032,7 +2140,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                                             .booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_CHARGE_DAMAGE),
                                     cmd.getHexesMoved());
                         } else if ((target.getTargetType() == Targetable.TYPE_FUEL_TANK)
-                                   || (target.getTargetType() == Targetable.TYPE_BUILDING)) {
+                                || (target.getTargetType() == Targetable.TYPE_BUILDING)) {
                             Building bldg = clientgui.getClient().getGame().getBoard().getBuildingAt(moveto);
                             toAttacker = ChargeAttackAction.getDamageTakenBy(ce, bldg, moveto);
                         }
@@ -2163,8 +2271,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
     private synchronized void updateChaffButton() {
         Entity ce = ce();
-        if (ce == null )
-        {
+        if (ce == null) {
             return;
         }
 
@@ -2193,7 +2300,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         } else if (cmd.getFinalHullDown()) {
             if (isMech) {
                 setGetUpEnabled(!ce.isImmobile() && !ce.isStuck()
-                                && !((Mech) ce).cannotStandUpFromHullDown());
+                        && !((Mech) ce).cannotStandUpFromHullDown());
             } else {
                 setGetUpEnabled(!ce.isImmobile() && !ce.isStuck());
             }
@@ -2202,7 +2309,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         } else {
             setGetUpEnabled(false);
             setGoProneEnabled(!ce.isImmobile() && isMech && !ce.isStuck()
-                              && !(getBtn(MoveCommand.MOVE_GET_UP).isEnabled()));
+                    && !(getBtn(MoveCommand.MOVE_GET_UP).isEnabled()));
             if (!(ce instanceof Tank) && !(ce instanceof QuadVee
                     && ce.getConversionMode() == QuadVee.CONV_MODE_VEHICLE)) {
                 setHullDownEnabled(ce.canGoHullDown());
@@ -2211,11 +2318,11 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 // check if it's moved into a fortified position
                 if (cmd.getLastStep() != null) {
                     boolean hullDownEnabled = clientgui.getClient()
-                                                       .getGame().getOptions()
-                                                       .booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_HULL_DOWN);
+                            .getGame().getOptions()
+                            .booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_HULL_DOWN);
                     Hex occupiedHex = clientgui.getClient().getGame()
-                                                .getBoard()
-                                                .getHex(cmd.getLastStep().getPosition());
+                            .getBoard()
+                            .getHex(cmd.getLastStep().getPosition());
                     boolean fortifiedHex = occupiedHex
                             .containsTerrain(Terrains.FORTIFIED);
                     setHullDownEnabled(hullDownEnabled && fortifiedHex);
@@ -2238,14 +2345,14 @@ public class MovementDisplay extends ActionPhaseDisplay {
         GameOptions opts = clientgui.getClient().getGame().getOptions();
         setUnjamEnabled(ce.canUnjamRAC()
                 && ((gear == MovementDisplay.GEAR_LAND)
-                        || (gear == MovementDisplay.GEAR_TURN)
-                        || (gear == MovementDisplay.GEAR_BACKUP))
+                || (gear == MovementDisplay.GEAR_TURN)
+                || (gear == MovementDisplay.GEAR_BACKUP))
                 && ((cmd.getMpUsed() <= ce.getWalkMP())
-                        || (cmd.getLastStep().isOnlyPavement()
-                                && (cmd.getMpUsed() <= (ce.getWalkMP() + 1))))
+                || (cmd.getLastStep().isOnlyPavement()
+                && (cmd.getMpUsed() <= (ce.getWalkMP() + 1))))
                 && !(opts.booleanOption(OptionsConstants.ADVANCED_TACOPS_TANK_CREWS)
-                        && (cmd.getMpUsed() > 0) && (ce instanceof Tank)
-                        && (ce.getCrew().getSize() < 2)));
+                && (cmd.getMpUsed() > 0) && (ce instanceof Tank)
+                && (ce.getCrew().getSize() < 2)));
     }
 
     private void updateSearchlightButton() {
@@ -2474,6 +2581,13 @@ public class MovementDisplay extends ActionPhaseDisplay {
             setAccNEnabled(false);
         }
 
+        // Disable accn/decn if a jumpship has changed facing
+        if ((a instanceof Jumpship) && ((Jumpship) a).hasStationKeepingDrive()
+                && (cmd.contains(MoveStepType.TURN_LEFT) || cmd.contains(MoveStepType.TURN_RIGHT))) {
+            setDecNEnabled(false);
+            setAccNEnabled(false);
+        }
+
         // if in atmosphere, limit acceleration to 2x safe thrust
         if (!clientgui.getClient().getGame().getBoard().inSpace()
                 && (vel == (2 * ce.getWalkMP()))) {
@@ -2519,9 +2633,9 @@ public class MovementDisplay extends ActionPhaseDisplay {
         if (a.isSpheroid() && !board.inSpace()) {
             setFlyOffEnabled((position != null) && (ce.getWalkMP() > 0)
                     && ((position.getX() == 0)
-                            || (position.getX() == (board.getWidth() - 1))
-                            || (position.getY() == 0)
-                            || (position.getY() == (board.getHeight() - 1))));
+                    || (position.getX() == (board.getWidth() - 1))
+                    || (position.getY() == 0)
+                    || (position.getY() == (board.getHeight() - 1))));
             return;
         }
 
@@ -2533,13 +2647,13 @@ public class MovementDisplay extends ActionPhaseDisplay {
         boolean evenx = (position.getX() % 2) == 0;
         if ((velocityLeft > 0) && (((position.getX() == 0) && ((facing == 5) || (facing == 4)))
                 || ((position.getX() == (board.getWidth() - 1))
-                        && ((facing == 1) || (facing == 2)))
+                && ((facing == 1) || (facing == 2)))
                 || ((position.getY() == 0) && ((facing == 1) || (facing == 5) || (facing == 0)) && evenx)
                 || ((position.getY() == 0) && (facing == 0))
                 || ((position.getY() == (board.getHeight() - 1))
-                        && ((facing == 2) || (facing == 3) || (facing == 4)) && !evenx)
+                && ((facing == 2) || (facing == 3) || (facing == 4)) && !evenx)
                 || ((position.getY() == (board.getHeight() - 1))
-                        && (facing == 3)))) {
+                && (facing == 3)))) {
             setFlyOffEnabled(true);
         } else {
             setFlyOffEnabled(false);
@@ -2595,7 +2709,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         }
 
         if (!clientgui.getClient().getGame().getOptions()
-                      .booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_ADVANCED_MANEUVERS)) {
+                .booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_ADVANCED_MANEUVERS)) {
             return;
         }
 
@@ -2639,7 +2753,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         }
 
         if (!clientgui.getClient().getGame().getOptions()
-                      .booleanOption(OptionsConstants.RPG_MANUAL_SHUTDOWN)) {
+                .booleanOption(OptionsConstants.RPG_MANUAL_SHUTDOWN)) {
             return;
         }
 
@@ -2658,7 +2772,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         }
 
         if (!clientgui.getClient().getGame().getOptions()
-                      .booleanOption(OptionsConstants.ADVANCED_TACOPS_SELF_DESTRUCT)) {
+                .booleanOption(OptionsConstants.ADVANCED_TACOPS_SELF_DESTRUCT)) {
             return;
         }
 
@@ -2827,8 +2941,8 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
         if (ce().isBomber()
                 && ((ce() instanceof LandAirMech)
-                        || clientgui.getClient().getGame().getOptions()
-                        .booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_VTOL_ATTACKS))
+                || clientgui.getClient().getGame().getOptions()
+                .booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_VTOL_ATTACKS))
                 && ((IBomber) ce()).getBombPoints() > 0) {
             setBombEnabled(true);
         }
@@ -2924,7 +3038,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
         final boolean canTow = ce.getHitchLocations().stream()
                 .flatMap(c -> game().getEntitiesVector(c).stream())
-                .anyMatch(ce::canTow);
+                .anyMatch(e -> ce.canTow(e.getId()));
         setTowEnabled(canTow);
     }
 
@@ -2948,8 +3062,8 @@ public class MovementDisplay extends ActionPhaseDisplay {
             setLayMineEnabled(false);
         } else if (ce instanceof BattleArmor) {
             setLayMineEnabled(cmd.getLastStep() == null
-                || cmd.isJumping()
-                || cmd.getLastStepMovementType().equals(EntityMovementType.MOVE_VTOL_WALK));
+                    || cmd.isJumping()
+                    || cmd.getLastStepMovementType().equals(EntityMovementType.MOVE_VTOL_WALK));
         } else {
             setLayMineEnabled(true);
         }
@@ -2998,7 +3112,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             int i = 0;
             for (Integer bn : bayChoices) {
                 retVal[i++] = bn.toString() + " (Free Slots: "
-                              + (int) choice.getBayById(bn).getUnused() + ")";
+                        + (int) choice.getBayById(bn).getUnused() + ")";
             }
             if (bayChoices.size() > 1) {
                 String bayString = (String) JOptionPane
@@ -3011,7 +3125,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                                 JOptionPane.QUESTION_MESSAGE, null, retVal,
                                 null);
                 ce.setTargetBay(Integer.parseInt(bayString.substring(0,
-                                                                     bayString.indexOf(" "))));
+                        bayString.indexOf(" "))));
                 // We need to update the entity here so that the server knows
                 // about our target bay
                 clientgui.getClient().sendUpdateEntity(ce);
@@ -3033,7 +3147,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         Vector<Entity> choices = new Vector<>();
         for (Entity other : game.getEntitiesVector(cmd.getFinalCoords())) {
             if (other.isLoadableThisTurn() && (ce() != null)
-                && ce().canLoad(other, false)) {
+                    && ce().canLoad(other, false)) {
                 choices.addElement(other);
             }
         }
@@ -3048,12 +3162,12 @@ public class MovementDisplay extends ActionPhaseDisplay {
         if (choices.size() > 1) {
             String input = (String) JOptionPane
                     .showInputDialog(clientgui,
-                                     Messages.getString(
-                                             "DeploymentDisplay.loadUnitDialog.message",
-                                             new Object[]{ce().getShortName(),
-                                                          ce().getUnusedString()}),
-                                     Messages.getString("DeploymentDisplay.loadUnitDialog.title"),
-                                     JOptionPane.QUESTION_MESSAGE, null, SharedUtility
+                            Messages.getString(
+                                    "DeploymentDisplay.loadUnitDialog.message",
+                                    new Object[]{ce().getShortName(),
+                                            ce().getUnusedString()}),
+                            Messages.getString("DeploymentDisplay.loadUnitDialog.title"),
+                            JOptionPane.QUESTION_MESSAGE, null, SharedUtility
                                     .getDisplayArray(choices), null);
             choice = (Entity) SharedUtility.getTargetPicked(choices, input);
         } else {
@@ -3093,7 +3207,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 bayChoices = new ArrayList<>();
                 for (Transporter t : ce().getTransports()) {
                     if ((t instanceof ProtomechClampMount)
-                                && t.canLoad(choice)) {
+                            && t.canLoad(choice)) {
                         bayChoices.add(((ProtomechClampMount) t).isRear() ? 1 : 0);
                     }
                 }
@@ -3101,9 +3215,9 @@ public class MovementDisplay extends ActionPhaseDisplay {
                     String[] retVal = new String[bayChoices.size()];
                     int i = 0;
                     for (Integer bn : bayChoices) {
-                        retVal[i++] = bn > 0?
+                        retVal[i++] = bn > 0 ?
                                 Messages.getString("MovementDisplay.loadProtoClampMountDialog.rear") :
-                                    Messages.getString("MovementDisplay.loadProtoClampMountDialog.front");
+                                Messages.getString("MovementDisplay.loadProtoClampMountDialog.front");
                     }
                     String bayString = (String) JOptionPane
                             .showInputDialog(
@@ -3163,11 +3277,11 @@ public class MovementDisplay extends ActionPhaseDisplay {
         if (choices.size() > 1) {
             String input = (String) JOptionPane
                     .showInputDialog(clientgui,
-                                     Messages.getString(
-                                             "DeploymentDisplay.towUnitDialog.message",
-                                             new Object[]{ce().getShortName()}),
-                                     Messages.getString("DeploymentDisplay.towUnitDialog.title"),
-                                     JOptionPane.QUESTION_MESSAGE, null, SharedUtility
+                            Messages.getString(
+                                    "DeploymentDisplay.towUnitDialog.message",
+                                    new Object[]{ce().getShortName()}),
+                            Messages.getString("DeploymentDisplay.towUnitDialog.title"),
+                            JOptionPane.QUESTION_MESSAGE, null, SharedUtility
                                     .getDisplayArray(choices), null);
             choice = (Entity) SharedUtility.getTargetPicked(choices, input);
         } else {
@@ -3243,7 +3357,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             }
             String selection = (String) JOptionPane.showInputDialog(clientgui,
                     Messages.getString("MovementDisplay.loadUnitHitchDialog.message",
-                                    new Object[]{ce().getShortName()}),
+                            new Object[]{ce().getShortName()}),
                     Messages.getString("MovementDisplay.loadUnitHitchDialog.title"),
                     JOptionPane.QUESTION_MESSAGE, null, retVal, null);
             HitchChoice hc = null;
@@ -3297,7 +3411,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                             clientgui,
                             Messages.getString(
                                     "MovementDisplay.DisconnectUnitDialog.message", new Object[]{
-                                                                                             ce.getShortName(), ce.getUnusedString()}),
+                                            ce.getShortName(), ce.getUnusedString()}),
                             Messages.getString("MovementDisplay.DisconnectUnitDialog.title"),
                             JOptionPane.QUESTION_MESSAGE, null, SharedUtility
                                     .getDisplayArray(towedUnits), null);
@@ -3395,12 +3509,12 @@ public class MovementDisplay extends ActionPhaseDisplay {
             choices[i++] = c.toString();
         }
         String selected = (String) JOptionPane.showInputDialog(clientgui,
-                                                               Messages.getString(
-                                                                       "MovementDisplay.ChooseHex" + ".message", new Object[]{
-                                                                                                                              ce.getShortName(), ce.getUnusedString()}), Messages
-                                                                       .getString("MovementDisplay.ChooseHex.title"),
+                Messages.getString(
+                        "MovementDisplay.ChooseHex" + ".message", new Object[]{
+                                ce.getShortName(), ce.getUnusedString()}), Messages
+                        .getString("MovementDisplay.ChooseHex.title"),
 
-                                                               JOptionPane.QUESTION_MESSAGE, null, choices, null);
+                JOptionPane.QUESTION_MESSAGE, null, choices, null);
         Coords choice = null;
         if (selected == null) {
             return choice;
@@ -3446,12 +3560,12 @@ public class MovementDisplay extends ActionPhaseDisplay {
             choices[i++] = c.toString();
         }
         String selected = (String) JOptionPane.showInputDialog(clientgui,
-                                                               Messages.getString(
-                                                                       "MovementDisplay.ChooseEjectHex.message", new Object[]{
-                                                                               abandoned.getShortName(), abandoned.getUnusedString()}), Messages
-                                                                       .getString("MovementDisplay.ChooseHex.title"),
+                Messages.getString(
+                        "MovementDisplay.ChooseEjectHex.message", new Object[]{
+                                abandoned.getShortName(), abandoned.getUnusedString()}), Messages
+                        .getString("MovementDisplay.ChooseHex.title"),
 
-                                                               JOptionPane.QUESTION_MESSAGE, null, choices, null);
+                JOptionPane.QUESTION_MESSAGE, null, choices, null);
         Coords choice = null;
         if (selected == null) {
             return choice;
@@ -3559,7 +3673,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         if (game.useVectorMove()) {
             // not where you are, but where you will be
             loadeePos = Compute.getFinalPosition(ce.getPosition(),
-                                                 cmd.getFinalVectors());
+                    cmd.getFinalVectors());
         }
         boolean isGood = false;
         for (Entity other : game.getEntitiesVector(loadeePos)) {
@@ -3645,7 +3759,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             String question = Messages
                     .getString(
                             "MovementDisplay.LaunchFighterDialog.message", new Object[]{
-                                                                                         ce.getShortName(), doors * 2, bayNum});
+                                    ce.getShortName(), doors * 2, bayNum});
             for (int loop = 0; loop < names.length; loop++) {
                 names[loop] = currentFighters.get(loop).getShortName();
             }
@@ -3657,7 +3771,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                         clientgui.frame,
                         Messages.getString(
                                 "MovementDisplay.LaunchFighterDialog.title", new Object[]{
-                                                                                           currentBay.getType(), bayNum}), question,
+                                        currentBay.getType(), bayNum}), question,
                         names);
                 choiceDialog.setVisible(true);
                 if (choiceDialog.getChoices() == null) {
@@ -3805,42 +3919,42 @@ public class MovementDisplay extends ActionPhaseDisplay {
      *
      * @param craft The launching entity, which has already been tested to see if it's a small craft
      */
-     private void loadPassengerAtLaunch(SmallCraft craft) {
-         final Entity currentEntity = ce();
-         if (currentEntity == null) {
-             LogManager.getLogger().error("Cannot load passenger at launch for a null current entity.");
-             return;
-         }
+    private void loadPassengerAtLaunch(SmallCraft craft) {
+        final Entity currentEntity = ce();
+        if (currentEntity == null) {
+            LogManager.getLogger().error("Cannot load passenger at launch for a null current entity.");
+            return;
+        }
 
-         int space = 0;
-         for (Bay b : craft.getTransportBays()) {
-             if ((b instanceof CargoBay) || (b instanceof InfantryBay) || (b instanceof BattleArmorBay)) {
-                 // Assume a passenger takes up 0.1 tons per single infantryman weight calculations
-                 space += (int) Math.round(b.getUnused() / 0.1);
-             }
-         }
-         // Passengers don't actually 'load' into bays to consume space, so update what's available for anyone
-         // already aboard
-         space -= ((craft.getTotalOtherCrew() + craft.getTotalPassengers()) * 0.1);
-         // Make sure the text displays either the carrying capacity or the number of passengers left aboard
-         space = Math.min(space, currentEntity.getNPassenger());
-         ConfirmDialog takePassenger = new ConfirmDialog(clientgui.frame,
-                 Messages.getString("MovementDisplay.FillSmallCraftPassengerDialog.Title"),
-                 Messages.getString("MovementDisplay.FillSmallCraftPassengerDialog.message",
-                         craft.getShortName(), space, currentEntity.getShortName() + "'",
-                         currentEntity.getNPassenger()), false);
-         takePassenger.setVisible(true);
-         if (takePassenger.getAnswer()) {
-             // Move the passengers
-             currentEntity.setNPassenger(currentEntity.getNPassenger() - space);
-             if (currentEntity instanceof Aero) {
-                 ((Aero) currentEntity).addEscapeCraft(craft.getExternalIdAsString());
-             }
-             clientgui.getClient().sendUpdateEntity(currentEntity);
-             craft.addPassengers(currentEntity.getExternalIdAsString(), space);
-             clientgui.getClient().sendUpdateEntity(craft);
-         }
-     }
+        int space = 0;
+        for (Bay b : craft.getTransportBays()) {
+            if ((b instanceof CargoBay) || (b instanceof InfantryBay) || (b instanceof BattleArmorBay)) {
+                // Assume a passenger takes up 0.1 tons per single infantryman weight calculations
+                space += (int) Math.round(b.getUnused() / 0.1);
+            }
+        }
+        // Passengers don't actually 'load' into bays to consume space, so update what's available for anyone
+        // already aboard
+        space -= ((craft.getTotalOtherCrew() + craft.getTotalPassengers()) * 0.1);
+        // Make sure the text displays either the carrying capacity or the number of passengers left aboard
+        space = Math.min(space, currentEntity.getNPassenger());
+        ConfirmDialog takePassenger = new ConfirmDialog(clientgui.frame,
+                Messages.getString("MovementDisplay.FillSmallCraftPassengerDialog.Title"),
+                Messages.getString("MovementDisplay.FillSmallCraftPassengerDialog.message",
+                        craft.getShortName(), space, currentEntity.getShortName() + "'",
+                        currentEntity.getNPassenger()), false);
+        takePassenger.setVisible(true);
+        if (takePassenger.getAnswer()) {
+            // Move the passengers
+            currentEntity.setNPassenger(currentEntity.getNPassenger() - space);
+            if (currentEntity instanceof Aero) {
+                ((Aero) currentEntity).addEscapeCraft(craft.getExternalIdAsString());
+            }
+            clientgui.getClient().sendUpdateEntity(currentEntity);
+            craft.addPassengers(currentEntity.getExternalIdAsString(), space);
+            clientgui.getClient().sendUpdateEntity(craft);
+        }
+    }
 
     /**
      * Get the unit that the player wants to drop. This method will remove the
@@ -4079,7 +4193,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         }
 
         IAero aero = (IAero) ce;
-        if ((aero.getCurrentFuel() < 1) && !(ce.hasEngine() && ce.getEngine().isSolar())) {
+        if ((aero.getCurrentFuel() < 1) && aero.requiresFuel()) {
             disableButtons();
             butDone.setEnabled(true);
             getBtn(MoveCommand.MOVE_NEXT).setEnabled(true);
@@ -4192,15 +4306,15 @@ public class MovementDisplay extends ActionPhaseDisplay {
             dumpBombsDialog.getChoices();
             // first make a control roll
             PilotingRollData psr = ce().getBasePilotingRoll(overallMoveType);
-            int ctrlroll = Compute.d6(2);
+            Roll diceRoll = Compute.rollD6(2);
             Report r = new Report(9500);
             r.subject = ce().getId();
             r.add(ce().getDisplayName());
             r.add(psr);
-            r.add(ctrlroll);
+            r.add(diceRoll);
             r.newlines = 0;
             r.indent(1);
-            if (ctrlroll < psr.getValue()) {
+            if (diceRoll.getIntValue() < psr.getValue()) {
                 r.choose(false);
                 String title = Messages.getString("MovementDisplay.DumpingBombs.title");
                 String body = Messages.getString("MovementDisplay.DumpFailure.message");
@@ -4228,13 +4342,13 @@ public class MovementDisplay extends ActionPhaseDisplay {
         cmd.addManeuver(type);
         switch (type) {
             case ManeuverType.MAN_HAMMERHEAD:
-                addStepToMovePath(MoveStepType.YAW, true, true);
+                addStepToMovePath(MoveStepType.YAW, true, true, type);
                 return true;
             case ManeuverType.MAN_HALF_ROLL:
-                addStepToMovePath(MoveStepType.ROLL, true, true);
+                addStepToMovePath(MoveStepType.ROLL, true, true, type);
                 return true;
             case ManeuverType.MAN_BARREL_ROLL:
-                addStepToMovePath(MoveStepType.DEC, true, true);
+                addStepToMovePath(MoveStepType.DEC, true, true, type);
                 return true;
             case ManeuverType.MAN_IMMELMAN:
                 gear = MovementDisplay.GEAR_IMMEL;
@@ -4253,7 +4367,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                     vel = last.getVelocityLeft();
                 }
                 while (vel > 0) {
-                    addStepToMovePath(MoveStepType.DEC, true, true);
+                    addStepToMovePath(MoveStepType.DEC, true, true, type);
                     vel--;
                 }
                 addStepToMovePath(MoveStepType.UP);
@@ -4263,13 +4377,13 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 // See Total Warfare pg 85
                 if (clientgui.getClient().getGame().getBoard().getType() == Board.T_GROUND) {
                     for (int i = 0; i < 8; i++) {
-                        addStepToMovePath(MoveStepType.LATERAL_LEFT, true, true);
+                        addStepToMovePath(MoveStepType.LATERAL_LEFT, true, true, type);
                     }
                     for (int i = 0; i < 8; i++) {
-                        addStepToMovePath(MoveStepType.FORWARDS, true, true);
+                        addStepToMovePath(MoveStepType.FORWARDS, true, true, type);
                     }
                 } else {
-                    addStepToMovePath(MoveStepType.LATERAL_LEFT, true, true);
+                    addStepToMovePath(MoveStepType.LATERAL_LEFT, true, true, type);
                 }
                 return true;
             case ManeuverType.MAN_SIDE_SLIP_RIGHT:
@@ -4277,17 +4391,17 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 // See Total Warfare pg 85
                 if (clientgui.getClient().getGame().getBoard().getType() == Board.T_GROUND) {
                     for (int i = 0; i < 8; i++) {
-                        addStepToMovePath(MoveStepType.LATERAL_RIGHT, true, true);
+                        addStepToMovePath(MoveStepType.LATERAL_RIGHT, true, true, type);
                     }
                     for (int i = 0; i < 8; i++) {
-                        addStepToMovePath(MoveStepType.FORWARDS, true, true);
+                        addStepToMovePath(MoveStepType.FORWARDS, true, true, type);
                     }
                 } else {
-                    addStepToMovePath(MoveStepType.LATERAL_RIGHT, true, true);
+                    addStepToMovePath(MoveStepType.LATERAL_RIGHT, true, true, type);
                 }
                 return true;
             case ManeuverType.MAN_LOOP:
-                addStepToMovePath(MoveStepType.LOOP, true, true);
+                addStepToMovePath(MoveStepType.LOOP, true, true, type);
                 return true;
             default:
                 return false;
@@ -4434,7 +4548,14 @@ public class MovementDisplay extends ActionPhaseDisplay {
             mp.addStep(MoveStepType.START_JUMP);
         }
 
-        ShortestPathFinder pf = ShortestPathFinder.newInstanceOfOneToAll(maxMP, stepType, en.getGame());
+        // Create a path finder to find possible moves; if aerodyne, use a custom Aero path finder.
+        ShortestPathFinder pf = null;
+        if (!en.isAerodyne()) {
+            pf = ShortestPathFinder.newInstanceOfOneToAll(maxMP, stepType, en.getGame());
+        } else {
+            pf = ShortestPathFinder.newInstanceOfOneToAllAero(maxMP, stepType, en.getGame());
+        }
+
         pf.run(mp);
         mvEnvData = pf.getAllComputedPaths();
         Map<Coords, Integer> mvEnvMP = new HashMap<>((int) ((mvEnvData.size() * 1.25) + 1));
@@ -4443,6 +4564,40 @@ public class MovementDisplay extends ActionPhaseDisplay {
         }
         clientgui.getBoardView().setMovementEnvelope(mvEnvMP, en.getWalkMP(), en
                 .getRunMP(), en.getJumpMP(), mvMode);
+    }
+
+    /**
+     * Computes possible moves for entities of Aero units.  This is similar to the
+     * `computeMovementEnvelope()` method; however, it uses the `MovePath`
+     * final velocity to temporarily set units velocity to draw the move envelope.
+     * This method always sets the original entity velocity back to it's orginial.
+     *
+     * @param entity - Suggested entity to use to compute Aero move envelope.
+     * @return - This method will do nothing if the Entity passed in is null or
+     *           is not an Aero based unity.
+     */
+    public void computeAeroMovementEnvelope(Entity entity) {
+        if ((entity == null) || !(entity.isAero()) || (cmd == null)) {
+            return;
+        }
+
+        // Increment the entity's delta-v then compute the movement envelope.
+        Aero ae = (Aero)entity;
+        int currentVelocity = ae.getCurrentVelocity();
+        ae.setCurrentVelocity(cmd.getFinalVelocity());
+
+        // Refresh the new velocity envelope on the map.
+        try {
+            computeMovementEnvelope(ae);
+        } catch (Exception e) {
+            LogManager.getLogger().error("An error occured trying to compute the move envelope for an Aero.");
+        } finally {
+            // Reset the bird's velocity back to original velocity no-matter-what.  It will be updated when
+            // the 'move' button is clicked and the move is processed.
+            ae.setCurrentVelocity(currentVelocity);
+        }
+
+        return;
     }
 
     public void computeModifierEnvelope() {
@@ -4473,6 +4628,16 @@ public class MovementDisplay extends ActionPhaseDisplay {
         lpf.addStopCondition(timeoutCondition);
         lpf.run(mp);
         clientgui.getBoardView().setMovementModifierEnvelope(lpf.getLongestComputedPaths());
+    }
+
+    private void computeCFWarningHexes(Entity ce) {
+        List<Coords> warnList =
+                ConstructionFactorWarning.findCFWarningsMovement(
+                        clientgui.getBoardView().game,
+                        ce,
+                        clientgui.getBoardView().game.getBoard());
+
+        clientgui.getBoardView().setCFWarningSprites(warnList);
     }
 
     //
@@ -4515,18 +4680,18 @@ public class MovementDisplay extends ActionPhaseDisplay {
                     || (gear == MovementDisplay.GEAR_CHARGE)
                     || (gear == MovementDisplay.GEAR_DFA)
                     || ((cmd.getMpUsed() > ce.getWalkMP())
-                            && !(cmd.getLastStep().isOnlyPavement()
-                                    && (cmd.getMpUsed() <= (ce.getWalkMP() + 1))))
+                    && !(cmd.getLastStep().isOnlyPavement()
+                    && (cmd.getMpUsed() <= (ce.getWalkMP() + 1))))
                     || (opts.booleanOption("tacops_tank_crews")
-                            && (cmd.getMpUsed() > 0) && (ce instanceof Tank)
-                            && (ce.getCrew().getSize() < 2))
+                    && (cmd.getMpUsed() > 0) && (ce instanceof Tank)
+                    && (ce.getCrew().getSize() < 2))
                     || (gear == MovementDisplay.GEAR_SWIM)
                     || (gear == MovementDisplay.GEAR_RAM)) {
                 // in the wrong gear
                 // clearAllMoves();
                 // gear = Compute.GEAR_LAND;
                 setUnjamEnabled(false);
-            } else  if (clientgui.doYesNoDialog(title, msg)) {
+            } else if (clientgui.doYesNoDialog(title, msg)) {
                 addStepToMovePath(MoveStepType.UNJAM_RAC);
                 isUnJammingRAC = true;
                 ready();
@@ -4553,8 +4718,8 @@ public class MovementDisplay extends ActionPhaseDisplay {
         } else if (actionCmd.equals(MoveCommand.MOVE_JUMP.getCmd())) {
             if ((gear != MovementDisplay.GEAR_JUMP)
                     && !((cmd.getLastStep() != null)
-                            && cmd.getLastStep().isFirstStep()
-                            && (cmd.getLastStep().getType() == MoveStepType.LAY_MINE))) {
+                    && cmd.getLastStep().isFirstStep()
+                    && (cmd.getLastStep().getType() == MoveStepType.LAY_MINE))) {
                 clear();
             }
             if (!cmd.isJumping()) {
@@ -4632,7 +4797,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             if (!clientgui.getClient().getGame()
                     .containsMinefield(ce.getPosition())) {
                 clientgui.doAlertDialog(Messages
-                        .getString("MovementDisplay.CantClearMinefield"),
+                                .getString("MovementDisplay.CantClearMinefield"),
                         Messages.getString("MovementDisplay.NoMinefield"));
                 return;
             }
@@ -4760,9 +4925,9 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
                 // Dialog for choosing which location to brace
                 String option = (String) JOptionPane.showInputDialog(clientgui.getFrame(),
-                                "Choose the location to brace:",
-                                "Choose Brace Location", JOptionPane.QUESTION_MESSAGE, null,
-                                locationNames, locationNames[0]);
+                        "Choose the location to brace:",
+                        "Choose Brace Location", JOptionPane.QUESTION_MESSAGE, null,
+                        locationNames, locationNames[0]);
 
                 // Verify that we have a valid option...
                 if (option != null) {
@@ -4773,20 +4938,20 @@ public class MovementDisplay extends ActionPhaseDisplay {
             }
         } else if (actionCmd.equals(MoveCommand.MOVE_FLEE.getCmd())
                 && clientgui.doYesNoDialog(
-                        Messages.getString("MovementDisplay.EscapeDialog.title"),
-                        Messages.getString("MovementDisplay.EscapeDialog.message"))) {
+                Messages.getString("MovementDisplay.EscapeDialog.title"),
+                Messages.getString("MovementDisplay.EscapeDialog.message"))) {
 
             clear();
             addStepToMovePath(MoveStepType.FLEE);
             ready();
         } else if (actionCmd.equals(MoveCommand.MOVE_FLY_OFF.getCmd())
                 && clientgui.doYesNoDialog(
-                        Messages.getString("MovementDisplay.FlyOffDialog.title"),
-                        Messages.getString("MovementDisplay.FlyOffDialog.message"))) {
+                Messages.getString("MovementDisplay.FlyOffDialog.title"),
+                Messages.getString("MovementDisplay.FlyOffDialog.message"))) {
             if (opts.booleanOption(OptionsConstants.ADVAERORULES_RETURN_FLYOVER)
                     && clientgui.doYesNoDialog(
-                            Messages.getString("MovementDisplay.ReturnFly.title"),
-                            Messages.getString("MovementDisplay.ReturnFly.message"))) {
+                    Messages.getString("MovementDisplay.ReturnFly.title"),
+                    Messages.getString("MovementDisplay.ReturnFly.message"))) {
                 addStepToMovePath(MoveStepType.RETURN);
             } else {
                 addStepToMovePath(MoveStepType.OFF);
@@ -4879,15 +5044,16 @@ public class MovementDisplay extends ActionPhaseDisplay {
                     && (cmd.getLastStep().getNDown() == 1)
                     && (cmd.getLastStep().getVelocity() < 12)
                     && !(((IAero) ce).isSpheroid() || clientgui.getClient()
-                            .getGame().getPlanetaryConditions().isVacuum())) {
+                    .getGame().getPlanetaryConditions().isVacuum())) {
                 addStepToMovePath(MoveStepType.ACC, true);
+                computeAeroMovementEnvelope(ce);
             }
             addStepToMovePath(MoveStepType.DOWN);
         } else if (actionCmd.equals(MoveCommand.MOVE_CLIMB_MODE.getCmd())) {
             MoveStep ms = cmd.getLastStep();
             if ((ms != null)
                     && ((ms.getType() == MoveStepType.CLIMB_MODE_ON) || (ms
-                            .getType() == MoveStepType.CLIMB_MODE_OFF))) {
+                    .getType() == MoveStepType.CLIMB_MODE_OFF))) {
                 MoveStep lastStep = cmd.getLastStep();
                 cmd.removeLastStep();
                 // Add another climb mode step
@@ -4949,13 +5115,17 @@ public class MovementDisplay extends ActionPhaseDisplay {
             cmd.compile(clientgui.getClient().getGame(), ce, false);
             updateMove();
         } else if (actionCmd.equals(MoveCommand.MOVE_ACCN.getCmd())) {
+            removeIllegalSteps();
             addStepToMovePath(MoveStepType.ACCN);
         } else if (actionCmd.equals(MoveCommand.MOVE_DECN.getCmd())) {
+            removeIllegalSteps();
             addStepToMovePath(MoveStepType.DECN);
         } else if (actionCmd.equals(MoveCommand.MOVE_ACC.getCmd())) {
             addStepToMovePath(MoveStepType.ACC);
+            computeAeroMovementEnvelope(ce);
         } else if (actionCmd.equals(MoveCommand.MOVE_DEC.getCmd())) {
             addStepToMovePath(MoveStepType.DEC);
+            computeAeroMovementEnvelope(ce);
         } else if (actionCmd.equals(MoveCommand.MOVE_EVADE.getCmd())) {
             addStepToMovePath(MoveStepType.EVADE);
         } else if (actionCmd.equals(MoveCommand.MOVE_BOOTLEGGER.getCmd())) {
@@ -4983,6 +5153,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 ready();
             }
         } else if (actionCmd.equals(MoveCommand.MOVE_EVADE_AERO.getCmd())) {
+            removeIllegalSteps();
             addStepToMovePath(MoveStepType.EVADE);
             setEvadeAeroEnabled(false);
         } else if (actionCmd.equals(MoveCommand.MOVE_ROLL.getCmd())) {
@@ -5074,8 +5245,8 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 String title = Messages.getString("MovementDisplay.NoTakeOffDialog.title");
                 String body = Messages.getString(
                         "MovementDisplay.NoTakeOffDialog.message",
-                        new Object[] { ((IAero) ce())
-                                .hasRoomForHorizontalTakeOff() });
+                        new Object[]{((IAero) ce())
+                                .hasRoomForHorizontalTakeOff()});
                 clientgui.doAlertDialog(title, body);
             } else {
                 if (clientgui.doYesNoDialog(
@@ -5152,15 +5323,15 @@ public class MovementDisplay extends ActionPhaseDisplay {
             if (idx == 0) {
                 JOptionPane.showMessageDialog(clientgui.getFrame(),
                         "No players available. Units cannot be traitored to players "
-                        + "that aren't assigned to a team.");
+                                + "that aren't assigned to a team.");
                 return;
             }
 
             // Dialog for choosing which player to transfer to
             String option = (String) JOptionPane.showInputDialog(clientgui.getFrame(),
-                            "Choose the player to gain ownership of this unit when it turns traitor",
-                            "Traitor", JOptionPane.QUESTION_MESSAGE, null,
-                            options, options[0]);
+                    "Choose the player to gain ownership of this unit when it turns traitor",
+                    "Traitor", JOptionPane.QUESTION_MESSAGE, null,
+                    options, options[0]);
 
             // Verify that we have a valid option...
             if (option != null) {
@@ -5170,18 +5341,18 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
                 // And now we perform the actual transfer
                 int confirm = JOptionPane.showConfirmDialog(
-                                clientgui.getFrame(),
-                                e.getDisplayName() + " will switch to " + name
-                                        + "'s side at the end of this turn. Are you sure?",
-                                "Confirm",
-                                JOptionPane.YES_NO_OPTION);
+                        clientgui.getFrame(),
+                        e.getDisplayName() + " will switch to " + name
+                                + "'s side at the end of this turn. Are you sure?",
+                        "Confirm",
+                        JOptionPane.YES_NO_OPTION);
                 if (confirm == JOptionPane.YES_OPTION) {
                     e.setTraitorId(id);
                     clientgui.getClient().sendUpdateEntity(e);
                 }
             }
         } else if (actionCmd.equals(MoveCommand.MOVE_CHAFF.getCmd())) {
-            if(clientgui.doYesNoDialog(
+            if (clientgui.doYesNoDialog(
                     Messages.getString("MovementDisplay.ConfirmChaff.title"),
                     Messages.getString("MovementDisplay.ConfirmChaff.message"))) {
                 isUsingChaff = true;

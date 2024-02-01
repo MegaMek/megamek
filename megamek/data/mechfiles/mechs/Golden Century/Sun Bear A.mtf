@@ -1,6 +1,5 @@
-Version:1.1
-Sun Bear
-A
+chassis:Sun Bear
+model:A
 mul id:7624
 
 Config:Biped Omnimech
@@ -8,6 +7,12 @@ techbase:Clan
 era:2966
 source:TRO: Golden Century
 rules level:2
+role:Skirmisher
+
+quirk:easy_maintain
+quirk:rugged_1
+quirk:difficult_eject
+
 
 mass:55
 engine:275 XL (Clan) Engine(IS)

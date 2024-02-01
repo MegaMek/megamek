@@ -36,6 +36,10 @@ C
 Clan Level 2
 </type>
 
+<role>
+Ambusher
+</role>
+
 <motion_type>
 Wheeled
 </motion_type>
@@ -132,4 +136,11 @@ Rec Guide:ilClan #29
 <fuelType>
 PETROCHEMICALS
 </fuelType>
+
+
+<quirks>
+low_profile
+bad_rep_is
+poor_work
+</quirks>
 

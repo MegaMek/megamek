@@ -36,6 +36,10 @@ TinStar BattleArmor
 IS Level 2
 </type>
 
+<role>
+Ambusher
+</role>
+
 <motion_type>
 Leg
 </motion_type>
@@ -117,3 +121,11 @@ biped
 2
 </weightclass>
 
+
+<quirks>
+easy_maintain
+</quirks>
+
+<weaponQuirks>
+accurate:Squad:2:ISBASupportPPC
+</weaponQuirks>

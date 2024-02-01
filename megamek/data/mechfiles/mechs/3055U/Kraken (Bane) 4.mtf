@@ -1,6 +1,6 @@
-Version:1.0
-Kraken (Bane)
-4
+chassis:Kraken
+clanname:Bane
+model:4
 mul id:1844
 
 Config:Biped
@@ -8,6 +8,11 @@ TechBase:Clan
 Era:3066
 Source:TRO: 3055
 Rules Level:2
+role:Juggernaut
+
+quirk:ext_twist
+quirk:pro_actuator
+
 
 Mass:100
 Engine:300 XL (Clan) Engine

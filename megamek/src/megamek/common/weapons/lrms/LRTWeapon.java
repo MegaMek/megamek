@@ -50,7 +50,12 @@ public abstract class LRTWeapon extends MissileWeapon {
         flags = flags.or(F_ARTEMIS_COMPATIBLE);
 
     }
-    
+
+    @Override
+    public boolean hasIndirectFire() {
+        return true;
+    }
+
     @Override
     public double getTonnage(Entity entity, int location, double size) {
         if ((entity != null) && entity.hasETypeFlag(Entity.ETYPE_PROTOMECH)) {
@@ -65,12 +70,12 @@ public abstract class LRTWeapon extends MissileWeapon {
             WeaponAttackAction waa, Game game, GameManager manager) {
         return new MissileWeaponHandler(toHit, waa, game, manager);
     }
-    
+
     @Override
     public int getBattleForceClass() {
         return BFCLASS_TORP;
     }
-    
+
     @Override
     public boolean isAlphaStrikeIndirectFire() {
         return false;

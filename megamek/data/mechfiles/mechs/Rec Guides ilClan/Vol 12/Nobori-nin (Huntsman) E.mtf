@@ -1,6 +1,6 @@
-Version:1.1
-Nobori-nin (Huntsman)
-E
+chassis:Nobori-nin
+clanname:Huntsman
+model:E
 mul id:7782
 
 Config:Biped Omnimech
@@ -8,6 +8,10 @@ techbase:Clan
 era:3070
 source:Rec Guide:ilClan #12
 rules level:2
+role:Skirmisher
+
+quirk:stable
+
 
 mass:50
 engine:250 XL (Clan) Engine(IS)

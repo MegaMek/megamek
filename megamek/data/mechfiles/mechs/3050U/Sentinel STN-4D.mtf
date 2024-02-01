@@ -1,6 +1,5 @@
-Version:1.0
-Sentinel
-STN-4D
+chassis:Sentinel
+model:STN-4D
 mul id:2863
 
 Config:Biped
@@ -8,6 +7,12 @@ TechBase:Inner Sphere
 Era:3063
 Source:TRO: 3050
 Rules Level:2
+role:Striker
+
+
+
+quirk:imp_com
+
 
 Mass:40
 Engine:240 Fusion Engine

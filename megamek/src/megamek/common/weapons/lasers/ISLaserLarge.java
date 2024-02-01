@@ -26,7 +26,7 @@ public class ISLaserLarge extends LaserWeapon {
         setInternalName(this.name);
         addLookupName("IS Large Laser");
         addLookupName("ISLargeLaser");
-        sortingName = "Laser D";
+        sortingName = "Laser AA D";
         heat = 8;
         damage = 8;
         shortRange = 5;

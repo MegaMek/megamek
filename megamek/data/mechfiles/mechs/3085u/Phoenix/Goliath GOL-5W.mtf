@@ -1,6 +1,5 @@
-Version:1.1
-Goliath
-GOL-5W
+chassis:Goliath
+model:GOL-5W
 mul id:1236
 
 Config:Quad
@@ -8,6 +7,13 @@ TechBase:Inner Sphere
 Era:3071
 source:TRO: 3085
 Rules Level:2
+role:Brawler
+
+
+
+quirk:multi_trac
+quirk:exp_actuator
+
 
 Mass:80
 Engine:320 Fusion Engine(IS)

@@ -1,12 +1,7 @@
-#building block data file
+#Saved from version 0.49.16-SNAPSHOT on 2023-12-28
 <BlockVersion>
 1
 </BlockVersion>
-
-##Write the version number just in case...
-<Version>
-MAM0
-</Version>
 
 <UnitType>
 Tank
@@ -20,6 +15,10 @@ Von Luckner Heavy Tank
 VNL-K65W
 </Model>
 
+<mul id:>
+9482
+</mul id:>
+
 <year>
 3063
 </year>
@@ -28,24 +27,21 @@ VNL-K65W
 3063
 </originalBuildYear>
 
-<mul id:>
-9482
-</mul id:>
-
-<source>
-Rec Guide:ilClan #32
-</source>
-
 <type>
 IS Level 2
 </type>
 
+<role>
+Juggernaut
+</role>
+
+<quirks>
+difficult_maintain
+</quirks>
+
 <motion_type>
 Tracked
 </motion_type>
-
-<transporters>
-</transporters>
 
 <cruiseMP>
 3
@@ -73,20 +69,20 @@ Tracked
 
 <Body Equipment>
 ISCASE
-IS Ammo MML-5 LRM
-IS Ammo MML-5 SRM
 IS Ultra AC/20 Ammo
 IS Ultra AC/20 Ammo
 IS Ultra AC/20 Ammo
 IS Ultra AC/20 Ammo
 IS Streak SRM 4 Ammo
 IS Light Machine Gun Ammo - Half
+IS Ammo MML-5 LRM Artemis-capable
+IS Ammo MML-5 SRM Artemis-capable
 </Body Equipment>
 
 <Front Equipment>
-ISMML5
-ISMML5
 ISSmallPulseLaser
+ISMML5
+ISMML5
 ISArtemisIV
 ISArtemisIV
 </Front Equipment>
@@ -106,11 +102,6 @@ ISStreakSRM4
 ISStreakSRM4
 Light Machine Gun
 </Turret Equipment>
-
-<tonnage>
-75.0
-</tonnage>
-
 
 <capabilities>
 The Von Luckner's fusion power plant provides it with the same level of efficiency and mobility as a BattleMech of comparable weight, as well as the indefinite operating range that only fusion can deliver. The Von Luckner's primary armament is typically comprised of powerful autocannons supported by missile racks, as well as a variety of light close-in weaponry deployed to protect against infantry and battlearmor. Finally, its rather thick armor hide helps it to stay in a combat for an extended period of time.
@@ -142,3 +133,12 @@ ARMOR:StarSlab/4
 COMMUNICATIONS:O/P 300
 TARGETING:O/P GRNDSTAT 50A
 </systemManufacturers>
+
+<source>
+Rec Guide:ilClan #32
+</source>
+
+<tonnage>
+75.0
+</tonnage>
+

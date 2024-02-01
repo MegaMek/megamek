@@ -32,6 +32,10 @@ Simian Battle Armor
 IS Level 2
 </type>
 
+<role>
+Ambusher
+</role>
+
 <motion_type>
 Jump
 </motion_type>
@@ -113,3 +117,8 @@ TARGETING:Unknown
 
 <notes>
 The TRO: 3075 entry lists a 3-slot
+
+<quirks>
+easy_maintain
+</quirks>
+

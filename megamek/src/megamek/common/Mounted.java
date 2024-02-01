@@ -16,6 +16,7 @@ package megamek.common;
 
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
+import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.WeaponQuirks;
 import megamek.common.weapons.AmmoWeapon;
@@ -27,6 +28,7 @@ import org.apache.logging.log4j.LogManager;
 
 import java.io.Serializable;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * This describes equipment mounted on a mech.
@@ -108,6 +110,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
 
     // bomb stuff
     private boolean bombMounted = false;
+    private boolean isInternalBomb = false;
 
     // mine type
     private int mineType = MINE_NONE;
@@ -140,8 +143,8 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
     protected int damageTaken = 0;
 
     /**
-     * BA use locations for troopers, so we need a way to keep track of where
-     *  a piece of equipment is moutned on BA
+     * BattleArmor use the standard locations to track troopers. On BA, this field keeps track of where
+     * a piece of equipment is mounted.
      */
     private int baMountLoc = BattleArmor.MOUNT_LOC_NONE;
 
@@ -254,13 +257,35 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
         return (null != type) ? type : (type = EquipmentType.get(typeName));
     }
 
+    public int getModesCount() {
+        return getType().getModesCount();
+    }
+
+    protected EquipmentMode getMode(int mode) {
+        return getType().getMode(mode);
+    }
+
+    public boolean hasModes() {
+        return getType().hasModes();
+    }
+
+    public boolean hasModeType(String mode) {
+        return getType().hasModeType(mode);
+    }
+
+    public void adaptToGameOptions(GameOptions options) {
+        if (getType() instanceof Weapon) {
+            ((Weapon) getType()).adaptToGameOptions(options);
+        }
+    }
+
     /**
      * @return the current mode of the equipment, or <code>null</code> if it's
      *         not available.
      */
     public EquipmentMode curMode() {
-        if ((mode >= 0) && (mode < type.getModesCount())) {
-            return type.getMode(mode);
+        if ((mode >= 0) && (mode < getModesCount())) {
+            return getMode(mode);
         }
         return EquipmentMode.getMode("None");
     }
@@ -269,7 +294,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
      * @return the pending mode of the equipment.
      */
     public EquipmentMode pendingMode() {
-        if ((pendingMode < 0) || (pendingMode >= type.getModesCount())) {
+        if ((pendingMode < 0) || (pendingMode >= getModesCount())) {
             return EquipmentMode.getMode("None");
         }
         return type.getMode(pendingMode);
@@ -284,24 +309,24 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
      * @return new mode number, or <code>-1</code> if it's not available.
      */
     public int switchMode(boolean forward) {
-        if (type.hasModes()) {
+        if (hasModes()) {
             int nMode = 0;
             if (pendingMode > -1) {
                 if (forward) {
-                    nMode = (pendingMode + 1) % type.getModesCount();
+                    nMode = (pendingMode + 1) % getModesCount();
                 } else {
                     nMode = (pendingMode - 1);
                     if (nMode < 0) {
-                        nMode = type.getModesCount() - 1;
+                        nMode = getModesCount() - 1;
                     }
                 }
             } else {
                 if (forward) {
-                    nMode = (mode + 1) % type.getModesCount();
+                    nMode = (mode + 1) % getModesCount();
                 } else {
                     nMode = (mode - 1);
                     if (nMode < 0) {
-                        nMode = type.getModesCount() - 1;
+                        nMode = getModesCount() - 1;
                     }
                 }
             }
@@ -318,8 +343,8 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
      * @return new mode number on success, <code>-1</code> otherwise.
      */
     public int setMode(String newMode) {
-        for (int x = 0, e = type.getModesCount(); x < e; x++) {
-            if (type.getMode(x).equals(newMode)) {
+        for (int x = 0, e = getModesCount(); x < e; x++) {
+            if (getMode(x).equals(newMode)) {
                 setMode(x);
                 return x;
             }
@@ -334,9 +359,9 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
      *            the number of the desired new mode
      */
     public boolean setMode(int newMode) {
-        if (type.hasModes()) {
+        if (hasModes()) {
 
-            if (newMode >= type.getModesCount()) {
+            if (newMode >= getModesCount()) {
                 return false;
             }
 
@@ -526,6 +551,10 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
         if (isArmored()) {
             desc.append(" (armored)");
         }
+
+        if (isInternalBomb()) {
+            desc.append(" (Int. Bay)");
+        }
         return desc.toString();
     }
 
@@ -542,11 +571,11 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
      */
     public double getTonnage(RoundWeight defaultRounding) {
         if ((getType() instanceof MiscType) && getType().hasFlag(MiscType.F_DUMPER)) {
-            final Bay bay = getEntity().getBayById(getLinkedBayId());
-            if (bay != null) {
-                return defaultRounding.round(bay.getCapacity() * 0.05, getEntity());
+            Mounted cargo = getLinked();
+            if (cargo != null) {
+                return defaultRounding.round(cargo.getSize() * 0.05, getEntity());
             }
-            LogManager.getLogger().warn("Found dumper not linked to a cargo bay. Using zero for the weight.");
+            LogManager.getLogger().warn("Found dumper not linked to a Cargo equipment. Using zero for the weight.");
             return 0.0;
         }
         double retVal = getType().getTonnage(getEntity(), getLocation(), getSize(), defaultRounding);
@@ -1038,6 +1067,14 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
         }
     }
 
+    /**
+     * Returns the location this equipment is mounted in, such as {@link Tank#LOC_FRONT}. May also return
+     * {@link Entity#LOC_NONE} for unallocated equipment and some special equipment. For BattleArmor, will
+     * return one of the trooper locations, such as {@link BattleArmor#LOC_TROOPER_1}. To get the equipment
+     * location on BA, use {@link #getBaMountLoc()}.
+     *
+     * @return The location of this equipment on its unit
+     */
     public int getLocation() {
         return location;
     }
@@ -1204,21 +1241,21 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
                 damagePerShot = 15;
             }
 
-            long mType = atype.getMunitionType();
+            EnumSet<AmmoType.Munitions> mType = atype.getMunitionType();
             // both Dead-Fire and Tandem-charge SRM's do 3 points of damage per
             // shot when critted
             // Dead-Fire LRM's do 2 points of damage per shot when critted.
-            if ((mType == AmmoType.M_DEAD_FIRE)
-                    || (mType == AmmoType.M_TANDEM_CHARGE)) {
+            if ((mType.contains(AmmoType.Munitions.M_DEAD_FIRE))
+                    || (mType.contains(AmmoType.Munitions.M_TANDEM_CHARGE))) {
                 damagePerShot++;
             } else if (atype.getAmmoType() == AmmoType.T_TASER) {
                 damagePerShot = 6;
             }
 
             if (atype.getAmmoType() == AmmoType.T_MEK_MORTAR) {
-                if ((mType == AmmoType.M_AIRBURST)
-                        || (mType == AmmoType.M_FLARE)
-                        || (mType == AmmoType.M_SMOKE_WARHEAD)) {
+                if ((mType.contains(AmmoType.Munitions.M_AIRBURST))
+                        || (mType.contains(AmmoType.Munitions.M_FLARE))
+                        || (mType.contains(AmmoType.Munitions.M_SMOKE_WARHEAD))) {
                     damagePerShot = 1;
                 } else {
                     damagePerShot = 2;
@@ -1240,9 +1277,9 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
                 Mounted link = getLinked();
                 AmmoType atype = ((AmmoType) link.getType());
                 int damagePerShot = atype.getDamagePerShot();
-                // Launchers with Dead-Fire missles in them do an extra point of
+                // Launchers with Dead-Fire missiles in them do an extra point of
                 // damage per shot when critted
-                if (atype.getAmmoType() == AmmoType.M_DEAD_FIRE) {
+                if (atype.getMunitionType().contains(AmmoType.Munitions.M_DEAD_FIRE)) {
                     damagePerShot++;
                 }
 
@@ -1430,11 +1467,6 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
         return vibraSetting;
     }
 
-    @Override
-    public String toString() {
-        return "megamek.common.Mounted (" + typeName + ")";
-    }
-
     public int getBaseDamageAbsorptionRate() {
         return baseDamageAbsorptionRate;
     }
@@ -1602,6 +1634,19 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
     public boolean isGroundBomb() {
         return getType().hasFlag(WeaponType.F_DIVE_BOMB) || getType().hasFlag(WeaponType.F_ALT_BOMB) ||
                 getType().hasFlag(AmmoType.F_GROUND_BOMB);
+    }
+
+    public void setInternalBomb(boolean internal) {
+        isInternalBomb = internal;
+    }
+
+    /**
+     * Convenience method to determine if a bomb munition is mounted EXternally (reduces MP) or INternally (no
+     * MP reduction).
+     * @return True if
+     */
+    public boolean isInternalBomb() {
+        return isInternalBomb;
     }
 
     // is ammo in the same bay as the weapon
@@ -1773,15 +1818,19 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
     }
 
     /**
-     * Count all the quirks for this "mounted" object, positive and negative
+     * Count all the weapon quirks for this Mounted. Returns 0 when this Mounted is tied to an Entity and
+     * this Entity's game does not use quirks! In all other cases (e.g. outside of games), returns the quirk
+     * count of this Mounted.
+     *
+     * @return The number of active weapon quirks for this Mounted unless the game does not use quirks
      */
     public int countQuirks() {
-        if ((null == entity) || (null == entity.game)
-                || !entity.game.getOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS)) {
+        if ((entity != null) && (entity.getGame() != null) &&
+                !entity.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS)) {
             return 0;
+        } else {
+            return quirks.count();
         }
-
-        return quirks.count();
     }
 
     /**
@@ -1928,6 +1977,10 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
         */
     }
 
+    /**
+     * @return For BattleArmor, returns the location where a piece of equipment is mounted, e.g.
+     * {@link BattleArmor#MOUNT_LOC_LARM}.
+     */
     public int getBaMountLoc() {
         return baMountLoc;
     }
@@ -2086,7 +2139,64 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
         }
 
         AmmoType ammoType = (AmmoType) getType();
-        return ammoType.getMunitionType() == AmmoType.M_HOMING &&
+        return ammoType.getMunitionType().contains(AmmoType.Munitions.M_HOMING) &&
                 curMode().equals("Homing");
+    }
+
+    public int equipmentIndex() {
+        if (entity != null) {
+            return entity.getEquipmentNum(this);
+        } else {
+            return -1;
+        }
+    }
+
+    @Override
+    public String toString() {
+        List<String> locations = allLocations().stream().map(entity::getLocationAbbr).collect(Collectors.toList());
+        String intro = getType().getInternalName()
+                + " (" + String.join("/", locations)
+                + (rearMounted ? "-R" : "")
+                + (mechTurretMounted ? "-MTu" : "")
+                + (sponsonTurretMounted ? "-STu" : "")
+                + (pintleTurretMounted ? "-PTu" : "")
+                + (isDWPMounted ? "-DWP" : "")
+                + (isAPMMounted ? "-APM" : "")
+                + (squadSupportWeapon ? "-SSW" : "")
+                + (baMountLoc != -1 ? "-" + BattleArmor.MOUNT_LOC_NAMES[baMountLoc] : "")
+                + (omniPodMounted ? "-Pod" : "")
+
+                + ")";
+
+        List<String> state = new ArrayList<>();
+        if (linked != null) state.add("Linked: [" + entity.getEquipment().indexOf(linked) + "]");
+        if (linkedBy != null) state.add("LinkedBy: [" + entity.getEquipment().indexOf(linkedBy) + "]");
+        if (crossLinkedBy != null) state.add("CrossLinkedBy: [" + entity.getEquipment().indexOf(crossLinkedBy) + "]");
+        if (linkedBayId != -1) state.add("LinkedBay: [" + linkedBayId + "]");
+        if (!bayWeapons.isEmpty()) {
+            List<String> bayWeaponIds = bayWeapons.stream().map(id -> "[" + id + "]").collect(Collectors.toList());
+            state.add("Bay Weapons: " + String.join(", ", bayWeaponIds));
+        }
+        if (!bayAmmo.isEmpty()) {
+            List<String> bayAmmoIds = bayAmmo.stream().map(id -> "[" + id + "]").collect(Collectors.toList());
+            state.add("Bay Ammo: " + String.join(", ", bayAmmoIds));
+        }
+        if (type instanceof AmmoType) {
+            state.add("Shots: " + shotsLeft);
+        }
+        if (destroyed) state.add("Destroyed");
+        if (hit) state.add("Hit");
+        if (missing) state.add("Missing");
+        if (fired) state.add("Fired");
+        if (rapidfire) state.add("Rapidfire");
+        if (jammed) state.add("Jammed");
+        if (useless) state.add("Useless");
+        if (armoredComponent) state.add("Armored");
+        if (facing != -1) state.add("Facing: " + facing);
+        if (!quirks.activeQuirks().isEmpty()) state.add("Quirks: " + quirks.getOptionList("/"));
+        if (weaponGroup) state.add("Group");
+        if (nweapons != 1) state.add("#Weapons: " + nweapons);
+        if (size != 1) state.add("Size: " + size);
+        return intro + " { " + String.join(", ", state) + " }";
     }
 }

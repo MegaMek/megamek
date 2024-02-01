@@ -1,9 +1,9 @@
 size 32 34
 tag "Foliage (Auto)"
-tag "GrassTheme (Auto)"
 tag "Water (Auto)"
-tag "Roads (Auto)"
+tag "GrassTheme (Auto)"
 tag "Fields (Auto)"
+tag "Roads (Auto)"
 tag "Woods (Auto)"
 hex 0101 0 "mud:1" "grass"
 hex 0201 0 "mud:1" "grass"

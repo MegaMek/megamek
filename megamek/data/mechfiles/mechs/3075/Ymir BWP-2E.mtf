@@ -1,6 +1,5 @@
-Version:1.0
-Ymir
-BWP-2E
+chassis:Ymir
+model:BWP-2E
 mul id:5429
 
 Config:Biped
@@ -8,6 +7,12 @@ TechBase:Inner Sphere
 Era:2478
 Source:TRO: 3075
 Rules Level:1
+role:Sniper
+
+
+
+quirk:stable
+
 
 Mass:90
 Engine:360 Fusion Engine

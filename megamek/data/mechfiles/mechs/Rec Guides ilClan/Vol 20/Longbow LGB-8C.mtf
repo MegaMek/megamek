@@ -1,6 +1,5 @@
-Version:1.0
-Longbow
-LGB-8C
+chassis:Longbow
+model:LGB-8C
 mul id:8332
 
 Config:Biped
@@ -8,6 +7,7 @@ techbase:Inner Sphere
 era:2615
 source:Rec Guide:ilClan #20
 rules level:1
+role:Missile Boat
 
 mass:85
 engine:255 Fusion Engine(IS)

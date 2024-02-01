@@ -1,6 +1,5 @@
-Version:1.1
-Calliope
-CAL-1MAF
+chassis:Calliope
+model:CAL-1MAF
 mul id:6457
 
 Config:Biped
@@ -8,6 +7,13 @@ TechBase:Inner Sphere
 Era:3127
 Source:TRO: 3145 Capellan Confederation
 Rules Level:2
+role:Brawler
+
+
+
+
+quirk:easy_maintain
+
 
 Mass:40
 Engine:200 Fusion Engine(IS)

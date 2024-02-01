@@ -1,6 +1,5 @@
-Version:1.0
-Mongoose II
-MON-266
+chassis:Mongoose II
+model:MON-266
 mul id:2216
 
 Config:Biped
@@ -8,6 +7,14 @@ techbase:Inner Sphere
 era:3073
 source:TRO: 3075
 rules level:2
+role:Scout
+
+
+
+
+quirk:command_mech
+quirk:imp_com
+
 
 mass:40
 engine:320 XL Engine(IS)

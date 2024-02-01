@@ -1,6 +1,6 @@
-Version:1.0
-Vulture (Mad Dog)
-DD
+chassis:Vulture
+clanname:Mad Dog
+model:DD
 mul id:7727
 
 Config:Biped Omnimech
@@ -8,6 +8,10 @@ techbase:Clan
 era:3050
 source:Rec Guide:ilClan #10
 rules level:2
+role:Brawler
+
+quirk:imp_target_med
+
 
 mass:60
 engine:300 XL (Clan) Engine(IS)

@@ -1,6 +1,5 @@
-Version:1.1
-Woodsman
-C
+chassis:Woodsman
+model:C
 mul id:7644
 
 Config:Biped Omnimech
@@ -8,6 +7,10 @@ techbase:Clan
 era:3149
 source:TRO: Golden Century
 rules level:2
+role:Brawler
+
+quirk:easy_maintain
+
 
 mass:75
 engine:300 Fusion (Clan) Engine(IS)

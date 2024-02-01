@@ -1,13 +1,21 @@
-Version:1.0
-Vanquisher
-VQR-2B
+chassis:Vanquisher
+model:VQR-2B
 mul id:5339
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3067
 Rules Level:2
+role:Juggernaut
 source:TRO: 3067
+
+
+
+quirk:stable
+quirk:bad_rep_clan
+quirk:bad_rep_is
+quirk:no_arms
+
 
 Mass:100
 Engine:300 Fusion Engine

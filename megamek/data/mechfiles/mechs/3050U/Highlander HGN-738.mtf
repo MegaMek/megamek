@@ -1,6 +1,5 @@
-Version:1.0
-Highlander
-HGN-738
+chassis:Highlander
+model:HGN-738
 mul id:1522
 
 Config:Biped
@@ -8,6 +7,15 @@ TechBase:Inner Sphere
 Era:3069
 Source:TRO: 3050
 Rules Level:2
+role:Juggernaut
+
+
+
+quirk:command_mech
+quirk:cowl
+quirk:reinforced_legs
+quirk:difficult_eject
+
 
 Mass:90
 Engine:270 Fusion Engine

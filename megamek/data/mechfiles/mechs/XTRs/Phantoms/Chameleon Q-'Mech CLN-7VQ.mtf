@@ -1,6 +1,5 @@
-Version:1.0
-Chameleon
-CLN-7VQ 'Q-'Mech' 
+chassis:Chameleon
+model:CLN-7VQ 'Q-'Mech' 
 mul id:5601
 
 Config:Biped
@@ -8,6 +7,13 @@ TechBase:Mixed (IS Chassis)
 Era:3071
 Source:XTR: Phantoms
 Rules Level:4
+role:Striker
+
+
+
+quirk:easy_pilot
+quirk:non_standard
+
 
 Mass:50
 Engine:300 XL Engine(IS)

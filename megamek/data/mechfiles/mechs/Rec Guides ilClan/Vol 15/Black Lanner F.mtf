@@ -1,6 +1,5 @@
-Version:1.0
-Black Lanner
-F
+chassis:Black Lanner
+model:F
 mul id:8185
 
 Config:Biped Omnimech
@@ -8,6 +7,10 @@ techbase:Clan
 era:3121
 source:Rec Guide:ilClan #15
 rules level:2
+role:Scout
+
+quirk:stable
+
 
 mass:55
 engine:385 XL (Clan) Engine(IS)

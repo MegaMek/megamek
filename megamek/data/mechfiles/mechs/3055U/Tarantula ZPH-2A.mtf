@@ -1,6 +1,5 @@
-Version:1.0
-Tarantula
-ZPH-2A
+chassis:Tarantula
+model:ZPH-2A
 mul id:3161
 
 Config:Quad
@@ -8,6 +7,14 @@ TechBase:Inner Sphere
 Era:3060
 Source:TRO: 3055
 Rules Level:2
+role:Scout
+
+
+
+quirk:easy_pilot
+quirk:ext_twist
+quirk:exp_actuator
+
 
 Mass:25
 Engine:200 XL Engine

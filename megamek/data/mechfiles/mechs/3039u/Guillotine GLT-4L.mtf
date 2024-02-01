@@ -1,6 +1,5 @@
-Version:1.0
-Guillotine
-GLT-4L
+chassis:Guillotine
+model:GLT-4L
 mul id:1339
 
 Config:Biped
@@ -8,6 +7,12 @@ TechBase:Inner Sphere
 Era:2825
 Source:TRO: 3039
 Rules Level:1
+role:Skirmisher
+
+
+
+quirk:searchlight
+
 
 Mass:70
 Engine:280 Fusion Engine

@@ -1,13 +1,18 @@
-Version:1.1
-Hellspawn
-HSN-10SR
+chassis:Hellspawn
+model:HSN-10SR
 mul id:5674
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3081
 Rules Level:2
+role:Striker
 source:Record Sheets: 3067 Unabridged
+
+
+
+quirk:bad_rep_is
+
 
 Mass:45
 Engine:270 XL Fusion Engine

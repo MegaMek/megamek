@@ -1,6 +1,5 @@
-Version:1.0
-Dola
-DOL-1A1
+chassis:Dola
+model:DOL-1A1
 mul id:4086
 
 Config:Biped
@@ -8,6 +7,12 @@ techbase:Inner Sphere
 era:3082
 source:TRO: Prototypes
 rules level:4
+role:Scout
+
+
+
+weaponquirk:jettison_capable:RA:5:Sword
+
 
 mass:30
 engine:240 XL Engine(IS)

@@ -1,6 +1,5 @@
-Version:1.0
-Panther
-PNT-12KC
+chassis:Panther
+model:PNT-12KC
 mul id:6923
 
 Config:Biped
@@ -8,6 +7,13 @@ TechBase:Mixed (IS Chassis)
 Era:3139
 Source:Record Sheets: 3145 New Tech New Upgrades
 Rules Level:3
+role:Sniper
+
+
+
+quirk:imp_target_short
+quirk:nimble_jumper
+
 
 Mass:35
 Engine:140 Fusion Engine(IS)

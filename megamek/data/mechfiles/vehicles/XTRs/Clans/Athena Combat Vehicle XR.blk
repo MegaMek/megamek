@@ -36,6 +36,10 @@ XR
 Clan Level 4
 </type>
 
+<role>
+Juggernaut
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -120,3 +124,10 @@ XTR: Clans
 <tonnage>
 75.0
 </tonnage>
+
+<quirks>
+poor_performance
+prototype
+trailer_hitch
+</quirks>
+

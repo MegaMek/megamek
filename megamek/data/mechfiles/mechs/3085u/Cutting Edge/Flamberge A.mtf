@@ -1,6 +1,5 @@
-Version:1.0
-Flamberge
-A
+chassis:Flamberge
+model:A
 mul id:1116
 
 Config:Biped Omnimech
@@ -8,6 +7,10 @@ TechBase:Clan
 Era:3077
 source:TRO: 3085
 Rules Level:2
+role:Skirmisher
+
+quirk:imp_target_med
+
 
 Mass:70
 Engine:280 XL (Clan) Engine(IS)

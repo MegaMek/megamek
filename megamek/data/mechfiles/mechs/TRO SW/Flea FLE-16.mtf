@@ -1,6 +1,5 @@
-Version:1.0
-Flea
-FLE-16
+chassis:Flea
+model:FLE-16
 mul id:7427
 
 Config:Biped
@@ -8,6 +7,14 @@ TechBase:Inner Sphere
 Era:3032
 Source:TRO: Succession Wars
 Rules Level:1
+role:Scout
+
+
+
+quirk:easy_maintain
+quirk:imp_life_support
+quirk:no_arms
+
 
 Mass:20
 Engine:180 Fusion Engine(IS)

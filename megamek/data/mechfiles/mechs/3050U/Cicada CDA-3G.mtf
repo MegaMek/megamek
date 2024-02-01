@@ -1,6 +1,5 @@
-Version:1.0
-Cicada
-CDA-3G
+chassis:Cicada
+model:CDA-3G
 mul id:595
 
 Config:Biped
@@ -8,6 +7,12 @@ TechBase:Inner Sphere
 Era:3056
 Source:TRO: 3050
 Rules Level:2
+role:Striker
+
+
+
+quirk:no_arms
+
 
 Mass:40
 Engine:320 XL Engine

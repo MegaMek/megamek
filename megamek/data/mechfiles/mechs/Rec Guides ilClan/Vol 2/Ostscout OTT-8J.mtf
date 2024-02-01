@@ -1,6 +1,5 @@
-Version:1.1
-Ostscout
-OTT-8J
+chassis:Ostscout
+model:OTT-8J
 mul id:7451
 
 Config:Biped
@@ -8,6 +7,15 @@ techbase:Inner Sphere
 era:3145
 source:Rec Guide:ilClan #2
 rules level:2
+role:Scout
+
+
+
+quirk:imp_com
+quirk:imp_sensors
+quirk:low_profile
+quirk:rugged_1
+
 
 mass:35
 engine:280 XL Engine(IS)

@@ -1,6 +1,5 @@
-Version:1.0
-Onslaught
-SA-OS3
+chassis:Onslaught
+model:SA-OS3
 mul id:2323
 
 Config:Biped
@@ -8,6 +7,13 @@ TechBase:Inner Sphere
 Era:3062
 Source:TRO: 3055
 Rules Level:4
+role:Skirmisher
+
+
+
+quirk:pro_actuator
+quirk:non_standard
+
 
 Mass:75
 Engine:375 XL Engine

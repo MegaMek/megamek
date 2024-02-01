@@ -1,6 +1,5 @@
-Version:1.0
-Starslayer
-STY-3Dr
+chassis:Starslayer
+model:STY-3Dr
 mul id:3051
 
 Config:Biped
@@ -8,6 +7,12 @@ TechBase:Inner Sphere
 Era:3075
 source:TRO: 3085
 Rules Level:2
+role:Sniper
+
+
+
+quirk:rugged_1
+
 
 Mass:50
 Engine:250 Fusion Engine

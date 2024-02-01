@@ -36,6 +36,10 @@ Hippogriff
 Clan Level 3
 </type>
 
+<role>
+Missile Boat
+</role>
+
 <motion_type>
 Biped
 </motion_type>
@@ -136,3 +140,8 @@ JUMPJET:Unspecified
 COMMUNICATIONS:Unspecified
 TARGETING:Unspecified
 </systemManufacturers>
+
+<quirks>
+distracting
+</quirks>
+

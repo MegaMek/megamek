@@ -1,6 +1,5 @@
-Version:1.2
-Dominator
-2
+chassis:Dominator
+model:2
 mul id:7435
 
 Config:Biped
@@ -8,6 +7,13 @@ techbase:Clan
 era:3149
 source:Rec Guide:ilClan #1
 rules level:2
+role:Sniper
+
+quirk:battle_fists_la
+quirk:reinforced_legs
+weaponquirk:exposed_linkage:RT:6:CLERLargeLaser
+weaponquirk:exposed_linkage:RA:5:CLERLargeLaser
+
 
 mass:65
 engine:325 XL (Clan) Engine(IS)

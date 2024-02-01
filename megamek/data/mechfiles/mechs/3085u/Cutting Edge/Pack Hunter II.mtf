@@ -1,6 +1,5 @@
-Version:1.2
-Pack Hunter II
-
+chassis:Pack Hunter II
+model:
 mul id:2396
 
 Config:Biped
@@ -8,6 +7,11 @@ techbase:Clan
 era:3077
 source:TRO: 3085
 rules level:2
+role:Striker
+
+
+weaponquirk:stable_weapon:RT:7:CLERPPC
+
 
 mass:30
 engine:210 XL (Clan) Engine(IS)

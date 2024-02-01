@@ -1,12 +1,12 @@
-Version:1.0
-Powerman SC XI-M LoaderMech
-MOD
+chassis:Powerman
+model:SC XI-M LoaderMech MOD
 mul id:2565
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2801
 Rules Level:2
+role:Brawler
 Source:TRO: Vehicle Annex (Revised)
 
 Mass:35

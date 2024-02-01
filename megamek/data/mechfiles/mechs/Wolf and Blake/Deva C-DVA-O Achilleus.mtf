@@ -1,6 +1,5 @@
-Version:1.1
-Deva
-C-DVA-O (Achilleus)
+chassis:Deva
+model:C-DVA-O (Achilleus)
 mul id:884
 
 Config:Biped Omnimech
@@ -8,6 +7,15 @@ TechBase:Inner Sphere
 Era:3071
 Source:Starterbook: Wolf & Blake
 Rules Level:4
+role:Skirmisher
+
+
+
+quirk:imp_com
+quirk:imp_sensors
+quirk:bad_rep_clan
+quirk:bad_rep_is
+
 
 Mass:70
 Engine:280 Light Engine(IS)

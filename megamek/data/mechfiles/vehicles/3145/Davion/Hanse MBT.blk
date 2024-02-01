@@ -32,6 +32,10 @@ Hanse MBT
 IS Level 4
 </type>
 
+<role>
+Skirmisher
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -98,3 +102,8 @@ TRO: 3145 Federated Suns
 <tonnage>
 75.0
 </tonnage>
+
+<quirks>
+bad_rep_is
+</quirks>
+

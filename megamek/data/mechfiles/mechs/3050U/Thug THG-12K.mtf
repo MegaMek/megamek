@@ -1,6 +1,5 @@
-Version:1.0
-Thug
-THG-12K
+chassis:Thug
+model:THG-12K
 mul id:3208
 
 Config:Biped
@@ -8,6 +7,12 @@ TechBase:Inner Sphere
 Era:3067
 Source:TRO: 3050
 Rules Level:2
+role:Brawler
+
+
+
+quirk:rugged_1
+
 
 Mass:80
 Engine:320 Fusion Engine

@@ -1,12 +1,7 @@
-#building block data file
+#Saved from version 0.49.16-SNAPSHOT on 2023-12-30
 <BlockVersion>
 1
 </BlockVersion>
-
-# Write the version number just in case...
-<Version>
-MAM0
-</Version>
 
 <UnitType>
 Dropship
@@ -36,18 +31,22 @@ Lung Wang
 IS Level 2
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Spheroid
 </motion_type>
 
 <transporters>
-mechbay:4.0:2
-asfbay:2.0:2:2
-cargobay:289.5:2:3
-infantrybay:1.0:0:4:Foot
-1stclassquarters:30.0:0
-2ndclassquarters:0.0:0
-crewquarters:84.0:0
+mechbay:4.0:2:-1::-1:0
+asfbay:2.0:2:2::-1:0
+cargobay:289.5:2:3::-1:0
+infantrybay:1.0:0:4:Foot:-1:0
+1stclassquarters:30.0:0:-1::-1:0
+2ndclassquarters:0.0:0:-1::-1:0
+crewquarters:84.0:0:-1::-1:0
 </transporters>
 
 <SafeThrust>
@@ -153,6 +152,57 @@ ISArtemisIV
 15
 </structural_integrity>
 
+<capabilities>
+The design of the Lung Wang prioritizes flexibility and firepower. Its nose houses six weapon bays, each packed with long-range missiles and various laser systems, offering impressive forward fire-projection capabilities. However, its fighter and 'Mech bays' placement limits its aft defense, a recognized design vulnerability. The Lung Wang's first maneuver under its own power in 3055 led to a successful raid against the Federated Commonwealth, demonstrating its capabilities in actual combat.
+</capabilities>
+
+<overview>
+Launched in 3055 from the Rashpur-Owens Inc. yards at Capella, the Lung Wang Dropship has quickly established itself as a formidable raider in the Capellan Confederation's fleet. Built around the Xevec-19 drive system, it was conceived during the early days of Sun-Tzu Liao’s reign, with specifications demanding a craft capable of independent operation and formidable performance against non-Clan adversaries. The Lung Wang fulfills these criteria, balancing operational independence with considerable combat prowess.
+</overview>
+
+<deployment>
+The vessel's cargo capacity closely matches the preeminent Third Succession War era raider, the Leopard, carrying a complete Lance of BattleMechs, two aerospace fighters, with a third cargo bay capable of holding 314 tons and one Infantry Platoon.
+</deployment>
+
+<history>
+<p>The Lung Wang emerged as a groundbreaking addition to the Capellan Confederation's fleet, symbolizing a new era in their naval doctrine. From its first deployment in 3055, the Lung Wang's design and performance rapidly proved their worth in a variety of operational contexts. Its initial success near Lee was just the beginning of its storied career. The raid not only inflicted significant damage on the Federated Commonwealth forces but also served as a stark demonstration of the Lung Wang's tactical effectiveness and the Capellan Confederation's growing prowess in space warfare.</p>
+<p>In the years following its introduction, the Lung Wang participated in numerous operations that further cemented its reputation. These missions ranged from deep-space engagements to planetary assaults, where its formidable armament and strategic versatility were consistently put to the test. The Lung Wang’s ability to operate independently and its resilience in the face of superior enemy forces made it a favored choice for high-risk, high-reward missions, often operating on the fringes of Capellan space and beyond.</p>
+<p>The Lung Wang's adaptability was further highlighted during the tumultuous period of the Jihad. The chaos and destruction brought on by the Word of Blake necessitated a reevaluation of naval strategies across the Inner Sphere. In response, the Lung Wang underwent significant modifications, transitioning from a versatile raider and Mech carrier to a more specialized combatant in space warfare. The Predator variant, born out of this necessity, became a testament to the Capellan Confederation's ability to innovate under pressure. The CCS Predator’s destruction of two Blakist Union-class Pocket WarShips was not just a tactical victory but also a strategic statement, underscoring the Capellan's naval resilience and technological ingenuity.</p>
+<p>Post-Jihad, the Lung Wang continued to evolve, adapting to the changing landscape of interstellar warfare. The introduction of advanced targeting systems and modifications to its weapon systems in the Lung Wang Predator variant ensured that it remained a formidable presence in space engagements. The Lung Wang's ongoing deployment, particularly in system defense and patrol roles, reinforces its status as a crucial asset in the Capellan navy, capable of responding to threats swiftly and decisively.</p>
+</history>
+
+<manufacturer>
+Rashpur-Owens Inc.
+</manufacturer>
+
+<primaryFactory>
+Capella
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<use>
+Assault Ship
+</use>
+
+<length>
+57 meters
+</length>
+
+<width>
+54 meters
+</width>
+
+<height>
+47 meters
+</height>
+
 <source>
 TRO: 3057 Revised
 </source>
@@ -200,3 +250,4 @@ TRO: 3057 Revised
 <escape_pod>
 4
 </escape_pod>
+

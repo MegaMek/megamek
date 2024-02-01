@@ -1,6 +1,5 @@
-Version:1.0
-Jupiter
-4
+chassis:Jupiter
+model:4
 mul id:6829
 
 Config:Biped
@@ -8,6 +7,12 @@ TechBase:Clan
 Era:3093
 Source:Record Sheets: 3145 New Tech New Upgrades
 Rules Level:2
+role:Brawler
+
+quirk:fine_manipulators
+quirk:imp_sensors
+quirk:imp_target_long
+
 
 Mass:100
 Engine:400 XL (Clan) Engine(IS)

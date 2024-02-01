@@ -15,12 +15,7 @@ package megamek.common.weapons;
 
 import java.util.Vector;
 
-import megamek.common.BattleArmor;
-import megamek.common.Building;
-import megamek.common.Entity;
-import megamek.common.Game;
-import megamek.common.Report;
-import megamek.common.ToHitData;
+import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
 import megamek.server.GameManager;
@@ -112,14 +107,14 @@ public class CenturionWeaponSystemHandler extends EnergyWeaponHandler {
                         break;
                 }
             }
-            int sdroll = entityTarget.getCrew().rollPilotingSkill();
+            Roll diceRoll = entityTarget.getCrew().rollPilotingSkill();
             r = new Report(5060);
             r.subject = entityTarget.getId();
             r.indent(3);
             r.addDesc(entityTarget);
             r.add(shutdown);
-            r.add(sdroll);
-            if (sdroll >= shutdown) {
+            r.add(diceRoll);
+            if (diceRoll.getIntValue() >= shutdown) {
                 // avoided
                 r.choose(true);
                 vPhaseReport.add(r);

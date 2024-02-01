@@ -1,6 +1,5 @@
-Version:1.0
-Copperhead
-CPR-HD-002
+chassis:Copperhead
+model:CPR-HD-002
 mul id:690
 
 Config:Biped
@@ -8,6 +7,13 @@ TechBase:Inner Sphere
 Era:3054
 Source:TRO: 3055
 Rules Level:2
+role:Striker
+
+
+
+
+quirk:difficult_maintain
+
 
 Mass:30
 Engine:180 XL Engine

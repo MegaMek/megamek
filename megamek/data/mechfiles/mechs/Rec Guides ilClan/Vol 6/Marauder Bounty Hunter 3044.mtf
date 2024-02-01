@@ -1,6 +1,5 @@
-Version:1.0
-Marauder
-(Bounty Hunter-3044)
+chassis:Marauder
+model:(Bounty Hunter-3044)
 mul id:2031
 
 Config:Biped
@@ -8,6 +7,7 @@ techbase:Inner Sphere
 era:3044
 source:Rec Guide:ilClan #6
 rules level:4
+role:Sniper
 
 mass:75
 engine:225 XL Engine(IS)

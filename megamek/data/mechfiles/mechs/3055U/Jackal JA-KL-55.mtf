@@ -1,6 +1,5 @@
-Version:1.0
-Jackal
-JA-KL-55
+chassis:Jackal
+model:JA-KL-55
 mul id:1655
 
 Config:Biped
@@ -8,6 +7,13 @@ TechBase:Inner Sphere
 Era:3066
 Source:TRO: 3055
 Rules Level:2
+role:Striker
+
+
+
+quirk:weak_legs
+weaponquirk:imp_cooling:RT:6:ISERPPC
+
 
 Mass:30
 Engine:210 XL Engine

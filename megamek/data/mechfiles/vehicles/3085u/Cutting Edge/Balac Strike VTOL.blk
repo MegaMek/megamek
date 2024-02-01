@@ -32,6 +32,10 @@ Balac Strike VTOL
 Clan Level 2
 </type>
 
+<role>
+Striker
+</role>
+
 <motion_type>
 VTOL
 </motion_type>
@@ -93,3 +97,8 @@ TRO: 3085
 <tonnage>
 25.0
 </tonnage>
+
+<quirks>
+vtol_rotor_coaxial
+</quirks>
+

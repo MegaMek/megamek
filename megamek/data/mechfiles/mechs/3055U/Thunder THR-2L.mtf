@@ -1,6 +1,5 @@
-Version:1.0
-Thunder
-THR-2L
+chassis:Thunder
+model:THR-2L
 mul id:3215
 
 Config:Biped
@@ -8,6 +7,12 @@ TechBase:Inner Sphere
 Era:3063
 Source:TRO: 3055
 Rules Level:2
+role:Skirmisher
+
+
+
+quirk:cowl
+
 
 Mass:70
 Engine:350 XL Engine

@@ -36,6 +36,10 @@ HCT-213BC (Herman)
 IS Level 3
 </type>
 
+<role>
+Fast Dogfighter
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -111,3 +115,10 @@ XTR: Gunslingers
 <tonnage>
 50.0
 </tonnage>
+
+<quirks>
+easy_maintain
+imp_com
+obsolete
+</quirks>
+

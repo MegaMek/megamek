@@ -32,6 +32,10 @@ Configuration #1
 IS Level 4
 </type>
 
+<role>
+Sniper
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -65,8 +69,8 @@ Tractor
 Trailer
 Advanced Fire Control
 IS Ammo HVAC/2
-IS Ammo MML-5 LRM
-IS Ammo MML-5 SRM
+IS Ammo MML-5 LRM Artemis-capable
+IS Ammo MML-5 SRM Artemis-capable
 </Body Equipment>
 
 <Front Equipment>
@@ -98,3 +102,8 @@ cargobay:20:1
 <tonnage>
 50.0
 </tonnage>
+
+<quirks>
+non_standard
+</quirks>
+

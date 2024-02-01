@@ -1,12 +1,22 @@
-Version:1.3
-Griffin
-GRF-3RG
+chassis:Griffin
+model:GRF-3RG
 mul id:9401
 Config:Biped
 techbase:Inner Sphere
 era:3048
 source:Rec Guide:ilClan #1 
 rules level:2
+role:Skirmisher
+
+
+
+quirk:battle_fists_la
+quirk:battle_fists_ra
+quirk:rugged_1
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+weaponquirk:jettison_capable:RA:4:ISLargePulseLaser
+
 
 mass:55
 engine:275 Fusion Engine(IS)

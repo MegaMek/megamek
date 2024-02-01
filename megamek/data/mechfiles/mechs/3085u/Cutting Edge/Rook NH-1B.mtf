@@ -1,6 +1,5 @@
-Version:1.0
-Rook
-NH-1B
+chassis:Rook
+model:NH-1B
 mul id:2741
 
 Config:Biped
@@ -8,6 +7,12 @@ TechBase:Inner Sphere
 Era:3075
 source:TRO: 3085
 Rules Level:1
+role:Brawler
+
+
+
+quirk:rugged_1
+
 
 Mass:55
 Engine:220 Fusion Engine(IS)

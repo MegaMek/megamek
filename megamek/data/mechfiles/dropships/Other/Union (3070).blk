@@ -1,0 +1,239 @@
+#Saved from version 0.49.18-SNAPSHOT on 2024-01-13
+<BlockVersion>
+1
+</BlockVersion>
+
+<UnitType>
+Dropship
+</UnitType>
+
+<Name>
+Union
+</Name>
+
+<Model>
+(3070)
+</Model>
+
+<mul id:>
+5512
+</mul id:>
+
+<year>
+3070
+</year>
+
+<originalBuildYear>
+3055
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<role>
+None
+</role>
+
+<motion_type>
+Spheroid
+</motion_type>
+
+<transporters>
+mechbay:4.0:2:-1::-1:0
+mechbay:8.0:2:-1::-1:0
+asfbay:2.0:2:3::-1:0
+crewquarters:21.0:0:-1::-1:0
+2ndclassquarters:77.0:0:-1::-1:0
+cargobay:75.0:1:4::-1:0
+</transporters>
+
+<SafeThrust>
+3
+</SafeThrust>
+
+<heatsinks>
+80
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+6450
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+41
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
+180
+180
+180
+120
+</armor>
+
+<Nose Equipment>
+(B) ISERPPC
+(B) ISGaussRifle
+IS Gauss Ammo:24
+(B) ISMML9
+ISMML9
+ISMML9
+IS Ammo MML-9 LRM Artemis-capable:39
+IS Ammo MML-9 SRM Artemis-capable:33
+(B) ISERMediumLaser
+ISERMediumLaser
+(B) ISAntiMissileSystem
+ISAntiMissileSystem
+ISAMS Ammo:36
+ISArtemisIV
+ISArtemisIV
+ISArtemisIV
+</Nose Equipment>
+
+<Left Side Equipment>
+(B) ISERPPC
+(B) ISGaussRifle
+IS Gauss Ammo:24
+ISArtemisIV
+ISArtemisIV
+ISArtemisIV
+(B) ISMML9
+ISMML9
+ISMML9
+IS Ammo MML-9 LRM Artemis-capable:39
+IS Ammo MML-9 SRM Artemis-capable:33
+(B) ISERLargeLaser
+ISERMediumLaser
+ISERMediumLaser
+(R) (B) ISERLargeLaser
+(R) ISERMediumLaser
+(R) ISERMediumLaser
+</Left Side Equipment>
+
+<Right Side Equipment>
+ISArtemisIV
+ISArtemisIV
+ISArtemisIV
+(B) ISERPPC
+(B) ISGaussRifle
+IS Gauss Ammo:24
+(B) ISMML9
+ISMML9
+ISMML9
+IS Ammo MML-9 LRM Artemis-capable:39
+IS Ammo MML-9 SRM Artemis-capable:33
+(B) ISERLargeLaser
+ISERMediumLaser
+ISERMediumLaser
+(R) (B) ISERLargeLaser
+(R) ISERMediumLaser
+(R) ISERMediumLaser
+</Right Side Equipment>
+
+<Aft Equipment>
+(B) ISERLargeLaser
+ISERMediumLaser
+ISERMediumLaser
+(B) ISAntiMissileSystem
+ISAMS Ammo:36
+</Aft Equipment>
+
+<Hull Equipment>
+</Hull Equipment>
+
+<structural_integrity>
+11
+</structural_integrity>
+
+<capabilities>
+The ubiquitous example of the company-sized BattleMech combat transport, the Union class is a venerable and capable member of the DropShip unit type. Capable of carrying twelve 'Mechs and two aerospace fighters (a standard 'Mech company including one air lance under classic SLDF doctrine), it is among the smaller dedicated military deployment vehicles, dwarfed by its larger cousin Overlord and especially the massive troop transports such as the Excalibur, Lee, or Colossus. The Union, while not as heavily armed as Assault DropShips, carries a formidable array of weapons. The semi-automated weaponry is significant enough to defend the ship from light ground forces and cause single and paired aerospace fighters pause.
+</capabilities>
+
+<overview>
+The Union is the archetypical DropShip, widely used in military and civilian roles and described as the yardstick against which all other DropShips are measured.
+</overview>
+
+<deployment>
+First launched in July 3055 by Federated-Boeing Interstellar, the upgraded modern Union boasts a return to Star League era facilities with comparatively luxurious double and single occupancy berths and an improved air-filtration unit. The weaponry is also upgraded, trading the six autocannons for three Gauss Rifles, switching to ER PPCs and ER Large Lasers and adding Artemis IV FCS to the LRM launchers. Cargo capacity is reduced to 72.5 tons, and armor is also reduced slightly.
+</deployment>
+
+<history>
+The smaller but much more numerous, and implicitly also more cost-efficient and easier to manufacture, Union class weathered Lostech throughout the Succession Wars era better than the much larger vessels, and has been in continuous production ever since its inception. The ship was designed as a 'Mech deployment vehicle, not for prolonged comfortable travel. The interior personnel spaces aboard the Union are infamous for being very cramped on most Unions, and the air circulation system is often found lacking. The command and control facilities aboard Unions consisted of a Tactical Operations Room (TOR) sufficient to operate as a coordination point for smaller lance-sized combat transports partaking in company or larger sized operations. Likewise, it operates well in larger operations, where it may conduct missions of a surprise, diversionary or raiding role. The TOR was frequently removed from Union Class Dropships during refurbishment by the Clans.
+</history>
+
+<manufacturer>
+Bowie Industries-Port Sydney,Earthwerks Ltd,Matabushi Inc, Irian Naval Systems of Clipperton,Federated-Boeing Interstellar - Port Simon Shipyards,O'Neil Yards-Titan Yards
+</manufacturer>
+
+<primaryFactory>
+Alarion,Ares,Avon,Clipperton,Galax,Terra
+</primaryFactory>
+
+<systemManufacturers>
+ENGINE:Star League V250
+</systemManufacturers>
+
+<use>
+'Mech/ASF carrier
+</use>
+
+<source>
+Hexpack 1
+</source>
+
+<tonnage>
+3600.0
+</tonnage>
+
+<designtype>
+1
+</designtype>
+
+<crew>
+42
+</crew>
+
+<officers>
+3
+</officers>
+
+<gunners>
+6
+</gunners>
+
+<passengers>
+0
+</passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<otherpassenger>
+0
+</otherpassenger>
+
+<life_boat>
+0
+</life_boat>
+
+<escape_pod>
+7
+</escape_pod>
+

@@ -1,4 +1,4 @@
-Capellan Confederation Assault Mechs B
+Capellan Confederation Assault Mechs 3130 B
 Emperor EMP-6L,1
 Goliath GOL-3L,2
 Emperor EMP-7L,3

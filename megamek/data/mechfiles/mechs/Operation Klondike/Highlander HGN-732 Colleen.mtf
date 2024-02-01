@@ -1,6 +1,5 @@
-Version:1.0
-Highlander
-HGN-732 (Colleen)
+chassis:Highlander
+model:HGN-732 (Colleen)
 mul id:4323
 
 Config:Biped
@@ -8,6 +7,15 @@ techbase:Inner Sphere
 era:2801
 source:Historical: Operation Klondike
 rules level:4
+role:Juggernaut
+
+
+
+quirk:command_mech
+quirk:cowl
+quirk:reinforced_legs
+quirk:difficult_eject
+
 
 mass:90
 engine:270 Fusion Engine(IS)

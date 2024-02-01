@@ -36,6 +36,10 @@ Gulltoppr OmniMonitor
 IS Level 3
 </type>
 
+<role>
+Sniper
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -123,4 +127,13 @@ TRO: 3145 Lyran Commonwealth
 <baseChassisTurret2Weight>
 3.0
 </baseChassisTurret2Weight>
+
+
+<quirks>
+battle_computer
+difficult_maintain
+non_standard
+oversized
+poor_performance
+</quirks>
 

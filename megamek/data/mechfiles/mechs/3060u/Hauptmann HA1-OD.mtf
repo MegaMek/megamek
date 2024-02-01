@@ -1,6 +1,5 @@
-Version:1.0
-Hauptmann
-HA1-OD
+chassis:Hauptmann
+model:HA1-OD
 mul id:1424
 
 Config:Biped Omnimech
@@ -8,6 +7,13 @@ TechBase:Inner Sphere
 Era:3070
 Source:TRO: 3060
 Rules Level:2
+role:Sniper
+
+
+
+quirk:easy_maintain
+quirk:ext_twist
+
 
 Mass:95
 Engine:285 Fusion Engine(IS)

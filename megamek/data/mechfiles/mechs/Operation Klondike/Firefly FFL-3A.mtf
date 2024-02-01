@@ -1,6 +1,5 @@
-Version:1.0
-Firefly
-FFL-3A
+chassis:Firefly
+model:FFL-3A
 mul id:4172
 
 Config:Biped
@@ -8,6 +7,13 @@ TechBase:Inner Sphere
 Era:2679
 Source:Historical: Operation Klondike 
 Rules Level:3
+role:Striker
+
+
+
+
+
+quirk:no_arms
 
 
 Mass:30

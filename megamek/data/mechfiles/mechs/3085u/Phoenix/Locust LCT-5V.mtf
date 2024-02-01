@@ -1,6 +1,5 @@
-Version:1.0
-Locust
-LCT-5V
+chassis:Locust
+model:LCT-5V
 mul id:1910
 
 Config:Biped
@@ -8,6 +7,16 @@ TechBase:Inner Sphere
 Era:3068
 source:TRO: 3085
 Rules Level:2
+role:Striker
+
+
+
+quirk:compact_mech
+quirk:low_profile
+quirk:cramped_cockpit
+quirk:no_arms
+quirk:weak_legs
+
 
 Mass:20
 Engine:160 Fusion Engine

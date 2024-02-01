@@ -1,6 +1,5 @@
-Version:1.1
-Penthesilea
-PEN-2H
+chassis:Penthesilea
+model:PEN-2H
 mul id:2470
 
 Config:Biped
@@ -8,6 +7,16 @@ TechBase:Inner Sphere
 Era:3083
 source:TRO: 3085
 Rules Level:2
+role:Brawler
+
+
+
+
+quirk:rugged_1
+weaponquirk:stable_weapon:CT:9:ISERMediumLaser
+weaponquirk:stable_weapon:CT:10:ISERMediumLaser
+weaponquirk:stable_weapon:CT:11:ISERMediumLaser
+
 
 Mass:75
 Engine:300 Fusion Engine

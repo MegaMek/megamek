@@ -36,6 +36,10 @@ Mowang Courier
 IS Level 4
 </type>
 
+<role>
+Transport
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -151,3 +155,8 @@ XTR: Most Wanted
 <escape_pod>
 0
 </escape_pod>
+
+<quirks>
+internal_bomb
+</quirks>
+

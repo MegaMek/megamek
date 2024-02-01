@@ -1,6 +1,5 @@
-Version:1.0
-Opossum SalvageMech
-OPO-3 MOD
+chassis:Opossum SalvageMech
+model:OPO-3 MOD
 mul id:7848
 
 Config:Biped
@@ -8,6 +7,7 @@ techbase:Inner Sphere
 era:3145
 source:TRO: Irregulars
 rules level:2
+role:Sniper
 
 mass:25
 engine:75 ICE Engine(IS)

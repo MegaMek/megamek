@@ -1,6 +1,5 @@
-Version:1.0
-Victor
-VTR-9B (Shoji)
+chassis:Victor
+model:VTR-9B (Shoji)
 mul id:5864
 
 Config:Biped
@@ -8,6 +7,12 @@ TechBase:Inner Sphere
 Era:2725
 Source:Era Report 2750
 Rules Level:4
+role:Skirmisher
+
+
+
+quirk:rugged_1
+
 
 Mass:80
 Engine:320 Fusion Engine(IS)

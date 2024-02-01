@@ -1,6 +1,5 @@
-Version:1.1
-Omni-Corvis
-Prime
+chassis:Omni-Corvis
+model:Prime
 mul id:7610
 
 Config:Biped Omnimech
@@ -8,6 +7,11 @@ techbase:Clan
 era:2921
 source:TRO: Golden Century
 rules level:2
+role:Brawler
+
+
+quirk:prototype
+
 
 mass:50
 engine:250 Fusion (Clan) Engine(IS)

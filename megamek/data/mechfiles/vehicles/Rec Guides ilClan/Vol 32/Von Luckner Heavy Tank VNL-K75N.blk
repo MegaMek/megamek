@@ -36,6 +36,10 @@ VNL-K75N
 IS Level 2
 </type>
 
+<role>
+Juggernaut
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -139,4 +143,9 @@ Rec Guide:ilClan #32
 <tonnage>
 75.0
 </tonnage>
+
+
+<quirks>
+difficult_maintain
+</quirks>
 

@@ -1,6 +1,5 @@
-Version:1.0
-UrbanMech
-UM-R27
+chassis:UrbanMech
+model:UM-R27
 mul id:9498
 
 Config:Biped
@@ -8,6 +7,14 @@ techbase:Inner Sphere
 era:3130
 source:ForcePack UrbanMech
 rules level:3
+role:Ambusher
+
+
+
+quirk:ext_twist
+quirk:low_profile
+quirk:no_arms
+
 
 mass:30
 engine:60 Fusion Engine(IS)

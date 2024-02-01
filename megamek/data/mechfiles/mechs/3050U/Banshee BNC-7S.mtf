@@ -1,6 +1,5 @@
-Version:1.0
-Banshee
-BNC-7S
+chassis:Banshee
+model:BNC-7S
 mul id:249
 
 Config:Biped
@@ -8,6 +7,11 @@ TechBase:Inner Sphere
 Era:3063
 Source:TRO: 3050
 Rules Level:2
+role:Brawler
+
+quirk:rugged_1
+quirk:bad_rep_is
+
 
 Mass:95
 Engine:380 Light Engine

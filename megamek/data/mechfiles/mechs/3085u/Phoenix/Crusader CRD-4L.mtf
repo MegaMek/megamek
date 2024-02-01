@@ -1,6 +1,5 @@
-Version:1.0
-Crusader
-CRD-4L
+chassis:Crusader
+model:CRD-4L
 mul id:757
 
 Config:Biped
@@ -8,6 +7,17 @@ TechBase:Inner Sphere
 Era:3049
 source:TRO: 3085
 Rules Level:2
+role:Missile Boat
+
+
+
+quirk:easy_maintain
+quirk:rugged_1
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+weaponquirk:stable_weapon:RL:5:ISStreakSRM2
+weaponquirk:stable_weapon:LL:5:ISStreakSRM2
+
 
 Mass:65
 Engine:260 Fusion Engine

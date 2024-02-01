@@ -1,6 +1,5 @@
-Version:1.0
-Stalking Spider
-3
+chassis:Stalking Spider
+model:3
 mul id:3047
 
 Config:Quad
@@ -8,6 +7,10 @@ TechBase:Clan
 Era:3072
 Source:TRO: 3060
 Rules Level:2
+role:Striker
+
+quirk:stable
+
 
 Mass:50
 Engine:250 Fusion (Clan) Engine

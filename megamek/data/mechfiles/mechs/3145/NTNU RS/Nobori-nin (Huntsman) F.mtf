@@ -1,6 +1,6 @@
-Version:1.1
-Nobori-nin (Huntsman)
-F
+chassis:Nobori-nin
+clanname:Huntsman
+model:F
 mul id:6904
 
 Config:Biped Omnimech
@@ -8,6 +8,10 @@ TechBase:Mixed (Clan Chassis)
 Era:3132
 Source:Record Sheets: 3145 New Tech New Upgrades
 Rules Level:3
+role:Skirmisher
+
+quirk:stable
+
 
 Mass:50
 Engine:250 XL (Clan) Engine

@@ -1,6 +1,5 @@
-Version:1.0
-Carbine CON-9M-J ConstructionMech
-MOD
+chassis:Carbine
+model:CON-9M-J ConstructionMech MOD
 mul id:7849
 
 Config:Biped
@@ -8,6 +7,7 @@ techbase:Inner Sphere
 era:3145
 source:TRO: Irregulars
 rules level:2
+role:Ambusher
 
 mass:30
 engine:90 ICE Engine(IS)

@@ -1,6 +1,5 @@
-Version:1.0
-Atlas II
-AS7-D-H (Kerensky)
+chassis:Atlas II
+model:AS7-D-H (Kerensky)
 mul id:7310
 
 Config:Biped
@@ -8,6 +7,16 @@ TechBase:Clan
 Era:2833
 Source:Operational Turning Points: Widowmaker
 Rules Level:2
+role:Juggernaut
+
+
+
+quirk:battle_fists_la
+quirk:battle_fists_ra
+quirk:command_mech
+quirk:distracting
+quirk:imp_com
+
 
 Mass:100
 Engine:300 Fusion (Clan) Engine(IS)

@@ -1,6 +1,5 @@
-Version:1.0
-Black Knight
-BL-X-KNT 'Red Reaper'
+chassis:Black Knight
+model:BL-X-KNT 'Red Reaper'
 mul id:5783
 
 Config:Biped
@@ -8,6 +7,13 @@ TechBase:Inner Sphere
 Era:3069
 Source:XTR: Most Wanted
 Rules Level:4
+role:Juggernaut
+
+
+
+quirk:distracting
+quirk:unbalanced
+
 
 Mass:75
 Engine:300 XL Engine(IS)

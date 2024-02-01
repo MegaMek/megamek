@@ -1,0 +1,166 @@
+generator:MegaMek Suite 0.49.18-SNAPSHOT on 2024-01-13
+chassis:Naga
+model:T
+mul id:9578
+Config:Biped Omnimech
+techbase:Clan
+era:3142
+source:Rec Guide:ilClan #33
+rules level:3
+role:Missile Boat
+
+
+mass:80
+engine:400 XL (Clan) Engine(IS)
+structure:Clan Endo Steel
+myomer:Standard
+
+heat sinks:12 Clan Double
+base chassis heat sinks:12
+walk mp:5
+jump mp:0
+
+armor:Standard(Clan)
+LA armor:14
+RA armor:14
+LT armor:15
+RT armor:15
+CT armor:17
+HD armor:9
+LL armor:16
+RL armor:16
+RTL armor:9
+RTR armor:9
+RTC armor:10
+
+Weapons:5
+Arrow IV, Left Torso
+Arrow IV, Right Torso
+Improved Heavy Medium Laser, Left Torso
+Improved Heavy Medium Laser, Right Torso
+Light TAG, Center Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+CLArrowIV
+CLArrowIV
+CLArrowIV
+CLArrowIV
+CLArrowIV
+CLArrowIV
+CLArrowIV
+CLArrowIV
+CLArrowIV
+CLArrowIV
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+CLArrowIV
+CLArrowIV
+CLArrowIV
+CLArrowIV
+CLArrowIV
+CLArrowIV
+CLArrowIV
+CLArrowIV
+CLArrowIV
+CLArrowIV
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+CLArrowIV
+CLArrowIV
+CLImprovedMediumHeavyLaser (OMNIPOD)
+CLImprovedMediumHeavyLaser (OMNIPOD)
+CLArrowIVAmmo (OMNIPOD)
+CLArrowIVAmmo (OMNIPOD)
+CLCASEII (OMNIPOD)
+Clan Endo Steel
+-Empty-
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+CLArrowIV
+CLArrowIV
+CLImprovedMediumHeavyLaser (OMNIPOD)
+CLImprovedMediumHeavyLaser (OMNIPOD)
+CLArrowIVAmmo (OMNIPOD)
+CLArrowIVAmmo (OMNIPOD)
+CLCASEII (OMNIPOD)
+Clan Endo Steel
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLLightTAG (OMNIPOD)
+Clan Endo Steel
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Clan Endo Steel
+Clan Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Clan Endo Steel
+Clan Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+overview:The Naga BattleMech, named for its resemblance to a mythological cobra, stands as an unusual design in a culture that values personal glory and ritual combat. Originating from Clan Wolf, the Naga was developed from a modified Woodsman chassis, equipped to carry a pair of Arrow IV launchers. Despite initial skepticism due to its focus on indirect fire support rather than direct combat, the Naga quickly demonstrated its strategic value on the battlefield.
+capabilities:The primary role of the Naga is to provide sustained artillery support while maintaining a degree of mobility. Its standard configuration emphasizes this role, equipped with six tons of missile ammunition but minimal short-range defense.
+deployment:The Naga T is an 80-ton Clan OmniMech designed primarily for missile support, tailored for the era of 3130. It's powered by a 400 XL (Clan) Engine and constructed with Clan Endo Steel, ensuring both agility and durability for its size.</p> <p>This version of the Naga is armed with two Arrow IV missile launchers, one in each arm, providing potent long-range bombardment capabilities. For closer engagements, it's equipped with two Improved Heavy Medium Lasers, one in each torso, offering significant firepower at medium to short distances. Additionally, the Naga T features a Light TAG in the center torso, enhancing its targeting accuracy and making it more effective in coordinated attacks. The blend of heavy artillery and precision laser weaponry makes this variant particularly versatile in a range of combat scenarios, capable of delivering devastating strikes from afar and defending itself effectively in closer encounters.</p>
+history:First deployed in the mid-2900s, the Naga's adoption across various Clans was gradual. Its effectiveness was convincingly demonstrated during the battle for Tukayyid, where Clan Wolf's Naga-equipped artillery Stars played a pivotal role. Notably, the Nagas were instrumental in Wolf’s victory at Brzo and Skupo, significantly weakening ComStar’s Tenth Army. This success led to its wider acceptance and deployment among several other Clans, including the Hell’s Horses, Snow Ravens, Star Adders, Cloud Cobras, and in limited numbers, the Jade Falcons.
+manufacturer:Manufacturing Plant WA3
+primaryfactory:Arcadia
+systemmanufacturer:CHASSIS:Type BMH-7 Endo Steel
+systemmanufacturer:ENGINE:Fusion 400 XL
+systemmanufacturer:ARMOR:Forged Type 34 Standard
+systemmanufacturer:COMMUNICATIONS:Type G3, Mk. XII
+systemmanufacturer:TARGETING:ArTrack 2 TTS
+

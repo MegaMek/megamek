@@ -1,6 +1,5 @@
-Version:1.0
-Opossum SalvageMech
-OPO-2 
+chassis:Opossum SalvageMech
+model:OPO-2 
 mul id:7847
 
 Config:Biped
@@ -8,6 +7,7 @@ techbase:Inner Sphere
 era:3145
 source:TRO: Irregulars
 rules level:2
+role:None
 
 mass:25
 engine:75 ICE Engine(IS)

@@ -1,6 +1,5 @@
-Version:1.0
-Komodo
-KIM-2
+chassis:Komodo
+model:KIM-2
 mul id:1810
 
 Config:Biped
@@ -8,6 +7,16 @@ TechBase:Inner Sphere
 Era:3053
 Source:TRO: 3055
 Rules Level:2
+role:Striker
+
+
+
+
+quirk:ext_twist
+quirk:low_profile
+quirk:pro_actuator
+quirk:weak_head_2
+
 
 Mass:45
 Engine:225 XL Engine

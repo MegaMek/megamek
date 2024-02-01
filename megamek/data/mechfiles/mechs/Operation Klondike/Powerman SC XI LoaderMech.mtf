@@ -1,10 +1,10 @@
-Version:1.1
-Powerman SC XI LoaderMech
-
+chassis:Powerman
+model:SC XI LoaderMech
 Config:Biped
 TechBase:Inner Sphere
 Era:2764
 Rules Level:2
+role:Ambusher
 source:Historical: Operation Klondike
 mul id:2564
 

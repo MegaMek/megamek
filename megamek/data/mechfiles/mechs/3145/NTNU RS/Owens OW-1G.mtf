@@ -1,6 +1,5 @@
-Version:1.0
-Owens
-OW-1G
+chassis:Owens
+model:OW-1G
 mul id:6924
 
 Config:Biped Omnimech
@@ -8,6 +7,12 @@ TechBase:Inner Sphere
 Era:3125
 Source:Record Sheets: 3145 New Tech New Upgrades
 Rules Level:3
+role:Scout
+
+
+
+quirk:imp_sensors
+
 
 Mass:35
 Engine:280 XL Engine(IS)

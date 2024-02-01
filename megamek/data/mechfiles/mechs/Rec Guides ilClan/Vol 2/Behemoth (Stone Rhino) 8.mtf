@@ -1,6 +1,6 @@
-Version:1.0
-Behemoth (Stone Rhino)
-8
+chassis:Behemoth
+clanname:Stone Rhino
+model:8
 mul id:7449
 
 Config:Biped
@@ -8,6 +8,15 @@ techbase:Clan
 era:3128
 source:Rec Guide:ilClan #2
 rules level:3
+role:Sniper
+
+quirk:barrel_fists_la
+quirk:barrel_fists_ra
+quirk:pro_actuator
+quirk:oversized
+quirk:poor_performance
+quirk:weak_head_1
+
 
 mass:100
 engine:300 Fusion (Clan) Engine(IS)

@@ -32,6 +32,10 @@ Simian Battle Armor
 IS Level 2
 </type>
 
+<role>
+Ambusher
+</role>
+
 <motion_type>
 Jump
 </motion_type>
@@ -110,3 +114,8 @@ JUMPJET:Unknown
 COMMUNICATIONS:Unknown
 TARGETING:Unknown
 </systemManufacturers>
+
+<quirks>
+easy_maintain
+</quirks>
+

@@ -1,6 +1,5 @@
-Version:1.0
-Catapult
-CPLT-C4C
+chassis:Catapult
+model:CPLT-C4C
 mul id:5453
 
 Config:Biped
@@ -8,6 +7,13 @@ TechBase:Inner Sphere
 Era:3055
 Source:TRO: 3050
 Rules Level:2
+role:Missile Boat
+
+
+
+quirk:no_arms
+quirk:weak_head_1
+
 
 Mass:65
 Engine:260 XL Engine(IS)

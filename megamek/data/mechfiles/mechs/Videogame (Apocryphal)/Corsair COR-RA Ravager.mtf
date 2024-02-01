@@ -1,6 +1,5 @@
-Version:1.0
-Corsair
-COR-RA Ravager
+chassis:Corsair
+model:COR-RA Ravager
 
 Config:Biped
 TechBase:Inner Sphere

@@ -16,9 +16,9 @@ Warship
 Stefan Amaris Battleship
 </Name>
 
-<model>
+<Model>
 
-</model>
+</Model>
 
 <mul id:>
 6786
@@ -36,23 +36,27 @@ Stefan Amaris Battleship
 IS Level 3
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
 
 <transporters>
-asfbay:18.0:4:1
-asfbay:18.0:4:2
-smallcraftbay:6.0:2:3
-Docking Collar
-Docking Collar
-Docking Collar
-Docking Collar
-crewquarters:3458.0:0
-1stclassquarters:1430.0:0
-2ndclassquarters:350.0:0
-steeragequarters:800.0:0
-cargobay:111960.0:1:4
+asfbay:18.0:2:1::-1:0
+asfbay:18.0:2:2::-1:0
+smallcraftbay:6.0:2:3::-1:0
+crewquarters:3458.0:0:-1::-1:0
+1stclassquarters:1430.0:0:-1::-1:0
+2ndclassquarters:350.0:0:-1::-1:0
+steeragequarters:800.0:0:-1::-1:0
+cargobay:111960.0:4:8::-1:0
+dockingcollar
+dockingcollar
+dockingcollar
+dockingcollar
 </transporters>
 
 <SafeThrust>
@@ -369,6 +373,10 @@ Historical: Liberation of Terra II
 150
 </grav_decks>
 
+<designtype>
+1
+</designtype>
+
 <crew>
 714
 </crew>
@@ -400,4 +408,10 @@ Historical: Liberation of Terra II
 <escape_pod>
 100
 </escape_pod>
+
+
+<quirks>
+bad_rep_is
+obsolete
+</quirks>
 

@@ -32,6 +32,10 @@ Zahn Heavy Transport
 IS Level 3
 </type>
 
+<role>
+Sniper
+</role>
+
 <motion_type>
 Wheeled
 </motion_type>
@@ -102,3 +106,8 @@ TRO: 3145 Capellan Confederation
 <tonnage>
 65.0
 </tonnage>
+
+<quirks>
+low_profile
+</quirks>
+

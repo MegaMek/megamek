@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -16,9 +16,9 @@ SupportTank
 Lesseps Dump Truck
 </Name>
 
-<model>
+<Model>
 
-</model>
+</Model>
 
 <mul id:>
 4499
@@ -28,13 +28,24 @@ Lesseps Dump Truck
 2523
 </year>
 
+<originalBuildYear>
+2523
+</originalBuildYear>
+
 <type>
 IS Level 3
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Wheeled
 </motion_type>
+
+<transporters>
+</transporters>
 
 <cruiseMP>
 3
@@ -44,24 +55,12 @@ Wheeled
 11
 </engine_type>
 
-<fuel>
-4
-</fuel>
-
 <armor>
 28
 19
 19
 12
 </armor>
-
-<barrating>
-5
-</barrating>
-
-<structural_tech_rating>
-3
-</structural_tech_rating>
 
 <Body Equipment>
 ISOffRoadChassis
@@ -79,11 +78,24 @@ Backhoe
 
 <Rear Equipment>
 Dumper (Rear)
+Cargo:SIZE:20.0
 </Rear Equipment>
 
-<transporters>
-cargobay:20:1
-</transporters>
+<barrating>
+5
+</barrating>
+
+<structural_tech_rating>
+3
+</structural_tech_rating>
+
+<engine_tech_rating>
+3
+</engine_tech_rating>
+
+<armor_tech_rating>
+3
+</armor_tech_rating>
 
 <source>
 TRO: Vehicle Annex (Revised)
@@ -92,3 +104,8 @@ TRO: Vehicle Annex (Revised)
 <tonnage>
 50.0
 </tonnage>
+
+<fuel>
+4.0
+</fuel>
+

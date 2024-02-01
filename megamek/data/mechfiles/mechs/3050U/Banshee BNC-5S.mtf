@@ -1,6 +1,5 @@
-Version:1.0
-Banshee
-BNC-5S
+chassis:Banshee
+model:BNC-5S
 mul id:247
 
 Config:Biped
@@ -8,6 +7,11 @@ TechBase:Inner Sphere
 Era:3053
 Source:TRO: 3050
 Rules Level:2
+role:Sniper
+
+quirk:rugged_1
+quirk:bad_rep_is
+
 
 Mass:95
 Engine:380 XL Engine

@@ -36,6 +36,10 @@ Carter Medical Emergency Response Vehicle
 IS Level 2
 </type>
 
+<role>
+Scout
+</role>
+
 <motion_type>
 Wheeled
 </motion_type>
@@ -104,3 +108,10 @@ XTR: Primitives III
 <fuelType>
 PETROCHEMICALS
 </fuelType>
+
+<quirks>
+easy_maintain
+gas_hog
+obsolete
+</quirks>
+

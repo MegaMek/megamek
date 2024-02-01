@@ -41,6 +41,10 @@ cargobay:30:1
 <type>
 IS Level 1
 </type>
+
+<role>
+None
+</role>
 <year>
 2500
 </year>

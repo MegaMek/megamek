@@ -1,6 +1,5 @@
-Version:1.0
-Charger
-CGR-1L
+chassis:Charger
+model:CGR-1L
 mul id:562
 
 Config:Biped
@@ -8,6 +7,14 @@ TechBase:Inner Sphere
 Era:3022
 Source:TRO: 3039
 Rules Level:1
+role:Skirmisher
+
+
+
+quirk:barrel_fists_la
+quirk:easy_maintain
+quirk:bad_rep_is
+
 
 Mass:80
 Engine:400 Fusion Engine

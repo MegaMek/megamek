@@ -46,7 +46,7 @@ dependencies {
 mainClassName = 'megamek.MegaMek'
 
 ext {
-    mmJvmOptions = ['-Xmx2048m', '--add-opens', 'java.base/java.util=ALL-UNNAMED', '--add-opens', 'java.base/java.util.concurrent=ALL-UNNAMED']
+    mmJvmOptions = ['-Xmx4096m', '--add-opens', 'java.base/java.util=ALL-UNNAMED', '--add-opens', 'java.base/java.util.concurrent=ALL-UNNAMED', '-Dsun.awt.disablegrab=true']
     data = 'data'
     unitFiles = "${data}/mechfiles"
     rats = "${data}/rat"
@@ -101,12 +101,12 @@ task equipmentList(type: JavaExec, dependsOn: jar) {
 
 task copyFiles(type: Copy) {
     description = 'Stages files that are to be copied into the distribution.'
-    
+
     dependsOn officialUnitList
     dependsOn equipmentList
-    
+
     from projectDir
-    
+
     include "${data}/**"
     include "${docs}/**"
     include "${mmconf}/**"
@@ -116,9 +116,9 @@ task copyFiles(type: Copy) {
     exclude { it.file.isDirectory() && (it.file in file(unitFiles).listFiles()) }
     exclude "${rats}/**"
     include "${userdata}/"
-    
+
     into fileStagingDir
-    
+
     inputs.dir "${data}"
     inputs.dir "${docs}"
     inputs.dir "${mmconf}"
@@ -176,7 +176,7 @@ task stageFiles {
     dependsOn unitFilesZip
     dependsOn ratZip
     dependsOn deleteAtlasedImages
-    
+
     doLast {
         mkdir "${fileStagingDir}/${log}"
     }
@@ -249,7 +249,7 @@ createExe {
         new File("${buildDir}/${outputDir}/${iniFile}").text = """# Launch4j runtime config
 # you can add arguments here that will be processed by the JVM at runtime
 ${project.ext.mmJvmOptions.join('\n')}
-"""        
+"""
     }
 }
 
@@ -320,7 +320,7 @@ task buildFromRepo (type: GradleBuild) {
     description = 'Assembles the distribution packages in the clean repository copy'
     group = 'distribution'
     dependsOn cloneMMRepo
-    
+
     dir = "${mmRepoDir}"
     tasks = [ ':megamek:assembleDist' ]
 }
@@ -329,7 +329,7 @@ task release (type: Copy) {
     description = 'Builds the release packages from the repository and copies them into the project build directory'
     group = 'distribution'
     dependsOn buildFromRepo
-    
+
     from (buildFromRepo)
     into "${distributionDir}"
 }

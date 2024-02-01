@@ -1,6 +1,5 @@
-Version:1.0
-Zeus-X
-ZEU-9WD (Stacy)
+chassis:Zeus-X
+model:ZEU-9WD (Stacy)
 mul id:3647
 
 Config:Biped
@@ -8,6 +7,13 @@ TechBase:Inner Sphere
 Era:3070
 Source:Starterbook: Wolf & Blake
 Rules Level:4
+role:Sniper
+
+
+
+quirk:command_mech
+quirk:difficult_maintain
+
 
 Mass:80
 Engine:320 Light Engine(IS)

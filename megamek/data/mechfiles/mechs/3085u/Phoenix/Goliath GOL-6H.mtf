@@ -1,6 +1,5 @@
-Version:1.0
-Goliath
-GOL-6H
+chassis:Goliath
+model:GOL-6H
 mul id:1237
 
 Config:Quad
@@ -8,6 +7,13 @@ TechBase:Inner Sphere
 Era:3071
 source:TRO: 3085
 Rules Level:2
+role:Sniper
+
+
+
+quirk:multi_trac
+quirk:exp_actuator
+
 
 Mass:80
 Engine:320 Light Engine(IS)

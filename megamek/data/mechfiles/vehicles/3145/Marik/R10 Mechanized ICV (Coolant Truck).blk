@@ -36,6 +36,10 @@ R10 Mechanized ICV
 IS Level 2
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Wheeled
 </motion_type>
@@ -97,4 +101,10 @@ TRO: 3145 Free Worlds League
 <tonnage>
 45.0
 </tonnage>
+
+
+<quirks>
+easy_maintain
+poor_target_long
+</quirks>
 

@@ -32,6 +32,10 @@ Ontos Heavy Tank
 IS Level 1
 </type>
 
+<role>
+Missile Boat
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -122,10 +126,6 @@ TARGETING:GuideRite w/Laser Coordination Link
 <source>
 TRO: 3039
 </source>
-
-<tonnage>
-95.0
-</tonnage>
 
 <fuelType>
 PETROCHEMICALS

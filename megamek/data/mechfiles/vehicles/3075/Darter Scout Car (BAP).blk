@@ -44,6 +44,10 @@ BeagleActiveProbe
 <type>
 IS
 </type>
+
+<role>
+Scout
+</role>
 <year>
 3053
 </year>

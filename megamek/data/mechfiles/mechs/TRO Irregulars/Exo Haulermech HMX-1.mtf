@@ -1,6 +1,5 @@
-Version:1.1
-Exo HaulerMech
-HMX-1
+chassis:Exo HaulerMech
+model:HMX-1
 mul id:7840
 
 Config:Biped
@@ -8,6 +7,7 @@ techbase:Inner Sphere
 era:3080
 source:TRO: Irregulars
 rules level:3
+role:None
 
 mass:10
 engine:40 ICE Engine(IS)

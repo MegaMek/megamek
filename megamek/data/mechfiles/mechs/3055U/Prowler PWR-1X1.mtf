@@ -1,6 +1,5 @@
-Version:1.1
-Prowler
-PWR-1X1
+chassis:Prowler
+model:PWR-1X1
 mul id:2582
 
 Config:Biped
@@ -8,6 +7,12 @@ TechBase:Mixed (IS Chassis)
 Era:3068
 Source:TRO: 3055
 Rules Level:4
+role:Skirmisher
+
+
+
+quirk:poor_life_support
+
 
 Mass:55
 Engine:385 XXL Engine

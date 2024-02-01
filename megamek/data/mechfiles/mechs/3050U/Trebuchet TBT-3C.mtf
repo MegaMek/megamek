@@ -1,6 +1,5 @@
-Version:1.0
-Trebuchet
-TBT-3C
+chassis:Trebuchet
+model:TBT-3C
 mul id:3295
 
 Config:Biped
@@ -8,6 +7,14 @@ techbase:Inner Sphere
 era:2780
 source:TRO: 3050
 rules level:2
+role:Missile Boat
+
+
+
+
+quirk:easy_maintain
+weaponquirk:fast_reload:RT:3:LRM 15
+
 
 mass:50
 engine:300 XL Engine(IS)

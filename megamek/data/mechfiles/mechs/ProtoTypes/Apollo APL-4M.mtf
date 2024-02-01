@@ -1,13 +1,20 @@
-Version:1.0
-Apollo
-APL-4M
+chassis:Apollo
+model:APL-4M
 mul id:3706
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3083
 Rules Level:4
+role:Missile Boat
 Source:TRO: Prototypes 
+
+
+
+quirk:fast_reload
+quirk:rugged_1
+quirk:difficult_maintain
+
 
 Mass:55
 Engine:220 XL Engine(IS)

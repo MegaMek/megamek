@@ -13,14 +13,17 @@
  */
 package megamek.client.ui.swing.lobby;
 
+import megamek.common.Entity;
+import megamek.common.Player;
+import megamek.common.force.Force;
+import megamek.common.util.StringUtil;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.StringTokenizer;
 
-import megamek.common.Entity;
-import megamek.common.QuirksHandler;
 import static megamek.client.ui.swing.lobby.LobbyMekPopup.*;
 
 /** The ActionListener for the lobby popup menu for both the MekTable and MekTrees. */
@@ -77,8 +80,6 @@ public class LobbyMekPopupActions implements ActionListener {
             case LMP_HOTLOAD_ON:
             case LMP_HOTLOAD_OFF:
             case LMP_SQUADRON:
-            case LMP_SAVE_QUIRKS_ALL:
-            case LMP_SAVE_QUIRKS_MODEL:
             case LMP_LOAD:
             case LMP_UNLOAD:
             case LMP_UNLOADALL:
@@ -109,6 +110,7 @@ public class LobbyMekPopupActions implements ActionListener {
             case LMP_FASSIGNONLY:
             case LMP_FCREATEFROM:
             case LMP_SBFFORMATION:
+            case LMP_FCDELETEEMPTY:
                 forceAction(command, entities, info);
                 break;
         }
@@ -118,22 +120,27 @@ public class LobbyMekPopupActions implements ActionListener {
     private void forceAction(String command, Set<Entity> entities, String info) {
         switch (command) {
             case LMP_FCREATESUB:
-                int parentId = Integer.parseInt(info);
+                int parentId = StringUtil.toInt(info, Force.NO_FORCE);
                 lobby.lobbyActions.forceCreateSub(parentId);
                 break;
 
             case LMP_FADDTO:
-                int forceId = Integer.parseInt(info);
+                int forceId = StringUtil.toInt(info, Force.NO_FORCE);
                 lobby.lobbyActions.forceAddEntity(entities, forceId);
                 break;
 
             case LMP_FRENAME:
-                forceId = Integer.parseInt(info);
+                forceId = StringUtil.toInt(info, Force.NO_FORCE);
                 lobby.lobbyActions.forceRename(forceId);
                 break;
 
             case LMP_FCREATETOP:
                 lobby.lobbyActions.forceCreateEmpty();
+                break;
+
+            case LMP_FCDELETEEMPTY:
+                forceId = StringUtil.toInt(info, Force.NO_FORCE);
+                lobby.lobbyActions.forceDeleteEmpty(forceId);
                 break;
 
             case LMP_FCREATEFROM:
@@ -148,20 +155,20 @@ public class LobbyMekPopupActions implements ActionListener {
                 StringTokenizer fst = new StringTokenizer(info, ",");
                 Set<Integer> forceIds = new HashSet<>();
                 while (fst.hasMoreTokens()) {
-                    forceIds.add(Integer.parseInt(fst.nextToken()));
+                    forceIds.add(StringUtil.toInt(fst.nextToken(), Force.NO_FORCE));
                 }
                 lobby.lobbyActions.forcePromote(forceIds);
                 break;
 
             case LMP_FASSIGN:
                 StringTokenizer st = new StringTokenizer(info, ":");
-                int newOwnerId = Integer.parseInt(st.nextToken());
+                int newOwnerId = StringUtil.toInt(st.nextToken(), Player.PLAYER_NONE);
                 lobby.lobbyActions.forceAssignFull(LobbyUtility.getForces(lobby.game(), st.nextToken()), newOwnerId);
                 break;
 
             case LMP_FASSIGNONLY:
                 st = new StringTokenizer(info, ":");
-                newOwnerId = Integer.parseInt(st.nextToken());
+                newOwnerId = StringUtil.toInt(st.nextToken(), Player.PLAYER_NONE);
                 lobby.lobbyActions.forceAssignOnly(LobbyUtility.getForces(lobby.game(), st.nextToken()), newOwnerId);
                 break;
 
@@ -210,18 +217,6 @@ public class LobbyMekPopupActions implements ActionListener {
 
             case LMP_SQUADRON:
                 lobby.lobbyActions.createSquadron(entities);
-                break;
-
-            case LMP_SAVE_QUIRKS_ALL:
-                for (Entity e : entities) {
-                    QuirksHandler.addCustomQuirk(e, false);
-                }
-                break;
-
-            case LMP_SAVE_QUIRKS_MODEL:
-                for (Entity e : entities) {
-                    QuirksHandler.addCustomQuirk(e, true);
-                }
                 break;
 
             case LMP_LOAD:

@@ -1,6 +1,5 @@
-Version:1.0
-Centurion
-CN9-D5
+chassis:Centurion
+model:CN9-D5
 mul id:522
 
 Config:Biped
@@ -8,6 +7,11 @@ TechBase:Inner Sphere
 Era:3062
 Source:TRO: 3050
 Rules Level:2
+role:Skirmisher
+
+quirk:imp_target_short
+quirk:non_standard
+
 
 Mass:50
 Engine:300 XL Engine

@@ -1,6 +1,5 @@
-Version:1.0
-Cataphract
-CTF-4L
+chassis:Cataphract
+model:CTF-4L
 mul id:473
 
 Config:Biped
@@ -8,6 +7,12 @@ TechBase:Inner Sphere
 Era:3067
 Source:TRO: 3050
 Rules Level:2
+role:Sniper
+
+
+
+quirk:pro_actuator
+
 
 Mass:70
 Engine:280 Fusion Engine

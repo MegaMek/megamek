@@ -21,14 +21,7 @@ package megamek.common.weapons;
 
 import java.util.Vector;
 
-import megamek.common.Building;
-import megamek.common.Entity;
-import megamek.common.EquipmentMode;
-import megamek.common.Game;
-import megamek.common.Report;
-import megamek.common.TagInfo;
-import megamek.common.Targetable;
-import megamek.common.ToHitData;
+import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
 import megamek.server.GameManager;
@@ -58,11 +51,16 @@ public class TAGHandler extends WeaponHandler {
                     entityTarget, false);
             game.addTagInfo(info);
             entityTarget.setTaggedBy(ae.getId());
-            
+
+            if (weapon.isInternalBomb()) {
+                // Firing an internally-mounted TAG pod counts for bomb bay explosion check
+                ((IBomber) ae).increaseUsedInternalBombs(1);
+            }
+
             // per errata, being painted by a TAG also spots the target for indirect fire
             ae.setSpotting(true);
             ae.setSpotTargetId(entityTarget.getId());
-            
+
             Report r = new Report(3188);
             r.subject = subjectId;
             vPhaseReport.addElement(r);

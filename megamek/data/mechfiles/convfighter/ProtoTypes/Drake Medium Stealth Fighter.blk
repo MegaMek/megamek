@@ -36,6 +36,10 @@ Drake Medium Stealth Fighter
 IS Level 2
 </type>
 
+<role>
+Fire Support
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -117,3 +121,10 @@ TRO: Prototypes
 <tonnage>
 35.0
 </tonnage>
+
+<quirks>
+atmo_flyer
+non_standard
+difficult_maintain
+</quirks>
+

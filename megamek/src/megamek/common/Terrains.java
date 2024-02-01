@@ -503,4 +503,39 @@ public class Terrains implements Serializable {
             }
         }
     }
+
+    /**
+     * Modifier to control roll when the terrain is in the landing path.
+     * @param terrainType   Type of terrain
+     * @param terrainLevel  The level of the terrain
+     * @return The control roll modifier
+     */
+    public static int landingModifier(int terrainType, int  terrainLevel) {
+        switch (terrainType) {
+            case WOODS:
+            case JUNGLE:
+                return (terrainLevel == 3) ? 7 : terrainLevel + 3;
+            case WATER:
+                return (terrainLevel > 0) ? 3 : 2;
+            case ROUGH:
+                return terrainLevel == 2 ? 5 : 3;
+            case RUBBLE:
+                return terrainLevel == 6 ? 5 : 3;
+            case SAND:
+            case TUNDRA:
+            case MAGMA:
+            case FIELDS:
+            case SWAMP:
+                return 2;
+            case BUILDING:
+                return terrainLevel + 1;
+            case SNOW:
+                return (terrainLevel == 2) ? 1 : 0;
+            case ICE:
+            case MUD:
+                return 1;
+            default:
+                return 0;
+        }
+    }
 }

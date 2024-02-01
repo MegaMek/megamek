@@ -32,6 +32,10 @@ Commando(Sqd5)
 IS Level 2
 </type>
 
+<role>
+Ambusher
+</role>
+
 <motion_type>
 Leg
 </motion_type>
@@ -133,3 +137,8 @@ JUMPJET:Unknown
 COMMUNICATIONS:Unknown
 TARGETING:Unknown
 </systemManufacturers>
+
+<quirks>
+easy_maintain
+</quirks>
+

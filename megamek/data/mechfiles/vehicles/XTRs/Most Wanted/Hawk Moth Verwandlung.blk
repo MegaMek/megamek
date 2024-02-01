@@ -17,7 +17,7 @@ Hawk Moth Gunship
 </Name>
 
 <Model>
-'Vedwandlung'
+'Verwandlung'
 </Model>
 
 <mul id:>
@@ -101,3 +101,8 @@ XTR: Most Wanted
 <tonnage>
 25.0
 </tonnage>
+
+<quirks>
+vtol_rotor_coaxial
+</quirks>
+

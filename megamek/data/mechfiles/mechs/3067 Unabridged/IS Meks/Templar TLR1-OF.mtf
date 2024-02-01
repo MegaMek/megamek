@@ -1,6 +1,5 @@
-Version:1.0
-Templar
-TLR1-OF
+chassis:Templar
+model:TLR1-OF
 mul id:5709
 
 Config:Biped Omnimech
@@ -8,6 +7,12 @@ TechBase:Inner Sphere
 Era:3068
 Source:TRO: Jihad
 Rules Level:2
+role:Brawler
+
+
+
+quirk:easy_maintain
+
 
 Mass:85
 Engine:340 XL Engine(IS)

@@ -1,6 +1,5 @@
-Version:1.0
-Diomede
-D-M3D-3 ConstructionMech
+chassis:Diomede
+model:D-M3D-3 ConstructionMech
 mul id:901
 
 Config:Biped
@@ -8,6 +7,7 @@ techbase:Inner Sphere
 era:3084
 source:TRO: 3085
 rules level:2
+role:Missile Boat
 
 mass:100
 engine:200 Fusion Engine(IS)

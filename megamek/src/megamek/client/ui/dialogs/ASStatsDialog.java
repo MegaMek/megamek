@@ -42,7 +42,7 @@ import java.util.Collection;
  * It also allows export of the table data (optimized for import into Excel).
  */
 public class ASStatsDialog extends AbstractDialog {
-    
+
     private final Collection<Entity> entities;
     private final JButton clipBoardButton = new JButton(Messages.getString("CASCardPanel.copyCard"));
     private final JButton copyStatsButton = new JButton(Messages.getString("CASCardPanel.copyStats"));
@@ -71,7 +71,7 @@ public class ASStatsDialog extends AbstractDialog {
     @Override
     protected Container createCenterPane() {
         centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.PAGE_AXIS));
-        
+
         var optionsPanel = new UIUtil.FixedYPanel(new FlowLayout(FlowLayout.LEFT));
         optionsPanel.add(Box.createVerticalStrut(25));
         optionsPanel.add(clipBoardButton);
@@ -80,7 +80,7 @@ public class ASStatsDialog extends AbstractDialog {
         clipBoardButton.addActionListener(e -> copyToClipboard());
         copyStatsButton.addActionListener(e -> copyStats());
         printButton.addActionListener(ev -> printCards());
-        
+
         scrollPane.getVerticalScrollBar().setUnitIncrement(16);
 
         centerPanel.add(Box.createVerticalStrut(15));
@@ -89,7 +89,7 @@ public class ASStatsDialog extends AbstractDialog {
         setupTable();
         return centerPanel;
     }
-    
+
     private void setupTable() {
         centerPanel.remove(scrollPane);
         tablePanel = new ASStatsTablePanel(getFrame()).add(entities, "Selected Units");
@@ -97,7 +97,7 @@ public class ASStatsDialog extends AbstractDialog {
         centerPanel.add(scrollPane);
         adaptToGUIScale();
     }
-    
+
     private void copyToClipboard() {
         StringSelection stringSelection = new StringSelection(clipboardString(entities));
         Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
@@ -106,7 +106,7 @@ public class ASStatsDialog extends AbstractDialog {
 
     private void copyStats() {
         StringBuilder allStats = new StringBuilder();
-        for (ASCardDisplayable element : tablePanel.getElements()) {
+        for (ASCardDisplayable element : tablePanel.getSortedElements()) {
             var statsExporter = new ASStatsExporter(element);
             allStats.append(statsExporter.getStats()).append("\n");
         }
@@ -166,6 +166,6 @@ public class ASStatsDialog extends AbstractDialog {
     }
 
     private void printCards() {
-        new ASCardPrinter(tablePanel.getElements(), getFrame()).printCards();
+        new ASCardPrinter(tablePanel.getSortedElements(), getFrame()).printCards();
     }
 }

@@ -1,6 +1,6 @@
-Version:1.1
-Grendel (Mongrel)
-D
+chassis:Grendel
+clanname:Mongrel
+model:D
 mul id:1289
 
 Config:Biped Omnimech
@@ -8,6 +8,10 @@ TechBase:Clan
 Era:3053
 source:TRO: Clan Invasion
 Rules Level:2
+role:Striker
+
+quirk:rugged_1
+
 
 Mass:45
 Engine:315 XL (Clan) Engine(IS)

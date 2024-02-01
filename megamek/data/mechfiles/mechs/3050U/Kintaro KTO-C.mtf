@@ -1,6 +1,5 @@
-Version:1.0
-Kintaro
-KTO-C
+chassis:Kintaro
+model:KTO-C
 mul id:1795
 
 Config:Biped
@@ -8,6 +7,12 @@ TechBase:Inner Sphere
 Era:3051
 Source:TRO: 3050
 Rules Level:2
+role:Skirmisher
+
+
+
+quirk:rugged_1
+
 
 Mass:55
 Engine:275 Fusion Engine

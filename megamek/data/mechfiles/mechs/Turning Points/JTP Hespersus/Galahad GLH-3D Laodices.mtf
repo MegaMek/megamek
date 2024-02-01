@@ -1,6 +1,5 @@
-Version:1.1
-Galahad
-GLH-3D (Laodices)
+chassis:Galahad
+model:GLH-3D (Laodices)
 mul id:6978
 
 Config:Biped
@@ -8,6 +7,12 @@ TechBase:Inner Sphere
 Era:3070
 Source:Jihad Turning Points: Hespersus
 Rules Level:4
+role:Sniper
+
+
+
+quirk:difficult_maintain
+
 
 Mass:60
 Engine:240 Light Engine(IS)

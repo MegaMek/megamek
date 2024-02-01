@@ -1,6 +1,5 @@
-Version:1.0
-Firestarter
-FS9-H
+chassis:Firestarter
+model:FS9-H
 mul id:1096
 
 Config:Biped
@@ -8,6 +7,15 @@ TechBase:Inner Sphere
 Era:2703
 Source:TRO: 3039
 Rules Level:1
+role:Scout
+
+
+
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+weaponquirk:exposed_linkage:RA:4:Flamer
+weaponquirk:exposed_linkage:LA:4:Flamer
+
 
 Mass:35
 Engine:210 Fusion Engine

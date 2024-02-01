@@ -1,6 +1,5 @@
-Version:1.0
-Cyclops
-CP-12-K
+chassis:Cyclops
+model:CP-12-K
 mul id:780
 
 Config:Biped
@@ -8,6 +7,15 @@ TechBase:Inner Sphere
 Era:3059
 Source:TRO: 3050
 Rules Level:2
+role:Brawler
+
+
+
+quirk:battle_computer
+quirk:cowl
+quirk:difficult_eject
+quirk:weak_head_2
+
 
 Mass:90
 Engine:360 Fusion Engine(IS)

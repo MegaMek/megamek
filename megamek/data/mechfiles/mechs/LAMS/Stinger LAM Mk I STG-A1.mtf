@@ -1,6 +1,5 @@
-Version:1.0
-Stinger LAM Mk I
-STG-A1
+chassis:Stinger LAM Mk I
+model:STG-A1
 mul id:5140
 
 Config:LAM
@@ -8,6 +7,7 @@ TechBase:Inner Sphere
 Era:2688
 Source:TRO: 3085
 Rules Level:3
+role:Scout
 
 Mass:30
 Engine:180 Fusion Engine(IS)

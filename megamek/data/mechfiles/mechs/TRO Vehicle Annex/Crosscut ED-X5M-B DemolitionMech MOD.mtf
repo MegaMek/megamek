@@ -1,6 +1,5 @@
-Version:1.0
-Crosscut
-ED-X5M-B DemolitionMech MOD
+chassis:Crosscut
+model:ED-X5M-B DemolitionMech MOD
 mul id:7171
 
 Config:Biped
@@ -8,6 +7,7 @@ techbase:Inner Sphere
 era:3079
 source:Record Sheets: Vehicle Annex - IndustrialMechs & Exoskeletons
 rules level:2
+role:Ambusher
 
 mass:30
 engine:90 Fusion Engine(IS)

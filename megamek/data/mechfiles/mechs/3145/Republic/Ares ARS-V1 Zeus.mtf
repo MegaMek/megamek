@@ -1,39 +1,45 @@
-Version:1.1
-Ares
-ARS-V1 Zeus
+chassis:Ares
+model:ARS-V1 Zeus
 mul id:6685
-
 Config:Tripod Omnimech
-TechBase:Mixed (IS Chassis)
-Era:3136
-Source:TRO: 3145 Republic of the Sphere
-Rules Level:3
+techbase:Mixed (IS Chassis)
+era:3136
+source:TRO: 3145 Republic of the Sphere
+rules level:3
+role:Juggernaut
 
-Mass:135
-Engine:270 Fusion Engine(IS)
-Structure:IS Endo-Composite
-Myomer:Standard
-Cockpit:Superheavy Tripod Cockpit
-Gyro:Superheavy Gyro
 
-Heat Sinks:21 Double
-Base Chassis Heat Sinks:10
-Walk MP:2
-Jump MP:0
 
-Armor:Standard(Inner Sphere)
-LA Armor:41
-RA Armor:41
-LT Armor:40
-RT Armor:40
-CT Armor:60
-HD Armor:12
-LL Armor:56
-RL Armor:56
-CL Armor:56
-RTL Armor:16
-RTR Armor:16
-RTC Armor:22
+quirk:command_mech
+quirk:distracting
+quirk:searchlight
+
+
+mass:135
+engine:270 Fusion Engine(IS)
+structure:IS Endo-Composite
+myomer:Standard
+cockpit:Superheavy Tripod Cockpit
+gyro:Superheavy Gyro
+
+heat sinks:21 IS Double
+base chassis heat sinks:10
+walk mp:2
+jump mp:0
+
+armor:Standard(Inner Sphere)
+LA armor:41
+RA armor:41
+LT armor:40
+RT armor:40
+CT armor:60
+HD armor:12
+LL armor:56
+RL armor:56
+CL armor:56
+RTL armor:16
+RTR armor:16
+RTC armor:22
 
 Weapons:15
 ER PPC, Left Arm
@@ -55,38 +61,38 @@ ER Small Laser, Center Torso
 Left Arm:
 Shoulder
 Upper Arm Actuator
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
-CLERPPC (omnipod)
-CLERPPC (omnipod)
+ISDoubleHeatSink (OMNIPOD)
+ISDoubleHeatSink (OMNIPOD)
+ISDoubleHeatSink (OMNIPOD)
+ISDoubleHeatSink (OMNIPOD)
+ISDoubleHeatSink (OMNIPOD)
+ISDoubleHeatSink (OMNIPOD)
+CLERPPC (OMNIPOD)
+CLERPPC (OMNIPOD)
 IS Endo-Composite
 -Empty-
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
-CLStreakSRM6 (omnipod)
-CLStreakSRM6 (omnipod)
-CLStreakSRM6 (omnipod)
-Clan Streak SRM 6 Ammo|Clan Streak SRM 6 Ammo (omnipod)
-Clan Streak SRM 6 Ammo|Clan Streak SRM 6 Ammo (omnipod)
-ISCASEII (omnipod)
+ISDoubleHeatSink (OMNIPOD)
+ISDoubleHeatSink (OMNIPOD)
+CLStreakSRM6 (OMNIPOD)
+CLStreakSRM6 (OMNIPOD)
+CLStreakSRM6 (OMNIPOD)
+Clan Streak SRM 6 Ammo|Clan Streak SRM 6 Ammo (OMNIPOD)
+Clan Streak SRM 6 Ammo|Clan Streak SRM 6 Ammo (OMNIPOD)
+ISCASEII (OMNIPOD)
 IS Endo-Composite
 -Empty-
 
 Left Torso:
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (OMNIPOD)
+ISDoubleHeatSink (OMNIPOD)
+ISDoubleHeatSink (OMNIPOD)
+ISDoubleHeatSink (OMNIPOD)
+ISDoubleHeatSink (OMNIPOD)
+ISDoubleHeatSink (OMNIPOD)
 CLERMediumLaser
 CLERSmallLaser
 LRM 5
@@ -95,12 +101,12 @@ IS Ammo LRM-5
 ISCASEII
 
 Right Torso:
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (OMNIPOD)
+ISDoubleHeatSink (OMNIPOD)
+ISDoubleHeatSink (OMNIPOD)
+ISDoubleHeatSink (OMNIPOD)
+ISDoubleHeatSink (OMNIPOD)
+ISDoubleHeatSink (OMNIPOD)
 CLERMediumLaser
 CLERSmallLaser
 LRM 5
@@ -114,12 +120,12 @@ Fusion Engine
 Fusion Engine
 Gyro
 Gyro
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (OMNIPOD)
+ISDoubleHeatSink (OMNIPOD)
 SRM 2
 CLERSmallLaser
-ISTargeting Computer (omnipod)
-ISTargeting Computer (omnipod)
+ISTargeting Computer (OMNIPOD)
+ISTargeting Computer (OMNIPOD)
 IS Endo-Composite
 
 Head:
@@ -178,14 +184,14 @@ ISAntiPersonnelPod
 -Empty-
 -Empty-
 
-overview:The Ares is a Superheavy Class Tripod OmniMech, which was first produced by the Republic of the Sphere. 
+overview:<p>The Ares BattleMech, a product of the Rhodes Project, represents a significant advancement in super-heavy Mech technology. Developed as a more versatile successor to the Poseidon, the Ares compensates for its heavier weight and slower speed with robust armor, a reconfigurable payload, and the capacity to transport friendly battle armor. Its OmniMech design allows for rapid servicing and a wide array of firepower options, including artillery support. Visually similar to its sister Mech, the Poseidon, the Ares adds an element of unpredictability on the battlefield, keeping enemy commanders guessing about its actual capabilities until it engages in combat.</p>
 
-capabilities:Designed as a Tripod, the 'Mech's unique method of movement gives the Ares the ability to handle turns without having to slow its pace. This is a benefit to the design due to its slow speed. Its lower rated engine and Endo-Composite construction allows the 'Mech to carry 41 tons of OmniPod encased weapons and equipment. The 'Mech is protected by 28.5 tons of Maximillian 320 standard armor, giving it hefty protection against enemy fire. Like all Superheavy Tripods, the Ares has a 3-man cockpit, which allows the 'Mech to perform better in combat than a normal single MechWarrior. This allows it to be able to target multiple enemies without penalty, a pilot focused on navigating the machine, and gaining a tactical advantage to allow it to serve as a command vehicle in battle. Each Ares carries a fixed array of weapons: on each leg a pair of Anti-Personnel Pods. On the 'Mech's torso each version of the Ares has a pair of Clan ER Medium Lasers, three Clan ER Small Lasers, three SRM 2 launchers, and a pair of LRM 5 launchers, giving the Ares series of 'Mechs a well-rounded base platform to start with.
+capabilities:<p>The Ares, built on a unique tripedal humanoid chassis, closely resembles the Poseidon in appearance but is distinct in its operational capabilities. The intentional similarity in design serves not only as an engineering convenience but also as a strategic ploy to confuse observers and enemies. Equipped with a versatile array of weapons configurations, the Ares can adapt to various combat roles, from direct engagement to artillery support. Its various field configurations, each with specialized nomenclature, further contribute to the Mech's versatility and adaptability on the battlefield.</p>
 
 deployment:Its Primary Configuration, named "Zeus", is a generalist combatant. Along with its fixed-weapon systems, the "Zeus" has a pair of Clan tech ER PPCs in the left arm, while 3 additional Clan Streak 6 SRMs are fitted to the right. The 4 tons of missiles are protected by the addition of CASE II. With the addition of 11 Double Heat Sinks, a Targeting Computer is added precision to both OmniPod and fixed energy weapons found through the 'Mech.
 
-history:The 'Mech's development began as Poseidon prototypes finished their trial runs in 3135. The Ares' appearance is due, in part, to its development cycle, which took place at nearly the same time as that of the Poseidon. The Ares' origins were virtually unknown during its initial deployment with the Republic's Stone's Brigades and units stationed at its factory world on Devil's Rock. During the 3140s, the Ares had been deployed to various worlds neighboring the Republic's in covert raids and recon missions as part of the nation's efforts to keep potential invaders off guard. Production of the 'Mech and its sister design, the Poseidon, continued on Devil's Rock at Rhodes Foundry. By 3145, the location of the factory had become a frontline world in danger of falling to a potential Clan Wolf invasion. Additional production was planned for Mars, with the facilities on Devil's Rock set to be razed should invasion forces arrive on world. A single Ares of uncertain configuration saw deployment in 3146 as part of Julian Davion's Dawn Guards. Upon gifting Julian the 'Mech, Devlin Stone warned him that keeping the machine in fighting trim was "a nightmare." Several Ares 'Mechs were deployed to Callison in 3149. The Republic made extensive use of the Ares during the Battle of Terra, especially in Operation Four Horsemen, against Clan Wolf. They proved to be a serious threat, stopping and even managing to make the Clanners retreat, but after the Wolves adjusted their tactics to them, all fell, one after another. During Terra's conquest, the Wolves salvaged an unknown number of Areses, managing to rebuild and repair some, using them in their Trial against Clan Jade Falcon; most of them, ironically, were crewed by former bondsmen of the RAF.[10] After the Trial, Wolf's Dragoons salvaged a number of Areses, disassembling some to study and replicate them. The new Dragoons leader, Colonel Henry Kincaid, gave six functional units, along with intel about them, to the Free Worlds League Captain-General Nikol Halas-Hughes Marik, though they still retained some for themselves. That same year, the League's First Free Worlds Guards fielded several Areses when deployed on Marik, twice as many as the Dragoons gave Nikol. Some were newly manufactured, which made the League the first Inner Sphere state to build them since the fall of the Republic.
 
+history:<p>The Ares BattleMech's story is a narrative of technological evolution and strategic foresight in the wake of the Jihad, as envisioned by the Republic of the Sphere's Rhodes Project. Developed alongside the Poseidon as a more versatile super-heavy Mech, the Ares was designed not just as a response to emerging threats but also as a symbol of a new era in Mech warfare. Its development aimed to push the limits of Mech capabilities, incorporating flexibility in armament and operations, a stark contrast to traditional Mech designs.<p>In the tumultuous period following the Blackout and the rise of the Fortress Republic, the Ares emerged as a critical asset. Prototypes were first deployed at the Serbian proving grounds on Terra in 3135, where they engaged rebel senatorial forces. This conflict marked the Ares's baptism by fire, proving its worth in actual combat conditions. The Mech's performance in this secretive but pivotal engagement informed subsequent refinements, leading to the production of the versatile PSD-V2 models.<p>The deployment of the Ares has been strategic and selective, with units primarily assigned to Stone’s Brigade regiments, notably in the Lament and the Defenders on Terra. Additionally, a significant number of Ares Mechs are stationed at the Devil’s Rock factories, emphasizing their importance in safeguarding key Republic sites. As tensions rise near the Fortress Republic's boundaries, the Ares stands at the forefront of the Republic's defense strategy, particularly against potential Clan invasions.<p>As the Republic's military landscape continues to evolve, the Ares remains a critical component of its armed forces. Its diverse configurations, ranging from the Zeus to the Apollo, illustrate its adaptability and effectiveness in various combat roles. The Ares, with its unique tripedal design and modular weapon systems, represents the Republic's commitment to maintaining a formidable and flexible military presence in an uncertain future.</p>
 manufacturer:Rhodes Foundry
 primaryfactory:Devil’s Rock
 systemmanufacturer:CHASSIS:Rhodes-M Endo-Composite
@@ -193,3 +199,4 @@ systemmanufacturer:ENGINE:PlasmaStar 270
 systemmanufacturer:ARMOR:Maximillian 320 with CASE II
 systemmanufacturer:COMMUNICATIONS:Titan’s Shout Mk. IVA
 systemmanufacturer:TARGETING:Titan’s Vantage Mk. II
+

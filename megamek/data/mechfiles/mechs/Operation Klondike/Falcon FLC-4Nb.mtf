@@ -1,13 +1,18 @@
-Version:1.1
-Falcon
-FLC-4Nb
+chassis:Falcon
+model:FLC-4Nb
 mul id:1023
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2776
 Rules Level:2
+role:Striker
 source:Historical: Operation Klondike
+
+
+
+quirk:low_profile
+
 
 Mass:30
 Engine:180 Fusion Engine

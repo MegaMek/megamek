@@ -1,6 +1,5 @@
-Version:1.1
-Annihilator
-ANH-5W
+chassis:Annihilator
+model:ANH-5W
 mul id:8386
 
 Config:Biped
@@ -8,6 +7,12 @@ techbase:Mixed (IS Chassis)
 era:3134
 source:Rec Guide:ilClan #24
 rules level:2
+role:Sniper
+
+
+
+quirk:easy_maintain
+
 
 mass:100
 engine:200 Fusion Engine(IS)

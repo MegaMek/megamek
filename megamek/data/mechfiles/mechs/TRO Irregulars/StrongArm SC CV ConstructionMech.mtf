@@ -1,6 +1,5 @@
-Version:1.1
-StrongArm
-SC CV ConstructionMech
+chassis:StrongArm
+model:SC CV ConstructionMech
 mul id:7857
 
 Config:Biped
@@ -8,6 +7,7 @@ techbase:Inner Sphere
 era:3094
 source:TRO: Irregulars
 rules level:2
+role:None
 
 mass:35
 engine:140 ICE Engine(IS)

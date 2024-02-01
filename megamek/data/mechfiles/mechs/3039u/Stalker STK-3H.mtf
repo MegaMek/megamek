@@ -1,6 +1,5 @@
-Version:1.0
-Stalker
-STK-3H
+chassis:Stalker
+model:STK-3H
 mul id:3038
 
 Config:Biped
@@ -8,6 +7,14 @@ TechBase:Inner Sphere
 Era:2638
 Source:TRO: 3039
 Rules Level:1
+role:Missile Boat
+
+
+
+quirk:combat_computer
+quirk:ubiquitous_is
+quirk:no_arms
+
 
 Mass:85
 Engine:255 Fusion Engine

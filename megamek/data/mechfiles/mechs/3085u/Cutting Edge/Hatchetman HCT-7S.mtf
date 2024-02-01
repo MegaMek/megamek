@@ -1,6 +1,5 @@
-Version:1.2
-Hatchetman
-HCT-7S
+chassis:Hatchetman
+model:HCT-7S
 mul id:1418
 
 Config:Biped
@@ -8,6 +7,12 @@ TechBase:Inner Sphere
 Era:3084
 source:TRO: 3085
 Rules Level:2
+role:Skirmisher
+
+
+
+quirk:anti_air
+
 
 Mass:45
 Engine:225 Light Engine

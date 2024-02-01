@@ -36,6 +36,10 @@ Surat (Gray Death) Solahma Suit
 Mixed (IS Chassis)
 </type>
 
+<role>
+Ambusher
+</role>
+
 <motion_type>
 Leg
 </motion_type>
@@ -140,4 +144,11 @@ biped
 <weightclass>
 2
 </weightclass>
+
+
+<quirks>
+easy_maintain
+bad_rep_is
+poor_work
+</quirks>
 

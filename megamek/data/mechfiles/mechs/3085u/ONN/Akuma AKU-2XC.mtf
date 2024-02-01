@@ -1,6 +1,5 @@
-Version:1.1
-Akuma
-AKU-2XC
+chassis:Akuma
+model:AKU-2XC
 mul id:22
 
 Config:Biped
@@ -8,6 +7,12 @@ TechBase:Inner Sphere
 Era:3077
 source:TRO: 3085
 Rules Level:4
+role:Juggernaut
+
+
+
+quirk:easy_maintain
+
 
 Mass:90
 Engine:270 Fusion Engine(IS)

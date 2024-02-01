@@ -1,6 +1,5 @@
-Version:1.0
-Trebaruna
-TR-XL
+chassis:Trebaruna
+model:TR-XL
 mul id:3294
 
 Config:Quad
@@ -8,6 +7,12 @@ TechBase:Inner Sphere
 Era:3081
 source:TRO: 3085
 Rules Level:2
+role:Brawler
+
+
+
+quirk:command_mech
+
 
 Mass:95
 Engine:285 Light Engine

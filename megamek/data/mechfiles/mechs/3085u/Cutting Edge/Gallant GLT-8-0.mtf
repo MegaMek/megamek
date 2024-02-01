@@ -1,6 +1,5 @@
-Version:1.0
-Gallant
-GLT-8-0
+chassis:Gallant
+model:GLT-8-0
 mul id:1174
 
 Config:Biped
@@ -8,6 +7,13 @@ TechBase:Inner Sphere
 Era:3078
 source:TRO: 3085
 Rules Level:4
+role:Missile Boat
+
+
+
+weaponquirk:stable_weapon:RA:10:ISMediumXPulseLaser
+weaponquirk:stable_weapon:RA:11:ISMediumXPulseLaser
+
 
 Mass:70
 Engine:210 XL Engine

@@ -1,13 +1,18 @@
-Version:1.0
-Annihilator
-ANH-1E
+chassis:Annihilator
+model:ANH-1E
 mul id:36
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3028
 Rules Level:1
+role:Juggernaut
 source:Historical Turning Points: Death to Mercenaries
+
+
+
+quirk:easy_maintain
+
 
 Mass:100
 Engine:200 Fusion Engine(IS)

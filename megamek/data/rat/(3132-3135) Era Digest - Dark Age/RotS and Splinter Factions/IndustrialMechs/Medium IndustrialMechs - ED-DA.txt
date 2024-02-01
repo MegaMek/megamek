@@ -6,7 +6,7 @@ Buster BC XV-M-B HaulerMech MOD, 4
 Quasit MilitiaMech QUA-51T, 5
 Buster BC XV-M HaulerMech MOD, 6
 Sarissa SecurityMech MN2-A, 5
-Jabberwocky MilitiaMech JAW-67, 4
+Jabberwocky JAW-67 MilitiaMech, 4
 Quasit MilitiaMech QUA-51M, 3
 Quasit MilitiaMech QUA-51P, 2
 Raider Mk II JL-2, 1

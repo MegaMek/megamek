@@ -1,6 +1,5 @@
-Version:1.2
-Hatchetman
-HCT-3F
+chassis:Hatchetman
+model:HCT-3F
 mul id:1410
 
 Config:Biped
@@ -8,6 +7,14 @@ techbase:Inner Sphere
 era:3023
 source:TRO: 3039
 rules level:1	
+role:Brawler
+
+
+
+
+quirk:anti_air
+weaponquirk:fast_reload:RT:2:Autocannon/10
+
 
 mass:45
 engine:180 Fusion Engine(IS)

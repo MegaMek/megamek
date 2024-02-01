@@ -1,6 +1,5 @@
-Version:1.1
-Dasher II
-4
+chassis:Dasher II
+model:4
 mul id:6919
 
 Config:Biped
@@ -8,6 +7,10 @@ TechBase:Mixed (IS Chassis)
 Era:3136
 Source:Record Sheets: 3145 New Tech New Upgrades
 Rules Level:3
+role:Striker
+
+quirk:poor_performance
+
 
 Mass:40
 Engine:280 XXL (Clan) Engine

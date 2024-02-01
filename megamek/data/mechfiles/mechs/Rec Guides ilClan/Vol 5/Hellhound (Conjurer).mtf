@@ -1,6 +1,6 @@
-Version:1.0
-Hellhound (Conjurer)
-
+chassis:Hellhound
+clanname:Conjurer
+model:
 mul id:1473
 
 
@@ -9,6 +9,11 @@ techbase:Clan
 era:2829
 source:Rec Guide:ilClan #5
 rules level:2
+role:Skirmisher
+
+
+quirk:ext_twist
+
 
 mass:50
 engine:300 Fusion (Clan) Engine(IS)

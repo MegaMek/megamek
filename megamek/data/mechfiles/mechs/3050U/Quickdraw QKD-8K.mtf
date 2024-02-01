@@ -1,6 +1,5 @@
-Version:1.1
-Quickdraw
-QKD-8K
+chassis:Quickdraw
+model:QKD-8K
 mul id:2616
 
 Config:Biped
@@ -8,6 +7,13 @@ TechBase:Inner Sphere
 Era:3064
 Source:TRO: 3050
 Rules Level:2
+role:Skirmisher
+
+
+
+quirk:hyper_actuator
+quirk:exp_actuator
+
 
 Mass:60
 Engine:300 Fusion Engine

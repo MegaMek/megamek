@@ -1,12 +1,18 @@
-Version:1.3
-Nightsky
-NGS-4S
+chassis:Nightsky
+model:NGS-4S
 mul id:2279
 Config:Biped
 techbase:Inner Sphere
 era:3053
 source:TRO: 3055
 rules level:2
+role:Striker
+
+
+
+
+weaponquirk:mod_weapons:RA:4:Hatchet
+
 
 mass:50
 engine:300 XL Engine(IS)

@@ -1,6 +1,5 @@
-Version:1.0
-Warlord
-BLR-2Dr
+chassis:Warlord
+model:BLR-2Dr
 mul id:3510
 
 Config:Biped
@@ -8,6 +7,12 @@ TechBase:Inner Sphere
 Era:3078
 source:TRO: 3085
 Rules Level:2
+role:Brawler
+
+
+
+quirk:easy_maintain
+
 
 Mass:80
 Engine:320 Fusion Engine

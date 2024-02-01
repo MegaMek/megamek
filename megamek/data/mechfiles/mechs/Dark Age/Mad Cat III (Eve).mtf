@@ -1,6 +1,5 @@
-Version:1.0
-Mad Cat III
-(Eve)
+chassis:Mad Cat III
+model:(Eve)
 mul id:5543
 
 Config:Biped
@@ -8,6 +7,12 @@ TechBase:Clan
 Era:3086
 Source:Dark Age Turning Points: Liao
 Rules Level:2
+role:Sniper
+
+quirk:bad_rep_clan
+quirk:difficult_maintain
+quirk:imp_com
+
 
 Mass:55
 Engine:330 XL (Clan) Engine(IS)

@@ -1,6 +1,6 @@
-Version:1.0
-Vulture Mk III (Mad Dog Mk III)
-(Prime)
+chassis:Vulture Mk III
+clanname:Mad Dog Mk III
+model:(Prime)
 mul id:6271
 
 Config:Biped Omnimech
@@ -8,6 +8,14 @@ TechBase:Clan
 Era:3109
 Source:TRO: 3145 The Clans
 Rules Level:2
+role:Missile Boat
+
+
+
+
+quirk:stable
+quirk:variable_range_long
+
 
 Mass:60
 Engine:300 XL (Clan) Engine(IS)

@@ -36,6 +36,10 @@ Saturn Patrol Ship
 IS Level 4
 </type>
 
+<role>
+Transport
+</role>
+
 <motion_type>
 Spheroid
 </motion_type>
@@ -193,4 +197,10 @@ XTR: Primitives V
 <escape_pod>
 2
 </escape_pod>
+
+
+<quirks>
+imp_com
+atmo_instability
+</quirks>
 

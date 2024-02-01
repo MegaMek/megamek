@@ -1,6 +1,5 @@
-Version:1.0
-Zeus
-ZEU-6T
+chassis:Zeus
+model:ZEU-6T
 mul id:3643
 
 Config:Biped
@@ -8,6 +7,13 @@ TechBase:Inner Sphere
 Era:3026
 Source:TRO: 3039
 Rules Level:1
+role:Sniper
+
+
+
+quirk:barrel_fists_ra
+quirk:easy_maintain
+
 
 Mass:80
 Engine:320 Fusion Engine

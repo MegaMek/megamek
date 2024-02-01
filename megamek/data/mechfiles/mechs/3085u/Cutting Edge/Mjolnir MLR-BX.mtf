@@ -1,6 +1,5 @@
-Version:1.1
-Mjolnir
-MLR-BX
+chassis:Mjolnir
+model:MLR-BX
 mul id:2195
 
 Config:Biped
@@ -8,6 +7,13 @@ TechBase:Inner Sphere
 Era:3078
 source:TRO: 3085
 Rules Level:3
+role:Striker
+
+
+
+quirk:easy_maintain
+weaponquirk:accurate:LA:4:Mace
+
 
 Mass:25
 Engine:150 XL Engine(IS)

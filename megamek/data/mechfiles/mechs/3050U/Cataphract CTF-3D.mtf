@@ -1,6 +1,5 @@
-Version:1.0
-Cataphract
-CTF-3D
+chassis:Cataphract
+model:CTF-3D
 mul id:469
 
 Config:Biped
@@ -8,6 +7,12 @@ TechBase:Inner Sphere
 Era:3050
 Source:TRO: 3050
 Rules Level:2
+role:Sniper
+
+
+
+quirk:pro_actuator
+
 
 Mass:70
 Engine:280 XL Engine

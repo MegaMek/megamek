@@ -1,6 +1,5 @@
-Version:1.0
-Enforcer III
-ENF-6NAIS
+chassis:Enforcer III
+model:ENF-6NAIS
 mul id:984
 
 Config:Biped
@@ -8,6 +7,13 @@ TechBase:Inner Sphere
 Era:3074
 Source:TRO: 3060
 Rules Level:3
+role:Skirmisher
+
+
+
+quirk:barrel_fists_la
+quirk:barrel_fists_ra
+
 
 Mass:50
 Engine:250 XL Engine

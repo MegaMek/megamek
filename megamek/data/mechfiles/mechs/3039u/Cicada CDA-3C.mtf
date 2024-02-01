@@ -1,6 +1,5 @@
-Version:1.0
-Cicada
-CDA-3C
+chassis:Cicada
+model:CDA-3C
 mul id:593
 
 Config:Biped
@@ -8,6 +7,12 @@ TechBase:Inner Sphere
 Era:2840
 Source:TRO: 3039
 Rules Level:1
+role:Scout
+
+
+
+quirk:no_arms
+
 
 Mass:40
 Engine:280 Fusion Engine

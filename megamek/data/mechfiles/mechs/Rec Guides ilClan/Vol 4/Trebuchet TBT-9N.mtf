@@ -1,13 +1,19 @@
-Version:1.1
-Trebuchet
-TBT-9N
+chassis:Trebuchet
+model:TBT-9N
 mul id:7500
 
 Config:Biped
 techbase:Mixed (IS Chassis)
 era:3136
 rules level:4
+role:Missile Boat
 source:Rec Guide:ilClan #4
+
+
+
+
+quirk:easy_maintain
+weaponquirk:fast_reload:RT:3:CLLRM15
 
 
 mass:50

@@ -36,6 +36,10 @@ TIG-40
 IS Level 3
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Spheroid
 </motion_type>
@@ -162,3 +166,11 @@ ISLaserAntiMissileSystem
 <source>
 TRO: Prototypes
 </source>
+
+<quirks>
+difficult_maintain
+hard_pilot
+non_standard
+imp_target_long
+</quirks>
+

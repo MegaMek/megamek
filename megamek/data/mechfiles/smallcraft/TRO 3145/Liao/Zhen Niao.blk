@@ -36,6 +36,10 @@ Zhen Niao
 IS Level 3
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -155,3 +159,8 @@ TRO: 3145 Capellan Confederation
 <escape_pod>
 0
 </escape_pod>
+
+<quirks>
+imp_com
+</quirks>
+

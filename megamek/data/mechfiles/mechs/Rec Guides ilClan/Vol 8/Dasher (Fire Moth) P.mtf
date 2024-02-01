@@ -1,6 +1,6 @@
-Version:1.0
-Dasher (Fire Moth)
-P
+chassis:Dasher
+clanname:Fire Moth
+model:P
 mul id:7581
 
 Config:Biped Omnimech
@@ -8,6 +8,11 @@ techbase:Clan
 era:3132
 source:Rec Guide:ilClan #8
 rules level:4
+role:Striker
+
+quirk:low_profile
+quirk:overhead_arms
+
 
 mass:20
 engine:200 XL (Clan) Engine(IS)

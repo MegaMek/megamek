@@ -1,6 +1,5 @@
-Version:1.1
-Preta
-C-PRT-OU Exanimus
+chassis:Preta
+model:C-PRT-OU Exanimus
 mul id:2580
 
 Config:Biped Omnimech
@@ -8,6 +7,16 @@ TechBase:Inner Sphere
 Era:3077
 source:TRO: 3085
 Rules Level:4
+role:Scout
+
+
+
+quirk:imp_com
+quirk:imp_sensors
+quirk:bad_rep_clan
+quirk:bad_rep_is
+quirk:exp_actuator
+
 
 Mass:45
 Engine:270 Light Engine(IS)

@@ -36,6 +36,10 @@ Fensalir Combat WiGE
 IS Level 3
 </type>
 
+<role>
+Skirmisher
+</role>
+
 <motion_type>
 WiGE
 </motion_type>

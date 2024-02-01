@@ -1,6 +1,5 @@
-Version:1.0
-Bandersnatch
-BNDR-01B
+chassis:Bandersnatch
+model:BNDR-01B
 mul id:219
 
 Config:Biped
@@ -8,6 +7,13 @@ techbase:Inner Sphere
 era:3065
 source:TRO: 3055
 rules level:2
+role:Brawler
+
+
+
+quirk:stable
+quirk:ubiquitous_is
+
 
 mass:75
 engine:300 Light Engine(IS)

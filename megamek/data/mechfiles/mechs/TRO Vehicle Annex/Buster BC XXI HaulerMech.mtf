@@ -1,6 +1,5 @@
-Version:1.1
-Buster BC
-XXI HaulerMech
+chassis:Buster
+model:BC XXI HaulerMech
 mul id:7220
 
 Config:Biped
@@ -8,6 +7,7 @@ TechBase:Inner Sphere
 Era:3059
 Source:TRO: Vehicle Annex (Revised)
 Rules Level:2
+role:Ambusher
 
 Mass:50
 Engine:150 ICE Engine(IS)

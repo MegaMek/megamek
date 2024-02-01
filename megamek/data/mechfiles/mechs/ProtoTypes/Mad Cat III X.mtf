@@ -1,6 +1,5 @@
-Version:1.0
-Mad Cat III
-X
+chassis:Mad Cat III
+model:X
 mul id:4563
 
 Config:Biped
@@ -8,6 +7,13 @@ TechBase:Clan
 Era:3076
 Source:XTR: Clans
 Rules Level:4
+role:Missile Boat
+
+quirk:bad_rep_clan
+quirk:difficult_maintain
+quirk:imp_com
+quirk:prototype
+
 
 Mass:55
 Engine:330 XL (Clan) Engine(IS)

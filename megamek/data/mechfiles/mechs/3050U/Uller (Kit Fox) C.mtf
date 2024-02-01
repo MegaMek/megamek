@@ -1,6 +1,6 @@
-Version:1.2
-Uller (Kit Fox)
-C
+chassis:Uller
+clanname:Kit Fox
+model:C
 mul id:3342
 
 Config:Biped Omnimech
@@ -8,6 +8,10 @@ TechBase:Clan
 Era:3050
 Source:TRO: 3050
 Rules Level:2
+role:Striker
+
+quirk:low_profile
+
 
 Mass:30
 Engine:180 XL (Clan) Engine(IS)

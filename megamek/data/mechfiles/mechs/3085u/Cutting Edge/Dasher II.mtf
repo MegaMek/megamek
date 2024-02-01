@@ -1,6 +1,5 @@
-Version:1.0
-Dasher II
-
+chassis:Dasher II
+model:
 mul id:848
 
 Config:Biped
@@ -8,6 +7,11 @@ TechBase:Clan
 Era:3077
 source:TRO: 3085
 Rules Level:2
+role:Scout
+
+
+quirk:poor_performance
+
 
 Mass:40
 Engine:400 XL (Clan) Engine

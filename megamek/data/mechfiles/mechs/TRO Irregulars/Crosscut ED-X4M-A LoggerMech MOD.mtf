@@ -1,6 +1,5 @@
-Version:1.0
-Crosscut
-ED-X4M-A LoggerMech MOD
+chassis:Crosscut
+model:ED-X4M-A LoggerMech MOD
 mul id:7852
 
 Config:Biped
@@ -8,6 +7,7 @@ techbase:Inner Sphere
 era:3131
 source:TRO: Irregulars
 rules level:2
+role:Sniper
 
 mass:30
 engine:60 ICE Engine(IS)

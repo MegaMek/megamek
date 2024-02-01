@@ -76,6 +76,7 @@ public abstract class Weapon extends WeaponType implements Serializable {
     public static final String MODE_GAUSS_POWERED_DOWN = "Powered Down";
     
     public static final String MODE_MISSILE_INDIRECT = "Indirect";
+    public static final String MODE_INDIRECT_HEAT = "Indirect/Heat";
     
     public static final String MODE_PPC_CHARGE = "Charge";
     

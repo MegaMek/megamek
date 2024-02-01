@@ -1,6 +1,5 @@
-Version:1.1
-Jackal
-JA-KL-1579
+chassis:Jackal
+model:JA-KL-1579
 mul id:1654
 
 Config:Biped
@@ -8,6 +7,13 @@ TechBase:Inner Sphere
 Era:3077
 Source:XTR: Marik
 Rules Level:4
+role:Scout
+
+
+
+quirk:weak_legs
+weaponquirk:imp_cooling:RT:3:ISERPPC
+
 
 Mass:30
 Engine:210 XL Fusion Engine

@@ -1,6 +1,6 @@
-Version:1.0
-Ryoken (Stormcrow)
-TC
+chassis:Ryoken
+clanname:Stormcrow
+model:TC
 mul id:7592
 
 Config:Biped Omnimech
@@ -8,6 +8,10 @@ TechBase:Clan
 Era:3052
 source:Battle of Tukayyid
 Rules Level:2
+role:Skirmisher
+
+quirk:stable
+
 
 Mass:55
 Engine:330 XL (Clan) Engine(IS)

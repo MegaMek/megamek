@@ -1,6 +1,5 @@
-Version:1.0
-White Flame
-WHF-3B
+chassis:White Flame
+model:WHF-3B
 mul id:5404
 
 Config:Quad
@@ -8,6 +7,18 @@ techbase:Inner Sphere
 era:3065
 source:TRO: 3067
 rules level:2
+role:Skirmisher
+
+
+
+
+quirk:bad_rep_is
+quirk:exp_actuator
+weaponquirk:direct_torso_mount:RT:2:ISLargePulseLaser
+weaponquirk:direct_torso_mount:RT:4:ISMediumPulseLaser
+weaponquirk:direct_torso_mount:LT:2:ISERMediumLaser
+weaponquirk:direct_torso_mount:LT:3:ISERMediumLaser
+
 
 mass:70
 engine:350 Light Engine(IS)

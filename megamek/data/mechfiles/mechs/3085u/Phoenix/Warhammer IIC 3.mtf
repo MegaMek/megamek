@@ -1,6 +1,5 @@
-Version:1.0
-Warhammer IIC
-3
+chassis:Warhammer IIC
+model:3
 mul id:3502
 
 Config:Biped
@@ -8,6 +7,11 @@ TechBase:Clan
 Era:3060
 Source:TRO: Clan Invasion
 Rules Level:2
+role:Brawler
+
+quirk:searchlight
+quirk:stable
+
 
 Mass:80
 Engine:320 Fusion (Clan) Engine

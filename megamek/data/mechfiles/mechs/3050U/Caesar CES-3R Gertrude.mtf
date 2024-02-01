@@ -1,6 +1,5 @@
-Version:1.0
-Caesar
-CES-3R (Gertrude)
+chassis:Caesar
+model:CES-3R (Gertrude)
 mul id:3884
 
 Config:Biped
@@ -8,6 +7,12 @@ TechBase:Inner Sphere
 Era:3062
 Source:TRO: 3050
 Rules Level:2
+role:Brawler
+
+
+
+quirk:hyper_actuator
+
 
 Mass:70
 Engine:280 XL Engine

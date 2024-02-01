@@ -1,6 +1,5 @@
-Version:1.0
-Hammer
-HMR-3S 'Slammer'
+chassis:Hammer
+model:HMR-3S 'Slammer'
 mul id:1368
 
 Config:Biped
@@ -8,6 +7,13 @@ TechBase:Inner Sphere
 Era:3054
 Source:TRO: 3055
 Rules Level:2
+role:Striker
+
+
+
+quirk:ext_twist
+quirk:imp_target_long
+
 
 Mass:30
 Engine:150 Fusion Engine

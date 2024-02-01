@@ -1,6 +1,5 @@
-Version:1.0
-Argus
-AGS-8DX
+chassis:Argus
+model:AGS-8DX
 mul id:110
 
 Config:Biped
@@ -8,6 +7,13 @@ TechBase:Inner Sphere
 Era:3074
 source:TRO: 3085
 Rules Level:4
+role:Skirmisher
+
+
+
+quirk:easy_maintain
+quirk:no_arms
+
 
 Mass:60
 Engine:300 XL Engine(IS)

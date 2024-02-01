@@ -36,6 +36,10 @@ STM-OA
 IS Level 2
 </type>
 
+<role>
+Interceptor
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -114,3 +118,8 @@ TRO: 3145 Lyran Commonwealth
 <tonnage>
 40.0
 </tonnage>
+
+<quirks>
+easy_pilot
+</quirks>
+

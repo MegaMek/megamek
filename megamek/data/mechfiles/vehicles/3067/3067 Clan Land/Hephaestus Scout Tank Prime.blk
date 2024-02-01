@@ -32,15 +32,16 @@ Prime
 Clan Level 2
 </type>
 
+<role>
+Scout
+</role>
+
 <motion_type>
 Hover
 </motion_type>
 
 <transporters>
 troopspace:4.0
-</transporters>
-
-<transporters>
 BattleArmorHandles - troopers:-1
 </transporters>
 

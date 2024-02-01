@@ -1,6 +1,5 @@
-Version:1.0
-Crimson Hawk
-3
+chassis:Crimson Hawk
+model:3
 mul id:723
 
 Config:Biped
@@ -8,6 +7,10 @@ TechBase:Clan
 Era:3075
 Source:TRO: 3075
 Rules Level:2
+role:Brawler
+
+quirk:pro_actuator
+
 
 Mass:25
 Engine:125 XL (Clan) Engine

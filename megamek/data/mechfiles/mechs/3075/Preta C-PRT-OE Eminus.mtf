@@ -1,6 +1,5 @@
-Version:1.1
-Preta
-C-PRT-OE Eminus
+chassis:Preta
+model:C-PRT-OE Eminus
 mul id:2578
 
 Config:Biped Omnimech
@@ -8,6 +7,16 @@ TechBase:Inner Sphere
 Era:3072
 Source:TRO: 3075
 Rules Level:4
+role:Missile Boat
+
+
+
+quirk:imp_com
+quirk:imp_sensors
+quirk:bad_rep_clan
+quirk:bad_rep_is
+quirk:exp_actuator
+
 
 Mass:45
 Engine:270 Light Engine(IS)

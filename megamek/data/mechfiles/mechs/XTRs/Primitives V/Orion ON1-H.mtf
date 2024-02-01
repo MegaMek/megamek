@@ -1,6 +1,5 @@
-Version:1.1
-Orion
-ON1-H
+chassis:Orion
+model:ON1-H
 mul id:7405
 
 Config:Biped
@@ -8,6 +7,13 @@ TechBase:Inner Sphere
 Era:2456
 Source:XTR: Primitives V
 Rules Level:4
+role:Brawler
+
+
+
+quirk:easy_maintain
+weaponquirk:ammo_feed_problems:RT:0:Autocannon/10 Primitive
+
 
 Mass:75
 Engine:270 Fusion Engine(IS)

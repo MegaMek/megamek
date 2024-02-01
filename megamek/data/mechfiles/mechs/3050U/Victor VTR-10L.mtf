@@ -1,6 +1,5 @@
-Version:1.0
-Victor
-VTR-10L
+chassis:Victor
+model:VTR-10L
 mul id:3405
 
 Config:Biped
@@ -8,6 +7,12 @@ TechBase:Inner Sphere
 Era:3066
 Source:TRO: 3050
 Rules Level:2
+role:Skirmisher
+
+
+
+quirk:rugged_1
+
 
 Mass:80
 Engine:320 Fusion Engine

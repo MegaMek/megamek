@@ -1,6 +1,5 @@
-Version:1.0
-Charger
-CGR-SA5
+chassis:Charger
+model:CGR-SA5
 mul id:569
 
 Config:Biped
@@ -8,6 +7,14 @@ TechBase:Inner Sphere
 Era:3063
 Source:TRO: 3050
 Rules Level:2
+role:Juggernaut
+
+
+
+quirk:barrel_fists_la
+quirk:easy_maintain
+quirk:bad_rep_is
+
 
 Mass:80
 Engine:320 Light Engine

@@ -1,6 +1,5 @@
-Version:1.1
-Yeoman
-YMN-10-OR
+chassis:Yeoman
+model:YMN-10-OR
 mul id:3618
 
 Config:Biped
@@ -8,6 +7,12 @@ TechBase:Inner Sphere
 Era:3070
 Source:TRO: 3060
 Rules Level:2
+role:Missile Boat
+
+
+
+quirk:no_arms
+
 
 Mass:60
 Engine:240 Light Engine

@@ -36,6 +36,10 @@ Von Luckner Heavy Tank
 IS Level 2
 </type>
 
+<role>
+Sniper
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -138,4 +142,9 @@ Historical: Operation Klondike
 <tonnage>
 75.0
 </tonnage>
+
+
+<quirks>
+difficult_maintain
+</quirks>
 

@@ -1,6 +1,6 @@
-Version:1.0
-Thor II (Grand Summoner)
-A
+chassis:Thor II
+clanname:Grand Summoner
+model:A
 mul id:6282
 
 Config:Biped Omnimech
@@ -8,6 +8,12 @@ TechBase:Clan
 Era:3093
 Source:TRO: 3145 The Clans
 Rules Level:2
+role:Sniper
+
+
+
+quirk:imp_com
+
 
 Mass:70
 Engine:350 XL (Clan) Engine(IS)

@@ -1,6 +1,6 @@
-Version:1.0
-Uller (Kit Fox)
-D
+chassis:Uller
+clanname:Kit Fox
+model:D
 mul id:3343
 
 Config:Biped Omnimech
@@ -8,6 +8,10 @@ TechBase:Clan
 Era:2890
 Source:TRO: 3050
 Rules Level:2
+role:Missile Boat
+
+quirk:low_profile
+
 
 Mass:30
 Engine:180 XL (Clan) Engine(IS)

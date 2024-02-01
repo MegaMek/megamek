@@ -1,6 +1,5 @@
-Version:1.2
-Phoenix Hawk
-PXH-4W
+chassis:Phoenix Hawk
+model:PXH-4W
 mul id:2504
 
 Config:Biped
@@ -8,6 +7,16 @@ TechBase:Inner Sphere
 Era:3079
 source:TRO: 3085
 Rules Level:2
+role:Striker
+
+
+
+quirk:command_mech
+quirk:imp_com
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+weaponquirk:jettison_capable:RA:4:Light PPC
+
 
 Mass:45
 Engine:225 Light Engine(IS)

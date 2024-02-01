@@ -1,6 +1,5 @@
-Version:1.0
-Thunder Stallion
-3
+chassis:Thunder Stallion
+model:3
 mul id:3226
 
 Config:Quad
@@ -8,6 +7,10 @@ TechBase:Clan
 Era:3069
 Source:TRO: 3060
 Rules Level:2
+role:Juggernaut
+
+quirk:cramped_cockpit
+
 
 Mass:85
 Engine:255 Fusion (Clan) Engine

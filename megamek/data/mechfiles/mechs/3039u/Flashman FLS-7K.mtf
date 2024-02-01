@@ -1,6 +1,5 @@
-Version:1.0
-Flashman
-FLS-7K
+chassis:Flashman
+model:FLS-7K
 mul id:1123
 
 Config:Biped
@@ -8,6 +7,12 @@ TechBase:Inner Sphere
 Era:2796
 Source:TRO: 3039
 Rules Level:1
+role:Brawler
+
+
+
+quirk:rugged_1
+
 
 Mass:75
 Engine:300 Fusion Engine

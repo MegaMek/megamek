@@ -1,6 +1,5 @@
-Version:1.0
-Lynx
-LNX-8Q
+chassis:Lynx
+model:LNX-8Q
 mul id:1966
 
 Config:Biped
@@ -8,6 +7,12 @@ TechBase:Inner Sphere
 Era:2853
 Source:TRO: 3058
 Rules Level:1
+role:Skirmisher
+
+
+
+quirk:multi_trac
+
 
 Mass:55
 Engine:275 Fusion Engine

@@ -1,6 +1,5 @@
-Version:1.1
-Raptor II
-RPT-2X2
+chassis:Raptor II
+model:RPT-2X2
 mul id:6918
 
 Config:Biped
@@ -8,6 +7,13 @@ TechBase:Inner Sphere
 Era:3109
 Source:Record Sheets: 3145 New Tech New Upgrades
 Rules Level:4
+role:Striker
+
+
+
+quirk:no_arms
+quirk:no_eject
+
 
 Mass:40
 Engine:280 XL Engine(IS)

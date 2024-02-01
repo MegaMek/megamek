@@ -1,6 +1,5 @@
-Version:1.0
-Exterminator
-EXT-4DX
+chassis:Exterminator
+model:EXT-4DX
 mul id:7321
 
 Config:Biped
@@ -8,6 +7,12 @@ TechBase:Inner Sphere
 Era:2754
 Source:XTR: Gunslingers
 Rules Level:4
+role:Skirmisher
+
+
+
+quirk:difficult_maintain
+
 
 Mass:65
 Engine:325 XL Engine(IS)

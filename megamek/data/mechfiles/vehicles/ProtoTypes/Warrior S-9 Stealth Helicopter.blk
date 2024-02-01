@@ -36,6 +36,10 @@ S-9
 IS Level 3
 </type>
 
+<role>
+Scout
+</role>
+
 <motion_type>
 VTOL
 </motion_type>
@@ -127,4 +131,10 @@ TRO: Prototypes
 <tonnage>
 21.0
 </tonnage>
+
+
+<quirks>
+easy_pilot
+easy_maintain
+</quirks>
 

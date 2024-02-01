@@ -1,6 +1,5 @@
-Version:1.0
-Victor
-C
+chassis:Victor
+model:C
 mul id:3403
 
 Config:Biped
@@ -8,6 +7,12 @@ techbase:Mixed (IS Chassis)
 era:2835
 source:Shrapnel #6
 rules level:4
+role:Skirmisher
+
+
+
+quirk:rugged_1
+
 
 mass:80
 engine:320 Fusion (Clan) Engine

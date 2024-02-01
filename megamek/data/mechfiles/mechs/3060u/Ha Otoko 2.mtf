@@ -1,6 +1,5 @@
-Version:1.0
-Ha Otoko
-2
+chassis:Ha Otoko
+model:2
 mul id:1356
 
 Config:Biped
@@ -8,6 +7,10 @@ TechBase:Clan
 Era:3074
 Source:TRO: 3060
 Rules Level:2
+role:Brawler
+
+quirk:bad_rep_clan
+
 
 Mass:65
 Engine:260 XL (Clan) Engine

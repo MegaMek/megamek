@@ -32,6 +32,10 @@ Zibler Fast Strike Tank
 IS Level 3
 </type>
 
+<role>
+Sniper
+</role>
+
 <motion_type>
 Hover
 </motion_type>
@@ -100,3 +104,8 @@ TRO: 3145 Federated Suns
 <baseChassisTurretWeight>
 2.0
 </baseChassisTurretWeight>
+
+<quirks>
+fast_reload
+</quirks>
+

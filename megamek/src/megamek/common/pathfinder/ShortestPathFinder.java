@@ -259,6 +259,24 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
     }
 
     /**
+     * See {@link newInstanceOfOneToAll} - this returns a customized ShortestPathFinder to support Aerodyne units.
+     * @param maxMP maximum MP that entity can use
+     * @param stepType
+     * @param game The current {@link Game}
+     * @return - Customized ShortestPathFinder specifically for Aerodyne unit move envelope.
+     */
+    public static ShortestPathFinder newInstanceOfOneToAllAero(final int maxMP, final MoveStepType stepType, final Game game) {
+        final ShortestPathFinder spf =
+                new ShortestPathFinder(
+                        new ShortestPathFinder.AeroMovePathRelaxer(),
+                        new ShortestPathFinder.MovePathLengthComparator(),
+                        stepType, game);
+        spf.addFilter(new MovePathLengthFilter(maxMP));
+        spf.addFilter(new MovePathLegalityFilter(game));
+        return spf;
+    }
+
+    /**
      * Constructs a greedy algorithms. It considers only the moves end closer to
      * destination. Ignores legality of the move. Stops after reaching
      * destination.

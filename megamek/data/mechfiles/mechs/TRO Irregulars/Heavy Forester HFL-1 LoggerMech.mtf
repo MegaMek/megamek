@@ -1,6 +1,5 @@
-Version:1.1
-Heavy Forester
-HFL-1 LoggerMech
+chassis:Heavy Forester
+model:HFL-1 LoggerMech
 mul id:4529
 
 Config:Quad
@@ -8,6 +7,7 @@ techbase:Inner Sphere
 era:2700
 source:TRO: Irregulars
 rules level:2
+role:None
 
 mass:60
 engine:180 ICE Engine(IS)

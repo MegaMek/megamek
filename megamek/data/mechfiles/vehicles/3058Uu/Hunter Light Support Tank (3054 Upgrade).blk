@@ -1,17 +1,16 @@
-#building block data file
+#Saved from version 0.49.18-SNAPSHOT on 2024-01-10
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
-<Version>
-MAM0
-</Version>
+
 <UnitType>
 Tank
 </UnitType>
+
 <Name>
 Hunter Light Support Tank
 </Name>
+
 <Model>
 (3054 Upgrade)
 </Model>
@@ -19,46 +18,108 @@ Hunter Light Support Tank
 <mul id:>
 1573
 </mul id:>
-<Tonnage>
-35
-</Tonnage>
+
+<year>
+3054
+</year>
+
+<originalBuildYear>
+3054
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<role>
+Missile Boat
+</role>
+
+<motion_type>
+Tracked
+</motion_type>
+
 <cruiseMP>
 4
 </cruiseMP>
-<Armor>
+
+<engine_type>
+0
+</engine_type>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
 27
 15
 15
 14
-</Armor>
+</armor>
+
+<Body Equipment>
+IS Ammo LRM-15 Artemis-capable
+IS Ammo LRM-15 Artemis-capable
+</Body Equipment>
+
 <Front Equipment>
-ISLRM15
+LRM 15
 ISArtemisIV
-ISLRM15
+LRM 15
 ISArtemisIV
 </Front Equipment>
-<Body Equipment>
-ISLRM15 Ammo Artemis-capable
-ISLRM15 Ammo Artemis-capable
-</Body Equipment>
-<type>
-IS Level 2
-</type>
-<year>
-3054
-</year>
-<internal_type>
-0
-</internal_type>
-<armor_type>
-1
-</armor_type>
-<engine_type>
-0
-</engine_type>
-<motion_type>
-Tracked
-</motion_type>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<capabilities>
+The Hunter's primary armament is a twenty-tube long-range missile launcher, fed by two tons of ammunition, making it a highly effective support vehicle. The FarFire launcher's reliability, combined with its rearward placement, allows the Hunter to fire over barriers without exposing itself. The tank's secondary weapon, a rear-facing anti-personnel flamer, is less frequently used for direct combat and more for creating smoke and heat to confuse pursuers. The Hunter's communication and targeting systems, including the TharHes Mini-Talk and the TharHes AGART computer, are robust and efficient. The latest Hunter variant sees the addition of Artemis FCS to its missile system, replacing the single Maxi Rack with twin Star Fires for increased firepower. To accommodate these upgrades, the built-in flamer was removed, and armor was reduced, partially offset by the use of ferro-fibrous composites.
+</capabilities>
+
+<overview>
+Produced by Defiance Industries of Hesperus II, the Hunter Light Support Tank is an affordable and well-suited vehicle for battlefield support roles. Favored by planetary militias and under-funded second-line units that can support fusion engines, its design prioritizes indirect fire support from sheltered positions. The Hunter is moderately swift for a tracked vehicle and utilizes its low profile and a twenty-tube FarFire Maxi-Rack long-range missile launcher effectively. Redesigned during the last days of the Clan Invasion, the current Hunter model, developed between 3053 and 3054, uses advanced technology to enhance effectiveness while remaining cost-effective.
+</overview>
+
+<deployment>
+This major redesign in 3054 replaces all weapons with two Coventry Star Fire LRM-15 racks equipped with Artemis IV FCS and two tons of ammo each. It downgrades the engine and armor, resulting in reduced speed and protection but significantly enhanced missile accuracy and firepower.
+</deployment>
+
+<history>
+The Hunter Light Support Tank initially faced skepticism due to its specialized design and the use of a fusion engine during the tech-starved days of the Succession Wars. Its unique role as a light support tank diverged from the prevailing military doctrine that favored versatile, heavily armored tanks. Despite its underwhelming reception on paper and in trials, the Hunter demonstrated its effectiveness in combat, especially in the hands of planetary militias. This real-world performance gradually changed the perception of military commanders, leading to wider acceptance and appreciation of the Defiance design.<p>By the time of its redesign in the early 3050s, the Hunter had already established a solid reputation. The new model, incorporating advanced technology, enhanced the tank's firepower and capabilities while maintaining affordability. It saw extensive deployment in various conflicts, notably in Operations Bulldog and Serpent against the Clans. The FedCom Civil War marked a pivotal period for the Hunter, as it suffered considerable losses, primarily due to its vulnerability to faster vehicles and infantry assaults. This conflict highlighted the need for close-in defensive armaments, a lesson that would influence future tank designs. The aftermath of the civil war saw the distribution of upgraded Hunters across the Inner Sphere, with some units falling into the hands of other Successor States through battlefield salvage. Despite these challenges, the Hunter continues to serve as a testament to the evolving nature of military technology and strategy, adapting to the changing demands of warfare while retaining its core role as a reliable support vehicle.</p>
+</history>
+
+<manufacturer>
+Defiance Industries
+</manufacturer>
+
+<primaryFactory>
+Hesperus II
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Doorman 140
+ARMOR:StarSlab/4 Ferro-Fibrous
+COMMUNICATIONS:TharHes Mini-Talk
+TARGETING:TharHes AGART with Artemis FCS
+</systemManufacturers>
+
 <source>
 TRO: 3058
 </source>
+
+<tonnage>
+35.0
+</tonnage>
+

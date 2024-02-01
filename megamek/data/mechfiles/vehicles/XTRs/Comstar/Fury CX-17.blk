@@ -32,6 +32,10 @@ CX-17
 IS Level 4
 </type>
 
+<role>
+Sniper
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -92,3 +96,10 @@ XTR: ComStar
 <tonnage>
 80.0
 </tonnage>
+
+<quirks>
+prototype
+anti_air
+trailer_hitch
+</quirks>
+

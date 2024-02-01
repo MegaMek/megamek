@@ -1,6 +1,5 @@
-Version:1.0
-Raven
-RVN-3X
+chassis:Raven
+model:RVN-3X
 mul id:2665
 
 Config:Biped
@@ -8,6 +7,12 @@ TechBase:Inner Sphere
 Era:3028
 Source:TRO: 3039
 Rules Level:4
+role:Scout
+
+
+
+quirk:no_arms
+
 
 Mass:35
 Engine:175 Fusion Engine

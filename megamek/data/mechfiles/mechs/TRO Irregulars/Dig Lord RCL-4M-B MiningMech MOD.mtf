@@ -1,6 +1,5 @@
-Version:1.0
-Dig Lord
-RCL-4M-B MiningMech MOD
+chassis:Dig Lord
+model:RCL-4M-B MiningMech MOD
 mul id:7829
 
 Config:Biped
@@ -8,6 +7,7 @@ techbase:Inner Sphere
 era:3132
 source:TRO: Irregulars
 rules level:2
+role:Juggernaut
 
 mass:65
 engine:195 Fuel Cell Engine(IS)

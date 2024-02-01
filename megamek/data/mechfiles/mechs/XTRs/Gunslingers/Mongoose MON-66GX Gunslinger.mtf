@@ -1,6 +1,5 @@
-Version:1.0
-Mongoose
-MON-66GX
+chassis:Mongoose
+model:MON-66GX
 mul id:7318
 
 Config:Biped
@@ -8,6 +7,7 @@ TechBase:Inner Sphere
 Era:2766
 Source:XTR: Gunslingers
 Rules Level:4
+role:Scout
 
 Mass:25
 Engine:200 XL Engine(IS)

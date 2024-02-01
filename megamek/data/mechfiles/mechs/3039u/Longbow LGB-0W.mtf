@@ -1,6 +1,5 @@
-Version:1.0
-Longbow
-LGB-0W
+chassis:Longbow
+model:LGB-0W
 mul id:1930
 
 Config:Biped
@@ -8,6 +7,15 @@ techbase:Inner Sphere
 era:2529
 source:TRO: 3039
 rules level:1
+role:Missile Boat
+
+
+
+quirk:anti_air
+quirk:searchlight
+quirk:ubiquitous_is
+quirk:no_arms
+
 
 mass:85
 engine:340 Fusion Engine(IS)

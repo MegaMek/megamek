@@ -1,6 +1,6 @@
-Version:1.1
-Hankyu (Arctic Cheetah)
-B
+chassis:Hankyu
+clanname:Arctic Cheetah
+model:B
 mul id:1379
 
 Config:Biped Omnimech
@@ -8,6 +8,10 @@ TechBase:Clan
 Era:3037
 source:TRO: Clan Invasion
 Rules Level:2
+role:Striker
+
+quirk:pro_actuator
+
 
 Mass:30
 Engine:240 XL (Clan) Engine(IS)

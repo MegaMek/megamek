@@ -1,6 +1,5 @@
-Version:1.0
-Assassin
-ASN-30
+chassis:Assassin
+model:ASN-30
 mul id:129
 
 Config:Biped
@@ -8,6 +7,15 @@ TechBase:Inner Sphere
 Era:3062
 Source:TRO: 3050
 Rules Level:2
+role:Scout
+
+
+
+quirk:easy_maintain
+quirk:cramped_cockpit
+quirk:non_standard
+quirk:poor_life_support
+
 
 Mass:40
 Engine:280 Light Engine

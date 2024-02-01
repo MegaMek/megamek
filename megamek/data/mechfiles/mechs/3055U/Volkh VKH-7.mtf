@@ -1,6 +1,5 @@
-Version:1.1
-Volkh
-VKH-7
+chassis:Volkh
+model:VKH-7
 mul id:3448
 
 Config:Biped
@@ -8,6 +7,12 @@ TechBase:Inner Sphere
 Era:3066
 Source:TRO: 3055
 Rules Level:4
+role:Skirmisher
+
+
+
+quirk:non_standard
+
 
 Mass:45
 Engine:225 XXL Engine

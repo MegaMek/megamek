@@ -1,6 +1,5 @@
-Version:1.0
-Scarabus
-SCB-9T
+chassis:Scarabus
+model:SCB-9T
 mul id:2814
 
 Config:Biped
@@ -8,6 +7,12 @@ TechBase:Inner Sphere
 Era:3054
 Source:TRO: 3055
 Rules Level:2
+role:Scout
+
+
+
+quirk:rugged_1
+
 
 Mass:30
 Engine:300 XL Engine

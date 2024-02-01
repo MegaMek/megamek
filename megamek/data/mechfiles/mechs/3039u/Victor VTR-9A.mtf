@@ -1,6 +1,5 @@
-Version:1.0
-Victor
-VTR-9A
+chassis:Victor
+model:VTR-9A
 mul id:3407
 
 Config:Biped
@@ -8,6 +7,13 @@ TechBase:Inner Sphere
 Era:2508
 Source:TRO: 3039
 Rules Level:1
+role:Skirmisher
+
+
+
+
+quirk:rugged_1
+
 
 Mass:80
 Engine:320 Fusion Engine

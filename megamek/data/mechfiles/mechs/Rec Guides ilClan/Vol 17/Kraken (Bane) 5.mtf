@@ -1,6 +1,6 @@
-Version:1.0
-Kraken (Bane)
-5
+chassis:Kraken
+clanname:Bane
+model:5
 mul id:8242
 
 Config:Biped
@@ -8,6 +8,11 @@ techbase:Clan
 era:3105
 source:Rec Guide:ilClan #17
 rules level:2
+role:Sniper
+
+quirk:ext_twist
+quirk:pro_actuator
+
 
 mass:100
 engine:300 XL (Clan) Engine(IS)

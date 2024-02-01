@@ -1,6 +1,5 @@
-Version:1.1
-Targe
-TRG-2N
+chassis:Targe
+model:TRG-2N
 mul id:3165
 
 Config:Biped
@@ -8,6 +7,14 @@ TechBase:Inner Sphere
 Era:3084
 source:TRO: 3085
 Rules Level:2
+role:Striker
+
+
+
+quirk:ext_twist
+quirk:bad_rep_is
+quirk:no_arms
+
 
 Mass:40
 Engine:280 Light Engine

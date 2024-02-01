@@ -1,6 +1,5 @@
-Version:1.0
-Hellstar
-2
+chassis:Hellstar
+model:2
 mul id:1479
 
 Config:Biped
@@ -8,6 +7,12 @@ TechBase:Clan
 Era:3079
 source:TRO: 3085
 Rules Level:2
+role:Sniper
+
+quirk:barrel_fists_la
+quirk:barrel_fists_ra
+quirk:exp_actuator
+
 
 Mass:95
 Engine:380 XL (Clan) Engine

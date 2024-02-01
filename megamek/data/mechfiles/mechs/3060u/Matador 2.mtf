@@ -1,6 +1,5 @@
-Version:1.0
-Matador
-2
+chassis:Matador
+model:2
 mul id:2099
 
 Config:Biped
@@ -8,6 +7,11 @@ TechBase:Clan
 Era:3069
 Source:TRO: 3060
 Rules Level:2
+role:Brawler
+
+quirk:battle_fists_la
+quirk:battle_fists_ra
+
 
 Mass:60
 Engine:240 Fusion (Clan) Engine

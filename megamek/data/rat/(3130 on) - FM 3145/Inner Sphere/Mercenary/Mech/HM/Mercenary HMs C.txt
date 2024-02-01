@@ -1,4 +1,4 @@
-Mercenary Heavy Mechs C
+Mercenary Heavy Mechs 3130 C
 Catapult CPLT-C5A,1
 Ostwar OWR-3M,2
 Mangonel MNL-3L,3

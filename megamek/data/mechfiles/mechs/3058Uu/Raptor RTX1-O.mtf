@@ -1,6 +1,5 @@
-Version:1.0
-Raptor
-RTX1-O
+chassis:Raptor
+model:RTX1-O
 mul id:2647
 
 Config:Biped Omnimech
@@ -8,6 +7,13 @@ TechBase:Inner Sphere
 Era:3052
 Source:TRO: 3058
 Rules Level:2
+role:Missile Boat
+
+
+
+
+quirk:easy_maintain
+
 
 Mass:25
 Engine:175 XL Engine(IS)

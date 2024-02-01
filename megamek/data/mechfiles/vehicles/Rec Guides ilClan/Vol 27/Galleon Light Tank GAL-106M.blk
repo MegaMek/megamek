@@ -36,6 +36,10 @@ GAL-106M
 IS Level 3
 </type>
 
+<role>
+Scout
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -132,4 +136,9 @@ Rec Guide:ilClan #27
 <tonnage>
 30.0
 </tonnage>
+
+
+<quirks>
+ubiquitous_is
+</quirks>
 

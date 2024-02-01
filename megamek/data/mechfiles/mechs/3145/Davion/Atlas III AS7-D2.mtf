@@ -1,6 +1,5 @@
-Version:1.0
-Atlas III
-AS7-D2
+chassis:Atlas III
+model:AS7-D2
 mul id:6359
 
 Config:Biped
@@ -8,6 +7,16 @@ techbase:Mixed (IS Chassis)
 era:3110
 source:TRO: 3145 Federated Suns
 rules level:4
+role:Juggernaut
+
+
+
+
+quirk:command_mech
+quirk:distracting
+quirk:pro_actuator
+weaponquirk:jettison_capable:RA:4:CLHAG30
+
 
 mass:100
 engine:300 Fusion Engine(IS)

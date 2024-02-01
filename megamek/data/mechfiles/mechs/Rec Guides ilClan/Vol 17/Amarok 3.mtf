@@ -1,6 +1,5 @@
-Version:1.0
-Amarok
-3
+chassis:Amarok
+model:3
 mul id:8241
 
 Config:Biped
@@ -8,6 +7,12 @@ techbase:Mixed (Clan Chassis)
 era:3150
 source:Rec Guide:ilClan #17
 rules level:3
+role:Juggernaut
+
+quirk:battle_fists_la
+quirk:battle_fists_ra
+quirk:stable
+
 
 mass:100
 engine:400 XL (Clan) Engine
@@ -153,6 +158,15 @@ Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-
+
+overview:<p>The Amarok, crafted to counter the age-old DFA tactic, inherits the Hammerhead's physical attributes, notably its hardened armor, which significantly shields the cockpit, thus, minimizing vulnerability during engagements.</p>
+
+capabilities:<p>Boasting a mass more than doubled, a sizable portion is dedicated to its formidable arsenal. The ER PPC, amplified by a capacitor, serves as a long-range deterrent against incoming Mechs, while a rotary autocannon and large pulse laser offer reliable secondary firepower, complemented by twin Streak missile launchers.</p>
+<p>An innovative feature, inspired by Solaris VII data, employs a pre-programmed routine to lock the arms above the cockpit, potentially thwarting DFA assaults. However, certain technical glitches have led to disabling this feature by many Amarok pilots, with plans to omit it in future productions. The Amarok's demand remains unaffected, as warriors vie for possession through Trials.</p>
+
+deployment:<p>This Mixed Tech variant focuses on combating DFA tactics. Spikes are added, along with nine and a half additional tons of Hardened Armor to better protect the Amarok from 'Mechs attempting to conduct such an attack. The PPC is replaced with an LRM 20 with Artemis V and the RAC is replaced with a Hyper-Assault Gauss Rifle 20, both with two tons of ammo and protected by CASE II. Seven small pulse lasers are added, three in each arm and one in the center torso, intended for inflicting disruptive damage on oncoming enemies.</p>
+
+history:<p>The Amarok, a pivotal invention by Ramiel Bekker, stands as Clan Wolf's stalwart defense against the Jade Falcons' notorious Death From Above (DFA) assaults. Assembled under time constraints, Bekker sought Clan Sea Fox's aid, replicating the collaborative essence from the Stormwolf venture. This venture was a boon for the ilKhanate post Gray Monday, promising a resurgence through this special order. Despite inter-Khanate disagreements owing to the Hammerhead-derived designs, successful Trials ensured a swift Amarok production, with Khan Hawker spearheading diplomacy to bolster inter-Clan cooperation.</p> <p>Bekker envisioned Amaroks fortifying most Clusters against major Jade Falcon threats. In reality, they concentrated mainly in Alpha and Beta Galaxies, with notable engagements occurring on Skye. Amaroks, often operating in groups, significantly disrupted enemy formations. However, they faced a severe onslaught from Turkina Keshik. Despite this, the Ninth Wolf Guard's Amaroks showcased their prowess by ambushing the Keshik, highlighting the strategic significance of the Amarok in battlefield control.</p>
 
 manufacturer:Manufacturing Plant SFF-TU1
 primaryfactory:Tukayyid

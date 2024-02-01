@@ -36,6 +36,10 @@ Trutzburg
 IS Level 3
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Spheroid
 </motion_type>
@@ -230,3 +234,8 @@ TRO: 3145 Lyran Commonwealth
 <escape_pod>
 5
 </escape_pod>
+
+<quirks>
+difficult_maintain
+</quirks>
+

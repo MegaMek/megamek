@@ -1,13 +1,18 @@
-Version:1.1
-JagerMech
-JM7-DD
+chassis:JagerMech
+model:JM7-DD
 
 Config:Biped
 techbase:Mixed (IS Chassis)
 era:3146
 rules level:2
+role:Sniper
 mul id:9487
 Source:Rec Guide:ilClan #32
+
+
+
+quirk:anti_air
+
 
 mass:70
 engine:280 XL Engine(IS)

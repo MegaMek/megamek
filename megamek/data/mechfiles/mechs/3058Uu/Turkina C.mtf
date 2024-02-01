@@ -1,6 +1,5 @@
-Version:1.0
-Turkina
-C
+chassis:Turkina
+model:C
 mul id:3328
 
 Config:Biped Omnimech
@@ -8,6 +7,10 @@ techbase:Clan
 era:3052
 source:TRO: Clan Invasion
 rules level:2
+role:Juggernaut
+
+quirk:easy_pilot
+
 
 mass:95
 engine:285 XL (Clan) Engine(IS)

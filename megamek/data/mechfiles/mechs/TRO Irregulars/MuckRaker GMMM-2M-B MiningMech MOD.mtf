@@ -1,6 +1,5 @@
-Version:1.0
-MuckRaker
-GMMM-2M-B MiningMech MOD
+chassis:MuckRaker
+model:GMMM-2M-B MiningMech MOD
 mul id:7828
 
 Config:Biped
@@ -8,6 +7,7 @@ techbase:Inner Sphere
 era:3132
 source:TRO: Irregulars
 rules level:2
+role:Missile Boat
 
 mass:70
 engine:140 ICE Engine(IS)

@@ -36,6 +36,10 @@ Buzzard Hover Tank
 IS Level 2
 </type>
 
+<role>
+Striker
+</role>
+
 <motion_type>
 Hover
 </motion_type>
@@ -105,4 +109,9 @@ Rec Guide:ilClan #27
 <tonnage>
 50.0
 </tonnage>
+
+
+<quirks>
+ramshackle
+</quirks>
 

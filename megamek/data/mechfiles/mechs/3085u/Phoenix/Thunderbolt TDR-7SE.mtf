@@ -1,6 +1,5 @@
-Version:1.0
-Thunderbolt
-TDR-7SE
+chassis:Thunderbolt
+model:TDR-7SE
 mul id:3245
 
 Config:Biped
@@ -8,6 +7,14 @@ TechBase:Inner Sphere
 Era:3067
 source:TRO: 3085u 
 Rules Level:2
+role:Skirmisher
+
+
+
+quirk:multi_trac
+quirk:rugged_2
+quirk:ubiquitous_is
+
 
 Mass:65
 Engine:260 Fusion Engine

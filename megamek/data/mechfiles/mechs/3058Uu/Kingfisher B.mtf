@@ -1,6 +1,5 @@
-Version:1.0
-Kingfisher
-B
+chassis:Kingfisher
+model:B
 mul id:1780
 
 Config:Biped Omnimech
@@ -8,6 +7,10 @@ TechBase:Clan
 Era:2887
 Source:TRO: 3058
 Rules Level:2
+role:Brawler
+
+quirk:rugged_1
+
 
 Mass:90
 Engine:360 Fusion (Clan) Engine(IS)

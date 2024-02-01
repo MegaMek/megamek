@@ -1,12 +1,12 @@
-Version:1.0
-Rattlesnake 
-JR7-31
+chassis:Rattlesnake 
+model:JR7-31
 
 Config:Biped
 techbase:Inner Sphere
 era:3042
 source:Shrapnel #9
 rules level:2
+role:Striker
 mul id:9238
 
 mass:35

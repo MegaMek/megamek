@@ -36,6 +36,10 @@ WKT-1S
 IS Level 4
 </type>
 
+<role>
+Fast Dogfighter
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -113,3 +117,8 @@ TRO: Prototypes
 <tonnage>
 45.0
 </tonnage>
+
+<quirks>
+easy_pilot
+</quirks>
+

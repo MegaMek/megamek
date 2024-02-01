@@ -1,6 +1,5 @@
-Version:1.0
-Wolverine
-WVR-11M
+chassis:Wolverine
+model:WVR-11M
 mul id:8258
 
 Config:Biped
@@ -8,6 +7,18 @@ techbase:Inner Sphere
 era:3122
 source:Rec Guide:ilClan #18
 rules level:2
+role:Skirmisher
+
+
+
+quirk:command_mech
+quirk:ext_twist
+quirk:imp_com
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+quirk:cramped_cockpit
+weaponquirk:jettison_capable:RA:4:Heavy PPC
+
 
 mass:55
 engine:275 XL Engine(IS)

@@ -1,6 +1,5 @@
-Version:1.0
-BattleMaster
-BLR-4L
+chassis:BattleMaster
+model:BLR-4L
 mul id:293
 
 Config:Biped
@@ -8,6 +7,13 @@ techbase:Inner Sphere
 era:3081
 source:TRO: 3085
 rules level:2
+role:Sniper
+
+
+
+quirk:command_mech
+quirk:weak_head_1
+
 
 mass:85
 engine:340 Light Engine(IS)

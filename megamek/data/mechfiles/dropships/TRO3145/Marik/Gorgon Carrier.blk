@@ -36,6 +36,10 @@ Gorgon Carrier
 IS Level 2
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -187,3 +191,8 @@ TRO: 3145 Free Worlds League
 <escape_pod>
 3
 </escape_pod>
+
+<quirks>
+internal_bomb
+</quirks>
+

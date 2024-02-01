@@ -1,6 +1,5 @@
-Version:1.0
-Archer
-ARC-4M2
+chassis:Archer
+model:ARC-4M2
 mul id:7730
 
 Config:Biped
@@ -8,6 +7,16 @@ techbase:Inner Sphere
 era:3086
 source:Rec Guide:ilClan #10
 rules level:2
+role:Missile Boat
+
+
+
+quirk:battle_fists_la
+quirk:battle_fists_ra
+quirk:command_mech
+quirk:stable
+quirk:ubiquitous_is
+
 
 mass:70
 engine:280 Fusion Engine(IS)

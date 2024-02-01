@@ -1,6 +1,5 @@
-Version:1.0
-Cougar
-I
+chassis:Cougar
+model:I
 mul id:6928
 
 Config:Biped Omnimech
@@ -8,6 +7,10 @@ TechBase:Clan
 Era:3099
 source:Rec Guide:ilClan #19
 Rules Level:2
+role:Striker
+
+quirk:ubiquitous_clan
+
 
 Mass:35
 Engine:175 XL (Clan) Engine(IS)

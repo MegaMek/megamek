@@ -1,6 +1,5 @@
-Version:1.0
-Doloire
-DLR-OD
+chassis:Doloire
+model:DLR-OD
 mul id:6682
 
 Config:Biped Omnimech
@@ -8,6 +7,13 @@ TechBase:Mixed (IS Chassis)
 Era:3121
 source:TRO: 3145 Republic of the Sphere
 Rules Level:3
+role:Skirmisher
+
+
+
+quirk:multi_trac
+quirk:command_mech
+
 
 Mass:80
 Engine:320 XL (Clan) Engine

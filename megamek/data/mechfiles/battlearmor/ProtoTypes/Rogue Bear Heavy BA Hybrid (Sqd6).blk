@@ -32,6 +32,10 @@ Rogue Bear Heavy Battle Armor
 Mixed (Clan Chassis)
 </type>
 
+<role>
+Juggernaut
+</role>
+
 <motion_type>
 Jump
 </motion_type>
@@ -120,3 +124,9 @@ JUMPJET:Unknown
 COMMUNICATIONS:Unknown
 TARGETING:Unknown
 </systemManufacturers>
+
+<quirks>
+easy_maintain
+non_standard
+</quirks>
+

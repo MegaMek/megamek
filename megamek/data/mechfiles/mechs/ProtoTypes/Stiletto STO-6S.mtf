@@ -1,13 +1,20 @@
-Version:1.0
-Stiletto
-STO-6S
+chassis:Stiletto
+model:STO-6S
 mul id:5133
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3083
 Rules Level:4
+role:Striker
 Source:TRO: Prototypes 
+
+
+
+quirk:multi_trac
+quirk:difficult_eject
+quirk:bad_rep_is
+
 
 Mass:35
 Engine:245 Fusion Engine(IS)

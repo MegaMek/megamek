@@ -36,6 +36,10 @@ Pueblo
 IS Level 3
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -256,4 +260,10 @@ Historical: Liberation of Terra II
 <escape_pod>
 4
 </escape_pod>
+
+
+<quirks>
+atmo_flyer
+imp_com
+</quirks>
 

@@ -1,6 +1,5 @@
-Version:1.0
-Exterminator
-EXT-4D
+chassis:Exterminator
+model:EXT-4D
 mul id:1004
 
 Config:Biped
@@ -8,6 +7,12 @@ TechBase:Inner Sphere
 Era:2630
 Source:TRO: 3050
 Rules Level:2
+role:Skirmisher
+
+
+
+quirk:difficult_maintain
+
 
 Mass:65
 Engine:390 XL Engine

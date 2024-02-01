@@ -1,6 +1,5 @@
-Version:1.0
-Cougar
-E
+chassis:Cougar
+model:E
 mul id:708
 
 Config:Biped Omnimech
@@ -8,6 +7,10 @@ TechBase:Clan
 Era:3063
 source:Rec Guide:ilClan #19
 Rules Level:2
+role:Brawler
+
+quirk:ubiquitous_clan
+
 
 Mass:35
 Engine:175 XL (Clan) Engine(IS)

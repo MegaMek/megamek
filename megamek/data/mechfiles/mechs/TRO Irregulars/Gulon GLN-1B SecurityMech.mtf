@@ -1,6 +1,5 @@
-Version:1.0
-Gulon SecurityMech
-GLN-1B
+chassis:Gulon SecurityMech
+model:GLN-1B
 mul id:7845
 
 Config:Biped
@@ -8,6 +7,7 @@ techbase:Inner Sphere
 era:3000
 source:TRO: Irregulars
 rules level:2
+role:Ambusher
 
 mass:25
 engine:100 Fission Engine(IS)

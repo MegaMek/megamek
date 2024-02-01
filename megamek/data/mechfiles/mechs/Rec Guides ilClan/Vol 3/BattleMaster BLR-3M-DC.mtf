@@ -1,6 +1,5 @@
-Version:1.1
-BattleMaster
-BLR-3M-DC
+chassis:BattleMaster
+model:BLR-3M-DC
 mul id:3806
 
 Config:Biped
@@ -8,6 +7,13 @@ techbase:Inner Sphere
 era:3053
 source:Rec Guide:ilClan #3
 rules level:3
+role:Brawler
+
+
+
+quirk:command_mech
+quirk:weak_head_1
+
 
 mass:85
 engine:340 Fusion Engine(IS)

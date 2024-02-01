@@ -1,6 +1,5 @@
-Version:1.0
-Rifleman IIC
-
+chassis:Rifleman IIC
+model:
 mul id:2710
 
 Config:Biped
@@ -8,6 +7,12 @@ techbase:Clan
 era:2845
 Source:TRO: 3085
 rules level:2
+role:Sniper
+
+
+quirk:anti_air
+quirk:imp_com
+
 
 mass:65
 engine:195 Fusion (Clan) Engine(IS)

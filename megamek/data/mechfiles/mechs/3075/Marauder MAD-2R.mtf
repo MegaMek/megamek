@@ -1,6 +1,5 @@
-Version:1.0
-Marauder
-MAD-2R
+chassis:Marauder
+model:MAD-2R
 mul id:2034
 
 Config:Biped
@@ -8,6 +7,16 @@ TechBase:Inner Sphere
 Era:2760
 source:TRO: 3075
 Rules Level:2
+role:Sniper
+
+
+
+quirk:command_mech
+quirk:hyper_actuator
+quirk:low_profile
+weaponquirk:direct_torso_mount:RT:3:Autocannon/5
+weaponquirk:exposed_linkage:RT:3:Autocannon/5
+
 
 Mass:75
 Engine:300 Fusion Engine

@@ -1,12 +1,19 @@
-Version:1.3
-Prey Seeker
-PY-SR10
+chassis:Prey Seeker
+model:PY-SR10
 mul id:6331
 Config:Biped
 techbase:Inner Sphere
 era:3136
 source:TRO: 3145 Federated Suns
 rules level:3
+role:Striker
+
+
+
+
+quirk:overhead_arms
+quirk:exp_actuator
+
 
 mass:15
 engine:180 XXL Engine(IS)

@@ -1,6 +1,5 @@
-Version:1.0
-Crosscut
-ED-X4K LoggerMech
+chassis:Crosscut
+model:ED-X4K LoggerMech
 mul id:7466
 
 Config:Biped
@@ -8,6 +7,7 @@ techbase:Inner Sphere
 era:2786
 source:Touring the Stars: Kaumberg
 rules level:2
+role:Ambusher
 
 mass:30
 engine:90 Fuel Cell Engine(IS)

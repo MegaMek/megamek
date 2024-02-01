@@ -1,6 +1,5 @@
-Version:1.0
-Javelin
-JVN-11A 'Fire Javelin'
+chassis:Javelin
+model:JVN-11A 'Fire Javelin'
 mul id:1677
 
 Config:Biped
@@ -8,6 +7,12 @@ TechBase:Inner Sphere
 Era:3053
 Source:TRO: 3050
 Rules Level:2
+role:Striker
+
+
+
+quirk:unbalanced
+
 
 Mass:30
 Engine:180 Fusion Engine(IS)

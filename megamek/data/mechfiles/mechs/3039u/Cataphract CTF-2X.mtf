@@ -1,6 +1,5 @@
-Version:1.0
-Cataphract
-CTF-2X
+chassis:Cataphract
+model:CTF-2X
 mul id:467
 
 Config:Biped
@@ -8,6 +7,12 @@ TechBase:Inner Sphere
 Era:3027
 Source:TRO: 3039
 Rules Level:1
+role:Brawler
+
+
+
+quirk:pro_actuator
+
 
 Mass:70
 Engine:280 Fusion Engine

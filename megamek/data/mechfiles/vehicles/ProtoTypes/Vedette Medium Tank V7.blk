@@ -36,6 +36,10 @@ V7
 IS Level 3
 </type>
 
+<role>
+Brawler
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -128,4 +132,10 @@ TRO: Prototypes
 <tonnage>
 50.0
 </tonnage>
+
+
+<quirks>
+trailer_hitch
+poor_work
+</quirks>
 

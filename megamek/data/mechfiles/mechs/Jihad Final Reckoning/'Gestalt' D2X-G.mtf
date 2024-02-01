@@ -1,6 +1,5 @@
-Version:1.1
-'Gestalt'
-D2X-G
+chassis:'Gestalt'
+model:D2X-G
 mul id:4209
 
 Config:Biped
@@ -8,6 +7,7 @@ TechBase:Inner Sphere
 Era:3078
 Source:Jihad: Final Reckoning
 Rules Level:4
+role:Striker
 
 Mass:45
 Engine:315 XL Engine(IS)

@@ -1,6 +1,5 @@
-Version:1.1
-Highlander
-HGN-736
+chassis:Highlander
+model:HGN-736
 mul id:1521
 
 Config:Biped
@@ -8,6 +7,15 @@ TechBase:Inner Sphere
 Era:3060
 Source:TRO: 3050
 Rules Level:2
+role:Sniper
+
+
+
+quirk:command_mech
+quirk:cowl
+quirk:reinforced_legs
+quirk:difficult_eject
+
 
 Mass:90
 Engine:270 Fusion Engine

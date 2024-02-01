@@ -30,23 +30,7 @@ public final class TipUtil {
     final static boolean BR = true;
     final static boolean NOBR = false;
 
-    // Tooltip Colors - hardcoded to avoid unreadable text
-    // but could be moved to GUIPreferences Advance Options
-    public final static String BGCOLOR = "#313131";
-    public final static String FGCOLOR = "#EEE6D9";
-    public static final String LIGHT_BGCOLOR = "#999999";
-    public static final String BUILDING_BGCOLOR = "#CCCC99";
-    public static final String ALT_BGCOLOR = "#FFDDDD";
-    public static final String BLOCK_BGCOLOR = "#000060";
-    public static final String TERRAIN_BGCOLOR = "#8DAF8D";
-
-    // HTML block begins and ends
-    public final static String TABLE_BEGIN = "<TABLE CELLSPACING=0 CELLPADDING=0><TBODY><TR><TD VALIGN=TOP>";
-    public final static String TABLE_END = "</TR></TBODY></TABLE>";
-    public static final String HTML_BEGIN = "<HTML><BODY style=\"color: "+FGCOLOR + " background-color:"+BGCOLOR+";\">";
-    public static final String HTML_END = "</BODY></HTML>";
-
-    /** 
+    /**
      * Returns a List wherein each element consists of an option group of the given 
      * optGroups, which is e.g. crew.getOptions().getGroups() or entity.getQuirks().getGroups()
      * as well as the count of active options within that group, e.g. "Manei Domini (2)".
@@ -124,7 +108,7 @@ public final class TipUtil {
                 List<String> origList = new ArrayList<>();
                 for (Enumeration<IOption> advs = advGroup.getOptions(); advs.hasMoreElements();) {
                     IOption adv = advs.nextElement();
-                    if (adv.booleanValue()) {
+                    if (adv != null && adv.booleanValue()) {
                         origList.add(adv.getDisplayableNameWithValue());
                     }
                 }

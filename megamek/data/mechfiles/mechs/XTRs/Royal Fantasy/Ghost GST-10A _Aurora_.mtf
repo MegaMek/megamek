@@ -1,6 +1,5 @@
-Version:1.0
-Ghost
-GST-10A 'Aurora'
+chassis:Ghost
+model:GST-10A 'Aurora'
 mul id:8373
 
 Config:Biped
@@ -8,6 +7,14 @@ techbase:Mixed (IS Chassis)
 era:3130
 source:XTR: Royal Fantasy
 rules level:3
+role:Striker
+
+
+
+quirk:ext_twist
+quirk:imp_com
+quirk:imp_sensors
+
 
 mass:50
 engine:300 XL Engine(IS)

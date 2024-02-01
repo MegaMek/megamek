@@ -1,6 +1,5 @@
-Version:1.0
-No-Dachi
-NDA-3X
+chassis:No-Dachi
+model:NDA-3X
 mul id:2298
 
 Config:Biped
@@ -8,6 +7,12 @@ techbase:Mixed (IS Chassis)
 era:3075
 source:XTR: Kurita
 rules level:4
+role:Missile Boat
+
+
+
+quirk:hyper_actuator
+
 
 mass:70
 engine:350 XL Engine(IS)

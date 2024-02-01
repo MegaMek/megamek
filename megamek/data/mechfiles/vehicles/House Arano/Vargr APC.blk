@@ -36,6 +36,10 @@ Vargr APC Tank
 IS Level 1
 </type>
 
+<role>
+Brawler
+</role>
+
 <motion_type>
 Wheeled
 </motion_type>

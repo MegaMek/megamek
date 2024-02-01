@@ -1,6 +1,5 @@
-Version:1.0
-Spatha
-SP1-X
+chassis:Spatha
+model:SP1-X
 mul id:2998
 
 Config:Biped
@@ -8,6 +7,14 @@ TechBase:Inner Sphere
 Era:3067
 Source:TRO: 3055
 Rules Level:4
+role:Skirmisher
+
+
+
+
+quirk:difficult_maintain
+quirk:non_standard
+
 
 Mass:60
 Engine:360 XXL Engine

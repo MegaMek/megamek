@@ -1,6 +1,6 @@
-Version:1.0
-Masakari (Warhawk)
-G
+chassis:Masakari
+clanname:Warhawk
+model:G
 mul id:8338
 
 Config:Biped Omnimech
@@ -8,6 +8,10 @@ techbase:Clan
 era:3114
 source:Rec Guide:ilClan #20
 rules level:2
+role:Juggernaut
+
+quirk:imp_target_long
+
 
 mass:85
 engine:340 XL (Clan) Engine(IS)

@@ -1,6 +1,5 @@
-Version:1.0
-Duan Gung
-D9-G10
+chassis:Duan Gung
+model:D9-G10
 mul id:934
 
 Config:Biped
@@ -8,6 +7,13 @@ TechBase:Inner Sphere
 Era:3070
 Source:TRO: 3060
 Rules Level:2
+role:Striker
+
+
+
+quirk:pro_actuator
+quirk:non_standard
+
 
 Mass:25
 Engine:175 XL Engine

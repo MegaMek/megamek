@@ -1,6 +1,5 @@
-Version:1.0
-Catapult
-CPLT-C1b
+chassis:Catapult
+model:CPLT-C1b
 mul id:480
 
 Config:Biped
@@ -8,6 +7,13 @@ TechBase:Inner Sphere
 Era:2688
 Source:TRO: 3039
 Rules Level:2
+role:Missile Boat
+
+
+
+quirk:no_arms
+quirk:weak_head_1
+
 
 Mass:65
 Engine:260 Fusion Engine

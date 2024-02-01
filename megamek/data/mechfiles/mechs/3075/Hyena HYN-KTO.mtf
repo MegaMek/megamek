@@ -1,0 +1,158 @@
+generator:MegaMek Suite 0.49.18-SNAPSHOT on 2024-01-13
+chassis:Hyena
+model:HYN-KTO
+mul id:6959
+Config:Biped
+techbase:Inner Sphere
+era:2792
+source:TRO: 3039
+rules level:2
+role:Skirmisher
+
+quirk:rugged_1
+
+mass:55
+engine:275 Fusion Engine(IS)
+structure:IS Standard
+myomer:Standard
+
+heat sinks:10 Single
+walk mp:5
+jump mp:0
+
+armor:Ferro-Fibrous(Inner Sphere)
+LA armor:18
+RA armor:18
+LT armor:18
+RT armor:18
+CT armor:26
+HD armor:9
+LL armor:23
+RL armor:23
+RTL armor:8
+RTR armor:8
+RTC armor:10
+
+Weapons:1
+Medium Laser, Center Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Salvage Arm
+Salvage Arm
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Lift Hoist/Arresting Hoist (R)
+Lift Hoist/Arresting Hoist (R)
+Lift Hoist/Arresting Hoist (R)
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+
+Right Torso:
+Lift Hoist/Arresting Hoist (R)
+Lift Hoist/Arresting Hoist (R)
+Lift Hoist/Arresting Hoist (R)
+Cargo:SIZE:8.0
+Cargo:SIZE:8.0
+Cargo:SIZE:8.0
+Cargo:SIZE:8.0
+Cargo:SIZE:8.0
+Cargo:SIZE:8.0
+Cargo:SIZE:8.0
+Cargo:SIZE:8.0
+IS Ferro-Fibrous
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Medium Laser
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+manufacturer:Field Refit
+primaryfactory:Various
+systemmanufacturer:CHASSIS:Technicron-1
+systemmanufacturer:ENGINE:Core Tek 275
+systemmanufacturer:ARMOR:Leopard V Ferro-Fibrous
+systemmanufacturer:COMMUNICATIONS:OmniComm 3
+systemmanufacturer:TARGETING:Starbeam 3000
+

@@ -1,6 +1,5 @@
-Version:1.2
-Beowulf
-BEO-X-7a
+chassis:Beowulf
+model:BEO-X-7a
 mul id:5548
 
 Config:Biped
@@ -8,6 +7,14 @@ TechBase:Inner Sphere
 Era:3068
 Source:XTR: ComStar
 Rules Level:4
+role:Skirmisher
+
+
+
+quirk:ext_twist
+quirk:exp_actuator
+quirk:prototype
+
 
 Mass:45
 Engine:270 XL Engine(IS)

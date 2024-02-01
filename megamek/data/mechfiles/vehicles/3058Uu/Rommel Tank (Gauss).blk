@@ -54,6 +54,10 @@ ISMG Ammo (100)
 <type>
 IS Level 2
 </type>
+
+<role>
+Brawler
+</role>
 <year>
 3054
 </year>
@@ -108,3 +112,9 @@ TRO: 3039
 <tonnage>
 65.0
 </tonnage>
+
+<quirks>
+low_profile
+poor_target_short
+</quirks>
+

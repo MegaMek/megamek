@@ -1,6 +1,5 @@
-Version:1.0
-Buster BC
-XV-M-W HaulerMech MOD
+chassis:Buster
+model:BC XV-M-W HaulerMech MOD
 mul id:7179
 
 Config:Biped
@@ -8,6 +7,7 @@ TechBase:Inner Sphere
 Era:3077
 Source:Record Sheets: Vehicle Annex - IndustrialMechs & Exoskeletons
 Rules Level:2
+role:Sniper
 
 Mass:50
 Engine:150 ICE Engine(IS)

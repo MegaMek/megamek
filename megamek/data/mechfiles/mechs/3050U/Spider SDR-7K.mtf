@@ -1,6 +1,5 @@
-Version:1.1
-Spider
-SDR-7K
+chassis:Spider
+model:SDR-7K
 mul id:3011
 
 Config:Biped
@@ -8,6 +7,14 @@ TechBase:Inner Sphere
 Era:3067
 Source:TRO: 3050
 Rules Level:2
+role:Striker
+
+
+
+quirk:easy_maintain
+quirk:nimble_jumper
+quirk:no_eject
+
 
 Mass:30
 Engine:240 Light Fusion Engine

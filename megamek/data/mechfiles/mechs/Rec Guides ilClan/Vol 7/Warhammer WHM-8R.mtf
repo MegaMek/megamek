@@ -1,6 +1,5 @@
-Version:1.0
-Warhammer
-WHM-8R
+chassis:Warhammer
+model:WHM-8R
 mul id:7563
 
 Config:Biped
@@ -8,6 +7,16 @@ techbase:Inner Sphere
 era:3090
 source:Rec Guide:ilClan #7
 rules level:2
+role:Brawler
+
+
+
+quirk:rugged_2
+quirk:searchlight
+quirk:stable
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+
 
 mass:70
 engine:280 Fusion Engine(IS)

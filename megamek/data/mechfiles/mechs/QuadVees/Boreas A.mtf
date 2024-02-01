@@ -1,6 +1,5 @@
-Version:1.0
-Boreas
-A
+chassis:Boreas
+model:A
 mul id:7352
 
 Config:QuadVee Omnimech
@@ -8,6 +7,7 @@ TechBase:Clan
 Era:3132
 Source:XTR: Republic II
 Rules Level:3
+role:Sniper
 
 Mass:60
 Engine:240 Fusion (Clan) Engine(IS)

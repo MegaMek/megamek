@@ -1,6 +1,5 @@
-Version:1.0
-No-Dachi
-NDA-2KC
+chassis:No-Dachi
+model:NDA-2KC
 mul id:2297
 
 Config:Biped
@@ -8,6 +7,12 @@ TechBase:Inner Sphere
 Era:3067
 source:TRO: 3085
 Rules Level:2
+role:Skirmisher
+
+
+
+quirk:hyper_actuator
+
 
 Mass:70
 Engine:350 XL Engine

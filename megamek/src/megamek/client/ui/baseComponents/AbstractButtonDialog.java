@@ -76,6 +76,15 @@ public abstract class AbstractButtonDialog extends AbstractDialog {
         super(frame, modal, resources, name, title);
         setResult(DialogResult.CANCELLED); // Default result is cancelled
     }
+
+    /**
+     * This constructor is provided for uses cases where this dialog needs another dialog as a parent.
+     */
+    protected AbstractButtonDialog(final JDialog dialog, final JFrame frame, final boolean modal, final ResourceBundle resources,
+                                   final String name, final String title) {
+        super(dialog, frame, modal, resources, name, title);
+        setResult(DialogResult.CANCELLED); // Default result is cancelled
+    }
     //endregion Constructors
 
     //region Getters/Setters

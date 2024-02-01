@@ -1,6 +1,5 @@
-Version:1.1
-Griffin
-GRF-4N
+chassis:Griffin
+model:GRF-4N
 mul id:1301
 
 Config:Biped
@@ -8,6 +7,17 @@ TechBase:Inner Sphere
 Era:3083
 source:TRO: 3085
 Rules Level:2
+role:Striker
+
+
+
+quirk:battle_fists_la
+quirk:battle_fists_ra
+quirk:rugged_1
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+weaponquirk:jettison_capable:RA:4:ISPlasmaRifle
+
 
 Mass:55
 Engine:330 Light Engine(IS)

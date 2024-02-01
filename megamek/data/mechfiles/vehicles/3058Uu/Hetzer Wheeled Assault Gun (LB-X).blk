@@ -44,6 +44,10 @@ ISLBXAC20 CL Ammo
 <type>
 IS Level 2
 </type>
+
+<role>
+Ambusher
+</role>
 <year>
 3063
 </year>
@@ -93,3 +97,10 @@ ARMOR:StarSlab/6
 COMMUNICATIONS:Johnston Q-Band
 TARGETING:Scantrex Dual Tac
 </systemManufacturers>
+
+<quirks>
+low_profile
+bad_rep_is
+poor_work
+</quirks>
+

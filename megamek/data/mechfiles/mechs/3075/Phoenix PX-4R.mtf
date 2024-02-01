@@ -1,6 +1,5 @@
-Version:1.0
-Phoenix
-PX-4R
+chassis:Phoenix
+model:PX-4R
 mul id:2490
 
 Config:Biped
@@ -8,6 +7,12 @@ TechBase:Inner Sphere
 Era:2581
 source:TRO: 3075
 Rules Level:1
+role:Skirmisher
+
+
+
+weaponquirk:direct_torso_mount:LT:1:SRM 2
+
 
 Mass:50
 Engine:250 Fusion Engine

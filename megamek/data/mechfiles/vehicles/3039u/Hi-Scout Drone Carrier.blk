@@ -32,6 +32,10 @@ Hi-Scout Drone Carrier
 IS Level 3
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Tracked
 </motion_type>

@@ -157,7 +157,11 @@ public class ASBattleArmorDamageConverter extends ASDamageConverter {
             report.addLine("Troop Factor", formatForReport(mDamage) + " x " + formatForReport(troopFactor),
                     "= " + formatForReport(mDamage * troopFactor));
             mDamage *= troopFactor;
-            mDamage += assembleSquadSupportDamage(MEDIUM_RANGE);
+        }
+
+        mDamage += assembleSquadSupportDamage(MEDIUM_RANGE);
+
+        if (mDamage > 0) {
             finalMDamage = ASDamage.createDualRoundedUp(mDamage);
             report.addLine("Final M damage:",
                     formatForReport(mDamage) + ", dual rounded", "= " + finalMDamage.toStringWithZero());
@@ -175,7 +179,11 @@ public class ASBattleArmorDamageConverter extends ASDamageConverter {
             report.addLine("Troop Factor", formatForReport(lDamage) + " x " + formatForReport(troopFactor),
                     "= " + formatForReport(lDamage * troopFactor));
             lDamage *= troopFactor;
-            lDamage += assembleSquadSupportDamage(LONG_RANGE);
+        }
+
+        lDamage += assembleSquadSupportDamage(LONG_RANGE);
+
+        if (lDamage > 0) {
             finalLDamage = ASDamage.createDualRoundedUp(lDamage);
             report.addLine("Final L damage:",
                     formatForReport(lDamage) + ", dual rounded", "= " + finalLDamage.toStringWithZero());

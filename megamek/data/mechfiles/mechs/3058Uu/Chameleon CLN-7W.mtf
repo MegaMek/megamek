@@ -1,6 +1,5 @@
-Version:1.0
-Chameleon
-CLN-7W
+chassis:Chameleon
+model:CLN-7W
 mul id:544
 
 Config:Biped
@@ -8,6 +7,12 @@ TechBase:Inner Sphere
 Era:3058
 Source:TRO: 3058
 Rules Level:2
+role:Striker
+
+
+
+quirk:easy_pilot
+
 
 Mass:50
 Engine:300 Fusion Engine

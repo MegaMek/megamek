@@ -13,11 +13,11 @@ LargeSupportTank
 </UnitType>
 
 <Name>
-Buffalo Drone Bomb
+Buffalo
 </Name>
 
 <model>
-
+BFFL Drone Bomb
 </model>
 
 <mul id:>
@@ -95,10 +95,6 @@ ISDroneOperatingSystem
 
 <Rear Left Equipment>
 </Rear Left Equipment>
-
-<Body Equipment>
-ISBoobyTrap
-</Body Equipment>
 
 <Rear Equipment>
 Cargo Container (10 tons)

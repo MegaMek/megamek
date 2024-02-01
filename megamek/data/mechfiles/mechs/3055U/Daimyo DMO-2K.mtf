@@ -1,6 +1,5 @@
-Version:1.0
-Daimyo
-DMO-2K
+chassis:Daimyo
+model:DMO-2K
 mul id:804
 
 Config:Biped
@@ -8,6 +7,14 @@ TechBase:Inner Sphere
 Era:3056
 Source:TRO: 3055
 Rules Level:2
+role:Brawler
+
+
+
+quirk:ext_twist
+quirk:low_profile
+quirk:difficult_maintain
+
 
 Mass:40
 Engine:200 Fusion Engine

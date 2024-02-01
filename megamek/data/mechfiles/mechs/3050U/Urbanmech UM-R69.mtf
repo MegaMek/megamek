@@ -1,6 +1,5 @@
-Version:1.0
-UrbanMech
-UM-R69
+chassis:UrbanMech
+model:UM-R69
 mul id:3358
 
 Config:Biped
@@ -8,6 +7,14 @@ TechBase:Inner Sphere
 Era:3063
 Source:TRO: 3050
 Rules Level:2
+role:Sniper
+
+
+
+quirk:ext_twist
+quirk:low_profile
+quirk:no_arms
+
 
 Mass:30
 Engine:60 Fusion Engine

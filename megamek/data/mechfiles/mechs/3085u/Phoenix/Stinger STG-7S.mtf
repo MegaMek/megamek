@@ -1,6 +1,5 @@
-Version:1.2
-Stinger
-STG-7S
+chassis:Stinger
+model:STG-7S
 mul id:3068
 
 Config:Biped
@@ -8,6 +7,15 @@ TechBase:Inner Sphere
 Era:3077
 source:TRO: 3085
 Rules Level:2
+role:Scout
+
+
+
+quirk:rugged_1
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+quirk:cramped_cockpit
+
 
 Mass:20
 Engine:120 XL Engine(IS)

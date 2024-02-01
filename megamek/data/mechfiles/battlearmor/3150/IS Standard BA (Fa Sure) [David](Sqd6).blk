@@ -20,12 +20,20 @@ IS Standard Battle Armor
 (Fa Sure) [David](Sqd6)
 </Model>
 
+<mul id:>
+9526
+</mul id:>
+
+<role>
+Ambusher
+</role>
+
 <year>
-3150
+3140
 </year>
 
 <originalBuildYear>
-3150
+3140
 </originalBuildYear>
 
 <type>

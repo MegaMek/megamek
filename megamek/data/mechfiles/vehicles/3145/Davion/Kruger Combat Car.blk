@@ -32,6 +32,10 @@ Kruger Combat Car
 IS Level 2
 </type>
 
+<role>
+Scout
+</role>
+
 <motion_type>
 Wheeled
 </motion_type>
@@ -87,3 +91,9 @@ TRO: 3145 Federated Suns
 <tonnage>
 10.0
 </tonnage>
+
+<quirks>
+imp_com
+power_reverse
+</quirks>
+

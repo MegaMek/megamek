@@ -1,6 +1,5 @@
-Version:1.1
-Uni ATAE-70T CargoMech
-
+chassis:Uni
+model:ATAE-70T CargoMech
 mul id:7175
 
 Config:Quad
@@ -8,6 +7,7 @@ techbase:Inner Sphere
 era:3074
 source:Record Sheets: Vehicle Annex - IndustrialMechs & Exoskeletons
 rules level:3
+role:Ambusher
 
 mass:70
 engine:210 Fuel Cell Engine(IS)

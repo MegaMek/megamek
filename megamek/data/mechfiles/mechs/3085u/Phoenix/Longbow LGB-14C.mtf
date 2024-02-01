@@ -1,6 +1,5 @@
-Version:1.0
-Longbow
-LGB-14C
+chassis:Longbow
+model:LGB-14C
 mul id:1935
 
 Config:Biped
@@ -8,6 +7,15 @@ TechBase:Inner Sphere
 Era:3070
 source:TRO: 3085
 Rules Level:2
+role:Missile Boat
+
+
+
+quirk:anti_air
+quirk:searchlight
+quirk:ubiquitous_is
+quirk:no_arms
+
 
 Mass:85
 Engine:255 XL Engine(IS)

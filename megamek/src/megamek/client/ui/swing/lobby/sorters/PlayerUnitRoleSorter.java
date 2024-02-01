@@ -20,14 +20,9 @@ package megamek.client.ui.swing.lobby.sorters;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.ClientGUI;
-import megamek.client.ui.swing.calculationReport.FlexibleCalculationReport;
 import megamek.client.ui.swing.lobby.MekTableModel;
 import megamek.common.Entity;
 import megamek.common.Player;
-import megamek.common.UnitRole;
-import megamek.common.UnitRoleHandler;
-import megamek.common.alphaStrike.AlphaStrikeElement;
-import megamek.common.alphaStrike.conversion.ASConverter;
 
 /** A Lobby Mek Table sorter that sorts by 1) player 2) unit role. */
 public class PlayerUnitRoleSorter implements MekTableSorter {
@@ -63,8 +58,8 @@ public class PlayerUnitRoleSorter implements MekTableSorter {
         } else if (!p_a.equals(p_b)) {
             return p_a.getName().compareTo(p_b.getName());
         } else {
-            String aRole = UnitRoleHandler.getRoleFor(a).toString();
-            String bRole = UnitRoleHandler.getRoleFor(b).toString();
+            String aRole = a.getRole().toString();
+            String bRole = b.getRole().toString();
             return aRole.compareTo(bRole) * d;
         }
     }

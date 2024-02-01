@@ -1,6 +1,5 @@
-Version:1.1
-Wasp
-WSP-8T
+chassis:Wasp
+model:WSP-8T
 mul id:3532
 
 Config:Biped
@@ -8,6 +7,15 @@ TechBase:Inner Sphere
 Era:3075
 source:TRO: 3085
 Rules Level:2
+role:Scout
+
+
+
+quirk:easy_maintain
+quirk:ext_twist
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+
 
 Mass:20
 Engine:120 XL Engine(IS)

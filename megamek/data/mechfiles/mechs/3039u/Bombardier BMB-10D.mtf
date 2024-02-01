@@ -1,6 +1,5 @@
-Version:1.0
-Bombardier
-BMB-10D
+chassis:Bombardier
+model:BMB-10D
 mul id:422
 
 Config:Biped
@@ -8,6 +7,12 @@ TechBase:Inner Sphere
 Era:2866
 Source:TRO: 3039
 Rules Level:1
+role:Missile Boat
+
+
+
+quirk:bad_rep_is
+
 
 Mass:65
 Engine:260 Fusion Engine

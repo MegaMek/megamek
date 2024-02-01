@@ -1,6 +1,5 @@
-Version:1.0
-Charger
-CGR-SB 'Challenger'
+chassis:Charger
+model:CGR-SB 'Challenger'
 mul id:570
 
 Config:Biped
@@ -8,6 +7,14 @@ TechBase:Inner Sphere
 Era:3025
 Source:TRO: 3039
 Rules Level:1
+role:Juggernaut
+
+
+
+quirk:barrel_fists_la
+quirk:easy_maintain
+quirk:bad_rep_is
+
 
 Mass:80
 Engine:240 Fusion Engine

@@ -1,12 +1,18 @@
-Version:1.3
-Helepolis
-HEP-2H
+chassis:Helepolis
+model:HEP-2H
 mul id:1461
 Config:Biped
 techbase:Inner Sphere
 era:2567
 source:TRO: 3075
 rules level:3
+role:Missile Boat
+
+
+
+quirk:reinforced_legs
+quirk:stable
+
 
 mass:75
 engine:225 Fusion Engine(IS)

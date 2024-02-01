@@ -1,6 +1,5 @@
-Version:1.1
-Atlas
-AS7-S4
+chassis:Atlas
+model:AS7-S4
 mul id:8436
 
 Config:Biped
@@ -8,6 +7,16 @@ techbase:Inner Sphere
 era:3109
 source:Rec Guide:ilClan #24
 rules level:2
+role:Sniper
+
+
+
+quirk:battle_fists_la
+quirk:battle_fists_ra
+quirk:command_mech
+quirk:distracting
+quirk:imp_com
+
 
 mass:100
 engine:300 Fusion Engine(IS)

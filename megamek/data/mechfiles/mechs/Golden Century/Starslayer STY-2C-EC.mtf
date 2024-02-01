@@ -1,6 +1,5 @@
-Version:1.1
-Starslayer
-STY-2C-EC
+chassis:Starslayer
+model:STY-2C-EC
 mul id:7680
 
 Config:Biped
@@ -8,6 +7,12 @@ techbase:Mixed (IS Chassis)
 era:2823
 source:TRO: Golden Century
 rules level:4
+role:Skirmisher
+
+
+
+quirk:rugged_1
+
 
 mass:50
 engine:250 Fusion (Clan) Engine

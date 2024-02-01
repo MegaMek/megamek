@@ -1,6 +1,5 @@
-Version:1.0
-Awesome
-AWS-8T
+chassis:Awesome
+model:AWS-8T
 mul id:176
 
 Config:Biped
@@ -8,6 +7,12 @@ TechBase:Inner Sphere
 Era:2815
 Source:TRO: 3039
 Rules Level:1
+role:Missile Boat
+
+
+
+quirk:battle_fists_la
+
 
 Mass:80
 Engine:240 Fusion Engine

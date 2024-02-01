@@ -83,7 +83,7 @@ public class ReportDisplay extends StatusBarPhaseDisplay  {
     private Map<ReportCommand, MegamekButton> buttons;
     private boolean rerolled; // have we rerolled an init?
 
-    private static final String RD_REPORTDIPLAY = "ReportDisplay.";
+    private static final String RD_REPORTDISPLAY = "ReportDisplay.";
     private static final String RD_TOOLTIP = ".tooltip";
 
     /**
@@ -116,7 +116,7 @@ public class ReportDisplay extends StatusBarPhaseDisplay  {
     protected void setButtons() {
         buttons = new HashMap<>((int) (ReportCommand.values().length * 1.25 + 0.5));
         for (ReportCommand cmd : ReportCommand.values()) {
-            buttons.put(cmd, createButton(cmd.getCmd(), RD_REPORTDIPLAY));
+            buttons.put(cmd, createButton(cmd.getCmd(), RD_REPORTDISPLAY));
         }
         numButtonGroups = (int) Math.ceil((buttons.size() + 0.0) / buttonsPerGroup);
     }
@@ -124,7 +124,7 @@ public class ReportDisplay extends StatusBarPhaseDisplay  {
     @Override
     protected void setButtonsTooltips() {
         for (ReportCommand cmd : ReportCommand.values()) {
-            String tt = createToolTip(cmd.getCmd(), RD_REPORTDIPLAY, cmd.getHotKeyDesc());
+            String tt = createToolTip(cmd.getCmd(), RD_REPORTDISPLAY, cmd.getHotKeyDesc());
             buttons.get(cmd).setToolTipText(tt);
         }
     }
@@ -211,7 +211,7 @@ public class ReportDisplay extends StatusBarPhaseDisplay  {
     }
 
     private void resetButtons() {
-        butDone.setEnabled(true);
+        butDone.setEnabled(!clientgui.getClient().getLocalPlayer().isDone());
         setReportEnabled(true);
         setPlayerListEnabled(true);
 

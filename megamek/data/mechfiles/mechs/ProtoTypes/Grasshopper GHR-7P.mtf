@@ -1,13 +1,19 @@
-Version:1.1
-Grasshopper
-GHR-7P
+chassis:Grasshopper
+model:GHR-7P
 mul id:4234
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3081
 Rules Level:4
+role:Skirmisher
 Source:TRO: Prototypes 
+
+
+
+quirk:rugged_1
+quirk:non_standard
+
 
 Mass:70
 Engine:280 Light Engine(IS)

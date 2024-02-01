@@ -1,6 +1,5 @@
-Version:1.0
-Grand Dragon
-DRG-1G (Emory)
+chassis:Grand Dragon
+model:DRG-1G (Emory)
 mul id:1257
 
 Config:Biped
@@ -8,6 +7,13 @@ TechBase:Inner Sphere
 Era:3039
 Source:Starterbook: Sword and Dragon
 Rules Level:4
+
+
+
+quirk:ext_twist
+quirk:low_profile
+quirk:stable
+
 
 Mass:60
 Engine:300 Fusion Engine(IS)

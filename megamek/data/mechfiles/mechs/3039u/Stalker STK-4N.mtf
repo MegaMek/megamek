@@ -1,6 +1,5 @@
-Version:1.0
-Stalker
-STK-4N
+chassis:Stalker
+model:STK-4N
 mul id:3039
 
 Config:Biped
@@ -8,6 +7,14 @@ TechBase:Inner Sphere
 Era:2876
 Source:TRO: 3039
 Rules Level:1
+role:Juggernaut
+
+
+
+quirk:combat_computer
+quirk:ubiquitous_is
+quirk:no_arms
+
 
 Mass:85
 Engine:255 Fusion Engine

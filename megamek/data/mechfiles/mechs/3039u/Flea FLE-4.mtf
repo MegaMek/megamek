@@ -1,6 +1,5 @@
-Version:1.0
-Flea
-FLE-4
+chassis:Flea
+model:FLE-4
 mul id:1140
 
 Config:Biped
@@ -8,6 +7,15 @@ TechBase:Inner Sphere
 Era:2501
 Source:TRO: 3039
 Rules Level:1
+role:Scout
+
+
+
+
+quirk:easy_maintain
+quirk:imp_life_support
+quirk:no_arms
+
 
 Mass:20
 Engine:120 Fusion Engine

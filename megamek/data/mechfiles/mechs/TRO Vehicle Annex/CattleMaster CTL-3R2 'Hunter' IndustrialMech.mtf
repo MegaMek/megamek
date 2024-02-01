@@ -1,6 +1,5 @@
-Version:1.0
-CattleMaster
-CTL-3R2 'Hunter' IndustrialMech
+chassis:CattleMaster
+model:CTL-3R2 'Hunter' IndustrialMech
 mul id:3906
 
 Config:Biped
@@ -8,6 +7,7 @@ TechBase:Inner Sphere
 Era:3024
 Source:Record Sheets: Vehicle Annex - IndustrialMechs & Exoskeletons
 Rules Level:2
+role:Ambusher
 
 Mass:25
 Engine:100 ICE Engine(IS)

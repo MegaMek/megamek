@@ -1,6 +1,5 @@
-Version:1.0
-Kodiak II
-
+chassis:Kodiak II
+model:
 mul id:6295
 
 Config:Biped
@@ -8,6 +7,12 @@ techbase:Clan
 era:3095
 source:TRO: 3145 The Clans
 rules level:2
+role:Missile Boat
+
+
+quirk:command_mech
+quirk:distracting
+
 
 mass:100
 engine:400 XL (Clan) Engine(IS)

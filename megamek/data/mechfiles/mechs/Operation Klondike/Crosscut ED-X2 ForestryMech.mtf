@@ -1,12 +1,12 @@
-Version:1.1
-Crosscut
-ED-X2 LoggerMech
+chassis:Crosscut
+model:ED-X2 LoggerMech
 mul id:741
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2715 
 Rules Level:2
+role:Ambusher
 Source:Record Sheets: Operation Klondike
 
 Mass:30

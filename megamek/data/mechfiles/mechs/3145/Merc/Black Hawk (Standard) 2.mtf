@@ -1,6 +1,5 @@
-Version:1.0
-Black Hawk (Standard)
-2
+chassis:Black Hawk (Standard)
+model:2
 mul id:6555
 
 Config:Biped
@@ -8,6 +7,7 @@ TechBase:Clan
 Era:3092
 Source:TRO: 3145 Mercenaries
 Rules Level:2
+role:Skirmisher
 
 Mass:50
 Engine:250 XL Engine

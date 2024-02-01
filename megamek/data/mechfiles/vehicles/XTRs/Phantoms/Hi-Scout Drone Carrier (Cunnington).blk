@@ -32,6 +32,10 @@ Hi-Scout Drone Carrier
 IS Level 4
 </type>
 
+<role>
+Scout
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -92,3 +96,8 @@ XTR: Phantoms
 <tonnage>
 60.0
 </tonnage>
+
+<quirks>
+trailer_hitch
+</quirks>
+

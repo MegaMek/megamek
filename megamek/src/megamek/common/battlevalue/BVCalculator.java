@@ -745,7 +745,7 @@ public abstract class BVCalculator {
                     mgBV += mg.getType().getBV(entity);
                 }
             }
-            weaponBV = mgBV * (weapon.getType().isClan() ? 0.1 : 0.67);
+            weaponBV = mgBV * 0.67;
         }
 
         String multiplierText = (weaponCount > 1) ? weaponCount + " x " : "";
@@ -999,7 +999,7 @@ public abstract class BVCalculator {
         }
     }
 
-    /** @return The unit's head dissipation for BV purposes. Override as necessary. */
+    /** @return The unit's heat dissipation for BV purposes. Override as necessary. */
     protected int heatEfficiency() {
         return NO_HEAT;
     }
@@ -1176,7 +1176,11 @@ public abstract class BVCalculator {
      */
     public static double bvMultiplier(Entity entity, List<String> pilotModifiers) {
         if (entity.getCrew() == null) {
-            return 1;
+            if (entity.isConventionalInfantry() && !((Infantry) entity).hasAntiMekGear()) {
+                return bvSkillMultiplier(4, Infantry.ANTI_MECH_SKILL_NO_GEAR);
+            } else {
+                return bvSkillMultiplier(4, 5);
+            }
         }
         int gunnery = entity.getCrew().getGunnery();
         int piloting = entity.getCrew().getPiloting();
@@ -1184,6 +1188,8 @@ public abstract class BVCalculator {
         if (((entity instanceof Infantry) && (!((Infantry) entity).canMakeAntiMekAttacks()))
                 || (entity instanceof Protomech)) {
             piloting = 5;
+        } else if (entity.isConventionalInfantry() && !((Infantry) entity).hasAntiMekGear()) {
+            piloting = Infantry.ANTI_MECH_SKILL_NO_GEAR;
         } else if (entity.getCrew() instanceof LAMPilot) {
             LAMPilot lamPilot = (LAMPilot) entity.getCrew();
             gunnery = (lamPilot.getGunneryMech() + lamPilot.getGunneryAero()) / 2;
@@ -1272,9 +1278,10 @@ public abstract class BVCalculator {
             }
             for (Mounted mounted : otherEntity.getAmmo()) {
                 AmmoType atype = (AmmoType) mounted.getType();
-                long munitionType = atype.getMunitionType();
+                EnumSet<AmmoType.Munitions> munitionType = atype.getMunitionType();
                 if ((mounted.getUsableShotsLeft() > 0)
-                        && ((munitionType == M_SEMIGUIDED) || (munitionType == M_HOMING))) {
+                        && ((munitionType.contains(AmmoType.Munitions.M_SEMIGUIDED))
+                            || (munitionType.contains(AmmoType.Munitions.M_HOMING)))) {
                     adjustedBV += mounted.getType().getBV(entity) * tagCount;
                     bvReport.addLine("- " + equipmentDescriptor(mounted),
                             "+ " + tagCount + " x " + formatForReport(mounted.getType().getBV(entity))

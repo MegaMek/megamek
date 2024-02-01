@@ -47,6 +47,10 @@ ISMG Ammo (200)
 <type>
 IS Level 1
 </type>
+
+<role>
+Scout
+</role>
 <year>
 2915
 </year>
@@ -104,3 +108,8 @@ TARGETING:Maxell TA50
 <fuelType>
 PETROCHEMICALS
 </fuelType>
+
+<quirks>
+ubiquitous_is
+</quirks>
+

@@ -1,6 +1,5 @@
-Version:1.0
-Talon
-TLN-5Z
+chassis:Talon
+model:TLN-5Z
 mul id:3154
 
 Config:Biped
@@ -8,6 +7,13 @@ TechBase:Inner Sphere
 Era:3062
 Source:TRO: 3058
 Rules Level:2
+role:Sniper
+
+
+
+quirk:rugged_1
+quirk:no_arms
+
 
 Mass:35
 Engine:245 Light Engine

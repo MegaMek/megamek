@@ -1,6 +1,5 @@
-Version:1.0
-Burrower
-DTM-1 MiningMech
+chassis:Burrower
+model:DTM-1 MiningMech
 mul id:7874
 
 Config:Biped
@@ -8,6 +7,7 @@ techbase:Inner Sphere
 era:3115
 source:TRO: Irregulars
 rules level:3
+role:None
 
 mass:65
 engine:195 ICE Engine(IS)

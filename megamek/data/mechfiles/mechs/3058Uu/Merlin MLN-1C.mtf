@@ -1,6 +1,5 @@
-Version:1.0
-Merlin
-MLN-1C
+chassis:Merlin
+model:MLN-1C
 mul id:2180
 
 Config:Biped
@@ -8,6 +7,11 @@ TechBase:Inner Sphere
 Era:3068
 Source:TRO: 3058
 Rules Level:2
+role:Brawler
+
+quirk:easy_maintain
+quirk:rugged_1
+
 
 Mass:60
 Engine:240 Fusion Engine

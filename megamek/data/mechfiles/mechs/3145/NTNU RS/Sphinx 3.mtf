@@ -1,6 +1,5 @@
-Version:1.0
-Sphinx
-3
+chassis:Sphinx
+model:3
 mul id:6864
 
 Config:Biped
@@ -8,6 +7,11 @@ TechBase:Clan
 Era:3091
 Source:Record Sheets: 3145 New Tech New Upgrades
 Rules Level:2
+role:Skirmisher
+
+quirk:easy_maintain
+quirk:rugged_1
+
 
 Mass:75
 Engine:375 XL (Clan) Engine(IS)

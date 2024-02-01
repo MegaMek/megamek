@@ -1,6 +1,5 @@
-Version:1.1
-Celerity
-CLR-05-X
+chassis:Celerity
+model:CLR-05-X
 mul id:6710
 
 Config:Quad
@@ -8,6 +7,12 @@ techbase:Inner Sphere
 era:3138
 source:TRO: 3145 Republic of the Sphere
 rules level:4
+role:Scout
+
+
+
+quirk:exp_actuator
+
 
 mass:15
 engine:240 XXL Engine(IS)

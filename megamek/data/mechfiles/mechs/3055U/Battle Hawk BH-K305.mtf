@@ -1,6 +1,5 @@
-Version:1.0
-Battle Hawk
-BH-K305
+chassis:Battle Hawk
+model:BH-K305
 mul id:275
 
 Config:Biped
@@ -8,6 +7,13 @@ TechBase:Inner Sphere
 Era:3053
 Source:TRO: 3055
 Rules Level:2
+role:Striker
+
+
+
+
+quirk:rugged_1
+
 
 Mass:30
 Engine:150 XL Engine

@@ -1,6 +1,5 @@
-Version:1.0
-Sasquatch
-SQS-TH-002
+chassis:Sasquatch
+model:SQS-TH-002
 mul id:2799
 
 Config:Biped
@@ -8,6 +7,12 @@ TechBase:Inner Sphere
 Era:3065
 Source:TRO: 3055
 Rules Level:4
+role:Brawler
+
+
+
+quirk:difficult_maintain
+
 
 Mass:85
 Engine:425 Large XXL Engine

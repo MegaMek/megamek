@@ -32,6 +32,10 @@ Skadi Swift Attack VTOL
 Clan Level 4
 </type>
 
+<role>
+Striker
+</role>
+
 <motion_type>
 VTOL
 </motion_type>
@@ -94,3 +98,8 @@ TRO: 3145 The Clans
 <tonnage>
 30.0
 </tonnage>
+
+<quirks>
+vtol_rotor_dual
+</quirks>
+

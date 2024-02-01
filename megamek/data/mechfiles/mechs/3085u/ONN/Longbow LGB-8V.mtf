@@ -1,6 +1,5 @@
-Version:1.0
-Longbow
-LGB-8V
+chassis:Longbow
+model:LGB-8V
 mul id:1938
 
 Config:Biped
@@ -8,6 +7,15 @@ TechBase:Inner Sphere
 Era:3068
 source:TRO: 3085
 Rules Level:3
+role:Missile Boat
+
+
+
+quirk:anti_air
+quirk:searchlight
+quirk:ubiquitous_is
+quirk:no_arms
+
 
 Mass:85
 Engine:255 XL Engine(IS)

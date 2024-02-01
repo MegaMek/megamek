@@ -1,6 +1,5 @@
-Version:1.0
-Thunderbolt
-TDR-10S
+chassis:Thunderbolt
+model:TDR-10S
 mul id:6877
 
 Config:Biped
@@ -8,6 +7,14 @@ TechBase:Inner Sphere
 Era:3086
 Source:Record Sheets: 3145 New Tech New Upgrades
 Rules Level:2
+role:Sniper
+
+
+
+quirk:multi_trac
+quirk:rugged_2
+quirk:ubiquitous_is
+
 
 Mass:65
 Engine:260 Light Engine(IS)

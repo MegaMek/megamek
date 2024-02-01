@@ -32,15 +32,16 @@ C
 IS Level 2
 </type>
 
+<role>
+Striker
+</role>
+
 <motion_type>
 Hover
 </motion_type>
 
 <transporters>
 troopspace:4.0
-</transporters>
-
-<transporters>
 BattleArmorHandles - troopers:-1
 </transporters>
 
@@ -96,3 +97,8 @@ TRO: 3058
 <baseChassisTurretWeight>
 1.0
 </baseChassisTurretWeight>
+
+<weaponQuirks>
+mod_weapons:TU:0:SRM 6
+mod_weapons:TU:1:SRM 6
+</weaponQuirks>

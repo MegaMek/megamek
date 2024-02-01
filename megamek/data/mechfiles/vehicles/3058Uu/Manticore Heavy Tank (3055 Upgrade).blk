@@ -36,6 +36,10 @@ Manticore Heavy Tank
 IS Level 2
 </type>
 
+<role>
+Brawler
+</role>
+
 <motion_type>
 Tracked
 </motion_type>

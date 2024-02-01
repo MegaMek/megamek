@@ -20,6 +20,10 @@ IS Standard Battle Armor
 (Baka) [LRR](Sqd6)
 </Model>
 
+<mul id:>
+9522
+</mul id:>
+
 <year>
 3086
 </year>
@@ -27,6 +31,10 @@ IS Standard Battle Armor
 <originalBuildYear>
 3086
 </originalBuildYear>
+
+<role>
+Ambusher
+</role>
 
 <type>
 IS Level 2

@@ -1,6 +1,5 @@
-Version:1.0
-Warhammer
-WHM-9D
+chassis:Warhammer
+model:WHM-9D
 mul id:3497
 
 Config:Biped
@@ -8,6 +7,16 @@ TechBase:Inner Sphere
 Era:3067
 Source:Record Sheets: Clan Invasion
 Rules Level:2
+role:Sniper
+
+
+
+quirk:rugged_2
+quirk:searchlight
+quirk:stable
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+
 
 Mass:70
 Engine:350 XL Engine(IS)

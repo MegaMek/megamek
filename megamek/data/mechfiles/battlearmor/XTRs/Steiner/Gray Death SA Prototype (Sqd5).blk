@@ -57,6 +57,10 @@ InfantryAssaultRifle:LA:APM
 Mixed (IS Chassis) Advanced
 </type>
 
+<role>
+Ambusher
+</role>
+
 <year>
 3073
 </year>
@@ -109,3 +113,8 @@ JUMPJET:Unknown
 COMMUNICATIONS:Unknown
 TARGETING:Unknown
 </systemManufacturers>
+
+<quirks>
+distracting
+</quirks>
+

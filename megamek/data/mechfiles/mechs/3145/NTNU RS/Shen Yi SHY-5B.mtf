@@ -1,6 +1,5 @@
-Version:1.0
-Shen Yi
-SHY-5B
+chassis:Shen Yi
+model:SHY-5B
 mul id:6878
 
 Config:Biped
@@ -8,6 +7,12 @@ TechBase:Inner Sphere
 Era:3093
 Source:Record Sheets: 3145 New Tech New Upgrades
 Rules Level:2
+role:Missile Boat
+
+
+
+quirk:weak_head_1
+
 
 Mass:65
 Engine:260 XL Engine(IS)

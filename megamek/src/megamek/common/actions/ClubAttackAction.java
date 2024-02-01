@@ -28,6 +28,7 @@ import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.ToHitData;
 import megamek.common.options.OptionsConstants;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * The attacker makes a club attack on the target. This also covers mech melee
@@ -256,8 +257,13 @@ public class ClubAttackAction extends PhysicalAttackAction {
         final Entity ae = game.getEntity(attackerId);
         MiscType clubType;
         // arguments legal?
-        if ((ae == null) || (target == null)) {
-            throw new IllegalArgumentException("Attacker or target not valid");
+        if (ae == null) {
+            LogManager.getLogger().error("Attacker not valid");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Attacker not valid");
+        }
+        if (target == null) {
+            LogManager.getLogger().error("target not valid");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "target not valid");
         }
         if (club == null) {
             throw new IllegalArgumentException("Club is null");

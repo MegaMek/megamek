@@ -1,6 +1,5 @@
-Version:1.0
-Sentinel
-STN-3L
+chassis:Sentinel
+model:STN-3L
 mul id:2860
 
 Config:Biped
@@ -8,6 +7,13 @@ TechBase:Inner Sphere
 Era:2652
 Source:TRO: 3050
 Rules Level:2
+role:Striker
+
+
+
+quirk:imp_com
+weaponquirk:ammo_feed_problems:RT:0:ISStreakSRM2
+
 
 Mass:40
 Engine:240 Fusion Engine

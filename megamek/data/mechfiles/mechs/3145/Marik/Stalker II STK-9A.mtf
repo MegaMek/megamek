@@ -1,6 +1,5 @@
-Version:1.1
-Stalker II
-STK-9A
+chassis:Stalker II
+model:STK-9A
 mul id:6515
 
 Config:Biped
@@ -8,6 +7,15 @@ techbase:Inner Sphere
 era:3137
 source:TRO: 3145 Free Worlds League
 rules level:4
+role:Juggernaut
+
+
+
+
+quirk:combat_computer
+quirk:pro_actuator
+quirk:no_arms
+
 
 mass:85
 engine:255 Fusion Engine(IS)

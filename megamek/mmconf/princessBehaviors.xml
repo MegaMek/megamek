@@ -105,22 +105,7 @@
     <strategicBuildingTargets/>
   </behavior>
   <behavior>
-    <name>BERSERK</name>
-    <destinationEdge>NONE</destinationEdge>
-    <retreatEdge>NEAREST</retreatEdge>
-    <forcedWithdrawal>false</forcedWithdrawal>
-    <goHome>false</goHome>
-    <autoFlee>false</autoFlee>
-    <fallShameIndex>2</fallShameIndex>
-    <hyperAggressionIndex>10</hyperAggressionIndex>
-    <selfPreservationIndex>3</selfPreservationIndex>
-    <herdMentalityIndex>5</herdMentalityIndex>
-    <braveryIndex>2</braveryIndex>
-    <verbosity>WARNING</verbosity>
-    <strategicBuildingTargets/>
-  </behavior>
-  <behavior>
-    <name>BERSERK v2 ANGRY HORDE</name>
+    <name>BERSERK v2</name>
     <destinationEdge>NONE</destinationEdge>
     <retreatEdge>NEAREST</retreatEdge>
     <forcedWithdrawal>false</forcedWithdrawal>

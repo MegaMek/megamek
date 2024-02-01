@@ -1,6 +1,5 @@
-Version:1.0
-Hermes
-HER-1S
+chassis:Hermes
+model:HER-1S
 mul id:1487
 
 Config:Biped
@@ -8,6 +7,14 @@ TechBase:Inner Sphere
 Era:2632
 Source:TRO: 3050
 Rules Level:2
+role:Scout
+
+
+
+
+quirk:imp_com
+quirk:stable
+
 
 Mass:30
 Engine:270 Fusion Engine

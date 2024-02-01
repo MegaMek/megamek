@@ -1,6 +1,5 @@
-Version:1.0
-Highlander
-HGN-732
+chassis:Highlander
+model:HGN-732
 mul id:1514
 
 Config:Biped
@@ -8,6 +7,16 @@ techbase:Inner Sphere
 era:2592
 source:TRO: 3050
 rules level:2
+role:Sniper
+
+
+
+
+quirk:command_mech
+quirk:cowl
+quirk:reinforced_legs
+quirk:difficult_eject
+
 
 mass:90
 engine:270 Fusion Engine(IS)

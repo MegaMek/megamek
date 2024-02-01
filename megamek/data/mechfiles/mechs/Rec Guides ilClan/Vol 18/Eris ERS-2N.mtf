@@ -1,6 +1,5 @@
-Version:1.0
-Eris
-ERS-2N
+chassis:Eris
+model:ERS-2N
 mul id:8251
 
 Config:Biped
@@ -8,6 +7,7 @@ techbase:Inner Sphere
 era:3092
 source:Rec Guide:ilClan #18
 rules level:3
+role:Skirmisher
 
 mass:50
 engine:250 XL Engine(IS)

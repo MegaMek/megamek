@@ -1,6 +1,5 @@
-Version:1.1
-Chaffee Servicemech
-BT1
+chassis:Chaffee Servicemech
+model:BT1
 mul id:7151
 
 Config:Biped
@@ -8,6 +7,7 @@ TechBase:Inner Sphere
 Era:3081
 Source:TRO: Vehicle Annex (Revised)
 Rules Level:3
+role:Scout
 
 Mass:15
 Engine:75 Fuel Cell Engine(IS)

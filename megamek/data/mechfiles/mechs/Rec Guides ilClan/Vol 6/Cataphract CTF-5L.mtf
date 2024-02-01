@@ -1,12 +1,12 @@
-Version:1.3
-Cataphract
-CTF-5L
+chassis:Cataphract
+model:CTF-5L
 mul id:7527
 Config:Biped
 techbase:Inner Sphere
 era:3132
 source:Rec Guide:ilClan #6
 rules level:3
+role:Sniper
 
 mass:70
 engine:280 Fusion Engine(IS)

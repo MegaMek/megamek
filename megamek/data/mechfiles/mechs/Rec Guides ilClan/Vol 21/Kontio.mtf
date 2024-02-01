@@ -1,6 +1,5 @@
-Version:1.0
-Kontio
-
+chassis:Kontio
+model:
 mul id:8352
 
 Config:Biped
@@ -8,6 +7,13 @@ techbase:Mixed (Clan Chassis)
 era:3145
 source:Rec Guide:ilClan #21
 rules level:2
+role:Striker
+
+
+quirk:distracting
+quirk:bad_rep_clan
+quirk:bad_rep_is
+
 
 mass:40
 engine:280 XL (Clan) Engine

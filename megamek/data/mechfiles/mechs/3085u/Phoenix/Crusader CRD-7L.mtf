@@ -1,6 +1,5 @@
-Version:1.0
-Crusader
-CRD-7L
+chassis:Crusader
+model:CRD-7L
 mul id:762
 
 Config:Biped
@@ -8,6 +7,15 @@ TechBase:Inner Sphere
 Era:3067
 source:TRO: 3085u 
 Rules Level:2
+role:Missile Boat
+
+
+
+quirk:easy_maintain
+quirk:rugged_1
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+
 
 Mass:65
 Engine:195 Fusion Engine

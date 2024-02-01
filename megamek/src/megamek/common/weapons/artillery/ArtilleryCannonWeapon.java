@@ -37,9 +37,19 @@ public abstract class ArtilleryCannonWeapon extends AmmoWeapon {
         atClass = CLASS_AC;
     }
 
+    @Override
+    public boolean isAlphaStrikeIndirectFire() {
+        return false;
+    }
+
+    @Override
+    public boolean hasIndirectFire() {
+        return true;
+    }
+
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
      * megamek.common.actions.WeaponAttackAction, megamek.common.Game,
@@ -52,7 +62,7 @@ public abstract class ArtilleryCannonWeapon extends AmmoWeapon {
         // game.getEntity(waa.getEntityId()).getEquipment(waa.getWeaponId()).getLinked().getType();
         return new ArtilleryCannonWeaponHandler(toHit, waa, game, manager);
     }
-    
+
     @Override
     public void adaptToGameOptions(GameOptions gOp) {
         super.adaptToGameOptions(gOp);

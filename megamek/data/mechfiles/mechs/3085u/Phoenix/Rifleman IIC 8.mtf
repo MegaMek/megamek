@@ -1,6 +1,5 @@
-Version:1.0
-Rifleman IIC
-8
+chassis:Rifleman IIC
+model:8
 mul id:2717
 
 Config:Biped
@@ -8,6 +7,11 @@ TechBase:Clan
 Era:3078
 source:TRO: 3085
 Rules Level:2
+role:Skirmisher
+
+quirk:anti_air
+quirk:imp_com
+
 
 Mass:65
 Engine:325 XL (Clan) Engine

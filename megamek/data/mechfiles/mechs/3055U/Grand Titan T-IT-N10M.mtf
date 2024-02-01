@@ -1,6 +1,5 @@
-Version:1.0
-Grand Titan
-T-IT-N10M
+chassis:Grand Titan
+model:T-IT-N10M
 mul id:1265
 
 Config:Biped
@@ -8,6 +7,14 @@ TechBase:Inner Sphere
 Era:3054
 Source:TRO: 3055
 Rules Level:2
+role:Brawler
+
+
+
+
+quirk:multi_trac
+quirk:difficult_maintain
+
 
 Mass:100
 Engine:400 XL Engine

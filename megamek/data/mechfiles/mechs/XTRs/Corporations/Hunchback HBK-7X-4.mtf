@@ -1,6 +1,5 @@
-Version:1.1
-Hunchback
-HBK-7X-4
+chassis:Hunchback
+model:HBK-7X-4
 mul id:1567
 
 Config:Biped
@@ -8,6 +7,13 @@ TechBase:Inner Sphere
 Era:3065
 Source:XTR: Corporations
 Rules Level:4
+role:Sniper
+
+
+
+quirk:battle_fists_la
+quirk:battle_fists_ra
+
 
 Mass:50
 Engine:200 XL Fusion Engine

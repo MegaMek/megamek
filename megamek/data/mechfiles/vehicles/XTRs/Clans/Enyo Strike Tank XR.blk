@@ -32,6 +32,10 @@ XR
 Clan Level 4
 </type>
 
+<role>
+Striker
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -88,3 +92,10 @@ XTR: Clans
 <tonnage>
 55.0
 </tonnage>
+
+<quirks>
+difficult_maintain
+prototype
+trailer_hitch
+</quirks>
+

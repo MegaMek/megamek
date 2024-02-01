@@ -1,6 +1,5 @@
-Version:1.0
-Wolf Trap (Tora)
-WFT-1
+chassis:Wolf Trap (Tora)
+model:WFT-1
 mul id:3554
 
 Config:Biped
@@ -8,6 +7,14 @@ TechBase:Inner Sphere
 Era:3051
 Source:TRO: 3050
 Rules Level:2
+role:Striker
+
+
+
+
+quirk:bad_rep_is
+quirk:bad_rep_clan
+
 
 Mass:45
 Engine:270 XL Engine

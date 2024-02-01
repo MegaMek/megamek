@@ -1,6 +1,5 @@
-Version:1.1
-Ostsol
-OTL-8D
+chassis:Ostsol
+model:OTL-8D
 mul id:2377
 
 Config:Biped
@@ -8,6 +7,13 @@ TechBase:Inner Sphere
 Era:3069
 source:TRO: 3085
 Rules Level:2
+role:Skirmisher
+
+
+
+quirk:imp_sensors
+quirk:low_profile
+
 
 Mass:60
 Engine:300 Light Engine

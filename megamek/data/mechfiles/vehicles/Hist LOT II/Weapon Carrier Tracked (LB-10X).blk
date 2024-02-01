@@ -32,6 +32,10 @@ Weapon Carrier (Tracked)
 IS Level 2
 </type>
 
+<role>
+Sniper
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -92,3 +96,10 @@ Historical: Liberation of Terra II
 <tonnage>
 60.0
 </tonnage>
+
+<quirks>
+trailer_hitch
+difficult_maintain
+poor_work
+</quirks>
+

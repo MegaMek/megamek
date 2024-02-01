@@ -1,6 +1,6 @@
-Version:1.0
-Masakari (Warhawk)
-I
+chassis:Masakari
+clanname:Warhawk
+model:I
 mul id:8339
 
 Config:Biped Omnimech
@@ -8,6 +8,10 @@ techbase:Clan
 era:3015
 source:Rec Guide:ilClan #20
 rules level:2
+role:Sniper
+
+quirk:imp_target_long
+
 
 mass:85
 engine:340 XL (Clan) Engine(IS)

@@ -1,13 +1,18 @@
-Version:1.1
-Victor
-VTR-9K2 (St. James)
+chassis:Victor
+model:VTR-9K2 (St. James)
 mul id:3412
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3069
 Rules Level:4
+role:Missile Boat
 Source:XTR: Pirates
+
+
+
+quirk:rugged_1
+
 
 Mass:80
 Engine:320 Fusion Engine

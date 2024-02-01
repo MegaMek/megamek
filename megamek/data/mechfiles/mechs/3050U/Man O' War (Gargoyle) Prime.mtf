@@ -1,6 +1,6 @@
-Version:1.0
-Man O' War (Gargoyle)
-Prime
+chassis:Man O' War
+clanname:Gargoyle
+model:Prime
 mul id:2010
 
 Config:Biped Omnimech
@@ -8,6 +8,14 @@ techbase:Clan
 era:2945
 source:TRO: Clan Invasion
 rules level:2
+role:Skirmisher
+
+
+weaponquirk:stable_weapon:RA:2:CLSRM6
+weaponquirk:stable_weapon:RA:3:CLLBXAC5
+weaponquirk:stable_weapon:LA:2:CLSRM6
+weaponquirk:stable_weapon:LA:3:CLLBXAC5
+
 
 mass:80
 engine:400 XL (Clan) Engine(IS)

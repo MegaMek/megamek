@@ -1,6 +1,5 @@
-Version:1.0
-Ha Otoko
-
+chassis:Ha Otoko
+model:
 mul id:1355
 
 Config:Biped
@@ -8,6 +7,11 @@ TechBase:Clan
 Era:3060
 Source:TRO: 3060
 Rules Level:2
+role:Missile Boat
+
+
+quirk:bad_rep_clan
+
 
 Mass:65
 Engine:260 Fusion (Clan) Engine

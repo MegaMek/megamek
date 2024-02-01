@@ -1,12 +1,15 @@
-Version:1.3
-Vulcan
-VT-7T
+chassis:Vulcan
+model:VT-7T
 mul id:9427
 Config:Biped
 techbase:Inner Sphere
 era:3091
 source:Rec Guide:ilClan #30
 rules level:2
+role:Scout
+
+quirk:low_profile
+
 
 mass:40
 engine:240 XL Engine(IS)

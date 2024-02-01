@@ -1,6 +1,5 @@
-Version:1.1
-Storm Giant
-
+chassis:Storm Giant
+model:
 mul id:7649
 
 Config:Biped
@@ -8,6 +7,12 @@ techbase:Clan
 era:2862
 source:TRO: Golden Century
 rules level:2
+role:Missile Boat
+
+
+quirk:rugged_1
+quirk:oversized
+
 
 mass:100
 engine:400 XL (Clan) Engine(IS)

@@ -24,6 +24,7 @@
 <b>Cost:</b> ${cost} C-bills<br/>
 </p>
 	
+<#noautoesc>
 <#if fluffOverview??>
 <p>
 <b>Overview</b><br/>
@@ -51,3 +52,4 @@ ${fluffDeployment}
 ${fluffHistory}
 </p>
 </#if>
+</#noautoesc>

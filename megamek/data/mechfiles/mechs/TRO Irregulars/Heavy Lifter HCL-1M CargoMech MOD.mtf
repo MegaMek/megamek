@@ -1,6 +1,5 @@
-Version:1.1
-Heavy Lifter
-HCL-1M CargoMech MOD
+chassis:Heavy Lifter
+model:HCL-1M CargoMech MOD
 mul id:7869
 
 Config:Quad
@@ -8,6 +7,7 @@ techbase:Inner Sphere
 era:3132
 source:TRO: Irregulars
 rules level:2
+role:Brawler
 
 mass:60
 engine:240 Fusion Engine(IS)

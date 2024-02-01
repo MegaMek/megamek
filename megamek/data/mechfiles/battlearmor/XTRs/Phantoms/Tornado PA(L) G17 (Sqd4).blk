@@ -32,6 +32,10 @@ G17(Sqd4)
 Mixed (IS Chassis) Advanced
 </type>
 
+<role>
+Scout
+</role>
+
 <motion_type>
 VTOL
 </motion_type>
@@ -120,3 +124,9 @@ JUMPJET:Unknown
 COMMUNICATIONS:Unknown
 TARGETING:Unknown
 </systemManufacturers>
+
+<quirks>
+bad_rep_is
+difficult_maintain
+</quirks>
+

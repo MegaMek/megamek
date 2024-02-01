@@ -36,6 +36,10 @@ DroST IIa Transport
 IS Level 2
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -211,3 +215,10 @@ Cargo Transport
 <height>
 31 meters
 </height>
+
+<quirks>
+atmo_instability
+easy_maintain
+obsolete
+</quirks>
+

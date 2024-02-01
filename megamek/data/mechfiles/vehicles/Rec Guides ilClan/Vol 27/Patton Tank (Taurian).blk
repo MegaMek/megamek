@@ -36,6 +36,10 @@ Patton Tank
 IS Level 2
 </type>
 
+<role>
+Brawler
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -132,4 +136,10 @@ Rec Guide:ilClan #27
 <tonnage>
 65.0
 </tonnage>
+
+
+<quirks>
+low_profile
+poor_target_short
+</quirks>
 

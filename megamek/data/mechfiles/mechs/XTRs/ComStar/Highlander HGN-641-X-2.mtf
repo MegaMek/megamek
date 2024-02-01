@@ -1,6 +1,5 @@
-Version:1.1
-Highlander
-HGN-641-X-2
+chassis:Highlander
+model:HGN-641-X-2
 mul id:5552
 
 Config:Biped
@@ -8,6 +7,16 @@ TechBase:Inner Sphere
 Era:3070
 Source:XTR: ComStar
 Rules Level:4
+role:Juggernaut
+
+
+
+quirk:command_mech
+quirk:cowl
+quirk:reinforced_legs
+quirk:difficult_eject
+quirk:prototype
+
 
 Mass:90
 Engine:270 XL Fusion Engine

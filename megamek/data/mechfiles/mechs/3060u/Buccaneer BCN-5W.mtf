@@ -1,6 +1,5 @@
-Version:1.0
-Buccaneer
-BCN-5W
+chassis:Buccaneer
+model:BCN-5W
 mul id:437
 
 Config:Biped
@@ -8,6 +7,11 @@ TechBase:Inner Sphere
 Era:3069
 Source:TRO: 3060
 Rules Level:2
+role:Scout
+
+quirk:imp_target_short
+quirk:bad_rep_is
+
 
 Mass:55
 Engine:275 XL Engine

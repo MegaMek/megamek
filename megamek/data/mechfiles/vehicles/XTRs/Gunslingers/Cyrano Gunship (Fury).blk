@@ -36,6 +36,10 @@ Cyrano Gunship
 IS Level 4
 </type>
 
+<role>
+Scout
+</role>
+
 <motion_type>
 VTOL
 </motion_type>
@@ -105,3 +109,9 @@ XTR: Gunslingers
 <tonnage>
 30.0
 </tonnage>
+
+<quirks>
+easy_pilot
+obsolete
+</quirks>
+

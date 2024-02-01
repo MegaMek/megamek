@@ -36,6 +36,10 @@ Leviathan Jumpship
 IS Level 4
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -166,3 +170,9 @@ XTR: Primitives III
 <escape_pod>
 5
 </escape_pod>
+
+<quirks>
+easy_maintain
+bad_rep_is
+</quirks>
+

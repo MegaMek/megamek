@@ -1,6 +1,5 @@
-Version:1.1
-Coyotl
-C
+chassis:Coyotl
+model:C
 mul id:7607
 
 Config:Biped Omnimech
@@ -8,6 +7,10 @@ techbase:Clan
 era:3145
 source:TRO: Golden Century
 rules level:2
+role:Sniper
+
+quirk:ext_twist
+
 
 mass:40
 engine:280 XL (Clan) Engine(IS)

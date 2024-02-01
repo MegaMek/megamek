@@ -32,6 +32,10 @@ Partisan AA Vehicle
 IS Level 2
 </type>
 
+<role>
+Sniper
+</role>
+
 <motion_type>
 Wheeled
 </motion_type>
@@ -90,3 +94,8 @@ TRO: 3145 Free Worlds League
 <tonnage>
 50.0
 </tonnage>
+
+<quirks>
+anti_air
+</quirks>
+

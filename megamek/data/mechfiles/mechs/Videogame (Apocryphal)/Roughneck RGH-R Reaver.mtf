@@ -1,6 +1,5 @@
-Version:1.0
-Roughneck
-RGH-R Reaver
+chassis:Roughneck
+model:RGH-R Reaver
 
 Config:Biped
 TechBase:Inner Sphere

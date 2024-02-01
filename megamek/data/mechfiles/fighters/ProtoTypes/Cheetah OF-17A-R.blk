@@ -36,6 +36,10 @@ OF-17A-R
 IS Level 4
 </type>
 
+<role>
+Interceptor
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -114,3 +118,8 @@ TRO: Prototypes
 <tonnage>
 25.0
 </tonnage>
+
+<weaponQuirks>
+mod_weapons:AFT:1:Small Laser
+mod_weapons:AFT:2:Small Laser
+</weaponQuirks>

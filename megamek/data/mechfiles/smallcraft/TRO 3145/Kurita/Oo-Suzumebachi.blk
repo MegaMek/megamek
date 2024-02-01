@@ -36,6 +36,10 @@ Oo-Suzumebachi
 IS Level 3
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -166,4 +170,10 @@ TRO: 3145 Draconis Combine
 <escape_pod>
 0
 </escape_pod>
+
+
+<quirks>
+atmo_flyer
+fragile_fuel
+</quirks>
 

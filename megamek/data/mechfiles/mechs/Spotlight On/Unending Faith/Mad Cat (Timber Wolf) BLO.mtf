@@ -1,6 +1,6 @@
-Version:1.0
-Mad Cat (Timber Wolf)
-BLO
+chassis:Mad Cat
+clanname:Timber Wolf
+model:BLO
 mul id:7635
 
 Config:Biped Omnimech
@@ -8,6 +8,11 @@ TechBase:Mixed (Clan Chassis)
 Era:3129
 Source:Spotlight On: Unending Faith
 Rules Level:3
+role:Skirmisher
+
+quirk:imp_target_med
+quirk:weak_head_1
+
 
 Mass:75
 Engine:375 XL (Clan) Engine

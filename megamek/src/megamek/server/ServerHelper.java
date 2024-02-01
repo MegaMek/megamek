@@ -42,8 +42,7 @@ public class ServerHelper {
      * @return Whether the infantry unit can be considered to be "in the open"
      */
     public static boolean infantryInOpen(Entity te, Hex te_hex, Game game,
-            boolean isPlatoon, boolean ammoExplosion, boolean ignoreInfantryDoubleDamage) {
-
+                                         boolean isPlatoon, boolean ammoExplosion, boolean ignoreInfantryDoubleDamage) {
         if (isPlatoon && !te.isDestroyed() && !te.isDoomed() && !ignoreInfantryDoubleDamage
                 && (((Infantry) te).getDugIn() != Infantry.DUG_IN_COMPLETE)) {
 
@@ -69,7 +68,7 @@ public class ServerHelper {
      * Worker function that handles heat as applied to aerospace fighter
      */
     public static void resolveAeroHeat(Game game, Entity entity, Vector<Report> vPhaseReport, Vector<Report> rhsReports,
-            int radicalHSBonus, int hotDogMod, GameManager s) {
+                                       int radicalHSBonus, int hotDogMod, GameManager s) {
         Report r;
 
         // If this aero is part of a squadron, we will deal with its
@@ -80,8 +79,8 @@ public class ServerHelper {
 
         // should we even bother?
         if (entity.isDestroyed() || entity.isDoomed()
-            || entity.getCrew().isDoomed()
-            || entity.getCrew().isDead()) {
+                || entity.getCrew().isDoomed()
+                || entity.getCrew().isDead()) {
             return;
         }
 
@@ -247,13 +246,14 @@ public class ServerHelper {
                                     break;
                             }
                         }
-                        int startupRoll = entity.getCrew().rollPilotingSkill();
+                        Roll diceRoll = entity.getCrew().rollPilotingSkill();
                         r = new Report(5050);
                         r.subject = entity.getId();
                         r.addDesc(entity);
                         r.add(startup);
-                        r.add(startupRoll);
-                        if (startupRoll >= startup) {
+                        r.add(diceRoll);
+
+                        if (diceRoll.getIntValue() >= startup) {
                             // start 'er back up
                             entity.setShutDown(false);
                             r.choose(true);
@@ -316,13 +316,14 @@ public class ServerHelper {
                                 break;
                         }
                     }
-                    int shutdownRoll = Compute.d6(2);
+                    Roll diceRoll = Compute.rollD6(2);
                     r = new Report(5060);
                     r.subject = entity.getId();
                     r.addDesc(entity);
                     r.add(shutdown);
-                    r.add(shutdownRoll);
-                    if (shutdownRoll >= shutdown) {
+                    r.add(diceRoll);
+
+                    if (diceRoll.getIntValue() >= shutdown) {
                         // avoided
                         r.choose(true);
                         vPhaseReport.add(r);
@@ -355,10 +356,10 @@ public class ServerHelper {
             r.addDesc(entity);
             r.add(boom);
 
-            int roll = Compute.d6(2);
-            r.add(roll);
+            Roll diceRoll = Compute.rollD6(2);
+            r.add(diceRoll);
 
-            if (roll >= boom) {
+            if (diceRoll.getIntValue() >= boom) {
                 // no ammo explosion
                 r.choose(true);
                 vPhaseReport.add(r);
@@ -373,13 +374,14 @@ public class ServerHelper {
         // heat effects: pilot damage
         if (entity.heat >= 21) {
             int ouch = (6 + (entity.heat >= 27 ? 3 : 0)) - hotDogMod;
-            int ouchRoll = Compute.d6(2);
+            Roll diceRoll = Compute.rollD6(2);
             r = new Report(5075);
             r.subject = entity.getId();
             r.addDesc(entity);
             r.add(ouch);
-            r.add(ouchRoll);
-            if (ouchRoll >= ouch) {
+            r.add(diceRoll);
+
+            if (diceRoll.getIntValue() >= ouch) {
                 // pilot is ok
                 r.choose(true);
                 vPhaseReport.add(r);
@@ -402,7 +404,7 @@ public class ServerHelper {
         }
     }
 
-	public static void adjustHeatExtremeTemp(Game game, Entity entity, Vector<Report> vPhaseReport) {
+    public static void adjustHeatExtremeTemp(Game game, Entity entity, Vector<Report> vPhaseReport) {
         Report r;
         int tempDiff = game.getPlanetaryConditions().getTemperatureDifference(50, -30);
         boolean heatArmor = false;
@@ -467,21 +469,20 @@ public class ServerHelper {
     }
 
     public static void checkAndApplyMagmaCrust(Hex hex, int elevation, Entity entity, Coords curPos,
-            boolean jumpLanding, Vector<Report> vPhaseReport, GameManager gameManager) {
-
+                                               boolean jumpLanding, Vector<Report> vPhaseReport, GameManager gameManager) {
         if ((hex.terrainLevel(Terrains.MAGMA) == 1) && (elevation == 0) && (entity.getMovementMode() != EntityMovementMode.HOVER)) {
             int reportID = jumpLanding ? 2396 : 2395;
 
-            int roll = Compute.d6();
+            Roll diceRoll = Compute.rollD6(1);
             Report r = new Report(reportID);
             r.addDesc(entity);
-            r.add(roll);
+            r.add(diceRoll);
             r.subject = entity.getId();
             vPhaseReport.add(r);
 
             int rollTarget = jumpLanding ? 4 : 6;
 
-            if (roll >= rollTarget) {
+            if (diceRoll.getIntValue() >= rollTarget) {
                 hex.removeTerrain(Terrains.MAGMA);
                 hex.addTerrain(new Terrain(Terrains.MAGMA, 2));
                 gameManager.sendChangedHex(curPos);
@@ -548,7 +549,7 @@ public class ServerHelper {
      * @return True if any minefields have been detected.
      */
     public static boolean detectMinefields(Game game, Entity entity, Coords coords,
-            Vector<Report> vPhaseReport, GameManager gameManager) {
+                                           Vector<Report> vPhaseReport, GameManager gameManager) {
         if (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_MINEFIELDS)) {
             return false;
         }
@@ -607,7 +608,7 @@ public class ServerHelper {
      * Checks to see if any units can detected hidden units.
      */
     public static boolean detectHiddenUnits(Game game, Entity detector, Coords detectorCoords,
-            Vector<Report> vPhaseReport, GameManager gameManager) {
+                                            Vector<Report> vPhaseReport, GameManager gameManager) {
         // If hidden units aren't on, nothing to do
         if (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_HIDDEN_UNITS)) {
             return false;

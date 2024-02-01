@@ -1,6 +1,5 @@
-Version:1.1
-Fireball
-ALM-XF
+chassis:Fireball
+model:ALM-XF
 mul id:5781
 
 Config:Biped
@@ -8,6 +7,15 @@ TechBase:Inner Sphere
 Era:3077
 Source:XTR: Most Wanted
 Rules Level:4
+role:Scout
+
+
+
+quirk:imp_com
+quirk:low_profile
+quirk:hard_pilot
+quirk:non_standard
+
 
 Mass:20
 Engine:320 XXL Engine(IS)

@@ -1,0 +1,149 @@
+chassis:Hyena
+model:HYN-4A SalvageMech
+mul id:1598
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3066
+Source:TRO: 3075
+Rules Level:2
+role:Scout
+
+Mass:55
+Engine:275 Fusion Engine
+Structure:Industrial
+Myomer:Industrial Triple-Strength
+
+Heat Sinks:10 Single
+Walk MP:5
+Jump MP:0
+
+Armor:Standard(Inner Sphere)
+LA Armor:7
+RA Armor:7
+LT Armor:8
+RT Armor:8
+CT Armor:11
+HD Armor:8
+LL Armor:9
+RL Armor:9
+RTL Armor:4
+RTR Armor:4
+RTC Armor:5
+
+Weapons:1
+Small Laser, Center Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+Environmental Sealing
+Industrial TSM
+Industrial TSM
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Salvage Arm
+Salvage Arm
+Environmental Sealing
+Industrial TSM
+Industrial TSM
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Lift Hoist (R)
+Lift Hoist (R)
+Lift Hoist (R)
+Environmental Sealing
+Industrial TSM
+Industrial TSM
+Industrial TSM
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+Lift Hoist (R)
+Lift Hoist (R)
+Lift Hoist (R)
+Environmental Sealing
+Industrial TSM
+Industrial TSM
+Industrial TSM
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Small Laser
+Environmental Sealing
+
+Head:
+Life Support
+Sensors
+Cockpit
+Environmental Sealing
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Environmental Sealing
+Industrial TSM
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Environmental Sealing
+Industrial TSM
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

@@ -1,6 +1,5 @@
-Version:1.1
-Jenner
-JR7-C4
+chassis:Jenner
+model:JR7-C4
 mul id:1691
 
 Config:Biped
@@ -8,6 +7,12 @@ TechBase:Inner Sphere
 Era:3077
 source:TRO: 3085
 Rules Level:4
+role:Missile Boat
+
+
+
+quirk:no_arms
+
 
 Mass:35
 Engine:245 XL Engine(IS)

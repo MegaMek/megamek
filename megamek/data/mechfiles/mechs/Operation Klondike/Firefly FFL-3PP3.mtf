@@ -1,13 +1,18 @@
-Version:1.0
-Firefly
-FFL-3PP3
+chassis:Firefly
+model:FFL-3PP3
 mul id:1085
 
 Config:Biped
 techbase:Inner Sphere
 era:2801
 rules level:2
+role:Striker
 Source:Historical: Operation Klondike 
+
+
+
+quirk:no_arms
+
 
 mass:30
 engine:150 XL Engine(IS)

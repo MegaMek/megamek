@@ -1,6 +1,5 @@
-Version:1.0
-Duan Gung
-(Vaughn)
+chassis:Duan Gung
+model:(Vaughn)
 mul id:6979
 
 Config:Biped
@@ -8,6 +7,13 @@ TechBase:Inner Sphere
 Era:3068
 Source:BattleTech Dossiers: Youling Zhanshi
 Rules Level:2
+role:Missile Boat
+
+
+
+quirk:pro_actuator
+quirk:non_standard
+
 
 Mass:25
 Engine:175 XL Engine(IS)

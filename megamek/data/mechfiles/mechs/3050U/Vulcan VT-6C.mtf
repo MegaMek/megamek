@@ -1,6 +1,5 @@
-Version:1.0
-Vulcan
-VT-6C
+chassis:Vulcan
+model:VT-6C
 mul id:3464
 
 Config:Biped
@@ -8,6 +7,10 @@ TechBase:Inner Sphere
 Era:3070
 Source:TRO: 3050
 Rules Level:2
+role:Striker
+
+quirk:low_profile
+
 
 Mass:40
 Engine:240 Fusion Engine

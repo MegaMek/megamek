@@ -1,6 +1,5 @@
-Version:1.0
-Huron Warrior
-HUR-WO-R4N
+chassis:Huron Warrior
+model:HUR-WO-R4N
 mul id:1582
 
 Config:Biped
@@ -8,6 +7,12 @@ TechBase:Inner Sphere
 Era:3063
 Source:TRO: 3055
 Rules Level:2
+role:Missile Boat
+
+
+
+quirk:imp_sensors
+
 
 Mass:50
 Engine:250 XL Engine

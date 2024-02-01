@@ -1,6 +1,5 @@
-Version:1.0
-Banshee
-BNC-3S (Reinesblatt)
+chassis:Banshee
+model:BNC-3S (Reinesblatt)
 mul id:246
 
 Config:Biped
@@ -8,6 +7,11 @@ TechBase:Inner Sphere
 Era:3029
 Source:TRO: 3039
 Rules Level:1
+role:Juggernaut
+
+quirk:rugged_1
+quirk:bad_rep_is
+
 
 Mass:95
 Engine:285 Fusion Engine(IS)

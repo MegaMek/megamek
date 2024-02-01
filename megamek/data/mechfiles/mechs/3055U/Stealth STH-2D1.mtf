@@ -1,6 +1,5 @@
-Version:1.0
-Stealth
-STH-2D1
+chassis:Stealth
+model:STH-2D1
 mul id:3055
 
 Config:Biped
@@ -8,6 +7,12 @@ techbase:Inner Sphere
 era:3062
 source:TRO: 3055
 rules level:2
+role:Striker
+
+
+
+quirk:imp_sensors
+
 
 mass:45
 engine:315 XL Engine(IS)

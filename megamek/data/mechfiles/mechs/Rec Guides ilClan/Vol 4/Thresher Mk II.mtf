@@ -1,13 +1,18 @@
-Version:1.0
-Thresher Mk II
-
+chassis:Thresher Mk II
+model:
 mul id:7502
 
 Config:Biped
 techbase:Clan
 era:3149
 rules level:4
+role:Skirmisher
 source:Rec Guide:ilClan #4
+
+
+quirk:imp_target_med
+quirk:ramshackle
+
 
 mass:60
 engine:300 XL (Clan) Engine(IS)

@@ -1,13 +1,20 @@
-Version:1.1
-Stalker
-STK-3F (Jagawen)
+chassis:Stalker
+model:STK-3F (Jagawen)
 mul id:3036
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3028
 Rules Level:1
+role:Juggernaut
 source:Historical Turning Points: Misery
+
+
+
+quirk:combat_computer
+quirk:ubiquitous_is
+quirk:no_arms
+
 
 Mass:85
 Engine:255 Fusion Engine

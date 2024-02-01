@@ -36,6 +36,10 @@ H-10
 IS Level 2
 </type>
 
+<role>
+Scout
+</role>
+
 <motion_type>
 VTOL
 </motion_type>
@@ -127,3 +131,8 @@ TARGETING:N&D Handsfree
 <source>
 TRO: 3058
 </source>
+
+<quirks>
+vtol_rotor_coaxial
+</quirks>
+

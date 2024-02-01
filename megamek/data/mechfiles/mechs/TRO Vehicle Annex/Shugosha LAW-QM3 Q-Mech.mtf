@@ -1,6 +1,5 @@
-Version:1.1
-Shugosha
-LAW-QM3 Q-Mech
+chassis:Shugosha
+model:LAW-QM3 Q-Mech
 mul id:7156
 
 Config:Biped
@@ -8,6 +7,7 @@ TechBase:Inner Sphere
 Era:3051
 Source:Record Sheets: Vehicle Annex - IndustrialMechs & Exoskeletons
 Rules Level:4
+role:Sniper
 
 Mass:20
 Engine:40 Fusion Engine(IS)

@@ -1,6 +1,5 @@
-Version:1.1
-Patron MilitiaMech
-PTN-2
+chassis:Patron MilitiaMech
+model:PTN-2
 mul id:4794
 
 Config:Biped
@@ -8,6 +7,7 @@ TechBase:Inner Sphere
 Era:3076
 Source:XTR: RetroTech
 Rules Level:2
+role:Sniper
 
 Mass:15
 Engine:30 Fuel-Cell Engine

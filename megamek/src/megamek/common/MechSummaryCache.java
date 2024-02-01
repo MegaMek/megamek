@@ -18,6 +18,7 @@ package megamek.common;
 import megamek.common.alphaStrike.ASUnitType;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.alphaStrike.conversion.ASConverter;
+import megamek.common.preference.PreferenceManager;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.verifier.*;
 import org.apache.logging.log4j.LogManager;
@@ -42,6 +43,9 @@ public class MechSummaryCache {
 
     private static final String FILENAME_UNITS_CACHE = "units.cache";
     public static final String FILENAME_LOOKUP = "name_changes.txt";
+
+    private static final List<String> SUPPORTED_FILE_EXTENSIONS =
+            List.of(".mtf", ".blk", ".mep", ".hmv", ".tdb", ".hmp", ".zip");
 
     private static MechSummaryCache instance;
     private static boolean disposeInstance = false;
@@ -146,12 +150,6 @@ public class MechSummaryCache {
     private MechSummaryCache() {
         nameMap = new HashMap<>();
         fileNameMap = new HashMap<>();
-
-        try {
-            QuirksHandler.initQuirksList();
-        } catch (Exception e) {
-            LogManager.getLogger().error("Error initializing quirks", e);
-        }
     }
 
     public MechSummary[] getAllMechs() {
@@ -259,9 +257,17 @@ public class MechSummaryCache {
         boolean bNeedsUpdate = loadMechsFromDirectory(vMechs, sKnownFiles,
                 lLastCheck, Configuration.unitsDir(), ignoreUnofficial);
 
+        // load units from the MM internal user data dir
         File userDataUnits = new File(Configuration.userdataDir(), Configuration.unitsDir().toString());
         if (userDataUnits.isDirectory()) {
             bNeedsUpdate |= loadMechsFromDirectory(vMechs, sKnownFiles, lLastCheck, userDataUnits, ignoreUnofficial);
+        }
+
+        // load units from the external user data dir
+        String userDir = PreferenceManager.getClientPreferences().getUserDir();
+        File userDataUnits2 = new File(userDir, "");
+        if (!userDir.isBlank() && userDataUnits2.isDirectory()) {
+            bNeedsUpdate |= loadMechsFromDirectory(vMechs, sKnownFiles, lLastCheck, userDataUnits2, ignoreUnofficial);
         }
 
         // save updated cache back to disk
@@ -383,6 +389,7 @@ public class MechSummaryCache {
         MechSummary ms = new MechSummary();
         ms.setName(e.getShortNameRaw());
         ms.setChassis(e.getChassis());
+        ms.setClanChassisName(e.getClanChassisName());
         ms.setModel(e.getModel());
         ms.setMulId(e.getMulId());
         ms.setUnitType(UnitType.getTypeName(e.getUnitType()));
@@ -390,13 +397,11 @@ public class MechSummaryCache {
         ms.setEntityType(e.getEntityType());
         ms.setOmni(e.isOmni());
         ms.setMilitary(e.isMilitary());
+        ms.setMountedInfantry((e instanceof Infantry) && ((Infantry) e).getMount() != null);
+
         int tankTurrets = 0;
         if (e instanceof Tank) {
-            if (!((Tank) e).hasNoDualTurret()) {
-                tankTurrets = 2;
-            } else if (!((Tank) e).hasNoTurret()) {
-                tankTurrets = 1;
-            }
+            tankTurrets = ((Tank) e).getTurretCount();
         }
         ms.setTankTurrets(tankTurrets);
         ms.setSourceFile(f);
@@ -424,7 +429,7 @@ public class MechSummaryCache {
             ms.setTWweight(e.getWeight());
             ms.setSuitWeight(((BattleArmor) e).getTrooperWeight());
         }
-        ms.setBV(e.calculateBattleValue());
+        ms.setBV(e.calculateBattleValue(true, true));
         ms.setLevel(TechConstants.T_SIMPLE_LEVEL[e.getTechLevel()]);
         ms.setAdvancedYear(e.getProductionDate(e.isClan()));
         ms.setStandardYear(e.getCommonDate(e.isClan()));
@@ -485,29 +490,8 @@ public class MechSummaryCache {
             ms.setCockpitType(-2);
         }
 
-        TestEntity testEntity = null;
-        if (e instanceof Mech) {
-            testEntity = new TestMech((Mech) e, entityVerifier.mechOption, null);
-        } else if (e instanceof Protomech) {
-            testEntity = new TestProtomech((Protomech) e, entityVerifier.protomechOption, null);
-        } else if (e.isSupportVehicle()) {
-            testEntity = new TestSupportVehicle(e, entityVerifier.tankOption, null);
-        } else if (e instanceof Tank && !(e instanceof GunEmplacement)) {
-            testEntity = new TestTank((Tank) e, entityVerifier.tankOption, null);
-        } else if (e instanceof BattleArmor) {
-            testEntity = new TestBattleArmor((BattleArmor) e, entityVerifier.baOption, null);
-        } else if (e instanceof Infantry) {
-            testEntity = new TestInfantry((Infantry) e, entityVerifier.infOption, null);
-        } else if (e instanceof Jumpship) {
-            testEntity = new TestAdvancedAerospace((Jumpship) e, entityVerifier.aeroOption, null);
-        } else if (e instanceof SmallCraft) {
-            testEntity = new TestSmallCraft((SmallCraft) e, entityVerifier.aeroOption, null);
-        } else if (e instanceof Aero) {
-            // FighterSquadron and TeleMissile are also instanceof Aero but they won't be showing up in the unit files
-            testEntity = new TestAero((Aero) e, entityVerifier.aeroOption, null);
-        }
-        if (testEntity != null &&
-                !testEntity.correctEntity(new StringBuffer())) {
+        TestEntity testEntity = TestEntity.getEntityVerifier(e);
+        if (testEntity != null && !testEntity.correctEntity(new StringBuffer())) {
             ms.setLevel("F");
             ms.setInvalid(true);
         } else {
@@ -763,44 +747,18 @@ public class MechSummaryCache {
                         continue;
                     }
                     // recursion is fun
-                    bNeedsUpdate |= loadMechsFromDirectory(vMechs, sKnownFiles,
-                            lLastCheck, f, ignoreUnofficial);
+                    bNeedsUpdate |= loadMechsFromDirectory(vMechs, sKnownFiles, lLastCheck, f, ignoreUnofficial);
                     continue;
                 }
-                if (f.getName().indexOf('.') == -1) {
+                String lowerCaseName = f.getName().toLowerCase();
+                if (SUPPORTED_FILE_EXTENSIONS.stream().noneMatch(lowerCaseName::endsWith)) {
                     continue;
                 }
-                if (f.getName().toLowerCase().endsWith(".gitignore")) {
+                if (lowerCaseName.endsWith(".zip")) {
+                    bNeedsUpdate |= loadMechsFromZipFile(vMechs, sKnownFiles, lLastCheck, f);
                     continue;
                 }
-                if (f.getName().toLowerCase().endsWith(".txt")) {
-                    continue;
-                }
-                if (f.getName().toLowerCase().endsWith(".log")) {
-                    continue;
-                }
-                if (f.getName().toLowerCase().endsWith(".svn-base")) {
-                    continue;
-                }
-                if (f.getName().toLowerCase().endsWith(".svn-work")) {
-                    continue;
-                }
-                if (f.getName().toLowerCase().endsWith(".ds_store")) {
-                    continue;
-                }
-                if (f.getName().toLowerCase().endsWith(".yml")) {
-                    continue;
-                }
-                if (f.getName().equals("UnitVerifierOptions.xml")) {
-                    continue;
-                }
-                if (f.getName().toLowerCase().endsWith(".zip")) {
-                    bNeedsUpdate |= loadMechsFromZipFile(vMechs, sKnownFiles,
-                            lLastCheck, f);
-                    continue;
-                }
-                if ((f.lastModified() < lLastCheck)
-                        && sKnownFiles.contains(f.toString())) {
+                if ((f.lastModified() < lLastCheck) && sKnownFiles.contains(f.toString())) {
                     continue;
                 }
                 try {
@@ -878,10 +836,8 @@ public class MechSummaryCache {
                 }
                 continue;
             }
-            if (zEntry.getName().toLowerCase().endsWith(".txt")) {
-                continue;
-            }
-            if (zEntry.getName().toLowerCase().endsWith(".yml")) {
+            String lowerCaseName = zEntry.getName().toLowerCase();
+            if (SUPPORTED_FILE_EXTENSIONS.stream().noneMatch(lowerCaseName::endsWith)) {
                 continue;
             }
             if ((Math.max(fZipFile.lastModified(), zEntry.getTime()) < lLastCheck)

@@ -1,6 +1,5 @@
-Version:1.0
-Rifleman
-RFL-5CS
+chassis:Rifleman
+model:RFL-5CS
 mul id:7597
 
 Config:Biped
@@ -8,6 +7,16 @@ TechBase:Inner Sphere
 Era:3052
 source:Battle of Tukayyid
 Rules Level:2
+role:Sniper
+
+
+
+quirk:anti_air
+quirk:imp_com
+quirk:searchlight
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+
 
 Mass:60
 Engine:300 XL Engine(IS)

@@ -21,15 +21,18 @@ import megamek.client.ui.dialogs.UnitDisplayDialog;
 import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.UnitDisplayOrderPreferences;
+import megamek.client.ui.swing.tooltip.UnitToolTip;
 import megamek.client.ui.swing.util.CommandAction;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.util.UIUtil;
-import megamek.client.ui.swing.widget.MechPanelTabStrip;
+import megamek.client.ui.swing.widget.*;
+import megamek.common.Configuration;
 import megamek.common.Entity;
 import megamek.common.annotations.Nullable;
 import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
+import megamek.common.util.fileUtils.MegaMekFile;
 import org.apache.logging.log4j.LogManager;
 
 import javax.swing.*;
@@ -116,6 +119,13 @@ public class UnitDisplay extends JPanel implements IPreferenceChangeListener {
         labTitle = new JLabel("Title");
 
         tabStrip = new MechPanelTabStrip(this);
+        UnitDisplaySkinSpecification udSpec = SkinXMLHandler.getUnitDisplaySkin();
+        Image tile = getToolkit().getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getBackgroundTile()).toString());
+        PMUtil.setImage(tile, this);
+        int b = BackGroundDrawer.TILING_BOTH;
+        BackGroundDrawer bgd = new BackGroundDrawer(tile, b);
+        tabStrip.addBgDrawer(bgd);
+
         displayP = new JPanel(new CardLayout());
         mPan = new SummaryPanel(this);
         pPan = new PilotPanel(this);
@@ -562,37 +572,24 @@ public class UnitDisplay extends JPanel implements IPreferenceChangeListener {
         if (en == null) {
             return;
         }
-        String enName = en.getShortName();
-        switch (en.getDamageLevel()) {
-            case Entity.DMG_CRIPPLED:
-                enName += " [CRIPPLED]";
-                break;
-            case Entity.DMG_HEAVY:
-                enName += " [HEAVY DMG]";
-                break;
-            case Entity.DMG_MODERATE:
-                enName += " [MODERATE DMG]";
-                break;
-            case Entity.DMG_LIGHT:
-                enName += " [LIGHT DMG]";
-                break;
-            default:
-                enName += " [UNDAMAGED]";
-        }
+        currentlyDisplaying = en;
+        updateDisplay();
+    }
 
+    protected void updateDisplay() {
         if (clientgui != null) {
+            String enName = currentlyDisplaying.getShortName();
+            enName += " [" + UnitToolTip.getDamageLevelDesc(currentlyDisplaying, false) + "]";
             clientgui.getUnitDisplayDialog().setTitle(enName);
             labTitle.setText(enName);
         }
 
-        currentlyDisplaying = en;
-
-        mPan.displayMech(en);
-        pPan.displayMech(en);
-        aPan.displayMech(en);
-        wPan.displayMech(en);
-        sPan.displayMech(en);
-        ePan.displayMech(en);
+        mPan.displayMech(currentlyDisplaying);
+        pPan.displayMech(currentlyDisplaying);
+        aPan.displayMech(currentlyDisplaying);
+        wPan.displayMech(currentlyDisplaying);
+        sPan.displayMech(currentlyDisplaying);
+        ePan.displayMech(currentlyDisplaying);
     }
 
     /**

@@ -1,6 +1,5 @@
-Version:1.2
-Axman
-AXM-3Sr
+chassis:Axman
+model:AXM-3Sr
 mul id:187
 
 Config:Biped
@@ -8,6 +7,12 @@ techbase:Inner Sphere
 era:3069
 source:TRO: 3085
 rules level:2
+role:Skirmisher
+
+
+
+quirk:pro_actuator
+
 
 mass:65
 engine:260 Light Engine(IS)

@@ -1,6 +1,5 @@
-Version:1.0
-UrbanMech
-UM-R70
+chassis:UrbanMech
+model:UM-R70
 mul id:3359
 
 Config:Biped
@@ -8,6 +7,14 @@ TechBase:Inner Sphere
 Era:3066
 Source:TRO: 3050
 Rules Level:2
+role:Ambusher
+
+
+
+quirk:ext_twist
+quirk:low_profile
+quirk:no_arms
+
 
 Mass:30
 Engine:60 Fusion Engine

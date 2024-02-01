@@ -1,12 +1,15 @@
-Version:1.3
-Vulcan
-VL-2T
+chassis:Vulcan
+model:VL-2T
 mul id:3458
 Config:Biped
 techbase:Inner Sphere
 era:2777
 source:TRO: 3039
 rules level:1
+role:Scout
+
+quirk:low_profile
+
 
 mass:40
 engine:240 Fusion Engine(IS)

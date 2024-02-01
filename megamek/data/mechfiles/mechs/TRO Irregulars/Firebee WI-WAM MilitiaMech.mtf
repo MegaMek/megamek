@@ -1,6 +1,5 @@
-Version:1.0
-Firebee
-WI-WAM MilitiaMech
+chassis:Firebee
+model:WI-WAM MilitiaMech
 mul id:7838
 
 Config:Biped
@@ -8,6 +7,13 @@ techbase:Inner Sphere
 era:3130
 source:TRO: Irregulars
 rules level:2
+role:Missile Boat
+
+
+
+quirk:poor_life_support
+quirk:weak_legs
+
 
 mass:35
 engine:105 Fuel Cell Engine(IS)

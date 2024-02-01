@@ -264,6 +264,7 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
         unitTypeModel.addElement(UnitType.getTypeDisplayableName(UnitType.BATTLE_ARMOR));
         unitTypeModel.addElement(UnitType.getTypeDisplayableName(UnitType.INFANTRY));
         unitTypeModel.addElement(UnitType.getTypeDisplayableName(UnitType.PROTOMEK));
+        unitTypeModel.addElement(UnitType.getTypeDisplayableName(UnitType.AEROSPACEFIGHTER));
         unitTypeModel.addElement(UnitType.getTypeDisplayableName(UnitType.AERO));
         unitTypeModel.setSelectedItem(Messages.getString("MechSelectorDialog.All"));
 
@@ -1158,7 +1159,7 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
             /**
      * A table model for displaying weapon types
      */
-    
+
     /**
      * A table model for displaying equipment
      */

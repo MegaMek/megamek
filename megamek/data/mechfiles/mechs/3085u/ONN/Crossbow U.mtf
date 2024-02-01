@@ -1,6 +1,5 @@
-Version:1.0
-Crossbow
-U
+chassis:Crossbow
+model:U
 mul id:740
 
 Config:Biped Omnimech
@@ -8,6 +7,10 @@ TechBase:Clan
 Era:3077
 source:TRO: 3085
 Rules Level:4
+role:Skirmisher
+
+quirk:imp_target_short
+
 
 Mass:65
 Engine:325 Fusion (Clan) Engine(IS)

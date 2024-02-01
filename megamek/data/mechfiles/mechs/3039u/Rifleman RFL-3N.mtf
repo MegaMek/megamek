@@ -1,6 +1,5 @@
-Version:1.0
-Rifleman
-RFL-3N
+chassis:Rifleman
+model:RFL-3N
 mul id:2697
 
 Config:Biped
@@ -8,6 +7,16 @@ TechBase:Inner Sphere
 Era:2770
 Source:TRO: 3039
 Rules Level:1
+role:Sniper
+
+
+
+quirk:anti_air
+quirk:imp_com
+quirk:searchlight
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+
 
 Mass:60
 Engine:240 Fusion Engine

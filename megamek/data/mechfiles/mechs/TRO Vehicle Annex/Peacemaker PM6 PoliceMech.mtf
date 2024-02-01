@@ -1,6 +1,5 @@
-Version:1.0
-Peacemaker PM-6 PoliceMech
-
+chassis:Peacemaker PM-6 PoliceMech
+model:
 mul id:7173
 
 Config:Biped
@@ -8,6 +7,7 @@ techbase:Inner Sphere
 era:3067
 source:TRO: Vehicle Annex
 rules level:4
+role:Ambusher
 
 mass:35
 engine:140 Fusion Engine(IS)

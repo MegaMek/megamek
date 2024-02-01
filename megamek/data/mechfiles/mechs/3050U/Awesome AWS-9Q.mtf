@@ -1,6 +1,5 @@
-Version:1.0
-Awesome
-AWS-9Q
+chassis:Awesome
+model:AWS-9Q
 mul id:179
 
 Config:Biped
@@ -8,6 +7,12 @@ TechBase:Inner Sphere
 Era:3057
 Source:TRO: 3050
 Rules Level:2
+role:Sniper
+
+
+
+quirk:battle_fists_la
+
 
 Mass:80
 Engine:240 Fusion Engine

@@ -1,6 +1,5 @@
-Version:1.2
-Valkyrie
-VLK-QD1
+chassis:Valkyrie
+model:VLK-QD1
 mul id:3374
 
 Config:Biped
@@ -8,6 +7,13 @@ techbase:Inner Sphere
 era:3067
 source:TRO: Project Pheonix
 rules level:2
+role:Missile Boat
+
+
+
+quirk:easy_maintain
+quirk:imp_com
+
 
 mass:30
 engine:150 XL Engine(IS)

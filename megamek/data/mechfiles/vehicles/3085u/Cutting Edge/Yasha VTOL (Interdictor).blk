@@ -36,6 +36,10 @@ Yasha VTOL
 IS Level 2
 </type>
 
+<role>
+Missile Boat
+</role>
+
 <motion_type>
 VTOL
 </motion_type>

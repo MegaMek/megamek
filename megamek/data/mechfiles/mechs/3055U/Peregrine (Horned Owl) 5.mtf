@@ -1,35 +1,38 @@
-Version:1.0
-Peregrine (Horned Owl)
-5
+generator:MegaMek Suite 0.49.16-SNAPSHOT on 2023-12-29
+chassis:Peregrine
+clanname:Horned Owl
+model:5
 mul id:2476
-
 Config:Biped
-TechBase:Clan
-Era:3066
-Source:TRO: 3055
-Rules Level:2
+techbase:Clan
+era:3066
+source:TRO: 3055
+rules level:2
+role:Sniper
 
-Mass:35
-Engine:210 Fusion (Clan) Engine
-Structure:Endo Steel
-Myomer:Standard
+weaponquirk:stable_weapon:CT:10:CLHeavyMediumLaser
 
-Heat Sinks:11 Double
-Walk MP:6
-Jump MP:6
+mass:35
+engine:210 Fusion (Clan) Engine(IS)
+structure:Clan Endo Steel
+myomer:Standard
 
-Armor:Ferro-Fibrous(Clan)
-LA Armor:9
-RA Armor:9
-LT Armor:10
-RT Armor:10
-CT Armor:13
-HD Armor:9
-LL Armor:11
-RL Armor:11
-RTL Armor:4
-RTR Armor:4
-RTC Armor:6
+heat sinks:11 Clan Double
+walk mp:6
+jump mp:6
+
+armor:Ferro-Fibrous(Clan)
+LA armor:9
+RA armor:9
+LT armor:10
+RT armor:10
+CT armor:13
+HD armor:9
+LL armor:11
+RL armor:11
+RTL armor:4
+RTR armor:4
+RTC armor:6
 
 Weapons:3
 ER Large Laser, Left Arm
@@ -42,9 +45,9 @@ Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
 CLERLargeLaser
-Endo Steel
-Ferro-Fibrous
-Ferro-Fibrous
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -56,9 +59,9 @@ Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
 CLERLargeLaser
-Endo Steel
-Endo Steel
-Ferro-Fibrous
+Clan Endo Steel
+Clan Endo Steel
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -70,10 +73,10 @@ CLDoubleHeatSink
 CLDoubleHeatSink
 CLDoubleHeatSink
 Jump Jet
-Endo Steel
-Endo Steel
-Ferro-Fibrous
-Ferro-Fibrous
+Clan Endo Steel
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -82,10 +85,10 @@ Right Torso:
 CLDoubleHeatSink
 CLDoubleHeatSink
 Jump Jet
-Endo Steel
-Endo Steel
-Ferro-Fibrous
-Ferro-Fibrous
+Clan Endo Steel
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-

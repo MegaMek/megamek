@@ -1,67 +1,116 @@
-#building block data file
+#Saved from version 0.49.18-SNAPSHOT on 2024-01-07
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
-<Version>
-MAM0
-</Version>
+
 <UnitType>
 Tank
 </UnitType>
+
 <Name>
 Maxim Mk II Transport
 </Name>
-<model>
 
-</model>
+<Model>
+
+</Model>
 
 <mul id:>
 2129
 </mul id:>
-<Tonnage>
-50
-</Tonnage>
+
+<year>
+3083
+</year>
+
+<originalBuildYear>
+3083
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<role>
+Striker
+</role>
+
+<motion_type>
+Hover
+</motion_type>
+
+<transporters>
+troopspace:16.0
+</transporters>
+
 <cruiseMP>
 8
 </cruiseMP>
-<Armor>
+
+<engine_type>
+0
+</engine_type>
+
+<armor_type>
+6
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
 30
 20
 20
 19
 20
-</Armor>
+</armor>
+
+<Body Equipment>
+IS Ammo MML-3 LRM
+IS Ammo MML-3 SRM
+ISCASE
+</Body Equipment>
+
+<Front Equipment>
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
 <Turret Equipment>
 ISMML3
 ISMML3
 </Turret Equipment>
-<Body Equipment>
-ISMML3 LRM Ammo
-ISMML3 SRM Ammo
-ISCASE
-</Body Equipment>
-<transporters>
-TroopSpace:16
-</transporters>
-<type>
-IS Level 2
-</type>
-<year>
-3083
-</year>
-<internal_type>
-0
-</internal_type>
-<armor_type>
-6
-</armor_type>
-<engine_type>
-0
-</engine_type>
-<motion_type>
-Hover
-</motion_type>
+
+<manufacturer>
+Scarborough Manufacturers,Cyclops Inc.
+</manufacturer>
+
+<primaryFactory>
+Al Na'ir,Skye
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:165 VOX Fusion
+ARMOR:	ArcShield Heavy Ferro-Fibrous with CASE
+COMMUNICATIONS:Cyclops Surelink
+TARGETING:Scarborough Tracky 3
+</systemManufacturers>
+
 <source>
 TRO: 3085
 </source>
+
+<tonnage>
+50.0
+</tonnage>
+

@@ -1,6 +1,5 @@
-Version:1.0
-Talon
-TLN-5W
+chassis:Talon
+model:TLN-5W
 mul id:3153
 
 Config:Biped
@@ -8,6 +7,13 @@ TechBase:Inner Sphere
 Era:2760
 Source:TRO: 3058
 Rules Level:2
+role:Striker
+
+
+
+quirk:rugged_1
+quirk:no_arms
+
 
 Mass:35
 Engine:280 XL Engine

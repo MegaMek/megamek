@@ -1,13 +1,18 @@
-Version:1.1
-Cataphract
-CTF-5MOC (Naomi)
+chassis:Cataphract
+model:CTF-5MOC (Naomi)
 mul id:476
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3067
 Rules Level:2
+role:Brawler
 Source:Jihad Turning Points: Sian
+
+
+
+quirk:pro_actuator
+
 
 Mass:70
 Engine:280 XL Engine

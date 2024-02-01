@@ -1,6 +1,6 @@
-Version:1.0
-Ryoken (Stormcrow)
-I
+chassis:Ryoken
+clanname:Stormcrow
+model:I
 mul id:5487
 
 Config:Biped Omnimech
@@ -8,6 +8,10 @@ TechBase:Clan
 Era:3059
 source:Rec Guide:ilClan #7
 Rules Level:2
+role:Sniper
+
+quirk:stable
+
 
 Mass:55
 Engine:330 XL (Clan) Engine(IS)

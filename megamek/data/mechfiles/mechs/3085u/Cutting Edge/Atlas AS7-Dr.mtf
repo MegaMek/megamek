@@ -1,6 +1,5 @@
-Version:1.0
-Atlas
-AS7-Dr
+chassis:Atlas
+model:AS7-Dr
 mul id:143
 
 Config:Biped
@@ -8,6 +7,16 @@ TechBase:Inner Sphere
 Era:3070
 source:TRO: 3085
 Rules Level:2
+role:Juggernaut
+
+
+
+quirk:battle_fists_la
+quirk:battle_fists_ra
+quirk:command_mech
+quirk:distracting
+quirk:imp_com
+
 
 Mass:100
 Engine:300 Fusion Engine(IS)

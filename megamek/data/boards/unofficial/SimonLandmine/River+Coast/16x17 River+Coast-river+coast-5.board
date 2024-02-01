@@ -1,7 +1,7 @@
 size 16 17
 option exit_roads_to_pavement false
-tag "GrassTheme (Auto)"
 tag "Water (Auto)"
+tag "GrassTheme (Auto)"
 tag "Roads (Auto)"
 tag "Ocean (Auto)"
 tag "Woods (Auto)"

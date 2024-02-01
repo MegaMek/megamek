@@ -32,6 +32,10 @@ Nacon Armored Scout
 Clan Level 2
 </type>
 
+<role>
+Scout
+</role>
+
 <motion_type>
 Wheeled
 </motion_type>
@@ -87,3 +91,8 @@ TRO: 3145 The Clans
 <tonnage>
 20.0
 </tonnage>
+
+<quirks>
+easy_maintain
+</quirks>
+

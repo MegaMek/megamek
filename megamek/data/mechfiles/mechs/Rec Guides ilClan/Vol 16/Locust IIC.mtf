@@ -1,6 +1,5 @@
-Version:1.0
-Locust IIC
-
+chassis:Locust IIC
+model:
 mul id:1914
 
 Config:Biped
@@ -8,6 +7,14 @@ techbase:Clan
 era:2832
 source:Rec Guide:ilClan #16
 rules level:2
+role:Striker
+
+
+quirk:easy_maintain
+quirk:low_profile
+quirk:no_arms
+quirk:weak_legs
+
 
 mass:25
 engine:200 Fusion (Clan) Engine(IS)

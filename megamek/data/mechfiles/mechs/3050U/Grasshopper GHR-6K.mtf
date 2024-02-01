@@ -1,6 +1,5 @@
-Version:1.1
-Grasshopper
-GHR-6K
+chassis:Grasshopper
+model:GHR-6K
 mul id:1269
 
 Config:Biped
@@ -8,6 +7,12 @@ TechBase:Inner Sphere
 Era:3064
 Source:TRO: 3050
 Rules Level:2
+role:Skirmisher
+
+
+
+quirk:rugged_1
+
 
 Mass:70
 Engine:280 Fusion Engine

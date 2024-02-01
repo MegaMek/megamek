@@ -1,6 +1,5 @@
-Version:1.1
-Targe
-TRG-3M
+chassis:Targe
+model:TRG-3M
 mul id:6915
 
 Config:Biped
@@ -8,6 +7,14 @@ TechBase:Inner Sphere
 Era:3109
 Source:Record Sheets: 3145 New Tech New Upgrades
 Rules Level:2
+role:Striker
+
+
+
+quirk:ext_twist
+quirk:bad_rep_is
+quirk:no_arms
+
 
 Mass:40
 Engine:320 XL Engine(IS)

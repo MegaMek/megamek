@@ -32,6 +32,10 @@ Gladiator Exoskeleton
 IS Level 2
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Leg
 </motion_type>
@@ -127,3 +131,8 @@ JUMPJET:Unknown
 COMMUNICATIONS:Unknown
 TARGETING:Unknown
 </systemManufacturers>
+
+<quirks>
+difficult_maintain
+</quirks>
+

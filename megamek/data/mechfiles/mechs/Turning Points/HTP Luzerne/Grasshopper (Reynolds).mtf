@@ -1,6 +1,5 @@
-Version:1.0
-Grasshopper
-(Reynolds)
+chassis:Grasshopper
+model:(Reynolds)
 mul id:5861
 
 Config:Biped
@@ -8,6 +7,12 @@ TechBase:Mixed (IS Chassis)
 Era:3059
 Source:Historical Turning Points: Luzerne
 Rules Level:4
+role:Skirmisher
+
+
+
+quirk:rugged_1
+
 
 Mass:70
 Engine:280 Fusion Engine(IS)

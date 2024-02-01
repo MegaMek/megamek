@@ -1,12 +1,12 @@
 Magistracy of Canopus Heavy Vehicle A
-LRM Carrier (Standard),1
-Bulldog Medium Tank (Standard),2
-Burke Defense Tank (Standard),3
-Manticore Heavy Tank (Standard),4
-Magi Infantry Support Vehicle (Standard),5
+LRM Carrier,1
+Bulldog Medium Tank,2
+Burke Defense Tank,3
+Manticore Heavy Tank,4
+Magi Infantry Support Vehicle,5
 Von Luckner Heavy Tank VNL-K65N,6
-Marksman Artillery Vehicle (Standard),5
-Demon Tank (Standard),4
+Marksman Artillery Vehicle,5
+Demon Tank,4
 Von Luckner Heavy Tank (Star League),3
-Marksman Artillery Vehicle (Standard),2
-Thumper Artillery Vehicle (Standard),1
+Marksman Artillery Vehicle,2
+Thumper Artillery Vehicle,1

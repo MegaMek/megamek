@@ -1,6 +1,5 @@
-Version:1.0
-Nyx
-NX-90
+chassis:Nyx
+model:NX-90
 mul id:2309
 
 Config:Biped
@@ -8,6 +7,13 @@ TechBase:Inner Sphere
 Era:3080
 source:TRO: 3085
 Rules Level:4
+role:Scout
+
+
+
+quirk:low_profile
+quirk:difficult_maintain
+
 
 Mass:30
 Engine:300 XL Engine

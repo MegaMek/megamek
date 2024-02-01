@@ -1,6 +1,6 @@
-Version:1.0
-Fenris (Ice Ferret)
-Prime
+chassis:Fenris
+clanname:Ice Ferret
+model:Prime
 mul id:1053
 
 Config:Biped Omnimech
@@ -8,6 +8,11 @@ techbase:Clan
 era:2948
 source:TRO: Clan Invasion
 rules level:2
+role:Striker
+
+
+quirk:imp_sensors
+
 
 mass:45
 engine:360 XL (Clan) Engine(IS)

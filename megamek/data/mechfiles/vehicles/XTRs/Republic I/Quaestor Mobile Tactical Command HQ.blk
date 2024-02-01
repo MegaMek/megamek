@@ -32,6 +32,10 @@ Quaestor Mobile Tactical Command HQ
 IS Level 2
 </type>
 
+<role>
+Scout
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -79,3 +83,8 @@ XTR: Republic I
 <tonnage>
 30.0
 </tonnage>
+
+<quirks>
+poor_performance
+</quirks>
+

@@ -1,6 +1,5 @@
-Version:1.2
-Wolfhound
-WLF-6S
+chassis:Wolfhound
+model:WLF-6S
 mul id:8223
 
 Config:Biped
@@ -8,6 +7,13 @@ techbase:Inner Sphere
 era:3133
 source:Rec Guide:ilClan #17
 rules level:3
+role:Striker
+
+
+
+quirk:easy_maintain
+quirk:good_rep_1
+
 
 mass:35
 engine:245 XL Engine(IS)

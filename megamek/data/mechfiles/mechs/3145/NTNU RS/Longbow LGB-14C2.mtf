@@ -1,6 +1,5 @@
-Version:1.1
-Longbow
-LGB-14C2
+chassis:Longbow
+model:LGB-14C2
 mul id:6854
 
 Config:Biped
@@ -8,6 +7,15 @@ techbase:Inner Sphere
 era:3088
 source:Record Sheets: 3145 New Tech New Upgrades
 rules level:3
+role:Missile Boat
+
+
+
+quirk:anti_air
+quirk:searchlight
+quirk:ubiquitous_is
+quirk:no_arms
+
 
 mass:85
 engine:255 XL Engine(IS)

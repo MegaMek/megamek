@@ -1,6 +1,6 @@
-Version:1.0
-Black Hawk (Nova)
-A
+chassis:Black Hawk
+clanname:Nova
+model:A
 mul id:335
 
 Config:Biped Omnimech
@@ -8,6 +8,11 @@ techbase:Clan
 era:2870
 source:TRO: 3050
 rules level:2
+role:Sniper
+
+quirk:combat_computer
+quirk:low_profile
+
 
 mass:50
 engine:250 XL (Clan) Engine(IS)

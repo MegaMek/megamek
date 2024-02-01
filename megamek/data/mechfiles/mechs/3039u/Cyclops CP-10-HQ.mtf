@@ -1,12 +1,20 @@
-Version:1.3
-Cyclops
-CP-10-HQ
+chassis:Cyclops
+model:CP-10-HQ
 mul id:770
 Config:Biped
 techbase:Inner Sphere
 era:2753
 source:TRO: 3039
 rules level:3
+role:Juggernaut
+
+
+
+quirk:battle_computer
+quirk:cowl
+quirk:difficult_eject
+quirk:weak_head_2
+
 
 mass:90
 engine:360 Fusion Engine(IS)

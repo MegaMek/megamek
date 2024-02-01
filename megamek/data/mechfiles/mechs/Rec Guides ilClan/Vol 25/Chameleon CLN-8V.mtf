@@ -1,12 +1,18 @@
-Version:1.3
-Chameleon
-CLN-8V
+chassis:Chameleon
+model:CLN-8V
 mul id:9267
 Config:Biped
 techbase:Inner Sphere
 era:3086
 source:Rec Guide:ilClan #25
 rules level:2
+role:Striker
+
+
+
+quirk:easy_pilot
+quirk:distracting
+
 
 mass:50
 engine:300 XL Engine(IS)

@@ -1,6 +1,5 @@
-Version:1.0
-Mantis
-MTS-S
+chassis:Mantis
+model:MTS-S
 mul id:2023
 
 Config:Biped
@@ -8,6 +7,12 @@ TechBase:Inner Sphere
 Era:3061
 Source:TRO: 3055
 Rules Level:3
+role:Striker
+
+
+
+quirk:non_standard
+
 
 Mass:30
 Engine:270 XL Engine

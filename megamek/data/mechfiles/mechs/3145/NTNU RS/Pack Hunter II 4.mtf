@@ -1,6 +1,5 @@
-Version:1.2
-Pack Hunter II
-4
+chassis:Pack Hunter II
+model:4
 mul id:6935
 
 Config:Biped
@@ -8,6 +7,10 @@ techbase:Clan
 era:3093
 source:Record Sheets: 3145 New Tech New Upgrades
 rules level:4
+role:Sniper
+
+weaponquirk:stable_weapon:RT:7:CLERPPC
+
 
 mass:30
 engine:210 XL (Clan) Engine(IS)

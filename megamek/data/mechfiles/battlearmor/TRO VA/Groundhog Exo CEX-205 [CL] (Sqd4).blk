@@ -32,6 +32,10 @@ CEX-205 [Cargo Lifter](Sqd4)
 IS Level 2
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Leg
 </motion_type>
@@ -133,3 +137,8 @@ TARGETING:Unknown
 
 <notes>
 </notes>
+
+<quirks>
+imp_com
+</quirks>
+

@@ -36,6 +36,10 @@ Dunning Mobile Tactical Command Post
 IS Level 4
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Wheeled
 </motion_type>
@@ -107,3 +111,9 @@ XTR: Primitives V
 <fuelType>
 PETROCHEMICALS
 </fuelType>
+
+<quirks>
+imp_com
+difficult_maintain
+</quirks>
+

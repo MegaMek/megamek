@@ -1,6 +1,5 @@
-Version:1.0
-Mongoose
-MON-68
+chassis:Mongoose
+model:MON-68
 mul id:4655
 
 Config:Biped
@@ -8,6 +7,13 @@ TechBase:Inner Sphere
 Era:3039
 Source:TRO: 3039
 Rules Level:1
+role:Scout
+
+
+
+quirk:command_mech
+quirk:easy_pilot
+
 
 Mass:25
 Engine:175 Fusion Engine

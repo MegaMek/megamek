@@ -1,6 +1,5 @@
-Version:1.0
-Malice
-MAL-XV
+chassis:Malice
+model:MAL-XV
 mul id:6726
 
 Config:Biped
@@ -8,6 +7,7 @@ TechBase:Mixed (IS Chassis)
 Era:3140
 Source:TRO: 3145 Republic of the Sphere
 Rules Level:3
+role:Juggernaut
 
 Mass:100
 Engine:400 XL Engine(IS)

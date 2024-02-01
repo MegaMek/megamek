@@ -1,6 +1,5 @@
-Version:1.0
-Shadow Hawk
-SHD-2Ht
+chassis:Shadow Hawk
+model:SHD-2Ht
 mul id:7737
 
 Config:Biped
@@ -8,6 +7,17 @@ TechBase:Inner Sphere
 Era:3052
 source:Battle of Tukayyid
 Rules Level:2
+role:Skirmisher
+
+
+
+quirk:battle_fists_la
+quirk:battle_fists_ra
+quirk:imp_life_support
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+quirk:rugged_1
+
 
 Mass:55
 Engine:275 Fusion Engine(IS)

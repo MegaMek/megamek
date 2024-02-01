@@ -1,6 +1,5 @@
-Version:1.0
-Devastator
-DVS-3
+chassis:Devastator
+model:DVS-3
 mul id:895
 
 Config:Biped
@@ -8,6 +7,13 @@ TechBase:Inner Sphere
 Era:3058
 Source:TRO: 3058
 Rules Level:2
+role:Sniper
+
+
+
+quirk:hyper_actuator
+quirk:searchlight
+
 
 Mass:100
 Engine:300 XL Engine

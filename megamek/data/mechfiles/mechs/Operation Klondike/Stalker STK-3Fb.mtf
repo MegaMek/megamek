@@ -1,6 +1,5 @@
-Version:1.1
-Stalker
-STK-3Fb
+chassis:Stalker
+model:STK-3Fb
 mul id:3037
 source:Historical: Operation Klondike
 
@@ -8,6 +7,14 @@ Config:Biped
 TechBase:Inner Sphere
 Era:2705
 Rules Level:2
+role:Juggernaut
+
+
+
+quirk:combat_computer
+quirk:ubiquitous_is
+quirk:no_arms
+
 
 Mass:85
 Engine:255 Fusion Engine

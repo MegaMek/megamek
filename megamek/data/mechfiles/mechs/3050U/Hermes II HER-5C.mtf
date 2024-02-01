@@ -1,6 +1,5 @@
-Version:1.0
-Hermes II
-HER-5C
+chassis:Hermes II
+model:HER-5C
 mul id:1499
 
 Config:Biped
@@ -8,6 +7,13 @@ TechBase:Inner Sphere
 Era:3062
 Source:TRO: 3050
 Rules Level:2
+role:Striker
+
+
+
+quirk:easy_maintain
+quirk:imp_com
+
 
 Mass:40
 Engine:240 XL Engine

@@ -1,6 +1,5 @@
-Version:1.0
-Ostroc
-OSR-9C
+chassis:Ostroc
+model:OSR-9C
 mul id:8356
 
 Config:Biped
@@ -8,6 +7,12 @@ techbase:Inner Sphere
 era:2905
 source:Rec Guide:ilClan #21
 rules level:1
+role:Juggernaut
+
+
+
+quirk:low_profile
+
 
 mass:60
 engine:240 Fusion Engine(IS)

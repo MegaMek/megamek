@@ -1,6 +1,5 @@
-Version:1.0
-Thorn
-THE-T
+chassis:Thorn
+model:THE-T
 mul id:3196
 
 Config:Biped
@@ -8,6 +7,12 @@ TechBase:Inner Sphere
 Era:3038
 Source:TRO: 3039
 Rules Level:1
+role:Striker
+
+
+
+quirk:easy_maintain
+
 
 Mass:20
 Engine:120 Fusion Engine

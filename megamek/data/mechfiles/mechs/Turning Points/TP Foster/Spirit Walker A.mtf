@@ -1,12 +1,12 @@
-Version:1.0
-Spirit Walker
-A
+chassis:Spirit Walker
+model:A
 
 Config:Biped Omnimech
 techbase:Clan
 era:2866
 source:Turning Points: Foster
 rules level:2
+role:Brawler
 mul id:9236
 
 mass:75

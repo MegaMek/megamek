@@ -1,6 +1,5 @@
-Version:1.0
-Panther
-PNT-10KA
+chassis:Panther
+model:PNT-10KA
 mul id:4785
 
 Config:Biped
@@ -8,6 +7,13 @@ TechBase:Inner Sphere
 Era:3055
 Source:TRO: 3050
 Rules Level:2
+role:Brawler
+
+
+
+quirk:imp_target_short
+quirk:nimble_jumper
+
 
 Mass:35
 Engine:140 Fusion Engine(IS)

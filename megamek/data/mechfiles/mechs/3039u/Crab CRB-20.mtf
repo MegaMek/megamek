@@ -1,6 +1,5 @@
-Version:1.0
-Crab
-CRB-20
+chassis:Crab
+model:CRB-20
 mul id:715
 
 Config:Biped
@@ -8,6 +7,12 @@ TechBase:Inner Sphere
 Era:2810
 Source:TRO: 3039
 Rules Level:1
+role:Skirmisher
+
+
+
+quirk:easy_maintain
+
 
 Mass:50
 Engine:250 Fusion Engine

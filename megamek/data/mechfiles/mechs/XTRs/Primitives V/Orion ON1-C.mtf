@@ -1,12 +1,19 @@
-Version:1.3
-Orion
-ON1-C
+chassis:Orion
+model:ON1-C
 mul id:4755
 Config:Biped
 techbase:Inner Sphere
 era:2453
 source:XTR: Primitives V
 rules level:3
+role:Brawler
+
+
+
+
+quirk:easy_maintain
+weaponquirk:ammo_feed_problems:RT:0:Autocannon/5
+
 
 mass:75
 engine:360 Fusion Engine(IS)

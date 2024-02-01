@@ -32,6 +32,10 @@ Hasek Mechanized Combat Vehicle
 IS Level 2
 </type>
 
+<role>
+Sniper
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -91,3 +95,8 @@ TRO: 3145 Federated Suns
 <tonnage>
 40.0
 </tonnage>
+
+<quirks>
+easy_maintain
+</quirks>
+

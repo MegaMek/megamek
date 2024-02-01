@@ -36,7 +36,7 @@ import java.util.regex.Pattern;
 
 public class ScenarioLoader {
     private static final String COMMENT_MARK = "#";
-    
+
     private static final String SEPARATOR_PROPERTY = "=";
     private static final String SEPARATOR_COMMA = ",";
     private static final String SEPARATOR_SPACE = " ";
@@ -51,7 +51,7 @@ public class ScenarioLoader {
     private static final String PARAM_GAME_EXTERNAL_ID = "ExternalId";
     private static final String PARAM_FACTIONS = "Factions";
     private static final String PARAM_SINGLEPLAYER = "SinglePlayer";
-    
+
     private static final String PARAM_PLANETCOND_FIXED = "FixedPlanetaryConditions";
     private static final String PARAM_PLANETCOND_TEMP = "PlanetaryConditionsTemperature";
     private static final String PARAM_PLANETCOND_GRAV = "PlanetaryConditionsGravity";
@@ -106,21 +106,21 @@ public class ScenarioLoader {
 
     /** When true, the Game Options Dialog is skipped. */
     private boolean fixedGameOptions = false;
-    
+
     /** When true, the Planetary Conditions Dialog is skipped. */
     private boolean fixedPlanetCond;
-    
-    /** 
-     * When true, the Player assignment/camo Dialog and the host dialog are skipped. 
+
+    /**
+     * When true, the Player assignment/camo Dialog and the host dialog are skipped.
      * The first faction (player) is assumed to be the local player and the rest
-     * are assumed to be Princess.  
+     * are assumed to be Princess.
      */
     private boolean singlePlayer;
 
     public ScenarioLoader(File f) {
         scenarioFile = f;
     }
-    
+
     // TODO : legal/valid ammo type handling and game options, since they are set at this point
     private AmmoType getValidAmmoType(Game game, Mounted mounted, String ammoString) {
         final Entity e = mounted.getEntity();
@@ -143,13 +143,15 @@ public class ScenarioLoader {
             return null;
         } else if (e.isClan() && !game.getOptions().booleanOption(OptionsConstants.ALLOWED_CLAN_IGNORE_EQ_LIMITS)) {
             // Check for clan weapon restrictions
-            final long muniType = ((AmmoType) newAmmoType).getMunitionType() & ~AmmoType.M_INCENDIARY_LRM;
-            if ((muniType == AmmoType.M_SEMIGUIDED) || (muniType == AmmoType.M_SWARM_I)
-                || (muniType == AmmoType.M_THUNDER_AUGMENTED) || (muniType == AmmoType.M_THUNDER_INFERNO)
-                || (muniType == AmmoType.M_THUNDER_VIBRABOMB) || (muniType == AmmoType.M_THUNDER_ACTIVE)
-                || (muniType == AmmoType.M_INFERNO_IV) || (muniType == AmmoType.M_VIBRABOMB_IV)
-                || (muniType == AmmoType.M_LISTEN_KILL) || (muniType == AmmoType.M_ANTI_TSM)
-                || (muniType == AmmoType.M_DEAD_FIRE) || (muniType == AmmoType.M_MINE_CLEARANCE)) {
+            // Construct EnumSet with all the relevant
+            final EnumSet<AmmoType.Munitions> muniType = ((AmmoType) newAmmoType).getMunitionType();
+            muniType.add(AmmoType.Munitions.M_INCENDIARY_LRM);
+            if ((muniType.contains(AmmoType.Munitions.M_SEMIGUIDED) || (muniType.contains(AmmoType.Munitions.M_SWARM_I))
+                || (muniType.contains(AmmoType.Munitions.M_THUNDER_AUGMENTED)) || (muniType.contains(AmmoType.Munitions.M_THUNDER_INFERNO))
+                || (muniType.contains(AmmoType.Munitions.M_THUNDER_VIBRABOMB)) || (muniType.contains(AmmoType.Munitions.M_THUNDER_ACTIVE))
+                || (muniType.contains(AmmoType.Munitions.M_INFERNO_IV)) || (muniType.contains(AmmoType.Munitions.M_VIBRABOMB_IV))
+                || (muniType.contains(AmmoType.Munitions.M_LISTEN_KILL)) || (muniType.contains(AmmoType.Munitions.M_ANTI_TSM))
+                || (muniType.contains(AmmoType.Munitions.M_DEAD_FIRE)) || (muniType.contains(AmmoType.Munitions.M_MINE_CLEARANCE)))) {
                 LogManager.getLogger().warn(String.format("Ammo type %s not allowed by Clan rules", newAmmoType.getName()));
                 return null;
             }
@@ -370,6 +372,11 @@ public class ScenarioLoader {
                 entity.setId(entityId);
                 ++ entityId;
                 g.addEntity(entity);
+                // Grounded DropShips don't set secondary positions unless they're part of a game and can verify
+                // they're not on a space map.
+                if (entity.isLargeCraft() && !entity.isAirborne()) {
+                    entity.setAltitude(0);
+                }
             }
         }
         // game's ready
@@ -409,59 +416,59 @@ public class ScenarioLoader {
         if (p.containsKey(PARAM_PLANETCOND_TEMP)) {
             g.getPlanetaryConditions().setTemperature(Integer.parseInt(p.getString(PARAM_PLANETCOND_TEMP)));
         }
-        
+
         if (p.containsKey(PARAM_PLANETCOND_GRAV)) {
             g.getPlanetaryConditions().setGravity(Float.parseFloat(p.getString(PARAM_PLANETCOND_GRAV)));
         }
-        
+
         if (p.containsKey(PARAM_PLANETCOND_FOG)) {
             g.getPlanetaryConditions().setFog(Integer.parseInt(p.getString(PARAM_PLANETCOND_FOG)));
         }
-        
+
         if (p.containsKey(PARAM_PLANETCOND_ATMOS)) {
             g.getPlanetaryConditions().setAtmosphere(Integer.parseInt(p.getString(PARAM_PLANETCOND_ATMOS)));
         }
-        
+
         if (p.containsKey(PARAM_PLANETCOND_LIGHT)) {
             g.getPlanetaryConditions().setLight(Integer.parseInt(p.getString(PARAM_PLANETCOND_LIGHT)));
         }
-        
+
         if (p.containsKey(PARAM_PLANETCOND_WEATHER)) {
             g.getPlanetaryConditions().setWeather(Integer.parseInt(p.getString(PARAM_PLANETCOND_WEATHER)));
         }
-        
+
         if (p.containsKey(PARAM_PLANETCOND_WIND)) {
             g.getPlanetaryConditions().setWindStrength(Integer.parseInt(p.getString(PARAM_PLANETCOND_WIND)));
         }
-        
+
         if (p.containsKey(PARAM_PLANETCOND_WINDDIR)) {
             g.getPlanetaryConditions().setWindDirection(Integer.parseInt(p.getString(PARAM_PLANETCOND_WINDDIR)));
         }
-        
+
         if (p.containsKey(PARAM_PLANETCOND_WINDSHIFTINGDIR)) {
             g.getPlanetaryConditions().setShiftingWindDirection(parseBoolean(p, PARAM_PLANETCOND_WINDSHIFTINGDIR, false));
         }
-        
+
         if (p.containsKey(PARAM_PLANETCOND_WINDSHIFTINGSTR)) {
             g.getPlanetaryConditions().setShiftingWindStrength(parseBoolean(p, PARAM_PLANETCOND_WINDSHIFTINGSTR, false));
         }
-        
+
         if (p.containsKey(PARAM_PLANETCOND_WINDMIN)) {
             g.getPlanetaryConditions().setMinWindStrength(Integer.parseInt(p.getString(PARAM_PLANETCOND_WINDMIN)));
         }
-        
+
         if (p.containsKey(PARAM_PLANETCOND_WINDMAX)) {
             g.getPlanetaryConditions().setMaxWindStrength(Integer.parseInt(p.getString(PARAM_PLANETCOND_WINDMAX)));
         }
-        
+
         if (p.containsKey(PARAM_PLANETCOND_EMI)) {
             g.getPlanetaryConditions().setEMI(parseBoolean(p, PARAM_PLANETCOND_EMI, false));
         }
-        
+
         if (p.containsKey(PARAM_PLANETCOND_TERRAINCHANGES)) {
             g.getPlanetaryConditions().setTerrainAffected(parseBoolean(p, PARAM_PLANETCOND_TERRAINCHANGES, true));
         }
-        
+
         if (p.containsKey(PARAM_PLANETCOND_BLOWINGSAND)) {
             g.getPlanetaryConditions().setBlowingSand(parseBoolean(p, PARAM_PLANETCOND_BLOWINGSAND, false));
         }
@@ -473,7 +480,7 @@ public class ScenarioLoader {
         Pattern unitDataPattern = Pattern.compile(String.format("^(Unit_\\Q%s\\E_[^_]+)_([A-Z][^_]+)$", faction));
 
         Map<String, Entity> entities = new HashMap<>();
-        
+
         // Gather all defined units
         for (String key : p.keySet()) {
             if (unitPattern.matcher(key).matches() && (p.getNumValues(key) > 0)) {
@@ -485,7 +492,7 @@ public class ScenarioLoader {
                 entities.put(key, parseEntityLine(p.getString(key)));
             }
         }
-        
+
         // Add other information
         for (String key: p.keySet()) {
             Matcher dataMatcher = unitDataPattern.matcher(key);
@@ -580,7 +587,7 @@ public class ScenarioLoader {
                 }
             }
         }
-        
+
         return entities.values();
     }
 
@@ -705,7 +712,7 @@ public class ScenarioLoader {
     private String getFactionParam(String faction, String param) {
         return param + SEPARATOR_UNDERSCORE + faction;
     }
-    
+
     private Collection<Player> createPlayers(StringMultiMap p) throws ScenarioLoaderException {
         String sFactions = p.getString(PARAM_FACTIONS);
         if ((sFactions == null) || sFactions.isEmpty()) {
@@ -723,19 +730,19 @@ public class ScenarioLoader {
 
             // scenario players start out as ghosts to be logged into
             player.setGhost(true);
-            
+
             String loc = p.getString(getFactionParam(faction, PARAM_LOCATION));
             if (loc == null) {
                 loc = "Any";
             }
             int dir = Math.max(findIndex(IStartingPositions.START_LOCATION_NAMES, loc), 0);
             player.setStartingPos(dir);
-            
+
             final Camouflage camouflage = parseCamouflage(p.getString(getFactionParam(faction, PARAM_CAMO)));
             if (!camouflage.isDefault()) {
                 player.setCamouflage(camouflage);
             }
-            
+
             String team = p.getString(getFactionParam(faction, PARAM_TEAM));
             if ((team != null) && !team.isEmpty()) {
                 try {
@@ -747,7 +754,7 @@ public class ScenarioLoader {
                 teamId++;
             }
             player.setTeam(Math.min(teamId, Player.TEAM_NAMES.length - 1));
-            
+
             String minefields = p.getString(getFactionParam(faction, PARAM_MINEFIELDS));
             if ((minefields != null) && !minefields.isEmpty()) {
                 String[] mines = minefields.split(SEPARATOR_COMMA, -1);
@@ -766,7 +773,7 @@ public class ScenarioLoader {
                 }
             }
         }
-        
+
         return result;
     }
 
@@ -815,7 +822,7 @@ public class ScenarioLoader {
 
         // Find subdirectories given in the scenario file
         List<String> allDirs = new LinkedList<>();
-        // "" entry stands for the boards base directory 
+        // "" entry stands for the boards base directory
         allDirs.add("");
 
         if (p.getString(PARAM_MAP_DIRECTORIES) != null) {
@@ -924,20 +931,20 @@ public class ScenarioLoader {
         }
         return ExternalGameId;
     }
-    
+
     public boolean hasFixedGameOptions() {
         return fixedGameOptions;
     }
-    
+
     public boolean hasFixedPlanetCond() {
         return fixedPlanetCond;
     }
-    
+
     public boolean isSinglePlayer() {
         return singlePlayer;
     }
-    
-    /** 
+
+    /**
      * Parses a boolean value. When the key is not present, returns the given
      * defaultValue. When the key is present, interprets "true" and "on"  and "1"
      * as true and everything else as false.
@@ -945,7 +952,7 @@ public class ScenarioLoader {
     private boolean parseBoolean(StringMultiMap p, String key, boolean defaultValue) {
         boolean result = defaultValue;
         if (p.containsKey(key)) {
-            if (p.getString(key).equalsIgnoreCase("true") 
+            if (p.getString(key).equalsIgnoreCase("true")
                     || p.getString(key).equalsIgnoreCase("on")
                     || p.getString(key).equalsIgnoreCase("1")) {
                 result = true;
@@ -993,7 +1000,7 @@ public class ScenarioLoader {
             int ewSpot = s.indexOf(':');
             int loc = Integer.parseInt(s.substring(0, ewSpot));
             int slot = Integer.parseInt(s.substring(ewSpot + 1));
-            
+
             critHits.add(new CritHit(loc, slot - 1));
         }
     }
@@ -1012,12 +1019,12 @@ public class ScenarioLoader {
             this.setAmmoTo = setAmmoTo;
         }
     }
-    
+
     private static class SetAmmoType {
         public final int loc;
         public final int slot;
         public final String type;
-        
+
         public SetAmmoType(int loc, int slot, String type) {
             this.loc = loc;
             this.slot = slot;
@@ -1053,7 +1060,7 @@ public class ScenarioLoader {
 
             ammoSetTo.add(new SetAmmoTo(loc, slot - 1, setTo));
         }
-        
+
         public void addSetAmmoType(String s) {
             int ewSpot = s.indexOf(':');
             int atSpot = s.indexOf('-');
@@ -1062,7 +1069,7 @@ public class ScenarioLoader {
             }
             int loc = Integer.parseInt(s.substring(0, ewSpot));
             int slot = Integer.parseInt(s.substring(ewSpot + 1, atSpot));
-            
+
             ammoSetType.add(new SetAmmoType(loc, slot - 1, s.substring(atSpot + 1)));
         }
     }
@@ -1115,26 +1122,26 @@ public class ScenarioLoader {
             int setTo = Integer.parseInt(s.substring(ewSpot + 1));
             boolean rear = (s.charAt(0) == 'R');
             boolean internal = (s.charAt(0) == 'I');
-            
+
             specificDammage.add(new SpecDam(loc, setTo, rear, internal));
         }
     }
-    
+
     private static class ScenarioLoaderException extends Exception {
         private static final long serialVersionUID = 8622648319531348199L;
-        
+
         private final Object[] params;
 
         public ScenarioLoaderException(String errorKey) {
             super(errorKey);
             this.params = null;
         }
-        
+
         public ScenarioLoaderException(String errorKey, Object... params) {
             super(errorKey);
             this.params = params;
         }
-        
+
         @Override
         public String getMessage() {
             String result = Messages.getString("ScenarioLoaderException." + super.getMessage());
@@ -1148,7 +1155,7 @@ public class ScenarioLoader {
             return result;
         }
     }
-    
+
     private static class StringMultiMap extends HashMap<String, Collection<String>> {
         private static final long serialVersionUID = 2171662843329151622L;
 
@@ -1170,7 +1177,7 @@ public class ScenarioLoader {
             if ((values == null) || values.isEmpty()) {
                 return null;
             }
-            
+
             boolean firstElement = true;
             StringBuilder sb = new StringBuilder();
             for (String val : values) {
@@ -1183,7 +1190,7 @@ public class ScenarioLoader {
             }
             return sb.toString();
         }
-        
+
         /** @return the number of values for this key in the file */
         public int getNumValues(String key) {
             Collection<String> values = get(key);

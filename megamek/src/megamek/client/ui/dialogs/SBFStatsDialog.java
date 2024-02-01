@@ -23,6 +23,7 @@ import megamek.client.ui.baseComponents.AbstractDialog;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.MMToggleButton;
 import megamek.client.ui.swing.SBFStatsTablePanel;
+import megamek.client.ui.swing.util.FontHandler;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.codeUtilities.StringUtility;
 import megamek.common.Game;
@@ -40,6 +41,7 @@ import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
 import java.util.Collection;
 import java.util.Objects;
+import java.util.Vector;
 import java.util.stream.Collectors;
 
 /**
@@ -57,9 +59,9 @@ public class SBFStatsDialog extends AbstractDialog {
     private final JButton clipBoardButton = new JButton(Messages.getString("SBFStatsDialog.copy"));
     private final JButton printButton = new JButton(Messages.getString("SBFStatsDialog.print"));
     private final JLabel headerFontLabel = new JLabel(Messages.getString("SBFStatsDialog.headerFont"));
-    private final JComboBox<String> headerFontChooser = new JComboBox<>();
+    private JComboBox<String> headerFontChooser;
     private final JLabel valueFontLabel = new JLabel(Messages.getString("SBFStatsDialog.valueFont"));
-    private final JComboBox<String> valueFontChooser = new JComboBox<>();
+    private JComboBox<String> valueFontChooser;
     private final JScrollPane scrollPane = new JScrollPane();
     private final JPanel centerPanel = new JPanel();
     private SBFStatsTablePanel statsPanel;
@@ -91,6 +93,15 @@ public class SBFStatsDialog extends AbstractDialog {
         optionsPanel.add(elementsToggle);
         optionsPanel.add(clipBoardButton);
 
+        headerFontChooser = new JComboBox<>(new Vector<>(FontHandler.getAvailableNonSymbolFonts()));
+        headerFontChooser.addItem("");
+        valueFontChooser = new JComboBox<>(new Vector<>(FontHandler.getAvailableNonSymbolFonts()));
+        valueFontChooser.addItem("");
+        headerFontChooser.setSelectedItem(GUIPreferences.getInstance().getSbfSheetHeaderFont());
+        valueFontChooser.setSelectedItem(GUIPreferences.getInstance().getSbfSheetValueFont());
+        headerFontChooser.setFont(UIUtil.getScaledFont());
+        valueFontChooser.setFont(UIUtil.getScaledFont());
+
         var printPanel = new UIUtil.FixedYPanel(new FlowLayout(FlowLayout.LEFT));
         printPanel.add(Box.createHorizontalStrut(25));
         printPanel.add(printButton);
@@ -109,17 +120,6 @@ public class SBFStatsDialog extends AbstractDialog {
         printButton.setFont(UIUtil.getScaledFont());
         headerFontLabel.setFont(UIUtil.getScaledFont());
         valueFontLabel.setFont(UIUtil.getScaledFont());
-
-        headerFontChooser.addItem("");
-        valueFontChooser.addItem("");
-        for (String family : GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames()) {
-            headerFontChooser.addItem(family);
-            valueFontChooser.addItem(family);
-        }
-        headerFontChooser.setSelectedItem(GUIPreferences.getInstance().getSbfSheetHeaderFont());
-        valueFontChooser.setSelectedItem(GUIPreferences.getInstance().getSbfSheetValueFont());
-        headerFontChooser.setFont(UIUtil.getScaledFont());
-        valueFontChooser.setFont(UIUtil.getScaledFont());
 
         scrollPane.getVerticalScrollBar().setUnitIncrement(16);
         centerPanel.add(Box.createVerticalStrut(15));

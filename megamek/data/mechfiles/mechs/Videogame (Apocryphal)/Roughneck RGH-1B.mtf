@@ -1,6 +1,5 @@
-Version:1.0
-Roughneck
-RGH-1B
+chassis:Roughneck
+model:RGH-1B
 
 Config:Biped
 TechBase:Inner Sphere

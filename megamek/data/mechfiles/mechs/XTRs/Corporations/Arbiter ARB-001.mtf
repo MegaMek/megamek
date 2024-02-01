@@ -1,6 +1,5 @@
-Version:1.1
-Arbiter SecurityMech
-ARB-001
+chassis:Arbiter
+model:ARB-001 SecurityMech
 mul id:3714
 
 Config:Biped

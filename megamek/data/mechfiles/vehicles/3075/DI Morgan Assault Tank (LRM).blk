@@ -73,6 +73,10 @@ ISLRM20 Ammo Artemis-capable
 IS Level 2
 </type>
 
+<role>
+Missile Boat
+</role>
+
 <year>
 3075
 </year>
@@ -96,3 +100,19 @@ TRO: 3075
 <motion_type>
 Tracked
 </motion_type>
+
+<manufacturer>
+Defiance Motors, Defiance Industries
+</manufacturer>
+
+<primaryFactory>
+Tharkad, Hesperus II
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:300 GM XL Fusion
+ARMOR:Durallex Super Hvy Ferro-Fibrous
+COMMUNICATIONS:Neil 6000V
+TARGETING:Angst ClearView 2AV
+</systemManufacturers>

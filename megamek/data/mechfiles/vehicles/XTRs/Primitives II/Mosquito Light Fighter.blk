@@ -36,6 +36,10 @@ Mosquito Light Fighter
 IS Level 2
 </type>
 
+<role>
+Fire Support
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -127,3 +131,10 @@ XTR: Primitives II
 <tonnage>
 20.0
 </tonnage>
+
+<quirks>
+atmo_flyer
+easy_maintain
+obsolete
+</quirks>
+

@@ -1,13 +1,19 @@
-Version:1.0
-Fafnir
-FNR-4A (Peter)
+chassis:Fafnir
+model:FNR-4A (Peter)
 mul id:1020
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3068
 Rules Level:2
+role:Juggernaut
 Source:Jihad Turning Points: Tharkad
+
+
+
+quirk:no_arms
+weaponquirk:stable_weapon:RT:1:ISHeavyGaussRifle
+
 
 Mass:100
 Engine:300 Fusion Engine

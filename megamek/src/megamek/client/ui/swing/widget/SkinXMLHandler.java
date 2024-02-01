@@ -141,7 +141,7 @@ public class SkinXMLHandler {
      * @return
      */
     public static boolean validSkinSpecFile(String fileName) {
-        File file = new MegaMekFile(Configuration.skinsDir(), fileName).getFile();
+        File file = new MegaMekFile(fileName).getFile();
         if (!file.exists() || !file.isFile()) {
             return false;
         }
@@ -181,10 +181,14 @@ public class SkinXMLHandler {
             return false;
         }
 
-        File file = new MegaMekFile(Configuration.skinsDir(), filename).getFile();
+        File file = new MegaMekFile(filename).getFile();
         if (!file.exists() || !file.isFile()) {
-            LogManager.getLogger().error("Cannot initialize skin based on a non-existent file with filename " + filename);
-            return false;
+            // for backwards compatibility, also check the skins filename as if it is only a relative path
+            file = new MegaMekFile(Configuration.skinsDir(), filename).getFile();
+            if (!file.exists() || !file.isFile()) {
+                LogManager.getLogger().error("Cannot initialize skin based on a non-existent file with filename " + filename);
+                return false;
+            }
         }
 
         // Build the XML document.

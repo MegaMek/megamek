@@ -1,13 +1,22 @@
-Version:1.0
-Clint
-CLNT-3-4T
+chassis:Clint
+model:CLNT-3-4T
 mul id:9462
 
 Config:Biped
 techbase:Inner Sphere
 era:3109
 rules level:3
+role:Striker
 Source:Rec Guide:ilClan #31
+
+
+
+quirk:imp_target_long
+quirk:imp_target_med
+quirk:difficult_maintain
+quirk:exp_actuator
+quirk:non_standard
+
 
 mass:40
 engine:240 XL Engine(IS)

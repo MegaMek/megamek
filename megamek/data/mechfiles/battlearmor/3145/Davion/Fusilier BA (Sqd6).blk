@@ -32,6 +32,10 @@ Fusilier Battle Armor
 IS Level 3
 </type>
 
+<role>
+Juggernaut
+</role>
+
 <motion_type>
 Jump
 </motion_type>
@@ -115,3 +119,7 @@ JUMPJET:Unknown
 COMMUNICATIONS:Unknown
 TARGETING:Unknown
 </systemManufacturers>
+
+<weaponQuirks>
+accurate:Squad:1:ISBALightMachineGun
+</weaponQuirks>

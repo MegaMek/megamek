@@ -1,6 +1,5 @@
-Version:1.0
-Ostroc
-OSR-2C
+chassis:Ostroc
+model:OSR-2C
 mul id:2348
 
 Config:Biped
@@ -8,6 +7,13 @@ techbase:Inner Sphere
 era:2511
 source:TRO: 3039
 rules level:1
+role:Skirmisher
+
+
+
+
+quirk:low_profile
+
 
 mass:60
 engine:300 Fusion Engine(IS)

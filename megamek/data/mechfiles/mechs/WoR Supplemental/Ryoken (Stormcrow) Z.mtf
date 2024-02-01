@@ -1,6 +1,6 @@
-Version:1.0
-Ryoken (Stormcrow)
-Z
+chassis:Ryoken
+clanname:Stormcrow
+model:Z
 mul id:5820
 
 Config:Biped Omnimech
@@ -8,6 +8,10 @@ TechBase:Clan
 Era:3072
 source:Wars of Reaving
 Rules Level:4
+role:Striker
+
+quirk:stable
+
 
 Mass:55
 Engine:330 XL (Clan) Engine(IS)

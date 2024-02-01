@@ -1,6 +1,5 @@
-Version:1.0
-Locust
-C
+chassis:Locust
+model:C
 mul id:7601
 
 Config:Biped
@@ -8,6 +7,16 @@ techbase:Mixed (IS Chassis)
 era:2836
 source:Rec Guide:ilClan #16
 rules level:3
+role:Striker
+
+
+
+quirk:compact_mech
+quirk:low_profile
+quirk:cramped_cockpit
+quirk:no_arms
+quirk:weak_legs
+
 
 mass:20
 engine:160 Fusion Engine(IS)

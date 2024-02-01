@@ -1,6 +1,5 @@
-Version:1.0
-Nightsky
-NGS-6S
+chassis:Nightsky
+model:NGS-6S
 mul id:2283
 
 Config:Biped
@@ -8,6 +7,12 @@ TechBase:Inner Sphere
 Era:3066
 Source:TRO: 3055
 Rules Level:2
+role:Striker
+
+
+
+weaponquirk:mod_weapons:RA:4:Hatchet
+
 
 Mass:50
 Engine:300 Light Engine

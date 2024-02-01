@@ -13,6 +13,7 @@ package megamek.common;
 
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.common.cost.FixedWingSupportCostCalculator;
+import megamek.common.options.OptionsConstants;
 
 /**
  * @author Jason Tighe
@@ -62,7 +63,7 @@ public class FixedWingSupport extends ConvFighter {
      */
     @Override
     public int getBARRating(int loc) {
-        return barRating[loc];
+        return (barRating == null) ? 0 : barRating[loc];
     }
 
     /*
@@ -72,7 +73,7 @@ public class FixedWingSupport extends ConvFighter {
      */
     @Override
     public boolean hasBARArmor(int loc) {
-        return true;
+        return getArmorType(firstArmorIndex()) == EquipmentType.T_ARMOR_STANDARD;
     }
 
     @Override
@@ -135,12 +136,11 @@ public class FixedWingSupport extends ConvFighter {
      * @return The mass of each point of fuel in kg.
      */
     public int kgPerFuelPoint() {
+        if (!requiresFuel()) {
+            return 0;
+        }
         int kg = KG_PER_FUEL_POINT[getWeightClass() - EntityWeightClass.WEIGHT_SMALL_SUPPORT][getEngineTechRating()];
         if (hasPropChassisMod() || getMovementMode().equals(EntityMovementMode.AIRSHIP)) {
-            if (getEngine().isFusion() || (getEngine().getEngineType() == Engine.FISSION)
-                    || (getEngine().getEngineType() == Engine.SOLAR)) {
-                return 0;
-            }
             kg = (int) Math.ceil(kg * 0.75);
         }
         return kg;
@@ -155,6 +155,13 @@ public class FixedWingSupport extends ConvFighter {
     @Override
     public double getFuelPointsPerTon() {
         return 1000.0 / kgPerFuelPoint();
+    }
+
+    @Override
+    public boolean requiresFuel() {
+        return !(((hasPropChassisMod() || getMovementMode().isAirship()))
+                && hasEngine() && (getEngine().isFusion() || (getEngine().getEngineType() == Engine.FISSION)
+                || (getEngine().getEngineType() == Engine.SOLAR)));
     }
 
     private static final TechAdvancement TA_FIXED_WING_SUPPORT = new TechAdvancement(TECH_BASE_ALL)
@@ -228,14 +235,20 @@ public class FixedWingSupport extends ConvFighter {
 
     @Override
     public void autoSetMaxBombPoints() {
-        // fixed wing support craft need external stores hardpoints to be able to carry bombs
+        // fixed wing support craft need external stores hardpoints or the Internal Bomb Bay quirk
+        // to be able to carry bombs.
         int bombpoints = 0;
         for (Mounted misc : getMisc()) {
             if (misc.getType().hasFlag(MiscType.F_EXTERNAL_STORES_HARDPOINT)) {
                 bombpoints++;
             }
         }
-        maxBombPoints = bombpoints;
+        maxExtBombPoints = bombpoints;
+
+        // fixed-wing support craft may also use internal transport bays as bomb bays with Internal Bomb Bay quirk.
+        maxIntBombPoints = getTransportBays().stream().mapToInt(
+                tb -> (tb instanceof CargoBay) ? (int) Math.floor(tb.getUnused()) : 0
+        ).sum();
     }
 
     @Override
@@ -313,5 +326,11 @@ public class FixedWingSupport extends ConvFighter {
     @Override
     public boolean isAerospaceSV() {
         return true;
+    }
+
+    @Override
+    public void setOriginalWalkMP(int walkMP) {
+        super.setOriginalWalkMP(walkMP);
+        autoSetSI();
     }
 }

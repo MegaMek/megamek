@@ -1,6 +1,5 @@
-Version:1.0
-Naginata
-NG-C3Ar
+chassis:Naginata
+model:NG-C3Ar
 mul id:2253
 
 Config:Biped
@@ -8,6 +7,13 @@ TechBase:Inner Sphere
 Era:3076
 source:TRO: 3085
 Rules Level:4
+role:Missile Boat
+
+
+
+quirk:cowl
+quirk:stable
+
 
 Mass:95
 Engine:285 Fusion Engine(IS)

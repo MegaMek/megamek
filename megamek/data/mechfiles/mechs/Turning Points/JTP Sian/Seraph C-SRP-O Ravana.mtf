@@ -1,13 +1,22 @@
-Version:1.1
-Seraph
-C-SRP-OR (Ravana)
+chassis:Seraph
+model:C-SRP-OR (Ravana)
 mul id:2875
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3074
 Rules Level:4
+role:Juggernaut
 Source:Jihad Turning Points: Sian
+
+
+
+quirk:imp_com
+quirk:imp_sensors
+quirk:low_profile
+quirk:bad_rep_clan
+quirk:bad_rep_is
+
 
 Mass:85
 Engine:255 Light Fusion Engine

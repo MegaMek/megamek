@@ -1,6 +1,5 @@
-Version:1.1
-Waneta
-S-WN-2LAM
+chassis:Waneta
+model:S-WN-2LAM
 mul id:5380
 
 Config:LAM
@@ -8,6 +7,12 @@ techbase:Mixed (IS Chassis)
 era:3078
 source:Jihad: Final Reckoning
 rules level:4
+role:Skirmisher
+
+
+
+quirk:non_standard
+
 
 mass:55
 engine:220 Fusion Engine(IS)

@@ -1,6 +1,5 @@
-Version:1.0
-Bear Cub
-
+chassis:Bear Cub
+model:
 mul id:314
 
 Config:Biped
@@ -8,6 +7,13 @@ TechBase:Clan
 Era:3068
 Source:TRO: 3075
 Rules Level:2
+role:Striker
+
+
+quirk:easy_pilot
+quirk:ext_twist
+quirk:cramped_cockpit
+
 
 Mass:25
 Engine:200 XL (Clan) Engine

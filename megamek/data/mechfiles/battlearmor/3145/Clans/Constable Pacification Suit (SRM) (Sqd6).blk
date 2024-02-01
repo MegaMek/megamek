@@ -32,6 +32,10 @@ Constable Pacification Suit
 Clan Level 2
 </type>
 
+<role>
+Ambusher
+</role>
+
 <motion_type>
 Jump
 </motion_type>
@@ -106,3 +110,8 @@ BA Facility Gamma
 <primaryFactory>
 Mannedorf
 </primaryFactory>
+
+<quirks>
+easy_maintain
+</quirks>
+

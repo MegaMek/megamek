@@ -36,6 +36,10 @@ Arrow IV Assault Vehicle
 IS Level 3
 </type>
 
+<role>
+Missile Boat
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -108,4 +112,9 @@ TRO: 3145 Capellan Confederation
 <tonnage>
 80.0
 </tonnage>
+
+
+<quirks>
+fast_reload
+</quirks>
 

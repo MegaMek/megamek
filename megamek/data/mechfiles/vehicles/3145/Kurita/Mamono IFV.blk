@@ -32,6 +32,10 @@ Mamono IFV
 IS Level 3
 </type>
 
+<role>
+Brawler
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -101,3 +105,8 @@ TRO: 3145 Draconis Combine
 <tonnage>
 70.0
 </tonnage>
+
+<quirks>
+poor_performance
+</quirks>
+

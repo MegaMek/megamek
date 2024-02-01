@@ -1,13 +1,18 @@
-Version:1.0
-Javelin
-JVN-12N
+chassis:Javelin
+model:JVN-12N
 mul id:9461
 
 Config:Biped
 techbase:Mixed (IS Chassis)
 era:3121
 rules level:2
+role:Scout
 Source:Rec Guide:ilClan #31
+
+
+
+quirk:unbalanced
+
 
 mass:30
 engine:240 XL Engine(IS)

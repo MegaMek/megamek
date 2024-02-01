@@ -1,6 +1,5 @@
-Version:1.1
-King Crab
-KGC-008
+chassis:King Crab
+model:KGC-008
 mul id:1777
 
 Config:Biped
@@ -8,6 +7,12 @@ TechBase:Inner Sphere
 Era:3069
 Source:TRO: 3050
 Rules Level:2
+role:Sniper
+
+
+
+quirk:command_mech
+
 
 Mass:100
 Engine:300 Fusion Engine

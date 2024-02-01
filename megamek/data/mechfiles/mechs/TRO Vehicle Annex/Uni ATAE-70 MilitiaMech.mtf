@@ -1,12 +1,12 @@
-Version:1.0
-Uni ATAE-70 MilitiaMech
-
+chassis:Uni
+model:ATAE-70 MilitiaMech
 mul id:6977
 
 Config:Quad
 TechBase:Inner Sphere
 Era:3053
 Rules Level:2
+role:Sniper
 Source:Record Sheets: Vehicle Annex - IndustrialMechs & Exoskeletons
 
 Mass:70

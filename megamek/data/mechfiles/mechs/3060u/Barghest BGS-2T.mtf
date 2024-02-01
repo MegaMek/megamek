@@ -1,6 +1,5 @@
-Version:1.0
-Barghest
-BGS-2T
+chassis:Barghest
+model:BGS-2T
 mul id:253
 
 Config:Quad
@@ -8,6 +7,12 @@ TechBase:Inner Sphere
 Era:3060
 Source:TRO: 3060
 Rules Level:2
+role:Skirmisher
+
+
+
+quirk:directional_torso_mount
+
 
 Mass:70
 Engine:350 XL Engine

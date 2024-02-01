@@ -1,6 +1,5 @@
-Version:1.0
-Atlas
-C 3
+chassis:Atlas
+model:C 3
 mul id:8432
 
 Config:Biped
@@ -8,6 +7,16 @@ techbase:Clan
 era:2842
 source:Rec Guide:ilClan #24
 rules level:3
+role:Sniper
+
+
+
+quirk:battle_fists_la
+quirk:battle_fists_ra
+quirk:command_mech
+quirk:distracting
+quirk:imp_com
+
 
 mass:100
 engine:300 Fusion (Clan) Engine(IS)

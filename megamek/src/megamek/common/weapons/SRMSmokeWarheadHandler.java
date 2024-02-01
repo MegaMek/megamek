@@ -38,7 +38,7 @@ public class SRMSmokeWarheadHandler extends SRMHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * megamek.common.weapons.WeaponHandler#specialResolution(java.util.Vector,
      * megamek.common.Entity, boolean)
@@ -75,7 +75,7 @@ public class SRMSmokeWarheadHandler extends SRMHandler {
         }
 
         // Handle munitions.
-        if (atype.getMunitionType() == AmmoType.M_SMOKE_WARHEAD) {
+        if (atype.getMunitionType().contains(AmmoType.Munitions.M_SMOKE_WARHEAD)) {
             int damage = wtype.getRackSize() * calcDamagePerHit();
             int smokeType = SmokeCloud.SMOKE_LIGHT;
             if (damage > 5) {
@@ -83,7 +83,7 @@ public class SRMSmokeWarheadHandler extends SRMHandler {
             }
 
             gameManager.deliverMissileSmoke(center, smokeType, vPhaseReport);
-        } else if (atype.getMunitionType() == AmmoType.M_ANTI_TSM) {
+        } else if (atype.getMunitionType().contains(AmmoType.Munitions.M_ANTI_TSM)) {
             gameManager.deliverMissileSmoke(center, SmokeCloud.SMOKE_GREEN, vPhaseReport);
         }
         return true;

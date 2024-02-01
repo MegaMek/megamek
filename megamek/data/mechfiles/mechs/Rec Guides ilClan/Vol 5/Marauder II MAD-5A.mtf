@@ -1,6 +1,5 @@
-Version:1.0
-Marauder II
-MAD-5A
+chassis:Marauder II
+model:MAD-5A
 mul id:2059
 
 Config:Biped
@@ -8,6 +7,14 @@ techbase:Inner Sphere
 era:3049
 source:Rec Guide:ilClan #5
 rules level:2
+role:Sniper
+
+
+
+quirk:command_mech
+quirk:hyper_actuator
+quirk:low_profile
+
 
 mass:100
 engine:300 XL Engine(IS)

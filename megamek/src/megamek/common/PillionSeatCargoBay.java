@@ -49,7 +49,12 @@ public final class PillionSeatCargoBay extends StandardSeatCargoBay {
 
     @Override
     public String toString() {
-        return "pillionseats:" + currentSpace + ":" + doors;
+        String bayType = "pillionseats";
+        return this.bayString(
+                bayType,
+                currentSpace,
+                doors
+        );
     }
 
     @Override

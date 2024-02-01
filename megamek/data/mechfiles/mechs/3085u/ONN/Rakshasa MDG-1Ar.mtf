@@ -1,6 +1,5 @@
-Version:1.0
-Rakshasa
-MDG-1Ar
+chassis:Rakshasa
+model:MDG-1Ar
 mul id:2632
 
 Config:Biped
@@ -8,6 +7,13 @@ TechBase:Inner Sphere
 Era:3076
 source:TRO: 3085
 Rules Level:2
+role:Skirmisher
+
+
+
+quirk:easy_maintain
+quirk:weak_head_1
+
 
 Mass:75
 Engine:375 XL Engine

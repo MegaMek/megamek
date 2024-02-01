@@ -1,6 +1,5 @@
-Version:1.2
-Wolfhound
-WLF-1 (Allard)
+chassis:Wolfhound
+model:WLF-1 (Allard)
 mul id:5416
 
 Config:Biped
@@ -8,6 +7,13 @@ TechBase:Mixed (IS Chassis)
 Era:3062
 Source:TRO: 3050
 Rules Level:3
+role:Striker
+
+
+
+quirk:easy_maintain
+quirk:good_rep_1
+
 
 Mass:35
 Engine:210 XL (Clan) Engine

@@ -1,6 +1,6 @@
-Version:1.0
-Dragonfly (Viper)
-R
+chassis:Dragonfly
+clanname:Viper
+model:R
 mul id:7588
 
 Config:Biped Omnimech
@@ -8,6 +8,11 @@ techbase:Mixed (Clan Chassis)
 era:3110
 source:Rec Guide:ilClan #8
 rules level:2
+role:Scout
+
+quirk:imp_target_long
+quirk:low_profile
+
 
 mass:40
 engine:320 XL (Clan) Engine

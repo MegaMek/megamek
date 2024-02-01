@@ -1,6 +1,5 @@
-Version:1.0
-Wasp LAM Mk I
-WSP-100b
+chassis:Wasp LAM Mk I
+model:WSP-100b
 mul id:5394
 
 Config:LAM
@@ -8,6 +7,7 @@ TechBase:Inner Sphere
 Era:2703
 Source:TRO: 3085
 Rules Level:3
+role:Scout
 
 Mass:30
 Engine:150 Fusion Engine(IS)

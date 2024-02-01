@@ -1,6 +1,5 @@
-Version:1.0
-Matador
-
+chassis:Matador
+model:
 mul id:2098
 
 Config:Biped
@@ -8,6 +7,12 @@ TechBase:Clan
 Era:2846
 Source:TRO: 3060
 Rules Level:2
+role:Juggernaut
+
+
+quirk:battle_fists_la
+quirk:battle_fists_ra
+
 
 Mass:60
 Engine:240 Fusion (Clan) Engine

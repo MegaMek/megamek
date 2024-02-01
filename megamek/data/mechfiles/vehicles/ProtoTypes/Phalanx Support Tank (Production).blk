@@ -32,6 +32,10 @@ Phalanx Support Tank
 IS Level 3
 </type>
 
+<role>
+Sniper
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -84,3 +88,12 @@ TRO: Prototypes
 <tonnage>
 40.0
 </tonnage>
+
+<quirks>
+difficult_maintain
+trailer_hitch
+</quirks>
+
+<weaponQuirks>
+inaccurate:FR:0:ISMG
+</weaponQuirks>

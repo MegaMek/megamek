@@ -32,15 +32,16 @@ E
 IS Level 2
 </type>
 
+<role>
+Missile Boat
+</role>
+
 <motion_type>
 Hover
 </motion_type>
 
 <transporters>
 troopspace:4.0
-</transporters>
-
-<transporters>
 BattleArmorHandles - troopers:-1
 </transporters>
 
@@ -96,3 +97,8 @@ TRO: 3058
 <baseChassisTurretWeight>
 1.0
 </baseChassisTurretWeight>
+
+<weaponQuirks>
+mod_weapons:FR:0:Medium Laser
+mod_weapons:TU:0:LRM 10
+</weaponQuirks>

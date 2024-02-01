@@ -1,6 +1,5 @@
-Version:1.0
-Commando
-COM-9S
+chassis:Commando
+model:COM-9S
 mul id:7439
 
 Config:Biped
@@ -8,6 +7,11 @@ techbase:Inner Sphere
 era:3146
 source:Rec Guide:ilClan #1
 rules level:2
+role:Striker
+
+quirk:low_profile
+quirk:exp_actuator
+
 
 mass:25
 engine:175 XL Engine(IS)

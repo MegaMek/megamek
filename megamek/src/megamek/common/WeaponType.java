@@ -230,6 +230,7 @@ public class WeaponType extends EquipmentType {
     public static final int CLASS_TELE_MISSILE = 25;
     public static final int CLASS_GAUSS = 26;
     public static final int CLASS_THUNDERBOLT = 27;
+    public static final int CLASS_MORTAR = 28;
 
     public static final int WEAPON_DIRECT_FIRE = 0;
     public static final int WEAPON_CLUSTER_BALLISTIC = 1;
@@ -249,7 +250,7 @@ public class WeaponType extends EquipmentType {
     // Used for BA vs BA damage for BA Plasma Rifle
     public static final int WEAPON_PLASMA = 15;
 
-    public static String[] classNames = { "Unknown", "Laser", "Point Defense", "PPC", "Pulse Laser", "Artilery", "AMS",
+    public static String[] classNames = { "Unknown", "Laser", "Point Defense", "PPC", "Pulse Laser", "Artillery", "Plasma",
             "AC", "LBX", "LRM", "SRM", "MRM", "ATM", "Rocket Launcher", "Capital Laser", "Capital PPC", "Capital AC",
             "Capital Gauss", "Capital Missile", "AR10", "Screen", "Sub Capital Cannon", "Capital Mass Driver", "AMS" };
 
@@ -307,6 +308,13 @@ public class WeaponType extends EquipmentType {
     protected boolean capital = false;
     protected boolean subCapital = false;
     protected int atClass = CLASS_NONE;
+
+    /**
+     * @return true if the wtype is able to be fired indirectly.
+     */
+    public boolean canIndirect() {
+        return false;
+    }
 
     public void setDamage(int inD) {
         damage = inD;
@@ -398,13 +406,13 @@ public class WeaponType extends EquipmentType {
         boolean hasLoadedAmmo = (weapon.getLinked() != null);
         if ((getAmmoType() == AmmoType.T_ATM) && hasLoadedAmmo) {
             AmmoType atype = (AmmoType) weapon.getLinked().getType();
-            if ((atype.getAmmoType() == AmmoType.T_ATM) && (atype.getMunitionType() == AmmoType.M_EXTENDED_RANGE)) {
+            if ((atype.getAmmoType() == AmmoType.T_ATM) && (atype.getMunitionType().contains(AmmoType.Munitions.M_EXTENDED_RANGE))) {
                 minRange = 4;
                 sRange = 9;
                 mRange = 18;
                 lRange = 27;
                 eRange = 36;
-            } else if ((atype.getAmmoType() == AmmoType.T_ATM) && (atype.getMunitionType() == AmmoType.M_HIGH_EXPLOSIVE)) {
+            } else if ((atype.getAmmoType() == AmmoType.T_ATM) && (atype.getMunitionType().contains(AmmoType.Munitions.M_HIGH_EXPLOSIVE))) {
                 minRange = 0;
                 sRange = 3;
                 mRange = 6;
@@ -414,13 +422,15 @@ public class WeaponType extends EquipmentType {
         }
         if ((getAmmoType() == AmmoType.T_IATM) && hasLoadedAmmo) {
             AmmoType atype = (AmmoType) weapon.getLinked().getType();
-            if ((atype.getAmmoType() == AmmoType.T_IATM) && (atype.getMunitionType() == AmmoType.M_EXTENDED_RANGE)) {
+            if ((atype.getAmmoType() == AmmoType.T_IATM) && (atype.getMunitionType().contains(AmmoType.Munitions.M_EXTENDED_RANGE))) {
                 minRange = 4;
                 sRange = 9;
                 mRange = 18;
                 lRange = 27;
                 eRange = 36;
-            } else if ((atype.getAmmoType() == AmmoType.T_IATM) && ((atype.getMunitionType() == AmmoType.M_HIGH_EXPLOSIVE)||(atype.getMunitionType() == AmmoType.M_IATM_IMP))) {
+            } else if ((atype.getAmmoType() == AmmoType.T_IATM)
+                    && ((atype.getMunitionType().contains(AmmoType.Munitions.M_HIGH_EXPLOSIVE))
+                        || (atype.getMunitionType().contains(AmmoType.Munitions.M_IATM_IMP)))) {
                 minRange = 0;
                 sRange = 3;
                 mRange = 6;
@@ -443,7 +453,7 @@ public class WeaponType extends EquipmentType {
                 lRange = 9;
                 eRange = 12;
             }
-            if (atype.getMunitionType() == AmmoType.M_DEAD_FIRE) {
+            if (atype.getMunitionType().contains(AmmoType.Munitions.M_DEAD_FIRE)) {
                 if (atype.hasFlag(AmmoType.F_MML_LRM)) {
                     minRange = 4;
                     sRange = 5;
@@ -461,7 +471,7 @@ public class WeaponType extends EquipmentType {
         }
         if ((getAmmoType() == AmmoType.T_LRM) && hasLoadedAmmo) {
             AmmoType atype = (AmmoType) weapon.getLinked().getType();
-            if ((atype.getAmmoType() == AmmoType.T_LRM) && (atype.getMunitionType() == AmmoType.M_DEAD_FIRE)) {
+            if ((atype.getAmmoType() == AmmoType.T_LRM) && (atype.getMunitionType().contains(AmmoType.Munitions.M_DEAD_FIRE))) {
                 minRange = 4;
                 sRange = 5;
                 mRange = 10;
@@ -471,7 +481,7 @@ public class WeaponType extends EquipmentType {
         }
         if ((getAmmoType() == AmmoType.T_SRM) && hasLoadedAmmo) {
             AmmoType atype = (AmmoType) weapon.getLinked().getType();
-            if ((atype.getAmmoType() == AmmoType.T_SRM) && (atype.getMunitionType() == AmmoType.M_DEAD_FIRE)) {
+            if ((atype.getAmmoType() == AmmoType.T_SRM) && (atype.getMunitionType().contains(AmmoType.Munitions.M_DEAD_FIRE))) {
                 minRange = 0;
                 sRange = 2;
                 mRange = 4;
@@ -480,7 +490,7 @@ public class WeaponType extends EquipmentType {
             }
         }
         if (hasFlag(WeaponType.F_PDBAY)) {
-            if (hasModes() && weapon.curMode().equals("Point Defense")) {
+            if (weapon.hasModes() && weapon.curMode().equals("Point Defense")) {
                 sRange = 1;
             } else {
                 sRange = 6;
@@ -538,9 +548,9 @@ public class WeaponType extends EquipmentType {
         if (null != weapon) {
             if (getAmmoType() == AmmoType.T_ATM) {
                 AmmoType atype = (AmmoType) weapon.getLinked().getType();
-                if ((atype.getAmmoType() == AmmoType.T_ATM) && (atype.getMunitionType() == AmmoType.M_EXTENDED_RANGE)) {
+                if ((atype.getAmmoType() == AmmoType.T_ATM) && (atype.getMunitionType().contains(AmmoType.Munitions.M_EXTENDED_RANGE))) {
                     return RANGE_EXT;
-                } else if ((atype.getAmmoType() == AmmoType.T_ATM) && (atype.getMunitionType() == AmmoType.M_HIGH_EXPLOSIVE)) {
+                } else if ((atype.getAmmoType() == AmmoType.T_ATM) && (atype.getMunitionType().contains(AmmoType.Munitions.M_HIGH_EXPLOSIVE))) {
                     return RANGE_SHORT;
                 }
             }
@@ -620,8 +630,19 @@ public class WeaponType extends EquipmentType {
         return atClass;
     }
 
-    // Probably not the best place for this
+    /**
+     * @return The type of weapon bay this weapon goes in
+     */
     public EquipmentType getBayType() {
+        return getBayType(false);
+    }
+
+    // Probably not the best place for this
+    /**
+     * @param capitalOnly If true, this will return the equivalent capital bay for subcapital weapons.
+     * @return The type of weapon bay this weapon goes in
+     */
+    public EquipmentType getBayType(boolean capitalOnly) {
         // Return the correct weapons bay for the given type of weapon
         switch (getAtClass()) {
             case CLASS_LASER:
@@ -657,19 +678,19 @@ public class WeaponType extends EquipmentType {
             case CLASS_ROCKET_LAUNCHER:
                 return EquipmentType.get(EquipmentTypeLookup.ROCKET_LAUNCHER_BAY);
             case CLASS_CAPITAL_LASER:
-                return isSubCapital() ? EquipmentType.get(EquipmentTypeLookup.SCL_BAY)
+                return (isSubCapital() && !capitalOnly) ? EquipmentType.get(EquipmentTypeLookup.SCL_BAY)
                         : EquipmentType.get(EquipmentTypeLookup.CAPITAL_LASER_BAY);
             case CLASS_CAPITAL_PPC:
                 return EquipmentType.get(EquipmentTypeLookup.CAPITAL_PPC_BAY);
             case CLASS_CAPITAL_AC:
-                return isSubCapital() ? EquipmentType.get(EquipmentTypeLookup.SCC_BAY)
+                return (isSubCapital() && !capitalOnly) ? EquipmentType.get(EquipmentTypeLookup.SCC_BAY)
                         : EquipmentType.get(EquipmentTypeLookup.CAPITAL_AC_BAY);
             case CLASS_CAPITAL_GAUSS:
                 return EquipmentType.get(EquipmentTypeLookup.CAPITAL_GAUSS_BAY);
             case CLASS_CAPITAL_MD:
                 return EquipmentType.get(EquipmentTypeLookup.CAPITAL_MASS_DRIVER_BAY);
             case CLASS_CAPITAL_MISSILE:
-                return isSubCapital() ? EquipmentType.get(EquipmentTypeLookup.SC_MISSILE_BAY)
+                return (isSubCapital() && !capitalOnly) ? EquipmentType.get(EquipmentTypeLookup.SC_MISSILE_BAY)
                         : EquipmentType.get(EquipmentTypeLookup.CAPITAL_MISSILE_BAY);
             case CLASS_TELE_MISSILE:
                 return EquipmentType.get(EquipmentTypeLookup.TELE_CAPITAL_MISSILE_BAY);

@@ -32,6 +32,10 @@ UTR-588 Recovery Vehicle
 IS Level 4
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -87,3 +91,8 @@ XTR: Primitives V
 <tonnage>
 90.0
 </tonnage>
+
+<quirks>
+poor_performance
+</quirks>
+

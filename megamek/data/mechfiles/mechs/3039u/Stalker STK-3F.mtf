@@ -1,6 +1,5 @@
-Version:1.0
-Stalker
-STK-3F
+chassis:Stalker
+model:STK-3F
 mul id:3035
 
 Config:Biped
@@ -8,6 +7,15 @@ techbase:Inner Sphere
 era:2594
 source:TRO: 3039
 rules level:1
+role:Juggernaut
+
+
+
+
+quirk:combat_computer
+quirk:ubiquitous_is
+quirk:no_arms
+
 
 mass:85
 engine:255 Fusion Engine(IS)

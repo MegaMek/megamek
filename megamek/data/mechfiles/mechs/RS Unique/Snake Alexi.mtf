@@ -1,6 +1,5 @@
-Version:1.1
-Snake
-SNK-1V (Alexi)
+chassis:Snake
+model:SNK-1V (Alexi)
 mul id:2975
 source:Record Sheets: Unique Mechs
 
@@ -8,6 +7,13 @@ Config:Biped
 TechBase:Inner Sphere
 Era:3057
 Rules Level:2
+role:Sniper
+
+
+
+quirk:imp_target_short
+quirk:pro_actuator
+
 
 Mass:45
 Engine:225 XL Engine

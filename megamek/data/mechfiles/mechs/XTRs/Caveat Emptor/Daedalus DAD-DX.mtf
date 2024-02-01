@@ -1,6 +1,5 @@
-Version:1.1
-Daedalus
-DAD-DX
+chassis:Daedalus
+model:DAD-DX
 mul id:8105
 
 Config:Biped
@@ -8,6 +7,12 @@ techbase:Inner Sphere
 era:3097
 source:XTR: Caveat Emptor
 rules level:4
+role:Striker
+
+
+
+quirk:difficult_maintain
+
 
 mass:45
 engine:270 XXL Engine(IS)

@@ -1,6 +1,5 @@
-Version:1.0
-Hatchetman
-HCT-5S
+chassis:Hatchetman
+model:HCT-5S
 mul id:1413
 
 Config:Biped
@@ -8,6 +7,13 @@ TechBase:Inner Sphere
 Era:3049
 Source:TRO: 3050
 Rules Level:2
+role:Brawler
+
+
+
+quirk:anti_air
+weaponquirk:fast_reload:RT:4:ISLBXAC10
+
 
 Mass:45
 Engine:180 XL Engine

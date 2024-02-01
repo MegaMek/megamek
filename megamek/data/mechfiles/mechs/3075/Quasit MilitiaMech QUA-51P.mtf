@@ -1,6 +1,5 @@
-Version:1.1
-Quasit MilitiaMech
-QUA-51P
+chassis:Quasit MilitiaMech
+model:QUA-51P
 mul id:2608
 
 Config:Biped
@@ -8,6 +7,7 @@ TechBase:Inner Sphere
 Era:3074
 Source:TRO: 3075
 Rules Level:2
+role:Scout
 
 Mass:45
 Engine:225 Fusion Engine

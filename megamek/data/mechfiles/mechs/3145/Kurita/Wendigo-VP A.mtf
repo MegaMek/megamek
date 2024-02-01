@@ -1,6 +1,5 @@
-Version:1.1
-Wendigo-VP
-A
+chassis:Wendigo-VP
+model:A
 mul id:6409
 
 Config:Biped Omnimech
@@ -8,6 +7,7 @@ techbase:Clan
 era:3150
 source:TRO: 3145 Draconis Combine
 rules level:4
+role:Skirmisher
 
 mass:50
 engine:250 XL (Clan) Engine(IS)

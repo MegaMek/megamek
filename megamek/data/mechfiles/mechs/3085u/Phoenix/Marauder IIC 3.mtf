@@ -1,6 +1,5 @@
-Version:1.0
-Marauder IIC
-3
+chassis:Marauder IIC
+model:3
 mul id:2067
 
 Config:Biped
@@ -8,6 +7,12 @@ TechBase:Clan
 Era:3064
 Source:TRO: Clan Invasion
 Rules Level:2
+role:Brawler
+
+quirk:command_mech
+quirk:hyper_actuator
+quirk:exp_actuator
+
 
 Mass:85
 Engine:340 Fusion (Clan) Engine

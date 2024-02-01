@@ -1,6 +1,5 @@
-Version:1.0
-Jenner
-JR7-K
+chassis:Jenner
+model:JR7-K
 mul id:1694
 
 Config:Biped
@@ -8,6 +7,12 @@ techbase:Inner Sphere
 era:3047
 source:TRO: 3050
 rules level:2
+role:Striker
+
+
+
+quirk:no_arms
+
 
 mass:35
 engine:245 Fusion Engine(IS)

@@ -1,12 +1,16 @@
-Version:1.3
-Banshee
-BNC-5S (Sawyer)
+chassis:Banshee
+model:BNC-5S (Sawyer)
 mul id:3786
 Config:Biped
 techbase:Inner Sphere
 era:3057
 source:TRO: 3050
 rules level:2
+role:Sniper
+
+quirk:rugged_1
+quirk:bad_rep_is
+
 
 mass:95
 engine:380 XL Engine(IS)

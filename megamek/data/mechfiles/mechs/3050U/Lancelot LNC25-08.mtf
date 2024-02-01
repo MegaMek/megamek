@@ -1,6 +1,5 @@
-Version:1.1
-Lancelot
-LNC25-08
+chassis:Lancelot
+model:LNC25-08
 mul id:1860
 
 Config:Biped
@@ -8,6 +7,14 @@ TechBase:Inner Sphere
 Era:3071
 Source:TRO: 3050
 Rules Level:2
+role:Sniper
+
+
+
+quirk:anti_air
+quirk:low_profile
+quirk:bad_rep_is
+
 
 Mass:60
 Engine:360 XL Engine(IS)

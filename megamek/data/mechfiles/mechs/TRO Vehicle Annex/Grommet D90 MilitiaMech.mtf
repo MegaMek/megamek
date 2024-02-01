@@ -1,6 +1,5 @@
-Version:1.0
-Grommet D90 MilitiaMech
-
+chassis:Grommet D90 MilitiaMech
+model:
 mul id:7180
 
 Config:Biped
@@ -8,6 +7,7 @@ TechBase:Inner Sphere
 Era:3000
 Source:Record Sheets: Vehicle Annex - IndustrialMechs & Exoskeletons
 Rules Level:2
+role:Brawler
 
 Mass:75
 Engine:225 Fusion Engine(IS)

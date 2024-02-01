@@ -1,13 +1,16 @@
-Version:1.0
-Pinion
-2
+chassis:Pinion
+model:2
 mul id:4830
 
 Config:Biped
 TechBase:Clan
 Era:3068
 Rules Level:2
+role:Brawler
 source:TRO: 3067
+
+quirk:bad_rep_clan
+
 
 Mass:45
 Engine:225 Fusion Engine

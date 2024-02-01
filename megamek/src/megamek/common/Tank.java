@@ -83,6 +83,8 @@ public class Tank extends Entity {
     public static final int CRIT_TURRET_LOCK = 13;
     public static final int CRIT_TURRET_DESTROYED = 14;
 
+    public static final int CRIT_SENSOR_MAX = 4;
+
     //Fortify terrain just like infantry
     public static final int DUG_IN_NONE = 0;
     public static final int DUG_IN_FORTIFYING1 = 1;
@@ -210,6 +212,18 @@ public class Tank extends Entity {
         return m_bHasNoDualTurret;
     }
 
+    public int getTurretCount() {
+        int tankTurrets = 0;
+
+        if (!hasNoDualTurret()) {
+            tankTurrets = 2;
+        } else if (!hasNoTurret()) {
+            tankTurrets = 1;
+        }
+
+        return tankTurrets;
+    }
+
     public void setHasNoTurret(boolean b) {
         m_bHasNoTurret = b;
     }
@@ -236,7 +250,7 @@ public class Tank extends Entity {
 
     private static final TechAdvancement TA_COMBAT_VEHICLE = new TechAdvancement(TECH_BASE_ALL)
             .setAdvancement(DATE_NONE, 2470, 2490).setProductionFactions(F_TH)
-            .setTechRating(RATING_E).setAvailability(RATING_C, RATING_C, RATING_C, RATING_B)
+            .setTechRating(RATING_D).setAvailability(RATING_C, RATING_C, RATING_C, RATING_B)
             .setStaticTechLevel(SimpleTechLevel.INTRO);
 
     @Override
@@ -390,7 +404,7 @@ public class Tank extends Entity {
 
     @Override
     public boolean canChangeSecondaryFacing() {
-        return !m_bHasNoTurret && !isTurretLocked(getLocTurret());
+        return !(m_bHasNoTurret || isTurretLocked(getLocTurret()) || getAlreadyTwisted());
     }
 
     @Override
@@ -551,6 +565,23 @@ public class Tank extends Entity {
     @Override
     public boolean isPermanentlyImmobilized(boolean checkCrew) {
         return super.isPermanentlyImmobilized(checkCrew) || isMovementHit();
+    }
+
+    /**
+     * Per https://bg.battletech.com/forums/index.php/topic,78336.msg1869386.html#msg1869386
+     * CVs with working engines and Jump Jets should still have the option to jump during the movement
+     * phase, even if reduced to 0 MP by motive hits, or rolling 12 on the Motive System Damage table.
+     */
+    @Override
+    public boolean isImmobileForJump() {
+        // *Can* jump unless 0 Jump MP, or 1+ Jump MP but engine is critted, or crew unconscious/dead.
+        boolean jumpImmobile = (
+                super.isImmobile(true) ||
+                super.isPermanentlyImmobilized(true) ||
+                (getJumpMP() == 0) ||
+                (isEngineHit())
+        );
+        return jumpImmobile;
     }
 
     @Override
@@ -1861,7 +1892,7 @@ public class Tank extends Entity {
                             }
                         }
                     case 9:
-                        if (getSensorHits() < 4) {
+                        if (getSensorHits() < CRIT_SENSOR_MAX) {
                             return CRIT_SENSOR;
                         }
                     case 10:

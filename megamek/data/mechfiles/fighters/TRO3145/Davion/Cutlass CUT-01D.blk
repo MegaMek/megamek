@@ -36,6 +36,10 @@ CUT-01D
 IS Level 3
 </type>
 
+<role>
+Fast Dogfighter
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -149,3 +153,9 @@ TARGETING:Rander TA1000 with Beagle Active Probe
 <source>
 TRO: 3145 Federated Suns
 </source>
+
+<quirks>
+imp_life_support
+atmo_instability
+</quirks>
+

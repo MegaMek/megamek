@@ -20,6 +20,10 @@ IS Standard Battle Armor
 (Fa Sure) [MG](Sqd4)
 </Model>
 
+<role>
+Ambusher
+</role>
+
 <mul id:>
 8026
 </mul id:>
@@ -35,6 +39,10 @@ IS Standard Battle Armor
 <type>
 IS Level 2
 </type>
+
+<role>
+Ambusher
+</role>
 
 <motion_type>
 Jump

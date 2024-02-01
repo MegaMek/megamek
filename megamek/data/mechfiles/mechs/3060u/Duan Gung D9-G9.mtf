@@ -1,6 +1,5 @@
-Version:1.0
-Duan Gung
-D9-G9
+chassis:Duan Gung
+model:D9-G9
 mul id:935
 
 Config:Biped
@@ -8,6 +7,14 @@ TechBase:Inner Sphere
 Era:3058
 Source:TRO: 3060
 Rules Level:2
+role:Missile Boat
+
+
+
+
+quirk:pro_actuator
+quirk:non_standard
+
 
 Mass:25
 Engine:175 XL Engine

@@ -1,6 +1,6 @@
-Version:1.1
-Nobori-nin (Huntsman)
-N
+chassis:Nobori-nin
+clanname:Huntsman
+model:N
 mul id:2295
 
 Config:Biped Omnimech
@@ -8,6 +8,10 @@ TechBase:Clan
 Era:3068
 Source:TRO: 3058
 Rules Level:2
+role:Sniper
+
+quirk:stable
+
 
 Mass:50
 Engine:250 XL (Clan) Engine(IS)

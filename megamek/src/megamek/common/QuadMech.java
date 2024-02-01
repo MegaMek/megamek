@@ -206,7 +206,7 @@ public class QuadMech extends Mech {
 
     @Override
     public boolean canChangeSecondaryFacing() {
-        return hasQuirk(OptionsConstants.QUIRK_POS_EXT_TWIST) && !isProne();
+        return hasQuirk(OptionsConstants.QUIRK_POS_EXT_TWIST) && !(isProne() || getAlreadyTwisted());
     }
 
     @Override

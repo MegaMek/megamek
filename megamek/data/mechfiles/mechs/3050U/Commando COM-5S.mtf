@@ -1,6 +1,5 @@
-Version:1.0
-Commando
-COM-5S
+chassis:Commando
+model:COM-5S
 mul id:674
 
 Config:Biped
@@ -8,6 +7,11 @@ techbase:Inner Sphere
 era:3050
 source:TRO: 3050
 rules level:2
+role:Striker
+
+quirk:low_profile
+quirk:exp_actuator
+
 
 mass:25
 engine:150 Fusion Engine(IS)

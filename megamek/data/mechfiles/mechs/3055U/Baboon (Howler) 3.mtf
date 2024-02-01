@@ -1,6 +1,6 @@
-Version:1.0
-Baboon (Howler)
-3 'Devil'
+chassis:Baboon
+clanname:Howler
+model:3 'Devil'
 mul id:191
 
 Config:Biped
@@ -8,6 +8,12 @@ TechBase:Clan
 Era:3066
 Source:TRO: 3055
 Rules Level:2
+role:Striker
+
+quirk:ext_twist
+quirk:low_profile
+quirk:searchlight
+
 
 Mass:20
 Engine:120 XL (Clan) Engine

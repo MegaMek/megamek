@@ -1,6 +1,5 @@
-Version:1.0
-Masauwu
-
+chassis:Masauwu
+model:
 mul id:7642
 
 Config:Biped
@@ -8,6 +7,12 @@ techbase:Clan
 era:2832
 source:TRO: Golden Century
 rules level:2
+role:Brawler
+
+
+quirk:easy_maintain
+quirk:rugged_1
+
 
 mass:75
 engine:300 XL (Clan) Engine(IS)

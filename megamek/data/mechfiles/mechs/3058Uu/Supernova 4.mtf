@@ -1,6 +1,5 @@
-Version:1.0
-Supernova
-4
+chassis:Supernova
+model:4
 mul id:3135
 
 Config:Biped
@@ -8,6 +7,10 @@ TechBase:Clan
 Era:3067
 Source:TRO: 3058
 Rules Level:2
+role:Juggernaut
+
+quirk:imp_target_long
+
 
 Mass:90
 Engine:270 Fusion (Clan) Engine

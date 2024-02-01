@@ -1,6 +1,5 @@
-Version:1.0
-Goshawk II
-RISC
+chassis:Goshawk II
+model:RISC
 mul id:7376
 
 Config:Biped
@@ -8,6 +7,14 @@ TechBase:Mixed (Clan Chassis)
 Era:3136
 Source:XTR: Republic III
 Rules Level:4
+role:Striker
+
+quirk:imp_life_support
+quirk:nimble_jumper
+quirk:combat_computer
+quirk:flawed_cooling
+quirk:prototype
+
 
 Mass:45
 Engine:315 XXL (Clan) Engine

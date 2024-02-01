@@ -1,6 +1,5 @@
-Version:1.0
-Pariah (Septicemia)
-UW
+chassis:Pariah (Septicemia)
+model:UW
 mul id:5818
 
 Config:Biped Omnimech
@@ -8,6 +7,12 @@ techbase:Clan
 era:3072
 source:Wars of Reaving
 rules level:4
+role:Skirmisher
+
+quirk:ext_twist
+quirk:multi_trac
+quirk:bad_rep_clan
+
 
 mass:55
 engine:275 XL (Clan) Engine(IS)

@@ -1,6 +1,5 @@
-Version:1.0
-Cyclops
-CP-11-A
+chassis:Cyclops
+model:CP-11-A
 mul id:773
 
 Config:Biped
@@ -8,6 +7,15 @@ TechBase:Inner Sphere
 Era:3045
 Source:TRO: 3050
 Rules Level:2
+role:Sniper
+
+
+
+quirk:battle_computer
+quirk:cowl
+quirk:difficult_eject
+quirk:weak_head_2
+
 
 Mass:90
 Engine:360 Fusion Engine(IS)

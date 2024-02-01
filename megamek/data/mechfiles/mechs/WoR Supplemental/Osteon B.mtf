@@ -1,6 +1,5 @@
-Version:1.1
-Osteon
-B
+chassis:Osteon
+model:B
 mul id:5823
 
 Config:Biped Omnimech
@@ -8,6 +7,13 @@ TechBase:Mixed (Clan Chassis)
 Era:3072
 source:Wars of Reaving
 Rules Level:4
+role:Juggernaut
+
+quirk:ext_twist
+quirk:multi_trac
+quirk:pro_actuator
+quirk:bad_rep_clan
+
 
 Mass:85
 Engine:255 XL (Clan) Engine

@@ -1,13 +1,19 @@
-Version:1.0
-Grim Reaper
-GRM-R-PR62A
+chassis:Grim Reaper
+model:GRM-R-PR62A
 mul id:1331
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3072
 Rules Level:2
+role:Skirmisher
 source:Jihad Turning Points: New Avalon
+
+
+
+quirk:easy_maintain
+quirk:pro_actuator
+
 
 Mass:55
 Engine:275 XL Engine

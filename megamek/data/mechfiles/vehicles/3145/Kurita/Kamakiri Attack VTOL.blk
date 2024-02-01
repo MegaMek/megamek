@@ -32,6 +32,10 @@ Kamakiri Attack VTOL
 IS Level 3
 </type>
 
+<role>
+Missile Boat
+</role>
+
 <motion_type>
 VTOL
 </motion_type>
@@ -122,3 +126,9 @@ ARMOR:StarGuard Aurora Reflective
 COMMUNICATIONS:Scuti Dualcom
 TARGETING:Radcom T11
 </systemManufacturers>
+
+<quirks>
+vtol_rotor_dual
+hard_pilot
+</quirks>
+

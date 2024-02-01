@@ -14,15 +14,16 @@
  */
 package megamek.common;
 
+import megamek.codeUtilities.StringUtility;
 import megamek.common.alphaStrike.*;
-import megamek.common.options.IOption;
-import megamek.common.options.IOptionGroup;
-import megamek.common.options.Quirks;
-import megamek.common.options.WeaponQuirks;
+import megamek.common.annotations.Nullable;
+import megamek.common.options.*;
+import org.apache.logging.log4j.LogManager;
 
 import java.io.File;
 import java.io.Serializable;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * The MechSummary of a unit offers compiled information about the unit without having to load the file.
@@ -31,6 +32,7 @@ public class MechSummary implements Serializable, ASCardDisplayable {
 
     private String name;
     private String chassis;
+    private String clanChassisName;
     private String model;
     private int mulId;
     private String unitType;
@@ -39,6 +41,7 @@ public class MechSummary implements Serializable, ASCardDisplayable {
     private Long entityType;
     private boolean omni;
     private boolean military;
+    private boolean mountedInfantry;
     private int tankTurrets;
     private File sourceFile;
     private String source;
@@ -128,16 +131,16 @@ public class MechSummary implements Serializable, ASCardDisplayable {
 
     /** The type of internal structure on this unit **/
     private int internalsType;
-    
+
     /**
      * Each location can have a separate armor type, but this is used for search purposes. We really
      * only care about which types are present.
      */
     private final HashSet<Integer> armorTypeSet;
-    
+
     /** The armor type for each location. */
     private int[] armorLoc;
-    
+
     /** The armor tech type for each location. */
     private int[] armorLocTech;
 
@@ -168,7 +171,7 @@ public class MechSummary implements Serializable, ASCardDisplayable {
     private int fullStructure;
     private int squadSize;
     private ASSpecialAbilityCollection specialAbilities = new ASSpecialAbilityCollection();
-    private UnitRole role;
+    private UnitRole role = UnitRole.UNDETERMINED;
 
     public MechSummary() {
         armorTypeSet = new HashSet<>();
@@ -181,6 +184,19 @@ public class MechSummary implements Serializable, ASCardDisplayable {
     @Override
     public String getChassis() {
         return chassis;
+    }
+
+    @Override
+    public String getFullChassis() {
+        return chassis + (StringUtility.isNullOrBlank(clanChassisName) ? "" : " (" + clanChassisName + ")");
+    }
+
+    public void setClanChassisName(String name) {
+        clanChassisName = name;
+    }
+
+    public String getClanChassisName() {
+        return clanChassisName;
     }
 
     @Override
@@ -256,15 +272,17 @@ public class MechSummary implements Serializable, ASCardDisplayable {
             case "Jumpship":
             case "Dropship":
             case "Small Craft":
-            case "Conventional Fighter":
             case "Aero":
                 return Entity.getEntityMajorTypeName(Entity.ETYPE_AERO);
+            case "Conventional Fighter":
+            case "AeroSpaceFighter":
+                return Entity.getEntityMajorTypeName(Entity.ETYPE_AEROSPACEFIGHTER);
             case "Unknown":
                 return Entity.getEntityMajorTypeName(-1);
         }
         return Entity.getEntityMajorTypeName(-1);
     }
-    
+
     // This is here for legacy purposes to not break the API
     @Deprecated
     public static String determineUnitType(Entity e) {
@@ -306,11 +324,11 @@ public class MechSummary implements Serializable, ASCardDisplayable {
     public int getType() {
         return type;
     }
-    
+
     public int[] getAltTypes() {
         return altTypes;
     }
-    
+
     public int getType(int year) {
         if (year >= stdTechYear) {
             return altTypes[0];
@@ -335,6 +353,10 @@ public class MechSummary implements Serializable, ASCardDisplayable {
 
     public boolean getMilitary() {
         return military;
+    }
+
+    public boolean getMountedInfantry() {
+        return mountedInfantry;
     }
 
     public int getTankTurrets() {
@@ -524,7 +546,7 @@ public class MechSummary implements Serializable, ASCardDisplayable {
     public String getLevel() {
         return level;
     }
-    
+
     public int getAdvancedTechYear() {
         return advTechYear;
     }
@@ -532,7 +554,7 @@ public class MechSummary implements Serializable, ASCardDisplayable {
     public int getStandardTechYear() {
         return stdTechYear;
     }
-    
+
     public String getLevel(int year) {
         if (level.equals("F")) {
             return level;
@@ -637,7 +659,7 @@ public class MechSummary implements Serializable, ASCardDisplayable {
 
     @Override
     public UnitRole getRole() {
-        return role;
+        return (role == null) ? UnitRole.UNDETERMINED : role;
     }
 
     public void setFullAccurateUnitType(String type) {
@@ -654,6 +676,10 @@ public class MechSummary implements Serializable, ASCardDisplayable {
 
     public void setMilitary(boolean b) {
         military = b;
+    }
+
+    public void setMountedInfantry(boolean b) {
+        mountedInfantry = b;
     }
 
     public void setTankTurrets(int i) {
@@ -862,11 +888,11 @@ public class MechSummary implements Serializable, ASCardDisplayable {
     public void setType(int nType) {
         this.type = nType;
     }
-    
+
     public void setAltTypes(int[] altTypes) {
         this.altTypes = altTypes;
     }
-    
+
     public void setTons(double nTons) {
         this.tons = nTons;
     }
@@ -902,11 +928,11 @@ public class MechSummary implements Serializable, ASCardDisplayable {
     public void setLevel(String level) {
         this.level = level;
     }
-    
+
     public void setAdvancedYear(int year) {
         advTechYear = year;
     }
-    
+
     public void setStandardYear(int year) {
         stdTechYear = year;
     }
@@ -987,11 +1013,11 @@ public class MechSummary implements Serializable, ASCardDisplayable {
     public void setJumpMp(int jumpMp) {
         this.jumpMp = jumpMp;
     }
-    
+
     /**
      * Given the list of equipment mounted on this unit, parse it into a unique
      * list of names and the number of times that name appears.
-     * 
+     *
      * @param mountedList A collection of <code>Mounted</code> equipment
      */
     public void setEquipment(List<Mounted> mountedList)
@@ -1011,31 +1037,24 @@ public class MechSummary implements Serializable, ASCardDisplayable {
                 equipmentQuantities.add(1);
             } else { // We've seen this before, update count
                 equipmentQuantities.set(index, equipmentQuantities.get(index)+1);
-            }               
+            }
         }
     }
-    
+
     public Vector<String> getEquipmentNames() {
         return equipmentNames;
     }
-    
+
     public Vector<Integer> getEquipmentQuantities() {
         return equipmentQuantities;
     }
 
     public void setQuirkNames(Quirks quirks) {
-        quirkNames = "";
-        for (final Enumeration<IOptionGroup> optionGroups = quirks.getGroups(); optionGroups.hasMoreElements();) {
-            final IOptionGroup group = optionGroups.nextElement();
-            for (final Enumeration<IOption> options = group.getOptions(); options.hasMoreElements(); ) {
-                final IOption option = options.nextElement();
-                if ((option != null) && option.booleanValue()) {
-                    if (!quirkNames.contains(option.getDisplayableNameWithValue())) {
-                        quirkNames += option.getDisplayableNameWithValue() + ";";
-                    }
-                }
-            }
-        }
+        Set<String> quirkNameList = quirks.getOptionsList().stream()
+                .filter(IOption::booleanValue)
+                .map(IOptionInfo::getDisplayableNameWithValue)
+                .collect(Collectors.toSet());
+        quirkNames = String.join(";", quirkNameList);
     }
 
     public String getQuirkNames() {
@@ -1043,29 +1062,14 @@ public class MechSummary implements Serializable, ASCardDisplayable {
     }
 
     public void setWeaponQuirkNames(Entity entity) {
-        HashMap<Integer, WeaponQuirks> wpnQks = new HashMap<>();
-        weaponQuirkNames = "";
-        for (Mounted m : entity.getWeaponList()) {
-            wpnQks.put(entity.getEquipmentNum(m), m.getQuirks());
+        Set<String> weaponQuirkNameList = new HashSet<>();
+        for (Mounted mounted : entity.getEquipment()) {
+            weaponQuirkNameList.addAll(mounted.getQuirks().getOptionsList().stream()
+                    .filter(IOption::booleanValue)
+                    .map(IOptionInfo::getDisplayableNameWithValue)
+                    .collect(Collectors.toSet()));
         }
-        Set<Integer> set = wpnQks.keySet();
-
-        Iterator<Integer> iter = set.iterator();
-        while (iter.hasNext()) {
-            int key = iter.next();
-            WeaponQuirks wpnQuirks = wpnQks.get(key);
-            for (Enumeration<IOptionGroup> i = wpnQuirks.getGroups(); i.hasMoreElements(); ) {
-                IOptionGroup group = i.nextElement();
-                for (Enumeration<IOption> j = group.getSortedOptions(); j.hasMoreElements(); ) {
-                    IOption option = j.nextElement();
-                    if ((option != null) && option.booleanValue()) {
-                        if (!weaponQuirkNames.contains(option.getDisplayableNameWithValue())) {
-                            weaponQuirkNames += option.getDisplayableNameWithValue() + ";";
-                        }
-                    }
-                }
-            }
-        }
+        weaponQuirkNames = String.join(";", weaponQuirkNameList);
     }
 
     public String getWeaponQuirkNames() {
@@ -1097,9 +1101,9 @@ public class MechSummary implements Serializable, ASCardDisplayable {
     }
 
     /**
-     * Takes the armor type at all locations and creates a set of the armor 
+     * Takes the armor type at all locations and creates a set of the armor
      * types.
-     * 
+     *
      * @param locsArmor  An array that stores the armor type at each location.
      */
     public void setArmorType(int[] locsArmor) {
@@ -1112,19 +1116,19 @@ public class MechSummary implements Serializable, ASCardDisplayable {
     public HashSet<Integer> getArmorType() {
         return armorTypeSet;
     }
-    
+
     public int[] getArmorTypes() {
         return armorLoc;
     }
-    
+
     public void setArmorTypes(int[] al) {
         armorLoc = al;
     }
-    
+
     public int[] getArmorTechTypes() {
         return armorLocTech;
     }
-    
+
     public void setArmorTechTypes(int[] att) {
         armorLocTech = att;
     }
@@ -1262,7 +1266,7 @@ public class MechSummary implements Serializable, ASCardDisplayable {
         return Objects.equals(chassis, other.chassis) && Objects.equals(model, other.model)
                 && Objects.equals(unitType, other.unitType) && Objects.equals(sourceFile, other.sourceFile);
     }
-    
+
     @Override
     public int hashCode() {
         return Objects.hash(chassis, model, unitType, sourceFile);
@@ -1276,5 +1280,25 @@ public class MechSummary implements Serializable, ASCardDisplayable {
     @Override
     public String formatSUA(BattleForceSUA sua, String delimiter, ASSpecialAbilityCollector collection) {
         return AlphaStrikeHelper.formatAbility(sua, collection, this, delimiter);
+    }
+
+    /**
+     * Loads and returns the entity for this MechSummary. If the entity cannot be loaded, the error is logged
+     * and null is returned.
+     *
+     * @return The loaded entity or null in case of an error
+     */
+    public @Nullable Entity loadEntity() {
+        try {
+            return new MechFileParser(sourceFile, entryName).getEntity();
+        } catch (Exception ex) {
+            LogManager.getLogger().error("", ex);
+            return null;
+        }
+    }
+
+    @Override
+    public String toString() {
+        return getName();
     }
 }

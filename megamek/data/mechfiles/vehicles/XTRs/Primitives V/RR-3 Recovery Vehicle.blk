@@ -36,6 +36,10 @@ RR-3 Recovery Vehicle
 IS Level 4
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Wheeled
 </motion_type>
@@ -109,3 +113,9 @@ XTR: Primitives V
 <fuelType>
 PETROCHEMICALS
 </fuelType>
+
+<quirks>
+easy_maintain
+gas_hog
+</quirks>
+

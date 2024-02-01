@@ -1,6 +1,5 @@
-Version:1.1
-Buster BC
-XV HaulerMech
+chassis:Buster
+model:BC XV HaulerMech
 mul id:452
 
 Config:Biped
@@ -8,6 +7,7 @@ TechBase:Inner Sphere
 Era:2615
 Source:Record Sheets: Vehicle Annex - IndustrialMechs & Exoskeletons
 Rules Level:2
+role:Ambusher
 
 Mass:50
 Engine:150 ICE Engine(IS)

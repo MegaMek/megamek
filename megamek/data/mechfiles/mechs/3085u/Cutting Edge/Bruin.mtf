@@ -1,6 +1,5 @@
-Version:1.0
-Bruin
-
+chassis:Bruin
+model:
 mul id:430
 
 Config:Biped
@@ -8,6 +7,12 @@ TechBase:Clan
 Era:3081
 source:TRO: 3085
 Rules Level:2
+role:Skirmisher
+
+
+quirk:rugged_1
+quirk:exp_actuator
+
 
 Mass:80
 Engine:320 XL (Clan) Engine

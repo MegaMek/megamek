@@ -1,6 +1,5 @@
-Version:1.0
-Thug
-THG-13U
+chassis:Thug
+model:THG-13U
 mul id:8171
 
 Config:Biped
@@ -8,6 +7,12 @@ techbase:Inner Sphere
 era:3137
 source:Rec Guide:ilClan #14
 rules level:3
+role:Juggernaut
+
+
+
+quirk:rugged_1
+
 
 mass:80
 engine:320 Fusion Engine(IS)

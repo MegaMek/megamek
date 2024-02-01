@@ -1,12 +1,7 @@
-#building block data file
+#Saved from version 0.49.18-SNAPSHOT on 2024-01-07
 <BlockVersion>
 1
 </BlockVersion>
-
-# Write the version number just in case...
-<Version>
-MAM0
-</Version>
 
 <UnitType>
 Tank
@@ -28,9 +23,22 @@ X-Pulse
 3086
 </year>
 
+<originalBuildYear>
+3086
+</originalBuildYear>
+
 <type>
-IS Level 4
+IS Level 3
 </type>
+
+<role>
+Striker
+</role>
+
+<quirks>
+hard_pilot
+imp_com
+</quirks>
 
 <motion_type>
 Hover
@@ -84,14 +92,6 @@ ISMediumXPulseLaser
 ISStreakSRM6
 </Turret Equipment>
 
-<source>
-TRO: Prototypes
-</source>
-
-<tonnage>
-35.0
-</tonnage>
-
 <capabilities>
 The Pegasus, often referred to as a "Harasser on Steroids," carries much of the same armament in the form of turret-mounted missile racks for its main offensive and defensive armament. The Pegasus is equipped with a single medium laser, which, despite being inefficient for its weight on this internal combustion vehicle, allows it to operate behind enemy lines even after its missiles run out. With six-and-a-half tonnes of ProtecTech on its frame, the Pegasus is reasonably armoured for a hover tank of its size. Though crews are trained to avoid enemy contact whenever possible, the tank's armour has allowed it to survive several lucky large laser hits to any location. Unless it is hidden from enemy patrols, the Pegasus has a respectable top speed of nearly 130 kph.
 </capabilities>
@@ -118,8 +118,8 @@ Algedi
 
 <systemManufacturers>
 CHASSIS:Unknown
-ENGINE:Unknown
-ARMOR:ProtecTech 6
+ENGINE:210 Scarborough 210 XL with Supercharger
+ARMOR:ProtecTec 19 Heavy Ferro-Fibrous
 COMMUNICATIONS:Salamander Systems CommPhase Unit
 TARGETING:Exeter LongScan with ReconLock
 </systemManufacturers>
@@ -127,3 +127,8 @@ TARGETING:Exeter LongScan with ReconLock
 <source>
 TRO: Prototypes
 </source>
+
+<tonnage>
+35.0
+</tonnage>
+

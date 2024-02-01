@@ -32,6 +32,10 @@ Mk I
 IS Level 4
 </type>
 
+<role>
+Juggernaut
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -93,3 +97,12 @@ XTR: Primitives III
 <tonnage>
 95.0
 </tonnage>
+
+<quirks>
+difficult_maintain
+imp_com
+poor_performance
+trailer_hitch
+obsolete
+</quirks>
+

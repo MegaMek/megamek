@@ -1,12 +1,13 @@
-Version:1.1
-Man O' War (Gargoyle)
-F
+chassis:Man O' War
+clanname:Gargoyle
+model:F
 mul id:7755
 
 Config:Biped Omnimech
 techbase:Clan
 era:3127
 rules level:2
+role:Brawler
 source:Rec Guide:ilClan #11
 
 mass:80

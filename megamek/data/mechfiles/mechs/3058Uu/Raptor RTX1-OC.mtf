@@ -1,6 +1,5 @@
-Version:1.0
-Raptor
-RTX1-OC
+chassis:Raptor
+model:RTX1-OC
 mul id:2650
 
 Config:Biped Omnimech
@@ -8,6 +7,12 @@ TechBase:Inner Sphere
 Era:3052
 Source:TRO: 3058
 Rules Level:2
+role:Striker
+
+
+
+quirk:easy_maintain
+
 
 Mass:25
 Engine:175 XL Engine(IS)

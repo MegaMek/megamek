@@ -1,6 +1,5 @@
-Version:1.0
-Raven
-RVN-4Lr
+chassis:Raven
+model:RVN-4Lr
 mul id:2668
 
 Config:Biped
@@ -8,6 +7,12 @@ TechBase:Inner Sphere
 Era:3073
 source:TRO: 3085
 Rules Level:2
+role:Scout
+
+
+
+quirk:no_arms
+
 
 Mass:35
 Engine:210 XL Engine

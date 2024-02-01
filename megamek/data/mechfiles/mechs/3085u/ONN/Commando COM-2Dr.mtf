@@ -1,6 +1,5 @@
-Version:1.0
-Commando
-COM-2Dr
+chassis:Commando
+model:COM-2Dr
 mul id:671
 
 Config:Biped
@@ -8,6 +7,11 @@ TechBase:Inner Sphere
 Era:3075
 source:TRO: 3085
 Rules Level:2
+role:Striker
+
+quirk:low_profile
+quirk:exp_actuator
+
 
 Mass:25
 Engine:150 Fusion Engine(IS)

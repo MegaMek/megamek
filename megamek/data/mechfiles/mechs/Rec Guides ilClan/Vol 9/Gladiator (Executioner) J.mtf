@@ -1,6 +1,6 @@
-Version:1.0
-Gladiator (Executioner)
-J
+chassis:Gladiator
+clanname:Executioner
+model:J
 mul id:7712
 
 Config:Biped Omnimech
@@ -8,6 +8,10 @@ techbase:Clan
 era:3104
 source:Rec Guide:ilClan #9
 rules level:2
+role:Juggernaut
+
+quirk:distracting
+
 
 mass:95
 engine:380 XL (Clan) Engine(IS)

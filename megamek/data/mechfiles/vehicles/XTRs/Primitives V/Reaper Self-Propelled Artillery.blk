@@ -36,6 +36,10 @@ Reaper Self-Propelled Artillery
 IS Level 4
 </type>
 
+<role>
+Missile Boat
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -110,3 +114,9 @@ XTR: Primitives V
 <fuelType>
 PETROCHEMICALS
 </fuelType>
+
+<quirks>
+anti_air
+poor_sealing
+</quirks>
+

@@ -1,6 +1,5 @@
-Version:1.0
-Koto
-KTO-4A
+chassis:Koto
+model:KTO-4A
 mul id:1839
 
 Config:Biped
@@ -8,6 +7,12 @@ TechBase:Inner Sphere
 Era:3068
 Source:TRO: 3055
 Rules Level:2
+role:Striker
+
+
+
+quirk:em_inter_whole
+
 
 Mass:25
 Engine:200 XL Engine

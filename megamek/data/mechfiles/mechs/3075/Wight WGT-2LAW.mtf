@@ -1,6 +1,5 @@
-Version:1.0
-Wight
-WGT-2LAW
+chassis:Wight
+model:WGT-2LAW
 mul id:3548
 
 Config:Biped
@@ -8,6 +7,13 @@ TechBase:Inner Sphere
 Era:3075
 Source:TRO: 3075
 Rules Level:2
+role:Striker
+
+
+
+quirk:exp_actuator
+quirk:weak_legs
+
 
 Mass:35
 Engine:175 Compact Engine

@@ -1,6 +1,5 @@
-Version:1.1
-Banshee
-BNC-9S2
+chassis:Banshee
+model:BNC-9S2
 mul id:6844
 
 Config:Biped
@@ -8,6 +7,11 @@ TechBase:Inner Sphere
 Era:3109
 Source:Record Sheets: 3145 New Tech New Upgrades
 Rules Level:3
+role:Sniper
+
+quirk:rugged_1
+quirk:bad_rep_is
+
 
 Mass:95
 Engine:285 Light Engine(IS)

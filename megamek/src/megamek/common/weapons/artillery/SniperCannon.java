@@ -35,6 +35,7 @@ public class SniperCannon extends ArtilleryCannonWeapon {
         addLookupName("CLSniper Cannon");
         addLookupName("CLSniperArtilleryCannon");
         addLookupName("CL Sniper Cannon");
+        sortingName = "Cannon Arty Sniper";
         heat = 10;
         rackSize = 10;
         ammoType = AmmoType.T_SNIPER_CANNON;

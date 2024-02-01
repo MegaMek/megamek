@@ -1,6 +1,5 @@
-Version:1.1
-Garm
-GRM-01A2
+chassis:Garm
+model:GRM-01A2
 mul id:1190
 
 Config:Biped
@@ -8,6 +7,12 @@ TechBase:Inner Sphere
 Era:3076
 Source:TRO: 3060
 Rules Level:2
+role:Missile Boat
+
+
+
+quirk:ext_twist
+
 
 Mass:35
 Engine:210 Light Engine

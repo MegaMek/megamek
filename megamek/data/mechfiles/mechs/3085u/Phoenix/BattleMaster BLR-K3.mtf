@@ -1,6 +1,5 @@
-Version:1.0
-BattleMaster
-BLR-K3
+chassis:BattleMaster
+model:BLR-K3
 mul id:300
 
 Config:Biped
@@ -8,6 +7,13 @@ TechBase:Inner Sphere
 Era:3064
 source:TRO: Clan Invasion
 Rules Level:2
+role:Brawler
+
+
+
+quirk:command_mech
+quirk:weak_head_1
+
 
 Mass:85
 Engine:340 XL Engine

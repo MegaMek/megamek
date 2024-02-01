@@ -1,6 +1,5 @@
-Version:1.1
-Ostscout
-OTT-10CS
+chassis:Ostscout
+model:OTT-10CS
 mul id:2364
 
 Config:Biped
@@ -8,6 +7,15 @@ TechBase:Inner Sphere
 Era:3071
 source:TRO: 3085
 Rules Level:2
+role:Scout
+
+
+
+quirk:imp_com
+quirk:imp_sensors
+quirk:low_profile
+quirk:rugged_1
+
 
 Mass:35
 Engine:280 XL Engine

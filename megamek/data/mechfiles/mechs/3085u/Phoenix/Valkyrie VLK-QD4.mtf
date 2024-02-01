@@ -1,6 +1,5 @@
-Version:1.2
-Valkyrie
-VLK-QD4
+chassis:Valkyrie
+model:VLK-QD4
 mul id:3377
 
 Config:Biped
@@ -8,6 +7,13 @@ TechBase:Inner Sphere
 Era:3085
 source:TRO: 3085
 Rules Level:2
+role:Striker
+
+
+
+quirk:easy_maintain
+quirk:imp_com
+
 
 Mass:30
 Engine:150 XL Engine(IS)

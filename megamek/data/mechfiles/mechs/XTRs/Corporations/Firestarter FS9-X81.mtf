@@ -1,6 +1,5 @@
-Version:1.1
-Firestarter
-FS9-X81
+chassis:Firestarter
+model:FS9-X81
 mul id:1092
 
 Config:Biped
@@ -8,6 +7,7 @@ TechBase:Inner Sphere
 Era:3074
 source:XTR: Corporations
 Rules Level:4
+role:Striker
 
 Mass:35
 Engine:210 XXL Fusion Engine

@@ -1,6 +1,5 @@
-Version:1.0
-Regent
-A
+chassis:Regent
+model:A
 mul id:8360
 
 Config:Biped Omnimech
@@ -8,6 +7,10 @@ techbase:Clan
 era:3145
 source:Rec Guide:ilClan #21
 rules level:2
+role:Sniper
+
+quirk:easy_maintain
+
 
 mass:90
 engine:270 Fusion (Clan) Engine(IS)

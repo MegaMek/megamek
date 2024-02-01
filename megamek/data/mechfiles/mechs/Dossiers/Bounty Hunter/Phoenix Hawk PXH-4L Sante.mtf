@@ -1,6 +1,5 @@
-Version:1.2
-Phoenix Hawk
-PXH-4L (Sante)
+chassis:Phoenix Hawk
+model:PXH-4L (Sante)
 mul id:5807
 
 Config:Biped
@@ -8,6 +7,16 @@ TechBase:Mixed (IS Chassis)
 Era:3068
 Source:BattleTech Dossiers: The Bounty Hunter
 Rules Level:4
+role:Striker
+
+
+
+quirk:command_mech
+quirk:imp_com
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+weaponquirk:jettison_capable:RA:4:CLERLargeLaser
+
 
 Mass:45
 Engine:270 Fusion Engine(IS)

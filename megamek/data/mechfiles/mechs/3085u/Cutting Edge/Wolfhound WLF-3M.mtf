@@ -1,6 +1,5 @@
-Version:1.2
-Wolfhound
-WLF-3M
+chassis:Wolfhound
+model:WLF-3M
 mul id:3565
 
 Config:Biped
@@ -8,6 +7,13 @@ TechBase:Inner Sphere
 Era:3077
 source:TRO: 3085
 Rules Level:2
+role:Sniper
+
+
+
+quirk:easy_maintain
+quirk:good_rep_1
+
 
 Mass:35
 Engine:210 Light Engine(IS)

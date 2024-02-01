@@ -32,6 +32,10 @@ Schrek PPC Carrier
 IS Level 1
 </type>
 
+<role>
+Sniper
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -111,3 +115,8 @@ ARMOR:ArcShield VII Mk 5
 COMMUNICATIONS:Olmstead 3000
 TARGETING:Omicron IX
 </systemManufacturers>
+
+<quirks>
+low_profile
+</quirks>
+

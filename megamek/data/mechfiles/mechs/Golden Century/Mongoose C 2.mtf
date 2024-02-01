@@ -1,6 +1,5 @@
-Version:1.1
-Mongoose
-C 2
+chassis:Mongoose
+model:C 2
 mul id:7604
 
 Config:Biped
@@ -8,6 +7,12 @@ techbase:Clan
 era:2860
 source:TRO: Golden Century
 rules level:2
+role:Scout
+
+
+
+quirk:easy_pilot
+
 
 mass:25
 engine:200 XL (Clan) Engine(IS)

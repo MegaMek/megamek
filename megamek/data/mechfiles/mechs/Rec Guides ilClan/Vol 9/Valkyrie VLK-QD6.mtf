@@ -1,6 +1,5 @@
-Version:1.1
-Valkyrie
-VLK-QD6
+chassis:Valkyrie
+model:VLK-QD6
 mul id:7703
 
 Config:Biped
@@ -8,6 +7,13 @@ techbase:Inner Sphere
 era:3102
 source:Rec Guide:ilClan #9
 rules level:2
+role:Missile Boat
+
+
+
+quirk:easy_maintain
+quirk:imp_com
+
 
 mass:30
 engine:150 XL Engine(IS)

@@ -1,6 +1,5 @@
-Version:1.0
-Devastator
-DVS-1D
+chassis:Devastator
+model:DVS-1D
 mul id:893
 
 Config:Biped
@@ -8,6 +7,13 @@ TechBase:Inner Sphere
 Era:3036
 Source:TRO: 3058
 Rules Level:1
+role:Juggernaut
+
+
+
+quirk:hyper_actuator
+quirk:searchlight
+
 
 Mass:100
 Engine:300 Fusion Engine

@@ -1,6 +1,5 @@
-Version:1.0
-Stalker
-STK-7C3BS
+chassis:Stalker
+model:STK-7C3BS
 mul id:3042
 
 Config:Biped
@@ -8,6 +7,14 @@ TechBase:Inner Sphere
 Era:3075
 source:TRO: 3085
 Rules Level:4
+role:Juggernaut
+
+
+
+quirk:combat_computer
+quirk:ubiquitous_is
+quirk:no_arms
+
 
 Mass:85
 Engine:255 Fusion Engine(IS)

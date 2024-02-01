@@ -32,6 +32,10 @@ Pixiu Heavy Tank
 IS Level 3
 </type>
 
+<role>
+Sniper
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -93,3 +97,8 @@ TRO: 3145 Capellan Confederation
 <tonnage>
 70.0
 </tonnage>
+
+<quirks>
+power_reverse
+</quirks>
+

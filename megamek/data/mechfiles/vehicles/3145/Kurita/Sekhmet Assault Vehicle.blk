@@ -32,6 +32,10 @@ Sekhmet Assault Vehicle
 Clan Level 2
 </type>
 
+<role>
+Brawler
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -94,3 +98,10 @@ TRO: 3145 Draconis Combine
 <tonnage>
 65.0
 </tonnage>
+
+<quirks>
+power_reverse
+bad_rep_is
+bad_rep_clan
+</quirks>
+

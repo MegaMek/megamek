@@ -1,6 +1,5 @@
-Version:1.0
-Quickdraw
-QKD-5Mr
+chassis:Quickdraw
+model:QKD-5Mr
 mul id:2615
 
 Config:Biped
@@ -8,6 +7,13 @@ TechBase:Inner Sphere
 Era:3070
 source:TRO: 3085
 Rules Level:2
+role:Missile Boat
+
+
+
+quirk:hyper_actuator
+quirk:exp_actuator
+
 
 Mass:60
 Engine:300 Fusion Engine

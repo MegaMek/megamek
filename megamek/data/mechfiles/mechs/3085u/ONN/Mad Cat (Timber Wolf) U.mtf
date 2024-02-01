@@ -1,6 +1,6 @@
-Version:1.0
-Mad Cat (Timber Wolf)
-U
+chassis:Mad Cat
+clanname:Timber Wolf
+model:U
 mul id:1987
 
 Config:Biped Omnimech
@@ -8,6 +8,11 @@ TechBase:Clan
 Era:3077
 source:Record Sheets: 3085 Unabridged - Old is the New New
 Rules Level:4
+role:Sniper
+
+quirk:imp_target_med
+quirk:weak_head_1
+
 
 Mass:75
 Engine:375 XL (Clan) Engine(IS)

@@ -1,6 +1,5 @@
-Version:1.0
-Firefly
-FFL-4C
+chassis:Firefly
+model:FFL-4C
 mul id:1089
 
 Config:Biped
@@ -8,6 +7,12 @@ TechBase:Inner Sphere
 Era:3048
 Source:TRO: 3050
 Rules Level:2
+role:Striker
+
+
+
+quirk:no_arms
+
 
 Mass:30
 Engine:150 XL Engine

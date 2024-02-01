@@ -1,6 +1,5 @@
-Version:1.0
-Grand Crusader
-GRN-D-02-B
+chassis:Grand Crusader
+model:GRN-D-02-B
 mul id:8423
 
 Config:Biped
@@ -8,6 +7,14 @@ techbase:Inner Sphere
 era:3057
 source:Rec Guide:ilClan #23
 rules level:2
+role:Sniper
+
+
+
+quirk:bad_rep_is
+weaponquirk:direct_torso_mount:RT:3:LRM 20
+weaponquirk:direct_torso_mount:LT:3:LRM 20
+
 
 mass:80
 engine:320 XL Engine(IS)

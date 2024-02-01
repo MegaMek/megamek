@@ -1,6 +1,5 @@
-Version:1.3
-Raider Mk II
-JL-3C
+chassis:Raider Mk II
+model:JL-3C
 mul id:8072
 Config:Biped
 techbase:Inner Sphere

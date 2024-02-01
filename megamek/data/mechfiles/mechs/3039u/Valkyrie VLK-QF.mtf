@@ -1,6 +1,5 @@
-Version:1.0
-Valkyrie
-VLK-QF
+chassis:Valkyrie
+model:VLK-QF
 mul id:3378
 
 Config:Biped
@@ -8,6 +7,13 @@ TechBase:Inner Sphere
 Era:2967
 Source:TRO: 3039
 Rules Level:1
+role:Missile Boat
+
+
+
+quirk:easy_maintain
+quirk:imp_com
+
 
 Mass:30
 Engine:150 Fusion Engine

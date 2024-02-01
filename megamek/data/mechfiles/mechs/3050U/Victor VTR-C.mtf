@@ -1,6 +1,5 @@
-Version:1.0
-Victor
-VTR-C
+chassis:Victor
+model:VTR-C
 mul id:3415
 
 Config:Biped
@@ -8,6 +7,12 @@ TechBase:Inner Sphere
 Era:3054
 Source:TRO: 3050
 Rules Level:2
+role:Skirmisher
+
+
+
+quirk:rugged_1
+
 
 Mass:80
 Engine:320 Fusion Engine

@@ -1,6 +1,5 @@
-Version:1.0
-Buccaneer
-BCN-6PX 'Pan'
+chassis:Buccaneer
+model:BCN-6PX 'Pan'
 mul id:8379
 
 Config:Biped
@@ -8,6 +7,11 @@ techbase:Mixed (IS Chassis)
 era:3120
 source:XTR: Royal Fantasy
 rules level:3
+role:Skirmisher
+
+quirk:imp_target_short
+quirk:bad_rep_is
+
 
 mass:55
 engine:330 XL Engine(IS)

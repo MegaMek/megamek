@@ -36,6 +36,10 @@ Mk.III
 IS Level 3
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -192,4 +196,11 @@ XTR: Primitives II
 <escape_pod>
 0
 </escape_pod>
+
+
+<quirks>
+atmo_flyer
+easy_maintain
+obsolete
+</quirks>
 

@@ -52,6 +52,10 @@ Environmental Sealing
 IS Level 3
 </type>
 
+<role>
+Scout
+</role>
+
 <year>
 3083
 </year>
@@ -79,3 +83,10 @@ WIGE
 <transporters>
 TroopSpace:4
 </transporters>
+
+<quirks>
+difficult_maintain
+non_standard
+easy_pilot
+</quirks>
+

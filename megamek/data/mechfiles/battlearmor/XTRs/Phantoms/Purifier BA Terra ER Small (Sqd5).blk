@@ -32,6 +32,10 @@ Purifier Battle Armor Terra
 Mixed (IS Chassis) Advanced
 </type>
 
+<role>
+Ambusher
+</role>
+
 <motion_type>
 Jump
 </motion_type>
@@ -113,3 +117,9 @@ JUMPJET:Unknown
 COMMUNICATIONS:Unknown
 TARGETING:Unknown
 </systemManufacturers>
+
+<quirks>
+bad_rep_is
+difficult_maintain
+</quirks>
+

@@ -537,6 +537,7 @@ Invader Jumpship (PPC)|Invader Jumpship (2631 PPC)
 Invader Jumpship (Clan)[PPC]|Invader Jumpship (2850)
 Invader Jumpship (Standard)|Invader Jumpship (2631)
 Invader Jumpship (Clan)|Invader Jumpship (2631)
+Invader Jumpship (2631 PPC)|Invader Jumpship (2631) (PPC)
 Magellan Jumpship (Standard)|Magellan Jumpship (2960)
 Merchant Jumpship (Standard)|Merchant Jumpship (2503)
 Monolith Jumpship (Standard)|Monolith Jumpship (2776)
@@ -559,9 +560,9 @@ Black Hawk (Nova) C|Nova (Black Hawk) C
 Black Hawk (Nova) D|Nova (Black Hawk) D
 Black Hawk (Nova) Prime|Nova (Black Hawk) Prime
 Black Hawk (Nova) S|Nova (Black Hawk) S
-Black Hawk (Standard)|Black Hawk (Standard)
 Black Hawk 2|Black Hawk (Standard) 2
 Black Hawk 3|Black Hawk (Standard) 3
+
 Blood Asp Prime|Star Adder (Blood Asp) Prime
 Blood Asp A|Star Adder (Blood Asp) A
 Blood Asp B|Star Adder (Blood Asp) B
@@ -572,6 +573,7 @@ Blood Asp F|Star Adder (Blood Asp) F
 Blood Asp G|Star Adder (Blood Asp) G
 Blood Asp I|Star Adder (Blood Asp) I
 Blood Asp T|Star Adder (Blood Asp) T
+
 Cauldron-Born (Ebon Jaguar) A|Ebon Jaguar (Cauldron-Born) A
 Cauldron-Born (Ebon Jaguar) B|Ebon Jaguar (Cauldron-Born) B
 Cauldron-Born (Ebon Jaguar) C|Ebon Jaguar (Cauldron-Born) C
@@ -744,6 +746,7 @@ Donovan-Miter Magellan Series Four|Magellan Series Four
 Falcon Hover Tank (Standard)|Falcon Hover Tank
 Federated-Boeing Longhaul FB-335|Longhaul Cargo Aircraft FB-335
 Hover Tank (Standard)|LTV-4 Hover Tank
+Iveco Burro Heavy Support Truck|Burro Heavy Support Truck
 Iveco Burro II Super Heavy Cargo Truck|Burro II Super Heavy Cargo Truck
 Kressly Dillinger Police Vehicle|Dillinger Police Vehicle
 LTV-4 Hover Tank (Standard)|Hawk Hover Tank (LTV-4)
@@ -763,6 +766,10 @@ Schildkröte Line Tank (Standard)|Schildkröte Line Tank
 Schildkrote Line Tank|Schildkröte Line Tank
 Sleipnir APC (SRM)|Sleipnir AP Tank (SRM)
 Sleipnir APC|Sleipnir AP Tank
+SM Tank Destroyer SM1 'Telos'|SM Tank Destroyer SM1 'Telos'
+SM1 Tank Destroyer SM1|SM Tank Destroyer SM1
+SM1A Tank Destroyer SM1A|SM Tank Destroyer SM1A
+SM3 Tank Destroyer SM3|SM Tank Destroyer SM3
 St. Christopher Cargo Lifter C1|St. Christopher Cargo Transport C1
 St. Christopher Cargo Lifter C1|St. Christopher Cargo Transport C2
 SturmFeur "Kalki" Cruise Missile Launcher (Standard)|SturmFeur 'Kalki' Cruise Missile Launcher (Standard)
@@ -774,6 +781,8 @@ Vector (Attack)|Vector Combat Support VTOL (Attack)
 Vector (EW)|Vector Combat Support VTOL (EW)
 Vector (Scout)|Vector Combat Support VTOL (Scout)
 Vector (Transport)|Vector Combat Support VTOL (Transport)
+
+
 
 #Warships
 Aegis Heavy Cruiser (Clan)|Aegis Heavy Cruiser (2843)
@@ -1027,6 +1036,8 @@ Dasher II (Standard)|Dasher II
 Death Trike (Standard)|Death Trike
 Defender Battlecruiser (Standard)|Defender Battlecruiser
 Delphyne (Standard)|Delphyne
+Demolisher Heavy Tank (Standard Mk. I)|Demolisher Heavy Tank (Mk. I)
+Demolisher Heavy Tank (Standard Mk. II)|Demolisher Heavy Tank (Mk. II)
 Demolisher II Heavy Tank (Standard)|Demolisher II Heavy Tank
 Demon Medium Tank (Standard)|Demon Medium Tank
 Demon Tank (Standard)|Demon Tank

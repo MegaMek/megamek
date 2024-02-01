@@ -1,6 +1,5 @@
-Version:1.0
-Ghost
-GST-11
+chassis:Ghost
+model:GST-11
 mul id:1194
 
 Config:Biped
@@ -8,6 +7,14 @@ TechBase:Inner Sphere
 Era:3082
 source:TRO: 3085
 Rules Level:2
+role:Sniper
+
+
+
+quirk:ext_twist
+quirk:imp_com
+quirk:imp_sensors
+
 
 Mass:50
 Engine:300 XL Engine

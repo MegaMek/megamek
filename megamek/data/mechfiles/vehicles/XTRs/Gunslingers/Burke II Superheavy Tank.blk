@@ -32,6 +32,10 @@ Burke II Superheavy Tank
 IS Level 4
 </type>
 
+<role>
+Juggernaut
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -108,3 +112,11 @@ XTR: Gunslingers
 <tonnage>
 140.0
 </tonnage>
+
+<quirks>
+distracting
+prototype
+trailer_hitch
+obsolete
+</quirks>
+

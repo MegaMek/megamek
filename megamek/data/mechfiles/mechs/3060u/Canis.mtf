@@ -1,6 +1,5 @@
-Version:1.0
-Canis
-
+chassis:Canis
+model:
 mul id:459
 
 Config:Biped
@@ -8,6 +7,11 @@ TechBase:Clan
 Era:3058
 Source:TRO: 3060
 Rules Level:2
+role:Sniper
+
+
+quirk:fast_reload
+
 
 Mass:80
 Engine:240 XL (Clan) Engine

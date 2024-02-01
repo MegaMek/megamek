@@ -1,6 +1,5 @@
-Version:1.0
-JagerMech
-JM6-S
+chassis:JagerMech
+model:JM6-S
 mul id:1670
 
 Config:Biped
@@ -8,6 +7,13 @@ TechBase:Inner Sphere
 Era:2774
 Source:TRO: 3039
 Rules Level:1
+role:Sniper
+
+
+
+
+quirk:anti_air
+
 
 Mass:65
 Engine:260 Fusion Engine

@@ -1,6 +1,5 @@
-Version:1.0
-Karhu
-(Syngman)
+chassis:Karhu
+model:(Syngman)
 mul id:1747
 
 Config:Biped Omnimech
@@ -8,6 +7,10 @@ techbase:Mixed (Clan Chassis)
 era:3085
 source:BattleTech Dossiers: Lamenkov's Liability
 rules level:4
+role:Skirmisher
+
+quirk:em_inter_whole
+
 
 mass:65
 engine:325 XL (Clan) Engine

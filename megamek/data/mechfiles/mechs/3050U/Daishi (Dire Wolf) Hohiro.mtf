@@ -1,6 +1,6 @@
-Version:1.0
-Daishi (Dire Wolf)
-(Hohiro)
+chassis:Daishi
+clanname:Dire Wolf
+model:(Hohiro)
 mul id:812
 
 Config:Biped Omnimech
@@ -8,6 +8,11 @@ TechBase:Clan
 Era:3051
 Source:TRO: 3050
 Rules Level:2
+role:Sniper
+
+quirk:imp_target_long
+quirk:difficult_eject
+
 
 Mass:100
 Engine:300 XL (Clan) Engine(IS)

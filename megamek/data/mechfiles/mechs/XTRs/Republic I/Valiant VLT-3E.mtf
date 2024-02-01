@@ -1,6 +1,5 @@
-Version:1.1
-Valiant
-VLT-3E
+chassis:Valiant
+model:VLT-3E
 mul id:7293
 
 Config:Biped
@@ -8,6 +7,14 @@ TechBase:Inner Sphere
 Era:3098
 Source:XTR: Republic I
 Rules Level:3
+role:Striker
+
+
+
+quirk:imp_target_short
+quirk:pro_actuator
+quirk:weak_head_1
+
 
 Mass:30
 Engine:210 XL Engine(IS)

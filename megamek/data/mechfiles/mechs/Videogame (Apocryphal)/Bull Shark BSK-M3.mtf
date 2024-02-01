@@ -1,104 +1,108 @@
-Version:1.0
-Bull Shark
-BSK-M3
+chassis:Bull Shark
+model:BSK-M3
 
 Config:Biped
-techbase:Mixed (Clan Chassis)
-era:2825
-rules level:4
-source: Videogame (Apocryphal)
+techbase:Mixed (IS Chassis)
+era:3035
+source:Videogame (Apocryphal)
+rules level:3
+
+
+
+quirk:distracting
+
 
 mass:95
-engine:285 XL (Clan) Engine
-structure:Clan Endo Steel
+engine:285 XL Engine(IS)
+structure:IS Endo Steel
 myomer:Standard
 
-heat sinks:16 Single
+heat sinks:10 Single
 walk mp:3
 jump mp:0
 
 armor:Standard(Inner Sphere)
-LA armor:27
-RA armor:27
-LT armor:30
-RT armor:30
-CT armor:40
+LA armor:32
+RA armor:32
+LT armor:31
+RT armor:31
+CT armor:45
 HD armor:9
-LL armor:35
-RL armor:35
-RTL armor:10
-RTR armor:10
-RTC armor:11
+LL armor:40
+RL armor:40
+RTL armor:9
+RTR armor:9
+RTC armor:15
 
 Weapons:12
-Improved Autocannon/10, Left Arm
 Improved Autocannon/5, Left Arm
-Improved Autocannon/10, Right Arm
+AC/10, Left Arm
 Improved Autocannon/5, Right Arm
-Medium Laser, Left Torso
-Medium Laser, Left Torso
+AC/10, Right Arm
 LRM 5, Left Torso
 LRM 5, Left Torso
-Medium Laser, Right Torso
-Medium Laser, Right Torso
+Medium Laser, Left Torso
+Medium Laser, Left Torso
 LRM 5, Right Torso
 LRM 5, Right Torso
+Medium Laser, Right Torso
+Medium Laser, Right Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-Improved Autocannon/10
-Improved Autocannon/10
-Improved Autocannon/10
-Improved Autocannon/10
-Improved Autocannon/10
-Improved Autocannon/10
 Improved Autocannon/5
 Improved Autocannon/5
-Clan Endo Steel
-Clan Endo Steel
+Autocannon/10
+Autocannon/10
+Autocannon/10
+Autocannon/10
+Autocannon/10
+Autocannon/10
+Autocannon/10
+IS Endo Steel
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
-Improved Autocannon/10
-Improved Autocannon/10
-Improved Autocannon/10
-Improved Autocannon/10
-Improved Autocannon/10
-Improved Autocannon/10
 Improved Autocannon/5
 Improved Autocannon/5
-Clan Endo Steel
-Clan Endo Steel
+Autocannon/10
+Autocannon/10
+Autocannon/10
+Autocannon/10
+Autocannon/10
+Autocannon/10
+Autocannon/10
+IS Endo Steel
 
 Left Torso:
 Fusion Engine
 Fusion Engine
-Medium Laser
-Medium Laser
+Fusion Engine
 LRM 5
 LRM 5
--Empty-
--Empty-
--Empty-
--Empty-
--Empty-
--Empty-
+Medium Laser
+Medium Laser
+IS Ammo LRM-5
+CLIMPAmmoAC5
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-Medium Laser
-Medium Laser
+Fusion Engine
 LRM 5
 LRM 5
-CLIMPAmmoAC5
-Heat Sink
-Heat Sink
-Heat Sink
-Clan Endo Steel
-Clan Endo Steel
+Medium Laser
+Medium Laser
+IS Ammo LRM-5
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Center Torso:
 Fusion Engine
@@ -111,14 +115,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Heat Sink
-Heat Sink
+IS Endo Steel
+IS Endo Steel
 
 Head:
 Life Support
 Sensors
 Cockpit
-Clan Endo Steel
+IS Endo Steel
 Sensors
 Life Support
 -Empty-
@@ -133,8 +137,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-CLIMPAmmoAC10
-IS Ammo LRM-5
+IS Ammo AC/10
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -147,8 +151,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-CLIMPAmmoAC10
-IS Ammo LRM-5
+IS Ammo AC/10
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -156,4 +160,14 @@ IS Ammo LRM-5
 -Empty-
 -Empty-
 
+overview:"This is something brand-new to me, Commander. I don't know where this 'Mech came from, but it's a serious force to be reckoned with because of its heavy weaponry and nearly impenetrable armor. Quite a find!" - Yang Virtanen
+deployment:The Bull Shark is a 95-ton Assault 'Mech described as a "Heavy Brawler", and is equipped to engage targets across a fairly wide range bracket. This Inner Sphere production variant uses conventional and rediscovered 'tech, unlike its original prototype, and carries a more versatile loadout and hardpoint set-up. A pair of LRM-5s and one ton of ammo are fitted to each torso, while medium lasers replace the original extended range versions. Each arm mounts a standard AC/10 and an Improved AC/5. The design features two tons of AC/10 ammo and one ton of AC/5 ammo. The replacement of the original's Thumper Artillery Cannon allows the chassis to carry a full 18.5 tons of armour, providing protection that nearly rivals an Atlas.  Only ten Single Heat Sinks mounted in the engine fight to keep the 'Mech from burning up, with MechWarriors needing to keep careful track of their heat generation.
+history:Following the discovery and subsequent loss of the original Bull Shark BSK-MAZ aboard the abandoned jumpship Dobrev, the shadowy organisation known as the Baumann Group set to recreate the design. While the original 'Mech was lost to them during a conflict with the Black Widow Company, a large equipment cache of mysterious origin was still aboard and available for them to use, primarily consisting of seemingly cast-off but high-quality autocannons. After a few years of design and production set-up, the initial results were less than desirable, with the 'Mech unable to match its original's speed without sacrificing firepower or armour. The rediscovery of Endo-Steel and Extralight Fusion Engine manufacturing in 3035, around a decade after the original Bull Shark had been lost, allowed the Baumann Group to progess their recreation further. With their influence and black market dealings, they sourced the new material and engines for their efforts. Using standard Inner Sphere weaponry - paired with the Improved Autocannons from the Dobrev - a limited run of BSK-M3s were produced and sold to those with the right connections and enough C-Bills to afford the exotic-looking new 'Mechs.
+manufacturer:Baumann Group
+notes:The following regards derivation of the design: Improved Autocannons must be used to fit in the arms. Assume they are from a Clan equipment stash found aboard the Dobrev where the MAZ prototype was discovered. Inner Sphere Endo-Steel and XL engines are reintroduced in 3035 in the Combine and Commonwealth respectively. Assume the well-connected Baumann Group was able to source these for limited production.  Design runs 2 tons light. This is legal; or alternatively view that if normal AC-5s were (somehow) fitted as with HBS' design in the videogame, it would come to 95 tons total.
+systemmode:CHASSIS:Endo-Steel
+systemmode:ENGINE:285 XL
+systemmode:ARMOR:Standard
+systemmanufacturer:JUMPJET:N/A
+systemmode:JUMPJET:N/A
 

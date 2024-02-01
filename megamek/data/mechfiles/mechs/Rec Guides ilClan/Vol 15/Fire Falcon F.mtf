@@ -1,6 +1,5 @@
-Version:1.0
-Fire Falcon
-F
+chassis:Fire Falcon
+model:F
 mul id:1068
 
 Config:Biped Omnimech
@@ -8,6 +7,10 @@ TechBase:Clan
 Era:3072
 source:Rec Guide:ilClan #15
 Rules Level:2
+role:Striker
+
+quirk:imp_sensors
+
 
 Mass:25
 Engine:200 XL (Clan) Engine(IS)

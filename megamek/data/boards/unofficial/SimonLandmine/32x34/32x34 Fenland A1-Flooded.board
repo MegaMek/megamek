@@ -1,8 +1,8 @@
 size 32 34
 option exit_roads_to_pavement false
 tag "Foliage (Auto)"
-tag "GrassTheme (Auto)"
 tag "Water (Auto)"
+tag "GrassTheme (Auto)"
 tag "Roads (Auto)"
 tag "Woods (Auto)"
 hex 0101 0 "water:0:63;mud:1" ""

@@ -1,6 +1,5 @@
-Version:1.0
-Scorpion
-SCP-1TB
+chassis:Scorpion
+model:SCP-1TB
 mul id:2840
 
 Config:Quad
@@ -8,6 +7,14 @@ techbase:Inner Sphere
 era:3072
 source:Rec Guide:ilClan #19
 rules level:2
+role:Missile Boat
+
+
+
+quirk:bad_rep_clan
+quirk:bad_rep_is
+quirk:hard_pilot
+
 
 mass:55
 engine:330 Light Engine(IS)

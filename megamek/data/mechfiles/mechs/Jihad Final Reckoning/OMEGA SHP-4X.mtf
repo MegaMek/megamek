@@ -1,12 +1,12 @@
-Version:1.3
-Omega
-SHP-4X
+chassis:Omega
+model:SHP-4X
 mul id:4746
 Config:Biped
 techbase:Inner Sphere
 era:3077
 source:Jihad: Final Reckoning
 rules level:4
+role:Sniper
 
 mass:150
 engine:300 XL Engine(IS)

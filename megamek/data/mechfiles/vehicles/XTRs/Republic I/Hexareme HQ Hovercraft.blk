@@ -32,6 +32,10 @@ Hexareme HQ Hovercraft
 IS Level 3
 </type>
 
+<role>
+Skirmisher
+</role>
+
 <motion_type>
 Hover
 </motion_type>
@@ -110,3 +114,8 @@ XTR: Republic I
 <tonnage>
 90.0
 </tonnage>
+
+<quirks>
+poor_performance
+</quirks>
+

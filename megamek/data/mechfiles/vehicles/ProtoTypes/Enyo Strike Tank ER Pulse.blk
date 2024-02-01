@@ -32,6 +32,10 @@ Enyo Strike Tank
 Clan Level 4
 </type>
 
+<role>
+Skirmisher
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -91,3 +95,11 @@ TRO: Prototypes
 <tonnage>
 55.0
 </tonnage>
+
+<quirks>
+bad_rep_clan
+poor_sealing
+imp_target_short
+trailer_hitch
+</quirks>
+

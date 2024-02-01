@@ -1,13 +1,21 @@
-Version:1.0
-Stinger
-STG-3Gb
+chassis:Stinger
+model:STG-3Gb
 mul id:3059
 
 Config:Biped
 techbase:Inner Sphere
 era:2720
 rules level:2
+role:Striker
 source:Rec Guide:ilClan #13
+
+
+
+quirk:rugged_1
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+quirk:cramped_cockpit
+
 
 mass:20
 engine:140 XL Engine(IS)

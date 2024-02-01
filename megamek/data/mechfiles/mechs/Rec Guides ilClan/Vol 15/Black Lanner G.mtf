@@ -1,6 +1,5 @@
-Version:1.0
-Black Lanner
-G
+chassis:Black Lanner
+model:G
 mul id:8186
 
 Config:Biped Omnimech
@@ -8,6 +7,10 @@ techbase:Clan
 era:3134
 source:Rec Guide:ilClan #15
 rules level:2
+role:Missile Boat
+
+quirk:stable
+
 
 mass:55
 engine:385 XL (Clan) Engine(IS)

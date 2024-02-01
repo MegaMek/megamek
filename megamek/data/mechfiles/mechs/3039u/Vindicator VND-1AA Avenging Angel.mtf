@@ -1,6 +1,5 @@
-Version:1.0
-Vindicator
-VND-1AA 'Avenging Angel'
+chassis:Vindicator
+model:VND-1AA 'Avenging Angel'
 mul id:3421
 
 Config:Biped
@@ -8,6 +7,13 @@ TechBase:Inner Sphere
 Era:2863
 Source:TRO: 3039
 Rules Level:1
+role:Skirmisher
+
+
+
+quirk:rugged_1
+quirk:difficult_eject
+
 
 Mass:45
 Engine:225 Fusion Engine

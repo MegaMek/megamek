@@ -1,6 +1,5 @@
-Version:1.0
-Thug
-THG-11E
+chassis:Thug
+model:THG-11E
 mul id:3205
 
 Config:Biped
@@ -8,6 +7,13 @@ techbase:Inner Sphere
 era:2572
 source:TRO: 3050
 rules level:2
+role:Brawler
+
+
+
+
+quirk:rugged_1
+
 
 mass:80
 engine:320 Fusion Engine(IS)

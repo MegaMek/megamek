@@ -1,13 +1,18 @@
-Version:1.1
-Grasshopper
-GHR-7X
+chassis:Grasshopper
+model:GHR-7X
 mul id:1271
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3075
 Rules Level:4
+role:Skirmisher
 source:XTR: Mercenaries
+
+
+
+quirk:rugged_1
+
 
 Mass:70
 Engine:280 Light Fusion Engine

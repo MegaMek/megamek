@@ -1,13 +1,19 @@
-Version:1.0
-Ninja-To
-NJT-2
+chassis:Ninja-To
+model:NJT-2
 mul id:4726
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3062
 Rules Level:2
+role:Skirmisher
 source:TRO: 3067
+
+
+
+
+quirk:stable
+
 
 Mass:65
 Engine:390 XL Engine

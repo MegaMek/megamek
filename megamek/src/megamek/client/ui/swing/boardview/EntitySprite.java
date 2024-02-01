@@ -459,6 +459,8 @@ class EntitySprite extends Sprite {
         boolean isTank = (entity instanceof Tank);
         boolean isInfantry = (entity instanceof Infantry);
         boolean isAero = entity.isAero();
+        boolean isGunEmplacement = entity instanceof GunEmplacement;
+        boolean isSquadron = entity instanceof FighterSquadron;
 
         if ((isAero && ((IAero) entity).isSpheroid() && !board.inSpace()) && (secondaryPos == 1)) {
             graph.setColor(Color.WHITE);
@@ -474,11 +476,9 @@ class EntitySprite extends Sprite {
             // and if it is a gun emplacement
             boolean turretLocked = false;
             int crewStunned = 0;
-            boolean ge = false;
             if (entity instanceof Tank) {
                 turretLocked = !((Tank) entity).hasNoTurret() && !entity.canChangeSecondaryFacing();
                 crewStunned = ((Tank) entity).getStunnedTurns();
-                ge = entity instanceof GunEmplacement;
             }
 
             // draw elevation/altitude if non-zero
@@ -523,7 +523,7 @@ class EntitySprite extends Sprite {
                 stStr.add(new Status(GUIP.getCautionColor(), "STUCK"));
             }
 
-            if (!ge && entity.isImmobile()) {
+            if (!isGunEmplacement && entity.isImmobile()) {
                 stStr.add(new Status(GUIP.getWarningColor(), "IMMOBILE"));
             }
 
@@ -552,8 +552,8 @@ class EntitySprite extends Sprite {
                 stStr.add(new Status(GUIP.getWarningColor(), "SWARMED"));
             }
 
-            // Transporting
-            if (!entity.getLoadedUnits().isEmpty()) {
+            // Transporting (but not Squadrons that are obviously composed of subunits)
+            if (!entity.getLoadedUnits().isEmpty() && !isSquadron) {
                 stStr.add(new Status(GUIP.getCautionColor(), "T", SMALL));
             }
 
@@ -780,8 +780,8 @@ class EntitySprite extends Sprite {
             graph.setColor(getStatusBarColor(percentRemaining));
             graph.fillRect(STATUS_BAR_X, 6, barLength, 3);
 
-            if (!ge) {
-                // Gun emplacements don't have internal structure
+            if (!isGunEmplacement && !isSquadron) {
+                // Gun emplacements and squadrons don't use internal structure nor SI damage
                 percentRemaining = entity.getInternalRemainingPercent();
                 barLength = (int) (STATUS_BAR_LENGTH * percentRemaining);
 
@@ -795,7 +795,7 @@ class EntitySprite extends Sprite {
 
             // TMM pips show if done in movement, or on all units during firing
             int pipOption = GUIP.getTMMPipMode();
-            if ((pipOption != 0) && !ge
+            if ((pipOption != 0) && !isGunEmplacement && !entity.isAero()
                     && ((entity.isDone() && bv.game.getPhase().isMovement())
                     || bv.game.getPhase().isFiring())) {
                 int tmm = Compute.getTargetMovementModifier(bv.game, entity.getId()).getValue();

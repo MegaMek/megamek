@@ -1,6 +1,5 @@
-Version:1.0
-Jenner
-JR7-K (Grace II)
+chassis:Jenner
+model:JR7-K (Grace II)
 mul id:1695
 
 Config:Biped
@@ -8,6 +7,12 @@ TechBase:Inner Sphere
 Era:3067
 Source:Starterbook: Sword and Dragon
 Rules Level:2
+role:Scout
+
+
+
+quirk:no_arms
+
 
 Mass:35
 Engine:245 Fusion Engine

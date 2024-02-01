@@ -1,6 +1,5 @@
-Version:1.1
-Centurion
-CN9-H
+chassis:Centurion
+model:CN9-H
 mul id:3922
 
 Config:Biped
@@ -8,6 +7,11 @@ TechBase:Inner Sphere
 Era:3077
 Source:XTR: RetroTech
 Rules Level:4
+role:Brawler
+
+quirk:imp_target_short
+quirk:non_standard
+
 
 Mass:50
 Engine:240 Primitive Fusion Engine

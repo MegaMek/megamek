@@ -1,6 +1,5 @@
-Version:1.0
-Cyclops
-C
+chassis:Cyclops
+model:C
 mul id:8357
 
 Config:Biped
@@ -8,6 +7,15 @@ techbase:Clan
 era:3147
 source:Rec Guide:ilClan #21
 rules level:3
+role:Brawler
+
+
+
+quirk:battle_computer
+quirk:cowl
+quirk:difficult_eject
+quirk:weak_head_2
+
 
 mass:90
 engine:360 Fusion (Clan) Engine(IS)

@@ -1,13 +1,20 @@
-Version:1.1
-Gurkha
-GUR-8G
+chassis:Gurkha
+model:GUR-8G
 mul id:5664
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3069
 Rules Level:2
+role:Striker
 source:Record Sheets: 3067 Unabridged
+
+
+
+quirk:bad_rep_clan
+quirk:bad_rep_is
+quirk:exp_actuator
+
 
 Mass:35
 Engine:245 XL Fusion Engine

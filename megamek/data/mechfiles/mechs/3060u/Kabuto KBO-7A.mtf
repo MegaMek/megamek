@@ -1,6 +1,5 @@
-Version:1.0
-Kabuto
-KBO-7A
+chassis:Kabuto
+model:KBO-7A
 mul id:1728
 
 Config:Biped
@@ -8,6 +7,13 @@ TechBase:Inner Sphere
 Era:3059
 Source:TRO: 3060
 Rules Level:2
+role:Striker
+
+
+
+
+quirk:ext_twist
+
 
 Mass:20
 Engine:140 XL Engine

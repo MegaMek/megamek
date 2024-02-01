@@ -36,6 +36,10 @@ LRM Carrier
 IS Level 2
 </type>
 
+<role>
+Missile Boat
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -144,4 +148,13 @@ XTR: Primitives II
 <fuelType>
 PETROCHEMICALS
 </fuelType>
+
+
+<quirks>
+easy_maintain
+low_profile
+fast_reload
+poor_performance
+obsolete
+</quirks>
 

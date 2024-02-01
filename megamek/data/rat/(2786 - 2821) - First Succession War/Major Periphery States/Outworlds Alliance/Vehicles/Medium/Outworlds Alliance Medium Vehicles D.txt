@@ -1,12 +1,12 @@
 Outworlds Alliance Medium Vehicles D
-Condor Heavy Hover Tank (Standard),1
-Maxim Heavy Hover Transport (Standard),2
-Goblin Medium Tank (Standard),3
-LTV-4 Hover Tank (Standard),4
-Prowler Multi-Terrain Vehicle (Standard),5
-Turhan Urban Combat Vehicle (Standard),6
-Zephyr Hovertank (Standard),5
-Maxim Heavy Hover Transport (Standard),4
-Kanga Medium Hovertank (Standard),3
-Chaparral Missile Artillery Tank (Standard),2
+Condor Heavy Hover Tank,1
+Maxim Heavy Hover Transport,2
+Goblin Medium Tank,3
+LTV-4 Hover Tank,4
+Prowler Multi-Terrain Vehicle,5
+Turhan Urban Combat Vehicle,6
+Zephyr Hovertank,5
+Maxim Heavy Hover Transport,4
+Kanga Medium Hovertank,3
+Chaparral Missile Artillery Tank,2
 Goblin Medium Tank (SRM),1

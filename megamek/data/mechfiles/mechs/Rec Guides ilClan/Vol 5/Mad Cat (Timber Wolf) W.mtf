@@ -1,13 +1,18 @@
-Version:1.0
-Mad Cat (Timber Wolf)
-W
+chassis:Mad Cat
+clanname:Timber Wolf
+model:W
 mul id:7518
 
 Config:Biped Omnimech
 techbase:Clan
 era:3100
 rules level:4
+role:Juggernaut
 source:Rec Guide:ilClan #5
+
+quirk:imp_target_med
+quirk:weak_head_1
+
 
 mass:75
 engine:375 XL (Clan) Engine(IS)

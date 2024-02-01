@@ -450,7 +450,11 @@ public class Engine implements Serializable, ITechnology {
      */
     public String getShortEngineName() {
         if (engineType < TYPE_KEYS.length) {
-            return String.format("%d%s", engineRating, Messages.getString("Engine." + TYPE_KEYS[engineType]));
+            if (hasFlag(SUPPORT_VEE_ENGINE)) {
+                return Messages.getString("Engine." + TYPE_KEYS[engineType]).trim();
+            } else {
+                return String.format("%d%s", engineRating, Messages.getString("Engine." + TYPE_KEYS[engineType]));
+            }
         } else {
             return Messages.getString("Engine.invalid");
         }

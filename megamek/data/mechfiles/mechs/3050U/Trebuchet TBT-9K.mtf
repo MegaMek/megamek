@@ -1,6 +1,5 @@
-Version:1.1
-Trebuchet
-TBT-9K
+chassis:Trebuchet
+model:TBT-9K
 mul id:3302
 
 Config:Biped
@@ -8,6 +7,13 @@ TechBase:Inner Sphere
 Era:3059
 Source:TRO: 3050
 Rules Level:2
+role:Striker
+
+
+
+quirk:easy_maintain
+weaponquirk:fast_reload:RT:3:MRM 20
+
 
 Mass:50
 Engine:250 XL Fusion Engine

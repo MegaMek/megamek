@@ -1,6 +1,5 @@
-Version:1.1
-UrbanMech
-UM-AIV
+chassis:UrbanMech
+model:UM-AIV
 mul id:3353
 
 Config:Biped
@@ -8,6 +7,14 @@ TechBase:Inner Sphere
 Era:3072
 source:TRO: 3085
 Rules Level:3
+role:Missile Boat
+
+
+
+quirk:ext_twist
+quirk:low_profile
+quirk:no_arms
+
 
 Mass:30
 Engine:60 XL Engine(IS)

@@ -24,17 +24,22 @@ Kanazuchi Assault Battle Armor
 8027
 </mul id:>
 
+<role>
+Juggernaut
+</role>
+
 <year>
-3145
+3120
 </year>
 
 <originalBuildYear>
-3145
+3120
 </originalBuildYear>
 
 <type>
 IS Level 2
 </type>
+
 
 <motion_type>
 Leg

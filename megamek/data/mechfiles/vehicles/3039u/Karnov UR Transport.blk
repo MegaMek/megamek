@@ -1,12 +1,7 @@
-#building block data file
+#Saved from version 0.49.18-SNAPSHOT on 2024-01-10
 <BlockVersion>
 1
 </BlockVersion>
-
-# Write the version number just in case...
-<Version>
-MAM0
-</Version>
 
 <UnitType>
 VTOL
@@ -16,9 +11,9 @@ VTOL
 Karnov UR Transport
 </Name>
 
-<model>
+<Model>
 
-</model>
+</Model>
 
 <mul id:>
 1759
@@ -28,9 +23,21 @@ Karnov UR Transport
 2600
 </year>
 
+<originalBuildYear>
+2600
+</originalBuildYear>
+
 <type>
 IS Level 1
 </type>
+
+<role>
+Scout
+</role>
+
+<quirks>
+vtol_rotor_dual
+</quirks>
 
 <motion_type>
 VTOL
@@ -74,6 +81,38 @@ troopspace:6.0
 <Rotor Equipment>
 </Rotor Equipment>
 
+<capabilities>
+Constructed around the DAV 190 ICE aircraft engine, the Karnov is known for its reliability and ruggedness. The tiltrotor mechanism allows for horizontal speeds over 180 kph, although landing requires careful rotor positioning due to their size. The variable landing gear and interior cargo bay ramp enhance its versatility in loading and unloading operations. While its StarSlab armor offers protection against light fire, the large rotors are a vulnerability. Recent upgrades include ScatterGun machine guns for self-defense and a rotor auto-adjustment sensor to prevent accidents, demonstrating NETC's commitment to modernizing the Karnov's capabilities.
+</capabilities>
+
+<overview>
+The Karnov UR Transport is a heavy-lift VTOL, originally believed to be of Terran origin and several centuries old. Despite the mystery surrounding its production by the New Earth Trading Company (NETC), the Karnov has been a reliable and versatile asset in both military and corporate sectors across the Inner Sphere. Its adaptability as a cargo carrier and flying crane has made it a common sight on nearly every civilized planet.
+</overview>
+
+<deployment>
+he standard Karnov UR, primarily used for transport, features moderate protection and a tiltrotor design. It is suitable for non-combat logistical roles.
+</deployment>
+
+<history>
+The Karnov UR Transport, initially designed for non-combat roles, has seen a significant evolution into a dedicated infantry transport in the last century. The Republic's variant, with a lighter engine and stealth armor, exemplifies this transition, catering to the transportation of various types of battle armor and special forces. The strategic importance of the Karnov, especially in the context of the impending struggle for Terra, has made acquiring its plans or production lines a key objective. Over the years, the Karnov has proven its resilience and adaptability in numerous conflicts and operations. Its ability to operate in diverse environments, from dense urban landscapes to rugged terrain, has made it a staple in both peacekeeping and warfare. The Karnov's journey from a simple logistics vehicle to a multifaceted military asset reflects the changing dynamics of warfare and the increasing importance of versatile, multi-role vehicles in military strategy. Its enduring relevance in various combat scenarios and the continued demand for its variants underscore its pivotal role in shaping tactical and strategic outcomes on the battlefield.
+</history>
+
+<manufacturer>
+Refit -  Field New Earth Trading Company New Earth Trading Company
+</manufacturer>
+
+<primaryFactory>
+Various New Earth Terra
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:DAV 190
+ARMOR:StarSlab/1.5
+COMMUNICATIONS:Johnston Q-Rotor
+TARGETING:None
+</systemManufacturers>
+
 <source>
 TRO: 3039
 </source>
@@ -81,3 +120,8 @@ TRO: 3039
 <tonnage>
 30.0
 </tonnage>
+
+<fuelType>
+PETROCHEMICALS
+</fuelType>
+

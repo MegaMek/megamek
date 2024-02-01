@@ -1,13 +1,18 @@
-Version:1.0
-Blackjack
-BJ2-OX
+chassis:Blackjack
+model:BJ2-OX
 mul id:387
 
 Config:Biped Omnimech
 TechBase:Inner Sphere
 Era:3074
 Rules Level:3
+role:Brawler
 source:TRO: 3058
+
+
+
+quirk:non_standard
+
 
 Mass:50
 Engine:200 XL Engine(IS)

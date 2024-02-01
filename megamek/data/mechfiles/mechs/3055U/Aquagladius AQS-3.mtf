@@ -1,6 +1,5 @@
-Version:1.0
-Aquagladius
-AQS-3
+chassis:Aquagladius
+model:AQS-3
 mul id:58
 
 Config:Biped
@@ -8,6 +7,14 @@ TechBase:Inner Sphere
 Era:3065
 Source:TRO: 3055
 Rules Level:4
+role:Striker
+
+
+
+
+quirk:difficult_eject
+quirk:difficult_maintain
+
 
 Mass:50
 Engine:300 Light Engine

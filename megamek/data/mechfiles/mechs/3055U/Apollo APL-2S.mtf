@@ -1,6 +1,5 @@
-Version:1.0
-Apollo
-APL-2S
+chassis:Apollo
+model:APL-2S
 mul id:56
 
 Config:Biped
@@ -8,6 +7,13 @@ TechBase:Inner Sphere
 Era:3056
 Source:TRO: 3055
 Rules Level:2
+role:Missile Boat
+
+
+
+quirk:fast_reload
+quirk:rugged_1
+
 
 Mass:55
 Engine:220 Fusion Engine

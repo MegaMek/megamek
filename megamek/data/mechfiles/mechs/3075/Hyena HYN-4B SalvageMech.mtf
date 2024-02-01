@@ -1,6 +1,5 @@
-Version:1.0
-Hyena
-HYN-4B SalvageMech
+chassis:Hyena
+model:HYN-4B SalvageMech
 mul id:4354
 
 Config:Biped
@@ -8,6 +7,7 @@ techbase:Inner Sphere
 era:3072
 source:TRO: 3075
 rules level:2
+role:Scout
 
 mass:55
 engine:220 ICE Engine(IS)

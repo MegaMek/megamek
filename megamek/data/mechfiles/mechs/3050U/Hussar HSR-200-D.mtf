@@ -1,38 +1,45 @@
-Version:1.0
-Hussar
-HSR-200-D
+chassis:Hussar
+model:HSR-200-D
 mul id:1585
-
 Config:Biped
-TechBase:Inner Sphere
-Era:2620
-Source:TRO: 3050
-Rules Level:2
+techbase:Inner Sphere
+era:2620
+source:TRO: 3050
+rules level:2
+role:Scout
 
-Mass:30
-Engine:270 Fusion Engine
-Structure:Standard
-Myomer:Standard
 
-Heat Sinks:10 Double
-Walk MP:9
-Jump MP:0
 
-Armor:Ferro-Fibrous
-LA Armor:2
-RA Armor:2
-LT Armor:3
-RT Armor:3
-CT Armor:3
-HD Armor:3
-LL Armor:2
-RL Armor:2
-RTL Armor:2
-RTR Armor:2
-RTC Armor:2
+
+quirk:imp_com
+quirk:rugged_1
+weaponquirk:direct_torso_mount:CT:10:ISERLargeLaser
+
+
+mass:30
+engine:270 Fusion Engine(IS)
+structure:IS Standard
+myomer:Standard
+
+heat sinks:10 IS Double
+walk mp:9
+jump mp:0
+
+armor:Ferro-Fibrous(Inner Sphere)
+LA armor:2
+RA armor:2
+LT armor:3
+RT armor:3
+CT armor:3
+HD armor:3
+LL armor:2
+RL armor:2
+RTL armor:2
+RTR armor:2
+RTC armor:2
 
 Weapons:1
-1 ISERLargeLaser, Center Torso
+ER Large Laser, Center Torso
 
 Left Arm:
 Shoulder
@@ -63,12 +70,12 @@ Hand Actuator
 -Empty-
 
 Left Torso:
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -77,13 +84,13 @@ Ferro-Fibrous
 -Empty-
 
 Right Torso:
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -108,7 +115,7 @@ Head:
 Life Support
 Sensors
 Cockpit
-Ferro-Fibrous
+IS Ferro-Fibrous
 Sensors
 Life Support
 -Empty-
@@ -145,4 +152,18 @@ Foot Actuator
 -Empty-
 -Empty-
 -Empty-
+
+overview:The Hussar stands as a hallmark reconnaissance platform within the realms of the Star League Defense Force (SLDF), with its ability to achieve top speeds surpassing 150 kph. This speed advantage rendered the Hussar a challenging target in direct confrontations on the battlefield. Although modern designs have surfaced over time, the Hussar continues to embody the quintessence of a light recon BattleMech. The initial utilization of Hussar by the original SLDF in light 'Mech formations led to its scarce presence among the Great Houses, a scenario exacerbated post the historical Exodus led by General Kerensky.
+capabilities:<P>
+The Hussar, though notably under-armored when juxtaposed against other recon designs, wasn’t crafted to thrive in one-on-one combat scenarios. Its principal design featured an extended-range large laser, a component allowing it to engage adversaries from a long-range distance. The essence of the Hussar’s advantage is rooted in its speed, a fact often overlooked by Lyran pilots, particularly the inexperienced ones accustomed to heavier designs, leading to a significant pilot mortality rate.</P>
+<P>Enhanced communication and surveillance apparatus form a part of the Hussar's core capabilities, with the original Field Ranger Sightseer schematics being replicated in 3055, thus bolstering its reconnaissance prowess. This technological integration rendered the Hussar invaluable during the FedCom Civil War, with its deployment often aimed at disrupting enemy supply lines, embodying a strategy not alien to several hard-line Lyran commanders of the era.</P>
+deployment:The HSR-200-D variant is quintessentially equipped with a single ER large laser and sports a lightweight armor frame of one and a half tons, epitomizing a balance of reconnaissance and engagement from a distance.
+history:The legacy of the Hussar traces back to its pivotal role within the SLDF as a reconnaissance stalwart. The scarcity of this design among the Great Houses became more pronounced post General Kerensky’s Exodus, leading to its classification as a lost design until its revival by the Com Guards in 3051. The subsequent acquisition of the Hussar design by Coventry Metal Works from Bonn Mekarmorwerks marked a new chapter, leading to the development of new variants between 3055 and 3068. The narrative of the Hussar took a dire turn with the onset of the Jihad, as the Word of Blake’s assault on Coventry halted further advancements and shipments of this iconic design.
+manufacturer:Coventry Metal Works, Newhart Industries 
+primaryfactory:Coventry,New Earth 
+systemmanufacturer:CHASSIS:Benztrov 40
+systemmanufacturer:ENGINE:GM 270
+systemmanufacturer:ARMOR:Lexington Limited High Grade Ferro-Fibrous
+systemmanufacturer:COMMUNICATIONS:Field Ranger Sightseer
+systemmanufacturer:TARGETING:Ranger LAF Model 2
 

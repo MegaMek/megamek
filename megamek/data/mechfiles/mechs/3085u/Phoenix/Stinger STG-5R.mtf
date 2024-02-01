@@ -1,6 +1,5 @@
-Version:1.2
-Stinger
-STG-5R
+chassis:Stinger
+model:STG-5R
 mul id:3064
 
 Config:Biped
@@ -8,6 +7,15 @@ techbase:Inner Sphere
 era:3067
 source:TRO: Project Phoenix
 rules level:2
+role:Scout
+
+
+
+quirk:rugged_1
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+quirk:cramped_cockpit
+
 
 mass:20
 engine:120 Fusion Engine(IS)

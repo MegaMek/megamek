@@ -1,36 +1,40 @@
-Version:1.0
-Templar
-TLR1-OR
+chassis:Templar
+model:TLR1-OR
 mul id:6852
-
 Config:Biped Omnimech
-TechBase:Mixed (IS Chassis)
-Era:3134
-Source:Record Sheets: 3145 New Tech New Upgrades
-Rules Level:3
+techbase:Mixed (IS Chassis)
+era:3134
+source:Record Sheets: 3145 New Tech New Upgrades
+rules level:3
+role:Sniper
 
-Mass:85
-Engine:340 XL Engine(IS)
-Structure:Clan Endo Steel
-Myomer:Standard
 
-Heat Sinks:15 Double
-Base Chassis Heat Sinks:13
-Walk MP:4
-Jump MP:0
 
-Armor:Standard(Clan)
-LA Armor:28
-RA Armor:28
-LT Armor:26
-RT Armor:26
-CT Armor:44
-HD Armor:9
-LL Armor:36
-RL Armor:36
-RTL Armor:10
-RTR Armor:10
-RTC Armor:10
+quirk:easy_maintain
+
+
+mass:85
+engine:340 XL Engine(IS)
+structure:IS Endo Steel
+myomer:Standard
+
+heat sinks:15 IS Double
+base chassis heat sinks:13
+walk mp:4
+jump mp:0
+
+armor:Standard(Clan)
+LA armor:28
+RA armor:28
+LT armor:26
+RT armor:26
+CT armor:44
+HD armor:9
+LL armor:36
+RL armor:36
+RTL armor:10
+RTR armor:10
+RTC armor:10
 
 Weapons:8
 ER PPC, Left Arm
@@ -45,12 +49,12 @@ Medium Re-engineered Laser, Center Torso
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLERPPC (omnipod)
-CLERPPC (omnipod)
-CLERPPC (omnipod)
-CLERPPC (omnipod)
-Medium Re-engineered Laser (omnipod)
-Medium Re-engineered Laser (omnipod)
+CLERPPC (OMNIPOD)
+CLERPPC (OMNIPOD)
+CLERPPC (OMNIPOD)
+CLERPPC (OMNIPOD)
+Medium Re-engineered Laser (OMNIPOD)
+Medium Re-engineered Laser (OMNIPOD)
 IS Endo Steel
 IS Endo Steel
 IS Endo Steel
@@ -59,28 +63,28 @@ IS Endo Steel
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLLBXAC10 (omnipod)
-CLLBXAC10 (omnipod)
-CLLBXAC10 (omnipod)
-CLLBXAC10 (omnipod)
-CLLBXAC10 (omnipod)
-Clan LB 10-X AC Ammo (omnipod)
-Clan LB 10-X AC Ammo (omnipod)
-Clan LB 10-X Cluster Ammo (omnipod)
-CLCASEII (omnipod)
+CLLBXAC10 (OMNIPOD)
+CLLBXAC10 (OMNIPOD)
+CLLBXAC10 (OMNIPOD)
+CLLBXAC10 (OMNIPOD)
+CLLBXAC10 (OMNIPOD)
+Clan LB 10-X AC Ammo (OMNIPOD)
+Clan LB 10-X AC Ammo (OMNIPOD)
+Clan LB 10-X Cluster Ammo (OMNIPOD)
+CLCASEII (OMNIPOD)
 IS Endo Steel
 
 Left Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
-Medium Re-engineered Laser (omnipod)
-Medium Re-engineered Laser (omnipod)
-Medium Re-engineered Laser (omnipod)
-Medium Re-engineered Laser (omnipod)
+ISDoubleHeatSink (OMNIPOD)
+ISDoubleHeatSink (OMNIPOD)
+ISDoubleHeatSink (OMNIPOD)
+Medium Re-engineered Laser (OMNIPOD)
+Medium Re-engineered Laser (OMNIPOD)
+Medium Re-engineered Laser (OMNIPOD)
+Medium Re-engineered Laser (OMNIPOD)
 IS Endo Steel
 IS Endo Steel
 
@@ -88,11 +92,11 @@ Right Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
-Medium Re-engineered Laser (omnipod)
-Medium Re-engineered Laser (omnipod)
+ISDoubleHeatSink (OMNIPOD)
+ISDoubleHeatSink (OMNIPOD)
+ISDoubleHeatSink (OMNIPOD)
+Medium Re-engineered Laser (OMNIPOD)
+Medium Re-engineered Laser (OMNIPOD)
 ISCASE
 IS Endo Steel
 IS Endo Steel
@@ -109,8 +113,8 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Medium Re-engineered Laser (omnipod)
-Medium Re-engineered Laser (omnipod)
+Medium Re-engineered Laser (OMNIPOD)
+Medium Re-engineered Laser (OMNIPOD)
 
 Head:
 Life Support
@@ -154,12 +158,9 @@ IS Endo Steel
 -Empty-
 -Empty-
 
-capabilities:This Dark Age era configuration carries two ER PPC's and an LB 10-X autocannon, all Clan-spec. These are supported by five Medium Re-engineered Lasers. 
-
+capabilities:This Dark Age era configuration carries two ER PPC's and an LB 10-X autocannon, all Clan-spec. These are supported by five Medium Re-engineered Lasers.
 deployment: The Templar is built on a lightweight Kallon Type XIX Endo Steel chassis and is powered by a KalTek 340 XL engine that gives the 'Mech a top speed of 64.8 km/h while sacrificing durability. The Templar has thirteen fixed double heat sinks and is armored with sixteen and a half tons of Starshield A armor with CASE fixed in the right torso. Overall, this allows the Templar to have forty tons of free pod space for weapons and equipment which the 'Mech uses effectively in its various configurations.
-
 history:With a noticeable lack of OmniMechs designed in the Federated Suns, Field Marshal Duke George Hasek went over the heads of the Department of the Quartermaster and commissioned Kallon Industries to design an assault OmniMech and backed the project with his own considerable financial resources. The resulting 'Mech is a force to be reckoned with on the modern battlefield.
-
 manufacturer:Kallon Industries
 primaryfactory:Talon
 systemmanufacturer:CHASSIS:Kallon Type XIX Endo Steel

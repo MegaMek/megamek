@@ -1,6 +1,5 @@
-Version:1.0
-Marauder
-MAD-5L
+chassis:Marauder
+model:MAD-5L
 mul id:2040
 
 Config:Biped
@@ -8,6 +7,16 @@ TechBase:Inner Sphere
 Era:3067
 source:TRO: 3085u 
 Rules Level:2
+role:Sniper
+
+
+
+quirk:command_mech
+quirk:hyper_actuator
+quirk:low_profile
+weaponquirk:direct_torso_mount:RT:6:ISERPPC
+weaponquirk:exposed_linkage:RT:6:ISERPPC
+
 
 Mass:75
 Engine:300 Fusion Engine

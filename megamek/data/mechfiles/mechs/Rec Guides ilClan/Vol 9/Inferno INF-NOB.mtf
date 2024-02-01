@@ -1,6 +1,5 @@
-Version:1.1
-Inferno
-INF-NOB
+chassis:Inferno
+model:INF-NOB
 mul id:7717
 
 Config:Biped Omnimech
@@ -8,6 +7,15 @@ techbase:Inner Sphere
 era:3146
 source:Rec Guide:ilClan #9
 rules level:2
+role:Missile Boat
+
+
+
+quirk:battle_fists_la
+quirk:battle_fists_ra
+quirk:easy_pilot
+weaponquirk:em_interference:CT:8:ISERPPC
+
 
 mass:75
 engine:300 Fusion Engine(IS)

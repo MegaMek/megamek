@@ -1,6 +1,5 @@
-Version:1.1
-Epimetheus
-Prime
+chassis:Epimetheus
+model:Prime
 mul id:4129
 
 Config:Biped
@@ -8,6 +7,11 @@ TechBase:Mixed (Clan Chassis)
 Era:3053
 Source:Unbound
 Rules Level:4
+role:Sniper
+
+
+quirk:non_standard
+
 
 Mass:80
 Engine:400 XL (Clan) Engine

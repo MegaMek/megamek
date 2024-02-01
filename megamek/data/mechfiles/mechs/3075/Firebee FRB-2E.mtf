@@ -1,6 +1,5 @@
-Version:1.0
-Firebee
-FRB-2E
+chassis:Firebee
+model:FRB-2E
 mul id:1079
 
 Config:Biped
@@ -8,6 +7,13 @@ TechBase:Inner Sphere
 Era:2524
 Source:TRO: 3075
 Rules Level:1
+role:Brawler
+
+
+
+quirk:poor_life_support
+quirk:weak_legs
+
 
 Mass:35
 Engine:175 Fusion Engine

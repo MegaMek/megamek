@@ -1,6 +1,5 @@
-Version:1.0
-Falcon Hawk
-FNHK-9K1B
+chassis:Falcon Hawk
+model:FNHK-9K1B
 mul id:1032
 
 Config:Biped
@@ -8,6 +7,12 @@ TechBase:Inner Sphere
 Era:3063
 Source:TRO: 3058
 Rules Level:2
+role:Brawler
+
+
+
+quirk:good_rep_1
+
 
 Mass:35
 Engine:175 XL Engine

@@ -1,6 +1,5 @@
-Version:1.1
-Dragoon
-AEM-04
+chassis:Dragoon
+model:AEM-04
 mul id:6783
 
 Config:Biped
@@ -8,6 +7,23 @@ TechBase:Inner Sphere
 Era:2771
 source:Historical: Liberation of Terra II
 Rules Level:2
+role:None
+
+
+
+quirk:easy_maintain
+quirk:bad_rep_clan
+quirk:bad_rep_is
+quirk:obsolete
+weaponquirk:mod_weapons:HD:3:Medium Laser
+weaponquirk:mod_weapons:CT:10:SRM 4
+weaponquirk:mod_weapons:RT:3:SRM 4
+weaponquirk:mod_weapons:LT:3:SRM 4
+weaponquirk:mod_weapons:RA:2:ISGaussRifle
+weaponquirk:mod_weapons:RA:9:SRM 4
+weaponquirk:mod_weapons:LA:2:ISERPPC
+weaponquirk:mod_weapons:LA:5:SRM 4
+
 
 Mass:70
 Engine:280 XL Fusion Engine

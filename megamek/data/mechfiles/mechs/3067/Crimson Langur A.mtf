@@ -1,6 +1,5 @@
-Version:1.0
-Crimson Langur
-A
+chassis:Crimson Langur
+model:A
 mul id:4016
 
 Config:Biped Omnimech
@@ -8,6 +7,12 @@ TechBase:Clan
 Era:3065
 source:TRO: 3067
 Rules Level:2
+role:Missile Boat
+
+quirk:easy_maintain
+quirk:imp_com
+quirk:pro_actuator
+
 
 Mass:50
 Engine:350 XL (Clan) Engine(IS)

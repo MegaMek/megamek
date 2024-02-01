@@ -1,6 +1,5 @@
-Version:1.3
-Gotterdammerung
-GTD-20C
+chassis:Gotterdammerung
+model:GTD-20C
 mul id:8061
 Config:Biped
 techbase:Mixed (IS Chassis)

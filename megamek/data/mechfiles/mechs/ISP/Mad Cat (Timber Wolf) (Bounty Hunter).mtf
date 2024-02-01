@@ -1,6 +1,6 @@
-Version:1.0
-Mad Cat (Timber Wolf)
-(Bounty Hunter)
+chassis:Mad Cat
+clanname:Timber Wolf
+model:(Bounty Hunter)
 mul id:1976
 
 Config:Biped Omnimech
@@ -8,6 +8,11 @@ techbase:Clan
 era:3060
 source:BattleTech Dossiers: The Bounty Hunter
 rules level:2
+role:Brawler
+
+quirk:imp_target_med
+quirk:weak_head_1
+
 
 mass:75
 engine:375 XL (Clan) Engine(IS)

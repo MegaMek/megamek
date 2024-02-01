@@ -1,6 +1,5 @@
-Version:1.0
-Snake
-SNK-2Br
+chassis:Snake
+model:SNK-2Br
 mul id:2977
 
 Config:Biped
@@ -8,6 +7,13 @@ TechBase:Inner Sphere
 Era:3070
 source:TRO: 3085
 Rules Level:2
+role:Brawler
+
+
+
+quirk:imp_target_short
+quirk:pro_actuator
+
 
 Mass:45
 Engine:225 XL Engine

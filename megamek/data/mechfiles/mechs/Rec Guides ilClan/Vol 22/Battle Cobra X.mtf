@@ -1,6 +1,5 @@
-Version:1.0
-Battle Cobra
-X
+chassis:Battle Cobra
+model:X
 mul id:274
 
 Config:Biped Omnimech
@@ -8,6 +7,10 @@ techbase:Clan
 era:3073
 source:Rec Guide:ilClan #22
 rules level:3
+role:Striker
+
+quirk:ext_twist
+
 
 mass:40
 engine:240 Fusion (Clan) Engine(IS)

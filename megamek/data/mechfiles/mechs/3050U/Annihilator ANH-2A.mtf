@@ -1,6 +1,5 @@
-Version:1.0
-Annihilator
-ANH-2A
+chassis:Annihilator
+model:ANH-2A
 mul id:39
 
 Config:Biped
@@ -8,6 +7,12 @@ techbase:Inner Sphere
 era:3048
 source:TRO: 3050
 rules level:2
+role:Juggernaut
+
+
+
+quirk:easy_maintain
+
 
 mass:100
 engine:200 Fusion Engine(IS)

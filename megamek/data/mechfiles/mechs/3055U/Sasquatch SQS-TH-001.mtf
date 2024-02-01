@@ -1,6 +1,5 @@
-Version:1.0
-Sasquatch
-SQS-TH-001
+chassis:Sasquatch
+model:SQS-TH-001
 mul id:2798
 
 Config:Biped
@@ -8,6 +7,13 @@ TechBase:Inner Sphere
 Era:3054
 Source:TRO: 3055
 Rules Level:2
+role:Skirmisher
+
+
+
+
+quirk:difficult_maintain
+
 
 Mass:85
 Engine:340 XL Engine

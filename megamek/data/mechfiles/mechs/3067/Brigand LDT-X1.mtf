@@ -1,13 +1,18 @@
-Version:1.0
-Brigand
-LDT-X1
+chassis:Brigand
+model:LDT-X1
 mul id:3860
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3066
 Rules Level:2
+role:Striker
 source:TRO: 3067
+
+
+
+quirk:nimble_jumper
+
 
 Mass:25
 Engine:150 Fusion Engine

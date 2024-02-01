@@ -32,6 +32,10 @@ Configuration #2
 IS Level 4
 </type>
 
+<role>
+Missile Boat
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -99,3 +103,8 @@ XTR: Periphery
 <tonnage>
 50.0
 </tonnage>
+
+<quirks>
+non_standard
+</quirks>
+

@@ -1,6 +1,5 @@
-Version:1.1
-Rokurokubi
-RK-4X
+chassis:Rokurokubi
+model:RK-4X
 mul id:6394
 
 Config:Biped
@@ -8,6 +7,13 @@ TechBase:Mixed (IS Chassis)
 Era:3136
 Source:TRO: 3145 Draconis Combine
 Rules Level:4
+role:Striker
+
+
+
+quirk:pro_actuator
+quirk:no_eject
+
 
 Mass:35
 Engine:280 XL Engine(IS)

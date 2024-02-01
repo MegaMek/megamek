@@ -32,6 +32,10 @@ Donar Assault Helicopter
 Clan Level 3
 </type>
 
+<role>
+Striker
+</role>
+
 <motion_type>
 VTOL
 </motion_type>

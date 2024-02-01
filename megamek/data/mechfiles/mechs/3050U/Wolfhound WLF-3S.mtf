@@ -1,6 +1,5 @@
-Version:1.2
-Wolfhound
-WLF-3S
+chassis:Wolfhound
+model:WLF-3S
 mul id:3566
 
 Config:Biped
@@ -8,6 +7,13 @@ techbase:Inner Sphere
 era:3064
 source:TRO: 3050
 rules level:2	
+role:Striker
+
+
+
+quirk:easy_maintain
+quirk:good_rep_1
+
 
 mass:35
 engine:210 Light Engine(IS)

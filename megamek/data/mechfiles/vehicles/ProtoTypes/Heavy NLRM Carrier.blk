@@ -32,6 +32,10 @@ Heavy NLRM Carrier
 IS Level 4
 </type>
 
+<role>
+Missile Boat
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -93,3 +97,9 @@ TRO: Prototypes
 <tonnage>
 80.0
 </tonnage>
+
+<quirks>
+difficult_maintain
+trailer_hitch
+</quirks>
+

@@ -1,6 +1,5 @@
-Version:1.0
-Deep Lord MilitiaMech
-RCL-Z1M-B
+chassis:Deep Lord MilitiaMech
+model:RCL-Z1M-B
 mul id:7830
 
 Config:Biped
@@ -8,6 +7,7 @@ techbase:Inner Sphere
 era:3118
 source:TRO: Irregulars
 rules level:3
+role:Juggernaut
 
 mass:65
 engine:195 Fuel Cell Engine(IS)

@@ -1,6 +1,5 @@
-Version:1.0
-Commando
-COM-4H
+chassis:Commando
+model:COM-4H
 mul id:673
 
 Config:Biped
@@ -8,6 +7,11 @@ TechBase:Inner Sphere
 Era:3064
 Source:TRO: 3050
 Rules Level:2
+role:Striker
+
+quirk:low_profile
+quirk:exp_actuator
+
 
 Mass:25
 Engine:150 Fusion Engine

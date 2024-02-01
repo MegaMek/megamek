@@ -1,6 +1,5 @@
-Version:1.0
-Flashfire
-FLS-P4
+chassis:Flashfire
+model:FLS-P4
 mul id:1121
 
 Config:Biped
@@ -8,6 +7,7 @@ TechBase:Inner Sphere
 Era:3055
 Source:TRO: 3055
 Rules Level:2
+role:Striker
 
 Mass:30
 Engine:180 XL Engine

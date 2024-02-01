@@ -1,6 +1,5 @@
-Version:1.0
-Rifleman
-RFL-7M
+chassis:Rifleman
+model:RFL-7M
 mul id:2703
 
 Config:Biped
@@ -8,6 +7,16 @@ TechBase:Inner Sphere
 Era:3066
 source:TRO: 3085u 
 Rules Level:2
+role:Brawler
+
+
+
+quirk:anti_air
+quirk:imp_com
+quirk:searchlight
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+
 
 Mass:60
 Engine:240 XL Engine

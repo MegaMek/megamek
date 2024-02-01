@@ -1,6 +1,5 @@
-Version:1.0
-Phoenix Hawk
-PXH-1b (Special)
+chassis:Phoenix Hawk
+model:PXH-1b (Special)
 mul id:2492
 
 Config:Biped
@@ -8,6 +7,16 @@ TechBase:Inner Sphere
 Era:2760
 source:TRO: 3075
 Rules Level:2
+role:Skirmisher
+
+
+
+quirk:command_mech
+quirk:imp_com
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+weaponquirk:jettison_capable:RA:4:ISERPPC
+
 
 Mass:45
 Engine:270 XL Engine

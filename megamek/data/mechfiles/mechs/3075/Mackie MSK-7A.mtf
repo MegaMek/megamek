@@ -1,6 +1,5 @@
-Version:1.1
-Mackie
-MSK-7A
+chassis:Mackie
+model:MSK-7A
 mul id:4556
 
 Config:Biped
@@ -8,6 +7,15 @@ techbase:Inner Sphere
 era:2488
 source:Record Sheets: 3075
 rules level:1
+role:Juggernaut
+
+
+
+quirk:easy_maintain
+quirk:pro_actuator
+quirk:rugged_1
+quirk:oversized
+
 
 mass:100
 engine:300 Fusion Engine(IS)

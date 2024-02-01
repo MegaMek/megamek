@@ -1,6 +1,5 @@
-Version:1.1
-Raptor II
-RPT-2X1
+chassis:Raptor II
+model:RPT-2X1
 mul id:2658
 
 Config:Biped
@@ -8,6 +7,13 @@ TechBase:Inner Sphere
 Era:3073
 source:TRO: 3085
 Rules Level:4
+role:Striker
+
+
+
+quirk:no_arms
+quirk:no_eject
+
 
 Mass:40
 Engine:280 XL Engine(IS)

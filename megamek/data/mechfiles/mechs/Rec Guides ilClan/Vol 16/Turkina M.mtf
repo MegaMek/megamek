@@ -1,6 +1,5 @@
-Version:1.0
-Turkina
-M
+chassis:Turkina
+model:M
 mul id:8213
 
 Config:Biped Omnimech
@@ -8,6 +7,10 @@ techbase:Clan
 era:3058
 source:Rec Guide:ilClan #16
 rules level:2
+role:Sniper
+
+quirk:easy_pilot
+
 
 mass:95
 engine:285 XL (Clan) Engine(IS)

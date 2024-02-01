@@ -1,6 +1,5 @@
-Version:1.0
-Pouncer
-H
+chassis:Pouncer
+model:H
 mul id:2562
 
 Config:Biped Omnimech
@@ -8,6 +7,10 @@ TechBase:Clan
 Era:3062
 Source:TRO: 3055
 Rules Level:2
+role:Striker
+
+quirk:weak_head_2
+
 
 Mass:40
 Engine:240 XL (Clan) Engine(IS)

@@ -1,6 +1,5 @@
-Version:1.0
-Grasshopper
-GHR-5J
+chassis:Grasshopper
+model:GHR-5J
 mul id:1268
 
 Config:Biped
@@ -8,6 +7,12 @@ TechBase:Inner Sphere
 Era:3049
 Source:TRO: 3050
 Rules Level:2
+role:Skirmisher
+
+
+
+quirk:rugged_1
+
 
 Mass:70
 Engine:280 Fusion Engine

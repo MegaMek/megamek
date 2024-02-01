@@ -1,13 +1,18 @@
-Version:1.1
-Victor
-VTR-9B (Li)
+chassis:Victor
+model:VTR-9B (Li)
 mul id:3402
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3028
 Rules Level:1
+role:Skirmisher
 source:Historical Turning Points: Death to Mercenaries
+
+
+
+quirk:rugged_1
+
 
 Mass:80
 Engine:320 Fusion Engine

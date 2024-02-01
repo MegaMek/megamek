@@ -1,6 +1,5 @@
-Version:1.1
-Shugosha
-PTN-LAW LoaderMech
+chassis:Shugosha
+model:PTN-LAW LoaderMech
 mul id:7157
 
 Config:Biped
@@ -8,6 +7,7 @@ TechBase:Inner Sphere
 Era:2627
 Source:Record Sheets: Vehicle Annex - IndustrialMechs & Exoskeletons
 Rules Level:2
+role:None
 
 Mass:20
 Engine:40 Fusion Engine(IS)

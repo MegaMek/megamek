@@ -1,6 +1,5 @@
-Version:1.0
-Peacekeeper
-PKP-1B
+chassis:Peacekeeper
+model:PKP-1B
 mul id:2453
 
 Config:Biped
@@ -8,6 +7,12 @@ TechBase:Inner Sphere
 Era:3087
 source:TRO: 3085
 Rules Level:2
+role:Sniper
+
+
+
+quirk:rugged_1
+
 
 Mass:95
 Engine:380 XL Engine

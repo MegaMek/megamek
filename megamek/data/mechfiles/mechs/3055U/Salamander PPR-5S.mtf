@@ -1,6 +1,5 @@
-Version:1.0
-Salamander
-PPR-5S
+chassis:Salamander
+model:PPR-5S
 mul id:2782
 
 Config:Biped
@@ -8,6 +7,13 @@ TechBase:Inner Sphere
 Era:3055
 Source:TRO: 3055
 Rules Level:2
+role:Missile Boat
+
+
+
+
+quirk:difficult_maintain
+
 
 Mass:80
 Engine:320 XL Engine

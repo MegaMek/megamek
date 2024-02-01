@@ -1,6 +1,181 @@
-VERSION HISTORY:
+MEGAMEK VERSION HISTORY:
 ----------------
-0.49.14-SNAPSHOT
+0.49.18-SNAPSHOT
++ Fix #5004: Prevents an error when configuring LAMs or quadvees in the lobby
++ PR #5002, #5001: AS conversion: fix BA medium and long range damage with SSW, STOL units and aerodyne DS/SC now receive VSTOL
++ PR #4993: Alpha Strike aero support vehicles (fixced wing support) will now find and display their fluff images if there are any
++ Fix #4998: ZIP files in the user directory will no longer generate errors when they contain files other than unit files
++ PR #5003: Implements the Internal Bomb Bay quirk
++ PR #5024: Mech summary invalid
++ PR #5023: Correct conversion exception causing search to not work
++ Fix #5015: Add advanced search for gyro
++ PR #5014: Fix CF warning sprite to work with isometric view
++ PR #5012: QuirkEntry: remove maximum slot number check (fixes MegaMekLab#1364)
++ PR #4992: Don't display engine rating for SV engines
++ PR #5025, #5068: Using the keybind (default: Backspace) for removing the last movement step will now remove all illegal steps if there are any at the end of a move path
++ Fix #5038: Add clan CASE in postLoadInit for explosive secondary locations
++ Fix #5028: Tow button no longer working
++ PR #5036: CF Warning clean up sprites when turn ends
++ Fix #1021: Overshooting movement is now automatically removed when the Evade button is pressed
++ PR #5034: ADA Missile to-hit modifiers have received an update to match the rules better
++ Fix #4648: The Sandblaster SPA now allows selecting Mek mortars
++ Fix #4520: Princess has undergone aerospace training sessions and is now better able to select between TAG and other weapons
++ PR #5009: Searchlights are no longer auto-enabled during daytime
++ Fix #5046: RFE: Search by MUL ID in advanced search.
++ Fix #5051: RFE: Improve the Invalid Reasons display
++ Fix #5060: Heat Inefficient issues with BV
++ Fix #5053: Update Aero movement envelope when accelerating or decelerating
++ PR #5059: Unit tooltip pilot updates
++ PR #5057: Lobby force updates
++ PR #5041: Princess Ice & Infantry On Ice Fix
++ PR #5069: Reset forces when resetting game 
++ Fix #5064, Fix #5065: Aero movement cenvelope and acc/dec next optimizations.
++ PR #5071: MUL parser updates
++ PR #5075: Laser-guided bombs now receive a -2 bonus on tagged units
++ PR #5074: Infantry no longer incorrectly applies a BV unit type modifier
++ PR #5040: Units with TAG weapons should now be able to torso twist in the Offboard / TAG phases in accordance with recent errata
++ PR #5083: Misc Code stuff
++ Fix #4941: MechView Ammo Block
++ Fix #5070: CI Anti-Mek Gear - Implements proper Anti-Mek set up for Infantry
++ Fix #5078: BA LB-X should get flak bonus against airborne targets
++ Fix #5088: Inaccurate Movement Envelope for Aerospace Fighters on Ground Maps
++ PR #5094: add start and connect to game to the file menu
++ PR #5102: Laser insulator and RISC laser pulse module validation
++ PR #5101: Rework of the internal representation of Armor
++ PR #5106, 5107: Separates clan and IS name for Meks with different names such as Mad Cat/Timber Wolf
+
+0.49.17 (2023-12-31 1900 UTC)
++ Fix #1031: Show structure collapse warning when deploying and moving.
++ PR #4990: FixedWingSupport: automatically set SI when walk MPs are set 
+
+0.49.16 (2023-12-30 2200 UTC)
++ Fix #4769: BA Tube Artillery should support smoke rounds
++ Fix #4854: Fix multiple end-of-game and end-of-phase hangs
++ Fix #4541: Natural piloting SPA applies to physical attacks
++ PR #4871: Allow HTML tags in the TROView fluff
++ Data: Update Boards and Tagging. Fluff project continues.
++ Fix #4793: Flame Based Infantry Bugs
++ Issue #4213: RFE Add CI indirect fire for mortars
++ PR #4877: Add client setting for auto centering
++ PR #4875: Done and skip buttons handle changes in GUI Scale better
++ Issue #4861: Fix for RAC and UAC ammo bingo state hanging game
++ PR #4853: Fixes bugs with loading infantry into transports and JumpShip fuel consumption
++ Data: Correcting various Prototype weapon BVs.
++ Issue #4794: Game hangs on 'firing phase'
++ PR #4872: Improvements to CSV tool.
++ PR #4883: Beast mounted infantry implemented! Swoop down on unsuspecting Meks with your Branth fliers!
++ Fix #4806: IllegalArgumentException when attempting to launch and recover fighters in the same turn
++ Fix #3861: Militarized Space Stations turning corrected
++ PR #4899: add report heading for piloting rolls
++ PR #4900: advanced search for mounted infantry
++ PR #4903: Move Unit Roles to Unit Files
++ Fix #4821: Fixed-Wing Support Vehicles with propellers and fusion engines should not require fuel
++ PR #4914: add missing filter for QuadVee
++ Fix #3095: Jumped WIGE does not get to-hit modifier
++ Fix #4901: 49.16 - Beast Infantry - Princess Cannot Move Branth Flying infantry
++ Issue #4907: Display Cockpit type in Unit Viewer
++ Fix #4857: Sprinting units are considered to be using supercharger
++ PR #4924: weapon panel factor in combat computer with displaying heat buildup
++ Issue #3917: Vehicles with jump MP no longer incorrectly count as immobilized
++ Issue #4876: Unit display tab renders properly when switching units
++ PR #4932: Illumination indicators added to hex/unit tooltips
++ Issue #4930: Added option to start with search lights on at deployment
++ Issue #4866: Correct roll reporting for fumbled PSRs
++ PR #4928: Don't set GM to observer when GM player has no units to avoid auto-skip of report phases
++ Issue #4925: Mobile artillery points being generated with black navy force generation 0.49.15
++ PR #4873, #4964: In round reports, many dice rolls now have tooltips showing roll details
++ Issue #4904: Ultra ACs firing a single shot now correctly report when they score a hit
++ Issue #4927: With both TacOps Woods Cover and TacOps Active Probes options active, a to-hit bonus is now only applied if intervening woods hexes exist.
++ Issue #4795: Fixed sensor range bands not showing up under certain circumstances
++ PR #4948, 4950: Quirks are now part of the unit files (.mtf and .blk). They can still be configured in the lobby; any changes made there only apply to the present unit. Saving custom quirks from the lobby has been removed. An accompanying change adds quirk editing to MegaMekLab.
++ Fix #4935: Torpedoes no longer think they're crossing dry land when in fact they are fired through open water
++ PR #4921: Background colors for the unit tooltip can now be configured in the client settings
++ PR #4954: Add the MM version and date when saving unit files
++ PR #4955: MechSummaryCache BV calculation: ignore pilot skill
++ Data #4933: Megamek tacops ammo BV error (Partial Fix - work still needed on Dead Fire and LK)
++ PR #4956: Use foot/jump type modifier for beast-mounted infantry
++ PR #4963: In the heat report, heat effects are now shown after the affected unit (instead of before)
++ PR #4966: The mtf file format for Meks now uses chassis: and model: qualifiers and no longer includes the mtf version
++ Issue #4949: return impossible instead of raising an error
++ PR #4957: More tooltips colors (set FG color and BG color for more tooltips, add highlight, weapon, quirk client settings, consolidate some colors into existing client setting colors)
++ PR #4922: Add deployment options (There is a lot in this one see note from PR link for specifics)
++ PR #4981: Add unit readout button (Warbook) that displays the unit summary, TRO entry, and AS card in Game
++ PR #4961: User file directory
++ PR #4977: Add a split pane lobby between player and unit panels
++ PR #4980: Allow gm to configure spas in game
++ Issue #2595: Warn before collapsing buildings via movement due to weight
+
+0.49.15 (2023-10-21 1530 UTC)
++ PR #4688: Round reports should no longer take increasingly long to load
++ PR #4686: QuadVee should no longer be able to fall after converting to vehicle mode
++ PR #4684: Added game option for GM to advance report phases without waiting for other players
++ PR #4691: Correct max # of bay doors for space stations and jumpships
++ PR #4661: Add audio tab and master volume setting to client settings
++ PR #4678: Display vehicle crit effects in unit tooltip
++ Issue #4687: Fixes to jump jet attack logic
++ Issue #4705: Reset 'turn interrupted' flag between phases (possible SimFire fix)
++ Issue #4699: Fix homing Arty splash
++ Issue #4707: Prevent bot crash when firing large craft weapons from bays
++ Issue #935: Disallow targeting of hexes for ignition that cannot be set on fire as per BMM p. 107
++ Issue #4346: Prevent soft-lock when battle armor ends swarm attack on unit being destroyed by something else
++ Issue #3956: First Succession Wars Rats seem incorrect
++ PR #4716: Camo rotation and scaling
++ PR #4709: Mixed tech dropships do not save BA Tech type
++ Issue #4704: Follow-the-leader LRM ammo is treated as regular ammo when passing through ECM field.
++ Issue #4708: Respect variable tech level game option/allowed era settings
++ Issue #4711: Prevent squadron-related NPE in lobby
++ Issue #4692: Landed dropships introduced in megamek scenarios should deploy properly
++ PR #4728: Mute "other players turn" sound properly
++ Fix #4739: ProtoMek Transport bays should now load properly
++ PR #4746: Removed Testbot
++ Fix #3546: Artillery cannons now generate proper damage values for Fuel-Air ammunition
++ Fix #4359: Artillery cannons now use flak modifiers correctly
++ Fix #4734: Non-Mek heat-tracking units no longer burn to death in a terrain fire
++ Fix #4750: Prevent errors for some dialogs
++ PR #4753: Small Craft are no longer shown as invalid in the lobby after configuring them
++ PR #4751: Tech level filtering in the unit selector dialog has been corrected (also affects MML and MHQ)
++ PR #4748: Alpha strike filters now correctly apply when creating random creating a random army
++ Issue #4690: Improvements to MegaMek command-line handling
++ Issue #4286: RATGeneratorEditor: Show unit type instead of number
++ issue #4756: Quirks: VTOL Rotor Arrangement Co-Axial/Dual Rotor
++ Issue #4756: Correct NPE in bvReports when player is not on a team
++ Fix #4694: Silver Bullet Gauss Rifle now use the correct Aero damage of 9
++ Fix #4774: Tripod Meks with AES now load correctly
++ Fix #4737: The planetary conditions overlay should now be more consistently shown or hidden
++ PR #4771: Alpha Strike conversion updates
++ Fix #4754: Updates to some VTOL and CV units that feature transportation capabilities which may not have loaded correctly
++ Fix #4727: Fixes an error with pilot images in reports
++ PR #4776: Fixed Wing Support with STOL no longer show as invalid in the lobby when set to altitude 0
++ Issue #1552: Added Arrow IV air defense missiles; Princess can use them if available
++ Issue #4782: Argotera now has full-head ejection system
++ Fix #4780: Players can once again fire during the point blank phase
++ Fix #4779: Mechs can once again sprint
++ Fix #4768: Improved gauss rifles nerfed - take a +1 penalty to the TN when fired from small aeros
++ Issue #4550: Improve Princess logic regarding placement of units in deep water
++ Issue #2698: Attempt to reduce bot speed in low gravity
++ Fix #3870, 4524: Properly apply quirks and SPAs to artillery attacks
++ Issue #4730: Multi-crew units with command console receive correct crew count
++ PR #4800: Improvements to aerospace and fighter squadron UI
++ Fix #4789: Prevent bot hang when smoke drifts off-board
++ Fix #4790: Prevent soft lock when processing artillery attacks against fled/destroyed off-board artillery
++ Fix #4738: Aim-high attacks no longer use partial cover hit table when target is in partial cover
++ PR #4815: Some illegal ammos have been removed from artillery cannons
++ Fix #4706: The BV calculation now includes special values for minefield artillery rounds
++ Fix #4743: Units making vertical landings now only apply half the terrain modifiers
++ PR #4813: Aero landing now considers terrain modifiers for advanced terrain from TO; a unit takes damage when the landing path includes rough or rubble; a unit that lands in water of sufficient depth (2 for DS, 1 otherwise) is destroyed; dropships landing in depth 1 water are permanently immobile
++ Data: Fixes for #4808, #4752, #4685, #4677, #4619, and #4597
++ Fix #4820: Fix Immelman and Split-S maneuvers
++ PR #4818: Separate structure class from TestEntity
++ PR #4816: TestTank: Adapt some tests for GunEmplacements
++ Fix #4828: Use standard ECM range for Watchdog/Nova CEWS
++ Fix 4830: WiGE units with jump jets no longer jump to the bottom of water hexes
++ PR #4834: The unit tooltip now indicates when TSM is active
++ PR #4822, #4844: Formatting updates and utilities for the unit summary (unit selector/lobby unit view)
++ Fix #4786: Fix modifier for controlled sideslip
++ Fix #4745: Fix machine gun array burst damage against conventional infantry
+
+
+0.49.14 (2023-07-28 2100 UTC)
 + Fix #4452: Fixes a bug with detecting if Infantry dies due to extreme temperatures
 + Fix #4245: At victory in a double-blind game, a full unfiltered report is now available
 + PR #4458: When clicking on report hyperlink, center board on entity if possible
@@ -29,8 +204,7 @@ VERSION HISTORY:
 + Fix #894: TO fatigue is now calculated from the better of Gunnery/Anti-Mek for Infantry
 + PR #4539: Picked-up pilots are now shown on the unit tooltip in pilot info
 + PR #4532, #4536: BV Calculation updates for MG Arrays and Manei Domini options
-+ Fix #206: The allowed weapons for the Sandblaster and Weapon Specialist SPAs have been corrected; some are available depending on game options;
-            Weapon choices are now shown in the pilot tooltip
++ Fix #206: The allowed weapons for the Sandblaster and Weapon Specialist SPAs have been corrected; some are available depending on game options; Weapon choices are now shown in the pilot tooltip
 + PR #4549, #4551: GUI improvements to the Unit Selector
 + Fix #4305: Environmental Specialist SPA is now properly reducing penalties from high wind
 + PR #4567: The unofficial sensor geek modifier is now applied to sensor ranges displayed on the map
@@ -43,8 +217,30 @@ VERSION HISTORY:
 + Fix #4574: Mortar turret ammo selection dropdown is empty
 + Fix #4543, 4547: Auto-success/fail message in to-hit display; set scroll to top when selecting new target for reduced annoyance
 + PR #4609: There is now a client setting to hide the unit tooltips in the game reports
-+ PR #4607: Alpha Strike Conversion updates
++ PR #4607, #4654: Alpha Strike Conversion updates
 + PR #4610: Implemented Gas Hog quirk (only relevant for aerospace units at the moment)
++ Issue #4527: Allow indirect LRM launches from nose cones of grounded spheroid dropships
++ Issue #4614: unit display tab strip background respects theme
++ Issue #4553: offboard artillery Disengage causes uncaught nullpointer exception
++ PR #4632, #4630, #4627, #4626, #4660: Tests for flagging units as invalid have been expanded (Nova CEWS, internal structure slots, modular armor, industrial equipment)
++ PR #4622: Fluff images for some unit types are now loaded from the right directories
++ Fix #4618: Improved and unified savegame path resolution and error reporting for -dedicated and -host starts; should now find savegames without path
++ Fix #4540: Field of fire and sensors rings now display during indirect attack declaration (-> TAG)
++ PR #4576: Gamemaster mode can now edit units during a game
++ Fix #4591: Grounded SmallCraft now receive a -2 attack bonus instead of a +2 malus that only applies to fighters
++ PR #4637: There is now an indicator in the player table showing the GM player
++ Fix #4599: The Alpha Strike stats table that can be accessed from the lobby is now sortable; sorting also applies to printing AS cards
++ Fix #4582: Infantry (over) stacking in building hex
++ Fix #4439, #4638: Indirect mortar attacks without spotter and indirect semi-guided + tag attacks now ignore all terrain modifiers including those of the target hex
++ PR #4605: The Replace Player Dialog can now edit existing bot configurations
++ Fix #3654: Infantry/BA damage messages no longer accumulate
++ Fix #4641: In the lobby, setting the game master no longer requires a vote
++ Fix #4645: Display the correct conversion mode text for LAMs
++ Fix #4656: Game board key binds (wasd) now also work in the report phases
++ Fix #4653: Moving from prone to hull down now allows a free facing change the same way moving from prone to standing does
++ PR #4674: Fix potential race condition in Game::turnVector
++ Fix #4606: Half-roll maneuver allows illegal facing change for aerospace fighter
++ Fix #4652: VTOL Jet Boosters Not Applying +3 Modifier To Piloting Rolls
 
 
 0.49.13 (2023-05-23 2000 UTC)

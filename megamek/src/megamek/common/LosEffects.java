@@ -161,6 +161,8 @@ public class LosEffects {
      */
     Coords coverLocSecondary = null;
     int minimumWaterDepth = -1;
+
+    // Arced shots get no modifiers from any intervening terrain
     boolean arcedShot = false;
 
     
@@ -1332,8 +1334,15 @@ public class LosEffects {
         return false;
     }
 
-    public void setArcedAttack(boolean attack) {
-        arcedShot = attack;
+    /**
+     * Sets this LosEffects to the given isArced value. When this is true, the line of sight is treated
+     * as for an indirect shot without spotter or with semi-guided ammo on a TAGged target, i.e. one
+     * that gets no terrain modifiers.
+     *
+     * @param isArced True for a shot that shouldn't get any terrain modifiers
+     */
+    public void setArcedAttack(boolean isArced) {
+        arcedShot = isArced;
     }
 
     /**

@@ -1,6 +1,5 @@
-Version:1.0
-Cestus
-CTS-6Y
+chassis:Cestus
+model:CTS-6Y
 mul id:533
 
 Config:Biped
@@ -8,6 +7,12 @@ TechBase:Inner Sphere
 Era:2766
 Source:TRO: 3058
 Rules Level:2
+role:Brawler
+
+
+
+weaponquirk:stable_weapon:RT:3:ISGaussRifle
+
 
 Mass:65
 Engine:260 XL Engine

@@ -1,6 +1,5 @@
-Version:1.0
-Owens
-OW-1A
+chassis:Owens
+model:OW-1A
 mul id:2385
 
 Config:Biped Omnimech
@@ -8,6 +7,12 @@ TechBase:Inner Sphere
 Era:3056
 Source:TRO: 3058
 Rules Level:2
+role:Scout
+
+
+
+quirk:imp_sensors
+
 
 Mass:35
 Engine:280 XL Engine(IS)

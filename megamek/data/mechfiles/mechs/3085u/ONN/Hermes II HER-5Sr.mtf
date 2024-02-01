@@ -1,6 +1,5 @@
-Version:1.1
-Hermes II
-HER-5Sr
+chassis:Hermes II
+model:HER-5Sr
 mul id:1503
 
 Config:Biped
@@ -8,6 +7,13 @@ TechBase:Inner Sphere
 Era:3074
 source:TRO: 3085
 Rules Level:2
+role:Sniper
+
+
+
+quirk:easy_maintain
+quirk:imp_com
+
 
 Mass:40
 Engine:240 Fusion Engine

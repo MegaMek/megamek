@@ -52,26 +52,7 @@ public class BLKLargeSupportTankFile extends BLKFile implements IMechLoader {
     public Entity getEntity() throws EntityLoadingException {
 
         LargeSupportTank t = new LargeSupportTank();
-
-        if (dataFile.exists("source")) {
-            t.setSource(dataFile.getDataAsString("source")[0]);
-        }
-
-        if (!dataFile.exists("Name")) {
-            throw new EntityLoadingException("Could not find name block.");
-        }
-        t.setChassis(dataFile.getDataAsString("Name")[0]);
-        if (dataFile.exists("Model") && (dataFile.getDataAsString("Model")[0] != null)) {
-            t.setModel(dataFile.getDataAsString("Model")[0]);
-        } else {
-            t.setModel("");
-        }
-        if (dataFile.exists(MtfFile.MUL_ID)) {
-            t.setMulId(dataFile.getDataAsInt(MtfFile.MUL_ID)[0]);
-        }
-        setTechLevel(t);
-        setFluff(t);
-        checkManualBV(t);
+        setBasicEntityData(t);
 
         if (!dataFile.exists("tonnage")) {
             throw new EntityLoadingException("Could not find weight block.");
@@ -231,7 +212,7 @@ public class BLKLargeSupportTankFile extends BLKFile implements IMechLoader {
                 t.setICEFuelType(FuelType.PETROCHEMICALS);
             }
         }
-
+        loadQuirks(t);
         return t;
     }
 }

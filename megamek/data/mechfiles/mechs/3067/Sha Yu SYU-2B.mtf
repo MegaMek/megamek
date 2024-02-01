@@ -1,6 +1,5 @@
-Version:1.0
-Sha Yu
-SYU-2B
+chassis:Sha Yu
+model:SYU-2B
 mul id:5026
 
 Config:Biped
@@ -8,6 +7,13 @@ techbase:Inner Sphere
 era:3063
 source:TRO: 3067
 rules level:2
+role:Sniper
+
+
+
+
+quirk:imp_com
+
 
 mass:40
 engine:280 XL Engine(IS)

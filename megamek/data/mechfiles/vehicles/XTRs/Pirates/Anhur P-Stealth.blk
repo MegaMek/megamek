@@ -36,6 +36,10 @@ Anhur
 Mixed (Clan Chassis) Experimental
 </type>
 
+<role>
+Missile Boat
+</role>
+
 <motion_type>
 VTOL
 </motion_type>

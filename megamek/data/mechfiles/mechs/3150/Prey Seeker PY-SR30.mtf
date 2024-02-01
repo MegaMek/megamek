@@ -1,47 +1,47 @@
-Version:1.1
-Prey Seeker
-PY-SR30
-mul id:8068
-
+generator:MegaMek Suite 0.49.18-SNAPSHOT on 2024-01-13
+chassis:Prey Seeker
+model:PY-SR30
+mul id:8069
 Config:Biped
-TechBase:Inner Sphere
-Era:3141
-Source:TRO: 3150
-Rules Level:3
+techbase:Inner Sphere
+era:3141
+source:TRO: 3150
+rules level:3
 
-Mass:15
-Engine:180 XXL Engine(IS)
-Structure:IS Endo Steel
-Myomer:Standard
-Cockpit:Small Cockpit
-Gyro:XL Gyro
 
-Heat Sinks:10 Double
-Walk MP:12
-Jump MP:0
+mass:15
+engine:180 XXL Engine(IS)
+structure:IS Endo Steel
+myomer:Standard
+cockpit:Small Cockpit
+gyro:XL Gyro
 
-Armor:Standard(Clan)
-LA Armor:4
-RA Armor:4
-LT Armor:7
-RT Armor:7
-CT Armor:9
-HD Armor:9
-LL Armor:6
-RL Armor:6
-RTL Armor:1
-RTR Armor:1
-RTC Armor:1
+heat sinks:10 IS Double
+walk mp:12
+jump mp:0
+
+armor:Standard(Clan)
+LA armor:4
+RA armor:4
+LT armor:7
+RT armor:7
+CT armor:9
+HD armor:9
+LL armor:6
+RL armor:6
+RTL armor:1
+RTR armor:1
+RTC armor:1
 
 Weapons:8
+Machine Gun, Left Arm
+Machine Gun, Left Arm
+Machine Gun, Left Arm
 Machine Gun Array, Left Arm
-Machine Gun, Left Arm
-Machine Gun, Left Arm
-Machine Gun, Left Arm
+Light Machine Gun, Right Arm
+Light Machine Gun, Right Arm
+Light Machine Gun, Right Arm
 Light Machine Gun Array, Right Arm
-Light Machine Gun, Right Arm
-Light Machine Gun, Right Arm
-Light Machine Gun, Right Arm
 
 Left Arm:
 Shoulder
@@ -156,14 +156,9 @@ IS Endo Steel
 -Empty-
 
 overview:Achernar BattleMechs' Prey Seeker evolved from a variety of sources. Its off-putting arm construction, as well as its phenomenal speed, harkens back to the Clan Dasher's distinctive profile, but its role—old-fashioned BattleMech scouting—speaks to a quiet dissatisfaction among the AFFS' MechWarriors who feel increasingly marginalized by the rise of combined- arms warfare.
-
 capabilities:Capable of running at a staggering 194 km/h thanks to the extralight, but frighteningly expensive, Magna 180 XXL engine, the Prey Seeker takes a minimalist approach to equipment to pay for that high rate of speed. Mounting a small cockpit and an XL gyro, the Prey Seeker mounts three and a half tons of armor and lacks jump jets. The minimal armor present over the rear of the Prey Seeker means that if hit from behind by any but the lightest of weapons, the Prey Seeker runs the risk of taking internal damage.
-
 deployment:No information on this variant
-
 history:Soon after Fortress Republic, Prey Seekers were pressed into combat deployments.
-Without appropriate time for testing and doctrine formation, many MechWarriors were forced to discover and define what successful—and failing—tactics would be. The extended raid is one role that the Prey Seekers have proved to excel in. Many AFFS commanders have deployed small bands of Prey Seekers on long paths around enemy concentrations, despite their uncomfortable cockpits.
-
 manufacturer:Achernar BattleMechs
 primaryfactory:Cahokia
 systemmanufacturer:CHASSIS:A1 Type 22 Ultralight Endo Steel

@@ -1,6 +1,5 @@
-Version:1.0
-Marauder II
-MAD-4L
+chassis:Marauder II
+model:MAD-4L
 mul id:6828
 
 Config:Biped
@@ -8,6 +7,14 @@ TechBase:Inner Sphere
 Era:3084
 Source:Record Sheets: 3145 New Tech New Upgrades
 Rules Level:2
+role:Sniper
+
+
+
+quirk:command_mech
+quirk:hyper_actuator
+quirk:low_profile
+
 
 Mass:100
 Engine:300 Light Engine(IS)

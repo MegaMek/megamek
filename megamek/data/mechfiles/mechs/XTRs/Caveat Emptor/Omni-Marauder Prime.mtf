@@ -1,6 +1,5 @@
-Version:1.1
-OmniMarauder
-MAD-BR-O
+chassis:OmniMarauder
+model:MAD-BR-O
 mul id:8110
 
 Config:Biped Omnimech
@@ -8,6 +7,15 @@ techbase:Mixed (IS Chassis)
 era:3135
 source:XTR: Caveat Emptor
 rules level:3
+role:Sniper
+
+
+
+quirk:command_mech
+quirk:directional_torso_mount
+quirk:hyper_actuator
+quirk:low_profile
+
 
 mass:75
 engine:300 XL (Clan) Engine

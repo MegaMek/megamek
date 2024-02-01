@@ -36,6 +36,10 @@ Colt Medium Fighter
 IS Level 4
 </type>
 
+<role>
+Dogfighter
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -123,3 +127,9 @@ XTR: Primitives V
 <tonnage>
 40.0
 </tonnage>
+
+<quirks>
+atmo_flyer
+difficult_eject
+</quirks>
+

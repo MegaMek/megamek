@@ -1,6 +1,5 @@
-Version:1.0
-Marauder
-Red Hunter
+chassis:Marauder
+model:Red Hunter
 mul id:7536
 
 Config:Biped

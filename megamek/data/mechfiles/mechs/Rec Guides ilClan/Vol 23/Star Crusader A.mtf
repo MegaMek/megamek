@@ -1,6 +1,5 @@
-Version:1.0
-Star Crusader
-A
+chassis:Star Crusader
+model:A
 mul id:8426
 
 Config:Biped Omnimech
@@ -8,6 +7,10 @@ techbase:Clan
 era:3146
 source:Rec Guide:ilClan #23
 rules level:2
+role:Brawler
+
+quirk:stable
+
 
 mass:80
 engine:320 XL (Clan) Engine(IS)

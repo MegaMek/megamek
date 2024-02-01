@@ -1,6 +1,5 @@
-Version:1.2
-Griffin
-GRF-5M
+chassis:Griffin
+model:GRF-5M
 mul id:1305
 
 Config:Biped
@@ -8,6 +7,17 @@ TechBase:Inner Sphere
 Era:3066
 source:TRO: 3085u 
 Rules Level:2
+role:Missile Boat
+
+
+
+quirk:battle_fists_la
+quirk:battle_fists_ra
+quirk:rugged_1
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+weaponquirk:jettison_capable:RA:7:ISLightGaussRifle
+
 
 Mass:55
 Engine:275 XL Engine(IS)

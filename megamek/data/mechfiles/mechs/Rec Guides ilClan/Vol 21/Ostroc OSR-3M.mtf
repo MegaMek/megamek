@@ -1,6 +1,5 @@
-Version:1.0
-Ostroc
-OSR-3M
+chassis:Ostroc
+model:OSR-3M
 mul id:8354
 
 Config:Biped
@@ -8,6 +7,12 @@ techbase:Inner Sphere
 era:3088
 source:Rec Guide:ilClan #21
 rules level:2
+role:Skirmisher
+
+
+
+quirk:low_profile
+
 
 mass:60
 engine:300 Fusion Engine(IS)

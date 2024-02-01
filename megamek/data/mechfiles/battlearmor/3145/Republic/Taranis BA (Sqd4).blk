@@ -32,6 +32,10 @@ Taranis Battle Armor
 IS Level 2
 </type>
 
+<role>
+Ambusher
+</role>
+
 <motion_type>
 Leg
 </motion_type>
@@ -120,3 +124,12 @@ JUMPJET:Unknown
 COMMUNICATIONS:Unknown
 TARGETING:Unknown
 </systemManufacturers>
+
+<quirks>
+distracting
+</quirks>
+
+<weaponQuirks>
+mod_weapons:Squad:2:CLBAHeavy Recoilless Rifle
+mod_weapons:Squad:4:ISBAMediumLaser
+</weaponQuirks>

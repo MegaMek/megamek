@@ -32,6 +32,10 @@ Fenrir II Assault Battle Armor
 Mixed (IS Chassis) Advanced
 </type>
 
+<role>
+Juggernaut
+</role>
+
 <motion_type>
 Leg
 </motion_type>
@@ -132,3 +136,8 @@ JUMPJET:Unknown
 COMMUNICATIONS:Unknown
 TARGETING:Unknown
 </systemManufacturers>
+
+<quirks>
+distracting
+</quirks>
+

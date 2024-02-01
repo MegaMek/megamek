@@ -1,12 +1,7 @@
-#building block data file
+#Saved from version 0.49.16-SNAPSHOT on 2023-12-30
 <BlockVersion>
 1
 </BlockVersion>
-
-# Write the version number just in case...
-<Version>
-MAM0
-</Version>
 
 <UnitType>
 Dropship
@@ -36,17 +31,27 @@ P2
 IS Level 3
 </type>
 
+<role>
+None
+</role>
+
+<quirks>
+atmo_instability
+weak_undercarriage
+imp_com
+</quirks>
+
 <motion_type>
 Spheroid
 </motion_type>
 
 <transporters>
-asfbay:2.0:2:1
-1stclassquarters:40.0:0
-2ndclassquarters:0.0:0
-crewquarters:105.0:0
-infantrybay:2.0:1:5:Foot
-cargobay:58.5:1:6
+asfbay:2.0:2:1::-1:0
+1stclassquarters:40.0:0:-1::-1:0
+2ndclassquarters:0.0:0:-1::-1:0
+crewquarters:105.0:0:-1::-1:0
+infantrybay:2.0:1:5:Foot:-1:0
+cargobay:58.5:1:6::-1:0
 </transporters>
 
 <SafeThrust>
@@ -85,9 +90,9 @@ cargobay:58.5:1:6
 </armor>
 
 <Nose Equipment>
-(B) Sub-Capital Laser (SCL/3)
-Sub-Capital Laser (SCL/3)
-Sub-Capital Laser (SCL/3)
+(B) Sub-Capital Laser /3
+Sub-Capital Laser /3
+Sub-Capital Laser /3
 (B) Extended LRM 20
 Extended LRM 20
 Extended LRM 20
@@ -140,6 +145,54 @@ ISArtemisIV
 15
 </structural_integrity>
 
+<capabilities>
+The design of the Lung Wang prioritizes flexibility and firepower. Its nose houses six weapon bays, each packed with long-range missiles and various laser systems, offering impressive forward fire-projection capabilities. However, its fighter and 'Mech bays' placement limits its aft defense, a recognized design vulnerability. The Lung Wang's first maneuver under its own power in 3055 led to a successful raid against the Federated Commonwealth, demonstrating its capabilities in actual combat.
+</capabilities>
+
+<overview>
+Launched in 3055 from the Rashpur-Owens Inc. yards at Capella, the Lung Wang Dropship has quickly established itself as a formidable raider in the Capellan Confederation's fleet. Built around the Xevec-19 drive system, it was conceived during the early days of Sun-Tzu Liao’s reign, with specifications demanding a craft capable of independent operation and formidable performance against non-Clan adversaries. The Lung Wang fulfills these criteria, balancing operational independence with considerable combat prowess.
+</overview>
+
+<deployment>
+Post-Jihad, the Lung Wang was adapted to space combat focus, losing its BattleMech transport capability. Its nose bay was equipped with three sub-capital lasers, making it effective against most DropShips and suitable for anti-missile warfare. The CCS Predator variant of this class demonstrated this effectiveness by destroying two Blakist Union-class Pocket WarShips.
+</deployment>
+
+<history>
+<p>The Lung Wang emerged as a groundbreaking addition to the Capellan Confederation's fleet, symbolizing a new era in their naval doctrine. From its first deployment in 3055, the Lung Wang's design and performance rapidly proved their worth in a variety of operational contexts. Its initial success near Lee was just the beginning of its storied career. The raid not only inflicted significant damage on the Federated Commonwealth forces but also served as a stark demonstration of the Lung Wang's tactical effectiveness and the Capellan Confederation's growing prowess in space warfare.</p>
+</history>
+
+<manufacturer>
+Rashpur-Owens Inc.
+</manufacturer>
+
+<primaryFactory>
+Capella
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<use>
+Assault Ship
+</use>
+
+<length>
+57 meters
+</length>
+
+<width>
+54 meters
+</width>
+
+<height>
+47 meters
+</height>
+
 <source>
 TRO: Prototypes
 </source>
@@ -187,3 +240,4 @@ TRO: Prototypes
 <escape_pod>
 4
 </escape_pod>
+

@@ -1,6 +1,5 @@
-Version:1.0
-Cave Lion
-
+chassis:Cave Lion
+model:
 mul id:6954
 
 Config:Biped
@@ -8,6 +7,7 @@ TechBase:Clan
 Era:3122
 Source:Era Digest: Dark Age
 Rules Level:3
+role:Skirmisher
 
 Mass:75
 Engine:375 XL (Clan) Engine(IS)

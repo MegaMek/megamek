@@ -1,6 +1,5 @@
-Version:1.1
-Gulon MiningMech
-GLN-1A 
+chassis:Gulon MiningMech
+model:GLN-1A 
 mul id:7844
 
 Config:Biped
@@ -8,6 +7,7 @@ techbase:Inner Sphere
 era:3000
 source:TRO: Irregulars
 rules level:2
+role:Ambusher
 
 mass:25
 engine:100 Fission Engine(IS)

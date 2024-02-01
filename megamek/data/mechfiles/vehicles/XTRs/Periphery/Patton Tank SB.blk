@@ -36,6 +36,10 @@ Patton Tank
 IS Level 2
 </type>
 
+<role>
+Sniper
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -138,6 +142,9 @@ TARGETING:TharHes Mars5
 TRO: 3039
 </source>
 
-<tonnage>
-65.0
-</tonnage>
+<quirks>
+low_profile
+poor_target_short
+prototype
+</quirks>
+

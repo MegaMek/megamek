@@ -1,6 +1,5 @@
-Version:1.1
-Salamander
-PPR-7T
+chassis:Salamander
+model:PPR-7T
 mul id:6860
 
 Config:Biped
@@ -8,6 +7,12 @@ TechBase:Inner Sphere
 Era:3111
 Source:Record Sheets: 3145 New Tech New Upgrades
 Rules Level:3
+role:Missile Boat
+
+
+
+quirk:difficult_maintain
+
 
 Mass:80
 Engine:320 XL Engine(IS)

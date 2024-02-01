@@ -1,6 +1,5 @@
-Version:1.0
-Warhammer
-WHM-4L
+chassis:Warhammer
+model:WHM-4L
 mul id:3483
 
 Config:Biped
@@ -8,6 +7,16 @@ TechBase:Inner Sphere
 Era:3067
 Source:Record Sheets: Clan Invasion
 Rules Level:2
+role:Brawler
+
+
+
+quirk:rugged_2
+quirk:searchlight
+quirk:stable
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+
 
 Mass:70
 Engine:280 XL Engine(IS)

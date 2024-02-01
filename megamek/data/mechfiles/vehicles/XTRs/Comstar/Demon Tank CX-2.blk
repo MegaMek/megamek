@@ -32,6 +32,10 @@ CX-2
 IS Level 4
 </type>
 
+<role>
+Sniper
+</role>
+
 <motion_type>
 Wheeled
 </motion_type>
@@ -89,3 +93,10 @@ XTR: ComStar
 <tonnage>
 60.0
 </tonnage>
+
+<quirks>
+prototype
+poor_work
+trailer_hitch
+</quirks>
+

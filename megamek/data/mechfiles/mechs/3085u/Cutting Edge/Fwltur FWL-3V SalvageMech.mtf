@@ -1,6 +1,5 @@
-Version:1.1
-Fwltur
-FWL-3V SalvageMech
+chassis:Fwltur
+model:FWL-3V SalvageMech
 mul id:1163
 
 Config:Biped
@@ -8,6 +7,7 @@ techbase:Inner Sphere
 era:3085
 source:TRO: 3085
 rules level:4
+role:None
 
 mass:35
 engine:105 Fusion Engine(IS)

@@ -36,6 +36,10 @@ Czar Dropship
 IS Level 2
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Spheroid
 </motion_type>
@@ -235,4 +239,14 @@ XTR: Primitives III
 <escape_pod>
 4
 </escape_pod>
+
+
+<quirks>
+atmo_instability
+difficult_maintain
+docking_arms
+imp_target_short
+sensor_ghosts
+obsolete
+</quirks>
 

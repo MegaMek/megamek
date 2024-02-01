@@ -1,6 +1,5 @@
-Version:1.3
-Jinggau
-JN-G7Lr
+chassis:Jinggau
+model:JN-G7Lr
 mul id:9503
 
 Config:Biped
@@ -8,6 +7,13 @@ techbase:Mixed (IS Chassis)
 era:3078
 source:Shrapnel #12 
 rules level:2
+role:Skirmisher
+
+
+
+quirk:low_profile
+quirk:weak_head_2
+
 
 mass:65
 engine:325 XL Engine(IS)

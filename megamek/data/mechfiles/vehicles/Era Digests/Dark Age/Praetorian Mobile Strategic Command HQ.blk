@@ -32,6 +32,10 @@ Praetorian Mobile Strategic Command HQ
 IS Level 3
 </type>
 
+<role>
+Scout
+</role>
+
 <motion_type>
 Tracked
 </motion_type>

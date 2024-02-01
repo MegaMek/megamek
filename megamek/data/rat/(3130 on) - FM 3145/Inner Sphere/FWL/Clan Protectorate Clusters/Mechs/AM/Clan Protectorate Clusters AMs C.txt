@@ -1,4 +1,4 @@
-Clan Protectorate Clusters Assault Mechs C
+Clan Protectorate Clusters Assault Mechs 3130 C
 Emperor EMP-6A,1
 Stalker STK-6M,2
 Longbow LGB-12C,3

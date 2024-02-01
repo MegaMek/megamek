@@ -1,13 +1,18 @@
-Version:1.1
-Sha Yu
-SYU-6B
+chassis:Sha Yu
+model:SYU-6B
 mul id:5670
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3070
 Rules Level:2
+role:Striker
 source:Record Sheets: 3067 Unabridged
+
+
+
+quirk:imp_com
+
 
 Mass:40
 Engine:280 XL Fusion Engine

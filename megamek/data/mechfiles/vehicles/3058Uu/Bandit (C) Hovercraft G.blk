@@ -32,15 +32,16 @@ G
 Clan Level 2
 </type>
 
+<role>
+Scout
+</role>
+
 <motion_type>
 Hover
 </motion_type>
 
 <transporters>
 troopspace:5.0
-</transporters>
-
-<transporters>
 BattleArmorHandles - troopers:-1
 </transporters>
 

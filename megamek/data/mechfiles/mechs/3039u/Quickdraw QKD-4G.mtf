@@ -1,6 +1,5 @@
-Version:1.0
-Quickdraw
-QKD-4G
+chassis:Quickdraw
+model:QKD-4G
 mul id:2610
 
 Config:Biped
@@ -8,6 +7,14 @@ TechBase:Inner Sphere
 Era:2779
 Source:TRO: 3039
 Rules Level:1
+role:Skirmisher
+
+
+
+
+quirk:hyper_actuator
+quirk:exp_actuator
+
 
 Mass:60
 Engine:300 Fusion Engine

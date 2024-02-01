@@ -1,6 +1,5 @@
-Version:1.0
-Commando
-COM-1B
+chassis:Commando
+model:COM-1B
 mul id:667
 
 Config:Biped
@@ -8,6 +7,11 @@ TechBase:Inner Sphere
 Era:3015
 Source:TRO: 3050
 Rules Level:1
+role:Striker
+
+quirk:low_profile
+quirk:exp_actuator
+
 
 Mass:25
 Engine:150 Fusion Engine(IS)

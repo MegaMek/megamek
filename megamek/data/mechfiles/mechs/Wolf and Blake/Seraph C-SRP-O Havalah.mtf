@@ -1,6 +1,5 @@
-Version:1.1
-Seraph
-C-SRP-O (Havalah)
+chassis:Seraph
+model:C-SRP-O (Havalah)
 mul id:2868
 
 Config:Biped Omnimech
@@ -8,6 +7,16 @@ TechBase:Inner Sphere
 Era:3071
 Source:Starterbook: Wolf & Blake
 Rules Level:3
+role:Juggernaut
+
+
+
+quirk:imp_com
+quirk:imp_sensors
+quirk:low_profile
+quirk:bad_rep_clan
+quirk:bad_rep_is
+
 
 Mass:85
 Engine:255 Light Engine(IS)

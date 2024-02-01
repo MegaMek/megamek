@@ -1,13 +1,21 @@
-Version:1.1
-Nightstar
-NSR-10D
+chassis:Nightstar
+model:NSR-10D
 mul id:7539
 
 Config:Biped
 techbase:Mixed (IS Chassis)
 era:3144
 rules level:4
+role:Sniper
 source:Rec Guide:ilClan #6
+
+
+
+quirk:command_mech
+quirk:good_rep_1
+quirk:variable_range_long
+quirk:difficult_maintain
+
 
 mass:95
 engine:285 XL Engine(IS)

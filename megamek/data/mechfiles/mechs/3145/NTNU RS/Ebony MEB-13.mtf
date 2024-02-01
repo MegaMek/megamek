@@ -1,6 +1,5 @@
-Version:1.1
-Ebony
-MEB-13
+chassis:Ebony
+model:MEB-13
 mul id:6943
 
 Config:Biped
@@ -8,6 +7,12 @@ TechBase:Inner Sphere
 Era:3137
 Source:Record Sheets: 3145 New Tech New Upgrades
 Rules Level:3
+role:Scout
+
+
+
+quirk:imp_target_med
+
 
 Mass:25
 Engine:225 XL Engine(IS)

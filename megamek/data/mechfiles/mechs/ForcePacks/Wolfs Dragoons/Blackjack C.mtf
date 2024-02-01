@@ -1,6 +1,5 @@
-Version:1.0
-Blackjack
-C
+chassis:Blackjack
+model:C
 mul id:8388
 
 Config:Biped
@@ -8,6 +7,7 @@ techbase:Clan
 era:3150
 source:ForcePack Wolfs Dragoons
 rules level:2
+role:Sniper
 
 mass:45
 engine:180 Fusion Engine(IS)

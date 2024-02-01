@@ -57,6 +57,10 @@ Environmental Sealing
 IS Level 2
 </type>
 
+<role>
+Brawler
+</role>
+
 <year>
 3076
 </year>
@@ -111,3 +115,10 @@ ARMOR:StarSlab/6
 COMMUNICATIONS:Johnston Q-Band
 TARGETING:Scantrex Dual Tac
 </systemManufacturers>
+
+<quirks>
+low_profile
+bad_rep_is
+poor_work
+</quirks>
+

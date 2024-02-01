@@ -1,6 +1,6 @@
-Version:1.0
-Black Hawk (Nova)
-K
+chassis:Black Hawk
+clanname:Nova
+model:K
 mul id:8167
 
 Config:Biped Omnimech
@@ -8,6 +8,11 @@ techbase:Clan
 era:3134
 source:Rec Guide:ilClan #14
 rules level:2
+role:Brawler
+
+quirk:combat_computer
+quirk:low_profile
+
 
 mass:50
 engine:250 XL (Clan) Engine(IS)

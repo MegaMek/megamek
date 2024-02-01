@@ -32,6 +32,10 @@ Bishop Transport VTOL
 IS Level 3
 </type>
 
+<role>
+Scout
+</role>
+
 <motion_type>
 VTOL
 </motion_type>
@@ -91,3 +95,9 @@ TRO: 3145 Mercenaries
 <tonnage>
 45.0
 </tonnage>
+
+<quirks>
+easy_pilot
+vtol_rotor_dual
+</quirks>
+

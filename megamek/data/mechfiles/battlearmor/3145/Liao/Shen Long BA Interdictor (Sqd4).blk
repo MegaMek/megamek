@@ -32,6 +32,10 @@ Shen Long Battle Armor
 IS Level 2
 </type>
 
+<role>
+Scout
+</role>
+
 <motion_type>
 Leg
 </motion_type>
@@ -114,3 +118,8 @@ JUMPJET:Unknown
 COMMUNICATIONS:Unknown
 TARGETING:Unknown
 </systemManufacturers>
+
+<weaponQuirks>
+mod_weapons:Squad:0:CLBAFlamer
+mod_weapons:Squad:1:CLBAFlamer
+</weaponQuirks>

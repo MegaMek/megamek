@@ -36,6 +36,10 @@ CSR-F100
 IS Level 2
 </type>
 
+<role>
+Fire Support
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -108,3 +112,9 @@ TRO: 3145 Free Worlds League
 <tonnage>
 35.0
 </tonnage>
+
+<quirks>
+easy_maintain
+atmo_instability
+</quirks>
+

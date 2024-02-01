@@ -1,6 +1,5 @@
-Version:1.0
-Scorpion
-SCP-1N
+chassis:Scorpion
+model:SCP-1N
 mul id:2837
 
 Config:Quad
@@ -8,6 +7,15 @@ TechBase:Inner Sphere
 Era:2570
 Source:TRO: 3039
 Rules Level:1
+role:Skirmisher
+
+
+
+
+quirk:bad_rep_clan
+quirk:bad_rep_is
+quirk:hard_pilot
+
 
 Mass:55
 Engine:330 Fusion Engine

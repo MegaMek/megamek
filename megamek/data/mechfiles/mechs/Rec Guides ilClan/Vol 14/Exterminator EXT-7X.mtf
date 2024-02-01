@@ -1,6 +1,5 @@
-Version:1.0
-Exterminator
-EXT-7X
+chassis:Exterminator
+model:EXT-7X
 mul id:8161
 
 Config:Biped
@@ -8,6 +7,12 @@ techbase:Inner Sphere
 era:3148
 source:Rec Guide:ilClan #14
 rules level:2
+role:Skirmisher
+
+
+
+quirk:difficult_maintain
+
 
 mass:65
 engine:325 XXL Engine(IS)

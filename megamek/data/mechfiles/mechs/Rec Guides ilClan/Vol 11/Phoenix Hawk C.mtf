@@ -1,12 +1,12 @@
-Version:1.0
-Phoenix Hawk
-C
+chassis:Phoenix Hawk
+model:C
 mul id:7752
 
 Config:Biped
 techbase:Clan
 era:2831
 rules level:2
+role:Striker
 source:Rec Guide:ilClan #11
 
 mass:45

@@ -36,6 +36,10 @@ Y-2
 IS Level 3
 </type>
 
+<role>
+Attack Fighter
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -116,3 +120,8 @@ TRO: 3145 Capellan Confederation
 <tonnage>
 40.0
 </tonnage>
+
+<quirks>
+easy_pilot
+</quirks>
+

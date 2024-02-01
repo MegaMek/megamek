@@ -32,6 +32,10 @@ Savior Repair Vehicle
 IS Level 3
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -94,3 +98,8 @@ TRO: 3145 Mercenaries
 <tonnage>
 60.0
 </tonnage>
+
+<quirks>
+easy_maintain
+</quirks>
+

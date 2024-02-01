@@ -1,6 +1,5 @@
-Version:1.1
-Deva
-C-DVA-OU Exanimus
+chassis:Deva
+model:C-DVA-OU Exanimus
 mul id:892
 
 Config:Biped Omnimech
@@ -8,6 +7,15 @@ TechBase:Inner Sphere
 Era:3077
 source:TRO: 3085
 Rules Level:4
+role:Brawler
+
+
+
+quirk:imp_com
+quirk:imp_sensors
+quirk:bad_rep_clan
+quirk:bad_rep_is
+
 
 Mass:70
 Engine:280 Light Engine(IS)

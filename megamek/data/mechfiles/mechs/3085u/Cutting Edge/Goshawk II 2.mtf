@@ -1,6 +1,5 @@
-Version:1.0
-Goshawk II
-2
+chassis:Goshawk II
+model:2
 mul id:1247
 
 Config:Biped
@@ -8,6 +7,11 @@ TechBase:Clan
 Era:3086
 source:TRO: 3085
 Rules Level:3
+role:Striker
+
+quirk:imp_life_support
+quirk:nimble_jumper
+
 
 Mass:45
 Engine:315 XL (Clan) Engine

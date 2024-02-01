@@ -1,6 +1,5 @@
-Version:1.0
-Salamander
-PPR-7S
+chassis:Salamander
+model:PPR-7S
 mul id:2786
 
 Config:Biped
@@ -8,6 +7,12 @@ TechBase:Inner Sphere
 Era:3064
 Source:TRO: 3055
 Rules Level:2
+role:Missile Boat
+
+
+
+quirk:difficult_maintain
+
 
 Mass:80
 Engine:320 Light Engine(IS)

@@ -32,6 +32,10 @@ Garrot Superheavy Transport
 IS Level 2
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 VTOL
 </motion_type>
@@ -96,3 +100,8 @@ TRO: 3145 Mercenaries
 <tonnage>
 30.0
 </tonnage>
+
+<quirks>
+easy_maintain
+</quirks>
+

@@ -1,6 +1,5 @@
-Version:1.1
-Patron MilitiaMech
-PTN-2M
+chassis:Patron MilitiaMech
+model:PTN-2M
 mul id:4795
 
 Config:Biped
@@ -8,6 +7,16 @@ TechBase:Inner Sphere
 Era:3083
 Source:TRO: Prototypes
 Rules Level:3
+role:Ambusher
+
+
+
+quirk:pro_actuator
+weaponquirk:ammo_feed_problems:RA:4:Light Machine Gun
+weaponquirk:ammo_feed_problems:RA:5:Light Machine Gun
+weaponquirk:ammo_feed_problems:LA:4:Light Machine Gun
+weaponquirk:ammo_feed_problems:LA:5:Light Machine Gun
+
 
 Mass:15
 Engine:30 Fuel Cell Engine(IS)

@@ -1,6 +1,5 @@
-Version:1.0
-Fennec
-FEC-1CM
+chassis:Fennec
+model:FEC-1CM
 mul id:1036
 
 Config:Biped
@@ -8,6 +7,13 @@ TechBase:Inner Sphere
 Era:3080
 source:TRO: 3085
 Rules Level:2
+role:Skirmisher
+
+
+
+
+quirk:no_arms
+
 
 Mass:55
 Engine:330 XL Engine(IS)

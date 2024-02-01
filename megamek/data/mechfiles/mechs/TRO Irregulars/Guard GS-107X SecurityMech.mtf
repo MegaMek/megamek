@@ -1,6 +1,5 @@
-Version:1.0
-Guard SecurityMech
-GS-107X 
+chassis:Guard SecurityMech
+model:GS-107X 
 mul id:7823
 
 Config:Quad
@@ -8,6 +7,7 @@ techbase:Inner Sphere
 era:3068
 source:TRO: Irregulars
 rules level:2
+role:Ambusher
 
 mass:15
 engine:60 Fusion Engine(IS)

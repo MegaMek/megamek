@@ -1,6 +1,5 @@
-Version:1.2
-Cadaver
-CVR-A1
+chassis:Cadaver
+model:CVR-A1
 mul id:6550
 
 Config:Biped
@@ -8,6 +7,14 @@ TechBase:Inner Sphere
 Era:3094
 Source:TRO: 3145 Mercenaries
 Rules Level:3
+role:Striker
+
+
+
+
+quirk:pro_actuator
+quirk:unbalanced
+
 
 Mass:30
 Engine:240 XL Engine(IS)

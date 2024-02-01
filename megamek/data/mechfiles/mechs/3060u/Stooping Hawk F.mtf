@@ -1,6 +1,5 @@
-Version:1.0
-Stooping Hawk
-F
+chassis:Stooping Hawk
+model:F
 mul id:3081
 
 Config:Biped Omnimech
@@ -8,6 +7,10 @@ TechBase:Clan
 Era:3072
 Source:TRO: 3060
 Rules Level:2
+role:Striker
+
+quirk:rugged_2
+
 
 Mass:55
 Engine:275 Fusion (Clan) Engine(IS)

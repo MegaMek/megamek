@@ -1,6 +1,5 @@
-Version:1.0
-Annihilator
-ANH-1A
+chassis:Annihilator
+model:ANH-1A
 mul id:3700
 
 Config:Biped
@@ -8,6 +7,12 @@ TechBase:Inner Sphere
 Era:3009
 Source:TRO: 3050
 Rules Level:1
+role:Juggernaut
+
+
+
+quirk:easy_maintain
+
 
 Mass:100
 Engine:200 Fusion Engine

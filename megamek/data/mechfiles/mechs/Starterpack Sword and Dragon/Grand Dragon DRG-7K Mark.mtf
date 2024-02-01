@@ -1,6 +1,5 @@
-Version:1.0
-Grand Dragon
-DRG-7K (Mark)
+chassis:Grand Dragon
+model:DRG-7K (Mark)
 mul id:1261
 
 Config:Biped
@@ -8,6 +7,14 @@ techbase:Inner Sphere
 era:3067
 source:Starterbook: Sword and Dragon
 rules level:2
+role:Sniper
+
+
+
+quirk:ext_twist
+quirk:low_profile
+quirk:stable
+
 
 mass:60
 engine:300 Light Engine(IS)

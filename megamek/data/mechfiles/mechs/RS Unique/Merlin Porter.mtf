@@ -1,6 +1,5 @@
-Version:1.1
-Merlin
-MLN-1B (Porter)
+chassis:Merlin
+model:MLN-1B (Porter)
 mul id:2179
 source:Record Sheets: Unique Mechs 
 
@@ -8,6 +7,11 @@ Config:Biped
 TechBase:Inner Sphere
 Era:3064
 Rules Level:1
+role:Skirmisher
+
+quirk:easy_maintain
+quirk:rugged_1
+
 
 Mass:60
 Engine:240 Fusion Engine

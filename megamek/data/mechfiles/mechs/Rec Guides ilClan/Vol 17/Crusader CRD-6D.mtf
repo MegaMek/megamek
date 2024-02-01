@@ -1,6 +1,5 @@
-Version:1.0
-Crusader
-CRD-6D
+chassis:Crusader
+model:CRD-6D
 mul id:8224
 
 Config:Biped
@@ -8,6 +7,15 @@ techbase:Inner Sphere
 era:3054
 source:Rec Guide:ilClan #17
 rules level:2
+role:Skirmisher
+
+
+
+quirk:easy_maintain
+quirk:rugged_1
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+
 
 mass:65
 engine:325 XL Engine(IS)

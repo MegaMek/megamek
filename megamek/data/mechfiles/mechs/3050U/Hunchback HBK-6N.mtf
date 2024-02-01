@@ -1,6 +1,5 @@
-Version:1.1
-Hunchback
-HBK-6N
+chassis:Hunchback
+model:HBK-6N
 mul id:4337
 
 Config:Biped
@@ -8,6 +7,13 @@ TechBase:Inner Sphere
 Era:3059
 Source:TRO: 3050
 Rules Level:2
+role:Juggernaut
+
+
+
+quirk:battle_fists_la
+quirk:battle_fists_ra
+
 
 Mass:50
 Engine:200 Fusion Engine

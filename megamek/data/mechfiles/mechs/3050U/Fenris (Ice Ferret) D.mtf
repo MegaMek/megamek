@@ -1,6 +1,6 @@
-Version:1.2
-Fenris (Ice Ferret)
-D
+chassis:Fenris
+clanname:Ice Ferret
+model:D
 mul id:1049
 
 Config:Biped Omnimech
@@ -8,6 +8,10 @@ TechBase:Clan
 Era:2948
 source:TRO: Clan Invasion
 Rules Level:2
+role:Striker
+
+quirk:imp_sensors
+
 
 Mass:45
 Engine:360 XL (Clan) Engine(IS)

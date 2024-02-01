@@ -1,13 +1,19 @@
-Version:1.0
-Imp
-IMP-1C
+chassis:Imp
+model:IMP-1C
 mul id:1609
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2825
 Rules Level:2
+role:Juggernaut
 source:Historical: Operation Klondike
+
+
+
+quirk:command_mech
+quirk:difficult_maintain
+
 
 Mass:100
 Engine:300 Fusion Engine

@@ -1,6 +1,5 @@
-Version:1.0
-Osprey
-OSP-25
+chassis:Osprey
+model:OSP-25
 mul id:2345
 
 Config:Biped
@@ -8,6 +7,13 @@ TechBase:Inner Sphere
 Era:3074
 source:TRO: 3085
 Rules Level:2
+role:Sniper
+
+
+
+quirk:no_arms
+weaponquirk:direct_torso_mount:RT:4:ISGaussRifle
+
 
 Mass:55
 Engine:220 XL Engine

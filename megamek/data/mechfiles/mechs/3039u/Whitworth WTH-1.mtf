@@ -1,6 +1,5 @@
-Version:1.0
-Whitworth
-WTH-1
+chassis:Whitworth
+model:WTH-1
 mul id:3538
 
 Config:Biped
@@ -8,6 +7,13 @@ TechBase:Inner Sphere
 Era:2689
 Source:TRO: 3039
 Rules Level:1
+role:Missile Boat
+
+
+
+quirk:rugged_1
+quirk:weak_legs
+
 
 Mass:40
 Engine:160 Fusion Engine

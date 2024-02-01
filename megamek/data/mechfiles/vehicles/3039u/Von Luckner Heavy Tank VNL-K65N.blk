@@ -36,6 +36,10 @@ VNL-K65N
 IS Level 1
 </type>
 
+<role>
+Juggernaut
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -129,4 +133,9 @@ TRO: 3039
 <tonnage>
 75.0
 </tonnage>
+
+
+<quirks>
+difficult_maintain
+</quirks>
 

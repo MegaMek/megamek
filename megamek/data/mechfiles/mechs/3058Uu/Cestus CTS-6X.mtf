@@ -1,12 +1,12 @@
-Version:1.3
-Cestus
-CTS-6X
+chassis:Cestus
+model:CTS-6X
 mul id:532
 Config:Biped
 techbase:Inner Sphere
 era:2609
 source:TRO: 3058
 rules level:2
+role:Brawler
 
 mass:65
 engine:260 XL Engine(IS)

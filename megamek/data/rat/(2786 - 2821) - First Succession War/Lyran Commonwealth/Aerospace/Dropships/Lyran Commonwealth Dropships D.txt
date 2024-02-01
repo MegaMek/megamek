@@ -1,6 +1,6 @@
 Lyran Commonwealth Dropships D
 Lion (2595),1
-Dictator (Standard),2
+Dictator,2
 Leopard (2537),3
 Fortress (2613),4
 Leopard CV (2581),5

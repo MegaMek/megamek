@@ -1,6 +1,5 @@
-Version:1.1
-Sling
-SL-1G
+chassis:Sling
+model:SL-1G
 mul id:2967
 source:Historical: Operation Klondike
 
@@ -8,6 +7,13 @@ Config:Biped
 TechBase:Inner Sphere
 Era:2766
 Rules Level:2
+role:Missile Boat
+
+
+
+
+quirk:cramped_cockpit
+
 
 Mass:25
 Engine:175 XL Engine

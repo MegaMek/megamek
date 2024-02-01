@@ -1,6 +1,5 @@
-Version:1.0
-Snake
-(Arthur)
+chassis:Snake
+model:(Arthur)
 mul id:6982
 
 Config:Biped
@@ -8,6 +7,13 @@ TechBase:Inner Sphere
 Era:3068
 Source:BattleTech Dossiers: Youling Zhanshi
 Rules Level:2
+role:Striker
+
+
+
+quirk:imp_target_short
+quirk:pro_actuator
+
 
 Mass:45
 Engine:225 XL Engine(IS)

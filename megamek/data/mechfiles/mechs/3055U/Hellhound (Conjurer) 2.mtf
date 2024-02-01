@@ -1,6 +1,6 @@
-Version:1.0
-Hellhound (Conjurer)
-2
+chassis:Hellhound
+clanname:Conjurer
+model:2
 mul id:1474
 
 Config:Biped
@@ -8,6 +8,10 @@ TechBase:Clan
 Era:3062
 Source:TRO: 3055
 Rules Level:2
+role:Skirmisher
+
+quirk:ext_twist
+
 
 Mass:50
 Engine:350 XL (Clan) Engine

@@ -36,6 +36,10 @@ Saroyan Jump Bomber
 IS Level 3
 </type>
 
+<role>
+Fast Dogfighter
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -117,4 +121,9 @@ TRO: 3145 Capellan Confederation
 <tonnage>
 25.0
 </tonnage>
+
+
+<quirks>
+poor_work
+</quirks>
 

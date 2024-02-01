@@ -36,6 +36,10 @@ ZRO-CX-3
 IS Level 4
 </type>
 
+<role>
+Fire Support
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -137,4 +141,11 @@ TARGETING:PS/1/12
 </systemManufacturers>
 
 
+
+
+<quirks>
+prototype
+atmo_flyer
+fragile_fuel
+</quirks>
 

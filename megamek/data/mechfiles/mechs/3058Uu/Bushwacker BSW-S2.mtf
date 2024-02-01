@@ -1,6 +1,5 @@
-Version:1.0
-Bushwacker
-BSW-S2
+chassis:Bushwacker
+model:BSW-S2
 mul id:448
 
 Config:Biped
@@ -8,6 +7,13 @@ TechBase:Inner Sphere
 Era:3056
 Source:TRO: 3058
 Rules Level:2
+role:Sniper
+
+
+
+quirk:low_profile
+weaponquirk:stable_weapon:CT:10:ISERLargeLaser
+
 
 Mass:55
 Engine:275 XL Engine

@@ -16,6 +16,7 @@ package megamek.common.verifier;
 
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
+import megamek.common.equipment.ArmorType;
 import megamek.common.util.StringUtil;
 import megamek.common.weapons.flamers.VehicleFlamerWeapon;
 import megamek.common.weapons.infantry.InfantryWeapon;
@@ -579,8 +580,7 @@ public class TestSupportVehicle extends TestEntity {
             return EquipmentType.getSupportVehicleArmorWeightPerPoint(vee.getBARRating(vee.firstArmorIndex()),
                     vee.getArmorTechRating());
         } else {
-            final double ppt = 16.0 * EquipmentType.getArmorPointMultiplier(
-                    at, vee.getArmorTechLevel(vee.firstArmorIndex()));
+            final double ppt = ArmorType.forEntity(vee).getPointsPerTon(vee);
             return round(1.0 / ppt, Ceil.KILO);
         }
     }
@@ -1370,24 +1370,23 @@ public class TestSupportVehicle extends TestEntity {
                 // Support vehicle armor takes slots like ferro-fibrous at BAR 10/TL E/F
                 if (supportVee.getBARRating(supportVee.firstArmorIndex()) == 10) {
                     if (supportVee.getArmorTechRating() == ITechnology.RATING_E) {
-                        armorSlots += AdvancedSVArmor.FERRO_FIBROUS.space;
+                        armorSlots += ArmorType.of(EquipmentType.T_ARMOR_FERRO_FIBROUS, false).getSupportVeeSlots(supportVee);
                     } else if (supportVee.getArmorTechRating() == ITechnology.RATING_F) {
-                        armorSlots += AdvancedSVArmor.CLAN_FERRO_FIBROUS.space;
+                        armorSlots += ArmorType.of(EquipmentType.T_ARMOR_FERRO_FIBROUS, true).getSupportVeeSlots(supportVee);
                     }
                 }
             } else {
-                AdvancedSVArmor armor = AdvancedSVArmor.getArmor(at,
-                        TechConstants.isClan(supportVee.getArmorTechLevel(supportVee.firstArmorIndex())));
+                ArmorType armor = ArmorType.of(at, TechConstants.isClan(supportVee.getArmorTechLevel(supportVee.firstArmorIndex())));
                 if (null != armor) {
-                    armorSlots += armor.space;
+                    armorSlots += armor.getSupportVeeSlots(supportVee);
                 }
             }
         } else {
             for (int loc = 0; loc < supportVee.locations(); loc++) {
-                AdvancedSVArmor armor = AdvancedSVArmor.getArmor(supportVee.getArmorType(loc),
+                ArmorType armor = ArmorType.of(supportVee.getArmorType(loc),
                         TechConstants.isClan(supportVee.getArmorTechLevel(loc)));
                 if (null != armor) {
-                    armorSlots += armor.patchworkSpace;
+                    armorSlots += armor.getPatchworkSlotsMechSV();
                 }
             }
         }
@@ -1461,17 +1460,17 @@ public class TestSupportVehicle extends TestEntity {
                 // Support vehicle armor takes slots like ferro-fibrous at BAR 10/TL E/F
                 if (supportVee.getBARRating(supportVee.firstArmorIndex()) == 10) {
                     if (supportVee.getArmorTechRating() == ITechnology.RATING_E) {
-                        return AdvancedSVArmor.FERRO_FIBROUS.space;
+                        return ArmorType.of(EquipmentType.T_ARMOR_FERRO_FIBROUS, false).getSupportVeeSlots(supportVee);
                     } else if (supportVee.getArmorTechRating() == ITechnology.RATING_F) {
-                        return AdvancedSVArmor.CLAN_FERRO_FIBROUS.space;
+                        return ArmorType.of(EquipmentType.T_ARMOR_FERRO_FIBROUS, true).getSupportVeeSlots(supportVee);
                     }
                 }
                 return 0;
             } else {
-                AdvancedSVArmor armor = AdvancedSVArmor.getArmor(at,
+                ArmorType armor = ArmorType.of(at,
                         TechConstants.isClan(supportVee.getArmorTechLevel(supportVee.firstArmorIndex())));
                 if (null != armor) {
-                    return armor.space;
+                    return armor.getSupportVeeSlots(supportVee);
                 } else {
                     return 0;
                 }
@@ -1479,10 +1478,10 @@ public class TestSupportVehicle extends TestEntity {
         } else {
             int space = 0;
             for (int loc = 0; loc < supportVee.locations(); loc++) {
-                AdvancedSVArmor armor = AdvancedSVArmor.getArmor(supportVee.getArmorType(loc),
+                ArmorType armor = ArmorType.of(supportVee.getArmorType(loc),
                         TechConstants.isClan(supportVee.getArmorTechLevel(loc)));
                 if (null != armor) {
-                    space += armor.patchworkSpace;
+                    space += armor.getPatchworkSlotsMechSV();
                 }
             }
             return space;
@@ -1619,77 +1618,5 @@ public class TestSupportVehicle extends TestEntity {
             }
         }
         return slots;
-    }
-
-    public enum AdvancedSVArmor {
-        CLAN_FERRO_FIBROUS(EquipmentType.T_ARMOR_FERRO_FIBROUS, 1, 1, true),
-        CLAN_FERRO_ALUM(EquipmentType.T_ARMOR_ALUM, 1, 1, true),
-        FERRO_LAMELLOR(EquipmentType.T_ARMOR_FERRO_LAMELLOR, 2, 1, true),
-        CLAN_REACTIVE(EquipmentType.T_ARMOR_REACTIVE, 1, 1, true),
-        CLAN_REFLECTIVE(EquipmentType.T_ARMOR_REFLECTIVE, 1, 1, true),
-        ANTI_PENETRATIVE_ABLATION(
-                EquipmentType.T_ARMOR_ANTI_PENETRATIVE_ABLATION, 1, 1, false),
-        BALLISTIC_REINFORCED(
-                EquipmentType.T_ARMOR_BALLISTIC_REINFORCED, 2, 1, false),
-        FERRO_FIBROUS(EquipmentType.T_ARMOR_ALUM, 2, 1, false),
-        FERRO_ALUM(EquipmentType.T_ARMOR_ALUM, 2, 1, false),
-        FERRO_FIBROUS_PROTO(EquipmentType.T_ARMOR_FERRO_FIBROUS_PROTO, 3, 1, false),
-        FERRO__ALUM_PROTO(EquipmentType.T_ARMOR_FERRO_ALUM_PROTO, 3, 1, false),
-        HEAVY_FERRO_FIBROUS(EquipmentType.T_ARMOR_HEAVY_FERRO, 4, 2, false),
-        LIGHT_FERRO_FIBROUS(EquipmentType.T_ARMOR_LIGHT_FERRO, 1, 1, false),
-        HEAVY_FERRO_ALUM(EquipmentType.T_ARMOR_HEAVY_ALUM, 4, 2, false),
-        LIGHT_FERRO_ALUM(EquipmentType.T_ARMOR_LIGHT_ALUM, 1, 1, false),
-        PRIMITIVE(EquipmentType.T_ARMOR_PRIMITIVE_FIGHTER, 0, 0, false),
-        REACTIVE(EquipmentType.T_ARMOR_REACTIVE, 3, 1, false),
-        REFLECTIVE(EquipmentType.T_ARMOR_REFLECTIVE, 2, 1, false),
-        STEALTH_VEHICLE(EquipmentType.T_ARMOR_STEALTH_VEHICLE, 2, 1, false);
-
-        public final int armorType;
-        /**
-         * The type, corresponding to types defined in
-         * <code>EquipmentType</code>.
-         */
-        public final EquipmentType eqType;
-
-        /**
-         * The number of spaces occupied by the armor type.
-         */
-        public final int space;
-
-        /**
-         * The number of weapon spaces occupied by patchwork armor.
-         */
-        public final int patchworkSpace;
-
-        /**
-         * Denotes whether this armor is Clan or not.
-         */
-        public final boolean isClan;
-
-        AdvancedSVArmor(int at, int space, int patchworkSpace, boolean clan) {
-            this.armorType = at;
-            eqType = EquipmentType.get(EquipmentType.getArmorTypeName(at, clan));
-            this.space = space;
-            this.patchworkSpace = patchworkSpace;
-            isClan = clan;
-        }
-
-        /**
-         * Given an armor type, return the <code>AdvancedSVArmor</code> instance that
-         * represents that type.
-         *
-         * @param at The armor type.
-         * @param c  Whether this armor type is Clan or not.
-         * @return   The <code>AdvancedSVArmor</code> that correspondes to the given
-         *              type or null if no match was found.
-         */
-        public static @Nullable AdvancedSVArmor getArmor(int at, boolean c) {
-            for (AdvancedSVArmor a : values()) {
-                if ((a.armorType == at) && (a.isClan == c)) {
-                    return a;
-                }
-            }
-            return null;
-        }
     }
 }

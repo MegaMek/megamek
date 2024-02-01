@@ -13,6 +13,7 @@ package megamek.common;
 
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.common.cost.JumpShipCostCalculator;
+import megamek.common.equipment.ArmorType;
 import megamek.common.options.OptionsConstants;
 
 import java.util.ArrayList;
@@ -1144,26 +1145,9 @@ public class Jumpship extends Aero {
             armorPoints -= Math.round(get0SI() / 10.0) * locCount;
         } else {
             armorPoints -= Math.floor(Math.round(get0SI() / 10.0) * locCount * 0.66);
-            armorPoints = Math.ceil(armorPoints / 0.66);
         }
 
-        // now I need to determine base armor points by type and weight
-        boolean clan = TechConstants.isClan(getArmorTechLevel(firstArmorIndex()));
-        double baseArmor = clan ? 1.0 : 0.8;
-
-        if (weight >= 250000) {
-            baseArmor = clan ? 0.5 : 0.4;
-        } else if (weight >= 150000) {
-            baseArmor = clan ? 0.7 : 0.6;
-        }
-
-        if (armorType[0] == EquipmentType.T_ARMOR_LC_FERRO_IMP) {
-            baseArmor += 0.2;
-        } else if (armorType[0] == EquipmentType.T_ARMOR_LC_FERRO_CARBIDE) {
-            baseArmor += 0.4;
-        } else if (armorType[0] == EquipmentType.T_ARMOR_LC_LAMELLOR_FERRO_CARBIDE) {
-            baseArmor += 0.6;
-        }
+        double baseArmor = ArmorType.forEntity(this).getPointsPerTon(this);
 
         return RoundWeight.standard(armorPoints / baseArmor, this);
     }

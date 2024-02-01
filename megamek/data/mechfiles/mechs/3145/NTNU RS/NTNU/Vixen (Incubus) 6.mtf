@@ -1,5 +1,6 @@
 generator:MegaMek Suite 0.49.16-SNAPSHOT on 2023-12-29
-chassis:Vixen (Incubus)
+chassis:Vixen
+clanname:Incubus
 model:6
 mul id:8008
 Config:Biped

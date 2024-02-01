@@ -20,6 +20,7 @@ package megamek.common.cost;
 
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.common.*;
+import megamek.common.equipment.ArmorType;
 import megamek.common.verifier.SupportVeeStructure;
 import megamek.common.verifier.TestEntity;
 
@@ -114,13 +115,11 @@ public class CombatVehicleCostCalculator {
         } else {
             if (tank.hasPatchworkArmor()) {
                 for (int loc = 0; loc < tank.locations(); loc++) {
-                    costs[i++] = tank.getArmorWeight(loc)
-                            * EquipmentType.getArmorCost(tank.getArmorType(loc));
+                    costs[i++] = tank.getArmorWeight(loc) * ArmorType.forEntity(tank, loc).getCost();
                 }
 
             } else {
-                costs[i++] = tank.getArmorWeight()
-                        * EquipmentType.getArmorCost(tank.getArmorType(0));
+                costs[i++] = tank.getArmorWeight() * ArmorType.forEntity(tank).getCost();
             }
         }
 

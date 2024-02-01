@@ -10538,7 +10538,7 @@ public class GameManager implements IGameManager {
                                     && (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_HEAT_DISSIPATING)) {
                                 heatDamage += 1;
                                 heatReduced = true;
-                                reductionCause = ArmorType.forEntity(te, hit.getLocation()).getName());
+                                reductionCause = ArmorType.forEntity(te, hit.getLocation()).getName();
                             } else {
                                 heatDamage += 2;
                             }

@@ -103,14 +103,6 @@ public class EquipmentType implements ITechnology {
     public static final double[] structureCosts = { 400, 300, 1600, 4800, 6400,
             1600, 3200 };
 
-    // Assume for now that prototype is not more expensive
-    public static final double[] armorCosts = {
-            10000, 20000, 30000, 30000, 15000, 15000, 25000, /* patchwork */0, 50000, 60000,
-            3000, 75000, 100000, 50000, 5000, 10000, 35000, 5000, 10000, 20000,
-            25000, 15000, 50000, 15000, 25000, 20000, 25000, 60000, 10000, 10000,
-            12500, 12000, 15000, 20000, 50000, 10000, 15000, 37000, 37000, 5000,
-            5000, 10000};
-
     protected String name = null;
 
     // Short name for RS Printing
@@ -1106,13 +1098,6 @@ public class EquipmentType implements ITechnology {
     @Override
     public int getReintroductionDate(boolean clan, int faction) {
         return techAdvancement.getReintroductionDate(clan, faction);
-    }
-
-    public static double getArmorCost(int inArmor) {
-        if ((inArmor < 0) || (inArmor >= armorCosts.length)) {
-            return -1;
-        }
-        return armorCosts[inArmor];
     }
 
     public static double getStructureCost(int inStructure) {

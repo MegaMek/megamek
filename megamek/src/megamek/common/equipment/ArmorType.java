@@ -161,6 +161,13 @@ public class ArmorType extends MiscType {
     }
 
     /**
+     * @return The cost of this armor per ton, or per point for BA and protomech armor.
+     */
+    public double getCost() {
+        return cost;
+    }
+
+    /**
      * @return The EquipmentType.T_ARMOR_* constant for this armor.
      */
     public int getArmorType() {

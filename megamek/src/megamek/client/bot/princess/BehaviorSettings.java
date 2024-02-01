@@ -49,16 +49,16 @@ public class BehaviorSettings implements Serializable {
             30};
     static final int[] FALL_SHAME_VALUES = {
             10,
-            20,
             40,
-            60,
             80,
             100,
-            120,
-            140,
             160,
-            180,
-            200};
+            500,
+            500,
+            500,
+            500,
+            500,
+            500};
     protected static final double[] BRAVERY = {
             0.1,
             0.3,

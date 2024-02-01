@@ -1683,7 +1683,7 @@ public class Compute {
         return (target != null)
                 && entity.hasBAP()
                 && (entity.getBAPRange() >= Compute.effectiveDistance(game, entity, target))
-                && !ComputeECM.isAffectedByECM(entity, entity.getPosition(), entity.getPosition());
+                && !ComputeECM.isAffectedByECM(entity, entity.getPosition(), target.getPosition());
     }
 
     /**

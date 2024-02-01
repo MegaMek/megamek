@@ -242,7 +242,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         return toHit(game, getEntityId(), game.getTarget(getTargetType(), getTargetId()),
                 getWeaponId(), getAimedLocation(), getAimingMode(), nemesisConfused, swarmingMissiles,
                 game.getTarget(getOldTargetType(), getOldTargetId()),
-                game.getTarget(getOriginalTargetType(), getOriginalTargetId()), isStrafing(), isPointblankShot());
+                game.getTarget(getOriginalTargetType(), getOriginalTargetId()), isStrafing(), isPointblankShot(),
+                this.ammoId);
     }
 
     /**
@@ -255,7 +256,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         return toHit(game, getEntityId(), game.getTarget(getTargetType(), getTargetId()),
                 getWeaponId(), getAimedLocation(), getAimingMode(), nemesisConfused, swarmingMissiles,
                 game.getTarget(getOldTargetType(), getOldTargetId()),
-                game.getTarget(getOriginalTargetType(), getOriginalTargetId()), isStrafing(), isPointblankShot(), evenIfAlreadyFired);
+                game.getTarget(getOriginalTargetType(), getOriginalTargetId()), isStrafing(), isPointblankShot(), evenIfAlreadyFired, this.ammoId);
     }
 
     public ToHitData toHit(Game game, List<ECMInfo> allECMInfo) {
@@ -263,34 +264,38 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 getWeaponId(), getAimedLocation(), getAimingMode(), nemesisConfused, swarmingMissiles,
                 game.getTarget(getOldTargetType(), getOldTargetId()),
                 game.getTarget(getOriginalTargetType(), getOriginalTargetId()), isStrafing(), isPointblankShot(),
-                allECMInfo, false);
+                allECMInfo, false, this.ammoId);
     }
 
     public static ToHitData toHit(Game game, int attackerId, Targetable target, int weaponId, boolean isStrafing) {
+        // Use -1 as ammoId because this method should always use the currently linked ammo for display calcs
         return toHit(game, attackerId, target, weaponId, Entity.LOC_NONE, AimingMode.NONE,
-                false, false, null, null, isStrafing, false);
+                false, false, null, null, isStrafing, false, -1);
     }
 
     public static ToHitData toHit(Game game, int attackerId, Targetable target, int weaponId,
                                   int aimingAt, AimingMode aimingMode, boolean isStrafing) {
+        // Use -1 as ammoId because this method should always use the currently linked ammo for display calcs
         return toHit(game, attackerId, target, weaponId, aimingAt, aimingMode, false,
-                false, null, null, isStrafing, false);
+                false, null, null, isStrafing, false, -1);
     }
 
     public static ToHitData toHit(Game game, int attackerId, Targetable target, int weaponId,
                                   int aimingAt, AimingMode aimingMode, boolean isNemesisConfused,
                                   boolean exchangeSwarmTarget, Targetable oldTarget,
-                                  Targetable originalTarget, boolean isStrafing, boolean isPointblankShot) {
+                                  Targetable originalTarget, boolean isStrafing, boolean isPointblankShot,
+                                  int ammoId) {
         return toHitCalc(game, attackerId, target, weaponId, aimingAt, aimingMode, isNemesisConfused,
-                exchangeSwarmTarget, oldTarget, originalTarget, isStrafing, isPointblankShot, null, false);
+                exchangeSwarmTarget, oldTarget, originalTarget, isStrafing, isPointblankShot, null, false, ammoId);
     }
 
     public static ToHitData toHit(Game game, int attackerId, Targetable target, int weaponId,
                                   int aimingAt, AimingMode aimingMode, boolean isNemesisConfused,
                                   boolean exchangeSwarmTarget, Targetable oldTarget,
-                                  Targetable originalTarget, boolean isStrafing, boolean isPointblankShot, boolean evenIfAlreadyFired) {
+                                  Targetable originalTarget, boolean isStrafing, boolean isPointblankShot, boolean evenIfAlreadyFired,
+                                  int ammoId) {
         return toHitCalc(game, attackerId, target, weaponId, aimingAt, aimingMode, isNemesisConfused,
-                exchangeSwarmTarget, oldTarget, originalTarget, isStrafing, isPointblankShot, null, evenIfAlreadyFired);
+                exchangeSwarmTarget, oldTarget, originalTarget, isStrafing, isPointblankShot, null, evenIfAlreadyFired, ammoId);
     }
 
     /**
@@ -300,9 +305,11 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                                    int aimingAt, AimingMode aimingMode, boolean isNemesisConfused,
                                    boolean exchangeSwarmTarget, Targetable oldTarget,
                                    Targetable originalTarget, boolean isStrafing,
-                                   boolean isPointblankShot, List<ECMInfo> allECMInfo, boolean evenIfAlreadyFired) {
+                                   boolean isPointblankShot, List<ECMInfo> allECMInfo, boolean evenIfAlreadyFired,
+                                   int ammoId) {
         final Entity ae = game.getEntity(attackerId);
         final Mounted weapon = ae.getEquipment(weaponId);
+        final Mounted linkedAmmo = (ammoId == -1) ? weapon.getLinked() : ae.getEquipment(ammoId);
 
         final EquipmentType type = weapon.getType();
 
@@ -346,7 +353,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
 
         final boolean usesAmmo = (wtype.getAmmoType() != AmmoType.T_NA) && !isWeaponInfantry;
 
-        final Mounted ammo = usesAmmo ? weapon.getLinked() : null;
+        final Mounted ammo = usesAmmo ? linkedAmmo : null;
 
         final AmmoType atype = ammo == null ? null : (AmmoType) ammo.getType();
 
@@ -5333,6 +5340,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         final String buffer = toHit.getValueAsString() + ((!table.isEmpty()) ? ' '+table : "");
         final Entity entity = game.getEntity(this.getEntityId());
         final String weaponName =  ((WeaponType) entity.getEquipment(this.getWeaponId()).getType()).getName();
-        return weaponName + Messages.getString("BoardView1.needs") + buffer;
+        final String ammoName = ((AmmoType) entity.getEquipment(this.getWeaponId()).getLinked().getType()).getName();
+        return weaponName + " [" + ammoName + "] " + Messages.getString("BoardView1.needs") + buffer;
     }
 }

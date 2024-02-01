@@ -555,6 +555,9 @@ public class WeaponFireInfo {
             setAction(buildBombAttackAction(bombPayloads));
         }
 
+        // Set ammoId here so we can tell toHitCalc which ammo to use for calculations; later overwritten.
+        getWeaponAttackAction().setAmmoId(shooter.getEquipmentNum(this.getAmmo()));
+
         if (!guess) {
             setToHit(calcRealToHit(getWeaponAttackAction()));
         } else if (null != shooterPath) {

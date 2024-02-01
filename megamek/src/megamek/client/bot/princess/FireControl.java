@@ -1581,7 +1581,10 @@ public class FireControl {
                             ammo,
                             game,
                             true);
-                    if (null == bestShoot || shoot.getProbabilityToHit() > bestShoot.getProbabilityToHit()) {
+                    // Choose best expected damage shot, not best to-hit
+                    if (null == bestShoot ||
+                            (shoot.getExpectedDamage() > bestShoot.getExpectedDamage())
+                    ){
                         bestShoot = shoot;
                     }
                 }
@@ -1690,7 +1693,10 @@ public class FireControl {
                             true,
                             true);
 
-                    if (null == bestShoot || shoot.getProbabilityToHit() > bestShoot.getProbabilityToHit()) {
+                    // Choose best expected damage shot, not best to-hit
+                    if (null == bestShoot ||
+                            (shoot.getExpectedDamage() > bestShoot.getExpectedDamage())
+                    ){
                         bestShoot = shoot;
                     }
                 }
@@ -1817,8 +1823,12 @@ public class FireControl {
             return myPlan;
         }
 
-        // cycle through my weapons
+        // cycle through my weapons; should probably filter out already-fired / IDF arty
         for (final Mounted weapon : shooter.getWeaponList()) {
+            if (!weapon.canFire()) {
+                continue;
+            }
+
             // respect restriction on manual AMS firing.
             if (!game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_MANUAL_AMS) &&
                     weapon.getType().hasFlag(WeaponType.F_AMS)) {
@@ -1847,7 +1857,10 @@ public class FireControl {
                             shoot.setUpdatedFiringMode(updatedMissileMode);
                         }
                     }
-                    if (null == bestShoot || shoot.getProbabilityToHit() > bestShoot.getProbabilityToHit()) {
+                    // Choose best expected damage shot, not best to-hit
+                    if (null == bestShoot ||
+                        (shoot.getExpectedDamage() > bestShoot.getExpectedDamage())
+                    ){
                         bestShoot = shoot;
                     }
                 }

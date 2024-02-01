@@ -251,10 +251,12 @@ public class InfantryFireControl extends FireControl {
             if (weaponIsAppropriate(weapon, firingPlanType)) {
                 WeaponFireInfo bestShoot = null;
 
-                // Compare all ammo for this weapon
                 final WeaponFireInfo shoot = buildWeaponFireInfo(shooter, shooterState, target, targetState, weapon,
                         null, game, true);
-                if (bestShoot == null || shoot.getProbabilityToHit() > bestShoot.getProbabilityToHit()) {
+                // Choose best expected damage shot, not best to-hit
+                if (null == bestShoot ||
+                        (shoot.getExpectedDamage() > bestShoot.getExpectedDamage())
+                ){
                     bestShoot = shoot;
                 }
 

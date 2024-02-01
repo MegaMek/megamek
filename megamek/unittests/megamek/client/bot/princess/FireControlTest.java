@@ -2273,6 +2273,8 @@ public class FireControlTest {
         when(mockTarget.isOffBoard()).thenReturn(false);
         when(mockBoard.contains(eq(mockShooterCoords))).thenReturn(true);
         when(mockBoard.contains(eq(mockTargetCoords))).thenReturn(true);
+        when(mockPPC.canFire()).thenReturn(true);
+        when(mockLRM5.canFire()).thenReturn(true);
         doNothing().when(testFireControl).calculateUtility(any(FiringPlan.class), anyInt(), anyBoolean());
 
         // Test the normal case.

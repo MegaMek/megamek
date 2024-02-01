@@ -106,7 +106,8 @@ public class ArtilleryTargetingControl {
                 continue;
             }
 
-            int friendlyMultiplier = -1;
+            // Disincentivize hitting friendlies _strongly_.
+            int friendlyMultiplier = -2;
 
             // try to avoid shooting at friendlies
             // ignore routed enemies who haven't resumed fire
@@ -167,14 +168,21 @@ public class ArtilleryTargetingControl {
         targetSet = null;
     }
 
+    /**
+     * Iterates over all artillery weapons and checks if it can make an ADA attack later in the turn.
+     * @param shooter who will make the attack
+     * @return true if ADA rounds are available for any weapons, false otherwise
+     */
     private boolean getADAAvailable(Entity shooter){
         boolean available = false;
         for (Mounted weapon: shooter.getWeaponList()){
             if (weapon.getType().hasFlag(WeaponType.F_ARTILLERY)){
-                if(((AmmoType) weapon.getLinked().getType()).getMunitionType().contains(AmmoType.Munitions.M_ADA)
-                    && !weapon.isFired() && weapon.getLinked().getUsableShotsLeft() > 0) {
-                    available = true;
-                    break;
+                for (Mounted ammo: shooter.getAmmo(weapon)) {
+                    if (((AmmoType) ammo.getType()).getMunitionType().contains(AmmoType.Munitions.M_ADA)
+                            && !weapon.isFired() && ammo.getUsableShotsLeft() > 0) {
+                        available = true;
+                        break;
+                    }
                 }
             }
         }
@@ -196,15 +204,13 @@ public class ArtilleryTargetingControl {
             Entity e = enemies.next();
 
             // Given how accurate and long-ranged ADA missiles are, prioritize airborne targets if ADA is available
-            // Short-circuit Indirect fire artillery targeting to leave tubes available for ADA direct fire.
             if(adaAvailable){
+                // We will check these first, but still look at other possible shots.
                 if (e.isAirborne() || e.isAirborneVTOLorWIGE() || e.isAirborneAeroOnGroundMap()){
-                   // Forget about indirect fire for now.
-                   targetSet = new HashSet<>();
-                   return;
+                    targetSet.add(e);
                }
             }
-            // skip airborne entities, and those off board - we'll handle them later and don't target ignored units
+            // Otherwise skip airborne entities, and those off board - we'll handle them later and don't target ignored units
             if (!e.isAirborne()
                     && !e.isAirborneVTOLorWIGE()
                     && !e.isOffBoard()
@@ -275,6 +281,7 @@ public class ArtilleryTargetingControl {
      */
     private FiringPlan calculateIndirectArtilleryPlan(Entity shooter, Game game, Princess owner, int facingChange) {
         FiringPlan retval = new FiringPlan();
+        FiringPlan TAGPlan = new FiringPlan();
 
         // if we're fleeing and haven't been shot at, then try not to agitate guys that may pursue us.
         if (owner.isFallingBack(shooter) && !owner.canShootWhileFallingBack(shooter)) {
@@ -292,48 +299,72 @@ public class ArtilleryTargetingControl {
         // potential target list is the same regardless of the entity doing the shooting
         if (targetSet == null) {
             buildTargetList(shooter, game, owner);
+            // If we decided not to shoot this phase, no reason to continue calculating.
+            if (targetSet == null) {
+                return retval;
+            }
         }
 
         // loop through all weapons on entity
         // each indirect artillery piece randomly picks a target from the priority list
         // by the end of this loop, we either have 0 max damage/0 top valued coordinates, which indicates there's nothing worth shooting at
         // or we have a 1+ top valued coordinates.
+        // Track ADA WFIs separately.
+        List<WeaponFireInfo> topValuedADAInfos = new ArrayList<>();
         for (Mounted currentWeapon : shooter.getWeaponList()) {
+            List<WeaponFireInfo> topValuedFireInfos = new ArrayList<>();
+            double maxDamage = 0;
             if (currentWeapon.getType().hasFlag(WeaponType.F_ARTILLERY)) {
                 WeaponType wType = (WeaponType) currentWeapon.getType();
                 int damage = wType.getRackSize(); // crazy, but rack size appears to correspond to given damage values for arty pieces in tacops
 
-                List<WeaponFireInfo> topValuedFireInfos = new ArrayList<>();
-                double maxDamage = 0;
+                // Iterate over all loaded Artillery ammo so we can compare various options
+                for (final Mounted ammo : shooter.getAmmo(currentWeapon)) {
+                    // for each enemy unit, evaluate damage value of firing at its hex.
+                    // keep track of top target hexes with the same value and fire at them
+                    boolean isADA = ((AmmoType) ammo.getType()).getMunitionType().contains(AmmoType.Munitions.M_ADA);
+                    for (Targetable target : targetSet) {
+                        WeaponFireInfo wfi;
+                        double damageValue = 0.0;
+                        if (target.getTargetType() == Targetable.TYPE_ENTITY) {
+                            damageValue = damage;
+                        } else {
+                            if (!isADA) {
+                                damageValue = calculateDamageValue(damage, target.getPosition(), shooter, game, owner);
+                            } else {
+                                // No ADA attacks except at Entities.
+                                continue;
+                            }
+                        }
 
-                // for each enemy unit, evaluate damage value of firing at its hex.
-                // keep track of top target hexes with the same value and fire at them
-                for (Targetable hexTarget : targetSet) {
-                    double damageValue = 0.0;
-                    if (hexTarget.getTargetType() == Targetable.TYPE_ENTITY) {
-                        damageValue = damage;
-                    } else {
-                        damageValue = calculateDamageValue(damage, hexTarget.getPosition(), shooter, game, owner);
-                    }
+                        // ADA attacks should be handled as Direct Fire but we'll calc hits here for comparison.
+                        wfi = new WeaponFireInfo(shooter, target, currentWeapon, ammo, game, false, owner);
 
-                    WeaponFireInfo wfi = new WeaponFireInfo(shooter, hexTarget,
-                            currentWeapon, null, game, false, owner);
+                        // factor the chance to hit when picking a target - if we've got a spotted hex or an auto-hit hex
+                        // we should prefer to hit that over something that may scatter to who knows where
+                        if (wfi.getProbabilityToHit() > 0) {
+                            damageValue *= wfi.getProbabilityToHit();
 
-                    // factor the chance to hit when picking a target - if we've got a spotted hex or an auto-hit hex
-                    // we should prefer to hit that over something that may scatter to who knows where
-                    if (wfi.getProbabilityToHit() > 0) {
-                        damageValue *= wfi.getProbabilityToHit();
-
-                        if (damageValue > maxDamage) {
-                            topValuedFireInfos.clear();
-                            maxDamage = damageValue;
-                            topValuedFireInfos.add(wfi);
-                        } else if ((damageValue == maxDamage) && (damageValue > 0)) {
-                            topValuedFireInfos.add(wfi);
+                            if (damageValue > maxDamage) {
+                                if (isADA) {
+                                    topValuedADAInfos.clear();
+                                    maxDamage = damage;  // Actual expected damage will be higher
+                                    topValuedADAInfos.add(wfi);
+                                } else {
+                                    topValuedFireInfos.clear();
+                                    maxDamage = damageValue;
+                                    topValuedFireInfos.add(wfi);
+                                }
+                            } else if ((damageValue == maxDamage) && (damageValue > 0)) {
+                                if (((AmmoType) wfi.getAmmo().getType()).getMunitionType().contains(AmmoType.Munitions.M_ADA)){
+                                    topValuedADAInfos.add(wfi);
+                                } else {
+                                    topValuedFireInfos.add(wfi);
+                                }
+                            }
                         }
                     }
                 }
-
                 // this section is long and obnoxious:
                 // Pick a random fire info out of the ones with the top damage level
                 // Use that to create an artillery attack action, set the action's ammo
@@ -342,7 +373,7 @@ public class ArtilleryTargetingControl {
                 if (!topValuedFireInfos.isEmpty()) {
                     WeaponFireInfo actualFireInfo = topValuedFireInfos.get(Compute.randomInt(topValuedFireInfos.size()));
                     ArtilleryAttackAction aaa = (ArtilleryAttackAction) actualFireInfo.buildWeaponAttackAction();
-                    HelperAmmo ammo= findAmmo(shooter, currentWeapon);
+                    HelperAmmo ammo = findAmmo(shooter, actualFireInfo.getWeapon(), actualFireInfo.getAmmo());
 
                     if (ammo.equipmentNum > NO_AMMO) {
                         //This can happen if princess is towing ammo trailers, which she really shouldn't be doing...
@@ -352,16 +383,28 @@ public class ArtilleryTargetingControl {
                         actualFireInfo.setAction(aaa);
                         retval.add(actualFireInfo);
                         retval.setUtility(retval.getUtility() + maxDamage);
-                        owner.sendAmmoChange(shooter.getId(), shooter.getEquipmentNum(currentWeapon), ammo.equipmentNum);
+                        owner.sendAmmoChange(shooter.getId(), shooter.getEquipmentNum(actualFireInfo.getWeapon()), ammo.equipmentNum);
                     }
                 }
             } else if (currentWeapon.getType().hasFlag(WeaponType.F_TAG)) {
                 WeaponFireInfo tagInfo = getTAGInfo(currentWeapon, shooter, game, owner);
 
                 if (tagInfo != null) {
-                    retval.add(tagInfo);
-                    retval.setUtility(retval.getUtility() + tagInfo.getProbabilityToHit());
+                    TAGPlan.add(tagInfo);
+                    TAGPlan.setUtility(retval.getUtility() + tagInfo.getProbabilityToHit());
                 }
+            }
+        }
+
+        // Clear all artillery attacks if we have valid ADA attacks that do damage, but keep any TAG attacks.
+        if (!topValuedADAInfos.isEmpty()) {
+            if (topValuedADAInfos.get(0).getExpectedDamage() > 0) {
+                retval = TAGPlan;
+            }
+        } else {
+            for (WeaponFireInfo tagInfo : TAGPlan) {
+                retval.add(tagInfo);
+                retval.setUtility(retval.getUtility() + tagInfo.getProbabilityToHit());
             }
         }
 
@@ -409,22 +452,28 @@ public class ArtilleryTargetingControl {
      * @param currentWeapon
      * @return
      */
-    private HelperAmmo findAmmo(Entity shooter, Mounted currentWeapon) {
+    private HelperAmmo findAmmo(Entity shooter, Mounted currentWeapon, Mounted preferredAmmo) {
         int ammoEquipmentNum = NO_AMMO;
         EnumSet<AmmoType.Munitions> ammoMunitionType = EnumSet.noneOf(AmmoType.Munitions.class);
 
-        // simply grab the first valid ammo and let 'er rip.
-        for (Mounted ammo : shooter.getAmmo()) {
-            if (!ammo.isAmmoUsable() || !AmmoType.isAmmoValid(ammo, (WeaponType) currentWeapon.getType())) {
-                continue;
+        if (preferredAmmo != null && preferredAmmo.isAmmoUsable() && AmmoType.isAmmoValid(preferredAmmo, (WeaponType) currentWeapon.getType())){
+            // Use the ammo we used for calculations.
+            ammoEquipmentNum = shooter.getEquipmentNum(preferredAmmo);
+            ammoMunitionType = ((AmmoType) preferredAmmo.getType()).getMunitionType();
+        } else {
+            // simply grab the first valid ammo and let 'er rip.
+            for (Mounted ammo : shooter.getAmmo()) {
+                if (!ammo.isAmmoUsable() || !AmmoType.isAmmoValid(ammo, (WeaponType) currentWeapon.getType())) {
+                    continue;
+                }
+
+                ammoEquipmentNum = shooter.getEquipmentNum(ammo);
+                ammoMunitionType = ((AmmoType) ammo.getType()).getMunitionType();
+                break;
+
+                // TODO: Attempt to select homing ammo if the target is tagged.
+                // To do so, check ammoType.getMunitionType().contains(AmmoType.Munitions.M_HOMING
             }
-
-            ammoEquipmentNum = shooter.getEquipmentNum(ammo);
-            ammoMunitionType = ((AmmoType) ammo.getType()).getMunitionType();
-            break;
-
-            // TODO: Attempt to select homing ammo if the target is tagged.
-            // To do so, check ammoType.getMunitionType().contains(AmmoType.Munitions.M_HOMING
         }
 
         return new HelperAmmo(ammoEquipmentNum, ammoMunitionType);

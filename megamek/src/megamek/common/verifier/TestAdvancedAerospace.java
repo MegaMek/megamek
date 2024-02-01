@@ -15,113 +15,24 @@
 package megamek.common.verifier;
 
 import megamek.common.*;
+import megamek.common.equipment.ArmorType;
 import megamek.common.util.StringUtil;
 import megamek.common.weapons.bayweapons.BayWeapon;
 import megamek.common.weapons.capitalweapons.ScreenLauncherWeapon;
 
 import java.math.BigInteger;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Validation and construction data for advanced aerospace units (jumpships, warships, space stations)
- * 
+ *
  * @author Neoancient
  *
  */
 public class TestAdvancedAerospace extends TestAero {
-    
+
     private final Jumpship vessel;
-
-    public enum CapitalArmor {
-        PRIMITIVE(EquipmentType.T_ARMOR_PRIMITIVE_AERO, false),   
-        STANDARD(EquipmentType.T_ARMOR_AEROSPACE, false),   
-        CLAN_STANDARD(EquipmentType.T_ARMOR_AEROSPACE, true),
-        IS_IMP_FERRO_ALUM(EquipmentType.T_ARMOR_LC_FERRO_IMP, false),
-        CLAN_IMP_FERRO_ALUM(EquipmentType.T_ARMOR_LC_FERRO_IMP, true),
-        IS_FERRO_CARBIDE(EquipmentType.T_ARMOR_LC_FERRO_CARBIDE, false),
-        CLAN_FERRO_CARBIDE(EquipmentType.T_ARMOR_LC_FERRO_CARBIDE, true),
-        IS_LAMELLOR(EquipmentType.T_ARMOR_LC_LAMELLOR_FERRO_CARBIDE, false),
-        CLAN_LAMELLOR(EquipmentType.T_ARMOR_LC_LAMELLOR_FERRO_CARBIDE, true);
-
-        /**
-         * The type, corresponding to types defined in 
-         * <code>EquipmentType</code>.
-         */
-        public final int type;
-                
-        /**
-         * Denotes whether this armor is Clan or not.
-         */
-        public final boolean isClan;
-        
-        CapitalArmor(int t, boolean c) {
-            type = t;
-            isClan = c;
-        }
-        
-        /**
-         * Given an armor type, return the <code>AerospaceArmor</code> instance that
-         * represents that type.
-         * 
-         * @param t  The armor type.
-         * @param c  Whether this armor type is Clan or not.
-         * @return   The <code>AeroArmor</code> that corresponds to the given 
-         *              type or null if no match was found.
-         */
-        public static CapitalArmor getArmor(int t, boolean c) {
-            for (CapitalArmor a : values()) {
-                if (a.type == t && a.isClan == c) {
-                    return a;
-                }
-            }
-            return null;
-        }
-        
-        /**
-         * Calculates and returns the points per ton of the armor type given the
-         * weight of the ship. 
-         * 
-         * @param vessel The ship
-         * @return       The number of points of capital armor per ton
-         */
-        public double pointsPerTon(Jumpship vessel) {
-            double ppt = 0.8;
-            if (type == EquipmentType.T_ARMOR_LC_FERRO_IMP) {
-                ppt += 0.2;
-            } else if (type == EquipmentType.T_ARMOR_LC_FERRO_CARBIDE) {
-                ppt += 0.4;
-            } else if (type == EquipmentType.T_ARMOR_LC_LAMELLOR_FERRO_CARBIDE) {
-                ppt += 0.6;
-            }
-            if (vessel.getWeight() >= 250000) {
-                ppt -= 0.4;
-                if (isClan) {
-                    ppt += 0.1;
-                }
-            } else if (vessel.getWeight() >= 150000) {
-                ppt -= 0.2;
-                if (isClan) {
-                    ppt += 0.1;
-                }
-            } else if (isClan) {
-                ppt += 0.2;
-            }
-            // Deal with potential rounding errors
-            ppt = Math.round(ppt * 10.0) / 10.0;
-            if (type == EquipmentType.T_ARMOR_PRIMITIVE_AERO) {
-                ppt *= EquipmentType.armorPointMultipliers[EquipmentType.T_ARMOR_PRIMITIVE_AERO];
-            }
-            return ppt;
-        }
-        
-        /**
-         * @return The <code>MiscType</code> for this armor.
-         */
-        public EquipmentType getArmorEqType() {
-            String name = EquipmentType.getArmorTypeName(type, isClan);
-            return EquipmentType.get(name);
-        }
-    }
 
     /**
      * Filters all capital armor according to given tech constraints
@@ -131,34 +42,25 @@ public class TestAdvancedAerospace extends TestAero {
      */
     public static List<EquipmentType> legalArmorsFor(ITechManager techManager, boolean primitive) {
         if (primitive) {
-            return Collections.singletonList(CapitalArmor.PRIMITIVE.getArmorEqType());
+            return Collections.singletonList(ArmorType.of(EquipmentType.T_ARMOR_PRIMITIVE_AERO, false));
+        } else {
+            return ArmorType.allArmorTypes().stream()
+                    .filter(at -> at.hasFlag(MiscType.F_JS_EQUIPMENT) && techManager.isLegal(at))
+                    .collect(Collectors.toList());
         }
-        List<EquipmentType> retVal = new ArrayList<>();
-        for (CapitalArmor armor : CapitalArmor.values()) {
-            final EquipmentType eq = armor.getArmorEqType();
-            if ((null != eq) && techManager.isLegal(eq)) {
-                retVal.add(eq);
-            }
-        }
-        return retVal;
     }
     
     public static int maxArmorPoints(Jumpship vessel) {
-        CapitalArmor a = CapitalArmor.getArmor(vessel.getArmorType(0),
-                TechConstants.isClan(vessel.getArmorTechLevel(0)));
-        if (null == a) {
-            return 0;
-        }
         // The ship gets a number of armor points equal to 10% of the SI, rounded normally, per facing.
         double freeSI = Math.round(vessel.get0SI() / 10.0) * 6;
         // Primitive jumpships multiply the armor by a factor of 0.66. Per errata, the armor is calculated
         // based on standard armor then rounded down, and the free SI armor is rounded down separately.
         if (vessel.isPrimitive()) {
-            return (int) (Math.floor(CapitalArmor.STANDARD.pointsPerTon(vessel)
-                    * maxArmorWeight(vessel) * 0.66)
+            return (int) (Math.floor(ArmorType.of(EquipmentType.T_ARMOR_PRIMITIVE_AERO, false)
+                    .getPointsPerTon(vessel) * maxArmorWeight(vessel))
                 + Math.floor(freeSI * 0.66));
         }
-        return (int) Math.floor(a.pointsPerTon(vessel) * maxArmorWeight(vessel) + freeSI);
+        return (int) Math.floor(ArmorType.forEntity(vessel).getPointsPerTon(vessel) * maxArmorWeight(vessel) + freeSI);
     }
     
     /**
@@ -180,9 +82,9 @@ public class TestAdvancedAerospace extends TestAero {
     }
     
     public static double armorPointsPerTon(Jumpship vessel, int at, boolean clan) {
-        CapitalArmor arm = CapitalArmor.getArmor(at, clan);
+        ArmorType arm = ArmorType.of(at, clan);
         if (null != arm) {
-            return arm.pointsPerTon(vessel);
+            return arm.getPointsPerTon(vessel);
         } else {
             return 0;
         }

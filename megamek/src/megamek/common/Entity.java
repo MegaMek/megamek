@@ -25,6 +25,7 @@ import megamek.common.actions.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.battlevalue.BVCalculator;
 import megamek.common.enums.*;
+import megamek.common.equipment.ArmorType;
 import megamek.common.event.GameEntityChangeEvent;
 import megamek.common.force.Force;
 import megamek.common.icons.Camouflage;
@@ -10834,10 +10835,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * @return The weight of the armor in the location in tons.
      */
     public double getArmorWeight(int loc) {
-        double armorPerTon = 16.0 * EquipmentType.getArmorPointMultiplier(
-                armorType[loc], armorTechLevel[loc]);
-        double points = getOArmor(loc)
-                        + (hasRearArmor(loc) ? getOArmor(loc, true) : 0);
+        double armorPerTon = ArmorType.forEntity(this, loc).getPointsPerTon(this);
+        double points = getOArmor(loc) + (hasRearArmor(loc) ? getOArmor(loc, true) : 0);
         return points / armorPerTon;
     }
 
@@ -10862,8 +10861,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         } else {
             // this roundabout method is actually necessary to avoid rounding
             // weirdness. Yeah, it's dumb.
-            double armorPerTon = 16.0 * EquipmentType.getArmorPointMultiplier(
-                    armorType[0], armorTechLevel[0]);
+            double armorPerTon = ArmorType.forEntity(this).getPointsPerTon(this);
             return RoundWeight.standard(getTotalOArmor() / armorPerTon, this);
         }
     }
@@ -14157,8 +14155,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                     / EquipmentType.getSupportVehicleArmorWeightPerPoint(getBARRating(firstArmorIndex()),
                     getArmorTechRating()));
         }
-        double armorPerTon = 16.0 * EquipmentType.getArmorPointMultiplier(
-                armorType[0], armorTechLevel[0]);
+        double armorPerTon = ArmorType.forEntity(this).getPointsPerTon(this);
         return (int) Math.floor(armorPerTon * armorTonnage);
     }
 

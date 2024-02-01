@@ -14,9 +14,4 @@ public class EquipmentTypeTest {
     public void armorCostArraySameLengthAsArmorNames() {
         assertEquals(EquipmentType.armorCosts.length, EquipmentType.armorNames.length);
     }
-
-    @Test
-    public void armorPointMultiplierArraySameLengthAsArmorNames() {
-        assertEquals(EquipmentType.armorPointMultipliers.length, EquipmentType.armorNames.length);
-    }
 }

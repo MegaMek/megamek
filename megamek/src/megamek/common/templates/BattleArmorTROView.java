@@ -139,7 +139,7 @@ public class BattleArmorTROView extends TROView {
     private int addBAEquipment() {
         final List<Map<String, Object>> equipment = new ArrayList<>();
         final List<Map<String, Object>> modularEquipment = new ArrayList<>();
-        final String at = EquipmentType.getBaArmorTypeName(ba.getArmorType(BattleArmor.LOC_TROOPER_1),
+        final String at = EquipmentType.getArmorTypeName(ba.getArmorType(BattleArmor.LOC_TROOPER_1),
                 TechConstants.isClan(ba.getArmorTechLevel(BattleArmor.LOC_TROOPER_1)));
         final EquipmentType armor = EquipmentType.get(at);
         Map<String, Object> row;

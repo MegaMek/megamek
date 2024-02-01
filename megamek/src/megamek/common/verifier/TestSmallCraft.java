@@ -15,13 +15,14 @@
 package megamek.common.verifier;
 
 import megamek.common.*;
+import megamek.common.equipment.ArmorType;
 import megamek.common.util.StringUtil;
 
 import java.math.BigInteger;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Class for testing and validating instantiations for Small Craft and Dropships.
@@ -44,70 +45,6 @@ public class TestSmallCraft extends TestAero {
 
     private final SmallCraft smallCraft;
 
-    public enum AerospaceArmor{
-        STANDARD(EquipmentType.T_ARMOR_AEROSPACE, false),
-        CLAN_STANDARD(EquipmentType.T_ARMOR_AEROSPACE, true),
-        IS_FERRO_ALUM(EquipmentType.T_ARMOR_ALUM, false),
-        CLAN_FERRO_ALUM(EquipmentType.T_ARMOR_ALUM, true),
-        FERRO_PROTO(EquipmentType.T_ARMOR_FERRO_ALUM_PROTO, false),
-        HEAVY_FERRO_ALUM(EquipmentType.T_ARMOR_HEAVY_ALUM, false),
-        LIGHT_FERRO_ALUM(EquipmentType.T_ARMOR_LIGHT_ALUM, false),
-        PRIMITIVE(EquipmentType.T_ARMOR_PRIMITIVE_AERO, false);
-
-        /**
-         * The type, corresponding to types defined in
-         * <code>EquipmentType</code>.
-         */
-        public int type;
-
-        /**
-         * Denotes whether this armor is Clan or not.
-         */
-        public boolean isClan;
-
-        AerospaceArmor(int t, boolean c) {
-            type = t;
-            isClan = c;
-        }
-
-        /**
-         * Given an armor type, return the <code>AerospaceArmor</code> instance that
-         * represents that type.
-         *
-         * @param t  The armor type.
-         * @param c  Whether this armor type is Clan or not.
-         * @return   The <code>AeroArmor</code> that corresponds to the given
-         *              type or null if no match was found.
-         */
-        public static AerospaceArmor getArmor(int t, boolean c) {
-            for (AerospaceArmor a : values()) {
-                if (a.type == t && a.isClan == c) {
-                    return a;
-                }
-            }
-            return null;
-        }
-
-        /**
-         * Calculates and returns the points per ton of the armor type given the
-         * weight and shape of a small craft/dropship
-         *
-         * @param sc The small craft/dropship
-         * @return   The number of points of armor per ton
-         */
-        public double pointsPerTon(SmallCraft sc) {
-            return SmallCraft.armorPointsPerTon(sc.getWeight(), sc.isSpheroid(), type, isClan);
-        }
-
-        /**
-         * @return The <code>MiscType</code> for this armor.
-         */
-        public EquipmentType getArmorEqType() {
-            String name = EquipmentType.getArmorTypeName(type, isClan);
-            return EquipmentType.get(name);
-        }
-    }
-
     /**
      * Filters all small craft/dropship armor according to given tech constraints
      *
@@ -115,25 +52,15 @@ public class TestSmallCraft extends TestAero {
      * @return A list of all armors that meet the tech constraints
      */
     public static List<EquipmentType> legalArmorsFor(ITechManager techManager) {
-        List<EquipmentType> retVal = new ArrayList<>();
-        for (AerospaceArmor armor : AerospaceArmor.values()) {
-            final EquipmentType eq = armor.getArmorEqType();
-            if ((null != eq) && techManager.isLegal(eq)) {
-                retVal.add(eq);
-            }
-        }
-        return retVal;
+        return ArmorType.allArmorTypes().stream()
+                .filter(at -> at.hasFlag(MiscType.F_SC_EQUIPMENT) && techManager.isLegal(at))
+                .collect(Collectors.toList());
     }
 
     public static int maxArmorPoints(SmallCraft sc) {
-        AerospaceArmor a = AerospaceArmor.getArmor(sc.getArmorType(0),
-                TechConstants.isClan(sc.getArmorTechLevel(0)));
-        if (null != a) {
-            return (int) Math.floor(a.pointsPerTon(sc) * maxArmorWeight(sc)
-                    + sc.get0SI() * (sc.isPrimitive() ? 2.64 : 4));
-        } else {
-            return 0;
-        }
+        ArmorType a = ArmorType.forEntity(sc);
+        return (int) Math.floor(a.getPointsPerTon(sc) * maxArmorWeight(sc)
+                + sc.get0SI() * (sc.isPrimitive() ? 2.64 : 4));
     }
 
     /**

@@ -60,7 +60,7 @@ public class ASStatsExporter {
     private void prepareData() {
         model = new HashMap<>();
         if (element != null) {
-            model.put("chassis", element.getChassis());
+            model.put("chassis", element.getFullChassis());
             model.put("model", element.getModel());
             model.put("PV", element.getPointValue());
             model.put("TP", element.getASUnitType().toString());

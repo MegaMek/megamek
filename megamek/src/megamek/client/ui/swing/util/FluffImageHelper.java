@@ -16,7 +16,6 @@ package megamek.client.ui.swing.util;
 
 import megamek.common.*;
 import megamek.common.alphaStrike.ASCardDisplayable;
-import megamek.common.alphaStrike.ASUnitType;
 import megamek.common.annotations.Nullable;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.fileUtils.MegaMekFile;
@@ -45,7 +44,7 @@ public class FluffImageHelper {
     public static final String DIR_NAME_SPACESTATION = "Space Station";
     public static final String DIR_NAME_VEHICLE = "Vehicle";
     public static final String DIR_NAME_WARSHIP = "WarShip";
-    public static final String[] EXTENSIONS_FLUFF_IMAGE_FORMATS = { ".png", ".jpg", ".gif", ".PNG", ".JPG", ".GIF" };
+    public static final String[] EXTENSIONS_FLUFF_IMAGE_FORMATS = { ".PNG", ".png", ".JPG", ".JPEG", ".jpg", ".jpeg", ".GIF", ".gif" };
 
     /**
      * Get the fluff image for the specified unit, if available.
@@ -85,7 +84,7 @@ public class FluffImageHelper {
         String userDir = PreferenceManager.getClientPreferences().getUserDir();
         if (!userDir.isBlank()) {
             var userDirPath = new File(userDir + "/" + Configuration.fluffImagesDir(), getImagePath(entity));
-            Image image = loadFluffImageHeuristic(userDirPath, entity.getModel(), entity.getChassis());
+            Image image = loadFluffImageHeuristic(userDirPath, entity.getModel(), entity.getFullChassis());
             if (image != null) {
                 return image;
             }
@@ -104,14 +103,14 @@ public class FluffImageHelper {
         String userDir = PreferenceManager.getClientPreferences().getUserDir();
         if (!userDir.isBlank()) {
             var userDirPath = new File(userDir + "/" + Configuration.fluffImagesDir(), getImagePath(element));
-            Image image = loadFluffImageHeuristic(userDirPath, element.getModel(), element.getChassis());
+            Image image = loadFluffImageHeuristic(userDirPath, element.getModel(), element.getFullChassis());
             if (image != null) {
                 return image;
             }
         }
 
         var path = new MegaMekFile(Configuration.fluffImagesDir(), getImagePath(element));
-        return loadFluffImageHeuristic(path.getFile(), element.getModel(), element.getChassis());
+        return loadFluffImageHeuristic(path.getFile(), element.getModel(), element.getFullChassis());
     }
 
     private static @Nullable Image loadFluffImageHeuristic(File path, String model, String chassis) {
@@ -235,7 +234,7 @@ public class FluffImageHelper {
         }
     }
 
-    private static String getImagePath(final Entity unit) {
+    public static String getImagePath(final Entity unit) {
         if (unit instanceof Warship) {
             return DIR_NAME_WARSHIP;
         } else if (unit instanceof SpaceStation) {

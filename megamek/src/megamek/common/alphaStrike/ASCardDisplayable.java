@@ -49,6 +49,8 @@ public interface ASCardDisplayable extends BattleForceSUAFormatter, BTObject, Co
     /** @return The AS element's chassis, such as "Atlas". */
     String getChassis();
 
+    String getFullChassis();
+
     /** @return This AS element's MUL ID if it has one, -1 otherwise. */
     int getMulId();
 

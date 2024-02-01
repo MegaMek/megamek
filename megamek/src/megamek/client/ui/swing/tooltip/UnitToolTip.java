@@ -222,7 +222,7 @@ public final class UnitToolTip {
             String ownerName = (owner != null) ? owner.getName() : ReportMessages.getString("BoardView1.Tooltip.unknownOwner");
             String msg_clanbrackets = Messages.getString("BoardView1.Tooltip.ClanBrackets");
             String clanStr = entity.isClan() && !entity.isMixedTech() ? " " + msg_clanbrackets + " " : "";
-            result = entity.getChassis() + clanStr;
+            result = entity.getFullChassis() + clanStr;
             result += " (" + (int) entity.getWeight() + "t)";
             result += "&nbsp;&nbsp;" + entity.getEntityTypeName(entity.getEntityType());
             result += "<BR>" + ownerName;

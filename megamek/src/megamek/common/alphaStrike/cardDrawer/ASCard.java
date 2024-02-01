@@ -276,7 +276,7 @@ public class ASCard {
         }
         new StringDrawer(model).at(36, 44).font(modelFont).centerY()
                 .maxWidth(750).scaleX(1.3f).draw(g);
-        new StringDrawer(element.getChassis().toUpperCase(Locale.ROOT)).at(36, 89)
+        new StringDrawer(element.getFullChassis().toUpperCase(Locale.ROOT)).at(36, 89)
                 .font(chassisFont).centerY().maxWidth(770).scaleX(0.8f).draw(g);
 
         // Add BA Squad Size

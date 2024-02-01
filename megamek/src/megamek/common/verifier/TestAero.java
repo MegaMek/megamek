@@ -657,8 +657,8 @@ public class TestAero extends TestEntity {
             int[] availSpace = availableSpace(aero);
             if (availSpace == null) {
                 buff.append("Invalid armor type! Armor: ")
-                        .append(EquipmentType.armorNames[aero.getArmorType(Aero.LOC_NOSE)]);
-                buff.append("\n");
+                        .append(ArmorType.forEntity(aero))
+                        .append("\n");
                 return false;
             }
             if (numBombs > aero.getMaxBombPoints()) {

@@ -500,28 +500,15 @@ public class TestSupportVehicle extends TestEntity {
      */
     public static List<EquipmentType> legalArmorsFor(ITechManager techManager) {
         if (techManager.getTechLevel().ordinal() < SimpleTechLevel.ADVANCED.ordinal()) {
-            return Collections.singletonList(EquipmentType.get(EquipmentType.armorNames[EquipmentType.T_ARMOR_STANDARD]));
+            return Collections.singletonList(ArmorType.of(EquipmentType.T_ARMOR_STANDARD, false));
         }
         List<EquipmentType> retVal = new ArrayList<>();
-        for (int at = 0; at < EquipmentType.armorNames.length; at++) {
-            if (at == EquipmentType.T_ARMOR_PATCHWORK) {
+        for (ArmorType armor : ArmorType.allArmorTypes()) {
+            if (armor.getArmorType() == EquipmentType.T_ARMOR_PATCHWORK) {
                 continue;
             }
-            String name = EquipmentType.getArmorTypeName(at, techManager.useClanTechBase());
-            EquipmentType eq = EquipmentType.get(name);
-            if ((null != eq)
-                    && eq.hasFlag(MiscType.F_SUPPORT_TANK_EQUIPMENT)
-                    && techManager.isLegal(eq)) {
-                retVal.add(eq);
-            }
-            if (techManager.useMixedTech()) {
-                name = EquipmentType.getArmorTypeName(at, !techManager.useClanTechBase());
-                EquipmentType eq2 = EquipmentType.get(name);
-                if ((null != eq2) && (eq != eq2)
-                        && eq2.hasFlag(MiscType.F_SUPPORT_TANK_EQUIPMENT)
-                        && techManager.isLegal(eq2)) {
-                    retVal.add(eq2);
-                }
+            if (armor.hasFlag(MiscType.F_SUPPORT_TANK_EQUIPMENT) && techManager.isLegal(armor)) {
+                retVal.add(armor);
             }
         }
         return retVal;

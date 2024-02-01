@@ -13,12 +13,10 @@ package megamek.common;
 
 import megamek.common.annotations.Nullable;
 import megamek.common.equipment.ArmorType;
-import megamek.common.options.GameOptions;
 import megamek.common.weapons.autocannons.HVACWeapon;
 import megamek.common.weapons.defensivepods.BPodWeapon;
 import megamek.common.weapons.defensivepods.MPodWeapon;
 import megamek.common.weapons.ppc.PPCWeapon;
-import megamek.server.Server;
 import org.apache.logging.log4j.LogManager;
 
 import java.io.BufferedWriter;
@@ -96,24 +94,6 @@ public class EquipmentType implements ITechnology {
     public static final int T_STRUCTURE_REINFORCED = 4;
     public static final int T_STRUCTURE_COMPOSITE = 5;
     public static final int T_STRUCTURE_ENDO_COMPOSITE = 6;
-
-    public static final String[] armorNames = { "Standard", "Ferro-Fibrous",
-            "Reactive", "Reflective", "Hardened", "Light Ferro-Fibrous",
-            "Heavy Ferro-Fibrous", "Patchwork", "Stealth",
-            "Ferro-Fibrous Prototype", "Commercial", "Ferro-Carbide",
-            "Lamellor Ferro-Carbide", "Improved Ferro-Aluminum",
-            /* extra space at the end on purpose */ "Industrial ",
-            "Heavy Industrial", "Ferro-Lamellor", "Primitive",
-            "Electric Discharge ProtoMech", "Ferro-Aluminum",
-            "Heavy Ferro-Aluminum", "Light Ferro-Aluminum",
-            "Vehicular Stealth", "Anti-Penetrative Ablation",
-            "Heat-Dissipating", "Impact-Resistant", "Ballistic-Reinforced",
-            "Prototype Ferro-Aluminum", "BA Standard (Basic)",
-            "BA Standard (Prototype)", "BA Advanced", "BA Stealth (Basic)",
-            "BA Stealth (Standard)", "BA Stealth (Improved)", "BA Stealth (Prototype)",
-            "BA Fire Resistant", "BA Mimetic", "BA Laser Reflective (Reflec/Glazed)", "BA Reactive (Blazer)",
-            "Primitive Fighter", "Primitive Aerospace", "Standard Aerospace"};
-
 
     public static final String[] structureNames = { "Standard", "Industrial",
             "Endo Steel", "Endo Steel Prototype", "Reinforced", "Composite",
@@ -1407,9 +1387,5 @@ public class EquipmentType implements ITechnology {
 
     public static List<String> getStructureNames() {
         return Arrays.stream(structureNames).collect(Collectors.toList());
-    }
-
-    public static List<String> getArmorNames() {
-        return Arrays.stream(armorNames).collect(Collectors.toList());
     }
 }

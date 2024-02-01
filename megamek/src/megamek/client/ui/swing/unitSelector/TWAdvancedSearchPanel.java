@@ -24,6 +24,7 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.swing.table.MegamekTable;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.*;
+import megamek.common.equipment.ArmorType;
 import megamek.common.options.*;
 
 import javax.swing.*;
@@ -601,7 +602,7 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         loadYesNo(cClanEngine);
         loadYesNo(cPatchwork);
 
-        loadTriStateItem(EquipmentType.getArmorNames(), listArmorType, 5);
+        loadTriStateItem(ArmorType.allArmorNames(), listArmorType, 5);
         loadTriStateItem(Mech.getCockpitDescrtiption(), listCockpitType, 7);
         loadTriStateItem(EquipmentType.getStructureNames(), listInternalsType, 7);
         loadTriStateItem(Engine.getEngineTypes(), listEngineType, 5);

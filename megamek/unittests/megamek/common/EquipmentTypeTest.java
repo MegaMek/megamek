@@ -9,9 +9,4 @@ public class EquipmentTypeTest {
     public void structureCostArraySameLengthAsStructureNames() {
         assertEquals(EquipmentType.structureCosts.length, EquipmentType.structureNames.length);
     }
-
-    @Test
-    public void armorCostArraySameLengthAsArmorNames() {
-        assertEquals(EquipmentType.armorCosts.length, EquipmentType.armorNames.length);
-    }
 }

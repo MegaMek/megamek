@@ -15,6 +15,7 @@ package megamek.common.weapons;
 
 import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.equipment.ArmorType;
 import megamek.common.options.OptionsConstants;
 import megamek.server.GameManager;
 
@@ -56,7 +57,7 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
                 r.choose(true);
                 r.messageId = 3406;
                 r.add(extraHeat);
-                r.add(EquipmentType.armorNames[entityTarget.getArmorType(hit.getLocation())]);
+                r.add(ArmorType.forEntity(entityTarget, hit.getLocation()).getName());
             } else if (entityTarget.getArmor(hit) > 0
                     && (entityTarget.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_HEAT_DISSIPATING)) {
                 entityTarget.heatFromExternal += extraHeat / 2;
@@ -64,7 +65,7 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
                 r.choose(true);
                 r.messageId = 3406;
                 r.add(extraHeat);
-                r.add(EquipmentType.armorNames[entityTarget.getArmorType(hit.getLocation())]);
+                r.add(ArmorType.forEntity(entityTarget, hit.getLocation()).getName());
             } else {
                 entityTarget.heatFromExternal += extraHeat;
                 r.add(extraHeat);

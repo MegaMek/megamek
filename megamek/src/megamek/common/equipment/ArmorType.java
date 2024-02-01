@@ -22,6 +22,7 @@ package megamek.common.equipment;
 import megamek.common.*;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class ArmorType extends MiscType {
 
@@ -46,6 +47,10 @@ public class ArmorType extends MiscType {
 
     public static List<ArmorType> allArmorTypes() {
         return Collections.unmodifiableList(allTypes);
+    }
+
+    public static List<String> allArmorNames() {
+        return allTypes.stream().map(ArmorType::getName).distinct().collect(Collectors.toList());
     }
 
     public static void initializeTypes() {

@@ -42,6 +42,7 @@ MEGAMEK VERSION HISTORY:
 + PR #5094: add start and connect to game to the file menu
 + PR #5102: Laser insulator and RISC laser pulse module validation
 + PR #5101: Rework of the internal representation of Armor
++ PR #5106, 5107: Separates clan and IS name for Meks with different names such as Mad Cat/Timber Wolf
 
 0.49.17 (2023-12-31 1900 UTC)
 + Fix #1031: Show structure collapse warning when deploying and moving.

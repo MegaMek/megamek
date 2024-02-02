@@ -1,4 +1,5 @@
-chassis:Viper (Black Python)
+chassis:Viper
+clanname:Black Python
 model:
 mul id:3432
 Config:Biped

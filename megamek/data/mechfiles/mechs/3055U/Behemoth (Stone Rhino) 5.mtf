@@ -1,4 +1,5 @@
-chassis:Behemoth (Stone Rhino)
+chassis:Behemoth
+clanname:Stone Rhino
 model:5
 mul id:3815
 Config:Biped

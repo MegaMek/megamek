@@ -33,7 +33,12 @@ public class ArmorType extends MiscType {
     private static final List<ArmorType> allTypes = new ArrayList<>();
 
     public static ArmorType of(int type, boolean clan) {
-        return clan ? armorTypeLookupClan.get(type) : armorTypeLookupIS.get(type);
+        ArmorType armor = clan ? armorTypeLookupClan.get(type) : armorTypeLookupIS.get(type);
+        // Some mixed tech unit files use the unit tech base instead of the armor tech base.
+        if (armor == null) {
+            armor = of(type, !clan);
+        }
+        return armor;
     }
 
     public static ArmorType forEntity(Entity entity, int loc) {
@@ -109,22 +114,21 @@ public class ArmorType extends MiscType {
         addArmorType(createClanBAReactiveArmor());
 
         addArmorType(createPatchworkArmor());
+        addArmorType(createNoArmor());
     }
 
     private static void addArmorType(ArmorType at) {
-        if (at.getArmorType() != T_ARMOR_PATCHWORK) {
+        if ((at.getArmorType() != T_ARMOR_PATCHWORK) && (at.getArmorType() != T_ARMOR_UNKNOWN)) {
             EquipmentType.addType(at);
             allTypes.add(at);
         }
-        if (at.getArmorType() >= 0) {
-            if ((at.techAdvancement.getTechBase() == TechAdvancement.TECH_BASE_IS)
-                    || (at.techAdvancement.getTechBase() == TechAdvancement.TECH_BASE_ALL)) {
-                armorTypeLookupIS.put(at.armorType, at);
-            }
-            if ((at.techAdvancement.getTechBase() == TechAdvancement.TECH_BASE_CLAN)
-                    || (at.techAdvancement.getTechBase() == TechAdvancement.TECH_BASE_ALL)) {
-                armorTypeLookupClan.put(at.armorType, at);
-            }
+        if ((at.techAdvancement.getTechBase() == TechAdvancement.TECH_BASE_IS)
+                || (at.techAdvancement.getTechBase() == TechAdvancement.TECH_BASE_ALL)) {
+            armorTypeLookupIS.put(at.armorType, at);
+        }
+        if ((at.techAdvancement.getTechBase() == TechAdvancement.TECH_BASE_CLAN)
+                || (at.techAdvancement.getTechBase() == TechAdvancement.TECH_BASE_ALL)) {
+            armorTypeLookupClan.put(at.armorType, at);
         }
     }
 
@@ -1560,6 +1564,21 @@ public class ArmorType extends MiscType {
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED);
 
         armor.armorType = T_ARMOR_PATCHWORK;
+
+        return armor;
+    }
+
+    /* Placeholder for turrets and units that don't have a legal armor type (such as exoskeletons before
+     * the introduction of BA armor. */
+    private static ArmorType createNoArmor() {
+        ArmorType armor = new ArmorType();
+
+        armor.name = "No Armor";
+        armor.setInternalName(armor.name);
+        armor.addLookupName("Unknown");
+        armor.techAdvancement = new TechAdvancement();
+
+        armor.armorType = T_ARMOR_UNKNOWN;
 
         return armor;
     }

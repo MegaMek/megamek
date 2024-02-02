@@ -10596,10 +10596,12 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             armType = (TechConstants.isClan(getArmorTechLevel(0)) ? "Clan " : "IS ") + armType;
         }
         EquipmentType et = EquipmentType.get(armType);
-        if (et == null) {
+        if (!(et instanceof ArmorType)) {
             setArmorType(EquipmentType.T_ARMOR_UNKNOWN);
         } else {
-            setArmorType(EquipmentType.getArmorType(et));
+            ArmorType armor = (ArmorType) et;
+            setArmorType(armor.getArmorType());
+            setArmorTechLevel(armor.getStaticTechLevel().getCompoundTechLevel(armor.isClan()));
             // TODO: Is this needed? WTF is the point of it?
             if (et.getCriticals(this) == 0) {
                 try {

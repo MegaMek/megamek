@@ -93,6 +93,7 @@ public class ArmorType extends MiscType {
         addArmorType(createClanLamellorFerroCarbideArmor());
         addArmorType(createPrimitiveLCAerospaceArmor());
 
+        addArmorType(createStandardProtomekArmor());
         addArmorType(createElectricDischargeArmor());
 
         addArmorType(createISBAStandardArmor());
@@ -257,7 +258,7 @@ public class ArmorType extends MiscType {
         armor.addLookupName("IS Standard Armor");
         armor.addLookupName("Clan Standard Armor");
         armor.flags = armor.flags.or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT)
-                .or(F_VTOL_EQUIPMENT).or(F_FIGHTER_EQUIPMENT).or(F_PROTOMECH_EQUIPMENT);
+                .or(F_VTOL_EQUIPMENT).or(F_FIGHTER_EQUIPMENT);
         armor.criticals = 0;
         armor.cost = 10000.0;
 
@@ -1177,6 +1178,25 @@ public class ArmorType extends MiscType {
         return armor;
     }
 
+    private static ArmorType createStandardProtomekArmor() {
+        ArmorType armor = new ArmorType();
+
+        armor.name = "Standard ProtoMech";
+        armor.setInternalName(armor.name);
+        armor.addLookupName("Clan Standard ProtoMech");
+        armor.shortName = "Standard";
+        armor.flags = armor.flags.or(F_PROTOMECH_EQUIPMENT);
+        armor.criticals = 0;
+        armor.cost = 625.0;
+
+        armor.techAdvancement = Protomech.TA_STANDARD_PROTOMECH;
+
+        armor.armorType = T_ARMOR_STANDARD_PROTOMEK;
+        armor.weightPerPoint = 0.050;
+
+        return armor;
+    }
+
     private static ArmorType createElectricDischargeArmor() {
         ArmorType armor = new ArmorType();
 
@@ -1184,7 +1204,7 @@ public class ArmorType extends MiscType {
         armor.setInternalName("Clan Electric Discharge ProtoMech");
         armor.addLookupName("CLEDPArmor");
         armor.shortName = "EDP";
-        armor.cost = 10000.0;
+        armor.cost = 1250.0;
         armor.criticals = 1;
         armor.flags = armor.flags.or(F_PROTOMECH_EQUIPMENT).or(F_ELECTRIC_DISCHARGE_ARMOR);
         armor.bv = 32;

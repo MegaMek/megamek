@@ -19,7 +19,6 @@ import megamek.common.annotations.Nullable;
 import megamek.common.equipment.ArmorType;
 import megamek.common.util.StringUtil;
 
-import javax.swing.text.Utilities;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -55,95 +54,6 @@ public class TestProtomech extends TestEntity {
     private final Protomech proto;
     private final String fileString;
 
-    /**
-     * All the ProtoMek armor options
-     */
-    public enum ProtomechArmor {
-        STANDARD (EquipmentType.T_ARMOR_STANDARD, 0),
-        EDP (EquipmentType.T_ARMOR_EDP, 1);
-
-        private final int type;
-        private final int torsoSlots;
-
-        ProtomechArmor(int t, int slots) {
-            type = t;
-            torsoSlots = slots;
-        }
-
-        public static int armorCount() {
-            return values().length;
-        }
-
-        /**
-         * Given a ProtoMek, return the {@link ProtomechArmor} instance that
-         * represents the type installed
-         *
-         * @param proto The ProtoMek
-         * @return      The {@link ProtomechArmor} that corresponds to the given type
-         *              or null if no match was found.
-         */
-        public static @Nullable ProtomechArmor getArmor(Protomech proto) {
-            return getArmor(proto.getArmorType(Protomech.LOC_TORSO));
-        }
-
-        /**
-         * Given an armor type, return the {@link ProtomechArmor} instance that
-         * represents that type.
-         *
-         * @param t   The armor type.
-         * @return    The {@link ProtomechArmor} that corresponds to the given type
-         *            or null if no match was found.
-         */
-        public static @Nullable ProtomechArmor getArmor(int t) {
-            for (ProtomechArmor a : values()) {
-                if (a.type == t) {
-                    return a;
-                }
-            }
-            return null;
-        }
-
-        /**
-         * Given an armor type, return the {@link ProtomechArmor} instance that
-         * represents that type.
-         * @deprecated Use {@link #getArmor(int)} instead
-
-         * @param t   The armor type.
-         * @param c   Whether the armor has a Clan tech base
-         * @return    The {@link ProtomechArmor} that corresponds to the given type
-         *            or null if no match was found.
-         */
-        @Deprecated
-        public static @Nullable ProtomechArmor getArmor(int t, boolean c) {
-            return getArmor(t);
-        }
-        
-        /**
-         * @return The {@link MiscType} for this armor.
-         */
-        public EquipmentType getArmorEqType() {
-            String name = EquipmentType.getArmorTypeName(type, true);
-            return EquipmentType.get(name);
-        }
-        
-        public int getType() {
-            return type;
-        }
-        
-        public int getArmorTech() {
-            EquipmentType eq = getArmorEqType();
-            return eq.getStaticTechLevel().getCompoundTechLevel(true);
-        }
-        
-        public int getTorsoSlots() {
-            return torsoSlots;
-        }
-        
-        public double getWtPerPoint() {
-            return ArmorType.of(type, true).getWeightPerPoint();
-        }
-    }
-    
     public static int maxJumpMP(Protomech proto) {
         if (proto.getMisc().stream().map(Mounted::getType)
                 .anyMatch(eq -> eq.hasFlag(MiscType.F_JUMP_JET)
@@ -250,12 +160,7 @@ public class TestProtomech extends TestEntity {
 
     @Override
     public double getWeightAllocatedArmor() {
-        ProtomechArmor armor = ProtomechArmor.getArmor(proto);
-        double wtPerPoint = 0.0;
-        if (null != armor) {
-            wtPerPoint = armor.getWtPerPoint();
-        }
-        return proto.getTotalArmor() * wtPerPoint;
+        return proto.getTotalArmor() * ArmorType.forEntity(proto).getWeightPerPoint();
     }
 
     @Override
@@ -419,12 +324,12 @@ public class TestProtomech extends TestEntity {
                 }
             }
         }
-        ProtomechArmor armor = ProtomechArmor.getArmor(proto);
-        if (null == armor) {
+        ArmorType armor = ArmorType.forEntity(proto);
+        if (!armor.hasFlag(MiscType.F_PROTOMECH_EQUIPMENT)) {
             buff.append("Does not have legal armor type.\n");
             illegal = true;
         } else {
-            slotsByLoc.merge(Protomech.LOC_TORSO, armor.getTorsoSlots(), Integer::sum);
+            slotsByLoc.merge(Protomech.LOC_TORSO, armor.getCriticals(proto), Integer::sum);
         }
 
         for (int loc = 0; loc < proto.locations(); loc++) {

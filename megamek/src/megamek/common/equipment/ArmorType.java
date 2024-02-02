@@ -652,7 +652,7 @@ public class ArmorType extends MiscType {
         armor.setInternalName("IS Reactive");
         armor.addLookupName("IS Reactive Armor");
         armor.addLookupName("IS Reactive");
-        armor.cost = 37000.0;
+        armor.cost = 30000.0;
         armor.criticals = 14;
         armor.tankslots = 2;
         armor.svslots = 2;
@@ -682,7 +682,7 @@ public class ArmorType extends MiscType {
         armor.setInternalName("Clan Reactive");
         armor.addLookupName("Clan Reactive Armor");
         armor.addLookupName("Clan Reactive");
-        armor.cost = 37000.0;
+        armor.cost = 30000.0;
         armor.criticals = 7;
         armor.tankslots = 1;
         armor.svslots = 1;
@@ -711,7 +711,7 @@ public class ArmorType extends MiscType {
         armor.setInternalName("IS Reflective");
         armor.addLookupName("IS Reflective Armor");
         armor.addLookupName("IS Reflective");
-        armor.cost = 37000.0;
+        armor.cost = 30000.0;
         armor.criticals = 10;
         armor.tankslots = 1;
         armor.svslots = 1;
@@ -740,7 +740,7 @@ public class ArmorType extends MiscType {
         armor.setInternalName("Clan Reflective");
         armor.addLookupName("Clan Reflective Armor");
         armor.addLookupName("Clan Reflective");
-        armor.cost = 37000.0;
+        armor.cost = 30000.0;
         armor.criticals = 5;
         armor.tankslots = 1;
         armor.svslots = 1;
@@ -1316,7 +1316,7 @@ public class ArmorType extends MiscType {
         armor.name = "BA Fire Resistant";
         armor.setInternalName("Clan BA Fire Resistant");
         armor.shortName = "Fire Resistant";
-        armor.cost = 12500.0;
+        armor.cost = 10000.0;
         armor.criticals = 5;
         armor.flags = armor.flags.or(F_FIRE_RESISTANT).or(F_BA_EQUIPMENT);
         armor.rulesRefs = "253, TM";

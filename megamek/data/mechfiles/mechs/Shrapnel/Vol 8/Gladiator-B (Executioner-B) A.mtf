@@ -1,4 +1,5 @@
-chassis:Gladiator-B (Executioner-B)
+chassis:Gladiator-B
+clanname:Executioner-B
 model:A
 mul id:8464
 Config:Biped Omnimech

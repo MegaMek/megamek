@@ -86,6 +86,15 @@ public class EquipmentType implements ITechnology {
     public static final int T_ARMOR_PRIMITIVE_AERO = 40;
     public static final int T_ARMOR_AEROSPACE = 41;
     public static final int T_ARMOR_STANDARD_PROTOMEK = 42;
+    public static final int T_ARMOR_SV_BAR_2 = 43;
+    public static final int T_ARMOR_SV_BAR_3 = 44;
+    public static final int T_ARMOR_SV_BAR_4 = 45;
+    public static final int T_ARMOR_SV_BAR_5 = 46;
+    public static final int T_ARMOR_SV_BAR_6 = 47;
+    public static final int T_ARMOR_SV_BAR_7 = 48;
+    public static final int T_ARMOR_SV_BAR_8 = 49;
+    public static final int T_ARMOR_SV_BAR_9 = 50;
+    public static final int T_ARMOR_SV_BAR_10 = 51;
 
     public static final int T_STRUCTURE_UNKNOWN = -1;
     public static final int T_STRUCTURE_STANDARD = 0;

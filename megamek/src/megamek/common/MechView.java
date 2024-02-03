@@ -18,6 +18,7 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.annotations.Nullable;
+import megamek.common.equipment.ArmorType;
 import megamek.common.eras.Era;
 import megamek.common.eras.Eras;
 import megamek.common.options.*;
@@ -679,15 +680,12 @@ public class MechView {
                 armor += "/" + maxArmor;
             }
             if (!isInf && !isProto && !entity.hasPatchworkArmor()) {
-                armor += Messages.getString("MechView."
-                        + EquipmentType.getArmorTypeName(entity.getArmorType(1))
-                                .trim());
+                armor += " (" + ArmorType.forEntity(entity).getName() + ")";
             }
             if (isBA) {
                 armor += " " + EquipmentType.getArmorTypeName(entity.getArmorType(1)).trim();
             }
-            retVal.add(new LabeledElement(Messages.getString("MechView.Armor"),
-                    armor));
+            retVal.add(new LabeledElement(Messages.getString("MechView.Armor"), armor));
 
         }
         // Walk through the entity's locations.
@@ -776,9 +774,7 @@ public class MechView {
             armor += Messages.getString("MechView.CapitalArmor");
         }
         if (!entity.hasPatchworkArmor()) {
-            armor += Messages.getString("MechView."
-                    + EquipmentType.getArmorTypeName(entity.getArmorType(1))
-                            .trim());
+            armor += " " + ArmorType.forEntity(entity).getName();
         }
         retVal.add(new LabeledElement(Messages.getString("MechView.Armor"),
                 armor));

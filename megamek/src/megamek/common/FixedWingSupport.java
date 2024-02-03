@@ -13,6 +13,7 @@ package megamek.common;
 
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.common.cost.FixedWingSupportCostCalculator;
+import megamek.common.equipment.ArmorType;
 import megamek.common.options.OptionsConstants;
 
 /**
@@ -74,7 +75,7 @@ public class FixedWingSupport extends ConvFighter {
      */
     @Override
     public boolean hasBARArmor(int loc) {
-        return getArmorType(firstArmorIndex()) == EquipmentType.T_ARMOR_STANDARD;
+        return ArmorType.forEntity(this, loc).hasFlag(MiscType.F_SUPPORT_VEE_BAR_ARMOR);
     }
 
     @Override

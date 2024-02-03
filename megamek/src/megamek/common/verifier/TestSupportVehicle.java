@@ -499,12 +499,14 @@ public class TestSupportVehicle extends TestEntity {
      * @return            A list of armor equipment that meets the tech constraints
      */
     public static List<EquipmentType> legalArmorsFor(ITechManager techManager) {
-        if (techManager.getTechLevel().ordinal() < SimpleTechLevel.ADVANCED.ordinal()) {
-            return Collections.singletonList(ArmorType.of(EquipmentType.T_ARMOR_STANDARD, false));
-        }
         List<EquipmentType> retVal = new ArrayList<>();
         for (ArmorType armor : ArmorType.allArmorTypes()) {
             if (armor.getArmorType() == EquipmentType.T_ARMOR_PATCHWORK) {
+                continue;
+            }
+            // Installing non-BAR armor on a support vehicle is advanced
+            if (!armor.hasFlag(MiscType.F_SUPPORT_VEE_BAR_ARMOR)
+                    && (techManager.getTechLevel().ordinal() < SimpleTechLevel.ADVANCED.ordinal())) {
                 continue;
             }
             if (armor.hasFlag(MiscType.F_SUPPORT_TANK_EQUIPMENT) && techManager.isLegal(armor)) {
@@ -1345,26 +1347,11 @@ public class TestSupportVehicle extends TestEntity {
         // different armor types take different amount of slots
         int armorSlots = 0;
         if (!supportVee.hasPatchworkArmor()) {
-            int at = supportVee.getArmorType(supportVee.firstArmorIndex());
-            if (at == EquipmentType.T_ARMOR_STANDARD) {
-                // Support vehicle armor takes slots like ferro-fibrous at BAR 10/TL E/F
-                if (supportVee.getBARRating(supportVee.firstArmorIndex()) == 10) {
-                    if (supportVee.getArmorTechRating() == ITechnology.RATING_E) {
-                        armorSlots += ArmorType.of(EquipmentType.T_ARMOR_FERRO_FIBROUS, false).getSupportVeeSlots(supportVee);
-                    } else if (supportVee.getArmorTechRating() == ITechnology.RATING_F) {
-                        armorSlots += ArmorType.of(EquipmentType.T_ARMOR_FERRO_FIBROUS, true).getSupportVeeSlots(supportVee);
-                    }
-                }
-            } else {
-                ArmorType armor = ArmorType.of(at, TechConstants.isClan(supportVee.getArmorTechLevel(supportVee.firstArmorIndex())));
-                if (null != armor) {
-                    armorSlots += armor.getSupportVeeSlots(supportVee);
-                }
-            }
+            ArmorType armor = ArmorType.forEntity(supportVee);
+            armorSlots += armor.getSupportVeeSlots(supportVee);
         } else {
             for (int loc = 0; loc < supportVee.locations(); loc++) {
-                ArmorType armor = ArmorType.of(supportVee.getArmorType(loc),
-                        TechConstants.isClan(supportVee.getArmorTechLevel(loc)));
+                ArmorType armor = ArmorType.forEntity(supportVee, loc);
                 if (null != armor) {
                     armorSlots += armor.getPatchworkSlotsMechSV();
                 }
@@ -1435,26 +1422,8 @@ public class TestSupportVehicle extends TestEntity {
      */
     public int getArmorSlots() {
         if (!supportVee.hasPatchworkArmor()) {
-            int at = supportVee.getArmorType(supportVee.firstArmorIndex());
-            if (at == EquipmentType.T_ARMOR_STANDARD) {
-                // Support vehicle armor takes slots like ferro-fibrous at BAR 10/TL E/F
-                if (supportVee.getBARRating(supportVee.firstArmorIndex()) == 10) {
-                    if (supportVee.getArmorTechRating() == ITechnology.RATING_E) {
-                        return ArmorType.of(EquipmentType.T_ARMOR_FERRO_FIBROUS, false).getSupportVeeSlots(supportVee);
-                    } else if (supportVee.getArmorTechRating() == ITechnology.RATING_F) {
-                        return ArmorType.of(EquipmentType.T_ARMOR_FERRO_FIBROUS, true).getSupportVeeSlots(supportVee);
-                    }
-                }
-                return 0;
-            } else {
-                ArmorType armor = ArmorType.of(at,
-                        TechConstants.isClan(supportVee.getArmorTechLevel(supportVee.firstArmorIndex())));
-                if (null != armor) {
-                    return armor.getSupportVeeSlots(supportVee);
-                } else {
-                    return 0;
-                }
-            }
+            ArmorType armor = ArmorType.forEntity(supportVee);
+            return armor.getSupportVeeSlots(supportVee);
         } else {
             int space = 0;
             for (int loc = 0; loc < supportVee.locations(); loc++) {

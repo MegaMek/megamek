@@ -213,6 +213,19 @@ public class ArmorType extends MiscType {
         return patchworkSlotsCVFtr;
     }
 
+    @Override
+    public int getSupportVeeSlots(Entity entity) {
+        // Support vehicle armor takes slots like ferro-fibrous at BAR 10/TL E/F
+        if (getArmorType() == T_ARMOR_SV_BAR_10) {
+            if (entity.getArmorTechRating() == ITechnology.RATING_E) {
+                return ArmorType.of(T_ARMOR_FERRO_FIBROUS, false).criticals;
+            } else if (entity.getArmorTechRating() == ITechnology.RATING_F) {
+                return ArmorType.of(T_ARMOR_FERRO_FIBROUS, true).criticals;
+            }
+        }
+        return svslots;
+    }
+
     /**
      * Used for entities that do not vary the coverage by tonnage. For large craft, use
      * {@link ArmorType#getPointsPerTon(Entity)}.

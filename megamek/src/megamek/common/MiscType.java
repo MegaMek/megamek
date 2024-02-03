@@ -282,6 +282,7 @@ public class MiscType extends EquipmentType {
     public static final BigInteger F_PROTOTYPE = BigInteger.valueOf(1).shiftLeft(225);
     // Fortify Equipment
     public static final BigInteger F_TRENCH_CAPABLE = BigInteger.valueOf(1).shiftLeft(226);
+    public static final BigInteger F_SUPPORT_VEE_BAR_ARMOR = BigInteger.valueOf(1).shiftLeft(227);
 
     // Secondary Flags for Physical Weapons
     public static final long S_CLUB = 1L << 0; // BMR - Indicates an Improvised Club

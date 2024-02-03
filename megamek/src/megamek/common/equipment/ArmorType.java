@@ -1638,7 +1638,7 @@ public class ArmorType extends MiscType {
         armor.setInternalName(armor.name);
         armor.shortName = "BAR 2";
         armor.cost = 50.0;
-        armor.flags = armor.flags.or(F_SUPPORT_TANK_EQUIPMENT);
+        armor.flags = armor.flags.or(F_SUPPORT_TANK_EQUIPMENT).or(F_SUPPORT_VEE_BAR_ARMOR);
         armor.techAdvancement = new TechAdvancement(TECH_BASE_ALL).setAdvancement(DATE_PS, DATE_PS, DATE_PS)
                 .setTechRating(RATING_A).setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
@@ -1658,7 +1658,7 @@ public class ArmorType extends MiscType {
         armor.setInternalName(armor.name);
         armor.shortName = "BAR 3";
         armor.cost = 100.0;
-        armor.flags = armor.flags.or(F_SUPPORT_TANK_EQUIPMENT);
+        armor.flags = armor.flags.or(F_SUPPORT_TANK_EQUIPMENT).or(F_SUPPORT_VEE_BAR_ARMOR);
         armor.techAdvancement = new TechAdvancement(TECH_BASE_ALL).setAdvancement(DATE_PS, DATE_PS, DATE_PS)
             .setTechRating(RATING_A).setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
             .setStaticTechLevel(SimpleTechLevel.STANDARD);
@@ -1678,7 +1678,7 @@ public class ArmorType extends MiscType {
         armor.setInternalName(armor.name);
         armor.shortName = "BAR 4";
         armor.cost = 150.0;
-        armor.flags = armor.flags.or(F_SUPPORT_TANK_EQUIPMENT);
+        armor.flags = armor.flags.or(F_SUPPORT_TANK_EQUIPMENT).or(F_SUPPORT_VEE_BAR_ARMOR);
         armor.techAdvancement = new TechAdvancement(TECH_BASE_ALL).setAdvancement(DATE_PS, DATE_PS, DATE_PS)
             .setTechRating(RATING_B).setAvailability(RATING_B, RATING_B, RATING_A, RATING_A)
             .setStaticTechLevel(SimpleTechLevel.STANDARD);
@@ -1698,7 +1698,7 @@ public class ArmorType extends MiscType {
         armor.setInternalName(armor.name);
         armor.shortName = "BAR 5";
         armor.cost = 200.0;
-        armor.flags = armor.flags.or(F_SUPPORT_TANK_EQUIPMENT);
+        armor.flags = armor.flags.or(F_SUPPORT_TANK_EQUIPMENT).or(F_SUPPORT_VEE_BAR_ARMOR);
         armor.techAdvancement = new TechAdvancement(TECH_BASE_ALL).setAdvancement(DATE_ES, DATE_ES, DATE_ES)
             .setTechRating(RATING_B).setAvailability(RATING_B, RATING_B, RATING_B, RATING_A)
             .setStaticTechLevel(SimpleTechLevel.STANDARD);
@@ -1718,7 +1718,7 @@ public class ArmorType extends MiscType {
         armor.setInternalName(armor.name);
         armor.shortName = "BAR 6";
         armor.cost = 250.0;
-        armor.flags = armor.flags.or(F_SUPPORT_TANK_EQUIPMENT);
+        armor.flags = armor.flags.or(F_SUPPORT_TANK_EQUIPMENT).or(F_SUPPORT_VEE_BAR_ARMOR);
         armor.techAdvancement = new TechAdvancement(TECH_BASE_ALL).setAdvancement(DATE_ES, DATE_ES, DATE_ES)
                 .setTechRating(RATING_C).setAvailability(RATING_C, RATING_B, RATING_B, RATING_A)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
@@ -1738,7 +1738,7 @@ public class ArmorType extends MiscType {
         armor.setInternalName(armor.name);
         armor.shortName = "BAR 7";
         armor.cost = 300.0;
-        armor.flags = armor.flags.or(F_SUPPORT_TANK_EQUIPMENT);
+        armor.flags = armor.flags.or(F_SUPPORT_TANK_EQUIPMENT).or(F_SUPPORT_VEE_BAR_ARMOR);
         armor.techAdvancement = new TechAdvancement(TECH_BASE_ALL).setAdvancement(2250, 2300, 2305)
             .setApproximate(true, true, false).setPrototypeFactions(F_TA)
             .setProductionFactions(F_TA).setTechRating(RATING_C)
@@ -1760,7 +1760,7 @@ public class ArmorType extends MiscType {
         armor.setInternalName(armor.name);
         armor.shortName = "BAR 8";
         armor.cost = 400.0;
-        armor.flags = armor.flags.or(F_SUPPORT_TANK_EQUIPMENT);
+        armor.flags = armor.flags.or(F_SUPPORT_TANK_EQUIPMENT).or(F_SUPPORT_VEE_BAR_ARMOR);
         armor.techAdvancement = new TechAdvancement(TECH_BASE_ALL).setAdvancement(2425, 2435, 22445)
             .setPrototypeFactions(F_TH).setProductionFactions(F_TH)
             .setTechRating(RATING_D)
@@ -1782,7 +1782,7 @@ public class ArmorType extends MiscType {
         armor.setInternalName(armor.name);
         armor.shortName = "BAR 9";
         armor.cost = 500.0;
-        armor.flags = armor.flags.or(F_SUPPORT_TANK_EQUIPMENT);
+        armor.flags = armor.flags.or(F_SUPPORT_TANK_EQUIPMENT).or(F_SUPPORT_VEE_BAR_ARMOR);
         armor.techAdvancement = new TechAdvancement(TECH_BASE_ALL).setAdvancement(2440, 2450, 2470)
             .setPrototypeFactions(F_TH).setProductionFactions(F_TH)
             .setTechRating(RATING_D)
@@ -1804,7 +1804,7 @@ public class ArmorType extends MiscType {
         armor.setInternalName(armor.name);
         armor.shortName = "BAR 10";
         armor.cost = 625.0;
-        armor.flags = armor.flags.or(F_SUPPORT_TANK_EQUIPMENT);
+        armor.flags = armor.flags.or(F_SUPPORT_TANK_EQUIPMENT).or(F_SUPPORT_VEE_BAR_ARMOR);
         armor.techAdvancement = new TechAdvancement(TECH_BASE_ALL).setAdvancement(2460, 2470, 2505)
             .setPrototypeFactions(F_TH).setProductionFactions(F_TH)
             .setApproximate(true, false, false).setTechRating(RATING_D)

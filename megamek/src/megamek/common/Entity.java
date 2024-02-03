@@ -10855,16 +10855,15 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                 total += getArmorWeight(loc);
             }
             return RoundWeight.standard(total, this);
-        } else if (isSupportVehicle()
-                    && getArmorType(firstArmorIndex()) == EquipmentType.T_ARMOR_STANDARD) {
-            double total = getTotalOArmor()
-                    * EquipmentType.getSupportVehicleArmorWeightPerPoint(getBARRating(firstArmorIndex()), getArmorTechRating());
-            return RoundWeight.standard(total, this);
         } else {
-            // this roundabout method is actually necessary to avoid rounding
-            // weirdness. Yeah, it's dumb.
-            double armorPerTon = ArmorType.forEntity(this).getPointsPerTon(this);
-            return RoundWeight.standard(getTotalOArmor() / armorPerTon, this);
+            ArmorType armor = ArmorType.forEntity(this);
+            if (armor.hasFlag(MiscType.F_SUPPORT_VEE_BAR_ARMOR)) {
+                double total = armor.getSVWeightPerPoint(getArmorTechRating());
+                return RoundWeight.standard(total, this);
+            } else {
+                double armorPerTon = ArmorType.forEntity(this).getPointsPerTon(this);
+                return RoundWeight.standard(getTotalOArmor() / armorPerTon, this);
+            }
         }
     }
 

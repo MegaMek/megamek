@@ -562,12 +562,11 @@ public class TestSupportVehicle extends TestEntity {
      * @return    The weight of each armor point in tons, rounded to the kilogram.
      */
     public static double armorWeightPerPoint(Entity vee) {
-        final int at = vee.getArmorType(vee.firstArmorIndex());
-        if (at == EquipmentType.T_ARMOR_STANDARD) {
-            return EquipmentType.getSupportVehicleArmorWeightPerPoint(vee.getBARRating(vee.firstArmorIndex()),
-                    vee.getArmorTechRating());
+        final ArmorType armor = ArmorType.forEntity(vee);
+        if (armor.hasFlag(MiscType.F_SUPPORT_VEE_BAR_ARMOR)) {
+            return armor.getSVWeightPerPoint(vee.getArmorTechRating());
         } else {
-            final double ppt = ArmorType.forEntity(vee).getPointsPerTon(vee);
+            final double ppt = armor.getPointsPerTon(vee);
             return round(1.0 / ppt, Ceil.KILO);
         }
     }
@@ -631,15 +630,10 @@ public class TestSupportVehicle extends TestEntity {
     @Override
     public String printWeightArmor() {
         String name;
-        if (getEntity().hasBARArmor(getEntity().firstArmorIndex())) {
-            name = String.format("BAR %d [%s]",
-                    getEntity().getBARRating(getEntity().firstArmorIndex()),
-                    ITechnology.getRatingName(getEntity().getArmorTechRating()));
-        } else if (!getEntity().hasPatchworkArmor()) {
-            name = EquipmentType.getArmorTypeName(getEntity()
-                            .getArmorType(getEntity().firstArmorIndex()));
-        } else {
+        if (getEntity().hasPatchworkArmor()) {
             name = "Patchwork";
+        } else {
+            name = ArmorType.forEntity(getEntity()).getName();
         }
         return StringUtil.makeLength(
                 String.format("Armor: %d (%s)", getTotalOArmor(), name),
@@ -1160,13 +1154,12 @@ public class TestSupportVehicle extends TestEntity {
                 .map(m -> ChassisModification.getChassisMod(m.getType()))
                 .filter(Objects::nonNull).collect(Collectors.toSet());
         if (!chassisMods.contains(ChassisModification.ARMORED)) {
-            if (!supportVee.hasBARArmor(supportVee.firstArmorIndex())) {
+            ArmorType armor = ArmorType.forEntity(supportVee);
+            if (!armor.hasFlag(MiscType.F_SUPPORT_VEE_BAR_ARMOR)) {
                 buff.append("Advanced armor requires the Armored Chassis Mod.\n");
                 illegal = true;
             }
-            if (EquipmentType.getSupportVehicleArmorWeightPerPoint(
-                    supportVee.getBARRating(supportVee.firstArmorIndex()),
-                            supportVee.getArmorTechRating()) > 0.05) {
+            if (armor.getSVWeightPerPoint(supportVee.getArmorTechRating()) > 0.05) {
                 buff.append("Armor heavier than 50kg/point requires the Armored Chassis Mod.\n");
                 illegal = true;
             }

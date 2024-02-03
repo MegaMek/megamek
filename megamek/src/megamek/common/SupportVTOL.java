@@ -33,6 +33,7 @@ public class SupportVTOL extends VTOL {
         barRating = new int[locations()];
     }
 
+    @Override
     public void setBARRating(int rating, int loc) {
         barRating[loc] = rating;
     }

@@ -45,6 +45,7 @@ public class FixedWingSupport extends ConvFighter {
         return false;
     }
 
+    @Override
     public void setBARRating(int rating, int loc) {
         barRating[loc] = rating;
     }

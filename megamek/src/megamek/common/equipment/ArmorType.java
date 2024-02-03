@@ -37,6 +37,10 @@ public class ArmorType extends MiscType {
         return clan ? armorTypeLookupClan.get(type) : armorTypeLookupIS.get(type);
     }
 
+    public static ArmorType svArmor(int bar) {
+        return of(T_ARMOR_SV_BAR_2 - 2 + bar, false);
+    }
+
     public static ArmorType forEntity(Entity entity, int loc) {
         return ArmorType.of(entity.getArmorType(loc), TechConstants.isClan(entity.getArmorTechLevel(loc)));
     }

@@ -12745,9 +12745,16 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Sets the barrier armor rating for support vehicles. Has no effect on other unit types.
-     * @param rating
+     * @param rating The BAR
      */
     public void setBARRating(int rating) {}
+
+    /**
+     * Sets the barrier armor rating in a specific location for support vehicles. Has no effect on other unit types.
+     * @param rating The BAR
+     * @param loc    The location index
+     */
+    public void setBARRating(int rating, int loc) {}
 
     /**
      * does this entity have an armored chassis?

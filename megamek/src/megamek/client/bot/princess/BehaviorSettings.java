@@ -814,11 +814,11 @@ public class BehaviorSettings implements Serializable {
         out.append("\n\t Destination Edge: ").append(getDestinationEdge());
         out.append("\n\t Retreat Edge: ").append(getRetreatEdge());
         out.append("\n\t Forced Withdrawal: ").append(isForcedWithdrawal());
-        out.append("\n\t Self Preservation: ").append(getSelfPreservationIndex());
-        out.append("\n\t Hyper Aggression: ").append(getHyperAggressionIndex());
-        out.append("\n\t Fall Shame: ").append(getFallShameIndex());
-        out.append("\n\t Bravery: ").append(getBraveryIndex());
-        out.append("\n\t Herd Mentality: ").append(getHerdMentalityIndex());
+        out.append("\n\t Self Preservation: ").append(getSelfPreservationIndex()).append(":").append(getSelfPreservationValue(getSelfPreservationIndex()));
+        out.append("\n\t Hyper Aggression: ").append(getHyperAggressionIndex()).append(":").append(getHyperAggressionValue(getHyperAggressionIndex()));
+        out.append("\n\t Fall Shame: ").append(getFallShameIndex()).append(":").append(getFallShameValue(getFallShameIndex()));
+        out.append("\n\t Bravery: ").append(getBraveryIndex()).append(":").append(getBraveryValue(getBraveryIndex()));
+        out.append("\n\t Herd Mentality: ").append(getHerdMentalityIndex()).append(":").append(getHerdMentalityValue(getHerdMentalityIndex()));
         out.append("\n\t Targets:");
         out.append("\n\t\t Priority Coords: ");
         for (final String t : getStrategicBuildingTargets()) {

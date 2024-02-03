@@ -828,41 +828,6 @@ public class EquipmentType implements ITechnology {
                     {.000, .000, .000, .057, .051, .047},
                     {.000, .000, .000, .063, .056, .052}};
 
-    /**
-     * `Lookup method for the weight of a point of support vehicle armor.
-     *
-     * @param bar        The armor's barrier armor rating
-     * @param techRating The armor's tech rating (0-5 corresponds to A-F)
-     * @return           The weight of a point of armor in tons. Returns 0.0 for invalid value.
-     */
-    public static double getSupportVehicleArmorWeightPerPoint(int bar, int techRating) {
-        if ((bar >= 0) && (techRating >= 0)
-                && (bar < SV_ARMOR_WEIGHT.length) && (techRating < SV_ARMOR_WEIGHT[bar].length)) {
-            return SV_ARMOR_WEIGHT[bar][techRating];
-        }
-        return 0.0;
-    }
-
-    /**
-     * Cost in C-bills of a single point of SV armor for various BAR values.
-     */
-    private static int[] SV_ARMOR_COST = {
-            0, 0, 50, 100, 150, 200, 250, 300, 400, 500, 625
-    };
-
-    /**
-     * Cost lookup for standard SV armor.
-     *
-     * @param bar The barrier armor rating of the support vehicle armor
-     * @return    The cost per point, in C-bills.
-     */
-    public static double getSupportVehicleArmorCostPerPoint(int bar) {
-        if (bar < 0) {
-            return 0;
-        }
-        return SV_ARMOR_COST[Math.min(bar, SV_ARMOR_COST.length - 1)];
-    }
-
     /* Armor and structure are stored as integers and standard uses a generic MiscType that
      * does not have its own TechAdvancement.
      */
@@ -875,70 +840,6 @@ public class EquipmentType implements ITechnology {
             .setAdvancement(DATE_NONE).setTechRating(RATING_A)
             .setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
             .setStaticTechLevel(SimpleTechLevel.INTRO);
-    private static final TechAdvancement[] TA_SV_ARMOR = {
-            TA_NONE, // Placeholder for index 0
-            TA_NONE, // Placeholder for index 1
-            new TechAdvancement(TECH_BASE_ALL).setAdvancement(DATE_PS, DATE_PS, DATE_PS)
-                    .setTechRating(RATING_A).setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
-                    .setStaticTechLevel(SimpleTechLevel.STANDARD), // BAR 2
-            new TechAdvancement(TECH_BASE_ALL).setAdvancement(DATE_PS, DATE_PS, DATE_PS)
-                    .setTechRating(RATING_A).setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
-                    .setStaticTechLevel(SimpleTechLevel.STANDARD), // BAR 3
-            new TechAdvancement(TECH_BASE_ALL).setAdvancement(DATE_PS, DATE_PS, DATE_PS)
-                    .setTechRating(RATING_B).setAvailability(RATING_B, RATING_B, RATING_A, RATING_A)
-                    .setStaticTechLevel(SimpleTechLevel.STANDARD), // BAR 4
-            new TechAdvancement(TECH_BASE_ALL).setAdvancement(DATE_ES, DATE_ES, DATE_ES)
-                    .setTechRating(RATING_B).setAvailability(RATING_B, RATING_B, RATING_B, RATING_A)
-                    .setStaticTechLevel(SimpleTechLevel.STANDARD), // BAR 5
-            new TechAdvancement(TECH_BASE_ALL).setAdvancement(DATE_ES, DATE_ES, DATE_ES)
-                    .setTechRating(RATING_C).setAvailability(RATING_C, RATING_B, RATING_B, RATING_A)
-                    .setStaticTechLevel(SimpleTechLevel.STANDARD), // BAR 6
-            new TechAdvancement(TECH_BASE_ALL).setAdvancement(2250, 2300, 2305)
-                    .setApproximate(true, true, false).setPrototypeFactions(F_TA)
-                    .setProductionFactions(F_TA).setTechRating(RATING_C)
-                    .setAvailability(RATING_C, RATING_B, RATING_B, RATING_B)
-                    .setStaticTechLevel(SimpleTechLevel.STANDARD), // BAR 7
-            new TechAdvancement(TECH_BASE_ALL).setAdvancement(2425, 2435, 22445)
-                    .setPrototypeFactions(F_TH).setProductionFactions(F_TH)
-                    .setTechRating(RATING_D)
-                    .setAvailability(RATING_C, RATING_C, RATING_B, RATING_B)
-                    .setStaticTechLevel(SimpleTechLevel.STANDARD), // BAR 8
-            new TechAdvancement(TECH_BASE_ALL).setAdvancement(2440, 2450, 2470)
-                    .setPrototypeFactions(F_TH).setProductionFactions(F_TH)
-                    .setTechRating(RATING_D)
-                    .setAvailability(RATING_C, RATING_C, RATING_C, RATING_B)
-                    .setStaticTechLevel(SimpleTechLevel.STANDARD), // BAR 9
-            new TechAdvancement(TECH_BASE_ALL).setAdvancement(2460, 2470, 2505)
-                    .setPrototypeFactions(F_TH).setProductionFactions(F_TH)
-                    .setApproximate(true, false, false).setTechRating(RATING_D)
-                    .setAvailability(RATING_D, RATING_D, RATING_D, RATING_C)
-                    .setStaticTechLevel(SimpleTechLevel.STANDARD) // BAR 10
-    };
-
-    /**
-     * Tech advancement for armor based on the armor type index and tech base
-     *
-     * @param at   The armor type constant
-     * @param clan The armor tech base
-     * @return     The tech advancement for the armor
-     */
-    public static TechAdvancement getArmorTechAdvancement(int at, boolean clan) {
-        ArmorType armor = ArmorType.of(at, clan);
-        return (armor == null) ? TA_NONE : armor.getTechAdvancement();
-    }
-
-    /**
-     * Tech advancement for support vehicle armor
-     *
-     * @param bar The armor's barrier armor rating
-     * @return    The armor tech advancement
-     */
-    public static TechAdvancement getSVArmorTechAdvancement(int bar) {
-        if ((bar >= 0) && (bar < TA_SV_ARMOR.length)) {
-            return TA_SV_ARMOR[bar];
-        }
-        return TA_NONE;
-    }
 
     public static TechAdvancement getStructureTechAdvancement(int at, boolean clan) {
         if (at == T_STRUCTURE_STANDARD) {

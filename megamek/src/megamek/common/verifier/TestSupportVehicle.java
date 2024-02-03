@@ -976,7 +976,7 @@ public class TestSupportVehicle extends TestEntity {
                 buff.append("Armor must have a BAR between 2 and 10.\n");
                 correct = false;
             } else {
-                double perPoint = EquipmentType.getSupportVehicleArmorWeightPerPoint(bar, supportVee.getArmorTechRating());
+                double perPoint = ArmorType.forEntity(supportVee).getSVWeightPerPoint(supportVee.getArmorTechRating());
                 if (perPoint < 0.001) {
                     buff.append("BAR ").append(bar).append(" exceeds maximum for armor tech rating ")
                             .append(ITechnology.getRatingName(supportVee.getArmorTechRating()))

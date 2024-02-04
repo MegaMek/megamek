@@ -26,6 +26,7 @@ import megamek.common.containers.PlayerIDandList;
 import megamek.common.enums.BasementType;
 import megamek.common.enums.GamePhase;
 import megamek.common.enums.WeaponSortOrder;
+import megamek.common.equipment.ArmorType;
 import megamek.common.event.GameListener;
 import megamek.common.event.GameVictoryEvent;
 import megamek.common.force.Force;
@@ -10538,8 +10539,7 @@ public class GameManager implements IGameManager {
                                     && (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_HEAT_DISSIPATING)) {
                                 heatDamage += 1;
                                 heatReduced = true;
-                                reductionCause = EquipmentType.armorNames[te
-                                        .getArmorType(hit.getLocation())];
+                                reductionCause = ArmorType.forEntity(te, hit.getLocation()).getName();
                             } else {
                                 heatDamage += 2;
                             }

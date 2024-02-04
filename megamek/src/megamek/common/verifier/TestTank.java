@@ -86,29 +86,17 @@ public class TestTank extends TestEntity {
      */
     public static List<EquipmentType> legalArmorsFor(EntityMovementMode movementMode, ITechManager techManager) {
         List<EquipmentType> retVal = new ArrayList<>();
-        for (int at = 0; at < EquipmentType.armorNames.length; at++) {
-            if ((at == EquipmentType.T_ARMOR_PATCHWORK)
-                    || ((at == EquipmentType.T_ARMOR_HARDENED)
+        for (ArmorType eq : ArmorType.allArmorTypes()) {
+            if ((eq.getArmorType() == EquipmentType.T_ARMOR_PATCHWORK)
+                    || ((eq.getArmorType() == EquipmentType.T_ARMOR_HARDENED)
                             && ((movementMode == EntityMovementMode.VTOL)
                             || (movementMode == EntityMovementMode.HOVER)
                             || (movementMode == EntityMovementMode.WIGE)))) {
                 continue;
             }
-            String name = EquipmentType.getArmorTypeName(at, techManager.useClanTechBase());
-            EquipmentType eq = EquipmentType.get(name);
-            if ((null != eq)
-                    && eq.hasFlag(MiscType.F_TANK_EQUIPMENT)
+            if (eq.hasFlag(MiscType.F_TANK_EQUIPMENT)
                     && techManager.isLegal(eq)) {
                 retVal.add(eq);
-            }
-            if (techManager.useMixedTech()) {
-                name = EquipmentType.getArmorTypeName(at, !techManager.useClanTechBase());
-                EquipmentType eq2 = EquipmentType.get(name);
-                if ((null != eq2) && (eq != eq2)
-                        && eq2.hasFlag(MiscType.F_TANK_EQUIPMENT)
-                        && techManager.isLegal(eq2)) {
-                    retVal.add(eq2);
-                }
             }
         }
         return retVal;
@@ -659,9 +647,7 @@ public class TestTank extends TestEntity {
                 }
                 continue;
             }
-            if (!((mount.getType() instanceof AmmoType) || Arrays.asList(
-                    EquipmentType.armorNames).contains(
-                    mount.getType().getName()))) {
+            if (!((mount.getType() instanceof AmmoType) || (mount.getType() instanceof ArmorType))) {
                 buff.append(StringUtil.makeLength(mount.getName(), 30));
                 buff.append(mount.getType().getTankSlots(tank)).append("\n");
             }

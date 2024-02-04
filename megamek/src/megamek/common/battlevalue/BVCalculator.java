@@ -22,6 +22,7 @@ import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.client.ui.swing.calculationReport.DummyCalculationReport;
 import megamek.codeUtilities.MathUtility;
 import megamek.common.*;
+import megamek.common.equipment.ArmorType;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.bayweapons.BayWeapon;
 
@@ -396,7 +397,7 @@ public abstract class BVCalculator {
             calculation += " x " + formatForReport(armorFactor());
             calculation += (armorMultiplier != 1) ?
                     " x " + formatForReport(armorMultiplier) + " ("
-                            + EquipmentType.armorNames[entity.getArmorType(0)] + ")" : "";
+                            + ArmorType.forEntity(entity).getName() + ")" : "";
             calculation += (barRating != 1) ?
                     " x " + formatForReport(barRating) + " (BAR)" : "";
             defensiveValue += totalArmorBV * armorFactor();

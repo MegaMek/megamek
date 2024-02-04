@@ -13,12 +13,10 @@ package megamek.common;
 
 import megamek.common.annotations.Nullable;
 import megamek.common.equipment.ArmorType;
-import megamek.common.options.GameOptions;
 import megamek.common.weapons.autocannons.HVACWeapon;
 import megamek.common.weapons.defensivepods.BPodWeapon;
 import megamek.common.weapons.defensivepods.MPodWeapon;
 import megamek.common.weapons.ppc.PPCWeapon;
-import megamek.server.Server;
 import org.apache.logging.log4j.LogManager;
 
 import java.io.BufferedWriter;
@@ -87,6 +85,7 @@ public class EquipmentType implements ITechnology {
     public static final int T_ARMOR_PRIMITIVE_FIGHTER = 39;
     public static final int T_ARMOR_PRIMITIVE_AERO = 40;
     public static final int T_ARMOR_AEROSPACE = 41;
+    public static final int T_ARMOR_STANDARD_PROTOMEK = 42;
 
     public static final int T_STRUCTURE_UNKNOWN = -1;
     public static final int T_STRUCTURE_STANDARD = 0;
@@ -97,24 +96,6 @@ public class EquipmentType implements ITechnology {
     public static final int T_STRUCTURE_COMPOSITE = 5;
     public static final int T_STRUCTURE_ENDO_COMPOSITE = 6;
 
-    public static final String[] armorNames = { "Standard", "Ferro-Fibrous",
-            "Reactive", "Reflective", "Hardened", "Light Ferro-Fibrous",
-            "Heavy Ferro-Fibrous", "Patchwork", "Stealth",
-            "Ferro-Fibrous Prototype", "Commercial", "Ferro-Carbide",
-            "Lamellor Ferro-Carbide", "Improved Ferro-Aluminum",
-            /* extra space at the end on purpose */ "Industrial ",
-            "Heavy Industrial", "Ferro-Lamellor", "Primitive",
-            "Electric Discharge ProtoMech", "Ferro-Aluminum",
-            "Heavy Ferro-Aluminum", "Light Ferro-Aluminum",
-            "Vehicular Stealth", "Anti-Penetrative Ablation",
-            "Heat-Dissipating", "Impact-Resistant", "Ballistic-Reinforced",
-            "Prototype Ferro-Aluminum", "BA Standard (Basic)",
-            "BA Standard (Prototype)", "BA Advanced", "BA Stealth (Basic)",
-            "BA Stealth (Standard)", "BA Stealth (Improved)", "BA Stealth (Prototype)",
-            "BA Fire Resistant", "BA Mimetic", "BA Laser Reflective (Reflec/Glazed)", "BA Reactive (Blazer)",
-            "Primitive Fighter", "Primitive Aerospace", "Standard Aerospace"};
-
-
     public static final String[] structureNames = { "Standard", "Industrial",
             "Endo Steel", "Endo Steel Prototype", "Reinforced", "Composite",
             "Endo-Composite" };
@@ -122,14 +103,6 @@ public class EquipmentType implements ITechnology {
     // Assume for now that prototype is not more expensive
     public static final double[] structureCosts = { 400, 300, 1600, 4800, 6400,
             1600, 3200 };
-
-    // Assume for now that prototype is not more expensive
-    public static final double[] armorCosts = {
-            10000, 20000, 30000, 30000, 15000, 15000, 25000, /* patchwork */0, 50000, 60000,
-            3000, 75000, 100000, 50000, 5000, 10000, 35000, 5000, 10000, 20000,
-            25000, 15000, 50000, 15000, 25000, 20000, 25000, 60000, 10000, 10000,
-            12500, 12000, 15000, 20000, 50000, 10000, 15000, 37000, 37000, 5000,
-            5000, 10000};
 
     protected String name = null;
 
@@ -830,19 +803,6 @@ public class EquipmentType implements ITechnology {
     }
 
     /**
-     * Lookup method for protomech armor cost
-     * @param type The type of armor.
-     * @return     The cost per point in C-bills
-     */
-    public static int getProtomechArmorCostPerPoint(int type) {
-        // currently only one type of specialized armor for protomechs; anything else is treated as standard
-        if (type == T_ARMOR_EDP) {
-            return 1250;
-        }
-        return 625;
-    }
-
-    /**
      * Gives the weight of a single point of armor at a particular BAR for a
      * given tech level.
      */
@@ -1128,13 +1088,6 @@ public class EquipmentType implements ITechnology {
         return techAdvancement.getReintroductionDate(clan, faction);
     }
 
-    public static double getArmorCost(int inArmor) {
-        if ((inArmor < 0) || (inArmor >= armorCosts.length)) {
-            return -1;
-        }
-        return armorCosts[inArmor];
-    }
-
     public static double getStructureCost(int inStructure) {
         if ((inStructure < 0) || (inStructure >= structureCosts.length)) {
             return -1;
@@ -1407,9 +1360,5 @@ public class EquipmentType implements ITechnology {
 
     public static List<String> getStructureNames() {
         return Arrays.stream(structureNames).collect(Collectors.toList());
-    }
-
-    public static List<String> getArmorNames() {
-        return Arrays.stream(armorNames).collect(Collectors.toList());
     }
 }

@@ -20,6 +20,7 @@ package megamek.common.cost;
 
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.common.*;
+import megamek.common.equipment.ArmorType;
 import megamek.common.verifier.SupportVeeStructure;
 
 public class FixedWingSupportCostCalculator {
@@ -72,11 +73,11 @@ public class FixedWingSupportCostCalculator {
         } else {
             if (fixedWingSupport.hasPatchworkArmor()) {
                 for (int loc = 0; loc < fixedWingSupport.locations(); loc++) {
-                    costs[i++] = fixedWingSupport.getArmorWeight(loc) * EquipmentType.getArmorCost(fixedWingSupport.getArmorType(loc));
+                    costs[i++] = fixedWingSupport.getArmorWeight(loc) * ArmorType.forEntity(fixedWingSupport, loc).getCost();
                 }
 
             } else {
-                costs[i++] = fixedWingSupport.getArmorWeight() * EquipmentType.getArmorCost(fixedWingSupport.getArmorType(0));
+                costs[i++] = fixedWingSupport.getArmorWeight() * ArmorType.forEntity(fixedWingSupport).getCost();
             }
         }
 

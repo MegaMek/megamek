@@ -20,7 +20,7 @@ package megamek.common.cost;
 
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.common.*;
-import megamek.common.verifier.SupportVeeStructure;
+import megamek.common.equipment.ArmorType;
 
 public class SpaceStationCostCalculator {
 
@@ -60,7 +60,7 @@ public class SpaceStationCostCalculator {
         costs[costIdx++] += (200 * spaceStation.getFuel()) / spaceStation.getFuelPerTon() * 1.02;
 
         // Armor
-        costs[costIdx++] += spaceStation.getArmorWeight() * EquipmentType.getArmorCost(spaceStation.getArmorType(0));
+        costs[costIdx++] += spaceStation.getArmorWeight() * ArmorType.forEntity(spaceStation).getCost();
 
         // Heat Sinks
         int sinkCost = 2000 + (4000 * spaceStation.getHeatType());

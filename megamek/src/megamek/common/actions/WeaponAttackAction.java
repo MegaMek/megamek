@@ -4454,25 +4454,38 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
 
         // Special Equipment
 
-        // if we have BAP and there are woods in the
-        // way, and we are within BAP range, we reduce the BTH by 1
-        // Per TacOps errata, this bonus also applies to all units on the same C3 network
-        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_BAP) && !isIndirect && (te != null)
-                && ae.hasBAP() && (ae.getBAPRange() >= Compute.effectiveDistance(game, ae, te))
-                && !ComputeECM.isAffectedByECM(ae, ae.getPosition(), te.getPosition())
-                && (!game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_WOODS_COVER) &&
-                        (game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.WOODS)
-                        || game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.JUNGLE)))
-                    || (los.getLightWoods() > 0) || (los.getHeavyWoods() > 0) || (los.getUltraWoods() > 0)
-                    || ae.hasNetworkBAP()) {
-            if (ae.hasBAP()) {
-                // If you want the bonus, the entity with the BAP should fire first.
-                // Not sure how to get around this
-                for (Entity en : game.getC3NetworkMembers(ae)) {
-                    en.setNetworkBAP(true);
+        // BAP Targeting rule enabled - TO:AR 6th p.97
+        // have line of sight and there are woods in our way
+        // we have BAP in range or C3 member has BAP in range
+        // we reduce the BTH by 1
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_BAP)) {
+            boolean targetWoodsAffectModifier = te != null
+                    && !game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_WOODS_COVER)
+                    && (game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.WOODS)
+                    || game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.JUNGLE));
+            if (los.canSee() && (targetWoodsAffectModifier || los.thruWoods())) {
+                boolean bapInRange = Compute.bapInRange(game, ae, te);
+                boolean c3BAP = false;
+                if (!bapInRange) {
+                    for (Entity en : game.getC3NetworkMembers(ae)) {
+                        if (ae.equals(en)) {
+                            continue;
+                        }
+                        bapInRange = Compute.bapInRange(game, en, te);
+                        if (bapInRange) {
+                            c3BAP = true;
+                            break;
+                        }
+                    }
+                }
+                if (bapInRange) {
+                    if (c3BAP) {
+                        toHit.addModifier(-1, Messages.getString("WeaponAttackAction.BAPInWoodsC3"));
+                    } else {
+                        toHit.addModifier(-1, Messages.getString("WeaponAttackAction.BAPInWoods"));
+                    }
                 }
             }
-            toHit.addModifier(-1, Messages.getString("WeaponAttackAction.BAPInWoods"));
         }
 
         // To-hit table changes with no to-hit modifiers

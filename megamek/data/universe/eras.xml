@@ -1,4 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+Each Era consists of the following fields:
+Code: The unique String code for the era.
+Name: The display name for the era.
+End: The end date for the era. This can be in the formats "yyyy-MM-dd", "yyyy-MM" (assuming first day of the month), and "yyyy" (assuming first day of the year). One era should have this value missing, which will put it as the final era. For the canon dates, these will be one year after their end date in the MUL, as that will swapover on the first day of the new era.
+Flag: The internal flags for the base eras. You can have multiple flag fields (multiple lines each with a single flag) per custom era, which isn't used in base MekHQ, but allows one to customize things.
 
 <eras>
 	<era>

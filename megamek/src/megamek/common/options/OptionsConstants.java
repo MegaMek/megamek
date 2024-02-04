@@ -267,6 +267,7 @@ public class OptionsConstants {
 
     // GAME OPTIONS TO BE MOVED.
     public static final String BASE_FRIENDLY_FIRE = "friendly_fire";
+    public static final String BASE_TURN_TIMER = "turn_timer";
     public static final String BASE_TURN_TIMER_TARGETING = "turn_timer_targeting";
     public static final String BASE_TURN_TIMER_MOVEMENT = "turn_timer_movement";
     public static final String BASE_TURN_TIMER_FIRING = "turn_timer_firing";

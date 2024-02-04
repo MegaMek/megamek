@@ -283,12 +283,16 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
 
         }
         clientgui.getBoardView().select(null);
+
+        startTimer();
     }
 
     /**
      * Does end turn stuff.
      */
     private void endMyTurn() {
+        stopTimer();
+
         // end my turn, then.
         Entity next = clientgui.getClient().getGame()
                 .getNextEntity(clientgui.getClient().getGame().getTurnIndex());

@@ -17,6 +17,7 @@ import megamek.client.Client;
 import megamek.client.ui.swing.AbstractPhaseDisplay;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.common.enums.GamePhase;
+import megamek.common.options.GameOptions;
 import megamek.common.options.Option;
 import megamek.common.options.OptionsConstants;
 
@@ -103,30 +104,37 @@ public class TurnTimer {
 
     public static TurnTimer init(AbstractPhaseDisplay phaseDisplay, Client client) {
         // check if there should be a turn timer running
-        if (timerShouldStart(client)) {
-            Option timer = (Option) client.getGame().getOptions().getOption(OptionsConstants.BASE_TURN_TIMER);
-            TurnTimer tt = new TurnTimer(timer.intValue(), phaseDisplay);
+        GameOptions options = client.getGame().getOptions();
+        GamePhase phase = client.getGame().getPhase();
+
+        int timerLimit = 0;
+
+        switch (phase) {
+            case TARGETING:
+            case SET_ARTILLERY_AUTOHIT_HEXES:
+            case DEPLOY_MINEFIELDS:
+                timerLimit = options.getOption(OptionsConstants.BASE_TURN_TIMER_TARGETING).intValue();
+                break;
+            case MOVEMENT:
+                timerLimit = options.getOption(OptionsConstants.BASE_TURN_TIMER_MOVEMENT).intValue();
+                break;
+            case FIRING:
+                timerLimit = options.getOption(OptionsConstants.BASE_TURN_TIMER_FIRING).intValue();
+                break;
+            case PHYSICAL:
+                timerLimit = options.getOption(OptionsConstants.BASE_TURN_TIMER_PHYSICAL).intValue();
+                break;
+            default:
+                timerLimit = 0;
+        }
+
+        if (timerLimit > 0) {
+            TurnTimer tt = new TurnTimer(timerLimit, phaseDisplay);
             tt.startTimer();
             return tt;
         }
+
         return null;
     }
 
-    /**
-     * Checks if a turn time limit is set in options
-     * limit is only imposed on movement, firing
-     */
-    //TODO: add timer to physical and targeting phase currently it is only in movement and fire
-    private static boolean timerShouldStart(Client client) {
-        // check if there is a timer set
-        Option timer = (Option) client.getGame().getOptions().getOption(OptionsConstants.BASE_TURN_TIMER);
-        // if timer is set to 0 in options, it is disabled so we only create one if a limit is set in options
-        if (timer.intValue() > 0) {
-            GamePhase phase = client.getGame().getPhase();
-
-            // turn timer should only kick in on firing, targeting, movement and physical attack phase
-            return phase.isMovement() || phase.isFiring() || phase.isPhysical() || phase.isTargeting();
-        }
-        return false;
-    }
 }

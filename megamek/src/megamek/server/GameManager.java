@@ -170,6 +170,7 @@ public class GameManager implements IGameManager {
         commands.add(new ExportListCommand(server));
         commands.add(new FixElevationCommand(server, this));
         commands.add(new HelpCommand(server));
+        commands.add(new BotHelpCommand(server));
         commands.add(new KickCommand(server));
         commands.add(new ListSavesCommand(server));
         commands.add(new LocalSaveGameCommand(server));

@@ -197,6 +197,7 @@ public class Client implements IClientCommandHandler {
         this.port = port;
 
         registerCommand(new HelpCommand(this));
+        registerCommand(new BotHelpCommand(this));
         registerCommand(new MoveCommand(this));
         registerCommand(new RulerCommand(this));
         registerCommand(new ShowEntityCommand(this));

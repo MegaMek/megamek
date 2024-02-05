@@ -26,15 +26,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.swing.*;
-import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 
 import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
-import megamek.client.ui.swing.util.CommandAction;
-import megamek.client.ui.swing.util.KeyCommandBind;
-import megamek.client.ui.swing.util.TurnTimer;
-import megamek.client.ui.swing.util.UIUtil;
+import megamek.client.ui.swing.util.*;
 import megamek.client.ui.swing.widget.*;
 import megamek.common.*;
 import megamek.common.enums.GamePhase;
@@ -136,6 +132,8 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
         GUIP.addPreferenceChangeListener(this);
         KeyBindParser.addPreferenceChangeListener(this);
         ToolTipManager.sharedInstance().registerComponent(this);
+
+        regKeyCommands();
     }
 
 
@@ -284,6 +282,35 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
         adaptToGUIScale();
     }
 
+    /**
+     * Register all of the <code>CommandAction</code>s for this panel display.
+     */
+    protected void regKeyCommands() {
+        MegaMekController controller = clientgui.controller;
+        final StatusBarPhaseDisplay display = this;
+        // Register the action for EXTEND_TURN_TIMER
+        controller.registerCommandAction(KeyCommandBind.EXTEND_TURN_TIMER.cmd,
+                new CommandAction() {
+
+                    @Override
+                    public boolean shouldPerformAction() {
+                        if (!clientgui.getClient().isMyTurn()
+                                || clientgui.getBoardView().getChatterBoxActive()
+                                || display.isIgnoringEvents()
+                                || !display.isVisible()) {
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    }
+
+                    @Override
+                    public void performAction() {
+                        extendTimer();
+                    }
+                });
+    }
+
     @Override
     public void keyPressed(KeyEvent evt) { }
 
@@ -321,6 +348,12 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
         if (tt != null) {
             tt.stopTimer();
             tt = null;
+        }
+    }
+
+    public void extendTimer() {
+        if (tt != null) {
+            tt.setExtendTimer();
         }
     }
 

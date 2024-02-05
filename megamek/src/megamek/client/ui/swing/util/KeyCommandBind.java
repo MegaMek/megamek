@@ -119,7 +119,8 @@ public enum KeyCommandBind {
     MOD_ENVELOPE(true, "viewModEnvelope", VK_W, CTRL_DOWN_MASK),
     SENSOR_RANGE(true, "sensorRange", VK_C),
     UNDO_SINGLE_STEP("undoSingleStep", VK_BACK_SPACE, CTRL_DOWN_MASK),
-    FORCE_DISPLAY(true, "toggleForceDisplay", VK_F, CTRL_DOWN_MASK);
+    FORCE_DISPLAY(true, "toggleForceDisplay", VK_F, CTRL_DOWN_MASK),
+    EXTEND_TURN_TIMER("extendTurnTimer", VK_F4, CTRL_DOWN_MASK);
 
     /** The command associated with this binding. */
     public String cmd;

@@ -470,8 +470,8 @@
     </KeyBind>
 
     <KeyBind>
-         <command>undoSingleStep</command> <!-- Ctrl+BackSpace -->
-        <keyCode>8</keyCode>      
+         <command>undoSingleStep</command> <!-- Ctrl-Backspace -->
+        <keyCode>8</keyCode>
         <modifier>128</modifier>
         <isRepeatable>false</isRepeatable>
     </KeyBind>
@@ -479,6 +479,13 @@
     <KeyBind>
          <command>toggleForceDisplay</command> <!-- Ctrl-F -->
         <keyCode>70</keyCode>
+        <modifier>128</modifier>
+        <isRepeatable>false</isRepeatable>
+    </KeyBind>
+
+    <KeyBind>
+         <command>extendTurnTimer</command> <!-- Ctrl-F4 -->
+        <keyCode>115</keyCode>
         <modifier>128</modifier>
         <isRepeatable>false</isRepeatable>
     </KeyBind>

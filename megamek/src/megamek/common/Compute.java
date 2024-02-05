@@ -2561,7 +2561,7 @@ public class Compute {
                             || (entity.moved == EntityMovementType.MOVE_VTOL_SPRINT)
                         );
 
-        boolean isVTOL = (entity.moved == EntityMovementType.MOVE_VTOL_RUN)
+        boolean validFlying = (entity.moved == EntityMovementType.MOVE_VTOL_RUN)
                         || (entity.moved == EntityMovementType.MOVE_VTOL_WALK)
                         || (entity.getMovementMode() == EntityMovementMode.VTOL)
                         || (entity.moved == EntityMovementType.MOVE_VTOL_SPRINT);
@@ -2570,7 +2570,7 @@ public class Compute {
                 .getTargetMovementModifier(
                         entity.delta_distance,
                         jumped,
-                        isVTOL,
+                        validFlying,
                         game);
 
         if (entity.moved != EntityMovementType.MOVE_JUMP
@@ -2645,7 +2645,7 @@ public class Compute {
             }
         }
 
-        if (jumped) {
+        if (isVTOL || jumped) {
             if (isVTOL && (distance > 0)) {
                 toHit.addModifier(1, "target VTOL used MPs");
             } else {

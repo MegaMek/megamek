@@ -264,8 +264,9 @@ public class FireControl {
                 }
             }
         } else {
+            // Now more inclusive VTOL/WiGE check, should cover VTOL CI/BA as well.
             toHitData.append(getTargetMovementModifier(targetState.getHexesMoved(), targetState.isJumping(),
-                                                       target instanceof VTOL, game));
+                                                       target.isAirborneVTOLorWIGE(), game));
         }
         if (shooterState.isProne()) {
             toHitData.addModifier(TH_ATT_PRONE);

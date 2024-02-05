@@ -126,24 +126,33 @@ public class ArtilleryCannonWeaponHandler extends AmmoWeaponHandler {
             vPhaseReport.addElement(r);
         } else {
             targetPos = Compute.scatter(targetPos, (Math.abs(toHit.getMoS()) + 1) / 2);
-            if (game.getBoard().contains(targetPos)) {
-                // misses and scatters to another hex
-                if (!isFlak) {
-                    r = new Report(3195);
+            if (!game.getBoard().inSpace()) {
+                if (game.getBoard().contains(targetPos)) {
+                    // misses and scatters to another hex
+                    if (!isFlak) {
+                        r = new Report(3195);
+                    } else {
+                        r = new Report(3192);
+                    }
+                    r.subject = subjectId;
+                    r.add(targetPos.getBoardNum());
+                    vPhaseReport.addElement(r);
                 } else {
-                    r = new Report(3192);
+                    // misses and scatters off-board
+                    if (isFlak) {
+                        r = new Report(3193);
+                    } else {
+                        r = new Report(3200);
+                    }
+                    r.subject = subjectId;
+                    vPhaseReport.addElement(r);
+                    return !bMissed;
                 }
+            } else {
+                // No scattering in space
+                r = new Report(3196);
                 r.subject = subjectId;
                 r.add(targetPos.getBoardNum());
-                vPhaseReport.addElement(r);
-            } else {
-                // misses and scatters off-board
-                if (isFlak) {
-                    r = new Report(3193);
-                } else {
-                    r = new Report(3200);
-                }
-                r.subject = subjectId;
                 vPhaseReport.addElement(r);
                 return !bMissed;
             }

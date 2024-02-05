@@ -125,8 +125,8 @@ public class ArtilleryCannonWeaponHandler extends AmmoWeaponHandler {
             r.add(targetPos.getBoardNum());
             vPhaseReport.addElement(r);
         } else {
-            targetPos = Compute.scatter(targetPos, (Math.abs(toHit.getMoS()) + 1) / 2);
             if (!game.getBoard().inSpace()) {
+                targetPos = Compute.scatter(targetPos, (Math.abs(toHit.getMoS()) + 1) / 2);
                 if (game.getBoard().contains(targetPos)) {
                     // misses and scatters to another hex
                     if (!isFlak) {

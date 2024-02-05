@@ -23,7 +23,6 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import megamek.common.equipment.ArmorType;
 import megamek.common.BipedMech;
 import megamek.common.Engine;
 import megamek.common.Entity;
@@ -32,7 +31,6 @@ import megamek.common.Mounted;
 import megamek.common.QuadMech;
 import megamek.common.loaders.TdbFile.CriticalSlot;
 import megamek.common.loaders.TdbFile.Location;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

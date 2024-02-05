@@ -171,6 +171,7 @@ public class GameManager implements IGameManager {
         commands.add(new ExportListCommand(server));
         commands.add(new FixElevationCommand(server, this));
         commands.add(new HelpCommand(server));
+        commands.add(new BotHelpCommand(server));
         commands.add(new KickCommand(server));
         commands.add(new ListSavesCommand(server));
         commands.add(new LocalSaveGameCommand(server));
@@ -1098,7 +1099,6 @@ public class GameManager implements IGameManager {
             entity.setUsedSearchlight(false);
 
             entity.setCarefulStand(false);
-            entity.setNetworkBAP(false);
 
             // this flag is relevant only within the context of a single phase, but not between phases
             entity.setTurnInterrupted(false);
@@ -20331,7 +20331,7 @@ public class GameManager implements IGameManager {
             r.add(rollTarget.getLastPlainDesc());
             vPhaseReport.add(r);
             // roll
-            final Roll diceRoll = Compute.rollD6(2);
+            Roll diceRoll = entity.getCrew().rollPilotingSkill();
             r = new Report(2190);
             r.subject = entity.getId();
             r.add(rollTarget.getValueAsString());

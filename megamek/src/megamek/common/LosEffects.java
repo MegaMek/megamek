@@ -237,6 +237,10 @@ public class LosEffects {
         return ultraWoods;
     }
 
+    public boolean thruWoods() {
+        return (lightWoods > 0) || (heavyWoods > 0) || (ultraWoods > 0);
+    }
+
     public int getLightSmoke() {
         return lightSmoke;
     }

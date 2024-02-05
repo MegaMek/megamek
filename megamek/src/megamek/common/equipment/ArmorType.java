@@ -34,6 +34,9 @@ public class ArmorType extends MiscType {
     private static final List<ArmorType> allTypes = new ArrayList<>();
 
     public static ArmorType of(int type, boolean clan) {
+        if (armorTypeLookupClan.isEmpty() && armorTypeLookupIS.isEmpty()) {
+            initializeTypes();
+        }
         ArmorType armor = clan ? armorTypeLookupClan.get(type) : armorTypeLookupIS.get(type);
         // Some mixed tech unit files use the unit tech base instead of the armor tech base.
         if (armor == null) {
@@ -59,6 +62,7 @@ public class ArmorType extends MiscType {
     }
 
     public static void initializeTypes() {
+        addArmorType(createUnknownArmor());
         addArmorType(createStandardArmor());
         addArmorType(createISFerroFibrous());
         addArmorType(createClanFerroFibrous());

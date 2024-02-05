@@ -46,14 +46,15 @@ public class ArtilleryCannonWeaponHandler extends AmmoWeaponHandler {
         if (!cares(phase)) {
             return true;
         }
-
-        Coords targetPos = target.getPosition();
-        boolean isFlak = (target instanceof VTOL) || target.isAero();
-        boolean asfFlak = target.isAero();
         if (ae == null) {
             LogManager.getLogger().error("Artillery Entity is null!");
             return true;
         }
+
+        Coords targetPos = target.getPosition();
+        boolean targetIsEntity = target.getTargetType() == Targetable.TYPE_ENTITY;
+        boolean isFlak = targetIsEntity && Compute.isFlakAttack(ae, (Entity) target);
+        boolean asfFlak = isFlak && target.isAirborne();
         Mounted ammoUsed = ae.getEquipment(waa.getAmmoId());
         final AmmoType ammoType = (ammoUsed == null) ? null : (AmmoType) ammoUsed.getType();
 

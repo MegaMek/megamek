@@ -62,7 +62,6 @@ public class ArmorType extends MiscType {
     }
 
     public static void initializeTypes() {
-        addArmorType(createUnknownArmor());
         addArmorType(createStandardArmor());
         addArmorType(createISFerroFibrous());
         addArmorType(createClanFerroFibrous());
@@ -253,29 +252,6 @@ public class ArmorType extends MiscType {
 
     public int getBAR() {
         return bar;
-    }
-
-    private static ArmorType createUnknownArmor() {
-        ArmorType armor = new ArmorType();
-        armor.name = "Unknown";
-        armor.setInternalName("Unknown Armor");
-        armor.addLookupName("IS Unknown");
-        armor.addLookupName("Clan Unknown");
-        armor.addLookupName("Unknown");
-
-        armor.flags = armor.flags.or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT)
-                .or(F_VTOL_EQUIPMENT).or(F_FIGHTER_EQUIPMENT).or(F_PROTOMECH_EQUIPMENT);
-        armor.criticals = 0;
-
-        armor.techAdvancement = new TechAdvancement(TECH_BASE_ALL)
-                .setAdvancement(2460, 2470, 2470).setApproximate(true, false, false)
-                .setTechRating(RATING_D).setAvailability(RATING_C, RATING_C, RATING_C, RATING_B)
-                .setStaticTechLevel(SimpleTechLevel.INTRO);
-
-        armor.armorType = T_ARMOR_UNKNOWN;
-        armor.weightPerPoint = 0.050; // when used as protomech armor
-
-        return armor;
     }
 
     private static ArmorType createStandardArmor() {

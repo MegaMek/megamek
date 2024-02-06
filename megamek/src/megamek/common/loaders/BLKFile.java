@@ -922,7 +922,7 @@ public class BLKFile {
         for (int i = 0; i < numLocs; i++) {
             blk.writeBlockData(t.getLocationName(i) + " Equipment", eq.get(i));
         }
-        if (!t.hasPatchworkArmor() && t.hasBARArmor(1)) {
+        if (!t.hasPatchworkArmor() && ArmorType.forEntity(t).hasFlag(MiscType.F_SUPPORT_VEE_BAR_ARMOR)) {
             blk.writeBlockData("barrating", t.getBARRating(1));
         }
 

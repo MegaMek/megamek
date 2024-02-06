@@ -271,8 +271,8 @@ public class OptionsConstants {
     public static final String BASE_TURN_TIMER_TARGETING = "turn_timer_targeting";
     public static final String BASE_TURN_TIMER_MOVEMENT = "turn_timer_movement";
     public static final String BASE_TURN_TIMER_FIRING = "turn_timer_firing";
-    public static final String BASE_TURN_TIMER_ALLOW_EXTENSION = "turn_timer_allow_extension";
     public static final String BASE_TURN_TIMER_PHYSICAL = "turn_timer_physical";
+    public static final String BASE_TURN_TIMER_ALLOW_EXTENSION = "turn_timer_allow_extension";
     public static final String BASE_SKIP_INELIGABLE_MOVEMENT = "skip_ineligable_movement";
     public static final String BASE_SKIP_INELIGABLE_FIRING = "skip_ineligable_firing";
     public static final String BASE_SKIP_INELIGABLE_PHYSICAL = "skip_ineligable_physical";

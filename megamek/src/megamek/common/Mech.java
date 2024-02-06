@@ -6371,7 +6371,28 @@ public abstract class Mech extends Entity {
         return true;
     }
 
-    public static List<String> getCockpitDescrtiption() {
-        return Arrays.stream(COCKPIT_STRING).collect(Collectors.toList());
+    public static Map<Integer, String> getAllCockpitCodeName() {
+        Map<Integer, String> result = new HashMap();
+
+        result.put(COCKPIT_STANDARD, getCockpitDisplayString(COCKPIT_STANDARD));
+        result.put(COCKPIT_SMALL, getCockpitDisplayString(COCKPIT_SMALL));
+        result.put(COCKPIT_COMMAND_CONSOLE, getCockpitDisplayString(COCKPIT_COMMAND_CONSOLE));
+        result.put(COCKPIT_TORSO_MOUNTED, getCockpitDisplayString(COCKPIT_TORSO_MOUNTED));
+        result.put(COCKPIT_DUAL, getCockpitDisplayString(COCKPIT_DUAL));
+        result.put(COCKPIT_INDUSTRIAL, getCockpitDisplayString(COCKPIT_INDUSTRIAL));
+        result.put(COCKPIT_PRIMITIVE, getCockpitDisplayString(COCKPIT_PRIMITIVE));
+        result.put(COCKPIT_PRIMITIVE_INDUSTRIAL, getCockpitDisplayString(COCKPIT_PRIMITIVE_INDUSTRIAL));
+        result.put(COCKPIT_SUPERHEAVY, getCockpitDisplayString(COCKPIT_SUPERHEAVY));
+        result.put(COCKPIT_SUPERHEAVY_TRIPOD, getCockpitDisplayString(COCKPIT_SUPERHEAVY_TRIPOD));
+        result.put(COCKPIT_TRIPOD, getCockpitDisplayString(COCKPIT_TRIPOD));
+        result.put(COCKPIT_INTERFACE, getCockpitDisplayString(COCKPIT_INTERFACE));
+        result.put(COCKPIT_VRRP, getCockpitDisplayString(COCKPIT_VRRP));
+        result.put(COCKPIT_QUADVEE, getCockpitDisplayString(COCKPIT_QUADVEE));
+        result.put(COCKPIT_SUPERHEAVY_INDUSTRIAL, getCockpitDisplayString(COCKPIT_SUPERHEAVY_INDUSTRIAL));
+        result.put(COCKPIT_SUPERHEAVY_COMMAND_CONSOLE, getCockpitDisplayString(COCKPIT_SUPERHEAVY_COMMAND_CONSOLE));
+        result.put(COCKPIT_SMALL_COMMAND_CONSOLE, getCockpitDisplayString(COCKPIT_SMALL_COMMAND_CONSOLE));
+        result.put(COCKPIT_UNKNOWN, getCockpitDisplayString(COCKPIT_UNKNOWN));
+
+        return result;
     }
 }

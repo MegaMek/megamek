@@ -602,12 +602,12 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         loadYesNo(cClanEngine);
         loadYesNo(cPatchwork);
 
-        loadTriStateItem(ArmorType.allArmorNames(), listArmorType, 5);
-        loadTriStateItem(Mech.getCockpitDescrtiption(), listCockpitType, 7);
-        loadTriStateItem(EquipmentType.getStructureNames(), listInternalsType, 7);
-        loadTriStateItem(Engine.getEngineTypes(), listEngineType, 5);
-        loadTriStateItem(Entity.getGyroTypes(), listGyroType, 7);
-        loadTriStateItem(SimpleTechLevel.getDescriptions(), listTechLevel, 5);
+        loadTriStateItem(ArmorType.getAllArmorCodeName(), listArmorType, 5);
+        loadTriStateItem(Mech.getAllCockpitCodeName(), listCockpitType, 7);
+        loadTriStateItem(EquipmentType.getAllStructureCodeName(), listInternalsType, 7);
+        loadTriStateItem(Engine.getAllEngineCodeName(), listEngineType, 5);
+        loadTriStateItem(Entity.getAllGyroCodeName(), listGyroType, 7);
+        loadTriStateItem(SimpleTechLevel.getAllSimpleTechLevelCodeName(), listTechLevel, 5);
         loadTriStateItem(Entity.getTechBaseDescriptions(), listTechBase, 4);
 
         JPanel baseComboBoxesPanel = new JPanel();
@@ -2206,19 +2206,6 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         return mechFilter;
     }
 
-    private void updateTriStateItemInteger(List<Integer> include, List<Integer> exclude,  JList l) {
-        ListModel<TriStateItem> m = l.getModel();
-
-        for (int i = 0; i < m.getSize(); i++) {
-            TriStateItem ms = m.getElementAt(i);
-            if (ms.state.contains("\u2611")) {
-                include.add(i);
-            } else if (ms.state.contains("\u2612")) {
-                exclude.add(i);
-            }
-        }
-    }
-
     private void updateTriStateItemString(List<String> include, List<String> exclude, JList l) {
         ListModel<TriStateItem> m = l.getModel();
 
@@ -2232,15 +2219,16 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         }
     }
 
-    private void updateTriStateItemString(Map<Integer, String> include, Map<Integer, String> exclude, JList l) {
+    private void updateTriStateItem(List<Integer> include, List<Integer> exclude, JList l) {
         ListModel<TriStateItem> m = l.getModel();
 
         for (int i = 0; i < m.getSize(); i++) {
             TriStateItem ms = m.getElementAt(i);
             if (ms.state.contains("\u2611")) {
-                include.put(ms.code, ms.text);
+                include.add(ms.code);
+
             } else if (ms.state.contains("\u2612")) {
-                exclude.put(ms.code, ms.text);
+                exclude.add(ms.code);
             }
         }
     }
@@ -2280,12 +2268,12 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         mechFilter.sStartBV = tStartBV.getText();
         mechFilter.sEndBV = tEndBV.getText();
 
-        updateTriStateItemInteger(mechFilter.armorType, mechFilter.armorTypeExclude, listArmorType);
-        updateTriStateItemInteger(mechFilter.cockpitType, mechFilter.cockpitTypeExclude, listCockpitType);
-        updateTriStateItemInteger(mechFilter.internalsType, mechFilter.internalsTypeExclude, listInternalsType);
-        updateTriStateItemString(mechFilter.engineType, mechFilter.engineTypeExclude, listEngineType);
-        updateTriStateItemString(mechFilter.gyroType, mechFilter.gyroTypeExclude, listGyroType);
-        updateTriStateItemString(mechFilter.techLevel, mechFilter.techLevelExclude, listTechLevel);
+        updateTriStateItem(mechFilter.armorType, mechFilter.armorTypeExclude, listArmorType);
+        updateTriStateItem(mechFilter.cockpitType, mechFilter.cockpitTypeExclude, listCockpitType);
+        updateTriStateItem(mechFilter.internalsType, mechFilter.internalsTypeExclude, listInternalsType);
+        updateTriStateItem(mechFilter.engineType, mechFilter.engineTypeExclude, listEngineType);
+        updateTriStateItem(mechFilter.gyroType, mechFilter.gyroTypeExclude, listGyroType);
+        updateTriStateItem(mechFilter.techLevel, mechFilter.techLevelExclude, listTechLevel);
         updateTriStateItemString(mechFilter.techBase, mechFilter.techBaseExclude, listTechBase);
     }
 

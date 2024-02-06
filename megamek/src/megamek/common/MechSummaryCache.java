@@ -499,6 +499,7 @@ public class MechSummaryCache {
         }
 
         ms.setTechLevel(e.getStaticTechLevel().toString());
+        ms.setTechLevelCode(e.getStaticTechLevel().ordinal());
         ms.setTechBase(e.getTechBaseDescription());
 
         ms.setFailedToLoadEquipment(e.getFailedEquipment().hasNext());
@@ -506,8 +507,10 @@ public class MechSummaryCache {
         ms.setGyroType(e.getGyroType());
         if (e.hasEngine()) {
             ms.setEngineName(e.getEngine().getEngineName());
+            ms.setEngineType(e.getEngine().getEngineType());
         } else {
             ms.setEngineName("None");
+            ms.setEngineType(-1);
         }
 
         if (e instanceof Mech) {

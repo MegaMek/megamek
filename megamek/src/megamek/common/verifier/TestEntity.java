@@ -329,7 +329,7 @@ public abstract class TestEntity implements TestEntityOption {
      * @param techManager   The constraints used to filter the armor types
      * @return A list of all armors that meet the tech constraints
      */
-    public static List<EquipmentType> legalArmorsFor(long etype, boolean industrial, boolean primitive,
+    public static List<ArmorType> legalArmorsFor(long etype, boolean industrial, boolean primitive,
             EntityMovementMode movementMode, ITechManager techManager) {
         if ((etype & Entity.ETYPE_BATTLEARMOR) != 0) {
             return TestBattleArmor.legalArmorsFor(techManager);

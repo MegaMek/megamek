@@ -84,8 +84,8 @@ public class TestTank extends TestEntity {
      * @param techManager  The tech constraints
      * @return             The armors legal for the unit
      */
-    public static List<EquipmentType> legalArmorsFor(EntityMovementMode movementMode, ITechManager techManager) {
-        List<EquipmentType> retVal = new ArrayList<>();
+    public static List<ArmorType> legalArmorsFor(EntityMovementMode movementMode, ITechManager techManager) {
+        List<ArmorType> retVal = new ArrayList<>();
         for (ArmorType eq : ArmorType.allArmorTypes()) {
             if ((eq.getArmorType() == EquipmentType.T_ARMOR_PATCHWORK)
                     || ((eq.getArmorType() == EquipmentType.T_ARMOR_HARDENED)

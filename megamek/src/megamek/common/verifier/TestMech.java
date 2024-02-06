@@ -85,8 +85,8 @@ public class TestMech extends TestEntity {
      * @param techManager  The tech manager that determines legality
      * @return             A list of legal armors for the mech
      */
-    public static List<EquipmentType> legalArmorsFor(long etype, boolean industrial, ITechManager techManager) {
-        List<EquipmentType> legalArmors = new ArrayList<>();
+    public static List<ArmorType> legalArmorsFor(long etype, boolean industrial, ITechManager techManager) {
+        List<ArmorType> legalArmors = new ArrayList<>();
         boolean industrialOnly = industrial
                 && (techManager.getTechLevel().ordinal() < SimpleTechLevel.EXPERIMENTAL.ordinal());
         boolean isLam = (etype & Entity.ETYPE_LAND_AIR_MECH) != 0;

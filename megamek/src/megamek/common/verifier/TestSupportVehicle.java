@@ -498,8 +498,8 @@ public class TestSupportVehicle extends TestEntity {
      * @param techManager Applies the filtering criteria
      * @return            A list of armor equipment that meets the tech constraints
      */
-    public static List<EquipmentType> legalArmorsFor(ITechManager techManager) {
-        List<EquipmentType> retVal = new ArrayList<>();
+    public static List<ArmorType> legalArmorsFor(ITechManager techManager) {
+        List<ArmorType> retVal = new ArrayList<>();
         for (ArmorType armor : ArmorType.allArmorTypes()) {
             if (armor.getArmorType() == EquipmentType.T_ARMOR_PATCHWORK) {
                 continue;

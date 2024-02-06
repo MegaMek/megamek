@@ -2645,12 +2645,10 @@ public class Compute {
             }
         }
 
-        if (isVTOL || jumped) {
-            if (isVTOL && (distance > 0)) {
-                toHit.addModifier(1, "target VTOL used MPs");
-            } else {
-                toHit.addModifier(1, "target jumped");
-            }
+        if (isVTOL && (distance > 0)) {
+            toHit.addModifier(1, "target VTOL used MPs");
+        } else if (jumped) {
+            toHit.addModifier(1, "target jumped");
         }
 
         return toHit;

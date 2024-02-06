@@ -312,6 +312,11 @@ public class Engine implements Serializable, ITechnology {
     public boolean isSolar() {
         return engineType == SOLAR;
     }
+    
+    public boolean isICE() {
+        return engineType == COMBUSTION_ENGINE;
+    }
+
 
     /**
      * Returns the weight of the engine in tons, rounded to the next highest half

@@ -817,9 +817,13 @@ public class BLKFile {
                 blk.writeBlockData("armor_type",
                         EquipmentType.T_ARMOR_PATCHWORK);
                 for (int i = 1; i < t.locations(); i++) {
+                    ArmorType armor = ArmorType.forEntity(t, i);
                     blk.writeBlockData(t.getLocationName(i) + "_armor_type", t.getArmorType(i));
                     blk.writeBlockData(t.getLocationName(i) + "_armor_tech",
                             TechConstants.getTechName(t.getArmorTechLevel(i)));
+                    if (armor.hasFlag(MiscType.F_SUPPORT_VEE_BAR_ARMOR)) {
+                        blk.writeBlockData(t.getLocationName(i) + "_barrating", armor.getBAR());
+                    }
                 }
             }
             if (t.getStructureType() != 0) {

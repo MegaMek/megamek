@@ -21,6 +21,9 @@ package megamek.common;
 
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.common.battlevalue.BVCalculator;
+import megamek.common.equipment.ArmorType;
+
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -58,6 +61,12 @@ public class EntityTest {
         when(testEntity.getWeaponList()).thenReturn(equipment);
         when(testEntity.getAmmo()).thenReturn(new ArrayList<>(0));
         return testEntity;
+    }
+
+    @BeforeAll
+    public static void beforeAll() {
+        EquipmentType.initializeTypes();
+        ArmorType.initializeTypes();
     }
 
     @Test

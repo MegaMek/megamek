@@ -22,6 +22,7 @@ package megamek.client.bot.princess;
 import megamek.client.bot.princess.PathRanker.PathRankerType;
 import megamek.codeUtilities.StringUtility;
 import megamek.common.*;
+import megamek.common.equipment.ArmorType;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
@@ -29,6 +30,8 @@ import megamek.common.weapons.StopSwarmAttack;
 import megamek.common.weapons.missiles.ATMWeapon;
 import megamek.common.weapons.missiles.MMLWeapon;
 import megamek.server.SmokeCloud;
+
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledForJreRange;
@@ -139,6 +142,12 @@ public class FireControlTest {
     private Map<Mounted, Double> testToHitThreshold;
 
     private FireControl testFireControl;
+
+    @BeforeAll
+    public static void beforeAll() {
+        EquipmentType.initializeTypes();
+        ArmorType.initializeTypes();
+    }
 
     @BeforeEach
     public void beforeEach() {

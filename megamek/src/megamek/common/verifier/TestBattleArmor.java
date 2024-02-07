@@ -361,7 +361,7 @@ public class TestBattleArmor extends TestEntity {
 
     public TestBattleArmor(BattleArmor armor, TestEntityOption option,
             String fileString) {
-        super(option, null, null, null);
+        super(option, null, null);
         ba = armor;
         this.fileString = fileString;
     }

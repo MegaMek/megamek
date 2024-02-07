@@ -109,7 +109,7 @@ public class TestMech extends TestEntity {
     private Mech mech;
 
     public TestMech(Mech mech, TestEntityOption option, String fileString) {
-        super(option, mech.getEngine(), getArmor(mech), getStructure(mech));
+        super(option, mech.getEngine(), getStructure(mech));
         this.mech = mech;
         this.fileString = fileString;
     }
@@ -119,31 +119,6 @@ public class TestMech extends TestEntity {
         return new Structure(type, mech.isSuperHeavy(), mech.getMovementMode());
     }
 
-    private static Armor[] getArmor(Mech mech) {
-        Armor[] armor;
-        if (!mech.hasPatchworkArmor()) {
-            armor = new Armor[1];
-            int type = mech.getArmorType(1);
-            int flag = 0;
-            if (mech.isClanArmor(1)) {
-                flag |= Armor.CLAN_ARMOR;
-            }
-            armor[0] = new Armor(type, flag);
-            return armor;
-        } else {
-            armor = new Armor[mech.locations()];
-            for (int i = 0; i < mech.locations(); i++) {
-                int type = mech.getArmorType(i);
-                int flag = 0;
-                if (mech.isClanArmor(i)) {
-                    flag |= Armor.CLAN_ARMOR;
-                }
-                armor[i] = new Armor(type, flag);
-            }
-        }
-        return armor;
-    }
-    
     public static Integer maxJumpMP(Mech mech) {
         if (mech.isSuperHeavy()) {
             return 0;

@@ -608,7 +608,7 @@ public class TestSupportVehicle extends TestEntity {
     
     public TestSupportVehicle(Entity sv, TestEntityOption options,
             String fileString) {
-        super(options, sv.getEngine(), null, null);
+        super(options, sv.getEngine(), null);
         this.supportVee = sv;
         testTank = sv instanceof Tank ? new TestTank((Tank) sv, options, fileString) : null;
         testAero = sv instanceof Aero ? new TestAero((Aero) sv, options, fileString) : null;

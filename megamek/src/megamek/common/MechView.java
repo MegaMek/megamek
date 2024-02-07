@@ -22,7 +22,6 @@ import megamek.common.equipment.ArmorType;
 import megamek.common.eras.Era;
 import megamek.common.eras.Eras;
 import megamek.common.options.*;
-import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.verifier.*;
 import megamek.common.weapons.bayweapons.BayWeapon;
 import megamek.common.weapons.infantry.InfantryWeapon;
@@ -721,13 +720,7 @@ public class MechView {
                             entity.getOArmor(loc), html);
                 }
                 if (entity.hasPatchworkArmor()) {
-                    row[3] = Messages.getString("MechView."
-                            + EquipmentType.getArmorTypeName(entity
-                                    .getArmorType(loc)).trim());
-                    if (entity.hasBARArmor(loc)) {
-                        row[3] += " " + Messages.getString("MechView.BARRating")
-                                + entity.getBARRating(loc);
-                    }
+                    row[3] = ArmorType.forEntity(entity, loc).getName();
                 }
                 if (!entity.getLocationDamage(loc).isEmpty()) {
                     row[4] = warningStart() + entity.getLocationDamage(loc) + warningEnd();

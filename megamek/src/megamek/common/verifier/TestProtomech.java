@@ -64,24 +64,11 @@ public class TestProtomech extends TestEntity {
     }
 
     public TestProtomech(Protomech proto, TestEntityOption option, String fileString) {
-        super(option, proto.getEngine(), getArmor(proto), null);
+        super(option, proto.getEngine(), null);
         this.proto = proto;
         this.fileString = fileString;
     }
 
-    private static Armor[] getArmor(Protomech proto) {
-        Armor[] armor = new Armor[proto.locations()];
-        for (int i = 0; i < proto.locations(); i++) {
-            int type = proto.getArmorType(i);
-            int flag = 0;
-            if (proto.isClanArmor(i)) {
-                flag |= Armor.CLAN_ARMOR;
-            }
-            armor[i] = new Armor(type, flag);
-        }
-        return armor;
-    }
-    
     @Override
     public Entity getEntity() {
         return proto;

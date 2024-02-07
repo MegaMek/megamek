@@ -18,10 +18,10 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.annotations.Nullable;
+import megamek.common.equipment.ArmorType;
 import megamek.common.eras.Era;
 import megamek.common.eras.Eras;
 import megamek.common.options.*;
-import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.verifier.*;
 import megamek.common.weapons.bayweapons.BayWeapon;
 import megamek.common.weapons.infantry.InfantryWeapon;
@@ -679,15 +679,12 @@ public class MechView {
                 armor += "/" + maxArmor;
             }
             if (!isInf && !isProto && !entity.hasPatchworkArmor()) {
-                armor += Messages.getString("MechView."
-                        + EquipmentType.getArmorTypeName(entity.getArmorType(1))
-                                .trim());
+                armor += " (" + ArmorType.forEntity(entity).getName() + ")";
             }
             if (isBA) {
                 armor += " " + EquipmentType.getArmorTypeName(entity.getArmorType(1)).trim();
             }
-            retVal.add(new LabeledElement(Messages.getString("MechView.Armor"),
-                    armor));
+            retVal.add(new LabeledElement(Messages.getString("MechView.Armor"), armor));
 
         }
         // Walk through the entity's locations.
@@ -723,13 +720,7 @@ public class MechView {
                             entity.getOArmor(loc), html);
                 }
                 if (entity.hasPatchworkArmor()) {
-                    row[3] = Messages.getString("MechView."
-                            + EquipmentType.getArmorTypeName(entity
-                                    .getArmorType(loc)).trim());
-                    if (entity.hasBARArmor(loc)) {
-                        row[3] += " " + Messages.getString("MechView.BARRating")
-                                + entity.getBARRating(loc);
-                    }
+                    row[3] = ArmorType.forEntity(entity, loc).getName();
                 }
                 if (!entity.getLocationDamage(loc).isEmpty()) {
                     row[4] = warningStart() + entity.getLocationDamage(loc) + warningEnd();
@@ -776,9 +767,7 @@ public class MechView {
             armor += Messages.getString("MechView.CapitalArmor");
         }
         if (!entity.hasPatchworkArmor()) {
-            armor += Messages.getString("MechView."
-                    + EquipmentType.getArmorTypeName(entity.getArmorType(1))
-                            .trim());
+            armor += " " + ArmorType.forEntity(entity).getName();
         }
         retVal.add(new LabeledElement(Messages.getString("MechView.Armor"),
                 armor));

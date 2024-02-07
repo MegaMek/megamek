@@ -43,7 +43,6 @@ public abstract class TestEntity implements TestEntityOption {
     }
     
     protected Engine engine = null;
-    protected Armor[] armor = null;
     protected Structure structure = null;
     private TestEntityOption options = null;
 
@@ -116,11 +115,9 @@ public abstract class TestEntity implements TestEntityOption {
         return testEntity;
     }
 
-    public TestEntity(TestEntityOption options, Engine engine, Armor[] armor,
-            Structure structure) {
+    public TestEntity(TestEntityOption options, Engine engine, Structure structure) {
         this.options = options;
         this.engine = engine;
-        this.armor = armor;
         this.structure = structure;
     }
 
@@ -329,7 +326,7 @@ public abstract class TestEntity implements TestEntityOption {
      * @param techManager   The constraints used to filter the armor types
      * @return A list of all armors that meet the tech constraints
      */
-    public static List<EquipmentType> legalArmorsFor(long etype, boolean industrial, boolean primitive,
+    public static List<ArmorType> legalArmorsFor(long etype, boolean industrial, boolean primitive,
             EntityMovementMode movementMode, ITechManager techManager) {
         if ((etype & Entity.ETYPE_BATTLEARMOR) != 0) {
             return TestBattleArmor.legalArmorsFor(techManager);
@@ -489,7 +486,7 @@ public abstract class TestEntity implements TestEntityOption {
     public String printWeightArmor() {
         if (!getEntity().hasPatchworkArmor()) {
             return StringUtil.makeLength("Armor: " + getTotalOArmor() + " "
-                    + armor[0].getShortName(), getPrintSize() - 5)
+                    + ArmorType.forEntity(getEntity()).getShortName(), getPrintSize() - 5)
                     + TestEntity.makeWeightString(getWeightArmor(), usesKgStandard()) + "\n";
         } else {
             return StringUtil.makeLength("Armor: " + getTotalOArmor() + " " + "Patchwork",
@@ -503,18 +500,30 @@ public abstract class TestEntity implements TestEntityOption {
         return getEntity().getLabArmorTonnage();
     }
 
+    public static double getRawWeightArmor(ArmorType armor, int totalOArmor) {
+        double points = totalOArmor;
+        double multiplier = armor.getArmorPointsMultiplier();
+        points /= multiplier;
+        double pointsPerTon = 16.0f;
+        return points / pointsPerTon;
+    }
+
+    public static double getWeightArmor(ArmorType armor, int totalOArmor, TestEntity.Ceil roundWeight) {
+        return TestEntity.ceilMaxHalf(getRawWeightArmor(armor, totalOArmor), roundWeight);
+    }
+
     public double getWeightAllocatedArmor() {
         if (!getEntity().hasPatchworkArmor()) {
-            return (armor[0].getWeightArmor(getTotalOArmor(), getWeightCeilingArmor()));
+            return getWeightArmor(ArmorType.forEntity(getEntity()), getEntity().getTotalOArmor(), getWeightCeilingArmor());
         } else {
             double armorWeight = 0;
-            for (int i = 0; i < armor.length; i++) {
-                int points = getEntity().getOArmor(i);
-                if (getEntity().hasRearArmor(i) &&
-                        (getEntity().getOArmor(i, true) > 0)) {
-                    points += getEntity().getOArmor(i, true);
+            for (int loc = getEntity().firstArmorIndex(); loc < getEntity().locations(); loc++) {
+                int points = getEntity().getOArmor(loc);
+                if (getEntity().hasRearArmor(loc) &&
+                        (getEntity().getOArmor(loc, true) > 0)) {
+                    points += getEntity().getOArmor(loc, true);
                 }
-                armorWeight += armor[i].getRawWeightArmor(points);
+                armorWeight += getRawWeightArmor(ArmorType.forEntity(getEntity(), loc), points);
             }
             return TestEntity.ceilMaxHalf(armorWeight, getWeightCeilingArmor());
         }
@@ -1749,50 +1758,3 @@ public abstract class TestEntity implements TestEntityOption {
         return slotCount;
     }
 } // End class TestEntity
-
-class Armor {
-    public static final int CLAN_ARMOR = 0x01;
-
-    private int armorType;
-
-    private int armorFlags;
-
-    public Armor(int armorType, int armorFlags) {
-        this.armorType = armorType;
-        this.armorFlags = armorFlags;
-    }
-    
-    public double getWeightArmor(int totalOArmor, TestEntity.Ceil roundWeight) {
-        return Armor.getWeightArmor(armorType, armorFlags, totalOArmor,
-                roundWeight);
-    }
-    
-    public double getRawWeightArmor(int totalOArmor) {
-        return Armor.getRawWeightArmor(armorType, armorFlags, totalOArmor);
-    }
-    
-    public static double getRawWeightArmor(int armorType, int armorFlags,
-            int totalOArmor) {
-        double points = totalOArmor;
-        int techLevel;
-        if ((armorFlags & CLAN_ARMOR) != 0) {
-            techLevel = TechConstants.T_CLAN_TW;
-        } else {
-            techLevel = TechConstants.T_IS_TW_NON_BOX;
-        }
-        double multiplier = ArmorType.of(armorType, TechConstants.isClan(techLevel)).getArmorPointsMultiplier();
-        points /= multiplier;
-        double pointsPerTon = 16.0f;
-        return points / pointsPerTon;
-    }
-
-    public static double getWeightArmor(int armorType, int armorFlags,
-            int totalOArmor, TestEntity.Ceil roundWeight) {
-        return TestEntity.ceilMaxHalf(getRawWeightArmor(armorType, armorFlags, totalOArmor), roundWeight);
-    }
-
-    public String getShortName() {
-        return "(" + EquipmentType.getArmorTypeName(armorType) + ")";
-    }
-
-} // end class Armor

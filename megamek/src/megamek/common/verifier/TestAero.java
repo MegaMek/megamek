@@ -50,8 +50,8 @@ public class TestAero extends TestEntity {
      * @param techManager
      * @return A list of all armors that meet the tech constraints
      */
-    public static List<EquipmentType> legalArmorsFor(ITechManager techManager) {
-        List<EquipmentType> retVal = new ArrayList<>();
+    public static List<ArmorType> legalArmorsFor(ITechManager techManager) {
+        List<ArmorType> retVal = new ArrayList<>();
         for (ArmorType armor : ArmorType.allArmorTypes()) {
             if (armor.hasFlag(MiscType.F_FIGHTER_EQUIPMENT) && techManager.isLegal(armor)) {
                 retVal.add(armor);
@@ -322,7 +322,7 @@ public class TestAero extends TestEntity {
     }
 
     public TestAero(Aero a, TestEntityOption option, String fs) {
-        super(option, a.getEngine(), getArmor(a), getStructure(a));
+        super(option, a.getEngine(), getStructure(a));
         aero = a;
         fileString = fs;
     }
@@ -330,19 +330,6 @@ public class TestAero extends TestEntity {
     private static Structure getStructure(Aero aero) {
         int type = aero.getStructureType();
         return new Structure(type, false, aero.getMovementMode());
-    }
-
-    private static Armor[] getArmor(Aero aero) {
-        Armor[] armor;
-        armor = new Armor[1];
-        int type = aero.getArmorType(1);
-        int flag = 0;
-        if (aero.isClanArmor(1)) {
-            flag |= Armor.CLAN_ARMOR;
-        }
-        armor[0] = new Armor(type, flag);
-        return armor;
-
     }
 
     @Override

@@ -105,19 +105,14 @@ public class CombatVehicleCostCalculator {
         costs[i++] = engineCost;
 
         // armor
-        if (tank.isSupportVehicle()) {
-            int totalArmorPoints = 0;
+        if (tank.hasPatchworkArmor()) {
             for (int loc = 0; loc < tank.locations(); loc++) {
-                totalArmorPoints += tank.getOArmor(loc);
+                costs[i++] = tank.getArmorWeight(loc) * ArmorType.forEntity(tank, loc).getCost();
             }
-            costs[i++] = totalArmorPoints
-                    * EquipmentType.getSupportVehicleArmorCostPerPoint(tank.getBARRating(tank.firstArmorIndex()));
         } else {
-            if (tank.hasPatchworkArmor()) {
-                for (int loc = 0; loc < tank.locations(); loc++) {
-                    costs[i++] = tank.getArmorWeight(loc) * ArmorType.forEntity(tank, loc).getCost();
-                }
-
+            ArmorType armor = ArmorType.forEntity(tank);
+            if (armor.hasFlag(MiscType.F_SUPPORT_VEE_BAR_ARMOR)) {
+                costs[i++] = tank.getTotalOArmor() * armor.getCost();
             } else {
                 costs[i++] = tank.getArmorWeight() * ArmorType.forEntity(tank).getCost();
             }

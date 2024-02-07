@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2018 - The MegaMek Team
+ * MegaMek - Copyright (C) 2018, 2024 - The MegaMek Team
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -13,13 +13,17 @@
  */
 package megamek.common;
 
+import megamek.client.ui.swing.util.FluffImageHelper;
 import megamek.common.annotations.Nullable;
+import org.apache.logging.log4j.LogManager;
 
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.Serializable;
-import java.util.EnumMap;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -45,6 +49,8 @@ public class EntityFluff implements Serializable {
         }
     }
 
+    private final Entity entity;
+
     private String capabilities = "";
     private String overview = "";
     private String deployment = "";
@@ -54,9 +60,22 @@ public class EntityFluff implements Serializable {
     private String primaryFactory = "";
     private final Map<System, String> systemManufacturers = new EnumMap<>(System.class);
     private final Map<System, String> systemModels = new EnumMap<>(System.class);
+    private String notes = "";
 
     private String mmlImageFilePath = "";
-    private String notes = "";
+
+    /**
+     * This is a base64 representation of the fluff image, if it was stored in the unit file directly. For canon units,
+     * this will typically be empty as fluff images are not stored in the unit file for those.
+     */
+    private String fluffImageEncoded = "";
+
+    /**
+     * The fluff image, if it was stored in the unit file directly. For canon units, this will typically
+     * remain null as fluff images are not stored in the unit file for those. This is transient and
+     * restored by {@link #getFluffImage()} if there is a base64-encoded image present.
+     */
+    private transient Image fluffImage;
 
     // For aerospace vessels
     private String use = "";
@@ -64,8 +83,8 @@ public class EntityFluff implements Serializable {
     private String width = "";
     private String height = "";
 
-    public EntityFluff() {
-        // Constructor
+    public EntityFluff(Entity entity) {
+        this.entity = Objects.requireNonNull(entity);
     }
 
     public String getCapabilities() {
@@ -237,5 +256,39 @@ public class EntityFluff implements Serializable {
     public List<String> createSystemModelsList() {
         return systemModels.entrySet().stream().filter(e -> !e.getValue().isBlank())
                 .map(e -> e.getKey().toString() + ":" + e.getValue()).collect(Collectors.toList());
+    }
+
+    /** Sets the encoded form of the fluff image to the given String. */
+    public void setFluffImageEncoded(String fluffImage) {
+        this.fluffImageEncoded = fluffImage;
+    }
+
+    /**
+     * @return The base64 encoded form of the fluff image (if it was stored in the unit file). For canon units,
+     * this is empty as the fluff images are not stored in the unit files.
+     */
+    public String getFluffImageEncoded() {
+        return fluffImageEncoded;
+    }
+
+    /**
+     * @return The unit's fluff image if any can be found. Will return the fluff image stored in the unit file,
+     * if present; otherwise (e.g. for canon units), will try to find the fluff image by name in the fluff
+     * directories (internal and user directory).
+     */
+    public @Nullable Image getFluffImage() {
+        if (fluffImage != null) {
+            return fluffImage;
+        } else if (!fluffImageEncoded.isBlank()) {
+            byte[] image = Base64.getDecoder().decode(fluffImageEncoded);
+            try (ByteArrayInputStream inStreambj = new ByteArrayInputStream(image)) {
+                fluffImage = ImageIO.read(inStreambj);
+            } catch (IOException ex) {
+                LogManager.getLogger().warn("", ex);
+            }
+            return fluffImage;
+        }
+
+        return FluffImageHelper.getFluffImage(entity);
     }
 }

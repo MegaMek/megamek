@@ -120,6 +120,16 @@ public final class ImageUtil {
     }
 
     /**
+     * Converts the given image to a BufferedImage.
+     *
+     * @param image An Image of any type
+     * @return The image as a BufferedImage
+     */
+    public static BufferedImage getBufferedImage(Image image) {
+        return getScaledImage(image, image.getWidth(null), image.getHeight(null));
+    }
+
+    /**
      * Get a scaled version of the input image, using the supplied type to
      * select which scaling method to use.
      *
@@ -440,6 +450,13 @@ public final class ImageUtil {
         }
 
         return base64Text;
+    }
+
+    /**
+     * @return The base64 representation of the given image.
+     */
+    public static String base64TextEncodeImage(Image image) {
+        return base64TextEncodeImage(getBufferedImage(image));
     }
 
     /**

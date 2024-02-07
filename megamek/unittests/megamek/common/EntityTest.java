@@ -21,7 +21,6 @@ package megamek.common;
 
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.common.battlevalue.BVCalculator;
-import megamek.common.equipment.ArmorType;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -66,7 +65,6 @@ public class EntityTest {
     @BeforeAll
     public static void beforeAll() {
         EquipmentType.initializeTypes();
-        ArmorType.initializeTypes();
     }
 
     @Test

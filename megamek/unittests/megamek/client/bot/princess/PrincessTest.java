@@ -22,7 +22,6 @@ package megamek.client.bot.princess;
 import megamek.client.bot.princess.PathRanker.PathRankerType;
 import megamek.common.*;
 import megamek.common.enums.GamePhase;
-import megamek.common.equipment.ArmorType;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import org.junit.jupiter.api.BeforeAll;
@@ -52,7 +51,6 @@ public class PrincessTest {
     @BeforeAll
     public static void beforeAll() {
         EquipmentType.initializeTypes();
-        ArmorType.initializeTypes();
     }
 
     @BeforeEach

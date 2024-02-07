@@ -4466,6 +4466,13 @@ public abstract class Mech extends Entity {
             sb.append(newLine);
         }
 
+        if (!getFluff().getFluffImageEncoded().isBlank()) {
+            sb.append(newLine);
+            sb.append(MtfFile.FLUFF_IMAGE);
+            sb.append(getFluff().getFluffImageEncoded());
+            sb.append(newLine);
+        }
+
         return sb.toString();
     }
 

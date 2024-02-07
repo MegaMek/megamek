@@ -79,6 +79,8 @@ public class MtfFile implements IMechLoader {
     private String notes = "";
     private String imagePath = "";
 
+    private String fluffImageEncoded = "";
+
     private int bv = 0;
     private String role;
 
@@ -144,6 +146,7 @@ public class MtfFile implements IMechLoader {
     public static final String QUIRK = "quirk:";
     public static final String WEAPON_QUIRK = "weaponquirk:";
     public static final String ROLE = "role:";
+    public static final String FLUFF_IMAGE = "fluffimage:";
 
     public MtfFile(InputStream is) throws EntityLoadingException {
         try (InputStreamReader isr = new InputStreamReader(is);
@@ -460,6 +463,7 @@ public class MtfFile implements IMechLoader {
             mech.getFluff().setManufacturer(manufacturer);
             mech.getFluff().setPrimaryFactory(primaryFactory);
             mech.getFluff().setNotes(notes);
+            mech.getFluff().setFluffImageEncoded(fluffImageEncoded);
             systemManufacturers.forEach((k, v) -> mech.getFluff().setSystemManufacturer(k, v));
             systemModels.forEach((k, v) -> mech.getFluff().setSystemModel(k, v));
             mech.getFluff().setMMLImagePath(imagePath);
@@ -1247,6 +1251,11 @@ public class MtfFile implements IMechLoader {
 
         if (lineLower.startsWith(MUL_ID)) {
             mulId = Integer.parseInt(line.substring(MUL_ID.length()));
+            return true;
+        }
+
+        if (lineLower.startsWith(FLUFF_IMAGE)) {
+            fluffImageEncoded = line.substring(FLUFF_IMAGE.length());
             return true;
         }
 

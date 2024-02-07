@@ -41,7 +41,7 @@ MEGAMEK VERSION HISTORY:
 + Fix #5088: Inaccurate Movement Envelope for Aerospace Fighters on Ground Maps
 + PR #5094: add start and connect to game to the file menu
 + PR #5102: Laser insulator and RISC laser pulse module validation
-+ PR #5101, #5116, #5119: Rework of the internal representation of Armor
++ PR #5101, #5116, #5119, #5137: Rework of the internal representation of Armor
 + PR #5106, #5107: Separates clan and IS name for Meks with different names such as Mad Cat/Timber Wolf
 + Fix #5092: SPA Natural Aptitude: Piloting is not being applied to low gravity PSR's.
 + Fix #5103: Check for not dusk dawn for searchlight penalty reduction

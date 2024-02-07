@@ -123,7 +123,7 @@ public class MechViewPanel extends JPanel {
     }
 
     private void setFluffImage(Entity entity) {
-        Image image = FluffImageHelper.getFluffImage(entity);
+        Image image = entity.getFluffImage();
         // Scale down to the default width if the image is wider than that
         if (null != image) {
             if (image.getWidth(this) > DEFAULT_WIDTH) {

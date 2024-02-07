@@ -66,6 +66,9 @@ public class FireControlTest {
     @SuppressWarnings("FieldCanBeLocal")
     private AmmoType mockAmmoTypeAc5Flechette;
     private Mounted mockAmmoAc5Flechette;
+    private WeaponFireInfo mockAC5StdFireInfo;
+    private WeaponFireInfo mockAC5IncendiaryFireInfo;
+    private WeaponFireInfo mockAC5FlakFireInfo;
 
     // LB10X
     private Mounted mockWeaponLB10X;
@@ -267,6 +270,45 @@ public class FireControlTest {
         doReturn(true).when(mockAmmoTypeAc5Flechette).equalsAmmoTypeOnly(eq(mockAmmoTypeAC5Incendiary));
         doReturn(true).when(mockAmmoTypeAc5Flechette).equalsAmmoTypeOnly(eq(mockAmmoTypeAc5Flechette));
 
+        // AC5 WeaponFireInfo mocks
+        mockAC5StdFireInfo = mock(WeaponFireInfo.class);
+        mockAC5IncendiaryFireInfo = mock(WeaponFireInfo.class);
+        mockAC5FlakFireInfo = mock(WeaponFireInfo.class);
+        when(mockAC5StdFireInfo.getProbabilityToHit()).thenReturn(0.5833);
+        when(mockAC5StdFireInfo.getExpectedDamage()).thenReturn(0.5833 * 5);
+        when(mockAC5IncendiaryFireInfo.getProbabilityToHit()).thenReturn(0.5833);
+        when(mockAC5IncendiaryFireInfo.getExpectedDamage()).thenReturn(0.5833 * 5);
+        when(mockAC5FlakFireInfo.getProbabilityToHit()).thenReturn(0.8333);
+        when(mockAC5FlakFireInfo.getExpectedDamage()).thenReturn(0.8333 * 3);
+        // Std AC5
+        doReturn(mockAC5StdFireInfo).when(testFireControl).buildWeaponFireInfo(any(Entity.class),
+                any(EntityState.class), any(Targetable.class), any(EntityState.class), eq(mockWeaponAC5), any(Mounted.class),
+                any(Game.class), anyBoolean());
+        doReturn(mockAC5StdFireInfo).when(testFireControl).buildWeaponFireInfo(any(Entity.class),
+                any(MovePath.class), any(Targetable.class), any(EntityState.class), eq(mockWeaponAC5), any(Mounted.class),
+                any(Game.class), anyBoolean(), anyBoolean());
+        doReturn(mockAC5StdFireInfo).when(testFireControl).buildWeaponFireInfo(any(Entity.class),
+                any(Targetable.class), eq(mockWeaponAC5), any(Mounted.class), any(Game.class), anyBoolean());
+        // Incendiary AC5
+        doReturn(mockAC5IncendiaryFireInfo).when(testFireControl).buildWeaponFireInfo(any(Entity.class),
+                any(EntityState.class), any(Targetable.class), any(EntityState.class), eq(mockWeaponAC5), any(Mounted.class),
+                any(Game.class), anyBoolean());
+        doReturn(mockAC5IncendiaryFireInfo).when(testFireControl).buildWeaponFireInfo(any(Entity.class),
+                any(MovePath.class), any(Targetable.class), any(EntityState.class), eq(mockWeaponAC5), any(Mounted.class),
+                any(Game.class), anyBoolean(), anyBoolean());
+        doReturn(mockAC5IncendiaryFireInfo).when(testFireControl).buildWeaponFireInfo(any(Entity.class),
+                any(Targetable.class), eq(mockWeaponAC5), any(Mounted.class), any(Game.class), anyBoolean());
+        // Flak AC5
+        doReturn(mockAC5FlakFireInfo).when(testFireControl).buildWeaponFireInfo(any(Entity.class),
+                any(EntityState.class), any(Targetable.class), any(EntityState.class), eq(mockWeaponAC5), any(Mounted.class),
+                any(Game.class), anyBoolean());
+        doReturn(mockAC5FlakFireInfo).when(testFireControl).buildWeaponFireInfo(any(Entity.class),
+                any(MovePath.class), any(Targetable.class), any(EntityState.class), eq(mockWeaponAC5), any(Mounted.class),
+                any(Game.class), anyBoolean(), anyBoolean());
+        doReturn(mockAC5FlakFireInfo).when(testFireControl).buildWeaponFireInfo(any(Entity.class),
+                any(Targetable.class), eq(mockWeaponAC5), any(Mounted.class), any(Game.class), anyBoolean());
+
+
         // LB10X
         mockLB10X = mock(WeaponType.class);
         mockAmmoTypeLB10XSlug = mock(AmmoType.class);
@@ -292,7 +334,7 @@ public class FireControlTest {
 
         mockLB10XSlugFireInfo = mock(WeaponFireInfo.class);
         mockLB10XClusterFireInfo = mock(WeaponFireInfo.class);
-        // TN 8, average cluster
+        // TN 8, average slug
         when(mockLB10XSlugFireInfo.getProbabilityToHit()).thenReturn(0.4166);
         when(mockLB10XSlugFireInfo.getExpectedDamage()).thenReturn(0.58*6);
         // TN 5 (as flak), average cluster
@@ -2451,6 +2493,22 @@ public class FireControlTest {
         // Should get the plan back with a Cluster shot
         FiringPlan expected = new FiringPlan(mockTarget);
         expected.add(mockLB10XClusterFireInfo);
+        final FiringPlan actual = testFireControl.getFullFiringPlan(mockShooter, mockTarget,
+                testToHitThreshold, mockGame);
+        assertEquals(new HashSet<>(expected), new HashSet<>(actual));
+    }
+
+    @Test
+    public void testChooseACAmmoForEngagingFlyer() {
+        ArrayList<Mounted> wepList = new ArrayList<Mounted>(Arrays.asList(mockWeaponAC5));
+        ArrayList<Mounted> ammoList = new ArrayList<Mounted>(Arrays.asList(
+                mockAmmoAC5Std, mockAmmoAc5Incendiary, mockAmmoAC5Flak
+        ));
+        prepForFullFiringPlan(wepList, ammoList);
+
+        // Should get the plan back with a Cluster shot
+        FiringPlan expected = new FiringPlan(mockTarget);
+        expected.add(mockAC5FlakFireInfo);
         final FiringPlan actual = testFireControl.getFullFiringPlan(mockShooter, mockTarget,
                 testToHitThreshold, mockGame);
         assertEquals(new HashSet<>(expected), new HashSet<>(actual));

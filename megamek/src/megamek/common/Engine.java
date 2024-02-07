@@ -464,23 +464,31 @@ public class Engine implements Serializable, ITechnology {
             return Messages.getString("Engine.invalid");
         }
     }
+
+    public static String getEngineTypeName(int engineType) {
+        if ((engineType < 0) || (engineType >= TYPE_KEYS.length)) {
+            return "UNKNOWN";
+        }
+        return Messages.getString("Engine." + TYPE_KEYS[engineType]);
+    }
+
     public static Map<Integer, String> getAllEngineCodeName() {
         Map<Integer, String> result = new HashMap();
 
-        result.put(COMBUSTION_ENGINE, Messages.getString("Engine." + TYPE_KEYS[COMBUSTION_ENGINE]));
-        result.put(NORMAL_ENGINE, Messages.getString("Engine." + TYPE_KEYS[NORMAL_ENGINE]));
-        result.put(XL_ENGINE, Messages.getString("Engine." + TYPE_KEYS[XL_ENGINE]));
-        result.put(XXL_ENGINE, Messages.getString("Engine." + TYPE_KEYS[XXL_ENGINE]));
-        result.put(FUEL_CELL, Messages.getString("Engine." + TYPE_KEYS[FUEL_CELL]));
-        result.put(LIGHT_ENGINE, Messages.getString("Engine." + TYPE_KEYS[LIGHT_ENGINE]));
-        result.put(COMPACT_ENGINE, Messages.getString("Engine." + TYPE_KEYS[COMPACT_ENGINE]));
-        result.put(FISSION, Messages.getString("Engine." + TYPE_KEYS[FISSION]));
-        result.put(NONE, Messages.getString("Engine." + TYPE_KEYS[NONE]));
-        result.put(MAGLEV, Messages.getString("Engine." + TYPE_KEYS[MAGLEV]));
-        result.put(STEAM, Messages.getString("Engine." + TYPE_KEYS[STEAM]));
-        result.put(BATTERY, Messages.getString("Engine." + TYPE_KEYS[BATTERY]));
-        result.put(SOLAR, Messages.getString("Engine." + TYPE_KEYS[SOLAR]));
-        result.put(EXTERNAL, Messages.getString("Engine." + TYPE_KEYS[EXTERNAL]));
+        result.put(COMBUSTION_ENGINE, getEngineTypeName(COMBUSTION_ENGINE));
+        result.put(NORMAL_ENGINE, getEngineTypeName(NORMAL_ENGINE));
+        result.put(XL_ENGINE, getEngineTypeName(XL_ENGINE));
+        result.put(XXL_ENGINE, getEngineTypeName(XXL_ENGINE));
+        result.put(FUEL_CELL, getEngineTypeName(FUEL_CELL));
+        result.put(LIGHT_ENGINE, getEngineTypeName(LIGHT_ENGINE));
+        result.put(COMPACT_ENGINE, getEngineTypeName(COMPACT_ENGINE));
+        result.put(FISSION, getEngineTypeName(FISSION));
+        result.put(NONE, getEngineTypeName(NONE));
+        result.put(MAGLEV, getEngineTypeName(MAGLEV));
+        result.put(STEAM, getEngineTypeName(STEAM));
+        result.put(BATTERY, getEngineTypeName(BATTERY));
+        result.put(SOLAR, getEngineTypeName(SOLAR));
+        result.put(EXTERNAL, getEngineTypeName(EXTERNAL));
 
         return result;
     }

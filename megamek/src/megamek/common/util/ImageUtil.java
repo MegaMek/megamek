@@ -427,11 +427,11 @@ public final class ImageUtil {
      * takes an image and converts it to text in the Base64 encoding.
      */
     public static String base64TextEncodeImage(BufferedImage img) {
-        String base64Text = "";
+        String base64Text;
 
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            ImageIO.write((RenderedImage) img, "png", baos);
+            ImageIO.write(img, "png", baos);
             baos.flush();
             base64Text = Base64.getEncoder().encodeToString(baos.toByteArray());
             baos.close();

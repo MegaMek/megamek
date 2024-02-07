@@ -259,8 +259,9 @@ public class EntityFluff implements Serializable {
     }
 
     /** Sets the encoded form of the fluff image to the given String. */
-    public void setFluffImageEncoded(String fluffImage) {
-        this.fluffImageEncoded = fluffImage;
+    public void setFluffImageEncoded(String fluffImage64) {
+        this.fluffImageEncoded = fluffImage64;
+        fluffImage = null;
     }
 
     /**

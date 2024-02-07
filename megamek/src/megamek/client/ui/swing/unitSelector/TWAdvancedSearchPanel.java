@@ -926,19 +926,7 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         l.setModel(dlm);
 
         l.setVisibleRowCount(count);
-        l.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        l.setSelectionModel(new NoSelectionModel());
-        l.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                super.mouseClicked(e);
-                if (e.getButton() == MouseEvent.BUTTON1) {
-                    JList list = (JList) e.getSource();
-                    int index = list.locationToIndex(e.getPoint());
-                    toggleText(list, index);
-                }
-            }
-        });
+        jlistSetup(l);
     }
 
     private void loadAndOr(JComboBox<String> cb, int index) {

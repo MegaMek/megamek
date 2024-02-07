@@ -467,7 +467,7 @@ public class Engine implements Serializable, ITechnology {
 
     public static String getEngineTypeName(int engineType) {
         if ((engineType < 0) || (engineType >= TYPE_KEYS.length)) {
-            return "UNKNOWN";
+            return Messages.getString("Engine.invalid");
         }
         return Messages.getString("Engine." + TYPE_KEYS[engineType]);
     }

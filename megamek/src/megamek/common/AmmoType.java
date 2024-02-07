@@ -13930,6 +13930,7 @@ public class AmmoType extends EquipmentType {
             }
 
             munition.shortName = munition.shortName.replace("(Clan) ", "");
+            munition.subMunitionName = munition.shortName;
 
             // Assign our munition type.
             munition.munitionType = type;
@@ -14303,7 +14304,7 @@ public class AmmoType extends EquipmentType {
     }
 
     public String getSubMunitionName() {
-        return subMunitionName;
+        return subMunitionName.isBlank() ? getShortName() : subMunitionName;
     }
 
     /**

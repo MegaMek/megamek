@@ -802,7 +802,9 @@ public class WeaponHandler implements AttackHandler, Serializable {
                         && (weapon.getLinked() != null)
                         && (weapon.getLinked().getType() instanceof AmmoType)) {
                     AmmoType atype = (AmmoType) weapon.getLinked().getType();
-                    if (!atype.getMunitionType().contains(AmmoType.Munitions.M_STANDARD)) {
+                    if (!atype.getMunitionType().contains(AmmoType.Munitions.M_STANDARD)
+                        || atype.getAmmoType() == AmmoType.T_MML
+                        || atype.getAmmoType() == AmmoType.T_AC_LBX) {
                         r.messageId = 3116;
                         r.add(atype.getSubMunitionName());
                     }

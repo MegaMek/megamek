@@ -115,10 +115,6 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     private boolean bombMounted = false;
     private boolean isInternalBomb = false;
 
-    // mine type
-    private int mineType = MINE_NONE;
-    // vibrabomb mine setting
-    private int vibraSetting = 20;
 
     // These arrays are used to track individual missing modular components on BA for MHQ
     // in MM they probably shouldn't need to be touched. They are used to keep track of
@@ -131,14 +127,6 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     private int armorValue = 0;
 
     private GamePhase phase = GamePhase.UNKNOWN;
-
-    public static final int MINE_NONE = -1;
-    public static final int MINE_CONVENTIONAL = 0;
-    public static final int MINE_VIBRABOMB = 1;
-    public static final int MINE_ACTIVE = 2;
-    public static final int MINE_INFERNO = 3;
-    public static final int MINE_EMP = 4;
-    public static final int MINE_COMMAND_DETONATED = 5;
 
     /**
      * BattleArmor use the standard locations to track troopers. On BA, this field keeps track of where
@@ -396,33 +384,12 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
         return type.getShortName(size);
     }
 
+    protected String getBaseDesc() {
+        return getType().getDesc(getSize());
+    }
+
     public String getDesc() {
-        StringBuffer desc;
-        switch (getMineType()) {
-            case MINE_CONVENTIONAL:
-                desc = new StringBuffer(
-                        Messages.getString("Mounted.ConventionalMine"));
-                break;
-            case MINE_VIBRABOMB:
-                desc = new StringBuffer(
-                        Messages.getString("Mounted.VibraBombMine"));
-                break;
-            case MINE_COMMAND_DETONATED:
-                desc = new StringBuffer(
-                        Messages.getString("Mounted.CommandDetonatedMine"));
-                break;
-            case MINE_ACTIVE:
-                desc = new StringBuffer(
-                        Messages.getString("Mounted.ActiveMine"));
-                break;
-            case MINE_INFERNO:
-                desc = new StringBuffer(
-                        Messages.getString("Mounted.InfernoMine"));
-                break;
-            case -1:
-            default:
-                desc = new StringBuffer(getType().getDesc(getSize()));
-        }
+        StringBuilder desc = new StringBuilder(getBaseDesc());
         if (isWeaponGroup()) {
             desc.append(" (").append(getNWeapons()).append(")");
         }
@@ -1284,42 +1251,6 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
             return false;
         }
         return true;
-    }
-
-    /**
-     * @return the type of mine this mounted is, or <code>-1</code> if it isn't
-     *         a mine
-     */
-    public int getMineType() {
-        return mineType;
-    }
-
-    /**
-     * set the type of mine this should be
-     *
-     * @param mineType
-     */
-    public void setMineType(int mineType) {
-        this.mineType = mineType;
-    }
-
-    /**
-     * set the vibrabomb sensitivity
-     *
-     * @param vibraSetting
-     *            the <code>int</code> sensitivity to set
-     */
-    public void setVibraSetting(int vibraSetting) {
-        this.vibraSetting = vibraSetting;
-    }
-
-    /**
-     * get the vibrabomb sensitivity
-     *
-     * @return the <code>int</code> vibrabomb sensitity this mine is set to.
-     */
-    public int getVibraSetting() {
-        return vibraSetting;
     }
 
     public void addWeaponToBay(int w) {

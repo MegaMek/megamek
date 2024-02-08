@@ -23,10 +23,19 @@ import megamek.common.*;
 
 public class MiscMounted extends Mounted<MiscType> {
 
-    // New stuff for shields
+    public static final int MINE_NONE = -1;
+    public static final int MINE_CONVENTIONAL = 0;
+    public static final int MINE_VIBRABOMB = 1;
+    public static final int MINE_ACTIVE = 2;
+    public static final int MINE_INFERNO = 3;
+    public static final int MINE_EMP = 4;
+    public static final int MINE_COMMAND_DETONATED = 5;
+
     private int baseDamageAbsorptionRate = 0;
     private int baseDamageCapacity = 0;
     private int damageTaken = 0;
+    private int mineType = MINE_NONE;
+    private int vibraSetting = 20;
 
     public MiscMounted(Entity entity, MiscType type) {
         super(entity, type);
@@ -76,7 +85,7 @@ public class MiscMounted extends Mounted<MiscType> {
     public int getDamageAbsorption(Entity entity, int location) {
         // Shields can only be used in arms so if you've got a shield in a
         // location
-        // other then an arm your SOL --Torren.
+        // other than an arm your SOL --Torren.
         if ((location != Mech.LOC_RARM) && (location != Mech.LOC_LARM)) {
             return 0;
         }
@@ -126,14 +135,14 @@ public class MiscMounted extends Mounted<MiscType> {
      * amount of damage its already take. The damage capacity is used to
      * determine if the shield is still viable.
      *
-     * @param entity
-     * @param location
-     * @return damage capacity(no less then 0)
+     * @param entity    The entity the shield is mounted on
+     * @param location  The shield's location index
+     * @return damage capacity(no less than 0)
      */
     public int getCurrentDamageCapacity(Entity entity, int location) {
         // Shields can only be used in arms so if you've got a shield in a
         // location
-        // other then an arm your SOL --Torren.
+        // other than an arm your SOL --Torren.
         if ((location != Mech.LOC_RARM) && (location != Mech.LOC_LARM)) {
             return 0;
         }
@@ -187,4 +196,58 @@ public class MiscMounted extends Mounted<MiscType> {
     public void takeDamage(int damage) {
         damageTaken += damage;
     }
+    /**
+     * @return the type of mine this mounted is, or <code>-1</code> if it isn't
+     *         a mine
+     */
+    public int getMineType() {
+        return mineType;
+    }
+
+    /**
+     * set the type of mine this should be
+     *
+     * @param mineType The mine type index
+     */
+    public void setMineType(int mineType) {
+        this.mineType = mineType;
+    }
+
+    /**
+     * set the vibrabomb sensitivity
+     *
+     * @param vibraSetting
+     *            the <code>int</code> sensitivity to set
+     */
+    public void setVibraSetting(int vibraSetting) {
+        this.vibraSetting = vibraSetting;
+    }
+
+    /**
+     * get the vibrabomb sensitivity
+     *
+     * @return the <code>int</code> vibrabomb sensitity this mine is set to.
+     */
+    public int getVibraSetting() {
+        return vibraSetting;
+    }
+
+    @Override
+    public String getBaseDesc() {
+        switch (getMineType()) {
+            case MINE_CONVENTIONAL:
+                return Messages.getString("Mounted.ConventionalMine");
+            case MINE_VIBRABOMB:
+                return Messages.getString("Mounted.VibraBombMine");
+            case MINE_COMMAND_DETONATED:
+                return Messages.getString("Mounted.CommandDetonatedMine");
+            case MINE_ACTIVE:
+                return Messages.getString("Mounted.ActiveMine");
+            case MINE_INFERNO:
+                return Messages.getString("Mounted.InfernoMine");
+            default:
+                return super.getBaseDesc();
+        }
+    }
+
 }

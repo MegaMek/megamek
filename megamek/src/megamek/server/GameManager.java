@@ -27,6 +27,7 @@ import megamek.common.enums.BasementType;
 import megamek.common.enums.GamePhase;
 import megamek.common.enums.WeaponSortOrder;
 import megamek.common.equipment.ArmorType;
+import megamek.common.equipment.MiscMounted;
 import megamek.common.event.GameListener;
 import megamek.common.event.GameVictoryEvent;
 import megamek.common.force.Force;
@@ -34821,27 +34822,27 @@ public class GameManager implements IGameManager {
      * @param mineId an <code>int</code> pointing to the mine
      */
     private void layMine(Entity entity, int mineId, Coords coords) {
-        Mounted mine = entity.getEquipment(mineId);
+        MiscMounted mine = (MiscMounted) entity.getEquipment(mineId);
         Report r;
         if (!mine.isMissing()) {
             int reportId = 0;
             switch (mine.getMineType()) {
-                case Mounted.MINE_CONVENTIONAL:
+                case MiscMounted.MINE_CONVENTIONAL:
                     deliverThunderMinefield(coords, entity.getOwnerId(), 10,
                             entity.getId());
                     reportId = 3500;
                     break;
-                case Mounted.MINE_VIBRABOMB:
+                case MiscMounted.MINE_VIBRABOMB:
                     deliverThunderVibraMinefield(coords, entity.getOwnerId(), 10,
                             mine.getVibraSetting(), entity.getId());
                     reportId = 3505;
                     break;
-                case Mounted.MINE_ACTIVE:
+                case MiscMounted.MINE_ACTIVE:
                     deliverThunderActiveMinefield(coords, entity.getOwnerId(), 10,
                             entity.getId());
                     reportId = 3510;
                     break;
-                case Mounted.MINE_INFERNO:
+                case MiscMounted.MINE_INFERNO:
                     deliverThunderInfernoMinefield(coords, entity.getOwnerId(), 10,
                             entity.getId());
                     reportId = 3515;

@@ -18,6 +18,7 @@ import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
 import megamek.common.*;
 import megamek.common.equipment.AmmoMounted;
+import megamek.common.equipment.MiscMounted;
 import megamek.common.options.AbstractOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.util.fileUtils.MegaMekFile;
@@ -421,7 +422,7 @@ public class EquipChoicePanel extends JPanel {
         GridBagConstraints gbc = new GridBagConstraints();
 
         int row = 0;
-        for (Mounted m : entity.getMisc()) {
+        for (MiscMounted m : entity.getMisc()) {
             if (!m.getType().hasFlag((MiscType.F_MINE)) &&
                     !m.getType().hasFlag((MiscType.F_VEHICLE_MINE_DISPENSER))) {
                 continue;
@@ -721,9 +722,9 @@ public class EquipChoicePanel extends JPanel {
 
             private JComboBox<String> m_choice;
 
-            private Mounted m_mounted;
+            private MiscMounted m_mounted;
 
-            MineChoicePanel(Mounted m) {
+            MineChoicePanel(MiscMounted m) {
                 m_mounted = m;
                 m_choice = new JComboBox<>();
                 m_choice.addItem(Messages.getString("CustomMechDialog.Conventional"));

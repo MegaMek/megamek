@@ -35,6 +35,7 @@ import megamek.common.actions.ChargeAttackAction;
 import megamek.common.actions.DfaAttackAction;
 import megamek.common.actions.RamAttackAction;
 import megamek.common.annotations.Nullable;
+import megamek.common.equipment.MiscMounted;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.options.AbstractOptions;
@@ -5074,8 +5075,8 @@ public class MovementDisplay extends ActionPhaseDisplay {
         } else if (actionCmd.equals(MoveCommand.MOVE_LAY_MINE.getCmd())) {
             int i = chooseMineToLay();
             if (i != -1) {
-                Mounted m = ce.getEquipment(i);
-                if (m.getMineType() == Mounted.MINE_VIBRABOMB) {
+                MiscMounted m = (MiscMounted) ce.getEquipment(i);
+                if (m.getMineType() == MiscMounted.MINE_VIBRABOMB) {
                     VibrabombSettingDialog vsd = new VibrabombSettingDialog(
                             clientgui.frame);
                     vsd.setVisible(true);

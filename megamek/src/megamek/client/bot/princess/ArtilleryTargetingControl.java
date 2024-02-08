@@ -502,8 +502,8 @@ public class ArtilleryTargetingControl {
                 Mounted weapon = aaa.getEntity(operator.getGame()).getEquipment(aaa.getWeaponId());
                 if (null == weapon) {
                     // The weaponId couldn't get us a weapon; probably a bomb Arrow IV dropped on a prior turn.
-                    // Arrow IV is in the 20 damage range.
-                    damage = 20;
+                    BombType btype = BombType.createBombByType(BombType.getBombTypeFromName("Arrow IV Missile"));
+                    damage = btype.getRackSize();
                 } else {
                     if (weapon.getType() instanceof BombType) {
                         damage = (weapon.getExplosionDamage());

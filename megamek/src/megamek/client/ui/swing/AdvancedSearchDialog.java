@@ -19,6 +19,7 @@ import megamek.client.ui.swing.table.MegamekTable;
 import megamek.client.ui.swing.unitSelector.TWAdvancedSearchPanel;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.*;
+import megamek.common.equipment.ArmorType;
 
 import javax.swing.*;
 import javax.swing.RowSorter.SortKey;
@@ -182,10 +183,10 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
         cArmor.addItem(Messages.getString("MechSelectorDialog.Search.Armor75"));
         cArmor.addItem(Messages.getString("MechSelectorDialog.Search.Armor90"));
 
-        DefaultListModel dlma  = new DefaultListModel();
+        DefaultListModel<String> dlma  = new DefaultListModel<>();
 
-        for (int i = 0; i < EquipmentType.armorNames.length; i++) {
-            dlma.addElement("\u2610 " + EquipmentType.armorNames[i]);
+        for (String armor : ArmorType.allArmorNames()) {
+            dlma.addElement("\u2610 " + armor);
         }
 
         listArmorType.setModel(dlma);

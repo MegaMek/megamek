@@ -511,6 +511,7 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == addTargetButton) {
             var dlg = new BotConfigTargetHexDialog(getFrame(), clientGui);
+            dlg.setAlwaysOnTop(true);
             dlg.setVisible(true);
             if (dlg.getResult() == DialogResult.CONFIRMED) {
                 dlg.getSelectedCoords().stream().filter(c -> !targetsListModel.contains(c)).forEach(targetsListModel::addElement);
@@ -518,6 +519,7 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
 
         } else if (e.getSource() == addUnitButton) {
             var dlg = new BotConfigTargetUnitDialog(getFrame());
+            dlg.setAlwaysOnTop(true);
             dlg.setVisible(true);
             if (dlg.getResult() == DialogResult.CONFIRMED) {
                 dlg.getSelectedIDs().stream().filter(c -> !targetsListModel.contains(c)).forEach(targetsListModel::addElement);

@@ -12,12 +12,11 @@
 package megamek.common;
 
 import megamek.common.annotations.Nullable;
-import megamek.common.options.GameOptions;
+import megamek.common.equipment.ArmorType;
 import megamek.common.weapons.autocannons.HVACWeapon;
 import megamek.common.weapons.defensivepods.BPodWeapon;
 import megamek.common.weapons.defensivepods.MPodWeapon;
 import megamek.common.weapons.ppc.PPCWeapon;
-import megamek.server.Server;
 import org.apache.logging.log4j.LogManager;
 
 import java.io.BufferedWriter;
@@ -86,6 +85,16 @@ public class EquipmentType implements ITechnology {
     public static final int T_ARMOR_PRIMITIVE_FIGHTER = 39;
     public static final int T_ARMOR_PRIMITIVE_AERO = 40;
     public static final int T_ARMOR_AEROSPACE = 41;
+    public static final int T_ARMOR_STANDARD_PROTOMEK = 42;
+    public static final int T_ARMOR_SV_BAR_2 = 43;
+    public static final int T_ARMOR_SV_BAR_3 = 44;
+    public static final int T_ARMOR_SV_BAR_4 = 45;
+    public static final int T_ARMOR_SV_BAR_5 = 46;
+    public static final int T_ARMOR_SV_BAR_6 = 47;
+    public static final int T_ARMOR_SV_BAR_7 = 48;
+    public static final int T_ARMOR_SV_BAR_8 = 49;
+    public static final int T_ARMOR_SV_BAR_9 = 50;
+    public static final int T_ARMOR_SV_BAR_10 = 51;
 
     public static final int T_STRUCTURE_UNKNOWN = -1;
     public static final int T_STRUCTURE_STANDARD = 0;
@@ -96,24 +105,6 @@ public class EquipmentType implements ITechnology {
     public static final int T_STRUCTURE_COMPOSITE = 5;
     public static final int T_STRUCTURE_ENDO_COMPOSITE = 6;
 
-    public static final String[] armorNames = { "Standard", "Ferro-Fibrous",
-            "Reactive", "Reflective", "Hardened", "Light Ferro-Fibrous",
-            "Heavy Ferro-Fibrous", "Patchwork", "Stealth",
-            "Ferro-Fibrous Prototype", "Commercial", "Ferro-Carbide",
-            "Lamellor Ferro-Carbide", "Improved Ferro-Aluminum",
-            /* extra space at the end on purpose */ "Industrial ",
-            "Heavy Industrial", "Ferro-Lamellor", "Primitive",
-            "Electric Discharge ProtoMech", "Ferro-Aluminum",
-            "Heavy Ferro-Aluminum", "Light Ferro-Aluminum",
-            "Vehicular Stealth", "Anti-Penetrative Ablation",
-            "Heat-Dissipating", "Impact-Resistant", "Ballistic-Reinforced",
-            "Prototype Ferro-Aluminum", "BA Standard (Basic)",
-            "BA Standard (Prototype)", "BA Advanced", "BA Stealth (Basic)",
-            "BA Stealth (Standard)", "BA Stealth (Improved)", "BA Stealth (Prototype)",
-            "BA Fire Resistant", "BA Mimetic", "BA Laser Reflective (Reflec/Glazed)", "BA Reactive (Blazer)",
-            "Primitive Fighter", "Primitive Aerospace", "Standard Aerospace"};
-
-
     public static final String[] structureNames = { "Standard", "Industrial",
             "Endo Steel", "Endo Steel Prototype", "Reinforced", "Composite",
             "Endo-Composite" };
@@ -121,25 +112,6 @@ public class EquipmentType implements ITechnology {
     // Assume for now that prototype is not more expensive
     public static final double[] structureCosts = { 400, 300, 1600, 4800, 6400,
             1600, 3200 };
-
-    // Assume for now that prototype is not more expensive
-    public static final double[] armorCosts = {
-            10000, 20000, 30000, 30000, 15000, 15000, 25000, /* patchwork */0, 50000, 60000,
-            3000, 75000, 100000, 50000, 5000, 10000, 35000, 5000, 10000, 20000,
-            25000, 15000, 50000, 15000, 25000, 20000, 25000, 60000, 10000, 10000,
-            12500, 12000, 15000, 20000, 50000, 10000, 15000, 37000, 37000, 5000,
-            5000, 10000};
-
-    public static final double[] armorPointMultipliers = {
-            1, 1.12, 1, 1, 0.5, 1.06, 1.24, 1, 1, 1.12,
-            1.5, 1.52, 1.72, 1.32, 0.67, 1.0, 0.875, 0.67, 1, 1.12,
-            1.24, 1.06, 1, 0.75, 0.625, 0.875, 0.75, 1.12, 0.8, 1.6,
-            0.64, 0.48, 0.96, 0.96, 1.6, 0.48, 0.8, 0.88, 0.96, 0.67,
-            0.66, 1 };
-
-    public static final double POINT_MULTIPLIER_UNKNOWN = 1;
-    public static final double POINT_MULTIPLIER_CLAN_FF = 1.2;
-    public static final double POINT_ADDITION_CLAN_FF = 0.08;
 
     protected String name = null;
 
@@ -729,6 +701,7 @@ public class EquipmentType implements ITechnology {
             MiscType.initializeTypes();
             BombType.initializeTypes();
             SmallWeaponAmmoType.initializeTypes();
+            ArmorType.initializeTypes();
             for (EquipmentType et : allTypes) {
                 if (et.getTechAdvancement().getStaticTechLevel() == null) {
                     et.getTechAdvancement().setStaticTechLevel(et.getTechAdvancement()
@@ -761,43 +734,42 @@ public class EquipmentType implements ITechnology {
     }
 
     public static int getArmorType(EquipmentType et) {
-        if (null == et) {
+        if (et instanceof ArmorType) {
+            return ((ArmorType) et).getArmorType();
+        } else {
             return T_ARMOR_UNKNOWN;
         }
-        for (int x = 0; x < armorNames.length; x++) {
-            // Some armor names (Industrial), have a space in the name, so trim
-            if (armorNames[x].trim().equals(et.getName().trim())) {
-                return x;
-            }
-        }
-        return T_ARMOR_UNKNOWN;
     }
 
     public static String getArmorTypeName(int armorType) {
-        if ((armorType < 0) || (armorType >= armorNames.length)) {
+        ArmorType armor = ArmorType.of(armorType, false);
+        if (armor == null) {
+            armor = ArmorType.of(armorType, true);
+        }
+        if (armor != null) {
+            return armor.getName();
+        } else {
             return "UNKNOWN";
         }
-        return armorNames[armorType];
     }
 
     public static String getArmorTypeName(int armorType, boolean clan) {
-        if ((armorType < 0) || (armorType >= armorNames.length)) {
+        ArmorType armor = ArmorType.of(armorType, clan);
+        if (armor != null) {
+            return clan ? "Clan " + armor.getName() : "IS " + armor.getName();
+        } else {
             return "UNKNOWN";
         }
-        return clan ? "Clan " + armorNames[armorType] : "IS "
-                + armorNames[armorType];
     }
 
     /**
-     * Convenience method to test whether an EquipmentType instance is armor. This works
-     * by comparing the results of {@link #getName()} to the armor names array and returning
-     * {@code true} if there is a match.
+     * Convenience method to test whether an EquipmentType instance is armor.
      *
      * @param et The equipment instance to test
      * @return   Whether the equipment is an armor type
      */
     public static boolean isArmorType(EquipmentType et) {
-        return getArmorType(et) != T_ARMOR_UNKNOWN;
+        return et instanceof ArmorType;
     }
 
     public static int getStructureType(EquipmentType et) {
@@ -839,88 +811,6 @@ public class EquipmentType implements ITechnology {
         return getStructureType(et) != T_STRUCTURE_UNKNOWN;
     }
 
-    public static String getBaArmorTypeName(int armorType) {
-        return getArmorTypeName(armorType);
-    }
-
-    public static String getBaArmorTypeName(int armorType, boolean clan) {
-        return getArmorTypeName(armorType, clan);
-    }
-
-    public static double getBaArmorWeightPerPoint(int type, boolean isClan) {
-        switch (type) {
-            case T_ARMOR_BA_STANDARD_PROTOTYPE:
-                return 0.1;
-            case T_ARMOR_BA_STANDARD_ADVANCED:
-                return 0.04;
-            case T_ARMOR_BA_STEALTH:
-                if (isClan) {
-                    return 0.035;
-                }
-                return 0.06;
-            case T_ARMOR_BA_STEALTH_BASIC:
-                if (isClan) {
-                    return 0.03;
-                }
-                return 0.055;
-            case T_ARMOR_BA_STEALTH_IMP:
-                if (isClan) {
-                    return 0.035;
-                }
-                return 0.06;
-            case T_ARMOR_BA_STEALTH_PROTOTYPE:
-                return 0.1;
-            case T_ARMOR_BA_FIRE_RESIST:
-                return 0.03;
-            case T_ARMOR_BA_MIMETIC:
-                return 0.05;
-            case T_ARMOR_BA_REFLECTIVE:
-                if (isClan) {
-                    return 0.03;
-                } else {
-                    return 0.055;
-                }
-            case T_ARMOR_BA_REACTIVE:
-                if (isClan) {
-                    return 0.035;
-                } else {
-                    return 0.06;
-                }
-            case T_ARMOR_BA_STANDARD:
-            default:
-                if (isClan) {
-                    return 0.025;
-                }
-                return 0.05;
-        }
-    }
-
-    /**
-     * Computes protomech armor weight by point.
-     *
-     * @param type    The armor type
-     * @return        The weight of a point of armor in kg
-     */
-    public static double getProtomechArmorWeightPerPoint(int type) {
-        if (type == T_ARMOR_EDP) {
-            return 0.075;
-        }
-        return 0.05;
-    }
-
-    /**
-     * Lookup method for protomech armor cost
-     * @param type The type of armor.
-     * @return     The cost per point in C-bills
-     */
-    public static int getProtomechArmorCostPerPoint(int type) {
-        // currently only one type of specialized armor for protomechs; anything else is treated as standard
-        if (type == T_ARMOR_EDP) {
-            return 1250;
-        }
-        return 625;
-    }
-
     /**
      * Gives the weight of a single point of armor at a particular BAR for a
      * given tech level.
@@ -938,49 +828,10 @@ public class EquipmentType implements ITechnology {
                     {.000, .000, .000, .057, .051, .047},
                     {.000, .000, .000, .063, .056, .052}};
 
-    /**
-     * `Lookup method for the weight of a point of support vehicle armor.
-     *
-     * @param bar        The armor's barrier armor rating
-     * @param techRating The armor's tech rating (0-5 corresponds to A-F)
-     * @return           The weight of a point of armor in tons. Returns 0.0 for invalid value.
-     */
-    public static double getSupportVehicleArmorWeightPerPoint(int bar, int techRating) {
-        if ((bar >= 0) && (techRating >= 0)
-                && (bar < SV_ARMOR_WEIGHT.length) && (techRating < SV_ARMOR_WEIGHT[bar].length)) {
-            return SV_ARMOR_WEIGHT[bar][techRating];
-        }
-        return 0.0;
-    }
-
-    /**
-     * Cost in C-bills of a single point of SV armor for various BAR values.
-     */
-    private static int[] SV_ARMOR_COST = {
-            0, 0, 50, 100, 150, 200, 250, 300, 400, 500, 625
-    };
-
-    /**
-     * Cost lookup for standard SV armor.
-     *
-     * @param bar The barrier armor rating of the support vehicle armor
-     * @return    The cost per point, in C-bills.
-     */
-    public static double getSupportVehicleArmorCostPerPoint(int bar) {
-        if (bar < 0) {
-            return 0;
-        }
-        return SV_ARMOR_COST[Math.min(bar, SV_ARMOR_COST.length - 1)];
-    }
-
     /* Armor and structure are stored as integers and standard uses a generic MiscType that
      * does not have its own TechAdvancement.
      */
 
-    protected static final TechAdvancement TA_STANDARD_ARMOR = new TechAdvancement(TECH_BASE_ALL)
-            .setAdvancement(2460, 2470, 2470).setApproximate(true, false, false)
-            .setTechRating(RATING_D).setAvailability(RATING_C, RATING_C, RATING_C, RATING_B)
-            .setStaticTechLevel(SimpleTechLevel.INTRO);
     protected static final TechAdvancement TA_STANDARD_STRUCTURE = new TechAdvancement(TECH_BASE_ALL)
             .setAdvancement(2430, 2439, 2505).setApproximate(true, false, false).setIntroLevel(true)
             .setTechRating(RATING_D).setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
@@ -989,77 +840,6 @@ public class EquipmentType implements ITechnology {
             .setAdvancement(DATE_NONE).setTechRating(RATING_A)
             .setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
             .setStaticTechLevel(SimpleTechLevel.INTRO);
-    private static final TechAdvancement[] TA_SV_ARMOR = {
-            TA_NONE, // Placeholder for index 0
-            TA_NONE, // Placeholder for index 1
-            new TechAdvancement(TECH_BASE_ALL).setAdvancement(DATE_PS, DATE_PS, DATE_PS)
-                    .setTechRating(RATING_A).setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
-                    .setStaticTechLevel(SimpleTechLevel.STANDARD), // BAR 2
-            new TechAdvancement(TECH_BASE_ALL).setAdvancement(DATE_PS, DATE_PS, DATE_PS)
-                    .setTechRating(RATING_A).setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
-                    .setStaticTechLevel(SimpleTechLevel.STANDARD), // BAR 3
-            new TechAdvancement(TECH_BASE_ALL).setAdvancement(DATE_PS, DATE_PS, DATE_PS)
-                    .setTechRating(RATING_B).setAvailability(RATING_B, RATING_B, RATING_A, RATING_A)
-                    .setStaticTechLevel(SimpleTechLevel.STANDARD), // BAR 4
-            new TechAdvancement(TECH_BASE_ALL).setAdvancement(DATE_ES, DATE_ES, DATE_ES)
-                    .setTechRating(RATING_B).setAvailability(RATING_B, RATING_B, RATING_B, RATING_A)
-                    .setStaticTechLevel(SimpleTechLevel.STANDARD), // BAR 5
-            new TechAdvancement(TECH_BASE_ALL).setAdvancement(DATE_ES, DATE_ES, DATE_ES)
-                    .setTechRating(RATING_C).setAvailability(RATING_C, RATING_B, RATING_B, RATING_A)
-                    .setStaticTechLevel(SimpleTechLevel.STANDARD), // BAR 6
-            new TechAdvancement(TECH_BASE_ALL).setAdvancement(2250, 2300, 2305)
-                    .setApproximate(true, true, false).setPrototypeFactions(F_TA)
-                    .setProductionFactions(F_TA).setTechRating(RATING_C)
-                    .setAvailability(RATING_C, RATING_B, RATING_B, RATING_B)
-                    .setStaticTechLevel(SimpleTechLevel.STANDARD), // BAR 7
-            new TechAdvancement(TECH_BASE_ALL).setAdvancement(2425, 2435, 22445)
-                    .setPrototypeFactions(F_TH).setProductionFactions(F_TH)
-                    .setTechRating(RATING_D)
-                    .setAvailability(RATING_C, RATING_C, RATING_B, RATING_B)
-                    .setStaticTechLevel(SimpleTechLevel.STANDARD), // BAR 8
-            new TechAdvancement(TECH_BASE_ALL).setAdvancement(2440, 2450, 2470)
-                    .setPrototypeFactions(F_TH).setProductionFactions(F_TH)
-                    .setTechRating(RATING_D)
-                    .setAvailability(RATING_C, RATING_C, RATING_C, RATING_B)
-                    .setStaticTechLevel(SimpleTechLevel.STANDARD), // BAR 9
-            new TechAdvancement(TECH_BASE_ALL).setAdvancement(2460, 2470, 2505)
-                    .setPrototypeFactions(F_TH).setProductionFactions(F_TH)
-                    .setApproximate(true, false, false).setTechRating(RATING_D)
-                    .setAvailability(RATING_D, RATING_D, RATING_D, RATING_C)
-                    .setStaticTechLevel(SimpleTechLevel.STANDARD) // BAR 10
-    };
-
-    /**
-     * Tech advancement for armor based on the armor type index and tech base
-     *
-     * @param at   The armor type constant
-     * @param clan The armor tech base
-     * @return     The tech advancement for the armor
-     */
-    public static TechAdvancement getArmorTechAdvancement(int at, boolean clan) {
-        if (at == T_ARMOR_STANDARD) {
-            return TA_STANDARD_ARMOR;
-        }
-        String armorName = EquipmentType.getArmorTypeName(at, clan);
-        EquipmentType armor = EquipmentType.get(armorName);
-        if (armor != null) {
-            return armor.getTechAdvancement();
-        }
-        return TA_NONE;
-    }
-
-    /**
-     * Tech advancement for support vehicle armor
-     *
-     * @param bar The armor's barrier armor rating
-     * @return    The armor tech advancement
-     */
-    public static TechAdvancement getSVArmorTechAdvancement(int bar) {
-        if ((bar >= 0) && (bar < TA_SV_ARMOR.length)) {
-            return TA_SV_ARMOR[bar];
-        }
-        return TA_NONE;
-    }
 
     public static TechAdvancement getStructureTechAdvancement(int at, boolean clan) {
         if (at == T_STRUCTURE_STANDARD) {
@@ -1218,52 +998,11 @@ public class EquipmentType implements ITechnology {
         return techAdvancement.getReintroductionDate(clan, faction);
     }
 
-    public static double getArmorCost(int inArmor) {
-        if ((inArmor < 0) || (inArmor >= armorCosts.length)) {
-            return -1;
-        }
-        return armorCosts[inArmor];
-    }
-
     public static double getStructureCost(int inStructure) {
         if ((inStructure < 0) || (inStructure >= structureCosts.length)) {
             return -1;
         }
         return structureCosts[inStructure];
-    }
-
-    public static double getArmorPointMultiplier(int inArmor) {
-        return EquipmentType.getArmorPointMultiplier(inArmor,
-                TechConstants.T_IS_TW_NON_BOX);
-    }
-
-    public static double getArmorPointMultiplier(int inArmor, int inTechLevel) {
-        return EquipmentType
-                .getArmorPointMultiplier(
-                        inArmor,
-                        ((inTechLevel == TechConstants.T_CLAN_TW) || (inTechLevel == TechConstants.T_CLAN_ADVANCED))
-                                || (inTechLevel == TechConstants.T_CLAN_EXPERIMENTAL)
-                                || (inTechLevel == TechConstants.T_CLAN_UNOFFICIAL));
-    }
-
-    public static double getArmorPointMultiplier(int inArmor, boolean clanArmor) {
-        if ((inArmor < 0) || (inArmor >= armorPointMultipliers.length)) {
-            return POINT_MULTIPLIER_UNKNOWN;
-        }
-        /*
-         * now handled in a single if statement
-        if ((inArmor == T_ARMOR_FERRO_FIBROUS) && clanArmor) {
-            return POINT_MULTIPLIER_CLAN_FF;
-        }
-        if ((inArmor == T_ARMOR_ALUM) && clanArmor) {
-            return POINT_MULTIPLIER_CLAN_FF;
-        }*/
-        // Clan armors of these types have a multiplier exactly 0.08 higher than the I.S. variety
-        if (clanArmor && ((inArmor == T_ARMOR_ALUM) || (inArmor == T_ARMOR_FERRO_FIBROUS))) {
-            return armorPointMultipliers[inArmor] + POINT_ADDITION_CLAN_FF;
-
-        }
-        return armorPointMultipliers[inArmor];
     }
 
     @Override
@@ -1529,11 +1268,18 @@ public class EquipmentType implements ITechnology {
         return isAnyOf(typeInternalName);
     }
 
-    public static List<String> getStructureNames() {
-        return Arrays.stream(structureNames).collect(Collectors.toList());
-    }
+    public static Map<Integer, String> getAllStructureCodeName() {
+        Map<Integer, String> result = new HashMap();
 
-    public static List<String> getArmorNames() {
-        return Arrays.stream(armorNames).collect(Collectors.toList());
+        result.put(T_STRUCTURE_UNKNOWN, getStructureTypeName(T_STRUCTURE_UNKNOWN));
+        result.put(T_STRUCTURE_STANDARD, getStructureTypeName(T_STRUCTURE_STANDARD));
+        result.put(T_STRUCTURE_INDUSTRIAL, getStructureTypeName(T_STRUCTURE_INDUSTRIAL));
+        result.put(T_STRUCTURE_ENDO_STEEL, getStructureTypeName(T_STRUCTURE_ENDO_STEEL));
+        result.put(T_STRUCTURE_ENDO_PROTOTYPE, getStructureTypeName(T_STRUCTURE_ENDO_PROTOTYPE));
+        result.put(T_STRUCTURE_REINFORCED, getStructureTypeName(T_STRUCTURE_REINFORCED));
+        result.put(T_STRUCTURE_COMPOSITE, getStructureTypeName(T_STRUCTURE_COMPOSITE));
+        result.put(T_STRUCTURE_ENDO_COMPOSITE, getStructureTypeName(T_STRUCTURE_ENDO_COMPOSITE));
+
+        return result;
     }
 }

@@ -20,6 +20,7 @@ package megamek.common.cost;
 
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.common.*;
+import megamek.common.equipment.ArmorType;
 
 public class BattleArmorCostCalculator {
 
@@ -71,31 +72,7 @@ public class BattleArmorCostCalculator {
         }
         costs[idx++] = manipulatorCost;
 
-        double baseArmorCost;
-        switch (battleArmor.getArmorType(BattleArmor.LOC_TROOPER_1)) {
-            case EquipmentType.T_ARMOR_BA_STANDARD_ADVANCED:
-                baseArmorCost = 12500;
-                break;
-            case EquipmentType.T_ARMOR_BA_MIMETIC:
-            case EquipmentType.T_ARMOR_BA_STEALTH:
-                baseArmorCost = 15000;
-                break;
-            case EquipmentType.T_ARMOR_BA_STEALTH_BASIC:
-                baseArmorCost = 12000;
-                break;
-            case EquipmentType.T_ARMOR_BA_STEALTH_IMP:
-                baseArmorCost = 20000;
-                break;
-            case EquipmentType.T_ARMOR_BA_STEALTH_PROTOTYPE:
-                baseArmorCost = 50000;
-                break;
-            case EquipmentType.T_ARMOR_BA_FIRE_RESIST:
-            case EquipmentType.T_ARMOR_BA_STANDARD_PROTOTYPE:
-            case EquipmentType.T_ARMOR_BA_STANDARD:
-            default:
-                baseArmorCost = 10000;
-                break;
-        }
+        double baseArmorCost = ArmorType.forEntity(battleArmor).getCost();
 
         costs[idx++] = (baseArmorCost * battleArmor.getOArmor(BattleArmor.LOC_TROOPER_1));
 

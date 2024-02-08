@@ -1,0 +1,41 @@
+Map generator enhancements
+--------------------------
+
+Integration of map generator with map editor
+ - you can now create random terrain to seed a new map.
+ - just press Okay to get a blank map as before.
+
+New terrain features
+ - Swamps can stack with woods and roughs in the same hex
+ - Pavements for patches of ice / places to put buildings
+ - Craters available on basic menu
+ - Theme can be set when generating the map, to use the alternate graphics (snow, lunar, mars...)
+
+Terrain special effects (advanced menu)
+ - Drought, dries up water on the map to leave lower water, swamp or rough.
+   Use river + drought to get a dried up river bed.
+   FX modifier adjusts the severity of the drought
+ - Fires, clears and ignites woods for a map that looks like a battle just finished
+   A low % chance on high temperature worlds could give riflemen a nasty shock
+   FX modifier adjusts balance between cleared and untouched hexes
+ - Frozen, converts water and swamp to ice (pavement)
+   Adds atmosphere to low temperature worlds with frozen lakes and rivers a possibility
+ - Flood, fills negative hex levels with water and level 0 with swamp
+   Fen / salt marsh / coastline type maps.  Hovercraft at their finest.
+   FX modifier adjusts sea level.
+
+Combining effects
+ - Flood + Drought
+   Rocky shores - not so good for hovers.
+   FX modifier -1 worked well
+ - Flood + Frozen
+   Glacier / ice shelf
+
+Defects fixed
+ - The alternate elevation algorithm and text in advanced settings expected hilliness 0-1000.
+   But default elevation algorithm and enforced settings expected 0-99.
+   Modified to use the 0-99 range
+Defects introduced :)
+ - Advanced map settings is quite a big list now, it should maybe be split into two columns...
+   GridBagLayout makes my head hurt
+ - More localisation needed for the german & russian

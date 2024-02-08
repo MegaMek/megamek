@@ -187,7 +187,7 @@ public class ChatProcessor {
 
         // Tell me what behavior you are using.
         if (command.toLowerCase().startsWith(ChatCommands.SHOW_BEHAVIOR.getAbbreviation())) {
-            msg = "Current Behavior: " + princess.getBehaviorSettings().getDescription();
+            msg = "Current Behavior: " + princess.getBehaviorSettings().toLog();
             princess.sendChat(msg);
             LogManager.getLogger().info(msg);
         }
@@ -230,7 +230,7 @@ public class ChatProcessor {
         // Make sure the command came from my team.
         int speakerTeam = speakerPlayer.getTeam();
         int princessTeam = princessPlayer.getTeam();
-        if (princessTeam != speakerTeam) {
+        if ((princessTeam != speakerTeam) && !speakerPlayer.getGameMaster()) {
             msg = "You are not my boss. [wrong team]";
             princess.sendChat(msg);
             LogManager.getLogger().warn(msg);

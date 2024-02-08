@@ -720,12 +720,16 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements
             initDonePanelForNewTurn();
         }
         setupButtonPanel();
+
+        startTimer();
     }
 
     /**
      * Does end turn stuff.
      */
     private void endMyTurn() {
+        stopTimer();
+
         // end my turn, then.
         Entity next = clientgui.getClient().getGame()
                 .getNextEntity(clientgui.getClient().getGame().getTurnIndex());

@@ -1,5 +1,6 @@
 generator:MegaMek Suite 0.49.16-SNAPSHOT on 2023-12-29
-chassis:Peregrine (Horned Owl)
+chassis:Peregrine
+clanname:Horned Owl
 model:3
 mul id:2474
 Config:Biped

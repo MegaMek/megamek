@@ -20,6 +20,7 @@ package megamek.common.alphaStrike.conversion;
 
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.client.ui.swing.calculationReport.DummyCalculationReport;
+import megamek.codeUtilities.StringUtility;
 import megamek.common.*;
 import megamek.common.alphaStrike.ASArcs;
 import megamek.common.alphaStrike.ASUnitType;
@@ -101,7 +102,7 @@ public final class ASConverter {
         element.setName(entity.getShortName());
         element.setQuirks(entity.getQuirks());
         element.setModel(entity.getModel());
-        element.setChassis(entity.getChassis());
+        element.setChassis(entity.getFullChassis());
         element.setMulId(entity.getMulId());
         element.setRole(entity.getRole());
 

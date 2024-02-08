@@ -1,4 +1,5 @@
-chassis:Hellhound II-P (Hellcat-P)
+chassis:Hellhound II-P
+clanname:Hellcat-P
 model:
 mul id:9430
 Config:Biped

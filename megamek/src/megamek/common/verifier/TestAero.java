@@ -16,6 +16,7 @@ package megamek.common.verifier;
 
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
+import megamek.common.equipment.ArmorType;
 import megamek.common.options.OptionsConstants;
 import megamek.common.util.StringUtil;
 import megamek.common.weapons.bayweapons.BayWeapon;
@@ -44,104 +45,16 @@ public class TestAero extends TestEntity {
     private Aero aero;
 
     /**
-     * An enumeration that keeps track of the legal armors for Aerospace and
-     * Conventional fighters.  Each entry consists of the type, which
-     * corresponds to the types defined in <code>EquipmentType</code> as well
-     * as the number of slots the armor takes up.
-     *
-     * @author arlith
-     */
-    public enum AeroArmor {
-        STANDARD(EquipmentType.T_ARMOR_STANDARD, 0, 0, false),
-        CLAN_FERRO_ALUM(EquipmentType.T_ARMOR_ALUM, 2, 1, true),
-        FERRO_LAMELLOR(EquipmentType.T_ARMOR_FERRO_LAMELLOR, 2, 1, true),
-        CLAN_REACTIVE(EquipmentType.T_ARMOR_REACTIVE, 1, 1, true),
-        CLAN_REFLECTIVE(EquipmentType.T_ARMOR_REFLECTIVE, 1, 1, true),
-        ANTI_PENETRATIVE_ABLATION(
-                EquipmentType.T_ARMOR_ANTI_PENETRATIVE_ABLATION, 1, 1, false),
-        BALLISTIC_REINFORCED(
-                EquipmentType.T_ARMOR_BALLISTIC_REINFORCED, 2, 1, false),
-        FERRO_ALUM(EquipmentType.T_ARMOR_ALUM, 2, 1, false),
-        FERRO_PROTO(EquipmentType.T_ARMOR_FERRO_ALUM_PROTO, 3, 1, false),
-        HEAVY_FERRO_ALUM(EquipmentType.T_ARMOR_HEAVY_ALUM, 4, 2, false),
-        LIGHT_FERRO_ALUM(EquipmentType.T_ARMOR_LIGHT_ALUM, 1, 1, false),
-        PRIMITIVE(EquipmentType.T_ARMOR_PRIMITIVE_FIGHTER, 0, 0, false),
-        REACTIVE(EquipmentType.T_ARMOR_REACTIVE, 3, 1, false),
-        REFLECTIVE(EquipmentType.T_ARMOR_REFLECTIVE, 2, 1, false),
-        STEALTH_VEHICLE(EquipmentType.T_ARMOR_STEALTH_VEHICLE, 2, 1, false);
-
-        /**
-         * The type, corresponding to types defined in
-         * <code>EquipmentType</code>.
-         */
-        public final int type;
-
-        /**
-         * The number of spaces occupied by the armor type.  Armors that take
-         * up 1 space take up space in the aft, those with 2 take up space in
-         * each wing, 3 takes up space in both wings and the aft, 4 takes up
-         * space in each possible arc (nose, aft, left wing, right wing).
-         */
-        public final int space;
-
-        /**
-         * The number of weapon spaces occupied by patchwork armor. Unlike standard armor, patchwork
-         * armor takes up slots in the location where it's used.
-         */
-        public final int patchworkSpace;
-
-        /**
-         * Denotes whether this armor is Clan or not.
-         */
-        public boolean isClan;
-
-        AeroArmor(int t, int s, int p, boolean c) {
-            type = t;
-            space = s;
-            patchworkSpace = p;
-            isClan = c;
-        }
-
-        /**
-         * Given an armor type, return the <code>AeroArmor</code> instance that
-         * represents that type.
-         *
-         * @param t  The armor type.
-         * @param c  Whether this armor type is Clan or not.
-         * @return   The <code>AeroArmor</code> that correspondes to the given
-         *              type or null if no match was found.
-         */
-        public static AeroArmor getArmor(int t, boolean c) {
-            for (AeroArmor a : values()) {
-                if ((a.type == t) && ((a.isClan == c)
-                        || (t == EquipmentType.T_ARMOR_STANDARD))) {
-                    return a;
-                }
-            }
-            return null;
-        }
-
-        /**
-         * @return The <code>MiscType</code> for this armor.
-         */
-        public EquipmentType getArmor() {
-            String name = EquipmentType.getArmorTypeName(type, isClan);
-            return EquipmentType.get(name);
-        }
-    }
-
-    /**
      * Filters all fighter armor according to given tech constraints
      *
      * @param techManager
      * @return A list of all armors that meet the tech constraints
      */
-    public static List<EquipmentType> legalArmorsFor(ITechManager techManager) {
-        List<EquipmentType> retVal = new ArrayList<>();
-        for (AeroArmor armor : AeroArmor.values()) {
-            final EquipmentType eq = armor.getArmor();
-            if ((null != eq) && techManager.isLegal(eq)) {
-                retVal.add(eq);
+    public static List<ArmorType> legalArmorsFor(ITechManager techManager) {
+        List<ArmorType> retVal = new ArrayList<>();
+        for (ArmorType armor : ArmorType.allArmorTypes()) {
+            if (armor.hasFlag(MiscType.F_FIGHTER_EQUIPMENT) && techManager.isLegal(armor)) {
+                retVal.add(armor);
             }
         }
         return retVal;
@@ -272,13 +185,12 @@ public class TestAero extends TestEntity {
 
         if (!a.hasPatchworkArmor()) {
             // Get the armor type, to determine how much space it uses
-            AeroArmor armor = AeroArmor.getArmor(a.getArmorType(Aero.LOC_NOSE), a.isClanArmor(Aero.LOC_NOSE));
-
+            ArmorType armor = ArmorType.of(a.getArmorType(Aero.LOC_NOSE), a.isClanArmor(Aero.LOC_NOSE));
             if (armor == null) {
                 return null;
             }
             // Remove space for each location until we've allocated the armor
-            int spaceUsedByArmor = armor.space;
+            int spaceUsedByArmor = armor.getFighterSlots();
             int loc = (spaceUsedByArmor != 2) ? Aero.LOC_AFT : Aero.LOC_RWING;
             while (spaceUsedByArmor > 0) {
                 availSpace[loc]--;
@@ -289,12 +201,12 @@ public class TestAero extends TestEntity {
                 }
             }
         } else {
-            for (int loc = 0; loc < Aero.LOC_WINGS; loc++) {
-                AeroArmor armor = AeroArmor.getArmor(a.getArmorType(loc), a.isClanArmor(loc));
+            for (int loc = a.firstArmorIndex(); loc < Aero.LOC_WINGS; loc++) {
+                ArmorType armor = ArmorType.of(a.getArmorType(loc), a.isClanArmor(loc));
                 if (null == armor) {
                     return null;
                 } else {
-                    availSpace[loc] -= armor.patchworkSpace;
+                    availSpace[loc] -= armor.getPatchworkSlotsCVFtr();
                 }
             }
         }
@@ -410,7 +322,7 @@ public class TestAero extends TestEntity {
     }
 
     public TestAero(Aero a, TestEntityOption option, String fs) {
-        super(option, a.getEngine(), getArmor(a), getStructure(a));
+        super(option, a.getEngine(), getStructure(a));
         aero = a;
         fileString = fs;
     }
@@ -418,19 +330,6 @@ public class TestAero extends TestEntity {
     private static Structure getStructure(Aero aero) {
         int type = aero.getStructureType();
         return new Structure(type, false, aero.getMovementMode());
-    }
-
-    private static Armor[] getArmor(Aero aero) {
-        Armor[] armor;
-        armor = new Armor[1];
-        int type = aero.getArmorType(1);
-        int flag = 0;
-        if (aero.isClanArmor(1)) {
-            flag |= Armor.CLAN_ARMOR;
-        }
-        armor[0] = new Armor(type, flag);
-        return armor;
-
     }
 
     @Override
@@ -745,8 +644,8 @@ public class TestAero extends TestEntity {
             int[] availSpace = availableSpace(aero);
             if (availSpace == null) {
                 buff.append("Invalid armor type! Armor: ")
-                        .append(EquipmentType.armorNames[aero.getArmorType(Aero.LOC_NOSE)]);
-                buff.append("\n");
+                        .append(ArmorType.forEntity(aero))
+                        .append("\n");
                 return false;
             }
             if (numBombs > aero.getMaxBombPoints()) {

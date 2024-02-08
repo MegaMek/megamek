@@ -47,4 +47,14 @@ public enum ChatCommands {
     public String getDescription() {
         return description;
     }
+
+    public static ChatCommands getByValue(String s) {
+        for (ChatCommands cc : ChatCommands.values()) {
+            if (cc.getAbbreviation().equals(s)) {
+                return cc;
+            }
+        }
+
+        return null;
+    }
 }

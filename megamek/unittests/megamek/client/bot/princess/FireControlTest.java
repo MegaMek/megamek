@@ -29,10 +29,11 @@ import megamek.common.weapons.StopSwarmAttack;
 import megamek.common.weapons.missiles.ATMWeapon;
 import megamek.common.weapons.missiles.MMLWeapon;
 import megamek.server.SmokeCloud;
+
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledForJreRange;
-import org.junit.jupiter.api.condition.DisabledOnJre;
 import org.junit.jupiter.api.condition.JRE;
 
 import java.math.BigInteger;
@@ -139,6 +140,11 @@ public class FireControlTest {
     private Map<Mounted, Double> testToHitThreshold;
 
     private FireControl testFireControl;
+
+    @BeforeAll
+    public static void beforeAll() {
+        EquipmentType.initializeTypes();
+    }
 
     @BeforeEach
     public void beforeEach() {

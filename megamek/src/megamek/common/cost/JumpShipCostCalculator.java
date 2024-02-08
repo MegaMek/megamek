@@ -20,6 +20,7 @@ package megamek.common.cost;
 
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.common.*;
+import megamek.common.equipment.ArmorType;
 
 public class JumpShipCostCalculator {
 
@@ -91,7 +92,7 @@ public class JumpShipCostCalculator {
         costs[costIdx++] += (200 * jumpShip.getFuel()) / jumpShip.getFuelPerTon() * 1.02;
 
         // Armor
-        costs[costIdx++] += jumpShip.getArmorWeight() * EquipmentType.getArmorCost(jumpShip.getArmorType(0));
+        costs[costIdx++] += jumpShip.getArmorWeight() * ArmorType.forEntity(jumpShip).getCost();
 
         // Heat Sinks
         int sinkCost = 2000 + (4000 * jumpShip.getHeatType());

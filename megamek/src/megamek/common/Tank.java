@@ -2376,9 +2376,7 @@ public class Tank extends Entity {
                 // Only one slot each for all jump jets or fuel tanks, added later.
                 continue;
             }
-            if (!((mount.getType() instanceof AmmoType) || Arrays.asList(
-                    EquipmentType.armorNames).contains(
-                    mount.getType().getName()))) {
+            if (!((mount.getType() instanceof AmmoType) || EquipmentType.isArmorType(mount.getType()))) {
                 usedSlots += mount.getType().getTankSlots(this);
             }
         }

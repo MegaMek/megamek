@@ -13,6 +13,7 @@ package megamek.common;
 
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.common.cost.SmallCraftCostCalculator;
+import megamek.common.equipment.ArmorType;
 import megamek.common.options.OptionsConstants;
 
 import java.util.HashMap;
@@ -724,52 +725,10 @@ public class SmallCraft extends Aero {
         } else {
             armorPoints -= freeSI;
         }
-        double armorPerTon = SmallCraft.armorPointsPerTon(getWeight(), isSpheroid(),
-                getArmorType(0), TechConstants.isClan(getArmorTechLevel(0)));
+        ArmorType armor = ArmorType.forEntity(this);
+        double armorPerTon = armor.getPointsPerTon(this);
 
         return RoundWeight.nextHalfTon(armorPoints / armorPerTon);
-    }
-
-    public static double armorPointsPerTon(double craftWeight, boolean spheroid, int at, boolean isClan) {
-        double base = 16.0;
-        if (spheroid) {
-            if (craftWeight >= 65000) {
-                base = 6.0;
-            } else if (craftWeight >= 50000) {
-                base = 8.0;
-            } else if (craftWeight >= 35000) {
-                base = 10.0;
-            } else if (craftWeight >= 20000) {
-                base = 12.0;
-            } else if (craftWeight >= 12500) {
-                base = 14.0;
-            }
-        } else {
-            if (craftWeight >= 25000) {
-                base = 6.0;
-            } else if (craftWeight >= 17500) {
-                base = 8.0;
-            } else if (craftWeight >= 12500) {
-                base = 10.0;
-            } else if (craftWeight >= 9500) {
-                base = 12.0;
-            } else if (craftWeight >= 6000) {
-                base = 14.0;
-            }
-        }
-        if (isClan) {
-            if (base > 14) {
-                base += 4;
-            } else if (base > 12) {
-                base += 3;
-            } else if (base > 6) {
-                base += 2;
-            } else {
-                base += 1;
-            }
-        }
-
-        return base * EquipmentType.getArmorPointMultiplier(at, isClan);
     }
 
     @Override

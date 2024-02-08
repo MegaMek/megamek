@@ -41,6 +41,17 @@ MEGAMEK VERSION HISTORY:
 + Fix #5088: Inaccurate Movement Envelope for Aerospace Fighters on Ground Maps
 + PR #5094: add start and connect to game to the file menu
 + PR #5102: Laser insulator and RISC laser pulse module validation
++ PR #5101, #5116, #5119, #5137: Rework of the internal representation of Armor
++ PR #5106, #5107: Separates clan and IS name for Meks with different names such as Mad Cat/Timber Wolf
++ Fix #5092: SPA Natural Aptitude: Piloting is not being applied to low gravity PSR's.
++ Fix #5103: Check for not dusk dawn for searchlight penalty reduction
++ PR #5121: Bot command updates
++ Fix #4878: Princess non-combat PSR reduction
++ Fix #5103, #5030, #5072: Correct issues with BAP targeting to hit bonus 
++ Fix #5073: Brings Quirks in line with Campaign Ops 4th printing table.
++ PR #5126: turn timer updates
++ PR #5132: Fix Long Tom Cannon not dealing damage to flying dropship
++ Fix #5104: To-hit calculation bug when shooting at VTOLs
 
 0.49.17 (2023-12-31 1900 UTC)
 + Fix #1031: Show structure collapse warning when deploying and moving.

@@ -48,6 +48,11 @@ public class PrincessTest {
     private Princess mockPrincess;
     private BasicPathRanker mockPathRanker;
 
+    @BeforeAll
+    public static void beforeAll() {
+        EquipmentType.initializeTypes();
+    }
+
     @BeforeEach
     public void beforeEach() {
         mockPathRanker = mock(BasicPathRanker.class);

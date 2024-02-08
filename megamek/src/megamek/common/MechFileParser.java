@@ -223,14 +223,17 @@ public class MechFileParser {
 
         // Walk through the list of equipment.
         for (Mounted m : ent.getMisc()) {
+            if (m.getLinked() != null) {
+                continue;
+            }
             // link laser insulators
             if ((m.getType().hasFlag(MiscType.F_LASER_INSULATOR)
                     || m.getType().hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE))) {
                 // We can link to a laser in the same location that isn't already linked.
                 Predicate<Mounted> linkable = mount ->
                         (mount.getLinkedBy() == null) && (mount.getLocation() == m.getLocation())
-                            && (mount.getType() instanceof WeaponType)
-                            && mount.getType().hasFlag(WeaponType.F_LASER);
+                                && (mount.getType() instanceof WeaponType)
+                                && mount.getType().hasFlag(WeaponType.F_LASER);
                 // The laser pulse module is also restricted to non-pulse lasers, IS only
                 if (m.getType().hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)) {
                     linkable = linkable.and(mount -> !mount.getType().hasFlag(WeaponType.F_PULSE)
@@ -292,10 +295,9 @@ public class MechFileParser {
                         break;
                     }
                 }
-            } else if ((m.getType().hasFlag(MiscType.F_ARTEMIS)
-                    || (m.getType().hasFlag(MiscType.F_ARTEMIS_V))
-                    || (m.getType().hasFlag(MiscType.F_ARTEMIS_PROTO)))
-                    && (m.getLinked() == null)) {
+            } else if (m.getType().hasFlag(MiscType.F_ARTEMIS)
+                    || m.getType().hasFlag(MiscType.F_ARTEMIS_V)
+                    || m.getType().hasFlag(MiscType.F_ARTEMIS_PROTO)) {
 
                 // link up to a weapon in the same location
                 for (Mounted mWeapon : ent.getTotalWeaponList()) {
@@ -320,9 +322,7 @@ public class MechFileParser {
                     // huh. this shouldn't happen
                     throw new EntityLoadingException("Unable to match Artemis to launcher for " + ent.getShortName());
                 }
-            } else if ((m.getType().hasFlag(MiscType.F_STEALTH) || m.getType()
-                    .hasFlag(MiscType.F_VOIDSIG))
-                    && (m.getLinked() == null)
+            } else if ((m.getType().hasFlag(MiscType.F_STEALTH) || m.getType().hasFlag(MiscType.F_VOIDSIG))
                     && (ent instanceof Mech)) {
                 // Find an ECM suite to link to the stealth system.
                 // Stop looking after we find the first ECM suite.
@@ -338,12 +338,11 @@ public class MechFileParser {
                     // This mech has stealth armor but no ECM. Probably
                     // an improperly created custom.
                     throw new EntityLoadingException(
-                            "Unable to find an ECM Suite for "+ent.getShortName()+".  Mechs with Stealth Armor or Void-Signature-System must also be equipped with an ECM Suite.");
+                            "Unable to find an ECM Suite for " + ent.getShortName() + ".  Mechs with Stealth Armor or Void-Signature-System must also be equipped with an ECM Suite.");
                 }
             } // End link-Stealth
-              // Link PPC Capacitor to PPC it its location.
-            else if (m.getType().hasFlag(MiscType.F_PPC_CAPACITOR)
-                    && (m.getLinked() == null)) {
+            // Link PPC Capacitor to PPC it its location.
+            else if (m.getType().hasFlag(MiscType.F_PPC_CAPACITOR)) {
 
                 // link up to a weapon in the same location
                 for (Mounted mWeapon : ent.getTotalWeaponList()) {
@@ -377,8 +376,7 @@ public class MechFileParser {
             } // End link-PPC Capacitor
 
             // Link MRM Apollo fire-control systems to their missle racks.
-            else if (m.getType().hasFlag(MiscType.F_APOLLO)
-                    && (m.getLinked() == null)) {
+            else if (m.getType().hasFlag(MiscType.F_APOLLO)) {
 
                 // link up to a weapon in the same location
                 for (Mounted mWeapon : ent.getTotalWeaponList()) {
@@ -405,12 +403,14 @@ public class MechFileParser {
                 if (m.getLinked() == null) {
                     // huh. this shouldn't happen
                     throw new EntityLoadingException(
-                            "Unable to match Apollo to launcher for "+ent.getShortName());
+                            "Unable to match Apollo to launcher for " + ent.getShortName());
                 }
-            } // End link-Apollo
+            }// End link-Apollo
+        }
               // now find any active probes and add them to the sensor list
               // choose this sensor if added
               //WOR CEWS
+        for (Mounted m : ent.getMisc()) {
             if (m.getType().hasFlag(MiscType.F_BAP)) {
                 if (m.getType().getInternalName().equals(Sensor.BAP)) {
                     ent.getSensors().add(new Sensor(Sensor.TYPE_BAP));

@@ -61,7 +61,7 @@ public class UnitFileMigrationTool {
                     System.out.println(unit + " doesnt have model without :");
                     continue;
                 }
-                    Files.write(file.toPath(), lines, StandardCharsets.UTF_8);
+                Files.write(file.toPath(), lines, StandardCharsets.UTF_8);
 //                System.out.println(lines);
             }
         }

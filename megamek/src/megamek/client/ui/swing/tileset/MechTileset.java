@@ -196,8 +196,8 @@ public class MechTileset {
         }
 
         // second, check for chassis matches
-        if (chassis.containsKey(entity.getChassis().toUpperCase() + mode + addendum)) {
-            return chassis.get(entity.getChassis().toUpperCase() + mode + addendum);
+        if (chassis.containsKey(entity.getFullChassis().toUpperCase() + mode + addendum)) {
+            return chassis.get(entity.getFullChassis().toUpperCase() + mode + addendum);
         }
 
         // last, the generic model

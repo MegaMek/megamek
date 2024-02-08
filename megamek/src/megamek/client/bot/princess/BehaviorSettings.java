@@ -49,16 +49,16 @@ public class BehaviorSettings implements Serializable {
             30};
     static final int[] FALL_SHAME_VALUES = {
             10,
-            20,
             40,
-            60,
             80,
             100,
-            120,
-            140,
             160,
-            180,
-            200};
+            500,
+            500,
+            500,
+            500,
+            500,
+            500};
     protected static final double[] BRAVERY = {
             0.1,
             0.3,
@@ -811,24 +811,24 @@ public class BehaviorSettings implements Serializable {
      */
     public String toLog() {
         final StringBuilder out = new StringBuilder("Princess Behavior: ").append(getDescription());
-        out.append("\n\tDestination Edge: ").append(getDestinationEdge());
-        out.append("\n\tRetreat Edge: ").append(getRetreatEdge());
-        out.append("\n\tForced Withdrawal: ").append(isForcedWithdrawal());
-        out.append("\n\tSelf Preservation: ").append(getSelfPreservationIndex());
-        out.append("\n\tHyper Aggression: ").append(getHyperAggressionIndex());
-        out.append("\n\tFall Shame: ").append(getFallShameIndex());
-        out.append("\n\tBravery: ").append(getBraveryIndex());
-        out.append("\n\tHerd Mentality: ").append(getHerdMentalityIndex());
-        out.append("\n\tTargets:");
-        out.append("\n\t\tCoords: ");
+        out.append("\n\t Destination Edge: ").append(getDestinationEdge());
+        out.append("\n\t Retreat Edge: ").append(getRetreatEdge());
+        out.append("\n\t Forced Withdrawal: ").append(isForcedWithdrawal());
+        out.append("\n\t Self Preservation: ").append(getSelfPreservationIndex()).append(":").append(getSelfPreservationValue(getSelfPreservationIndex()));
+        out.append("\n\t Hyper Aggression: ").append(getHyperAggressionIndex()).append(":").append(getHyperAggressionValue(getHyperAggressionIndex()));
+        out.append("\n\t Fall Shame: ").append(getFallShameIndex()).append(":").append(getFallShameValue(getFallShameIndex()));
+        out.append("\n\t Bravery: ").append(getBraveryIndex()).append(":").append(getBraveryValue(getBraveryIndex()));
+        out.append("\n\t Herd Mentality: ").append(getHerdMentalityIndex()).append(":").append(getHerdMentalityValue(getHerdMentalityIndex()));
+        out.append("\n\t Targets:");
+        out.append("\n\t\t Priority Coords: ");
         for (final String t : getStrategicBuildingTargets()) {
             out.append("  ").append(t);
         }
-        out.append("\n\t\tUnits:");
+        out.append("\n\t\t Priority Units:");
         for (final int id : getPriorityUnitTargets()) {
             out.append("  ").append(id);
         }
-        out.append("\n\t\tIgnored Units:");
+        out.append("\n\t\t Ignored Units:");
         for (final int id : getIgnoredUnitTargets()) {
             out.append("  ").append(id);
         }

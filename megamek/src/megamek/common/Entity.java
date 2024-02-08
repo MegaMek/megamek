@@ -25,13 +25,13 @@ import megamek.common.actions.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.battlevalue.BVCalculator;
 import megamek.common.enums.*;
+import megamek.common.equipment.ArmorType;
 import megamek.common.event.GameEntityChangeEvent;
 import megamek.common.force.Force;
 import megamek.common.icons.Camouflage;
 import megamek.common.options.*;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.weapons.*;
-import megamek.common.weapons.battlearmor.ISBAPopUpMineLauncher;
 import megamek.common.weapons.bayweapons.AR10BayWeapon;
 import megamek.common.weapons.bayweapons.BayWeapon;
 import megamek.common.weapons.bayweapons.CapitalMissileBayWeapon;
@@ -142,6 +142,13 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     protected boolean omni = false;
     protected String chassis;
     protected String model;
+
+    /**
+     * The special chassis name for Clan Meks such as Timber Wolf for the Mad Cat. This is appended to the
+     * base chassis name to form the full chassis name such as Mad Cat (Timber Wolf) in
+     * {@link #getShortNameRaw()} and {@link #getFullChassis()}. This is only saved in mtf files (as of 2024).
+     */
+    protected String clanChassisName = "";
 
     /**
      * If this is a unit from an official source, the MUL ID links it to its corresponding
@@ -375,7 +382,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     private String c3MasterIsUUID = null;
     private String[] c3iUUIDs = new String[MAX_C3i_NODES];
     private String[] NC3UUIDs = new String[MAX_C3i_NODES];
-    private boolean networkBAP = false;
 
     protected int structureType = EquipmentType.T_STRUCTURE_UNKNOWN;
     protected int structureTechLevel = TechConstants.T_TECH_UNKNOWN;
@@ -1020,10 +1026,17 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
-     * Returns the chassis name for this entity.
+     * @return The pure chassis name without any additions, e.g. "Mad Cat"
      */
     public String getChassis() {
         return chassis;
+    }
+
+    /**
+     * @return The full chassis name plus the additional name, if any, e.g. Mad Cat (Timber Wolf)
+     */
+    public String getFullChassis() {
+        return chassis + (StringUtility.isNullOrBlank(clanChassisName) ? "" : " (" + clanChassisName + ")");
     }
 
     /**
@@ -1033,6 +1046,16 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      */
     public void setChassis(String chassis) {
         this.chassis = chassis;
+    }
+
+    /** Sets the {@link #clanChassisName} for this unit, e.g. "Timber Wolf". */
+    public void setClanChassisName(String name) {
+        clanChassisName = Objects.requireNonNullElse(name, "");
+    }
+
+    /** @return The {@link #clanChassisName} for this unit, e.g. "Timber Wolf", or "" if there is none. */
+    public String getClanChassisName() {
+        return clanChassisName;
     }
 
     /**
@@ -1303,14 +1326,13 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         if (hasPatchworkArmor()) {
             ctl.addComponent(TA_PATCHWORK_ARMOR);
             for (int loc = 0; loc < locations(); loc++) {
-                ctl.addComponent(EquipmentType.getArmorTechAdvancement(armorType[loc],
-                        TechConstants.isClan(armorTechLevel[loc])));
+                ctl.addComponent(ArmorType.forEntity(this, loc).getTechAdvancement());
             }
-        } else if (isSupportVehicle() && hasBARArmor(firstArmorIndex())) {
-            ctl.addComponent(EquipmentType.getSVArmorTechAdvancement(getBARRating(firstArmorIndex())));
         } else {
-            ctl.addComponent(EquipmentType.getArmorTechAdvancement(armorType[0],
-                    TechConstants.isClan(armorTechLevel[0])));
+            ArmorType armor = ArmorType.forEntity(this);
+            if (armor != null) {
+                ctl.addComponent(armor.getTechAdvancement());
+            }
         }
         if (isMixedTech()) {
             ctl.addComponent(TA_MIXED_TECH);
@@ -2563,7 +2585,10 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     public String getShortNameRaw() {
-        return StringUtility.isNullOrBlank(model) ? chassis : chassis + ' ' + model;
+        String unitName = chassis;
+        unitName += StringUtility.isNullOrBlank(clanChassisName) ? "" : " (" + clanChassisName + ")";
+        unitName += StringUtility.isNullOrBlank(model) ? "" : " " + model;
+        return unitName;
     }
 
     /**
@@ -4769,7 +4794,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         return -1;
     }
 
-    public static Map<Integer, String> getGyroTypes() {
+    public static Map<Integer, String> getAllGyroCodeName() {
         Map<Integer, String> result = new HashMap();
 
         result.put(Mech.GYRO_UNKNOWN, Mech.getGyroDisplayString(Mech.GYRO_UNKNOWN));
@@ -5386,19 +5411,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      */
     public boolean hasBAP() {
         return hasBAP(true);
-    }
-
-    /**
-     * Does a unit on the same C3 network have a BAP?
-     * Used to share BAP targeting bonuses against targets in woods
-     * @return
-     */
-    public boolean hasNetworkBAP() {
-        return networkBAP;
-    }
-
-    public void setNetworkBAP(boolean BAP) {
-        networkBAP = BAP;
     }
 
     public boolean hasBAP(boolean checkECM) {
@@ -10569,10 +10581,12 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             armType = (TechConstants.isClan(getArmorTechLevel(0)) ? "Clan " : "IS ") + armType;
         }
         EquipmentType et = EquipmentType.get(armType);
-        if (et == null) {
+        if (!(et instanceof ArmorType)) {
             setArmorType(EquipmentType.T_ARMOR_UNKNOWN);
         } else {
-            setArmorType(EquipmentType.getArmorType(et));
+            ArmorType armor = (ArmorType) et;
+            setArmorType(armor.getArmorType());
+            setArmorTechLevel(armor.getStaticTechLevel().getCompoundTechLevel(armor.isClan()));
             // TODO: Is this needed? WTF is the point of it?
             if (et.getCriticals(this) == 0) {
                 try {
@@ -10808,10 +10822,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * @return The weight of the armor in the location in tons.
      */
     public double getArmorWeight(int loc) {
-        double armorPerTon = 16.0 * EquipmentType.getArmorPointMultiplier(
-                armorType[loc], armorTechLevel[loc]);
-        double points = getOArmor(loc)
-                        + (hasRearArmor(loc) ? getOArmor(loc, true) : 0);
+        double armorPerTon = ArmorType.forEntity(this, loc).getPointsPerTon(this);
+        double points = getOArmor(loc) + (hasRearArmor(loc) ? getOArmor(loc, true) : 0);
         return points / armorPerTon;
     }
 
@@ -10828,17 +10840,15 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                 total += getArmorWeight(loc);
             }
             return RoundWeight.standard(total, this);
-        } else if (isSupportVehicle()
-                    && getArmorType(firstArmorIndex()) == EquipmentType.T_ARMOR_STANDARD) {
-            double total = getTotalOArmor()
-                    * EquipmentType.getSupportVehicleArmorWeightPerPoint(getBARRating(firstArmorIndex()), getArmorTechRating());
-            return RoundWeight.standard(total, this);
         } else {
-            // this roundabout method is actually necessary to avoid rounding
-            // weirdness. Yeah, it's dumb.
-            double armorPerTon = 16.0 * EquipmentType.getArmorPointMultiplier(
-                    armorType[0], armorTechLevel[0]);
-            return RoundWeight.standard(getTotalOArmor() / armorPerTon, this);
+            ArmorType armor = ArmorType.forEntity(this);
+            if (armor.hasFlag(MiscType.F_SUPPORT_VEE_BAR_ARMOR)) {
+                double total = armor.getSVWeightPerPoint(getArmorTechRating());
+                return RoundWeight.standard(total, this);
+            } else {
+                double armorPerTon = ArmorType.forEntity(this).getPointsPerTon(this);
+                return RoundWeight.standard(getTotalOArmor() / armorPerTon, this);
+            }
         }
     }
 
@@ -12719,9 +12729,16 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Sets the barrier armor rating for support vehicles. Has no effect on other unit types.
-     * @param rating
+     * @param rating The BAR
      */
     public void setBARRating(int rating) {}
+
+    /**
+     * Sets the barrier armor rating in a specific location for support vehicles. Has no effect on other unit types.
+     * @param rating The BAR
+     * @param loc    The location index
+     */
+    public void setBARRating(int rating, int loc) {}
 
     /**
      * does this entity have an armored chassis?
@@ -14125,15 +14142,13 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     public int getLabTotalArmorPoints() {
-        if (isSupportVehicle() && (getArmorType(firstArmorIndex()) == EquipmentType.T_ARMOR_STANDARD)
-            && !hasPatchworkArmor()) {
-            return (int) Math.floor(armorTonnage
-                    / EquipmentType.getSupportVehicleArmorWeightPerPoint(getBARRating(firstArmorIndex()),
-                    getArmorTechRating()));
+        ArmorType armor = ArmorType.forEntity(this);
+        if (armor.hasFlag(MiscType.F_SUPPORT_VEE_BAR_ARMOR)) {
+            return (int) Math.floor(armorTonnage / armor.getSVWeightPerPoint(getArmorTechRating()));
+        } else {
+            double armorPerTon = ArmorType.forEntity(this).getPointsPerTon(this);
+            return (int) Math.floor(armorPerTon * armorTonnage);
         }
-        double armorPerTon = 16.0 * EquipmentType.getArmorPointMultiplier(
-                armorType[0], armorTechLevel[0]);
-        return (int) Math.floor(armorPerTon * armorTonnage);
     }
 
     public void loadDefaultCustomWeaponOrder() {

@@ -18,6 +18,7 @@ import java.util.Vector;
 
 import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.equipment.ArmorType;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.DamageType;
 import megamek.common.weapons.Weapon;
@@ -100,8 +101,7 @@ public class InfantryHeatWeaponHandler extends InfantryWeaponHandler {
                 r.add(nDamage / 2);
                 r.choose(true);
                 r.messageId=3406;
-                r.add(EquipmentType.armorNames
-                        [entityTarget.getArmorType(hit.getLocation())]);
+                r.add(ArmorType.forEntity(entityTarget, hit.getLocation()).getName());
             } else {
                 entityTarget.heatFromExternal += nDamage;
                 r.add(nDamage);

@@ -20,6 +20,7 @@ package megamek.common.cost;
 
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.common.*;
+import megamek.common.equipment.ArmorType;
 import megamek.common.options.OptionsConstants;
 
 public class MekCostCalculator {
@@ -126,10 +127,10 @@ public class MekCostCalculator {
         // armor
         if (mek.hasPatchworkArmor()) {
             for (int loc = 0; loc < mek.locations(); loc++) {
-                costs[i++] += mek.getArmorWeight(loc) * EquipmentType.getArmorCost(mek.getArmorType(loc));
+                costs[i++] += mek.getArmorWeight(loc) * ArmorType.forEntity(mek, loc).getCost();
             }
         } else {
-            costs[i++] += mek.getArmorWeight() * EquipmentType.getArmorCost(mek.getArmorType(0));
+            costs[i++] += mek.getArmorWeight() * ArmorType.forEntity(mek).getCost();
         }
 
         double weaponCost = CostCalculator.getWeaponsAndEquipmentCost(mek, ignoreAmmo);

@@ -25,6 +25,7 @@ import megamek.common.actions.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.battlevalue.BVCalculator;
 import megamek.common.enums.*;
+import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.ArmorType;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.event.GameEntityChangeEvent;
@@ -446,7 +447,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     /**
      * A list of all mounted ammo.
      */
-    protected ArrayList<Mounted> ammoList = new ArrayList<>();
+    protected List<AmmoMounted> ammoList = new ArrayList<>();
 
     /**
      * A list of all mounted bombs.
@@ -3764,8 +3765,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                 addOneshotAmmo(mounted);
             }
         }
-        if (mounted.getType() instanceof AmmoType) {
-            ammoList.add(mounted);
+        if (mounted instanceof AmmoMounted) {
+            ammoList.add((AmmoMounted) mounted);
         }
         if (mounted.getType() instanceof BombType) {
             bombList.add(mounted);
@@ -4198,7 +4199,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         return false;
     }
 
-    public ArrayList<Mounted> getAmmo() {
+    public List<AmmoMounted> getAmmo() {
         return ammoList;
     }
 

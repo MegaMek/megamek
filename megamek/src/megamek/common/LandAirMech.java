@@ -14,6 +14,7 @@
 package megamek.common;
 
 import megamek.common.enums.MPBoosters;
+import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.OptionsConstants;
 import org.apache.logging.log4j.LogManager;
@@ -2063,7 +2064,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
             }
         }
         if (mounted.getType() instanceof AmmoType) {
-            ammoList.add(mounted);
+            ammoList.add((AmmoMounted) mounted);
         }
         if (mounted.getType() instanceof MiscType) {
             miscList.add(mounted);

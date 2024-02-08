@@ -591,7 +591,7 @@ public class Princess extends BotClient {
             // we skip this step if we have already decided not to fire due to being hidden or under "peaceful forced withdrawal"
             if (!skipFiring) {
                 // Set up ammo conservation.
-                final Map<Mounted, Double> ammoConservation = calcAmmoConservation(shooter);
+                final Map<WeaponMounted, Double> ammoConservation = calcAmmoConservation(shooter);
 
                 // entity that can act this turn make sure weapons are loaded
                 final FiringPlan plan = getFireControl(shooter).getBestFiringPlan(shooter,
@@ -716,7 +716,7 @@ public class Princess extends BotClient {
         sendDone(true);
     }
 
-    private Map<Mounted, Double> calcAmmoConservation(final Entity shooter) {
+    private Map<WeaponMounted, Double> calcAmmoConservation(final Entity shooter) {
         final double aggroFactor = (10 - getBehaviorSettings().getHyperAggressionIndex()) * 2;
         final StringBuilder msg = new StringBuilder("\nCalculating ammo conservation for ")
                 .append(shooter.getDisplayName());
@@ -739,11 +739,11 @@ public class Princess extends BotClient {
                    .append(" = ").append(ammoCounts.get(ammoType));
             }
 
-            final Map<Mounted, Double> ammoConservation = new HashMap<>();
+            final Map<WeaponMounted, Double> ammoConservation = new HashMap<>();
             msg.append("\nCalculating conservation for each weapon");
-            for (final Mounted weapon : shooter.getWeaponList()) {
-                final WeaponType weaponType = (WeaponType) weapon.getType();
-                msg.append("\n\t").append(weaponType);
+            for (final WeaponMounted weapon : shooter.getWeaponList()) {
+                final WeaponType weaponType = weapon.getType();
+                msg.append("\n\t").append(weapon);
                 if (!(weaponType instanceof AmmoWeapon)) {
                     ammoConservation.put(weapon, 0.0);
                     msg.append(" doesn't use ammo.");

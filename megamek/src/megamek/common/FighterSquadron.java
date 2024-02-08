@@ -22,6 +22,7 @@ package megamek.common;
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.common.cost.CostCalculator;
 import megamek.common.enums.AimingMode;
+import megamek.common.equipment.AmmoMounted;
 import megamek.common.options.OptionsConstants;
 import org.apache.logging.log4j.LogManager;
 
@@ -425,8 +426,8 @@ public class FighterSquadron extends AeroSpaceFighter {
     }
 
     @Override
-    public ArrayList<Mounted> getAmmo() {
-        ArrayList<Mounted> allAmmo = new ArrayList<>();
+    public List<AmmoMounted> getAmmo() {
+        List<AmmoMounted> allAmmo = new ArrayList<>();
         getActiveSubEntities().forEach(fighter -> allAmmo.addAll(fighter.getAmmo()));
         return allAmmo;
     }

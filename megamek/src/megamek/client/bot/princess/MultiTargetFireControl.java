@@ -47,7 +47,7 @@ public class MultiTargetFireControl extends FireControl {
     public FiringPlan getBestFiringPlan(final Entity shooter,
             final IHonorUtil honorUtil,
             final Game game,
-            final Map<Mounted, Double> ammoConservation) { 
+            final Map<WeaponMounted, Double> ammoConservation) {
         FiringPlan bestPlan = new FiringPlan();
         
         // optimal firing patterns for units such as dropships, Thunderbolts with multi-trac

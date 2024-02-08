@@ -17,6 +17,7 @@ import megamek.client.generator.RandomNameGenerator;
 import megamek.codeUtilities.StringUtility;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.Gender;
+import megamek.common.equipment.AmmoMounted;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.infantry.InfantryWeapon;
@@ -1619,7 +1620,7 @@ public class MULParser {
                     EquipmentType newLoad = EquipmentType.get(type);
                     if (newLoad instanceof AmmoType) {
                         int counter = -1;
-                        Iterator<Mounted> ammo = entity.getAmmo()
+                        Iterator<AmmoMounted> ammo = entity.getAmmo()
                                 .iterator();
                         while (ammo.hasNext()
                                 && (counter < locAmmoCount)) {

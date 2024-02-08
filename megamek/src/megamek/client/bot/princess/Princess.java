@@ -548,11 +548,18 @@ public class Princess extends BotClient {
 
     @Override
     protected void calculateFiringTurn() {
+        final Entity shooter;
         try {
             // get the first entity that can act this turn make sure weapons
             // are loaded
-            final Entity shooter = getEntityToFire(fireControlState);
+            shooter = getEntityToFire(fireControlState);
+        } catch (Exception e) {
+            // If we fail to get the shooter, literally nothing can be done.
+            LogManager.getLogger().error(e.getMessage(), e);
+            return;
+        }
 
+        try {
             // Forego firing if
             // a) hidden,
             // b) under "peaceful" forced withdrawal,
@@ -687,8 +694,11 @@ public class Princess extends BotClient {
             }
 
             sendAttackData(shooter.getId(), miscPlan);
-        } catch (Exception ignored) {
-            LogManager.getLogger().error(ignored.getMessage(), ignored);
+        } catch (Exception e) {
+            LogManager.getLogger().error(e.getMessage(), e);
+            // Don't lock up, just skip this entity.
+            Vector<EntityAction> fallback = new Vector<>();
+            sendAttackData(shooter.getId(), fallback);
         }
     }
 

@@ -125,7 +125,7 @@ public class SmallSVMunitionsChoicePanel extends JPanel {
         }
 
         private Mounted addAmmoMount(EquipmentType ammo, int shots) {
-            Mounted mount = new Mounted(weapon.getEntity(), ammo);
+            Mounted mount = Mounted.createMounted(weapon.getEntity(), ammo);
             mount.setOmniPodMounted(mount.isOmniPodMounted());
             mount.setShotsLeft(shots);
             mount.setOriginalShots(shots);

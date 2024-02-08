@@ -81,7 +81,7 @@ public class BayMunitionsChoicePanel extends JPanel {
                 if (shots > 0) {
                     Mounted mounted;
                     if (mountIndex >= row.ammoMounts.size()) {
-                        mounted = new Mounted(entity, row.munitions.get(i));
+                        mounted = Mounted.createMounted(entity, row.munitions.get(i));
                         try {
                             entity.addEquipment(mounted, row.bay.getLocation(), row.bay.isRearMounted());
                             row.bay.addAmmoToBay(entity.getEquipmentNum(mounted));

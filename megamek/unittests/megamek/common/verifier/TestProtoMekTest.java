@@ -19,10 +19,12 @@
 package megamek.common.verifier;
 
 import megamek.common.*;
+import megamek.common.equipment.WeaponMounted;
 import megamek.common.verifier.TestEntity.Ceil;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -43,7 +45,7 @@ public class TestProtoMekTest {
         return mockProtoMek;
     }
     
-    private TestEntityOption option = new TestEntityOption() {
+    private final TestEntityOption option = new TestEntityOption() {
         @Override
         public Ceil getWeightCeilingEngine() {
             return Ceil.KILO;
@@ -306,9 +308,9 @@ public class TestProtoMekTest {
     @Test
     public void testExcessiveSlots() {
         Protomech mockProtoMek = createGenericMockProtoMek();
-        Mounted m = new Mounted(mockProtoMek, EquipmentType.get("CLERSmallLaser"));
+        Mounted<?> m = Mounted.createMounted(mockProtoMek, EquipmentType.get("CLERSmallLaser"));
         m.setLocation(Protomech.LOC_TORSO);
-        ArrayList<Mounted> eqList = new ArrayList<>();
+        List<Mounted<?>> eqList = new ArrayList<>();
         eqList.add(m);
         when(mockProtoMek.getEquipment()).thenReturn(eqList);
         TestProtomech test = new TestProtomech(mockProtoMek, option, null);
@@ -322,9 +324,9 @@ public class TestProtoMekTest {
     public void testNoArmMountsForQuads() {
         Protomech mockProtoMek = createGenericMockProtoMek();
         when(mockProtoMek.isQuad()).thenReturn(true);
-        Mounted m = new Mounted(mockProtoMek, EquipmentType.get("CLERSmallLaser"));
+        Mounted<?> m = Mounted.createMounted(mockProtoMek, EquipmentType.get("CLERSmallLaser"));
         m.setLocation(Protomech.LOC_LARM);
-        ArrayList<Mounted> eqList = new ArrayList<>();
+        List<Mounted<?>> eqList = new ArrayList<>();
         eqList.add(m);
         when(mockProtoMek.getEquipment()).thenReturn(eqList);
         TestProtomech test = new TestProtomech(mockProtoMek, option, null);
@@ -339,9 +341,9 @@ public class TestProtoMekTest {
         when(mockProtoMek.locations()).thenReturn(Protomech.NUM_PMECH_LOCATIONS);
         when(mockProtoMek.getArmorType(anyInt())).thenReturn(EquipmentType.T_ARMOR_EDP);
         when(mockProtoMek.getArmorTechLevel(anyInt())).thenReturn(TechConstants.T_CLAN_EXPERIMENTAL);
-        Mounted m = new Mounted(mockProtoMek, EquipmentType.get("CLERSmallLaser"));
+        Mounted<?> m = Mounted.createMounted(mockProtoMek, EquipmentType.get("CLERSmallLaser"));
         m.setLocation(Protomech.LOC_TORSO);
-        ArrayList<Mounted> eqList = new ArrayList<>();
+        List<Mounted<?>> eqList = new ArrayList<>();
         eqList.add(m);
         when(mockProtoMek.getEquipment()).thenReturn(eqList);
         TestProtomech test = new TestProtomech(mockProtoMek, option, null);
@@ -354,8 +356,8 @@ public class TestProtoMekTest {
     @Test
     public void testRearMountTorsoOnly() {
         Protomech mockProtoMek = createGenericMockProtoMek();
-        Mounted m = new Mounted(mockProtoMek, EquipmentType.get("CLERSmallLaser"));
-        ArrayList<Mounted> eqList = new ArrayList<>();
+        Mounted<?> m = Mounted.createMounted(mockProtoMek, EquipmentType.get("CLERSmallLaser"));
+        List<Mounted<?>> eqList = new ArrayList<>();
         eqList.add(m);
         when(mockProtoMek.getEquipment()).thenReturn(eqList);
         TestProtomech test = new TestProtomech(mockProtoMek, option, null);
@@ -385,16 +387,18 @@ public class TestProtoMekTest {
     @Test
     public void testHeatSinkCount() {
         Protomech mockProtoMek = createGenericMockProtoMek();
-        Mounted laser = new Mounted(mockProtoMek, EquipmentType.get("CLERSmallLaser"));
+        WeaponMounted laser = (WeaponMounted) Mounted.createMounted(mockProtoMek, EquipmentType.get("CLERSmallLaser"));
         laser.setLocation(Protomech.LOC_TORSO);
-        ArrayList<Mounted> eqList = new ArrayList<>();
+        List<Mounted<?>> eqList = new ArrayList<>();
+        List<WeaponMounted> weaponList = new ArrayList<>();
         eqList.add(laser);
+        weaponList.add(laser);
         when(mockProtoMek.getEquipment()).thenReturn(eqList);
-        when(mockProtoMek.getWeaponList()).thenReturn(eqList);
+        when(mockProtoMek.getWeaponList()).thenReturn(weaponList);
         TestProtomech test = new TestProtomech(mockProtoMek, option, null);
 
         assertEquals(test.getCountHeatSinks(), laser.getType().getHeat());
-        eqList.add(new Mounted(mockProtoMek, EquipmentType.get("CLUltraAC5")));
+        eqList.add(Mounted.createMounted(mockProtoMek, EquipmentType.get("CLUltraAC5")));
         assertEquals(test.getCountHeatSinks(), laser.getType().getHeat());
     }
 }

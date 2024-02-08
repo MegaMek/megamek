@@ -694,7 +694,7 @@ public class HmpFile implements IMechLoader {
                                     }
                                 } else {
                                     // make a new one
-                                    m = new Mounted(mech, equipment);
+                                    m = Mounted.createMounted(mech, equipment);
                                     m.setFoundCrits(1);
                                     vSplitWeapons.addElement(m);
                                 }

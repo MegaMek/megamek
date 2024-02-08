@@ -1410,7 +1410,7 @@ public abstract class Mech extends Entity {
 
         for (int i = 0; i < toAllocate; i++) {
             try {
-                addEquipment(new Mounted(this, sinkType), Entity.LOC_NONE, false);
+                addEquipment(Mounted.createMounted(this, sinkType), Entity.LOC_NONE, false);
             } catch (LocationFullException ignored) {
                 // um, that's impossible.
             }
@@ -2737,7 +2737,7 @@ public abstract class Mech extends Entity {
             }
             if (explosiveFound) {
                 try {
-                    addEquipment(new Mounted(this, clCase), i, false);
+                    addEquipment(Mounted.createMounted(this, clCase), i, false);
                 } catch (LocationFullException ex) {
                     // um, that's impossible.
                 }
@@ -2747,8 +2747,8 @@ public abstract class Mech extends Entity {
 
     public Mounted addEquipment(EquipmentType etype, EquipmentType etype2,
             int loc,  boolean omniPod, boolean armored) throws LocationFullException {
-        Mounted mounted = new Mounted(this, etype);
-        Mounted mounted2 = new Mounted(this, etype2);
+        Mounted mounted = Mounted.createMounted(this, etype);
+        Mounted mounted2 = Mounted.createMounted(this, etype2);
         mounted.setOmniPodMounted(omniPod);
         mounted2.setOmniPodMounted(omniPod);
         mounted.setArmored(armored);

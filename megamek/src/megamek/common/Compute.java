@@ -21,6 +21,7 @@ import megamek.common.annotations.Nullable;
 import megamek.common.enums.AimingMode;
 import megamek.common.enums.BasementType;
 import megamek.common.enums.IlluminationLevel;
+import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.DiveBombAttack;
 import megamek.common.weapons.InfantryAttack;
@@ -6491,13 +6492,13 @@ public class Compute {
     /**
      * @return the maximum damage that a set of weapons can generate.
      */
-    public static int computeTotalDamage(List<Mounted> weaponList){
+    public static int computeTotalDamage(List<WeaponMounted> weaponList){
         int totalDmg = 0;
-        for (Mounted weapon : weaponList) {
+        for (WeaponMounted weapon : weaponList) {
             if (!weapon.isBombMounted() && weapon.isCrippled()) {
                 continue;
             }
-            WeaponType type = (WeaponType) weapon.getType();
+            WeaponType type = weapon.getType();
             if (type.getDamage() == WeaponType.DAMAGE_VARIABLE) {
                 // Estimate rather than compute exact bay / trooper damage sum.
                 totalDmg += type.getRackSize();

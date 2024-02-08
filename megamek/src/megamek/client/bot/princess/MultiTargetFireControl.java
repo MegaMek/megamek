@@ -23,6 +23,7 @@ import megamek.common.Entity;
 import megamek.common.Game;
 import megamek.common.Mounted;
 import megamek.common.Targetable;
+import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.OptionsConstants;
 import org.apache.logging.log4j.LogManager;
 
@@ -58,7 +59,7 @@ public class MultiTargetFireControl extends FireControl {
         // For each weapon, calculate the easiest shot. 
         // Then, solve the backpack problem.
         
-        List<Mounted> weaponList;
+        List<WeaponMounted> weaponList;
         
         if (shooter.usesWeaponBays()) {
             weaponList = shooter.getWeaponBayList();
@@ -168,11 +169,11 @@ public class MultiTargetFireControl extends FireControl {
         firingPlan.setUtility(utility);
     }
 
-    FiringPlan calculateFiringPlan(Entity shooter, List<Mounted> weaponList) {
+    FiringPlan calculateFiringPlan(Entity shooter, List<WeaponMounted> weaponList) {
         FiringPlan retVal = new FiringPlan();
         
         List<WeaponFireInfo> shotList = new ArrayList<>();
-        for (Mounted weapon : weaponList) {
+        for (WeaponMounted weapon : weaponList) {
             WeaponFireInfo shot = getBestShot(weapon);
             if (shot != null) {
                 shotList.add(shot);

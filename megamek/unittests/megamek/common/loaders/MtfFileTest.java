@@ -42,14 +42,14 @@ public class MtfFileTest {
     @Test
     public void testLoadEquipment() throws Exception {
         Mech mech = new BipedMech();
-        Mounted mount = new Mounted(mech, EquipmentType.get("Medium Laser"));
+        Mounted<?> mount = Mounted.createMounted(mech, EquipmentType.get("Medium Laser"));
         mount.setOmniPodMounted(true);
         mount.setMechTurretMounted(true);
         mount.setArmored(true);
         mech.addEquipment(mount, Mech.LOC_LT, true);
 
         MtfFile loader = toMtfFile(mech);
-        Mounted found = loader.getEntity().getCritical(Mech.LOC_LT, 0).getMount();
+        Mounted<?> found = loader.getEntity().getCritical(Mech.LOC_LT, 0).getMount();
 
         assertEquals(mount.getType(), found.getType());
         assertTrue(found.isRearMounted());
@@ -107,7 +107,7 @@ public class MtfFileTest {
         mech.setWeight(150.0);
         mech.setEngine(new Engine(300, Engine.NORMAL_ENGINE, 0));
         EquipmentType commo = EquipmentType.get("CommsGear");
-        Mounted mount = mech.addEquipment(commo, Mech.LOC_LT, false);
+        Mounted<?> mount = mech.addEquipment(commo, Mech.LOC_LT, false);
         mount.setSize(varSize);
 
         MtfFile loader = toMtfFile(mech);
@@ -127,7 +127,7 @@ public class MtfFileTest {
         mech.setWeight(150.0);
         mech.setEngine(new Engine(300, Engine.NORMAL_ENGINE, 0));
         EquipmentType commo = EquipmentType.get("CommsGear");
-        Mounted mount = mech.addEquipment(commo, Mech.LOC_LT, false);
+        Mounted<?> mount = mech.addEquipment(commo, Mech.LOC_LT, false);
         mount.setSize(varSize);
         MtfFile loader = toMtfFile(mech);
 

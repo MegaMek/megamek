@@ -18,6 +18,7 @@ import megamek.common.actions.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.annotations.StaticWrapper;
 import megamek.common.enums.IlluminationLevel;
+import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.OptionsConstants;
 import megamek.common.pathfinder.AeroGroundPathFinder;
 import megamek.common.weapons.StopSwarmAttack;
@@ -1682,7 +1683,7 @@ public class FireControl {
 
         // things that cause us to avoid calculating a bomb plan:
         // not having any bombs (in the first place)
-        final Iterator<Mounted> weaponIter = shooter.getWeapons();
+        final Iterator<WeaponMounted> weaponIter = shooter.getWeapons();
         if (null == weaponIter) {
             return diveBombPlan;
         }

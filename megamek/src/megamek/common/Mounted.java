@@ -16,6 +16,7 @@ package megamek.common;
 
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
+import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.WeaponQuirks;
@@ -177,7 +178,7 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     private boolean squadSupportWeapon;
 
     /** Creates new Mounted */
-    public Mounted(Entity entity, T type) {
+    protected Mounted(Entity entity, T type) {
         this.entity = entity;
         this.type = type;
         typeName = type.getInternalName();
@@ -215,6 +216,14 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
         }
 
         quirks.initialize();
+    }
+
+    public static Mounted<?> createMounted(Entity entity, EquipmentType type) {
+        if (type instanceof WeaponType) {
+            return new WeaponMounted(entity, (WeaponType) type);
+        } else {
+            return new Mounted<>(entity, type);
+        }
     }
 
     /**

@@ -30,6 +30,7 @@ import megamek.common.actions.BreakGrappleAttackAction;
 import megamek.common.actions.GrappleAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
+import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.OptionsConstants;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.verifier.*;
@@ -773,17 +774,17 @@ public class MapMenu extends JPopupMenu {
             try {
                 FiringDisplay panel = (FiringDisplay) currentPanel;
                 // Get all weapons
-                ArrayList<Mounted> weapons = myEntity.getWeaponList();
+                List<WeaponMounted> weapons = myEntity.getWeaponList();
                 // We will need to map a Mounted to its weapon number
-                HashMap<Mounted, Integer> weapToId = new HashMap<>();
-                for (Mounted weapon : weapons) {
+                HashMap<WeaponMounted, Integer> weapToId = new HashMap<>();
+                for (WeaponMounted weapon : weapons) {
                     weapToId.put(weapon, myEntity.getEquipmentNum(weapon));
                 }
                 // Sort weapons from high damage to low
                 weapons.sort(new WeaponComparatorDamage(false));
 
                 Targetable target = panel.getTarget();
-                for (Mounted weapon : weapons) {
+                for (WeaponMounted weapon : weapons) {
                     // If the weapon has been used at all this turn, ignore
                     if (!weapon.usedInPhase().isUnknown()) {
                         continue;

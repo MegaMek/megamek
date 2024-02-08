@@ -856,17 +856,17 @@ public class Protomech extends Entity {
     }
 
     @Override
-    public Mounted addEquipment(EquipmentType etype, int loc,
+    public Mounted<?> addEquipment(EquipmentType etype, int loc,
             boolean rearMounted) throws LocationFullException {
-        Mounted mounted = new Mounted(this, etype);
+        Mounted<?> mounted = Mounted.createMounted(this, etype);
         addEquipment(mounted, loc, rearMounted, -1);
         return mounted;
     }
 
     @Override
-    public Mounted addEquipment(EquipmentType etype, int loc,
+    public Mounted<?> addEquipment(EquipmentType etype, int loc,
             boolean rearMounted, int shots) throws LocationFullException {
-        Mounted mounted = new Mounted(this, etype);
+        Mounted<?> mounted = Mounted.createMounted(this, etype);
         addEquipment(mounted, loc, rearMounted, shots);
         return mounted;
 
@@ -876,7 +876,7 @@ public class Protomech extends Entity {
      * Mounts the specified weapon in the specified location.
      */
     @Override
-    protected void addEquipment(Mounted mounted, int loc, boolean rearMounted,
+    protected void addEquipment(Mounted<?> mounted, int loc, boolean rearMounted,
             int shots) throws LocationFullException {
         if (mounted.getType() instanceof AmmoType) {
             // Damn protomech ammo; nasty hack, should be cleaner

@@ -2662,7 +2662,7 @@ public class MULParser {
         int bayCritIndex = Integer.parseInt(bayIndex);
         Mounted bay = entity.getCritical(loc, bayCritIndex - 1).getMount();
 
-        Mounted ammo = new Mounted(entity, AmmoType.get(type));
+        Mounted ammo = Mounted.createMounted(entity, AmmoType.get(type));
 
         try {
             entity.addEquipment(ammo, loc, bay.isRearMounted());

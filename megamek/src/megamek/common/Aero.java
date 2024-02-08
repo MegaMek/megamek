@@ -16,6 +16,7 @@ package megamek.common;
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.common.cost.AeroCostCalculator;
 import megamek.common.enums.AimingMode;
+import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.OptionsConstants;
 import org.apache.logging.log4j.LogManager;
 
@@ -1815,7 +1816,7 @@ public class Aero extends Entity implements IAero, IBomber {
             }
             if (explosiveFound) {
                 try {
-                    addEquipment(new Mounted(this, clCase), i, false);
+                    addEquipment(Mounted.createMounted(this, clCase), i, false);
                 } catch (LocationFullException ex) {
                     // um, that's impossible.
                 }
@@ -2629,10 +2630,10 @@ public class Aero extends Entity implements IAero, IBomber {
             return false;
         }
 
-        List<Mounted> weaponList = getTotalWeaponList();
+        List<WeaponMounted> weaponList = getTotalWeaponList();
         int totalWeapons = weaponList.size();
         int totalInoperable = 0;
-        for (Mounted weap : weaponList) {
+        for (WeaponMounted weap : weaponList) {
             if (weap.isCrippled()) {
                 totalInoperable++;
             }

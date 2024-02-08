@@ -26,6 +26,7 @@ import megamek.common.annotations.Nullable;
 import megamek.common.battlevalue.BVCalculator;
 import megamek.common.enums.*;
 import megamek.common.equipment.ArmorType;
+import megamek.common.equipment.WeaponMounted;
 import megamek.common.event.GameEntityChangeEvent;
 import megamek.common.force.Force;
 import megamek.common.icons.Camouflage;
@@ -418,29 +419,29 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     /**
      * A list of all mounted equipment. (Weapons, ammo, and misc)
      */
-    protected ArrayList<Mounted> equipmentList = new ArrayList<>();
+    protected List<Mounted<?>> equipmentList = new ArrayList<>();
 
     /**
      * A list of all mounted weapons. This only includes regular weapons, not
      * bay mounts or grouped weapon mounts.
      */
-    protected ArrayList<Mounted> weaponList = new ArrayList<>();
+    protected List<WeaponMounted> weaponList = new ArrayList<>();
 
     /**
      * A list of all mounted weapon bays
      */
-    protected ArrayList<Mounted> weaponBayList = new ArrayList<>();
+    protected List<WeaponMounted> weaponBayList = new ArrayList<>();
 
     /**
      * A list of all mounted weapon groups
      */
-    protected ArrayList<Mounted> weaponGroupList = new ArrayList<>();
+    protected List<WeaponMounted> weaponGroupList = new ArrayList<>();
 
     /**
      * A list of every weapon mount, including bay mounts and weapon group
      * mounts
      */
-    protected ArrayList<Mounted> totalWeaponList = new ArrayList<>();
+    protected List<WeaponMounted> totalWeaponList = new ArrayList<>();
 
     /**
      * A list of all mounted ammo.
@@ -886,8 +887,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
         // Find any weapons with range of 6+
         boolean hasRangeSixPlus = false;
-        List<Mounted> weaponList = getTotalWeaponList();
-        for (Mounted weapon : weaponList) {
+        List<WeaponMounted> weaponList = getTotalWeaponList();
+        for (WeaponMounted weapon : weaponList) {
             if (weapon.isCrippled()) {
                 continue;
             }
@@ -3610,7 +3611,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     /**
      * Creates a new mount for this equipment and adds it in.
      */
-    public Mounted addEquipment(EquipmentType etype, int loc,
+    public Mounted<?> addEquipment(EquipmentType etype, int loc,
                                 boolean rearMounted) throws LocationFullException {
         return addEquipment(etype, loc, rearMounted,
                             BattleArmor.MOUNT_LOC_NONE, false, false, false, false, false);
@@ -3619,14 +3620,14 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     /**
      * Creates a new mount for this equipment and adds it in.
      */
-    public Mounted addEquipment(EquipmentType etype, int loc,
+    public Mounted<?> addEquipment(EquipmentType etype, int loc,
                                 boolean rearMounted, int baMountLoc, boolean isArmored,
                                 boolean isTurreted) throws LocationFullException {
         return addEquipment(etype, loc, rearMounted, baMountLoc, isArmored,
                             isTurreted, false, false, false);
     }
 
-    public Mounted addEquipment(EquipmentType etype, int loc,
+    public Mounted<?> addEquipment(EquipmentType etype, int loc,
                                 boolean rearMounted, int baMountLoc, boolean isArmored,
                                 boolean isTurreted, boolean isSponsonTurreted)
             throws LocationFullException {
@@ -3634,7 +3635,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                             isTurreted, isSponsonTurreted, false, false);
     }
 
-    public Mounted addEquipment(EquipmentType etype, int loc,
+    public Mounted<?> addEquipment(EquipmentType etype, int loc,
             boolean rearMounted, int baMountLoc, boolean isArmored,
             boolean isTurreted, boolean isSponsonTurreted,
             boolean isPintleTurreted) throws LocationFullException {
@@ -3642,11 +3643,11 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                 isTurreted, isSponsonTurreted, isPintleTurreted, false);
     }
 
-    public Mounted addEquipment(EquipmentType etype, int loc,
+    public Mounted<?> addEquipment(EquipmentType etype, int loc,
                                 boolean rearMounted, int baMountLoc, boolean isArmored,
                                 boolean isTurreted, boolean isSponsonTurreted,
                                 boolean isPintleTurreted, boolean isOmniPodded) throws LocationFullException {
-        Mounted mounted = new Mounted(this, etype);
+        Mounted<?> mounted = Mounted.createMounted(this, etype);
         mounted.setArmored(isArmored);
         mounted.setBaMountLoc(baMountLoc);
         mounted.setMechTurretMounted(isTurreted);
@@ -3667,9 +3668,9 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * @return
      * @throws LocationFullException
      */
-    public Mounted addEquipment(EquipmentType etype, int loc,
+    public Mounted<?> addEquipment(EquipmentType etype, int loc,
                                 boolean rearMounted, int nAmmo) throws LocationFullException {
-        Mounted mounted = new Mounted(this, etype);
+        Mounted<?> mounted = Mounted.createMounted(this, etype);
         addEquipment(mounted, loc, rearMounted, nAmmo);
         return mounted;
 
@@ -3680,7 +3681,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      */
     public Mounted addBomb(EquipmentType etype, int loc)
             throws LocationFullException {
-        Mounted mounted = new Mounted(this, etype);
+        Mounted mounted = Mounted.createMounted(this, etype);
         addBomb(mounted, loc);
         return mounted;
     }
@@ -3691,9 +3692,9 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         addEquipment(mounted, loc, false);
     }
 
-    public Mounted addWeaponGroup(EquipmentType etype, int loc)
+    public WeaponMounted addWeaponGroup(EquipmentType etype, int loc)
             throws LocationFullException {
-        Mounted mounted = new Mounted(this, etype);
+        WeaponMounted mounted = (WeaponMounted) Mounted.createMounted(this, etype);
         addEquipment(mounted, loc, false, true);
         return mounted;
     }
@@ -3701,17 +3702,17 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     /**
      * indicate whether this is bodymounted for BAs
      */
-    public Mounted addEquipment(EquipmentType etype, int loc,
+    public Mounted<?> addEquipment(EquipmentType etype, int loc,
                                 boolean rearMounted, int baMountLoc, boolean dwpMounted)
             throws LocationFullException {
-        Mounted mounted = new Mounted(this, etype);
+        Mounted<?> mounted = Mounted.createMounted(this, etype);
         mounted.setBaMountLoc(baMountLoc);
         mounted.setDWPMounted(dwpMounted);
         addEquipment(mounted, loc, rearMounted);
         return mounted;
     }
 
-    protected void addEquipment(Mounted mounted, int loc, boolean rearMounted,
+    protected void addEquipment(Mounted<?> mounted, int loc, boolean rearMounted,
                                 int nAmmo) throws LocationFullException {
         if ((mounted.getType() instanceof AmmoType) && (nAmmo > 1)) {
             mounted.setByShot(true);
@@ -3724,14 +3725,14 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         addEquipment(mounted, loc, rearMounted);
     }
 
-    protected void addEquipment(Mounted mounted, int loc, boolean rearMounted,
+    protected void addEquipment(Mounted<?> mounted, int loc, boolean rearMounted,
                                 boolean isWeaponGroup) throws LocationFullException {
         mounted.setWeaponGroup(true);
 
         addEquipment(mounted, loc, rearMounted);
     }
 
-    public void addEquipment(Mounted mounted, int loc, boolean rearMounted)
+    public void addEquipment(Mounted<?> mounted, int loc, boolean rearMounted)
             throws LocationFullException {
         mounted.setLocation(loc, rearMounted);
         equipmentList.add(mounted);
@@ -3742,14 +3743,14 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         }
 
         // add it to the proper sub-list
-        if (mounted.getType() instanceof WeaponType) {
-            totalWeaponList.add(mounted);
+        if (mounted instanceof WeaponMounted) {
+            totalWeaponList.add((WeaponMounted) mounted);
             if (mounted.isWeaponGroup()) {
-                weaponGroupList.add(mounted);
+                weaponGroupList.add((WeaponMounted) mounted);
             } else if (mounted.getType() instanceof BayWeapon) {
-                weaponBayList.add(mounted);
+                weaponBayList.add((WeaponMounted) mounted);
             } else {
-                weaponList.add(mounted);
+                weaponList.add((WeaponMounted) mounted);
             }
 
             if (mounted.getType().hasFlag(WeaponType.F_ARTILLERY)) {
@@ -3788,7 +3789,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             LogManager.getLogger().error("Equipment lookup failed for ammo for " + mounted.getName());
             return;
         }
-        Mounted m = new Mounted(this, ammo);
+        Mounted m = Mounted.createMounted(this, ammo);
         m.setOmniPodMounted(mounted.isOmniPodMounted());
         // BA pop-up mines can be fired individually and need a shot for each launcher in the squad.
         if (mounted.getType().hasFlag(WeaponType.F_BA_INDIVIDUAL)) {
@@ -3802,7 +3803,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         // need to allow for two separate mounts. Some infantry weapons have alternate
         // inferno ammo, which will use the same mechanism but start with zero shots.
         if (mounted.getType().hasFlag(WeaponType.F_DOUBLE_ONESHOT)) {
-            Mounted m2 = new Mounted(this, m.getType());
+            Mounted m2 = Mounted.createMounted(this, m.getType());
             m2.setOmniPodMounted(mounted.isOmniPodMounted());
             m2.setShotsLeft(shots);
             m2.setOriginalShots(shots);
@@ -3810,7 +3811,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             addEquipment(m2, Entity.LOC_NONE, false);
         } else if ((mounted.getType() instanceof InfantryWeapon)
                 && ((InfantryWeapon) mounted.getType()).hasInfernoAmmo()) {
-            Mounted m2 = new Mounted(this, EquipmentType.get(EquipmentTypeLookup.INFANTRY_INFERNO_AMMO));
+            Mounted m2 = Mounted.createMounted(this, EquipmentType.get(EquipmentTypeLookup.INFANTRY_INFERNO_AMMO));
             m2.setOmniPodMounted(mounted.isOmniPodMounted());
             m2.setShotsLeft(0);
             m.setLinked(m2);
@@ -3836,14 +3837,14 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     /**
      * Returns an enumeration of all equipment
      */
-    public ArrayList<Mounted> getEquipment() {
+    public List<Mounted<?>> getEquipment() {
         return equipmentList;
     }
 
     /**
      * Returns the equipment, specified by number
      */
-    public Mounted getEquipment(int index) {
+    public Mounted<?> getEquipment(int index) {
         try {
             return equipmentList.get(index);
         } catch (IndexOutOfBoundsException ex) {
@@ -3911,7 +3912,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      */
     public abstract boolean isSecondaryArcWeapon(int weaponId);
 
-    public Iterator<Mounted> getWeapons() {
+    public Iterator<WeaponMounted> getWeapons() {
         if (usesWeaponBays()) {
             return weaponBayList.iterator();
         }
@@ -3922,11 +3923,11 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         return weaponList.iterator();
     }
 
-    public ArrayList<Mounted> getIndividualWeaponList() {
+    public List<WeaponMounted> getIndividualWeaponList() {
         return weaponList;
     }
 
-    public ArrayList<Mounted> getWeaponList() {
+    public List<WeaponMounted> getWeaponList() {
         if (usesWeaponBays()) {
             return weaponBayList;
         }
@@ -3937,16 +3938,16 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         return weaponList;
     }
 
-    public List<Mounted> getTotalWeaponList() {
+    public List<WeaponMounted> getTotalWeaponList() {
         // return full weapon list even bay mounts and weapon groups
         return totalWeaponList;
     }
 
-    public ArrayList<Mounted> getWeaponBayList() {
+    public List<WeaponMounted> getWeaponBayList() {
         return weaponBayList;
     }
 
-    public ArrayList<Mounted> getWeaponGroupList() {
+    public List<WeaponMounted> getWeaponGroupList() {
         return weaponGroupList;
     }
 
@@ -4258,7 +4259,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                     && isFighter()
                     && game.getBoard().inSpace()) {
                 try {
-                    Mounted bomb = addEquipment(spaceBomb, m.getLocation(), false);
+                    WeaponMounted bomb = (WeaponMounted) addEquipment(spaceBomb, m.getLocation(), false);
                     if (hasETypeFlag(ETYPE_FIGHTER_SQUADRON)) {
                         bomb.setWeaponGroup(true);
                         weaponGroupList.add(bomb);
@@ -4275,7 +4276,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                             && (getConversionMode() == LandAirMech.CONV_MODE_MECH))) {
                 if (numGroundBombs < 1) {
                     try {
-                        Mounted bomb = addEquipment(diveBomb, m.getLocation(), false);
+                        WeaponMounted bomb = (WeaponMounted) addEquipment(diveBomb, m.getLocation(), false);
                         if (hasETypeFlag(ETYPE_FIGHTER_SQUADRON)) {
                             bomb.setWeaponGroup(true);
                             weaponGroupList.add(bomb);
@@ -4287,7 +4288,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
                 if ((numGroundBombs < 10) && isFighter()) {
                     try {
-                        Mounted bomb = addEquipment(altBomb, m.getLocation(), false);
+                        WeaponMounted bomb = (WeaponMounted) addEquipment(altBomb, m.getLocation(), false);
                         if (hasETypeFlag(ETYPE_FIGHTER_SQUADRON)) {
                             bomb.setWeaponGroup(true);
                             weaponGroupList.add(bomb);
@@ -4330,7 +4331,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      */
     public void clearBombs() {
         bombList.clear();
-        for (Iterator<Mounted> i = equipmentList.iterator(); i.hasNext(); ) {
+        for (Iterator<Mounted<?>> i = equipmentList.iterator(); i.hasNext(); ) {
             Mounted m = i.next();
             if ((m.getType() instanceof BombType)
                 || (m.getType() instanceof DiveBombAttack)
@@ -4353,8 +4354,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                 i.remove();
             }
         }
-        for (Iterator<Mounted> i = weaponList.iterator(); i.hasNext(); ) {
-            Mounted m = i.next();
+        for (Iterator<WeaponMounted> i = weaponList.iterator(); i.hasNext(); ) {
+            WeaponMounted m = i.next();
             if ((m.getType() instanceof DiveBombAttack)
                 || (m.getType() instanceof SpaceBombAttack)
                 || (m.getType() instanceof AltitudeBombAttack)
@@ -5681,9 +5682,9 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
         // Do we need to determine that there's no company command master?
         if (c3CompanyMasterIndex == LOC_DESTROYED) {
-            Iterator<Mounted> e = getEquipment().iterator();
+            Iterator<Mounted<?>> e = getEquipment().iterator();
             while ((c3CompanyMasterIndex == LOC_DESTROYED) && e.hasNext()) {
-                Mounted m = e.next();
+                Mounted<?> m = e.next();
                 if ((m.getType() instanceof WeaponType)
                     && (m.getType().hasFlag(WeaponType.F_C3M) || m
                         .getType().hasFlag(WeaponType.F_C3MBS))

@@ -298,7 +298,7 @@ public interface IBomber {
             m.setInternalBomb(internal);
             // Add bomb itself as single-shot ammo.
             if (type != BombType.B_TAG) {
-                Mounted ammo = new Mounted((Entity) this,
+                Mounted ammo = Mounted.createMounted((Entity) this,
                         EquipmentType.get(BombType.getBombInternalName(type)));
                 ammo.setShotsLeft(1);
                 ammo.setInternalBomb(internal);

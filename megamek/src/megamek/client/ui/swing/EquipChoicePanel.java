@@ -17,6 +17,7 @@ import megamek.client.Client;
 import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
 import megamek.common.*;
+import megamek.common.equipment.AmmoMounted;
 import megamek.common.options.AbstractOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.util.fileUtils.MegaMekFile;
@@ -582,8 +583,8 @@ public class EquipChoicePanel extends JPanel {
         }
         panMunitions.setLayout(gbl);
 
-        for (Mounted m : entity.getAmmo()) {
-            AmmoType at = (AmmoType) m.getType();
+        for (AmmoMounted m : entity.getAmmo()) {
+            AmmoType at = m.getType();
             ArrayList<AmmoType> vTypes = new ArrayList<>();
             Vector<AmmoType> vAllTypes = AmmoType.getMunitionsFor(at.getAmmoType());
             if (vAllTypes == null) {
@@ -976,7 +977,7 @@ public class EquipChoicePanel extends JPanel {
 
             boolean numShotsChanged = false;
 
-            private Mounted m_mounted;
+            private AmmoMounted m_mounted;
 
             JLabel labDump = new JLabel(Messages.getString("CustomMechDialog.labDump"));
 
@@ -987,7 +988,7 @@ public class EquipChoicePanel extends JPanel {
             JCheckBox chHotLoad = new JCheckBox();
 
             @SuppressWarnings("unchecked")
-            MunitionChoicePanel(Mounted m, ArrayList<AmmoType> vTypes, List<WeaponAmmoChoicePanel> weaponAmmoChoicePanels) {
+            MunitionChoicePanel(AmmoMounted m, ArrayList<AmmoType> vTypes, List<WeaponAmmoChoicePanel> weaponAmmoChoicePanels) {
                 m_vTypes = vTypes;
                 m_mounted = m;
 

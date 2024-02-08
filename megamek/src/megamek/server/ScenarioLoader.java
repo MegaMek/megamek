@@ -20,6 +20,7 @@ import megamek.common.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.GamePhase;
 import megamek.common.enums.Gender;
+import megamek.common.equipment.AmmoMounted;
 import megamek.common.icons.Camouflage;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.IOption;
@@ -302,11 +303,11 @@ public class ScenarioLoader {
                     if (sa.slot < sap.entity.getNumberOfCriticals(sa.loc)) {
                         CriticalSlot cs = sap.entity.getCritical(sa.loc, sa.slot);
                         if (cs != null) {
-                            Mounted ammo = sap.entity.getCritical(sa.loc, sa.slot).getMount();
+                            AmmoMounted ammo = (AmmoMounted) sap.entity.getCritical(sa.loc, sa.slot).getMount();
                             if (ammo == null) {
                                 LogManager.getLogger().error(String.format("%s - invalid slot specified %d: %d",
                                         sap.entity.getShortName(), sa.loc, sa.slot + 1));
-                            } else if (ammo.getType() instanceof AmmoType) {
+                            } else {
                                 AmmoType newAmmoType = getValidAmmoType(m.getGame(), ammo, sa.type);
                                 if (newAmmoType != null) {
                                     ammo.changeAmmoType(newAmmoType);

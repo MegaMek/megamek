@@ -3728,7 +3728,9 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     protected void addEquipment(Mounted<?> mounted, int loc, boolean rearMounted,
                                 boolean isWeaponGroup) throws LocationFullException {
-        mounted.setWeaponGroup(true);
+        if (mounted instanceof WeaponMounted) {
+            ((WeaponMounted) mounted).setWeaponGroup(isWeaponGroup);
+        }
 
         addEquipment(mounted, loc, rearMounted);
     }

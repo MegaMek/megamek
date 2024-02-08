@@ -1626,7 +1626,7 @@ public class MULParser {
                                 && (counter < locAmmoCount)) {
 
                             // Is this mounted in the current location?
-                            Mounted mounted = ammo.next();
+                            AmmoMounted mounted = ammo.next();
                             if (mounted.getLocation() == loc) {
 
                                 // Increment the loop counter.
@@ -1801,7 +1801,7 @@ public class MULParser {
                 mounted.setRapidfire(Boolean.parseBoolean(rfmg));
 
                 // Is the mounted a type of ammo?
-                if (mounted.getType() instanceof AmmoType) {
+                if (mounted instanceof AmmoMounted) {
                     // Get the saved ammo load.
                     EquipmentType newLoad = EquipmentType.get(type);
                     if (newLoad instanceof AmmoType) {
@@ -1827,7 +1827,7 @@ public class MULParser {
                         } else {
 
                             // Change to the saved ammo type and shots.
-                            mounted.changeAmmoType((AmmoType) newLoad);
+                            ((AmmoMounted) mounted).changeAmmoType((AmmoType) newLoad);
                             mounted.setShotsLeft(shotsVal);
 
                         } // End have-good-shots-value
@@ -1889,8 +1889,7 @@ public class MULParser {
                     // Make sure munition is a type of ammo.
                     if (munType instanceof AmmoType) {
                         // Change to the saved munition type.
-                        mounted.getLinked().changeAmmoType(
-                                (AmmoType) munType);
+                        ((AmmoMounted) mounted.getLinked()).changeAmmoType((AmmoType) munType);
                     } else {
                         // Bad XML equipment.
                         warning.append("XML file expects")

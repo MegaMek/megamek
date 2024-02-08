@@ -66,13 +66,13 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     private int location;
     private boolean rearMounted;
 
-    private Mounted linked = null; // for ammo, or artemis
-    private Mounted linkedBy = null; // reverse link for convenience
+    private Mounted<?> linked = null; // for ammo, or artemis
+    private Mounted<?> linkedBy = null; // reverse link for convenience
 
-    private Mounted crossLinkedBy = null; // Weapons with crossLinked capacitors
+    private Mounted<?> crossLinkedBy = null; // Weapons with crossLinked capacitors
     private int linkedBayId = -1;
 
-    private Entity entity; // what I'm mounted on
+    private final Entity entity; // what I'm mounted on
 
     private WeaponQuirks quirks = new WeaponQuirks();
 
@@ -184,10 +184,6 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
         this.type = type;
         typeName = type.getInternalName();
 
-        if (type instanceof AmmoType) {
-            shotsLeft = ((AmmoType) type).getShots();
-            size = type.getTonnage(entity);
-        }
         if ((type instanceof MiscType) && type.hasFlag(MiscType.F_MINE)) {
             mineType = MINE_CONVENTIONAL;
             // Used to keep track of the # of mines
@@ -230,27 +226,6 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     }
 
     /**
-     * Changing ammo loadouts allows updating AmmoTypes of existing bins. This
-     * is the only circumstance under which this should happen.
-     */
-
-    public void changeAmmoType(AmmoType at) {
-        if (!(type instanceof AmmoType)) {
-            LogManager.getLogger().warn("Attempted to change ammo type of non-ammo");
-            return;
-        }
-        type = (T) at;
-        typeName = at.getInternalName();
-        if (location == Entity.LOC_NONE) {
-            // Oneshot launcher
-            shotsLeft = 1;
-        } else {
-            // Regular launcher
-            shotsLeft = at.getShots();
-        }
-    }
-
-    /**
      * Restores the equipment from the name
      */
     @SuppressWarnings("unchecked")
@@ -269,6 +244,11 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     @SuppressWarnings("unchecked")
     public T getType() {
         return (null != type) ? type : (type = (T) EquipmentType.get(typeName));
+    }
+
+    protected void setType(T type) {
+        this.type = type;
+        this.typeName = type.getInternalName();
     }
 
     public int getModesCount() {

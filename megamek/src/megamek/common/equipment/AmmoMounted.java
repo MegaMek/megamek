@@ -27,5 +27,25 @@ public class AmmoMounted extends Mounted<AmmoType> {
 
     public AmmoMounted(Entity entity, AmmoType type) {
         super(entity, type);
+
+        setShotsLeft(type.getShots());
+        setSize(type.getTonnage(entity));
     }
+
+    /**
+     * Change the type of ammo in this bin
+     * @param at The new ammo type
+     */
+    public void changeAmmoType(AmmoType at) {
+        setType(at);
+        if (getLocation() == Entity.LOC_NONE) {
+            // Oneshot launcher
+            setShotsLeft(1);
+        } else {
+            // Regular launcher
+            setShotsLeft(at.getShots());
+        }
+    }
+
+
 }

@@ -3715,12 +3715,12 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     protected void addEquipment(Mounted<?> mounted, int loc, boolean rearMounted,
                                 int nAmmo) throws LocationFullException {
-        if ((mounted.getType() instanceof AmmoType) && (nAmmo > 1)) {
+        if ((mounted instanceof AmmoMounted) && (nAmmo > 1)) {
             mounted.setByShot(true);
             mounted.setShotsLeft(nAmmo);
             mounted.setOriginalShots(nAmmo);
-            double tonnage = Math.max(1, nAmmo / ((AmmoType) mounted.getType()).getShots()) * mounted.getTonnage();
-            mounted.setAmmoCapacity(tonnage);
+            double tonnage = Math.max(1, nAmmo / ((AmmoMounted) mounted).getType().getShots()) * mounted.getTonnage();
+            ((AmmoMounted) mounted).setAmmoCapacity(tonnage);
         }
 
         addEquipment(mounted, loc, rearMounted);

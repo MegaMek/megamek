@@ -545,7 +545,7 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener, ListSe
                 return;
             }
             if ("dump".equals(ae.getActionCommand())) {
-                Mounted m = getSelectedEquipment();
+                Mounted<?> m = getSelectedEquipment();
                 boolean bOwner = clientgui.getClient().getLocalPlayer().equals(en.getOwner());
                 if ((m == null) || !bOwner) {
                     return;

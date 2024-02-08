@@ -20,8 +20,11 @@
 package megamek.common.equipment;
 
 import megamek.common.AmmoType;
+import megamek.common.BombType;
 import megamek.common.Entity;
 import megamek.common.Mounted;
+
+import java.util.EnumSet;
 
 public class AmmoMounted extends Mounted<AmmoType> {
 
@@ -46,6 +49,58 @@ public class AmmoMounted extends Mounted<AmmoType> {
             setShotsLeft(at.getShots());
         }
     }
+    
+    @Override
+    public int getExplosionDamage() {
+        int rackSize = getType().getRackSize();
+        int damagePerShot = getType().getDamagePerShot();
+        // Anti-ship EW bomb does no damage but deals a 5-point explosion if LAM bomb bay is hit
+        if ((getType() instanceof BombType)
+                && (((BombType) getType()).getBombType() == BombType.B_ASEW)) {
+            damagePerShot = 5;
+        }
 
+        //Capital missiles need a racksize for this
+        if (getType().hasFlag(AmmoType.F_CAP_MISSILE)) {
+            rackSize = 1;
+        }
 
+        //Screen launchers need a racksize. Damage is 15 per TW p251
+        if (getType().getAmmoType() == AmmoType.T_SCREEN_LAUNCHER) {
+            rackSize = 1;
+            damagePerShot = 15;
+        }
+
+        EnumSet<AmmoType.Munitions> mType = getType().getMunitionType();
+        // both Dead-Fire and Tandem-charge SRM's do 3 points of damage per
+        // shot when critted
+        // Dead-Fire LRM's do 2 points of damage per shot when critted.
+        if ((mType.contains(AmmoType.Munitions.M_DEAD_FIRE))
+                || (mType.contains(AmmoType.Munitions.M_TANDEM_CHARGE))) {
+            damagePerShot++;
+        } else if (getType().getAmmoType() == AmmoType.T_TASER) {
+            damagePerShot = 6;
+        }
+
+        if (getType().getAmmoType() == AmmoType.T_MEK_MORTAR) {
+            if ((mType.contains(AmmoType.Munitions.M_AIRBURST))
+                    || (mType.contains(AmmoType.Munitions.M_FLARE))
+                    || (mType.contains(AmmoType.Munitions.M_SMOKE_WARHEAD))) {
+                damagePerShot = 1;
+            } else {
+                damagePerShot = 2;
+            }
+        }
+
+        return damagePerShot * rackSize * getBaseShotsLeft();
+    }
+
+    /**
+     * Sets the capacity of the ammo bin. Used for units that allocate by shot rather than by ton.
+     * @param capacity The capacity of the ammo bin in tons.
+     */
+    public void setAmmoCapacity(double capacity) {
+        // alias for setSize
+        setSize(capacity);
+    }
 }

@@ -1833,17 +1833,17 @@ public class MULParser {
                         } // End have-good-shots-value
                         try {
                             double capVal = Double.parseDouble(capacity);
-                            mounted.setAmmoCapacity(capVal);
+                            ((AmmoMounted) mounted).setAmmoCapacity(capVal);
                         } catch (NumberFormatException excep) {
                             // Handled by the next if test.
                         }
                         if (capacity.equals(VALUE_NA)) {
                             if (entity.hasETypeFlag(Entity.ETYPE_BATTLEARMOR)
                                     || entity.hasETypeFlag(Entity.ETYPE_PROTOMECH)) {
-                                mounted.setAmmoCapacity(mounted.getOriginalShots()
+                                ((AmmoMounted) mounted).setAmmoCapacity(mounted.getOriginalShots()
                                          * ((AmmoType) mounted.getType()).getKgPerShot() * 1000);
                             } else {
-                                mounted.setAmmoCapacity(mounted.getOriginalShots()
+                                ((AmmoMounted) mounted).setAmmoCapacity(mounted.getOriginalShots()
                                         * mounted.getTonnage()
                                         / ((AmmoType) mounted.getType()).getShots());
                             }

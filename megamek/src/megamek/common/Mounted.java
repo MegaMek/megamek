@@ -742,7 +742,7 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
 
     /**
      * The number of shots of ammunition currently stored in this Mounted
-     * irregardless of its operational status. Or in other words, the straight
+     * regardless of its operational status. Or in other words, the straight
      * value last set by {@link #setShotsLeft(int)}, even if this ammo slot is
      * no longer functional or indeed notionally no longer part of the unit
      * formerly carrying it. This is the 'general' base value that should be
@@ -904,28 +904,6 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
         this.size = size;
     }
 
-    /**
-     * The capacity of an ammo bin may be different than the weight of the original shots
-     * in the case of AR10s due to variable missile weight.
-     *
-     * @return The capacity of a mounted ammo bin in tons.
-     * @deprecated Use {@link #getSize()}
-     */
-    @Deprecated
-    public double getAmmoCapacity() {
-        return size;
-    }
-
-    /**
-     * Sets the maximum tonnage of ammo for a mounted ammo bin.
-     *
-     * @param capacity The capacity of the bin in tons.
-     * @deprecated Use {@link #setSize(double)}
-     */
-    @Deprecated
-    public void setAmmoCapacity(double capacity) {
-        size = capacity;
-    }
 
     public boolean isRapidfire() {
         return rapidfire;
@@ -947,7 +925,7 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
         boolean isHotLoaded = false;
 
         if (getType() instanceof WeaponType) {
-            Mounted link = getLinked();
+            Mounted<?> link = getLinked();
             if ((link == null) || !(link.getType() instanceof AmmoType)) {
                 return false;
             }
@@ -990,16 +968,16 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     public void setHotLoad(boolean hotload) {
 
         if (getType() instanceof WeaponType) {
-            Mounted link = getLinked();
+            Mounted<?> link = getLinked();
             if ((link == null) || !(link.getType() instanceof AmmoType)) {
                 return;
             }
-            if (((AmmoType) link.getType()).hasFlag(AmmoType.F_HOTLOAD)) {
+            if (link.getType().hasFlag(AmmoType.F_HOTLOAD)) {
                 link.hotloaded = hotload;
             }
         }
         if (getType() instanceof AmmoType) {
-            if (((AmmoType) getType()).hasFlag(AmmoType.F_HOTLOAD)) {
+            if (getType().hasFlag(AmmoType.F_HOTLOAD)) {
                 hotloaded = hotload;
             }
         }
@@ -1134,33 +1112,33 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
         return locations;
     }
 
-    public Mounted getLinked() {
+    public Mounted<?> getLinked() {
         return linked;
     }
 
-    public Mounted getLinkedBy() {
+    public Mounted<?> getLinkedBy() {
         return linkedBy;
     }
 
-    public Mounted getCrossLinkedBy() {
+    public Mounted<?> getCrossLinkedBy() {
         return crossLinkedBy;
     }
 
-    public void setLinked(Mounted linked) {
+    public void setLinked(Mounted<?> linked) {
         this.linked = linked;
         if (linked != null) {
             linked.setLinkedBy(this);
         }
     }
 
-    public void setCrossLinked(Mounted linked) {
+    public void setCrossLinked(Mounted<?> linked) {
         this.linked = linked;
         linked.setCrossLinkedBy(this);
     }
 
     // should only be called by setLinked(), or when dumping a DWP
     // in the case of a many-to-one relationship (like ammo) this is meaningless
-    public void setLinkedBy(Mounted linker) {
+    public void setLinkedBy(Mounted<?> linker) {
         if ((linker != null) && (linker.getLinked() != this)) {
             // liar
             return;
@@ -1169,7 +1147,7 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     }
 
     // called by setCrossLinked() when using cross-linked capacitors.
-    public void setCrossLinkedBy(Mounted linker) {
+    public void setCrossLinkedBy(Mounted<?> linker) {
         if ((linker != null) && (linker.getLinked() != this)) {
             // liar
             return;
@@ -1214,94 +1192,6 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     }
 
     public int getExplosionDamage() {
-        if (type instanceof AmmoType) {
-            AmmoType atype = (AmmoType) type;
-            int rackSize = atype.getRackSize();
-            int damagePerShot = atype.getDamagePerShot();
-            // Anti-ship EW bomb does no damage but deals a 5-point explosion if LAM bomb bay is hit
-            if ((type instanceof BombType)
-                    && (((BombType) type).getBombType() == BombType.B_ASEW)) {
-                damagePerShot = 5;
-            }
-
-            //Capital missiles need a racksize for this
-            if (type.hasFlag(AmmoType.F_CAP_MISSILE)) {
-                rackSize = 1;
-            }
-
-            //Screen launchers need a racksize. Damage is 15 per TW p251
-            if (atype.getAmmoType() == AmmoType.T_SCREEN_LAUNCHER) {
-                rackSize = 1;
-                damagePerShot = 15;
-            }
-
-            EnumSet<AmmoType.Munitions> mType = atype.getMunitionType();
-            // both Dead-Fire and Tandem-charge SRM's do 3 points of damage per
-            // shot when critted
-            // Dead-Fire LRM's do 2 points of damage per shot when critted.
-            if ((mType.contains(AmmoType.Munitions.M_DEAD_FIRE))
-                    || (mType.contains(AmmoType.Munitions.M_TANDEM_CHARGE))) {
-                damagePerShot++;
-            } else if (atype.getAmmoType() == AmmoType.T_TASER) {
-                damagePerShot = 6;
-            }
-
-            if (atype.getAmmoType() == AmmoType.T_MEK_MORTAR) {
-                if ((mType.contains(AmmoType.Munitions.M_AIRBURST))
-                        || (mType.contains(AmmoType.Munitions.M_FLARE))
-                        || (mType.contains(AmmoType.Munitions.M_SMOKE_WARHEAD))) {
-                    damagePerShot = 1;
-                } else {
-                    damagePerShot = 2;
-                }
-            }
-
-            return damagePerShot * rackSize * shotsLeft;
-        }
-
-        if (type instanceof WeaponType) {
-            WeaponType wtype = (WeaponType) type;
-            // TacOps Gauss Weapon rule p. 102
-            if ((type instanceof GaussWeapon) && type.hasModes()
-                    && curMode().equals("Powered Down")) {
-                return 0;
-            }
-            if ((isHotLoaded() || hasQuirk(OptionsConstants.QUIRK_WEAP_NEG_AMMO_FEED_PROBLEMS))
-                    && (getLinked() != null) && (getLinked().getUsableShotsLeft() > 0)) {
-                Mounted link = getLinked();
-                AmmoType atype = ((AmmoType) link.getType());
-                int damagePerShot = atype.getDamagePerShot();
-                // Launchers with Dead-Fire missiles in them do an extra point of
-                // damage per shot when critted
-                if (atype.getMunitionType().contains(AmmoType.Munitions.M_DEAD_FIRE)) {
-                    damagePerShot++;
-                }
-
-                int damage = wtype.getRackSize() * damagePerShot;
-                return damage;
-            }
-
-            if (wtype.hasFlag(WeaponType.F_PPC) && (hasChargedCapacitor() != 0)) {
-                if (isFired()) {
-                    if (hasChargedCapacitor() == 2) {
-                        return 15;
-                    }
-                    return 0;
-                }
-                if (hasChargedCapacitor() == 2) {
-                    return 30;
-                }
-                return 15;
-            }
-
-            if ((wtype.getAmmoType() == AmmoType.T_MPOD) && isFired()) {
-                return 0;
-            }
-
-            return wtype.getExplosionDamage();
-
-        }
-
         if (type instanceof MiscType) {
             MiscType mtype = (MiscType) type;
             if (mtype.hasFlag(MiscType.F_PPC_CAPACITOR)) {
@@ -1658,55 +1548,6 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
      * status
      */
     public int getCurrentHeat() {
-        if (getType() instanceof WeaponType) {
-            WeaponType wtype = (WeaponType) getType();
-            int heat = wtype.getHeat();
-
-            // AR10's have heat based upon the loaded missile
-            if (wtype.getName().equals("AR10")) {
-                AmmoType ammoType = (AmmoType) getLinked().getType();
-                if (ammoType.hasFlag(AmmoType.F_AR10_BARRACUDA)) {
-                    return 10;
-                } else if (ammoType.hasFlag(AmmoType.F_AR10_WHITE_SHARK)) {
-                    return 15;
-                } else { // AmmoType.F_AR10_KILLER_WHALE
-                    return 20;
-                }
-            }
-
-            if (wtype.hasFlag(WeaponType.F_ENERGY) && wtype.hasModes()) {
-                heat = Compute.dialDownHeat(this, wtype);
-            }
-            // multiply by number of shots and number of weapons
-            heat = heat * getCurrentShots() * getNWeapons();
-            if (hasQuirk(OptionsConstants.QUIRK_WEAP_POS_IMP_COOLING)) {
-                heat = Math.max(1, heat - 1);
-            }
-            if (hasQuirk(OptionsConstants.QUIRK_WEAP_NEG_POOR_COOLING)) {
-                heat += 1;
-            }
-            if (hasQuirk(OptionsConstants.QUIRK_WEAP_NEG_NO_COOLING)) {
-                heat += 2;
-            }
-            if (hasChargedCapacitor() == 2) {
-                heat += 10;
-            }
-            if (hasChargedCapacitor() == 1) {
-                heat += 5;
-            }
-            if ((getLinkedBy() != null)
-                    && !getLinkedBy().isInoperable()
-                    && (getLinkedBy().getType() instanceof MiscType)
-                    && getLinkedBy().getType().hasFlag(
-                            MiscType.F_LASER_INSULATOR)) {
-                heat -= 1;
-                if (heat == 0) {
-                    heat++;
-                }
-            }
-
-            return heat;
-        }
         return 0;
     }
 

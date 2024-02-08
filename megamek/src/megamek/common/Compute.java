@@ -7318,4 +7318,9 @@ public class Compute {
                     && !(isLandedSpheroid && noseWeaponAimedAtGroundTarget);
     }
 
+    public static boolean isFlakAttack(Entity attacker, Entity target) {
+        boolean validLocation = !(attacker.isSpaceborne() || target.isSpaceborne());
+        return validLocation && (target.isAirborne() || target.isAirborneVTOLorWIGE());
+    }
+
 } // End public class Compute

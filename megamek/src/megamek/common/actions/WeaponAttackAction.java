@@ -363,7 +363,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
 
         boolean isFlakAttack = !game.getBoard().inSpace() && (te != null)
-                && (te.isAirborne() || te.isAirborneVTOLorWIGE())
+                && Compute.isFlakAttack(ae, te)
                 && (wtype instanceof CLBALBX
                     || ((atype != null)
                         && (
@@ -409,9 +409,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
 
         // hack, otherwise when actually resolves shot labeled impossible.
         boolean isArtilleryFLAK = isArtilleryDirect && (te != null)
-                && ((((te.getMovementMode() == EntityMovementMode.VTOL)
-                        || (te.getMovementMode() == EntityMovementMode.WIGE)) && te.isAirborneVTOLorWIGE())
-                        || (te.isAirborne()))
+                && Compute.isFlakAttack(ae, te)
                 && (atype != null) && (usesAmmo && (atype.countsAsFlak()));
 
         boolean isHaywireINarced = ae.isINarcedWith(INarcPod.HAYWIRE);

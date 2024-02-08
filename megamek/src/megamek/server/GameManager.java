@@ -10125,24 +10125,26 @@ public class GameManager implements IGameManager {
         vPhaseReport.add(r);
         createSmoke(coords, SmokeCloud.SMOKE_HEAVY, 3);
         Hex hex = game.getBoard().getHex(coords);
-        hex.addTerrain(new Terrain(Terrains.SMOKE, SmokeCloud.SMOKE_HEAVY));
-        sendChangedHex(coords);
-        for (int dir = 0; dir <= 5; dir++) {
-            Coords tempcoords = coords.translated(dir);
-            if (!game.getBoard().contains(tempcoords)) {
-                continue;
-            }
-            if (coords.equals(tempcoords)) {
-                continue;
-            }
-            r = new Report(5185, Report.PUBLIC);
-            r.indent(2);
-            r.add(tempcoords.getBoardNum());
-            vPhaseReport.add(r);
-            createSmoke(tempcoords, SmokeCloud.SMOKE_HEAVY, 3);
-            hex = game.getBoard().getHex(tempcoords);
+        if (hex != null) {
             hex.addTerrain(new Terrain(Terrains.SMOKE, SmokeCloud.SMOKE_HEAVY));
-            sendChangedHex(tempcoords);
+            sendChangedHex(coords);
+            for (int dir = 0; dir <= 5; dir++) {
+                Coords tempcoords = coords.translated(dir);
+                if (!game.getBoard().contains(tempcoords)) {
+                    continue;
+                }
+                if (coords.equals(tempcoords)) {
+                    continue;
+                }
+                r = new Report(5185, Report.PUBLIC);
+                r.indent(2);
+                r.add(tempcoords.getBoardNum());
+                vPhaseReport.add(r);
+                createSmoke(tempcoords, SmokeCloud.SMOKE_HEAVY, 3);
+                hex = game.getBoard().getHex(tempcoords);
+                hex.addTerrain(new Terrain(Terrains.SMOKE, SmokeCloud.SMOKE_HEAVY));
+                sendChangedHex(tempcoords);
+            }
         }
     }
 
@@ -10158,24 +10160,26 @@ public class GameManager implements IGameManager {
         vPhaseReport.add(r);
         createSmoke(coords, SmokeCloud.SMOKE_LI_HEAVY, 2);
         Hex hex = game.getBoard().getHex(coords);
-        hex.addTerrain(new Terrain(Terrains.SMOKE, SmokeCloud.SMOKE_LI_HEAVY));
-        sendChangedHex(coords);
-        for (int dir = 0; dir <= 5; dir++) {
-            Coords tempcoords = coords.translated(dir);
-            if (!game.getBoard().contains(tempcoords)) {
-                continue;
-            }
-            if (coords.equals(tempcoords)) {
-                continue;
-            }
-            r = new Report(5186, Report.PUBLIC);
-            r.indent(2);
-            r.add(tempcoords.getBoardNum());
-            vPhaseReport.add(r);
-            createSmoke(tempcoords, SmokeCloud.SMOKE_LI_HEAVY, 2);
-            hex = game.getBoard().getHex(tempcoords);
+        if (null != hex) {
             hex.addTerrain(new Terrain(Terrains.SMOKE, SmokeCloud.SMOKE_LI_HEAVY));
-            sendChangedHex(tempcoords);
+            sendChangedHex(coords);
+            for (int dir = 0; dir <= 5; dir++) {
+                Coords tempcoords = coords.translated(dir);
+                if (!game.getBoard().contains(tempcoords)) {
+                    continue;
+                }
+                if (coords.equals(tempcoords)) {
+                    continue;
+                }
+                r = new Report(5186, Report.PUBLIC);
+                r.indent(2);
+                r.add(tempcoords.getBoardNum());
+                vPhaseReport.add(r);
+                createSmoke(tempcoords, SmokeCloud.SMOKE_LI_HEAVY, 2);
+                hex = game.getBoard().getHex(tempcoords);
+                hex.addTerrain(new Terrain(Terrains.SMOKE, SmokeCloud.SMOKE_LI_HEAVY));
+                sendChangedHex(tempcoords);
+            }
         }
     }
 

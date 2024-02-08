@@ -23,6 +23,7 @@ import megamek.client.ui.swing.calculationReport.DummyCalculationReport;
 import megamek.codeUtilities.MathUtility;
 import megamek.common.*;
 import megamek.common.equipment.ArmorType;
+import megamek.common.equipment.MiscMounted;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.bayweapons.BayWeapon;
 
@@ -345,7 +346,7 @@ public abstract class BVCalculator {
 
                 // Modular Armor
                 int modularArmor = 0;
-                for (Mounted mounted : entity.getMisc()) {
+                for (MiscMounted mounted : entity.getMisc()) {
                     if (mounted.getType().hasFlag(MiscType.F_MODULAR_ARMOR) && (mounted.getLocation() == loc)) {
                         modularArmor += mounted.getBaseDamageCapacity() - mounted.getDamageTaken();
                     }

@@ -30,6 +30,7 @@ import megamek.common.actions.BreakGrappleAttackAction;
 import megamek.common.actions.GrappleAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
+import megamek.common.equipment.MiscMounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.OptionsConstants;
 import megamek.common.util.fileUtils.MegaMekFile;
@@ -1585,7 +1586,7 @@ public class MapMenu extends JPopupMenu {
         item.setActionCommand(Integer.toString(clubNumber));
         item.addActionListener(evt -> {
             try {
-                Mounted club = myEntity.getClubs().get(
+                MiscMounted club = myEntity.getClubs().get(
                         Integer.parseInt(evt.getActionCommand()));
                 ((PhysicalDisplay) currentPanel).club(club);
             } catch (Exception ex) {

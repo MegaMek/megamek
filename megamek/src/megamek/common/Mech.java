@@ -20,6 +20,7 @@ import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.common.cost.MekCostCalculator;
 import megamek.common.enums.AimingMode;
 import megamek.common.enums.MPBoosters;
+import megamek.common.equipment.MiscMounted;
 import megamek.common.loaders.MtfFile;
 import megamek.common.options.IBasicOption;
 import megamek.common.options.IOption;
@@ -5209,12 +5210,10 @@ public abstract class Mech extends Entity {
                 continue;
             }
 
-            Mounted m = cs.getMount();
-
-            EquipmentType type = m.getType();
-            if ((type instanceof MiscType) && ((MiscType) type).isShield()) {
-                rate -= m.getDamageAbsorption(this, m.getLocation());
-                m.damageTaken++;
+            Mounted<?> m = cs.getMount();
+            if ((m instanceof MiscMounted) && ((MiscMounted) m).getType().isShield()) {
+                rate -= ((MiscMounted) m).getDamageAbsorption(this, m.getLocation());
+                ((MiscMounted) m).takeDamage(1);
                 return Math.max(0, rate);
             }
         }

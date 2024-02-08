@@ -4383,9 +4383,9 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         ammoList.removeIf(m -> m.getType() instanceof BombType);
     }
 
-    public List<Mounted> getClubs() {
-        List<Mounted> rv = new ArrayList<>();
-        for (Mounted m : getMisc()) {
+    public List<MiscMounted> getClubs() {
+        List<MiscMounted> rv = new ArrayList<>();
+        for (MiscMounted m : getMisc()) {
             if (m.getType().hasFlag(MiscType.F_CLUB)) {
                 rv.add(m);
             }
@@ -12159,23 +12159,19 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         if (!hasModularArmor(loc)) {
             return damage;
         }
-        for (Mounted mount : this.getEquipment()) {
+        for (MiscMounted mount : this.getMisc()) {
             if ((mount.getLocation() == loc)
                 && !mount.isDestroyed()
-                && (mount.getType() instanceof MiscType)
-                && ((MiscType) mount.getType()).hasFlag(MiscType.F_MODULAR_ARMOR)
+                && mount.getType().hasFlag(MiscType.F_MODULAR_ARMOR)
                 // On 'Mech torsos only, modular armor covers either front
                 // or rear, as mounted.
                 && (!(this instanceof Mech)
-                    || !((loc == Mech.LOC_CT) || (loc == Mech.LOC_LT) || (loc == Mech.LOC_RT)) || (hit
-                                                                                                           .isRear()
-                                                                                                   == mount
-                    .isRearMounted()))) {
+                    || !((loc == Mech.LOC_CT) || (loc == Mech.LOC_LT) || (loc == Mech.LOC_RT))
+                    || (hit.isRear() == mount.isRearMounted()))) {
 
-                int damageAbsorption = mount.getBaseDamageCapacity()
-                                       - mount.getDamageTaken();
+                int damageAbsorption = mount.getBaseDamageCapacity() - mount.getDamageTaken();
                 if (damageAbsorption > damage) {
-                    mount.damageTaken += damage;
+                    mount.takeDamage(damage);
                     Report r = new Report(3535);
                     r.subject = getId();
                     r.add(damage);
@@ -12185,9 +12181,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                     Report.addNewline(vDesc);
 
                     return 0;
-                }
-
-                if (damageAbsorption == damage) {
+                } else if (damageAbsorption == damage) {
                     Report.addNewline(vDesc);
                     Report r = new Report(3535);
                     r.subject = getId();
@@ -12200,12 +12194,10 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                     r.indent();
                     vDesc.addElement(r);
 
-                    mount.damageTaken += damage;
+                    mount.takeDamage(damage);
                     mount.setHit(true);
                     return 0;
-                }
-
-                if (damageAbsorption < damage) {
+                } else {
                     Report.addNewline(vDesc);
                     Report r = new Report(3535);
                     r.subject = getId();
@@ -12218,9 +12210,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                     r.indent(1);
                     vDesc.addElement(r);
 
-                    damage -= mount.baseDamageAbsorptionRate
-                              - mount.damageTaken;
-                    mount.damageTaken = mount.baseDamageAbsorptionRate;
+                    damage -= mount.getBaseDamageAbsorptionRate() - mount.getDamageTaken();
+                    mount.setDamageTaken(mount.getBaseDamageAbsorptionRate());
                     mount.setDestroyed(true);
                     mount.setHit(true);
                 }

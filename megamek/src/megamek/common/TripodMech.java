@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import megamek.common.enums.AimingMode;
+import megamek.common.equipment.MiscMounted;
 import megamek.common.options.OptionsConstants;
 import megamek.common.preference.PreferenceManager;
 import org.apache.logging.log4j.LogManager;
@@ -681,11 +682,10 @@ public class TripodMech extends Mech {
                 continue;
             }
 
-            Mounted m = cs.getMount();
-            EquipmentType type = m.getType();
-            if ((type instanceof MiscType) && ((MiscType) type).isShield()
+            Mounted<?> m = cs.getMount();
+            if ((m instanceof MiscMounted) && ((MiscMounted) m).getType().isShield()
                 && m.curMode().equals(MiscType.S_ACTIVE_SHIELD)) {
-                return m.getCurrentDamageCapacity(this, m.getLocation()) > 0;
+                return ((MiscMounted) m).getCurrentDamageCapacity(this, m.getLocation()) > 0;
             }
         }
         return false;
@@ -753,11 +753,10 @@ public class TripodMech extends Mech {
                 continue;
             }
 
-            Mounted m = cs.getMount();
-            EquipmentType type = m.getType();
-            if ((type instanceof MiscType) && ((MiscType) type).isShield()
+            Mounted<?> m = cs.getMount();
+            if ((m instanceof MiscMounted) && ((MiscMounted) m).getType().isShield()
                 && m.curMode().equals(MiscType.S_PASSIVE_SHIELD)) {
-                return m.getCurrentDamageCapacity(this, m.getLocation()) > 0;
+                return ((MiscMounted) m).getCurrentDamageCapacity(this, m.getLocation()) > 0;
             }
         }
         return false;
@@ -788,10 +787,9 @@ public class TripodMech extends Mech {
                 continue;
             }
 
-            Mounted m = cs.getMount();
-            EquipmentType type = m.getType();
-            if ((type instanceof MiscType)
-                && ((MiscType) type).isShield()
+            Mounted<?> m = cs.getMount();
+            if ((m instanceof MiscMounted)
+                && ((MiscMounted) m).getType().isShield()
                 && (m.curMode().equals(MiscType.S_NO_SHIELD)
                     || isShutDown() || // if
                     // he
@@ -804,7 +802,7 @@ public class TripodMech extends Mech {
                     // defense mode
                     getCrew().isKoThisRound() || getCrew()
                     .isUnconscious())) {
-                return m.getCurrentDamageCapacity(this, m.getLocation()) > 0;
+                return ((MiscMounted) m).getCurrentDamageCapacity(this, m.getLocation()) > 0;
             }
         }
         return false;

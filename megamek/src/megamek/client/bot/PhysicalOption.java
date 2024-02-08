@@ -28,6 +28,7 @@ import megamek.common.actions.EntityAction;
 import megamek.common.actions.KickAttackAction;
 import megamek.common.actions.PunchAttackAction;
 import megamek.common.actions.PushAttackAction;
+import megamek.common.equipment.MiscMounted;
 
 /**
  * TODO: add more options, pushing, kick both for quad mechs, etc.
@@ -59,7 +60,7 @@ public class PhysicalOption {
     INarcPod i_target;
     double expectedDmg;
     int type;
-    Mounted club;
+    MiscMounted club;
 
     public PhysicalOption(Entity attacker) {
         this.attacker = attacker;
@@ -67,7 +68,7 @@ public class PhysicalOption {
     }
 
     public PhysicalOption(Entity attacker, Targetable target, double dmg,
-            int type, Mounted club) {
+            int type, MiscMounted club) {
         this.attacker = attacker;
         this.target = target;
         

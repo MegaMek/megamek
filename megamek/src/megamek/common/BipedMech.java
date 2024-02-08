@@ -19,6 +19,7 @@ package megamek.common;
 import java.util.ArrayList;
 import java.util.List;
 
+import megamek.common.equipment.MiscMounted;
 import megamek.common.options.OptionsConstants;
 
 public class BipedMech extends Mech {
@@ -573,10 +574,9 @@ public class BipedMech extends Mech {
                 continue;
             }
 
-            Mounted m = cs.getMount();
-            EquipmentType type = m.getType();
-            if ((type instanceof MiscType) && ((MiscType) type).isShield() && m.curMode().equals(MiscType.S_ACTIVE_SHIELD)) {
-                return m.getCurrentDamageCapacity(this, m.getLocation()) > 0;
+            Mounted<?> m = cs.getMount();
+            if ((m instanceof MiscMounted) && ((MiscMounted) m).getType().isShield() && m.curMode().equals(MiscType.S_ACTIVE_SHIELD)) {
+                return ((MiscMounted) m).getCurrentDamageCapacity(this, m.getLocation()) > 0;
             }
         }
         return false;
@@ -643,10 +643,9 @@ public class BipedMech extends Mech {
                 continue;
             }
 
-            Mounted m = cs.getMount();
-            EquipmentType type = m.getType();
-            if ((type instanceof MiscType) && ((MiscType) type).isShield() && m.curMode().equals(MiscType.S_PASSIVE_SHIELD)) {
-                return m.getCurrentDamageCapacity(this, m.getLocation()) > 0;
+            Mounted<?> m = cs.getMount();
+            if ((m instanceof MiscMounted) && ((MiscMounted) m).getType().isShield() && m.curMode().equals(MiscType.S_PASSIVE_SHIELD)) {
+                return ((MiscMounted) m).getCurrentDamageCapacity(this, m.getLocation()) > 0;
             }
         }
         return false;
@@ -677,9 +676,8 @@ public class BipedMech extends Mech {
                 continue;
             }
 
-            Mounted m = cs.getMount();
-            EquipmentType type = m.getType();
-            if ((type instanceof MiscType) && ((MiscType) type).isShield() && (m.curMode().equals(MiscType.S_NO_SHIELD) || isShutDown() || // if
+            Mounted<?> m = cs.getMount();
+            if ((m instanceof MiscMounted) && ((MiscMounted) m).getType().isShield() && (m.curMode().equals(MiscType.S_NO_SHIELD) || isShutDown() || // if
                                                                                // he
                                                                                // has
                                                                                // a
@@ -690,7 +688,7 @@ public class BipedMech extends Mech {
                                                                                // defense mode
                                                                                getCrew().isKoThisRound() || getCrew()
                     .isUnconscious())) {
-                return m.getCurrentDamageCapacity(this, m.getLocation()) > 0;
+                return ((MiscMounted) m).getCurrentDamageCapacity(this, m.getLocation()) > 0;
             }
         }
         return false;

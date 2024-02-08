@@ -21,6 +21,7 @@ import megamek.client.ui.swing.widget.MegamekButton;
 import megamek.common.*;
 import megamek.common.actions.*;
 import megamek.common.enums.AimingMode;
+import megamek.common.equipment.MiscMounted;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.options.OptionsConstants;
@@ -812,20 +813,20 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
         }
     }
 
-    private Mounted chooseClub() {
-        java.util.List<Mounted> clubs = ce().getClubs();
+    private MiscMounted chooseClub() {
+        java.util.List<MiscMounted> clubs = ce().getClubs();
         if (clubs.size() == 1) {
             return clubs.get(0);
         } else if (clubs.size() > 1) {
             String[] names = new String[clubs.size()];
             for (int loop = 0; loop < names.length; loop++) {
-                Mounted club = clubs.get(loop);
+                MiscMounted club = clubs.get(loop);
                 final ToHitData toHit = ClubAttackAction.toHit(clientgui.getClient().getGame(), cen,
                         target, club, ash.getAimTable(), false);
                 final int dmg = ClubAttackAction.getDamageFor(ce(), club,
                         target.isConventionalInfantry(), false);
                 // Need to do this outside getDamageFor, as it only returns int
-                String dmgString = dmg + "";
+                String dmgString = String.valueOf(dmg);
                 if ((club.getType().hasSubType(MiscType.S_COMBINE)
                         || club.getType().hasSubType(MiscType.S_CHAINSAW)
                         || club.getType().hasSubType(MiscType.S_DUAL_SAW))
@@ -855,14 +856,14 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
      * Club that target!
      */
     void club() {
-        Mounted club = chooseClub();
+        MiscMounted club = chooseClub();
         club(club);
     }
 
     /**
      * Club that target!
      */
-    void club(Mounted club) {
+    void club(MiscMounted club) {
         if (null == club) {
             return;
         }
@@ -885,7 +886,7 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
                 isAptPiloting);
         final int clubDmg = ClubAttackAction.getDamageFor(en, club, target.isConventionalInfantry(), false);
         // Need to do this outside getDamageFor, as it only returns int
-        String dmgString = clubDmg + "";
+        String dmgString = String.valueOf(clubDmg);
         if ((club.getType().hasSubType(MiscType.S_COMBINE)
                 || club.getType().hasSubType(MiscType.S_CHAINSAW)
                 || club.getType().hasSubType(MiscType.S_DUAL_SAW))

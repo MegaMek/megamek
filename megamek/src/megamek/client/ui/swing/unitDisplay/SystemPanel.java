@@ -8,6 +8,7 @@ import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.client.ui.swing.widget.*;
 import megamek.common.*;
+import megamek.common.equipment.MiscMounted;
 import megamek.common.options.OptionsConstants;
 import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
@@ -428,9 +429,9 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener, ListSe
                 sb.append(')');
             }
 
-            if ((m.getType() instanceof MiscType) && ((MiscType) m.getType()).isShield()) {
-                sb.append(" ").append(m.getDamageAbsorption(en, m.getLocation())).append('/')
-                        .append(m.getCurrentDamageCapacity(en, m.getLocation())).append(')');
+            if ((m instanceof MiscMounted) && ((MiscMounted) m).getType().isShield()) {
+                sb.append(" ").append(((MiscMounted) m).getDamageAbsorption(en, m.getLocation())).append('/')
+                        .append(((MiscMounted) m).getCurrentDamageCapacity(en, m.getLocation())).append(')');
             }
         }
         return sb.toString();

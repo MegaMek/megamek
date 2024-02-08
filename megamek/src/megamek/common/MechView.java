@@ -857,7 +857,7 @@ public class MechView {
         wpnTable.setColNames("Weapons  ", "  Loc  ", "  Heat  ", entity.isOmni() ? "  Omni  " : "");
         wpnTable.setJustification(TableElement.JUSTIFIED_LEFT, TableElement.JUSTIFIED_CENTER,
                 TableElement.JUSTIFIED_CENTER, TableElement.JUSTIFIED_CENTER);
-        for (Mounted mounted : entity.getWeaponList()) {
+        for (Mounted<?> mounted : entity.getWeaponList()) {
             String[] row = { mounted.getDesc() + quirkMarker(mounted),
                     entity.joinLocationAbbr(mounted.allLocations(), 3), "", "" };
             WeaponType wtype = (WeaponType) mounted.getType();

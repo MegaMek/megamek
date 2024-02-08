@@ -3069,7 +3069,7 @@ public class Aero extends Entity implements IAero, IBomber {
                 || (this instanceof SpaceStation)) {
 
             ArrayList<Mounted> ams = new ArrayList<>();
-            for (Mounted weapon : getWeaponBayList()) {
+            for (Mounted<?> weapon : getWeaponBayList()) {
                 // Skip anything that's not an AMS, AMS Bay or Point Defense Bay
                 if (!weapon.getType().hasFlag(WeaponType.F_AMS)
                         && !weapon.getType().hasFlag(WeaponType.F_AMSBAY)

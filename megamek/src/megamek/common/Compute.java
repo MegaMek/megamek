@@ -3024,7 +3024,7 @@ public class Compute {
         int infShootingStrength = 0;
         double infDamagePerTrooper = 0;
 
-        Mounted weapon = attacker.getEquipment(waa.getWeaponId());
+        Mounted<?> weapon = attacker.getEquipment(waa.getWeaponId());
         Mounted lnk_guide;
 
         ToHitData hitData = waa.toHit(g, allECMInfo);

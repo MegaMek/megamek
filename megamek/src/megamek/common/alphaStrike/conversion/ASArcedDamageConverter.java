@@ -43,7 +43,7 @@ public class ASArcedDamageConverter extends ASAeroDamageConverter {
         }
         // Flatten the weaponlist as weapon bays are not relevant for AS conversion
         List<Mounted> flattenedWeaponList = new ArrayList<>();
-        for (Mounted weapon : entity.getWeaponList()) {
+        for (Mounted<?> weapon : entity.getWeaponList()) {
             if (weapon.getType() instanceof BayWeapon) {
                 weapon.getBayWeapons().stream().map(entity::getEquipment).forEach(flattenedWeaponList::add);
             } else {

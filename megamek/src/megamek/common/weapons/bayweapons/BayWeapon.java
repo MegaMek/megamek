@@ -68,7 +68,7 @@ public abstract class BayWeapon extends Weapon {
     }
     
     @Override
-    public int getMaxRange(Mounted weapon) {
+    public int getMaxRange(Mounted<?> weapon) {
         int mrange = RANGE_SHORT;
         Entity ae = weapon.getEntity();
         if (null != ae) {

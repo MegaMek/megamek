@@ -35,7 +35,7 @@ import java.util.stream.Collectors;
  * @author Ben
  * @since April 1, 2002, 1:29 PM
  */
-public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
+public class Mounted<T extends EquipmentType> implements Serializable, RoundUpdated, PhaseUpdated {
 
     private static final long serialVersionUID = 6438017987074691566L;
     private boolean usedThisRound = false;
@@ -74,7 +74,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
 
     private WeaponQuirks quirks = new WeaponQuirks();
 
-    private transient EquipmentType type;
+    private transient T type;
     private String typeName;
     private double size = 1.0;
 
@@ -177,7 +177,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
     private boolean squadSupportWeapon;
 
     /** Creates new Mounted */
-    public Mounted(Entity entity, EquipmentType type) {
+    public Mounted(Entity entity, T type) {
         this.entity = entity;
         this.type = type;
         typeName = type.getInternalName();
@@ -227,7 +227,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
             LogManager.getLogger().warn("Attempted to change ammo type of non-ammo");
             return;
         }
-        type = at;
+        type = (T) at;
         typeName = at.getInternalName();
         if (location == Entity.LOC_NONE) {
             // Oneshot launcher
@@ -241,11 +241,12 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
     /**
      * Restores the equipment from the name
      */
+    @SuppressWarnings("unchecked")
     public void restore() {
         if (typeName == null) {
             typeName = type.getName();
         } else {
-            type = EquipmentType.get(typeName);
+            type = (T) EquipmentType.get(typeName);
         }
 
         if (type == null) {
@@ -253,8 +254,9 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
         }
     }
 
-    public EquipmentType getType() {
-        return (null != type) ? type : (type = EquipmentType.get(typeName));
+    @SuppressWarnings("unchecked")
+    public T getType() {
+        return (null != type) ? type : (type = (T) EquipmentType.get(typeName));
     }
 
     public int getModesCount() {
@@ -1507,7 +1509,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
                 continue;
             }
 
-            Mounted m = cs.getMount();
+            Mounted<?> m = cs.getMount();
             EquipmentType type = m.getType();
             if ((type instanceof MiscType) && ((MiscType) type).isShield()) {
                 if (cs.isDamaged()) {
@@ -1564,7 +1566,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
                 continue;
             }
 
-            Mounted m = cs.getMount();
+            Mounted<?> m = cs.getMount();
             EquipmentType type = m.getType();
             if ((type instanceof MiscType) && ((MiscType) type).isShield()) {
                 if (cs.isDamaged()) {

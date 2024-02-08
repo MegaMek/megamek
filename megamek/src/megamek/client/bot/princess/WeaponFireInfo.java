@@ -42,7 +42,7 @@ public class WeaponFireInfo {
     private WeaponAttackAction action;
     private Entity shooter;
     private Targetable target;
-    private Mounted weapon;
+    private Mounted<?> weapon;
     private double probabilityToHit;
     private int heat;
     private double maxDamage;
@@ -116,7 +116,7 @@ public class WeaponFireInfo {
      * @param assumeUnderFlightPath Set TRUE for aerial units performing air-to-ground attacks.
      * @param guess                 Set TRUE to estimate the chance to hit rather than doing the full calculation.
      * @param owner                 Instance of the princess owner
-     * @param bombPayload           The bomb payload, as described in WeaponAttackAction.setBombPayload
+     * @param bombPayloads          The bomb payload, as described in WeaponAttackAction.setBombPayload
      */
     WeaponFireInfo(final Entity shooter,
                    final MovePath shooterPath,
@@ -146,7 +146,7 @@ public class WeaponFireInfo {
      * @param guess                 Set TRUE to estimate the chance to hit rather than going through the full
      *                              calculation.
      * @param owner                 Instance of the princess owner
-     * @param bombPayload           The bomb payload, as described in WeaponAttackAction.setBombPayload
+     * @param bombPayloads          The bomb payload, as described in WeaponAttackAction.setBombPayload
      */
     private WeaponFireInfo(final Entity shooter,
                            final EntityState shooterState,
@@ -450,7 +450,7 @@ public class WeaponFireInfo {
      * @param weapon The weapon to check.
      * @return Generated heat.
      */
-    int computeHeat(Mounted weapon) {
+    int computeHeat(Mounted<?> weapon) {
         // bay weapons require special consideration, by looping through all weapons and adding up the damage
         // A bay's weapons may have different ranges, most noticeable in laser bays, where the damage potential
         // varies with distance to target.

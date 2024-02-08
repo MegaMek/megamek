@@ -53,7 +53,7 @@ public class ArtilleryAttackAction extends WeaponAttackAction implements Seriali
         WeaponType wType = (WeaponType) eType;
         Mounted mounted = getEntity(game).getEquipment(weaponId);
         if (getEntity(game).usesWeaponBays() && wType.getAtClass() == WeaponType.CLASS_ARTILLERY) {
-            for (int wId : game.getEntity(entityId).getEquipment(weaponId).getBayWeapons()) {
+            for (int wId : ((Mounted<?>) game.getEntity(entityId).getEquipment(weaponId)).getBayWeapons()) {
                 Mounted bayW = game.getEntity(entityId).getEquipment(wId);
                 WeaponType bayWType = ((WeaponType) bayW.getType());
                 if (bayWType.hasFlag(WeaponType.F_CRUISE_MISSILE)) {

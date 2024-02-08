@@ -515,14 +515,14 @@ public class MechFileParser {
         } // Check the next piece of equipment.
 
         // Walk through the list of equipment.
-        for (Mounted m : ent.getMisc()) {
+        for (Mounted<?> m : ent.getMisc()) {
 
             // Link PPC Capacitor to PPC it its location.
             if (m.getType().hasFlag(MiscType.F_PPC_CAPACITOR)
                     && (m.getLinked() == null)) {
 
                 // link up to a weapon in the same location
-                for (Mounted mWeapon : ent.getWeaponList()) {
+                for (Mounted<?> mWeapon : ent.getWeaponList()) {
                     WeaponType wtype = (WeaponType) mWeapon.getType();
 
                     //Handle weapon bays

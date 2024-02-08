@@ -378,7 +378,7 @@ public class TestSmallCraft extends TestAero {
             return super.printWeapon();
         }
         StringBuffer buffer = new StringBuffer();
-        for (Mounted m : getEntity().getWeaponBayList()) {
+        for (Mounted<?> m : getEntity().getWeaponBayList()) {
             buffer.append(m.getName()).append(" ")
                 .append(getLocationAbbr(m.getLocation()));
             if (m.isRearMounted()) {
@@ -520,7 +520,7 @@ public class TestSmallCraft extends TestAero {
 
         // For DropShips, make sure all bays have at least one weapon and that there are at least
         // ten shots of ammo for each ammo-using weapon in the bay.
-        for (Mounted bay : smallCraft.getWeaponBayList()) {
+        for (Mounted<?> bay : smallCraft.getWeaponBayList()) {
             if (bay.getBayWeapons().isEmpty()) {
                 buff.append("Bay ").append(bay.getName()).append(" has no weapons\n");
                 illegal = true;

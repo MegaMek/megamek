@@ -451,7 +451,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         ArrayList<Mounted> lCounters = waa.getCounterEquipment();
         if (null != lCounters) {
             // resolve AMS counter-fire
-            for (Mounted counter : lCounters) {
+            for (Mounted<?> counter : lCounters) {
                 // Set up differences between different types of AMS
                 boolean isAMS = counter.getType().hasFlag(WeaponType.F_AMS);
                 boolean isAMSBay = counter.getType().hasFlag(WeaponType.F_AMSBAY);

@@ -515,7 +515,7 @@ public class CustomMechDialog extends AbstractButtonDialog implements ActionList
             // effective range, even if many of the unit's weapons would be out of range
             int maxDistance = 0;
             for (Entity entity : entities) {
-                for (Mounted wep : entity.getWeaponList()) {
+                for (Mounted<?> wep : entity.getWeaponList()) {
                     EquipmentType e = wep.getType();
                     WeaponType w = (WeaponType) e;
                     int nDistance = 0;

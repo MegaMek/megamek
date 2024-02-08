@@ -49,7 +49,7 @@ public class ASLargeAeroSpecialAbilityConverter extends ASSpecialAbilityConverte
     @Override
     protected void processENE() {
         Arrays.fill(hasExplosiveArcComponent, false);
-        for (Mounted equipment : entity.getEquipment()) {
+        for (Mounted<?> equipment : entity.getEquipment()) {
             processArcENE(equipment);
             if (equipment.getType() instanceof BayWeapon) {
                 var bayEquipmentList = new ArrayList<>(equipment.getBayWeapons());

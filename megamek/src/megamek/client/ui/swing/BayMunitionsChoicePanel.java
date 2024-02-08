@@ -45,7 +45,7 @@ public class BayMunitionsChoicePanel extends JPanel {
         gbc.anchor = GridBagConstraints.WEST;
         gbc.insets = new Insets(10, 0, 10, 0);
 
-        for (Mounted bay : entity.getWeaponBayList()) {
+        for (Mounted<?> bay : entity.getWeaponBayList()) {
             Map<List<Integer>,List<Mounted>> ammoByType = new HashMap<>();
             for (Integer aNum : bay.getBayAmmo()) {
                 final Mounted ammo = entity.getEquipment(aNum);
@@ -139,7 +139,7 @@ public class BayMunitionsChoicePanel extends JPanel {
 
         private double tonnage;
 
-        AmmoRowPanel(Mounted bay, int at, int rackSize, List<Mounted> ammoMounts) {
+        AmmoRowPanel(Mounted<?> bay, int at, int rackSize, List<Mounted> ammoMounts) {
             this.bay = bay;
             this.at = at;
             this.rackSize = rackSize;

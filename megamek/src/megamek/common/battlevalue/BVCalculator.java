@@ -733,7 +733,7 @@ public abstract class BVCalculator {
      * @param addToOffensiveValue When true, will add the result to offensiveValue and show the result
      * @return The BV for this weapon
      */
-    protected double processWeapon(Mounted weapon, boolean showInReport,
+    protected double processWeapon(Mounted<?> weapon, boolean showInReport,
                                    boolean addToOffensiveValue, int weaponCount) {
         double weaponBV = weapon.getType().getBV(entity);
 
@@ -741,7 +741,7 @@ public abstract class BVCalculator {
         if ((weapon.getType() instanceof WeaponType) && weapon.getType().hasFlag(WeaponType.F_MGA)) {
             double mgBV = 0;
             for (int eqNum : weapon.getBayWeapons()) {
-                Mounted mg = entity.getEquipment(eqNum);
+                Mounted<?> mg = entity.getEquipment(eqNum);
                 if ((mg != null) && (!mg.isDestroyed())) {
                     mgBV += mg.getType().getBV(entity);
                 }

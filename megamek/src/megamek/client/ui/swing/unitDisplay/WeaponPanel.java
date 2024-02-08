@@ -1109,7 +1109,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
 
         boolean hasFiredWeapons = false;
         for (int i = 0; i < entity.getWeaponList().size(); i++) {
-            Mounted mounted = entity.getWeaponList().get(i);
+            Mounted<?> mounted = entity.getWeaponList().get(i);
 
             // Don't add bomb weapons for LAMs in mech mode except RL and TAG.
             if ((entity instanceof LandAirMech)
@@ -1458,7 +1458,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
             return;
         }
 
-        Mounted mounted = ((WeaponListModel) weaponList.getModel())
+        Mounted<?> mounted = ((WeaponListModel) weaponList.getModel())
                 .getWeaponAt(weaponList.getSelectedIndex());
         WeaponType wtype = (WeaponType) mounted.getType();
         // The rules are a bit sparse on airborne (dropping) ground units, but it seems they should
@@ -2744,7 +2744,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
             if (weaponList.getSelectedIndex() == -1) {
                 return;
             }
-            Mounted mWeap = ((WeaponListModel) weaponList.getModel())
+            Mounted<?> mWeap = ((WeaponListModel) weaponList.getModel())
                     .getWeaponAt(n);
             Mounted oldWeap = mWeap;
             Mounted oldAmmo = mWeap.getLinked();

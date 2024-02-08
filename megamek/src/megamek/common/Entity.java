@@ -11573,7 +11573,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      */
     public Mounted whichBay(int bayID) {
 
-        for (Mounted m : getWeaponBayList()) {
+        for (Mounted<?> m : getWeaponBayList()) {
             for (int wId : m.getBayWeapons()) {
                 // find the weapon and determine if it is there
                 if (wId == bayID) {
@@ -12548,7 +12548,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      */
     public Mounted getBayByAmmo(Mounted mammo) {
 
-        for (Mounted m : getWeaponBayList()) {
+        for (Mounted<?> m : getWeaponBayList()) {
             for (int bayAmmoId : m.getBayAmmo()) {
                 Mounted bayammo = getEquipment(bayAmmoId);
                 if (bayammo == mammo) {

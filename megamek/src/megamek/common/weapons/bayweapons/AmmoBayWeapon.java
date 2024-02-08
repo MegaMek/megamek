@@ -46,7 +46,7 @@ public abstract class AmmoBayWeapon extends BayWeapon {
 
     protected void checkAmmo(WeaponAttackAction waa, Game g) {
         Entity ae = waa.getEntity(g);
-        Mounted m = ae.getEquipment(waa.getWeaponId());
+        Mounted<?> m = ae.getEquipment(waa.getWeaponId());
         for (int wId : m.getBayWeapons()) {
             Mounted weapon = ae.getEquipment(wId);
             Mounted ammo = weapon.getLinked();

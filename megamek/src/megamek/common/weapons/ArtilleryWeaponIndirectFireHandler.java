@@ -234,7 +234,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
         r.newlines = 0;
         r.subject = subjectId;
         if (wtype != null) {
-            r.add(wtype.getName());
+            r.add(wtype.getName() + " (" + atype.getShortName() + ")");
         } else {
             r.add("Error: From Nowhere");
         }

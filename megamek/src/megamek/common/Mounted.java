@@ -17,6 +17,7 @@ package megamek.common;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
 import megamek.common.equipment.AmmoMounted;
+import megamek.common.equipment.MiscMounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
@@ -184,33 +185,6 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
         this.type = type;
         typeName = type.getInternalName();
 
-        if ((type instanceof MiscType) && type.hasFlag(MiscType.F_MINE)) {
-            mineType = MINE_CONVENTIONAL;
-            // Used to keep track of the # of mines
-            shotsLeft = 1;
-        }
-        if ((type instanceof MiscType) &&
-                type.hasFlag(MiscType.F_VEHICLE_MINE_DISPENSER)) {
-            mineType = MINE_CONVENTIONAL;
-            // Used to keep track of the # of mines
-            shotsLeft = 2;
-        }
-        if ((type instanceof MiscType)
-                && type.hasFlag(MiscType.F_SENSOR_DISPENSER)) {
-            setShotsLeft(type.hasFlag(MiscType.F_BA_EQUIPMENT) ? 6 : 30);
-        }
-        if ((type instanceof MiscType)
-                && ((((MiscType) type).isShield() || type
-                        .hasFlag(MiscType.F_MODULAR_ARMOR)))) {
-            MiscType shield = (MiscType) type;
-            baseDamageAbsorptionRate = shield.baseDamageAbsorptionRate;
-            baseDamageCapacity = shield.baseDamageCapacity;
-            damageTaken = shield.damageTaken;
-        }
-        if ((type instanceof MiscType)
-                && type.hasFlag(MiscType.F_MINESWEEPER)) {
-            armorValue = 30;
-        }
 
         quirks.initialize();
     }
@@ -220,6 +194,8 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
             return new WeaponMounted(entity, (WeaponType) type);
         } else if (type instanceof AmmoType) {
             return new AmmoMounted(entity, (AmmoType) type);
+        } else if (type instanceof MiscType) {
+            return new MiscMounted(entity, (MiscType) type);
         } else {
             return new Mounted<>(entity, type);
         }

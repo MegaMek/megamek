@@ -4305,7 +4305,7 @@ public abstract class Mech extends Entity {
         sb.append(newLine);
 
         sb.append(MtfFile.HEAT_SINKS).append(heatSinks()).append(" ");
-        Optional<EquipmentType> heatSink = getMisc().stream()
+        Optional<MiscType> heatSink = getMisc().stream()
                 .filter(m -> m.getType().hasFlag(MiscType.F_HEAT_SINK)
                     || m.getType().hasFlag(MiscType.F_DOUBLE_HEAT_SINK))
                 .map(Mounted::getType).findFirst();

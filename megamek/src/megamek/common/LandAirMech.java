@@ -15,6 +15,7 @@ package megamek.common;
 
 import megamek.common.enums.MPBoosters;
 import megamek.common.equipment.AmmoMounted;
+import megamek.common.equipment.MiscMounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.OptionsConstants;
 import org.apache.logging.log4j.LogManager;
@@ -2063,19 +2064,19 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
                 addEquipment(m, Entity.LOC_NONE, false);
             }
         }
-        if (mounted.getType() instanceof AmmoType) {
+        if (mounted instanceof AmmoMounted) {
             ammoList.add((AmmoMounted) mounted);
         }
-        if (mounted.getType() instanceof MiscType) {
-            miscList.add(mounted);
+        if (mounted instanceof MiscMounted) {
+            miscList.add((MiscMounted) mounted);
         }
         equipmentList.add(mounted);
     }
 
     @Override
-    public Mounted addEquipment(EquipmentType etype, int loc, boolean rearMounted) throws LocationFullException {
+    public Mounted<?> addEquipment(EquipmentType etype, int loc, boolean rearMounted) throws LocationFullException {
         if (etype instanceof BombType) {
-            Mounted mounted = Mounted.createMounted(this, etype);
+            Mounted<?> mounted = Mounted.createMounted(this, etype);
             addBomb(mounted, loc);
             return mounted;
         } else {

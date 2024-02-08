@@ -1268,7 +1268,18 @@ public class EquipmentType implements ITechnology {
         return isAnyOf(typeInternalName);
     }
 
-    public static List<String> getStructureNames() {
-        return Arrays.stream(structureNames).collect(Collectors.toList());
+    public static Map<Integer, String> getAllStructureCodeName() {
+        Map<Integer, String> result = new HashMap();
+
+        result.put(T_STRUCTURE_UNKNOWN, getStructureTypeName(T_STRUCTURE_UNKNOWN));
+        result.put(T_STRUCTURE_STANDARD, getStructureTypeName(T_STRUCTURE_STANDARD));
+        result.put(T_STRUCTURE_INDUSTRIAL, getStructureTypeName(T_STRUCTURE_INDUSTRIAL));
+        result.put(T_STRUCTURE_ENDO_STEEL, getStructureTypeName(T_STRUCTURE_ENDO_STEEL));
+        result.put(T_STRUCTURE_ENDO_PROTOTYPE, getStructureTypeName(T_STRUCTURE_ENDO_PROTOTYPE));
+        result.put(T_STRUCTURE_REINFORCED, getStructureTypeName(T_STRUCTURE_REINFORCED));
+        result.put(T_STRUCTURE_COMPOSITE, getStructureTypeName(T_STRUCTURE_COMPOSITE));
+        result.put(T_STRUCTURE_ENDO_COMPOSITE, getStructureTypeName(T_STRUCTURE_ENDO_COMPOSITE));
+
+        return result;
     }
 }

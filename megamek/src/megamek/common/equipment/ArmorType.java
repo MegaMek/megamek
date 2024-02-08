@@ -65,6 +65,16 @@ public class ArmorType extends MiscType {
         return allTypes.stream().map(ArmorType::getName).distinct().collect(Collectors.toList());
     }
 
+    public static Map<Integer, String> getAllArmorCodeName() {
+        Map<Integer, String> result = new HashMap();
+
+        for (ArmorType armorType : allTypes) {
+            result.put(armorType.getArmorType(), getArmorTypeName(armorType.getArmorType()));
+        }
+
+        return result;
+    }
+
     public static void initializeTypes() {
         addArmorType(createStandardArmor());
         addArmorType(createISFerroFibrous());

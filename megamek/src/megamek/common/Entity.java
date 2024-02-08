@@ -4794,7 +4794,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         return -1;
     }
 
-    public static Map<Integer, String> getGyroTypes() {
+    public static Map<Integer, String> getAllGyroCodeName() {
         Map<Integer, String> result = new HashMap();
 
         result.put(Mech.GYRO_UNKNOWN, Mech.getGyroDisplayString(Mech.GYRO_UNKNOWN));

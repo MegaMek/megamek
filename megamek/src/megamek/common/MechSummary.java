@@ -47,6 +47,7 @@ public class MechSummary implements Serializable, ASCardDisplayable {
     private String source;
     private boolean invalid;
     private String techLevel;
+    private int techLevelCode;
     private String techBase;
     private boolean failedToLoadEquipment;
     private String entryName; // for files in zips
@@ -84,6 +85,7 @@ public class MechSummary implements Serializable, ASCardDisplayable {
     private int totalInternal;
     private int cockpitType;
     private String engineName;
+    private int engineType;
     private int gyroType;
     private String myomerName;
     private int lowerArms;
@@ -299,6 +301,10 @@ public class MechSummary implements Serializable, ASCardDisplayable {
 
     public String getTechLevel() {
         return techLevel;
+    }
+
+    public int getTechLevelCode() {
+        return techLevelCode;
     }
 
     public String getTechBase() {
@@ -865,6 +871,10 @@ public class MechSummary implements Serializable, ASCardDisplayable {
         this.techLevel = s;
     }
 
+    public void setTechLevelCode(int i) {
+        this.techLevelCode = i;
+    }
+
     public void setTechBase(String s) {
         this.techBase = s;
     }
@@ -1147,6 +1157,14 @@ public class MechSummary implements Serializable, ASCardDisplayable {
 
     public void setEngineName(String engineName) {
         this.engineName = engineName;
+    }
+
+    public int getEngineType() {
+        return engineType;
+    }
+
+    public void setEngineType(int engineType) {
+        this.engineType = engineType;
     }
 
     public int getGyroType() {

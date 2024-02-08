@@ -500,12 +500,17 @@ public class ArtilleryTargetingControl {
                 // damage for artillery weapons is, for some reason, derived from the weapon type's rack size
                 int damage = 0;
                 Mounted weapon = aaa.getEntity(operator.getGame()).getEquipment(aaa.getWeaponId());
-                if (weapon.getType() instanceof BombType){
-                    damage = (weapon.getExplosionDamage());
+                if (null == weapon) {
+                    // The weaponId couldn't get us a weapon; probably a bomb Arrow IV dropped on a prior turn.
+                    // Arrow IV is in the 20 damage range.
+                    damage = 20;
                 } else {
-                    damage = ((WeaponType) weapon.getType()).getRackSize();
+                    if (weapon.getType() instanceof BombType) {
+                        damage = (weapon.getExplosionDamage());
+                    } else {
+                        damage = ((WeaponType) weapon.getType()).getRackSize();
+                    }
                 }
-
 
                 // distance from given coordinates reduces damage
                 Coords attackDestination = aaa.getTarget(operator.getGame()).getPosition();

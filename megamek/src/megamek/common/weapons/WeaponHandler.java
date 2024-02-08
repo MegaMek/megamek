@@ -56,6 +56,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
     protected boolean bLowProfileGlancing = false;
     protected boolean nukeS2S = false;
     protected WeaponType wtype;
+    protected AmmoType atype;
     protected String typeName;
     protected Mounted weapon;
     protected Entity ae;
@@ -801,7 +802,6 @@ public class WeaponHandler implements AttackHandler, Serializable {
                 if ((wtype.getAmmoType() != AmmoType.T_NA)
                         && (weapon.getLinked() != null)
                         && (weapon.getLinked().getType() instanceof AmmoType)) {
-                    AmmoType atype = (AmmoType) weapon.getLinked().getType();
                     if (!atype.getMunitionType().contains(AmmoType.Munitions.M_STANDARD)
                         || atype.getAmmoType() == AmmoType.T_MML
                         || atype.getAmmoType() == AmmoType.T_AC_LBX) {
@@ -1753,6 +1753,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
         ae = game.getEntity(waa.getEntityId());
         weapon = ae.getEquipment(waa.getWeaponId());
         wtype = (WeaponType) weapon.getType();
+        atype = (weapon.getLinked() != null) ? (AmmoType) weapon.getLinked().getType() : null;
         typeName = wtype.getInternalName();
         target = game.getTarget(waa.getTargetType(), waa.getTargetId());
         gameManager = m;

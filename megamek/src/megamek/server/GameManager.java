@@ -10190,13 +10190,15 @@ public class GameManager implements IGameManager {
                                         int subjectId, Vector<Report> vPhaseReport) {
         Hex h = game.getBoard().getHex(coords);
         Report r;
-        // Unless there is a fire in the hex already, start one.
-        if (h.terrainLevel(Terrains.FIRE) < Terrains.FIRE_LVL_INFERNO_IV) {
-            ignite(coords, Terrains.FIRE_LVL_INFERNO_IV, vPhaseReport);
-        }
-        // possibly melt ice and snow
-        if (h.containsTerrain(Terrains.ICE) || h.containsTerrain(Terrains.SNOW)) {
-            vPhaseReport.addAll(meltIceAndSnow(coords, subjectId));
+        if (null != h) {
+            // Unless there is a fire in the hex already, start one.
+            if (h.terrainLevel(Terrains.FIRE) < Terrains.FIRE_LVL_INFERNO_IV) {
+                ignite(coords, Terrains.FIRE_LVL_INFERNO_IV, vPhaseReport);
+            }
+            // possibly melt ice and snow
+            if (h.containsTerrain(Terrains.ICE) || h.containsTerrain(Terrains.SNOW)) {
+                vPhaseReport.addAll(meltIceAndSnow(coords, subjectId));
+            }
         }
         for (Entity entity : game.getEntitiesVector(coords)) {
             // TacOps, p. 356 - treat as if hit by 5 inferno missiles
@@ -10222,13 +10224,15 @@ public class GameManager implements IGameManager {
                 continue;
             }
             h = game.getBoard().getHex(tempcoords);
-            // Unless there is a fire in the hex already, start one.
-            if (h.terrainLevel(Terrains.FIRE) < Terrains.FIRE_LVL_INFERNO_IV) {
-                ignite(tempcoords, Terrains.FIRE_LVL_INFERNO_IV, vPhaseReport);
-            }
-            // possibly melt ice and snow
-            if (h.containsTerrain(Terrains.ICE) || h.containsTerrain(Terrains.SNOW)) {
-                vPhaseReport.addAll(meltIceAndSnow(tempcoords, subjectId));
+            if (null != h) {
+                // Unless there is a fire in the hex already, start one.
+                if (h.terrainLevel(Terrains.FIRE) < Terrains.FIRE_LVL_INFERNO_IV) {
+                    ignite(tempcoords, Terrains.FIRE_LVL_INFERNO_IV, vPhaseReport);
+                }
+                // possibly melt ice and snow
+                if (h.containsTerrain(Terrains.ICE) || h.containsTerrain(Terrains.SNOW)) {
+                    vPhaseReport.addAll(meltIceAndSnow(tempcoords, subjectId));
+                }
             }
             for (Entity entity : game.getEntitiesVector(tempcoords)) {
                 r = new Report(6695);

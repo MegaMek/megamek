@@ -69,7 +69,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirec
                 r.indent();
                 r.newlines = 0;
                 r.subject = subjectId;
-                r.add(wtype.getName());
+                r.add(wtype.getName() + " (" + atype.getShortName() + ")");
                 r.add(aaa.getTurnsTilHit());
                 vPhaseReport.addElement(r);
                 Report.addNewline(vPhaseReport);
@@ -87,7 +87,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirec
             aaa.decrementTurnsTilHit();
             return true;
         }
-        
+
         convertHomingShotToEntityTarget();
         Entity entityTarget = (aaa.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) aaa
                 .getTarget(game) : null;
@@ -179,7 +179,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirec
             bMissed = true;
         }
         nDamPerHit = wtype.getRackSize();
-        
+
         AmmoType ammoType = (AmmoType) ammo.getType();
 
         // copperhead gets 10 damage less than standard
@@ -191,7 +191,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirec
         if (specialResolution(vPhaseReport, entityTarget)) {
             return false;
         }
-        
+
         //Any AMS/Point Defense fire against homing rounds?
         int hits = handleAMS(vPhaseReport);
 
@@ -205,14 +205,14 @@ public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirec
                 return false;
             }
         }
-        int nCluster = 1;       
+        int nCluster = 1;
         if ((entityTarget != null) && (entityTarget.getTaggedBy() != -1)) {
             if (aaa.getCoords() != null && hits > 0) {
                 toHit.setSideTable(entityTarget.sideTable(aaa.getCoords()));
             }
-           
+
         }
-        
+
         // The building shields all units from a certain amount of damage.
         // The amount is based upon the building's CF at the phase's start.
         int bldgAbsorbs = 0;
@@ -245,9 +245,9 @@ public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirec
             vPhaseReport.addElement(r);
             return false;
         }
-        
+
         boolean targetingHex = false;
-        
+
         if (!bMissed && (entityTarget != null)) {
             handleEntityDamage(entityTarget, vPhaseReport, bldg, hits, nCluster, bldgAbsorbs);
             gameManager.creditKill(entityTarget, ae);
@@ -267,34 +267,34 @@ public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirec
 
         Coords coords = target.getPosition();
         int ratedDamage = 5; // splash damage is 5 from all launchers
-        
+
         //If AMS shoots down a missile, it shouldn't deal any splash damage
         if (hits == 0) {
             ratedDamage = 0;
         }
-        
+
         // homing artillery splash damage is area effect.
         // do damage to woods, 2 * normal damage (TW page 112)
         // on the other hand, if the hex *is* the target, do full damage
         int hexDamage = targetingHex ? wtype.getRackSize() : ratedDamage * 2;
-        
+
         bldg = null;
         bldg = game.getBoard().getBuildingAt(coords);
         bldgAbsorbs = (bldg != null) ? bldg.getAbsorbtion(coords) : 0;
         bldgAbsorbs = Math.min(bldgAbsorbs, ratedDamage);
         handleClearDamage(vPhaseReport, bldg, hexDamage, false);
         ratedDamage -= bldgAbsorbs;
-        
+
         if (ratedDamage > 0) {
             Hex hex = game.getBoard().getHex(coords);
-            
+
             for (Entity entity : game.getEntitiesVector(coords)) {
                 if (!bMissed && (entity == entityTarget)) {
                         continue; // don't splash the original target unless it's a miss
                 }
-                
-                AreaEffectHelper.artilleryDamageEntity(entity, ratedDamage, bldg, bldgAbsorbs, 
-                        targetInBuilding, bldgDamagedOnMiss, missReported, ratedDamage, coords, ammoType, 
+
+                AreaEffectHelper.artilleryDamageEntity(entity, ratedDamage, bldg, bldgAbsorbs,
+                        targetInBuilding, bldgDamagedOnMiss, missReported, ratedDamage, coords, ammoType,
                         coords, targetingHex, entityTarget, hex, hexDamage, vPhaseReport, gameManager);
             }
         }
@@ -303,7 +303,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirec
     }
 
     /**
-     * Find the tagged entity for this attack 
+     * Find the tagged entity for this attack
      * Uses a CFR to let the player choose from eligible TAG
      */
     public void convertHomingShotToEntityTarget() {
@@ -315,14 +315,14 @@ public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirec
         Vector<TagInfo> v = game.getTagInfo();
         Vector<TagInfo> allowed = new Vector<>();
         Entity attacker = game.getEntityFromAllSources(getAttackerId());
-        
+
         // get only TagInfo on the same side
-        for (TagInfo ti : v) { 
+        for (TagInfo ti : v) {
             Entity tagger = game.getEntityFromAllSources(ti.attackerId);
             if (attacker.getOwner().isEnemyOf(tagger.getOwner())) {
                 continue;
             }
-            
+
             switch (ti.targetType) {
                 case Targetable.TYPE_BLDG_TAG:
                 case Targetable.TYPE_HEX_TAG:
@@ -411,7 +411,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirec
             Vector<Report> vPhaseReport) {
         return true;
     }
-    
+
     /**
      * Checks to see if the basic conditions needed for point defenses to work are in place
      * Artillery weapons need to change this slightly
@@ -424,7 +424,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirec
         }
         return true;
     }
-        
+
     /**
      * Sets the appropriate AMS Bay reporting flag depending on what type of missile this is
      */
@@ -432,7 +432,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirec
     protected void setAMSBayReportingFlag() {
         amsBayEngagedCap = true;
     }
-    
+
     /**
      * Sets the appropriate PD Bay reporting flag depending on what type of missile this is
      */
@@ -440,20 +440,20 @@ public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirec
     protected void setPDBayReportingFlag() {
         pdBayEngagedCap = true;
     }
-    
+
     @Override
     protected int calcCapMissileAMSMod() {
         CapMissileAMSMod = (int) Math.ceil(CounterAV / 10.0);
         return CapMissileAMSMod;
     }
-    
+
     @Override
     protected int getCapMissileAMSMod() {
         return CapMissileAMSMod;
     }
-    
+
     protected int handleAMS(Vector<Report> vPhaseReport) {
-        
+
         int hits = 1;
         if (((AmmoType) ammo.getType()).getAmmoType() == AmmoType.T_ARROW_IV
                 || ((AmmoType) ammo.getType()).getAmmoType() == BombType.B_HOMING) {
@@ -462,7 +462,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirec
             gameManager.assignAMS();
             calcCounterAV();
             // Report AMS/Pointdefense failure due to Overheating.
-            if (pdOverheated 
+            if (pdOverheated
                     && (!(amsBayEngaged
                             || amsBayEngagedCap
                             || amsBayEngagedMissile

@@ -2266,11 +2266,18 @@ public class FireControl {
             return false;
         }
 
-        for (Mounted weapon : shooter.getWeaponList()) {
-            if (weapon.hasModeType(Weapon.MODE_MISSILE_INDIRECT) || weapon.hasModeType(Weapon.MODE_INDIRECT_HEAT)) {
-                fireControlState.getEntityIDFStates().put(shooter.getId(), true);
-                return true;
+        try {
+            // Beware concurrent modification
+            for (Mounted weapon : shooter.getWeaponList()) {
+                if (weapon.hasModeType(Weapon.MODE_MISSILE_INDIRECT) || weapon.hasModeType(Weapon.MODE_INDIRECT_HEAT)) {
+                    fireControlState.getEntityIDFStates().put(shooter.getId(), true);
+                    return true;
+                }
             }
+        }
+        catch (ConcurrentModificationException e) {
+            // Needs more investigation, but for now just say IDF mode can't change right now.
+            LogManager.getLogger().error(e.getMessage(), e);
         }
 
         fireControlState.getEntityIDFStates().put(shooter.getId(), false);

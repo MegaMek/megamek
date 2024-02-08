@@ -69,7 +69,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
                 r.indent();
                 r.newlines = 0;
                 r.subject = subjectId;
-                r.add(wtype.getName());
+                r.add(wtype.getName() + " (" + atype.getShortName() + ")");
                 r.add(aaa.getTurnsTilHit());
                 vPhaseReport.addElement(r);
                 Report.addNewline(vPhaseReport);

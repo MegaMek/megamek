@@ -297,6 +297,7 @@ public class ArtilleryTargetingControl {
 
         // if we haven't built a target list yet, do so now.
         // potential target list is the same regardless of the entity doing the shooting
+        // TODO: allow for counter-battery fire on spotted off-board shooters.
         if (targetSet == null) {
             buildTargetList(shooter, game, owner);
             // If we decided not to shoot this phase, no reason to continue calculating.

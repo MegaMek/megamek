@@ -20,6 +20,7 @@ import megamek.common.actions.TeleMissileAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.AimingMode;
 import megamek.common.enums.GamePhase;
+import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.OptionsConstants;
 import megamek.server.GameManager;
 import megamek.server.Server;
@@ -57,7 +58,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
     protected boolean nukeS2S = false;
     protected WeaponType wtype;
     protected String typeName;
-    protected Mounted<?> weapon;
+    protected WeaponMounted weapon;
     protected Entity ae;
     protected Targetable target;
     protected int subjectId;
@@ -1749,7 +1750,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
         waa = w;
         game = g;
         ae = game.getEntity(waa.getEntityId());
-        weapon = ae.getEquipment(waa.getWeaponId());
+        weapon = (WeaponMounted) ae.getEquipment(waa.getWeaponId());
         wtype = (WeaponType) weapon.getType();
         typeName = wtype.getInternalName();
         target = game.getTarget(waa.getTargetType(), waa.getTargetId());
@@ -1938,8 +1939,8 @@ public class WeaponHandler implements AttackHandler, Serializable {
             return nDamage;
         }
 
-        weapon = ae.getEquipment(waa.getWeaponId());
-        wtype = (WeaponType) weapon.getType();
+        weapon = ae.getWeapon(waa.getWeaponId());
+        wtype = weapon.getType();
 
         if (!wtype.hasFlag(WeaponType.F_ENERGY)) {
             return nDamage;

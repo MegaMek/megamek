@@ -18,6 +18,7 @@ import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.equipment.BombMounted;
+import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
 import megamek.common.weapons.infantry.InfantryWeapon;
@@ -43,7 +44,7 @@ public class WeaponFireInfo {
     private WeaponAttackAction action;
     private Entity shooter;
     private Targetable target;
-    private Mounted<?> weapon;
+    private WeaponMounted weapon;
     private double probabilityToHit;
     private int heat;
     private double maxDamage;
@@ -76,7 +77,7 @@ public class WeaponFireInfo {
      */
     WeaponFireInfo(final Entity shooter,
                    final Targetable target,
-                   final Mounted weapon,
+                   final WeaponMounted weapon,
                    final Game game,
                    final boolean guess,
                    final Princess owner) {
@@ -98,7 +99,7 @@ public class WeaponFireInfo {
                    final EntityState shooterState,
                    final Targetable target,
                    final EntityState targetState,
-                   final Mounted weapon,
+                   final WeaponMounted weapon,
                    final Game game,
                    final boolean guess,
                    final Princess owner) {
@@ -123,7 +124,7 @@ public class WeaponFireInfo {
                    final MovePath shooterPath,
                    final Targetable target,
                    final EntityState targetState,
-                   final Mounted weapon,
+                   final WeaponMounted weapon,
                    final Game game,
                    final boolean assumeUnderFlightPath,
                    final boolean guess,
@@ -154,7 +155,7 @@ public class WeaponFireInfo {
                            final MovePath shooterPath,
                            final Targetable target,
                            final EntityState targetState,
-                           final Mounted weapon,
+                           final WeaponMounted weapon,
                            final Game game,
                            final boolean assumeUnderFlightPath,
                            final boolean guess,
@@ -310,7 +311,7 @@ public class WeaponFireInfo {
         this.targetState = targetState;
     }
 
-    protected void setWeapon(final Mounted weapon) {
+    protected void setWeapon(final WeaponMounted weapon) {
         this.weapon = weapon;
     }
 
@@ -322,7 +323,7 @@ public class WeaponFireInfo {
         return heat;
     }
 
-    public Mounted getWeapon() {
+    public WeaponMounted getWeapon() {
         return weapon;
     }
 
@@ -365,7 +366,7 @@ public class WeaponFireInfo {
         if ((null != weapon.getBayWeapons()) && !weapon.getBayWeapons().isEmpty()) {
             int bayDamage = 0;
             for (int weaponID : weapon.getBayWeapons()) {
-                Mounted bayWeapon = weapon.getEntity().getEquipment(weaponID);
+                Mounted<?> bayWeapon = weapon.getEntity().getEquipment(weaponID);
                 WeaponType weaponType = (WeaponType) bayWeapon.getType();
                 int maxRange = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE)
                         ? weaponType.getExtremeRange() : weaponType.getLongRange();

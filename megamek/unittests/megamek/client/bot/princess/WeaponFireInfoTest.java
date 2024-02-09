@@ -21,6 +21,7 @@ package megamek.client.bot.princess;
 import megamek.client.bot.princess.FireControl.FireControlType;
 import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.equipment.WeaponMounted;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -57,7 +58,7 @@ public class WeaponFireInfoTest {
     private static BipedMech mockTarget;
     private static EntityState mockTargetState;
     private static Game mockGame;
-    private static Mounted mockWeapon;
+    private static WeaponMounted mockWeapon;
     private static WeaponType mockWeaponType;
     private static WeaponAttackAction mockWeaponAttackAction;
     private static EquipmentMode mockEquipmentMode;
@@ -108,7 +109,7 @@ public class WeaponFireInfoTest {
         when(mockTargetState.getPosition()).thenReturn(TARGET_COORDS_9);
 
         mockWeaponType = mock(WeaponType.class);
-        mockWeapon = mock(Mounted.class);
+        mockWeapon = mock(WeaponMounted.class);
         mockEquipmentMode = mock(EquipmentMode.class);
         when(mockWeapon.getType()).thenReturn(mockWeaponType);
         when(mockEquipmentMode.getName()).thenReturn("");
@@ -181,7 +182,7 @@ public class WeaponFireInfoTest {
         doReturn(mockToHitSix).when(testWeaponFireInfo).calcToHit();
         doReturn(mockWeaponAttackAction).when(testWeaponFireInfo).buildWeaponAttackAction();
         doReturn(expectedMaxDamage).when(testWeaponFireInfo).computeExpectedDamage();
-        when(mockShooter.getEquipment(anyInt())).thenReturn(mockWeapon);
+        when(mockShooter.getEquipment(anyInt())).thenReturn((Mounted) mockWeapon);
         testWeaponFireInfo.initDamage(null, false, true, null);
         assertEquals(expectedMaxDamage, testWeaponFireInfo.getMaxDamage());
         assertEquals(expectedMaxDamage, testWeaponFireInfo.getExpectedDamageOnHit());

@@ -111,7 +111,7 @@ public class MultiTargetFireControl extends FireControl {
      * @param weapon Weapon to fire.
      * @return The weapon fire info with the most expected damage. Null if no such thing.
      */
-    WeaponFireInfo getBestShot(Mounted weapon) {
+    WeaponFireInfo getBestShot(WeaponMounted weapon) {
         WeaponFireInfo bestShot = null;
         
         for (Targetable target : getTargetableEnemyEntities(weapon.getEntity(), owner.getGame(), owner.getFireControlState())) {

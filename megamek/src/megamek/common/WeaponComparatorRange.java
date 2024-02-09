@@ -14,6 +14,8 @@
  */
 package megamek.common;
 
+import megamek.common.equipment.WeaponMounted;
+
 import java.util.Comparator;
 
 /**
@@ -21,7 +23,7 @@ import java.util.Comparator;
  * 
  * @author arlith
  */
-public class WeaponComparatorRange implements Comparator<Mounted> {
+public class WeaponComparatorRange implements Comparator<WeaponMounted> {
 
     /**
      * Value used to change order from ascending to descending. If descending,
@@ -36,42 +38,38 @@ public class WeaponComparatorRange implements Comparator<Mounted> {
     }
 
     @Override
-    public int compare(Mounted obj1, Mounted obj2) {
-        if (obj1.getType() instanceof WeaponType
-                && obj2.getType() instanceof WeaponType) {
-            WeaponType weap1 = (WeaponType) obj1.getType();
-            WeaponType weap2 = (WeaponType) obj2.getType();
-            
-            // If types are equal, pick front facing first
-            if (weap1 == weap2) {
-                if (obj1.isRearMounted()) {
-                    return -1 * ascending;
-                } else if (obj2.isRearMounted()) {
-                    return ascending;
-                } else {
-                    return 0;
-                }
-            }
-            int[] ranges1 = weap1.getRanges(obj1);
-            int[] ranges2 = weap2.getRanges(obj2);
-            // Start by comparing the short range brackets (*not* the minimum
-            // ranges at index 0), then work outwards from there as needed.
-            for (int r = 1; r < ranges1.length; r++) {
-                if (ranges1[r] < ranges2[r]) {
-                    return -1 * ascending;
-                } else if (ranges1[r] > ranges2[r]) {
-                    return ascending;
-                }
-            }
-            // If we get here, all ranges are equals, arbitrate with heat
-            if (weap1.getHeat() > weap2.getHeat()) {
-                return ascending;
-            } else if (weap1.getHeat() < weap2.getHeat()) {
+    public int compare(WeaponMounted obj1, WeaponMounted obj2) {
+        WeaponType weap1 = obj1.getType();
+        WeaponType weap2 = obj2.getType();
+
+        // If types are equal, pick front facing first
+        if (weap1 == weap2) {
+            if (obj1.isRearMounted()) {
                 return -1 * ascending;
+            } else if (obj2.isRearMounted()) {
+                return ascending;
             } else {
                 return 0;
             }
         }
-        throw new ClassCastException("Passed Mounteds are not Weapons");
+        int[] ranges1 = weap1.getRanges(obj1);
+        int[] ranges2 = weap2.getRanges(obj2);
+        // Start by comparing the short range brackets (*not* the minimum
+        // ranges at index 0), then work outwards from there as needed.
+        for (int r = 1; r < ranges1.length; r++) {
+            if (ranges1[r] < ranges2[r]) {
+                return -1 * ascending;
+            } else if (ranges1[r] > ranges2[r]) {
+                return ascending;
+            }
+        }
+        // If we get here, all ranges are equals, arbitrate with heat
+        if (weap1.getHeat() > weap2.getHeat()) {
+            return ascending;
+        } else if (weap1.getHeat() < weap2.getHeat()) {
+            return -1 * ascending;
+        } else {
+            return 0;
+        }
     }
 }

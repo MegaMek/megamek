@@ -18,6 +18,8 @@ import megamek.common.Game;
 import megamek.common.Mounted;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.equipment.AmmoMounted;
+import megamek.common.equipment.WeaponMounted;
 import megamek.server.GameManager;
 import megamek.server.Server;
 
@@ -50,11 +52,10 @@ public abstract class AmmoWeapon extends Weapon {
 
     protected void checkAmmo(WeaponAttackAction waa, Game g) {
         Entity ae = waa.getEntity(g);
-        Mounted weapon = ae.getEquipment(waa.getWeaponId());
-        Mounted ammo = weapon.getLinked();
+        WeaponMounted weapon = (WeaponMounted) ae.getEquipment(waa.getWeaponId());
+        AmmoMounted ammo = weapon.getLinkedAmmo();
         if (ammo == null || ammo.getUsableShotsLeft() < 1) {
             ae.loadWeaponWithSameAmmo(weapon);
-            ammo = weapon.getLinked();
         }
     }
 

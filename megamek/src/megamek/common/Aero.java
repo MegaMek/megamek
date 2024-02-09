@@ -3062,15 +3062,11 @@ public class Aero extends Entity implements IAero, IBomber {
     }
 
     @Override
-    public List<Mounted> getActiveAMS() {
+    public List<WeaponMounted> getActiveAMS() {
         //Large craft use AMS and Point Defense bays
-        if ((this instanceof Dropship)
-                || (this instanceof Jumpship)
-                || (this instanceof Warship)
-                || (this instanceof SpaceStation)) {
-
-            ArrayList<Mounted> ams = new ArrayList<>();
-            for (Mounted<?> weapon : getWeaponBayList()) {
+        if (isLargeCraft()) {
+            List<WeaponMounted> ams = new ArrayList<>();
+            for (WeaponMounted weapon : getWeaponBayList()) {
                 // Skip anything that's not an AMS, AMS Bay or Point Defense Bay
                 if (!weapon.getType().hasFlag(WeaponType.F_AMS)
                         && !weapon.getType().hasFlag(WeaponType.F_AMSBAY)
@@ -3093,8 +3089,8 @@ public class Aero extends Entity implements IAero, IBomber {
 
                 // Make sure ammo is loaded
                 for (int wId : weapon.getBayWeapons()) {
-                    Mounted bayW = getEquipment(wId);
-                    Mounted bayWAmmo = bayW.getLinked();
+                    Mounted<?> bayW = getEquipment(wId);
+                    Mounted<?> bayWAmmo = bayW.getLinked();
                     if (!(weapon.getType().hasFlag(WeaponType.F_ENERGY))
                             && ((bayWAmmo == null) || (bayWAmmo.getUsableShotsLeft() == 0)
                             || bayWAmmo.isDumping())) {

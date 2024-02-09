@@ -16,6 +16,7 @@ package megamek.client.ui.swing;
 import megamek.client.ui.Messages;
 import megamek.common.*;
 import megamek.common.equipment.AmmoMounted;
+import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.OptionsConstants;
 import org.apache.logging.log4j.LogManager;
 
@@ -46,7 +47,7 @@ public class BayMunitionsChoicePanel extends JPanel {
         gbc.anchor = GridBagConstraints.WEST;
         gbc.insets = new Insets(10, 0, 10, 0);
 
-        for (Mounted<?> bay : entity.getWeaponBayList()) {
+        for (WeaponMounted bay : entity.getWeaponBayList()) {
             Map<List<Integer>,List<AmmoMounted>> ammoByType = new HashMap<>();
             for (Integer aNum : bay.getBayAmmo()) {
                 final AmmoMounted ammo = (AmmoMounted) entity.getEquipment(aNum);
@@ -113,9 +114,8 @@ public class BayMunitionsChoicePanel extends JPanel {
             // and adjust original shots.
             if (remainingWeight > 0) {
                 AmmoMounted m = row.ammoMounts.get(0);
-                AmmoType at = (AmmoType) m.getType();
                 m.setSize(m.getSize() + remainingWeight);
-                m.setOriginalShots((int) Math.floor(m.getSize() / (at.getShots() * m.getTonnage())));
+                m.setOriginalShots((int) Math.floor(m.getSize() / (m.getType().getShots() * m.getTonnage())));
             }
         }
     }
@@ -128,7 +128,7 @@ public class BayMunitionsChoicePanel extends JPanel {
 
         private final JLabel lblTonnage = new JLabel();
 
-        private final Mounted bay;
+        private final WeaponMounted bay;
         private final int at;
         private final int rackSize;
         private final int techBase;
@@ -139,7 +139,7 @@ public class BayMunitionsChoicePanel extends JPanel {
 
         private double tonnage;
 
-        AmmoRowPanel(Mounted<?> bay, int at, int rackSize, List<AmmoMounted> ammoMounts) {
+        AmmoRowPanel(WeaponMounted bay, int at, int rackSize, List<AmmoMounted> ammoMounts) {
             this.bay = bay;
             this.at = at;
             this.rackSize = rackSize;

@@ -13,6 +13,8 @@ package megamek.common;
 
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.common.cost.DropShipCostCalculator;
+import megamek.common.equipment.AmmoMounted;
+import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.OptionsConstants;
 
 import java.util.HashMap;
@@ -392,17 +394,17 @@ public class Dropship extends SmallCraft {
      * need to check bay location before loading ammo
      */
     @Override
-    public boolean loadWeapon(Mounted mounted, Mounted mountedAmmo) {
+    public boolean loadWeapon(WeaponMounted mounted, AmmoMounted mountedAmmo) {
         boolean success = false;
-        WeaponType wtype = (WeaponType) mounted.getType();
-        AmmoType atype = (AmmoType) mountedAmmo.getType();
+        WeaponType wtype = mounted.getType();
+        AmmoType atype = mountedAmmo.getType();
 
         if (mounted.getLocation() != mountedAmmo.getLocation()) {
             return success;
         }
 
         // for large craft, ammo must be in the same bay
-        Mounted bay = whichBay(getEquipmentNum(mounted));
+        WeaponMounted bay = whichBay(getEquipmentNum(mounted));
         if ((bay != null) && !bay.ammoInBay(getEquipmentNum(mountedAmmo))) {
             return success;
         }

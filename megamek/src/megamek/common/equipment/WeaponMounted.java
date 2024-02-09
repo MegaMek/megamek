@@ -23,7 +23,18 @@ import megamek.common.*;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.gaussrifles.GaussWeapon;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
 public class WeaponMounted extends Mounted<WeaponType> {
+
+    // A list of ids (equipment numbers) for the weapons and ammo linked to
+    // this bay (if the mounted is of the BayWeapon type)
+    // I can also use this for weapons of the same type on a capital fighter
+    // and now Machine Gun Arrays too!
+    private List<Integer> bayWeapons = new ArrayList<>();
+    private List<Integer> bayAmmo = new ArrayList<>();
 
     public WeaponMounted(Entity entity, WeaponType type) {
         super(entity, type);
@@ -119,8 +130,88 @@ public class WeaponMounted extends Mounted<WeaponType> {
         return heat;
     }
 
+    /**
+     * @return The ammo currently linked by this weapon, or null if there is no linked ammo.
+     */
+    public AmmoMounted getLinkedAmmo() {
+        return (getLinked() instanceof AmmoMounted) ? (AmmoMounted) getLinked() : null;
+    }
+
+    /**
+     * Returns how many shots the weapon is using
+     */
+    public int getCurrentShots() {
+        WeaponType wtype = (WeaponType) getType();
+        int nShots = getNumShots(wtype, curMode(), false);
+        // sets number of shots for MG arrays
+        if (wtype.hasFlag(WeaponType.F_MGA)) {
+            nShots = 0;
+            for (int eqn : getBayWeapons()) {
+                Mounted<?> m = getEntity().getEquipment(eqn);
+                if (null == m) {
+                    continue;
+                }
+                if ((m.getLocation() == getLocation())
+                        && !m.isDestroyed()
+                        && !m.isBreached()
+                        && m.getType().hasFlag(WeaponType.F_MG)
+                        && (((WeaponType) m.getType()).getRackSize() == ((WeaponType) getType())
+                        .getRackSize())) {
+                    nShots++;
+                }
+            }
+        }
+        return nShots;
+    }
+
     @Override
     public boolean isOneShot() {
         return getType().hasFlag(WeaponType.F_ONESHOT);
+    }
+
+    public void addWeaponToBay(int w) {
+        bayWeapons.add(w);
+    }
+
+    @Override
+    public List<Integer> getBayWeapons() {
+        return bayWeapons;
+    }
+
+    public void addAmmoToBay(int a) {
+        bayAmmo.add(a);
+    }
+
+    @Override
+    public List<Integer> getBayAmmo() {
+        return bayAmmo;
+    }
+
+    /**
+     *
+     * @param mAmmoId equipment number of ammo
+     * @return        whether the ammo is in this weapon's bay
+     */
+    public boolean ammoInBay(int mAmmoId) {
+        for (int nextAmmoId : bayAmmo) {
+            if (nextAmmoId == mAmmoId) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    protected List<String> bayComponentsToString() {
+        List<String> list = new ArrayList<>();
+        if (!bayWeapons.isEmpty()) {
+            List<String> bayWeaponIds = bayWeapons.stream().map(id -> "[" + id + "]").collect(Collectors.toList());
+            list.add("Bay Weapons: " + String.join(", ", bayWeaponIds));
+        }
+        if (!bayAmmo.isEmpty()) {
+            List<String> bayAmmoIds = bayAmmo.stream().map(id -> "[" + id + "]").collect(Collectors.toList());
+            list.add("Bay Ammo: " + String.join(", ", bayAmmoIds));
+        }
+        return list;
     }
 }

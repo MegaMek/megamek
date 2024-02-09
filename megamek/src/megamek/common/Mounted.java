@@ -27,7 +27,7 @@ import megamek.common.weapons.AmmoWeapon;
 import megamek.common.weapons.Weapon;
 import megamek.common.weapons.WeaponHandler;
 import megamek.common.weapons.bayweapons.AmmoBayWeapon;
-import megamek.common.weapons.gaussrifles.GaussWeapon;
+import megamek.common.weapons.bayweapons.BayWeapon;
 import org.apache.logging.log4j.LogManager;
 
 import java.io.Serializable;
@@ -89,13 +89,6 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     private int originalShots;
     private boolean m_bPendingDump;
     private boolean m_bDumping;
-
-    // A list of ids (equipment numbers) for the weapons and ammo linked to
-    // this bay (if the mounted is of the BayWeapon type)
-    // I can also use this for weapons of the same type on a capital fighter
-    // and now Machine Gun Arrays too!
-    private Vector<Integer> bayWeapons = new Vector<>();
-    private Vector<Integer> bayAmmo = new Vector<>();
 
     // on capital fighters and squadrons some weapon mounts actually represent
     // multiple weapons of the same type
@@ -174,7 +167,9 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     }
 
     public static Mounted<?> createMounted(Entity entity, EquipmentType type) {
-        if (type instanceof WeaponType) {
+        if (type instanceof BayWeapon) {
+            return new WeaponMounted(entity, (WeaponType) type);
+        } else if (type instanceof WeaponType) {
             return new WeaponMounted(entity, (WeaponType) type);
         } else if (type instanceof BombType) {
             return new BombMounted(entity, (BombType) type);
@@ -740,33 +735,6 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     }
 
     /**
-     * Returns how many shots the weapon is using
-     */
-    public int getCurrentShots() {
-        WeaponType wtype = (WeaponType) getType();
-        int nShots = getNumShots(wtype, curMode(), false);
-        // sets number of shots for MG arrays
-        if (wtype.hasFlag(WeaponType.F_MGA)) {
-            nShots = 0;
-            for (int eqn : getBayWeapons()) {
-                Mounted m = entity.getEquipment(eqn);
-                if (null == m) {
-                    continue;
-                }
-                if ((m.getLocation() == getLocation())
-                        && !m.isDestroyed()
-                        && !m.isBreached()
-                        && m.getType().hasFlag(WeaponType.F_MG)
-                        && (((WeaponType) m.getType()).getRackSize() == ((WeaponType) getType())
-                                .getRackSize())) {
-                    nShots++;
-                }
-            }
-        }
-        return nShots;
-    }
-
-    /**
      * Returns how many shots a weapon type would use.  This can be used without
      * an instantiation of Mounted, which is useful for computing Aero heat.
      * If ignoreMode is true, then mode can be null.
@@ -1243,6 +1211,14 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
         return false;
     }
 
+    public List<Integer> getBayWeapons() {
+        return Collections.emptyList();
+    }
+
+    public List<Integer> getBayAmmo() {
+        return Collections.emptyList();
+    }
+
     /**
      * Returns false if this ammo should not be loaded. Checks if the ammo is
      * already destroyed or missing, is being dumped, has been breached, is
@@ -1254,22 +1230,6 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
             return false;
         }
         return true;
-    }
-
-    public void addWeaponToBay(int w) {
-        bayWeapons.add(w);
-    }
-
-    public Vector<Integer> getBayWeapons() {
-        return bayWeapons;
-    }
-
-    public void addAmmoToBay(int a) {
-        bayAmmo.add(a);
-    }
-
-    public Vector<Integer> getBayAmmo() {
-        return bayAmmo;
     }
 
     public void setByShot(boolean b) {
@@ -1310,16 +1270,6 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
      */
     public boolean isInternalBomb() {
         return isInternalBomb;
-    }
-
-    // is ammo in the same bay as the weapon
-    public boolean ammoInBay(int mAmmoId) {
-        for (int nextAmmoId : bayAmmo) {
-            if (nextAmmoId == mAmmoId) {
-                return true;
-            }
-        }
-        return false;
     }
 
     /**
@@ -1732,6 +1682,10 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
         }
     }
 
+    protected List<String> bayComponentsToString() {
+        return Collections.emptyList();
+    }
+
     @Override
     public String toString() {
         List<String> locations = allLocations().stream().map(entity::getLocationAbbr).collect(Collectors.toList());
@@ -1754,14 +1708,7 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
         if (linkedBy != null) state.add("LinkedBy: [" + entity.getEquipment().indexOf(linkedBy) + "]");
         if (crossLinkedBy != null) state.add("CrossLinkedBy: [" + entity.getEquipment().indexOf(crossLinkedBy) + "]");
         if (linkedBayId != -1) state.add("LinkedBay: [" + linkedBayId + "]");
-        if (!bayWeapons.isEmpty()) {
-            List<String> bayWeaponIds = bayWeapons.stream().map(id -> "[" + id + "]").collect(Collectors.toList());
-            state.add("Bay Weapons: " + String.join(", ", bayWeaponIds));
-        }
-        if (!bayAmmo.isEmpty()) {
-            List<String> bayAmmoIds = bayAmmo.stream().map(id -> "[" + id + "]").collect(Collectors.toList());
-            state.add("Bay Ammo: " + String.join(", ", bayAmmoIds));
-        }
+        state.addAll(bayComponentsToString());
         if (type instanceof AmmoType) {
             state.add("Shots: " + shotsLeft);
         }

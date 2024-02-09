@@ -14,6 +14,8 @@
  */
 package megamek.common;
 
+import megamek.common.equipment.WeaponMounted;
+
 import java.util.Comparator;
 
 /**
@@ -22,50 +24,45 @@ import java.util.Comparator;
  * 
  * @author arlith
  */
-public class WeaponComparatorArc implements Comparator<Mounted> {
-    private Entity entity;
+public class WeaponComparatorArc implements Comparator<WeaponMounted> {
+    private final Entity entity;
 
     public WeaponComparatorArc(Entity e) {
         entity = e;
     }
 
     @Override
-    public int compare(Mounted obj1, Mounted obj2) {
-        if (obj1.getType() instanceof WeaponType
-                && obj2.getType() instanceof WeaponType) {
-            int wnum1 = entity.getEquipmentNum(obj1);
-            int wnum2 = entity.getEquipmentNum(obj2);
-            WeaponType weap1 = (WeaponType) obj1.getType();
-            WeaponType weap2 = (WeaponType) obj2.getType();
+    public int compare(WeaponMounted obj1, WeaponMounted obj2) {
+        int wnum1 = entity.getEquipmentNum(obj1);
+        int wnum2 = entity.getEquipmentNum(obj2);
+        WeaponType weap1 = (WeaponType) obj1.getType();
+        WeaponType weap2 = (WeaponType) obj2.getType();
 
-            // Pick the weapon with the lowest arc
-            if (entity.getWeaponArc(wnum1) > entity.getWeaponArc(wnum2)) {
-                return 1;
-            } else if (entity.getWeaponArc(wnum1) < entity.getWeaponArc(wnum2)) {
-                return -1;
-            } else {
-                // Break ties with damage
-                // If types are equal, pick front facing first
-                if (weap1 == weap2) {
-                    if (obj1.isRearMounted()) {
-                        return -1;
-                    } else if (obj2.isRearMounted()) {
-                        return 1;
-                    } else {
-                        return 0;
-                    }
-                }
-                // Pick the weapon with the highest damage
-                if (weap1.getDamage() > weap2.getDamage()) {
-                    return 1;
-                } else if (weap1.getDamage() < weap2.getDamage()) {
+        // Pick the weapon with the lowest arc
+        if (entity.getWeaponArc(wnum1) > entity.getWeaponArc(wnum2)) {
+            return 1;
+        } else if (entity.getWeaponArc(wnum1) < entity.getWeaponArc(wnum2)) {
+            return -1;
+        } else {
+            // Break ties with damage
+            // If types are equal, pick front facing first
+            if (weap1 == weap2) {
+                if (obj1.isRearMounted()) {
                     return -1;
-                } else { // Break ties with heat
-                    return Integer.compare(weap1.getHeat(), weap2.getHeat());
+                } else if (obj2.isRearMounted()) {
+                    return 1;
+                } else {
+                    return 0;
                 }
             }
+            // Pick the weapon with the highest damage
+            if (weap1.getDamage() > weap2.getDamage()) {
+                return 1;
+            } else if (weap1.getDamage() < weap2.getDamage()) {
+                return -1;
+            } else { // Break ties with heat
+                return Integer.compare(weap1.getHeat(), weap2.getHeat());
+            }
         }
-
-        throw new ClassCastException("Passed Mounteds are not Weapons");
     }
 }

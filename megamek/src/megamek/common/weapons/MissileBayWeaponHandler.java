@@ -31,6 +31,8 @@ import megamek.common.ToHitData;
 import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
+import megamek.common.equipment.AmmoMounted;
+import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.OptionsConstants;
 import megamek.server.GameManager;
 
@@ -74,13 +76,13 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
         int range = RangeType.rangeBracket(nRange, wtype.getATRanges(), true, false);
 
         for (int wId : weapon.getBayWeapons()) {
-            Mounted bayW = ae.getEquipment(wId);
+            WeaponMounted bayW = ae.getWeapon(wId);
             // check the currently loaded ammo
-            Mounted bayWAmmo = bayW.getLinked();
+            AmmoMounted bayWAmmo = bayW.getLinkedAmmo();
             if (null == bayWAmmo || bayWAmmo.getUsableShotsLeft() < 1) {
                 // try loading something else
                 ae.loadWeaponWithSameAmmo(bayW);
-                bayWAmmo = bayW.getLinked();
+                bayWAmmo = bayW.getLinkedAmmo();
             }
             if (!bayW.isBreached()
                     && !bayW.isDestroyed()
@@ -115,7 +117,7 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
                                 || bayWAmmo.getUsableShotsLeft() < 1) {
                             // try loading something else
                             ae.loadWeaponWithSameAmmo(bayW);
-                            bayWAmmo = bayW.getLinked();
+                            bayWAmmo = bayW.getLinkedAmmo();
                         }
                         if (null != bayWAmmo) {
                             bayWAmmo.setShotsLeft(bayWAmmo.getBaseShotsLeft() - 1);

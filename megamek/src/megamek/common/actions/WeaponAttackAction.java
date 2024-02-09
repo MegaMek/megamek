@@ -18,18 +18,18 @@ import megamek.client.Client;
 import megamek.client.ui.Messages;
 import megamek.common.*;
 import megamek.common.enums.AimingMode;
+import megamek.common.equipment.AmmoMounted;
+import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.DiveBombAttack;
 import megamek.common.weapons.InfantryAttack;
 import megamek.common.weapons.Weapon;
 import megamek.common.weapons.artillery.ArtilleryCannonWeapon;
 import megamek.common.weapons.artillery.ArtilleryWeapon;
-import megamek.common.weapons.autocannons.LBXACWeapon;
 import megamek.common.weapons.battlearmor.CLBALBX;
 import megamek.common.weapons.bayweapons.*;
 import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
 import megamek.common.weapons.gaussrifles.GaussWeapon;
-import megamek.common.weapons.gaussrifles.ISHGaussRifle;
 import megamek.common.weapons.lasers.ISBombastLaser;
 import megamek.common.weapons.lasers.VariableSpeedPulseLaserWeapon;
 import megamek.common.weapons.lrms.LRTWeapon;
@@ -302,7 +302,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                                    Targetable originalTarget, boolean isStrafing,
                                    boolean isPointblankShot, List<ECMInfo> allECMInfo, boolean evenIfAlreadyFired) {
         final Entity ae = game.getEntity(attackerId);
-        final Mounted<?> weapon = ae.getEquipment(weaponId);
+        final WeaponMounted weapon = (WeaponMounted) ae.getEquipment(weaponId);
 
         final EquipmentType type = weapon.getType();
 
@@ -346,7 +346,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
 
         final boolean usesAmmo = (wtype.getAmmoType() != AmmoType.T_NA) && !isWeaponInfantry;
 
-        final Mounted ammo = usesAmmo ? weapon.getLinked() : null;
+        final AmmoMounted ammo = usesAmmo ? weapon.getLinkedAmmo() : null;
 
         final AmmoType atype = ammo == null ? null : (AmmoType) ammo.getType();
 
@@ -924,7 +924,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
      */
     private static String toHitIsImpossible(Game game, Entity ae, int attackerId, Targetable target, int ttype,
             LosEffects los, ToHitData losMods, ToHitData toHit, int distance, Entity spotter,
-            WeaponType wtype, Mounted<?> weapon, int weaponId, AmmoType atype, Mounted ammo, EnumSet<AmmoType.Munitions> munition,
+            WeaponType wtype, WeaponMounted weapon, int weaponId, AmmoType atype, AmmoMounted ammo, EnumSet<AmmoType.Munitions> munition,
             boolean isArtilleryDirect, boolean isArtilleryFLAK, boolean isArtilleryIndirect, boolean isAttackerInfantry,
             boolean isBearingsOnlyMissile, boolean isCruiseMissile, boolean exchangeSwarmTarget, boolean isHoming,
             boolean isInferno, boolean isIndirect, boolean isStrafing, boolean isTAG, boolean targetInBuilding,

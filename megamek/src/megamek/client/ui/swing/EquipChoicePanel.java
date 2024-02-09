@@ -19,6 +19,7 @@ import megamek.client.ui.Messages;
 import megamek.common.*;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.MiscMounted;
+import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.AbstractOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.util.fileUtils.MegaMekFile;
@@ -703,11 +704,9 @@ public class EquipChoicePanel extends JPanel {
         GridBagLayout gbl = new GridBagLayout();
         panWeaponAmmoSelector.setLayout(gbl);
 
-        for (Mounted weapon : entity.getWeaponList()) {
-            WeaponType weaponType = weapon.getType() instanceof WeaponType ? (WeaponType) weapon.getType() : null;
-
+        for (WeaponMounted weapon : entity.getWeaponList()) {
             // don't deal with bay or grouped weapons for now
-            if (weaponType == null || weaponType.getAmmoType() == AmmoType.T_NA) {
+            if (weapon.getType().getAmmoType() == AmmoType.T_NA) {
                 continue;
             }
 
@@ -1158,8 +1157,8 @@ public class EquipChoicePanel extends JPanel {
         class WeaponAmmoChoicePanel extends JPanel {
             private static final long serialVersionUID = 604670659251519188L;
             // the weapon being displayed in this row
-            private Mounted m_mounted;
-            private ArrayList<Mounted> matchingAmmoBins;
+            private WeaponMounted m_mounted;
+            private ArrayList<AmmoMounted> matchingAmmoBins;
 
             private JComboBox<String> ammoBins;
 
@@ -1167,12 +1166,7 @@ public class EquipChoicePanel extends JPanel {
              * Constructor
              * @param weapon The mounted weapon. Assumes that the weapon uses ammo.
              */
-            public WeaponAmmoChoicePanel(Mounted weapon) {
-                // for safety purposes, if the given mounted isn't a weapon, don't do anything.
-                if (!(weapon.getType() instanceof WeaponType)) {
-                    return;
-                }
-
+            public WeaponAmmoChoicePanel(WeaponMounted weapon) {
                 m_mounted = weapon;
 
                 this.setLayout(new GridBagLayout());
@@ -1183,18 +1177,18 @@ public class EquipChoicePanel extends JPanel {
                 if (m_mounted.isOneShot() || (entity.isSupportVehicle()
                         && (m_mounted.getType() instanceof InfantryWeapon))) {
                     // One-shot weapons can only access their own bin
-                    matchingAmmoBins.add(m_mounted.getLinked());
+                    matchingAmmoBins.add(m_mounted.getLinkedAmmo());
                     // Fusillade and some small SV weapons are treated like one-shot
                     // weapons but may have a second munition type available.
                     if ((m_mounted.getLinked().getLinked() != null)
                             && (((AmmoType) m_mounted.getLinked().getType()).getMunitionType()
                                 != (((AmmoType) m_mounted.getLinked().getLinked().getType()).getMunitionType()))) {
-                        matchingAmmoBins.add(m_mounted.getLinked().getLinked());
+                        matchingAmmoBins.add((AmmoMounted) m_mounted.getLinked().getLinked());
                     }
                 } else {
-                    for (Mounted ammoBin : weapon.getEntity().getAmmo()) {
+                    for (AmmoMounted ammoBin : weapon.getEntity().getAmmo()) {
                         if ((ammoBin.getLocation() != Entity.LOC_NONE)
-                            && AmmoType.canSwitchToAmmo(weapon, (AmmoType) ammoBin.getType())) {
+                            && AmmoType.canSwitchToAmmo(weapon, ammoBin.getType())) {
                             matchingAmmoBins.add(ammoBin);
                         }
                     }

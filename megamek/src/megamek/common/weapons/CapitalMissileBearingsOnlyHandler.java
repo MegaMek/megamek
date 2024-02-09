@@ -17,6 +17,8 @@ import megamek.common.*;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
+import megamek.common.equipment.AmmoMounted;
+import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.bayweapons.TeleOperatedMissileBayWeapon;
 import megamek.server.GameManager;
@@ -44,7 +46,7 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
             || weapon.curMode().equals(Weapon.MODE_CAP_MISSILE_WAYPOINT_BEARING_EXT));
 
     // Defined here so we can use it in multiple methods
-    Mounted bayWAmmo;
+    AmmoMounted bayWAmmo;
     int range;
     Coords targetCoords;
 
@@ -66,9 +68,9 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
     
     protected void getMountedAmmo() {
         for (int wId : weapon.getBayWeapons()) {
-            Mounted bayW = ae.getEquipment(wId);
+            WeaponMounted bayW = ae.getWeapon(wId);
             // check the currently loaded ammo
-            bayWAmmo = bayW.getLinked();
+            bayWAmmo = bayW.getLinkedAmmo();
 
             if (bayWAmmo == null) {// Can't happen. w/o legal ammo, the weapon
                 // *shouldn't* fire.
@@ -80,14 +82,13 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
     @Override
     protected void useAmmo() {
         getMountedAmmo();
-        Mounted bayW = bayWAmmo.getLinkedBy();        
+        WeaponMounted bayW = (WeaponMounted) bayWAmmo.getLinkedBy();
         int shots = (bayW.getCurrentShots() * weapon.getBayWeapons().size());
         for (int i = 0; i < shots; i++) {
-            if (null == bayWAmmo
-                    || bayWAmmo.getUsableShotsLeft() < 1) {
+            if ((null == bayWAmmo) || bayWAmmo.getUsableShotsLeft() < 1) {
                 // try loading something else
                 ae.loadWeaponWithSameAmmo(bayW);
-                bayWAmmo = bayW.getLinked();
+                bayWAmmo = bayW.getLinkedAmmo();
             }
             if (null != bayWAmmo) {
                 bayWAmmo.setShotsLeft(bayWAmmo.getBaseShotsLeft() - 1);
@@ -689,13 +690,13 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
         int range = RangeType.RANGE_EXTREME;
 
         for (int wId : weapon.getBayWeapons()) {
-            Mounted bayW = ae.getEquipment(wId);
+            WeaponMounted bayW = ae.getWeapon(wId);
             // check the currently loaded ammo
-            Mounted bayWAmmo = bayW.getLinked();
+            AmmoMounted bayWAmmo = bayW.getLinkedAmmo();
             if (null == bayWAmmo || bayWAmmo.getUsableShotsLeft() < 1) {
                 // try loading something else
                 ae.loadWeaponWithSameAmmo(bayW);
-                bayWAmmo = bayW.getLinked();
+                bayWAmmo = bayW.getLinkedAmmo();
             }
             if (!bayW.isBreached()
                     && !bayW.isDestroyed()

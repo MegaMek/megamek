@@ -1042,7 +1042,7 @@ public class FireControl {
      */
     private String checkGuess(final Entity shooter,
                               final Targetable target,
-                              final Mounted weapon,
+                              final WeaponMounted weapon,
                               final Game game) {
 
         // This really should only be done for debugging purposes. Regular play should avoid the overhead.
@@ -1134,7 +1134,7 @@ public class FireControl {
         final StringBuilder ret = new StringBuilder();
         final List<Targetable> enemies = getTargetableEnemyEntities(shooter, game, owner.getFireControlState());
         for (final Targetable enemy : enemies) {
-            for (final Mounted weapon : shooter.getWeaponList()) {
+            for (final WeaponMounted weapon : shooter.getWeaponList()) {
                 final String shootingCheck = checkGuess(shooter, enemy, weapon, game);
                 if (null != shootingCheck) {
                     ret.append(shootingCheck);
@@ -1413,7 +1413,7 @@ public class FireControl {
                                        final EntityState shooterState,
                                        final Targetable target,
                                        final EntityState targetState,
-                                       final Mounted weapon,
+                                       final WeaponMounted weapon,
                                        final Game game,
                                        final boolean guessToHit) {
         return new WeaponFireInfo(shooter, shooterState, target, targetState,
@@ -1438,7 +1438,7 @@ public class FireControl {
                                        final MovePath flightPath,
                                        final Targetable target,
                                        final EntityState targetState,
-                                       final Mounted weapon,
+                                       final WeaponMounted weapon,
                                        final Game game,
                                        final boolean assumeUnderFlightPath,
                                        final boolean guessToHit) {
@@ -1465,7 +1465,7 @@ public class FireControl {
                                                final MovePath flightPath,
                                                final Targetable target,
                                                @SuppressWarnings("SameParameterValue") final EntityState targetState,
-                                               final Mounted weapon,
+                                               final WeaponMounted weapon,
                                                final Game game,
                                                final boolean assumeUnderFlightPath,
                                                final boolean guessToHit,
@@ -1486,7 +1486,7 @@ public class FireControl {
      */
     WeaponFireInfo buildWeaponFireInfo(final Entity shooter,
                                        final Targetable target,
-                                       final Mounted weapon,
+                                       final WeaponMounted weapon,
                                        final Game game,
                                        final boolean guessToHit) {
         return new WeaponFireInfo(shooter, target, weapon, game, guessToHit, owner);
@@ -1534,7 +1534,7 @@ public class FireControl {
         }
 
         // cycle through my weapons
-        for (final Mounted weapon : shooter.getWeaponList()) {
+        for (final WeaponMounted weapon : shooter.getWeaponList()) {
             // respect restriction on manual AMS firing.
             if (!game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_MANUAL_AMS) &&
                     weapon.getType().hasFlag(WeaponType.F_AMS)) {
@@ -1625,7 +1625,7 @@ public class FireControl {
         }
 
         // cycle through my weapons
-        for (final Mounted weapon : shooter.getWeaponList()) {
+        for (final WeaponMounted weapon : shooter.getWeaponList()) {
             // bombing attacks have to be carried out separately from other weapon attacks, so we handle them in a special case
             if (weapon.isGroundBomb()) {
                 continue;
@@ -2442,7 +2442,7 @@ public class FireControl {
 
         // Loading ammo for all my weapons.
         for (final WeaponFireInfo info : plan) {
-            final Mounted currentWeapon = info.getWeapon();
+            final WeaponMounted currentWeapon = info.getWeapon();
             if (null == currentWeapon) {
                 continue;
             }
@@ -2453,7 +2453,7 @@ public class FireControl {
                 continue;
             }
 
-            final Mounted mountedAmmo = getPreferredAmmo(shooter, info.getTarget(), currentWeapon);
+            final AmmoMounted mountedAmmo = getPreferredAmmo(shooter, info.getTarget(), currentWeapon);
             // if we found preferred ammo but can't apply it to the weapon, log it and continue.
             if ((null != mountedAmmo) && !shooter.loadWeapon(currentWeapon, mountedAmmo)) {
                 LogManager.getLogger().warn(shooter.getDisplayName() + " tried to load "
@@ -2515,16 +2515,16 @@ public class FireControl {
         return returnAmmo;
     }
 
-    Mounted getPreferredAmmo(final Entity shooter,
+    AmmoMounted getPreferredAmmo(final Entity shooter,
                              final Targetable target,
-                             final Mounted weapon) {
+                             final WeaponMounted weapon) {
         final StringBuilder msg = new StringBuilder("Getting ammo for ").append(weapon.getType().getShortName())
                                                                         .append(" firing at ")
                                                                         .append(target.getDisplayName
                         ());
         Entity targetEntity = null;
-        Mounted preferredAmmo = null;
-        WeaponType weaponType = (WeaponType) weapon.getType();
+        AmmoMounted preferredAmmo = null;
+        WeaponType weaponType = weapon.getType();
 
         try {
             boolean fireResistant = false;

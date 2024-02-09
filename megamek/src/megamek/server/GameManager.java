@@ -26,9 +26,7 @@ import megamek.common.containers.PlayerIDandList;
 import megamek.common.enums.BasementType;
 import megamek.common.enums.GamePhase;
 import megamek.common.enums.WeaponSortOrder;
-import megamek.common.equipment.ArmorType;
-import megamek.common.equipment.BombMounted;
-import megamek.common.equipment.MiscMounted;
+import megamek.common.equipment.*;
 import megamek.common.event.GameListener;
 import megamek.common.event.GameVictoryEvent;
 import megamek.common.force.Force;
@@ -23043,7 +23041,7 @@ public class GameManager implements IGameManager {
 
                         // If there are split weapons in this location, mark it
                         // as hit, even if it took no criticals.
-                        for (Mounted m : te.getWeaponList()) {
+                        for (WeaponMounted m : te.getWeaponList()) {
                             if (m.isSplit()) {
                                 if ((m.getLocation() == hit.getLocation())
                                         || (m.getLocation() == nextHit
@@ -28514,7 +28512,7 @@ public class GameManager implements IGameManager {
             }
             // also do DWP dumping
             if (entity instanceof BattleArmor) {
-                for (Mounted m : entity.getWeaponList()) {
+                for (WeaponMounted m : entity.getWeaponList()) {
                     if (m.isDWPMounted() && m.isPendingDump()) {
                         m.setMissing(true);
                         r = new Report(5116);
@@ -30115,24 +30113,14 @@ public class GameManager implements IGameManager {
         }
 
         // Make sure that the entity has the given equipment.
-        Mounted mWeap = e.getEquipment(weaponId);
-        Mounted mAmmo = e.getEquipment(ammoId);
+        WeaponMounted mWeap = (WeaponMounted) e.getEquipment(weaponId);
+        AmmoMounted mAmmo = (AmmoMounted) e.getEquipment(ammoId);
         if (null == mAmmo) {
             LogManager.getLogger().error("Entity " + e.getDisplayName() + " does not have ammo #" + ammoId);
             return;
         }
-        if (!(mAmmo.getType() instanceof AmmoType)) {
-            LogManager.getLogger().error("Item #" + ammoId + " of entity " + e.getDisplayName()
-                    + " is a " + mAmmo.getName() + " and not ammo.");
-            return;
-        }
         if (null == mWeap) {
             LogManager.getLogger().error("Entity " + e.getDisplayName() + " does not have weapon #" + weaponId);
-            return;
-        }
-        if (!(mWeap.getType() instanceof WeaponType)) {
-            LogManager.getLogger().error("Item #" + weaponId + " of entity " + e.getDisplayName()
-                    + " is a " + mWeap.getName() + " and not a weapon.");
             return;
         }
         if (((WeaponType) mWeap.getType()).getAmmoType() == AmmoType.T_NA) {

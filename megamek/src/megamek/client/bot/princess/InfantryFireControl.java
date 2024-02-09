@@ -15,6 +15,7 @@ package megamek.client.bot.princess;
 
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
+import megamek.common.equipment.WeaponMounted;
 import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.server.ServerHelper;
 import org.apache.logging.log4j.LogManager;
@@ -74,8 +75,8 @@ public class InfantryFireControl extends FireControl {
                 && target.hasETypeFlag(Entity.ETYPE_INFANTRY) && ((Infantry) target).isMechanized();
 
         // cycle through my weapons
-        for (final Mounted weapon : shooter.getWeaponList()) {
-            final WeaponType weaponType = (WeaponType) weapon.getType();
+        for (final WeaponMounted weapon : shooter.getWeaponList()) {
+            final WeaponType weaponType = weapon.getType();
 
             final int bracket = RangeType.rangeBracket(range, weaponType.getRanges(weapon), useExtremeRange,
                     useLOSRange);
@@ -247,7 +248,7 @@ public class InfantryFireControl extends FireControl {
         final FiringPlan myPlan = new FiringPlan(target);
 
         // cycle through my field guns
-        for (final Mounted weapon : shooter.getWeaponList()) {
+        for (final WeaponMounted weapon : shooter.getWeaponList()) {
             if (weaponIsAppropriate(weapon, firingPlanType)) {
                 final WeaponFireInfo shoot = buildWeaponFireInfo(shooter, shooterState, target, targetState, weapon,
                         game, true);
@@ -268,7 +269,7 @@ public class InfantryFireControl extends FireControl {
      * Helper method that determines whether a weapon type is appropriate for a given firing plan type,
      * e.g. field guns cannot be fired when we're going to do a swarm attack, etc.
      */
-    private boolean weaponIsAppropriate(Mounted weapon, InfantryFiringPlanType firingPlanType) {
+    private boolean weaponIsAppropriate(WeaponMounted weapon, InfantryFiringPlanType firingPlanType) {
         boolean weaponIsSwarm = (weapon.getType()).getInternalName().equals(Infantry.SWARM_MEK);
         boolean weaponIsLegAttack = (weapon.getType()).getInternalName().equals(Infantry.LEG_ATTACK);
         boolean weaponIsFieldGuns = weapon.getLocation() == Infantry.LOC_FIELD_GUNS;

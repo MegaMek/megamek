@@ -18,6 +18,7 @@ import megamek.codeUtilities.StringUtility;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.Gender;
 import megamek.common.equipment.AmmoMounted;
+import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.infantry.InfantryWeapon;
@@ -2660,9 +2661,9 @@ public class MULParser {
         // 3: add the ammo to a crit slot on the bay's location
 
         int bayCritIndex = Integer.parseInt(bayIndex);
-        Mounted bay = entity.getCritical(loc, bayCritIndex - 1).getMount();
+        WeaponMounted bay = (WeaponMounted) entity.getCritical(loc, bayCritIndex - 1).getMount();
 
-        Mounted ammo = Mounted.createMounted(entity, AmmoType.get(type));
+        Mounted<?> ammo = Mounted.createMounted(entity, AmmoType.get(type));
 
         try {
             entity.addEquipment(ammo, loc, bay.isRearMounted());

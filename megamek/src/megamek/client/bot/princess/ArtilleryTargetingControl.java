@@ -18,6 +18,7 @@ import java.util.*;
 
 import megamek.common.*;
 import megamek.common.actions.ArtilleryAttackAction;
+import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.OptionsConstants;
 
 /**
@@ -298,7 +299,7 @@ public class ArtilleryTargetingControl {
         // each indirect artillery piece randomly picks a target from the priority list
         // by the end of this loop, we either have 0 max damage/0 top valued coordinates, which indicates there's nothing worth shooting at
         // or we have a 1+ top valued coordinates.
-        for (Mounted currentWeapon : shooter.getWeaponList()) {
+        for (WeaponMounted currentWeapon : shooter.getWeaponList()) {
             if (currentWeapon.getType().hasFlag(WeaponType.F_ARTILLERY)) {
                 WeaponType wType = (WeaponType) currentWeapon.getType();
                 int damage = wType.getRackSize(); // crazy, but rack size appears to correspond to given damage values for arty pieces in tacops
@@ -377,7 +378,7 @@ public class ArtilleryTargetingControl {
      * @param owner
      * @return
      */
-    private WeaponFireInfo getTAGInfo(Mounted weapon, Entity shooter, Game game, Princess owner) {
+    private WeaponFireInfo getTAGInfo(WeaponMounted weapon, Entity shooter, Game game, Princess owner) {
         WeaponFireInfo retval = null;
         double hitOdds = 0.0;
 

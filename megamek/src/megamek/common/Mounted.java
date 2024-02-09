@@ -17,6 +17,7 @@ package megamek.common;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
 import megamek.common.equipment.AmmoMounted;
+import megamek.common.equipment.BombMounted;
 import megamek.common.equipment.MiscMounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.GameOptions;
@@ -175,6 +176,8 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     public static Mounted<?> createMounted(Entity entity, EquipmentType type) {
         if (type instanceof WeaponType) {
             return new WeaponMounted(entity, (WeaponType) type);
+        } else if (type instanceof BombType) {
+            return new BombMounted(entity, (BombType) type);
         } else if (type instanceof AmmoType) {
             return new AmmoMounted(entity, (AmmoType) type);
         } else if (type instanceof MiscType) {

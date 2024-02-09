@@ -25,10 +25,7 @@ import megamek.common.actions.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.battlevalue.BVCalculator;
 import megamek.common.enums.*;
-import megamek.common.equipment.AmmoMounted;
-import megamek.common.equipment.ArmorType;
-import megamek.common.equipment.MiscMounted;
-import megamek.common.equipment.WeaponMounted;
+import megamek.common.equipment.*;
 import megamek.common.event.GameEntityChangeEvent;
 import megamek.common.force.Force;
 import megamek.common.icons.Camouflage;
@@ -453,7 +450,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     /**
      * A list of all mounted bombs.
      */
-    protected ArrayList<Mounted> bombList = new ArrayList<>();
+    protected List<BombMounted> bombList = new ArrayList<>();
 
     /**
      * A list of all remaining equipment.
@@ -3681,14 +3678,14 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     /**
      * indicate whether this is a bomb mount
      */
-    public Mounted addBomb(EquipmentType etype, int loc)
+    public Mounted<?> addBomb(EquipmentType etype, int loc)
             throws LocationFullException {
-        Mounted mounted = Mounted.createMounted(this, etype);
+        Mounted<?> mounted = Mounted.createMounted(this, etype);
         addBomb(mounted, loc);
         return mounted;
     }
 
-    protected void addBomb(Mounted mounted, int loc)
+    protected void addBomb(Mounted<?> mounted, int loc)
             throws LocationFullException {
         mounted.setBombMounted(true);
         addEquipment(mounted, loc, false);
@@ -3771,8 +3768,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         if (mounted instanceof AmmoMounted) {
             ammoList.add((AmmoMounted) mounted);
         }
-        if (mounted.getType() instanceof BombType) {
-            bombList.add(mounted);
+        if (mounted instanceof BombMounted) {
+            bombList.add((BombMounted) mounted);
         }
         if (mounted instanceof MiscMounted) {
             miscList.add((MiscMounted) mounted);
@@ -4210,13 +4207,13 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         return miscList;
     }
 
-    public List<Mounted> getBombs() {
+    public List<BombMounted> getBombs() {
         return bombList;
     }
 
-    public Vector<Mounted> getBombs(BigInteger flag) {
-        Vector<Mounted> bombs = new Vector<>();
-        for (Mounted bomb : getBombs()) {
+    public List<BombMounted> getBombs(BigInteger flag) {
+        List<BombMounted> bombs = new ArrayList<>();
+        for (BombMounted bomb : getBombs()) {
             BombType btype = (BombType) bomb.getType();
             if (!bomb.isInoperable() && (bomb.getUsableShotsLeft() > 0)
                 && btype.hasFlag(flag)) {

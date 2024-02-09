@@ -27,6 +27,7 @@ import megamek.common.enums.BasementType;
 import megamek.common.enums.GamePhase;
 import megamek.common.enums.WeaponSortOrder;
 import megamek.common.equipment.ArmorType;
+import megamek.common.equipment.BombMounted;
 import megamek.common.equipment.MiscMounted;
 import megamek.common.event.GameListener;
 import megamek.common.event.GameVictoryEvent;
@@ -25647,7 +25648,7 @@ public class GameManager implements IGameManager {
                         r.subject = aero.getId();
                         r.addDesc(aero);
                         reports.add(r);
-                        for (Mounted bomb: ((IBomber) aero).getBombs()) {
+                        for (BombMounted bomb: ((IBomber) aero).getBombs()) {
                             damageBomb(bomb);
                         }
                         aero.applyDamage();
@@ -25656,13 +25657,13 @@ public class GameManager implements IGameManager {
                         // This will require firing an event to the End Phase to display a dialog;
                         // for now just randomly dump bombs just like bots'.
                         // TODO: fire event here to display dialog in end phase.
-                        for (Mounted bomb:randomlySubSelectList(((IBomber) aero).getBombs(), bombsDestroyed)) {
+                        for (BombMounted bomb : randomlySubSelectList(((IBomber) aero).getBombs(), bombsDestroyed)) {
                             damageBomb(bomb);
                         }
                         aero.applyDamage();
                     } else {
                         // This should always use the random method.
-                        for (Mounted bomb:randomlySubSelectList(((IBomber) aero).getBombs(), bombsDestroyed)) {
+                        for (BombMounted bomb:randomlySubSelectList(((IBomber) aero).getBombs(), bombsDestroyed)) {
                             damageBomb(bomb);
                         }
                         aero.applyDamage();
@@ -25678,7 +25679,7 @@ public class GameManager implements IGameManager {
         }
     }
 
-    private void damageBomb(Mounted bomb) {
+    private void damageBomb(BombMounted bomb) {
         bomb.setShotsLeft(0);
         bomb.setHit(true);
         if (bomb.getLinked() != null && (bomb.getLinked().getUsableShotsLeft() > 0)) {
@@ -25687,8 +25688,8 @@ public class GameManager implements IGameManager {
     }
 
     // Randomly select subset of Mounted items.
-    private ArrayList<Mounted> randomlySubSelectList(List<Mounted> list, int size) {
-        ArrayList<Mounted> subset = new ArrayList<>();
+    private <T extends Mounted<?>> List<T> randomlySubSelectList(List<T> list, int size) {
+        List<T> subset = new ArrayList<>();
         Random random_method = new Random();
         for (int i = 0; i < size; i++) {
             subset.add(list.get(random_method.nextInt(list.size())));

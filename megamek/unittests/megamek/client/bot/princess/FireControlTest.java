@@ -41,6 +41,7 @@ import org.junit.jupiter.api.condition.JRE;
 import java.math.BigInteger;
 import java.util.*;
 
+import static java.util.Collections.emptyList;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
@@ -2227,7 +2228,7 @@ public class FireControlTest {
         FiringPlan expected;
         when(mockShooter.getPosition()).thenReturn(mockShooterCoords);
         when(mockShooter.isOffBoard()).thenReturn(false);
-        when(mockShooter.getBombs(any(BigInteger.class))).thenReturn(new Vector<>(0));
+        when(mockShooter.getBombs(any(BigInteger.class))).thenReturn(emptyList());
         when(mockTarget.getPosition()).thenReturn(mockTargetCoords);
         when(mockTarget.isOffBoard()).thenReturn(false);
         when(mockBoard.contains(eq(mockShooterCoords))).thenReturn(true);

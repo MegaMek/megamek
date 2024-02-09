@@ -17,6 +17,7 @@ import megamek.common.*;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
+import megamek.common.equipment.BombMounted;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
 import megamek.common.weapons.infantry.InfantryWeapon;
@@ -481,8 +482,8 @@ public class WeaponFireInfo {
 
         // for dive attacks, we can pretty much assume that we're going to drop everything we've got on the poor scrubs in this hex
         if (weapon.getType().hasFlag(WeaponType.F_DIVE_BOMB)) {
-            for (final Mounted bomb : shooter.getBombs(BombType.F_GROUND_BOMB)) {
-                final int damagePerShot = ((BombType) bomb.getType()).getDamagePerShot();
+            for (final BombMounted bomb : shooter.getBombs(BombType.F_GROUND_BOMB)) {
+                final int damagePerShot = bomb.getType().getDamagePerShot();
 
                 // some bombs affect a blast radius, so we take that into account
                 final List<Coords> affectedHexes = new ArrayList<>();

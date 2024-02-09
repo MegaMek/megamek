@@ -19,6 +19,7 @@ import megamek.common.annotations.Nullable;
 import megamek.common.annotations.StaticWrapper;
 import megamek.common.enums.IlluminationLevel;
 import megamek.common.equipment.AmmoMounted;
+import megamek.common.equipment.BombMounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.OptionsConstants;
 import megamek.common.pathfinder.AeroGroundPathFinder;
@@ -1695,7 +1696,7 @@ public class FireControl {
         }
 
         while (weaponIter.hasNext()) {
-            final Mounted weapon = weaponIter.next();
+            final WeaponMounted weapon = weaponIter.next();
             if (weapon.getType().hasFlag(WeaponType.F_DIVE_BOMB)) {
                 final HashMap<String, int[]> bombPayloads = new HashMap<String, int[]>();
                 bombPayloads.put("internal", new int[BombType.B_NUM]);
@@ -1703,8 +1704,8 @@ public class FireControl {
 
                 // load up all droppable bombs, yeah baby! Mix thunder bombs and infernos 'cause why the hell not.
                 // seriously, though, TODO: more intelligent bomb drops
-                for (final Mounted bomb : shooter.getBombs(BombType.F_GROUND_BOMB)) {
-                    int bType = ((BombType) bomb.getType()).getBombType();
+                for (final BombMounted bomb : shooter.getBombs(BombType.F_GROUND_BOMB)) {
+                    int bType = bomb.getType().getBombType();
                     if (bomb.isInternalBomb()) {
                         // Can only drop 6 internal bombs in one turn.
                         if (bombPayloads.get("internal")[bType] < 6) {

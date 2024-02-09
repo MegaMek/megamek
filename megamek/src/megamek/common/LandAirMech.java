@@ -15,6 +15,7 @@ package megamek.common;
 
 import megamek.common.enums.MPBoosters;
 import megamek.common.equipment.AmmoMounted;
+import megamek.common.equipment.BombMounted;
 import megamek.common.equipment.MiscMounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.OptionsConstants;
@@ -2045,8 +2046,8 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
 
         mounted.setBombMounted(true);
 
-        if (mounted.getType() instanceof BombType) {
-            bombList.add(mounted);
+        if (mounted instanceof BombMounted) {
+            bombList.add((BombMounted) mounted);
         }
 
         if (mounted instanceof WeaponMounted) {
@@ -2056,7 +2057,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
                 aTracker.addWeapon(mounted);
             }
             if (mounted.getType().hasFlag(WeaponType.F_ONESHOT) && (AmmoType.getOneshotAmmo(mounted) != null)) {
-                Mounted m = Mounted.createMounted(this, AmmoType.getOneshotAmmo(mounted));
+                AmmoMounted m = (AmmoMounted) Mounted.createMounted(this, AmmoType.getOneshotAmmo(mounted));
                 m.setShotsLeft(1);
                 mounted.setLinked(m);
                 // Oneshot ammo will be identified by having a location

@@ -794,27 +794,27 @@ public class FireControlTest {
 
         // Test ATMs
         when(mockTarget.getPosition()).thenReturn(new Coords(10, 30));
-        when(mockAtm5Weapon.getLinked()).thenReturn(mockAmmoAtm5Er);
+        when(mockAtm5Weapon.getLinked()).thenReturn((Mounted) mockAmmoAtm5Er);
         assertEquals(mockAmmoAtm5Er, testFireControl.getPreferredAmmo(mockShooter, mockTarget, mockAtm5Weapon));
         when(mockTarget.getPosition()).thenReturn(new Coords(10, 22));
         assertEquals(mockAmmoAtm5Er, testFireControl.getPreferredAmmo(mockShooter, mockTarget, mockAtm5Weapon));
         when(mockTarget.getPosition()).thenReturn(new Coords(10, 18));
-        when(mockAtm5Weapon.getLinked()).thenReturn(mockAmmoAtm5St);
+        when(mockAtm5Weapon.getLinked()).thenReturn((Mounted) mockAmmoAtm5St);
         assertEquals(mockAmmoAtm5St, testFireControl.getPreferredAmmo(mockShooter, mockTarget, mockAtm5Weapon));
         when(mockTarget.getPosition()).thenReturn(new Coords(10, 16));
-        when(mockAtm5Weapon.getLinked()).thenReturn(mockAmmoAtm5He);
+        when(mockAtm5Weapon.getLinked()).thenReturn((Mounted) mockAmmoAtm5He);
         assertEquals(mockAmmoAtm5He, testFireControl.getPreferredAmmo(mockShooter, mockTarget, mockAtm5Weapon));
         when(mockTarget.getPosition()).thenReturn(new Coords(10, 15));
-        when(mockAtm5Weapon.getLinked()).thenReturn(mockAmmoAtm5St);
+        when(mockAtm5Weapon.getLinked()).thenReturn((Mounted) mockAmmoAtm5St);
         assertEquals(mockAmmoAtm5St, testFireControl.getPreferredAmmo(mockShooter, mockTarget, mockAtm5Weapon));
         when(mockTarget.getPosition()).thenReturn(new Coords(10, 13));
-        when(mockAtm5Weapon.getLinked()).thenReturn(mockAmmoAtm5He);
+        when(mockAtm5Weapon.getLinked()).thenReturn((Mounted) mockAmmoAtm5He);
         assertEquals(mockAmmoAtm5He, testFireControl.getPreferredAmmo(mockShooter, mockTarget, mockAtm5Weapon));
 
         // Test shooting an AC5 at a building.
         mockTarget = mock(BuildingTarget.class);
         when(mockTarget.getPosition()).thenReturn(new Coords(10, 15));
-        when(mockWeaponAC5.getLinked()).thenReturn(mockAmmoAc5Incendiary);
+        when(mockWeaponAC5.getLinked()).thenReturn((Mounted) mockAmmoAc5Incendiary);
         assertEquals(mockAmmoAc5Incendiary, testFireControl.getPreferredAmmo(mockShooter, mockTarget, mockWeaponAC5));
 
         // Test shooting an LBX at an airborne target.
@@ -822,21 +822,21 @@ public class FireControlTest {
         when(((Entity) mockTarget).getArmorType(anyInt())).thenReturn(EquipmentType.T_ARMOR_STANDARD);
         when(mockTarget.getPosition()).thenReturn(new Coords(10, 15));
         when(mockTarget.isAirborne()).thenReturn(true);
-        when(mockWeaponLB10X.getLinked()).thenReturn(mockAmmoLB10XCluster);
+        when(mockWeaponLB10X.getLinked()).thenReturn((Mounted) mockAmmoLB10XCluster);
         assertEquals(mockAmmoLB10XCluster, testFireControl.getPreferredAmmo(mockShooter, mockTarget, mockWeaponLB10X));
 
         // Test shooting an LBX at a tank.
         mockTarget = mock(Tank.class);
         when(((Entity) mockTarget).getArmorType(anyInt())).thenReturn(EquipmentType.T_ARMOR_STANDARD);
         when(mockTarget.getPosition()).thenReturn(new Coords(10, 15));
-        when(mockWeaponLB10X.getLinked()).thenReturn(mockAmmoLB10XCluster);
+        when(mockWeaponLB10X.getLinked()).thenReturn((Mounted) mockAmmoLB10XCluster);
         assertEquals(mockAmmoLB10XCluster, testFireControl.getPreferredAmmo(mockShooter, mockTarget, mockWeaponLB10X));
 
         // Test shooting an AC at infantry.
         mockTarget = mock(Infantry.class);
         when(((Entity) mockTarget).getArmorType(anyInt())).thenReturn(EquipmentType.T_ARMOR_STANDARD);
         when(mockTarget.getPosition()).thenReturn(new Coords(10, 15));
-        when(mockWeaponAC5.getLinked()).thenReturn(mockAmmoAc5Flechette);
+        when(mockWeaponAC5.getLinked()).thenReturn((Mounted) mockAmmoAc5Flechette);
         assertTrue(
                 mockAmmoAc5Flechette.equals(testFireControl.getPreferredAmmo(mockShooter, mockTarget,
                         mockWeaponAC5))
@@ -848,24 +848,24 @@ public class FireControlTest {
         when(((Entity) mockTarget).getArmorType(anyInt())).thenReturn(EquipmentType.T_ARMOR_STANDARD);
         when(mockTarget.getPosition()).thenReturn(new Coords(10, 15));
         when(((Entity) mockTarget).getDamageLevel()).thenReturn(Entity.DMG_HEAVY);
-        when(mockWeaponLB10X.getLinked()).thenReturn(mockAmmoLB10XCluster);
+        when(mockWeaponLB10X.getLinked()).thenReturn((Mounted) mockAmmoLB10XCluster);
         assertEquals(mockAmmoLB10XCluster, testFireControl.getPreferredAmmo(mockShooter, mockTarget, mockWeaponLB10X));
 
         // Test a hot target.
         when(((Entity) mockTarget).getDamageLevel()).thenReturn(Entity.DMG_LIGHT);
         when(((Entity) mockTarget).getHeat()).thenReturn(12);
-        when(mockWeaponMML5.getLinked()).thenReturn(mockAmmoInferno5);
+        when(mockWeaponMML5.getLinked()).thenReturn((Mounted) mockAmmoInferno5);
         assertEquals(mockAmmoInferno5, testFireControl.getPreferredAmmo(mockShooter, mockTarget, mockWeaponMML5));
         when(((Entity) mockTarget).getArmorType(anyInt())).thenReturn(EquipmentType.T_ARMOR_HEAT_DISSIPATING);
-        when(mockWeaponMML5.getLinked()).thenReturn(mockAmmoSRM5);
+        when(mockWeaponMML5.getLinked()).thenReturn((Mounted) mockAmmoSRM5);
         assertEquals(mockAmmoSRM5, testFireControl.getPreferredAmmo(mockShooter, mockTarget, mockWeaponMML5));
         when(((Entity) mockTarget).getArmorType(anyInt())).thenReturn(EquipmentType.T_ARMOR_STANDARD);
 
         // Test a normal target.
         when(((Entity) mockTarget).getHeat()).thenReturn(4);
-        when(mockWeaponAC5.getLinked()).thenReturn(mockAmmoAC5Std);
+        when(mockWeaponAC5.getLinked()).thenReturn((Mounted) mockAmmoAC5Std);
         assertEquals(mockAmmoAC5Std, testFireControl.getPreferredAmmo(mockShooter, mockTarget, mockWeaponAC5));
-        when(mockWeaponMML5.getLinked()).thenReturn(mockAmmoSRM5);
+        when(mockWeaponMML5.getLinked()).thenReturn((Mounted) mockAmmoSRM5);
         assertEquals(mockAmmoSRM5, testFireControl.getPreferredAmmo(mockShooter, mockTarget, mockWeaponMML5));
     }
 
@@ -1512,7 +1512,7 @@ public class FireControlTest {
         when(mockWeaponType.hasFlag(eq(WeaponType.F_DIRECT_FIRE))).thenReturn(true);
 
         final AmmoMounted mockAmmo = mock(AmmoMounted.class);
-        when(mockWeapon.getLinked()).thenReturn(mockAmmo);
+        when(mockWeapon.getLinked()).thenReturn((Mounted) mockAmmo);
         when(mockAmmo.getUsableShotsLeft()).thenReturn(10);
 
         // Test the vanilla case.
@@ -1834,7 +1834,7 @@ public class FireControlTest {
         when(mockWeaponType.getAmmoType()).thenReturn(AmmoType.T_AC);
 
         final WeaponMounted mockAmmo = mock(WeaponMounted.class);
-        when(mockWeapon.getLinked()).thenReturn(mockAmmo);
+        when(mockWeapon.getLinked()).thenReturn((Mounted) mockAmmo);
         when(mockAmmo.getUsableShotsLeft()).thenReturn(10);
 
         final ConvFighter mockFighter = mock(ConvFighter.class);

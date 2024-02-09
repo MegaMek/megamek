@@ -1601,48 +1601,15 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     }
 
     /**
-     * Returns true if this Mounted is a one-shot launcher of some kind
-     * otherwise returns false.
-     *
-     * @return
-     */
-    public boolean isOneShotWeapon() {
-        return (getType() instanceof WeaponType) && getType().hasFlag(WeaponType.F_ONESHOT);
-    }
-
-    /**
      * Checks whether this mount is either one a one-shot weapon or ammo for a one-shot weapon.
-     * @return
+     * @return Whether the equipment is one-shot
      */
     public boolean isOneShot() {
-        if (isOneShotWeapon()) {
-            return true;
-        } else if ((getType() instanceof AmmoType) && getLinkedBy() != null) {
-            // There should not be any circular references, but we should track where we've been just in case.
-            // Do a couple checks first to avoid instantiating a set unnecessarily.
-            Set<Mounted> checked = new HashSet<>();
-            for (Mounted current = getLinkedBy(); current != null; current = current.getLinkedBy()) {
-                if (checked.contains(current)) {
-                    return false;
-                }
-                if (current.isOneShotWeapon()) {
-                    return true;
-                }
-                checked.add(current);
-            }
-        }
         return false;
     }
 
-    /**
-     * Check for whether this mount is linked by a one-shot weapon
-     *
-     * @return {@code true} if this is one-shot ammo
-     */
     public boolean isOneShotAmmo() {
-        return (getType() instanceof AmmoType)
-                && (getLinkedBy() != null)
-                && getLinkedBy().isOneShot();
+        return false;
     }
 
     public boolean isSquadSupportWeapon() {

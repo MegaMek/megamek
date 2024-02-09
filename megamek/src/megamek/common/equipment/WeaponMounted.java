@@ -118,4 +118,9 @@ public class WeaponMounted extends Mounted<WeaponType> {
 
         return heat;
     }
+
+    @Override
+    public boolean isOneShot() {
+        return getType().hasFlag(WeaponType.F_ONESHOT);
+    }
 }

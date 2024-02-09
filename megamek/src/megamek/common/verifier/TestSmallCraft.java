@@ -529,7 +529,7 @@ public class TestSmallCraft extends TestAero {
             Map<Integer,Integer> ammoTypeCount = new HashMap<>();
             for (Integer wNum : bay.getBayWeapons()) {
                 final Mounted w = smallCraft.getEquipment(wNum);
-                if (w.isOneShotWeapon()) {
+                if (w.isOneShot()) {
                     continue;
                 }
                 if (w.getType() instanceof WeaponType) {
@@ -541,7 +541,7 @@ public class TestSmallCraft extends TestAero {
             }
 
             for (Integer aNum : bay.getBayAmmo()) {
-                final Mounted a = smallCraft.getEquipment(aNum);
+                final Mounted<?> a = smallCraft.getEquipment(aNum);
                 if (a.getType() instanceof AmmoType) {
                     ammoTypeCount.merge(((AmmoType) a.getType()).getAmmoType(), a.getUsableShotsLeft(),
                             Integer::sum);

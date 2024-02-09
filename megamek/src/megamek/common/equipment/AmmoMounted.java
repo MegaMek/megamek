@@ -19,12 +19,11 @@
 
 package megamek.common.equipment;
 
-import megamek.common.AmmoType;
-import megamek.common.BombType;
-import megamek.common.Entity;
-import megamek.common.Mounted;
+import megamek.common.*;
 
 import java.util.EnumSet;
+import java.util.HashSet;
+import java.util.Set;
 
 public class AmmoMounted extends Mounted<AmmoType> {
 
@@ -102,5 +101,28 @@ public class AmmoMounted extends Mounted<AmmoType> {
     public void setAmmoCapacity(double capacity) {
         // alias for setSize
         setSize(capacity);
+    }
+
+    public boolean isOneShot() {
+        if (getLinkedBy() != null) {
+            // There should not be any circular references, but we should track where we've been just in case.
+            // Do a couple checks first to avoid instantiating a set unnecessarily.
+            Set<Mounted<?>> checked = new HashSet<>();
+            for (Mounted<?> current = getLinkedBy(); current != null; current = current.getLinkedBy()) {
+                if (checked.contains(current)) {
+                    return false;
+                }
+                if ((current.getType() instanceof WeaponType) && current.isOneShot()) {
+                    return true;
+                }
+                checked.add(current);
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean isOneShotAmmo() {
+        return isOneShot();
     }
 }

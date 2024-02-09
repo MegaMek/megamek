@@ -22,8 +22,10 @@ import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.client.ui.swing.calculationReport.DummyCalculationReport;
 import megamek.codeUtilities.MathUtility;
 import megamek.common.*;
+import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.ArmorType;
 import megamek.common.equipment.MiscMounted;
+import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.bayweapons.BayWeapon;
 
@@ -1034,13 +1036,13 @@ public abstract class BVCalculator {
     protected void processOffensiveTypeModifier() { }
 
     /** @return true when the given ammo (must be AmmoType) counts towards offensive ammo BV calculation. */
-    protected boolean ammoCounts(Mounted ammo) {
-        AmmoType ammoType = (AmmoType) ammo.getType();
+    protected boolean ammoCounts(AmmoMounted ammo) {
+        AmmoType ammoType = ammo.getType();
         return (ammo.getUsableShotsLeft() > 0)
                 && (ammoType.getAmmoType() != AmmoType.T_AMS)
                 && (ammoType.getAmmoType() != AmmoType.T_APDS)
                 && (ammoType.getAmmoType() != AmmoType.T_SCREEN_LAUNCHER)
-                && !ammo.isOneShotAmmo();
+                && !ammo.isOneShot();
     }
 
     /** Processes the sum of offensive and defensive battle rating and modifiers that affect this sum. */
@@ -1071,8 +1073,8 @@ public abstract class BVCalculator {
     }
 
     protected void assembleAmmo() {
-        for (Mounted ammo : entity.getAmmo()) {
-            AmmoType ammoType = (AmmoType) ammo.getType();
+        for (AmmoMounted ammo : entity.getAmmo()) {
+            AmmoType ammoType = ammo.getType();
 
             // don't count depleted ammo, AMS and oneshot ammo
             if (ammoCounts(ammo)) {
@@ -1089,8 +1091,8 @@ public abstract class BVCalculator {
             }
         }
 
-        for (Mounted weapon : entity.getTotalWeaponList()) {
-            WeaponType wtype = (WeaponType) weapon.getType();
+        for (WeaponMounted weapon : entity.getTotalWeaponList()) {
+            WeaponType wtype = weapon.getType();
 
             if (weapon.isDestroyed() //|| wtype.hasFlag(WeaponType.F_AMS)
                     || wtype.hasFlag(WeaponType.F_B_POD) || wtype.hasFlag(WeaponType.F_M_POD)

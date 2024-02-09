@@ -16,6 +16,7 @@ package megamek.common.verifier;
 
 import megamek.common.*;
 import megamek.common.equipment.ArmorType;
+import megamek.common.equipment.WeaponMounted;
 import megamek.common.util.StringUtil;
 import megamek.common.weapons.bayweapons.BayWeapon;
 import megamek.common.weapons.capitalweapons.ScreenLauncherWeapon;
@@ -648,8 +649,8 @@ public class TestAdvancedAerospace extends TestAero {
             Map<Integer,Integer> ammoWeaponCount = new HashMap<>();
             Map<Integer,Integer> ammoTypeCount = new HashMap<>();
             for (Integer wNum : bay.getBayWeapons()) {
-                final Mounted w = vessel.getEquipment(wNum);
-                if (w.isOneShotWeapon()) {
+                final Mounted<?> w = vessel.getEquipment(wNum);
+                if (w.isOneShot()) {
                     continue;
                 }
                 if (w.getType() instanceof WeaponType) {

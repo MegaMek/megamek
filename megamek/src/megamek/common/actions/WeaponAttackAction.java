@@ -775,7 +775,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
 
         // Collect the modifiers for terrain and line-of-sight. This includes any related to-hit table changes
         toHit = compileTerrainAndLosToHitMods(game, ae, target, ttype, aElev, tElev, targEl, distance, los, toHit,
-                    losMods, toSubtract, eistatus, wtype, weapon, weaponId, atype, munition, isAttackerInfantry,
+                    losMods, toSubtract, eistatus, wtype, weapon, weaponId, atype, ammo, munition, isAttackerInfantry,
                     inSameBuilding, isIndirect, isPointblankShot, underWater);
 
         // If this is a swarm LRM secondary attack, remove old target movement and terrain mods, then
@@ -787,7 +787,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
 
         // Collect the modifiers specific to the weapon the attacker is using
-        toHit = compileWeaponToHitMods(game, ae, spotter, target, ttype, toHit, wtype, weapon, atype, munition,
+        toHit = compileWeaponToHitMods(game, ae, spotter, target, ttype, toHit, wtype, weapon, atype, ammo, munition,
                     isFlakAttack, isIndirect, narcSpotter);
 
         // Collect the modifiers specific to the ammo the attacker is using
@@ -882,7 +882,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
 
         // Collect the modifiers for terrain and line-of-sight. This includes any related to-hit table changes
         toHit = compileTerrainAndLosToHitMods(game, ae, target, ttype, aElev, tElev, targEl, distance, los, toHit,
-                    losMods, toSubtract, eistatus, null, null, weaponId, null, EnumSet.of(AmmoType.Munitions.M_STANDARD), isAttackerInfantry,
+                    losMods, toSubtract, eistatus, null, null, weaponId, null, null, EnumSet.of(AmmoType.Munitions.M_STANDARD), isAttackerInfantry,
                     inSameBuilding, false, false, false);
 
         // okay!
@@ -2542,7 +2542,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                     && (weapon.curMode().equals(Weapon.MODE_CAPITAL_BRACKET_80) || weapon.curMode().equals(Weapon.MODE_CAPITAL_BRACKET_60)
                             || weapon.curMode().equals(Weapon.MODE_CAPITAL_BRACKET_40))
                     && target.isAero() && te!= null && !te.isLargeCraft()
-                    && (RangeType.rangeBracket(ae.getPosition().distance(target.getPosition()), wtype.getRanges(weapon),
+                    && (RangeType.rangeBracket(ae.getPosition().distance(target.getPosition()), wtype.getRanges(weapon, ammo),
                             true, false) == RangeType.RANGE_SHORT)) {
                 return Messages.getString("WeaponAttackAction.TooCloseForSCBracket");
             }
@@ -2947,7 +2947,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
      * @param narcSpotter  flag that indicates whether this spotting entity is using NARC equipment
      */
     private static ToHitData compileWeaponToHitMods(Game game, Entity ae, Entity spotter, Targetable target,
-                int ttype, ToHitData toHit, WeaponType wtype, Mounted weapon, AmmoType atype, EnumSet<AmmoType.Munitions> munition,
+                int ttype, ToHitData toHit, WeaponType wtype, Mounted weapon, AmmoType atype, Mounted ammo, EnumSet<AmmoType.Munitions> munition,
                 boolean isFlakAttack, boolean isIndirect, boolean narcSpotter) {
         if (ae == null || wtype == null || weapon == null) {
             // Can't calculate weapon mods without a valid weapon and an attacker to fire it
@@ -3038,7 +3038,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             int modifier = wtype.getToHitModifier();
             if (wtype instanceof VariableSpeedPulseLaserWeapon) {
                 int nRange = ae.getPosition().distance(target.getPosition());
-                int[] nRanges = wtype.getRanges(weapon);
+                int[] nRanges = wtype.getRanges(weapon, ammo);
 
                 if (nRange <= nRanges[RangeType.RANGE_SHORT]) {
                     modifier += RangeType.RANGE_SHORT;
@@ -4347,7 +4347,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
      */
     private static ToHitData compileTerrainAndLosToHitMods(Game game, Entity ae, Targetable target, int ttype, int aElev, int tElev,
                 int targEl, int distance, LosEffects los, ToHitData toHit, ToHitData losMods, int toSubtract, int eistatus,
-                WeaponType wtype, Mounted weapon, int weaponId, AmmoType atype, EnumSet<AmmoType.Munitions> munition, boolean isAttackerInfantry,
+                WeaponType wtype, Mounted weapon, int weaponId, AmmoType atype, Mounted ammo, EnumSet<AmmoType.Munitions> munition, boolean isAttackerInfantry,
                 boolean inSameBuilding, boolean isIndirect, boolean isPointBlankShot, boolean underWater) {
         if (ae == null || target == null) {
             // Can't handle these attacks without a valid attacker and target
@@ -4381,7 +4381,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                         || wtype.hasFlag(WeaponType.F_DIVE_BOMB)
                         || (atype != null && atype.getMunitionType().contains(AmmoType.Munitions.M_ADA))))
                 && weaponId > WeaponType.WEAPON_NA)) {
-            toHit.append(Compute.getRangeMods(game, ae, weaponId, target));
+            toHit.append(Compute.getRangeMods(game, ae, weapon, ammo, target));
         }
 
         // add in LOS mods that we've been keeping

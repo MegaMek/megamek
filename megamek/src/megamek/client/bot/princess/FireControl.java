@@ -1924,10 +1924,10 @@ public class FireControl {
 
             // Choose the best shot
             if (null != bestShoot) {
-                if (((AmmoType) bestShoot.getAmmo().getType()).getMunitionType().contains(AmmoType.Munitions.M_DEAD_FIRE)) {
+                if ((bestShoot.getAmmo() != null) && ((AmmoType) bestShoot.getAmmo().getType()).getMunitionType().contains(AmmoType.Munitions.M_DEAD_FIRE)) {
                     // Avoid weird interaction where Dead-Fire gets chosen despite out-of-range mod.
                     if (bestShoot.getToHit().getValue() == TargetRoll.AUTOMATIC_FAIL) {
-                        LogManager.getLogger().debug("\nDead-fire selected despite impossible to-hit chance!");
+                        LogManager.getLogger().debug("\nDead-fire selected despite impossible to-hit chance!  Skipping...");
                         continue;
                     }
 

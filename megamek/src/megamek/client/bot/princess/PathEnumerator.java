@@ -218,8 +218,8 @@ public class PathEnumerator {
                 paths.addAll(apf.getAllComputedPathsUncategorized());
             // this handles the case of the mover acting like a spheroid aerospace unit in an atmosphere
             } else if (Compute.useSpheroidAtmosphere(game, mover)) {
-                Coords poi = AeroPathUtil.getSpheroidPOI(game, mover);
-                SpheroidPathFinder spf = SpheroidPathFinder.getInstance(game, poi);
+                int dir = AeroPathUtil.getSpheroidDir(game, mover);
+                SpheroidPathFinder spf = SpheroidPathFinder.getInstance(game, dir);
                 spf.run(new MovePath(game, mover));
                 paths.addAll(spf.getAllComputedPathsUncategorized());
             // this handles the case of the mover being an infantry unit of some kind, that's not airborne.

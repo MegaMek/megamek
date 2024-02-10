@@ -464,7 +464,7 @@ public abstract class PathRanker implements IPathRanker {
         return false;
     }
 
-    protected @Nullable Coords calcAllyCenter(int myId, @Nullable List<Entity> friends, Game game) {
+    public static @Nullable Coords calcAllyCenter(int myId, @Nullable List<Entity> friends, Game game) {
         if ((friends == null) || friends.isEmpty()) {
             return null;
         }

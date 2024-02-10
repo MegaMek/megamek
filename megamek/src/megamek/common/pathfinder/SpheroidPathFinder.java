@@ -37,30 +37,31 @@ import java.util.*;
  */
 public class SpheroidPathFinder {
     private Game game;
-    private Coords poi;
+    private int direction;
     private List<MovePath> spheroidPaths;
 
     private Set<Coords> visitedCoords = new HashSet<>();
 
     private SpheroidPathFinder(Game game) {
-        this(game, game.getBoard().getCenter());
+        // Default to heading north
+        this(game,0);
     }
 
-    private SpheroidPathFinder(Game game, Coords poi) {
+    private SpheroidPathFinder(Game game, int direction) {
         this.game = game;
-        this.poi = poi;
+        this.direction = direction;
     }
 
     /**
      * We want to be able to set a point that the entity should turn to face
      * @param target
      */
-    public void setPOI(@Nullable Coords target) {
-        this.poi = target;
+    public void setDirection(int direction) {
+        this.direction = direction;
     }
 
-    public Coords getPOI() {
-        return this.poi;
+    public int getDirection() {
+        return this.direction;
     }
 
     public Collection<MovePath> getAllComputedPathsUncategorized() {
@@ -94,6 +95,7 @@ public class SpheroidPathFinder {
                 // since we are considering paths across multiple altitudes that cross the same coordinates
                 // we want to clear this out before every altitude to avoid discarding altitude changing paths
                 // so that our dropships can maneuver vertically if necessary.
+                // Each path will end with turns to face this.direction.
                 visitedCoords.clear();
 
                 // we don't really want to consider a non-hovering path, we will add it as a special case
@@ -114,11 +116,11 @@ public class SpheroidPathFinder {
 
 
             // Set the correct facing for each end location
-            for (MovePath path : spheroidPaths) {
-                validRotations.addAll(AeroPathUtil.generateValidRotation(path, poi));
-            }
+            // for (MovePath path : spheroidPaths) {
+            //     validRotations.addAll(AeroPathUtil.generateValidRotation(path, poi));
+            //}
 
-            spheroidPaths.addAll(validRotations);
+            //spheroidPaths.addAll(validRotations);
 
             visitedCoords.clear();
 
@@ -143,8 +145,8 @@ public class SpheroidPathFinder {
         }
     }
 
-    public static SpheroidPathFinder getInstance(Game game, Coords poi) {
-        return new SpheroidPathFinder(game, poi);
+    public static SpheroidPathFinder getInstance(Game game, int direction) {
+        return new SpheroidPathFinder(game, direction);
     }
 
     private MovePath generateHoverPath(MovePath startingPath) {
@@ -175,6 +177,11 @@ public class SpheroidPathFinder {
         // we've moved further than 8 hexes on a ground map
         if (visitedCoords.contains(startingPath.getFinalCoords()) ||
                 (startingPath.getMpUsed() > startingPath.getEntity().getRunMP())) {
+            // End this path with turns to face our desired final direction
+            int diff = (6 + (direction - startingPath.getFinalFacing())) % 6;
+            for (MoveStepType stepType : AeroPathUtil.TURNS.get(diff)) {
+                startingPath.addStep(stepType);
+            }
             return retval;
         }
 

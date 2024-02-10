@@ -2,6 +2,7 @@ package megamek.client.bot.princess;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 import megamek.common.*;
@@ -238,28 +239,52 @@ public class AeroPathUtil {
         return childPaths;
     }
 
-    public static List<MovePath> generateValidRotation(MovePath path, @Nullable Coords poi) {
+    public static List<MovePath> generateValidRotation(MovePath path, int dir) {
         List<MovePath> childPaths = new ArrayList<>();
-        if (null != poi) {
-            MovePath childPath = path.clone();
-            Coords curCoords = childPath.getFinalCoords();
+        MovePath childPath = path.clone();
+        Coords curCoords = childPath.getFinalCoords();
 
-            int dir = curCoords.direction(poi);
-
-            // Only turn if not facing correct direction
-            if (dir > 0) {
-                for (MoveStepType turn : TURNS.get(dir)) {
-                    childPath.addStep(turn);
-                }
-                childPaths.add(childPath);
+        // Only turn if not facing correct direction
+        if (dir > 0) {
+            for (MoveStepType turn : TURNS.get(dir)) {
+                childPath.addStep(turn);
             }
+            childPaths.add(childPath);
         }
 
         return childPaths;
 
     }
 
-    public static Coords getSpheroidPOI(Game game, Entity mover) {
-        return game.getBoard().getCenter();
+    public static int getSpheroidDir(Game game, Entity mover) {
+        // Face the center of the board
+        int dir = mover.getPosition().direction(game.getBoard().getCenter());
+
+        // Then determine if we need to protect part of the ship
+        if (mover.getDamageLevel() != Entity.DMG_NONE) {
+            // TODO: finish this
+            int leastArmor = 9999999;
+            int leastLoc = Dropship.LOC_NONE;
+            for (int i = Dropship.LOC_NOSE; i<= Dropship.LOC_FUSELAGE; i++) {
+                if (mover.getArmor(i) < leastArmor) {
+                    leastArmor = mover.getArmor(i);
+                    leastLoc = i;
+                }
+            }
+
+        } else {
+            // Get all enemies, find centroid, face that.
+            final Coords centroid;
+            ArrayList<Entity> enemies = new ArrayList<>();
+            Iterator<Entity> eIt = game.getAllEnemyEntities(mover);
+            while (eIt.hasNext()) {
+                enemies.add(eIt.next());
+            }
+            centroid = PathRanker.calcAllyCenter(mover.getId(), enemies, game);
+            dir = mover.getPosition().direction(centroid);
+
+        }
+
+        return dir;
     }
 }

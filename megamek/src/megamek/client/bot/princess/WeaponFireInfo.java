@@ -715,12 +715,13 @@ public class WeaponFireInfo {
     }
 
     String getDebugDescription() {
+        String ammoClause = (getAmmo() == null) ? "" : ", Ammo: " + ((AmmoType) getAmmo().getType()).getSubMunitionName();
         return getWeapon().getName() + " P. Hit: " + LOG_PER.format(getProbabilityToHit())
                 + ", Max Dam: " + LOG_DEC.format(getMaxDamage())
                 + ", Exp. Dam: " + LOG_DEC.format(getExpectedDamageOnHit())
                 + ", Num Crits: " + LOG_DEC.format(getExpectedCriticals())
                 + ", Kill Prob: " + LOG_PER.format(getKillProbability())
-                + ", Ammo: " + ((AmmoType) getAmmo().getType()).getSubMunitionName();
+                + ammoClause;
 
     }
 

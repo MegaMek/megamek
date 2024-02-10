@@ -719,7 +719,8 @@ public class WeaponFireInfo {
                 + ", Max Dam: " + LOG_DEC.format(getMaxDamage())
                 + ", Exp. Dam: " + LOG_DEC.format(getExpectedDamageOnHit())
                 + ", Num Crits: " + LOG_DEC.format(getExpectedCriticals())
-                + ", Kill Prob: " + LOG_PER.format(getKillProbability());
+                + ", Kill Prob: " + LOG_PER.format(getKillProbability())
+                + ", Ammo: " + ((AmmoType) getAmmo().getType()).getSubMunitionName();
 
     }
 

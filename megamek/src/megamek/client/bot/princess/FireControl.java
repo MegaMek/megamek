@@ -1150,7 +1150,21 @@ public class FireControl {
                         ret.append(shootingCheck);
                     }
                 } else {
-                    for (final Mounted ammo : shooter.getAmmo(weapon)) {
+                    ArrayList<Mounted> ammos;
+                    if (shooter.isLargeCraft()) {
+                        // Bay ammo is handled differently
+                        ammos = new ArrayList<Mounted>();
+                        for (final Mounted a : shooter.getAmmo()) {
+                            if (AmmoType.isAmmoValid(a, (WeaponType) weapon.getType())
+                                    && AmmoType.canSwitchToAmmo(weapon, (AmmoType) a.getType())) {
+                                ammos.add(a);
+                            }
+                        }
+                    } else {
+                        ammos = shooter.getAmmo(weapon);
+                    }
+
+                    for (Mounted ammo: ammos) {
                         shootingCheck = checkGuess(shooter, enemy, weapon, ammo, game);
                         if (null != shootingCheck) {
                             ret.append(shootingCheck);
@@ -1571,8 +1585,22 @@ public class FireControl {
             if (AmmoType.T_NA == wtype.getAmmoType()) {
                 bestShoot = buildWeaponFireInfo(shooter, target, weapon, null, game, false);
             } else {
+                ArrayList<Mounted> ammos;
+                if (shooter.isLargeCraft()) {
+                    // Bay ammo is handled differently
+                    ammos = new ArrayList<Mounted>();
+                    for (final Mounted a : shooter.getAmmo()) {
+                        if (AmmoType.isAmmoValid(a, (WeaponType) weapon.getType())
+                                && AmmoType.canSwitchToAmmo(weapon, (AmmoType) a.getType())) {
+                            ammos.add(a);
+                        }
+                    }
+                } else {
+                    ammos = shooter.getAmmo(weapon);
+                }
+
                 WeaponFireInfo shoot;
-                for (final Mounted ammo : shooter.getAmmo(weapon)) {
+                for (Mounted ammo: ammos) {
                     shoot = buildWeaponFireInfo(shooter,
                             shooterState,
                             target,
@@ -1680,8 +1708,22 @@ public class FireControl {
             if (AmmoType.T_NA == wtype.getAmmoType()) {
                 bestShoot = buildWeaponFireInfo(shooter, target, weapon, null, game, false);
             } else {
+                ArrayList<Mounted> ammos;
+                if (shooter.isLargeCraft()) {
+                    // Bay ammo is handled differently
+                    ammos = new ArrayList<Mounted>();
+                    for (final Mounted a : shooter.getAmmo()) {
+                        if (AmmoType.isAmmoValid(a, (WeaponType) weapon.getType())
+                                && AmmoType.canSwitchToAmmo(weapon, (AmmoType) a.getType())) {
+                            ammos.add(a);
+                        }
+                    }
+                } else {
+                    ammos = shooter.getAmmo(weapon);
+                }
+
                 WeaponFireInfo shoot;
-                for (final Mounted ammo : shooter.getAmmo(weapon)) {
+                for (Mounted ammo: ammos) {
 
                     shoot = buildWeaponFireInfo(shooter,
                             flightPath,
@@ -1844,7 +1886,21 @@ public class FireControl {
             if (AmmoType.T_NA == wtype.getAmmoType()) {
                 bestShoot = buildWeaponFireInfo(shooter, target, weapon, null, game, false);
             } else {
-                for (Mounted ammo : shooter.getAmmo(weapon)) {
+                ArrayList<Mounted> ammos;
+                if (shooter.isLargeCraft()) {
+                    // Bay ammo is handled differently
+                    ammos = new ArrayList<Mounted>();
+                    for (final Mounted a : shooter.getAmmo()) {
+                        if (AmmoType.isAmmoValid(a, (WeaponType) weapon.getType())
+                                && AmmoType.canSwitchToAmmo(weapon, (AmmoType) a.getType())) {
+                            ammos.add(a);
+                        }
+                    }
+                } else {
+                    ammos = shooter.getAmmo(weapon);
+                }
+
+                for (Mounted ammo: ammos) {
                     WeaponFireInfo shoot = buildWeaponFireInfo(shooter, target, weapon, ammo, game, false);
 
                     // if we're below the threshold, try switching missile modes
@@ -1868,6 +1924,14 @@ public class FireControl {
 
             // Choose the best shot
             if (null != bestShoot) {
+                if (((AmmoType) bestShoot.getAmmo().getType()).getMunitionType().contains(AmmoType.Munitions.M_DEAD_FIRE)) {
+                    // Avoid weird interaction where Dead-Fire gets chosen despite out-of-range mod.
+                    if (bestShoot.getToHit().getValue() == TargetRoll.AUTOMATIC_FAIL) {
+                        LogManager.getLogger().debug("\nDead-fire selected despite impossible to-hit chance!");
+                        continue;
+                    }
+
+                }
                 if (bestShoot.getProbabilityToHit() > toHitThreshold) {
                     myPlan.add(bestShoot);
                     continue;
@@ -2496,7 +2560,20 @@ public class FireControl {
             } else {
                 // Iterate over all valid ammo for this weapon
                 int bracket;
-                for (final Mounted ammo : shooter.getAmmo(weapon)) {
+                ArrayList<Mounted> ammos;
+                if (shooter.isLargeCraft()) {
+                    // Bay ammo is handled differently
+                    ammos = new ArrayList<Mounted>();
+                    for (final Mounted a : shooter.getAmmo()) {
+                        if (AmmoType.isAmmoValid(a, (WeaponType) weapon.getType())
+                                && AmmoType.canSwitchToAmmo(weapon, (AmmoType) a.getType())) {
+                            ammos.add(a);
+                        }
+                    }
+                } else {
+                    ammos = shooter.getAmmo(weapon);
+                }
+                for (Mounted ammo: ammos) {
                     bracket = RangeType.rangeBracket(range,
                             weaponType.getRanges(weapon, ammo),
                             useExtremeRange,
@@ -2700,10 +2777,11 @@ public class FireControl {
                 return validAmmo.get(0);
             }
 
+            // Todo: delete
             // ATMs
-            if (weaponType instanceof ATMWeapon) {
-                return getAtmAmmo(validAmmo, range, new EntityState(target), fireResistant);
-            }
+            // if (weaponType instanceof ATMWeapon) {
+            //    return getAtmAmmo(validAmmo, range, new EntityState(target), fireResistant);
+            //}
 
             // Target is a building.
             if (target instanceof BuildingTarget) {
@@ -3186,16 +3264,17 @@ public class FireControl {
             }
         }
 
+        // Todo: delete
         // MML ammo depends on range.
-        if (weaponType instanceof MMLWeapon) {
-            if (9 < range) { // Out of SRM range
-                returnAmmo = mmlLrm;
-            } else if (6 < range) { // SRM long range.
-                returnAmmo = (null == mmlLrm ? mmlSrm : mmlLrm);
-            } else {
-                returnAmmo = (null == mmlSrm ? mmlLrm : mmlSrm);
-            }
-        }
+       // if (weaponType instanceof MMLWeapon) {
+       //     if (9 < range) { // Out of SRM range
+       //         returnAmmo = mmlLrm;
+       //     } else if (6 < range) { // SRM long range.
+       //         returnAmmo = (null == mmlLrm ? mmlSrm : mmlLrm);
+       //     } else {
+       //         returnAmmo = (null == mmlSrm ? mmlLrm : mmlSrm);
+       //     }
+       // }
 
         return returnAmmo;
     }

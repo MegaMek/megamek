@@ -726,7 +726,7 @@ public class Princess extends BotClient {
     }
 
     private Map<Mounted, Double> calcAmmoConservation(final Entity shooter) {
-        final double aggroFactor = (10 - getBehaviorSettings().getHyperAggressionIndex()) * 2;
+        final double aggroFactor = getBehaviorSettings().getHyperAggressionIndex();
         final StringBuilder msg = new StringBuilder("\nCalculating ammo conservation for ")
                 .append(shooter.getDisplayName());
         msg.append("\nAggression Factor = ").append(aggroFactor);
@@ -767,8 +767,13 @@ public class Princess extends BotClient {
                     ammoCount += ammoCounts.get(ammoType);
                 }
                 msg.append(" has ").append(ammoCount).append(" shots left");
+                // Desired behavior:
+                // At min aggro (0 of 10), require ~50% chance to hit with > 3 shots left
+                // At normal aggro (5 of 10), require at least 10% to-hit chance with > 3 shots left
+                // At max aggro (10 of 10) require just over 0% chance to hit until at 1 round left.
                 final double toHitThreshold =
-                        Math.max(0.0, 1 - (ammoCount / aggroFactor));
+                        Math.max(0.0,
+                                (0.8/((aggroFactor) + 2) + 1.0 / ((ammoCount*ammoCount)+1)));
                 msg.append("; To Hit Threshold = ").append(new DecimalFormat("0.000").format(toHitThreshold));
                 ammoConservation.put(weapon, toHitThreshold);
             }

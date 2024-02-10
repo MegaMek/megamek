@@ -19,10 +19,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import megamek.common.Entity;
-import megamek.common.Game;
-import megamek.common.Mounted;
-import megamek.common.Targetable;
+import megamek.common.*;
 import megamek.common.options.OptionsConstants;
 import org.apache.logging.log4j.LogManager;
 
@@ -120,7 +117,21 @@ public class MultiTargetFireControl extends FireControl {
                 continue;
             }
 
-            for (Mounted ammo: shooter.getAmmo(weapon)) {
+            ArrayList<Mounted> ammos;
+            if (shooter.isLargeCraft()) {
+                // Bay ammo is handled differently
+                ammos = new ArrayList<Mounted>();
+                for (final Mounted a : shooter.getAmmo()) {
+                    if (AmmoType.isAmmoValid(a, (WeaponType) weapon.getType())
+                            && AmmoType.canSwitchToAmmo(weapon, (AmmoType) a.getType())) {
+                        ammos.add(a);
+                    }
+                }
+            } else {
+                ammos = shooter.getAmmo(weapon);
+            }
+
+            for (Mounted ammo: ammos) {
                 WeaponFireInfo shot = buildWeaponFireInfo(shooter, target, weapon, ammo, owner.getGame(), false);
 
                 // this is a better shot if it has a chance of doing damage and the damage is better than the previous best shot

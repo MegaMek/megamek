@@ -1,13 +1,16 @@
 /*
  * MegaMek - Copyright (C) 2002-2004 Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2018-2024 - The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it under the terms of the
- * GNU General Public License as published by the Free Software* Foundation; either version 2 of the
- * License, or (at your option) any later version.
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later
+ * version.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
- * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  */
 package megamek.common;
 
@@ -27,7 +30,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * Represents any type of equipment mounted on a 'Mek, excluding systems and actuators.
+ * Represents any type of equipment mounted on a 'Mek, excluding systems and
+ * actuators.
  *
  * @author Ben
  * @since April 1, 2002, 1:35 PM
@@ -37,8 +41,9 @@ public class EquipmentType implements ITechnology {
     public static final int CRITICALS_VARIABLE = Integer.MIN_VALUE;
     public static final int BV_VARIABLE = Integer.MIN_VALUE;
     public static final int COST_VARIABLE = Integer.MIN_VALUE;
-    /** Default value for support vehicle slot cost. Those that differ from mechs are assigned
-     * a value >= 0
+    /**
+     * Default value for support vehicle slot cost. Those that differ from `Mechs
+     * are assigned a value >= 0
      */
     private static final int MECH_SLOT_COST = -1;
 
@@ -54,9 +59,9 @@ public class EquipmentType implements ITechnology {
     public static final int T_ARMOR_STEALTH = 8;
     public static final int T_ARMOR_FERRO_FIBROUS_PROTO = 9;
     public static final int T_ARMOR_COMMERCIAL = 10;
-    public static final int T_ARMOR_LC_FERRO_CARBIDE = 11;  //Large Craft Only
-    public static final int T_ARMOR_LC_LAMELLOR_FERRO_CARBIDE = 12; //Large Craft Only
-    public static final int T_ARMOR_LC_FERRO_IMP = 13; //Large Craft Only
+    public static final int T_ARMOR_LC_FERRO_CARBIDE = 11; // Large Craft Only
+    public static final int T_ARMOR_LC_LAMELLOR_FERRO_CARBIDE = 12; // Large Craft Only
+    public static final int T_ARMOR_LC_FERRO_IMP = 13; // Large Craft Only
     public static final int T_ARMOR_INDUSTRIAL = 14;
     public static final int T_ARMOR_HEAVY_INDUSTRIAL = 15;
     public static final int T_ARMOR_FERRO_LAMELLOR = 16;
@@ -105,13 +110,26 @@ public class EquipmentType implements ITechnology {
     public static final int T_STRUCTURE_COMPOSITE = 5;
     public static final int T_STRUCTURE_ENDO_COMPOSITE = 6;
 
-    public static final String[] structureNames = { "Standard", "Industrial",
-            "Endo Steel", "Endo Steel Prototype", "Reinforced", "Composite",
-            "Endo-Composite" };
+    public static final String[] structureNames = {
+            "Standard",
+            "Industrial",
+            "Endo Steel",
+            "Endo Steel Prototype",
+            "Reinforced",
+            "Composite",
+            "Endo-Composite"
+    };
 
     // Assume for now that prototype is not more expensive
-    public static final double[] structureCosts = { 400, 300, 1600, 4800, 6400,
-            1600, 3200 };
+    public static final double[] structureCosts = {
+            400,
+            300,
+            1600,
+            4800,
+            6400,
+            1600,
+            3200
+    };
 
     protected String name = null;
 
@@ -120,10 +138,12 @@ public class EquipmentType implements ITechnology {
 
     protected String internalName = null;
 
-    /** Sorting lists of equipment by this string groups and sorts equipment better. */
+    /**
+     * Sorting lists of equipment by this string groups and sorts equipment better.
+     */
     protected String sortingName;
 
-    private Vector<String> namesVector = new Vector<>();
+    private Vector<String> namesVector = new Vector<String>();
 
     protected double tonnage = 0;
     protected int criticals = 0;
@@ -133,7 +153,7 @@ public class EquipmentType implements ITechnology {
     protected boolean explosive = false;
     protected boolean hittable = true; // if false, reroll critical hits
 
-    /** can the crits for this be spread over locations? */
+    /** can the criticals for this be spread over locations? */
     protected boolean spreadable = false;
     protected int toHitModifier = 0;
 
@@ -146,7 +166,7 @@ public class EquipmentType implements ITechnology {
     protected double bv = 0; // battle value point system
     protected double cost = 0; // The C-Bill cost of the item.
 
-    // For equipment that cannot be pod-mounted on an omni unit
+    // For equipment that cannot be pod-mounted on an Omni unit
     protected boolean omniFixedOnly = false;
 
     /**
@@ -163,15 +183,15 @@ public class EquipmentType implements ITechnology {
      * instantly In that case, the specific end of turn mode names can be added
      * here
      */
-    public Vector<String> endTurnModes = new Vector<>();
+    public Vector<String> endTurnModes = new Vector<String>();
 
     // static list of eq
     protected static Vector<EquipmentType> allTypes;
     protected static Hashtable<String, EquipmentType> lookupHash;
 
     /**
-    * Keeps track of page numbers for rules references.
-    */
+     * Keeps track of page numbers for rules references.
+     */
     public String rulesRefs = "";
 
     /** Creates new EquipmentType */
@@ -228,11 +248,12 @@ public class EquipmentType implements ITechnology {
     }
 
     /**
-     * @deprecated The old tech progression system has been replaced by the TechAdvancement class.
+     * @deprecated The old tech progression system has been replaced by the
+     *             TechAdvancement class.
      */
     @Deprecated
     public Map<Integer, Integer> getTechLevels() {
-        Map<Integer,Integer> techLevel = new HashMap<>();
+        Map<Integer, Integer> techLevel = new HashMap<>();
         if (isUnofficial()) {
             if (techAdvancement.getTechBase() == TECH_BASE_CLAN) {
                 techLevel.put(techAdvancement.getIntroductionDate(true), TechConstants.T_CLAN_UNOFFICIAL);
@@ -285,54 +306,58 @@ public class EquipmentType implements ITechnology {
     }
 
     /**
-     * Calculates the weight of the equipment. If {@code entity} is {@code null}, equipment without
-     * a fixed weight will return {@link EquipmentType#TONNAGE_VARIABLE}.
+     * Calculates the weight of the equipment. If {@code entity} is {@code null},
+     * equipment without a fixed weight will return
+     * {@link EquipmentType#TONNAGE_VARIABLE}.
      *
      * @param entity The unit the equipment is mounted on
-     * @return       The weight of the equipment in tons
+     * @return The weight of the equipment in tons
      */
     public double getTonnage(@Nullable Entity entity) {
         return getTonnage(entity, Entity.LOC_NONE, 1.0);
     }
 
     /**
-     * Calculates the weight of the equipment. If {@code entity} is {@code null}, equipment without
-     * a fixed weight will return {@link EquipmentType#TONNAGE_VARIABLE}.
+     * Calculates the weight of the equipment. If {@code entity} is {@code null},
+     * equipment without a fixed weight will return
+     * {@link EquipmentType#TONNAGE_VARIABLE}.
      *
      * @param entity The unit the equipment is mounted on
      * @param size   The size of variable-sized equipment
-     * @return       The weight of the equipment in tons
+     * @return The weight of the equipment in tons
      */
     public double getTonnage(@Nullable Entity entity, double size) {
         return getTonnage(entity, Entity.LOC_NONE, size);
     }
 
     /**
-     * Calculates the weight of the equipment. If {@code entity} is {@code null}, equipment without
-     * a fixed weight will return {@link EquipmentType#TONNAGE_VARIABLE}.
+     * Calculates the weight of the equipment. If {@code entity} is {@code null},
+     * equipment without a fixed weight will return
+     * {@link EquipmentType#TONNAGE_VARIABLE}.
      *
      * @param entity   The unit the equipment is mounted on
      * @param location The mount location
      * @param size     The size (for variable-sized equipment)
-     * @return         The weight of the equipment in tons
+     * @return The weight of the equipment in tons
      */
     public double getTonnage(Entity entity, int location, double size) {
         return tonnage;
     }
 
     /**
-     * Calculates the weight of the equipment, with the option to override the standard rounding based on unit
-     * type. This allows for the optional fractional accounting construction rules.
-     * If {@code entity} is {@code null}, equipment without a fixed weight will
-     * return {@link EquipmentType#TONNAGE_VARIABLE}.
+     * Calculates the weight of the equipment, with the option to override the
+     * standard rounding based on unit type. This allows for the optional fractional
+     * accounting construction rules. If {@code entity} is {@code null}, equipment
+     * without a fixed weight will return {@link EquipmentType#TONNAGE_VARIABLE}.
      *
      * @param entity        The unit the equipment is mounted on
      * @param location      The mount location
      * @param size          The size (for variable-sized equipment)
-     * @param defaultMethod The rounding method to use for any variable weight equipment. Any equipment
-     *                      that is normally rounded to either the half ton or kg based on unit type
-     *                      will have this method applied instead.
-     * @return              The weight of the equipment in tons
+     * @param defaultMethod The rounding method to use for any variable weight
+     *                      equipment. Any equipment that is normally rounded to
+     *                      either the half ton or kg based on unit type will have
+     *                      this method applied instead.
+     * @return The weight of the equipment in tons
      */
     public double getTonnage(Entity entity, int location, double size, RoundWeight defaultMethod) {
         // Default implementation does not deal with variable-weight equipment.
@@ -377,7 +402,6 @@ public class EquipmentType implements ITechnology {
                         .getUsableShotsLeft() == 0))) {
             return false;
         }
-
 
         // special case: RISC laser pulse module are only explosive when the
         // laser they're linked to is working
@@ -431,7 +455,7 @@ public class EquipmentType implements ITechnology {
 
         // special case. PPC with Capacitor only explodes when charged
         if (ignoreCharge) {
-            // for BV purposes, we need to ignore the chargedness and check only
+            // for BV purposes, we need to ignore the charged-ness and check only
             // if there's a capacitor
             if ((mounted.getType() instanceof PPCWeapon)
                     && (mounted.getLinkedBy() != null)) {
@@ -485,8 +509,8 @@ public class EquipmentType implements ITechnology {
     }
 
     /**
-     * @return - whether the equipment must be considered part of the base chassis when
-     *           mounted on an omni unit
+     * @return - whether the equipment must be considered part of the base chassis
+     *         when mounted on an omni unit
      */
     public boolean isOmniFixedOnly() {
         return omniFixedOnly;
@@ -502,6 +526,7 @@ public class EquipmentType implements ITechnology {
 
     /**
      * Simple way to check if a piece of equipment has a specific usage/firing mode
+     *
      * @param modeType The name of the mode to check.
      * @return True or false.
      */
@@ -558,8 +583,7 @@ public class EquipmentType implements ITechnology {
      * EquipmentType doesn't have the modes, so don't try to call this method
      * with null or empty argument.
      *
-     * @param modes
-     *            non null, non empty list of available mode names.
+     * @param modes non null, non empty list of available mode names.
      */
     protected void setModes(String... modes) {
         Vector<EquipmentMode> newModes = new Vector<>(modes.length);
@@ -587,7 +611,8 @@ public class EquipmentType implements ITechnology {
      * Add a mode to the Equipment
      *
      * @param mode The mode to be added
-     * @return true if the mode was added; false if modes was null or the mode was already present
+     * @return true if the mode was added; false if modes was null or the mode was
+     *         already present
      * @author Simon (Juliez)
      */
     public boolean addMode(String mode) {
@@ -621,9 +646,8 @@ public class EquipmentType implements ITechnology {
      * vector of names. It is used by the {@link Mounted#setMode(int)} method to
      * distinguish instant and end of turn switching.
      *
-     * @param mode
-     *            - the <code>String</code> of the mode name involved in the
-     *            switch
+     * @param mode - the <code>String</code> of the mode name involved in the
+     *             switch
      * @return true if the mode name is found in the next turn mode vector
      */
     public boolean isNextTurnModeSwitch(String mode) {
@@ -639,9 +663,9 @@ public class EquipmentType implements ITechnology {
      * <p>
      * Returns the mode number <code>modeNum</code> from the list of modes
      * available for this type of equipment. Modes are numbered from
-     * <code>0</code> to
-     * <code>getModesCount() - 1</code>
+     * <code>0</code> to <code>getModesCount() - 1</code>
      * </p>
+     *
      * Fails if this type of the equipment doesn't have modes, or given mode is
      * out of the valid range.
      *
@@ -673,9 +697,10 @@ public class EquipmentType implements ITechnology {
     }
 
     /**
-     * Returns an EquipmentType having the given internal name or lookup name (but not the "name" which
-     * is the display text unless it's equal to the internal name). Internal names may be taken from
-     * {@link EquipmentTypeLookup}. Returns null if there is none with that name.
+     * Returns an EquipmentType having the given internal name or lookup name (but
+     * not the "name" which is the display text unless it's equal to the internal
+     * name). Internal names may be taken from {@link EquipmentTypeLookup}. Returns
+     * null if there is none with that name.
      *
      * @param key The internal name or lookup name
      * @return The EquipmentType with the given internal name or lookup name
@@ -718,12 +743,15 @@ public class EquipmentType implements ITechnology {
         return EquipmentType.allTypes.elements();
     }
 
-    /** @return All equipment types as a List. The list is a copy and can safely be modified. */
+    /**
+     * @return All equipment types as a List. The list is a copy and can safely be
+     *         modified.
+     */
     public static List<EquipmentType> allTypes() {
         if (EquipmentType.allTypes == null) {
             EquipmentType.initializeTypes();
         }
-        return new ArrayList<>(EquipmentType.allTypes);
+        return new ArrayList<EquipmentType>(EquipmentType.allTypes);
     }
 
     protected static void addType(EquipmentType type) {
@@ -766,7 +794,7 @@ public class EquipmentType implements ITechnology {
      * Convenience method to test whether an EquipmentType instance is armor.
      *
      * @param et The equipment instance to test
-     * @return   Whether the equipment is an armor type
+     * @return Whether the equipment is an armor type
      */
     public static boolean isArmorType(EquipmentType et) {
         return et instanceof ArmorType;
@@ -795,17 +823,17 @@ public class EquipmentType implements ITechnology {
         if ((structureType < 0) || (structureType >= structureNames.length)) {
             return "UNKNOWN";
         }
-        return clan ? "Clan " + structureNames[structureType] : "IS "
-                + structureNames[structureType];
+        return clan ? "Clan " + structureNames[structureType]
+                : "IS " + structureNames[structureType];
     }
 
     /**
-     * Convenience method to test whether an EquipmentType instance is mech structure. This works
-     * by comparing the results of {@link #getName()} to the structure names array and returning
-     * {@code true} if there is a match.
+     * Convenience method to test whether an EquipmentType instance is mech
+     * structure. This works by comparing the results of {@link #getName()} to the
+     * structure names array and returning {@code true} if there is a match.
      *
      * @param et The equipment instance to test
-     * @return   Whether the equipment is a structure type
+     * @return Whether the equipment is a structure type
      */
     public static boolean isStructureType(EquipmentType et) {
         return getStructureType(et) != T_STRUCTURE_UNKNOWN;
@@ -815,21 +843,21 @@ public class EquipmentType implements ITechnology {
      * Gives the weight of a single point of armor at a particular BAR for a
      * given tech level.
      */
-    private static final double[][] SV_ARMOR_WEIGHT =
-            {{0.0, 0.0, 0.0, 0.0, 0.0, 0.0},
-                    {0.0, 0.0, 0.0, 0.0, 0.0, 0.0},
-                    {.040, .025, .016, .013, .012, .011},
-                    {.060, .038, .024, .019, .017, .016},
-                    {.000, .050, .032, .026, .023, .021},
-                    {.000, .063, .040, .032, .028, .026},
-                    {.000, .000, .048, .038, .034, .032},
-                    {.000, .000, .056, .045, .040, .037},
-                    {.000, .000, .000, .051, .045, .042},
-                    {.000, .000, .000, .057, .051, .047},
-                    {.000, .000, .000, .063, .056, .052}};
+    private static final double[][] SV_ARMOR_WEIGHT = { { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 },
+            { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 },
+            { .040, .025, .016, .013, .012, .011 },
+            { .060, .038, .024, .019, .017, .016 },
+            { .000, .050, .032, .026, .023, .021 },
+            { .000, .063, .040, .032, .028, .026 },
+            { .000, .000, .048, .038, .034, .032 },
+            { .000, .000, .056, .045, .040, .037 },
+            { .000, .000, .000, .051, .045, .042 },
+            { .000, .000, .000, .057, .051, .047 },
+            { .000, .000, .000, .063, .056, .052 } };
 
-    /* Armor and structure are stored as integers and standard uses a generic MiscType that
-     * does not have its own TechAdvancement.
+    /*
+     * Armor and structure are stored as integers and standard uses a generic
+     * MiscType that does not have its own TechAdvancement.
      */
 
     protected static final TechAdvancement TA_STANDARD_STRUCTURE = new TechAdvancement(TECH_BASE_ALL)
@@ -874,7 +902,8 @@ public class EquipmentType implements ITechnology {
     }
 
     /**
-     * @return Whether the item weight varies according to the unit it's installed on
+     * @return Whether the item weight varies according to the unit it's installed
+     *         on
      */
     public boolean isVariableTonnage() {
         return tonnage == TONNAGE_VARIABLE;
@@ -1077,7 +1106,7 @@ public class EquipmentType implements ITechnology {
             w.write("This file can be regenerated with java -jar MegaMek.jar -eqedb ");
             w.write(f.toString());
             w.newLine();
-            w.write("Type,Name,Tech Base,Rules,Tech Rating,Static Tech Level,Introduction Date,Prototype Date,Production Date,Common Date,Extinction Date,Re-Introduction Date,Tonnage,Crits,Cost,BV,Alias");
+            w.write("Type,Name,Tech Base,Rules,Tech Rating,Static Tech Level,Introduction Date,Prototype Date,Production Date,Common Date,Extinction Date,Re-Introduction Date,Tonnage,CriticalSlots,Cost,BV,Alias");
             w.newLine();
             for (Enumeration<EquipmentType> e = EquipmentType.getAllTypes(); e
                     .hasMoreElements();) {
@@ -1096,7 +1125,7 @@ public class EquipmentType implements ITechnology {
                 // Gather the unique tech levels for this equipment ...
                 List<Integer> levels = type.getTechLevels().keySet().stream()
                         .map(type::getTechLevel)
-                        .sorted()   // ordered for ease of use
+                        .sorted() // ordered for ease of use
                         .distinct()
                         .collect(Collectors.toList());
 
@@ -1154,12 +1183,12 @@ public class EquipmentType implements ITechnology {
                 } else {
                     w.write(Double.toString(type.bv));
                 }
-                w.write(",");
-                for (Enumeration<String> names = type.getNames(); names
-                        .hasMoreElements();) {
+                w.write(",\"");
+                for (Enumeration<String> names = type.getNames(); names.hasMoreElements();) {
                     String name = names.nextElement();
-                    w.write("\"" + name + "\",");
+                    w.write(name + ",");
                 }
+                w.write(",");
                 w.newLine();
             }
             w.flush();
@@ -1223,8 +1252,9 @@ public class EquipmentType implements ITechnology {
     }
 
     /**
-     * This does not include heat generated by stealth armor, as that depends on whether
-     * it is installed as patchwork and does not appear in the equipment list of all unit types.
+     * This does not include heat generated by stealth armor, as that depends on
+     * whether it is installed as patchwork and does not appear in the equipment
+     * list of all unit types.
      *
      * @return The amount of heat generated by the equipment
      */
@@ -1233,33 +1263,42 @@ public class EquipmentType implements ITechnology {
     }
 
     /**
-     * Sorting with the String returned by this method results in an improved ordering and grouping
-     * of equipment than by getName(); for example, AC2/5/10/20 will appear in that
-     * order instead of the order AC10/2/20/5 and S/M/L Lasers will be grouped together.
-     * @return A String similar to getName() but modified to support a better sorting
+     * Sorting with the String returned by this method results in an improved
+     * ordering and grouping of equipment than by getName(); for example,
+     * AC2/5/10/20 will appear in that order instead of the order AC10/2/20/5 and
+     * S/M/L Lasers will be grouped together.
+     *
+     * @return A String similar to getName() but modified to support a better
+     *         sorting
      */
     public String getSortingName() {
         return (sortingName != null) ? sortingName : name;
     }
 
     /**
-     * Returns true if this equipment is any of those identified by the given type Strings. The
-     * given typeInternalNames are compared to the internal name of this EquipmentType, not the (display) name!
+     * Returns true if this equipment is any of those identified by the given type
+     * Strings. The given typeInternalNames are compared to the internal name of
+     * this EquipmentType, not the (display) name!
+     *
      * Best use the constants defined in EquipmentTypeLookup.
      *
-     * @param typeInternalName An Equipment internal name to check
+     * @param typeInternalName  An Equipment internal name to check
      * @param typeInternalNames More Equipment internal names to check
-     * @return true if the internalName of this equipment matches any of the given types
+     * @return true if the internalName of this equipment matches any of the given
+     *         types
      */
     public boolean isAnyOf(String typeInternalName, String... typeInternalNames) {
         return internalName.equals(typeInternalName) || Arrays.asList(typeInternalNames).contains(internalName);
     }
 
     /**
-     * Returns true if this equipment is that identified by the given typeInternalName String. The
-     * given typeInternalName is compared to the internal name of this EquipmentType, not the (display) name!
-     * Best use the constants defined in EquipmentTypeLookup. Calling this is equivalent to
-     * {@link #isAnyOf(String, String...)} with only the one parameter.
+     * Returns true if this equipment is that identified by the given
+     * typeInternalName String. The given typeInternalName is compared to the
+     * internal name of this EquipmentType, not the (display) name!
+     *
+     * Best use the constants defined in EquipmentTypeLookup. Calling this is
+     * equivalent to {@link #isAnyOf(String, String...)} with only the one
+     * parameter.
      *
      * @param typeInternalName An Equipment internal name to check
      * @return true if the internalName of this equipment matches the given type
@@ -1269,7 +1308,7 @@ public class EquipmentType implements ITechnology {
     }
 
     public static Map<Integer, String> getAllStructureCodeName() {
-        Map<Integer, String> result = new HashMap();
+        Map<Integer, String> result = new HashMap<Integer, String>();
 
         result.put(T_STRUCTURE_UNKNOWN, getStructureTypeName(T_STRUCTURE_UNKNOWN));
         result.put(T_STRUCTURE_STANDARD, getStructureTypeName(T_STRUCTURE_STANDARD));

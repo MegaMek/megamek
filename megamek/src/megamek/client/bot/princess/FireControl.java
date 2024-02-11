@@ -662,15 +662,18 @@ public class FireControl {
 
         // Make sure we have ammo.
         final WeaponType weaponType = (WeaponType) weapon.getType();
+        final Mounted firingAmmo;
         if (AmmoType.T_NA != weaponType.getAmmoType()) {
             // Use ammo arg if provided, else use linked ammo.
-            Mounted firingAmmo = (ammo == null) ? weapon.getLinked() : ammo;
+            firingAmmo = (ammo == null) ? weapon.getLinked() : ammo;
             if (null == firingAmmo) {
                 return new ToHitData(TH_WEAP_NO_AMMO);
             }
             if (0 == firingAmmo.getUsableShotsLeft()) {
                 return new ToHitData(TH_WEAP_NO_AMMO);
             }
+        } else {
+            firingAmmo = null;
         }
 
         if (shooterState.isProne()) {
@@ -839,9 +842,9 @@ public class FireControl {
 
         // ammo mods
         if (AmmoType.T_NA != weaponType.getAmmoType()
-            && (null != weapon.getLinked())
-            && (weapon.getLinked().getType() instanceof AmmoType)) {
-            final AmmoType ammoType = (AmmoType) weapon.getLinked().getType();
+            && (null != firingAmmo)
+            && (firingAmmo.getType() instanceof AmmoType)) {
+            final AmmoType ammoType = (AmmoType) firingAmmo.getType();
             if (null != ammoType){
                 // Set of munitions we'll consider for Flak targeting
                 EnumSet<AmmoType.Munitions> aaMunitions = EnumSet.of(
@@ -871,6 +874,17 @@ public class FireControl {
                         toHit.addModifier(TH_WEAP_FLAK);
                     } else if (ammoType.getMunitionType().stream().anyMatch(ArtyOnlyMunitions::contains)){
                         toHit.addModifier(TH_WEAP_CANNOT_FIRE);
+                    }
+                }
+
+                // Guesstimate Heat-Seeking Ammo mods
+                if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_HEAT_SEEKING)) {
+                    if (targetState.getHeat() > 0) {
+                        // Hot target good
+                        toHit.addModifier(-targetState.getHeat() / 5, TH_AMMO_MOD);
+                    } else {
+                        // Cold target bad
+                        toHit.addModifier(1, TH_AMMO_MOD);
                     }
                 }
             }
@@ -2777,12 +2791,6 @@ public class FireControl {
                 return validAmmo.get(0);
             }
 
-            // Todo: delete
-            // ATMs
-            // if (weaponType instanceof ATMWeapon) {
-            //    return getAtmAmmo(validAmmo, range, new EntityState(target), fireResistant);
-            //}
-
             // Target is a building.
             if (target instanceof BuildingTarget) {
                 msg.append("\n\tTarget is a building... ");
@@ -3263,18 +3271,6 @@ public class FireControl {
                 }
             }
         }
-
-        // Todo: delete
-        // MML ammo depends on range.
-       // if (weaponType instanceof MMLWeapon) {
-       //     if (9 < range) { // Out of SRM range
-       //         returnAmmo = mmlLrm;
-       //     } else if (6 < range) { // SRM long range.
-       //         returnAmmo = (null == mmlLrm ? mmlSrm : mmlLrm);
-       //     } else {
-       //         returnAmmo = (null == mmlSrm ? mmlLrm : mmlSrm);
-       //     }
-       // }
 
         return returnAmmo;
     }

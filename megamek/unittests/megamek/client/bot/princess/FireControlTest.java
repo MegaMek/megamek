@@ -920,28 +920,6 @@ public class FireControlTest {
         when(mockWeaponMML5.getType()).thenReturn(mockMML5);
 
 
-        // Todo: delete
-        // Test ATMs
-        /**
-        when(mockTarget.getPosition()).thenReturn(new Coords(10, 30));
-        when(mockAtm5Weapon.getLinked()).thenReturn(mockAmmoAtm5Er);
-        assertEquals(mockAmmoAtm5Er, testFireControl.getPreferredAmmo(mockShooter, mockTarget, mockAtm5Weapon));
-        when(mockTarget.getPosition()).thenReturn(new Coords(10, 22));
-        assertEquals(mockAmmoAtm5Er, testFireControl.getPreferredAmmo(mockShooter, mockTarget, mockAtm5Weapon));
-        when(mockTarget.getPosition()).thenReturn(new Coords(10, 18));
-        when(mockAtm5Weapon.getLinked()).thenReturn(mockAmmoAtm5St);
-        assertEquals(mockAmmoAtm5St, testFireControl.getPreferredAmmo(mockShooter, mockTarget, mockAtm5Weapon));
-        when(mockTarget.getPosition()).thenReturn(new Coords(10, 16));
-        when(mockAtm5Weapon.getLinked()).thenReturn(mockAmmoAtm5He);
-        assertEquals(mockAmmoAtm5He, testFireControl.getPreferredAmmo(mockShooter, mockTarget, mockAtm5Weapon));
-        when(mockTarget.getPosition()).thenReturn(new Coords(10, 15));
-        when(mockAtm5Weapon.getLinked()).thenReturn(mockAmmoAtm5St);
-        assertEquals(mockAmmoAtm5St, testFireControl.getPreferredAmmo(mockShooter, mockTarget, mockAtm5Weapon));
-        when(mockTarget.getPosition()).thenReturn(new Coords(10, 13));
-        when(mockAtm5Weapon.getLinked()).thenReturn(mockAmmoAtm5He);
-        assertEquals(mockAmmoAtm5He, testFireControl.getPreferredAmmo(mockShooter, mockTarget, mockAtm5Weapon));
-         */
-
         // Test shooting an AC5 at a building.
         mockTarget = mock(BuildingTarget.class);
         when(mockTarget.getPosition()).thenReturn(new Coords(10, 15));

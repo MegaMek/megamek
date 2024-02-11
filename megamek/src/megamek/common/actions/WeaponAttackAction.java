@@ -3221,7 +3221,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                     toHit.addModifier(1, atype.getSubMunitionName()
                             + Messages.getString("WeaponAttackAction.AmmoMod"));
                 } else {
-                    // +1 bonus for each -1MP the target would get due to heat
+                    // -1 bonus for each -1MP the target would get due to heat
                     toHit.addModifier(-te.getHeatMPReduction(),
                             atype.getSubMunitionName()
                                     + Messages.getString("WeaponAttackAction.AmmoMod"));

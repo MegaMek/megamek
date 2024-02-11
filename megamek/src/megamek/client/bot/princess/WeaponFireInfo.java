@@ -404,11 +404,13 @@ public class WeaponFireInfo {
             return 7D;
         }
 
-        // artillery and cluster table use the rack size as the base damage amount
-        // a little inaccurate, but better than ignoring those weapons entirely
+        // artillery and cluster table use the rack size as the base damage amount,
+        // but we'll roll an "average" cluster for the given weapon size to estimate damage.
         if ((weaponType.getDamage() == WeaponType.DAMAGE_BY_CLUSTERTABLE) ||
            (weaponType.getDamage() == WeaponType.DAMAGE_ARTILLERY)) {
-            return weaponType.getRackSize();
+            // Assume average cluster size for this weapon
+            int rs = weaponType.getRackSize();
+            return Compute.calculateClusterHitTableAmount(7, rs);
         }
 
         // infantry weapons use number of troopers multiplied by weapon damage,
@@ -426,10 +428,17 @@ public class WeaponFireInfo {
             return 1;
         }
 
-        // Aero TAG usage needs to take into account incoming Indirect Fire shots from friendlies, homing
-        // weapons, and the disutility of foregoing its own other weapons.
-        if (weapon.getEntity().isAero() && weaponType.hasFlag(WeaponType.F_TAG) && !target.isAero()){
-            return computeAeroExpectedTAGDamage();
+        // Give an estimation of the utility of TAGging a given target.
+        if (weaponType.hasFlag(WeaponType.F_TAG)) {
+            // Aero TAG usage needs to take into account incoming Indirect Fire shots from friendlies, homing
+            // weapons, and the disutility of foregoing its own other weapons.
+            if (weapon.getEntity().isAero() && !target.isAero()){
+                return computeAeroExpectedTAGDamage();
+            } else {
+                // Other taggers just need to know what hitting with the TAG can expect to deal, damage-wise.
+                return computeExpectedTAGDamage(false);
+            }
+
         }
 
         if (getTarget() instanceof Entity) {
@@ -450,12 +459,24 @@ public class WeaponFireInfo {
      * @return expected damage of firing a TAG weapon, in light of other options.
      */
     double computeAeroExpectedTAGDamage(){
-        int myWeaponsDamage = Compute.computeTotalDamage(shooter.getTotalWeaponList());
+        // If TAG damage exceeds the attacking unit's own max damage capacity, go for it!
+        return computeExpectedTAGDamage(true);
+    }
+
+    /**
+     * Generalized computation of hitting with TAG given current guidable muniitions in play
+     * @param skipOtherWeapons true if Aero, false otherwise.
+     * @return
+     */
+    double computeExpectedTAGDamage(boolean skipOtherWeapons){
+        int myWeaponsDamage = 0;
+        if (skipOtherWeapons) {
+            myWeaponsDamage = Compute.computeTotalDamage(shooter.getTotalWeaponList());
+        }
 
         // Get a list of incoming or potentially incoming guidable weapons from the relevant Princess and compute damage.
         int incomingAttacksDamage = Compute.computeTotalDamage(owner.computeGuidedWeapons(shooter, target.getPosition()));
 
-        // If TAG damage exceeds the attacking unit's own max damage capacity, go for it!
         return Math.max(incomingAttacksDamage - myWeaponsDamage, 0);
     }
 
@@ -603,7 +624,8 @@ public class WeaponFireInfo {
             msg.append("\n\tHeat: ").append(getHeat());
         }
 
-        setExpectedDamageOnHit(computeExpectedDamage());
+        // Expected damage is the chance of hitting * the max damage
+        setExpectedDamageOnHit(getProbabilityToHit() * computeExpectedDamage());
         setMaxDamage(getExpectedDamageOnHit());
 
         if (debugging) {

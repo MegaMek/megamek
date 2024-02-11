@@ -5,9 +5,10 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
+import megamek.client.commands.ClientCommand;
 import megamek.common.*;
 import megamek.common.MovePath.MoveStepType;
-import megamek.common.annotations.Nullable;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * Helper class that contains functionality relating mostly to aero unit paths.
@@ -239,30 +240,37 @@ public class AeroPathUtil {
         return childPaths;
     }
 
-    public static List<MovePath> generateValidRotation(MovePath path, int dir) {
-        List<MovePath> childPaths = new ArrayList<>();
-        MovePath childPath = path.clone();
-        Coords curCoords = childPath.getFinalCoords();
-
-        // Only turn if not facing correct direction
-        if (dir > 0) {
-            for (MoveStepType turn : TURNS.get(dir)) {
-                childPath.addStep(turn);
-            }
-            childPaths.add(childPath);
-        }
-
-        return childPaths;
-
-    }
-
     public static int getSpheroidDir(Game game, Entity mover) {
+        final StringBuilder msg = new StringBuilder("Deciding where to point ")
+                .append(mover.getDisplayName()).append("...");
+
         // Face the center of the board
         int dir = mover.getPosition().direction(game.getBoard().getCenter());
+        msg.append("\nMap center is to the ").append(ClientCommand.getDirection(dir));
+
+        int enemyDir = dir;
+
+        // Get all enemies, find centroid, face that.
+        final Coords centroid;
+        ArrayList<Entity> enemies = new ArrayList<>();
+        Iterator<Entity> eIt = game.getAllEnemyEntities(mover);
+        while (eIt.hasNext()) {
+            enemies.add(eIt.next());
+        }
+        if (!enemies.isEmpty()) {
+            // Calc center of allies _of the enemy_
+            centroid = PathRanker.calcAllyCenter(enemies.get(0).getId(), enemies, game);
+            enemyDir = mover.getPosition().direction(centroid);
+            msg.append("\nEnemies are over in ").append(ClientCommand.getDirection(enemyDir));
+        }
 
         // Then determine if we need to protect part of the ship
-        if (mover.getDamageLevel() != Entity.DMG_NONE) {
-            // TODO: finish this
+        if (mover.getDamageLevel() == Entity.DMG_NONE) {
+            dir = enemyDir;
+            msg.append("\nBeing hale and hearty, we will aim toward the ")
+                    .append(ClientCommand.getDirection(dir));
+
+        } else {
             int leastArmor = 9999999;
             int leastLoc = Dropship.LOC_NONE;
             for (int i = Dropship.LOC_NOSE; i<= Dropship.LOC_FUSELAGE; i++) {
@@ -271,20 +279,31 @@ public class AeroPathUtil {
                     leastLoc = i;
                 }
             }
-
-        } else {
-            // Get all enemies, find centroid, face that.
-            final Coords centroid;
-            ArrayList<Entity> enemies = new ArrayList<>();
-            Iterator<Entity> eIt = game.getAllEnemyEntities(mover);
-            while (eIt.hasNext()) {
-                enemies.add(eIt.next());
+            if (leastLoc != Dropship.LOC_NONE) {
+                // Turn away, turn away, turn away, from enemy!
+                switch (leastLoc) {
+                    case Dropship.LOC_NOSE:
+                        // Turn 180, face away from enemy.
+                        dir = (enemyDir + 3) % 6;
+                    case Dropship.LOC_LWING:
+                        // Turn left two hex sides.
+                        dir = (enemyDir + 4) % 6;
+                    case Dropship.LOC_RWING:
+                        // Turn rigth two hex sides.
+                        dir = (enemyDir + 2) % 6;
+                    case Dropship.LOC_AFT:
+                    case Dropship.LOC_WINGS:
+                    case Dropship.LOC_FUSELAGE:
+                        // Default is nose to enemy.  If this should be different, suggest using NOSE case.
+                        dir = enemyDir;
+                }
+                msg.append("\nWe've taken a lot of damage to our ").append(mover.getLocationAbbr(leastLoc));
+                msg.append("\nTurning to the ").append(ClientCommand.getDirection(dir))
+                        .append(" to protect ourselves!");
             }
-            centroid = PathRanker.calcAllyCenter(mover.getId(), enemies, game);
-            dir = mover.getPosition().direction(centroid);
-
         }
 
+        LogManager.getLogger().debug(msg.toString());
         return dir;
     }
 }

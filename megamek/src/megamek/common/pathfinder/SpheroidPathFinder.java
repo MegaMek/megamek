@@ -53,8 +53,8 @@ public class SpheroidPathFinder {
     }
 
     /**
-     * We want to be able to set a point that the entity should turn to face
-     * @param target
+     * We want to be able to set the direction the entity should turn to face
+     * @param direction
      */
     public void setDirection(int direction) {
         this.direction = direction;

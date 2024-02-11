@@ -1858,7 +1858,19 @@ public class Compute {
         return findC3Spotter(game, attacker, target);
     }
 
+    /**
+     * Function that attempts to find one TAG spotter, or the best TAG spotter,
+     * @param game
+     * @param attacker should be an artillery unit
+     * @param target (if null, do not return a spotter!)
+     * @param stopAtFirst if we only want to know that there is one, not which is best
+     * @return The Spotter.
+     */
     public static Entity findTAGSpotter(Game game, Entity attacker, Targetable target, boolean stopAtFirst) {
+        if (target == null) {
+            return null;
+        }
+
         Entity spotter = null;
 
         ArrayList<Entity> spotters = new ArrayList<>();
@@ -1869,7 +1881,8 @@ public class Compute {
 
             if (!friend.isDeployed()
                     || friend.isOffBoard()
-                    || (friend.getTransportId() != Entity.NONE)) {
+                    || (friend.getTransportId() != Entity.NONE)
+                    || friend == null) {
                 continue; // useless to us...
             }
 

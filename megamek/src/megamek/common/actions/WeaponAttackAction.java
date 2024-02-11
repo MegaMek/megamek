@@ -43,6 +43,7 @@ import java.util.*;
  * Represents intention to fire a weapon at the target.
  */
 public class WeaponAttackAction extends AbstractAttackAction implements Serializable {
+    public static int DEFAULT_VELOCITY = 50;
     private static final long serialVersionUID = -9096603813317359351L;
 
     public static final int STRATOPS_SENSOR_SHADOW_WEIGHT_DIFF = 100000;
@@ -56,7 +57,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
     private int otherAttackInfo = -1;
     private boolean nemesisConfused;
     private boolean swarmingMissiles;
-    protected int launchVelocity = 50;
+    protected int launchVelocity = DEFAULT_VELOCITY;
     /**
      * Keeps track of the ID of the current primary target for a swarm missile
      * attack.

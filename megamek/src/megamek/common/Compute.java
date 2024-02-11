@@ -1900,11 +1900,12 @@ public class Compute {
                 continue;
             }
 
-            int buddyRange = Compute.effectiveDistance(game, friend, target,
-                    false);
+            int buddyRange =  Compute.effectiveDistance(game, friend, target, false);
+            // Friend has to be as close as their max running speed * flight time, + TAG range, + 8
+            int taggingRange = (1 + Compute.turnsTilHit(game, attacker, target)) * friend.getRunMP() + range + 8;
 
             // Need a target hex within 8 of the main target, and within shooting distance of the spotter.
-            if (buddyRange > friend.getRunMP() + range + 8) {
+            if (buddyRange > taggingRange) {
                 // Probably can't get close enough this turn.
                 LogManager.getLogger().debug("Found a TAG spotter but too far from target");
                 continue;
@@ -7384,6 +7385,24 @@ public class Compute {
     public static boolean isFlakAttack(Entity attacker, Entity target) {
         boolean validLocation = !(attacker.isSpaceborne() || target.isSpaceborne());
         return validLocation && (target.isAirborne() || target.isAirborneVTOLorWIGE());
+    }
+
+    public static int turnsTilHit(Game game, Entity ae, Targetable te) {
+        return turnsTilHit(game, ae, te, WeaponAttackAction.DEFAULT_VELOCITY);
+    }
+
+    /**
+     * Get turns for an indirect or off-board round to hit with its current velocity
+     * @param game
+     * @param ae Attacker
+     * @param target Target hex/entity
+     * @param velocity speed of round, default 50 according to WeaponAttackAction
+     * @return
+     */
+    public static int turnsTilHit(Game game, Entity ae, Targetable te, int velocity) {
+        int distance = Compute.effectiveDistance(game, ae, te);
+        distance = (int) Math.floor((double) distance / game.getPlanetaryConditions().getGravity());
+        return distance / velocity;
     }
 
 } // End public class Compute

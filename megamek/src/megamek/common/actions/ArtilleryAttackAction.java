@@ -134,7 +134,7 @@ public class ArtilleryAttackAction extends WeaponAttackAction implements Seriali
     public int getPlayerId() {
         return playerId;
     }
-    
+
     public void setSpotterIds(Vector<Integer> spotterIds) {
         this.spotterIds = spotterIds;
     }
@@ -146,7 +146,7 @@ public class ArtilleryAttackAction extends WeaponAttackAction implements Seriali
     public Coords getCoords() {
         return this.firingCoords;
     }
-    
+
     // For use with AMS and artillery to-hit tables
     public void setOldTargetCoords(Coords coords) {
         this.oldTargetCoords = coords;
@@ -155,31 +155,29 @@ public class ArtilleryAttackAction extends WeaponAttackAction implements Seriali
     public Coords getOldTargetCoords() {
         return this.oldTargetCoords;
     }
-    
+
     /*
      * Updates the turnsTilHit value of this aaa
      * Needed after aaa setup by bearings-only missiles, which have a variable velocity
      */
     @Override
     public void updateTurnsTilHit(Game game) {
-        int distance = Compute.effectiveDistance(game, getEntity(game), getTarget(game));
         // adjust distance for gravity
-        distance = (int) Math.floor((double) distance / game.getPlanetaryConditions().getGravity());
-        this.turnsTilHit = distance / launchVelocity;
+        this.turnsTilHit = Compute.turnsTilHit(game, getEntity(game), getTarget(game), launchVelocity);
     }
-    
+
     public int getTurnsTilHit() {
         return this.turnsTilHit;
     }
-    
+
     public void setTurnsTilHit(int turnsTilHit) {
         this.turnsTilHit = turnsTilHit;
     }
-    
+
     public void decrementTurnsTilHit() {
         decrementTurnsTilHit(1);
     }
-    
+
     public void decrementTurnsTilHit(int numTurns) {
         this.turnsTilHit-=numTurns;
     }

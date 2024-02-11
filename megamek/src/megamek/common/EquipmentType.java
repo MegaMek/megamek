@@ -1109,99 +1109,112 @@ public class EquipmentType implements ITechnology {
 
     public static void writeEquipmentExtendedDatabase(File f) {
         try {
-            BufferedWriter w = new BufferedWriter(new FileWriter(f));
-            w.write("MegaMek Equipment Extended Database");
-            w.newLine();
-            w.write("This file can be regenerated with java -jar MegaMek.jar -eqedb ");
-            w.write(f.toString());
-            w.newLine();
-            w.write("Type,Name,Tech Base,Rules,Tech Rating,Static Tech Level,Introduction Date,Prototype Date,Production Date,Common Date,Extinction Date,Re-Introduction Date,Tonnage,CriticalSlots,Cost,BV,Alias");
-            w.newLine();
-            for (Enumeration<EquipmentType> e = EquipmentType.getAllTypes(); e
+            BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(f));
+            bufferedWriter.write("MegaMek Equipment Extended Database");
+            bufferedWriter.newLine();
+            bufferedWriter.write("This file can be regenerated with java -jar MegaMek.jar -eqedb ");
+            bufferedWriter.write(f.toString());
+            bufferedWriter.newLine();
+            bufferedWriter.write(
+                    "Type,Name,Tech Base,Rules,Tech Rating,Static Tech Level,Introduction Date,Prototype Date,Production Date,Common Date,Extinction Date,Re-Introduction Date,Tonnage,CriticalSlots,Cost,BV,Alias");
+            bufferedWriter.newLine();
+            for (Enumeration<EquipmentType> equipmentTypes = EquipmentType.getAllTypes(); equipmentTypes
                     .hasMoreElements();) {
-                EquipmentType type = e.nextElement();
-                if (type instanceof AmmoType) {
-                    w.write("A");
-                } else if (type instanceof WeaponType) {
-                    w.write("W");
+                EquipmentType equipmentType = equipmentTypes.nextElement();
+                if (equipmentType instanceof AmmoType) {
+                    bufferedWriter.write("A");
+                } else if (equipmentType instanceof WeaponType) {
+                    bufferedWriter.write("W");
                 } else {
-                    w.write("M");
+                    bufferedWriter.write("M");
                 }
 
-                w.write(",\"");
-                w.write(type.getName());
+                bufferedWriter.write(",\"");
+                bufferedWriter.write(equipmentType.getName());
 
                 // Gather the unique tech levels for this equipment ...
-                List<Integer> levels = type.getTechLevels().keySet().stream()
-                        .map(type::getTechLevel)
+                List<Integer> levels = equipmentType.getTechLevels().keySet().stream()
+                        .map(equipmentType::getTechLevel)
                         .sorted() // ordered for ease of use
                         .distinct()
                         .collect(Collectors.toList());
 
                 // ... and use them to output the tech names ...
-                w.write("\",\"");
-                w.write(levels.stream()
+                bufferedWriter.write("\",\"");
+                bufferedWriter.write(levels.stream()
                         .map(TechConstants::getTechName)
                         .distinct()
                         .collect(Collectors.joining("/")));
 
                 // ... and associated rules levels.
-                w.write("\",\"");
-                w.write(levels.stream()
+                bufferedWriter.write("\",\"");
+                bufferedWriter.write(levels.stream()
                         .map(TechConstants::getLevelName)
                         .distinct()
                         .collect(Collectors.joining("/")));
 
-                w.write("\",\"");
-                w.write(type.getFullRatingName());
-                w.write("\",\"");
-                w.write(type.getTechAdvancement().getStaticTechLevel().toString());
-                w.write("\",\"");
-                w.write(type.getTechAdvancement().getIntroductionDateName());
-                w.write("\",\"");
-                w.write(type.getTechAdvancement().getPrototypeDateName());
-                w.write("\",\"");
-                w.write(type.getTechAdvancement().getProductionDateName());
-                w.write("\",\"");
-                w.write(type.getTechAdvancement().getCommonDateName());
-                w.write("\",\"");
-                w.write(type.getTechAdvancement().getExtinctionDateName());
-                w.write("\",\"");
-                w.write(type.getTechAdvancement().getReintroductionDateName());
-                w.write("\",");
-                if (type.tonnage == EquipmentType.TONNAGE_VARIABLE) {
-                    w.write("Variable");
+                bufferedWriter.write("\",\"");
+                bufferedWriter.write(equipmentType.getFullRatingName());
+
+                bufferedWriter.write("\",\"");
+                bufferedWriter.write(equipmentType.getTechAdvancement().getStaticTechLevel().toString());
+
+                bufferedWriter.write("\",\"");
+                bufferedWriter.write(equipmentType.getTechAdvancement().getIntroductionDateName());
+
+                bufferedWriter.write("\",\"");
+                bufferedWriter.write(equipmentType.getTechAdvancement().getPrototypeDateName());
+
+                bufferedWriter.write("\",\"");
+                bufferedWriter.write(equipmentType.getTechAdvancement().getProductionDateName());
+
+                bufferedWriter.write("\",\"");
+                bufferedWriter.write(equipmentType.getTechAdvancement().getCommonDateName());
+
+                bufferedWriter.write("\",\"");
+                bufferedWriter.write(equipmentType.getTechAdvancement().getExtinctionDateName());
+
+                bufferedWriter.write("\",\"");
+                bufferedWriter.write(equipmentType.getTechAdvancement().getReintroductionDateName());
+
+                bufferedWriter.write("\",");
+                if (equipmentType.tonnage == EquipmentType.TONNAGE_VARIABLE) {
+                    bufferedWriter.write("Variable");
                 } else {
-                    w.write(Double.toString(type.tonnage));
+                    bufferedWriter.write(Double.toString(equipmentType.tonnage));
                 }
-                w.write(",");
-                if (type.criticals == EquipmentType.CRITICALS_VARIABLE) {
-                    w.write("Variable");
+
+                bufferedWriter.write(",");
+                if (equipmentType.criticals == EquipmentType.CRITICALS_VARIABLE) {
+                    bufferedWriter.write("Variable");
                 } else {
-                    w.write(Integer.toString(type.criticals));
+                    bufferedWriter.write(Integer.toString(equipmentType.criticals));
                 }
-                w.write(",");
-                if (type.cost == EquipmentType.COST_VARIABLE) {
-                    w.write("Variable");
+
+                bufferedWriter.write(",");
+                if (equipmentType.cost == EquipmentType.COST_VARIABLE) {
+                    bufferedWriter.write("Variable");
                 } else {
-                    w.write(Double.toString(type.getCost(null, false, -1, 1.0)));
+                    bufferedWriter.write(Double.toString(equipmentType.getCost(null, false, -1, 1.0)));
                 }
-                w.write(",");
-                if (type.bv == EquipmentType.BV_VARIABLE) {
-                    w.write("Variable");
+
+                bufferedWriter.write(",");
+                if (equipmentType.bv == EquipmentType.BV_VARIABLE) {
+                    bufferedWriter.write("Variable");
                 } else {
-                    w.write(Double.toString(type.bv));
+                    bufferedWriter.write(Double.toString(equipmentType.bv));
                 }
-                w.write(",\"");
-                for (Enumeration<String> names = type.getNames(); names.hasMoreElements();) {
+
+                bufferedWriter.write(",\"");
+                for (Enumeration<String> names = equipmentType.getNames(); names.hasMoreElements();) {
                     String name = names.nextElement();
-                    w.write(name + ",");
+                    bufferedWriter.write(name + ",");
                 }
-                w.write(",");
-                w.newLine();
+                bufferedWriter.write("\"");
+                bufferedWriter.newLine();
             }
-            w.flush();
-            w.close();
+            bufferedWriter.flush();
+            bufferedWriter.close();
         } catch (Exception e) {
             LogManager.getLogger().error("", e);
         }
@@ -1491,99 +1504,110 @@ public class EquipmentType implements ITechnology {
 
     public static void writeEquipmentMiscDatabase(File f) {
         try {
-            BufferedWriter w = new BufferedWriter(new FileWriter(f));
-            w.write("MegaMek Equipment Extended Database");
-            w.newLine();
-            w.write("This file can be regenerated with java -jar MegaMek.jar -eqedb ");
-            w.write(f.toString());
-            w.newLine();
-            w.write("Type,Name,Tech Base,Rules,Tech Rating,Static Tech Level,Introduction Date,Prototype Date,Production Date,Common Date,Extinction Date,Re-Introduction Date,Tonnage,CriticalSlots,Cost,BV,Alias");
-            w.newLine();
-            for (Enumeration<EquipmentType> e = EquipmentType.getAllTypes(); e
+            BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(f));
+            bufferedWriter.write("MegaMek Equipment Extended Database");
+            bufferedWriter.newLine();
+            bufferedWriter.write("This file can be regenerated with java -jar MegaMek.jar -eqmdb ");
+            bufferedWriter.write(f.toString());
+            bufferedWriter.newLine();
+            bufferedWriter.write(
+                    "Name,Tech Base,Rules,Tech Rating,Static Tech Level,Introduction Date,Prototype Date,Production Date,Common Date,Extinction Date,Re-Introduction Date,Tonnage,CriticalSlots,Cost,BV,Alias");
+            bufferedWriter.newLine();
+            for (Enumeration<EquipmentType> equipmentTypes = EquipmentType.getAllTypes(); equipmentTypes
                     .hasMoreElements();) {
-                EquipmentType type = e.nextElement();
-                if (type instanceof AmmoType) {
-                    w.write("A");
-                } else if (type instanceof WeaponType) {
-                    w.write("W");
-                } else {
-                    w.write("M");
+                EquipmentType equipmentType = equipmentTypes.nextElement();
+                if ((equipmentType instanceof AmmoType) || (equipmentType instanceof WeaponType)) {
+                    continue;
                 }
 
-                w.write(",\"");
-                w.write(type.getName());
+                bufferedWriter.write("\"");
+                bufferedWriter.write(equipmentType.getName());
 
                 // Gather the unique tech levels for this equipment ...
-                List<Integer> levels = type.getTechLevels().keySet().stream()
-                        .map(type::getTechLevel)
+                List<Integer> levels = equipmentType.getTechLevels().keySet().stream()
+                        .map(equipmentType::getTechLevel)
                         .sorted() // ordered for ease of use
                         .distinct()
                         .collect(Collectors.toList());
 
                 // ... and use them to output the tech names ...
-                w.write("\",\"");
-                w.write(levels.stream()
+                bufferedWriter.write("\",\"");
+                bufferedWriter.write(levels.stream()
                         .map(TechConstants::getTechName)
                         .distinct()
                         .collect(Collectors.joining("/")));
 
                 // ... and associated rules levels.
-                w.write("\",\"");
-                w.write(levels.stream()
+                bufferedWriter.write("\",\"");
+                bufferedWriter.write(levels.stream()
                         .map(TechConstants::getLevelName)
                         .distinct()
                         .collect(Collectors.joining("/")));
 
-                w.write("\",\"");
-                w.write(type.getFullRatingName());
-                w.write("\",\"");
-                w.write(type.getTechAdvancement().getStaticTechLevel().toString());
-                w.write("\",\"");
-                w.write(type.getTechAdvancement().getIntroductionDateName());
-                w.write("\",\"");
-                w.write(type.getTechAdvancement().getPrototypeDateName());
-                w.write("\",\"");
-                w.write(type.getTechAdvancement().getProductionDateName());
-                w.write("\",\"");
-                w.write(type.getTechAdvancement().getCommonDateName());
-                w.write("\",\"");
-                w.write(type.getTechAdvancement().getExtinctionDateName());
-                w.write("\",\"");
-                w.write(type.getTechAdvancement().getReintroductionDateName());
-                w.write("\",");
-                if (type.tonnage == EquipmentType.TONNAGE_VARIABLE) {
-                    w.write("Variable");
+                bufferedWriter.write("\",\"");
+                bufferedWriter.write(equipmentType.getFullRatingName());
+
+                bufferedWriter.write("\",\"");
+                bufferedWriter.write(equipmentType.getTechAdvancement().getStaticTechLevel().toString());
+
+                bufferedWriter.write("\",\"");
+                bufferedWriter.write(equipmentType.getTechAdvancement().getIntroductionDateName());
+
+                bufferedWriter.write("\",\"");
+                bufferedWriter.write(equipmentType.getTechAdvancement().getPrototypeDateName());
+
+                bufferedWriter.write("\",\"");
+                bufferedWriter.write(equipmentType.getTechAdvancement().getProductionDateName());
+
+                bufferedWriter.write("\",\"");
+                bufferedWriter.write(equipmentType.getTechAdvancement().getCommonDateName());
+
+                bufferedWriter.write("\",\"");
+                bufferedWriter.write(equipmentType.getTechAdvancement().getExtinctionDateName());
+
+                bufferedWriter.write("\",\"");
+                bufferedWriter.write(equipmentType.getTechAdvancement().getReintroductionDateName());
+
+                bufferedWriter.write("\",");
+                if (equipmentType.tonnage == EquipmentType.TONNAGE_VARIABLE) {
+                    bufferedWriter.write("Variable");
                 } else {
-                    w.write(Double.toString(type.tonnage));
+                    bufferedWriter.write(Double.toString(equipmentType.tonnage));
                 }
-                w.write(",");
-                if (type.criticals == EquipmentType.CRITICALS_VARIABLE) {
-                    w.write("Variable");
+
+                bufferedWriter.write(",");
+                if (equipmentType.criticals == EquipmentType.CRITICALS_VARIABLE) {
+                    bufferedWriter.write("Variable");
                 } else {
-                    w.write(Integer.toString(type.criticals));
+                    bufferedWriter.write(Integer.toString(equipmentType.criticals));
                 }
-                w.write(",");
-                if (type.cost == EquipmentType.COST_VARIABLE) {
-                    w.write("Variable");
+
+                bufferedWriter.write(",");
+                if (equipmentType.cost == EquipmentType.COST_VARIABLE) {
+                    bufferedWriter.write("Variable");
                 } else {
-                    w.write(Double.toString(type.getCost(null, false, -1, 1.0)));
+                    bufferedWriter.write(Double.toString(equipmentType.getCost(null, false, -1, 1.0)));
                 }
-                w.write(",");
-                if (type.bv == EquipmentType.BV_VARIABLE) {
-                    w.write("Variable");
+
+                bufferedWriter.write(",");
+                if (equipmentType.bv == EquipmentType.BV_VARIABLE) {
+                    bufferedWriter.write("Variable");
                 } else {
-                    w.write(Double.toString(type.bv));
+                    bufferedWriter.write(Double.toString(equipmentType.bv));
                 }
-                w.write(",\"");
-                for (Enumeration<String> names = type.getNames(); names.hasMoreElements();) {
+
+                bufferedWriter.write(",\"");
+                for (Enumeration<String> names = equipmentType.getNames(); names.hasMoreElements();) {
                     String name = names.nextElement();
-                    w.write(name + ",");
+                    bufferedWriter.write(name + ",");
                 }
-                w.write(",");
-                w.newLine();
+
+                bufferedWriter.write("\"");
+                bufferedWriter.newLine();
             }
-            w.flush();
-            w.close();
+
+            bufferedWriter.flush();
+            bufferedWriter.close();
         } catch (Exception e) {
             LogManager.getLogger().error("", e);
         }

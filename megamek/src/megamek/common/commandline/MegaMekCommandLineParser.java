@@ -112,7 +112,10 @@ public class MegaMekCommandLineParser extends AbstractCommandLineParser {
                         processWeaponEquipmentDb();
                         break;
                     case EQADB:
-                        processWeaponArmorDb();
+                        processWeaponAmmoDb();
+                        break;
+                    case EQMDB:
+                        processWeaponMiscDb();
                         break;
                     case DATADIR:
                         processDataDir();
@@ -192,12 +195,24 @@ public class MegaMekCommandLineParser extends AbstractCommandLineParser {
         System.exit(0);
     }
 
-    private void processWeaponArmorDb() throws ParseException {
+    private void processWeaponAmmoDb() throws ParseException {
         String filename;
         if (getTokenType() == TOK_LITERAL) {
             filename = getTokenValue();
             nextToken();
             megamek.common.EquipmentType.writeEquipmentAmmoDatabase(new File(filename));
+        } else {
+            throw new ParseException("file name expected");
+        }
+        System.exit(0);
+    }
+
+    private void processWeaponMiscDb() throws ParseException {
+        String filename;
+        if (getTokenType() == TOK_LITERAL) {
+            filename = getTokenValue();
+            nextToken();
+            megamek.common.EquipmentType.writeEquipmentMiscDatabase(new File(filename));
         } else {
             throw new ParseException("file name expected");
         }
@@ -266,7 +281,7 @@ public class MegaMekCommandLineParser extends AbstractCommandLineParser {
             if (!new File("./docs").exists()) {
                 if (!new File("./docs").mkdir()) {
                     LogManager.getLogger().error(
-                            "Error in creating directory ./docs. We know this is annoying, and apologise. "
+                            "Error in creating directory ./docs. We know this is annoying, and apologize. "
                                     + "Please submit a bug report at https://github.com/MegaMek/megamek/issues "
                                     + " and we will try to resolve your issue.");
                 }
@@ -370,7 +385,7 @@ public class MegaMekCommandLineParser extends AbstractCommandLineParser {
             if (!new File("./docs").exists()) {
                 if (!new File("./docs").mkdir()) {
                     LogManager.getLogger().error(
-                            "Error in creating directory ./docs. We know this is annoying, and apologise. "
+                            "Error in creating directory ./docs. We know this is annoying, and apologize. "
                                     + "Please submit a bug report at https://github.com/MegaMek/megamek/issues "
                                     + " and we will try to resolve your issue.");
                 }

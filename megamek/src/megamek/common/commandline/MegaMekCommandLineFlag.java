@@ -29,11 +29,13 @@ public enum MegaMekCommandLineFlag {
     HOST(Messages.getString("MegaMek.Help.Host")),
     CLIENT(Messages.getString("MegaMek.Help.Client")),
     QUICK(Messages.getFormattedString("MegaMek.Help.Quick", MMConstants.QUICKSAVE_FILE)),
+
     // exporters and utilities
     EQDB(Messages.getString("MegaMek.Help.EquipmentDB")),
     EQEDB(Messages.getString("MegaMek.Help.EquipmentExtendedDB")),
     EQWDB(Messages.getString("MegaMek.Help.EquipmentWeaponDB")),
     EQADB(Messages.getString("MegaMek.Help.EquipmentAmmoDB")),
+    EQMDB(Messages.getString("MegaMek.Help.EquipmentMiscDB")),
     EXPORT(Messages.getString("MegaMek.Help.UnitExport")),
     VALIDATE(Messages.getString("MegaMek.Help.UnitValidator")),
     OUL(Messages.getString("MegaMek.Help.OfficialUnitList")),

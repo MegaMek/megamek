@@ -14,11 +14,17 @@
  */
 package megamek.common;
 
-import megamek.common.options.OptionsConstants;
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.EnumSet;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.Set;
+import java.util.Vector;
+
 import org.apache.commons.lang.ArrayUtils;
 
-import java.math.BigInteger;
-import java.util.*;
+import megamek.common.options.OptionsConstants;
 
 public class AmmoType extends EquipmentType {
 
@@ -181,9 +187,10 @@ public class AmmoType extends EquipmentType {
     public static final BigInteger F_BATTLEARMOR = BigInteger.valueOf(1).shiftLeft(1); // only used by BA squads
     public static final BigInteger F_PROTOMECH = BigInteger.valueOf(1).shiftLeft(2); // only used by ProtoMeks
     public static final BigInteger F_HOTLOAD = BigInteger.valueOf(1).shiftLeft(3); // Ammo can be hotloaded
-    public static final BigInteger F_ENCUMBERING = BigInteger.valueOf(1).shiftLeft(4); // BA can't jump or make
-                                                                                       // antimech
-                                                                                       // until dumped
+
+    // BA can't jump or make antimech until dumped
+    public static final BigInteger F_ENCUMBERING = BigInteger.valueOf(1).shiftLeft(4);
+
     public static final BigInteger F_MML_LRM = BigInteger.valueOf(1).shiftLeft(5); // LRM type
     public static final BigInteger F_AR10_WHITE_SHARK = BigInteger.valueOf(1).shiftLeft(6); // White shark type
     public static final BigInteger F_AR10_KILLER_WHALE = BigInteger.valueOf(1).shiftLeft(7); // Killer Whale type
@@ -194,8 +201,9 @@ public class AmmoType extends EquipmentType {
     public static final BigInteger F_TELE_MISSILE = BigInteger.valueOf(1).shiftLeft(10); // Tele-Missile
     public static final BigInteger F_CAP_MISSILE = BigInteger.valueOf(1).shiftLeft(11); // Other Capital-Missile
     public static final BigInteger F_SPACE_BOMB = BigInteger.valueOf(1).shiftLeft(12); // can be used to space bomb
-    public static final BigInteger F_GROUND_BOMB = BigInteger.valueOf(1).shiftLeft(13); // can be used to ground
-                                                                                        // bomb
+
+    // can be used to ground bomb
+    public static final BigInteger F_GROUND_BOMB = BigInteger.valueOf(1).shiftLeft(13);
     public static final BigInteger F_MML_SRM = BigInteger.valueOf(1).shiftLeft(14); // SRM type
 
     // Numbers 14-15 out of order. See nuclear missiles, above

@@ -13,15 +13,16 @@
  */
 package megamek.common.commandline;
 
+import java.util.Locale;
+
+import org.apache.logging.log4j.LogManager;
+
 import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.common.Configuration;
-import org.apache.logging.log4j.LogManager;
-
-import java.util.Locale;
 
 public enum MegaMekCommandLineFlag {
-    //region Enum Declarations
+    // region Enum Declarations
     // standard game options
     HELP(Messages.getString("MegaMek.Help")),
     DEDICATED(Messages.getString("MegaMek.Help.Dedicated")),
@@ -31,13 +32,15 @@ public enum MegaMekCommandLineFlag {
     // exporters and utilities
     EQDB(Messages.getString("MegaMek.Help.EquipmentDB")),
     EQEDB(Messages.getString("MegaMek.Help.EquipmentExtendedDB")),
+    EQWDB(Messages.getString("MegaMek.Help.EquipmentWeaponDB")),
+    EQADB(Messages.getString("MegaMek.Help.EquipmentAmmoDB")),
     EXPORT(Messages.getString("MegaMek.Help.UnitExport")),
     VALIDATE(Messages.getString("MegaMek.Help.UnitValidator")),
     OUL(Messages.getString("MegaMek.Help.OfficialUnitList")),
     ASC(Messages.getString("MegaMek.Help.UnitAlphastrikeConversion")),
     EDITRATGEN(Messages.getString("MegaMek.Help.RatgenEdit")),
     DATADIR(Messages.getFormattedString("MegaMek.Help.DataDir", Configuration.dataDir()));
-    //endregion Enum Declarations
+    // endregion Enum Declarations
 
     public final String helpText;
 
@@ -50,7 +53,7 @@ public enum MegaMekCommandLineFlag {
             return valueOf(text.toUpperCase(Locale.ROOT));
         } catch (Exception ex) {
             LogManager.getLogger().error("Failed to parse the MegaMekCommandLineFlag from text " + text);
-            throw(ex);
+            throw (ex);
         }
     }
 }

@@ -1,51 +1,470 @@
 /*
- * MegaMek -
- * Copyright (C) 2000-2007 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2002-2007 Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2018-2024 - The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later
+ * version.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  */
 package megamek.common;
 
+import java.math.BigInteger;
+
 import megamek.common.alphaStrike.AlphaStrikeElement;
-import megamek.common.weapons.*;
-import megamek.common.weapons.artillery.*;
-import megamek.common.weapons.autocannons.*;
+import megamek.common.weapons.AlamoMissileWeapon;
+import megamek.common.weapons.AltitudeBombAttack;
+import megamek.common.weapons.DiveBombAttack;
+import megamek.common.weapons.LegAttack;
+import megamek.common.weapons.SpaceBombAttack;
+import megamek.common.weapons.StopSwarmAttack;
+import megamek.common.weapons.SwarmAttack;
+import megamek.common.weapons.SwarmWeaponAttack;
+import megamek.common.weapons.artillery.CLArrowIV;
+import megamek.common.weapons.artillery.ISArrowIV;
+import megamek.common.weapons.artillery.ISCruiseMissile120;
+import megamek.common.weapons.artillery.ISCruiseMissile50;
+import megamek.common.weapons.artillery.ISCruiseMissile70;
+import megamek.common.weapons.artillery.ISCruiseMissile90;
+import megamek.common.weapons.artillery.LongTom;
+import megamek.common.weapons.artillery.LongTomCannon;
+import megamek.common.weapons.artillery.Sniper;
+import megamek.common.weapons.artillery.SniperCannon;
+import megamek.common.weapons.artillery.Thumper;
+import megamek.common.weapons.artillery.ThumperCannon;
+import megamek.common.weapons.autocannons.CLImprovedAC10;
+import megamek.common.weapons.autocannons.CLImprovedAC2;
+import megamek.common.weapons.autocannons.CLImprovedAC20;
+import megamek.common.weapons.autocannons.CLImprovedAC5;
+import megamek.common.weapons.autocannons.CLLB10XAC;
+import megamek.common.weapons.autocannons.CLLB20XAC;
+import megamek.common.weapons.autocannons.CLLB2XAC;
+import megamek.common.weapons.autocannons.CLLB5XAC;
+import megamek.common.weapons.autocannons.CLProtoMechAC2;
+import megamek.common.weapons.autocannons.CLProtoMechAC4;
+import megamek.common.weapons.autocannons.CLProtoMechAC8;
+import megamek.common.weapons.autocannons.CLRAC2;
+import megamek.common.weapons.autocannons.CLRAC5;
+import megamek.common.weapons.autocannons.CLUAC10;
+import megamek.common.weapons.autocannons.CLUAC2;
+import megamek.common.weapons.autocannons.CLUAC20;
+import megamek.common.weapons.autocannons.CLUAC5;
+import megamek.common.weapons.autocannons.ISAC10;
+import megamek.common.weapons.autocannons.ISAC2;
+import megamek.common.weapons.autocannons.ISAC20;
+import megamek.common.weapons.autocannons.ISAC5;
+import megamek.common.weapons.autocannons.ISHVAC10;
+import megamek.common.weapons.autocannons.ISHVAC2;
+import megamek.common.weapons.autocannons.ISHVAC5;
+import megamek.common.weapons.autocannons.ISLAC2;
+import megamek.common.weapons.autocannons.ISLAC5;
+import megamek.common.weapons.autocannons.ISLB10XAC;
+import megamek.common.weapons.autocannons.ISLB20XAC;
+import megamek.common.weapons.autocannons.ISLB2XAC;
+import megamek.common.weapons.autocannons.ISLB5XAC;
+import megamek.common.weapons.autocannons.ISNailandRivetGun;
+import megamek.common.weapons.autocannons.ISRAC2;
+import megamek.common.weapons.autocannons.ISRAC5;
+import megamek.common.weapons.autocannons.ISRifleHeavy;
+import megamek.common.weapons.autocannons.ISRifleLight;
+import megamek.common.weapons.autocannons.ISRifleMedium;
+import megamek.common.weapons.autocannons.ISUAC10;
+import megamek.common.weapons.autocannons.ISUAC2;
+import megamek.common.weapons.autocannons.ISUAC20;
+import megamek.common.weapons.autocannons.ISUAC5;
 import megamek.common.weapons.battlearmor.*;
-import megamek.common.weapons.bayweapons.*;
-import megamek.common.weapons.bombs.*;
+import megamek.common.weapons.bayweapons.ACBayWeapon;
+import megamek.common.weapons.bayweapons.AMSBayWeapon;
+import megamek.common.weapons.bayweapons.AR10BayWeapon;
+import megamek.common.weapons.bayweapons.ATMBayWeapon;
+import megamek.common.weapons.bayweapons.ArtilleryBayWeapon;
+import megamek.common.weapons.bayweapons.CapitalACBayWeapon;
+import megamek.common.weapons.bayweapons.CapitalGaussBayWeapon;
+import megamek.common.weapons.bayweapons.CapitalLaserBayWeapon;
+import megamek.common.weapons.bayweapons.CapitalMDBayWeapon;
+import megamek.common.weapons.bayweapons.CapitalMissileBayWeapon;
+import megamek.common.weapons.bayweapons.CapitalPPCBayWeapon;
+import megamek.common.weapons.bayweapons.GaussBayWeapon;
+import megamek.common.weapons.bayweapons.LBXBayWeapon;
+import megamek.common.weapons.bayweapons.LRMBayWeapon;
+import megamek.common.weapons.bayweapons.LaserBayWeapon;
+import megamek.common.weapons.bayweapons.MMLBayWeapon;
+import megamek.common.weapons.bayweapons.MRMBayWeapon;
+import megamek.common.weapons.bayweapons.MiscBayWeapon;
+import megamek.common.weapons.bayweapons.PPCBayWeapon;
+import megamek.common.weapons.bayweapons.PlasmaBayWeapon;
+import megamek.common.weapons.bayweapons.PointDefenseBayWeapon;
+import megamek.common.weapons.bayweapons.PulseLaserBayWeapon;
+import megamek.common.weapons.bayweapons.RLBayWeapon;
+import megamek.common.weapons.bayweapons.SRMBayWeapon;
+import megamek.common.weapons.bayweapons.ScreenLauncherBayWeapon;
+import megamek.common.weapons.bayweapons.SubCapCannonBayWeapon;
+import megamek.common.weapons.bayweapons.SubCapLaserBayWeapon;
+import megamek.common.weapons.bayweapons.SubCapitalMissileBayWeapon;
+import megamek.common.weapons.bayweapons.TeleOperatedMissileBayWeapon;
+import megamek.common.weapons.bayweapons.ThunderboltBayWeapon;
+import megamek.common.weapons.bombs.BombArrowIV;
+import megamek.common.weapons.bombs.BombISRL10;
+import megamek.common.weapons.bombs.CLAAAMissileWeapon;
+import megamek.common.weapons.bombs.CLASEWMissileWeapon;
+import megamek.common.weapons.bombs.CLASMissileWeapon;
+import megamek.common.weapons.bombs.CLBombTAG;
+import megamek.common.weapons.bombs.CLLAAMissileWeapon;
+import megamek.common.weapons.bombs.ISAAAMissileWeapon;
+import megamek.common.weapons.bombs.ISASEWMissileWeapon;
+import megamek.common.weapons.bombs.ISASMissileWeapon;
+import megamek.common.weapons.bombs.ISBombTAG;
+import megamek.common.weapons.bombs.ISLAAMissileWeapon;
 import megamek.common.weapons.c3.ISC3M;
 import megamek.common.weapons.c3.ISC3MBS;
 import megamek.common.weapons.c3.ISC3RemoteSensorLauncher;
-import megamek.common.weapons.capitalweapons.*;
+import megamek.common.weapons.capitalweapons.AR10Weapon;
+import megamek.common.weapons.capitalweapons.CapMissBarracudaWeapon;
+import megamek.common.weapons.capitalweapons.CapMissKillerWhaleWeapon;
+import megamek.common.weapons.capitalweapons.CapMissKrakenWeapon;
+import megamek.common.weapons.capitalweapons.CapMissTeleBarracudaWeapon;
+import megamek.common.weapons.capitalweapons.CapMissTeleKillerWhaleWeapon;
+import megamek.common.weapons.capitalweapons.CapMissTeleKrakenWeapon;
+import megamek.common.weapons.capitalweapons.CapMissTeleWhiteSharkWeapon;
+import megamek.common.weapons.capitalweapons.CapMissWhiteSharkWeapon;
+import megamek.common.weapons.capitalweapons.MassDriverHeavy;
+import megamek.common.weapons.capitalweapons.MassDriverLight;
+import megamek.common.weapons.capitalweapons.MassDriverMedium;
+import megamek.common.weapons.capitalweapons.NAC10Weapon;
+import megamek.common.weapons.capitalweapons.NAC20Weapon;
+import megamek.common.weapons.capitalweapons.NAC25Weapon;
+import megamek.common.weapons.capitalweapons.NAC30Weapon;
+import megamek.common.weapons.capitalweapons.NAC35Weapon;
+import megamek.common.weapons.capitalweapons.NAC40Weapon;
+import megamek.common.weapons.capitalweapons.NGaussWeaponHeavy;
+import megamek.common.weapons.capitalweapons.NGaussWeaponLight;
+import megamek.common.weapons.capitalweapons.NGaussWeaponMedium;
+import megamek.common.weapons.capitalweapons.NL35Weapon;
+import megamek.common.weapons.capitalweapons.NL45Weapon;
+import megamek.common.weapons.capitalweapons.NL55Weapon;
+import megamek.common.weapons.capitalweapons.NPPCWeaponHeavy;
+import megamek.common.weapons.capitalweapons.NPPCWeaponLight;
+import megamek.common.weapons.capitalweapons.NPPCWeaponMedium;
+import megamek.common.weapons.capitalweapons.ScreenLauncherWeapon;
+import megamek.common.weapons.capitalweapons.SubCapCannonWeaponHeavy;
+import megamek.common.weapons.capitalweapons.SubCapCannonWeaponLight;
+import megamek.common.weapons.capitalweapons.SubCapCannonWeaponMedium;
+import megamek.common.weapons.capitalweapons.SubCapLaserWeapon1;
+import megamek.common.weapons.capitalweapons.SubCapLaserWeapon2;
+import megamek.common.weapons.capitalweapons.SubCapLaserWeapon3;
+import megamek.common.weapons.capitalweapons.SubCapMissileMantaRayWeapon;
+import megamek.common.weapons.capitalweapons.SubCapMissilePiranhaWeapon;
+import megamek.common.weapons.capitalweapons.SubCapMissileStingrayWeapon;
+import megamek.common.weapons.capitalweapons.SubCapMissileSwordfishWeapon;
 import megamek.common.weapons.defensivepods.ISBPod;
 import megamek.common.weapons.defensivepods.ISMPod;
-import megamek.common.weapons.flamers.*;
-import megamek.common.weapons.gaussrifles.*;
+import megamek.common.weapons.flamers.CLERFlamer;
+import megamek.common.weapons.flamers.CLFlamer;
+import megamek.common.weapons.flamers.CLHeavyFlamer;
+import megamek.common.weapons.flamers.ISERFlamer;
+import megamek.common.weapons.flamers.ISFlamer;
+import megamek.common.weapons.flamers.ISHeavyFlamer;
+import megamek.common.weapons.flamers.ISVehicleFlamer;
+import megamek.common.weapons.gaussrifles.CLAPGaussRifle;
+import megamek.common.weapons.gaussrifles.CLGaussRifle;
+import megamek.common.weapons.gaussrifles.CLHAG20;
+import megamek.common.weapons.gaussrifles.CLHAG30;
+import megamek.common.weapons.gaussrifles.CLHAG40;
+import megamek.common.weapons.gaussrifles.CLImprovedGaussRifle;
+import megamek.common.weapons.gaussrifles.ISGaussRifle;
+import megamek.common.weapons.gaussrifles.ISHGaussRifle;
+import megamek.common.weapons.gaussrifles.ISImpHGaussRifle;
+import megamek.common.weapons.gaussrifles.ISLGaussRifle;
+import megamek.common.weapons.gaussrifles.ISMagshotGaussRifle;
+import megamek.common.weapons.gaussrifles.ISSilverBulletGauss;
 import megamek.common.weapons.infantry.*;
-import megamek.common.weapons.lasers.*;
+import megamek.common.weapons.lasers.CLChemicalLaserLarge;
+import megamek.common.weapons.lasers.CLChemicalLaserMedium;
+import megamek.common.weapons.lasers.CLChemicalLaserSmall;
+import megamek.common.weapons.lasers.CLERLaserLarge;
+import megamek.common.weapons.lasers.CLERLaserMedium;
+import megamek.common.weapons.lasers.CLERLaserMicro;
+import megamek.common.weapons.lasers.CLERLaserSmall;
+import megamek.common.weapons.lasers.CLERPulseLaserLarge;
+import megamek.common.weapons.lasers.CLERPulseLaserMedium;
+import megamek.common.weapons.lasers.CLERPulseLaserSmall;
+import megamek.common.weapons.lasers.CLHeavyLaserLarge;
+import megamek.common.weapons.lasers.CLHeavyLaserMedium;
+import megamek.common.weapons.lasers.CLHeavyLaserSmall;
+import megamek.common.weapons.lasers.CLImprovedHeavyLaserLarge;
+import megamek.common.weapons.lasers.CLImprovedHeavyLaserMedium;
+import megamek.common.weapons.lasers.CLImprovedHeavyLaserSmall;
+import megamek.common.weapons.lasers.CLImprovedLaserLarge;
+import megamek.common.weapons.lasers.CLImprovedPulseLaserLarge;
+import megamek.common.weapons.lasers.CLPulseLaserLarge;
+import megamek.common.weapons.lasers.CLPulseLaserMedium;
+import megamek.common.weapons.lasers.CLPulseLaserMicro;
+import megamek.common.weapons.lasers.CLPulseLaserSmall;
+import megamek.common.weapons.lasers.ISBinaryLaserCannon;
+import megamek.common.weapons.lasers.ISBombastLaser;
+import megamek.common.weapons.lasers.ISERLaserLarge;
+import megamek.common.weapons.lasers.ISERLaserMedium;
+import megamek.common.weapons.lasers.ISERLaserSmall;
+import megamek.common.weapons.lasers.ISLaserLarge;
+import megamek.common.weapons.lasers.ISLaserMedium;
+import megamek.common.weapons.lasers.ISLaserSmall;
+import megamek.common.weapons.lasers.ISPulseLaserLarge;
+import megamek.common.weapons.lasers.ISPulseLaserMedium;
+import megamek.common.weapons.lasers.ISPulseLaserSmall;
+import megamek.common.weapons.lasers.ISRISCHyperLaser;
+import megamek.common.weapons.lasers.ISReengineeredLaserLarge;
+import megamek.common.weapons.lasers.ISReengineeredLaserMedium;
+import megamek.common.weapons.lasers.ISReengineeredLaserSmall;
+import megamek.common.weapons.lasers.ISVariableSpeedPulseLaserLarge;
+import megamek.common.weapons.lasers.ISVariableSpeedPulseLaserMedium;
+import megamek.common.weapons.lasers.ISVariableSpeedPulseLaserSmall;
+import megamek.common.weapons.lasers.ISXPulseLaserLarge;
+import megamek.common.weapons.lasers.ISXPulseLaserMedium;
+import megamek.common.weapons.lasers.ISXPulseLaserSmall;
 import megamek.common.weapons.lrms.*;
-import megamek.common.weapons.mgs.*;
-import megamek.common.weapons.missiles.*;
-import megamek.common.weapons.mortars.*;
-import megamek.common.weapons.other.*;
-import megamek.common.weapons.ppc.*;
-import megamek.common.weapons.primitive.*;
-import megamek.common.weapons.prototypes.*;
-import megamek.common.weapons.srms.*;
+import megamek.common.weapons.mgs.CLHeavyMG;
+import megamek.common.weapons.mgs.CLHeavyMGA;
+import megamek.common.weapons.mgs.CLLightMG;
+import megamek.common.weapons.mgs.CLLightMGA;
+import megamek.common.weapons.mgs.CLMG;
+import megamek.common.weapons.mgs.CLMGA;
+import megamek.common.weapons.mgs.ISHeavyMG;
+import megamek.common.weapons.mgs.ISHeavyMGA;
+import megamek.common.weapons.mgs.ISLightMG;
+import megamek.common.weapons.mgs.ISLightMGA;
+import megamek.common.weapons.mgs.ISMG;
+import megamek.common.weapons.mgs.ISMGA;
+import megamek.common.weapons.missiles.CLATM12;
+import megamek.common.weapons.missiles.CLATM3;
+import megamek.common.weapons.missiles.CLATM6;
+import megamek.common.weapons.missiles.CLATM9;
+import megamek.common.weapons.missiles.CLIATM12;
+import megamek.common.weapons.missiles.CLIATM3;
+import megamek.common.weapons.missiles.CLIATM6;
+import megamek.common.weapons.missiles.CLIATM9;
+import megamek.common.weapons.missiles.ISMML3;
+import megamek.common.weapons.missiles.ISMML5;
+import megamek.common.weapons.missiles.ISMML7;
+import megamek.common.weapons.missiles.ISMML9;
+import megamek.common.weapons.missiles.ISMRM10;
+import megamek.common.weapons.missiles.ISMRM10IOS;
+import megamek.common.weapons.missiles.ISMRM10OS;
+import megamek.common.weapons.missiles.ISMRM20;
+import megamek.common.weapons.missiles.ISMRM20IOS;
+import megamek.common.weapons.missiles.ISMRM20OS;
+import megamek.common.weapons.missiles.ISMRM30;
+import megamek.common.weapons.missiles.ISMRM30IOS;
+import megamek.common.weapons.missiles.ISMRM30OS;
+import megamek.common.weapons.missiles.ISMRM40;
+import megamek.common.weapons.missiles.ISMRM40IOS;
+import megamek.common.weapons.missiles.ISMRM40OS;
+import megamek.common.weapons.missiles.ISThunderBolt10;
+import megamek.common.weapons.missiles.ISThunderBolt15;
+import megamek.common.weapons.missiles.ISThunderBolt20;
+import megamek.common.weapons.missiles.ISThunderBolt5;
+import megamek.common.weapons.missiles.ISThunderbolt10IOS;
+import megamek.common.weapons.missiles.ISThunderbolt10OS;
+import megamek.common.weapons.missiles.ISThunderbolt15IOS;
+import megamek.common.weapons.missiles.ISThunderbolt15OS;
+import megamek.common.weapons.missiles.ISThunderbolt20IOS;
+import megamek.common.weapons.missiles.ISThunderbolt20OS;
+import megamek.common.weapons.missiles.ISThunderbolt5IOS;
+import megamek.common.weapons.missiles.ISThunderbolt5OS;
+import megamek.common.weapons.missiles.RocketLauncher10;
+import megamek.common.weapons.missiles.RocketLauncher15;
+import megamek.common.weapons.missiles.RocketLauncher20;
+import megamek.common.weapons.mortars.CLMekMortar1;
+import megamek.common.weapons.mortars.CLMekMortar2;
+import megamek.common.weapons.mortars.CLMekMortar4;
+import megamek.common.weapons.mortars.CLMekMortar8;
+import megamek.common.weapons.mortars.ISMekMortar1;
+import megamek.common.weapons.mortars.ISMekMortar2;
+import megamek.common.weapons.mortars.ISMekMortar4;
+import megamek.common.weapons.mortars.ISMekMortar8;
+import megamek.common.weapons.mortars.ISVehicularGrenadeLauncher;
+import megamek.common.weapons.other.CLAMS;
+import megamek.common.weapons.other.CLFireExtinguisher;
+import megamek.common.weapons.other.CLFluidGun;
+import megamek.common.weapons.other.CLFussilade;
+import megamek.common.weapons.other.CLLaserAMS;
+import megamek.common.weapons.other.CLNarc;
+import megamek.common.weapons.other.CLNarcIOS;
+import megamek.common.weapons.other.CLNarcOS;
+import megamek.common.weapons.other.ISAMS;
+import megamek.common.weapons.other.ISAPDS;
+import megamek.common.weapons.other.ISCenturionWeaponSystem;
+import megamek.common.weapons.other.ISFireExtinguisher;
+import megamek.common.weapons.other.ISFluidGun;
+import megamek.common.weapons.other.ISImprovedNarc;
+import megamek.common.weapons.other.ISImprovedNarcOS;
+import megamek.common.weapons.other.ISLaserAMS;
+import megamek.common.weapons.other.ISMekTaser;
+import megamek.common.weapons.other.ISNarc;
+import megamek.common.weapons.other.ISNarcIOS;
+import megamek.common.weapons.other.ISNarcOS;
+import megamek.common.weapons.other.ISTSEMPCannon;
+import megamek.common.weapons.other.ISTSEMPOneShot;
+import megamek.common.weapons.other.ISTSEMPRepeatingCannon;
+import megamek.common.weapons.ppc.CLERPPC;
+import megamek.common.weapons.ppc.CLEnhancedPPC;
+import megamek.common.weapons.ppc.CLImprovedPPC;
+import megamek.common.weapons.ppc.CLPlasmaCannon;
+import megamek.common.weapons.ppc.ISERPPC;
+import megamek.common.weapons.ppc.ISHeavyPPC;
+import megamek.common.weapons.ppc.ISKinsSlaughterPPC;
+import megamek.common.weapons.ppc.ISLightPPC;
+import megamek.common.weapons.ppc.ISPPC;
+import megamek.common.weapons.ppc.ISPlasmaRifle;
+import megamek.common.weapons.ppc.ISSnubNosePPC;
+import megamek.common.weapons.primitive.ISAC10Primitive;
+import megamek.common.weapons.primitive.ISAC20Primitive;
+import megamek.common.weapons.primitive.ISAC2Primitive;
+import megamek.common.weapons.primitive.ISAC5Primitive;
+import megamek.common.weapons.primitive.ISLRM10Primitive;
+import megamek.common.weapons.primitive.ISLRM15Primitive;
+import megamek.common.weapons.primitive.ISLRM20Primitive;
+import megamek.common.weapons.primitive.ISLRM5Primitive;
+import megamek.common.weapons.primitive.ISLaserPrimitiveLarge;
+import megamek.common.weapons.primitive.ISLaserPrimitiveMedium;
+import megamek.common.weapons.primitive.ISLaserPrimitiveSmall;
+import megamek.common.weapons.primitive.ISLongTomPrimitive;
+import megamek.common.weapons.primitive.ISPPCPrimitive;
+import megamek.common.weapons.primitive.ISSRM2Primitive;
+import megamek.common.weapons.primitive.ISSRM4Primitive;
+import megamek.common.weapons.primitive.ISSRM6Primitive;
+import megamek.common.weapons.prototypes.CLERLaserMediumPrototype;
+import megamek.common.weapons.prototypes.CLERLaserSmallPrototype;
+import megamek.common.weapons.prototypes.CLLB20XACPrototype;
+import megamek.common.weapons.prototypes.CLLB2XACPrototype;
+import megamek.common.weapons.prototypes.CLLB5XACPrototype;
+import megamek.common.weapons.prototypes.CLStreakSRM4Prototype;
+import megamek.common.weapons.prototypes.CLStreakSRM6Prototype;
+import megamek.common.weapons.prototypes.CLUAC10Prototype;
+import megamek.common.weapons.prototypes.CLUAC20Prototype;
+import megamek.common.weapons.prototypes.CLUAC2Prototype;
+import megamek.common.weapons.prototypes.ISERLaserLargePrototype;
+import megamek.common.weapons.prototypes.ISGaussRiflePrototype;
+import megamek.common.weapons.prototypes.ISLB10XACPrototype;
+import megamek.common.weapons.prototypes.ISNarcPrototype;
+import megamek.common.weapons.prototypes.ISPrototypeTAG;
+import megamek.common.weapons.prototypes.ISPulseLaserLargePrototype;
+import megamek.common.weapons.prototypes.ISPulseLaserMediumPrototype;
+import megamek.common.weapons.prototypes.ISPulseLaserMediumRecovered;
+import megamek.common.weapons.prototypes.ISPulseLaserSmallPrototype;
+import megamek.common.weapons.prototypes.ISUAC5Prototype;
+import megamek.common.weapons.prototypes.PrototypeArrowIV;
+import megamek.common.weapons.prototypes.PrototypeRL10;
+import megamek.common.weapons.prototypes.PrototypeRL15;
+import megamek.common.weapons.prototypes.PrototypeRL20;
+import megamek.common.weapons.srms.CLImprovedSRM2;
+import megamek.common.weapons.srms.CLImprovedSRM4;
+import megamek.common.weapons.srms.CLImprovedSRM6;
+import megamek.common.weapons.srms.CLSRM1;
+import megamek.common.weapons.srms.CLSRM1OS;
+import megamek.common.weapons.srms.CLSRM2;
+import megamek.common.weapons.srms.CLSRM2IOS;
+import megamek.common.weapons.srms.CLSRM2OS;
+import megamek.common.weapons.srms.CLSRM3;
+import megamek.common.weapons.srms.CLSRM3OS;
+import megamek.common.weapons.srms.CLSRM4;
+import megamek.common.weapons.srms.CLSRM4IOS;
+import megamek.common.weapons.srms.CLSRM4OS;
+import megamek.common.weapons.srms.CLSRM5;
+import megamek.common.weapons.srms.CLSRM5OS;
+import megamek.common.weapons.srms.CLSRM6;
+import megamek.common.weapons.srms.CLSRM6IOS;
+import megamek.common.weapons.srms.CLSRM6OS;
+import megamek.common.weapons.srms.CLSRT1;
+import megamek.common.weapons.srms.CLSRT1OS;
+import megamek.common.weapons.srms.CLSRT2;
+import megamek.common.weapons.srms.CLSRT2IOS;
+import megamek.common.weapons.srms.CLSRT2OS;
+import megamek.common.weapons.srms.CLSRT3;
+import megamek.common.weapons.srms.CLSRT3OS;
+import megamek.common.weapons.srms.CLSRT4;
+import megamek.common.weapons.srms.CLSRT4IOS;
+import megamek.common.weapons.srms.CLSRT4OS;
+import megamek.common.weapons.srms.CLSRT5;
+import megamek.common.weapons.srms.CLSRT5OS;
+import megamek.common.weapons.srms.CLSRT6;
+import megamek.common.weapons.srms.CLSRT6IOS;
+import megamek.common.weapons.srms.CLSRT6OS;
+import megamek.common.weapons.srms.CLStreakSRM1;
+import megamek.common.weapons.srms.CLStreakSRM2;
+import megamek.common.weapons.srms.CLStreakSRM2IOS;
+import megamek.common.weapons.srms.CLStreakSRM2OS;
+import megamek.common.weapons.srms.CLStreakSRM3;
+import megamek.common.weapons.srms.CLStreakSRM4;
+import megamek.common.weapons.srms.CLStreakSRM4IOS;
+import megamek.common.weapons.srms.CLStreakSRM4OS;
+import megamek.common.weapons.srms.CLStreakSRM5;
+import megamek.common.weapons.srms.CLStreakSRM6;
+import megamek.common.weapons.srms.CLStreakSRM6IOS;
+import megamek.common.weapons.srms.CLStreakSRM6OS;
+import megamek.common.weapons.srms.ISSRM2;
+import megamek.common.weapons.srms.ISSRM2IOS;
+import megamek.common.weapons.srms.ISSRM2OS;
+import megamek.common.weapons.srms.ISSRM4;
+import megamek.common.weapons.srms.ISSRM4IOS;
+import megamek.common.weapons.srms.ISSRM4OS;
+import megamek.common.weapons.srms.ISSRM6;
+import megamek.common.weapons.srms.ISSRM6IOS;
+import megamek.common.weapons.srms.ISSRM6OS;
+import megamek.common.weapons.srms.ISSRT2;
+import megamek.common.weapons.srms.ISSRT2IOS;
+import megamek.common.weapons.srms.ISSRT2OS;
+import megamek.common.weapons.srms.ISSRT4;
+import megamek.common.weapons.srms.ISSRT4IOS;
+import megamek.common.weapons.srms.ISSRT4OS;
+import megamek.common.weapons.srms.ISSRT6;
+import megamek.common.weapons.srms.ISSRT6IOS;
+import megamek.common.weapons.srms.ISSRT6OS;
+import megamek.common.weapons.srms.ISStreakSRM2;
+import megamek.common.weapons.srms.ISStreakSRM2IOS;
+import megamek.common.weapons.srms.ISStreakSRM2OS;
+import megamek.common.weapons.srms.ISStreakSRM4;
+import megamek.common.weapons.srms.ISStreakSRM4IOS;
+import megamek.common.weapons.srms.ISStreakSRM4OS;
+import megamek.common.weapons.srms.ISStreakSRM6;
+import megamek.common.weapons.srms.ISStreakSRM6IOS;
+import megamek.common.weapons.srms.ISStreakSRM6OS;
 import megamek.common.weapons.tag.CLLightTAG;
 import megamek.common.weapons.tag.CLTAG;
 import megamek.common.weapons.tag.ISTAG;
-import megamek.common.weapons.unofficial.*;
-
-import java.math.BigInteger;
+import megamek.common.weapons.unofficial.CLPlasmaRifle;
+import megamek.common.weapons.unofficial.CLRAC10;
+import megamek.common.weapons.unofficial.CLRAC20;
+import megamek.common.weapons.unofficial.ISAC10i;
+import megamek.common.weapons.unofficial.ISAC15;
+import megamek.common.weapons.unofficial.ISGAC2;
+import megamek.common.weapons.unofficial.ISGAC4;
+import megamek.common.weapons.unofficial.ISGAC6;
+import megamek.common.weapons.unofficial.ISGAC8;
+import megamek.common.weapons.unofficial.ISLAC10;
+import megamek.common.weapons.unofficial.ISLAC20;
+import megamek.common.weapons.unofficial.ISLaserAMSTHB;
+import megamek.common.weapons.unofficial.ISMRM1;
+import megamek.common.weapons.unofficial.ISMRM1OS;
+import megamek.common.weapons.unofficial.ISMRM2;
+import megamek.common.weapons.unofficial.ISMRM2OS;
+import megamek.common.weapons.unofficial.ISMRM3;
+import megamek.common.weapons.unofficial.ISMRM3OS;
+import megamek.common.weapons.unofficial.ISMRM4;
+import megamek.common.weapons.unofficial.ISMRM4OS;
+import megamek.common.weapons.unofficial.ISMRM5;
+import megamek.common.weapons.unofficial.ISMRM5OS;
+import megamek.common.weapons.unofficial.ISRailGun;
+import megamek.common.weapons.unofficial.ISTHBLB20XAC;
+import megamek.common.weapons.unofficial.ISTHBLB2XAC;
+import megamek.common.weapons.unofficial.ISTHBLB5XAC;
+import megamek.common.weapons.unofficial.ISTHBUAC10;
+import megamek.common.weapons.unofficial.ISTHBUAC2;
+import megamek.common.weapons.unofficial.ISTHBUAC20;
 
 // TODO add XML support back in.
 
@@ -62,7 +481,7 @@ public class WeaponType extends EquipmentType {
 
     // weapon flags (note: many weapons can be identified by their ammo type)
 
-    // marks any weapon affected by a targetting computer
+    // marks any weapon affected by a targeting computer
     public static final BigInteger F_DIRECT_FIRE = BigInteger.valueOf(1).shiftLeft(0);
     public static final BigInteger F_FLAMER = BigInteger.valueOf(1).shiftLeft(1);
     // Glaze armor
@@ -72,12 +491,12 @@ public class WeaponType extends EquipmentType {
     public static final BigInteger F_AUTO_TARGET = BigInteger.valueOf(1).shiftLeft(4);
     // can not start fires
     public static final BigInteger F_NO_FIRES = BigInteger.valueOf(1).shiftLeft(5);
-    //must be only weapon attacking
+    // must be only weapon attacking
     public static final BigInteger F_SOLO_ATTACK = BigInteger.valueOf(1).shiftLeft(7);
     public static final BigInteger F_VGL = BigInteger.valueOf(1).shiftLeft(8);
     // MGL for rapid fire setup
     public static final BigInteger F_MG = BigInteger.valueOf(1).shiftLeft(9);
-    //Inferno weapon
+    // Inferno weapon
     public static final BigInteger F_INFERNO = BigInteger.valueOf(1).shiftLeft(10);
     // Infantry caliber weapon, damage based on # of men shooting
     public static final BigInteger F_INFANTRY = BigInteger.valueOf(1).shiftLeft(11);
@@ -86,39 +505,39 @@ public class WeaponType extends EquipmentType {
     public static final BigInteger F_ONESHOT = BigInteger.valueOf(1).shiftLeft(14);
     public static final BigInteger F_ARTILLERY = BigInteger.valueOf(1).shiftLeft(15);
 
-    //for Gunnery/Ballistic
+    // for Gunnery/Ballistic
     public static final BigInteger F_BALLISTIC = BigInteger.valueOf(1).shiftLeft(16);
-    //for Gunnery/Energy
+    // for Gunnery/Energy
     public static final BigInteger F_ENERGY = BigInteger.valueOf(1).shiftLeft(17);
-    //for Gunnery/Missile
+    // for Gunnery/Missile
     public static final BigInteger F_MISSILE = BigInteger.valueOf(1).shiftLeft(18);
 
-    //fires
+    // fires
     public static final BigInteger F_PLASMA = BigInteger.valueOf(1).shiftLeft(19);
     public static final BigInteger F_INCENDIARY_NEEDLES = BigInteger.valueOf(1).shiftLeft(20);
 
-    //War of 3039 prototypes
+    // War of 3039 prototypes
     public static final BigInteger F_PROTOTYPE = BigInteger.valueOf(1).shiftLeft(21);
-    //Variable heat, heat is listed in dice, not points
+    // Variable heat, heat is listed in dice, not points
     public static final BigInteger F_HEATASDICE = BigInteger.valueOf(1).shiftLeft(22);
-    //AMS
+    // AMS
     public static final BigInteger F_AMS = BigInteger.valueOf(1).shiftLeft(23);
 
-    //may only target Infantry
+    // may only target Infantry
     public static final BigInteger F_INFANTRY_ONLY = BigInteger.valueOf(1).shiftLeft(25);
 
     public static final BigInteger F_TAG = BigInteger.valueOf(1).shiftLeft(26);
-    //C3 Master with Target Acquisition gear
+    // C3 Master with Target Acquisition gear
     public static final BigInteger F_C3M = BigInteger.valueOf(1).shiftLeft(27);
 
-    //Plasma Rifle
+    // Plasma Rifle
     public static final BigInteger F_PLASMA_MFUK = BigInteger.valueOf(1).shiftLeft(28);
-    //fire Extinguisher
+    // fire Extinguisher
     public static final BigInteger F_EXTINGUISHER = BigInteger.valueOf(1).shiftLeft(29);
     public static final BigInteger F_PULSE = BigInteger.valueOf(1).shiftLeft(30);
     // Full Damage vs. Infantry
     public static final BigInteger F_BURST_FIRE = BigInteger.valueOf(1).shiftLeft(31);
-    //Machine Gun Array
+    // Machine Gun Array
     public static final BigInteger F_MGA = BigInteger.valueOf(1).shiftLeft(32);
     public static final BigInteger F_NO_AIM = BigInteger.valueOf(1).shiftLeft(33);
     public static final BigInteger F_BOMBAST_LASER = BigInteger.valueOf(1).shiftLeft(34);
@@ -126,7 +545,7 @@ public class WeaponType extends EquipmentType {
     public static final BigInteger F_B_POD = BigInteger.valueOf(1).shiftLeft(36);
     public static final BigInteger F_TASER = BigInteger.valueOf(1).shiftLeft(37);
 
-    //Anti-ship missiles
+    // Anti-ship missiles
     public static final BigInteger F_ANTI_SHIP = BigInteger.valueOf(1).shiftLeft(38);
     public static final BigInteger F_SPACE_BOMB = BigInteger.valueOf(1).shiftLeft(39);
     public static final BigInteger F_M_POD = BigInteger.valueOf(1).shiftLeft(40);
@@ -140,7 +559,6 @@ public class WeaponType extends EquipmentType {
     public static final BigInteger F_PROTO_WEAPON = BigInteger.valueOf(1).shiftLeft(46);
     public static final BigInteger F_TANK_WEAPON = BigInteger.valueOf(1).shiftLeft(47);
 
-
     public static final BigInteger F_INFANTRY_ATTACK = BigInteger.valueOf(1).shiftLeft(48);
     public static final BigInteger F_INF_BURST = BigInteger.valueOf(1).shiftLeft(49);
     public static final BigInteger F_INF_AA = BigInteger.valueOf(1).shiftLeft(50);
@@ -149,12 +567,14 @@ public class WeaponType extends EquipmentType {
     public static final BigInteger F_INF_SUPPORT = BigInteger.valueOf(1).shiftLeft(53);
     public static final BigInteger F_INF_ENCUMBER = BigInteger.valueOf(1).shiftLeft(54);
     public static final BigInteger F_INF_ARCHAIC = BigInteger.valueOf(1).shiftLeft(55);
-    public static final BigInteger F_INF_CLIMBINGCLAWS = BigInteger.valueOf(1).shiftLeft(63);   //TODO Add game rules IO pg 84
+
+    // TODO Add game rules IO pg 84
+    public static final BigInteger F_INF_CLIMBINGCLAWS = BigInteger.valueOf(1).shiftLeft(63);
 
     // C3 Master Booster System
     public static final BigInteger F_C3MBS = BigInteger.valueOf(1).shiftLeft(56);
 
-    //Naval Mass Drivers
+    // Naval Mass Drivers
     public static final BigInteger F_MASS_DRIVER = BigInteger.valueOf(1).shiftLeft(58);
 
     public static final BigInteger F_CWS = BigInteger.valueOf(1).shiftLeft(59);
@@ -165,16 +585,17 @@ public class WeaponType extends EquipmentType {
     public static final BigInteger F_BOMB_WEAPON = BigInteger.valueOf(1).shiftLeft(61);
 
     public static final BigInteger F_BA_INDIVIDUAL = BigInteger.valueOf(1).shiftLeft(62);
-    //Next one's out of order. See F_INF_CLIMBINGCLAWS
+    // Next one's out of order. See F_INF_CLIMBINGCLAWS
 
-    //AMS and Point Defense Bays - Have to work differently from code using the F_AMS flag
+    // AMS and Point Defense Bays - Have to work differently from code using the
+    // F_AMS flag
     public static final BigInteger F_PDBAY = BigInteger.valueOf(1).shiftLeft(64);
     public static final BigInteger F_AMSBAY = BigInteger.valueOf(1).shiftLeft(65);
 
-    //Thunderbolt and similar large missiles, for use with AMS resolution
+    // Thunderbolt and similar large missiles, for use with AMS resolution
     public static final BigInteger F_LARGEMISSILE = BigInteger.valueOf(1).shiftLeft(66);
 
-    //Hyper-Laser
+    // Hyper-Laser
     public static final BigInteger F_HYPER = BigInteger.valueOf(1).shiftLeft(67);
 
     // Fusillade works like a one-shot weapon but has a second round.
@@ -184,10 +605,13 @@ public class WeaponType extends EquipmentType {
     /** Missile weapon that can be linked to an Artemis fire control system */
     public static final BigInteger F_ARTEMIS_COMPATIBLE = BigInteger.valueOf(1).shiftLeft(70);
 
-    /** This flag is used by mortar-type weapons that allow indirect fire without a spotter and/or with LOS. */
+    /**
+     * This flag is used by mortar-type weapons that allow indirect fire without a
+     * spotter and/or with LOS.
+     */
     public static final BigInteger F_MORTARTYPE_INDIRECT = BigInteger.valueOf(1).shiftLeft(71);
 
-    //Used for TSEMP Weapons.
+    // Used for TSEMP Weapons.
     public static final BigInteger F_TSEMP = BigInteger.valueOf(1).shiftLeft(57);
     public static final BigInteger F_REPEATING = BigInteger.valueOf(1).shiftLeft(72);
 
@@ -250,14 +674,36 @@ public class WeaponType extends EquipmentType {
     // Used for BA vs BA damage for BA Plasma Rifle
     public static final int WEAPON_PLASMA = 15;
 
-    public static String[] classNames = { "Unknown", "Laser", "Point Defense", "PPC", "Pulse Laser", "Artillery", "Plasma",
-            "AC", "LBX", "LRM", "SRM", "MRM", "ATM", "Rocket Launcher", "Capital Laser", "Capital PPC", "Capital AC",
-            "Capital Gauss", "Capital Missile", "AR10", "Screen", "Sub Capital Cannon", "Capital Mass Driver", "AMS" };
+    public static String[] classNames = {
+            "Unknown",
+            "Laser",
+            "Point Defense",
+            "PPC",
+            "Pulse Laser",
+            "Artillery",
+            "Plasma",
+            "AC",
+            "LBX",
+            "LRM",
+            "SRM",
+            "MRM",
+            "ATM",
+            "Rocket Launcher",
+            "Capital Laser",
+            "Capital PPC",
+            "Capital AC",
+            "Capital Gauss",
+            "Capital Missile",
+            "AR10", "Screen",
+            "Sub Capital Cannon",
+            "Capital Mass Driver",
+            "AMS"
+    };
 
     public static final int BFCLASS_STANDARD = 0;
     public static final int BFCLASS_LRM = 1;
     public static final int BFCLASS_SRM = 2;
-    public static final int BFCLASS_MML = 3; //Not a separate category, but adds to both SRM and LRM
+    public static final int BFCLASS_MML = 3; // Not a separate category, but adds to both SRM and LRM
     public static final int BFCLASS_TORP = 4;
     public static final int BFCLASS_AC = 5;
     public static final int BFCLASS_FLAK = 6;
@@ -288,12 +734,13 @@ public class WeaponType extends EquipmentType {
     public int waterLongRange;
     public int waterExtremeRange;
 
-    //the class of weapon for infantry damage
+    // the class of weapon for infantry damage
     public int infDamageClass = WEAPON_DIRECT_FIRE;
+
     /**
-     *  Used for the BA vs BA damage rules on TO pg 109.  Determines how much
-     *  damage a weapon will inflict on BA, where the default WEAPON_DIRECT_FIRE
-     *  indicates normal weapon damage.
+     * Used for the BA vs BA damage rules on TO pg 109. Determines how much
+     * damage a weapon will inflict on BA, where the default WEAPON_DIRECT_FIRE
+     * indicates normal weapon damage.
      */
     protected int baDamageClass = WEAPON_DIRECT_FIRE;
 
@@ -310,7 +757,7 @@ public class WeaponType extends EquipmentType {
     protected int atClass = CLASS_NONE;
 
     /**
-     * @return true if the wtype is able to be fired indirectly.
+     * @return true if the weapon type is able to be fired indirectly.
      */
     public boolean canIndirect() {
         return false;
@@ -397,7 +844,7 @@ public class WeaponType extends EquipmentType {
 
     public int[] getRanges(Mounted weapon) {
         // modify the ranges for ATM missile systems based on the ammo selected
-        // TODO: this is not the right place to hardcode these
+        // FIXME: this is not the right place to hardcode these
         int minRange = getMinimumRange();
         int sRange = getShortRange();
         int mRange = getMediumRange();
@@ -405,14 +852,16 @@ public class WeaponType extends EquipmentType {
         int eRange = getExtremeRange();
         boolean hasLoadedAmmo = (weapon.getLinked() != null);
         if ((getAmmoType() == AmmoType.T_ATM) && hasLoadedAmmo) {
-            AmmoType atype = (AmmoType) weapon.getLinked().getType();
-            if ((atype.getAmmoType() == AmmoType.T_ATM) && (atype.getMunitionType().contains(AmmoType.Munitions.M_EXTENDED_RANGE))) {
+            AmmoType ammoType = (AmmoType) weapon.getLinked().getType();
+            if ((ammoType.getAmmoType() == AmmoType.T_ATM)
+                    && (ammoType.getMunitionType().contains(AmmoType.Munitions.M_EXTENDED_RANGE))) {
                 minRange = 4;
                 sRange = 9;
                 mRange = 18;
                 lRange = 27;
                 eRange = 36;
-            } else if ((atype.getAmmoType() == AmmoType.T_ATM) && (atype.getMunitionType().contains(AmmoType.Munitions.M_HIGH_EXPLOSIVE))) {
+            } else if ((ammoType.getAmmoType() == AmmoType.T_ATM)
+                    && (ammoType.getMunitionType().contains(AmmoType.Munitions.M_HIGH_EXPLOSIVE))) {
                 minRange = 0;
                 sRange = 3;
                 mRange = 6;
@@ -421,16 +870,17 @@ public class WeaponType extends EquipmentType {
             }
         }
         if ((getAmmoType() == AmmoType.T_IATM) && hasLoadedAmmo) {
-            AmmoType atype = (AmmoType) weapon.getLinked().getType();
-            if ((atype.getAmmoType() == AmmoType.T_IATM) && (atype.getMunitionType().contains(AmmoType.Munitions.M_EXTENDED_RANGE))) {
+            AmmoType ammoType = (AmmoType) weapon.getLinked().getType();
+            if ((ammoType.getAmmoType() == AmmoType.T_IATM)
+                    && (ammoType.getMunitionType().contains(AmmoType.Munitions.M_EXTENDED_RANGE))) {
                 minRange = 4;
                 sRange = 9;
                 mRange = 18;
                 lRange = 27;
                 eRange = 36;
-            } else if ((atype.getAmmoType() == AmmoType.T_IATM)
-                    && ((atype.getMunitionType().contains(AmmoType.Munitions.M_HIGH_EXPLOSIVE))
-                        || (atype.getMunitionType().contains(AmmoType.Munitions.M_IATM_IMP)))) {
+            } else if ((ammoType.getAmmoType() == AmmoType.T_IATM)
+                    && ((ammoType.getMunitionType().contains(AmmoType.Munitions.M_HIGH_EXPLOSIVE))
+                            || (ammoType.getMunitionType().contains(AmmoType.Munitions.M_IATM_IMP)))) {
                 minRange = 0;
                 sRange = 3;
                 mRange = 6;
@@ -439,8 +889,8 @@ public class WeaponType extends EquipmentType {
             }
         }
         if ((getAmmoType() == AmmoType.T_MML) && hasLoadedAmmo) {
-            AmmoType atype = (AmmoType) weapon.getLinked().getType();
-            if (atype.hasFlag(AmmoType.F_MML_LRM) || (getAmmoType() == AmmoType.T_LRM_TORPEDO)) {
+            AmmoType ammoType = (AmmoType) weapon.getLinked().getType();
+            if (ammoType.hasFlag(AmmoType.F_MML_LRM) || (getAmmoType() == AmmoType.T_LRM_TORPEDO)) {
                 minRange = 6;
                 sRange = 7;
                 mRange = 14;
@@ -453,8 +903,8 @@ public class WeaponType extends EquipmentType {
                 lRange = 9;
                 eRange = 12;
             }
-            if (atype.getMunitionType().contains(AmmoType.Munitions.M_DEAD_FIRE)) {
-                if (atype.hasFlag(AmmoType.F_MML_LRM)) {
+            if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_DEAD_FIRE)) {
+                if (ammoType.hasFlag(AmmoType.F_MML_LRM)) {
                     minRange = 4;
                     sRange = 5;
                     mRange = 10;
@@ -470,8 +920,9 @@ public class WeaponType extends EquipmentType {
             }
         }
         if ((getAmmoType() == AmmoType.T_LRM) && hasLoadedAmmo) {
-            AmmoType atype = (AmmoType) weapon.getLinked().getType();
-            if ((atype.getAmmoType() == AmmoType.T_LRM) && (atype.getMunitionType().contains(AmmoType.Munitions.M_DEAD_FIRE))) {
+            AmmoType ammoType = (AmmoType) weapon.getLinked().getType();
+            if ((ammoType.getAmmoType() == AmmoType.T_LRM)
+                    && (ammoType.getMunitionType().contains(AmmoType.Munitions.M_DEAD_FIRE))) {
                 minRange = 4;
                 sRange = 5;
                 mRange = 10;
@@ -480,8 +931,9 @@ public class WeaponType extends EquipmentType {
             }
         }
         if ((getAmmoType() == AmmoType.T_SRM) && hasLoadedAmmo) {
-            AmmoType atype = (AmmoType) weapon.getLinked().getType();
-            if ((atype.getAmmoType() == AmmoType.T_SRM) && (atype.getMunitionType().contains(AmmoType.Munitions.M_DEAD_FIRE))) {
+            AmmoType ammoType = (AmmoType) weapon.getLinked().getType();
+            if ((ammoType.getAmmoType() == AmmoType.T_SRM)
+                    && (ammoType.getMunitionType().contains(AmmoType.Munitions.M_DEAD_FIRE))) {
                 minRange = 0;
                 sRange = 2;
                 mRange = 4;
@@ -496,7 +948,7 @@ public class WeaponType extends EquipmentType {
                 sRange = 6;
             }
         }
-        //Allow extremely long-range shots for bearings-only capital missiles
+        // Allow extremely long-range shots for bearings-only capital missiles
         if (weapon.isInBearingsOnlyMode()) {
             eRange = RangeType.RANGE_BEARINGS_ONLY_OUT;
         }
@@ -524,8 +976,7 @@ public class WeaponType extends EquipmentType {
     }
 
     public int[] getWRanges() {
-        return new int[]
-                { minimumRange, waterShortRange, waterMediumRange, waterLongRange, waterExtremeRange };
+        return new int[] { minimumRange, waterShortRange, waterMediumRange, waterLongRange, waterExtremeRange };
     }
 
     public int getWShortRange() {
@@ -547,16 +998,18 @@ public class WeaponType extends EquipmentType {
     public int getMaxRange(Mounted weapon) {
         if (null != weapon) {
             if (getAmmoType() == AmmoType.T_ATM) {
-                AmmoType atype = (AmmoType) weapon.getLinked().getType();
-                if ((atype.getAmmoType() == AmmoType.T_ATM) && (atype.getMunitionType().contains(AmmoType.Munitions.M_EXTENDED_RANGE))) {
+                AmmoType ammoType = (AmmoType) weapon.getLinked().getType();
+                if ((ammoType.getAmmoType() == AmmoType.T_ATM)
+                        && (ammoType.getMunitionType().contains(AmmoType.Munitions.M_EXTENDED_RANGE))) {
                     return RANGE_EXT;
-                } else if ((atype.getAmmoType() == AmmoType.T_ATM) && (atype.getMunitionType().contains(AmmoType.Munitions.M_HIGH_EXPLOSIVE))) {
+                } else if ((ammoType.getAmmoType() == AmmoType.T_ATM)
+                        && (ammoType.getMunitionType().contains(AmmoType.Munitions.M_HIGH_EXPLOSIVE))) {
                     return RANGE_SHORT;
                 }
             }
             if (getAmmoType() == AmmoType.T_MML) {
-                AmmoType atype = (AmmoType) weapon.getLinked().getType();
-                if (atype.hasFlag(AmmoType.F_MML_LRM) || (getAmmoType() == AmmoType.T_LRM_TORPEDO)) {
+                AmmoType ammoType = (AmmoType) weapon.getLinked().getType();
+                if (ammoType.hasFlag(AmmoType.F_MML_LRM) || (getAmmoType() == AmmoType.T_LRM_TORPEDO)) {
                     return RANGE_LONG;
                 } else {
                     return RANGE_SHORT;
@@ -576,12 +1029,11 @@ public class WeaponType extends EquipmentType {
 
     public int[] getATRanges() {
         if (isCapital()) {
-            return new int[]
-                    { Integer.MIN_VALUE, 12, 24, 40, 50 };
+            return new int[] { Integer.MIN_VALUE, 12, 24, 40, 50 };
         }
-        return new int[]
-                { Integer.MIN_VALUE, 6, 12, 20, 25 };
+        return new int[] { Integer.MIN_VALUE, 6, 12, 20, 25 };
     }
+
     public int getMissileArmor() {
         return missileArmor;
     }
@@ -639,7 +1091,8 @@ public class WeaponType extends EquipmentType {
 
     // Probably not the best place for this
     /**
-     * @param capitalOnly If true, this will return the equivalent capital bay for subcapital weapons.
+     * @param capitalOnly If true, this will return the equivalent capital bay for
+     *                    subcapital weapons.
      * @return The type of weapon bay this weapon goes in
      */
     public EquipmentType getBayType(boolean capitalOnly) {
@@ -705,15 +1158,17 @@ public class WeaponType extends EquipmentType {
 
     /**
      * Damage calculation for BattleForce and AlphaStrike
+     *
      * @param range The range in hexes
      * @return Damage in BattleForce scale
      */
-    // TODO : the calculations are superseded by the ASC table but correct most of the time, ideally should be replaced
+    // TODO : the calculations are superseded by the ASC table but correct most of
+    // the time, ideally should be replaced
     public double getBattleForceDamage(int range) {
         double damage = 0;
         if (range <= getLongRange()) {
-            // Variable damage weapons that cannot reach into the BF long range band use LR damage
-            // for the MR band
+            // Variable damage weapons that cannot reach into the BF long range band use LR
+            // damage for the MR band
             if (getDamage() == DAMAGE_VARIABLE
                     && range == AlphaStrikeElement.MEDIUM_RANGE
                     && getLongRange() < AlphaStrikeElement.LONG_RANGE) {
@@ -735,7 +1190,9 @@ public class WeaponType extends EquipmentType {
     }
 
     /**
-     * Damage calculation for BattleForce and AlphaStrike for missile weapons that may have advanced fire control
+     * Damage calculation for BattleForce and AlphaStrike for missile weapons that
+     * may have advanced fire control
+     *
      * @param range - the range in hexes
      * @param fcs   - linked Artemis or Apollo FCS (null for none)
      * @return - damage in BattleForce scale
@@ -749,9 +1206,11 @@ public class WeaponType extends EquipmentType {
     }
 
     /**
-     * BattleForce-scale damage for BattleArmor, using cluster hits table based on squad size.
+     * BattleForce-scale damage for BattleArmor, using cluster hits table based on
+     * squad size.
      * AlphaStrike uses a different method.
-     * @param range - the range in hexes
+     *
+     * @param range       - the range in hexes
      * @param baSquadSize - the number of suits in the squad/point/level i
      * @return - damage in BattleForce scale
      */
@@ -760,38 +1219,49 @@ public class WeaponType extends EquipmentType {
     }
 
     /**
-     * @return The class of weapons for those that are tracked separately from standard damage (AlphaStrike)
+     * @return The class of weapons for those that are tracked separately from
+     *         standard damage (AlphaStrike)
      */
     public int getBattleForceClass() {
         return BFCLASS_STANDARD;
     }
 
-    /** Returns the weapon's heat for AlphaStrike conversion. Overridden where it differs from TW heat. */
+    /**
+     * Returns the weapon's heat for AlphaStrike conversion. Overridden where it
+     * differs from TW heat.
+     */
     public int getAlphaStrikeHeat() {
         return getHeat();
     }
 
-    /** Returns the weapon's AlphaStrike heat damage for AlphaStrike conversion. ASC p.124. */
-    public int getAlphaStrikeHeatDamage(int rangeband) {
+    /**
+     * Returns the weapon's AlphaStrike heat damage for AlphaStrike conversion. ASC
+     * p.124.
+     */
+    public int getAlphaStrikeHeatDamage(int rangeBand) {
         return 0;
     }
 
-    /** Returns true if this weapon type can be used for Total War LRM-type indirect fire. */
+    /**
+     * Returns true if this weapon type can be used for Total War LRM-type indirect
+     * fire.
+     */
     public boolean hasIndirectFire() {
         return false;
     }
 
     /**
-     * Returns true if this weapon type contributes to the AlphaStrike IF ability. This
-     * is identical to TW indirect fire for most but not all weapons (see e.g. IATMs)
+     * Returns true if this weapon type contributes to the AlphaStrike IF ability.
+     * This is identical to TW indirect fire for most but not all weapons (see e.g.
+     * IATMs)
      */
     public boolean isAlphaStrikeIndirectFire() {
         return hasIndirectFire();
     }
 
     /**
-     * Returns true if this weapon type contributes to the AlphaStrike PNT ability. This
-     * is not identical to TW point defense, therefore implemented separately.
+     * Returns true if this weapon type contributes to the AlphaStrike PNT ability.
+     * This is not identical to TW point defense, therefore implemented separately.
      */
     public boolean isAlphaStrikePointDefense() {
         return false;
@@ -800,8 +1270,9 @@ public class WeaponType extends EquipmentType {
     /**
      * Add all the types of weapons we can create to the list
      *
-     * When a weapon class extends another, the subclass must be listed first to avoid
-     * clobbering the name lookup when calling the contructor of the superclass.
+     * When a weapon class extends another, the subclass must be listed first to
+     * avoid clobbering the name lookup when calling the constructor of the
+     * superclass.
      */
     public static void initializeTypes() {
         // Laser types
@@ -852,11 +1323,13 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new CLChemicalLaserLarge());
         EquipmentType.addType(new CLChemicalLaserMedium());
         EquipmentType.addType(new CLChemicalLaserSmall());
+
         // PPC types
         EquipmentType.addType(new ISPPC());
         EquipmentType.addType(new ISPPCPrimitive());
         EquipmentType.addType(new ISERPPC());
-//        EquipmentType.addType(new ISEHERPPC());
+
+        // EquipmentType.addType(new ISEHERPPC());
         EquipmentType.addType(new CLERPPC());
         EquipmentType.addType(new ISSnubNosePPC());
         EquipmentType.addType(new ISLightPPC());
@@ -864,6 +1337,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new ISKinsSlaughterPPC());
         EquipmentType.addType(new ISBASupportPPC());
         EquipmentType.addType(new CLBASupportPPC());
+
         // Flamers
         EquipmentType.addType(new CLFlamer());
         EquipmentType.addType(new ISFlamer());
@@ -872,6 +1346,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new ISHeavyFlamer());
         EquipmentType.addType(new ISERFlamer());
         EquipmentType.addType(new CLERFlamer());
+
         // Autocannons
         EquipmentType.addType(new ISAC2());
         EquipmentType.addType(new ISAC5());
@@ -884,6 +1359,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new ISAC5Primitive());
         EquipmentType.addType(new ISAC10Primitive());
         EquipmentType.addType(new ISAC20Primitive());
+
         // Ultras
         EquipmentType.addType(new ISUAC2());
         EquipmentType.addType(new ISUAC5());
@@ -900,6 +1376,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new CLUAC10Prototype());
         EquipmentType.addType(new CLUAC20());
         EquipmentType.addType(new CLUAC20Prototype());
+
         // LBXs
         EquipmentType.addType(new ISLB2XAC());
         EquipmentType.addType(new ISLB5XAC());
@@ -916,18 +1393,22 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new ISTHBLB2XAC());
         EquipmentType.addType(new ISTHBLB5XAC());
         EquipmentType.addType(new ISTHBLB20XAC());
+
         // RACs
         EquipmentType.addType(new ISRAC2());
         EquipmentType.addType(new ISRAC5());
+
         // LACs
         EquipmentType.addType(new ISLAC2());
         EquipmentType.addType(new ISLAC5());
         EquipmentType.addType(new ISLAC10());
         EquipmentType.addType(new ISLAC20());
+
         // HVACs
         EquipmentType.addType(new ISHVAC2());
         EquipmentType.addType(new ISHVAC5());
         EquipmentType.addType(new ISHVAC10());
+
         // Gausses
         EquipmentType.addType(new ISGaussRifle());
         EquipmentType.addType(new ISGaussRiflePrototype());
@@ -940,6 +1421,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new CLHAG30());
         EquipmentType.addType(new CLHAG40());
         EquipmentType.addType(new CLAPGaussRifle());
+
         // MGs
         EquipmentType.addType(new ISMG());
         EquipmentType.addType(new ISLightMG());
@@ -953,17 +1435,20 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new CLMGA());
         EquipmentType.addType(new CLLightMGA());
         EquipmentType.addType(new CLHeavyMGA());
+
         // LRMs
-/*        These were BA versions and there are currently BA
-         versions of these weapons. So they've been commented out.
-         EquipmentType.addType(new ISLRM1());
-         EquipmentType.addType(new ISLRM1OS());
-         EquipmentType.addType(new ISLRM2());
-         EquipmentType.addType(new ISLRM2OS());
-         EquipmentType.addType(new ISLRM3());
-         EquipmentType.addType(new ISLRM3OS());
-         EquipmentType.addType(new ISLRM4());
-         EquipmentType.addType(new ISLRM4OS());*/
+        /*
+         * These were BA versions and there are currently BA
+         * versions of these weapons. So they've been commented out.
+         * EquipmentType.addType(new ISLRM1());
+         * EquipmentType.addType(new ISLRM1OS());
+         * EquipmentType.addType(new ISLRM2());
+         * EquipmentType.addType(new ISLRM2OS());
+         * EquipmentType.addType(new ISLRM3());
+         * EquipmentType.addType(new ISLRM3OS());
+         * EquipmentType.addType(new ISLRM4());
+         * EquipmentType.addType(new ISLRM4OS());
+         */
         EquipmentType.addType(new ISLRM5());
         EquipmentType.addType(new ISLRM10());
         EquipmentType.addType(new ISLRM15());
@@ -1053,6 +1538,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new ISLRM10Primitive());
         EquipmentType.addType(new ISLRM15Primitive());
         EquipmentType.addType(new ISLRM20Primitive());
+
         // LRTs
         EquipmentType.addType(new ISLRT5());
         EquipmentType.addType(new ISLRT10());
@@ -1087,18 +1573,19 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new CLLRT10OS());
         EquipmentType.addType(new CLLRT15OS());
         EquipmentType.addType(new CLLRT20OS());
+
         // SRMs
-//        EquipmentType.addType(new ISSRM1());
+        // EquipmentType.addType(new ISSRM1());
         EquipmentType.addType(new ISSRM2());
-//        EquipmentType.addType(new ISSRM3());
+        // EquipmentType.addType(new ISSRM3());
         EquipmentType.addType(new ISSRM4());
-//        EquipmentType.addType(new ISSRM5());
+        // EquipmentType.addType(new ISSRM5());
         EquipmentType.addType(new ISSRM6());
-//        EquipmentType.addType(new ISSRM1OS());
+        // EquipmentType.addType(new ISSRM1OS());
         EquipmentType.addType(new ISSRM2OS());
-//        EquipmentType.addType(new ISSRM3OS());
+        // EquipmentType.addType(new ISSRM3OS());
         EquipmentType.addType(new ISSRM4OS());
-//        EquipmentType.addType(new ISSRM5OS());
+        // EquipmentType.addType(new ISSRM5OS());
         EquipmentType.addType(new ISSRM6OS());
         EquipmentType.addType(new CLSRM1());
         EquipmentType.addType(new CLSRM1OS());
@@ -1132,6 +1619,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new ISSRM2Primitive());
         EquipmentType.addType(new ISSRM4Primitive());
         EquipmentType.addType(new ISSRM6Primitive());
+
         // SRTs
         EquipmentType.addType(new ISSRT2());
         EquipmentType.addType(new ISSRT4());
@@ -1151,15 +1639,16 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new CLSRT4OS());
         EquipmentType.addType(new CLSRT5OS());
         EquipmentType.addType(new CLSRT6OS());
+
         // RLs
         /*
          * This is a duplicate of the ISBARL, and not available for mechs.
-        EquipmentType.addType(new ISRL1());
-        EquipmentType.addType(new ISRL2());
-        EquipmentType.addType(new ISRL3());
-        EquipmentType.addType(new ISRL4());
-        EquipmentType.addType(new ISRL5());
-        */
+         * EquipmentType.addType(new ISRL1());
+         * EquipmentType.addType(new ISRL2());
+         * EquipmentType.addType(new ISRL3());
+         * EquipmentType.addType(new ISRL4());
+         * EquipmentType.addType(new ISRL5());
+         */
         EquipmentType.addType(new RocketLauncher10());
         EquipmentType.addType(new RocketLauncher15());
         EquipmentType.addType(new RocketLauncher20());
@@ -1172,12 +1661,14 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new CLATM6());
         EquipmentType.addType(new CLATM9());
         EquipmentType.addType(new CLATM12());
+
         // iATMs
         EquipmentType.addType(new CLIATM3());
         EquipmentType.addType(new CLIATM6());
         EquipmentType.addType(new CLIATM9());
         EquipmentType.addType(new CLIATM12());
         EquipmentType.addType(new CLFussilade());
+
         // MRMs
         EquipmentType.addType(new ISMRM1());
         EquipmentType.addType(new ISMRM2());
@@ -1197,6 +1688,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new ISMRM20OS());
         EquipmentType.addType(new ISMRM30OS());
         EquipmentType.addType(new ISMRM40OS());
+
         // NARCs
         EquipmentType.addType(new ISNarc());
         EquipmentType.addType(new ISNarcPrototype());
@@ -1207,26 +1699,30 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new CLNarcIOS());
         EquipmentType.addType(new ISImprovedNarc());
         EquipmentType.addType(new ISImprovedNarcOS());
+
         // AMSs
         EquipmentType.addType(new ISAMS());
         EquipmentType.addType(new ISLaserAMS());
         EquipmentType.addType(new ISLaserAMSTHB());
         EquipmentType.addType(new CLAMS());
         EquipmentType.addType(new CLLaserAMS());
+
         // TAGs
         EquipmentType.addType(new ISTAG());
         EquipmentType.addType(new ISC3M());
         EquipmentType.addType(new ISC3MBS());
         EquipmentType.addType(new CLLightTAG());
         EquipmentType.addType(new CLTAG());
-//        EquipmentType.addType(new ISBALightTAG());
+        // EquipmentType.addType(new ISBALightTAG());
         EquipmentType.addType(new CLBALightTAG());
         EquipmentType.addType(new ISPrototypeTAG());
+
         // MMLs
         EquipmentType.addType(new ISMML3());
         EquipmentType.addType(new ISMML5());
         EquipmentType.addType(new ISMML7());
         EquipmentType.addType(new ISMML9());
+
         // Arty
         EquipmentType.addType(new LongTom());
         EquipmentType.addType(new Thumper());
@@ -1235,27 +1731,33 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new CLArrowIV());
         EquipmentType.addType(new ISBATubeArtillery());
         EquipmentType.addType(new PrototypeArrowIV());
+
         // Arty Cannons
         EquipmentType.addType(new LongTomCannon());
         EquipmentType.addType(new ThumperCannon());
         EquipmentType.addType(new SniperCannon());
+
         // MFUK weapons
         EquipmentType.addType(new CLPlasmaRifle());
         EquipmentType.addType(new CLRAC2());
         EquipmentType.addType(new CLRAC5());
         EquipmentType.addType(new CLRAC10());
         EquipmentType.addType(new CLRAC20());
+
         // misc lvl3 stuff
         EquipmentType.addType(new ISRailGun());
         EquipmentType.addType(new ISFluidGun());
         EquipmentType.addType(new CLFluidGun());
         EquipmentType.addType(new ISCenturionWeaponSystem());
+
         // MapPack Solaris VII
         EquipmentType.addType(new ISMagshotGaussRifle());
         EquipmentType.addType(new ISMPod());
-//        EquipmentType.addType(new CLMPod());
+
+        // EquipmentType.addType(new CLMPod());
         EquipmentType.addType(new ISBPod());
-//        EquipmentType.addType(new CLBPod());
+
+        // EquipmentType.addType(new CLBPod());
         // Thunderbolts
         EquipmentType.addType(new ISThunderBolt5());
         EquipmentType.addType(new ISThunderBolt10());
@@ -1273,9 +1775,9 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new ISMekTaser());
 
         EquipmentType.addType(new ISNailandRivetGun());
-//        EquipmentType.addType(new ISRivetGun());
-//        EquipmentType.addType(new CLNailGun());
-//        EquipmentType.addType(new CLRivetGun());
+        // EquipmentType.addType(new ISRivetGun());
+        // EquipmentType.addType(new CLNailGun());
+        // EquipmentType.addType(new CLRivetGun());
 
         // rifles
         EquipmentType.addType(new ISRifleLight());
@@ -1284,10 +1786,10 @@ public class WeaponType extends EquipmentType {
 
         // VGLs
         EquipmentType.addType(new ISVehicularGrenadeLauncher());
-//        EquipmentType.addType(new CLVehicularGrenadeLauncher());
+        // EquipmentType.addType(new CLVehicularGrenadeLauncher());
         EquipmentType.addType(new ISC3RemoteSensorLauncher());
 
-        //IO Weapons
+        // IO Weapons
         EquipmentType.addType(new CLImprovedAC2());
         EquipmentType.addType(new CLImprovedAC5());
         EquipmentType.addType(new CLImprovedAC10());
@@ -1365,7 +1867,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new InfantryArchaicWhipWeapon());
         EquipmentType.addType(new InfantryArchaicShockStaffWeapon());
 
-        //Clan Archaic - Commented out can be considered Obsolete
+        // Clan Archaic - Commented out can be considered Obsolete
         EquipmentType.addType(new InfantryArchaicClanVibroSwordWeapon());
 
         // Infantry Pistols
@@ -1412,7 +1914,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new InfantryPistolSMGGHTSpec7aWeapon());
         EquipmentType.addType(new InfantryPistolVintageWeapon());
 
-        //Shrapnel Pistols
+        // Shrapnel Pistols
         EquipmentType.addType(new InfantryPistolAAGemini());
         EquipmentType.addType(new InfantryPistolAlamo17());
         EquipmentType.addType(new InfantryPistolCamdenHR7());
@@ -1436,7 +1938,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new InfantryPistolWolfM30());
         EquipmentType.addType(new InfantryPistolYanjingshe());
 
-        //Clan Pistols - Commented out can be considered Obsolete
+        // Clan Pistols - Commented out can be considered Obsolete
         EquipmentType.addType(new InfantryPistolClanERLaserPistolWeapon());
         EquipmentType.addType(new InfantryPistolClanGaussPistolWeapon());
         EquipmentType.addType(new InfantryPistolClanPulseLaserPistolWeapon());
@@ -1496,7 +1998,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new InfantryShotgunSawnoffPumpActionWeapon());
         EquipmentType.addType(new InfantryShotgunWakazashiWeapon());
 
-        //Shrapnel Shotguns
+        // Shrapnel Shotguns
         EquipmentType.addType(new InfantryShotgunAMIKeymaster15());
         EquipmentType.addType(new InfantryShotgunAWAAS105());
         EquipmentType.addType(new InfantryShotgunAWASS112());
@@ -1561,13 +2063,13 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new InfantrySMGWC6());
         EquipmentType.addType(new InfantrySMGWolfBarronA7());
 
-        //Sniper Rifles
+        // Sniper Rifles
         EquipmentType.addType(new InfantrySniperRifleSniperWeapon());
         EquipmentType.addType(new InfantrySniperRifleRadiumLaserWeapon());
         EquipmentType.addType(new InfantrySniperStalkerWeapon());
         EquipmentType.addType(new InfantrySniperRifleMinolta9000Weapon());
 
-        //Shrapnel Sniper Files
+        // Shrapnel Sniper Files
         EquipmentType.addType(new InfantrySniperRifleBartonAMRAntiArmor());
         EquipmentType.addType(new InfantrySniperRifleBartonAMRStandard());
         EquipmentType.addType(new InfantrySniperRifleFNFJ12DarkCaste());
@@ -1661,7 +2163,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new InfantryGrenadeRAGWeapon());
         EquipmentType.addType(new InfantryGrenadeStandardWeapon());
 
-        //Infantry TAG
+        // Infantry TAG
         EquipmentType.addType(new InfantrySupportTAGWeapon());
 
         // Prosthetic Weapon from ATOW Companion
@@ -1720,7 +2222,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new CLBAGrenadeLauncherHeavy());
         EquipmentType.addType(new CLBALaserHeavyMedium());
         EquipmentType.addType(new CLBAMGHeavy());
-        EquipmentType.addType(new CLBAMortarHeavy());  // added per IO Pg 53
+        EquipmentType.addType(new CLBAMortarHeavy()); // added per IO Pg 53
         EquipmentType.addType(new CLBARecoillessRifleHeavy());
         EquipmentType.addType(new CLBALaserHeavySmall());
         EquipmentType.addType(new CLBALBX());
@@ -1759,29 +2261,30 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new CLBACompactNarc());
         EquipmentType.addType(new ISBALaserERMedium());
         EquipmentType.addType(new ISBALaserERSmall());
-//        EquipmentType.addType(new ISBAHeavyFlamer());
+        // EquipmentType.addType(new ISBAHeavyFlamer());
         EquipmentType.addType(new ISBAMGHeavy());
-//        EquipmentType.addType(new ISBAMGLight());
+        // EquipmentType.addType(new ISBAMGLight());
         EquipmentType.addType(new ISBAGaussRifleMagshot());
         EquipmentType.addType(new ISBALaserMedium());
         EquipmentType.addType(new ISBALaserPulseMedium());
-//        EquipmentType.addType(new ISBAMG());
+        // EquipmentType.addType(new ISBAMG());
         EquipmentType.addType(new ISBAPlasmaRifle());
         EquipmentType.addType(new ISBALaserSmall());
         EquipmentType.addType(new ISBALaserPulseSmall());
         EquipmentType.addType(new ISBALaserVSPSmall());
         EquipmentType.addType(new ISBALaserVSPMedium());
         EquipmentType.addType(new ISBATaser());
-//        EquipmentType.addType(new ISBACompactNarc());
+        // EquipmentType.addType(new ISBACompactNarc());
         EquipmentType.addType(new ISBAGaussRifleDavidLight());
         EquipmentType.addType(new ISBAFiredrakeNeedler());
         EquipmentType.addType(new ISBAGaussRifleGrandMauler());
-//        EquipmentType.addType(new ISBAGrenadeLauncherHeavy());
-//        EquipmentType.addType(new ISBAMortarHeavy());
+        // EquipmentType.addType(new ISBAGrenadeLauncherHeavy());
+        // EquipmentType.addType(new ISBAMortarHeavy());
         EquipmentType.addType(new ISBAGaussRifleKingDavidLight());
-//        EquipmentType.addType(new ISBAMortarLight());
+        // EquipmentType.addType(new ISBAMortarLight());
         EquipmentType.addType(new ISBAGrenadeLauncherMicro());
-//        EquipmentType.addType(new ISBAGrenadeLauncher()); //See note in ISBAGrenadeLauncher File.
+        // EquipmentType.addType(new ISBAGrenadeLauncher()); //See note in
+        // ISBAGrenadeLauncher File.
         EquipmentType.addType(new ISBAPopUpMineLauncher());
         EquipmentType.addType(new ISBAGaussRifleTsunami());
         EquipmentType.addType(new ISBASRM1());
@@ -1844,15 +2347,15 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new NL35Weapon());
         EquipmentType.addType(new NL45Weapon());
         EquipmentType.addType(new NL55Weapon());
-//        EquipmentType.addType(new CLNL35Weapon());
-//        EquipmentType.addType(new CLNL45Weapon());
-//        EquipmentType.addType(new CLNL55Weapon());
+        // EquipmentType.addType(new CLNL35Weapon());
+        // EquipmentType.addType(new CLNL45Weapon());
+        // EquipmentType.addType(new CLNL55Weapon());
         EquipmentType.addType(new NPPCWeaponLight());
         EquipmentType.addType(new NPPCWeaponMedium());
         EquipmentType.addType(new NPPCWeaponHeavy());
-//        EquipmentType.addType(new CLNPPCWeaponLight());
-//        EquipmentType.addType(new CLNPPCWeaponMedium());
-//        EquipmentType.addType(new CLNPPCWeaponHeavy());
+        // EquipmentType.addType(new CLNPPCWeaponLight());
+        // EquipmentType.addType(new CLNPPCWeaponMedium());
+        // EquipmentType.addType(new CLNPPCWeaponHeavy());
         EquipmentType.addType(new NAC10Weapon());
         EquipmentType.addType(new NAC20Weapon());
         EquipmentType.addType(new NAC25Weapon());
@@ -1862,9 +2365,9 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new NGaussWeaponLight());
         EquipmentType.addType(new NGaussWeaponMedium());
         EquipmentType.addType(new NGaussWeaponHeavy());
-//        EquipmentType.addType(new CLNGaussWeaponLight());
-//        EquipmentType.addType(new CLNGaussWeaponMedium());
-//        EquipmentType.addType(new CLNGaussWeaponHeavy());
+        // EquipmentType.addType(new CLNGaussWeaponLight());
+        // EquipmentType.addType(new CLNGaussWeaponMedium());
+        // EquipmentType.addType(new CLNGaussWeaponHeavy());
         EquipmentType.addType(new CapMissBarracudaWeapon());
         EquipmentType.addType(new CapMissWhiteSharkWeapon());
         EquipmentType.addType(new CapMissKillerWhaleWeapon());
@@ -1874,7 +2377,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new CapMissTeleKrakenWeapon());
         EquipmentType.addType(new CapMissKrakenWeapon());
         EquipmentType.addType(new AR10Weapon());
-//        EquipmentType.addType(new CLAR10Weapon());
+        // EquipmentType.addType(new CLAR10Weapon());
         EquipmentType.addType(new ScreenLauncherWeapon());
         EquipmentType.addType(new SubCapCannonWeaponLight());
         EquipmentType.addType(new SubCapCannonWeaponMedium());
@@ -1900,7 +2403,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new ISLAAMissileWeapon());
         EquipmentType.addType(new CLLAAMissileWeapon());
         EquipmentType.addType(new BombArrowIV());
-        //EquipmentType.addType(new CLBombArrowIV());
+        // EquipmentType.addType(new CLBombArrowIV());
         EquipmentType.addType(new ISBombTAG());
         EquipmentType.addType(new CLBombTAG());
         EquipmentType.addType(new BombISRL10());
@@ -1934,7 +2437,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new CapitalMissileBayWeapon());
         EquipmentType.addType(new CapitalMDBayWeapon());
         EquipmentType.addType(new AR10BayWeapon());
-//        EquipmentType.addType(new CLAR10BayWeapon());
+        // EquipmentType.addType(new CLAR10BayWeapon());
         EquipmentType.addType(new ScreenLauncherBayWeapon());
         EquipmentType.addType(new SubCapCannonBayWeapon());
         EquipmentType.addType(new SubCapLaserBayWeapon());

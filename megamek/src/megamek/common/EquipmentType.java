@@ -260,9 +260,11 @@ public class EquipmentType implements ITechnology {
      * @deprecated The old tech progression system has been replaced by the
      *             TechAdvancement class.
      */
-    @Deprecated
+    // @Deprecated This is using the new TechAdvancement class under the hood.
+    // Should it really be deprecated now?
+
     public Map<Integer, Integer> getTechLevels() {
-        Map<Integer, Integer> techLevel = new HashMap<>();
+        Map<Integer, Integer> techLevel = new HashMap<Integer, Integer>();
         if (isUnofficial()) {
             if (techAdvancement.getTechBase() == TECH_BASE_CLAN) {
                 techLevel.put(techAdvancement.getIntroductionDate(true), TechConstants.T_CLAN_UNOFFICIAL);
@@ -271,18 +273,23 @@ public class EquipmentType implements ITechnology {
             }
             return techLevel;
         }
+
         if (techAdvancement.getPrototypeDate(true) > 0) {
             techLevel.put(techAdvancement.getPrototypeDate(true), TechConstants.T_CLAN_EXPERIMENTAL);
         }
+
         if (techAdvancement.getPrototypeDate(false) > 0) {
             techLevel.put(techAdvancement.getPrototypeDate(false), TechConstants.T_IS_EXPERIMENTAL);
         }
+
         if (techAdvancement.getProductionDate(true) > 0) {
             techLevel.put(techAdvancement.getProductionDate(true), TechConstants.T_CLAN_ADVANCED);
         }
+
         if (techAdvancement.getProductionDate(false) > 0) {
             techLevel.put(techAdvancement.getProductionDate(false), TechConstants.T_IS_ADVANCED);
         }
+
         if (techAdvancement.getTechBase() == TECH_BASE_ALL
                 && techAdvancement.getCommonDate() > 0) {
             techLevel.put(techAdvancement.getCommonDate(true), TechConstants.T_TW_ALL);
@@ -292,6 +299,7 @@ public class EquipmentType implements ITechnology {
             techLevel.put(techAdvancement.getCommonDate(false),
                     isIntroLevel() ? TechConstants.T_INTRO_BOXSET : TechConstants.T_IS_TW_NON_BOX);
         }
+
         return techLevel;
     }
 
@@ -1116,7 +1124,7 @@ public class EquipmentType implements ITechnology {
             bufferedWriter.write(f.toString());
             bufferedWriter.newLine();
             bufferedWriter.write(
-                    "Type,Name,Tech Base,Rules,Tech Rating,Static Tech Level,Introduction Date,Prototype Date,Production Date,Common Date,Extinction Date,Re-Introduction Date,Tonnage,CriticalSlots,Cost,BV,Alias");
+                    "Type,Name,Tech Base,Rules,Tech Rating,Static Tech Level,Introduction Date,Prototype Date,Production Date,Common Date,Extinction Date,Re-Introduction Date,Tonnage,CriticalSlots,Cost,BV,RulesRef,Alias");
             bufferedWriter.newLine();
             for (Enumeration<EquipmentType> equipmentTypes = EquipmentType.getAllTypes(); equipmentTypes
                     .hasMoreElements();) {
@@ -1205,6 +1213,9 @@ public class EquipmentType implements ITechnology {
                     bufferedWriter.write(Double.toString(equipmentType.bv));
                 }
 
+                bufferedWriter.write(",");
+                bufferedWriter.write(equipmentType.getRulesRefs());
+
                 bufferedWriter.write(",\"");
                 for (Enumeration<String> names = equipmentType.getNames(); names.hasMoreElements();) {
                     String name = names.nextElement();
@@ -1229,7 +1240,7 @@ public class EquipmentType implements ITechnology {
             bufferedWriter.write(f.toString());
             bufferedWriter.newLine();
             bufferedWriter.write(
-                    "Name,Tech Base,Rules,Tech Rating,Static Tech Level,Introduction Date,Prototype Date,Production Date,Common Date,Extinction Date,Re-Introduction Date,Tonnage,CriticalSlots,Cost,BV,MinimalRange,ShortRange,MediumRange,LongRange,ExtremeRange,ShortWaterRange,MediumWaterRange,LongWaterRange,ExtremeWaterRange,MinimalDamage,ShortDamage,MediumDamage,LongDamage,ExtremeDamage,Alias");
+                    "Name,Tech Base,Rules,Tech Rating,Static Tech Level,Introduction Date,Prototype Date,Production Date,Common Date,Extinction Date,Re-Introduction Date,Tonnage,CriticalSlots,Cost,BV,RulesRef,MinimalRange,ShortRange,MediumRange,LongRange,ExtremeRange,ShortWaterRange,MediumWaterRange,LongWaterRange,ExtremeWaterRange,MinimalDamage,ShortDamage,MediumDamage,LongDamage,ExtremeDamage,Alias");
             bufferedWriter.newLine();
 
             for (Enumeration<EquipmentType> equipmentTypes = EquipmentType.getAllTypes(); equipmentTypes
@@ -1305,6 +1316,9 @@ public class EquipmentType implements ITechnology {
                     bufferedWriter.write(Double.toString(weaponType.bv));
                 }
 
+                bufferedWriter.write(",");
+                bufferedWriter.write(weaponType.getRulesRefs());
+
                 int minimalRange = weaponType.getMinimumRange();
                 minimalRange = (minimalRange < 0) ? -1 : minimalRange;
                 bufferedWriter.write(",");
@@ -1374,7 +1388,7 @@ public class EquipmentType implements ITechnology {
             bufferedWriter.write(f.toString());
             bufferedWriter.newLine();
             bufferedWriter.write(
-                    "Name,Tech Base,Rules,Tech Rating,Static Tech Level,Introduction Date,Prototype Date,Production Date,Common Date,Extinction Date,Re-Introduction Date,Tonnage,CriticalSlots,Cost,BV,CountAsFlak?,MunitionType,DamagePerShot,RackSize,Shots,AmmoRatio,IsCapital,KgPerShot,AeroUse?,Alias");
+                    "Name,Tech Base,Rules,Tech Rating,Static Tech Level,Introduction Date,Prototype Date,Production Date,Common Date,Extinction Date,Re-Introduction Date,Tonnage,CriticalSlots,Cost,BV,RulesRef,CountAsFlak?,MunitionType,DamagePerShot,RackSize,Shots,AmmoRatio,IsCapital,KgPerShot,AeroUse?,Alias");
             bufferedWriter.newLine();
             for (Enumeration<EquipmentType> equipmentTypes = EquipmentType.getAllTypes(); equipmentTypes
                     .hasMoreElements();) {
@@ -1461,6 +1475,9 @@ public class EquipmentType implements ITechnology {
                 }
 
                 bufferedWriter.write(",");
+                bufferedWriter.write(ammoType.getRulesRefs());
+
+                bufferedWriter.write(",");
                 bufferedWriter.write(Boolean.toString(ammoType.countsAsFlak()));
 
                 bufferedWriter.write(",");
@@ -1511,7 +1528,7 @@ public class EquipmentType implements ITechnology {
             bufferedWriter.write(f.toString());
             bufferedWriter.newLine();
             bufferedWriter.write(
-                    "Name,Tech Base,Rules,Tech Rating,Static Tech Level,Introduction Date,Prototype Date,Production Date,Common Date,Extinction Date,Re-Introduction Date,Tonnage,CriticalSlots,Cost,BV,Alias");
+                    "Name,Tech Base,Rules,Tech Rating,Static Tech Level,Introduction Date,Prototype Date,Production Date,Common Date,Extinction Date,Re-Introduction Date,Tonnage,CriticalSlots,Cost,BV,RulesRef,Alias");
             bufferedWriter.newLine();
             for (Enumeration<EquipmentType> equipmentTypes = EquipmentType.getAllTypes(); equipmentTypes
                     .hasMoreElements();) {
@@ -1595,6 +1612,9 @@ public class EquipmentType implements ITechnology {
                 } else {
                     bufferedWriter.write(Double.toString(equipmentType.bv));
                 }
+
+                bufferedWriter.write(",");
+                bufferedWriter.write(equipmentType.getRulesRefs());
 
                 bufferedWriter.write(",\"");
                 for (Enumeration<String> names = equipmentType.getNames(); names.hasMoreElements();) {

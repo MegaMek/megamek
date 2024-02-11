@@ -885,7 +885,7 @@ public class FireControl {
                     final StringBuilder msg = new StringBuilder("Estimating to-hit for Homing artillery fire by ")
                             .append(shooter.getDisplayName());
 
-                    if (Compute.isTargetTagged(target, game)) {
+                    if (Compute.isTargetTagged(target, game) || (target instanceof Entity && ((Entity) target).getTaggedBy() != -1)) {
                         // If it's been tagged recently, assume we can get that support again!
                         msg.append("\nAssuming the last guy who TAGged this target will do so again!");
                         toHit.addModifier(TH_HOMING_TARGET_TAGGED);

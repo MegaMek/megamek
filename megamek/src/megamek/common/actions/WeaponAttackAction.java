@@ -5073,10 +5073,16 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         processAttackerSPAs(toHit, ae, te, weapon, game);
         processDefenderSPAs(toHit, ae, te, weapon, game);
 
-        //Homing warheads just need a flat 4 to seek out a successful TAG
+        //Homing warheads just need a flat 4 to seek out a successful TAG, but Princess needs help
         if (isHoming) {
             srt.setSpecialResolution(true);
-            return new ToHitData(4, Messages.getString("WeaponAttackAction.HomingArty"));
+            String msg = Messages.getString("WeaponAttackAction.HomingArty");
+            // Check if any spotters can help us out...
+            if (Compute.findTAGSpotter(game, ae, te, false) != null) {
+                return new ToHitData(4, msg);
+            } else {
+                return new ToHitData(ToHitData.AUTOMATIC_FAIL, msg);
+            }
         }
 
         //Don't bother adding up modifiers if the target hex has been hit before

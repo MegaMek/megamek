@@ -118,18 +118,7 @@ public class MultiTargetFireControl extends FireControl {
             }
 
             ArrayList<Mounted> ammos;
-            if (shooter.isLargeCraft()) {
-                // Bay ammo is handled differently
-                ammos = new ArrayList<Mounted>();
-                for (final Mounted a : shooter.getAmmo()) {
-                    if (AmmoType.isAmmoValid(a, (WeaponType) weapon.getType())
-                            && AmmoType.canSwitchToAmmo(weapon, (AmmoType) a.getType())) {
-                        ammos.add(a);
-                    }
-                }
-            } else {
-                ammos = shooter.getAmmo(weapon);
-            }
+            ammos = shooter.getAmmo(weapon);
 
             for (Mounted ammo: ammos) {
                 WeaponFireInfo shot = buildWeaponFireInfo(shooter, target, weapon, ammo, owner.getGame(), false);

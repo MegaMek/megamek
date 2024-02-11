@@ -23,7 +23,6 @@ import megamek.common.pathfinder.AeroGroundPathFinder;
 import megamek.common.weapons.StopSwarmAttack;
 import megamek.common.weapons.Weapon;
 import megamek.common.weapons.infantry.InfantryWeapon;
-import megamek.common.weapons.missiles.ATMWeapon;
 import megamek.common.weapons.missiles.MMLWeapon;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -116,6 +115,8 @@ public class FireControl {
     static final TargetRollModifier TH_WEAPON_NO_ARC = new TargetRollModifier(TargetRoll.IMPOSSIBLE, "not in arc");
     static final TargetRollModifier TH_INF_ZERO_RNG = new TargetRollModifier(TargetRoll.AUTOMATIC_FAIL, "non-infantry shooting with zero range");
     static final TargetRollModifier TH_STOP_SWARM_INVALID = new TargetRollModifier(TargetRoll.IMPOSSIBLE, "not swarming a Mek");
+    static final TargetRollModifier TH_HOMING_TARGET_TAGGED = new TargetRollModifier(TargetRoll.AUTOMATIC_SUCCESS, "Homing Round on TAGged target");
+    static final TargetRollModifier TH_HOMING_TARGET_UNTAGGED = new TargetRollModifier(TargetRoll.AUTOMATIC_FAIL, "Homing Round without TAG support");
     static final TargetRollModifier TH_SWARM_STOPPED = new TargetRollModifier(TargetRoll.AUTOMATIC_SUCCESS, "stops swarming");
     static final TargetRollModifier TH_OUT_OF_RANGE = new TargetRollModifier(TargetRoll.IMPOSSIBLE, "out of range");
     static final TargetRollModifier TH_SHORT_RANGE = new TargetRollModifier(0, "Short Range");
@@ -855,6 +856,9 @@ public class FireControl {
                         AmmoType.Munitions.M_FLECHETTE,
                         AmmoType.Munitions.M_FAE
                 );
+                EnumSet<AmmoType.Munitions> homingMunitions = EnumSet.of(
+                        AmmoType.Munitions.M_HOMING
+                );
                 if (0 != ammoType.getToHitModifier()) {
                     toHit.addModifier(ammoType.getToHitModifier(), TH_AMMO_MOD);
                 }
@@ -875,6 +879,32 @@ public class FireControl {
                     } else if (ammoType.getMunitionType().stream().anyMatch(ArtyOnlyMunitions::contains)){
                         toHit.addModifier(TH_WEAP_CANNOT_FIRE);
                     }
+                }
+                // Handle homing munitions
+                if (ammoType.getMunitionType().stream().anyMatch(homingMunitions::contains)) {
+                    final StringBuilder msg = new StringBuilder("Estimating to-hit for Homing artillery fire by ")
+                            .append(shooter.getDisplayName());
+
+                    if (Compute.isTargetTagged(target, game)) {
+                        // If it's been tagged recently, assume we can get that support again!
+                        msg.append("\nAssuming the last guy who TAGged this target will do so again!");
+                        toHit.addModifier(TH_HOMING_TARGET_TAGGED);
+                    } else {
+                        boolean friendliesClose = (
+                                Compute.findTAGSpotter(game, shooter, target, true) != null
+                        );
+                        // Check all friends with TAG for proximity to enemies.
+                        if (friendliesClose) {
+                            // If we've got one friendly TAGger in range, roll them bones!
+                            msg.append("\nSurvey says we've got friendly TAGgers nearby; fingers crossed!");
+                            toHit.addModifier(TH_HOMING_TARGET_TAGGED);
+                        } else {
+                            // Can't hit without TAG support on-site!
+                            msg.append("\nUnfortunately we have no friends near the target...");
+                            toHit.addModifier(TH_HOMING_TARGET_UNTAGGED);
+                        }
+                    }
+                    LogManager.getLogger().debug(msg.toString());
                 }
 
                 // Guesstimate Heat-Seeking Ammo mods
@@ -1165,18 +1195,7 @@ public class FireControl {
                     }
                 } else {
                     ArrayList<Mounted> ammos;
-                    if (shooter.isLargeCraft()) {
-                        // Bay ammo is handled differently
-                        ammos = new ArrayList<Mounted>();
-                        for (final Mounted a : shooter.getAmmo()) {
-                            if (AmmoType.isAmmoValid(a, (WeaponType) weapon.getType())
-                                    && AmmoType.canSwitchToAmmo(weapon, (AmmoType) a.getType())) {
-                                ammos.add(a);
-                            }
-                        }
-                    } else {
-                        ammos = shooter.getAmmo(weapon);
-                    }
+                    ammos = shooter.getAmmo(weapon);
 
                     for (Mounted ammo: ammos) {
                         shootingCheck = checkGuess(shooter, enemy, weapon, ammo, game);
@@ -1600,18 +1619,7 @@ public class FireControl {
                 bestShoot = buildWeaponFireInfo(shooter, target, weapon, null, game, false);
             } else {
                 ArrayList<Mounted> ammos;
-                if (shooter.isLargeCraft()) {
-                    // Bay ammo is handled differently
-                    ammos = new ArrayList<Mounted>();
-                    for (final Mounted a : shooter.getAmmo()) {
-                        if (AmmoType.isAmmoValid(a, (WeaponType) weapon.getType())
-                                && AmmoType.canSwitchToAmmo(weapon, (AmmoType) a.getType())) {
-                            ammos.add(a);
-                        }
-                    }
-                } else {
-                    ammos = shooter.getAmmo(weapon);
-                }
+                ammos = shooter.getAmmo(weapon);
 
                 WeaponFireInfo shoot;
                 for (Mounted ammo: ammos) {
@@ -1723,18 +1731,7 @@ public class FireControl {
                 bestShoot = buildWeaponFireInfo(shooter, target, weapon, null, game, false);
             } else {
                 ArrayList<Mounted> ammos;
-                if (shooter.isLargeCraft()) {
-                    // Bay ammo is handled differently
-                    ammos = new ArrayList<Mounted>();
-                    for (final Mounted a : shooter.getAmmo()) {
-                        if (AmmoType.isAmmoValid(a, (WeaponType) weapon.getType())
-                                && AmmoType.canSwitchToAmmo(weapon, (AmmoType) a.getType())) {
-                            ammos.add(a);
-                        }
-                    }
-                } else {
-                    ammos = shooter.getAmmo(weapon);
-                }
+                ammos = shooter.getAmmo(weapon);
 
                 WeaponFireInfo shoot;
                 for (Mounted ammo: ammos) {
@@ -1901,18 +1898,7 @@ public class FireControl {
                 bestShoot = buildWeaponFireInfo(shooter, target, weapon, null, game, false);
             } else {
                 ArrayList<Mounted> ammos;
-                if (shooter.isLargeCraft()) {
-                    // Bay ammo is handled differently
-                    ammos = new ArrayList<Mounted>();
-                    for (final Mounted a : shooter.getAmmo()) {
-                        if (AmmoType.isAmmoValid(a, (WeaponType) weapon.getType())
-                                && AmmoType.canSwitchToAmmo(weapon, (AmmoType) a.getType())) {
-                            ammos.add(a);
-                        }
-                    }
-                } else {
-                    ammos = shooter.getAmmo(weapon);
-                }
+                ammos = shooter.getAmmo(weapon);
 
                 for (Mounted ammo: ammos) {
                     WeaponFireInfo shoot = buildWeaponFireInfo(shooter, target, weapon, ammo, game, false);
@@ -2575,18 +2561,7 @@ public class FireControl {
                 // Iterate over all valid ammo for this weapon
                 int bracket;
                 ArrayList<Mounted> ammos;
-                if (shooter.isLargeCraft()) {
-                    // Bay ammo is handled differently
-                    ammos = new ArrayList<Mounted>();
-                    for (final Mounted a : shooter.getAmmo()) {
-                        if (AmmoType.isAmmoValid(a, (WeaponType) weapon.getType())
-                                && AmmoType.canSwitchToAmmo(weapon, (AmmoType) a.getType())) {
-                            ammos.add(a);
-                        }
-                    }
-                } else {
-                    ammos = shooter.getAmmo(weapon);
-                }
+                ammos = shooter.getAmmo(weapon);
                 for (Mounted ammo: ammos) {
                     bracket = RangeType.rangeBracket(range,
                             weaponType.getRanges(weapon, ammo),

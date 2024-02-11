@@ -468,16 +468,27 @@ public class WeaponFireInfo {
      * @param skipOtherWeapons true if Aero, false otherwise.
      * @return
      */
-    double computeExpectedTAGDamage(boolean skipOtherWeapons){
+    double computeExpectedTAGDamage(boolean exclusiveWithOtherWeapons){
+        final StringBuilder msg = new StringBuilder("Assessing the expected max damage from ")
+                .append(shooter.getDisplayName())
+                .append(" using their TAG this turn");
+
         int myWeaponsDamage = 0;
-        if (skipOtherWeapons) {
+        if (exclusiveWithOtherWeapons) {
+            // We need to know what we're giving up if we fire this TAG...
             myWeaponsDamage = Compute.computeTotalDamage(shooter.getTotalWeaponList());
+            msg.append("\nThe unit will be giving up ")
+                    .append(myWeaponsDamage)
+                    .append(" damage from other weapons");
         }
 
         // Get a list of incoming or potentially incoming guidable weapons from the relevant Princess and compute damage.
         int incomingAttacksDamage = Compute.computeTotalDamage(owner.computeGuidedWeapons(shooter, target.getPosition()));
+        int utility = incomingAttacksDamage - myWeaponsDamage;
+        msg.append("\n\tUtility: ").append(utility).append(" damage (Max, estimated)");
+        LogManager.getLogger().debug(msg.toString());
 
-        return Math.max(incomingAttacksDamage - myWeaponsDamage, 0);
+        return Math.max(utility, 0);
     }
 
     /**
@@ -624,12 +635,13 @@ public class WeaponFireInfo {
             msg.append("\n\tHeat: ").append(getHeat());
         }
 
+        setMaxDamage(computeExpectedDamage());
         // Expected damage is the chance of hitting * the max damage
-        setExpectedDamageOnHit(getProbabilityToHit() * computeExpectedDamage());
-        setMaxDamage(getExpectedDamageOnHit());
+        setExpectedDamageOnHit(getProbabilityToHit() * getMaxDamage());
 
         if (debugging) {
             msg.append("\n\tMax Damage: ").append(LOG_DEC.format(maxDamage));
+            msg.append("\n\tExpected Damage: ").append(LOG_DEC.format(expectedDamageOnHit));
         }
 
         // If expected damage from Aero tagging is zero, return out - save attacks for later.

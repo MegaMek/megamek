@@ -1858,6 +1858,73 @@ public class Compute {
         return findC3Spotter(game, attacker, target);
     }
 
+    public static Entity findTAGSpotter(Game game, Entity attacker, Targetable target, boolean stopAtFirst) {
+        Entity spotter = null;
+
+        ArrayList<Entity> spotters = new ArrayList<>();
+        ToHitData bestMods = new ToHitData(TargetRoll.IMPOSSIBLE, "");
+
+        // Compute friendly spotters
+        for (Entity friend : game.getEntitiesVector()) {
+
+            if (attacker.equals(friend)
+                    || !friend.isDeployed()
+                    || friend.isOffBoard()
+                    || (friend.getTransportId() != Entity.NONE)) {
+                continue; // useless to us...
+            }
+
+            Mounted tag = null;
+            int range = 0;
+            for (Mounted m : friend.getWeaponList()) {
+                WeaponType wtype = ((WeaponType) m.getType());
+                if (wtype.hasFlag(WeaponType.F_TAG)) {
+                    tag = m;
+                    range = wtype.getMaxRange(m);
+                    break;
+                }
+            }
+            if (tag == null) {
+                continue;
+            }
+
+            // what are this guy's mods to the attack?
+            LosEffects los = LosEffects.calculateLOS(game, friend, target, false);
+            ToHitData mods = los.losModifiers(game);
+            los.setTargetCover(LosEffects.COVER_NONE);
+            mods.append(Compute.getAttackerMovementModifier(game,
+                    friend.getId()));
+
+            // If the target isn't spotted, can't target
+            if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)
+                    && !Compute.inVisualRange(game, los, friend, target)
+                    && !Compute.inSensorRange(game, los, friend, target, null)) {
+                mods.addModifier(TargetRoll.IMPOSSIBLE,
+                        "outside of visual and sensor range");
+            }
+
+            int buddyRange = Compute.effectiveDistance(game, friend, target,
+                    false);
+
+            if (buddyRange > friend.getWalkMP() + range) {
+                // Probably can't get close enough this turn.
+                continue;
+            }
+
+            // is this guy a better spotter?
+            if ((spotter == null && mods.getValue() < TargetRoll.AUTOMATIC_FAIL)
+                    || (mods.getValue() < bestMods.getValue())) {
+                spotter = friend;
+                bestMods = mods;
+                if (stopAtFirst) {
+                    break;
+                }
+            }
+        }
+
+        return spotter;
+    }
+
     /**
      * find a c3, c3i, NC3, or nova spotter that is closer to the target than the
      * attacker.

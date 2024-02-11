@@ -114,13 +114,7 @@ public class SpheroidPathFinder {
             // Allow the entity to rotate any direction if it hovers.
             validRotations.addAll(AeroPathUtil.generateValidRotations(hoverPath));
 
-
-            // Set the correct facing for each end location
-            // for (MovePath path : spheroidPaths) {
-            //     validRotations.addAll(AeroPathUtil.generateValidRotation(path, poi));
-            //}
-
-            //spheroidPaths.addAll(validRotations);
+            spheroidPaths.addAll(validRotations);
 
             visitedCoords.clear();
 
@@ -177,11 +171,6 @@ public class SpheroidPathFinder {
         // we've moved further than 8 hexes on a ground map
         if (visitedCoords.contains(startingPath.getFinalCoords()) ||
                 (startingPath.getMpUsed() > startingPath.getEntity().getRunMP())) {
-            // End this path with turns to face our desired final direction
-            int diff = (6 + (direction - startingPath.getFinalFacing())) % 6;
-            for (MoveStepType stepType : AeroPathUtil.TURNS.get(diff)) {
-                startingPath.addStep(stepType);
-            }
             return retval;
         }
 
@@ -200,8 +189,17 @@ public class SpheroidPathFinder {
                 childPath.addStep(stepType);
             }
 
-            // finally, move forward
-            childPath.addStep(MoveStepType.FORWARDS);
+            // If we're right at the end of our possible movement, face our desired heading
+            if (childPath.getMpUsed() == startingPath.getEntity().getRunMP() - 1) {
+                // End this path with turns to face our desired final direction
+                int diff = (6 + (direction - startingPath.getFinalFacing())) % 6;
+                for (MoveStepType stepType : AeroPathUtil.TURNS.get(diff)) {
+                    startingPath.addStep(stepType);
+                }
+            } else {
+                // Allow continued movement forward
+                childPath.addStep(MoveStepType.FORWARDS);
+            }
 
             // having generated the child, we add it and (recursively) any of its children to the list of children to be returned
             // of course, if it winds up not being legal anyway for some other reason, then we discard it and move on

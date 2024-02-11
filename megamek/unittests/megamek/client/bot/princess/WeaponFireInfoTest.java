@@ -159,10 +159,7 @@ public class WeaponFireInfoTest {
         when(mockWeapon.getDesc()).thenReturn("Gauss Rifle (C)");
     }
 
-    @Test
-    public void testInitDamage() {
-        final double DELTA = 0.00001;
-
+    private WeaponFireInfo setupWFI() {
         WeaponFireInfo testWeaponFireInfo = spy(new WeaponFireInfo(mockPrincess));
         testWeaponFireInfo.setShooter(mockShooter);
         testWeaponFireInfo.setShooterState(mockShooterState);
@@ -170,13 +167,22 @@ public class WeaponFireInfoTest {
         testWeaponFireInfo.setTargetState(mockTargetState);
         testWeaponFireInfo.setWeapon(mockWeapon);
         testWeaponFireInfo.setGame(mockGame);
+        return testWeaponFireInfo;
+    }
+    @Test
+    public void testInitDamage() {
+        final double DELTA = 0.00001;
+        final double ROLL_TWO = 0.028;
+        final double CRIT_COUNT = 0.611;
+
+        WeaponFireInfo testWeaponFireInfo = setupWFI();
 
         // Test a medium laser vs light target with a to hit roll of 6.
         setupMediumLaser();
         setupLightTarget();
         double expectedMaxDamage = mockWeaponType.getDamage();
         double expectedProbabilityToHit = Compute.oddsAbove(mockToHitSix.getValue()) / 100;
-        double expectedCriticals = 0.02460;
+        double expectedCriticals = ROLL_TWO * CRIT_COUNT * expectedProbabilityToHit;
         double expectedKill = 0;
         doReturn(mockToHitSix).when(testWeaponFireInfo).calcToHit();
         doReturn(mockWeaponAttackAction).when(testWeaponFireInfo).buildWeaponAttackAction();
@@ -184,68 +190,72 @@ public class WeaponFireInfoTest {
         when(mockShooter.getEquipment(anyInt())).thenReturn(mockWeapon);
         testWeaponFireInfo.initDamage(null, false, true, null);
         assertEquals(expectedMaxDamage, testWeaponFireInfo.getMaxDamage());
-        assertEquals(expectedMaxDamage, testWeaponFireInfo.getExpectedDamageOnHit());
         assertEquals(expectedProbabilityToHit, testWeaponFireInfo.getProbabilityToHit(), DELTA);
+        assertEquals(expectedMaxDamage * testWeaponFireInfo.getProbabilityToHit(), testWeaponFireInfo.getExpectedDamageOnHit());
         assertEquals(expectedCriticals, testWeaponFireInfo.getExpectedCriticals(), DELTA);
         assertEquals(expectedKill, testWeaponFireInfo.getKillProbability(), DELTA);
 
         // Test a PPC vs light target with a to hit roll of 8.
         setupPPC();
+        testWeaponFireInfo = setupWFI();
         setupLightTarget();
         expectedMaxDamage = mockWeaponType.getDamage();
         expectedProbabilityToHit = Compute.oddsAbove(mockToHitEight.getValue()) / 100;
-        expectedCriticals = 0.01867;
-        expectedKill = 0.01155;
+        expectedCriticals = 0.0141773; // differs following first setup due to location destruction potential
+        expectedKill = 0.0;
         doReturn(mockToHitEight).when(testWeaponFireInfo).calcToHit();
         doReturn(mockWeaponAttackAction).when(testWeaponFireInfo).buildWeaponAttackAction();
         doReturn(expectedMaxDamage).when(testWeaponFireInfo).computeExpectedDamage();
         testWeaponFireInfo.initDamage(null, false, true, null);
         assertEquals(expectedMaxDamage, testWeaponFireInfo.getMaxDamage());
-        assertEquals(expectedMaxDamage, testWeaponFireInfo.getExpectedDamageOnHit());
+        assertEquals(expectedMaxDamage * testWeaponFireInfo.getProbabilityToHit(), testWeaponFireInfo.getExpectedDamageOnHit());
         assertEquals(expectedProbabilityToHit, testWeaponFireInfo.getProbabilityToHit(), DELTA);
         assertEquals(expectedCriticals, testWeaponFireInfo.getExpectedCriticals(), DELTA);
         assertEquals(expectedKill, testWeaponFireInfo.getKillProbability(), DELTA);
 
         // Test a Gauss Rifle vs a light target with a to hit roll of 6.
         setupCGR();
+        testWeaponFireInfo = setupWFI();
         setupLightTarget();
         expectedMaxDamage = mockWeaponType.getDamage();
         expectedProbabilityToHit = Compute.oddsAbove(mockToHitSix.getValue()) / 100;
-        expectedCriticals = 0.46129;
+        expectedCriticals = 0.0324; // differs following first setup due to location destruction potential
         expectedKill = 0.02005;
         doReturn(mockToHitSix).when(testWeaponFireInfo).calcToHit();
         doReturn(mockWeaponAttackAction).when(testWeaponFireInfo).buildWeaponAttackAction();
         doReturn(expectedMaxDamage).when(testWeaponFireInfo).computeExpectedDamage();
         testWeaponFireInfo.initDamage(null, false, true, null);
         assertEquals(expectedMaxDamage, testWeaponFireInfo.getMaxDamage());
-        assertEquals(expectedMaxDamage, testWeaponFireInfo.getExpectedDamageOnHit());
+        assertEquals(expectedMaxDamage * testWeaponFireInfo.getProbabilityToHit(), testWeaponFireInfo.getExpectedDamageOnHit());
         assertEquals(expectedProbabilityToHit, testWeaponFireInfo.getProbabilityToHit(), DELTA);
         assertEquals(expectedCriticals, testWeaponFireInfo.getExpectedCriticals(), DELTA);
         assertEquals(expectedKill, testWeaponFireInfo.getKillProbability(), DELTA);
 
         // Test a Gauss Rifle vs. a medium target with a to hit roll of 8.
         setupCGR();
+        testWeaponFireInfo = setupWFI();
         setupMediumTarget();
         expectedMaxDamage = mockWeaponType.getDamage();
         expectedProbabilityToHit = Compute.oddsAbove(mockToHitEight.getValue()) / 100;
-        expectedCriticals = 0.01867;
-        expectedKill = 0.01155;
+        expectedCriticals = ROLL_TWO * CRIT_COUNT * expectedProbabilityToHit;
+        expectedKill = 0.0;
         doReturn(mockToHitEight).when(testWeaponFireInfo).calcToHit();
         doReturn(mockWeaponAttackAction).when(testWeaponFireInfo).buildWeaponAttackAction();
         doReturn(expectedMaxDamage).when(testWeaponFireInfo).computeExpectedDamage();
         testWeaponFireInfo.initDamage(null, false, true, null);
         assertEquals(expectedMaxDamage, testWeaponFireInfo.getMaxDamage());
-        assertEquals(expectedMaxDamage, testWeaponFireInfo.getExpectedDamageOnHit());
+        assertEquals(expectedMaxDamage * testWeaponFireInfo.getProbabilityToHit(), testWeaponFireInfo.getExpectedDamageOnHit());
         assertEquals(expectedProbabilityToHit, testWeaponFireInfo.getProbabilityToHit(), DELTA);
         assertEquals(expectedCriticals, testWeaponFireInfo.getExpectedCriticals(), DELTA);
         assertEquals(expectedKill, testWeaponFireInfo.getKillProbability(), DELTA);
 
         // Test a medium laser vs. a medium target with no chance to hit.
         setupMediumLaser();
+        testWeaponFireInfo = setupWFI();
         setupMediumTarget();
         expectedMaxDamage = 0;
         expectedProbabilityToHit = Compute.oddsAbove(mockToHitThirteen.getValue()) / 100;
-        expectedCriticals = 0;
+        expectedCriticals = ROLL_TWO * CRIT_COUNT * expectedProbabilityToHit;
         expectedKill = 0;
         doReturn(mockToHitThirteen).when(testWeaponFireInfo).calcToHit();
         doReturn(mockWeaponAttackAction).when(testWeaponFireInfo).buildWeaponAttackAction();

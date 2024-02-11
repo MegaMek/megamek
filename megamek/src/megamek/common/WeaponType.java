@@ -458,7 +458,7 @@ public class WeaponType extends EquipmentType {
         int eRange = getExtremeRange();
         boolean hasLoadedAmmo = (ammo != null);
         if ((getAmmoType() == AmmoType.T_ATM) && hasLoadedAmmo) {
-            AmmoType ammoType = (AmmoType) weapon.getLinked().getType();
+            AmmoType ammoType = (AmmoType) ammo.getType();
             if ((ammoType.getAmmoType() == AmmoType.T_ATM)
                     && (ammoType.getMunitionType().contains(AmmoType.Munitions.M_EXTENDED_RANGE))) {
                 minRange = 4;
@@ -476,7 +476,7 @@ public class WeaponType extends EquipmentType {
             }
         }
         if ((getAmmoType() == AmmoType.T_IATM) && hasLoadedAmmo) {
-            AmmoType ammoType = (AmmoType) weapon.getLinked().getType();
+            AmmoType ammoType = (AmmoType) ammo.getType();
             if ((ammoType.getAmmoType() == AmmoType.T_IATM)
                     && (ammoType.getMunitionType().contains(AmmoType.Munitions.M_EXTENDED_RANGE))) {
                 minRange = 4;
@@ -495,7 +495,7 @@ public class WeaponType extends EquipmentType {
             }
         }
         if ((getAmmoType() == AmmoType.T_MML) && hasLoadedAmmo) {
-            AmmoType ammoType = (AmmoType) weapon.getLinked().getType();
+            AmmoType ammoType = (AmmoType) ammo.getType();
             if (ammoType.hasFlag(AmmoType.F_MML_LRM) || (getAmmoType() == AmmoType.T_LRM_TORPEDO)) {
                 minRange = 6;
                 sRange = 7;
@@ -526,7 +526,7 @@ public class WeaponType extends EquipmentType {
             }
         }
         if ((getAmmoType() == AmmoType.T_LRM) && hasLoadedAmmo) {
-            AmmoType ammoType = (AmmoType) weapon.getLinked().getType();
+            AmmoType ammoType = (AmmoType) ammo.getType();
             if ((ammoType.getAmmoType() == AmmoType.T_LRM)
                     && (ammoType.getMunitionType().contains(AmmoType.Munitions.M_DEAD_FIRE))) {
                 minRange = 4;
@@ -537,7 +537,7 @@ public class WeaponType extends EquipmentType {
             }
         }
         if ((getAmmoType() == AmmoType.T_SRM) && hasLoadedAmmo) {
-            AmmoType ammoType = (AmmoType) weapon.getLinked().getType();
+            AmmoType ammoType = (AmmoType) ammo.getType();
             if ((ammoType.getAmmoType() == AmmoType.T_SRM)
                     && (ammoType.getMunitionType().contains(AmmoType.Munitions.M_DEAD_FIRE))) {
                 minRange = 0;

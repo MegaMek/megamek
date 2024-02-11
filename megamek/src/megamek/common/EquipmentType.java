@@ -1213,10 +1213,10 @@ public class EquipmentType implements ITechnology {
                     bufferedWriter.write(Double.toString(equipmentType.bv));
                 }
 
-                bufferedWriter.write(",");
+                bufferedWriter.write(",\"");
                 bufferedWriter.write(equipmentType.getRulesRefs());
 
-                bufferedWriter.write(",\"");
+                bufferedWriter.write("\",\"");
                 for (Enumeration<String> names = equipmentType.getNames(); names.hasMoreElements();) {
                     String name = names.nextElement();
                     bufferedWriter.write(name + ",");
@@ -1316,12 +1316,12 @@ public class EquipmentType implements ITechnology {
                     bufferedWriter.write(Double.toString(weaponType.bv));
                 }
 
-                bufferedWriter.write(",");
+                bufferedWriter.write(",\"");
                 bufferedWriter.write(weaponType.getRulesRefs());
 
                 int minimalRange = weaponType.getMinimumRange();
                 minimalRange = (minimalRange < 0) ? -1 : minimalRange;
-                bufferedWriter.write(",");
+                bufferedWriter.write("\",");
                 bufferedWriter.write(Integer.toString(minimalRange));
 
                 bufferedWriter.write(",");
@@ -1474,10 +1474,10 @@ public class EquipmentType implements ITechnology {
                     bufferedWriter.write(Double.toString(ammoType.bv));
                 }
 
-                bufferedWriter.write(",");
+                bufferedWriter.write(",\"");
                 bufferedWriter.write(ammoType.getRulesRefs());
 
-                bufferedWriter.write(",");
+                bufferedWriter.write("\",");
                 bufferedWriter.write(Boolean.toString(ammoType.countsAsFlak()));
 
                 bufferedWriter.write(",");
@@ -1613,10 +1613,10 @@ public class EquipmentType implements ITechnology {
                     bufferedWriter.write(Double.toString(equipmentType.bv));
                 }
 
-                bufferedWriter.write(",");
+                bufferedWriter.write(",\"");
                 bufferedWriter.write(equipmentType.getRulesRefs());
 
-                bufferedWriter.write(",\"");
+                bufferedWriter.write("\",\"");
                 for (Enumeration<String> names = equipmentType.getNames(); names.hasMoreElements();) {
                     String name = names.nextElement();
                     bufferedWriter.write(name + ",");

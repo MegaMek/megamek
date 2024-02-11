@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
  * Copyright (c) 2018-2024 - The MegaMek Team. All Rights Reserved.
  *
  * This program is free software; you can redistribute it and/or modify it under

@@ -23,7 +23,7 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.DamageType;
 import megamek.common.weapons.Weapon;
 import megamek.server.GameManager;
-import megamek.server.Server;
+
 
 /**
  * @author Jay Lawson

@@ -445,6 +445,10 @@ public class WeaponType extends EquipmentType {
     }
 
     public int[] getRanges(Mounted weapon) {
+        return getRanges(weapon, weapon.getLinked());
+    }
+
+    public int[] getRanges(Mounted weapon, Mounted ammo) {
         // modify the ranges for ATM missile systems based on the ammo selected
         // FIXME: this is not the right place to hardcode these
         int minRange = getMinimumRange();
@@ -452,7 +456,7 @@ public class WeaponType extends EquipmentType {
         int mRange = getMediumRange();
         int lRange = getLongRange();
         int eRange = getExtremeRange();
-        boolean hasLoadedAmmo = (weapon.getLinked() != null);
+        boolean hasLoadedAmmo = (ammo != null);
         if ((getAmmoType() == AmmoType.T_ATM) && hasLoadedAmmo) {
             AmmoType ammoType = (AmmoType) weapon.getLinked().getType();
             if ((ammoType.getAmmoType() == AmmoType.T_ATM)
@@ -1540,6 +1544,21 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new InfantryPistolWolfM30());
         EquipmentType.addType(new InfantryPistolYanjingshe());
 
+        EquipmentType.addType(new InfantryLaserPistolAA75L());
+        EquipmentType.addType(new InfantryLaserPistolAWAWilibyMk4LaserPistol());
+        EquipmentType.addType(new InfantryLaserPistolBR25());
+        EquipmentType.addType(new InfantryLaserPistolBrightStarL12());
+        EquipmentType.addType(new InfantryLaserPistolBrightStarL15());
+        EquipmentType.addType(new InfantryLaserPistolBrightStarL7());
+        EquipmentType.addType(new InfantryLaserPistolDarklightIVLaserPistol());
+        EquipmentType.addType(new InfantryLaserPistolKelvin000Lancer3MM());
+        EquipmentType.addType(new InfantryLaserPistolXingShan());
+        EquipmentType.addType(new InfantryLaserPistolXingShanER());
+        EquipmentType.addType(new InfantryPulseLaserPistolMedusaIII());
+        EquipmentType.addType(new InfantryPulseLaserPistolMedusaIV());
+        EquipmentType.addType(new InfantryPulseLaserPistolNWW12());
+        EquipmentType.addType(new InfantryPulseLaserPistolRDISunSwarmPulsar());
+
         // Clan Pistols - Commented out can be considered Obsolete
         EquipmentType.addType(new InfantryPistolClanERLaserPistolWeapon());
         EquipmentType.addType(new InfantryPistolClanGaussPistolWeapon());
@@ -1671,6 +1690,19 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new InfantrySniperStalkerWeapon());
         EquipmentType.addType(new InfantrySniperRifleMinolta9000Weapon());
 
+        // Shrapnel Laser Rifles
+        EquipmentType.addType(new InfantryLaserCarbineBrightstarL15());
+        EquipmentType.addType(new InfantryLaserRifleDarkLightCLLight());
+        EquipmentType.addType(new InfantryLaserRifleDWSL5S());
+        EquipmentType.addType(new InfantryLaserRifleScorcherVIBlazerRifle());
+        EquipmentType.addType(new InfantryLaserRifleSyrtisFirebolt12Repaired());
+        EquipmentType.addType(new InfantryLaserRifleSyrtisFirebolt12Unrepaired());
+        EquipmentType.addType(new InfantryLaserRifleWolfBaronSunraker());
+        EquipmentType.addType(new InfantryLaserRifleYangLie());
+        EquipmentType.addType(new InfantryPulseLaserRifleDWSL5C());
+        EquipmentType.addType(new InfantryPulseLaserRifleGaul());
+        EquipmentType.addType(new InfantryPulseLaserRifleTirbuni());
+
         // Shrapnel Sniper Files
         EquipmentType.addType(new InfantrySniperRifleBartonAMRAntiArmor());
         EquipmentType.addType(new InfantrySniperRifleBartonAMRStandard());
@@ -1687,6 +1719,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new InfantrySniperRifleWilimtonRS14());
         EquipmentType.addType(new InfantrySniperRifleWilimtonRS17Stripped());
         EquipmentType.addType(new InfantrySniperRifleYuanLing());
+        EquipmentType.addType(new InfantryLaserSniperRifleDWSL5L());
 
         // Infantry Support Weapons
         EquipmentType.addType(new InfantrySupportMGPortableWeapon());

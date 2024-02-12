@@ -187,18 +187,21 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
         artyAutoHitHexes.clear();
         setArtyEnabled(startingHexes);
         butDone.setEnabled(true);
+
+        startTimer();
     }
 
     /**
      * Clears out old data and disables relevant buttons.
      */
     private void endMyTurn() {
+        stopTimer();
+
         // end my turn, then.
         disableButtons();
         clientgui.getBoardView().select(null);
         clientgui.getBoardView().highlight(null);
         clientgui.getBoardView().cursor(null);
-
     }
 
     /**

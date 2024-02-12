@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 import com.sun.mail.util.DecodingException;
 import megamek.common.*;
 import megamek.common.InfantryBay.PlatoonType;
+import megamek.common.equipment.ArmorType;
 import megamek.common.options.IBasicOption;
 import megamek.common.options.IOption;
 import megamek.common.options.PilotOptions;
@@ -342,6 +343,36 @@ public class BLKFile {
                     m.setSize(legacyDCCSCapacity);
                     break;
                 }
+            }
+        }
+    }
+
+    protected void loadSVArmor(Entity sv) throws EntityLoadingException {
+        boolean patchworkArmor = dataFile.exists("armor_type")
+                && dataFile.getDataAsInt("armor_type")[0] == EquipmentType.T_ARMOR_PATCHWORK;
+        if (patchworkArmor) {
+            for (int i = 1; i < sv.locations(); i++) {
+                megamek.common.equipment.ArmorType armor = dataFile.exists(sv.getLocationName(i) + "_barrating") ?
+                        megamek.common.equipment.ArmorType.svArmor(dataFile.getDataAsInt(sv.getLocationName(i) + "_barrating")[0]) :
+                        megamek.common.equipment.ArmorType.of(dataFile.getDataAsInt(sv.getLocationName(i) + "_armor_type")[0],
+                                TechConstants.isClan(dataFile.getDataAsInt(sv.getLocationName(i) + "_armor_tech")[0]));
+                sv.setArmorType(armor.getArmorType(), i);
+                sv.setBARRating(armor.getBAR(), i);
+                sv.setArmorTechLevel(armor.getStaticTechLevel().getCompoundTechLevel(false), i);
+            }
+        } else if (dataFile.exists("barrating")) {
+            megamek.common.equipment.ArmorType armor = ArmorType.svArmor(dataFile.getDataAsInt("barrating")[0]);
+            sv.setArmorType(armor.getArmorType());
+            sv.setBARRating(armor.getBAR());
+            sv.setArmorTechLevel(armor.getStaticTechLevel().getCompoundTechLevel(false));
+        } else {
+            if (dataFile.exists("armor_type")) {
+                sv.setArmorType(dataFile.getDataAsInt("armor_type")[0]);
+            } else {
+                throw new EntityLoadingException("could not find armor_type block.");
+            }
+            if (dataFile.exists("armor_tech")) {
+                sv.setArmorTechRating(dataFile.getDataAsInt("armor_tech")[0]);
             }
         }
     }
@@ -785,9 +816,13 @@ public class BLKFile {
                 blk.writeBlockData("armor_type",
                         EquipmentType.T_ARMOR_PATCHWORK);
                 for (int i = 1; i < t.locations(); i++) {
+                    ArmorType armor = ArmorType.forEntity(t, i);
                     blk.writeBlockData(t.getLocationName(i) + "_armor_type", t.getArmorType(i));
                     blk.writeBlockData(t.getLocationName(i) + "_armor_tech",
                             TechConstants.getTechName(t.getArmorTechLevel(i)));
+                    if (armor.hasFlag(MiscType.F_SUPPORT_VEE_BAR_ARMOR)) {
+                        blk.writeBlockData(t.getLocationName(i) + "_barrating", armor.getBAR());
+                    }
                 }
             }
             if (t.getStructureType() != 0) {
@@ -890,7 +925,7 @@ public class BLKFile {
         for (int i = 0; i < numLocs; i++) {
             blk.writeBlockData(t.getLocationName(i) + " Equipment", eq.get(i));
         }
-        if (!t.hasPatchworkArmor() && t.hasBARArmor(1)) {
+        if (!t.hasPatchworkArmor() && ArmorType.forEntity(t).hasFlag(MiscType.F_SUPPORT_VEE_BAR_ARMOR)) {
             blk.writeBlockData("barrating", t.getBARRating(1));
         }
 

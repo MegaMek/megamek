@@ -25,6 +25,7 @@ import megamek.client.bot.princess.UnitBehavior.BehaviorType;
 import megamek.codeUtilities.StringUtility;
 import megamek.common.*;
 import megamek.common.MovePath.Key;
+import megamek.common.equipment.ArmorType;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
@@ -61,6 +62,11 @@ public class BasicPathRankerTest {
 
     @BeforeEach
     public void beforeEach() {
+
+        // We now need to make sure all armor types are initialized or mockito will complain.
+        if (!ArmorType.getAllTypes().hasMoreElements()) {
+            ArmorType.initializeTypes();
+        }
         final BehaviorSettings mockBehavior = mock(BehaviorSettings.class);
         when(mockBehavior.getFallShameValue()).thenReturn(BehaviorSettings.FALL_SHAME_VALUES[5]);
         when(mockBehavior.getBraveryValue()).thenReturn(BehaviorSettings.BRAVERY[5]);

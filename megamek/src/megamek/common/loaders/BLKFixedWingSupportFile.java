@@ -76,31 +76,7 @@ public class BLKFixedWingSupportFile extends BLKFile implements IMechLoader {
         //support vees don't use engine ratings, so just use a value of 1
         a.setEngine(new Engine(1, BLKFile.translateEngineCode(engineCode), engineFlags));
 
-        boolean patchworkArmor = false;
-        if (dataFile.exists("armor_type")) {
-            if (dataFile.getDataAsInt("armor_type")[0] == EquipmentType.T_ARMOR_PATCHWORK) {
-                patchworkArmor = true;
-            } else {
-                a.setArmorType(dataFile.getDataAsInt("armor_type")[0]);
-            }
-        } else {
-            a.setArmorType(EquipmentType.T_ARMOR_STANDARD);
-        }
-        if (!patchworkArmor && dataFile.exists("armor_tech")) {
-            a.setArmorTechLevel(dataFile.getDataAsInt("armor_tech")[0]);
-        }
-        if (!patchworkArmor) {
-            if (!dataFile.exists("barrating")) {
-                throw new EntityLoadingException("Could not find barrating block.");
-            }
-            a.setBARRating(dataFile.getDataAsInt("barrating")[0]);
-        } else {
-            for (int i = 0; i < (a.locations() - 1); i++) {
-                a.setArmorType(dataFile.getDataAsInt(a.getLocationName(i) + "_armor_type")[0], i);
-                a.setArmorTechLevel(dataFile.getDataAsInt(a.getLocationName(i) + "_armor_type")[0], i);
-                a.setBARRating(dataFile.getDataAsInt(a.getLocationName(i) + "_barrating")[0], i);
-            }
-        }
+        loadSVArmor(a);
 
         if (dataFile.exists("internal_type")) {
             a.setStructureType(dataFile.getDataAsInt("internal_type")[0]);

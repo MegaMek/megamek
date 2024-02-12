@@ -211,7 +211,7 @@ public class Quirks extends AbstractOptions {
                 case QUIRK_POS_POWER_REVERSE:
                     return en.getMovementMode().isTrackedOrWheeled() && !en.isSupportVehicle();
                 case QUIRK_NEG_FRAGILE_FUEL:
-                    return !(en.hasEngine() && en.getEngine().isFusion());
+                    return (en.hasEngine() && en.getEngine().isICE());
                 case QUIRK_POS_TRAILER_HITCH:
                     return !(en.getMovementMode().isHover() || en.getMovementMode().isVTOL());
                 case QUIRK_POS_SCOUT_BIKE:
@@ -222,36 +222,47 @@ public class Quirks extends AbstractOptions {
                     return en instanceof VTOL;
                 default:
                     return quirk.isAnyOf(
-                            QUIRK_POS_ANTI_AIR,         QUIRK_POS_BATTLE_COMP,      QUIRK_POS_EASY_MAINTAIN,
-                            QUIRK_POS_FAST_RELOAD,      QUIRK_POS_IMP_COM,          QUIRK_POS_IMPROVED_SENSORS,
-                            QUIRK_POS_IMP_TARG_S,       QUIRK_POS_SEARCHLIGHT,      QUIRK_NEG_NON_STANDARD,
-                            QUIRK_POS_IMP_TARG_M,       QUIRK_POS_IMP_TARG_L,       QUIRK_POS_LOW_PROFILE,
-                            QUIRK_NEG_BAD_REP_IS,       QUIRK_NEG_BAD_REP_CLAN,     QUIRK_NEG_DIFFICULT_MAINTAIN,
-                            QUIRK_NEG_EM_INTERFERENCE_WHOLE,                        QUIRK_NEG_POOR_PERFORMANCE,
-                            QUIRK_NEG_HARD_PILOT,       QUIRK_NEG_POOR_TARG_S,      QUIRK_NEG_POOR_TARG_M,
-                            QUIRK_NEG_POOR_TARG_L,      QUIRK_NEG_POOR_WORK,        QUIRK_NEG_PROTOTYPE,
-                            QUIRK_NEG_SENSOR_GHOSTS,    QUIRK_POS_UBIQUITOUS_IS,    QUIRK_POS_UBIQUITOUS_CLAN);
+                            QUIRK_POS_ANTI_AIR, 		QUIRK_POS_BATTLE_COMP, 		QUIRK_POS_EASY_MAINTAIN,
+                            QUIRK_POS_FAST_RELOAD, 		QUIRK_POS_GOOD_REP_1, 		QUIRK_POS_GOOD_REP_2,
+                            QUIRK_POS_IMP_COM, 			QUIRK_POS_IMPROVED_SENSORS,
+                            QUIRK_POS_IMP_TARG_S, 		QUIRK_POS_SEARCHLIGHT,
+                            QUIRK_POS_IMP_TARG_M, 		QUIRK_POS_IMP_TARG_L, 		QUIRK_POS_LOW_PROFILE,
+                            QUIRK_NEG_BAD_REP_IS, 		QUIRK_NEG_BAD_REP_CLAN, 	QUIRK_NEG_DIFFICULT_MAINTAIN,
+                            QUIRK_NEG_NON_STANDARD,		QUIRK_NEG_POOR_PERFORMANCE, QUIRK_NEG_HARD_PILOT, 		
+                            QUIRK_NEG_POOR_TARG_S,      QUIRK_NEG_POOR_TARG_M, 		QUIRK_NEG_POOR_TARG_L, 		
+                            QUIRK_NEG_POOR_WORK,        QUIRK_NEG_PROTOTYPE,        QUIRK_NEG_SENSOR_GHOSTS, 	
+                            QUIRK_POS_UBIQUITOUS_IS,    QUIRK_POS_UBIQUITOUS_CLAN);
             }
         }
 
         if (en instanceof BattleArmor) {
             return quirk.isAnyOf(
-                    QUIRK_NEG_HARD_PILOT,           QUIRK_NEG_BAD_REP_IS,       QUIRK_NEG_BAD_REP_CLAN,
-                    QUIRK_NEG_DIFFICULT_MAINTAIN,   QUIRK_NEG_PROTOTYPE,        QUIRK_NEG_POOR_TARG_S,
-                    QUIRK_NEG_POOR_TARG_M,          QUIRK_NEG_POOR_TARG_L,      QUIRK_NEG_POOR_WORK,
-                    QUIRK_NEG_SENSOR_GHOSTS,        QUIRK_POS_EASY_MAINTAIN,    QUIRK_POS_IMP_COM,
-                    QUIRK_POS_EASY_PILOT,           QUIRK_POS_FAST_RELOAD,      QUIRK_NEG_EM_INTERFERENCE_WHOLE,
-                    QUIRK_NEG_NON_STANDARD);
+                    		QUIRK_POS_EASY_MAINTAIN,	QUIRK_POS_EASY_PILOT,		QUIRK_POS_GOOD_REP_1,
+                    		QUIRK_POS_GOOD_REP_2,       QUIRK_POS_IMP_COM,      	QUIRK_POS_RUGGED_1,
+		                    QUIRK_POS_RUGGED_2,         QUIRK_POS_UBIQUITOUS_IS,	QUIRK_POS_UBIQUITOUS_CLAN,
+		                    QUIRK_NEG_BAD_REP_IS,       QUIRK_NEG_BAD_REP_CLAN,     QUIRK_NEG_DIFFICULT_MAINTAIN,
+		                    QUIRK_NEG_HARD_PILOT,       QUIRK_NEG_ILLEGAL_DESIGN,   QUIRK_NEG_NON_STANDARD,
+		                    QUIRK_NEG_OBSOLETE,         QUIRK_NEG_POOR_SEALING,     QUIRK_NEG_POOR_TARG_S,
+		                    QUIRK_NEG_POOR_TARG_M,      QUIRK_NEG_POOR_TARG_L,      QUIRK_NEG_POOR_WORK,
+		                    QUIRK_NEG_PROTOTYPE,        QUIRK_NEG_SENSOR_GHOSTS);
         }
 
-        if (en instanceof Aero) {
+        if (en instanceof Aero || en instanceof FixedWingSupport) {
             if (quirk.isAnyOf(
-                    QUIRK_NEG_HARD_PILOT,           QUIRK_NEG_BAD_REP_IS,       QUIRK_NEG_BAD_REP_CLAN,
-                    QUIRK_NEG_DIFFICULT_MAINTAIN,   QUIRK_NEG_NON_STANDARD,     QUIRK_NEG_POOR_TARG_S,
-                    QUIRK_NEG_POOR_TARG_M,          QUIRK_NEG_POOR_TARG_L,      QUIRK_NEG_POOR_WORK,
-                    QUIRK_NEG_SENSOR_GHOSTS,        QUIRK_POS_EASY_MAINTAIN,    QUIRK_POS_IMP_COM,
-                    QUIRK_POS_EASY_PILOT,           QUIRK_POS_IMP_TARG_S,       QUIRK_POS_IMP_TARG_M,
-                    QUIRK_NEG_FRAGILE_FUEL,         QUIRK_NEG_PROTOTYPE,        QUIRK_POS_IMP_TARG_L)) {
+            		QUIRK_POS_ATMO_FLYER, 		QUIRK_POS_COMBAT_COMPUTER, 		QUIRK_POS_EASY_MAINTAIN,
+                    QUIRK_POS_EASY_PILOT, 		QUIRK_POS_GOOD_REP_1, 			QUIRK_POS_GOOD_REP_2,
+                    QUIRK_POS_IMP_COM, 			QUIRK_POS_IMP_LIFE_SUPPORT, 	QUIRK_POS_IMP_TARG_L,
+                    QUIRK_POS_IMP_TARG_M, 		QUIRK_POS_IMP_TARG_S, 			QUIRK_POS_INTERNAL_BOMB,
+                    QUIRK_POS_RUGGED_1, 		QUIRK_POS_RUGGED_2, 			QUIRK_POS_RUMBLE_SEAT,
+                    QUIRK_POS_UBIQUITOUS_IS,	QUIRK_POS_UBIQUITOUS_CLAN,      QUIRK_NEG_ATMO_INSTABILITY, 
+                    QUIRK_NEG_BAD_REP_IS,       QUIRK_NEG_BAD_REP_CLAN,         QUIRK_NEG_CRAMPED_COCKPIT, 
+                    QUIRK_NEG_DIFFICULT_EJECT, 	QUIRK_NEG_DIFFICULT_MAINTAIN,   QUIRK_NEG_FRAGILE_FUEL, 
+                    QUIRK_NEG_HARD_PILOT,       QUIRK_NEG_ILLEGAL_DESIGN, 		QUIRK_NEG_NO_EJECT, 
+                    QUIRK_NEG_NON_STANDARD,     QUIRK_NEG_OBSOLETE, 			QUIRK_NEG_POOR_LIFE_SUPPORT, 
+                    QUIRK_NEG_POOR_PERFORMANCE, QUIRK_NEG_POOR_TARG_S, 			QUIRK_NEG_POOR_TARG_M, 
+                    QUIRK_NEG_POOR_TARG_L,      QUIRK_NEG_POOR_WORK, 			QUIRK_NEG_PROTOTYPE, 
+                    QUIRK_NEG_RAMSHACKLE,       QUIRK_NEG_SENSOR_GHOSTS, 		QUIRK_NEG_UNSTREAMLINED, 
+                    QUIRK_NEG_WEAK_UNDERCARRIAGE)) {
                 return true;
             }
 
@@ -276,15 +287,14 @@ public class Quirks extends AbstractOptions {
 
         if (en instanceof Protomech) {
             return quirk.isAnyOf(
-                    QUIRK_NEG_HARD_PILOT,           QUIRK_NEG_BAD_REP_IS,           QUIRK_NEG_BAD_REP_CLAN,
-                    QUIRK_NEG_DIFFICULT_MAINTAIN,   QUIRK_NEG_NON_STANDARD,         QUIRK_NEG_POOR_TARG_S,
-                    QUIRK_NEG_POOR_TARG_M,          QUIRK_NEG_POOR_TARG_L,          QUIRK_NEG_POOR_WORK,
-                    QUIRK_NEG_SENSOR_GHOSTS,        QUIRK_POS_EASY_MAINTAIN,        QUIRK_POS_IMP_COM,
-                    QUIRK_POS_ANIMALISTIC,          QUIRK_POS_DISTRACTING,          QUIRK_POS_EXT_TWIST,
-                    QUIRK_POS_IMPROVED_SENSORS,     QUIRK_POS_IMP_TARG_S,           QUIRK_POS_IMP_TARG_M,
-                    QUIRK_POS_VAR_RNG_TARG_L,       QUIRK_NEG_NO_TWIST,             QUIRK_NEG_OBSOLETE,
-                    QUIRK_NEG_POOR_PERFORMANCE,     QUIRK_NEG_PROTOTYPE,            QUIRK_POS_IMP_TARG_L,
-                    QUIRK_NEG_POOR_SEALING,         QUIRK_POS_PRO_ACTUATOR);
+            		QUIRK_POS_EASY_MAINTAIN,	QUIRK_POS_EASY_PILOT,		QUIRK_POS_GOOD_REP_1,
+            		QUIRK_POS_GOOD_REP_2,       QUIRK_POS_IMP_COM,      	QUIRK_POS_RUGGED_1,
+                    QUIRK_POS_RUGGED_2,         QUIRK_POS_UBIQUITOUS_IS,	QUIRK_POS_UBIQUITOUS_CLAN,
+                    QUIRK_NEG_BAD_REP_IS,       QUIRK_NEG_BAD_REP_CLAN,     QUIRK_NEG_DIFFICULT_MAINTAIN,
+                    QUIRK_NEG_HARD_PILOT,       QUIRK_NEG_ILLEGAL_DESIGN,   QUIRK_NEG_NON_STANDARD,
+                    QUIRK_NEG_OBSOLETE,         QUIRK_NEG_POOR_SEALING,     QUIRK_NEG_POOR_TARG_S,
+                    QUIRK_NEG_POOR_TARG_M,      QUIRK_NEG_POOR_TARG_L,      QUIRK_NEG_POOR_WORK,
+                    QUIRK_NEG_PROTOTYPE,       QUIRK_NEG_SENSOR_GHOSTS);
         }
 
         return false;

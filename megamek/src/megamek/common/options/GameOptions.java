@@ -75,8 +75,12 @@ public class GameOptions extends AbstractOptions {
         addOption(base, OptionsConstants.BASE_INDIRECT_FIRE, true); 
         addOption(base, OptionsConstants.BASE_BREEZE, false); 
         addOption(base, OptionsConstants.BASE_RANDOM_BASEMENTS, true); 
-        addOption(base, OptionsConstants.BASE_AUTO_AMS, true); 
-        addOption(base, OptionsConstants.BASE_TURN_TIMER, 0);
+        addOption(base, OptionsConstants.BASE_AUTO_AMS, true);
+        addOption(base, OptionsConstants.BASE_TURN_TIMER_TARGETING, 0);
+        addOption(base, OptionsConstants.BASE_TURN_TIMER_MOVEMENT, 0);
+        addOption(base, OptionsConstants.BASE_TURN_TIMER_FIRING, 0);
+        addOption(base, OptionsConstants.BASE_TURN_TIMER_PHYSICAL, 0);
+        addOption(base, OptionsConstants.BASE_TURN_TIMER_ALLOW_EXTENSION, true);
         addOption(base, OptionsConstants.BASE_SUPPRESS_UNIT_TOOLTIP_IN_REPORT_LOG, false);
         addOption(base, OptionsConstants.BASE_GM_CONTROLS_DONE_REPORT_PHASE, false);
         addOption(base, OptionsConstants.BASE_HIDE_UNOFFICIAL, false);

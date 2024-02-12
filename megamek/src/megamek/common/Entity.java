@@ -1327,14 +1327,13 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         if (hasPatchworkArmor()) {
             ctl.addComponent(TA_PATCHWORK_ARMOR);
             for (int loc = 0; loc < locations(); loc++) {
-                ctl.addComponent(EquipmentType.getArmorTechAdvancement(armorType[loc],
-                        TechConstants.isClan(armorTechLevel[loc])));
+                ctl.addComponent(ArmorType.forEntity(this, loc).getTechAdvancement());
             }
-        } else if (isSupportVehicle() && hasBARArmor(firstArmorIndex())) {
-            ctl.addComponent(EquipmentType.getSVArmorTechAdvancement(getBARRating(firstArmorIndex())));
         } else {
-            ctl.addComponent(EquipmentType.getArmorTechAdvancement(armorType[0],
-                    TechConstants.isClan(armorTechLevel[0])));
+            ArmorType armor = ArmorType.forEntity(this);
+            if (armor != null) {
+                ctl.addComponent(armor.getTechAdvancement());
+            }
         }
         if (isMixedTech()) {
             ctl.addComponent(TA_MIXED_TECH);
@@ -4796,7 +4795,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         return -1;
     }
 
-    public static Map<Integer, String> getGyroTypes() {
+    public static Map<Integer, String> getAllGyroCodeName() {
         Map<Integer, String> result = new HashMap();
 
         result.put(Mech.GYRO_UNKNOWN, Mech.getGyroDisplayString(Mech.GYRO_UNKNOWN));
@@ -10842,16 +10841,15 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                 total += getArmorWeight(loc);
             }
             return RoundWeight.standard(total, this);
-        } else if (isSupportVehicle()
-                    && getArmorType(firstArmorIndex()) == EquipmentType.T_ARMOR_STANDARD) {
-            double total = getTotalOArmor()
-                    * EquipmentType.getSupportVehicleArmorWeightPerPoint(getBARRating(firstArmorIndex()), getArmorTechRating());
-            return RoundWeight.standard(total, this);
         } else {
-            // this roundabout method is actually necessary to avoid rounding
-            // weirdness. Yeah, it's dumb.
-            double armorPerTon = ArmorType.forEntity(this).getPointsPerTon(this);
-            return RoundWeight.standard(getTotalOArmor() / armorPerTon, this);
+            ArmorType armor = ArmorType.forEntity(this);
+            if (armor.hasFlag(MiscType.F_SUPPORT_VEE_BAR_ARMOR)) {
+                double total = armor.getSVWeightPerPoint(getArmorTechRating());
+                return RoundWeight.standard(total, this);
+            } else {
+                double armorPerTon = ArmorType.forEntity(this).getPointsPerTon(this);
+                return RoundWeight.standard(getTotalOArmor() / armorPerTon, this);
+            }
         }
     }
 
@@ -12732,9 +12730,16 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Sets the barrier armor rating for support vehicles. Has no effect on other unit types.
-     * @param rating
+     * @param rating The BAR
      */
     public void setBARRating(int rating) {}
+
+    /**
+     * Sets the barrier armor rating in a specific location for support vehicles. Has no effect on other unit types.
+     * @param rating The BAR
+     * @param loc    The location index
+     */
+    public void setBARRating(int rating, int loc) {}
 
     /**
      * does this entity have an armored chassis?
@@ -14138,14 +14143,13 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     public int getLabTotalArmorPoints() {
-        if (isSupportVehicle() && (getArmorType(firstArmorIndex()) == EquipmentType.T_ARMOR_STANDARD)
-            && !hasPatchworkArmor()) {
-            return (int) Math.floor(armorTonnage
-                    / EquipmentType.getSupportVehicleArmorWeightPerPoint(getBARRating(firstArmorIndex()),
-                    getArmorTechRating()));
+        ArmorType armor = ArmorType.forEntity(this);
+        if (armor.hasFlag(MiscType.F_SUPPORT_VEE_BAR_ARMOR)) {
+            return (int) Math.floor(armorTonnage / armor.getSVWeightPerPoint(getArmorTechRating()));
+        } else {
+            double armorPerTon = ArmorType.forEntity(this).getPointsPerTon(this);
+            return (int) Math.floor(armorPerTon * armorTonnage);
         }
-        double armorPerTon = ArmorType.forEntity(this).getPointsPerTon(this);
-        return (int) Math.floor(armorPerTon * armorTonnage);
     }
 
     public void loadDefaultCustomWeaponOrder() {

@@ -34,12 +34,19 @@ public class ArmorType extends MiscType {
     private static final List<ArmorType> allTypes = new ArrayList<>();
 
     public static ArmorType of(int type, boolean clan) {
+        if (armorTypeLookupClan.isEmpty() && armorTypeLookupIS.isEmpty()) {
+            initializeTypes();
+        }
         ArmorType armor = clan ? armorTypeLookupClan.get(type) : armorTypeLookupIS.get(type);
         // Some mixed tech unit files use the unit tech base instead of the armor tech base.
         if (armor == null) {
             armor = of(type, !clan);
         }
         return armor;
+    }
+
+    public static ArmorType svArmor(int bar) {
+        return of(T_ARMOR_SV_BAR_2 - 2 + bar, false);
     }
 
     public static ArmorType forEntity(Entity entity, int loc) {
@@ -56,6 +63,16 @@ public class ArmorType extends MiscType {
 
     public static List<String> allArmorNames() {
         return allTypes.stream().map(ArmorType::getName).distinct().collect(Collectors.toList());
+    }
+
+    public static Map<Integer, String> getAllArmorCodeName() {
+        Map<Integer, String> result = new HashMap();
+
+        for (ArmorType armorType : allTypes) {
+            result.put(armorType.getArmorType(), getArmorTypeName(armorType.getArmorType()));
+        }
+
+        return result;
     }
 
     public static void initializeTypes() {
@@ -87,6 +104,16 @@ public class ArmorType extends MiscType {
         addArmorType(createBallisticReinforced());
         addArmorType(createPrimitiveArmor());
         addArmorType(createPrimitiveFighterArmor());
+
+        addArmorType(createSVArmorBAR2());
+        addArmorType(createSVArmorBAR3());
+        addArmorType(createSVArmorBAR4());
+        addArmorType(createSVArmorBAR5());
+        addArmorType(createSVArmorBAR6());
+        addArmorType(createSVArmorBAR7());
+        addArmorType(createSVArmorBAR8());
+        addArmorType(createSVArmorBAR9());
+        addArmorType(createSVArmorBAR10());
 
         addArmorType(createISAeroSpaceArmor());
         addArmorType(createClanAeroSpaceArmor());
@@ -156,6 +183,7 @@ public class ArmorType extends MiscType {
     private double weightPerPoint = 0.0;
     private double[] pptDropship = { };
     private double[] pptCapital = { };
+    private double[] weightPerPointSV = { };
     private int bar = 10;
 
     private ArmorType() {
@@ -202,6 +230,19 @@ public class ArmorType extends MiscType {
         return patchworkSlotsCVFtr;
     }
 
+    @Override
+    public int getSupportVeeSlots(Entity entity) {
+        // Support vehicle armor takes slots like ferro-fibrous at BAR 10/TL E/F
+        if (getArmorType() == T_ARMOR_SV_BAR_10) {
+            if (entity.getArmorTechRating() == ITechnology.RATING_E) {
+                return ArmorType.of(T_ARMOR_FERRO_FIBROUS, false).criticals;
+            } else if (entity.getArmorTechRating() == ITechnology.RATING_F) {
+                return ArmorType.of(T_ARMOR_FERRO_FIBROUS, true).criticals;
+            }
+        }
+        return svslots;
+    }
+
     /**
      * Used for entities that do not vary the coverage by tonnage. For large craft, use
      * {@link ArmorType#getPointsPerTon(Entity)}.
@@ -245,6 +286,19 @@ public class ArmorType extends MiscType {
 
     public double getWeightPerPoint() {
         return weightPerPoint;
+    }
+
+    /**
+     * @param techRating The support vehicle's armor tech rating
+     * @return The weight in tons of each point of armor. A value of 0.0 means that the armor does not
+     *         exist at that tech level (or it is not SV BAR armor).
+     */
+    public double getSVWeightPerPoint(int techRating) {
+        if ((techRating >= 0) && (techRating < weightPerPointSV.length)) {
+            return weightPerPointSV[techRating];
+        } else {
+            return 0.0;
+        }
     }
 
     public int getBAR() {
@@ -1603,6 +1657,194 @@ public class ArmorType extends MiscType {
 
         armor.armorType = T_ARMOR_BA_REFLECTIVE;
         armor.weightPerPoint = 0.030;
+
+        return armor;
+    }
+
+    private static ArmorType createSVArmorBAR2() {
+        ArmorType armor = new ArmorType();
+
+        armor.name = "BAR 2 Armor";
+        armor.setInternalName(armor.name);
+        armor.shortName = "BAR 2";
+        armor.cost = 50.0;
+        armor.flags = armor.flags.or(F_SUPPORT_TANK_EQUIPMENT).or(F_SUPPORT_VEE_BAR_ARMOR);
+        armor.techAdvancement = new TechAdvancement(TECH_BASE_ALL).setAdvancement(DATE_PS, DATE_PS, DATE_PS)
+                .setTechRating(RATING_A).setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD);
+        armor.rulesRefs = "134, TM";
+        armor.bar = 2;
+
+        armor.armorType = T_ARMOR_SV_BAR_2;
+        armor.weightPerPointSV = new double[] { 0.040, 0.025, 0.016, 0.013, 0.012, 0.011 };
+
+        return armor;
+    }
+
+    private static ArmorType createSVArmorBAR3() {
+        ArmorType armor = new ArmorType();
+
+        armor.name = "BAR 3 Armor";
+        armor.setInternalName(armor.name);
+        armor.shortName = "BAR 3";
+        armor.cost = 100.0;
+        armor.flags = armor.flags.or(F_SUPPORT_TANK_EQUIPMENT).or(F_SUPPORT_VEE_BAR_ARMOR);
+        armor.techAdvancement = new TechAdvancement(TECH_BASE_ALL).setAdvancement(DATE_PS, DATE_PS, DATE_PS)
+            .setTechRating(RATING_A).setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
+            .setStaticTechLevel(SimpleTechLevel.STANDARD);
+        armor.rulesRefs = "134, TM";
+        armor.bar = 3;
+
+        armor.armorType = T_ARMOR_SV_BAR_3;
+        armor.weightPerPointSV = new double[] { 0.060, 0.038, 0.024, 0.019, 0.017, 0.016 };
+
+        return armor;
+    }
+
+    private static ArmorType createSVArmorBAR4() {
+        ArmorType armor = new ArmorType();
+
+        armor.name = "BAR 4 Armor";
+        armor.setInternalName(armor.name);
+        armor.shortName = "BAR 4";
+        armor.cost = 150.0;
+        armor.flags = armor.flags.or(F_SUPPORT_TANK_EQUIPMENT).or(F_SUPPORT_VEE_BAR_ARMOR);
+        armor.techAdvancement = new TechAdvancement(TECH_BASE_ALL).setAdvancement(DATE_PS, DATE_PS, DATE_PS)
+            .setTechRating(RATING_B).setAvailability(RATING_B, RATING_B, RATING_A, RATING_A)
+            .setStaticTechLevel(SimpleTechLevel.STANDARD);
+        armor.rulesRefs = "134, TM";
+        armor.bar = 4;
+
+        armor.armorType = T_ARMOR_SV_BAR_4;
+        armor.weightPerPointSV = new double[] { 0.080, 0.050, 0.032, 0.026, 0.023, 0.021 };
+
+        return armor;
+    }
+
+    private static ArmorType createSVArmorBAR5() {
+        ArmorType armor = new ArmorType();
+
+        armor.name = "BAR 5 Armor";
+        armor.setInternalName(armor.name);
+        armor.shortName = "BAR 5";
+        armor.cost = 200.0;
+        armor.flags = armor.flags.or(F_SUPPORT_TANK_EQUIPMENT).or(F_SUPPORT_VEE_BAR_ARMOR);
+        armor.techAdvancement = new TechAdvancement(TECH_BASE_ALL).setAdvancement(DATE_ES, DATE_ES, DATE_ES)
+            .setTechRating(RATING_B).setAvailability(RATING_B, RATING_B, RATING_B, RATING_A)
+            .setStaticTechLevel(SimpleTechLevel.STANDARD);
+        armor.rulesRefs = "134, TM";
+        armor.bar = 5;
+
+        armor.armorType = T_ARMOR_SV_BAR_5;
+        armor.weightPerPointSV = new double[] { 0.100, 0.063, 0.040, 0.032, 0.028, 0.026 };
+
+        return armor;
+    }
+
+    private static ArmorType createSVArmorBAR6() {
+        ArmorType armor = new ArmorType();
+
+        armor.name = "BAR 6 Armor";
+        armor.setInternalName(armor.name);
+        armor.shortName = "BAR 6";
+        armor.cost = 250.0;
+        armor.flags = armor.flags.or(F_SUPPORT_TANK_EQUIPMENT).or(F_SUPPORT_VEE_BAR_ARMOR);
+        armor.techAdvancement = new TechAdvancement(TECH_BASE_ALL).setAdvancement(DATE_ES, DATE_ES, DATE_ES)
+                .setTechRating(RATING_C).setAvailability(RATING_C, RATING_B, RATING_B, RATING_A)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD);
+        armor.rulesRefs = "134, TM";
+        armor.bar = 6;
+
+        armor.armorType = T_ARMOR_SV_BAR_6;
+        armor.weightPerPointSV = new double[] { 0.130, 0.75, 0.048, 0.038, 0.034, 0.032 };
+
+        return armor;
+    }
+
+    private static ArmorType createSVArmorBAR7() {
+        ArmorType armor = new ArmorType();
+
+        armor.name = "BAR 7 Armor";
+        armor.setInternalName(armor.name);
+        armor.shortName = "BAR 7";
+        armor.cost = 300.0;
+        armor.flags = armor.flags.or(F_SUPPORT_TANK_EQUIPMENT).or(F_SUPPORT_VEE_BAR_ARMOR);
+        armor.techAdvancement = new TechAdvancement(TECH_BASE_ALL).setAdvancement(2250, 2300, 2305)
+            .setApproximate(true, true, false).setPrototypeFactions(F_TA)
+            .setProductionFactions(F_TA).setTechRating(RATING_C)
+            .setAvailability(RATING_C, RATING_B, RATING_B, RATING_B)
+            .setStaticTechLevel(SimpleTechLevel.STANDARD);
+        armor.rulesRefs = "134, TM";
+        armor.bar = 7;
+
+        armor.armorType = T_ARMOR_SV_BAR_7;
+        armor.weightPerPointSV = new double[] { 0.180, 0.088, 0.056, 0.045, 0.040, 0.037 };
+
+        return armor;
+    }
+
+    private static ArmorType createSVArmorBAR8() {
+        ArmorType armor = new ArmorType();
+
+        armor.name = "BAR 8 Armor";
+        armor.setInternalName(armor.name);
+        armor.shortName = "BAR 8";
+        armor.cost = 400.0;
+        armor.flags = armor.flags.or(F_SUPPORT_TANK_EQUIPMENT).or(F_SUPPORT_VEE_BAR_ARMOR);
+        armor.techAdvancement = new TechAdvancement(TECH_BASE_ALL).setAdvancement(2425, 2435, 22445)
+            .setPrototypeFactions(F_TH).setProductionFactions(F_TH)
+            .setTechRating(RATING_D)
+            .setAvailability(RATING_C, RATING_C, RATING_B, RATING_B)
+            .setStaticTechLevel(SimpleTechLevel.STANDARD);
+        armor.rulesRefs = "134, TM";
+        armor.bar = 8;
+
+        armor.armorType = T_ARMOR_SV_BAR_8;
+        armor.weightPerPointSV = new double[] { 0.230, 0.120, 0.064, 0.051, 0.045, 0.042 };
+
+        return armor;
+    }
+
+    private static ArmorType createSVArmorBAR9() {
+        ArmorType armor = new ArmorType();
+
+        armor.name = "BAR 9 Armor";
+        armor.setInternalName(armor.name);
+        armor.shortName = "BAR 9";
+        armor.cost = 500.0;
+        armor.flags = armor.flags.or(F_SUPPORT_TANK_EQUIPMENT).or(F_SUPPORT_VEE_BAR_ARMOR);
+        armor.techAdvancement = new TechAdvancement(TECH_BASE_ALL).setAdvancement(2440, 2450, 2470)
+            .setPrototypeFactions(F_TH).setProductionFactions(F_TH)
+            .setTechRating(RATING_D)
+            .setAvailability(RATING_C, RATING_C, RATING_C, RATING_B)
+            .setStaticTechLevel(SimpleTechLevel.STANDARD);
+        armor.rulesRefs = "134, TM";
+        armor.bar = 9;
+
+        armor.armorType = T_ARMOR_SV_BAR_9;
+        armor.weightPerPointSV = new double[] { 0.0, 0.180, 0.100, 0.057, 0.051, 0.047 };
+
+        return armor;
+    }
+
+    private static ArmorType createSVArmorBAR10() {
+        ArmorType armor = new ArmorType();
+
+        armor.name = "BAR 10 Armor";
+        armor.setInternalName(armor.name);
+        armor.shortName = "BAR 10";
+        armor.cost = 625.0;
+        armor.flags = armor.flags.or(F_SUPPORT_TANK_EQUIPMENT).or(F_SUPPORT_VEE_BAR_ARMOR);
+        armor.techAdvancement = new TechAdvancement(TECH_BASE_ALL).setAdvancement(2460, 2470, 2505)
+            .setPrototypeFactions(F_TH).setProductionFactions(F_TH)
+            .setApproximate(true, false, false).setTechRating(RATING_D)
+            .setAvailability(RATING_D, RATING_D, RATING_D, RATING_C)
+            .setStaticTechLevel(SimpleTechLevel.STANDARD);
+        armor.rulesRefs = "134, TM";
+        armor.bar = 10;
+
+        armor.armorType = T_ARMOR_SV_BAR_10;
+        armor.weightPerPointSV = new double[] { 0.0, 0.250, 0.150, 0.063, 0.056, 0.052 };
 
         return armor;
     }

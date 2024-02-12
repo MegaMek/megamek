@@ -30,7 +30,7 @@ public class TestInfantry extends TestEntity {
     private Infantry infantry;
     
     public TestInfantry(Infantry infantry, TestEntityOption option, String fileString) {
-        super(option, null, null, null);
+        super(option, null, null);
         this.infantry = infantry;
         this.fileString = fileString;
     }

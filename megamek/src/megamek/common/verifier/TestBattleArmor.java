@@ -68,8 +68,8 @@ public class TestBattleArmor extends TestEntity {
      * @param techManager
      * @return A list of all armors that meet the tech constraints
      */
-    public static List<EquipmentType> legalArmorsFor(ITechManager techManager) {
-        List<EquipmentType> retVal = new ArrayList<>();
+    public static List<ArmorType> legalArmorsFor(ITechManager techManager) {
+        List<ArmorType> retVal = new ArrayList<>();
         for (ArmorType armor : ArmorType.allArmorTypes()) {
             if (armor.hasFlag(MiscType.F_BA_EQUIPMENT) && techManager.isLegal(armor)) {
                 retVal.add(armor);
@@ -361,7 +361,7 @@ public class TestBattleArmor extends TestEntity {
 
     public TestBattleArmor(BattleArmor armor, TestEntityOption option,
             String fileString) {
-        super(option, null, null, null);
+        super(option, null, null);
         ba = armor;
         this.fileString = fileString;
     }

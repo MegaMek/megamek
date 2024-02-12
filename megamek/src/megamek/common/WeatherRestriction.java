@@ -88,22 +88,22 @@ public class WeatherRestriction {
         windRestrictions = new HashMap<>();
 
         WeatherRestriction weatherRestrictionLtGale = new WeatherRestriction(PlanetaryConditions.ATMO_THIN, null);
-        weatherRestrictions.put(PlanetaryConditions.WI_LIGHT_GALE, weatherRestrictionLtGale);
+        windRestrictions.put(PlanetaryConditions.WI_LIGHT_GALE, weatherRestrictionLtGale);
 
         WeatherRestriction weatherRestrictionMdGale = new WeatherRestriction(PlanetaryConditions.ATMO_TRACE, null);
-        weatherRestrictions.put(PlanetaryConditions.WI_MOD_GALE, weatherRestrictionMdGale);
+        windRestrictions.put(PlanetaryConditions.WI_MOD_GALE, weatherRestrictionMdGale);
 
         WeatherRestriction weatherRestrictionStGale = new WeatherRestriction(PlanetaryConditions.ATMO_TRACE, null);
-        weatherRestrictions.put(PlanetaryConditions.WI_STRONG_GALE, weatherRestrictionStGale);
+        windRestrictions.put(PlanetaryConditions.WI_STRONG_GALE, weatherRestrictionStGale);
 
         WeatherRestriction weatherRestrictionStorm = new WeatherRestriction(PlanetaryConditions.ATMO_TRACE, null);
-        weatherRestrictions.put(PlanetaryConditions.WI_STORM, weatherRestrictionStorm);
+        windRestrictions.put(PlanetaryConditions.WI_STORM, weatherRestrictionStorm);
 
         WeatherRestriction weatherRestrictionF13 = new WeatherRestriction(PlanetaryConditions.ATMO_TRACE, null);
-        weatherRestrictions.put(PlanetaryConditions.WI_TORNADO_F13, weatherRestrictionF13);
+        windRestrictions.put(PlanetaryConditions.WI_TORNADO_F13, weatherRestrictionF13);
 
         WeatherRestriction weatherRestrictionF4 = new WeatherRestriction(PlanetaryConditions.ATMO_TRACE, null);
-        weatherRestrictions.put(PlanetaryConditions.WI_TORNADO_F4, weatherRestrictionF4);
+        windRestrictions.put(PlanetaryConditions.WI_TORNADO_F4, weatherRestrictionF4);
     }
 
     public WeatherRestriction(Integer minAtmoLevel, Integer maxTemp) {

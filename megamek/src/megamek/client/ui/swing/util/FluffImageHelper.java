@@ -50,7 +50,8 @@ public final class FluffImageHelper {
     public static final String DIR_NAME_SPACESTATION = "Space Station";
     public static final String DIR_NAME_VEHICLE = "Vehicle";
     public static final String DIR_NAME_WARSHIP = "WarShip";
-    public static final String[] EXTENSIONS_FLUFF_IMAGE_FORMATS = { ".PNG", ".png", ".JPG", ".JPEG", ".jpg", ".jpeg", ".GIF", ".gif" };
+    public static final String[] EXTENSIONS_FLUFF_IMAGE_FORMATS = { ".PNG", ".png", ".JPG",
+            ".JPEG", ".jpg", ".jpeg", ".GIF", ".gif" };
 
     /**
      * Returns a fluff image for the given unit/object to be shown e.g. in the unit summary.
@@ -184,7 +185,7 @@ public final class FluffImageHelper {
     /**
      * Returns the subdirectory in the fluff images directory suitable for the given
      * unit, i.e. "ConvFighter" for CF and FWS units.
-     * 
+     *
      * @param unit The unit
      * @return The unit type subdirectory for fluff images
      */

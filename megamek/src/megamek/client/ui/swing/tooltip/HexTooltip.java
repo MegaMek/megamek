@@ -128,7 +128,8 @@ public final class HexTooltip {
             Vector<Minefield> minefields = game.getMinefields(mcoords);
             for (int i = 0; i < minefields.size(); i++) {
                 Minefield mf = minefields.elementAt(i);
-                String owner = " (" + game.getPlayer(mf.getPlayerId()).getName() + ')';
+                Player owner = (game != null) ? game.getPlayer(mf.getPlayerId()) : null;
+                String ownerName = (owner != null) ? " (" + owner.getName() + ')' : ReportMessages.getString("BoardView1.Tooltip.unknownOwner");
                 String sMinefield = mf.getName() + ' ' + Messages.getString("BoardView1.minefield") + " (" + mf.getDensity() + ')';
 
                 switch (mf.getType()) {
@@ -136,13 +137,13 @@ public final class HexTooltip {
                     case Minefield.TYPE_COMMAND_DETONATED:
                     case Minefield.TYPE_ACTIVE:
                     case Minefield.TYPE_INFERNO:
-                        sMinefield += ' ' + owner;
+                        sMinefield += ' ' + ownerName;
                         break;
                     case Minefield.TYPE_VIBRABOMB:
                         if (mf.getPlayerId() == localPlayer.getId()) {
-                            sMinefield += "(" + mf.getSetting() + ") " + owner;
+                            sMinefield += "(" + mf.getSetting() + ") " + ownerName;
                         } else {
-                            sMinefield += owner;
+                            sMinefield += ownerName;
                         }
                         break;
                     default:

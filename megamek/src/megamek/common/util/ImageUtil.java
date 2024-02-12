@@ -126,7 +126,7 @@ public final class ImageUtil {
      * @param image An Image of any type
      * @return The image as a BufferedImage
      */
-    public static BufferedImage getBufferedImage(Image image) {
+    public static BufferedImage convertToBufferedImage(Image image) {
         if (image instanceof BufferedImage) {
             return (BufferedImage) image;
         } else {
@@ -484,7 +484,7 @@ public final class ImageUtil {
      * @return The base64 representation of the given image.
      */
     public static String base64TextEncodeImage(Image image) {
-        return base64TextEncodeImage(getBufferedImage(image));
+        return base64TextEncodeImage(convertToBufferedImage(image));
     }
 
     /**

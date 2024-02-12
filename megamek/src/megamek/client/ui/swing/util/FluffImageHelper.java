@@ -55,12 +55,12 @@ public final class FluffImageHelper {
     /**
      * Returns a fluff image for the given unit/object to be shown e.g. in the unit summary.
      *
-     * If a fluff image is stored in the unit/object itself, e.g. if it was part of the
+     * <P>If a fluff image is stored in the unit/object itself, e.g. if it was part of the
      * unit's file or is created by the unit itself, this is returned. Note that this
      * is not used for canon units, but may be used in custom ones by adding a fluff
      * image to the unit in MML.
      *
-     * Otherwise, the fluff images directories are searched. First searches the user dir,
+     * <P>Otherwise, the fluff images directories are searched. First searches the user dir,
      * then the internal dir. Tries to match the image by chassis + model or chassis alone.
      * Chassis and model names are cleaned from " and / characters before matching. For
      * Meks with clan names, both names and the combinations are searched. The model
@@ -76,22 +76,10 @@ public final class FluffImageHelper {
     }
 
     /**
-     * Returns a File with a suitable fluff image for the given unit or object, or a fallback
+     * Returns a fluff image for the given unit for the record sheet, with a fallback
      * file named "hud.png" if that is present in the right fluff directory, or null if nothing
-     * can be found.
-     *
-     * If a fluff image is stored in the unit/object itself, e.g. if it was part of the
-     * unit's file or is created by the unit itself, this is returned. Note that this
-     * is not used for canon units, but may be used in custom ones by adding a fluff
-     * image to the unit in MML.
-     *
-     * Otherwise, the fluff images directories are searched. First searches the user dir,
-     * then the internal dir. Tries to match the image by chassis + model or chassis alone.
-     * Chassis and model names are cleaned from " and / characters before matching. For
-     * Meks with clan names, both names and the combinations are searched. The model
-     * alone is not used to search.
-     *
-     * Returns null if no fluff image can be found.
+     * can be found. See {@link #getFluffImage(BTObject)} for further comments on how the fluff
+     * image is searched.
      *
      * @param unit The unit
      * @return a fluff image or null, if no match is found
@@ -193,6 +181,13 @@ public final class FluffImageHelper {
 
     private FluffImageHelper() { }
 
+    /**
+     * Returns the subdirectory in the fluff images directory suitable for the given
+     * unit, i.e. "ConvFighter" for CF and FWS units.
+     * 
+     * @param unit The unit
+     * @return The unit type subdirectory for fluff images
+     */
     public static String getFluffPath(BTObject unit) {
         if (unit.isWarShip()) {
             return DIR_NAME_WARSHIP;

@@ -55,6 +55,7 @@ MEGAMEK VERSION HISTORY:
 + PR #5146: planetary conditions weather updates 
 + PR #5140: BA tech advancement for Exoskeltons.
 + PR #5147: Fix weather restrictions around wind 
++ Data: Implement Shrapnel #9 Laser Weapons. 
 
 0.49.17 (2023-12-31 1900 UTC)
 + Fix #1031: Show structure collapse warning when deploying and moving.

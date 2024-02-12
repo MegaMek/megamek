@@ -882,29 +882,34 @@ public class FireControl {
                 }
                 // Handle homing munitions
                 if (ammoType.getMunitionType().stream().anyMatch(homingMunitions::contains)) {
-                    final StringBuilder msg = new StringBuilder("Estimating to-hit for Homing artillery fire by ")
-                            .append(shooter.getDisplayName());
+                    if (game.getPhase().isOffboard()) {
+                        boolean debug = LogManager.getLogger().isDebugEnabled();
+                        final StringBuilder msg = (debug) ? new StringBuilder("Estimating to-hit for Homing artillery fire by ")
+                                .append(shooter.getDisplayName())
+                                : null;
 
-                    if (Compute.isTargetTagged(target, game) || (target instanceof Entity && ((Entity) target).getTaggedBy() != -1)) {
-                        // If it's been tagged recently, assume we can get that support again!
-                        msg.append("\nAssuming the last guy who TAGged this target will do so again!");
-                        toHit.addModifier(TH_HOMING_TARGET_TAGGED);
-                    } else {
-                        boolean friendliesClose = (
-                                Compute.findTAGSpotter(game, shooter, target, true) != null
-                        );
                         // Check all friends with TAG for proximity to enemies.
-                        if (friendliesClose) {
+                        Entity friendlySpotter = Compute.findTAGSpotter(game, shooter, target, true);
+
+                        if (friendlySpotter != null) {
                             // If we've got one friendly TAGger in range, roll them bones!
-                            msg.append("\nSurvey says we've got friendly TAGgers nearby; fingers crossed!");
+                            if (debug) {
+                                msg.append("\nSurvey says we've got friendly TAG unit ")
+                                        .append(friendlySpotter.getDisplayName())
+                                        .append(" nearby; fingers crossed!");
+                            }
                             toHit.addModifier(TH_HOMING_TARGET_TAGGED);
                         } else {
                             // Can't hit without TAG support on-site!
-                            msg.append("\nUnfortunately we have no friends near the target...");
+                            if (debug) {
+                                msg.append("\nUnfortunately we have no friends near the target...");
+                            }
                             toHit.addModifier(TH_HOMING_TARGET_UNTAGGED);
                         }
+                        if (debug) {
+                            LogManager.getLogger().debug(msg.toString());
+                        }
                     }
-                    LogManager.getLogger().debug(msg.toString());
                 }
 
                 // Guesstimate Heat-Seeking Ammo mods

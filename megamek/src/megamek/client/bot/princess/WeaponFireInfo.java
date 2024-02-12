@@ -570,7 +570,7 @@ public class WeaponFireInfo {
                     final boolean assumeUnderFlightPath,
                     final boolean guess,
                     final HashMap<String, int[]> bombPayloads) {
-        boolean debugging = false;
+        boolean debugging = LogManager.getLogger().isDebugEnabled();
 
         final StringBuilder msg =
                 debugging ?
@@ -743,6 +743,8 @@ public class WeaponFireInfo {
             setProbabilityToHit(0);
             return null;
         }
+        // Set the ammoId for calcs.
+        getAction().setAmmoId(shooter.getEquipmentNum(this.getAmmo()));
         setProbabilityToHit(Compute.oddsAbove(getAction().toHit(getGame()).getValue(),
                                               getShooterState().hasNaturalAptGun()) / 100.0);
         return getAction();

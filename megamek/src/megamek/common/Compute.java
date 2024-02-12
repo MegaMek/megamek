@@ -1870,6 +1870,12 @@ public class Compute {
         if (target == null) {
             return null;
         }
+        boolean debug = LogManager.getLogger().isDebugEnabled();
+        StringBuilder msg = (debug) ? new StringBuilder("Looking for TAG spotter for ")
+                .append(attacker.getDisplayName())
+                .append(" targeting ")
+                .append(target.getDisplayName())
+                : null;
 
         Entity spotter = null;
 
@@ -1877,11 +1883,12 @@ public class Compute {
         int distance = -1;
 
         // Compute friendly spotters
-        for (Entity friend : game.getEntitiesVector()) {
+        for (Entity friend : game.getPlayerEntities(attacker.getOwner(), true)) {
 
             if (!friend.isDeployed()
                     || friend.isOffBoard()
                     || (friend.getTransportId() != Entity.NONE)
+                    || friend.isAero() // Much higher bar for TAGging
                     || friend == null) {
                 continue; // useless to us...
             }
@@ -1892,7 +1899,7 @@ public class Compute {
                 WeaponType wtype = ((WeaponType) m.getType());
                 if (wtype.hasFlag(WeaponType.F_TAG)) {
                     tag = m;
-                    range = wtype.getMaxRange(m);
+                    range = wtype.getLongRange();
                     break;
                 }
             }
@@ -1900,26 +1907,39 @@ public class Compute {
                 continue;
             }
 
-            int buddyRange =  Compute.effectiveDistance(game, friend, target, false);
+            int friendRange =  Compute.effectiveDistance(game, friend, target, false);
+            int ownRange = Compute.effectiveDistance(game, attacker, target, false);
             // Friend has to be as close as their max running speed * flight time, + TAG range, + 8
-            int taggingRange = (1 + Compute.turnsTilHit(game, attacker, target)) * friend.getRunMP() + range + 8;
+            int taggingRange = ((1 + Compute.turnsTilHit(ownRange)) * friend.getWalkMP()) + range + 8;
+            if (debug) {
+                msg.append("\n").append(friend.getDisplayName()).append(" has TAG at ")
+                        .append(friendRange).append(" from target; must be within ")
+                        .append(taggingRange).append(" to be able to TAG this target for us.");
+            }
 
             // Need a target hex within 8 of the main target, and within shooting distance of the spotter.
-            if (buddyRange > taggingRange) {
-                // Probably can't get close enough this turn.
-                LogManager.getLogger().debug("Found a TAG spotter but too far from target");
+            if (friendRange > taggingRange) {
                 continue;
             }
 
             // is this guy a better spotter?
             if ((spotter == null )
                     || range < distance) {
+                if (debug) {
+                    msg.append("\n").append(friend.getDisplayName()).append(" is a good candidate.");
+                }
                 spotter = friend;
-                distance = range;
+                distance = friendRange;
                 if (stopAtFirst) {
                     break;
                 }
             }
+        }
+        if (debug) {
+            msg.append("\nFinal result: ")
+                    .append((spotter == null) ? "no TAG friendly in range" : spotter.getDisplayName())
+                    .append("!");
+            LogManager.getLogger().debug(msg.toString());
         }
 
         return spotter;
@@ -7387,8 +7407,23 @@ public class Compute {
         return validLocation && (target.isAirborne() || target.isAirborneVTOLorWIGE());
     }
 
-    public static int turnsTilHit(Game game, Entity ae, Targetable te) {
-        return turnsTilHit(game, ae, te, WeaponAttackAction.DEFAULT_VELOCITY);
+    public static int turnsTilHit(int distance) {
+        final int turnsTilHit;
+        // See indirect flight times table, TO p181
+        if (distance <= Board.DEFAULT_BOARD_HEIGHT) {
+            turnsTilHit = 0;
+        } else if (distance <= (8 * Board.DEFAULT_BOARD_HEIGHT)) {
+            turnsTilHit = 1;
+        } else if (distance <= (15 * Board.DEFAULT_BOARD_HEIGHT)) {
+            turnsTilHit = 2;
+        } else if (distance <= (21 * Board.DEFAULT_BOARD_HEIGHT)) {
+            turnsTilHit =3;
+        } else if (distance <= (26 * Board.DEFAULT_BOARD_HEIGHT)) {
+            turnsTilHit = 4;
+        } else {
+            turnsTilHit = 5;
+        }
+        return turnsTilHit;
     }
 
     /**
@@ -7399,7 +7434,7 @@ public class Compute {
      * @param velocity speed of round, default 50 according to WeaponAttackAction
      * @return
      */
-    public static int turnsTilHit(Game game, Entity ae, Targetable te, int velocity) {
+    public static int turnsTilBOMHit(Game game, Entity ae, Targetable te, int velocity) {
         int distance = Compute.effectiveDistance(game, ae, te);
         distance = (int) Math.floor((double) distance / game.getPlanetaryConditions().getGravity());
         return distance / velocity;

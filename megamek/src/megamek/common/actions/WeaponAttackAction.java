@@ -5079,7 +5079,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             srt.setSpecialResolution(true);
             String msg = Messages.getString("WeaponAttackAction.HomingArty");
             // Check if any spotters can help us out...
-            if (Compute.findTAGSpotter(game, ae, te, false) != null) {
+            if (Compute.findTAGSpotter(game, ae, target, true) != null) {
                 return new ToHitData(4, msg);
             } else {
                 return new ToHitData(ToHitData.AUTOMATIC_FAIL, msg);

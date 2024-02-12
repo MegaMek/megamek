@@ -13,17 +13,15 @@
  */
 package megamek.common;
 
-import megamek.client.ui.swing.util.FluffImageHelper;
+import megamek.client.ui.Base64Image;
 import megamek.common.annotations.Nullable;
-import org.apache.logging.log4j.LogManager;
 
-import javax.imageio.ImageIO;
 import java.awt.*;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.Serializable;
-import java.util.*;
+import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -49,8 +47,6 @@ public class EntityFluff implements Serializable {
         }
     }
 
-    private final Entity entity;
-
     private String capabilities = "";
     private String overview = "";
     private String deployment = "";
@@ -62,30 +58,13 @@ public class EntityFluff implements Serializable {
     private final Map<System, String> systemModels = new EnumMap<>(System.class);
     private String notes = "";
 
-    private String mmlImageFilePath = "";
-
-    /**
-     * This is a base64 representation of the fluff image, if it was stored in the unit file directly. For canon units,
-     * this will typically be empty as fluff images are not stored in the unit file for those.
-     */
-    private String fluffImageEncoded = "";
-
-    /**
-     * The fluff image, if it was stored in the unit file directly. For canon units, this will typically
-     * remain null as fluff images are not stored in the unit file for those. This is transient and
-     * restored by {@link #getFluffImage()} if there is a base64-encoded image present.
-     */
-    private transient Image fluffImage;
+    private Base64Image fluffImage = new Base64Image();
 
     // For aerospace vessels
     private String use = "";
     private String length = "";
     private String width = "";
     private String height = "";
-
-    public EntityFluff(Entity entity) {
-        this.entity = Objects.requireNonNull(entity);
-    }
 
     public String getCapabilities() {
         return capabilities;
@@ -190,14 +169,6 @@ public class EntityFluff implements Serializable {
         }
     }
 
-    public String getMMLImagePath() {
-        return mmlImageFilePath;
-    }
-
-    public void setMMLImagePath(String filePath) {
-        mmlImageFilePath = Objects.requireNonNullElse(filePath, "");
-    }
-
     public String getNotes() {
         return notes;
     }
@@ -259,37 +230,22 @@ public class EntityFluff implements Serializable {
     }
 
     /** Sets the encoded form of the fluff image to the given String. */
-    public void setFluffImageEncoded(String fluffImage64) {
-        this.fluffImageEncoded = fluffImage64;
-        fluffImage = null;
+    public void setFluffImage(String fluffImage64) {
+        fluffImage = new Base64Image(fluffImage64);
     }
 
-    /**
-     * @return The base64 encoded form of the fluff image (if it was stored in the unit file). For canon units,
-     * this is empty as the fluff images are not stored in the unit files.
-     */
-    public String getFluffImageEncoded() {
-        return fluffImageEncoded;
-    }
-
-    /**
-     * @return The unit's fluff image if any can be found. Will return the fluff image stored in the unit file,
-     * if present; otherwise (e.g. for canon units), will try to find the fluff image by name in the fluff
-     * directories (internal and user directory).
-     */
+    /** @return The unit's fluff image, if a fluff image was stored in the unit file; null otherwise. */
     public @Nullable Image getFluffImage() {
-        if (fluffImage != null) {
-            return fluffImage;
-        } else if (!fluffImageEncoded.isBlank()) {
-            byte[] image = Base64.getDecoder().decode(fluffImageEncoded);
-            try (ByteArrayInputStream inStreambj = new ByteArrayInputStream(image)) {
-                fluffImage = ImageIO.read(inStreambj);
-            } catch (IOException ex) {
-                LogManager.getLogger().warn("", ex);
-            }
-            return fluffImage;
-        }
+        return fluffImage.getImage();
+    }
 
-        return FluffImageHelper.getFluffImage(entity);
+    /** @return True if a fluff image is part of the unit, i.e. stored in the unit file or set in MML. */
+    public boolean hasEmbeddedFluffImage() {
+        return !fluffImage.isEmpty();
+    }
+
+    /** @return The Base64Image holding an embedded fluff image. Empty if no fluff image was stored in the unit file. */
+    public Base64Image getBase64FluffImage() {
+        return fluffImage;
     }
 }

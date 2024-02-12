@@ -134,7 +134,6 @@ public class MtfFile implements IMechLoader {
     public static final String SYSTEM_MANUFACTURER = "systemmanufacturer:";
     public static final String SYSTEM_MODEL = "systemmode:";
     public static final String NOTES = "notes:";
-    public static final String IMAGE_FILE = "imagefile:";
     public static final String BV = "bv:";
     public static final String WEAPONS = "weapons:";
     public static final String EMPTY = "-Empty-";
@@ -463,10 +462,9 @@ public class MtfFile implements IMechLoader {
             mech.getFluff().setManufacturer(manufacturer);
             mech.getFluff().setPrimaryFactory(primaryFactory);
             mech.getFluff().setNotes(notes);
-            mech.getFluff().setFluffImageEncoded(fluffImageEncoded);
+            mech.getFluff().setFluffImage(fluffImageEncoded);
             systemManufacturers.forEach((k, v) -> mech.getFluff().setSystemManufacturer(k, v));
             systemModels.forEach((k, v) -> mech.getFluff().setSystemModel(k, v));
-            mech.getFluff().setMMLImagePath(imagePath);
 
             mech.setArmorTonnage(mech.getArmorWeight());
 
@@ -1236,11 +1234,6 @@ public class MtfFile implements IMechLoader {
 
         if (lineLower.startsWith(NOTES)) {
             notes = line.substring(NOTES.length());
-            return true;
-        }
-
-        if (lineLower.startsWith(IMAGE_FILE)) {
-            imagePath = line.substring(IMAGE_FILE.length());
             return true;
         }
 

@@ -4438,12 +4438,6 @@ public abstract class Mech extends Entity {
             sb.append(newLine);
         }
 
-        if (!getFluff().getMMLImagePath().isBlank()) {
-            sb.append(MtfFile.IMAGE_FILE);
-            sb.append(getFluff().getMMLImagePath());
-            sb.append(newLine);
-        }
-
         for (EntityFluff.System system : EntityFluff.System.values()) {
             if (!getFluff().getSystemManufacturer(system).isBlank()) {
                 sb.append(MtfFile.SYSTEM_MANUFACTURER);
@@ -4466,10 +4460,10 @@ public abstract class Mech extends Entity {
             sb.append(newLine);
         }
 
-        if (!getFluff().getFluffImageEncoded().isBlank()) {
+        if (getFluff().hasEmbeddedFluffImage()) {
             sb.append(newLine);
             sb.append(MtfFile.FLUFF_IMAGE);
-            sb.append(getFluff().getFluffImageEncoded());
+            sb.append(getFluff().getBase64FluffImage().getBase64String());
             sb.append(newLine);
         }
 

@@ -14,15 +14,18 @@
  */
 package megamek.common;
 
+import megamek.client.ui.Base64Image;
 import megamek.codeUtilities.StringUtility;
 import megamek.common.alphaStrike.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.options.*;
 import org.apache.logging.log4j.LogManager;
 
+import java.awt.*;
 import java.io.File;
 import java.io.Serializable;
 import java.util.*;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -39,6 +42,7 @@ public class MechSummary implements Serializable, ASCardDisplayable {
     private String unitSubType;
     private String fullAccurateUnitType;
     private Long entityType;
+    private Base64Image fluffImage = new Base64Image();
     private boolean omni;
     private boolean military;
     private boolean mountedInfantry;
@@ -1012,6 +1016,15 @@ public class MechSummary implements Serializable, ASCardDisplayable {
 
     public void setJumpMp(int jumpMp) {
         this.jumpMp = jumpMp;
+    }
+
+    public void setFluffImage(String base64image) {
+        fluffImage = new Base64Image(base64image);
+    }
+
+    @Override
+    public @Nullable Image getFluffImage() {
+        return fluffImage.getImage();
     }
 
     /**

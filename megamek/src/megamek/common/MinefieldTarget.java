@@ -130,4 +130,15 @@ public class MinefieldTarget implements Targetable {
     public boolean isEnemyOf(Entity other) {
         return true;
     }
+
+
+    @Override
+    public String generalName() {
+        return getDisplayName();
+    }
+
+    @Override
+    public String specificName() {
+        return "";
+    }
 }

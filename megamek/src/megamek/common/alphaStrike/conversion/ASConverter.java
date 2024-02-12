@@ -20,7 +20,6 @@ package megamek.common.alphaStrike.conversion;
 
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.client.ui.swing.calculationReport.DummyCalculationReport;
-import megamek.codeUtilities.StringUtility;
 import megamek.common.*;
 import megamek.common.alphaStrike.ASArcs;
 import megamek.common.alphaStrike.ASUnitType;
@@ -29,7 +28,7 @@ import megamek.common.alphaStrike.BattleForceSUA;
 import megamek.common.annotations.Nullable;
 import org.apache.logging.log4j.LogManager;
 
-import java.util.*;
+import java.util.Objects;
 
 /**
  * Static AlphaStrike Conversion class; contains all information for conversion except for some weapon specifics
@@ -105,6 +104,7 @@ public final class ASConverter {
         element.setChassis(entity.getFullChassis());
         element.setMulId(entity.getMulId());
         element.setRole(entity.getRole());
+        element.setFluff(entity.getFluff());
 
         if (entity.getShortName().length() < 15) {
             conversionReport.addHeader("Alpha Strike Conversion for " + entity.getShortName());

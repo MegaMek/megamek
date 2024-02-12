@@ -128,7 +128,7 @@ public final class HexTooltip {
             Vector<Minefield> minefields = game.getMinefields(mcoords);
             for (int i = 0; i < minefields.size(); i++) {
                 Minefield mf = minefields.elementAt(i);
-                Player owner = (game != null) ? game.getPlayer(mf.getPlayerId()) : null;
+                Player owner = game.getPlayer(mf.getPlayerId());
                 String ownerName = (owner != null) ? " (" + owner.getName() + ')' : ReportMessages.getString("BoardView1.Tooltip.unknownOwner");
                 String sMinefield = mf.getName() + ' ' + Messages.getString("BoardView1.minefield") + " (" + mf.getDensity() + ')';
 

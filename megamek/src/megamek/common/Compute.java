@@ -1880,8 +1880,6 @@ public class Compute {
                 : null;
 
         Entity spotter = null;
-
-        ArrayList<Entity> spotters = new ArrayList<>();
         int distance = -1;
 
         // Compute friendly spotters

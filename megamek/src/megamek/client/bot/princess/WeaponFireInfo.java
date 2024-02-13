@@ -465,7 +465,7 @@ public class WeaponFireInfo {
 
     /**
      * Generalized computation of hitting with TAG given current guidable muniitions in play
-     * @param skipOtherWeapons true if Aero, false otherwise.
+     * @param exclusiveWithOtherWeapons true if Aero, false otherwise.
      * @return
      */
     double computeExpectedTAGDamage(boolean exclusiveWithOtherWeapons){

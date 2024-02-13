@@ -1614,6 +1614,18 @@ public class FireControl {
             return myPlan;
         }
 
+        if (shooter.isAirborne() && shooter.isLargeCraft() && game.getBoard().onGround()) {
+            // This process takes a long time for no reason; the likelihood of being able to strike
+            // or hit an enemy Aero is next to nil.
+            boolean debug = LogManager.getLogger().isDebugEnabled();
+            if (debug) {
+                LogManager.getLogger().debug(
+                        "Skip guessing firing plan for airborne dropship " + shooter.getShortName()
+                );
+            }
+            return null;
+        }
+
         // cycle through my weapons
         for (final Mounted weapon : shooter.getWeaponList()) {
             // respect restriction on manual AMS firing.

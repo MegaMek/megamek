@@ -15733,6 +15733,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         return -1;
     }
 
+    @Override
     public @Nullable Image getFluffImage() {
         return fluff.getFluffImage();
     }

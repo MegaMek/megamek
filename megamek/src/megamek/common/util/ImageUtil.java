@@ -464,12 +464,13 @@ public final class ImageUtil {
     /**
      * takes an image and converts it to text in the Base64 encoding.
      */
-    public static String base64TextEncodeImage(BufferedImage img) {
+    public static String base64TextEncodeImage(Image image) {
+        BufferedImage bufferedImage = convertToBufferedImage(image);
         String base64Text;
 
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            ImageIO.write(img, "png", baos);
+            ImageIO.write(bufferedImage, "png", baos);
             baos.flush();
             base64Text = Base64.getEncoder().encodeToString(baos.toByteArray());
             baos.close();
@@ -478,13 +479,6 @@ public final class ImageUtil {
         }
 
         return base64Text;
-    }
-
-    /**
-     * @return The base64 representation of the given image.
-     */
-    public static String base64TextEncodeImage(Image image) {
-        return base64TextEncodeImage(convertToBufferedImage(image));
     }
 
     /**

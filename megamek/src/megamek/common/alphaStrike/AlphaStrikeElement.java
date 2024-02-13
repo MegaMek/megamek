@@ -548,11 +548,7 @@ public class AlphaStrikeElement implements Serializable, ASCardDisplayable, ASSp
         return AlphaStrikeHelper.formatAbility(sua, collection, this, delimiter);
     }
 
-    /**
-     * @return The unit's fluff image if any can be found. Will return the fluff image stored in the unit file,
-     * if present; otherwise (e.g. for canon units), will try to find the fluff image by name in the fluff
-     * directories (user dir and internal dir).
-     */
+    @Override
     public @Nullable Image getFluffImage() {
         return fluff.getFluffImage();
     }

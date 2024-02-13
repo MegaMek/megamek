@@ -211,6 +211,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     private Game boardPreviewGame = new Game();
     private BoardView previewBV;
     Dimension currentMapButtonSize = new Dimension(0, 0);
+    private JCheckBox showPlayerDeployment = new JCheckBox(Messages.getString("ChatLounge.showPlayerDeployment"));
 
     private ArrayList<String> invalidBoards = new ArrayList<>();
     private ArrayList<String> serverBoards = new ArrayList<>();
@@ -767,7 +768,11 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             bpButton.addActionListener(e -> previewGameBoard());
             JPanel bpPanel = new JPanel();
             bpPanel.setLayout(new BoxLayout(bpPanel, BoxLayout.PAGE_AXIS));
-            bpPanel.add(bpButton);
+            JPanel topPanel = new JPanel(new FlowLayout());
+            topPanel.add(bpButton);
+            showPlayerDeployment.setSelected(true);
+            topPanel.add(showPlayerDeployment);
+            bpPanel.add(topPanel);
             bpPanel.add(previewBV.getComponent(true));
             boardPreviewW.add(bpPanel);
             boardPreviewW.setSize(clientgui.frame.getWidth() / 2, clientgui.frame.getHeight() / 2);
@@ -1163,6 +1168,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         previewBV.setLocalPlayer(client().getLocalPlayer());
         final GameOptions gOpts = game().getOptions();
         boardPreviewGame.setOptions(gOpts);
+        previewBV.setShowLobbyPlayerDeployment(showPlayerDeployment.isSelected());
 
         for (Player player : boardPreviewGame.getPlayersList()) {
             boardPreviewGame.removePlayer(player.getId());

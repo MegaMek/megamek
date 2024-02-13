@@ -2154,7 +2154,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
     @Override
     public String toString() {
         List<String> locations = allLocations().stream().map(entity::getLocationAbbr).collect(Collectors.toList());
-        String intro = getType().getInternalName()
+        String intro = getType().toString()
                 + " (" + String.join("/", locations)
                 + (rearMounted ? "-R" : "")
                 + (mechTurretMounted ? "-MTu" : "")

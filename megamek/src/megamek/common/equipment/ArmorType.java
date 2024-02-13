@@ -1882,4 +1882,9 @@ public class ArmorType extends MiscType {
 
         return armor;
     }
+
+    @Override
+    public String toString() {
+        return "[Armor] " + internalName;
+    }
 }

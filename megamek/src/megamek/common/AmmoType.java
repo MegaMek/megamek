@@ -13027,7 +13027,7 @@ public class AmmoType extends EquipmentType {
 
     @Override
     public String toString() {
-        return "Ammo: " + name;
+        return "[Ammo] " + internalName;
     }
 
     public static boolean canClearMinefield(AmmoType at) {

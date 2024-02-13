@@ -1171,7 +1171,7 @@ public class EquipmentType implements ITechnology {
 
     @Override
     public String toString() {
-        return "EquipmentType: " + name;
+        return "[Equipment] " + internalName;
     }
 
     public String getShortName() {

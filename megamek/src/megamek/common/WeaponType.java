@@ -2053,4 +2053,8 @@ public class WeaponType extends EquipmentType {
         return criticals >= 8;
     }
 
+    @Override
+    public String toString() {
+        return "[Weapon] " + internalName;
+    }
 }

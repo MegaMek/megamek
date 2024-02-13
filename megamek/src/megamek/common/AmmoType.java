@@ -4867,8 +4867,8 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createISMGAmmo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.name = "Machine Gun Ammo";
-        ammo.shortName = "Machine Gun";
+        ammo.name = "Machine Gun Ammo [Full]";
+        ammo.shortName = "MG Ammo";
         ammo.setInternalName("IS Ammo MG - Full");
         ammo.addLookupName("ISMG Ammo (200)");
         ammo.addLookupName("ISMG Ammo Full");
@@ -4893,8 +4893,8 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createCLMGAmmo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.name = "Machine Gun Ammo";
-        ammo.shortName = "Machine Gun";
+        ammo.name = "Machine Gun Ammo [Half]";
+        ammo.shortName = "MG Ammo";
         ammo.setInternalName("Clan Machine Gun Ammo - Full");
         ammo.addLookupName("Clan Ammo MG - Full");
         ammo.addLookupName("CLMG Ammo (200)");
@@ -4919,13 +4919,14 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createISMGAmmoHalf() {
         AmmoType ammo = new AmmoType();
 
-        ammo.name = "Half Machine Gun Ammo";
-        ammo.shortName = "Machine Gun";
+        ammo.name = "Machine Gun Ammo [Half]";
+        ammo.shortName = "MG Ammo";
         ammo.setInternalName("IS Machine Gun Ammo - Half");
         ammo.addLookupName("IS Ammo MG - Half");
         ammo.addLookupName("ISMG Ammo (100)");
         ammo.addLookupName("ISMG Ammo Half");
         ammo.addLookupName("IS Machine Gun Ammo (1/2 ton)");
+        ammo.addLookupName("Half Machine Gun Ammo");
         ammo.damagePerShot = 1;
         ammo.rackSize = 2;
         ammo.ammoType = AmmoType.T_MG;
@@ -4947,12 +4948,13 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createCLMGAmmoHalf() {
         AmmoType ammo = new AmmoType();
 
-        ammo.name = "Half Machine Gun Ammo";
-        ammo.shortName = "Machine Gun";
+        ammo.name = "Machine Gun Ammo [Half]";
+        ammo.shortName = "MG Ammo";
         ammo.setInternalName("Clan Machine Gun Ammo - Half");
         ammo.addLookupName("Clan Ammo MG - Half");
         ammo.addLookupName("CLMG Ammo (100)");
         ammo.addLookupName("Clan Machine Gun Ammo (1/2 ton)");
+        ammo.addLookupName("Half Machine Gun Ammo");
         ammo.damagePerShot = 1;
         ammo.rackSize = 2;
         ammo.ammoType = AmmoType.T_MG;
@@ -4977,7 +4979,7 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.name = "Light Machine Gun Ammo [Full]";
-        ammo.shortName = "Light Machine Gun";
+        ammo.shortName = "LMG Ammo";
         ammo.setInternalName("IS Light Machine Gun Ammo - Full");
         ammo.addLookupName("ISLightMG Ammo (200)");
         ammo.addLookupName("IS Light Machine Gun Ammo");
@@ -5002,7 +5004,7 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.name = "Light Machine Gun Ammo [Full]";
-        ammo.shortName = "Light Machine Gun";
+        ammo.shortName = "LMG Ammo";
         ammo.setInternalName("Clan Light Machine Gun Ammo - Full");
         ammo.addLookupName("CLLightMG Ammo (200)");
         ammo.addLookupName("Clan Light Machine Gun Ammo");
@@ -5027,7 +5029,7 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.name = "Light Machine Gun Ammo [Half]";
-        ammo.shortName = "Light Machine Gun";
+        ammo.shortName = "LMG Ammo";
         ammo.setInternalName("IS Light Machine Gun Ammo - Half");
         ammo.addLookupName("ISLightMG Ammo (100)");
         ammo.addLookupName("IS Light Machine Gun Ammo (1/2 ton)");
@@ -5052,7 +5054,7 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.name = "Light Machine Gun Ammo [Half]";
-        ammo.shortName = "Light Machine Gun";
+        ammo.shortName = "LMG Ammo";
         ammo.setInternalName("Clan Light Machine Gun Ammo - Half");
         ammo.addLookupName("CLLightMG Ammo (100)");
         ammo.addLookupName("Clan Light Machine Gun Ammo (1/2 ton)");
@@ -5080,7 +5082,7 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.name = "Heavy Machine Gun Ammo [Full]";
-        ammo.shortName = "Heavy Machine Gun";
+        ammo.shortName = "HMG Ammo";
         ammo.setInternalName("IS Heavy Machine Gun Ammo - Full");
         ammo.addLookupName("ISHeavyMG Ammo (100)");
         ammo.addLookupName("IS Heavy Machine Gun Ammo");
@@ -5104,7 +5106,7 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.name = "Heavy Machine Gun Ammo [Half]";
-        ammo.shortName = "Heavy Machine Gun";
+        ammo.shortName = "HMG Ammo";
         ammo.setInternalName("IS Heavy Machine Gun Ammo - Half");
         ammo.addLookupName("ISHeavyMG Ammo (50)");
         ammo.addLookupName("IS Heavy Machine Gun Ammo (1/2 ton)");
@@ -5129,7 +5131,7 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.name = "Heavy Machine Gun Ammo [Full]";
-        ammo.shortName = "Heavy Machine Gun";
+        ammo.shortName = "HMG Ammo";
         ammo.setInternalName("Clan Heavy Machine Gun Ammo - Full");
         ammo.addLookupName("CLHeavyMG Ammo (100)");
         ammo.addLookupName("Clan Heavy Machine Gun Ammo");
@@ -5154,7 +5156,7 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.name = "Heavy Machine Gun Ammo [Half]";
-        ammo.shortName = "Heavy Machine Gun";
+        ammo.shortName = "HMG Ammo";
         ammo.setInternalName("Clan Heavy Machine Gun Ammo - Half");
         ammo.addLookupName("CLHeavyMG Ammo (50)");
         ammo.addLookupName("Clan Heavy Machine Gun Ammo (1/2 ton)");

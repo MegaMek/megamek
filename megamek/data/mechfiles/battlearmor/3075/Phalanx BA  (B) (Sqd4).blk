@@ -36,6 +36,10 @@ Phalanx Battle Armor
 IS Level 3
 </type>
 
+<role>
+Ambusher
+</role>
+
 <motion_type>
 Leg
 </motion_type>
@@ -86,7 +90,7 @@ ISBATaser:RA
 </Trooper 4 Equipment>
 
 <source>
-TRO 3075 - Civil War
+TRO: 3075
 </source>
 
 <chassis>

@@ -41,6 +41,10 @@ CLRocketLauncher15Prototype
 <type>
 IS Level 4
 </type>
+
+<role>
+Scout
+</role>
 <year>
 2801
 </year>
@@ -56,3 +60,7 @@ IS Level 4
 <motion_type>
 Wheeled
 </motion_type>
+
+<source>
+Historical: Operation Klondike
+</source>

@@ -1,13 +1,13 @@
-Version:1.1
-Phoenix
-PX-1KL
+chassis:Phoenix
+model:PX-1KL
 mul id:7468
 
 Config:Biped
 techbase:Inner Sphere
 era:3070
-source:Jihad
+source:Touring the Stars: Kaumberg
 rules level:4
+role:Brawler
 
 mass:50
 engine:240 Fusion Engine(IS)

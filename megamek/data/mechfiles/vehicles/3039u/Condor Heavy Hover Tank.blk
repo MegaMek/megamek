@@ -32,6 +32,10 @@ Condor Heavy Hover Tank
 IS Level 1
 </type>
 
+<role>
+Striker
+</role>
+
 <motion_type>
 Hover
 </motion_type>
@@ -77,7 +81,7 @@ Medium Laser
 </Turret Equipment>
 
 <source>
-TRO 3039 - Age of War
+TRO: 3039
 </source>
 
 <tonnage>

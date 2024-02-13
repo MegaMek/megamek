@@ -58,6 +58,10 @@ IS BA Stealth (Basic):Body
 IS Level 2
 </type>
 
+<role>
+Scout
+</role>
+
 <year>
 3072
 </year>
@@ -67,7 +71,7 @@ Leg
 </motion_type>
 
 <source>
-TRO 3085 - Jihad
+TRO: 3085
 </source>
 
 <armor_type>

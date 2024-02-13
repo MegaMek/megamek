@@ -1,13 +1,13 @@
-Version:1.0
-Marauder
-C
+chassis:Marauder
+model:C
 mul id:2032
 
 Config:Biped
 techbase:Mixed (Clan Chassis)
 era:2827
-source:Rec Guide:ilClan #6 - Clan Invasion
+source:Rec Guide:ilClan #6
 rules level:4
+role:Sniper
 
 mass:75
 engine:300 Fusion Engine(IS)

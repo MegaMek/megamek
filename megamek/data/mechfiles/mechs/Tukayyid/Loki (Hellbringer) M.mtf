@@ -1,13 +1,17 @@
-Version:1.1
-Loki (Hellbringer)
-M
+chassis:Loki
+clanname:Hellbringer
+model:M
 mul id:7594
 
 Config:Biped Omnimech
 TechBase:Clan
 Era:3052
-source:TRO Clan Invasion - Clan Invasion
+source:TRO: Clan Invasion
 Rules Level:2
+role:Sniper
+
+quirk:searchlight
+
 
 Mass:65
 Engine:325 XL (Clan) Engine(IS)

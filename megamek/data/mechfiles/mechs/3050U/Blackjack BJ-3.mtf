@@ -1,13 +1,18 @@
-Version:1.0
-Blackjack
-BJ-3
+chassis:Blackjack
+model:BJ-3
 mul id:388
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3042
-Source:TRO 3050 - Succession Wars
+Source:TRO: 3050
 Rules Level:2
+role:Brawler
+
+
+
+quirk:bad_rep_is
+
 
 Mass:45
 Engine:180 Fusion Engine

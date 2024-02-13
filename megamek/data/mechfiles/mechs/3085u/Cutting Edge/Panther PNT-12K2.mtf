@@ -1,13 +1,19 @@
-Version:1.0
-Panther
-PNT-12K2
+chassis:Panther
+model:PNT-12K2
 mul id:2420
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3074
-Source:Dark Age
+source:TRO: 3085
 Rules Level:2
+role:Brawler
+
+
+
+quirk:imp_target_short
+quirk:nimble_jumper
+
 
 Mass:35
 Engine:140 Fusion Engine(IS)

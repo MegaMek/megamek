@@ -1,13 +1,18 @@
-Version:1.0
-Fafnir
-FNR-6U
+chassis:Fafnir
+model:FNR-6U
 mul id:5720
 
 Config:Biped
 techbase:Inner Sphere
 era:3081
-source:3067 Unabridged - Jihad
+source:Record Sheets: 3067 Unabridged
 rules level:2
+role:Juggernaut
+
+
+
+quirk:no_arms
+
 
 mass:100
 engine:300 Light Engine(IS)

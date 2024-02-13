@@ -36,6 +36,10 @@ Black Eagle
 IS Level 3
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Spheroid
 </motion_type>
@@ -173,7 +177,7 @@ We've reduced the cargo space to make the unit valid.
 </height>
 
 <source>
-TRO Primitives II - Age of War
+TRO: Primitives II
 </source>
 
 <tonnage>
@@ -219,3 +223,9 @@ TRO Primitives II - Age of War
 <escape_pod>
 8
 </escape_pod>
+
+<quirks>
+easy_maintain
+obsolete
+</quirks>
+

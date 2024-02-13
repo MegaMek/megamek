@@ -32,6 +32,10 @@ Gladiator Exoskeleton
 IS Level 4
 </type>
 
+<role>
+Ambusher
+</role>
+
 <motion_type>
 Jump
 </motion_type>
@@ -61,7 +65,7 @@ Infantry Auto Rifle:APM
 </Squad Equipment>
 
 <source>
-XTR Gladiators
+XTR: Gladiators
 </source>
 
 <chassis>
@@ -117,3 +121,8 @@ JUMPJET:Unknown
 COMMUNICATIONS:Unknown
 TARGETING:Unknown
 </systemManufacturers>
+
+<quirks>
+difficult_maintain
+</quirks>
+

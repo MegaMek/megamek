@@ -1,13 +1,18 @@
-Version:1.1
-Awesome
-AWS-11M
+chassis:Awesome
+model:AWS-11M
 mul id:173
 
 Config:Biped
 TechBase:Mixed (IS Chassis)
 Era:3079
-Source:XTRO Marik - Jihad
+Source:XTR: Marik
 Rules Level:3
+role:Sniper
+
+
+
+quirk:battle_fists_la
+
 
 Mass:80
 Engine:240 Fusion Engine (Clan)

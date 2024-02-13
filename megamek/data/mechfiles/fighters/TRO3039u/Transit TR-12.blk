@@ -36,6 +36,10 @@ TR-12
 IS Level 2
 </type>
 
+<role>
+Fast Dogfighter
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -102,7 +106,7 @@ IS LB 20-X Cluster Ammo
 </Fuselage Equipment>
 
 <source>
-TRO 3039 - Civil War
+TRO: 3039
 </source>
 
 <tonnage>

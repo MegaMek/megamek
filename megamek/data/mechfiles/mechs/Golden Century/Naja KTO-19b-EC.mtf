@@ -1,13 +1,16 @@
-Version:1.1
-Naja
-KTO-19b-EC
+chassis:Naja
+model:KTO-19b-EC
 mul id:7622
 
 Config:Biped
 techbase:Mixed (IS Chassis)
 era:2824
-source:Succession War
+source:TRO: Golden Century
 rules level:4
+role:Brawler
+
+quirk:easy_maintain
+
 
 mass:55
 engine:275 XL Engine(IS)

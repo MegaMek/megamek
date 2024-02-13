@@ -1,12 +1,16 @@
-Version:1.3
-Juliano
-JLN-5C
+chassis:Juliano
+model:JLN-5C
 mul id:8065
 Config:Biped
 techbase:Mixed (IS Chassis)
 era:3146
-source:TRO Dark Age - Dark Age
+source:TRO: Dark Age
 rules level:2
+
+
+
+quirk:combat_computer
+
 
 mass:90
 engine:360 XL Engine(IS)

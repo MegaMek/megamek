@@ -32,6 +32,10 @@ Resgate PA(L)
 Clan Level 2
 </type>
 
+<role>
+Ambusher
+</role>
+
 <motion_type>
 Jump
 </motion_type>
@@ -60,7 +64,7 @@ Clan BA Fire Resistant:LA
 </Point Equipment>
 
 <source>
-TRO Vehicle Annex (r) - Jihad
+TRO: Vehicle Annex Revised
 </source>
 
 <chassis>

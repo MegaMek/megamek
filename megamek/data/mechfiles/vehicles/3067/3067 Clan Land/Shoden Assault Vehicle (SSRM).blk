@@ -59,6 +59,10 @@ CLCASE
 <type>
 Clan
 </type>
+
+<role>
+Brawler
+</role>
 <year>
 3068
 </year>
@@ -74,3 +78,7 @@ Clan
 <motion_type>
 Wheeled
 </motion_type>
+
+<source>
+TRO: 3067
+</source>

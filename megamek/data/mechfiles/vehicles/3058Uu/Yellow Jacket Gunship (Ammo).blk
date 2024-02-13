@@ -43,6 +43,10 @@ ISGauss Ammo
 <type>
 IS
 </type>
+
+<role>
+Sniper
+</role>
 <year>
 3058
 </year>
@@ -59,5 +63,5 @@ IS
 VTOL
 </motion_type>
 <source>
-Clan Invasion
+TRO: 3058
 </source>

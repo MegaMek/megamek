@@ -36,6 +36,10 @@ Gaajian System Patrol Boat
 IS Level 2
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Spheroid
 </motion_type>
@@ -132,7 +136,7 @@ ISHighResImager
 </structural_integrity>
 
 <source>
-HB:House Kurita - Clan Invasion
+Handbook: House Kurita
 </source>
 
 <tonnage>

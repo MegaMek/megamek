@@ -1,12 +1,18 @@
-Version:1.1
-Annihilator
-ANH-2AX
+chassis:Annihilator
+model:ANH-2AX
 mul id:40
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3074
 Rules Level:4
+role:Sniper
+source:XTR: Mercenaries
+
+
+
+quirk:easy_maintain
+
 
 Mass:100
 Engine:200 Compact Engine

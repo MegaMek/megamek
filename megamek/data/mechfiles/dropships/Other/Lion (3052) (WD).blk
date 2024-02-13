@@ -36,6 +36,10 @@ Lion
 Clan Level 2
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Spheroid
 </motion_type>
@@ -300,7 +304,7 @@ Troop Carrier
 </height>
 
 <source>
-TRO 3057r - Clan Invasion
+TRO: 3057 Revised
 </source>
 
 <tonnage>

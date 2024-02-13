@@ -61,15 +61,21 @@ public class InfantrySupportLRMInfernoWeapon extends InfantryWeapon {
     
     @Override
     public void adaptToGameOptions(GameOptions gOp) {
+        removeMode("");
+        removeMode(MODE_MISSILE_INDIRECT);
+        removeMode(MODE_INDIRECT_HEAT);
+        // add heat options
         super.adaptToGameOptions(gOp);
 
         // Indirect Fire
         if (gOp.booleanOption(OptionsConstants.BASE_INDIRECT_FIRE)) {
-            addMode("");
-            addMode("Indirect");
-        } else {
-            removeMode("");
-            removeMode("Indirect");
+            if (gOp.booleanOption(OptionsConstants.BASE_INFANTRY_DAMAGE_HEAT)) {
+                addMode("");
+                addMode(MODE_MISSILE_INDIRECT);
+            } else {
+                addMode(MODE_MISSILE_INDIRECT);
+                addMode(MODE_INDIRECT_HEAT);
+            }
         }
     }
 }

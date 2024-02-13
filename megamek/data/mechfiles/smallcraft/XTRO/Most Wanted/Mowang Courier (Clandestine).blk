@@ -36,6 +36,10 @@ Mowang Courier
 IS Level 4
 </type>
 
+<role>
+Transport
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -105,7 +109,7 @@ ISAngelECMSuite
 </structural_integrity>
 
 <source>
-XTRO Most Wanted - Jihad
+XTR: Most Wanted
 </source>
 
 <tonnage>
@@ -151,3 +155,8 @@ XTRO Most Wanted - Jihad
 <escape_pod>
 0
 </escape_pod>
+
+<quirks>
+internal_bomb
+</quirks>
+

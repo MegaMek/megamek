@@ -32,6 +32,10 @@ Hector Road Train Trailer Module
 IS Level 2
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Wheeled
 </motion_type>
@@ -81,7 +85,7 @@ liquidcargobay:60.5:4
 </transporters>
 
 <source>
-HB:House Marik - Age of War
+Handbook: House Marik
 </source>
 
 <tonnage>

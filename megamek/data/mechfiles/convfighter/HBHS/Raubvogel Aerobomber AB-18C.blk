@@ -36,6 +36,10 @@ AB-18C
 IS Level 2
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -99,7 +103,7 @@ IS Streak SRM 4 Ammo
 </Fuselage Equipment>
 
 <source>
-HB:House Steiner - Civil War
+Handbook: House Steiner
 </source>
 
 <tonnage>

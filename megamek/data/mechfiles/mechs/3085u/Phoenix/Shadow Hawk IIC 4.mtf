@@ -1,13 +1,18 @@
-Version:1.0
-Shadow Hawk IIC
-4
+chassis:Shadow Hawk IIC
+model:4
 mul id:2914
 
 Config:Biped
 TechBase:Clan
 Era:3060
-Source:Clan Invasion
+source:TRO: 3085
 Rules Level:2
+role:Striker
+
+quirk:battle_fists_la
+quirk:battle_fists_ra
+quirk:imp_life_support
+
 
 Mass:45
 Engine:270 Fusion (Clan) Engine

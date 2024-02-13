@@ -1,13 +1,19 @@
-Version:1.0
-Ursus
-
+chassis:Ursus
+model:
 mul id:3363
 
 Config:Biped
 TechBase:Clan
 Era:3059
-Source:TRO 3060
+Source:TRO: 3060
 Rules Level:2
+role:Brawler
+
+
+quirk:distracting
+quirk:pro_actuator
+quirk:cramped_cockpit
+
 
 Mass:50
 Engine:200 Fusion (Clan) Engine

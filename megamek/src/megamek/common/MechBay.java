@@ -72,7 +72,12 @@ public final class MechBay extends Bay {
 
     @Override
     public String toString() {
-        return "mechbay:" + totalSpace + ":" + doors;
+        String bayType = "mechbay";
+        return this.bayString(
+                bayType,
+                totalSpace,
+                doors
+        );
     }
     
     public static TechAdvancement techAdvancement() {

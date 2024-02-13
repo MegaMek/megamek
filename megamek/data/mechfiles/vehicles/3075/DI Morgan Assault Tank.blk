@@ -1,12 +1,7 @@
-#building block data file
+#Saved from version 0.49.18-SNAPSHOT on 2024-01-07
 <BlockVersion>
 1
 </BlockVersion>
-
-#Write the version number just in case...
-<Version>
-MAM0
-</Version>
 
 <UnitType>
 Tank
@@ -16,34 +11,75 @@ Tank
 DI Morgan Assault Tank
 </Name>
 
-<model>
+<Model>
 
-</model>
+</Model>
 
 <mul id:>
 900
 </mul id:>
 
-<Tonnage>
-100
-</Tonnage>
+<year>
+3073
+</year>
+
+<originalBuildYear>
+3073
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<role>
+Sniper
+</role>
+
+<motion_type>
+Tracked
+</motion_type>
 
 <cruiseMP>
 3
 </cruiseMP>
 
-<Armor>
+<engine_type>
+2
+</engine_type>
+
+<armor_type>
+6
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
 57
 41
 41
 28
 41
-</Armor>
+</armor>
+
+<Body Equipment>
+IS Machine Gun Ammo - Half
+</Body Equipment>
 
 <Front Equipment>
-ISMachine Gun
-ISMachine Gun
+Machine Gun
+Machine Gun
 </Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
 
 <Turret Equipment>
 ISERPPC
@@ -51,34 +87,27 @@ ISERPPC
 ISERPPC
 </Turret Equipment>
 
-<Body Equipment>
-IS Machine Gun Ammo - Half
-</Body Equipment>
+<manufacturer>
+Defiance Motors, Defiance Industries
+</manufacturer>
 
-<type>
-IS Level 2
-</type>
+<primaryFactory>
+Tharkad, Hesperus II
+</primaryFactory>
 
-<year>
-3073
-</year>
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:300 GM XL Fusion
+ARMOR:Durallex Super Hvy Ferro-Fibrous
+COMMUNICATIONS:Neil 6000V
+TARGETING:Angst ClearView 2AV
+</systemManufacturers>
 
 <source>
-Jihad
+TRO: 3075
 </source>
 
-<internal_type>
-0
-</internal_type>
+<tonnage>
+100.0
+</tonnage>
 
-<armor_type>
-6
-</armor_type>
-
-<engine_type>
-2
-</engine_type>
-
-<motion_type>
-Tracked
-</motion_type>

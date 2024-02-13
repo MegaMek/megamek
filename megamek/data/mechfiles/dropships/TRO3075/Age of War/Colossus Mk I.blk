@@ -36,6 +36,10 @@ Mk I
 IS Level 3
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Spheroid
 </motion_type>
@@ -169,7 +173,7 @@ Medium Laser
 </structural_integrity>
 
 <source>
-TRO 3075 - Star League
+TRO: 3075
 </source>
 
 <tonnage>

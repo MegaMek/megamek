@@ -1,13 +1,19 @@
-Version:1.0
-Whitworth
-WTH-2
+chassis:Whitworth
+model:WTH-2
 mul id:3541
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3050
-Source:TRO 3050 - Clan Invasion
+Source:TRO: 3050
 Rules Level:2
+role:Missile Boat
+
+
+
+quirk:rugged_1
+quirk:weak_legs
+
 
 Mass:40
 Engine:160 Fusion Engine

@@ -1,13 +1,13 @@
-Version:1.0
-Longbow
-LGB-0H
+chassis:Longbow
+model:LGB-0H
 mul id:8330
 
 Config:Biped
 techbase:Inner Sphere
 era:3065
-source:Rec Guide:ilClan #20 - Civil War
+source:Rec Guide:ilClan #20
 rules level:2
+role:Sniper
 
 mass:85
 engine:340 Fusion Engine(IS)

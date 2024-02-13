@@ -1,15 +1,15 @@
-/*  
-* MegaMek - Copyright (C) 2019 - The MegaMek Team  
-*  
-* This program is free software; you can redistribute it and/or modify it under  
-* the terms of the GNU General Public License as published by the Free Software  
-* Foundation; either version 2 of the License, or (at your option) any later  
-* version.  
-*  
-* This program is distributed in the hope that it will be useful, but WITHOUT  
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS  
-* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more  
-* details.  
+/*
+* MegaMek - Copyright (C) 2019 - The MegaMek Team
+*
+* This program is free software; you can redistribute it and/or modify it under
+* the terms of the GNU General Public License as published by the Free Software
+* Foundation; either version 2 of the License, or (at your option) any later
+* version.
+*
+* This program is distributed in the hope that it will be useful, but WITHOUT
+* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+* details.
 */
 package megamek.client.bot.princess;
 
@@ -25,7 +25,7 @@ import java.util.List;
 /**
  * This class is intended to help the bot calculate firing plans for infantry
  * units.
- * 
+ *
  * @author NickAragua
  */
 public class InfantryFireControl extends FireControl {
@@ -36,7 +36,7 @@ public class InfantryFireControl extends FireControl {
         Swarm,
         Leg
     }
-    
+
     public InfantryFireControl(Princess owner) {
         super(owner);
     }
@@ -65,8 +65,7 @@ public class InfantryFireControl extends FireControl {
         boolean shooterIsActualInfantry = shooter.hasETypeFlag(Entity.ETYPE_INFANTRY)
                 && !shooter.hasETypeFlag(Entity.ETYPE_BATTLEARMOR);
         // field guns can't fire if the unit in question moved
-        boolean fieldGunsDoDamage = (shooterIsActualInfantry && shooterPath.getMpUsed() == 0)
-                || !shooterIsActualInfantry;
+        boolean otherWeaponsMayShoot = !shooterIsActualInfantry || shooterPath.getMpUsed() == 0;
         boolean inBuilding = Compute.isInBuilding(target.getGame(), targetPath.getFinalElevation(),
                 targetPath.getFinalCoords());
         boolean inOpen = ServerHelper.infantryInOpen(target, targetHex, target.getGame(), targetIsPlatoon, false,
@@ -85,7 +84,7 @@ public class InfantryFireControl extends FireControl {
                 continue;
             }
 
-            // there are three ways this can go:
+            // there are N ways this can go, currently we handle these:
             // 1. Shooter is infantry using infantry weapon, target is infantry.
             // Use infantry damage. Track damage separately.
             // 2. Shooter is non-infantry, target is infantry in open. Use
@@ -94,25 +93,23 @@ public class InfantryFireControl extends FireControl {
             // weapon damage, multiply by building dmg reduction.
             // 4. Shooter is non-infantry, target is infantry in "cover". Use
             // "directBlowInfantryDamage".
-            // 5. Shooter is non-infantry, target is non-infantry. Use base
-            // class.
+            // 5. Shooter is infantry with field gun / field artillery and needs special damage calc.
+            // 6. Shooter is non-infantry, target is non-infantry. Use base class.
 
             // case 1
             if (weaponType.hasFlag(WeaponType.F_INFANTRY)) {
                 int infantryCount = 1;
-                
+
                 if (shooter.isConventionalInfantry()) {
                     infantryCount = shooter.getInternal(Infantry.LOC_INFANTRY);
                 } else if (shooter instanceof BattleArmor) {
                     infantryCount = ((BattleArmor) shooter).getNumberActiverTroopers();
                 }
-                
+
                 maxInfantryWeaponDamage += ((InfantryWeapon) weaponType).getInfantryDamage()
                         * infantryCount;
-                // field guns can't fire if the infantry unit has done anything
-                // other than turning
-            } else if (targetIsActualInfantry && fieldGunsDoDamage) {
-                double damage = 0;
+            } else if (targetIsActualInfantry && otherWeaponsMayShoot) {
+                double damage;
 
                 // if we're outside, use the direct blow infantry damage
                 // calculation
@@ -132,10 +129,17 @@ public class InfantryFireControl extends FireControl {
                 }
 
                 maxFGDamage += damage;
-                // field guns can't fire if the infantry unit has done anything
-                // other than turning
-            } else if (fieldGunsDoDamage) {
-                maxFGDamage += weaponType.getDamage();
+            } else if (otherWeaponsMayShoot) {
+                // case 5
+                if (shooterIsActualInfantry) {
+                    // field guns can't fire if the infantry unit has done anything
+                    // other than turning, so we only get here if infantry has not used MP.
+                    // All valid Infantry Field Weapons can consider rackSize as their damage.
+                    maxFGDamage += weaponType.rackSize;
+                // Case 6: all other unit types / weapons
+                } else {
+                    maxFGDamage += weaponType.getDamage();
+                }
             }
         }
 
@@ -162,7 +166,7 @@ public class InfantryFireControl extends FireControl {
     protected FiringPlan guessBestFiringPlanUnderHeat(final Entity shooter, @Nullable EntityState shooterState,
             final Targetable target, @Nullable EntityState targetState, int maxHeat, final Game game) {
         FiringPlan bestPlan = new FiringPlan(target);
-        
+
         // Shooting isn't possible if one of us isn't on the board.
         if ((null == shooter.getPosition()) || shooter.isOffBoard()
                 || !game.getBoard().contains(shooter.getPosition())) {
@@ -173,19 +177,19 @@ public class InfantryFireControl extends FireControl {
             LogManager.getLogger().error("Target's position is NULL/Off Board!");
             return bestPlan;
         }
-        
+
         // if it's not infantry, then we shouldn't be here, let's redirect to the base method.
         if (!(shooter instanceof Infantry)) {
             return super.guessBestFiringPlanUnderHeat(shooter, shooterState, target, targetState, maxHeat, game);
         }
-        
+
         if (null == shooterState) {
             shooterState = new EntityState(shooter);
         }
         if (null == targetState) {
             targetState = new EntityState(target);
         }
-        
+
         // Infantry can do the following things, which are mutually exclusive:
         // 1. Fire standard infantry weapons, including "need to stay still" support weapons
         // 2. Fire field guns - the unit needs to remain still to fire these
@@ -203,11 +207,11 @@ public class InfantryFireControl extends FireControl {
             FiringPlan fieldGunPlan = guessFiringPlan(shooter, shooterState, target, targetState, game, InfantryFiringPlanType.FieldGuns);
             firingPlans.add(fieldGunPlan);
         }
-        
+
         // case 3: leg attack
         FiringPlan legPlan = guessFiringPlan(shooter, shooterState, target, targetState, game, InfantryFiringPlanType.Leg);
         firingPlans.add(legPlan);
-        
+
         // case 4: swarm attack
         FiringPlan swarmPlan = guessFiringPlan(shooter, shooterState, target, targetState, game, InfantryFiringPlanType.Swarm);
         firingPlans.add(swarmPlan);
@@ -239,7 +243,7 @@ public class InfantryFireControl extends FireControl {
      */
     private FiringPlan guessFiringPlan(final Entity shooter, @Nullable EntityState shooterState,
             final Targetable target, @Nullable EntityState targetState, final Game game, InfantryFiringPlanType firingPlanType) {
-        
+
         final FiringPlan myPlan = new FiringPlan(target);
 
         // cycle through my field guns
@@ -259,16 +263,16 @@ public class InfantryFireControl extends FireControl {
 
         return myPlan;
     }
-    
+
     /**
-     * Helper method that determines whether a weapon type is appropriate for a given firing plan type, 
+     * Helper method that determines whether a weapon type is appropriate for a given firing plan type,
      * e.g. field guns cannot be fired when we're going to do a swarm attack, etc.
      */
     private boolean weaponIsAppropriate(Mounted weapon, InfantryFiringPlanType firingPlanType) {
         boolean weaponIsSwarm = (weapon.getType()).getInternalName().equals(Infantry.SWARM_MEK);
         boolean weaponIsLegAttack = (weapon.getType()).getInternalName().equals(Infantry.LEG_ATTACK);
         boolean weaponIsFieldGuns = weapon.getLocation() == Infantry.LOC_FIELD_GUNS;
-        
+
         switch (firingPlanType) {
             case FieldGuns:
                 return weaponIsFieldGuns;

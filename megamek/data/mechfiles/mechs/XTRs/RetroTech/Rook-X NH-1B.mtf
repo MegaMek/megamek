@@ -1,13 +1,18 @@
-Version:1.1
-Rook
-NH-1X 'Rook-X'
+chassis:Rook
+model:NH-1X 'Rook-X'
 mul id:4935
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3077
-Source:XTRO RetroTech - Jihad
+Source:XTR: RetroTech
 Rules Level:4
+role:Juggernaut
+
+
+
+quirk:rugged_1
+
 
 Mass:55
 Engine:200 Primitive Fusion Engine

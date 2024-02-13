@@ -1,13 +1,18 @@
-Version:1.1
-Awesome
-AWS-9Ma
+chassis:Awesome
+model:AWS-9Ma
 mul id:5594
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3051
-Source:TRO 3050 - Clan Invasion
+Source:TRO: 3050
 Rules Level:3
+role:Sniper
+
+
+
+quirk:battle_fists_la
+
 
 Mass:80
 Engine:320 XL Engine(IS)

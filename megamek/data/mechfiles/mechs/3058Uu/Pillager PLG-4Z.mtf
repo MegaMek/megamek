@@ -1,13 +1,19 @@
-Version:1.0
-Pillager
-PLG-4Z
+chassis:Pillager
+model:PLG-4Z
 mul id:2527
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3064
-Source:TRO 3058 - Civil War
+Source:TRO: 3058
 Rules Level:2
+role:Sniper
+
+
+
+quirk:battle_fists_la
+quirk:battle_fists_ra
+
 
 Mass:100
 Engine:300 Fusion Engine

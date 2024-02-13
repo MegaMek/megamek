@@ -1,13 +1,21 @@
-Version:1.0
-Crusader
-CRD-8S
+chassis:Crusader
+model:CRD-8S
 mul id:765
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3066
-Source:Civil War
+source:TRO: 3085u 
 Rules Level:2
+role:Skirmisher
+
+
+
+quirk:easy_maintain
+quirk:rugged_1
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+
 
 Mass:65
 Engine:260 XL Engine

@@ -32,6 +32,10 @@ F
 IS Level 3
 </type>
 
+<role>
+Missile Boat
+</role>
+
 <motion_type>
 Wheeled
 </motion_type>
@@ -108,7 +112,7 @@ ISERMediumLaser:OMNI
 </Turret Equipment>
 
 <source>
-Jihad
+TRO: 3060
 </source>
 
 <tonnage>

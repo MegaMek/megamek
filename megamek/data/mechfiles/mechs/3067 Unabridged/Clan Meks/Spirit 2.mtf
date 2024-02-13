@@ -1,39 +1,40 @@
-Version:1.1
-Spirit
-2
+generator:MegaMek Suite 0.49.16-SNAPSHOT on 2023-12-29
+chassis:Spirit
+model:2
 mul id:5665
-
 Config:Biped
-TechBase:Clan
-Era:3068
-Rules Level:2
-source:3067 Unabridged
+techbase:Clan
+era:3068
+source:Record Sheets: 3067 Unabridged
+rules level:2
+role:Striker
 
-Mass:35
-Engine:245 XL Fusion Engine
-Structure:Endo-Steel
-Myomer:Standard
 
-Heat Sinks:10 Double
-Walk MP:7
-Jump MP:0
+mass:35
+engine:245 XL (Clan) Engine(IS)
+structure:Clan Endo Steel
+myomer:Standard
 
-Armor:Ferro-Fibrous
-LA Armor:11
-RA Armor:11
-LT Armor:11
-RT Armor:11
-CT Armor:12
-HD Armor:9
-LL Armor:16
-RL Armor:16
-RTL Armor:5
-RTR Armor:5
-RTC Armor:8
+heat sinks:10 Clan Double
+walk mp:7
+jump mp:0
+
+armor:Ferro-Fibrous(Clan)
+LA armor:11
+RA armor:11
+LT armor:11
+RT armor:11
+CT armor:12
+HD armor:9
+LL armor:16
+RL armor:16
+RTL armor:5
+RTR armor:5
+RTC armor:8
 
 Weapons:2
-1 CLATM12, Left Arm, Ammo:15
-1 CLERLargeLaser, Left Arm
+ATM 12, Left Arm
+ER Large Laser, Left Arm
 
 Left Arm:
 Shoulder
@@ -45,9 +46,9 @@ CLATM12
 CLATM12
 CLATM12
 CLERLargeLaser
-CLATM12 Ammo
-CLATM12 ER Ammo
-CLATM12 HE Ammo
+Clan Ammo ATM-12 HE
+Clan Ammo ATM-12
+Clan Ammo ATM-12 ER
 
 Right Arm:
 Shoulder
@@ -64,13 +65,13 @@ Hand Actuator
 -Empty-
 
 Left Torso:
-Engine
-Engine
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+Fusion Engine
+Fusion Engine
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -78,30 +79,30 @@ Ferro-Fibrous
 -Empty-
 
 Right Torso:
-Engine
-Engine
-CLDouble Heat Sink
-CLDouble Heat Sink
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
+Fusion Engine
+Fusion Engine
+CLDoubleHeatSink
+CLDoubleHeatSink
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-
 
 Center Torso:
-Engine
-Engine
-Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
 Gyro
 Gyro
 Gyro
 Gyro
-Engine
-Engine
-Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
 -Empty-
 -Empty-
 
@@ -112,19 +113,39 @@ Cockpit
 CLTargeting Computer
 Sensors
 Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Left Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Ferro-Fibrous
-Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Right Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo-Steel
-Endo-Steel
+Clan Endo Steel
+Clan Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

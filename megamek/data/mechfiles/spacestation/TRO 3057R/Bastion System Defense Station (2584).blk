@@ -36,6 +36,10 @@ Bastion System Defense Station
 IS Level 3
 </type>
 
+<role>
+None
+</role>
+
 <designtype>
 1
 </designtype>
@@ -333,7 +337,7 @@ Small Laser
 </structural_integrity>
 
 <source>
-TRO3057r - Star League
+TRO: 3057 Revised
 </source>
 
 <tonnage>

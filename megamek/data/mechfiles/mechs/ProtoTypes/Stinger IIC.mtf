@@ -1,12 +1,19 @@
-Version:1.0
-Stinger IIC
-
+chassis:Stinger IIC
+model:
 mul id:5135
 
 Config:Biped
 TechBase:Clan
 Era:3085
 Rules Level:4
+role:Scout
+Source:TRO: Prototypes 
+
+
+quirk:cramped_cockpit
+quirk:difficult_eject
+quirk:combat_computer
+
 
 Mass:20
 Engine:120 Fusion (Clan) Engine(IS)

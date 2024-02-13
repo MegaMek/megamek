@@ -1,13 +1,20 @@
-Version:1.0
-Lancelot
-LNC25-01X
+chassis:Lancelot
+model:LNC25-01X
 mul id:1854
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2765
-Source:TRO 3039 - Star League
+Source:TRO: 3039
 Rules Level:2
+role:Sniper
+
+
+
+quirk:anti_air
+quirk:low_profile
+quirk:bad_rep_is
+
 
 Mass:60
 Engine:360 XL Engine(IS)

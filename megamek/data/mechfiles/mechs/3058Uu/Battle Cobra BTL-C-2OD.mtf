@@ -1,13 +1,16 @@
-Version:1.0
-Battle Cobra
-BTL-C-2OD
+chassis:Battle Cobra
+model:BTL-C-2OD
 mul id:267
 
 Config:Biped Omnimech
 TechBase:Inner Sphere
 Era:3069
-Source:TRO 3058 - Jihad
+Source:TRO: 3058
 Rules Level:2
+role:Sniper
+
+quirk:ext_twist
+
 
 Mass:40
 Engine:200 Fusion Engine(IS)

@@ -1,35 +1,40 @@
-Version:1.0
-Cygnus
-4
+generator:MegaMek Suite 0.49.16-SNAPSHOT on 2023-12-29
+chassis:Cygnus
+model:4
 mul id:6843
-
 Config:Biped
-TechBase:Clan
-Era:3090
-Source:RS 3145 NT NU
-Rules Level:2
+techbase:Clan
+era:3090
+source:Record Sheets: 3145 New Tech New Upgrades
+rules level:2
+role:Juggernaut
 
-Mass:95
-Engine:380 XL (Clan) Engine(IS)
-Structure:Clan Endo Steel
-Myomer:Standard
+weaponquirk:exposed_linkage:LA:3:CLLBXAC20
+weaponquirk:static_feed:LA:3:CLLBXAC20
+weaponquirk:exposed_linkage:RA:3:CLLBXAC20
+weaponquirk:static_feed:RA:3:CLLBXAC20
 
-Heat Sinks:15 Double
-Walk MP:4
-Jump MP:0
+mass:95
+engine:380 XL (Clan) Engine(IS)
+structure:Clan Endo Steel
+myomer:Standard
 
-Armor:Standard(Clan)
-LA Armor:32
-RA Armor:32
-LT Armor:30
-RT Armor:30
-CT Armor:45
-HD Armor:9
-LL Armor:40
-RL Armor:40
-RTL Armor:10
-RTR Armor:10
-RTC Armor:15
+heat sinks:15 Clan Double
+walk mp:4
+jump mp:0
+
+armor:Standard(Clan)
+LA armor:32
+RA armor:32
+LT armor:30
+RT armor:30
+CT armor:45
+HD armor:9
+LL armor:40
+RL armor:40
+RTL armor:10
+RTR armor:10
+RTC armor:15
 
 Weapons:10
 LB 20-X AC, Left Arm

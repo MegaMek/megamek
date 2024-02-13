@@ -36,6 +36,10 @@ LT-MOB-25 (Ammunition Carriage)
 IS Level 3
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -81,7 +85,7 @@ Hitch
 </Rear Equipment>
 
 <source>
-TRO 3039 - Star League
+TRO: 3039
 </source>
 
 <tonnage>

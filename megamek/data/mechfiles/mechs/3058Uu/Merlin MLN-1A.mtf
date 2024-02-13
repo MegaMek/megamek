@@ -1,13 +1,18 @@
-Version:1.0
-Merlin
-MLN-1A
+chassis:Merlin
+model:MLN-1A
 mul id:2177
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3010
-Source:TRO 3058 - Succession Wars
+Source:TRO: 3058
 Rules Level:1
+role:Brawler
+
+
+quirk:easy_maintain
+quirk:rugged_1
+
 
 Mass:60
 Engine:240 Fusion Engine

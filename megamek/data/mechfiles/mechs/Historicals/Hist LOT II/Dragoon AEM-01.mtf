@@ -1,12 +1,24 @@
-Version:1.3
-Dragoon
-AEM-01
+chassis:Dragoon
+model:AEM-01
 mul id:6780
 Config:Biped
 techbase:Inner Sphere
 era:2771
-source:Hist LOT II
+source:Historical: Liberation of Terra II
 rules level:2
+role:Sniper
+
+
+
+
+quirk:easy_maintain
+quirk:bad_rep_clan
+quirk:bad_rep_is
+quirk:obsolete
+weaponquirk:mod_weapons:RA:2:ISERPPC
+weaponquirk:mod_weapons:RA:5:ISLBXAC10
+weaponquirk:mod_weapons:LA:2:ISLBXAC10
+
 
 mass:70
 engine:280 XL Engine(IS)

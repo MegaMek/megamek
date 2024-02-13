@@ -1,12 +1,17 @@
-Version:1.1
-Commando
-COM-7S2 (Freyr)
+chassis:Commando
+model:COM-7S2 (Freyr)
 mul id:677
 
 Config:Biped
 TechBase:Mixed (IS Chassis)
 Era:3070
 Rules Level:4
+role:Striker
+Source:XTR: Pirates
+
+quirk:low_profile
+quirk:exp_actuator
+
 
 Mass:25
 Engine:150 XL Engine (Clan)

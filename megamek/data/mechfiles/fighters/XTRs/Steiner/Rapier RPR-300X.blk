@@ -36,6 +36,10 @@ RPR-300X
 IS Level 4
 </type>
 
+<role>
+Dogfighter
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -113,7 +117,7 @@ IS Ammo Extended LRM-10
 </Fuselage Equipment>
 
 <source>
-XTRO Steiner - Jihad
+XTR: Steiner
 </source>
 
 <tonnage>

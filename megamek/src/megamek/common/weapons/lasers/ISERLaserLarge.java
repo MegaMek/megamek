@@ -29,7 +29,7 @@ public class ISERLaserLarge extends LaserWeapon {
         name = "ER Large Laser";
         setInternalName("ISERLargeLaser");
         addLookupName("IS ER Large Laser");
-        sortingName = "ER Laser D";
+        sortingName = "Laser ER D";
         heat = 12;
         damage = 8;
         shortRange = 7;

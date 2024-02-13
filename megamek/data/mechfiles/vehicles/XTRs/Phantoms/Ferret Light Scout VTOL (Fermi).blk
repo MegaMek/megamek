@@ -32,6 +32,10 @@ Ferret Light Scout VTOL
 Mixed (IS Chassis) Experimental
 </type>
 
+<role>
+Scout
+</role>
+
 <motion_type>
 VTOL
 </motion_type>
@@ -85,9 +89,15 @@ CLECMSuite
 </Rotor Equipment>
 
 <source>
-XTRO Phantoms - Jihad
+XTR: Phantoms
 </source>
 
 <tonnage>
 5.0
 </tonnage>
+
+<quirks>
+imp_sensors
+low_profile
+</quirks>
+

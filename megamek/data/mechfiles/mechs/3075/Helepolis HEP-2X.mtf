@@ -1,12 +1,18 @@
-Version:1.0
-Helepolis
-HEP-2X
+chassis:Helepolis
+model:HEP-2X
 mul id:8471
 Config:Biped
 techbase:Inner Sphere
 era:2488
-source:TRO 3075 - Age of War
+source:TRO: 3075
 rules level:3
+role:Missile Boat
+
+
+
+quirk:reinforced_legs
+quirk:stable
+
 
 mass:75
 engine:225 Fusion Engine(IS)

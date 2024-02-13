@@ -32,6 +32,10 @@ Aerie PA(L)
 Clan Level 2
 </type>
 
+<role>
+Ambusher
+</role>
+
 <motion_type>
 Jump
 </motion_type>
@@ -60,7 +64,7 @@ Clan BA Stealth (Standard):RA
 </Point Equipment>
 
 <source>
-TRO 3075 - Jihad
+TRO: 3075
 </source>
 
 <chassis>

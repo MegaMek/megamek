@@ -1,13 +1,16 @@
-Version:1.0
-Hellion
-A
+chassis:Hellion
+model:A
 mul id:4303
 
 Config:Biped Omnimech
 TechBase:Clan
 Era:3059
-Source:TRO 3067
+Source:TRO: 3067
 Rules Level:2
+role:Missile Boat
+
+quirk:weak_head_1
+
 
 Mass:30
 Engine:210 XL (Clan) Engine(IS)

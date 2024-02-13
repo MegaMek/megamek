@@ -1,13 +1,19 @@
-Version:1.1
-Pathfinder
-PFF-2
+chassis:Pathfinder
+model:PFF-2
 mul id:4790
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3075
-Source:XTRO RetroTech - Jihad
+Source:XTR: RetroTech
 Rules Level:4
+role:Scout
+
+
+
+
+quirk:imp_sensors
+
 
 Mass:25
 Engine:180 Primitive Fusion Engine

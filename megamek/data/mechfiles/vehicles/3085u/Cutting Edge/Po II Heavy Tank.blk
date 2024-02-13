@@ -32,6 +32,10 @@ Po II Heavy Tank
 IS Level 2
 </type>
 
+<role>
+Brawler
+</role>
+
 <tonnage>
 60
 </tonnage>
@@ -76,5 +80,5 @@ Machine Gun
 </Turret Equipment>
 
 <source>
-Jihad
+TRO: 3085
 </source>

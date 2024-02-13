@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -35,6 +35,10 @@ Winchester Cruiser
 <type>
 IS Level 3
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Aerodyne
@@ -185,6 +189,50 @@ Medium Laser
 75
 </structural_integrity>
 
+<capabilities>
+The Winchester-class cruisers were notable for their combination of heavy armor and high speed. They could reach a maximum acceleration of 2.5 Gs while withstanding heavy fire, making them resilient in combat. The primary firepower of the cruisers relied on naval autocannon and lasers, complemented by smaller-scale lasers and autocannon for anti-fighter defense. These cruisers also featured fighter and small craft bays capable of accommodating three support squadrons and docking collars for larger vessels. They often carried a range of attendant DropShips, including troop transports and boarding craft, manned partially by the Winchester's own complement of trained marines.
+</capabilities>
+
+<overview>
+The Winchester-class cruiser was a significant military asset for the Taurian Concordat during a time of shifting power dynamics in the Inner Sphere. Produced at the Illiushin shipyards, these cruisers showcased the Concordat's determination to strengthen its naval forces and defend against potential invasions. Known for their impressive speed and heavy armor, the Winchester-class cruisers became a source of pride for the Taurian space fleet, representing the rugged and progressive spirit of the Concordat.
+</overview>
+
+<history>
+During a period of political upheaval and the rise of more powerful Inner Sphere realms, the Taurian Concordat embarked on an arming campaign to secure its future. The construction of the Winchester-class cruisers marked the beginning of the Concordat's new fleet, serving as a symbol of their military might. Despite their impressive armor and speed, the Winchester-class cruisers became obsolete by the time the Concordat faced full-scale interstellar warfare during the Reunification War. Throughout the war, these aging cruisers were destroyed in various engagements, with the final vessels meeting their fate in the Battle of Robsart in 2581. The Winchester-class cruisers had a mixed armament, allowing them to engage both large and small targets. However, compared to later cruisers and heavier classes, their light armor and armament posed a disadvantage during the Reunification War, leading to their ultimate defeat.
+</history>
+
+<manufacturer>
+Illiushin Shipyards
+</manufacturer>
+
+<primaryFactory>
+Illiushin
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<use>
+Cruiser
+</use>
+
+<length>
+457 m
+</length>
+
+<height>
+870 m Sail
+</height>
+
+<source>
+TRO: 3057 Revised
+</source>
+
 <tonnage>
 740000.0
 </tonnage>
@@ -201,6 +249,10 @@ Medium Laser
 70
 90
 </grav_decks>
+
+<designtype>
+1
+</designtype>
 
 <crew>
 278
@@ -233,3 +285,4 @@ Medium Laser
 <escape_pod>
 30
 </escape_pod>
+

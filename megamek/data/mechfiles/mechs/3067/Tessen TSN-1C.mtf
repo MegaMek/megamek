@@ -1,13 +1,19 @@
-Version:1.0
-Tessen
-TSN-1C
+chassis:Tessen
+model:TSN-1C
 mul id:5208
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3061
 Rules Level:2
-source:TRO 3067
+role:Skirmisher
+source:TRO: 3067
+
+
+
+
+quirk:bad_rep_is
+
 
 Mass:50
 Engine:300 XL Engine

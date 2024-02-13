@@ -1,13 +1,19 @@
-Version:1.0
-Exterminator
-EXT-4C
+chassis:Exterminator
+model:EXT-4C
 mul id:4148
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2630
-Source:TRO 3050 - Star League
+Source:TRO: 3050
 Rules Level:4
+role:Skirmisher
+
+
+
+
+quirk:difficult_maintain
+
 
 Mass:65
 Engine:390 XL Engine(IS)

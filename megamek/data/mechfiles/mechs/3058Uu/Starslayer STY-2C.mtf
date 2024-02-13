@@ -1,13 +1,19 @@
-Version:1.0
-Starslayer
-STY-2C
+chassis:Starslayer
+model:STY-2C
 mul id:3048
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2772
-Source:TRO 3058 - Star League
+Source:TRO: 3058
 Rules Level:2
+role:Skirmisher
+
+
+
+
+quirk:rugged_1
+
 
 Mass:50
 Engine:250 Fusion Engine

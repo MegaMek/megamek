@@ -36,6 +36,10 @@ Interceptor
 Mixed (IS Chassis) Experimental
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -134,7 +138,7 @@ CLERMediumLaser
 </structural_integrity>
 
 <source>
-XTRO Steiner - Jihad
+XTR: Steiner
 </source>
 
 <tonnage>

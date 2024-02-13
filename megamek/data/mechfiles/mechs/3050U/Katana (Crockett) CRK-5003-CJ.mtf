@@ -1,13 +1,19 @@
-Version:1.0
-Katana (Crockett)
-CRK-5003-CJ
+chassis:Katana (Crockett)
+model:CRK-5003-CJ
 mul id:1762
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3071
-Source:TRO 3050 - Jihad
+Source:TRO: 3050
 Rules Level:2
+role:Skirmisher
+
+
+
+quirk:easy_pilot
+quirk:poor_life_support
+
 
 Mass:85
 Engine:255 Fusion Engine

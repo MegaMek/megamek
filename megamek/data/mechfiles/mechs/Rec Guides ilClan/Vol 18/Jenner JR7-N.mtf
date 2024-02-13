@@ -1,13 +1,18 @@
-Version:1.0
-Jenner
-JR7-N
+chassis:Jenner
+model:JR7-N
 mul id:8247
 
 Config:Biped
 techbase:Inner Sphere
 era:3120
-source:Rec Guide:ilClan #18 - Late Republic
+source:Rec Guide:ilClan #18
 rules level:2
+role:Striker
+
+
+
+quirk:no_arms
+
 
 mass:35
 engine:245 XL Engine(IS)

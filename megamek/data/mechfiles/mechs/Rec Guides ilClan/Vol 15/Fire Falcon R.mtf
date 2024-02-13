@@ -1,13 +1,16 @@
-Version:1.0
-Fire Falcon
-R
+chassis:Fire Falcon
+model:R
 mul id:8183
 
 Config:Biped Omnimech
 techbase:Mixed (Clan Chassis)
 era:3142
-source:Rec Guide:ilClan #15 - Dark Age
+source:Rec Guide:ilClan #15
 rules level:3
+role:Striker
+
+quirk:imp_sensors
+
 
 mass:25
 engine:200 XL (Clan) Engine

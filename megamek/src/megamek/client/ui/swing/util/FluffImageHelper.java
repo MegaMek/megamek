@@ -17,6 +17,7 @@ package megamek.client.ui.swing.util;
 import megamek.common.*;
 import megamek.common.alphaStrike.ASCardDisplayable;
 import megamek.common.annotations.Nullable;
+import megamek.common.preference.PreferenceManager;
 import megamek.common.util.fileUtils.MegaMekFile;
 
 import javax.swing.*;
@@ -43,7 +44,7 @@ public class FluffImageHelper {
     public static final String DIR_NAME_SPACESTATION = "Space Station";
     public static final String DIR_NAME_VEHICLE = "Vehicle";
     public static final String DIR_NAME_WARSHIP = "WarShip";
-    public static final String[] EXTENSIONS_FLUFF_IMAGE_FORMATS = { ".png", ".jpg", ".gif", ".PNG", ".JPG", ".GIF" };
+    public static final String[] EXTENSIONS_FLUFF_IMAGE_FORMATS = { ".PNG", ".png", ".JPG", ".JPEG", ".jpg", ".jpeg", ".GIF", ".gif" };
 
     /**
      * Get the fluff image for the specified unit, if available.
@@ -76,17 +77,21 @@ public class FluffImageHelper {
 
     /**
      * Attempt to load a fluff image by combining elements of type and name.
-     * @param unit The unit.
+     * @param entity The unit.
      * @return An image or {@code null}.
      */
-    public static @Nullable Image loadFluffImageHeuristic(final Entity unit) {
-        Image fluff = null;
-        var file = new MegaMekFile(Configuration.fluffImagesDir(), getImagePath(unit)).getFile();
-        File fluff_image_file = findFluffImage(file, unit.getModel(), unit.getChassis());
-        if (fluff_image_file != null) {
-            fluff = new ImageIcon(fluff_image_file.toString()).getImage();
+    public static @Nullable Image loadFluffImageHeuristic(final Entity entity) {
+        String userDir = PreferenceManager.getClientPreferences().getUserDir();
+        if (!userDir.isBlank()) {
+            var userDirPath = new File(userDir + "/" + Configuration.fluffImagesDir(), getImagePath(entity));
+            Image image = loadFluffImageHeuristic(userDirPath, entity.getModel(), entity.getFullChassis());
+            if (image != null) {
+                return image;
+            }
         }
-        return fluff;
+
+        var path = new MegaMekFile(Configuration.fluffImagesDir(), getImagePath(entity));
+        return loadFluffImageHeuristic(path.getFile(), entity.getModel(), entity.getChassis());
     }
 
     /**
@@ -95,13 +100,26 @@ public class FluffImageHelper {
      * @return An image or null
      */
     public static @Nullable Image loadFluffImageHeuristic(final ASCardDisplayable element) {
-        Image fluff = null;
-        var file = new MegaMekFile(Configuration.fluffImagesDir(), getImagePath(element)).getFile();
-        File fluff_image_file = findFluffImage(file, element.getModel(), element.getChassis());
-        if (fluff_image_file != null) {
-            fluff = new ImageIcon(fluff_image_file.toString()).getImage();
+        String userDir = PreferenceManager.getClientPreferences().getUserDir();
+        if (!userDir.isBlank()) {
+            var userDirPath = new File(userDir + "/" + Configuration.fluffImagesDir(), getImagePath(element));
+            Image image = loadFluffImageHeuristic(userDirPath, element.getModel(), element.getFullChassis());
+            if (image != null) {
+                return image;
+            }
         }
-        return fluff;
+
+        var path = new MegaMekFile(Configuration.fluffImagesDir(), getImagePath(element));
+        return loadFluffImageHeuristic(path.getFile(), element.getModel(), element.getFullChassis());
+    }
+
+    private static @Nullable Image loadFluffImageHeuristic(File path, String model, String chassis) {
+        File fluff_image_file = findFluffImage(path, model, chassis);
+        if (fluff_image_file != null) {
+            return new ImageIcon(fluff_image_file.toString()).getImage();
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -191,8 +209,6 @@ public class FluffImageHelper {
                 return DIR_NAME_SPACESTATION;
             case JS:
                 return DIR_NAME_JUMPSHIP;
-            case CF:
-                return DIR_NAME_CONVFIGHTER;
             case DS:
             case DA:
                 return DIR_NAME_DROPSHIP;
@@ -206,13 +222,19 @@ public class FluffImageHelper {
                 return DIR_NAME_PROTOMEK;
             case CV:
             case SV:
-                return DIR_NAME_VEHICLE;
+                if (!element.hasMovementMode("a")) {
+                    return DIR_NAME_VEHICLE;
+                } // intentional fall through
+            case CF:
+                return DIR_NAME_CONVFIGHTER;
+            case AF:
+                return DIR_NAME_FIGHTER;
             default:
                 return DIR_NAME_MECH;
         }
     }
 
-    private static String getImagePath(final Entity unit) {
+    public static String getImagePath(final Entity unit) {
         if (unit instanceof Warship) {
             return DIR_NAME_WARSHIP;
         } else if (unit instanceof SpaceStation) {

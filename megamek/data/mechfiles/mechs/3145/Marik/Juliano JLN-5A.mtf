@@ -1,12 +1,18 @@
-Version:1.3
-Juliano
-JLN-5A
+chassis:Juliano
+model:JLN-5A
 mul id:6516
 Config:Biped
 techbase:Mixed (IS Chassis)
 era:3116
-source:TRO 3145 Free Worlds League - Late Republic
+source:TRO: 3145 Free Worlds League
 rules level:2
+role:Brawler
+
+
+
+
+quirk:combat_computer
+
 
 mass:90
 engine:360 XL Engine(IS)

@@ -36,6 +36,10 @@ B
 Clan Level 4
 </type>
 
+<role>
+Striker
+</role>
+
 <motion_type>
 Quad
 </motion_type>
@@ -105,7 +109,7 @@ ProtoQuadMeleeSystem
 </Legs Equipment>
 
 <source>
-WoRS - Jihad
+Wars of Reaving
 </source>
 
 <tonnage>

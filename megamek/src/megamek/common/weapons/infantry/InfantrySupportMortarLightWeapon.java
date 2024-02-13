@@ -18,6 +18,8 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
+import megamek.common.options.GameOptions;
+import megamek.common.options.OptionsConstants;
 
 /**
  * @author Ben Grills
@@ -54,5 +56,19 @@ public class InfantrySupportMortarLightWeapon extends InfantryWeapon {
 		        .setClanApproximate(false, false, false, false, false).setTechRating(RATING_B)
 		        .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C);
 
+	}
+
+	@Override
+	public void adaptToGameOptions(GameOptions gOp) {
+		super.adaptToGameOptions(gOp);
+
+		// Indirect Fire
+		if (gOp.booleanOption(OptionsConstants.BASE_INDIRECT_FIRE)) {
+			addMode("");
+			addMode("Indirect");
+		} else {
+			removeMode("");
+			removeMode("Indirect");
+		}
 	}
 }

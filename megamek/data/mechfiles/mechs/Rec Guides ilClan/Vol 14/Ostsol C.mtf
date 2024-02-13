@@ -1,13 +1,19 @@
-Version:1.0
-Ostsol
-C
+chassis:Ostsol
+model:C
 mul id:8163
 
 Config:Biped
 techbase:Clan
 era:3145
-source:Rec Guide:ilClan #14 - Dark Age
+source:Rec Guide:ilClan #14
 rules level:3
+role:Skirmisher
+
+
+
+quirk:imp_sensors
+quirk:low_profile
+
 
 mass:60
 engine:300 Fusion (Clan) Engine(IS)

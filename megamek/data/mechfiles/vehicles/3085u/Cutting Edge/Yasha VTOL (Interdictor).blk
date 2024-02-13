@@ -36,6 +36,10 @@ Yasha VTOL
 IS Level 2
 </type>
 
+<role>
+Missile Boat
+</role>
+
 <motion_type>
 VTOL
 </motion_type>
@@ -96,7 +100,7 @@ ISArtemisIV
 </Rotor Equipment>
 
 <source>
-Dark Age
+TRO: 3085
 </source>
 
 <tonnage>

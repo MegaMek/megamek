@@ -1,13 +1,19 @@
-Version:1.1
-BattleMaster
-BLR-3M (Rogers)
+chassis:BattleMaster
+model:BLR-3M (Rogers)
 mul id:3805
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3057
-Source:OTP:Falcon Incursion - Clan Invasion
+Source:Operational Turning Points: Falcon Incursion
 Rules Level:2
+role:Brawler
+
+
+
+quirk:command_mech
+quirk:weak_head_1
+
 
 Mass:85
 Engine:340 Fusion Engine

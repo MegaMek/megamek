@@ -67,7 +67,7 @@ public final class ProtomechBay extends Bay {
         if (doors <= loadedThisTurn) {
             result = false;
         }
-        
+
         // Return our result.
         return result;
     }
@@ -96,16 +96,22 @@ public final class ProtomechBay extends Bay {
 
     @Override
     public String toString() {
-        return "ProtoMekBay:" + totalSpace + ":" + doors + ":"+ bayNumber;
+        String bayType = "ProtoMekBay";
+        return this.bayString(
+                bayType,
+                totalSpace,
+                doors,
+                bayNumber
+        );
     }
-    
+
     public static TechAdvancement techAdvancement() {
         return new TechAdvancement(TECH_BASE_CLAN).setClanAdvancement(3060, 3066, 3070)
                 .setClanApproximate(true, false, false).setTechRating(RATING_C)
                 .setAvailability(RATING_X, RATING_X, RATING_D, RATING_D)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
-    
+
     @Override
     public TechAdvancement getTechAdvancement() {
         return ProtomechBay.techAdvancement();

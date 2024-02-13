@@ -1,13 +1,18 @@
-Version:1.0
-Raptor
-RTX1-OE
+chassis:Raptor
+model:RTX1-OE
 mul id:2652
 
 Config:Biped Omnimech
 TechBase:Inner Sphere
 Era:3058
-Source:TRO 3058 - Clan Invasion
+Source:TRO: 3058
 Rules Level:2
+role:Striker
+
+
+
+quirk:easy_maintain
+
 
 Mass:25
 Engine:175 XL Engine(IS)

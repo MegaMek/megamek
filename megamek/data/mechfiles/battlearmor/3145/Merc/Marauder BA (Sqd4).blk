@@ -32,6 +32,10 @@ Marauder Battle Armor
 IS Level 2
 </type>
 
+<role>
+Ambusher
+</role>
+
 <motion_type>
 Leg
 </motion_type>
@@ -53,7 +57,7 @@ BA-Magnetic Clamp:Body
 </Squad Equipment>
 
 <source>
-TRO 3145 Mercenaries - Late Republic
+TRO: 3145 Mercenaries
 </source>
 
 <chassis>
@@ -118,3 +122,11 @@ TARGETING:Unknown
 
 <notes>
 </notes>
+
+<quirks>
+easy_maintain
+</quirks>
+
+<weaponQuirks>
+accurate:Squad:2:ISLight Recoilless Rifle
+</weaponQuirks>

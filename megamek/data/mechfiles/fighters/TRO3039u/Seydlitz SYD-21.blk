@@ -36,6 +36,10 @@ SYD-21
 IS Level 2
 </type>
 
+<role>
+Interceptor
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -94,7 +98,7 @@ Large Laser
 </Fuselage Equipment>
 
 <source>
-TRO 3039 - Age of War
+TRO: 3039
 </source>
 
 <tonnage>

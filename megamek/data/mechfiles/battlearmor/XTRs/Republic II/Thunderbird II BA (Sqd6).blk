@@ -36,6 +36,10 @@ Thunderbird II Battle Armor
 Mixed (Clan Chassis) Advanced
 </type>
 
+<role>
+Ambusher
+</role>
+
 <motion_type>
 Leg
 </motion_type>
@@ -74,7 +78,7 @@ ISDetachableWeaponPack:RA
 
 
 <source>
-XTRO Republic II - Dark Ages
+XTR: Republic II
 </source>
 
 <chassis>

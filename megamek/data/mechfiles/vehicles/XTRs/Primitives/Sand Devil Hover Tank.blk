@@ -36,6 +36,10 @@ Sand Devil Hover Tank
 IS Level 2
 </type>
 
+<role>
+Scout
+</role>
+
 <motion_type>
 Hover
 </motion_type>
@@ -99,7 +103,7 @@ Small Laser
 </armor_tech_rating>
 
 <source>
-XTRO Primitives I - Age of War
+XTR: Primitives I
 </source>
 
 <tonnage>

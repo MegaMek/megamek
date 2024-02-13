@@ -32,6 +32,10 @@ PKR-T5
 IS Level 1
 </type>
 
+<role>
+Scout
+</role>
+
 <motion_type>
 Wheeled
 </motion_type>
@@ -75,7 +79,7 @@ Flamer
 </Rear Equipment>
 
 <source>
-TRO 3039 - Star League
+TRO: 3039
 </source>
 
 <tonnage>

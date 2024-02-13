@@ -1,12 +1,16 @@
-Version:1.3
-Merlin
-MLN-1D
+chassis:Merlin
+model:MLN-1D
 mul id:9316
 Config:Biped
 techbase:Inner Sphere
 era:3090
-source:Rec Guide:ilClan #26 - Early Republic 
+source:Rec Guide:ilClan #26 
 rules level:2
+role:Sniper
+
+quirk:easy_maintain
+quirk:rugged_1
+
 
 mass:60
 engine:240 Fusion Engine(IS)

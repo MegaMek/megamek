@@ -1,13 +1,17 @@
-Version:1.2
-Gladiator (Executioner)
-C
+chassis:Gladiator
+clanname:Executioner
+model:C
 mul id:1205
 
 Config:Biped Omnimech
 TechBase:Clan
 Era:3001
-Source:TRO 3050 - Succession Wars
+Source:TRO: 3050
 Rules Level:2
+role:Missile Boat
+
+quirk:distracting
+
 
 Mass:95
 Engine:380 XL (Clan) Engine(IS)

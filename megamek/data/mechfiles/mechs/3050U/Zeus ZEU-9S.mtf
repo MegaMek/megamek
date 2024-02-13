@@ -1,13 +1,19 @@
-Version:1.0
-Zeus
-ZEU-9S
+chassis:Zeus
+model:ZEU-9S
 mul id:3644
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3048
-Source:TRO 3050 - Succession Wars
+Source:TRO: 3050
 Rules Level:2
+role:Sniper
+
+
+
+quirk:barrel_fists_ra
+quirk:easy_maintain
+
 
 Mass:80
 Engine:320 Fusion Engine

@@ -1,13 +1,18 @@
-Version:1.0
-Tian-Zong
-TNZ-N2
+chassis:Tian-Zong
+model:TNZ-N2
 mul id:6470
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3096
-Source:TRO 3145 Capellan Confederation - Early Republic
+Source:TRO: 3145 Capellan Confederation
 Rules Level:3
+role:Sniper
+
+
+
+quirk:command_mech
+
 
 Mass:75
 Engine:300 XL Engine(IS)

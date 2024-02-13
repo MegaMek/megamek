@@ -32,6 +32,10 @@ Saracen Mk II HCV
 IS Level 3
 </type>
 
+<role>
+Scout
+</role>
+
 <motion_type>
 Hover
 </motion_type>
@@ -84,7 +88,7 @@ ISMML5
 </Turret Equipment>
 
 <source>
-TRO 3145 Draconis Combine - Dark Ages
+TRO: 3145 Draconis Combine
 </source>
 
 <tonnage>

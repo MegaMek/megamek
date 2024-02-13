@@ -59,6 +59,10 @@ InfantryAssaultRifle:Body:APM
 IS Level 2
 </type>
 
+<role>
+Juggernaut
+</role>
+
 <year>
 3058
 </year>
@@ -68,7 +72,7 @@ Leg
 </motion_type>
 
 <source>
-TRO 3058U - Clan Invasion
+TRO: 3058 Upgrade
 </source>
 
 <armor_type>

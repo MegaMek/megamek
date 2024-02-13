@@ -1,13 +1,19 @@
-Version:1.0
-Hermes II
-HER-6D
+chassis:Hermes II
+model:HER-6D
 mul id:1504
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3062
-Source:TRO 3050 - Civil War
+Source:TRO: 3050
 Rules Level:2
+role:Striker
+
+
+
+quirk:easy_maintain
+quirk:imp_com
+
 
 Mass:40
 Engine:240 Fusion Engine(IS)

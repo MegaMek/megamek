@@ -1,13 +1,19 @@
-Version:1.0
-BattleMaster
-BLR-1D
+chassis:BattleMaster
+model:BLR-1D
 mul id:282
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2867
-Source:TRO 3039 - Succession Wars
+Source:TRO: 3039
 Rules Level:1
+role:Brawler
+
+
+
+quirk:command_mech
+quirk:weak_head_1
+
 
 Mass:85
 Engine:340 Fusion Engine

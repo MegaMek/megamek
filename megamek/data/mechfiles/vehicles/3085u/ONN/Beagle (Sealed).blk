@@ -32,6 +32,10 @@ Beagle Hover Scout
 IS Level 3
 </type>
 
+<role>
+Scout
+</role>
+
 <tonnage>
 15
 </tonnage>
@@ -69,5 +73,5 @@ ISC3iUnit
 </Turret Equipment>
 
 <source>
-Jihad
+TRO: 3085
 </source>

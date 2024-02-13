@@ -1,13 +1,17 @@
-Version:1.1
-Turkina
-Prime
+chassis:Turkina
+model:Prime
 mul id:3332
 
 Config:Biped Omnimech
 TechBase:Clan
 Era:3052
-source:TRO Clan Invasion - Clan Invasion
+source:TRO: Clan Invasion
 Rules Level:2
+role:Sniper
+
+
+quirk:easy_pilot
+
 
 Mass:95
 Engine:285 XL (Clan) Engine(IS)

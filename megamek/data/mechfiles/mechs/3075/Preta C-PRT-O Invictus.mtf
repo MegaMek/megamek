@@ -1,13 +1,23 @@
-Version:1.1
-Preta
-C-PRT-O Invictus
+chassis:Preta
+model:C-PRT-O Invictus
 mul id:2573
 
 Config:Biped Omnimech
 TechBase:Inner Sphere
 Era:3069
-Source:TRO 3075
+Source:TRO: 3075
 Rules Level:2
+role:Skirmisher
+
+
+
+
+quirk:imp_com
+quirk:imp_sensors
+quirk:bad_rep_clan
+quirk:bad_rep_is
+quirk:exp_actuator
+
 
 Mass:45
 Engine:270 Light Engine(IS)

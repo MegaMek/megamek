@@ -1,13 +1,16 @@
-Version:1.1
-Coyotl
-D
+chassis:Coyotl
+model:D
 mul id:7608
 
 Config:Biped Omnimech
 techbase:Clan
 era:3149
-source:TRO:GC - Dark Age
+source:TRO: Golden Century
 rules level:2
+role:Striker
+
+quirk:ext_twist
+
 
 mass:40
 engine:280 XL (Clan) Engine(IS)

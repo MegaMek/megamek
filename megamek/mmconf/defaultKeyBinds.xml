@@ -218,9 +218,9 @@
     </KeyBind>
 
     <KeyBind>
-         <command>doneNoAction</command> <!-- Ctrl+Alt-Enter -->
+         <command>doneNoAction</command> <!-- Ctrl+Shift-Enter -->
         <keyCode>10</keyCode>
-        <modifier>640</modifier>
+        <modifier>192</modifier>
         <isRepeatable>false</isRepeatable>
     </KeyBind>
 
@@ -372,6 +372,13 @@
     </KeyBind>
 
     <KeyBind>
+         <command>toggleTurnDetails</command> <!-- Ctrl-T -->
+        <keyCode>84</keyCode>
+        <modifier>128</modifier>
+        <isRepeatable>false</isRepeatable>
+    </KeyBind>
+
+    <KeyBind>
          <command>clientSettings</command> <!-- Alt-C -->
         <keyCode>67</keyCode>
         <modifier>512</modifier>
@@ -451,6 +458,34 @@
     <KeyBind>
          <command>viewModEnvelope</command> <!-- Ctrl-W -->
         <keyCode>87</keyCode>
+        <modifier>128</modifier>
+        <isRepeatable>false</isRepeatable>
+    </KeyBind>
+
+    <KeyBind>
+         <command>sensorRange</command> <!-- C -->
+        <keyCode>67</keyCode>
+        <modifier>0</modifier>
+        <isRepeatable>false</isRepeatable>
+    </KeyBind>
+
+    <KeyBind>
+         <command>undoSingleStep</command> <!-- Ctrl-Backspace -->
+        <keyCode>8</keyCode>
+        <modifier>128</modifier>
+        <isRepeatable>false</isRepeatable>
+    </KeyBind>
+
+    <KeyBind>
+         <command>toggleForceDisplay</command> <!-- Ctrl-F -->
+        <keyCode>70</keyCode>
+        <modifier>128</modifier>
+        <isRepeatable>false</isRepeatable>
+    </KeyBind>
+
+    <KeyBind>
+         <command>extendTurnTimer</command> <!-- Ctrl-F4 -->
+        <keyCode>115</keyCode>
         <modifier>128</modifier>
         <isRepeatable>false</isRepeatable>
     </KeyBind>

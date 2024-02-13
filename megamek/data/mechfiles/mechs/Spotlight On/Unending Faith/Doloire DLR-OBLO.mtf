@@ -1,13 +1,19 @@
-Version:1.0
-Doloire
-DLR-OBLO
+chassis:Doloire
+model:DLR-OBLO
 mul id:7636
 
 Config:Biped Omnimech
 TechBase:Mixed (IS Chassis)
 Era:3140
-Source:SO: Unending Faith - Late Republic
+Source:Spotlight On: Unending Faith
 Rules Level:4
+role:Brawler
+
+
+
+quirk:multi_trac
+quirk:command_mech
+
 
 Mass:80
 Engine:320 XL (Clan) Engine

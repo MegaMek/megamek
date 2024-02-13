@@ -85,7 +85,8 @@ class LobbyMekCellFormatter {
         GameOptions options = game.getOptions();
         Player localPlayer = client.getLocalPlayer();
         Player owner = entity.getOwner();
-        boolean hideEntity = owner.isEnemyOf(localPlayer)
+        boolean localGM = localPlayer.isGameMaster();
+        boolean hideEntity = !localGM && owner.isEnemyOf(localPlayer)
                 && options.booleanOption(OptionsConstants.BASE_BLIND_DROP);
         if (hideEntity) {
             result.append(DOT_SPACER);
@@ -163,11 +164,9 @@ class LobbyMekCellFormatter {
         result.append("</FONT>");
 
         // Alpha Strike Unit Role
-        if (ASConverter.canConvert(entity)) {
-            FlexibleCalculationReport report = new FlexibleCalculationReport();
-            AlphaStrikeElement element = ASConverter.convert(entity, false, report);
+        if (!entity.isUnitGroup()) {
             result.append(DOT_SPACER);
-            result.append(element.getRole());
+            result.append(entity.getRole().toString());
         }
         
         // Invalid Design
@@ -185,7 +184,7 @@ class LobbyMekCellFormatter {
             if (entity.isShutDown()) {
                 result.append(DOT_SPACER);
                 result.append(guiScaledFontHTML(GUIP.getWarningColor()));
-                result.append("\u23FC ").append(Messages.getString("ChatLounge.shutdown"));
+                result.append(WARNING_SIGN).append(Messages.getString("ChatLounge.shutdown"));
                 result.append("</FONT>");
             }
         }
@@ -231,6 +230,7 @@ class LobbyMekCellFormatter {
             if (pilot.countOptions() > 0) {
                 result.append(DOT_SPACER + guiScaledFontHTML(uiQuirksColor()));
                 result.append(Messages.getString("ChatLounge.abilities"));
+                result.append("</FONT>");
             }
 
             // Owner
@@ -264,6 +264,16 @@ class LobbyMekCellFormatter {
             }
             String msg_start = Messages.getString("ChatLounge.Start");
             result.append(" " + msg_start + ":" + IStartingPositions.START_LOCATION_NAMES[sp]);
+            if (sp == 0) {
+                int NWx = entity.getStartingAnyNWx() + 1;
+                int NWy = entity.getStartingAnyNWy() + 1;
+                int SEx = entity.getStartingAnySEx() + 1;
+                int SEy = entity.getStartingAnySEy() + 1;
+                int hexes = (1 + SEx - NWx) * (1 + SEy - NWy);
+                if ((NWx + NWy + SEx + SEy) > 0) {
+                    result.append(" (" + NWx + ", " + NWy + ")-(" + SEx + ", " + SEy + ") (" + hexes + ")");
+                }
+            }
             int so = entity.getStartingOffset(true);
             int sw = entity.getStartingWidth(true);
             if ((so != 0) || (sw != 3)) {
@@ -485,7 +495,8 @@ class LobbyMekCellFormatter {
         GameOptions options = game.getOptions();
         Player localPlayer = client.getLocalPlayer();
         Player owner = entity.getOwner();
-        boolean hideEntity = owner.isEnemyOf(localPlayer)
+        boolean localGM = localPlayer.isGameMaster();
+        boolean hideEntity = !localGM && owner.isEnemyOf(localPlayer)
                 && options.booleanOption(OptionsConstants.BASE_BLIND_DROP);
         if (hideEntity) {
             String value = "<HTML><NOBR>&nbsp;&nbsp;";

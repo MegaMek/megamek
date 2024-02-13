@@ -32,6 +32,10 @@ Ravager Assault Battle Armor
 IS Level 2
 </type>
 
+<role>
+Missile Boat
+</role>
+
 <motion_type>
 Leg
 </motion_type>
@@ -62,7 +66,7 @@ IS BA Advanced:LA
 </Squad Equipment>
 
 <source>
-RS3145 NT NU - Late Republic
+Record Sheets: 3145 New Tech New Upgrades
 </source>
 
 <chassis>

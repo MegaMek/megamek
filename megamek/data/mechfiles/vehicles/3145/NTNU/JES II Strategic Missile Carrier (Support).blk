@@ -32,6 +32,10 @@ JES II Strategic Missile Carrier
 IS Level 2
 </type>
 
+<role>
+Missile Boat
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -89,7 +93,7 @@ ISArtemisIV
 </Rear Equipment>
 
 <source>
-RS 3145 NT NU
+Record Sheets: 3145 New Tech New Upgrades
 </source>
 
 <tonnage>

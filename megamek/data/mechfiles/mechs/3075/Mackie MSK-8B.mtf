@@ -1,13 +1,21 @@
-Version:1.0
-Mackie
-MSK-8B
+chassis:Mackie
+model:MSK-8B
 mul id:1974
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2576
-Source:TRO 3075
+source:TRO: 3075
 Rules Level:2
+role:Juggernaut
+
+
+
+quirk:easy_maintain
+quirk:pro_actuator
+quirk:rugged_1
+quirk:oversized
+
 
 Mass:100
 Engine:300 Fusion Engine

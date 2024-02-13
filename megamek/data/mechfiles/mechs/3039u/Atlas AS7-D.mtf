@@ -1,13 +1,19 @@
-Version:1.0
-Atlas
-AS7-D
+chassis:Atlas
+model:AS7-D
 mul id:140
 
 Config:Biped
 techbase:Inner Sphere
 era:2755
-source:TRO 3039 - Star League
+source:TRO: 3039
 rules level:1
+role:Juggernaut
+
+quirk:battle_fists_la
+quirk:battle_fists_ra
+quirk:command_mech
+quirk:distracting
+quirk:imp_com
 
 mass:100
 engine:300 Fusion Engine(IS)

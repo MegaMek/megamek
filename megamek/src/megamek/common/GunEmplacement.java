@@ -15,12 +15,9 @@
 package megamek.common;
 
 import megamek.client.ui.swing.calculationReport.CalculationReport;
-import megamek.common.battlevalue.GunEmplacementBVCalculator;
 import megamek.common.cost.CostCalculator;
 import megamek.common.enums.AimingMode;
 import org.apache.logging.log4j.LogManager;
-
-import java.util.Vector;
 
 /**
  * A building with weapons fitted and, optionally, a turret.
@@ -37,9 +34,9 @@ public class GunEmplacement extends Tank {
 
     public static final String[] HIT_LOCATION_NAMES = { "guns" };
 
-    private static int[] CRITICAL_SLOTS = new int[] { 0 };
-    private static String[] LOCATION_ABBRS = { "GUN" };
-    private static String[] LOCATION_NAMES = { "GUNS" };
+    private static final int[] CRITICAL_SLOTS = new int[] { 0 };
+    private static final String[] LOCATION_ABBRS = { "GUN" };
+    private static final String[] LOCATION_NAMES = { "GUNS" };
         
     private static final TechAdvancement TA_GUN_EMPLACEMENT = new TechAdvancement(TECH_BASE_ALL)
             .setAdvancement(DATE_PS, DATE_PS, DATE_PS)
@@ -115,8 +112,23 @@ public class GunEmplacement extends Tank {
     }
 
     @Override
-    public int getWalkMP(boolean gravity, boolean ignoreHeat) {
-        return 0;
+    public int getWalkMP(MPCalculationSetting mpCalculationSetting) {
+        return 0; // Overridden for performance and to keep it from being made non-zero by any rule
+    }
+
+    @Override
+    public int getRunMP(MPCalculationSetting mpCalculationSetting) {
+        return 0; // Overridden for performance and to keep it from being made non-zero by any rule
+    }
+
+    @Override
+    public int getSprintMP(MPCalculationSetting mpCalculationSetting) {
+        return 0; // Overridden for performance and to keep it from being made non-zero by any rule
+    }
+
+    @Override
+    public int getJumpMP(MPCalculationSetting mpCalculationSetting) {
+        return 0; // Overridden for performance and to keep it from being made non-zero by any rule
     }
 
     @Override
@@ -132,11 +144,6 @@ public class GunEmplacement extends Tank {
     @Override
     public int locations() {
         return 1;
-    }
-
-    @Override
-    public boolean hasRearArmor(int loc) {
-        return false;
     }
 
     @Override
@@ -168,79 +175,14 @@ public class GunEmplacement extends Tank {
         return new HitData(LOC_GUNS, false, HitData.EFFECT_NONE);
     }
 
-    /**
-     * Gets the location that excess damage transfers to
-     */
-    @Override
-    public HitData getTransferLocation(HitData hit) {
-        return new HitData(LOC_DESTROYED);
-    }
-
-    /**
-     * Gets the location that is destroyed recursively
-     */
-    @Override
-    public int getDependentLocation(int loc) {
-        return LOC_NONE;
-    }
-
-    @Override
-    public int doBattleValueCalculation(boolean ignoreC3, boolean ignoreSkill, CalculationReport calculationReport) {
-        return GunEmplacementBVCalculator.calculateBV(this, ignoreC3, ignoreSkill, calculationReport);
-    }
-
     @Override
     public PilotingRollData addEntityBonuses(PilotingRollData prd) {
         return prd;
     }
 
     @Override
-    public Vector<Report> victoryReport() {
-        Vector<Report> vDesc = new Vector<>();
-
-        Report r = new Report(7025);
-        r.type = Report.PUBLIC;
-        r.addDesc(this);
-        vDesc.addElement(r);
-
-        r = new Report(7035);
-        r.type = Report.PUBLIC;
-        r.newlines = 0;
-        vDesc.addElement(r);
-        vDesc.addAll(getCrew().getDescVector(false));
-        r = new Report(7070, Report.PUBLIC);
-        r.add(getKillNumber());
-        vDesc.addElement(r);
-
-        if (isDestroyed()) {
-            Entity killer = game.getEntity(killerId);
-            if (killer == null) {
-                killer = game.getOutOfGameEntity(killerId);
-            }
-            if (killer != null) {
-                r = new Report(7072, Report.PUBLIC);
-                r.addDesc(killer);
-            } else {
-                r = new Report(7073, Report.PUBLIC);
-            }
-            vDesc.addElement(r);
-        } else if (getCrew().isEjected()) {
-            r = new Report(7071, Report.PUBLIC);
-            vDesc.addElement(r);
-        }
-        r.newlines = 2;
-
-        return vDesc;
-    }
-
-    @Override
     public int[] getNoOfSlots() {
         return CRITICAL_SLOTS;
-    }
-
-    @Override
-    public int getRunMPwithoutMASC(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
-        return 0;
     }
 
     @Override
@@ -251,11 +193,6 @@ public class GunEmplacement extends Tank {
     @Override
     public int getHeatCapacityWithWater() {
         return getHeatCapacity();
-    }
-
-    @Override
-    public int getEngineCritHeat() {
-        return 0;
     }
 
     @Override
@@ -284,17 +221,7 @@ public class GunEmplacement extends Tank {
     }
 
     @Override
-    public boolean canDFA() {
-        return false;
-    }
-
-    @Override
     public boolean canFlee() {
-        return false;
-    }
-
-    @Override
-    public boolean canFlipArms() {
         return false;
     }
 
@@ -315,33 +242,8 @@ public class GunEmplacement extends Tank {
     }
 
     @Override
-    public boolean doomedInExtremeTemp() {
-        return false;
-    }
-
-    @Override
     public boolean doomedInVacuum() {
         return false;
-    }
-
-    @Override
-    public boolean doomedOnGround() {
-        return false;
-    }
-
-    @Override
-    public boolean doomedInAtmosphere() {
-        return true;
-    }
-
-    @Override
-    public boolean doomedInSpace() {
-        return true;
-    }
-
-    @Override
-    public boolean isNuclearHardened() {
-        return true;
     }
 
     @Override
@@ -352,10 +254,6 @@ public class GunEmplacement extends Tank {
         addCritical(loc, new CriticalSlot(mounted));
     }
 
-    /*
-     * (non-Javadoc)
-     * @see megamek.common.Entity#getTotalCommGearTons()
-     */
     @Override
     public int getTotalCommGearTons() {
         return getExtraCommGearTons();
@@ -428,6 +326,11 @@ public class GunEmplacement extends Tank {
         // this is a hack to get around the fact that gun emplacements don't even have armor
         return 0;
     }
+
+    @Override
+    public int getArmorTechLevel(int loc) {
+        return TechConstants.T_INTRO_BOXSET;
+    }
     
     @Override
     public boolean hasStealth() {
@@ -457,9 +360,6 @@ public class GunEmplacement extends Tank {
         initialBuildingCF = initialBuildingArmor = 0;
     }
     
-    /**
-     * How much more damage, percentage-wise, the gun emplacement's building can take
-     */
     @Override
     public double getArmorRemainingPercent() {
         if (getPosition() == null) {
@@ -483,7 +383,7 @@ public class GunEmplacement extends Tank {
      */
     @Override
     public int getDamagedCriticals(int type, int index, int loc) {
-        Mounted m = null;
+        Mounted m;
         if (type == CriticalSlot.TYPE_EQUIPMENT) {
             m = getEquipment(index);
             

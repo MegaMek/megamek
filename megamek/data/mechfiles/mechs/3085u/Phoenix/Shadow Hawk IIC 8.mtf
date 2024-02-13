@@ -1,13 +1,18 @@
-Version:1.0
-Shadow Hawk IIC
-8
+chassis:Shadow Hawk IIC
+model:8
 mul id:2918
 
 Config:Biped
 TechBase:Clan
 Era:3081
-Source:Dark Age
+source:TRO: 3085
 Rules Level:2
+role:Missile Boat
+
+quirk:battle_fists_la
+quirk:battle_fists_ra
+quirk:imp_life_support
+
 
 Mass:45
 Engine:270 XL (Clan) Engine

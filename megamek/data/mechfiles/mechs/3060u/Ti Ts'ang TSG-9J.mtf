@@ -1,13 +1,18 @@
-Version:1.0
-Ti Ts'ang
-TSG-9J
+chassis:Ti Ts'ang
+model:TSG-9J
 mul id:3255
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3060
-Source:TRO 3060
+Source:TRO: 3060
 Rules Level:2
+role:Skirmisher
+
+
+
+quirk:hyper_actuator
+
 
 Mass:60
 Engine:360 XL Engine

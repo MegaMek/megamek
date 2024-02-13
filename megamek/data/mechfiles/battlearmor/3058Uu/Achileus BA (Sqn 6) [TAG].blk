@@ -36,6 +36,10 @@ Achileus Light Battle Armor
 IS Level 3
 </type>
 
+<role>
+Ambusher
+</role>
+
 <motion_type>
 Jump
 </motion_type>
@@ -115,7 +119,7 @@ Gibson,Irian,Washburn
 </primaryFactory>
 
 <source>
-TRO 3058U - Civil War
+TRO: 3058 Upgrade
 </source>
 
 <chassis>

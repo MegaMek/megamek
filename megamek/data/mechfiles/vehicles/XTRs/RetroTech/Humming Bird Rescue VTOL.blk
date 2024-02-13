@@ -36,6 +36,10 @@ Humming Bird VTOL
 IS Level 4
 </type>
 
+<role>
+Scout
+</role>
+
 <motion_type>
 VTOL
 </motion_type>
@@ -90,7 +94,7 @@ Lift Hoist/Arresting Hoist
 </structural_tech_rating>
 
 <source>
-XTRO RetroTech - Jihad
+XTR: RetroTech
 </source>
 
 <tonnage>

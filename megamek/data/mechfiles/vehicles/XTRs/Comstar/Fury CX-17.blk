@@ -32,6 +32,10 @@ CX-17
 IS Level 4
 </type>
 
+<role>
+Sniper
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -86,9 +90,16 @@ ISLBXAC5
 </Turret Equipment>
 
 <source>
-XTRO ComStar - Clan Invasion
+XTR: ComStar
 </source>
 
 <tonnage>
 80.0
 </tonnage>
+
+<quirks>
+prototype
+anti_air
+trailer_hitch
+</quirks>
+

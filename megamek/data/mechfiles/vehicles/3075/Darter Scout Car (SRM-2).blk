@@ -45,11 +45,15 @@ IS Machine Gun Ammo
 <type>
 IS
 </type>
+
+<role>
+Scout
+</role>
 <year>
 2835
 </year>
 <source>
-Succession Wars
+TRO: 3075
 </source>
 <internal_type>
 0

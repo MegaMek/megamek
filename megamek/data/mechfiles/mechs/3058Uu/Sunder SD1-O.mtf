@@ -1,36 +1,41 @@
-Version:1.0
-Sunder
-SD1-O
+chassis:Sunder
+model:SD1-O
 mul id:3123
-
 Config:Biped Omnimech
-TechBase:Inner Sphere
-Era:3056
-Source:TRO 3058 - Clan Invasion
-Rules Level:2
+techbase:Inner Sphere
+era:3056
+source:TRO: 3058
+rules level:2
+role:Brawler
 
-Mass:90
-Engine:360 XL Engine(IS)
-Structure:IS Standard
-Myomer:Standard
 
-Heat Sinks:15 Double
-Base Chassis Heat Sinks:14
-Walk MP:4
-Jump MP:0
 
-Armor:Standard(Inner Sphere)
-LA Armor:30
-RA Armor:30
-LT Armor:28
-RT Armor:28
-CT Armor:41
-HD Armor:9
-LL Armor:33
-RL Armor:33
-RTL Armor:10
-RTR Armor:10
-RTC Armor:12
+
+quirk:ext_twist
+
+
+mass:90
+engine:360 XL Engine(IS)
+structure:IS Standard
+myomer:Standard
+
+heat sinks:15 IS Double
+base chassis heat sinks:14
+walk mp:4
+jump mp:0
+
+armor:Standard(Inner Sphere)
+LA armor:30
+RA armor:30
+LT armor:28
+RT armor:28
+CT armor:41
+HD armor:9
+LL armor:33
+RL armor:33
+RTL armor:10
+RTR armor:10
+RTC armor:12
 
 Weapons:8
 AC/20, Left Arm
@@ -45,16 +50,16 @@ SRM 4, Head
 Left Arm:
 Shoulder
 Upper Arm Actuator
-Autocannon/20 (omnipod)
-Autocannon/20 (omnipod)
-Autocannon/20 (omnipod)
-Autocannon/20 (omnipod)
-Autocannon/20 (omnipod)
-Autocannon/20 (omnipod)
-Autocannon/20 (omnipod)
-Autocannon/20 (omnipod)
-Autocannon/20 (omnipod)
-Autocannon/20 (omnipod)
+Autocannon/20 (OMNIPOD)
+Autocannon/20 (OMNIPOD)
+Autocannon/20 (OMNIPOD)
+Autocannon/20 (OMNIPOD)
+Autocannon/20 (OMNIPOD)
+Autocannon/20 (OMNIPOD)
+Autocannon/20 (OMNIPOD)
+Autocannon/20 (OMNIPOD)
+Autocannon/20 (OMNIPOD)
+Autocannon/20 (OMNIPOD)
 
 Right Arm:
 Shoulder
@@ -63,10 +68,10 @@ Lower Arm Actuator
 ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
-Large Laser (omnipod)
-Large Laser (omnipod)
-Large Laser (omnipod)
-Large Laser (omnipod)
+Large Laser (OMNIPOD)
+Large Laser (OMNIPOD)
+Large Laser (OMNIPOD)
+Large Laser (OMNIPOD)
 -Empty-
 -Empty-
 
@@ -74,9 +79,9 @@ Left Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Medium Laser (omnipod)
-IS Ammo AC/20 (omnipod)
-IS Ammo SRM-4 (omnipod)
+Medium Laser (OMNIPOD)
+IS Ammo AC/20 (OMNIPOD)
+IS Ammo SRM-4 (OMNIPOD)
 -Empty-
 -Empty-
 -Empty-
@@ -88,9 +93,9 @@ Right Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Medium Laser (omnipod)
-IS Ammo AC/20 (omnipod)
-IS Ammo SRM-4 (omnipod)
+Medium Laser (OMNIPOD)
+IS Ammo AC/20 (OMNIPOD)
+IS Ammo SRM-4 (OMNIPOD)
 -Empty-
 -Empty-
 -Empty-
@@ -109,14 +114,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-SRM 4 (omnipod)
-SRM 4 (omnipod)
+SRM 4 (OMNIPOD)
+SRM 4 (OMNIPOD)
 
 Head:
 Life Support
 Sensors
 Cockpit
-SRM 4 (omnipod)
+SRM 4 (OMNIPOD)
 Sensors
 Life Support
 -Empty-
@@ -154,4 +159,19 @@ Foot Actuator
 -Empty-
 -Empty-
 
+overview:The Sunder OmniMech is a product of the Draconis Combine's initiative to reengineer captured Clan Loki and Thor chassis for similar roles. Though initially plagued by actuator wear and missile exhaust issues, it was not until late 3056 that the Sunder was deployed widely.
+
+capabilities:This ninety-ton behemoth is powered by a Hermes 360 XL engine, enabling a top speed of 65 km/h, which is respectable for its weight class. The Sunder is armored with sixteen and a half tons of protection and equipped with fifteen double heat sinks to manage the heat load from its diverse weaponry. The Sunder can carry up to 36 tons of pod-mounted equipment. Despite its slower speed and the quality difference between Inner Sphere and Clan technology, the Sunder performs its intended roles marginally well.
+
+deployment:The Prime Configuration shines in short to mid-range skirmishes, where its Autocannon/20 can deliver devastating damage to enemy armor, followed up by precise strikes from the Medium Lasers and SRM-4 launchers to exploit armor breaches. The Large Lasers provide a decent long-range punch, keeping adversaries at bay as the Sunder maneuvers for a closer engagement.
+
+history:<p>Sunders were key players in Operation Bulldog, particularly along the Clan border. Their 36-ton pod space, utilized to peak efficiency, allowed them to compete favorably with Clan Masakari and Gladiator OmniMechs. Many Sunders were also equipped as lance or company C3 nodes, significantly enhancing DCMS units' performance. They continued to prove their worth in subsequent conflicts like the Lyons Thumb incident and the Ghost Bear War, showcasing the strategic advantages of OmniMech technology in protracted engagements. Noteworthy engagements and MechWarriors have contributed to the Sunder's reputation.</p> <p>During Operation Bulldog, a commander of the Fourth Pesht Regulars distinguished himself against Nova Cat opponents, later earning renown on Kiamba by challenging a Second Bear Regulars Trinary's Star Captain to single combat, thereby allowing his unit to regroup. Another MechWarrior known as 'the Scourge of Addicks' gained repute for her unique configurations specializing in anti-infantry warfare, employing flamers, machine guns, and Inferno SRM launchers. These historical narratives underline the Sunder's versatility and the valor of its pilots in various combat scenarios. The production of this OmniMech in the Draconis Combine was halted due to the destruction of the Luthien Armor Works factory by Word of Blake forces in 3068.</p>
+
+manufacturer:StarCorps Industries, StarCorps Industries, Luthien Armor Works,StarCorps Industries,StarCorps Industries
+primaryfactory:Crofton,Loburg,Luthien,Son Hoa,St. Ives
+systemmanufacturer:CHASSIS:Alshain Class 98 Omni
+systemmanufacturer:ENGINE:Hermes 360 XL
+systemmanufacturer:ARMOR:Mitchell Argon
+systemmanufacturer:COMMUNICATIONS:Sipher Security Plus
+systemmanufacturer:TARGETING:Matabushi Sentinel
 

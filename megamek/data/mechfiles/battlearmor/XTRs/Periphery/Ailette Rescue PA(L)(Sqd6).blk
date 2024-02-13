@@ -32,6 +32,10 @@ Ailette Rescue PA(L)
 IS Level 4
 </type>
 
+<role>
+Ambusher
+</role>
+
 <motion_type>
 Jump
 </motion_type>
@@ -59,7 +63,7 @@ InfantryAssaultRifle:RA:APM
 </Squad Equipment>
 
 <source>
-XTRO Periphery - Jihad
+XTR: Periphery
 </source>
 
 <chassis>
@@ -105,3 +109,9 @@ Federated-Boeing Interstellar,Taurus Territorial Industries
 <primaryFactory>
 Galax,Sterope
 </primaryFactory>
+
+<quirks>
+prototype
+easy_pilot
+</quirks>
+

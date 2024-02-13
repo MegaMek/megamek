@@ -1,13 +1,23 @@
-Version:1.0
-Shadow Hawk
-SHD-4H
+chassis:Shadow Hawk
+model:SHD-4H
 mul id:7785
 
 Config:Biped
 techbase:Inner Sphere
 era:3101
-source:Rec Guide:ilClan #12 - Early Republic
+source:Rec Guide:ilClan #12
 rules level:2
+role:Sniper
+
+
+
+quirk:battle_fists_la
+quirk:battle_fists_ra
+quirk:imp_life_support
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+quirk:rugged_1
+
 
 mass:55
 engine:275 Fusion Engine(IS)

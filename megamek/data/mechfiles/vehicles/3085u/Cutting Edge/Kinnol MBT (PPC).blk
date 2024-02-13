@@ -54,6 +54,10 @@ ISC3SlaveUnit
 <type>
 IS Level 2
 </type>
+
+<role>
+Skirmisher
+</role>
 <year>
 3086
 </year>
@@ -70,5 +74,5 @@ IS Level 2
 Tracked
 </motion_type>
 <source>
-Dark Age
+TRO: 3085
 </source>

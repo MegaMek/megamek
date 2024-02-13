@@ -32,6 +32,10 @@ Rhino Fire Support Tank
 IS Level 4
 </type>
 
+<role>
+Missile Boat
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -85,9 +89,16 @@ Medium Laser
 </Front Turret Equipment>
 
 <source>
-XTRO Gunslingers - Star League
+XTR: Gunslingers
 </source>
 
 <tonnage>
 80.0
 </tonnage>
+
+<quirks>
+non_standard
+trailer_hitch
+obsolete
+</quirks>
+

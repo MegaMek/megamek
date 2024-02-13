@@ -36,6 +36,10 @@ C
 Clan Level 2
 </type>
 
+<role>
+Ambusher
+</role>
+
 <motion_type>
 Wheeled
 </motion_type>
@@ -122,7 +126,7 @@ TARGETING:Scantrex Dual Tac
 </systemManufacturers>
 
 <source>
-Rec Guide:ilClan #29 - Late Republic
+Rec Guide:ilClan #29
 </source>
 
 <tonnage>
@@ -132,4 +136,11 @@ Rec Guide:ilClan #29 - Late Republic
 <fuelType>
 PETROCHEMICALS
 </fuelType>
+
+
+<quirks>
+low_profile
+bad_rep_is
+poor_work
+</quirks>
 

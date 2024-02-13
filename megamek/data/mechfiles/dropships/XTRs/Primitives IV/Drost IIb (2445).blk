@@ -36,6 +36,10 @@ DroST IIb Transport
 IS Level 4
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -202,7 +206,7 @@ Cargo Transport
 </height>
 
 <source>
-XTRO Primitives IV - Age of War
+XTR: Primitives IV
 </source>
 
 <tonnage>
@@ -248,4 +252,12 @@ XTRO Primitives IV - Age of War
 <escape_pod>
 1
 </escape_pod>
+
+
+<quirks>
+atmo_instability
+docking_arms
+easy_maintain
+obsolete
+</quirks>
 

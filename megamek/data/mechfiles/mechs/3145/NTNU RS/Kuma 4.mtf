@@ -1,39 +1,42 @@
-Version:1.0
-Kuma
-4
+generator:MegaMek Suite 0.49.16-SNAPSHOT on 2023-12-29
+chassis:Kuma
+model:4
 mul id:6888
-
 Config:Biped
-TechBase:Clan
-Era:3141
-Source:RS 3145 NT NU
-Rules Level:3
+techbase:Clan
+era:3141
+source:Record Sheets: 3145 New Tech New Upgrades
+rules level:3
+role:Skirmisher
 
-Mass:60
-Engine:360 XL (Clan) Engine(IS)
-Structure:Clan Endo Steel
-Myomer:Standard
+quirk:hard_pilot
+weaponquirk:accurate:HD:3:CLERLargeLaser
 
-Heat Sinks:11 Double
-Walk MP:6
-Jump MP:6
+mass:60
+engine:360 XL (Clan) Engine(IS)
+structure:Clan Endo Steel
+myomer:Standard
 
-Armor:Ferro-Fibrous(Clan)
-LA Armor:20
-RA Armor:20
-LT Armor:20
-RT Armor:20
-CT Armor:30
-HD Armor:9
-LL Armor:28
-RL Armor:28
-RTL Armor:8
-RTR Armor:8
-RTC Armor:10
+heat sinks:11 Clan Double
+walk mp:6
+jump mp:6
+
+armor:Ferro-Fibrous(Clan)
+LA armor:20
+RA armor:20
+LT armor:20
+RT armor:20
+CT armor:30
+HD armor:9
+LL armor:28
+RL armor:28
+RTL armor:8
+RTR armor:8
+RTC armor:10
 
 Weapons:3
-ER Medium Laser, Right Leg
 ER Medium Laser, Left Leg
+ER Medium Laser, Right Leg
 ER Large Laser, Head
 
 Left Arm:
@@ -41,7 +44,7 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-HarJel II Self-Repair System
+HarJel Repair Systems (HarJel II)
 Clan Endo Steel
 Clan Endo Steel
 Clan Endo Steel
@@ -55,7 +58,7 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-HarJel II Self-Repair System
+HarJel Repair Systems (HarJel II)
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
@@ -70,7 +73,7 @@ Fusion Engine
 Jump Jet
 Jump Jet
 Jump Jet
-HarJel II Self-Repair System
+HarJel Repair Systems (HarJel II)
 Clan Endo Steel
 Clan Endo Steel
 Clan Endo Steel
@@ -84,7 +87,7 @@ Fusion Engine
 Jump Jet
 Jump Jet
 Jump Jet
-HarJel II Self-Repair System
+HarJel Repair Systems (HarJel II)
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
@@ -103,7 +106,7 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-HarJel II Self-Repair System
+HarJel Repair Systems (HarJel II)
 -Empty-
 
 Head:

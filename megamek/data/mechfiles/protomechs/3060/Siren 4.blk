@@ -36,6 +36,10 @@ Siren
 Clan Level 2
 </type>
 
+<role>
+Scout
+</role>
+
 <motion_type>
 Biped
 </motion_type>
@@ -88,7 +92,7 @@ CLERMicroLaser
 </Legs Equipment>
 
 <source>
-TRO 3060 - Jihad
+TRO: 3060
 </source>
 
 <tonnage>

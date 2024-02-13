@@ -1,13 +1,18 @@
-Version:1.0
-Annihilator
-ANH-4A
+chassis:Annihilator
+model:ANH-4A
 mul id:42
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3069
-Source:TRO 3050 - Jihad
+Source:TRO: 3050
 Rules Level:2
+role:Sniper
+
+
+
+quirk:easy_maintain
+
 
 Mass:100
 Engine:200 Fusion Engine

@@ -1,13 +1,13 @@
-Version:1.1
-Redback
-
+chassis:Redback
+model:
 mul id:7684
 
 Config:Biped
 techbase:Mixed (Clan Chassis)
 era:2828
-source:Succession Wars
+source:TRO: Golden Century
 rules level:4
+role:Brawler
 
 mass:75
 engine:375 XL (Clan) Engine

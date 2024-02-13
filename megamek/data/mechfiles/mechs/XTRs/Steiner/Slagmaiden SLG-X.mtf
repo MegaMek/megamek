@@ -1,13 +1,21 @@
-Version:1.1
-Slagmaiden
-SLG-X
+chassis:Slagmaiden
+model:SLG-X
 mul id:5078
 
 Config:Biped
 TechBase:Mixed (IS Chassis)
 Era:3076
-Source:XTRO Steiner - Jihad
+Source:XTR: Steiner
 Rules Level:4
+role:Skirmisher
+
+
+
+
+quirk:exp_actuator
+weaponquirk:stable_weapon:RA:3:CLHeavyLargeLaser
+weaponquirk:jettison_capable:LA:4:ISLargeShield
+
 
 Mass:55
 Engine:330 XL Engine(IS)

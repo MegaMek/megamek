@@ -36,6 +36,10 @@ Aurora
 IS Level 2
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -125,7 +129,7 @@ ISLargePulseLaser
 </structural_integrity>
 
 <source>
-TRO 3075 - Civil War
+TRO: 3075
 </source>
 
 <tonnage>

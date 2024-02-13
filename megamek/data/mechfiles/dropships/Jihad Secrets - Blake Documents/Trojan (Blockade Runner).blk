@@ -36,6 +36,10 @@ Trojan
 IS Level 2
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Spheroid
 </motion_type>
@@ -126,7 +130,7 @@ Medium Laser
 </structural_integrity>
 
 <source>
-Jihad Secrets: The Blake Documents - Star League
+Jihad Secrets: The Blake Documents
 </source>
 
 <tonnage>

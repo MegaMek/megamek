@@ -1,12 +1,17 @@
-Version:1.0
-Mad Cat III
-2 (MWDA)
+chassis:Mad Cat III
+model:2 (MWDA)
 mul id:6896
 
 Config:Biped
 TechBase:Clan
 Era:3089
 Rules Level:2
+source:TRO: Dark Age
+
+quirk:bad_rep_clan
+quirk:difficult_maintain
+quirk:imp_com
+
 
 Mass:55
 Engine:330 XL Engine

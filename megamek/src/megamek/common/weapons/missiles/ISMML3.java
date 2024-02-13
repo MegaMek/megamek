@@ -21,6 +21,7 @@ package megamek.common.weapons.missiles;
 
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.Mounted;
+import megamek.common.SimpleTechLevel;
 
 /**
  * @author Sebastian Brocks
@@ -58,8 +59,9 @@ public class ISMML3 extends MMLWeapon {
             .setTechRating(RATING_D)
             .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
             .setISAdvancement(DATE_NONE, 3067, 3073, DATE_NONE, DATE_NONE)
-            .setISApproximate(false, false, true,false, false)
-            .setProductionFactions(F_MERC,F_WB);
+            .setISApproximate(false, true, false, false, false)
+            .setProductionFactions(F_MERC,F_WB)
+            .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
 
     @Override

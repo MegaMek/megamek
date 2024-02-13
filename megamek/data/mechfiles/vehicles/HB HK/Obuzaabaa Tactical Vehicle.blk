@@ -32,6 +32,10 @@ Obuzaabaa Tactical Vehicle
 IS Level 3
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Wheeled
 </motion_type>
@@ -86,7 +90,7 @@ Communications Equipment (2 ton)
 </Rear Equipment>
 
 <source>
-HB:House Kurita - Succession Wars
+Handbook: House Kurita
 </source>
 
 <tonnage>

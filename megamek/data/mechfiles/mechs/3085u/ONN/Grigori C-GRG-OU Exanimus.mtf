@@ -1,13 +1,21 @@
-Version:1.1
-Grigori
-C-GRG-OU Exanimus
+chassis:Grigori
+model:C-GRG-OU Exanimus
 mul id:1327
 
 Config:Biped Omnimech
 TechBase:Inner Sphere
 Era:3077
-Source:Jihad
+source:TRO: 3085
 Rules Level:4
+role:Sniper
+
+
+
+quirk:imp_com
+quirk:imp_sensors
+quirk:bad_rep_clan
+quirk:bad_rep_is
+
 
 Mass:60
 Engine:240 Light Engine(IS)

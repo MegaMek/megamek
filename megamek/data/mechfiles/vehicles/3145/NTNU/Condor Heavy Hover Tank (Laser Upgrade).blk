@@ -32,6 +32,10 @@ Condor Heavy Hover Tank
 IS Level 3
 </type>
 
+<role>
+Striker
+</role>
+
 <motion_type>
 Hover
 </motion_type>
@@ -86,7 +90,7 @@ Medium Re-engineered Laser
 </Turret Equipment>
 
 <source>
-RS 3145 NT NU
+Record Sheets: 3145 New Tech New Upgrades
 </source>
 
 <tonnage>
@@ -126,7 +130,7 @@ TARGETING:TharHes Mars 1 with TAG
 </systemManufacturers>
 
 <source>
-Rec Guide:ilClan #26 - Late Succession War - Renaissance
+Rec Guide:ilClan #26
 </source>
 
 <capabilities>
@@ -162,7 +166,7 @@ TARGETING:TharHes Mars 1 with TAG
 </systemManufacturers>
 
 <source>
-Rec Guide:ilClan #26 - Late Succession War - Renaissance
+Rec Guide:ilClan #26
 </source>
 
 <capabilities>
@@ -198,5 +202,5 @@ TARGETING:TharHes Mars 1 with TAG
 </systemManufacturers>
 
 <source>
-Rec Guide:ilClan #26 - Late Succession War - Renaissance
+Rec Guide:ilClan #26
 </source>

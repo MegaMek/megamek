@@ -36,6 +36,10 @@ H-7C
 IS Level 2
 </type>
 
+<role>
+Sniper
+</role>
+
 <motion_type>
 VTOL
 </motion_type>
@@ -114,7 +118,7 @@ TARGETING:N&D Handsfree
 </systemManufacturers>
 
 <source>
-TRO 3039 - Succession Wars
+TRO: 3039
 </source>
 
 <tonnage>
@@ -124,4 +128,9 @@ TRO 3039 - Succession Wars
 <fuelType>
 PETROCHEMICALS
 </fuelType>
+
+
+<quirks>
+vtol_rotor_coaxial
+</quirks>
 

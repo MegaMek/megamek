@@ -32,6 +32,10 @@ Sherpa Armored Truck
 IS Level 2
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -90,7 +94,7 @@ Machine Gun
 </Turret Equipment>
 
 <source>
-TRO VAr - Age of War
+TRO: Vehicle Annex (Revised)
 </source>
 
 <tonnage>

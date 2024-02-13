@@ -32,6 +32,10 @@ Clan Medium Battle Armor
 Clan Level 2
 </type>
 
+<role>
+Scout
+</role>
+
 <motion_type>
 Jump
 </motion_type>
@@ -63,7 +67,7 @@ BASearchlight:LA
 </Point Equipment>
 
 <source>
-TRO 3085 - Jihad
+TRO: 3085
 </source>
 
 <chassis>

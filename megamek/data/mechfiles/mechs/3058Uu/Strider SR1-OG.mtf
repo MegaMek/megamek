@@ -1,13 +1,18 @@
-Version:1.0
-Strider
-SR1-OG
+chassis:Strider
+model:SR1-OG
 mul id:3091
 
 Config:Biped Omnimech
 TechBase:Inner Sphere
 Era:3070
-Source:TRO 3058 - Jihad
+Source:TRO: 3058
 Rules Level:2
+role:Missile Boat
+
+
+
+quirk:easy_pilot
+
 
 Mass:40
 Engine:240 Fusion Engine(IS)

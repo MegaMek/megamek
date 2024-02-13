@@ -14,7 +14,6 @@
 package megamek.common;
 
 import megamek.client.ui.swing.calculationReport.CalculationReport;
-import megamek.common.battlevalue.CombatVehicleBVCalculator;
 import megamek.common.cost.CombatVehicleCostCalculator;
 import megamek.common.enums.AimingMode;
 import megamek.common.enums.GamePhase;
@@ -83,6 +82,8 @@ public class Tank extends Entity {
     public static final int CRIT_TURRET_JAM = 12;
     public static final int CRIT_TURRET_LOCK = 13;
     public static final int CRIT_TURRET_DESTROYED = 14;
+
+    public static final int CRIT_SENSOR_MAX = 4;
 
     //Fortify terrain just like infantry
     public static final int DUG_IN_NONE = 0;
@@ -211,6 +212,18 @@ public class Tank extends Entity {
         return m_bHasNoDualTurret;
     }
 
+    public int getTurretCount() {
+        int tankTurrets = 0;
+
+        if (!hasNoDualTurret()) {
+            tankTurrets = 2;
+        } else if (!hasNoTurret()) {
+            tankTurrets = 1;
+        }
+
+        return tankTurrets;
+    }
+
     public void setHasNoTurret(boolean b) {
         m_bHasNoTurret = b;
     }
@@ -237,7 +250,7 @@ public class Tank extends Entity {
 
     private static final TechAdvancement TA_COMBAT_VEHICLE = new TechAdvancement(TECH_BASE_ALL)
             .setAdvancement(DATE_NONE, 2470, 2490).setProductionFactions(F_TH)
-            .setTechRating(RATING_E).setAvailability(RATING_C, RATING_C, RATING_C, RATING_B)
+            .setTechRating(RATING_D).setAvailability(RATING_C, RATING_C, RATING_C, RATING_B)
             .setStaticTechLevel(SimpleTechLevel.INTRO);
 
     @Override
@@ -262,33 +275,28 @@ public class Tank extends Entity {
         }
     }
 
-    /**
-     * Returns this entity's walking/cruising mp, factored for heat, extreme
-     * temperatures, and gravity.
-     */
     @Override
-    public int getWalkMP(boolean gravity, boolean ignoreheat) {
-        return getWalkMP(gravity, ignoreheat, false);
-    }
-
-    @Override
-    public int getWalkMP(boolean gravity, boolean ignoreheat,
-            boolean ignoremodulararmor) {
-        int j = getOriginalWalkMP();
+    public int getWalkMP(MPCalculationSetting mpCalculationSetting) {
+        int mp = getOriginalWalkMP();
         if (engineHit || isImmobile()) {
             return 0;
         }
-        j = Math.max(0, j - motiveDamage);
-        j = Math.max(0, j - getCargoMpReduction(this));
-        if (null != game) {
-            int weatherMod = game.getPlanetaryConditions()
-                    .getMovementMods(this);
-            if (weatherMod != 0) {
-                j = Math.max(j + weatherMod, 0);
-            }
+        if (hasWorkingMisc(MiscType.F_HYDROFOIL)) {
+            mp = (int) Math.round(mp * 1.25);
+        }
+        mp = Math.max(0, mp - motiveDamage);
+
+        if (!mpCalculationSetting.ignoreCargo) {
+            mp = Math.max(0, mp - getCargoMpReduction(this));
+        }
+
+        if (!mpCalculationSetting.ignoreWeather && (null != game)) {
+            int weatherMod = game.getPlanetaryConditions().getMovementMods(this);
+            mp = Math.max(mp + weatherMod, 0);
+
             if (getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_SNOW)) {
                 if ((game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_ICE_STORM)) {
-                    j += 2;
+                    mp += 2;
                 }
 
                 if ((game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_SLEET)
@@ -296,29 +304,31 @@ public class Tank extends Entity {
                         || (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_MOD_SNOW)
                         || (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_HEAVY_SNOW)
                         || (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_SNOW_FLURRIES)) {
-                    j += 1;
+                    mp += 1;
                 }
             }
 
             if(getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_WIND)
-                    && (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WI_TORNADO_F13)) {
-                j += 1;
+                    && (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_NONE)
+                    && (game.getPlanetaryConditions().getWindStrength() == PlanetaryConditions.WI_TORNADO_F13)) {
+                mp += 1;
             }
         }
 
-        if (!ignoremodulararmor && hasModularArmor()) {
-            j--;
-        }
-        if (hasWorkingMisc(MiscType.F_DUNE_BUGGY) && (game != null)) {
-            j--;
+        if (!mpCalculationSetting.ignoreModularArmor && hasModularArmor()) {
+            mp--;
         }
 
-        if (gravity) {
-            j = applyGravityEffectsOnMP(j);
+        if (hasWorkingMisc(MiscType.F_DUNE_BUGGY)) {
+            mp--;
+        }
+
+        if (!mpCalculationSetting.ignoreGravity) {
+            mp = applyGravityEffectsOnMP(mp);
         }
 
         //If the unit is towing trailers, adjust its walkMP, TW p205
-        if (!getAllTowedUnits().isEmpty()) {
+        if (!mpCalculationSetting.ignoreCargo && (null != game) && !getAllTowedUnits().isEmpty()) {
             double trainWeight = getWeight();
             int lowestSuspensionFactor = getSuspensionFactor();
             //Add up the trailers
@@ -336,11 +346,10 @@ public class Tank extends Entity {
                 }
                 trainWeight += tr.getWeight();
             }
-            j = (int) ((getEngine().getRating() + lowestSuspensionFactor) / trainWeight);
+            mp = (int) ((getEngine().getRating() + lowestSuspensionFactor) / trainWeight);
         }
 
-        return j;
-
+        return Math.max(mp, 0);
     }
 
     @Override
@@ -395,7 +404,7 @@ public class Tank extends Entity {
 
     @Override
     public boolean canChangeSecondaryFacing() {
-        return !m_bHasNoTurret && !isTurretLocked(getLocTurret());
+        return !(m_bHasNoTurret || isTurretLocked(getLocTurret()) || getAlreadyTwisted());
     }
 
     @Override
@@ -556,6 +565,23 @@ public class Tank extends Entity {
     @Override
     public boolean isPermanentlyImmobilized(boolean checkCrew) {
         return super.isPermanentlyImmobilized(checkCrew) || isMovementHit();
+    }
+
+    /**
+     * Per https://bg.battletech.com/forums/index.php/topic,78336.msg1869386.html#msg1869386
+     * CVs with working engines and Jump Jets should still have the option to jump during the movement
+     * phase, even if reduced to 0 MP by motive hits, or rolling 12 on the Motive System Damage table.
+     */
+    @Override
+    public boolean isImmobileForJump() {
+        // *Can* jump unless 0 Jump MP, or 1+ Jump MP but engine is critted, or crew unconscious/dead.
+        boolean jumpImmobile = (
+                super.isImmobile(true) ||
+                super.isPermanentlyImmobilized(true) ||
+                (getJumpMP() == 0) ||
+                (isEngineHit())
+        );
+        return jumpImmobile;
     }
 
     @Override
@@ -1272,11 +1298,6 @@ public class Tank extends Entity {
     }
 
     @Override
-    protected int doBattleValueCalculation(boolean ignoreC3, boolean ignoreSkill, CalculationReport calculationReport) {
-        return CombatVehicleBVCalculator.calculateBV(this, ignoreC3, ignoreSkill, calculationReport);
-    }
-
-    @Override
     public PilotingRollData addEntityBonuses(PilotingRollData prd) {
         if (motivePenalty > 0) {
             prd.addModifier(motivePenalty, "Steering Damage");
@@ -1357,121 +1378,40 @@ public class Tank extends Entity {
         return NUM_OF_SLOTS;
     }
 
-    /**
-     * Tanks have Superchargers but don't have MASC
-     */
     @Override
-    public int getRunMPwithoutMASC(boolean gravity, boolean ignoreheat,
-            boolean ignoremodulararmor) {
-        return super.getRunMP(gravity, ignoreheat, ignoremodulararmor);
-    }
-
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see megamek.common.Entity#getRunMP(boolean, boolean, boolean)
-     */
-    @Override
-    public int getRunMP(boolean gravity, boolean ignoreheat,
-            boolean ignoremodulararmor) {
-        if (hasArmedMASC()) {
-            return (getWalkMP(gravity, ignoreheat, ignoremodulararmor) * 2);
+    public int getRunMP(MPCalculationSetting mpCalculationSetting) {
+        if (!mpCalculationSetting.ignoreMASC && hasArmedMASC()) {
+            return (getWalkMP(mpCalculationSetting) * 2);
+        } else {
+            return super.getRunMP(mpCalculationSetting);
         }
-        return getRunMPwithoutMASC(gravity, ignoreheat, ignoremodulararmor);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see megamek.common.Entity#getSprintMP()
-     */
     @Override
     public int getSprintMP() {
-        // Overdrive
-        if (game != null
-                && game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_ADVANCED_MANEUVERS)) {
-            return getSprintMP(true, false, false);
-        }
-        return getSprintMP(true, false, false);
+        return getSprintMP(MPCalculationSetting.STANDARD);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see megamek.common.Entity#getSprintMP(boolean, boolean, boolean)
-     */
     @Override
-    public int getSprintMP(boolean gravity, boolean ignoreheat,
-            boolean ignoremodulararmor) {
-        if (game != null && game.getOptions()
-                .booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_ADVANCED_MANEUVERS)) {
-            if (hasArmedMASC()) {
-                return (int) Math.ceil(getWalkMP(gravity, ignoreheat,
-                        ignoremodulararmor) * 2.5);
+    public int getSprintMP(MPCalculationSetting mpCalculationSetting) {
+        if ((game != null) && game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_ADVANCED_MANEUVERS)) {
+            if (!mpCalculationSetting.ignoreMASC && hasArmedMASC()) {
+                return (int) Math.ceil(getWalkMP(mpCalculationSetting) * 2.5);
             } else {
-                return getSprintMPwithoutMASC(gravity, ignoreheat, ignoremodulararmor);
+                return getWalkMP(mpCalculationSetting) * 2;
             }
         } else {
-            return getRunMP(gravity, ignoreheat, ignoremodulararmor);
+            return getRunMP(mpCalculationSetting);
         }
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see megamek.common.Entity#getSprintMPwithoutMASC(boolean, boolean)
-     */
-    @Override
-    public int getSprintMPwithoutMASC() {
-        return getSprintMPwithoutMASC(true, false, false);
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see megamek.common.Entity#getSprintMPwithoutMASC(boolean, boolean,
-     * boolean)
-     */
-    @Override
-    public int getSprintMPwithoutMASC(boolean gravity, boolean ignoreheat,
-            boolean ignoremodulararmor) {
-        if (game != null && game.getOptions()
-                .booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_ADVANCED_MANEUVERS)) {
-            return (int) Math.ceil(getWalkMP(gravity, ignoreheat,
-                    ignoremodulararmor) * 2.0);
-        } else {
-            return getRunMPwithoutMASC(gravity, ignoreheat, ignoremodulararmor);
-        }
-    }
-
-    public int getOriginalSprintMPwithoutMASC() {
-        if (game != null && game.getOptions()
-                .booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_ADVANCED_MANEUVERS)) {
-            return (int) Math.ceil(getOriginalWalkMP() * 2.0);
-        } else {
-            return getOriginalRunMP();
-        }
-    }
-
-
-    /**
-     * Returns this entity's Sprint mp as a string.
-     */
-    @Override
-    public String getSprintMPasString() {
-        if (hasArmedMASC()) {
-            return getRunMPwithoutMASC() + "(" + getSprintMP() + ")";
-        }
-        return Integer.toString(getSprintMP());
     }
 
     @Override
     public int getRunningGravityLimit() {
         if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_ADVANCED_MANEUVERS)) {
-            return getSprintMP(false, false, false);
+            return getSprintMP(MPCalculationSetting.NO_GRAVITY);
+        } else {
+            return getRunMP(MPCalculationSetting.NO_GRAVITY);
         }
-        return getRunMP(false, false, false);
     }
 
     @Override
@@ -1952,7 +1892,7 @@ public class Tank extends Entity {
                             }
                         }
                     case 9:
-                        if (getSensorHits() < 4) {
+                        if (getSensorHits() < CRIT_SENSOR_MAX) {
                             return CRIT_SENSOR;
                         }
                     case 10:
@@ -2436,14 +2376,12 @@ public class Tank extends Entity {
                 // Only one slot each for all jump jets or fuel tanks, added later.
                 continue;
             }
-            if (!((mount.getType() instanceof AmmoType) || Arrays.asList(
-                    EquipmentType.armorNames).contains(
-                    mount.getType().getName()))) {
+            if (!((mount.getType() instanceof AmmoType) || EquipmentType.isArmorType(mount.getType()))) {
                 usedSlots += mount.getType().getTankSlots(this);
             }
         }
         // JJs take just 1 slot
-        if (this.getJumpMP(false) > 0) {
+        if (this.getJumpMP(MPCalculationSetting.NO_GRAVITY) > 0) {
             usedSlots++;
         }
         // So do fuel tanks

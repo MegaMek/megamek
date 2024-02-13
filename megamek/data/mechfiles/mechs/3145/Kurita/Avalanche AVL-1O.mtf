@@ -1,12 +1,18 @@
-Version:1.3
-Avalanche
-AVL-1O
+chassis:Avalanche
+model:AVL-1O
 mul id:6396
 Config:Biped Omnimech
 techbase:Inner Sphere
 era:3133
-source:TRO 3145 Draconis Combine - Dark Ages
+source:TRO: 3145 Draconis Combine
 rules level:2
+role:Missile Boat
+
+
+
+
+quirk:bad_rep_is
+
 
 mass:50
 engine:250 Fusion Engine(IS)

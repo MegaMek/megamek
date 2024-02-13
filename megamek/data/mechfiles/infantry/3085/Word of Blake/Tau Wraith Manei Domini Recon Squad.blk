@@ -32,6 +32,10 @@ Manei Domini Recon Squad
 IS Level 4
 </type>
 
+<role>
+Scout
+</role>
+
 <motion_type>
 Leg
 </motion_type>
@@ -40,7 +44,7 @@ Leg
 </Field Guns Equipment>
 
 <source>
-TRO 3085 - Civil War
+TRO: 3085
 </source>
 
 <squad_size>

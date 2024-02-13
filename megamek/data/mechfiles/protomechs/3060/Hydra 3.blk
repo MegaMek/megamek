@@ -36,6 +36,10 @@ Hydra
 Clan Level 2
 </type>
 
+<role>
+Missile Boat
+</role>
+
 <motion_type>
 Biped
 </motion_type>
@@ -93,7 +97,7 @@ CLLRM6
 </Legs Equipment>
 
 <source>
-TRO 3060 - Civil War
+TRO: 3060
 </source>
 
 <tonnage>

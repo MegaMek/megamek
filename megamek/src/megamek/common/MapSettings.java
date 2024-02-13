@@ -70,8 +70,8 @@ public class MapSettings implements Serializable {
     private int mapHeight = 1;
     private int medium = MEDIUM_GROUND;
 
-    private ArrayList<String> boardsSelected = new ArrayList<>();
-    private ArrayList<String> boardsAvailable = new ArrayList<>();
+    private List<String> boardsSelected = new ArrayList<>();
+    private List<String> boardsAvailable = new ArrayList<>();
     private ArrayList<BuildingTemplate> boardBuildings = new ArrayList<>();
 
     /**
@@ -127,6 +127,28 @@ public class MapSettings implements Serializable {
     /** probability for heavy woods, Range 0..100 */
     @XmlElement(name = "FORESTHEAVYPROB")
     private int probHeavy = 30;
+    /** probability for ultra woods, Range 0..100 */
+    @XmlElement(name = "FORESTULTRAPROB")
+    private int probUltra = 0;
+
+    /** how much forests at least */
+    @XmlElement(name = "JUNGLEMINSPOTS")
+    private int minJungleSpots = 0;
+    /** how much forests at most */
+    @XmlElement(name = "JUNGLEMAXSPOTS")
+    private int maxJungleSpots = 0;
+    /** minimum size of a forest */
+    @XmlElement(name = "JUNGLEMINHEXES")
+    private int minJungleSize = 0;
+    /** maximum Size of a forest */
+    @XmlElement(name = "JUNGLEMAXHEXES")
+    private int maxJungleSize = 0;
+    /** probability for heavy woods, Range 0..100 */
+    @XmlElement(name = "JUNGLEHEAVYPROB")
+    private int probHeavyJungle = 0;
+    /** probability for ultra woods, Range 0..100 */
+    @XmlElement(name = "JUNGLEULTRAPROB")
+    private int probUltraJungle = 0;
     
     /** how much foliage at least */
     @XmlElement(name = "FOLIAGEMINSPOTS")
@@ -157,6 +179,10 @@ public class MapSettings implements Serializable {
     @XmlElement(name = "ROUGHMAXHEXES")
     private int maxRoughSize = 2;
 
+    /** probability a rough spot is upgraded to an ultra-rough */
+    @XmlElement(name = "ROUGHULTRAPROB")
+    private int probUltraRough = 0;
+
     /** how much sand spots at least */
     @XmlElement(name = "SANDMINSPOTS")
     private int minSandSpots = 2;
@@ -170,18 +196,31 @@ public class MapSettings implements Serializable {
     @XmlElement(name = "SANDMAXHEXES")
     private int maxSandSize = 2;
 
-    /** how much sand spots at least */
+    /** how much snow spots at least */
     @XmlElement(name = "SNOWMINSPOTS")
     private int minSnowSpots = 0;
-    /** how much sand spots at most */
+    /** how much snow spots at most */
     @XmlElement(name = "SNOWMAXSPOTS")
     private int maxSnowSpots = 0;
-    /** minimum size of a rough spot */
+    /** minimum size of a snow spot */
     @XmlElement(name = "SNOWMINHEXES")
     private int minSnowSize = 0;
-    /** maximum Size of a rough spot */
+    /** maximum Size of a snow spot */
     @XmlElement(name = "SNOWMAXHEXES")
     private int maxSnowSize = 0;
+
+    /** how much tundra spots at least */
+    @XmlElement(name = "TUNDRAMINSPOTS")
+    private int minTundraSpots = 0;
+    /** how much tundra spots at most */
+    @XmlElement(name = "TUNDRAMAXSPOTS")
+    private int maxTundraSpots = 0;
+    /** minimum size of a tundra spot */
+    @XmlElement(name = "TUNDRAMINHEXES")
+    private int minTundraSize = 0;
+    /** maximum Size of a tundra spot */
+    @XmlElement(name = "TUNDRAMAXHEXES")
+    private int maxTundraSize = 0;
 
     /** how much planted field spots at least */
     @XmlElement(name = "PLANTEDFIELDMINSPOTS")
@@ -234,6 +273,10 @@ public class MapSettings implements Serializable {
     /** maximum Size of a rubble spot */
     @XmlElement(name = "RUBBLEMAXHEXES")
     private int maxRubbleSize = 6;
+
+    /** probability of a rubble  ultraspot */
+    @XmlElement(name = "RUBBLEULTRAPROB")
+    private int probUltraRubble = 0;
 
     /** how much fortified spots at least */
     @XmlElement(name = "FORTIFIEDMINSPOTS")
@@ -406,11 +449,9 @@ public class MapSettings implements Serializable {
     private MapSettings(int boardWidth, int boardHeight, int mapWidth, int mapHeight) {
         setBoardSize(boardWidth, boardHeight);
         setMapSize(mapWidth, mapHeight);
-        adjustPathSeparator();
     }
 
     /** Creates new MapSettings that is a duplicate of another */
-    @SuppressWarnings("unchecked")
     private MapSettings(MapSettings other) {
         boardWidth = other.getBoardWidth();
         boardHeight = other.getBoardHeight();
@@ -419,8 +460,8 @@ public class MapSettings implements Serializable {
 
         medium = other.getMedium();
 
-        boardsSelected = (ArrayList<String>) other.getBoardsSelectedVector().clone();
-        boardsAvailable = (ArrayList<String>) other.getBoardsAvailableVector().clone();
+        boardsSelected = new ArrayList<>(other.getBoardsSelectedVector());
+        boardsAvailable = new ArrayList<>(other.getBoardsAvailableVector());
 
         invertNegativeTerrain = other.getInvertNegativeTerrain();
         mountainHeightMin = other.getMountainHeightMin();
@@ -443,6 +484,13 @@ public class MapSettings implements Serializable {
         minForestSize = other.getMinForestSize();
         maxForestSize = other.getMaxForestSize();
         probHeavy = other.getProbHeavy();
+        probUltra = other.getProbUltra();
+        minJungleSpots = other.getMinJungleSpots();
+        maxJungleSpots = other.getMaxJungleSpots();
+        minJungleSize = other.getMinJungleSize();
+        maxJungleSize = other.getMaxJungleSize();
+        probHeavyJungle = other.getProbHeavyJungle();
+        probUltraJungle = other.getProbUltraJungle();
         minFoliageSpots = other.getMinFoliageSpots();
         maxFoliageSpots = other.getMaxFoliageSpots();
         minFoliageSize = other.getMinFoliageSize();
@@ -452,6 +500,7 @@ public class MapSettings implements Serializable {
         maxRoughSpots = other.getMaxRoughSpots();
         minRoughSize = other.getMinRoughSize();
         maxRoughSize = other.getMaxRoughSize();
+        probUltraRough = other.getProbUltraRough();
         minSandSpots = other.getMinSandSpots();
         maxSandSpots = other.getMaxSandSpots();
         minSandSize = other.getMinSandSize();
@@ -460,6 +509,10 @@ public class MapSettings implements Serializable {
         maxSnowSpots = other.getMaxSnowSpots();
         minSnowSize = other.getMinSnowSize();
         maxSnowSize = other.getMaxSnowSize();
+        minTundraSpots = other.getMinTundraSpots();
+        maxTundraSpots = other.getMaxTundraSpots();
+        minTundraSize = other.getMinTundraSize();
+        maxTundraSize = other.getMaxTundraSize();
         minPlantedFieldSpots = other.getMinPlantedFieldSpots();
         maxPlantedFieldSpots = other.getMaxPlantedFieldSpots();
         minPlantedFieldSize = other.getMinPlantedFieldSize();
@@ -476,6 +529,7 @@ public class MapSettings implements Serializable {
         maxRubbleSpots = other.getMaxRubbleSpots();
         minRubbleSize = other.getMinRubbleSize();
         maxRubbleSize = other.getMaxRubbleSize();
+        probUltraRubble = other.getProbUltraRubble();
         minFortifiedSpots = other.getMinFortifiedSpots();
         maxFortifiedSpots = other.getMaxFortifiedSpots();
         minFortifiedSize = other.getMinFortifiedSize();
@@ -507,47 +561,6 @@ public class MapSettings implements Serializable {
         cityDensity = other.getCityDensity();
         boardBuildings = other.getBoardBuildings();
         townSize = other.getTownSize();
-        adjustPathSeparator();
-    }
-
-    /**
-     * Odious hack to fix cross-platform issues. The Server generates the list
-     * of available boards and then sends them to the client. Instead of storing
-     * the boards as a File object, they are stored as lists of Strings. This
-     * means that, a Windows server will generate Windows paths that could then
-     * be sent to non-windows machines.
-     * 
-     * While the available and selected boards should really be stored as lists
-     * of Files, they have infrastructure built up around them and it's far
-     * easier to use this kludgy hack to always store in Linux style \ separator
-     */
-    public void adjustPathSeparator() {
-        // Windows will happily accept a forward slash in the path, the only
-        // real issue is back-slashes (windows separators) in Linux and macOS
-        boolean containsWindowsPathSeparator = false;
-        for (String path : boardsAvailable) {
-            if (path.contains("\\")) {
-                containsWindowsPathSeparator = true;
-            }
-            if (containsWindowsPathSeparator) {
-                break;
-            }
-        }
-
-        if (containsWindowsPathSeparator) {
-            for (int i = 0; i < boardsAvailable.size(); i++) {
-                if (boardsAvailable.get(i) == null) {
-                    continue;
-                }
-                boardsAvailable.set(i, boardsAvailable.get(i).replace("\\", "/"));
-            }
-            for (int i = 0; i < boardsSelected.size(); i++) {
-                if (boardsSelected.get(i) == null) {
-                    continue;
-                }
-                boardsSelected.set(i, boardsSelected.get(i).replace("\\", "/"));
-            }
-        }
     }
 
     public int getBoardWidth() {
@@ -630,16 +643,13 @@ public class MapSettings implements Serializable {
         mapWidth = newWidth;
     }
 
-    public Iterator<String> getBoardsSelected() {
-        return boardsSelected.iterator();
-    }
-
-    public ArrayList<String> getBoardsSelectedVector() {
+    public List<String> getBoardsSelectedVector() {
         return boardsSelected;
     }
 
-    public void setBoardsSelectedVector(ArrayList<String> boardsSelected) {
-        this.boardsSelected = boardsSelected;
+    public void setBoardsSelectedVector(List<String> newBoards) {
+        boardsSelected.clear();
+        boardsSelected.addAll(newBoards);
     }
 
     /**
@@ -736,7 +746,7 @@ public class MapSettings implements Serializable {
                     List<String> boards = LobbyUtility.extractSurpriseMaps(boardName);
                     ArrayList<String> remainingBoards = new ArrayList<>();
                     for (String board: boards) {
-                        if (boardsAvailable.indexOf(board) != -1) {
+                        if (boardsAvailable.contains(board)) {
                             remainingBoards.add(board);
                         }
                     }
@@ -749,7 +759,7 @@ public class MapSettings implements Serializable {
                         boardsSelected.set(i, MapSettings.BOARD_SURPRISE + remBoards);
                     }
                 } else {
-                    if (boardsAvailable.indexOf(boardName) == -1) {
+                    if (!boardsAvailable.contains(boardName)) {
                         boardsSelected.set(i, null);
                     }
                 }
@@ -757,17 +767,13 @@ public class MapSettings implements Serializable {
         }
     }
 
-    public Iterator<String> getBoardsAvailable() {
-        return boardsAvailable.iterator();
-    }
-
-    public ArrayList<String> getBoardsAvailableVector() {
+    public List<String> getBoardsAvailableVector() {
         return boardsAvailable;
     }
 
-    public void setBoardsAvailableVector(ArrayList<String> boardsAvailable) {
-        this.boardsAvailable = boardsAvailable;
-        adjustPathSeparator();
+    public void setBoardsAvailableVector(List<String> newBoards) {
+        boardsAvailable.clear();
+        boardsAvailable.addAll(newBoards);
     }
 
     /**
@@ -826,6 +832,38 @@ public class MapSettings implements Serializable {
         if (probHeavy > 100) {
             probHeavy = 100;
         }
+        if (probUltra < 0) {
+            probUltra = 0;
+        }
+        if (probUltra > 100) {
+            probUltra = 100;
+        }
+
+        if (minJungleSpots < 0) {
+            minJungleSpots = 0;
+        }
+        if (maxJungleSpots < minJungleSpots) {
+            maxJungleSpots = minJungleSpots;
+        }
+        if (minJungleSize < 0) {
+            minJungleSize = 0;
+        }
+        if (maxJungleSize < minJungleSize) {
+            maxJungleSize = minJungleSize;
+        }
+        if (probHeavyJungle < 0) {
+            probHeavyJungle = 0;
+        }
+        if (probHeavyJungle > 100) {
+            probHeavyJungle = 100;
+        }
+        if (probUltraJungle < 0) {
+            probUltraJungle = 0;
+        }
+        if (probUltraJungle > 100) {
+            probUltraJungle = 100;
+        }
+
         if (minFoliageSpots < 0) {
             minFoliageSpots = 0;
         }
@@ -856,6 +894,12 @@ public class MapSettings implements Serializable {
         if (maxRoughSize < minRoughSize) {
             maxRoughSize = minRoughSize;
         }
+        if (probUltraRough < 0) {
+            probUltraRough = 0;
+        }
+        if (probUltraRough > 100) {
+            probUltraRough = 100;
+        }
         if (minSandSpots < 0) {
             minSandSpots = 0;
         }
@@ -879,6 +923,18 @@ public class MapSettings implements Serializable {
         }
         if (maxSnowSize < minSnowSize) {
             maxSnowSize = minSnowSize;
+        }
+        if (minTundraSpots < 0) {
+            minTundraSpots = 0;
+        }
+        if (maxTundraSpots < minTundraSpots) {
+            maxTundraSpots = minTundraSpots;
+        }
+        if (minTundraSize < 0) {
+            minTundraSize = 0;
+        }
+        if (maxTundraSize < minTundraSize) {
+            maxTundraSize = minTundraSize;
         }
         if (minPlantedFieldSpots < 0) {
             minPlantedFieldSpots = 0;
@@ -927,6 +983,12 @@ public class MapSettings implements Serializable {
         }
         if (maxRubbleSize < minRubbleSize) {
             maxRubbleSize = minRubbleSize;
+        }
+        if (probUltraRubble < 0) {
+            probUltraRubble = 0;
+        }
+        if (probUltraRubble > 100) {
+            probUltraRubble = 100;
         }
         if (minFortifiedSpots < 0) {
             minFortifiedSpots = 0;
@@ -1014,15 +1076,22 @@ public class MapSettings implements Serializable {
                 && (probDeep == other.getProbDeep()) && (minForestSpots == other.getMinForestSpots())
                 && (maxForestSpots == other.getMaxForestSpots()) && (minForestSize == other.getMinForestSize())
                 && (maxForestSize == other.getMaxForestSize()) && (probHeavy == other.getProbHeavy())
+                && (probUltra == other.getProbUltra())
+                && (minJungleSpots == other.getMinJungleSpots())
+                && (maxJungleSpots == other.getMaxJungleSpots()) && (minJungleSize == other.getMinJungleSize())
+                && (maxJungleSize == other.getMaxJungleSize()) && (probHeavyJungle == other.getProbHeavyJungle())
+                && (probUltraJungle == other.getProbUltraJungle())
                 && (minFoliageSpots == other.getMinFoliageSpots())
                 && (maxFoliageSpots == other.getMaxFoliageSpots()) && (minFoliageSize == other.getMinFoliageSize())
                 && (maxFoliageSize == other.getMaxFoliageSize()) && (probFoliageHeavy == other.getProbFoliageHeavy())
                 && (minRoughSpots == other.getMinRoughSpots()) && (maxRoughSpots == other.getMaxRoughSpots())
-                && (minRoughSize == other.getMinRoughSize()) && (maxRoughSize == other.getMaxRoughSize())
+                && (minRoughSize == other.getMinRoughSize()) && (maxRoughSize == other.getMaxRoughSize() && (probUltraRough == other.getProbUltraRough()))
                 && (minSandSpots == other.getMinSandSpots()) && (maxSandSpots == other.getMaxSandSpots())
                 && (minSandSize == other.getMinSandSize()) && (maxSandSize == other.getMaxSandSize())
                 && (minSnowSpots == other.getMinSnowSpots()) && (maxSnowSpots == other.getMaxSnowSpots())
                 && (minSnowSize == other.getMinSnowSize()) && (maxSnowSize == other.getMaxSnowSize())
+                && (minTundraSpots == other.getMinTundraSpots()) && (maxTundraSpots == other.getMaxTundraSpots())
+                && (minTundraSize == other.getMinTundraSize()) && (maxTundraSize == other.getMaxTundraSize())
                 && (minPlantedFieldSpots == other.getMinPlantedFieldSpots())
                 && (maxPlantedFieldSpots == other.getMaxPlantedFieldSpots())
                 && (minPlantedFieldSize == other.getMinPlantedFieldSize())
@@ -1033,7 +1102,7 @@ public class MapSettings implements Serializable {
                 && (maxPavementSpots == other.getMaxPavementSpots()) && (minPavementSize == other.getMinPavementSize())
                 && (maxPavementSize == other.getMaxPavementSize()) && (minRubbleSpots == other.getMinRubbleSpots())
                 && (maxRubbleSpots == other.getMaxRubbleSpots()) && (minRubbleSize == other.getMinRubbleSize())
-                && (maxRubbleSize == other.getMaxRubbleSize()) && (minFortifiedSpots == other.getMinFortifiedSpots())
+                && (maxRubbleSize == other.getMaxRubbleSize()) && (minFortifiedSpots == other.getMinFortifiedSpots() && (probUltraRubble == other.getProbUltraRubble()))
                 && (maxFortifiedSpots == other.getMaxFortifiedSpots())
                 && (minFortifiedSize == other.getMinFortifiedSize())
                 && (maxFortifiedSize == other.getMaxFortifiedSize()) && (minIceSpots == other.getMinIceSpots())
@@ -1112,9 +1181,29 @@ public class MapSettings implements Serializable {
         return maxForestSize;
     }
 
-    public int getProbHeavy() {
-        return probHeavy;
+    public int getProbHeavy() { return probHeavy; }
+
+    public int getProbUltra() { return probUltra; }
+
+    public int getMinJungleSpots() {
+        return minJungleSpots;
     }
+
+    public int getMaxJungleSpots() {
+        return maxJungleSpots;
+    }
+
+    public int getMinJungleSize() {
+        return minJungleSize;
+    }
+
+    public int getMaxJungleSize() {
+        return maxJungleSize;
+    }
+
+    public int getProbHeavyJungle() { return probHeavyJungle; }
+
+    public int getProbUltraJungle() { return probUltraJungle; }
     
     public int getMinFoliageSpots() {
         return minFoliageSpots;
@@ -1151,6 +1240,8 @@ public class MapSettings implements Serializable {
     public int getMaxRoughSize() {
         return maxRoughSize;
     }
+
+    public int getProbUltraRough() {return probUltraRough; }
 
     public int getMinSandSpots() {
         return minSandSpots;
@@ -1210,6 +1301,36 @@ public class MapSettings implements Serializable {
 
     public void setMaxSnowSize(int maxSnowSize) {
         this.maxSnowSize = maxSnowSize;
+    }
+
+    public int getMinTundraSpots() {
+        return minTundraSpots;
+    }
+
+    public void setMinTundraSpots(int minTundraSpots) {
+        this.minTundraSpots = minTundraSpots;
+    }
+
+    public int getMaxTundraSpots() {
+        return maxTundraSpots;
+    }
+
+    public void setMaxTundraSpots(int maxTundraSpots) {
+        this.maxTundraSpots = maxTundraSpots;
+    }
+
+    public int getMinTundraSize() {
+        return minTundraSize;
+    }
+
+    public void setMinTundraSize(int minTundraSize) {
+        this.minTundraSize = minTundraSize;
+    }
+
+    public int getMaxTundraSize() { return maxTundraSize; }
+
+    public void setMaxTundraSize(int maxTundraSize) {
+        this.maxTundraSize = maxTundraSize;
     }
 
     public int getMinPlantedFieldSpots() {
@@ -1290,6 +1411,10 @@ public class MapSettings implements Serializable {
 
     public int getMaxRubbleSize() {
         return maxRubbleSize;
+    }
+
+    public int getProbUltraRubble() {
+        return probUltraRubble;
     }
 
     public int getMinFortifiedSpots() {
@@ -1453,14 +1578,27 @@ public class MapSettings implements Serializable {
     }
 
     /**
-     * set the Parameters for the Map Generator
+     * set the forest parameters for the Map Generator
      */
-    public void setForestParams(int minSpots, int maxSpots, int minSize, int maxSize, int prob) {
+    public void setForestParams(int minSpots, int maxSpots, int minSize, int maxSize, int probHeavy, int probUltra) {
         minForestSpots = minSpots;
         maxForestSpots = maxSpots;
         minForestSize = minSize;
         maxForestSize = maxSize;
-        probHeavy = prob;
+        this.probHeavy = probHeavy;
+        this.probUltra = probUltra;
+    }
+
+    /**
+     * set the jungle parameters for the Map Generator
+     */
+    public void setJungleParams(int minSpots, int maxSpots, int minSize, int maxSize, int probHeavy, int probUltra) {
+        minJungleSpots = minSpots;
+        maxJungleSpots = maxSpots;
+        minJungleSize = minSize;
+        maxJungleSize = maxSize;
+        probHeavyJungle = probHeavy;
+        probUltraJungle = probUltra;
     }
     
     /**
@@ -1475,13 +1613,14 @@ public class MapSettings implements Serializable {
     }
 
     /**
-     * set the Parameters for the Map Generator
+     * set rough terrain parameters for the Map Generator
      */
-    public void setRoughParams(int minSpots, int maxSpots, int minSize, int maxSize) {
+    public void setRoughParams(int minSpots, int maxSpots, int minSize, int maxSize, int probUltra) {
         minRoughSpots = minSpots;
         maxRoughSpots = maxSpots;
         minRoughSize = minSize;
         maxRoughSize = maxSize;
+        probUltraRough = probUltra;
     }
 
     /**
@@ -1502,6 +1641,16 @@ public class MapSettings implements Serializable {
         maxSnowSpots = maxSpots;
         minSnowSize = minSize;
         maxSnowSize = maxSize;
+    }
+
+    /**
+     * set the tundra parameters for the Map Generator
+     */
+    public void setTundraParams(int minSpots, int maxSpots, int minSize, int maxSize) {
+        minTundraSpots = minSpots;
+        maxTundraSpots = maxSpots;
+        minTundraSize = minSize;
+        maxTundraSize = maxSize;
     }
 
     /**
@@ -1537,11 +1686,12 @@ public class MapSettings implements Serializable {
     /**
      * set the Parameters for the Map Generator
      */
-    public void setRubbleParams(int minSpots, int maxSpots, int minSize, int maxSize) {
+    public void setRubbleParams(int minSpots, int maxSpots, int minSize, int maxSize, int probUltra) {
         minRubbleSpots = minSpots;
         maxRubbleSpots = maxSpots;
         minRubbleSize = minSize;
         maxRubbleSize = maxSize;
+        probUltraRubble = probUltra;
     }
 
     /**

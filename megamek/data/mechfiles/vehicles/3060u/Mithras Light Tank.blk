@@ -32,6 +32,10 @@ Mithras Light Tank
 Clan Level 2
 </type>
 
+<role>
+Striker
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -84,7 +88,7 @@ CLUltraAC2
 </Turret Equipment>
 
 <source>
-Succession Wars
+TRO: 3060
 </source>
 
 <tonnage>

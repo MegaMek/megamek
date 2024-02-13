@@ -1,12 +1,21 @@
-Version:1.3
-Warhammer
-C
+chassis:Warhammer
+model:C
 mul id:3479
 Config:Biped
 techbase:Mixed (IS Chassis)
 era:2825
-source:Rec Guide:ilClan #7 - Clan Invasion
+source:Rec Guide:ilClan #7
 rules level:3
+role:Brawler
+
+
+
+quirk:rugged_2
+quirk:searchlight
+quirk:stable
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+
 
 mass:70
 engine:280 Fusion Engine(IS)

@@ -1,13 +1,21 @@
-Version:1.1
-Assassin
-ASN-99
+chassis:Assassin
+model:ASN-99
 mul id:130
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3068
-Source:TRO 3050 - Jihad
+Source:TRO: 3050
 Rules Level:2
+role:Scout
+
+
+
+quirk:easy_maintain
+quirk:cramped_cockpit
+quirk:non_standard
+quirk:poor_life_support
+
 
 Mass:40
 Engine:280 XL Fusion Engine

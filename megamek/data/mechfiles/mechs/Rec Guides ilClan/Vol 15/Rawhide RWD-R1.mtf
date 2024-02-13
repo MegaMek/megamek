@@ -1,13 +1,20 @@
-Version:1.0
-Rawhide
-RWD-R1
+chassis:Rawhide
+model:RWD-R1
 mul id:8189
 
 Config:Biped
 techbase:Inner Sphere
 era:3137
-source:Rec Guide:ilClan #15 - Dark Age
+source:Rec Guide:ilClan #15
 rules level:3
+role:Skirmisher
+
+
+
+
+quirk:reinforced_legs
+quirk:rugged_1
+
 
 mass:55
 engine:275 XL Engine(IS)

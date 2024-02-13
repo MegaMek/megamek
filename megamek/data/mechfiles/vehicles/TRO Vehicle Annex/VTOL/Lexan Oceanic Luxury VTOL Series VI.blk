@@ -32,6 +32,10 @@ Series VI
 IS Level 2
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 VTOL
 </motion_type>
@@ -86,7 +90,7 @@ cargobay:1.5:1
 </transporters>
 
 <source>
-TRO VAr - Clan Invasion
+TRO: Vehicle Annex (Revised)
 </source>
 
 <tonnage>

@@ -90,6 +90,10 @@ ISCASE
 IS Level 2
 </type>
 
+<role>
+Scout
+</role>
+
 <year>
 3070
 </year>
@@ -115,5 +119,5 @@ Hover
 </motion_type>
 
 <source>
-Jihad
+TRO: 3060
 </source>

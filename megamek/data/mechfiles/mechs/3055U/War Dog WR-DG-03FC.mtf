@@ -1,13 +1,13 @@
-Version:1.0
-War Dog
-WR-DG-03FC
+chassis:War Dog
+model:WR-DG-03FC
 mul id:3477
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3064
-Source:TRO 3055 - Civil War
+Source:TRO: 3055
 Rules Level:2
+role:Brawler
 
 Mass:75
 Engine:300 XL Engine

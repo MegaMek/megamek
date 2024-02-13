@@ -1,13 +1,22 @@
-Version:1.0
-Atlas
-AS7-S
+chassis:Atlas
+model:AS7-S
 mul id:148
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3050
-Source:TRO 3050 - Clan Invasion
+Source:TRO: 3050
 Rules Level:2
+role:Juggernaut
+
+
+
+quirk:battle_fists_la
+quirk:battle_fists_ra
+quirk:command_mech
+quirk:distracting
+quirk:imp_com
+
 
 Mass:100
 Engine:300 Fusion Engine

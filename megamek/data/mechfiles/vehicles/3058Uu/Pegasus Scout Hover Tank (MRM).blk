@@ -47,6 +47,10 @@ ISMRM20 Ammo
 <type>
 IS Level 2
 </type>
+
+<role>
+Striker
+</role>
 <year>
 3063
 </year>
@@ -64,7 +68,7 @@ Hover
 </motion_type>
 
 <source>
-TRO 3058 - Civil War
+TRO: 3058
 </source>
 
 <capabilities>

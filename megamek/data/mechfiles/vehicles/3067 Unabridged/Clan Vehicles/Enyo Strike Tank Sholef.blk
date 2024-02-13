@@ -32,6 +32,10 @@ Enyo Strike Tank
 Clan Level 2
 </type>
 
+<role>
+Skirmisher
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -93,7 +97,7 @@ CLSRM6
 </Turret Equipment>
 
 <source>
-RS 3067U
+Record Sheets: Record Sheets: 3067 Unabridged
 </source>
 
 <tonnage>

@@ -1,19 +1,25 @@
 /*
- * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2000-2003 - Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2023 - The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
 package megamek.common;
 
-import megamek.common.options.OptionsConstants;
+import megamek.common.equipment.ArmorType;
 
 /**
  * This is a support vehicle
@@ -22,7 +28,8 @@ import megamek.common.options.OptionsConstants;
  */
 public class SupportTank extends Tank {
     private static final long serialVersionUID = -9028127010133768714L;
-    private int[] barRating;
+
+    private final int[] barRating;
     private double fuelTonnage = 0;
 
     public SupportTank() {
@@ -30,6 +37,7 @@ public class SupportTank extends Tank {
         barRating = new int[locations()];
     }
 
+    @Override
     public void setBARRating(int rating, int loc) {
         barRating[loc] = rating;
     }
@@ -41,40 +49,19 @@ public class SupportTank extends Tank {
         }
     }
 
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see megamek.common.Entity#getBARRating()
-     */
     @Override
     public int getBARRating(int loc) {
-        return barRating[loc];
+        return (barRating == null) ? 0 : barRating[loc];
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see megamek.common.Entity#hasBARArmor()
-     */
     @Override
     public boolean hasBARArmor(int loc) {
-        return true;
+        return ArmorType.forEntity(this, loc).hasFlag(MiscType.F_SUPPORT_VEE_BAR_ARMOR);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see megamek.common.Entity#hasArmoredChassis()
-     */
     @Override
     public boolean hasArmoredChassis() {
-        for (Mounted misc : miscList) {
-            if (misc.getType().hasFlag(MiscType.F_ARMORED_CHASSIS)) {
-                return true;
-            }
-        }
-        return false;
+        return hasMisc(MiscType.F_ARMORED_CHASSIS);
     }
     
     private static final TechAdvancement TA_HOVER = new TechAdvancement(TECH_BASE_ALL)
@@ -185,9 +172,6 @@ public class SupportTank extends Tank {
         }
     }
 
-    /**
-     * Tanks have all sorts of prohibited terrain.
-     */
     @Override
     public boolean isLocationProhibited(Coords c, int currElevation) {
         Hex hex = game.getBoard().getHex(c);
@@ -257,92 +241,11 @@ public class SupportTank extends Tank {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see megamek.common.Entity#getTotalCommGearTons()
-     */
     @Override
     public int getTotalCommGearTons() {
         return getExtraCommGearTons();
     }
 
-    @Override
-    public int getWalkMP(boolean gravity, boolean ignoreheat,
-                         boolean ignoremodulararmor) {
-        int mp = getOriginalWalkMP();
-        if (engineHit || isImmobile()) {
-            return 0;
-        }
-        if (hasWorkingMisc(MiscType.F_HYDROFOIL)) {
-            mp = (int) Math.round(mp * 1.25);
-        }
-        mp = Math.max(0, mp - motiveDamage);
-        mp = Math.max(0, mp - getCargoMpReduction(this));
-        if (null != game) {
-            int weatherMod = game.getPlanetaryConditions()
-                    .getMovementMods(this);
-            if (weatherMod != 0) {
-                mp = Math.max(mp + weatherMod, 0);
-            }
-
-            if (getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_SNOW)) {
-                if ((game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_ICE_STORM)) {
-                    mp += 2;
-                }
-
-                if ((game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_SLEET)
-                        || (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_LIGHT_SNOW)
-                        || (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_MOD_SNOW)
-                        || (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_HEAVY_SNOW)
-                        || (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_SNOW_FLURRIES)) {
-                    mp += 1;
-                }
-            }
-
-            if(getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_WIND)
-                    && (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WI_TORNADO_F13)) {
-                mp += 1;
-            }
-        }
-
-        if (!ignoremodulararmor && hasModularArmor()) {
-            mp--;
-        }
-        if (hasWorkingMisc(MiscType.F_DUNE_BUGGY) && (game != null)) {
-            mp--;
-        }
-
-        if (gravity) {
-            mp = applyGravityEffectsOnMP(mp);
-        }
-
-        //If the unit is towing trailers, adjust its walkMP, TW p205
-        if ((null != game) && !getAllTowedUnits().isEmpty()) {
-            double trainWeight = getWeight();
-            int lowestSuspensionFactor = getSuspensionFactor();
-            //Add up the trailers
-            for (int id : getAllTowedUnits()) {
-                Entity tr = game.getEntity(id);
-                if (tr == null) {
-                    //this isn't supposed to happen, but it can in rare cases when tr is destroyed
-                    continue;
-                }
-                if (tr instanceof Tank) {
-                    Tank trailer = (Tank) tr;
-                    if (trailer.getSuspensionFactor() < lowestSuspensionFactor) {
-                        lowestSuspensionFactor = trailer.getSuspensionFactor();
-                    }
-                }
-                trainWeight += tr.getWeight();
-            }
-            mp = (int) ((getEngine().getRating() + lowestSuspensionFactor) / trainWeight);
-        }
-
-        return mp;
-
-    }
-    
     // CONSTRUCTION INFORMATION
     //Support Vee Engine Information
     @Override
@@ -393,7 +296,6 @@ public class SupportTank extends Tank {
         }
     }
 
-    //Support Vee Engine Information
     @Override
     public double getBaseEngineValue() {
         switch (movementMode) {
@@ -457,7 +359,6 @@ public class SupportTank extends Tank {
         }
     }
 
-    //FUEL CAPACITY TM 128
     @Override
     public double getFuelTonnage() {
         return fuelTonnage;
@@ -468,14 +369,6 @@ public class SupportTank extends Tank {
         fuelTonnage = fuel;
     }
 
-    //DETERMINE SI TM 130
-    //ADD LIFT/DIVE EQUIPMENT TM 131
-    //ADD CONTROL AND CREW STUFF TM 131
-    //ADD HEAT SINKS TM 133
-    //ADD ARMOR
-    //ADD WEAPONS AMMO and EQUIPMENT
-      
-        
     @Override
     public int getTotalSlots() {
         return 5 + (int) Math.floor(getWeight() / 10);

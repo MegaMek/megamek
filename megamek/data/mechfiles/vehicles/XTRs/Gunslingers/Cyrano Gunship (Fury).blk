@@ -36,6 +36,10 @@ Cyrano Gunship
 IS Level 4
 </type>
 
+<role>
+Scout
+</role>
+
 <motion_type>
 VTOL
 </motion_type>
@@ -99,9 +103,15 @@ Medium Laser
 </Turret Equipment>
 
 <source>
-XTRO Gunslingers - Star League
+XTR: Gunslingers
 </source>
 
 <tonnage>
 30.0
 </tonnage>
+
+<quirks>
+easy_pilot
+obsolete
+</quirks>
+

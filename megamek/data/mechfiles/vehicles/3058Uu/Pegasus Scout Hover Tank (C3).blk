@@ -45,6 +45,10 @@ ISC3SlaveUnit
 <type>
 IS Level 2
 </type>
+
+<role>
+Striker
+</role>
 <year>
 3070
 </year>
@@ -62,7 +66,7 @@ Hover
 </motion_type>
 
 <source>
-TRO 3058 - Jihad
+TRO: 3058
 </source>
 
 <capabilities>

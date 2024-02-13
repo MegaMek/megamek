@@ -1,13 +1,17 @@
-Version:1.0
-Ryoken (Stormcrow)
-D
+chassis:Ryoken
+clanname:Stormcrow
+model:D
 mul id:2752
 
 Config:Biped Omnimech
 TechBase:Clan
 Era:2930
-Source:TRO 3050 - Succession Wars
+Source:TRO: 3050
 Rules Level:2
+role:Missile Boat
+
+quirk:stable
+
 
 Mass:55
 Engine:330 XL (Clan) Engine(IS)

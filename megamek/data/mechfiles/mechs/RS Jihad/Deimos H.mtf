@@ -1,13 +1,16 @@
-Version:1.0
-Deimos
-H
+chassis:Deimos
+model:H
 mul id:9505
 
 Config:Biped Omnimech
 techbase:Clan
 era:3085
-source:Jihad
+source:TRO: Jihad
 rules level:2
+role:Sniper
+
+quirk:anti_air
+
 
 mass:85
 engine:255 XL (Clan) Engine(IS)

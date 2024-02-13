@@ -1,0 +1,119 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+SupportTank
+</UnitType>
+
+<Name>
+Rumbler-HT
+</Name>
+
+<Model>
+
+</Model>
+
+<mul id:>
+4210
+</mul id:>
+
+<year>
+3012
+</year>
+
+<originalBuildYear>
+3012
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<transporters>
+standardseats:3.0:0
+troopspace:1.0
+cargobay:0.417:1:1
+</transporters>
+
+<cruiseMP>
+2
+</cruiseMP>
+
+<engine_type>
+6
+</engine_type>
+
+<armor>
+3
+2
+2
+2
+1
+</armor>
+
+<Body Equipment>
+Armored Chassis
+Advanced Fire Control
+</Body Equipment>
+
+<Front Equipment>
+HHSearchlight
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+Machine Gun (Semi-Portable):SIZE:1.0
+InfantryHRR:SIZE:1.0
+</Turret Equipment>
+
+<barrating>
+8
+</barrating>
+
+<structural_tech_rating>
+3
+</structural_tech_rating>
+
+<engine_tech_rating>
+3
+</engine_tech_rating>
+
+<armor_tech_rating>
+3
+</armor_tech_rating>
+
+<notes>
+Extra ammo:
+</notes>
+
+<source>
+TRO: Vehicle Annex (Revised)
+</source>
+
+<tonnage>
+3.0
+</tonnage>
+
+<fuel>
+0.018
+</fuel>
+

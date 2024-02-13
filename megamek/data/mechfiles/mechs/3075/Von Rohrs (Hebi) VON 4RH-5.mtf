@@ -1,13 +1,13 @@
-Version:1.0
-Von Rohrs (Hebi)
-VON 4RH-5
+chassis:Von Rohrs (Hebi)
+model:VON 4RH-5
 mul id:3455
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2487
-Source:TRO 3075
+Source:TRO: 3075
 Rules Level:1
+role:Missile Boat
 
 Mass:65
 Engine:325 Fusion Engine

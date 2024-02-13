@@ -1,13 +1,21 @@
-Version:1.0
-Firestarter
-FS9-S3
+chassis:Firestarter
+model:FS9-S3
 mul id:5442
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3075
-Source:TRO 3050 - Jihad
+Source:TRO: 3050
 Rules Level:2
+role:Scout
+
+
+
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+weaponquirk:exposed_linkage:RA:7:Flamer
+weaponquirk:exposed_linkage:LA:7:Flamer
+
 
 Mass:35
 Engine:210 Fusion Engine(IS)

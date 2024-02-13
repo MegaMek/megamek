@@ -1,13 +1,17 @@
-Version:1.0
-Arctic Wolf
-
+chassis:Arctic Wolf
+model:
 mul id:99
 
 Config:Biped
 TechBase:Clan
 Era:3059
-Source:TRO 3060
+Source:TRO: 3060
 Rules Level:2
+role:Striker
+
+
+quirk:imp_target_short
+
 
 Mass:40
 Engine:280 XL (Clan) Engine

@@ -36,6 +36,10 @@ SCK-OA
 IS Level 2
 </type>
 
+<role>
+Dogfighter
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -119,9 +123,16 @@ IS Gauss Ammo:OMNI
 </Fuselage Equipment>
 
 <source>
-TRO 3145 Republic of the Sphere - Early Republic
+TRO: 3145 Republic of the Sphere
 </source>
 
 <tonnage>
 60.0
 </tonnage>
+
+<quirks>
+easy_pilot
+non_standard
+difficult_maintain
+</quirks>
+

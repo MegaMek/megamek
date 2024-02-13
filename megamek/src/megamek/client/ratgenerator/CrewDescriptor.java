@@ -326,6 +326,26 @@ public class CrewDescriptor {
     }
 
     public Crew createCrew(CrewType crewType) {
-        return new Crew(crewType, name, 1, gunnery, piloting, gender, assignment.getFactionRec().isClan(), null);
+        Crew crew = new Crew(crewType, name, crewType.getCrewSlots(), gunnery, piloting, gender, assignment.getFactionRec().isClan(), null);
+        // Randomize names and skills of crew, then assign the piloting and
+        // gunnery skills generated for the unit to the correct slot.
+        if (crewType.getCrewSlots() > 1) {
+            int oldPiloting = crew.getPiloting();
+            int oldGunnery = crew.getGunnery();
+            setSkills();
+            crew.setPiloting(piloting, 0);
+            crew.setGunnery(gunnery, 0);
+            for (int i = 1; i < crew.getSlotCount(); i++) {
+                crew.setName(generateName(Gender.RANDOMIZE), i);
+                setSkills();
+                crew.setPiloting(piloting, i);
+                crew.setGunnery(gunnery, i);
+            }
+            crew.setPiloting(oldPiloting, crew.getCurrentPilotIndex());
+            crew.setGunnery(oldGunnery, crew.getCurrentGunnerIndex());
+            setPiloting(oldPiloting);
+            setGunnery(oldGunnery);
+        }
+        return crew;
     }
 }

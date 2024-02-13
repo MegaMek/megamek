@@ -1,13 +1,18 @@
-Version:1.0
-Crimson Langur
-E
+chassis:Crimson Langur
+model:E
 mul id:5677
 
 Config:Biped Omnimech
 TechBase:Clan
 Era:3068
-Source:3067 Unabridged - Jihad
+Source:Record Sheets: 3067 Unabridged
 Rules Level:2
+role:Striker
+
+quirk:easy_maintain
+quirk:imp_com
+quirk:pro_actuator
+
 
 Mass:50
 Engine:350 XL (Clan) Engine(IS)

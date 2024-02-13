@@ -1,13 +1,22 @@
-Version:1.1
-Grigori
-C-GRG-O Invictus
+chassis:Grigori
+model:C-GRG-O Invictus
 mul id:1320
 
 Config:Biped Omnimech
 TechBase:Inner Sphere
 Era:3069
-Source:TRO 3075
+Source:TRO: 3075
 Rules Level:2
+role:Brawler
+
+
+
+
+quirk:imp_com
+quirk:imp_sensors
+quirk:bad_rep_clan
+quirk:bad_rep_is
+
 
 Mass:60
 Engine:240 Light Engine(IS)

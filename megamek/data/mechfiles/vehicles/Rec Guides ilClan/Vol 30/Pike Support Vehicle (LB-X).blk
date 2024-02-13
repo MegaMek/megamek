@@ -36,6 +36,10 @@ Pike Support Vehicle
 IS Level 2
 </type>
 
+<role>
+Sniper
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -127,7 +131,7 @@ TARGETING:Magestrix Gamma Mk II
 </systemManufacturers>
 
 <source>
-Rec Guide:ilClan #30 - Dark Age
+Rec Guide:ilClan #30
 </source>
 
 <tonnage>

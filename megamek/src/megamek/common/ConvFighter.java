@@ -14,13 +14,14 @@ package megamek.common;
 
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.common.cost.ConvFighterCostCalculator;
+import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 
 /**
  * @author Jay Lawson
  * @since Jun 12, 2008
  */
-public class ConvFighter extends Aero {
+public class ConvFighter extends AeroSpaceFighter {
     private static final long serialVersionUID = 6297668284292929409L;
 
     @Override
@@ -52,7 +53,7 @@ public class ConvFighter extends Aero {
     public int getHeatCapacity() {
         return DOES_NOT_TRACK_HEAT;
     }
-    
+
     @Override
     public boolean tracksHeat() {
         return false;
@@ -73,7 +74,7 @@ public class ConvFighter extends Aero {
         int used = safeThrust + (2 * overThrust);
         if (!getEngine().isFusion()) {
             used = (int) Math.floor(safeThrust * 0.5) + overThrust;
-        } else if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_CONV_FUSION_BONUS)) {
+        } else if (gameOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_CONV_FUSION_BONUS)) {
             used = (int) Math.floor(safeThrust * 0.5) + (2 * overThrust);
         }
         return used;
@@ -83,12 +84,12 @@ public class ConvFighter extends Aero {
                 .setAdvancement(DATE_NONE, 2470, 2490).setProductionFactions(F_TH)
                 .setTechRating(RATING_D).setAvailability(RATING_C, RATING_D, RATING_C, RATING_B)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
-    
+
     @Override
     public TechAdvancement getConstructionTechAdvancement() {
         return TA_CONV_FIGHTER;
     }
-    
+
     @Override
     public double getBVTypeModifier() {
         return 1.1;

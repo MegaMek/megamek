@@ -1,13 +1,20 @@
-Version:1.1
-Exterminator
-EXT-6CS
+chassis:Exterminator
+model:EXT-6CS
 mul id:5551
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3079
-Source:XTRO ComStar - Jihad
+Source:XTR: ComStar
 Rules Level:4
+role:Skirmisher
+
+
+
+quirk:difficult_maintain
+quirk:non_standard
+quirk:sensor_ghosts
+
 
 Mass:65
 Engine:390 XL Fusion Engine

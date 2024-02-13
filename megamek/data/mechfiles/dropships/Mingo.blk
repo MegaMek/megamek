@@ -36,6 +36,10 @@ Mingo
 IS Level 2
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Spheroid
 </motion_type>
@@ -134,7 +138,7 @@ Medium Laser
 </imagepath>
 
 <source>
-ToS - Valencia - Age of War
+Touring the Stars: Valencia
 </source>
 
 <tonnage>

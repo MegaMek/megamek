@@ -1,13 +1,18 @@
-Version:1.1
-Dasher (Fire Moth)
-B
+chassis:Dasher
+clanname:Fire Moth
+model:B
 mul id:839
 
 Config:Biped Omnimech
 TechBase:Clan
 Era:2874
-Source:TRO 3050 - Succession Wars
+Source:TRO: 3050
 Rules Level:2
+role:Striker
+
+quirk:low_profile
+quirk:overhead_arms
+
 
 Mass:20
 Engine:200 XL (Clan) Engine(IS)

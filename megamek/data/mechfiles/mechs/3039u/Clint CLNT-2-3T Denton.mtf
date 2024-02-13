@@ -1,13 +1,22 @@
-Version:1.0
-Clint
-CLNT-2-3T (Denton)
+chassis:Clint
+model:CLNT-2-3T (Denton)
 mul id:645
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3033
-Source:TRO 3039 - Succession Wars
+Source:TRO: 3039
 Rules Level:1
+role:Striker
+
+
+
+quirk:imp_target_long
+quirk:imp_target_med
+quirk:difficult_maintain
+quirk:exp_actuator
+quirk:non_standard
+
 
 Mass:40
 Engine:240 Fusion Engine

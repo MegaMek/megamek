@@ -27,13 +27,17 @@ Barouche Military Transport
 3078
 </year>
 <source>
-XTRO RetroTech - Jihad
+XTR: RetroTech
 </source>
 
 
 <type>
 IS Level 2
 </type>
+
+<role>
+Scout
+</role>
 
 <motion_type>
 Hover

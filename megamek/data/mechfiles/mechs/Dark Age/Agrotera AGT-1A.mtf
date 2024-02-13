@@ -1,12 +1,12 @@
-Version:1.3
-Agrotera
-AGT-1A
+chassis:Agrotera
+model:AGT-1A
 mul id:6459
 Config:Biped
 techbase:Inner Sphere
 era:3108
-source:TRO 3145 Capellan Confederation - Late Republic
+source:TRO: 3145 Capellan Confederation
 rules level:3
+role:Striker
 
 mass:50
 engine:300 XL Engine(IS)
@@ -14,6 +14,7 @@ structure:IS Endo Steel
 myomer:Standard
 cockpit:Standard Cockpit
 gyro:XL Gyro
+ejection:Full Head Ejection System
 
 heat sinks:10 IS Double
 walk mp:6

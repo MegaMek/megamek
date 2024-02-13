@@ -1,13 +1,18 @@
-Version:1.0
-Hoplite
-HOP-4C
+chassis:Hoplite
+model:HOP-4C
 mul id:4331
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2584
-Source:TRO 3050 - Star League
+Source:TRO: 3050
 Rules Level:1
+role:Brawler
+
+
+
+quirk:no_arms
+
 
 Mass:55
 Engine:220 Fusion Engine

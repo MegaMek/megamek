@@ -60,6 +60,10 @@ IS BA Stealth (Improved):LA
 IS Level 2
 </type>
 
+<role>
+Ambusher
+</role>
+
 <year>
 3071
 </year>
@@ -69,7 +73,7 @@ Leg
 </motion_type>
 
 <source>
-TRO 3075 - Jihad
+TRO: 3075
 </source>
 
 <armor_type>

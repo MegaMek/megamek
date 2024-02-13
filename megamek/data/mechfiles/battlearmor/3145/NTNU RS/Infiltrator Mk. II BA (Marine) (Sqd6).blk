@@ -64,6 +64,10 @@ IS BA Stealth:LA
 Mixed (IS Chassis)
 </type>
 
+<role>
+Ambusher
+</role>
+
 <year>
 3092
 </year>
@@ -73,7 +77,7 @@ Jump
 </motion_type>
 
 <source>
-RS3145 NT NU - Early Republic
+Record Sheets: 3145 New Tech New Upgrades
 </source>
 
 <armor_type>

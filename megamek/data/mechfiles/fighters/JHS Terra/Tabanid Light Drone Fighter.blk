@@ -36,6 +36,10 @@ Tabanid Light Drone Fighter
 IS Level 4
 </type>
 
+<role>
+Interceptor
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -104,7 +108,7 @@ ImprovedSmartRoboticControlSystem
 </Fuselage Equipment>
 
 <source>
-JHS Terra - Jihad
+Jihad Hot Spots: Terra
 </source>
 
 <tonnage>

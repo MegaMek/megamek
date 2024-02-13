@@ -36,6 +36,10 @@ Invader Jumpship
 IS Level 3
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -114,7 +118,7 @@ steeragequarters:100.0:0
 </structural_integrity>
 
 <source>
-TRO 3057U - Star League
+TRO: 3057 Revised
 </source>
 
 <tonnage>

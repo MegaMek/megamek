@@ -17,12 +17,14 @@ package megamek.common;
 import megamek.common.loaders.*;
 import megamek.common.util.BuildingBlock;
 import megamek.common.util.fileUtils.MegaMekFile;
+import megamek.common.verifier.TestInfantry;
 import megamek.common.weapons.ppc.*;
 import org.apache.logging.log4j.LogManager;
 
 import java.io.*;
 import java.util.*;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import java.util.zip.ZipFile;
 
 /**
@@ -122,7 +124,9 @@ public class MechFileParser {
                 } else if (sType.equals("SupportVTOL")) {
                     loader = new BLKSupportVTOLFile(bb);
                 } else if (sType.equals("Aero")) {
-                    loader = new BLKAeroFile(bb);
+                    loader = new BLKAeroSpaceFighterFile(bb);
+                } else if (sType.equals("AeroSpaceFighter")) {
+                    loader = new BLKAeroSpaceFighterFile(bb);
                 } else if (sType.equals("FixedWingSupport")) {
                     loader = new BLKFixedWingSupportFile(bb);
                 } else if (sType.equals("ConvFighter")) {
@@ -161,7 +165,6 @@ public class MechFileParser {
      */
     public static void postLoadInit(Entity ent) throws EntityLoadingException {
         try {
-            ent.loadDefaultQuirks();
             ent.loadDefaultCustomWeaponOrder();
         } catch (Exception ex) {
             LogManager.getLogger().error("Error in postLoadInit for " + ent.getDisplayName(), ex);
@@ -191,7 +194,7 @@ public class MechFileParser {
             // Conventional Fighters get a combined sensor suite
             ent.getSensors().add(new Sensor(Sensor.TYPE_AERO_SENSOR));
             ent.setNextSensor(ent.getSensors().firstElement());
-        } else if (ent.hasETypeFlag(Entity.ETYPE_DROPSHIP) 
+        } else if (ent.hasETypeFlag(Entity.ETYPE_DROPSHIP)
                 || ent.hasETypeFlag(Entity.ETYPE_SPACE_STATION)
                 || ent.hasETypeFlag(Entity.ETYPE_JUMPSHIP)
                 || ent.hasETypeFlag(Entity.ETYPE_WARSHIP)) {
@@ -220,14 +223,17 @@ public class MechFileParser {
 
         // Walk through the list of equipment.
         for (Mounted m : ent.getMisc()) {
+            if (m.getLinked() != null) {
+                continue;
+            }
             // link laser insulators
             if ((m.getType().hasFlag(MiscType.F_LASER_INSULATOR)
                     || m.getType().hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE))) {
                 // We can link to a laser in the same location that isn't already linked.
                 Predicate<Mounted> linkable = mount ->
                         (mount.getLinkedBy() == null) && (mount.getLocation() == m.getLocation())
-                            && (mount.getType() instanceof WeaponType)
-                            && mount.getType().hasFlag(WeaponType.F_LASER);
+                                && (mount.getType() instanceof WeaponType)
+                                && mount.getType().hasFlag(WeaponType.F_LASER);
                 // The laser pulse module is also restricted to non-pulse lasers, IS only
                 if (m.getType().hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)) {
                     linkable = linkable.and(mount -> !mount.getType().hasFlag(WeaponType.F_PULSE)
@@ -289,10 +295,9 @@ public class MechFileParser {
                         break;
                     }
                 }
-            } else if ((m.getType().hasFlag(MiscType.F_ARTEMIS)
-                    || (m.getType().hasFlag(MiscType.F_ARTEMIS_V))
-                    || (m.getType().hasFlag(MiscType.F_ARTEMIS_PROTO)))
-                    && (m.getLinked() == null)) {
+            } else if (m.getType().hasFlag(MiscType.F_ARTEMIS)
+                    || m.getType().hasFlag(MiscType.F_ARTEMIS_V)
+                    || m.getType().hasFlag(MiscType.F_ARTEMIS_PROTO)) {
 
                 // link up to a weapon in the same location
                 for (Mounted mWeapon : ent.getTotalWeaponList()) {
@@ -317,9 +322,7 @@ public class MechFileParser {
                     // huh. this shouldn't happen
                     throw new EntityLoadingException("Unable to match Artemis to launcher for " + ent.getShortName());
                 }
-            } else if ((m.getType().hasFlag(MiscType.F_STEALTH) || m.getType()
-                    .hasFlag(MiscType.F_VOIDSIG))
-                    && (m.getLinked() == null)
+            } else if ((m.getType().hasFlag(MiscType.F_STEALTH) || m.getType().hasFlag(MiscType.F_VOIDSIG))
                     && (ent instanceof Mech)) {
                 // Find an ECM suite to link to the stealth system.
                 // Stop looking after we find the first ECM suite.
@@ -335,12 +338,11 @@ public class MechFileParser {
                     // This mech has stealth armor but no ECM. Probably
                     // an improperly created custom.
                     throw new EntityLoadingException(
-                            "Unable to find an ECM Suite for "+ent.getShortName()+".  Mechs with Stealth Armor or Void-Signature-System must also be equipped with an ECM Suite.");
+                            "Unable to find an ECM Suite for " + ent.getShortName() + ".  Mechs with Stealth Armor or Void-Signature-System must also be equipped with an ECM Suite.");
                 }
             } // End link-Stealth
-              // Link PPC Capacitor to PPC it its location.
-            else if (m.getType().hasFlag(MiscType.F_PPC_CAPACITOR)
-                    && (m.getLinked() == null)) {
+            // Link PPC Capacitor to PPC it its location.
+            else if (m.getType().hasFlag(MiscType.F_PPC_CAPACITOR)) {
 
                 // link up to a weapon in the same location
                 for (Mounted mWeapon : ent.getTotalWeaponList()) {
@@ -374,8 +376,7 @@ public class MechFileParser {
             } // End link-PPC Capacitor
 
             // Link MRM Apollo fire-control systems to their missle racks.
-            else if (m.getType().hasFlag(MiscType.F_APOLLO)
-                    && (m.getLinked() == null)) {
+            else if (m.getType().hasFlag(MiscType.F_APOLLO)) {
 
                 // link up to a weapon in the same location
                 for (Mounted mWeapon : ent.getTotalWeaponList()) {
@@ -402,19 +403,21 @@ public class MechFileParser {
                 if (m.getLinked() == null) {
                     // huh. this shouldn't happen
                     throw new EntityLoadingException(
-                            "Unable to match Apollo to launcher for "+ent.getShortName());
+                            "Unable to match Apollo to launcher for " + ent.getShortName());
                 }
-            } // End link-Apollo
+            }// End link-Apollo
+        }
               // now find any active probes and add them to the sensor list
               // choose this sensor if added
               //WOR CEWS
+        for (Mounted m : ent.getMisc()) {
             if (m.getType().hasFlag(MiscType.F_BAP)) {
                 if (m.getType().getInternalName().equals(Sensor.BAP)) {
                     ent.getSensors().add(new Sensor(Sensor.TYPE_BAP));
                     ent.setNextSensor(ent.getSensors().lastElement());
                } else if (m.getType().getInternalName().equals(Sensor.BAPP)) {
                     ent.getSensors().add(new Sensor(Sensor.TYPE_BAPP));
-                    ent.setNextSensor(ent.getSensors().lastElement());      
+                    ent.setNextSensor(ent.getSensors().lastElement());
                } else if (m.getType().getInternalName().equals(Sensor.BLOODHOUND)) {
                     ent.getSensors().add(new Sensor(Sensor.TYPE_BLOODHOUND));
                     ent.setNextSensor(ent.getSensors().lastElement());
@@ -425,7 +428,7 @@ public class MechFileParser {
                     ent.getSensors().add(new Sensor(Sensor.TYPE_NOVA));
                     ent.setNextSensor(ent.getSensors().lastElement());
                 } else if (m.getType().getInternalName().equals(Sensor.CLAN_AP)) {
-                    ent.getSensors().add(new Sensor(Sensor.TYPE_CLAN_BAP));
+                    ent.getSensors().add(new Sensor(Sensor.TYPE_CLAN_AP));
                     ent.setNextSensor(ent.getSensors().lastElement());
                 } else if (m.getType().getInternalName()
                         .equals(Sensor.LIGHT_AP)) {
@@ -464,7 +467,8 @@ public class MechFileParser {
                 if ((m.getLocation() != Mech.LOC_LARM)
                         && (m.getLocation() != Mech.LOC_LLEG)
                         && (m.getLocation() != Mech.LOC_RARM)
-                        && (m.getLocation() != Mech.LOC_RLEG)) {
+                        && (m.getLocation() != Mech.LOC_RLEG)
+                        && (m.getLocation() != Mech.LOC_CLEG)) {
                     throw new EntityLoadingException(
                             "Unable to load AES due to incompatible location for "+ent.getShortName());
                 }
@@ -567,7 +571,7 @@ public class MechFileParser {
                                 || (mWeapon.getType() instanceof ISSnubNosePPC)
                                 || (mWeapon.getType() instanceof CLEnhancedPPC)
                                 || (mWeapon.getType() instanceof CLImprovedPPC)
-                                || (mWeapon.getType() instanceof ISKinsSlaughterPPC)                             
+                                || (mWeapon.getType() instanceof ISKinsSlaughterPPC)
                                 || (mWeapon.getType() instanceof CLERPPC && ent.getYear() >= 3101)) {
 
                             m.setCrossLinked(mWeapon);
@@ -624,30 +628,21 @@ public class MechFileParser {
         ent.addClanCase();
 
         if (ent instanceof BattleArmor) {
-            // now, depending on equipment and chassis, BA might be able to do
-            // leg
-            // and swarm attacks
+            // now, depending on equipment and chassis, BA might be able to do leg and swarm attacks
             if (((BattleArmor) ent).getChassisType() != BattleArmor.CHASSIS_TYPE_QUAD) {
-                int tBasicManipulatorCount = ent
-                        .countWorkingMisc(MiscType.F_BASIC_MANIPULATOR);
-                int tArmoredGloveCount = ent
-                        .countWorkingMisc(MiscType.F_ARMORED_GLOVE);
-                int tBattleClawCount = ent
-                        .countWorkingMisc(MiscType.F_BATTLE_CLAW);
+                int tBasicManipulatorCount = ent.countWorkingMisc(MiscType.F_BASIC_MANIPULATOR);
+                int tArmoredGloveCount = ent.countWorkingMisc(MiscType.F_ARMORED_GLOVE);
+                int tBattleClawCount = ent.countWorkingMisc(MiscType.F_BATTLE_CLAW);
                 boolean hasSwarm, hasSwarmStart, hasSwarmStop, hasLegAttack;
                 hasSwarm = hasSwarmStart = hasSwarmStop = hasLegAttack = false;
                 for (Mounted m : ent.getWeaponList()) {
-                    if (m.getType().getInternalName()
-                            .equals(Infantry.SWARM_WEAPON_MEK)) {
+                    if (m.getType().getInternalName().equals(Infantry.SWARM_WEAPON_MEK)) {
                         hasSwarm = true;
-                    } else if (m.getType().getInternalName()
-                            .equals(Infantry.SWARM_MEK)) {
+                    } else if (m.getType().getInternalName().equals(Infantry.SWARM_MEK)) {
                         hasSwarmStart = true;
-                    } else if (m.getType().getInternalName()
-                            .equals(Infantry.STOP_SWARM)) {
+                    } else if (m.getType().getInternalName().equals(Infantry.STOP_SWARM)) {
                         hasSwarmStop = true;
-                    } else if (m.getType().getInternalName()
-                            .equals(Infantry.LEG_ATTACK)) {
+                    } else if (m.getType().getInternalName().equals(Infantry.LEG_ATTACK)) {
                         hasLegAttack = true;
                     }
                 }
@@ -730,22 +725,10 @@ public class MechFileParser {
             }
         }
         // physical attacks for conventional infantry
-        else if ((ent instanceof Infantry) && ((Infantry) ent).canMakeAntiMekAttacks()) {
-            try {
-                ent.addEquipment(EquipmentType.get(Infantry.SWARM_MEK),
-                        Infantry.LOC_INFANTRY, false,
-                        BattleArmor.MOUNT_LOC_NONE, false);
-                ent.addEquipment(EquipmentType.get(Infantry.STOP_SWARM),
-                        Infantry.LOC_INFANTRY, false,
-                        BattleArmor.MOUNT_LOC_NONE, false);
-                ent.addEquipment(EquipmentType.get(Infantry.LEG_ATTACK),
-                        Infantry.LOC_INFANTRY, false,
-                        BattleArmor.MOUNT_LOC_NONE, false);
-            } catch (LocationFullException ex) {
-                throw new EntityLoadingException(ex.getMessage());
-            }
+        else if (ent instanceof Infantry) {
+            TestInfantry.adaptAntiMekAttacks((Infantry) ent);
         }
-        
+
         // Check if it's canon; if it is, mark it as such.
         ent.setCanon(false);// Guilty until proven innocent
         try {
@@ -776,8 +759,36 @@ public class MechFileParser {
         int index = Collections.binarySearch(canonUnitNames, ent.getShortNameRaw());
         if (index >= 0) {
             ent.setCanon(true);
-        }        
+        }
         ent.initMilitary();
+        linkDumpers(ent);
+    }
+
+    /**
+     * Links each Dumper to the first (unlinked) Cargo equipment if there is one in the same location.
+     * Works only for variable size Cargo, {@link MiscType#createCargo()}, but not Liquid Storage,
+     * Cargo containers or bays.
+     *
+     * @param entity The entity to add links to
+     */
+    static void linkDumpers(Entity entity) {
+        List<Mounted> dumpers = entity.getMisc().stream()
+                .filter(mounted -> mounted.getType().hasFlag(MiscType.F_DUMPER)).collect(Collectors.toList());
+
+        List<Mounted> cargos = entity.getMisc().stream()
+                .filter(mounted -> mounted.is(EquipmentTypeLookup.CARGO)).collect(Collectors.toList());
+        cargos.forEach(cargo -> cargo.setLinkedBy(null));
+
+        for (Mounted dumper : dumpers) {
+            dumper.setLinked(null);
+            for (Mounted cargo : cargos) {
+                if ((cargo.getLinkedBy() == null) && (cargo.getLocation() == dumper.getLocation())) {
+                    dumper.setLinked(cargo);
+                    cargo.setLinkedBy(dumper);
+                    break;
+                }
+            }
+        }
     }
 
     /**

@@ -1,13 +1,18 @@
-Version:1.1
-Gun
-GN-2OB
+chassis:Gun
+model:GN-2OB
 mul id:6452
 
 Config:Biped Omnimech
 TechBase:Inner Sphere
 Era:3134
-Source:TRO 3145 Capellan Confederation - Dark Ages
+Source:TRO: 3145 Capellan Confederation
 Rules Level:3
+role:Sniper
+
+
+
+quirk:imp_target_short
+
 
 Mass:20
 Engine:100 Fusion Engine(IS)

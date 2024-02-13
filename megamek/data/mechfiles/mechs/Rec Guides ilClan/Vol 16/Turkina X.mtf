@@ -1,13 +1,16 @@
-Version:1.0
-Turkina
-X
+chassis:Turkina
+model:X
 mul id:3334
 
 Config:Biped Omnimech
 techbase:Clan
 era:3077
-source:Rec Guide:ilClan #16 - Jihad
+source:Rec Guide:ilClan #16
 rules level:3
+role:Missile Boat
+
+quirk:easy_pilot
+
 
 mass:95
 engine:285 XL (Clan) Engine(IS)

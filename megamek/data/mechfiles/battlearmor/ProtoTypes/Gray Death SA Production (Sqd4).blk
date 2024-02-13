@@ -63,6 +63,10 @@ BABasicManipulator:RA
 IS Level 2
 </type>
 
+<role>
+Ambusher
+</role>
+
 <year>
 3080
 </year>
@@ -72,7 +76,7 @@ Leg
 </motion_type>
 
 <source>
-TRO Prototypes - Jihad
+TRO: Prototypes
 </source>
 
 <overview>
@@ -107,3 +111,8 @@ JUMPJET:Unknown
 COMMUNICATIONS:Unknown
 TARGETING:Unknown
 </systemManufacturers>
+
+<quirks>
+distracting
+</quirks>
+

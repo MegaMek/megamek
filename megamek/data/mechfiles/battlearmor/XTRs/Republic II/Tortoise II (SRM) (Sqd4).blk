@@ -32,6 +32,10 @@ Tortoise II
 Mixed (IS Chassis)
 </type>
 
+<role>
+Ambusher
+</role>
+
 <motion_type>
 Leg
 </motion_type>
@@ -61,7 +65,7 @@ BA-SRM6 Ammo:TU:Shots3#
 </Squad Equipment>
 
 <source>
-XTRO Republic II - Dark Ages
+XTR: Republic II
 </source>
 
 <chassis>
@@ -120,3 +124,10 @@ JUMPJET:Unknown
 COMMUNICATIONS:Unknown
 TARGETING:Unknown
 </systemManufacturers>
+
+<quirks>
+difficult_maintain
+hard_pilot
+prototype
+</quirks>
+

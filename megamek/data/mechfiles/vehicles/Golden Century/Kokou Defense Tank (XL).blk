@@ -36,6 +36,10 @@ Kokou Defense Tank
 Clan Level 2
 </type>
 
+<role>
+Sniper
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -92,7 +96,7 @@ CLLargePulseLaser
 </Turret Equipment>
 
 <source>
-Succession Wars
+TRO: Golden Century
 </source>
 
 <tonnage>

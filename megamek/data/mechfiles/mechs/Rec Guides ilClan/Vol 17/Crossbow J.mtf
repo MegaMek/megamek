@@ -1,13 +1,13 @@
-Version:1.0
-Crossbow
-J
+chassis:Crossbow
+model:J
 mul id:8245
 
 Config:Biped Omnimech
 techbase:Clan
 era:3142
-source:Rec Guide:ilClan #17 - Dark Age
+source:Rec Guide:ilClan #17
 rules level:3
+role:Skirmisher
 
 mass:65
 engine:325 Fusion (Clan) Engine(IS)

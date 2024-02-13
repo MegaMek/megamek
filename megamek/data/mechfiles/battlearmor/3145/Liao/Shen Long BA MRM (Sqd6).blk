@@ -32,6 +32,10 @@ Shen Long Battle Armor
 IS Level 2
 </type>
 
+<role>
+Scout
+</role>
+
 <motion_type>
 Leg
 </motion_type>
@@ -54,7 +58,7 @@ IS MRM 5 Ammo:TU:Shots4#
 </Squad Equipment>
 
 <source>
-TRO 3145 Capellan Confederation - Early Republic
+TRO: 3145 Capellan Confederation
 </source>
 
 <chassis>
@@ -113,3 +117,7 @@ JUMPJET:Unknown
 COMMUNICATIONS:Unknown
 TARGETING:Unknown
 </systemManufacturers>
+
+<weaponQuirks>
+mod_weapons:Squad:0:ISBAMRM5
+</weaponQuirks>

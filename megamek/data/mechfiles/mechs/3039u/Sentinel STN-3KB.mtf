@@ -1,13 +1,19 @@
-Version:1.0
-Sentinel
-STN-3KB
+chassis:Sentinel
+model:STN-3KB
 mul id:2859
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2830
-Source:TRO 3039 - Succession Wars
+Source:TRO: 3039
 Rules Level:1
+role:Striker
+
+
+
+quirk:imp_com
+weaponquirk:ammo_feed_problems:RT:1:SRM 2
+
 
 Mass:40
 Engine:240 Fusion Engine

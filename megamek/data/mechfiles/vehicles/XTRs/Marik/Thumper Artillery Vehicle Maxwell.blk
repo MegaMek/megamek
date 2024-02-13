@@ -32,6 +32,10 @@ Maxwell
 IS Level 4
 </type>
 
+<role>
+Missile Boat
+</role>
+
 <tonnage>
 60.0
 </tonnage>
@@ -85,5 +89,5 @@ Machine Gun(ST)
 </Rear Equipment>
 
 <source>
-XTRO Marik - Jihad
+XTR: Marik
 </source>

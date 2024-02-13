@@ -1,13 +1,18 @@
-Version:1.0
-Firefly
-FFL-4DA
+chassis:Firefly
+model:FFL-4DA
 mul id:1091
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3067
-Source:Starterbook: Wolf & Blake - Civil War
+Source:Starterbook: Wolf & Blake
 Rules Level:2
+role:Striker
+
+
+
+quirk:no_arms
+
 
 Mass:30
 Engine:150 Light Engine

@@ -36,6 +36,10 @@ C
 IS Level 3
 </type>
 
+<role>
+Fire Support
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -120,7 +124,7 @@ This configuration is 4 tons overweight as given in the official source.
 </notes>
 
 <source>
-TRO 3085
+TRO: 3085
 </source>
 
 <tonnage>

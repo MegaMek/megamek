@@ -36,6 +36,10 @@ Kage Light Battle Armor
 IS Level 2
 </type>
 
+<role>
+Scout
+</role>
+
 <motion_type>
 Jump
 </motion_type>
@@ -90,7 +94,7 @@ LegAttack
 </Trooper 6 Equipment>
 
 <source>
-TRO 3058U - Clan Invasion
+TRO: 3058 Upgrade
 </source>
 
 <chassis>

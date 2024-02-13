@@ -46,8 +46,8 @@ public class NaturalOrderComparator implements Comparator<String>, Serializable 
     }
 
     public NaturalOrderComparator(int collatorStrength) {
-        this.collator = Collator.getInstance();
-        this.collator.setStrength(collatorStrength);
+        collator = Collator.getInstance();
+        collator.setStrength(collatorStrength);
     }
 
     @Override

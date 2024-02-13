@@ -1,12 +1,17 @@
-Version:1.1
-Excalibur
-EXC-C1 (Cernunnos)
+chassis:Excalibur
+model:EXC-C1 (Cernunnos)
 mul id:1001
+source:Record Sheets: Unique Mechs
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3062
 Rules Level:2
+role:Skirmisher
+
+quirk:vestigial_hands_la
+quirk:vestigial_hands_ra
+
 
 Mass:70
 Engine:350 XL Engine

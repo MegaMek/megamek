@@ -32,6 +32,10 @@ Winston Combat Vehicle
 IS Level 2
 </type>
 
+<role>
+Missile Boat
+</role>
+
 <tonnage>
 70.0
 </tonnage>
@@ -95,3 +99,6 @@ Light PPC
 Light PPC
 </Turret Equipment>
 
+<source>
+TRO: 3085
+</source>

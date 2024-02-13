@@ -36,6 +36,10 @@ CUT-01D
 IS Level 3
 </type>
 
+<role>
+Fast Dogfighter
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -111,7 +115,7 @@ IS Gauss Ammo
 </Fuselage Equipment>
 
 <source>
-TRO 3145 Federated Suns - Late Republic
+TRO: 3145 Federated Suns
 </source>
 
 <tonnage>
@@ -147,5 +151,11 @@ TARGETING:Rander TA1000 with Beagle Active Probe
 </systemManufacturers>
 
 <source>
-TRO 3145 Federated Suns - Late Republic
+TRO: 3145 Federated Suns
 </source>
+
+<quirks>
+imp_life_support
+atmo_instability
+</quirks>
+

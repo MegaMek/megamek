@@ -1,13 +1,23 @@
-Version:1.0
-Mercury
-MCY-99
+chassis:Mercury
+model:MCY-99
 mul id:2172
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2742
-Source:TRO 3050 - Star League
+Source:TRO: 3050
 Rules Level:2
+role:Scout
+
+
+
+
+quirk:easy_maintain
+weaponquirk:mod_weapons:HD:3:Small Laser
+weaponquirk:mod_weapons:CT:10:Small Laser
+weaponquirk:mod_weapons:LT:0:Medium Laser
+weaponquirk:mod_weapons:RA:4:Medium Laser
+
 
 Mass:20
 Engine:160 Fusion Engine

@@ -1,13 +1,22 @@
-Version:1.0
-Warhammer
-WHM-10K
+chassis:Warhammer
+model:WHM-10K
 mul id:7564
 
 Config:Biped
 techbase:Mixed (IS Chassis)
 era:3147
-source:Rec Guide:ilClan #7 - Dark Age
+source:Rec Guide:ilClan #7
 rules level:3
+role:Brawler
+
+
+
+quirk:rugged_2
+quirk:searchlight
+quirk:stable
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+
 
 mass:70
 engine:280 Light Engine(IS)

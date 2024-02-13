@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -35,6 +35,10 @@ Carson Destroyer
 <type>
 IS Level 3
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Aerodyne
@@ -145,8 +149,48 @@ Ammo NAC/30:40
 40
 </structural_integrity>
 
+<capabilities>
+The Carson-class destroyers, manufactured by Thompson's Shipyards, were designed to serve as escort vessels for the expanding Star League Navy. These destroyers incorporated features suitable for extended deployment, including an eighty-meter diameter Grav deck, large cargo capacity, and fuel tank. However, issues arose due to the inexperience of Thompson's Shipyards with WarShip construction. The single Regulis-XII engine, when operated at maximum thrust for extended periods, experienced excessive wear and tear, resulting in reduced maximum thrust and a need for frequent shipyard maintenance. These limitations made the Carson-class destroyers incapable of operating effectively in the new territories, where maintenance yards were scarce.
+</capabilities>
+
+<overview>
+The Carson-class destroyers were a series of escort vessels commissioned by the Star League Navy to cover the expanding territory of the Star League. Manufactured by Thompson's Shipyards, known for their expertise in JumpShip construction, the Carsons featured a generous grav deck, large cargo capacity, and fuel tanks for extended deployment. However, due to engineering oversights, the Carson-class faced challenges with excessive wear and tear on the engines, leading to reduced thrust and a high need for maintenance. Despite their initial role, the introduction of more reliable destroyers eventually led to the retirement of the Carson-class in 2722, marking the end of their service in the Star League Navy.
+</overview>
+
+<history>
+After five years of service, problems with the Carson-class destroyers became evident due to Thompson's Shipyards' oversight in accounting for the engine's wear and tear. The lack of provisions for this issue resulted in reduced thrust and the need for frequent maintenance, making the destroyers unsuitable for operating in the "wilds" of the expanding territories. As a result, a study on replacing the drive deemed it cost-ineffective, leading to the halting of production. The completed Carson-class destroyers were reassigned to patrol more settled regions while more reliable craft, such as the Lola III-class destroyer, became available. The introduction of the Essex-class destroyer in 2722 finally allowed the Navy to retire the Carson-class destroyers from service.
+</history>
+
+<manufacturer>
+Thompson's Shipyards
+</manufacturer>
+
+<primaryFactory>
+Keid
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<use>
+Destroyer
+</use>
+
+<length>
+582 m
+</length>
+
+<height>
+1080 m Sail
+</height>
+
 <source>
-TRO 3057R - Star League
+TRO: 3057 Revised
 </source>
 
 <tonnage>
@@ -164,6 +208,10 @@ TRO 3057R - Star League
 <grav_decks>
 80
 </grav_decks>
+
+<designtype>
+1
+</designtype>
 
 <crew>
 250
@@ -196,3 +244,4 @@ TRO 3057R - Star League
 <escape_pod>
 27
 </escape_pod>
+

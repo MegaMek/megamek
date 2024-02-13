@@ -1,13 +1,18 @@
-Version:1.0
-Morrigan
-
+chassis:Morrigan
+model:
 mul id:2231
 
 Config:Biped
 TechBase:Clan
 Era:3083
-Source:Dark Age
+source:TRO: 3085
 Rules Level:2
+role:Striker
+
+
+quirk:weak_legs
+weaponquirk:stable_weapon:RA:3:CLHeavyLargeLaser
+
 
 Mass:35
 Engine:280 XL (Clan) Engine

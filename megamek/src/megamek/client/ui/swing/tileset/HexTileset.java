@@ -218,7 +218,8 @@ public class HexTileset implements BoardListener {
             }
         }
 
-        Image img = bestMatch.getImage(comp, hex.getCoords().hashCode());
+        Random random = new Random(hex.getCoords().hashCode());
+        Image img = bestMatch.getImage(comp, Math.abs(random.nextInt() * random.nextInt()));
         if (img == null) {
             img = ImageUtil.createAcceleratedImage(HEX_W, HEX_H);
         }
@@ -288,7 +289,7 @@ public class HexTileset implements BoardListener {
                 incDepth++;
                 if (incDepth < 100) {
                     String incFile = st.sval;
-                    LogManager.getLogger().info("Including " + incFile);
+                    LogManager.getLogger().debug("Including " + incFile);
                     loadFromFile(incFile);
                 }
             }
@@ -299,10 +300,10 @@ public class HexTileset implements BoardListener {
         
         String loadInfo = String.format("Loaded %o base images, %o super images and %o ortho images", 
                 bases.size(), supers.size(), orthos.size());
-        LogManager.getLogger().info(loadInfo);
+        LogManager.getLogger().debug(loadInfo);
         
         if (incDepth == 0) {
-            LogManager.getLogger().info("HexTileset loaded in " + (endTime - startTime) + "ms.");
+            LogManager.getLogger().info("HexTileset " + filename + " loaded in " + (endTime - startTime) + "ms.");
         }
         incDepth--;
     }

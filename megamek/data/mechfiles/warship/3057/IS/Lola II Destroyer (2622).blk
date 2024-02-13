@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -35,6 +35,10 @@ Lola II Destroyer
 <type>
 IS Level 3
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Aerodyne
@@ -166,8 +170,48 @@ Ammo Barracuda:40
 50
 </structural_integrity>
 
+<capabilities>
+The Lola II-class destroyers were equipped with a variety of heavy naval lasers and autocannons, showcasing their formidable armament. They also carried a squadron of heavy fighters to enhance their escort and picket capabilities. The design emphasized durability through the use of extensive armor, although this added weight necessitated the installation of oversized drives meant for larger vessels.
+</capabilities>
+
+<overview>
+The Lola-class destroyers were developed in response to the demands of Rear Admiral Adelaide Lola, who prioritized moral and ethical excellence in addition to military skill. The Lola II variant, along with its predecessors, served as escort and picket ships with impressive armaments and heavy armor. However, the inclusion of massive Rolls Le Fay drives and additional armor increased the ship's mass and resulted in cramped living conditions for the crew.
+</overview>
+
+<history>
+In the pursuit of a replacement for the Lola Block I, the Blue Nose Clipperships, under license from Boeing Interstellar, began designing a new destroyer class. However, in their rush to bring the design to production, critical faults in the fuel system were overlooked, leading to additional design flaws. Consequently, the Star League Navy ordered the decommissioning and scrapping of the remaining Lola II vessels in 2660. Despite this, at least four Lola IIs resurfaced in the hands of Taurian rebels during the Second Periphery Uprising, raising questions about their actual fate.
+</history>
+
+<manufacturer>
+Blue Nose Clipperships,Boeing Interstellar
+</manufacturer>
+
+<primaryFactory>
+Mars,Terra
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<use>
+Destroyer
+</use>
+
+<length>
+626 m
+</length>
+
+<height>
+1000 m Sail
+</height>
+
 <source>
-TRO 3057R - Star League
+TRO: 3057 Revised
 </source>
 
 <tonnage>
@@ -181,6 +225,10 @@ TRO 3057R - Star League
 <sail>
 1
 </sail>
+
+<designtype>
+1
+</designtype>
 
 <crew>
 244
@@ -213,3 +261,4 @@ TRO 3057R - Star League
 <escape_pod>
 20
 </escape_pod>
+

@@ -36,6 +36,10 @@ Maxim Heavy Hover Transport
 Clan Level 2
 </type>
 
+<role>
+Striker
+</role>
+
 <motion_type>
 Hover
 </motion_type>
@@ -104,7 +108,7 @@ CLStreakSRM6
 </Turret Equipment>
 
 <source>
-Clan Invasion
+TRO: 3058
 </source>
 
 <tonnage>
@@ -116,7 +120,7 @@ PETROCHEMICALS
 </fuelType>
 
 <source>
-TRO 3058 - Clan Invasion
+TRO: 3058
 </source>
 
 <capabilities>

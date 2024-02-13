@@ -1,13 +1,18 @@
-Version:1.0
-Barghest
-BGS-7S
+chassis:Barghest
+model:BGS-7S
 mul id:255
 
 Config:Quad
 TechBase:Inner Sphere
 Era:3074
-Source:TRO 3060 - Jihad
+Source:TRO: 3060
 Rules Level:3
+role:Missile Boat
+
+
+
+quirk:directional_torso_mount
+
 
 Mass:70
 Engine:350 XL Engine

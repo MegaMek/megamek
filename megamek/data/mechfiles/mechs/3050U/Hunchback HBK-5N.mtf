@@ -1,13 +1,19 @@
-Version:1.0
-Hunchback
-HBK-5N
+chassis:Hunchback
+model:HBK-5N
 mul id:1562
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3057
-Source:TRO 3050 - Clan Invasion
+Source:TRO: 3050
 Rules Level:2
+role:Juggernaut
+
+
+
+quirk:battle_fists_la
+quirk:battle_fists_ra
+
 
 Mass:50
 Engine:200 Fusion Engine

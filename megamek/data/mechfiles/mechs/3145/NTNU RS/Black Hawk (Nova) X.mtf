@@ -1,13 +1,18 @@
-Version:1.0
-Black Hawk (Nova)
-X
+chassis:Black Hawk
+clanname:Nova
+model:X
 mul id:6910
 
 Config:Biped Omnimech
 TechBase:Mixed (Clan Chassis)
 Era:3137
-Source:RS 3145 NTNU - Dark Ages
+Source:Record Sheets: 3145 New Tech New Upgrades
 Rules Level:3
+role:Skirmisher
+
+quirk:combat_computer
+quirk:low_profile
+
 
 Mass:50
 Engine:250 XL (Clan) Engine

@@ -1,13 +1,18 @@
-Version:1.0
-Bowman
-4
+chassis:Bowman
+model:4
 mul id:5691
 
 Config:Biped
 TechBase:Clan
 Era:2923
-Source:RS:3067U
+Source:Record Sheets: 3067 Unabridged
 Rules Level:3
+role:Missile Boat
+
+quirk:fast_reload
+quirk:stable
+quirk:bad_rep_clan
+
 
 Mass:70
 Engine:350 XL (Clan) Engine(IS)

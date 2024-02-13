@@ -32,6 +32,10 @@ Rommel Tank
 IS Level 1
 </type>
 
+<role>
+Juggernaut
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -114,9 +118,11 @@ TARGETING:TharHes Mars5
 </systemManufacturers>
 
 <source>
-TRO 3039 - Succession Wars
+TRO: 3039
 </source>
 
-<tonnage>
-65.0
-</tonnage>
+<quirks>
+low_profile
+poor_target_short
+</quirks>
+

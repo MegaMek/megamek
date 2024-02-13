@@ -42,6 +42,10 @@ ISTargeting Computer
 <type>
 IS Level 2
 </type>
+
+<role>
+Scout
+</role>
 <year>
 3066
 </year>
@@ -90,5 +94,10 @@ TARGETING:Maxell TA50
 </systemManufacturers>
 
 <source>
-TRO3058U - Succession Wars
+TRO: 3058 Upgrade
 </source>
+
+<quirks>
+ubiquitous_is
+</quirks>
+

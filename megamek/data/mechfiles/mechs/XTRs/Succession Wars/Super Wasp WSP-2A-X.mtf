@@ -1,13 +1,19 @@
-Version:1.0
-Super-Wasp
-WSP-2A-X
+chassis:Super-Wasp
+model:WSP-2A-X
 mul id:5770
 
 Config:Biped
 techbase:Inner Sphere
 era:3020
-source:XTRO Succession Wars - Succession Wars
+source:XTR: Succession Wars
 rules level:4
+role:Striker
+
+
+
+
+quirk:prototype
+
 
 mass:25
 engine:150 Fusion Engine(IS)

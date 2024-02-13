@@ -1,13 +1,20 @@
-Version:1.0
-Daimyo
-DMO-5K
+chassis:Daimyo
+model:DMO-5K
 mul id:806
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3062
-Source:TRO 3055 - Civil War
+Source:TRO: 3055
 Rules Level:2
+role:Brawler
+
+
+
+quirk:ext_twist
+quirk:low_profile
+quirk:difficult_maintain
+
 
 Mass:40
 Engine:200 Fusion Engine

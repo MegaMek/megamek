@@ -1,13 +1,18 @@
-Version:1.0
-Blackjack
-BJ-1DC
+chassis:Blackjack
+model:BJ-1DC
 mul id:375
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3024
-Source:TRO 3039 - Succession Wars
+Source:TRO: 3039
 Rules Level:1
+role:Brawler
+
+
+
+quirk:bad_rep_is
+
 
 Mass:45
 Engine:180 Fusion Engine

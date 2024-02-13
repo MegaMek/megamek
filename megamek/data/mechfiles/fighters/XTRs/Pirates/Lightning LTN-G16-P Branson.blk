@@ -36,6 +36,10 @@ LTN-G16-P (Branson)
 Mixed (IS Chassis) Experimental
 </type>
 
+<role>
+Dogfighter
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -109,7 +113,7 @@ IS Ammo HVAC/10
 </Fuselage Equipment>
 
 <source>
-XTRO Pirates - Jihad
+XTR: Pirates
 </source>
 
 <tonnage>

@@ -1,13 +1,18 @@
-Version:1.0
-Dragonfly (Viper)
-Z
+chassis:Dragonfly
+clanname:Viper
+model:Z
 mul id:5644
 
 Config:Biped Omnimech
 TechBase:Clan
 Era:3072
-Source:WoR - Jihad
+source:Wars of Reaving
 Rules Level:4
+role:Striker
+
+quirk:imp_target_long
+quirk:low_profile
+
 
 Mass:40
 Engine:320 XL (Clan) Engine(IS)

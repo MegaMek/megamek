@@ -32,6 +32,10 @@ Gabriel Reconnaissance Hovercraft
 IS Level 3
 </type>
 
+<role>
+Scout
+</role>
+
 <motion_type>
 Hover
 </motion_type>
@@ -81,7 +85,7 @@ RL10
 </Turret Equipment>
 
 <source>
-TRO 3050 - Jihad
+TRO: 3050
 </source>
 
 <tonnage>

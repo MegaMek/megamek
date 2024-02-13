@@ -32,6 +32,10 @@ Caltrop(Sqd4)
 Mixed (IS Chassis)
 </type>
 
+<role>
+Ambusher
+</role>
+
 <motion_type>
 Jump
 </motion_type>
@@ -65,7 +69,7 @@ Clan BA Stealth (Improved):RA
 </Squad Equipment>
 
 <source>
-XTRO Kurita - Jihad
+XTR: Kurita
 </source>
 
 <chassis>

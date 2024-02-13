@@ -32,6 +32,10 @@ Fulcrum Heavy HoverTank
 Mixed (IS Chassis) Experimental
 </type>
 
+<role>
+Striker
+</role>
+
 <motion_type>
 Hover
 </motion_type>
@@ -88,9 +92,15 @@ ISMagshotGR
 </Turret Equipment>
 
 <source>
-TRO:Prototypes
+TRO: Prototypes
 </source>
 
 <tonnage>
 50.0
 </tonnage>
+
+<quirks>
+non_standard
+easy_maintain
+</quirks>
+

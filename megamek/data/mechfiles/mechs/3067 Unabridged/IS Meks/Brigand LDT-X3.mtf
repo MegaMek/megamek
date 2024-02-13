@@ -1,13 +1,18 @@
-Version:1.0
-Brigand
-LDT-X3
+chassis:Brigand
+model:LDT-X3
 mul id:5653
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3075
-Source:3067 Unabridged
+Source:Record Sheets: 3067 Unabridged
 Rules Level:2
+role:Striker
+
+
+
+quirk:nimble_jumper
+
 
 Mass:25
 Engine:150 XL Engine(IS)

@@ -1,0 +1,109 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+SupportTank
+</UnitType>
+
+<Name>
+Kallon UL-series Construction Vehicle
+</Name>
+
+<Model>
+UL-11 'Rock Cutter'
+</Model>
+
+<mul id:>
+4424
+</mul id:>
+
+<year>
+3054
+</year>
+
+<originalBuildYear>
+3054
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<transporters>
+cargobay:0.5:1:1
+</transporters>
+
+<cruiseMP>
+1
+</cruiseMP>
+
+<engine_type>
+1
+</engine_type>
+
+<armor>
+5
+5
+5
+5
+</armor>
+
+<Body Equipment>
+</Body Equipment>
+
+<Front Equipment>
+Rock Cutter
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<barrating>
+3
+</barrating>
+
+<structural_tech_rating>
+2
+</structural_tech_rating>
+
+<engine_tech_rating>
+2
+</engine_tech_rating>
+
+<armor_tech_rating>
+2
+</armor_tech_rating>
+
+<source>
+TRO: Vehicle Annex (Revised)
+</source>
+
+<tonnage>
+10.0
+</tonnage>
+
+<fuel>
+0.5
+</fuel>
+
+<fuelType>
+PETROCHEMICALS
+</fuelType>
+

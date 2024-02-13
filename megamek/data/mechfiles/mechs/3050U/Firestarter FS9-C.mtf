@@ -1,13 +1,21 @@
-Version:1.0
-Firestarter
-FS9-C
+chassis:Firestarter
+model:FS9-C
 mul id:1111
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3064
-Source:TRO 3050 - Civil War
+Source:TRO: 3050
 Rules Level:2
+role:Striker
+
+
+
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+weaponquirk:exposed_linkage:RA:3:Flamer
+weaponquirk:exposed_linkage:LA:3:Flamer
+
 
 Mass:35
 Engine:210 Fusion Engine(IS)

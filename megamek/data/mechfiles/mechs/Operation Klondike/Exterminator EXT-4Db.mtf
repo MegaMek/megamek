@@ -1,12 +1,18 @@
-Version:1.1
-Exterminator
-EXT-4Db
+chassis:Exterminator
+model:EXT-4Db
 mul id:1005
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2718
 Rules Level:2
+role:Skirmisher
+source:Historical: Operation Klondike
+
+
+
+quirk:difficult_maintain
+
 
 Mass:65
 Engine:390 XL Engine

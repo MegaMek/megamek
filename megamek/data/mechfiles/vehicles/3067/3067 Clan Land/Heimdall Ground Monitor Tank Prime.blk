@@ -32,6 +32,10 @@ Prime
 Clan Level 2
 </type>
 
+<role>
+Juggernaut
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -98,3 +102,7 @@ CLStreakSRM4:OMNI
 <baseChassisTurretWeight>
 1.5
 </baseChassisTurretWeight>
+
+<source>
+TRO: 3067
+</source>

@@ -1,13 +1,16 @@
-Version:1.0
-Vulcan
-VL-5T
+chassis:Vulcan
+model:VL-5T
 mul id:3459
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2778
-Source:TRO 3039 - Star League
+Source:TRO: 3039
 Rules Level:1
+role:Striker
+
+quirk:low_profile
+
 
 Mass:40
 Engine:240 Fusion Engine

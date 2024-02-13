@@ -1,11 +1,11 @@
-Version:1.0
-Corsair
-COR-BR Broadside
+chassis:Corsair
+model:COR-BR Broadside
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3067
 Rules Level:2
+source: Videogame (Apocryphal)
 
 Mass:95
 Engine:285 XL Engine(IS)

@@ -32,6 +32,10 @@ Gorilla Exoskeleton
 IS Level 2
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Leg
 </motion_type>
@@ -64,7 +68,7 @@ IS BA Advanced:LA
 </Squad Equipment>
 
 <source>
-TRO Vehicle Annex (r) - Jihad
+TRO: Vehicle Annex Revised
 </source>
 
 <chassis>

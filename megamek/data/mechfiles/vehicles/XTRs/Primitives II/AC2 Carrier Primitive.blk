@@ -32,6 +32,10 @@ AC/2 Carrier
 IS Level 4
 </type>
 
+<role>
+Sniper
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -86,9 +90,18 @@ Autocannon/2
 </Rear Equipment>
 
 <source>
-XTRO Primitives II - Age of War
+XTR: Primitives II
 </source>
 
 <tonnage>
 55.0
 </tonnage>
+
+<quirks>
+easy_maintain
+low_profile
+fast_reload
+poor_performance
+obsolete
+</quirks>
+

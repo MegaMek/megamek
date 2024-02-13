@@ -32,6 +32,10 @@ Cyrano Gunship
 IS Level 2
 </type>
 
+<role>
+Scout
+</role>
+
 <motion_type>
 VTOL
 </motion_type>
@@ -81,7 +85,7 @@ BeagleActiveProbe
 </Rotor Equipment>
 
 <source>
-TRO 3050 - Star League
+TRO: 3050
 </source>
 
 <tonnage>

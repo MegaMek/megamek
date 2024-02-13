@@ -32,6 +32,10 @@ Asura Medium Battle Armor
 IS Level 2
 </type>
 
+<role>
+Ambusher
+</role>
+
 <motion_type>
 Jump
 </motion_type>
@@ -65,7 +69,7 @@ ISBARL4:Body
 
 
 <source>
-TRO 3075 - Jihad
+TRO: 3075
 </source>
 
 <chassis>

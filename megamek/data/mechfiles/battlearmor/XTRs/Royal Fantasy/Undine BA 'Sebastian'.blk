@@ -36,6 +36,10 @@ Undine Battle Armor
 Clan Level 2
 </type>
 
+<role>
+Ambusher
+</role>
+
 <motion_type>
 UMU
 </motion_type>
@@ -69,7 +73,7 @@ Should be SRT1 but not coded in the MM at this time.
 </notes>
 
 <source>
-XTRO Royal Fantasy - Dark Age
+XTR: Royal Fantasy
 </source>
 
 <chassis>

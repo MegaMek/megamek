@@ -1,13 +1,18 @@
-Version:1.0
-Cataphract
-CTF-4X
+chassis:Cataphract
+model:CTF-4X
 mul id:474
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3029
-Source:TRO 3050 - Succession Wars
+Source:TRO: 3050
 Rules Level:1
+role:Sniper
+
+
+
+quirk:pro_actuator
+
 
 Mass:70
 Engine:210 Fusion Engine

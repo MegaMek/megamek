@@ -1,13 +1,18 @@
-Version:1.1
-Ebony
-MEB-11
+chassis:Ebony
+model:MEB-11
 mul id:941
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3081
-Source:Dark Age
+source:TRO: 3085
 Rules Level:2
+role:Scout
+
+
+
+quirk:imp_target_med
+
 
 Mass:25
 Engine:250 XL Engine

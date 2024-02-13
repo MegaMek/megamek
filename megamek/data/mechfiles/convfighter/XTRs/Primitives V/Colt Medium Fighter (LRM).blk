@@ -36,6 +36,10 @@ Colt Medium Fighter
 IS Level 4
 </type>
 
+<role>
+Dogfighter
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -117,9 +121,15 @@ IS Ammo LRM-5
 </armor_tech_rating>
 
 <source>
-XTRO Primitives V - Age of War
+XTR: Primitives V
 </source>
 
 <tonnage>
 40.0
 </tonnage>
+
+<quirks>
+atmo_flyer
+difficult_eject
+</quirks>
+

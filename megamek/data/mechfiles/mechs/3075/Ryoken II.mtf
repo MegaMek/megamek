@@ -1,13 +1,17 @@
-Version:1.0
-Ryoken II
-
+chassis:Ryoken II
+model:
 mul id:2758
 
 Config:Biped
 TechBase:Clan
 Era:3075
-Source:TRO 3075
+Source:TRO: 3075
 Rules Level:2
+role:Sniper
+
+
+quirk:stable
+
 
 Mass:75
 Engine:375 XL (Clan) Engine

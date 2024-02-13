@@ -1,13 +1,18 @@
-Version:1.2
-Axman
-AXM-5N
+chassis:Axman
+model:AXM-5N
 mul id:7790
 
 Config:Biped
 techbase:Mixed (IS Chassis)
 era:3148
-source:Rec Guide:ilClan #12 - Dark Age
+source:Rec Guide:ilClan #12
 rules level:2
+role:Skirmisher
+
+
+
+quirk:pro_actuator
+
 
 mass:65
 engine:260 XL Engine(IS)

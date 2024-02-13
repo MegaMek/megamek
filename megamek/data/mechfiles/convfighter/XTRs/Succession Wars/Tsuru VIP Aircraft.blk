@@ -36,6 +36,10 @@ Tsuru VIP Aircraft
 IS Level 4
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -111,7 +115,7 @@ Communications Equipment (3 ton)
 </structural_tech_rating>
 
 <source>
-XTRO Succession Wars - Succession Wars
+XTR: Succession Wars
 </source>
 
 <tonnage>

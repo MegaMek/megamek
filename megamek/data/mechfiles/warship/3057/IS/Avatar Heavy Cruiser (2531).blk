@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -35,6 +35,10 @@ Avatar Heavy Cruiser
 <type>
 IS Level 3
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Aerodyne
@@ -259,8 +263,48 @@ Naval Laser 35
 85
 </structural_integrity>
 
+<capabilities>
+The Avatar-class cruiser excelled in its weaponry, with a devastating broadside of naval PPCs, autocannons, and supplementary weaponry. The installation of large maneuvering thrusters significantly enhanced the ship's agility and maneuverability. Despite the electrical system problem, the Avatar's combat capabilities made it a formidable presence on the battlefield.
+</capabilities>
+
+<overview>
+The Avatar-class cruiser replaced the Aegis-class Heavy Cruisers in the Terran Hegemony in 2531. Weighing 85,000 tons more than its predecessor, the Avatar boasted heavier armor, weaponry, and improved maneuverability. Its primary strength was its formidable weapons system, combining naval PPCs, autocannons, Killer Whale launchers, and naval lasers. However, the class suffered from electrical system issues that were never resolved, leading to its eventual demise.
+</overview>
+
+<history>
+In the early 28th century, the Avatar-class cruiser was replaced by the Luxor-class cruiser. Many Avatars were either placed in reserve fleets or repurposed as training vessels. During Stephan Amaris' seizure of Terra in 2766, three Avatar-class vessels undergoing refitting at the Ian Cameron yards fell under his control. By the end of the war, six Avatars remained, with five serving in the SLDF and one captured by the Rim Worlds. Despite their obsolescence, General Kerensky chose to include these vessels in the Exodus fleet due to their cargo and DropShip capacities, and they are currently stored in naval caches.
+</history>
+
+<manufacturer>
+Daussault-Shimmon Enterprises
+</manufacturer>
+
+<primaryFactory>
+New Earth
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<use>
+Cruiser
+</use>
+
+<length>
+855 m
+</length>
+
+<height>
+1250 m Sail
+</height>
+
 <source>
-TRO 3057R - Age of War
+TRO: 3057 Revised
 </source>
 
 <tonnage>
@@ -283,6 +327,10 @@ TRO 3057R - Age of War
 185
 145
 </grav_decks>
+
+<designtype>
+1
+</designtype>
 
 <crew>
 355
@@ -315,3 +363,4 @@ TRO 3057R - Age of War
 <escape_pod>
 40
 </escape_pod>
+

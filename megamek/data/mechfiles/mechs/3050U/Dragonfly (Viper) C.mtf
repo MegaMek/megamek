@@ -1,13 +1,18 @@
-Version:1.0
-Dragonfly (Viper)
-C
+chassis:Dragonfly
+clanname:Viper
+model:C
 mul id:919
 
 Config:Biped Omnimech
 TechBase:Clan
 Era:2940
-Source:TRO 3050 - Succession Wars
+Source:TRO: 3050
 Rules Level:2
+role:Striker
+
+quirk:imp_target_long
+quirk:low_profile
+
 
 Mass:40
 Engine:320 XL (Clan) Engine(IS)

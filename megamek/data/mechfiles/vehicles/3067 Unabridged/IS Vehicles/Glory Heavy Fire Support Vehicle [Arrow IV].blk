@@ -32,6 +32,10 @@ Glory Heavy Fire Support Vehicle
 IS Level 3
 </type>
 
+<role>
+Missile Boat
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -92,3 +96,7 @@ ISArrowIV
 <tonnage>
 85.0
 </tonnage>
+
+<source>
+TRO: 3067
+</source>

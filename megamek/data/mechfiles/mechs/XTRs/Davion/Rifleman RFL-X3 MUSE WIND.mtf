@@ -1,13 +1,22 @@
-Version:1.1
-Rifleman
-RFL-X3 MUSE WIND
+chassis:Rifleman
+model:RFL-X3 MUSE WIND
 mul id:2708
 
 Config:Biped
 TechBase:Mixed (IS Chassis)
 Era:3076
-Source:Jihad
+source:XTR: Davion
 Rules Level:4
+role:Sniper
+
+
+
+quirk:anti_air
+quirk:imp_com
+quirk:searchlight
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+
 
 Mass:60
 Engine:240 XL Engine(IS)

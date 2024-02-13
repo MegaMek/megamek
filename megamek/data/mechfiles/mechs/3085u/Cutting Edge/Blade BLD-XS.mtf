@@ -1,13 +1,23 @@
-Version:1.1
-Blade
-BLD-XS
+chassis:Blade
+model:BLD-XS
 mul id:392
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3087
-Source:Dark Age
+source:TRO: 3085
 Rules Level:2
+role:Striker
+
+
+
+quirk:easy_maintain
+weaponquirk:exposed_linkage:RA:2:Autocannon/10
+weaponquirk:mod_weapons:RA:2:Autocannon/10
+weaponquirk:static_feed:RA:2:Autocannon/10
+weaponquirk:mod_weapons:RA:9:Medium Laser
+weaponquirk:mod_weapons:RA:10:Medium Laser
+
 
 Mass:35
 Engine:245 XL Engine(IS)

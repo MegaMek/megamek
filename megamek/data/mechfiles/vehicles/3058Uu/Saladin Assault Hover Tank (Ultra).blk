@@ -41,6 +41,10 @@ ISUltraAC20 Ammo
 <type>
 IS Level 2
 </type>
+
+<role>
+Striker
+</role>
 <year>
 3064
 </year>
@@ -57,5 +61,5 @@ IS Level 2
 Hover
 </motion_type>
 <source>
-Civil War
+TRO: 3058
 </source>

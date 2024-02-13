@@ -1,13 +1,19 @@
-Version:1.1
-Goliath
-C
+chassis:Goliath
+model:C
 mul id:7438
 
 Config:Quad
 techbase:Mixed (IS Chassis)
 era:3143
-source:Rec Guide:ilClan #1 - Dark Age
+source:Rec Guide:ilClan #1
 rules level:3
+role:Sniper
+
+
+
+quirk:multi_trac
+quirk:exp_actuator
+
 
 mass:80
 engine:240 Fusion Engine(IS)

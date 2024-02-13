@@ -1,12 +1,19 @@
-Version:1.3
-Penetrator
-PTR-4D
+chassis:Penetrator
+model:PTR-4D
 mul id:2465
 Config:Biped
 techbase:Inner Sphere
 era:3053
-source:TRO 3055 - Clan Invasion
+source:TRO: 3055
 rules level:2
+role:Skirmisher
+
+
+
+
+quirk:good_rep_1
+quirk:stable
+
 
 mass:75
 engine:300 Fusion Engine(IS)

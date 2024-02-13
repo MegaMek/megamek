@@ -1,13 +1,20 @@
-Version:1.1
-Raptor II
-RPT-2X
+chassis:Raptor II
+model:RPT-2X
 mul id:2657
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3073
-Source:Jihad
+source:TRO: 3085
 Rules Level:4
+role:Scout
+
+
+
+
+quirk:no_arms
+quirk:no_eject
+
 
 Mass:40
 Engine:280 XL Engine(IS)

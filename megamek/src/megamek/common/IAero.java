@@ -15,11 +15,7 @@
 
 package megamek.common;
 
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-import java.util.Vector;
+import java.util.*;
 
 import megamek.common.MovePath.MoveStepType;
 import org.apache.logging.log4j.LogManager;
@@ -150,6 +146,10 @@ public interface IAero {
 
     double getFuelPointsPerTon();
 
+    default boolean requiresFuel() {
+        return true;
+    }
+
     // Capital fighters
     int getCapArmor();
 
@@ -170,8 +170,9 @@ public interface IAero {
     void autoSetCapArmor();
 
     void autoSetFatalThresh();
-    
+
     int getAltitude();
+
 
     /**
      * Iterate through current weapons and count the number in each capital
@@ -477,20 +478,50 @@ public interface IAero {
                 roll.addModifier(+4, "no thrust");
             }
         }
-        // terrain mods
-        boolean lightWoods = false;
-        boolean rough = false;
-        boolean heavyWoods = false;
-        boolean clear = false;
-        boolean paved = true;
 
-        Set<Coords> landingPositions = new HashSet<>();
-        boolean isDropship = (this instanceof Dropship);
-        // Vertical landing just checks the landing hex
+        // Per TW p. 87, the modifier is added once for each terrain type
+        Set<List<Integer>> terrains = new HashSet<>();
+        Set<Coords> landingPositions = getLandingCoords(isVertical, landingPos, face);
+        // Any hex without terrain is clear, which is a +2 modifier.
+        boolean clear = false;
+        for (Coords pos : landingPositions) {
+            Hex hex = ((Entity) this).getGame().getBoard().getHex(pos);
+            if ((hex == null) || hex.hasPavement()) {
+                continue;
+            }
+            if (hex.isClearHex()) {
+                clear = true;
+            } else {
+                for (int terrain : hex.getTerrainTypes()) {
+                    if ((terrain == Terrains.WATER) && hex.containsTerrain(Terrains.ICE)) {
+                        continue;
+                    }
+                    if (Terrains.landingModifier(terrain, hex.terrainLevel(terrain)) > 0) {
+                        terrains.add(List.of(terrain, hex.terrainLevel(terrain)));
+                    }
+                }
+            }
+        }
+        if (clear) {
+            roll.addModifier(isVertical ? 1 : 2, "Clear terrain in landing path");
+        }
+        for (List<Integer> terrain : terrains) {
+            int mod = Terrains.landingModifier(terrain.get(0), terrain.get(1));
+            if (isVertical) {
+                mod = mod / 2 + mod % 2;
+            }
+            roll.addModifier(mod, Terrains.getDisplayName(terrain.get(0), terrain.get(1)) + " in landing path");
+        }
+
+        return roll;
+    }
+
+    default Set<Coords> getLandingCoords(boolean isVertical, Coords landingPos, int facing) {
+        Set<Coords> landingPositions = new HashSet<Coords>();
         if (isVertical) {
             landingPositions.add(landingPos);
             // Dropships must also check the adjacent 6 hexes
-            if (isDropship) {
+            if (this instanceof Dropship) {
                 for (int i = 0; i < 6; i++) {
                     landingPositions.add(landingPos.translated(i));
                 }
@@ -498,49 +529,16 @@ public interface IAero {
             // Horizontal landing requires checking whole landing strip
         } else {
             for (int i = 0; i < getLandingLength(); i++) {
-                Coords pos = landingPos.translated(face, i);
+                Coords pos = landingPos.translated(facing, i);
                 landingPositions.add(pos);
                 // Dropships have to check the front adjacent hexes
-                if (isDropship) {
-                    landingPositions.add(pos.translated((face + 4) % 6));
-                    landingPositions.add(pos.translated((face + 2) % 6));
+                if (this instanceof Dropship) {
+                    landingPositions.add(pos.translated((facing + 4) % 6));
+                    landingPositions.add(pos.translated((facing + 2) % 6));
                 }
             }
         }
-
-        for (Coords pos : landingPositions) {
-            Hex hex = ((Entity) this).getGame().getBoard().getHex(pos);
-            if (hex.containsTerrain(Terrains.ROUGH) || hex.containsTerrain(Terrains.RUBBLE)) {
-                rough = true;
-            } else if (hex.containsTerrain(Terrains.WOODS, 2)) {
-                heavyWoods = true;
-            } else if (hex.containsTerrain(Terrains.WOODS, 1)) {
-                lightWoods = true;
-            } else if (!hex.containsTerrain(Terrains.PAVEMENT) && !hex.containsTerrain(Terrains.ROAD)) {
-                paved = false;
-                // Landing in other terrains isn't allowed, so if we reach here
-                // it must be a clear hex
-                clear = true;
-            }
-        }
-
-        if (heavyWoods) {
-            roll.addModifier(+5, "heavy woods in landing path");
-        }
-        if (lightWoods) {
-            roll.addModifier(+4, "light woods in landing path");
-        }
-        if (rough) {
-            roll.addModifier(+3, "rough/rubble in landing path");
-        }
-        if (paved) {
-            roll.addModifier(+0, "paved/road landing strip");
-        }
-        if (clear) {
-            roll.addModifier(+2, "clear hex in landing path");
-        }
-
-        return roll;
+        return landingPositions;
     }
 
     /**
@@ -737,6 +735,14 @@ public interface IAero {
         if (!hex.isClearForLanding()) {
             return "Unacceptable terrain for landing";
         }
+        // Aerospace units are destroyed by water landings except for those that have flotation hulls.
+        // LAMs are not.
+        if (hex.containsTerrain(Terrains.WATER) && !hex.containsTerrain(Terrains.ICE)
+                && (hex.terrainLevel(Terrains.WATER) > 0)
+                && (this instanceof Aero)
+                && !((Entity) this).hasWorkingMisc(MiscType.F_FLOTATION_HULL)) {
+            return "cannot land on water";
+        }
 
         return null;
     }
@@ -769,10 +775,11 @@ public interface IAero {
     }
 
     default int getFuelUsed(int thrust) {
-        if (((Entity) this).getEngine().isSolar()) {
+        Entity entity = (Entity) this;
+        if (entity.hasEngine() && entity.getEngine().isSolar()) {
             return 0;
         } else {
-            int overThrust = Math.max(thrust - ((Entity) this).getWalkMP(), 0);
+            int overThrust = Math.max(thrust - entity.getWalkMP(), 0);
             int safeThrust = thrust - overThrust;
             return safeThrust + (2 * overThrust);
         }

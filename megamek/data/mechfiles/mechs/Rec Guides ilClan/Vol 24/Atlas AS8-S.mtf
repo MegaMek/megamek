@@ -1,13 +1,19 @@
-Version:1.1
-Atlas
-AS8-S
+generator:MegaMek Suite 0.49.18-SNAPSHOT on 2024-01-09
+chassis:Atlas
+model:AS8-S
 mul id:8433
-
 Config:Biped
 techbase:Mixed (IS Chassis)
 era:3138
-source:Rec Guide:ilClan #24 - Dark Age
+source:Rec Guide:ilClan #24
 rules level:3
+role:Sniper
+
+quirk:battle_fists_la
+quirk:battle_fists_ra
+quirk:distracting
+quirk:command_mech
+quirk:imp_com
 
 mass:100
 engine:300 XL (Clan) Engine
@@ -34,13 +40,13 @@ RTR armor:10
 RTC armor:14
 
 Weapons:7
-Improved Heavy Gauss Rifle, Right Torso
-ER Large Laser, Right Arm
 ER Large Laser, Left Arm
-ER Medium Laser, Left Torso
-ER Medium Laser, Right Torso
-LRM 5, Left Torso
+ER Large Laser, Right Arm
 Streak SRM 6, Left Torso
+LRM 5, Left Torso
+ER Medium Laser, Left Torso
+Improved Heavy Gauss Rifle, Center Torso
+ER Medium Laser, Right Torso
 
 Left Arm:
 Shoulder
@@ -82,7 +88,7 @@ IS Streak SRM 6 Ammo
 Clan Ammo LRM-5
 ISGuardianECMSuite
 ISGuardianECMSuite
-CLCASEII
+ISCASEII
 
 Right Torso:
 Fusion Engine
@@ -96,7 +102,7 @@ ISImprovedHeavyGaussRifle
 ISImprovedHeavyGaussRifle
 ISImprovedHeavyGaussRifle
 CLERMediumLaser (R)
-CLCASEII
+ISCASEII
 
 Center Torso:
 Fusion Engine
@@ -110,7 +116,7 @@ Fusion Engine
 ISImprovedHeavyGaussRifle
 ISImprovedHeavyGaussRifle
 ISImprovedHeavyGaussRifle
-CLCASEII
+ISCASEII
 
 Head:
 Life Support

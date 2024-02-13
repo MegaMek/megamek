@@ -32,6 +32,10 @@ A
 IS Level 2
 </type>
 
+<role>
+Juggernaut
+</role>
+
 <motion_type>
 Wheeled
 </motion_type>
@@ -107,7 +111,7 @@ MRM 10:OMNI
 </Turret Equipment>
 
 <source>
-Clan Invasion
+TRO: 3060
 </source>
 
 <tonnage>

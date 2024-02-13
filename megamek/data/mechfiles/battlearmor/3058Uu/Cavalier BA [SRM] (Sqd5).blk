@@ -36,6 +36,10 @@ Cavalier Battle Armor
 IS Level 2
 </type>
 
+<role>
+Ambusher
+</role>
+
 <motion_type>
 Jump
 </motion_type>
@@ -78,7 +82,7 @@ BABattleClaw:LA
 </Trooper 4 Equipment>
 
 <source>
-TRO 3058U - Clan Invasion
+TRO: 3058 Upgrade
 </source>
 
 <chassis>

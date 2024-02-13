@@ -1,12 +1,22 @@
-Version:1.1
-Atlas
-AS7-WGS (Samsonov)
+chassis:Atlas
+model:AS7-WGS (Samsonov)
 mul id:150
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3025
 Rules Level:1
+role:Juggernaut
+source:Historical Turning Points: Galtor
+
+
+
+quirk:battle_fists_la
+quirk:battle_fists_ra
+quirk:command_mech
+quirk:distracting
+quirk:imp_com
+
 
 Mass:100
 Engine:300 Fusion Engine

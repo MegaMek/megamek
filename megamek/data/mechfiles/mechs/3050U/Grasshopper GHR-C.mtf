@@ -1,13 +1,18 @@
-Version:1.0
-Grasshopper
-GHR-C
+chassis:Grasshopper
+model:GHR-C
 mul id:1272
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3052
-Source:TRO 3050 - Clan Invasion
+Source:TRO: 3050
 Rules Level:2
+role:Skirmisher
+
+
+
+quirk:rugged_1
+
 
 Mass:70
 Engine:280 Fusion Engine

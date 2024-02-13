@@ -32,6 +32,10 @@ Manta Fast Attack Submarine
 IS Level 2
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Submarine
 </motion_type>
@@ -80,7 +84,7 @@ ISERMediumLaser
 </Rear Equipment>
 
 <source>
-TRO3085S - Early Republic
+TRO: 3085 Supplemental
 </source>
 
 <tonnage>

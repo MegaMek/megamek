@@ -47,6 +47,10 @@ ISThunderbolt5 Ammo
 <type>
 IS Level 3
 </type>
+
+<role>
+Missile Boat
+</role>
 <year>
 3072
 </year>
@@ -63,5 +67,5 @@ IS Level 3
 Wheeled
 </motion_type>
 <source>
-TRO 3060
+TRO: 3060
 </source>

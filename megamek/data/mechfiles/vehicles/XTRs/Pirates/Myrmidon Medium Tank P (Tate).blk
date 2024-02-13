@@ -36,6 +36,10 @@ P (Tate)
 IS Level 4
 </type>
 
+<role>
+Skirmisher
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -97,7 +101,7 @@ ISSNPPC
 </Turret Equipment>
 
 <source>
-XTR Pirates - Jihad
+XTR: Pirates
 </source>
 
 <tonnage>

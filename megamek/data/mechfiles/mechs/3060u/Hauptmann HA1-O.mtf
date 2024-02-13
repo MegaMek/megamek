@@ -1,13 +1,20 @@
-Version:1.0
-Hauptmann
-HA1-O
+chassis:Hauptmann
+model:HA1-O
 mul id:1420
 
 Config:Biped Omnimech
 techbase:Inner Sphere
 era:3060
-source:TRO 3060
+source:TRO: 3060
 rules level:2
+role:Juggernaut
+
+
+
+
+quirk:easy_maintain
+quirk:ext_twist
+
 
 mass:95
 engine:285 Fusion Engine(IS)

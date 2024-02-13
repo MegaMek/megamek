@@ -1,13 +1,18 @@
-Version:1.1
-Hachiwara
-HCA-4U
+chassis:Hachiwara
+model:HCA-4U
 mul id:1362
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3066
-Source:TRO 3055 - Civil War
+Source:TRO: 3055
 Rules Level:4
+role:Skirmisher
+
+
+
+quirk:difficult_maintain
+
 
 Mass:70
 Engine:350 XL Engine

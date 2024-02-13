@@ -32,6 +32,10 @@ Armored Personnel Carrier
 IS Level 2
 </type>
 
+<role>
+Scout
+</role>
+
 <motion_type>
 Hover
 </motion_type>
@@ -90,7 +94,7 @@ Machine Gun
 </Turret Equipment>
 
 <source>
-XTRO Primitives I - Age of War
+XTR: Primitives I
 </source>
 
 <tonnage>

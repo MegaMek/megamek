@@ -1,13 +1,20 @@
-Version:1.0
-Morpheus
-MR-P1
+chassis:Morpheus
+model:MR-P1
 mul id:2225
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3051
-Source:TRO 3055 - Clan Invasion
+Source:TRO: 3055
 Rules Level:2
+role:Scout
+
+
+
+
+quirk:pro_actuator
+quirk:difficult_maintain
+
 
 Mass:65
 Engine:390 XL Engine

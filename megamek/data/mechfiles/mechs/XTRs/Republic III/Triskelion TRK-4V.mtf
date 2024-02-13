@@ -1,13 +1,21 @@
-Version:1.1
-Triskelion
-TRK-4V
+chassis:Triskelion
+model:TRK-4V
 mul id:7384
 
 Config:Tripod
 TechBase:Mixed (IS Chassis)
 Era:3146
-Source:XTRO Republic III - Dark Age
+Source:XTR: Republic III
 Rules Level:3
+role:Brawler
+
+
+
+
+quirk:distracting
+quirk:difficult_eject
+quirk:prototype
+
 
 Mass:75
 Engine:375 XL (Clan) Engine

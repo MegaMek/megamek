@@ -1,13 +1,18 @@
-Version:1.0
-Peregrine (Horned Owl)
-
+chassis:Peregrine
+clanname:Horned Owl
+model:
 mul id:2472
 
 Config:Biped
 techbase:Clan
 era:2835
-source:Rec Guide:ilClan #11 - Succession Wars
+source:Rec Guide:ilClan #11
 rules level:2
+role:Striker
+
+
+weaponquirk:stable_weapon:CT:10:CLLargePulseLaser
+
 
 mass:35
 engine:210 Fusion (Clan) Engine(IS)

@@ -36,6 +36,10 @@ Mk. 30
 IS Level 2
 </type>
 
+<role>
+Fast Dogfighter
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -96,7 +100,7 @@ ISERLargeLaser
 </Fuselage Equipment>
 
 <source>
-Interstellar Players 2 - Star League
+Interstellar Players 2
 </source>
 
 <tonnage>

@@ -32,6 +32,10 @@ Command Van
 IS Level 2
 </type>
 
+<role>
+Scout
+</role>
+
 <motion_type>
 Wheeled
 </motion_type>
@@ -96,9 +100,15 @@ PETROCHEMICALS
 </fuelType>
 
 <source>
-Rec Guide:ilClan #29 - Succession Wars
+Rec Guide:ilClan #29
 </source>
 
 <mul id:>
 3977
 </mul id:>
+
+<quirks>
+imp_com
+difficult_maintain
+</quirks>
+

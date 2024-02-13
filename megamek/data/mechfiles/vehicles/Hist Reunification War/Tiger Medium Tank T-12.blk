@@ -32,6 +32,10 @@ T-12
 IS Level 1
 </type>
 
+<role>
+Brawler
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -80,7 +84,7 @@ Machine Gun
 </Turret Equipment>
 
 <source>
-Hist:Reunification War
+Historical: Reunification War
 </source>
 
 <tonnage>

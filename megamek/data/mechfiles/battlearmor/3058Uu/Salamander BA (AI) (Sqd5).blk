@@ -32,6 +32,10 @@ Salamander Battle Armor
 Clan Level 2
 </type>
 
+<role>
+Ambusher
+</role>
+
 <motion_type>
 Jump
 </motion_type>
@@ -66,7 +70,7 @@ Clan BA Fire Resistant:LA
 </Point Equipment>
 
 <source>
-TRO 3058U - Jihad
+TRO: 3058 Upgrade
 </source>
 
 <chassis>

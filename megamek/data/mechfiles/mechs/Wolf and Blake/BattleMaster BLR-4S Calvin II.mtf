@@ -1,13 +1,19 @@
-Version:1.0
-BattleMaster
-BLR-4S (Calvin II)
+chassis:BattleMaster
+model:BLR-4S (Calvin II)
 mul id:295
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3071
-Source:Starterbook: Wolf & Blake - Jihad
+Source:Starterbook: Wolf & Blake
 Rules Level:4
+role:Brawler
+
+
+
+quirk:command_mech
+quirk:weak_head_1
+
 
 Mass:85
 Engine:340 Light Engine(IS)

@@ -29,12 +29,16 @@ Sea Skimmer Hydrofoil
 </year>
 
 <Source>
-XTR Corporations
+XTR: Corporations
 </Source>
 
 <type>
 IS Level 4
 </type>
+
+<role>
+Scout
+</role>
 
 <tonnage>
 25.0

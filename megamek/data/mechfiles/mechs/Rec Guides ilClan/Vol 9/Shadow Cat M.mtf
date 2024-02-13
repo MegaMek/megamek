@@ -1,13 +1,16 @@
-Version:1.0
-Shadow Cat
-M
+chassis:Shadow Cat
+model:M
 mul id:7707
 
 Config:Biped Omnimech
 techbase:Clan
 era:3054
-source:Rec Guide:ilClan #9 - Clan Invasion
+source:Rec Guide:ilClan #9
 rules level:2
+role:Striker
+
+quirk:low_profile
+
 
 mass:45
 engine:270 XL (Clan) Engine(IS)

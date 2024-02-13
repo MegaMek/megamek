@@ -32,6 +32,10 @@ Wraith Battle Armor
 Clan Level 2
 </type>
 
+<role>
+Ambusher
+</role>
+
 <motion_type>
 Jump
 </motion_type>
@@ -63,7 +67,7 @@ Clan BA Stealth (Basic):RA
 </Point Equipment>
 
 <source>
-TRO 3145 The Clans - Late Republic
+TRO: 3145 The Clans
 </source>
 
 <chassis>
@@ -117,3 +121,8 @@ JUMPJET:Unknown
 COMMUNICATIONS:Unknown
 TARGETING:Unknown
 </systemManufacturers>
+
+<quirks>
+distracting
+</quirks>
+

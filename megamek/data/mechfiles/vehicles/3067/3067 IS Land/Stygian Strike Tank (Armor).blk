@@ -48,6 +48,10 @@ ISLRM15 Ammo
 <type>
 IS
 </type>
+
+<role>
+Missile Boat
+</role>
 <year>
 3065
 </year>
@@ -63,3 +67,7 @@ IS
 <motion_type>
 Hover
 </motion_type>
+
+<source>
+TRO: 3067
+</source>

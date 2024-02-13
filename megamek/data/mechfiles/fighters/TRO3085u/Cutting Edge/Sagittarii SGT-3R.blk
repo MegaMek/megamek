@@ -36,6 +36,10 @@ SGT-3R
 IS Level 2
 </type>
 
+<role>
+Fast Dogfighter
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -107,7 +111,7 @@ IS Ammo MML-5 SRM
 </Fuselage Equipment>
 
 <source>
-TRO 3085 - Jihad
+TRO: 3085
 </source>
 
 <tonnage>

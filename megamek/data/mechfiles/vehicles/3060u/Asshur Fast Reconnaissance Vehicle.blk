@@ -32,6 +32,10 @@ Asshur Fast Reconnaissance Vehicle
 Clan Level 2
 </type>
 
+<role>
+Striker
+</role>
+
 <motion_type>
 Hover
 </motion_type>
@@ -86,7 +90,7 @@ CLERMediumLaser
 </Turret Equipment>
 
 <source>
-RS 3060U
+Record Sheets: 3060 Unabridged
 </source>
 
 <tonnage>

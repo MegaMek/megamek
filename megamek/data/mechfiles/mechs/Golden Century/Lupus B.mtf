@@ -1,12 +1,16 @@
-Version:1.1
-Lupus
-B
+chassis:Lupus
+model:B
 mul id:1964
 
 Config:Biped Omnimech
 TechBase:Clan
 Era:2857
 Rules Level:2
+role:Skirmisher
+source:TRO: Golden Century
+
+quirk:exp_actuator
+
 
 Mass:60
 Engine:300 Fusion (Clan) Engine(IS)

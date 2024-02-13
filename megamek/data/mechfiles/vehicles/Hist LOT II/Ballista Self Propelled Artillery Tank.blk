@@ -36,6 +36,10 @@ Ballista Self-Propelled Artillery Tank
 IS Level 3
 </type>
 
+<role>
+Missile Boat
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -110,7 +114,7 @@ The vehicle's armament fluff classifies the individual Sniper weapon as a cannon
 </notes>
 
 <source>
-Hist LOT II
+Historical: Liberation of Terra II
 </source>
 
 <tonnage>
@@ -121,3 +125,12 @@ Hist LOT II
 PETROCHEMICALS
 </fuelType>
 
+
+<quirks>
+easy_maintain
+trailer_hitch
+</quirks>
+
+<weaponQuirks>
+accurate:TU:0:ISSniper
+</weaponQuirks>

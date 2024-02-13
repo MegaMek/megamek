@@ -1,13 +1,18 @@
-Version:1.0
-Javelin
-JVN-10F 'Fire Javelin'
+chassis:Javelin
+model:JVN-10F 'Fire Javelin'
 mul id:1674
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2819
-Source:TRO 3039 - Succession Wars
+Source:TRO: 3039
 Rules Level:1
+role:Striker
+
+
+
+quirk:unbalanced
+
 
 Mass:30
 Engine:180 Fusion Engine

@@ -32,6 +32,10 @@ Gossamer VTOL
 Clan Level 3
 </type>
 
+<role>
+Scout
+</role>
+
 <motion_type>
 VTOL
 </motion_type>
@@ -81,7 +85,7 @@ CLLBXAC10
 </Rotor Equipment>
 
 <source>
-TRO 3145 Mercenaries - Late Republic
+TRO: 3145 Mercenaries
 </source>
 
 <tonnage>

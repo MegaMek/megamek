@@ -32,6 +32,10 @@ K-27 'Killjoy'
 IS Level 3
 </type>
 
+<role>
+Ambusher
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -74,7 +78,7 @@ SRM 4
 </Turret Equipment>
 
 <source>
-TRO 3039 - Succession Wars
+TRO: 3039
 </source>
 
 <tonnage>

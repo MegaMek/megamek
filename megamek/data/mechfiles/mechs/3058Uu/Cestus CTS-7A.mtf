@@ -1,13 +1,13 @@
-Version:1.0
-Cestus
-CTS-7A
+chassis:Cestus
+model:CTS-7A
 mul id:535
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3070
-Source:TRO 3058 - Jihad
+Source:TRO: 3058
 Rules Level:2
+role:Brawler
 
 Mass:65
 Engine:260 XL Engine

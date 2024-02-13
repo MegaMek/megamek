@@ -1,13 +1,17 @@
-Version:1.0
-Fire Falcon
-Prime
+chassis:Fire Falcon
+model:Prime
 mul id:1070
 
 Config:Biped Omnimech
 techbase:Clan
 era:3052
-source:TRO 3058 - Clan Invasion
+source:TRO: 3058
 rules level:2
+role:Striker
+
+
+quirk:imp_sensors
+
 
 mass:25
 engine:200 XL (Clan) Engine(IS)

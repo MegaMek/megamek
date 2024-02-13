@@ -18,9 +18,19 @@
  */
 package megamek.common;
 
+import megamek.client.ui.swing.calculationReport.CalculationReport;
+import megamek.common.battlevalue.BVCalculator;
+import megamek.common.options.GameOptions;
+import megamek.common.options.OptionsConstants;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class TargetRollTest {
     @Test
@@ -64,7 +74,7 @@ public class TargetRollTest {
         assertEquals("Automatic Success", roll.getValueAsString());
         assertEquals("great success", roll.getDesc());
     }
-    
+
     @Test
     public void checkFalseTest() {
         TargetRoll roll = new TargetRoll(TargetRoll.CHECK_FALSE, "check one, check one two");
@@ -105,5 +115,33 @@ public class TargetRollTest {
         assertEquals("1 (first) - 2 (second) + 3 (third) + 0 (fourth)", roll.getDesc());
         assertEquals(2, roll.getValue());
         assertEquals("2", roll.getValueAsString());
+    }
+
+    // Check to-hit roll mods for VTOL, WiGE, jumping Hovers, etc.
+    private Game setupGame() {
+        Game game = new Game();
+        GameOptions gOp = new GameOptions();
+        game.setOptions(gOp);
+        return game;
+    }
+
+    @Test
+    public void addOneForFlyingVTOL() {
+        int distance = 1;
+        boolean jumped = false;
+        boolean vtol = true;
+        Game game = setupGame();
+        ToHitData thd = Compute.getTargetMovementModifier(distance, jumped, vtol, game);
+        assertEquals(1, thd.getValue());
+    }
+
+    @Test
+    public void addOneForJumping() {
+        int distance = 1;
+        boolean jumped = true;
+        boolean vtol = false;
+        Game game = setupGame();
+        ToHitData thd = Compute.getTargetMovementModifier(distance, jumped, vtol, game);
+        assertEquals(1, thd.getValue());
     }
 }

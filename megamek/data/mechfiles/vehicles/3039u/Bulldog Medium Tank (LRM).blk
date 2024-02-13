@@ -32,6 +32,10 @@ Bulldog Medium Tank
 IS Level 1
 </type>
 
+<role>
+Missile Boat
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -81,7 +85,7 @@ LRM 20
 </Turret Equipment>
 
 <source>
-TRO 3039 - Succession Wars
+TRO: 3039
 </source>
 
 <tonnage>

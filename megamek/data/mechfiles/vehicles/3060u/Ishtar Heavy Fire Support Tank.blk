@@ -32,6 +32,10 @@ Ishtar Heavy Fire Support Tank
 Clan Level 3
 </type>
 
+<role>
+Sniper
+</role>
+
 <motion_type>
 Wheeled
 </motion_type>
@@ -95,7 +99,7 @@ CLUltraAC10
 </Turret Equipment>
 
 <source>
-Succession Wars
+Record Sheets: 3067 Unabridged
 </source>
 
 <tonnage>

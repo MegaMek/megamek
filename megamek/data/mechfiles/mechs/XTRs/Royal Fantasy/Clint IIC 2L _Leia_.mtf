@@ -1,13 +1,17 @@
-Version:1.0
-Clint IIC
-2L 'Leia'
+chassis:Clint IIC
+model:2L 'Leia'
 mul id:8369
 
 Config:Biped
 techbase:Mixed (Clan Chassis)
 era:3125
-source:XTRO Royal Fantasy - Dark Age
+source:XTR: Royal Fantasy
 rules level:3
+role:Striker
+
+quirk:imp_target_long
+quirk:imp_target_med
+
 
 mass:40
 engine:240 XL (Clan) Engine

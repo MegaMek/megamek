@@ -1,13 +1,19 @@
-Version:1.1
-Aquagladius
-AQS-5 MAM
+chassis:Aquagladius
+model:AQS-5 MAM
 mul id:8108
 
 Config:Biped
 techbase:Inner Sphere
 era:3090
-source:XTRO Ray
+source:XTR: Caveat Emptor
 rules level:4
+role:Skirmisher
+
+
+
+quirk:difficult_eject
+quirk:difficult_maintain
+
 
 mass:50
 engine:300 XXL Engine(IS)

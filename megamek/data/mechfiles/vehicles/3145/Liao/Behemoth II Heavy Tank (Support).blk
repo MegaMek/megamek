@@ -32,6 +32,10 @@ Behemoth II Heavy Tank
 IS Level 3
 </type>
 
+<role>
+Sniper
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -92,7 +96,7 @@ ISGaussRifle
 </Turret Equipment>
 
 <source>
-TRO 3145 Capellan Confederation - Late Republic
+TRO: 3145 Capellan Confederation
 </source>
 
 <tonnage>
@@ -129,3 +133,8 @@ ARMOR:ArcShield Max III Advanced Ferro-Fibrous
 COMMUNICATIONS:Olmstead 44
 TARGETING:Omicron VIII
 </systemManufacturers>
+
+<quirks>
+imp_target_long
+</quirks>
+

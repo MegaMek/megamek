@@ -1,12 +1,18 @@
-Version:1.3
-Goliath
-GOL-3S
+chassis:Goliath
+model:GOL-3S
 mul id:1233
 Config:Quad
 techbase:Inner Sphere
 era:3066
-source:Civil War
+source:TRO: 3085u 
 rules level:2
+role:Missile Boat
+
+
+
+quirk:multi_trac
+quirk:exp_actuator
+
 
 mass:80
 engine:320 Light Engine(IS)

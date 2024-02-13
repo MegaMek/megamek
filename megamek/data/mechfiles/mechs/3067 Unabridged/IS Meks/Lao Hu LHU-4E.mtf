@@ -1,12 +1,18 @@
-Version:1.1
-Lao Hu
-LHU-4E
+chassis:Lao Hu
+model:LHU-4E
 mul id:5696
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3078
 Rules Level:4
+role:Sniper
+source:Record Sheets: 3067 Unabridged
+
+
+
+quirk:good_rep_1
+
 
 Mass:75
 Engine:375 XL Fusion Engine

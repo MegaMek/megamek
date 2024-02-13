@@ -1,13 +1,13 @@
-Version:1.1
-Fox
-
+chassis:Fox
+model:
 mul id:7609
 
 Config:Biped
 techbase:Clan
 era:2835
-source:Succession Wars
+source:TRO: Golden Century
 rules level:2
+role:Missile Boat
 
 mass:50
 engine:300 XL (Clan) Engine(IS)

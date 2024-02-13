@@ -36,6 +36,10 @@ Owl II
 IS Level 1
 </type>
 
+<role>
+Interceptor
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -96,7 +100,7 @@ Small Laser
 </Fuselage Equipment>
 
 <source>
-TRO 3039 - Star League
+TRO: 3039
 </source>
 
 <tonnage>

@@ -1,13 +1,13 @@
-Version:1.0
-Eris
-ERS-3R
+chassis:Eris
+model:ERS-3R
 mul id:8252
 
 Config:Biped
 techbase:Inner Sphere
 era:3130
-source:Rec Guide:ilClan #18 - Dark Age
+source:Rec Guide:ilClan #18
 rules level:3
+role:Skirmisher
 
 mass:50
 engine:250 XL Engine(IS)

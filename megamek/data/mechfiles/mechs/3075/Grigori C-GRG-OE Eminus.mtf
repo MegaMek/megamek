@@ -1,13 +1,21 @@
-Version:1.1
-Grigori
-C-GRG-OE Eminus
+chassis:Grigori
+model:C-GRG-OE Eminus
 mul id:1325
 
 Config:Biped Omnimech
 TechBase:Inner Sphere
 Era:3072
-Source:TRO 3075
+Source:TRO: 3075
 Rules Level:4
+role:Brawler
+
+
+
+quirk:imp_com
+quirk:imp_sensors
+quirk:bad_rep_clan
+quirk:bad_rep_is
+
 
 Mass:60
 Engine:240 Light Engine(IS)

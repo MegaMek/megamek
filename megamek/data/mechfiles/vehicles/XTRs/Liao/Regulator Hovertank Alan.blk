@@ -29,12 +29,16 @@ Regulator Hovertank
 </year>
 
 <source>
-XTRO Liao - Jihad
+XTR: Liao
 </source>
 
 <type>
 IS Level 4
 </type>
+
+<role>
+Scout
+</role>
 
 <tonnage>
 45.0

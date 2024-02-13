@@ -1,13 +1,19 @@
-Version:1.0
-Firestarter
-FS9-K
+chassis:Firestarter
+model:FS9-K
 mul id:1097
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2550
-Source:TRO 3039 - Age of War
+Source:TRO: 3039
 Rules Level:1
+role:Scout
+
+
+
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+
 
 Mass:35
 Engine:210 Fusion Engine

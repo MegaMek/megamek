@@ -1,13 +1,23 @@
-Version:1.0
-Shadow Hawk
-SHD-2Hb
+chassis:Shadow Hawk
+model:SHD-2Hb
 mul id:2902
 
 Config:Biped
 techbase:Inner Sphere
 era:2752
 rules level:2
-source:Rec Guide:ilClan #12 - Star League
+role:Skirmisher
+source:Rec Guide:ilClan #12
+
+
+
+quirk:battle_fists_la
+quirk:battle_fists_ra
+quirk:imp_life_support
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+quirk:rugged_1
+
 
 mass:55
 engine:275 Fusion Engine(IS)

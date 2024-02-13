@@ -32,6 +32,10 @@ Odin Scout Tank
 Clan Level 3
 </type>
 
+<role>
+Scout
+</role>
+
 <motion_type>
 Wheeled
 </motion_type>
@@ -88,7 +92,7 @@ CLNarcBeacon
 </Turret Equipment>
 
 <source>
-Jihad
+TRO: 3060
 </source>
 
 <tonnage>

@@ -22,6 +22,7 @@ import megamek.client.ui.swing.MMToggleButton;
 import megamek.common.Player;
 import megamek.common.annotations.Nullable;
 import megamek.common.util.ImageUtil;
+import org.apache.logging.log4j.LogManager;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -35,6 +36,7 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.MouseEvent;
 import java.awt.image.ImageObserver;
+import java.net.URL;
 import java.util.List;
 import java.util.*;
 import java.util.stream.Stream;
@@ -59,6 +61,21 @@ public final class UIUtil {
     public static final String DOT_SPACER = " \u2B1D ";
     public static final String BOT_MARKER = " \u259A ";
 
+
+    public static void showMUL(int mulId, Component parent) {
+        browse(MMConstants.MUL_URL_PREFIX + mulId, parent);
+    }
+
+    public static void browse(String url, Component parent) {
+        try {
+            if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
+                Desktop.getDesktop().browse(new URL(url).toURI());
+            }
+        } catch (Exception ex) {
+            LogManager.getLogger().error("", ex);
+            JOptionPane.showMessageDialog(parent, ex.getMessage(), "ERROR", JOptionPane.ERROR_MESSAGE);
+        }
+    }
 
     public static String repeat(String str, int count) {
         return String.valueOf(str).repeat(Math.max(0, count));
@@ -656,7 +673,7 @@ public final class UIUtil {
             ((Graphics2D) graph).setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
             ((Graphics2D) graph).setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
             ((Graphics2D) graph).setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
-            ((Graphics2D) graph).setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+            ((Graphics2D) graph).setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
         }
     }
 
@@ -1146,11 +1163,19 @@ public final class UIUtil {
     }
 
     /**
-     * Returns vertical spacer Swing component ({@link Box#createVerticalStrut(int)} with the given height
+     * Returns a vertical spacer Swing component ({@link Box#createVerticalStrut(int)}) with the given height
      * scaled by the current GUI scaling.
      */
     public static Component scaledVerticalSpacer(int unscaledHeight) {
-        return Box.createVerticalStrut((int) (unscaledHeight * GUIPreferences.getInstance().getGUIScale()));
+        return Box.createVerticalStrut(scaleForGUI(unscaledHeight));
+    }
+
+    /**
+     * Returns a horizontal spacer Swing component ({@link Box#createHorizontalStrut(int)}) with the given width
+     * scaled by the current GUI scaling.
+     */
+    public static Component scaledHorizontalSpacer(int unscaledHeight) {
+        return Box.createHorizontalStrut(scaleForGUI(unscaledHeight));
     }
 
     /**
@@ -1171,6 +1196,47 @@ public final class UIUtil {
     public static boolean isModalDialogDisplayed() {
         return Stream.of(Window.getWindows())
                 .anyMatch(w -> w.isShowing() && (w instanceof JDialog) && ((JDialog) w).isModal());
+    }
+
+    /**
+     *  Automatically determines the correct row heights for each row of the given JTable and sets it.
+     *  Note: Just calling this after a data change or after {@link #adjustDialog(JDialog, int)} will
+     *  typically not work well. Instead, it must be called from a {@link javax.swing.event.TableModelListener},
+     *  a {@link javax.swing.event.TableColumnModelListener} and (if a row sorter is used) a
+     *  {@link javax.swing.event.RowSorterListener} to be effective.
+     *  Note: For tables of more than about 200 entries or with slow renderers this will become noticeably slow
+     *  when drag-resizing the table. When the table has uniform row heights, better use
+     *  {@link #updateRowHeightsForEqualHeights(JTable)}.
+     */
+    public static void updateRowHeights(JTable table) {
+        for (int row = 0; row < table.getRowCount(); row++) {
+            int rowHeight = table.getRowHeight();
+            for (int column = 0; column < table.getColumnCount(); column++) {
+                Component comp = table.prepareRenderer(table.getCellRenderer(row, column), row, column);
+                rowHeight = Math.max(rowHeight, comp.getPreferredSize().height);
+            }
+            table.setRowHeight(row, rowHeight);
+        }
+    }
+
+    /**
+     *  Automatically determines the correct row height for the given JTable and sets it, assuming it has a
+     *  uniform row height for all rows.
+     *  Note: Just calling this after a data change or after {@link #adjustDialog(JDialog, int)} will
+     *  typically not work well. Instead, it must be called from a {@link javax.swing.event.TableModelListener},
+     *  a {@link javax.swing.event.TableColumnModelListener} and (if a row sorter is used) a
+     *  {@link javax.swing.event.RowSorterListener} to be effective.
+     */
+    public static void updateRowHeightsForEqualHeights(JTable table) {
+        if (table.getRowCount() > 0) {
+            int row = 0;
+            int rowHeight = 0;
+            for (int column = 0; column < table.getColumnCount(); column++) {
+                Component comp = table.prepareRenderer(table.getCellRenderer(row, column), row, column);
+                rowHeight = Math.max(rowHeight, comp.getPreferredSize().height);
+            }
+            table.setRowHeight(rowHeight);
+        }
     }
 
     // PRIVATE
@@ -1306,7 +1372,6 @@ public final class UIUtil {
         y = Math.min(y, h - vh);
         return y;
     }
-
 
     private UIUtil() { }
 }

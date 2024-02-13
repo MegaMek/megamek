@@ -36,6 +36,10 @@ V7
 IS Level 3
 </type>
 
+<role>
+Brawler
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -122,10 +126,16 @@ TARGETING:ComStar Test-2
 </systemManufacturers>
 
 <source>
-TRO Prototypes - Early Republic
+TRO: Prototypes
 </source>
 
 <tonnage>
 50.0
 </tonnage>
+
+
+<quirks>
+trailer_hitch
+poor_work
+</quirks>
 

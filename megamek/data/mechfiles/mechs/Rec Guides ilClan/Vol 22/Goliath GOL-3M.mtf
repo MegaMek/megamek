@@ -1,13 +1,19 @@
-Version:1.0
-Goliath
-GOL-3M
+chassis:Goliath
+model:GOL-3M
 mul id:1232
 
 Config:Quad
 techbase:Inner Sphere
 era:3047
-source:Rec Guide:ilClan #22 - Late Succession War
+source:Rec Guide:ilClan #22
 rules level:2
+role:Sniper
+
+
+
+quirk:multi_trac
+quirk:exp_actuator
+
 
 mass:80
 engine:320 XL Engine(IS)

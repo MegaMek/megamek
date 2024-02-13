@@ -1,13 +1,20 @@
-Version:1.0
-Stiletto
-STO-4A
+chassis:Stiletto
+model:STO-4A
 mul id:5131
 
 Config:Biped
 techbase:Inner Sphere
 era:3061
-source:TRO 3067
+source:TRO: 3067
 rules level:2
+role:Striker
+
+
+
+
+quirk:multi_trac
+quirk:difficult_eject
+
 
 mass:35
 engine:280 Light Engine(IS)

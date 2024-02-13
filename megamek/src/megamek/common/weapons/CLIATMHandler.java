@@ -40,16 +40,16 @@ public class CLIATMHandler extends ATMHandler {
     protected int calcDamagePerHit() {
         double toReturn;
         AmmoType atype = (AmmoType) ammo.getType();
-        if (atype.getMunitionType() == AmmoType.M_HIGH_EXPLOSIVE) {
+        if (atype.getMunitionType().contains(AmmoType.Munitions.M_HIGH_EXPLOSIVE)) {
             sSalvoType = " high-explosive missile(s) ";
             toReturn = 3;
-        } else if (atype.getMunitionType() == AmmoType.M_EXTENDED_RANGE) {
+        } else if (atype.getMunitionType().contains(AmmoType.Munitions.M_EXTENDED_RANGE)) {
             sSalvoType = " extended-range missile(s) ";
             toReturn = 1;
-        } else if (atype.getMunitionType() == AmmoType.M_IATM_IMP) {
+        } else if (atype.getMunitionType().contains(AmmoType.Munitions.M_IATM_IMP)) {
             sSalvoType = " IMP missile(s) ";
             toReturn = 1;
-        } else if (atype.getMunitionType() == AmmoType.M_IATM_IIW) {
+        } else if (atype.getMunitionType().contains(AmmoType.Munitions.M_IATM_IIW)) {
             sSalvoType = " IIW missile(s) ";
             toReturn = 2;
         } else {
@@ -62,7 +62,7 @@ public class CLIATMHandler extends ATMHandler {
                     wtype.getInfantryDamageClass(),
                     ((Infantry) target).isMechanized(),
                     toHit.getThruBldg() != null, ae.getId(), calcDmgPerHitReport);
-            
+
             // some question here about "partial streak missiles"
             if (streakInactive()) {
                 toReturn = applyGlancingBlowModifier(toReturn, true);
@@ -84,13 +84,13 @@ public class CLIATMHandler extends ATMHandler {
         int hits = calcMissileHits(vPhaseReport);
 
         // If we use IIW or IMP we are done.
-        if ((atype.getMunitionType() == AmmoType.M_IATM_IIW)
-            || (atype.getMunitionType() == AmmoType.M_IATM_IMP)) {
+        if ((atype.getMunitionType().contains(AmmoType.Munitions.M_IATM_IIW))
+            || (atype.getMunitionType().contains(AmmoType.Munitions.M_IATM_IMP))) {
             return hits;
         }
 
         // Normalize into clusters (for standard and HE)
-        if (atype.getMunitionType() != AmmoType.M_EXTENDED_RANGE) {
+        if (!atype.getMunitionType().contains(AmmoType.Munitions.M_EXTENDED_RANGE)) {
             // change to 5 damage clusters here, after AMS has been done
             hits = nDamPerHit * hits;
             nDamPerHit = 1;
@@ -157,8 +157,8 @@ public class CLIATMHandler extends ATMHandler {
 
         // Only apply if not all shots hit. IATM IMP have HE ranges and thus
         // suffer from spread too
-        if (((atype.getMunitionType() == AmmoType.M_HIGH_EXPLOSIVE)
-                || (atype.getMunitionType() == AmmoType.M_IATM_IMP))
+        if (((atype.getMunitionType().contains(AmmoType.Munitions.M_HIGH_EXPLOSIVE))
+                || (atype.getMunitionType().contains(AmmoType.Munitions.M_IATM_IMP)))
             && tacopscluster && !allShotsHit()) {
             if (nRange <= 1) {
                 nMissilesModifier += 1;
@@ -168,7 +168,7 @@ public class CLIATMHandler extends ATMHandler {
                 nMissilesModifier -= 1;
             }
         }
-        
+
         // //////
         // This applies even with streaks.
         if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE)
@@ -179,7 +179,7 @@ public class CLIATMHandler extends ATMHandler {
                 && (nRange > ranges[RangeType.RANGE_EXTREME])) {
             nMissilesModifier -= 3;
         }
-        
+
 
         // Don't need to check for ECM here since we can't have artemis boni.
         // And Streak bonus is allready handled.
@@ -207,7 +207,7 @@ public class CLIATMHandler extends ATMHandler {
         if (bGlancing && streakInactive()) {
             nMissilesModifier -= 4;
         }
-        
+
         if (bLowProfileGlancing && streakInactive()) {
             nMissilesModifier -= 4;
         }
@@ -225,7 +225,7 @@ public class CLIATMHandler extends ATMHandler {
         // add AMS mods
         int amsMod = getAMSHitsMod(vPhaseReport);
         nMissilesModifier += amsMod;
-        
+
         if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
             Entity entityTarget = (target.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) target
                     : null;
@@ -330,7 +330,7 @@ public class CLIATMHandler extends ATMHandler {
         }
 
         if (!(toHit.getValue() == TargetRoll.IMPOSSIBLE)
-            && (roll >= toHit.getValue())) {
+            && (roll.getIntValue() >= toHit.getValue())) {
             super.addHeat();
         }
     }
@@ -352,7 +352,7 @@ public class CLIATMHandler extends ATMHandler {
             ae.loadWeaponWithSameAmmo(weapon);
             ammo = weapon.getLinked();
         }
-        if (roll >= toHit.getValue()) {
+        if (roll.getIntValue() >= toHit.getValue()) {
             ammo.setShotsLeft(ammo.getBaseShotsLeft() - 1);
             if (wtype.hasFlag(WeaponType.F_ONESHOT)) {
                 weapon.setFired(true);
@@ -396,13 +396,13 @@ public class CLIATMHandler extends ATMHandler {
         }
         return false;
     }
-    
+
     /**
      * Streak effect only works for iATM when not firing indirectly, and not at all for fusillade.
      */
     private boolean streakInactive() {
         return weapon.curMode().equals("Indirect")
-                || weapon.getType().hasFlag(WeaponType.F_PROTO_WEAPON); 
+                || weapon.getType().hasFlag(WeaponType.F_PROTO_WEAPON);
     }
 
     /*
@@ -413,7 +413,7 @@ public class CLIATMHandler extends ATMHandler {
     @Override
     public boolean handle(GamePhase phase, Vector<Report> vPhaseReport) {
         AmmoType atype = (AmmoType) ammo.getType();
-        if (atype.getMunitionType() == AmmoType.M_IATM_IIW) {
+        if (atype.getMunitionType().contains(AmmoType.Munitions.M_IATM_IIW)) {
             if (!cares(phase)) {
                 return true;
             }
@@ -477,14 +477,14 @@ public class CLIATMHandler extends ATMHandler {
             vPhaseReport.addElement(r);
 
             // do we hit?
-            bMissed = roll < toHit.getValue();
+            bMissed = roll.getIntValue() < toHit.getValue();
 
             // are we a glancing hit?
             setGlancingBlowFlags(entityTarget);
             addGlancingBlowReports(vPhaseReport);
 
             // Set Margin of Success/Failure.
-            toHit.setMoS(roll - Math.max(2, toHit.getValue()));
+            toHit.setMoS(roll.getIntValue() - Math.max(2, toHit.getValue()));
             bDirect = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_DIRECT_BLOW)
                       && ((toHit.getMoS() / 3) >= 1) && (entityTarget != null);
             if (bDirect) {
@@ -531,7 +531,7 @@ public class CLIATMHandler extends ATMHandler {
                         hits, weapon.getCalledShot().getCall()));
             }
             return false;
-        } else if (atype.getMunitionType() == AmmoType.M_IATM_IMP) {
+        } else if (atype.getMunitionType().contains(AmmoType.Munitions.M_IATM_IMP)) {
             if (!cares(phase)) {
                 return true;
             }
@@ -647,14 +647,14 @@ public class CLIATMHandler extends ATMHandler {
             vPhaseReport.addElement(r);
 
             // do we hit?
-            bMissed = roll < toHit.getValue();
+            bMissed = roll.getIntValue() < toHit.getValue();
 
             // are we a glancing hit?
             setGlancingBlowFlags(entityTarget);
             addGlancingBlowReports(vPhaseReport);
 
             // Set Margin of Success/Failure.
-            toHit.setMoS(roll - Math.max(2, toHit.getValue()));
+            toHit.setMoS(roll.getIntValue() - Math.max(2, toHit.getValue()));
             bDirect = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_DIRECT_BLOW)
                       && ((toHit.getMoS() / 3) >= 1) && (entityTarget != null);
             if (bDirect) {
@@ -753,7 +753,7 @@ public class CLIATMHandler extends ATMHandler {
                     && (toHit.getThruBldg() == null)) {
                 bldgAbsorbs = bldg.getAbsorbtion(target.getPosition());
             }
-            
+
             // Attacking infantry in buildings from same building
             if (targetInBuilding && (bldg != null)
                     && (toHit.getThruBldg() != null)

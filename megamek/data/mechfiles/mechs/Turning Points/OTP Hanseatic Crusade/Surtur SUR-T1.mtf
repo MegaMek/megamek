@@ -1,13 +1,13 @@
-Version:1.0
-Surtur
-SUR-T1
+chassis:Surtur
+model:SUR-T1
 mul id:7884
 
 Config:Biped
 techbase:Inner Sphere
 era:3140
-source:Dark Age
+source:Operational Turning Points: Hanseatic Crusade
 rules level:3
+role:Skirmisher
 
 mass:55
 engine:330 XL Engine(IS)

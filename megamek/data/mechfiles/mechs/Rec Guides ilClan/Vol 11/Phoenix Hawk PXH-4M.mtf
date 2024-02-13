@@ -1,13 +1,20 @@
-Version:1.0
-Phoenix Hawk 
-PXH-4M
+chassis:Phoenix Hawk 
+model:PXH-4M
 mul id:7750
 
 Config:Biped
 techbase:Inner Sphere
 era:3087
 rules level:2
-source:Rec Guide:ilClan #11 - Early Republic
+role:Striker
+source:Rec Guide:ilClan #11
+
+
+
+quirk:command_mech
+quirk:imp_com
+weaponquirk:jettison_capable:RA:4:Light PPC
+
 
 mass:45
 engine:270 Light Engine(IS)

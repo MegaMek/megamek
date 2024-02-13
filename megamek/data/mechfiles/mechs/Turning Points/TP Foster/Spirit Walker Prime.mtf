@@ -1,12 +1,12 @@
-Version:1.0
-Spirit Walker
-Prime
+chassis:Spirit Walker
+model:Prime
 
 Config:Biped Omnimech
 techbase:Clan
 era:2866
-source:TP:Foster - Succession Wars
+source:Turning Points: Foster
 rules level:2
+role:Sniper
 mul id:9237
 
 

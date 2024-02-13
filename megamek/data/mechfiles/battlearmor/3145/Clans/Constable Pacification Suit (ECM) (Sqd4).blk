@@ -32,6 +32,10 @@ Constable Pacification Suit
 Clan Level 2
 </type>
 
+<role>
+Ambusher
+</role>
+
 <motion_type>
 Jump
 </motion_type>
@@ -66,7 +70,7 @@ BASearchlight:Body
 
 
 <source>
-TRO 3145 The Clans - Early Republic
+TRO: 3145 The Clans
 </source>
 
 <chassis>
@@ -112,3 +116,8 @@ BA Facility Gamma
 <primaryFactory>
 Mannedorf
 </primaryFactory>
+
+<quirks>
+easy_maintain
+</quirks>
+

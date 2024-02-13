@@ -32,6 +32,10 @@ Kanazuchi Assault Battle Armor
 Mixed (IS Chassis) Experimental
 </type>
 
+<role>
+Juggernaut
+</role>
+
 <motion_type>
 Leg
 </motion_type>
@@ -65,7 +69,7 @@ IS BA Advanced:RA
 </Squad Equipment>
 
 <source>
-XTR Gladiators - Jihad
+XTR: Gladiators
 </source>
 
 <chassis>

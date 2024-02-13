@@ -36,6 +36,10 @@ Cormorant Medium Cargo Craft
 IS Level 2
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 WiGE
 </motion_type>
@@ -125,7 +129,7 @@ TARGETING:Unknown
 </systemManufacturers>
 
 <source>
-TRO VAr - Early Succession Wars
+TRO: Vehicle Annex (Revised)
 </source>
 
 <tonnage>

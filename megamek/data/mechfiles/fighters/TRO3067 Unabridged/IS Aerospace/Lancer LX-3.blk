@@ -36,6 +36,10 @@ LX-3
 IS Level 3
 </type>
 
+<role>
+Fast Dogfighter
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -96,7 +100,7 @@ ISLargeVSPLaser
 </Fuselage Equipment>
 
 <source>
-TRO 3067 - Jihad
+TRO: 3067
 </source>
 
 <tonnage>

@@ -36,6 +36,10 @@ E
 Clan Level 2
 </type>
 
+<role>
+Interceptor
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -112,7 +116,7 @@ RemoteSensorDispenser:OMNI
 </Fuselage Equipment>
 
 <source>
-TRO 3055u - Civil War
+TRO: 3055 Update
 </source>
 
 <tonnage>

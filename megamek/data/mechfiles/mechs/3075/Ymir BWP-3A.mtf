@@ -1,13 +1,18 @@
-Version:1.0
-Ymir
-BWP-3A
+chassis:Ymir
+model:BWP-3A
 mul id:3622
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2733
-Source:TRO 3075
+source:TRO: 3075
 Rules Level:2
+role:Brawler
+
+
+
+quirk:stable
+
 
 Mass:90
 Engine:360 Fusion Engine

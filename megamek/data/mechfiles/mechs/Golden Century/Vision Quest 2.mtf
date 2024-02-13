@@ -1,13 +1,13 @@
-Version:1.1
-Vision Quest
-2
+chassis:Vision Quest
+model:2
 mul id:7639
 
 Config:Biped
 techbase:Clan
 era:2868
-source:Succession Wars
+source:TRO: Golden Century
 rules level:2
+role:Sniper
 
 mass:60
 engine:300 XL (Clan) Engine(IS)

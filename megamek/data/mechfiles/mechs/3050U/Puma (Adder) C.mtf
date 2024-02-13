@@ -1,13 +1,17 @@
-Version:1.2
-Puma (Adder)
-C
+chassis:Puma
+clanname:Adder
+model:C
 mul id:2593
 
 Config:Biped Omnimech
 TechBase:Clan
 Era:3012
-Source:TRO 3050 - Succession Wars
+Source:TRO: 3050
 Rules Level:2
+role:Missile Boat
+
+quirk:low_profile
+
 
 Mass:35
 Engine:210 XL (Clan) Engine(IS)

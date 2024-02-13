@@ -32,6 +32,10 @@ A
 Clan Level 3
 </type>
 
+<role>
+Missile Boat
+</role>
+
 <motion_type>
 Hover
 </motion_type>
@@ -97,7 +101,7 @@ CLLRM20:OMNI
 </Turret Equipment>
 
 <source>
-Succession Wars
+TRO: 3060
 </source>
 
 <tonnage>

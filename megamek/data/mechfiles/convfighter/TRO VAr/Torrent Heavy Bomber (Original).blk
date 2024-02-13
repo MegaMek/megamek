@@ -36,6 +36,10 @@ Torrent Heavy Bomber
 IS Level 2
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -164,10 +168,17 @@ TARGETING:Unknown
 </systemManufacturers>
 
 <source>
-TRO Vehicle Annex (r) - Star League
+TRO: Vehicle Annex Revised
 </source>
 
 <tonnage>
 200.0
 </tonnage>
+
+
+<quirks>
+atmo_flyer
+internal_bomb
+poor_performance
+</quirks>
 

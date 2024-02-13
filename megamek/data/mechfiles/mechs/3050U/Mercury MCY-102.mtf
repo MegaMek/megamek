@@ -1,13 +1,20 @@
-Version:1.0
-Mercury
-MCY-102
+chassis:Mercury
+model:MCY-102
 mul id:2169
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3067
-Source:TRO 3050 - Civil War
+Source:TRO: 3050
 Rules Level:2
+role:Scout
+
+
+
+quirk:easy_maintain
+weaponquirk:mod_weapons:HD:3:ISERSmallLaser
+weaponquirk:mod_weapons:RA:4:ISERMediumLaser
+
 
 Mass:20
 Engine:160 Fusion Engine(IS)

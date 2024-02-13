@@ -1,13 +1,21 @@
-Version:1.0
-Fujin
-RJN-301-F
+chassis:Fujin
+model:RJN-301-F
 mul id:8414
 
 Config:Biped
 techbase:Inner Sphere
 era:3139
-source:Rec Guide:ilClan #23 - Dark Age
+source:Rec Guide:ilClan #23
 rules level:3
+role:Striker
+
+
+
+
+quirk:ext_twist
+quirk:no_arms
+weaponquirk:direct_torso_mount:RT:3:ISERPPC
+
 
 mass:50
 engine:300 XL Engine(IS)

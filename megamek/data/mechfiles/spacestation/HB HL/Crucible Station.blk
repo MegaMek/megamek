@@ -36,6 +36,10 @@ Crucible Station
 IS Level 3
 </type>
 
+<role>
+None
+</role>
+
 <designtype>
 1
 </designtype>
@@ -173,7 +177,7 @@ IS Ammo SRM-6:30
 </structural_integrity>
 
 <source>
-HB:HL - Civil War
+Handbook: House Liao
 </source>
 
 <tonnage>

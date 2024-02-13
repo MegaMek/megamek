@@ -36,6 +36,10 @@ Snowden Mining Station
 IS Level 3
 </type>
 
+<role>
+None
+</role>
+
 <designtype>
 0
 </designtype>
@@ -160,7 +164,7 @@ Small Laser
 </structural_integrity>
 
 <source>
-HB:MPS - Age of War
+Handbook: Major Periphery States
 </source>
 
 <tonnage>

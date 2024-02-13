@@ -21,6 +21,7 @@ package megamek.common.weapons;
 
 import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.equipment.ArmorType;
 import megamek.server.GameManager;
 import megamek.server.Server;
 
@@ -60,7 +61,7 @@ public class PlasmaMFUKWeaponHandler extends EnergyWeaponHandler {
                 r.choose(true);
                 r.messageId=3406;
                 r.add(5);
-                r.add(EquipmentType.armorNames[entityTarget.getArmorType(hit.getLocation())]);
+                r.add(ArmorType.forEntity(entityTarget, hit.getLocation()).getName());
             } else {
                 entityTarget.heatFromExternal += 5;
                 r.add(5);

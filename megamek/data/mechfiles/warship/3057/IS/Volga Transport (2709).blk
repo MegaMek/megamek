@@ -36,6 +36,10 @@ Volga Transport
 IS Level 3
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -243,6 +247,14 @@ Eaton AeroSpace
 Inglesmond
 </primaryFactory>
 
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
 <use>
 Transport
 </use>
@@ -251,8 +263,12 @@ Transport
 715 m
 </length>
 
+<height>
+1205 m Sail
+</height>
+
 <source>
-TRO3057R - Star League
+TRO: 3057 Revised
 </source>
 
 <tonnage>

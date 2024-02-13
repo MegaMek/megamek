@@ -1,13 +1,16 @@
-Version:1.0
-Deimos
-D
+chassis:Deimos
+model:D
 mul id:6856
 
 Config:Biped Omnimech
 TechBase:Clan
 Era:3119
-Source:RS 3145 NTNU - Late Republic
+Source:Record Sheets: 3145 New Tech New Upgrades
 Rules Level:2
+role:Sniper
+
+quirk:anti_air
+
 
 Mass:85
 Engine:255 XL (Clan) Engine(IS)

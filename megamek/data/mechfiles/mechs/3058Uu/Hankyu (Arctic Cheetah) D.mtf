@@ -1,13 +1,17 @@
-Version:1.1
-Hankyu (Arctic Cheetah)
-D
+chassis:Hankyu
+clanname:Arctic Cheetah
+model:D
 mul id:1381
 
 Config:Biped Omnimech
 TechBase:Clan
 Era:3037
-source:TRO Clan Invasion - Succession Wars
+source:TRO: Clan Invasion
 Rules Level:2
+role:Missile Boat
+
+quirk:pro_actuator
+
 
 Mass:30
 Engine:240 XL (Clan) Engine(IS)

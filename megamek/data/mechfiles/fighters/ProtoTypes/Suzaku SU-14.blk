@@ -36,6 +36,10 @@ SU-14
 IS Level 4
 </type>
 
+<role>
+Fast Dogfighter
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -141,10 +145,18 @@ TARGETING:Chichester ASR30
 </systemManufacturers>
 
 <source>
-TRO Prototypes - Jihad
+TRO: Prototypes
 </source>
 
 <tonnage>
 75.0
 </tonnage>
 
+
+<quirks>
+atmo_flyer
+</quirks>
+
+<weaponQuirks>
+no_cooling:Aft:0:ISLaserAMS
+</weaponQuirks>

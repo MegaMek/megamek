@@ -36,6 +36,10 @@ Behemoth Heavy Tank
 IS Level 1
 </type>
 
+<role>
+Juggernaut
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -134,7 +138,7 @@ TARGETING:Cirxese Ballista- Check with Cirxese RockeCheck
 </systemManufacturers>
 
 <source>
-TRO 3039 - Succession Wars
+TRO: 3039
 </source>
 
 <tonnage>

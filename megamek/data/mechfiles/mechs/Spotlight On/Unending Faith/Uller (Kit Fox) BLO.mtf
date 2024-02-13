@@ -1,13 +1,17 @@
-Version:1.0
-Uller (Kit Fox)
-BLO
+chassis:Uller
+clanname:Kit Fox
+model:BLO
 mul id:7632
 
 Config:Biped Omnimech
 TechBase:Mixed (Clan Chassis)
 Era:3138
-Source:SO: Unending Faith - Dark Age
+Source:Spotlight On: Unending Faith
 Rules Level:4
+role:Skirmisher
+
+quirk:low_profile
+
 
 Mass:30
 Engine:180 XL (Clan) Engine

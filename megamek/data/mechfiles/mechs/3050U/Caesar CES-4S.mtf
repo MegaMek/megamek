@@ -1,13 +1,18 @@
-Version:1.0
-Caesar
-CES-4S
+chassis:Caesar
+model:CES-4S
 mul id:458
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3064
-Source:TRO 3050 - Civil War
+Source:TRO: 3050
 Rules Level:2
+role:Brawler
+
+
+
+quirk:hyper_actuator
+
 
 Mass:70
 Engine:280 Light Engine

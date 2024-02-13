@@ -1,12 +1,12 @@
-Version:1.0
-Night Chanter
-Prime
+chassis:Night Chanter
+model:Prime
 
 Config:Biped Omnimech
 techbase:Clan
 era:2865
-source:TP:Foster - Succession Wars
+source:Turning Points: Foster
 rules level:2
+role:Skirmisher
 mul id:9232
 
 mass:45

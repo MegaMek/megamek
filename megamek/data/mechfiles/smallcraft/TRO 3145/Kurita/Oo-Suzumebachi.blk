@@ -36,6 +36,10 @@ Oo-Suzumebachi
 IS Level 3
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -120,7 +124,7 @@ ISERMediumLaser
 </structural_integrity>
 
 <source>
-TRO 3145 Draconis Combine - Late Republic
+TRO: 3145 Draconis Combine
 </source>
 
 <tonnage>
@@ -166,4 +170,10 @@ TRO 3145 Draconis Combine - Late Republic
 <escape_pod>
 0
 </escape_pod>
+
+
+<quirks>
+atmo_flyer
+fragile_fuel
+</quirks>
 

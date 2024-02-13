@@ -32,6 +32,10 @@ Zephyros Infantry Support Vehicle
 Clan Level 2
 </type>
 
+<role>
+Striker
+</role>
+
 <motion_type>
 Wheeled
 </motion_type>
@@ -90,7 +94,7 @@ CLERMediumLaser
 </Front Turret Equipment>
 
 <source>
-Dark Age
+TRO: 3085
 </source>
 
 <tonnage>

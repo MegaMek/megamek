@@ -1,13 +1,17 @@
-Version:1.0
-Commando
-COM-7B
+chassis:Commando
+model:COM-7B
 mul id:675
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3068
-Source:TRO 3050 - Jihad
+Source:TRO: 3050
 Rules Level:2
+role:Striker
+
+quirk:low_profile
+quirk:exp_actuator
+
 
 Mass:25
 Engine:150 Light Engine

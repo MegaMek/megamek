@@ -1,13 +1,18 @@
-Version:1.0
-Crab
-CRB-27b
+chassis:Crab
+model:CRB-27b
 mul id:717
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2719
-Source:TRO 3075
+source:TRO: 3075
 Rules Level:2
+role:Sniper
+
+
+
+quirk:easy_maintain
+
 
 Mass:50
 Engine:250 Fusion Engine

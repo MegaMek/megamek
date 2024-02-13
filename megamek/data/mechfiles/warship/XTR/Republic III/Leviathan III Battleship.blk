@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -16,9 +16,9 @@ Warship
 Leviathan III Battleship
 </Name>
 
-<model>
+<Model>
 
-</model>
+</Model>
 
 <mul id:>
 7394
@@ -35,6 +35,10 @@ Leviathan III Battleship
 <type>
 Clan Level 3
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Aerodyne
@@ -88,6 +92,10 @@ crewquarters:4900.0:0
 <engine_type>
 1
 </engine_type>
+
+<clan_engine>
+false
+</clan_engine>
 
 <armor_type>
 12
@@ -773,8 +781,48 @@ Clan Ammo ATM-12:900
 150
 </structural_integrity>
 
+<capabilities>
+The Leviathan III, a derivative of the Leviathan-class hull, is a highly anticipated development in the Rasalhague Dominion's naval capabilities. Incorporating lessons from the Second Combine-Dominion War, the Leviathan III is expected to feature twenty docking collars for DropShip transport, indicating a shift in responsibility for supplying the aerospace complement onto the transported DropShips. While the precise armament of the Leviathan III is not confirmed, it is believed to be a modified version of the Leviathan II's weaponry, optimized for long-range combat. Defensive measures are also likely to be incorporated to fend off enemy fighters and prevent them from reaching nuclear attack range. The implications of the Leviathan III are significant. While primarily serving as a transport for DropShip Stars, its sheer size and capabilities make it a formidable force. With the potential to carry eight Aesir aerospace fighters, the Leviathan III's complement rivals that of the fearsome Rasalhague. The remaining docking collars hold undisclosed potential, potentially accommodating additional assault DropShip Stars. The Dominion's renewed focus on such monumental craft, coupled with its historical expertise in naval construction, raises concerns for the Republic as previous alliances between the two factions have faded.
+</capabilities>
+
+<overview>
+The Rasalhague Dominion navy, having learned lessons from the Jihad, recognizes the expense and vulnerability of WarShips but acknowledges their indispensable role in achieving orbital supremacy. The Leviathan-class battleships played a crucial role in the Dominion's successful assaults on Luthien, Dieron, and Terra. Conversely, their assaults on New Earth, without the presence of such heavy assets, met with failure. As a result, the Dominion understands the importance of heavy battleships in facing formidable opposition.
+</overview>
+
+<history>
+In the aftermath of the Jihad, the Rasalhague Dominion recognized the cost and vulnerability of WarShips but also their crucial role in achieving orbital supremacy. The Leviathan-class battleships played a pivotal role in successful Dominion assaults on key targets. However, when facing significant opposition without the presence of these heavy assets, their assaults failed. This realization reinforced the importance of heavy battleships in the Dominion's naval strategy. Following the expansion of the Dominion's aerospace sibkos after Gray Monday, intelligence agencies initially believed the Dominion was focusing on expanding its DropShip navy. However, recent revelations from an internal Dominion report indicate the development of a new Leviathan derivative, tentatively named Leviathan III. The Leviathan III appears to incorporate lessons from the Second Combine-Dominion War and is expected to feature twenty docking collars for DropShip transport, relieving the battleship of direct responsibility for housing aerospace fighters. While precise details about the armament of the Leviathan III remain undisclosed, it is speculated to be a modified version of the Leviathan II's weaponry, optimized for long-range combat. Additionally, defensive measures are anticipated to prevent enemy fighters from reaching nuclear attack range. The prospect of the Leviathan III raises concerns as the Dominion's renewed focus on constructing such monumental craft suggests a potential shift in its priorities and alliances. Despite increased security measures at Clan shipyards, rumors have surfaced of construction at Quatre Belle, raising the possibility of a joint Bear-Raven WarShip project. The combination of the Dominion's production capabilities and the Alliance's naval expertise could create a formidable and potentially invincible force, posing a significant challenge to other factions.
+</history>
+
+<manufacturer>
+Alshain Naval Yards
+</manufacturer>
+
+<primaryFactory>
+Alshain
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<use>
+Battleship
+</use>
+
+<length>
+1623 m
+</length>
+
+<height>
+1560 m Sail
+</height>
+
 <source>
-XTR RotS 3 - Dark Ages
+XTR: Republic III
 </source>
 
 <tonnage>
@@ -803,6 +851,10 @@ XTR RotS 3 - Dark Ages
 95
 95
 </grav_decks>
+
+<designtype>
+1
+</designtype>
 
 <crew>
 1040
@@ -835,3 +887,4 @@ XTR RotS 3 - Dark Ages
 <escape_pod>
 150
 </escape_pod>
+

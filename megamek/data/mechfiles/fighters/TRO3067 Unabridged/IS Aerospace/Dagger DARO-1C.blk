@@ -36,6 +36,10 @@ DARO-1C
 IS Level 2
 </type>
 
+<role>
+Fast Dogfighter
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -115,7 +119,7 @@ ISMediumPulseLaser:OMNI
 </Fuselage Equipment>
 
 <source>
-TRO 3067 - Jihad
+TRO: 3067
 </source>
 
 <tonnage>

@@ -1,13 +1,19 @@
-Version:1.0
-Crockett
-CRK-5003-3
+chassis:Crockett
+model:CRK-5003-3
 mul id:727
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3062
-Source:TRO 3050 - Civil War
+Source:TRO: 3050
 Rules Level:2
+role:Sniper
+
+
+
+quirk:easy_pilot
+quirk:poor_life_support
+
 
 Mass:85
 Engine:255 Fusion Engine

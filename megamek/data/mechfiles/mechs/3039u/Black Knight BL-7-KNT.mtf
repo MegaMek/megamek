@@ -1,13 +1,18 @@
-Version:1.0
-Black Knight
-BL-7-KNT
+chassis:Black Knight
+model:BL-7-KNT
 mul id:360
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2809
-Source:TRO 3039 - Succession Wars
+Source:TRO: 3039
 Rules Level:1
+role:Brawler
+
+
+
+quirk:command_mech
+
 
 Mass:75
 Engine:300 Fusion Engine

@@ -32,6 +32,10 @@ Garuda Heavy VTOL
 Clan Level 3
 </type>
 
+<role>
+Sniper
+</role>
+
 <motion_type>
 VTOL
 </motion_type>
@@ -89,9 +93,15 @@ CLTAG
 </Turret Equipment>
 
 <source>
-TRO:Prototypes
+TRO: Prototypes
 </source>
 
 <tonnage>
 40.0
 </tonnage>
+
+<quirks>
+non_standard
+searchlight
+</quirks>
+

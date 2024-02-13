@@ -32,6 +32,10 @@ Engineering Vehicle
 IS Level 2
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -73,7 +77,7 @@ Backhoe
 </Turret Equipment>
 
 <source>
-TRO 3039 - Age of War
+TRO: 3039
 </source>
 
 <tonnage>

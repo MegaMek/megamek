@@ -32,6 +32,10 @@ Trireme Infantry Transport
 IS Level 2
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 VTOL
 </motion_type>
@@ -91,7 +95,7 @@ battlearmorbay:4.5:1
 </barrating>
 
 <source>
-TRO 3085 - Early Republic
+TRO: 3085
 </source>
 
 <tonnage>

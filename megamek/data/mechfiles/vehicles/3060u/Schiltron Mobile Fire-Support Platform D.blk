@@ -32,6 +32,10 @@ D
 IS Level 2
 </type>
 
+<role>
+Juggernaut
+</role>
+
 <motion_type>
 Wheeled
 </motion_type>
@@ -103,7 +107,7 @@ ISRotaryAC5:OMNI
 </Turret Equipment>
 
 <source>
-Civil War
+TRO: 3060
 </source>
 
 <tonnage>

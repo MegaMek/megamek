@@ -1,13 +1,17 @@
-Version:1.0
-Great Wyrm
-
+chassis:Great Wyrm
+model:
 mul id:1284
 
 Config:Biped
 TechBase:Clan
 Era:2844
-Source:TRO 3060
+Source:TRO: 3060
 Rules Level:2
+role:Brawler
+
+
+quirk:stable
+
 
 Mass:45
 Engine:225 Fusion (Clan) Engine

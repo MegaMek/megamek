@@ -1,6 +1,5 @@
-Version:1.1
-Daedalus
-GTX2 (Militarized)
+chassis:Daedalus
+model:GTX2 (Militarized)
 mul id:793
 
 Config:Quad
@@ -8,6 +7,12 @@ techbase:Inner Sphere
 era:2801
 source:Historical: Operation Klondike
 rules level:4
+role:Brawler
+
+
+
+quirk:difficult_maintain
+
 
 mass:60
 engine:240 Fusion Engine(IS)

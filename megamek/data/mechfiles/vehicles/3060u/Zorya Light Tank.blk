@@ -47,6 +47,10 @@ CLCASE
 <type>
 Clan Level 2
 </type>
+
+<role>
+Missile Boat
+</role>
 <year>
 2842
 </year>
@@ -63,5 +67,5 @@ Clan Level 2
 Tracked
 </motion_type>
 <source>
-Succession Wars
+TRO: 3060
 </source>

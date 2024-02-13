@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -35,6 +35,10 @@ Nightlord Battleship
 <type>
 Clan Level 3
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Aerodyne
@@ -72,6 +76,10 @@ crewquarters:4858.0:0
 <engine_type>
 1
 </engine_type>
+
+<clan_engine>
+false
+</clan_engine>
 
 <armor_type>
 12
@@ -222,8 +230,50 @@ Ammo Medium N-Gauss:30
 85
 </structural_integrity>
 
+<capabilities>
+The Nightlord-class battleship showcases remarkable capabilities derived from Clan advancements. Its advanced construction techniques and extensive lamellor ferrocarbide armor provide nearly triple the protection of conventional armor. With a diverse offensive arsenal, including naval autocannons, naval lasers, PPC systems, and Gauss rifles, the Nightlord boasts firepower capable of engaging targets at various ranges. It also features a formidable defensive armament, enabling it to fend off enemy attacks effectively. Notably, the Nightlord is equipped with two Stars of fighter craft, ensuring a robust defense against fighter attacks. Its ability to transport a combined Galaxy of OmniMechs and Elementals adds a significant tactical advantage. This allows the Nightlord to operate as a one-ship task force, handling diverse situations much like the larger McKenna-class battleship. Its role as a fleet and touman flagship demonstrates its commanding presence and superior capabilities.
+</capabilities>
+
+<overview>
+The Nightlord-class battleship is hailed as the ultimate in Clan-produced weaponry, representing the pinnacle of Clan military advancement. Known for its advanced construction and formidable armor, the Nightlord surpasses conventional standards. With its diverse array of energy and ballistic weapons, it possesses offensive capabilities comparable to larger battleships. Additionally, the Nightlord stands out for its ability to transport a significant force of OmniMechs, Elementals, and OmniFighters, making it a formidable one-ship task force.
+</overview>
+
+<history>
+The Nightlord-class battleship emerged as a testament to Clan Snow Raven's dedication to technological progress. Designed to capitalize on Clan advancements, the Nightlord represented the pinnacle of Clan military prowess when it was first launched from the Snow Raven yards at Lum in the early 2930s. It quickly became renowned for its advanced construction, armoring techniques, and remarkable offensive and defensive capabilities. Throughout its history, the Nightlord has primarily been observed in the fleets of Clans Jade Falcon and Ghost Bear. While the Clans largely relied on retrofitted SLDF vessels from the Exodus fleet, the Nightlord stood apart as a specialized vessel explicitly tailored to exploit Clan technologies. It served as a task force command ship, boasting superior armor, firepower, and cargo capacity compared to its Star League-era counterparts.
+Despite its exceptional capabilities, the Nightlord faced limited production and deployment due to its high cost and the abundance of still functional ex-SLDF ships. As a result, the number of Nightlords remained relatively small outside of the Snow Raven and Ghost Bear fleets, with the latter possessing the majority share. Nevertheless, the Nightlord played a significant role as a flagship vessel, participating in notable missions and contributing to Clan military achievements.
+Throughout its storied history, the Nightlord-class battleship has cemented its reputation as the ultimate Clan-produced weapon. Its technological advancements, formidable firepower, and transport capacity for OmniMechs, Elementals, and OmniFighters make it a fearsome presence on the battlefield, embodying the pinnacle of Clan military prowess.
+</history>
+
+<manufacturer>
+Unknown
+</manufacturer>
+
+<primaryFactory>
+Lum
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<use>
+Battleship
+</use>
+
+<length>
+1100 m
+</length>
+
+<height>
+1450 m Sail
+</height>
+
 <source>
-TRO3057R - Succession Wars - Late
+TRO: 3057 Revised
 </source>
 
 <tonnage>
@@ -246,6 +296,10 @@ TRO3057R - Succession Wars - Late
 140
 140
 </grav_decks>
+
+<designtype>
+1
+</designtype>
 
 <crew>
 1073
@@ -278,3 +332,4 @@ TRO3057R - Succession Wars - Late
 <escape_pod>
 160
 </escape_pod>
+

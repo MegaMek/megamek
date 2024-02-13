@@ -50,10 +50,10 @@ public class SerializationHelper {
                 megamek.common.CompositeTechLevel.DateRange.class,
                 megamek.common.CriticalSlot.class,
                 megamek.common.EquipmentMode.class,
+                megamek.common.Flare.class,
                 megamek.common.Game.class,
                 megamek.common.Hex.class,
                 megamek.common.Minefield.class,
-                megamek.common.Mounted.class,
                 megamek.common.PilotingRollData.class,
                 megamek.common.Player.class,
                 megamek.common.Sensor.class,
@@ -74,7 +74,9 @@ public class SerializationHelper {
         xStream.allowTypeHierarchy(megamek.common.Crew.class);
         xStream.allowTypeHierarchy(megamek.common.GameTurn.class);
         xStream.allowTypeHierarchy(megamek.common.ITechnology.class);
+        xStream.allowTypeHierarchy(megamek.common.Roll.class);
         xStream.allowTypeHierarchy(megamek.common.Transporter.class);
+        xStream.allowTypeHierarchy(megamek.common.Mounted.class);
         xStream.allowTypeHierarchy(megamek.common.actions.EntityAction.class);
         xStream.allowTypeHierarchy(megamek.common.icons.AbstractIcon.class);
         xStream.allowTypeHierarchy(megamek.common.options.AbstractOptions.class);

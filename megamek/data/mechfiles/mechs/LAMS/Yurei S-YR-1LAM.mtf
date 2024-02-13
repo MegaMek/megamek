@@ -1,13 +1,19 @@
-Version:1.1
-Yurei
-S-YR-1LAM
+chassis:Yurei
+model:S-YR-1LAM
 mul id:5431
 
 Config:LAM
 techbase:Mixed (IS Chassis)
 era:3077
-source:J:FR
+source:Jihad: Final Reckoning
 rules level:4
+role:Skirmisher
+
+
+
+
+quirk:non_standard
+
 
 mass:40
 engine:200 Fusion Engine(IS)

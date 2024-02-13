@@ -32,6 +32,10 @@ Strike Falcon Attack VTOL
 IS Level 2
 </type>
 
+<role>
+Striker
+</role>
+
 <motion_type>
 VTOL
 </motion_type>
@@ -96,9 +100,15 @@ Machine Gun
 </barrating>
 
 <source>
-XTRO Primitives II - Age of War
+XTR: Primitives II
 </source>
 
 <tonnage>
 30.0
 </tonnage>
+
+<quirks>
+easy_pilot
+obsolete
+</quirks>
+

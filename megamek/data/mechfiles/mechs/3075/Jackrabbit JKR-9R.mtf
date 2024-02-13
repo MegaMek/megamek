@@ -1,13 +1,13 @@
-Version:1.0
-Jackrabbit
-JKR-9R 'Joker'
+chassis:Jackrabbit
+model:JKR-9R 'Joker'
 mul id:1657
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2768
-Source:TRO 3075
+source:TRO: 3075
 Rules Level:2
+role:Striker
 
 Mass:25
 Engine:150 Fusion Engine

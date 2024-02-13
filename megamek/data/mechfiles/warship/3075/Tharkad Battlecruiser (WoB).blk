@@ -36,6 +36,10 @@ Tharkad Battlecruiser
 IS Level 3
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -278,8 +282,48 @@ IS Ammo LRM-10:120
 80
 </structural_integrity>
 
+<capabilities>
+The Tharkad-class battlecruiser excelled in terms of its capabilities, surpassing many of its contemporaries. Its design prioritized speed, enabling it to outrun or overtake most older Star League cruisers while maintaining superior firepower. The battlecruiser boasted a wide array of weapons, including powerful guns, and was accompanied by six squadrons of fighters. Additionally, it featured DropShip docking collars, enabling it to bring its own fire support when needed. The Tharkad-class battlecruisers were renowned for their combination of speed, armor, firepower, and fighter support, making them a formidable force in combat.
+</capabilities>
+
+<overview>
+The Tharkad-class battlecruiser, designed in 2685 to bolster the Lyran Commonwealth's naval fleet, was hailed as the pride of the Lyran navy. Built at the Bolson-Tamar Shipyards, these battlecruisers were renowned for their superior acceleration, armor, and firepower. They outmatched many older Star League vessels and set the stage for an arms race with the Terran Hegemony. Equipped with a formidable arsenal, fighter squadrons, and DropShip docking collars, the Tharkad-class battlecruisers were formidable warships.
+</overview>
+
+<history>
+The Tharkad-class battlecruisers were introduced as new warships for the Lyran Commonwealth during the Star League era. Between 2685 and the beginning of the First Succession War, 28 battlecruisers were produced at the Bolson-Tamar Shipyards. They quickly became a symbol of Lyran military might, enforcing Lyran will across the nation. However, the destruction of the shipyards marked a significant setback for the production of Tharkad-class battlecruisers. Only one Tharkad-class battlecruiser, the LCS Invincible, survived the conflicts that erupted after the fall of the Star League. Despite suffering significant damage in a fierce engagement over Moore, the Invincible was brought back into service in 2853 during a desperate Lyran attempt to break a Kurita siege on Hesperus II. The battlecruiser played a pivotal role in turning the tide of the conflict, but was presumably destroyed due to a jump drive failure during its return flight to Tharkad. In a surprising turn of events, the LCS Invincible reappeared over Tharkad in 3067 under the control of a Word of Blake crew, sporting a complete refurbishment and retrofitted with a lithium-fusion battery. The vessel, capable of making two rapid jumps, demonstrated the extent and expense of the retrofit. The Tharkad-class battlecruiser regained its original functionality during the liberation of Tharkad in January 3072, capturing the attention of allied forces who were astounded by the vessel's transformation and the commander's decision not to employ the advanced system to escape during the battle. Despite the limited number of Tharkad-class battlecruisers produced and the destruction of the shipyards, these warships left a lasting impact on Lyran military history. They represented a pinnacle of Lyran naval technology during the Star League era and played crucial roles in significant engagements. The reemergence of the LCS Invincible as a refurbished vessel under different control added another chapter to the battlecruiser's storied history.
+</history>
+
+<manufacturer>
+Bolson-Tamar Shipyards
+</manufacturer>
+
+<primaryFactory>
+Tamar
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<use>
+Battlecruiser
+</use>
+
+<length>
+975 m
+</length>
+
+<height>
+1490m Sail
+</height>
+
 <source>
-TRO3075 - Star League
+TRO: 3075
 </source>
 
 <tonnage>
@@ -338,44 +382,4 @@ TRO3075 - Star League
 <escape_pod>
 30
 </escape_pod>
-
-<capabilities>
-The Tharkad is armed primarily with a wide variety of naval-grade autocannons and lasers, providing a selection of weapons to properly respond to an enemy threat without needlessly wasting firepower on smaller targets. The vessel also carries a number of Medium and Heavy Naval PPCs and four massive Heavy Naval Gauss Cannons, making the Tharkad a threat to heavier WarShips as well. Unusual for its era, the Tharkad carries a significant number of conventional weapons to fight off aerospace fighters. WarShips of the time usually relied on their attending DropShips to provide screens against enemy fighters. Although the practice is commonplace on modern WarShips, conventional weapons were often seen as a waste of tonnage on vessels deployed during the Age of War and the Star League.
-</capabilities>
-
-<overview>
-The first in a line of new WarShips for the Lyran Commonwealth during the Star League era, the Tharkad-class battlecruiser was easily a match for the vast majority of its contemporaries, and was only really outclassed by the Texas and McKenna-class battleships.
-</overview>
-
-<deployment>
-Outside of the ship's strong armor and prolific firepower, this ability to fend for itself was likely one of the reasons that the LCS Invincible was one of the last functional WarShips in the Inner Sphere until the Clan Invasion.
-</deployment>
-
-<history>
-Carrying a vast array of weaponry, moderately heavy armor, and possessing above-average speed, the Tharkad helped enforce Lyran will across the nation. Unfortunately for the Lyran navy, only 28 were produced between its introduction in 2690 and the destruction of the Bolson-Tamar Shipyards at the beginning of the First Succession War. The last functioning Tharkad was believed lost in 2853 until its reemergence in 3067. In 2765 the Lyran Commonwealth was already operating eleven Tharkads, with a single Tharkad forming the heart of each of six Lyran navy patrol squadrons and another Tharkad positioned in each of the static fleets located at Tharkad and each state capital; each Tharkad was commonly escorted by one or more Commonwealth-class light cruisers.
-</history>
-
-<manufacturer>
-Bolson-Tamar Shipyards
-</manufacturer>
-
-<primaryFactory>
-Tamar
-</primaryFactory>
-
-<systemManufacturers>
-CHASSIS:Unknown
-ENGINE:Unknown
-ARMOR:Unknown
-COMMUNICATIONS:Unknown
-TARGETING:Unknown
-</systemManufacturers>
-
-<use>
-Battlecruiser
-</use>
-
-<length>
-975 m
-</length>
 

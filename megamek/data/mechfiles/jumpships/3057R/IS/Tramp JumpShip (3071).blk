@@ -36,6 +36,10 @@ Tramp JumpShip
 IS Level 4
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -144,7 +148,7 @@ ISAMS Ammo:24
 </structural_integrity>
 
 <source>
-TRO 3057R - Jihad
+TRO: 3057 Revised
 </source>
 
 <tonnage>

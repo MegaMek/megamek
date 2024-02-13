@@ -1,13 +1,18 @@
-Version:1.0
-Sojourner
-A
+chassis:Sojourner
+model:A
 mul id:7444
 
 Config:Biped Omnimech
 techbase:Clan
 era:3147
-source:Rec Guide:ilClan #2- Dark Age
+source:Rec Guide:ilClan #2
 rules level:3
+role:Brawler
+
+quirk:easy_maintain
+quirk:easy_pilot
+quirk:rugged_1
+
 
 mass:60
 engine:240 Fusion (Clan) Engine(IS)

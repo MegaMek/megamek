@@ -61,6 +61,10 @@ InfantryAssaultRifle:RA:APM
 IS Level 2
 </type>
 
+<role>
+Scout
+</role>
+
 <year>
 3067
 </year>
@@ -70,7 +74,7 @@ Jump
 </motion_type>
 
 <source>
-TRO 3085 - Civil War
+TRO: 3085
 </source>
 
 <armor_type>

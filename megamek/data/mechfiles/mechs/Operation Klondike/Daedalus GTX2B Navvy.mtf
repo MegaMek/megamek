@@ -1,6 +1,5 @@
-Version:1.1
-Daedalus
-GTX2B 'Navvy'
+chassis:Daedalus
+model:GTX2B 'Navvy'
 mul id:795
 
 Config:Quad
@@ -8,6 +7,12 @@ techbase:Inner Sphere
 era:2750
 source:Historical: Operation Klondike
 rules level:2
+role:Ambusher
+
+
+
+quirk:difficult_maintain
+
 
 mass:60
 engine:240 Fusion Engine(IS)

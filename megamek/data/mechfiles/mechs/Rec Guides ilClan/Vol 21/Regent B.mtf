@@ -1,13 +1,16 @@
-Version:1.0
-Regent
-B
+chassis:Regent
+model:B
 mul id:8361
 
 Config:Biped Omnimech
 techbase:Clan
 era:3145
-source:Rec Guide:ilClan #21 - Dark Age
+source:Rec Guide:ilClan #21
 rules level:2
+role:Juggernaut
+
+quirk:easy_maintain
+
 
 mass:90
 engine:270 Fusion (Clan) Engine(IS)

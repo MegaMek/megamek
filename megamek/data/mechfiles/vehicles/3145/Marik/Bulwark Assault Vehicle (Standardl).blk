@@ -32,6 +32,10 @@ Bulwark Assault Vehicle
 IS Level 2
 </type>
 
+<role>
+Sniper
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -85,9 +89,14 @@ Heavy PPC
 </Turret Equipment>
 
 <source>
-TRO 3145 Free Worlds League - Late Republic
+TRO: 3145 Free Worlds League
 </source>
 
 <tonnage>
 85.0
 </tonnage>
+
+<weaponQuirks>
+accurate:FR:0:ISImprovedHeavyGaussRifle
+exposed_linkage:FR:0:ISImprovedHeavyGaussRifle
+</weaponQuirks>

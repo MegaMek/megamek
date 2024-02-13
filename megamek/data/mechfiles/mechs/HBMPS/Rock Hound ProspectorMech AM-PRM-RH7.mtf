@@ -1,12 +1,13 @@
-Version:1.0
-Rock Hound ProspectorMech
-AM-PRM-RH7
+chassis:Rock Hound ProspectorMech
+model:AM-PRM-RH7
 mul id:4926
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3042
 Rules Level:2
+role:None
+source:Handbook: Major Periphery States
 
 Mass:40
 Engine:160 Fuel Cell Engine(IS)

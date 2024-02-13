@@ -1,13 +1,19 @@
-Version:1.0
-Stinger IIC
-2
+chassis:Stinger IIC
+model:2
 mul id:5136
 
 Config:Biped
 TechBase:Clan
 Era:3086
 Rules Level:4
+role:Scout
 History:Based off the Fluff, crit placement is likely wrong.
+Source:TRO: Prototypes 
+
+quirk:cramped_cockpit
+quirk:difficult_eject
+quirk:combat_computer
+
 
 Mass:20
 Engine:100 Fusion (Clan) Engine(IS)

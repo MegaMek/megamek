@@ -1,13 +1,21 @@
-Version:1.0
-Shogun
-SHG-2E
+chassis:Shogun
+model:SHG-2E
 mul id:2932
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3005
-Source:TRO 3050 - Succession Wars
+Source:TRO: 3050
 Rules Level:2
+role:Missile Boat
+
+
+
+quirk:barrel_fists_la
+quirk:barrel_fists_ra
+quirk:difficult_maintain
+quirk:non_standard
+
 
 Mass:85
 Engine:255 Fusion Engine

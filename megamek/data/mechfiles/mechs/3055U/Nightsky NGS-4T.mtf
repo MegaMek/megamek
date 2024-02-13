@@ -1,13 +1,18 @@
-Version:1.0
-Nightsky
-NGS-4T
+chassis:Nightsky
+model:NGS-4T
 mul id:2280
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3056
-Source:TRO 3055 - Clan Invasion
+Source:TRO: 3055
 Rules Level:2
+role:Striker
+
+
+
+weaponquirk:mod_weapons:RA:4:Hatchet
+
 
 Mass:50
 Engine:300 XL Engine

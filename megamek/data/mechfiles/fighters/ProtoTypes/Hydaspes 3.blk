@@ -36,6 +36,10 @@ Hydaspes
 Clan Level 3
 </type>
 
+<role>
+Attack Fighter
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -121,9 +125,16 @@ CLCASE
 </Fuselage Equipment>
 
 <source>
-TRO Prototypes - Jihad
+TRO: Prototypes
 </source>
 
 <tonnage>
 95.0
 </tonnage>
+
+<quirks>
+difficult_eject
+imp_life_support
+multi_trac
+</quirks>
+

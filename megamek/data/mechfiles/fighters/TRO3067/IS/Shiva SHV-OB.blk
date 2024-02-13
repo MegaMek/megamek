@@ -36,6 +36,10 @@ SHV-OB
 IS Level 2
 </type>
 
+<role>
+Attack Fighter
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -122,7 +126,7 @@ ISCASE:OMNI
 </Fuselage Equipment>
 
 <source>
-TRO 3067 - Clan Invasion
+TRO: 3067
 </source>
 
 <tonnage>

@@ -36,6 +36,10 @@ Stork Light Refueling Craft
 IS Level 2
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -108,7 +112,7 @@ IS Ammo SRM-4
 </structural_tech_rating>
 
 <source>
-TRO 3075 - Star League
+TRO: 3075
 </source>
 
 <tonnage>

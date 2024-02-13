@@ -36,6 +36,10 @@ VNL-K75N
 IS Level 2
 </type>
 
+<role>
+Juggernaut
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -133,10 +137,15 @@ TARGETING:O/P GRNDSTAT 50A
 </systemManufacturers>
 
 <source>
-Rec Guide:ilClan #32 - Civil War
+Rec Guide:ilClan #32
 </source>
 
 <tonnage>
 75.0
 </tonnage>
+
+
+<quirks>
+difficult_maintain
+</quirks>
 

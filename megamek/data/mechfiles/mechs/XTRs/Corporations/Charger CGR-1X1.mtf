@@ -1,13 +1,20 @@
-Version:1.1
-Charger
-CGR-1X1
+chassis:Charger
+model:CGR-1X1
 mul id:563
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3076
-Source:Jihad
+source:XTR: Corporations
 Rules Level:4
+role:Scout
+
+
+
+quirk:barrel_fists_la
+quirk:easy_maintain
+quirk:bad_rep_is
+
 
 Mass:80
 Engine:400 XL Fusion Engine

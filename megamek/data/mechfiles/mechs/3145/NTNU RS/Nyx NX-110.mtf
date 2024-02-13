@@ -1,13 +1,19 @@
-Version:1.1
-Nyx
-NX-110
+chassis:Nyx
+model:NX-110
 mul id:6936
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3141
-Source:RS 3145 NT NU
+Source:Record Sheets: 3145 New Tech New Upgrades
 Rules Level:3
+role:Scout
+
+
+
+quirk:low_profile
+quirk:difficult_maintain
+
 
 Mass:30
 Engine:300 XL Engine(IS)

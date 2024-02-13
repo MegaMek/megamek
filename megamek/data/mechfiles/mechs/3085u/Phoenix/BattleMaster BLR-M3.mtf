@@ -1,13 +1,19 @@
-Version:1.0
-BattleMaster
-BLR-M3
+chassis:BattleMaster
+model:BLR-M3
 mul id:302
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3070
-Source:RS3085 - Jihad
+Source:Record Sheets: 3085 Unabridged — Project Phoenix
 Rules Level:2
+role:Sniper
+
+
+
+quirk:command_mech
+quirk:weak_head_1
+
 
 Mass:85
 Engine:340 Light Engine(IS)

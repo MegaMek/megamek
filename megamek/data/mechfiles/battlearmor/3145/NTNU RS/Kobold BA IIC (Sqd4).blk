@@ -32,6 +32,10 @@ Kobold Battle Armor IIC
 Clan Level 3
 </type>
 
+<role>
+Scout
+</role>
+
 <motion_type>
 VTOL
 </motion_type>
@@ -71,7 +75,7 @@ BA Harjel not coded. Unit included for completeness
 </history>
 
 <source>
-RS3145 NT NU - Early Republic
+Record Sheets: 3145 New Tech New Upgrades
 </source>
 
 <chassis>

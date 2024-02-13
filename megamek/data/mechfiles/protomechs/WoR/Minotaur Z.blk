@@ -36,6 +36,10 @@ Z
 Clan Level 4
 </type>
 
+<role>
+Ambusher
+</role>
+
 <motion_type>
 Biped
 </motion_type>
@@ -97,7 +101,7 @@ CLImprovedMediumHeavyLaser
 </Legs Equipment>
 
 <source>
-WoRS - Jihad
+Wars of Reaving
 </source>
 
 <tonnage>

@@ -1,13 +1,17 @@
-Version:1.0
-Carrion Crow
-B
+chassis:Carrion Crow
+model:B
 mul id:7777
 
 Config:Biped Omnimech
 techbase:Clan
 era:3145
-source:Rec Guide:ilClan #12 - Dark Age
+source:Rec Guide:ilClan #12
 rules level:2
+role:Sniper
+
+quirk:imp_target_short
+quirk:unbalanced
+
 
 mass:40
 engine:280 XL (Clan) Engine(IS)

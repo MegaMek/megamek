@@ -36,6 +36,10 @@ Pandion Combat WiGE
 IS Level 4
 </type>
 
+<role>
+Striker
+</role>
+
 <motion_type>
 WiGE
 </motion_type>
@@ -91,7 +95,7 @@ RL15
 </Turret Equipment>
 
 <source>
-Dark Age
+TRO: 3150
 </source>
 
 <tonnage>

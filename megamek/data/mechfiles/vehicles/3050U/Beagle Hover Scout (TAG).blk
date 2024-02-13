@@ -32,6 +32,10 @@ Beagle Hover Scout
 IS Level 2
 </type>
 
+<role>
+Scout
+</role>
+
 <motion_type>
 Hover
 </motion_type>
@@ -82,7 +86,7 @@ BeagleActiveProbe
 </Turret Equipment>
 
 <source>
-TRO 3050 - Jihad
+TRO: 3050
 </source>
 
 <tonnage>

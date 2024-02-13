@@ -1,13 +1,19 @@
-Version:1.2
-Hatchetman
-HCT-6S
+chassis:Hatchetman
+model:HCT-6S
 mul id:1417
 
 Config:Biped
 techbase:Inner Sphere
 era:3064
-source:TRO 3050 - Civil War
+source:TRO: 3050
 rules level:2
+role:Brawler
+
+
+
+quirk:anti_air
+weaponquirk:fast_reload:RT:2:ISLBXAC10
+
 
 mass:45
 engine:180 Light Engine(IS)

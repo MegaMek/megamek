@@ -1,13 +1,19 @@
-Version:1.1
-Man O' War (Gargoyle)
-E
+chassis:Man O' War
+clanname:Gargoyle
+model:E
 mul id:2006
 
 Config:Biped Omnimech
 TechBase:Clan
 Era:3060
-source:TRO Clan Invasion - Clan Invasion
+source:TRO: Clan Invasion
 Rules Level:2
+role:Skirmisher
+
+weaponquirk:stable_weapon:RA:3:CLATM12
+weaponquirk:stable_weapon:LA:4:CLHeavyMediumLaser
+weaponquirk:stable_weapon:LA:6:CLHeavyMediumLaser
+
 
 Mass:80
 Engine:400 XL (Clan) Engine(IS)

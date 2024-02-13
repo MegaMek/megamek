@@ -32,6 +32,10 @@ Luduan Scout Vehicle
 IS Level 3
 </type>
 
+<role>
+Scout
+</role>
+
 <motion_type>
 Hover
 </motion_type>
@@ -86,9 +90,14 @@ ISTAG
 </Turret Equipment>
 
 <source>
-TRO 3145 Capellan Confederation - Dark Ages
+TRO: 3145 Capellan Confederation
 </source>
 
 <tonnage>
 25.0
 </tonnage>
+
+<quirks>
+imp_com
+</quirks>
+

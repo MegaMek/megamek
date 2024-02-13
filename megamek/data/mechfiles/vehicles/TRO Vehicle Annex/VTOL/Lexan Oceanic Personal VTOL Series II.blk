@@ -36,6 +36,10 @@ Series II
 IS Level 2
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 VTOL
 </motion_type>
@@ -90,7 +94,7 @@ ISGuardianECMSuite
 </structural_tech_rating>
 
 <source>
-TRO VAr - Star League
+TRO: Vehicle Annex (Revised)
 </source>
 
 <tonnage>

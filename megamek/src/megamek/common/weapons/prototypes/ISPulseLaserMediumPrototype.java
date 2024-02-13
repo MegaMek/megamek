@@ -65,7 +65,7 @@ public class ISPulseLaserMediumPrototype extends PulseLaserWeapon {
         waterExtremeRange = 6;
         tonnage = 2.0;
         criticals = 1;
-        bv = 48;
+        bv = 43;
         cost = 300000;
         rulesRefs = "71, IO";
         techAdvancement.setTechBase(TECH_BASE_IS)

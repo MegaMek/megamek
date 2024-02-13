@@ -1,13 +1,18 @@
-Version:1.0
-No-Dachi
-NDA-2KO
+chassis:No-Dachi
+model:NDA-2KO
 mul id:4733
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3060
-Source:TRO 3067
+Source:TRO: 3067
 Rules Level:2
+role:Brawler
+
+
+
+quirk:hyper_actuator
+
 
 Mass:70
 Engine:350 XL Engine(IS)

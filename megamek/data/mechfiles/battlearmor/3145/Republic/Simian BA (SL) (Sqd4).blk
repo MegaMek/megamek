@@ -32,6 +32,10 @@ Simian Battle Armor
 IS Level 2
 </type>
 
+<role>
+Ambusher
+</role>
+
 <motion_type>
 Jump
 </motion_type>
@@ -48,7 +52,7 @@ BASearchlight:Body
 </Squad Equipment>
 
 <source>
-TRO 3145 Republic of the Sphere - Dark Ages
+TRO: 3145 Republic of the Sphere
 </source>
 
 <chassis>
@@ -112,4 +116,9 @@ TARGETING:Unknown
 </systemManufacturers>
 
 <notes>
-The TRO3075 entry lists a 3-slot
+The TRO: 3075 entry lists a 3-slot
+
+<quirks>
+easy_maintain
+</quirks>
+

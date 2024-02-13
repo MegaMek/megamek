@@ -32,6 +32,10 @@ Elemental II Battle Armor
 Clan Level 3
 </type>
 
+<role>
+Scout
+</role>
+
 <motion_type>
 Leg
 </motion_type>
@@ -62,7 +66,7 @@ LegAttack
 </Point Equipment>
 
 <source>
-TRO Prototypes - Jihad
+TRO: Prototypes
 </source>
 
 <chassis>
@@ -117,3 +121,8 @@ JUMPJET:Various
 COMMUNICATIONS:Various
 TARGETING:Various
 </systemManufacturers>
+
+<quirks>
+easy_maintain
+</quirks>
+

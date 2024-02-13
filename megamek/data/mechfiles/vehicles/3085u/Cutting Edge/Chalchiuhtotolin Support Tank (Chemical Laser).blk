@@ -32,6 +32,10 @@ Chalchiuhtotolin Support Tank
 Mixed (Clan Chassis) Advanced
 </type>
 
+<role>
+Brawler
+</role>
+
 <motion_type>
 Wheeled
 </motion_type>
@@ -96,3 +100,7 @@ CLStreakSRM4
 <tonnage>
 50.0
 </tonnage>
+
+<source>
+TRO: 3085
+</source>

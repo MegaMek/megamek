@@ -32,6 +32,10 @@ Mk. XXX(Bountry Hunter)(Restored)
 IS Level 2
 </type>
 
+<role>
+Ambusher
+</role>
+
 <motion_type>
 Jump
 </motion_type>
@@ -75,7 +79,7 @@ IS BA Stealth:LA
 </Trooper 4 Equipment>
 
 <source>
-TRO 3075/RS 3085 Unabridged ONN - Star League
+TRO: 3075
 </source>
 
 <chassis>

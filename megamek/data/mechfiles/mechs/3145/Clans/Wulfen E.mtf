@@ -1,13 +1,13 @@
-Version:1.1
-Wulfen
-E
+chassis:Wulfen
+model:E
 mul id:6261
 
 Config:Biped Omnimech
 TechBase:Mixed (Clan Chassis)
 Era:3137
-Source:TRO 3145 The Clans - Dark Ages
-Rules Level:4
+Source:TRO: 3145 The Clans
+rules level:3
+role:Striker
 
 Mass:30
 Engine:300 XXL (Clan) Engine
@@ -153,4 +153,19 @@ IS Stealth
 -Empty-
 -Empty-
 
+overview:<P>The Wulfen, a light OmniMech from Clan Wolf, initially met with internal disapproval but soon gained admiration due to its sterling combat performances. Its prototypes showcased formidable capabilities during the invasions of the Republic, Free Worlds League, and Lyran Commonwealth, earning it a special place within Clan Wolf, especially among ristars (rising stars).</P>
+
+capabilities:<P>Boasting an amalgam of speed and stealth armor, the Wulfen excels in dictating engagement terms against heavier adversaries. Its versatility shines in long-range duels, disrupting supply chains, eliminating reconnaissance elements, and facilitating general advancements on the battlefield.</P><P>Leveraging a blend of Clan and Inner Sphere technologies, the Wulfen is equipped with a 300-rated Model 39b extra-light engine, Inner Sphere XL gyro, Process 12 endo steel chassis, and 10 tons of pod space. It also hosts an ECM suite, Full-Head Ejection System, and six and a half tons of Imstar V-Stealth stealth armor. This technological medley ensures the Wulfen remains a formidable contender on the battlefield.</P>
+
+deployment:<P>This generalist setup carries two ATM-3 launchers, a pair of ER medium lasers, a micro pulse laser with a targeting computer, and a supercharger for quick speed bursts.</P>
+
+history:<P>Initially designed in 3137 on Tamar, its production saw a hiatus during the Clan's repositioning to the Lyran Commonwealth border, resuming in 3142 initially on Weingarten and later on Thermopolis. Star Captain Paul's ascendancy from a humble sibko to a Nova leader in the Third Wolf Guard Battle Cluster epitomizes the Wulfen's allure among the Clan's ambitious warriors.</P><P>The Wulfen's journey from controversy to a revered combat unit encapsulates Clan Wolf's evolving combat doctrines. Initially denounced by Star Colonel Josiah Ward as a symbol of Spheroid dishonor, the Wulfen's reputation was salvaged by saKhan Garner Kerensky, who triumphed over Ward in a Trial of Grievance using a Wulfen prototype. This event birthed the B configuration, which became a staple in later combat scenarios. Its prototypes showcased formidable capabilities during the invasions of the Republic, Free Worlds League, and Lyran Commonwealth, earning it a special place within Clan Wolf, especially among ristars (rising stars).</P>
+
+manufacturer:Kallon Weapon Industries, W-7 Facilities  
+primaryfactory:Thermopolis,Weingarten 
+systemmanufacturer:CHASSIS:Process 12 Endo Steel
+systemmanufacturer:ENGINE:Model 39b 300 XXL Engine
+systemmanufacturer:ARMOR:Imstar V-Stealth
+systemmanufacturer:COMMUNICATIONS:Garret T11-b with ECM Suite
+systemmanufacturer:TARGETING:ync Tracker (39-42071)
 

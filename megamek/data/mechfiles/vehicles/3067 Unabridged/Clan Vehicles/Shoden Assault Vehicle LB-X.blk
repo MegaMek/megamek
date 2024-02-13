@@ -32,6 +32,10 @@ Shoden Assault Vehicle
 Clan Level 3
 </type>
 
+<role>
+Brawler
+</role>
+
 <motion_type>
 Wheeled
 </motion_type>
@@ -93,7 +97,7 @@ CLLBXAC10
 </Turret Equipment>
 
 <source>
-RS 3067U
+Record Sheets: Record Sheets: 3067 Unabridged
 </source>
 
 <tonnage>

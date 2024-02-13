@@ -32,6 +32,10 @@ Sokar Urban Combat Unit
 Clan Level 3
 </type>
 
+<role>
+Ambusher
+</role>
+
 <motion_type>
 Wheeled
 </motion_type>
@@ -93,9 +97,17 @@ CLAPGaussRifle
 </Turret Equipment>
 
 <source>
-TRO:Prototype
+TRO: Prototypes
 </source>
 
 <tonnage>
 50.0
 </tonnage>
+
+<quirks>
+gas_hog
+poor_work
+imp_target_short
+trailer_hitch
+</quirks>
+

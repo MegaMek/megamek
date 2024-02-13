@@ -1,12 +1,18 @@
-Version:1.3
-Devastator
-DVS-2
+chassis:Devastator
+model:DVS-2
 mul id:894
 Config:Biped
 techbase:Inner Sphere
 era:3048
-source:TRO 3058 - Succession Wars
+source:TRO: 3058
 rules level:2
+role:Juggernaut
+
+
+
+quirk:hyper_actuator
+quirk:searchlight
+
 
 mass:100
 engine:300 XL Engine(IS)

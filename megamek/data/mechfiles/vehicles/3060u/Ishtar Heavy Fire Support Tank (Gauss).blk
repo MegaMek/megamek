@@ -32,6 +32,10 @@ Ishtar Heavy Fire Support Tank
 Clan Level 2
 </type>
 
+<role>
+Sniper
+</role>
+
 <motion_type>
 Wheeled
 </motion_type>
@@ -92,7 +96,7 @@ CLGaussRifle
 </Turret Equipment>
 
 <source>
-Jihad
+TRO: 3060
 </source>
 
 <tonnage>

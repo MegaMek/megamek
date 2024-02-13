@@ -1,13 +1,18 @@
-Version:1.1
-Atlas
-AS7-00 (Jurn)
+chassis:Atlas
+model:AS7-00 (Jurn)
 mul id:5564
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3081
-Source:XTRO Periphery - Jihad
+Source:XTR: Periphery
 Rules Level:4
+role:Sniper
+
+quirk:prototype
+quirk:non_standard
+quirk:command_mech
+quirk:distracting
 
 Mass:100
 Engine:300 XL Engine(IS)
@@ -151,6 +156,7 @@ RemoteSensorDispenser
 -Empty-
 -Empty-
 -Empty-
+
 
 overview:"A 'Mech as powerful as possible, as impenetrable as possible, and as ugly and foreboding as conceivable, so that fear itself will be our ally.”-Aleksandr Kerensky
 

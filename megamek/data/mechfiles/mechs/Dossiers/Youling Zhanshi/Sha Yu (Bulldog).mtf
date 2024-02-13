@@ -1,13 +1,18 @@
-Version:1.0
-Sha Yu
-(Bulldog)
+chassis:Sha Yu
+model:(Bulldog)
 mul id:6980
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3068
-Source:BattleTech Dossiers: Youling Zhanshi - Jihad
+Source:BattleTech Dossiers: Youling Zhanshi
 Rules Level:2
+role:Striker
+
+
+
+quirk:imp_com
+
 
 Mass:40
 Engine:280 XL Engine(IS)

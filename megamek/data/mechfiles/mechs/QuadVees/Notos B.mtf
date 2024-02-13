@@ -1,13 +1,13 @@
-Version:1.1
-Notos
-B
+chassis:Notos
+model:B
 mul id:7372
 
 Config:QuadVee Omnimech
 TechBase:Clan
 Era:3145
-Source:XTRO Republic III - Late Republic
+Source:XTR: Republic III
 Rules Level:3
+role:Skirmisher
 
 Mass:60
 Engine:300 XL (Clan) Engine(IS)

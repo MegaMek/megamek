@@ -32,6 +32,10 @@ C
 IS Level 2
 </type>
 
+<role>
+Juggernaut
+</role>
+
 <motion_type>
 Wheeled
 </motion_type>
@@ -93,7 +97,7 @@ Large Laser:OMNI
 </Turret Equipment>
 
 <source>
-Clan Invasion
+TRO: 3060
 </source>
 
 <tonnage>

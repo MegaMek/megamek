@@ -1,13 +1,18 @@
-Version:1.1
-Ebony
-MEB-12
+chassis:Ebony
+model:MEB-12
 mul id:6942
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3118
-Source:RS 3145 NT NU
+Source:Record Sheets: 3145 New Tech New Upgrades
 Rules Level:3
+role:Scout
+
+
+
+quirk:imp_target_med
+
 
 Mass:25
 Engine:250 XL Engine(IS)

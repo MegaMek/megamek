@@ -1,13 +1,18 @@
-Version:1.0
-Berserker
-BRZ-C3
+chassis:Berserker
+model:BRZ-C3
 mul id:331
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3067
-Source:TRO 3055 - Civil War
+Source:TRO: 3055
 Rules Level:2
+role:Juggernaut
+
+
+
+quirk:distracting
+
 
 Mass:100
 Engine:400 Light Engine

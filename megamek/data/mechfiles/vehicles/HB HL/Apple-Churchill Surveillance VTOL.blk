@@ -32,6 +32,10 @@ Apple-Churchill Surveillance VTOL
 IS Level 3
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 VTOL
 </motion_type>
@@ -95,7 +99,7 @@ cargobay:.5:1
 </transporters>
 
 <source>
-HB:House Liao - Succession Wars
+Handbook: House Liao
 </source>
 
 <tonnage>

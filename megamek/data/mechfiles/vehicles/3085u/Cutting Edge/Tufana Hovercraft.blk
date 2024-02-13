@@ -47,6 +47,10 @@ ISNarc Pods
 <type>
 IS Level 2
 </type>
+
+<role>
+Scout
+</role>
 <year>
 3079
 </year>
@@ -63,5 +67,5 @@ IS Level 2
 Hover
 </motion_type>
 <source>
-Jihad
+TRO: 3085
 </source>

@@ -36,6 +36,10 @@ UPU-3000
 IS Level 2
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -104,7 +108,7 @@ HHSearchlight
 </armor_tech_rating>
 
 <source>
-TRO VAr - Succession Wars
+TRO: Vehicle Annex (Revised)
 </source>
 
 <tonnage>

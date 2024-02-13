@@ -1,12 +1,19 @@
-Version:1.3
-Spector
-SPR-4F
+chassis:Spector
+model:SPR-4F
 mul id:3002
 Config:Biped
 techbase:Inner Sphere
 era:2640
-source:TRO 3058 - Star League
+source:TRO: 3058
 rules level:4
+role:Striker
+
+
+
+
+quirk:rugged_1
+quirk:difficult_maintain
+
 
 mass:35
 engine:245 XL Engine(IS)

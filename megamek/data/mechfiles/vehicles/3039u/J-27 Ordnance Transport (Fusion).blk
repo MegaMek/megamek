@@ -32,6 +32,10 @@ J-27 Ordnance Transport
 IS Level 3
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -78,7 +82,7 @@ Machine Gun
 </Turret Equipment>
 
 <source>
-TRO 3039 - Star League
+TRO: 3039
 </source>
 
 <tonnage>

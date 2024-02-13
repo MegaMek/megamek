@@ -14,6 +14,7 @@
 package megamek.common.loaders;
 
 import megamek.common.*;
+import megamek.common.equipment.ArmorType;
 import megamek.common.util.BuildingBlock;
 import megamek.common.verifier.TestProtomech;
 
@@ -32,33 +33,12 @@ public class BLKProtoFile extends BLKFile implements IMechLoader {
     public Entity getEntity() throws EntityLoadingException {
 
         Protomech t = new Protomech();
-
-        if (!dataFile.exists("name")) {
-            throw new EntityLoadingException("Could not find name block.");
-        }
-        t.setChassis(dataFile.getDataAsString("Name")[0]);
-
-        // Model is not strictly necessary.
-        if (dataFile.exists("Model") && (dataFile.getDataAsString("Model")[0] != null)) {
-            t.setModel(dataFile.getDataAsString("Model")[0]);
-        } else {
-            t.setModel("");
-        }
-        if (dataFile.exists(MtfFile.MUL_ID)) {
-            t.setMulId(dataFile.getDataAsInt(MtfFile.MUL_ID)[0]);
-        }
-        if (dataFile.exists("source")) {
-            t.setSource(dataFile.getDataAsString("source")[0]);
-        }
+        setBasicEntityData(t);
 
         if (!dataFile.exists("year")) {
             throw new EntityLoadingException("Could not find year block.");
         }
         t.setYear(dataFile.getDataAsInt("year")[0]);
-
-        setTechLevel(t);
-        setFluff(t);
-        checkManualBV(t);
 
         if (!dataFile.exists("tonnage")) {
             throw new EntityLoadingException("Could not find weight block.");
@@ -112,9 +92,13 @@ public class BLKProtoFile extends BLKFile implements IMechLoader {
         t.setHasMainGun(hasMainGun);
 
         if (dataFile.exists("armor_type")) {
-            t.setArmorType(dataFile.getDataAsInt("armor_type")[0]);
+            int at = dataFile.getDataAsInt("armor_type")[0];
+            if (at == ArmorType.T_ARMOR_STANDARD) {
+                at = ArmorType.T_ARMOR_STANDARD_PROTOMEK;
+            }
+            t.setArmorType(at);
         } else {
-            t.setArmorType(EquipmentType.T_ARMOR_STANDARD);
+            t.setArmorType(EquipmentType.T_ARMOR_STANDARD_PROTOMEK);
         }
         
         if (dataFile.exists("armor_tech")) {
@@ -136,7 +120,7 @@ public class BLKProtoFile extends BLKFile implements IMechLoader {
             loadEquipment(t, abbrs[loop], loop);
         }
         t.setArmorTonnage(t.getArmorWeight());
-
+        loadQuirks(t);
         return t;
     }
 

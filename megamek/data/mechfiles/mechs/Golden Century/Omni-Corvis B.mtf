@@ -1,13 +1,16 @@
-Version:1.1
-Omni-Corvis
-B
+chassis:Omni-Corvis
+model:B
 mul id:7612
 
 Config:Biped Omnimech
 techbase:Clan
 era:2921
-source:Succession Wars
+source:TRO: Golden Century
 rules level:2
+role:Missile Boat
+
+quirk:prototype
+
 
 mass:50
 engine:250 Fusion (Clan) Engine(IS)

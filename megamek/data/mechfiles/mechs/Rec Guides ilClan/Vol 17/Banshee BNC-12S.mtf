@@ -1,13 +1,17 @@
-Version:1.0
-Banshee
-BNC-12S
+chassis:Banshee
+model:BNC-12S
 mul id:8246
 
 Config:Biped
 techbase:Mixed (IS Chassis)
 era:3138
-source:Rec Guide:ilClan #17 - Dark Age
+source:Rec Guide:ilClan #17
 rules level:2
+role:Brawler
+
+quirk:rugged_1
+quirk:bad_rep_is
+
 
 mass:95
 engine:380 XL (Clan) Engine

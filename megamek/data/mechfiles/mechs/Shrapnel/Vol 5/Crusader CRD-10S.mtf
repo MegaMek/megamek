@@ -1,13 +1,21 @@
-Version:1.0
-Crusader
-CRD-10S
+chassis:Crusader
+model:CRD-10S
 mul id:8234
 
 Config:Biped
 techbase:Clan
 era:3147
-source:Shrapnel #5 - Republic Era
+source:Shrapnel #5
 rules level:2
+role:Missile Boat
+
+
+
+quirk:easy_maintain
+quirk:rugged_1
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+
 
 mass:65
 engine:325 XL (Clan) Engine(IS)

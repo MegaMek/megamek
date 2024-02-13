@@ -1,35 +1,38 @@
-Version:1.0
-Blood Reaper
-
+generator:MegaMek Suite 0.49.16-SNAPSHOT on 2023-12-30
+chassis:Blood Reaper
+model:
 mul id:408
-
 Config:Biped
-TechBase:Clan
-Era:3079
-Source:Jihad
-Rules Level:2
+techbase:Clan
+era:3079
+source:TRO: 3085
+rules level:2
+role:Skirmisher
 
-Mass:70
-Engine:280 XL (Clan) Engine
-Structure:Endo Steel
-Myomer:Standard
+quirk:rugged_1
+quirk:hyper_actuator
 
-Heat Sinks:18 Double
-Walk MP:4
-Jump MP:4
+mass:70
+engine:280 XL (Clan) Engine(IS)
+structure:Clan Endo Steel
+myomer:Standard
 
-Armor:Standard(Clan)
-LA Armor:22
-RA Armor:22
-LT Armor:22
-RT Armor:22
-CT Armor:34
-HD Armor:9
-LL Armor:30
-RL Armor:30
-RTL Armor:8
-RTR Armor:8
-RTC Armor:9
+heat sinks:18 Clan Double
+walk mp:4
+jump mp:4
+
+armor:Standard(Clan)
+LA armor:22
+RA armor:22
+LT armor:22
+RT armor:22
+CT armor:34
+HD armor:9
+LL armor:30
+RL armor:30
+RTL armor:8
+RTR armor:8
+RTC armor:9
 
 Weapons:6
 ER PPC, Left Arm
@@ -49,9 +52,9 @@ CLERPPC
 CLERPPC
 CLHeavyMediumLaser
 CLHeavyMediumLaser
-Endo Steel
-Endo Steel
-Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 
 Right Arm:
 Shoulder
@@ -63,9 +66,9 @@ CLERPPC
 CLERPPC
 CLHeavyMediumLaser
 CLHeavyMediumLaser
-Endo Steel
-Endo Steel
-Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 
 Left Torso:
 Fusion Engine
@@ -77,9 +80,9 @@ CLDoubleHeatSink
 CLATM6
 CLATM6
 CLATM6
+Clan Ammo ATM-6 HE
 Clan Ammo ATM-6
 Clan Ammo ATM-6 ER
-Clan Ammo ATM-6 HE
 
 Right Torso:
 Fusion Engine
@@ -91,9 +94,9 @@ CLDoubleHeatSink
 CLATM6
 CLATM6
 CLATM6
+Clan Ammo ATM-6 HE
 Clan Ammo ATM-6
 Clan Ammo ATM-6 ER
-Clan Ammo ATM-6 HE
 
 Center Torso:
 Fusion Engine
@@ -113,7 +116,7 @@ Head:
 Life Support
 Sensors
 Cockpit
-Endo Steel
+Clan Endo Steel
 Sensors
 Life Support
 -Empty-
@@ -151,4 +154,21 @@ Jump Jet
 -Empty-
 -Empty-
 
+overview:The Blood Reaper, Clan Wolf's latest BattleMech, symbolizes a strategic shift in their approach to warfare. Designed under the directive of Khan Vlad Ward, it represents a return to Clan Wolf's roots, emphasizing the importance of heritage in their mechanical arsenal. This Mech, conceived as a challenge by the Khan to the scientist caste, was crafted to be a symbol around which the Clan could rally, embodying the Wolf's cunning, strength, and resilience in battle.
+
+capabilities:Deriving its structural inspiration from the Mad Cat and Black Hawk, the Blood Reaper is a second-line Mech emphasizing survivability, impact, and cost-effectiveness. Its armament includes a pair of ATM launchers for versatile multi-range firepower and ER PPCs for raw hitting power, supplemented by two heavy medium lasers for close combat. While not as fast as frontline Clan OmniMechs, it possesses jump jets for added mobility, aligning with Ward's vision of a Mech that embodies the Wolf's adaptability and ferocity.
+
+deployment:Equipped with CC 6-Rack ATM Launchers and Type 22 ER PPCs, this version balances long-range and close-quarters combat efficiency. It also includes a three-ton ammo bay for each ATM launcher, offering maximum tactical flexibility.
+
+history:<p>The Blood Reaper's introduction marked a turning point in Clan Wolf's tactical doctrine. Its initial triumph against the Hell's Horses on the battlefield in 3079 was just the beginning. The Mech's success in this encounter, where it exploited its weaponry and jump jets to outmaneuver the lighter Horse machines, demonstrated its formidable combat capabilities. This victory resonated throughout Clan Wolf, reinforcing Khan Vlad Ward's vision of a Mech that could embody the Clan's spirit and prowess in warfare.</p> <p>Following its debut, the Blood Reaper quickly became a staple in Clan Wolf's engagements across various fronts. Its deployment in skirmishes and larger conflicts allowed the Clan to assert its dominance effectively, often outperforming the expectations set for a second-line Mech. The Blood Reaper's presence on the battlefield became a psychological tool, symbolizing Clan Wolf's innovation and strength, and often demoralizing opponents before the fight had even begun.</p>
+<p>The Blood Reaper also played a pivotal role in the political dynamics of Clan Wolf. Khan Ward's use of the Mech as a symbol of Clan pride and heritage bolstered his standing within the Clan and the Inner Sphere at large. The Blood Reaper's deployment in critical battles became a testament to Clan Wolf's strategic acumen, with its pilots often handpicked for their skill and loyalty to the Clan's ideals.</p><p>As Clan Wolf navigated the tumultuous period following the Jihad and into the early 32nd century, the Blood Reaper's adaptability and potency in various combat scenarios underscored its importance. The Mech's involvement in key engagements, particularly in defending Clan territories and in aggressive maneuvers against rival Clans and Inner Sphere forces, further cemented its status as an integral part of Clan Wolf's military might. Its evolution through various variants, particularly the Blood Reaper 2 and 3, reflected the Clan's continuous pursuit of technological advancement and battlefield supremacy.</p>
+
+manufacturer:W-7 Facilities
+primaryfactory:Weingarten
+systemmanufacturer:CHASSIS:Type W4 Endo Steel
+systemmanufacturer:ENGINE:280 Fusion XL
+systemmanufacturer:ARMOR:Advanced/3
+systemmanufacturer:JUMPJET:BMP Series XV
+systemmanufacturer:COMMUNICATIONS:Build 1685 Tacticom
+systemmanufacturer:TARGETING:Build 2 CAT TTttS
 

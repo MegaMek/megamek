@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -35,6 +35,10 @@ Nightwing Surveillance
 <type>
 IS Level 3
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Aerodyne
@@ -135,8 +139,44 @@ Ammo NAC/20:10
 65
 </structural_integrity>
 
+<capabilities>
+The Nightwing is a powerful and well-armed surveillance vessel that lacks point defense weaponry, relying on other ships for defense against smaller aerospace assets. Its main asset is a large and discreet sensor array embedded throughout the hull, allowing passive readings and the option to deploy a longer-ranged sensor array or small craft for surveillance. However, the integration of the sensor array presents challenges for refits, repairs, and upgrades.
+</capabilities>
+
+<overview>
+The Nightwing-class WarShip was a surveillance vessel disguised as a civilian JumpShip, equipped with advanced surveillance equipment and superior armament. It operated alongside Tracker-class vessels, appearing as a trade convoy due to their docking collars. However, the Nightwing's complex sensor system ultimately led to its replacement by the Bug-Eye surveillance vessel.
+</overview>
+
+<history>
+The Nightwing, a small WarShip, was often deployed alongside Tracker-class surveillance vessels, resembling civilian JumpShips. Paired Nightwings and Trackers formed squadrons that conducted long-range surveillance upon entering a system and then proceeded on a preestablished patrol. The inclusion of docking collars on the Tracker helped disguise the squadron as a trade convoy, especially when accompanied by DropShips. Ironically, the Nightwing's advanced sensor suite became its downfall. With the increasing sophistication of electronic warfare, the WarShip's interwoven sensor system proved difficult to replace, as it was intricately integrated into the hull. In 2525, the Hegemony sought new surveillance ship designs, leading to the introduction of the Bug-Eye vessel as the successor to the Nightwing.
+</history>
+
+<manufacturer>
+Di Tron Heavy Industries
+</manufacturer>
+
+<primaryFactory>
+Terra
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<use>
+Surveilance
+</use>
+
+<length>
+305 m
+</length>
+
 <source>
-TRO 3057R - Age of War
+TRO: 3057 Revised
 </source>
 
 <tonnage>
@@ -154,6 +194,10 @@ TRO 3057R - Age of War
 <grav_decks>
 80
 </grav_decks>
+
+<designtype>
+1
+</designtype>
 
 <crew>
 118
@@ -186,3 +230,4 @@ TRO 3057R - Age of War
 <escape_pod>
 0
 </escape_pod>
+

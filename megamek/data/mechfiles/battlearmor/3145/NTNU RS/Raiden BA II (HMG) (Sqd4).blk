@@ -32,6 +32,10 @@ Raiden II Battle Armor
 IS Level 3
 </type>
 
+<role>
+Ambusher
+</role>
+
 <motion_type>
 Jump
 </motion_type>
@@ -65,7 +69,7 @@ LegAttack
 </Squad Equipment>
 
 <source>
-RS3145 NT NU - Late Republic
+Record Sheets: 3145 New Tech New Upgrades
 </source>
 
 <chassis>

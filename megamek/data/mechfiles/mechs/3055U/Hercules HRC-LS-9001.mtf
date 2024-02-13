@@ -1,13 +1,16 @@
-Version:1.0
-Hercules
-HRC-LS-9001
+chassis:Hercules
+model:HRC-LS-9001
 mul id:1484
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3056
-Source:TRO 3055 - Clan Invasion
+Source:TRO: 3055
 Rules Level:2
+role:Skirmisher
+
+quirk:difficult_maintain
+
 
 Mass:70
 Engine:350 XL Engine

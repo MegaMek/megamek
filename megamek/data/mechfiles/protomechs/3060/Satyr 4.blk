@@ -36,6 +36,10 @@ Satyr
 Clan Level 2
 </type>
 
+<role>
+Striker
+</role>
+
 <motion_type>
 Biped
 </motion_type>
@@ -89,7 +93,7 @@ CLLightTAG
 </Legs Equipment>
 
 <source>
-TRO 3060 - Jihad
+TRO: 3060
 </source>
 
 <tonnage>

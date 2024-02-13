@@ -14,8 +14,8 @@
 package megamek.client.ui.swing;
 
 import megamek.client.ui.enums.DialogResult;
-import megamek.client.ui.swing.tooltip.HexTooltip;
 import megamek.client.ui.swing.tooltip.UnitToolTip;
+import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
@@ -30,6 +30,8 @@ import java.util.List;
 public class TargetChoiceDialog extends AbstractChoiceDialog<Targetable> {
     final ClientGUI clientGUI;
     Entity firingEntity;
+
+    private static final GUIPreferences GUIP = GUIPreferences.getInstance();
 
      /**
      * This creates a modal dialog to pick one or more Targetable objects.
@@ -73,18 +75,19 @@ public class TargetChoiceDialog extends AbstractChoiceDialog<Targetable> {
 
     @Override
     protected void detailLabel(JToggleButton button, Targetable target) {
-        button.setText("<html>" + infoText(target) + UnitToolTip.getTargetTipDetail(target,
-                clientGUI.getClient().getBoard(), clientGUI) + "</html>");
+        String div = infoText(target) + " " + UnitToolTip.getTargetTipDetail(target, clientGUI.getClient());
+        div = "<DIV WIDTH=" + UIUtil.scaleForGUI(500) + ">" + div  + "</DIV>";
+        button.setText(UnitToolTip.wrapWithHTML(div));
     }
 
     @Override
     protected void summaryLabel(JToggleButton button, Targetable target) {
-        button.setText("<html>" + infoText(target) + UnitToolTip.getTargetTipSummary(target,
-                clientGUI.getClient().getBoard()) + "</html>");
+        String txt = infoText(target) + "<BR>" + UnitToolTip.getTargetTipSummary(target, clientGUI.getClient());
+        button.setText(UnitToolTip.wrapWithHTML(txt));
     }
 
     protected String infoText(Targetable target) {
-        String result = "<b>" + target.getDisplayName() + "</b>";
+        String result = "";
 
         if (firingEntity != null) {
             ToHitData thd = WeaponAttackAction.toHit(clientGUI.getClient().getGame(), firingEntity.getId(), target);

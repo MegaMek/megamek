@@ -1,13 +1,21 @@
-Version:1.1
-Phoenix Hawk
-PXH-1-EC
+chassis:Phoenix Hawk
+model:PXH-1-EC
 mul id:7678
 
 Config:Biped
 techbase:Mixed (IS Chassis)
 era:2819
-source:Succession Wars
+source:TRO: Golden Century
 rules level:4
+role:Skirmisher
+
+
+
+quirk:command_mech
+quirk:imp_com
+quirk:ubiquitous_clan
+weaponquirk:jettison_capable:RA:4:Improved Large Laser
+
 
 mass:45
 engine:270 Fusion Engine(IS)

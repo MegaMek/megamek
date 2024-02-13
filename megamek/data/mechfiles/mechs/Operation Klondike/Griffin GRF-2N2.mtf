@@ -1,12 +1,23 @@
-Version:1.0
-Griffin
-GRF-2N2
+chassis:Griffin
+model:GRF-2N2
 mul id:6767
 
 Config:Biped
 techbase:Inner Sphere
 era:2703
 rules level:3
+role:Skirmisher
+source:Historical: Operation Klondike
+
+
+
+quirk:battle_fists_la
+quirk:battle_fists_ra
+quirk:rugged_1
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+weaponquirk:jettison_capable:RA:4:PPC
+
 
 mass:55
 engine:275 Fusion Engine(IS)

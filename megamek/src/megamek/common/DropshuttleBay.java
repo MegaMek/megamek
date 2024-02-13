@@ -92,10 +92,16 @@ public class DropshuttleBay extends Bay {
     
     @Override
     public String toString() {
-        return "dropshuttlebay:" + totalSpace + FIELD_SEPARATOR
-                + doors + FIELD_SEPARATOR
-                + bayNumber + FIELD_SEPARATOR
-                + FACING_PREFIX + facing; 
+        String bayType = "dropshuttlebay";
+        return this.bayString(
+                bayType,
+                totalSpace,
+                doors,
+                bayNumber,
+                "",
+                facing,
+                0
+        );
     }
     
     @Override

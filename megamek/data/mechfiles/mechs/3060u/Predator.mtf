@@ -1,13 +1,18 @@
-Version:1.0
-Predator
-
+chassis:Predator
+model:
 mul id:2567
 
 Config:Biped
 TechBase:Clan
 Era:3060
-Source:TRO 3060
+Source:TRO: 3060
 Rules Level:2
+role:Skirmisher
+
+
+quirk:cramped_cockpit
+quirk:difficult_eject
+
 
 Mass:60
 Engine:300 XL (Clan) Engine

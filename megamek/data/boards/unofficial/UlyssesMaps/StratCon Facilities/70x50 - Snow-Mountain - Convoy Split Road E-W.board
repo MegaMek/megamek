@@ -1,4 +1,13 @@
 size 70 50
+tag "Rough (Auto)"
+tag "Foliage (Auto)"
+tag "Cliffs (Auto)"
+tag "SnowTheme (Auto)"
+tag "Roads (Auto)"
+tag "HighHills (Auto)"
+tag "IceTerrain (Auto)"
+tag "Woods (Auto)"
+tag "DenseForest (Auto)"
 hex 0101 6 "rough:1" "snow"
 hex 0201 5 "woods:1;foliage_elev:2" "snow"
 hex 0301 5 "woods:1;foliage_elev:2" "snow"

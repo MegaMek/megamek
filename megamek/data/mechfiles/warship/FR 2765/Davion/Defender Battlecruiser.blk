@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -16,9 +16,9 @@ Warship
 Defender Battlecruiser
 </Name>
 
-<model>
+<Model>
 
-</model>
+</Model>
 
 <mul id:>
 6988
@@ -35,6 +35,10 @@ Defender Battlecruiser
 <type>
 IS Level 3
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Aerodyne
@@ -269,8 +273,48 @@ IS Ammo AC/5:80
 40
 </structural_integrity>
 
+<capabilities>
+The Defender-class battlecruisers were known for their impressive maneuverability and firepower. With their advanced maneuvering drives, they could outmaneuver the Terran Hegemony's Dreadnoughts. They were armed with a heavy battery of naval autocannons, allowing them to engage enemy WarShips effectively. However, their limited aftward firepower and reduced armor protection were drawbacks. The internal cargo space and shuttle bays were also limited, affecting their operating range and logistical capabilities.
+</capabilities>
+
+<overview>
+The Defender-class battlecruisers were part of the ambitious program of the Federated Suns to challenge the Terran Hegemony's Dreadnought-class. These battlecruisers were designed to outmaneuver and outgun the enemy with their large maneuvering drives and heavy naval autocannons. However, their size and design limitations hindered their overall effectiveness.
+</overview>
+
+<history>
+he launch of the Defender-class battlecruisers initially shocked the Inner Sphere, showcasing the growing martial power of the Terran Hegemony. However, the Hegemony soon introduced more advanced and heavily armed ships, such as the Monsoon-class, which outclassed and outnumbered the Defenders. Despite their limitations, the Defender-class ships served in various conflicts, including the Reunification War and the Succession Wars. Some of them earned fame, like the FSS Golden Lion, for their roles in pivotal battles. However, none of the ancient Defenders survived the First Succession War.
+</history>
+
+<manufacturer>
+Challenge Systems
+</manufacturer>
+
+<primaryFactory>
+Galax
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<use>
+Battlecruiser
+</use>
+
+<length>
+870 m
+</length>
+
+<height>
+1300 m Sail
+</height>
+
 <source>
-FR2765-AFFS - Star League
+Field Report 2765 AFFS
 </source>
 
 <tonnage>
@@ -289,6 +333,10 @@ FR2765-AFFS - Star League
 120
 120
 </grav_decks>
+
+<designtype>
+1
+</designtype>
 
 <crew>
 430
@@ -321,3 +369,4 @@ FR2765-AFFS - Star League
 <escape_pod>
 35
 </escape_pod>
+

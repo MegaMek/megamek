@@ -1,13 +1,21 @@
-Version:1.0
-Wasp
-WSP-4W
+chassis:Wasp
+model:WSP-4W
 mul id:7497
 
 Config:Biped
 techbase:Inner Sphere
 era:3065
 rules level:2
-source:Rec Guide:ilClan #4 - Civil War
+role:Scout
+source:Rec Guide:ilClan #4
+
+
+
+quirk:easy_maintain
+quirk:ext_twist
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+
 
 mass:20
 engine:120 Light Engine(IS)

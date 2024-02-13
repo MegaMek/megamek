@@ -36,6 +36,10 @@ A(Sqd4)
 Mixed (IS Chassis)
 </type>
 
+<role>
+Ambusher
+</role>
+
 <motion_type>
 Leg
 </motion_type>
@@ -113,7 +117,7 @@ TARGETING:Unknown
 </systemManufacturers>
 
 <source>
-XTRO Republic III - Dark Age
+XTR: Republic III
 </source>
 
 <chassis>
@@ -135,4 +139,9 @@ biped
 <weightclass>
 3
 </weightclass>
+
+
+<quirks>
+difficult_maintain
+</quirks>
 

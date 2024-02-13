@@ -1,13 +1,18 @@
-Version:1.0
-Koshi (Mist Lynx)
-H
+chassis:Koshi
+clanname:Mist Lynx
+model:H
 mul id:1834
 
 Config:Biped Omnimech
 TechBase:Clan
 Era:3059
-Source:TRO 3050 - Clan Invasion
+Source:TRO: 3050
 Rules Level:2
+role:Striker
+
+quirk:imp_sensors
+quirk:low_profile
+
 
 Mass:25
 Engine:175 XL (Clan) Engine(IS)

@@ -1,13 +1,18 @@
-Version:1.0
-Shadow Hawk IIC
-9
+chassis:Shadow Hawk IIC
+model:9
 mul id:6911
 
 Config:Biped
 TechBase:Clan
 Era:3134	
-Source:RS 3145 NTNU - Dark Ages
+Source:Record Sheets: 3145 New Tech New Upgrades
 Rules Level:2
+role:Skirmisher
+
+quirk:battle_fists_la
+quirk:battle_fists_ra
+quirk:imp_life_support
+
 
 Mass:45
 Engine:270 Fusion (Clan) Engine(IS)

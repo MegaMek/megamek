@@ -1,13 +1,19 @@
-Version:1.0
-Firestarter
-FS9-M 'Mirage'
+chassis:Firestarter
+model:FS9-M 'Mirage'
 mul id:1098
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2893
-Source:TRO 3039 - Succession Wars
+Source:TRO: 3039
 Rules Level:1
+role:Scout
+
+
+
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+
 
 Mass:35
 Engine:210 Fusion Engine

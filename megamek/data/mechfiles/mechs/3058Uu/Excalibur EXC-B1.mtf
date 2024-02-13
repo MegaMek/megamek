@@ -1,13 +1,18 @@
-Version:1.0
-Excalibur
-EXC-B1
+chassis:Excalibur
+model:EXC-B1
 mul id:997
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2619
-Source:TRO 3058 - Star League
+Source:TRO: 3058
 Rules Level:2
+role:Skirmisher
+
+
+quirk:vestigial_hands_la
+quirk:vestigial_hands_ra
+
 
 Mass:70
 Engine:350 XL Engine

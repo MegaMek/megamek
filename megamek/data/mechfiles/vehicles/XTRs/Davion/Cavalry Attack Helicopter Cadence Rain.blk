@@ -36,6 +36,10 @@ Cadence Rain
 IS Level 3
 </type>
 
+<role>
+Scout
+</role>
+
 <motion_type>
 VTOL
 </motion_type>
@@ -93,7 +97,7 @@ ISMagshotGR
 </Rotor Equipment>
 
 <source>
-XTRO Davion - Jihad
+XTR: Davion
 </source>
 
 <tonnage>

@@ -36,6 +36,10 @@ Centaur
 Clan Level 2
 </type>
 
+<role>
+Striker
+</role>
+
 <motion_type>
 Biped
 </motion_type>
@@ -96,7 +100,7 @@ CLAPGaussRifle
 </Main Gun Equipment>
 
 <source>
-TRO 3060 - Jihad
+TRO: 3060
 </source>
 
 <tonnage>

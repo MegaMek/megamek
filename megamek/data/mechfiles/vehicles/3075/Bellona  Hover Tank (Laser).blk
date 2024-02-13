@@ -29,12 +29,16 @@ Bellona Hover Tank
 </year>
 
 <source>
-Jihad
+TRO: 3075
 </source>
 
 <type>
 Clan Level 2
 </type>
+
+<role>
+Missile Boat
+</role>
 
 <tonnage>
 45.0

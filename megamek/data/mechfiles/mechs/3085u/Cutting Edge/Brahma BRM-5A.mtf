@@ -1,13 +1,19 @@
-Version:1.0
-Brahma
-BRM-5A
+chassis:Brahma
+model:BRM-5A
 mul id:426
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3080
-Source:Jihad
+source:TRO: 3085
 Rules Level:2
+role:Skirmisher
+
+
+
+
+weaponquirk:stable_weapon:RT:7:Light Auto Cannon/5
+
 
 Mass:60
 Engine:300 XL Engine

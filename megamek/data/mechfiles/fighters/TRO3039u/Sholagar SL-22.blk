@@ -36,6 +36,10 @@ SL-22
 IS Level 2
 </type>
 
+<role>
+Interceptor
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -106,7 +110,7 @@ IS Ammo MML-7 SRM
 </Fuselage Equipment>
 
 <source>
-TRO 3039 - Jihad
+TRO: 3039
 </source>
 
 <tonnage>

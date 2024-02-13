@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -17,7 +17,7 @@ Davion Destroyer
 </Name>
 
 <Model>
-Block I
+(Block I)
 </Model>
 
 <mul id:>
@@ -176,8 +176,48 @@ IS Ammo SRM-6:300
 55
 </structural_integrity>
 
+<capabilities>
+The Block I Davions lacked sufficient armor protection and firepower for their intended mission. They were not equipped with a full fighter wing, and their original design did not include the ability to dock DropShips. These ships were ill-suited for heavy combat engagements and were primarily assigned to secondary duties such as convoy escort and Periphery patrol.
+</capabilities>
+
+<overview>
+The Block I series of Davion-class destroyers, initially introduced in the early 26th century, faced various issues and shortcomings due to bureaucratic mismanagement. These ships were under-armored, under-armed, and plagued by delays and cost overruns. As a result, their utilization was limited, and they did not become the pride of the navy as originally intended.
+</overview>
+
+<history>
+Despite entering service in 2510, the Block I Davions did not meet the expectations of the AFFS Department of the Army and the Navy. They became the result of bureaucratic kickbacks and administrative issues, bearing little resemblance to the desired specifications. Several ships saw limited service during the Davion Civil War, but plans for further construction were put on hold. The surviving Block I Davions, few in number, found an unexpected future in the hands of the Clans, having been leased to the SLDF and later upgraded by the Clans.
+</history>
+
+<manufacturer>
+Challenge Systems
+</manufacturer>
+
+<primaryFactory>
+Galax
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<use>
+Destroyer
+</use>
+
+<length>
+685 m
+</length>
+
+<height>
+1120 m Sail
+</height>
+
 <source>
-TRO 3057R - Age of War
+TRO: 3057 Revised
 </source>
 
 <tonnage>
@@ -196,6 +236,10 @@ TRO 3057R - Age of War
 65
 65
 </grav_decks>
+
+<designtype>
+1
+</designtype>
 
 <crew>
 237
@@ -228,3 +272,4 @@ TRO 3057R - Age of War
 <escape_pod>
 0
 </escape_pod>
+

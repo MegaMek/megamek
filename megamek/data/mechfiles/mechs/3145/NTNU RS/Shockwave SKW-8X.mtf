@@ -1,13 +1,20 @@
-Version:1.1
-Shockwave
-SKW-8X
+chassis:Shockwave
+model:SKW-8X
 mul id:6902
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3134
-Source:RS 3145 NT NU
+Source:Record Sheets: 3145 New Tech New Upgrades
 Rules Level:3
+role:Brawler
+
+
+
+quirk:battle_fists_la
+quirk:battle_fists_ra
+quirk:easy_maintain
+
 
 Mass:50
 Engine:250 XL Engine(IS)

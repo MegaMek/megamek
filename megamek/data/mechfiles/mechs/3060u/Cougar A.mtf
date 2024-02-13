@@ -1,13 +1,16 @@
-Version:1.0
-Cougar
-A
+chassis:Cougar
+model:A
 mul id:704
 
 Config:Biped Omnimech
 TechBase:Clan
 Era:3058
-Source:TRO 3060
+Source:TRO: 3060
 Rules Level:2
+role:Missile Boat
+
+quirk:ubiquitous_clan
+
 
 Mass:35
 Engine:175 XL (Clan) Engine(IS)

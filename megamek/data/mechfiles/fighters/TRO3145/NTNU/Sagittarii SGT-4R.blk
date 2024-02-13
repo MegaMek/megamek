@@ -36,6 +36,10 @@ SGT-4R
 IS Level 3
 </type>
 
+<role>
+Fast Dogfighter
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -109,7 +113,7 @@ IS Ammo MML-5 SRM
 </Fuselage Equipment>
 
 <source>
-TRO 3145 NTNU - Late Republic
+TRO: 3145 NTNU
 </source>
 
 <tonnage>

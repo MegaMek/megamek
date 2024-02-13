@@ -1,13 +1,19 @@
-Version:1.0
-Hermes
-HER-1A
+chassis:Hermes
+model:HER-1A
 mul id:1485
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2856
-Source:TRO 3039 - Succession Wars
+Source:TRO: 3039
 Rules Level:1
+role:Scout
+
+
+
+quirk:imp_com
+quirk:stable
+
 
 Mass:30
 Engine:270 Fusion Engine

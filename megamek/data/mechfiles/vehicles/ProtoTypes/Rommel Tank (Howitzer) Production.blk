@@ -32,6 +32,10 @@ Rommel Tank
 IS Level 4
 </type>
 
+<role>
+Brawler
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -124,9 +128,11 @@ TARGETING:TharHes Mars5
 </systemManufacturers>
 
 <source>
-TRO:Prototypes - Early Republic
+TRO: Prototypes
 </source>
 
-<tonnage>
-65.0
-</tonnage>
+<quirks>
+low_profile
+poor_target_short
+</quirks>
+

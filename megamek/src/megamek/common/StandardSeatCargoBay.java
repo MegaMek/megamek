@@ -75,7 +75,12 @@ public class StandardSeatCargoBay extends Bay {
 
     @Override
     public String toString() {
-        return "standardseats:" + currentSpace + ":" + doors;
+        String bayType = "standardseats";
+        return this.bayString(
+                bayType,
+                currentSpace,
+                doors
+        );
     }
 
     @Override

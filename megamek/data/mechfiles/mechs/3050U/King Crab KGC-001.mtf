@@ -1,13 +1,18 @@
-Version:1.0
-King Crab
-KGC-001
+chassis:King Crab
+model:KGC-001
 mul id:1773
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3052
-Source:TRO 3050 - Clan Invasion
+Source:TRO: 3050
 Rules Level:2
+role:Juggernaut
+
+
+
+quirk:command_mech
+
 
 Mass:100
 Engine:300 XL Engine

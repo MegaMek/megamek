@@ -36,6 +36,10 @@ DAR4-XP
 IS Level 4
 </type>
 
+<role>
+Fast Dogfighter
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -104,7 +108,7 @@ ISMediumVSPLaser
 </Fuselage Equipment>
 
 <source>
-XTRO Davion - Jihad
+XTR: Davion
 </source>
 
 <tonnage>

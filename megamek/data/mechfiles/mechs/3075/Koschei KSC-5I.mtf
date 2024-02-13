@@ -1,13 +1,19 @@
-Version:1.1
-Koschei
-KSC-5I
+chassis:Koschei
+model:KSC-5I
 mul id:1824
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3071
-Source:TRO 3075
+Source:TRO: 3075
 Rules Level:2
+role:Skirmisher
+
+
+
+quirk:imp_life_support
+quirk:weak_head_1
+
 
 Mass:65
 Engine:325 XL Engine

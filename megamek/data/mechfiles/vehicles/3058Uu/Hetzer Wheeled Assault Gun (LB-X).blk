@@ -44,6 +44,10 @@ ISLBXAC20 CL Ammo
 <type>
 IS Level 2
 </type>
+
+<role>
+Ambusher
+</role>
 <year>
 3063
 </year>
@@ -60,7 +64,7 @@ IS Level 2
 Wheeled
 </motion_type>
 <source>
-TRO 3039 - Civil War
+TRO: 3039
 </source>
 
 <capabilities>
@@ -93,3 +97,10 @@ ARMOR:StarSlab/6
 COMMUNICATIONS:Johnston Q-Band
 TARGETING:Scantrex Dual Tac
 </systemManufacturers>
+
+<quirks>
+low_profile
+bad_rep_is
+poor_work
+</quirks>
+

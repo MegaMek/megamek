@@ -1,0 +1,170 @@
+generator:MegaMek Suite 0.49.18-SNAPSHOT on 2024-01-06
+chassis:Hatamoto-Chi
+model:HTM-30T
+mul id:9577
+Config:Biped
+techbase:Inner Sphere
+era:3142
+source:Rec Guide:ilClan #33
+rules level:3
+role:Juggernaut
+
+quirk:easy_maintain
+quirk:barrel_fists_la
+weaponquirk:mod_weapons:LT:6:SRM 6
+weaponquirk:mod_weapons:RT:6:SRM 6
+
+mass:80
+engine:240 Fusion Engine(IS)
+structure:IS Standard
+myomer:Standard
+cockpit:Standard Cockpit
+gyro:XL Gyro
+
+heat sinks:15 IS Double
+walk mp:3
+jump mp:0
+
+armor:Ballistic-Reinforced(Inner Sphere)
+LA armor:26
+RA armor:26
+LT armor:25
+RT armor:25
+CT armor:34
+HD armor:9
+LL armor:34
+RL armor:34
+RTL armor:9
+RTR armor:9
+RTC armor:16
+
+Weapons:4
+Heavy PPC, Left Arm
+Heavy PPC, Right Arm
+SRM 6, Left Torso
+SRM 6, Right Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+Heavy PPC
+Heavy PPC
+Heavy PPC
+Heavy PPC
+IS Ballistic-Reinforced
+IS Ballistic-Reinforced
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+Heavy PPC
+Heavy PPC
+Heavy PPC
+Heavy PPC
+IS Ballistic-Reinforced
+
+Left Torso:
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+SRM 6
+SRM 6
+IS Ammo SRM-6
+ISCASEII
+IS Ballistic-Reinforced
+-Empty-
+
+Right Torso:
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+SRM 6
+SRM 6
+IS Ammo SRM-6
+ISCASEII
+IS Ballistic-Reinforced
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+
+Head:
+Life Support
+Sensors
+Cockpit
+IS Ballistic-Reinforced
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Ballistic-Reinforced
+IS Ballistic-Reinforced
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Ballistic-Reinforced
+IS Ballistic-Reinforced
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+overview:The Hatamoto-Series BattleMechs represent a pinnacle of strategic innovation within the Draconis Combine, marking a fusion of advanced Star League technology with existing Combine frameworks. The development of this series was initiated to leverage the influx of SLDF BattleMechs gifted by ComStar, focusing on reverse-engineering efforts that combined the strengths of the Thug with the Charger chassis. Spearheaded by the foresight of the future Coordinator of the Draconis Combine, this endeavor aimed to create a long-term technological advantage. Integrating advanced weaponry onto a robust and readily available chassis, the Hatamoto-Series stands as a significant achievement in military engineering, reflecting a progressive approach to Mech warfare.
+capabilities:The Hatamoto-Series is characterized by its formidable balance of firepower and defensive capabilities. These Mechs are equipped with a diverse array of energy and missile weapons, enabling effective engagement at multiple ranges. Their considerable armor plating allows them to endure severe combat scenarios, solidifying their role as primary combat units. A key design focus of the Hatamoto-Series is the prioritization of armament strength and survivability, though this comes at the cost of limited heat management and reduced mobility. The series faces challenges in heat dissipation during high-intensity battles, necessitating strategic weapon use by pilots. Despite these constraints, the Hatamoto-Series remains a testament to the Draconis Combine's engineering acumen, blending lethal offensive power with robustness to fulfill various combat requirements effectively.
+deployment:The HTM-30T variant marks a leap in the Hatamoto-Series with the integration of compact Lord’s Light 3 heavy PPCs, significantly boosting its long-range striking power. This model strikes an optimal balance between affordability, durability, and combat effectiveness, leading to its high production volume and notable market impact. Its success has notably affected competitors, with a decrease in demand for higher-cost alternatives like Technicron’s Awesome.
+history:The Hatamoto-Chi's development and subsequent variants have played a pivotal role in the evolution of the Draconis Combine's military might. After the introduction of the HTM-26T and 27T models, the Hatamoto-Chi underwent a series of modifications, each tailored to specific tactical needs and technological advancements within the Combine. The HTM-27U, known as the Hatamoto-Hi, emerged as a response to the need for a more heat-efficient and close-combat capable Mech. The integration of Medium Pulse Lasers and an additional heat sink in the 27U variant made it a popular choice for MechWarriors engaging in more aggressive combat scenarios.<p>Similarly, the HTM-27V (Hatamoto-Kaze) and HTM-27W (Hatamoto-Ku) variants represented strategic shifts towards long-range and direct fire combat, respectively. The 27V's focus on missile weaponry and the 27W's implementation of an Autocannon/5 provided MechWarriors with greater versatility in battlefield engagements, enhancing the Hatamoto-Chi's adaptability across different combat situations.</p>
+manufacturer:Maltex Corporation
+primaryfactory:Unity
+systemmanufacturer:CHASSIS:Earthwerks VOL
+systemmanufacturer:ENGINE:Pitban 320
+systemmanufacturer:ARMOR:Mitchell Argon
+systemmanufacturer:COMMUNICATIONS:Colmax 90
+systemmanufacturer:TARGETING:Garret D2j
+

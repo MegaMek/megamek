@@ -32,6 +32,10 @@ Musketeer Hover Tank
 IS Level 2
 </type>
 
+<role>
+Striker
+</role>
+
 <motion_type>
 Hover
 </motion_type>
@@ -89,7 +93,7 @@ ISRotaryAC5
 </Turret Equipment>
 
 <source>
-TRO 3067 U
+TRO: 3067
 </source>
 
 <tonnage>

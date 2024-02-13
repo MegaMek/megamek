@@ -36,6 +36,10 @@ SPR-7Dr
 IS Level 3
 </type>
 
+<role>
+Interceptor
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -105,7 +109,7 @@ ISERSmallLaser
 </Fuselage Equipment>
 
 <source>
-TRO 3145 NTNU - Late Republic
+TRO: 3145 NTNU
 </source>
 
 <tonnage>

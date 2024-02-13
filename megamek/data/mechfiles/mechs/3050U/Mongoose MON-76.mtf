@@ -1,13 +1,21 @@
-Version:1.0
-Mongoose
-MON-76
+chassis:Mongoose
+model:MON-76
 mul id:2214
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3077
-Source:TRO 3050 - Jihad
+Source:TRO: 3050
 Rules Level:2
+role:Striker
+
+
+
+quirk:command_mech
+quirk:easy_pilot
+weaponquirk:stable_weapon:HD:3:Small Laser
+weaponquirk:stable_weapon:CT:10:ISMediumPulseLaser
+
 
 Mass:25
 Engine:200 XL Engine

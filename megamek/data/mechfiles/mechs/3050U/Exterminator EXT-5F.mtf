@@ -1,13 +1,18 @@
-Version:1.0
-Exterminator
-EXT-5F
+chassis:Exterminator
+model:EXT-5F
 mul id:1007
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3074
-Source:TRO 3050 - Jihad
+Source:TRO: 3050
 Rules Level:2
+role:Skirmisher
+
+
+
+quirk:difficult_maintain
+
 
 Mass:65
 Engine:390 XL Engine

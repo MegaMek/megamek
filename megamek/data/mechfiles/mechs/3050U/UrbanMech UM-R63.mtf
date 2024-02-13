@@ -1,13 +1,20 @@
-Version:1.0
-UrbanMech
-UM-R63
+chassis:UrbanMech
+model:UM-R63
 mul id:3356
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3050
-Source:TRO 3050 - Clan Invasion
+Source:TRO: 3050
 Rules Level:2
+role:Sniper
+
+
+
+quirk:ext_twist
+quirk:low_profile
+quirk:no_arms
+
 
 Mass:30
 Engine:60 Fusion Engine

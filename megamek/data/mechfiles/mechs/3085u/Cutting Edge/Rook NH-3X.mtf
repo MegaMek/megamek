@@ -1,13 +1,18 @@
-Version:1.0
-Rook
-NH-3X
+chassis:Rook
+model:NH-3X
 mul id:2743
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3076
-Source:Dark Age
+source:TRO: 3085
 Rules Level:4
+role:Striker
+
+
+
+quirk:rugged_1
+
 
 Mass:55
 Engine:330 XL Engine

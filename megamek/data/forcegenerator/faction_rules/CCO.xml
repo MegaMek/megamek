@@ -123,7 +123,7 @@ ranked SL units.-->
 			<subforce chassis="Lola III Destroyer"
 				ifDateBetween=",3073"
 				fluffName="CCS Courage">%ELEMENT%</subforce>
-			<subforce chassis="Essex Destroyer"
+			<subforce chassis="Essex II Destroyer"
 				ifDateBetween=",3075"
 				fluffName="CCS Windrunner">%ELEMENT%</subforce>
 			<subforce chassis="Potemkin Troop Cruiser"

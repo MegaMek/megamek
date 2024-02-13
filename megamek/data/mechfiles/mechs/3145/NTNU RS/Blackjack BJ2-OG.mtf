@@ -1,13 +1,18 @@
-Version:1.0
-Blackjack
-BJ2-OG
+chassis:Blackjack
+model:BJ2-OG
 mul id:6908
 
 Config:Biped Omnimech
 TechBase:Inner Sphere
 Era:3134
-Source:RS 3145 NTNU - Dark Ages
+Source:Record Sheets: 3145 New Tech New Upgrades
 Rules Level:3
+role:Brawler
+
+
+
+quirk:non_standard
+
 
 Mass:50
 Engine:200 XL Engine(IS)

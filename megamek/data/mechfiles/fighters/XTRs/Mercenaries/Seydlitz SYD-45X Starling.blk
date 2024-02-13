@@ -36,6 +36,10 @@ SYD-45X 'Starling'
 IS Level 4
 </type>
 
+<role>
+Interceptor
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -103,7 +107,7 @@ ISChaffPod
 </Fuselage Equipment>
 
 <source>
-XTRO Mercenaries - Jihad
+XTR: Mercenaries
 </source>
 
 <tonnage>

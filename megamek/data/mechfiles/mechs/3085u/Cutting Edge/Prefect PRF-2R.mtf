@@ -1,13 +1,18 @@
-Version:1.1
-Prefect
-PRF-2R
+chassis:Prefect
+model:PRF-2R
 mul id:2571
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3086
-Source:Dark Age
+source:TRO: 3085
 Rules Level:2
+role:Skirmisher
+
+
+
+quirk:ext_twist
+
 
 Mass:75
 Engine:375 Light Engine

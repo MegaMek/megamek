@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -36,6 +36,10 @@ Whirlwind Destroyer
 Clan Level 3
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -67,6 +71,10 @@ crewquarters:1092.0:0
 <engine_type>
 1
 </engine_type>
+
+<clan_engine>
+false
+</clan_engine>
 
 <armor_type>
 11
@@ -180,8 +188,52 @@ Clan Streak SRM 6 Ammo:15
 55
 </structural_integrity>
 
+<capabilities>
+Those weapons that are dedicated to attacking aerospace fighters are located in the broadsides and fore and aft arcs. This leaves several approach vectors covered only by a Light Naval Gauss Rifle, which is particularly ill-suited to defending against small craft.
+</capabilities>
+
+<overview>
+The Whirlwind-class, like many Star League WarShips, was designed to engage other WarShips. Consequently it devotes very little of its available weaponry to anti-aerospace fighter duties.
+</overview>
+
+<deployment>
+The Star League Whirlwinds were so focused on fighting WarShips that they didn't carry any aerospace fighters. Instead they had a single cargo bay that carried 71,206 tons of cargo.
+</deployment>
+
+<history>
+The Star League Defense Force navy leased 22 of the original Davion-class WarShips under the auspices of First Lord Ian Cameron's Directive 22. For the duration of the Reunification War, these ships served well. After the war ended, the SLDF navy purchased the 19 that remained in service and refitted them with the best technology the Terran Hegemony had to offer. These ships were renamed the Whirlwind-class and entered service in 2606. For the next two centuries the Whirlwind-class ships served the SLDF well. All of them left the Inner Sphere as part of the Exodus. When the Clans invaded the Inner Sphere, the Whirlwind-class ships were only seen in the touman of Clan Steel Viper. Analysis of these ships showed that the Clans had made significant changes to the vessels, adding a Lithium-Fusion Battery , adding docking bays to support a star of clan omnifighters, and doubling the armor protection of the ship by using Ferro-Carbide armor.
+</history>
+
+<manufacturer>
+Refit
+</manufacturer>
+
+<primaryFactory>
+Unknown
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<use>
+Destroyer
+</use>
+
+<length>
+610 m
+</length>
+
+<height>
+1120 m Sail
+</height>
+
 <source>
-TRO3057R - Succession Wars - Late
+TRO: 3057 Revised
 </source>
 
 <tonnage>
@@ -204,6 +256,10 @@ TRO3057R - Succession Wars - Late
 65
 65
 </grav_decks>
+
+<designtype>
+1
+</designtype>
 
 <crew>
 207
@@ -236,3 +292,4 @@ TRO3057R - Succession Wars - Late
 <escape_pod>
 0
 </escape_pod>
+

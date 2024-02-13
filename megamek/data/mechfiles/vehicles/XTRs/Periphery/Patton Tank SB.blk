@@ -36,6 +36,10 @@ Patton Tank
 IS Level 2
 </type>
 
+<role>
+Sniper
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -96,7 +100,7 @@ ISERMediumLaser
 </Turret Equipment>
 
 <source>
-XTRO Periphery - Jihad
+XTR: Periphery
 </source>
 
 <tonnage>
@@ -135,9 +139,12 @@ TARGETING:TharHes Mars5
 </systemManufacturers>
 
 <source>
-TRO 3039 - Succession Wars
+TRO: 3039
 </source>
 
-<tonnage>
-65.0
-</tonnage>
+<quirks>
+low_profile
+poor_target_short
+prototype
+</quirks>
+

@@ -1,12 +1,16 @@
-Version:1.3
-Goshawk (Vapor Eagle)
-6
+chassis:Goshawk
+clanname:Vapor Eagle
+model:6
 mul id:7709
 Config:Biped
 techbase:Clan
 era:2850
-source:Rec Guide:ilClan #9 - Early Succession Wars
+source:Rec Guide:ilClan #9
 rules level:2
+role:Skirmisher
+
+quirk:nimble_jumper
+
 
 mass:55
 engine:330 XL (Clan) Engine(IS)

@@ -1,13 +1,19 @@
-Version:1.0
-Zeus
-ZEU-9T
+chassis:Zeus
+model:ZEU-9T
 mul id:3645
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3062
-Source:TRO 3050 - Civil War
+Source:TRO: 3050
 Rules Level:2
+role:Brawler
+
+
+
+quirk:barrel_fists_ra
+quirk:easy_maintain
+
 
 Mass:80
 Engine:320 Light Engine

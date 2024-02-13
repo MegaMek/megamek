@@ -1,13 +1,20 @@
-Version:1.2
-Phoenix Hawk L
-'Fenikkusu Taka' PXH-11K
+chassis:Phoenix Hawk L
+model:'Fenikkusu Taka' PXH-11K
 mul id:6390
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3116
-Source:TRO 3145 Draconis Combine - Late Republic
+Source:TRO: 3145 Draconis Combine
 Rules Level:3
+role:Scout
+
+
+
+
+quirk:poor_sealing
+weaponquirk:accurate:RA:4:TSEMP Cannon
+
 
 Mass:35
 Engine:210 XL Engine(IS)

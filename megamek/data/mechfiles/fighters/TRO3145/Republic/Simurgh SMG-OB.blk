@@ -36,6 +36,10 @@ SMG-OB
 IS Level 3
 </type>
 
+<role>
+Fire Support
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -114,9 +118,16 @@ ISImprovedHeavyGauss Ammo:OMNI
 </Fuselage Equipment>
 
 <source>
-TRO 3145 Republic of the Sphere - Late Republic
+TRO: 3145 Republic of the Sphere
 </source>
 
 <tonnage>
 85.0
 </tonnage>
+
+<quirks>
+easy_pilot
+non_standard
+difficult_maintain
+</quirks>
+

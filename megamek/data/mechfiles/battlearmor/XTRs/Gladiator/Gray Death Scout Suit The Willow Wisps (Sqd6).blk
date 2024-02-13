@@ -36,6 +36,10 @@ Gray Death Scout Suit
 Mixed (IS Chassis) Advanced
 </type>
 
+<role>
+Scout
+</role>
+
 <motion_type>
 Jump
 </motion_type>
@@ -124,7 +128,7 @@ TARGETING:Unknown
 </systemManufacturers>
 
 <source>
-XTR Gladiators - Jihad
+XTR: Gladiators
 </source>
 
 <chassis>

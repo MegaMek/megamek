@@ -1,13 +1,18 @@
-Version:1.0
-Hankyu (Arctic Cheetah)
-Prime
+chassis:Hankyu
+clanname:Arctic Cheetah
+model:Prime
 mul id:1384
 
 Config:Biped Omnimech
 techbase:Clan
 era:3037
-source:TRO Clan Invasion - Succession Wars
+source:TRO: Clan Invasion
 rules level:2
+role:Striker
+
+
+quirk:pro_actuator
+
 
 mass:30
 engine:240 XL (Clan) Engine(IS)

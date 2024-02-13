@@ -36,6 +36,10 @@ AHB-MD
 IS Level 2
 </type>
 
+<role>
+Attack Fighter
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -103,7 +107,7 @@ IS MRM 40 Ammo
 </Fuselage Equipment>
 
 <source>
-TRO 3050u - Clan Invasion
+TRO: 3050
 </source>
 
 <tonnage>
@@ -143,7 +147,7 @@ TARGETING:Antron 7
 </systemManufacturers>
 
 <source>
-TRO 3050u - Star League
+TRO: 3050
 </source>
 
 <tonnage>

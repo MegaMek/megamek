@@ -1,13 +1,17 @@
-Version:1.0
-Crossbow
-CRS-6C
+chassis:Crossbow
+model:CRS-6C
 mul id:734
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2481
-Source:TRO 3075
+Source:TRO: 3075
 Rules Level:1
+role:Skirmisher
+
+quirk:obsolete
+quirk:poor_target_long
+
 
 Mass:60
 Engine:300 Fusion Engine

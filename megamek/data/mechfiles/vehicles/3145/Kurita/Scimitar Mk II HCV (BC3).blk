@@ -32,6 +32,10 @@ Scimitar Mk II HCV
 IS Level 3
 </type>
 
+<role>
+Striker
+</role>
+
 <motion_type>
 Hover
 </motion_type>
@@ -83,7 +87,7 @@ SRM 4
 </Turret Equipment>
 
 <source>
-TRO 3145 Draconis Combine - Dark Ages
+TRO: 3145 Draconis Combine
 </source>
 
 <tonnage>

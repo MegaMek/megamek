@@ -1,13 +1,21 @@
-Version:1.2
-Wasp
-WSP-3A
+chassis:Wasp
+model:WSP-3A
 mul id:3526
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3082
-Source:Jihad
+source:TRO: 3085
 Rules Level:2
+role:Scout
+
+
+
+quirk:easy_maintain
+quirk:ext_twist
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+
 
 Mass:20
 Engine:100 XL Engine(IS)

@@ -32,6 +32,10 @@ PKR-T5 (ICE)
 IS Level 1
 </type>
 
+<role>
+Scout
+</role>
+
 <motion_type>
 Wheeled
 </motion_type>
@@ -74,7 +78,7 @@ SRM 6
 </Rear Equipment>
 
 <source>
-TRO 3039 - Succession Wars
+TRO: 3039
 </source>
 
 <tonnage>

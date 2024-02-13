@@ -1,13 +1,18 @@
-Version:1.0
-Crab
-CRB-54
+chassis:Crab
+model:CRB-54
 mul id:7510
 
 Config:Biped
 techbase:Inner Sphere
 era:3144
 rules level:4
-source:Rec Guide:ilClan #5 - Dark Age
+role:Skirmisher
+source:Rec Guide:ilClan #5
+
+
+
+quirk:easy_maintain
+
 
 mass:50
 engine:350 XXL Engine(IS)

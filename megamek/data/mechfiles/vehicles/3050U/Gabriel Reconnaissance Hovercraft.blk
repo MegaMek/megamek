@@ -32,6 +32,10 @@ Gabriel Reconnaissance Hovercraft
 IS Level 2
 </type>
 
+<role>
+Scout
+</role>
+
 <motion_type>
 Hover
 </motion_type>
@@ -80,7 +84,7 @@ Medium Laser
 </Turret Equipment>
 
 <source>
-TRO 3050 - Star League
+TRO: 3050
 </source>
 
 <tonnage>

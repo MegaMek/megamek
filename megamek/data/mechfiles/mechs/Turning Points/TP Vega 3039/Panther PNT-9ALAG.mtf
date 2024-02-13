@@ -1,13 +1,19 @@
-Version:1.0
-Panther
-PNT-9ALAG
+chassis:Panther
+model:PNT-9ALAG
 mul id:7417
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2950
-Source:Star League
+Source:Turning Points: War of 3039 - Vega
 Rules Level:1
+role:Striker
+
+
+
+quirk:imp_target_short
+quirk:nimble_jumper
+
 
 Mass:35
 Engine:175 Fusion Engine(IS)

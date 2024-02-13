@@ -36,6 +36,10 @@ CX-19
 Mixed (IS Chassis) Experimental
 </type>
 
+<role>
+Dogfighter
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -115,9 +119,16 @@ Clan Streak SRM 6 Ammo
 </Fuselage Equipment>
 
 <source>
-XTRO ComStar - Jihad
+XTR: ComStar
 </source>
 
 <tonnage>
 65.0
 </tonnage>
+
+<quirks>
+prototype
+bad_rep_is
+non_standard
+</quirks>
+

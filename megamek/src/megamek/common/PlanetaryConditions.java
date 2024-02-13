@@ -200,8 +200,8 @@ public class PlanetaryConditions implements Serializable {
 
     // misc
     private boolean blowingSand = false;
-    private static final String MSG_NAME_BLOWINGSAND_TRUE = Messages.getString("PlanetaryConditions.DisplayableName.SandBlowing.true");
-    private static final String MSG_NAME_BLOWINGSAND_FALSE = Messages.getString("PlanetaryConditions.DisplayableName.SandBlowing.false");
+    public static final String MSG_NAME_BLOWINGSAND_TRUE = Messages.getString("PlanetaryConditions.DisplayableName.SandBlowing.true");
+    public static final String MSG_NAME_BLOWINGSAND_FALSE = Messages.getString("PlanetaryConditions.DisplayableName.SandBlowing.false");
     private static final String MSG_INDICATOR_BLOWINGSAND_TRUE = Messages.getString("PlanetaryConditions.Indicator.SandBlowing.true");
     private static final String MSG_INDICATOR_BLOWINGSAND_FALSE = Messages.getString("PlanetaryConditions.Indicator.SandBlowing.false");
 
@@ -382,6 +382,15 @@ public class PlanetaryConditions implements Serializable {
     public boolean isSearchlightEffective() {
         return (lightConditions == L_FULL_MOON) || (lightConditions == L_MOONLESS)
                 || (lightConditions == L_PITCH_BLACK);
+    }
+
+    /**
+     * Returns true when visual range is increased by a illumination
+     * in the light condition, i.e. in dusk/dawn, full moon,
+     * moonless and pitch black night.
+     */
+    public boolean isIlluminationEffective() {
+        return (lightConditions > L_DAY);
     }
 
     /** Returns true when the given weather is prohibited for temperatures of 30 degC and more. */
@@ -776,9 +785,9 @@ public class PlanetaryConditions implements Serializable {
 
         // TO:AR v6 p189
         // Illuminated?  Flat 45 hex distance
-        if (targetIlluminated && (lightConditions > L_DAY)) {
+        if (targetIlluminated && (isIlluminationEffective())) {
             lightRange = 45;
-        } else if (Spotlight && (lightConditions > L_DAY)) {
+        } else if (Spotlight && (isIlluminationEffective())) {
             // Using a searchlight?  Flat 30 hex range
             if (isMechVee || isAero || isLargeCraft) {
                 lightRange = 30;

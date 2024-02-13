@@ -1,13 +1,19 @@
-Version:1.0
-Penetrator
-PTR-6M
+chassis:Penetrator
+model:PTR-6M
 mul id:2467
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3058
-Source:TRO 3055 - Clan Invasion
+Source:TRO: 3055
 Rules Level:2
+role:Skirmisher
+
+
+
+quirk:good_rep_1
+quirk:stable
+
 
 Mass:75
 Engine:300 Fusion Engine

@@ -42,6 +42,10 @@ TroopSpace:1.5
 <type>
 IS Level 1
 </type>
+
+<role>
+Scout
+</role>
 <year>
 3017
 </year>
@@ -58,5 +62,5 @@ IS Level 1
 VTOL
 </motion_type>
 <source>
-Succession Wars
+TRO: 3058
 </source>

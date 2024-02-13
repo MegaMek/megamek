@@ -29,12 +29,16 @@ Lightning Attack Hovercraft
 </year>
 
 <source>
-Star League
+TRO: 3075
 </source>
 
 <type>
 IS Level 2
 </type>
+
+<role>
+Striker
+</role>
 
 <tonnage>
 35.0

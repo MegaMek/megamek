@@ -94,10 +94,15 @@ CLMediumPulseLaser
 </Turret Equipment>
 
 <source>
-RS3150 - Dark Age
+Record Sheets: 3150
 </source>
 
 <tonnage>
 30.0
 </tonnage>
+
+
+<quirks>
+imp_sensors
+</quirks>
 

@@ -1,13 +1,18 @@
-Version:1.0
-Orion IIC
-'Burton'
+chassis:Orion IIC
+model:'Burton'
 mul id:7403
 
 Config:Biped
 TechBase:Clan
 Era:3105
-Source:OTP Capellan - Dark Age
+Source:Operational Turning Points: Capellan Crusades
 Rules Level:2
+role:Sniper
+
+quirk:anti_air
+quirk:easy_maintain
+quirk:rugged_1
+
 
 Mass:75
 Engine:300 XL (Clan) Engine(IS)

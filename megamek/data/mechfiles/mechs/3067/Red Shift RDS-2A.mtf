@@ -1,13 +1,22 @@
-Version:1.0
-Red Shift
-RDS-2A
+chassis:Red Shift
+model:RDS-2A
 mul id:4906
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3062
 Rules Level:2
-source:TRO 3067
+role:Striker
+source:TRO: 3067
+
+
+
+
+quirk:imp_com
+quirk:low_profile
+quirk:bad_rep_is
+weaponquirk:accurate:HD:3:ISTAG
+
 
 Mass:20
 Engine:180 XL Engine

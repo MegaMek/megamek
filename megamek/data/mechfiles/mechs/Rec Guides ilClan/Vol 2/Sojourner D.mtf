@@ -1,20 +1,24 @@
-Version:1.0
-Sojourner
-D
+generator:MegaMek Suite 0.49.18-SNAPSHOT on 2024-01-09
+chassis:Sojourner
+model:D
 mul id:7447
-
 Config:Biped Omnimech
 techbase:Clan
 era:3147
-source:Rec Guide:ilClan #2- Dark Age
+source:Rec Guide:ilClan #2
 rules level:3
+role:Brawler
+
+quirk:easy_pilot
+quirk:easy_maintain
+quirk:rugged_1
 
 mass:60
 engine:240 Fusion (Clan) Engine(IS)
 structure:Clan Endo Steel
 myomer:Standard
 
-heat sinks:12 Double
+heat sinks:12 Clan Double
 base chassis heat sinks:9
 walk mp:4
 jump mp:0
@@ -33,45 +37,45 @@ RTR armor:8
 RTC armor:10
 
 Weapons:4
-Medium Pulse Laser, Left Arm
-Medium Pulse Laser, Left Arm
-ER PPC, Right Arm
 Ultra AC/10, Right Arm
+ER PPC, Right Arm
+Medium Pulse Laser, Left Torso
+Medium Pulse Laser, Left Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLMediumPulseLaser (omnipod)
-CLMediumPulseLaser (omnipod)
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
 Clan Endo Steel
 Clan Endo Steel
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
+-Empty-
+-Empty-
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLERPPC (omnipod)
-CLERPPC (omnipod)
-CLUltraAC10 (omnipod)
-CLUltraAC10 (omnipod)
-CLUltraAC10 (omnipod)
-CLUltraAC10 (omnipod)
+CLUltraAC10 (OMNIPOD)
+CLUltraAC10 (OMNIPOD)
+CLUltraAC10 (OMNIPOD)
+CLUltraAC10 (OMNIPOD)
+CLERPPC (OMNIPOD)
+CLERPPC (OMNIPOD)
 ISAES
 ISAES
 ISAES
 -Empty-
 
 Left Torso:
+CLMediumPulseLaser (OMNIPOD)
+CLMediumPulseLaser (OMNIPOD)
 Clan Endo Steel
 Clan Endo Steel
 Clan Endo Steel
--Empty-
--Empty-
 -Empty-
 -Empty-
 -Empty-
@@ -81,14 +85,14 @@ Clan Endo Steel
 -Empty-
 
 Right Torso:
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
-Clan Ultra AC/10 Ammo (omnipod)
-Clan Ultra AC/10 Ammo (omnipod)
-Clan Ultra AC/10 Ammo (omnipod)
-CLCASEII (omnipod)
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+Clan Ultra AC/10 Ammo (OMNIPOD)
+Clan Ultra AC/10 Ammo (OMNIPOD)
+Clan Ultra AC/10 Ammo (OMNIPOD)
+CLCASEII (OMNIPOD)
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
@@ -105,7 +109,7 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Supercharger (Clan)
+Supercharger
 -Empty-
 
 Head:
@@ -151,13 +155,9 @@ Clan Ferro-Fibrous
 -Empty-
 
 overview:Though introduced in 3147, its primarily intended for newly minted Clan Wolf-in-Exile MechWarriors, the Sojourner is a easy to pilot and easy to repair OmniMech.
-
 capabilities:Intended to ease young MechWarriors into the subtleties of 'Mech combat, the configurations that fill the Sojourner's twenty-five and half tons of Pod Space are relatively simplistic, focused around the Actuator Enhancement System-enhanced right arm for main weaponry with supplementary support weaponry placed in the opposite torso. Structually the Sojourner is built around a Endo Steel frame and clad in ten and half tons of Ferro-Fibrous armor, the use of a readily available and afforable Pitban 240-rated standard engine reduces costs but also reduces its average speed. The inclusion of a fixed Supercharger on the Sojourners chassis mitigates this to a degree, though it is intended to assist an out of their depth green warrior extricate themselves from an unfavorably battle rather than more rapidly close with their foes. Ten Double Heat Sinks built into the frame can be enhanced as a configuration requires.
-
-deployment:The Sojourner D carries a ER PPC and Ultra AC/10 in the AES supported right arm, complimented by a pair of Medium Pulse Lasers in the left torso. Two extra Double Heat Sinks and three tons of reloads site in the CASE II protected right torso. 
-
+deployment:The Sojourner D carries a ER PPC and Ultra AC/10 in the AES supported right arm, complimented by a pair of Medium Pulse Lasers in the left torso. Two extra Double Heat Sinks and three tons of reloads site in the CASE II protected right torso.
 history:The genesis of the Sojourner actually stems decades earlier with the post-Jihad Exiled Wolves drafting a simple and affordable OmniMech to bulk out their touman, only for the 'Mech to be passed over for production to appease Devlin Stone and his arms-reduction treaties. Though the Sojouner's active development was ceased, a generation of Exiled Wolf technicans and designers would continue to tinker and refine the design in a virtual lab for decades. With the crippled Clan Wolf-in-Exile limping to Donegal following their devastating defeat on Arc-Royal in 3146, Khan Miriam Shaw ordered a massive upscaling of production to rebuild her Clan. Rather than expand ATI's already at maximum capacity production lines for high-end OmniMechs like the Linebacker, Shaw ordered that one line be retooled to produce the Sojourner instead. Shaw's decision was a pragmatic realization of her Clan's weakened position, with the easy to repair, easy to pilot and low-cost design appealing to her greatly. While widely deployed in the much depleted clusters of the Exiles Wolves, as per agreements with the Lyran Commonwealth production of the Sojourner was also shared with the Lyran Commonwealth Armed Forces. Though the Exiles largely distribute them to their greenest warriors, the LCAF primarily assigns them to more seasoned troops who can make best advantage of Clan-grade weaponry. For both factions, the value of the Sojourner in an era of increasingly prolonged warfare and limited resources in both men as well as material has been amply proven.
-
 manufacturer:Assault Tech Industries
 primaryfactory:Donegal
 systemmanufacturer:CHASSIS:Type W4 Endo Steel
@@ -165,3 +165,4 @@ systemmanufacturer:ENGINE:Pitban 240
 systemmanufacturer:ARMOR:Compound RSH5 Ferro-Fibrous
 systemmanufacturer:COMMUNICATIONS:Neil 6000-g
 systemmanufacturer:TARGETING:RCA Instatrac Mark XXII
+

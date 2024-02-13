@@ -32,6 +32,10 @@ Hetzer Wheeled Assault Gun
 IS Level 1
 </type>
 
+<role>
+Ambusher
+</role>
+
 <motion_type>
 Wheeled
 </motion_type>
@@ -72,7 +76,7 @@ Autocannon/20
 </Rear Equipment>
 
 <source>
-TRO 3039 - Succession Wars
+TRO: 3039
 </source>
 
 <tonnage>
@@ -109,3 +113,10 @@ ARMOR:StarSlab/6
 COMMUNICATIONS:Johnston Q-Band
 TARGETING:Scantrex Dual Tac
 </systemManufacturers>
+
+<quirks>
+low_profile
+bad_rep_is
+poor_work
+</quirks>
+

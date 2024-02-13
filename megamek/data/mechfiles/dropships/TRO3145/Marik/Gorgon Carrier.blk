@@ -1,0 +1,198 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Dropship
+</UnitType>
+
+<Name>
+Gorgon Carrier
+</Name>
+
+<model>
+
+</model>
+
+<mul id:>
+6522
+</mul id:>
+
+<year>
+3096
+</year>
+
+<originalBuildYear>
+3096
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<role>
+None
+</role>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+asfbay:18.0:3:1
+2ndclassquarters:0.0:0
+1stclassquarters:30.0:0
+crewquarters:70.0:0
+cargobay:981.0:1:5
+</transporters>
+
+<SafeThrust>
+4
+</SafeThrust>
+
+<heatsinks>
+88
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+15000
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+19
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
+231
+211
+211
+202
+</armor>
+
+<Nose Equipment>
+(B) ISERPPC
+ISERPPC
+ISERPPC
+(B) ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+IS Gauss Ammo:48
+</Nose Equipment>
+
+<Left Side Equipment>
+(B) LRM 15
+LRM 15
+IS Ammo LRM-15 Artemis-capable:32
+ISArtemisIV
+ISArtemisIV
+(B) Heavy PPC
+(B) ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAMS Ammo:72
+</Left Side Equipment>
+
+<Right Side Equipment>
+(B) LRM 15
+LRM 15
+IS Ammo LRM-15 Artemis-capable:32
+ISArtemisIV
+ISArtemisIV
+(B) Heavy PPC
+(B) ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAMS Ammo:72
+</Right Side Equipment>
+
+<Aft Equipment>
+(B) LRM 15
+LRM 15
+IS Ammo LRM-15 Artemis-capable:32
+ISArtemisIV
+ISArtemisIV
+(B) ISLargePulseLaser
+ISLargePulseLaser
+(B) ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAMS Ammo:72
+</Aft Equipment>
+
+<Hull Equipment>
+</Hull Equipment>
+
+<structural_integrity>
+12
+</structural_integrity>
+
+<source>
+TRO: 3145 Free Worlds League
+</source>
+
+<tonnage>
+6800.0
+</tonnage>
+
+<designtype>
+1
+</designtype>
+
+<crew>
+46
+</crew>
+
+<officers>
+3
+</officers>
+
+<gunners>
+4
+</gunners>
+
+<passengers>
+0
+</passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<otherpassenger>
+0
+</otherpassenger>
+
+<life_boat>
+3
+</life_boat>
+
+<escape_pod>
+3
+</escape_pod>
+
+<quirks>
+internal_bomb
+</quirks>
+

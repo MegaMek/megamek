@@ -25,16 +25,20 @@ Cavalier II Battle Armor
 </mul id:>
 
 <year>
-3150
+3142
 </year>
 
 <originalBuildYear>
-3150
+3142
 </originalBuildYear>
 
 <type>
 Mixed (IS Chassis)
 </type>
+
+<role>
+Ambusher
+</role>
 
 <motion_type>
 Jump
@@ -108,7 +112,7 @@ New Avalon,Talcott
 </primaryFactory>
 
 <source>
-TRO 3150 - Dark Age
+TRO: 3150
 </source>
 
 <chassis>

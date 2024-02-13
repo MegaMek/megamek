@@ -36,6 +36,10 @@ Demon Tank
 IS Level 2
 </type>
 
+<role>
+Skirmisher
+</role>
+
 <motion_type>
 Wheeled
 </motion_type>
@@ -92,7 +96,7 @@ ISGaussRifle
 </Turret Equipment>
 
 <source>
-Star League
+TRO: 3075
 </source>
 
 <tonnage>

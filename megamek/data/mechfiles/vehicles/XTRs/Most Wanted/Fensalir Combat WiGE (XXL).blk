@@ -36,6 +36,10 @@ Fensalir Combat WiGE
 IS Level 4
 </type>
 
+<role>
+Skirmisher
+</role>
+
 <motion_type>
 WiGE
 </motion_type>
@@ -96,7 +100,7 @@ ISSmallPulseLaser
 </Rear Equipment>
 
 <source>
-XTRO Most Wanted - Jihad
+XTR: Most Wanted
 </source>
 
 <tonnage>
@@ -135,3 +139,12 @@ JUMPJET:Unknown
 COMMUNICATIONS:Unknown
 TARGETING:Unknown
 </systemManufacturers>
+
+<quirks>
+difficult_maintain
+poor_performance
+</quirks>
+
+<weaponQuirks>
+accurate:FR:0:ISImprovedHeavyGaussRifle
+</weaponQuirks>

@@ -1,12 +1,18 @@
-Version:1.3
-Pillager
-PLG-3Z
+chassis:Pillager
+model:PLG-3Z
 mul id:2525
 Config:Biped
 techbase:Inner Sphere
 era:2594
-source:TRO 3058 - Star League
+source:TRO: 3058
 rules level:2
+role:Juggernaut
+
+
+
+quirk:battle_fists_la
+quirk:battle_fists_ra
+
 
 mass:100
 engine:300 XL Engine(IS)

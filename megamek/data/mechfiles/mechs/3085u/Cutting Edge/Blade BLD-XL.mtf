@@ -1,13 +1,22 @@
-Version:1.1
-Blade
-BLD-XL
+chassis:Blade
+model:BLD-XL
 mul id:391
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3087
-Source:Dark Age
+source:TRO: 3085
 Rules Level:2
+role:Striker
+
+
+
+
+quirk:easy_maintain
+weaponquirk:exposed_linkage:RA:2:ISRotaryAC5
+weaponquirk:mod_weapons:RA:2:ISRotaryAC5
+weaponquirk:static_feed:RA:2:ISRotaryAC5
+
 
 Mass:35
 Engine:245 XL Engine(IS)

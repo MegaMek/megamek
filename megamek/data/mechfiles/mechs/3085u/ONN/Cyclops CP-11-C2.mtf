@@ -1,13 +1,21 @@
-Version:1.0
-Cyclops
-CP-11-C2
+chassis:Cyclops
+model:CP-11-C2
 mul id:776
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3073
-Source:Jihad
+source:TRO: 3085
 Rules Level:2
+role:Brawler
+
+
+
+quirk:battle_computer
+quirk:cowl
+quirk:difficult_eject
+quirk:weak_head_2
+
 
 Mass:90
 Engine:360 Fusion Engine(IS)

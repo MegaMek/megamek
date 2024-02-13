@@ -1,11 +1,13 @@
-Version:1.3
-Ryoken III-XP (Skinwalker)
-Prime
+chassis:Ryoken III-XP
+clanname:Skinwalker
+model:Prime
 mul id:7378
 Config:Biped Omnimech
 techbase:Mixed (Clan Chassis)
 era:3143
 rules level:4
+role:Striker
+Source:XTR: Republic III
 
 mass:55
 engine:330 XL (Clan) Engine

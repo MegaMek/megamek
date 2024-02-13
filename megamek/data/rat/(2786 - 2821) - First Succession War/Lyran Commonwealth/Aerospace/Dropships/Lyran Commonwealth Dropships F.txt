@@ -1,7 +1,7 @@
 Lyran Commonwealth Dropships F
 Gazelle (2531),1
 Lion (2595),2
-Dictator (Standard),3
+Dictator,3
 Leopard (2537),4
 Fortress (2613),5
 Leopard CV (2581),6

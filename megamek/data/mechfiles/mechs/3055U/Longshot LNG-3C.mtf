@@ -1,13 +1,18 @@
-Version:1.0
-Longshot
-LNG-3C
+chassis:Longshot
+model:LNG-3C
 mul id:1949
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3064
-Source:TRO 3055 - Civil War
+Source:TRO: 3055
 Rules Level:4
+role:Striker
+
+
+
+quirk:difficult_maintain
+
 
 Mass:35
 Engine:245 XXL Engine

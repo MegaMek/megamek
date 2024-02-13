@@ -1,13 +1,18 @@
-Version:1.0
-Puma (Adder)
-Prime
+chassis:Puma
+clanname:Adder
+model:Prime
 mul id:2598
 
 Config:Biped Omnimech
 techbase:Clan
 era:3010
-source:TRO 3050 - Succession Wars
+source:TRO: 3050
 rules level:2
+role:Sniper
+
+
+quirk:low_profile
+
 
 mass:35
 engine:210 XL (Clan) Engine(IS)

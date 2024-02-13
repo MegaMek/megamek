@@ -36,6 +36,10 @@ HEAT
 IS Level 3
 </type>
 
+<role>
+Juggernaut
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -126,7 +130,7 @@ TARGETING:Wasat Aggressor
 </systemManufacturers>
 
 <source>
-TRO:Prototypes - Early Republic
+TRO: Prototypes
 </source>
 
 <tonnage>

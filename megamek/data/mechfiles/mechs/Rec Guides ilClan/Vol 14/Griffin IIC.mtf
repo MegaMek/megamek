@@ -1,13 +1,18 @@
-Version:1.0
-Griffin IIC
-
+chassis:Griffin IIC
+model:
 mul id:1310
 
 Config:Biped
 techbase:Clan
 era:2852
-source:Rec Guide:ilClan #14 - Succession Wars
+source:Rec Guide:ilClan #14
 rules level:2
+role:Missile Boat
+
+
+quirk:battle_fists_la
+quirk:battle_fists_ra
+
 
 mass:40
 engine:240 Fusion (Clan) Engine(IS)

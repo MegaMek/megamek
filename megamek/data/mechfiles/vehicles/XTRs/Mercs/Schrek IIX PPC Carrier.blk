@@ -32,6 +32,10 @@ Schrek II-X PPC Carrier
 IS Level 4
 </type>
 
+<role>
+Sniper
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -89,7 +93,7 @@ Light PPC
 </Turret Equipment>
 
 <source>
-XTR Mercs - Jihad
+XTR: Mercenaries
 </source>
 
 <tonnage>

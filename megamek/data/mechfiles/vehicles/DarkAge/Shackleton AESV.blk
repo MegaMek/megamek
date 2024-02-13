@@ -36,6 +36,10 @@ Shackleton AESV
 IS Level 3
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Wheeled
 </motion_type>
@@ -97,7 +101,7 @@ BeagleActiveProbe
 </structural_tech_rating>
 
 <source>
-Intersteller Players 3 - Early Republic
+Intersteller Players 3
 </source>
 
 <tonnage>

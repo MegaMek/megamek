@@ -196,7 +196,7 @@ public class TROView {
      * @return The fluff display name, which consists of the manufacturer and the
      *         model separated by a space. If either is missing it is left out.
      */
-    protected String formatSystemFluff(EntityFluff.System system, EntityFluff fluff, Supplier<String> altText) {
+    public static String formatSystemFluff(EntityFluff.System system, EntityFluff fluff, Supplier<String> altText) {
         final StringJoiner sj = new StringJoiner(" ");
         if (!fluff.getSystemManufacturer(system).isBlank()) {
             sj.add(fluff.getSystemManufacturer(system));
@@ -213,8 +213,12 @@ public class TROView {
         addEntityFluff(entity);
         model.put("massDesc", NumberFormat.getInstance().format(entity.getWeight())
                 + Messages.getString(entity.getWeight() == 1.0 ? "TROView.ton" : "TROView.tons"));
-        model.put("engineDesc", formatSystemFluff(EntityFluff.System.ENGINE, entity.getFluff(),
-                () -> stripNotes(entity.getEngine().getEngineName())));
+        if (entity.hasEngine()) {
+            model.put("engineDesc", formatSystemFluff(EntityFluff.System.ENGINE, entity.getFluff(),
+                    () -> stripNotes(entity.getEngine().getEngineName())));
+        } else {
+            model.put("engineDesc", "None");
+        }
         if (!entity.isAero()) {
             model.put("cruisingSpeed", entity.getWalkMP() * 10.8);
             model.put("maxSpeed", entity.getRunMP() * 10.8);
@@ -400,6 +404,7 @@ public class TROView {
         final int structure = entity.getStructureType();
         final Map<String, Map<EquipmentKey, Integer>> equipment = new HashMap<>();
         int nameWidth = 20;
+        EquipmentKey eqk;
         for (final Mounted m : entity.getEquipment()) {
             if (skipMount(m, includeAmmo)) {
                 continue;
@@ -418,8 +423,8 @@ public class TROView {
             if (m.isOmniPodMounted() || !entity.isOmni()) {
                 final String loc = formatLocationTableEntry(entity, m);
                 equipment.putIfAbsent(loc, new HashMap<>());
-                equipment.get(loc).merge(new EquipmentKey(m.getType(), m.getSize(), m.isArmored()),
-                        1, Integer::sum);
+                eqk = new EquipmentKey(m.getType(), m.getSize(), m.isArmored(), m.isInternalBomb());
+                equipment.get(loc).merge(eqk,1, Integer::sum);
             }
         }
         final List<Map<String, Object>> eqList = new ArrayList<>();
@@ -430,6 +435,9 @@ public class TROView {
                 String name = stripNotes(entry.getKey().name());
                 if (entry.getKey().isArmored()) {
                     name += " (Armored)";
+                }
+                if (entry.getKey().internalBomb) {
+                    name += " (Int. Bay)";
                 }
                 if (eq instanceof AmmoType) {
                     name = String.format("%s (%d)", name, ((AmmoType) eq).getShots() * count);
@@ -778,15 +786,17 @@ public class TROView {
         private final EquipmentType etype;
         private final double size;
         private final boolean armored;
+        private final boolean internalBomb;
 
         EquipmentKey(EquipmentType etype, double size) {
-            this(etype, size, false);
+            this(etype, size, false, false);
         }
 
-        EquipmentKey(EquipmentType etype, double size, boolean armored) {
+        EquipmentKey(EquipmentType etype, double size, boolean armored, boolean internal) {
             this.etype = etype;
             this.size = size;
             this.armored = armored;
+            this.internalBomb = internal;
         }
 
         String name() {

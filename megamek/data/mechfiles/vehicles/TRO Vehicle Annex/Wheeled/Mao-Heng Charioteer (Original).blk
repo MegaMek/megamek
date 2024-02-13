@@ -32,6 +32,10 @@ Mao-Heng Charioteer
 IS Level 2
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Wheeled
 </motion_type>
@@ -84,7 +88,7 @@ troopspace:.6
 </transporters>
 
 <source>
-TRO VAr - Succession Wars
+TRO: Vehicle Annex (Revised)
 </source>
 
 <tonnage>

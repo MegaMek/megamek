@@ -1,13 +1,17 @@
-Version:1.0
-Warhammer IIC
-13
+chassis:Warhammer IIC
+model:13
 mul id:7498
 
 Config:Biped
 techbase:Clan
 era:3150
 rules level:2
-source:Rec Guide:ilClan #4 - Dark Age
+role:Brawler
+source:Rec Guide:ilClan #4
+
+quirk:searchlight
+quirk:stable
+
 
 mass:80
 engine:320 XL (Clan) Engine(IS)

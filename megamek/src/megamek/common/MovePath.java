@@ -206,8 +206,8 @@ public class MovePath implements Cloneable, Serializable {
         return addStep(new MoveStep(this, type, noCost));
     }
 
-    public MovePath addStep(final MoveStepType type, final boolean noCost, final boolean isManeuver) {
-        return addStep(new MoveStep(this, type, noCost, isManeuver));
+    public MovePath addStep(final MoveStepType type, final boolean noCost, final boolean isManeuver, final int maneuverType) {
+        return addStep(new MoveStep(this, type, noCost, isManeuver, maneuverType));
     }
 
     public MovePath addStep(final MoveStepType type, final Minefield mf) {
@@ -567,10 +567,10 @@ public class MovePath implements Cloneable, Serializable {
                 step = new MoveStep(this, step.getType(), step.getBraceLocation());
             } else if (!step.getLaunched().isEmpty()) {
                 step = new MoveStep(this, step.getType(), step.getLaunched());
+            } else if (step.isManeuver()) {
+                step = new MoveStep(this, step.getType(), step.hasNoCost(), step.isManeuver(), step.getManeuverType());
             } else if (step.getManeuverType() != ManeuverType.MAN_NONE) {
                 step = new MoveStep(this, step.getType(), -1, -1, step.getManeuverType());
-            } else if (step.isManeuver()) {
-                step = new MoveStep(this, step.getType(), step.hasNoCost(), step.isManeuver());
             } else if (step.hasNoCost()) {
                 step = new MoveStep(this, step.getType(), step.hasNoCost());
             } else if (null != step.getMinefield()) {
@@ -1440,11 +1440,12 @@ public class MovePath implements Cloneable, Serializable {
         while (!getFinalCoords().equals(subDest)) {
             // adjust facing
             rotatePathfinder((getFinalCoords().direction(subDest) + (step == MoveStepType.BACKWARDS ? 3 : 0)) % 6,
-                    false);
+                    false, ManeuverType.MAN_NONE);
             // step forwards
             addStep(step);
         }
-        rotatePathfinder((getFinalCoords().direction(dest) + (step == MoveStepType.BACKWARDS ? 3 : 0)) % 6, false);
+        rotatePathfinder((getFinalCoords().direction(dest) + (step == MoveStepType.BACKWARDS ? 3 : 0)) % 6,
+                false, ManeuverType.MAN_NONE);
         if (!dest.equals(getFinalCoords())) {
             addStep(type);
         }
@@ -1553,10 +1554,10 @@ public class MovePath implements Cloneable, Serializable {
     /**
      * Rotate from the current facing to the destination facing.
      */
-    public void rotatePathfinder(final int destFacing, final boolean isManeuver) {
+    public void rotatePathfinder(final int destFacing, final boolean isManeuver, int maneuverType) {
         while (getFinalFacing() != destFacing) {
             final MoveStepType stepType = getDirection(getFinalFacing(), destFacing);
-            addStep(stepType, isManeuver, isManeuver);
+            addStep(stepType, isManeuver, isManeuver, maneuverType);
         }
     }
 
@@ -1617,7 +1618,7 @@ public class MovePath implements Cloneable, Serializable {
 
     /**
      * Airborne WiGEs that move less than five hexes (four for glider protomech) in a movement phase must
-     * land unless it has taken off in the same phase or it is a LAM or glider ProtoMech that is using hover
+     * land unless it has taken off in the same phase, jumped, or it is a LAM or glider ProtoMech that is using hover
      * movement.
      *
      * @param includeMovePathHexes  Whether to include the hexes plotted in this MovePath in the total distance
@@ -1638,6 +1639,10 @@ public class MovePath implements Cloneable, Serializable {
             } else {
                 return getEntity().isAirborneVTOLorWIGE();
             }
+        }
+        // A WiGE that jumped A) has to have been flying and B) cannot land this turn.
+        if (isJumping()) {
+            return false;
         }
         // If movement has been interrupted (such as by a sideslip) and remaining movement points have
         // been spent, this MovePath only contains the hexes moved after the interruption. The hexes already
@@ -1662,6 +1667,21 @@ public class MovePath implements Cloneable, Serializable {
         } else {
             return getEntity().isAirborneVTOLorWIGE();
         }
+    }
+
+    /**
+     * @return Whether the entire path is submerged. A unit is only considered submerged when entirely undewater.
+     */
+    public boolean isAllUnderwater(Game game) {
+        for (MoveStep step : steps) {
+            Hex hex = game.getBoard().getHex(step.getPosition());
+            if (!hex.containsTerrain(Terrains.WATER)
+                    || (step.getElevation() >= -entity.height())) {
+                return false;
+            }
+        }
+        return game.getBoard().getHex(entity.getPosition()).containsTerrain(Terrains.WATER)
+                && entity.relHeight() < 0;
     }
 
     protected static class MovePathComparator implements Comparator<MovePath> {
@@ -1853,12 +1873,12 @@ public class MovePath implements Cloneable, Serializable {
     }
 
     /**
-     * Worker function that counts the number of steps of the given type 
+     * Worker function that counts the number of steps of the given type
      * at the end of the given path before another step type occurs.
      */
     public int getEndStepCount(MoveStepType stepType) {
         int stepCount = 0;
-        
+
         for (int index = getStepVector().size() - 1; index >= 0; index--) {
             if (getStepVector().get(index).getType() == stepType) {
                 stepCount++;
@@ -1866,10 +1886,10 @@ public class MovePath implements Cloneable, Serializable {
                 break;
             }
         }
-        
+
         return stepCount;
     }
-    
+
     /**
      * Debugging method that calculates a destruction-aware move path to the destination coordinates
      */

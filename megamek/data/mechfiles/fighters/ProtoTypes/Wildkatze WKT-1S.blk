@@ -36,6 +36,10 @@ WKT-1S
 IS Level 4
 </type>
 
+<role>
+Fast Dogfighter
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -107,9 +111,14 @@ IS Ammo MML-5 LRM
 </Fuselage Equipment>
 
 <source>
-TRO Prototypes - Jihad
+TRO: Prototypes
 </source>
 
 <tonnage>
 45.0
 </tonnage>
+
+<quirks>
+easy_pilot
+</quirks>
+

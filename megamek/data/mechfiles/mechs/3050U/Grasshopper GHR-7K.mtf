@@ -1,13 +1,18 @@
-Version:1.0
-Grasshopper
-GHR-7K
+chassis:Grasshopper
+model:GHR-7K
 mul id:1270
 
 Config:Biped
 techbase:Inner Sphere
 era:3068
-source:TRO 3050 - Jihad
+source:TRO: 3050
 rules level:2
+role:Skirmisher
+
+
+
+quirk:rugged_1
+
 
 mass:70
 engine:280 Fusion Engine(IS)

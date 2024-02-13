@@ -1,13 +1,19 @@
-Version:1.1
-Locust IIC
-9
+chassis:Locust IIC
+model:9
 mul id:1922
 
 Config:Biped
 TechBase:Mixed (Clan Chassis)
 Era:3085
-Source:Dark Age
+source:TRO: 3085
 Rules Level:4
+role:Striker
+
+quirk:easy_maintain
+quirk:low_profile
+quirk:no_arms
+quirk:weak_legs
+
 
 Mass:25
 Engine:350 XXL (Clan) Engine

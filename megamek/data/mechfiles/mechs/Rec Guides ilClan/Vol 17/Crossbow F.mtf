@@ -1,13 +1,13 @@
-Version:1.0
-Crossbow
-F
+chassis:Crossbow
+model:F
 mul id:8236
 
 Config:Biped Omnimech
 techbase:Clan
 era:3116
-source:Rec Guide:ilClan #17 - Late Republic
+source:Rec Guide:ilClan #17
 rules level:2
+role:Skirmisher
 
 mass:65
 engine:325 Fusion (Clan) Engine(IS)

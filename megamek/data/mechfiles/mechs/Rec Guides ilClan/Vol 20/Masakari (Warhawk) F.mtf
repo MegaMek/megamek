@@ -1,13 +1,17 @@
-Version:1.1
-Masakari (Warhawk)
-F
+chassis:Masakari
+clanname:Warhawk
+model:F
 mul id:5491
 
 Config:Biped Omnimech
 TechBase:Clan
 Era:3054
-source:Rec Guide:ilClan #20 - Clan Invasion
+source:Rec Guide:ilClan #20
 Rules Level:2
+role:Sniper
+
+quirk:imp_target_long
+
 
 Mass:85
 Engine:340 XL (Clan) Engine(IS)

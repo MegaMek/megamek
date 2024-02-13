@@ -1,13 +1,19 @@
-Version:1.0
-Ostsol
-OTL-4F
+chassis:Ostsol
+model:OTL-4F
 mul id:2372
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2871
-Source:TRO 3039 - Succession Wars
+Source:TRO: 3039
 Rules Level:1
+role:Skirmisher
+
+
+
+quirk:imp_sensors
+quirk:low_profile
+
 
 Mass:60
 Engine:300 Fusion Engine

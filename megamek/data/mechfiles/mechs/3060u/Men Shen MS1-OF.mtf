@@ -1,13 +1,20 @@
-Version:1.0
-Men Shen
-MS1-OF
+chassis:Men Shen
+model:MS1-OF
 mul id:2166
 
 Config:Biped Omnimech
 TechBase:Inner Sphere
 Era:3076
-Source:TRO 3060
+Source:TRO: 3060
 Rules Level:2
+role:Striker
+
+
+
+quirk:imp_com
+quirk:imp_sensors
+quirk:exp_actuator
+
 
 Mass:55
 Engine:330 XL Engine(IS)

@@ -32,6 +32,10 @@ Po Heavy Tank
 IS Level 3
 </type>
 
+<role>
+Brawler
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -84,9 +88,16 @@ Hyper Velocity Auto Cannon/10
 </Turret Equipment>
 
 <source>
-TRO:Prototypes
+TRO: Prototypes
 </source>
 
 <tonnage>
 60.0
 </tonnage>
+
+<quirks>
+poor_sealing
+trailer_hitch
+easy_maintain
+</quirks>
+

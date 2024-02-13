@@ -44,7 +44,7 @@ public class MissileMineClearanceHandler extends AmmoWeaponHandler {
 
         Mounted ammoUsed = ae.getEquipment(waa.getAmmoId());
         final AmmoType ammoType = (ammoUsed == null) ? null : (AmmoType) ammoUsed.getType();
-        if ((ammoType == null) || (ammoType.getMunitionType() != AmmoType.M_MINE_CLEARANCE)) {
+        if ((ammoType == null) || (!ammoType.getMunitionType().contains(AmmoType.Munitions.M_MINE_CLEARANCE))) {
             LogManager.getLogger().error("Not using mine clearance ammo!");
             return true;
         }
@@ -97,16 +97,16 @@ public class MissileMineClearanceHandler extends AmmoWeaponHandler {
         vPhaseReport.addElement(r);
 
         // do we hit?
-        bMissed = roll < toHit.getValue();
+        bMissed = roll.getIntValue() < toHit.getValue();
         // Set Margin of Success/Failure.
-        toHit.setMoS(roll - Math.max(2, toHit.getValue()));
-        
+        toHit.setMoS(roll.getIntValue() - Math.max(2, toHit.getValue()));
+
         if (bMissed) {
             // misses
-            r = new Report(3196);                    
+            r = new Report(3196);
             r.subject = subjectId;
             r.add(targetPos.getBoardNum());
-            vPhaseReport.addElement(r);     
+            vPhaseReport.addElement(r);
             return false;
         }
 
@@ -159,7 +159,7 @@ public class MissileMineClearanceHandler extends AmmoWeaponHandler {
         vPhaseReport.addElement(r);
 
         Vector<Report> newReports;
-        
+
         // Damage building directly
         Building bldg = game.getBoard().getBuildingAt(targetPos);
         if (bldg != null) {
@@ -190,7 +190,7 @@ public class MissileMineClearanceHandler extends AmmoWeaponHandler {
             if (target.isAirborne() || target.isAirborneVTOLorWIGE()) {
                 continue;
             }
-            
+
             // Units in a building apply damage to building
             // The rules don't state this, but I'm going to treat mine clearance
             // munitions like airburst mortars for purposes of units in
@@ -212,7 +212,7 @@ public class MissileMineClearanceHandler extends AmmoWeaponHandler {
                 if (target.getBARRating(hit.getLocation()) <= 6) {
                     hit.setGeneralDamageType(generalDamageType);
                     hit.setCapital(wtype.isCapital());
-                    hit.setBoxCars(roll == 12);
+                    hit.setBoxCars(roll.getIntValue() == 12);
                     hit.setCapMisCritMod(getCapMisMod());
                     hit.setFirstHit(firstHit);
                     hit.setAttackerId(getAttackerId());
@@ -231,14 +231,14 @@ public class MissileMineClearanceHandler extends AmmoWeaponHandler {
                 }
             }
         }
-        
+
         return false;
     }
-    
+
     /**
      * Indents all reports in the collection, and adds a new line to the last
      * one.  This is used to make nested reports line-up and look nicer.
-     * 
+     *
      * @param reports
      */
     private void adjustReports(Vector<Report> reports) {

@@ -1,13 +1,13 @@
-Version:1.0
-Cestus
-CTS-6Z
+chassis:Cestus
+model:CTS-6Z
 mul id:534
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3058
-Source:TRO 3058 - Clan Invasion
+Source:TRO: 3058
 Rules Level:2
+role:Brawler
 
 Mass:65
 Engine:260 XL Engine

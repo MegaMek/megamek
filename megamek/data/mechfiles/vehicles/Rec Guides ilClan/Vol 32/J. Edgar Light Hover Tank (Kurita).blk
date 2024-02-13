@@ -36,6 +36,10 @@ J. Edgar Light Hover Tank
 IS Level 2
 </type>
 
+<role>
+Scout
+</role>
+
 <motion_type>
 Hover
 </motion_type>
@@ -91,7 +95,7 @@ Small Laser
 </Turret Equipment>
 
 <source>
-Clan Invasion
+Rec Guide:ilClan #32
 </source>
 
 <tonnage>

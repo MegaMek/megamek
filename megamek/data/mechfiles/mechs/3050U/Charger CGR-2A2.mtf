@@ -1,13 +1,20 @@
-Version:1.0
-Charger
-CGR-2A2
+chassis:Charger
+model:CGR-2A2
 mul id:564
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3064
-Source:TRO 3050 - Civil War
+Source:TRO: 3050
 Rules Level:2
+role:Scout
+
+
+
+quirk:barrel_fists_la
+quirk:easy_maintain
+quirk:bad_rep_is
+
 
 Mass:80
 Engine:400 Fusion Engine

@@ -32,6 +32,10 @@ Po II Heavy Tank
 IS Level 3
 </type>
 
+<role>
+Missile Boat
+</role>
+
 <tonnage>
 60
 </tonnage>
@@ -76,5 +80,5 @@ Machine Gun
 </Turret Equipment>
 
 <source>
-Dark Age
+TRO: 3085
 </source>

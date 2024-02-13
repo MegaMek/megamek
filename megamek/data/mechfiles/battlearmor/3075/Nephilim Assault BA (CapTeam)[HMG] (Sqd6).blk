@@ -32,6 +32,10 @@ Nephilim Assault Battle Armor
 IS Level 3
 </type>
 
+<role>
+Juggernaut
+</role>
+
 <motion_type>
 Leg
 </motion_type>
@@ -92,7 +96,7 @@ ISBATaser:DWP
 </Trooper 6 Equipment>
 
 <source>
-TRO 3075 - Jihad
+TRO: 3075
 </source>
 
 <chassis>

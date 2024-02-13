@@ -1,0 +1,174 @@
+chassis:Amarok
+model:
+mul id:8239
+Config:Biped
+techbase:Clan
+era:3149
+source:Rec Guide:ilClan #17
+rules level:3
+role:Juggernaut
+
+
+quirk:battle_fists_la
+quirk:battle_fists_ra
+quirk:stable
+
+
+mass:100
+engine:400 XL (Clan) Engine(IS)
+structure:Clan Endo Steel
+myomer:Standard
+
+heat sinks:16 Clan Double
+walk mp:4
+jump mp:0
+
+armor:Hardened(Clan)
+LA armor:18
+RA armor:18
+LT armor:18
+RT armor:18
+CT armor:25
+HD armor:9
+LL armor:20
+RL armor:20
+RTL armor:5
+RTR armor:5
+RTC armor:8
+
+Weapons:5
+Rotary AC/5, Left Torso
+ER PPC, Right Torso
+Streak SRM 6, Right Torso
+Streak SRM 6, Right Torso
+Large Pulse Laser, Center Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+Clan Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+Clan Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+CLRotaryAC5
+CLRotaryAC5
+CLRotaryAC5
+CLRotaryAC5
+CLRotaryAC5
+CLRotaryAC5
+CLRotaryAC5
+CLRotaryAC5
+CLRotaryAC5 Ammo
+CLRotaryAC5 Ammo
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+CLERPPC
+CLERPPC
+PPC Capacitor
+CLStreakSRM6
+CLStreakSRM6
+CLStreakSRM6
+CLStreakSRM6
+Clan Streak SRM 6 Ammo
+Supercharger
+Clan Endo Steel
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLLargePulseLaser
+CLLargePulseLaser
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Clan Endo Steel
+Clan Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Clan Endo Steel
+Clan Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+overview:<p>The Amarok, crafted to counter the age-old DFA tactic, inherits the Hammerhead's physical attributes, notably its hardened armor, which significantly shields the cockpit, thus, minimizing vulnerability during engagements.</p>
+
+capabilities:<p>Boasting a mass more than doubled, a sizable portion is dedicated to its formidable arsenal. The ER PPC, amplified by a capacitor, serves as a long-range deterrent against incoming Mechs, while a rotary autocannon and large pulse laser offer reliable secondary firepower, complemented by twin Streak missile launchers.</p>
+<p>An innovative feature, inspired by Solaris VII data, employs a pre-programmed routine to lock the arms above the cockpit, potentially thwarting DFA assaults. However, certain technical glitches have led to disabling this feature by many Amarok pilots, with plans to omit it in future productions. The Amarok's demand remains unaffected, as warriors vie for possession through Trials.</p>
+
+deployment:<p>The original Amarok model emerges as a formidable adversary on the battlefield, tailored to counter Death From Above (DFA) tactics predominantly employed by the Jade Falcons. Its design, heavily influenced by the Hammerhead, incorporates hardened armor and a substantial arsenal comprising an ER PPC enhanced with a capacitor, a rotary autocannon, a large pulse laser, and paired Streak missile launchers. Despite certain technical challenges with its innovative arm-lock mechanism intended to shield against DFA assaults, the Amarok has earned a revered status among MechWarriors, often requiring a Trial of Possession for assignment due to its high demand.</p>
+
+history:<p>The Amarok, a pivotal invention by Ramiel Bekker, stands as Clan Wolf's stalwart defense against the Jade Falcons' notorious Death From Above (DFA) assaults. Assembled under time constraints, Bekker sought Clan Sea Fox's aid, replicating the collaborative essence from the Stormwolf venture. This venture was a boon for the ilKhanate post Gray Monday, promising a resurgence through this special order. Despite inter-Khanate disagreements owing to the Hammerhead-derived designs, successful Trials ensured a swift Amarok production, with Khan Hawker spearheading diplomacy to bolster inter-Clan cooperation.</p> <p>Bekker envisioned Amaroks fortifying most Clusters against major Jade Falcon threats. In reality, they concentrated mainly in Alpha and Beta Galaxies, with notable engagements occurring on Skye. Amaroks, often operating in groups, significantly disrupted enemy formations. However, they faced a severe onslaught from Turkina Keshik. Despite this, the Ninth Wolf Guard's Amaroks showcased their prowess by ambushing the Keshik, highlighting the strategic significance of the Amarok in battlefield control.</p>
+
+manufacturer:Manufacturing Plant SFF-TU1
+primaryfactory:Tukayyid
+systemmanufacturer:CHASSIS:SFAM Endo 4
+systemmanufacturer:ENGINE:Type 79 400 XL Fusion
+systemmanufacturer:ARMOR:Double-Forged ZX20 Hardened
+systemmanufacturer:COMMUNICATIONS:Khan Series (Type 6c)
+systemmanufacturer:TARGETING:Series XIV OPT
+

@@ -32,6 +32,10 @@ Configuration #2
 IS Level 4
 </type>
 
+<role>
+Missile Boat
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -93,9 +97,14 @@ liquidcargobay:18.2:1
 
 
 <source>
-XTRO Periphery - Jihad
+XTR: Periphery
 </source>
 
 <tonnage>
 50.0
 </tonnage>
+
+<quirks>
+non_standard
+</quirks>
+

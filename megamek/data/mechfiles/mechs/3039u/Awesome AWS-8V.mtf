@@ -1,13 +1,18 @@
-Version:1.0
-Awesome
-AWS-8V
+chassis:Awesome
+model:AWS-8V
 mul id:177
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2980
-Source:TRO 3039 - Succession Wars
+Source:TRO: 3039
 Rules Level:1
+role:Sniper
+
+
+
+quirk:battle_fists_la
+
 
 Mass:80
 Engine:240 Fusion Engine

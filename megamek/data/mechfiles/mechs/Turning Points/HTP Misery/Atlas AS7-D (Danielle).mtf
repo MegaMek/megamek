@@ -1,12 +1,22 @@
-Version:1.1
-Atlas
-AS7-D (Danielle)
+chassis:Atlas
+model:AS7-D (Danielle)
 mul id:141
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3028
 Rules Level:1
+role:Juggernaut
+source:Historical Turning Points: Misery
+
+
+
+quirk:battle_fists_la
+quirk:battle_fists_ra
+quirk:command_mech
+quirk:distracting
+quirk:imp_com
+
 
 Mass:100
 Engine:300 Fusion Engine

@@ -1,13 +1,13 @@
-Version:1.0
-Longbow
-LGB-14V
+chassis:Longbow
+model:LGB-14V
 mul id:8336
 
 Config:Biped
 techbase:Inner Sphere
 era:3105
-source:Rec Guide:ilClan #20 - Late Republic
+source:Rec Guide:ilClan #20
 rules level:2
+role:Brawler
 
 mass:85
 engine:340 XL Engine(IS)

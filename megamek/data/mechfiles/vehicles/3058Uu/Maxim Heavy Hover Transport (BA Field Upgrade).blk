@@ -57,6 +57,10 @@ ISLRM5 Ammo
 <type>
 IS Level 2
 </type>
+
+<role>
+Striker
+</role>
 <year>
 3056
 </year>
@@ -73,7 +77,7 @@ IS Level 2
 Hover
 </motion_type>
 <source>
-TRO 3058 - Clan Invasion
+TRO: 3058
 </source>
 
 <capabilities>

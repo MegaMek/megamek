@@ -32,6 +32,10 @@ Gienah-Durapaq Elite Land Train
 IS Level 2
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -97,7 +101,7 @@ cargobay:2:1
 </transporters>
 
 <source>
-TRO VAr - Succession Wars
+TRO: Vehicle Annex (Revised)
 </source>
 
 <tonnage>

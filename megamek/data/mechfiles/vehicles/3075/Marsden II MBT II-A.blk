@@ -13,7 +13,7 @@ Tank
 </UnitType>
 
 <Name>
-Marsden II MBT
+Marsden MBT
 </Name>
 
 <Model>
@@ -83,7 +83,7 @@ Autocannon/10
 </Turret Equipment>
 
 <source>
-Civil War
+TRO: 3075
 </source>
 
 <tonnage>

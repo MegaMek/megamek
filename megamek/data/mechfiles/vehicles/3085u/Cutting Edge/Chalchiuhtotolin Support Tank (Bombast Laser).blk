@@ -32,6 +32,10 @@ Chalchiuhtotolin Support Tank
 Mixed (Clan Chassis) Experimental
 </type>
 
+<role>
+Brawler
+</role>
+
 <motion_type>
 Wheeled
 </motion_type>
@@ -90,7 +94,7 @@ CLStreakSRM4
 </Turret Equipment>
 
 <source>
-Dark Age
+TRO: 3085
 </source>
 
 <tonnage>

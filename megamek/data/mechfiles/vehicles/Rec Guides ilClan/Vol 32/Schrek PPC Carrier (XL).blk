@@ -36,6 +36,10 @@ Schrek PPC Carrier
 IS Level 2
 </type>
 
+<role>
+Sniper
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -89,10 +93,15 @@ PPC
 </Turret Equipment>
 
 <source>
-Rec Guide:ilClan #32 - Civil War
+Rec Guide:ilClan #32
 </source>
 
 <tonnage>
 80.0
 </tonnage>
+
+
+<quirks>
+low_profile
+</quirks>
 

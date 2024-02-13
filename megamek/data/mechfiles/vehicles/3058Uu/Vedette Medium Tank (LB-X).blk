@@ -36,6 +36,10 @@ Vedette Medium Tank
 IS Level 2
 </type>
 
+<role>
+Sniper
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -121,7 +125,7 @@ TARGETING:ComStar Test-2
 </systemManufacturers>
 
 <source>
-TRO 3058 - Jihad
+TRO: 3058
 </source>
 
 <tonnage>

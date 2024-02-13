@@ -55,6 +55,10 @@ ISGuardianECM
 <type>
 IS Level 2
 </type>
+
+<role>
+Missile Boat
+</role>
 <year>
 3067
 </year>
@@ -70,3 +74,7 @@ IS Level 2
 <motion_type>
 Tracked
 </motion_type>
+
+<source>
+TRO: 3067
+</source>

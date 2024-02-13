@@ -32,6 +32,10 @@ Fa Shih Battle Armor
 IS Level 2
 </type>
 
+<role>
+Ambusher
+</role>
+
 <motion_type>
 Jump
 </motion_type>
@@ -65,7 +69,7 @@ IS BA Advanced:LA
 </Squad Equipment>
 
 <source>
-TRO 3085 - Jihad
+TRO: 3085
 </source>
 
 <chassis>

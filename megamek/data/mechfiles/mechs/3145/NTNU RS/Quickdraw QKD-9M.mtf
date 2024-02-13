@@ -1,13 +1,19 @@
-Version:1.0
-Quickdraw
-QKD-9M
+chassis:Quickdraw
+model:QKD-9M
 mul id:6887
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3086
-Source:RS 3145 NT NU
+Source:Record Sheets: 3145 New Tech New Upgrades
 Rules Level:2
+role:Skirmisher
+
+
+
+quirk:hyper_actuator
+quirk:exp_actuator
+
 
 Mass:60
 Engine:300 XL Engine(IS)

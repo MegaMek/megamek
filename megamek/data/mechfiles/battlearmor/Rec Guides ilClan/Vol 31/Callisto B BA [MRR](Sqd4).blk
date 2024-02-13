@@ -33,12 +33,16 @@ B [MRR](Sqd4)
 </mul id:>
 
 <source>
-Rec Guide:ilClan #31 - Dark Age
+Rec Guide:ilClan #31
 </source>
 
 <type>
 Clan Level 2
 </type>
+
+<role>
+Ambusher
+</role>
 
 <motion_type>
 Leg

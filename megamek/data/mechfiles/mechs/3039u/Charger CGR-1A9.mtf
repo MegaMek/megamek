@@ -1,12 +1,19 @@
-Version:1.3
-Charger
-CGR-1A9
+chassis:Charger
+model:CGR-1A9
 mul id:561
 Config:Biped
 techbase:Inner Sphere
 era:3034
-source:TRO 3039 - Succession Wars
+source:TRO: 3039
 rules level:1
+role:Skirmisher
+
+
+
+quirk:barrel_fists_la
+quirk:easy_maintain
+quirk:bad_rep_is
+
 
 mass:80
 engine:320 Fusion Engine(IS)

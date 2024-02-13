@@ -13,7 +13,7 @@ Infantry
 </UnitType>
 
 <Name>
-Foot Platoon, Taurian
+Foot Platoon (Taurian)
 </Name>
 
 <Model>
@@ -47,7 +47,7 @@ Leg
 </Field Guns Equipment>
 
 <source>
-Total Warfare - Succession Wars
+Total Warfare
 </source>
 
 <squad_size>

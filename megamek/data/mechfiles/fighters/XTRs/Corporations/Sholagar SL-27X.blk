@@ -36,6 +36,10 @@ SL-27X
 IS Level 4
 </type>
 
+<role>
+Interceptor
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -98,7 +102,7 @@ Light PPC
 </Fuselage Equipment>
 
 <source>
-XTRO Corporation - Jihad
+XTR: Corporation
 </source>
 
 <tonnage>

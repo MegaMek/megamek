@@ -1,13 +1,19 @@
-Version:1.1
-Jinggau
-JN-G9CC
+chassis:Jinggau
+model:JN-G9CC
 mul id:1710
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3072
-Source:TRO 3060 - Jihad
+Source:TRO: 3060
 Rules Level:3
+role:Skirmisher
+
+
+
+quirk:low_profile
+quirk:weak_head_2
+
 
 Mass:65
 Engine:325 XL Engine

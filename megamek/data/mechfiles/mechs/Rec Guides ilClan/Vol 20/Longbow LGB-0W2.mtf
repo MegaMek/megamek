@@ -1,13 +1,13 @@
-Version:1.0
-Longbow
-LGB-0W2
+chassis:Longbow
+model:LGB-0W2
 mul id:8331
 
 Config:Biped
 techbase:Inner Sphere
 era:2531
-source:Rec Guide:ilClan #20 - Age of War
+source:Rec Guide:ilClan #20
 rules level:1
+role:Missile Boat
 
 mass:85
 engine:340 Fusion Engine(IS)

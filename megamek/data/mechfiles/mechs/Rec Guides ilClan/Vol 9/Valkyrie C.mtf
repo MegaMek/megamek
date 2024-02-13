@@ -1,13 +1,19 @@
-Version:1.1
-Valkyrie
-C
+chassis:Valkyrie
+model:C
 mul id:7701
 
 Config:Biped
 techbase:Mixed (IS Chassis)
 era:3139
-source:Rec Guide:ilClan #9 - Dark Age
+source:Rec Guide:ilClan #9
 rules level:2
+role:Missile Boat
+
+
+
+quirk:easy_maintain
+quirk:imp_com
+
 
 mass:30
 engine:150 XL Engine(IS)

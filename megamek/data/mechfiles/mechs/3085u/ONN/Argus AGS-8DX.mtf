@@ -1,13 +1,19 @@
-Version:1.0
-Argus
-AGS-8DX
+chassis:Argus
+model:AGS-8DX
 mul id:110
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3074
-Source:Jihad
+source:TRO: 3085
 Rules Level:4
+role:Skirmisher
+
+
+
+quirk:easy_maintain
+quirk:no_arms
+
 
 Mass:60
 Engine:300 XL Engine(IS)
@@ -149,4 +155,4 @@ Endo Steel
 -Empty-
 -Empty-
 
-imagefile:.\data\images\fluff\Mech\TRO3067_Argus.jpg
+

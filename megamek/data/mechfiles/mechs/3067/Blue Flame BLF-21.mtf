@@ -1,13 +1,20 @@
-Version:1.0
-Blue Flame
-BLF-21
+chassis:Blue Flame
+model:BLF-21
 mul id:3840
 
 Config:Quad
 techbase:Inner Sphere
 era:3062
-source:TRO 3067
+source:TRO: 3067
 rules level:2
+role:Sniper
+
+
+
+
+quirk:directional_torso_mount
+quirk:bad_rep_is
+
 
 mass:45
 engine:225 Light Engine(IS)

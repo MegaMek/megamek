@@ -32,6 +32,10 @@ Kage Light Battle Armor
 IS Level 2
 </type>
 
+<role>
+Scout
+</role>
+
 <motion_type>
 Jump
 </motion_type>
@@ -80,7 +84,7 @@ IS BA ECM:Body
 
 
 <source>
-TRO 3058U - Clan Invasion
+TRO: 3058 Upgrade
 </source>
 
 <chassis>

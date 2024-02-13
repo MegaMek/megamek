@@ -36,6 +36,10 @@ Mosquito Light Fighter
 IS Level 2
 </type>
 
+<role>
+Fire Support
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -121,9 +125,16 @@ External Stores Hardpoint
 </armor_tech_rating>
 
 <source>
-XTRO Primitives II - Age of War
+XTR: Primitives II
 </source>
 
 <tonnage>
 20.0
 </tonnage>
+
+<quirks>
+atmo_flyer
+easy_maintain
+obsolete
+</quirks>
+

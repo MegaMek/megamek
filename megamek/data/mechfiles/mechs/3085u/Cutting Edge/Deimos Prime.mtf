@@ -1,13 +1,17 @@
-Version:1.0
-Deimos
-Prime
+chassis:Deimos
+model:Prime
 mul id:856
 
 Config:Biped Omnimech
 TechBase:Clan
 Era:3085
-Source:Civil War
+source:TRO: 3085u
 Rules Level:2
+role:Sniper
+
+
+quirk:anti_air
+
 
 Mass:85
 Engine:255 XL (Clan) Engine(IS)

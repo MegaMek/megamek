@@ -44,6 +44,10 @@ ISCASE
 <type>
 IS Level 2
 </type>
+
+<role>
+Striker
+</role>
 <year>
 3066
 </year>
@@ -60,5 +64,5 @@ IS Level 2
 VTOL
 </motion_type>
 <source>
-Civil War
+TRO: 3058
 </source>

@@ -1,12 +1,18 @@
-Version:1.0
-Champion
-CHP-1Nb2
+chassis:Champion
+model:CHP-1Nb2
 mul id:6765
 
 Config:Biped
 techbase:Inner Sphere
 era:2737
 rules level:3
+role:None
+source:Historical: Operation Klondike
+
+
+
+quirk:no_arms
+
 
 mass:60
 engine:300 Fusion Engine(IS)

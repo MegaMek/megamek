@@ -36,6 +36,10 @@ Patton Tank
 IS Level 2
 </type>
 
+<role>
+Brawler
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -126,10 +130,16 @@ TARGETING:TharHes Mars5
 </systemManufacturers>
 
 <source>
-Rec Guide:ilClan #27 - Late Republic
+Rec Guide:ilClan #27
 </source>
 
 <tonnage>
 65.0
 </tonnage>
+
+
+<quirks>
+low_profile
+poor_target_short
+</quirks>
 

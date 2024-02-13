@@ -29,12 +29,16 @@ Danai Support Vehicle
 </year>
 
 <source>
-Jihad
+TRO: 3075
 </source>
 
 <type>
 IS Level 3
 </type>
+
+<role>
+Missile Boat
+</role>
 
 <tonnage>
 45.0

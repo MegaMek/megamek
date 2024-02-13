@@ -32,6 +32,10 @@ Golem Assault Armor
 Clan Level 3
 </type>
 
+<role>
+Juggernaut
+</role>
+
 <motion_type>
 Leg
 </motion_type>
@@ -64,7 +68,7 @@ Clan BA Fire Resistant:Body
 </Point Equipment>
 
 <source>
-TRO 3075 - Jihad
+TRO: 3075
 </source>
 
 <chassis>

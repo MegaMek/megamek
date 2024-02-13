@@ -36,6 +36,10 @@ Planetlifter Support Aircraft
 IS Level 4
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -144,7 +148,7 @@ TARGETING:Unknown
 </systemManufacturers>
 
 <source>
-XTR Corps - Jihad
+XTR: Corporations
 </source>
 
 <tonnage>

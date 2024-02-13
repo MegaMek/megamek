@@ -32,6 +32,10 @@ Heavy MML Carrier
 IS Level 2
 </type>
 
+<role>
+Missile Boat
+</role>
+
 <tonnage>
 80
 </tonnage>
@@ -93,5 +97,5 @@ ISMML9
 </Turret Equipment>
 
 <source>
-Jihad
+TRO: 3060
 </source>

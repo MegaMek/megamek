@@ -36,6 +36,10 @@ Dragonstar Assault Transport
 IS Level 2
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Spheroid
 </motion_type>
@@ -110,7 +114,7 @@ ISERMediumLaser
 </structural_integrity>
 
 <source>
-HB Kurita - Clan Invasion
+Handbook: House Kurita
 </source>
 
 <tonnage>

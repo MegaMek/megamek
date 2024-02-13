@@ -1,13 +1,17 @@
-Version:1.0
-Battle Cobra
-Prime
+chassis:Battle Cobra
+model:Prime
 mul id:273
 
 Config:Biped Omnimech
 techbase:Clan
 era:2873
-source:TRO 3058 - Succession Wars
+source:TRO: 3058
 rules level:2
+role:Sniper
+
+
+quirk:ext_twist
+
 
 mass:40
 engine:240 Fusion (Clan) Engine(IS)

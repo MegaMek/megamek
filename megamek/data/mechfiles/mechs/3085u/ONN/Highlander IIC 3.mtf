@@ -1,13 +1,19 @@
-Version:1.0
-Highlander IIC
-3
+chassis:Highlander IIC
+model:3
 mul id:1523
 
 Config:Biped
 TechBase:Clan
 Era:3077
-Source:RS 3085U - Jihad
+Source:Record Sheets: 3085 Unabridged - Old is the New New
 Rules Level:2
+role:Missile Boat
+
+quirk:command_mech
+quirk:cowl
+quirk:reinforced_legs
+quirk:difficult_eject
+
 
 Mass:90
 Engine:270 Fusion (Clan) Engine

@@ -1,0 +1,341 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Warship
+</UnitType>
+
+<Name>
+Newgrange III Yardship
+</Name>
+
+<Model>
+'Eyrines'
+</Model>
+
+<mul id:>
+4713
+</mul id:>
+
+<year>
+3066
+</year>
+
+<originalBuildYear>
+3066
+</originalBuildYear>
+
+<type>
+IS Level 4
+</type>
+
+<role>
+None
+</role>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+navalrepairunpressurized:2100000.0:1:1:f0
+mechbay:36.0:1:-1::-1:0
+cargobay:12000.0:0:3::-1:0
+smallcraftbay:72.0:6:4::-1:0
+cargobay:24000.0:1:5::-1:0
+dockingcollar
+dockingcollar
+dockingcollar
+dockingcollar
+cargobay:250000.0:0:10::-1:0
+2ndclassquarters:14000.0:0:-1::-1:0
+1stclassquarters:2690.0:0:-1::-1:0
+steeragequarters:25600.0:0:-1::-1:0
+crewquarters:3178.0:0:-1::-1:0
+cargobay:354640.5:1:15::-1:0
+</transporters>
+
+<SafeThrust>
+2
+</SafeThrust>
+
+<heatsinks>
+787
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+10000
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+11
+</armor_type>
+
+<armor_tech>
+5
+</armor_tech>
+
+<armor>
+83
+81
+81
+91
+81
+81
+</armor>
+
+<Nose Equipment>
+(B) Capital Missile Launcher (Barracuda)
+Capital Missile Launcher (Barracuda)
+Ammo Barracuda:100
+(B) ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+(B) ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAMS Ammo:240
+(B) Mass Driver (Heavy)
+Ammo Heavy Mass Driver:50
+</Nose Equipment>
+
+<Left Front Side Equipment>
+(B) Naval Laser 45
+Naval Laser 45
+(B) PPC
+PPC
+(B) ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAMS Ammo:300
+</Left Front Side Equipment>
+
+<Right Front Side Equipment>
+(B) Naval Laser 45
+Naval Laser 45
+(B) PPC
+PPC
+(B) ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAMS Ammo:300
+</Right Front Side Equipment>
+
+<Aft Equipment>
+(B) Capital Missile Launcher (Barracuda)
+Capital Missile Launcher (Barracuda)
+Ammo Barracuda:100
+(B) ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+(B) ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAMS Ammo:240
+</Aft Equipment>
+
+<Aft Left Side Equipment>
+(B) Naval Laser 45
+Naval Laser 45
+(B) PPC
+PPC
+(B) ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAMS Ammo:240
+</Aft Left Side Equipment>
+
+<Aft Right Side Equipment>
+(B) Naval Laser 45
+Naval Laser 45
+(B) PPC
+PPC
+(B) ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAMS Ammo:240
+</Aft Right Side Equipment>
+
+<Hull Equipment>
+</Hull Equipment>
+
+<Left Broadsides Equipment>
+(B) Naval Laser 55
+Naval Laser 55
+Naval Laser 55
+Naval Laser 55
+(B) Capital Missile Launcher (Barracuda)
+Capital Missile Launcher (Barracuda)
+Ammo Barracuda:100
+(B) ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+(B) ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAMS Ammo:240
+</Left Broadsides Equipment>
+
+<Right Broadsides Equipment>
+(B) Naval Laser 55
+Naval Laser 55
+Naval Laser 55
+Naval Laser 55
+(B) Capital Missile Launcher (Barracuda)
+Capital Missile Launcher (Barracuda)
+Ammo Barracuda:100
+(B) ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+(B) ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAMS Ammo:240
+</Right Broadsides Equipment>
+
+<structural_integrity>
+25
+</structural_integrity>
+
+<capabilities>
+The Newgrange-class YardShip, exemplified by the Erinyes, represented the pinnacle of mobile repair and fabrication. Equipped with an immense unpressurized repair bay, it could accommodate WarShips of up to 2.3 million tons, showcasing its exceptional repair capabilities. With substantial cargo storage and advanced on-board manufacturing facilities, the YardShip functioned as a self-sufficient factory in space, capable of fabricating small parts as required. Its crew complement of over seven thousand included skilled workers, who also enjoyed luxurious recreational facilities across the ship's grav decks. The YardShip further boasted a fleet of small craft for passenger transportation and housed a battalion's worth of WorkMechs for repair operations. However, the YardShip's armament remained light, emphasizing its reliance on escorts for protection.
+</capabilities>
+
+<overview>
+The Newgrange-class YardShip, renowned for its immense size and mobile repair capabilities, served as a monumental vessel during the era of the first Star League. With its monolithic structure and forward-mounted unpressurized repair bay, the YardShip excelled in providing extensive repair and refit support for WarShips. However, despite its impressive size, the Newgrange-class was lightly armed and relied on escorts for defense. Notably, records revealed the existence of a modified Newgrange-class YardShip named Erinyes, which underwent significant weaponization during the Jihad, utilizing a mass driver and drive-equipped asteroids for stealth orbital bombardments.
+</overview>
+
+<history>
+During the tumultuous Jihad, descriptions of a super-massive WarShip began circulating among intelligence agencies and spacefaring communities, sparking intrigue and speculation. These reports, combined with rumors that the Word of Blake had modified one of their Newgrange-class YardShips, gave rise to a mythical reputation, likening the vessel to the legendary Flying Dutchman. Blamed for various calamities, including the destruction of Arkab and alleged bio-engineered droughts on Wisconsin, the rumored ship remained an enigmatic presence, unverifiable but deeply ingrained in the collective imagination. The vessel's existence continued to grow in legend despite the concerted efforts of The Republic and its allied nations to dispel the rumors. In 3079, a breakthrough occurred when data decryption of Blakist archives unveiled a reference to a ship known only as Erinyes. Although further information on this mysterious ship remained elusive for the next six years, the legend surrounding it persisted, refusing to be fully suppressed. The destruction of Lopez in 3083 added fuel to the fire, intensifying the tales and making it nearly impossible to quell the rumors completely. Recent discoveries from decrypted archives have shed light on the modifications made to the Erinyes, adding credibility to several events attributed to the Word's ghostly vessel. The massive pressurized bay underwent a significant reconfiguration, featuring the installation of a spinal-mounted heavy mass driver as its primary modification. Additionally, the remaining space was converted to accommodate large asteroids, enabling their refitting with thrust engines. These modifications originated from the original concept of the Erinyes as a deep-space mining vessel capable of extracting rare ores or fitting asteroids with drives for transportation to a central processing location. However, during the Jihad, the Word repurposed the ship's capabilities, turning it into a formidable weapon. The Erinyes, armed with its mass driver and equipped with drive-equipped asteroids, participated in at least two confirmed stealth orbital bombardments, striking from great distances and then swiftly retreating with its jump drive, leaving the target worlds devastated. Believed to still be operational, the Erinyes continues its mysterious activities with an unknown complement of crew and equipment. Its presence, as well as any reports of ghost ships, sightings, or rumors of Word activity, are to be immediately forwarded to RAF intelligence, ensuring vigilant monitoring of this enigmatic and potentially dangerous vessel.
+</history>
+
+<manufacturer>
+Unknown
+</manufacturer>
+
+<primaryFactory>
+Refit
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<notes>
+No Stats available for this unit. Reduced Cargo Space and add Heavy Mass Driver.
+</notes>
+
+<use>
+Deep Space Mining
+</use>
+
+<length>
+2680 m
+</length>
+
+<height>
+3000 m Sail
+</height>
+
+<source>
+Jihad Hot Spots: 3076
+</source>
+
+<tonnage>
+2300000.0
+</tonnage>
+
+<kf_core>
+1
+</kf_core>
+
+<sail>
+1
+</sail>
+
+<grav_decks>
+250
+250
+250
+250
+250
+250
+250
+250
+</grav_decks>
+
+<designtype>
+1
+</designtype>
+
+<crew>
+975
+</crew>
+
+<officers>
+91
+</officers>
+
+<gunners>
+38
+</gunners>
+
+<passengers>
+7180
+</passengers>
+
+<marines>
+120
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<life_boat>
+600
+</life_boat>
+
+<escape_pod>
+600
+</escape_pod>
+

@@ -36,6 +36,10 @@ SL-15R
 IS Level 2
 </type>
 
+<role>
+Dogfighter
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -103,7 +107,7 @@ IS LB 10-X Cluster Ammo
 </Fuselage Equipment>
 
 <source>
-TRO 3039 - Succession Wars
+TRO: 3039
 </source>
 
 <tonnage>

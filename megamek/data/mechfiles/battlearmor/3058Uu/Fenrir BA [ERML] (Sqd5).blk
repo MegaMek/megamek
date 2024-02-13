@@ -32,6 +32,10 @@ Fenrir Battle Armor
 IS Level 2
 </type>
 
+<role>
+Scout
+</role>
+
 <motion_type>
 Leg
 </motion_type>
@@ -68,7 +72,7 @@ ISBAERMediumLaser:TU
 </Trooper 5 Equipment>
 
 <source>
-TRO 3058U - Civil War
+TRO: 3058 Upgrade
 </source>
 
 <chassis>

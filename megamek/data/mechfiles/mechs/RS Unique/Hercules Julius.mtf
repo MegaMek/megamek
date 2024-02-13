@@ -1,12 +1,16 @@
-Version:1.1
-Hercules
-HRC-LS-9000 (Julius)
+chassis:Hercules
+model:HRC-LS-9000 (Julius)
 mul id:1483
+source:Record Sheets: Unique Mechs
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3065
 Rules Level:2
+role:Skirmisher
+
+quirk:difficult_maintain
+
 
 Mass:70
 Engine:350 XL Engine

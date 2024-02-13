@@ -36,6 +36,10 @@ LC-100
 IS Level 2
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -102,7 +106,7 @@ cargobay:6.0:1:4
 </structural_integrity>
 
 <source>
-HB: House Steiner
+Handbook: House Steiner
 </source>
 
 <tonnage>

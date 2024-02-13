@@ -1,13 +1,13 @@
-Version:1.0
-Crossbow
-W
+chassis:Crossbow
+model:W
 mul id:8238
 
 Config:Biped Omnimech
 techbase:Clan
 era:3128
-source:Rec Guide:ilClan #17 - Late Republic
+source:Rec Guide:ilClan #17
 rules level:2
+role:Sniper
 
 mass:65
 engine:325 Fusion (Clan) Engine(IS)

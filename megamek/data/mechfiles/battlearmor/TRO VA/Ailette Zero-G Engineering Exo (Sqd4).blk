@@ -32,6 +32,10 @@ Ailette Zero-G Engineering Exoskeleton
 IS Level 2
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Leg
 </motion_type>
@@ -68,7 +72,7 @@ ISBAExtendedLifeSupport:Body
 </Trooper 4 Equipment>
 
 <source>
-TRO Vehicle Annex (r) - Clan Invasion
+TRO: Vehicle Annex Revised
 </source>
 
 <chassis>

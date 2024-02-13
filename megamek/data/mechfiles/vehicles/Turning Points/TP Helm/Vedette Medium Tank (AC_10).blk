@@ -36,6 +36,10 @@ Vedette Medium Tank
 IS Level 1
 </type>
 
+<role>
+Brawler
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -82,7 +86,7 @@ Autocannon/10
 </Turret Equipment>
 
 <source>
-TP: Helm - Succession Wars
+Turning Points: Helm
 </source>
 
 <tonnage>

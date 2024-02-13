@@ -58,6 +58,10 @@ IS BA Advanced:Body
 IS Level 2
 </type>
 
+<role>
+Juggernaut
+</role>
+
 <year>
 3072
 </year>
@@ -67,7 +71,7 @@ Leg
 </motion_type>
 
 <source>
-TRO 3075 - Jihad
+TRO: 3075
 </source>
 
 <armor_type>
@@ -112,5 +116,5 @@ TARGETING:Unknown
 </systemManufacturers>
 
 <notes>
-The TRO3075 entry lists a 3-slot configurable turret with a weight of 40 kg. The correct weight of 80 kg would exceed the maximum 2000 kg.
+The TRO: 3075 entry lists a 3-slot configurable turret with a weight of 40 kg. The correct weight of 80 kg would exceed the maximum 2000 kg.
 </notes>

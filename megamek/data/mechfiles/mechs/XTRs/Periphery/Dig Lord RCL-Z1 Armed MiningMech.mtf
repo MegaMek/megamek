@@ -1,13 +1,20 @@
-Version:1.1
-Dig Lord
-RCL-Z1 Armed MiningMech
+chassis:Dig Lord
+model:RCL-Z1 Armed MiningMech
 mul id:5565
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3081
-Source:XTRO Periphery - Jihad
+Source:XTR: Periphery
 Rules Level:4
+role:Ambusher
+
+
+
+quirk:pro_actuator
+quirk:prototype
+weaponquirk:jettison_capable:RA:7:Medium Vibroblade
+
 
 Mass:65
 Engine:195 Fuel-Cell Engine

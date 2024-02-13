@@ -36,6 +36,10 @@ Seahorse Cargo Sub
 IS Level 2
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Submarine
 </motion_type>
@@ -92,7 +96,7 @@ LRT 10
 </structural_tech_rating>
 
 <source>
-TRO VAr - Star League
+TRO: Vehicle Annex (Revised)
 </source>
 
 <tonnage>

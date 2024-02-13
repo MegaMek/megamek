@@ -1,13 +1,20 @@
-Version:1.0
-Jackal
-JA-KL-1532
+chassis:Jackal
+model:JA-KL-1532
 mul id:1653
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3052
-Source:TRO 3055 - Clan Invasion
+Source:TRO: 3055
 Rules Level:2
+role:Striker
+
+
+
+
+quirk:weak_legs
+weaponquirk:imp_cooling:RT:3:ISERPPC
+
 
 Mass:30
 Engine:210 XL Engine

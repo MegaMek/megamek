@@ -36,6 +36,10 @@ Demon Tank
 IS Level 2
 </type>
 
+<role>
+Brawler
+</role>
+
 <motion_type>
 Wheeled
 </motion_type>
@@ -93,7 +97,7 @@ ISERMediumLaser
 </Rear Equipment>
 
 <source>
-TRO 3050 - Jihad
+TRO: 3050
 </source>
 
 <tonnage>

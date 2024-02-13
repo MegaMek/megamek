@@ -1,13 +1,20 @@
-Version:1.0
-Beowulf
-BEO-14
+chassis:Beowulf
+model:BEO-14
 mul id:328
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3075
-Source:TRO 3060
+Source:TRO: 3060
 Rules Level:3
+role:Skirmisher
+
+
+
+quirk:command_mech
+quirk:ext_twist
+quirk:exp_actuator
+
 
 Mass:45
 Engine:270 XL Engine

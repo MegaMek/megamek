@@ -1,13 +1,18 @@
-Version:1.0
-Axman
-AXM-4D
+chassis:Axman
+model:AXM-4D
 mul id:188
 
 Config:Biped
 techbase:Inner Sphere
 era:3071
-source:TRO 3050 - Jihad
+source:TRO: 3050
 rules level:2
+role:Brawler
+
+
+
+quirk:pro_actuator
+
 
 mass:65
 engine:260 XL Engine(IS)

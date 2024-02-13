@@ -41,6 +41,10 @@ ISLRM5 Ammo
 <type>
 IS Level 1
 </type>
+
+<role>
+Missile Boat
+</role>
 <year>
 2801
 </year>
@@ -56,3 +60,7 @@ IS Level 1
 <motion_type>
 Wheeled
 </motion_type>
+
+<source>
+Historical: Operation Klondike
+</source>

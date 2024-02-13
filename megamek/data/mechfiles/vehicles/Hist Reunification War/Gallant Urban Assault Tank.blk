@@ -32,6 +32,10 @@ Gallant Urban Assault Tank
 IS Level 2
 </type>
 
+<role>
+Juggernaut
+</role>
+
 <motion_type>
 Wheeled
 </motion_type>
@@ -84,7 +88,7 @@ SRM 2
 </Turret Equipment>
 
 <source>
-Hist:Reunification War
+Historical: Reunification War
 </source>
 
 <tonnage>

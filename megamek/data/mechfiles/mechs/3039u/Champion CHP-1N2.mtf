@@ -1,13 +1,18 @@
-Version:1.0
-Champion
-CHP-1N2
+chassis:Champion
+model:CHP-1N2
 mul id:549
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2667
-Source:TRO 3039 - Star League
+Source:TRO: 3039
 Rules Level:2
+role:Skirmisher
+
+
+
+quirk:no_arms
+
 
 Mass:60
 Engine:300 Fusion Engine(IS)

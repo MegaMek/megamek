@@ -1,13 +1,16 @@
-Version:1.0
-Cougar
-H
+chassis:Cougar
+model:H
 mul id:711
 
 Config:Biped Omnimech
 TechBase:Clan
 Era:3061
-source:Rec Guide:ilClan #19 - Civil War
+source:Rec Guide:ilClan #19
 Rules Level:2
+role:Brawler
+
+quirk:ubiquitous_clan
+
 
 Mass:35
 Engine:175 XL (Clan) Engine(IS)

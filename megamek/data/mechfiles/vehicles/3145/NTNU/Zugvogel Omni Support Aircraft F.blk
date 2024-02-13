@@ -36,6 +36,10 @@ F
 Mixed (IS Chassis) Advanced
 </type>
 
+<role>
+Fire Support
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -141,7 +145,7 @@ Advanced Fire Control
 </structural_tech_rating>
 
 <source>
-RS 3145 NT NU
+Record Sheets: 3145 New Tech New Upgrades
 </source>
 
 <tonnage>

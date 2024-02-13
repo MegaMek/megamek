@@ -32,6 +32,10 @@ Eldingar Hover Sled
 Clan Level 3
 </type>
 
+<role>
+Striker
+</role>
+
 <motion_type>
 Hover
 </motion_type>
@@ -90,7 +94,7 @@ CLLBXAC2
 </Turret Equipment>
 
 <source>
-RS 3145 NTNU - Late Republic
+Record Sheets: 3145 New Tech New Upgrades
 </source>
 
 <tonnage>

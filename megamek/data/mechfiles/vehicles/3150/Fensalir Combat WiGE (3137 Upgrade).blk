@@ -36,6 +36,10 @@ Fensalir Combat WiGE
 IS Level 3
 </type>
 
+<role>
+Sniper
+</role>
+
 <motion_type>
 WiGE
 </motion_type>
@@ -132,5 +136,5 @@ TARGETING:Unknown
 </systemManufacturers>
 
 <source>
-TRO 3150 - Dark Age
+TRO: 3150
 </source>

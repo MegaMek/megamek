@@ -32,6 +32,10 @@ Indra Infantry Transport
 Clan Level 2
 </type>
 
+<role>
+Sniper
+</role>
+
 <motion_type>
 Wheeled
 </motion_type>
@@ -90,7 +94,7 @@ CLMG
 </Turret Equipment>
 
 <source>
-Succession Wars
+TRO: 3060
 </source>
 
 <tonnage>

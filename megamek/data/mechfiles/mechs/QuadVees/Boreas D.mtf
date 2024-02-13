@@ -1,13 +1,13 @@
-Version:1.0
-Boreas
-D
+chassis:Boreas
+model:D
 mul id:7355
 
 Config:QuadVee Omnimech
 TechBase:Clan
 Era:3132
-Source:XTRO Republic II - Late Republic
+Source:XTR: Republic II
 Rules Level:3
+role:Skirmisher
 
 Mass:60
 Engine:240 Fusion (Clan) Engine(IS)

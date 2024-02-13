@@ -36,6 +36,10 @@ Sea Fox Amphibious Armor
 Mixed (IS Chassis) Experimental
 </type>
 
+<role>
+Ambusher
+</role>
+
 <motion_type>
 UMU
 </motion_type>
@@ -74,7 +78,7 @@ IS BA Stealth (Basic):Body
 </Squad Equipment>
 
 <source>
-TRO 3145 Federated Suns - Late Republic
+TRO: 3145 Federated Suns
 </source>
 
 <chassis>
@@ -129,3 +133,11 @@ JUMPJET:Unknown
 COMMUNICATIONS:Unknown
 TARGETING:Unknown
 </systemManufacturers>
+
+<quirks>
+non_standard
+</quirks>
+
+<weaponQuirks>
+accurate:Squad:2:ISBALightMachineGun
+</weaponQuirks>

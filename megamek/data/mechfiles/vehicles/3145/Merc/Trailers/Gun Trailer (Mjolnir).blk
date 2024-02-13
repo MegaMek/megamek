@@ -36,6 +36,10 @@ Gun Trailer
 IS Level 2
 </type>
 
+<role>
+Sniper
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -89,7 +93,7 @@ ISVehicularGrenadeLauncher
 </Rear Equipment>
 
 <source>
-TRO 3145 Mercenaries - Late Republic
+TRO: 3145 Mercenaries
 </source>
 
 <tonnage>

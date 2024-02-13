@@ -32,6 +32,10 @@ Oni Battle Armor
 Mixed (IS Chassis)
 </type>
 
+<role>
+Ambusher
+</role>
+
 <motion_type>
 Jump
 </motion_type>
@@ -90,7 +94,7 @@ BA-Compact Narc Ammo:RA:Shots4#
 </Trooper 5 Equipment>
 
 <source>
-TRO 3145 Draconis Combine - Dark Ages
+TRO: 3145 Draconis Combine
 </source>
 
 <chassis>
@@ -145,3 +149,9 @@ JUMPJET:Unknown
 COMMUNICATIONS:Unknown
 TARGETING:Unknown
 </systemManufacturers>
+
+<quirks>
+fast_reload
+non_standard
+</quirks>
+

@@ -1,13 +1,18 @@
-Version:1.0
-UrbanMech IIC
-2
+chassis:UrbanMech IIC
+model:2
 mul id:3362
 
 Config:Biped
 TechBase:Clan
 Era:3070
-Source:TRO 3060
+Source:TRO: 3060
 Rules Level:2
+role:Sniper
+
+quirk:ext_twist
+quirk:low_profile
+quirk:no_arms
+
 
 Mass:30
 Engine:90 Fusion (Clan) Engine

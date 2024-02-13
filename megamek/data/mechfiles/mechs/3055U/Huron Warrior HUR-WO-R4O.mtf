@@ -1,13 +1,18 @@
-Version:1.0
-Huron Warrior
-HUR-WO-R4O
+chassis:Huron Warrior
+model:HUR-WO-R4O
 mul id:1583
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3065
-Source:TRO 3055 - Civil War
+Source:TRO: 3055
 Rules Level:2
+role:Skirmisher
+
+
+
+quirk:imp_sensors
+
 
 Mass:50
 Engine:250 XL Engine

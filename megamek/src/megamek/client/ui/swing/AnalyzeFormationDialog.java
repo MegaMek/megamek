@@ -9,7 +9,6 @@ import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.EntityWeightClass;
 import megamek.common.MechSummary;
 import megamek.common.UnitRole;
-import megamek.common.UnitRoleHandler;
 
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
@@ -321,7 +320,7 @@ public class AnalyzeFormationDialog extends JDialog {
                     if (null == mr) {
                         return UnitRole.UNDETERMINED.toString();
                     } else {
-                        return UnitRoleHandler.getRoleFor(mr.getKey()).toString();
+                        return mr.getMechSummary().getRole().toString();
                     }
                 default:
                     Function<MechSummary,?> metric = formationType.getReportMetric(colNames.get(columnIndex));

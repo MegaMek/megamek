@@ -1,13 +1,20 @@
-Version:1.0
-Flea
-FLE-17
+chassis:Flea
+model:FLE-17
 mul id:1137
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3049
-Source:TRO 3050 - Succession Wars
+Source:TRO: 3050
 Rules Level:2
+role:Striker
+
+
+
+quirk:easy_maintain
+quirk:imp_life_support
+quirk:no_arms
+
 
 Mass:20
 Engine:120 Fusion Engine

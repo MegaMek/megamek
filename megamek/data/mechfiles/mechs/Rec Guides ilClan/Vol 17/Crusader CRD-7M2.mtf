@@ -1,13 +1,21 @@
-Version:1.1
-Crusader
-CRD-7M2
+chassis:Crusader
+model:CRD-7M2
 mul id:8228
 
 Config:Biped
 techbase:Inner Sphere
 era:3088
-source:Rec Guide:ilClan #17 - Early Republic
+source:Rec Guide:ilClan #17
 rules level:2
+role:Brawler
+
+
+
+quirk:easy_maintain
+quirk:rugged_1
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+
 
 mass:65
 engine:260 XL Engine(IS)

@@ -1,13 +1,18 @@
-Version:1.1
-Fafnir
-FNR-5WB
+chassis:Fafnir
+model:FNR-5WB
 mul id:5719
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3073
 Rules Level:2
-source:3067 Unabridged
+role:Juggernaut
+source:Record Sheets: 3067 Unabridged
+
+
+
+quirk:no_arms
+
 
 Mass:100
 Engine:300 Fusion Engine

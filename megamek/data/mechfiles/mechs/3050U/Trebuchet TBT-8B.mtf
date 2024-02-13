@@ -1,13 +1,20 @@
-Version:1.0
-Trebuchet
-TBT-8B
+chassis:Trebuchet
+model:TBT-8B
 mul id:3301
 
 Config:Biped
 techbase:Inner Sphere
 era:3071
-source:TRO 3050 - Jihad
+source:TRO: 3050
 rules level:2
+role:Missile Boat
+
+
+
+quirk:easy_maintain
+weaponquirk:fast_reload:RT:6:ISMML5
+weaponquirk:fast_reload:RT:9:ISMML5
+
 
 mass:50
 engine:300 XL Engine(IS)

@@ -1,13 +1,17 @@
-Version:1.0
-Gladiator (Executioner)
-F
+chassis:Gladiator
+clanname:Executioner
+model:F
 mul id:6842
 
 Config:Biped Omnimech
 techbase:Clan
 era:3089
-source:Rec Guide:ilClan #9 - Early Republic
+source:Rec Guide:ilClan #9
 rules level:2
+role:Sniper
+
+quirk:distracting
+
 
 mass:95
 engine:380 XL (Clan) Engine(IS)

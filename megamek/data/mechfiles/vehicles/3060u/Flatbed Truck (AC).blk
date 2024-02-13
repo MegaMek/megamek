@@ -36,6 +36,10 @@ Flatbed Truck
 IS Level 4
 </type>
 
+<role>
+Scout
+</role>
+
 <motion_type>
 Wheeled
 </motion_type>
@@ -80,7 +84,7 @@ Unit is based on fluff write up only hence Level 5 tech Level
 </history>
 
 <source>
-Star League
+TRO: 3060
 </source>
 
 <tonnage>

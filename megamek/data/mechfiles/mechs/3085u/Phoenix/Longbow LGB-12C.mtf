@@ -1,13 +1,21 @@
-Version:1.0
-Longbow
-LGB-12C
+chassis:Longbow
+model:LGB-12C
 mul id:1931
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3061
-Source:Civil War
+source:TRO: 3085u 
 Rules Level:2
+role:Missile Boat
+
+
+
+quirk:anti_air
+quirk:searchlight
+quirk:ubiquitous_is
+quirk:no_arms
+
 
 Mass:85
 Engine:255 XL Engine

@@ -36,6 +36,10 @@ Motuo Che Shang No.2
 IS Level 2
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Wheeled
 </motion_type>
@@ -85,7 +89,7 @@ MonocycleChassisMod
 </structural_tech_rating>
 
 <source>
-TRO VAr - Age of War
+TRO: Vehicle Annex (Revised)
 </source>
 
 <tonnage>

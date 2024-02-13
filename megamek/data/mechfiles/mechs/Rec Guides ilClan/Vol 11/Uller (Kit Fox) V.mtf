@@ -1,13 +1,17 @@
-Version:1.0
-Uller (Kit Fox)
-V
+chassis:Uller
+clanname:Kit Fox
+model:V
 mul id:7746
 
 Config:Biped Omnimech
 techbase:Clan
 era:2921
-source:Rec Guide:ilClan #11 - Early Succession War
+source:Rec Guide:ilClan #11
 rules level:3
+role:Missile Boat
+
+quirk:low_profile
+
 
 mass:30
 engine:180 XL (Clan) Engine(IS)

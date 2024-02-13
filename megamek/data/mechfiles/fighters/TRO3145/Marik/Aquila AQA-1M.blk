@@ -36,6 +36,10 @@ AQA-1M
 IS Level 2
 </type>
 
+<role>
+Fast Dogfighter
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -108,9 +112,14 @@ IS Light Gauss Ammo
 </Fuselage Equipment>
 
 <source>
-TRO 3145 Free Worlds League - Late Republic
+TRO: 3145 Free Worlds League
 </source>
 
 <tonnage>
 55.0
 </tonnage>
+
+<weaponQuirks>
+accurate:NOS:0:ISLightGaussRifle
+accurate:NOS:1:ISLightGaussRifle
+</weaponQuirks>

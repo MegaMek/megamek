@@ -1,13 +1,27 @@
-Version:1.1
-Blade
-BLD-XR
+chassis:Blade
+model:BLD-XR
 mul id:7345
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3125
-Source:XTRO Republic II - Late Republic
+Source:XTR: Republic II
 Rules Level:3
+role:Sniper
+
+
+
+quirk:easy_maintain
+quirk:pro_actuator
+weaponquirk:mod_weapons:RA:3:Light PPC
+weaponquirk:exposed_linkage:RA:5:Light Auto Cannon/2
+weaponquirk:mod_weapons:RA:5:Light Auto Cannon/2
+weaponquirk:static_feed:RA:5:Light Auto Cannon/2
+weaponquirk:mod_weapons:LA:3:Light PPC
+weaponquirk:exposed_linkage:LA:5:Light Auto Cannon/2
+weaponquirk:mod_weapons:LA:5:Light Auto Cannon/2
+weaponquirk:static_feed:LA:5:Light Auto Cannon/2
+
 
 Mass:35
 Engine:245 XL Engine(IS)

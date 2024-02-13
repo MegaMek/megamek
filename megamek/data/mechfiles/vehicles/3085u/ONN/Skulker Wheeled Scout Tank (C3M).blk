@@ -36,6 +36,10 @@ Skulker Wheeled Scout Tank
 IS Level 2
 </type>
 
+<role>
+Scout
+</role>
+
 <motion_type>
 Wheeled
 </motion_type>
@@ -114,7 +118,7 @@ TARGETING:Targeting System 2.3
 </systemManufacturers>
 
 <source>
-TRO 3085 - Jihad
+TRO: 3085
 </source>
 
 <tonnage>

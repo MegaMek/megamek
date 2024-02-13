@@ -32,6 +32,10 @@ Aerie PA(L)
 Clan Level 2
 </type>
 
+<role>
+Ambusher
+</role>
+
 <motion_type>
 Jump
 </motion_type>
@@ -80,7 +84,7 @@ CLBAExtendedLifeSupport:Body
 </Trooper 5 Equipment>
 
 <source>
-TRO 3075 - Civil War
+TRO: 3075
 </source>
 
 <chassis>

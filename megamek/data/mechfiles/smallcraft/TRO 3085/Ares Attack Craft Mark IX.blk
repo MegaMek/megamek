@@ -36,6 +36,10 @@ Mark IX
 IS Level 2
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -110,7 +114,7 @@ BeagleActiveProbe
 </structural_integrity>
 
 <source>
-TRO 3085 - Jihad
+TRO: 3085
 </source>
 
 <tonnage>

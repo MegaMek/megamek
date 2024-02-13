@@ -48,6 +48,11 @@ public class PrincessTest {
     private Princess mockPrincess;
     private BasicPathRanker mockPathRanker;
 
+    @BeforeAll
+    public static void beforeAll() {
+        EquipmentType.initializeTypes();
+    }
+
     @BeforeEach
     public void beforeEach() {
         mockPathRanker = mock(BasicPathRanker.class);
@@ -95,8 +100,8 @@ public class PrincessTest {
 
         // Test a 6/9/6 regular mech.
         Entity mockMech = mock(BipedMech.class);
-        when(mockMech.getRunMP(anyBoolean(), anyBoolean(), anyBoolean())).thenReturn(9);
-        when(mockMech.getJumpMP(anyBoolean())).thenReturn(6);
+        when(mockMech.getRunMP(MPCalculationSetting.STANDARD)).thenReturn(9);
+        when(mockMech.getJumpMP(MPCalculationSetting.STANDARD)).thenReturn(6);
         when(mockMech.isProne()).thenReturn(false);
         when(mockMech.isCommander()).thenReturn(false);
         when(mockMech.isMilitary()).thenReturn(true);
@@ -150,8 +155,8 @@ public class PrincessTest {
 
         // Test a BA unit.
         Entity mockBA = mock(BattleArmor.class);
-        when(mockBA.getRunMP(anyBoolean(), anyBoolean(), anyBoolean())).thenReturn(1);
-        when(mockBA.getJumpMP(anyBoolean())).thenReturn(3);
+        when(mockBA.getRunMP()).thenReturn(1);
+        when(mockBA.getJumpMP()).thenReturn(3);
         when(mockBA.isProne()).thenReturn(false);
         when(mockBA.isCommander()).thenReturn(false);
         when(mockBA.isMilitary()).thenReturn(true);
@@ -164,8 +169,8 @@ public class PrincessTest {
 
         // Test an Inf unit.
         Entity mockInf = mock(Infantry.class);
-        when(mockInf.getRunMP(anyBoolean(), anyBoolean(), anyBoolean())).thenReturn(1);
-        when(mockInf.getJumpMP(anyBoolean())).thenReturn(0);
+        when(mockInf.getRunMP(MPCalculationSetting.STANDARD)).thenReturn(1);
+        when(mockInf.getJumpMP(MPCalculationSetting.STANDARD)).thenReturn(0);
         when(mockInf.isProne()).thenReturn(false);
         when(mockInf.isCommander()).thenReturn(false);
         when(mockInf.isMilitary()).thenReturn(true);
@@ -178,8 +183,8 @@ public class PrincessTest {
 
         // Test a Tank.
         Entity mockTank = mock(Tank.class);
-        when(mockTank.getRunMP(anyBoolean(), anyBoolean(), anyBoolean())).thenReturn(6);
-        when(mockTank.getJumpMP(anyBoolean())).thenReturn(0);
+        when(mockTank.getRunMP(MPCalculationSetting.STANDARD)).thenReturn(6);
+        when(mockTank.getJumpMP(MPCalculationSetting.STANDARD)).thenReturn(0);
         when(mockTank.isProne()).thenReturn(false);
         when(mockTank.isCommander()).thenReturn(false);
         when(mockTank.isMilitary()).thenReturn(true);

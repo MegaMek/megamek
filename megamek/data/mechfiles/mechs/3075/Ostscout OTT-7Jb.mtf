@@ -1,13 +1,21 @@
-Version:1.0
-Ostscout
-OTT-7Jb
+chassis:Ostscout
+model:OTT-7Jb
 mul id:2367
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2600
-Source:TRO 3075
+source:TRO: 3075
 Rules Level:2
+role:Scout
+
+
+
+quirk:imp_com
+quirk:imp_sensors
+quirk:low_profile
+quirk:rugged_1
+
 
 Mass:35
 Engine:280 Fusion Engine

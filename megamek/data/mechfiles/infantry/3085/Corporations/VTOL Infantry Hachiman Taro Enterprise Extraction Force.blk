@@ -32,6 +32,10 @@ Hachiman Taro Enterprise Extraction Force
 IS Level 4
 </type>
 
+<role>
+Striker
+</role>
+
 <motion_type>
 VTOL
 </motion_type>
@@ -40,7 +44,7 @@ VTOL
 </Field Guns Equipment>
 
 <source>
-TRO 3085
+TRO: 3085
 </source>
 
 <squad_size>
@@ -60,5 +64,5 @@ MyomerVest
 </armorKit>
 
 <era>
-TRO 3085 - Late Succession War - Renaissance
+TRO: 3085
 </era>

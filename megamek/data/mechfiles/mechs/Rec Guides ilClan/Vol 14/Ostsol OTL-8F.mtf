@@ -1,13 +1,19 @@
-Version:1.1
-Ostsol
-OTL-8F
+chassis:Ostsol
+model:OTL-8F
 mul id:8173
 
 Config:Biped
 techbase:Inner Sphere
 era:3145
-source:Rec Guide:ilClan #14 - Dark Age
+source:Rec Guide:ilClan #14
 rules level:2
+role:Skirmisher
+
+
+
+quirk:imp_sensors
+quirk:low_profile
+
 
 mass:60
 engine:300 XL Engine(IS)

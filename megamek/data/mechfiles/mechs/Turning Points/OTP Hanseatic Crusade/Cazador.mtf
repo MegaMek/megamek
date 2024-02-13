@@ -1,13 +1,13 @@
-Version:1.0
-Cazador
-
+chassis:Cazador
+model:
 mul id:7881
 
 Config:Biped
 techbase:Clan
 era:3145
-source:Dark Age
+source:Operational Turning Points: Hanseatic Crusade
 rules level:3
+role:Striker
 
 mass:35
 engine:175 Fusion (Clan) Engine(IS)

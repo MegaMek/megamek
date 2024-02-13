@@ -1,13 +1,21 @@
-Version:1.0
-Longbow
-LGB-13NAIS
+chassis:Longbow
+model:LGB-13NAIS
 mul id:1934
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3069
-Source:Jihad
+source:TRO: 3085
 Rules Level:2
+role:Juggernaut
+
+
+
+quirk:anti_air
+quirk:searchlight
+quirk:ubiquitous_is
+quirk:no_arms
+
 
 Mass:85
 Engine:255 Fusion Engine(IS)

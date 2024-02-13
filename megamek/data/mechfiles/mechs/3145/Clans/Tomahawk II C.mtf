@@ -1,13 +1,18 @@
-Version:1.0
-Tomahawk II
-C
+chassis:Tomahawk II
+model:C
 mul id:6306
 
 Config:Biped Omnimech
 TechBase:Clan
 Era:3088
-Source:TRO 3145 The Clans - Early Republic
+Source:TRO: 3145 The Clans
 Rules Level:4
+role:Missile Boat
+
+
+
+quirk:difficult_eject
+
 
 Mass:100
 Engine:300 XL (Clan) Engine(IS)
@@ -161,7 +166,7 @@ capabilities:The Tomahawk II is designed around the use of a DSAM Endo 10-Compos
 
 deployment:Intended for the fire support role, the C Configuration carries a number of missile batteries and Pulse Laser technologies to play its role, while also providing a means of self-defense. The C Configuration sports six LRM-15 Launchers - one in each arm and two allocated to each side torso. The 'Mech's missile ammunition is found in the arms, with five tons worth of LRM munitions protected by CASE II. Backing up the 'Mech at closer ranges are three Large Pulse Lasers, each mounted in each of the 'Mech's torsos. Six additional Double Heat Sinks are provided to help manage the tremendous heat levels generated.
 
-history:The Tomahawk II was based on early prototypes developed during the Clan Invasion era, which were produced in limited numbers. The Tomahawk II was originally produced at the Wolves' W-7 Facilities on Weingarten until the late 3130s when the Clan undertook its migration to then exFree Worlds Leagues space. Production of the 'Mech would resume on Keystone at Earthwerks-FWL, Incorporated. One of the Tomahawk II's most notable uses was during Clan Wolf's invasion of Tharkad in 3143. Beta Galaxy's Galaxy Commander Alaric Ward[5] utilized a binary of Tomahawk IIs in order to demoralize Tharkard's Lyran defenders. He deployed this elite Binary of Tomahawk IIs to defeat elements of the 2nd Royals at Nagelring in July.
+history:The Tomahawk II was based on early prototypes developed during the Clan Invasion era, which were produced in limited numbers. The Tomahawk II was originally produced at the Wolves' W-7 Facilities on Weingarten until the late 3130s when the Clan undertook its migration to then exFree Worlds League space. Production of the 'Mech would resume on Keystone at Earthwerks-FWL, Incorporated. One of the Tomahawk II's most notable uses was during Clan Wolf's invasion of Tharkad in 3143. Beta Galaxy's Galaxy Commander Alaric Ward[5] utilized a binary of Tomahawk IIs in order to demoralize Tharkard's Lyran defenders. He deployed this elite Binary of Tomahawk IIs to defeat elements of the 2nd Royals at Nagelring in July.
 
 manufacturer:Earthwerks-FWL, Inc.
 primaryfactory:Keystone

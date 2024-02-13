@@ -32,6 +32,10 @@ Thor Artillery Vehicle
 IS Level 3
 </type>
 
+<role>
+Missile Boat
+</role>
+
 <motion_type>
 Wheeled
 </motion_type>
@@ -80,7 +84,7 @@ ISThumper
 </Rear Equipment>
 
 <source>
-TRO 3050 - Civil War
+TRO: 3050
 </source>
 
 <tonnage>

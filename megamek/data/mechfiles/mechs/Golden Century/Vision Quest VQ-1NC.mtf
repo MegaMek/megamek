@@ -1,13 +1,13 @@
-Version:1.1
-Vision Quest
-VQ-1NC
+chassis:Vision Quest
+model:VQ-1NC
 mul id:5355
 
 Config:Biped
 techbase:Mixed (IS Chassis)
 era:2828
-source:Succession Wars
+source:TRO: Golden Century
 rules level:4
+role:Sniper
 
 mass:60
 engine:300 XL Engine(IS)

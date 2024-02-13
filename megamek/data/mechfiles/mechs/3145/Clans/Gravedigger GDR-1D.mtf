@@ -1,13 +1,19 @@
-Version:1.0
-Gravedigger
-GDR-1D
+chassis:Gravedigger
+model:GDR-1D
 mul id:6264
 
 Config:Biped
 TechBase:Mixed (IS Chassis)
 Era:3105
-Source:TRO 3145 The Clans - Late Republic
+Source:TRO: 3145 The Clans
 Rules Level:3
+role:Sniper
+
+
+
+quirk:pro_actuator
+weaponquirk:exposed_linkage:LA:5:CLERPPC
+
 
 Mass:50
 Engine:200 XL Engine(IS)

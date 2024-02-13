@@ -32,6 +32,10 @@ Ferret Light Scout VTOL
 IS Level 1
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 VTOL
 </motion_type>
@@ -75,7 +79,7 @@ cargobay:2.5:1
 </Rotor Equipment>
 
 <source>
-TRO 3039 - Succession War
+TRO: 3039
 </source>
 
 <tonnage>

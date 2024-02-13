@@ -1,0 +1,338 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Warship
+</UnitType>
+
+<Name>
+Narukami Destroyer
+</Name>
+
+<Model>
+(Block I)
+</Model>
+
+<mul id:>
+6990
+</mul id:>
+
+<year>
+2380
+</year>
+
+<originalBuildYear>
+2380
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<role>
+None
+</role>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+smallcraftbay:12.0:6:1
+cargobay:53483.0:1:2
+dockingcollar
+dockingcollar
+dockingcollar
+1stclassquarters:400.0:0
+crewquarters:1435.0:0
+</transporters>
+
+<SafeThrust>
+5
+</SafeThrust>
+
+<heatsinks>
+1300
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+10000
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+41
+</armor_type>
+
+<armor_tech>
+5
+</armor_tech>
+
+<armor>
+51
+51
+51
+47
+48
+48
+</armor>
+
+<Nose Equipment>
+(B) Naval PPC (Heavy)
+Naval PPC (Heavy)
+(B) Large Laser
+Large Laser
+Large Laser
+Large Laser
+Large Laser
+</Nose Equipment>
+
+<Left Front Side Equipment>
+(B) Naval PPC (Medium)
+Naval PPC (Medium)
+(B) Naval Autocannon (NAC/20)
+Naval Autocannon (NAC/20)
+Naval Autocannon (NAC/30)
+Ammo NAC/20:100
+Ammo NAC/30:50
+(B) Large Laser
+Large Laser
+Large Laser
+Large Laser
+Large Laser
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+</Left Front Side Equipment>
+
+<Right Front Side Equipment>
+(B) Naval PPC (Medium)
+Naval PPC (Medium)
+(B) Naval Autocannon (NAC/20)
+Naval Autocannon (NAC/20)
+Naval Autocannon (NAC/30)
+Ammo NAC/20:100
+Ammo NAC/30:50
+(B) Large Laser
+Large Laser
+Large Laser
+Large Laser
+Large Laser
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+</Right Front Side Equipment>
+
+<Aft Equipment>
+(B) Large Laser
+Large Laser
+Large Laser
+Large Laser
+Large Laser
+Large Laser
+Large Laser
+Large Laser
+Large Laser
+Large Laser
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+</Aft Equipment>
+
+<Aft Left Side Equipment>
+(B) Naval Autocannon (NAC/20)
+Naval Autocannon (NAC/20)
+Naval Autocannon (NAC/30)
+Ammo NAC/20:100
+Ammo NAC/30:50
+(B) Large Laser
+Large Laser
+Large Laser
+Large Laser
+Large Laser
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+</Aft Left Side Equipment>
+
+<Aft Right Side Equipment>
+(B) Naval Autocannon (NAC/20)
+Naval Autocannon (NAC/20)
+Naval Autocannon (NAC/30)
+Ammo NAC/20:100
+Ammo NAC/30:50
+(B) Large Laser
+Large Laser
+Large Laser
+Large Laser
+Large Laser
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+</Aft Right Side Equipment>
+
+<Hull Equipment>
+</Hull Equipment>
+
+<Left Broadsides Equipment>
+(B) Naval Autocannon (NAC/35)
+Naval Autocannon (NAC/35)
+Ammo NAC/35:100
+(B) Large Laser
+Large Laser
+Large Laser
+Large Laser
+Large Laser
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+</Left Broadsides Equipment>
+
+<Right Broadsides Equipment>
+(B) Naval Autocannon (NAC/35)
+Naval Autocannon (NAC/35)
+Ammo NAC/35:100
+(B) Large Laser
+Large Laser
+Large Laser
+Large Laser
+Large Laser
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+</Right Broadsides Equipment>
+
+<structural_integrity>
+50
+</structural_integrity>
+
+<capabilities>
+The Narukami-class WarShip, designed by the Draconis Combine, was renowned for its effectiveness and power. Compared to contemporary WarShips like the Lola-class, the Narukami boasted higher thrust, greater firepower, and enhanced protection. However, the class was not without its flaws. The powerful maneuvering drive could push the light hull beyond its structural limits, leading to stress fractures and engine failures. Additionally, the Narukami suffered from limited cargo capacity, impacting its ability to stay on station for extended periods. Despite these challenges, the Narukami remained a formidable force in battle and was considered one of the most effective WarShips ever built.
+</capabilities>
+
+<overview>
+The Narukami-class WarShip was developed by the Draconis Combine, known for its small and powerful ships that reflected the nation's industrial limitations. While observing trends in WarShip design, the Draconis Combine incorporated docking collars and focused on creating hard-hitting vessels. The Narukami-class became one of the most effective WarShips ever built, featuring high thrust, firepower, and protection. However, the class faced challenges such as structural limits, stress fractures, engine failures, and limited cargo capacity. Due to the high operational costs, the class was eventually mothballed in favor of acquiring "inferior" Hegemony castoffs.
+</overview>
+
+<history>
+The development of the Narukami-class WarShip by the Draconis Combine was a slow process due to the nation's weak industrial base. However, this delay allowed for careful observation of trends in WarShip design, resulting in the inclusion of docking collars and the development of a doctrine based on small yet powerful ships. The Narukami-class was launched twice in history, first in the twenty-fourth century and again after the Amaris Coup. The first generation of Narukamis participated in the Reunification War, showcasing their effectiveness. However, ongoing drive failures and structural issues led to the decommissioning of the class during the Star League's peak years. The Block II ships, unveiled after Aleksandr Kerensky's liberation of Terra, incorporated newer armor technologies and improved secondary armaments while retaining the original structural and engine design. Flight decks on the second-generation Narukamis were reorganized to accommodate the proliferation and success of aerospace fighters. These later ships, along with the Samarkand II carriers, became the backbone of the Draconis Combine's navy during the early Succession Wars. The demise of the Narukami class was not due to battles, but rather economic factors. The ravages of war shattered the fragile industry of the Draconis Combine, making it financially impossible to maintain these temperamental vessels. The surviving Narukamis were mothballed and managed to survive until the 3060s. However, the Combine's attempts to reactivate them to face the Clans proved futile due to extensive damage to their ancient jump cores and complete failures in the maneuvering drives. Eventually, the remaining Narukamis were scrapped by the time of the Jihad.
+</history>
+
+<manufacturer>
+Tengoku no Ken Master Shipwrights Ltd.
+</manufacturer>
+
+<primaryFactory>
+Mizunami
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<use>
+Destroyer
+</use>
+
+<length>
+610 m
+</length>
+
+<height>
+1100 m Sail
+</height>
+
+<source>
+Field Report 2765 DCMS
+</source>
+
+<tonnage>
+670000.0
+</tonnage>
+
+<kf_core>
+1
+</kf_core>
+
+<sail>
+1
+</sail>
+
+<grav_decks>
+200
+200
+</grav_decks>
+
+<designtype>
+1
+</designtype>
+
+<crew>
+305
+</crew>
+
+<officers>
+40
+</officers>
+
+<gunners>
+45
+</gunners>
+
+<passengers>
+0
+</passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<life_boat>
+0
+</life_boat>
+
+<escape_pod>
+45
+</escape_pod>
+

@@ -32,6 +32,10 @@ Indra Infantry Transport
 Clan Level 3
 </type>
 
+<role>
+Brawler
+</role>
+
 <motion_type>
 Wheeled
 </motion_type>
@@ -96,7 +100,7 @@ CLCASE
 </Turret Equipment>
 
 <source>
-Jihad
+TRO: 3060
 </source>
 
 <tonnage>

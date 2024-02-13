@@ -32,15 +32,16 @@ G
 IS Level 2
 </type>
 
+<role>
+Striker
+</role>
+
 <motion_type>
 Hover
 </motion_type>
 
 <transporters>
 troopspace:4.0
-</transporters>
-
-<transporters>
 BattleArmorHandles - troopers:-1
 </transporters>
 
@@ -91,7 +92,7 @@ Medium Laser:OMNI
 </Turret Equipment>
 
 <source>
-Succession Wars
+TRO: 3058
 </source>
 
 <tonnage>
@@ -101,3 +102,14 @@ Succession Wars
 <baseChassisTurretWeight>
 1.0
 </baseChassisTurretWeight>
+
+<weaponQuirks>
+mod_weapons:FR:0:Small Laser
+mod_weapons:FR:1:Small Laser
+mod_weapons:FR:2:Small Laser
+mod_weapons:FR:3:Small Laser
+mod_weapons:FR:4:Small Laser
+mod_weapons:FR:5:Small Laser
+mod_weapons:TU:0:Medium Laser
+mod_weapons:TU:1:Medium Laser
+</weaponQuirks>

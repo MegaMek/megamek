@@ -1,13 +1,19 @@
-Version:1.0
-Penetrator
-PTR-6T
+chassis:Penetrator
+model:PTR-6T
 mul id:2469
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3066
-Source:TRO 3055 - Civil War
+Source:TRO: 3055
 Rules Level:2
+role:Skirmisher
+
+
+
+quirk:good_rep_1
+quirk:stable
+
 
 Mass:75
 Engine:300 Fusion Engine

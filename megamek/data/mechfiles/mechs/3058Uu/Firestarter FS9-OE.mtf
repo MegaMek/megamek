@@ -1,13 +1,19 @@
-Version:1.0
-Firestarter
-FS9-OE
+chassis:Firestarter
+model:FS9-OE
 mul id:1104
 
 Config:Biped Omnimech
 TechBase:Inner Sphere
 Era:3058
-Source:TRO 3058 - Clan Invasion
+Source:TRO: 3058
 Rules Level:2
+role:Striker
+
+
+
+quirk:cowl
+quirk:difficult_maintain
+
 
 Mass:45
 Engine:270 XL Engine(IS)

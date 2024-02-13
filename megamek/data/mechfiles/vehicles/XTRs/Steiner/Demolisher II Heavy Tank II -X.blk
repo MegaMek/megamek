@@ -32,6 +32,10 @@ II-X
 Mixed (IS Chassis) Experimental
 </type>
 
+<role>
+Sniper
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -94,7 +98,7 @@ CLUltraAC10
 </tonnage>
 
 <source>
-XTRO Steiner - Jihad
+XTR: Steiner
 </source>
 
 <capabilities>

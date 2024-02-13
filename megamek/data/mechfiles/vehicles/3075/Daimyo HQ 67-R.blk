@@ -29,12 +29,16 @@ Daimyo HQ
 </year>
 
 <source>
-Jihad
+TRO: 3075
 </source>
 
 <type>
 IS Level 2
 </type>
+
+<role>
+Brawler
+</role>
 
 <tonnage>
 50.0

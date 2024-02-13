@@ -1,13 +1,19 @@
-Version:1.0
-Locust IIC
-5
+chassis:Locust IIC
+model:5
 mul id:1918
 
 Config:Biped
 TechBase:Clan
 Era:3060
-Source:Clan Invasion
+source:TRO: 3085
 Rules Level:2
+role:Striker
+
+quirk:easy_maintain
+quirk:low_profile
+quirk:no_arms
+quirk:weak_legs
+
 
 Mass:25
 Engine:200 Fusion (Clan) Engine

@@ -1,13 +1,18 @@
-Version:1.0
-Black Knight
-BL-9-KNT
+chassis:Black Knight
+model:BL-9-KNT
 mul id:362
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3052
-Source:Clan Invasion
+source:Battle of Tukayyid
 Rules Level:2
+role:Brawler
+
+
+
+quirk:command_mech
+
 
 Mass:75
 Engine:300 XL Engine(IS)

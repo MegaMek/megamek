@@ -1,12 +1,19 @@
-Version:1.3
-Wolfhound
-WLF-1
+chassis:Wolfhound
+model:WLF-1
 mul id:3560
 Config:Biped
 techbase:Inner Sphere
 era:3028
-source:TRO 3039 - Succession Wars
+source:TRO: 3039
 rules level:2
+role:Striker
+
+
+
+
+quirk:easy_maintain
+quirk:good_rep_1
+
 
 mass:35
 engine:210 Fusion Engine(IS)

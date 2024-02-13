@@ -36,6 +36,10 @@ C 2
 Clan Level 2
 </type>
 
+<role>
+Striker
+</role>
+
 <motion_type>
 Hover
 </motion_type>
@@ -102,7 +106,7 @@ CLATM3
 </Turret Equipment>
 
 <source>
-Rec Guide:ilClan #32 - Dark Age
+Rec Guide:ilClan #32
 </source>
 
 <tonnage>

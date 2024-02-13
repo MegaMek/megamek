@@ -1,12 +1,20 @@
-Version:1.3
-Assassin
-ASN-109
+chassis:Assassin
+model:ASN-109
 mul id:9395
 Config:Biped
 techbase:Inner Sphere
 era:3140
-source:Rec Guide:ilClan #29 - Dark Age
+source:Rec Guide:ilClan #29
 rules level:2
+role:Scout
+
+
+
+quirk:easy_maintain
+quirk:cramped_cockpit
+quirk:non_standard
+quirk:poor_life_support
+
 
 mass:40
 engine:280 XL Engine(IS)

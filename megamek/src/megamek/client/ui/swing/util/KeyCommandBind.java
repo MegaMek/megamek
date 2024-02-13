@@ -104,6 +104,7 @@ public enum KeyCommandBind {
     UNIT_OVERVIEW(true, "toggleUnitOverview", VK_U, CTRL_DOWN_MASK),
     KEY_BINDS(true, "toggleKeybinds", VK_K, CTRL_DOWN_MASK),
     PLANETARY_CONDITIONS(true, "togglePlanetaryConditions", VK_P, CTRL_DOWN_MASK),
+    TURN_DETAILS(true, "toggleTurnDetails", VK_T, CTRL_DOWN_MASK),
     CLIENT_SETTINGS(true, "clientSettings", VK_C, ALT_DOWN_MASK),
     INC_GUISCALE(true, "incGuiScale", VK_ADD, CTRL_DOWN_MASK),
     DEC_GUISCALE(true, "decGuiScale", VK_SUBTRACT, CTRL_DOWN_MASK),
@@ -115,8 +116,11 @@ public enum KeyCommandBind {
     LOCAL_LOAD(true, "localLoad", VK_L, CTRL_DOWN_MASK),
     LOCAL_SAVE(true, "localSave", VK_S, CTRL_DOWN_MASK),
     REPLACE_PLAYER(true, "replacePlayer", VK_R, CTRL_DOWN_MASK | SHIFT_DOWN_MASK),
-    MOD_ENVELOPE(true, "viewModEnvelope", VK_W, CTRL_DOWN_MASK);
-
+    MOD_ENVELOPE(true, "viewModEnvelope", VK_W, CTRL_DOWN_MASK),
+    SENSOR_RANGE(true, "sensorRange", VK_C),
+    UNDO_SINGLE_STEP("undoSingleStep", VK_BACK_SPACE, CTRL_DOWN_MASK),
+    FORCE_DISPLAY(true, "toggleForceDisplay", VK_F, CTRL_DOWN_MASK),
+    EXTEND_TURN_TIMER("extendTurnTimer", VK_F4, CTRL_DOWN_MASK);
 
     /** The command associated with this binding. */
     public String cmd;

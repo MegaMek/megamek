@@ -1,13 +1,19 @@
-Version:1.1
-Quickdraw
-QKD-8X
+chassis:Quickdraw
+model:QKD-8X
 mul id:2617
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3073
-Source:Jihad
+source:XTR: Corporations
 Rules Level:4
+role:Sniper
+
+
+
+quirk:hyper_actuator
+quirk:exp_actuator
+
 
 Mass:60
 Engine:300 Fusion Engine

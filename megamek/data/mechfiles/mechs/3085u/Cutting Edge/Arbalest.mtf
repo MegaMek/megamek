@@ -1,13 +1,17 @@
-Version:1.0
-Arbalest
-
+chassis:Arbalest
+model:
 mul id:62
 
 Config:Biped
 TechBase:Clan
 Era:3077
-Source:Jihad
+source:TRO: 3085
 Rules Level:2
+role:Missile Boat
+
+
+quirk:easy_maintain
+
 
 Mass:25
 Engine:125 Fusion (Clan) Engine

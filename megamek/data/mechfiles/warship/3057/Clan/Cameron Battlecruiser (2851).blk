@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -35,6 +35,10 @@ Cameron Battlecruiser
 <type>
 Clan Level 3
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Aerodyne
@@ -69,6 +73,10 @@ crewquarters:1673.0:0
 <engine_type>
 1
 </engine_type>
+
+<clan_engine>
+false
+</clan_engine>
 
 <armor_type>
 11
@@ -185,8 +193,48 @@ Naval Laser 35
 80
 </structural_integrity>
 
+<capabilities>
+The Cameron-class battlecruiser possesses a formidable arsenal, including Series-25 autocannons, naval lasers, and naval PPCs, providing both close-in and long-range firepower. Its anti-fighter defense is augmented by Maelstrom AR-10 missile launchers capable of firing missiles of various sizes. However, the flawed power distribution system of the original design led to critical failures, as illustrated by the loss of the SLS Saint Joan during an attack by Periphery pirates.
+</capabilities>
+
+<overview>
+The Cameron-class battlecruiser was commissioned by the SLDF with the expectation of a swift and powerful WarShip to bridge the gap between cruisers and battleships. However, the actual performance of the Cameron fell short of expectations, with issues in weight, acceleration, and power systems. Despite these shortcomings, the SLDF ordered 40 of the vessels due to budget constraints and the ship's excellent weaponry and armor.
+</overview>
+
+<history>
+The initial Cameron-class ships faced significant challenges due to their design flaws. The failure of the power system during the engagement with Periphery pirates led to the destruction of the SLS Saint Joan, resulting in the resignation of senior admirals and the appropriation of Daussault-Shimmon's shipyards by the Star League. The existing Camerons were then relegated to transport duties. The Clans, along with ComStar, later adopted a modified version of the Cameron. While this improved version addressed some of the original flaws by correcting the power distribution system and adding a lithium-fusion battery system, it still fell short of meeting the performance specifications of the SLDF-commissioned Cameron. Nevertheless, the modified Cameron proved to be an excellent mobile command center for the Clans.
+</history>
+
+<manufacturer>
+refit
+</manufacturer>
+
+<primaryFactory>
+Unknown
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<use>
+Battlecruiser
+</use>
+
+<length>
+839 m
+</length>
+
+<height>
+1450 m Sail
+</height>
+
 <source>
-TRO3057R - Star League
+TRO: 3057 Revised
 </source>
 
 <tonnage>
@@ -209,6 +257,10 @@ TRO3057R - Star League
 75
 75
 </grav_decks>
+
+<designtype>
+1
+</designtype>
 
 <crew>
 337
@@ -241,3 +293,4 @@ TRO3057R - Star League
 <escape_pod>
 30
 </escape_pod>
+

@@ -36,6 +36,10 @@ MR-1SB
 IS Level 4
 </type>
 
+<role>
+Fire Support
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -115,7 +119,7 @@ IS Ammo MML-5 LRM:OMNI
 </Fuselage Equipment>
 
 <source>
-TRO 3085 - Early Republic
+TRO: 3085
 </source>
 
 <tonnage>

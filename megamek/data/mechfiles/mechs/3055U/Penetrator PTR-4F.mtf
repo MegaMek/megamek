@@ -1,13 +1,19 @@
-Version:1.0
-Penetrator
-PTR-4F
+chassis:Penetrator
+model:PTR-4F
 mul id:2466
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3056
-Source:TRO 3055 - Clan Invasion
+Source:TRO: 3055
 Rules Level:2
+role:Missile Boat
+
+
+
+quirk:good_rep_1
+quirk:stable
+
 
 Mass:75
 Engine:300 Fusion Engine

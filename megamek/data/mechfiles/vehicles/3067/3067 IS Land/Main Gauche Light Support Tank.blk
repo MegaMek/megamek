@@ -44,6 +44,10 @@ ISMG Ammo (100)
 <type>
 IS Level 2
 </type>
+
+<role>
+Sniper
+</role>
 <year>
 3064
 </year>
@@ -59,3 +63,7 @@ IS Level 2
 <motion_type>
 Tracked
 </motion_type>
+
+<source>
+TRO: 3067
+</source>

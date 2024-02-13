@@ -1,13 +1,20 @@
-Version:1.0
-SuburbanMech
-UM-R100
+chassis:SuburbanMech
+model:UM-R100
 mul id:7929
 
 Config:Biped
 techbase:Inner Sphere
 era:3045
-source:Shrapnel 4 - Succession Wars
+source:Shrapnel #4
 rules level:2
+role:Sniper
+
+
+
+quirk:ext_twist
+quirk:low_profile
+quirk:no_arms
+
 
 mass:30
 engine:120 Fusion Engine(IS)

@@ -32,6 +32,10 @@ Tengu Heavy Battle Armor
 IS Level 4
 </type>
 
+<role>
+Juggernaut
+</role>
+
 <motion_type>
 Leg
 </motion_type>
@@ -63,7 +67,7 @@ IS BA Advanced:Body
 </Squad Equipment>
 
 <source>
-TRO 3075 - Jihad
+TRO: 3075
 </source>
 
 <chassis>

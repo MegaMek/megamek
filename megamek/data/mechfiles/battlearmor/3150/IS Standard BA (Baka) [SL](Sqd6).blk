@@ -20,6 +20,11 @@ IS Standard Battle Armor
 (Baka) [SL](Sqd6)
 </Model>
 
+<mul id:>
+9524
+</mul id:>
+
+
 <year>
 3086
 </year>
@@ -27,6 +32,10 @@ IS Standard Battle Armor
 <originalBuildYear>
 3086
 </originalBuildYear>
+
+<role>
+Ambusher
+</role>
 
 <type>
 IS Level 2
@@ -81,7 +90,7 @@ ISBASmallLaser:RA
 </Trooper 6 Equipment>
 
 <source>
-TRO Dark Age - Dark Age
+TRO: Dark Age
 </source>
 
 <chassis>

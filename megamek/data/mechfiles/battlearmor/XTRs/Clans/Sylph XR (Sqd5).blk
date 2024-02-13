@@ -53,6 +53,10 @@ BASearchlight:Body
 <type>
 Clan Level 3
 </type>
+
+<role>
+Scout
+</role>
 <year>
 3077
 </year>
@@ -60,7 +64,7 @@ Clan Level 3
 Leg
 </motion_type>
 <source>
-XTRO Clans - Jihad
+XTR: Clans
 </source>
 
 <armor_type>
@@ -102,3 +106,9 @@ JUMPJET:Unknown
 COMMUNICATIONS:Unknown
 TARGETING:Unknown
 </systemManufacturers>
+
+<quirks>
+hard_pilot
+prototype
+</quirks>
+

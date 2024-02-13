@@ -1,13 +1,17 @@
-Version:1.0
-Omen
-2
+chassis:Omen
+model:2
 mul id:6853
 
 Config:Biped
 TechBase:Clan
 Era:3141
-Source:RS 3145 NT NU
+Source:Record Sheets: 3145 New Tech New Upgrades
 Rules Level:3
+role:Juggernaut
+
+quirk:pro_actuator
+quirk:rugged_1
+
 
 Mass:85
 Engine:255 XL (Clan) Engine(IS)

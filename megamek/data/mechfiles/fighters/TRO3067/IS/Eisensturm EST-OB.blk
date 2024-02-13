@@ -36,6 +36,10 @@ EST-OB
 IS Level 2
 </type>
 
+<role>
+Fire Support
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -119,7 +123,7 @@ IS Ammo LRM-15 Artemis-capable:OMNI
 </Fuselage Equipment>
 
 <source>
-TRO 3067 - Civil War
+TRO: 3067
 </source>
 
 <tonnage>

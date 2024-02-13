@@ -1,13 +1,19 @@
-Version:1.0
-Strider
-SR1-O
+chassis:Strider
+model:SR1-O
 mul id:3084
 
 Config:Biped Omnimech
 TechBase:Inner Sphere
 Era:3057
-Source:TRO 3058 - Clan Invasion
+Source:TRO: 3058
 Rules Level:2
+role:Striker
+
+
+
+
+quirk:easy_pilot
+
 
 Mass:40
 Engine:240 Fusion Engine(IS)

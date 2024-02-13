@@ -1,13 +1,16 @@
-Version:1.0
-Dasher II
-3
+chassis:Dasher II
+model:3
 mul id:6920
 
 Config:Biped
 TechBase:Mixed (Clan Chassis)
 Era:3136
-Source:RS 3145 NT NU
+Source:Record Sheets: 3145 New Tech New Upgrades
 Rules Level:3
+role:Striker
+
+quirk:poor_performance
+
 
 Mass:40
 Engine:320 XL (Clan) Engine

@@ -55,6 +55,10 @@ ISMG Ammo (100)
 <type>
 IS Level 1
 </type>
+
+<role>
+Scout
+</role>
 <year>
 2470
 </year>
@@ -71,5 +75,5 @@ IS Level 1
 Wheeled
 </motion_type>
 <source>
-Star League
+TRO: 3060
 </source>

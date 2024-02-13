@@ -1,13 +1,22 @@
-Version:1.1
-Atlas
-AS8-K
+chassis:Atlas
+model:AS8-K
 mul id:8435
 
 Config:Biped
 techbase:Inner Sphere
 era:3140
-source:Rec Guide:ilClan #24 - Dark Age
+source:Rec Guide:ilClan #24
 rules level:3
+role:Juggernaut
+
+
+
+quirk:battle_fists_la
+quirk:battle_fists_ra
+quirk:command_mech
+quirk:distracting
+quirk:imp_com
+
 
 mass:100
 engine:300 XL Engine(IS)

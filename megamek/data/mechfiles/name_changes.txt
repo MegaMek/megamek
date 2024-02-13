@@ -483,6 +483,7 @@ Carrier (Standard)|Carrier (2882)
 Claymore (Standard)|Claymore (3054)
 Confederate (2703)|Confederate (2602)
 Confederate (Clan)|Confederate C (3048)
+Czar Dropship (Standard)|Czar Dropship
 DroST Light Bulk Transport IIA|DroST IIa Transport (2470)
 Excalibur (Pocket Warship)|Excalibur 'Pocket Warship'
 Hamilcar (Standard)|Hamilcar (3054)
@@ -512,7 +513,7 @@ Union C|Union C (2829)
 Vampire II|Vampire II (Standard)
 Vengeance Danai Centrella|Vengeance (Danai Centrella)
 Vulture (Standard)|Vulture (2312)
-Czar Dropship (Standard)|Czar Dropship
+
 
 #Infantry
 Clan Motorized Combat Engineers|Clan Motorized Point (Rifle)
@@ -536,6 +537,7 @@ Invader Jumpship (PPC)|Invader Jumpship (2631 PPC)
 Invader Jumpship (Clan)[PPC]|Invader Jumpship (2850)
 Invader Jumpship (Standard)|Invader Jumpship (2631)
 Invader Jumpship (Clan)|Invader Jumpship (2631)
+Invader Jumpship (2631 PPC)|Invader Jumpship (2631) (PPC)
 Magellan Jumpship (Standard)|Magellan Jumpship (2960)
 Merchant Jumpship (Standard)|Merchant Jumpship (2503)
 Monolith Jumpship (Standard)|Monolith Jumpship (2776)
@@ -558,9 +560,9 @@ Black Hawk (Nova) C|Nova (Black Hawk) C
 Black Hawk (Nova) D|Nova (Black Hawk) D
 Black Hawk (Nova) Prime|Nova (Black Hawk) Prime
 Black Hawk (Nova) S|Nova (Black Hawk) S
-Black Hawk (Standard)|Black Hawk (Standard)
 Black Hawk 2|Black Hawk (Standard) 2
 Black Hawk 3|Black Hawk (Standard) 3
+
 Blood Asp Prime|Star Adder (Blood Asp) Prime
 Blood Asp A|Star Adder (Blood Asp) A
 Blood Asp B|Star Adder (Blood Asp) B
@@ -571,6 +573,7 @@ Blood Asp F|Star Adder (Blood Asp) F
 Blood Asp G|Star Adder (Blood Asp) G
 Blood Asp I|Star Adder (Blood Asp) I
 Blood Asp T|Star Adder (Blood Asp) T
+
 Cauldron-Born (Ebon Jaguar) A|Ebon Jaguar (Cauldron-Born) A
 Cauldron-Born (Ebon Jaguar) B|Ebon Jaguar (Cauldron-Born) B
 Cauldron-Born (Ebon Jaguar) C|Ebon Jaguar (Cauldron-Born) C
@@ -711,7 +714,6 @@ Sprite 3|Sprite Ultraheavy ProtoMech 3
 Sprite Ultraheavy ProtoMech|(Standard) Sprite (Standard)
 Sprite Ultraheavy ProtoMech 2|Sprite 2
 Sprite Ultraheavy ProtoMech 3|Sprite 3
-
 Svartalfa Ultra ProtoMech (Standard)|Svartalfa
 Svartalfa Ultra ProtoMech (LRM Variant)|/Svartalfa (LRM Variant)
 Svartalfa (LRM Variant)|Svartalfa 2
@@ -734,35 +736,51 @@ Small Unpressurized Yard (Standard)|Unpressurized Yard - Small (2100)
 Snowden Mining Station Mk I|Snowden Mining Station (MK I)
 
 #Tanks
-Nuberu Anti Aircraft Tank 2 'Numantia'|Nuberu Anti Aircraft Tank 2 'Numantia'
-SturmFeur "Kalki" Cruise Missile Launcher (Standard)|SturmFeur 'Kalki' Cruise Missile Launcher (Standard)
+Avanti Aerospace Airliner ACL-800|Comet Airliner ACL-800
+BFFL 'Buffalo'|Buffalo BFFL Hovertruck
+Cal-Boeing Swiftran RTC-215M (Passenger)|Swiftran RTC-215M
+Command Van (Standard)|Command Van
 Command Van|Command Van (Standard)
 Desert Scorpion|Desert Scorpion Light Tank
-Vargr APC|Vargr APC Tank
-Vargr APC (LRM)| Vargr APC Tank (LRM)
-Sleipnir APC|Sleipnir AP Tank
+Donovan-Miter Magellan Series Four|Magellan Series Four
+Falcon Hover Tank (Standard)|Falcon Hover Tank
+Federated-Boeing Longhaul FB-335|Longhaul Cargo Aircraft FB-335
+Hover Tank (Standard)|LTV-4 Hover Tank
+Iveco Burro Heavy Support Truck|Burro Heavy Support Truck
+Iveco Burro II Super Heavy Cargo Truck|Burro II Super Heavy Cargo Truck
+Kressly Dillinger Police Vehicle|Dillinger Police Vehicle
+LTV-4 Hover Tank (Standard)|Hawk Hover Tank (LTV-4)
+Mobile Long Tom Artillery (Unofficial) (+ Carriage)|Mobile Long Tom Artillery (+Carriages)(Unofficial)
+Mobile Long Tom Artillery Ammunition Trailer LT-MOB-25|Mobile Long Tom Artillery LT-MOB-25 (Ammunition Carriage)
+Mobile Long Tom Artillery Support Carriage LT-MOB-25|Mobile Long Tom Artillery LT-MOB-25 (Support Carriage)
+Nuberu Anti Aircraft Tank 2 'Numantia'|Nuberu Anti Aircraft Tank 2 'Numantia'
+O-65 'Oppie' Hazardous Materials Recovery Vehicle O-65 HMRV|HMRV (Hazardous Materials Recovery Vehicle) 'Oppie' O-65
+O-66 'Oppie' Hazardous Materials Recovery Vehicle O-66 HMRV|HMRV (Hazardous Materials Recovery Vehicle) 'Oppie' O-66
+'Oppie' (HMRV DeConAid Trailer) (Standard)|HMRV (Hazardous Materials Recovery Vehicle) DeConAid Trailer
+'Oppie' (HMRV DeConAid Trailer) |HMRV (Hazardous Materials Recovery Vehicle) DeConAid Trailer
+'Oppie' (HMRV Salvage Bed Trailer) (Standard)|HMRV (Hazardous Materials Recovery Vehicle) Salvage Bed
+'Oppie' (HMRV Salvage Bed Trailer) |HMRV (Hazardous Materials Recovery Vehicle) Salvage Bed
+Pion-Laurier Cascatelle|Cascatelle Firefighting VTOL
+Prime Mover|Prime Mover (LRM)
+Schildkröte Line Tank (Standard)|Schildkröte Line Tank
+Schildkrote Line Tank|Schildkröte Line Tank
 Sleipnir APC (SRM)|Sleipnir AP Tank (SRM)
+Sleipnir APC|Sleipnir AP Tank
+SM Tank Destroyer SM1 'Telos'|SM Tank Destroyer SM1 'Telos'
+SM1 Tank Destroyer SM1|SM Tank Destroyer SM1
+SM1A Tank Destroyer SM1A|SM Tank Destroyer SM1A
+SM3 Tank Destroyer SM3|SM Tank Destroyer SM3
+St. Christopher Cargo Lifter C1|St. Christopher Cargo Transport C1
+St. Christopher Cargo Lifter C1|St. Christopher Cargo Transport C2
+SturmFeur "Kalki" Cruise Missile Launcher (Standard)|SturmFeur 'Kalki' Cruise Missile Launcher (Standard)
 Sturmfeur Heavy Tank (SRM)|SturmFeur Heavy Tank (SRM)
 Sturmfeur Heavy Tank (Standard)|SturmFeur Heavy Tank (Standard)
-Hover Tank (Standard)|LTV-4 Hover Tank
+Vargr APC (LRM)| Vargr APC Tank (LRM)
+Vargr APC|Vargr APC Tank
 Vector (Attack)|Vector Combat Support VTOL (Attack)
 Vector (EW)|Vector Combat Support VTOL (EW)
 Vector (Scout)|Vector Combat Support VTOL (Scout)
 Vector (Transport)|Vector Combat Support VTOL (Transport)
-LTV-4 Hover Tank (Standard)|Hawk Hover Tank (LTV-4)
-Falcon Hover Tank (Standard)|Falcon Hover Tank
-Command Van (Standard)|Command Van
-Mobile Long Tom Artillery Ammunition Trailer LT-MOB-25|Mobile Long Tom Artillery LT-MOB-25 (Ammunition Carriage)
-Mobile Long Tom Artillery Support Carriage LT-MOB-25|Mobile Long Tom Artillery LT-MOB-25 (Support Carriage)
-Mobile Long Tom Artillery (Unofficial) (+ Carriage)|Mobile Long Tom Artillery (+Carriages)(Unofficial)
-'Oppie' (HMRV DeConAid Trailer) |HMRV (Hazardous Materials Recovery Vehicle) DeConAid Trailer
-'Oppie' (HMRV Salvage Bed Trailer) |HMRV (Hazardous Materials Recovery Vehicle) Salvage Bed
-'Oppie' (HMRV DeConAid Trailer) (Standard)|HMRV (Hazardous Materials Recovery Vehicle) DeConAid Trailer
-'Oppie' (HMRV Salvage Bed Trailer) (Standard)|HMRV (Hazardous Materials Recovery Vehicle) Salvage Bed
-O-65 'Oppie' Hazardous Materials Recovery Vehicle O-65 HMRV|HMRV (Hazardous Materials Recovery Vehicle) 'Oppie' O-65
-O-66 'Oppie' Hazardous Materials Recovery Vehicle O-66 HMRV|HMRV (Hazardous Materials Recovery Vehicle) 'Oppie' O-66
-Schildkrote Line Tank|Schildkröte Line Tank
-
 
 
 
@@ -781,12 +799,15 @@ Carrack Transport (Merchant)|Carrack Transport (Merchant 2985)
 Carson Destroyer (Standard)|Carson Destroyer (2632)
 Congress Frigate (Clan)|Congress Frigate (2914)
 Dart Light Cruiser (Standard)|Dart Light Cruiser (2305)
+Davion Destroyer Block I|Davion Destroyer (Block I)
+Davion Destroyer Block II|Davion Destroyer (Block II)
 Essex Destroyer (2711)|Essex II Destroyer (2711)
 Essex Destroyer (Clan)|Essex II Destroyer (2862)
 Essex I Destroyer (Standard)|Essex I Destroyer (2351)
 Farragut Battleship (Standard)|Farragut Battleship (2448)
 Fox Corvette (Standard)|Fox Corvette (3057)
-Fredasa Corvette Raider (Standard)|Fredasa Corvette Raider (2962)
+Fredasa Corvette Raider (Standard)|Fredasa (Corvette-Raider) (2962)
+Fredasa Corvette Raider (2962)|Fredasa (Corvette-Raider) (2962)
 Impavido Destroyer (Standard)|Impavido Destroyer (3058)
 Kimagure Pursuit Cruiser (Standard)|Kimagure Pursuit Cruiser (2582)
 Kirishima Cruiser (Standard)|Kirishima Cruiser (3061)
@@ -802,6 +823,7 @@ Monsoon Battleship (Lithium-Fusion)|Monsoon Battleship (LF) (2574)
 Monsoon Battleship (Standard)|Monsoon Battleship (2368)
 Naga Destroyer (Standard)|Naga Destroyer (2645)
 New|Sovetskii Soyuz Heavy Cruiser (Dire Wolf) (2845)
+Newgrange Yardship|Newgrange III Yardship (2700)
 Newgrange Yardship (Standard)|Newgrange III Yardship (2700)
 Nightlord Battleship (Standard)|Nightlord Battleship (2932)
 Nightwing Surveillance (Standard)|Nightwing Surveillance (2447)
@@ -810,6 +832,11 @@ Potemkin Troop Cruiser (Clan)|Potemkin Troop Cruiser (2875)
 Quixote Frigate (Standard)|Quixote Frigate (2350)
 Riga Frigate (Standard)|Riga Frigate (2440)
 Riga II Destroyer/Carrier (Standard)|Riga II Destroyer/Carrier (2747)
+Riga II Destroyer/Carrier|Riga II Destroyer-Carrier (2747)
+Robinson Transport Block I|Robinson Transport (Block I)
+Robinson Transport Block II|Robinson Transport (Block II)
+Samarkand Carrier Block I|Samarkand Carrier (Block I)
+Samarkand Carrier Block II|Samarkand Carrier (Block II)
 Sovetskii Soyuz Heavy Cruiser (Clan)|Sovetskii Soyuz Heavy Cruiser (2845)
 Suffren Destroyer (Standard)|Suffren Destroyer (3062)
 Sylvester Transport (Standard)|Sylvester Transport (2499)
@@ -821,6 +848,8 @@ Wagon Wheel Frigate (Standard)|Wagon Wheel Frigate (2570)
 Whirlwind Destroyer (Clan)|Whirlwind Destroyer (2901)
 Winchester Cruiser (Standard)|Winchester Cruiser (2364)
 York Destroyer Carrier (Standard)|York Destroyer Carrier (2947)
+York Destroyer/Carrier|York Destroyer-Carrier
+York Destroyer/Carrier|York Destroyer-Carrier (2947)
 
 #These are the units impact by the removal of the (Standard) designation that the MUL has discontinued. Done as part of 0.49.13 May 10/2023
 AC/2 Carrier (Standard)|AC/2 Carrier
@@ -1007,6 +1036,8 @@ Dasher II (Standard)|Dasher II
 Death Trike (Standard)|Death Trike
 Defender Battlecruiser (Standard)|Defender Battlecruiser
 Delphyne (Standard)|Delphyne
+Demolisher Heavy Tank (Standard Mk. I)|Demolisher Heavy Tank (Mk. I)
+Demolisher Heavy Tank (Standard Mk. II)|Demolisher Heavy Tank (Mk. II)
 Demolisher II Heavy Tank (Standard)|Demolisher II Heavy Tank
 Demon Medium Tank (Standard)|Demon Medium Tank
 Demon Tank (Standard)|Demon Tank

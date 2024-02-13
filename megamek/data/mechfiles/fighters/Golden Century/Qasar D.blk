@@ -36,6 +36,10 @@ D
 Clan Level 2
 </type>
 
+<role>
+Fast Dogfighter
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -108,7 +112,7 @@ Clan Ammo ATM-9:OMNI
 </Fuselage Equipment>
 
 <source>
-Dark Age
+TRO: Golden Century
 </source>
 
 <tonnage>

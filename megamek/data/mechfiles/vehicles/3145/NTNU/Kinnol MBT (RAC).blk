@@ -32,6 +32,10 @@ Kinnol MBT
 IS Level 3
 </type>
 
+<role>
+Brawler
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -93,7 +97,7 @@ ISRotaryAC5
 </Turret Equipment>
 
 <source>
-RS 3145 NTNU - Jihad
+Record Sheets: 3145 New Tech New Upgrades
 </source>
 
 <tonnage>

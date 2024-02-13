@@ -1,13 +1,22 @@
-Version:1.0
-Warhammer
-WHM-7A
+chassis:Warhammer
+model:WHM-7A
 mul id:3490
 
 Config:Biped
 techbase:Inner Sphere
 era:2761
 rules level:2
-source:Rec Guide:ilClan #7 - Star League
+role:Brawler
+source:Rec Guide:ilClan #7
+
+
+
+quirk:rugged_2
+quirk:searchlight
+quirk:stable
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+
 
 mass:70
 engine:280 Fusion Engine(IS)

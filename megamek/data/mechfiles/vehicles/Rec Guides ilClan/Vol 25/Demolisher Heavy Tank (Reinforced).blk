@@ -36,6 +36,10 @@ Demolisher Heavy Tank
 IS Level 3
 </type>
 
+<role>
+Sniper
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -94,7 +98,7 @@ ISUltraAC10
 </Turret Equipment>
 
 <source>
-Clan Invasion
+Rec Guide:ilClan #25
 </source>
 
 <tonnage>

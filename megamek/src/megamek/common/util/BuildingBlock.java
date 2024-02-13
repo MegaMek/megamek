@@ -13,10 +13,12 @@
  */
 package megamek.common.util;
 
+import megamek.SuiteConstants;
 import org.apache.logging.log4j.LogManager;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Vector;
 
@@ -378,13 +380,7 @@ public class BuildingBlock {
      */
     public boolean createNewBlock() {
         rawData.clear();
-
-        writeBlockComment("building block data file");
-        this.writeBlockData("BlockVersion", "" + BuildingBlock.version);
-
-        writeBlockComment("#Write the version number just in case...");
-        this.writeBlockData("Version", "MAM0");
-
+        writeBlockComment("Saved from version " + SuiteConstants.VERSION + " on " + LocalDate.now());
         return true;
     }
 
@@ -706,5 +702,21 @@ public class BuildingBlock {
         }
 
         return true;
+    }
+
+    /**
+     *  Checks if a block exists and has data.
+     */
+    public boolean containsData(String blockName) {
+        if(!exists(blockName)){
+            return false;
+        }
+        // If the end index is the next line after the start index,
+        // the block is empty.
+        // Otherwise it contains data.
+        int start = findStartIndex(blockName);
+        int end = findEndIndex(blockName);
+        return (end - start) >= 1;
+
     }
 }

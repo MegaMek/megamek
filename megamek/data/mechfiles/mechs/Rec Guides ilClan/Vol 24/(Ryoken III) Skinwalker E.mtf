@@ -1,13 +1,14 @@
-Version:1.1
-Ryoken III (Skinwalker)
-E
+chassis:Ryoken III
+clanname:Skinwalker
+model:E
 mul id:8453
 
 Config:Biped Omnimech
 techbase:Clan
 era:3147
-source:Rec Guide:ilClan #24 - Dark Age
+source:Rec Guide:ilClan #24
 rules level:4
+role:Sniper
 
 mass:55
 engine:330 XL (Clan) Engine(IS)

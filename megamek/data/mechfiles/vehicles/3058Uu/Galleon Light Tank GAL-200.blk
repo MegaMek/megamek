@@ -47,6 +47,10 @@ ISMG Ammo (200)
 <type>
 IS Level 1
 </type>
+
+<role>
+Scout
+</role>
 <year>
 2915
 </year>
@@ -63,7 +67,7 @@ IS Level 1
 Tracked
 </motion_type>
 <source>
-OP Klondyke - Late Succession War
+Historical: Operation Klondike
 </source>
 
 <capabilities>
@@ -104,3 +108,8 @@ TARGETING:Maxell TA50
 <fuelType>
 PETROCHEMICALS
 </fuelType>
+
+<quirks>
+ubiquitous_is
+</quirks>
+

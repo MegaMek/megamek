@@ -18,6 +18,7 @@
  */
 package megamek.client.ui.swing;
 
+import megamek.client.ui.swing.tooltip.EntityActionLog;
 import megamek.common.actions.*;
 
 import java.util.*;
@@ -26,10 +27,11 @@ import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
 
 public abstract class AttackPhaseDisplay extends ActionPhaseDisplay {
     // client list of attacks user has input
-    protected Vector<EntityAction> attacks;
+    protected EntityActionLog attacks;
 
     protected AttackPhaseDisplay(ClientGUI cg) {
         super(cg);
+        attacks = new EntityActionLog(clientgui.getClient().getGame());
     }
 
     /**
@@ -50,7 +52,12 @@ public abstract class AttackPhaseDisplay extends ActionPhaseDisplay {
     @Override
     protected void updateDonePanel()
     {
-        updateDonePanelButtons(getDoneButtonLabel(), getSkipTurnButtonLabel(), !attacks.isEmpty());
+        if (attacks.isEmpty() || (attacks.size() == 1 && attacks.firstElement() instanceof TorsoTwistAction)){
+            // a torso twist alone should not trigger Done button
+            updateDonePanelButtons(getDoneButtonLabel(), getSkipTurnButtonLabel(), false, null);
+        } else {
+            updateDonePanelButtons(getDoneButtonLabel(), getSkipTurnButtonLabel(), true, attacks.getDescriptions());
+        }
     }
 
     protected void removeAttack(Object o)
@@ -62,7 +69,7 @@ public abstract class AttackPhaseDisplay extends ActionPhaseDisplay {
     /** removes all elements from the local temporary attack list */
     protected void removeAllAttacks()
     {
-        attacks.removeAllElements();
+        attacks.clear();
         updateDonePanel();
     }
 

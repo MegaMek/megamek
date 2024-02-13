@@ -36,6 +36,10 @@ R1
 IS Level 3
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Spheroid
 </motion_type>
@@ -131,7 +135,7 @@ ISLaserAntiMissileSystem
 </structural_integrity>
 
 <source>
-TRO Prototypes - Jihad
+TRO: Prototypes
 </source>
 
 <tonnage>
@@ -177,3 +181,8 @@ TRO Prototypes - Jihad
 <escape_pod>
 2
 </escape_pod>
+
+<quirks>
+non_standard
+</quirks>
+

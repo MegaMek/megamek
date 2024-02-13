@@ -1,11 +1,11 @@
-Version:1.0
-Roughneck
-RGH-1B
+chassis:Roughneck
+model:RGH-1B
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3050
 Rules Level:2
+source: Videogame (Apocryphal)
 
 Mass:65
 Engine:260 Fusion Engine(IS)

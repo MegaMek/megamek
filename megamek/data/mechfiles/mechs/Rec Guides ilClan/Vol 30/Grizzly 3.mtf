@@ -1,12 +1,16 @@
-Version:1.3
-Grizzly
-3
+chassis:Grizzly
+model:3
 mul id:9432
 Config:Biped
 techbase:Mixed (Clan Chassis)
 era:3138
-source:Rec Guide:ilClan #30 - Dark Age
+source:Rec Guide:ilClan #30
 rules level:2
+role:Skirmisher
+
+quirk:difficult_maintain
+quirk:exp_actuator
+
 
 mass:70
 engine:280 XL (Clan) Engine

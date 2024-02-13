@@ -1,12 +1,18 @@
-Version:1.3
-Hunchback
-HBK-7S
+chassis:Hunchback
+model:HBK-7S
 mul id:7346
 Config:Biped
 techbase:Inner Sphere
 era:3134
-source:XTRO Republic II - Late Republic
+source:XTR: Republic II
 rules level:2
+role:Striker
+
+
+
+quirk:battle_fists_la
+quirk:battle_fists_ra
+
 
 mass:50
 engine:300 XL Engine(IS)

@@ -57,6 +57,10 @@ IS BA Stealth:Body
 IS Level 2
 </type>
 
+<role>
+Ambusher
+</role>
+
 <year>
 3097
 </year>
@@ -66,7 +70,7 @@ Leg
 </motion_type>
 
 <source>
-RS 3145 NT NU - Dark Age
+Record Sheets: 3145 New Tech New Upgrades
 </source>
 
 <armor_type>

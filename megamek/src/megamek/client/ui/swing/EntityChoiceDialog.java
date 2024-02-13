@@ -15,6 +15,7 @@ package megamek.client.ui.swing;
 
 import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.swing.tooltip.UnitToolTip;
+import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.Entity;
 import megamek.common.annotations.Nullable;
 
@@ -26,6 +27,7 @@ import java.util.List;
  * in brief or in detail.
  */
 public class EntityChoiceDialog extends AbstractChoiceDialog<Entity> {
+    private static final GUIPreferences GUIP = GUIPreferences.getInstance();
 
     /**
      * This creates a modal dialog to pick one or more entities.
@@ -45,12 +47,14 @@ public class EntityChoiceDialog extends AbstractChoiceDialog<Entity> {
 
     @Override
     protected void detailLabel(JToggleButton button, Entity target) {
-        button.setText("<html>" + UnitToolTip.getEntityTipVitals(target, null) + "</html>");
+        String div = "<DIV WIDTH=" + UIUtil.scaleForGUI(500) + ">" + UnitToolTip.getEntityTipAsTarget(target, null) + "</DIV>";
+        button.setText(UnitToolTip.wrapWithHTML(div));
     }
 
     @Override
     protected void summaryLabel(JToggleButton button, Entity target) {
-        button.setText("<html><b>" + target.getDisplayName() + "</b></html>");
+        String txt = UnitToolTip.getTargetTipSummaryEntity(target, null);
+        button.setText(UnitToolTip.wrapWithHTML(txt));
     }
 
     /**

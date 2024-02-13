@@ -1,13 +1,17 @@
-Version:1.0
-Mad Cat Mk II
-
+chassis:Mad Cat Mk II
+model:
 mul id:4565
 
 Config:Biped
 TechBase:Clan
 Era:3062
-Source:TRO 3067
+Source:TRO: 3067
 Rules Level:2
+role:Brawler
+
+
+quirk:imp_target_med
+
 
 Mass:90
 Engine:360 XL (Clan) Engine(IS)

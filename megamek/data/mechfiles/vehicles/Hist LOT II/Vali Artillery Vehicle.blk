@@ -36,6 +36,10 @@ Vali Artillery Vehicle
 IS Level 3
 </type>
 
+<role>
+Missile Boat
+</role>
+
 <motion_type>
 Wheeled
 </motion_type>
@@ -112,7 +116,7 @@ Ozawa
 </primaryFactory>
 
 <source>
-Hist LOT II
+Historical: Liberation of Terra II
 </source>
 
 <tonnage>
@@ -122,4 +126,11 @@ Hist LOT II
 <fuelType>
 PETROCHEMICALS
 </fuelType>
+
+
+<quirks>
+easy_maintain
+fast_reload
+trailer_hitch
+</quirks>
 

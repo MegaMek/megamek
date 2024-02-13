@@ -48,6 +48,10 @@ ISSRM2 Ammo
 <type>
 IS Level 2
 </type>
+
+<role>
+Striker
+</role>
 <year>
 3061
 </year>
@@ -64,7 +68,7 @@ IS Level 2
 Hover
 </motion_type>
 <source>
-Clan Invasion
+Rec Guide:ilClan #26
 </source>
 
 <capabilities>

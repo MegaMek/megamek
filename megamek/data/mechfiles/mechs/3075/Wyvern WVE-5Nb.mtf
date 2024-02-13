@@ -1,13 +1,18 @@
-Version:1.0
-Wyvern
-WVE-5Nb
+chassis:Wyvern
+model:WVE-5Nb
 mul id:3598
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2660
-Source:TRO 3075
+source:TRO: 3075
 Rules Level:2
+role:Missile Boat
+
+
+
+quirk:rugged_1
+
 
 Mass:45
 Engine:180 XL Engine

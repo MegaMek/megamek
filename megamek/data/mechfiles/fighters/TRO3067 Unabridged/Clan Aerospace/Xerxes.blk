@@ -36,6 +36,10 @@ Xerxes
 Clan Level 2
 </type>
 
+<role>
+Dogfighter
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -110,7 +114,7 @@ CLCASE
 </Fuselage Equipment>
 
 <source>
-TRO 3067 - Succession Wars
+TRO: 3067
 </source>
 
 <tonnage>

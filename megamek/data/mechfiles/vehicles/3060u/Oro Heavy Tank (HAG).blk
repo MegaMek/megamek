@@ -32,6 +32,10 @@ Oro Heavy Tank
 Clan Level 2
 </type>
 
+<role>
+Sniper
+</role>
+
 <tonnage>
 60
 </tonnage>
@@ -90,6 +94,6 @@ CLHAG30
 </Turret Equipment>
 
 <source>
-Jihad
+TRO: 3060
 </source>
 

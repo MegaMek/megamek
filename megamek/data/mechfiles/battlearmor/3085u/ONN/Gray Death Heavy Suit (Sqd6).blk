@@ -36,6 +36,10 @@ Gray Death Heavy Suit
 IS Level 2
 </type>
 
+<role>
+Scout
+</role>
+
 <motion_type>
 Leg
 </motion_type>
@@ -121,7 +125,7 @@ From this forum post. https://bg.battletech.com/forums/fan-articles/battle-armor
 </notes>
 
 <source>
-TRO 3085 - Jihad
+TRO: 3085
 </source>
 
 <chassis>

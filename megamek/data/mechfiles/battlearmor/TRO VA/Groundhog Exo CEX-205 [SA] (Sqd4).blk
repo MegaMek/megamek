@@ -32,6 +32,10 @@ CEX-205 [Salvage Arm](Sqd4)
 IS Level 2
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Leg
 </motion_type>
@@ -71,7 +75,7 @@ BASalvageArm:RA
 </Trooper 4 Equipment>
 
 <source>
-TRO Vehicle Annex (r) - Civil War
+TRO: Vehicle Annex Revised
 </source>
 
 <chassis>
@@ -130,3 +134,8 @@ JUMPJET:Unknown
 COMMUNICATIONS:Unknown
 TARGETING:Unknown
 </systemManufacturers>
+
+<quirks>
+imp_com
+</quirks>
+

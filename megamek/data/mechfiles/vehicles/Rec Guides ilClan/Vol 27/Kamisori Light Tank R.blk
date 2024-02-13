@@ -36,6 +36,10 @@ R
 Mixed (IS Chassis)
 </type>
 
+<role>
+Scout
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -113,7 +117,7 @@ TARGETING:Matabushi Stalker
 </systemManufacturers>
 
 <source>
-Rec Guide:ilClan #27 - Late Republic
+Rec Guide:ilClan #27
 </source>
 
 <tonnage>

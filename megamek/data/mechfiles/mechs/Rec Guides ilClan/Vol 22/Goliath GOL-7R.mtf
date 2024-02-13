@@ -1,13 +1,19 @@
-Version:1.0
-Goliath
-GOL-7R
+chassis:Goliath
+model:GOL-7R
 mul id:8408
 
 Config:Quad
 techbase:Inner Sphere
 era:3133
-source:Rec Guide:ilClan #22 - Dark Age
+source:Rec Guide:ilClan #22
 rules level:2
+role:Sniper
+
+
+
+quirk:multi_trac
+quirk:exp_actuator
+
 
 mass:80
 engine:320 Light Engine(IS)

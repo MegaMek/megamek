@@ -1,13 +1,19 @@
-Version:1.0
-Shen Yi
-SHY-3B
+chassis:Shen Yi
+model:SHY-3B
 mul id:2922
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3086
-Source:Jihad
+source:TRO: 3085
 Rules Level:2
+role:Brawler
+
+
+
+
+quirk:weak_head_1
+
 
 Mass:65
 Engine:260 XL Engine

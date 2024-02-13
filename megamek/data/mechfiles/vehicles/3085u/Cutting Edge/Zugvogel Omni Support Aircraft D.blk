@@ -36,6 +36,10 @@ D 'Raubvogel'
 IS Level 2
 </type>
 
+<role>
+Fire Support
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -136,7 +140,7 @@ MML is assigning 2 slots for armor when per pg 134 of TM it should have 0 slots 
 </notes>
 
 <source>
-TRO 3085
+TRO: 3085
 </source>
 
 <tonnage>

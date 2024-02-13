@@ -32,6 +32,10 @@ SturmFeur Heavy Tank
 IS Level 1
 </type>
 
+<role>
+Juggernaut
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -116,7 +120,7 @@ TARGETING:SturmFeur Highlight with BlindFire Radar
 </systemManufacturers>
 
 <source>
-Rec Guide:ilClan #28 - Succession Wars
+Rec Guide:ilClan #28
 </source>
 
 <tonnage>

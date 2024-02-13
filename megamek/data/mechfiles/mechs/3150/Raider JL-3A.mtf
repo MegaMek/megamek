@@ -1,11 +1,10 @@
-Version:1.3
-Raider
-JL-3A
+chassis:Raider
+model:JL-3A
 mul id:8070
 Config:Biped
 techbase:Inner Sphere
 era:3138
-source:TRO Dark Age - Dark Age
+source:TRO: Dark Age
 rules level:2
 
 mass:50

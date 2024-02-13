@@ -36,6 +36,10 @@ Steinadler (Golden Eagle)
 IS Level 1
 </type>
 
+<role>
+Fire Support
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -98,7 +102,7 @@ IS Ammo LRM-5
 </Fuselage Equipment>
 
 <source>
-TRO 3039 - Star League
+TRO: 3039
 </source>
 
 <tonnage>

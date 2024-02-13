@@ -1,13 +1,18 @@
-Version:1.0
-Jenner
-JR7-F
+chassis:Jenner
+model:JR7-F
 mul id:1693
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2784
-Source:TRO 3039 - Succession Wars
+Source:TRO: 3039
 Rules Level:1
+role:Striker
+
+
+
+quirk:no_arms
+
 
 Mass:35
 Engine:245 Fusion Engine

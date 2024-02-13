@@ -32,6 +32,10 @@ IS Standard Battle Armor
 IS Level 4
 </type>
 
+<role>
+Ambusher
+</role>
+
 <motion_type>
 Jump
 </motion_type>
@@ -78,7 +82,7 @@ IS BA Advanced:RA
 </Trooper 4 Equipment>
 
 <source>
-XTR Gladiators - Jihad
+XTR: Gladiators
 </source>
 
 <chassis>

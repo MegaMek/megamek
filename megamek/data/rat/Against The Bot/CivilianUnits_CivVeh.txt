@@ -72,7 +72,7 @@ Korvin Tank KRV-2,3
 MASH Truck (Standard),18
 MASH Truck (Small),9
 MASH Truck (ICE),27
-Marsden I,9
+Marsden MBT I,9
 Merkava Heavy Tank Mk VI,3
 Merkava Heavy Tank Mk VII,9
 O-65 'Oppie' Hazardous Materials Recovery Vehicle O-65 HMRV,9

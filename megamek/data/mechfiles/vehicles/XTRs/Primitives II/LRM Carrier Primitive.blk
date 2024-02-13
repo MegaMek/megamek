@@ -36,6 +36,10 @@ LRM Carrier
 IS Level 2
 </type>
 
+<role>
+Missile Boat
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -99,7 +103,7 @@ LRM 15
 </armor_tech_rating>
 
 <capabilities>
-The chassis for missile carriers vary in basic design, but they are all essentially military transport vehicles, tracked being the most common, adapted to carry the huge missile launchers and loading equipment. Those adaptations generally consist of reinforcing the suspension systems and armoring the crew and critical components areas enough to survive the back blast from so many missiles. With an average top speed of 54 km/h and armor unable to survive counterbattery fire, if forced to engage in direct combat a carrier's life expectancy is measured in seconds.
+The chassis for missile carriers, but they are all essentially military transport vehicles, tracked being the most common, adapted to carry the huge missile launchers and loading equipment. Those adaptations generally consist of reinforcing the suspension systems and armoring the crew and critical components areas enough to survive the back blast from so many missiles. With an average top speed of 54 km/h and armor unable to survive counterbattery fire, if forced to engage in direct combat a carrier's life expectancy is measured in seconds.
 </capabilities>
 
 <overview>
@@ -130,7 +134,7 @@ TARGETING:FireScan with IndirecTrack
 </systemManufacturers>
 
 <source>
-XTRO Primitives II - Age of War
+XTR: Primitives II
 </source>
 
 <tonnage>
@@ -144,4 +148,13 @@ XTRO Primitives II - Age of War
 <fuelType>
 PETROCHEMICALS
 </fuelType>
+
+
+<quirks>
+easy_maintain
+low_profile
+fast_reload
+poor_performance
+obsolete
+</quirks>
 

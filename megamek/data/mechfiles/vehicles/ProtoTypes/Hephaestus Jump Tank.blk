@@ -32,6 +32,10 @@ Hephaestus Jump Tank
 Clan Level 3
 </type>
 
+<role>
+Striker
+</role>
+
 <motion_type>
 Hover
 </motion_type>
@@ -97,9 +101,17 @@ CLTAG
 </Turret Equipment>
 
 <source>
-TRO:Prototypes
+TRO: Prototypes
 </source>
 
 <tonnage>
 35.0
 </tonnage>
+
+<quirks>
+difficult_maintain
+hard_pilot
+non_standard
+distracting
+</quirks>
+

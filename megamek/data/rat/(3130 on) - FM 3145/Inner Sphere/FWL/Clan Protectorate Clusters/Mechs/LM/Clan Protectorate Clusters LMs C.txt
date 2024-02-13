@@ -1,4 +1,4 @@
-Clan Protectorate Clusters Light Mechs C
+Clan Protectorate Clusters Light Mechs 3130 C
 Eagle EGL-2M,1
 Locust LCT-6M,2
 Wight WGT-2SC,3

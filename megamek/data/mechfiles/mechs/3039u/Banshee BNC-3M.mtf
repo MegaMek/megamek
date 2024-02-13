@@ -1,13 +1,17 @@
-Version:1.0
-Banshee
-BNC-3M
+chassis:Banshee
+model:BNC-3M
 mul id:241
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2579
-Source:TRO 3039 - Star League
+Source:TRO: 3039
 Rules Level:1
+role:Brawler
+
+quirk:rugged_1
+quirk:bad_rep_is
+
 
 Mass:95
 Engine:380 Fusion Engine

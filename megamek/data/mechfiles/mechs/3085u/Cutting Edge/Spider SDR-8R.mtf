@@ -1,13 +1,20 @@
-Version:1.0
-Spider
-SDR-8R
+chassis:Spider
+model:SDR-8R
 mul id:3018
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3084
-Source:Jihad
+source:TRO: 3085
 Rules Level:2
+role:Scout
+
+
+
+quirk:easy_maintain
+quirk:nimble_jumper
+quirk:no_eject
+
 
 Mass:30
 Engine:210 Light Engine

@@ -1,13 +1,20 @@
-Version:1.0
-JagerMech III
-JM6-D3
+chassis:JagerMech III
+model:JM6-D3
 mul id:1672
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3058
-Source:TRO 3060
+Source:TRO: 3060
 Rules Level:2
+role:Sniper
+
+
+
+
+quirk:anti_air
+quirk:overhead_arms
+
 
 Mass:65
 Engine:325 XL Engine

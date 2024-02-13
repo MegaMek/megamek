@@ -1,13 +1,22 @@
-Version:1.0
-Locust
-LCT-5S
+chassis:Locust
+model:LCT-5S
 mul id:8199
 
 Config:Biped
 techbase:Inner Sphere
 era:3073
-source:Rec Guide:ilClan #16 - Jihad
+source:Rec Guide:ilClan #16
 rules level:2
+role:Striker
+
+
+
+quirk:compact_mech
+quirk:low_profile
+quirk:cramped_cockpit
+quirk:no_arms
+quirk:weak_legs
+
 
 mass:20
 engine:160 Fusion Engine(IS)

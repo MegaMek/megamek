@@ -36,6 +36,10 @@ Carrack Transport
 Clan Level 3
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -208,7 +212,7 @@ CLArtemisIV
 </structural_integrity>
 
 <source>
-3057R - Succession Wars - Late Era
+TRO: 3057 Revised
 </source>
 
 <tonnage>

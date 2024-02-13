@@ -1,13 +1,19 @@
-Version:1.0
-Hermes II
-HER-2M 'Mercury'
+chassis:Hermes II
+model:HER-2M 'Mercury'
 mul id:1496
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2802
-Source:TRO 3039 - Succession Wars
+Source:TRO: 3039
 Rules Level:1
+role:Striker
+
+
+
+quirk:easy_maintain
+quirk:imp_com
+
 
 Mass:40
 Engine:280 Fusion Engine

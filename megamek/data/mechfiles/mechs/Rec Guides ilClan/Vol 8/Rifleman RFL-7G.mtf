@@ -1,13 +1,22 @@
-Version:1.0
-Rifleman
-RFL-7G
+chassis:Rifleman
+model:RFL-7G
 mul id:7572
 
 Config:Biped
 techbase:Inner Sphere
 era:3086
-source:Rec Guide:ilClan #8 - Early Republic
+source:Rec Guide:ilClan #8
 rules level:2
+role:Sniper
+
+
+
+quirk:anti_air
+quirk:imp_com
+quirk:searchlight
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+
 
 mass:60
 engine:240 XL Engine(IS)

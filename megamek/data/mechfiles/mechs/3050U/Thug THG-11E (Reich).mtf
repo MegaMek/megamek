@@ -1,13 +1,18 @@
-Version:1.0
-Thug
-THG-11E (Reich)
+chassis:Thug
+model:THG-11E (Reich)
 mul id:5228
 
 Config:Biped
 TechBase:Mixed (IS Chassis)
 Era:3071
-Source:FM:Mercenaries SII - Jihad
+Source:Mercenaries Supplemental II
 Rules Level:4
+role:Brawler
+
+
+
+quirk:rugged_1
+
 
 Mass:80
 Engine:320 Fusion Engine(IS)

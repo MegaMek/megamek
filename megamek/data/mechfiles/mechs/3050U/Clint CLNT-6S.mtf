@@ -1,13 +1,22 @@
-Version:1.0
-Clint
-CLNT-6S
+chassis:Clint
+model:CLNT-6S
 mul id:651
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3069
-Source:TRO 3050 - Jihad
+Source:TRO: 3050
 Rules Level:2
+role:Striker
+
+
+
+quirk:imp_target_long
+quirk:imp_target_med
+quirk:difficult_maintain
+quirk:exp_actuator
+quirk:non_standard
+
 
 Mass:40
 Engine:280 Light Engine

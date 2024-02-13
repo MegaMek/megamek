@@ -32,6 +32,10 @@ Mk. XV
 IS Level 3
 </type>
 
+<role>
+Sniper
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -94,9 +98,15 @@ ISSBGR
 </Turret Equipment>
 
 <source>
-TRO:Prototypes
+TRO: Prototypes
 </source>
 
 <tonnage>
 90.0
 </tonnage>
+
+<quirks>
+poor_performance
+trailer_hitch
+</quirks>
+

@@ -32,6 +32,10 @@ Ironhold Assault Battle Armor
 Clan Level 3
 </type>
 
+<role>
+Juggernaut
+</role>
+
 <motion_type>
 Jump
 </motion_type>
@@ -62,7 +66,7 @@ Clan BA Fire Resistant:LA
 </Point Equipment>
 
 <source>
-RS 3145 NT NU - Early Republic
+Record Sheets: 3145 New Tech New Upgrades
 </source>
 
 <chassis>

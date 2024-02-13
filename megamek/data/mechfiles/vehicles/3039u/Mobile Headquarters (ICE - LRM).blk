@@ -32,6 +32,10 @@ Mobile Headquarters
 IS Level 2
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Wheeled
 </motion_type>
@@ -78,7 +82,7 @@ LRM 10
 </Turret Equipment>
 
 <source>
-TRO 3039 - Succession Wars
+TRO: 3039
 </source>
 
 <tonnage>

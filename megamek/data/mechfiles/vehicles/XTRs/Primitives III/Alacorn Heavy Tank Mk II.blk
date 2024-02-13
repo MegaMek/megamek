@@ -32,6 +32,10 @@ Mk II
 IS Level 4
 </type>
 
+<role>
+Juggernaut
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -85,7 +89,7 @@ Autocannon/20
 </Turret Equipment>
 
 <source>
-XTRO Primitives III - Age of War
+XTR: Primitives III
 </source>
 
 <tonnage>

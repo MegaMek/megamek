@@ -1,13 +1,22 @@
-Version:1.0
-Archer
-ARC-5CS
+chassis:Archer
+model:ARC-5CS
 mul id:7598
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3052
-Source:Clan Invasion
+source:Battle of Tukayyid
 Rules Level:2
+role:Missile Boat
+
+
+
+quirk:battle_fists_la
+quirk:battle_fists_ra
+quirk:command_mech
+quirk:stable
+quirk:ubiquitous_is
+
 
 Mass:70
 Engine:280 XL Engine(IS)

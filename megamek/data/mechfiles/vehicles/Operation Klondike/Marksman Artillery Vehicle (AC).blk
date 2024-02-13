@@ -32,6 +32,10 @@ Marksman Artillery Vehicle
 IS Level 4
 </type>
 
+<role>
+Brawler
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -83,3 +87,8 @@ Large Laser
 <tonnage>
 65.0
 </tonnage>
+
+<source>
+Historical: Operation Klondike
+</source>
+

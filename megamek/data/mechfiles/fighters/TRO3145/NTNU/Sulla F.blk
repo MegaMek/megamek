@@ -36,6 +36,10 @@ F
 Clan Level 3
 </type>
 
+<role>
+Fast Dogfighter
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -114,7 +118,7 @@ WatchdogECMSuite:OMNI
 </Fuselage Equipment>
 
 <source>
-TRO 3145 NTNU - Late Republic
+TRO: 3145 NTNU
 </source>
 
 <tonnage>

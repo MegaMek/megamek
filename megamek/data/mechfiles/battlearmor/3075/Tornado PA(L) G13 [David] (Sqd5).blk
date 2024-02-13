@@ -36,6 +36,10 @@ G13 [David Light Gauss](Sqd5)
 IS Level 2
 </type>
 
+<role>
+Ambusher
+</role>
+
 <motion_type>
 Leg
 </motion_type>
@@ -70,7 +74,7 @@ LegAttack
 </Squad Equipment>
 
 <source>
-TRO 3075 - Civil War
+TRO: 3075
 </source>
 
 <chassis>

@@ -36,6 +36,10 @@ RGU-133Eb
 IS Level 2
 </type>
 
+<role>
+Fast Dogfighter
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -109,7 +113,7 @@ IS Ammo LRM-15 Artemis-capable
 </Fuselage Equipment>
 
 <source>
-TRO 3075 - Star League
+TRO: 3075
 </source>
 
 <tonnage>

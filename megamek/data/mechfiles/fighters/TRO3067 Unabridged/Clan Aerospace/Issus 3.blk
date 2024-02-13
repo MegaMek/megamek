@@ -36,6 +36,10 @@ Issus
 Clan Level 3
 </type>
 
+<role>
+Fast Dogfighter
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -106,7 +110,7 @@ CLERMediumLaser
 </Fuselage Equipment>
 
 <source>
-TRO 3067 - Jihad
+TRO: 3067
 </source>
 
 <tonnage>

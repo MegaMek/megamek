@@ -32,6 +32,10 @@ Djinn Battle Armor
 IS Level 2
 </type>
 
+<role>
+Scout
+</role>
+
 <motion_type>
 Jump
 </motion_type>
@@ -66,7 +70,7 @@ IS BA Advanced:Body
 </Squad Equipment>
 
 <source>
-TRO 3075 - Jihad
+TRO: 3075
 </source>
 
 <chassis>

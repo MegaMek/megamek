@@ -36,6 +36,10 @@ Arcadia
 Clan Level 2
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -161,7 +165,7 @@ Clan Streak SRM 6 Ammo:45
 </structural_integrity>
 
 <source>
-TRO 3067 - Civil War
+TRO: 3067
 </source>
 
 <tonnage>

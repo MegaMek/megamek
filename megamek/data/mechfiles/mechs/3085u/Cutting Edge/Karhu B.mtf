@@ -1,13 +1,16 @@
-Version:1.0
-Karhu
-B
+chassis:Karhu
+model:B
 mul id:1749
 
 Config:Biped Omnimech
 TechBase:Clan
 Era:3079
-Source:Jihad
+source:TRO: 3085
 Rules Level:2
+role:Skirmisher
+
+quirk:em_inter_whole
+
 
 Mass:65
 Engine:325 XL (Clan) Engine(IS)

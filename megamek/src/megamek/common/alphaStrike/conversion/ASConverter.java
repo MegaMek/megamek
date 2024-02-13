@@ -20,6 +20,7 @@ package megamek.common.alphaStrike.conversion;
 
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.client.ui.swing.calculationReport.DummyCalculationReport;
+import megamek.codeUtilities.StringUtility;
 import megamek.common.*;
 import megamek.common.alphaStrike.ASArcs;
 import megamek.common.alphaStrike.ASUnitType;
@@ -40,10 +41,21 @@ import java.util.*;
 public final class ASConverter {
 
     //TODO: LG, SLG, VLG support vehicles, MS
-    //TODO: pilot skill not working
 
+    /**
+     *  Performs Alpha Strike conversion for the MechSummaryCache (without trying to get a clean unit first,
+     *  without storing a conversion report and without considering pilot skill).
+     */
     public static AlphaStrikeElement convertForMechCache(Entity entity) {
         return performConversion(entity, false, new DummyCalculationReport(), entity.getCrew());
+    }
+
+    /**
+     *  Performs Alpha Strike conversion for use in MML (without trying to get a clean unit first,
+     *  without considering pilot skill but with storing a conversion report).
+     */
+    public static AlphaStrikeElement convertInMML(Entity entity, CalculationReport report) {
+        return performConversion(entity, false, report, entity.getCrew());
     }
 
     public static AlphaStrikeElement convert(Entity entity, CalculationReport conversionReport) {
@@ -90,9 +102,9 @@ public final class ASConverter {
         element.setName(entity.getShortName());
         element.setQuirks(entity.getQuirks());
         element.setModel(entity.getModel());
-        element.setChassis(entity.getChassis());
+        element.setChassis(entity.getFullChassis());
         element.setMulId(entity.getMulId());
-        element.setRole(UnitRoleHandler.getRoleFor(entity));
+        element.setRole(entity.getRole());
 
         if (entity.getShortName().length() < 15) {
             conversionReport.addHeader("Alpha Strike Conversion for " + entity.getShortName());

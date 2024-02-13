@@ -1,13 +1,20 @@
-Version:1.0
-Men Shen
-MS1-OU
+chassis:Men Shen
+model:MS1-OU
 mul id:2167
 
 Config:Biped Omnimech
 TechBase:Inner Sphere
 Era:3077
-Source:Jihad
+source:TRO: 3085
 Rules Level:4
+role:Striker
+
+
+
+quirk:imp_com
+quirk:imp_sensors
+quirk:exp_actuator
+
 
 Mass:55
 Engine:330 XL Engine(IS)

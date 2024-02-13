@@ -82,12 +82,16 @@ ISCASE
 IS Level 2
 </type>
 
+<role>
+Sniper
+</role>
+
 <year>
 3086
 </year>
 
 <source>
-Dark Age
+TRO: 3085
 </source>
 
 <internal_type>
@@ -105,3 +109,19 @@ Dark Age
 <motion_type>
 Tracked
 </motion_type>
+
+<manufacturer>
+Defiance Industries
+</manufacturer>
+
+<primaryFactory>
+Hesperus II
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:300 Vlar XL Fusion
+ARMOR:StarSlab/4 Heavy Ferro-Fibrous with CASE
+COMMUNICATIONS:TharHes Muse 54-58K with C3
+TARGETING:TharHes Mars8.2
+</systemManufacturers>

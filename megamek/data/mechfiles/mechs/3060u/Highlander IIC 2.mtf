@@ -1,13 +1,19 @@
-Version:1.0
-Highlander IIC
-2
+chassis:Highlander IIC
+model:2
 mul id:1525
 
 Config:Biped
 TechBase:Clan
 Era:3072
-Source:TRO 3060 - Jihad
+Source:TRO: 3060
 Rules Level:2
+role:Juggernaut
+
+quirk:command_mech
+quirk:cowl
+quirk:reinforced_legs
+quirk:difficult_eject
+
 
 Mass:90
 Engine:270 Fusion (Clan) Engine

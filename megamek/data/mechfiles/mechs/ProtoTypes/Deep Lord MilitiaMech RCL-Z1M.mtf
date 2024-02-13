@@ -1,12 +1,21 @@
-Version:1.1
-Deep Lord MilitiaMech
-RCL-Z1M
+chassis:Deep Lord MilitiaMech
+model:RCL-Z1M
 mul id:4057
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3085
 Rules Level:4
+role:Juggernaut
+Source:TRO: Prototypes 
+
+
+
+
+quirk:pro_actuator
+quirk:imp_life_support
+weaponquirk:jettison_capable:RA:5:Mace
+
 
 Mass:65
 Engine:195 Fuel Cell Engine(IS)

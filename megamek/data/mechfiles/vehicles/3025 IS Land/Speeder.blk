@@ -34,6 +34,10 @@ Speeder
 <type>
 IS Level 1
 </type>
+
+<role>
+None
+</role>
 <year>
 2300
 </year>
@@ -49,3 +53,7 @@ IS Level 1
 <motion_type>
 Wheeled
 </motion_type>
+
+<source>
+TRO: 3025
+</source>

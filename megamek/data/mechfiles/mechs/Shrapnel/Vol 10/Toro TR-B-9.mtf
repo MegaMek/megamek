@@ -1,12 +1,12 @@
-Version:1.3
-Toro
-TR-B-9
+chassis:Toro
+model:TR-B-9
 mul id:9249
 Config:Biped
 techbase:Inner Sphere
 era:3108
-source:Shrapnel 10 - Late Republic
+source:Shrapnel #10
 rules level:2
+role:Brawler
 
 mass:35
 engine:175 Fusion Engine(IS)

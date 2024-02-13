@@ -95,10 +95,17 @@ CLStreakLRM20
 </Turret Equipment>
 
 <source>
-RS3150 - Dark Age
+Record Sheets: 3150
 </source>
 
 <tonnage>
 65.0
 </tonnage>
+
+
+<quirks>
+power_reverse
+bad_rep_is
+bad_rep_clan
+</quirks>
 

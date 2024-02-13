@@ -32,6 +32,10 @@ Mechanized Tracked Platoon
 IS Level 3
 </type>
 
+<role>
+Ambusher
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -40,7 +44,7 @@ Tracked
 </Field Guns Equipment>
 
 <source>
-Total Warfare - Succession Wars
+Total Warfare
 </source>
 
 <squad_size>

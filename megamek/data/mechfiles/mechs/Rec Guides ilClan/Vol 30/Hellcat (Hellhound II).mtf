@@ -1,12 +1,18 @@
-Version:1.3
-Hellcat (Hellhound II)
-
+chassis:Hellcat
+clanname:Hellhound II
+model:
 mul id:9409
 Config:Biped
 techbase:Clan
 era:3133
-source:Rec Guide:ilClan #30 - Dark Age
+source:Rec Guide:ilClan #30
 rules level:3
+role:Skirmisher
+
+
+quirk:ext_twist
+quirk:difficult_maintain
+
 
 mass:50
 engine:300 XXL (Clan) Engine(IS)

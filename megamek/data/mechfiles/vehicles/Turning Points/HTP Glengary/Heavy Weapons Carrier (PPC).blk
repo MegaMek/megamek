@@ -32,6 +32,10 @@ Heavy Weapons Carrier
 IS Level 1
 </type>
 
+<role>
+Striker
+</role>
+
 <motion_type>
 Hover
 </motion_type>
@@ -72,7 +76,7 @@ PPC
 </Turret Equipment>
 
 <source>
-HTP: Glengarry
+Historical Turning Points: Glengarry
 </source>
 
 <tonnage>

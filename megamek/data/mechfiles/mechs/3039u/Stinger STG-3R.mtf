@@ -1,13 +1,22 @@
-Version:1.0
-Stinger
-STG-3R
+chassis:Stinger
+model:STG-3R
 mul id:3061
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2479
-Source:TRO 3039 - Age of War
+Source:TRO: 3039
 Rules Level:1
+role:Scout
+
+
+
+
+quirk:rugged_1
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+quirk:cramped_cockpit
+
 
 Mass:20
 Engine:120 Fusion Engine

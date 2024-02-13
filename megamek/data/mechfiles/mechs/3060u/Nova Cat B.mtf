@@ -1,13 +1,17 @@
-Version:1.0
-Nova Cat
-B
+chassis:Nova Cat
+model:B
 mul id:2300
 
 Config:Biped Omnimech
 TechBase:Clan
 Era:3059
-Source:TRO 3060
+Source:TRO: 3060
 Rules Level:2
+role:Missile Boat
+
+quirk:ext_twist
+quirk:exp_actuator
+
 
 Mass:70
 Engine:280 XL (Clan) Engine(IS)

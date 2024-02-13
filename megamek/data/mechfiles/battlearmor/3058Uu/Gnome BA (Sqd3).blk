@@ -36,6 +36,10 @@ Gnome Battle Armor
 Clan Level 2
 </type>
 
+<role>
+Juggernaut
+</role>
+
 <motion_type>
 Jump
 </motion_type>
@@ -63,7 +67,7 @@ BAHeavyBattleClaw:LA
 </Point Equipment>
 
 <source>
-TRO 3058U - Clan Invasion
+TRO: 3058 Upgrade
 </source>
 
 <chassis>

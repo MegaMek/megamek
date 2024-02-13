@@ -32,6 +32,10 @@ Shamash Reconnaissance Vehicle
 Clan Level 3
 </type>
 
+<role>
+Scout
+</role>
+
 <motion_type>
 Hover
 </motion_type>
@@ -81,7 +85,7 @@ CLERFlamer
 </Turret Equipment>
 
 <source>
-Jihad
+TRO: 3060
 </source>
 
 <tonnage>

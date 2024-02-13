@@ -1,13 +1,16 @@
-Version:1.0
-Vulcan
-VT-5M
+chassis:Vulcan
+model:VT-5M
 mul id:3461
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3050
-Source:TRO 3050 - Clan Invasion
+Source:TRO: 3050
 Rules Level:2
+role:Striker
+
+quirk:low_profile
+
 
 Mass:40
 Engine:240 Fusion Engine

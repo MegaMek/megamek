@@ -32,6 +32,10 @@ Prometheus Combat Support Bridgelayer
 IS Level 3
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -87,7 +91,7 @@ HeavyBridgeLayer
 </Rear Equipment>
 
 <source>
-TRO 3075 - Age of War
+TRO: 3075
 </source>
 
 <tonnage>

@@ -1,13 +1,18 @@
-Version:1.0
-Hermit Crab
-HMC-14
+chassis:Hermit Crab
+model:HMC-14
 mul id:7722
 
 Config:Biped
 techbase:Inner Sphere
 era:3108
-source:Rec Guide:ilClan #10 - Late Repubic
+source:Rec Guide:ilClan #10
 rules level:2
+role:Striker
+
+
+
+quirk:easy_maintain
+
 
 mass:25
 engine:175 Fusion Engine(IS)

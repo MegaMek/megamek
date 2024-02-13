@@ -36,6 +36,10 @@ Gnome Battle Armor
 Mixed (Clan Chassis) Advanced
 </type>
 
+<role>
+Juggernaut
+</role>
+
 <motion_type>
 Jump
 </motion_type>
@@ -109,7 +113,7 @@ TARGETING:Unknown
 </systemManufacturers>
 
 <source>
-XTRO Royal Fantasy - Dark Age
+XTR: Royal Fantasy
 </source>
 
 <chassis>

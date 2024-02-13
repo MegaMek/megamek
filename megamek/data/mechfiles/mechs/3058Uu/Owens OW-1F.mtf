@@ -1,13 +1,18 @@
-Version:1.0
-Owens
-OW-1F
+chassis:Owens
+model:OW-1F
 mul id:2390
 
 Config:Biped Omnimech
 TechBase:Inner Sphere
 Era:3076
-Source:TRO 3058 - Jihad
+Source:TRO: 3058
 Rules Level:2
+role:Striker
+
+
+
+quirk:imp_sensors
+
 
 Mass:35
 Engine:280 XL Engine(IS)

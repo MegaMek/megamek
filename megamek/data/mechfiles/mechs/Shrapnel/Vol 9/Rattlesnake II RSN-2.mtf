@@ -1,12 +1,12 @@
-Version:1.1
-Rattlesnake II
-RSN-2
+chassis:Rattlesnake II
+model:RSN-2
 
 Config:Biped
 techbase:Mixed (IS Chassis)
 era:3149
-source:Shrapnel 9 - Dark Ages
+source:Shrapnel #9
 rules level:2
+role:Striker
 mul id:9242
 
 mass:45

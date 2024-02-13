@@ -72,7 +72,13 @@ public final class HeavyVehicleBay extends Bay {
 
     @Override
     public String toString() {
-        return "heavyvehiclebay:" + totalSpace + ":" + doors + ":"+ bayNumber;
+        String bayType = "heavyvehiclebay";
+        return this.bayString(
+                bayType,
+                totalSpace,
+                doors,
+                bayNumber
+        );
     }
 
     public static TechAdvancement techAdvancement() {

@@ -1,13 +1,16 @@
-Version:1.0
-Balius
-A
+chassis:Balius
+model:A
 mul id:211
 
 Config:Quad Omnimech
 TechBase:Clan
 Era:3075
-Source:TRO 3075 - Jihad
+Source:TRO: 3075
 Rules Level:2
+role:Sniper
+
+quirk:rugged_1
+
 
 Mass:65
 Engine:390 XL (Clan) Engine(IS)

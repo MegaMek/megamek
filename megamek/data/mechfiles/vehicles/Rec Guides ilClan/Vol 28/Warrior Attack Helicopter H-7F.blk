@@ -121,10 +121,15 @@ TARGETING:N&D Handsfree with TAG
 </systemManufacturers>
 
 <source>
-Rec Guide:ilClan #28 - Dark Age
+Rec Guide:ilClan #28
 </source>
 
 <tonnage>
 21.0
 </tonnage>
+
+
+<quirks>
+vtol_rotor_coaxial
+</quirks>
 

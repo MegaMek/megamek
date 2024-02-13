@@ -33,6 +33,10 @@ Kinnol MBT
 IS Level 2
 </type>
 
+<role>
+Skirmisher
+</role>
+
 <tonnage>
 70.0
 </tonnage>
@@ -96,3 +100,7 @@ ISMML5
 ISLBXAC10
 ISERMediumLaser
 </Turret Equipment>
+
+<source>
+TRO: 3085
+</source>

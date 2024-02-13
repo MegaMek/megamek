@@ -14,7 +14,7 @@
  */
 package megamek.client.ui.swing.dialog;
 
-import megamek.MMConstants;
+import megamek.MegaMek;
 import megamek.client.ui.Messages;
 import megamek.client.ui.dialogs.BVDisplayDialog;
 import megamek.client.ui.models.XTableColumnModel;
@@ -31,11 +31,9 @@ import org.apache.logging.log4j.LogManager;
 
 import javax.swing.*;
 import javax.swing.RowSorter.SortKey;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
+import javax.swing.event.*;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableRowSorter;
 import java.awt.*;
@@ -98,14 +96,14 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
     protected static MechSummaryCache mscInstance = MechSummaryCache.getInstance();
     protected MechSummary[] mechs;
 
-    private MechTableModel unitModel = new MechTableModel();
-    private XTableColumnModel unitColumnModel = new XTableColumnModel();
+    private final MechTableModel unitModel = new MechTableModel();
+    private final XTableColumnModel unitColumnModel = new XTableColumnModel();
     private TableColumn pvColumn;
     private TableColumn bvColumn;
     protected MechSearchFilter searchFilter;
 
     protected JFrame frame;
-    private UnitLoadingDialog unitLoadingDialog;
+    private final UnitLoadingDialog unitLoadingDialog;
     private AdvancedSearchDialog2 advancedSearchDialog2;
 
     protected TableRowSorter<MechTableModel> sorter;
@@ -118,6 +116,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
     protected boolean allowInvalid = true;
     protected int gameTechLevel = TechConstants.T_SIMPLE_INTRO;
     protected int techLevelDisplayType = TECH_LEVEL_DISPLAY_IS_CLAN;
+    protected boolean eraBasedTechLevel = false;
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
     //endregion Variable Declarations
 
@@ -195,6 +194,14 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         tableUnits.addKeyListener(this);
         tableUnits.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(
                 KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "");
+        tableUnits.setDefaultRenderer(Double.class, new TonnageRenderer());
+        tableUnits.setDefaultRenderer(Long.class, new PriceRenderer());
+
+        DefaultTableCellRenderer centeredRenderer = new DefaultTableCellRenderer();
+        centeredRenderer.setHorizontalAlignment(JLabel.CENTER);
+        tableUnits.setDefaultRenderer(Integer.class, centeredRenderer);
+        tableUnits.getColumnModel().getColumn(MechTableModel.COL_LEVEL).setCellRenderer(centeredRenderer);
+
         tableUnits.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         sorter = new TableRowSorter<>(unitModel);
         sorter.setComparator(MechTableModel.COL_CHASSIS, new NaturalOrderComparator());
@@ -213,11 +220,14 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         }
         bvColumn = tableUnits.getColumnModel().getColumn(MechTableModel.COL_BV);
         pvColumn = tableUnits.getColumnModel().getColumn(MechTableModel.COL_PV);
-        tableUnits.setFont(new Font(MMConstants.FONT_MONOSPACED, Font.PLAIN, 12));
         togglePV(false);
 
         scrollTableUnits = new JScrollPane(tableUnits);
         scrollTableUnits.setName("scrollTableUnits");
+
+        unitModel.addTableModelListener((e) -> UIUtil.updateRowHeightsForEqualHeights(tableUnits));
+        sorter.addRowSorterListener((e) -> UIUtil.updateRowHeightsForEqualHeights(tableUnits));
+        unitColumnModel.addColumnModelListener(columnModelListener);
 
         gridBagConstraints.insets = new Insets(5, 0, 0, 0);
         gridBagConstraints.gridx = 0;
@@ -432,7 +442,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         if (selectedIndices.length == 0) {
             String option = GUIP.getMechSelectorRulesLevels().replaceAll("[\\[\\]]", "");
             if (!option.isBlank()) {
-                String[] strSelections = option.split("[,]");
+                String[] strSelections = option.split(",");
                 selectedIndices = new int[strSelections.length];
                 for (int i = 0; i < strSelections.length; i++) {
                     selectedIndices[i] = Integer.parseInt(strSelections[i].trim());
@@ -491,7 +501,6 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
             }
         }
         listTechLevel.setModel(techModel);
-
         listTechLevel.setSelectedIndices(selectedIndices);
         listTechLevel.addListSelectionListener(this);
     }
@@ -535,7 +544,8 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
                     MechTableModel mechModel = entry.getModel();
                     MechSummary mech = mechModel.getMechSummary(entry.getIdentifier());
                     boolean techLevelMatch = false;
-                    int type = enableYearLimits ? mech.getType(allowedYear) : mech.getType();
+                    int type = eraBasedTechLevel ?
+                            mech.getType(allowedYear) : mech.getType();
                     for (int tl : nTypes) {
                         if (type == tl) {
                             techLevelMatch = true;
@@ -559,11 +569,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
                                     /* Advanced Search */
                                     && ((searchFilter == null) || MechSearchFilter.isMatch(mech, searchFilter))
                                     && advancedSearchDialog2.getASAdvancedSearch().matches(mech)) {
-                        if (!textFilter.getText().isBlank()) {
-                            String text = textFilter.getText();
-                            return mech.getName().toLowerCase().contains(text.toLowerCase());
-                        }
-                        return true;
+                        return matchesTextFilter(mech);
                     }
                     return false;
                 }
@@ -576,12 +582,26 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         lblCount.setText(String.format(" %s %d", msg_unitcount, sorter.getViewRowCount()));
     }
 
+    protected boolean matchesTextFilter(MechSummary unit) {
+        if (!textFilter.getText().isBlank()) {
+            String text = textFilter.getText().toLowerCase();
+            String[] tokens = text.split(" ");
+            String searchText = unit.getName().toLowerCase() + "###" + unit.getModel().toLowerCase();
+            for (String token : tokens) {
+                if (!searchText.contains(token)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
     /**
      * @return the selected entity (required for MekHQ/MegaMek overrides)
      */
     protected Entity refreshUnitView() {
         Entity selectedEntity = getSelectedEntity();
-        panePreview.updateDisplayedEntity(selectedEntity);
+        panePreview.updateDisplayedEntity(selectedEntity, getSelectedMechSummary());
         // Empty the unit preview icon if there's no entity selected
         if (selectedEntity == null) {
             labelImage.setIcon(null);
@@ -593,13 +613,11 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
      * @return the selected entity
      */
     public @Nullable Entity getSelectedEntity() {
-        int view = tableUnits.getSelectedRow();
-        if (view < 0) {
-            // selection got filtered away
+        MechSummary ms = getSelectedMechSummary();
+        if (ms == null) {
             return null;
         }
-        int selected = tableUnits.convertRowIndexToModel(view);
-        MechSummary ms = mechs[selected];
+
         try {
             // For some unknown reason the base path gets screwed up after you
             // print so this sets the source file to the full path.
@@ -609,6 +627,17 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
                             + ": " + e.getMessage(), e);
             return null;
         }
+    }
+
+    /** @return The MechSummary for the selected unit. */
+    public @Nullable MechSummary getSelectedMechSummary() {
+        int view = tableUnits.getSelectedRow();
+        if (view < 0) {
+            // selection got filtered away
+            return null;
+        }
+        int selected = tableUnits.convertRowIndexToModel(view);
+        return mechs[selected];
     }
 
     @Override
@@ -777,7 +806,6 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
      * A table model for displaying work items
      */
     protected class MechTableModel extends AbstractTableModel {
-        //region Variable Declarations
         private static final long serialVersionUID = -5457068129532709857L;
         private static final int COL_CHASSIS = 0;
         private static final int COL_MODEL = 1;
@@ -790,7 +818,6 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         private static final int N_COL = 8;
 
         private MechSummary[] data = new MechSummary[0];
-        //endregion Variable Declarations
 
         @Override
         public int getRowCount() {
@@ -802,26 +829,17 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
             return N_COL;
         }
 
-        public int getPreferredWidth(int col) {
-            switch (col) {
+        public int getPreferredWidth(int column) {
+            switch (column) {
                 case COL_MODEL:
                     return 75;
                 case COL_CHASSIS:
                     return 125;
+                case COL_COST:
                 case COL_WEIGHT:
                     return 50;
-                case COL_BV:
-                    return 25;
-                case COL_PV:
-                    return 25;
-                case COL_YEAR:
-                    return 25;
-                case COL_COST:
-                    return 25;
-                case COL_LEVEL:
-                    return 25;
                 default:
-                    return 0;
+                    return 15;
             }
         }
 
@@ -854,16 +872,10 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
             return getValueAt(0, col).getClass();
         }
 
-        @Override
-        public boolean isCellEditable(int row, int col) {
-            return false;
-        }
-
         public MechSummary getMechSummary(int i) {
             return data[i];
         }
 
-        // fill table with values
         public void setData(MechSummary[] ms) {
             data = ms;
             fireTableDataChanged();
@@ -878,7 +890,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
             if (col == COL_MODEL) {
                 return ms.getModel();
             } else if (col == COL_CHASSIS) {
-                return ms.getChassis();
+                return ms.getFullChassis();
             } else if (col == COL_WEIGHT) {
                 if ((gameOptions != null) && ms.getUnitType().equals("BattleArmor")) {
                     if (gameOptions.booleanOption(OptionsConstants.ADVANCED_TACOPS_BA_WEIGHT)) {
@@ -909,11 +921,79 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         }
     }
 
+    /** A specialized renderer for the mek table (formats the unit tonnage). */
+    public static class TonnageRenderer extends DefaultTableCellRenderer {
+
+        @Override
+        public Component getTableCellRendererComponent(final JTable table, final @Nullable Object value,
+                                                       final boolean isSelected, final boolean hasFocus,
+                                                       final int row, final int column) {
+            if (value instanceof Double) {
+                setHorizontalAlignment(JLabel.RIGHT);
+                double weight = (Double) value;
+                super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                if (weight < 2) {
+                    setText(String.format(MegaMek.getMMOptions().getLocale(), "%,d kg ", (int) (weight * 1000)));
+                } else if (Math.round(weight) == weight) {
+                    setText(String.format(MegaMek.getMMOptions().getLocale(), "%,d t ", Math.round(weight)));
+                } else {
+                    setText(String.format(MegaMek.getMMOptions().getLocale(), "%.1f t ", weight));
+                }
+                return this;
+            } else {
+                return null;
+            }
+        }
+    }
+
+    /** A specialized renderer for the mek table (formats the unit price). */
+    public static class PriceRenderer extends DefaultTableCellRenderer {
+
+        @Override
+        public Component getTableCellRendererComponent(final JTable table, final @Nullable Object value,
+                                                       final boolean isSelected, final boolean hasFocus,
+                                                       final int row, final int column) {
+            if (value instanceof Long) {
+                setHorizontalAlignment(JLabel.RIGHT);
+                super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                setText(String.format(MegaMek.getMMOptions().getLocale(), "%,d ", (Long) value));
+                return this;
+            } else {
+                return null;
+            }
+        }
+    }
+
     private void adaptToGUIScale() {
         UIUtil.adjustDialog(this, UIUtil.FONT_SCALE1);
-        textFilter.setMinimumSize(new Dimension(UIUtil.scaleForGUI(200), UIUtil.scaleForGUI(28)));
-        textFilter.setPreferredSize(new Dimension(UIUtil.scaleForGUI(200), UIUtil.scaleForGUI(28)));
-        techLevelScroll.setMinimumSize(new Dimension(UIUtil.scaleForGUI(300), UIUtil.scaleForGUI(100)));
-        techLevelScroll.setPreferredSize(new Dimension(UIUtil.scaleForGUI(300), UIUtil.scaleForGUI(100)));
+        setMinimumSize(UIUtil.scaleForGUI(new Dimension(700, 500)));
+        textFilter.setMinimumSize(UIUtil.scaleForGUI(new Dimension(200, 28)));
+        textFilter.setPreferredSize(UIUtil.scaleForGUI(new Dimension(200, 28)));
+        techLevelScroll.setMinimumSize(UIUtil.scaleForGUI(new Dimension(300, 100)));
+        techLevelScroll.setPreferredSize(UIUtil.scaleForGUI(new Dimension(300, 100)));
     }
+
+    TableColumnModelListener columnModelListener = new TableColumnModelListener() {
+
+        @Override
+        public void columnAdded(TableColumnModelEvent e) { }
+
+        @Override
+        public void columnRemoved(TableColumnModelEvent e) { }
+
+        @Override
+        public void columnMoved(TableColumnModelEvent e) {
+            UIUtil.updateRowHeightsForEqualHeights(tableUnits);
+        }
+
+        @Override
+        public void columnMarginChanged(ChangeEvent e) {
+            UIUtil.updateRowHeightsForEqualHeights(tableUnits);
+        }
+
+        @Override
+        public void columnSelectionChanged(ListSelectionEvent e) {
+            if (!e.getValueIsAdjusting()) UIUtil.updateRowHeightsForEqualHeights(tableUnits);
+        }
+    };
 }

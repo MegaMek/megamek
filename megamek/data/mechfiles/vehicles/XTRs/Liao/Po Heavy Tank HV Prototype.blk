@@ -32,6 +32,10 @@ Po Heavy Tank
 IS Level 4
 </type>
 
+<role>
+Brawler
+</role>
+
 <tonnage>
 60.0
 </tonnage>
@@ -88,5 +92,5 @@ Hyper Velocity Auto Cannon/10
 </Turret Equipment>
 
 <source>
-XTRO Liao - Jihad
+XTR: Liao
 </source>

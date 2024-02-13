@@ -1,13 +1,18 @@
-Version:1.0
-Cicada
-CDA-3M
+chassis:Cicada
+model:CDA-3M
 mul id:596
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3049
-Source:TRO 3050 - Clan Invasion
+Source:TRO: 3050
 Rules Level:2
+role:Striker
+
+
+
+quirk:no_arms
+
 
 Mass:40
 Engine:320 XL Engine

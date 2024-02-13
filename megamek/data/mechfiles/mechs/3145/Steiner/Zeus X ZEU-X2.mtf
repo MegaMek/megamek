@@ -1,13 +1,19 @@
-Version:1.0
-Zeus-X
-ZEU-X2
+chassis:Zeus-X
+model:ZEU-X2
 mul id:6632
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3069
-Source:TRO 3145 Lyran Commonwealth - Jihad
+Source:TRO: 3145 Lyran Commonwealth
 Rules Level:4
+role:Skirmisher
+
+
+
+quirk:command_mech
+quirk:difficult_maintain
+
 
 Mass:80
 Engine:400 XXL Engine(IS)

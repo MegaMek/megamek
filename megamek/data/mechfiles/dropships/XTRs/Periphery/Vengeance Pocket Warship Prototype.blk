@@ -36,6 +36,10 @@ Vengeance
 IS Level 4
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -183,7 +187,7 @@ ISSmallNavalCommScannerSuite
 </structural_integrity>
 
 <source>
-XTRO Periphery - Jihad
+XTR: Periphery
 </source>
 
 <tonnage>

@@ -15,17 +15,7 @@ package megamek.common.weapons.battlearmor;
 
 import java.util.Vector;
 
-import megamek.common.Aero;
-import megamek.common.BattleArmor;
-import megamek.common.Compute;
-import megamek.common.Entity;
-import megamek.common.HitData;
-import megamek.common.Game;
-import megamek.common.Mech;
-import megamek.common.Protomech;
-import megamek.common.Report;
-import megamek.common.Tank;
-import megamek.common.ToHitData;
+import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AmmoWeaponHandler;
 import megamek.server.GameManager;
@@ -63,12 +53,13 @@ public class BATaserHandler extends AmmoWeaponHandler {
             return done;
         }
         Report r = new Report(3700);
-        int taserRoll = Compute.d6(2);
-        r.add(taserRoll);
+        Roll diceRoll = Compute.rollD6(2);
+
+        r.add(diceRoll);
         r.newlines = 0;
         vPhaseReport.add(r);
         if (entityTarget instanceof BattleArmor) {
-            if (taserRoll >= 9) {
+            if (diceRoll.getIntValue() >= 9) {
                 initHit(entityTarget);
             
                 r = new Report(3706);
@@ -88,14 +79,14 @@ public class BATaserHandler extends AmmoWeaponHandler {
             }
         } else if (entityTarget instanceof Mech) {
             if (((Mech) entityTarget).isIndustrial()) {
-                if (taserRoll >= 11) {
+                if (diceRoll.getIntValue() >= 11) {
                     entityTarget.taserShutdown(3, true);
                 } else {
                     // suffer +1 to piloting and gunnery for 3 rounds
                     entityTarget.setTaserInterference(1, 3, true);
                 }
             } else {
-                if (taserRoll >= 12) {
+                if (diceRoll.getIntValue() >= 12) {
                     r = new Report(3705);
                     r.addDesc(entityTarget);
                     r.add(3);
@@ -113,7 +104,7 @@ public class BATaserHandler extends AmmoWeaponHandler {
         } else if ((entityTarget instanceof Protomech)
                 || (entityTarget instanceof Tank)
                 || (entityTarget instanceof Aero)) {
-            if (taserRoll >= 11) {
+            if (diceRoll.getIntValue() >= 11) {
                 r = new Report(3705);
                 r.addDesc(entityTarget);
                 r.add(3);
@@ -128,14 +119,16 @@ public class BATaserHandler extends AmmoWeaponHandler {
                 entityTarget.setTaserInterference(1, 3, true);
             }
         }
-        taserRoll = Compute.d6(2);
+
+
+        Roll diceRoll2 = Compute.rollD6(2);
         r = new Report(3715);
         r.addDesc(ae);
-        r.add(taserRoll);
+        r.add(diceRoll2);
         r.newlines = 0;
         r.indent(2);
         vPhaseReport.add(r);
-        if (taserRoll >= 7) {
+        if (diceRoll2.getIntValue() >= 7) {
             r = new Report(3720);
             vPhaseReport.add(r);
             // +1 to-hit for 3 turns

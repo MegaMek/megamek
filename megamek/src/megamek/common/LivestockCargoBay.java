@@ -87,7 +87,13 @@ public final class LivestockCargoBay extends Bay {
 
     @Override
     public String toString() {
-        return "livestockcargobay:" + totalSpace + ":" + doors + ":"+ bayNumber;
+        String bayType = "livestockcargobay";
+        return this.bayString(
+                bayType,
+                totalSpace,
+                doors,
+                bayNumber
+        );
     }
 
     

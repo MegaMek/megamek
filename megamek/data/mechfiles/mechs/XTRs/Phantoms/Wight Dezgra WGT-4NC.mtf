@@ -1,13 +1,23 @@
-Version:1.0
-Wight
-WGT-4NC 'Dezgra'
+chassis:Wight
+model:WGT-4NC 'Dezgra'
 mul id:5600
 
 Config:Biped
 techbase:Mixed (IS Chassis)
 era:3074
-source:XTRO Phantoms - Jihad
+source:XTR: Phantoms
 rules level:4
+role:Striker
+
+
+
+quirk:exp_actuator
+quirk:weak_legs
+quirk:distracting
+quirk:imp_sensors
+quirk:bad_rep_is
+quirk:difficult_maintain
+
 
 mass:35
 engine:280 XL Engine(IS)

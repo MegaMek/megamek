@@ -1,13 +1,21 @@
-Version:1.1
-Thug
-THG-11ECX (Jose)
+chassis:Thug
+model:THG-11ECX (Jose)
 mul id:7322
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2772
-Source:XTRO Gunslingers - Star League
+Source:XTR: Gunslingers
 Rules Level:4
+role:Brawler
+
+
+
+quirk:rugged_1
+quirk:bad_rep_is
+quirk:non_standard
+quirk:obsolete
+
 
 Mass:80
 Engine:320 XL Engine(IS)

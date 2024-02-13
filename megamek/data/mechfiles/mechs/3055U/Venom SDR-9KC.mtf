@@ -1,13 +1,19 @@
-Version:1.0
-Venom
-SDR-9KC
+chassis:Venom
+model:SDR-9KC
 mul id:3401
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3066
-Source:TRO 3055 - Civil War
+Source:TRO: 3055
 Rules Level:2
+role:Striker
+
+
+
+quirk:nimble_jumper
+quirk:difficult_eject
+
 
 Mass:35
 Engine:280 XL Engine

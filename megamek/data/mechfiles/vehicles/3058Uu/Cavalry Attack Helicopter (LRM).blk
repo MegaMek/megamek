@@ -43,6 +43,10 @@ ISSRM2 Ammo
 <type>
 IS Level 1
 </type>
+
+<role>
+Missile Boat
+</role>
 <year>
 3055
 </year>
@@ -59,5 +63,5 @@ IS Level 1
 VTOL
 </motion_type>
 <source>
-Clan Invasion
+TRO: 3058
 </source>

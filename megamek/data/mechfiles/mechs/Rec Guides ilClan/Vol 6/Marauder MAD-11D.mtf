@@ -1,13 +1,22 @@
-Version:1.1
-Marauder
-MAD-11D
+chassis:Marauder
+model:MAD-11D
 mul id:7534
 
 Config:Biped
 techbase:Mixed (IS Chassis)
 era:3140
-source:Rec Guide:ilClan #6 - Dark Age
+source:Rec Guide:ilClan #6
 rules level:4
+role:Sniper
+
+
+
+quirk:command_mech
+quirk:hyper_actuator
+quirk:low_profile
+weaponquirk:direct_torso_mount:RT:3:ISSBGR
+weaponquirk:exposed_linkage:RT:3:ISSBGR
+
 
 mass:75
 engine:300 XL Engine(IS)

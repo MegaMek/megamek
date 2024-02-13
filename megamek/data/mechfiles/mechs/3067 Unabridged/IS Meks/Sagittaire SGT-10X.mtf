@@ -1,13 +1,20 @@
-Version:1.1
-Sagittaire
-SGT-10X
+chassis:Sagittaire
+model:SGT-10X
 mul id:5718
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3084
 Rules Level:2
-source:3067 Unabridged - Early Republic
+role:Brawler
+source:Record Sheets: 3067 Unabridged
+
+
+
+quirk:imp_target_short
+quirk:difficult_maintain
+quirk:weak_head_1
+
 
 Mass:95
 Engine:285 Light Fusion Engine

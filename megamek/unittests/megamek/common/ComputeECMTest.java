@@ -20,6 +20,8 @@
 package megamek.common;
 
 import megamek.common.options.GameOptions;
+
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -37,7 +39,11 @@ import static org.mockito.Mockito.when;
  * @since 11/3/13 8:48 AM
  */
 public class ComputeECMTest {
-    
+    @BeforeAll
+    public static void beforeAll() {
+        EquipmentType.initializeTypes();
+    }
+
     @Test
     public void testEntityGetECMInfo() {
         // Mock Player

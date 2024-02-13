@@ -1,0 +1,101 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+SupportTank
+</UnitType>
+
+<Name>
+Aston-Martin Fiver Roadster
+</Name>
+
+<model>
+
+</model>
+
+<mul id:>
+3740
+</mul id:>
+
+<year>
+3064
+</year>
+
+<originalBuildYear>
+3064
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<role>
+None
+</role>
+
+<motion_type>
+Wheeled
+</motion_type>
+
+<transporters>
+standardseats:2.0:0
+cargobay:0.052:1:1
+</transporters>
+
+<cruiseMP>
+12
+</cruiseMP>
+
+<engine_type>
+11
+</engine_type>
+
+<armor>
+0
+0
+0
+0
+</armor>
+
+<Body Equipment>
+ConvertibleChassisMod
+</Body Equipment>
+
+<Front Equipment>
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<barrating>
+2
+</barrating>
+
+<structural_tech_rating>
+3
+</structural_tech_rating>
+
+<source>
+TRO: Vehicle Annex (Revised)
+</source>
+
+<tonnage>
+1.0
+</tonnage>
+
+<fuel>
+0.222
+</fuel>

@@ -49,6 +49,10 @@ ISCASE
 <type>
 IS Level 2
 </type>
+
+<role>
+Sniper
+</role>
 <year>
 3058
 </year>
@@ -65,5 +69,49 @@ IS Level 2
 Tracked
 </motion_type>
 <source>
-Clan Invasion
+TRO: 3058
 </source>
+
+<capabilities>
+The Partisan Heavy Tank variants are specialized for anti-aircraft defense, each equipped with a sophisticated targeting system for engaging airborne targets. Primary armaments include long-range autocannons, effective against air threats, complemented by machine guns for close-range anti-infantry defense. These tanks are designed as support units with moderate armor, suitable for stationary or slow-moving roles rather than direct front-line combat.<p>Key across all variants is the balance between firepower and mobility. While capable of robust air defense, they rely on proximity to ammunition resupply points due to high consumption rates during operations. Despite variations in armaments and specific capabilities, all Partisan models maintain their primary function of providing air support and defense, utilizing a mix of advanced targeting systems, autocannons, and machine guns to achieve this objective effectively.<p>
+</capabilities>
+
+<overview>
+The Partisan Heavy Tank, designed by Kallon Industries, represents an evolution in anti-aircraft warfare. Its inception dates back to the age of airplanes, constantly adapting to counter more powerful aircraft. With the decline in BattleMech production during the Succession Wars, the Partisan emerged as a solution for ground forces to counter aerial threats effectively. During the Clan Invasion, the AFFC's need for an effective anti-air defense system against Clan OmniFighters led to the Partisan being chosen for significant upgrades, including the integration of the Draconis-invented C3 networking computer.
+</overview>
+
+<deployment>
+In the 3058 lance command variant of the Partisan Air Defense Tank, the C3 slave unit is upgraded to a C3 master unit, enhancing its command and coordination capabilities. To accommodate this upgrade, the tank's primary armament is modified, replacing its heavier autocannons with a pair of Ultra AC/5s, which offer a balance between firepower and space efficiency. This variant plays a pivotal role in battlefield communication and strategy.
+</deployment>
+
+<history>
+The Partisan Heavy Tank, primarily deployed in the Federated Suns and Free Worlds League, has a storied history in major military operations, with its roots tracing back to the age of the airplane. Originally designed to counter the increasing power of aircraft, Kallon Industries pivoted from their renowned BattleMech designs to the Partisan during the Succession Wars, addressing the urgent need for effective anti-aircraft solutions on the ground. The Clan Invasion further catalyzed the development of the Partisan, as AFFC forces faced overwhelming aerial assaults from Clan OmniFighters. Kallon's response was to enhance the Partisan with advanced anti-air systems, including the integration of the Draconis-invented C3 networking computer.<p>The Partisan's role became increasingly critical, as demonstrated during the attack on Dobson against Kurita forces. The lack of Davion aerospace assets led to the Partisan's deployment in a defensive fortification around Dobbiville. Its effectiveness was highlighted when a company of Partisans successfully engaged and destroyed multiple Kurita fighters, altering the tactics of the opposing forces and ultimately contributing to the defense of the city. This engagement showcased the Partisan's capabilities not just in shooting down enemy aircraft but also in shaping the broader tactics of ground engagements.</p><p>In the aftermath of Operation Guerrero, the Partisan's role expanded beyond traditional anti-aircraft duties, proving its utility in both land and air confrontations. On New Avalon, Partisan units played a pivotal role in repelling Blakist forces, particularly in coordination with BattleMech forces through their C3 networking capability. Despite intense bombardment from Blakist WarShips, the Partisans' effectiveness in anti-air defense was crucial in preserving several key strongholds on the capital planet of House Davion.</p><p>Today, Partisan companies continue to operate on key battlefronts, providing indispensable anti-air defense. Recent reports highlight their ongoing relevance, with a group of Partisans notably crippling a low-flying Assault Triumph in support of a Blakist offensive. The tank's enduring presence and adaptability in various combat scenarios underscore its significance in modern warfare, offering a blend of technological advancement and strategic versatility.</p>
+</history>
+
+<manufacturer>
+Kallon Weapon Industries
+</manufacturer>
+
+<primaryFactory>
+Nanking
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:GM Super 240 Fusion
+ARMOR:Kallon Unity Weave Ferro-Fibrous
+COMMUNICATIONS:JKallon Secure Net with C3
+TARGETING:AntiAir Flak Systems-1
+</systemManufacturers>
+
+<source>
+TRO: 3039
+</source>
+
+<tonnage>
+80.0
+</tonnage>
+
+<fuelType>
+PETROCHEMICALS
+</fuelType>

@@ -1,13 +1,19 @@
-Version:1.0
-Valkyrie
-VLK-QT2
+chassis:Valkyrie
+model:VLK-QT2
 mul id:3380
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3081
-Source:Jihad
+source:TRO: 3085
 Rules Level:2
+role:Striker
+
+
+
+quirk:easy_maintain
+quirk:imp_com
+
 
 Mass:30
 Engine:210 XL Engine(IS)

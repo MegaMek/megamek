@@ -36,6 +36,10 @@ GAL-100
 IS Level 1
 </type>
 
+<role>
+Scout
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -112,7 +116,7 @@ TARGETING:Maxell TA50
 </systemManufacturers>
 
 <source>
-TRO3058U - Succession Wars
+TRO: 3058 Upgrade
 </source>
 
 <tonnage>
@@ -122,4 +126,9 @@ TRO3058U - Succession Wars
 <fuelType>
 PETROCHEMICALS
 </fuelType>
+
+
+<quirks>
+ubiquitous_is
+</quirks>
 

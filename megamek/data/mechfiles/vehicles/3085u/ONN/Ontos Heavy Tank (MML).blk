@@ -36,6 +36,10 @@ Ontos Heavy Tank
 IS Level 2
 </type>
 
+<role>
+Sniper
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -131,7 +135,7 @@ TARGETING:GuideRite with Laser Coordination Link and Artemis FCS
 </systemManufacturers>
 
 <source>
-TRO - 3085
+TRO: 3085
 </source>
 
 <tonnage>

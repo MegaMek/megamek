@@ -36,6 +36,10 @@ Baleena Passenger Submarine
 IS Level 2
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Submarine
 </motion_type>
@@ -96,7 +100,7 @@ Cargo Container (10 tons)
 </structural_tech_rating>
 
 <source>
-TRO VAr - Age of War
+TRO: Vehicle Annex (Revised)
 </source>
 
 <tonnage>

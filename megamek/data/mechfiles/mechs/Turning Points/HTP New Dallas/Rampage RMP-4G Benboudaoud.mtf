@@ -1,13 +1,21 @@
-Version:1.0
-Rampage
-RMP-4G (Benboudaoud)
+chassis:Rampage
+model:RMP-4G (Benboudaoud)
 mul id:6974
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2766
-Source:HTP New Dallas
+source:Historical Turning Points: New Dallas
 Rules Level:2
+role:Brawler
+
+
+
+quirk:vestigial_hands_ra
+quirk:bad_rep_clan
+quirk:bad_rep_is
+quirk:obsolete
+
 
 Mass:85
 Engine:340 XL Engine(IS)

@@ -1,13 +1,19 @@
-Version:1.0
-Spector
-SPR-5F
+chassis:Spector
+model:SPR-5F
 mul id:3003
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3053
-Source:TRO 3058 - Clan Invasion
+Source:TRO: 3058
 Rules Level:2
+role:Striker
+
+
+
+quirk:rugged_1
+quirk:difficult_maintain
+
 
 Mass:35
 Engine:245 XL Engine

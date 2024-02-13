@@ -36,6 +36,10 @@ Manticore Heavy Tank
 IS Level 2
 </type>
 
+<role>
+Brawler
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -124,7 +128,7 @@ TARGETING:TargiTrack 717
 </systemManufacturers>
 
 <source>
-TRO:3058 - Civil War
+TRO: 3058
 </source>
 
 <tonnage>

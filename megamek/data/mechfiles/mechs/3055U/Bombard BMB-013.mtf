@@ -1,13 +1,19 @@
-Version:1.0
-Bombard
-BMB-013
+chassis:Bombard
+model:BMB-013
 mul id:419
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3063
-Source:TRO 3055 - Civil War
+Source:TRO: 3055
 Rules Level:4
+role:Missile Boat
+
+
+
+quirk:bad_rep_is
+quirk:non_standard
+
 
 Mass:50
 Engine:100 XL Engine

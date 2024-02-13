@@ -1,13 +1,22 @@
-Version:1.0
-Archer
-C
+chassis:Archer
+model:C
 mul id:90
 
 Config:Biped
 techbase:Mixed (IS Chassis)
 era:2824
-source:Rec Guide:ilClan #10 - Clan Invasion
+source:Rec Guide:ilClan #10
 rules level:3
+role:Missile Boat
+
+
+
+quirk:battle_fists_la
+quirk:battle_fists_ra
+quirk:command_mech
+quirk:stable
+quirk:ubiquitous_is
+
 
 mass:70
 engine:280 Fusion (Clan) Engine

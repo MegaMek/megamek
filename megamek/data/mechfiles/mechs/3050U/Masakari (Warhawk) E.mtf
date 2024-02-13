@@ -1,13 +1,17 @@
-Version:1.1
-Masakari (Warhawk)
-E
+chassis:Masakari
+clanname:Warhawk
+model:E
 mul id:2095
 
 Config:Biped Omnimech
 techbase:Clan
 era:3069
-source:TRO 3050 - Jihad
+source:TRO: 3050
 rules level:2
+role:Sniper
+
+quirk:imp_target_long
+
 
 mass:85
 engine:340 XL (Clan) Engine(IS)

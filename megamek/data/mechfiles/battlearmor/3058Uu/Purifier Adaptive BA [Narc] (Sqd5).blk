@@ -36,6 +36,10 @@ Purifier Adaptive Battle Armor
 IS Level 2
 </type>
 
+<role>
+Ambusher
+</role>
+
 <motion_type>
 Jump
 </motion_type>
@@ -96,7 +100,7 @@ BA-Compact Narc Ammo:LA:Shots2#
 </Trooper 5 Equipment>
 
 <source>
-TRO 3058U - Civil War
+TRO: 3058 Upgrade
 </source>
 
 <chassis>

@@ -32,6 +32,10 @@ Nuberu Anti Aircraft Tank
 Clan Level 4
 </type>
 
+<role>
+Sniper
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -89,9 +93,16 @@ CLLBXAC5
 </Front Turret Equipment>
 
 <source>
-TRO:Prototypes
+TRO: Prototypes
 </source>
 
 <tonnage>
 60.0
 </tonnage>
+
+<quirks>
+gas_hog
+anti_air
+trailer_hitch
+</quirks>
+

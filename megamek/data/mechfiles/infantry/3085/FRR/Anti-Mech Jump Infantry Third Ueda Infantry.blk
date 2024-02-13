@@ -37,11 +37,15 @@ InfantryHeavyLaser
 <type>
 IS Level 2
 </type>
+
+<role>
+Ambusher
+</role>
 <year>
 2600
 </year>
 <era>
-TRO 3085 - Star League
+TRO: 3085
 </era>
 <motion_type>
 Jump

@@ -36,6 +36,10 @@ Demolisher Heavy Tank
 Clan Level 3
 </type>
 
+<role>
+Juggernaut
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -110,7 +114,7 @@ CLMediumPulseLaser
 </Turret Equipment>
 
 <source>
-Civil War
+Rec Guide:ilClan #27
 </source>
 
 <tonnage>

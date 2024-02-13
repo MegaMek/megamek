@@ -1,13 +1,21 @@
-Version:1.0
-Longbow
-LGB-7Q
+chassis:Longbow
+model:LGB-7Q
 mul id:1936
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2610
-Source:TRO 3058 - Star League
+Source:TRO: 3058
 Rules Level:1
+role:Missile Boat
+
+
+
+quirk:anti_air
+quirk:searchlight
+quirk:ubiquitous_is
+quirk:no_arms
+
 
 Mass:85
 Engine:255 Fusion Engine

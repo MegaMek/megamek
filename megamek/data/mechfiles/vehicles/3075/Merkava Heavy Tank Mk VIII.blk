@@ -29,12 +29,16 @@ Mk VIII
 </year>
 
 <source>
-Star League
+TRO: 3075
 </source>
 
 <type>
 IS Level 1
 </type>
+
+<role>
+Missile Boat
+</role>
 
 <tonnage>
 75.0

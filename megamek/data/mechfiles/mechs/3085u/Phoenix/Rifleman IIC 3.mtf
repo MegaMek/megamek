@@ -1,13 +1,17 @@
-Version:1.0
-Rifleman IIC
-3
+chassis:Rifleman IIC
+model:3
 mul id:2712
 
 Config:Biped
 TechBase:Clan
 Era:3062
-Source:Civil War
+source:TRO: 3085u 
 Rules Level:2
+role:Juggernaut
+
+quirk:anti_air
+quirk:imp_com
+
 
 Mass:65
 Engine:195 Fusion (Clan) Engine

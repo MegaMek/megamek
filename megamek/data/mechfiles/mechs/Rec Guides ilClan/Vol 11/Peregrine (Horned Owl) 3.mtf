@@ -1,20 +1,23 @@
-Version:1.0
-Peregrine (Horned Owl)
-3
+generator:MegaMek Suite 0.49.16-SNAPSHOT on 2023-12-29
+chassis:Peregrine
+clanname:Horned Owl
+model:3
 mul id:2474
-
 Config:Biped
 techbase:Clan
 era:3061
-source:Rec Guide:ilClan #11 - Clan Invasion
+source:Rec Guide:ilClan #11
 rules level:2
+role:Sniper
+
+weaponquirk:stable_weapon:CT:10:CLERPPC
 
 mass:35
 engine:210 Fusion (Clan) Engine(IS)
 structure:Clan Endo Steel
 myomer:Standard
 
-heat sinks:10 Double
+heat sinks:10 Clan Double
 walk mp:6
 jump mp:6
 

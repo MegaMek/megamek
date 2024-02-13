@@ -1,13 +1,25 @@
-Version:1.1
-Wolverine
-WVR-3R
+chassis:Wolverine
+model:WVR-3R
 mul id:7408
 
 Config:Biped
 techbase:Inner Sphere
 era:2490
-source:XTRO Primitives V - Age of War
+source:XTR: Primitives V
 rules level:4
+role:Skirmisher
+
+
+
+quirk:command_mech
+quirk:ext_twist
+quirk:imp_com
+quirk:pro_actuator
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+quirk:cramped_cockpit
+weaponquirk:jettison_capable:RA:3:Autocannon/5
+
 
 mass:55
 engine:265 Fusion Engine(IS)

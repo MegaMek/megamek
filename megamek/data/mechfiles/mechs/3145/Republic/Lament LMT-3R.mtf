@@ -1,13 +1,21 @@
-Version:1.1
-Lament
-LMT-3R
+chassis:Lament
+model:LMT-3R
 mul id:6723
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3135
-Source:TRO 3145 Republic of the Sphere - Dark Ages
+Source:TRO: 3145 Republic of the Sphere
 Rules Level:3
+role:Brawler
+
+
+
+quirk:multi_trac
+quirk:pro_actuator
+quirk:difficult_maintain
+quirk:non_standard
+
 
 Mass:65
 Engine:325 XL Engine(IS)

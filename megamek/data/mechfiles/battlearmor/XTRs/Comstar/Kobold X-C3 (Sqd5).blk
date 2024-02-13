@@ -32,6 +32,10 @@ X-C3(Sqd5)
 IS Level 4
 </type>
 
+<role>
+Ambusher
+</role>
+
 <motion_type>
 Jump
 </motion_type>
@@ -78,7 +82,7 @@ IS BA Stealth (Basic):LA
 </Trooper 5 Equipment>
 
 <source>
-XTRO ComStar - Jihad
+XTR: ComStar
 </source>
 
 <chassis>
@@ -132,3 +136,10 @@ JUMPJET:Unknown
 COMMUNICATIONS:Unknown
 TARGETING:Unknown
 </systemManufacturers>
+
+<quirks>
+prototype
+bad_rep_is
+imp_com
+</quirks>
+

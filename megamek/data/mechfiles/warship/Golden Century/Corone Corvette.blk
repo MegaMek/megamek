@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -36,6 +36,10 @@ Corone Destroyer
 Clan Level 3
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -47,7 +51,7 @@ dockingcollar
 dockingcollar
 dockingcollar
 dockingcollar
-cargobay:35810.0:1:3
+cargobay:35810.0:1:7
 crewquarters:168.0:0
 2ndclassquarters:1162.0:0
 </transporters>
@@ -185,6 +189,46 @@ ISERLargeLaser
 47
 </structural_integrity>
 
+<capabilities>
+Despite its relatively lighter tonnage, the Corone-class destroyer boasted impressive armor and carried a fighter and DropShip capacity more akin to a larger cruiser. Unlike Star League-era destroyers that were designed to operate in squadrons, the Corone was built to operate independently, jumping alone to its objectives and deploying its forces for decisive strikes. With its significant DropShip capacity and large fighter wing, the Corone excelled as a deep-penetration vessel, operating effectively throughout Clan space. Equipped with an attached HPG, the Corone also served as a fleet support vessel, providing advanced communications capabilities to larger fleet formations.
+</capabilities>
+
+<overview>
+The Corone-class destroyer, developed toward the end of the Golden Century by the Snow Raven Clan, represented the future of Clan naval warfare. As a light raider, the Corone was designed for independent operations and trial warfare, reflecting the evolving tactics and strategies of Clan space.
+</overview>
+
+<history>
+Only six Corone-class destroyers were constructed at the Lum Naval Yards due to the substantial resources required. These vessels quickly found themselves at the forefront of Snow Raven trials during the 2900s, showcasing their capabilities in the new trial-based society. In 2917, the Corone-class Eternal Flight participated in numerous trials over Hellgate, slowing down the Steel Vipers' hold on the planet. In 2920, the Corones proved their combat value when the Raven's Wing engaged Clan Steel Viper forces to prevent the takeover of Strato Domingo. The Corone destroyer played a crucial role in damaging the Viper ships and forcing the Martial Legacy to withdraw. However, the Corones' early successes eventually led to their downfall. Other Clans capitalized on the lessons learned from the Corone's design, developing faster vessels with greater firepower and fighter capacity. The Corone-class was ultimately superseded by more advanced designs such as the York refit destroyer and the Fredasa corvette. The Snow Ravens, however, used the Corone as the basis for the larger Nightlord-class before retiring the remaining Corones to mothball in 2946. One notable incident involving a Corone-class destroyer occurred in 2926 when the CSR Regal Claw retaliated against a Clan Ghost Bear raid on the Lum Naval Yards. The Regal Claw engaged a Ghost Bear cruiser in the Bearclaw system, and despite the Raven pilots' skill, the heavier Bear's Den ship ultimately destroyed the Claw in battle.
+</history>
+
+<manufacturer>
+Lum Naval Yards
+</manufacturer>
+
+<primaryFactory>
+Lum
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<use>
+Destroyer
+</use>
+
+<length>
+670 m
+</length>
+
+<height>
+1000 m Sail
+</height>
+
 <tonnage>
 290000.0
 </tonnage>
@@ -205,6 +249,10 @@ ISERLargeLaser
 75
 75
 </grav_decks>
+
+<designtype>
+1
+</designtype>
 
 <crew>
 286
@@ -237,3 +285,7 @@ ISERLargeLaser
 <escape_pod>
 30
 </escape_pod>
+
+<source>
+TRO: Golden Century
+</source>

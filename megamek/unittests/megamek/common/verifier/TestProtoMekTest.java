@@ -37,7 +37,7 @@ public class TestProtoMekTest {
         Protomech mockProtoMek = mock(Protomech.class);
         when(mockProtoMek.hasMainGun()).thenReturn(true);
         when(mockProtoMek.locations()).thenReturn(Protomech.NUM_PMECH_LOCATIONS);
-        when(mockProtoMek.getArmorType(anyInt())).thenReturn(EquipmentType.T_ARMOR_STANDARD);
+        when(mockProtoMek.getArmorType(anyInt())).thenReturn(EquipmentType.T_ARMOR_STANDARD_PROTOMEK);
         when(mockProtoMek.getArmorTechLevel(anyInt())).thenReturn(TechConstants.T_CLAN_EXPERIMENTAL);
         when(mockProtoMek.getMovementMode()).thenReturn(EntityMovementMode.BIPED);
         return mockProtoMek;

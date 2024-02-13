@@ -32,6 +32,10 @@ Hipparch Cavalry Tank
 IS Level 1
 </type>
 
+<role>
+Scout
+</role>
+
 <motion_type>
 Hover
 </motion_type>
@@ -75,7 +79,7 @@ SRM 2
 </Turret Equipment>
 
 <source>
-Hist:Reunification War
+Historical: Reunification War
 </source>
 
 <tonnage>

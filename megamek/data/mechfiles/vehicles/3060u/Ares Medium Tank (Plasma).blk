@@ -32,6 +32,10 @@ Ares Medium Tank
 Clan Level 3
 </type>
 
+<role>
+Missile Boat
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -89,7 +93,7 @@ CLPlasmaCannon
 </Turret Equipment>
 
 <source>
-Jihad
+TRO: 3060
 </source>
 
 <tonnage>

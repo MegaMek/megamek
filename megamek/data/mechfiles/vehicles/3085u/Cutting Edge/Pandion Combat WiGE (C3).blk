@@ -56,12 +56,16 @@ BeagleActiveProbe
 IS Level 2
 </type>
 
+<role>
+Scout
+</role>
+
 <year>
 3078
 </year>
 
 <source>
-Jihad
+TRO: 3085
 </source>
 
 <internal_type>

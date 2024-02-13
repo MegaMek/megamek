@@ -26,6 +26,7 @@ import megamek.common.EquipmentType;
 import megamek.common.HitData;
 import megamek.common.Report;
 import megamek.common.WeaponType;
+import megamek.common.equipment.ArmorType;
 
 /**
  * Helper class that contains common functionality for flamer-type weapons.
@@ -70,7 +71,7 @@ public class FlamerHandlerHelper {
             r.choose(true);
             r.messageId=3406;
             r.add(heatDamage);
-            r.add(EquipmentType.armorNames[entityTarget.getArmorType(hit.getLocation())]);
+            r.add(ArmorType.forEntity(entityTarget, hit.getLocation()).getName());
         } else {
             entityTarget.heatFromExternal += heatDamage;
             r.add(heatDamage);

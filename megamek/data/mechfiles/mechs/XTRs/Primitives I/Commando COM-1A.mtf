@@ -1,13 +1,18 @@
-Version:1.1
-Commando
-COM-1A
+chassis:Commando
+model:COM-1A
 mul id:666
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2463
-Source:XTRO Primitives I - Age of War
+Source:XTR: Primitives I
 Rules Level:4
+role:Scout
+
+
+quirk:low_profile
+quirk:exp_actuator
+
 
 Mass:25
 Engine:150 Primitive Fusion Engine

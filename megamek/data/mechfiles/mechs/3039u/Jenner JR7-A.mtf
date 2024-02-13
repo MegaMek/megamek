@@ -1,13 +1,19 @@
-Version:1.0
-Jenner
-JR7-A
+chassis:Jenner
+model:JR7-A
 mul id:1687
 
 Config:Biped
 techbase:Inner Sphere
 era:2779
-source:TRO 3039 - Star League
+source:TRO: 3039
 rules level:1
+role:Scout
+
+
+
+
+quirk:no_arms
+
 
 mass:35
 engine:245 Fusion Engine(IS)

@@ -1,13 +1,18 @@
-Version:1.0
-Flashman
-FLS-9C
+chassis:Flashman
+model:FLS-9C
 mul id:1126
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3061
-Source:TRO 3050 - Clan Invasion
+Source:TRO: 3050
 Rules Level:2
+role:Skirmisher
+
+
+
+quirk:rugged_1
+
 
 Mass:75
 Engine:375 XL Engine

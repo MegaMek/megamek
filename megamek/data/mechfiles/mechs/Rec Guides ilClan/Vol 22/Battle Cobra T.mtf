@@ -1,13 +1,16 @@
-Version:1.0
-Battle Cobra
-T
+chassis:Battle Cobra
+model:T
 mul id:8389
 
 Config:Biped Omnimech
 techbase:Clan
 era:3142
-source:Rec Guide:ilClan #22 - Dark Age
+source:Rec Guide:ilClan #22
 rules level:2
+role:Sniper
+
+quirk:ext_twist
+
 
 mass:40
 engine:240 Fusion (Clan) Engine(IS)

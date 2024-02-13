@@ -1,13 +1,17 @@
-Version:1.0
-Viper (Black Python)
-3
+chassis:Viper
+clanname:Black Python
+model:3
 mul id:3434
 
 Config:Biped
 TechBase:Clan
 Era:3066
-Source:TRO 3055 - Civil War
+Source:TRO: 3055
 Rules Level:2
+role:Skirmisher
+
+quirk:imp_target_short
+
 
 Mass:75
 Engine:375 XL (Clan) Engine

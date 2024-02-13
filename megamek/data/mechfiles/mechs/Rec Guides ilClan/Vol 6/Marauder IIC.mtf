@@ -1,12 +1,18 @@
-Version:1.3
-Marauder IIC
-
+chassis:Marauder IIC
+model:
 mul id:2065
 Config:Biped
 techbase:Clan
 era:2828
-source:Rec Guide:ilClan #6 - Succession Wars
+source:Rec Guide:ilClan #6
 rules level:2
+role:Brawler
+
+
+quirk:command_mech
+quirk:hyper_actuator
+quirk:exp_actuator
+
 
 mass:85
 engine:340 Fusion (Clan) Engine(IS)

@@ -24,6 +24,10 @@ TinStar BattleArmor
 3087
 </year>
 
+<mul id:>
+9356
+</mul id:>
+
 <originalBuildYear>
 3087
 </originalBuildYear>
@@ -96,7 +100,7 @@ Independence
 </primaryFactory>
 
 <source>
-OTP:Fronc Reaches - Early Republic
+Operational Turning Points: Fronc Reaches
 </source>
 
 <chassis>
@@ -119,3 +123,11 @@ biped
 2
 </weightclass>
 
+
+<quirks>
+easy_maintain
+</quirks>
+
+<weaponQuirks>
+accurate:Squad:2:ISBASupportPPC
+</weaponQuirks>

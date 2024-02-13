@@ -1,13 +1,18 @@
-Version:1.0
-Crab
-CRB-27sl
+chassis:Crab
+model:CRB-27sl
 mul id:5873
 
 Config:Biped
 techbase:Inner Sphere
 era:2719
-source:ER 2750
-rules level:4
+source:Era Report 2750
+rules level:2
+role:Skirmisher
+
+
+
+quirk:easy_maintain
+
 
 mass:50
 engine:250 XL Engine(IS)

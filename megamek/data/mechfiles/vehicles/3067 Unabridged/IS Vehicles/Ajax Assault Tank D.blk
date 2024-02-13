@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -28,24 +28,26 @@ D
 3075
 </year>
 
+<originalBuildYear>
+3075
+</originalBuildYear>
+
 <type>
 IS Level 3
 </type>
+
+<role>
+Missile Boat
+</role>
 
 <motion_type>
 Tracked
 </motion_type>
 
 <transporters>
-troopspace:4.0
-</transporters>
-
-<transporters>
 BattleArmorHandles - troopers:-1
-</transporters>
-
-<transporters>
-troopspace:4.0
+troopspace:4.0:omni
+cargobay:8.0:1:1::-1:0:omni
 </transporters>
 
 <cruiseMP>
@@ -69,7 +71,7 @@ troopspace:4.0
 </armor>
 
 <Body Equipment>
-ISDroneCarrierControlSystem:OMNI
+ISDroneCarrierControlSystem:OMNI:SIZE:6.0
 ISGuardianECMSuite:OMNI
 ISArrowIVHomingAmmo:OMNI
 ISArrowIVHomingAmmo:OMNI
@@ -80,6 +82,7 @@ ISCASE
 </Body Equipment>
 
 <Front Equipment>
+Light Machine Gun:OMNI
 </Front Equipment>
 
 <Right Equipment>
@@ -99,14 +102,6 @@ ISArrowIV:OMNI
 ISERMediumLaser:OMNI
 ISERMediumLaser:OMNI
 </Turret Equipment>
-
-<tonnage>
-90.0
-</tonnage>
-
-<baseChassisTurretWeight>
-3.5
-</baseChassisTurretWeight>
 
 <capabilities>
 The Ajax follows on the heels of the successful Manteuffel OmniVehicle. The Ajax is slow, only capable of attaining speeds up to 54 km/h. Since speed is not its defense, the designers gave the Ajax nineteen tons of armor. The room for all of this armor comes from the XL engine the Ajax uses for power.
@@ -141,5 +136,14 @@ TARGETING:Sync Tracker (39-42071)
 </systemManufacturers>
 
 <source>
-TRO 3067 - Civil War
+TRO: 3067
 </source>
+
+<tonnage>
+90.0
+</tonnage>
+
+<baseChassisTurretWeight>
+3.5
+</baseChassisTurretWeight>
+

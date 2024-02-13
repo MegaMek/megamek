@@ -36,6 +36,10 @@ AIX-210(Sqd5)
 IS Level 2
 </type>
 
+<role>
+Ambusher
+</role>
+
 <motion_type>
 Leg
 </motion_type>
@@ -158,5 +162,5 @@ biped
 </weightclass>
 
 <source>
-ToS Kandersteg - Late Republic
+Touring the Stars: Kandersteg
 </source>

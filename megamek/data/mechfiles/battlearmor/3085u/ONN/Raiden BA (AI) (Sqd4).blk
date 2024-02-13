@@ -32,6 +32,10 @@ Raiden Battle Armor
 IS Level 2
 </type>
 
+<role>
+Ambusher
+</role>
+
 <motion_type>
 Jump
 </motion_type>
@@ -64,7 +68,7 @@ IS BA Advanced:Body
 </Squad Equipment>
 
 <source>
-TRO 3085 - Clan Invasion
+TRO: 3085
 </source>
 
 <chassis>

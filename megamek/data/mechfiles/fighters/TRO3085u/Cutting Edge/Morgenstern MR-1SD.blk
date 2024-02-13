@@ -36,6 +36,10 @@ MR-1SD
 IS Level 2
 </type>
 
+<role>
+Fire Support
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -124,7 +128,7 @@ IS Ammo MML-7 SRM Artemis-capable:OMNI
 </Fuselage Equipment>
 
 <source>
-TRO 3085 - Early Republic
+TRO: 3085
 </source>
 
 <tonnage>

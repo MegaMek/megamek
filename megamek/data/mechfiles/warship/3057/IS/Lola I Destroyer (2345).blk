@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -35,6 +35,10 @@ Lola I Destroyer
 <type>
 IS Level 3
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Aerodyne
@@ -187,8 +191,48 @@ Large Laser
 50
 </structural_integrity>
 
+<capabilities>
+The Lola-class destroyers were equipped with an impressive array of armaments, including heavy naval lasers and autocannons. They also carried a squadron of heavy fighters for enhanced escort and picket capabilities. The design prioritized armor protection, which increased the ship's mass and required the use of massive Rolls Le Fay drives. This resulted in cramped living conditions for the crew.
+</capabilities>
+
+<overview>
+The Lola-class destroyers were developed as a direct response to the demands of Rear Admiral Adelaide Lola, known for her emphasis on moral and ethical excellence in addition to military skill. These destroyers served as escort and picket ships for centuries and were highly regarded. However, they faced challenges with their heavy armor and mass, leading to cramped living conditions for the crew.
+</overview>
+
+<history>
+In 2345, the first Lola-class destroyer was launched, addressing the concerns raised by Rear Admiral Adelaide Lola. Over time, design flaws and issues with the fuel system emerged, leading to the decommissioning and scrapping of the remaining vessels by the Star League Navy in 2660. However, several Lola IIs resurfaced in the hands of Taurian rebels during the Second Periphery Uprising, raising doubts about the true fate of these ships.
+</history>
+
+<manufacturer>
+Boeing Interstellar
+</manufacturer>
+
+<primaryFactory>
+Terra
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<use>
+Destroyer
+</use>
+
+<length>
+600 m
+</length>
+
+<height>
+100 m Sail
+</height>
+
 <source>
-TRO 3057R - Age of War
+TRO: 3057 Revised
 </source>
 
 <tonnage>
@@ -202,6 +246,10 @@ TRO 3057R - Age of War
 <sail>
 1
 </sail>
+
+<designtype>
+1
+</designtype>
 
 <crew>
 243
@@ -234,3 +282,4 @@ TRO 3057R - Age of War
 <escape_pod>
 20
 </escape_pod>
+

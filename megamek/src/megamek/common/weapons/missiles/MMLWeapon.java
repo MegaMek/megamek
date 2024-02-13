@@ -1,6 +1,6 @@
 /*
  * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
  * Software Foundation; either version 2 of the License, or (at your option)
@@ -54,7 +54,7 @@ public abstract class MMLWeapon extends MissileWeapon {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
      * megamek.common.actions.WeaponAttackAction, megamek.common.Game,
@@ -66,57 +66,57 @@ public abstract class MMLWeapon extends MissileWeapon {
         AmmoType atype = (AmmoType) game.getEntity(waa.getEntityId())
                 .getEquipment(waa.getWeaponId()).getLinked().getType();
         if (atype.hasFlag(AmmoType.F_MML_LRM)) {
-            if (atype.getMunitionType() == AmmoType.M_FRAGMENTATION) {
+            if (atype.getMunitionType().contains(AmmoType.Munitions.M_FRAGMENTATION)) {
                 return new LRMFragHandler(toHit, waa, game, manager);
             }
-            if (atype.getMunitionType() == AmmoType.M_ANTI_TSM) {
+            if (atype.getMunitionType().contains(AmmoType.Munitions.M_ANTI_TSM)) {
                 return new LRMAntiTSMHandler(toHit, waa, game, manager);
             }
-            if (atype.getMunitionType() == AmmoType.M_THUNDER
-                    || atype.getMunitionType() == AmmoType.M_THUNDER_ACTIVE
-                    || atype.getMunitionType() == AmmoType.M_THUNDER_AUGMENTED
-                    || atype.getMunitionType() == AmmoType.M_THUNDER_INFERNO
-                    || atype.getMunitionType() == AmmoType.M_THUNDER_VIBRABOMB) {
+            if (atype.getMunitionType().contains(AmmoType.Munitions.M_THUNDER)
+                    || atype.getMunitionType().contains(AmmoType.Munitions.M_THUNDER_ACTIVE)
+                    || atype.getMunitionType().contains(AmmoType.Munitions.M_THUNDER_AUGMENTED)
+                    || atype.getMunitionType().contains(AmmoType.Munitions.M_THUNDER_INFERNO)
+                    || atype.getMunitionType().contains(AmmoType.Munitions.M_THUNDER_VIBRABOMB)) {
                 return new LRMScatterableHandler(toHit, waa, game, manager);
             }
-            if (atype.getMunitionType() == AmmoType.M_SWARM) {
+            if (atype.getMunitionType().contains(AmmoType.Munitions.M_SWARM)) {
                 return new LRMSwarmHandler(toHit, waa, game, manager);
             }
-            if (atype.getMunitionType() == AmmoType.M_SWARM_I) {
+            if (atype.getMunitionType().contains(AmmoType.Munitions.M_SWARM_I)) {
                 return new LRMSwarmIHandler(toHit, waa, game, manager);
             }
-            if (atype.getMunitionType() == AmmoType.M_DEAD_FIRE) {
+            if (atype.getMunitionType().contains(AmmoType.Munitions.M_DEAD_FIRE)) {
                 return new LRMDeadFireHandler(toHit, waa, game, manager);
             }
-            if (atype.getMunitionType() == AmmoType.M_FOLLOW_THE_LEADER) {
+            if (atype.getMunitionType().contains(AmmoType.Munitions.M_FOLLOW_THE_LEADER)) {
                 return new LRMFollowTheLeaderHandler(toHit, waa, game, manager);
             }
-            if (atype.getMunitionType() == AmmoType.M_SMOKE_WARHEAD) {
+            if (atype.getMunitionType().contains(AmmoType.Munitions.M_SMOKE_WARHEAD)) {
                 return new LRMSmokeWarheadHandler(toHit, waa, game, manager);
             }
 
             return new LRMHandler(toHit, waa, game, manager);
 
         }
-        if (atype.getMunitionType() == AmmoType.M_FRAGMENTATION) {
+        if (atype.getMunitionType().contains(AmmoType.Munitions.M_FRAGMENTATION)) {
             return new SRMFragHandler(toHit, waa, game, manager);
         }
-        if (atype.getMunitionType() == AmmoType.M_AX_HEAD) {
+        if (atype.getMunitionType().contains(AmmoType.Munitions.M_AX_HEAD)) {
             return new SRMAXHandler(toHit, waa, game, manager);
         }
-        if (atype.getMunitionType() == AmmoType.M_ANTI_TSM) {
+        if (atype.getMunitionType().contains(AmmoType.Munitions.M_ANTI_TSM)) {
             return new SRMAntiTSMHandler(toHit, waa, game, manager);
         }
-        if (atype.getMunitionType() == AmmoType.M_INFERNO) {
+        if (atype.getMunitionType().contains(AmmoType.Munitions.M_INFERNO)) {
             return new SRMInfernoHandler(toHit, waa, game, manager);
         }
-        if (atype.getMunitionType() == AmmoType.M_DEAD_FIRE) {
+        if (atype.getMunitionType().contains(AmmoType.Munitions.M_DEAD_FIRE)) {
             return new SRMDeadFireHandler(toHit, waa, game, manager);
         }
-        if (atype.getMunitionType() == AmmoType.M_TANDEM_CHARGE) {
+        if (atype.getMunitionType().contains(AmmoType.Munitions.M_TANDEM_CHARGE)) {
             return new SRMTandemChargeHandler(toHit, waa, game, manager);
         }
-        if (atype.getMunitionType() == AmmoType.M_SMOKE_WARHEAD) {
+        if (atype.getMunitionType().contains(AmmoType.Munitions.M_SMOKE_WARHEAD)) {
             return new SRMSmokeWarheadHandler(toHit, waa, game, manager);
         }
 
@@ -127,12 +127,12 @@ public abstract class MMLWeapon extends MissileWeapon {
     public int getBattleForceClass() {
         return BFCLASS_MML;
     }
-    
+
     @Override
     public boolean hasIndirectFire() {
         return true;
     }
-    
+
     @Override
     public void adaptToGameOptions(GameOptions gOp) {
         super.adaptToGameOptions(gOp);

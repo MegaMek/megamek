@@ -36,6 +36,10 @@ Liberty Jumpship
 IS Level 4
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -116,7 +120,7 @@ dockingcollar
 </structural_integrity>
 
 <source>
-XTRO Primitives III - Age of War
+XTR: Primitives III
 </source>
 
 <tonnage>
@@ -162,3 +166,10 @@ XTRO Primitives III - Age of War
 <escape_pod>
 4
 </escape_pod>
+
+<quirks>
+difficult_maintain
+docking_arms
+obsolete
+</quirks>
+

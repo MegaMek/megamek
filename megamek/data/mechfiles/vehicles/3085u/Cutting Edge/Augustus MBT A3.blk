@@ -36,6 +36,10 @@ A3
 IS Level 2
 </type>
 
+<role>
+Sniper
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -104,7 +108,7 @@ Autocannon/2
 </armor_tech_rating>
 
 <source>
-TRO 3085 - Age of War
+TRO: 3085
 </source>
 
 <tonnage>

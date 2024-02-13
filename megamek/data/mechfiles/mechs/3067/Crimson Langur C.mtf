@@ -1,13 +1,18 @@
-Version:1.0
-Crimson Langur
-C
+chassis:Crimson Langur
+model:C
 mul id:4018
 
 Config:Biped Omnimech
 TechBase:Clan
 Era:3065
-source:TRO 3067 - Civil War
+source:TRO: 3067
 Rules Level:2
+role:Striker
+
+quirk:easy_maintain
+quirk:imp_com
+quirk:pro_actuator
+
 
 Mass:50
 Engine:350 XL (Clan) Engine(IS)

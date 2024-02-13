@@ -1,12 +1,22 @@
-Version:1.3
-Griffin
-GRF-1RG
+chassis:Griffin
+model:GRF-1RG
 mul id:9402
 Config:Biped
 techbase:Inner Sphere
 era:2597
-source:Rec Guide:ilClan #1 - Star League
+source:Rec Guide:ilClan #1
 rules level:1
+role:Skirmisher
+
+
+
+quirk:battle_fists_la
+quirk:battle_fists_ra
+quirk:rugged_1
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+weaponquirk:jettison_capable:RA:4:Large Laser
+
 
 mass:55
 engine:275 Fusion Engine(IS)

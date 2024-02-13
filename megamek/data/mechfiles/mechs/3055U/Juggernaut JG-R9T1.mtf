@@ -1,13 +1,20 @@
-Version:1.0
-Juggernaut
-JG-R9T1
+chassis:Juggernaut
+model:JG-R9T1
 mul id:1713
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3053
-Source:TRO 3055 - Clan Invasion
+Source:TRO: 3055
 Rules Level:2
+role:Juggernaut
+
+
+
+
+quirk:imp_life_support
+quirk:difficult_maintain
+
 
 Mass:90
 Engine:270 Fusion Engine

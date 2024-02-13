@@ -36,6 +36,10 @@ Generic Expandable Services Vehicle
 IS Level 2
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Wheeled
 </motion_type>
@@ -93,7 +97,7 @@ RemoteSensorDispenser:OMNI
 </structural_tech_rating>
 
 <source>
-HB:House Davion - Civil War
+Handbook: House Davion
 </source>
 
 <tonnage>

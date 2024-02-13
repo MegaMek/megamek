@@ -36,6 +36,10 @@ VNL-K90
 IS Level 3
 </type>
 
+<role>
+Juggernaut
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -96,7 +100,7 @@ Machine Gun
 </Turret Equipment>
 
 <source>
-Rec Guide:ilClan #32 - Dark Age
+Rec Guide:ilClan #32
 </source>
 
 <tonnage>
@@ -134,3 +138,8 @@ ARMOR:New Samarkand Teppeki Hardened
 COMMUNICATIONS:O/P 300
 TARGETING:O/P GRNDSTAT 50A
 </systemManufacturers>
+
+<quirks>
+difficult_maintain
+</quirks>
+

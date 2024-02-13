@@ -1,13 +1,18 @@
-Version:1.0
-Javelin
-JVN-11P
+chassis:Javelin
+model:JVN-11P
 mul id:6938
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3101
-Source:RS 3145 NT NU - Early Republic
+Source:Record Sheets: 3145 New Tech New Upgrades
 Rules Level:2
+role:Striker
+
+
+
+quirk:unbalanced
+
 
 Mass:30
 Engine:180 Fusion Engine(IS)

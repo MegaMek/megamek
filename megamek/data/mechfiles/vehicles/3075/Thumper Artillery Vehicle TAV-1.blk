@@ -32,6 +32,10 @@ TAV-1
 IS Level 3
 </type>
 
+<role>
+Missile Boat
+</role>
+
 <motion_type>
 Wheeled
 </motion_type>
@@ -87,7 +91,7 @@ ISERSmallLaser
 </Turret Equipment>
 
 <source>
-TRO 3075 - Jihad
+TRO: 3075
 </source>
 
 <tonnage>

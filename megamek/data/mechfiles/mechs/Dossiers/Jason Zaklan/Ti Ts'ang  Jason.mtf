@@ -1,13 +1,18 @@
-Version:1.0
-Ti Ts'ang
- Jason
+chassis:Ti Ts'ang
+model: Jason
 mul id:7395
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3068
-Source:BD: Jason Zaklan - Jihad
+Source:BattleTech Dossiers: Jason Zaklan
 Rules Level:2
+role:Brawler
+
+
+
+quirk:hyper_actuator
+
 
 Mass:60
 Engine:360 XL Engine(IS)

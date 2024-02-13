@@ -1,13 +1,24 @@
-Version:1.0
-Wolverine
-WVR-6D
+chassis:Wolverine
+model:WVR-6D
 mul id:7430
 
 Config:Biped
 techbase:Inner Sphere
 era:2834
-source:RS:Succession Wars - Succession Wars
+source:Record Sheets: Succession Wars
 rules level:1
+role:Skirmisher
+
+
+
+quirk:command_mech
+quirk:ext_twist
+quirk:imp_com
+quirk:pro_actuator
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+quirk:cramped_cockpit
+
 
 mass:55
 engine:275 Fusion Engine(IS)

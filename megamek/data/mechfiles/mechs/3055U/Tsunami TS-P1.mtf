@@ -1,13 +1,19 @@
-Version:1.0
-Tsunami
-TS-P1
+chassis:Tsunami
+model:TS-P1
 mul id:3311
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3052
-Source:TRO 3055 - Clan Invasion
+Source:TRO: 3055
 Rules Level:2
+role:Scout
+
+
+
+
+quirk:difficult_maintain
+
 
 Mass:40
 Engine:240 Fusion Engine

@@ -1,13 +1,19 @@
-Version:1.0
-Catapult
-CPLT-C4
+chassis:Catapult
+model:CPLT-C4
 mul id:482
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2565
-Source:TRO 3039 - Age of War
+Source:TRO: 3039
 Rules Level:1
+role:Missile Boat
+
+
+
+quirk:no_arms
+quirk:weak_head_1
+
 
 Mass:65
 Engine:260 Fusion Engine

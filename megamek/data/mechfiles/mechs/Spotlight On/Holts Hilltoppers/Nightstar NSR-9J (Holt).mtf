@@ -1,13 +1,21 @@
-Version:1.0
-Nightstar
-NSR-9J (Holt)
+chassis:Nightstar
+model:NSR-9J (Holt)
 mul id:7619
 
 Config:Biped
 TechBase:Mixed (IS Chassis)
 Era:3063
-Source:SO:Holt's Hilltoppers
+Source:Spotlight On: Holt's Hilltoppers
 Rules Level:4
+role:Sniper
+
+
+
+quirk:command_mech
+quirk:good_rep_1
+quirk:variable_range_long
+quirk:difficult_maintain
+
 
 Mass:95
 Engine:285 XL Engine(IS)

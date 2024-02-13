@@ -1,13 +1,16 @@
-Version:1.0
-Kingfisher
-I
+chassis:Kingfisher
+model:I
 mul id:8262
 
 Config:Biped Omnimech
 techbase:Clan
 era:3137
-source:Rec Guide:ilClan #18 - Dark Age
+source:Rec Guide:ilClan #18
 rules level:2
+role:Brawler
+
+quirk:rugged_1
+
 
 mass:90
 engine:360 Fusion (Clan) Engine(IS)

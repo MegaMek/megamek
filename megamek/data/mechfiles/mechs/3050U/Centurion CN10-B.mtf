@@ -1,13 +1,17 @@
-Version:1.0
-Centurion
-CN10-B
+chassis:Centurion
+model:CN10-B
 mul id:3921
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3057
-Source:TRO 3050 - Clan Invasion
+Source:TRO: 3050
 Rules Level:2
+role:Brawler
+
+quirk:imp_target_short
+quirk:non_standard
+
 
 Mass:55
 Engine:220 Fusion Engine(IS)

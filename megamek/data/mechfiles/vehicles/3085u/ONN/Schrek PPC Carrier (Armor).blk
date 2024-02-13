@@ -32,6 +32,10 @@ Schrek PPC Carrier
 IS Level 2
 </type>
 
+<role>
+Sniper
+</role>
+
 <tonnage>
 80.0
 </tonnage>
@@ -86,7 +90,7 @@ PPC
 </Turret Equipment>
 
 <source>
-TRO 3085 - Jihad
+TRO: 3085
 </source>
 
 <capabilities>
@@ -119,3 +123,8 @@ ARMOR:Hellespont Heavy Ferro-Fibrous
 COMMUNICATIONS:Olmstead 3000
 TARGETING:Omicron IX
 </systemManufacturers>
+
+<quirks>
+low_profile
+</quirks>
+

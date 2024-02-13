@@ -1,13 +1,18 @@
-Version:1.0
-Lao Hu
-LHU-3B
+chassis:Lao Hu
+model:LHU-3B
 mul id:4479
 
 Config:Biped
 techbase:Inner Sphere
 era:3063
-source:TRO 3067
+source:TRO: 3067
 rules level:2
+role:Skirmisher
+
+
+
+quirk:good_rep_1
+
 
 mass:75
 engine:375 XL Engine(IS)

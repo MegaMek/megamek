@@ -1,13 +1,17 @@
-Version:1.0
-Puma (Adder)
-S
+chassis:Puma
+clanname:Adder
+model:S
 mul id:7483
 
 Config:Biped Omnimech
 techbase:Clan
 era:3050
-source:Rec Guide:ilClan #3- Dark Age
+source:Rec Guide:ilClan #3
 rules level:2
+role:Scout
+
+quirk:low_profile
+
 
 mass:35
 engine:210 XL (Clan) Engine(IS)

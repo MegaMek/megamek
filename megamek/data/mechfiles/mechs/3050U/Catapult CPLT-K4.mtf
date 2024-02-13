@@ -1,13 +1,19 @@
-Version:1.0
-Catapult
-CPLT-K4
+chassis:Catapult
+model:CPLT-K4
 mul id:488
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3068
-Source:TRO 3050 - Jihad
+Source:TRO: 3050
 Rules Level:2
+role:Sniper
+
+
+
+quirk:no_arms
+quirk:weak_head_1
+
 
 Mass:65
 Engine:195 Fusion Engine

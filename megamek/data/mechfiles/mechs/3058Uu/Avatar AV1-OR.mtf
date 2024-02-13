@@ -1,36 +1,41 @@
-Version:1.0
-Avatar
-AV1-OR
+chassis:Avatar
+model:AV1-OR
 mul id:170
-
 Config:Biped Omnimech
-TechBase:Mixed (IS Chassis)
-Era:3059
-Source:TRO 3058 - Clan Invasion
-Rules Level:4
+techbase:Mixed (IS Chassis)
+era:3059
+source:TRO: 3058
+rules level:3
+role:Brawler
 
-Mass:70
-Engine:280 XL Engine(IS)
-Structure:IS Standard
-Myomer:Standard
 
-Heat Sinks:10 Double
-Base Chassis Heat Sinks:10
-Walk MP:4
-Jump MP:0
 
-Armor:Standard(Inner Sphere)
-LA Armor:16
-RA Armor:16
-LT Armor:22
-RT Armor:22
-CT Armor:30
-HD Armor:9
-LL Armor:26
-RL Armor:26
-RTL Armor:8
-RTR Armor:8
-RTC Armor:9
+weaponquirk:stable_weapon:CT:10:Medium Laser
+weaponquirk:stable_weapon:CT:11:Medium Laser
+
+
+mass:70
+engine:280 XL Engine(IS)
+structure:IS Standard
+myomer:Standard
+
+heat sinks:10 IS Double
+base chassis heat sinks:10
+walk mp:4
+jump mp:0
+
+armor:Standard(Inner Sphere)
+LA armor:16
+RA armor:16
+LT armor:22
+RT armor:22
+CT armor:30
+HD armor:9
+LL armor:26
+RL armor:26
+RTL armor:8
+RTR armor:8
+RTC armor:9
 
 Weapons:6
 Gauss Rifle, Left Arm
@@ -43,12 +48,12 @@ ER Large Laser, Head
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLGaussRifle (omnipod)
-CLGaussRifle (omnipod)
-CLGaussRifle (omnipod)
-CLGaussRifle (omnipod)
-CLGaussRifle (omnipod)
-CLGaussRifle (omnipod)
+CLGaussRifle (OMNIPOD)
+CLGaussRifle (OMNIPOD)
+CLGaussRifle (OMNIPOD)
+CLGaussRifle (OMNIPOD)
+CLGaussRifle (OMNIPOD)
+CLGaussRifle (OMNIPOD)
 -Empty-
 -Empty-
 -Empty-
@@ -58,13 +63,13 @@ Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-MRM 40 (omnipod)
-MRM 40 (omnipod)
-MRM 40 (omnipod)
-MRM 40 (omnipod)
-MRM 40 (omnipod)
-MRM 40 (omnipod)
-MRM 40 (omnipod)
+MRM 40 (OMNIPOD)
+MRM 40 (OMNIPOD)
+MRM 40 (OMNIPOD)
+MRM 40 (OMNIPOD)
+MRM 40 (OMNIPOD)
+MRM 40 (OMNIPOD)
+MRM 40 (OMNIPOD)
 -Empty-
 -Empty-
 
@@ -72,7 +77,7 @@ Left Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Clan Gauss Ammo (omnipod)
+Clan Gauss Ammo (OMNIPOD)
 ISCASE
 -Empty-
 -Empty-
@@ -86,10 +91,10 @@ Right Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLStreakSRM4 (omnipod)
-Clan Streak SRM 4 Ammo (omnipod)
-IS MRM 40 Ammo (omnipod)
-IS MRM 40 Ammo (omnipod)
+CLStreakSRM4 (OMNIPOD)
+Clan Streak SRM 4 Ammo (OMNIPOD)
+IS MRM 40 Ammo (OMNIPOD)
+IS MRM 40 Ammo (OMNIPOD)
 ISCASE
 -Empty-
 -Empty-
@@ -114,7 +119,7 @@ Head:
 Life Support
 Sensors
 Cockpit
-CLERLargeLaser (omnipod)
+CLERLargeLaser (OMNIPOD)
 Sensors
 Life Support
 -Empty-
@@ -151,3 +156,21 @@ Foot Actuator
 -Empty-
 -Empty-
 -Empty-
+
+
+overview:The Avatar OmniMech is the result of Inner Sphere initiative in response to Clan technology. Originating from the Draconis Combine's efforts post-capture of Clan 'Mechs, this seventy-ton platform is a significant presence in engagements involving the Draconis Combine Mustered Soldiery, the Lyran Alliance, and ComStar. It reaches speeds up to 64.8 km/h powered by an XL engine and is encased in twelve tons of armor with CASE systems for ammunition explosion containment. The 'Mech's design supports a substantial thirty-four tons of pod space for weapons.
+
+capabilities:Equipped with medium lasers as standard fixed armaments, the Avatar is designed to maintain offensive capabilities even with pod failure. In its primary loadout, the OmniMech is outfitted with long-range missile launchers, an autocannon, machine guns, and pulse lasers, allowing it to engage at various ranges with a broad selection of weaponry.
+
+deployment:A field upgrade that combines diverse technologies, it's equipped with a missile system, a clan-tech ballistic weapon, an extended-range energy weapon, and a short-range missile system.
+
+history:Developed by Luthien Armor Works, the Avatar is a strategic development following the Battle of Luthien. The 'Mech's design retains the leg assembly from captured Clan 'Mechs, specifically the Mad Dog, with modifications to the torso to accommodate the bulkier Inner Sphere technology.
+
+manufacturer:Crofton, Loburg, Luthien, Marduk, New Valencia, Son Hoa, St. Ives
+primaryfactory:StarCorps Industries, StarCorps Industries, Luthien Armor Works, Victory Industries (formerly Norse BattleMech Works), General Motors/Blackwell Corporation, StarCorps Industries, StarCorps Industries
+systemmanufacturer:CHASSIS:Alshain Hagetaga-O7
+systemmanufacturer:ENGINE:Hermes 280 XL
+systemmanufacturer:ARMOR:StarSlab/4 with CASE
+systemmanufacturer:COMMUNICATIONS:Sipher CommCon SCU-9
+systemmanufacturer:TARGETING:Matabushi Stalker
+

@@ -1,13 +1,20 @@
-Version:1.0
-Lancelot
-LNC25-03
+chassis:Lancelot
+model:LNC25-03
 mul id:1856
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2876
-Source:TRO 3050 - Succession Wars
+Source:TRO: 3050
 Rules Level:2
+role:Skirmisher
+
+
+
+quirk:anti_air
+quirk:low_profile
+quirk:bad_rep_is
+
 
 Mass:60
 Engine:300 XL Engine

@@ -36,6 +36,10 @@ D
 Clan Level 2
 </type>
 
+<role>
+Fire Support
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -121,7 +125,7 @@ CLCASE
 </Fuselage Equipment>
 
 <source>
-TRO 3145 NTNU - Late Republic
+TRO: 3145 NTNU
 </source>
 
 <tonnage>

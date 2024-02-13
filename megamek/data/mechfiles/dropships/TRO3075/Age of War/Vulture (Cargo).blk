@@ -36,6 +36,10 @@ Vulture
 IS Level 2
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Spheroid
 </motion_type>
@@ -127,7 +131,7 @@ Medium Laser
 </structural_integrity>
 
 <source>
-TRO 3075 - Age of War
+TRO: 3075
 </source>
 
 <tonnage>

@@ -1,13 +1,21 @@
-Version:1.0
-Highlander
-HGN-732 (Jorgensson)
+chassis:Highlander
+model:HGN-732 (Jorgensson)
 mul id:7309
 
 Config:Biped
 TechBase:Mixed (IS Chassis)
 Era:2829
-Source:OTP Widowmaker
+Source:Operational Turning Points: Widowmaker
 Rules Level:4
+role:Sniper
+
+
+
+quirk:command_mech
+quirk:cowl
+quirk:reinforced_legs
+quirk:difficult_eject
+
 
 Mass:90
 Engine:270 Fusion Engine(IS)
@@ -73,8 +81,8 @@ LRM 20
 LRM 20
 LRM 20
 ISArtemisIV
-Clan Ammo LRM-20 (Clan) Artemis-capable
-Clan Ammo LRM-20 (Clan) Artemis-capable
+IS Ammo LRM-20 Artemis-capable
+IS Ammo LRM-20 Artemis-capable
 ISCASE
 IS Ferro-Fibrous
 IS Ferro-Fibrous

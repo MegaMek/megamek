@@ -1,12 +1,13 @@
-Version:1.0
-Uni ATAE-70 ArtilleryMech
-
+chassis:Uni
+model:ATAE-70 ArtilleryMech
 mul id:8101
 
 Config:Quad
 techbase:Inner Sphere
 era:3090
 rules level:5
+role:Missile Boat
+source:XTR: Caveat Emptor
 
 mass:70
 engine:210 Fuel Cell Engine(IS)

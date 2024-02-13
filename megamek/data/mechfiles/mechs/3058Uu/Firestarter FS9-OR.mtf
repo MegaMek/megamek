@@ -1,13 +1,19 @@
-Version:1.0
-Firestarter
-FS9-OR
+chassis:Firestarter
+model:FS9-OR
 mul id:1108
 
 Config:Biped Omnimech
 TechBase:Mixed (IS Chassis)
 Era:3059
-Source:TRO 3058 - Clan Invasion
+Source:TRO: 3058
 Rules Level:4
+role:Sniper
+
+
+
+quirk:cowl
+quirk:difficult_maintain
+
 
 Mass:45
 Engine:270 XL Engine(IS)

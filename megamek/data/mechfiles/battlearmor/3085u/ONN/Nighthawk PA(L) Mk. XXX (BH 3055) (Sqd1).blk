@@ -1,12 +1,7 @@
-#building block data file
+#Saved from version 0.49.18-SNAPSHOT on 2024-01-13
 <BlockVersion>
 1
 </BlockVersion>
-
-# Write the version number just in case...
-<Version>
-MAM0
-</Version>
 
 <UnitType>
 BattleArmor
@@ -25,8 +20,12 @@ Mk. XXX (Bounty Hunter)(Non-Functional)
 </mul id:>
 
 <year>
-2957 
+2957
 </year>
+
+<originalBuildYear>
+2957
+</originalBuildYear>
 
 <type>
 IS Level 2
@@ -51,15 +50,51 @@ Leg
 <Squad Equipment>
 BAArmoredGlove:LA
 BAArmoredGlove:RA
-Mauser 960 Assault System:APM:RA
+Laser Rifle (Mauser 960):APM:RA
 SwarmMek
 SwarmWeaponMek
 StopSwarm
 LegAttack
 </Squad Equipment>
 
+<Trooper 1 Equipment>
+</Trooper 1 Equipment>
+
+<capabilities>
+The Nighthawk itself is little more than a heavily-armored Sneak Suit with an integral ECM Suite. While it only has 120kg of armor, enough to stop a couple bursts from a Support Machine Gun, its protection against small arms was considered excellent. The armor plating has stealth capabilities similar to an IR/ECM sneak suit, enabling Nighthawks to move undetected and making them more difficult to target if they are fired upon. The suit is also quite mobile, with integral jump jets allowing it to leap up to ninety meters at a time, and it comes equipped with an Extended Life Support system.
+</capabilities>
+
+<overview>
+The Nighthawk is a Power Armor (Light) [PA(L)] design and the progenitor of modern Battle Armor. The original Nighthawk was based upon exoskeletons originally used for commercial purposes during the Star League.
+</overview>
+
+<deployment>
+Almost as famous as his green Marauder is his PA(L) suit. First appearing with emergence of the second Bounty Hunter in 2957, this priceless suit was a Mk. XXX variant of the Star League's top secret Nighthawk PA(L) which the Bounty Hunter wears whenever he expects to encounter combat outside his 'Mech. While its stealth systems and jump pack were nonfunctional during the LosTech era of the Third Succession War, by the FedCom Civil War era these systems had been restored to operation. Generally the Bounty Hunter will dual wield Sternsnacht Claymore Heavy Pistols, his PA(L) taking care of the weight and recoil, along with carrying any other heavy weapons his requires for the mission.
+</deployment>
+
+<history>
+It took fifteen years and twenty prototypes before the SLDF finally perfected the design that would eventually be produced. A working prototype was first introduced in 2718, which was followed by two years of field testing and, finally, full production, entering service with the Special Forces Command. Nighthawk numbers were never large as the SLDF wanted them to be, partly to keep its existence a secret, as the suits were given to the Special Armed Services troops known as the Blackhearts and their deployment was never public knowledge. While plans were made for a design of the Nighthawk to reach SLDF Royal units, the Amaris Civil War and the fall of the Star League prevented that version from entering full production. When Jerome Blake took control of Terra a few Nighthawk suits were uncovered, which ComStar would use to outfit their own commando units following the creation of the Com Guards. However ComStar did not have the capability to produce new Nighthawk suits, and attempts to duplicate the design led to the creation of the inferior Tornado. Several Nighthawk suits were eventually discovered on Karbala by the Gray Death Legion and most of them were turned over to the NAIS for study, but it would take the Word of Blake, following their schism with ComStar and in conjunction with the Free Worlds League, to overcome the technical challenges and begin production of new suits on Terra in 3065. ComStar quickly began producing their own new Nighthawks on Tukayyid, sharing their output with the Second Star League, until the factory was destroyed in 3067. With the start of the Jihad the Word of Blake also supplied Nighthawk suits to Protectorate Militia infantry units to increase their capability while retaining most battle armor for frontline units; however it would take ComStar many years to restart production on Arc-Royal, with spotty production still seeing it reserved for covert operations. It was also around 3071 that Niops Association found among their old Star League records plans for Nighthawk suits and began production of both the Mk. XXI and Mk. XXII to fend off belligerent Periphery neighbors.
+</history>
+
+<manufacturer>
+Krupp Armament Works
+</manufacturer>
+
+<primaryFactory>
+Terra
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+JUMPJET:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
 <source>
-TRO 3075/RS 3085 Unabridged ONN - Succession Wars
+TRO: 3075
 </source>
 
 <chassis>
@@ -82,35 +117,3 @@ biped
 0
 </weightclass>
 
-<overview>
-The Nighthawk is a Power Armor (Light) [PA(L)] design and the progenitor of modern Battle Armor. The original Nighthawk was based upon exoskeletons originally used for commercial purposes during the Star League. 
-</overview>
-
-<capabilities>
-The Nighthawk itself is little more than a heavily-armored Sneak Suit with an integral ECM Suite. While it only has 120kg of armor, enough to stop a couple bursts from a Support Machine Gun, its protection against small arms was considered excellent. The armor plating has stealth capabilities similar to an IR/ECM sneak suit, enabling Nighthawks to move undetected and making them more difficult to target if they are fired upon. The suit is also quite mobile, with integral jump jets allowing it to leap up to ninety meters at a time, and it comes equipped with an Extended Life Support system. 
-</capabilities>
-
-<deployment>
-Almost as famous as his green Marauder is his PA(L) suit. First appearing with emergence of the second Bounty Hunter in 2957, this priceless suit was a Mk. XXX variant of the Star League's top secret Nighthawk PA(L) which the Bounty Hunter wears whenever he expects to encounter combat outside his 'Mech. While its stealth systems and jump pack were nonfunctional during the LosTech era of the Third Succession War, by the FedCom Civil War era these systems had been restored to operation. Generally the Bounty Hunter will dual wield Sternsnacht Claymore Heavy Pistols, his PA(L) taking care of the weight and recoil, along with carrying any other heavy weapons his requires for the mission.
-</deployment>
-
-<history>
- It took fifteen years and twenty prototypes before the SLDF finally perfected the design that would eventually be produced. A working prototype was first introduced in 2718, which was followed by two years of field testing and, finally, full production, entering service with the Special Forces Command. Nighthawk numbers were never large as the SLDF wanted them to be, partly to keep its existence a secret, as the suits were given to the Special Armed Services troops known as the Blackhearts and their deployment was never public knowledge. While plans were made for a design of the Nighthawk to reach SLDF Royal units, the Amaris Civil War and the fall of the Star League prevented that version from entering full production. When Jerome Blake took control of Terra a few Nighthawk suits were uncovered, which ComStar would use to outfit their own commando units following the creation of the Com Guards. However ComStar did not have the capability to produce new Nighthawk suits, and attempts to duplicate the design led to the creation of the inferior Tornado. Several Nighthawk suits were eventually discovered on Karbala by the Gray Death Legion and most of them were turned over to the NAIS for study, but it would take the Word of Blake, following their schism with ComStar and in conjunction with the Free Worlds League, to overcome the technical challenges and begin production of new suits on Terra in 3065. ComStar quickly began producing their own new Nighthawks on Tukayyid, sharing their output with the Second Star League, until the factory was destroyed in 3067. With the start of the Jihad the Word of Blake also supplied Nighthawk suits to Protectorate Militia infantry units to increase their capability while retaining most battle armor for frontline units; however it would take ComStar many years to restart production on Arc-Royal, with spotty production still seeing it reserved for covert operations. It was also around 3071 that Niops Association found among their old Star League records plans for Nighthawk suits and began production of both the Mk. XXI and Mk. XXII to fend off belligerent Periphery neighbors.
-</history>
-
-<manufacturer>
-Krupp Armament Works
-</manufacturer>
-
-<primaryFactory>
-Terra
-</primaryFactory>
-
-<systemManufacturers>
-CHASSIS:Unknown
-ENGINE:Unknown
-ARMOR:Unknown
-JUMPJET:Unknown
-COMMUNICATIONS:Unknown
-TARGETING:Unknown
-</systemManufacturers>

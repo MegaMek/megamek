@@ -1,13 +1,18 @@
-Version:1.1
-Porcupine
-PRC-2N
+chassis:Porcupine
+model:PRC-2N
 mul id:2556
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3067
-Source:TRO 3055 - Civil War
+Source:TRO: 3055
 Rules Level:4
+role:Striker
+
+
+
+quirk:distracting
+
 
 Mass:20
 Engine:160 XXL Engine

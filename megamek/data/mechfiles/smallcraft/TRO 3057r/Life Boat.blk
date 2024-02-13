@@ -36,6 +36,10 @@ Life Boat
 IS Level 2
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -141,3 +145,7 @@ cargobay:1.85:0:1
 <escape_pod>
 0
 </escape_pod>
+
+<source>
+TRO: 3057 Revised
+</source>

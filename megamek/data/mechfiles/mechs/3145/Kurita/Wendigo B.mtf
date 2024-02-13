@@ -1,13 +1,18 @@
-Version:1.1
-Wendigo
-B
+chassis:Wendigo
+model:B
 mul id:6405
 
 Config:Biped Omnimech
 techbase:Clan
 era:3150
-source:TRO 3145 Draconis Combine - Dark Ages
+source:TRO: 3145 Draconis Combine
 rules level:4
+role:Skirmisher
+
+
+
+quirk:distracting
+
 
 mass:50
 engine:300 XL (Clan) Engine(IS)

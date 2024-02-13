@@ -36,6 +36,10 @@ Schrek AC Carrier
 IS Level 2
 </type>
 
+<role>
+Sniper
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -95,7 +99,7 @@ ISUltraAC10
 </Turret Equipment>
 
 <source>
-Rec Guide:ilClan #32 - Dark Age
+Rec Guide:ilClan #32
 </source>
 
 <tonnage>
@@ -105,4 +109,9 @@ Rec Guide:ilClan #32 - Dark Age
 <fuelType>
 PETROCHEMICALS
 </fuelType>
+
+
+<quirks>
+low_profile
+</quirks>
 

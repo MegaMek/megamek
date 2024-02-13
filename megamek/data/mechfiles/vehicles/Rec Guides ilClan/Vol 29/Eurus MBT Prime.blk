@@ -36,6 +36,10 @@ Prime
 Clan Level 3
 </type>
 
+<role>
+Sniper
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -121,7 +125,7 @@ TARGETING:Series XL FWS
 </systemManufacturers>
 
 <source>
-Rec Guide:ilClan #29 - Dark Age
+Rec Guide:ilClan #29
 </source>
 
 <tonnage>

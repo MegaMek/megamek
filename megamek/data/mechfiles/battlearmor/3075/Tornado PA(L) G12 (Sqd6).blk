@@ -58,6 +58,10 @@ IS BA Stealth (Basic):LA
 IS Level 2
 </type>
 
+<role>
+Ambusher
+</role>
+
 <year>
 3058
 </year>
@@ -67,7 +71,7 @@ Leg
 </motion_type>
 
 <source>
-TRO 3075 - Clan Invasion
+TRO: 3075
 </source>
 
 <armor_type>

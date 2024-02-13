@@ -1,13 +1,19 @@
-Version:1.0
-Vindicator
-VND-1SIC
+chassis:Vindicator
+model:VND-1SIC
 mul id:3424
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3031
-Source:TRO 3039 - Succession Wars
+Source:TRO: 3039
 Rules Level:1
+role:Brawler
+
+
+
+quirk:rugged_1
+quirk:difficult_eject
+
 
 Mass:45
 Engine:180 Fusion Engine

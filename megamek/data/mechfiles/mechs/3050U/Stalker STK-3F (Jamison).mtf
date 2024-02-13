@@ -1,13 +1,20 @@
-Version:1.0
-Stalker
-STK-3F (Jamison)
+chassis:Stalker
+model:STK-3F (Jamison)
 mul id:5119
 
 Config:Biped
 TechBase:Mixed (IS Chassis)
 Era:3054
-Source:TRO 3050 - Clan Invasion
+Source:TRO: 3050
 Rules Level:4
+role:Missile Boat
+
+
+
+quirk:combat_computer
+quirk:ubiquitous_is
+quirk:no_arms
+
 
 Mass:85
 Engine:255 Fusion Engine(IS)

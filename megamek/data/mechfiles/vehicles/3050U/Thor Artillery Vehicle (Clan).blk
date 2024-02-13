@@ -32,6 +32,10 @@ Thor Artillery Vehicle
 Clan Level 4
 </type>
 
+<role>
+Missile Boat
+</role>
+
 <motion_type>
 Wheeled
 </motion_type>
@@ -85,7 +89,7 @@ CLERMediumLaser
 </Turret Equipment>
 
 <source>
-TRO 3050 - Succession Wars
+TRO: 3050
 </source>
 
 <tonnage>

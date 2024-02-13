@@ -1,13 +1,22 @@
-Version:1.0
-Archer
-ARC-2W
+chassis:Archer
+model:ARC-2W
 mul id:77
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3010
-Source:TRO 3039 - Succession Wars
+Source:TRO: 3039
 Rules Level:1
+role:Missile Boat
+
+
+
+quirk:battle_fists_la
+quirk:battle_fists_ra
+quirk:command_mech
+quirk:stable
+quirk:ubiquitous_is
+
 
 Mass:70
 Engine:280 Fusion Engine

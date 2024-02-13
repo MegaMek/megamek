@@ -1,13 +1,20 @@
-Version:1.0
-Stalker
-STK-4P
+chassis:Stalker
+model:STK-4P
 mul id:5120
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2998
-Source:TRO 3039 - Succession Wars
+Source:TRO: 3039
 Rules Level:1
+role:Juggernaut
+
+
+
+quirk:combat_computer
+quirk:ubiquitous_is
+quirk:no_arms
+
 
 Mass:75
 Engine:225 Fusion Engine(IS)

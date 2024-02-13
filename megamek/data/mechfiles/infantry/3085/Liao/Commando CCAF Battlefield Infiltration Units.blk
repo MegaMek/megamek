@@ -32,6 +32,10 @@ Battlefield Infiltration Units
 IS Level 3
 </type>
 
+<role>
+Ambusher
+</role>
+
 <motion_type>
 Jump
 </motion_type>
@@ -60,5 +64,5 @@ ISSneakSuitCamoIRECM
 </armorKit>
 
 <source>
-TRO 3085 - Age of War
+TRO: 3085
 </source>

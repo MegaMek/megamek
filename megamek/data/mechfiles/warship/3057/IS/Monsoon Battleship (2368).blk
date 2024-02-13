@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -35,6 +35,10 @@ Monsoon Battleship
 <type>
 IS Level 3
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Aerodyne
@@ -180,8 +184,48 @@ Ammo NAC/35:40
 90
 </structural_integrity>
 
+<capabilities>
+The Monsoon-class battleship represented a pinnacle of technological and tactical improvements achieved through the development of early WarShips, notably the TAS Dreadnought. Designed to dominate space warfare, these battleships boasted advanced features and capabilities. They were armed with a formidable array of weaponry, including powerful naval autocannons, missile launchers, and other offensive systems. Their operational range allowed for extended engagements, making them a force to be reckoned with on the battlefield. Additionally, their robust defensive systems provided enhanced protection against enemy attacks. The Monsoons set the standard for subsequent ship designs, showcasing conceptual and technological superiority. They played a crucial role in the expansion of the Terran Hegemony and later during the destructive "Age of War." However, as technological advancements continued, newer ship designs emerged that outclassed the Monsoon-class battleships. Efforts were made to upgrade and modernize these venerable ships, with the installation of lithium-fusion batteries being the last major modification attempted. Unfortunately, due to budget constraints and the changing tides of warfare, the Monsoons gradually became outdated, leading to their retirement in 2668.
+</capabilities>
+
+<overview>
+The Monsoon-class battleship played a significant role in the advancement of modern fighting starships, serving as the blueprint for subsequent designs. Introduced during the Terran Hegemony era, these powerful vessels showcased superior technological advancements and became renowned for their formidable reputation. However, despite their legacy, the Monsoons eventually faced obsolescence and were retired after the Reunification War.
+</overview>
+
+<history>
+The origins of the Monsoon-class battleship can be traced back to the TAS Dreadnought, launched in 2300 under the command of Admiral James McKenna. Utilizing the Dreadnought and its sister ships, Admiral McKenna overthrew the corrupt Terran Alliance and established the Terran Hegemony. The early battles fought by the Hegemony Navy significantly influenced the development of advanced ship designs, culminating in the creation of the Monsoon-class battleship. These immense vessels became the benchmark for naval architecture for over four hundred years. The Monsoons gained a fearsome reputation during the expansion of the Hegemony and played a vital role during the destructive "Age of War." Despite their unparalleled status and legendary names such as Barham, Richelie, and Thunderer, the Admiralty of the Terran Hegemony found it difficult to retire these revered ships. Sentimentality clouded their judgment, leading to excessive spending on repairs and upgrades, as many Admirals had begun their careers aboard Monsoon-class battleships. However, as the Reunification War unfolded, it became increasingly clear that the Great Houses possessed designs capable of outclassing the Monsoons. In a final attempt to keep up with advancements, the Admiralty initiated a modification project to fit lithium-fusion batteries onto the remaining ships. The process proved challenging and costly. Following the war, with budgetary cutbacks and changing priorities, the Admiralty struggled to justify the expense of upgrading the entire fleet. As a result, the Monsoons were gradually decommissioned, with only ten ships receiving the battery installation before the retirement of the class in 2668. Some decommissioned Monsoon-class battleships found new homes among Star League member states. For instance, the Rim Worlds Republic incorporated seven Monsoons into its navy. Additionally, at least one Monsoon joined Alexander Kerensky's Exodus Fleet, its final fate shrouded in mystery. The Monsoons left an indelible mark on history, serving as a testament to the advancements and traditions of naval warfare within the Inner Sphere.
+</history>
+
+<manufacturer>
+Di Tron Heavy Industries
+</manufacturer>
+
+<primaryFactory>
+Terra
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<use>
+Battleship
+</use>
+
+<length>
+1400 m
+</length>
+
+<height>
+1400 m Sail
+</height>
+
 <source>
-3057R - Age of War
+TRO: 3057 Revised
 </source>
 
 <tonnage>
@@ -201,6 +245,10 @@ Ammo NAC/35:40
 65
 55
 </grav_decks>
+
+<designtype>
+1
+</designtype>
 
 <crew>
 653
@@ -233,3 +281,4 @@ Ammo NAC/35:40
 <escape_pod>
 12
 </escape_pod>
+

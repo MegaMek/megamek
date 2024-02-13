@@ -1,12 +1,18 @@
-Version:1.3
-Wraith
-TR5
+chassis:Wraith
+model:TR5
 mul id:9269
 Config:Biped
 techbase:Inner Sphere
 era:3140
-source:Rec Guide 25 - Dark Ages
+source:Rec Guide:ilClan #25
 rules level:2
+role:Skirmisher
+
+
+
+quirk:ubiquitous_is
+quirk:difficult_maintain
+
 
 mass:55
 engine:330 XL Engine(IS)

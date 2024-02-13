@@ -1,13 +1,17 @@
-Version:1.0
-Cauldron-Born (Ebon Jaguar)
-X
+chassis:Cauldron-Born
+clanname:Ebon Jaguar
+model:X
 mul id:498
 
 Config:Biped Omnimech
 techbase:Clan
 era:3075
-source:Rec Guide:ilClan #16 - Jihad
+source:Rec Guide:ilClan #16
 rules level:3
+role:Skirmisher
+
+quirk:low_profile
+
 
 mass:65
 engine:325 XL (Clan) Engine(IS)

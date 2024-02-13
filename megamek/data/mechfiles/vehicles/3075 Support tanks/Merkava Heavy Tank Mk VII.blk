@@ -32,6 +32,10 @@ Mk VII
 IS Level 1
 </type>
 
+<role>
+Sniper
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -89,7 +93,7 @@ Machine Gun
 </Turret Equipment>
 
 <source>
-TRO 3075 - Age of War
+TRO: 3075
 </source>
 
 <tonnage>

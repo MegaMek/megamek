@@ -1,13 +1,25 @@
-Version:1.0
-Wolverine
-WVR-9W2
+chassis:Wolverine
+model:WVR-9W2
 mul id:3584
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3077
-Source:Dark Age
+source:TRO: 3085
 Rules Level:2
+role:Striker
+
+
+
+quirk:command_mech
+quirk:ext_twist
+quirk:imp_com
+quirk:pro_actuator
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+quirk:cramped_cockpit
+weaponquirk:jettison_capable:RA:7:Light PPC
+
 
 Mass:55
 Engine:275 XL Engine(IS)

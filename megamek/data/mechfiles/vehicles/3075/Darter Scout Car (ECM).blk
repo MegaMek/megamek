@@ -44,11 +44,15 @@ ISGuardianECMSuite
 <type>
 IS
 </type>
+
+<role>
+Scout
+</role>
 <year>
 3054
 </year>
 <source>
-Clan Invasion
+TRO: 3075
 </source>
 <internal_type>
 0

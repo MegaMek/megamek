@@ -1,13 +1,18 @@
-Version:1.0
-Sunder
-SD1-OR
+chassis:Sunder
+model:SD1-OR
 mul id:3130
 
 Config:Biped Omnimech
 TechBase:Mixed (IS Chassis)
 Era:3059
-Source:TRO 3058 - Clan Invasion
+Source:TRO: 3058
 Rules Level:4
+role:Brawler
+
+
+
+quirk:ext_twist
+
 
 Mass:90
 Engine:360 XL Engine(IS)
@@ -154,5 +159,21 @@ Foot Actuator
 -Empty-
 -Empty-
 -Empty-
+
+overview:The Sunder OmniMech is a product of the Draconis Combine's initiative to reengineer captured Clan Loki and Thor chassis for similar roles. Though initially plagued by actuator wear and missile exhaust issues, it was not until late 3056 that the Sunder was deployed widely.
+
+capabilities:This ninety-ton behemoth is powered by a Hermes 360 XL engine, enabling a top speed of 65 km/h, which is respectable for its weight class. The Sunder is armored with sixteen and a half tons of protection and equipped with fifteen double heat sinks to manage the heat load from its diverse weaponry. The Sunder can carry up to 36 tons of pod-mounted equipment. Despite its slower speed and the quality difference between Inner Sphere and Clan technology, the Sunder performs its intended roles marginally well.
+
+deployment:Developed during Operation Bulldog, this field upgrade configuration utilizes captured Clan weaponry to bolster its firepower, with Large Pulse Lasers supporting an LB 10-X AC for a mix of range and damage, complemented by ER Medium Lasers and Streak SRM-6s for close encounters
+
+history:<p>Sunders were key players in Operation Bulldog, particularly along the Clan border. Their 36-ton pod space, utilized to peak efficiency, allowed them to compete favorably with Clan Masakari and Gladiator OmniMechs. Many Sunders were also equipped as lance or company C3 nodes, significantly enhancing DCMS units' performance. They continued to prove their worth in subsequent conflicts like the Lyons Thumb incident and the Ghost Bear War, showcasing the strategic advantages of OmniMech technology in protracted engagements. Noteworthy engagements and MechWarriors have contributed to the Sunder's reputation.</p> <p>During Operation Bulldog, a commander of the Fourth Pesht Regulars distinguished himself against Nova Cat opponents, later earning renown on Kiamba by challenging a Second Bear Regulars Trinary's Star Captain to single combat, thereby allowing his unit to regroup. Another MechWarrior known as 'the Scourge of Addicks' gained repute for her unique configurations specializing in anti-infantry warfare, employing flamers, machine guns, and Inferno SRM launchers. These historical narratives underline the Sunder's versatility and the valor of its pilots in various combat scenarios. The production of this OmniMech in the Draconis Combine was halted due to the destruction of the Luthien Armor Works factory by Word of Blake forces in 3068.</p>
+
+manufacturer:StarCorps Industries, StarCorps Industries, Luthien Armor Works,StarCorps Industries,StarCorps Industries
+primaryfactory:Crofton,Loburg,Luthien,Son Hoa,St. Ives
+systemmanufacturer:CHASSIS:Alshain Class 98 Omni
+systemmanufacturer:ENGINE:Hermes 360 XL
+systemmanufacturer:ARMOR:Mitchell Argon
+systemmanufacturer:COMMUNICATIONS:Sipher Security Plus
+systemmanufacturer:TARGETING:Matabushi Sentinel
 
 

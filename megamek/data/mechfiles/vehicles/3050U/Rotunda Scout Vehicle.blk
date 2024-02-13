@@ -32,6 +32,10 @@ RND-J-1-11
 IS Level 2
 </type>
 
+<role>
+Scout
+</role>
+
 <motion_type>
 Wheeled
 </motion_type>
@@ -78,7 +82,7 @@ SRM 2
 </Rear Equipment>
 
 <source>
-TRO 3050 - Star League
+TRO: 3050
 </source>
 
 <tonnage>

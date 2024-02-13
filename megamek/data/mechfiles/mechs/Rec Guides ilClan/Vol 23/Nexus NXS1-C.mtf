@@ -1,13 +1,18 @@
-Version:1.1
-Nexus
-NXS1-C
+chassis:Nexus
+model:NXS1-C
 mul id:8412
 
 Config:Biped
 techbase:Inner Sphere
 era:3140
-source:Rec Guide:ilClan #23 - Dark Age
+source:Rec Guide:ilClan #23
 rules level:3
+role:Striker
+
+
+
+quirk:bad_rep_is
+
 
 mass:25
 engine:175 Light Engine(IS)

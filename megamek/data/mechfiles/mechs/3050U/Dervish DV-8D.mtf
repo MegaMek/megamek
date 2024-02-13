@@ -1,13 +1,19 @@
-Version:1.1
-Dervish
-DV-8D
+chassis:Dervish
+model:DV-8D
 mul id:881
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3062
-Source:TRO 3050 - Civil War
+Source:TRO: 3050
 Rules Level:2
+role:Missile Boat
+
+
+
+quirk:easy_maintain
+quirk:hyper_actuator
+
 
 Mass:55
 Engine:275 XL Fusion Engine

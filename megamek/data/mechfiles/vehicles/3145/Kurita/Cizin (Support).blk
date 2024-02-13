@@ -32,6 +32,10 @@ Cizin Hover Tank
 Clan Level 3
 </type>
 
+<role>
+Striker
+</role>
+
 <motion_type>
 Hover
 </motion_type>
@@ -85,9 +89,18 @@ CLERLargeLaser
 </Turret Equipment>
 
 <source>
-TRO 3145 Draconis Combine - Late Republic
+TRO: 3145 Draconis Combine
 </source>
 
 <tonnage>
 45.0
 </tonnage>
+
+<quirks>
+battle_computer
+fast_reload
+bad_rep_is
+poor_performance
+non_standard
+</quirks>
+

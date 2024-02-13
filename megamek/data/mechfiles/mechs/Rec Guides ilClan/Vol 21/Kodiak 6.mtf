@@ -1,13 +1,18 @@
-Version:1.0
-Kodiak
-6
+chassis:Kodiak
+model:6
 mul id:8364
 
 Config:Biped
 techbase:Clan
 era:3131
-source:Rec Guide:ilClan #21 - Dark Age
+source:Rec Guide:ilClan #21
 rules level:2
+role:Juggernaut
+
+quirk:battle_fists_la
+quirk:battle_fists_ra
+quirk:distracting
+
 
 mass:100
 engine:400 XL (Clan) Engine(IS)

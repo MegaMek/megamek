@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -36,6 +36,10 @@ Newgrange III Yardship
 IS Level 3
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -50,12 +54,12 @@ dockingcollar
 dockingcollar
 dockingcollar
 dockingcollar
-cargobay:250000.0:0:7
+cargobay:250000.0:0:10
 2ndclassquarters:14000.0:0
 steeragequarters:25600.0:0
 1stclassquarters:2710.0:0
 crewquarters:3213.0:0
-cargobay:469066.0:1:11
+cargobay:469066.0:1:15
 </transporters>
 
 <SafeThrust>
@@ -227,8 +231,48 @@ ISAMS Ammo:240
 25
 </structural_integrity>
 
+<capabilities>
+The Newgrange-class YardShip excelled in its role as a mobile repair and refit facility. Equipped with substantial cargo storage, it had the capacity to house dismantled destroyers and possessed advanced on-board manufacturing and assembly facilities. This self-sufficient factory in space could fabricate small parts as needed, ensuring efficient repair and maintenance operations. With a crew complement of over seven thousand, the majority serving as a workforce, the YardShip boasted luxurious recreational and exercise facilities across its four 250-meter grav decks. Additionally, it maintained a fleet of small craft for passenger transportation to and from local bases and planetside facilities. The inclusion of a battalion's worth of WorkMechs supported repair work, with some bays accommodating BattleMechs for defense or their own repairs.
+</capabilities>
+
+<overview>
+The Newgrange-class YardShip was a monumental mobile repair and refit support vessel that reached its prime during the era of the first Star League. As the largest of its kind, these monolithic tenders were renowned for their immense size and capabilities. Serving as the pinnacle of mobile repair and fabrication, the Newgrange-class YardShip housed an impressive unpressurized repair bay capable of accommodating WarShips up to 2.3 million tons. Despite its formidable size, the YardShip was lightly armed and relied on escorts for protection.
+</overview>
+
+<history>
+During the height of the Star League, approximately 200 Newgrange-class YardShips were constructed, representing the pinnacle of mobile repair and refit support vessels. However, after the conflict against Stefan Amaris and General Kerensky's Exodus from the Inner Sphere, only around 45 YardShips remained. The early Succession Wars took a heavy toll on shipyards and factories, making YardShips vulnerable targets. Their inability to jump or maneuver while servicing other vessels made them easy prey for enemy forces. For a significant period, it was believed that none of the Newgrange-class YardShips survived the ravages of the Succession Wars. However, the Word of Blake's deployment of one YardShip at Coventry shattered this assumption. The YardShip was sent in a futile attempt to repair the crippled drive system of the Immortal Spirit. This revelation demonstrated that at least one Newgrange-class YardShip had managed to survive and resurface in the Inner Sphere. The Newgrange-class YardShip stands as a testament to the immense capabilities and scale of the Star League's naval industry. Though their numbers dwindled, their legacy as formidable repair and refit facilities remains, symbolizing the remarkable engineering achievements of the past.
+</history>
+
+<manufacturer>
+Di Tron Heavy Industries
+</manufacturer>
+
+<primaryFactory>
+Terra
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<use>
+Yardship
+</use>
+
+<length>
+2680 m
+</length>
+
+<height>
+3000 m Sail
+</height>
+
 <source>
-TRO3085S - Star League
+TRO: 3085 Supplemental
 </source>
 
 <tonnage>
@@ -253,6 +297,10 @@ TRO3085S - Star League
 250
 250
 </grav_decks>
+
+<designtype>
+1
+</designtype>
 
 <crew>
 982
@@ -285,3 +333,4 @@ TRO3085S - Star League
 <escape_pod>
 600
 </escape_pod>
+

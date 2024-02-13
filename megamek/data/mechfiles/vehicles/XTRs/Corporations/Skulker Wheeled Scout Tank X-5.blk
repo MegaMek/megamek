@@ -36,6 +36,10 @@ X-5
 IS Level 4
 </type>
 
+<role>
+Scout
+</role>
+
 <motion_type>
 Wheeled
 </motion_type>
@@ -108,7 +112,7 @@ TARGETING:Targeting System 2.3
 </systemManufacturers>
 
 <source>
-XTRO:Corporations - Jihad
+XTR: Corporations
 </source>
 
 <tonnage>

@@ -1,13 +1,18 @@
-Version:1.0
-Black Hawk (Nova)
-R
+chassis:Black Hawk
+clanname:Nova
+model:R
 mul id:8169
 
 Config:Biped Omnimech
 techbase:Mixed (Clan Chassis)
 era:3140
-source:Rec Guide:ilClan #14 - Dark Age
+source:Rec Guide:ilClan #14
 rules level:3
+role:Skirmisher
+
+quirk:combat_computer
+quirk:low_profile
+
 
 mass:50
 engine:250 XL (Clan) Engine

@@ -36,6 +36,10 @@ Triton
 Clan Level 2
 </type>
 
+<role>
+Brawler
+</role>
+
 <motion_type>
 Biped
 </motion_type>
@@ -95,7 +99,7 @@ CLHeavyMediumLaser
 </Main Gun Equipment>
 
 <source>
-TRO 3075 - Jihad
+TRO: 3075
 </source>
 
 <tonnage>

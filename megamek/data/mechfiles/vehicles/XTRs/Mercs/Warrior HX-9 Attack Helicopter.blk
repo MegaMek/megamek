@@ -36,6 +36,10 @@ HX-9
 IS Level 4
 </type>
 
+<role>
+Scout
+</role>
+
 <motion_type>
 VTOL
 </motion_type>
@@ -122,10 +126,15 @@ TARGETING:Dwyerson Mk XIX
 </systemManufacturers>
 
 <source>
-XTRO Mercs - Clan Invasion
+XTR: Mercenaries
 </source>
 
 <tonnage>
 21.0
 </tonnage>
+
+
+<quirks>
+vtol_rotor_coaxial
+</quirks>
 

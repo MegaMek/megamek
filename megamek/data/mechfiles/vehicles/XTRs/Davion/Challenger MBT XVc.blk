@@ -32,6 +32,10 @@ XVc
 IS Level 4
 </type>
 
+<role>
+Sniper
+</role>
+
 <tonnage>
 90.0
 </tonnage>
@@ -99,3 +103,6 @@ ISGaussRifle
 ISSBGR
 </Turret Equipment>
 
+<source>
+XTR: Davion
+</source>

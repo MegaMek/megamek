@@ -36,6 +36,10 @@ Gulltoppr OmniMonitor
 Mixed (IS Chassis) Experimental
 </type>
 
+<role>
+Missile Boat
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -118,7 +122,7 @@ CLArtemisV:OMNI
 </Front Turret Equipment>
 
 <source>
-TRO 3145 Lyran Commonwealth - Late Republic
+TRO: 3145 Lyran Commonwealth
 </source>
 
 <tonnage>
@@ -132,4 +136,13 @@ TRO 3145 Lyran Commonwealth - Late Republic
 <baseChassisTurret2Weight>
 3.0
 </baseChassisTurret2Weight>
+
+
+<quirks>
+battle_computer
+difficult_maintain
+non_standard
+oversized
+poor_performance
+</quirks>
 

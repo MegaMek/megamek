@@ -32,6 +32,10 @@ Gray Death Infiltrator Suit
 IS Level 2
 </type>
 
+<role>
+Scout
+</role>
+
 <motion_type>
 Jump
 </motion_type>
@@ -90,7 +94,7 @@ Mine
 </Trooper 6 Equipment>
 
 <source>
-TRO 3145 Lyran Commonwealth - Late Republic
+TRO: 3145 Lyran Commonwealth
 </source>
 
 <chassis>

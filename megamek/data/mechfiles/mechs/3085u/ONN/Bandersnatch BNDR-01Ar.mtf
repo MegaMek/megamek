@@ -1,13 +1,19 @@
-Version:1.0
-Bandersnatch
-BNDR-01Ar
+chassis:Bandersnatch
+model:BNDR-01Ar
 mul id:218
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3071
-Source:Jihad
+source:TRO: 3085
 Rules Level:2
+role:Brawler
+
+
+
+quirk:stable
+quirk:ubiquitous_is
+
 
 Mass:75
 Engine:300 XL Engine

@@ -36,6 +36,10 @@ Drillson Heavy Hover Tank
 IS Level 2
 </type>
 
+<role>
+Striker
+</role>
+
 <motion_type>
 Hover
 </motion_type>
@@ -98,7 +102,7 @@ ISStreakSRM2
 </Turret Equipment>
 
 <source>
-Rec Guide:ilClan #32 - Early Republic
+Rec Guide:ilClan #32
 </source>
 
 <tonnage>

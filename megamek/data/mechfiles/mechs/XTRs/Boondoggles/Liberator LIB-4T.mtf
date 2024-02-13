@@ -1,12 +1,21 @@
-Version:1.3
-Liberator
-LIB-4T
+chassis:Liberator
+model:LIB-4T
 mul id:5845
 Config:Biped
 techbase:Inner Sphere
 era:3018
-source:XTR Boondoggles - Succession Wars
+source:XTR: Boondoggles
 rules level:2
+role:None
+
+
+
+
+quirk:bad_rep_clan
+quirk:bad_rep_is
+quirk:poor_work
+quirk:prototype
+
 
 mass:40
 engine:240 Fusion Engine(IS)

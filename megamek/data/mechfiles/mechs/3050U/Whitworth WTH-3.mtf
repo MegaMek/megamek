@@ -1,13 +1,19 @@
-Version:1.0
-Whitworth
-WTH-3
+chassis:Whitworth
+model:WTH-3
 mul id:3543
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3069
-Source:TRO 3050 - Jihad
+Source:TRO: 3050
 Rules Level:2
+role:Missile Boat
+
+
+
+quirk:rugged_1
+quirk:weak_legs
+
 
 Mass:40
 Engine:160 Fusion Engine

@@ -32,6 +32,10 @@ Athena Combat Vehicle
 Clan Level 2
 </type>
 
+<role>
+Juggernaut
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -93,7 +97,7 @@ CLMG
 </Turret Equipment>
 
 <source>
-Succession Wars
+TRO: 3060
 </source>
 
 <tonnage>

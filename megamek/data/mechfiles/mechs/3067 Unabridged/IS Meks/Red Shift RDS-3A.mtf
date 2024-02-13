@@ -1,13 +1,20 @@
-Version:1.1
-Red Shift
-RDS-3A
+chassis:Red Shift
+model:RDS-3A
 mul id:5652
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3068
 Rules Level:2
-source:3067 Unabridged
+role:Striker
+source:Record Sheets: 3067 Unabridged
+
+
+
+quirk:imp_com
+quirk:low_profile
+quirk:bad_rep_is
+
 
 Mass:20
 Engine:180 XL Fusion Engine

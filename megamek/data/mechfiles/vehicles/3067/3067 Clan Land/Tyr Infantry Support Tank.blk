@@ -48,6 +48,10 @@ CLCASE
 <type>
 Clan Level 2
 </type>
+
+<role>
+Striker
+</role>
 <year>
 3063
 </year>
@@ -63,3 +67,7 @@ Clan Level 2
 <motion_type>
 Hover
 </motion_type>
+
+<source>
+TRO: 3067
+</source>

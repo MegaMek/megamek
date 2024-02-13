@@ -36,6 +36,10 @@ Trinity Medium Battle Armor
 IS Level 2
 </type>
 
+<role>
+Ambusher
+</role>
+
 <motion_type>
 Leg
 </motion_type>
@@ -72,7 +76,7 @@ BA Advanced:LA
 </Squad Equipment>
 
 <source>
-TRO 3085 - Jihad
+TRO: 3085
 </source>
 
 <chassis>

@@ -1,13 +1,19 @@
-Version:1.0
-Locust IIC
-8
+chassis:Locust IIC
+model:8
 mul id:1921
 
 Config:Biped
 TechBase:Clan
 Era:3084
-Source:Dark Age
+source:TRO: 3085
 Rules Level:2
+role:Scout
+
+quirk:easy_maintain
+quirk:low_profile
+quirk:no_arms
+quirk:weak_legs
+
 
 Mass:25
 Engine:300 XL (Clan) Engine(IS)

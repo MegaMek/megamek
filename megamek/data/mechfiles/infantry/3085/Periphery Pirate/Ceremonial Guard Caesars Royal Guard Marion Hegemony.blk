@@ -32,6 +32,10 @@ Caesar's Royal Guard; Marion Hegemony
 IS Level 3
 </type>
 
+<role>
+Ambusher
+</role>
+
 <motion_type>
 Leg
 </motion_type>
@@ -40,7 +44,7 @@ Leg
 </Field Guns Equipment>
 
 <source>
-TRO 3085
+TRO: 3085
 </source>
 
 <squad_size>

@@ -1,13 +1,20 @@
-Version:1.0
-Marauder II
-MAD-4S
+chassis:Marauder II
+model:MAD-4S
 mul id:2058
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3064
-Source:TRO:Clan Invasion - Civil War
+Source:TRO: Clan Invasion
 Rules Level:2
+role:Juggernaut
+
+
+
+quirk:command_mech
+quirk:hyper_actuator
+quirk:low_profile
+
 
 Mass:100
 Engine:300 Light Engine

@@ -36,6 +36,10 @@ R10 Mechanized ICV
 IS Level 2
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Wheeled
 </motion_type>
@@ -91,10 +95,16 @@ Flamer (Vehicle)
 </Turret Equipment>
 
 <source>
-TRO 3145 Free Worlds League - Early Republic
+TRO: 3145 Free Worlds League
 </source>
 
 <tonnage>
 45.0
 </tonnage>
+
+
+<quirks>
+easy_maintain
+poor_target_long
+</quirks>
 

@@ -36,6 +36,10 @@ F-96R
 IS Level 3
 </type>
 
+<role>
+Dogfighter
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -104,7 +108,7 @@ Large Re-engineered Laser
 </Fuselage Equipment>
 
 <source>
-TRO 3145 NTNU - Late Republic
+TRO: 3145 NTNU
 </source>
 
 <tonnage>

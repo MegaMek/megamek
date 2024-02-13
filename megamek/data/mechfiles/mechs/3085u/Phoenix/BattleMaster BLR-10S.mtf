@@ -1,13 +1,19 @@
-Version:1.1
-BattleMaster
-BLR-10S
+chassis:BattleMaster
+model:BLR-10S
 mul id:280
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3070
-Source:TRO 3085 - Jihad
+Source:TRO: 3085
 Rules Level:2
+role:Juggernaut
+
+
+
+quirk:command_mech
+quirk:weak_head_1
+
 
 Mass:85
 Engine:255 Compact Fusion Engine

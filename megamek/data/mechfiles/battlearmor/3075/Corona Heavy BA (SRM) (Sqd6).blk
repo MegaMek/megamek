@@ -32,6 +32,10 @@ Corona Heavy Battle Armor
 Clan Level 2
 </type>
 
+<role>
+Ambusher
+</role>
+
 <motion_type>
 Leg
 </motion_type>
@@ -60,7 +64,7 @@ BABattleClaw:RA
 </Point Equipment>
 
 <source>
-TRO 3075 - Jihad
+TRO: 3075
 </source>
 
 <chassis>

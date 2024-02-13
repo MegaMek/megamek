@@ -32,6 +32,10 @@ Hawk Moth Gunship
 IS Level 2
 </type>
 
+<role>
+Sniper
+</role>
+
 <motion_type>
 VTOL
 </motion_type>
@@ -81,7 +85,7 @@ ISLightGaussRifle
 </Rotor Equipment>
 
 <source>
-Clan Invasion
+TRO: 3060
 </source>
 
 <tonnage>

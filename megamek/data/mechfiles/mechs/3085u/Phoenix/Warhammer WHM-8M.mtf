@@ -1,13 +1,22 @@
-Version:1.0
-Warhammer
-WHM-8M
+chassis:Warhammer
+model:WHM-8M
 mul id:3496
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3069
-Source:RS 3085 PP - Jihad
+Source:Record Sheets: 3085 Unabridged - Project Phoenix
 Rules Level:2
+role:Sniper
+
+
+
+quirk:rugged_2
+quirk:searchlight
+quirk:stable
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+
 
 Mass:70
 Engine:280 Fusion Engine(IS)

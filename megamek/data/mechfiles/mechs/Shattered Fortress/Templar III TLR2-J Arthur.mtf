@@ -1,13 +1,13 @@
-Version:1.1
-Templar III
-TLR2-J 'Arthur'
+chassis:Templar III
+model:TLR2-J 'Arthur'
 mul id:7955
 
 Config:Biped Omnimech
 techbase:Mixed (IS Chassis)
 era:3120
-source:Shattered Fortress - Dark Ages
+source:Shattered Fortresss
 rules level:3
+role:Skirmisher
 
 mass:85
 engine:340 Light Engine(IS)

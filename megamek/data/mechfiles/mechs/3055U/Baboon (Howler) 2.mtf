@@ -1,13 +1,19 @@
-Version:1.0
-Baboon (Howler)
-2
+chassis:Baboon
+clanname:Howler
+model:2
 mul id:190
 
 Config:Biped
 TechBase:Clan
 Era:3063
-Source:TRO 3055 - Civil War
+Source:TRO: 3055
 Rules Level:2
+role:Striker
+
+quirk:ext_twist
+quirk:low_profile
+quirk:searchlight
+
 
 Mass:20
 Engine:120 XL (Clan) Engine

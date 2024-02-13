@@ -114,6 +114,11 @@ public class ASLargeAeroSpecialAbilityConverter extends ASSpecialAbilityConverte
             }
         }
 
+        Aero aero = (Aero) entity;
+        if (aero.isVSTOL() || aero.isSTOL() || (aero instanceof SmallCraft && aero.isAerodyne())) {
+            assign("VSTOL or STOL gear or capable", VSTOL);
+        }
+
         assign("Space capable", SPC);
     }
 }

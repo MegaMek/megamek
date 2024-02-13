@@ -1,13 +1,23 @@
-Version:1.0
-Shadow Hawk
-SHD-2D2
+chassis:Shadow Hawk
+model:SHD-2D2
 mul id:2900
 
 Config:Biped
 techbase:Inner Sphere
 era:3049
-source:Rec Guide:ilClan #12 - Late Succession War
+source:Rec Guide:ilClan #12
 rules level:2
+role:Brawler
+
+
+
+quirk:battle_fists_la
+quirk:battle_fists_ra
+quirk:imp_life_support
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+quirk:rugged_1
+
 
 mass:55
 engine:275 Fusion Engine(IS)

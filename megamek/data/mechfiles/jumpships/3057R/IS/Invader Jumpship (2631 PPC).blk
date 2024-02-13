@@ -17,7 +17,7 @@ Invader Jumpship
 </Name>
 
 <Model>
-(2631 PPC)
+(2631) (PPC)
 </Model>
 
 <mul id:>
@@ -116,7 +116,7 @@ dockingcollar
 </structural_integrity>
 
 <source>
-TRO 3057R - Star League
+TRO: 3057 Revised
 </source>
 
 <tonnage>

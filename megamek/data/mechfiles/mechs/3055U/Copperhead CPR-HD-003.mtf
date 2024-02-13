@@ -1,13 +1,18 @@
-Version:1.1
-Copperhead
-CPR-HD-003
+chassis:Copperhead
+model:CPR-HD-003
 mul id:691
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3065
-Source:TRO 3055 - Civil War
+Source:TRO: 3055
 Rules Level:4
+role:Striker
+
+
+
+quirk:difficult_maintain
+
 
 Mass:30
 Engine:180 XL Engine

@@ -32,6 +32,10 @@ III(Sqd4)
 IS Level 2
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Leg
 </motion_type>
@@ -60,7 +64,7 @@ ISBAMediumRecoillessRifle:RA
 </Squad Equipment>
 
 <source>
-TRO Vehicle Annex (r) - Jihad
+TRO: Vehicle Annex Revised
 </source>
 
 <chassis>

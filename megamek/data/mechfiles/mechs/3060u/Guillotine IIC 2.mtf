@@ -1,13 +1,16 @@
-Version:1.0
-Guillotine IIC
-2
+chassis:Guillotine IIC
+model:2
 mul id:1346
 
 Config:Biped
 TechBase:Clan
 Era:3070
-Source:TRO 3060
+Source:TRO: 3060
 Rules Level:2
+role:Skirmisher
+
+quirk:searchlight
+
 
 Mass:70
 Engine:280 Fusion (Clan) Engine

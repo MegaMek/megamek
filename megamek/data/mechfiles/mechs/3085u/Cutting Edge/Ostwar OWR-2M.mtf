@@ -1,13 +1,19 @@
-Version:1.1
-Ostwar
-OWR-2M
+chassis:Ostwar
+model:OWR-2M
 mul id:4769
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2470
-Source:XTRO Primitives I - Age of War
+Source:XTR: Primitives I
 Rules Level:4
+role:Juggernaut
+
+
+
+
+quirk:easy_maintain
+
 
 Mass:65
 Engine:235 Fusion Engine

@@ -1,13 +1,17 @@
-Version:1.0
-Banshee
-BNC-3MC
+chassis:Banshee
+model:BNC-3MC
 mul id:242
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3037
-Source:TRO 3039 - Succession Wars
+Source:TRO: 3039
 Rules Level:1
+role:Brawler
+
+quirk:rugged_1
+quirk:bad_rep_is
+
 
 Mass:95
 Engine:380 Fusion Engine

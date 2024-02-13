@@ -1,11 +1,11 @@
 size 16 17
 option exit_roads_to_pavement false
-tag "GrassTheme (Auto)"
 tag "Water (Auto)"
+tag "GrassTheme (Auto)"
 tag "Roads (Auto)"
 tag "Ocean (Auto)"
-tag "LightForest (Auto)"
 tag "Woods (Auto)"
+tag "LightForest (Auto)"
 hex 0101 2 "" "Grass"
 hex 0201 2 "woods:1;road:1:10;foliage_elev:2" "Grass"
 hex 0301 2 "woods:1;road:1:17;foliage_elev:2" "Grass"

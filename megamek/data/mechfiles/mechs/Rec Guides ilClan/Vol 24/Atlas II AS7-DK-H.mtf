@@ -1,13 +1,22 @@
-Version:1.0
-Atlas II
-AS7-DK-H
+chassis:Atlas II
+model:AS7-DK-H
 mul id:8459
 
 Config:Biped
 techbase:Mixed (IS Chassis)
 era:3139
-source:Rec Guide:ilClan #24 - Dark Ages
+source:Rec Guide:ilClan #24
 rules level:2
+role:Brawler
+
+
+
+quirk:battle_fists_la
+quirk:battle_fists_ra
+quirk:command_mech
+quirk:distracting
+quirk:imp_com
+
 
 mass:100
 engine:400 XL Engine(IS)

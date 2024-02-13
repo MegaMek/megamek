@@ -36,6 +36,10 @@ IRN-SD1b-EC
 Mixed (IS Chassis) Experimental
 </type>
 
+<role>
+Dogfighter
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -112,7 +116,7 @@ Ironsides EC: Following Klondike, Star Adder scientists began mass producing pro
 </history>
 
 <source>
-Succession Wars
+TRO: Golden Century
 </source>
 
 <tonnage>

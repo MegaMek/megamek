@@ -1,13 +1,17 @@
-Version:1.0
-Banshee
-BNC-3Q
+chassis:Banshee
+model:BNC-3Q
 mul id:244
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2915
-Source:TRO 3039 - Succession Wars
+Source:TRO: 3039
 Rules Level:1
+role:Juggernaut
+
+quirk:rugged_1
+quirk:bad_rep_is
+
 
 Mass:95
 Engine:380 Fusion Engine

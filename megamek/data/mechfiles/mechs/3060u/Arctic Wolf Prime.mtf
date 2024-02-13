@@ -1,13 +1,17 @@
-Version:1.0
-Arctic Wolf
-Prime
+chassis:Arctic Wolf
+model:Prime
 mul id:103
 
 Config:Biped Omnimech
 TechBase:Clan
 Era:3067
-Source:TRO 3060
+Source:TRO: 3060
 Rules Level:2
+role:Striker
+
+
+quirk:imp_target_short
+
 
 Mass:40
 Engine:240 XL (Clan) Engine(IS)

@@ -32,6 +32,10 @@ Laser Carrier
 IS Level 1
 </type>
 
+<role>
+Ambusher
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -75,7 +79,7 @@ Medium Laser
 </Rear Equipment>
 
 <source>
-TRO 3039 - Succession Wars
+TRO: 3039
 </source>
 
 <tonnage>

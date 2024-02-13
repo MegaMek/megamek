@@ -32,6 +32,10 @@ Tunnel Rat IV Mining Exoskeleton
 IS Level 2
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Jump
 </motion_type>
@@ -61,7 +65,7 @@ ISBAGrenadeLauncher:RA
 </Squad Equipment>
 
 <source>
-TRO Vehicle Annex (r) - Civil War
+TRO: Vehicle Annex Revised
 </source>
 
 <chassis>

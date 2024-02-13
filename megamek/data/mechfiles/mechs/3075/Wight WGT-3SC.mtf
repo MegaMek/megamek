@@ -1,13 +1,19 @@
-Version:1.0
-Wight
-WGT-3SC
+chassis:Wight
+model:WGT-3SC
 mul id:3551
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3076
-Source:TRO 3075
+Source:TRO: 3075
 Rules Level:2
+role:Brawler
+
+
+
+quirk:exp_actuator
+quirk:weak_legs
+
 
 Mass:35
 Engine:175 Compact Engine

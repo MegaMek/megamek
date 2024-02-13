@@ -36,6 +36,10 @@ Skulker Wheeled Scout Tank
 IS Level 1
 </type>
 
+<role>
+Scout
+</role>
+
 <motion_type>
 Wheeled
 </motion_type>
@@ -108,7 +112,7 @@ TARGETING:Targeting System 2.3
 </systemManufacturers>
 
 <source>
-TRO 3039 - Succession Wars
+TRO: 3039
 </source>
 
 <tonnage>

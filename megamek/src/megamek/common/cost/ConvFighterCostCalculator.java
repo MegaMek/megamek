@@ -20,7 +20,7 @@ package megamek.common.cost;
 
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.common.ConvFighter;
-import megamek.common.EquipmentType;
+import megamek.common.equipment.ArmorType;
 import megamek.common.verifier.TestEntity;
 
 public class ConvFighterCostCalculator {
@@ -57,11 +57,11 @@ public class ConvFighterCostCalculator {
         if (fighter.hasPatchworkArmor()) {
             int armorcost = 0;
             for (int loc = 0; loc < fighter.locations(); loc++) {
-                armorcost += fighter.getArmorWeight(loc) * EquipmentType.getArmorCost(fighter.getArmorType(loc));
+                armorcost += fighter.getArmorWeight(loc) * ArmorType.forEntity(fighter, loc).getCost();
             }
             costs[idx++] = armorcost;
         } else {
-            costs[idx++] = fighter.getArmorWeight() * EquipmentType.getArmorCost(fighter.getArmorType(0));
+            costs[idx++] = fighter.getArmorWeight() * ArmorType.forEntity(fighter).getCost();
         }
 
         // Heat sinks

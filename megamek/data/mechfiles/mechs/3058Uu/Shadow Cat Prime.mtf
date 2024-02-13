@@ -1,13 +1,17 @@
-Version:1.0
-Shadow Cat
-Prime
+chassis:Shadow Cat
+model:Prime
 mul id:2892
 
 Config:Biped Omnimech
 techbase:Clan
 era:3003
-source:TRO 3058 - Succession Wars
+source:TRO: 3058
 rules level:2
+role:Striker
+
+
+quirk:low_profile
+
 
 mass:45
 engine:270 XL (Clan) Engine(IS)

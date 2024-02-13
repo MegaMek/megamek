@@ -36,6 +36,10 @@ Procyon
 Clan Level 2
 </type>
 
+<role>
+Striker
+</role>
+
 <motion_type>
 Quad
 </motion_type>
@@ -99,7 +103,7 @@ CLSRM2
 </Legs Equipment>
 
 <source>
-TRO Prototypes - Jihad
+TRO: Prototypes
 </source>
 
 <tonnage>
@@ -138,3 +142,9 @@ JUMPJET:Unspecified
 COMMUNICATIONS:Build 2083 Micro
 TARGETING:Proto-Enhanced, Model 4
 </systemManufacturers>
+
+<quirks>
+hard_pilot
+distracting
+</quirks>
+

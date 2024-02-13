@@ -32,6 +32,10 @@ Phalanx Battle Armor
 IS Level 2
 </type>
 
+<role>
+Ambusher
+</role>
+
 <motion_type>
 Leg
 </motion_type>
@@ -64,7 +68,7 @@ ISBAKingDavidLightGaussRifle:RA
 </Squad Equipment>
 
 <source>
-TRO 3075 - Civil War
+TRO: 3075
 </source>
 
 <chassis>

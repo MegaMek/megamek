@@ -1,13 +1,19 @@
-Version:1.0
-Nexus II
-NXS2-B
+chassis:Nexus II
+model:NXS2-B
 mul id:2262
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3067
-Source:TRO 3055 - Civil War
+Source:TRO: 3055
 Rules Level:2
+role:Scout
+
+
+
+quirk:ext_twist
+quirk:bad_rep_is
+
 
 Mass:25
 Engine:200 Light Engine

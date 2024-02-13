@@ -1,13 +1,21 @@
-Version:1.1
-Kraken-XR
-
+chassis:Kraken-XR
+model:
 mul id:4463
 
 Config:Biped
 TechBase:Clan
 Era:3073
-Source:XTRO Clans - Jihad
+Source:XTR: Clans
 Rules Level:4
+role:Sniper
+
+
+quirk:difficult_maintain
+quirk:poor_performance
+quirk:prototype
+quirk:ext_twist
+quirk:pro_actuator
+
 
 Mass:100
 Engine:300 XL Fusion Engine

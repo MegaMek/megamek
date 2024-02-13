@@ -36,6 +36,10 @@ Mk 1
 IS Level 1
 </type>
 
+<role>
+Juggernaut
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -113,7 +117,7 @@ Spittal
 </primaryFactory>
 
 <source>
-TRO 3039 - Succession Wars
+TRO: 3039
 </source>
 
 <tonnage>
@@ -123,4 +127,10 @@ TRO 3039 - Succession Wars
 <fuelType>
 PETROCHEMICALS
 </fuelType>
+
+
+<quirks>
+low_profile
+poor_target_short
+</quirks>
 

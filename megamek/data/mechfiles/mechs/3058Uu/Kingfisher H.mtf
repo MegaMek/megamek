@@ -1,13 +1,16 @@
-Version:1.0
-Kingfisher
-H
+chassis:Kingfisher
+model:H
 mul id:1785
 
 Config:Biped Omnimech
 TechBase:Clan
 Era:3061
-Source:TRO 3058 - Clan Invasion
+Source:TRO: 3058
 Rules Level:2
+role:Brawler
+
+quirk:rugged_1
+
 
 Mass:90
 Engine:360 Fusion (Clan) Engine(IS)

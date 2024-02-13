@@ -1,12 +1,19 @@
-Version:1.3
-Scorpion
-C
+chassis:Scorpion
+model:C
 mul id:8316
 Config:Quad
 techbase:Mixed (IS Chassis)
 era:3150
-source:Rec Guide:ilClan #19 - Early Republic
+source:Rec Guide:ilClan #19
 rules level:2
+role:Skirmisher
+
+
+
+quirk:bad_rep_clan
+quirk:bad_rep_is
+quirk:hard_pilot
+
 
 mass:55
 engine:330 Light Engine(IS)

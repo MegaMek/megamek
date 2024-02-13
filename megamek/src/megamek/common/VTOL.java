@@ -14,6 +14,7 @@
 package megamek.common;
 
 import megamek.common.enums.AimingMode;
+import megamek.common.enums.MPBoosters;
 import megamek.common.options.OptionsConstants;
 
 import java.util.ArrayList;
@@ -51,8 +52,8 @@ public class VTOL extends Tank implements IBomber {
         // need to set elevation to something different than entity
         elevation = 1;
     }
-    
-    
+
+
     @Override
     public int getUnitType() {
         return UnitType.VTOL;
@@ -72,13 +73,15 @@ public class VTOL extends Tank implements IBomber {
     public int getLocTurret() {
         return LOC_TURRET;
     }
-    
+
     @Override
     public int getLocTurret2() {
         return LOC_TURRET_2;
     }
 
-    private int[] bombChoices = new int[BombType.B_NUM];
+    protected int[] intBombChoices = new int[BombType.B_NUM];
+    protected int[] extBombChoices = new int[BombType.B_NUM];
+
     private Targetable bombTarget = null;
     private List<Coords> strafingCoords = new ArrayList<>();
 
@@ -239,38 +242,57 @@ public class VTOL extends Tank implements IBomber {
     public boolean doomedInAtmosphere() {
         return true;
     }
-    
+
     @Override
     public boolean isBomber() {
         return (game != null)
-                && game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_VTOL_ATTACKS);
+                && (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_VTOL_ATTACKS));
     }
-    
+
     @Override
     public int availableBombLocation(int cost) {
         return LOC_FRONT;
     }
-    
+
     @Override
-    public int getMaxBombPoints() {
+    public int getMaxExtBombPoints() {
         return (int) Math.round(getWeight() / 5);
     }
+    @Override
+    public int getMaxIntBombPoints() {
+        return 0;
+    }
+
 
     @Override
-    public int[] getBombChoices() {
-        return bombChoices.clone();
+    public int getMaxBombPoints() {
+        return getMaxExtBombPoints();
     }
 
     @Override
-    public void setBombChoices(int... bc) {
-        if (bc.length == bombChoices.length) {
-            bombChoices = bc;
+    public int[] getIntBombChoices() {
+        return intBombChoices.clone();
+    }
+
+    @Override
+    public void setIntBombChoices(int[] bc) {
+    }
+
+    @Override
+    public int[] getExtBombChoices() {
+        return extBombChoices.clone();
+    }
+
+    @Override
+    public void setExtBombChoices(int[] bc) {
+        if (bc.length == extBombChoices.length) {
+            extBombChoices = bc;
         }
     }
-    
+
     @Override
     public void clearBombChoices() {
-        Arrays.fill(bombChoices, 0);
+        Arrays.fill(extBombChoices, 0);
     }
 
     @Override
@@ -280,15 +302,31 @@ public class VTOL extends Tank implements IBomber {
     }
 
     @Override
+    public void setUsedInternalBombs(int b){
+        // Do nothing
+    }
+
+    @Override
+    public void increaseUsedInternalBombs(int b){
+        // Do nothing
+    }
+
+    @Override
+    public int getUsedInternalBombs() {
+        // Currently not possible
+        return 0;
+    }
+
+    @Override
     public Targetable getVTOLBombTarget() {
         return bombTarget;
     }
-    
+
     @Override
     public void setVTOLBombTarget(Targetable t) {
         bombTarget = t;
     }
-    
+
     public List<Coords> getStrafingCoords() {
         return strafingCoords;
     }
@@ -362,7 +400,7 @@ public class VTOL extends Tank implements IBomber {
                             }
                         }
                     case 9:
-                        if (getSensorHits() < 4) {
+                        if (getSensorHits() < Tank.CRIT_SENSOR_MAX) {
                             return CRIT_SENSOR;
                         }
                     case 10:
@@ -413,7 +451,7 @@ public class VTOL extends Tank implements IBomber {
                             }
                         }
                     case 10:
-                        if (getSensorHits() < 4) {
+                        if (getSensorHits() < Tank.CRIT_SENSOR_MAX) {
                             return CRIT_SENSOR;
                         }
                     case 11:
@@ -564,32 +602,32 @@ public class VTOL extends Tank implements IBomber {
     @Override
     public void newRound(int roundNumber) {
         super.newRound(roundNumber);
-        
+
         bombTarget = null;
         strafingCoords.clear();
     }
 
     @Override
-    public int getWalkMP(boolean gravity, boolean ignoreheat,
-            boolean ignoremodulararmor) {
-        int j = getOriginalWalkMP();
-        if (engineHit) {
+    public int getWalkMP(MPCalculationSetting mpCalculationSetting) {
+        int mp = getOriginalWalkMP();
+
+        if (engineHit || isLocationBad(LOC_ROTOR)) {
             return 0;
         }
-        if (isLocationBad(LOC_ROTOR)) {
-            return 0;
+
+        mp = Math.max(0, mp - motiveDamage);
+
+        if (!mpCalculationSetting.ignoreCargo) {
+            mp = Math.max(0, mp - getCargoMpReduction(this));
         }
-        j = Math.max(0, j - motiveDamage);
-        j = Math.max(0, j - getCargoMpReduction(this));
-        if (null != game) {
+
+        if (!mpCalculationSetting.ignoreWeather && (null != game)) {
             int weatherMod = game.getPlanetaryConditions().getMovementMods(this);
-            if (weatherMod != 0) {
-                j = Math.max(j + weatherMod, 0);
-            }
+            mp = Math.max(mp + weatherMod, 0);
 
             if (getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_SNOW)) {
                 if (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_ICE_STORM) {
-                    j += 2;
+                    mp += 2;
                 }
 
                 if ((game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_SLEET)
@@ -597,29 +635,55 @@ public class VTOL extends Tank implements IBomber {
                         || (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_MOD_SNOW)
                         || (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_HEAVY_SNOW)
                         || (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_SNOW_FLURRIES)) {
-                    j += 1;
+                    mp += 1;
                 }
             }
         }
 
-        if (!ignoremodulararmor && hasModularArmor()) {
-            j--;
+        if (!mpCalculationSetting.ignoreModularArmor && hasModularArmor()) {
+            mp--;
         }
+
         if (hasWorkingMisc(MiscType.F_DUNE_BUGGY)) {
-            j--;
+            mp--;
         }
 
-        j = reduceMPByBombLoad(j);
-
-        if (gravity) {
-            j = applyGravityEffectsOnMP(j);
+        if (!mpCalculationSetting.ignoreCargo) {
+            mp = reduceMPByBombLoad(mp);
         }
 
-        return j;
+        if (!mpCalculationSetting.ignoreGravity) {
+            mp = applyGravityEffectsOnMP(mp);
+        }
 
+        return mp;
     }
 
     @Override
+    public MPBoosters getMPBoosters(boolean onlyArmed) {
+        for (Mounted m : getEquipment()) {
+            if (!m.isInoperable() && (m.getType() instanceof MiscType)
+                    && m.getType().hasFlag(MiscType.F_MASC)) {
+                return MPBoosters.VTOL_JET_BOOSTER;
+            }
+        }
+        return MPBoosters.NONE;
+    }
+
+    @Override
+    public PilotingRollData checkSideSlip(EntityMovementType moveType,
+                                          Hex prevHex, EntityMovementType overallMoveType,
+                                          MoveStep prevStep, int prevFacing, int curFacing, Coords lastPos,
+                                          Coords curPos, int distance, boolean speedBooster) {
+        PilotingRollData roll = super.checkSideSlip(moveType, prevHex, overallMoveType, prevStep, prevFacing,
+                curFacing, lastPos, curPos, distance, speedBooster);
+        if (speedBooster) {
+            roll.addModifier(3, "used VTOL Jet Booster");
+        }
+        return roll;
+    }
+
+        @Override
     public int height() {
         if (isSuperHeavy()) {
             return 1;

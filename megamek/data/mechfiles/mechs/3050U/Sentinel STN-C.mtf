@@ -1,13 +1,19 @@
-Version:1.0
-Sentinel
-STN-C
+chassis:Sentinel
+model:STN-C
 mul id:2865
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3065
-Source:TRO 3050 - Civil War
+Source:TRO: 3050
 Rules Level:2
+role:Sniper
+
+
+
+quirk:imp_com
+weaponquirk:ammo_feed_problems:RT:0:SRM 2
+
 
 Mass:40
 Engine:240 Fusion Engine

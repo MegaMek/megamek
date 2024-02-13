@@ -93,7 +93,7 @@ Independence
 </primaryFactory>
 
 <source>
-Rec Guide:ilClan #28 -
+Rec Guide:ilClan #28
 </source>
 
 <chassis>
@@ -116,3 +116,11 @@ biped
 2
 </weightclass>
 
+
+<quirks>
+easy_maintain
+</quirks>
+
+<weaponQuirks>
+accurate:Squad:2:ISBASupportPPC
+</weaponQuirks>

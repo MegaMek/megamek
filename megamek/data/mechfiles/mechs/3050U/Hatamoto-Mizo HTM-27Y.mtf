@@ -1,13 +1,20 @@
-Version:1.0
-Hatamoto-Mizo
-HTM-27Y
+chassis:Hatamoto-Mizo
+model:HTM-27Y
 mul id:1409
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3050
-Source:TRO 3050 - Clan Invasion
+Source:TRO: 3050
 Rules Level:2
+role:Sniper
+
+
+
+
+quirk:barrel_fists_la
+quirk:easy_maintain
+
 
 Mass:80
 Engine:320 Fusion Engine
@@ -148,3 +155,21 @@ Heat Sink
 -Empty-
 -Empty-
 
+overview:The Hatamoto-Series BattleMechs represent a pinnacle of strategic innovation within the Draconis Combine, marking a fusion of advanced Star League technology with existing Combine frameworks. The development of this series was initiated to leverage the influx of SLDF BattleMechs gifted by ComStar, focusing on reverse-engineering efforts that combined the strengths of the Thug with the Charger chassis. Spearheaded by the foresight of the future Coordinator of the Draconis Combine, this endeavor aimed to create a long-term technological advantage. Integrating advanced weaponry onto a robust and readily available chassis, the Hatamoto-Series stands as a significant achievement in military engineering, reflecting a progressive approach to Mech warfare.
+
+capabilities:The Hatamoto-Series is characterized by its formidable balance of firepower and defensive capabilities. These Mechs are equipped with a diverse array of energy and missile weapons, enabling effective engagement at multiple ranges. Their considerable armor plating allows them to endure severe combat scenarios, solidifying their role as primary combat units. A key design focus of the Hatamoto-Series is the prioritization of armament strength and survivability, though this comes at the cost of limited heat management and reduced mobility. The series faces challenges in heat dissipation during high-intensity battles, necessitating strategic weapon use by pilots. Despite these constraints, the Hatamoto-Series remains a testament to the Draconis Combine's engineering acumen, blending lethal offensive power with robustness to fulfill various combat requirements effectively.
+
+deployment:The HTM-27Y, known as the Hatamoto-Mizo, shifts its focus towards long-range combat effectiveness. This variant replaces the standard SRM-6 launchers with a single ER Large Laser, significantly enhancing its long-range striking capabilities. The Hatamoto-Mizo is adept at wearing down enemy defenses from a distance before closing in for decisive combat. Its configuration is optimized for MechWarriors who prioritize range and precision in their tactical approach, making it a formidable contender in ranged engagements.
+
+history:The Hatamoto-Chi's development and subsequent variants have played a pivotal role in the evolution of the Draconis Combine's military might. After the introduction of the HTM-26T and 27T models, the Hatamoto-Chi underwent a series of modifications, each tailored to specific tactical needs and technological advancements within the Combine. The HTM-27U, known as the Hatamoto-Hi, emerged as a response to the need for a more heat-efficient and close-combat capable Mech. The integration of Medium Pulse Lasers and an additional heat sink in the 27U variant made it a popular choice for MechWarriors engaging in more aggressive combat scenarios.<p>Similarly, the HTM-27V (Hatamoto-Kaze) and HTM-27W (Hatamoto-Ku) variants represented strategic shifts towards long-range and direct fire combat, respectively. The 27V's focus on missile weaponry and the 27W's implementation of an Autocannon/5 provided MechWarriors with greater versatility in battlefield engagements, enhancing the Hatamoto-Chi's adaptability across different combat situations.</p>
+<p>The introduction of the HTM-28T marked a significant advancement, featuring ER PPCs and Streak SRM-6 launchers, and the inclusion of a C3 slave unit, signifying the Combine's growing emphasis on network-centric warfare. This variant was particularly notable for its improved jumping capability, enhancing the Mech's mobility on the battlefield.</p>
+<p>As the Draconis Combine faced new challenges in the post-Clan Invasion era and beyond, the Hatamoto-Chi continued to evolve. The HTM-30S Hatamoto-Suna and HTM-30Z Hatomoto-Godai variants, with their advanced weapon systems and electronic warfare capabilities, showcased the Combine's response to the changing dynamics of interstellar warfare. The HTM-30Z, equipped for command roles, became a symbol of leadership and strategic command on the battlefield.</p>
+<p>In conclusion, the Hatamoto-Chi's history is not just a tale of technological innovation but also a reflection of the Draconis Combine's strategic adaptability and cultural evolution in Mech warfare. Each variant of the Hatamoto-Chi has contributed to its legacy as a formidable and versatile warrior on the battlefields of the Inner Sphere.</p>
+
+manufacturer:Yori 'Mech Works,Luthien Armor Works
+primaryfactory:Al Na'ir,Luthien
+systemmanufacturer:CHASSIS:Earthwerks VOL Endo Steel
+systemmanufacturer:ENGINE:Pitban 320
+systemmanufacturer:ARMOR:Mitchell Argon
+systemmanufacturer:COMMUNICATIONS:Colmax 90
+systemmanufacturer:TARGETING:Garret D2j

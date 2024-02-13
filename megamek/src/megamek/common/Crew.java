@@ -15,6 +15,9 @@
 */
 package megamek.common;
 
+import megamek.client.generator.RandomGenderGenerator;
+import megamek.client.ui.swing.tooltip.PilotToolTip;
+import megamek.codeUtilities.MathUtility;
 import megamek.common.enums.Gender;
 import megamek.common.icons.Portrait;
 import megamek.common.options.IOption;
@@ -66,9 +69,9 @@ public class Crew implements Serializable {
     private boolean ejected;
 
     // StratOps fatigue points
-    private int fatigue;
+    private int fatiguePoints;
     // also need to track turns for fatigue by pilot because some may have later deployment
-    private int fatigueCount;
+    private int fatigueTurnCount;
 
     //region RPG Skills
     // MW3e uses 3 different gunnery skills
@@ -237,7 +240,7 @@ public class Crew implements Serializable {
         dead = new boolean[slots];
         missing = new boolean[slots];
         koThisRound = new boolean[slots];
-        fatigue = 0;
+        fatiguePoints = 0;
         toughness = new int[slots];
 
         options.initialize();
@@ -339,6 +342,9 @@ public class Crew implements Serializable {
 
     public void setPortrait(final Portrait portrait, final int pos) {
         getPortraits()[pos] = portrait;
+
+        // delete PilotToolTip cache for this portrait
+        PilotToolTip.deleteImageCache(this, pos);
     }
 
     /**
@@ -512,7 +518,7 @@ public class Crew implements Serializable {
     /**
      * Uses the table on TO p206 to calculate the number of crew hits based on percentage
      * of total casualties. Used for ejection, boarding actions and such
-     * @return 
+     * @return The number of crew hits
      */
     public int calculateHits() {
         if (currentSize == 0) {
@@ -981,47 +987,53 @@ public class Crew implements Serializable {
     }
 
     private int getPilotingFatigueTurn() {
+        // TO:AR p.166 fatigue
+        int rating = tacOpsFatigueRating();
         int turn = 20;
-        if (getPiloting() > 5) {
+        if (rating > 5) {
             turn = 10;
-        } else if (getPiloting() > 3) {
+        } else if (rating > 3) {
             turn = 14;
-        } else if (getPiloting() > 1) {
+        } else if (rating > 1) {
             turn = 17;
         }
-
-        // get fatigue point modifiers
-        int mod = (int) Math.min(Math.max(0, Math.ceil(fatigue / 4.0) - 1), 4);
-        turn = turn - mod;
-
-        return turn;
+        return turn + CamOpsFatigueTurnModifier();
     }
 
     public boolean isPilotingFatigued() {
-        return fatigueCount >= getPilotingFatigueTurn();
+        return fatigueTurnCount >= getPilotingFatigueTurn();
     }
 
     private int getGunneryFatigueTurn() {
-        int turn = 20;
-        if (getPiloting() > 5) {
+        // TO:AR p.166 fatigue
+        int rating = tacOpsFatigueRating();
+        int turn = Integer.MAX_VALUE;
+        if (rating > 5) {
             turn = 14;
-        } else if (getPiloting() > 3) {
+        } else if (rating > 3) {
             turn = 17;
+        } else if (rating > 1) {
+            turn = 20;
         }
-
-        // get fatigue point modifiers
-        int mod = (int) Math.min(Math.max(0, Math.ceil(fatigue / 4.0) - 1), 4);
-        turn = turn - mod;
-
-        return turn;
-
+        return turn + CamOpsFatigueTurnModifier();
     }
 
     public boolean isGunneryFatigued() {
-        if (getPiloting() < 2) {
-            return false;
+        return fatigueTurnCount >= getGunneryFatigueTurn();
+    }
+
+    /** Returns the modifier for the TO:AR p.166 fatigue turn thresholds from CamOps p.219 fatigue points. */
+    private int CamOpsFatigueTurnModifier() {
+        return -MathUtility.clamp((fatiguePoints - 1) / 4, 0, 4);
+    }
+
+    /** Returns the rating used for TO:AR p.166 fatigue. */
+    private int tacOpsFatigueRating() {
+        if (crewType == CrewType.INFANTRY_CREW) {
+            return Math.min(getGunnery(), getPiloting());
+        } else {
+            return getPiloting();
         }
-        return fatigueCount >= getGunneryFatigueTurn();
     }
 
     /**
@@ -1062,7 +1074,7 @@ public class Crew implements Serializable {
      */
     public String getExternalIdAsString() {
         for (int i = 0; i < getSlotCount(); i++) {
-            if (!externalId[i].equals("-1")) {
+            if (externalId != null && !externalId[i].equals("-1")) {
                 return externalId[i];
             }
         }
@@ -1082,22 +1094,22 @@ public class Crew implements Serializable {
     }
 
     public int getFatigue() {
-        return fatigue;
+        return fatiguePoints;
     }
 
     public void setFatigue(int i) {
-        fatigue = i;
+        fatiguePoints = i;
     }
 
     public void incrementFatigueCount() {
-        fatigueCount++;
+        fatigueTurnCount++;
     }
 
     /**
      * Sets crew state fields back to defaults. Used by MekHQ to clear game state.
      */
     public void resetGameState() {
-        fatigueCount = 0;
+        fatigueTurnCount = 0;
         doomed = false;
         ejected = false;
         for (int i = 0; i < crewType.getCrewSlots(); i++) {
@@ -1107,20 +1119,20 @@ public class Crew implements Serializable {
         }
     }
 
-    public int rollGunnerySkill() {
+    public Roll rollGunnerySkill() {
         if (getOptions().booleanOption(OptionsConstants.PILOT_APTITUDE_GUNNERY)) {
-            return Compute.d6(3, 2);
+            return Compute.rollD6(3, 2);
         }
 
-        return Compute.d6(2);
+        return Compute.rollD6(2);
     }
 
-    public int rollPilotingSkill() {
+    public Roll rollPilotingSkill() {
         if (getOptions().booleanOption(OptionsConstants.PILOT_APTITUDE_PILOTING)) {
-            return Compute.d6(3, 2);
+            return Compute.rollD6(3, 2);
         }
 
-        return Compute.d6(2);
+        return Compute.rollD6(2);
     }
 
     public int getCurrentPilotIndex() {

@@ -1,12 +1,12 @@
-Version:1.3
-Behemoth
-BHN-6H
+chassis:Behemoth
+model:BHN-6H
 mul id:8301
 Config:Biped
 techbase:Inner Sphere
 era:3004
-source:Rec Guide:ilClan #2 - Late Succession War
+source:Rec Guide:ilClan #2
 rules level:1
+role:Juggernaut
 
 mass:100
 engine:200 Fusion Engine(IS)

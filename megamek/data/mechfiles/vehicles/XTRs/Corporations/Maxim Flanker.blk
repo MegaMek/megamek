@@ -36,6 +36,10 @@ Maxim Flanker
 IS Level 2
 </type>
 
+<role>
+Missile Boat
+</role>
+
 <motion_type>
 Hover
 </motion_type>
@@ -92,7 +96,7 @@ Machine Gun
 </tonnage>
 
 <source>
-XTRO Corporations - Jihad
+XTR: Corporations
 </source>
 
 <capabilities>

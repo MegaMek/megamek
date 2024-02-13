@@ -1,13 +1,13 @@
-Version:1.0
-Eris
-ERS-2H
+chassis:Eris
+model:ERS-2H
 mul id:9328
 
 Config:Biped
 techbase:Inner Sphere
 era:3087
-source:Rec Guide:ilClan #18 - Early Republic
+source:Rec Guide:ilClan #18
 rules level:2
+role:Skirmisher
 
 mass:50
 engine:250 XL Engine(IS)

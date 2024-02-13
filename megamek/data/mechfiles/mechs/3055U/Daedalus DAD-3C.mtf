@@ -1,13 +1,18 @@
-Version:1.0
-Daedalus
-DAD-3C
+chassis:Daedalus
+model:DAD-3C
 mul id:789
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3053
-Source:TRO 3055 - Clan Invasion
+Source:TRO: 3055
 Rules Level:2
+role:Striker
+
+
+
+quirk:difficult_maintain
+
 
 Mass:45
 Engine:270 XL Engine

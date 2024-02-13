@@ -1,13 +1,18 @@
-Version:1.0
-Jupiter
-3
+chassis:Jupiter
+model:3
 mul id:1727
 
 Config:Biped
 TechBase:Clan
 Era:3075
-Source:TRO 3075
+Source:TRO: 3075
 Rules Level:2
+role:Sniper
+
+quirk:fine_manipulators
+quirk:imp_sensors
+quirk:imp_target_long
+
 
 Mass:100
 Engine:300 XL (Clan) Engine

@@ -32,6 +32,10 @@ Mars Assault Vehicle
 Clan Level 3
 </type>
 
+<role>
+Missile Boat
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -101,7 +105,7 @@ CLGaussRifle
 </Turret Equipment>
 
 <source>
-TRO 3060 - Clan Invasion
+TRO: 3060
 </source>
 
 <tonnage>

@@ -32,6 +32,10 @@ Fenrir II Assault Battle Armor
 Mixed (IS Chassis) Advanced
 </type>
 
+<role>
+Missile Boat
+</role>
+
 <motion_type>
 Leg
 </motion_type>
@@ -73,7 +77,7 @@ BA Advanced:Body
 </Trooper 4 Equipment>
 
 <source>
-TRO 3145 Lyran Commonwealth - Late Republic
+TRO: 3145 Lyran Commonwealth
 </source>
 
 <chassis>
@@ -132,3 +136,8 @@ JUMPJET:Unknown
 COMMUNICATIONS:Unknown
 TARGETING:Unknown
 </systemManufacturers>
+
+<quirks>
+distracting
+</quirks>
+

@@ -1,13 +1,17 @@
-Version:1.0
-Hellhound (Conjurer)
-8
+chassis:Hellhound
+clanname:Conjurer
+model:8
 mul id:7513
 
 Config:Biped
 techbase:Mixed (Clan Chassis)
 era:3142
 rules level:3
-source:Rec Guide:ilClan #5 - Dark Age
+role:Skirmisher
+source:Rec Guide:ilClan #5
+
+quirk:ext_twist
+
 
 mass:50
 engine:250 XL Engine(IS)

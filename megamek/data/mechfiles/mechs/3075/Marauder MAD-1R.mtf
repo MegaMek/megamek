@@ -1,13 +1,13 @@
-Version:1.0
-Marauder
-MAD-1R
+chassis:Marauder
+model:MAD-1R
 mul id:2033
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2612
-Source:TRO 3075
+source:TRO: 3075
 Rules Level:2
+role:Sniper
 
 Mass:75
 Engine:300 Fusion Engine

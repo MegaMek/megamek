@@ -32,6 +32,10 @@ NK-1C
 IS Level 3
 </type>
 
+<role>
+Sniper
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -89,9 +93,16 @@ ISAntiMissileSystem
 </Turret Equipment>
 
 <source>
-TRO 3145 Draconis Combine - Early Republic
+TRO: 3145 Draconis Combine
 </source>
 
 <tonnage>
 90.0
 </tonnage>
+
+<quirks>
+low_profile
+hard_pilot
+fast_reload
+</quirks>
+

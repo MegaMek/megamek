@@ -1,13 +1,20 @@
-Version:1.0
-Scorpion
-SCP-12S
+chassis:Scorpion
+model:SCP-12S
 mul id:2836
 
 Config:Quad
 TechBase:Inner Sphere
 Era:3066
-Source:Civil War
+source:TRO: 3085u 
 Rules Level:2
+role:Skirmisher
+
+
+
+quirk:bad_rep_clan
+quirk:bad_rep_is
+quirk:hard_pilot
+
 
 Mass:55
 Engine:330 Light Engine(IS)

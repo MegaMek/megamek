@@ -36,6 +36,10 @@ Sylph Battle Armor
 Clan Level 2
 </type>
 
+<role>
+Scout
+</role>
+
 <motion_type>
 VTOL
 </motion_type>
@@ -108,7 +112,7 @@ TARGETING:Unknown
 </systemManufacturers>
 
 <source>
-XTRO Royal Fantasy - Dark Age
+XTR: Royal Fantasy
 </source>
 
 <chassis>

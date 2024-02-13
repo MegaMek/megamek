@@ -1,12 +1,19 @@
-Version:1.3
-Baboon (Howler)
-
+chassis:Baboon
+clanname:Howler
+model:
 mul id:189
 Config:Biped
 techbase:Clan
 era:2871
-source:TRO 3055 - Succession Wars
+source:TRO: 3055
 rules level:2
+role:Missile Boat
+
+
+quirk:ext_twist
+quirk:low_profile
+quirk:searchlight
+
 
 mass:20
 engine:140 Fusion (Clan) Engine(IS)

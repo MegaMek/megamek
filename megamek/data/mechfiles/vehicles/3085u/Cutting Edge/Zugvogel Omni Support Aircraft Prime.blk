@@ -36,6 +36,10 @@ Prime
 IS Level 2
 </type>
 
+<role>
+Fire Support
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -125,7 +129,7 @@ Advanced Fire Control
 </structural_tech_rating>
 
 <source>
-TRO 3085
+TRO: 3085
 </source>
 
 <tonnage>

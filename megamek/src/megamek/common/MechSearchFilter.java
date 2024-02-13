@@ -16,6 +16,7 @@
 package megamek.common;
 
 import megamek.client.ui.swing.unitSelector.TWAdvancedSearchPanel;
+import megamek.common.util.StringUtil;
 import org.apache.logging.log4j.LogManager;
 
 import java.util.*;
@@ -41,6 +42,7 @@ public class MechSearchFilter {
     public int iOmni;
     public int iMilitary;
     public int iIndustrial;
+    public int iMountedInfantry;
     public int iWaterOnly;
     public int iDoomedOnGround;
     public int iDoomedInAtmosphere;
@@ -60,6 +62,7 @@ public class MechSearchFilter {
     public int iCanon;
     public int iPatchwork;
     public String source;
+    public String mulid;
     public int iInvalid;
     public int iFailedToLoadEquipment;
     public String sStartTroopSpace;
@@ -139,8 +142,10 @@ public class MechSearchFilter {
     public String sStartBV;
     public String sEndBV;
     public boolean isDisabled;
-    public List<String> engineType = new ArrayList<>();
-    public List<String> engineTypeExclude = new ArrayList<>();
+    public List<Integer> engineType = new ArrayList<>();
+    public List<Integer> engineTypeExclude = new ArrayList<>();
+    public List<Integer> gyroType = new ArrayList<>();
+    public List<Integer> gyroTypeExclude = new ArrayList<>();
     public List<Integer> armorType = new ArrayList<>();
     public List<Integer> armorTypeExclude = new ArrayList<>();
     public List<Integer> internalsType = new ArrayList<>();
@@ -149,8 +154,8 @@ public class MechSearchFilter {
     public List<Integer> cockpitType = new ArrayList<>();
     public List<Integer> cockpitTypeExclude = new ArrayList<>();
 
-    public List<String> techLevel = new ArrayList<>();
-    public List<String> techLevelExclude = new ArrayList<>();
+    public List<Integer> techLevel = new ArrayList<>();
+    public List<Integer> techLevelExclude = new ArrayList<>();
 
     public List<String> techBase = new ArrayList<>();
     public List<String> techBaseExclude = new ArrayList<>();
@@ -362,25 +367,13 @@ public class MechSearchFilter {
 
     }
 
-    private static int toInt(String s, int i) {
-        if (s.isEmpty()) {
-            return i;
-        }
-
-        try {
-            return Integer.parseInt(s);
-        } catch (Exception ignored) {
-            return i;
-        }
-    }
-
     private static boolean isBetween(double value, String sStart, String sEnd) {
         if (sStart.isEmpty() && sEnd.isEmpty()) {
             return true;
         }
 
-        int iStart = toInt(sStart, Integer.MIN_VALUE);
-        int iEnd = toInt(sEnd, Integer.MAX_VALUE);
+        int iStart = StringUtil.toInt(sStart, Integer.MIN_VALUE);
+        int iEnd = StringUtil.toInt(sEnd, Integer.MAX_VALUE);
 
         if ((value < iStart) || (value > iEnd)) {
             return false;
@@ -404,6 +397,13 @@ public class MechSearchFilter {
     }
     private static boolean allMatch(List<String> list, String search) {
         return list.stream().allMatch(search::contains);
+    }
+
+    private static boolean anyMatch(List<Integer> list, int search) {
+        return list.stream().anyMatch(i -> i == search);
+    }
+    private static boolean allMatch(List<Integer> list, int search) {
+        return list.stream().allMatch(i -> i == search);
     }
 
     private static boolean anyMatch(List<Integer> list, HashSet<Integer> search) {
@@ -450,6 +450,10 @@ public class MechSearchFilter {
             return false;
         }
 
+        if ((!f.mulid.isEmpty()) && (mech.getMulId() != StringUtil.toInt(f.mulid, -2))) {
+            return false;
+        }
+
         if (!isMatch(f.iInvalid, mech.getInvalid())) {
             return false;
         }
@@ -467,6 +471,10 @@ public class MechSearchFilter {
         }
 
         if (!isMatch(f.iIndustrial, mech.isIndustrialMek())) {
+            return false;
+        }
+
+        if (!isMatch(f.iMountedInfantry, mech.getMountedInfantry())) {
             return false;
         }
 
@@ -716,19 +724,27 @@ public class MechSearchFilter {
             return false;
         }
 
-        if ((!f.engineType.isEmpty()) && (!anyMatch(f.engineType, mech.getEngineName()))) {
+        if ((!f.engineType.isEmpty()) && (!anyMatch(f.engineType, mech.getEngineType()))) {
             return false;
         }
 
-        if ((!f.engineTypeExclude.isEmpty()) && (anyMatch(f.engineTypeExclude, mech.getEngineName()))) {
+        if ((!f.engineTypeExclude.isEmpty()) && (anyMatch(f.engineTypeExclude, mech.getEngineType()))) {
             return false;
         }
 
-        if ((!f.techLevel.isEmpty()) && (!anyMatch(f.techLevel, mech.getTechLevel()))) {
+        if ((!f.gyroType.isEmpty()) && (!anyMatch(f.gyroType, mech.getGyroType()))) {
             return false;
         }
 
-        if ((!f.techLevelExclude.isEmpty()) && (anyMatch(f.techLevelExclude, mech.getTechLevel()))) {
+        if ((!f.gyroTypeExclude.isEmpty()) && (anyMatch(f.gyroTypeExclude, mech.getGyroType()))) {
+            return false;
+        }
+
+        if ((!f.techLevel.isEmpty()) && (!anyMatch(f.techLevel, mech.getTechLevelCode()))) {
+            return false;
+        }
+
+        if ((!f.techLevelExclude.isEmpty()) && (anyMatch(f.techLevelExclude, mech.getTechLevelCode()))) {
             return false;
         }
 
@@ -782,10 +798,6 @@ public class MechSearchFilter {
 
         long entityType = mech.getEntityType();
 
-        if (mech.isAerospaceFighter()) {
-            entityType = entityType | Entity.ETYPE_AEROSPACEFIGHTER;
-        }
-
         long entityTypes = 0;
 
         if (f.filterMech == 1) {
@@ -805,6 +817,9 @@ public class MechSearchFilter {
         }
         if (f.filterQuad == 1) {
             entityTypes = entityTypes | Entity.ETYPE_QUAD_MECH;
+        }
+        if (f.filterQuadVee == 1) {
+            entityTypes = entityTypes | Entity.ETYPE_QUADVEE;
         }
         if (f.filterAero == 1) {
             entityTypes = entityTypes | Entity.ETYPE_AERO;
@@ -884,6 +899,9 @@ public class MechSearchFilter {
         }
         if (f.filterQuad == 2) {
             entityTypes = entityTypes | Entity.ETYPE_QUAD_MECH;
+        }
+        if (f.filterQuadVee == 2) {
+            entityTypes = entityTypes | Entity.ETYPE_QUADVEE;
         }
         if (f.filterAero == 2) {
             entityTypes = entityTypes | Entity.ETYPE_AERO;
@@ -1026,10 +1044,10 @@ public class MechSearchFilter {
                     } else if (currEq.equals(n.name) && n.qty == 0) {
                         return false;
                     }
-                    
+
                 }
 
-                // If we reach this point. It means that the MechSummary didn't have a weapon/equipment that matched the leaf node. 
+                // If we reach this point. It means that the MechSummary didn't have a weapon/equipment that matched the leaf node.
                 // If the leaf quantity is 0, that means that the mech is a match. If the leaf quantity is non-zero, that means the mech isn't
                 // a match.
                 if (n.qty == 0) {

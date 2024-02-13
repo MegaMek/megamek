@@ -58,6 +58,10 @@ BABattleClaw:RA
 IS Level 2
 </type>
 
+<role>
+Ambusher
+</role>
+
 <year>
 3052
 </year>
@@ -71,7 +75,7 @@ Jump
 </armor_type>
 
 <source>
-TRO 3058U - Clan Invasion
+TRO: 3058 Upgrade
 </source>
 
 <armor_tech>

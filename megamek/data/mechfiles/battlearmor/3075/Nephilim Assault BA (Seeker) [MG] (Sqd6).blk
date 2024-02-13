@@ -63,6 +63,10 @@ IS BA Mimetic:LA
 IS Level 2
 </type>
 
+<role>
+Juggernaut
+</role>
+
 <year>
 3071
 </year>
@@ -72,7 +76,7 @@ leg
 </motion_type>
 
 <source>
-TRO 3075 - Jihad
+TRO: 3075
 </source>
 
 <armor_type>

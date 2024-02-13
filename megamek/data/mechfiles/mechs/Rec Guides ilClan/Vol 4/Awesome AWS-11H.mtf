@@ -1,13 +1,18 @@
-Version:1.0
-Awesome
-AWS-11H
+chassis:Awesome
+model:AWS-11H
 mul id:7501
 
 Config:Biped
 techbase:Mixed (IS Chassis)
 era:3142
 rules level:2
-source:Rec Guide:ilClan #4 - Dark Age
+role:Sniper
+source:Rec Guide:ilClan #4
+
+
+
+quirk:battle_fists_la
+
 
 mass:80
 engine:240 Fusion Engine(IS)

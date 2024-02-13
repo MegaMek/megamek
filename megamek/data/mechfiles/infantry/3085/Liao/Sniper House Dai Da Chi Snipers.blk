@@ -43,12 +43,16 @@ ISSneakSuitCamo
 IS Level 3
 </type>
 
+<role>
+Ambusher
+</role>
+
 <year>
 3055
 </year>
 
 <era>
-TRO 3085 - Clan Invasion
+TRO: 3085
 </era>
 
 <motion_type>

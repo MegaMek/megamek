@@ -1,13 +1,19 @@
-Version:1.0
-Spector
-SPR-5S
+chassis:Spector
+model:SPR-5S
 mul id:3004
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3067
-Source:TRO 3058 - Civil War
+Source:TRO: 3058
 Rules Level:2
+role:Striker
+
+
+
+quirk:rugged_1
+quirk:difficult_maintain
+
 
 Mass:35
 Engine:245 XL Engine

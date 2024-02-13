@@ -32,6 +32,10 @@ Turhan Urban Combat Vehicle
 IS Level 2
 </type>
 
+<role>
+Brawler
+</role>
+
 <motion_type>
 Wheeled
 </motion_type>
@@ -85,7 +89,7 @@ Machine Gun
 </Turret Equipment>
 
 <source>
-TRO 3075 - Age of War
+TRO: 3075
 </source>
 
 <tonnage>

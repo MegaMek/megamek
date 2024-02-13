@@ -1,13 +1,16 @@
-Version:1.0
-Shadow Cat
-F
+chassis:Shadow Cat
+model:F
 mul id:6912
 
 Config:Biped Omnimech
 TechBase:Mixed (Clan Chassis)
 Era:3131
-Source:RS 3145 NTNU - Dark Ages
+Source:Record Sheets: 3145 New Tech New Upgrades
 Rules Level:3
+role:Sniper
+
+quirk:low_profile
+
 
 Mass:45
 Engine:270 XL (Clan) Engine

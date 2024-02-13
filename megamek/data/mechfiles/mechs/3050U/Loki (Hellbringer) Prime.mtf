@@ -1,13 +1,18 @@
-Version:1.0
-Loki (Hellbringer)
-Prime
+chassis:Loki
+clanname:Hellbringer
+model:Prime
 mul id:1929
 
 Config:Biped Omnimech
 techbase:Clan
 era:2926
-source:TRO Clan Invasion - Succession Wars
+source:TRO: Clan Invasion
 rules level:2
+role:Striker
+
+
+quirk:searchlight
+
 
 mass:65
 engine:325 XL (Clan) Engine(IS)

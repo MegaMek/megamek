@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -35,6 +35,10 @@ Mako Corvette
 <type>
 IS Level 3
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Aerodyne
@@ -192,8 +196,48 @@ IS Gauss Ammo:80
 50
 </structural_integrity>
 
+<capabilities>
+The Mako-class corvette stands out with its formidable armament, equipped with naval autocannons, naval PPCs, and naval lasers for engaging enemy WarShips. Additionally, it possesses lasers, Gauss rifles, and autocannons to defend against aerospace fighters. However, the true strengths of the Mako lie in its exceptional maneuverability and impressive armor. Weighing 200,000 tons, the Mako boasts nearly 200 tons of armor and can achieve a remarkable acceleration of 4.5 Gs.
+</capabilities>
+
+<overview>
+The Lyran Mako-class corvette, named for its sleek and swift characteristics reminiscent of its shark namesake, boasted impressive maneuverability, capable of sustained 3G maneuvers and sprinting up to 4.5Gs. Despite its compact size, the Mako outperformed most opposing WarShips and many DropShips, featuring a formidable array of weapons and armor. Manufactured by Bolson Shipyards, the Mako served as an escort and performed independent operations, patrolling Lyran Commonwealth borders and serving as picket vessels in isolated systems. Over a hundred Makos were constructed between 2692 and the fall of the Star League, seeing action on both sides during the conflict to liberate Terra. However, devastating losses along the border with the Free Worlds League in 2787, combined with the destruction of Bolson yards, led to attrition and scrapping of the Makos. The last Mako was destroyed in 2841 during the Second Succession War's defense of Caledonia against Kurita forces.
+</overview>
+
+<history>
+The Lyran Mako-class corvette, renowned for its sleek and agile nature, paid homage to its sea-dwelling shark namesake. Manufactured by Bolson Shipyards of New Kyoto, known for their production of conventional JumpShips, the Mako stood out as their sole entry into the combat JumpShip market. The design, deviating from the Lyran doctrine of heavy naval vessels, served as an escort for larger ships, undertaking independent operations, border patrols, and picket duties in remote Lyran systems. During its production period from 2692 to the fall of the Star League, over a hundred Makos were constructed, primarily for the Lyran Commonwealth Armed Forces (LCAF) but also for export. The Star League Defense Force (SLDF) utilized a few Makos as courier vessels, while the Rim Worlds Republic purchased five to reinforce their loyalist fleet. Consequently, Makos found themselves fighting on both sides of the conflict to liberate Terra. It is widely believed that all SLDF and Rim Worlds Makos were destroyed in the war, leaving none remaining with the Clans. The Lyran Makos faced severe devastation during the intense border clashes with the Free Worlds League in 2787. The Bolson yards themselves were shattered in the Marik offensive, leading to the loss of the capability to maintain Mako-class vessels. Attrition gradually diminished the fleet as numerous Makos fell in enemy engagements, and others were decommissioned due to the impossibility of keeping them in service. This cannibalization of resources allowed the Mako corvettes to persist until 2841 when the last Mako was destroyed while attempting to defend Caledonia against Kurita forces during the Second Succession War.
+</history>
+
+<manufacturer>
+Bolson Shipyards
+</manufacturer>
+
+<primaryFactory>
+New Kyoto
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<use>
+Corvette
+</use>
+
+<length>
+390 m
+</length>
+
+<height>
+260 m Sail
+</height>
+
 <source>
-TRO 3057R - Star League
+TRO: 3057 Revised
 </source>
 
 <tonnage>
@@ -211,6 +255,10 @@ TRO 3057R - Star League
 <grav_decks>
 55
 </grav_decks>
+
+<designtype>
+1
+</designtype>
 
 <crew>
 155
@@ -243,3 +291,4 @@ TRO 3057R - Star League
 <escape_pod>
 10
 </escape_pod>
+

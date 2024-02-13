@@ -32,6 +32,10 @@ Ripper Infantry Transport
 IS Level 2
 </type>
 
+<role>
+Scout
+</role>
+
 <motion_type>
 VTOL
 </motion_type>
@@ -85,7 +89,7 @@ ISSmallPulseLaser
 </Rotor Equipment>
 
 <source>
-TRO 3050 - Clan Invasion
+TRO: 3050
 </source>
 
 <tonnage>

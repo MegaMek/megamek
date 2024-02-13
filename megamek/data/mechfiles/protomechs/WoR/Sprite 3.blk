@@ -36,6 +36,10 @@ Sprite Ultraheavy ProtoMech
 Clan Level 4
 </type>
 
+<role>
+Striker
+</role>
+
 <motion_type>
 Biped
 </motion_type>
@@ -138,7 +142,7 @@ TARGETING:SAT-PM1
 </systemManufacturers>
 
 <source>
-Wars of Reaving - Jihad
+Wars of Reaving
 </source>
 
 <tonnage>

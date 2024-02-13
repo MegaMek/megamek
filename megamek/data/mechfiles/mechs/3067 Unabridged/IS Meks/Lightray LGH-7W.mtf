@@ -1,13 +1,20 @@
-Version:1.1
-Lightray
-LGH-7W
+chassis:Lightray
+model:LGH-7W
 mul id:5681
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3069
 Rules Level:2
-source:3067 Unabridged
+role:Skirmisher
+source:Record Sheets: 3067 Unabridged
+
+
+
+quirk:hyper_actuator
+quirk:bad_rep_is
+quirk:exp_actuator
+
 
 Mass:55
 Engine:385 XL Fusion Engine

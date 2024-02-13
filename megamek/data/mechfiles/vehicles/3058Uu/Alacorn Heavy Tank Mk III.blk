@@ -51,6 +51,10 @@ ISAC10 Ammo
 <type>
 IS Level 2
 </type>
+
+<role>
+Juggernaut
+</role>
 <year>
 2587
 </year>
@@ -67,5 +71,5 @@ IS Level 2
 Tracked
 </motion_type>
 <source>
-Star League
+TRO: 3058
 </source>

@@ -36,6 +36,10 @@ B
 Clan Level 2
 </type>
 
+<role>
+Fire Support
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -105,7 +109,7 @@ Clan Streak SRM 6 Ammo:OMNI
 </Fuselage Equipment>
 
 <source>
-Succession Wars
+TRO: Golden Century
 </source>
 
 <tonnage>

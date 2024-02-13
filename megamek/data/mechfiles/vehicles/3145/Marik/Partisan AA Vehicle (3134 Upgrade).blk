@@ -32,6 +32,10 @@ Partisan AA Vehicle
 IS Level 3
 </type>
 
+<role>
+Sniper
+</role>
+
 <motion_type>
 Wheeled
 </motion_type>
@@ -86,9 +90,14 @@ RL10
 </Turret Equipment>
 
 <source>
-TRO 3145 Free Worlds League - Dark Ages
+TRO: 3145 Free Worlds League
 </source>
 
 <tonnage>
 50.0
 </tonnage>
+
+<quirks>
+anti_air
+</quirks>
+

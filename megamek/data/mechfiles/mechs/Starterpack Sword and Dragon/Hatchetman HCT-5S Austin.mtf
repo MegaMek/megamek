@@ -1,13 +1,19 @@
-Version:1.2
-Hatchetman
-HCT-5S (Austin)
+chassis:Hatchetman
+model:HCT-5S (Austin)
 mul id:1414
 
 Config:Biped
 techbase:Inner Sphere
 era:3059
-source:Starterbook: Sword and Dragon - Clan Invasion
+source:Starterbook: Sword and Dragon
 rules level:4
+role:Brawler
+
+
+
+quirk:anti_air
+weaponquirk:fast_reload:RT:2:ISLBXAC10
+
 
 mass:45
 engine:180 Light Engine(IS)

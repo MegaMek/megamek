@@ -36,6 +36,10 @@ B [SRM](Sqd5)
 Clan Level 2
 </type>
 
+<role>
+Ambusher
+</role>
+
 <motion_type>
 Leg
 </motion_type>
@@ -82,7 +86,7 @@ BABattleClaw:LA
 </Trooper 5 Equipment>
 
 <source>
-Rec Guide:ilClan #31 - Dark Age
+Rec Guide:ilClan #31
 </source>
 
 <chassis>

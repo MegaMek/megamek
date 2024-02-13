@@ -1,0 +1,152 @@
+chassis:Hellspawn
+model:HSN-10G
+mul id:5673
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3076
+Rules Level:2
+role:Missile Boat
+source:Record Sheets: 3067 Unabridged
+
+
+
+quirk:bad_rep_is
+
+
+Mass:45
+Engine:270 XL Fusion Engine
+Structure:Endo-Steel
+Myomer:Standard
+
+Heat Sinks:10 Double
+Walk MP:6
+Jump MP:5
+
+Armor:Light Ferro-Fibrous
+LA Armor:10
+RA Armor:10
+LT Armor:16
+RT Armor:16
+CT Armor:20
+HD Armor:9
+LL Armor:15
+RL Armor:15
+RTL Armor:5
+RTR Armor:5
+RTC Armor:6
+
+Weapons:5
+1 ISLightPPC, Right Torso
+1 ISMML7, Left Torso, Ammo:51
+1 ISMML7, Right Arm
+1 ISMediumPulseLaser, Left Arm
+1 ISMediumPulseLaser, Right Arm
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISMediumPulseLaser
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Light Ferro-Fibrous
+Light Ferro-Fibrous
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISMML7
+ISMML7
+ISMML7
+ISMML7
+ISMediumPulseLaser
+Endo-Steel
+Light Ferro-Fibrous
+Light Ferro-Fibrous
+-Empty-
+
+Left Torso:
+Engine
+Engine
+Engine
+Jump Jet
+Jump Jet
+Jump Jet
+ISMML7
+ISMML7
+ISMML7
+ISMML7
+ISMML7 LRM Ammo
+ISMML7 SRM Ammo
+
+Right Torso:
+Engine
+Engine
+Engine
+Jump Jet
+Jump Jet
+ISLightPPC
+ISLightPPC
+ISMML7 LRM Ammo
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+
+Center Torso:
+Engine
+Engine
+Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Engine
+Engine
+Engine
+Light Ferro-Fibrous
+Light Ferro-Fibrous
+
+Head:
+Life Support
+Sensors
+Cockpit
+Light Ferro-Fibrous
+Sensors
+Life Support
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo-Steel
+Endo-Steel
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo-Steel
+Endo-Steel
+
+overview:The flagship design of GM's Talcott production facility, the Hellspawn was designed in response to a call from the Armed Forces of the Federated Commonwealth for a modern, highly mobile, fire-support BattleMech to compete with the older Dervish.
+
+capabilities:The Hellspawn is built on a GM Fury-M Endo Steel chassis that weighs half as much as a standard chassis. The Hellspawn carries a GM 270 XL engine that gives it a top speed of 97.2 km/h and also weighs half as much as a standard engine while making the 'Mech susceptible to a combat kill from a side torso loss. For protection from enemy electronic warfare equipment such as C3 or Artemis IV, the Hellspawn is equipped with a Guardian ECM Suite. To enhance the 'Mech's mobility it has six Rawlings 80 jump jets that allow the 'Mech to jump up to one hundred and eighty meters. Finally, the Hellspawn has six and a half tons of armor that is barely adequate when compared to other medium 'Mechs.
+
+deployment:This version introduced in 3076 equipped with a pair of MML-7s and Medium Pulse Lasers, supplemented with a Light PPC. This variant loses a jump jet, restricting its jump range to 150 meters. 
+
+manufacturer:General Motors
+primaryfactory:Talcott
+systemmanufacturer:CHASSIS:GM Fury-M Endo
+systemmanufacturer:ENGINE:GM 270 XL
+systemmanufacturer:ARMOR:StarGuard III
+systemmanufacturer:COMMUNICATIONS:Dalban SuperMicronics with Guardian ECM
+systemmanufacturer:TARGETING:GME HiTrak-3

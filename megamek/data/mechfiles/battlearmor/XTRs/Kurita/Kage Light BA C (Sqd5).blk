@@ -32,6 +32,10 @@ C(Sqd5)
 IS Level 4
 </type>
 
+<role>
+Ambusher
+</role>
+
 <motion_type>
 Jump
 </motion_type>
@@ -82,7 +86,7 @@ IS BA Mimetic:Body
 </Trooper 5 Equipment>
 
 <source>
-XTRO Kurita - Jihad
+XTR: Kurita
 </source>
 
 <chassis>

@@ -1,13 +1,21 @@
-Version:1.1
-Ostscout
-OTT-12R
+chassis:Ostscout
+model:OTT-12R
 mul id:7452
 
 Config:Biped
 techbase:Mixed (IS Chassis)
 era:3145
-source:Rec Guide:ilClan #2- Dark Age
+source:Rec Guide:ilClan #2
 rules level:2
+role:Scout
+
+
+
+quirk:imp_com
+quirk:imp_sensors
+quirk:low_profile
+quirk:rugged_1
+
 
 mass:35
 engine:280 Light Engine(IS)

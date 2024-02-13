@@ -1,13 +1,20 @@
-Version:1.0
-Hermes II
-HER-2S
+chassis:Hermes II
+model:HER-2S
 mul id:1497
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2798
-Source:TRO 3039 - Succession Wars
+Source:TRO: 3039
 Rules Level:1
+role:Scout
+
+
+
+
+quirk:easy_maintain
+quirk:imp_com
+
 
 Mass:40
 Engine:240 Fusion Engine

@@ -1,13 +1,19 @@
-Version:1.0
-Whitworth
-WTH-0
+chassis:Whitworth
+model:WTH-0
 mul id:3537
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2754
-Source:TRO 3039 - Star League
+Source:TRO: 3039
 Rules Level:1
+role:Skirmisher
+
+
+
+quirk:rugged_1
+quirk:weak_legs
+
 
 Mass:40
 Engine:160 Fusion Engine

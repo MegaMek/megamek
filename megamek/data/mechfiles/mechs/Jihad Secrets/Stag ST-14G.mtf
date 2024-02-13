@@ -1,12 +1,22 @@
-Version:1.0
-Stag
-ST-14G
+chassis:Stag
+model:ST-14G
 mul id:3033
+source:Jihad Secrets: The Blake Documents
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2823
 Rules Level:2
+role:Striker
+
+
+
+
+quirk:imp_com
+quirk:imp_sensors
+quirk:bad_rep_clan
+weaponquirk:stable_weapon:RA:3:ISERLargeLaser
+
 
 Mass:45
 Engine:270 XL Engine

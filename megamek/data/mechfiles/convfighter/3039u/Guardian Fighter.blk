@@ -36,6 +36,10 @@ Guardian Fighter
 IS Level 1
 </type>
 
+<role>
+Fast Dogfighter
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -99,7 +103,7 @@ IS Ammo SRM-6
 </Fuselage Equipment>
 
 <source>
-TRO 3039 - Succession Wars
+TRO: 3039
 </source>
 
 <tonnage>

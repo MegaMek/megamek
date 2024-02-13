@@ -1,13 +1,13 @@
-Version:1.2
-Hatchetman
-HCT-8S
+chassis:Hatchetman
+model:HCT-8S
 mul id:7780
 
 Config:Biped
 techbase:Mixed (IS Chassis)
 era:3140
-source:Rec Guide:ilClan #12 - Dark Age
+source:Rec Guide:ilClan #12
 rules level:3
+role:Striker
 
 mass:45
 engine:225 XL (Clan) Engine

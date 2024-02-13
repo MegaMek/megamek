@@ -32,6 +32,10 @@ Garrot Superheavy Transport
 IS Level 2
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 VTOL
 </motion_type>
@@ -90,9 +94,14 @@ Light Machine Gun
 </Turret Equipment>
 
 <source>
-TRO 3145 Mercenaries - Late Republic
+TRO: 3145 Mercenaries
 </source>
 
 <tonnage>
 30.0
 </tonnage>
+
+<quirks>
+easy_maintain
+</quirks>
+

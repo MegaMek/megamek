@@ -1,13 +1,21 @@
-Version:1.0
-Assassin
-'Servitor'
+chassis:Assassin
+model:'Servitor'
 mul id:3737
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3066
-Source:TRO 3050 - Civil War
+Source:TRO: 3050
 Rules Level:4
+role:Striker
+
+
+
+quirk:easy_maintain
+quirk:cramped_cockpit
+quirk:non_standard
+quirk:poor_life_support
+
 
 Mass:40
 Engine:280 XL Engine(IS)

@@ -1,12 +1,7 @@
-#building block data file
+#Saved from version 0.49.18-SNAPSHOT on 2024-01-10
 <BlockVersion>
 1
 </BlockVersion>
-
-# Write the version number just in case...
-<Version>
-MAM0
-</Version>
 
 <UnitType>
 Tank
@@ -16,9 +11,9 @@ Tank
 Sea Hunter Maritime Tank
 </Name>
 
-<model>
+<Model>
 
-</model>
+</Model>
 
 <mul id:>
 2854
@@ -28,9 +23,22 @@ Sea Hunter Maritime Tank
 3068
 </year>
 
+<originalBuildYear>
+3068
+</originalBuildYear>
+
 <type>
 IS Level 4
 </type>
+
+<role>
+Missile Boat
+</role>
+
+<weaponQuirks>
+accurate:FR:0:Enhanced LRM 10
+accurate:FR:1:LRT 10
+</weaponQuirks>
 
 <motion_type>
 Tracked
@@ -80,10 +88,43 @@ LRT 10
 ISCombatVehicleEscapePod
 </Rear Equipment>
 
+<capabilities>
+The Hunter's primary armament is a twenty-tube long-range missile launcher, fed by two tons of ammunition, making it a highly effective support vehicle. The FarFire launcher's reliability, combined with its rearward placement, allows the Hunter to fire over barriers without exposing itself. The tank's secondary weapon, a rear-facing anti-personnel flamer, is less frequently used for direct combat and more for creating smoke and heat to confuse pursuers. The Hunter's communication and targeting systems, including the TharHes Mini-Talk and the TharHes AGART computer, are robust and efficient. The latest Hunter variant sees the addition of Artemis FCS to its missile system, replacing the single Maxi Rack with twin Star Fires for increased firepower. To accommodate these upgrades, the built-in flamer was removed, and armor was reduced, partially offset by the use of ferro-fibrous composites.
+</capabilities>
+
+<overview>
+Produced by Defiance Industries of Hesperus II, the Hunter Light Support Tank is an affordable and well-suited vehicle for battlefield support roles. Favored by planetary militias and under-funded second-line units that can support fusion engines, its design prioritizes indirect fire support from sheltered positions. The Hunter is moderately swift for a tracked vehicle and utilizes its low profile and a twenty-tube FarFire Maxi-Rack long-range missile launcher effectively. Redesigned during the last days of the Clan Invasion, the current Hunter model, developed between 3053 and 3054, uses advanced technology to enhance effectiveness while remaining cost-effective.
+</overview>
+
+<deployment>
+Defiance Industries has updated the Hunter with advanced technology, equipping it with a compact Defiance-Doombud ClanTech LRM 20 Launcher and a large fuel cell engine. These enhancements significantly boost its mobility, enabling near-hovercraft speeds, while maintaining a cost increase that is only marginal over the original model.
+</deployment>
+
+<history>
+The Hunter had a rocky introduction, initially overlooked due to its specialized design and fusion engine during the tech-starved Succession Wars. However, its effectiveness demonstrated by planetary militias eventually garnered appreciation from major military forces. After full production started in late 3054, the new Hunters were primarily delivered to Lyran units and the Federated Commonwealth. The Hunter saw significant action in Operations Bulldog and Serpent, and notably in the FedCom Civil War, where it suffered heavy losses. Post-war, some upgraded Hunters were salvaged by other Successor States.<p>Post-FedCom Civil War, the Sea Hunter variant emerged as a curiosity from Herzberg. In the early 3080s, Defiance Industries acquired the rights to this variant, making significant modifications, including removing the combat vehicle escape system and replacing the XL fusion engine with a fuel cell. The rebranded Hunter Amphibious Tank began full production in 3085, facing moderate sales. Despite efforts to boost adoption, including an incentive program in 3089, competition from models like the Glaive and Sea Skimmer hindered its market success. Consequently, production has decreased by twenty-five percent in favor of more marketable units.</p>
+</history>
+
+<manufacturer>
+Andrea County Armor Yards (refit)
+</manufacturer>
+
+<primaryFactory>
+Herzberg
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Doorman 140 Fuel Cell
+ARMOR:StarSlab Neptune/3 Heavy Ferro-Fibrous
+COMMUNICATIONS:TharHes Mini-Talk
+TARGETING:TharHes AGART v3
+</systemManufacturers>
+
 <source>
-XTR Boondocks
+XTR: Boondocks
 </source>
 
 <tonnage>
 35.0
 </tonnage>
+

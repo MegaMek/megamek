@@ -36,6 +36,10 @@ HCT-213BC (Herman)
 IS Level 3
 </type>
 
+<role>
+Fast Dogfighter
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -105,9 +109,16 @@ ISSpaceMineDispenser
 </Fuselage Equipment>
 
 <source>
-XTRO Gunslingers - Star League
+XTR: Gunslingers
 </source>
 
 <tonnage>
 50.0
 </tonnage>
+
+<quirks>
+easy_maintain
+imp_com
+obsolete
+</quirks>
+

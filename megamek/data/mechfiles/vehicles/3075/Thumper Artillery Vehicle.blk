@@ -36,6 +36,10 @@ Thumper Artillery Vehicle
 IS Level 3
 </type>
 
+<role>
+Missile Boat
+</role>
+
 <motion_type>
 Wheeled
 </motion_type>
@@ -87,7 +91,7 @@ Machine Gun
 </Rear Equipment>
 
 <source>
-Star League
+TRO: 3075
 </source>
 
 <tonnage>

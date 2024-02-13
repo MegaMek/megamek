@@ -59,6 +59,10 @@ ISStreakSRM4 Ammo
 <type>
 IS Level 2
 </type>
+
+<role>
+Juggernaut
+</role>
 <year>
 3065
 </year>
@@ -75,5 +79,5 @@ IS Level 2
 Tracked
 </motion_type>
 <source>
-Civil War
+TRO: 3058
 </source>

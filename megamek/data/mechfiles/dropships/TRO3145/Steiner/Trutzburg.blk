@@ -1,0 +1,241 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Dropship
+</UnitType>
+
+<Name>
+Trutzburg
+</Name>
+
+<model>
+
+</model>
+
+<mul id:>
+6641
+</mul id:>
+
+<year>
+3112
+</year>
+
+<originalBuildYear>
+3112
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<role>
+None
+</role>
+
+<motion_type>
+Spheroid
+</motion_type>
+
+<transporters>
+asfbay:6.0:3:1
+mechbay:12.0:2
+battlearmorbay:4.0:1:3
+cargobay:432.0:1:4
+2ndclassquarters:0.0:0
+crewquarters:210.0:0
+1stclassquarters:70.0:0
+</transporters>
+
+<SafeThrust>
+3
+</SafeThrust>
+
+<heatsinks>
+131
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+12000
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+20
+</armor_type>
+
+<armor_tech>
+5
+</armor_tech>
+
+<armor>
+321
+270
+270
+250
+</armor>
+
+<Nose Equipment>
+(B) ISERPPC
+ISERPPC
+(B) ISImprovedHeavyGaussRifle
+ISImprovedHeavyGaussRifle
+ISImprovedHeavyGauss Ammo:40
+(B) ISERLargeLaser
+ISERLargeLaser
+ISERMediumLaser
+ISERMediumLaser
+(B) ISLongTom
+ISLongTomAmmo:100
+(B) ISLongTom
+ISLongTomAmmo:100
+(B) ISLongTom
+ISLongTomAmmo:100
+</Nose Equipment>
+
+<Left Side Equipment>
+(B) ISERPPC
+(B) Extended LRM 20
+Extended LRM 20
+IS Ammo Extended LRM-20:32
+(B) ISERLargeLaser
+ISERLargeLaser
+ISERMediumLaser
+ISERMediumLaser
+ISERMediumLaser
+ISERMediumLaser
+(B) ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAMS Ammo:72
+(R) (B) ISERPPC
+(R) (B) ISImprovedHeavyGaussRifle
+(R) ISImprovedHeavyGaussRifle
+(R) ISImprovedHeavyGauss Ammo:40
+(R) (B) LRM 20
+(R) LRM 20
+(R) IS Ammo LRM-20 Artemis-capable:30
+ISArtemisIV
+ISArtemisIV
+(R) (B) ISERMediumLaser
+(R) ISERMediumLaser
+(R) (B) ISAntiMissileSystem
+(R) ISAntiMissileSystem
+(R) ISAntiMissileSystem
+(R) ISAMS Ammo:72
+</Left Side Equipment>
+
+<Right Side Equipment>
+(B) ISERPPC
+(B) Extended LRM 20
+Extended LRM 20
+IS Ammo Extended LRM-20:32
+(B) ISERLargeLaser
+ISERLargeLaser
+ISERMediumLaser
+ISERMediumLaser
+ISERMediumLaser
+ISERMediumLaser
+(B) ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAMS Ammo:72
+(R) (B) ISERPPC
+(R) (B) ISImprovedHeavyGaussRifle
+(R) ISImprovedHeavyGaussRifle
+(R) ISImprovedHeavyGauss Ammo:40
+(R) (B) LRM 20
+(R) LRM 20
+(R) IS Ammo LRM-20 Artemis-capable:30
+ISArtemisIV
+ISArtemisIV
+(R) (B) ISERMediumLaser
+(R) ISERMediumLaser
+(R) (B) ISAntiMissileSystem
+(R) ISAntiMissileSystem
+(R) ISAntiMissileSystem
+(R) ISAMS Ammo:72
+</Right Side Equipment>
+
+<Aft Equipment>
+(B) ISImprovedHeavyGaussRifle
+ISImprovedHeavyGauss Ammo:20
+(B) ISERLargeLaser
+ISERLargeLaser
+ISERMediumLaser
+ISERMediumLaser
+</Aft Equipment>
+
+<Hull Equipment>
+</Hull Equipment>
+
+<structural_integrity>
+15
+</structural_integrity>
+
+<source>
+TRO: 3145 Lyran Commonwealth
+</source>
+
+<tonnage>
+6000.0
+</tonnage>
+
+<designtype>
+1
+</designtype>
+
+<crew>
+90
+</crew>
+
+<officers>
+7
+</officers>
+
+<gunners>
+10
+</gunners>
+
+<passengers>
+0
+</passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<otherpassenger>
+0
+</otherpassenger>
+
+<life_boat>
+4
+</life_boat>
+
+<escape_pod>
+5
+</escape_pod>
+
+<quirks>
+difficult_maintain
+</quirks>
+

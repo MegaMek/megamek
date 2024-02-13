@@ -1,13 +1,13 @@
-Version:1.1
-Sarissa
-MN1-D
+chassis:Sarissa
+model:MN1-D
 mul id:2797
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3080
-Source:XTRO Marik - Jihad
+Source:XTR: Marik
 Rules Level:4
+role:Brawler
 
 Mass:50
 Engine:240 Primitive Fusion Engine

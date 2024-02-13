@@ -1,11 +1,10 @@
-Version:1.3
-Gotterdammerung
-GTD-30S
+chassis:Gotterdammerung
+model:GTD-30S
 mul id:8062
 Config:Biped
 techbase:Inner Sphere
 era:3138
-source:TRO 3145 Lyran Commonwealth - Dark Ages
+source:TRO: 3145 Lyran Commonwealth
 rules level:2
 
 mass:75

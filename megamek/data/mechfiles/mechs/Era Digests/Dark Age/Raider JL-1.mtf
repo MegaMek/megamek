@@ -1,12 +1,12 @@
-Version:1.3
-Raider
-JL-1
+chassis:Raider
+model:JL-1
 mul id:6955
 Config:Biped
 techbase:Inner Sphere
 era:3134
-source:ED: Dark Age
+source:Era Digest: Dark Age
 rules level:2
+role:Juggernaut
 
 mass:50
 engine:200 ICE Engine(IS)

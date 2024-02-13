@@ -1,13 +1,20 @@
-Version:1.0
-Orion
-ON1-MC
+chassis:Orion
+model:ON1-MC
 mul id:4758
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3058
-Source:TRO 3050 - Clan Invasion
+Source:TRO: 3050
 Rules Level:2
+role:Brawler
+
+
+
+quirk:anti_air
+quirk:easy_maintain
+quirk:rugged_1
+
 
 Mass:75
 Engine:300 XL Engine(IS)

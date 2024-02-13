@@ -1,13 +1,20 @@
-Version:1.0
-Goliath
-GOL-1H
+chassis:Goliath
+model:GOL-1H
 mul id:1229
 
 Config:Quad
 techbase:Inner Sphere
 era:2652
-source:TRO 3039 - Star League
+source:TRO: 3039
 rules level:1
+role:Sniper
+
+
+
+
+quirk:multi_trac
+quirk:exp_actuator
+
 
 mass:80
 engine:320 Fusion Engine(IS)

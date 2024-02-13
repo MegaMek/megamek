@@ -32,6 +32,10 @@ Predator Tank Destroyer
 IS Level 1
 </type>
 
+<role>
+Striker
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -69,9 +73,15 @@ Autocannon/20
 </Rear Equipment>
 
 <source>
-TRO 3145 Capellan Confederation - Succession Wars
+TRO: 3145 Capellan Confederation
 </source>
 
 <tonnage>
 45.0
 </tonnage>
+
+<quirks>
+easy_maintain
+low_profile
+</quirks>
+

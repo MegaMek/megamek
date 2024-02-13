@@ -1,13 +1,13 @@
-Version:1.0
-DemolitionMech
-WI-DM2
+chassis:DemolitionMech
+model:WI-DM2
 mul id:869
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2514
-Source:TRO 3075
+Source:TRO: 3075
 Rules Level:2
+role:Juggernaut
 
 Mass:35
 Engine:105 Fuel Cell Engine(IS)

@@ -66,6 +66,10 @@ BABasicManipulator:RA
 Clan Level 2
 </type>
 
+<role>
+Juggernaut
+</role>
+
 <year>
 3077
 </year>
@@ -75,7 +79,7 @@ Jump
 </motion_type>
 
 <source>
-TRO 3085 - Jihad
+TRO: 3085
 </source>
 
 <overview>

@@ -1,13 +1,20 @@
-Version:1.0
-Thunderbolt
-TDR-9S
+chassis:Thunderbolt
+model:TDR-9S
 mul id:3249
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3050
-source:Rec Guide:ilClan #15 - Clan Invasion
+source:Rec Guide:ilClan #15
 Rules Level:2
+role:Brawler
+
+
+
+quirk:multi_trac
+quirk:rugged_2
+quirk:ubiquitous_is
+
 
 Mass:65
 Engine:260 Fusion Engine(IS)

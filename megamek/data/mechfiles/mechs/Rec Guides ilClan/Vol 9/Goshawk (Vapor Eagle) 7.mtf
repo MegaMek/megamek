@@ -1,13 +1,17 @@
-Version:1.0
-Goshawk (Vapor Eagle)
-7
+chassis:Goshawk
+clanname:Vapor Eagle
+model:7
 mul id:7711
 
 Config:Biped
 techbase:Clan
 era:3136
-source:Rec Guide:ilClan #9 - Dark Age
+source:Rec Guide:ilClan #9
 rules level:2
+role:Skirmisher
+
+quirk:nimble_jumper
+
 
 mass:55
 engine:330 XL (Clan) Engine(IS)

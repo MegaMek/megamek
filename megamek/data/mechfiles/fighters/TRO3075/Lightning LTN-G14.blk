@@ -36,6 +36,10 @@ LTN-G14
 IS Level 4
 </type>
 
+<role>
+Dogfighter
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -108,7 +112,7 @@ IS Ammo AC/10
 </Fuselage Equipment>
 
 <source>
-TRO 3075 - Age of War
+TRO: 3075
 </source>
 
 <tonnage>

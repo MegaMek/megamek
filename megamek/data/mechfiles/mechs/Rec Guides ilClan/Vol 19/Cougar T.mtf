@@ -1,13 +1,16 @@
-Version:1.0
-Cougar
-T
+chassis:Cougar
+model:T
 mul id:8325
 
 Config:Biped Omnimech
 techbase:Clan
 era:3142
-source:Rec Guide:ilClan #19 - Dark Age
+source:Rec Guide:ilClan #19
 rules level:2
+role:Brawler
+
+quirk:ubiquitous_clan
+
 
 mass:35
 engine:175 XL (Clan) Engine(IS)

@@ -1,13 +1,19 @@
-Version:1.0
-Hunchback
-HBK-4J
+chassis:Hunchback
+model:HBK-4J
 mul id:1556
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2856
-Source:TRO 3039 - Succession Wars
+Source:TRO: 3039
 Rules Level:1
+role:Missile Boat
+
+
+
+quirk:battle_fists_la
+quirk:battle_fists_ra
+
 
 Mass:50
 Engine:200 Fusion Engine

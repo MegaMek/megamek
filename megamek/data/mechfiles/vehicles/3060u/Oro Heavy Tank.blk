@@ -32,6 +32,10 @@ Oro Heavy Tank
 Clan Level 2
 </type>
 
+<role>
+Brawler
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -85,7 +89,7 @@ CLLBXAC20
 </Turret Equipment>
 
 <source>
-Succession Wars
+TRO: 3060
 </source>
 
 <tonnage>

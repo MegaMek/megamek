@@ -68,6 +68,10 @@ ISCASE
 IS Level 3
 </type>
 
+<role>
+Missile Boat
+</role>
+
 <year>
 3074
 </year>
@@ -89,7 +93,7 @@ Tracked
 </motion_type>
 
 <source>
-Jihad
+TRO: 3060
 </source>
 
 <capabilities>

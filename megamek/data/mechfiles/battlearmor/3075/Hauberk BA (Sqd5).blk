@@ -32,6 +32,10 @@ Hauberk Battle Armor
 IS Level 2
 </type>
 
+<role>
+Missile Boat
+</role>
+
 <motion_type>
 Leg
 </motion_type>
@@ -74,7 +78,7 @@ IS BA Stealth (Improved):RA
 </Trooper 4 Equipment>
 
 <source>
-TRO 3075 - Jihad
+TRO: 3075
 </source>
 
 <chassis>

@@ -1,13 +1,18 @@
-Version:1.0
-Raven
-RVN-3L
+chassis:Raven
+model:RVN-3L
 mul id:2664
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3048
-Source:TRO 3050 - Succession Wars
+Source:TRO: 3050
 Rules Level:2
+role:Scout
+
+
+
+quirk:no_arms
+
 
 Mass:35
 Engine:210 XL Engine(IS)

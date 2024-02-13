@@ -36,6 +36,10 @@ Basilisk
 Clan Level 2
 </type>
 
+<role>
+Brawler
+</role>
+
 <motion_type>
 Biped
 </motion_type>
@@ -93,7 +97,7 @@ CLLRM3
 </Main Gun Equipment>
 
 <source>
-TRO 3075 - Civil War
+TRO: 3075
 </source>
 
 <tonnage>

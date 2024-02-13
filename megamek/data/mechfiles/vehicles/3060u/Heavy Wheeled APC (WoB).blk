@@ -89,6 +89,10 @@ ISSmallVariableSpeedLaser
 IS Level 3
 </type>
 
+<role>
+Scout
+</role>
+
 <year>
 3072
 </year>
@@ -118,5 +122,5 @@ TroopSpace:6
 </transporters>
 
 <source>
-Jihad
+TRO: 3060
 </source>

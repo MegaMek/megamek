@@ -1,13 +1,19 @@
-Version:1.1
-Tessen
-TSN-X-4
+chassis:Tessen
+model:TSN-X-4
 mul id:5549
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3074
-Source:XTRO ComStar - Jihad
+Source:XTR: ComStar
 Rules Level:4
+role:Skirmisher
+
+
+
+quirk:bad_rep_is
+quirk:prototype
+
 
 Mass:50
 Engine:300 XL Fusion Engine

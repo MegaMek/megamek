@@ -36,6 +36,10 @@ Sangihe Shrike-Thrush 'Nanook'
 Mixed (IS Chassis) Experimental
 </type>
 
+<role>
+Interceptor
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -142,7 +146,7 @@ Small Laser
 </Fuselage Equipment>
 
 <source>
-XTRO Boondocks - Jihad
+XTR: Boondocks
 </source>
 
 <tonnage>

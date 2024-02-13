@@ -1,13 +1,19 @@
-Version:1.0
-Striker
-STC-2C
+chassis:Striker
+model:STC-2C
 mul id:3094
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2571
-Source:TRO 3058 - Star League
+Source:TRO: 3058
 Rules Level:1
+role:Brawler
+
+
+
+
+quirk:easy_maintain
+
 
 Mass:80
 Engine:320 Fusion Engine

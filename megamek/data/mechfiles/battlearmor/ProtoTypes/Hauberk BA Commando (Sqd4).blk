@@ -32,6 +32,10 @@ Commando(Sqd4)
 IS Level 2
 </type>
 
+<role>
+Ambusher
+</role>
+
 <motion_type>
 Leg
 </motion_type>
@@ -78,7 +82,7 @@ IS BA Mimetic:Body
 </Trooper 4 Equipment>
 
 <source>
-TRO Prototypes - Early Republic
+TRO: Prototypes
 </source>
 
 <chassis>
@@ -133,3 +137,8 @@ JUMPJET:Unknown
 COMMUNICATIONS:Unknown
 TARGETING:Unknown
 </systemManufacturers>
+
+<quirks>
+easy_maintain
+</quirks>
+

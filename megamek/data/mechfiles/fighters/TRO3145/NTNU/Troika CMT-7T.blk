@@ -36,6 +36,10 @@ CMT-7T
 IS Level 3
 </type>
 
+<role>
+Dogfighter
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -109,7 +113,7 @@ IS Ammo LRM-20
 </Fuselage Equipment>
 
 <source>
-TRO 3145 NTNU - Late Republic
+TRO: 3145 NTNU
 </source>
 
 <tonnage>

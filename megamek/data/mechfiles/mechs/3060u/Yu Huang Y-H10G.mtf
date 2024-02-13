@@ -1,35 +1,41 @@
-Version:1.0
-Yu Huang
-Y-H10G
+chassis:Yu Huang
+model:Y-H10G
 mul id:3624
-
 Config:Biped
-TechBase:Inner Sphere
-Era:3060
-Source:TRO 3060
-Rules Level:2
+techbase:Inner Sphere
+era:3060
+source:TRO: 3060
+rules level:2
+role:Skirmisher
 
-Mass:90
-Engine:360 XL Engine
-Structure:Endo Steel
-Myomer:Standard
 
-Heat Sinks:16 Double
-Walk MP:4
-Jump MP:4
 
-Armor:Standard(Inner Sphere)
-LA Armor:29
-RA Armor:29
-LT Armor:28
-RT Armor:28
-CT Armor:43
-HD Armor:9
-LL Armor:37
-RL Armor:37
-RTL Armor:9
-RTR Armor:9
-RTC Armor:14
+
+quirk:command_mech
+quirk:good_rep_1
+
+
+mass:90
+engine:360 XL Engine(IS)
+structure:IS Endo Steel
+myomer:Standard
+
+heat sinks:16 IS Double
+walk mp:4
+jump mp:4
+
+armor:Standard(Inner Sphere)
+LA armor:29
+RA armor:29
+LT armor:28
+RT armor:28
+CT armor:43
+HD armor:9
+LL armor:37
+RL armor:37
+RTL armor:9
+RTR armor:9
+RTC armor:14
 
 Weapons:8
 ER Large Laser, Left Arm
@@ -51,9 +57,9 @@ ISERLargeLaser
 ISERLargeLaser
 BeagleActiveProbe
 BeagleActiveProbe
-Endo Steel
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Right Arm:
 Shoulder
@@ -76,12 +82,12 @@ Fusion Engine
 ISERMediumLaser
 ISERMediumLaser
 ISERMediumLaser
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Right Torso:
 Fusion Engine
@@ -92,10 +98,10 @@ ISERMediumLaser
 ISERMediumLaser
 IS Gauss Ammo
 IS Gauss Ammo
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Center Torso:
 Fusion Engine
@@ -115,7 +121,7 @@ Head:
 Life Support
 Sensors
 Cockpit
-Endo Steel
+IS Endo Steel
 Sensors
 Life Support
 -Empty-
@@ -153,4 +159,20 @@ Jump Jet
 -Empty-
 -Empty-
 
+overview:The Yu Huang, a significant BattleMech from Shengli Arms, marks a blend of technological advancement and cultural symbolism in the Capellan Confederation. With Chancellor Sun-Tzu Liao's directive, this 'Mech not only exhibits a design inspired by ancient Chinese deities but also reflects the Confederation's commitment to self-reliance in military technology. Equipped with a potent LB-20X autocannon, the Yu Huang was conceived to be a commanding presence on the battlefield, a testament to the Chancellor’s vision for a renewed Capellan military force.
+
+capabilities:The Yu Huang stands out in the assault-class category with its combination of advanced weaponry and defensive systems. Notable for its high speed and agility for a ninety-ton 'Mech, it features a robust endo steel frame and an extra-light engine, allowing for substantial armor without compromising mobility. The Yu Huang is equipped with a diverse arsenal, typically including long-range weaponry like PPCs and LRM launchers, complemented by medium lasers for close-quarters engagements. Its signature autocannon, adaptable with different ammunition types, offers versatility in various combat scenarios. Enhanced by advanced jump jet capabilities, the Yu Huang is adept at rapid repositioning, making it a formidable presence on any battlefield.
+
+deployment:Focused on close combat, this variant wields six ER medium lasers, an ER large laser, and a Gauss rifle. It also features a Guardian ECM suite and a Beagle active probe for electronic warfare and reconnaissance.
+
+history:<p>The Yu Huang, a symbol of the Capellan Confederation's technological and cultural evolution, was developed by Shengli Arms. Its design, inspired by ancient Chinese mythology, was part of Chancellor Sun-Tzu Liao’s vision of a revitalized Capellan force. The Mech, named after the Jade Emperor, debuted in the late 3050s, embodying a mix of advanced technology and cultural homage. Its production began in 3060, representing a significant milestone in the Confederation’s military development.</p><p>Despite early skepticism about its armament, the Yu Huang demonstrated the Confederation’s growing self-sufficiency in military technology, particularly with the in-house production of its LB-20X autocannon. The Mech's capabilities and design quickly made it a favored asset in the CCAF, and it was also selectively distributed to mercenary units, showcasing its strategic value.</p><p>The Yu Huang’s production, however, faced a setback in December 3068 when Olson's Rangers mercenary unit destroyed its production lines. This event marked a significant shift in the Confederation's military strategy during the Jihad. Rather than rebuilding the Yu Huang line, Shengli Arms shifted focus to new designs, leading to the creation of the Dola.</p><p>The legacy of the Yu Huang continued into the 3100s. Following the loss of Shengli, Ceres Metal Industries took over the production, adding distinct modifications to the design. The Yu Huang saw various iterations, adapting to the changing demands of warfare, and was notably used by Sang-shao Carson Rieves during the invasion of Liao in 3134. Throughout its history, the Yu Huang has remained a symbol of the Confederation’s resilience and adaptability in the face of evolving military challenges.</p>
+
+manufacturer:Ceres Metals Industries,Shengli Arms
+primaryfactory:Capella,Victoria
+systemmanufacturer:CHASSIS:Chariot Type II Endo Steel
+systemmanufacturer:ENGINE:Hermes 360 XL
+systemmanufacturer:ARMOR:Star Shell Standard
+systemmanufacturer:JUMPJET:Rodan-90s
+systemmanufacturer:COMMUNICATIONS:Dian-bao Comms, Standard
+systemmanufacturer:TARGETING:O/P 911 Targeting and Tracking System
 

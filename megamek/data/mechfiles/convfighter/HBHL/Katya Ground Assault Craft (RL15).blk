@@ -36,6 +36,10 @@ C-904(RL15)
 IS Level 2
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -100,7 +104,7 @@ IS Light Machine Gun Ammo - Half
 </Fuselage Equipment>
 
 <source>
-HB:House Liao - Civil War
+Handbook: House Liao
 </source>
 
 <tonnage>

@@ -32,6 +32,10 @@ Rommel Tank
 IS Level 4
 </type>
 
+<role>
+Brawler
+</role>
+
 <tonnage>
 65.0
 </tonnage>
@@ -123,9 +127,11 @@ TARGETING:TharHes Mars5
 </systemManufacturers>
 
 <source>
-XTRO Steiner - Jihad
+XTR: Steiner
 </source>
 
-<tonnage>
-65.0
-</tonnage>
+<quirks>
+low_profile
+poor_target_short
+</quirks>
+

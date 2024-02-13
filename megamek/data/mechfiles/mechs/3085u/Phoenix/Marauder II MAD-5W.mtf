@@ -1,13 +1,20 @@
-Version:1.0
-Marauder II
-MAD-5W
+chassis:Marauder II
+model:MAD-5W
 mul id:2062
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3070
-Source:Jihad
+source:TRO: 3085
 Rules Level:2
+role:Sniper
+
+
+
+quirk:command_mech
+quirk:hyper_actuator
+quirk:low_profile
+
 
 Mass:100
 Engine:300 Fusion Engine(IS)

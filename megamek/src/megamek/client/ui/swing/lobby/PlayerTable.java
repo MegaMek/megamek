@@ -25,6 +25,7 @@ import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.IStartingPositions;
 import megamek.common.Player;
+import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 
 import javax.swing.*;
@@ -80,7 +81,7 @@ class PlayerTable extends JTable {
         if ((lobby.client() instanceof BotClient) && player.equals(lobby.localPlayer())) {
             String msg_thisbot = Messages.getString("ChatLounge.ThisBot");
             result.append(" (" + UIUtil.BOT_MARKER + " " + msg_thisbot + ")");
-        } else if (lobby.client().bots.containsKey(player.getName())) {
+        } else if (lobby.client().localBots.containsKey(player.getName())) {
             String msg_yourbot = Messages.getString("ChatLounge.YourBot");
             result.append(" (" + UIUtil.BOT_MARKER + " " + msg_yourbot + ")");
         } else if (lobby.localPlayer().equals(player)) {
@@ -98,7 +99,7 @@ class PlayerTable extends JTable {
             result.append(msg_noinitiativemodifier);
         }
         if (lobby.game().getOptions().booleanOption(OptionsConstants.ADVANCED_MINEFIELDS)) {
-            int mines = player.getNbrMFConventional() + player.getNbrMFActive() 
+            int mines = player.getNbrMFConventional() + player.getNbrMFActive()
             + player.getNbrMFInferno() + player.getNbrMFVibra();
             String msg_totalminefields = Messages.getString("ChatLounge.TotalMinefields");
             result.append("<BR>" + msg_totalminefields + ": ").append(mines);
@@ -177,7 +178,7 @@ class PlayerTable extends JTable {
             StringBuilder result = new StringBuilder("<HTML><NOBR>" + UIUtil.guiScaledFontHTML());
             // First Line - Player Name
             if ((lobby.client() instanceof BotClient) && player.equals(lobby.localPlayer())
-                    || lobby.client().bots.containsKey(player.getName())) {
+                    || lobby.client().localBots.containsKey(player.getName())) {
                 result.append(UIUtil.BOT_MARKER);
             }
             result.append(player.getName());
@@ -195,8 +196,28 @@ class PlayerTable extends JTable {
             result.append(guiScaledFontHTML());
 
             String msg_start = Messages.getString("ChatLounge.Start");
-            if ((player.getStartingPos() >= 0) && (player.getStartingPos() <= IStartingPositions.START_LOCATION_NAMES.length)) {
+
+            final GameOptions gOpts = lobby.game().getOptions();
+            if (gOpts.booleanOption(OptionsConstants.BASE_SET_PLAYER_DEPLOYMENT_TO_PLAYER0) && !player.isBot() && player.getId() != 0) {
+                result.append(msg_start + ": " + Messages.getString("ChatLounge.Player0"));
+            } else if ((!lobby.client().getLocalPlayer().isGameMaster()
+                    && (isEnemy)
+                    && (gOpts.booleanOption(OptionsConstants.BASE_BLIND_DROP)
+                    || gOpts.booleanOption(OptionsConstants.BASE_REAL_BLIND_DROP)))) {
+                result.append(msg_start + ": " + Messages.getString("ChatLounge.Blind"));
+            } else if ((player.getStartingPos() >= 0)
+                    && (player.getStartingPos() <= IStartingPositions.START_LOCATION_NAMES.length)) {
                 result.append(msg_start + ": " + IStartingPositions.START_LOCATION_NAMES[player.getStartingPos()]);
+
+                if (player.getStartingPos() == 0) {
+                    int NWx = player.getStartingAnyNWx() + 1;
+                    int NWy = player.getStartingAnyNWy() + 1;
+                    int SEx = player.getStartingAnySEx() + 1;
+                    int SEy = player.getStartingAnySEy() + 1;
+                    if ((NWx + NWy + SEx + SEy) > 0) {
+                        result.append(" (" + NWx + ", " + NWy + ")-(" + SEx + ", " + SEy + ")");
+                    }
+                }
                 int so = player.getStartOffset();
                 int sw = player.getStartWidth();
                 if ((so != 0) || (sw != 3)) {
@@ -208,12 +229,12 @@ class PlayerTable extends JTable {
                 result.append(msg_start + ": " + msg_none);
             }
             result.append("</FONT>");
-            
+
             if (!LobbyUtility.isValidStartPos(lobby.game(), player)) {
-                result.append(guiScaledFontHTML(uiYellow())); 
+                result.append(guiScaledFontHTML(uiYellow()));
                 result.append(WARNING_SIGN + "</FONT>");
             }
-            
+
             // Player BV
             result.append(UIUtil.DOT_SPACER);
             result.append(guiScaledFontHTML());
@@ -238,6 +259,13 @@ class PlayerTable extends JTable {
                 result.append(UIUtil.DOT_SPACER);
                 result.append(guiScaledFontHTML(uiGreen()));
                 result.append("\uD83D\uDC41");
+                result.append("</FONT>");
+            }
+
+            if (player.getGameMaster()) {
+                result.append(UIUtil.DOT_SPACER);
+                result.append(guiScaledFontHTML(uiGreen()));
+                result.append("\uD83D\uDD2E  GM");
                 result.append("</FONT>");
             }
 

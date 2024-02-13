@@ -1,13 +1,20 @@
-Version:1.0
-Thunderbolt
-C 2
+chassis:Thunderbolt
+model:C 2
 mul id:8195
 
 Config:Biped
 techbase:Clan
 era:3054
-source:Rec Guide:ilClan #15 - Clan Invasion
+source:Rec Guide:ilClan #15
 rules level:2
+role:Juggernaut
+
+
+
+quirk:multi_trac
+quirk:rugged_2
+quirk:ubiquitous_is
+
 
 mass:65
 engine:260 Fusion (Clan) Engine(IS)

@@ -1,13 +1,17 @@
-Version:1.0
-Banshee
-BNC-3E
+chassis:Banshee
+model:BNC-3E
 mul id:240
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2475
-Source:TRO 3039 - Age of War
+Source:TRO: 3039
 Rules Level:1
+role:Sniper
+
+quirk:rugged_1
+quirk:bad_rep_is
+
 
 Mass:95
 Engine:380 Fusion Engine

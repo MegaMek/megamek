@@ -1,13 +1,19 @@
-Version:1.0
-Fireball
-ALM-10D
+chassis:Fireball
+model:ALM-10D
 mul id:1074
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3076
-Source:Jihad
+source:TRO: 3085
 Rules Level:2
+role:Striker
+
+
+
+quirk:imp_com
+quirk:low_profile
+
 
 Mass:20
 Engine:220 XL Engine

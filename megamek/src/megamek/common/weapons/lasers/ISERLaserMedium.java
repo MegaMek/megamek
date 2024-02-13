@@ -25,7 +25,7 @@ public class ISERLaserMedium extends LaserWeapon {
         name = "ER Medium Laser";
         setInternalName("ISERMediumLaser");
         addLookupName("IS ER Medium Laser");
-        sortingName = "ER Laser C";
+        sortingName = "Laser ER C";
         heat = 5;
         damage = 5;
         shortRange = 4;

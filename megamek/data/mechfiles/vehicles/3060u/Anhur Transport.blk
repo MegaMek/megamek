@@ -45,6 +45,10 @@ TroopSpace:7
 <type>
 Clan Level 2
 </type>
+
+<role>
+Striker
+</role>
 <year>
 2840
 </year>
@@ -66,5 +70,5 @@ Clan Level 2
 VTOL
 </motion_type>
 <source>
-Succession Wars
+Record Sheets: 3067 Unabridged
 </source>

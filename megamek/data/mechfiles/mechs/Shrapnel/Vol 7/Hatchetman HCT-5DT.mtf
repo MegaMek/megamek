@@ -1,13 +1,13 @@
-Version:1.2
-Hatchetman
-HCT-5DT
+chassis:Hatchetman
+model:HCT-5DT
 mul id:8438
 
 Config:Biped
 techbase:Inner Sphere
 era:3145
-source:Shrapnel 7 - Dark Age
+source:Shrapnel #7
 rules level:2
+role:Brawler
 
 mass:45
 engine:180 XL Engine(IS)

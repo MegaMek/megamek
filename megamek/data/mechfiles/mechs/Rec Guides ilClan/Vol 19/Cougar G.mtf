@@ -1,13 +1,16 @@
-Version:1.0
-Cougar
-G
+chassis:Cougar
+model:G
 mul id:710
 
 Config:Biped Omnimech
 techbase:Clan
 era:3071
-source:Rec Guide:ilClan #19 - Jihad
+source:Rec Guide:ilClan #19
 rules level:2
+role:Sniper
+
+quirk:ubiquitous_clan
+
 
 mass:35
 engine:175 XL (Clan) Engine(IS)

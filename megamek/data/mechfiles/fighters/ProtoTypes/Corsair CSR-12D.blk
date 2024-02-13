@@ -36,6 +36,10 @@ CSR-12D
 IS Level 4
 </type>
 
+<role>
+Fast Dogfighter
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -138,10 +142,16 @@ TARGETING:Ranker TA1000
 </systemManufacturers>
 
 <source>
-TRO Prototypes - Jihad
+TRO: Prototypes
 </source>
 
 <tonnage>
 50.0
 </tonnage>
+
+
+<quirks>
+weak_undercarriage
+easy_maintain
+</quirks>
 

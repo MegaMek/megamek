@@ -32,6 +32,10 @@ Stygian Strike Tank
 IS Level 2
 </type>
 
+<role>
+Striker
+</role>
+
 <motion_type>
 Hover
 </motion_type>
@@ -76,7 +80,7 @@ LRM 10
 </Turret Equipment>
 
 <source>
-RS:3067U
+Record Sheets: 3067 Unabridged
 </source>
 
 <tonnage>

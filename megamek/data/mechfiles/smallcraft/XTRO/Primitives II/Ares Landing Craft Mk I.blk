@@ -36,6 +36,10 @@ Mk.I
 IS Level 4
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -141,7 +145,7 @@ Armed Cargo Transport
 </width>
 
 <source>
-XTRO Primitives II - Age of War
+XTR: Primitives II
 </source>
 
 <tonnage>
@@ -187,4 +191,11 @@ XTRO Primitives II - Age of War
 <escape_pod>
 0
 </escape_pod>
+
+
+<quirks>
+atmo_flyer
+easy_maintain
+obsolete
+</quirks>
 

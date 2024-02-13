@@ -1,13 +1,19 @@
-Version:1.0
-Katana (Crockett)
-CRK-5006-1
+chassis:Katana (Crockett)
+model:CRK-5006-1
 mul id:8428
 
 Config:Biped
 techbase:Inner Sphere
 era:3108
-source:Rec Guide:ilClan #23 - Early Republic
+source:Rec Guide:ilClan #23
 rules level:2
+role:Skirmisher
+
+
+
+quirk:easy_pilot
+quirk:poor_life_support
+
 
 mass:85
 engine:255 Fusion Engine(IS)

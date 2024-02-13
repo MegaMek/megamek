@@ -1,12 +1,22 @@
-Version:1.3
-Icarus
-ICR-1X
+chassis:Icarus
+model:ICR-1X
 mul id:1599
 Config:Biped
 techbase:Inner Sphere
 era:2470
-source:XTRO Primitives II - Age of War
+source:XTR: Primitives II
 rules level:3
+role:Brawler
+
+
+
+
+quirk:difficult_maintain
+quirk:ext_twist
+quirk:poor_performance
+quirk:prototype
+quirk:obsolete
+
 
 mass:40
 engine:195 Fusion Engine(IS)

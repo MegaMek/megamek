@@ -29,12 +29,16 @@ Scorpion Light Tank
 </year>
 
 <source>
-XTRO Liao - Jihad
+XTR: Liao
 </source>
 
 <type>
 IS Level 4
 </type>
+
+<role>
+Missile Boat
+</role>
 
 <tonnage>
 25.0

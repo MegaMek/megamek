@@ -36,6 +36,10 @@ C
 Clan Level 2
 </type>
 
+<role>
+Striker
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -120,10 +124,15 @@ TARGETING:Maxell TA50
 </systemManufacturers>
 
 <source>
-Rec Guide:ilClan #27 - Dark Age
+Rec Guide:ilClan #27
 </source>
 
 <tonnage>
 30.0
 </tonnage>
+
+
+<quirks>
+ubiquitous_is
+</quirks>
 

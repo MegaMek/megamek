@@ -32,6 +32,10 @@ Magi Infantry Support Vehicle
 IS Level 2
 </type>
 
+<role>
+Skirmisher
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -82,7 +86,7 @@ Medium Laser
 </Rear Equipment>
 
 <source>
-TRO 3050 - Star League
+TRO: 3050
 </source>
 
 <tonnage>

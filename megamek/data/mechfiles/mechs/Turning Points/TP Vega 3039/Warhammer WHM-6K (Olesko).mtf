@@ -1,13 +1,22 @@
-Version:1.0
-Warhammer
-WHM-6K (Olesko)
+chassis:Warhammer
+model:WHM-6K (Olesko)
 mul id:7798
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3023
-Source:TP Vega - Late Succession War
+Source:Turning Points: War of 3039 - Vega
 Rules Level:1
+role:Brawler
+
+
+
+quirk:rugged_2
+quirk:searchlight
+quirk:stable
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+
 
 Mass:70
 Engine:280 Fusion Engine(IS)

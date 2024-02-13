@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2002-2005 Ben Mazur (bmazur@sev.org)
  * Copyright (c) 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
- * Copyright (c) 2021-2022 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2021-2023 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -263,12 +263,7 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
     }
 
     @Override
-    public synchronized void update(Graphics g) {
-        paint(g);
-    }
-
-    @Override
-    public void paint(Graphics g) {
+    protected void paintComponent(Graphics g) {
         if (mapImage != null) {
             g.drawImage(mapImage, 0, 0, this);
             paintVisibleSection(g);
@@ -474,7 +469,7 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
     };
 
     /** Call this to schedule a minimap redraw. */
-    public synchronized void refreshMap() {
+    public void refreshMap() {
         lastDrawMapReq = System.currentTimeMillis();
         SwingUtilities.invokeLater(drawMapable);
     }
@@ -488,12 +483,12 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
     }
 
     /** 
-     * Draws the minimap to the backbuffer. When ignoreVisible is true,
+     * Draws the minimap to the backbuffer. When forceDraw is true,
      * the map will be drawn even if it is minimized or not visible.
      * This can be used to draw the minimap for saving it as an image regardless
      * of its visual status onscreen.
      */
-    private synchronized void drawMap(boolean forceDraw) {
+    private void drawMap(boolean forceDraw) {
         if ((lastDrawStarted > lastDrawMapReq) && !forceDraw) {
             return;
         }
@@ -629,7 +624,7 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
 
         // thin less translucent rectangle
         g.setColor(new Color(255, 255, 255, 180));
-        ((Graphics2D) g).setStroke(new BasicStroke(zoom / 2));
+        ((Graphics2D) g).setStroke(new BasicStroke(zoom / 2f));
         g.drawRect(x1, y1, x2, y2);
     }
 
@@ -664,7 +659,7 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
 
         int[] xTriangle = new int[3];
         int[] yTriangle = new int[3];
-        xTriangle[0] = Math.round((w - 11) / 2);
+        xTriangle[0] = Math.round((w - 11) / 2f);
         xTriangle[1] = xTriangle[0] + 11;
         if (minimized) {
             yTriangle[0] = h - 10;
@@ -815,6 +810,7 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
 
     private void paintSingleCoordBorder(Graphics g, int x, int y, Color c) {
         g.setColor(c);
+        ((Graphics2D) g).setStroke(new BasicStroke(Math.max(1, zoom / 2f)));
         g.drawPolygon(xPoints(x), yPoints(x, y), 6);
     }
 
@@ -834,18 +830,20 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
         int[] xPoints = xPoints(x);
         int[] yPoints = yPoints(x, y);
         g.fillPolygon(xPoints, yPoints, 6);
-        g.setColor(new Color(20, 20, 60));
+        // alpha to tone down borders and stars at low zoom so they don't overwhelm the image
+        int alpha = Math.min(250, 20 * HEX_SIDE[zoom]);
+        g.setColor(new Color(20, 20, 60, alpha));
         g.drawPolygon(xPoints, yPoints, 6);
         // Drop in a star
         int dx = (int) (Math.random() * HEX_SIDE[zoom]);
         int dy = (int) ((Math.random() - 0.5) * HEX_SIDE_BY_COS30[zoom]);
         int c = (int) (Math.random() * 180);
-        g.setColor(new Color(c, c, c));
+        g.setColor(new Color(c, c, c, alpha));
         if (Math.random() < 0.1) {
-            g.setColor(new Color(c, c / 10, c / 10)); // red star
+            g.setColor(new Color(c, c / 10, c / 10, alpha)); // red star
         } else if (Math.random() < 0.1) {
-            int factor = (int) (Math.random()*10) + 1;
-            g.setColor(new Color(c / factor, c / factor, c)); // blue star
+            int factor = (int) (Math.random() * 10) + 1;
+            g.setColor(new Color(c / factor, c / factor, c, alpha)); // blue star
         }
         g.fillRect(baseX + dx, baseY + dy, 1, 1);
     }
@@ -1472,7 +1470,7 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
         
         @Override
         public void hexMoused(BoardViewEvent b) {
-            update();
+            repaint();
         }
 
         @Override

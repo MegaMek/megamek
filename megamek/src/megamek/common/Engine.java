@@ -15,8 +15,8 @@
 package megamek.common;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * This class represents an engine, such as those driving 'Meks.
@@ -297,20 +297,26 @@ public class Engine implements Serializable, ITechnology {
         }
     }
 
-    /**
-     * returns true if and only if this engine is a fusion engine
-     *
-     * @return true if it is not an internal combustion engine.
-     */
+    /** @return True if this engine is a fusion engine. */
     public boolean isFusion() {
         return (engineType != COMBUSTION_ENGINE) && (engineType != FISSION) && (engineType != FUEL_CELL)
                 && (engineType != NONE) && (engineType != BATTERY) && (engineType != SOLAR)
                 && (engineType != STEAM) && (engineType != MAGLEV) && (engineType != EXTERNAL);
     }
 
+    /** @return True if this engine is a fission engine. */
+    public boolean isFission() {
+        return engineType == FISSION;
+    }
+
     public boolean isSolar() {
         return engineType == SOLAR;
     }
+    
+    public boolean isICE() {
+        return engineType == COMBUSTION_ENGINE;
+    }
+
 
     /**
      * Returns the weight of the engine in tons, rounded to the next highest half
@@ -449,18 +455,40 @@ public class Engine implements Serializable, ITechnology {
      */
     public String getShortEngineName() {
         if (engineType < TYPE_KEYS.length) {
-            return String.format("%d%s", engineRating, Messages.getString("Engine." + TYPE_KEYS[engineType]));
+            if (hasFlag(SUPPORT_VEE_ENGINE)) {
+                return Messages.getString("Engine." + TYPE_KEYS[engineType]).trim();
+            } else {
+                return String.format("%d%s", engineRating, Messages.getString("Engine." + TYPE_KEYS[engineType]));
+            }
         } else {
             return Messages.getString("Engine.invalid");
         }
     }
 
-    public static List<String> getEngineTypes() {
-        List<String> result = new ArrayList<>();
-
-        for (int i = 0; i < Engine.NUM_ENGINE_TYPES; i++) {
-            result.add(Messages.getString("Engine." + TYPE_KEYS[i]));
+    public static String getEngineTypeName(int engineType) {
+        if ((engineType < 0) || (engineType >= TYPE_KEYS.length)) {
+            return Messages.getString("Engine.invalid");
         }
+        return Messages.getString("Engine." + TYPE_KEYS[engineType]);
+    }
+
+    public static Map<Integer, String> getAllEngineCodeName() {
+        Map<Integer, String> result = new HashMap();
+
+        result.put(COMBUSTION_ENGINE, getEngineTypeName(COMBUSTION_ENGINE));
+        result.put(NORMAL_ENGINE, getEngineTypeName(NORMAL_ENGINE));
+        result.put(XL_ENGINE, getEngineTypeName(XL_ENGINE));
+        result.put(XXL_ENGINE, getEngineTypeName(XXL_ENGINE));
+        result.put(FUEL_CELL, getEngineTypeName(FUEL_CELL));
+        result.put(LIGHT_ENGINE, getEngineTypeName(LIGHT_ENGINE));
+        result.put(COMPACT_ENGINE, getEngineTypeName(COMPACT_ENGINE));
+        result.put(FISSION, getEngineTypeName(FISSION));
+        result.put(NONE, getEngineTypeName(NONE));
+        result.put(MAGLEV, getEngineTypeName(MAGLEV));
+        result.put(STEAM, getEngineTypeName(STEAM));
+        result.put(BATTERY, getEngineTypeName(BATTERY));
+        result.put(SOLAR, getEngineTypeName(SOLAR));
+        result.put(EXTERNAL, getEngineTypeName(EXTERNAL));
 
         return result;
     }

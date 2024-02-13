@@ -1,12 +1,19 @@
-Version:1.3
-Pendragon
-PDG-1R
+chassis:Pendragon
+model:PDG-1R
 mul id:4799
 Config:Biped
 techbase:Inner Sphere
 era:3083
-source:TRO:Prototypes - Early Republic
+source:TRO: Prototypes
 rules level:3
+role:Missile Boat
+
+
+
+quirk:no_arms
+quirk:difficult_maintain
+quirk:imp_target_long
+
 
 mass:95
 engine:380 XL Engine(IS)

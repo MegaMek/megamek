@@ -1,13 +1,17 @@
-Version:1.0
-Merlin
-MLN-1B
+chassis:Merlin
+model:MLN-1B
 mul id:2178
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3053
-Source:TRO 3058 - Clan Invasion
+Source:TRO: 3058
 Rules Level:1
+role:Brawler
+
+quirk:easy_maintain
+quirk:rugged_1
+
 
 Mass:60
 Engine:240 Fusion Engine

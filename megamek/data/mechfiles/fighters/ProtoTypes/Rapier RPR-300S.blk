@@ -36,6 +36,10 @@ RPR-300S
 IS Level 3
 </type>
 
+<role>
+Dogfighter
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -145,10 +149,18 @@ TARGETING:Bauer-Scope 130Z
 </systemManufacturers>
 
 <source>
-TRO Prototypes - Jihad
+TRO: Prototypes
 </source>
 
 <tonnage>
 85.0
 </tonnage>
+
+
+<quirks>
+difficult_maintain
+hard_pilot
+imp_target_long
+non_standard
+</quirks>
 

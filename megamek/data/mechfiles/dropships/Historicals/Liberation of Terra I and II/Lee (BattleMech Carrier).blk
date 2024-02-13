@@ -36,6 +36,10 @@ Lee
 IS Level 2
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Spheroid
 </motion_type>
@@ -254,7 +258,7 @@ Transport
 </height>
 
 <source>
-H:Liberation of Terra II - Star League
+Historical: Liberation of Terra II
 </source>
 
 <tonnage>

@@ -1,35 +1,37 @@
-Version:1.0
-Spartan
-SPT-N1
+generator:MegaMek Suite 0.49.18-SNAPSHOT on 2024-01-06
+chassis:Spartan
+model:SPT-N1
 mul id:2994
-
 Config:Biped
-TechBase:Inner Sphere
-Era:2764
-Source:Rhonda's Irregulars - Star League
-Rules Level:2
+techbase:Inner Sphere
+era:2764
+source:Rhonda's Irregulars
+rules level:2
+role:Skirmisher
 
-Mass:80
-Engine:400 XL Engine
-Structure:Standard
-Myomer:Standard
+quirk:imp_sensors
 
-Heat Sinks:13 Single
-Walk MP:5
-Jump MP:0
+mass:80
+engine:400 XL Engine(IS)
+structure:IS Standard
+myomer:Standard
 
-Armor:Standard(Inner Sphere)
-LA Armor:26
-RA Armor:26
-LT Armor:26
-RT Armor:26
-CT Armor:31
-HD Armor:9
-LL Armor:26
-RL Armor:26
-RTL Armor:8
-RTR Armor:8
-RTC Armor:12
+heat sinks:13 Single
+walk mp:5
+jump mp:0
+
+armor:Standard(Inner Sphere)
+LA armor:26
+RA armor:26
+LT armor:26
+RT armor:26
+CT armor:31
+HD armor:9
+LL armor:26
+RL armor:26
+RTL armor:8
+RTR armor:8
+RTC armor:12
 
 Weapons:8
 Medium Pulse Laser, Right Arm
@@ -37,7 +39,7 @@ Medium Pulse Laser, Right Arm
 Medium Pulse Laser, Right Arm
 ER PPC, Left Torso
 TAG, Left Torso
-AMS, Right Torso
+Anti-Missile System, Right Torso
 Streak SRM 2, Center Torso
 Streak SRM 2, Center Torso
 
@@ -87,11 +89,11 @@ Right Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
+IS Streak SRM 2 Ammo
+IS Streak SRM 2 Ammo
+ISAMS Ammo
+ISAMS Ammo
 ISAntiMissileSystem
-ISAMS Ammo
-ISAMS Ammo
-IS Streak SRM 2 Ammo
-IS Streak SRM 2 Ammo
 -Empty-
 -Empty-
 -Empty-
@@ -153,4 +155,18 @@ Foot Actuator
 -Empty-
 -Empty-
 
+overview:The Spartan, a Star League era BattleMech, began full production just before the Civil War at Terra's Martinson Armaments facility. Conceived as a general service 'Mech, the Spartan was known for its remarkable speed and diverse range capabilities, distinguishing it from similar weight class 'Mechs like the Crockett and Thug. Though only a little over 600 units were produced before the destruction of the manufacturing facility during Stefan Amaris' coup, the Spartan dispersed throughout the Inner Sphere, with a few remaining operational in Com Guards and other factions by 3042.
+
+capabilities:The Spartan's hallmark was its versatility across various combat ranges. Its primary long-range weapon, the Kinslaughter ER PPC, was notable for its lower heat generation and ease of maintenance. Medium-range combat was handled by three Blankenburg Technologies medium pulse lasers, offering greater damage output despite a slightly reduced range. For close engagements, it relied on two Streak SRM-2 packs located in the upper center torso. A unique feature was its auxiliary escape hatch, providing an alternate exit when standard ejection was compromised. Its superior speed, capable of reaching over 86 kph, allowed Spartan pilots to effectively control engagement ranges, using speed as a defensive asset.
+
+deployment:The Spartan SPT-N1, a variant of the classic 80-ton Spartan, is a skirmisher designed for a balance of mobility, firepower, and sensor capability. This model is powered by a 400 XL Engine, enabling it to reach a top speed of 86.4 km/h. This significant speed for its weight class makes the SPT-N1 adept at flanking maneuvers and rapid positioning on the battlefield.<p>Armament-wise, the SPT-N1 is equipped with three Medium Pulse Lasers in its right arm, delivering effective short-range damage, particularly useful in hit-and-run tactics. For longer engagements, it carries an Extended-Range Particle Projection Cannon (ER PPC) in its left torso, providing a powerful punch at extended distances. The inclusion of TAG (Target Acquisition Gear) in its left torso enhances its role in coordinated attacks, allowing for precision strikes in conjunction with allied artillery or air support.</p><p>In terms of defense, the SPT-N1 carries an Anti-Missile System (AMS) in its right torso to intercept incoming missile attacks, enhancing its survivability. Additionally, it is equipped with two Streak SRM-2 launchers in the center torso, offering reliable missile fire with improved targeting capabilities. The 'Mech's standard armor provides a balance between protection and mobility.</p><p>A notable feature of the SPT-N1 is its improved sensors, granting it enhanced detection capabilities, which are critical for its role as a skirmisher. This makes the Spartan SPT-N1 a versatile asset on the battlefield, capable of engaging enemies at various ranges while providing vital reconnaissance for its unit.</p>
+
+history:The Spartan, initially produced in limited numbers by the Star League, saw a decline in deployment during the Succession Wars due to production cessation and battlefield attrition. Despite this, the 'Mech maintained a niche presence, particularly among mercenary groups and peripheral states where its balanced capabilities in assault roles were valued. The Spartan's rarity made it a target for salvage operations, and those that survived became prized assets for their owners.<p>Post-Star League, the Spartan's presence dwindled significantly, with only a few units known to be operational. Notably, Snord's Irregulars operated a few well-maintained Spartans, utilizing them effectively in various combat scenarios. This period marked the Spartan as a symbol of lost Star League technology, with its operational units being remnants of a bygone era.</p><p>The Word of Blake's period saw a brief attempt at reviving the Spartan, with efforts to produce new units on Terra. However, this initiative was short-lived and had minimal impact on the Spartan's overall presence in the Inner Sphere.</p><p>In the post-Jihad era, the discovery of Spartan blueprints by the Capellan Confederation led to a resurgence in interest. The Capellans developed the SPT-N4 variant, which incorporated modern technology into the classic design. This variant aimed to enhance the Spartan's battlefield utility while retaining its fundamental characteristics. The reintroduction of the Spartan into modern warfare, especially its sale to prominent units like the Wolf's Dragoons, indicated its enduring legacy as a versatile and reliable 'Mech, despite its historical scarcity and the challenges of modern mech combat.</p>
+manufacturer:Martinson Armaments
+primaryfactory:Terra
+systemmanufacturer:CHASSIS:Geometric 500 Hard Core
+systemmanufacturer:ENGINE:Dantrus 400 XL
+systemmanufacturer:ARMOR:Strausburg Armaments 206 Dlamond Weave
+systemmanufacturer:COMMUNICATIONS:Blow 300 SNA Net
+systemmanufacturer:TARGETING:Scope 40 RNDST
 

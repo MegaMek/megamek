@@ -1,13 +1,16 @@
-Version:1.0
-Piranha
-2
+chassis:Piranha
+model:2
 mul id:2536
 
 Config:Biped
 TechBase:Clan
 Era:3067
-Source:TRO 3058 - Civil War
+Source:TRO: 3058
 Rules Level:2
+role:Striker
+
+quirk:imp_target_short
+
 
 Mass:20
 Engine:180 XL (Clan) Engine

@@ -32,6 +32,10 @@ Se'irim Medium Battle Armor
 IS Level 3
 </type>
 
+<role>
+Ambusher
+</role>
+
 <motion_type>
 Jump
 </motion_type>
@@ -94,7 +98,7 @@ ISBATaser:DWP
 </Trooper 6 Equipment>
 
 <source>
-TRO 3075 - Jihad
+TRO: 3075
 </source>
 
 <chassis>

@@ -36,6 +36,10 @@ Ngake
 IS Level 4
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Spheroid
 </motion_type>
@@ -135,7 +139,7 @@ ISLaserAntiMissileSystem
 </structural_integrity>
 
 <source>
-XTRO Marik - Jihad
+XTR: Marik
 </source>
 
 <tonnage>

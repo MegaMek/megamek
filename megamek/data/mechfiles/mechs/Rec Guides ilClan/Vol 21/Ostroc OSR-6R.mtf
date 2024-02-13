@@ -1,13 +1,18 @@
-Version:1.0
-Ostroc
-OSR-6R
+chassis:Ostroc
+model:OSR-6R
 mul id:8355
 
 Config:Biped
 techbase:Mixed (IS Chassis)
 era:3139
-source:Rec Guide:ilClan #21 - Dark Age
+source:Rec Guide:ilClan #21
 rules level:3
+role:Skirmisher
+
+
+
+quirk:low_profile
+
 
 mass:60
 engine:360 XL Engine(IS)

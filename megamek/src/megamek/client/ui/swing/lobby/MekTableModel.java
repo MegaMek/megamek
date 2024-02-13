@@ -20,6 +20,7 @@ package megamek.client.ui.swing.lobby;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.ClientGUI;
+import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.tooltip.PilotToolTip;
 import megamek.client.ui.swing.tooltip.UnitToolTip;
 import megamek.client.ui.swing.util.UIUtil;
@@ -40,7 +41,6 @@ import java.awt.*;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 
-import static megamek.client.ui.swing.tooltip.TipUtil.*;
 import static megamek.client.ui.swing.util.UIUtil.alternateTableBGColor;
 import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
 import static megamek.client.ui.swing.util.UIUtil.uiGreen;
@@ -85,6 +85,7 @@ public class MekTableModel extends AbstractTableModel {
     private final ArrayList<String> pilotTooltips = new ArrayList<>();
     /** The displayed contents of the Player column. */
     private final ArrayList<String> playerCells = new ArrayList<>();
+    private static final GUIPreferences GUIP = GUIPreferences.getInstance();
     //endregion Variable Declarations
 
     //region Constructors
@@ -104,7 +105,8 @@ public class MekTableModel extends AbstractTableModel {
         if (col == COLS.BV.ordinal()) {
             boolean isEnemy = clientGui.getClient().getLocalPlayer().isEnemyOf(ownerOf(entity));
             boolean isBlindDrop = clientGui.getClient().getGame().getOptions().booleanOption(OptionsConstants.BASE_BLIND_DROP);
-            boolean hideEntity = isEnemy && isBlindDrop;
+            boolean localGM = clientGui.getClient().getLocalPlayer().isGameMaster();
+            boolean hideEntity = !localGM && isEnemy && isBlindDrop;
             float size = chatLounge.isCompact() ? 0 : 0.2f;
             return hideEntity ? "" : guiScaledFontHTML(size) + NumberFormat.getIntegerInstance().format(bv.get(row));
             
@@ -176,8 +178,10 @@ public class MekTableModel extends AbstractTableModel {
         // Note that units of a player's bots are obscured because they could be added from
         // a MekHQ AtB campaign. Thus, the player can still configure them and so can identify
         // the obscured units but has to actively decide to do it.
-        boolean hideEntity = clientGui.getClient().getLocalPlayer().isEnemyOf(owner)
+        boolean localGM = clientGui.getClient().getLocalPlayer().isGameMaster();
+        boolean hideEntity = !localGM && clientGui.getClient().getLocalPlayer().isEnemyOf(owner)
                 && clientGui.getClient().getGame().getOptions().booleanOption(OptionsConstants.BASE_BLIND_DROP);
+
         if (hideEntity) {
             unitTooltips.add(null);
             pilotTooltips.add(null);
@@ -185,12 +189,12 @@ public class MekTableModel extends AbstractTableModel {
             MapSettings mset = chatLounge.mapSettings;
             Player lPlayer = clientGui.getClient().getLocalPlayer();
             String s = UnitToolTip.lobbyTip(entity, lPlayer, mset).toString();
-            unitTooltips.add( HTML_BEGIN + s + HTML_END);
+            unitTooltips.add(UnitToolTip.wrapWithHTML(s));
             s = PilotToolTip.lobbyTip(entity).toString();
             if (entity instanceof Entity) {
                 s += PilotToolTip.getCrewAdvs((Entity) entity, true).toString();
             }
-            pilotTooltips.add(HTML_BEGIN + s + HTML_END);
+            pilotTooltips.add(UnitToolTip.wrapWithHTML(s));
         }
         final boolean rpgSkills = clientGui.getClient().getGame().getOptions().booleanOption(OptionsConstants.RPG_RPG_GUNNERY);
         unitCells.add(LobbyMekCellFormatter.unitTableEntry(entity, chatLounge, false, chatLounge.isCompact()));
@@ -295,7 +299,8 @@ public class MekTableModel extends AbstractTableModel {
             }
 
             Player owner = ownerOf(entity);
-            boolean showAsUnknown = clientGui.getClient().getLocalPlayer().isEnemyOf(owner)
+            boolean localGM = clientGui.getClient().getLocalPlayer().isGameMaster();
+            boolean showAsUnknown = !localGM && clientGui.getClient().getLocalPlayer().isEnemyOf(owner)
                     && clientGui.getClient().getGame().getOptions().booleanOption(OptionsConstants.BASE_BLIND_DROP);
             int size = UIUtil.scaleForGUI(MEKTABLE_IMGHEIGHT);
 

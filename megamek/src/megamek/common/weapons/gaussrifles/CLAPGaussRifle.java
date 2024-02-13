@@ -28,6 +28,7 @@ public class CLAPGaussRifle extends GaussWeapon {
         name = "AP Gauss Rifle";
         setInternalName("CLAPGaussRifle");
         addLookupName("Clan AP Gauss Rifle");
+        sortingName = "Gauss X";
         heat = 1;
         damage = 3;
         infDamageClass = WeaponType.WEAPON_BURST_2D6;

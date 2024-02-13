@@ -1,13 +1,22 @@
-Version:1.0
-Rifleman
-RFL-8D
+chassis:Rifleman
+model:RFL-8D
 mul id:2705
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3064
-Source:Civil War
+source:TRO: 3085u 
 Rules Level:2
+role:Skirmisher
+
+
+
+quirk:anti_air
+quirk:imp_com
+quirk:searchlight
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+
 
 Mass:60
 Engine:240 XL Engine

@@ -1,13 +1,19 @@
-Version:1.0
-Quickdraw
-QKD-5K2
+chassis:Quickdraw
+model:QKD-5K2
 mul id:4886
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3057
-Source:TRO 3050 - Clan Invasion
+Source:TRO: 3050
 Rules Level:2
+role:Skirmisher
+
+
+
+quirk:hyper_actuator
+quirk:exp_actuator
+
 
 Mass:60
 Engine:300 Fusion Engine(IS)

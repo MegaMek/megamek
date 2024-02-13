@@ -1,12 +1,15 @@
-Version:1.3
-Battle Cobra
-BTL-C-2OI
+chassis:Battle Cobra
+model:BTL-C-2OI
 mul id:9494
 Config:Biped Omnimech
 techbase:Inner Sphere
 era:3083
-source:Shrapnel 11 - Early Republic
+source:Shrapnel #11
 rules level:2
+role:Skirmisher
+
+quirk:ext_twist
+
 
 mass:40
 engine:200 Fusion Engine(IS)

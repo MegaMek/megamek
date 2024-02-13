@@ -1,13 +1,13 @@
-Version:1.0
-Phoenix Hawk
-C 2
+chassis:Phoenix Hawk
+model:C 2
 mul id:7753
 
 Config:Biped
 techbase:Mixed (IS Chassis)
 era:3140
 rules level:2
-source:Rec Guide:ilClan #11 - Dark Age
+role:Striker
+source:Rec Guide:ilClan #11
 
 mass:45
 engine:270 XL Engine(IS)

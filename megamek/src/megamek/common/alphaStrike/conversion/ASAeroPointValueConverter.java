@@ -33,11 +33,11 @@ public class ASAeroPointValueConverter extends ASPointValueConverter {
     @Override
     protected void processMovement() {
         int highestMove = getHighestMove(element);
-        defensiveValue += 0.25 * highestMove;
-        report.addLine("Movement", highestMove + " / 4", "" + formatForReport(defensiveValue));
+        defensiveValue += 4 + 0.25 * highestMove;
+        report.addLine("Movement", "4 + " + highestMove + " / 4", "" + formatForReport(defensiveValue));
         if (highestMove >= 10) {
             defensiveValue += 1;
-            report.addLine("Thrust", "+2 (Very High Thrust)", "= " + formatForReport(defensiveValue));
+            report.addLine("Thrust", "+1 (Very High Thrust)", "= " + formatForReport(defensiveValue));
         } else if (highestMove >= 7) {
             defensiveValue += 0.5;
             report.addLine("Thrust", "+0.5 (High Thrust)", "= " + formatForReport(defensiveValue));

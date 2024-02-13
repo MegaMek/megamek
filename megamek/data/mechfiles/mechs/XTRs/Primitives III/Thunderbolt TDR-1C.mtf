@@ -1,13 +1,22 @@
-Version:1.1
-Thunderbolt
-TDR-1C
+chassis:Thunderbolt
+model:TDR-1C
 mul id:5237
 
 Config:Biped
 techbase:Inner Sphere
 era:2491
-source:XTRO Primitives III - Age of War
+source:XTR: Primitives III
 rules level:4
+role:Missile Boat
+
+
+
+
+quirk:multi_trac
+quirk:difficult_maintain
+quirk:obsolete
+quirk:poor_work
+
 
 mass:65
 engine:235 Fusion Engine(IS)

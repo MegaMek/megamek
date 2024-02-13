@@ -32,6 +32,10 @@ Ifrit
 IS Level 4
 </type>
 
+<role>
+Scout
+</role>
+
 <motion_type>
 Hover
 </motion_type>
@@ -86,9 +90,16 @@ ISSNPPC
 </Rear Equipment>
 
 <source>
-XTRO Periphery - Jihad
+XTR: Periphery
 </source>
 
 <tonnage>
 35.0
 </tonnage>
+
+<quirks>
+prototype
+hard_pilot
+non_standard
+</quirks>
+

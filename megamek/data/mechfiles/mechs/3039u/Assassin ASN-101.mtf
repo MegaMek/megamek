@@ -1,13 +1,21 @@
-Version:1.0
-Assassin
-ASN-101
+chassis:Assassin
+model:ASN-101
 mul id:126
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3024
-Source:TRO 3039 - Succession Wars
+Source:TRO: 3039
 Rules Level:1
+role:Scout
+
+
+
+quirk:easy_maintain
+quirk:cramped_cockpit
+quirk:non_standard
+quirk:poor_life_support
+
 
 Mass:40
 Engine:280 Fusion Engine(IS)

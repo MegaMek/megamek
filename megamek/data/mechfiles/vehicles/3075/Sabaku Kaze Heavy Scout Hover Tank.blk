@@ -29,12 +29,16 @@ Sabaku Kaze Heavy Scout Hover Tank
 </year>
 
 <source>
-Star League
+TRO: 3075
 </source>
 
 <type>
 IS Level 1
 </type>
+
+<role>
+Striker
+</role>
 
 <tonnage>
 50.0

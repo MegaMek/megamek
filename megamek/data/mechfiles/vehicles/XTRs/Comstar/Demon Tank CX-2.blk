@@ -32,6 +32,10 @@ CX-2
 IS Level 4
 </type>
 
+<role>
+Sniper
+</role>
+
 <motion_type>
 Wheeled
 </motion_type>
@@ -83,9 +87,16 @@ Medium Laser(ST)
 </Turret Equipment>
 
 <source>
-XTRO ComStar - Jihad
+XTR: ComStar
 </source>
 
 <tonnage>
 60.0
 </tonnage>
+
+<quirks>
+prototype
+poor_work
+trailer_hitch
+</quirks>
+

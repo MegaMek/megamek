@@ -36,6 +36,10 @@ Chaeronea
 Clan Level 2
 </type>
 
+<role>
+Interceptor
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -97,7 +101,7 @@ CLTargeting Computer
 </Fuselage Equipment>
 
 <source>
-TRO 3067 - Jihad
+TRO: 3067
 </source>
 
 <tonnage>

@@ -36,6 +36,10 @@ Satyr
 Clan Level 2
 </type>
 
+<role>
+Striker
+</role>
+
 <motion_type>
 Biped
 </motion_type>
@@ -88,7 +92,7 @@ CLLightActiveProbe
 </Legs Equipment>
 
 <source>
-TRO 3060 - Clan Invasion
+TRO: 3060
 </source>
 
 <tonnage>

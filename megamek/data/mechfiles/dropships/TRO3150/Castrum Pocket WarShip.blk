@@ -36,6 +36,10 @@ Castrum Pocket WarShip
 IS Level 4
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Spheroid
 </motion_type>
@@ -251,7 +255,7 @@ ISNC3
 </structural_integrity>
 
 <source>
-XTRO Republic I - Early Republic
+XTR: Republic I
 </source>
 
 <tonnage>
@@ -297,3 +301,10 @@ XTRO Republic I - Early Republic
 <escape_pod>
 0
 </escape_pod>
+
+<quirks>
+imp_target_long
+large_dropper
+unstreamlined
+</quirks>
+

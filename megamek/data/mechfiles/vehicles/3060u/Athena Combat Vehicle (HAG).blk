@@ -32,6 +32,10 @@ Athena Combat Vehicle
 Clan Level 3
 </type>
 
+<role>
+Juggernaut
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -93,7 +97,7 @@ CLAPGaussRifle
 </Turret Equipment>
 
 <source>
-Jihad
+TRO: 3060
 </source>
 
 <tonnage>

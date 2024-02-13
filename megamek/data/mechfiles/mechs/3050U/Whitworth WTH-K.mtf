@@ -1,13 +1,19 @@
-Version:1.0
-Whitworth
-WTH-K
+chassis:Whitworth
+model:WTH-K
 mul id:3545
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3070
-Source:TRO 3050 - Jihad
+Source:TRO: 3050
 Rules Level:2
+role:Missile Boat
+
+
+
+quirk:rugged_1
+quirk:weak_legs
+
 
 Mass:40
 Engine:160 Fusion Engine

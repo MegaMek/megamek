@@ -32,6 +32,10 @@ Fulmar Patrol Craft
 IS Level 3
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 WiGE
 </motion_type>
@@ -92,7 +96,7 @@ ISVehicularMineDispenser
 </Rear Equipment>
 
 <source>
-TRO VAr - Clan Invasion
+TRO: Vehicle Annex (Revised)
 </source>
 
 <tonnage>

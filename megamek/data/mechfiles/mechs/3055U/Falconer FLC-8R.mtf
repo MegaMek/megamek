@@ -1,13 +1,19 @@
-Version:1.0
-Falconer
-FLC-8R
+chassis:Falconer
+model:FLC-8R
 mul id:1033
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3053
-Source:TRO 3055 - Clan Invasion
+Source:TRO: 3055
 Rules Level:2
+role:Skirmisher
+
+
+
+
+quirk:stable
+
 
 Mass:75
 Engine:375 XL Engine

@@ -1,13 +1,19 @@
-Version:1.1
-Blitzkrieg
-BTZ-4F
+chassis:Blitzkrieg
+model:BTZ-4F
 mul id:395
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3074
-Source:TRO 3060
+Source:TRO: 3060
 Rules Level:2
+role:Skirmisher
+
+
+
+quirk:directional_torso_mount
+quirk:no_arms
+
 
 Mass:50
 Engine:350 XL Engine

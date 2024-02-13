@@ -14,6 +14,8 @@
 package megamek.common;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class CriticalSlot implements Serializable {
@@ -222,5 +224,23 @@ public class CriticalSlot implements Serializable {
 
     public boolean isRepairable() {
         return repairable;
+    }
+
+    @Override
+    public String toString() {
+        String typeString = type == 0 ? "System Slot" : "Equipment Slot";
+        List<String> state = new ArrayList<>();
+        if (type == 0) state.add("System No: " + index);
+        if (mount != null) state.add("[" + mount.equipmentIndex() + "] " + mount.getType().getInternalName());
+        if (mount2 != null) state.add("Mount 2: [" + mount2.equipmentIndex() + "] " + mount2.getType().getInternalName());
+        if (destroyed) state.add("Destroyed");
+        if (hit) state.add("Hit");
+        if (!hittable) state.add("Not hittable");
+        if (breached) state.add("Breached");
+        if (missing) state.add("Missing");
+        if (armored) state.add("Armored");
+        if (repairing) state.add("Repairing");
+        if (!repairable) state.add("Not repairable");
+        return typeString + " { " + String.join(", ", state) + " }";
     }
 }

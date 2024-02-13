@@ -68,6 +68,10 @@ IS BA Stealth (Improved):Body
 IS Level 2
 </type>
 
+<role>
+Ambusher
+</role>
+
 <year>
 3057
 </year>
@@ -77,7 +81,7 @@ Jump
 </motion_type>
 
 <source>
-TRO 3058U - Clan Invasion
+TRO: 3058 Upgrade
 </source>
 
 <armor_tech>

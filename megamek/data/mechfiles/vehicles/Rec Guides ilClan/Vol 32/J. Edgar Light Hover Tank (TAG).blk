@@ -36,6 +36,10 @@ J. Edgar Light Hover Tank
 IS Level 2
 </type>
 
+<role>
+Scout
+</role>
+
 <motion_type>
 Hover
 </motion_type>
@@ -90,7 +94,7 @@ ISTAG
 </Turret Equipment>
 
 <source>
-RS 3058 - Clan Invasion
+Record Sheets: 3058
 </source>
 
 <tonnage>

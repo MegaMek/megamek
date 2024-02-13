@@ -1,0 +1,134 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+VTOL
+</UnitType>
+
+<Name>
+Kamakiri Attack VTOL
+</Name>
+
+<model>
+
+</model>
+
+<mul id:>
+6382
+</mul id:>
+
+<year>
+3100
+</year>
+
+<type>
+IS Level 3
+</type>
+
+<role>
+Missile Boat
+</role>
+
+<motion_type>
+VTOL
+</motion_type>
+
+<cruiseMP>
+7
+</cruiseMP>
+
+<engine_type>
+2
+</engine_type>
+
+<armor_type>
+3
+</armor_type>
+
+<armor_tech>
+5
+</armor_tech>
+
+<armor>
+36
+28
+28
+18
+2
+</armor>
+
+<Body Equipment>
+IS Ammo Thunderbolt-10
+IS Ammo Thunderbolt-10
+IS Ammo Thunderbolt-10
+</Body Equipment>
+
+<Front Equipment>
+PPC
+Thunderbolt 10
+Thunderbolt 10
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Rotor Equipment>
+</Rotor Equipment>
+
+<source>
+TRO: 3145 Draconis Combine
+</source>
+
+<tonnage>
+55.0
+</tonnage>
+
+<capabilities>
+Moving as fast as many reconnaissance and strike platforms in service with the DCMS already thanks to the DAV 155 XL extra light engine, the original specification armor installed by Yan was replaced with seven tons of StarGuard Aurora Reflective at the request of the DCMS, who wanted to improve the Kamakari's protection against energy weapons, although the nature of the Reflective Armor didn't offer any additional protection against the flak commonly directed at VTOLs.
+</capabilities>
+
+<overview>
+The Kamakiri Attack VTOL was developed at the end of the thirty-first century by Yan Manufacturing of New Samarkand as a result of their growing success in the military aerospace market.
+</overview>
+
+<deployment>
+The Kamakiri mounted three weapon systems mounted in the front of the VTOL - a single Tiegart Particle Projection Cannon and a pair of Telos ThunderShot Thunderbolt 10 Missile Launchers. Three tons of ammunition for the Thunderbolt Launchers was stored inside the body of the Kamakiri.
+</deployment>
+
+<history>
+Dubbed as resembling a praying mantis, the Kamakiri was an immediate success; the Draconis Combine Mustered Soldiery personnel responsible for supervising the first vehicle trial watched for just two minutes before approving the Kamakiri for purchase.
+</history>
+
+<manufacturer>
+Yan Manufacturing
+</manufacturer>
+
+<primaryFactory>
+New Samarkand
+</primaryFactory>
+
+<systemManufacturers>
+ENGINE:DAV 155 XL Fusion
+ARMOR:StarGuard Aurora Reflective
+COMMUNICATIONS:Scuti Dualcom
+TARGETING:Radcom T11
+</systemManufacturers>
+
+<quirks>
+vtol_rotor_dual
+hard_pilot
+</quirks>
+

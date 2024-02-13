@@ -1,12 +1,12 @@
-Version:1.0
-Night Chanter
-A
+chassis:Night Chanter
+model:A
 
 Config:Biped Omnimech
 techbase:Clan
 era:2865
-source:TP:Foster - Succession Wars
+source:Turning Points: Foster
 rules level:3
+role:Sniper
 mul id:9233
 
 mass:45

@@ -36,6 +36,10 @@ Z
 Clan Level 4
 </type>
 
+<role>
+Missile Boat
+</role>
+
 <motion_type>
 Biped
 </motion_type>
@@ -98,7 +102,7 @@ CLERMicroLaser
 </Main Gun Equipment>
 
 <source>
-WoRS - Jihad
+Wars of Reaving
 </source>
 
 <tonnage>

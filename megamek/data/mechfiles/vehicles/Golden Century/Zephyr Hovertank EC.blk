@@ -1,0 +1,113 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+Zephyr Hovertank EC
+</Name>
+
+<Model>
+
+</Model>
+
+<mul id:>
+7674
+</mul id:>
+
+<year>
+2820
+</year>
+
+<originalBuildYear>
+2820
+</originalBuildYear>
+
+<type>
+Mixed (IS Chassis) Experimental
+</type>
+
+<role>
+Scout
+</role>
+
+<motion_type>
+Hover
+</motion_type>
+
+<transporters>
+</transporters>
+
+<cruiseMP>
+9
+</cruiseMP>
+
+<engine_type>
+0
+</engine_type>
+
+<clan_engine>
+false
+</clan_engine>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+6
+</armor_tech>
+
+<armor>
+35
+28
+28
+18
+35
+</armor>
+
+<Body Equipment>
+ISGuardianECMSuite
+CLImpAmmoSRM6
+CLImpAmmoSRM6
+</Body Equipment>
+
+<Front Equipment>
+Improved SRM 6
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+ISTAG
+CLERMediumLaserPrototype
+CLERMediumLaserPrototype
+</Turret Equipment>
+
+<history>
+Before the Blood Spirits began isolating themselves, they built a popular armor export around the accessible Zephyr. The interim hovertank saw new prototype lasers replace the standard mediums and small, while a new improved SRM 6 freed up tonnage for some additional protection made possible with ferro-fibrous plates.
+</history>
+
+<source>
+TRO: Golden Century
+</source>
+
+<tonnage>
+40.0
+</tonnage>

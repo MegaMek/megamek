@@ -32,6 +32,10 @@ Ku Wheeled Assault Tank
 Clan Level 3
 </type>
 
+<role>
+Striker
+</role>
+
 <motion_type>
 Wheeled
 </motion_type>
@@ -90,7 +94,7 @@ CLAPGaussRifle
 </Turret Equipment>
 
 <source>
-Jihad
+TRO: 3060
 </source>
 
 <tonnage>

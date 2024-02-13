@@ -1,13 +1,16 @@
-Version:1.0
-Dark Crow
-3
+chassis:Dark Crow
+model:3
 mul id:825
 
 Config:Biped
 TechBase:Clan
 Era:3084
-Source:Dark Age
+source:TRO: 3085
 Rules Level:4
+role:Striker
+
+quirk:low_arms
+
 
 Mass:55
 Engine:330 XXL (Clan) Engine

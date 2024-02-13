@@ -32,6 +32,10 @@ Djinn Battle Armor
 IS Level 4
 </type>
 
+<role>
+Ambusher
+</role>
+
 <motion_type>
 Jump
 </motion_type>
@@ -66,7 +70,7 @@ ISBASmallLaser:RA
 </Squad Equipment>
 
 <source>
-XTRO Most Wanted - Jihad
+XTR: Most Wanted
 </source>
 
 <chassis>

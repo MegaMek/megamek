@@ -36,6 +36,10 @@ Apostle Self-Propelled Artillery
 IS Level 4
 </type>
 
+<role>
+Missile Boat
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -97,7 +101,7 @@ ISSniper
 </armor_tech_rating>
 
 <source>
-XTRO Primitives V - Age of War
+XTR: Primitives V
 </source>
 
 <tonnage>
@@ -111,3 +115,8 @@ XTRO Primitives V - Age of War
 <fuelType>
 PETROCHEMICALS
 </fuelType>
+
+<quirks>
+imp_com
+</quirks>
+

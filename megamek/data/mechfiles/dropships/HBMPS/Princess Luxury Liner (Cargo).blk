@@ -36,6 +36,10 @@ Princess Luxury Liner
 IS Level 2
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Spheroid
 </motion_type>
@@ -130,7 +134,7 @@ IS Machine Gun Ammo - Half:100
 </structural_integrity>
 
 <source>
-HB:Major Periphery States - Succession Wars
+Handbook: Major Periphery States
 </source>
 
 <tonnage>

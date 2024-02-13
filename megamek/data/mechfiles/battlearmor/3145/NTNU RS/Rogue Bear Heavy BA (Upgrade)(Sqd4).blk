@@ -64,6 +64,10 @@ BAHeavyBattleClaw:RA
 Clan Level 2
 </type>
 
+<role>
+Juggernaut
+</role>
+
 <year>
 3108
 </year>
@@ -73,7 +77,7 @@ Jump
 </motion_type>
 
 <source>
-RS3145 NT NU - Late Republic
+Record Sheets: 3145 New Tech New Upgrades
 </source>
 
 <armor_tech>

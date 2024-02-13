@@ -1,13 +1,17 @@
-Version:1.0
-Doom Courser
-A
+chassis:Doom Courser
+model:A
 mul id:8394
 
 Config:Quad Omnimech
 techbase:Clan
 era:3147
-source:Rec Guide:ilClan #22 - Dark Age
+source:Rec Guide:ilClan #22
 rules level:3
+role:Brawler
+
+quirk:imp_com
+quirk:exp_actuator
+
 
 mass:70
 engine:280 Fusion (Clan) Engine(IS)

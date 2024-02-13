@@ -1,13 +1,19 @@
-Version:1.0
-Trebuchet
-TBT-5S
+chassis:Trebuchet
+model:TBT-5S
 mul id:3298
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2864
-Source:TRO 3039 - Succession Wars
+Source:TRO: 3039
 Rules Level:1
+role:Skirmisher
+
+
+
+quirk:easy_maintain
+weaponquirk:fast_reload:RT:2:SRM 6
+
 
 Mass:50
 Engine:250 Fusion Engine

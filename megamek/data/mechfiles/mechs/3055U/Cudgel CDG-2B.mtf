@@ -1,13 +1,18 @@
-Version:1.1
-Cudgel
-CDG-2B
+chassis:Cudgel
+model:CDG-2B
 mul id:768
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3068
-Source:TRO 3055 - Jihad
+Source:TRO: 3055
 Rules Level:3
+role:Juggernaut
+
+
+
+quirk:difficult_maintain
+
 
 Mass:80
 Engine:400 XL Engine

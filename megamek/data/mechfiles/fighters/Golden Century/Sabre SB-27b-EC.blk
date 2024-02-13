@@ -36,6 +36,10 @@ SB-27b-EC
 Mixed (IS Chassis) Experimental
 </type>
 
+<role>
+Interceptor
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -109,7 +113,7 @@ Cloud Cobra technicians modified the Clan’s remaining stock of Royal Sabres wi
 </history>
 
 <source>
-TRO Golden Century - Succession Wars
+TRO: Golden Century
 </source>
 
 <tonnage>

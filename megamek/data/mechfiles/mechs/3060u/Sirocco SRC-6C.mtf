@@ -1,13 +1,24 @@
-Version:1.1
-Sirocco
-SRC-6C
+chassis:Sirocco
+model:SRC-6C
 mul id:2953
 
 Config:Quad
 TechBase:Inner Sphere
 Era:3070
-Source:TRO 3060
+Source:TRO: 3060
 Rules Level:2
+role:Skirmisher
+
+
+
+quirk:difficult_maintain
+weaponquirk:direct_torso_mount:RT:0:ISLightGaussRifle
+weaponquirk:direct_torso_mount:LT:0:ISERLargeLaser
+weaponquirk:direct_torso_mount:LT:2:ISERMediumLaser
+weaponquirk:direct_torso_mount:LT:3:ISERMediumLaser
+weaponquirk:direct_torso_mount:LT:4:ISERMediumLaser
+weaponquirk:direct_torso_mount:LT:5:ISERMediumLaser
+
 
 Mass:95
 Engine:285 Fusion Engine

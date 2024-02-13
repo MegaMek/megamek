@@ -1,13 +1,20 @@
-Version:1.0
-Argus
-AGS-2D
+chassis:Argus
+model:AGS-2D
 mul id:3729
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3062
 Rules Level:2
-source:TRO 3067
+role:Missile Boat
+source:TRO: 3067
+
+
+
+
+quirk:easy_maintain
+quirk:no_arms
+
 
 Mass:60
 Engine:300 XL Engine

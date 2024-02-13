@@ -1,13 +1,19 @@
-Version:1.0
-Wraith
-TR2
+chassis:Wraith
+model:TR2
 mul id:3589
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3057
-Source:TRO 3055 - Clan Invasion
+Source:TRO: 3055
 Rules Level:2
+role:Skirmisher
+
+
+
+quirk:ubiquitous_is
+quirk:difficult_maintain
+
 
 Mass:55
 Engine:385 XL Engine

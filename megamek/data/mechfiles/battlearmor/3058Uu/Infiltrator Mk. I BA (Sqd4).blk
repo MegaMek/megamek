@@ -60,6 +60,10 @@ IS BA Stealth (Prototype):Body
 IS Level 4
 </type>
 
+<role>
+Ambusher
+</role>
+
 <year>
 3050
 </year>
@@ -69,7 +73,7 @@ Leg
 </motion_type>
 
 <source>
-TRO 3058U - Clan Invasion
+TRO: 3058 Upgrade
 </source>
 
 <armor_tech>

@@ -36,6 +36,10 @@ Basilisk ProtoMech (Quad)
 Clan Level 4
 </type>
 
+<role>
+Striker
+</role>
+
 <motion_type>
 Quad
 </motion_type>
@@ -106,7 +110,7 @@ CLEDPArmor
 </Legs Equipment>
 
 <source>
-WoRS - Jihad
+Wars of Reaving
 </source>
 
 <tonnage>

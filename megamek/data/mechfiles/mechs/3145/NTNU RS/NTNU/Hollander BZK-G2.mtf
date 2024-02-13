@@ -1,11 +1,10 @@
-Version:1.3
-Hollander
-BZK-G2
+chassis:Hollander
+model:BZK-G2
 mul id:7992
 Config:Biped
 techbase:Inner Sphere
 era:3121
-source:RS3150 - Late Republic
+source:Record Sheets: 3150
 rules level:2
 
 mass:35

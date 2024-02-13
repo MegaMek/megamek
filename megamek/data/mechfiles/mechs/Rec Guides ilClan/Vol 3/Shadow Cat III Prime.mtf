@@ -1,13 +1,17 @@
-Version:1.0
-Shadow Cat III
-Prime
+chassis:Shadow Cat III
+model:Prime
 mul id:7491
 
 Config:Biped Omnimech
 techbase:Clan
 era:3111
-source:Rec Guide:ilClan #3- Dark Age
+source:Rec Guide:ilClan #3
 rules level:2
+role:Striker
+
+
+quirk:low_profile
+
 
 mass:45
 engine:270 XL (Clan) Engine(IS)

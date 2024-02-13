@@ -36,6 +36,10 @@ Whitestreak Speedboat
 IS Level 2
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Naval
 </motion_type>
@@ -84,7 +88,7 @@ UltraLightChassisMod
 </structural_tech_rating>
 
 <source>
-TRO VAr - Age of War
+TRO: Vehicle Annex (Revised)
 </source>
 
 <tonnage>

@@ -1,13 +1,21 @@
-Version:1.0
-Viper
-VP-7
+chassis:Viper
+model:VP-7
 
 Config:Biped
 techbase:Mixed (IS Chassis)
 era:3124
 rules level:2
+role:Brawler
 mul id:9489
-Source:Rec Guide:ilClan #32 - Late Republic
+Source:Rec Guide:ilClan #32
+
+
+
+quirk:imp_com
+quirk:rugged_1
+quirk:searchlight
+quirk:difficult_eject
+
 
 mass:70
 engine:280 Light Engine(IS)

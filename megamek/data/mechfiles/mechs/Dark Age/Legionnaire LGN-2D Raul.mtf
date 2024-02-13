@@ -1,12 +1,20 @@
-Version:1.0
-Legionnaire
-LGN-2D (Raul)
+chassis:Legionnaire
+model:LGN-2D (Raul)
 mul id:8296
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3132
 Rules Level:2
+role:Striker
+source:TRO: Dark Age
+
+
+
+quirk:easy_maintain
+quirk:imp_target_med
+weaponquirk:exposed_linkage:RA:5:ISRotaryAC5
+
 
 Mass:50
 Engine:350 XL Engine

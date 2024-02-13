@@ -1,13 +1,18 @@
-Version:1.0
-BattleAxe
-BKX-8D
+chassis:BattleAxe
+model:BKX-8D
 mul id:279
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3073
-Source:TRO 3075
+Source:TRO: 3075
 Rules Level:2
+role:Skirmisher
+
+
+
+quirk:difficult_maintain
+
 
 Mass:70
 Engine:280 Light Engine

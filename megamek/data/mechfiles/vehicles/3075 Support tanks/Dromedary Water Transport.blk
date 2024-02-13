@@ -36,6 +36,10 @@ Dromedary Water Transport
 IS Level 3
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Wheeled
 </motion_type>
@@ -107,7 +111,7 @@ Machine Gun
 </armor_tech_rating>
 
 <source>
-TRO 3075 - Age of War
+TRO: 3075
 </source>
 
 <tonnage>

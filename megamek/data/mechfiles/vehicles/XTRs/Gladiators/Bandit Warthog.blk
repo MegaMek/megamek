@@ -32,6 +32,10 @@ Bandit Hovercraft
 IS Level 4
 </type>
 
+<role>
+Scout
+</role>
+
 <motion_type>
 Hover
 </motion_type>
@@ -83,9 +87,14 @@ Machine Gun
 </Turret Equipment>
 
 <source>
-XTR Gladiators
+XTR: Gladiators
 </source>
 
 <tonnage>
 50.0
 </tonnage>
+
+<weaponQuirks>
+mod_weapons:TU:0:ISLargeVSPLaser
+mod_weapons:TU:1:Machine Gun
+</weaponQuirks>

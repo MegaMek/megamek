@@ -1,12 +1,13 @@
-Version:1.1
-Sarissa SecurityMech
-MN2-A
+chassis:Sarissa SecurityMech
+model:MN2-A
 mul id:4974
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3082
 Rules Level:4
+role:Juggernaut
+Source:TRO: Prototypes 
 
 Mass:50
 Engine:200 Fusion Engine

@@ -1,13 +1,18 @@
-Version:1.0
-Firefly
-FFL-4B
+chassis:Firefly
+model:FFL-4B
 mul id:1088
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3047
-Source:TRO 3050 - Succession Wars
+Source:TRO: 3050
 Rules Level:2
+role:Striker
+
+
+
+quirk:no_arms
+
 
 Mass:30
 Engine:150 Fusion Engine

@@ -36,6 +36,10 @@ Minotaur
 Clan Level 3
 </type>
 
+<role>
+Sniper
+</role>
+
 <motion_type>
 Biped
 </motion_type>
@@ -97,7 +101,7 @@ CLProtoMechAC2
 </Main Gun Equipment>
 
 <source>
-TRO 3060 - Jihad
+TRO: 3060
 </source>
 
 <tonnage>

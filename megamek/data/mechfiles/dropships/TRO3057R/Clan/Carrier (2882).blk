@@ -36,6 +36,10 @@ Carrier
 Clan Level 2
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -181,7 +185,7 @@ Clan Ultra AC/20 Ammo:50
 </structural_integrity>
 
 <source>
-TRO 3057R - Early Succession War
+TRO: 3057 Revised
 </source>
 
 <tonnage>

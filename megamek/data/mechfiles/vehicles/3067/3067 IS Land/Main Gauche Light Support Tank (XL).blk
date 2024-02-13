@@ -43,6 +43,10 @@ ISMG Ammo (100)
 <type>
 IS
 </type>
+
+<role>
+Sniper
+</role>
 <year>
 3066
 </year>
@@ -58,3 +62,7 @@ IS
 <motion_type>
 Tracked
 </motion_type>
+
+<source>
+TRO: 3067
+</source>

@@ -36,6 +36,10 @@ Interdictor Pocket Warship
 IS Level 4
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -191,7 +195,7 @@ ISNC3
 </structural_integrity>
 
 <source>
-RS 3145 NTNU - Late Republic
+Record Sheets: 3145 New Tech New Upgrades
 </source>
 
 <tonnage>

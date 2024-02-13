@@ -48,6 +48,10 @@ ISBeagleActiveProbe
 <type>
 IS Level 2
 </type>
+
+<role>
+Striker
+</role>
 <year>
 2958
 </year>
@@ -64,5 +68,5 @@ IS Level 2
 Wheeled
 </motion_type>
 <source>
-Succession Wars
+TRO: 3060
 </source>

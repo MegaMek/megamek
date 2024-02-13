@@ -32,6 +32,10 @@ Hawk Moth II Gunship
 IS Level 3
 </type>
 
+<role>
+Sniper
+</role>
+
 <motion_type>
 VTOL
 </motion_type>
@@ -86,9 +90,14 @@ Hyper Velocity Auto Cannon/2
 </Turret Equipment>
 
 <source>
-TRO 3145 Republic of the Sphere - Late Republic
+TRO: 3145 Republic of the Sphere
 </source>
 
 <tonnage>
 25.0
 </tonnage>
+
+<quirks>
+vtol_rotor_coaxial
+</quirks>
+

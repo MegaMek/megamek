@@ -1,13 +1,19 @@
-Version:1.0
-Zeus-X
-ZEU-9WD
+chassis:Zeus-X
+model:ZEU-9WD
 mul id:3646
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3067
-Source:TRO 3050U - Civil War
+Source:TRO: 3050
 Rules Level:2
+role:Brawler
+
+
+
+quirk:command_mech
+quirk:difficult_maintain
+
 
 Mass:80
 Engine:320 Light Engine

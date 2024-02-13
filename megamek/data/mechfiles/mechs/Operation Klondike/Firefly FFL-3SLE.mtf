@@ -1,13 +1,18 @@
-Version:1.1
-Firefly
-FFL-3SLE
+chassis:Firefly
+model:FFL-3SLE
 mul id:1086
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2790
 Rules Level:2
-Source:Op. Klondyke - Early Succession War 
+role:Striker
+Source:Historical: Operation Klondike 
+
+
+
+quirk:no_arms
+
 
 Mass:30
 Engine:150 XL Engine

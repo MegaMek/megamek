@@ -29,7 +29,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 /**
@@ -70,22 +69,45 @@ public abstract class AbstractDialog extends JDialog implements WindowListener {
     /**
      * This creates an AbstractDialog using the specified resource bundle. This is not recommended
      * by default.
+     *
+     * @param frame the dialog's parent frame
+     * @param modal if this dialog is modal
+     * @param resources the resource bundle for this dialog
+     * @param name the dialog's name
+     * @param title the dialog's title resource key. This is required for accessibility reasons, and
+     *              the method will error out if it isn't valid.
      */
     protected AbstractDialog(final JFrame frame, final boolean modal, final ResourceBundle resources,
                              final String name, final String title) {
         super(frame, modal);
-        // Reviewers - I guarded this for my own dev, as passing a title key that does not exist
-        // sees like it should not throw an NPE, but perhaps it should be left unguarded?
-        try {
-            setTitle(resources.getString(title));
-        } catch (MissingResourceException e) {
-            setTitle(title);
-        }
-
+        setTitle(resources.getString(title));
         setName(name);
         setFrame(frame);
         this.resources = resources;
     }
+
+    /**
+     * This allows Swing to create the dialog with another dialog as the parent. Which dialog swing renders on top
+     * is somewhat undefined, depending on the window manager. This can cause problems in the case of modal dialogs
+     * that show up behind other dialogs and you cannot get to them.
+     *
+     * @param dialog Owning dialog, for dialogs on dialogs
+     * @param frame Owning frame
+     * @param modal if this dialog is modal
+     * @param resources the resource bundle for this dialog
+     * @param name the dialog's name
+     * @param title the dialog's title resource key. This is required for accessibility reasons, and
+     *              the method will error out if it isn't valid.
+     */
+    protected AbstractDialog(final JDialog dialog, JFrame frame, final boolean modal, final ResourceBundle resources,
+                             final String name, final String title) {
+        super(dialog, modal);
+        setTitle(resources.getString(title));
+        setName(name);
+        setFrame(frame);
+        this.resources = resources;
+    }
+
     //endregion Constructors
 
     //region Getters/Setters

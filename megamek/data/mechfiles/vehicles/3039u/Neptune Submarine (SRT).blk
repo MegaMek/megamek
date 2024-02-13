@@ -29,12 +29,16 @@ Neptune Submarine
 </year>
 
 <source>
-TRO 3039 - Succession Wars
+TRO: 3039
 </source>
 
 <type>
 IS Level 2
 </type>
+
+<role>
+Juggernaut
+</role>
 
 <tonnage>
 100.0

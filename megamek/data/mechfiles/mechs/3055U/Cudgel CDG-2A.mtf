@@ -1,13 +1,18 @@
-Version:1.1
-Cudgel
-CDG-2A
+chassis:Cudgel
+model:CDG-2A
 mul id:767
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3066
-Source:TRO 3055 - Civil War
+Source:TRO: 3055
 Rules Level:3
+role:Juggernaut
+
+
+
+quirk:difficult_maintain
+
 
 Mass:80
 Engine:400 XL Engine

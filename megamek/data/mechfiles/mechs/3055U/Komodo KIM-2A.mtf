@@ -1,13 +1,21 @@
-Version:1.0
-Komodo
-KIM-2A
+chassis:Komodo
+model:KIM-2A
 mul id:1811
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3053
-Source:TRO 3055 - Clan Invasion
+Source:TRO: 3055
 Rules Level:2
+role:Striker
+
+
+
+quirk:ext_twist
+quirk:low_profile
+quirk:pro_actuator
+quirk:weak_head_2
+
 
 Mass:45
 Engine:225 XL Engine

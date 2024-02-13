@@ -1,0 +1,97 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+SupportTank
+</UnitType>
+
+<Name>
+Luciano White Wolverine
+</Name>
+
+<model>
+
+</model>
+
+<mul id:>
+4540
+</mul id:>
+
+<year>
+2554
+</year>
+
+<type>
+IS Level 2
+</type>
+
+<role>
+None
+</role>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<cruiseMP>
+4
+</cruiseMP>
+
+<engine_type>
+1
+</engine_type>
+
+<fuel>
+.5
+</fuel>
+
+<armor>
+4
+3
+3
+3
+</armor>
+
+<barrating>
+6
+</barrating>
+
+<structural_tech_rating>
+3
+</structural_tech_rating>
+
+<Body Equipment>
+SnowmobileChassis
+</Body Equipment>
+
+<Front Equipment>
+Searchlight
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<transporters>
+cargobay:.5:1
+</transporters>
+
+<source>
+TRO: Vehicle Annex (Revised)
+</source>
+
+<tonnage>
+8.0
+</tonnage>

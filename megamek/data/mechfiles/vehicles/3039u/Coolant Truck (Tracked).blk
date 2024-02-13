@@ -32,15 +32,16 @@ Coolant Truck
 IS Level 1
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
 
 <transporters>
 insulatedcargobay:4.35:1:1
-</transporters>
-
-<transporters>
 insulatedcargobay:1.74:1:2
 </transporters>
 
@@ -83,7 +84,7 @@ Vehicle Flamer
 </Turret Equipment>
 
 <source>
-TRO 3039 - Star League
+TRO: 3039
 </source>
 
 <tonnage>

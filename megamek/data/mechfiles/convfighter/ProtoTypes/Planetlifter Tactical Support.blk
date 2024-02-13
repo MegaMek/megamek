@@ -36,6 +36,10 @@ Planetlifter Tactical Support
 IS Level 3
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -110,7 +114,7 @@ ISArrowIVAmmo
 </Fuselage Equipment>
 
 <source>
-TRO Prototypes - Jihad
+TRO: Prototypes
 </source>
 
 <tonnage>
@@ -148,3 +152,8 @@ ARMOR:Imstar V-Stealth
 COMMUNICATIONS:IMB Hi-Def ComCon with Angel ECM Suite
 TARGETING:Imstar SkyWatch with LDR Array
 </systemManufacturers>
+
+<quirks>
+imp_com
+</quirks>
+

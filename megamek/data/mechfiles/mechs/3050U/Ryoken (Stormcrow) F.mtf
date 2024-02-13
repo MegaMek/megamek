@@ -1,13 +1,17 @@
-Version:1.0
-Ryoken (Stormcrow)
-F
+chassis:Ryoken
+clanname:Stormcrow
+model:F
 mul id:2754
 
 Config:Biped Omnimech
 TechBase:Clan
 Era:3069
-Source:TRO 3050 - Jihad
+Source:TRO: 3050
 Rules Level:2
+role:Striker
+
+quirk:stable
+
 
 Mass:55
 Engine:330 XL (Clan) Engine(IS)

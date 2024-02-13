@@ -1,13 +1,19 @@
-Version:1.0
-Helepolis
-HEP-4H
+chassis:Helepolis
+model:HEP-4H
 mul id:1463
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3074
-Source:TRO 3075
+Source:TRO: 3075
 Rules Level:3
+role:Missile Boat
+
+
+
+quirk:reinforced_legs
+quirk:stable
+
 
 Mass:75
 Engine:300 Light Engine

@@ -36,6 +36,10 @@ Issus
 Clan Level 2
 </type>
 
+<role>
+Fast Dogfighter
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -107,7 +111,7 @@ CLCASE
 </Fuselage Equipment>
 
 <source>
-RS Unique Fighters - Civil War
+Record Sheets: Unique Fighters
 </source>
 
 <tonnage>

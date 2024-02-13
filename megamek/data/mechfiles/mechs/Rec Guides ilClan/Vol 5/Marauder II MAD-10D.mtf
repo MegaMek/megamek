@@ -1,13 +1,20 @@
-Version:1.1
-Marauder II
-MAD-10D
+chassis:Marauder II
+model:MAD-10D
 mul id:7519
 
 Config:Biped
 techbase:Mixed (IS Chassis)
 era:3141
 rules level:3
-source:Rec Guide:ilClan #5 - Dark Age
+role:Skirmisher
+source:Rec Guide:ilClan #5
+
+
+
+quirk:command_mech
+quirk:hyper_actuator
+quirk:low_profile
+
 
 mass:100
 engine:400 XL Engine(IS)

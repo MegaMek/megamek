@@ -1,12 +1,13 @@
-Version:1.0
-Centurion
-CN10-J
+chassis:Centurion
+model:CN10-J
 mul id:7696
 
 Config:Biped
 techbase:Inner Sphere
 era:3057
 rules level:2
+role:Brawler
+source:Shrapnel #2
 
 mass:55
 engine:220 Fusion Engine(IS)

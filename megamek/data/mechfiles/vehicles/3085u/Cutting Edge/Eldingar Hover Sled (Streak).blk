@@ -32,6 +32,10 @@ Eldingar Hover Sled
 Clan Level 4
 </type>
 
+<role>
+Skirmisher
+</role>
+
 <motion_type>
 Hover
 </motion_type>
@@ -86,7 +90,7 @@ CLStreakLRM15
 </Turret Equipment>
 
 <source>
-Dark Age
+TRO: 3085
 </source>
 
 <tonnage>

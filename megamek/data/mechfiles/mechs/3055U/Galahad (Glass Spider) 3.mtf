@@ -1,13 +1,19 @@
-Version:1.0
-Galahad (Glass Spider)
-3
+chassis:Galahad
+clanname:Glass Spider
+model:3
 mul id:1172
 
 Config:Biped
 TechBase:Clan
 Era:3065
-Source:TRO 3055 - Civil War
+Source:TRO: 3055
 Rules Level:2
+role:Sniper
+
+quirk:anti_air
+quirk:ext_twist
+quirk:multi_trac
+
 
 Mass:60
 Engine:240 Fusion (Clan) Engine

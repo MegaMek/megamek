@@ -25,16 +25,20 @@ Elemental III Battle Armor
 </mul id:>
 
 <year>
-3081
+3091
 </year>
 
 <originalBuildYear>
-3081
+3091
 </originalBuildYear>
 
 <type>
 Clan Level 2
 </type>
+
+<role>
+Ambusher
+</role>
 
 <motion_type>
 Jump
@@ -131,7 +135,7 @@ TARGETING:Various
 </systemManufacturers>
 
 <source>
-Rec Guide:ilClan #24 - Dark Age
+Rec Guide:ilClan #24
 </source>
 
 <chassis>

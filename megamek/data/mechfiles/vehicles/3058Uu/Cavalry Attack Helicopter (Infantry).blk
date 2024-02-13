@@ -32,6 +32,10 @@ Cavalry Attack Helicopter
 IS Level 2
 </type>
 
+<role>
+Striker
+</role>
+
 <motion_type>
 VTOL
 </motion_type>
@@ -90,7 +94,7 @@ Machine Gun
 </Rotor Equipment>
 
 <source>
-Civil War
+TRO: 3058
 </source>
 
 <tonnage>

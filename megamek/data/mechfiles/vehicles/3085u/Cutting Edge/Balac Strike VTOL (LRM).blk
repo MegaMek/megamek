@@ -32,6 +32,10 @@ Balac Strike VTOL
 Clan Level 2
 </type>
 
+<role>
+Missile Boat
+</role>
+
 <motion_type>
 VTOL
 </motion_type>
@@ -86,9 +90,14 @@ CLERMediumLaser
 </Rotor Equipment>
 
 <source>
-Dark Age
+TRO: 3085
 </source>
 
 <tonnage>
 25.0
 </tonnage>
+
+<quirks>
+vtol_rotor_coaxial
+</quirks>
+

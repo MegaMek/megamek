@@ -1,13 +1,19 @@
-Version:1.1
-Scorpion
-SCP-2N
+chassis:Scorpion
+model:SCP-2N
 mul id:8315
-
 Config:Quad
 techbase:Inner Sphere
 era:3131
-source:Rec Guide:ilClan #19 - Early Republic
+source:Rec Guide:ilClan #19
 rules level:2
+role:Skirmisher
+
+
+
+quirk:bad_rep_clan
+quirk:bad_rep_is
+quirk:hard_pilot
+
 
 mass:55
 engine:330 Light Engine(IS)
@@ -16,7 +22,7 @@ myomer:Standard
 cockpit:Standard Cockpit
 gyro:XL Gyro
 
-heat sinks:10 Single
+heat sinks:10 IS Double
 walk mp:6
 jump mp:0
 
@@ -34,10 +40,10 @@ RTR armor:6
 RTC armor:8
 
 Weapons:4
+TAG, Left Torso
 Plasma Rifle, Right Torso
 MML 3, Right Torso
 MML 3, Right Torso
-TAG, Left Torso
 
 Front Left Leg:
 Hip
@@ -70,8 +76,8 @@ IS Endo Steel
 Left Torso:
 Fusion Engine
 Fusion Engine
-IS Ammo MML-3 LRM
 IS Ammo MML-3 SRM
+IS Ammo MML-3 LRM
 ISTAG
 Supercharger
 ISCASEII

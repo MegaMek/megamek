@@ -32,6 +32,10 @@ Grenadier Battle Armor
 IS Level 2
 </type>
 
+<role>
+Ambusher
+</role>
+
 <motion_type>
 Leg
 </motion_type>
@@ -85,7 +89,7 @@ BA-Compact Narc Ammo:LA:Shots3#
 </Trooper 5 Equipment>
 
 <source>
-TRO 3075 - Jihad
+TRO: 3075
 </source>
 
 <chassis>

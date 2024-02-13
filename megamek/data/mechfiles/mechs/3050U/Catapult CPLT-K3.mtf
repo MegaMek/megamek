@@ -1,13 +1,19 @@
-Version:1.0
-Catapult
-CPLT-K3
+chassis:Catapult
+model:CPLT-K3
 mul id:3903
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3047
-Source:TRO 3050 - Succession Wars
+Source:TRO: 3050
 Rules Level:2
+role:Sniper
+
+
+
+quirk:no_arms
+quirk:weak_head_1
+
 
 Mass:65
 Engine:260 Fusion Engine(IS)

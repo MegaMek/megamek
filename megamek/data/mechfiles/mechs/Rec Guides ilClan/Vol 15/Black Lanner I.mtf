@@ -1,13 +1,16 @@
-Version:1.0
-Black Lanner
-I
+chassis:Black Lanner
+model:I
 mul id:8187
 
 Config:Biped Omnimech
 techbase:Mixed (Clan Chassis)
 era:3143
-source:Rec Guide:ilClan #15 - Dark Age
+source:Rec Guide:ilClan #15
 rules level:2
+role:Skirmisher
+
+quirk:stable
+
 
 mass:55
 engine:385 XL (Clan) Engine

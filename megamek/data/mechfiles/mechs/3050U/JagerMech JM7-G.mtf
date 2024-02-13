@@ -1,13 +1,18 @@
-Version:1.1
-JagerMech
-JM7-G
+chassis:JagerMech
+model:JM7-G
 mul id:4392
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3068
-Source:TRO 3050 - Jihad
+Source:TRO: 3050
 Rules Level:2
+role:Sniper
+
+
+
+quirk:anti_air
+
 
 Mass:70
 Engine:280 XL Fusion Engine

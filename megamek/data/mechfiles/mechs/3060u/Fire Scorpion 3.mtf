@@ -1,13 +1,16 @@
-Version:1.0
-Fire Scorpion
-3
+chassis:Fire Scorpion
+model:3
 mul id:1073
 
 Config:Quad
 techbase:Clan
 era:3071
-source:TRO 3060 - Jihad
+source:TRO: 3060
 rules level:2
+role:Skirmisher
+
+quirk:cowl
+
 
 mass:65
 engine:260 Fusion (Clan) Engine(IS)

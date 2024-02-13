@@ -32,6 +32,10 @@ Regulator II Hovertank
 IS Level 4
 </type>
 
+<role>
+Scout
+</role>
+
 <tonnage>
 50.0
 </tonnage>
@@ -87,5 +91,5 @@ ISLightGaussRifle
 </Turret Equipment>
 
 <source>
-Dark Age
+TRO: 3085
 </source>

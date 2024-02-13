@@ -1,13 +1,16 @@
-Version:1.0
-Regent
-C
+chassis:Regent
+model:C
 mul id:8362
 
 Config:Biped Omnimech
 techbase:Mixed (Clan Chassis)
 era:3145
-source:Rec Guide:ilClan #21 - Dark Age
+source:Rec Guide:ilClan #21
 rules level:2
+role:Sniper
+
+quirk:easy_maintain
+
 
 mass:90
 engine:270 Fusion (Clan) Engine

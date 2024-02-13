@@ -1,0 +1,267 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Dropship
+</UnitType>
+
+<Name>
+Taihou Assault Dropship
+</Name>
+
+<model>
+
+</model>
+
+<mul id:>
+5174
+</mul id:>
+
+<year>
+3079
+</year>
+
+<originalBuildYear>
+3079
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<role>
+None
+</role>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+smallcraftbay:2.0:1:2
+cargobay:614.0:2:6
+2ndclassquarters:28.0:0
+steeragequarters:255.0:0
+</transporters>
+
+<SafeThrust>
+6
+</SafeThrust>
+
+<heatsinks>
+250
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+12000
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+20
+</armor_type>
+
+<armor_tech>
+5
+</armor_tech>
+
+<armor>
+601
+451
+451
+328
+</armor>
+
+<Nose Equipment>
+(B) Sub-Capital Cannon (Heavy)
+Sub-Capital Cannon (Heavy)
+Sub-Capital Cannon (Heavy)
+Sub-Capital Cannon (Heavy)
+Ammo Heavy SCC:60
+(B) Heavy PPC
+Heavy PPC
+Heavy PPC
+(B) MRM 40
+MRM 40
+MRM 40
+IS MRM 40 Ammo:42
+ISApollo
+ISApollo
+ISApollo
+(B) Screen Launcher
+Ammo Screen:10
+</Nose Equipment>
+
+<Left Side Equipment>
+(B) Heavy PPC
+Heavy PPC
+Heavy PPC
+(B) MRM 40
+MRM 40
+MRM 40
+IS MRM 40 Ammo:42
+ISApollo
+ISApollo
+ISApollo
+(B) ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAMS Ammo:72
+(R) (B) ISAntiMissileSystem
+(R) ISAntiMissileSystem
+(R) ISAntiMissileSystem
+(R) ISAMS Ammo:72
+</Left Side Equipment>
+
+<Right Side Equipment>
+(B) Heavy PPC
+Heavy PPC
+Heavy PPC
+(B) MRM 40
+MRM 40
+MRM 40
+IS MRM 40 Ammo:42
+ISApollo
+ISApollo
+ISApollo
+(B) ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAMS Ammo:72
+(R) (B) ISAntiMissileSystem
+(R) ISAntiMissileSystem
+(R) ISAntiMissileSystem
+(R) ISAMS Ammo:72
+</Right Side Equipment>
+
+<Aft Equipment>
+(B) Heavy PPC
+Heavy PPC
+Heavy PPC
+(B) MRM 40
+MRM 40
+MRM 40
+IS MRM 40 Ammo:42
+ISApollo
+ISApollo
+ISApollo
+</Aft Equipment>
+
+<Hull Equipment>
+ISNC3
+</Hull Equipment>
+
+<structural_integrity>
+30
+</structural_integrity>
+
+<capabilities>
+Protected by 115 tons of Ferro Aluminum armor, as part to enhance the Taihou's fleet performance, the ship had been fitted out with advance tech Nirasaki Naval C3 System, which like its land-based version helps squadrons of ships fitted with the system to enhance the effectiveness against opposing enemy forces. Intended as an assault ship, the Taihou features a relatively small cargo capacity of 472 tons along with the ability to carry two Small Craft to allow its complement of 36 Battle Armor marines to perform boarding operations.
+</capabilities>
+
+<overview>
+The Taihou Assault DropShip was produced as part of the Draconis Combine efforts to produce a replacement vessel for its diminished navy in the late Jihad era.
+</overview>
+
+<deployment>
+Conceived as a replacement for lost WarShip producing capacities of the Combine, the Taihou utilized a sizable array of Sub-Capital Weapons to meet this role. The ship carried four Heavy Capital Cannons with 60 rounds of fire for them mounted in the ship's nose. Backing up these powerful Sub-capital weapons is a trio of Heavy PPCs and advanced tech Apollo Fire Control System for the ship's MRM 40 Launchers. A Screen Launcher was mounted in the nose to help protect the ship from incoming fire. In the ship's right and left wing sections and aft quarters are mounted an additional trinity of Heavy PPCs and Apollo Guided MRM 40 Launchers. An Anti-Missile System was also added to each of the wing sections, to cut down on missile fire and potentially capital grade missiles used against the ship. On rear flanks of the wing sections, additional Anti-Missile Systems are added per facing flanking sections.
+</deployment>
+
+<history>
+Produced as a collaborative effort between Hinsdale Elec's shipyard, personnel from various companies such as Midway Warship Yard and electronic assistance from the Nirasaki Computers Collective, the end-result was a tough and small Assault DropShip which could inflict considerable damage against even WarShips.
+</history>
+
+<manufacturer>
+Hinsdale Elec
+</manufacturer>
+
+<primaryFactory>
+Dover
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<use>
+Assault DropShip
+</use>
+
+<length>
+200 meters
+</length>
+
+<width>
+90 meters
+</width>
+
+<height>
+30 meters
+</height>
+
+<source>
+TRO: 3085
+</source>
+
+<tonnage>
+12000.0
+</tonnage>
+
+<designtype>
+1
+</designtype>
+
+<crew>
+29
+</crew>
+
+<officers>
+4
+</officers>
+
+<gunners>
+9
+</gunners>
+
+<passengers>
+0
+</passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+36
+</battlearmor>
+
+<otherpassenger>
+0
+</otherpassenger>
+
+<life_boat>
+5
+</life_boat>
+
+<escape_pod>
+5
+</escape_pod>
+

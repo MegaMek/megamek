@@ -1,13 +1,18 @@
-Version:1.0
-Victor
-VTR-9D
+chassis:Victor
+model:VTR-9D
 mul id:3410
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3049
-Source:TRO 3050 - Clan Invasion
+Source:TRO: 3050
 Rules Level:2
+role:Skirmisher
+
+
+
+quirk:rugged_1
+
 
 Mass:80
 Engine:320 Fusion Engine

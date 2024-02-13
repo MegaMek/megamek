@@ -36,6 +36,10 @@ CRX-OR
 Mixed (IS Chassis) Experimental
 </type>
 
+<role>
+Fast Dogfighter
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -104,7 +108,7 @@ Clan Streak SRM 4 Ammo:OMNI
 </Fuselage Equipment>
 
 <source>
-TRO 3067 - Jihad
+TRO: 3067
 </source>
 
 <tonnage>

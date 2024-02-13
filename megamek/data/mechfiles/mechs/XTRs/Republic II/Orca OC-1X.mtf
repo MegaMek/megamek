@@ -1,13 +1,23 @@
-Version:1.1
-Orca
-OC-1X
+chassis:Orca
+model:OC-1X
 mul id:7356
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3103
-Source:XTRO Republic II - Early Republic  
+Source:XTR: Republic II  
 Rules Level:4
+role:Sniper
+
+
+
+
+quirk:distracting
+quirk:hard_pilot
+quirk:obsolete
+quirk:poor_performance
+quirk:prototype
+
 
 Mass:200
 Engine:400 XL Engine(IS)

@@ -1,13 +1,19 @@
-Version:1.0
-Crockett
-CRK-5004-1
+chassis:Crockett
+model:CRK-5004-1
 mul id:728
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3063
-Source:TRO 3050 - Civil War
+Source:TRO: 3050
 Rules Level:2
+role:Juggernaut
+
+
+
+quirk:easy_pilot
+quirk:poor_life_support
+
 
 Mass:85
 Engine:255 Fusion Engine(IS)

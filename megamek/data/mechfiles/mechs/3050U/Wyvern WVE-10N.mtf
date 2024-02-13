@@ -1,13 +1,18 @@
-Version:1.0
-Wyvern
-WVE-10N
+chassis:Wyvern
+model:WVE-10N
 mul id:3596
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3065
-Source:TRO 3050 - Civil War
+Source:TRO: 3050
 Rules Level:2
+role:Brawler
+
+
+
+quirk:rugged_1
+
 
 Mass:45
 Engine:180 Fusion Engine(IS)

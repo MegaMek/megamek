@@ -1,12 +1,18 @@
-Version:1.3
-BattleMaster
-BLR-1Gd
+chassis:BattleMaster
+model:BLR-1Gd
 mul id:5867
 Config:Biped
 techbase:Inner Sphere
 era:2760
-source:ER 2750 - Star League
+source:Era Report 2750
 rules level:3
+role:Brawler
+
+
+
+quirk:command_mech
+quirk:weak_head_1
+
 
 mass:85
 engine:340 Fusion Engine(IS)

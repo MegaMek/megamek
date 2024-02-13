@@ -1,13 +1,21 @@
-Version:1.1
-Tenshi
-TN-10-O
+chassis:Tenshi
+model:TN-10-O
 mul id:6421
 
 Config:Biped Omnimech
 techbase:Inner Sphere
 era:3101
-source:TRO 3145 Draconis Combine - Late Republic
+source:TRO: 3145 Draconis Combine
 rules level:4
+role:Sniper
+
+
+
+
+quirk:distracting
+quirk:searchlight
+quirk:difficult_eject
+
 
 mass:95
 engine:285 Light Engine(IS)

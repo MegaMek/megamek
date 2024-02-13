@@ -1,13 +1,18 @@
-Version:1.1
-Wyvern
-WVE-5UX
+chassis:Wyvern
+model:WVE-5UX
 mul id:7319
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2686
-Source:XTRO Gunslingers - Star League
+Source:XTR: Gunslingers
 Rules Level:4
+role:Brawler
+
+
+
+quirk:rugged_1
+
 
 Mass:45
 Engine:180 Fusion Engine(IS)

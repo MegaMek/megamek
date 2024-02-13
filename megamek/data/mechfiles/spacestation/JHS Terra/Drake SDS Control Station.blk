@@ -36,6 +36,10 @@ Drake SDS Control Station
 IS Level 4
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -211,7 +215,7 @@ DirectTacticalAnalysisSystem:SIZE:18.0
 </structural_integrity>
 
 <source>
-JHS:Terra - Jihad
+Jihad Hot Spots: Terra
 </source>
 
 <tonnage>

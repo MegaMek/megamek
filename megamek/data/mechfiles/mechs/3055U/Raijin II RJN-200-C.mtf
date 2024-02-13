@@ -1,13 +1,19 @@
-Version:1.0
-Raijin II
-RJN-200-C
+chassis:Raijin II
+model:RJN-200-C
 mul id:2630
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3066
-Source:TRO 3055 - Civil War
+Source:TRO: 3055
 Rules Level:2
+role:Skirmisher
+
+
+
+quirk:ext_twist
+quirk:bad_rep_is
+
 
 Mass:50
 Engine:300 Light Engine

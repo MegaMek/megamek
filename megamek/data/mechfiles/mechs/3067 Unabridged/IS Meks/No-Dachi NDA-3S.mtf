@@ -1,12 +1,18 @@
-Version:1.1
-No-Dachi
-NDA-3S
+chassis:No-Dachi
+model:NDA-3S
 mul id:5692
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3081
 Rules Level:3
+role:Brawler
+source:Record Sheets: 3067 Unabridged
+
+
+
+quirk:hyper_actuator
+
 
 Mass:70
 Engine:350 XL Fusion Engine

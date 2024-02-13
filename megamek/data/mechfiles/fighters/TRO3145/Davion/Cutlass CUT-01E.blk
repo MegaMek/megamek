@@ -36,6 +36,10 @@ CUT-01E
 IS Level 3
 </type>
 
+<role>
+Fire Support
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -137,10 +141,16 @@ TARGETING:Rander TA1000 with Beagle Active Probe
 </systemManufacturers>
 
 <source>
-TRO 3145 Federated Suns - Late Republic
+TRO: 3145 Federated Suns
 </source>
 
 <tonnage>
 70.0
 </tonnage>
+
+
+<quirks>
+imp_life_support
+atmo_instability
+</quirks>
 

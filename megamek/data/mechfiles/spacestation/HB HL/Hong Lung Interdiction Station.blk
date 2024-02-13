@@ -36,6 +36,10 @@ Hong Lung Interdiction Station
 IS Level 3
 </type>
 
+<role>
+None
+</role>
+
 <designtype>
 1
 </designtype>
@@ -193,7 +197,7 @@ Medium Laser
 </structural_integrity>
 
 <source>
-HB HL - Late Succession War - Renaissance
+Handbook: House Liao
 </source>
 
 <tonnage>

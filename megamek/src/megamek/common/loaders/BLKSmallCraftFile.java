@@ -31,26 +31,7 @@ public class BLKSmallCraftFile extends BLKFile implements IMechLoader {
     public Entity getEntity() throws EntityLoadingException {
 
         SmallCraft a = new SmallCraft();
-
-        if (!dataFile.exists("Name")) {
-            throw new EntityLoadingException("Could not find name block.");
-        }
-        a.setChassis(dataFile.getDataAsString("Name")[0]);
-        if (dataFile.exists("Model") && (dataFile.getDataAsString("Model")[0] != null)) {
-            a.setModel(dataFile.getDataAsString("Model")[0]);
-        } else {
-            a.setModel("");
-        }
-        if (dataFile.exists(MtfFile.MUL_ID)) {
-            a.setMulId(dataFile.getDataAsInt(MtfFile.MUL_ID)[0]);
-        }
-        if (dataFile.exists("source")) {
-            a.setSource(dataFile.getDataAsString("source")[0]);
-        }
-
-        setTechLevel(a);
-        setFluff(a);
-        checkManualBV(a);
+        setBasicEntityData(a);
 
         if (dataFile.exists("originalBuildYear")) {
             a.setOriginalBuildYear(dataFile.getDataAsInt("originalBuildYear")[0]);
@@ -168,10 +149,10 @@ public class BLKSmallCraftFile extends BLKFile implements IMechLoader {
             throw new EntityLoadingException("Incorrect armor array length");
         }
 
-        a.initializeArmor(armor[BLKAeroFile.NOSE], SmallCraft.LOC_NOSE);
-        a.initializeArmor(armor[BLKAeroFile.RW], SmallCraft.LOC_RWING);
-        a.initializeArmor(armor[BLKAeroFile.LW], SmallCraft.LOC_LWING);
-        a.initializeArmor(armor[BLKAeroFile.AFT], SmallCraft.LOC_AFT);
+        a.initializeArmor(armor[BLKAeroSpaceFighterFile.NOSE], SmallCraft.LOC_NOSE);
+        a.initializeArmor(armor[BLKAeroSpaceFighterFile.RW], SmallCraft.LOC_RWING);
+        a.initializeArmor(armor[BLKAeroSpaceFighterFile.LW], SmallCraft.LOC_LWING);
+        a.initializeArmor(armor[BLKAeroSpaceFighterFile.AFT], SmallCraft.LOC_AFT);
         a.initializeArmor(IArmorState.ARMOR_NA, SmallCraft.LOC_HULL);
 
         a.autoSetInternal();
@@ -184,8 +165,12 @@ public class BLKSmallCraftFile extends BLKFile implements IMechLoader {
         }
 
         addTransports(a);
-        a.setArmorTonnage(a.getArmorWeight());
 
+        // how many bombs can it carry; depends on transport bays
+        a.autoSetMaxBombPoints();
+
+        a.setArmorTonnage(a.getArmorWeight());
+        loadQuirks(a);
         return a;
     }
 
@@ -241,7 +226,7 @@ public class BLKSmallCraftFile extends BLKFile implements IMechLoader {
                     facing = 2;
                     equipName = equipName.substring(0, equipName.length() - 4)
                             .trim();
-                }                 
+                }
 
                 EquipmentType etype = EquipmentType.get(equipName);
 
@@ -258,7 +243,7 @@ public class BLKSmallCraftFile extends BLKFile implements IMechLoader {
                         int useLoc = TestEntity.eqRequiresLocation(t, etype) ? nLoc : SmallCraft.LOC_HULL;
                         Mounted mount = t.addEquipment(etype, useLoc, rearMount);
                         // Need to set facing for VGLs
-                        if ((etype instanceof WeaponType) 
+                        if ((etype instanceof WeaponType)
                                 && etype.hasFlag(WeaponType.F_VGL)) {
                             if (facing == -1) {
                                 mount.setFacing(defaultAeroVGLFacing(useLoc, rearMount));

@@ -50,7 +50,7 @@ public class ISPulseLaserLargePrototype extends PulseLaserWeapon {
         waterExtremeRange = 10;
         tonnage = 7.0;
         criticals = 2;
-        bv = 119;
+        bv = 108;
         cost = 875000;
         shortAV = 9;
         medAV = 9;

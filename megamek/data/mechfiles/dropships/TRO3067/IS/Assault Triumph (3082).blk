@@ -36,6 +36,10 @@ Assault Triumph
 IS Level 2
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -158,7 +162,7 @@ ISLaserAntiMissileSystem
 </structural_integrity>
 
 <source>
-TRO 3067 - Jihad
+TRO: 3067
 </source>
 
 <tonnage>

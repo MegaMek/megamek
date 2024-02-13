@@ -1,13 +1,19 @@
-Version:1.0
-Nyx
-NX-80C
+chassis:Nyx
+model:NX-80C
 mul id:2308
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3078
-Source:Dark Age
+source:TRO: 3085
 Rules Level:2
+role:Striker
+
+
+
+quirk:low_profile
+quirk:difficult_maintain
+
 
 Mass:30
 Engine:300 XL Engine

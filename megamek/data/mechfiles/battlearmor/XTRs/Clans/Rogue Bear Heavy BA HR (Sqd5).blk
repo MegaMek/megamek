@@ -65,12 +65,16 @@ Clan BA Stealth (Basic):RA
 Mixed (Clan Chassis)
 </type>
 
+<role>
+Ambusher
+</role>
+
 <year>
 3078
 </year>
 
 <source>
-XTRO Clans - Jihad
+XTR: Clans
 </source>
 
 <motion_type>
@@ -116,3 +120,9 @@ JUMPJET:Unknown
 COMMUNICATIONS:Unknown
 TARGETING:Unknown
 </systemManufacturers>
+
+<quirks>
+non_standard
+prototype
+</quirks>
+

@@ -32,6 +32,10 @@ Donar Assault Helicopter
 Clan Level 3
 </type>
 
+<role>
+Striker
+</role>
+
 <motion_type>
 VTOL
 </motion_type>
@@ -86,7 +90,7 @@ CLMastMount
 </Rotor Equipment>
 
 <source>
-Civil War
+TRO: 3060
 </source>
 
 <tonnage>

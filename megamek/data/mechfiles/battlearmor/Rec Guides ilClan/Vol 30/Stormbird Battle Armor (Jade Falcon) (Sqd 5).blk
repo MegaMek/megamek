@@ -36,6 +36,10 @@ Stormbird Battle Armor
 Mixed (Clan Chassis)
 </type>
 
+<role>
+Ambusher
+</role>
+
 <motion_type>
 Jump
 </motion_type>
@@ -92,7 +96,7 @@ Quatre Belle (CSR Beta), Sudeten (Olivetti
 </primaryFactory>
 
 <source>
-Rec Guide:ilClan #30 - Early Republic
+Rec Guide:ilClan #30
 </source>
 
 <chassis>

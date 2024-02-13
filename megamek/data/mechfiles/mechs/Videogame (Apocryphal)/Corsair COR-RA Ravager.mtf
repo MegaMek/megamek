@@ -1,11 +1,11 @@
-Version:1.0
-Corsair
-COR-RA Ravager
+chassis:Corsair
+model:COR-RA Ravager
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3037
 Rules Level:2
+source: Videogame (Apocryphal)
 
 Mass:95
 Engine:285 XL Engine(IS)

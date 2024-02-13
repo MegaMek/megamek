@@ -1,12 +1,16 @@
-Version:1.3
-Lineholder
-KW2-LH10
+chassis:Lineholder
+model:KW2-LH10
 mul id:7996
 Config:Biped
 techbase:Inner Sphere
 era:3131
-source:RS3150 - 3131
+source:Record Sheets: 3150
 rules level:3
+
+
+
+quirk:easy_maintain
+
 
 mass:55
 engine:275 XL Engine(IS)

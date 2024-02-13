@@ -1,13 +1,18 @@
-Version:1.0
-Blackjack
-BJ-1
+chassis:Blackjack
+model:BJ-1
 mul id:373
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2757
-Source:TRO 3039 - Star League
+Source:TRO: 3039
 Rules Level:1
+role:Sniper
+
+
+
+quirk:bad_rep_is
+
 
 Mass:45
 Engine:180 Fusion Engine

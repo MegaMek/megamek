@@ -36,6 +36,10 @@ Padilla Tube Artillery Tank
 IS Level 3
 </type>
 
+<role>
+Missile Boat
+</role>
+
 <motion_type>
 Wheeled
 </motion_type>
@@ -88,7 +92,7 @@ LRM 5
 </Turret Equipment>
 
 <source>
-Jihad
+TRO: 3085
 </source>
 
 <tonnage>

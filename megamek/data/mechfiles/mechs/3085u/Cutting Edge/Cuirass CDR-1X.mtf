@@ -1,13 +1,19 @@
-Version:1.1
-Cuirass
-CDR-1X
+chassis:Cuirass
+model:CDR-1X
 mul id:769
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3086
-Source:Dark Age
+source:TRO: 3085
 Rules Level:2
+role:Striker
+
+
+
+
+quirk:easy_maintain
+
 
 Mass:40
 Engine:240 XL Engine(IS)

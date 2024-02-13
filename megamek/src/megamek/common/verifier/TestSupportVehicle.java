@@ -16,6 +16,7 @@ package megamek.common.verifier;
 
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
+import megamek.common.equipment.ArmorType;
 import megamek.common.util.StringUtil;
 import megamek.common.weapons.flamers.VehicleFlamerWeapon;
 import megamek.common.weapons.infantry.InfantryWeapon;
@@ -84,7 +85,7 @@ public class TestSupportVehicle extends TestEntity {
         }
 
         /**
-         * Finds the enum value corresponding to a support vehicle based on movement mode.
+         * Finds the enum value corresponding to a support vehicle.
          *
          * @param entity The support vehicle
          * @return       The support vehicle type, or {@code null} if the entity's movement type is not
@@ -92,6 +93,10 @@ public class TestSupportVehicle extends TestEntity {
          */
         public static @Nullable
         SVType getVehicleType(Entity entity) {
+            // When grounded, FWS revert to wheeled movement mode; must be independent of this
+            if (entity instanceof FixedWingSupport) {
+                return FIXED_WING;
+            }
             switch (entity.getMovementMode()) {
                 case AIRSHIP:
                     return AIRSHIP;
@@ -493,30 +498,19 @@ public class TestSupportVehicle extends TestEntity {
      * @param techManager Applies the filtering criteria
      * @return            A list of armor equipment that meets the tech constraints
      */
-    public static List<EquipmentType> legalArmorsFor(ITechManager techManager) {
-        if (techManager.getTechLevel().ordinal() < SimpleTechLevel.ADVANCED.ordinal()) {
-            return Collections.singletonList(EquipmentType.get(EquipmentType.armorNames[EquipmentType.T_ARMOR_STANDARD]));
-        }
-        List<EquipmentType> retVal = new ArrayList<>();
-        for (int at = 0; at < EquipmentType.armorNames.length; at++) {
-            if (at == EquipmentType.T_ARMOR_PATCHWORK) {
+    public static List<ArmorType> legalArmorsFor(ITechManager techManager) {
+        List<ArmorType> retVal = new ArrayList<>();
+        for (ArmorType armor : ArmorType.allArmorTypes()) {
+            if (armor.getArmorType() == EquipmentType.T_ARMOR_PATCHWORK) {
                 continue;
             }
-            String name = EquipmentType.getArmorTypeName(at, techManager.useClanTechBase());
-            EquipmentType eq = EquipmentType.get(name);
-            if ((null != eq)
-                    && eq.hasFlag(MiscType.F_SUPPORT_TANK_EQUIPMENT)
-                    && techManager.isLegal(eq)) {
-                retVal.add(eq);
+            // Installing non-BAR armor on a support vehicle is advanced
+            if (!armor.hasFlag(MiscType.F_SUPPORT_VEE_BAR_ARMOR)
+                    && (techManager.getTechLevel().ordinal() < SimpleTechLevel.ADVANCED.ordinal())) {
+                continue;
             }
-            if (techManager.useMixedTech()) {
-                name = EquipmentType.getArmorTypeName(at, !techManager.useClanTechBase());
-                EquipmentType eq2 = EquipmentType.get(name);
-                if ((null != eq2) && (eq != eq2)
-                        && eq2.hasFlag(MiscType.F_SUPPORT_TANK_EQUIPMENT)
-                        && techManager.isLegal(eq2)) {
-                    retVal.add(eq2);
-                }
+            if (armor.hasFlag(MiscType.F_SUPPORT_TANK_EQUIPMENT) && techManager.isLegal(armor)) {
+                retVal.add(armor);
             }
         }
         return retVal;
@@ -570,13 +564,11 @@ public class TestSupportVehicle extends TestEntity {
      * @return    The weight of each armor point in tons, rounded to the kilogram.
      */
     public static double armorWeightPerPoint(Entity vee) {
-        final int at = vee.getArmorType(vee.firstArmorIndex());
-        if (at == EquipmentType.T_ARMOR_STANDARD) {
-            return EquipmentType.getSupportVehicleArmorWeightPerPoint(vee.getBARRating(vee.firstArmorIndex()),
-                    vee.getArmorTechRating());
+        final ArmorType armor = ArmorType.forEntity(vee);
+        if (armor.hasFlag(MiscType.F_SUPPORT_VEE_BAR_ARMOR)) {
+            return armor.getSVWeightPerPoint(vee.getArmorTechRating());
         } else {
-            final double ppt = 16.0 * EquipmentType.getArmorPointMultiplier(
-                    at, vee.getArmorTechLevel(vee.firstArmorIndex()));
+            final double ppt = armor.getPointsPerTon(vee);
             return round(1.0 / ppt, Ceil.KILO);
         }
     }
@@ -616,7 +608,7 @@ public class TestSupportVehicle extends TestEntity {
     
     public TestSupportVehicle(Entity sv, TestEntityOption options,
             String fileString) {
-        super(options, sv.getEngine(), null, null);
+        super(options, sv.getEngine(), null);
         this.supportVee = sv;
         testTank = sv instanceof Tank ? new TestTank((Tank) sv, options, fileString) : null;
         testAero = sv instanceof Aero ? new TestAero((Aero) sv, options, fileString) : null;
@@ -640,15 +632,10 @@ public class TestSupportVehicle extends TestEntity {
     @Override
     public String printWeightArmor() {
         String name;
-        if (getEntity().hasBARArmor(getEntity().firstArmorIndex())) {
-            name = String.format("BAR %d [%s]",
-                    getEntity().getBARRating(getEntity().firstArmorIndex()),
-                    ITechnology.getRatingName(getEntity().getArmorTechRating()));
-        } else if (!getEntity().hasPatchworkArmor()) {
-            name = EquipmentType.getArmorTypeName(getEntity()
-                            .getArmorType(getEntity().firstArmorIndex()));
-        } else {
+        if (getEntity().hasPatchworkArmor()) {
             name = "Patchwork";
+        } else {
+            name = ArmorType.forEntity(getEntity()).getName();
         }
         return StringUtil.makeLength(
                 String.format("Armor: %d (%s)", getTotalOArmor(), name),
@@ -711,7 +698,12 @@ public class TestSupportVehicle extends TestEntity {
 
     @Override
     public double calculateWeight() {
-        return ceilWeight(super.calculateWeight() + getFuelTonnage());
+        return ceilWeight(calculateWeightExact());
+    }
+
+    @Override
+    public double calculateWeightExact() {
+        return super.calculateWeightExact() + getFuelTonnage();
     }
 
     @Override
@@ -984,7 +976,7 @@ public class TestSupportVehicle extends TestEntity {
                 buff.append("Armor must have a BAR between 2 and 10.\n");
                 correct = false;
             } else {
-                double perPoint = EquipmentType.getSupportVehicleArmorWeightPerPoint(bar, supportVee.getArmorTechRating());
+                double perPoint = ArmorType.forEntity(supportVee).getSVWeightPerPoint(supportVee.getArmorTechRating());
                 if (perPoint < 0.001) {
                     buff.append("BAR ").append(bar).append(" exceeds maximum for armor tech rating ")
                             .append(ITechnology.getRatingName(supportVee.getArmorTechRating()))
@@ -994,10 +986,14 @@ public class TestSupportVehicle extends TestEntity {
             }
         }
         if (supportVee instanceof VTOL) {
-            if (!supportVee.hasWorkingMisc(MiscType.F_MAST_MOUNT)) {
+            long mastMountCount = supportVee.countEquipment(EquipmentTypeLookup.MAST_MOUNT);
+            if (mastMountCount > 1) {
+                buff.append("Cannot mount more than one mast mount\n");
+                correct = false;
+            } else if (mastMountCount == 0) {
                 for (Mounted m : supportVee.getEquipment()) {
                     if (m.getLocation() == VTOL.LOC_ROTOR) {
-                        buff.append("rotor equipment must be placed in mast mount");
+                        buff.append("rotor equipment must be placed in mast mount\n");
                         correct = false;
                     }
                 }
@@ -1160,13 +1156,12 @@ public class TestSupportVehicle extends TestEntity {
                 .map(m -> ChassisModification.getChassisMod(m.getType()))
                 .filter(Objects::nonNull).collect(Collectors.toSet());
         if (!chassisMods.contains(ChassisModification.ARMORED)) {
-            if (!supportVee.hasBARArmor(supportVee.firstArmorIndex())) {
+            ArmorType armor = ArmorType.forEntity(supportVee);
+            if (!armor.hasFlag(MiscType.F_SUPPORT_VEE_BAR_ARMOR)) {
                 buff.append("Advanced armor requires the Armored Chassis Mod.\n");
                 illegal = true;
             }
-            if (EquipmentType.getSupportVehicleArmorWeightPerPoint(
-                    supportVee.getBARRating(supportVee.firstArmorIndex()),
-                            supportVee.getArmorTechRating()) > 0.05) {
+            if (armor.getSVWeightPerPoint(supportVee.getArmorTechRating()) > 0.05) {
                 buff.append("Armor heavier than 50kg/point requires the Armored Chassis Mod.\n");
                 illegal = true;
             }
@@ -1320,7 +1315,7 @@ public class TestSupportVehicle extends TestEntity {
         // different engines take different amounts of slots
 
         // JJs take just 1 slot
-        if (supportVee.getJumpMP(false) > 0) {
+        if (supportVee.getJumpMP(MPCalculationSetting.NO_GRAVITY) > 0) {
             buff.append(StringUtil.makeLength("Jump Jets", 30)).append("1\n");
         }
 
@@ -1352,29 +1347,13 @@ public class TestSupportVehicle extends TestEntity {
         // different armor types take different amount of slots
         int armorSlots = 0;
         if (!supportVee.hasPatchworkArmor()) {
-            int at = supportVee.getArmorType(supportVee.firstArmorIndex());
-            if (at == EquipmentType.T_ARMOR_STANDARD) {
-                // Support vehicle armor takes slots like ferro-fibrous at BAR 10/TL E/F
-                if (supportVee.getBARRating(supportVee.firstArmorIndex()) == 10) {
-                    if (supportVee.getArmorTechRating() == ITechnology.RATING_E) {
-                        armorSlots += AdvancedSVArmor.FERRO_FIBROUS.space;
-                    } else if (supportVee.getArmorTechRating() == ITechnology.RATING_F) {
-                        armorSlots += AdvancedSVArmor.CLAN_FERRO_FIBROUS.space;
-                    }
-                }
-            } else {
-                AdvancedSVArmor armor = AdvancedSVArmor.getArmor(at,
-                        TechConstants.isClan(supportVee.getArmorTechLevel(supportVee.firstArmorIndex())));
-                if (null != armor) {
-                    armorSlots += armor.space;
-                }
-            }
+            ArmorType armor = ArmorType.forEntity(supportVee);
+            armorSlots += armor.getSupportVeeSlots(supportVee);
         } else {
             for (int loc = 0; loc < supportVee.locations(); loc++) {
-                AdvancedSVArmor armor = AdvancedSVArmor.getArmor(supportVee.getArmorType(loc),
-                        TechConstants.isClan(supportVee.getArmorTechLevel(loc)));
+                ArmorType armor = ArmorType.forEntity(supportVee, loc);
                 if (null != armor) {
-                    armorSlots += armor.patchworkSpace;
+                    armorSlots += armor.getPatchworkSlotsMechSV();
                 }
             }
         }
@@ -1443,33 +1422,15 @@ public class TestSupportVehicle extends TestEntity {
      */
     public int getArmorSlots() {
         if (!supportVee.hasPatchworkArmor()) {
-            int at = supportVee.getArmorType(supportVee.firstArmorIndex());
-            if (at == EquipmentType.T_ARMOR_STANDARD) {
-                // Support vehicle armor takes slots like ferro-fibrous at BAR 10/TL E/F
-                if (supportVee.getBARRating(supportVee.firstArmorIndex()) == 10) {
-                    if (supportVee.getArmorTechRating() == ITechnology.RATING_E) {
-                        return AdvancedSVArmor.FERRO_FIBROUS.space;
-                    } else if (supportVee.getArmorTechRating() == ITechnology.RATING_F) {
-                        return AdvancedSVArmor.CLAN_FERRO_FIBROUS.space;
-                    }
-                }
-                return 0;
-            } else {
-                AdvancedSVArmor armor = AdvancedSVArmor.getArmor(at,
-                        TechConstants.isClan(supportVee.getArmorTechLevel(supportVee.firstArmorIndex())));
-                if (null != armor) {
-                    return armor.space;
-                } else {
-                    return 0;
-                }
-            }
+            ArmorType armor = ArmorType.forEntity(supportVee);
+            return armor.getSupportVeeSlots(supportVee);
         } else {
             int space = 0;
             for (int loc = 0; loc < supportVee.locations(); loc++) {
-                AdvancedSVArmor armor = AdvancedSVArmor.getArmor(supportVee.getArmorType(loc),
+                ArmorType armor = ArmorType.of(supportVee.getArmorType(loc),
                         TechConstants.isClan(supportVee.getArmorTechLevel(loc)));
                 if (null != armor) {
-                    space += armor.patchworkSpace;
+                    space += armor.getPatchworkSlotsMechSV();
                 }
             }
             return space;
@@ -1606,77 +1567,5 @@ public class TestSupportVehicle extends TestEntity {
             }
         }
         return slots;
-    }
-
-    public enum AdvancedSVArmor {
-        CLAN_FERRO_FIBROUS(EquipmentType.T_ARMOR_FERRO_FIBROUS, 1, 1, true),
-        CLAN_FERRO_ALUM(EquipmentType.T_ARMOR_ALUM, 1, 1, true),
-        FERRO_LAMELLOR(EquipmentType.T_ARMOR_FERRO_LAMELLOR, 2, 1, true),
-        CLAN_REACTIVE(EquipmentType.T_ARMOR_REACTIVE, 1, 1, true),
-        CLAN_REFLECTIVE(EquipmentType.T_ARMOR_REFLECTIVE, 1, 1, true),
-        ANTI_PENETRATIVE_ABLATION(
-                EquipmentType.T_ARMOR_ANTI_PENETRATIVE_ABLATION, 1, 1, false),
-        BALLISTIC_REINFORCED(
-                EquipmentType.T_ARMOR_BALLISTIC_REINFORCED, 2, 1, false),
-        FERRO_FIBROUS(EquipmentType.T_ARMOR_ALUM, 2, 1, false),
-        FERRO_ALUM(EquipmentType.T_ARMOR_ALUM, 2, 1, false),
-        FERRO_FIBROUS_PROTO(EquipmentType.T_ARMOR_FERRO_FIBROUS_PROTO, 3, 1, false),
-        FERRO__ALUM_PROTO(EquipmentType.T_ARMOR_FERRO_ALUM_PROTO, 3, 1, false),
-        HEAVY_FERRO_FIBROUS(EquipmentType.T_ARMOR_HEAVY_FERRO, 4, 2, false),
-        LIGHT_FERRO_FIBROUS(EquipmentType.T_ARMOR_LIGHT_FERRO, 1, 1, false),
-        HEAVY_FERRO_ALUM(EquipmentType.T_ARMOR_HEAVY_ALUM, 4, 2, false),
-        LIGHT_FERRO_ALUM(EquipmentType.T_ARMOR_LIGHT_ALUM, 1, 1, false),
-        PRIMITIVE(EquipmentType.T_ARMOR_PRIMITIVE_FIGHTER, 0, 0, false),
-        REACTIVE(EquipmentType.T_ARMOR_REACTIVE, 3, 1, false),
-        REFLECTIVE(EquipmentType.T_ARMOR_REFLECTIVE, 2, 1, false),
-        STEALTH_VEHICLE(EquipmentType.T_ARMOR_STEALTH_VEHICLE, 2, 1, false);
-
-        public final int armorType;
-        /**
-         * The type, corresponding to types defined in
-         * <code>EquipmentType</code>.
-         */
-        public final EquipmentType eqType;
-
-        /**
-         * The number of spaces occupied by the armor type.
-         */
-        public final int space;
-
-        /**
-         * The number of weapon spaces occupied by patchwork armor.
-         */
-        public final int patchworkSpace;
-
-        /**
-         * Denotes whether this armor is Clan or not.
-         */
-        public final boolean isClan;
-
-        AdvancedSVArmor(int at, int space, int patchworkSpace, boolean clan) {
-            this.armorType = at;
-            eqType = EquipmentType.get(EquipmentType.getArmorTypeName(at, clan));
-            this.space = space;
-            this.patchworkSpace = patchworkSpace;
-            isClan = clan;
-        }
-
-        /**
-         * Given an armor type, return the <code>AdvancedSVArmor</code> instance that
-         * represents that type.
-         *
-         * @param at The armor type.
-         * @param c  Whether this armor type is Clan or not.
-         * @return   The <code>AdvancedSVArmor</code> that correspondes to the given
-         *              type or null if no match was found.
-         */
-        public static @Nullable AdvancedSVArmor getArmor(int at, boolean c) {
-            for (AdvancedSVArmor a : values()) {
-                if ((a.armorType == at) && (a.isClan == c)) {
-                    return a;
-                }
-            }
-            return null;
-        }
     }
 }

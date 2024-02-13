@@ -1,13 +1,18 @@
-Version:1.1
-Hoplite
-HOP-4Bb
+chassis:Hoplite
+model:HOP-4Bb
 mul id:1541
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2795
 Rules Level:2
-source:Hist Klondike - Early Succession War
+role:Brawler
+source:Historical: Operation Klondike
+
+
+
+quirk:no_arms
+
 
 Mass:55
 Engine:220 Fusion Engine

@@ -1,13 +1,22 @@
-Version:1.0
-Archer
-ARC-9W
+chassis:Archer
+model:ARC-9W
 mul id:89
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3078
-Source:Jihad
+source:TRO: 3085
 Rules Level:4
+role:Missile Boat
+
+
+
+quirk:battle_fists_la
+quirk:battle_fists_ra
+quirk:command_mech
+quirk:stable
+quirk:ubiquitous_is
+
 
 Mass:70
 Engine:350 XL Engine(IS)

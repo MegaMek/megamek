@@ -36,6 +36,10 @@ Bardiche Heavy Strike Tank
 IS Level 3
 </type>
 
+<role>
+Brawler
+</role>
+
 <motion_type>
 Wheeled
 </motion_type>
@@ -102,10 +106,16 @@ Heavy PPC
 </Turret Equipment>
 
 <source>
-TRO 3145 Free Worlds League - Late Republic
+TRO: 3145 Free Worlds League
 </source>
 
 <tonnage>
 70.0
 </tonnage>
+
+
+<quirks>
+power_reverse
+poor_sealing
+</quirks>
 

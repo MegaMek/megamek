@@ -36,6 +36,10 @@ F-12A
 IS Level 2
 </type>
 
+<role>
+Interceptor
+</role>
+
 <motion_type>
 None
 </motion_type>
@@ -101,10 +105,17 @@ Amity
 </primaryFactory>
 
 <source>
-XTR Boondoggles - Succesion Wars
+XTR: Boondoggles
 </source>
 
 <tonnage>
 25.0
 </tonnage>
+
+
+<quirks>
+atmo_flyer
+bad_rep_is
+difficult_maintain
+</quirks>
 

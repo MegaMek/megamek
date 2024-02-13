@@ -1,13 +1,13 @@
-Version:1.0
-Stormwolf
-A
+chassis:Stormwolf
+model:A
 mul id:8205
 
 Config:Biped Omnimech
 techbase:Mixed (Clan Chassis)
 era:3149
-source:Rec Guide:ilClan #16 - Dark Age
+source:Rec Guide:ilClan #16
 rules level:3
+role:Striker
 
 mass:50
 engine:300 XL (Clan) Engine

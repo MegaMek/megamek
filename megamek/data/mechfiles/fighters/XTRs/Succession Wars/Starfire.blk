@@ -108,9 +108,23 @@ IS Ultra AC/5 Ammo
 </Fuselage Equipment>
 
 <source>
-XTRO Succession Wars - Succession Wars
+XTR: Succession Wars
 </source>
 
 <tonnage>
 55.0
 </tonnage>
+
+<quirks>
+atmo_flyer
+obsolete
+</quirks>
+
+<weaponQuirks>
+mod_weapons:NOS:0:ISUltraAC5Prototype
+mod_weapons:LWG:0:Medium Laser
+mod_weapons:LWG:1:Medium Laser
+mod_weapons:RWG:0:Medium Laser
+mod_weapons:RWG:1:Medium Laser
+mod_weapons:AFT:0:Small Laser
+</weaponQuirks>

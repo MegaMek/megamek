@@ -1,0 +1,265 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Warship
+</UnitType>
+
+<Name>
+Robinson Transport
+</Name>
+
+<Model>
+(Block I)
+</Model>
+
+<mul id:>
+4924
+</mul id:>
+
+<year>
+2560
+</year>
+
+<originalBuildYear>
+2560
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+asfbay:24.0:4:1
+smallcraftbay:12.0:2:2
+mechbay:36.0:4
+cargobay:56609.0:2:4
+dockingcollar
+dockingcollar
+dockingcollar
+dockingcollar
+1stclassquarters:460.0:0
+crewquarters:875.0:0
+</transporters>
+
+<SafeThrust>
+3
+</SafeThrust>
+
+<heatsinks>
+2324
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+6500
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+41
+</armor_type>
+
+<armor_tech>
+5
+</armor_tech>
+
+<armor>
+55
+50
+50
+45
+50
+50
+</armor>
+
+<Nose Equipment>
+(B) Naval Autocannon (NAC/30)
+Naval Autocannon (NAC/30)
+Ammo NAC/30:20
+(B) Naval PPC (Heavy)
+</Nose Equipment>
+
+<Left Front Side Equipment>
+(B) Naval PPC (Light)
+Naval PPC (Light)
+Naval PPC (Light)
+(B) Large Laser
+Large Laser
+Medium Laser
+Medium Laser
+(B) LRM 20
+LRM 20
+IS Ammo LRM-20:48
+</Left Front Side Equipment>
+
+<Right Front Side Equipment>
+(B) Naval PPC (Light)
+Naval PPC (Light)
+Naval PPC (Light)
+(B) Large Laser
+Large Laser
+Medium Laser
+Medium Laser
+(B) LRM 20
+LRM 20
+IS Ammo LRM-20:48
+</Right Front Side Equipment>
+
+<Aft Equipment>
+(B) Naval PPC (Heavy)
+(B) Naval Laser 35
+Naval Laser 35
+(B) Large Laser
+Large Laser
+Medium Laser
+Medium Laser
+</Aft Equipment>
+
+<Aft Left Side Equipment>
+(B) Naval Laser 45
+Naval Laser 45
+Naval Laser 45
+(B) Medium Laser
+Medium Laser
+</Aft Left Side Equipment>
+
+<Aft Right Side Equipment>
+(B) Naval Laser 45
+Naval Laser 45
+Naval Laser 45
+(B) Medium Laser
+Medium Laser
+</Aft Right Side Equipment>
+
+<Hull Equipment>
+</Hull Equipment>
+
+<Left Broadsides Equipment>
+(B) Naval PPC (Medium)
+Naval PPC (Medium)
+</Left Broadsides Equipment>
+
+<Right Broadsides Equipment>
+(B) Naval PPC (Medium)
+Naval PPC (Medium)
+</Right Broadsides Equipment>
+
+<structural_integrity>
+79
+</structural_integrity>
+
+<capabilities>
+The Robinson excelled in its dual role as a troop transport and ground support vessel. With its spacious bays accommodating up to thirty-six BattleMechs, it provided efficient transportation for ground forces. The ship's armament focused on precise orbital bombardment and anti-assault DropShip duties, complying with the Ares Conventions. It relied on its complement of four fighter squadrons for defense against smaller threats. The Robinson's innovative capability to combat-drop BattleMechs from low orbit, supported by its fighters, allowed for strategic landings and the establishment of secure landing zones. Over time, the Robinson underwent upgrades inspired by advances in technology from the Terran Hegemony. These enhancements, similar to those applied to the Davion destroyer, bolstered the vessel's defensive capabilities. Although the Robinson did not increase in mass, it received additional anti-fighter weaponry and doubled its armor protection, transforming into an impressive armored transport.
+</capabilities>
+
+<overview>
+The Robinson-class WarShip, introduced in 2560 by Alexander Davion as a reward for his supporters, played a significant role in boosting morale and strengthening the naval forces of the border systems within the Federated Suns. Designed as a versatile transport vessel, the Robinson carried troops and BattleMechs while also serving as a platform for pinpoint orbital bombardment. It became known for its unique ability to combat-drop BattleMechs onto planetary surfaces from low orbit using special cocoons.
+</overview>
+
+<history>
+Robinson-class WarShips were frequently assigned to specific commands rather than floating naval task forces. Notably, they served alongside the Ceti Hussars when stationed on the Kuritan border, demonstrating their importance in protecting crucial territories. Other Robinsons were deployed to safeguard the New Syrtis border, operating in a similar manner to the New Syrtis Fighter Cruisers. These ships performed commendably in combat, showcasing their effectiveness in various engagements. During the Succession Wars, the Kuritan Navy exploited a weakness in the Robinson's design, resulting in the capture of two Block I vessels. These captured ships later served as the inspiration for the development of the Kyushu Frigate, a testament to the enduring impact and legacy of the Robinson-class WarShip. Despite its capture and subsequent modifications by enemy forces, the Robinson-class maintained its reputation as a formidable and adaptable vessel, leaving a lasting mark on the annals of interstellar warfare.
+</history>
+
+<manufacturer>
+Challenge Systems
+</manufacturer>
+
+<primaryFactory>
+Galax
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<use>
+Transport
+</use>
+
+<length>
+537 m
+</length>
+
+<height>
+969 m Sail
+</height>
+
+<source>
+TRO: 3075
+</source>
+
+<tonnage>
+400000.0
+</tonnage>
+
+<kf_core>
+1
+</kf_core>
+
+<sail>
+1
+</sail>
+
+<grav_decks>
+75
+75
+</grav_decks>
+
+<designtype>
+1
+</designtype>
+
+<crew>
+351
+</crew>
+
+<officers>
+46
+</officers>
+
+<gunners>
+33
+</gunners>
+
+<passengers>
+0
+</passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<life_boat>
+0
+</life_boat>
+
+<escape_pod>
+30
+</escape_pod>
+

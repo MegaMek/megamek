@@ -1,13 +1,17 @@
-Version:1.0
-Griffin IIC
-9
+chassis:Griffin IIC
+model:9
 mul id:8159
 
 Config:Biped
 techbase:Mixed (Clan Chassis)
 era:3144
-source:Rec Guide:ilClan #14 - Dark Age
+source:Rec Guide:ilClan #14
 rules level:2
+role:Striker
+
+quirk:battle_fists_la
+quirk:battle_fists_ra
+
 
 mass:40
 engine:240 Fusion (Clan) Engine

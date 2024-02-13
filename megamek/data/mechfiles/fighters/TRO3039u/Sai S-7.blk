@@ -36,6 +36,10 @@ S-7
 IS Level 2
 </type>
 
+<role>
+Fast Dogfighter
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -99,7 +103,7 @@ IS MRM 10 Ammo
 </Fuselage Equipment>
 
 <source>
-TRO 3039 - Civil War
+TRO: 3039
 </source>
 
 <tonnage>

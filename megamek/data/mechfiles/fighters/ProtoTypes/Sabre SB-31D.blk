@@ -36,6 +36,10 @@ SB-31D
 IS Level 3
 </type>
 
+<role>
+Interceptor
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -107,7 +111,7 @@ ISLaserAntiMissileSystem
 </Fuselage Equipment>
 
 <source>
-TRO Prototypes - Jihad
+TRO: Prototypes
 </source>
 
 <tonnage>
@@ -147,4 +151,10 @@ TARGETING:Ki-II TTS
 </systemManufacturers>
 
 
+
+
+<quirks>
+cramped_cockpit
+atmo_flyer
+</quirks>
 

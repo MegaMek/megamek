@@ -32,6 +32,10 @@ Burke Defense Tank
 IS Level 2
 </type>
 
+<role>
+Sniper
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -87,3 +91,7 @@ PPC
 <tonnage>
 75.0
 </tonnage>
+
+<source>
+Historical: Operation Klondike
+</source>

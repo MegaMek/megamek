@@ -1,13 +1,16 @@
-Version:1.0
-Night Gyr
-E
+chassis:Night Gyr
+model:E
 mul id:2267
 
 Config:Biped Omnimech
 TechBase:Clan
 Era:3061
-Source:TRO 3058 - Clan Invasion
+Source:TRO: 3058
 Rules Level:2
+role:Skirmisher
+
+quirk:difficult_maintain
+
 
 Mass:75
 Engine:300 XL (Clan) Engine(IS)

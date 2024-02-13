@@ -1,13 +1,22 @@
-Version:1.0
-Mercury
-MCY-104
+chassis:Mercury
+model:MCY-104
 mul id:2170
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3069
-Source:TRO 3050 - Jihad
+Source:TRO: 3050
 Rules Level:2
+role:Striker
+
+
+
+quirk:easy_maintain
+weaponquirk:mod_weapons:HD:3:ISERSmallLaser
+weaponquirk:mod_weapons:CT:11:ISTAG
+weaponquirk:mod_weapons:RA:4:ISERMediumLaser
+weaponquirk:mod_weapons:RA:5:ISERMediumLaser
+
 
 Mass:20
 Engine:160 XL Engine

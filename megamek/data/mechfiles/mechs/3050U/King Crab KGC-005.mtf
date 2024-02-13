@@ -1,13 +1,18 @@
-Version:1.0
-King Crab
-KGC-005
+chassis:King Crab
+model:KGC-005
 mul id:1774
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3062
-Source:TRO 3050 - Civil War
+Source:TRO: 3050
 Rules Level:2
+role:Juggernaut
+
+
+
+quirk:command_mech
+
 
 Mass:100
 Engine:300 Fusion Engine

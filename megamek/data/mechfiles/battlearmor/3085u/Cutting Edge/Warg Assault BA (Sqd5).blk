@@ -66,6 +66,10 @@ BABasicManipulator:RA
 Clan Level 2
 </type>
 
+<role>
+Juggernaut
+</role>
+
 <year>
 3086
 </year>
@@ -75,7 +79,7 @@ Leg
 </motion_type>
 
 <source>
-TRO 3085 - Early Republic
+TRO: 3085
 </source>
 
 <overview>

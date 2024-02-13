@@ -32,6 +32,10 @@ Balac Strike VTOL
 Clan Level 3
 </type>
 
+<role>
+Striker
+</role>
+
 <motion_type>
 VTOL
 </motion_type>
@@ -86,9 +90,14 @@ CLHeavyMG
 </Rotor Equipment>
 
 <source>
-Jihad
+TRO: 3145
 </source>
 
 <tonnage>
 25.0
 </tonnage>
+
+<quirks>
+vtol_rotor_coaxial
+</quirks>
+

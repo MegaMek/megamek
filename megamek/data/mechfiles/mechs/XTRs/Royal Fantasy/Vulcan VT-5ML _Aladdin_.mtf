@@ -1,13 +1,16 @@
-Version:1.0
-Vulcan
-VT-5ML 'Aladdin'
+chassis:Vulcan
+model:VT-5ML 'Aladdin'
 mul id:8370
 
 Config:Biped
 techbase:Inner Sphere
 era:3143
-source:XTRO Royal Fantasy - Dark Age
+source:XTR: Royal Fantasy
 rules level:2
+role:Sniper
+
+quirk:low_profile
+
 
 mass:40
 engine:240 Fusion Engine(IS)

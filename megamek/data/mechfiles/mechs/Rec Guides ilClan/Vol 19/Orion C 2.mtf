@@ -1,13 +1,13 @@
-Version:1.0
-Orion
-C 2
+chassis:Orion
+model:C 2
 mul id:8317
 
 Config:Biped
 techbase:Mixed (IS Chassis)
 era:3143
-source:Rec Guide:ilClan #19 - Dark Age
+source:Rec Guide:ilClan #19
 rules level:2
+role:Brawler
 
 mass:75
 engine:300 Fusion Engine(IS)

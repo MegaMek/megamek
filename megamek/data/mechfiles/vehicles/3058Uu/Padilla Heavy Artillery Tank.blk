@@ -51,6 +51,10 @@ ISAMS Ammo
 <type>
 IS Level 3
 </type>
+
+<role>
+Missile Boat
+</role>
 <year>
 2620
 </year>
@@ -67,5 +71,5 @@ IS Level 3
 Tracked
 </motion_type>
 <source>
-Star League
+TRO: 3058
 </source>

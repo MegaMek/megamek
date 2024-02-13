@@ -32,6 +32,10 @@ Myrmidon Medium Tank
 IS Level 4
 </type>
 
+<role>
+Brawler
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -80,9 +84,18 @@ ISERLargeLaser
 </Turret Equipment>
 
 <source>
-TRO:Prototype
+TRO: Prototypes
 </source>
 
 <tonnage>
 40.0
 </tonnage>
+
+<quirks>
+poor_work
+trailer_hitch
+</quirks>
+
+<weaponQuirks>
+accurate:TU:0:ISERLargeLaser
+</weaponQuirks>

@@ -1,13 +1,18 @@
-Version:1.0
-Stalking Spider II
-
+chassis:Stalking Spider II
+model:
 mul id:6553
 
 Config:Quad
 TechBase:Clan
 Era:3110
-Source:TRO 3145 Mercenaries - Late Republic
+Source:TRO: 3145 Mercenaries
 Rules Level:3
+role:Skirmisher
+
+
+weaponquirk:ammo_feed_problems:RT:5:CLSRM4
+weaponquirk:ammo_feed_problems:RT:6:CLSRM4
+
 
 Mass:45
 Engine:225 Fusion (Clan) Engine(IS)

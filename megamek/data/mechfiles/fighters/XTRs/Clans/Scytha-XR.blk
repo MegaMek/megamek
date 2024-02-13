@@ -36,6 +36,10 @@ XR
 Clan Level 4
 </type>
 
+<role>
+Dogfighter
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -113,7 +117,7 @@ CLCASE
 </Fuselage Equipment>
 
 <source>
-XTRO Clans - Jihad
+XTR: Clans
 </source>
 
 <tonnage>
@@ -143,3 +147,17 @@ ARMOR:Ironhold Series III Ferro-Aluminum
 COMMUNICATIONS:System VII
 TARGETING:TTS Model 3
 </systemManufacturers>
+
+<quirks>
+atmo_flyer
+prototype
+</quirks>
+
+<weaponQuirks>
+mod_weapons:NOS:0:CLRotaryAC5
+mod_weapons:NOS:1:CLLargePulseLaser
+mod_weapons:LWG:0:CLImprovedHeavyLargeLaser
+mod_weapons:RWG:0:CLImprovedHeavyLargeLaser
+mod_weapons:AFT:0:CLERMediumLaser
+mod_weapons:AFT:1:CLERMediumLaser
+</weaponQuirks>

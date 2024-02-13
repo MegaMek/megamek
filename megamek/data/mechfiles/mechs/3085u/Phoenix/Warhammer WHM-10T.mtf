@@ -1,13 +1,22 @@
-Version:1.1
-Warhammer
-WHM-10T
+chassis:Warhammer
+model:WHM-10T
 mul id:3481
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3073
 Rules Level:2
-Source:RS 3085 PP - Jihad
+role:Skirmisher
+Source:Record Sheets: 3085 Unabridged - Project Phoenix
+
+
+
+quirk:rugged_2
+quirk:searchlight
+quirk:stable
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+
 
 Mass:70
 Engine:350 XL Fusion Engine

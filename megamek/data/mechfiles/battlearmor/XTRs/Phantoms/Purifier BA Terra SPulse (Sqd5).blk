@@ -32,6 +32,10 @@ Purifier Battle Armor Terra
 Mixed (IS Chassis) Advanced
 </type>
 
+<role>
+Ambusher
+</role>
+
 <motion_type>
 Jump
 </motion_type>
@@ -58,7 +62,7 @@ LegAttack
 </Squad Equipment>
 
 <source>
-XTRO Phantoms - Jihad
+XTR: Phantoms
 </source>
 
 <chassis>
@@ -113,3 +117,9 @@ JUMPJET:Unknown
 COMMUNICATIONS:Unknown
 TARGETING:Unknown
 </systemManufacturers>
+
+<quirks>
+bad_rep_is
+difficult_maintain
+</quirks>
+

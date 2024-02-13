@@ -32,6 +32,10 @@ Aithon Assault Transport
 Clan Level 4
 </type>
 
+<role>
+Missile Boat
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -93,9 +97,15 @@ CLMediumPulseLaser
 </Turret Equipment>
 
 <source>
-TRO:Prototype
+TRO: Prototypes
 </source>
 
 <tonnage>
 100.0
 </tonnage>
+
+<quirks>
+distracting
+trailer_hitch
+</quirks>
+

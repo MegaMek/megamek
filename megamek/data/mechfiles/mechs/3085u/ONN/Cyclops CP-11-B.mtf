@@ -1,13 +1,21 @@
-Version:1.0
-Cyclops
-CP-11-B
+chassis:Cyclops
+model:CP-11-B
 mul id:774
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3071
-Source:Jihad
+source:TRO: 3085
 Rules Level:2
+role:Juggernaut
+
+
+
+quirk:battle_computer
+quirk:cowl
+quirk:difficult_eject
+quirk:weak_head_2
+
 
 Mass:90
 Engine:270 Fusion Engine

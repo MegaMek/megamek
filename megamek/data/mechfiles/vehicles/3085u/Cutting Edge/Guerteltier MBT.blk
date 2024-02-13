@@ -1,12 +1,7 @@
-﻿#building block data file
+#Saved from version 0.49.18-SNAPSHOT on 2024-01-07
 <BlockVersion>
 1
 </BlockVersion>
-
-#Write the version number just in case...
-<Version>
-MAM0
-</Version>
 
 <UnitType>
 Tank
@@ -16,41 +11,85 @@ Tank
 Gurteltier MBT
 </Name>
 
-<model>
+<Model>
 
-</model>
+</Model>
 
 <mul id:>
 4256
 </mul id:>
 
-<Tonnage>
-100
-</Tonnage>
+<year>
+3081
+</year>
+
+<originalBuildYear>
+3081
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<role>
+Sniper
+</role>
+
+<motion_type>
+Tracked
+</motion_type>
 
 <cruiseMP>
 3
 </cruiseMP>
 
-#Order is Tank/VTOL/LST
-<Armor>
+<engine_type>
+2
+</engine_type>
+
+<armor_type>
+6
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
 109
 75
 75
 50
 67
-</Armor>
+</armor>
 
-<Left Equipment>
-ISMachine Gun
-</Left Equipment>
+<Body Equipment>
+IS Gauss Ammo
+IS Gauss Ammo
+IS Gauss Ammo
+IS Ammo MML-7 LRM
+IS Ammo MML-7 LRM
+IS Ammo MML-7 SRM
+IS Machine Gun Ammo - Half
+ISGuardianECMSuite
+ISTargeting Computer
+ISC3SlaveUnit
+ISCASE
+</Body Equipment>
+
+<Front Equipment>
+</Front Equipment>
 
 <Right Equipment>
-ISMachine Gun
+Machine Gun
 </Right Equipment>
 
+<Left Equipment>
+Machine Gun
+</Left Equipment>
+
 <Rear Equipment>
-ISMachine Gun
+Machine Gun
 </Rear Equipment>
 
 <Turret Equipment>
@@ -59,44 +98,27 @@ ISGaussRifle
 ISMML7
 </Turret Equipment>
 
-<Body Equipment>
-ISGauss Ammo
-ISGauss Ammo
-ISGauss Ammo
-ISMML7 LRM Ammo
-ISMML7 LRM Ammo
-ISMML7 SRM Ammo
-ISMG Ammo (100)
-ISGuardianECMSuite
-ISTargeting Computer
-ISC3SlaveUnit
-ISCASE
-</Body Equipment>
+<manufacturer>
+Defiance Industries
+</manufacturer>
 
-<type>
-IS Level 2
-</type>
+<primaryFactory>
+Hesperus II
+</primaryFactory>
 
-<year>
-3081
-</year>
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:300 Vlar XL Fusion
+ARMOR:StarSlab/4 Heavy Ferro-Fibrous with CASE
+COMMUNICATIONS:TharHes Muse 54-58K with C3
+TARGETING:TharHes Mars8.2
+</systemManufacturers>
 
 <source>
-Dark Age
+TRO: 3085
 </source>
 
-<internal_type>
-0
-</internal_type>
+<tonnage>
+100.0
+</tonnage>
 
-<armor_type>
-6
-</armor_type>
-
-<engine_type>
-2
-</engine_type>
-
-<motion_type>
-Tracked
-</motion_type>

@@ -1,13 +1,16 @@
-Version:1.0
-Pouncer
-A
+chassis:Pouncer
+model:A
 mul id:2557
 
 Config:Biped Omnimech
 TechBase:Clan
 Era:3050
-Source:TRO 3055 - Clan Invasion
+Source:TRO: 3055
 Rules Level:2
+role:Missile Boat
+
+quirk:weak_head_2
+
 
 Mass:40
 Engine:240 XL (Clan) Engine(IS)

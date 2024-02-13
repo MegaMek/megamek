@@ -36,6 +36,10 @@ SL-15C
 IS Level 2
 </type>
 
+<role>
+Dogfighter
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -105,7 +109,7 @@ IS Ammo LRM-15
 </Fuselage Equipment>
 
 <source>
-TRO 3039 - Succession Wars
+TRO: 3039
 </source>
 
 <tonnage>

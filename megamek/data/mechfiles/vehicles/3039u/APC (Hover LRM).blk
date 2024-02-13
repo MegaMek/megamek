@@ -32,6 +32,10 @@ Armored Personnel Carrier
 IS Level 1
 </type>
 
+<role>
+Missile Boat
+</role>
+
 <motion_type>
 Hover
 </motion_type>
@@ -69,7 +73,7 @@ LRM 5
 </Rear Equipment>
 
 <source>
-TRO 3039 - Age of War
+TRO: 3039
 </source>
 
 <tonnage>

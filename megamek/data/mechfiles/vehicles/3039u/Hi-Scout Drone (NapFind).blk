@@ -24,12 +24,16 @@ Hi-Scout Drone
 </year>
 
 <source>
-TRO 3039 - Succession Wars
+TRO: 3039
 </source>
 
 <type>
 IS Level 3
 </type>
+
+<role>
+Scout
+</role>
 
 <tonnage>
 3.0

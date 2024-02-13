@@ -1,13 +1,18 @@
-Version:1.0
-Templar
-TLR1-OBLO
+chassis:Templar
+model:TLR1-OBLO
 mul id:7637
 
 Config:Biped Omnimech
 TechBase:Inner Sphere
 Era:3100
-Source:SO:Unending Faith: Late Republic Era
+Source:Spotlight On: Unending Faith
 Rules Level:4
+role:Brawler
+
+
+
+quirk:easy_maintain
+
 
 Mass:85
 Engine:340 XL Engine(IS)

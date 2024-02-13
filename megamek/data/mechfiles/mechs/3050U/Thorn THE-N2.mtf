@@ -1,13 +1,18 @@
-Version:1.0
-Thorn
-THE-N2
+chassis:Thorn
+model:THE-N2
 mul id:3193
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3071
-Source:TRO 3050 - Jihad
+Source:TRO: 3050
 Rules Level:2
+role:Striker
+
+
+
+quirk:easy_maintain
+
 
 Mass:20
 Engine:120 XL Engine

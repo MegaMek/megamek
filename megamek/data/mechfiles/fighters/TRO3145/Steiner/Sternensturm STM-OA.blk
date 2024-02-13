@@ -36,6 +36,10 @@ STM-OA
 IS Level 2
 </type>
 
+<role>
+Interceptor
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -108,9 +112,14 @@ ISTargeting Computer:OMNI
 </Fuselage Equipment>
 
 <source>
-TRO 3145 Lyran Commonwealth - Early Republic
+TRO: 3145 Lyran Commonwealth
 </source>
 
 <tonnage>
 40.0
 </tonnage>
+
+<quirks>
+easy_pilot
+</quirks>
+

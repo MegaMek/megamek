@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -16,9 +16,9 @@ Warship
 Leviathan Heavy Transport
 </Name>
 
-<model>
+<Model>
 
-</model>
+</Model>
 
 <mul id:>
 4500
@@ -35,6 +35,10 @@ Leviathan Heavy Transport
 <type>
 Clan Level 3
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Aerodyne
@@ -54,7 +58,7 @@ dockingcollar
 1stclassquarters:1660.0:0
 crewquarters:5838.0:0
 2ndclassquarters:1575.0:0
-smallcraftbay:20.0:12:6
+smallcraftbay:20.0:12:14
 </transporters>
 
 <SafeThrust>
@@ -76,6 +80,10 @@ smallcraftbay:20.0:12:6
 <engine_type>
 1
 </engine_type>
+
+<clan_engine>
+false
+</clan_engine>
 
 <armor_type>
 12
@@ -445,8 +453,48 @@ Naval Laser 55
 90
 </structural_integrity>
 
+<capabilities>
+The Leviathan-class WarShip is equipped with a formidable array of weaponry, making it a force to be reckoned with on the battlefield. Its arsenal includes capital autocannons, naval PPCs, missile launchers, and anti-missile systems, ensuring both offensive and defensive capabilities. The ship's primary capital weapons in the bow/front section consist of a heavy naval Gauss rifle, NAC/35s, Medium Naval PPCs, and an AR-10 Launcher with access to various capital missiles. Additional Gauss rifles, large lasers, and extended-range PPCs are strategically placed throughout the ship, providing versatility in combat scenarios. One of the notable features of the Leviathan-class is its ability to transport cargo over long distances. Originally repurposed as large-scale armored transports during the Ghost Bear Clan's relocation to the Inner Sphere, these vessels played a crucial role in the clandestine movement of millions of people. With its spacious cargo holds and endurance for extended operations, the Leviathan proves to be a capable logistical asset.
+</capabilities>
+
+<overview>
+The Leviathan-class WarShip, authorized by Ghost Bear Khans Nornian Tseng and Ursula Jorgensson, is a monumental achievement in Clan engineering. Designed to be the largest WarShip ever constructed, it surpasses even the massive McKenna battleship. With its imposing presence and formidable capabilities, the Leviathan embodies the grandeur and power of Clan Ghost Bear.
+</overview>
+
+<history>
+The Leviathan-class WarShip project was initiated in 3044 by Clan Ghost Bear Khans Nornian Tseng and Ursula Jorgensson. The ambitious goal was to construct the largest WarShip ever seen, outmatching even the renowned McKenna battleship. However, technical challenges proved insurmountable for Ghost Bear scientists, leading them to seek assistance from their allies in Clan Snow Raven. Construction of the Leviathan-class began, but progress was hindered by shifting priorities during the Trials for Operation REVIVAL. It was not until after the Battle of Tukayyid that the Ghost Bear Khans decided to repurpose the partially completed Leviathan hulls as disguised transports for their relocation to the Inner Sphere. The ships were modified to accommodate cargo and were instrumental in the successful exodus of the entire Ghost Bear Clan population. Following the completion of the relocation operation, plans were made to convert the Leviathans into their original intended military role as heavy battleships. However, delays occurred due to the Combine-Ghost Bear War and Clan Nova Cat's failed Trial of Possession for an incomplete Leviathan II-class vessel. Despite the setbacks, the Leviathan-class WarShips stand as a testament to the determination and ambition of Clan Ghost Bear. Their imposing presence, impressive firepower, and logistical capabilities make them a symbol of Clan engineering prowess and their quest for greatness in the Inner Sphere.
+</history>
+
+<manufacturer>
+Unknown
+</manufacturer>
+
+<primaryFactory>
+Lum
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<use>
+Heavy Transport
+</use>
+
+<length>
+1623 m
+</length>
+
+<height>
+1560 m Sail
+</height>
+
 <source>
-TRO3067 - Clan Invasion
+TRO: 3067
 </source>
 
 <tonnage>
@@ -475,6 +523,10 @@ TRO3067 - Clan Invasion
 95
 95
 </grav_decks>
+
+<designtype>
+1
+</designtype>
 
 <crew>
 1100
@@ -507,3 +559,4 @@ TRO3067 - Clan Invasion
 <escape_pod>
 30000
 </escape_pod>
+

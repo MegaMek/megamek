@@ -25,16 +25,20 @@ Dune Buggy
 </mul id:>
 
 <year>
-2000
+2010
 </year>
 
 <originalBuildYear>
-2000
+2010
 </originalBuildYear>
 
 <type>
 IS Level 5
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Wheeled

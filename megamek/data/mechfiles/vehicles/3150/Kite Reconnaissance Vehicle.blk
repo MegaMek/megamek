@@ -32,6 +32,10 @@ Kite Reconnaissance Vehicle
 Clan Level 3
 </type>
 
+<role>
+Scout
+</role>
+
 <motion_type>
 Hover
 </motion_type>
@@ -89,9 +93,14 @@ CLLightTAG
 </Turret Equipment>
 
 <source>
-TRO 3145 Mercenaries - Late Republic
+TRO: 3145 Mercenaries
 </source>
 
 <tonnage>
 30.0
 </tonnage>
+
+<quirks>
+imp_sensors
+</quirks>
+

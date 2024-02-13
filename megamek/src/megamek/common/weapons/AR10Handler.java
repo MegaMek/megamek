@@ -1,14 +1,14 @@
 /**
  * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 package megamek.common.weapons;
@@ -35,7 +35,7 @@ import megamek.server.Server;
 public class AR10Handler extends AmmoWeaponHandler {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -2536312899803153911L;
 
@@ -48,7 +48,7 @@ public class AR10Handler extends AmmoWeaponHandler {
     public AR10Handler(ToHitData t, WeaponAttackAction w, Game g, GameManager m) {
         super(t, w, g, m);
     }
-    
+
     /*
      * (non-Javadoc)
      *
@@ -59,12 +59,12 @@ public class AR10Handler extends AmmoWeaponHandler {
         if (!cares(phase)) {
             return true;
         }
-        
+
         int numAttacks = 1;
-        
+
         Entity entityTarget = (target.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) target
                 : null;
-        
+
         if (entityTarget != null) {
             ae.setLastTarget(entityTarget.getId());
             ae.setLastTargetDisplayName(entityTarget.getDisplayName());
@@ -84,7 +84,7 @@ public class AR10Handler extends AmmoWeaponHandler {
                         && (weapon.getLinked() != null)
                         && (weapon.getLinked().getType() instanceof AmmoType)) {
                     AmmoType atype = (AmmoType) weapon.getLinked().getType();
-                    if (atype.getMunitionType() != AmmoType.M_STANDARD) {
+                    if (!atype.getMunitionType().contains(AmmoType.Munitions.M_STANDARD)) {
                         r.messageId = 3116;
                         r.add(atype.getSubMunitionName());
                     }
@@ -95,38 +95,38 @@ public class AR10Handler extends AmmoWeaponHandler {
                 r.add(target.getDisplayName(), true);
             }
             vPhaseReport.addElement(r);
-                
+
             //Point Defense fire vs Capital Missiles
-        
+
             // are we a glancing hit?  Check for this here, report it later
             setGlancingBlowFlags(entityTarget);
-        
+
             // Set Margin of Success/Failure and check for Direct Blows
-            toHit.setMoS(roll - Math.max(2, toHit.getValue()));
+            toHit.setMoS(roll.getIntValue() - Math.max(2, toHit.getValue()));
             bDirect = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_DIRECT_BLOW)
                     && ((toHit.getMoS() / 3) >= 1) && (entityTarget != null);
 
             //This has to be up here so that we don't screw up glancing/direct blow reports
             attackValue = calcAttackValue();
-        
+
             //CalcAttackValue triggers counterfire, so now we can safely get this
             CapMissileAMSMod = getCapMissileAMSMod();
-        
+
             //Only do this if the missile wasn't destroyed
             if (CapMissileAMSMod > 0 && CapMissileArmor > 0) {
                 toHit.addModifier(CapMissileAMSMod, "Damage from Point Defenses");
-                if (roll < toHit.getValue()) {
+                if (roll.getIntValue() < toHit.getValue()) {
                     CapMissileMissed = true;
                 }
             }
-        
+
             // Report any AMS bay action against Capital missiles that doesn't destroy them all.
             if (amsBayEngagedCap && CapMissileArmor > 0) {
                 r = new Report(3358);
                 r.add(CapMissileAMSMod);
                 r.subject = subjectId;
                 vPhaseReport.addElement(r);
-                    
+
                 // Report any PD bay action against Capital missiles that doesn't destroy them all.
             } else if (pdBayEngagedCap && CapMissileArmor > 0) {
                 r = new Report(3357);
@@ -134,7 +134,7 @@ public class AR10Handler extends AmmoWeaponHandler {
                 r.subject = subjectId;
                 vPhaseReport.addElement(r);
             }
-        
+
             if (toHit.getValue() == TargetRoll.IMPOSSIBLE) {
                 r = new Report (3135);
                 r.subject = subjectId;
@@ -170,12 +170,12 @@ public class AR10Handler extends AmmoWeaponHandler {
             vPhaseReport.addElement(r);
 
             // do we hit?
-            bMissed = roll < toHit.getValue();
+            bMissed = roll.getIntValue() < toHit.getValue();
 
             //Report Glancing/Direct Blow here because of Capital Missile weirdness
             if (!(amsBayEngagedCap || pdBayEngagedCap)) {
                 addGlancingBlowReports(vPhaseReport);
-    
+
                 if (bDirect) {
                     r = new Report(3189);
                     r.subject = ae.getId();
@@ -265,7 +265,7 @@ public class AR10Handler extends AmmoWeaponHandler {
 
     /**
      * Calculate the attack value based on range
-     * 
+     *
      * @return an <code>int</code> representing the attack value at that range.
      */
     @Override

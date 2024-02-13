@@ -32,6 +32,10 @@ Browning Mobile HQ
 IS Level 2
 </type>
 
+<role>
+Scout
+</role>
+
 <motion_type>
 Wheeled
 </motion_type>
@@ -98,9 +102,15 @@ TARGETING:Wayne SweepSight
 </tonnage>
 
 <source>
-Rec Guide:ilClan #29 - Star League
+Rec Guide:ilClan #29
 </source>
 
 <mul id:>
 9399
 </mul id:>
+
+<quirks>
+imp_com
+difficult_maintain
+</quirks>
+

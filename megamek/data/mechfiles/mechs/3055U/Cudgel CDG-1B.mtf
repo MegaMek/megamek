@@ -1,13 +1,19 @@
-Version:1.0
-Cudgel
-CDG-1B
+chassis:Cudgel
+model:CDG-1B
 mul id:766
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3053
-Source:TRO 3055 - Clan Invasion
+Source:TRO: 3055
 Rules Level:3
+role:Juggernaut
+
+
+
+
+quirk:difficult_maintain
+
 
 Mass:80
 Engine:400 XL Engine

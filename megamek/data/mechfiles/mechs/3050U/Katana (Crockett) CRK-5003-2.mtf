@@ -1,13 +1,20 @@
-Version:1.0
-Katana (Crockett)
-CRK-5003-2
+chassis:Katana (Crockett)
+model:CRK-5003-2
 mul id:1760
 
 Config:Biped
 techbase:Inner Sphere
 era:3035
-source:TRO 3050 - Succession Wars
+source:TRO: 3050
 rules level:2
+role:Juggernaut
+
+
+
+
+quirk:easy_pilot
+quirk:poor_life_support
+
 
 mass:85
 engine:255 Fusion Engine(IS)

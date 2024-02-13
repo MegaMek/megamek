@@ -36,6 +36,10 @@ S-2B
 IS Level 2
 </type>
 
+<role>
+Fast Dogfighter
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -99,7 +103,7 @@ IS Ammo MG - Full
 </Fuselage Equipment>
 
 <source>
-Field Report 2765 DCMS - Age of War
+Field Report 2765 DCMS
 </source>
 
 <tonnage>

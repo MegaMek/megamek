@@ -1,12 +1,14 @@
-Version:1.1
-Ryoken III-XP (Skinwalker)
-D
+chassis:Ryoken III-XP
+clanname:Skinwalker
+model:D
 mul id:7382
 
 Config:Biped Omnimech
 techbase:Mixed (Clan Chassis)
 Era:3143
 Rules Level:4
+role:Striker
+Source:XTR: Republic III
 
 Mass:55
 Engine:330 XL (Clan) Engine

@@ -1,13 +1,18 @@
-Version:1.0
-Victor
-VTR-9Ka
+chassis:Victor
+model:VTR-9Ka
 mul id:3413
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3076
-Source:Jihad
+source:TRO: 3085
 Rules Level:2
+role:Skirmisher
+
+
+
+quirk:rugged_1
+
 
 Mass:80
 Engine:320 Fusion Engine(IS)

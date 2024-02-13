@@ -1,12 +1,12 @@
 SLDF Heavy Vehicles - SLDF Regular
-Burke Defense Tank (Standard),2
-Padilla Heavy Artillery Tank (Standard),3
-Burke Defense Tank (Standard),4
+Burke Defense Tank,2
+Padilla Heavy Artillery Tank,3
+Burke Defense Tank,4
 Von Luckner Heavy Tank (Star League),5
-Magi Infantry Support Vehicle (Standard),6
-Manticore Heavy Tank (Standard),7
-Bulldog Medium Tank (Standard),6
-Demon Tank (Standard),5
-Burke Defense Tank (Standard),4
-Marksman Artillery Vehicle (Standard),3
-Demon Tank (Standard),2
+Magi Infantry Support Vehicle,6
+Manticore Heavy Tank,7
+Bulldog Medium Tank,6
+Demon Tank,5
+Burke Defense Tank,4
+Marksman Artillery Vehicle,3
+Demon Tank,2

@@ -1,13 +1,23 @@
-Version:1.0
-Crusader
-CRD-3L
+chassis:Crusader
+model:CRD-3L
 mul id:751
 
 Config:Biped
 techbase:Inner Sphere
 era:2753
-source:TRO 3039 - Star League
+source:TRO: 3039
 rules level:1
+role:Missile Boat
+
+
+
+quirk:easy_maintain
+quirk:rugged_1
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+weaponquirk:stable_weapon:RL:5:SRM 4
+weaponquirk:stable_weapon:LL:5:SRM 4
+
 
 mass:65
 engine:260 Fusion Engine(IS)

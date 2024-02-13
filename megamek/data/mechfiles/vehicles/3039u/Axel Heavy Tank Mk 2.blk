@@ -32,6 +32,10 @@ Mk 2
 IS Level 1
 </type>
 
+<role>
+Juggernaut
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -83,7 +87,7 @@ Autocannon/20
 </Turret Equipment>
 
 <source>
-TRO 3039 - Succession Wars
+TRO: 3039
 </source>
 
 <tonnage>
@@ -115,13 +119,15 @@ Spittal
 </primaryFactory>
 
 <source>
-TRO 3039 - Succession Wars
+TRO: 3039
 </source>
-
-<tonnage>
-65.0
-</tonnage>
 
 <fuelType>
 PETROCHEMICALS
 </fuelType>
+
+<quirks>
+low_profile
+poor_target_short
+</quirks>
+

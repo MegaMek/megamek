@@ -1,13 +1,13 @@
-Version:1.0
-Koshi (Standard)
-2
+chassis:Koshi (Standard)
+model:2
 mul id:6548
 
 Config:Biped
 TechBase:Clan
 Era:3095
-Source:TRO 3145 Mercenaries - Early Republic
+Source:TRO: 3145 Mercenaries
 Rules Level:2
+role:Striker
 
 Mass:25
 Engine:175 XL (Clan) Engine(IS)

@@ -1,13 +1,19 @@
-Version:1.0
-Naginata
-NG-C3B
+chassis:Naginata
+model:NG-C3B
 mul id:2254
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3063
-Source:TRO 3055 - Civil War
+Source:TRO: 3055
 Rules Level:2
+role:Missile Boat
+
+
+
+quirk:cowl
+quirk:stable
+
 
 Mass:95
 Engine:285 Fusion Engine

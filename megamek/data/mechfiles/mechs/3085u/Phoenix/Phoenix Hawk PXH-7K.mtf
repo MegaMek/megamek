@@ -1,13 +1,22 @@
-Version:1.2
-Phoenix Hawk
-PXH-7K
+chassis:Phoenix Hawk
+model:PXH-7K
 mul id:2508
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3070
-Source:Jihad
+source:TRO: 3085
 Rules Level:2
+role:Striker
+
+
+
+quirk:command_mech
+quirk:imp_com
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+weaponquirk:jettison_capable:RA:4:ISSNPPC
+
 
 Mass:45
 Engine:270 Light Engine(IS)

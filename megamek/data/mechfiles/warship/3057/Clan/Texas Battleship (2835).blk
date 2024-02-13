@@ -36,6 +36,10 @@ Texas Battleship
 Clan Level 3
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -214,7 +218,7 @@ Ammo AR10 White Shark:10
 </structural_integrity>
 
 <source>
-TRO3057R - Succession Wars - Early
+TRO: 3057 Revised
 </source>
 
 <tonnage>
@@ -270,3 +274,43 @@ TRO3057R - Succession Wars - Early
 <escape_pod>
 20
 </escape_pod>
+
+<capabilities>
+The Texas battleship boasts impressive capabilities that set it apart as a formidable warship. It incorporates advanced technologies and design features to address the needs identified by the Star League Navy. Enhanced engine technology provides the battleship with improved speed, granting it greater maneuverability on the battlefield. The ship's hull utilizes synthetic metals and BattleMech armor research, resulting in lighter yet stronger armor plating that offers increased protection against enemy attacks. At the heart of the Texas battleship is the powerful Communal XXX computer system, designed by the Nirasaki Computers Collective. This massive computer, rivaling planet-based machines, controls communication and power grids, enabling efficient coordination and operation of the ship's systems. The battleship's weaponry includes two Winchester-Boeing Autocannons, capable of launching 1.2-ton shells with tremendous accuracy over long distances. The ship is also equipped with six missile launchers capable of firing various-sized missiles, along with PPCs and lasers. This formidable arsenal, coupled with the vessel's maneuverability provided by three Rolls Kraken engines, makes the Texas battleship a force to be reckoned with. The Clans respected the capabilities of this massive ship and so have maintained it within their fleet. The remaining Texas-class ships have been outfitted with a Lithium-Fusion Battery at the expense of a portion of their cargo space.
+</capabilities>
+
+<overview>
+The Texas-class battleship emerged as the successor to the revered Monsoon battleship in the 27th century. Recognizing the need for upgrades, the Star League Navy sought a new vessel that prioritized speed, increased protection, and advanced weapon systems. Krester's Ship Construction was awarded the contract to build the Texas battleships, incorporating cutting-edge technologies and a formidable array of weapons. While fewer in number than its predecessor, the Texas battleship stood as one of the most potent vessels of its time.
+</overview>
+
+<history>
+As the Monsoon battleship approached the end of its operational lifespan, the need for a successor became evident. In 2611, the Star League Navy admirals outlined the essential characteristics for a new battleship. Following intense competition among shipbuilders, Krester's Ship Construction was awarded the contract, leading to the creation of the Texas-class battleship. The construction process, aided by automation, took 18 months, nearly twice as long as its predecessor. Despite its impressive capabilities, the Texas battleship remained relatively rare, with only 52 vessels constructed. However, its combat prowess was demonstrated during the Amaris Coup when a Texas-class battleship engaged in combat with the Republic's Navy above Devin. The destruction of the battleship resulted in the formation of "The Boneyard," a field of craters and a mountain of steel. In 3050, this site became the battlefield where Clan Jade Falcon emerged victorious against Devin's armored tank militia units. The Texas battleship represents a significant leap forward in battleship design, incorporating advanced technology, formidable weaponry, and improved speed and protection. Though limited in number, the Texas battleships left a lasting impact on the Star League Navy's naval capabilities and played a crucial role in decisive engagements throughout their operational history.
+</history>
+
+<manufacturer>
+Refit
+</manufacturer>
+
+<primaryFactory>
+Unknown
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:KF Tiger I
+ENGINE:Rolls Royce Krakens
+ARMOR:Panthex YM1
+COMMUNICATIONS:Pathfinder 43CD
+TARGETING:MORSAT
+</systemManufacturers>
+
+<use>
+Battleship
+</use>
+
+<length>
+1209 m
+</length>
+
+<height>
+1375 m Sail
+</height>

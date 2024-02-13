@@ -36,6 +36,10 @@ Titan
 IS Level 2
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -203,3 +207,7 @@ Medium Laser
 <escape_pod>
 4
 </escape_pod>
+
+<source>
+TRO: 3057 Revised
+</source>

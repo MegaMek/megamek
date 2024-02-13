@@ -1,13 +1,20 @@
-Version:1.0
-Enforcer III
-ENF-6T
+chassis:Enforcer III
+model:ENF-6T
 mul id:985
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3062
-Source:TRO 3050 - Civil War
+Source:TRO: 3050
 Rules Level:2
+role:Sniper
+
+
+
+quirk:barrel_fists_ra
+quirk:battle_fists_la
+weaponquirk:fast_reload:RA:3:ISGaussRifle
+
 
 Mass:50
 Engine:250 XL Engine

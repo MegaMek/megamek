@@ -1,13 +1,19 @@
-Version:1.1
-Devastator
-DVS-X10 MUSE EARTH
+chassis:Devastator
+model:DVS-X10 MUSE EARTH
 mul id:896
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3075
-Source:Jihad
+source:XTR: Davion
 Rules Level:4
+role:Skirmisher
+
+
+
+quirk:hyper_actuator
+quirk:searchlight
+
 
 Mass:100
 Engine:400 XXL Engine(IS)

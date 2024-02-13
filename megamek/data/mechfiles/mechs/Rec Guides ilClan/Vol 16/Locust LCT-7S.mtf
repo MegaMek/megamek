@@ -1,13 +1,22 @@
-Version:1.0
-Locust
-LCT-7S
+chassis:Locust
+model:LCT-7S
 mul id:8200
 
 Config:Biped
 techbase:Mixed (IS Chassis)
 era:3128
-source:Rec Guide:ilClan #16 - Dark Age
+source:Rec Guide:ilClan #16
 rules level:2
+role:Scout
+
+
+
+quirk:compact_mech
+quirk:low_profile
+quirk:cramped_cockpit
+quirk:no_arms
+quirk:weak_legs
+
 
 mass:20
 engine:240 XL (Clan) Engine

@@ -32,6 +32,10 @@ Fortune Wheeled Assault Vehicle
 IS Level 3
 </type>
 
+<role>
+Missile Boat
+</role>
+
 <motion_type>
 Wheeled
 </motion_type>
@@ -86,3 +90,7 @@ Thunderbolt 15
 <tonnage>
 80.0
 </tonnage>
+
+<source>
+TRO: 3067
+</source>

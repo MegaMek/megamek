@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -35,6 +35,10 @@ Wagon Wheel Frigate
 <type>
 IS Level 3
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Aerodyne
@@ -194,8 +198,48 @@ IS Ammo AC/10:120
 47
 </structural_integrity>
 
+<capabilities>
+Originally intended as a heavy troop transport and carrier, the Wagon Wheel-class frigate underwent changes that transformed it into a fast attack ship. Its design featured three large grav decks and over a dozen docking collars for DropShips, emphasizing troop transport capabilities. However, due to various factors, including financial miscalculations and technical issues, the ship was modified to have only two docking collars while upgrading its engine thrust and firepower. The oversized grav decks, reminiscent of a wagon wheel, remained a distinctive feature of the vessel. However, they also posed limitations on maneuverability and were susceptible to damage during high-stress accelerations and evasive actions.
+</capabilities>
+
+<overview>
+The Wagon Wheel-class frigate was a significant achievement for the Taurian Concordat, representing both their efforts to enhance their space fleet and foster Periphery solidarity. Originally designed as a heavy troop transport and carrier with long-range capabilities, the ship underwent modifications due to technical challenges and financial constraints. Although it entered service as a fast attack ship rather than a heavy transport, it retained oversized grav decks, resembling spokes of an old Terran wagon wheel, which affected its maneuverability.
+</overview>
+
+<history>
+The Taurian Concordat produced only a small number of Wagon Wheel-class frigates before the Reunification War shifted military priorities. Ironically, the destruction of two Wagon Wheels by Davion WarShips in the Malagrotta Affair in 2573 played a significant role in sparking the Reunification War. This event further fueled the historical enmity between the Taurian Concordat and the Federated Suns, a rivalry that persists to this day. Despite its limited production and involvement in a critical historical event, the Wagon Wheel-class frigate symbolizes the Taurian Concordat's ambition to strengthen its space fleet and foster Periphery unity in the face of a resurgent Inner Sphere.
+</history>
+
+<manufacturer>
+Liberty Naval Yards
+</manufacturer>
+
+<primaryFactory>
+Horsham
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<use>
+Frigate
+</use>
+
+<length>
+700 m
+</length>
+
+<height>
+1003 m Sail
+</height>
+
 <source>
-TRO 3057 - Star League
+TRO: 3057 Revised
 </source>
 
 <tonnage>
@@ -215,6 +259,10 @@ TRO 3057 - Star League
 250
 200
 </grav_decks>
+
+<designtype>
+1
+</designtype>
 
 <crew>
 279
@@ -247,3 +295,4 @@ TRO 3057 - Star League
 <escape_pod>
 24
 </escape_pod>
+

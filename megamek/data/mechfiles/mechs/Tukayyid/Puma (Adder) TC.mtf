@@ -1,13 +1,17 @@
-Version:1.0
-Puma (Adder)
-TC
+chassis:Puma
+clanname:Adder
+model:TC
 mul id:7589
 
 Config:Biped Omnimech
 techbase:Clan
 era:3052
-source:Clan Invasion
+source:Battle of Tukayyid
 rules level:2
+role:Striker
+
+quirk:low_profile
+
 
 mass:35
 engine:210 XL (Clan) Engine(IS)

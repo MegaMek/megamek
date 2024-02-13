@@ -32,6 +32,10 @@ AC/2 Carrier
 IS Level 1
 </type>
 
+<role>
+Sniper
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -76,7 +80,7 @@ Autocannon/2
 </Rear Equipment>
 
 <source>
-TRO 3039 - Age of War
+TRO: 3039
 </source>
 
 <tonnage>

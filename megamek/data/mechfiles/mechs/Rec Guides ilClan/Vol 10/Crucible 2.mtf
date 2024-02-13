@@ -1,13 +1,17 @@
-Version:1.0
-Crucible
-2
+chassis:Crucible
+model:2
 mul id:7735
 
 Config:Biped
 techbase:Clan
 era:3149
-source:Rec Guide:ilClan #10 - Dark Age
+source:Rec Guide:ilClan #10
 rules level:2
+role:Sniper
+
+quirk:pro_actuator
+quirk:oversized
+
 
 mass:100
 engine:300 XL (Clan) Engine(IS)

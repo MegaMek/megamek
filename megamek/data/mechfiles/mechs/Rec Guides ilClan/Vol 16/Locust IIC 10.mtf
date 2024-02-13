@@ -1,13 +1,19 @@
-Version:1.0
-Locust IIC
-10
+chassis:Locust IIC
+model:10
 mul id:8203
 
 Config:Biped
 techbase:Clan
 era:3148
-source:Rec Guide:ilClan #16 - Dark Age
+source:Rec Guide:ilClan #16
 rules level:3
+role:Striker
+
+quirk:easy_maintain
+quirk:low_profile
+quirk:no_arms
+quirk:weak_legs
+
 
 mass:25
 engine:200 Fusion (Clan) Engine(IS)

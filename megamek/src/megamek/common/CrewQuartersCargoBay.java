@@ -40,6 +40,7 @@ public final class CrewQuartersCargoBay extends Bay {
         totalSpace = (int) weight / 7;
         this.weight = weight;
         currentSpace = (int) weight / 7;
+        this.minDoors = 0;
         this.doors = doors;
         currentdoors = doors;
     }
@@ -93,7 +94,12 @@ public final class CrewQuartersCargoBay extends Bay {
 
     @Override
     public String toString() {
-        return "crewquarters:" + weight + ":" + doors;
+        String bayType = "crewquarters";
+        return this.bayString(
+                bayType,
+                weight,
+                doors
+        );
     }
 
     @Override

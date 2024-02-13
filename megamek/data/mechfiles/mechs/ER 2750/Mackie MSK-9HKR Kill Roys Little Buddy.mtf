@@ -1,13 +1,21 @@
-Version:1.0
-Mackie
-MSK-9HKR 'Kill-Roy's Little Buddy'
+chassis:Mackie
+model:MSK-9HKR 'Kill-Roy's Little Buddy'
 mul id:5876
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2750
-Source:Star League
+Source:Era Report 2750
 Rules Level:4
+role:Sniper
+
+
+
+quirk:easy_maintain
+quirk:pro_actuator
+quirk:rugged_1
+quirk:oversized
+
 
 Mass:100
 Engine:300 Fusion Engine(IS)

@@ -1,13 +1,18 @@
-Version:1.0
-Falcon
-FLC-5P
+chassis:Falcon
+model:FLC-5P
 mul id:1028
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3065
-Source:TRO 3050 - Civil War
+Source:TRO: 3050
 Rules Level:2
+role:Striker
+
+
+
+quirk:low_profile
+
 
 Mass:30
 Engine:180 Light Engine

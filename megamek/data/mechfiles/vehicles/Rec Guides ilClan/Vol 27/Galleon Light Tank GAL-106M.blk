@@ -36,6 +36,10 @@ GAL-106M
 IS Level 3
 </type>
 
+<role>
+Scout
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -126,10 +130,15 @@ TARGETING:Maxell TA50 with Beagle Active Probe and TAG
 </systemManufacturers>
 
 <source>
-Rec Guide:ilClan #27 - Dark Age
+Rec Guide:ilClan #27
 </source>
 
 <tonnage>
 30.0
 </tonnage>
+
+
+<quirks>
+ubiquitous_is
+</quirks>
 

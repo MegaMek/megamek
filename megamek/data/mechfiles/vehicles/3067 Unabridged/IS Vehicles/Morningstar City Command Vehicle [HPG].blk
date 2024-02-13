@@ -32,6 +32,10 @@ Morningstar City Command Vehicle
 IS Level 3
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Wheeled
 </motion_type>
@@ -79,3 +83,7 @@ ISMagshotGR
 <tonnage>
 60.0
 </tonnage>
+
+<source>
+TRO: 3067
+</source>

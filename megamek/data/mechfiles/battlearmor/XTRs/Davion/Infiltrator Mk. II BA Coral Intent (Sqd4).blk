@@ -32,6 +32,10 @@ Coral Intent(Sqd4)
 IS Level 4
 </type>
 
+<role>
+Ambusher
+</role>
+
 <motion_type>
 Jump
 </motion_type>
@@ -81,7 +85,7 @@ IS BA Mimetic:RA
 </Trooper 4 Equipment>
 
 <source>
-XTRO Davion - Jihad
+XTR: Davion
 </source>
 
 <chassis>

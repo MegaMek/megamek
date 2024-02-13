@@ -1,12 +1,18 @@
-Version:1.3
-Whitworth
-WTH-2H
+chassis:Whitworth
+model:WTH-2H
 mul id:9428
 Config:Biped
 techbase:Inner Sphere
 era:3139
-source:Rec Guide:ilClan #30 - Dark Age
+source:Rec Guide:ilClan #30
 rules level:2
+role:Brawler
+
+
+
+quirk:rugged_1
+quirk:weak_legs
+
 
 mass:40
 engine:200 Fusion Engine(IS)

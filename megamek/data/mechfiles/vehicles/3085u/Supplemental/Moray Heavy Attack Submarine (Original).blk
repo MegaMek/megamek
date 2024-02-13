@@ -32,6 +32,10 @@ Moray Heavy Attack Submarine
 IS Level 2
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Submarine
 </motion_type>
@@ -99,7 +103,7 @@ SRT 6
 </Turret Equipment>
 
 <source>
-TRO 3085S - Star League
+TRO: 3085 Supplemental
 </source>
 
 <tonnage>

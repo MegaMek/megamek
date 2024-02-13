@@ -36,6 +36,10 @@ Intrepid Assault Craft
 IS Level 4
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -127,7 +131,7 @@ TARGETING:Unknown
 </systemManufacturers>
 
 <notes>
-Unit is illegal in the XTRO
+Unit is illegal in the XTR:
 </notes>
 
 <use>
@@ -147,7 +151,7 @@ Assault Craft
 </height>
 
 <source>
-XTRO Primitives IV - Age of War
+XTR: Primitives IV
 </source>
 
 <tonnage>
@@ -194,3 +198,13 @@ XTRO Primitives IV - Age of War
 0
 </escape_pod>
 
+
+<quirks>
+atmo_instability
+obsolete
+</quirks>
+
+<weaponQuirks>
+imp_cooling:RS:0:ISLargeLaser
+imp_cooling:LS:0:ISLargeLaser
+</weaponQuirks>

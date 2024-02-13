@@ -1,13 +1,18 @@
-Version:1.0
-Blackjack
-BJ-4
+chassis:Blackjack
+model:BJ-4
 mul id:389
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3067
-Source:TRO 3050 - Civil War
+Source:TRO: 3050
 Rules Level:2
+role:Brawler
+
+
+
+quirk:bad_rep_is
+
 
 Mass:45
 Engine:180 Light Engine

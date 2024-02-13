@@ -1,5 +1,5 @@
 3145 LCAF Medium Vehicles D
-Schildkröte Line Tank,1
+Schildkrote Line Tank,1
 Vedette Medium Tank (NETC), 2
 Drillson Heavy Hover Tank (Standard), 3
 Fulcrum Heavy Hovertank (Standard), 4

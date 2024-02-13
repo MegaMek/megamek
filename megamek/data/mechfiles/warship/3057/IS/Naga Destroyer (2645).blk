@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -35,6 +35,10 @@ Naga Destroyer
 <type>
 IS Level 3
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Aerodyne
@@ -158,8 +162,48 @@ Naval Laser 35
 68
 </structural_integrity>
 
+<capabilities>
+Designed for close-quarters combat against other large ships, the Naga-class light destroyer boasted a heavy concentration of light naval autocannons and energy weapons. Its armament was simplified to streamline logistical needs, requiring only three types of ammunition. The ship featured a spacious cargo bay that could be utilized for storing additional ammunition or supplies for extended missions, enhancing its operational range and self-sustainability. To defend against enemy fighters, the Naga carried up to two squadrons of aerospace craft and a pair of heavy combat shuttles. However, the Naga had several critical flaws, including a lack of rearward firepower, slow acceleration, and limited light anti-fighter defenses.
+</capabilities>
+
+<overview>
+The Naga-class light destroyer once served as the backbone of the Terran Hegemony's fleet, replacing the older Essex-class in 2645. With its combination of heavy armor and firepower, the Naga was designed to be a cost-effective destroyer capable of delivering an efficient mix of capital weaponry. However, advancements in technology eventually rendered the Naga obsolete, and its demise came when the upgraded Essex-class was commissioned. Today, only three Nagas remain, but their age and structural flaws make restoration efforts impractical.
+</overview>
+
+<history>
+The Naga-class light destroyer entered service in 2645, becoming the primary destroyer of the Terran Hegemony's navy. Its introduction marked the replacement of the older Essex-class, offering improved armor and firepower. The Naga's cost-effective design allowed it to deliver a potent mix of capital weaponry, making it a formidable force on the battlefield. For fifty years, the Naga reigned as the premier destroyer of the Hegemony fleet. However, technological advancements eventually led to the development of faster and more powerful ships. The upgraded Essex-class, commissioned in 2707 and launched in 2711, sounded the death knell for the Naga-class. The newer ships surpassed the capabilities of the Naga, rendering it obsolete in the eyes of the Hegemony navy. Today, only three Nagas are known to exist, having been mothballed since the fall of the Star League. These destroyers have remained in orbit around Neptune, largely overlooked during the conflicts for Terra. However, recent intelligence reports indicate that fanatics have gained control of these vessels and are attempting to reactivate them. Unfortunately, the Nagas suffer from extensive structural fatigue and engine flaws that have worsened over time due to their age. Restoration efforts are considered impractical and wasteful, given the high costs involved.
+</history>
+
+<manufacturer>
+Riga Interstellar Shipyards
+</manufacturer>
+
+<primaryFactory>
+Dyev
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<use>
+Destroyer
+</use>
+
+<length>
+540 m
+</length>
+
+<height>
+1200 m Sail
+</height>
+
 <source>
-TRO 3057R - Star League
+TRO: 3057 Revised
 </source>
 
 <tonnage>
@@ -177,6 +221,10 @@ TRO 3057R - Star League
 <grav_decks>
 50
 </grav_decks>
+
+<designtype>
+1
+</designtype>
 
 <crew>
 235
@@ -209,3 +257,4 @@ TRO 3057R - Star League
 <escape_pod>
 10
 </escape_pod>
+

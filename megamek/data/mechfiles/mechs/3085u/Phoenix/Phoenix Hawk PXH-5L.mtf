@@ -1,13 +1,22 @@
-Version:1.2
-Phoenix Hawk
-PXH-5L
+chassis:Phoenix Hawk
+model:PXH-5L
 mul id:2505
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3069
-Source:Jihad
+source:TRO: 3085
 Rules Level:2
+role:Skirmisher
+
+
+
+quirk:command_mech
+quirk:imp_com
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+weaponquirk:jettison_capable:RA:4:ISPlasmaRifle
+
 
 Mass:45
 Engine:270 Fusion Engine(IS)

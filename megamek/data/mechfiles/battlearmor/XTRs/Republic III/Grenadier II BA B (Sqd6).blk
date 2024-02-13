@@ -32,6 +32,10 @@ B(Sqd6)
 Mixed (IS Chassis) Advanced
 </type>
 
+<role>
+Missile Boat
+</role>
+
 <motion_type>
 Leg
 </motion_type>
@@ -60,7 +64,7 @@ BACL Ammo LRM-4:Body:Shots4#
 </Squad Equipment>
 
 <source>
-XTRO Republic III - Dark Age
+XTR: Republic III
 </source>
 
 <chassis>
@@ -115,3 +119,8 @@ JUMPJET:Unknown
 COMMUNICATIONS:Unknown
 TARGETING:Unknown
 </systemManufacturers>
+
+<quirks>
+difficult_maintain
+</quirks>
+

@@ -23,7 +23,6 @@ import org.apache.logging.log4j.LogManager;
 
 import java.io.*;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
@@ -47,7 +46,7 @@ public class Board implements Serializable {
     public static final int START_EDGE = 9;
     public static final int START_CENTER = 10;
     public static final int NUM_ZONES = 11;
-    
+
     // Board Dimensions
     // Used for things like artillery rules that reference the standard mapsheet dimensions
     public static final int DEFAULT_BOARD_HEIGHT = 17;
@@ -434,35 +433,35 @@ public class Board implements Serializable {
 
         // Always make the coords of the hex match the actual position on the board
         hex.setCoords(new Coords(x, y));
-        
+
         hex.clearExits();
         for (int i = 0; i < 6; i++) {
             Hex other = getHexInDir(x, y, i);
             hex.setExits(other, i, roadsAutoExit);
         }
-        
+
         // Internally handled terrain (inclines, cliff-bottoms)
         initializeAutomaticTerrain(x, y, /* useInclines: */ true);
-        
+
         // Add woods/jungle elevation where none was saved
         initializeFoliageElev(x, y);
-        
+
         if (event) {
             processBoardEvent(new BoardEvent(this, new Coords(x, y), BoardEvent.BOARD_CHANGED_HEX));
         }
     }
-    
+
     /** Adds the FOLIAGE_ELEV terrain when none is present. */
     private void initializeFoliageElev(int x, int y) {
         Hex hex = getHex(x, y);
 
         // If the foliage elevation is present or the hex doesn't even have foliage,
         // nothing needs to be done
-        if (hex.containsTerrain(Terrains.FOLIAGE_ELEV) || 
+        if (hex.containsTerrain(Terrains.FOLIAGE_ELEV) ||
                 (!hex.containsTerrain(Terrains.WOODS) && !hex.containsTerrain(Terrains.JUNGLE))) {
             return;
         }
-        
+
         // Foliage is missing, therefore add it with the standard TW values
         // elevation 3 for Ultra Woods/Jungle and 2 for Light/Heavy
         if (hex.terrainLevel(Terrains.WOODS) == 3 || hex.terrainLevel(Terrains.JUNGLE) == 3) {
@@ -471,9 +470,9 @@ public class Board implements Serializable {
             hex.addTerrain(new Terrain(Terrains.FOLIAGE_ELEV, 2));
         }
     }
-    
-    /** 
-     * Checks all hex edges of the hex at (x, y) if automatically handled 
+
+    /**
+     * Checks all hex edges of the hex at (x, y) if automatically handled
      * terrains such as inclines must be placed or removed.
      * @param x The hex X-coord.
      * @param y The hex Y-coord.
@@ -491,7 +490,7 @@ public class Board implements Serializable {
 
         // Get the currently set cliff-tops for correction. When exits
         // are not specified, the cliff-tops are removed.
-        if (hex.containsTerrain(Terrains.CLIFF_TOP) 
+        if (hex.containsTerrain(Terrains.CLIFF_TOP)
                 && hex.getTerrain(Terrains.CLIFF_TOP).hasExitsSpecified()) {
             origCliffTopExits = hex.getTerrain(Terrains.CLIFF_TOP).getExits();
         }
@@ -517,26 +516,26 @@ public class Board implements Serializable {
 
             // Should there be an incline top?
             if (((levelDiff == 1) || (levelDiff == 2))
-                    && !cliffTopExitInThisDir 
+                    && !cliffTopExitInThisDir
                     && !inWater
                     && !towardsWater) {
                 inclineTopExits += (1 << i);
             }
-            
+
             if (towardsWater
                     && !inWater
-                    && !cliffTopExitInThisDir 
+                    && !cliffTopExitInThisDir
                     && ((levelDiffToWaterSurface == 1) || levelDiffToWaterSurface == 2)) {
                 inclineTopExits += (1 << i);
             }
 
             // Should there be a high level cliff top?
-            if (levelDiff > 2 
+            if (levelDiff > 2
                     && !inWater
                     && (!towardsWater || levelDiffToWaterSurface > 2)) {
                 highInclineTopExits += (1 << i);
             }
-            
+
             // Should there be an incline bottom or a cliff bottom?
             // This needs to check for a cliff-top in the other hex and
             // in the opposite direction
@@ -568,7 +567,7 @@ public class Board implements Serializable {
         }
     }
 
-    /** 
+    /**
      * Adds automatically handled terrain such as inclines when the given
      * exits value is not 0, otherwise removes it.
      */
@@ -579,7 +578,7 @@ public class Board implements Serializable {
             hex.removeTerrain(terrainType);
         }
     }
-    
+
     /**
      * Rebuilds automatic terrains for the whole board.
      * @param useInclines Indicates whether to use inclines on hex exits.
@@ -691,6 +690,12 @@ public class Board implements Serializable {
             Hex currHex = hexIter.next();
             int x = currCoord.getX();
             int y = currCoord.getY();
+
+            // Client may have sent off-board coordinates or null info; ignore.
+            if (!contains(x,y) || null == currHex){
+                continue;
+            }
+
             data[(y * width) + x] = currHex;
             initializeHex(x, y);
 
@@ -794,7 +799,7 @@ public class Board implements Serializable {
         }
         return new BoardDimensions(boardx, boardy);
     }
-    
+
     /** Inspects the given board file and returns a set of its tags. */
     public static Set<String> getTags(final File filepath) {
         var result = new HashSet<String>();
@@ -820,7 +825,7 @@ public class Board implements Serializable {
         }
         return result;
     }
-    
+
     public static boolean isValid(String board) {
         Board tempBoard = new Board(16, 17);
         if (!board.endsWith(".board")) {
@@ -841,9 +846,9 @@ public class Board implements Serializable {
      * Can the given player deploy at these coordinates?
      */
     public boolean isLegalDeployment(Coords c, Player p) {
-        return isLegalDeployment(c, p.getStartingPos(), p.getStartWidth(), p.getStartOffset());
+        return isLegalDeployment(c, p.getStartingPos(), p.getStartWidth(), p.getStartOffset(), p.getStartingAnyNWx(), p.getStartingAnyNWy(), p.getStartingAnySEx(), p.getStartingAnySEy());
     }
-    
+
     /**
      * Can the given entity be deployed at these coordinates
      */
@@ -851,14 +856,14 @@ public class Board implements Serializable {
         if (e == null) {
             return false;
         }
-        
-        return isLegalDeployment(c, e.getStartingPos(), e.getStartingWidth(), e.getStartingOffset());
+
+        return isLegalDeployment(c, e.getStartingPos(), e.getStartingWidth(), e.getStartingOffset(), e.getStartingAnyNWx(), e.getStartingAnyNWy(), e.getStartingAnySEx(), e.getStartingAnySEy());
     }
-    
+
     /**
      * Can an object be deployed at these coordinates, given a starting zone, width of starting zone and offset from edge of board?
      */
-    public boolean isLegalDeployment(Coords c, int zoneType, int startingWidth, int startingOffset) {
+    public boolean isLegalDeployment(Coords c, int zoneType, int startingWidth, int startingOffset, int startingAnyNWx, int startingAnyNWy, int startingAnySEx, int startingAnySEy) {
         if ((c == null) || !contains(c)) {
             return false;
         }
@@ -868,10 +873,13 @@ public class Board implements Serializable {
         int maxx = width - startingOffset;
         int miny = startingOffset;
         int maxy = height - startingOffset;
-        
+
         switch (zoneType) {
             case START_ANY:
-                return true;
+                return (((startingAnyNWx == Entity.STARTING_ANY_NONE) || (c.getX() >= startingAnyNWx))
+                        && ((startingAnySEx == Entity.STARTING_ANY_NONE) || (c.getX() <= startingAnySEx))
+                        && ((startingAnyNWy == Entity.STARTING_ANY_NONE) || (c.getY() >= startingAnyNWy))
+                        && ((startingAnySEy == Entity.STARTING_ANY_NONE) || (c.getY() <= startingAnySEy)));
             case START_NW:
                 return ((c.getX() < (minx + nLimit)) && (c.getX() >= minx) && (c.getY() >= miny) && (c.getY() < (height / 2)))
                         || ((c.getY() < (miny + nLimit)) && (c.getY() >= miny) && (c.getX() >= minx) && (c.getX() < (width / 2)));
@@ -1085,14 +1093,14 @@ public class Board implements Serializable {
                 }
                 StringBuffer currBuff = new StringBuffer();
                 boolean valid = hex.isValid(currBuff);
-                
-                // Multi-hex problems 
+
+                // Multi-hex problems
                 // A building hex must only have exits to other building hexes of the same Building Type and Class
                 if (hex.containsTerrain(Terrains.BUILDING) && hex.getTerrain(Terrains.BUILDING).hasExitsSpecified()) {
                     for (int dir = 0; dir < 6; dir++) {
                         Hex adjHex = getHexInDir(x, y, dir);
-                        if ((adjHex != null) 
-                                && adjHex.containsTerrain(Terrains.BUILDING) 
+                        if ((adjHex != null)
+                                && adjHex.containsTerrain(Terrains.BUILDING)
                                 && hex.containsTerrainExit(Terrains.BUILDING, dir)) {
                             if (adjHex.getTerrain(Terrains.BUILDING).getLevel() != hex.getTerrain(Terrains.BUILDING).getLevel()) {
                                 valid = false;
@@ -1109,7 +1117,7 @@ public class Board implements Serializable {
                         }
                     }
                 }
-                
+
                 // Return early if we aren't logging errors
                 if (!valid && (errBuff == null)) {
                     return false;
@@ -1856,13 +1864,13 @@ public class Board implements Serializable {
         }
     }
 
-    /** 
-     * Sets a tileset theme for all hexes of the board. 
+    /**
+     * Sets a tileset theme for all hexes of the board.
      * Passing null as newTheme resets the theme to the theme specified in the board file.
-     */ 
+     */
     public void setTheme(final @Nullable String newTheme) {
         boolean reset = newTheme == null;
-        
+
         for (int c = 0; c < width * height; c++) {
             if (reset) {
                 data[c].resetTheme();
@@ -1877,9 +1885,9 @@ public class Board implements Serializable {
      * @return true when the given Coord c is on the edge of the board.
      */
     public boolean isOnBoardEdge(Coords c) {
-        return (c.getX() == 0) 
+        return (c.getX() == 0)
                 || (c.getY() == 0)
-                || (c.getX() == (width - 1)) 
+                || (c.getX() == (width - 1))
                 || (c.getY() == (height - 1));
     }
 

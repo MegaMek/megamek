@@ -1,13 +1,19 @@
-Version:1.0
-Cossack
-C-SK1
+chassis:Cossack
+model:C-SK1
 mul id:703
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3060
-Source:TRO 3060
+Source:TRO: 3060
 Rules Level:2
+role:Striker
+
+
+
+
+quirk:ext_twist
+
 
 Mass:20
 Engine:120 XL Engine

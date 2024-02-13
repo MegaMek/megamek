@@ -1,13 +1,18 @@
-Version:1.0
-King Crab
-KGC-007
+chassis:King Crab
+model:KGC-007
 mul id:1776
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3071
-Source:TRO 3050 - Jihad
+Source:TRO: 3050
 Rules Level:2
+role:Juggernaut
+
+
+
+quirk:command_mech
+
 
 Mass:100
 Engine:300 Fusion Engine(IS)

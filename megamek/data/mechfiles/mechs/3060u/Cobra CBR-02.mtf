@@ -1,13 +1,19 @@
-Version:1.0
-Cobra
-CBR-02
+chassis:Cobra
+model:CBR-02
 mul id:655
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3060
-Source:TRO 3060
+Source:TRO: 3060
 Rules Level:2
+role:Missile Boat
+
+
+
+
+quirk:pro_actuator
+
 
 Mass:45
 Engine:225 Fusion Engine

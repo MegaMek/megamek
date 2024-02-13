@@ -20,6 +20,7 @@ package megamek.common.cost;
 
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.common.*;
+import megamek.common.equipment.ArmorType;
 import megamek.common.verifier.SupportVeeStructure;
 
 public class FixedWingSupportCostCalculator {
@@ -62,21 +63,16 @@ public class FixedWingSupportCostCalculator {
         costs[i++] = engineCost;
 
         // armor
-        if (fixedWingSupport.getArmorType(fixedWingSupport.firstArmorIndex()) == EquipmentType.T_ARMOR_STANDARD) {
-            int totalArmorPoints = 0;
+        if (fixedWingSupport.hasPatchworkArmor()) {
             for (int loc = 0; loc < fixedWingSupport.locations(); loc++) {
-                totalArmorPoints += fixedWingSupport.getOArmor(loc);
+                costs[i++] = fixedWingSupport.getArmorWeight(loc) * ArmorType.forEntity(fixedWingSupport, loc).getCost();
             }
-            costs[i++] = totalArmorPoints *
-                    EquipmentType.getSupportVehicleArmorCostPerPoint(fixedWingSupport.getBARRating(fixedWingSupport.firstArmorIndex()));
         } else {
-            if (fixedWingSupport.hasPatchworkArmor()) {
-                for (int loc = 0; loc < fixedWingSupport.locations(); loc++) {
-                    costs[i++] = fixedWingSupport.getArmorWeight(loc) * EquipmentType.getArmorCost(fixedWingSupport.getArmorType(loc));
-                }
-
+            ArmorType armor = ArmorType.forEntity(fixedWingSupport);
+            if (armor.hasFlag(MiscType.F_SUPPORT_VEE_BAR_ARMOR)) {
+                costs[i++] = fixedWingSupport.getTotalOArmor() * armor.getCost();
             } else {
-                costs[i++] = fixedWingSupport.getArmorWeight() * EquipmentType.getArmorCost(fixedWingSupport.getArmorType(0));
+                costs[i++] = fixedWingSupport.getArmorWeight() * ArmorType.forEntity(fixedWingSupport).getCost();
             }
         }
 

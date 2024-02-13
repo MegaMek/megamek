@@ -1,48 +1,51 @@
-Version:1.0
-Morrigan
-4
+generator:MegaMek Suite 0.49.16-SNAPSHOT on 2023-12-29
+chassis:Morrigan
+model:4
 mul id:6927
-
 Config:Biped
-TechBase:Mixed (Clan Chassis)
-Era:3111
-Source:RS 3145 NT NU
-Rules Level:3
+techbase:Mixed (Clan Chassis)
+era:3111
+source:Record Sheets: 3145 New Tech New Upgrades
+rules level:3
+role:Striker
 
-Mass:35
-Engine:280 XL (Clan) Engine
-Structure:Clan Endo Steel
-Myomer:Standard
+quirk:weak_legs
+weaponquirk:stable_weapon:RA:3:TSEMP Cannon
 
-Heat Sinks:12 Double
-Walk MP:8
-Jump MP:0
+mass:35
+engine:280 XL (Clan) Engine
+structure:Clan Endo Steel
+myomer:Standard
 
-Armor:Ferro-Fibrous(Clan)
-LA Armor:10
-RA Armor:10
-LT Armor:11
-RT Armor:11
-CT Armor:15
-HD Armor:9
-LL Armor:16
-RL Armor:16
-RTL Armor:5
-RTR Armor:5
-RTC Armor:7
+heat sinks:12 Clan Double
+walk mp:8
+jump mp:0
+
+armor:Ferro-Fibrous(Clan)
+LA armor:10
+RA armor:10
+LT armor:11
+RT armor:11
+CT armor:15
+HD armor:9
+LL armor:16
+RL armor:16
+RTL armor:5
+RTR armor:5
+RTC armor:7
 
 Weapons:11
-ER Small Laser, Left Torso
-ER Small Laser, Left Torso
-ER Small Laser, Left Torso
-ER Small Laser, Left Torso
-ER Small Laser, Right Torso
-ER Small Laser, Right Torso
-ER Small Laser, Right Torso
-ER Small Laser, Right Torso
-ER Small Laser, Right Torso
-ER Small Laser, Left Torso
 TSEMP Cannon, Right Arm
+ER Small Laser, Left Torso
+ER Small Laser, Left Torso
+ER Small Laser, Left Torso
+ER Small Laser, Left Torso
+ER Small Laser, Left Torso
+ER Small Laser, Right Torso
+ER Small Laser, Right Torso
+ER Small Laser, Right Torso
+ER Small Laser, Right Torso
+ER Small Laser, Right Torso
 
 Left Arm:
 Shoulder

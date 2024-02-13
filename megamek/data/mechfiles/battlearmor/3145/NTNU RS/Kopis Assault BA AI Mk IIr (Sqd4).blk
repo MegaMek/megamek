@@ -36,6 +36,10 @@ Kopis Assault Battle Armor
 IS Level 2
 </type>
 
+<role>
+Ambusher
+</role>
+
 <motion_type>
 Leg
 </motion_type>
@@ -118,7 +122,7 @@ TARGETING:Unknown
 </systemManufacturers>
 
 <source>
-RS3145 NTNU - Dark Age
+Record Sheets: 3145 New Tech New Upgrades
 </source>
 
 <chassis>

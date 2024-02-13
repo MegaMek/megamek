@@ -75,6 +75,10 @@ BA Machine Gun:TU
 IS Level 2
 </type>
 
+<role>
+Scout
+</role>
+
 <year>
 3060
 </year>
@@ -88,7 +92,7 @@ Leg
 </armor_type>
 
 <source>
-TRO 3058U - Clan Invasion
+TRO: 3058 Upgrade
 </source>
 
 <armor_tech>

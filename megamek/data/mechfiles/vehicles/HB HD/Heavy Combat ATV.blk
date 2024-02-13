@@ -36,6 +36,10 @@ Heavy Combat ATV
 IS Level 2
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Wheeled
 </motion_type>
@@ -89,7 +93,7 @@ PintleTurret
 </structural_tech_rating>
 
 <source>
-HB:House Davion - Succession Wars
+Handbook: House Davion
 </source>
 
 <tonnage>

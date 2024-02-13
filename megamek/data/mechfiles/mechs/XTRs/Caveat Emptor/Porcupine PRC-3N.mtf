@@ -1,13 +1,18 @@
-Version:1.0
-Porcupine
-PRC-3N
+chassis:Porcupine
+model:PRC-3N
 mul id:8102
 
 Config:Biped
 techbase:Inner Sphere
 era:3132
-source:Dark Age
+source:XTR: Caveat Emptor
 rules level:4
+role:Striker
+
+
+
+quirk:distracting
+
 
 mass:20
 engine:180 XXL Engine(IS)

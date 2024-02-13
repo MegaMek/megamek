@@ -32,6 +32,10 @@ Shen Long Battle Armor
 IS Level 2
 </type>
 
+<role>
+Scout
+</role>
+
 <motion_type>
 Leg
 </motion_type>
@@ -56,7 +60,7 @@ BADavidLightGaussRifle:TU
 </Squad Equipment>
 
 <source>
-TRO 3145 Capellan Confederation - Early Republic
+TRO: 3145 Capellan Confederation
 </source>
 
 <chassis>
@@ -115,3 +119,10 @@ JUMPJET:Unknown
 COMMUNICATIONS:Unknown
 TARGETING:Unknown
 </systemManufacturers>
+
+<weaponQuirks>
+mod_weapons:Squad:0:BADavidLightGaussRifle
+mod_weapons:Squad:1:BADavidLightGaussRifle
+mod_weapons:Squad:2:BADavidLightGaussRifle
+mod_weapons:Squad:3:BADavidLightGaussRifle
+</weaponQuirks>

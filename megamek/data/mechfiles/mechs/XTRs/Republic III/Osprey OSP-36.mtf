@@ -1,13 +1,20 @@
-Version:1.0
-Osprey
-OSP-36
+chassis:Osprey
+model:OSP-36
 mul id:7377
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3139
-Source:XTRO Republic III - Dark Age
+Source:XTR: Republic III
 Rules Level:3
+role:Sniper
+
+
+
+quirk:no_arms
+weaponquirk:inaccurate:RA:5:ISERMediumLaser
+weaponquirk:inaccurate:LA:5:ISERMediumLaser
+
 
 Mass:55
 Engine:220 XL Engine(IS)

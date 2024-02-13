@@ -1,13 +1,20 @@
-Version:1.0
-Paladin
-PAL-1
+chassis:Paladin
+model:PAL-1
 mul id:2408
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3053
-Source:TRO 3055 - Clan Invasion
+Source:TRO: 3055
 Rules Level:2
+role:Skirmisher
+
+
+
+
+quirk:difficult_maintain
+quirk:non_standard
+
 
 Mass:60
 Engine:300 Fusion Engine

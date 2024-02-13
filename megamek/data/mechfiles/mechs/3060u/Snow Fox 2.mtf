@@ -1,13 +1,17 @@
-Version:1.0
-Snow Fox
-2
+chassis:Snow Fox
+model:2
 mul id:2980
 
 Config:Quad
 TechBase:Clan
 Era:3015
-Source:TRO 3060
+Source:TRO: 3060
 Rules Level:2
+role:Missile Boat
+
+quirk:low_profile
+quirk:hard_pilot
+
 
 Mass:20
 Engine:160 Fusion (Clan) Engine

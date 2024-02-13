@@ -36,6 +36,10 @@ SWF-606CA (Aaron)
 IS Level 4
 </type>
 
+<role>
+Interceptor
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -139,5 +143,5 @@ TARGETING:PhantomTrac 55
 </systemManufacturers>
 
 <source>
-XTRO Gunslingers - Star League
+XTR: Gunslingers
 </source>

@@ -51,6 +51,10 @@ ISMG Ammo (100)
 <type>
 IS Level 4
 </type>
+
+<role>
+Brawler
+</role>
 <year>
 2801
 </year>
@@ -66,3 +70,7 @@ IS Level 4
 <motion_type>
 Wheeled
 </motion_type>
+
+<source>
+Historical: Operation Klondike
+</source>

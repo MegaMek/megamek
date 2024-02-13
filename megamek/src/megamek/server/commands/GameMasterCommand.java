@@ -19,6 +19,7 @@
 package megamek.server.commands;
 
 import megamek.common.Player;
+import megamek.common.enums.GamePhase;
 import megamek.server.GameManager;
 import megamek.server.Server;
 
@@ -55,13 +56,16 @@ public class GameMasterCommand extends ServerCommand {
             return;
         }
 
-        // toggling off game master requires no vote
+        GameManager gameManager = (GameManager) server.getGameManager();
         if (player.getGameMaster()) {
-            GameManager gameManager = (GameManager) server.getGameManager();
+            // toggling off game master requires no vote
             gameManager.setGameMaster(player, false);
-            return;
+        } else if (gameManager.getGame() != null && gameManager.getGame().getPhase().isLounge() ) {
+            // becoming GameMaster in Lobby is always permitted
+            server.sendServerChat(player.getName() + " will become Game Master without vote.");
+            gameManager.setGameMaster(player, true);
         } else {
-            // require voting
+            // becoming GameMaster in regular gameplay requires unanimous human player voting
             for (Player p : server.getGame().getPlayersVector()) {
                 if (p.getId() != player.getId()) {
                     server.sendServerChat(p.getId(), player.getName() + " wants to become a Game Master" + SERVER_VOTE_PROMPT_MSG);

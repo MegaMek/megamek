@@ -32,6 +32,10 @@ Cuchulainn Support Armor
 Clan Level 2
 </type>
 
+<role>
+Juggernaut
+</role>
+
 <motion_type>
 Jump
 </motion_type>
@@ -62,7 +66,7 @@ Clan BA Stealth (Improved):Body
 
 
 <source>
-TRO 3145 Lyran Commonwealth - Dark Ages
+TRO: 3145 Lyran Commonwealth
 </source>
 
 <chassis>

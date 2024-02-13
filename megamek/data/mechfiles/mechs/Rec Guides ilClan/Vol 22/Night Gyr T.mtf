@@ -1,13 +1,16 @@
-Version:1.0
-Night Gyr
-T
+chassis:Night Gyr
+model:T
 mul id:8398
 
 Config:Biped Omnimech
 techbase:Clan
 era:3142
-source:Rec Guide:ilClan #22 - Dark Age
+source:Rec Guide:ilClan #22
 rules level:2
+role:Juggernaut
+
+quirk:difficult_maintain
+
 
 mass:75
 engine:300 XL (Clan) Engine(IS)

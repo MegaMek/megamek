@@ -36,6 +36,10 @@ Stormbird Battle Armor
 Clan Level 2
 </type>
 
+<role>
+Ambusher
+</role>
+
 <motion_type>
 Leg
 </motion_type>
@@ -95,7 +99,7 @@ Quatre Belle (CSR Beta), Sudeten (Olivetti
 </primaryFactory>
 
 <source>
-Rec Guide:ilClan #30 - Early Republic
+Rec Guide:ilClan #30
 </source>
 
 <chassis>

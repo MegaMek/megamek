@@ -1,13 +1,22 @@
-Version:1.0
-Warhammer
-WHM-6K
+chassis:Warhammer
+model:WHM-6K
 mul id:3486
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2830
-Source:TRO 3039 - Succession Wars
+Source:TRO: 3039
 Rules Level:1
+role:Brawler
+
+
+
+quirk:rugged_2
+quirk:searchlight
+quirk:stable
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+
 
 Mass:70
 Engine:280 Fusion Engine(IS)

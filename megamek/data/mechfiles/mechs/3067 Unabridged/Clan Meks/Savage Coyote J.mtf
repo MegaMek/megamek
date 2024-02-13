@@ -1,13 +1,16 @@
-Version:1.0
-Savage Coyote
-J
+chassis:Savage Coyote
+model:J
 mul id:5705
 
 Config:Biped Omnimech
 TechBase:Clan
 Era:3073
-Source:3067 Unabridged
+Source:TRO: Jihad
 Rules Level:2
+role:Brawler
+
+quirk:oversized
+
 
 Mass:85
 Engine:255 XL (Clan) Engine(IS)

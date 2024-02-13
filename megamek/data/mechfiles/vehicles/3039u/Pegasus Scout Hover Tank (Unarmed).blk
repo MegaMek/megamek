@@ -32,6 +32,10 @@ Pegasus Scout Hover Tank
 IS Level 1
 </type>
 
+<role>
+Scout
+</role>
+
 <motion_type>
 Hover
 </motion_type>
@@ -75,7 +79,7 @@ cargobay:12.0:1
 </Turret Equipment>
 
 <source>
-TRO 3039 - Succession Wars
+TRO: 3039
 </source>
 
 <tonnage>

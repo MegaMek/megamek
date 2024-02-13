@@ -1,13 +1,17 @@
-Version:1.1
-Butcherbird (Ion Sparrow)
-C
+chassis:Butcherbird
+clanname:Ion Sparrow
+model:C
 mul id:7741
 
 Config:Biped Omnimech
 techbase:Clan
 era:3147
 rules level:2
-source:Rec Guide:ilClan #11 - Dark Age
+role:Scout
+source:Rec Guide:ilClan #11
+
+quirk:easy_pilot
+
 
 mass:20
 engine:160 XL (Clan) Engine(IS)
@@ -73,9 +77,9 @@ Clan Ferro-Fibrous
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLPartialWing (omnipod)
-CLPartialWing (omnipod)
-CLPartialWing (omnipod)
+CLPartialWing
+CLPartialWing
+CLPartialWing
 CLDoubleHeatSink
 CLDoubleHeatSink
 Jump Jet (omnipod)
@@ -87,9 +91,9 @@ CLTargeting Computer (omnipod)
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLPartialWing (omnipod)
-CLPartialWing (omnipod)
-CLPartialWing (omnipod)
+CLPartialWing
+CLPartialWing
+CLPartialWing
 CLDoubleHeatSink
 CLDoubleHeatSink
 Jump Jet (omnipod)

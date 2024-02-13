@@ -29,27 +29,27 @@ public interface IOption extends IBasicOption, IOptionInfo {
     /**
      * Boolean option type
      */
-    public static final int BOOLEAN = 0;
+    int BOOLEAN = 0;
 
     /**
      * Integer option type
      */
-    public static final int INTEGER = 1;
+    int INTEGER = 1;
 
     /**
      * Float option type
      */
-    public static final int FLOAT = 2;
+    int FLOAT = 2;
 
     /**
      * String option type
      */
-    public static final int STRING = 3;
+    int STRING = 3;
 
     /**
      * Choice option type
      */
-    public static final int CHOICE = 4;
+    int CHOICE = 4;
 
     /**
      * Returns this option container - GameOptions, PilotOptions etc
@@ -71,66 +71,66 @@ public interface IOption extends IBasicOption, IOptionInfo {
      * 
      * @return default option value
      */
-    public abstract Object getDefault();
+    Object getDefault();
 
     /**
      * Return the value as the <code>boolean</code>
      */
-    public abstract boolean booleanValue();
+    boolean booleanValue();
 
     /**
      * Return the value as the <code>int</code>
      */
-    public abstract int intValue();
+    int intValue();
 
     /**
      * Return the value as the <code>float</code>
      */
-    public abstract float floatValue();
+    float floatValue();
 
     /**
      * Return the value as the <code>String</code>
      */
-    public abstract String stringValue();
+    String stringValue();
 
     /**
      * Sets the value
      * 
      * @param value value to set
      */
-    public abstract void setValue(Object value);
+    void setValue(Object value);
 
     /**
      * Sets the <code>String</code> value
      * 
      * @param value value to set
      */
-    public abstract void setValue(String value);
+    void setValue(String value);
 
     /**
      * Sets the <code>boolean</code> value
      * 
      * @param value value to set
      */
-    public abstract void setValue(boolean value);
+    void setValue(boolean value);
 
     /**
      * Sets the <code>int</code> value
      * 
      * @param value value to set
      */
-    public abstract void setValue(int value);
+    void setValue(int value);
 
     /**
      * Sets the <code>float</code> value
      * 
      * @param value value to set
      */
-    public abstract void setValue(float value);
+    void setValue(float value);
 
     /**
      * Resets the value to its "default" state
      */
-    public abstract void clearValue();
+    void clearValue();
 
 }

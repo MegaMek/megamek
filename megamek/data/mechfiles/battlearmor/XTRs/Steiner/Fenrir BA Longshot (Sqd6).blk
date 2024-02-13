@@ -32,6 +32,10 @@ Fenrir Battle Armor
 Mixed (IS Chassis) Experimental
 </type>
 
+<role>
+Missile Boat
+</role>
+
 <motion_type>
 Leg
 </motion_type>
@@ -56,7 +60,7 @@ BACL Ammo LRM-5:Body:Shots2#
 </Squad Equipment>
 
 <source>
-XTRO Steiner - Jihad
+XTR: Steiner
 </source>
 
 <chassis>

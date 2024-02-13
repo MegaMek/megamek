@@ -32,6 +32,10 @@ Maxim Mk II Transport
 IS Level 2
 </type>
 
+<role>
+Scout
+</role>
+
 <motion_type>
 Hover
 </motion_type>
@@ -87,9 +91,25 @@ ISStreakSRM2
 </Turret Equipment>
 
 <source>
-RS 3145 NTNU - Early Republic
+Record Sheets: 3145 New Tech New Upgrades
 </source>
 
 <tonnage>
 50.0
 </tonnage>
+
+<manufacturer>
+Field Refit
+</manufacturer>
+
+<primaryFactory>
+Various
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:165 VOX Fusion
+ARMOR:	ArcShield Heavy Ferro-Fibrous with CASE
+COMMUNICATIONS:Cyclops Surelink
+TARGETING:Scarborough Tracky 3
+</systemManufacturers>

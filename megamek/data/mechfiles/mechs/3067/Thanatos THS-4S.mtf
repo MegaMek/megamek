@@ -1,13 +1,19 @@
-Version:1.0
-Thanatos
-TNS-4S
+chassis:Thanatos
+model:TNS-4S
 mul id:5218
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3061
 Rules Level:2
-source:TRO 3067
+role:Skirmisher
+source:TRO: 3067
+
+
+
+
+quirk:stable
+
 
 Mass:75
 Engine:375 XL Engine

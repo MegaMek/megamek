@@ -1,13 +1,20 @@
-Version:1.0
-Hornet
-HNT-151
+chassis:Hornet
+model:HNT-151
 mul id:1545
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2760
-Source:TRO 3039 - Star League
+Source:TRO: 3039
 Rules Level:1
+role:Striker
+
+
+
+
+quirk:low_profile
+quirk:no_arms
+
 
 Mass:20
 Engine:100 Fusion Engine

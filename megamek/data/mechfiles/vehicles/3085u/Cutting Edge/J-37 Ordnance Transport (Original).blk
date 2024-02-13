@@ -36,6 +36,10 @@ J-37 Ordnance Transport
 IS Level 2
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Wheeled
 </motion_type>
@@ -90,7 +94,7 @@ Small Laser
 </structural_tech_rating>
 
 <source>
-TRO 3085 - Succession Wars
+TRO: 3085
 </source>
 
 <tonnage>

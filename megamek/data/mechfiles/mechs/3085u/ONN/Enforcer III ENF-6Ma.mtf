@@ -1,13 +1,20 @@
-Version:1.0
-Enforcer III
-ENF-6Ma
+chassis:Enforcer III
+model:ENF-6Ma
 mul id:983
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3065
-Source:Civil War
+source:TRO: 3085u 
 Rules Level:2
+role:Skirmisher
+
+
+
+quirk:barrel_fists_la
+quirk:barrel_fists_ra
+weaponquirk:fast_reload:RA:3:Autocannon/10
+
 
 Mass:50
 Engine:250 XL Engine(IS)

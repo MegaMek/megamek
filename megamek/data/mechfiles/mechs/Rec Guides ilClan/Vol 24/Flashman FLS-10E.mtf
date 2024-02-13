@@ -1,13 +1,18 @@
-Version:1.0
-Flashman
-FLS-10E
+chassis:Flashman
+model:FLS-10E
 mul id:8445
 
 Config:Biped
 techbase:Mixed (IS Chassis)
 era:3144
-source:Rec Guide:ilClan #24 - Dark Age
+source:Rec Guide:ilClan #24
 rules level:3
+role:Skirmisher
+
+
+
+quirk:rugged_1
+
 
 mass:75
 engine:375 XL (Clan) Engine

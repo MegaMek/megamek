@@ -1,13 +1,18 @@
-Version:1.0
-Strider
-SR1-OX
+chassis:Strider
+model:SR1-OX
 mul id:3093
 
 Config:Biped Omnimech
 TechBase:Inner Sphere
 Era:3071
-Source:TRO 3058 - Jihad
+Source:TRO: 3058
 Rules Level:4
+role:Striker
+
+
+
+quirk:easy_pilot
+
 
 Mass:40
 Engine:240 Fusion Engine(IS)

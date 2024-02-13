@@ -32,6 +32,10 @@ Vidar Heavy Defense Tank
 Clan Level 3
 </type>
 
+<role>
+Missile Boat
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -105,9 +109,16 @@ CLLargeChemLaser
 </Front Turret Equipment>
 
 <source>
-TRO:Prototypes
+TRO: Prototypes
 </source>
 
 <tonnage>
 75.0
 </tonnage>
+
+<quirks>
+bad_rep_clan
+poor_performance
+trailer_hitch
+</quirks>
+

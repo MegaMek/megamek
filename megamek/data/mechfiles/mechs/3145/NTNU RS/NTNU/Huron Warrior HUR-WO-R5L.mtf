@@ -1,11 +1,10 @@
-Version:1.3
-Huron Warrior
-HUR-WO-R5L
+chassis:Huron Warrior
+model:HUR-WO-R5L
 mul id:7994
 Config:Biped
 techbase:Inner Sphere
 era:3102
-source:RS3150 - Late Republic
+source:Record Sheets: 3150
 rules level:2
 
 mass:50

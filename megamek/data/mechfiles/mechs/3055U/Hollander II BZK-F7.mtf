@@ -1,13 +1,19 @@
-Version:1.0
-Hollander II
-BZK-F7
+chassis:Hollander II
+model:BZK-F7
 mul id:1539
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3061
-Source:TRO 3055 - Clan Invasion
+Source:TRO: 3055
 Rules Level:2
+role:Sniper
+
+
+
+quirk:reinforced_legs
+weaponquirk:stable_weapon:RT:0:ISHeavyGaussRifle
+
 
 Mass:45
 Engine:225 Fusion Engine

@@ -32,6 +32,10 @@ Wraith Battle Armor
 Mixed (Clan Chassis) Advanced
 </type>
 
+<role>
+Ambusher
+</role>
+
 <motion_type>
 Jump
 </motion_type>
@@ -49,7 +53,7 @@ ISBAFiredrakeIncendiaryNeedler:RA
 </Point Equipment>
 
 <source>
-TRO 3145 The Clans - Late Republic
+TRO: 3145 The Clans
 </source>
 
 <chassis>
@@ -110,3 +114,8 @@ JUMPJET:Unknown
 COMMUNICATIONS:Unknown
 TARGETING:Unknown
 </systemManufacturers>
+
+<quirks>
+distracting
+</quirks>
+

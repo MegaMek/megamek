@@ -1,13 +1,19 @@
-Version:1.0
-Hauptmann
-HA1-OT
+chassis:Hauptmann
+model:HA1-OT
 mul id:6837
 
 Config:Biped Omnimech
 TechBase:Mixed (IS Chassis)
 Era:3136
-Source:RS 3145 NTNU - Dark Ages
+Source:Record Sheets: 3145 New Tech New Upgrades
 Rules Level:3
+role:Juggernaut
+
+
+
+quirk:easy_maintain
+quirk:ext_twist
+
 
 Mass:95
 Engine:285 Fusion Engine(IS)

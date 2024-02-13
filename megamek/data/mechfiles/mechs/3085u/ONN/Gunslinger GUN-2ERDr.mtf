@@ -1,13 +1,18 @@
-Version:1.0
-Gunslinger
-GUN-2ERDr
+chassis:Gunslinger
+model:GUN-2ERDr
 mul id:1350
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3078
-source:TRO:CI - Jihad
+source:TRO: Clan Invasion
 Rules Level:4
+role:Juggernaut
+
+
+
+quirk:cowl
+
 
 Mass:85
 Engine:255 XL Engine(IS)

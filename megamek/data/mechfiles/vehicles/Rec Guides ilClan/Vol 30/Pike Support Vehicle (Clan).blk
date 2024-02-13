@@ -36,6 +36,10 @@ Pike Support Vehicle
 Clan Level 2
 </type>
 
+<role>
+Sniper
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -101,7 +105,7 @@ CLUltraAC2
 </Turret Equipment>
 
 <source>
-Rec Guide:ilClan #30 - Clan Invasion
+Rec Guide:ilClan #30
 </source>
 
 <tonnage>

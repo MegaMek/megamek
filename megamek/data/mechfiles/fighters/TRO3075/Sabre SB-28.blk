@@ -36,6 +36,10 @@ SB-28
 IS Level 2
 </type>
 
+<role>
+Interceptor
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -136,7 +140,7 @@ TARGETING:Ki-II TTS
 </systemManufacturers>
 
 <source>
-TRO 3075 - Star League
+TRO: 3075
 </source>
 
 <tonnage>

@@ -36,6 +36,10 @@ Sloth Battle Armor
 IS Level 3
 </type>
 
+<role>
+Ambusher
+</role>
+
 <motion_type>
 Leg
 </motion_type>
@@ -62,7 +66,7 @@ BAMineLauncher:Body
 </Squad Equipment>
 
 <source>
-TRO 3058U - Clan Invasion
+TRO: 3058 Upgrade
 </source>
 
 <chassis>

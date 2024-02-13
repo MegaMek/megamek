@@ -36,6 +36,10 @@ Suffren Destroyer
 IS Level 3
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -251,7 +255,7 @@ Destroyer
 </length>
 
 <source>
-TROR 3057R - Civil War
+TRO: 3057 Revised
 </source>
 
 <tonnage>

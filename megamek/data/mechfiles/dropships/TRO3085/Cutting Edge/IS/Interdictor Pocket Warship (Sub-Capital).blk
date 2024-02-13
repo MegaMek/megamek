@@ -36,6 +36,10 @@ Interdictor Pocket Warship
 IS Level 4
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -151,7 +155,7 @@ ISAMS Ammo:24
 </structural_integrity>
 
 <source>
-JHS 3076 - Jihad
+Jihad Hot Spots: 3076
 </source>
 
 <tonnage>

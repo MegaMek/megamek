@@ -17,7 +17,7 @@ Hawk Moth Gunship
 </Name>
 
 <Model>
-'Vedwandlung'
+'Verwandlung'
 </Model>
 
 <mul id:>
@@ -95,9 +95,14 @@ Machine Gun
 </Turret Equipment>
 
 <source>
-XTRO Most Wanted - Jihad
+XTR: Most Wanted
 </source>
 
 <tonnage>
 25.0
 </tonnage>
+
+<quirks>
+vtol_rotor_coaxial
+</quirks>
+

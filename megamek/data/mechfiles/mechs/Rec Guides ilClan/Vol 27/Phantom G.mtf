@@ -1,12 +1,15 @@
-Version:1.3
-Phantom
-G
+chassis:Phantom
+model:G
 mul id:9346
 Config:Biped Omnimech
 techbase:Clan
 era:3090
-source:Rec Guide:ilClan #27 - Early Republic
+source:Rec Guide:ilClan #27
 rules level:2
+role:Scout
+
+quirk:imp_sensors
+
 
 mass:40
 engine:360 XL (Clan) Engine(IS)

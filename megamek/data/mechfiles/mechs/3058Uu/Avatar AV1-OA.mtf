@@ -1,13 +1,19 @@
-Version:1.0
-Avatar
-AV1-OA
+chassis:Avatar
+model:AV1-OA
 mul id:161
 
 Config:Biped Omnimech
 TechBase:Inner Sphere
 Era:3056
-Source:TRO 3058 - Clan Invasion
+Source:TRO: 3058
 Rules Level:2
+role:Brawler
+
+
+
+weaponquirk:stable_weapon:CT:10:Medium Laser
+weaponquirk:stable_weapon:CT:11:Medium Laser
+
 
 Mass:70
 Engine:280 XL Engine(IS)
@@ -151,3 +157,19 @@ Jump Jet (omnipod)
 -Empty-
 -Empty-
 -Empty-
+
+overview:The Avatar OmniMech is the result of Inner Sphere initiative in response to Clan technology. Originating from the Draconis Combine's efforts post-capture of Clan 'Mechs, this seventy-ton platform is a significant presence in engagements involving the Draconis Combine Mustered Soldiery, the Lyran Alliance, and ComStar. It reaches speeds up to 64.8 km/h powered by an XL engine and is encased in twelve tons of armor with CASE systems for ammunition explosion containment. The 'Mech's design supports a substantial thirty-four tons of pod space for weapons.
+
+capabilities:Equipped with medium lasers as standard fixed armaments, the Avatar is designed to maintain offensive capabilities even with pod failure. In its primary loadout, the OmniMech is outfitted with long-range missile launchers, an autocannon, machine guns, and pulse lasers, allowing it to engage at various ranges with a broad selection of weaponry.
+
+deployment:This close combat variant comes with an enhanced-range energy weapon, short-range missile launchers, and an autocannon with significant firepower, supported by jump jets for increased maneuverability.
+
+history:Developed by Luthien Armor Works, the Avatar is a strategic development following the Battle of Luthien. The 'Mech's design retains the leg assembly from captured Clan 'Mechs, specifically the Mad Dog, with modifications to the torso to accommodate the bulkier Inner Sphere technology.
+
+manufacturer:Crofton, Loburg, Luthien, Marduk, New Valencia, Son Hoa, St. Ives
+primaryfactory:StarCorps Industries, StarCorps Industries, Luthien Armor Works, Victory Industries (formerly Norse BattleMech Works), General Motors/Blackwell Corporation, StarCorps Industries, StarCorps Industries
+systemmanufacturer:CHASSIS:Alshain Hagetaga-O7
+systemmanufacturer:ENGINE:Hermes 280 XL
+systemmanufacturer:ARMOR:StarSlab/4 with CASE
+systemmanufacturer:COMMUNICATIONS:Sipher CommCon SCU-9
+systemmanufacturer:TARGETING:Matabushi Stalker

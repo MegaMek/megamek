@@ -1,13 +1,17 @@
-Version:1.0
-Griffin IIC
-2
+chassis:Griffin IIC
+model:2
 mul id:1311
 
 Config:Biped
 techbase:Clan
 era:2973
-source:Rec Guide:ilClan #14 - Succession Wars
+source:Rec Guide:ilClan #14
 rules level:2
+role:Striker
+
+quirk:battle_fists_la
+quirk:battle_fists_ra
+
 
 mass:40
 engine:240 Fusion (Clan) Engine(IS)

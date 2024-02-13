@@ -1,13 +1,19 @@
-Version:1.1
-Argus
-AGS-5D
+chassis:Argus
+model:AGS-5D
 mul id:5683
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3071
 Rules Level:2
-source:3067 Unabridged
+role:Skirmisher
+source:Record Sheets: 3067 Unabridged
+
+
+
+quirk:easy_maintain
+quirk:no_arms
+
 
 Mass:60
 Engine:300 XL Fusion Engine

@@ -1,12 +1,7 @@
-#building block data file
+#Saved from version 0.49.18-SNAPSHOT on 2024-01-13
 <BlockVersion>
 1
 </BlockVersion>
-
-##Write the version number just in case...
-<Version>
-MAM0
-</Version>
 
 <UnitType>
 BattleArmor
@@ -17,11 +12,11 @@ Longinus C Battle Armor
 </Name>
 
 <Model>
-[PPC] (Sqd5)
+[PPC](Sqd5)
 </Model>
 
 <mul id:>
-8030
+9214
 </mul id:>
 
 <year>
@@ -40,9 +35,6 @@ Mixed (IS Chassis)
 Jump
 </motion_type>
 
-<transporters>
-</transporters>
-
 <cruiseMP>
 1
 </cruiseMP>
@@ -57,13 +49,13 @@ Jump
 
 <Squad Equipment>
 CLAdvancedSRM4OS:Body
-InfantryAssaultRifle:APM
 SwarmMek
 SwarmWeaponMek
 StopSwarm
 LegAttack
 BABattleClaw:LA
 BAAPMount:LA
+InfantryAssaultRifle:APM
 ISBASupportPPC:RA
 </Squad Equipment>
 
@@ -116,7 +108,7 @@ TARGETING:Unknown
 </systemManufacturers>
 
 <source>
-TRO: 3150 - Dark Age
+TRO: 3150
 </source>
 
 <chassis>

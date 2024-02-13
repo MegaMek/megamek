@@ -1,13 +1,21 @@
-Version:1.0
-Assassin
-ASN-23
+chassis:Assassin
+model:ASN-23
 mul id:128
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3050
-Source:TRO 3050 - Clan Invasion
+Source:TRO: 3050
 Rules Level:2
+role:Striker
+
+
+
+quirk:easy_maintain
+quirk:cramped_cockpit
+quirk:non_standard
+quirk:poor_life_support
+
 
 Mass:40
 Engine:280 Fusion Engine

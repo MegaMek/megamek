@@ -1,13 +1,20 @@
-Version:1.0
-Marauder II
-MAD-6S
+chassis:Marauder II
+model:MAD-6S
 mul id:7331
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3133
-Source:TP Irian - Dark Ages
+Source:Turning Points: Irian
 Rules Level:2
+role:Juggernaut
+
+
+
+quirk:command_mech
+quirk:hyper_actuator
+quirk:low_profile
+
 
 Mass:100
 Engine:300 Light Engine(IS)

@@ -1,11 +1,10 @@
-Version:1.3
-Brahma
-BRM-6T
+chassis:Brahma
+model:BRM-6T
 mul id:7981
 Config:Biped
 techbase:Inner Sphere
 era:3148
-source:RS3150 - Dark Age
+source:Record Sheets: 3150
 rules level:2
 
 mass:60

@@ -1,12 +1,19 @@
-Version:1.3
-Flea
-FLE-21
+chassis:Flea
+model:FLE-21
 mul id:9313
 Config:Biped
 techbase:Inner Sphere
 era:3139
-source:Rec Guide:ilClan #26 - Dark Age
+source:Rec Guide:ilClan #26
 rules level:2
+role:Scout
+
+
+
+quirk:easy_maintain
+quirk:imp_life_support
+quirk:no_arms
+
 
 mass:20
 engine:180 Light Engine(IS)

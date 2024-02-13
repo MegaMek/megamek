@@ -1,13 +1,19 @@
-Version:1.0
-Super-Griffin
-GRF-2N-X
+chassis:Super-Griffin
+model:GRF-2N-X
 mul id:5771
 
 Config:Biped
 techbase:Inner Sphere
 era:3020
-source:XTRO Succession Wars
+source:XTR: Succession Wars
 rules level:4
+role:Missile Boat
+
+
+
+
+quirk:prototype
+
 
 mass:60
 engine:240 Fusion Engine(IS)

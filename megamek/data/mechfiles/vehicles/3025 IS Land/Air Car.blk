@@ -40,6 +40,10 @@ Air Car
 <type>
 IS Level 1
 </type>
+
+<role>
+None
+</role>
 <year>
 2100
 </year>
@@ -55,3 +59,7 @@ IS Level 1
 <motion_type>
 Hover
 </motion_type>
+
+<source>
+TRO: 3025
+</source>

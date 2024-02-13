@@ -1,13 +1,18 @@
-Version:1.1
-Awesome
-AWS-8Q (Buck)
+chassis:Awesome
+model:AWS-8Q (Buck)
 mul id:7311
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3076
-Source:HTP Tortuga
+Source:Historical Turning Points: Tortuga
 Rules Level:2
+role:Sniper
+
+
+
+quirk:battle_fists_la
+
 
 Mass:80
 Engine:400 XL Engine(IS)

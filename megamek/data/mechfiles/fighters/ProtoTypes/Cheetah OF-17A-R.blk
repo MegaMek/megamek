@@ -36,6 +36,10 @@ OF-17A-R
 IS Level 4
 </type>
 
+<role>
+Interceptor
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -108,9 +112,14 @@ Small Laser
 </Fuselage Equipment>
 
 <source>
-TRO Prototypes - Jihad
+TRO: Prototypes
 </source>
 
 <tonnage>
 25.0
 </tonnage>
+
+<weaponQuirks>
+mod_weapons:AFT:1:Small Laser
+mod_weapons:AFT:2:Small Laser
+</weaponQuirks>

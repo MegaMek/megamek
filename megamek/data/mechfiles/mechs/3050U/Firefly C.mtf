@@ -1,13 +1,18 @@
-Version:1.0
-Firefly
-C
+chassis:Firefly
+model:C
 mul id:1082
 
 Config:Biped
 TechBase:Clan
 Era:2839
-Source:TRO 3050 - Succession Wars
+Source:TRO: 3050
 Rules Level:2
+role:Striker
+
+
+
+quirk:no_arms
+
 
 Mass:30
 Engine:150 Fusion Engine

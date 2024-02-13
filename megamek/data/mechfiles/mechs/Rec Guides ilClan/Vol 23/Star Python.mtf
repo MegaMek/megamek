@@ -1,13 +1,13 @@
-Version:1.0
-Star Python
-
+chassis:Star Python
+model:
 mul id:8413
 
 Config:Biped
 techbase:Clan
 era:3150
-source:Rec Guide:ilClan #23 -
+source:Rec Guide:ilClan #23
 rules level:3
+role:Scout
 
 mass:25
 engine:175 Fusion (Clan) Engine(IS)

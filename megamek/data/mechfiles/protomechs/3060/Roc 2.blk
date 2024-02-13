@@ -36,6 +36,10 @@ Roc
 Clan Level 2
 </type>
 
+<role>
+Brawler
+</role>
+
 <motion_type>
 Biped
 </motion_type>
@@ -96,7 +100,7 @@ CLHeavyMediumLaser
 </Main Gun Equipment>
 
 <source>
-TRO 3060 - Civil War
+TRO: 3060
 </source>
 
 <tonnage>

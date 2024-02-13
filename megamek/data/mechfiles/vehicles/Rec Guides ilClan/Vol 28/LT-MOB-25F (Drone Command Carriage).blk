@@ -36,6 +36,10 @@ LT-MOB-25F (Drone Command Carriage)
 IS Level 3
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -129,5 +133,5 @@ TARGETING:O/P 10-40 LTR
 </systemManufacturers>
 
 <source>
-Rec Guide:ilClan #28 - Star League
+Rec Guide:ilClan #28
 </source>

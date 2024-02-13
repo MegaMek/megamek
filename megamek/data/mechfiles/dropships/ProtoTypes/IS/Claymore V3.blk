@@ -36,6 +36,10 @@ V3
 IS Level 3
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -134,7 +138,7 @@ ISERMediumLaser
 </structural_integrity>
 
 <source>
-TRO Prototypes - Early Republic
+TRO: Prototypes
 </source>
 
 <tonnage>
@@ -180,3 +184,9 @@ TRO Prototypes - Early Republic
 <escape_pod>
 0
 </escape_pod>
+
+<quirks>
+bad_rep_is
+atmo_flyer
+</quirks>
+

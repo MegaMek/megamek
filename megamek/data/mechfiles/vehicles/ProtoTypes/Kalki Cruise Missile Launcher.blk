@@ -32,6 +32,10 @@ Kalki Cruise Missile Launcher
 IS Level 4
 </type>
 
+<role>
+Missile Boat
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -84,7 +88,7 @@ ISMagshotGR
 </Turret Equipment>
 
 <source>
-TRO:Prototype - Jihad
+TRO: Prototypes
 </source>
 
 <tonnage>

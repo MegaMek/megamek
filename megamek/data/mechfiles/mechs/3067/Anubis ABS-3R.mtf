@@ -1,13 +1,20 @@
-Version:1.0
-Anubis
-ABS-3R
+chassis:Anubis
+model:ABS-3R
 mul id:3703
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3064
 Rules Level:2
-source:TRO 3067
+role:Missile Boat
+source:TRO: 3067
+
+
+
+quirk:ext_twist
+quirk:difficult_maintain
+quirk:exp_actuator
+
 
 Mass:30
 Engine:240 XL Engine
@@ -152,3 +159,18 @@ Stealth Armor
 -Empty-
 -Empty-
 
+overview:<p>The Anubis, designed by Gittleman and Abzug within the Fredonian Industrial Technologies consortium, was envisioned to complement the Osiris BattleMech. Despite initial rejections by manufacturers, the Anubis found a home with Detroit Consolidated MechWorks in the New Colony Region. This nimble Mech, named after the Egyptian god of the dead, showcases the Capellan Confederation's commitment to advanced technology through its incorporation of revolutionary stealth armor and specialized missile weaponry. Designed to operate in a supporting role, the Anubis signifies a blend of tactical innovation and technological advancement.</p>
+
+capabilities:<p>The Anubis is a testament to the Trinity Alliance's technological collaboration. Featuring the Confederation's stealth armor and designed for a support role, it excels in laying down suppressing fire with its array of long-range missile launchers. This strategy allows allied units to engage the enemy directly while the Anubis remains concealed. Though equipped with minimal armor protection, the incorporation of stealth armor provides a significant tactical advantage. The Anubis, however, does have a higher susceptibility to equipment malfunctions compared to other Mechs, a trade-off for its advanced capabilities. Its arsenal and design focus on maintaining distance from the enemy, leveraging its stealth and missile capabilities to control the battlefield.</p>
+
+deployment:This variant focuses on short-range firepower, replacing two LRM-5s with a Rocket Launcher 10 and two Rocket Launcher 15s.
+
+history:<p>The Anubis, emerging from the inventive minds of Gittleman and Abzug, journeyed from a challenging start to becoming a key asset in several military forces. Initially overlooked by Achernar BattleMechs and other manufacturers, its fortunes turned when the duo joined Detroit Consolidated MechWorks in the New Colony Region. This transition marked the beginning of the Anubis's significant role within the Magistracy of Canopus and the Taurian Concordat, symbolizing the technological strength and commitment of the Capellan Confederation to the Trinity Alliance.</p><p>Deployed first in late 3063, the Anubis quickly integrated into various units across the Magistracy and the Concordat. The Colonial Marshals became its most prominent users, employing the Anubis in a variety of tactical scenarios. However, political changes in the Colony Region led to a halt in further shipments to the Colonial Marshals, reflecting the complex interplay of politics and military strategy in the region. The Magestrix's consideration towards recognizing the new government in the Colony Region, despite President Shraplen's reported displeasure, further indicates the nuanced role the Anubis plays in regional dynamics.</p><p>The Anubis's history is also marked by its service as a fast scout, particularly favored for long-range search-and-destroy missions. Its stealth capabilities and sensor upgrades have made it a reliable choice for reconnaissance and support roles. Notably, during a reconnaissance mission on Ruschegg in 3145, Anubis units of the Fourth Andurien Cavalry played a pivotal role, demonstrating both the strengths and limitations of the Mech in complex combat scenarios.</p><p>As a product of technological innovation and strategic necessity, the Anubis has seen several variants over the years, each addressing different tactical needs and technological advancements. These variants, from the ABS-3R to the ABS-5Z, illustrate the ongoing evolution of the Anubis, adapting to the ever-changing landscape of warfare in the Inner Sphere.</p>
+
+manufacturer:Detroit Consolidated Mechworks
+primaryfactory:Detroit
+systemmanufacturer:CHASSIS:Detroit Type III Endo
+systemmanufacturer:ENGINE:Ceres Motors 240 Extralight
+systemmanufacturer:ARMOR:Hellespont Lite Stealth
+systemmanufacturer:COMMUNICATIONS:Ceres Metals Model 666 with Guardian ECM Suite
+systemmanufacturer:TARGETING:Dynatec 990

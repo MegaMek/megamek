@@ -1,12 +1,7 @@
-#building block data file
+#Saved from version 0.49.18-SNAPSHOT on 2024-01-13
 <BlockVersion>
 1
 </BlockVersion>
-
-# Write the version number just in case...
-<Version>
-MAM0
-</Version>
 
 <UnitType>
 SupportVTOL
@@ -16,9 +11,9 @@ SupportVTOL
 Lexan Surveillance Helo
 </Name>
 
-<model>
+<Model>
 
-</model>
+</Model>
 
 <mul id:>
 1868
@@ -28,8 +23,12 @@ Lexan Surveillance Helo
 3076
 </year>
 
+<originalBuildYear>
+3076
+</originalBuildYear>
+
 <type>
-IS Level 4
+IS Level 3
 </type>
 
 <motion_type>
@@ -51,10 +50,6 @@ VTOL
 2
 2
 </armor>
-
-<structural_tech_rating>
-5
-</structural_tech_rating>
 
 <Body Equipment>
 Armored Chassis
@@ -83,10 +78,27 @@ ISReconCamera
 10
 </barrating>
 
+<structural_tech_rating>
+5
+</structural_tech_rating>
+
+<engine_tech_rating>
+5
+</engine_tech_rating>
+
+<armor_tech_rating>
+5
+</armor_tech_rating>
+
 <source>
-XTRO Boondocks - Jihad
+XTR: Boondocks
 </source>
 
 <tonnage>
 15.0
 </tonnage>
+
+<fuel>
+0.0
+</fuel>
+

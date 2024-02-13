@@ -1,13 +1,22 @@
-Version:1.0
-Atlas
-AS7-C
+chassis:Atlas
+model:AS7-C
 mul id:138
 
 Config:Biped
 TechBase:Mixed (IS Chassis)
 Era:3050
-Source:TRO 3050 - Clan Invasion
+Source:TRO: 3050
 Rules Level:2
+role:Sniper
+
+
+
+quirk:battle_fists_la
+quirk:battle_fists_ra
+quirk:command_mech
+quirk:distracting
+quirk:imp_com
+
 
 Mass:100
 Engine:300 XL Engine

@@ -1,13 +1,20 @@
-Version:1.0
-Hammerhands
-HMH-4D
+chassis:Hammerhands
+model:HMH-4D
 mul id:1370
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2492
-Source:TRO 3075
+Source:TRO: 3075
 Rules Level:1
+role:Juggernaut
+
+
+
+quirk:barrel_fists_la
+quirk:barrel_fists_ra
+quirk:pro_actuator
+
 
 Mass:75
 Engine:225 Fusion Engine

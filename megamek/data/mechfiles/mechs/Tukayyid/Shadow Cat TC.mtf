@@ -1,13 +1,16 @@
-Version:1.0
-Shadow Cat
-TC
+chassis:Shadow Cat
+model:TC
 mul id:7590
 
 Config:Biped Omnimech
 techbase:Clan
 era:3050
-source:Clan Invasion
+source:Battle of Tukayyid
 rules level:2
+role:Scout
+
+quirk:low_profile
+
 
 mass:45
 engine:270 XL (Clan) Engine(IS)

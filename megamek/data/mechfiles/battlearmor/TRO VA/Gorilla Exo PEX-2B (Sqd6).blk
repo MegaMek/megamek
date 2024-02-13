@@ -32,6 +32,10 @@ PEX-2B(Sqd6)
 IS Level 2
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Leg
 </motion_type>
@@ -56,7 +60,7 @@ BASearchlight:Body
 </Squad Equipment>
 
 <source>
-TRO Vehicle Annex (r) - Clan Invasion
+TRO: Vehicle Annex Revised
 </source>
 
 <chassis>

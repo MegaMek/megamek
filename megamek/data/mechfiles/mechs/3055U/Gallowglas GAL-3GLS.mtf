@@ -1,13 +1,18 @@
-Version:1.0
-Gallowglas
-GAL-3GLS
+chassis:Gallowglas
+model:GAL-3GLS
 mul id:1185
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3064
-Source:TRO 3055 - Civil War
+Source:TRO: 3055
 Rules Level:2
+role:Brawler
+
+
+
+quirk:good_rep_1
+
 
 Mass:70
 Engine:280 Light Engine

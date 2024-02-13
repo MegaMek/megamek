@@ -32,6 +32,10 @@ A(Sqd6)
 IS Level 2
 </type>
 
+<role>
+Juggernaut
+</role>
+
 <motion_type>
 Jump
 </motion_type>
@@ -47,7 +51,7 @@ BABasicManipulator:RA
 </Squad Equipment>
 
 <source>
-TRO 3145 Free Worlds League - Late Republic
+TRO: 3145 Free Worlds League
 </source>
 
 <chassis>
@@ -109,3 +113,8 @@ JUMPJET:Unknown
 COMMUNICATIONS:Unknown
 TARGETING:Unknown
 </systemManufacturers>
+
+<quirks>
+imp_com
+</quirks>
+

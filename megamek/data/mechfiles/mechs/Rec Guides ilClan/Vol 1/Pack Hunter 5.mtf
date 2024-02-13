@@ -1,13 +1,16 @@
-Version:1.0
-Pack Hunter
-5
+chassis:Pack Hunter
+model:5
 mul id:7440
 
 Config:Biped
 techbase:Mixed (Clan Chassis)
 era:3145
-source:Rec Guide:ilClan #1 - Dark Age
+source:Rec Guide:ilClan #1
 rules level:2
+role:Sniper
+
+quirk:reinforced_legs
+
 
 mass:30
 engine:270 XL Engine(IS)

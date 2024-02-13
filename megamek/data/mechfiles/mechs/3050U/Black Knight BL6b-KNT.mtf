@@ -1,13 +1,18 @@
-Version:1.0
-Black Knight
-BL-6b-KNT
+chassis:Black Knight
+model:BL-6b-KNT
 mul id:357
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2751
-Source:TRO 3050 - Star League
+Source:TRO: 3050
 Rules Level:2
+role:Brawler
+
+
+
+quirk:command_mech
+
 
 Mass:75
 Engine:300 Fusion Engine

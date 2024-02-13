@@ -1,13 +1,21 @@
-Version:1.0
-Stinger
-STG-3G
+chassis:Stinger
+model:STG-3G
 mul id:3058
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2581
-Source:TRO 3039 - Star League
+Source:TRO: 3039
 Rules Level:1
+role:Scout
+
+
+
+quirk:rugged_1
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+quirk:cramped_cockpit
+
 
 Mass:20
 Engine:120 Fusion Engine

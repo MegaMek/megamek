@@ -1,13 +1,21 @@
-Version:1.1
-Crusader
-CRD-7W
+chassis:Crusader
+model:CRD-7W
 mul id:763
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3071
-Source:Jihad
+source:TRO: 3085
 Rules Level:2
+role:Missile Boat
+
+
+
+quirk:easy_maintain
+quirk:rugged_1
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+
 
 Mass:65
 Engine:260 XL Engine

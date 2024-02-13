@@ -1,12 +1,20 @@
-Version:1.0
-Pandarus
-LFA-1A
+chassis:Pandarus
+model:LFA-1A
 mul id:4783
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3083
 Rules Level:4
+role:Missile Boat
+Source:TRO: Prototypes 
+
+
+
+quirk:poor_target_short
+quirk:imp_target_long
+quirk:easy_maintain
+
 
 Mass:75
 Engine:300 Fusion Engine(IS)

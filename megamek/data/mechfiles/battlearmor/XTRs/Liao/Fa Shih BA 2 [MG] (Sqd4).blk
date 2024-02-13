@@ -32,6 +32,10 @@ Fa Shih Battle Armor
 Mixed (IS Chassis) Experimental
 </type>
 
+<role>
+Ambusher
+</role>
+
 <motion_type>
 Jump
 </motion_type>
@@ -73,7 +77,7 @@ ISBAMineDispenser:Body
 </Trooper 4 Equipment>
 
 <source>
-XTRO Liao - Jihad
+XTR: Liao
 </source>
 
 <chassis>

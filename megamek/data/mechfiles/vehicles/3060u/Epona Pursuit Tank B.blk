@@ -32,6 +32,10 @@ B
 Clan Level 3
 </type>
 
+<role>
+Striker
+</role>
+
 <motion_type>
 Hover
 </motion_type>
@@ -94,7 +98,7 @@ CLUltraAC10:OMNI
 </Turret Equipment>
 
 <source>
-Succession Wars
+TRO: 3060
 </source>
 
 <tonnage>

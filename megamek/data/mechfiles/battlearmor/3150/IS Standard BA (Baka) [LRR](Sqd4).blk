@@ -36,6 +36,10 @@ IS Standard Battle Armor
 IS Level 2
 </type>
 
+<role>
+Ambusher
+</role>
+
 <motion_type>
 Leg
 </motion_type>
@@ -79,7 +83,7 @@ ISBASRM2OS:Body
 </Trooper 4 Equipment>
 
 <source>
-TRO Dark Age - Dark Age
+TRO: Dark Age
 </source>
 
 <chassis>

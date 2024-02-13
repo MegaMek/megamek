@@ -36,6 +36,10 @@ MI6 Extraction Team
 IS Level 3
 </type>
 
+<role>
+Ambusher
+</role>
+
 <motion_type>
 Leg
 </motion_type>
@@ -47,7 +51,7 @@ Leg
 </Field Guns Equipment>
 
 <source>
-TRO 3085 - Age of War
+TRO: 3085
 </source>
 
 <squad_size>

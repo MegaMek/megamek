@@ -1,13 +1,20 @@
-Version:1.0
-Perseus
-P1A
+chassis:Perseus
+model:P1A
 mul id:4809
 
 Config:Biped Omnimech
 TechBase:Inner Sphere
 Era:3058
-Source:TRO 3067
+Source:TRO: 3067
 Rules Level:2
+role:Missile Boat
+
+
+
+
+quirk:anti_air
+quirk:easy_maintain
+
 
 Mass:75
 Engine:300 XL Engine(IS)

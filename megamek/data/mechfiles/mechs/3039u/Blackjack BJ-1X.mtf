@@ -1,12 +1,18 @@
-Version:1.3
-Blackjack
-BJ-1X
+chassis:Blackjack
+model:BJ-1X
 mul id:376
 Config:Biped
 techbase:Inner Sphere
 era:2756
-source:TRO 3039 - Star League
+source:TRO: 3039
 rules level:1
+role:Skirmisher
+
+
+
+
+quirk:bad_rep_is
+
 
 mass:45
 engine:225 Fusion Engine(IS)

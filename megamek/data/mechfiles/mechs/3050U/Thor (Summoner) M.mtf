@@ -1,13 +1,18 @@
-Version:1.1
-Thor (Summoner)
-M
+chassis:Thor
+clanname:Summoner
+model:M
 mul id:3182
 
 Config:Biped Omnimech
 TechBase:Clan
 Era:3051
-source:TRO Clan Invasion - Clan Invasion
+source:TRO: Clan Invasion
 Rules Level:2
+role:Sniper
+
+quirk:imp_com
+quirk:ubiquitous_clan
+
 
 Mass:70
 Engine:350 XL (Clan) Engine(IS)

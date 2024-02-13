@@ -1,13 +1,16 @@
-Version:1.0
-Vulcan
-VT-6M
+chassis:Vulcan
+model:VT-6M
 mul id:3465
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3069
-Source:TRO 3050 - Jihad
+Source:TRO: 3050
 Rules Level:2
+role:Striker
+
+quirk:low_profile
+
 
 Mass:40
 Engine:240 XL Engine

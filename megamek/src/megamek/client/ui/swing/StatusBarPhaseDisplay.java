@@ -19,19 +19,18 @@
  */
 package megamek.client.ui.swing;
 
-import java.awt.Dimension;
-import java.awt.GridLayout;
+import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 
+import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
-import megamek.client.ui.swing.util.CommandAction;
-import megamek.client.ui.swing.util.KeyCommandBind;
-import megamek.client.ui.swing.util.TurnTimer;
-import megamek.client.ui.swing.util.UIUtil;
+import megamek.client.ui.swing.util.*;
 import megamek.client.ui.swing.widget.*;
 import megamek.common.*;
 import megamek.common.enums.GamePhase;
@@ -43,7 +42,7 @@ import static megamek.client.ui.swing.util.UIUtil.uiLightViolet;
 /**
  * This is a parent class for the button display for each phase.  Every phase
  * has a panel of control buttons along with a Done button. Each button
- * correspondes to a command that can be carried out in the current phase.
+ * corresponds to a command that can be carried out in the current phase.
  * This class formats the button panel, the done button, and a status display area.
  * Control buttons are grouped and the groups can be cycled through.
  */
@@ -86,6 +85,8 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
     private JLabel labStatus;
     protected JPanel panStatus = new JPanel();
     protected JPanel panButtons = new JPanel();
+
+    private UIUtil.FixedXPanel donePanel;
 
     /** The button group that is currently displayed */
     protected int currentButtonGroup = 0;
@@ -131,6 +132,8 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
         GUIP.addPreferenceChangeListener(this);
         KeyBindParser.addPreferenceChangeListener(this);
         ToolTipManager.sharedInstance().registerComponent(this);
+
+        regKeyCommands();
     }
 
 
@@ -226,12 +229,20 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
 
     protected UIUtil.FixedXPanel setupDonePanel()
     {
-        var donePanel = new UIUtil.FixedXPanel();
+        donePanel = new UIUtil.FixedXPanel();
+        donePanel.setPreferredSize(new Dimension(UIUtil.scaleForGUI(DONE_BUTTON_WIDTH+5), MIN_BUTTON_SIZE.height*2+5));
         donePanel.setOpaque(false);
-        donePanel.setLayout(new GridLayout(2,1));
-        donePanel.add(butDone);
-        butDone.setPreferredSize(new Dimension(DONE_BUTTON_WIDTH, MIN_BUTTON_SIZE.height * 2));
+        donePanel.setBackground(Color.darkGray);
+        donePanel.setBorder( new EmptyBorder(0, 10, 0, 0));
+        donePanel.setLayout(new GridBagLayout());
+        addToDonePanel(donePanel, butDone);
         return donePanel;
+    }
+
+    protected void addToDonePanel(JPanel donePanel, JComponent item) {
+        item.setPreferredSize(new Dimension(UIUtil.scaleForGUI(DONE_BUTTON_WIDTH), MIN_BUTTON_SIZE.height));
+        butDone.setAlignmentX(LEFT_ALIGNMENT);
+        donePanel.add(item, GBC.eol().fill(GridBagConstraints.BOTH).weighty(1));
     }
 
     /** Clears the actions of this phase. */
@@ -252,6 +263,8 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
     private void adaptToGUIScale() {
         UIUtil.adjustContainer(panButtons, UIUtil.FONT_SCALE1);
         UIUtil.adjustContainer(panStatus, UIUtil.FONT_SCALE2);
+
+        donePanel.setPreferredSize(new Dimension(UIUtil.scaleForGUI(DONE_BUTTON_WIDTH), MIN_BUTTON_SIZE.height * 1));
     }
 
     @Override
@@ -265,6 +278,37 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
         } else if (e.getName().equals(KeyBindParser.KEYBINDS_CHANGED)) {
             setButtonsTooltips();
         }
+
+        adaptToGUIScale();
+    }
+
+    /**
+     * Register all of the <code>CommandAction</code>s for this panel display.
+     */
+    protected void regKeyCommands() {
+        MegaMekController controller = clientgui.controller;
+        final StatusBarPhaseDisplay display = this;
+        // Register the action for EXTEND_TURN_TIMER
+        controller.registerCommandAction(KeyCommandBind.EXTEND_TURN_TIMER.cmd,
+                new CommandAction() {
+
+                    @Override
+                    public boolean shouldPerformAction() {
+                        if (!clientgui.getClient().isMyTurn()
+                                || clientgui.getBoardView().getChatterBoxActive()
+                                || display.isIgnoringEvents()
+                                || !display.isVisible()) {
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    }
+
+                    @Override
+                    public void performAction() {
+                        extendTimer();
+                    }
+                });
     }
 
     @Override
@@ -304,6 +348,12 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
         if (tt != null) {
             tt.stopTimer();
             tt = null;
+        }
+    }
+
+    public void extendTimer() {
+        if (tt != null) {
+            tt.setExtendTimer();
         }
     }
 
@@ -385,4 +435,5 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
 
         clientgui.getBoardView().setWeaponFieldOfFire(unit, cmd);
     }
+
 }

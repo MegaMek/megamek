@@ -29,12 +29,16 @@ Fury Command Tank
 </year>
 
 <source>
-Star League
+TRO: 3075
 </source>
 
 <type>
 IS Level 2
 </type>
+
+<role>
+Sniper
+</role>
 
 <tonnage>
 80.0

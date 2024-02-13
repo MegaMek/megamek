@@ -1,41 +1,40 @@
-Version:1.1
-Antlion
-LK-3D
+chassis:Antlion
+model:LK-3D
 mul id:6338
-
 Config:Quad
-TechBase:Mixed (IS Chassis)
-Era:3117
-Source:TRO 3145 Federated Suns - Late Republic
-Rules Level:4
+techbase:Mixed (IS Chassis)
+era:3117
+source:TRO: 3145 Federated Suns
+rules level:4
+role:Missile Boat
 
-Mass:45
-Engine:225 XL Engine(IS)
-Structure:IS Reinforced
-Myomer:Standard
-Cockpit:Small Cockpit
-Gyro:XL Gyro
+mass:45
+engine:225 XL Engine(IS)
+structure:IS Reinforced
+myomer:Standard
+cockpit:Small Cockpit
+gyro:XL Gyro
 
-Heat Sinks:10 Double
-Walk MP:5
-Jump MP:0
+heat sinks:10 IS Double
+walk mp:5
+jump mp:0
 
-Armor:Light Ferro-Fibrous(Inner Sphere)
-FLL Armor:20
-FRL Armor:20
-LT Armor:17
-RT Armor:17
-CT Armor:22
-HD Armor:9
-RLL Armor:20
-RRL Armor:20
-RTL Armor:5
-RTR Armor:5
-RTC Armor:6
+armor:Light Ferro-Fibrous(Inner Sphere)
+FLL armor:20
+FRL armor:20
+LT armor:17
+RT armor:17
+CT armor:22
+HD armor:9
+RLL armor:20
+RRL armor:20
+RTL armor:5
+RTR armor:5
+RTC armor:6
 
 Weapons:4
-Mortar 4, Right Torso
-Mortar 4, Left Torso
+'Mech Mortar 4, Left Torso
+'Mech Mortar 4, Right Torso
 Light Machine Gun, Head
 Light Machine Gun, Head
 
@@ -151,4 +150,23 @@ IS Light Ferro-Fibrous
 -Empty-
 -Empty-
 
+overview:<p>The Antlion, a unique quad BattleMech developed by StarCorps, is a specialized unit in the Armed Forces of the Federated Suns, purpose-built for indirect fire support. Designed to address the diminishing efficiency of LRMs due to the rise of anti-missile systems, the Antlion stands out for its specific role in warfare. Despite limited adoption beyond the AFFS and select mercenary units, its production continues, underscoring its niche yet vital function on the battlefield. The Antlion represents a tactical shift in mech warfare, focusing on bombardment from cover rather than direct engagement.</p>
+capabilities:<p>The Antlion is characterized by its light frame and slow speed, making it unsuitable for direct combat. Its primary strength lies in its exceptional sensor capabilities, with an active probe that ensures nothing can approach undetected within a 240-meter radius. However, its armament, limited to a pair of light machine guns, offers minimal offensive capability, barely posing a threat even to unarmored infantry. The Antlion's real value is in its specialized role, utilizing its advanced sensor systems for indirect fire missions and tactical positioning rather than frontline engagement.</p>
+deployment:This is the only known variant
+history:<p>
+The Antlion's inception by StarCorps marks a strategic evolution in BattleMech design, focusing on indirect fire support to counteract the growing efficiency of anti-missile systems. Initially designed to complement the Osiris and intended for the Federated Suns' military, the Antlion found its place after Gittleman and Abzug moved to the New Colony Region and collaborated with Detroit Consolidated MechWorks. This transition facilitated the Antlion's integration into the AFFS and highlighted its unique role in modern warfare.
+
+<p>
+In practical deployment, the Antlion has demonstrated its effectiveness in specialized missions, particularly in urban warfare. Its successful use in the city-fighting in Bueller showcased the Mech's ability to coordinate with battle armor units for ambush tactics, utilizing the urban landscape to its advantage. Similarly, during the invasion of New Syrtis, Antlions were employed as mobile infantry interdiction platforms, adeptly maneuvering through the city's infrastructure to disrupt enemy forces. Their sophisticated sensor systems, primarily the active probe, have been instrumental in these operations, allowing for precise indirect fire and strategic positioning.
+
+<p>
+However, the Antlion's limitations in direct combat have been exposed in several engagements. Instances where Antlion units were overrun by faster and more heavily armed enemies underscore the Mech's vulnerability in frontline battles. This has led to discussions among AFFS officers about the potential development of a direct-fire escort variant, though StarCorps maintains that other Mechs in their lineup adequately fulfill this role. Despite these challenges, the Antlion continues to serve as a testament to the necessity and effectiveness of specialized units in asymmetric warfare and remains a valuable asset in the Federated Suns' arsenal.
+</p>
+manufacturer:StarCorps Industries
+primaryfactory:Crofton
+systemmanufacturer:CHASSIS:StarFrame Medium Reinforced
+systemmanufacturer:ENGINE:GM SuperFusion 225 XL
+systemmanufacturer:ARMOR:Valiant Ringmail Light Ferro-Fibrous with CASE II
+systemmanufacturer:COMMUNICATIONS:O/P 3950 COMSET M7
+systemmanufacturer:TARGETING:Martin-Quarry Tarsys XLR 2.7 with Bloodhound Active
 

@@ -1,13 +1,16 @@
-Version:1.1
-Fox
-CS-1
+chassis:Fox
+model:CS-1
 mul id:4182
 
 Config:Biped
 techbase:Mixed (IS Chassis)
 era:2824
-source:Succession Wars
+source:TRO: Golden Century
 rules level:4
+role:Missile Boat
+
+quirk:variable_range_long
+
 
 mass:50
 engine:300 XL (Clan) Engine

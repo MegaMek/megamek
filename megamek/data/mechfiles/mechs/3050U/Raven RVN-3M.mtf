@@ -1,13 +1,18 @@
-Version:1.0
-Raven
-RVN-3M
+chassis:Raven
+model:RVN-3M
 mul id:5444
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3053
-Source:TRO 3050 - Clan Invasion
+Source:TRO: 3050
 Rules Level:2
+role:Missile Boat
+
+
+
+quirk:no_arms
+
 
 Mass:35
 Engine:210 XL Engine(IS)

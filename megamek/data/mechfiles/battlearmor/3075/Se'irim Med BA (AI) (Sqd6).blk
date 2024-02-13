@@ -61,6 +61,10 @@ IS BA Stealth (Basic):RA
 IS Level 2
 </type>
 
+<role>
+Ambusher
+</role>
+
 <year>
 3072
 </year>
@@ -70,7 +74,7 @@ Jump
 </motion_type>
 
 <source>
-TRO 3075 - Jihad
+TRO: 3075
 </source>
 
 <armor_type>

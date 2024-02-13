@@ -20,12 +20,20 @@ IS Standard Battle Armor
 (Fa Sure) [David](Sqd5)
 </Model>
 
+<mul id:>
+9525
+</mul id:>
+
+<role>
+Ambusher
+</role>
+
 <year>
-3150
+3140
 </year>
 
 <originalBuildYear>
-3150
+3140
 </originalBuildYear>
 
 <type>
@@ -79,7 +87,7 @@ ISBAMineDispenser:Body
 </Trooper 5 Equipment>
 
 <source>
-Dark Age
+TRO: 3150
 </source>
 
 <chassis>

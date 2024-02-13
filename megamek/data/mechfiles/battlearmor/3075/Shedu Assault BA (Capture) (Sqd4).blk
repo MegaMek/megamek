@@ -33,6 +33,10 @@ Shedu Assault Battle Armor
 IS Level 3
 </type>
 
+<role>
+Juggernaut
+</role>
+
 <motion_type>
 Leg
 </motion_type>
@@ -87,7 +91,7 @@ ISBATaser:DWP
 </Trooper 4 Equipment>
 
 <source>
-TRO 3075 - Jihad
+TRO: 3075
 </source>
 
 <chassis>
@@ -144,5 +148,5 @@ TARGETING:Unknown
 </systemManufacturers>
 
 <notes>
-The TRO3075 entry lists a 3-slot configurable turret with a weight of 40 kg. The correct weight of 80 kg would exceed the maximum 2000 kg.
+The TRO: 3075 entry lists a 3-slot configurable turret with a weight of 40 kg. The correct weight of 80 kg would exceed the maximum 2000 kg.
 </notes>

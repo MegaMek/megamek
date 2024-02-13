@@ -1,13 +1,21 @@
-Version:1.1
-Cougar
-XR
+chassis:Cougar
+model:XR
 mul id:4013
 
 Config:Biped
 TechBase:Mixed (Clan Chassis)
 Era:3071
-Source:XTRO Clans - Jihad
+Source:XTR: Clans
 Rules Level:4
+role:Missile Boat
+
+quirk:ubiquitous_clan
+quirk:prototype
+quirk:unbalanced
+weaponquirk:mod_weapons:RT:2:CLLRM15
+weaponquirk:mod_weapons:LT:2:CLLRM15
+weaponquirk:mod_weapons:RA:5:CLERMediumPulseLaser
+
 
 Mass:35
 Engine:175 XL (Clan) Engine

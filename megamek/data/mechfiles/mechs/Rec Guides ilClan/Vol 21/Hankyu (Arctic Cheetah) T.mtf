@@ -1,13 +1,17 @@
-Version:1.0
-Hankyu (Arctic Cheetah)
-T
+chassis:Hankyu
+clanname:Arctic Cheetah
+model:T
 mul id:8349
 
 Config:Biped Omnimech
 techbase:Clan
 era:3142
-source:Rec Guide:ilClan #21 - Succession Wars
+source:Rec Guide:ilClan #21
 rules level:2
+role:Scout
+
+quirk:pro_actuator
+
 
 mass:30
 engine:240 XL (Clan) Engine(IS)

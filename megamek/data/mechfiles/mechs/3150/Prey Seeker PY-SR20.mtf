@@ -1,12 +1,11 @@
-Version:1.1
-Prey Seeker
-PY-SR20
+chassis:Prey Seeker
+model:PY-SR20
 mul id:8068
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3140
-Source:TRO 3150 - Dark Age
+Source:TRO: 3150
 Rules Level:3
 
 Mass:15

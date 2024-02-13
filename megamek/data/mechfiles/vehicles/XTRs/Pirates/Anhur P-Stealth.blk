@@ -36,6 +36,10 @@ Anhur
 Mixed (Clan Chassis) Experimental
 </type>
 
+<role>
+Missile Boat
+</role>
+
 <motion_type>
 VTOL
 </motion_type>
@@ -98,7 +102,7 @@ CLLRM15
 </Rotor Equipment>
 
 <source>
-XTR Pirates - Jihad
+XTR: Pirates
 </source>
 
 <tonnage>

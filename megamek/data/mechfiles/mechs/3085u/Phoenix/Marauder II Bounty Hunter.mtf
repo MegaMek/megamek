@@ -1,13 +1,20 @@
-Version:1.0
-Marauder II
-(Bounty Hunter)
+chassis:Marauder II
+model:(Bounty Hunter)
 mul id:2053
 
 Config:Biped
 TechBase:Clan
 Era:3064
-Source:BattleTech Dossiers: The Bounty Hunter - Civil War
+Source:BattleTech Dossiers: The Bounty Hunter
 Rules Level:2
+role:Sniper
+
+
+
+quirk:command_mech
+quirk:hyper_actuator
+quirk:low_profile
+
 
 Mass:100
 Engine:300 Fusion (Clan) Engine(IS)

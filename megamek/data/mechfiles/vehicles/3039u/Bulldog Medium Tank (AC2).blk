@@ -32,6 +32,10 @@ Bulldog Medium Tank
 IS Level 1
 </type>
 
+<role>
+Brawler
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -80,7 +84,7 @@ Autocannon/2
 </Turret Equipment>
 
 <source>
-TRO 3039 - Succession Wars
+TRO: 3039
 </source>
 
 <tonnage>

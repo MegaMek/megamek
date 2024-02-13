@@ -1,13 +1,19 @@
-Version:1.0
-Raven II
-RVN-5X
+chassis:Raven II
+model:RVN-5X
 mul id:6458
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3123
-Source:TRO 3145 Capellan Confederation - Late Republic
+Source:TRO: 3145 Capellan Confederation
 Rules Level:3
+role:Scout
+
+
+
+
+quirk:imp_sensors
+
 
 Mass:40
 Engine:280 XL Engine(IS)

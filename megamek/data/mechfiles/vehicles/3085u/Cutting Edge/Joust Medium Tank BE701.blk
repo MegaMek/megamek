@@ -32,6 +32,10 @@ BE701
 Clan Level 3
 </type>
 
+<role>
+Skirmisher
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -92,7 +96,7 @@ CLLightMG
 </Turret Equipment>
 
 <source>
-Dark Age
+TRO: 3085
 </source>
 
 <tonnage>

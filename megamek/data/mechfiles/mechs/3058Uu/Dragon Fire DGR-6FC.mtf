@@ -1,13 +1,19 @@
-Version:1.0
-Dragon Fire
-DGR-6FC
+chassis:Dragon Fire
+model:DGR-6FC
 mul id:915
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3065
-Source:TRO 3058 - Civil War
+Source:TRO: 3058
 Rules Level:2
+role:Brawler
+
+
+
+quirk:good_rep_1
+quirk:no_arms
+
 
 Mass:75
 Engine:300 XL Engine

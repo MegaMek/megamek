@@ -1,0 +1,86 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Infantry
+</UnitType>
+
+<Name>
+Surveillance Specialist
+</Name>
+
+<Model>
+Com Guards Battlefield Data Miners
+</Model>
+
+<mul id:>
+3136
+</mul id:>
+
+<year>
+3064
+</year>
+
+<originalBuildYear>
+3064
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<motion_type>
+Hover
+</motion_type>
+
+<Field Guns Equipment>
+</Field Guns Equipment>
+
+<capabilities>
+<p>Equipped with advanced remote sensors and mechanized carriers, the Data Miners excel in capturing enemy transmissions and conducting signal measurements. While real-time decryption of encrypted communications is rare, their ability to identify enemy commanders and key positions through signal analysis greatly aids in targeting and strategic planning.</p>
+<p>Their technical expertise is not just limited to signal interception; they also play a key role in the processing and analysis of the gathered data, making them indispensable in the Com Guards' information warfare strategies.</p>
+</capabilities>
+
+<overview>
+<p>The Surveillance Specialists of the Com Guards Battlefield Data Miners are a crucial component of ComStar's intelligence apparatus. With ComStar's foundational business in communications, these units specialize in intercepting and analyzing battlefield transmissions. Their role is pivotal in providing up-to-date intelligence, a vital element in the strategic planning and execution of ComStar's military operations.</p>
+</overview>
+
+<deployment>
+<p>Deployed primarily in scenarios where intelligence gathering is crucial, the Surveillance Specialists operate behind the front lines. Their actions are often decisive in identifying enemy movements and command structures, thereby shaping the Com Guards' tactical responses and operations on the battlefield.</p>
+</deployment>
+
+<history>
+<p>The inception and evolution of the Battlefield Data Miners are deeply intertwined with ComStar's ethos of prioritizing communication and intelligence in warfare. Over the years, they have proved their worth in various conflicts, notably during the Jihad, where their intelligence gathering capabilities significantly contributed to the strategic successes of the Com Guards.</p>
+</history>
+
+<source>
+Technical Readout: 3085
+</source>
+
+<squad_size>
+5
+</squad_size>
+
+<squadn>
+2
+</squadn>
+
+<Primary>
+InfantryFederatedBarrettM42B
+</Primary>
+
+<armorKit>
+ComStar Infantry Kit
+</armorKit>
+
+<specialization>
+16
+</specialization>
+

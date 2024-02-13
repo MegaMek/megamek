@@ -1,12 +1,23 @@
-Version:1.1
-Ti Ts'ang
-TSG-9DDC
+chassis:Ti Ts'ang
+model:TSG-9DDC
 mul id:5242
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3083
 Rules Level:4
+role:Skirmisher
+Source:TRO: Prototypes 
+
+
+
+quirk:hyper_actuator
+quirk:difficult_maintain
+quirk:non_standard
+quirk:imp_life_support
+quirk:pro_actuator
+weaponquirk:jettison_capable:RA:4:Lance
+
 
 Mass:60
 Engine:360 XL Engine(IS)

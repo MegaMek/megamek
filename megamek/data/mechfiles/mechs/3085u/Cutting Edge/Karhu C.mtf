@@ -1,13 +1,16 @@
-Version:1.0
-Karhu
-C
+chassis:Karhu
+model:C
 mul id:1750
 
 Config:Biped Omnimech
 TechBase:Clan
 Era:3079
-Source:Jihad
+source:TRO: 3085
 Rules Level:2
+role:Sniper
+
+quirk:em_inter_whole
+
 
 Mass:65
 Engine:325 XL (Clan) Engine(IS)

@@ -1,13 +1,17 @@
-Version:1.1
-Fenris (Ice Ferret)
-K
+chassis:Fenris
+clanname:Ice Ferret
+model:K
 mul id:7504
 
 Config:Biped Omnimech
 techbase:Clan
 era:3135
 rules level:2
-source:Rec Guide:ilClan #4- Dark Age 
+role:Striker
+source:Rec Guide:ilClan #4 
+
+quirk:imp_sensors
+
 
 mass:45
 engine:360 XL (Clan) Engine(IS)

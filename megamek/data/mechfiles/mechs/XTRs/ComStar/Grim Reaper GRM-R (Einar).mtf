@@ -1,13 +1,22 @@
-Version:1.0
-Grim Reaper
-GRM-R (Einar)
+chassis:Grim Reaper
+model:GRM-R (Einar)
 mul id:5550
 
 Config:Biped
 TechBase:Mixed (IS Chassis)
 Era:3073
-Source:XTRO ComStar - Jihad
+Source:XTR: ComStar
 Rules Level:4
+role:Missile Boat
+
+
+
+quirk:easy_maintain
+quirk:pro_actuator
+quirk:difficult_maintain
+quirk:non_standard
+quirk:poor_sealing
+
 
 Mass:55
 Engine:275 XL (Clan) Engine

@@ -1,13 +1,19 @@
-Version:1.0
-Flashfire
-FLS-P5
+chassis:Flashfire
+model:FLS-P5
 mul id:1122
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3067
-Source:TRO 3055 - Civil War
+Source:TRO: 3055
 Rules Level:4
+role:Striker
+
+
+
+weaponquirk:mod_weapons:RA:7:IS Fluid Gun
+weaponquirk:mod_weapons:LA:8:IS Fluid Gun
+
 
 Mass:30
 Engine:180 XL Engine

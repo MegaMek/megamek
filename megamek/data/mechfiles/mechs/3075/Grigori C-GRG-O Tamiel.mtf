@@ -1,13 +1,21 @@
-Version:1.1
-Grigori
-C-GRG-O (Tamiel)
+chassis:Grigori
+model:C-GRG-O (Tamiel)
 mul id:1319
 
 Config:Biped Omnimech
 TechBase:Inner Sphere
 Era:3072
-Source:TRO 3075
+Source:TRO: 3075
 Rules Level:4
+role:Missile Boat
+
+
+
+quirk:imp_com
+quirk:imp_sensors
+quirk:bad_rep_clan
+quirk:bad_rep_is
+
 
 Mass:60
 Engine:240 Light Engine(IS)

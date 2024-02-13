@@ -36,6 +36,10 @@ Cockatrice Monitor Platform
 IS Level 4
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Spheroid
 </motion_type>
@@ -140,7 +144,7 @@ Weapons:
 </notes>
 
 <source>
-Jihad Hot Spots: Terra - Civil War
+Jihad Hot Spots: Terra
 </source>
 
 <tonnage>

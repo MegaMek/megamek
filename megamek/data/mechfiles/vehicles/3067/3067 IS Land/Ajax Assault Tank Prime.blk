@@ -36,6 +36,10 @@ Prime
 IS Level 2
 </type>
 
+<role>
+Juggernaut
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -128,7 +132,7 @@ TARGETING:Sync Tracker (39-42071)
 </systemManufacturers>
 
 <source>
-TRO 3067 - Civil War
+TRO: 3067
 </source>
 
 <tonnage>

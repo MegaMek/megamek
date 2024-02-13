@@ -1,13 +1,19 @@
-Version:1.0
-Maelstrom
-MTR-5K
+chassis:Maelstrom
+model:MTR-5K
 mul id:1988
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3056
-Source:TRO 3058 - Clan Invasion
+Source:TRO: 3058
 Rules Level:2
+role:Skirmisher
+
+
+
+
+quirk:good_rep_1
+
 
 Mass:75
 Engine:375 XL Engine

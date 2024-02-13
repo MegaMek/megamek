@@ -56,6 +56,10 @@ IS BA Stealth (Basic):Body
 IS Level 2
 </type>
 
+<role>
+Scout
+</role>
+
 <year>
 3065
 </year>
@@ -65,7 +69,7 @@ Leg
 </motion_type>
 
 <source>
-TRO 3075 - Civil War
+TRO: 3075
 </source>
 
 <armor_type>

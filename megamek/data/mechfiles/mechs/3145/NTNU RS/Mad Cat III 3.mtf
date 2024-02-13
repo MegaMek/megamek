@@ -1,13 +1,18 @@
-Version:1.0
-Mad Cat III
-3
+chassis:Mad Cat III
+model:3
 mul id:6896
 
 Config:Biped
 TechBase:Clan
 Era:3094
-Source:RS 3145 NT NU
+Source:Record Sheets: 3145 New Tech New Upgrades
 Rules Level:2
+role:Sniper
+
+quirk:bad_rep_clan
+quirk:difficult_maintain
+quirk:imp_com
+
 
 Mass:55
 Engine:330 XL (Clan) Engine(IS)

@@ -36,6 +36,10 @@ P2
 Clan Level 3
 </type>
 
+<role>
+Ambusher
+</role>
+
 <motion_type>
 Biped
 </motion_type>
@@ -95,7 +99,7 @@ CLSRM4
 </Main Gun Equipment>
 
 <source>
-TRO Prototypes - Jihad
+TRO: Prototypes
 </source>
 
 <tonnage>
@@ -134,3 +138,8 @@ JUMPJET:Unspecified
 COMMUNICATIONS:Unspecified
 TARGETING:Unspecified
 </systemManufacturers>
+
+<quirks>
+ext_twist
+</quirks>
+

@@ -1,13 +1,19 @@
-Version:1.3
-Waneta
-S-WN-1LAM
+chassis:Waneta
+model:S-WN-1LAM
 mul id:5379
 
 Config:LAM
 techbase:Mixed (IS Chassis)
 era:3078
-source:J:FR
+source:Jihad: Final Reckoning
 rules level:3
+role:None
+
+
+
+
+quirk:non_standard
+
 
 mass:55
 engine:220 Fusion Engine(IS)

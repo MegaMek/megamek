@@ -85,10 +85,16 @@ ISImprovedHeavyGaussRifle
 </Rear Equipment>
 
 <source>
-RS3150 - Dark Age
+Record Sheets: 3150
 </source>
 
 <tonnage>
 45.0
 </tonnage>
+
+
+<quirks>
+easy_maintain
+low_profile
+</quirks>
 

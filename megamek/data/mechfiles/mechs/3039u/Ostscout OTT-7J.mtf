@@ -1,13 +1,22 @@
-Version:1.0
-Ostscout
-OTT-7J
+chassis:Ostscout
+model:OTT-7J
 mul id:2366
 
 Config:Biped
 techbase:Inner Sphere
 era:2600
-source:TRO 3039 - Star League
+source:TRO: 3039
 rules level:1
+role:Scout
+
+
+
+
+quirk:imp_com
+quirk:imp_sensors
+quirk:low_profile
+quirk:rugged_1
+
 
 mass:35
 engine:280 Fusion Engine(IS)

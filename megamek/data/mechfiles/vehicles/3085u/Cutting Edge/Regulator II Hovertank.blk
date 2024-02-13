@@ -54,12 +54,16 @@ ISGauss Ammo
 IS Level 2
 </type>
 
+<role>
+Sniper
+</role>
+
 <year>
 3076
 </year>
 
 <source>
-Jihad
+TRO: 3085
 </source>
 
 <internal_type>

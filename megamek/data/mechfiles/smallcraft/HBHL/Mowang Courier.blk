@@ -36,6 +36,10 @@ Mowang Courier
 IS Level 2
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -103,7 +107,7 @@ cargobay:26.5:1:5
 </structural_integrity>
 
 <source>
-Handbook:Liao - Early Succesion Wars
+Handbook: House Liao
 </source>
 
 <tonnage>

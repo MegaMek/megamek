@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -16,9 +16,9 @@ Warship
 Tatsumaki Destroyer
 </Name>
 
-<model>
+<Model>
 
-</model>
+</Model>
 
 <mul id:>
 5184
@@ -36,6 +36,10 @@ Tatsumaki Destroyer
 IS Level 3
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -48,7 +52,7 @@ dockingcollar
 1stclassquarters:400.0:0
 crewquarters:1400.0:0
 2ndclassquarters:756.0:0
-cargobay:54793.0:1:6
+cargobay:54793.0:1:8
 </transporters>
 
 <SafeThrust>
@@ -289,8 +293,48 @@ ISMediumPulseLaser
 50
 </structural_integrity>
 
+<capabilities>
+The Tatsumaki-class WarShip is a deadly combatant, equipped with a dominant array of pulse lasers and naval autocannons. Its primary strength lies in close-range engagements, where it can swiftly eliminate most targets, except for the most powerful ones. The ship's design also allows it to carry a full battalion of marines in battle armor, making it well-suited for boarding actions against enemy WarShips.
+</capabilities>
+
+<overview>
+The Tatsumaki-class WarShip, known as the "tornado," is designed to strike fear into the hearts of its opponents with its whirlwind of devastating weapons fire. Despite its formidable reputation, the design has been plagued by technical problems, leading to increased crew requirements. The Tatsumaki serves as an escort for unarmed JumpShip troop transports in hostile systems and excels in close-range combat, utilizing pulse lasers and naval autocannons. However, due to the technical issues faced by the class, no new vessels are planned.
+</overview>
+
+<history>
+The Tatsumaki-class WarShip was met with high expectations, as its name and reputation promised a devastating force on the battlefield. However, the ship's history has been marred by technical challenges that have plagued its construction and operation. Detractors attribute these issues to hasty contracting and construction processes, resulting in a storm of technical problems. Despite the setbacks, a limited number of Tatsumaki-class vessels were constructed and deployed. The Lair of Mighty Wyrms stands as the sole remaining active ship of this class, while The Dragon's Last Tear met its tragic end during the fatal attack on the Dominion capital of Alshain. The Tatsumaki-class, with its unique capabilities and close-range firepower, served as escorts for groups of unarmed JumpShip troop transports in hostile systems. While the class exhibited impressive combat abilities, the technical problems it encountered necessitated almost double the standard technical crew complement for each vessel. This issue hindered the Tatsumaki-class's operational effectiveness and raised concerns about its long-term viability. As a result, no new vessels of this class are currently planned, leaving The Lair of Mighty Wyrms as the last representative of the Tatsumaki-class in active service.
+</history>
+
+<manufacturer>
+Stellar Trek Enterprises - Terada Shipyards
+</manufacturer>
+
+<primaryFactory>
+Dieron
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<use>
+Destroyer
+</use>
+
+<length>
+585 m
+</length>
+
+<height>
+1100 m Sail
+</height>
+
 <source>
-TRO3067 - Clan Invasion
+TRO: 3067
 </source>
 
 <tonnage>
@@ -313,6 +357,10 @@ TRO3067 - Clan Invasion
 200
 200
 </grav_decks>
+
+<designtype>
+1
+</designtype>
 
 <crew>
 351
@@ -345,3 +393,4 @@ TRO3067 - Clan Invasion
 <escape_pod>
 45
 </escape_pod>
+

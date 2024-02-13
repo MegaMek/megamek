@@ -36,6 +36,10 @@ M-3
 IS Level 4
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Spheroid
 </motion_type>
@@ -224,7 +228,7 @@ SDS Drone
 </height>
 
 <source>
-H:Liberation of Terra I - Star League
+Historical: Liberation of Terra I
 </source>
 
 <tonnage>

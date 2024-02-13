@@ -36,6 +36,10 @@ CSR-F100
 IS Level 2
 </type>
 
+<role>
+Fire Support
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -102,9 +106,15 @@ Heavy PPC
 </Fuselage Equipment>
 
 <source>
-TRO 3145 Free Worlds League - Early Republic
+TRO: 3145 Free Worlds League
 </source>
 
 <tonnage>
 35.0
 </tonnage>
+
+<quirks>
+easy_maintain
+atmo_instability
+</quirks>
+

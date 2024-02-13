@@ -32,6 +32,10 @@ Fusilier Battle Armor
 IS Level 3
 </type>
 
+<role>
+Juggernaut
+</role>
+
 <motion_type>
 Jump
 </motion_type>
@@ -63,7 +67,7 @@ IS BA Reflective:Body
 </Squad Equipment>
 
 <source>
-TRO 3145 Federated Suns - Dark Ages
+TRO: 3145 Federated Suns
 </source>
 
 <chassis>
@@ -118,3 +122,7 @@ JUMPJET:Unknown
 COMMUNICATIONS:Unknown
 TARGETING:Unknown
 </systemManufacturers>
+
+<weaponQuirks>
+accurate:Squad:1:ISBALightMachineGun
+</weaponQuirks>

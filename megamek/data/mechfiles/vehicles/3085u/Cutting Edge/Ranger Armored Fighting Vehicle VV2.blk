@@ -68,12 +68,16 @@ ISMagshotGR Ammo
 IS Level 3
 </type>
 
+<role>
+Striker
+</role>
+
 <year>
 3082
 </year>
 
 <source>
-Dark Age
+TRO: 3085
 </source>
 
 <internal_type>

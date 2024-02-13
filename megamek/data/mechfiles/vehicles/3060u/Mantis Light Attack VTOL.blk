@@ -47,6 +47,10 @@ ISBeagleActiveProbe
 <type>
 IS Level 2
 </type>
+
+<role>
+Scout
+</role>
 <year>
 3061
 </year>
@@ -64,5 +68,5 @@ VTOL
 </motion_type>
 
 <source>
-Civil War
+TRO: 3060
 </source>

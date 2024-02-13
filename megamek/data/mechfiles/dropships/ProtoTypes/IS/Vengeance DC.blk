@@ -36,6 +36,10 @@ DC
 IS Level 3
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -183,7 +187,7 @@ ISSmallNavalCommScannerSuite
 </structural_integrity>
 
 <source>
-TRO Prototypes - Jihad
+TRO: Prototypes
 </source>
 
 <tonnage>
@@ -229,3 +233,8 @@ TRO Prototypes - Jihad
 <escape_pod>
 33
 </escape_pod>
+
+<quirks>
+unstreamlined
+</quirks>
+

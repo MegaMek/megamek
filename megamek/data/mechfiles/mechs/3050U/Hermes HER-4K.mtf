@@ -1,13 +1,19 @@
-Version:1.0
-Hermes
-HER-4K
+chassis:Hermes
+model:HER-4K
 mul id:1492
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3058
-Source:TRO 3050 - Clan Invasion
+Source:TRO: 3050
 Rules Level:2
+role:Striker
+
+
+
+quirk:imp_com
+quirk:stable
+
 
 Mass:30
 Engine:270 XL Engine

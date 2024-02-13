@@ -36,6 +36,10 @@ Water Elemental Mining Suit
 Mixed (IS Chassis) Experimental
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 UMU
 </motion_type>
@@ -75,7 +79,7 @@ Hades Industrial Complex
 </primaryFactory>
 
 <source>
-TRO Golden Century - Early Succession War
+TRO: Golden Century
 </source>
 
 <chassis>

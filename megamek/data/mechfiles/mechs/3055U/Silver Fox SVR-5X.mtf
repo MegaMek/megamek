@@ -1,13 +1,20 @@
-Version:1.0
-Silver Fox
-SVR-5X
+chassis:Silver Fox
+model:SVR-5X
 mul id:2944
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3065
-Source:TRO 3055 - Civil War
+Source:TRO: 3055
 Rules Level:4
+role:Striker
+
+
+
+
+quirk:non_standard
+quirk:weak_head_1
+
 
 Mass:35
 Engine:315 XXL Engine

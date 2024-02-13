@@ -1,13 +1,20 @@
-Version:1.0
-Stalker
-STK-7D
+chassis:Stalker
+model:STK-7D
 mul id:3043
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3062
-Source:TRO 3050 - Civil War
+Source:TRO: 3050
 Rules Level:2
+role:Juggernaut
+
+
+
+quirk:combat_computer
+quirk:ubiquitous_is
+quirk:no_arms
+
 
 Mass:85
 Engine:255 Fusion Engine

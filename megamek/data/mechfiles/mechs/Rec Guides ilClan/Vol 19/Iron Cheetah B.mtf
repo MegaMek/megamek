@@ -1,12 +1,14 @@
-Version:1.3
-Iron Cheetah
-B
+generator:MegaMek Suite 0.49.18-SNAPSHOT on 2024-01-09
+chassis:Iron Cheetah
+model:B
 mul id:8321
 Config:Biped Omnimech
 techbase:Clan
 era:3054
-source:Rec Guide:ilClan #19 - Clan Invasion
+source:Rec Guide:ilClan #19
 rules level:2
+role:Juggernaut
+
 
 mass:100
 engine:400 XL (Clan) Engine(IS)
@@ -59,13 +61,13 @@ Clan Ferro-Fibrous
 Right Arm:
 Shoulder
 Upper Arm Actuator
+Lower Arm Actuator
 CLLargePulseLaser (OMNIPOD)
 CLLargePulseLaser (OMNIPOD)
 CLMediumPulseLaser (OMNIPOD)
 CLMediumPulseLaser (OMNIPOD)
 CLMediumPulseLaser (OMNIPOD)
 Clan Ferro-Fibrous
--Empty-
 -Empty-
 -Empty-
 -Empty-
@@ -156,7 +158,7 @@ Clan Endo Steel
 
 overview:The final OmniMech of Clan Smoke Jaguar. Designed to represent the pinnacle of 3050's technology.
 capabilities:Designed to improve upon the Dire Wolf, the Iron Cheetah mounts a 400-rated XL engine. This enables to the 'Mech to reach speeds of 64 km/h. While designers feared the increased engine mass would excessively reduce the 'Mech's payload, the increased cooling efficiency meant little impact to the 'Mech's practical punch. Both Endo Steel and ferro-fibrous armor were used to save additional weight.
-deployment:Mounting paired Large Pulse Lasers and six Medium Pulse Lasers, the B-configuration is capable of highly accurate fire even while utilizing its four Jump Jets to seek cover and firing positions. A Targeting Computer provides additional firing assistance. 
+deployment:Mounting paired Large Pulse Lasers and six Medium Pulse Lasers, the B-configuration is capable of highly accurate fire even while utilizing its four Jump Jets to seek cover and firing positions. A Targeting Computer provides additional firing assistance.
 history:Even though the Smoke Jaguars were running into issues of limited resources, they were still able to develop one last OmniMech. The Iron Cheetah was designed to supplement the Dire Wolf and represented the pinnacle of 3050's BattleMech technology. The lack of sufficient resources precluded the Jaguar ability to field more than a handful of these machines before their Annihilation at the hands of the Inner Sphere. The Draconis Combine was able to salvage a few chassis, which were assigned to the most prestigious of MechWarriors. The plans for the Iron Cheetah managed to find their way to Clan Diamond Shark but it wasn't until 3080s that the Diamond Sharks were able to put the OmniMech into production. The Republic of the Sphere purchased an exclusivity contract, thus preventing widespread dissemination of the Iron Cheetah. The Republic concentrated its machines in Stone's Brigade and the Fidelis. With the death of the Republic, Clan Sea Fox began selling the Iron Cheetah on the open market, mostly to House Steiner, Marik, and Davion. Only Clan Snow Raven and Clan Wolf-in-Exile have shown interest in the 'Mech.
 manufacturer:Manufacturing Plant SFF
 primaryfactory:Itabaiana

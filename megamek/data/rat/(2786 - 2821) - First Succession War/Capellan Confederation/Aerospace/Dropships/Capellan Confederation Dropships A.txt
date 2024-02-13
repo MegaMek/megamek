@@ -1,7 +1,7 @@
 Capellan Confederation Dropships A
 Confederate (2602),1
 Gazelle (2531),2
-Dictator (Standard),3
+Dictator,3
 Triumph (2593),4
 Leopard CV (2581),5
 Union (2708),6

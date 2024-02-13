@@ -32,6 +32,10 @@ Gray Death Strike Suit
 IS Level 2
 </type>
 
+<role>
+Ambusher
+</role>
+
 <motion_type>
 Leg
 </motion_type>
@@ -67,7 +71,7 @@ IS BA Advanced:Body
 </Squad Equipment>
 
 <source>
-RS3145 NT NU - Dark Age
+Record Sheets: 3145 New Tech New Upgrades
 </source>
 
 <chassis>
@@ -126,3 +130,8 @@ JUMPJET:Unknown
 COMMUNICATIONS:Unknown
 TARGETING:Unknown
 </systemManufacturers>
+
+<quirks>
+distracting
+</quirks>
+

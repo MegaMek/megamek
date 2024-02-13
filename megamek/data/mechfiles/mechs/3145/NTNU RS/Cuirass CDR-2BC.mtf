@@ -1,13 +1,18 @@
-Version:1.1
-Cuirass
-CDR-2BC
+chassis:Cuirass
+model:CDR-2BC
 mul id:6922
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3119
-Source:RS 3145 NT NU
+Source:Record Sheets: 3145 New Tech New Upgrades
 Rules Level:3
+role:Striker
+
+
+
+quirk:easy_maintain
+
 
 Mass:40
 Engine:240 XL Engine(IS)

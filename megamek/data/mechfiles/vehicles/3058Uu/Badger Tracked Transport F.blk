@@ -36,6 +36,10 @@ F
 IS Level 2
 </type>
 
+<role>
+Scout
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -85,7 +89,7 @@ ISERMediumLaser:OMNI
 </Turret Equipment>
 
 <source>
-Clan Invasion
+TRO: 3058
 </source>
 
 <tonnage>

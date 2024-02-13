@@ -1,13 +1,18 @@
-Version:1.0
-Blackjack
-BJ2-OC
+chassis:Blackjack
+model:BJ2-OC
 mul id:381
 
 Config:Biped Omnimech
 TechBase:Inner Sphere
 Era:3057
-Source:TRO 3058 - Clan Invasion
+Source:TRO: 3058
 Rules Level:2
+role:Brawler
+
+
+
+quirk:non_standard
+
 
 Mass:50
 Engine:200 XL Engine(IS)

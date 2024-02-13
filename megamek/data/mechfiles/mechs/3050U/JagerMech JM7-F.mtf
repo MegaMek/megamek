@@ -1,13 +1,18 @@
-Version:1.0
-JagerMech
-JM7-F
+chassis:JagerMech
+model:JM7-F
 mul id:4391
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3062
-Source:TRO 3050 - Civil War
+Source:TRO: 3050
 Rules Level:2
+role:Brawler
+
+
+
+quirk:anti_air
+
 
 Mass:70
 Engine:280 XL Engine

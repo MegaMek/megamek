@@ -1,13 +1,23 @@
-Version:1.0
-Crusader
-CRD-4BR
+chassis:Crusader
+model:CRD-4BR
 mul id:754
 
 Config:Biped
 techbase:Inner Sphere
 era:3054
-source:Rec Guide:ilClan #17 - Clan Invasion
+source:Rec Guide:ilClan #17
 rules level:2
+role:Missile Boat
+
+
+
+quirk:easy_maintain
+quirk:rugged_1
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+weaponquirk:stable_weapon:RL:4:ISStreakSRM2
+weaponquirk:stable_weapon:LL:4:ISStreakSRM2
+
 
 mass:65
 engine:260 Fusion Engine(IS)

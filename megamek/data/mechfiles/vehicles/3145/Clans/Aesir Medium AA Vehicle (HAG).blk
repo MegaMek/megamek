@@ -32,6 +32,10 @@ Aesir Medium AA Vehicle
 Clan Level 3
 </type>
 
+<role>
+Sniper
+</role>
+
 <motion_type>
 Wheeled
 </motion_type>
@@ -88,9 +92,14 @@ CLCASE
 </Turret Equipment>
 
 <source>
-TRO 3145 The Clans - Late Republic
+TRO: 3145 The Clans
 </source>
 
 <tonnage>
 55.0
 </tonnage>
+
+<quirks>
+anti_air
+</quirks>
+

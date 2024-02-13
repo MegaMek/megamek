@@ -1,13 +1,18 @@
-Version:1.1
-Starslayer
-STY-2C-EC
+chassis:Starslayer
+model:STY-2C-EC
 mul id:7680
 
 Config:Biped
 techbase:Mixed (IS Chassis)
 era:2823
-source:Succession Wars
+source:TRO: Golden Century
 rules level:4
+role:Skirmisher
+
+
+
+quirk:rugged_1
+
 
 mass:50
 engine:250 Fusion (Clan) Engine
@@ -157,7 +162,7 @@ capabilities:The Starslayer is built on a lightweight Thor-4 Endo Steel chassis 
 
 deployment:An interim design built by the Nova Cats, the BattleMech’s lasers were all swapped for improved or early Clan prototypes to support the new Streak 4 system won from the Star Adders.
 
-history:Though Blue Shot's design won selection in 2765, the Starslayer would also be plagued with technical delays with its tracking system that would delay full production until 2772 and the Amaris Civil War. Despite the SLDF's desperate need for matériel, tensions between General Kerensky and Archon Robert Steiner II would result in Blue Shot delaying SLDF shipments until 2781 due to lack of "up-to-date" shipping information and as a result the Starslayer would be far more common in the LCAF service than the SLDF. By now a thoroughly Lyran Commonwealth design, production of the original 2C Starslayer would cease during the technological decline of the early Succession Wars, with Blue Shot Weaponry resuming with the superior and updated STY-3C model in wake of the Clan Invasion.
+history:Though Blue Shot's design won selection in 2765, the Starslayer would also be plagued with technical delays with its tracking system that would delay full production until 2772 and the Amaris Civil War. Despite the SLDF's desperate need for matériel, tensions between General Kerensky and Archon Robert Steiner II would result in Blue Shot delaying SLDF shipments until 2781 due to lack of "up-to-date" shipping information and as a result the Starslayer would be far more common in the LCAF service than the SLDF. By now a thoroughly Lyran Commonwealth design, production of the original 2C Starslayer would cease during the technological decline of the early TRO: Golden Century, with Blue Shot Weaponry resuming with the superior and updated STY-3C model in wake of the Clan Invasion.
 
 manufacturer:Brim Ironworks
 primaryfactory:Brim

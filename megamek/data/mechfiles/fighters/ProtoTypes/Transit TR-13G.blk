@@ -36,6 +36,10 @@ TR-13G
 IS Level 4
 </type>
 
+<role>
+Fire Support
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -109,7 +113,7 @@ ISLongTomCannonAmmo
 </Fuselage Equipment>
 
 <source>
-TRO Prototypes - Jihad
+TRO: Prototypes
 </source>
 
 <tonnage>
@@ -145,4 +149,10 @@ TARGETING:Dwyerson Mark XII
 </systemManufacturers>
 
 
+
+
+<quirks>
+hard_pilot
+atmo_flyer
+</quirks>
 

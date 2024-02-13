@@ -1,13 +1,16 @@
-Version:1.1
-Coyotl
-B
+chassis:Coyotl
+model:B
 mul id:7606
 
 Config:Biped Omnimech
 techbase:Clan
 era:2854
-source:TRO:GC - Early Succession War
+source:TRO: Golden Century
 rules level:2
+role:Striker
+
+quirk:ext_twist
+
 
 mass:40
 engine:280 XL (Clan) Engine(IS)

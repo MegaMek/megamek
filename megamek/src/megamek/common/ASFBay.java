@@ -59,7 +59,9 @@ public final class ASFBay extends AbstractSmallCraftASFBay {
     public boolean canLoad(Entity unit) {
         boolean loadableFighter = unit.isFighter() && !(unit instanceof FighterSquadron);
         boolean loadableLAM = (unit instanceof LandAirMech) && (unit.getConversionMode() == LandAirMech.CONV_MODE_FIGHTER);
-        return (getUnused() >= 1) && (availableRecoverySlots() >= 1) && (loadableFighter || loadableLAM);
+        boolean loadableSquadron = (unit instanceof FighterSquadron) && (getUnused() >= unit.getSubEntities().size());
+        return (getUnused() >= 1) && (availableRecoverySlots() >= 1)
+                && (loadableFighter || loadableLAM || loadableSquadron);
     }
 
     @Override
@@ -97,7 +99,13 @@ public final class ASFBay extends AbstractSmallCraftASFBay {
 
     @Override
     public String toString() {
-        return (hasARTS() ? "artsasfbay:" : "asfbay:") + totalSpace + ":" + doors + ":" + bayNumber;
+        String bayType = (hasARTS() ? "artsasfbay" : "asfbay");
+        return this.bayString(
+                bayType,
+                totalSpace,
+                doors,
+                bayNumber
+        );
     }
 
     public static TechAdvancement techAdvancement() {

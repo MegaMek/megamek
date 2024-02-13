@@ -1,13 +1,13 @@
-Version:1.0
-Copper SecurityMech
-CPK-65KM
+chassis:Copper SecurityMech
+model:CPK-65KM
 mul id:7465
 
 Config:Biped
 techbase:Inner Sphere
 era:3065
-source:Jihad
+source:Touring the Stars: Kaumberg
 rules level:2
+role:Ambusher
 
 mass:25
 engine:100 Fuel Cell Engine(IS)

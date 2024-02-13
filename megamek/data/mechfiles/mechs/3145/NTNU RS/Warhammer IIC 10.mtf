@@ -1,13 +1,17 @@
-Version:1.0
-Warhammer IIC
-10
+chassis:Warhammer IIC
+model:10
 mul id:6859
 
 Config:Biped
 TechBase:Clan
 Era:3120
-Source:RS 3145 NT NU - Late Republic 
+Source:Record Sheets: 3145 New Tech New Upgrades 
 Rules Level:2
+role:Sniper
+
+quirk:searchlight
+quirk:stable
+
 
 Mass:80
 Engine:320 Fusion (Clan) Engine(IS)

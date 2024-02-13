@@ -36,6 +36,10 @@ Ontos Heavy Tank
 Mixed (IS Chassis)
 </type>
 
+<role>
+Juggernaut
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -137,7 +141,7 @@ TARGETING:GuideRite with Laser Coordination Link and Artemis FCS
 </systemManufacturers>
 
 <source>
-Rec Guide:ilClan #29 - Dark Age
+Rec Guide:ilClan #29
 </source>
 
 <tonnage>

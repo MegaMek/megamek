@@ -1,13 +1,13 @@
-Version:1.1
-Quasit MilitiaMech
-QUA-51T
+chassis:Quasit MilitiaMech
+model:QUA-51T
 mul id:2609
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2517
-Source:TRO 3075
+Source:TRO: 3075
 Rules Level:2
+role:Brawler
 
 Mass:45
 Engine:225 Fusion Engine

@@ -32,6 +32,10 @@ Schrek AC Carrier
 IS Level 1
 </type>
 
+<role>
+Sniper
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -89,9 +93,14 @@ Autocannon/5
 </Turret Equipment>
 
 <source>
-TRO 3039 - Succession Wars
+TRO: 3039
 </source>
 
 <tonnage>
 80.0
 </tonnage>
+
+<quirks>
+low_profile
+</quirks>
+

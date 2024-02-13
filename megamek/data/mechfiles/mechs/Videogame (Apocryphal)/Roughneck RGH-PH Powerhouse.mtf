@@ -1,11 +1,11 @@
-Version:1.0
-Roughneck
-RGH-PH Powerhouse
+chassis:Roughneck
+model:RGH-PH Powerhouse
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3067
 Rules Level:2
+source: Videogame (Apocryphal)
 
 Mass:65
 Engine:260 XL Engine(IS)

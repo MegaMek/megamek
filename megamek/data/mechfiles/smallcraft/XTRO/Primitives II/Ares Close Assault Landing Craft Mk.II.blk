@@ -36,6 +36,10 @@ Mk.II
 IS Level 4
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -132,7 +136,7 @@ TARGETING:Unknown
 </systemManufacturers>
 
 <notes>
-Stat's adjusted from XTRO to be legal.
+Stat's adjusted from XTR: to be legal.
 </notes>
 
 <use>
@@ -148,7 +152,7 @@ Combat Landing Craft
 </width>
 
 <source>
-XTRO Primitives II - Age of War
+XTR: Primitives II
 </source>
 
 <tonnage>
@@ -194,4 +198,11 @@ XTRO Primitives II - Age of War
 <escape_pod>
 0
 </escape_pod>
+
+
+<quirks>
+atmo_flyer
+easy_maintain
+obsolete
+</quirks>
 

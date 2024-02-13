@@ -1,13 +1,20 @@
-Version:1.0
-Tarantula
-ZPH-4A
+chassis:Tarantula
+model:ZPH-4A
 mul id:3163
 
 Config:Quad
 TechBase:Inner Sphere
 Era:3066
-Source:TRO 3055 - Civil War
+Source:TRO: 3055
 Rules Level:2
+role:Striker
+
+
+
+quirk:easy_pilot
+quirk:ext_twist
+quirk:exp_actuator
+
 
 Mass:25
 Engine:200 XL Engine

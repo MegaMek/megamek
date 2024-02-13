@@ -1,13 +1,19 @@
-Version:1.0
-Warlord
-BLR-2D
+chassis:Warlord
+model:BLR-2D
 mul id:3509
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3070
-Source:TRO 3075
+Source:TRO: 3075
 Rules Level:2
+role:Brawler
+
+
+
+
+quirk:easy_maintain
+
 
 Mass:80
 Engine:320 Fusion Engine

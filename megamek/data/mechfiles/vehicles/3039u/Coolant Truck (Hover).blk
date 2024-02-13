@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -28,20 +28,24 @@ Coolant Truck
 2602
 </year>
 
+<originalBuildYear>
+2602
+</originalBuildYear>
+
 <type>
 IS Level 1
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Hover
 </motion_type>
 
 <transporters>
-insulatedcargobay:3.48:1:1
-</transporters>
-
-<transporters>
-insulatedcargobay:1.74:1:1
+insulatedcargobay:4.35:1:1::-1:0
 </transporters>
 
 <cruiseMP>
@@ -78,14 +82,19 @@ IS Vehicle Flamer Ammo
 </Rear Equipment>
 
 <Turret Equipment>
-Vehicle Flamer
-Vehicle Flamer
+Flamer (Vehicle)
+Flamer (Vehicle)
 </Turret Equipment>
 
 <source>
-TRO 3039 - Star League
+TRO: 3039
 </source>
 
 <tonnage>
 30.0
 </tonnage>
+
+<fuelType>
+PETROCHEMICALS
+</fuelType>
+

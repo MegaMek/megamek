@@ -1,94 +1,97 @@
-Version:1.0
-Pulverizer
-PUL-2V
+generator:MegaMek Suite 0.49.16-SNAPSHOT on 2023-12-29
+chassis:Pulverizer
+model:PUL-2V
 mul id:2590
-
 Config:Biped
-TechBase:Inner Sphere
-Era:2823
-Rules Level:4
+techbase:Inner Sphere
+era:2823
+source:Jihad Secrets: The Blake Documents
+rules level:3
+role:Brawler
 
-Mass:90
-Engine:360 Fusion Engine
-Structure:Endo Steel
-Myomer:Standard
+quirk:easy_maintain
+quirk:bad_rep_clan
+quirk:pro_actuator
 
-Heat Sinks:15 Double
-Walk MP:4
-Jump MP:0
+mass:90
+engine:360 Fusion Engine(IS)
+structure:IS Endo Steel
+myomer:Standard
 
-Armor:Ferro-Fibrous
-LA Armor:30
-RA Armor:30
-LT Armor:30
-RT Armor:30
-CT Armor:44
-HD Armor:9
-LL Armor:38
-RL Armor:38
-RTL Armor:8
-RTR Armor:8
-RTC Armor:12
+heat sinks:15 IS Double
+walk mp:4
+jump mp:0
 
-Weapons:5
-1 ISLargeLaser, Right Arm
-1 ISLargeLaser, Left Arm
-1 ISEHERPPC, Right Torso
-1 ISLRM10, Left Torso, Ammo:12
-1 ISGuardianECM, Center Torso
+armor:Ferro-Fibrous(Inner Sphere)
+LA armor:30
+RA armor:30
+LT armor:30
+RT armor:30
+CT armor:44
+HD armor:9
+LL armor:38
+RL armor:38
+RTL armor:8
+RTR armor:8
+RTC armor:12
+
+Weapons:3
+Large Laser, Left Arm
+Large Laser, Right Arm
+LRM 10, Left Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-ISLargeLaser
-ISLargeLaser
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Endo Steel
-Endo Steel
-Endo Steel
+Large Laser
+Large Laser
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-ISLargeLaser
-ISLargeLaser
-Ferro-Fibrous
-Ferro-Fibrous
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+Large Laser
+Large Laser
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 
 Left Torso:
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISLRM10
-ISLRM10
-ISLRM10 Ammo
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+LRM 10
+LRM 10
+IS Ammo LRM-10
 ISCASE
-Ferro-Fibrous
-Ferro-Fibrous
-Endo Steel
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 
 Right Torso:
-ISEHERPPC
-ISEHERPPC
-ISEHERPPC
-Ferro-Fibrous
-Ferro-Fibrous
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
 -Empty-
 -Empty-
 -Empty-
@@ -104,14 +107,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISGuardianECM
-ISGuardianECM
+ISGuardianECMSuite
+ISGuardianECMSuite
 
 Head:
 Life Support
 Sensors
 Cockpit
-Ferro-Fibrous
+IS Ferro-Fibrous
 Sensors
 Life Support
 -Empty-
@@ -126,8 +129,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Ferro-Fibrous
-Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -140,11 +143,13 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Ferro-Fibrous
-Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
+
+

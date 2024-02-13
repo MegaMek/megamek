@@ -1,12 +1,18 @@
-Version:1.3
-Orochi
-OR-2I
+chassis:Orochi
+model:OR-2I
 mul id:2343
 Config:Biped
 techbase:Inner Sphere
 era:3084
-source:TRO:DA - Dark Age
+source:TRO: Dark Age
 rules level:2
+role:Missile Boat
+
+
+
+
+quirk:no_arms
+
 
 mass:90
 engine:360 XL Engine(IS)

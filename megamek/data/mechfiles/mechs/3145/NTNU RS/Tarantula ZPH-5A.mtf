@@ -1,13 +1,20 @@
-Version:1.0
-Tarantula
-ZPH-5A
+chassis:Tarantula
+model:ZPH-5A
 mul id:6941
 
 Config:Quad
 TechBase:Inner Sphere
 Era:3111	
-Source:RS 3145 NTNU - Late Republic
+Source:Record Sheets: 3145 New Tech New Upgrades
 Rules Level:3
+role:Scout
+
+
+
+quirk:easy_pilot
+quirk:ext_twist
+quirk:exp_actuator
+
 
 Mass:25
 Engine:200 XL Engine(IS)

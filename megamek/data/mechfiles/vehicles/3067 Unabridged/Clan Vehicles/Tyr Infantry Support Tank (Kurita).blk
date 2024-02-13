@@ -32,6 +32,10 @@ Tyr Infantry Support Tank
 IS Level 2
 </type>
 
+<role>
+Missile Boat
+</role>
+
 <motion_type>
 Hover
 </motion_type>
@@ -82,7 +86,7 @@ Light Machine Gun
 </Turret Equipment>
 
 <source>
-RS 3067U
+Record Sheets: Record Sheets: 3067 Unabridged
 </source>
 
 <tonnage>

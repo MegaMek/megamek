@@ -1,13 +1,18 @@
-Version:1.0
-Jenner
-JR7-F (Smith)
+chassis:Jenner
+model:JR7-F (Smith)
 mul id:7796
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3030
-Source:TRO 3039
+Source:Turing Points: War of 3039 - Vega
 Rules Level:1
+role:Striker
+
+
+
+quirk:no_arms
+
 
 Mass:35
 Engine:245 Fusion Engine(IS)

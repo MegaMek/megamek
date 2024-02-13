@@ -32,6 +32,10 @@ Prowler Multi-Terrain Vehicle
 IS Level 3
 </type>
 
+<role>
+Scout
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -81,7 +85,7 @@ ISMML7
 </Turret Equipment>
 
 <source>
-RS 3145 NY NU
+Record Sheets: 3145 New Tech New Upgrades
 </source>
 
 <tonnage>

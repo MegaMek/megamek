@@ -32,6 +32,10 @@ Clan Motorized Point
 Clan Level 2
 </type>
 
+<role>
+Ambusher
+</role>
+
 <motion_type>
 Motorized
 </motion_type>
@@ -40,7 +44,7 @@ Motorized
 </Field Guns Equipment>
 
 <source>
-Total Warfare - Succession Wars
+Total Warfare
 </source>
 
 <squad_size>

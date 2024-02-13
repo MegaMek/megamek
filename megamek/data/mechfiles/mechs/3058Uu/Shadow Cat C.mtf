@@ -1,13 +1,16 @@
-Version:1.0
-Shadow Cat
-C
+chassis:Shadow Cat
+model:C
 mul id:2889
 
 Config:Biped Omnimech
 TechBase:Clan
 Era:3061
-Source:TRO 3058 - Clan Invasion
+Source:TRO: 3058
 Rules Level:2
+role:Striker
+
+quirk:low_profile
+
 
 Mass:45
 Engine:270 XL (Clan) Engine(IS)

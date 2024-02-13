@@ -1,12 +1,21 @@
-Version:1.1
-Grigori
-C-GRG-OS Caelestis
+chassis:Grigori
+model:C-GRG-OS Caelestis
 mul id:1326
+source:Jihad Secrets: The Blake Documents
 
 Config:Biped Omnimech
 TechBase:Mixed (IS Chassis)
 Era:3075
 Rules Level:4
+role:Brawler
+
+
+
+quirk:imp_com
+quirk:imp_sensors
+quirk:bad_rep_clan
+quirk:bad_rep_is
+
 
 Mass:60
 Engine:240 Light Engine(IS)

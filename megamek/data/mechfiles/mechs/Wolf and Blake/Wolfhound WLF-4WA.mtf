@@ -1,13 +1,19 @@
-Version:1.2
-Wolfhound
-WLF-4WA
+chassis:Wolfhound
+model:WLF-4WA
 mul id:3568
 
 Config:Biped
 techbase:Inner Sphere
 era:3071
-source:Starterbook: Wolf & Blake - Jihad
+source:Starterbook: Wolf & Blake
 rules level:2
+role:Sniper
+
+
+
+quirk:easy_maintain
+quirk:good_rep_1
+
 
 mass:35
 engine:210 Fusion Engine(IS)

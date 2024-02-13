@@ -36,6 +36,10 @@ Silverback Coastal Cutter
 IS Level 2
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Hydrofoil
 </motion_type>
@@ -97,7 +101,7 @@ Searchlight
 </structural_tech_rating>
 
 <source>
-TRO VAr - Clan Invasion
+TRO: Vehicle Annex (Revised)
 </source>
 
 <tonnage>

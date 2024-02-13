@@ -36,6 +36,10 @@ Asher Hover Scout
 IS Level 4
 </type>
 
+<role>
+Scout
+</role>
+
 <motion_type>
 Hover
 </motion_type>
@@ -104,7 +108,7 @@ Machine Gun
 </armor_tech_rating>
 
 <source>
-XTRO Primitives V - Age of War
+XTR: Primitives V
 </source>
 
 <tonnage>
@@ -118,3 +122,9 @@ XTRO Primitives V - Age of War
 <fuelType>
 PETROCHEMICALS
 </fuelType>
+
+<quirks>
+hard_pilot
+non_standard
+</quirks>
+

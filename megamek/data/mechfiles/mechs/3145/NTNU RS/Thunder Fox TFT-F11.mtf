@@ -1,13 +1,18 @@
-Version:1.1
-Thunder Fox
-TFT-F11
+chassis:Thunder Fox
+model:TFT-F11
 mul id:6892
 
 Config:Quad
 techbase:Mixed (IS Chassis)
 era:3119
-source:RS 3145 NT NU
+source:Record Sheets: 3145 New Tech New Upgrades
 rules level:4
+role:Sniper
+
+
+
+quirk:easy_maintain
+
 
 mass:55
 engine:275 XXL Engine(IS)

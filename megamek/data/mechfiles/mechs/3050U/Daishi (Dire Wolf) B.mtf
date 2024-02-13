@@ -1,13 +1,18 @@
-Version:1.1
-Daishi (Dire Wolf)
-B
+chassis:Daishi
+clanname:Dire Wolf
+model:B
 mul id:814
 
 Config:Biped Omnimech
 TechBase:Clan
 Era:3010
-Source:TRO 3050 - Succession Wars
+Source:TRO: 3050
 Rules Level:2
+role:Sniper
+
+quirk:imp_target_long
+quirk:difficult_eject
+
 
 Mass:100
 Engine:300 XL (Clan) Engine(IS)

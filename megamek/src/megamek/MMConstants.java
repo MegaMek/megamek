@@ -25,6 +25,9 @@ public final class MMConstants extends SuiteConstants {
     //region General Constants
     public static final String PROJECT_NAME = "MegaMek";
     public static final String MUL_URL_PREFIX = "http://www.masterunitlist.info/Unit/Details/";
+    public static final String BT_URL_SHRAPNEL = "https://bg.battletech.com/shrapnel/";
+    /** When this text is found in the source field, the Mek View will display a link to {@link #BT_URL_SHRAPNEL} */
+    public static final String SOURCE_TEXT_SHRAPNEL = "Shrapnel";
     //endregion General Constants
 
     //region GUI Constants
@@ -46,6 +49,7 @@ public final class MMConstants extends SuiteConstants {
     public static final String GIVEN_NAME_MALE_FILE = "data/names/maleGivenNames.csv";
     public static final String SURNAME_FILE = "data/names/surnames.csv";
     public static final String BOT_README_FILE_PATH = "docs/Bot Stuff/Princess Notes.txt";
+    public static final String USER_DIR_README_FILE = "docs/UserDirHelp.html";
     public static final String SERIALKILLER_CONFIG_FILE = "mmconf/serialkiller.xml";
     public static final String USER_NAME_FACTIONS_DIRECTORY_PATH = "userdata/data/names/factions/";
     public static final String USER_CALLSIGN_FILE_PATH = "userdata/data/names/callsigns.csv";
@@ -53,6 +57,7 @@ public final class MMConstants extends SuiteConstants {
     public static final String USER_HISTORICAL_ETHNICITY_FILE = "userdata/data/names/historicalEthnicity.csv";
     public static final String USER_GIVEN_NAME_MALE_FILE = "userdata/data/names/maleGivenNames.csv";
     public static final String USER_SURNAME_FILE = "userdata/data/names/surnames.csv";
+    public static final String ERAS_FILE_PATH = "data/universe/eras.xml";
     //endregion File Paths
 
     //region ClientServer

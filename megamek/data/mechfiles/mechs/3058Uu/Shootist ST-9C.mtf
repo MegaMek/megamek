@@ -1,13 +1,18 @@
-Version:1.0
-Shootist
-ST-9C
+chassis:Shootist
+model:ST-9C
 mul id:2941
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3066
-Source:TRO 3058 - Civil War
+Source:TRO: 3058
 Rules Level:2
+role:Sniper
+
+
+
+quirk:command_mech
+
 
 Mass:70
 Engine:280 Fusion Engine
@@ -149,4 +154,19 @@ Ferro-Fibrous
 -Empty-
 -Empty-
 
+overview:Introduced in 2621, the Shootist emerged as a command 'Mech for the Royal BattleMech regiments of the Star League Defense Force (SLDF) within the Terran Hegemony. Initially envisioned as a leadership platform, it maintained its relevance due to its balanced blend of speed and firepower, despite being outpaced by the BattleMaster a decade later. Its prowess in delivering substantial firepower for heavy lances in close combat ensured its continued service within many Royal formations, embodying a tradition where pilots challenge the largest adversary on the battlefield.
+
+capabilities:Prioritizing armor protection over firepower due to its original designation as a battlefield command platform, the Shootist boasts twelve tons of ferro-fibrous armor on a standard frame, ensuring well-armored protection across all locations, although vulnerable to concentrated salvos at the rear torso. Despite the armor-centric design, the Shootist’s arsenal is noteworthy. It houses a potent Deathgiver autocannon effective at close range, but the true hallmark is the Blankenburg extended-range large laser, revered for its accuracy and damage output across varying distances. Additionally, the arsenal is complemented by two medium pulse lasers and a head-mounted small laser, showcasing early adoption of the then-newly perfected pulse technology. The Shootist's resilience is further bolstered by a standard engine and CASE (Cellular Ammunition Storage Equipment), allowing it to withstand catastrophic ammunition explosions that would incapacitate most other Star League 'Mech designs.
+
+deployment:TBuilding on the ST-8C, the ST-9C variant removes the autocannon and a heat sink to accommodate a Gauss Rifle, shifting the Shootist's role towards a support 'Mech with the new long-range weaponry​1​.
+
+history:The Shootist's narrative is a long, unfolding saga that transcends centuries, albeit in limited numbers. Even during peak production, construction rates barely offset combat attritions, and the tumultuous periods of the Succession Wars left few Shootists intact, except those secured within ComStar's repositories or Clan Brian Caches. Deployment majorly occurred within heavy and command Level IIs by ComStar and later, the Word of Blake, with some commanders employing it for personal battlefield protection. Its effectiveness when deployed in unison was acknowledged by the SLDF, but limited availability restricted such formations. Significant attrition occurred during the harsh confrontations on Tukayyid and the ensuing schism forming the Word of Blake, with violent engagements in the Chaos March further dwindling their numbers. The ongoing conflict threatens the legacy of the Shootist, with less than fifty of these formidable 'Mechs remaining in the Inner Sphere. Adaptations over time led to variant Shootists housing a C3i unit, achieved by altering the laser and heat sink configurations, while retaining or replacing the autocannon with a Gauss rifle. Notably, identical twins Adept Mathew and Simon Kincade, serving with the Fourth Division, utilized their distinctive Shootists in a masterful deception strategy, impressing Precentor Martial Cameron St. Jamais and contributing to the Word of Blake Militia’s covert expansion, showcasing the Shootist’s enduring strategic utility amidst evolving military theatrics.
+
+manufacturer:Various
+primaryfactory:Refit
+systemmanufacturer:CHASSIS:Dennenbach-Mitchell Mark IV
+systemmanufacturer:ENGINE:VOX 280
+systemmanufacturer:ARMOR:MV Ferro-Fibrous with CASE
+systemmanufacturer:COMMUNICATIONS:Domman Echo II
+systemmanufacturer:TARGETING:Wayne Marksman
 

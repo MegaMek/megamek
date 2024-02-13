@@ -36,6 +36,10 @@ C
 Clan Level 3
 </type>
 
+<role>
+Fast Dogfighter
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -107,9 +111,19 @@ CLCASE
 </Fuselage Equipment>
 
 <source>
-TRO Prototypes - Jihad
+TRO: Prototypes
 </source>
 
 <tonnage>
 30.0
 </tonnage>
+
+<quirks>
+bad_rep_clan
+</quirks>
+
+<weaponQuirks>
+mod_weapons:NOS:0:CLStreakLRM15
+mod_weapons:LWG:0:CLERMediumLaser
+mod_weapons:RWG:0:CLERMediumLaser
+</weaponQuirks>

@@ -1,12 +1,18 @@
-Version:1.3
-Barghest
-BGS-1T
+chassis:Barghest
+model:BGS-1T
 mul id:252
 Config:Quad
 techbase:Inner Sphere
 era:3058
-source:TRO 3060 - Clan Invasion
+source:TRO: 3060
 rules level:2
+role:Sniper
+
+
+
+
+quirk:directional_torso_mount
+
 
 mass:70
 engine:350 XL Engine(IS)

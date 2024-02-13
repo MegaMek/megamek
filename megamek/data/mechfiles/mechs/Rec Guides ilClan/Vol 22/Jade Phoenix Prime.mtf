@@ -1,13 +1,13 @@
-Version:1.0
-Jade Phoenix
-Prime
+chassis:Jade Phoenix
+model:Prime
 mul id:8293
 
 Config:Biped Omnimech
 techbase:Clan
 era:3148
-source:Rec Guide:ilClan #22 - Dark Age
+source:Rec Guide:ilClan #22
 rules level:3
+role:Sniper
 
 mass:85
 engine:340 XL (Clan) Engine(IS)

@@ -32,6 +32,10 @@ Sasayaku Control Transport
 IS Level 3
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Wheeled
 </motion_type>
@@ -88,7 +92,7 @@ ISDroneExtra
 </Rear Equipment>
 
 <source>
-HB:House Kurita - Succession Wars
+Handbook: House Kurita
 </source>
 
 <tonnage>

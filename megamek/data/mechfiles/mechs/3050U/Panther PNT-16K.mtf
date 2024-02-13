@@ -1,13 +1,19 @@
-Version:1.0
-Panther
-PNT-16K
+chassis:Panther
+model:PNT-16K
 mul id:2423
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3070
-Source:TRO 3050 - Jihad
+Source:TRO: 3050
 Rules Level:2
+role:Brawler
+
+
+
+quirk:imp_target_short
+quirk:nimble_jumper
+
 
 Mass:35
 Engine:140 Fusion Engine

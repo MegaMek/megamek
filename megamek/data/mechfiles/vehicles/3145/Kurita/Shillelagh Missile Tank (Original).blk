@@ -1,12 +1,7 @@
-#building block data file
+#Saved from version 0.49.16-SNAPSHOT on 2023-12-29
 <BlockVersion>
 1
 </BlockVersion>
-
-# Write the version number just in case...
-<Version>
-MAM0
-</Version>
 
 <UnitType>
 Tank
@@ -28,9 +23,27 @@ Shillelagh Missile Tank
 2859
 </year>
 
+<originalBuildYear>
+2859
+</originalBuildYear>
+
 <type>
 IS Level 2
 </type>
+
+<role>
+Missile Boat
+</role>
+
+<quirks>
+hard_pilot
+easy_maintain
+sensor_ghosts
+</quirks>
+
+<weaponQuirks>
+accurate:TU:0:LRM 15
+</weaponQuirks>
 
 <motion_type>
 Tracked
@@ -76,9 +89,14 @@ LRM 15
 </Turret Equipment>
 
 <source>
-TRO 3145 Draconis Combine - Succession Wars
+TRO: 3145 Draconis Combine
 </source>
 
 <tonnage>
 40.0
 </tonnage>
+
+<fuelType>
+PETROCHEMICALS
+</fuelType>
+

@@ -1,0 +1,144 @@
+#Saved from version 0.49.18-SNAPSHOT on 2024-01-07
+<BlockVersion>
+1
+</BlockVersion>
+
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+SM Tank Destroyer
+</Name>
+
+<Model>
+SM1A
+</Model>
+
+<mul id:>
+2972
+</mul id:>
+
+<year>
+3070
+</year>
+
+<originalBuildYear>
+3070
+</originalBuildYear>
+
+<type>
+Clan Level 2
+</type>
+
+<role>
+Striker
+</role>
+
+<motion_type>
+Hover
+</motion_type>
+
+<cruiseMP>
+8
+</cruiseMP>
+
+<engine_type>
+0
+</engine_type>
+
+<clan_engine>
+false
+</clan_engine>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+2
+</armor_tech>
+
+<internal_type>
+-1
+</internal_type>
+
+<armor>
+43
+29
+29
+19
+24
+</armor>
+
+<Body Equipment>
+Clan LB 20-X AC Ammo
+Clan LB 20-X AC Ammo
+Clan LB 20-X AC Ammo
+Clan LB 20-X AC Ammo
+Clan LB 20-X AC Ammo
+Clan Light Machine Gun Ammo - Half
+</Body Equipment>
+
+<Front Equipment>
+CLLBXAC20
+CLLightActiveProbe
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+CLCASE
+</Rear Equipment>
+
+<Turret Equipment>
+CLLightMG
+CLLightMG
+CLLightMG
+CLLightMG
+CLLMGA
+</Turret Equipment>
+
+<capabilities>
+The vehicle has unique "glass" dual cockpits on the front of the vehicle that are functionally identical while mounting a smaller anti-infantry turret just behind its left side cockpit. The vehicle's unique split cockpit design allows the cockpit modules to eject from the vehicle. Due to its appearance, the SM1 was dubbed the "Suicide Machine" by its first pilots because they felt over-exposed with the tank's all ferro-glass cockpit.
+</capabilities>
+
+<overview>
+The SM1 Tank Destroyer was designed as a speedy infighter by scientists from Clan Nova Cat. The machine is a cheap and effective combat vehicle.
+</overview>
+
+<deployment>
+This variant swaps out the Ultra AC for an LB-X Autocannon/20 with five tons of ammunition. The weight saved goes towards a Light Active Probe, and a Light Machine Gun Array to guide its 4 light machine guns. The vehicle became available during the FedCom Civil War.
+</deployment>
+
+<history>
+Following their integration with the Draconis Combine in 3060, Clan Nova Cat found its advanced manufacturing capacities lacking due to the harsh realities of living in the Inner Sphere. Thus the Clan decided to begin to embrace the Inner Sphere's combined-arms doctrine of combat. Working with Luthien Armor Works, as it did with the Shoden project at LAW's defunct facilities on Irece, this facility began to produce the SM1 Tank Destroyer in 3065. Clan Nova Cat provided the advanced technology from their own factories after upgrading LAW's facilities on Irece. The deal with LAW gave the Clan shares in the manufacturing plant itself, and purchasing rights for the SM1's first five years of production. The vehicle was accepted by Nova Cat Galaxies after the performance of volunteer crews. After the vehicles were first introduced, several appeared in the ranks of the Draconis Combine's local Ryuken regiment, which they have apparently won through trials.
+</history>
+
+<manufacturer>
+Luthien Armor Works,LAW-Barcella
+</manufacturer>
+
+<primaryFactory>
+Hyner,Irece
+</primaryFactory>
+
+<systemManufacturers>
+ENGINE:165 Standard Fusion
+ARMOR:Advanced Compound Beta
+COMMUNICATIONS:Unit 2J2 “Basher”
+TARGETING:Able-Seven Sensor Suite
+</systemManufacturers>
+
+<source>
+TRO: 3075
+</source>
+
+<tonnage>
+50.0
+</tonnage>
+

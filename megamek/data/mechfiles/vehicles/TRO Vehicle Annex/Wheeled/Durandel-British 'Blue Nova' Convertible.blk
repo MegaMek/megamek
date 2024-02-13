@@ -36,6 +36,10 @@ Durandel-British 'Blue Nova' Convertible
 IS Level 2
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Wheeled
 </motion_type>
@@ -85,7 +89,7 @@ ConvertibleChassisMod
 </structural_tech_rating>
 
 <source>
-TRO VAr - Civil War
+TRO: Vehicle Annex (Revised)
 </source>
 
 <tonnage>

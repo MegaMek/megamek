@@ -42,6 +42,10 @@ IS Ammo Medium Rifle
 <type>
 IS Level 4
 </type>
+
+<role>
+Scout
+</role>
 <year>
 3084
 </year>
@@ -58,5 +62,21 @@ IS Level 4
 Wheeled
 </motion_type>
 <source>
-Dark Age
+TRO: 3085
 </source>
+
+<manufacturer>
+Brigadier Corporation
+</manufacturer>
+
+<primaryFactory>
+Oliver
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:295 GM Fusion
+ARMOR:Leopard II Heavy Ferro-Fibrous
+COMMUNICATIONS:Exeter LongScan
+TARGETING:Standard TargetTrack
+</systemManufacturers>

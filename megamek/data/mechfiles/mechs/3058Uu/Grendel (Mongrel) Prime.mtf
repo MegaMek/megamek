@@ -1,13 +1,18 @@
-Version:1.0
-Grendel (Mongrel)
-Prime
+chassis:Grendel
+clanname:Mongrel
+model:Prime
 mul id:1293
 
 Config:Biped Omnimech
 techbase:Clan
 era:3052
-source:TRO Clan Invasion - Clan Invasion
+source:TRO: Clan Invasion
 rules level:2
+role:Striker
+
+
+quirk:rugged_1
+
 
 mass:45
 engine:315 XL (Clan) Engine(IS)

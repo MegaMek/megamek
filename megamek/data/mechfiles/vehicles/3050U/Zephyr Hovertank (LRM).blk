@@ -32,6 +32,10 @@ Zephyr Hovertank
 IS Level 2
 </type>
 
+<role>
+Missile Boat
+</role>
+
 <motion_type>
 Hover
 </motion_type>
@@ -86,7 +90,7 @@ ISERMediumLaser
 </Turret Equipment>
 
 <source>
-TRO 3050 - Civil War
+TRO: 3050
 </source>
 
 <tonnage>

@@ -1,13 +1,19 @@
-Version:1.0
-Orion IIC
-
+chassis:Orion IIC
+model:
 mul id:2340
 
 Config:Biped
 TechBase:Clan
 Era:2841
-Source:TRO 3060
+Source:TRO: 3060
 Rules Level:2
+role:Sniper
+
+
+quirk:anti_air
+quirk:easy_maintain
+quirk:rugged_1
+
 
 Mass:75
 Engine:300 Fusion (Clan) Engine

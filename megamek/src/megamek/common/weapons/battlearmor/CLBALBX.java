@@ -46,9 +46,11 @@ public class CLBALBX extends Weapon {
         tonnage = 0.4;
         criticals = 2;
         toHitModifier = -1;
+        // TODO: refactor BA ammo-based weapons to use real AmmoTypes (but not track ammo use)
         ammoType = AmmoType.T_NA;
         bv = 20;
         cost = 70000;
+        // TODO: implement F_NO_COUNT_AMMO
         flags = flags.or(F_NO_FIRES).or(F_BA_WEAPON).or(F_BALLISTIC).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
         rulesRefs = "207, TM";
         techAdvancement.setTechBase(TECH_BASE_CLAN)

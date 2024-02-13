@@ -36,6 +36,10 @@ Von Luckner Heavy Tank
 IS Level 2
 </type>
 
+<role>
+Sniper
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -132,10 +136,15 @@ TARGETING:O/P GRNDSTAT 50A
 </systemManufacturers>
 
 <source>
-Hist: Op Klondike - Star League
+Historical: Operation Klondike
 </source>
 
 <tonnage>
 75.0
 </tonnage>
+
+
+<quirks>
+difficult_maintain
+</quirks>
 

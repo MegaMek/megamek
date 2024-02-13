@@ -32,6 +32,10 @@ X(Sqd6)
 Clan Level 4
 </type>
 
+<role>
+Ambusher
+</role>
+
 <motion_type>
 Jump
 </motion_type>
@@ -60,7 +64,7 @@ BABattleClaw:RA
 </Point Equipment>
 
 <source>
-XTRO Clans - Jihad
+XTR: Clans
 </source>
 
 <chassis>
@@ -115,3 +119,10 @@ JUMPJET:Various
 COMMUNICATIONS:Various
 TARGETING:Various
 </systemManufacturers>
+
+<quirks>
+easy_maintain
+bad_rep_clan
+prototype
+</quirks>
+

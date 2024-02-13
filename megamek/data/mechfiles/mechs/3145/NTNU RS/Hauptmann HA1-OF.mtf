@@ -1,13 +1,19 @@
-Version:1.0
-Hauptmann
-HA1-OF
+chassis:Hauptmann
+model:HA1-OF
 mul id:6839
 
 Config:Biped Omnimech
 TechBase:Inner Sphere
 Era:3094
-Source:RS 3145 NTNU - Early Republic
+Source:Record Sheets: 3145 New Tech New Upgrades
 Rules Level:2
+role:Sniper
+
+
+
+quirk:easy_maintain
+quirk:ext_twist
+
 
 Mass:95
 Engine:285 Fusion Engine(IS)

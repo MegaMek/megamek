@@ -1,13 +1,19 @@
-Version:1.0
-Grand Titan
-T-IT-N11M
+chassis:Grand Titan
+model:T-IT-N11M
 mul id:1266
 
 Config:Biped
 techbase:Inner Sphere
 era:3058
-source:TRO 3055 - Clan Invasion
+source:TRO: 3055
 rules level:2
+role:Brawler
+
+
+
+quirk:multi_trac
+quirk:difficult_maintain
+
 
 mass:100
 engine:400 XL Engine(IS)

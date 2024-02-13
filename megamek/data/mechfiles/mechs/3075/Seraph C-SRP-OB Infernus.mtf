@@ -1,13 +1,22 @@
-Version:1.1
-Seraph
-C-SRP-OB Infernus
+chassis:Seraph
+model:C-SRP-OB Infernus
 mul id:2871
 
 Config:Biped Omnimech
 TechBase:Inner Sphere
 Era:3069
-Source:TRO 3075
+Source:TRO: 3075
 Rules Level:2
+role:Juggernaut
+
+
+
+quirk:imp_com
+quirk:imp_sensors
+quirk:low_profile
+quirk:bad_rep_clan
+quirk:bad_rep_is
+
 
 Mass:85
 Engine:255 Light Engine(IS)

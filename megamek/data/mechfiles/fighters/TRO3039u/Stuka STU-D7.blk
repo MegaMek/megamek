@@ -36,6 +36,10 @@ STU-D7
 IS Level 2
 </type>
 
+<role>
+Attack Fighter
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -120,7 +124,7 @@ ISRotaryAC5 Ammo
 </Fuselage Equipment>
 
 <source>
-TRO 3039 - Jihad
+TRO: 3039
 </source>
 
 <tonnage>
@@ -164,7 +168,7 @@ This variant is unique to the MUL as it has the ER PPCs. But I've adjusted the d
 </notes>
 
 <source>
-H:Operation Klondyke - Star League
+Historical: Operation Klondike
 </source>
 
 <tonnage>

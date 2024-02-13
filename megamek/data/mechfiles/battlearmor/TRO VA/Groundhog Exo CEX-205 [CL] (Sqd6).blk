@@ -32,6 +32,10 @@ CEX-205 [Cargo Lifter](Sqd6)
 IS Level 2
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Leg
 </motion_type>
@@ -71,7 +75,7 @@ BACargoLifter:RA
 </Trooper 4 Equipment>
 
 <source>
-TRO Vehicle Annex (r) - Civil War
+TRO: Vehicle Annex Revised
 </source>
 
 <chassis>
@@ -133,3 +137,8 @@ TARGETING:Unknown
 
 <notes>
 </notes>
+
+<quirks>
+imp_com
+</quirks>
+

@@ -1,13 +1,18 @@
-Version:1.1
-Berserker
-BRZ-D4
+chassis:Berserker
+model:BRZ-D4
 mul id:6831
 
 Config:Biped
 TechBase:Mixed (IS Chassis)
 Era:3112
-Source:RS 3145 NT NU
+Source:Record Sheets: 3145 New Tech New Upgrades
 Rules Level:4
+role:Juggernaut
+
+
+
+quirk:distracting
+
 
 Mass:100
 Engine:400 XL (Clan) Engine

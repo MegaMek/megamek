@@ -1,13 +1,13 @@
-Version:1.1
-Sentinel
-STN-6S
+chassis:Sentinel
+model:STN-6S
 mul id:8160
 
 Config:Biped
 techbase:Mixed (IS Chassis)
 era:3135
-source:Rec Guide:ilClan #14 - Dark Age
+source:Rec Guide:ilClan #14
 rules level:2
+role:Sniper
 
 mass:40
 engine:240 XL (Clan) Engine

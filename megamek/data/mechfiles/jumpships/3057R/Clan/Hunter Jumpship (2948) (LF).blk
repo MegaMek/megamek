@@ -36,6 +36,10 @@ Hunter Jumpship
 Clan Level 2
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -129,7 +133,7 @@ ISMobileHPG
 </structural_integrity>
 
 <source>
-TRO 3057U - Late Succession War - Lostech
+TRO: 3057 Revised
 </source>
 
 <tonnage>

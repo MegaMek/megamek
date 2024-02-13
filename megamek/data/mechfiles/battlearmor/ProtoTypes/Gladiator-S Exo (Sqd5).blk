@@ -32,6 +32,10 @@ S (Sqd5)
 IS Level 2
 </type>
 
+<role>
+Scout
+</role>
+
 <motion_type>
 Jump
 </motion_type>
@@ -60,7 +64,7 @@ BABattleClawVibro:LA
 </Squad Equipment>
 
 <source>
-TRO Prototypes - Jihad
+TRO: Prototypes
 </source>
 
 <chassis>

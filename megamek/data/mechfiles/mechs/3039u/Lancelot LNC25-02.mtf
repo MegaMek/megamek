@@ -1,13 +1,20 @@
-Version:1.0
-Lancelot
-LNC25-02
+chassis:Lancelot
+model:LNC25-02
 mul id:1855
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2864
-Source:TRO 3039 - Succession Wars
+Source:TRO: 3039
 Rules Level:1
+role:Brawler
+
+
+
+quirk:anti_air
+quirk:low_profile
+quirk:bad_rep_is
+
 
 Mass:60
 Engine:240 Fusion Engine

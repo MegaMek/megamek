@@ -36,6 +36,10 @@ Hurricane Conventional Fighter
 IS Level 2
 </type>
 
+<role>
+Dogfighter
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -107,7 +111,7 @@ External Stores Hardpoint
 </structural_tech_rating>
 
 <source>
-XTRO Primitives I - Age of War
+XTR: Primitives I
 </source>
 
 <tonnage>

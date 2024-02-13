@@ -1,13 +1,13 @@
-Version:1.0
-Diomede
-D-M3D-4 DemolitionMech
+chassis:Diomede
+model:D-M3D-4 DemolitionMech
 mul id:902
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3084
-Source:Dark Age
+source:TRO: 3085
 Rules Level:2
+role:Missile Boat
 
 Mass:100
 Engine:200 Fusion Engine(IS)

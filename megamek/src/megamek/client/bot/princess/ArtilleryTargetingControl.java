@@ -51,6 +51,28 @@ public class ArtilleryTargetingControl {
     private Set<Targetable> targetSet;
 
     /**
+     * Wrapper for calculateDamageValue that accounts for leading with artillery shots by accounting for both
+     * the original target hex and the computed target hex in damage calculations.
+     * @param damage
+     * @param hex
+     * @param shooter
+     * @param game
+     * @param owner
+     * @return
+     */
+    public double calculateDamageValue(int damage, HexTarget hex, Entity shooter, Game game, Princess owner) {
+        // For leading shots, this will be the computed end point.  Might contain friendlies.
+        // For non-leading shots, this is the original target hex.
+        double totalDamage = calculateDamageValue(damage, hex.getPosition(), shooter, game, owner);
+        if (null != hex.getOriginalTarget()) {
+            // For leading shots, the expected damage is based on the units in and around the _current_ location,
+            // which is stored as the "getOriginalTarget".
+            totalDamage += calculateDamageValue(damage, hex.getOriginalTarget().getPosition(), shooter, game, owner);
+        }
+        return totalDamage;
+    }
+
+    /**
      * Worker function that calculates the total damage that would be done if a shot with the given damage value
      * would hit the target coordinates.
      *
@@ -168,17 +190,12 @@ public class ArtilleryTargetingControl {
         targetSet = null;
     }
 
-    /**
-     * Iterates over all artillery weapons and checks if it can make an ADA attack later in the turn.
-     * @param shooter who will make the attack
-     * @return true if ADA rounds are available for any weapons, false otherwise
-     */
-    private boolean getADAAvailable(Entity shooter){
+    private boolean getAmmoTypeAvailable(Entity shooter, AmmoType.Munitions mtype) {
         boolean available = false;
         for (Mounted weapon: shooter.getWeaponList()){
             if (weapon.getType().hasFlag(WeaponType.F_ARTILLERY)){
                 for (Mounted ammo: shooter.getAmmo(weapon)) {
-                    if (((AmmoType) ammo.getType()).getMunitionType().contains(AmmoType.Munitions.M_ADA)
+                    if (((AmmoType) ammo.getType()).getMunitionType().contains(mtype)
                             && !weapon.isFired() && ammo.getUsableShotsLeft() > 0) {
                         available = true;
                         break;
@@ -187,7 +204,21 @@ public class ArtilleryTargetingControl {
             }
         }
         return available;
+
     }
+    /**
+     * Iterates over all artillery weapons and checks if it can make an ADA attack later in the turn.
+     * @param shooter who will make the attack
+     * @return true if ADA rounds are available for any weapons, false otherwise
+     */
+    private boolean getADAAvailable(Entity shooter){
+        return getAmmoTypeAvailable(shooter, AmmoType.Munitions.M_ADA);
+    }
+
+    private boolean getHomingAvailable(Entity shooter) {
+        return getAmmoTypeAvailable(shooter, AmmoType.Munitions.M_HOMING);
+    }
+
     /**
      * Builds a list of eligible targets for artillery strikes.
      * This includes hexes on and within the max radius of all non-airborne enemy entities
@@ -199,6 +230,7 @@ public class ArtilleryTargetingControl {
     private void buildTargetList(Entity shooter, Game game, Princess owner) {
         targetSet = new HashSet<>();
         boolean adaAvailable = getADAAvailable(shooter);
+        boolean homingAvailable = getHomingAvailable(shooter);
 
         for (Iterator<Entity> enemies = game.getAllEnemyEntities(shooter); enemies.hasNext();) {
             Entity e = enemies.next();
@@ -216,11 +248,34 @@ public class ArtilleryTargetingControl {
                     && !e.isOffBoard()
                     && !owner.getBehaviorSettings().getIgnoredUnitTargets().contains(e.getId())) {
 
-                targetSet.add(new HexTarget(e.getPosition(), Targetable.TYPE_HEX_ARTILLERY));
+                HexTarget hex = new HexTarget(e.getPosition(), Targetable.TYPE_HEX_ARTILLERY);
+
+                // Add leading hex for standard rounds
+                HexTarget leadHex = new HexTarget(Compute.calculateArtilleryLead(game, shooter, e, false),
+                        Targetable.TYPE_HEX_ARTILLERY);
+                leadHex.setOriginalTarget(hex);
+
+                // Add leading hex for homing rounds
+                HexTarget homingHex = new HexTarget(Compute.calculateArtilleryLead(game, shooter, e, homingAvailable),
+                        Targetable.TYPE_HEX_ARTILLERY);
+                homingHex.setOriginalTarget(hex);
+
+                // Decide which target to use; if all are the same position, use the first hex position
+                if (!(leadHex.getPosition().equals(hex.getPosition())
+                        && homingHex.getPosition().equals(hex.getPosition()))) {
+                    if (leadHex.getPosition().equals(homingHex.getPosition())) {
+                        // Either the target is hella fast, or we're not going to use homing
+                        hex = leadHex;
+                    } else {
+                        // Homing is in play, lead farther (probably)
+                        hex = homingHex;
+                    }
+                }
+                targetSet.add(hex);
 
                 // while we're here, consider shooting at hexes within "MAX_BLAST_RADIUS"
-                // of the entity.
-                addHexDonuts(e.getPosition(), targetSet, game);
+                // of the final target.
+                addHexDonuts(hex.getPosition(), targetSet, game);
             }
         }
 
@@ -331,7 +386,7 @@ public class ArtilleryTargetingControl {
                             damageValue = damage;
                         } else {
                             if (!isADA) {
-                                damageValue = calculateDamageValue(damage, target.getPosition(), shooter, game, owner);
+                                damageValue = calculateDamageValue(damage, (HexTarget) target, shooter, game, owner);
                             } else {
                                 // No ADA attacks except at Entities.
                                 continue;
@@ -373,6 +428,10 @@ public class ArtilleryTargetingControl {
                 // add the fire info to the firing plan
                 if (!topValuedFireInfos.isEmpty()) {
                     WeaponFireInfo actualFireInfo = topValuedFireInfos.get(Compute.randomInt(topValuedFireInfos.size()));
+                    if (actualFireInfo.getAmmo() != actualFireInfo.getWeapon().getLinked()) {
+                        // Announce why we switched
+                        actualFireInfo.getAmmo().setSwitchedReason(1507);
+                    }
                     ArtilleryAttackAction aaa = (ArtilleryAttackAction) actualFireInfo.buildWeaponAttackAction();
                     HelperAmmo ammo = findAmmo(shooter, actualFireInfo.getWeapon(), actualFireInfo.getAmmo());
 
@@ -384,7 +443,11 @@ public class ArtilleryTargetingControl {
                         actualFireInfo.setAction(aaa);
                         retval.add(actualFireInfo);
                         retval.setUtility(retval.getUtility() + maxDamage);
-                        owner.sendAmmoChange(shooter.getId(), shooter.getEquipmentNum(actualFireInfo.getWeapon()), ammo.equipmentNum);
+                        owner.sendAmmoChange(
+                                shooter.getId(),
+                                shooter.getEquipmentNum(actualFireInfo.getWeapon()),
+                                ammo.equipmentNum,
+                                1508);
                     }
                 }
             } else if (currentWeapon.getType().hasFlag(WeaponType.F_TAG)) {

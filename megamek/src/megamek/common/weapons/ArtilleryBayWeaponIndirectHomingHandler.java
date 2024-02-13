@@ -384,7 +384,7 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends ArtilleryBayWeaponI
         for (TagInfo ti : v) {
             newTarget = ti.target;
             // homing target area is 8 hexes
-            if (tc.distance(newTarget.getPosition()) <= 8) {
+            if (tc.distance(newTarget.getPosition()) <= Compute.HOMING_RADIUS) {
                 allowed.add(ti);
             }
         }

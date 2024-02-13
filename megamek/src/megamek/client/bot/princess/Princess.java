@@ -1705,7 +1705,7 @@ public class Princess extends BotClient {
             ArtilleryAttackAction a = attacks.nextElement();
             if (a.getTurnsTilHit() == 0 && a.getAmmoMunitionType().contains(AmmoType.Munitions.M_HOMING) && (!a.getEntity(game).isEnemyOf(entityToFire))) {
                 // Must be a shot that should land within 8 hexes of the target hex
-                if (a.getCoords().distance(location) <= 8) {
+                if (a.getCoords().distance(location) <= Compute.HOMING_RADIUS) {
                     friendlyGuidedWeapons.add(a.getEntity(game).getEquipment(a.getWeaponId()));
                 }
             }

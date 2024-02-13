@@ -1636,10 +1636,26 @@ public class FireControl {
                             ammo,
                             game,
                             true);
-                    // Choose best expected damage shot, not best to-hit
-                    if (null == bestShoot ||
-                            (shoot.getExpectedDamage() > bestShoot.getExpectedDamage())
-                    ){
+
+                    // Choose best expected damage shot if possible, not best to-hit
+                    if (null == bestShoot
+                            || shoot.getExpectedDamage() > bestShoot.getExpectedDamage()
+                            || (shoot.getExpectedDamage() == bestShoot.getExpectedDamage()
+                                && shoot.getProbabilityToHit() > bestShoot.getProbabilityToHit())
+                    ) {
+                        int switchedReason = 0;
+                        if (null == bestShoot) {
+                            switchedReason = 1506;
+                        } else if (shoot.getExpectedDamage() > bestShoot.getExpectedDamage()) {
+                            switchedReason = 1503;
+                        } else {
+                            switchedReason = 1502;
+                        }
+                        if (shoot.getAmmo() != null) {
+                            bestShoot.getAmmo().setSwitchedReason(
+                                    (bestShoot.getAmmo() == weapon.getLinked()) ? 0 : switchedReason
+                            );
+                        }
                         bestShoot = shoot;
                     }
                 }
@@ -2655,7 +2671,7 @@ public class FireControl {
             action.setAmmoCarrier(mountedAmmo.getEntity().getId());
             info.setAction(action);
             owner.sendAmmoChange(info.getShooter().getId(), shooter.getEquipmentNum(currentWeapon),
-                                 shooter.getEquipmentNum(mountedAmmo));
+                                 shooter.getEquipmentNum(mountedAmmo), mountedAmmo.getSwitchedReason());
         }
     }
 
@@ -2717,10 +2733,13 @@ public class FireControl {
                              final Targetable target,
                              final Mounted weapon,
                              final Mounted suggestedAmmo) {
-        final StringBuilder msg = new StringBuilder("Getting ammo for ").append(weapon.getType().getShortName())
-                                                                        .append(" firing at ")
-                                                                        .append(target.getDisplayName
-                        ());
+        boolean debug = LogManager.getLogger().isDebugEnabled();
+        final StringBuilder msg = (debug) ? new StringBuilder("Getting ammo for ")
+                .append(weapon.getType().getShortName())
+                .append(" firing at ")
+                .append(target.getDisplayName())
+                : null;
+
         Entity targetEntity = null;
         // May be null or any valid ammo that can make an attack
         Mounted preferredAmmo = suggestedAmmo;
@@ -2761,10 +2780,12 @@ public class FireControl {
             if (validAmmo.isEmpty()) {
                 return null;
             }
-            msg.append("\n\tFound ").append(validAmmo.size()).append(" units of valid ammo.");
 
             final int range = shooter.getPosition().distance(target.getPosition());
-            msg.append("\n\tRange to target is ").append(range);
+            if (debug) {
+                msg.append("\n\tFound ").append(validAmmo.size()).append(" units of valid ammo.");
+                msg.append("\n\tRange to target is ").append(range);
+            }
 
             // AMS only uses 1 type of ammo.
             if (weaponType.hasFlag(WeaponType.F_AMS)) {
@@ -2773,10 +2794,15 @@ public class FireControl {
 
             // Target is a building.
             if (target instanceof BuildingTarget) {
-                msg.append("\n\tTarget is a building... ");
+                if (debug) {
+                    msg.append("\n\tTarget is a building... ");
+                }
                 preferredAmmo = getIncendiaryAmmo(validAmmo, weaponType, range);
                 if (null != preferredAmmo) {
-                    msg.append("Burn It Down!");
+                    if (debug) {
+                        msg.append("Burn It Down!");
+                    }
+                    preferredAmmo.setSwitchedReason(1504);
                     return preferredAmmo;
                 }
 
@@ -2784,10 +2810,15 @@ public class FireControl {
             } else if (null != targetEntity) {
                 // Airborne targets
                 if (targetEntity.isAirborne() || (targetEntity.isAirborneVTOLorWIGE())) {
-                    msg.append("\n\tTarget is airborne... ");
+                    if (debug) {
+                        msg.append("\n\tTarget is airborne... ");
+                    }
                     preferredAmmo = getAntiAirAmmo(validAmmo, weaponType, range);
                     if (null != preferredAmmo) {
-                        msg.append("Shoot It Down!");
+                        if (debug) {
+                            msg.append("Shoot It Down!");
+                        }
+                        preferredAmmo.setSwitchedReason(1502);
                         return preferredAmmo;
                     }
                 }
@@ -2795,61 +2826,94 @@ public class FireControl {
                 if ((targetEntity instanceof BattleArmor)
                     || (targetEntity instanceof Tank)
                     || (targetEntity instanceof Protomech)) {
-                    msg.append("\n\tTarget is BA/Proto/Tank... ");
+                    if (debug) {
+                        msg.append("\n\tTarget is BA/Proto/Tank... ");
+                    }
                     preferredAmmo = getAntiVeeAmmo(validAmmo, weaponType, range, fireResistant);
                     if (null != preferredAmmo) {
-                        msg.append("We have ways of dealing with that.");
+                        if (debug) {
+                            msg.append("We have ways of dealing with that.");
+                        }
+                        preferredAmmo.setSwitchedReason(1503);
                         return preferredAmmo;
                     }
                 }
                 // PBI
                 if (targetEntity instanceof Infantry) {
-                    msg.append("\n\tTarget is infantry... ");
+                    if (debug) {
+                        msg.append("\n\tTarget is infantry... ");
+                    }
                     preferredAmmo = getAntiInfantryAmmo(validAmmo, weaponType, range);
                     if (null != preferredAmmo) {
-                        msg.append("They squish nicely.");
+                        if (debug) {
+                            msg.append("They squish nicely.");
+                        }
+                        preferredAmmo.setSwitchedReason(1503);
                         return preferredAmmo;
                     }
                 }
                 // On his last legs
                 if (Entity.DMG_HEAVY <= targetEntity.getDamageLevel()) {
-                    msg.append("\n\tTarget is heavily damaged... ");
+                    if (debug) {
+                        msg.append("\n\tTarget is heavily damaged... ");
+                    }
                     preferredAmmo = getClusterAmmo(validAmmo, weaponType, range);
                     if (null != preferredAmmo) {
-                        msg.append("Let's find a soft spot.");
+                        if (debug) {
+                            msg.append("Let's find a soft spot.");
+                        }
+                        preferredAmmo.setSwitchedReason(1509);
                         return preferredAmmo;
                     }
                 }
                 // He's running hot.
                 if (9 <= targetEntity.getHeat() && !fireResistant) {
-                    msg.append("\n\tTarget is at ").append(targetEntity.getHeat()).append(" heat... ");
+                    if (debug) {
+                        msg.append("\n\tTarget is at ").append(targetEntity.getHeat()).append(" heat... ");
+                    }
                     preferredAmmo = getHeatAmmo(validAmmo, weaponType, range);
                     if (null != preferredAmmo) {
-                        msg.append("Let's heat him up more.");
+                        if (debug) {
+                            msg.append("Let's heat him up more.");
+                        }
+                        preferredAmmo.setSwitchedReason(1510);
                         return preferredAmmo;
                     }
                 }
                 // Everything else.
-                msg.append("\n\tTarget is a hard target... ");
+                if (debug) {
+                    msg.append("\n\tTarget is a hard target... ");
+                }
                 preferredAmmo = getHardTargetAmmo(validAmmo, weaponType, range);
                 if (null != preferredAmmo) {
-                    msg.append("Fill him with holes!");
+                    if (debug) {
+                        msg.append("Fill him with holes!");
+                    }
+                    preferredAmmo.setSwitchedReason(1503);
                     return preferredAmmo;
                 }
             }
 
             // If we've gotten this far, no specialized ammo has been loaded
             if (weaponType instanceof MMLWeapon) {
-                msg.append("\n\tLoading MML Ammo.");
+                if (debug) {
+                    msg.append("\n\tLoading MML Ammo.");
+                }
+                // Reason set in function
                 preferredAmmo = getGeneralMmlAmmo(validAmmo, range);
             } else {
-                msg.append("\n\tLoading first available ammo.");
+                if (debug) {
+                    msg.append("\n\tLoading first available ammo.");
+                }
+                // Don't set switched reason if we didn't set it already.
                 preferredAmmo = validAmmo.get(0);
             }
             return preferredAmmo;
         } finally {
-            msg.append("\n\tReturning: ").append(null == preferredAmmo ? "null" : preferredAmmo.getDesc());
-            LogManager.getLogger().debug(msg.toString());
+            if (debug) {
+                msg.append("\n\tReturning: ").append(null == preferredAmmo ? "null" : preferredAmmo.getDesc());
+                LogManager.getLogger().debug(msg.toString());
+            }
         }
     }
 
@@ -2860,6 +2924,7 @@ public class FireControl {
         // Get the LRM and SRM bins if we have them.
         Mounted mmlSrm = null;
         Mounted mmlLrm = null;
+        int switchedReason = 0;
         for (final Mounted ammo : ammoList) {
             final AmmoType type = (AmmoType) ammo.getType();
             if ((null == mmlLrm) && type.hasFlag(AmmoType.F_MML_LRM)) {
@@ -2874,18 +2939,25 @@ public class FireControl {
         // Out of SRM range.
         if (9 < range) {
             returnAmmo = mmlLrm;
+            switchedReason = 1511;
 
             // LRMs have better chance to hit if we have them.
         } else if (5 < range) {
             returnAmmo = (null == mmlLrm ? mmlSrm : mmlLrm);
+            switchedReason = 1502;
 
             // If we only have LRMs left.
         } else if (null == mmlSrm) {
             returnAmmo = mmlLrm;
+            switchedReason = 1506;
 
             // Left with SRMS.
         } else {
             returnAmmo = mmlSrm;
+            switchedReason = 1503;
+        }
+        if (returnAmmo != null) {
+            returnAmmo.setSwitchedReason(switchedReason);
         }
         return returnAmmo;
     }

@@ -30110,6 +30110,7 @@ public class GameManager implements IGameManager {
         int entityId = c.getIntValue(0);
         int weaponId = c.getIntValue(1);
         int ammoId = c.getIntValue(2);
+        int reason = c.getIntValue(3);
         Entity e = game.getEntity(entityId);
 
         // Did we receive a request for a valid Entity?
@@ -30158,6 +30159,19 @@ public class GameManager implements IGameManager {
 
         // Load the weapon.
         e.loadWeapon(mWeap, mAmmo);
+
+        // Report the change, if reason is provided
+        if (reason != 0) {
+            Report r = new Report(1500);
+            r.subject = entityId;
+            r.addDesc(e);
+            r.add(mWeap.getShortName());
+            r.add(mAmmo.getShortName());
+            addReport(r);
+            r = new Report(reason);
+            r.indent(4);
+            addReport(r);
+        }
     }
 
     /**

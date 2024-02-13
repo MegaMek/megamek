@@ -94,6 +94,7 @@ public class Compute {
     public static final int ARC_AFT_WPL = 47;
     public static final int ARC_LEFT_BROADSIDE_WPL = 48;
     public static final int ARC_RIGHT_BROADSIDE_WPL = 49;
+    public static final int HOMING_RADIUS = 8;
 
     public static int DEFAULT_MAX_VISUAL_RANGE = 1;
 
@@ -7434,10 +7435,58 @@ public class Compute {
      * @param velocity speed of round, default 50 according to WeaponAttackAction
      * @return
      */
-    public static int turnsTilBOMHit(Game game, Entity ae, Targetable te, int velocity) {
-        int distance = Compute.effectiveDistance(game, ae, te);
+    public static int turnsTilBOMHit(Game game, Entity ae, Targetable target, int velocity) {
+        int distance = Compute.effectiveDistance(game, ae, target);
         distance = (int) Math.floor((double) distance / game.getPlanetaryConditions().getGravity());
         return distance / velocity;
+    }
+
+    /**
+     * @param game
+     * @param ae
+     * @param target
+     * @param atype to determine if we need the homing lead or some other value.
+     * @return Coordinates to target to hit this target while on the move.
+     */
+    public static Coords calculateArtilleryLead(Game game, Entity ae, Targetable target, boolean homing) {
+        int leadAmount = 0;
+        int direction = 0;
+        int turnsTilHit = turnsTilHit(effectiveDistance(game, ae, target, true));
+
+        // Hexes can't move...
+        if (target instanceof Entity) {
+            Entity te = (Entity) target;
+            int mp = te.getPosition().distance(te.getPriorPosition()); // Assume last move presages the next
+
+            // Try to keep the current position within the homing radius, unless they're real fast...
+            if (homing) {
+                leadAmount = (mp > 8) ? mp : HOMING_RADIUS;
+            } else {
+                leadAmount = mp;
+            }
+
+            // Guess at the target's movement direction
+            if (te.movedLastRound != EntityMovementType.MOVE_NONE) {
+                // Assume they'll keep moving in approximately the same direction
+                direction = te.getPriorPosition().direction(te.getPosition());
+            } else {
+                // They'll likely move in the direction they're facing...?
+                direction = te.getFacing();
+            }
+        }
+
+        return calculateArtilleryLead(target.getPosition(), direction, turnsTilHit * leadAmount);
+    }
+
+    /**
+     * @param targetPoint
+     * @param direction
+     * @param leadAmount
+     * @return Coordinates to target given this lead and direction
+     */
+    public static Coords calculateArtilleryLead(Coords targetPoint, int direction, int leadAmount) {
+        Coords newPoint = targetPoint.translated(direction, leadAmount);
+        return newPoint;
     }
 
 } // End public class Compute

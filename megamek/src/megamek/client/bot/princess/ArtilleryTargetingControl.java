@@ -402,6 +402,12 @@ public class ArtilleryTargetingControl {
                             damageValue *= wfi.getProbabilityToHit();
 
                             if (damageValue > maxDamage) {
+                                if (((AmmoType) (wfi.getAmmo().getType())).getMunitionType()
+                                        .contains(AmmoType.Munitions.M_HOMING)){
+                                    wfi.getAmmo().setSwitchedReason(1505);
+                                } else {
+                                    wfi.getAmmo().setSwitchedReason(1503);
+                                }
                                 if (isADA) {
                                     topValuedADAInfos.clear();
                                     maxDamage = damage;  // Actual expected damage will be higher
@@ -427,10 +433,15 @@ public class ArtilleryTargetingControl {
                 // then set the fire info's attack action to the created attack action
                 // add the fire info to the firing plan
                 if (!topValuedFireInfos.isEmpty()) {
-                    WeaponFireInfo actualFireInfo = topValuedFireInfos.get(Compute.randomInt(topValuedFireInfos.size()));
-                    if (actualFireInfo.getAmmo() != actualFireInfo.getWeapon().getLinked()) {
-                        // Announce why we switched
-                        actualFireInfo.getAmmo().setSwitchedReason(1507);
+                    WeaponFireInfo actualFireInfo;
+                    if (topValuedFireInfos.size() == 1) {
+                        actualFireInfo = topValuedFireInfos.get(0);
+                    } else {
+                        actualFireInfo = topValuedFireInfos.get(Compute.randomInt(topValuedFireInfos.size()));
+                        if (actualFireInfo.getAmmo() != actualFireInfo.getWeapon().getLinked()) {
+                            // Announce why we switched
+                            actualFireInfo.getAmmo().setSwitchedReason(1507);
+                        }
                     }
                     ArtilleryAttackAction aaa = (ArtilleryAttackAction) actualFireInfo.buildWeaponAttackAction();
                     HelperAmmo ammo = findAmmo(shooter, actualFireInfo.getWeapon(), actualFireInfo.getAmmo());
@@ -447,7 +458,7 @@ public class ArtilleryTargetingControl {
                                 shooter.getId(),
                                 shooter.getEquipmentNum(actualFireInfo.getWeapon()),
                                 ammo.equipmentNum,
-                                1508);
+                                actualFireInfo.getAmmo().getSwitchedReason());
                     }
                 }
             } else if (currentWeapon.getType().hasFlag(WeaponType.F_TAG)) {

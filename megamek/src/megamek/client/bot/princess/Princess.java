@@ -1285,6 +1285,9 @@ public class Princess extends BotClient {
             LogManager.getLogger().info("Best Path: " + bestpath.getPath() + "  Rank: " + bestpath.getRank());
 
             return performPathPostProcessing(bestpath);
+        } catch (Exception e) {
+            LogManager.getLogger().error("MP is now null!", e);
+            return null;
         } finally {
             precognition.unPause();
         }

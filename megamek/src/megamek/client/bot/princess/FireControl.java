@@ -1637,7 +1637,7 @@ public class FireControl {
                             game,
                             true);
 
-                    // Choose best expected damage shot if possible, not best to-hit
+                    // Choose first option, then best expected damage shot if possible, then the best to-hit
                     if (null == bestShoot
                             || shoot.getExpectedDamage() > bestShoot.getExpectedDamage()
                             || (shoot.getExpectedDamage() == bestShoot.getExpectedDamage()
@@ -1651,12 +1651,14 @@ public class FireControl {
                         } else {
                             switchedReason = 1502;
                         }
-                        if (shoot.getAmmo() != null) {
+
+                        bestShoot = shoot;
+
+                        if (shoot.getAmmo() != null && bestShoot != null) {
                             bestShoot.getAmmo().setSwitchedReason(
                                     (bestShoot.getAmmo() == weapon.getLinked()) ? 0 : switchedReason
                             );
                         }
-                        bestShoot = shoot;
                     }
                 }
             }

@@ -469,38 +469,45 @@ public class FireControlTest {
 
         // Weapon that will skip check for indirect fire mode
         WeaponType mockWeaponType = mock(WeaponType.class);
-        when(mockWeaponType.hasFlag(any())).thenReturn(false);
-        when(mockWeaponType.hasModeType(anyString())).thenReturn(false);
+        when(mockWeaponType.getAmmoType()).thenReturn(AmmoType.T_LRM);
+        WeaponType mockEnergyWeaponType = mock(WeaponType.class);
+        when(mockEnergyWeaponType.getAmmoType()).thenReturn(AmmoType.T_NA);
+        when(mockEnergyWeaponType.hasFlag(any())).thenReturn(false);
+        when(mockEnergyWeaponType.hasModeType(anyString())).thenReturn(false);
         mockPPC = mock(Mounted.class);
-        when(mockPPC.getType()).thenReturn(mockWeaponType);
+        when(mockPPC.getType()).thenReturn(mockEnergyWeaponType);
         shooterWeapons.add(mockPPC);
         mockPPCFireInfo = mock(WeaponFireInfo.class);
         when(mockPPCFireInfo.getProbabilityToHit()).thenReturn(0.5);
         doReturn(mockPPCFireInfo).when(testFireControl).buildWeaponFireInfo(any(Entity.class),
-                any(EntityState.class), any(Targetable.class), any(EntityState.class), eq(mockPPC), any(Mounted.class),
+                any(EntityState.class), any(Targetable.class), any(EntityState.class), eq(mockPPC), isNull(),
                 any(Game.class), anyBoolean());
         doReturn(mockPPCFireInfo).when(testFireControl).buildWeaponFireInfo(any(Entity.class),
-                any(MovePath.class), any(Targetable.class), any(EntityState.class), eq(mockPPC), any(Mounted.class),
+                any(MovePath.class), any(Targetable.class), any(EntityState.class), eq(mockPPC), isNull(),
                 any(Game.class), anyBoolean(), anyBoolean());
         doReturn(mockPPCFireInfo).when(testFireControl).buildWeaponFireInfo(any(Entity.class),
-                any(Targetable.class), eq(mockPPC), any(Mounted.class), any(Game.class), anyBoolean());
+                any(Targetable.class), eq(mockPPC), isNull(), any(Game.class), anyBoolean());
+        doReturn(mockPPCFireInfo).when(testFireControl).buildWeaponFireInfo(any(Entity.class),
+                any(Targetable.class), eq(mockPPC), isNull(), any(Game.class), anyBoolean());
+        // buildWeaponFireInfo(shooter, target, weapon, null, game, false);
 
         mockML = mock(Mounted.class);
         shooterWeapons.add(mockML);
-        when(mockML.getType()).thenReturn(mockWeaponType);
+        when(mockML.getType()).thenReturn(mockEnergyWeaponType);
         mockMLFireInfo = mock(WeaponFireInfo.class);
         when(mockMLFireInfo.getProbabilityToHit()).thenReturn(0.0);
         doReturn(mockMLFireInfo).when(testFireControl).buildWeaponFireInfo(any(Entity.class),
-                any(EntityState.class), any(Targetable.class), any(EntityState.class), eq(mockML), any(Mounted.class),
+                any(EntityState.class), any(Targetable.class), any(EntityState.class), eq(mockML), isNull(),
                 any(Game.class), anyBoolean());
         doReturn(mockMLFireInfo).when(testFireControl).buildWeaponFireInfo(any(Entity.class),
-                any(MovePath.class), any(Targetable.class), any(EntityState.class), eq(mockML), any(Mounted.class),
+                any(MovePath.class), any(Targetable.class), any(EntityState.class), eq(mockML), isNull(),
                 any(Game.class), anyBoolean(), anyBoolean());
         doReturn(mockMLFireInfo).when(testFireControl).buildWeaponFireInfo(any(Entity.class),
-                any(Targetable.class), eq(mockML), any(Mounted.class), any(Game.class), anyBoolean());
+                any(Targetable.class), eq(mockML), isNull(), any(Game.class), anyBoolean());
 
         mockLRM5 = mock(Mounted.class);
         when(mockLRM5.getType()).thenReturn(mockWeaponType);
+        when(mockLRM5.getLinked()).thenReturn(mockAmmoLRM5);
         shooterWeapons.add(mockLRM5);
         mockLRMFireInfo = mock(WeaponFireInfo.class);
         when(mockLRMFireInfo.getProbabilityToHit()).thenReturn(0.6);

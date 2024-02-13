@@ -1887,11 +1887,12 @@ public class Compute {
         // Compute friendly spotters
         for (Entity friend : game.getPlayerEntities(attacker.getOwner(), true)) {
 
-            if (!friend.isDeployed()
+            if (friend == null
+                    || !friend.isDeployed()
                     || friend.isOffBoard()
                     || (friend.getTransportId() != Entity.NONE)
                     || friend.isAero() // Much higher bar for TAGging
-                    || friend == null) {
+            ) {
                 continue; // useless to us...
             }
 

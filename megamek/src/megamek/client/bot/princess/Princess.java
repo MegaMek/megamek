@@ -76,6 +76,7 @@ public class Princess extends BotClient {
      * Used to allocate damage more intelligently and avoid overkill.
      */
     private final ConcurrentHashMap<Integer, Double> damageMap = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<Integer, Integer> teamTagTargetsMap = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<Map.Entry<Integer, Coords>, ArrayList<Mounted>> incomingGuidablesMap = new ConcurrentHashMap<>();
     private final Set<Coords> strategicBuildingTargets = new HashSet<>();
     private boolean fallBack = false;
@@ -371,7 +372,9 @@ public class Princess extends BotClient {
     @Override
     protected void initTargeting() {
         // Reset incoming guided weapon lists for each friendly unit.
+        // Reset planned TAG expected utility map
         incomingGuidablesMap.clear();
+        teamTagTargetsMap.clear();
         getArtilleryTargetingControl().initializeForTargetingPhase();
     }
 
@@ -1676,6 +1679,25 @@ public class Princess extends BotClient {
         NewtonianAerospacePathRanker newtonianAerospacePathRanker = new NewtonianAerospacePathRanker(this);
         newtonianAerospacePathRanker.setPathEnumerator(precognition.getPathEnumerator());
         pathRankers.put(PathRankerType.NewtonianAerospace, newtonianAerospacePathRanker);
+    }
+
+    /**
+     * Reduce utility of TAGging something if we're already trying.  Update the utilty if it's better,
+     * otherwise try to dissuade the next attacker.
+     * @param te
+     * @param damage
+     * @return
+     */
+    public int computeTeamTagUtility(Targetable te, int damage) {
+        int key = te.getId();
+        if (teamTagTargetsMap.containsKey(key)) {
+            if (teamTagTargetsMap.get(key) > damage) {
+                return damage / 4;
+            }
+        } else {
+            teamTagTargetsMap.put(key, damage);
+        }
+        return damage;
     }
 
     /**

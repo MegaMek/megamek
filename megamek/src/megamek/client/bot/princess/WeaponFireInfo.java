@@ -487,14 +487,15 @@ public class WeaponFireInfo {
             }
         }
 
-        // Get a list of incoming or potentially incoming guidable weapons from the relevant Princess and compute damage.
-        // If target is already tagged, make it undesirable as a target.
-        int incomingAttacksDamage = (Compute.isTargetTagged(target, game))
-                ? Compute.computeTotalDamage(owner.computeGuidedWeapons(shooter, target.getPosition()))
-                : 0;
+        int incomingAttacksDamage =  owner.computeTeamTagUtility(
+                target,
+                Compute.computeTotalDamage(owner.computeGuidedWeapons(shooter, target.getPosition()))
+        );
         int utility = incomingAttacksDamage - myWeaponsDamage;
-        msg.append("\n\tUtility: ").append(utility).append(" damage (Max, estimated)");
-        LogManager.getLogger().debug(msg.toString());
+        if (debug) {
+            msg.append("\n\tUtility: ").append(utility).append(" damage (Max, estimated)");
+            LogManager.getLogger().debug(msg.toString());
+        }
 
         return Math.max(utility, 0);
     }

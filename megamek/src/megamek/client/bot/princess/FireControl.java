@@ -1199,8 +1199,15 @@ public class FireControl {
                         ret.append(shootingCheck);
                     }
                 } else {
+                    // For certain weapon types, look over all their loaded ammos
                     ArrayList<Mounted> ammos;
-                    ammos = shooter.getAmmo(weapon);
+                    if (wtype.getAmmoType() == AmmoType.T_ATM || wtype.getAmmoType() == AmmoType.T_MML) {
+                        ammos = shooter.getAmmo(weapon);
+                    } else {
+                        // Otherwise assume the current loaded ammo is suitable representative
+                        ammos = new ArrayList<Mounted>();
+                        ammos.add(weapon.getLinked());
+                    }
 
                     for (Mounted ammo: ammos) {
                         shootingCheck = checkGuess(shooter, enemy, weapon, ammo, game);
@@ -1623,8 +1630,15 @@ public class FireControl {
             if (AmmoType.T_NA == wtype.getAmmoType()) {
                 bestShoot = buildWeaponFireInfo(shooter, target, weapon, null, game, false);
             } else {
+                // For certain weapon types, look over all their loaded ammos
                 ArrayList<Mounted> ammos;
-                ammos = shooter.getAmmo(weapon);
+                if (wtype.getAmmoType() == AmmoType.T_ATM || wtype.getAmmoType() == AmmoType.T_MML) {
+                    ammos = shooter.getAmmo(weapon);
+                } else {
+                    // Otherwise assume the current loaded ammo is suitable representative
+                    ammos = new ArrayList<Mounted>();
+                    ammos.add(weapon.getLinked());
+                }
 
                 WeaponFireInfo shoot;
                 for (Mounted ammo: ammos) {
@@ -1753,8 +1767,15 @@ public class FireControl {
             if (AmmoType.T_NA == wtype.getAmmoType()) {
                 bestShoot = buildWeaponFireInfo(shooter, target, weapon, null, game, false);
             } else {
+                // For certain weapon types, look over all their loaded ammos
                 ArrayList<Mounted> ammos;
-                ammos = shooter.getAmmo(weapon);
+                if (wtype.getAmmoType() == AmmoType.T_ATM || wtype.getAmmoType() == AmmoType.T_MML) {
+                    ammos = shooter.getAmmo(weapon);
+                } else {
+                    // Otherwise assume the current loaded ammo is suitable representative
+                    ammos = new ArrayList<Mounted>();
+                    ammos.add(weapon.getLinked());
+                }
 
                 WeaponFireInfo shoot;
                 for (Mounted ammo: ammos) {
@@ -1885,6 +1906,7 @@ public class FireControl {
                                  final Map<Mounted, Double> ammoConservation,
                                  final Game game) {
         final NumberFormat DECF = new DecimalFormat("0.000");
+        boolean debug = LogManager.getLogger().isDebugEnabled();
 
         final FiringPlan myPlan = new FiringPlan(target);
 
@@ -1920,6 +1942,7 @@ public class FireControl {
             if (AmmoType.T_NA == wtype.getAmmoType()) {
                 bestShoot = buildWeaponFireInfo(shooter, target, weapon, null, game, false);
             } else {
+                // Check _all_ ammunition for _all_ weapons here.
                 ArrayList<Mounted> ammos;
                 ammos = shooter.getAmmo(weapon);
 
@@ -1949,19 +1972,20 @@ public class FireControl {
             if (null != bestShoot) {
                 if ((bestShoot.getAmmo() != null) && ((AmmoType) bestShoot.getAmmo().getType()).getMunitionType().contains(AmmoType.Munitions.M_DEAD_FIRE)) {
                     // Avoid weird interaction where Dead-Fire gets chosen despite out-of-range mod.
-                    if (bestShoot.getToHit().getValue() == TargetRoll.AUTOMATIC_FAIL) {
+                    if (bestShoot.getToHit().getValue() == TargetRoll.AUTOMATIC_FAIL && debug) {
                         LogManager.getLogger().debug("\nDead-fire selected despite impossible to-hit chance!  Skipping...");
                         continue;
                     }
-
                 }
                 if (bestShoot.getProbabilityToHit() > toHitThreshold) {
                     myPlan.add(bestShoot);
                     continue;
                 }
-                LogManager.getLogger().debug("\nTo Hit Chance (" + DECF.format(bestShoot.getProbabilityToHit())
-                        + ") for " + weapon.getName() +
-                        " is less than threshold (" + DECF.format(toHitThreshold) + ")");
+                if (debug) {
+                    LogManager.getLogger().debug("\nTo Hit Chance (" + DECF.format(bestShoot.getProbabilityToHit())
+                            + ") for " + weapon.getName() +
+                            " is less than threshold (" + DECF.format(toHitThreshold) + ")");
+                }
             }
         }
 
@@ -2583,8 +2607,17 @@ public class FireControl {
             } else {
                 // Iterate over all valid ammo for this weapon
                 int bracket;
+
+                // For certain weapon types, look over all their loaded ammos
                 ArrayList<Mounted> ammos;
-                ammos = shooter.getAmmo(weapon);
+                if (weaponType.getAmmoType() == AmmoType.T_ATM || weaponType.getAmmoType() == AmmoType.T_MML) {
+                    ammos = shooter.getAmmo(weapon);
+                } else {
+                    // Otherwise assume the current loaded ammo is suitable representative
+                    ammos = new ArrayList<Mounted>();
+                    ammos.add(weapon.getLinked());
+                }
+
                 for (Mounted ammo: ammos) {
                     bracket = RangeType.rangeBracket(range,
                             weaponType.getRanges(weapon, ammo),

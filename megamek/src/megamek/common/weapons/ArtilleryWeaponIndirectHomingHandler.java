@@ -25,6 +25,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
 import megamek.server.GameManager;
+import org.apache.logging.log4j.LogManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -307,6 +308,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirec
      * Uses a CFR to let the player choose from eligible TAG
      */
     public void convertHomingShotToEntityTarget() {
+        boolean debug = LogManager.getLogger().isDebugEnabled();
         ArtilleryAttackAction aaa = (ArtilleryAttackAction) waa;
 
         final Coords tc = target.getPosition();
@@ -348,6 +350,11 @@ public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirec
             newTarget = ti.target;
             if (!ti.missed && (newTarget != null)) {
                 v.add(ti);
+                if (debug) {
+                    LogManager.getLogger().debug(new StringBuilder("Found valid TAG on target ")
+                            .append(ti).append("; Range to original target is ")
+                            .append(tc.distance(ti.target.getPosition())));
+                }
             }
         }
 
@@ -368,7 +375,6 @@ public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirec
             if (tc.distance(newTarget.getPosition()) <= Compute.HOMING_RADIUS) {
                 allowed.add(ti);
             }
-
         }
         if (allowed.isEmpty()) {
             aaa.setTargetId(newTarget.getId());

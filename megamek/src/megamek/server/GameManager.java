@@ -30127,6 +30127,7 @@ public class GameManager implements IGameManager {
         // Make sure that the entity has the given equipment.
         Mounted mWeap = e.getEquipment(weaponId);
         Mounted mAmmo = e.getEquipment(ammoId);
+        Mounted oldAmmo = mWeap.getLinked();
         if (null == mAmmo) {
             LogManager.getLogger().error("Entity " + e.getDisplayName() + " does not have ammo #" + ammoId);
             return;
@@ -30161,13 +30162,16 @@ public class GameManager implements IGameManager {
         e.loadWeapon(mWeap, mAmmo);
 
         // Report the change, if reason is provided and it's not already being used.
-        if (reason != 0 && mWeap.getLinked() != mAmmo) {
+        if (reason != 0 && oldAmmo != mAmmo) {
             Report r = new Report(1500);
             r.subject = entityId;
             r.addDesc(e);
             r.add(mAmmo.getShortName());
             r.add(ReportMessages.getString(String.valueOf(reason)));
             addReport(r);
+            if (LogManager.getLogger().isDebugEnabled()) {
+
+            }
         }
     }
 

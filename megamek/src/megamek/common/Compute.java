@@ -7457,11 +7457,15 @@ public class Compute {
         // Hexes can't move...
         if (target instanceof Entity) {
             Entity te = (Entity) target;
-            int mp = te.getPosition().distance(te.getPriorPosition()); // Assume last move presages the next
+            int mp = te.getPriorPosition().distance(te.getPosition()); // Assume last move presages the next
+            if (mp == 0 && game.getRoundCount() == 0) {
+                // Assume a mobile enemy will move somewhat after deploying
+                mp = te.getWalkMP();
+            }
 
             // Try to keep the current position within the homing radius, unless they're real fast...
             if (homing) {
-                leadAmount = (mp * (turnsTilHit + 1)) + HOMING_RADIUS;
+                leadAmount = (mp * (turnsTilHit)) + HOMING_RADIUS;
             } else {
                 leadAmount = mp * (turnsTilHit + 1);
             }

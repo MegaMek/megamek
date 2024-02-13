@@ -30160,16 +30160,13 @@ public class GameManager implements IGameManager {
         // Load the weapon.
         e.loadWeapon(mWeap, mAmmo);
 
-        // Report the change, if reason is provided
-        if (reason != 0) {
+        // Report the change, if reason is provided and it's not already being used.
+        if (reason != 0 && mWeap.getLinked() != mAmmo) {
             Report r = new Report(1500);
             r.subject = entityId;
             r.addDesc(e);
-            r.add(mWeap.getShortName());
             r.add(mAmmo.getShortName());
-            addReport(r);
-            r = new Report(reason);
-            r.indent(4);
+            r.add(ReportMessages.getString(String.valueOf(reason)));
             addReport(r);
         }
     }

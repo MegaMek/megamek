@@ -13832,7 +13832,13 @@ public class AmmoType extends EquipmentType {
                     index = base.internalName.lastIndexOf("Ammo");
                     nameBuf.insert(index, name);
                     munition.setInternalName(nameBuf.toString());
-                    munition.shortName = munition.name.replace("Prototype ", "p");
+
+                    // ADA full name is embarrassingly long.
+                    if (base.name.contains("ADA")) {
+                        munition.shortName = "ADA Missile";
+                    } else {
+                        munition.shortName = munition.name.replace("Prototype ", "p");
+                    }
 
                     munition.addBeforeString(base, "Ammo", name + " ");
                     munition.addToEnd(base, " - " + name);

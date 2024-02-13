@@ -379,15 +379,19 @@ public class ArtilleryTargetingControl {
                     // for each enemy unit, evaluate damage value of firing at its hex.
                     // keep track of top target hexes with the same value and fire at them
                     boolean isADA = ((AmmoType) ammo.getType()).getMunitionType().contains(AmmoType.Munitions.M_ADA);
+                    boolean isSmoke = ((AmmoType) ammo.getType()).getMunitionType().contains(AmmoType.Munitions.M_SMOKE);
                     for (Targetable target : targetSet) {
                         WeaponFireInfo wfi;
                         double damageValue = 0.0;
                         if (target.getTargetType() == Targetable.TYPE_ENTITY) {
                             damageValue = damage;
                         } else {
-                            if (!isADA) {
+                            if (!(isADA || isSmoke)) {
                                 damageValue = calculateDamageValue(damage, (HexTarget) target, shooter, game, owner);
-                            } else {
+                            } else if (isSmoke) {
+                                damageValue = 0;
+                            }
+                            else {
                                 // No ADA attacks except at Entities.
                                 continue;
                             }

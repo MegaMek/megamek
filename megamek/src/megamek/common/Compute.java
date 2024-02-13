@@ -33,6 +33,7 @@ import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.common.weapons.mgs.MGWeapon;
 import megamek.server.Server;
 import megamek.server.SmokeCloud;
+import org.apache.commons.logging.Log;
 import org.apache.logging.log4j.LogManager;
 
 import java.util.*;
@@ -7460,9 +7461,9 @@ public class Compute {
 
             // Try to keep the current position within the homing radius, unless they're real fast...
             if (homing) {
-                leadAmount = (mp > 8) ? mp : HOMING_RADIUS;
+                leadAmount = (mp * (turnsTilHit + 1)) + HOMING_RADIUS;
             } else {
-                leadAmount = mp;
+                leadAmount = mp * (turnsTilHit + 1);
             }
 
             // Guess at the target's movement direction
@@ -7475,7 +7476,7 @@ public class Compute {
             }
         }
 
-        return calculateArtilleryLead(target.getPosition(), direction, turnsTilHit * leadAmount);
+        return calculateArtilleryLead(target.getPosition(), direction, leadAmount);
     }
 
     /**
@@ -7486,6 +7487,15 @@ public class Compute {
      */
     public static Coords calculateArtilleryLead(Coords targetPoint, int direction, int leadAmount) {
         Coords newPoint = targetPoint.translated(direction, leadAmount);
+        if (LogManager.getLogger().isDebugEnabled()) {
+            StringBuilder msg = new StringBuilder("Computed coordinates ( ")
+                    .append(newPoint.toString())
+                    .append(" ) for target point ( ").append(targetPoint.toString())
+                    .append(" ), direction ").append(direction)
+                    .append(", lead range ").append(leadAmount);
+
+            LogManager.getLogger().debug(msg);
+        }
         return newPoint;
     }
 

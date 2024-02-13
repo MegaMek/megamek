@@ -469,21 +469,29 @@ public class WeaponFireInfo {
      * @return
      */
     double computeExpectedTAGDamage(boolean exclusiveWithOtherWeapons){
-        final StringBuilder msg = new StringBuilder("Assessing the expected max damage from ")
+        boolean debug = LogManager.getLogger().isDebugEnabled();
+        final StringBuilder msg = (debug) ?
+                new StringBuilder("Assessing the expected max damage from ")
                 .append(shooter.getDisplayName())
-                .append(" using their TAG this turn");
+                .append(" using their TAG this turn")
+                : null;
 
         int myWeaponsDamage = 0;
         if (exclusiveWithOtherWeapons) {
             // We need to know what we're giving up if we fire this TAG...
             myWeaponsDamage = Compute.computeTotalDamage(shooter.getTotalWeaponList());
-            msg.append("\nThe unit will be giving up ")
-                    .append(myWeaponsDamage)
-                    .append(" damage from other weapons");
+            if (debug) {
+                msg.append("\nThe unit will be giving up ")
+                        .append(myWeaponsDamage)
+                        .append(" damage from other weapons");
+            }
         }
 
         // Get a list of incoming or potentially incoming guidable weapons from the relevant Princess and compute damage.
-        int incomingAttacksDamage = Compute.computeTotalDamage(owner.computeGuidedWeapons(shooter, target.getPosition()));
+        // If target is already tagged, make it undesirable as a target.
+        int incomingAttacksDamage = (Compute.isTargetTagged(target, game))
+                ? Compute.computeTotalDamage(owner.computeGuidedWeapons(shooter, target.getPosition()))
+                : 0;
         int utility = incomingAttacksDamage - myWeaponsDamage;
         msg.append("\n\tUtility: ").append(utility).append(" damage (Max, estimated)");
         LogManager.getLogger().debug(msg.toString());

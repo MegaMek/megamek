@@ -690,6 +690,9 @@ public class WeaponFireInfo {
 
         setKillProbability(0);
         if (!(getTarget() instanceof Mech)) {
+            if (debugging) {
+                LogManager.getLogger().debug(msg.toString());
+            }
             return;
         }
 

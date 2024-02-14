@@ -1309,7 +1309,7 @@ public class Compute {
                 }
             }
         }
-        int maxRange = wtype.getMaxRange(weapon);
+        int maxRange = wtype.getMaxRange(weapon, ammo);
 
         // if aero and greater than max range then swith to range_out
         if ((ae.isAirborne() || (ae.usesWeaponBays() && game.getBoard()

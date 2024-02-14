@@ -6382,7 +6382,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
 
         // check if extreme range is used
         int maxrange = 4;
-        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE)) {
+        if (!game.getBoard().onGround() || game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE)) {
             maxrange = 5;
         }
 

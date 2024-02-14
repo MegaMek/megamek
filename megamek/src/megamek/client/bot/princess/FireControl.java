@@ -693,7 +693,7 @@ public class FireControl {
             }
         }
 
-        final boolean bayWeapon = (!weapon.getBayWeapons().isEmpty());
+        final boolean bayWeapon = (!(weapon.getBayWeapons() == null || weapon.getBayWeapons().isEmpty()));
         // Check if torso twists affect weapon
         int shooterFacing = shooterState.getFacing();
         if (shooter.isSecondaryArcWeapon(shooter.getEquipmentNum(weapon))) {

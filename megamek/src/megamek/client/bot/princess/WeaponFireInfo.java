@@ -385,6 +385,9 @@ public class WeaponFireInfo {
                 int maxRange = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE)
                         ? weaponType.getExtremeRange() : weaponType.getLongRange();
                 int targetDistance = getShooter().getPosition().distance(getTarget().getPosition());
+                if (shooter.isAirborne() && target.isAirborne()) {
+                    targetDistance /= 16;
+                }
 
                 // if the particular weapon is within range or we're an aircraft strafing a ground unit
                 // then we can count it. Otherwise, it's not going to contribute to damage, and we want

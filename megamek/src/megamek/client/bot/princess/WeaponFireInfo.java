@@ -390,10 +390,18 @@ public class WeaponFireInfo {
                 // then we can count it. Otherwise, it's not going to contribute to damage, and we want
                 // to avoid grossly overestimating damage.
                 if (targetDistance <= maxRange || shooter.isAirborne() && !target.isAirborne()) {
-                    bayDamage += weaponType.getDamage();
+                    switch (weaponType.getDamage()) {
+                        case WeaponType.DAMAGE_BY_CLUSTERTABLE:
+                        case WeaponType.DAMAGE_ARTILLERY:
+                        case WeaponType.DAMAGE_SPECIAL:
+                        case WeaponType.DAMAGE_VARIABLE:
+                            bayDamage += weaponType.getRackSize();
+                            break;
+                        default:
+                            bayDamage += weaponType.getDamage();
+                        }
+                    }
                 }
-            }
-
             return bayDamage;
         }
 
@@ -609,7 +617,11 @@ public class WeaponFireInfo {
         // If we can't hit, set everything zero and return...
         if (12 < getToHit().getValue()) {
             if (debugging) {
-                LogManager.getLogger().debug(msg.append("\n\tImpossible toHit: ").append(getToHit().getValue()).toString());
+                LogManager.getLogger().debug(
+                        msg.append("\n\tImpossible toHit: ").append(getToHit().getValue())
+                            .append(" (").append(getToHit().getCumulativePlainDesc()).append(")")
+                                .append((guess) ? " [guess]" : " [real]")
+                );
             }
             setProbabilityToHit(0);
             setMaxDamage(0);
@@ -656,7 +668,7 @@ public class WeaponFireInfo {
         // If expected damage from Aero tagging is zero, return out - save attacks for later.
         if (weapon.getType().hasFlag(WeaponType.F_TAG) && shooter.isAero() && getExpectedDamageOnHit() <= 0) {
             if (debugging) {
-                LogManager.getLogger().debug(msg.append("\n\tAerospace TAG attack not advised at this juncture"));
+                LogManager.getLogger().debug(msg.append("\n\tAerospace TAG attack not advised at this juncture").toString());
             }
             setProbabilityToHit(0);
             setMaxDamage(0);

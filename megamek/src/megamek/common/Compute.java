@@ -7497,7 +7497,7 @@ public class Compute {
                     .append(" ), direction ").append(direction)
                     .append(", lead range ").append(leadAmount);
 
-            LogManager.getLogger().debug(msg);
+            LogManager.getLogger().debug(msg.toString());
         }
         return newPoint;
     }

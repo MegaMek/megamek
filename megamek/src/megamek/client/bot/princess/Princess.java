@@ -1216,7 +1216,7 @@ public class Princess extends BotClient {
                 } else if (entity.isCrippled()) {
                     msg += " is crippled and withdrawing.";
                 }
-                LogManager.getLogger().debug(msg);
+                LogManager.getLogger().debug(msg.toString());
                 sendChat(msg, Level.ERROR);
 
                 // If this entity is falling back, able to flee the board, on

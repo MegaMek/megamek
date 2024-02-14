@@ -241,12 +241,17 @@ public class AeroPathUtil {
     }
 
     public static int getSpheroidDir(Game game, Entity mover) {
-        final StringBuilder msg = new StringBuilder("Deciding where to point ")
-                .append(mover.getDisplayName()).append("...");
+        boolean debug = LogManager.getLogger().isDebugEnabled();
+        final StringBuilder msg = (debug)
+                ? new StringBuilder("Deciding where to point ")
+                .append(mover.getDisplayName()).append("...")
+                : null;
 
         // Face the center of the board
         int dir = mover.getPosition().direction(game.getBoard().getCenter());
-        msg.append("\nMap center is to the ").append(ClientCommand.getDirection(dir));
+        if (debug) {
+            msg.append("\nMap center is to the ").append(ClientCommand.getDirection(dir));
+        }
 
         int enemyDir = dir;
 
@@ -261,15 +266,19 @@ public class AeroPathUtil {
             // Calc center of allies _of the enemy_
             centroid = PathRanker.calcAllyCenter(enemies.get(0).getId(), enemies, game);
             enemyDir = mover.getPosition().direction(centroid);
-            msg.append("\nEnemies are over in ").append(ClientCommand.getDirection(enemyDir));
+
+            if (debug) {
+                msg.append("\nEnemies are over in ").append(ClientCommand.getDirection(enemyDir));
+            }
         }
 
         // Then determine if we need to protect part of the ship
         if (mover.getDamageLevel() == Entity.DMG_NONE) {
             dir = enemyDir;
-            msg.append("\nBeing hale and hearty, we will aim toward the ")
-                    .append(ClientCommand.getDirection(dir));
-
+            if (debug) {
+                msg.append("\nBeing hale and hearty, we will aim toward the ")
+                        .append(ClientCommand.getDirection(dir));
+            }
         } else {
             int leastArmor = 9999999;
             int leastLoc = Dropship.LOC_NONE;
@@ -297,13 +306,17 @@ public class AeroPathUtil {
                         // Default is nose to enemy.  If this should be different, suggest using NOSE case.
                         dir = enemyDir;
                 }
-                msg.append("\nWe've taken a lot of damage to our ").append(mover.getLocationAbbr(leastLoc));
-                msg.append("\nTurning to the ").append(ClientCommand.getDirection(dir))
-                        .append(" to protect ourselves!");
+                if (debug) {
+                    msg.append("\nWe've taken a lot of damage to our ").append(mover.getLocationAbbr(leastLoc));
+                    msg.append("\nTurning to the ").append(ClientCommand.getDirection(dir))
+                            .append(" to protect ourselves!");
+                }
             }
         }
 
-        LogManager.getLogger().debug(msg.toString());
+        if (debug) {
+            LogManager.getLogger().debug(msg.toString());
+        }
         return dir;
     }
 }

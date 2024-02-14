@@ -693,12 +693,16 @@ public class FireControl {
             }
         }
 
+        final boolean bayWeapon = (!weapon.getBayWeapons().isEmpty());
         // Check if torso twists affect weapon
         int shooterFacing = shooterState.getFacing();
         if (shooter.isSecondaryArcWeapon(shooter.getEquipmentNum(weapon))) {
             shooterFacing = shooterState.getSecondaryFacing();
         }
-        final boolean inArc = isInArc(shooterState.getPosition(), shooterFacing, targetState.getPosition(),
+        // Bays compute arc differently
+        final boolean inArc = (bayWeapon)
+                ? Compute.isInArc(game, shooter.getId(), weapon.getBayWeapons().get(0), target)
+                : isInArc(shooterState.getPosition(), shooterFacing, targetState.getPosition(),
                                       shooter.getWeaponArc(shooter.getEquipmentNum(weapon)));
         if (!inArc) {
             return new ToHitData(TH_WEAPON_NO_ARC);
@@ -706,6 +710,10 @@ public class FireControl {
 
         // Check range.
         int distance = shooterState.getPosition().distance(targetState.getPosition());
+        if (shooterState.isAirborne() && targetState.isAirborne() && game.getBoard().onGround()) {
+            // Aerospace firing at each on the ground map have immense range.
+            distance /= 16;
+        }
 
         // Ground units attacking airborne aero considerations.
         if (targetState.isAirborneAero() && !shooterState.isAero()) {
@@ -718,6 +726,7 @@ public class FireControl {
                 distance += 2 * target.getAltitude();
             }
         }
+        // BayWeapons do range differently
         int range = RangeType.rangeBracket(distance, weaponType.getRanges(weapon, ammo),
                                            game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE),
                                            game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_LOS_RANGE));
@@ -1614,16 +1623,21 @@ public class FireControl {
             return myPlan;
         }
 
-        if (shooter.isAirborne() && shooter.isLargeCraft() && game.getBoard().onGround()) {
+        if (shooter.isAirborne()
+                && shooter.isLargeCraft()
+                && shooter.isSpheroid()
+                && game.getBoard().onGround()
+                && !target.isAirborne())
+        {
             // This process takes a long time for no reason; the likelihood of being able to strike
-            // or hit an enemy Aero is next to nil.
+            // or hit an enemy (other than Aero) is next to nil.
             boolean debug = LogManager.getLogger().isDebugEnabled();
             if (debug) {
                 LogManager.getLogger().debug(
                         "Skip guessing firing plan for airborne dropship " + shooter.getShortName()
                 );
             }
-            return null;
+            return myPlan;
         }
 
         // cycle through my weapons
@@ -1640,7 +1654,7 @@ public class FireControl {
 
             // Energy / ammo-independent weapons
             if (AmmoType.T_NA == wtype.getAmmoType()) {
-                bestShoot = buildWeaponFireInfo(shooter, target, weapon, null, game, false);
+                bestShoot = buildWeaponFireInfo(shooter, target, weapon, null, game, true);
             } else {
                 // For certain weapon types, look over all their loaded ammos
                 ArrayList<Mounted> ammos;
@@ -1761,6 +1775,18 @@ public class FireControl {
 
         if (AeroGroundPathFinder.OPTIMAL_STRIKE_ALTITUDE < flightPath.getFinalAltitude()) {
             LogManager.getLogger().error("Shooter's altitude is too high!");
+            return myPlan;
+        }
+
+        if (shooter.isAirborne() && shooter.isLargeCraft() && shooter.isSpheroid() && game.getBoard().onGround()) {
+            // This process takes a long time for no reason; the likelihood of being able to strike
+            // or hit an enemy Aero is next to nil.
+            boolean debug = LogManager.getLogger().isDebugEnabled();
+            if (debug) {
+                LogManager.getLogger().debug(
+                        "Skip guessing A2G firing plan for airborne dropship " + shooter.getShortName()
+                );
+            }
             return myPlan;
         }
 

@@ -118,7 +118,12 @@ public class MultiTargetFireControl extends FireControl {
             }
 
             ArrayList<Mounted> ammos;
-            ammos = shooter.getAmmo(weapon);
+            if (weapon.getBayWeapons().isEmpty()) {
+                ammos = shooter.getAmmo(weapon);
+            } else {
+                ammos = new ArrayList<>();
+                ammos.add(null);
+            }
 
             for (Mounted ammo: ammos) {
                 WeaponFireInfo shot = buildWeaponFireInfo(shooter, target, weapon, ammo, owner.getGame(), false);

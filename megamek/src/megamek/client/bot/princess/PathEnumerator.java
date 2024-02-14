@@ -136,6 +136,8 @@ public class PathEnumerator {
                     Thread.sleep(Compute.randomInt(1000) + 500);
                 } catch (InterruptedException e) {
                     LogManager.getLogger().error("", e);
+                } catch (Exception e) {
+                    LogManager.getLogger().error("Unexpected (non-interrupt) exception!", e);
                 }
             }
         }

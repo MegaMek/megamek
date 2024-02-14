@@ -9944,6 +9944,6 @@ public class MiscType extends EquipmentType {
 
     @Override
     public String toString() {
-        return "MiscType: " + name;
+        return "[Misc] " + internalName;
     }
 }

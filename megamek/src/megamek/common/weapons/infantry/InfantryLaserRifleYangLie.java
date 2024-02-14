@@ -27,7 +27,7 @@ public class InfantryLaserRifleYangLie extends InfantryWeapon {
 
         name = "Laser Rifle (Yang Lie)";
         setInternalName(name);
-        addLookupName("YÁNG LIÈ");
+        addLookupName("YangLie");
         ammoType = AmmoType.T_INFANTRY;
         cost = 1275;
         bv = 0.525;

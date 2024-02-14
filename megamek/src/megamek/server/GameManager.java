@@ -12572,6 +12572,9 @@ public class GameManager implements IGameManager {
                     && (stepForward.isMoveLegal() || stepBackwards.isMoveLegal())) {
                 // First, we need to make a PSR to see if we can step out
                 Roll diceRoll = Compute.rollD6(2);
+                if (roll == null) {
+                    roll = entity.getBasePilotingRoll();
+                }
 
                 r = new Report(2351);
                 r.indent(2);

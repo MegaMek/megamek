@@ -1432,6 +1432,7 @@ public class Client implements IClientCommandHandler {
 
                     if (player != null) {
                         player.setDone(c.getBooleanValue(1));
+                        game.processGameEvent(new GamePlayerChangeEvent(player, player));
                     }
                     break;
                 case PRINCESS_SETTINGS:

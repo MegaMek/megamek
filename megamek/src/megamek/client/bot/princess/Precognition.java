@@ -117,6 +117,7 @@ public class Precognition implements Runnable {
                     final Player player = getPlayer(c.getIntValue(0));
                     if (player != null) {
                         player.setDone(c.getBooleanValue(1));
+                        game.processGameEvent(new GamePlayerChangeEvent(player, player));
                     }
                     break;
                 case PLAYER_ADD:

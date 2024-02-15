@@ -575,13 +575,10 @@ public class Tank extends Entity {
     @Override
     public boolean isImmobileForJump() {
         // *Can* jump unless 0 Jump MP, or 1+ Jump MP but engine is critted, or crew unconscious/dead.
-        boolean jumpImmobile = (
-                super.isImmobile(true) ||
+        return super.isImmobile(true) ||
                 super.isPermanentlyImmobilized(true) ||
                 (getJumpMP() == 0) ||
-                (isEngineHit())
-        );
-        return jumpImmobile;
+                isEngineHit();
     }
 
     @Override
@@ -1721,13 +1718,13 @@ public class Tank extends Entity {
         return true;
     }
 
-    @Override
     /**
      * Checks to see if a Tank is capable of going hull-down.  This is true if
      * hull-down rules are enabled and the Tank is in a fortified hex.
      *
      *  @return True if hull-down is enabled and the Tank is in a fortified hex.
      */
+    @Override
     public boolean canGoHullDown() {
         // MoveStep line 2179 performs this same check
         // performing it here will allow us to disable the Hulldown button
@@ -2896,13 +2893,7 @@ public class Tank extends Entity {
     @Override
     public void setHullDown(boolean down) {
         super.setHullDown(down);
-        if ((getMovedBackwards() == true) && (down == true)) {
-            m_bBackedIntoHullDown = true;
-        } else if ((getMovedBackwards() == false) && (down == true)) {
-            m_bBackedIntoHullDown = false;
-        } else if (down == false) {
-            m_bBackedIntoHullDown = false;
-        }
+        m_bBackedIntoHullDown = getMovedBackwards() && down;
     }
 
     /**

@@ -441,7 +441,7 @@ public class ChatProcessor {
 
         // Specify a priority unit target.
         if (command.toLowerCase().startsWith(ChatCommands.SHOW_DISHONORED.getAbbreviation())) {
-            msg = "Dishonored Players: " + princess.getHonorUtil().getDishonoredEnemies().stream().map(Object::toString).collect(Collectors.joining(", "));
+            msg = "Dishonored Player ids: " + princess.getHonorUtil().getDishonoredEnemies().stream().map(Object::toString).collect(Collectors.joining(", "));
             princess.sendChat(msg);
             LogManager.getLogger().info(msg);
         }

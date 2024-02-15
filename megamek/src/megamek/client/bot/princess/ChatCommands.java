@@ -24,7 +24,8 @@ public enum ChatCommands {
                                                           "list."),
     SHOW_BEHAVIOR("sh", "princessName: showBehavior", "Princess will state the name of her current behavior."),
     LIST__COMMANDS("li", "princessName: listCommands", "Displays this list of commands."),
-    IGNORE_TARGET("ig", "princessName: ignoreTarget: unitId", "Will not fire on the entity with this ID.");
+    IGNORE_TARGET("ig", "princessName: ignoreTarget: unitId", "Will not fire on the entity with this ID."),
+    SHOW_DISHONORED("sd", "princessName: showDishonored", "Show the players on the dishonored enemies list.");
 
     private final String abbreviation;
     private final String syntax;

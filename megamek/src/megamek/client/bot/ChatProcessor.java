@@ -29,6 +29,7 @@ import org.apache.logging.log4j.LogManager;
 
 import java.util.Enumeration;
 import java.util.StringTokenizer;
+import java.util.stream.Collectors;
 
 public class ChatProcessor {
 
@@ -436,6 +437,13 @@ public class ChatProcessor {
             princess.getBehaviorSettings().addPriorityUnit(id);
             msg = "Unit " + id + " added to priority unit targets list.";
             princess.sendChat(msg);
+        }
+
+        // Specify a priority unit target.
+        if (command.toLowerCase().startsWith(ChatCommands.SHOW_DISHONORED.getAbbreviation())) {
+            msg = "Dishonored Players: " + princess.getHonorUtil().getDishonoredEnemies().stream().map(Object::toString).collect(Collectors.joining(", "));
+            princess.sendChat(msg);
+            LogManager.getLogger().info(msg);
         }
     }
 }

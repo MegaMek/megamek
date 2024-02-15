@@ -20,7 +20,7 @@ package megamek.common.cost;
 
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.common.Aero;
-import megamek.common.EquipmentType;
+import megamek.common.equipment.ArmorType;
 
 public class AeroCostCalculator {
 
@@ -47,11 +47,11 @@ public class AeroCostCalculator {
         if (aero.hasPatchworkArmor()) {
             int armorcost = 0;
             for (int loc = 0; loc < aero.locations(); loc++) {
-                armorcost += aero.getArmorWeight(loc) * EquipmentType.getArmorCost(aero.getArmorType(loc));
+                armorcost += aero.getArmorWeight(loc) * ArmorType.forEntity(aero, loc).getCost();
             }
             costs[idx++] = armorcost;
         } else {
-            costs[idx++] = aero.getArmorWeight() * EquipmentType.getArmorCost(aero.getArmorType(0));
+            costs[idx++] = aero.getArmorWeight() * ArmorType.forEntity(aero).getCost();
         }
 
         // Heat sinks

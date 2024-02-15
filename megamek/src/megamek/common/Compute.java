@@ -1681,6 +1681,20 @@ public class Compute {
     }
 
     /**
+     * If BAP setting is enbabled and unit has a BAP.
+     * check if target is within BAP range.
+     * check if entity is Affected by ECM.
+     *
+     * @return if target si in range and entity is not affected
+     */
+    public static boolean bapInRange(Game game, Entity entity, Entity target) {
+        return (target != null)
+                && entity.hasBAP()
+                && (entity.getBAPRange() >= Compute.effectiveDistance(game, entity, target))
+                && !ComputeECM.isAffectedByECM(entity, entity.getPosition(), target.getPosition());
+    }
+
+    /**
      * Finds the effective distance between an attacker and a target. Includes
      * the distance bonus if the attacker and target are in the same building
      * and on different levels. Also takes account of altitude differences
@@ -2555,7 +2569,7 @@ public class Compute {
                             || (entity.moved == EntityMovementType.MOVE_VTOL_SPRINT)
                         );
 
-        boolean isVTOL = (entity.moved == EntityMovementType.MOVE_VTOL_RUN)
+        boolean validFlying = (entity.moved == EntityMovementType.MOVE_VTOL_RUN)
                         || (entity.moved == EntityMovementType.MOVE_VTOL_WALK)
                         || (entity.getMovementMode() == EntityMovementMode.VTOL)
                         || (entity.moved == EntityMovementType.MOVE_VTOL_SPRINT);
@@ -2564,7 +2578,7 @@ public class Compute {
                 .getTargetMovementModifier(
                         entity.delta_distance,
                         jumped,
-                        isVTOL,
+                        validFlying,
                         game);
 
         if (entity.moved != EntityMovementType.MOVE_JUMP
@@ -2639,12 +2653,10 @@ public class Compute {
             }
         }
 
-        if (jumped) {
-            if (isVTOL && (distance > 0)) {
-                toHit.addModifier(1, "target VTOL used MPs");
-            } else {
-                toHit.addModifier(1, "target jumped");
-            }
+        if (isVTOL && (distance > 0)) {
+            toHit.addModifier(1, "target VTOL used MPs");
+        } else if (jumped) {
+            toHit.addModifier(1, "target jumped");
         }
 
         return toHit;
@@ -7310,6 +7322,11 @@ public class Compute {
                     && !(wtype instanceof ArtilleryCannonWeapon)
                     && !wtype.hasFlag(WeaponType.F_MORTARTYPE_INDIRECT)
                     && !(isLandedSpheroid && noseWeaponAimedAtGroundTarget);
+    }
+
+    public static boolean isFlakAttack(Entity attacker, Entity target) {
+        boolean validLocation = !(attacker.isSpaceborne() || target.isSpaceborne());
+        return validLocation && (target.isAirborne() || target.isAirborneVTOLorWIGE());
     }
 
 } // End public class Compute

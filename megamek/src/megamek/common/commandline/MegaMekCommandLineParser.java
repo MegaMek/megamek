@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved
+ * Copyright (c) 2022-2024 - The MegaMek Team. All Rights Reserved
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -13,18 +13,27 @@
  */
 package megamek.common.commandline;
 
-import megamek.MMConstants;
-import megamek.MegaMek;
-import megamek.client.ui.Messages;
-import megamek.common.*;
-import megamek.common.alphaStrike.conversion.ASConverter;
-import megamek.common.alphaStrike.AlphaStrikeElement;
-import megamek.common.util.fileUtils.MegaMekFile;
-import megamek.common.verifier.*;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
+import java.util.Vector;
+
 import org.apache.logging.log4j.LogManager;
 
-import java.io.*;
-import java.util.Vector;
+import megamek.MMConstants;
+import megamek.client.ui.Messages;
+import megamek.common.Configuration;
+import megamek.common.Entity;
+import megamek.common.MechFileParser;
+import megamek.common.MechSummary;
+import megamek.common.MechSummaryCache;
+import megamek.common.MechView;
+import megamek.common.TechConstants;
+import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.alphaStrike.conversion.ASConverter;
+import megamek.common.verifier.TestEntity;
 
 /**
  * This class parses the options passed into to MegaMek from the command line.
@@ -59,6 +68,7 @@ public class MegaMekCommandLineParser extends AbstractCommandLineParser {
 
     /**
      * Flag that indicates the option for the RAT Generator editor
+     *
      * @return Whether the RAT Generator editor should be invoked
      */
     public boolean ratGenEditor() {
@@ -71,7 +81,6 @@ public class MegaMekCommandLineParser extends AbstractCommandLineParser {
     public String[] getRestArgs() {
         return restArgs;
     }
-
 
     @Override
     public String help() {
@@ -98,6 +107,15 @@ public class MegaMekCommandLineParser extends AbstractCommandLineParser {
                         break;
                     case EQEDB:
                         processExtendedEquipmentDb();
+                        break;
+                    case EQWDB:
+                        processWeaponEquipmentDb();
+                        break;
+                    case EQADB:
+                        processWeaponAmmoDb();
+                        break;
+                    case EQMDB:
+                        processWeaponMiscDb();
                         break;
                     case DATADIR:
                         processDataDir();
@@ -159,6 +177,42 @@ public class MegaMekCommandLineParser extends AbstractCommandLineParser {
             filename = getTokenValue();
             nextToken();
             megamek.common.EquipmentType.writeEquipmentExtendedDatabase(new File(filename));
+        } else {
+            throw new ParseException("file name expected");
+        }
+        System.exit(0);
+    }
+
+    private void processWeaponEquipmentDb() throws ParseException {
+        String filename;
+        if (getTokenType() == TOK_LITERAL) {
+            filename = getTokenValue();
+            nextToken();
+            megamek.common.EquipmentType.writeEquipmentWeaponDatabase(new File(filename));
+        } else {
+            throw new ParseException("file name expected");
+        }
+        System.exit(0);
+    }
+
+    private void processWeaponAmmoDb() throws ParseException {
+        String filename;
+        if (getTokenType() == TOK_LITERAL) {
+            filename = getTokenValue();
+            nextToken();
+            megamek.common.EquipmentType.writeEquipmentAmmoDatabase(new File(filename));
+        } else {
+            throw new ParseException("file name expected");
+        }
+        System.exit(0);
+    }
+
+    private void processWeaponMiscDb() throws ParseException {
+        String filename;
+        if (getTokenType() == TOK_LITERAL) {
+            filename = getTokenValue();
+            nextToken();
+            megamek.common.EquipmentType.writeEquipmentMiscDatabase(new File(filename));
         } else {
             throw new ParseException("file name expected");
         }
@@ -227,7 +281,7 @@ public class MegaMekCommandLineParser extends AbstractCommandLineParser {
             if (!new File("./docs").exists()) {
                 if (!new File("./docs").mkdir()) {
                     LogManager.getLogger().error(
-                            "Error in creating directory ./docs. We know this is annoying, and apologise. "
+                            "Error in creating directory ./docs. We know this is annoying, and apologize. "
                                     + "Please submit a bug report at https://github.com/MegaMek/megamek/issues "
                                     + " and we will try to resolve your issue.");
                 }
@@ -331,7 +385,7 @@ public class MegaMekCommandLineParser extends AbstractCommandLineParser {
             if (!new File("./docs").exists()) {
                 if (!new File("./docs").mkdir()) {
                     LogManager.getLogger().error(
-                            "Error in creating directory ./docs. We know this is annoying, and apologise. "
+                            "Error in creating directory ./docs. We know this is annoying, and apologize. "
                                     + "Please submit a bug report at https://github.com/MegaMek/megamek/issues "
                                     + " and we will try to resolve your issue.");
                 }
@@ -349,7 +403,8 @@ public class MegaMekCommandLineParser extends AbstractCommandLineParser {
                     bw.newLine();
                     bw.write("This file can be regenerated with java -jar MegaMek.jar -export filename");
                     bw.newLine();
-                    bw.write("Type,SubType,Name,Model,BV,Cost (Loaded), Cost (Unloaded),Year,TechLevel,Tonnage,Tech,Canon,Walk,Run,Jump");
+                    bw.write(
+                            "Type,SubType,Name,Model,BV,Cost (Loaded), Cost (Unloaded),Year,TechLevel,Tonnage,Tech,Canon,Walk,Run,Jump");
                 }
                 bw.newLine();
 

@@ -1,5 +1,6 @@
 package megamek.common;
 
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -12,6 +13,11 @@ import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
 
 public class PlanetaryConditionsTest {
+
+    @BeforeAll
+    public static void beforeAll() {
+        EquipmentType.initializeTypes();
+    }
 
     @Test
     public void testWhyDoomed() {

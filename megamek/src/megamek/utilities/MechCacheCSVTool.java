@@ -21,6 +21,7 @@ package megamek.utilities;
 import megamek.codeUtilities.StringUtility;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
+import megamek.common.equipment.ArmorType;
 import megamek.common.templates.TROView;
 
 import java.io.*;
@@ -168,7 +169,7 @@ public final class MechCacheCSVTool {
                 List<String> equipmentNames = new ArrayList<>();
                 for (String name : unit.getEquipmentNames()) {
                     // Ignore armor critical
-                    if (Stream.of(EquipmentType.armorNames).anyMatch(name::contains)) {
+                    if (ArmorType.allArmorNames().contains(name)) {
                         continue;
                     }
 

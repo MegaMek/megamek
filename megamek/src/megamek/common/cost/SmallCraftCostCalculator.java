@@ -19,8 +19,8 @@
 package megamek.common.cost;
 
 import megamek.client.ui.swing.calculationReport.CalculationReport;
-import megamek.common.EquipmentType;
 import megamek.common.SmallCraft;
+import megamek.common.equipment.ArmorType;
 import megamek.common.verifier.TestSmallCraft;
 
 public class SmallCraftCostCalculator {
@@ -66,7 +66,7 @@ public class SmallCraftCostCalculator {
         costs[idx++] = testSmallCraft.getWeightEngine() * 1000;
         costs[idx++] = (500 * smallCraft.getOriginalWalkMP() * smallCraft.getWeight()) / 100.0;
         costs[idx++] = 200 * testSmallCraft.getWeightFuel();
-        costs[idx++] = smallCraft.getArmorWeight() * EquipmentType.getArmorCost(smallCraft.getArmorType(0));
+        costs[idx++] = smallCraft.getArmorWeight() * ArmorType.forEntity(smallCraft).getCost();
         int sinkCost = 2000 + (4000 * smallCraft.getHeatType());
         costs[idx++] = sinkCost * smallCraft.getHeatSinks();
         costs[idx++] = CostCalculator.getWeaponsAndEquipmentCost(smallCraft, ignoreAmmo);

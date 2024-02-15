@@ -22,6 +22,7 @@ package megamek.common.equipment;
 import megamek.common.*;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class ArmorType extends MiscType {
 
@@ -33,7 +34,19 @@ public class ArmorType extends MiscType {
     private static final List<ArmorType> allTypes = new ArrayList<>();
 
     public static ArmorType of(int type, boolean clan) {
-        return clan ? armorTypeLookupClan.get(type) : armorTypeLookupIS.get(type);
+        if (armorTypeLookupClan.isEmpty() && armorTypeLookupIS.isEmpty()) {
+            initializeTypes();
+        }
+        ArmorType armor = clan ? armorTypeLookupClan.get(type) : armorTypeLookupIS.get(type);
+        // Some mixed tech unit files use the unit tech base instead of the armor tech base.
+        if (armor == null) {
+            armor = of(type, !clan);
+        }
+        return armor;
+    }
+
+    public static ArmorType svArmor(int bar) {
+        return of(T_ARMOR_SV_BAR_2 - 2 + bar, false);
     }
 
     public static ArmorType forEntity(Entity entity, int loc) {
@@ -46,6 +59,20 @@ public class ArmorType extends MiscType {
 
     public static List<ArmorType> allArmorTypes() {
         return Collections.unmodifiableList(allTypes);
+    }
+
+    public static List<String> allArmorNames() {
+        return allTypes.stream().map(ArmorType::getName).distinct().collect(Collectors.toList());
+    }
+
+    public static Map<Integer, String> getAllArmorCodeName() {
+        Map<Integer, String> result = new HashMap();
+
+        for (ArmorType armorType : allTypes) {
+            result.put(armorType.getArmorType(), getArmorTypeName(armorType.getArmorType()));
+        }
+
+        return result;
     }
 
     public static void initializeTypes() {
@@ -78,6 +105,16 @@ public class ArmorType extends MiscType {
         addArmorType(createPrimitiveArmor());
         addArmorType(createPrimitiveFighterArmor());
 
+        addArmorType(createSVArmorBAR2());
+        addArmorType(createSVArmorBAR3());
+        addArmorType(createSVArmorBAR4());
+        addArmorType(createSVArmorBAR5());
+        addArmorType(createSVArmorBAR6());
+        addArmorType(createSVArmorBAR7());
+        addArmorType(createSVArmorBAR8());
+        addArmorType(createSVArmorBAR9());
+        addArmorType(createSVArmorBAR10());
+
         addArmorType(createISAeroSpaceArmor());
         addArmorType(createClanAeroSpaceArmor());
         addArmorType(createISImpFerroAluminumArmor());
@@ -88,6 +125,7 @@ public class ArmorType extends MiscType {
         addArmorType(createClanLamellorFerroCarbideArmor());
         addArmorType(createPrimitiveLCAerospaceArmor());
 
+        addArmorType(createStandardProtomekArmor());
         addArmorType(createElectricDischargeArmor());
 
         addArmorType(createISBAStandardArmor());
@@ -109,22 +147,21 @@ public class ArmorType extends MiscType {
         addArmorType(createClanBAReactiveArmor());
 
         addArmorType(createPatchworkArmor());
+        addArmorType(createNoArmor());
     }
 
     private static void addArmorType(ArmorType at) {
-        if (at.getArmorType() != T_ARMOR_PATCHWORK) {
+        if ((at.getArmorType() != T_ARMOR_PATCHWORK) && (at.getArmorType() != T_ARMOR_UNKNOWN)) {
             EquipmentType.addType(at);
             allTypes.add(at);
         }
-        if (at.getArmorType() >= 0) {
-            if ((at.techAdvancement.getTechBase() == TechAdvancement.TECH_BASE_IS)
-                    || (at.techAdvancement.getTechBase() == TechAdvancement.TECH_BASE_ALL)) {
-                armorTypeLookupIS.put(at.armorType, at);
-            }
-            if ((at.techAdvancement.getTechBase() == TechAdvancement.TECH_BASE_CLAN)
-                    || (at.techAdvancement.getTechBase() == TechAdvancement.TECH_BASE_ALL)) {
-                armorTypeLookupClan.put(at.armorType, at);
-            }
+        if ((at.techAdvancement.getTechBase() == TechAdvancement.TECH_BASE_IS)
+                || (at.techAdvancement.getTechBase() == TechAdvancement.TECH_BASE_ALL)) {
+            armorTypeLookupIS.put(at.armorType, at);
+        }
+        if ((at.techAdvancement.getTechBase() == TechAdvancement.TECH_BASE_CLAN)
+                || (at.techAdvancement.getTechBase() == TechAdvancement.TECH_BASE_ALL)) {
+            armorTypeLookupClan.put(at.armorType, at);
         }
     }
 
@@ -146,6 +183,7 @@ public class ArmorType extends MiscType {
     private double weightPerPoint = 0.0;
     private double[] pptDropship = { };
     private double[] pptCapital = { };
+    private double[] weightPerPointSV = { };
     private int bar = 10;
 
     private ArmorType() {
@@ -153,6 +191,13 @@ public class ArmorType extends MiscType {
         omniFixedOnly = true;
         spreadable = true;
         bv = 0;
+    }
+
+    /**
+     * @return The cost of this armor per ton, or per point for BA and protomech armor.
+     */
+    public double getCost() {
+        return cost;
     }
 
     /**
@@ -183,6 +228,19 @@ public class ArmorType extends MiscType {
      */
     public int getPatchworkSlotsCVFtr() {
         return patchworkSlotsCVFtr;
+    }
+
+    @Override
+    public int getSupportVeeSlots(Entity entity) {
+        // Support vehicle armor takes slots like ferro-fibrous at BAR 10/TL E/F
+        if (getArmorType() == T_ARMOR_SV_BAR_10) {
+            if (entity.getArmorTechRating() == ITechnology.RATING_E) {
+                return ArmorType.of(T_ARMOR_FERRO_FIBROUS, false).criticals;
+            } else if (entity.getArmorTechRating() == ITechnology.RATING_F) {
+                return ArmorType.of(T_ARMOR_FERRO_FIBROUS, true).criticals;
+            }
+        }
+        return svslots;
     }
 
     /**
@@ -230,6 +288,19 @@ public class ArmorType extends MiscType {
         return weightPerPoint;
     }
 
+    /**
+     * @param techRating The support vehicle's armor tech rating
+     * @return The weight in tons of each point of armor. A value of 0.0 means that the armor does not
+     *         exist at that tech level (or it is not SV BAR armor).
+     */
+    public double getSVWeightPerPoint(int techRating) {
+        if ((techRating >= 0) && (techRating < weightPerPointSV.length)) {
+            return weightPerPointSV[techRating];
+        } else {
+            return 0.0;
+        }
+    }
+
     public int getBAR() {
         return bar;
     }
@@ -245,8 +316,9 @@ public class ArmorType extends MiscType {
         armor.addLookupName("IS Standard Armor");
         armor.addLookupName("Clan Standard Armor");
         armor.flags = armor.flags.or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT)
-                .or(F_VTOL_EQUIPMENT).or(F_FIGHTER_EQUIPMENT).or(F_PROTOMECH_EQUIPMENT);
+                .or(F_VTOL_EQUIPMENT).or(F_FIGHTER_EQUIPMENT);
         armor.criticals = 0;
+        armor.cost = 10000.0;
 
         armor.techAdvancement = new TechAdvancement(TECH_BASE_ALL)
                 .setAdvancement(2460, 2470, 2470).setApproximate(true, false, false)
@@ -266,7 +338,7 @@ public class ArmorType extends MiscType {
         armor.setInternalName("IS Ferro-Fibrous");
         armor.addLookupName("IS Ferro-Fibrous Armor");
         armor.addLookupName("IS Ferro Fibre");
-        armor.tonnage = TONNAGE_VARIABLE;
+        armor.cost = 20000.0;
         armor.criticals = 14;
         armor.tankslots = 2;
         armor.svslots = 2;
@@ -293,7 +365,7 @@ public class ArmorType extends MiscType {
         armor.setInternalName("Clan Ferro-Fibrous");
         armor.addLookupName("Clan Ferro-Fibrous Armor");
         armor.addLookupName("Clan Ferro Fibre");
-        armor.tonnage = TONNAGE_VARIABLE;
+        armor.cost = 20000.0;
         armor.criticals = 7;
         armor.tankslots = 1;
         armor.svslots = 3;
@@ -321,7 +393,7 @@ public class ArmorType extends MiscType {
         armor.setInternalName("IS Light Ferro-Fibrous");
         armor.addLookupName("IS Light Ferro-Fibrous Armor");
         armor.addLookupName("IS LightFerro");
-        armor.tonnage = TONNAGE_VARIABLE;
+        armor.cost = 15000.0;
         armor.criticals = 7;
         armor.tankslots = 1;
         armor.svslots = 1;
@@ -347,7 +419,7 @@ public class ArmorType extends MiscType {
         armor.name = "Heavy Ferro-Fibrous";
         armor.setInternalName("IS Heavy Ferro-Fibrous");
         armor.addLookupName("IS Heavy Ferro-Fibrous Armor");
-        armor.tonnage = TONNAGE_VARIABLE;
+        armor.cost = 25000.0;
         armor.criticals = 21;
         armor.tankslots = 3;
         armor.svslots = 3;
@@ -373,7 +445,7 @@ public class ArmorType extends MiscType {
         armor.name = "Ferro-Fibrous Prototype";
         armor.setInternalName("IS Ferro-Fibrous Prototype");
         armor.addLookupName("IS Ferro-Fibrous Armor Prototype");
-        armor.tonnage = TONNAGE_VARIABLE;
+        armor.cost = 60000.0;
         armor.criticals = 16;
         armor.tankslots = 3;
         armor.svslots = 3;
@@ -400,9 +472,9 @@ public class ArmorType extends MiscType {
         armor.name = "Ferro-Aluminum";
         armor.setInternalName("IS Ferro-Aluminum");
         armor.addLookupName("IS Ferro-Aluminum Armor");
+        armor.cost = 20000.0;
         armor.figherSlots = 2;
         armor.patchworkSlotsCVFtr = 1;
-        armor.tonnage = TONNAGE_VARIABLE;
         armor.flags = armor.flags.or(F_FERRO_FIBROUS).or(F_FIGHTER_EQUIPMENT).or(F_SC_EQUIPMENT).or(F_DS_EQUIPMENT);
         armor.rulesRefs = "205, TM";
         armor.techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_E)
@@ -423,9 +495,9 @@ public class ArmorType extends MiscType {
         armor.name = "Ferro-Aluminum";
         armor.setInternalName("Clan Ferro-Aluminum");
         armor.addLookupName("Clan Ferro-Aluminum Armor");
+        armor.cost = 20000.0;
         armor.figherSlots = 2;
         armor.patchworkSlotsCVFtr = 1;
-        armor.tonnage = TONNAGE_VARIABLE;
         armor.flags = armor.flags.or(F_FERRO_FIBROUS).or(F_FIGHTER_EQUIPMENT).or(F_SC_EQUIPMENT).or(F_DS_EQUIPMENT);
         armor.rulesRefs = "205, TM";
         armor.techAdvancement.setTechBase(TECH_BASE_CLAN).setTechRating(RATING_F)
@@ -447,9 +519,9 @@ public class ArmorType extends MiscType {
         armor.name = "Light Ferro-Aluminum";
         armor.setInternalName("IS Light Ferro-Aluminum");
         armor.addLookupName("IS Light Ferro-Aluminum Armor");
+        armor.cost = 15000.0;
         armor.figherSlots = 1;
         armor.patchworkSlotsCVFtr = 1;
-        armor.tonnage = TONNAGE_VARIABLE;
         armor.flags = armor.flags.or(F_LIGHT_FERRO).or(F_FIGHTER_EQUIPMENT).or(F_SC_EQUIPMENT).or(F_DS_EQUIPMENT);
         armor.rulesRefs = "205, TM";
         armor.techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_E)
@@ -471,9 +543,9 @@ public class ArmorType extends MiscType {
         armor.name = "Heavy Ferro-Aluminum";
         armor.setInternalName("IS Heavy Ferro-Aluminum");
         armor.addLookupName("IS Heavy Ferro-Aluminum Armor");
+        armor.cost = 25000.0;
         armor.figherSlots = 4;
         armor.patchworkSlotsCVFtr = 2;
-        armor.tonnage = TONNAGE_VARIABLE;
         armor.flags = armor.flags.or(F_HEAVY_FERRO).or(F_FIGHTER_EQUIPMENT).or(F_SC_EQUIPMENT).or(F_DS_EQUIPMENT);
         armor.rulesRefs = "205, TM";
         armor.techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_E)
@@ -495,9 +567,9 @@ public class ArmorType extends MiscType {
         armor.name = "Prototype Ferro-Aluminum";
         armor.setInternalName("IS Prototype Ferro-Aluminum");
         armor.addLookupName("IS Ferro-Alum Armor Prototype");
+        armor.cost = 60000.0;
         armor.figherSlots = 3;
         armor.patchworkSlotsCVFtr = 1;
-        armor.tonnage = TONNAGE_VARIABLE;
         armor.flags = armor.flags.or(F_FERRO_FIBROUS_PROTO).or(F_FIGHTER_EQUIPMENT)
                 .or(F_SC_EQUIPMENT).or(F_DS_EQUIPMENT);
         armor.rulesRefs = "72, IO";
@@ -521,7 +593,7 @@ public class ArmorType extends MiscType {
         armor.setInternalName(armor.name);
         armor.addLookupName("IS Commercial");
         armor.addLookupName("Clan Commercial");
-        armor.tonnage = TONNAGE_VARIABLE;
+        armor.cost = 3000.0;
         armor.industrial = true;
         armor.flags = armor.flags.or(F_COMMERCIAL_ARMOR).or(F_MECH_EQUIPMENT);
         armor.omniFixedOnly = true;
@@ -544,10 +616,10 @@ public class ArmorType extends MiscType {
 
         armor.name = "Industrial "; // extra space at the end on purpose
         armor.setInternalName(armor.name);
-        armor.addLookupName("IS Industrial ");
-        armor.addLookupName("Clan Industrial ");
+        armor.addLookupName("IS Industrial");
+        armor.addLookupName("Clan Industrial");
         armor.addLookupName("Clan Industrial Armor");
-        armor.tonnage = TONNAGE_VARIABLE;
+        armor.cost = 5000.0;
         armor.industrial = true;
         armor.flags = armor.flags.or(F_INDUSTRIAL_ARMOR).or(F_MECH_EQUIPMENT);
         armor.omniFixedOnly = true;
@@ -570,7 +642,7 @@ public class ArmorType extends MiscType {
         armor.name = "Heavy Industrial";
         armor.setInternalName("IS Heavy Industrial");
         armor.addLookupName("Clan Heavy Industrial");
-        armor.tonnage = TONNAGE_VARIABLE;
+        armor.cost = 10000.0;
         armor.industrial = true;
         armor.flags = armor.flags.or(F_HEAVY_INDUSTRIAL_ARMOR).or(F_MECH_EQUIPMENT);
         armor.rulesRefs = "205, TM";
@@ -590,7 +662,7 @@ public class ArmorType extends MiscType {
 
         armor.name = "Primitive";
         armor.setInternalName("IS Primitive");
-        armor.tonnage = TONNAGE_VARIABLE;
+        armor.cost = 5000.0;
         armor.industrial = true;
         armor.flags = armor.flags.or(F_PRIMITIVE_ARMOR).or(F_MECH_EQUIPMENT);
         armor.rulesRefs = "125, IO";
@@ -614,7 +686,7 @@ public class ArmorType extends MiscType {
         armor.name = "Primitive Fighter";
         armor.setInternalName("IS Primitive Fighter");
         armor.shortName = "Primitive";
-        armor.tonnage = TONNAGE_VARIABLE;
+        armor.cost = 5000.0;
         armor.industrial = true;
         armor.flags = armor.flags.or(F_PRIMITIVE_ARMOR).or(F_FIGHTER_EQUIPMENT);
         armor.omniFixedOnly = true;
@@ -638,7 +710,7 @@ public class ArmorType extends MiscType {
         armor.setInternalName("IS Reactive");
         armor.addLookupName("IS Reactive Armor");
         armor.addLookupName("IS Reactive");
-        armor.tonnage = 0;
+        armor.cost = 30000.0;
         armor.criticals = 14;
         armor.tankslots = 2;
         armor.svslots = 2;
@@ -668,7 +740,7 @@ public class ArmorType extends MiscType {
         armor.setInternalName("Clan Reactive");
         armor.addLookupName("Clan Reactive Armor");
         armor.addLookupName("Clan Reactive");
-        armor.tonnage = 0;
+        armor.cost = 30000.0;
         armor.criticals = 7;
         armor.tankslots = 1;
         armor.svslots = 1;
@@ -697,7 +769,7 @@ public class ArmorType extends MiscType {
         armor.setInternalName("IS Reflective");
         armor.addLookupName("IS Reflective Armor");
         armor.addLookupName("IS Reflective");
-        armor.tonnage = 0;
+        armor.cost = 30000.0;
         armor.criticals = 10;
         armor.tankslots = 1;
         armor.svslots = 1;
@@ -726,7 +798,7 @@ public class ArmorType extends MiscType {
         armor.setInternalName("Clan Reflective");
         armor.addLookupName("Clan Reflective Armor");
         armor.addLookupName("Clan Reflective");
-        armor.tonnage = 0;
+        armor.cost = 30000.0;
         armor.criticals = 5;
         armor.tankslots = 1;
         armor.svslots = 1;
@@ -754,7 +826,7 @@ public class ArmorType extends MiscType {
         armor.name = "Hardened";
         armor.setInternalName("IS Hardened");
         armor.addLookupName("Clan Hardened");
-        armor.tonnage = TONNAGE_VARIABLE;
+        armor.cost = 15000.0;
         armor.criticals = 0;
         armor.tankslots = 1;
         armor.flags = armor.flags.or(F_HARDENED_ARMOR).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT);
@@ -780,7 +852,7 @@ public class ArmorType extends MiscType {
         armor.name = "Stealth";
         armor.setInternalName("IS Stealth");
         armor.addLookupName("IS Stealth Armor");
-        armor.tonnage = TONNAGE_VARIABLE;
+        armor.cost = 50000.0;
         armor.criticals = 12;
         armor.patchworkSlotsMechSV = 2;
         armor.patchworkSlotsCVFtr = 1;
@@ -809,7 +881,7 @@ public class ArmorType extends MiscType {
         armor.setInternalName("IS Vehicular Stealth");
         armor.addLookupName("IS Vehicular Stealth Armor");
         armor.shortName = "Stealth";
-        armor.tonnage = TONNAGE_VARIABLE;
+        armor.cost = 50000.0;
         armor.tankslots = 2;
         armor.svslots = 2;
         armor.figherSlots = 2;
@@ -837,7 +909,7 @@ public class ArmorType extends MiscType {
 
         armor.name = "Ferro-Lamellor";
         armor.setInternalName("Clan Ferro-Lamellor");
-        armor.tonnage = TONNAGE_VARIABLE;
+        armor.cost = 35000.0;
         armor.criticals = 14;
         armor.tankslots = 1;
         armor.svslots = 1;
@@ -865,7 +937,7 @@ public class ArmorType extends MiscType {
         armor.name = "Heat-Dissipating";
         armor.setInternalName("IS Heat-Dissipating");
         armor.addLookupName("Clan Heat-Dissipating");
-        armor.tonnage = TONNAGE_VARIABLE;
+        armor.cost = 25000.0;
         armor.criticals = 6;
         armor.patchworkSlotsMechSV = 1;
         armor.flags = armor.flags.or(F_HEAT_DISSIPATING).or(F_MECH_EQUIPMENT);
@@ -891,7 +963,7 @@ public class ArmorType extends MiscType {
 
         armor.name = "Impact-Resistant";
         armor.setInternalName("IS Impact-Resistant");
-        armor.tonnage = TONNAGE_VARIABLE;
+        armor.cost = 20000.0;
         armor.criticals = 10;
         armor.patchworkSlotsMechSV = 2;
         armor.flags = armor.flags.or(F_IMPACT_RESISTANT).or(F_MECH_EQUIPMENT);
@@ -915,7 +987,7 @@ public class ArmorType extends MiscType {
 
         armor.name = "Anti-Penetrative Ablation";
         armor.setInternalName("IS Anti-Penetrative Ablation");
-        armor.tonnage = TONNAGE_VARIABLE;
+        armor.cost = 15000.0;
         armor.criticals = 6;
         armor.tankslots = 1;
         armor.svslots = 1;
@@ -943,7 +1015,7 @@ public class ArmorType extends MiscType {
 
         armor.name = "Ballistic-Reinforced";
         armor.setInternalName("IS Ballistic-Reinforced");
-        armor.tonnage = TONNAGE_VARIABLE;
+        armor.cost = 25000.0;
         armor.criticals = 10;
         armor.tankslots = 1;
         armor.svslots = 1;
@@ -975,6 +1047,7 @@ public class ArmorType extends MiscType {
         armor.setInternalName("IS Standard Aerospace");
         armor.flags = armor.flags.or(F_SC_EQUIPMENT).or(F_DS_EQUIPMENT)
                 .or(F_JS_EQUIPMENT).or(F_WS_EQUIPMENT).or(F_SS_EQUIPMENT);
+        armor.cost = 10000.0;
         armor.rulesRefs = "205, TM";
         armor.techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_D)
                 .setAvailability(RATING_C, RATING_C, RATING_C, RATING_B)
@@ -996,6 +1069,7 @@ public class ArmorType extends MiscType {
         armor.setInternalName("Clan Standard Aerospace");
         armor.flags = armor.flags.or(F_SC_EQUIPMENT).or(F_DS_EQUIPMENT)
                 .or(F_JS_EQUIPMENT).or(F_WS_EQUIPMENT).or(F_SS_EQUIPMENT);
+        armor.cost = 10000.0;
         armor.rulesRefs = "205, TM";
         armor.techAdvancement.setTechBase(TECH_BASE_CLAN).setTechRating(RATING_D)
                 .setAvailability(RATING_C, RATING_C, RATING_C, RATING_B)
@@ -1016,8 +1090,8 @@ public class ArmorType extends MiscType {
         armor.setInternalName("IS Improved Ferro-Aluminum");
         armor.addLookupName(armor.name);
         armor.addLookupName("ImprovedFerroAluminum");
-        armor.bv = 0;
         armor.flags = armor.flags.or(F_CAPITAL_ARMOR).or(F_IMP_FERRO).or(F_JS_EQUIPMENT).or(F_WS_EQUIPMENT).or(F_SS_EQUIPMENT);
+        armor.cost = 50000.0;
         armor.rulesRefs = "152, SO";
         armor.techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_E)
                 .setAvailability(RATING_E, RATING_X, RATING_E, RATING_D)
@@ -1038,6 +1112,7 @@ public class ArmorType extends MiscType {
         armor.name = "Improved Ferro-Aluminum";
         armor.setInternalName("Clan Improved Ferro-Aluminum");
         armor.flags = armor.flags.or(F_CAPITAL_ARMOR).or(F_IMP_FERRO).or(F_JS_EQUIPMENT).or(F_WS_EQUIPMENT).or(F_SS_EQUIPMENT);
+        armor.cost = 50000.0;
         armor.rulesRefs = "152, SO";
         armor.techAdvancement.setTechBase(TECH_BASE_CLAN).setTechRating(RATING_E)
                 .setAvailability(RATING_E, RATING_X, RATING_E, RATING_D)
@@ -1057,7 +1132,7 @@ public class ArmorType extends MiscType {
         armor.name = "Ferro-Carbide";
         armor.setInternalName("IS Ferro-Carbide");
         armor.addLookupName("Ferro-Carbide");
-        armor.tonnage = 0;
+        armor.cost = 75000.0;
         armor.flags = armor.flags.or(F_CAPITAL_ARMOR).or(F_FERRO_CARBIDE).or(F_JS_EQUIPMENT).or(F_WS_EQUIPMENT).or(F_SS_EQUIPMENT);
         armor.rulesRefs = "152, SO";
         armor.techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_E)
@@ -1079,6 +1154,7 @@ public class ArmorType extends MiscType {
         armor.name = "Ferro-Carbide";
         armor.setInternalName("Clan Ferro-Carbide");
         armor.flags = armor.flags.or(F_CAPITAL_ARMOR).or(F_FERRO_CARBIDE).or(F_JS_EQUIPMENT).or(F_WS_EQUIPMENT).or(F_SS_EQUIPMENT);
+        armor.cost = 75000.0;
         armor.rulesRefs = "152, SO";
         armor.techAdvancement.setTechBase(TECH_BASE_CLAN).setTechRating(RATING_E)
                 .setAvailability(RATING_E, RATING_X, RATING_E, RATING_D)
@@ -1100,6 +1176,7 @@ public class ArmorType extends MiscType {
         armor.setInternalName("IS Lamellor Ferro-Carbide");
         armor.addLookupName(armor.name);
         armor.flags = armor.flags.or(F_CAPITAL_ARMOR).or(F_JS_EQUIPMENT).or(F_WS_EQUIPMENT).or(F_SS_EQUIPMENT);
+        armor.cost = 100000.0;
         armor.rulesRefs = "152, SO";
         armor.techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_E)
                 .setAvailability(RATING_E, RATING_F, RATING_E, RATING_D)
@@ -1121,6 +1198,7 @@ public class ArmorType extends MiscType {
         armor.name = "Lamellor Ferro-Carbide";
         armor.setInternalName("Clan Lamellor Ferro-Carbide");
         armor.flags = armor.flags.or(F_CAPITAL_ARMOR).or(F_JS_EQUIPMENT).or(F_WS_EQUIPMENT).or(F_SS_EQUIPMENT);
+        armor.cost = 100000.0;
         armor.rulesRefs = "152, SO";
         armor.techAdvancement.setTechBase(TECH_BASE_CLAN).setTechRating(RATING_E)
                 .setAvailability(RATING_E, RATING_F, RATING_E, RATING_D)
@@ -1141,7 +1219,7 @@ public class ArmorType extends MiscType {
         armor.name = "Primitive Aerospace";
         armor.setInternalName("IS Primitive Aerospace");
         armor.shortName = "Primitive";
-        armor.tonnage = TONNAGE_VARIABLE;
+        armor.cost = 5000.0;
         armor.industrial = true;
         armor.flags = armor.flags.or(F_PRIMITIVE_ARMOR).or(F_SC_EQUIPMENT).or(F_DS_EQUIPMENT)
                 .or(F_JS_EQUIPMENT).or(F_WS_EQUIPMENT).or(F_SS_EQUIPMENT);
@@ -1158,6 +1236,25 @@ public class ArmorType extends MiscType {
         return armor;
     }
 
+    private static ArmorType createStandardProtomekArmor() {
+        ArmorType armor = new ArmorType();
+
+        armor.name = "Standard ProtoMech";
+        armor.setInternalName(armor.name);
+        armor.addLookupName("Clan Standard ProtoMech");
+        armor.shortName = "Standard";
+        armor.flags = armor.flags.or(F_PROTOMECH_EQUIPMENT);
+        armor.criticals = 0;
+        armor.cost = 625.0;
+
+        armor.techAdvancement = Protomech.TA_STANDARD_PROTOMECH;
+
+        armor.armorType = T_ARMOR_STANDARD_PROTOMEK;
+        armor.weightPerPoint = 0.050;
+
+        return armor;
+    }
+
     private static ArmorType createElectricDischargeArmor() {
         ArmorType armor = new ArmorType();
 
@@ -1165,6 +1262,7 @@ public class ArmorType extends MiscType {
         armor.setInternalName("Clan Electric Discharge ProtoMech");
         armor.addLookupName("CLEDPArmor");
         armor.shortName = "EDP";
+        armor.cost = 1250.0;
         armor.criticals = 1;
         armor.flags = armor.flags.or(F_PROTOMECH_EQUIPMENT).or(F_ELECTRIC_DISCHARGE_ARMOR);
         armor.bv = 32;
@@ -1189,6 +1287,7 @@ public class ArmorType extends MiscType {
         armor.name = "BA Standard (Basic)";
         armor.setInternalName("IS BA Standard (Basic)");
         armor.shortName = "Standard (Basic)";
+        armor.cost = 10000.0;
         armor.criticals = 0;
         armor.flags = armor.flags.or(F_BA_EQUIPMENT);
         armor.rulesRefs = "252, TM";
@@ -1211,6 +1310,7 @@ public class ArmorType extends MiscType {
         armor.name = "BA Standard (Basic)";
         armor.setInternalName("Clan BA Standard (Basic)");
         armor.shortName = "Standard (Basic)";
+        armor.cost = 10000.0;
         armor.criticals = 0;
         armor.flags = armor.flags.or(F_BA_EQUIPMENT);
         armor.rulesRefs = "252, TM";
@@ -1232,6 +1332,7 @@ public class ArmorType extends MiscType {
         armor.name = "BA Standard (Prototype)";
         armor.setInternalName("IS BA Standard (Prototype)");
         armor.shortName = "Standard (Prototype)";
+        armor.cost = 10000.0;
         armor.criticals = 4;
         armor.flags = armor.flags.or(F_BA_EQUIPMENT);
         armor.techAdvancement.setTechBase(TECH_BASE_IS)
@@ -1253,6 +1354,7 @@ public class ArmorType extends MiscType {
         armor.name = "BA Advanced";
         armor.setInternalName("IS BA Advanced");
         armor.shortName = "Advanced";
+        armor.cost = 12500.0;
         armor.criticals = 5;
         armor.flags = armor.flags.or(F_BA_EQUIPMENT);
         armor.rulesRefs = "252, TM";
@@ -1272,6 +1374,7 @@ public class ArmorType extends MiscType {
         armor.name = "BA Fire Resistant";
         armor.setInternalName("Clan BA Fire Resistant");
         armor.shortName = "Fire Resistant";
+        armor.cost = 10000.0;
         armor.criticals = 5;
         armor.flags = armor.flags.or(F_FIRE_RESISTANT).or(F_BA_EQUIPMENT);
         armor.rulesRefs = "253, TM";
@@ -1293,6 +1396,7 @@ public class ArmorType extends MiscType {
         armor.setInternalName("IS BA Stealth (Prototype)");
         armor.addLookupName("Clan BA Stealth (Prototype)");
         armor.shortName = "Stealth (Prototype)";
+        armor.cost = 50000.0;
         armor.criticals = 4;
         armor.flags = armor.flags.or(F_STEALTH).or(F_BA_EQUIPMENT);
         armor.rulesRefs = "252, TM";
@@ -1313,6 +1417,7 @@ public class ArmorType extends MiscType {
         armor.name = "BA Stealth (Basic)";
         armor.setInternalName("IS BA Stealth (Basic)");
         armor.shortName = "Stealth (Basic)";
+        armor.cost = 12000.0;
         armor.criticals = 3;
         armor.flags = armor.flags.or(F_STEALTH).or(F_BA_EQUIPMENT);
         armor.rulesRefs = "252, TM";
@@ -1333,6 +1438,7 @@ public class ArmorType extends MiscType {
         armor.name = "BA Stealth (Basic)";
         armor.setInternalName("Clan BA Stealth (Basic)");
         armor.shortName = "Stealth (Basic)";
+        armor.cost = 12000.0;
         armor.criticals = 3;
         armor.flags = armor.flags.or(F_STEALTH).or(F_BA_EQUIPMENT);
         armor.rulesRefs = "252, TM";
@@ -1353,6 +1459,7 @@ public class ArmorType extends MiscType {
         armor.setInternalName("IS BA Stealth (Standard)");
         armor.addLookupName("IS BA Stealth");
         armor.shortName = "Stealth";
+        armor.cost = 15000.0;
         armor.criticals = 4;
         armor.flags = armor.flags.or(F_STEALTH).or(F_BA_EQUIPMENT);
         armor.rulesRefs = "252, TM";
@@ -1374,6 +1481,7 @@ public class ArmorType extends MiscType {
         armor.setInternalName("Clan BA Stealth (Standard)");
         armor.addLookupName("Clan BA Stealth");
         armor.shortName = "Stealth";
+        armor.cost = 15000.0;
         armor.criticals = 4;
         armor.flags = armor.flags.or(F_STEALTH).or(F_BA_EQUIPMENT);
         armor.rulesRefs = "252, TM";
@@ -1394,6 +1502,7 @@ public class ArmorType extends MiscType {
         armor.name = "BA Stealth (Improved)";
         armor.setInternalName("IS BA Stealth (Improved)");
         armor.shortName = "Stealth (Improved)";
+        armor.cost = 20000.0;
         armor.criticals = 5;
         armor.flags = armor.flags.or(F_STEALTH).or(F_BA_EQUIPMENT);
         armor.rulesRefs = "252, TM";
@@ -1415,6 +1524,7 @@ public class ArmorType extends MiscType {
         armor.name = "BA Stealth (Improved)";
         armor.setInternalName("Clan BA Stealth (Improved)");
         armor.shortName = "Stealth (Improved)";
+        armor.cost = 20000.0;
         armor.criticals = 5;
         armor.flags = armor.flags.or(F_STEALTH).or(F_BA_EQUIPMENT);
         armor.rulesRefs = "252, TM";
@@ -1436,6 +1546,7 @@ public class ArmorType extends MiscType {
         armor.name = "BA Mimetic";
         armor.setInternalName("IS BA Mimetic");
         armor.shortName = "Mimetic";
+        armor.cost = 15000.0;
         armor.criticals = 7;
         armor.flags = armor.flags.or(F_STEALTH).or(F_VISUAL_CAMO).or(F_BA_EQUIPMENT);
         armor.rulesRefs = "253, TM";
@@ -1457,6 +1568,7 @@ public class ArmorType extends MiscType {
         armor.setInternalName("IS BA Reactive (Blazer)");
         armor.addLookupName("IS BA Reactive");
         armor.shortName = "Reactive";
+        armor.cost = 37000.0;
         armor.criticals = 7;
         armor.flags = armor.flags.or(F_BA_EQUIPMENT).or(F_REACTIVE);
         armor.rulesRefs = "93, TO: AU&E";
@@ -1481,6 +1593,7 @@ public class ArmorType extends MiscType {
         armor.setInternalName("Clan BA Reactive (Blazer)");
         armor.addLookupName("Clan BA Reactive");
         armor.shortName = "Reactive";
+        armor.cost = 37000.0;
         armor.criticals = 7;
         armor.flags = armor.flags.or(F_BA_EQUIPMENT).or(F_REACTIVE);
         armor.rulesRefs = "94, TO: AU&E";
@@ -1504,6 +1617,7 @@ public class ArmorType extends MiscType {
         armor.setInternalName("IS BA Laser Reflective (Reflec/Glazed)");
         armor.addLookupName("IS BA Reflective");
         armor.shortName = "Reflective";
+        armor.cost = 37000.0;
         armor.criticals = 7;
         armor.flags = armor.flags.or(F_BA_EQUIPMENT).or(F_REFLECTIVE);
         armor.rulesRefs = "93, TO: AU&E";
@@ -1528,6 +1642,7 @@ public class ArmorType extends MiscType {
         armor.setInternalName("Clan BA Laser Reflective (Reflec/Glazed)");
         armor.addLookupName("Clan BA Reflective");
         armor.shortName = "Reflective";
+        armor.cost = 37000.0;
         armor.criticals = 7;
         armor.flags = armor.flags.or(F_BA_EQUIPMENT).or(F_REFLECTIVE);
         armor.rulesRefs = "93, TO: AU&E";
@@ -1546,12 +1661,201 @@ public class ArmorType extends MiscType {
         return armor;
     }
 
+    private static ArmorType createSVArmorBAR2() {
+        ArmorType armor = new ArmorType();
+
+        armor.name = "BAR 2 Armor";
+        armor.setInternalName(armor.name);
+        armor.shortName = "BAR 2";
+        armor.cost = 50.0;
+        armor.flags = armor.flags.or(F_SUPPORT_TANK_EQUIPMENT).or(F_SUPPORT_VEE_BAR_ARMOR);
+        armor.techAdvancement = new TechAdvancement(TECH_BASE_ALL).setAdvancement(DATE_PS, DATE_PS, DATE_PS)
+                .setTechRating(RATING_A).setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD);
+        armor.rulesRefs = "134, TM";
+        armor.bar = 2;
+
+        armor.armorType = T_ARMOR_SV_BAR_2;
+        armor.weightPerPointSV = new double[] { 0.040, 0.025, 0.016, 0.013, 0.012, 0.011 };
+
+        return armor;
+    }
+
+    private static ArmorType createSVArmorBAR3() {
+        ArmorType armor = new ArmorType();
+
+        armor.name = "BAR 3 Armor";
+        armor.setInternalName(armor.name);
+        armor.shortName = "BAR 3";
+        armor.cost = 100.0;
+        armor.flags = armor.flags.or(F_SUPPORT_TANK_EQUIPMENT).or(F_SUPPORT_VEE_BAR_ARMOR);
+        armor.techAdvancement = new TechAdvancement(TECH_BASE_ALL).setAdvancement(DATE_PS, DATE_PS, DATE_PS)
+            .setTechRating(RATING_A).setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
+            .setStaticTechLevel(SimpleTechLevel.STANDARD);
+        armor.rulesRefs = "134, TM";
+        armor.bar = 3;
+
+        armor.armorType = T_ARMOR_SV_BAR_3;
+        armor.weightPerPointSV = new double[] { 0.060, 0.038, 0.024, 0.019, 0.017, 0.016 };
+
+        return armor;
+    }
+
+    private static ArmorType createSVArmorBAR4() {
+        ArmorType armor = new ArmorType();
+
+        armor.name = "BAR 4 Armor";
+        armor.setInternalName(armor.name);
+        armor.shortName = "BAR 4";
+        armor.cost = 150.0;
+        armor.flags = armor.flags.or(F_SUPPORT_TANK_EQUIPMENT).or(F_SUPPORT_VEE_BAR_ARMOR);
+        armor.techAdvancement = new TechAdvancement(TECH_BASE_ALL).setAdvancement(DATE_PS, DATE_PS, DATE_PS)
+            .setTechRating(RATING_B).setAvailability(RATING_B, RATING_B, RATING_A, RATING_A)
+            .setStaticTechLevel(SimpleTechLevel.STANDARD);
+        armor.rulesRefs = "134, TM";
+        armor.bar = 4;
+
+        armor.armorType = T_ARMOR_SV_BAR_4;
+        armor.weightPerPointSV = new double[] { 0.080, 0.050, 0.032, 0.026, 0.023, 0.021 };
+
+        return armor;
+    }
+
+    private static ArmorType createSVArmorBAR5() {
+        ArmorType armor = new ArmorType();
+
+        armor.name = "BAR 5 Armor";
+        armor.setInternalName(armor.name);
+        armor.shortName = "BAR 5";
+        armor.cost = 200.0;
+        armor.flags = armor.flags.or(F_SUPPORT_TANK_EQUIPMENT).or(F_SUPPORT_VEE_BAR_ARMOR);
+        armor.techAdvancement = new TechAdvancement(TECH_BASE_ALL).setAdvancement(DATE_ES, DATE_ES, DATE_ES)
+            .setTechRating(RATING_B).setAvailability(RATING_B, RATING_B, RATING_B, RATING_A)
+            .setStaticTechLevel(SimpleTechLevel.STANDARD);
+        armor.rulesRefs = "134, TM";
+        armor.bar = 5;
+
+        armor.armorType = T_ARMOR_SV_BAR_5;
+        armor.weightPerPointSV = new double[] { 0.100, 0.063, 0.040, 0.032, 0.028, 0.026 };
+
+        return armor;
+    }
+
+    private static ArmorType createSVArmorBAR6() {
+        ArmorType armor = new ArmorType();
+
+        armor.name = "BAR 6 Armor";
+        armor.setInternalName(armor.name);
+        armor.shortName = "BAR 6";
+        armor.cost = 250.0;
+        armor.flags = armor.flags.or(F_SUPPORT_TANK_EQUIPMENT).or(F_SUPPORT_VEE_BAR_ARMOR);
+        armor.techAdvancement = new TechAdvancement(TECH_BASE_ALL).setAdvancement(DATE_ES, DATE_ES, DATE_ES)
+                .setTechRating(RATING_C).setAvailability(RATING_C, RATING_B, RATING_B, RATING_A)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD);
+        armor.rulesRefs = "134, TM";
+        armor.bar = 6;
+
+        armor.armorType = T_ARMOR_SV_BAR_6;
+        armor.weightPerPointSV = new double[] { 0.130, 0.75, 0.048, 0.038, 0.034, 0.032 };
+
+        return armor;
+    }
+
+    private static ArmorType createSVArmorBAR7() {
+        ArmorType armor = new ArmorType();
+
+        armor.name = "BAR 7 Armor";
+        armor.setInternalName(armor.name);
+        armor.shortName = "BAR 7";
+        armor.cost = 300.0;
+        armor.flags = armor.flags.or(F_SUPPORT_TANK_EQUIPMENT).or(F_SUPPORT_VEE_BAR_ARMOR);
+        armor.techAdvancement = new TechAdvancement(TECH_BASE_ALL).setAdvancement(2250, 2300, 2305)
+            .setApproximate(true, true, false).setPrototypeFactions(F_TA)
+            .setProductionFactions(F_TA).setTechRating(RATING_C)
+            .setAvailability(RATING_C, RATING_B, RATING_B, RATING_B)
+            .setStaticTechLevel(SimpleTechLevel.STANDARD);
+        armor.rulesRefs = "134, TM";
+        armor.bar = 7;
+
+        armor.armorType = T_ARMOR_SV_BAR_7;
+        armor.weightPerPointSV = new double[] { 0.180, 0.088, 0.056, 0.045, 0.040, 0.037 };
+
+        return armor;
+    }
+
+    private static ArmorType createSVArmorBAR8() {
+        ArmorType armor = new ArmorType();
+
+        armor.name = "BAR 8 Armor";
+        armor.setInternalName(armor.name);
+        armor.shortName = "BAR 8";
+        armor.cost = 400.0;
+        armor.flags = armor.flags.or(F_SUPPORT_TANK_EQUIPMENT).or(F_SUPPORT_VEE_BAR_ARMOR);
+        armor.techAdvancement = new TechAdvancement(TECH_BASE_ALL).setAdvancement(2425, 2435, 22445)
+            .setPrototypeFactions(F_TH).setProductionFactions(F_TH)
+            .setTechRating(RATING_D)
+            .setAvailability(RATING_C, RATING_C, RATING_B, RATING_B)
+            .setStaticTechLevel(SimpleTechLevel.STANDARD);
+        armor.rulesRefs = "134, TM";
+        armor.bar = 8;
+
+        armor.armorType = T_ARMOR_SV_BAR_8;
+        armor.weightPerPointSV = new double[] { 0.230, 0.120, 0.064, 0.051, 0.045, 0.042 };
+
+        return armor;
+    }
+
+    private static ArmorType createSVArmorBAR9() {
+        ArmorType armor = new ArmorType();
+
+        armor.name = "BAR 9 Armor";
+        armor.setInternalName(armor.name);
+        armor.shortName = "BAR 9";
+        armor.cost = 500.0;
+        armor.flags = armor.flags.or(F_SUPPORT_TANK_EQUIPMENT).or(F_SUPPORT_VEE_BAR_ARMOR);
+        armor.techAdvancement = new TechAdvancement(TECH_BASE_ALL).setAdvancement(2440, 2450, 2470)
+            .setPrototypeFactions(F_TH).setProductionFactions(F_TH)
+            .setTechRating(RATING_D)
+            .setAvailability(RATING_C, RATING_C, RATING_C, RATING_B)
+            .setStaticTechLevel(SimpleTechLevel.STANDARD);
+        armor.rulesRefs = "134, TM";
+        armor.bar = 9;
+
+        armor.armorType = T_ARMOR_SV_BAR_9;
+        armor.weightPerPointSV = new double[] { 0.0, 0.180, 0.100, 0.057, 0.051, 0.047 };
+
+        return armor;
+    }
+
+    private static ArmorType createSVArmorBAR10() {
+        ArmorType armor = new ArmorType();
+
+        armor.name = "BAR 10 Armor";
+        armor.setInternalName(armor.name);
+        armor.shortName = "BAR 10";
+        armor.cost = 625.0;
+        armor.flags = armor.flags.or(F_SUPPORT_TANK_EQUIPMENT).or(F_SUPPORT_VEE_BAR_ARMOR);
+        armor.techAdvancement = new TechAdvancement(TECH_BASE_ALL).setAdvancement(2460, 2470, 2505)
+            .setPrototypeFactions(F_TH).setProductionFactions(F_TH)
+            .setApproximate(true, false, false).setTechRating(RATING_D)
+            .setAvailability(RATING_D, RATING_D, RATING_D, RATING_C)
+            .setStaticTechLevel(SimpleTechLevel.STANDARD);
+        armor.rulesRefs = "134, TM";
+        armor.bar = 10;
+
+        armor.armorType = T_ARMOR_SV_BAR_10;
+        armor.weightPerPointSV = new double[] { 0.0, 0.250, 0.150, 0.063, 0.056, 0.052 };
+
+        return armor;
+    }
+
     // Not a true armor type
     private static ArmorType createPatchworkArmor() {
         ArmorType armor = new ArmorType();
 
         armor.name= "Patchwork";
         armor.setInternalName(armor.name);
+        armor.cost = 0.0;
         armor.flags = armor.flags.or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT)
                 .or(F_VTOL_EQUIPMENT).or(F_FIGHTER_EQUIPMENT);
         armor.techAdvancement = new TechAdvancement(TECH_BASE_ALL)
@@ -1562,5 +1866,25 @@ public class ArmorType extends MiscType {
         armor.armorType = T_ARMOR_PATCHWORK;
 
         return armor;
+    }
+
+    /* Placeholder for turrets and units that don't have a legal armor type (such as exoskeletons before
+     * the introduction of BA armor. */
+    private static ArmorType createNoArmor() {
+        ArmorType armor = new ArmorType();
+
+        armor.name = "No Armor";
+        armor.setInternalName(armor.name);
+        armor.addLookupName("Unknown");
+        armor.techAdvancement = new TechAdvancement();
+
+        armor.armorType = T_ARMOR_UNKNOWN;
+
+        return armor;
+    }
+
+    @Override
+    public String toString() {
+        return "[Armor] " + internalName;
     }
 }

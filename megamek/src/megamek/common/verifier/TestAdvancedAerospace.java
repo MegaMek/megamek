@@ -40,7 +40,7 @@ public class TestAdvancedAerospace extends TestAero {
      * @param techManager Constraints used to filter the possible armor types
      * @return A list of all armors that meet the tech constraints
      */
-    public static List<EquipmentType> legalArmorsFor(ITechManager techManager, boolean primitive) {
+    public static List<ArmorType> legalArmorsFor(ITechManager techManager, boolean primitive) {
         if (primitive) {
             return Collections.singletonList(ArmorType.of(EquipmentType.T_ARMOR_PRIMITIVE_AERO, false));
         } else {

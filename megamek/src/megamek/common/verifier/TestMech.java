@@ -16,6 +16,7 @@ package megamek.common.verifier;
 
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
+import megamek.common.equipment.ArmorType;
 import megamek.common.util.StringUtil;
 import megamek.common.weapons.artillery.ArtilleryWeapon;
 import megamek.common.weapons.autocannons.ACWeapon;
@@ -79,42 +80,27 @@ public class TestMech extends TestEntity {
     /**
      * Filters all mech armor according to given tech constraints
      *
-     * @param etype
-     * @param industrial
-     * @param techManager
-     * @return
+     * @param etype        Entity type bitmap
+     * @param industrial   Whether to include industrialmech armors
+     * @param techManager  The tech manager that determines legality
+     * @return             A list of legal armors for the mech
      */
-    public static List<EquipmentType> legalArmorsFor(long etype, boolean industrial, ITechManager techManager) {
-        List<EquipmentType> legalArmors = new ArrayList<>();
+    public static List<ArmorType> legalArmorsFor(long etype, boolean industrial, ITechManager techManager) {
+        List<ArmorType> legalArmors = new ArrayList<>();
         boolean industrialOnly = industrial
                 && (techManager.getTechLevel().ordinal() < SimpleTechLevel.EXPERIMENTAL.ordinal());
         boolean isLam = (etype & Entity.ETYPE_LAND_AIR_MECH) != 0;
-        for (int armorType = 0; armorType < EquipmentType.armorNames.length; armorType++) {
-            if ((armorType == EquipmentType.T_ARMOR_PATCHWORK)
-                    || (isLam && (armorType == EquipmentType.T_ARMOR_HARDENED))) {
+        for (ArmorType armor : ArmorType.allArmorTypes()) {
+            if ((armor.getArmorType() == EquipmentType.T_ARMOR_PATCHWORK)
+                    || (isLam && (armor.getArmorType() == EquipmentType.T_ARMOR_HARDENED))) {
                 continue;
             }
-            String name = EquipmentType.getArmorTypeName(armorType, techManager.useClanTechBase());
-            EquipmentType eq = EquipmentType.get(name);
-            if ((null != eq)
-                    && eq.hasFlag(MiscType.F_MECH_EQUIPMENT)
-                    && ((armorType != EquipmentType.T_ARMOR_COMMERCIAL) || industrial)
-                    && techManager.isLegal(eq)
-                    && (!isLam || (eq.getCriticals(null) == 0))
-                    && (!industrialOnly || ((MiscType) eq).isIndustrial())) {
-                legalArmors.add(eq);
-            }
-            if (techManager.useMixedTech()) {
-                name = EquipmentType.getArmorTypeName(armorType, !techManager.useClanTechBase());
-                EquipmentType eq2 = EquipmentType.get(name);
-                if ((null != eq2) && (eq != eq2)
-                        && eq2.hasFlag(MiscType.F_MECH_EQUIPMENT)
-                        && ((armorType != EquipmentType.T_ARMOR_COMMERCIAL) || industrial)
-                        && techManager.isLegal(eq2)
-                        && (!isLam || (eq2.getCriticals(null) == 0))
-                        && (!industrialOnly || ((null != eq) && ((MiscType) eq).isIndustrial()))) {
-                    legalArmors.add(eq2);
-                }
+            if (armor.hasFlag(MiscType.F_MECH_EQUIPMENT)
+                    && ((armor.getArmorType() != EquipmentType.T_ARMOR_COMMERCIAL) || industrial)
+                    && techManager.isLegal(armor)
+                    && (!isLam || (armor.getCriticals(null) == 0))
+                    && (!industrialOnly || armor.isIndustrial())) {
+                legalArmors.add(armor);
             }
         }
         return legalArmors;
@@ -123,7 +109,7 @@ public class TestMech extends TestEntity {
     private Mech mech;
 
     public TestMech(Mech mech, TestEntityOption option, String fileString) {
-        super(option, mech.getEngine(), getArmor(mech), getStructure(mech));
+        super(option, mech.getEngine(), getStructure(mech));
         this.mech = mech;
         this.fileString = fileString;
     }
@@ -133,31 +119,6 @@ public class TestMech extends TestEntity {
         return new Structure(type, mech.isSuperHeavy(), mech.getMovementMode());
     }
 
-    private static Armor[] getArmor(Mech mech) {
-        Armor[] armor;
-        if (!mech.hasPatchworkArmor()) {
-            armor = new Armor[1];
-            int type = mech.getArmorType(1);
-            int flag = 0;
-            if (mech.isClanArmor(1)) {
-                flag |= Armor.CLAN_ARMOR;
-            }
-            armor[0] = new Armor(type, flag);
-            return armor;
-        } else {
-            armor = new Armor[mech.locations()];
-            for (int i = 0; i < mech.locations(); i++) {
-                int type = mech.getArmorType(i);
-                int flag = 0;
-                if (mech.isClanArmor(i)) {
-                    flag |= Armor.CLAN_ARMOR;
-                }
-                armor[i] = new Armor(type, flag);
-            }
-        }
-        return armor;
-    }
-    
     public static Integer maxJumpMP(Mech mech) {
         if (mech.isSuperHeavy()) {
             return 0;

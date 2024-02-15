@@ -36,7 +36,7 @@ public class TestTank extends TestEntity {
     private final Tank tank;
 
     public TestTank(Tank tank, TestEntityOption options, String fileString) {
-        super(options, tank.getEngine(), getArmor(tank), getStructure(tank));
+        super(options, tank.getEngine(), getStructure(tank));
         this.tank = tank;
         this.fileString = fileString;
     }
@@ -52,31 +52,6 @@ public class TestTank extends TestEntity {
         return new Structure(type, tank.isSuperHeavy(), tank.getMovementMode());
     }
 
-    private static Armor[] getArmor(Tank tank) {
-        Armor[] armor;
-        if (!tank.hasPatchworkArmor()) {
-            armor = new Armor[1];
-            int type = tank.getArmorType(1);
-            int flag = 0;
-            if (tank.isClanArmor(1)) {
-                flag |= Armor.CLAN_ARMOR;
-            }
-            armor[0] = new Armor(type, flag);
-            return armor;
-        } else {
-            armor = new Armor[tank.locations()];
-            for (int i = 0; i < tank.locations(); i++) {
-                int type = tank.getArmorType(1);
-                int flag = 0;
-                if (tank.isClanArmor(1)) {
-                    flag |= Armor.CLAN_ARMOR;
-                }
-                armor[i] = new Armor(type, flag);
-            }
-        }
-        return armor;
-    }
-
     /**
      * Filters all vehicle armor according to given tech constraints
      *
@@ -84,31 +59,19 @@ public class TestTank extends TestEntity {
      * @param techManager  The tech constraints
      * @return             The armors legal for the unit
      */
-    public static List<EquipmentType> legalArmorsFor(EntityMovementMode movementMode, ITechManager techManager) {
-        List<EquipmentType> retVal = new ArrayList<>();
-        for (int at = 0; at < EquipmentType.armorNames.length; at++) {
-            if ((at == EquipmentType.T_ARMOR_PATCHWORK)
-                    || ((at == EquipmentType.T_ARMOR_HARDENED)
+    public static List<ArmorType> legalArmorsFor(EntityMovementMode movementMode, ITechManager techManager) {
+        List<ArmorType> retVal = new ArrayList<>();
+        for (ArmorType eq : ArmorType.allArmorTypes()) {
+            if ((eq.getArmorType() == EquipmentType.T_ARMOR_PATCHWORK)
+                    || ((eq.getArmorType() == EquipmentType.T_ARMOR_HARDENED)
                             && ((movementMode == EntityMovementMode.VTOL)
                             || (movementMode == EntityMovementMode.HOVER)
                             || (movementMode == EntityMovementMode.WIGE)))) {
                 continue;
             }
-            String name = EquipmentType.getArmorTypeName(at, techManager.useClanTechBase());
-            EquipmentType eq = EquipmentType.get(name);
-            if ((null != eq)
-                    && eq.hasFlag(MiscType.F_TANK_EQUIPMENT)
+            if (eq.hasFlag(MiscType.F_TANK_EQUIPMENT)
                     && techManager.isLegal(eq)) {
                 retVal.add(eq);
-            }
-            if (techManager.useMixedTech()) {
-                name = EquipmentType.getArmorTypeName(at, !techManager.useClanTechBase());
-                EquipmentType eq2 = EquipmentType.get(name);
-                if ((null != eq2) && (eq != eq2)
-                        && eq2.hasFlag(MiscType.F_TANK_EQUIPMENT)
-                        && techManager.isLegal(eq2)) {
-                    retVal.add(eq2);
-                }
             }
         }
         return retVal;
@@ -659,9 +622,7 @@ public class TestTank extends TestEntity {
                 }
                 continue;
             }
-            if (!((mount.getType() instanceof AmmoType) || Arrays.asList(
-                    EquipmentType.armorNames).contains(
-                    mount.getType().getName()))) {
+            if (!((mount.getType() instanceof AmmoType) || (mount.getType() instanceof ArmorType))) {
                 buff.append(StringUtil.makeLength(mount.getName(), 30));
                 buff.append(mount.getType().getTankSlots(tank)).append("\n");
             }

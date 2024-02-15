@@ -498,30 +498,19 @@ public class TestSupportVehicle extends TestEntity {
      * @param techManager Applies the filtering criteria
      * @return            A list of armor equipment that meets the tech constraints
      */
-    public static List<EquipmentType> legalArmorsFor(ITechManager techManager) {
-        if (techManager.getTechLevel().ordinal() < SimpleTechLevel.ADVANCED.ordinal()) {
-            return Collections.singletonList(EquipmentType.get(EquipmentType.armorNames[EquipmentType.T_ARMOR_STANDARD]));
-        }
-        List<EquipmentType> retVal = new ArrayList<>();
-        for (int at = 0; at < EquipmentType.armorNames.length; at++) {
-            if (at == EquipmentType.T_ARMOR_PATCHWORK) {
+    public static List<ArmorType> legalArmorsFor(ITechManager techManager) {
+        List<ArmorType> retVal = new ArrayList<>();
+        for (ArmorType armor : ArmorType.allArmorTypes()) {
+            if (armor.getArmorType() == EquipmentType.T_ARMOR_PATCHWORK) {
                 continue;
             }
-            String name = EquipmentType.getArmorTypeName(at, techManager.useClanTechBase());
-            EquipmentType eq = EquipmentType.get(name);
-            if ((null != eq)
-                    && eq.hasFlag(MiscType.F_SUPPORT_TANK_EQUIPMENT)
-                    && techManager.isLegal(eq)) {
-                retVal.add(eq);
+            // Installing non-BAR armor on a support vehicle is advanced
+            if (!armor.hasFlag(MiscType.F_SUPPORT_VEE_BAR_ARMOR)
+                    && (techManager.getTechLevel().ordinal() < SimpleTechLevel.ADVANCED.ordinal())) {
+                continue;
             }
-            if (techManager.useMixedTech()) {
-                name = EquipmentType.getArmorTypeName(at, !techManager.useClanTechBase());
-                EquipmentType eq2 = EquipmentType.get(name);
-                if ((null != eq2) && (eq != eq2)
-                        && eq2.hasFlag(MiscType.F_SUPPORT_TANK_EQUIPMENT)
-                        && techManager.isLegal(eq2)) {
-                    retVal.add(eq2);
-                }
+            if (armor.hasFlag(MiscType.F_SUPPORT_TANK_EQUIPMENT) && techManager.isLegal(armor)) {
+                retVal.add(armor);
             }
         }
         return retVal;
@@ -575,12 +564,11 @@ public class TestSupportVehicle extends TestEntity {
      * @return    The weight of each armor point in tons, rounded to the kilogram.
      */
     public static double armorWeightPerPoint(Entity vee) {
-        final int at = vee.getArmorType(vee.firstArmorIndex());
-        if (at == EquipmentType.T_ARMOR_STANDARD) {
-            return EquipmentType.getSupportVehicleArmorWeightPerPoint(vee.getBARRating(vee.firstArmorIndex()),
-                    vee.getArmorTechRating());
+        final ArmorType armor = ArmorType.forEntity(vee);
+        if (armor.hasFlag(MiscType.F_SUPPORT_VEE_BAR_ARMOR)) {
+            return armor.getSVWeightPerPoint(vee.getArmorTechRating());
         } else {
-            final double ppt = ArmorType.forEntity(vee).getPointsPerTon(vee);
+            final double ppt = armor.getPointsPerTon(vee);
             return round(1.0 / ppt, Ceil.KILO);
         }
     }
@@ -620,7 +608,7 @@ public class TestSupportVehicle extends TestEntity {
     
     public TestSupportVehicle(Entity sv, TestEntityOption options,
             String fileString) {
-        super(options, sv.getEngine(), null, null);
+        super(options, sv.getEngine(), null);
         this.supportVee = sv;
         testTank = sv instanceof Tank ? new TestTank((Tank) sv, options, fileString) : null;
         testAero = sv instanceof Aero ? new TestAero((Aero) sv, options, fileString) : null;
@@ -644,15 +632,10 @@ public class TestSupportVehicle extends TestEntity {
     @Override
     public String printWeightArmor() {
         String name;
-        if (getEntity().hasBARArmor(getEntity().firstArmorIndex())) {
-            name = String.format("BAR %d [%s]",
-                    getEntity().getBARRating(getEntity().firstArmorIndex()),
-                    ITechnology.getRatingName(getEntity().getArmorTechRating()));
-        } else if (!getEntity().hasPatchworkArmor()) {
-            name = EquipmentType.getArmorTypeName(getEntity()
-                            .getArmorType(getEntity().firstArmorIndex()));
-        } else {
+        if (getEntity().hasPatchworkArmor()) {
             name = "Patchwork";
+        } else {
+            name = ArmorType.forEntity(getEntity()).getName();
         }
         return StringUtil.makeLength(
                 String.format("Armor: %d (%s)", getTotalOArmor(), name),
@@ -993,7 +976,7 @@ public class TestSupportVehicle extends TestEntity {
                 buff.append("Armor must have a BAR between 2 and 10.\n");
                 correct = false;
             } else {
-                double perPoint = EquipmentType.getSupportVehicleArmorWeightPerPoint(bar, supportVee.getArmorTechRating());
+                double perPoint = ArmorType.forEntity(supportVee).getSVWeightPerPoint(supportVee.getArmorTechRating());
                 if (perPoint < 0.001) {
                     buff.append("BAR ").append(bar).append(" exceeds maximum for armor tech rating ")
                             .append(ITechnology.getRatingName(supportVee.getArmorTechRating()))
@@ -1173,13 +1156,12 @@ public class TestSupportVehicle extends TestEntity {
                 .map(m -> ChassisModification.getChassisMod(m.getType()))
                 .filter(Objects::nonNull).collect(Collectors.toSet());
         if (!chassisMods.contains(ChassisModification.ARMORED)) {
-            if (!supportVee.hasBARArmor(supportVee.firstArmorIndex())) {
+            ArmorType armor = ArmorType.forEntity(supportVee);
+            if (!armor.hasFlag(MiscType.F_SUPPORT_VEE_BAR_ARMOR)) {
                 buff.append("Advanced armor requires the Armored Chassis Mod.\n");
                 illegal = true;
             }
-            if (EquipmentType.getSupportVehicleArmorWeightPerPoint(
-                    supportVee.getBARRating(supportVee.firstArmorIndex()),
-                            supportVee.getArmorTechRating()) > 0.05) {
+            if (armor.getSVWeightPerPoint(supportVee.getArmorTechRating()) > 0.05) {
                 buff.append("Armor heavier than 50kg/point requires the Armored Chassis Mod.\n");
                 illegal = true;
             }
@@ -1365,26 +1347,11 @@ public class TestSupportVehicle extends TestEntity {
         // different armor types take different amount of slots
         int armorSlots = 0;
         if (!supportVee.hasPatchworkArmor()) {
-            int at = supportVee.getArmorType(supportVee.firstArmorIndex());
-            if (at == EquipmentType.T_ARMOR_STANDARD) {
-                // Support vehicle armor takes slots like ferro-fibrous at BAR 10/TL E/F
-                if (supportVee.getBARRating(supportVee.firstArmorIndex()) == 10) {
-                    if (supportVee.getArmorTechRating() == ITechnology.RATING_E) {
-                        armorSlots += ArmorType.of(EquipmentType.T_ARMOR_FERRO_FIBROUS, false).getSupportVeeSlots(supportVee);
-                    } else if (supportVee.getArmorTechRating() == ITechnology.RATING_F) {
-                        armorSlots += ArmorType.of(EquipmentType.T_ARMOR_FERRO_FIBROUS, true).getSupportVeeSlots(supportVee);
-                    }
-                }
-            } else {
-                ArmorType armor = ArmorType.of(at, TechConstants.isClan(supportVee.getArmorTechLevel(supportVee.firstArmorIndex())));
-                if (null != armor) {
-                    armorSlots += armor.getSupportVeeSlots(supportVee);
-                }
-            }
+            ArmorType armor = ArmorType.forEntity(supportVee);
+            armorSlots += armor.getSupportVeeSlots(supportVee);
         } else {
             for (int loc = 0; loc < supportVee.locations(); loc++) {
-                ArmorType armor = ArmorType.of(supportVee.getArmorType(loc),
-                        TechConstants.isClan(supportVee.getArmorTechLevel(loc)));
+                ArmorType armor = ArmorType.forEntity(supportVee, loc);
                 if (null != armor) {
                     armorSlots += armor.getPatchworkSlotsMechSV();
                 }
@@ -1455,26 +1422,8 @@ public class TestSupportVehicle extends TestEntity {
      */
     public int getArmorSlots() {
         if (!supportVee.hasPatchworkArmor()) {
-            int at = supportVee.getArmorType(supportVee.firstArmorIndex());
-            if (at == EquipmentType.T_ARMOR_STANDARD) {
-                // Support vehicle armor takes slots like ferro-fibrous at BAR 10/TL E/F
-                if (supportVee.getBARRating(supportVee.firstArmorIndex()) == 10) {
-                    if (supportVee.getArmorTechRating() == ITechnology.RATING_E) {
-                        return ArmorType.of(EquipmentType.T_ARMOR_FERRO_FIBROUS, false).getSupportVeeSlots(supportVee);
-                    } else if (supportVee.getArmorTechRating() == ITechnology.RATING_F) {
-                        return ArmorType.of(EquipmentType.T_ARMOR_FERRO_FIBROUS, true).getSupportVeeSlots(supportVee);
-                    }
-                }
-                return 0;
-            } else {
-                ArmorType armor = ArmorType.of(at,
-                        TechConstants.isClan(supportVee.getArmorTechLevel(supportVee.firstArmorIndex())));
-                if (null != armor) {
-                    return armor.getSupportVeeSlots(supportVee);
-                } else {
-                    return 0;
-                }
-            }
+            ArmorType armor = ArmorType.forEntity(supportVee);
+            return armor.getSupportVeeSlots(supportVee);
         } else {
             int space = 0;
             for (int loc = 0; loc < supportVee.locations(); loc++) {

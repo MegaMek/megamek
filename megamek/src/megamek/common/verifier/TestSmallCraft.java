@@ -51,7 +51,7 @@ public class TestSmallCraft extends TestAero {
      * @param techManager Used to check the tech constraints
      * @return A list of all armors that meet the tech constraints
      */
-    public static List<EquipmentType> legalArmorsFor(ITechManager techManager) {
+    public static List<ArmorType> legalArmorsFor(ITechManager techManager) {
         return ArmorType.allArmorTypes().stream()
                 .filter(at -> at.hasFlag(MiscType.F_SC_EQUIPMENT) && techManager.isLegal(at))
                 .collect(Collectors.toList());

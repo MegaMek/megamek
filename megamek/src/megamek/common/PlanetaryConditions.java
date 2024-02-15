@@ -231,8 +231,8 @@ public class PlanetaryConditions implements Serializable {
     private static final String MSG_INDICATOR_GRAVITY_NORMAL = Messages.getString("PlanetaryConditions.Indicator.Gravity.Normal");
     private static final String MSG_INDICATOR_GRAVITY_HIGH = Messages.getString("PlanetaryConditions.Indicator.Gravity.High");
     private boolean emi = false;
-    private static final String MSG_NAME_EMI_TRUE = Messages.getString("PlanetaryConditions.DisplayableName.EMI.true");
-    private static final String MSG_NAME_EMI_FALSE = Messages.getString("PlanetaryConditions.DisplayableName.EMI.false");
+    public static final String MSG_NAME_EMI_TRUE = Messages.getString("PlanetaryConditions.DisplayableName.EMI.true");
+    public static final String MSG_NAME_EMI_FALSE = Messages.getString("PlanetaryConditions.DisplayableName.EMI.false");
     private static final String MSG_INDICATOR_EMI_TRUE = Messages.getString("PlanetaryConditions.Indicator.EMI.true");
     private static final String MSG_INDICATOR_EMI_FALSE = Messages.getString("PlanetaryConditions.Indicator.EMI.false");
     private boolean terrainAffected = true;

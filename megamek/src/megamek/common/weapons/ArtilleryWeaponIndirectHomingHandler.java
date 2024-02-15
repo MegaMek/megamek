@@ -352,7 +352,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirec
                 v.add(ti);
                 if (debug) {
                     LogManager.getLogger().debug(new StringBuilder("Found valid TAG on target ")
-                            .append(ti).append("; Range to original target is ")
+                            .append(ti.target.getDisplayName()).append("; Range to original target is ")
                             .append(tc.distance(ti.target.getPosition())));
                 }
             }

@@ -30127,7 +30127,7 @@ public class GameManager implements IGameManager {
         // Make sure that the entity has the given equipment.
         Mounted mWeap = e.getEquipment(weaponId);
         Mounted mAmmo = e.getEquipment(ammoId);
-        Mounted oldAmmo = mWeap.getLinked();
+        Mounted oldAmmo = (mWeap == null) ? null : mWeap.getLinked();
         if (null == mAmmo) {
             LogManager.getLogger().error("Entity " + e.getDisplayName() + " does not have ammo #" + ammoId);
             return;

@@ -7445,8 +7445,8 @@ public class Compute {
      * @param game
      * @param ae
      * @param target
-     * @param atype to determine if we need the homing lead or some other value.
-     * @return Coordinates to target to hit this target while on the move.
+     * @param homing to determine if we need the homing lead or some other value.
+     * @return Coordinates to aim at to hit this target while it's on the move (we think).
      */
     public static Coords calculateArtilleryLead(Game game, Entity ae, Targetable target, boolean homing) {
         int leadAmount = 0;

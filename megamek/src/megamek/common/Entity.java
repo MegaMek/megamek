@@ -10646,6 +10646,9 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         if (!(strucType.startsWith("Clan ") || strucType.startsWith("IS "))) {
             strucType = (isClan() ? "Clan " : "IS ") + strucType;
         }
+        if (!(strucType.endsWith("Structure"))) {
+            strucType += " Structure";
+        }
         EquipmentType et = EquipmentType.get(strucType);
         setStructureType(EquipmentType.getStructureType(et));
         if (et == null) {

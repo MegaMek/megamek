@@ -166,6 +166,11 @@ public class MechTileset {
     }
 
     public Image imageFor(Entity entity, int secondaryPos) {
+        // Return the embedded icon, if the unit has one and this is the one-hex icon
+        if ((secondaryPos == -1) && entity.hasEmbeddedIcon()) {
+            return entity.getIcon();
+        }
+
         MechEntry entry = entryFor(entity, secondaryPos);
 
         if (entry == null) {

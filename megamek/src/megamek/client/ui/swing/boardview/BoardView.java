@@ -371,6 +371,8 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
      */
     public boolean showAllDeployment = false;
 
+    private boolean showLobbyPlayerDeployment = false;
+
     private long paintCompsStartTime;
 
     private Rectangle displayablesRect = new Rectangle();
@@ -1142,7 +1144,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         }
 
         if ((game.getPhase().isSetArtilleryAutohitHexes() && showAllDeployment)
-                || (game.getPhase().isLounge())) {
+                || ((game.getPhase().isLounge()) && showLobbyPlayerDeployment)) {
             drawAllDeployment(g);
         }
 
@@ -6751,5 +6753,9 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
 
     public boolean shouldShowCFWarning() {
         return ConstructionFactorWarning.shouldShow(game.getPhase(), GUIP.getShowCFWarnings());
+    }
+
+    public void setShowLobbyPlayerDeployment(boolean b) {
+        showLobbyPlayerDeployment = b;
     }
 }

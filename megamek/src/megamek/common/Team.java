@@ -52,6 +52,10 @@ public final class Team extends TurnOrdered {
         return players.isEmpty();
     }
 
+    public boolean hasPlayer(Player player) {
+        return players.contains(player);
+    }
+
     public List<Player> players() {
         return new ArrayList<>(players);
     }
@@ -133,7 +137,7 @@ public final class Team extends TurnOrdered {
      *         take in a phase.
      */
     @Override
-    public int getNormalTurns(Game game) {
+    public int getNormalTurns(IGame game) {
         int normalTurns = getMultiTurns(game) + getOtherTurns();
         return (normalTurns == 0) ? getEvenTurns() : normalTurns;
     }
@@ -149,7 +153,7 @@ public final class Team extends TurnOrdered {
     }
 
     @Override
-    public int getMultiTurns(Game game) {
+    public int getMultiTurns(IGame game) {
         return players.stream().mapToInt(p -> p.getMultiTurns(game)).sum();
     }
 

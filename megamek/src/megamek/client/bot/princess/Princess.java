@@ -1832,7 +1832,7 @@ public class Princess extends BotClient {
                              game);
     }
 
-    IHonorUtil getHonorUtil() {
+    public IHonorUtil getHonorUtil() {
         return honorUtil;
     }
 

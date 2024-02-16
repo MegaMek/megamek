@@ -43,6 +43,7 @@ import java.util.*;
  * Represents intention to fire a weapon at the target.
  */
 public class WeaponAttackAction extends AbstractAttackAction implements Serializable {
+    public static int DEFAULT_VELOCITY = 50;
     private static final long serialVersionUID = -9096603813317359351L;
 
     public static final int STRATOPS_SENSOR_SHADOW_WEIGHT_DIFF = 100000;
@@ -56,7 +57,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
     private int otherAttackInfo = -1;
     private boolean nemesisConfused;
     private boolean swarmingMissiles;
-    protected int launchVelocity = 50;
+    protected int launchVelocity = DEFAULT_VELOCITY;
     /**
      * Keeps track of the ID of the current primary target for a swarm missile
      * attack.
@@ -242,7 +243,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         return toHit(game, getEntityId(), game.getTarget(getTargetType(), getTargetId()),
                 getWeaponId(), getAimedLocation(), getAimingMode(), nemesisConfused, swarmingMissiles,
                 game.getTarget(getOldTargetType(), getOldTargetId()),
-                game.getTarget(getOriginalTargetType(), getOriginalTargetId()), isStrafing(), isPointblankShot());
+                game.getTarget(getOriginalTargetType(), getOriginalTargetId()), isStrafing(), isPointblankShot(),
+                this.ammoId);
     }
 
     /**
@@ -255,7 +257,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         return toHit(game, getEntityId(), game.getTarget(getTargetType(), getTargetId()),
                 getWeaponId(), getAimedLocation(), getAimingMode(), nemesisConfused, swarmingMissiles,
                 game.getTarget(getOldTargetType(), getOldTargetId()),
-                game.getTarget(getOriginalTargetType(), getOriginalTargetId()), isStrafing(), isPointblankShot(), evenIfAlreadyFired);
+                game.getTarget(getOriginalTargetType(), getOriginalTargetId()), isStrafing(), isPointblankShot(), evenIfAlreadyFired, this.ammoId);
     }
 
     public ToHitData toHit(Game game, List<ECMInfo> allECMInfo) {
@@ -263,34 +265,38 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 getWeaponId(), getAimedLocation(), getAimingMode(), nemesisConfused, swarmingMissiles,
                 game.getTarget(getOldTargetType(), getOldTargetId()),
                 game.getTarget(getOriginalTargetType(), getOriginalTargetId()), isStrafing(), isPointblankShot(),
-                allECMInfo, false);
+                allECMInfo, false, this.ammoId);
     }
 
     public static ToHitData toHit(Game game, int attackerId, Targetable target, int weaponId, boolean isStrafing) {
+        // Use -1 as ammoId because this method should always use the currently linked ammo for display calcs
         return toHit(game, attackerId, target, weaponId, Entity.LOC_NONE, AimingMode.NONE,
-                false, false, null, null, isStrafing, false);
+                false, false, null, null, isStrafing, false, -1);
     }
 
     public static ToHitData toHit(Game game, int attackerId, Targetable target, int weaponId,
                                   int aimingAt, AimingMode aimingMode, boolean isStrafing) {
+        // Use -1 as ammoId because this method should always use the currently linked ammo for display calcs
         return toHit(game, attackerId, target, weaponId, aimingAt, aimingMode, false,
-                false, null, null, isStrafing, false);
+                false, null, null, isStrafing, false, -1);
     }
 
     public static ToHitData toHit(Game game, int attackerId, Targetable target, int weaponId,
                                   int aimingAt, AimingMode aimingMode, boolean isNemesisConfused,
                                   boolean exchangeSwarmTarget, Targetable oldTarget,
-                                  Targetable originalTarget, boolean isStrafing, boolean isPointblankShot) {
+                                  Targetable originalTarget, boolean isStrafing, boolean isPointblankShot,
+                                  int ammoId) {
         return toHitCalc(game, attackerId, target, weaponId, aimingAt, aimingMode, isNemesisConfused,
-                exchangeSwarmTarget, oldTarget, originalTarget, isStrafing, isPointblankShot, null, false);
+                exchangeSwarmTarget, oldTarget, originalTarget, isStrafing, isPointblankShot, null, false, ammoId);
     }
 
     public static ToHitData toHit(Game game, int attackerId, Targetable target, int weaponId,
                                   int aimingAt, AimingMode aimingMode, boolean isNemesisConfused,
                                   boolean exchangeSwarmTarget, Targetable oldTarget,
-                                  Targetable originalTarget, boolean isStrafing, boolean isPointblankShot, boolean evenIfAlreadyFired) {
+                                  Targetable originalTarget, boolean isStrafing, boolean isPointblankShot, boolean evenIfAlreadyFired,
+                                  int ammoId) {
         return toHitCalc(game, attackerId, target, weaponId, aimingAt, aimingMode, isNemesisConfused,
-                exchangeSwarmTarget, oldTarget, originalTarget, isStrafing, isPointblankShot, null, evenIfAlreadyFired);
+                exchangeSwarmTarget, oldTarget, originalTarget, isStrafing, isPointblankShot, null, evenIfAlreadyFired, ammoId);
     }
 
     /**
@@ -300,9 +306,11 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                                    int aimingAt, AimingMode aimingMode, boolean isNemesisConfused,
                                    boolean exchangeSwarmTarget, Targetable oldTarget,
                                    Targetable originalTarget, boolean isStrafing,
-                                   boolean isPointblankShot, List<ECMInfo> allECMInfo, boolean evenIfAlreadyFired) {
+                                   boolean isPointblankShot, List<ECMInfo> allECMInfo, boolean evenIfAlreadyFired,
+                                   int ammoId) {
         final Entity ae = game.getEntity(attackerId);
         final Mounted weapon = ae.getEquipment(weaponId);
+        final Mounted linkedAmmo = (ammoId == -1) ? weapon.getLinked() : ae.getEquipment(ammoId);
 
         final EquipmentType type = weapon.getType();
 
@@ -346,7 +354,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
 
         final boolean usesAmmo = (wtype.getAmmoType() != AmmoType.T_NA) && !isWeaponInfantry;
 
-        final Mounted ammo = usesAmmo ? weapon.getLinked() : null;
+        final Mounted ammo = usesAmmo ? linkedAmmo : null;
 
         final AmmoType atype = ammo == null ? null : (AmmoType) ammo.getType();
 
@@ -768,7 +776,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
 
         // Collect the modifiers for terrain and line-of-sight. This includes any related to-hit table changes
         toHit = compileTerrainAndLosToHitMods(game, ae, target, ttype, aElev, tElev, targEl, distance, los, toHit,
-                    losMods, toSubtract, eistatus, wtype, weapon, weaponId, atype, munition, isAttackerInfantry,
+                    losMods, toSubtract, eistatus, wtype, weapon, weaponId, atype, ammo, munition, isAttackerInfantry,
                     inSameBuilding, isIndirect, isPointblankShot, underWater);
 
         // If this is a swarm LRM secondary attack, remove old target movement and terrain mods, then
@@ -780,7 +788,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
 
         // Collect the modifiers specific to the weapon the attacker is using
-        toHit = compileWeaponToHitMods(game, ae, spotter, target, ttype, toHit, wtype, weapon, atype, munition,
+        toHit = compileWeaponToHitMods(game, ae, spotter, target, ttype, toHit, wtype, weapon, atype, ammo, munition,
                     isFlakAttack, isIndirect, narcSpotter);
 
         // Collect the modifiers specific to the ammo the attacker is using
@@ -875,7 +883,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
 
         // Collect the modifiers for terrain and line-of-sight. This includes any related to-hit table changes
         toHit = compileTerrainAndLosToHitMods(game, ae, target, ttype, aElev, tElev, targEl, distance, los, toHit,
-                    losMods, toSubtract, eistatus, null, null, weaponId, null, EnumSet.of(AmmoType.Munitions.M_STANDARD), isAttackerInfantry,
+                    losMods, toSubtract, eistatus, null, null, weaponId, null, null, EnumSet.of(AmmoType.Munitions.M_STANDARD), isAttackerInfantry,
                     inSameBuilding, false, false, false);
 
         // okay!
@@ -2535,7 +2543,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                     && (weapon.curMode().equals(Weapon.MODE_CAPITAL_BRACKET_80) || weapon.curMode().equals(Weapon.MODE_CAPITAL_BRACKET_60)
                             || weapon.curMode().equals(Weapon.MODE_CAPITAL_BRACKET_40))
                     && target.isAero() && te!= null && !te.isLargeCraft()
-                    && (RangeType.rangeBracket(ae.getPosition().distance(target.getPosition()), wtype.getRanges(weapon),
+                    && (RangeType.rangeBracket(ae.getPosition().distance(target.getPosition()), wtype.getRanges(weapon, ammo),
                             true, false) == RangeType.RANGE_SHORT)) {
                 return Messages.getString("WeaponAttackAction.TooCloseForSCBracket");
             }
@@ -2940,7 +2948,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
      * @param narcSpotter  flag that indicates whether this spotting entity is using NARC equipment
      */
     private static ToHitData compileWeaponToHitMods(Game game, Entity ae, Entity spotter, Targetable target,
-                int ttype, ToHitData toHit, WeaponType wtype, Mounted weapon, AmmoType atype, EnumSet<AmmoType.Munitions> munition,
+                int ttype, ToHitData toHit, WeaponType wtype, Mounted weapon, AmmoType atype, Mounted ammo, EnumSet<AmmoType.Munitions> munition,
                 boolean isFlakAttack, boolean isIndirect, boolean narcSpotter) {
         if (ae == null || wtype == null || weapon == null) {
             // Can't calculate weapon mods without a valid weapon and an attacker to fire it
@@ -3031,7 +3039,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             int modifier = wtype.getToHitModifier();
             if (wtype instanceof VariableSpeedPulseLaserWeapon) {
                 int nRange = ae.getPosition().distance(target.getPosition());
-                int[] nRanges = wtype.getRanges(weapon);
+                int[] nRanges = wtype.getRanges(weapon, ammo);
 
                 if (nRange <= nRanges[RangeType.RANGE_SHORT]) {
                     modifier += RangeType.RANGE_SHORT;
@@ -3214,7 +3222,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                     toHit.addModifier(1, atype.getSubMunitionName()
                             + Messages.getString("WeaponAttackAction.AmmoMod"));
                 } else {
-                    // +1 bonus for each -1MP the target would get due to heat
+                    // -1 bonus for each -1MP the target would get due to heat
                     toHit.addModifier(-te.getHeatMPReduction(),
                             atype.getSubMunitionName()
                                     + Messages.getString("WeaponAttackAction.AmmoMod"));
@@ -4340,7 +4348,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
      */
     private static ToHitData compileTerrainAndLosToHitMods(Game game, Entity ae, Targetable target, int ttype, int aElev, int tElev,
                 int targEl, int distance, LosEffects los, ToHitData toHit, ToHitData losMods, int toSubtract, int eistatus,
-                WeaponType wtype, Mounted weapon, int weaponId, AmmoType atype, EnumSet<AmmoType.Munitions> munition, boolean isAttackerInfantry,
+                WeaponType wtype, Mounted weapon, int weaponId, AmmoType atype, Mounted ammo, EnumSet<AmmoType.Munitions> munition, boolean isAttackerInfantry,
                 boolean inSameBuilding, boolean isIndirect, boolean isPointBlankShot, boolean underWater) {
         if (ae == null || target == null) {
             // Can't handle these attacks without a valid attacker and target
@@ -4374,7 +4382,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                         || wtype.hasFlag(WeaponType.F_DIVE_BOMB)
                         || (atype != null && atype.getMunitionType().contains(AmmoType.Munitions.M_ADA))))
                 && weaponId > WeaponType.WEAPON_NA)) {
-            toHit.append(Compute.getRangeMods(game, ae, weaponId, target));
+            toHit.append(Compute.getRangeMods(game, ae, weapon, ammo, target));
         }
 
         // add in LOS mods that we've been keeping
@@ -5066,10 +5074,28 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         processAttackerSPAs(toHit, ae, te, weapon, game);
         processDefenderSPAs(toHit, ae, te, weapon, game);
 
-        //Homing warheads just need a flat 4 to seek out a successful TAG
+        //Homing warheads just need a flat 4 to seek out a successful TAG, but Princess needs help
+        //judging what a good homing target is.
         if (isHoming) {
             srt.setSpecialResolution(true);
-            return new ToHitData(4, Messages.getString("WeaponAttackAction.HomingArty"));
+            String msg = Messages.getString("WeaponAttackAction.HomingArty");
+            // Check if any spotters can help us out...
+            if (Compute.findTAGSpotter(game, ae, target, true) != null) {
+                // Likelihood of hitting goes up as speed goes down...
+                ToHitData thd = new ToHitData(4, msg);
+                if (null != te) {
+                    thd.append(
+                            Compute.getTargetMovementModifier(
+                                    te.getRunMP(),
+                                    false,
+                                    false,
+                                    game)
+                    );
+                }
+                return thd;
+            } else {
+                return new ToHitData(ToHitData.AUTOMATIC_FAIL, msg);
+            }
         }
 
         //Don't bother adding up modifiers if the target hex has been hit before
@@ -5333,6 +5359,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         final String buffer = toHit.getValueAsString() + ((!table.isEmpty()) ? ' '+table : "");
         final Entity entity = game.getEntity(this.getEntityId());
         final String weaponName =  ((WeaponType) entity.getEquipment(this.getWeaponId()).getType()).getName();
-        return weaponName + Messages.getString("BoardView1.needs") + buffer;
+        final String ammoName = ((AmmoType) entity.getEquipment(this.getWeaponId()).getLinked().getType()).getName();
+        return weaponName + " [" + ammoName + "] " + Messages.getString("BoardView1.needs") + buffer;
     }
 }

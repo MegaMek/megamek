@@ -10125,24 +10125,26 @@ public class GameManager implements IGameManager {
         vPhaseReport.add(r);
         createSmoke(coords, SmokeCloud.SMOKE_HEAVY, 3);
         Hex hex = game.getBoard().getHex(coords);
-        hex.addTerrain(new Terrain(Terrains.SMOKE, SmokeCloud.SMOKE_HEAVY));
-        sendChangedHex(coords);
-        for (int dir = 0; dir <= 5; dir++) {
-            Coords tempcoords = coords.translated(dir);
-            if (!game.getBoard().contains(tempcoords)) {
-                continue;
-            }
-            if (coords.equals(tempcoords)) {
-                continue;
-            }
-            r = new Report(5185, Report.PUBLIC);
-            r.indent(2);
-            r.add(tempcoords.getBoardNum());
-            vPhaseReport.add(r);
-            createSmoke(tempcoords, SmokeCloud.SMOKE_HEAVY, 3);
-            hex = game.getBoard().getHex(tempcoords);
+        if (hex != null) {
             hex.addTerrain(new Terrain(Terrains.SMOKE, SmokeCloud.SMOKE_HEAVY));
-            sendChangedHex(tempcoords);
+            sendChangedHex(coords);
+            for (int dir = 0; dir <= 5; dir++) {
+                Coords tempcoords = coords.translated(dir);
+                if (!game.getBoard().contains(tempcoords)) {
+                    continue;
+                }
+                if (coords.equals(tempcoords)) {
+                    continue;
+                }
+                r = new Report(5185, Report.PUBLIC);
+                r.indent(2);
+                r.add(tempcoords.getBoardNum());
+                vPhaseReport.add(r);
+                createSmoke(tempcoords, SmokeCloud.SMOKE_HEAVY, 3);
+                hex = game.getBoard().getHex(tempcoords);
+                hex.addTerrain(new Terrain(Terrains.SMOKE, SmokeCloud.SMOKE_HEAVY));
+                sendChangedHex(tempcoords);
+            }
         }
     }
 
@@ -10158,24 +10160,26 @@ public class GameManager implements IGameManager {
         vPhaseReport.add(r);
         createSmoke(coords, SmokeCloud.SMOKE_LI_HEAVY, 2);
         Hex hex = game.getBoard().getHex(coords);
-        hex.addTerrain(new Terrain(Terrains.SMOKE, SmokeCloud.SMOKE_LI_HEAVY));
-        sendChangedHex(coords);
-        for (int dir = 0; dir <= 5; dir++) {
-            Coords tempcoords = coords.translated(dir);
-            if (!game.getBoard().contains(tempcoords)) {
-                continue;
-            }
-            if (coords.equals(tempcoords)) {
-                continue;
-            }
-            r = new Report(5186, Report.PUBLIC);
-            r.indent(2);
-            r.add(tempcoords.getBoardNum());
-            vPhaseReport.add(r);
-            createSmoke(tempcoords, SmokeCloud.SMOKE_LI_HEAVY, 2);
-            hex = game.getBoard().getHex(tempcoords);
+        if (null != hex) {
             hex.addTerrain(new Terrain(Terrains.SMOKE, SmokeCloud.SMOKE_LI_HEAVY));
-            sendChangedHex(tempcoords);
+            sendChangedHex(coords);
+            for (int dir = 0; dir <= 5; dir++) {
+                Coords tempcoords = coords.translated(dir);
+                if (!game.getBoard().contains(tempcoords)) {
+                    continue;
+                }
+                if (coords.equals(tempcoords)) {
+                    continue;
+                }
+                r = new Report(5186, Report.PUBLIC);
+                r.indent(2);
+                r.add(tempcoords.getBoardNum());
+                vPhaseReport.add(r);
+                createSmoke(tempcoords, SmokeCloud.SMOKE_LI_HEAVY, 2);
+                hex = game.getBoard().getHex(tempcoords);
+                hex.addTerrain(new Terrain(Terrains.SMOKE, SmokeCloud.SMOKE_LI_HEAVY));
+                sendChangedHex(tempcoords);
+            }
         }
     }
 
@@ -10190,13 +10194,15 @@ public class GameManager implements IGameManager {
                                         int subjectId, Vector<Report> vPhaseReport) {
         Hex h = game.getBoard().getHex(coords);
         Report r;
-        // Unless there is a fire in the hex already, start one.
-        if (h.terrainLevel(Terrains.FIRE) < Terrains.FIRE_LVL_INFERNO_IV) {
-            ignite(coords, Terrains.FIRE_LVL_INFERNO_IV, vPhaseReport);
-        }
-        // possibly melt ice and snow
-        if (h.containsTerrain(Terrains.ICE) || h.containsTerrain(Terrains.SNOW)) {
-            vPhaseReport.addAll(meltIceAndSnow(coords, subjectId));
+        if (null != h) {
+            // Unless there is a fire in the hex already, start one.
+            if (h.terrainLevel(Terrains.FIRE) < Terrains.FIRE_LVL_INFERNO_IV) {
+                ignite(coords, Terrains.FIRE_LVL_INFERNO_IV, vPhaseReport);
+            }
+            // possibly melt ice and snow
+            if (h.containsTerrain(Terrains.ICE) || h.containsTerrain(Terrains.SNOW)) {
+                vPhaseReport.addAll(meltIceAndSnow(coords, subjectId));
+            }
         }
         for (Entity entity : game.getEntitiesVector(coords)) {
             // TacOps, p. 356 - treat as if hit by 5 inferno missiles
@@ -10222,13 +10228,15 @@ public class GameManager implements IGameManager {
                 continue;
             }
             h = game.getBoard().getHex(tempcoords);
-            // Unless there is a fire in the hex already, start one.
-            if (h.terrainLevel(Terrains.FIRE) < Terrains.FIRE_LVL_INFERNO_IV) {
-                ignite(tempcoords, Terrains.FIRE_LVL_INFERNO_IV, vPhaseReport);
-            }
-            // possibly melt ice and snow
-            if (h.containsTerrain(Terrains.ICE) || h.containsTerrain(Terrains.SNOW)) {
-                vPhaseReport.addAll(meltIceAndSnow(tempcoords, subjectId));
+            if (null != h) {
+                // Unless there is a fire in the hex already, start one.
+                if (h.terrainLevel(Terrains.FIRE) < Terrains.FIRE_LVL_INFERNO_IV) {
+                    ignite(tempcoords, Terrains.FIRE_LVL_INFERNO_IV, vPhaseReport);
+                }
+                // possibly melt ice and snow
+                if (h.containsTerrain(Terrains.ICE) || h.containsTerrain(Terrains.SNOW)) {
+                    vPhaseReport.addAll(meltIceAndSnow(tempcoords, subjectId));
+                }
             }
             for (Entity entity : game.getEntitiesVector(tempcoords)) {
                 r = new Report(6695);
@@ -30102,6 +30110,7 @@ public class GameManager implements IGameManager {
         int entityId = c.getIntValue(0);
         int weaponId = c.getIntValue(1);
         int ammoId = c.getIntValue(2);
+        int reason = c.getIntValue(3);
         Entity e = game.getEntity(entityId);
 
         // Did we receive a request for a valid Entity?
@@ -30118,6 +30127,7 @@ public class GameManager implements IGameManager {
         // Make sure that the entity has the given equipment.
         Mounted mWeap = e.getEquipment(weaponId);
         Mounted mAmmo = e.getEquipment(ammoId);
+        Mounted oldAmmo = (mWeap == null) ? null : mWeap.getLinked();
         if (null == mAmmo) {
             LogManager.getLogger().error("Entity " + e.getDisplayName() + " does not have ammo #" + ammoId);
             return;
@@ -30150,6 +30160,19 @@ public class GameManager implements IGameManager {
 
         // Load the weapon.
         e.loadWeapon(mWeap, mAmmo);
+
+        // Report the change, if reason is provided and it's not already being used.
+        if (reason != 0 && oldAmmo != mAmmo) {
+            Report r = new Report(1500);
+            r.subject = entityId;
+            r.addDesc(e);
+            r.add(mAmmo.getShortName());
+            r.add(ReportMessages.getString(String.valueOf(reason)));
+            addReport(r);
+            if (LogManager.getLogger().isDebugEnabled()) {
+
+            }
+        }
     }
 
     /**

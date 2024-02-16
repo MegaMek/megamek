@@ -608,9 +608,13 @@ public class WeaponType extends EquipmentType {
     }
 
     public int getMaxRange(Mounted weapon) {
+        return getMaxRange(weapon, weapon.getLinked());
+    }
+
+    public int getMaxRange(Mounted weapon, Mounted ammo) {
         if (null != weapon) {
             if (getAmmoType() == AmmoType.T_ATM) {
-                AmmoType ammoType = (AmmoType) weapon.getLinked().getType();
+                AmmoType ammoType = (AmmoType) ammo.getType();
                 if ((ammoType.getAmmoType() == AmmoType.T_ATM)
                         && (ammoType.getMunitionType().contains(AmmoType.Munitions.M_EXTENDED_RANGE))) {
                     return RANGE_EXT;
@@ -620,7 +624,7 @@ public class WeaponType extends EquipmentType {
                 }
             }
             if (getAmmoType() == AmmoType.T_MML) {
-                AmmoType ammoType = (AmmoType) weapon.getLinked().getType();
+                AmmoType ammoType = (AmmoType) ammo.getType();
                 if (ammoType.hasFlag(AmmoType.F_MML_LRM) || (getAmmoType() == AmmoType.T_LRM_TORPEDO)) {
                     return RANGE_LONG;
                 } else {

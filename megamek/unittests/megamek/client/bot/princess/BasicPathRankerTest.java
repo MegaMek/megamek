@@ -978,10 +978,11 @@ public class BasicPathRankerTest {
         assertNull(actual);
         actual = testRanker.calcAllyCenter(myId, null, mockGame);
         assertNull(actual);
+        // I'm my own best friend
         final List<Entity> solo = new ArrayList<>(1);
         solo.add(mockFriend1);
         actual = testRanker.calcAllyCenter(myId, solo, mockGame);
-        assertNull(actual);
+        assertEquals(actual.equals(mockFriend1.getPosition()), true);
     }
 
     private void assertCoordsEqual(final Coords expected, final Coords actual) {

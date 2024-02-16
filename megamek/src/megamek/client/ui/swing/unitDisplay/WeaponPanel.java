@@ -2771,7 +2771,8 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                         clientgui.getClient().sendAmmoChange(
                                 entity.getId(),
                                 entity.getEquipmentNum(bWeap),
-                                entity.getEquipmentNum(mAmmo));
+                                entity.getEquipmentNum(mAmmo),
+                                0);
                     }
                 }
             } else {
@@ -2779,7 +2780,8 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                 // Alert the server of the update.
                 clientgui.getClient().sendAmmoChange(entity.getId(),
                         entity.getEquipmentNum(mWeap),
-                        entity.getEquipmentNum(mAmmo));
+                        entity.getEquipmentNum(mAmmo),
+                        0);
             }
 
             // Refresh for hot load change

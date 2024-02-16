@@ -249,11 +249,20 @@ public class InfantryFireControl extends FireControl {
         // cycle through my field guns
         for (final Mounted weapon : shooter.getWeaponList()) {
             if (weaponIsAppropriate(weapon, firingPlanType)) {
-                final WeaponFireInfo shoot = buildWeaponFireInfo(shooter, shooterState, target, targetState, weapon,
-                        game, true);
+                WeaponFireInfo bestShoot = null;
 
-                if (0 < shoot.getProbabilityToHit()) {
-                    myPlan.add(shoot);
+                final WeaponFireInfo shoot = buildWeaponFireInfo(shooter, shooterState, target, targetState, weapon,
+                        null, game, true);
+                // Choose best expected damage shot, not best to-hit
+                if (null == bestShoot ||
+                        (shoot.getExpectedDamage() > bestShoot.getExpectedDamage())
+                ){
+                    bestShoot = shoot;
+                }
+
+                // If best shot can hit, use it.
+                if (bestShoot != null && 0 < bestShoot.getProbabilityToHit()) {
+                    myPlan.add(bestShoot);
                 }
             }
         }

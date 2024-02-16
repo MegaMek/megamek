@@ -4201,6 +4201,26 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         return ammoList;
     }
 
+    /**
+     * @param weapon we want to find available ammo for
+     * @return an ArrayList containing _one_ Mounted ammo for each viable type
+     */
+    public ArrayList<Mounted> getAmmo(Mounted weapon) {
+        WeaponType wtype = (WeaponType) weapon.getType();
+        Set<EquipmentType> etypes = new HashSet<EquipmentType>();
+        ArrayList<Mounted> ammos = new ArrayList<Mounted>();
+
+        // Only add one valid ammo to the list to reduce repeat calculations
+        for (Mounted ammo: ammoList) {
+            if (AmmoType.isAmmoValid(ammo, wtype)) {
+                if (etypes.add(ammo.getType())) {
+                    ammos.add(ammo);
+                }
+            }
+        }
+        // One entry per ammo type that is currently usable by this weapon.
+        return ammos;
+    }
     public ArrayList<Mounted> getMisc() {
         return miscList;
     }

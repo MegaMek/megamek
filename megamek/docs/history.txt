@@ -64,6 +64,7 @@ MEGAMEK VERSION HISTORY:
 + PR #5169: Code cleanup #5169
 + Fix #5155: Add checkbox to turn off showing player deployment on map preview
 + Fix #4952: Princess does not select alt ammo
++ Fix #5174: Quick Fix for structure not loading correctly
 
 0.49.17 (2023-12-31 1900 UTC)
 + Fix #1031: Show structure collapse warning when deploying and moving.

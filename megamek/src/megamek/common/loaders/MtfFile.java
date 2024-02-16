@@ -77,9 +77,9 @@ public class MtfFile implements IMechLoader {
     private final Map<EntityFluff.System, String> systemManufacturers = new EnumMap<>(EntityFluff.System.class);
     private final Map<EntityFluff.System, String> systemModels = new EnumMap<>(EntityFluff.System.class);
     private String notes = "";
-    private String imagePath = "";
 
     private String fluffImageEncoded = "";
+    private String iconEncoded = "";
 
     private int bv = 0;
     private String role;
@@ -146,6 +146,7 @@ public class MtfFile implements IMechLoader {
     public static final String WEAPON_QUIRK = "weaponquirk:";
     public static final String ROLE = "role:";
     public static final String FLUFF_IMAGE = "fluffimage:";
+    public static final String ICON = "icon:";
 
     public MtfFile(InputStream is) throws EntityLoadingException {
         try (InputStreamReader isr = new InputStreamReader(is);
@@ -463,6 +464,7 @@ public class MtfFile implements IMechLoader {
             mech.getFluff().setPrimaryFactory(primaryFactory);
             mech.getFluff().setNotes(notes);
             mech.getFluff().setFluffImage(fluffImageEncoded);
+            mech.setIcon(iconEncoded);
             systemManufacturers.forEach((k, v) -> mech.getFluff().setSystemManufacturer(k, v));
             systemModels.forEach((k, v) -> mech.getFluff().setSystemModel(k, v));
 
@@ -1249,6 +1251,11 @@ public class MtfFile implements IMechLoader {
 
         if (lineLower.startsWith(FLUFF_IMAGE)) {
             fluffImageEncoded = line.substring(FLUFF_IMAGE.length());
+            return true;
+        }
+
+        if (lineLower.startsWith(ICON)) {
+            iconEncoded = line.substring(ICON.length());
             return true;
         }
 

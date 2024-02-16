@@ -16,6 +16,7 @@ package megamek.common;
 
 import megamek.MMConstants;
 import megamek.client.bot.princess.FireControl;
+import megamek.client.ui.Base64Image;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.client.ui.swing.calculationReport.DummyCalculationReport;
@@ -828,6 +829,9 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * Primarily used by Princess to speed up TAG utility calculations.
      */
     protected ArrayList<WeaponAttackAction> incomingGuidedAttacks;
+
+    /** The iconf or this unit; This is empty unless the unit file has an embedded icon. */
+    protected Base64Image icon = new Base64Image();
 
     /**
      * Generates a new, blank, entity.
@@ -15746,5 +15750,30 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     @Override
     public String specificName() {
         return getModel();
+    }
+
+    @Override
+    public Image getIcon() {
+        return icon.getImage();
+    }
+
+    /** Sets the embedded icon for this unit to the given base64 string. */
+    public void setIcon(String icon64) {
+        icon = new Base64Image(icon64);
+    }
+
+    /**
+     * Returns true when this unit has an embedded icon, i.e. an icon stored in the unit file rather than
+     * found by the mechset.
+     *
+     * @return True when this unit has an embedded icon
+     */
+    public boolean hasEmbeddedIcon() {
+        return !icon.isEmpty();
+    }
+
+    /** @return The embedded icon of this unit in the full Base64Image form. */
+    public Base64Image getBase64Icon() {
+        return icon;
     }
 }

@@ -107,6 +107,10 @@ public class BLKFile {
             entity.getFluff().setFluffImage(dataFile.getDataAsString("fluffimage")[0]);
         }
 
+        if (dataFile.exists("icon")) {
+            entity.setIcon(dataFile.getDataAsString("icon")[0]);
+        }
+
         setTechLevel(entity);
         setFluff(entity);
         checkManualBV(entity);
@@ -1164,6 +1168,10 @@ public class BLKFile {
             blk.writeBlockData("battlearmor", js.getNBattleArmor());
             blk.writeBlockData("life_boat", js.getLifeBoats());
             blk.writeBlockData("escape_pod", js.getEscapePods());
+        }
+
+        if (t.hasEmbeddedIcon()) {
+            blk.writeBlockData("icon", t.getBase64Icon().getBase64String());
         }
 
         if (t.getFluff().hasEmbeddedFluffImage()) {

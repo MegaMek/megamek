@@ -2645,6 +2645,9 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     public void setSecondaryFacing(int sec_facing) {
+        if (getGame() == null) {
+            return;
+        }
         // Only allow changing secondary facing if we haven't done so in a prior phase
         GamePhase phase = getGame().getPhase();
         if (phase != null) {

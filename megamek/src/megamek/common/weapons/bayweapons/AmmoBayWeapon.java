@@ -46,8 +46,7 @@ public abstract class AmmoBayWeapon extends BayWeapon {
     protected void checkAmmo(WeaponAttackAction waa, Game g) {
         Entity ae = waa.getEntity(g);
         WeaponMounted bay = ae.getWeapon(waa.getWeaponId());
-        for (int wId : bay.getBayWeapons()) {
-            WeaponMounted weapon = ae.getWeapon(wId);
+        for (WeaponMounted weapon : bay.getBayWeapons()) {
             AmmoMounted ammo = weapon.getLinkedAmmo();
             if (ammo == null || ammo.getUsableShotsLeft() < 1) {
                 ae.loadWeaponWithSameAmmo(weapon);

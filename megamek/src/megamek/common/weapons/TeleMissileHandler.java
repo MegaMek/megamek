@@ -49,17 +49,16 @@ public class TeleMissileHandler extends CapitalMissileBayHandler {
      */
     private AmmoType getBayAmmoType() {
         AmmoType at = null;
-        for (int wId : weapon.getBayWeapons()) {
-            Mounted bayW = ae.getEquipment(wId);
+        for (WeaponMounted bayW : weapon.getBayWeapons()) {
             // check the currently loaded ammo
-            Mounted bayWAmmo = bayW.getLinked();
+            AmmoMounted bayWAmmo = bayW.getLinkedAmmo();
 
             if (bayWAmmo == null) {
                 LogManager.getLogger().debug("Handler can't find any ammo! Oh no!");
                 continue;
             }
              //Once we have some ammo to send to the server, stop looking
-             at = (AmmoType) bayWAmmo.getType();
+             at = bayWAmmo.getType();
              break;
         }
         return at;
@@ -67,9 +66,8 @@ public class TeleMissileHandler extends CapitalMissileBayHandler {
     
     private int calcBayDamageAndHeat() {
         int damage = 0;
-        for (int wId : weapon.getBayWeapons()) {
-            Mounted bayW = ae.getEquipment(wId);
-            WeaponType bayWType = ((WeaponType) bayW.getType());
+        for (WeaponMounted bayW : weapon.getBayWeapons()) {
+            WeaponType bayWType = bayW.getType();
             damage += (int) bayWType.getShortAV();
             ae.heatBuildup += bayW.getCurrentHeat();
             missileArmor = bayWType.getMissileArmor();
@@ -79,8 +77,7 @@ public class TeleMissileHandler extends CapitalMissileBayHandler {
     
     @Override
     protected void useAmmo() {
-        for (int wId : weapon.getBayWeapons()) {
-            WeaponMounted bayW = (WeaponMounted) ae.getEquipment(wId);
+        for (WeaponMounted bayW : weapon.getBayWeapons()) {
             // check the currently loaded ammo
             AmmoMounted bayWAmmo = bayW.getLinkedAmmo();
 

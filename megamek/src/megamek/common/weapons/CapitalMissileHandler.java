@@ -34,6 +34,7 @@ import megamek.common.ToHitData;
 import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
+import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.OptionsConstants;
 import megamek.server.GameManager;
 import megamek.server.Server;
@@ -495,12 +496,8 @@ public class CapitalMissileHandler extends AmmoWeaponHandler {
      * This should return true. Only when handling capital missile attacks can this be false.
      */
     @Override
-    protected boolean canEngageCapitalMissile(Mounted counter) {
-        if (counter.getBayWeapons().size() < 2) {
-            return false;
-        } else {
-            return true;
-        }
+    protected boolean canEngageCapitalMissile(WeaponMounted counter) {
+        return counter.getBayWeapons().size() >= 2;
     }
 
     /**

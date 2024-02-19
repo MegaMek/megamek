@@ -18,7 +18,9 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.annotations.Nullable;
+import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.ArmorType;
+import megamek.common.equipment.WeaponMounted;
 import megamek.common.eras.Era;
 import megamek.common.eras.Eras;
 import megamek.common.options.*;
@@ -857,10 +859,10 @@ public class MechView {
         wpnTable.setColNames("Weapons  ", "  Loc  ", "  Heat  ", entity.isOmni() ? "  Omni  " : "");
         wpnTable.setJustification(TableElement.JUSTIFIED_LEFT, TableElement.JUSTIFIED_CENTER,
                 TableElement.JUSTIFIED_CENTER, TableElement.JUSTIFIED_CENTER);
-        for (Mounted<?> mounted : entity.getWeaponList()) {
+        for (WeaponMounted mounted : entity.getWeaponList()) {
             String[] row = { mounted.getDesc() + quirkMarker(mounted),
                     entity.joinLocationAbbr(mounted.allLocations(), 3), "", "" };
-            WeaponType wtype = (WeaponType) mounted.getType();
+            WeaponType wtype = mounted.getType();
 
             if (entity.isClan()
                     && (mounted.getType().getTechBase() == ITechnology.TECH_BASE_IS)) {
@@ -882,11 +884,7 @@ public class MechView {
             if (wtype instanceof BayWeapon) {
                 // loop through weapons in bay and add up heat
                 heat = 0;
-                for (int wId : mounted.getBayWeapons()) {
-                    Mounted m = entity.getEquipment(wId);
-                    if (null == m) {
-                        continue;
-                    }
+                for (WeaponMounted m : mounted.getBayWeapons()) {
                     heat = heat + m.getType().getHeat();
                     if (m.isDestroyed()) {
                         bWeapDamaged++;
@@ -913,12 +911,7 @@ public class MechView {
 
             // if this is a weapon bay, then cycle through weapons and ammo
             if ((wtype instanceof BayWeapon) && showDetail) {
-                for (int wId : mounted.getBayWeapons()) {
-                    Mounted m = entity.getEquipment(wId);
-                    if (null == m) {
-                        continue;
-                    }
-
+                for (WeaponMounted m : mounted.getBayWeapons()) {
                     row = new String[] { m.getDesc(), "", "", "" };
 
                     if (entity.isClan()
@@ -939,11 +932,7 @@ public class MechView {
                         wpnTable.addRow(row);
                     }
                 }
-                for (int aId : mounted.getBayAmmo()) {
-                    Mounted m = entity.getEquipment(aId);
-                    if (null == m) {
-                        continue;
-                    }
+                for (AmmoMounted m : mounted.getBayAmmo()) {
                     // Ignore ammo for one-shot launchers
                     if ((m.getLinkedBy() != null)
                             && m.getLinkedBy().isOneShot()) {

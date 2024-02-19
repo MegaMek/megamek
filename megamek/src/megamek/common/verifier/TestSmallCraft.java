@@ -15,7 +15,9 @@
 package megamek.common.verifier;
 
 import megamek.common.*;
+import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.ArmorType;
+import megamek.common.equipment.WeaponMounted;
 import megamek.common.util.StringUtil;
 
 import java.math.BigInteger;
@@ -378,21 +380,19 @@ public class TestSmallCraft extends TestAero {
             return super.printWeapon();
         }
         StringBuffer buffer = new StringBuffer();
-        for (Mounted<?> m : getEntity().getWeaponBayList()) {
+        for (WeaponMounted m : getEntity().getWeaponBayList()) {
             buffer.append(m.getName()).append(" ")
                 .append(getLocationAbbr(m.getLocation()));
             if (m.isRearMounted()) {
                 buffer.append(" (R)");
             }
             buffer.append("\n");
-            for (Integer wNum : m.getBayWeapons()) {
-                final Mounted w = getEntity().getEquipment(wNum);
+            for (WeaponMounted w : m.getBayWeapons()) {
                 buffer.append("   ").append(StringUtil.makeLength(w.getName(),
                         getPrintSize() - 25)).append(w.getTonnage())
                     .append("\n");
             }
-            for (Integer aNum : m.getBayAmmo()) {
-                final Mounted a = getEntity().getEquipment(aNum);
+            for (AmmoMounted a : m.getBayAmmo()) {
                 double weight = a.getTonnage() * a.getBaseShotsLeft() / ((AmmoType) a.getType()).getShots();
                 buffer.append("   ").append(StringUtil.makeLength(a.getName(),
                         getPrintSize() - 25)).append(weight).append("\n");
@@ -520,35 +520,22 @@ public class TestSmallCraft extends TestAero {
 
         // For DropShips, make sure all bays have at least one weapon and that there are at least
         // ten shots of ammo for each ammo-using weapon in the bay.
-        for (Mounted<?> bay : smallCraft.getWeaponBayList()) {
+        for (WeaponMounted bay : smallCraft.getWeaponBayList()) {
             if (bay.getBayWeapons().isEmpty()) {
                 buff.append("Bay ").append(bay.getName()).append(" has no weapons\n");
                 illegal = true;
             }
             Map<Integer,Integer> ammoWeaponCount = new HashMap<>();
             Map<Integer,Integer> ammoTypeCount = new HashMap<>();
-            for (Integer wNum : bay.getBayWeapons()) {
-                final Mounted w = smallCraft.getEquipment(wNum);
+            for (WeaponMounted w : bay.getBayWeapons()) {
                 if (w.isOneShot()) {
                     continue;
                 }
-                if (w.getType() instanceof WeaponType) {
-                    ammoWeaponCount.merge(((WeaponType) w.getType()).getAmmoType(), 1, Integer::sum);
-                } else {
-                    buff.append(w.getName()).append(" in bay ").append(bay.getName()).append(" is not a weapon\n");
-                    illegal = true;
-                }
+                ammoWeaponCount.merge(w.getType().getAmmoType(), 1, Integer::sum);
             }
 
-            for (Integer aNum : bay.getBayAmmo()) {
-                final Mounted<?> a = smallCraft.getEquipment(aNum);
-                if (a.getType() instanceof AmmoType) {
-                    ammoTypeCount.merge(((AmmoType) a.getType()).getAmmoType(), a.getUsableShotsLeft(),
-                            Integer::sum);
-                } else {
-                    buff.append(a.getName()).append(" in bay ").append(bay.getName()).append(" is not ammo\n");
-                    illegal = true;
-                }
+            for (AmmoMounted a : bay.getBayAmmo()) {
+                ammoTypeCount.merge(a.getType().getAmmoType(), a.getUsableShotsLeft(), Integer::sum);
             }
 
             for (Integer at : ammoWeaponCount.keySet()) {

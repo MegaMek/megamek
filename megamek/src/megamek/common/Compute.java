@@ -253,6 +253,20 @@ public class Compute {
     }
 
     /**
+     * Selects a random element from a list
+     * @param list The list of items to select from
+     * @return     An element in the list
+     * @param <T>  The list type
+     */
+    public static<T> T randomListElement(List<T> list) {
+        if (list.isEmpty()) {
+            throw new IllegalArgumentException("Tried to select random element from empty list");
+        } else {
+            return list.get(randomInt(list.size()));
+        }
+    }
+
+    /**
      * Sets the RNG to the desired type
      */
     public static void setRNG(int type) {
@@ -1101,7 +1115,7 @@ public class Compute {
      */
     public static ToHitData getRangeMods(Game game, Entity ae, int weaponId,
                                          Targetable target) {
-        Mounted weapon = ae.getEquipment(weaponId);
+        WeaponMounted weapon = (WeaponMounted) ae.getEquipment(weaponId);
         WeaponType wtype = (WeaponType) weapon.getType();
         int[] weaponRanges = wtype.getRanges(weapon);
         boolean isAttackerInfantry = (ae instanceof Infantry);
@@ -3026,8 +3040,8 @@ public class Compute {
         int infShootingStrength = 0;
         double infDamagePerTrooper = 0;
 
-        Mounted<?> weapon = attacker.getEquipment(waa.getWeaponId());
-        Mounted lnk_guide;
+        WeaponMounted weapon = (WeaponMounted) attacker.getEquipment(waa.getWeaponId());
+        Mounted<?> lnk_guide;
 
         ToHitData hitData = waa.toHit(g, allECMInfo);
 
@@ -3235,10 +3249,10 @@ public class Compute {
             // adjust for previous AMS
             if ((wt.getDamage() == WeaponType.DAMAGE_BY_CLUSTERTABLE)
                 && wt.hasFlag(WeaponType.F_MISSILE)) {
-                ArrayList<Mounted> vCounters = waa.getCounterEquipment();
+                List<WeaponMounted> vCounters = waa.getCounterEquipment();
                 if (vCounters != null) {
-                    for (int x = 0; x < vCounters.size(); x++) {
-                        EquipmentType type = vCounters.get(x).getType();
+                    for (WeaponMounted vCounter : vCounters) {
+                        EquipmentType type = vCounter.getType();
                         if ((type instanceof WeaponType) && type.hasFlag(WeaponType.F_AMS)) {
                             fHits *= 0.6f;
                         }
@@ -3277,9 +3291,8 @@ public class Compute {
                 if (attacker.usesWeaponBays()) {
                     double av = 0;
                     double threat = 1;
-                    for (int wId : weapon.getBayWeapons()) {
-                        Mounted bayW = attacker.getEquipment(wId);
-                        WeaponType bayWType = ((WeaponType) bayW.getType());
+                    for (WeaponMounted bayW : weapon.getBayWeapons()) {
+                        WeaponType bayWType = bayW.getType();
                         //Capital weapons have a different range scale
                         if (wt.isCapital()) {
                             // Capital missiles get higher priority than standard missiles:

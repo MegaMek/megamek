@@ -20,6 +20,7 @@ import megamek.common.actions.TeleMissileAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.AimingMode;
 import megamek.common.enums.GamePhase;
+import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.OptionsConstants;
 import megamek.server.GameManager;
@@ -33,6 +34,7 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Vector;
 
 /**
@@ -136,9 +138,8 @@ public class WeaponHandler implements AttackHandler, Serializable {
                     AttackHandler ah = i.nextElement();
                     WeaponAttackAction prevAttack = ah.getWaa();
                     if (prevAttack.getEntityId() == e.getId()) {
-                        Mounted<?> prevWeapon = e.getEquipment(prevAttack.getWeaponId());
-                        for (int wId : prevWeapon.getBayWeapons()) {
-                            Mounted bayW = e.getEquipment(wId);
+                        WeaponMounted prevWeapon = (WeaponMounted) e.getEquipment(prevAttack.getWeaponId());
+                        for (WeaponMounted bayW : prevWeapon.getBayWeapons()) {
                             totalheat += bayW.getCurrentHeat();
                         }
                     }
@@ -148,7 +149,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
                     AttackHandler ah = i.nextElement();
                     WeaponAttackAction prevAttack = ah.getWaa();
                     if (prevAttack.getEntityId() == e.getId()) {
-                        Mounted prevWeapon = e.getEquipment(prevAttack.getWeaponId());
+                        Mounted<?> prevWeapon = e.getEquipment(prevAttack.getWeaponId());
                         totalheat += prevWeapon.getCurrentHeat();
                     }
                 }
@@ -189,7 +190,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
      * See also TeleMissileAttackAction, which contains a modified version of this to work against
      * a TeleMissile entity in the physical phase
      */
-    protected boolean canEngageCapitalMissile(Mounted counter) {
+    protected boolean canEngageCapitalMissile(WeaponMounted counter) {
         return true;
     }
 
@@ -231,11 +232,11 @@ public class WeaponHandler implements AttackHandler, Serializable {
         double pdAV = 0;
         Entity entityTarget = (Entity) target;
         // any AMS bay attacks by the target?
-        ArrayList<Mounted> lCounters = waa.getCounterEquipment();
+        List<WeaponMounted> lCounters = waa.getCounterEquipment();
         // We need to know how much heat has been assigned to offensive weapons fire by the defender this round
         int weaponHeat = getLargeCraftHeat(entityTarget) + entityTarget.heatBuildup;
         if (null != lCounters) {
-            for (Mounted<?> counter : lCounters) {
+            for (WeaponMounted counter : lCounters) {
                 // Point defenses only fire vs attacks against the arc they protect
                 Entity pdEnt = counter.getEntity();
                 boolean isInArc;
@@ -253,8 +254,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
                     continue;
                 }
                 // Point defenses can't fire if they're not ready for any other reason
-                if (!(counter.getType() instanceof WeaponType)
-                         || !counter.isReady() || counter.isMissing()
+                if (!counter.isReady() || counter.isMissing()
                             // shutdown means no Point defenses
                             || pdEnt.isShutDown()) {
                         continue;
@@ -279,10 +279,9 @@ public class WeaponHandler implements AttackHandler, Serializable {
                 // First, reset the temporary damage counters
                 amsAV = 0;
                 pdAV = 0;
-                for (int wId : counter.getBayWeapons()) {
-                    Mounted bayW = pdEnt.getEquipment(wId);
-                    Mounted bayWAmmo = bayW.getLinked();
-                    WeaponType bayWType = ((WeaponType) bayW.getType());
+                for (WeaponMounted bayW : counter.getBayWeapons()) {
+                    AmmoMounted bayWAmmo = bayW.getLinkedAmmo();
+                    WeaponType bayWType = bayW.getType();
 
                     // build up some heat
                     // First Check to see if we have enough heat capacity to fire

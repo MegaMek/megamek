@@ -49,15 +49,12 @@ public class BayMunitionsChoicePanel extends JPanel {
 
         for (WeaponMounted bay : entity.getWeaponBayList()) {
             Map<List<Integer>,List<AmmoMounted>> ammoByType = new HashMap<>();
-            for (Integer aNum : bay.getBayAmmo()) {
-                final AmmoMounted ammo = (AmmoMounted) entity.getEquipment(aNum);
-                if (null != ammo) {
-                    List<Integer> key = new ArrayList<>(2);
-                    key.add(ammo.getType().getAmmoType());
-                    key.add(ammo.getType().getRackSize());
-                    ammoByType.putIfAbsent(key, new ArrayList<>());
-                    ammoByType.get(key).add(ammo);
-                }
+            for (AmmoMounted ammo : bay.getBayAmmo()) {
+                List<Integer> key = new ArrayList<>(2);
+                key.add(ammo.getType().getAmmoType());
+                key.add(ammo.getType().getRackSize());
+                ammoByType.putIfAbsent(key, new ArrayList<>());
+                ammoByType.get(key).add(ammo);
             }
             for (List<Integer> key : ammoByType.keySet()) {
                 AmmoRowPanel row = new AmmoRowPanel(bay, key.get(0), key.get(1), ammoByType.get(key));
@@ -148,8 +145,7 @@ public class BayMunitionsChoicePanel extends JPanel {
             Dimension spinnerSize =new Dimension(55, 25);
 
             final Optional<WeaponType> wtype = bay.getBayWeapons().stream()
-                    .map(entity::getEquipment)
-                    .map(m -> (WeaponType) m.getType()).findAny();
+                    .map(Mounted::getType).findAny();
 
             // set the bay's tech base to that of any weapon in the bay
             // an assumption is made here that bays don't mix clan-only and IS-only tech base

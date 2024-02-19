@@ -743,9 +743,8 @@ public abstract class BVCalculator {
         // MG Arrays need to sum up their linked MGs
         if ((weapon.getType() instanceof WeaponType) && weapon.getType().hasFlag(WeaponType.F_MGA)) {
             double mgBV = 0;
-            for (int eqNum : ((WeaponMounted) weapon).getBayWeapons()) {
-                Mounted<?> mg = entity.getEquipment(eqNum);
-                if ((mg != null) && (!mg.isDestroyed())) {
+            for (WeaponMounted mg : ((WeaponMounted) weapon).getBayWeapons()) {
+                if (!mg.isDestroyed()) {
                     mgBV += mg.getType().getBV(entity);
                 }
             }

@@ -21,6 +21,7 @@ import megamek.common.actions.EntityAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.GamePhase;
+import megamek.common.equipment.WeaponMounted;
 import megamek.common.event.*;
 import megamek.common.net.packets.Packet;
 import megamek.common.options.OptionsConstants;
@@ -1004,13 +1005,12 @@ public abstract class BotClient extends Client {
                 fHits = expectedHitsByRackSize[wt.getRackSize()];
             }
             // adjust for previous AMS
-            ArrayList<Mounted> vCounters = waa.getCounterEquipment();
+            List<WeaponMounted> vCounters = waa.getCounterEquipment();
             if (wt.hasFlag(WeaponType.F_MISSILE) && vCounters != null) {
-                for (Mounted vCounter : vCounters) {
-                    EquipmentType type = vCounter.getType();
-                    if ((type instanceof WeaponType)
-                        && type.hasFlag(WeaponType.F_AMS)) {
-                        float fAMS = 3.5f * ((WeaponType) type).getDamage();
+                for (WeaponMounted vCounter : vCounters) {
+                    WeaponType type = vCounter.getType();
+                    if (type.hasFlag(WeaponType.F_AMS)) {
+                        float fAMS = 3.5f * type.getDamage();
                         fHits = Math.max(0.0f, fHits - fAMS);
                     }
                 }

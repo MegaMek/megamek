@@ -524,14 +524,13 @@ public class MechFileParser {
                     && (m.getLinked() == null)) {
 
                 // link up to a weapon in the same location
-                for (Mounted<?> mWeapon : ent.getWeaponList()) {
-                    WeaponType wtype = (WeaponType) mWeapon.getType();
+                for (WeaponMounted mWeapon : ent.getWeaponList()) {
+                    WeaponType wtype = mWeapon.getType();
 
                     //Handle weapon bays
                     if (wtype.getBayType().equals(EquipmentType.get(EquipmentTypeLookup.PPC_BAY))) {
-                        for (int wId : mWeapon.getBayWeapons()) {
-                            Mounted bayMountedWeapon = ent.getEquipment(wId);
-                            WeaponType bayWeapType = (WeaponType) bayMountedWeapon.getType();
+                        for (WeaponMounted bayMountedWeapon : mWeapon.getBayWeapons()) {
+                            WeaponType bayWeapType = bayMountedWeapon.getType();
 
                             // Check for PPC that isn't crosslinked
                             if (!bayWeapType.hasFlag(WeaponType.F_PPC) ||
@@ -808,7 +807,7 @@ public class MechFileParser {
             if (mga.getType().hasFlag(WeaponType.F_MGA)) {
                 // This may be called from MML after changing equipment location, so there
                 // may be old data that needs to be cleared
-                mga.getBayWeapons().clear();
+                mga.clearBayWeapons();
                 for (int i = 0; i < entity.getNumberOfCriticals(mga.getLocation()); i++) {
                     CriticalSlot slot = entity.getCritical(mga.getLocation(), i);
                     if ((slot != null) && (slot.getType() == CriticalSlot.TYPE_EQUIPMENT)

@@ -1131,8 +1131,8 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                 if (entity.usesWeaponBays()) {
                     // if using bay heat option then don't add total arc
                     if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_HEAT_BY_BAY)) {
-                        for (int wId : mounted.getBayWeapons()) {
-                            currentHeatBuildup += entity.getEquipment(wId).getCurrentHeat();
+                        for (WeaponMounted weapon : mounted.getBayWeapons()) {
+                            currentHeatBuildup += weapon.getCurrentHeat();
                         }
                     } else {
                         // check whether arc has fired
@@ -1889,12 +1889,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
             m_chBayWeapon.setEnabled(false);
         } else {
             m_chBayWeapon.setEnabled(true);
-            for (int wId : mounted.getBayWeapons()) {
-                WeaponMounted curWeapon = (WeaponMounted) entity.getEquipment(wId);
-                if (null == curWeapon) {
-                    continue;
-                }
-
+            for (WeaponMounted curWeapon : mounted.getBayWeapons()) {
                 m_chBayWeapon.addItem(formatBayWeapon(curWeapon));
             }
 
@@ -1913,7 +1908,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
             if (n == -1) {
                 n = 0;
             }
-            mounted = (WeaponMounted) entity.getEquipment(mounted.getBayWeapons().get(n));
+            mounted = mounted.getBayWeapon(n);
             wtype = mounted.getType();
         }
 
@@ -2548,7 +2543,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
 
     private void compileWeaponBay(WeaponMounted weapon, boolean isCapital) {
 
-        List<Integer> bayWeapons = weapon.getBayWeapons();
+        List<WeaponMounted> bayWeapons = weapon.getBayWeapons();
         WeaponType wtype = weapon.getType();
 
         // set default values in case if statement stops
@@ -2568,8 +2563,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         double avExt = 0;
         int maxr = WeaponType.RANGE_SHORT;
 
-        for (int wId : bayWeapons) {
-            Mounted<?> m = entity.getEquipment(wId);
+        for (WeaponMounted m : bayWeapons) {
             if (!m.isBreached()
                 && !m.isMissing()
                 && !m.isDestroyed()
@@ -2754,19 +2748,20 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                     return;
                 }
                 //
-                Mounted<?> sWeap = entity.getEquipment(mWeap.getBayWeapons().get(n));
+                WeaponMounted sWeap = mWeap.getBayWeapon(n);
                 // cycle through all weapons of the same type and load with
                 // this ammo
-                for (int wid : mWeap.getBayWeapons()) {
-                    WeaponMounted bWeap = (WeaponMounted) entity.getEquipment(wid);
-                    // FIXME: Consider new AmmoType::equals / BombType::equals
-                    if (bWeap.getType().equals(sWeap.getType())) {
-                        entity.loadWeapon(bWeap, mAmmo);
-                        // Alert the server of the update.
-                        clientgui.getClient().sendAmmoChange(
-                                entity.getId(),
-                                entity.getEquipmentNum(bWeap),
-                                entity.getEquipmentNum(mAmmo));
+                if (sWeap != null) {
+                    for (WeaponMounted bWeap : mWeap.getBayWeapons()) {
+                        // FIXME: Consider new AmmoType::equals / BombType::equals
+                        if (bWeap.getType().equals(sWeap.getType())) {
+                            entity.loadWeapon(bWeap, mAmmo);
+                            // Alert the server of the update.
+                            clientgui.getClient().sendAmmoChange(
+                                    entity.getId(),
+                                    entity.getEquipmentNum(bWeap),
+                                    entity.getEquipmentNum(mAmmo));
+                        }
                     }
                 }
             } else {

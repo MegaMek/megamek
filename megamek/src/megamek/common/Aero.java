@@ -16,6 +16,7 @@ package megamek.common;
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.common.cost.AeroCostCalculator;
 import megamek.common.enums.AimingMode;
+import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.OptionsConstants;
 import org.apache.logging.log4j.LogManager;
@@ -3088,14 +3089,13 @@ public class Aero extends Entity implements IAero, IBomber {
                 }
 
                 // Make sure ammo is loaded
-                for (int wId : weapon.getBayWeapons()) {
-                    Mounted<?> bayW = getEquipment(wId);
-                    Mounted<?> bayWAmmo = bayW.getLinked();
+                for (WeaponMounted bayW : weapon.getBayWeapons()) {
+                    AmmoMounted bayWAmmo = bayW.getLinkedAmmo();
                     if (!(weapon.getType().hasFlag(WeaponType.F_ENERGY))
                             && ((bayWAmmo == null) || (bayWAmmo.getUsableShotsLeft() == 0)
                             || bayWAmmo.isDumping())) {
                         loadWeapon(weapon);
-                        bayWAmmo = weapon.getLinked();
+                        bayWAmmo = weapon.getLinkedAmmo();
                     }
 
                     // try again

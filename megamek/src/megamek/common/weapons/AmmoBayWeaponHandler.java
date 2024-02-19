@@ -15,7 +15,6 @@ package megamek.common.weapons;
 
 import megamek.common.AmmoType;
 import megamek.common.Game;
-import megamek.common.Mounted;
 import megamek.common.RangeType;
 import megamek.common.ToHitData;
 import megamek.common.WeaponType;
@@ -23,8 +22,6 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.server.GameManager;
-import megamek.server.Server;
-import org.apache.logging.log4j.LogManager;
 
 /**
  * @author Jay Lawson
@@ -63,12 +60,7 @@ public class AmmoBayWeaponHandler extends BayWeaponHandler {
         double av = 0;
         int range = RangeType.rangeBracket(nRange, wtype.getATRanges(), true, false);
 
-        for (int wId : weapon.getBayWeapons()) {
-            WeaponMounted bayW = ae.getWeapon(wId);
-            if (bayW == null) {
-                LogManager.getLogger().error("Handler can't find the weapon!");
-                return 0;
-            }
+        for (WeaponMounted bayW : weapon.getBayWeapons()) {
             // check the currently loaded ammo
             AmmoMounted bayWAmmo = bayW.getLinkedAmmo();
             if (null == bayWAmmo || bayWAmmo.getUsableShotsLeft() < 1) {
@@ -96,7 +88,7 @@ public class AmmoBayWeaponHandler extends BayWeaponHandler {
                     current_av = bayWType.getExtAV();
                 }
                 current_av = updateAVforAmmo(current_av, atype, bayWType,
-                        range, wId);
+                        range, bayW.getEquipmentNum());
                 av = av + current_av;
                 // now use the ammo that we had loaded
                 if (current_av > 0) {

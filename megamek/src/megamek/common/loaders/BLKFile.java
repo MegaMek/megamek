@@ -20,7 +20,9 @@ import java.util.stream.Collectors;
 import com.sun.mail.util.DecodingException;
 import megamek.common.*;
 import megamek.common.InfantryBay.PlatoonType;
+import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.ArmorType;
+import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.IBasicOption;
 import megamek.common.options.IOption;
 import megamek.common.options.PilotOptions;
@@ -886,9 +888,9 @@ public class BLKFile {
                     continue;
                 }
                 boolean rear = m.isRearMounted();
-                for (int i = 0; i < m.getBayWeapons().size(); i++) {
-                    Mounted w = t.getEquipment(m.getBayWeapons().get(i));
-                    String name = w.getType().getInternalName();
+                List<WeaponMounted> bayWeapons = ((WeaponMounted) m).getBayWeapons();
+                for (int i = 0; i < bayWeapons.size(); i++) {
+                    String name = bayWeapons.get(i).getType().getInternalName();
                     if (i == 0) {
                         name = "(B) " + name;
                     }
@@ -897,8 +899,7 @@ public class BLKFile {
                     }
                     eq.get(loc).add(name);
                 }
-                for (Integer aNum : m.getBayAmmo()) {
-                    Mounted a = t.getEquipment(aNum);
+                for (AmmoMounted a : ((WeaponMounted) m).getBayAmmo()) {
                     String name = a.getType().getInternalName();
                     name += ":" + a.getBaseShotsLeft();
                     if (rear) {

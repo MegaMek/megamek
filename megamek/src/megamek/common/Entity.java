@@ -4015,7 +4015,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * @return True if valid, else false
      */
     public boolean isWeaponValidForPhase(int weapNum) {
-        return isWeaponValidForPhase(equipmentList.get(weapNum));
+        return isWeaponValidForPhase((WeaponMounted) equipmentList.get(weapNum));
     }
 
     /**
@@ -4025,7 +4025,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * @param mounted
      * @return True if valid, else false
      */
-    public boolean isWeaponValidForPhase(Mounted<?> mounted) {
+    public boolean isWeaponValidForPhase(WeaponMounted mounted) {
         // Start reached, now we can attempt to pick a weapon.
         if ((mounted != null)
             && (mounted.isReady())
@@ -11458,12 +11458,12 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         return isCommander;
     }
 
-    public boolean hasLinkedMGA(Mounted<?> mounted) {
+    public boolean hasLinkedMGA(WeaponMounted mounted) {
         for (WeaponMounted m : getWeaponList()) {
             if ((m.getLocation() == mounted.getLocation())
                 && m.getType().hasFlag(WeaponType.F_MGA)
                 && !(m.isDestroyed() || m.isBreached())
-                && m.getBayWeapons().contains(getEquipmentNum(mounted))
+                && m.getBayWeapons().contains(mounted)
                 && m.hasModes() && m.curMode().equals("Linked")) {
                 return true;
             }
@@ -11515,16 +11515,21 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
-     * return the bay of the current weapon
+     * return the bay of the current weapon or ammo
      *
-     * @param bayID
-     * @return
+     * @param equipmentId The equipment index
+     * @return The bay mount, or null if the equipment is not in a bay
      */
-    public WeaponMounted whichBay(int bayID) {
+    public WeaponMounted whichBay(int equipmentId) {
         for (WeaponMounted m : getWeaponBayList()) {
-            for (int wId : m.getBayWeapons()) {
+            for (WeaponMounted weapon : m.getBayWeapons()) {
                 // find the weapon and determine if it is there
-                if (wId == bayID) {
+                if (weapon.getEquipmentNum() == equipmentId) {
+                    return m;
+                }
+            }
+            for (AmmoMounted ammo : m.getBayAmmo()) {
+                if (ammo.getEquipmentNum() == equipmentId) {
                     return m;
                 }
             }
@@ -12483,11 +12488,10 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * @param mammo
      * @return
      */
-    public WeaponMounted getBayByAmmo(Mounted<?> mammo) {
+    public WeaponMounted getBayByAmmo(AmmoMounted mammo) {
 
         for (WeaponMounted m : getWeaponBayList()) {
-            for (int bayAmmoId : m.getBayAmmo()) {
-                Mounted<?> bayammo = getEquipment(bayAmmoId);
+            for (AmmoMounted bayammo : m.getBayAmmo()) {
                 if (bayammo == mammo) {
                     return m;
                 }

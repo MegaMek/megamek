@@ -13437,11 +13437,11 @@ public class GameManager implements IGameManager {
      */
     public void assignAMS() {
         // Get all of the coords that would be protected by APDS
-        Hashtable<Coords, List<Mounted>> apdsCoords = getAPDSProtectedCoords();
+        Hashtable<Coords, List<WeaponMounted>> apdsCoords = getAPDSProtectedCoords();
         // Map target to a list of missile attacks directed at it
         Hashtable<Entity, Vector<WeaponHandler>> htAttacks = new Hashtable<>();
         // Keep track of each APDS, and which attacks it could affect
-        Hashtable<Mounted, Vector<WeaponHandler>> apdsTargets = new Hashtable<>();
+        Hashtable<WeaponMounted, Vector<WeaponHandler>> apdsTargets = new Hashtable<>();
 
         for (AttackHandler ah : game.getAttacksVector()) {
             WeaponHandler wh = (WeaponHandler) ah;
@@ -13508,7 +13508,7 @@ public class GameManager implements IGameManager {
             v.addElement(wh);
             // Keep track of what weapon attacks could be affected by APDS
             if (apdsCoords.containsKey(target.getPosition())) {
-                for (Mounted apds : apdsCoords.get(target.getPosition())) {
+                for (WeaponMounted apds : apdsCoords.get(target.getPosition())) {
                     // APDS only affects attacks against friendly units
                     if (target.isEnemyOf(apds.getEntity())) {
                         continue;
@@ -13532,7 +13532,7 @@ public class GameManager implements IGameManager {
 
         // Let each APDS assign itself to an attack
         Set<WeaponAttackAction> targetedAttacks = new HashSet<>();
-        for (Mounted apds : apdsTargets.keySet()) {
+        for (WeaponMounted apds : apdsTargets.keySet()) {
             List<WeaponHandler> potentialTargets = apdsTargets.get(apds);
             // Ensure we only target each attack once
             List<WeaponHandler> targetsToRemove = new ArrayList<>();
@@ -13565,7 +13565,7 @@ public class GameManager implements IGameManager {
      * @param vAttacks
      *            List of missile attacks directed at e
      */
-    private WeaponAttackAction manuallyAssignAPDSTarget(Mounted apds,
+    private WeaponAttackAction manuallyAssignAPDSTarget(WeaponMounted apds,
                                                         List<WeaponHandler> vAttacks) {
         Entity e = apds.getEntity();
         if (e == null) {
@@ -13652,7 +13652,7 @@ public class GameManager implements IGameManager {
         // Current AMS targets: each attack can only be targeted once
         HashSet<WeaponAttackAction> amsTargets = new HashSet<>();
         // Pick assignment for each active AMS
-        for (Mounted ams : e.getActiveAMS()) {
+        for (WeaponMounted ams : e.getActiveAMS()) {
             // Skip APDS
             if (ams.isAPDS()) {
                 continue;
@@ -13717,22 +13717,22 @@ public class GameManager implements IGameManager {
      *
      * @return
      */
-    private Hashtable<Coords, List<Mounted>> getAPDSProtectedCoords() {
+    private Hashtable<Coords, List<WeaponMounted>> getAPDSProtectedCoords() {
         // Get all of the coords that would be protected by APDS
-        Hashtable<Coords, List<Mounted>> apdsCoords = new Hashtable<>();
+        Hashtable<Coords, List<WeaponMounted>> apdsCoords = new Hashtable<>();
         for (Entity e : game.getEntitiesVector()) {
             // Ignore Entities without positions
             if (e.getPosition() == null) {
                 continue;
             }
             Coords origPos = e.getPosition();
-            for (Mounted ams : e.getActiveAMS()) {
+            for (WeaponMounted ams : e.getActiveAMS()) {
                 // Ignore non-APDS AMS
                 if (!ams.isAPDS()) {
                     continue;
                 }
                 // Add the current hex as a defended location
-                List<Mounted> apdsList = apdsCoords.computeIfAbsent(origPos, k -> new ArrayList<>());
+                List<WeaponMounted> apdsList = apdsCoords.computeIfAbsent(origPos, k -> new ArrayList<>());
                 apdsList.add(ams);
                 // Add each coords that is within arc/range as protected
                 int maxDist = 3;
@@ -25121,7 +25121,7 @@ public class GameManager implements IGameManager {
                             cf.setWingsHit(true);
                         }
                     }
-                    for (Mounted weapon : cf.getWeaponList()) {
+                    for (WeaponMounted weapon : cf.getWeaponList()) {
                         if (weapon.getLocation() == loc) {
                             if (destroyAll) {
                                 weapon.setHit(true);
@@ -25131,7 +25131,7 @@ public class GameManager implements IGameManager {
                         }
                     }
                     // also destroy any ECM or BAP in the location hit
-                    for (Mounted misc : cf.getMisc()) {
+                    for (MiscMounted misc : cf.getMisc()) {
                         if ((misc.getType().hasFlag(MiscType.F_ECM)
                                 || misc.getType().hasFlag(MiscType.F_ANGEL_ECM)
                                 || misc.getType().hasFlag(MiscType.F_BAP))
@@ -25162,40 +25162,39 @@ public class GameManager implements IGameManager {
                 }
                 r = new Report(9150);
                 r.subject = aero.getId();
-                List<Mounted> weapons = new ArrayList<>();
+                List<Mounted<?>> hittable = new ArrayList<>();
                 // Ignore internal bomb bay-mounted weapons
-                for (Mounted weapon : aero.getWeaponList()) {
+                for (WeaponMounted weapon : aero.getWeaponList()) {
                     if ((weapon.getLocation() == loc) && !weapon.isDestroyed() && !weapon.isInternalBomb()
                             && weapon.getType().isHittable()) {
-                        weapons.add(weapon);
+                        hittable.add(weapon);
                     }
                 }
                 // add in hittable misc equipment; internal bay munitions are handled separately.
-                for (Mounted misc : aero.getMisc()) {
+                for (MiscMounted misc : aero.getMisc()) {
                     if (misc.getType().isHittable()
                             && (misc.getLocation() == loc)
                             && !misc.isDestroyed()
                             && !misc.isInternalBomb()) {
-                        weapons.add(misc);
+                        hittable.add(misc);
                     }
                 }
 
-                if (!weapons.isEmpty()) {
-                    Mounted<?> weapon = weapons.get(Compute.randomInt(weapons.size()));
+                if (!hittable.isEmpty()) {
+                    Mounted<?> equipmentHit = hittable.get(Compute.randomInt(hittable.size()));
                     // possibly check for an ammo explosion
                     // don't allow ammo explosions on fighter squadrons
                     if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_AMMO_EXPLOSIONS)
                             && !(aero instanceof FighterSquadron)
-                            && (weapon.getType() instanceof WeaponType)) {
+                            && (equipmentHit.getType() instanceof WeaponType)) {
                         //Bay Weapons
-                        if (aero.usesWeaponBays()) {
+                        if ((equipmentHit instanceof WeaponMounted) && aero.usesWeaponBays()) {
                             //Finish reporting(9150) a hit on the bay
-                            r.add(weapon.getName());
+                            r.add(equipmentHit.getName());
                             reports.add(r);
                             //Pick a random weapon in the bay and get the stats
-                            int wId = weapon.getBayWeapons().get(Compute.randomInt(weapon.getBayWeapons().size()));
-                            Mounted bayW = aero.getEquipment(wId);
-                            Mounted bayWAmmo = bayW.getLinked();
+                            WeaponMounted bayW = Compute.randomListElement(((WeaponMounted) equipmentHit).getBayWeapons());
+                            AmmoMounted bayWAmmo = bayW.getLinkedAmmo();
                             if (bayWAmmo != null && bayWAmmo.getType().isExplosive(bayWAmmo)) {
                                 r = new Report(9156);
                                 r.subject = aero.getId();
@@ -25234,33 +25233,30 @@ public class GameManager implements IGameManager {
                                 }
                             }
                             // Hit the weapon then also hit all the other weapons in the bay
-                            weapon.setHit(true);
-                            for (int next : weapon.getBayWeapons()) {
-                                Mounted bayWeap = aero.getEquipment(next);
-                                if (null != bayWeap) {
-                                    bayWeap.setHit(true);
-                                    // Taharqa : We should also damage the critical slot, or MM and
-                                    // MHQ won't remember that this weapon is damaged on the MUL file
-                                    for (int i = 0; i < aero.getNumberOfCriticals(loc); i++) {
-                                        CriticalSlot slot1 = aero.getCritical(loc, i);
-                                        if ((slot1 == null) ||
-                                                (slot1.getType() == CriticalSlot.TYPE_SYSTEM)) {
-                                            continue;
-                                        }
-                                        Mounted mounted = slot1.getMount();
-                                        if (mounted.equals(bayWeap)) {
-                                            aero.hitAllCriticals(loc, i);
-                                            break;
-                                        }
+                            equipmentHit.setHit(true);
+                            for (WeaponMounted bayWeap : ((WeaponMounted) equipmentHit).getBayWeapons()) {
+                                bayWeap.setHit(true);
+                                // Taharqa : We should also damage the critical slot, or MM and
+                                // MHQ won't remember that this weapon is damaged on the MUL file
+                                for (int i = 0; i < aero.getNumberOfCriticals(loc); i++) {
+                                    CriticalSlot slot1 = aero.getCritical(loc, i);
+                                    if ((slot1 == null) ||
+                                            (slot1.getType() == CriticalSlot.TYPE_SYSTEM)) {
+                                        continue;
+                                    }
+                                    Mounted mounted = slot1.getMount();
+                                    if (mounted.equals(bayWeap)) {
+                                        aero.hitAllCriticals(loc, i);
+                                        break;
                                     }
                                 }
                             }
                             break;
                         }
                         // does it use Ammo?
-                        WeaponType wtype = (WeaponType) weapon.getType();
+                        WeaponType wtype = (WeaponType) equipmentHit.getType();
                         if (wtype.getAmmoType() != AmmoType.T_NA) {
-                            Mounted m = weapon.getLinked();
+                            Mounted m = equipmentHit.getLinked();
                             int ammoroll = Compute.d6(2);
                             if (ammoroll >= 10) {
                                 // A chance to reroll an explosion with edge
@@ -25295,24 +25291,24 @@ public class GameManager implements IGameManager {
                     // If the weapon is explosive, use edge to roll up a new one
                     if (aero.getCrew().hasEdgeRemaining()
                             && aero.getCrew().getOptions().booleanOption(OptionsConstants.EDGE_WHEN_AERO_EXPLOSION)
-                            && (weapon.getType().isExplosive(weapon) && !weapon.isHit()
-                            && !weapon.isDestroyed())) {
+                            && (equipmentHit.getType().isExplosive(equipmentHit) && !equipmentHit.isHit()
+                            && !equipmentHit.isDestroyed())) {
                         aero.getCrew().decreaseEdge();
                         // Try something new for an interrupting report. r is still 9150.
                         Report r1 = new Report(6530);
                         r1.subject = aero.getId();
                         r1.add(aero.getCrew().getOptions().intOption(OptionsConstants.EDGE));
                         reports.add(r1);
-                        weapon = weapons.get(Compute.randomInt(weapons.size()));
+                        equipmentHit = hittable.get(Compute.randomInt(hittable.size()));
                     }
-                    r.add(weapon.getName());
+                    r.add(equipmentHit.getName());
                     reports.add(r);
                     // explosive weapons e.g. gauss now explode
-                    if (weapon.getType().isExplosive(weapon) && !weapon.isHit()
-                            && !weapon.isDestroyed()) {
-                        reports.addAll(explodeEquipment(aero, loc, weapon));
+                    if (equipmentHit.getType().isExplosive(equipmentHit) && !equipmentHit.isHit()
+                            && !equipmentHit.isDestroyed()) {
+                        reports.addAll(explodeEquipment(aero, loc, equipmentHit));
                     }
-                    weapon.setHit(true);
+                    equipmentHit.setHit(true);
                     // Taharqa : We should also damage the critical slot, or MM and MHQ won't
                     // remember that this weapon is damaged on the MUL file
                     for (int i = 0; i < aero.getNumberOfCriticals(loc); i++) {
@@ -25320,30 +25316,27 @@ public class GameManager implements IGameManager {
                         if ((slot1 == null) || (slot1.getType() == CriticalSlot.TYPE_SYSTEM)) {
                             continue;
                         }
-                        Mounted mounted = slot1.getMount();
-                        if (mounted.equals(weapon)) {
+                        Mounted<?> mounted = slot1.getMount();
+                        if (mounted.equals(equipmentHit)) {
                             aero.hitAllCriticals(loc, i);
                             break;
                         }
                     }
                     // if this is a weapons bay then also hit all the other weapons
-                    for (int wId : weapon.getBayWeapons()) {
-                        Mounted bayWeap = aero.getEquipment(wId);
-                        if (null != bayWeap) {
-                            bayWeap.setHit(true);
-                            // Taharqa : We should also damage the critical slot, or MM and MHQ
-                            // won't remember that this weapon is damaged on the MUL file
-                            for (int i = 0; i < aero.getNumberOfCriticals(loc); i++) {
-                                CriticalSlot slot1 = aero.getCritical(loc, i);
-                                if ((slot1 == null)
-                                        || (slot1.getType() == CriticalSlot.TYPE_SYSTEM)) {
-                                    continue;
-                                }
-                                Mounted mounted = slot1.getMount();
-                                if (mounted.equals(bayWeap)) {
-                                    aero.hitAllCriticals(loc, i);
-                                    break;
-                                }
+                    for (WeaponMounted bayWeap : ((WeaponMounted) equipmentHit).getBayWeapons()) {
+                        bayWeap.setHit(true);
+                        // Taharqa : We should also damage the critical slot, or MM and MHQ
+                        // won't remember that this weapon is damaged on the MUL file
+                        for (int i = 0; i < aero.getNumberOfCriticals(loc); i++) {
+                            CriticalSlot slot1 = aero.getCritical(loc, i);
+                            if ((slot1 == null)
+                                    || (slot1.getType() == CriticalSlot.TYPE_SYSTEM)) {
+                                continue;
+                            }
+                            Mounted mounted = slot1.getMount();
+                            if (mounted.equals(bayWeap)) {
+                                aero.hitAllCriticals(loc, i);
+                                break;
                             }
                         }
                     }

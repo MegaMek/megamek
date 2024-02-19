@@ -51,13 +51,7 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
     @Override
     protected void useAmmo() {
         nweaponsHit = weapon.getBayWeapons().size();
-        for (int wId : weapon.getBayWeapons()) {
-            WeaponMounted bayW = ae.getWeapon(wId);
-            if (bayW == null) {
-                LogManager.getLogger().error("Handler can't find the weapon!");
-                return;
-            }
-
+        for (WeaponMounted bayW : weapon.getBayWeapons()) {
             // check the currently loaded ammo
             AmmoMounted bayWAmmo = bayW.getLinkedAmmo();
 

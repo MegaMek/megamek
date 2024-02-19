@@ -15,6 +15,7 @@
 package megamek.common;
 
 import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.equipment.WeaponMounted;
 import megamek.common.weapons.*;
 import megamek.common.weapons.artillery.*;
 import megamek.common.weapons.autocannons.*;
@@ -544,7 +545,7 @@ public class WeaponType extends EquipmentType {
         return waterExtremeRange;
     }
 
-    public int getMaxRange(Mounted<?> weapon) {
+    public int getMaxRange(WeaponMounted weapon) {
         if (null != weapon) {
             if (getAmmoType() == AmmoType.T_ATM) {
                 AmmoType atype = (AmmoType) weapon.getLinked().getType();

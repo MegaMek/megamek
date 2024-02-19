@@ -2645,19 +2645,18 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     public void setSecondaryFacing(int sec_facing) {
-        if (getGame() == null) {
-            return;
-        }
-        // Only allow changing secondary facing if we haven't done so in a prior phase
-        GamePhase phase = getGame().getPhase();
-        if (phase != null) {
-            // If we already twisted in an earlier phase, return out
-            if (getAlreadyTwisted()) {
-                return;
-            }
-            if (phase.isOffboard() || phase.isFiring()) {
-                // Only Offboard and Firing phases could conceivably have later phases with twisting
-                setAlreadyTwisted(true);
+        if (getGame() != null) {
+            // Only allow changing secondary facing if we haven't done so in a prior phase
+            GamePhase phase = getGame().getPhase();
+            if (phase != null) {
+                // If we already twisted in an earlier phase, return out
+                if (getAlreadyTwisted()) {
+                    return;
+                }
+                if (phase.isOffboard() || phase.isFiring()) {
+                    // Only Offboard and Firing phases could conceivably have later phases with twisting
+                    setAlreadyTwisted(true);
+                }
             }
         }
         setSecondaryFacing(sec_facing, true);

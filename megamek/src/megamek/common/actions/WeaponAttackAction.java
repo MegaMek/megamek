@@ -4986,7 +4986,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
     private static ToHitData artilleryIndirectToHit(Entity ae, Targetable target,
                   ToHitData toHit, WeaponType wtype, Mounted weapon, SpecialResolutionTracker srt) {
 
-        int mod = 7;
+        // See MegaMek/megamek#5168
+        int mod = (ae.getPosition().distance(target.getPosition()) <= 17) ? 4 : 7;
         if (ae.hasAbility(OptionsConstants.GUNNERY_OBLIQUE_ATTACKER)) {
             mod--;
         }

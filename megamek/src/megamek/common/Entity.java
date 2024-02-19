@@ -2653,8 +2653,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * Optionally does not fire a game change event (useful for bot evaluation)
      */
     public void setSecondaryFacing(int sec_facing, boolean fireEvent) {
-        this.sec_facing = FireControl.correctFacing(sec_facing);
-
         if (game != null) {
             // Only allow changing secondary facing if we haven't done so in a prior phase
             GamePhase phase = game.getPhase();
@@ -2669,6 +2667,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                 }
             }
         }
+
+        this.sec_facing = FireControl.correctFacing(sec_facing);
 
         if (fireEvent && (game != null)) {
             game.processGameEvent(new GameEntityChangeEvent(this, this));

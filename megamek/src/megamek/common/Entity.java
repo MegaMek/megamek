@@ -2645,9 +2645,19 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     public void setSecondaryFacing(int sec_facing) {
-        if (getGame() != null) {
+        setSecondaryFacing(sec_facing, true);
+    }
+
+    /**
+     * Sets the secondary facing.
+     * Optionally does not fire a game change event (useful for bot evaluation)
+     */
+    public void setSecondaryFacing(int sec_facing, boolean fireEvent) {
+        this.sec_facing = FireControl.correctFacing(sec_facing);
+
+        if (game != null) {
             // Only allow changing secondary facing if we haven't done so in a prior phase
-            GamePhase phase = getGame().getPhase();
+            GamePhase phase = game.getPhase();
             if (phase != null) {
                 // If we already twisted in an earlier phase, return out
                 if (getAlreadyTwisted()) {
@@ -2659,15 +2669,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                 }
             }
         }
-        setSecondaryFacing(sec_facing, true);
-    }
 
-    /**
-     * Sets the secondary facing.
-     * Optionally does not fire a game change event (useful for bot evaluation)
-     */
-    public void setSecondaryFacing(int sec_facing, boolean fireEvent) {
-        this.sec_facing = FireControl.correctFacing(sec_facing);
         if (fireEvent && (game != null)) {
             game.processGameEvent(new GameEntityChangeEvent(this, this));
         }

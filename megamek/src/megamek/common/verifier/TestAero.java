@@ -268,7 +268,7 @@ public class TestAero extends TestEntity {
         long eType = unit.getEntityType();
         if (unit.hasETypeFlag(Entity.ETYPE_CONV_FIGHTER)) {
             rating = (tonnage * desiredSafeThrust);
-        } else if (eType == Entity.ETYPE_AERO) {
+        } else if (unit.hasETypeFlag(Entity.ETYPE_AEROSPACEFIGHTER)) {
             rating = (tonnage * (desiredSafeThrust - 2));
         } else {
             rating = 0;

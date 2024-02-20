@@ -69,11 +69,6 @@ public final class Team extends TurnOrdered {
         return nonObserverPlayers().size();
     }
 
-    /** Removes all players from this team. */
-    public void resetTeam() {
-        players.clear();
-    }
-
     /** Adds the given player to this team. Null players will not be added. */
     public void addPlayer(@Nullable Player player) {
         if (player != null) {
@@ -213,11 +208,6 @@ public final class Team extends TurnOrdered {
     @Override
     public String toString() {
         return (getId() == Player.TEAM_NONE) ? "No Team" : "Team " + getId();
-    }
-
-    // TODO : this is Total Warfare specific, remove from Team
-    public boolean hasTAG() {
-        return players.stream().anyMatch(Player::hasTAG);
     }
 
     /** @return The best initiative among the team's players. */

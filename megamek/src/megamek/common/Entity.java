@@ -15800,4 +15800,9 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         }
         return -1;
     }
+
+    @Override
+    public boolean countForStrengthSum() {
+        return !isDestroyed() && !isTrapped() && !isPartOfFighterSquadron();
+    }
 }

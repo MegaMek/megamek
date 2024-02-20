@@ -215,48 +215,39 @@ public class GameManager implements IGameManager {
             LogManager.getLogger().error("Attempted to set game to incorrect class.");
             return;
         }
-        // game listeners are transient so we need to save and restore them
-        Vector<GameListener> gameListenersClone = new Vector<>(getGame().getGameListeners());
-
         game = (Game) g;
-
-        for (GameListener listener : gameListenersClone) {
-            getGame().addGameListener(listener);
-        }
 
         List<Integer> orphanEntities = new ArrayList<>();
 
         // reattach the transient fields and ghost the players
-        for (Iterator<Entity> e = game.getEntities(); e.hasNext(); ) {
-            Entity ent = e.next();
-            ent.setGame(game);
+        for (Entity entity : game.getEntitiesVector()) {
+            entity.setGame(game);
 
-            if (ent.getOwner() == null) {
-                orphanEntities.add(ent.getId());
+            if (entity.getOwner() == null) {
+                orphanEntities.add(entity.getId());
                 continue;
             }
 
-            if (ent instanceof Mech) {
-                ((Mech) ent).setBAGrabBars();
-                ((Mech) ent).setProtomechClampMounts();
+            if (entity instanceof Mech) {
+                ((Mech) entity).setBAGrabBars();
+                ((Mech) entity).setProtomechClampMounts();
             }
-            if (ent instanceof Tank) {
-                ((Tank) ent).setBAGrabBars();
+            if (entity instanceof Tank) {
+                ((Tank) entity).setBAGrabBars();
             }
         }
 
         game.removeEntities(orphanEntities, IEntityRemovalConditions.REMOVE_UNKNOWN);
 
         game.setOutOfGameEntitiesVector(game.getOutOfGameEntitiesVector());
-        for (Enumeration<Player> e = game.getPlayers(); e.hasMoreElements(); ) {
-            Player p = e.nextElement();
-            p.setGame(game);
-            p.setGhost(true);
+        for (Player player : game.getPlayersList()) {
+            player.setGame(game);
+            player.setGhost(true);
         }
+
         // might need to restore weapon type for some attacks that take multiple
         // turns (like artillery)
-        for (Enumeration<AttackHandler> a = game.getAttacks(); a.hasMoreElements(); ) {
-            AttackHandler handler = a.nextElement();
+        for (AttackHandler handler : game.getAttacksVector()) {
             if (handler instanceof WeaponHandler) {
                 ((WeaponHandler) handler).restore();
             }
@@ -1685,23 +1676,23 @@ public class GameManager implements IGameManager {
             BVCountHelper bvcPlayer = new BVCountHelper();
             bvcPlayer.bv = player.getBV();
             bvcPlayer.bvInitial = player.getInitialBV();
-            bvcPlayer.bvFled = player.getFledBV();
-            bvcPlayer.unitsCount = player.getUnitCount();
+            bvcPlayer.bvFled = ServerReportsHelper.getFledBV(player, game);
+            bvcPlayer.unitsCount = ServerReportsHelper.getUnitCount(player, game);
             bvcPlayer.unitsInitialCount = player.getInitialEntityCount();
-            bvcPlayer.unitsLightDamageCount = player.getUnitDamageCount(Entity.DMG_LIGHT);
-            bvcPlayer.unitsModerateDamageCount = player.getUnitDamageCount(Entity.DMG_MODERATE);
-            bvcPlayer.unitsHeavyDamageCount = player.getUnitDamageCount(Entity.DMG_HEAVY);
-            bvcPlayer.unitsCrippledCount = player.getUnitDamageCount(Entity.DMG_CRIPPLED);
-            bvcPlayer.unitsDestroyedCount =  player.getUnitDestroyedCount();
-            bvcPlayer.unitsCrewEjectedCount = player.getUnitCrewEjectedCount();
-            bvcPlayer.unitsCrewTrappedCount = player.getUnitCrewTrappedCount();
-            bvcPlayer.unitsCrewKilledCount = player.getUnitCrewKilledCount();
-            bvcPlayer.unitsFledCount = player.getFledUnitsCount();
-            bvcPlayer.ejectedCrewActiveCount = player.getEjectedCrewCount();
-            bvcPlayer.ejectedCrewPickedUpByTeamCount =  player.getEjectedCrewPickedUpByTeamCount();
-            bvcPlayer.ejectedCrewPickedUpByEnemyTeamCount = player.getEjectedCrewPickedUpByEnemyTeamCount();
-            bvcPlayer.ejectedCrewKilledCount = player.getEjectedCrewKilledCount();
-            bvcPlayer.ejectedCrewFledCount = player.getFledEjectedCrew();
+            bvcPlayer.unitsLightDamageCount = ServerReportsHelper.getUnitDamageCount(player, Entity.DMG_LIGHT, game);
+            bvcPlayer.unitsModerateDamageCount = ServerReportsHelper.getUnitDamageCount(player, Entity.DMG_MODERATE, game);
+            bvcPlayer.unitsHeavyDamageCount = ServerReportsHelper.getUnitDamageCount(player, Entity.DMG_HEAVY, game);
+            bvcPlayer.unitsCrippledCount = ServerReportsHelper.getUnitDamageCount(player, Entity.DMG_CRIPPLED, game);
+            bvcPlayer.unitsDestroyedCount =  ServerReportsHelper.getUnitDestroyedCount(player, game);
+            bvcPlayer.unitsCrewEjectedCount = ServerReportsHelper.getUnitCrewEjectedCount(player, game);
+            bvcPlayer.unitsCrewTrappedCount = ServerReportsHelper.getUnitCrewTrappedCount(player, game);
+            bvcPlayer.unitsCrewKilledCount = ServerReportsHelper.getUnitCrewKilledCount(player, game);
+            bvcPlayer.unitsFledCount = ServerReportsHelper.getFledUnitsCount(player, game);
+            bvcPlayer.ejectedCrewActiveCount = ServerReportsHelper.getEjectedCrewCount(player, game);
+            bvcPlayer.ejectedCrewPickedUpByTeamCount =  ServerReportsHelper.getEjectedCrewPickedUpByTeamCount(player, game);
+            bvcPlayer.ejectedCrewPickedUpByEnemyTeamCount = ServerReportsHelper.getEjectedCrewPickedUpByEnemyTeamCount(player, game);
+            bvcPlayer.ejectedCrewKilledCount = ServerReportsHelper.getEjectedCrewKilledCount(player, game);
+            bvcPlayer.ejectedCrewFledCount = ServerReportsHelper.getFledEjectedCrew(player, game);
 
             playerReport.addAll(bvReport(player.getColorForPlayer(), player.getId(), bvcPlayer, checkBlind));
 
@@ -2206,7 +2197,8 @@ public class GameManager implements IGameManager {
     public void calculatePlayerInitialCounts() {
         for (final Enumeration<Player> players = game.getPlayers(); players.hasMoreElements(); ) {
             final Player player = players.nextElement();
-            player.setInitialEntityCount(player.getEntityCount());
+            player.setInitialEntityCount(Math.toIntExact(game.getPlayerEntities(player, false).stream()
+                    .filter(entity -> !entity.isDestroyed() && !entity.isTrapped()).count()));
             player.setInitialBV(player.getBV());
         }
     }
@@ -34868,10 +34860,18 @@ public class GameManager implements IGameManager {
      * @return a vector of relevant entity ids
      */
     public Vector<Integer> getAirborneVTOL(Team team) {
-        // a vector of unit ids
         Vector<Integer> units = new Vector<>();
-        for (Player player : team.players()) {
-            units.addAll(player.getAirborneVTOL());
+        for (Entity entity : game.getEntitiesVector()) {
+            for (Player player : team.players()) {
+                if (entity.getOwner().equals(player)) {
+                    if (((entity instanceof VTOL)
+                            || (entity.getMovementMode() == EntityMovementMode.WIGE)) &&
+                            (!entity.isDestroyed()) &&
+                            (entity.getElevation() > 0)) {
+                        units.add(entity.getId());
+                    }
+                }
+            }
         }
         return units;
     }

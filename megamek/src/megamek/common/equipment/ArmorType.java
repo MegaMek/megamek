@@ -66,7 +66,7 @@ public class ArmorType extends MiscType {
     }
 
     public static Map<Integer, String> getAllArmorCodeName() {
-        Map<Integer, String> result = new HashMap();
+        Map<Integer, String> result = new HashMap<>();
 
         for (ArmorType armorType : allTypes) {
             result.put(armorType.getArmorType(), getArmorTypeName(armorType.getArmorType()));
@@ -191,6 +191,9 @@ public class ArmorType extends MiscType {
         omniFixedOnly = true;
         spreadable = true;
         bv = 0;
+        criticals = 0;
+        tankslots = 0;
+        svslots = 0;
     }
 
     /**

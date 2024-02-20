@@ -10866,7 +10866,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         } else {
             ArmorType armor = ArmorType.forEntity(this);
             if (armor.hasFlag(MiscType.F_SUPPORT_VEE_BAR_ARMOR)) {
-                double total = armor.getSVWeightPerPoint(getArmorTechRating());
+                double total = getTotalOArmor() * armor.getSVWeightPerPoint(getArmorTechRating());
                 return RoundWeight.standard(total, this);
             } else {
                 double armorPerTon = ArmorType.forEntity(this).getPointsPerTon(this);

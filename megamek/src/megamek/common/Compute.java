@@ -601,6 +601,14 @@ public class Compute {
             return true;
         }
 
+        // Check for black ice on pavement
+        if (destHex.containsTerrain(Terrains.BLACK_ICE)
+                && !(entity.getElevation() > destHex.getLevel())
+                && isPavementStep
+                && (movementType != EntityMovementType.MOVE_JUMP)) {
+            return true;
+        }
+
         // Check for water unless we're a hovercraft or naval or using a bridge
         // or flying or QuadVee in vehicle mode.
         if ((movementType != EntityMovementType.MOVE_JUMP)

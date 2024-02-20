@@ -43,7 +43,6 @@ public class ServerHelper {
      */
     public static boolean infantryInOpen(Entity te, Hex te_hex, Game game,
                                          boolean isPlatoon, boolean ammoExplosion, boolean ignoreInfantryDoubleDamage) {
-
         if (isPlatoon && !te.isDestroyed() && !te.isDoomed() && !ignoreInfantryDoubleDamage
                 && (((Infantry) te).getDugIn() != Infantry.DUG_IN_COMPLETE)) {
 
@@ -359,7 +358,7 @@ public class ServerHelper {
 
             Roll diceRoll = Compute.rollD6(2);
             r.add(diceRoll);
-            
+
             if (diceRoll.getIntValue() >= boom) {
                 // no ammo explosion
                 r.choose(true);
@@ -471,7 +470,6 @@ public class ServerHelper {
 
     public static void checkAndApplyMagmaCrust(Hex hex, int elevation, Entity entity, Coords curPos,
                                                boolean jumpLanding, Vector<Report> vPhaseReport, GameManager gameManager) {
-
         if ((hex.terrainLevel(Terrains.MAGMA) == 1) && (elevation == 0) && (entity.getMovementMode() != EntityMovementMode.HOVER)) {
             int reportID = jumpLanding ? 2396 : 2395;
 
@@ -483,7 +481,7 @@ public class ServerHelper {
             vPhaseReport.add(r);
 
             int rollTarget = jumpLanding ? 4 : 6;
-            
+
             if (diceRoll.getIntValue() >= rollTarget) {
                 hex.removeTerrain(Terrains.MAGMA);
                 hex.addTerrain(new Terrain(Terrains.MAGMA, 2));
@@ -505,6 +503,26 @@ public class ServerHelper {
         if ((hex.terrainLevel(Terrains.MAGMA) == 2) && (elevation == 0) && (entity.getMovementMode() != EntityMovementMode.HOVER)) {
             gameManager.doMagmaDamage(entity, false);
         }
+    }
+
+    /**
+     * Check for black ice when moving into pavement hex.
+     */
+    public static boolean checkEnteringBlackIce(GameManager gameManager, Coords curPos, Hex curHex, boolean useBlackIce, boolean goodTemp, boolean isIceStorm) {
+        boolean isPavement = curHex.hasPavement();
+        if (isPavement && ((useBlackIce && goodTemp) || isIceStorm)) {
+            if (!curHex.containsTerrain(Terrains.BLACK_ICE)) {
+                int blackIceChance = Compute.d6(1);
+                if (blackIceChance > 4) {
+                    curHex.addTerrain(new Terrain(Terrains.BLACK_ICE, 1));
+                    gameManager.sendChangedHex(curPos);
+                    return true;
+                }
+            } else {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

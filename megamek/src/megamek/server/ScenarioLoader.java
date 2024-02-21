@@ -610,18 +610,18 @@ public class ScenarioLoader {
             if ((parts.length > 4) && parts[4].matches("-?\\d+")) {
                 e.setCrew(new Crew(e.getCrew().getCrewType(), parts[1], 1,
                         Integer.parseInt(parts[2]), Integer.parseInt(parts[3]),
-                        Gender.parseFromString(parts[4]), null));
-                i = 5; // direction will be part 5, as the scenario has the gender of its pilots included
+                        Gender.parseFromString(parts[4]), Boolean.parseBoolean(parts[5]), null));
+                i = 6; // direction will be part 6, as the scenario has the gender of its pilots included
             } else {
                 e.setCrew(new Crew(e.getCrew().getCrewType(), parts[1], 1,
                         Integer.parseInt(parts[2]), Integer.parseInt(parts[3]),
-                        RandomGenderGenerator.generate(), null));
+                        RandomGenderGenerator.generate(), e.isClan(), null));
                 i = 4; // direction will be part 4, as the scenario does not contain gender
             }
 
             // This uses the i value to ensure it is calculated correctly
             if (parts.length >= 7) {
-                String direction = parts[i++].toUpperCase(Locale.ROOT); //grab value at i, then increment
+                String direction = parts[i++].toUpperCase(Locale.ROOT); // grab value at i, then increment
                 switch (direction) {
                     case "N":
                         e.setFacing(0);

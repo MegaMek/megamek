@@ -3597,8 +3597,7 @@ public abstract class Mech extends Entity {
      */
     @Override
     public boolean isRepairable() {
-        // A Mech is repairable if it is salvageable,
-        // and its CT internals are not gone.
+        // A Mech is repairable if it is salvageable, and its CT internals are not gone.
         int loc_is = this.getInternal(Mech.LOC_CT);
         return isSalvage() && (loc_is != IArmorState.ARMOR_DOOMED)
                 && (loc_is != IArmorState.ARMOR_DESTROYED);
@@ -3608,17 +3607,21 @@ public abstract class Mech extends Entity {
     public boolean canCharge() {
         // Mechs can charge, unless they are Clan and the "no clan physicals" option is set
         return super.canCharge()
-                && !(game.getOptions().booleanOption(OptionsConstants.ALLOWED_NO_CLAN_PHYSICAL) && isClan());
+                && !(game.getOptions().booleanOption(OptionsConstants.ALLOWED_NO_CLAN_PHYSICAL)
+                        && getCrew().isClanPilot());
     }
 
     @Override
     public boolean canDFA() {
         // Mechs can DFA, unless they are Clan and the "no clan physicals" option is set
         return super.canDFA()
-                && !(game.getOptions().booleanOption(OptionsConstants.ALLOWED_NO_CLAN_PHYSICAL) && isClan());
+                && !(game.getOptions().booleanOption(OptionsConstants.ALLOWED_NO_CLAN_PHYSICAL)
+                        && getCrew().isClanPilot());
     }
 
-    // gives total number of sinks
+    /**
+     * @return the total number of sinks
+     */
     public int getNumberOfSinks() {
         int sinks = 0;
         for (Mounted mounted : getMisc()) {

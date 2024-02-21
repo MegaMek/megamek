@@ -50,6 +50,7 @@ public class CustomPilotView extends JPanel {
     private final JTextField fldName = new JTextField(20);
     private final JTextField fldNick = new JTextField(20);
     private final JTextField fldHits = new JTextField(5);
+    private final JCheckBox chkClanPilot = new JCheckBox(Messages.getString("CustomMechDialog.chkClanPilot"));
     private final JTextField fldGunnery = new JTextField(3);
     private final JTextField fldGunneryL = new JTextField(3);
     private final JTextField fldGunneryM = new JTextField(3);
@@ -97,12 +98,12 @@ public class CustomPilotView extends JPanel {
 
         portrait = entity.getCrew().getPortrait(slot);
         portraitButton.setIcon(entity.getCrew().getPortrait(slot).getImageIcon());
-        add(portraitButton, GBC.std().gridheight(2));
+        add(portraitButton, GBC.std().gridheight(4));
 
         JButton button = new JButton(Messages.getString("CustomMechDialog.RandomName"));
         button.addActionListener(e -> {
             gender = RandomGenderGenerator.generate();
-            fldName.setText(RandomNameGenerator.getInstance().generate(gender, entity.getOwner().getName()));
+            fldName.setText(RandomNameGenerator.getInstance().generate(gender, isClanPilot(), entity.getOwner().getName()));
         });
         add(button, GBC.eop());
 
@@ -122,6 +123,9 @@ public class CustomPilotView extends JPanel {
             }
         });
         add(button, GBC.eop());
+
+        add(chkClanPilot, GBC.eop());
+        chkClanPilot.setSelected(entity.getCrew().isClanPilot(slot));
 
         label = new JLabel(Messages.getString("CustomMechDialog.labName"), SwingConstants.RIGHT);
         add(label, GBC.std());
@@ -289,6 +293,7 @@ public class CustomPilotView extends JPanel {
         if (!editable) {
             fldName.setEnabled(false);
             fldNick.setEnabled(false);
+            chkClanPilot.setEnabled(false);
             fldHits.setEnabled(false);
             fldGunnery.setEnabled(false);
             fldGunneryL.setEnabled(false);
@@ -369,6 +374,10 @@ public class CustomPilotView extends JPanel {
 
     public Gender getGender() {
         return gender;
+    }
+
+    public boolean isClanPilot() {
+        return chkClanPilot.isSelected();
     }
 
     public int getGunnery() {

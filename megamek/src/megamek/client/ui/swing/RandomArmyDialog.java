@@ -1081,16 +1081,18 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
 
     private void autoSetSkillsAndName(Entity e) {
         ClientPreferences cs = PreferenceManager.getClientPreferences();
+
+        Arrays.fill(e.getCrew().getClanPilots(), e.isClan());
         if (cs.useAverageSkills()) {
-            m_client.getSkillGenerator().setRandomSkills(e, true);
+            m_client.getSkillGenerator().setRandomSkills(e);
         }
 
         for (int i = 0; i < e.getCrew().getSlotCount(); i++) {
             if (cs.generateNames()) {
                 Gender gender = RandomGenderGenerator.generate();
                 e.getCrew().setGender(gender, i);
-                e.getCrew().setName(RandomNameGenerator.getInstance()
-                        .generate(gender, (String) m_chPlayer.getSelectedItem()), i);
+                e.getCrew().setName(RandomNameGenerator.getInstance().generate(gender,
+                        e.getCrew().isClanPilot(i), (String) m_chPlayer.getSelectedItem()), i);
             }
         }
     }

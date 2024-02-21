@@ -789,6 +789,7 @@ public class CustomMechDialog extends AbstractButtonDialog implements ActionList
                 entity.getCrew().setNickname(nick, i);
                 entity.getCrew().setHits(Integer.parseInt(hits), i);
                 entity.getCrew().setGender(gender, i);
+                entity.getCrew().setClanPilot(panCrewMember[i].isClanPilot(), i);
                 entity.getCrew().setPortrait(panCrewMember[i].getPortrait().clone(), i);
                 if (backup >= 0) {
                     if (i == entity.getCrew().getCrewType().getPilotPos()) {

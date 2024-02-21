@@ -407,6 +407,7 @@ public class OptionsConstants {
     public static final String ADVCOMBAT_TACOPS_WOODS_COVER = "tacops_woods_cover";
     public static final String ADVCOMBAT_TACOPS_VEHICLE_EFFECTIVE = "tacops_vehicle_effective";
     public static final String ADVCOMBAT_TACOPS_VEHICLE_ARCS = "tacops_vehicle_arcs";
+
     public static final String ADVCOMBAT_TACOPS_VTOL_ATTACKS = "tacops_vtol_attacks";
     public static final String ADVCOMBAT_TACOPS_ADVANCED_MECH_HIT_LOCATIONS = "tacops_advanced_mech_hit_locations";
     public static final String ADVCOMBAT_TACOPS_COOLANT_FAILURE = "tacops_coolant_failure";
@@ -504,7 +505,6 @@ public class OptionsConstants {
     public static final String INIT_INF_MOVE_LATER = "inf_move_later";
     public static final String INIT_INF_MOVE_MULTI = "inf_move_multi";
     public static final String INIT_PROTOS_MOVE_EVEN = "protos_move_even";
-    public static final String INIT_PROTOS_DEPLOY_EVEN = "protos_deploy_even";
     public static final String INIT_PROTOS_MOVE_LATER = "protos_move_later";
     public static final String INIT_PROTOS_MOVE_MULTI = "protos_move_multi";
     public static final String INIT_INF_PROTO_MOVE_MULTI = "inf_proto_move_multi";
@@ -525,4 +525,6 @@ public class OptionsConstants {
     public static final String RPG_CONDITIONAL_EJECTION = "conditional_ejection";
     public static final String RPG_MANUAL_SHUTDOWN = "manual_shutdown";
     public static final String RPG_BEGIN_SHUTDOWN = "begin_shutdown";
+
+    private OptionsConstants() { }
 }

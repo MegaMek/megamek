@@ -2330,6 +2330,8 @@ public class MiscType extends EquipmentType {
         misc.addLookupName(EquipmentType.getStructureTypeName(T_STRUCTURE_STANDARD, false));
         misc.addLookupName(EquipmentType.getStructureTypeName(T_STRUCTURE_STANDARD, true));
         misc.addLookupName("Regular");
+        misc.addLookupName("IS Standard Structure");
+        misc.addLookupName("Clan Standard Structure");
         misc.flags = misc.flags.or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT)
                 .or(F_VTOL_EQUIPMENT).or(F_FIGHTER_EQUIPMENT).or(F_PROTOMECH_EQUIPMENT);
         misc.criticals = 0;
@@ -7614,6 +7616,9 @@ public class MiscType extends EquipmentType {
         misc.setInternalName(EquipmentType.getStructureTypeName(T_STRUCTURE_ENDO_STEEL, false));
         misc.addLookupName("IS EndoSteel");
         misc.addLookupName("IS Endo-Steel");
+        misc.addLookupName("IS Endo Steel Structure");
+        misc.addLookupName("IS EndoSteel Structure");
+        misc.addLookupName("IS Endo-Steel Structure");
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = CRITICALS_VARIABLE;
         misc.hittable = false;
@@ -7636,6 +7641,8 @@ public class MiscType extends EquipmentType {
         misc.setInternalName(EquipmentType.getStructureTypeName(T_STRUCTURE_ENDO_PROTOTYPE, false));
         misc.addLookupName("IS Endo Steel Prototype");
         misc.addLookupName("IS Endo-Steel Prototype");
+        misc.addLookupName("IS Endo Steel Prototype Structure");
+        misc.addLookupName("IS Endo-Steel Prototype Structure");
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 16;
         misc.hittable = false;
@@ -7658,6 +7665,9 @@ public class MiscType extends EquipmentType {
         misc.setInternalName(EquipmentType.getStructureTypeName(T_STRUCTURE_ENDO_STEEL, true));
         misc.addLookupName("Clan Endo-Steel");
         misc.addLookupName("Clan EndoSteel");
+        misc.addLookupName("Clan Endo-Steel Structure");
+        misc.addLookupName("Clan EndoSteel Structure");
+        misc.addLookupName("Clan Endo Steel Structure");
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 7;
         misc.hittable = false;
@@ -7680,6 +7690,7 @@ public class MiscType extends EquipmentType {
         misc.name = EquipmentType.getStructureTypeName(T_STRUCTURE_COMPOSITE);
         misc.setInternalName(EquipmentType.getStructureTypeName(T_STRUCTURE_COMPOSITE, false));
         misc.addLookupName("Composite");
+        misc.addLookupName("IS Composite Structure");
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 0;
         misc.hittable = false;
@@ -7701,6 +7712,7 @@ public class MiscType extends EquipmentType {
         misc.name = EquipmentType.getStructureTypeName(T_STRUCTURE_ENDO_COMPOSITE);
         misc.setInternalName(EquipmentType.getStructureTypeName(T_STRUCTURE_ENDO_COMPOSITE, false));
         misc.addLookupName("IS Endo-Composite");
+        misc.addLookupName("IS Endo-Composite Structure");
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = CRITICALS_VARIABLE;
         misc.hittable = false;
@@ -7725,6 +7737,7 @@ public class MiscType extends EquipmentType {
         misc.name = EquipmentType.getStructureTypeName(T_STRUCTURE_ENDO_COMPOSITE);
         misc.setInternalName(EquipmentType.getStructureTypeName(T_STRUCTURE_ENDO_COMPOSITE, true));
         misc.addLookupName("Clan Endo-Composite");
+        misc.addLookupName("Clan Endo-Composite Structure");
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 4;
         misc.hittable = false;
@@ -7750,6 +7763,8 @@ public class MiscType extends EquipmentType {
         misc.setInternalName(EquipmentType.getStructureTypeName(T_STRUCTURE_REINFORCED));
         misc.addLookupName("IS Reinforced");
         misc.addLookupName("Clan Reinforced");
+        misc.addLookupName("IS Reinforced Structure");
+        misc.addLookupName("Clan Reinforced Structure");
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 0;
         misc.hittable = false;
@@ -9944,6 +9959,6 @@ public class MiscType extends EquipmentType {
 
     @Override
     public String toString() {
-        return "MiscType: " + name;
+        return "[Misc] " + internalName;
     }
 }

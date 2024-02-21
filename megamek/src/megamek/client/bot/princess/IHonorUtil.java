@@ -17,6 +17,8 @@ package megamek.client.bot.princess;
 
 import megamek.common.Targetable;
 
+import java.util.Set;
+
 /**
  * @author Deric Page (deric dot page at usa dot net)
  * @since 9/5/14 2:48 PM
@@ -56,4 +58,6 @@ public interface IHonorUtil {
      * @param forcedWithdrawal Set TRUE if the Forced Withdrawal rule is in effect.
      */
     void checkEnemyBroken(Targetable target, boolean forcedWithdrawal);
+
+    Set<Integer> getDishonoredEnemies();
 }

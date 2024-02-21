@@ -142,6 +142,9 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
     protected int baseDamageCapacity = 0;
     protected int damageTaken = 0;
 
+    // New stuff for ammo switching
+    protected int switchedReason = 0;
+
     /**
      * BattleArmor use the standard locations to track troopers. On BA, this field keeps track of where
      * a piece of equipment is mounted.
@@ -2151,10 +2154,18 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
         }
     }
 
+    public int getSwitchedReason() {
+        return switchedReason;
+    }
+
+    public void setSwitchedReason(int reason) {
+        switchedReason = reason;
+    }
+
     @Override
     public String toString() {
         List<String> locations = allLocations().stream().map(entity::getLocationAbbr).collect(Collectors.toList());
-        String intro = getType().getInternalName()
+        String intro = getType().toString()
                 + " (" + String.join("/", locations)
                 + (rearMounted ? "-R" : "")
                 + (mechTurretMounted ? "-MTu" : "")

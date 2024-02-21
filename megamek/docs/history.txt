@@ -6,6 +6,7 @@ MEGAMEK VERSION HISTORY:
 + Fix #5177: Fixing an issue with MUL loading
 + PR #4521: Adds the Black Ice terrain modification. Happy Skidding!
 + PR #5156: Internal changes to Player and Team classes
++ Fix #3498: Adding Clan Personnel Tracking to MegaMek
 
 
 0.49.18 (2024-02-17 1800 UTC)

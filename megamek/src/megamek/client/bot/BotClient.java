@@ -548,6 +548,7 @@ public abstract class BotClient extends Client {
                 sendArtyAutoHitHexes(autoHitHexes);
             } else if (game.getPhase().isTargeting() || game.getPhase().isOffboard()) {
                 // Princess implements arty targeting
+                // TODO: TAG should be handled separately.
                 calculateTargetingOffBoardTurn();
             } else if (game.getPhase().isPremovement() || game.getPhase().isPrefiring()) {
                 calculatePrephaseTurn();

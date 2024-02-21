@@ -34,14 +34,14 @@ import java.util.stream.Collectors;
 public abstract class TestEntity implements TestEntityOption {
     public static enum Ceil {
         TON(1.0), HALFTON(2.0), QUARTERTON(4.0), TENTHTON(10.0), KILO(1000.0);
-        
+
         public final double mult;
-        
+
         private Ceil(double mult) {
             this.mult = mult;
         }
     }
-    
+
     protected Engine engine = null;
     protected Structure structure = null;
     private TestEntityOption options = null;
@@ -53,11 +53,11 @@ public abstract class TestEntity implements TestEntityOption {
     public abstract boolean isMech();
 
     public abstract boolean isAero();
-    
+
     public abstract boolean isSmallCraft();
-    
+
     public abstract boolean isAdvancedAerospace();
-    
+
     public abstract boolean isProtomech();
 
     public abstract double getWeightControls();
@@ -230,12 +230,12 @@ public abstract class TestEntity implements TestEntityOption {
     public boolean ignoreFailedEquip(String name) {
         return options.ignoreFailedEquip(name);
     }
-    
+
     @Override
     public boolean showIncorrectIntroYear() {
         return options.showIncorrectIntroYear();
     }
-    
+
     @Override
     public int getIntroYearMargin() {
         return options.getIntroYearMargin();
@@ -314,7 +314,7 @@ public abstract class TestEntity implements TestEntityOption {
         return Math.round(value * Math.pow(10, precision))
                 / Math.pow(10, precision);
     }
-    
+
     /**
      * Filters all armor according to given tech constraints
      *
@@ -322,7 +322,7 @@ public abstract class TestEntity implements TestEntityOption {
      * @param industrial    For mechs; industrial mechs can only use certain armor types
      *                      unless allowing experimental rules
      * @param primitive     Whether the unit is primitive/retrotech
-     * @param movementMode  For vehicles; hardened armor is illegal for some movement modes 
+     * @param movementMode  For vehicles; hardened armor is illegal for some movement modes
      * @param techManager   The constraints used to filter the armor types
      * @return A list of all armors that meet the tech constraints
      */
@@ -346,7 +346,7 @@ public abstract class TestEntity implements TestEntityOption {
             return Collections.emptyList();
         }
     }
-    
+
     public static List<EquipmentType> validJumpJets(long entitytype, boolean industrial) {
         if ((entitytype & Entity.ETYPE_MECH) != 0) {
             return TestMech.MechJumpJets.allJJs(industrial);
@@ -364,7 +364,7 @@ public abstract class TestEntity implements TestEntityOption {
             return Collections.emptyList();
         }
     }
-    
+
     /**
      * Additional crew requirements for vehicles and aerospace vessels for certain types of
      * equipment.
@@ -396,12 +396,12 @@ public abstract class TestEntity implements TestEntityOption {
         }
         return 0;
     }
-    
+
     /**
      * Determines whether a type of equipment requires a particular location on an {@link Entity}.
      * What this means depends on the type of unit, but typically it does not take up a slot or
      * is not assigned a firing arc.
-     * 
+     *
      * @param entity The Entity the equipment is to be placed on
      * @param eq     The equipment to place on the Entity
      * @return       Whether the equipment requires a location
@@ -421,7 +421,7 @@ public abstract class TestEntity implements TestEntityOption {
     /**
      * Determines where to place equipment that does not require a specific location. What
      * this means varies by {@link Entity} type.
-     * 
+     *
      * @param entity  The Entity to place the equipment in
      * @return        The location to place equipment that is not required to be assigned a location,
      *                defaulting to Entity.LOC_NONE for unit types that do not have such a location.
@@ -444,7 +444,7 @@ public abstract class TestEntity implements TestEntityOption {
     public MPBoosters getMPBoosters() {
         return (getEntity() instanceof Mech) ? getEntity().getMPBoosters() : MPBoosters.NONE;
     }
-    
+
     public String printShortMovement() {
         MPBoosters mpBoosters = getMPBoosters();
         return "Movement: " + getEntity().getOriginalWalkMP() + "/"
@@ -846,7 +846,7 @@ public abstract class TestEntity implements TestEntityOption {
      * Computes heat sink requirement for heat-neutral units (vehicles, conventional fighters,
      * protomechs). This is a total of energy weapons that don't use ammo and some other miscellaneous
      * equipment.
-     * 
+     *
      * @return The number of heat sinks required in construction
      */
     protected int heatNeutralHSRequirement() {
@@ -996,7 +996,7 @@ public abstract class TestEntity implements TestEntityOption {
         if ((eTechLevel >= eRulesLevel) && (getEntity().getEarliestTechDate() <= getEntity().getYear())) {
             return false;
         }
-        
+
         int eTLYear = getEntity().getTechLevelYear();
         for (Mounted mounted : getEntity().getEquipment()) {
             EquipmentType nextE = mounted.getType();
@@ -1045,7 +1045,7 @@ public abstract class TestEntity implements TestEntityOption {
         // Check cockpit TL
         ITechnology cockpit = null;
         String cockpitName = null;
-        if (getEntity().getEntityType() == Entity.ETYPE_AERO) {
+        if (getEntity().hasETypeFlag(Entity.ETYPE_AERO)) {
             cockpit = ((Aero) getEntity()).getCockpitTechAdvancement();
             cockpitName = ((Aero) getEntity()).getCockpitTypeString();
         } else if (getEntity() instanceof Mech) {
@@ -1058,7 +1058,7 @@ public abstract class TestEntity implements TestEntityOption {
             boolean illegal = eqRulesLevel > eRulesLevel;
             if (!getEntity().isMixedTech()) {
                 illegal |= getEntity().isClan() && cockpit.getTechBase() == ITechnology.TECH_BASE_IS;
-                illegal |= !getEntity().isClan() && cockpit.getTechBase() == ITechnology.TECH_BASE_CLAN;                
+                illegal |= !getEntity().isClan() && cockpit.getTechBase() == ITechnology.TECH_BASE_CLAN;
             }
             if (illegal) {
                 buff.append("Cockpit is illegal at unit's tech level (");
@@ -1083,7 +1083,7 @@ public abstract class TestEntity implements TestEntityOption {
                 boolean illegal = eqRulesLevel > eRulesLevel;
                 if (!getEntity().isMixedTech()) {
                     illegal |= getEntity().isClan() && gyro.getTechBase() == ITechnology.TECH_BASE_IS;
-                    illegal |= !getEntity().isClan() && gyro.getTechBase() == ITechnology.TECH_BASE_CLAN;                
+                    illegal |= !getEntity().isClan() && gyro.getTechBase() == ITechnology.TECH_BASE_CLAN;
                 }
                 if (illegal) {
                     buff.append("Gyro is illegal at unit's tech level (");
@@ -1109,7 +1109,7 @@ public abstract class TestEntity implements TestEntityOption {
             boolean illegal = eqRulesLevel > eRulesLevel;
             if (!getEntity().isMixedTech()) {
                 illegal |= getEntity().isClan() && engine.getTechBase() == ITechnology.TECH_BASE_IS;
-                illegal |= !getEntity().isClan() && engine.getTechBase() == ITechnology.TECH_BASE_CLAN;                
+                illegal |= !getEntity().isClan() && engine.getTechBase() == ITechnology.TECH_BASE_CLAN;
             }
             if (illegal) {
                 buff.append("Engine is illegal at unit's tech level (");
@@ -1150,7 +1150,7 @@ public abstract class TestEntity implements TestEntityOption {
                 buff.append("\n");
                 retVal = true;
             }
-            
+
             armors = new HashSet<>();
             for (int loc = 0; loc < getEntity().locations(); loc++) {
                 armors.add(EquipmentType.getArmorTypeName(getEntity().getArmorType(loc),
@@ -1159,7 +1159,7 @@ public abstract class TestEntity implements TestEntityOption {
         }
         for (String atName : armors) {
             EquipmentType at = EquipmentType.get(atName);
-            // Can be null in the case of vehicle body or asf wings.   
+            // Can be null in the case of vehicle body or asf wings.
             if (at == null) {
                 continue;
             }
@@ -1168,7 +1168,7 @@ public abstract class TestEntity implements TestEntityOption {
             boolean illegal = eqRulesLevel > eRulesLevel;
             if (!getEntity().isMixedTech()) {
                 illegal |= getEntity().isClan() && at.getTechBase() == ITechnology.TECH_BASE_IS;
-                illegal |= !getEntity().isClan() && at.getTechBase() == ITechnology.TECH_BASE_CLAN;                
+                illegal |= !getEntity().isClan() && at.getTechBase() == ITechnology.TECH_BASE_CLAN;
             }
             if (illegal) {
                 buff.append("Armor is illegal at unit's tech level (");
@@ -1192,7 +1192,7 @@ public abstract class TestEntity implements TestEntityOption {
 
     /**
      * Compares intro dates of all components to the unit intro year.
-     * 
+     *
      * @param buff Descriptions of problems will be added to the buffer.
      * @return Whether the unit has an intro year equal to or later than all the components.
      */
@@ -1258,7 +1258,7 @@ public abstract class TestEntity implements TestEntityOption {
                 continue;
             }
             checked.add(at);
-            // Can be null in the case of vehicle body or asf wings.   
+            // Can be null in the case of vehicle body or asf wings.
             if (at == null) {
                 continue;
             }
@@ -1620,7 +1620,7 @@ public abstract class TestEntity implements TestEntityOption {
          */
         boolean hasUnlinked = false;
         for (Mounted mount : getEntity().getTotalWeaponList()) {
-            if (!mount.isWeaponGroup() && 
+            if (!mount.isWeaponGroup() &&
                     compatibility.test((WeaponType) mount.getType())) {
                 linkedCount++;
                 if (mount.getLinkedBy() == null) {

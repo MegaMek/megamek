@@ -215,48 +215,39 @@ public class GameManager implements IGameManager {
             LogManager.getLogger().error("Attempted to set game to incorrect class.");
             return;
         }
-        // game listeners are transient so we need to save and restore them
-        Vector<GameListener> gameListenersClone = new Vector<>(getGame().getGameListeners());
-
         game = (Game) g;
-
-        for (GameListener listener : gameListenersClone) {
-            getGame().addGameListener(listener);
-        }
 
         List<Integer> orphanEntities = new ArrayList<>();
 
         // reattach the transient fields and ghost the players
-        for (Iterator<Entity> e = game.getEntities(); e.hasNext(); ) {
-            Entity ent = e.next();
-            ent.setGame(game);
+        for (Entity entity : game.getEntitiesVector()) {
+            entity.setGame(game);
 
-            if (ent.getOwner() == null) {
-                orphanEntities.add(ent.getId());
+            if (entity.getOwner() == null) {
+                orphanEntities.add(entity.getId());
                 continue;
             }
 
-            if (ent instanceof Mech) {
-                ((Mech) ent).setBAGrabBars();
-                ((Mech) ent).setProtomechClampMounts();
+            if (entity instanceof Mech) {
+                ((Mech) entity).setBAGrabBars();
+                ((Mech) entity).setProtomechClampMounts();
             }
-            if (ent instanceof Tank) {
-                ((Tank) ent).setBAGrabBars();
+            if (entity instanceof Tank) {
+                ((Tank) entity).setBAGrabBars();
             }
         }
 
         game.removeEntities(orphanEntities, IEntityRemovalConditions.REMOVE_UNKNOWN);
 
         game.setOutOfGameEntitiesVector(game.getOutOfGameEntitiesVector());
-        for (Enumeration<Player> e = game.getPlayers(); e.hasMoreElements(); ) {
-            Player p = e.nextElement();
-            p.setGame(game);
-            p.setGhost(true);
+        for (Player player : game.getPlayersList()) {
+            player.setGame(game);
+            player.setGhost(true);
         }
+
         // might need to restore weapon type for some attacks that take multiple
         // turns (like artillery)
-        for (Enumeration<AttackHandler> a = game.getAttacks(); a.hasMoreElements(); ) {
-            AttackHandler handler = a.nextElement();
+        for (AttackHandler handler : game.getAttacksVector()) {
             if (handler instanceof WeaponHandler) {
                 ((WeaponHandler) handler).restore();
             }
@@ -1685,23 +1676,23 @@ public class GameManager implements IGameManager {
             BVCountHelper bvcPlayer = new BVCountHelper();
             bvcPlayer.bv = player.getBV();
             bvcPlayer.bvInitial = player.getInitialBV();
-            bvcPlayer.bvFled = player.getFledBV();
-            bvcPlayer.unitsCount = player.getUnitCount();
+            bvcPlayer.bvFled = ServerReportsHelper.getFledBV(player, game);
+            bvcPlayer.unitsCount = ServerReportsHelper.getUnitCount(player, game);
             bvcPlayer.unitsInitialCount = player.getInitialEntityCount();
-            bvcPlayer.unitsLightDamageCount = player.getUnitDamageCount(Entity.DMG_LIGHT);
-            bvcPlayer.unitsModerateDamageCount = player.getUnitDamageCount(Entity.DMG_MODERATE);
-            bvcPlayer.unitsHeavyDamageCount = player.getUnitDamageCount(Entity.DMG_HEAVY);
-            bvcPlayer.unitsCrippledCount = player.getUnitDamageCount(Entity.DMG_CRIPPLED);
-            bvcPlayer.unitsDestroyedCount =  player.getUnitDestroyedCount();
-            bvcPlayer.unitsCrewEjectedCount = player.getUnitCrewEjectedCount();
-            bvcPlayer.unitsCrewTrappedCount = player.getUnitCrewTrappedCount();
-            bvcPlayer.unitsCrewKilledCount = player.getUnitCrewKilledCount();
-            bvcPlayer.unitsFledCount = player.getFledUnitsCount();
-            bvcPlayer.ejectedCrewActiveCount = player.getEjectedCrewCount();
-            bvcPlayer.ejectedCrewPickedUpByTeamCount =  player.getEjectedCrewPickedUpByTeamCount();
-            bvcPlayer.ejectedCrewPickedUpByEnemyTeamCount = player.getEjectedCrewPickedUpByEnemyTeamCount();
-            bvcPlayer.ejectedCrewKilledCount = player.getEjectedCrewKilledCount();
-            bvcPlayer.ejectedCrewFledCount = player.getFledEjectedCrew();
+            bvcPlayer.unitsLightDamageCount = ServerReportsHelper.getUnitDamageCount(player, Entity.DMG_LIGHT, game);
+            bvcPlayer.unitsModerateDamageCount = ServerReportsHelper.getUnitDamageCount(player, Entity.DMG_MODERATE, game);
+            bvcPlayer.unitsHeavyDamageCount = ServerReportsHelper.getUnitDamageCount(player, Entity.DMG_HEAVY, game);
+            bvcPlayer.unitsCrippledCount = ServerReportsHelper.getUnitDamageCount(player, Entity.DMG_CRIPPLED, game);
+            bvcPlayer.unitsDestroyedCount =  ServerReportsHelper.getUnitDestroyedCount(player, game);
+            bvcPlayer.unitsCrewEjectedCount = ServerReportsHelper.getUnitCrewEjectedCount(player, game);
+            bvcPlayer.unitsCrewTrappedCount = ServerReportsHelper.getUnitCrewTrappedCount(player, game);
+            bvcPlayer.unitsCrewKilledCount = ServerReportsHelper.getUnitCrewKilledCount(player, game);
+            bvcPlayer.unitsFledCount = ServerReportsHelper.getFledUnitsCount(player, game);
+            bvcPlayer.ejectedCrewActiveCount = ServerReportsHelper.getEjectedCrewCount(player, game);
+            bvcPlayer.ejectedCrewPickedUpByTeamCount =  ServerReportsHelper.getEjectedCrewPickedUpByTeamCount(player, game);
+            bvcPlayer.ejectedCrewPickedUpByEnemyTeamCount = ServerReportsHelper.getEjectedCrewPickedUpByEnemyTeamCount(player, game);
+            bvcPlayer.ejectedCrewKilledCount = ServerReportsHelper.getEjectedCrewKilledCount(player, game);
+            bvcPlayer.ejectedCrewFledCount = ServerReportsHelper.getFledEjectedCrew(player, game);
 
             playerReport.addAll(bvReport(player.getColorForPlayer(), player.getId(), bvcPlayer, checkBlind));
 
@@ -2206,7 +2197,8 @@ public class GameManager implements IGameManager {
     public void calculatePlayerInitialCounts() {
         for (final Enumeration<Player> players = game.getPlayers(); players.hasMoreElements(); ) {
             final Player player = players.nextElement();
-            player.setInitialEntityCount(player.getEntityCount());
+            player.setInitialEntityCount(Math.toIntExact(game.getPlayerEntities(player, false).stream()
+                    .filter(entity -> !entity.isDestroyed() && !entity.isTrapped()).count()));
             player.setInitialBV(player.getBV());
         }
     }
@@ -7942,6 +7934,21 @@ public class GameManager implements IGameManager {
                 }
             }
 
+            // Check for black ice
+            int minTemp = -30;
+            boolean useBlackIce = game.getOptions().booleanOption(OptionsConstants.ADVANCED_BLACK_ICE);
+            boolean goodTemp = game.getPlanetaryConditions().getTemperature() <= minTemp;
+            boolean goodWeather = game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_ICE_STORM;
+            if (isPavementStep && ((useBlackIce && goodTemp) || goodWeather)) {
+                if (!curHex.containsTerrain(Terrains.BLACK_ICE)) {
+                    int blackIceChance = Compute.d6(1);
+                    if (blackIceChance > 4) {
+                        curHex.addTerrain(new Terrain(Terrains.BLACK_ICE, 1));
+                        sendChangedHex(curPos);
+                    }
+                }
+            }
+
             // Handle loading units.
             if (step.getType() == MovePath.MoveStepType.LOAD) {
 
@@ -8741,16 +8748,19 @@ public class GameManager implements IGameManager {
         // but the danger isn't over yet! landing from a jump can be risky!
         if ((overallMoveType == EntityMovementType.MOVE_JUMP) && !entity.isMakingDfa()) {
             final Hex curHex = game.getBoard().getHex(curPos);
+
             // check for damaged criticals
             rollTarget = entity.checkLandingWithDamage(overallMoveType);
             if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
                 doSkillCheckInPlace(entity, rollTarget);
             }
+
             // check for prototype JJs
             rollTarget = entity.checkLandingWithPrototypeJJ(overallMoveType);
             if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
                 doSkillCheckInPlace(entity, rollTarget);
             }
+
             // check for jumping into heavy woods
             if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_PSR_JUMP_HEAVY_WOODS)) {
                 rollTarget = entity.checkLandingInHeavyWoods(overallMoveType, curHex);
@@ -8758,6 +8768,7 @@ public class GameManager implements IGameManager {
                     doSkillCheckInPlace(entity, rollTarget);
                 }
             }
+
             // Mechanical jump boosters fall damage
             if (md.shouldMechanicalJumpCauseFallDamage()) {
                 vPhaseReport.addAll(doEntityFallsInto(entity,
@@ -8765,6 +8776,7 @@ public class GameManager implements IGameManager {
                         curPos, entity.getBasePilotingRoll(overallMoveType),
                         false, entity.getJumpMP()));
             }
+
             // jumped into water?
             int waterLevel = curHex.terrainLevel(Terrains.WATER);
             if (curHex.containsTerrain(Terrains.ICE) && (waterLevel > 0)) {
@@ -8823,6 +8835,19 @@ public class GameManager implements IGameManager {
                 }
             }
 
+            // check for black ice
+            boolean useBlackIce = game.getOptions().booleanOption(OptionsConstants.ADVANCED_BLACK_ICE);
+            boolean goodTemp = game.getPlanetaryConditions().getTemperature() <= PlanetaryConditions.BLACK_ICE_TEMP;
+            boolean goodWeather = game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_ICE_STORM;
+            if ((useBlackIce && goodTemp) || goodWeather) {
+                if (ServerHelper.checkEnteringBlackIce(this, curPos, curHex, useBlackIce, goodTemp, goodWeather)) {
+                    rollTarget = entity.checkLandingOnBlackIce(overallMoveType, curHex);
+                    if (!doSkillCheckInPlace(entity, rollTarget)) {
+                        entity.applyDamage();
+                    }
+                }
+            }
+
             // check for building collapse
             Building bldg = game.getBoard().getBuildingAt(curPos);
             if (bldg != null) {
@@ -8866,6 +8891,7 @@ public class GameManager implements IGameManager {
                     }
                 }
             }
+
             // If the entity is being swarmed, jumping may dislodge the fleas.
             if (Entity.NONE != swarmerId) {
                 final Entity swarmer = game.getEntity(swarmerId);
@@ -10125,24 +10151,26 @@ public class GameManager implements IGameManager {
         vPhaseReport.add(r);
         createSmoke(coords, SmokeCloud.SMOKE_HEAVY, 3);
         Hex hex = game.getBoard().getHex(coords);
-        hex.addTerrain(new Terrain(Terrains.SMOKE, SmokeCloud.SMOKE_HEAVY));
-        sendChangedHex(coords);
-        for (int dir = 0; dir <= 5; dir++) {
-            Coords tempcoords = coords.translated(dir);
-            if (!game.getBoard().contains(tempcoords)) {
-                continue;
-            }
-            if (coords.equals(tempcoords)) {
-                continue;
-            }
-            r = new Report(5185, Report.PUBLIC);
-            r.indent(2);
-            r.add(tempcoords.getBoardNum());
-            vPhaseReport.add(r);
-            createSmoke(tempcoords, SmokeCloud.SMOKE_HEAVY, 3);
-            hex = game.getBoard().getHex(tempcoords);
+        if (hex != null) {
             hex.addTerrain(new Terrain(Terrains.SMOKE, SmokeCloud.SMOKE_HEAVY));
-            sendChangedHex(tempcoords);
+            sendChangedHex(coords);
+            for (int dir = 0; dir <= 5; dir++) {
+                Coords tempcoords = coords.translated(dir);
+                if (!game.getBoard().contains(tempcoords)) {
+                    continue;
+                }
+                if (coords.equals(tempcoords)) {
+                    continue;
+                }
+                r = new Report(5185, Report.PUBLIC);
+                r.indent(2);
+                r.add(tempcoords.getBoardNum());
+                vPhaseReport.add(r);
+                createSmoke(tempcoords, SmokeCloud.SMOKE_HEAVY, 3);
+                hex = game.getBoard().getHex(tempcoords);
+                hex.addTerrain(new Terrain(Terrains.SMOKE, SmokeCloud.SMOKE_HEAVY));
+                sendChangedHex(tempcoords);
+            }
         }
     }
 
@@ -10158,24 +10186,26 @@ public class GameManager implements IGameManager {
         vPhaseReport.add(r);
         createSmoke(coords, SmokeCloud.SMOKE_LI_HEAVY, 2);
         Hex hex = game.getBoard().getHex(coords);
-        hex.addTerrain(new Terrain(Terrains.SMOKE, SmokeCloud.SMOKE_LI_HEAVY));
-        sendChangedHex(coords);
-        for (int dir = 0; dir <= 5; dir++) {
-            Coords tempcoords = coords.translated(dir);
-            if (!game.getBoard().contains(tempcoords)) {
-                continue;
-            }
-            if (coords.equals(tempcoords)) {
-                continue;
-            }
-            r = new Report(5186, Report.PUBLIC);
-            r.indent(2);
-            r.add(tempcoords.getBoardNum());
-            vPhaseReport.add(r);
-            createSmoke(tempcoords, SmokeCloud.SMOKE_LI_HEAVY, 2);
-            hex = game.getBoard().getHex(tempcoords);
+        if (null != hex) {
             hex.addTerrain(new Terrain(Terrains.SMOKE, SmokeCloud.SMOKE_LI_HEAVY));
-            sendChangedHex(tempcoords);
+            sendChangedHex(coords);
+            for (int dir = 0; dir <= 5; dir++) {
+                Coords tempcoords = coords.translated(dir);
+                if (!game.getBoard().contains(tempcoords)) {
+                    continue;
+                }
+                if (coords.equals(tempcoords)) {
+                    continue;
+                }
+                r = new Report(5186, Report.PUBLIC);
+                r.indent(2);
+                r.add(tempcoords.getBoardNum());
+                vPhaseReport.add(r);
+                createSmoke(tempcoords, SmokeCloud.SMOKE_LI_HEAVY, 2);
+                hex = game.getBoard().getHex(tempcoords);
+                hex.addTerrain(new Terrain(Terrains.SMOKE, SmokeCloud.SMOKE_LI_HEAVY));
+                sendChangedHex(tempcoords);
+            }
         }
     }
 
@@ -10190,13 +10220,15 @@ public class GameManager implements IGameManager {
                                         int subjectId, Vector<Report> vPhaseReport) {
         Hex h = game.getBoard().getHex(coords);
         Report r;
-        // Unless there is a fire in the hex already, start one.
-        if (h.terrainLevel(Terrains.FIRE) < Terrains.FIRE_LVL_INFERNO_IV) {
-            ignite(coords, Terrains.FIRE_LVL_INFERNO_IV, vPhaseReport);
-        }
-        // possibly melt ice and snow
-        if (h.containsTerrain(Terrains.ICE) || h.containsTerrain(Terrains.SNOW)) {
-            vPhaseReport.addAll(meltIceAndSnow(coords, subjectId));
+        if (null != h) {
+            // Unless there is a fire in the hex already, start one.
+            if (h.terrainLevel(Terrains.FIRE) < Terrains.FIRE_LVL_INFERNO_IV) {
+                ignite(coords, Terrains.FIRE_LVL_INFERNO_IV, vPhaseReport);
+            }
+            // possibly melt ice and snow
+            if (h.containsTerrain(Terrains.ICE) || h.containsTerrain(Terrains.SNOW)) {
+                vPhaseReport.addAll(meltIceAndSnow(coords, subjectId));
+            }
         }
         for (Entity entity : game.getEntitiesVector(coords)) {
             // TacOps, p. 356 - treat as if hit by 5 inferno missiles
@@ -10222,13 +10254,15 @@ public class GameManager implements IGameManager {
                 continue;
             }
             h = game.getBoard().getHex(tempcoords);
-            // Unless there is a fire in the hex already, start one.
-            if (h.terrainLevel(Terrains.FIRE) < Terrains.FIRE_LVL_INFERNO_IV) {
-                ignite(tempcoords, Terrains.FIRE_LVL_INFERNO_IV, vPhaseReport);
-            }
-            // possibly melt ice and snow
-            if (h.containsTerrain(Terrains.ICE) || h.containsTerrain(Terrains.SNOW)) {
-                vPhaseReport.addAll(meltIceAndSnow(tempcoords, subjectId));
+            if (null != h) {
+                // Unless there is a fire in the hex already, start one.
+                if (h.terrainLevel(Terrains.FIRE) < Terrains.FIRE_LVL_INFERNO_IV) {
+                    ignite(tempcoords, Terrains.FIRE_LVL_INFERNO_IV, vPhaseReport);
+                }
+                // possibly melt ice and snow
+                if (h.containsTerrain(Terrains.ICE) || h.containsTerrain(Terrains.SNOW)) {
+                    vPhaseReport.addAll(meltIceAndSnow(tempcoords, subjectId));
+                }
             }
             for (Entity entity : game.getEntitiesVector(tempcoords)) {
                 r = new Report(6695);
@@ -14617,12 +14651,14 @@ public class GameManager implements IGameManager {
         // if there is snow on the ground and this a hotgun or inferno, it may
         // melt the snow instead
         if ((hex.containsTerrain(Terrains.SNOW) || hex
-                .containsTerrain(Terrains.ICE)) && (bHotGun || bInferno)) {
+                .containsTerrain(Terrains.ICE)
+                || hex.containsTerrain(Terrains.BLACK_ICE)) && (bHotGun || bInferno)) {
             boolean melted = false;
             int meltCheck = Compute.d6(2);
             if ((hex.terrainLevel(Terrains.SNOW) > 1) && (meltCheck == 12)) {
                 melted = true;
-            } else if (hex.containsTerrain(Terrains.ICE) && (meltCheck > 9)) {
+            } else if ((hex.containsTerrain(Terrains.ICE)
+            || hex.containsTerrain(Terrains.BLACK_ICE)) && (meltCheck > 9)) {
                 melted = true;
             } else if (hex.containsTerrain(Terrains.SNOW) && (meltCheck > 7)) {
                 melted = true;
@@ -30102,6 +30138,7 @@ public class GameManager implements IGameManager {
         int entityId = c.getIntValue(0);
         int weaponId = c.getIntValue(1);
         int ammoId = c.getIntValue(2);
+        int reason = c.getIntValue(3);
         Entity e = game.getEntity(entityId);
 
         // Did we receive a request for a valid Entity?
@@ -30118,6 +30155,7 @@ public class GameManager implements IGameManager {
         // Make sure that the entity has the given equipment.
         Mounted mWeap = e.getEquipment(weaponId);
         Mounted mAmmo = e.getEquipment(ammoId);
+        Mounted oldAmmo = (mWeap == null) ? null : mWeap.getLinked();
         if (null == mAmmo) {
             LogManager.getLogger().error("Entity " + e.getDisplayName() + " does not have ammo #" + ammoId);
             return;
@@ -30150,6 +30188,19 @@ public class GameManager implements IGameManager {
 
         // Load the weapon.
         e.loadWeapon(mWeap, mAmmo);
+
+        // Report the change, if reason is provided and it's not already being used.
+        if (reason != 0 && oldAmmo != mAmmo) {
+            Report r = new Report(1500);
+            r.subject = entityId;
+            r.addDesc(e);
+            r.add(mAmmo.getShortName());
+            r.add(ReportMessages.getString(String.valueOf(reason)));
+            addReport(r);
+            if (LogManager.getLogger().isDebugEnabled()) {
+
+            }
+        }
     }
 
     /**
@@ -34809,10 +34860,18 @@ public class GameManager implements IGameManager {
      * @return a vector of relevant entity ids
      */
     public Vector<Integer> getAirborneVTOL(Team team) {
-        // a vector of unit ids
         Vector<Integer> units = new Vector<>();
-        for (Player player : team.players()) {
-            units.addAll(player.getAirborneVTOL());
+        for (Entity entity : game.getEntitiesVector()) {
+            for (Player player : team.players()) {
+                if (entity.getOwner().equals(player)) {
+                    if (((entity instanceof VTOL)
+                            || (entity.getMovementMode() == EntityMovementMode.WIGE)) &&
+                            (!entity.isDestroyed()) &&
+                            (entity.getElevation() > 0)) {
+                        units.add(entity.getId());
+                    }
+                }
+            }
         }
         return units;
     }

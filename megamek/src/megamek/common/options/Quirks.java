@@ -247,7 +247,7 @@ public class Quirks extends AbstractOptions {
 		                    QUIRK_NEG_PROTOTYPE,        QUIRK_NEG_SENSOR_GHOSTS);
         }
 
-        if (en instanceof Aero || en instanceof FixedWingSupport) {
+        if (en instanceof Aero) {
             if (quirk.isAnyOf(
             		QUIRK_POS_ATMO_FLYER, 		QUIRK_POS_COMBAT_COMPUTER, 		QUIRK_POS_EASY_MAINTAIN,
                     QUIRK_POS_EASY_PILOT, 		QUIRK_POS_GOOD_REP_1, 			QUIRK_POS_GOOD_REP_2,

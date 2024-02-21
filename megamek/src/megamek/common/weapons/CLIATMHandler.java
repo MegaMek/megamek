@@ -434,7 +434,7 @@ public class CLIATMHandler extends ATMHandler {
             r.indent();
             r.newlines = 0;
             r.subject = subjectId;
-            r.add(wtype.getName());
+            r.add(wtype.getName() + " (" + atype.getShortName() + ")");
             if (entityTarget != null) {
                 r.addDesc(entityTarget);
             } else {

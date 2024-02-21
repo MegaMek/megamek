@@ -433,7 +433,7 @@ public class AreaEffectHelper {
         // Entity/ammo specific damage modifiers
         if (ammo != null) {
             if (ammo.getMunitionType().contains(AmmoType.Munitions.M_CLUSTER)) {
-                if (hex.containsTerrain(Terrains.FORTIFIED) && entity.isConventionalInfantry()) {
+                if (hex != null && hex.containsTerrain(Terrains.FORTIFIED) && entity.isConventionalInfantry()) {
                     hits *= 2;
                 }
             }

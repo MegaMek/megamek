@@ -43,6 +43,7 @@ public class WeaponFireInfo {
     private Entity shooter;
     private Targetable target;
     private Mounted weapon;
+    private Mounted preferredAmmo;
     private double probabilityToHit;
     private int heat;
     private double maxDamage;
@@ -70,16 +71,18 @@ public class WeaponFireInfo {
      * @param shooter The {@link megamek.common.Entity} doing the attacking.
      * @param target  The {@link megamek.common.Targetable} of the attack.
      * @param weapon  The {@link megamek.common.Mounted} weapon used for the attack.
+     * @param ammo    The {@link megamek.common.Mounted} ammo to use for the attack; may be null.
      * @param game    The current {@link Game}
      * @param guess   Set TRUE to estimate the chance to hit rather than doing the full calculation.
      */
     WeaponFireInfo(final Entity shooter,
                    final Targetable target,
                    final Mounted weapon,
+                   final Mounted ammo,
                    final Game game,
                    final boolean guess,
                    final Princess owner) {
-        this(shooter, null, null, target, null, weapon, game, false, guess, owner, null);
+        this(shooter, null, null, target, null, weapon, ammo, game, false, guess, owner, null);
     }
 
     /**
@@ -98,10 +101,11 @@ public class WeaponFireInfo {
                    final Targetable target,
                    final EntityState targetState,
                    final Mounted weapon,
+                   final Mounted ammo,
                    final Game game,
                    final boolean guess,
                    final Princess owner) {
-        this(shooter, shooterState, null, target, targetState, weapon, game, false, guess, owner, null);
+        this(shooter, shooterState, null, target, targetState, weapon, ammo, game, false, guess, owner, null);
     }
 
     /**
@@ -123,12 +127,13 @@ public class WeaponFireInfo {
                    final Targetable target,
                    final EntityState targetState,
                    final Mounted weapon,
+                   final Mounted ammo,
                    final Game game,
                    final boolean assumeUnderFlightPath,
                    final boolean guess,
                    final Princess owner,
                    final HashMap<String, int[]> bombPayloads) {
-        this(shooter, null, shooterPath, target, targetState, weapon, game, assumeUnderFlightPath, guess, owner, bombPayloads);
+        this(shooter, null, shooterPath, target, targetState, weapon, ammo, game, assumeUnderFlightPath, guess, owner, bombPayloads);
     }
 
     /**
@@ -154,6 +159,7 @@ public class WeaponFireInfo {
                            final Targetable target,
                            final EntityState targetState,
                            final Mounted weapon,
+                           final Mounted ammo,
                            final Game game,
                            final boolean assumeUnderFlightPath,
                            final boolean guess,
@@ -166,6 +172,7 @@ public class WeaponFireInfo {
         setTarget(target);
         setTargetState(targetState);
         setWeapon(weapon);
+        setAmmo(ammo);
         setGame(game);
         initDamage(shooterPath, assumeUnderFlightPath, guess, bombPayloads);
     }
@@ -263,14 +270,15 @@ public class WeaponFireInfo {
     ToHitData calcToHit() {
         return owner.getFireControl(getShooter()).guessToHitModifierForWeapon(getShooter(), getShooterState(), getTarget(),
                                                                   getTargetState(),
-                                                                  getWeapon(), getGame());
+                                                                  getWeapon(), getAmmo(), getGame());
     }
 
     private ToHitData calcToHit(final MovePath shooterPath,
                                 final boolean assumeUnderFlightPath) {
         return owner.getFireControl(getShooter()).guessAirToGroundStrikeToHitModifier(getShooter(), null, getTarget(),
                                                                           getTargetState(),
-                                                                          shooterPath, getWeapon(), getGame(),
+                                                                          shooterPath, getWeapon(),
+                                                                          getAmmo(), getGame(),
                                                                           assumeUnderFlightPath);
     }
 
@@ -313,6 +321,10 @@ public class WeaponFireInfo {
         this.weapon = weapon;
     }
 
+    protected void setAmmo(final Mounted ammo) {
+        this.preferredAmmo = ammo;
+    }
+
     protected void setHeat(final int heat) {
         this.heat = heat;
     }
@@ -323,6 +335,10 @@ public class WeaponFireInfo {
 
     public Mounted getWeapon() {
         return weapon;
+    }
+
+    public Mounted getAmmo() {
+        return preferredAmmo;
     }
 
     public double getExpectedDamage() {
@@ -369,15 +385,26 @@ public class WeaponFireInfo {
                 int maxRange = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE)
                         ? weaponType.getExtremeRange() : weaponType.getLongRange();
                 int targetDistance = getShooter().getPosition().distance(getTarget().getPosition());
+                if (shooter.isAirborne() && target.isAirborne()) {
+                    targetDistance /= 16;
+                }
 
                 // if the particular weapon is within range or we're an aircraft strafing a ground unit
                 // then we can count it. Otherwise, it's not going to contribute to damage, and we want
                 // to avoid grossly overestimating damage.
                 if (targetDistance <= maxRange || shooter.isAirborne() && !target.isAirborne()) {
-                    bayDamage += weaponType.getDamage();
+                    switch (weaponType.getDamage()) {
+                        case WeaponType.DAMAGE_BY_CLUSTERTABLE:
+                        case WeaponType.DAMAGE_ARTILLERY:
+                        case WeaponType.DAMAGE_SPECIAL:
+                        case WeaponType.DAMAGE_VARIABLE:
+                            bayDamage += weaponType.getRackSize();
+                            break;
+                        default:
+                            bayDamage += weaponType.getDamage();
+                        }
+                    }
                 }
-            }
-
             return bayDamage;
         }
 
@@ -388,11 +415,13 @@ public class WeaponFireInfo {
             return 7D;
         }
 
-        // artillery and cluster table use the rack size as the base damage amount
-        // a little inaccurate, but better than ignoring those weapons entirely
+        // artillery and cluster table use the rack size as the base damage amount,
+        // but we'll roll an "average" cluster for the given weapon size to estimate damage.
         if ((weaponType.getDamage() == WeaponType.DAMAGE_BY_CLUSTERTABLE) ||
            (weaponType.getDamage() == WeaponType.DAMAGE_ARTILLERY)) {
-            return weaponType.getRackSize();
+            // Assume average cluster size for this weapon
+            int rs = weaponType.getRackSize();
+            return Compute.calculateClusterHitTableAmount(7, rs);
         }
 
         // infantry weapons use number of troopers multiplied by weapon damage,
@@ -410,10 +439,17 @@ public class WeaponFireInfo {
             return 1;
         }
 
-        // Aero TAG usage needs to take into account incoming Indirect Fire shots from friendlies, homing
-        // weapons, and the disutility of foregoing its own other weapons.
-        if (weapon.getEntity().isAero() && weaponType.hasFlag(WeaponType.F_TAG) && !target.isAero()){
-            return computeAeroExpectedTAGDamage();
+        // Give an estimation of the utility of TAGging a given target.
+        if (weaponType.hasFlag(WeaponType.F_TAG)) {
+            // Aero TAG usage needs to take into account incoming Indirect Fire shots from friendlies, homing
+            // weapons, and the disutility of foregoing its own other weapons.
+            if (weapon.getEntity().isAero() && !target.isAero()){
+                return computeAeroExpectedTAGDamage();
+            } else {
+                // Other taggers just need to know what hitting with the TAG can expect to deal, damage-wise.
+                return computeExpectedTAGDamage(false);
+            }
+
         }
 
         if (getTarget() instanceof Entity) {
@@ -434,13 +470,45 @@ public class WeaponFireInfo {
      * @return expected damage of firing a TAG weapon, in light of other options.
      */
     double computeAeroExpectedTAGDamage(){
-        int myWeaponsDamage = Compute.computeTotalDamage(shooter.getTotalWeaponList());
-
-        // Get a list of incoming or potentially incoming guidable weapons from the relevant Princess and compute damage.
-        int incomingAttacksDamage = Compute.computeTotalDamage(owner.computeGuidedWeapons(shooter, target.getPosition()));
-
         // If TAG damage exceeds the attacking unit's own max damage capacity, go for it!
-        return Math.max(incomingAttacksDamage - myWeaponsDamage, 0);
+        return computeExpectedTAGDamage(true);
+    }
+
+    /**
+     * Generalized computation of hitting with TAG given current guidable muniitions in play
+     * @param exclusiveWithOtherWeapons true if Aero, false otherwise.
+     * @return
+     */
+    double computeExpectedTAGDamage(boolean exclusiveWithOtherWeapons){
+        boolean debug = LogManager.getLogger().isDebugEnabled();
+        final StringBuilder msg = (debug) ?
+                new StringBuilder("Assessing the expected max damage from ")
+                .append(shooter.getDisplayName())
+                .append(" using their TAG this turn")
+                : null;
+
+        int myWeaponsDamage = 0;
+        if (exclusiveWithOtherWeapons) {
+            // We need to know what we're giving up if we fire this TAG...
+            myWeaponsDamage = Compute.computeTotalDamage(shooter.getTotalWeaponList());
+            if (debug) {
+                msg.append("\nThe unit will be giving up ")
+                        .append(myWeaponsDamage)
+                        .append(" damage from other weapons");
+            }
+        }
+
+        int incomingAttacksDamage =  owner.computeTeamTagUtility(
+                target,
+                Compute.computeTotalDamage(owner.computeGuidedWeapons(shooter, target.getPosition()))
+        );
+        int utility = incomingAttacksDamage - myWeaponsDamage;
+        if (debug) {
+            msg.append("\n\tUtility: ").append(utility).append(" damage (Max, estimated)");
+            LogManager.getLogger().debug(msg.toString());
+        }
+
+        return Math.max(utility, 0);
     }
 
     /**
@@ -522,7 +590,7 @@ public class WeaponFireInfo {
                     final boolean assumeUnderFlightPath,
                     final boolean guess,
                     final HashMap<String, int[]> bombPayloads) {
-        boolean debugging = false;
+        boolean debugging = LogManager.getLogger().isDebugEnabled();
 
         final StringBuilder msg =
                 debugging ?
@@ -539,6 +607,9 @@ public class WeaponFireInfo {
             setAction(buildBombAttackAction(bombPayloads));
         }
 
+        // Set ammoId here so we can tell toHitCalc which ammo to use for calculations; later overwritten.
+        getWeaponAttackAction().setAmmoId(shooter.getEquipmentNum(this.getAmmo()));
+
         if (!guess) {
             setToHit(calcRealToHit(getWeaponAttackAction()));
         } else if (null != shooterPath) {
@@ -549,7 +620,11 @@ public class WeaponFireInfo {
         // If we can't hit, set everything zero and return...
         if (12 < getToHit().getValue()) {
             if (debugging) {
-                LogManager.getLogger().debug(msg.append("\n\tImpossible toHit: ").append(getToHit().getValue()).toString());
+                LogManager.getLogger().debug(
+                        msg.append("\n\tImpossible toHit: ").append(getToHit().getValue())
+                            .append(" (").append(getToHit().getCumulativePlainDesc()).append(")")
+                                .append((guess) ? " [guess]" : " [real]")
+                );
             }
             setProbabilityToHit(0);
             setMaxDamage(0);
@@ -584,17 +659,19 @@ public class WeaponFireInfo {
             msg.append("\n\tHeat: ").append(getHeat());
         }
 
-        setExpectedDamageOnHit(computeExpectedDamage());
-        setMaxDamage(getExpectedDamageOnHit());
+        setMaxDamage(computeExpectedDamage());
+        // Expected damage is the chance of hitting * the max damage
+        setExpectedDamageOnHit(getProbabilityToHit() * getMaxDamage());
 
         if (debugging) {
             msg.append("\n\tMax Damage: ").append(LOG_DEC.format(maxDamage));
+            msg.append("\n\tExpected Damage: ").append(LOG_DEC.format(expectedDamageOnHit));
         }
 
         // If expected damage from Aero tagging is zero, return out - save attacks for later.
         if (weapon.getType().hasFlag(WeaponType.F_TAG) && shooter.isAero() && getExpectedDamageOnHit() <= 0) {
             if (debugging) {
-                LogManager.getLogger().debug(msg.append("\n\tAerospace TAG attack not advised at this juncture"));
+                LogManager.getLogger().debug(msg.append("\n\tAerospace TAG attack not advised at this juncture").toString());
             }
             setProbabilityToHit(0);
             setMaxDamage(0);
@@ -613,6 +690,9 @@ public class WeaponFireInfo {
 
         setKillProbability(0);
         if (!(getTarget() instanceof Mech)) {
+            if (debugging) {
+                LogManager.getLogger().debug(msg.toString());
+            }
             return;
         }
 
@@ -690,17 +770,21 @@ public class WeaponFireInfo {
             setProbabilityToHit(0);
             return null;
         }
+        // Set the ammoId for calcs.
+        getAction().setAmmoId(shooter.getEquipmentNum(this.getAmmo()));
         setProbabilityToHit(Compute.oddsAbove(getAction().toHit(getGame()).getValue(),
                                               getShooterState().hasNaturalAptGun()) / 100.0);
         return getAction();
     }
 
     String getDebugDescription() {
+        String ammoClause = (getAmmo() == null) ? "" : ", Ammo: " + ((AmmoType) getAmmo().getType()).getSubMunitionName();
         return getWeapon().getName() + " P. Hit: " + LOG_PER.format(getProbabilityToHit())
                 + ", Max Dam: " + LOG_DEC.format(getMaxDamage())
                 + ", Exp. Dam: " + LOG_DEC.format(getExpectedDamageOnHit())
                 + ", Num Crits: " + LOG_DEC.format(getExpectedCriticals())
-                + ", Kill Prob: " + LOG_PER.format(getKillProbability());
+                + ", Kill Prob: " + LOG_PER.format(getKillProbability())
+                + ammoClause;
 
     }
 

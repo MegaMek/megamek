@@ -551,6 +551,7 @@ public class EquipmentType implements ITechnology {
             return false;
         }
 
+        // Beware concurrent modification
         for (EquipmentMode mode : modes) {
             if (mode.getName().equals(modeType)) {
                 return true;

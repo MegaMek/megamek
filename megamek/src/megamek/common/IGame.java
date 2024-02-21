@@ -93,6 +93,15 @@ public interface IGame {
 
     void setupTeams();
 
+    @Nullable default Team getTeamForPlayer(Player player) {
+        for (Team team : getTeams()) {
+            if (team.hasPlayer(player)) {
+                return team;
+            }
+        }
+        return null;
+    }
+
     // UNITS //////////////
 
     /** @return The next free id for InGameObjects (units and others). */

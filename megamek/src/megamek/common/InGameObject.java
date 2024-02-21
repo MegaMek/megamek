@@ -61,4 +61,17 @@ public interface InGameObject extends BTObject {
      * @return The current battle strength (BV/PV)
      */
     int getStrength();
+
+    /**
+     * Returns true when the current (remaining) battle strength of this unit/object should be
+     * counted for a strength sum, e.g. if it should count for the summed battle value of a player
+     * or team. This may be false when the unit is destroyed or trapped or otherwise permanently kept from
+     * acting or when it is part of a unit group and its strength will be counted through
+     * that unit group (e.g. FighterSquadrons). See {@link #getStrength()}.
+     *
+     * @return True when the strength of this should be counted in a strength sum
+     */
+    default boolean countForStrengthSum() {
+        return true;
+    }
 }

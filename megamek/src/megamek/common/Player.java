@@ -1,32 +1,39 @@
 /*
- * MegaMek - Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2000-2004 Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
 package megamek.common;
 
 import megamek.client.ui.swing.util.PlayerColour;
-import megamek.common.event.GamePlayerChangeEvent;
 import megamek.common.icons.Camouflage;
 import megamek.common.options.OptionsConstants;
 
-import java.util.Enumeration;
-import java.util.Iterator;
 import java.util.Objects;
 import java.util.Vector;
 
 /**
  * Represents a player in the game.
+ *
+ * Note that Player should be usable for any type of game (TW, AS, BF, SBF) and therefore should not
+ * make any direct use of Game, Entity, AlphaStrikeElement etc., instead using IGame and InGameObject if necessary.
  */
 public final class Player extends TurnOrdered {
+
     //region Variable Declarations
     private static final long serialVersionUID = 6828849559007455761L;
 
@@ -35,11 +42,11 @@ public final class Player extends TurnOrdered {
     public static final int TEAM_UNASSIGNED = -1;
     public static final String[] TEAM_NAMES = {"No Team", "Team 1", "Team 2", "Team 3", "Team 4", "Team 5"};
 
-    private transient Game game;
+    private transient IGame game;
 
     private String name;
     private String email;
-    private int id;
+    private final int id;
 
     private int team = TEAM_NONE;
 
@@ -219,7 +226,6 @@ public final class Player extends TurnOrdered {
 
     public void setDone(boolean done) {
         this.done = done;
-        game.processGameEvent(new GamePlayerChangeEvent(this, this));
     }
 
     public boolean isGhost() {
@@ -477,86 +483,6 @@ public final class Player extends TurnOrdered {
         artyAutoHitHexes.add(c);
     }
 
-    public boolean hasTAG() {
-        for (Iterator<Entity> e = game.getSelectedEntities(new EntitySelector() {
-                    private final int ownerId = getId();
-
-                    @Override
-                    public boolean accept(Entity entity) {
-                        if (entity.getOwner() == null) {
-                            return false;
-                        }
-                        return ownerId == entity.getOwner().getId();
-                    }
-                }); e.hasNext(); ) {
-            Entity m = e.next();
-            if (m.hasTAG()) {
-                return true;
-            }
-            // A player can't be on two teams.
-        }
-        return false;
-    }
-
-    public int getEntityCount() {
-        return Math.toIntExact(game.getPlayerEntities(this, false).stream()
-                .filter(entity -> !entity.isDestroyed() && !entity.isTrapped()).count());
-    }
-
-    public int getUnitCount() {
-        return Math.toIntExact(game.getPlayerEntities(this, false).stream()
-                .filter(entity -> !entity.isDestroyed() && !entity.isTrapped() && !(entity instanceof EjectedCrew)).count());
-    }
-
-    public int getUnitDamageCount(int damageLevel) {
-        return Math.toIntExact(game.getPlayerEntities(this, false).stream()
-                .filter(entity -> !entity.isDestroyed() && !entity.isTrapped() && (entity.getDamageLevel() == damageLevel) && !(entity instanceof EjectedCrew)).count());
-    }
-
-    public int getUnitDestroyedCount() {
-        return Math.toIntExact(game.getOutOfGameEntitiesVector().stream()
-                .filter(entity -> this.equals(entity.getOwner()) && entity.isDestroyed() && !(entity instanceof EjectedCrew)).count());
-    }
-
-    public int getUnitCrewEjectedCount() {
-        return Math.toIntExact(game.getOutOfGameEntitiesVector().stream()
-                .filter(entity -> this.equals(entity.getOwner()) && entity.getCrew().isEjected() && !(entity instanceof EjectedCrew)).count());
-    }
-
-    public int getUnitCrewTrappedCount() {
-        return Math.toIntExact(game.getOutOfGameEntitiesVector().stream()
-                .filter(entity -> this.equals(entity.getOwner()) && entity.isDestroyed() && !entity.getCrew().isDead() && !entity.getCrew().isEjected() && !(entity instanceof EjectedCrew)).count());
-    }
-
-    public int getUnitCrewKilledCount() {
-        return Math.toIntExact(game.getOutOfGameEntitiesVector().stream()
-                .filter(entity -> this.equals(entity.getOwner()) && entity.getCrew().isDead() && !entity.getCrew().isEjected() && !(entity instanceof EjectedCrew)).count());
-    }
-
-    public int getEjectedCrewCount() {
-        return Math.toIntExact(game.getPlayerEntities(this, false).stream()
-                .filter(entity -> !entity.isDestroyed() && !entity.isTrapped() &&
-                        (((entity instanceof MechWarrior) && ((MechWarrior) entity).getPickedUpById() == Entity.NONE) ||
-                                ((entity instanceof EjectedCrew) && !(entity instanceof MechWarrior)))).count());
-    }
-
-    public int getEjectedCrewPickedUpByTeamCount() {
-        return Math.toIntExact(game.getPlayerEntities(this, false).stream()
-                .filter(entity -> !entity.isDestroyed() && !entity.isTrapped() &&
-                        ((entity instanceof MechWarrior) && ((MechWarrior) entity).getPickedUpById() != Entity.NONE && game.getEntity(((MechWarrior) entity).getPickedUpById()).getOwner().getTeam() == this.getTeam())).count());
-    }
-
-    public int getEjectedCrewPickedUpByEnemyTeamCount() {
-        return Math.toIntExact(game.getPlayerEntities(this, false).stream()
-                .filter(entity -> !entity.isDestroyed() && !entity.isTrapped() &&
-                        ((entity instanceof MechWarrior) && ((MechWarrior) entity).getPickedUpById() != Entity.NONE && game.getEntity(((MechWarrior) entity).getPickedUpById()).getOwner().getTeam() != this.getTeam())).count());
-    }
-
-    public int getEjectedCrewKilledCount() {
-        return Math.toIntExact(game.getOutOfGameEntitiesVector().stream()
-                .filter(entity -> entity.getOwner().equals(this) && entity.isDestroyed() && (entity instanceof EjectedCrew)).count());
-    }
-
     public int getInitialEntityCount() {
         return initialEntityCount;
     }
@@ -570,39 +496,26 @@ public final class Player extends TurnOrdered {
     }
 
     /**
-     * @return The combined Battle Value of all the player's current assets.
+     * Returns the combined strength (Battle Value/PV) of all the player's usable assets. This includes only
+     * units that should count according to {@link InGameObject#countForStrengthSum()}.
+     *
+     * @return The combined strength (BV/PV) of all the player's assets
      */
     public int getBV() {
-        return game.getPlayerEntities(this, true).stream()
-                .filter(entity -> !entity.isDestroyed() && !entity.isTrapped())
-                .mapToInt(Entity::calculateBattleValue).sum();
+        return game.getInGameObjects().stream()
+                .filter(this::isMyUnit)
+                .filter(InGameObject::countForStrengthSum)
+                .mapToInt(InGameObject::getStrength).sum();
     }
 
     /**
-     * get the total BV (unmodified by force size mod) for the units of this
-     * player that have fled the field
+     * Returns true when the given unit belongs to this Player.
      *
-     * @return the BV
+     * @param unit The unit
+     * @return True when the unit belongs to "me", this Player
      */
-    public int getFledBV() {
-        //TODO: I'm not sure how squadrons are treated here - see getBV()
-        return game.getPlayerRetreatedEntities(this).stream()
-                .filter(entity -> !entity.isDestroyed())
-                .mapToInt(Entity::calculateBattleValue).sum();
-    }
-
-    public int getFledUnitsCount() {
-        //TODO: I'm not sure how squadrons are treated here - see getBV()
-        return Math.toIntExact(game.getPlayerRetreatedEntities(this).stream()
-                .filter(entity -> !entity.isDestroyed() && !(entity instanceof EjectedCrew))
-                .mapToInt(Entity::calculateBattleValue).count());
-    }
-
-    public int getFledEjectedCrew() {
-        //TODO: I'm not sure how squadrons are treated here - see getBV()
-        return Math.toIntExact(game.getPlayerRetreatedEntities(this).stream()
-                .filter(entity -> !entity.isDestroyed() && (entity instanceof EjectedCrew))
-                .mapToInt(Entity::calculateBattleValue).count());
+    public boolean isMyUnit(InGameObject unit) {
+        return unit.getOwnerId() == id;
     }
 
     public int getInitialBV() {
@@ -639,21 +552,18 @@ public final class Player extends TurnOrdered {
      * @return the bonus to this player's initiative rolls granted by his units
      */
     public int getTurnInitBonus() {
-        int bonus = 0;
         if (game == null) {
             return 0;
         }
-        if (game.getEntitiesVector() == null) {
-            return 0;
-        }
-        
-        // per TacOps:AR page 162-163, only the highest bonus should available should be used.
-        for (Entity entity : game.getEntitiesVector()) {
-            if (entity.getOwner().equals(this)) {
+
+        int bonus = 0;
+        for (InGameObject object : game.getInGameObjects()) {
+            if (object instanceof Entity && ((Entity) object).getOwner().equals(this)) {
+                Entity entity = (Entity) object;
                 if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_MOBILE_HQS)) {
                     bonus = Math.max(entity.getHQIniBonus(), bonus);
                 }
-                
+
                 bonus = Math.max(bonus, entity.getQuirkIniBonus());
             }
         }
@@ -665,60 +575,40 @@ public final class Player extends TurnOrdered {
      * (i.e. the 'commander')
      */
     public int getCommandBonus() {
-        int commandb = 0;
-        
         if (game == null) {
             return 0;
         }
-        
-        for (Entity entity : game.getEntitiesVector()) {
-            if ((null != entity.getOwner())
-                    && entity.getOwner().equals(this)
-                    && !entity.isDestroyed()
-                    && entity.isDeployed()
-                    && !entity.isOffBoard()
-                    && entity.getCrew().isActive()
-                    && !entity.isCaptured()
-                    && !(entity instanceof MechWarrior)) {
-                int bonus = 0;
-                if (game.getOptions().booleanOption(OptionsConstants.RPG_COMMAND_INIT)) {
-                    bonus = entity.getCrew().getCommandBonus();
-                }
-                //Even if the RPG option is not enabled, we still get the command bonus provided by special equipment.
-                //Since we are not designating a single force commander at this point, we assume a superheavy tripod
-                //is the force commander if that gives the highest bonus.
-                if (entity.hasCommandConsoleBonus() || entity.getCrew().hasActiveTechOfficer()) {
-                    bonus += 2;
-                }
-                //Once we've gotten the status of the command console (if any), reset the flag that tracks
-                //the previous turn's action.
-                if (bonus > commandb) {
-                    commandb = bonus;
+        int commandb = 0;
+        for (InGameObject unit : game.getInGameObjects()) {
+            if (unit instanceof Entity) {
+                Entity entity = (Entity) unit;
+                if ((null != entity.getOwner())
+                        && entity.getOwner().equals(this)
+                        && !entity.isDestroyed()
+                        && entity.isDeployed()
+                        && !entity.isOffBoard()
+                        && entity.getCrew().isActive()
+                        && !entity.isCaptured()
+                        && !(entity instanceof MechWarrior)) {
+                    int bonus = 0;
+                    if (game.getOptions().booleanOption(OptionsConstants.RPG_COMMAND_INIT)) {
+                        bonus = entity.getCrew().getCommandBonus();
+                    }
+                    //Even if the RPG option is not enabled, we still get the command bonus provided by special equipment.
+                    //Since we are not designating a single force commander at this point, we assume a superheavy tripod
+                    //is the force commander if that gives the highest bonus.
+                    if (entity.hasCommandConsoleBonus() || entity.getCrew().hasActiveTechOfficer()) {
+                        bonus += 2;
+                    }
+                    //Once we've gotten the status of the command console (if any), reset the flag that tracks
+                    //the previous turn's action.
+                    if (bonus > commandb) {
+                        commandb = bonus;
+                    }
                 }
             }
         }
         return commandb;
-    }
-
-    /**
-     * cycle through entities on team and collect all the airborne VTOL/WIGE
-     *
-     * @return a vector of relevant entity ids
-     */
-    public Vector<Integer> getAirborneVTOL() {
-        // a vector of unit ids
-        Vector<Integer> units = new Vector<>();
-        for (Entity entity : game.getEntitiesVector()) {
-            if (entity.getOwner().equals(this)) {
-                if (((entity instanceof VTOL)
-                     || (entity.getMovementMode() == EntityMovementMode.WIGE)) &&
-                    (!entity.isDestroyed()) &&
-                    (entity.getElevation() > 0)) {
-                    units.add(entity.getId());
-                }
-            }
-        }
-        return units;
     }
 
     public String getColorForPlayer() {
@@ -726,10 +616,9 @@ public final class Player extends TurnOrdered {
     }
 
     /**
-     * Un-sets any data that may be considered private.
-     *
-     * This method clears any data that should not be transmitted to other players from the server,
-     * such as email addresses.
+     * Clears any data from this Player that should not be transmitted to other players from the server,
+     * such as email addresses. Note that this changes this Player's data permanently and should typically
+     * be done to a copy of the player, see {@link #copy()}.
      */
     public void redactPrivateData() {
         this.email = null;
@@ -760,11 +649,8 @@ public final class Player extends TurnOrdered {
         return id;
     }
 
-    /**
-     * TODO : I should be a clone override, not my own method
-     */
     public Player copy() {
-        var copy = new Player(this.id, this.name);
+        var copy = new Player(id, name);
 
         copy.email = email;
 

@@ -608,24 +608,33 @@ public class WeaponType extends EquipmentType {
     }
 
     public int getMaxRange(Mounted weapon) {
-        if (null != weapon) {
-            if (getAmmoType() == AmmoType.T_ATM) {
-                AmmoType ammoType = (AmmoType) weapon.getLinked().getType();
-                if ((ammoType.getAmmoType() == AmmoType.T_ATM)
-                        && (ammoType.getMunitionType().contains(AmmoType.Munitions.M_EXTENDED_RANGE))) {
-                    return RANGE_EXT;
-                } else if ((ammoType.getAmmoType() == AmmoType.T_ATM)
-                        && (ammoType.getMunitionType().contains(AmmoType.Munitions.M_HIGH_EXPLOSIVE))) {
-                    return RANGE_SHORT;
-                }
+        if (weapon == null) {
+            return getMaxRange();
+        }
+        return getMaxRange(weapon, weapon.getLinked());
+    }
+
+    public int getMaxRange() {
+        return maxRange;
+    }
+
+    public int getMaxRange(Mounted weapon, Mounted ammo) {
+        if (getAmmoType() == AmmoType.T_ATM) {
+            AmmoType ammoType = (AmmoType) ammo.getType();
+            if ((ammoType.getAmmoType() == AmmoType.T_ATM)
+                    && (ammoType.getMunitionType().contains(AmmoType.Munitions.M_EXTENDED_RANGE))) {
+                return RANGE_EXT;
+            } else if ((ammoType.getAmmoType() == AmmoType.T_ATM)
+                    && (ammoType.getMunitionType().contains(AmmoType.Munitions.M_HIGH_EXPLOSIVE))) {
+                return RANGE_SHORT;
             }
-            if (getAmmoType() == AmmoType.T_MML) {
-                AmmoType ammoType = (AmmoType) weapon.getLinked().getType();
-                if (ammoType.hasFlag(AmmoType.F_MML_LRM) || (getAmmoType() == AmmoType.T_LRM_TORPEDO)) {
-                    return RANGE_LONG;
-                } else {
-                    return RANGE_SHORT;
-                }
+        }
+        if (getAmmoType() == AmmoType.T_MML) {
+            AmmoType ammoType = (AmmoType) ammo.getType();
+            if (ammoType.hasFlag(AmmoType.F_MML_LRM) || (getAmmoType() == AmmoType.T_LRM_TORPEDO)) {
+                return RANGE_LONG;
+            } else {
+                return RANGE_SHORT;
             }
         }
         return maxRange;

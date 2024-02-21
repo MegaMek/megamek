@@ -142,6 +142,9 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
     protected int baseDamageCapacity = 0;
     protected int damageTaken = 0;
 
+    // New stuff for ammo switching
+    protected int switchedReason = 0;
+
     /**
      * BattleArmor use the standard locations to track troopers. On BA, this field keeps track of where
      * a piece of equipment is mounted.
@@ -2149,6 +2152,14 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
         } else {
             return -1;
         }
+    }
+
+    public int getSwitchedReason() {
+        return switchedReason;
+    }
+
+    public void setSwitchedReason(int reason) {
+        switchedReason = reason;
     }
 
     @Override

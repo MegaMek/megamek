@@ -263,7 +263,11 @@ public class EntityImage {
 
             // Generate rotated images for the unit and for a wreck
             fImage = rotateImage(fImage, i);
-            facings[i] = applyDropShadow(fImage);
+            if (GUIP.getShadowMap()) {
+                facings[i] = applyDropShadow(fImage);
+            } else {
+                facings[i] = fImage;
+            }
         }
 
         // Apply the player/unit camouflage

@@ -201,8 +201,8 @@ public class PlanetaryConditions implements Serializable {
 
     // misc
     private boolean blowingSand = false;
-    public static final String MSG_NAME_BLOWINGSAND_TRUE = Messages.getString("PlanetaryConditions.DisplayableName.SandBlowing.true");
-    public static final String MSG_NAME_BLOWINGSAND_FALSE = Messages.getString("PlanetaryConditions.DisplayableName.SandBlowing.false");
+    private static final String MSG_NAME_BLOWINGSAND_TRUE = Messages.getString("PlanetaryConditions.DisplayableName.SandBlowing.true");
+    private static final String MSG_NAME_BLOWINGSAND_FALSE = Messages.getString("PlanetaryConditions.DisplayableName.SandBlowing.false");
     private static final String MSG_INDICATOR_BLOWINGSAND_TRUE = Messages.getString("PlanetaryConditions.Indicator.SandBlowing.true");
     private static final String MSG_INDICATOR_BLOWINGSAND_FALSE = Messages.getString("PlanetaryConditions.Indicator.SandBlowing.false");
 
@@ -1310,6 +1310,14 @@ public class PlanetaryConditions implements Serializable {
 
     public String getSandBlowingDisplayableValue() {
         return isSandBlowing() ? MSG_NAME_BLOWINGSAND_TRUE : MSG_NAME_BLOWINGSAND_FALSE;
+    }
+
+    public static String  getEMIDisplayableValue(boolean b) {
+        return b ? MSG_NAME_EMI_TRUE : MSG_NAME_EMI_FALSE;
+    }
+
+    public static String  getSandBlowingDisplayableValue(boolean b) {
+        return b ? MSG_NAME_BLOWINGSAND_TRUE : MSG_NAME_BLOWINGSAND_FALSE;
     }
 
 }

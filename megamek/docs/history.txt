@@ -6,7 +6,7 @@ MEGAMEK VERSION HISTORY:
 + Fix #5177: Fixing an issue with MUL loading
 + PR #4521: Adds the Black Ice terrain modification. Happy Skidding!
 + PR #5156: Internal changes to Player and Team classes
-+ Fix #3498: Adding Clan Personnel Tracking to MegaMek
++ Fix #3498: Adding Clan Personnel Tracking to MegaMek; IS pilots in Clan Meks can now go physical!
 + Fix #5189: Weapons will no longer think themselves out of ammo when there is ammo left on the unit
 
 

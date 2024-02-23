@@ -1965,9 +1965,4 @@ public class BattleArmor extends Infantry {
     public int firstArmorIndex() {
         return 1;
     }
-
-    // @Override
-    // public int getArmorTechLevel(int loc) {
-    //    return armorTechLevel[loc];
-    //}
 }

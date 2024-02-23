@@ -122,7 +122,7 @@ public abstract class InfantryWeapon extends Weapon {
 
     @Override
     public int getMaxRange(Mounted weapon) {
-        return this.getMaxRange(weapon, null);
+        return getMaxRange(weapon, null);
     }
 
     @Override

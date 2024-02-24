@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -19,9 +19,7 @@
 package megamek.common.enums;
 
 import megamek.MegaMek;
-import megamek.common.Messages;
 
-import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.ResourceBundle;
 

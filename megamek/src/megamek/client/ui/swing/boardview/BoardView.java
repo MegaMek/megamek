@@ -2546,7 +2546,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
             Point p2DST = new Point(hex_size.width, hex_size.height);
 
             Composite svComp = g.getComposite();
-            if (conditions.isDusk()) {
+            if (conditions.isDay()) {
                 g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_ATOP, 0.55f));
             } else {
                 g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_ATOP, 0.45f));

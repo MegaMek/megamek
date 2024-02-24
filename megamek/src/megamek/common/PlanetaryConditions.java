@@ -1087,8 +1087,7 @@ public class PlanetaryConditions implements Serializable {
     }
 
     public boolean isRecklessConditions() {
-        return (fog > FOG_NONE)
-                || Light.isDark(light);
+        return (fog > FOG_NONE) || Light.isDark(light);
     }
 
     public int getMaxWindStrength() {

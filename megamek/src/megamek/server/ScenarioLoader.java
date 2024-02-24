@@ -26,6 +26,7 @@ import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.IOption;
 import megamek.common.options.OptionsConstants;
 import megamek.common.util.BoardUtilities;
+import megamek.common.util.StringUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
 import org.apache.logging.log4j.LogManager;
 
@@ -431,7 +432,7 @@ public class ScenarioLoader {
         }
 
         if (p.containsKey(PARAM_PLANETCOND_LIGHT)) {
-            g.getPlanetaryConditions().setLight(Light.getLight(Integer.parseInt(p.getString(PARAM_PLANETCOND_LIGHT))));
+            g.getPlanetaryConditions().setLight(Light.getLight(StringUtil.toInt(p.getString(PARAM_PLANETCOND_LIGHT), 0)));
         }
 
         if (p.containsKey(PARAM_PLANETCOND_WEATHER)) {

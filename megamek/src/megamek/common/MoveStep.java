@@ -3030,6 +3030,7 @@ public class MoveStep implements Serializable {
                             mp += 1;
                         }
                         break;
+                    default:
                 }
             } else if (conditions.isDark()) {
                 setRunProhibited(true);

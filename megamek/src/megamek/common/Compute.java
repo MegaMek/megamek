@@ -21,6 +21,7 @@ import megamek.common.annotations.Nullable;
 import megamek.common.enums.AimingMode;
 import megamek.common.enums.BasementType;
 import megamek.common.enums.IlluminationLevel;
+import megamek.common.enums.Light;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.DiveBombAttack;
 import megamek.common.weapons.InfantryAttack;
@@ -2587,8 +2588,7 @@ public class Compute {
 
         if (attacker.getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_LIGHT)
                 && !target.isIlluminated()
-                && ((game.getPlanetaryConditions().getLight() == PlanetaryConditions.L_MOONLESS)
-                || (game.getPlanetaryConditions().getLight() == PlanetaryConditions.L_PITCH_BLACK))) {
+                && game.getPlanetaryConditions().isVeryDark()) {
             toHit.addModifier(-1, "light specialist");
         }
 

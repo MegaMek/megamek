@@ -2084,11 +2084,12 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
     @Override
     public boolean canSpot() {
         if (getConversionMode() == CONV_MODE_FIGHTER) {
-            return !isAirborne() || hasWorkingMisc(MiscType.F_RECON_CAMERA)
-                    || hasWorkingMisc(MiscType.F_INFRARED_IMAGER) || hasWorkingMisc(MiscType.F_HYPERSPECTRAL_IMAGER)
+            return !isAirborne()
+                    || hasWorkingMisc(MiscType.F_RECON_CAMERA)
+                    || hasWorkingMisc(MiscType.F_INFRARED_IMAGER)
+                    || hasWorkingMisc(MiscType.F_HYPERSPECTRAL_IMAGER)
                     || (hasWorkingMisc(MiscType.F_HIRES_IMAGER)
-                            && ((game.getPlanetaryConditions().getLight() == PlanetaryConditions.L_DAY)
-                                    || (game.getPlanetaryConditions().getLight() == PlanetaryConditions.L_DUSK)));
+                            && game.getPlanetaryConditions().isLighted());
         } else {
             return super.canSpot();
         }

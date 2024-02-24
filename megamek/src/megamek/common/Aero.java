@@ -2684,11 +2684,12 @@ public abstract class Aero extends Entity implements IAero, IBomber {
         // per a recent ruling on the official forums, aero units can't spot
         // for indirect LRM fire, unless they have a recon cam, an infrared or
         // hyperspec imager, or a high-res imager and it's not night
-        return !isAirborne() || hasWorkingMisc(MiscType.F_RECON_CAMERA) || hasWorkingMisc(MiscType.F_INFRARED_IMAGER)
+        return !isAirborne()
+                || hasWorkingMisc(MiscType.F_RECON_CAMERA)
+                || hasWorkingMisc(MiscType.F_INFRARED_IMAGER)
                 || hasWorkingMisc(MiscType.F_HYPERSPECTRAL_IMAGER)
                 || (hasWorkingMisc(MiscType.F_HIRES_IMAGER)
-                && ((game.getPlanetaryConditions().getLight() == PlanetaryConditions.L_DAY)
-                || (game.getPlanetaryConditions().getLight() == PlanetaryConditions.L_DUSK)));
+                    && game.getPlanetaryConditions().isLighted());
     }
 
     // Damage a fighter that was part of a squadron when splitting it. Per

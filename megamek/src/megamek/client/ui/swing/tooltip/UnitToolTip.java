@@ -1497,17 +1497,18 @@ public final class UnitToolTip {
         }
 
         if (showSensors) {
+            PlanetaryConditions conditions = game.getPlanetaryConditions();
             // If sensors, display what sensors this unit is using
             if (gameOptions.booleanOption(OptionsConstants.ADVANCED_TACOPS_SENSORS)
                     || (gameOptions.booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS)) && entity.isSpaceborne()) {
                 String visualRange = Compute.getMaxVisualRange(entity, false) + "";
-                if (game.getPlanetaryConditions().isIlluminationEffective()) {
+                if (conditions.isIlluminationEffective()) {
                     visualRange += " (" + Compute.getMaxVisualRange(entity, true) + ")";
                 }
                 result += addToTT("Sensors", BR, getSensorDesc(entity), visualRange);
             } else {
                 String visualRange = Compute.getMaxVisualRange(entity, false) + "";
-                if (game.getPlanetaryConditions().isIlluminationEffective()) {
+                if (conditions.isIlluminationEffective()) {
                     visualRange += " (" + Compute.getMaxVisualRange(entity, true) + ")";
                 }
                 result += addToTT("Visual", BR, visualRange);

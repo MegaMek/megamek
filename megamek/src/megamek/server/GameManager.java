@@ -3495,7 +3495,7 @@ public class GameManager implements IGameManager {
                 rWeather.add(game.getPlanetaryConditions().getWeatherDisplayableName());
                 rWeather.newlines = 0;
                 Report rLight = new Report(1032, Report.PUBLIC);
-                rLight.add(game.getPlanetaryConditions().getLightDisplayableName());
+                rLight.add(game.getPlanetaryConditions().getLight().toString());
                 Report rVis = new Report(1033, Report.PUBLIC);
                 rVis.add(game.getPlanetaryConditions().getFogDisplayableName());
                 addReport(rWindDir);

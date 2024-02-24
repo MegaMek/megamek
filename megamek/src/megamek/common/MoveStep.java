@@ -19,6 +19,7 @@
 package megamek.common;
 
 import megamek.common.MovePath.MoveStepType;
+import megamek.common.enums.Light;
 import megamek.common.enums.MPBoosters;
 import megamek.common.options.OptionsConstants;
 import megamek.common.pathfinder.CachedEntityState;
@@ -2963,9 +2964,9 @@ public class MoveStep implements Serializable {
         final boolean isLightSpecialist = en.getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_LIGHT);
         int nSrcEl = srcHex.getLevel() + prevEl;
         int nDestEl = destHex.getLevel() + elevation;
+        PlanetaryConditions conditions = game.getPlanetaryConditions();
 
         mp = 1;
-
 
         // 0 MP infantry units can move 1 hex
         if (isInfantry
@@ -2979,7 +2980,6 @@ public class MoveStep implements Serializable {
             return;
         }
 
-
         boolean applyNightPen =
                 !game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_NO_NIGHT_MOVE_PEN);
         boolean carefulExempt =
@@ -2989,7 +2989,7 @@ public class MoveStep implements Serializable {
         if (!game.getBoard().inSpace() && isCareful() && applyNightPen
                 && !carefulExempt) {
             // Fog
-            switch (game.getPlanetaryConditions().getFog()) {
+            switch (conditions.getFog()) {
                 case PlanetaryConditions.FOG_LIGHT:
                     if (!isFogSpecialist) {
                         mp += 1;
@@ -3006,13 +3006,13 @@ public class MoveStep implements Serializable {
 
             // Light
             if (!entity.isNightwalker()) {
-                switch (game.getPlanetaryConditions().getLight()) {
-                    case PlanetaryConditions.L_FULL_MOON:
+                switch (conditions.getLight()) {
+                    case FULL_MOON:
                         if (!isLightSpecialist && !en.isUsingSearchlight()) {
                             mp += 1;
                         }
                         break;
-                    case PlanetaryConditions.L_MOONLESS:
+                    case MOONLESS:
                         if (en.isUsingSearchlight()) {
                             break;
                         }
@@ -3023,7 +3023,7 @@ public class MoveStep implements Serializable {
                             mp += 1;
                         }
                         break;
-                    case PlanetaryConditions.L_PITCH_BLACK:
+                    case PITCH_BLACK:
                         if (!isLightSpecialist) {
                             mp += 3;
                         } else {
@@ -3031,11 +3031,10 @@ public class MoveStep implements Serializable {
                         }
                         break;
                 }
-            } else if (game.getPlanetaryConditions().getLight() > PlanetaryConditions.L_DUSK) {
+            } else if (conditions.isDark()) {
                 setRunProhibited(true);
             }
         }
-
 
         // VTOLs pay 1 for everything
         if (moveMode == EntityMovementMode.VTOL) {
@@ -3049,8 +3048,8 @@ public class MoveStep implements Serializable {
 
         // Be careful on pavement during cold weather, there may be black ice.
         boolean useBlackIce = game.getOptions().booleanOption(OptionsConstants.ADVANCED_BLACK_ICE);
-        boolean goodTemp = game.getPlanetaryConditions().getTemperature() <= PlanetaryConditions.BLACK_ICE_TEMP;
-        boolean goodWeather = game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_ICE_STORM;
+        boolean goodTemp = conditions.getTemperature() <= PlanetaryConditions.BLACK_ICE_TEMP;
+        boolean goodWeather = conditions.getWeather() == PlanetaryConditions.WE_ICE_STORM;
 
         if (isPavementStep && ((useBlackIce && goodTemp) || goodWeather)) {
             if (destHex.containsTerrain(Terrains.BLACK_ICE)){

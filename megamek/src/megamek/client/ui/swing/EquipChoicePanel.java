@@ -262,7 +262,7 @@ public class EquipChoicePanel extends JPanel {
 
         // Set up searchlight
         if (!entity.getsAutoExternalSearchlight()
-                && (client.getGame().getPlanetaryConditions().getLight() > PlanetaryConditions.L_DUSK)) {
+                && client.getGame().getPlanetaryConditions().isDark()) {
             add(labSearchlight, GBC.std());
             add(chSearchlight, GBC.eol());
             chSearchlight.setSelected(entity.hasSearchlight()

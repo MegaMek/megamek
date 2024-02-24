@@ -48,6 +48,7 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.swing.dialog.DialogButton;
 import megamek.common.Configuration;
 import megamek.common.PlanetaryConditions;
+import megamek.common.enums.Light;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
 
@@ -232,8 +233,8 @@ public class PlanetaryConditionsDialog extends ClientDialog {
     
     /** Fills the dialog comboboxes. */
     private void setupCombos() {
-        for (int i = 0; i < PlanetaryConditions.L_SIZE; i++) {
-            comLight.addItem(PlanetaryConditions.getLightDisplayableName(i));
+        for (Light condition : Light.values()) {
+            comLight.addItem(condition.toString());
         }
         for (int i = 0; i < PlanetaryConditions.WE_SIZE; i++) {
             comWeather.addItem(PlanetaryConditions.getWeatherDisplayableName(i));
@@ -289,7 +290,7 @@ public class PlanetaryConditionsDialog extends ClientDialog {
     /** Updates the dialog fields with values from the stored conditions. */
     private void refreshValues() {
         removeListeners();
-        comLight.setSelectedIndex(conditions.getLight());
+        comLight.setSelectedIndex(conditions.getLight().ordinal());
         comWeather.setSelectedIndex(conditions.getWeather());
         comWind.setSelectedIndex(conditions.getWindStrength());
         comWindFrom.setSelectedIndex(conditions.getMinWindStrength());
@@ -313,7 +314,7 @@ public class PlanetaryConditionsDialog extends ClientDialog {
      */
     private void setConditions() {
         // make the changes to the planetary conditions
-        conditions.setLight(comLight.getSelectedIndex());
+        conditions.setLight(Light.getLight(comLight.getSelectedIndex()));
         conditions.setWeather(comWeather.getSelectedIndex());
         conditions.setWindStrength(comWind.getSelectedIndex());
         conditions.setWindDirection(comWindDirection.getSelectedIndex());

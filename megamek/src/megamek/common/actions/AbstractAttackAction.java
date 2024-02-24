@@ -19,6 +19,7 @@ import megamek.client.ui.Messages;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.IlluminationLevel;
+import megamek.common.enums.Light;
 import megamek.common.options.OptionsConstants;
 
 import java.util.Enumeration;
@@ -97,8 +98,8 @@ public abstract class AbstractAttackAction extends AbstractEntityAction implemen
         Entity te = (target.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) target : null;
         ToHitData toHit = new ToHitData();
 
-        int lightCond = game.getPlanetaryConditions().getLight();
-        if (lightCond == PlanetaryConditions.L_DAY) {
+        PlanetaryConditions conditions = game.getPlanetaryConditions();
+        if (conditions.isDay()) {
             // It's the day, so just return
             return toHit;
         }
@@ -106,8 +107,8 @@ public abstract class AbstractAttackAction extends AbstractEntityAction implemen
         // The base night penalty
         final IlluminationLevel hexIllumLvl = IlluminationLevel.determineIlluminationLevel(game,
                 target.getPosition());
-        int night_modifier = game.getPlanetaryConditions().getLightHitPenalty(isWeapon);
-        toHit.addModifier(night_modifier, game.getPlanetaryConditions().getLightDisplayableName());
+        int night_modifier = conditions.getLightHitPenalty(isWeapon);
+        toHit.addModifier(night_modifier, conditions.getLight().toString());
 
         boolean illuminated = false;
         if (te != null) {
@@ -130,7 +131,7 @@ public abstract class AbstractAttackAction extends AbstractEntityAction implemen
         // Searchlights reduce the penalty to zero (or 1 for pitch-black)
         // (except for dusk/dawn)
         int searchlightMod = Math.min(3, night_modifier);
-        if ((te != null) && (lightCond > PlanetaryConditions.L_DUSK)
+        if ((te != null) && (conditions.isDark())
                 && (te.isUsingSearchlight() || illuminated)) {
             if (te.isUsingSearchlight()) {
                 toHit.addModifier(-searchlightMod, "target using searchlight");
@@ -147,7 +148,7 @@ public abstract class AbstractAttackAction extends AbstractEntityAction implemen
             int fireMod = Math.min(2, night_modifier);
             toHit.addModifier(-fireMod, "target illuminated by fire");
             night_modifier -= fireMod;
-        } else if ((lightCond > PlanetaryConditions.L_DUSK) && (hexIllumLvl.isSearchlight())) {
+        } else if ((conditions.isDark()) && (hexIllumLvl.isSearchlight())) {
             toHit.addModifier(-searchlightMod, "target illuminated by searchlight");
             night_modifier -= searchlightMod;
         } else if (atype != null) {
@@ -198,7 +199,7 @@ public abstract class AbstractAttackAction extends AbstractEntityAction implemen
 
         // now check for general hit bonuses for heat
         if ((te != null) && !attacker.isConventionalInfantry()) {
-            int heatBonus = game.getPlanetaryConditions().getLightHeatBonus(te.heat);
+            int heatBonus = conditions.getLightHeatBonus(te.heat);
             if (heatBonus < 0) {
                 toHit.addModifier(heatBonus, "target excess heat at night");
             }

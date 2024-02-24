@@ -18,6 +18,7 @@ package megamek.common;
 
 import java.io.Serializable;
 
+import megamek.common.enums.Light;
 import org.apache.logging.log4j.LogManager;
 
 /**
@@ -27,28 +28,6 @@ import org.apache.logging.log4j.LogManager;
 public class PlanetaryConditions implements Serializable {
 
     private static final long serialVersionUID = 6838624193286089781L;
-
-    // light
-    public static final int L_DAY          = 0;
-    public static final int L_DUSK         = 1;
-    public static final int L_FULL_MOON    = 2;
-    public static final int L_MOONLESS     = 3;
-    public static final int L_PITCH_BLACK  = 4;
-    private static final String MSG_NAME_LIGHT_DAYLIGHT = Messages.getString("PlanetaryConditions.DisplayableName.Light.Daylight");
-    private static final String MSG_NAME_LIGHT_DUSK = Messages.getString("PlanetaryConditions.DisplayableName.Light.Dusk");
-    private static final String MSG_NAME_LIGHT_FULLMOONNIGHT = Messages.getString("PlanetaryConditions.DisplayableName.Light.Full Moon Night");
-    private static final String MSG_NAME_LIGHT_MOONLESSNIGHT = Messages.getString("PlanetaryConditions.DisplayableName.Light.Moonless Night");
-    private static final String MSG_NAME_LIGHT_PITCHBLACK = Messages.getString("PlanetaryConditions.DisplayableName.Light.Pitch Black");
-    private static String[] lightNames = { MSG_NAME_LIGHT_DAYLIGHT, MSG_NAME_LIGHT_DUSK, MSG_NAME_LIGHT_FULLMOONNIGHT,
-            MSG_NAME_LIGHT_MOONLESSNIGHT, MSG_NAME_LIGHT_PITCHBLACK };
-    public static final int L_SIZE = lightNames.length;
-    private static final String MSG_INDICATOR_LIGHT_DAY = Messages.getString("PlanetaryConditions.Indicator.Light.Day");
-    private static final String MSG_INDICATOR_LIGHT_DUSK = Messages.getString("PlanetaryConditions.Indicator.Light.Dusk");
-    private static final String MSG_INDICATOR_LIGHT_FULL_MOON = Messages.getString("PlanetaryConditions.Indicator.Light.FullMoon");
-    private static final String MSG_INDICATOR_LIGHT_MOONLESS = Messages.getString("PlanetaryConditions.Indicator.Light.Moonless");
-    private static final String MSG_INDICATOR_LIGHT_PITCH_BLACK = Messages.getString("PlanetaryConditions.Indicator.Light.PitchBlack");
-    private static String[] lightIndicators = { MSG_INDICATOR_LIGHT_DAY, MSG_INDICATOR_LIGHT_DUSK, MSG_INDICATOR_LIGHT_FULL_MOON,
-            MSG_INDICATOR_LIGHT_MOONLESS, MSG_INDICATOR_LIGHT_PITCH_BLACK };
 
     // Weather
     public static final int WE_NONE             = 0;
@@ -210,7 +189,7 @@ public class PlanetaryConditions implements Serializable {
     private boolean runOnce = false;
 
     // set up the specific conditions
-    private int lightConditions = L_DAY;
+    private Light light = Light.DAY;
     private int weatherConditions = WE_NONE;
     private int oldWeatherConditions = WE_NONE;
     private int windStrength = WI_NONE;
@@ -249,7 +228,7 @@ public class PlanetaryConditions implements Serializable {
 
     /** Creates new PlanetaryConditions that is a duplicate of another */
     public PlanetaryConditions(PlanetaryConditions other) {
-        lightConditions = other.lightConditions;
+        light = other.light;
         weatherConditions = other.weatherConditions;
         windStrength = other.windStrength;
         windDirection = other.windDirection;
@@ -273,11 +252,93 @@ public class PlanetaryConditions implements Serializable {
         return new PlanetaryConditions(this);
     }
 
-    public static String getLightDisplayableName(int type) {
-        if ((type >= 0) && (type < L_SIZE)) {
-            return lightNames[type];
+    public void alterConditions(PlanetaryConditions conditions) {
+        light = conditions.light;
+        weatherConditions = conditions.weatherConditions;
+        windStrength = conditions.windStrength;
+        windDirection = conditions.windDirection;
+        shiftWindDirection = conditions.shiftWindDirection;
+        shiftWindStrength = conditions.shiftWindStrength;
+        minWindStrength = conditions.minWindStrength;
+        maxWindStrength = conditions.maxWindStrength;
+        atmosphere = conditions.atmosphere;
+        temperature = conditions.temperature;
+        gravity = conditions.gravity;
+        emi = conditions.emi;
+        fog = conditions.fog;
+        terrainAffected = conditions.terrainAffected;
+        blowingSand = conditions.blowingSand;
+        runOnce = conditions.runOnce;
+
+        if (!runOnce) {
+            setTempFromWeather();
+            setWindFromWeather();
+            setSandStorm();
+            runOnce = true;
         }
-        throw new IllegalArgumentException("Unknown light condition");
+    }
+
+    public void setLight(Light light) {
+        this.light = light;
+    }
+
+    /** @return The time of day lighting conditions (one of PlanetaryConditions.L_*). */
+    public Light getLight() {
+        return light;
+    }
+
+    public boolean isDay() {
+        return Light.isDay(light);
+    }
+
+    public boolean isDusk() {
+        return Light.isDusk(light);
+    }
+
+    public boolean isFullMoon() {
+        return Light.isFullMoon(light);
+    }
+
+    public boolean isMoonless() {
+        return Light.isMoonless(light);
+    }
+
+    public boolean isPitchBack() {
+        return Light.isPitchBack(light);
+    }
+
+    /**
+     * Returns true when visual range is increased by a illumination
+     * in the light condition, i.e. in dusk/dawn, full moon,
+     * moonless and pitch black night.
+     */
+    public boolean isIlluminationEffective() {
+        return Light.isIlluminationEffective(light);
+    }
+
+    /**
+     * Returns true when visual range is dark
+     * in the light condition, i.e. in full moon,
+     * moonless and pitch black night.
+     */
+    public boolean isDark() {
+        return Light.isDark(light);
+    }
+
+    /**
+     * Returns true when visual range is very dark
+     * in the light condition, i.e. in moonless and pitch black night.
+     */
+    public boolean isVeryDark() {
+        return Light.isVeryDark(light);
+    }
+
+    /**
+     * Returns true when visual range is light
+     * in the light condition, i.e. in day, dusk
+     */
+    public boolean isLighted() {
+        return Light.isLighted(light);
     }
 
     public static String getWeatherDisplayableName(int type) {
@@ -329,10 +390,6 @@ public class PlanetaryConditions implements Serializable {
         return getWindDirDisplayableName(windDirection);
     }
 
-    public String getLightDisplayableName() {
-        return getLightDisplayableName(lightConditions);
-    }
-
     public String getWeatherDisplayableName() {
         return getWeatherDisplayableName(weatherConditions);
     }
@@ -355,43 +412,24 @@ public class PlanetaryConditions implements Serializable {
     public int getLightHitPenalty(boolean isWeapon) {
         int penalty = 0;
         if (isWeapon) {
-            if (lightConditions == L_DUSK) {
+            if (isDusk()) {
                 penalty = 1;
-            } else if (lightConditions == L_FULL_MOON) {
+            } else if (isFullMoon()) {
                 penalty = 2;
-            } else if (lightConditions == L_MOONLESS) {
+            } else if (isMoonless()) {
                 penalty = 3;
-            } else if (lightConditions == L_PITCH_BLACK) {
+            } else if (isPitchBack()) {
                 penalty = 4;
             }
         } else {
-            if (lightConditions == L_MOONLESS) {
+            if (isMoonless()) {
                 penalty = 1;
-            } else if (lightConditions == L_PITCH_BLACK) {
+            } else if (isPitchBack()) {
                 penalty = 2;
             }
         }
 
         return penalty;
-    }
-
-    /**
-     * Returns true when the light conditions give a hit penalty and
-     * the hit penalty can be offset by a searchlight, i.e. in full moon,
-     * moonless and pitch black night.
-     */
-    public boolean isSearchlightEffective() {
-        return (lightConditions == L_FULL_MOON) || (lightConditions == L_MOONLESS)
-                || (lightConditions == L_PITCH_BLACK);
-    }
-
-    /**
-     * Returns true when visual range is increased by a illumination
-     * in the light condition, i.e. in dusk/dawn, full moon,
-     * moonless and pitch black night.
-     */
-    public boolean isIlluminationEffective() {
-        return (lightConditions > L_DAY);
     }
 
     /** Returns true when the given weather is prohibited for temperatures of 30 degC and more. */
@@ -411,13 +449,13 @@ public class PlanetaryConditions implements Serializable {
      */
     public int getLightHeatBonus(int heat) {
         double divisor = 10000.0;
-        if (lightConditions == L_DUSK) {
+        if (isDusk()) {
             divisor = 25.0;
-        } else if (lightConditions == L_FULL_MOON) {
+        } else if (isFullMoon()) {
             divisor = 20.0;
-        } else if (lightConditions == L_MOONLESS) {
+        } else if (isMoonless()) {
             divisor = 15.0;
-        } else if (lightConditions == L_PITCH_BLACK) {
+        } else if (isPitchBack()) {
             divisor = 10.0;
         }
 
@@ -796,7 +834,7 @@ public class PlanetaryConditions implements Serializable {
                 // Except infantry/handheld, 10 hexes
                 lightRange = 10;
             }
-        } else if (lightConditions == L_PITCH_BLACK) {
+    } else if (isPitchBack()) {
             if (isMechVee || (isAero && (en.getAltitude() < 2))) {
                 lightRange = 3;
             } else if (isAero) {
@@ -806,7 +844,7 @@ public class PlanetaryConditions implements Serializable {
             } else {
                 lightRange = 1;
             }
-        } else if (lightConditions == L_MOONLESS) {
+        } else if (isMoonless()) {
             if (isMechVee || (isAero && (en.getAltitude() < 2))) {
                 lightRange = 5;
             } else if (isAero) {
@@ -816,7 +854,7 @@ public class PlanetaryConditions implements Serializable {
             } else {
                 lightRange = 2;
             }
-        } else if (lightConditions == L_FULL_MOON) {
+        } else if (isFullMoon()) {
             if (isMechVee || (isAero && (en.getAltitude() < 2))) {
                 lightRange = 10;
             } else if (isAero) {
@@ -826,7 +864,7 @@ public class PlanetaryConditions implements Serializable {
             } else {
                 lightRange = 5;
             }
-        } else if (lightConditions == L_DUSK) {
+        } else if (isDusk()) {
             if (isMechVee || (isAero && (en.getAltitude() < 2))) {
                 lightRange = 15;
             } else if (isAero) {
@@ -943,16 +981,6 @@ public class PlanetaryConditions implements Serializable {
         }
     }
 
-    public void setLight(int type) {
-        lightConditions = type;
-    }
-
-
-    /** @return The time of day lighting conditions (one of PlanetaryConditions.L_*). */
-    public int getLight() {
-        return lightConditions;
-    }
-
     public void setWeather(int type) {
         if ((type < 0) || (type >= WE_SIZE)) {
             LogManager.getLogger().error(String.format("Invalid weather type supplied: %d", type));
@@ -1059,7 +1087,8 @@ public class PlanetaryConditions implements Serializable {
     }
 
     public boolean isRecklessConditions() {
-        return (fog > FOG_NONE) || (lightConditions > L_DUSK);
+        return (fog > FOG_NONE)
+                || Light.isDark(light);
     }
 
     public int getMaxWindStrength() {
@@ -1084,33 +1113,6 @@ public class PlanetaryConditions implements Serializable {
 
     public void setBlowingSand(boolean b) {
         blowingSand = b;
-    }
-
-    public void alterConditions(PlanetaryConditions conditions) {
-        lightConditions = conditions.lightConditions;
-        weatherConditions = conditions.weatherConditions;
-        windStrength = conditions.windStrength;
-        windDirection = conditions.windDirection;
-        shiftWindDirection = conditions.shiftWindDirection;
-        shiftWindStrength = conditions.shiftWindStrength;
-        minWindStrength = conditions.minWindStrength;
-        maxWindStrength = conditions.maxWindStrength;
-        atmosphere = conditions.atmosphere;
-        temperature = conditions.temperature;
-        gravity = conditions.gravity;
-        emi = conditions.emi;
-        fog = conditions.fog;
-        terrainAffected = conditions.terrainAffected;
-        blowingSand = conditions.blowingSand;
-        runOnce = conditions.runOnce;
-
-        if (!runOnce) {
-            setTempFromWeather();
-            setWindFromWeather();
-            setSandStorm();
-            runOnce = true;
-        }
-
     }
 
     private void setTempFromWeather() {
@@ -1206,17 +1208,6 @@ public class PlanetaryConditions implements Serializable {
 
     public boolean isExtremeTemperatureCold() {
         return (isExtremeTemperature() && (temperature < 0));
-    }
-
-    public String getLightIndicator(int type) {
-        if ((type >= 0) && (type < L_SIZE)) {
-            return lightIndicators[type];
-        }
-        throw new IllegalArgumentException("Unknown light Indicator");
-    }
-
-    public String getLightIndicator() {
-        return getLightIndicator(lightConditions);
     }
 
     public String getFogIndicator(int type) {

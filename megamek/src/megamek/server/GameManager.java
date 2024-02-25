@@ -2011,7 +2011,7 @@ public class GameManager implements IGameManager {
                 resetEntityPhase(phase);
                 clearReports();
                 resolveHeat();
-                if (game.getPlanetaryConditions().isSandBlowing()
+                if (game.getPlanetaryConditions().isBlowingSand()
                         && game.getPlanetaryConditions().isGreaterThanLightGale()) {
                     addReport(resolveBlowingSandDamage());
                 }

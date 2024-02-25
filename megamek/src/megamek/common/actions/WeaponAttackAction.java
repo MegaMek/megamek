@@ -2903,7 +2903,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         if (wtype != null
                 && wtype.hasFlag(WeaponType.F_ENERGY)
                 && !game.getBoard().inSpace()
-                && conditions.isSandBlowing()
+                && conditions.isBlowingSand()
                 && conditions.isGreaterThanLightGale()) {
             weatherToHitMods.addModifier(1, Messages.getString("WeaponAttackAction.BlowingSand"));
         }

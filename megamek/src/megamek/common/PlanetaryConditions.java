@@ -30,17 +30,10 @@ public class PlanetaryConditions implements Serializable {
 
     public static final int BLACK_ICE_TEMP      = -30;
 
-    // misc
-    private boolean blowingSand = false;
-    private static final String MSG_NAME_BLOWINGSAND_TRUE = Messages.getString("PlanetaryConditions.DisplayableName.SandBlowing.true");
-    private static final String MSG_NAME_BLOWINGSAND_FALSE = Messages.getString("PlanetaryConditions.DisplayableName.SandBlowing.false");
-    private static final String MSG_INDICATOR_BLOWINGSAND_TRUE = Messages.getString("PlanetaryConditions.Indicator.SandBlowing.true");
-    private static final String MSG_INDICATOR_BLOWINGSAND_FALSE = Messages.getString("PlanetaryConditions.Indicator.SandBlowing.false");
-
-    private boolean sandStorm = false;
-    private boolean runOnce = false;
-
     // set up the specific conditions
+    private BlowingSand blowingSand = BlowingSand.BLOWING_SAND_NONE;
+    private BlowingSand sandStorm =  BlowingSand.BLOWING_SAND_NONE;
+    private boolean runOnce = false;
     private Light light = Light.DAY;
     private Weather weather = Weather.WEATHER_NONE;
     private Weather oldWeather = Weather.WEATHER_NONE;
@@ -407,6 +400,22 @@ public class PlanetaryConditions implements Serializable {
 
     public boolean isFogHeavy() {
         return Fog.isFogHeavy(fog);
+    }
+
+    public BlowingSand getBlowingSand() {
+        return blowingSand;
+    }
+
+    public void setBlowingSand(BlowingSand blowingSand) {
+       this.blowingSand = blowingSand;
+    }
+
+    public boolean isBlowingSandNone() {
+        return BlowingSand.isBlowingSandNone(blowingSand);
+    }
+
+    public boolean isBlowingSand() {
+        return BlowingSand.isBlowingSand(blowingSand);
     }
 
 
@@ -903,7 +912,7 @@ public class PlanetaryConditions implements Serializable {
         } else if (isHeaveHail()
                 || isSleet()
                 || isHeavySnow()
-                || (blowingSand && isGreaterThanLightGale())
+                || (isBlowingSand() && isGreaterThanLightGale())
                 || isGustingRain()
                 || isIceStorm()
                 || isDownpour()) {
@@ -1044,14 +1053,6 @@ public class PlanetaryConditions implements Serializable {
         return !isFogNone() || isDark();
     }
 
-    public boolean isSandBlowing() {
-        return blowingSand;
-    }
-
-    public void setBlowingSand(boolean b) {
-        blowingSand = b;
-    }
-
     private void setTempFromWeather() {
         switch (weather) {
             case SLEET:
@@ -1120,20 +1121,20 @@ public class PlanetaryConditions implements Serializable {
     }
 
     private void setSandStorm() {
-        if (blowingSand && isLessThanModerateGale()) {
+        if (isBlowingSand() && isLessThanModerateGale()) {
             wind = Wind.MOD_GALE;
-            sandStorm = true;
+            sandStorm = BlowingSand.BLOWING_SAND;
         }
     }
 
     private void doSandStormCheck() {
-        if (blowingSand && isLessThanModerateGale()) {
+        if (isBlowingSand() && isLessThanModerateGale()) {
             sandStorm = blowingSand;
-            blowingSand = false;
+            blowingSand = BlowingSand.BLOWING_SAND_NONE;
         }
-        if (sandStorm && isGreaterThanLightGale()) {
+        if (BlowingSand.isBlowingSand(sandStorm) && isGreaterThanLightGale()) {
             sandStorm = blowingSand;
-            blowingSand = true;
+            blowingSand = BlowingSand.BLOWING_SAND;
         }
     }
 
@@ -1175,24 +1176,11 @@ public class PlanetaryConditions implements Serializable {
         return hasEMI() ? MSG_INDICATOR_EMI_TRUE : MSG_INDICATOR_EMI_FALSE;
     }
 
-    public String getSandBlowingIndicator() {
-        return hasEMI() ? MSG_INDICATOR_BLOWINGSAND_TRUE : MSG_INDICATOR_BLOWINGSAND_FALSE;
-    }
-
     public String getEMIDisplayableValue() {
         return hasEMI() ? MSG_NAME_EMI_TRUE : MSG_NAME_EMI_FALSE;
-    }
-
-    public String getSandBlowingDisplayableValue() {
-        return isSandBlowing() ? MSG_NAME_BLOWINGSAND_TRUE : MSG_NAME_BLOWINGSAND_FALSE;
     }
 
     public static String  getEMIDisplayableValue(boolean b) {
         return b ? MSG_NAME_EMI_TRUE : MSG_NAME_EMI_FALSE;
     }
-
-    public static String  getSandBlowingDisplayableValue(boolean b) {
-        return b ? MSG_NAME_BLOWINGSAND_TRUE : MSG_NAME_BLOWINGSAND_FALSE;
-    }
-
 }

@@ -298,7 +298,7 @@ public class PlanetaryConditionsDialog extends ClientDialog {
         comWindDirection.setSelectedIndex(conditions.getWindDirection().ordinal());
         comAtmosphere.setSelectedIndex(conditions.getAtmosphere().ordinal());
         comFog.setSelectedIndex(conditions.getFog().ordinal());
-        chkBlowingSands.setSelected(conditions.isSandBlowing());
+        chkBlowingSands.setSelected(conditions.isBlowingSand());
         chkShiftWindDir.setSelected(conditions.shiftingWindDirection());
         chkShiftWindStr.setSelected(conditions.shiftingWindStrength());
         fldTemp.setText(Integer.toString(conditions.getTemperature()));
@@ -321,7 +321,8 @@ public class PlanetaryConditionsDialog extends ClientDialog {
         refreshWindRange();
         conditions.setAtmosphere(Atmosphere.getAtmosphere(comAtmosphere.getSelectedIndex()));
         conditions.setFog(Fog.getFog(comFog.getSelectedIndex()));
-        conditions.setBlowingSand(chkBlowingSands.isSelected());
+        BlowingSand blowingSand = chkBlowingSands.isSelected() ? BlowingSand.BLOWING_SAND : BlowingSand.BLOWING_SAND_NONE;
+        conditions.setBlowingSand(blowingSand);
         conditions.setShiftingWindDirection(chkShiftWindDir.isSelected());
         conditions.setShiftingWindStrength(chkShiftWindStr.isSelected());
         conditions.setTemperature(Integer.parseInt(fldTemp.getText()));

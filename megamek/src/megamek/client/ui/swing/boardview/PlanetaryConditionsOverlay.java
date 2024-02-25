@@ -144,10 +144,10 @@ public class PlanetaryConditionsOverlay extends AbstractBoardViewOverlay {
                 result.add(tmpStr);
             }
 
-            if (showDefaultConditions || (conditions.isSandBlowing())) {
+            if (showDefaultConditions || conditions.isBlowingSand()) {
                 tmpStr = (showLabel ? MSG_BLOWINGSAND + "  " : "");
-                tmpStr = tmpStr + (showValue ? conditions.getSandBlowingDisplayableValue() + "  " : "");
-                tmpStr = tmpStr + (showIndicator ? conditions.getSandBlowingIndicator() : "");
+                tmpStr = tmpStr + (showValue ? conditions.getBlowingSand().toString() + "  " : "");
+                tmpStr = tmpStr + (showIndicator ? conditions.getBlowingSand().getIndicator() : "");
                 result.add(tmpStr);
             }
         }

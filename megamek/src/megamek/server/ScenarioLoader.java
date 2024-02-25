@@ -470,7 +470,8 @@ public class ScenarioLoader {
         }
 
         if (p.containsKey(PARAM_PLANETCOND_BLOWINGSAND)) {
-            g.getPlanetaryConditions().setBlowingSand(parseBoolean(p, PARAM_PLANETCOND_BLOWINGSAND, false));
+            BlowingSand blowingSand = parseBoolean(p, PARAM_PLANETCOND_BLOWINGSAND, false) ? BlowingSand.BLOWING_SAND : BlowingSand.BLOWING_SAND_NONE;
+            g.getPlanetaryConditions().setBlowingSand(blowingSand);
         }
     }
 

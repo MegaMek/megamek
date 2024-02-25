@@ -1,5 +1,6 @@
 package megamek.common;
 
+import megamek.common.enums.Atmosphere;
 import megamek.common.enums.Wind;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -29,7 +30,7 @@ public class PlanetaryConditionsTest {
 
         // Trace atmosphere - Entity doomed in vacuum/trace atmosphere
         PlanetaryConditions planetaryConditions = new PlanetaryConditions();
-        planetaryConditions.setAtmosphere(PlanetaryConditions.ATMO_TRACE);
+        planetaryConditions.setAtmosphere(Atmosphere.TRACE);
         when(mockGame.getPlanetaryConditions()).thenReturn(planetaryConditions);
         Entity mockEntity = mock(Infantry.class);
         when(mockEntity.doomedInVacuum()).thenReturn(true);
@@ -38,7 +39,7 @@ public class PlanetaryConditionsTest {
 
         // Trace atmosphere - Entity not doomed in vacuum/trace atmosphere
         planetaryConditions = new PlanetaryConditions();
-        planetaryConditions.setAtmosphere(PlanetaryConditions.ATMO_TRACE);
+        planetaryConditions.setAtmosphere(Atmosphere.TRACE);
         when(mockGame.getPlanetaryConditions()).thenReturn(planetaryConditions);
         mockEntity = mock(Infantry.class);
         when(mockEntity.doomedInVacuum()).thenReturn(false);

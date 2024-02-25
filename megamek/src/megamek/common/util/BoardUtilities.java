@@ -19,6 +19,7 @@ import megamek.client.bot.princess.CardinalEdge;
 import megamek.codeUtilities.MathUtility;
 import megamek.common.*;
 import megamek.common.enums.Weather;
+import megamek.common.enums.Wind;
 import megamek.common.util.generator.ElevationGenerator;
 import megamek.common.util.generator.SimplexGenerator;
 
@@ -1111,7 +1112,7 @@ public class BoardUtilities {
     /*
      * adjust the board based on weather conditions
      */
-    public static void addWeatherConditions(Board board, Weather weatherCond, int windCond) {
+    public static void addWeatherConditions(Board board, Weather weatherCond, Wind windCond) {
         for (int x = 0; x < board.getWidth(); x++) {
             for (int y = 0; y < board.getHeight(); y++) {
                 Coords c = new Coords(x, y);
@@ -1159,10 +1160,10 @@ public class BoardUtilities {
                 }
 
                 // check for rapids/torrents created by wind
-                if ((windCond > PlanetaryConditions.WI_MOD_GALE)
-                        && hex.containsTerrain(Terrains.WATER) && (hex.depth() > 0)) {
-
-                    if (windCond > PlanetaryConditions.WI_STORM) {
+                if (Wind.isGreaterThanModerateGale(windCond)
+                        && hex.containsTerrain(Terrains.WATER)
+                        && (hex.depth() > 0)) {
+                    if (Wind.isStorm(windCond)) {
                         if (!(hex.terrainLevel(Terrains.RAPIDS) > 1)) {
                             hex.addTerrain(new Terrain(Terrains.RAPIDS, 2));
                         }

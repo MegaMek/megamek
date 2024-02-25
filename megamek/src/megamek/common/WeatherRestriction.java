@@ -16,6 +16,7 @@
 package megamek.common;
 
 import megamek.common.enums.Weather;
+import megamek.common.enums.Wind;
 
 import java.util.HashMap;
 
@@ -90,22 +91,22 @@ public class WeatherRestriction {
         windRestrictions = new HashMap<>();
 
         WeatherRestriction weatherRestrictionLtGale = new WeatherRestriction(PlanetaryConditions.ATMO_THIN, null);
-        windRestrictions.put(PlanetaryConditions.WI_LIGHT_GALE, weatherRestrictionLtGale);
+        windRestrictions.put(Wind.LIGHT_GALE.ordinal(), weatherRestrictionLtGale);
 
         WeatherRestriction weatherRestrictionMdGale = new WeatherRestriction(PlanetaryConditions.ATMO_TRACE, null);
-        windRestrictions.put(PlanetaryConditions.WI_MOD_GALE, weatherRestrictionMdGale);
+        windRestrictions.put(Wind.MOD_GALE.ordinal(), weatherRestrictionMdGale);
 
         WeatherRestriction weatherRestrictionStGale = new WeatherRestriction(PlanetaryConditions.ATMO_TRACE, null);
-        windRestrictions.put(PlanetaryConditions.WI_STRONG_GALE, weatherRestrictionStGale);
+        windRestrictions.put(Wind.STRONG_GALE.ordinal(), weatherRestrictionStGale);
 
         WeatherRestriction weatherRestrictionStorm = new WeatherRestriction(PlanetaryConditions.ATMO_TRACE, null);
-        windRestrictions.put(PlanetaryConditions.WI_STORM, weatherRestrictionStorm);
+        windRestrictions.put(Wind.STORM.ordinal(), weatherRestrictionStorm);
 
         WeatherRestriction weatherRestrictionF13 = new WeatherRestriction(PlanetaryConditions.ATMO_TRACE, null);
-        windRestrictions.put(PlanetaryConditions.WI_TORNADO_F13, weatherRestrictionF13);
+        windRestrictions.put(Wind.TORNADO_F1_TO_F3.ordinal(), weatherRestrictionF13);
 
         WeatherRestriction weatherRestrictionF4 = new WeatherRestriction(PlanetaryConditions.ATMO_TRACE, null);
-        windRestrictions.put(PlanetaryConditions.WI_TORNADO_F4, weatherRestrictionF4);
+        windRestrictions.put(Wind.TORNADO_F4.ordinal(), weatherRestrictionF4);
     }
 
     public WeatherRestriction(Integer minAtmoLevel, Integer maxTemp) {
@@ -120,7 +121,7 @@ public class WeatherRestriction {
     public static boolean IsRestricted(PlanetaryConditions conditions) {
         return IsFogRestricted(conditions.getFog(), conditions.getAtmosphere(), conditions.getTemperature()) ||
                 IsWeatherRestricted(conditions.getWeather().ordinal(), conditions.getAtmosphere(), conditions.getTemperature()) ||
-                IsWindRestricted(conditions.getWindStrength(), conditions.getAtmosphere(), conditions.getTemperature());
+                IsWindRestricted(conditions.getWind().ordinal(), conditions.getAtmosphere(), conditions.getTemperature());
     }
 
     /**

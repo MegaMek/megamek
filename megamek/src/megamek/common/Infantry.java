@@ -406,11 +406,11 @@ public class Infantry extends Entity {
 
             if (getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_WIND)
                     && conditions.isWeatherNone()) {
-                if (conditions.getWindStrength() == PlanetaryConditions.WI_MOD_GALE) {
+                if (conditions.isModerateGale()) {
                     mp += 1;
                 }
 
-                if ((conditions.getWindStrength() == PlanetaryConditions.WI_STRONG_GALE)
+                if (conditions.isStrongGale()
                         && ((mp != 0) || getMovementMode().isMotorizedInfantry())) {
                     mp += 1;
                 }
@@ -456,10 +456,9 @@ public class Infantry extends Entity {
 
         if (!mpCalculationSetting.ignoreWeather && (null != game)) {
             PlanetaryConditions conditions = game.getPlanetaryConditions();
-            int windCond = conditions.getWindStrength();
-            if (windCond >= PlanetaryConditions.WI_STRONG_GALE) {
+            if (conditions.isGreaterThanModerateGale()) {
                 return 0;
-            } else if ((windCond == PlanetaryConditions.WI_MOD_GALE)
+            } else if (conditions.isModerateGale()
                     && !getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_WIND)) {
                 mp--;
             }

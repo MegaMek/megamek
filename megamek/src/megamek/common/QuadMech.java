@@ -182,7 +182,7 @@ public class QuadMech extends Mech {
 
             if(getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_WIND)
                     && conditions.isWeatherNone()
-                    && (conditions.getWindStrength() == PlanetaryConditions.WI_TORNADO_F13)) {
+                    && conditions.isTornadoF1ToF3()) {
                 mp += 1;
             }
         }

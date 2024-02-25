@@ -50,6 +50,7 @@ import megamek.common.Configuration;
 import megamek.common.PlanetaryConditions;
 import megamek.common.enums.Light;
 import megamek.common.enums.Weather;
+import megamek.common.enums.Wind;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
 
@@ -240,10 +241,10 @@ public class PlanetaryConditionsDialog extends ClientDialog {
         for (Weather condition : Weather.values()) {
             comWeather.addItem(condition.toString());
         }
-        for (int i = 0; i < PlanetaryConditions.WI_SIZE; i++) {
-            comWind.addItem(PlanetaryConditions.getWindDisplayableName(i));
-            comWindFrom.addItem(PlanetaryConditions.getWindDisplayableName(i));
-            comWindTo.addItem(PlanetaryConditions.getWindDisplayableName(i));
+        for (Wind condition : Wind.values()) {
+            comWind.addItem(condition.toString());
+            comWindFrom.addItem(condition.toString());
+            comWindTo.addItem(condition.toString());
         }
         for (int i = 0; i < PlanetaryConditions.DIR_SIZE; i++) {
             comWindDirection.addItem(PlanetaryConditions.getWindDirDisplayableName(i));
@@ -293,9 +294,9 @@ public class PlanetaryConditionsDialog extends ClientDialog {
         removeListeners();
         comLight.setSelectedIndex(conditions.getLight().ordinal());
         comWeather.setSelectedIndex(conditions.getWeather().ordinal());
-        comWind.setSelectedIndex(conditions.getWindStrength());
-        comWindFrom.setSelectedIndex(conditions.getMinWindStrength());
-        comWindTo.setSelectedIndex(conditions.getMaxWindStrength());
+        comWind.setSelectedIndex(conditions.getWind().ordinal());
+        comWindFrom.setSelectedIndex(conditions.getWindMin().ordinal());
+        comWindTo.setSelectedIndex(conditions.getWindMax().ordinal());
         comWindDirection.setSelectedIndex(conditions.getWindDirection());
         comAtmosphere.setSelectedIndex(conditions.getAtmosphere());
         comFog.setSelectedIndex(conditions.getFog());
@@ -317,7 +318,7 @@ public class PlanetaryConditionsDialog extends ClientDialog {
         // make the changes to the planetary conditions
         conditions.setLight(Light.getLight(comLight.getSelectedIndex()));
         conditions.setWeather(Weather.getWeather(comWeather.getSelectedIndex()));
-        conditions.setWindStrength(comWind.getSelectedIndex());
+        conditions.setWind(Wind.getWind(comWind.getSelectedIndex()));
         conditions.setWindDirection(comWindDirection.getSelectedIndex());
         refreshWindRange();
         conditions.setAtmosphere(comAtmosphere.getSelectedIndex());
@@ -377,18 +378,16 @@ public class PlanetaryConditionsDialog extends ClientDialog {
             gravTip.append(Messages.getString("PlanetaryConditionsDialog.invalid.gravRange"));
         }
         
-        int wind = comWind.getSelectedIndex();
+        Wind wind = Wind.getWind(comWind.getSelectedIndex());
         int atmo = comAtmosphere.getSelectedIndex();
         
-        if ((chkBlowingSands.isSelected()) && (wind < WI_MOD_GALE) 
-                && (!chkShiftWindStr.isSelected() 
-                        || (conditions.getMinWindStrength() > WI_MOD_GALE) 
-                        || (conditions.getMaxWindStrength() < WI_MOD_GALE))) {
+        if ((chkBlowingSands.isSelected() && Wind.isLessThanModerateGale(wind))
+                || (chkShiftWindStr.isSelected() && Wind.isLessThanModerateGale(conditions.getWindMax()))) {
             windTip.append(Messages.getString("PlanetaryConditionsDialog.invalid.sandsLost"));
             sandTip.append(Messages.getString("PlanetaryConditionsDialog.invalid.sandsLost"));
         }
 
-        if ((atmo == ATMO_TRACE) && (wind == WI_LIGHT_GALE)) {
+        if ((atmo == ATMO_TRACE) && Wind.isLightGale(wind)) {
             atmoTip.append(Messages.getString("PlanetaryConditionsDialog.invalid.traceLightGale"));
             windTip.append(Messages.getString("PlanetaryConditionsDialog.invalid.traceLightGale"));
         }
@@ -416,8 +415,8 @@ public class PlanetaryConditionsDialog extends ClientDialog {
         }
         
         if (chkShiftWindStr.isSelected()) {
-            if ((comWind.getSelectedIndex() < conditions.getMinWindStrength()) 
-                    || (comWind.getSelectedIndex() > conditions.getMaxWindStrength())) {
+            if ((comWind.getSelectedIndex() < conditions.getWindMin().ordinal())
+                    || (comWind.getSelectedIndex() > conditions.getWindMax().ordinal())) {
                 windTip.append(Messages.getString("PlanetaryConditionsDialog.invalid.windRange"));
             }
         }
@@ -467,11 +466,11 @@ public class PlanetaryConditionsDialog extends ClientDialog {
             comFog.setSelectedIndex(PlanetaryConditions.FOG_NONE);
         }
         if (isVacuum) {
-            comWind.setSelectedIndex(PlanetaryConditions.WI_NONE);
+            comWind.setSelectedIndex(Wind.CALM.ordinal());
             chkBlowingSands.setSelected(false);
             chkShiftWindDir.setSelected(false);
             chkShiftWindStr.setSelected(false);
-            comWind.setSelectedIndex(WI_NONE);
+            comWind.setSelectedIndex(Wind.CALM.ordinal());
             comWeather.setSelectedIndex(Weather.WEATHER_NONE.ordinal());
             comFog.setSelectedIndex(FOG_NONE);
         }
@@ -481,10 +480,10 @@ public class PlanetaryConditionsDialog extends ClientDialog {
                 case LIGHTNING_STORM:
                 case SNOW_FLURRIES:
                 case ICE_STORM:
-                    comWind.setSelectedIndex(WI_MOD_GALE);
+                    comWind.setSelectedIndex(Wind.MOD_GALE.ordinal());
                     break;
                 case GUSTING_RAIN:
-                    comWind.setSelectedIndex(WI_STRONG_GALE);
+                    comWind.setSelectedIndex(Wind.STRONG_GALE.ordinal());
                 default:
             }
         }
@@ -531,7 +530,7 @@ public class PlanetaryConditionsDialog extends ClientDialog {
     /** Sets the wind to at least moderate gale if Blowing Sands is activated. */
     private void adaptWindToBlowingSands() {
         if (chkBlowingSands.isSelected()) {
-            setMinimumWind(WI_MOD_GALE);
+            setMinimumWind(Wind.MOD_GALE.ordinal());
         }
     }
     
@@ -608,16 +607,16 @@ public class PlanetaryConditionsDialog extends ClientDialog {
      * closer border of that range.
      */
     private void refreshWindRange() {
-        int min = Math.min(comWindFrom.getSelectedIndex(), comWindTo.getSelectedIndex());
-        int max = Math.max(comWindFrom.getSelectedIndex(), comWindTo.getSelectedIndex());
-        conditions.setMinWindStrength(min);
-        conditions.setMaxWindStrength(max);
+        Wind min = Wind.getWind(Math.min(comWindFrom.getSelectedIndex(), comWindTo.getSelectedIndex()));
+        Wind max = Wind.getWind(Math.max(comWindFrom.getSelectedIndex(), comWindTo.getSelectedIndex()));
+        conditions.setWindMin(min);
+        conditions.setWindMax(max);
         removeListeners();
-        if (comWind.getSelectedIndex() < min) {
-            comWind.setSelectedIndex(min);
+        if (comWind.getSelectedIndex() < min.ordinal()) {
+            comWind.setSelectedIndex(min.ordinal());
         }
-        if (comWind.getSelectedIndex() > max) {
-            comWind.setSelectedIndex(max);
+        if (comWind.getSelectedIndex() > max.ordinal()) {
+            comWind.setSelectedIndex(max.ordinal());
         }
         addListeners();
     }

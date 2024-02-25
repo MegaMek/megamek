@@ -345,11 +345,12 @@ public abstract class Aero extends Entity implements IAero, IBomber {
         }
 
         if ((null != game) && !mpCalculationSetting.ignoreWeather) {
-            int weatherMod = game.getPlanetaryConditions().getMovementMods(this);
+            PlanetaryConditions conditions = game.getPlanetaryConditions();
+            int weatherMod = conditions.getMovementMods(this);
             mp = Math.max(mp + weatherMod, 0);
             if (getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_WIND)
-                    && (game.getPlanetaryConditions().getWindStrength() == PlanetaryConditions.WI_TORNADO_F13)
-                    && game.getPlanetaryConditions().isWeatherNone()) {
+                    && conditions.isTornadoF1ToF3()
+                    && conditions.isWeatherNone()) {
                 mp += 1;
             }
         }

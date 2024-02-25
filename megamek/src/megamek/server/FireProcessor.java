@@ -17,6 +17,7 @@ package megamek.server;
 
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
+import megamek.common.enums.Wind;
 import megamek.common.options.OptionsConstants;
 import org.apache.logging.log4j.LogManager;
 
@@ -53,7 +54,7 @@ public class FireProcessor extends DynamicTerrainProcessor {
         int width = board.getWidth();
         int height = board.getHeight();
         int windDirection = game.getPlanetaryConditions().getWindDirection();
-        int windStrength = game.getPlanetaryConditions().getWindStrength();
+        Wind windStrength = game.getPlanetaryConditions().getWind();
 
         // Get the position map of all entities in the game.
         Hashtable<Coords, Vector<Entity>> positionMap = game.getPositionMap();
@@ -151,9 +152,11 @@ public class FireProcessor extends DynamicTerrainProcessor {
                     boolean containsForest = (currentHex.containsTerrain(Terrains.WOODS)
                             || currentHex.containsTerrain(Terrains.JUNGLE));
                     boolean bInferno = currentHex.terrainLevel(Terrains.FIRE) == 2;
-                    if ((game.getPlanetaryConditions().getWindStrength() < PlanetaryConditions.WI_TORNADO_F13)
+                    PlanetaryConditions conditions = game.getPlanetaryConditions();
+                    if (conditions.isLessThanTornadoF1ToF3()
                             && !(game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_FOREST_FIRES_NO_SMOKE)
-                                    && containsForest && (bldg == null))) {
+                            && containsForest
+                            && (bldg == null))) {
                         ArrayList<Coords> smokeList = new ArrayList<>();
 
                         smokeList.add(currentCoords.translated(windDirection));
@@ -195,7 +198,7 @@ public class FireProcessor extends DynamicTerrainProcessor {
     /**
      * Spreads the fire around the specified coordinates.
      */
-    public void spreadFire(int x, int y, int windDir, int windStr) {
+    public void spreadFire(int x, int y, int windDir, Wind windStr) {
         Coords src = new Coords(x, y);
         Coords nextCoords = src.translated(windDir);
 
@@ -209,10 +212,10 @@ public class FireProcessor extends DynamicTerrainProcessor {
         TargetRoll directroll = new TargetRoll(9, "spread downwind");
         TargetRoll obliqueroll = new TargetRoll(11, "spread 60 degrees to downwind");
 
-        if ((windStr > PlanetaryConditions.WI_NONE) && (windStr < PlanetaryConditions.WI_STRONG_GALE)) {
+        if (Wind.isLightGale(windStr) || Wind.isModerateGale(windStr)) {
             directroll.addModifier(-2, "light/moderate gale");
             obliqueroll.addModifier(-1, "light/moderate gale");
-        } else if (windStr > PlanetaryConditions.WI_MOD_GALE) {
+        } else if (Wind.isGreaterThanModerateGale(windStr)) {
             directroll.addModifier(-3, "strong gale+");
             directroll.addModifier(-2, "strong gale+");
         }
@@ -264,12 +267,13 @@ public class FireProcessor extends DynamicTerrainProcessor {
     private void resolveSmoke() {
         final Board board = game.getBoard();
         final int windDir = game.getPlanetaryConditions().getWindDirection();
-        int windStr = game.getPlanetaryConditions().getWindStrength();
+        PlanetaryConditions conditions = game.getPlanetaryConditions();
+        Wind windStr = game.getPlanetaryConditions().getWind();
 
         // If the Smoke Drift option is turned on, treat wind strength as light gale if there is none
         if (game.getOptions().booleanOption(OptionsConstants.BASE_BREEZE)
-                && (windStr == PlanetaryConditions.WI_NONE)) {
-            windStr = PlanetaryConditions.WI_LIGHT_GALE;
+                && conditions.isCalm()) {
+            windStr = Wind.LIGHT_GALE;
         }
 
         HashMap<SmokeCloud, ArrayList<Coords>> allReplacementHexes = new HashMap<>();
@@ -360,7 +364,7 @@ public class FireProcessor extends DynamicTerrainProcessor {
      * board.
      */
     public @Nullable Coords driftAddSmoke(final Coords source, final int windDirection,
-                                          final int windStrength) {
+                                          final Wind windStrength) {
         return driftAddSmoke(source, windDirection, windStrength, 0);
     }
 
@@ -376,13 +380,13 @@ public class FireProcessor extends DynamicTerrainProcessor {
      * @return the coordinates where the smoke has drifted to, or null if it dissipates while on the
      * board.
      */
-    public @Nullable Coords driftAddSmoke(final Coords src, final int windDir, final int windStr,
+    public @Nullable Coords driftAddSmoke(final Coords src, final int windDir, final Wind windStr,
                                           final int directionChanges) {
         Coords nextCoords = src.translated(windDir);
         Board board = game.getBoard();
 
         // if the wind conditions are calm, then don't drift it
-        if (windStr == PlanetaryConditions.WI_NONE) {
+        if (Wind.isCalm(windStr)) {
             return src;
         }
 
@@ -427,8 +431,8 @@ public class FireProcessor extends DynamicTerrainProcessor {
         }
 
         // stronger wind causes smoke to drift farther
-        if (windStr > PlanetaryConditions.WI_MOD_GALE) {
-            return driftAddSmoke(nextCoords, windDir, windStr - 1);
+        if (Wind.isGreaterThanModerateGale(windStr)) {
+            return driftAddSmoke(nextCoords, windDir, windStr.lowerWind());
         }
 
         return nextCoords;
@@ -442,8 +446,8 @@ public class FireProcessor extends DynamicTerrainProcessor {
      * @param windStr The current wind strength
      * @return True when the smoke cloud dissipates by a level or entirely
      */
-    public boolean checkSmokeDissipation(SmokeCloud cloud, int windStr) {
-        if ((cloud.getDuration() == 1) || (windStr > PlanetaryConditions.WI_STORM)) {
+    public boolean checkSmokeDissipation(SmokeCloud cloud, Wind windStr) {
+        if ((cloud.getDuration() == 1) || Wind.isGreaterThanStorm(windStr)) {
             cloud.setSmokeLevel(0);
             return true;
         } else if (cloud.getDuration() > 1) {
@@ -453,9 +457,9 @@ public class FireProcessor extends DynamicTerrainProcessor {
 
         // Dissipate in various winds
         int roll = Compute.d6(2);
-        return (roll > 10) || ((roll > 9) && (windStr == PlanetaryConditions.WI_MOD_GALE))
-                || ((roll > 7) && (windStr == PlanetaryConditions.WI_STRONG_GALE))
-                || ((roll > 5) && (windStr == PlanetaryConditions.WI_STORM));
+        return (roll > 10) || ((roll > 9) && Wind.isModerateGale(windStr))
+                || ((roll > 7) && Wind.isStrongGale(windStr))
+                || ((roll > 5) && Wind.isStorm(windStr));
     }
 
     public void driftSmokeReport(SmokeCloud cloud, boolean dissipated) {

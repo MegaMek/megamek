@@ -126,10 +126,10 @@ public class PlanetaryConditionsOverlay extends AbstractBoardViewOverlay {
                 result.add(tmpStr);
             }
 
-            if (showDefaultConditions || (conditions.getWindStrength() != PlanetaryConditions.WI_NONE)) {
+            if (showDefaultConditions || !conditions.isCalm()) {
                 tmpStr = (showLabel ? MSG_WIND + "  " : "");
-                tmpStr = tmpStr + (showValue ? conditions.getWindDisplayableName() + "  " : "");
-                tmpStr = tmpStr + (showIndicator ? conditions.getWindStrengthIndicator() : "");
+                tmpStr = tmpStr + (showValue ? conditions.getWind().toString() + "  " : "");
+                tmpStr = tmpStr + (showIndicator ? conditions.getWind().getIndicator() : "");
                 result.add(tmpStr);
                 tmpStr = (showLabel ? MSG_DIRECTION + "  " : "");
                 tmpStr = tmpStr + (showValue ? conditions.getWindDirDisplayableName() + "  " : "");

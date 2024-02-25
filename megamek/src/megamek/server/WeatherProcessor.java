@@ -214,15 +214,13 @@ public class WeatherProcessor extends DynamicTerrainProcessor {
 
                 // check for rapids/torrents created by wind
                 // FIXME: This doesn't seem to be doing anything
-                if (conditions.getWindStrength() > PlanetaryConditions.WI_MOD_GALE
-                        && currentHex.containsTerrain(Terrains.WATER)
+                if (currentHex.containsTerrain(Terrains.WATER)
                         && currentHex.depth(true) > 0) {
-
-                    if (conditions.getWindStrength() > PlanetaryConditions.WI_STORM) {
+                    if (conditions.isGreaterThanStorm()) {
                         if (!(currentHex.terrainLevel(Terrains.RAPIDS) > 1)) {
                             currentHex.addTerrain(new Terrain(Terrains.RAPIDS, 2));
                         }
-                    } else {
+                    } else if (conditions.isGreaterThanModerateGale()) {
                         if (!currentHex.containsTerrain(Terrains.RAPIDS)) {
                             currentHex.addTerrain(new Terrain(Terrains.RAPIDS, 1));
                         }

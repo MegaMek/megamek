@@ -26,6 +26,7 @@ import megamek.common.containers.PlayerIDandList;
 import megamek.common.enums.BasementType;
 import megamek.common.enums.GamePhase;
 import megamek.common.enums.WeaponSortOrder;
+import megamek.common.enums.Wind;
 import megamek.common.equipment.ArmorType;
 import megamek.common.event.GameListener;
 import megamek.common.event.GameVictoryEvent;
@@ -2011,7 +2012,7 @@ public class GameManager implements IGameManager {
                 clearReports();
                 resolveHeat();
                 if (game.getPlanetaryConditions().isSandBlowing()
-                        && (game.getPlanetaryConditions().getWindStrength() > PlanetaryConditions.WI_LIGHT_GALE)) {
+                        && game.getPlanetaryConditions().isGreaterThanLightGale()) {
                     addReport(resolveBlowingSandDamage());
                 }
                 addReport(resolveControlRolls());
@@ -2913,7 +2914,7 @@ public class GameManager implements IGameManager {
         }
         if (game.getPlanetaryConditions().isTerrainAffected()) {
             BoardUtilities.addWeatherConditions(newBoard, game.getPlanetaryConditions().getWeather(),
-                    game.getPlanetaryConditions().getWindStrength());
+                    game.getPlanetaryConditions().getWind());
         }
         game.setBoard(newBoard);
     }
@@ -3485,19 +3486,20 @@ public class GameManager implements IGameManager {
             // we don't much care about wind direction and such in a hard vacuum
             if (!game.getBoard().inSpace()) {
                 // Wind direction and strength
+                PlanetaryConditions conditions = game.getPlanetaryConditions();
                 Report rWindDir = new Report(1025, Report.PUBLIC);
-                rWindDir.add(game.getPlanetaryConditions().getWindDirDisplayableName());
+                rWindDir.add(conditions.getWindDirDisplayableName());
                 rWindDir.newlines = 0;
                 Report rWindStr = new Report(1030, Report.PUBLIC);
-                rWindStr.add(game.getPlanetaryConditions().getWindDisplayableName());
+                rWindStr.add(conditions.getWind().toString());
                 rWindStr.newlines = 0;
                 Report rWeather = new Report(1031, Report.PUBLIC);
-                rWeather.add(game.getPlanetaryConditions().getWeather().toString());
+                rWeather.add(conditions.getWeather().toString());
                 rWeather.newlines = 0;
                 Report rLight = new Report(1032, Report.PUBLIC);
-                rLight.add(game.getPlanetaryConditions().getLight().toString());
+                rLight.add(conditions.getLight().toString());
                 Report rVis = new Report(1033, Report.PUBLIC);
-                rVis.add(game.getPlanetaryConditions().getFogDisplayableName());
+                rVis.add(conditions.getFogDisplayableName());
                 addReport(rWindDir);
                 addReport(rWindStr);
                 addReport(rWeather);
@@ -14680,7 +14682,7 @@ public class GameManager implements IGameManager {
         }
 
         // no lighting fires in tornadoes
-        if (game.getPlanetaryConditions().getWindStrength() > PlanetaryConditions.WI_STORM) {
+        if (game.getPlanetaryConditions().isGreaterThanStorm()) {
             nTargetRoll = new TargetRoll(TargetRoll.AUTOMATIC_FAIL, "tornado");
         }
 
@@ -28763,7 +28765,7 @@ public class GameManager implements IGameManager {
      */
     public void addSmoke(ArrayList<Coords> coords, int windDir, boolean bInferno) {
         // if a tornado, then no smoke!
-        if (game.getPlanetaryConditions().getWindStrength() > PlanetaryConditions.WI_STORM) {
+        if (game.getPlanetaryConditions().isGreaterThanStorm()) {
             return;
         }
 
@@ -33363,13 +33365,12 @@ public class GameManager implements IGameManager {
         if (conditions.isHeavySnow()
                 || conditions.isIceStorm()
                 || conditions.isDownpour()
-                || (conditions.getWindStrength() == PlanetaryConditions.WI_STRONG_GALE)) {
+                || conditions.isStrongGale()) {
             rollTarget.addModifier(2, "Bad Weather");
         }
 
-        if ((conditions.getWindStrength() >= PlanetaryConditions.WI_STORM)
-                || (conditions.isHeavySnow()
-                && (conditions.getWindStrength() == PlanetaryConditions.WI_STRONG_GALE))) {
+        if (conditions.isGreaterThanStrongGale()
+                ||  (conditions.isHeavySnow() && conditions.isStrongGale())) {
             rollTarget.addModifier(3, "Really Bad Weather");
         }
         return rollTarget;
@@ -34830,8 +34831,8 @@ public class GameManager implements IGameManager {
     private Vector<Report> resolveBlowingSandDamage() {
         Vector<Report> vFullReport = new Vector<>();
         vFullReport.add(new Report(5002, Report.PUBLIC));
-        int damage_bonus = Math.max(0, game.getPlanetaryConditions().getWindStrength()
-                - PlanetaryConditions.WI_MOD_GALE);
+        int damage_bonus = Math.max(0, game.getPlanetaryConditions().getWind().ordinal()
+                - Wind.MOD_GALE.ordinal());
         // cycle through each team and damage 1d6 airborne VTOL/WiGE
         for (Team team : game.getTeams()) {
             Vector<Integer> airborne = getAirborneVTOL(team);

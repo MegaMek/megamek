@@ -451,8 +451,8 @@ public class BattleArmor extends Infantry {
 
             if (getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_WIND)
                     && conditions.isWeatherNone()
-                    && ((conditions.getWindStrength() == PlanetaryConditions.WI_STRONG_GALE)
-                    || (conditions.getWindStrength() == PlanetaryConditions.WI_STORM))) {
+                    && (conditions.isStrongGale()
+                        || conditions.isStorm())) {
                 mp += 1;
             }
         }
@@ -496,9 +496,12 @@ public class BattleArmor extends Infantry {
             return 0;
         }
 
-        if (!mpCalculationSetting.ignoreWeather && (null != game)
-                && (game.getPlanetaryConditions().getWindStrength() >= PlanetaryConditions.WI_STORM)) {
-            return 0;
+        if (null != game) {
+            PlanetaryConditions conditions = game.getPlanetaryConditions();
+            if (!mpCalculationSetting.ignoreWeather
+                    && conditions.isGreaterThanStrongGale()){
+                return 0;
+            }
         }
 
         int mp = 0;

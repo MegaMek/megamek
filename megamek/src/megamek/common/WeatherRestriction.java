@@ -15,6 +15,7 @@
 
 package megamek.common;
 
+import megamek.common.enums.Atmosphere;
 import megamek.common.enums.Weather;
 import megamek.common.enums.Wind;
 
@@ -36,76 +37,76 @@ public class WeatherRestriction {
         // init fog restrictions
         fogRestrictions = new HashMap<>();
 
-        WeatherRestriction lightFogRestriction = new WeatherRestriction(PlanetaryConditions.ATMO_STANDARD, null);
+        WeatherRestriction lightFogRestriction = new WeatherRestriction(Atmosphere.STANDARD.ordinal(), null);
         fogRestrictions.put(PlanetaryConditions.FOG_LIGHT, lightFogRestriction);
 
-        WeatherRestriction heavyFogRestriction = new WeatherRestriction(PlanetaryConditions.ATMO_STANDARD, null);
+        WeatherRestriction heavyFogRestriction = new WeatherRestriction(Atmosphere.STANDARD.ordinal(), null);
         fogRestrictions.put(PlanetaryConditions.FOG_HEAVY, heavyFogRestriction);
 
         // init weather restrictions
         weatherRestrictions = new HashMap<>();
 
-        WeatherRestriction weatherRestrictionLtHail = new WeatherRestriction(PlanetaryConditions.ATMO_STANDARD, 30);
+        WeatherRestriction weatherRestrictionLtHail = new WeatherRestriction(Atmosphere.STANDARD.ordinal(), 30);
         weatherRestrictions.put(Weather.LIGHT_HAIL.ordinal(), weatherRestrictionLtHail);
 
-        WeatherRestriction weatherRestrictionHvyHail = new WeatherRestriction(PlanetaryConditions.ATMO_STANDARD, 30);
+        WeatherRestriction weatherRestrictionHvyHail = new WeatherRestriction(Atmosphere.STANDARD.ordinal(), 30);
         weatherRestrictions.put(Weather.HEAVY_HAIL.ordinal(), weatherRestrictionHvyHail);
 
-        WeatherRestriction weatherRestrictionLtRain = new WeatherRestriction(PlanetaryConditions.ATMO_STANDARD, null);
+        WeatherRestriction weatherRestrictionLtRain = new WeatherRestriction(Atmosphere.STANDARD.ordinal(), null);
         weatherRestrictions.put(Weather.LIGHT_RAIN.ordinal(), weatherRestrictionLtRain);
 
-        WeatherRestriction weatherRestrictionMdRain = new WeatherRestriction(PlanetaryConditions.ATMO_STANDARD, null);
+        WeatherRestriction weatherRestrictionMdRain = new WeatherRestriction(Atmosphere.STANDARD.ordinal(), null);
         weatherRestrictions.put(Weather.MOD_RAIN.ordinal(), weatherRestrictionMdRain);
 
-        WeatherRestriction weatherRestrictionLtStorm = new WeatherRestriction(PlanetaryConditions.ATMO_STANDARD, null);
+        WeatherRestriction weatherRestrictionLtStorm = new WeatherRestriction(Atmosphere.STANDARD.ordinal(), null);
         weatherRestrictions.put(Weather.LIGHTNING_STORM.ordinal(), weatherRestrictionLtStorm);
 
-        WeatherRestriction weatherRestrictionHvyRain = new WeatherRestriction(PlanetaryConditions.ATMO_STANDARD, null);
+        WeatherRestriction weatherRestrictionHvyRain = new WeatherRestriction(Atmosphere.STANDARD.ordinal(), null);
         weatherRestrictions.put(Weather.HEAVY_RAIN.ordinal(), weatherRestrictionHvyRain);
 
-        WeatherRestriction weatherRestrictionGustRain = new WeatherRestriction(PlanetaryConditions.ATMO_STANDARD, null);
+        WeatherRestriction weatherRestrictionGustRain = new WeatherRestriction(Atmosphere.STANDARD.ordinal(), null);
         weatherRestrictions.put(Weather.GUSTING_RAIN.ordinal(), weatherRestrictionGustRain);
 
-        WeatherRestriction weatherRestrictionDownpour = new WeatherRestriction(PlanetaryConditions.ATMO_STANDARD, null);
+        WeatherRestriction weatherRestrictionDownpour = new WeatherRestriction(Atmosphere.STANDARD.ordinal(), null);
         weatherRestrictions.put(Weather.DOWNPOUR.ordinal(), weatherRestrictionDownpour);
 
-        WeatherRestriction weatherRestrictionLtSnow = new WeatherRestriction(PlanetaryConditions.ATMO_STANDARD, 30);
+        WeatherRestriction weatherRestrictionLtSnow = new WeatherRestriction(Atmosphere.STANDARD.ordinal(), 30);
         weatherRestrictions.put(Weather.LIGHT_SNOW.ordinal(), weatherRestrictionLtSnow);
 
-        WeatherRestriction weatherRestrictionMdSnow = new WeatherRestriction(PlanetaryConditions.ATMO_STANDARD, 30);
+        WeatherRestriction weatherRestrictionMdSnow = new WeatherRestriction(Atmosphere.STANDARD.ordinal(), 30);
         weatherRestrictions.put(Weather.MOD_SNOW.ordinal(), weatherRestrictionMdSnow);
 
-        WeatherRestriction weatherRestrictionSleet = new WeatherRestriction(PlanetaryConditions.ATMO_STANDARD, 30);
+        WeatherRestriction weatherRestrictionSleet = new WeatherRestriction(Atmosphere.STANDARD.ordinal(), 30);
         weatherRestrictions.put(Weather.SLEET.ordinal(), weatherRestrictionSleet);
 
-        WeatherRestriction weatherRestrictionFlurry = new WeatherRestriction(PlanetaryConditions.ATMO_STANDARD, 30);
+        WeatherRestriction weatherRestrictionFlurry = new WeatherRestriction(Atmosphere.STANDARD.ordinal(), 30);
         weatherRestrictions.put(Weather.SNOW_FLURRIES.ordinal(), weatherRestrictionFlurry);
 
-        WeatherRestriction weatherRestrictionHvySnow = new WeatherRestriction(PlanetaryConditions.ATMO_STANDARD, 30);
+        WeatherRestriction weatherRestrictionHvySnow = new WeatherRestriction(Atmosphere.STANDARD.ordinal(), 30);
         weatherRestrictions.put(Weather.HEAVY_SNOW.ordinal(), weatherRestrictionHvySnow);
 
-        WeatherRestriction weatherRestrictionIceStorm = new WeatherRestriction(PlanetaryConditions.ATMO_STANDARD, 30);
+        WeatherRestriction weatherRestrictionIceStorm = new WeatherRestriction(Atmosphere.STANDARD.ordinal(), 30);
         weatherRestrictions.put(Weather.ICE_STORM.ordinal(), weatherRestrictionIceStorm);
 
         // init wind restrictions
         windRestrictions = new HashMap<>();
 
-        WeatherRestriction weatherRestrictionLtGale = new WeatherRestriction(PlanetaryConditions.ATMO_THIN, null);
+        WeatherRestriction weatherRestrictionLtGale = new WeatherRestriction(Atmosphere.THIN.ordinal(), null);
         windRestrictions.put(Wind.LIGHT_GALE.ordinal(), weatherRestrictionLtGale);
 
-        WeatherRestriction weatherRestrictionMdGale = new WeatherRestriction(PlanetaryConditions.ATMO_TRACE, null);
+        WeatherRestriction weatherRestrictionMdGale = new WeatherRestriction(Atmosphere.TRACE.ordinal(), null);
         windRestrictions.put(Wind.MOD_GALE.ordinal(), weatherRestrictionMdGale);
 
-        WeatherRestriction weatherRestrictionStGale = new WeatherRestriction(PlanetaryConditions.ATMO_TRACE, null);
+        WeatherRestriction weatherRestrictionStGale = new WeatherRestriction(Atmosphere.TRACE.ordinal(), null);
         windRestrictions.put(Wind.STRONG_GALE.ordinal(), weatherRestrictionStGale);
 
-        WeatherRestriction weatherRestrictionStorm = new WeatherRestriction(PlanetaryConditions.ATMO_TRACE, null);
+        WeatherRestriction weatherRestrictionStorm = new WeatherRestriction(Atmosphere.TRACE.ordinal(), null);
         windRestrictions.put(Wind.STORM.ordinal(), weatherRestrictionStorm);
 
-        WeatherRestriction weatherRestrictionF13 = new WeatherRestriction(PlanetaryConditions.ATMO_TRACE, null);
+        WeatherRestriction weatherRestrictionF13 = new WeatherRestriction(Atmosphere.TRACE.ordinal(), null);
         windRestrictions.put(Wind.TORNADO_F1_TO_F3.ordinal(), weatherRestrictionF13);
 
-        WeatherRestriction weatherRestrictionF4 = new WeatherRestriction(PlanetaryConditions.ATMO_TRACE, null);
+        WeatherRestriction weatherRestrictionF4 = new WeatherRestriction(Atmosphere.TRACE.ordinal(), null);
         windRestrictions.put(Wind.TORNADO_F4.ordinal(), weatherRestrictionF4);
     }
 
@@ -119,9 +120,9 @@ public class WeatherRestriction {
      * Currently validates fog, weather (precipitation) and wind strength
      */
     public static boolean IsRestricted(PlanetaryConditions conditions) {
-        return IsFogRestricted(conditions.getFog(), conditions.getAtmosphere(), conditions.getTemperature()) ||
-                IsWeatherRestricted(conditions.getWeather().ordinal(), conditions.getAtmosphere(), conditions.getTemperature()) ||
-                IsWindRestricted(conditions.getWind().ordinal(), conditions.getAtmosphere(), conditions.getTemperature());
+        return IsFogRestricted(conditions.getFog(), conditions.getAtmosphere().ordinal(), conditions.getTemperature()) ||
+                IsWeatherRestricted(conditions.getWeather().ordinal(), conditions.getAtmosphere().ordinal(), conditions.getTemperature()) ||
+                IsWindRestricted(conditions.getWind().ordinal(), conditions.getAtmosphere().ordinal(), conditions.getTemperature());
     }
 
     /**

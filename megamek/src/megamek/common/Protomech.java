@@ -16,6 +16,7 @@ package megamek.common;
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.common.cost.ProtoMekCostCalculator;
 import megamek.common.enums.AimingMode;
+import megamek.common.enums.Atmosphere;
 import megamek.common.equipment.ArmorType;
 import megamek.common.preference.PreferenceManager;
 import org.apache.logging.log4j.LogManager;
@@ -421,22 +422,23 @@ public class Protomech extends Entity {
                 break;
         }
         if (!mpCalculationSetting.ignoreWeather && hasWorkingMisc(MiscType.F_PARTIAL_WING)) {
-            int atmo = PlanetaryConditions.ATMO_STANDARD;
+            Atmosphere atmo = Atmosphere.STANDARD;
             if (game != null) {
                 atmo = game.getPlanetaryConditions().getAtmosphere();
             }
             switch (atmo) {
-                case PlanetaryConditions.ATMO_VHIGH:
-                case PlanetaryConditions.ATMO_HIGH:
+                case VERY_HIGH:
+                case HIGH:
                     jump += 3;
                     break;
-                case PlanetaryConditions.ATMO_STANDARD:
-                case PlanetaryConditions.ATMO_THIN:
+                case STANDARD:
+                case THIN:
                     jump += 2;
                     break;
-                case PlanetaryConditions.ATMO_TRACE:
+                case TRACE:
                     jump += 1;
                     break;
+                default:
             }
         }
 

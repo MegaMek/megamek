@@ -1125,34 +1125,34 @@ public abstract class Mech extends Entity {
         if (!mpCalculationSetting.ignoreWeather && (game != null)) {
             if ((getWeightClass() <= EntityWeightClass.WEIGHT_MEDIUM)) {
                 switch (game.getPlanetaryConditions().getAtmosphere()) {
-                    case PlanetaryConditions.ATMO_VACUUM:
-                    case PlanetaryConditions.ATMO_TRACE:
+                    case VACUUM:
+                    case TRACE:
                         bonus = 0;
                         break;
-                    case PlanetaryConditions.ATMO_THIN:
+                    case THIN:
                         bonus = 1;
                         break;
-                    case PlanetaryConditions.ATMO_VHIGH:
+                    case VERY_HIGH:
                         bonus = 3;
                         break;
-                    case PlanetaryConditions.ATMO_STANDARD:
-                    case PlanetaryConditions.ATMO_HIGH:
+                    case STANDARD:
+                    case HIGH:
                     default:
                         bonus = 2;
                         break;
                 }
             } else {
                 switch (game.getPlanetaryConditions().getAtmosphere()) {
-                    case PlanetaryConditions.ATMO_VACUUM:
-                    case PlanetaryConditions.ATMO_TRACE:
-                    case PlanetaryConditions.ATMO_THIN:
+                    case VACUUM:
+                    case TRACE:
+                    case THIN:
                         bonus = 0;
                         break;
-                    case PlanetaryConditions.ATMO_HIGH:
-                    case PlanetaryConditions.ATMO_VHIGH:
+                    case HIGH:
+                    case VERY_HIGH:
                         bonus = 2;
                         break;
-                    case PlanetaryConditions.ATMO_STANDARD:
+                    case STANDARD:
                     default:
                         bonus = 1;
                 }
@@ -1191,18 +1191,18 @@ public abstract class Mech extends Entity {
         int bonus;
         if (game != null) {
             switch (game.getPlanetaryConditions().getAtmosphere()) {
-                case PlanetaryConditions.ATMO_VACUUM:
+                case VACUUM:
                     bonus = 0;
                     break;
-                case PlanetaryConditions.ATMO_TRACE:
+                case TRACE:
                     bonus = 1;
                     break;
-                case PlanetaryConditions.ATMO_THIN:
+                case THIN:
                     bonus = 2;
                     break;
-                case PlanetaryConditions.ATMO_STANDARD:
-                case PlanetaryConditions.ATMO_HIGH:
-                case PlanetaryConditions.ATMO_VHIGH:
+                case STANDARD:
+                case HIGH:
+                case VERY_HIGH:
                 default:
                     bonus = 3;
                     break;

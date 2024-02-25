@@ -98,17 +98,17 @@ public class PlanetaryConditionsOverlay extends AbstractBoardViewOverlay {
             }
 
             Light light = conditions.getLight();
-            if (showDefaultConditions || (!conditions.isDay())) {
+            if (showDefaultConditions || !conditions.isDay()) {
                 tmpStr = (showLabel ? MSG_LIGHT + "  " : "");
                 tmpStr = tmpStr + (showValue ? light.toString() + "  " : "");
                 tmpStr = tmpStr + (showIndicator ? light.getIndicator() : "");
                 result.add(tmpStr);
             }
 
-            if (showDefaultConditions || (conditions.getAtmosphere() != PlanetaryConditions.ATMO_STANDARD)) {
+            if (showDefaultConditions || conditions.isStandard()) {
                 tmpStr = (showLabel ? MSG_ATMOSPHERICPREASSURE + "  " : "");
-                tmpStr = tmpStr + (showValue ? conditions.getAtmosphereDisplayableName() + "  " : "");
-                tmpStr = tmpStr + (showIndicator ? conditions.getAtmosphereIndicator() : "");
+                tmpStr = tmpStr + (showValue ? conditions.getAtmosphere().toString() + "  " : "");
+                tmpStr = tmpStr + (showIndicator ? conditions.getAtmosphere().getIndicator() : "");
                 result.add(tmpStr);
             }
 

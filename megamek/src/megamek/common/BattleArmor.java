@@ -516,7 +516,7 @@ public class BattleArmor extends Infantry {
 
         if ((mp > 0)
                 && hasWorkingMisc(MiscType.F_PARTIAL_WING)
-                && (mpCalculationSetting.ignoreWeather || (game == null) || !game.getPlanetaryConditions().isVacuum())) {
+                && (mpCalculationSetting.ignoreWeather || (game == null) || !game.getPlanetaryConditions().isLessThanThin())) {
             mp++;
         }
 

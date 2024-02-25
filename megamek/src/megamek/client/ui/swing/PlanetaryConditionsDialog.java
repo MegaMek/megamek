@@ -48,10 +48,7 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.swing.dialog.DialogButton;
 import megamek.common.Configuration;
 import megamek.common.PlanetaryConditions;
-import megamek.common.enums.Light;
-import megamek.common.enums.Weather;
-import megamek.common.enums.Wind;
-import megamek.common.enums.WindDirection;
+import megamek.common.enums.*;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
 
@@ -250,8 +247,8 @@ public class PlanetaryConditionsDialog extends ClientDialog {
         for (WindDirection condition : WindDirection.values()) {
             comWindDirection.addItem(condition.toString());
         }
-        for (int i = 0; i < PlanetaryConditions.ATMO_SIZE; i++) {
-            comAtmosphere.addItem(PlanetaryConditions.getAtmosphereDisplayableName(i));
+        for (Atmosphere condition : Atmosphere.values()) {
+            comAtmosphere.addItem(condition.toString());
         }
         for (int i = 0; i < PlanetaryConditions.FOG_SIZE; i++) {
             comFog.addItem(PlanetaryConditions.getFogDisplayableName(i));
@@ -299,7 +296,7 @@ public class PlanetaryConditionsDialog extends ClientDialog {
         comWindFrom.setSelectedIndex(conditions.getWindMin().ordinal());
         comWindTo.setSelectedIndex(conditions.getWindMax().ordinal());
         comWindDirection.setSelectedIndex(conditions.getWindDirection().ordinal());
-        comAtmosphere.setSelectedIndex(conditions.getAtmosphere());
+        comAtmosphere.setSelectedIndex(conditions.getAtmosphere().ordinal());
         comFog.setSelectedIndex(conditions.getFog());
         chkBlowingSands.setSelected(conditions.isSandBlowing());
         chkShiftWindDir.setSelected(conditions.shiftingWindDirection());
@@ -322,7 +319,7 @@ public class PlanetaryConditionsDialog extends ClientDialog {
         conditions.setWind(Wind.getWind(comWind.getSelectedIndex()));
         conditions.setWindDirection(WindDirection.getWindDirection(comWindDirection.getSelectedIndex()));
         refreshWindRange();
-        conditions.setAtmosphere(comAtmosphere.getSelectedIndex());
+        conditions.setAtmosphere(Atmosphere.getAtmosphere(comAtmosphere.getSelectedIndex()));
         conditions.setFog(comFog.getSelectedIndex());
         conditions.setBlowingSand(chkBlowingSands.isSelected());
         conditions.setShiftingWindDirection(chkShiftWindDir.isSelected());
@@ -380,7 +377,7 @@ public class PlanetaryConditionsDialog extends ClientDialog {
         }
         
         Wind wind = Wind.getWind(comWind.getSelectedIndex());
-        int atmo = comAtmosphere.getSelectedIndex();
+        Atmosphere atmo = Atmosphere.getAtmosphere(comAtmosphere.getSelectedIndex());
         
         if ((chkBlowingSands.isSelected() && Wind.isLessThanModerateGale(wind))
                 || (chkShiftWindStr.isSelected() && Wind.isLessThanModerateGale(conditions.getWindMax()))) {
@@ -388,7 +385,7 @@ public class PlanetaryConditionsDialog extends ClientDialog {
             sandTip.append(Messages.getString("PlanetaryConditionsDialog.invalid.sandsLost"));
         }
 
-        if ((atmo == ATMO_TRACE) && Wind.isLightGale(wind)) {
+        if (Atmosphere.isTrace(atmo) && Wind.isLightGale(wind)) {
             atmoTip.append(Messages.getString("PlanetaryConditionsDialog.invalid.traceLightGale"));
             windTip.append(Messages.getString("PlanetaryConditionsDialog.invalid.traceLightGale"));
         }
@@ -453,9 +450,9 @@ public class PlanetaryConditionsDialog extends ClientDialog {
      * weather to none.
      */
     private void adaptToWeatherAtmo() {
-        boolean isVacuum = comAtmosphere.getSelectedIndex() == ATMO_VACUUM;
-        boolean isTraceThin = comAtmosphere.getSelectedIndex() == ATMO_THIN 
-                | comAtmosphere.getSelectedIndex() == ATMO_TRACE;
+        boolean isVacuum = Atmosphere.isVacuum(Atmosphere.getAtmosphere(comAtmosphere.getSelectedIndex()));
+        boolean isTraceThin = Atmosphere.isTrace(Atmosphere.getAtmosphere(comAtmosphere.getSelectedIndex()))
+                || Atmosphere.isThin(Atmosphere.getAtmosphere(comAtmosphere.getSelectedIndex()));
         boolean isDense = !isVacuum && !isTraceThin;
         Weather weather = Weather.getWeather(comWeather.getSelectedIndex());
         boolean specificWind = Weather.isSnowFlurries(weather) || Weather.isIceStorm(weather)

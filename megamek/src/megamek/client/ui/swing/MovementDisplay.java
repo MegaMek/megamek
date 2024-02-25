@@ -1097,7 +1097,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             setEjectEnabled(true);
             // no turning for spheroids in atmosphere
             if ((((IAero) ce()).isSpheroid() || clientgui.getClient().getGame()
-                    .getPlanetaryConditions().isVacuum())
+                    .getPlanetaryConditions().isLessThanThin())
                     && !clientgui.getClient().getGame().getBoard().inSpace()) {
                 setTurnEnabled(false);
             }
@@ -4224,7 +4224,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         IAero a = (IAero) ce;
         if (!clientgui.getClient().getGame().getBoard().inSpace()) {
             if (a.isSpheroid()
-                    || clientgui.getClient().getGame().getPlanetaryConditions().isVacuum()) {
+                    || clientgui.getClient().getGame().getPlanetaryConditions().isLessThanThin()) {
                 getBtn(MoveCommand.MOVE_ACC).setEnabled(false);
                 getBtn(MoveCommand.MOVE_DEC).setEnabled(false);
                 getBtn(MoveCommand.MOVE_ACCN).setEnabled(false);
@@ -5044,7 +5044,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                     && (cmd.getLastStep().getNDown() == 1)
                     && (cmd.getLastStep().getVelocity() < 12)
                     && !(((IAero) ce).isSpheroid() || clientgui.getClient()
-                    .getGame().getPlanetaryConditions().isVacuum())) {
+                    .getGame().getPlanetaryConditions().isLessThanThin())) {
                 addStepToMovePath(MoveStepType.ACC, true);
                 computeAeroMovementEnvelope(ce);
             }

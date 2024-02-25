@@ -18,10 +18,7 @@ package megamek.common;
 
 import java.io.Serializable;
 
-import megamek.common.enums.Light;
-import megamek.common.enums.Weather;
-import megamek.common.enums.Wind;
-import megamek.common.enums.WindDirection;
+import megamek.common.enums.*;
 
 /**
  * This class will hold all the information on planetary conditions and a variety of helper functions
@@ -32,31 +29,6 @@ public class PlanetaryConditions implements Serializable {
     private static final long serialVersionUID = 6838624193286089781L;
 
     public static final int BLACK_ICE_TEMP      = -30;
-
-    // atmospheric pressure
-    public static final int ATMO_VACUUM   = 0;
-    public static final int ATMO_TRACE    = 1;
-    public static final int ATMO_THIN     = 2;
-    public static final int ATMO_STANDARD = 3;
-    public static final int ATMO_HIGH     = 4;
-    public static final int ATMO_VHIGH    = 5;
-    private static final String MSG_NAME_ATMOSPHERE_VACUUM = Messages.getString("PlanetaryConditions.DisplayableName.Atmosphere.Vacuum");
-    private static final String MSG_NAME_ATMOSPHERE_TRACE = Messages.getString("PlanetaryConditions.DisplayableName.Atmosphere.Trace");
-    private static final String MSG_NAME_ATMOSPHERE_THIN = Messages.getString("PlanetaryConditions.DisplayableName.Atmosphere.Thin");
-    private static final String MSG_NAME_ATMOSPHERE_STANDARD = Messages.getString("PlanetaryConditions.DisplayableName.Atmosphere.Standard");
-    private static final String MSG_NAME_ATMOSPHERE_HIGH = Messages.getString("PlanetaryConditions.DisplayableName.Atmosphere.High");
-    private static final String MSG_NAME_ATMOSPHERE_VHIGH = Messages.getString("PlanetaryConditions.DisplayableName.Atmosphere.Very High");
-    public static String[] atmoNames = { MSG_NAME_ATMOSPHERE_VACUUM, MSG_NAME_ATMOSPHERE_TRACE, MSG_NAME_ATMOSPHERE_THIN,
-            MSG_NAME_ATMOSPHERE_STANDARD, MSG_NAME_ATMOSPHERE_HIGH, MSG_NAME_ATMOSPHERE_VHIGH };
-    public static final int ATMO_SIZE = atmoNames.length;
-    private static final String MSG_INDICATOR_ATMOSPHERE_VACUUM = Messages.getString("PlanetaryConditions.Indicator.Atmosphere.Vacuum");
-    private static final String MSG_INDICATOR_ATMOSPHERE_TRACE = Messages.getString("PlanetaryConditions.Indicator.Atmosphere.Trace");
-    private static final String MSG_INDICATOR_ATMOSPHERE_THIN = Messages.getString("PlanetaryConditions.Indicator.Atmosphere.Thin");
-    private static final String MSG_INDICATOR_ATMOSPHERE_STANDARD = Messages.getString("PlanetaryConditions.Indicator.Atmosphere.Standard");
-    private static final String MSG_INDICATOR_ATMOSPHERE_HIGH = Messages.getString("PlanetaryConditions.Indicator.Atmosphere.High");
-    private static final String MSG_INDICATOR_ATMOSPHERE_VHIGH = Messages.getString("PlanetaryConditions.Indicator.Atmosphere.VHigh");
-    private static String[] atmosphereIndicators = { MSG_INDICATOR_ATMOSPHERE_VACUUM, MSG_INDICATOR_ATMOSPHERE_TRACE, MSG_INDICATOR_ATMOSPHERE_THIN,
-            MSG_INDICATOR_ATMOSPHERE_STANDARD ,MSG_INDICATOR_ATMOSPHERE_HIGH ,MSG_INDICATOR_ATMOSPHERE_VHIGH };
 
     // fog
     public static final int FOG_NONE  = 0;
@@ -93,7 +65,7 @@ public class PlanetaryConditions implements Serializable {
     private boolean shiftWindDirection = false;
     private boolean shiftWindStrength = false;
     private boolean isSleeting = false;
-    private int atmosphere = ATMO_STANDARD;
+    private Atmosphere atmosphere = Atmosphere.STANDARD;
     private int fog = FOG_NONE;
     private int temperature = 25;
     private int oldTemperature = 25;
@@ -391,7 +363,45 @@ public class PlanetaryConditions implements Serializable {
         return WindDirection.isRandomWindDirection(windDirection);
     }
 
+    public void setAtmosphere(Atmosphere atmosphere) {
+        this.atmosphere = atmosphere;
+    }
 
+    public Atmosphere getAtmosphere() {
+        return atmosphere;
+    }
+
+    public boolean isVacuum() {
+        return Atmosphere.isVacuum(atmosphere);
+    }
+
+    public boolean isTrace() {
+        return Atmosphere.isTrace(atmosphere);
+    }
+
+    public boolean isThin() {
+        return Atmosphere.isThin(atmosphere);
+    }
+
+    public boolean isStandard() {
+        return Atmosphere.isStandard(atmosphere);
+    }
+
+    public boolean isHigh() {
+        return Atmosphere.isHigh(atmosphere);
+    }
+
+    public boolean isVeryHigh() {
+        return Atmosphere.isVeryHigh(atmosphere);
+    }
+
+    public boolean isGreaterThanTrace() {
+        return Atmosphere.isGreaterThanTrace(atmosphere);
+    }
+
+    public boolean isLessThanThin() {
+        return Atmosphere.isLessThanThin(atmosphere);
+    }
 
     public static String getTemperatureDisplayableName(int temp) {
         if (isExtremeTemperature(temp) && (temp > 0)) {
@@ -403,22 +413,11 @@ public class PlanetaryConditions implements Serializable {
         }
     }
 
-    public static String getAtmosphereDisplayableName(int type) {
-        if ((type >= 0) && (type < ATMO_SIZE)) {
-            return atmoNames[type];
-        }
-        throw new IllegalArgumentException("Unknown atmospheric pressure condition");
-    }
-
     public static String getFogDisplayableName(int type) {
         if ((type >= 0) && (type < FOG_SIZE)) {
             return fogNames[type];
         }
         throw new IllegalArgumentException("Unknown fog condition");
-    }
-
-    public String getAtmosphereDisplayableName() {
-        return getAtmosphereDisplayableName(atmosphere);
     }
 
     public String getFogDisplayableName() {
@@ -581,11 +580,11 @@ public class PlanetaryConditions implements Serializable {
         }
 
         // atmospheric pressure may limit wind strength
-        if ((atmosphere == ATMO_TRACE) && (isGreaterThanStorm())) {
+        if (isTrace() && (isGreaterThanStorm())) {
             wind = Wind.STORM;
         }
 
-        if ((atmosphere ==ATMO_THIN) && (isTornadoF4())) {
+        if (isThin() && (isTornadoF4())) {
             wind = Wind.TORNADO_F1_TO_F3;
         }
     }
@@ -696,7 +695,7 @@ public class PlanetaryConditions implements Serializable {
      * @return a <code>String</code> with the reason why you cannot start a fire here
      */
     public String cannotStartFire() {
-        if (atmosphere < ATMO_THIN) {
+        if (isLessThanThin()) {
             return "atmosphere too thin";
         } else if (isGreaterThanStorm()) {
             return "a tornado";
@@ -749,17 +748,18 @@ public class PlanetaryConditions implements Serializable {
 
         // atmospheric pressure mods
         switch (atmosphere) {
-            case ATMO_THIN:
+            case THIN:
                 if (en.getMovementMode().isHoverVTOLOrWiGE()) {
                     mod -= 2;
                 }
                 break;
-            case ATMO_HIGH:
-            case ATMO_VHIGH:
+            case HIGH:
+            case VERY_HIGH:
                 if (en.getMovementMode().isHoverVTOLOrWiGE()) {
                     mod += 1;
                 }
                 break;
+            default:
         }
 
         // temperature difference
@@ -776,7 +776,7 @@ public class PlanetaryConditions implements Serializable {
      * @return a string given the reason for being doomed, null if not doomed
      */
     public String whyDoomed(Entity en, Game game) {
-        if ((atmosphere < ATMO_THIN) && en.doomedInVacuum()) {
+        if (isLessThanThin() && en.doomedInVacuum()) {
             return "vacuum";
         }
         if (isTornadoF4() && !(en instanceof Mech)) {
@@ -973,13 +973,13 @@ public class PlanetaryConditions implements Serializable {
     public int getDropRate() {
         // atmospheric pressure mods
         switch (atmosphere) {
-            case ATMO_TRACE:
+            case TRACE:
                 return 8;
-            case ATMO_THIN:
+            case THIN:
                 return 5;
-            case ATMO_HIGH:
+            case HIGH:
                 return 2;
-            case ATMO_VHIGH:
+            case VERY_HIGH:
                 return 1;
             default:
                 return 3;
@@ -1002,14 +1002,6 @@ public class PlanetaryConditions implements Serializable {
         return shiftWindStrength;
     }
 
-    public void setAtmosphere(int a) {
-        atmosphere = a;
-    }
-
-    public int getAtmosphere() {
-        return atmosphere;
-    }
-
     public void setTemperature(int tem) {
         temperature = tem;
     }
@@ -1018,9 +1010,6 @@ public class PlanetaryConditions implements Serializable {
         return temperature;
     }
 
-    public boolean isVacuum() {
-        return (atmosphere == ATMO_VACUUM) || (atmosphere == ATMO_TRACE);
-    }
 
     public static boolean isExtremeTemperature(int temperature) {
         return (temperature > 50) || (temperature < -30);
@@ -1181,17 +1170,6 @@ public class PlanetaryConditions implements Serializable {
 
     public String getFogIndicator() {
         return  getFogIndicator(fog);
-    }
-
-    public String getAtmosphereIndicator(int type) {
-        if ((type >= 0) && (type < ATMO_SIZE)) {
-            return atmosphereIndicators[type];
-        }
-        throw new IllegalArgumentException("Unknown Atmosphere Indicator");
-    }
-
-    public String getAtmosphereIndicator() {
-        return getAtmosphereIndicator(atmosphere);
     }
 
     public String getGravityIndicator() {

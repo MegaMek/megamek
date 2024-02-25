@@ -121,11 +121,10 @@ public class AreaEffectHelper {
     public static void processFuelAirDamage(Entity target, Coords center, EquipmentType ordnanceType, Entity attacker,
                                             Vector<Report> vPhaseReport, GameManager gameManager) {
         Game game = attacker.getGame();
+        PlanetaryConditions conditions = game.getPlanetaryConditions();
         // sanity check: if this attack is happening in vacuum through very thin atmo, add that to the phase report and terminate early
-        boolean notEnoughAtmo = game.getBoard().inSpace() ||
-                game.getPlanetaryConditions().getAtmosphere() <= PlanetaryConditions.ATMO_TRACE;
 
-        if (notEnoughAtmo) {
+        if (game.getBoard().inSpace() || conditions.isLessThanThin()) {
             Report r = new Report(9986);
             r.indent(1);
             r.subject = attacker.getId();
@@ -134,10 +133,9 @@ public class AreaEffectHelper {
             return;
         }
 
-        boolean thinAtmo = game.getPlanetaryConditions().getAtmosphere() == PlanetaryConditions.ATMO_THIN;
         int blastRadius = getFuelAirBlastRadiusIndex(ordnanceType.getInternalName());
 
-        if (thinAtmo) {
+        if (conditions.isThin()) {
             Report r = new Report(9990);
             r.indent(1);
             r.subject = attacker.getId();
@@ -161,7 +159,7 @@ public class AreaEffectHelper {
         }
 
         int damage = AreaEffectHelper.fuelAirDamage[damageBracket];
-        if (thinAtmo) {
+        if (conditions.isThin()) {
             damage = (int) Math.ceil(damage / 2.0);
         }
 
@@ -177,11 +175,9 @@ public class AreaEffectHelper {
     public static void processFuelAirDamage(Coords center, EquipmentType ordnanceType, Entity attacker,
                                             Vector<Report> vPhaseReport, GameManager gameManager) {
         Game game = attacker.getGame();
+        PlanetaryConditions conditions = game.getPlanetaryConditions();
         // sanity check: if this attack is happening in vacuum through very thin atmo, add that to the phase report and terminate early
-        boolean notEnoughAtmo = game.getBoard().inSpace() ||
-                game.getPlanetaryConditions().getAtmosphere() <= PlanetaryConditions.ATMO_TRACE;
-
-        if (notEnoughAtmo) {
+        if (game.getBoard().inSpace() || conditions.isLessThanThin()) {
             Report r = new Report(9986);
             r.indent(1);
             r.subject = attacker.getId();
@@ -190,10 +186,9 @@ public class AreaEffectHelper {
             return;
         }
 
-        boolean thinAtmo = game.getPlanetaryConditions().getAtmosphere() == PlanetaryConditions.ATMO_THIN;
         int blastRadius = getFuelAirBlastRadiusIndex(ordnanceType.getInternalName());
 
-        if (thinAtmo) {
+        if (conditions.isThin()) {
             Report r = new Report(9990);
             r.indent(1);
             r.subject = attacker.getId();
@@ -215,7 +210,7 @@ public class AreaEffectHelper {
             List<Coords> donut = center.allAtDistance(distFromCenter);
             for (Coords coords : donut) {
                 int damage = AreaEffectHelper.fuelAirDamage[damageBracket];
-                if (thinAtmo) {
+                if (conditions.isThin()) {
                     damage = (int) Math.ceil(damage / 2.0);
                 }
 

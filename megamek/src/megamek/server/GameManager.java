@@ -11708,7 +11708,7 @@ public class GameManager implements IGameManager {
             if ((entity instanceof Mech) && !entity.isProne()
                     && (hex.terrainLevel(Terrains.WATER) <= partialWaterLevel)) {
                 for (int loop = 0; loop < entity.locations(); loop++) {
-                    if (game.getPlanetaryConditions().isVacuum()
+                    if (game.getPlanetaryConditions().isLessThanThin()
                             || ((entity.getEntityType() & Entity.ETYPE_AERO) == 0 && entity.isSpaceborne())) {
                         entity.setLocationStatus(loop, ILocationExposureStatus.VACUUM);
                     } else {
@@ -11732,7 +11732,7 @@ public class GameManager implements IGameManager {
             } else {
                 int status = ILocationExposureStatus.WET;
                 if (entity.relHeight() >= 0) {
-                    status = game.getPlanetaryConditions().isVacuum() ?
+                    status = game.getPlanetaryConditions().isLessThanThin() ?
                             ILocationExposureStatus.VACUUM : ILocationExposureStatus.NORMAL;
                 }
                 for (int loop = 0; loop < entity.locations(); loop++) {
@@ -11744,7 +11744,7 @@ public class GameManager implements IGameManager {
             }
         } else {
             for (int loop = 0; loop < entity.locations(); loop++) {
-                if (game.getPlanetaryConditions().isVacuum()
+                if (game.getPlanetaryConditions().isLessThanThin()
                         || ((entity.getEntityType() & Entity.ETYPE_AERO) == 0 && entity.isSpaceborne())) {
                     entity.setLocationStatus(loop, ILocationExposureStatus.VACUUM);
                 } else {
@@ -12978,7 +12978,7 @@ public class GameManager implements IGameManager {
                 // all spheroid craft should have velocity of zero in atmosphere
                 // regardless of what was entered
                 IAero a = (IAero) entity;
-                if (a.isSpheroid() || game.getPlanetaryConditions().isVacuum()) {
+                if (a.isSpheroid() || game.getPlanetaryConditions().isLessThanThin()) {
                     a.setCurrentVelocity(0);
                     a.setNextVelocity(0);
                 }
@@ -20287,7 +20287,7 @@ public class GameManager implements IGameManager {
             if ((((entity.getElevation() < 0) && ((curHex
                     .terrainLevel(Terrains.WATER) > 1) || ((curHex
                     .terrainLevel(Terrains.WATER) == 1) && entity.isProne()))) || game
-                    .getPlanetaryConditions().isVacuum())
+                    .getPlanetaryConditions().isLessThanThin())
                     && (entity.getHitCriticals(CriticalSlot.TYPE_SYSTEM,
                     Mech.SYSTEM_LIFE_SUPPORT, Mech.LOC_HEAD) > 0)) {
                 Report r = new Report(6020);
@@ -21809,7 +21809,7 @@ public class GameManager implements IGameManager {
 
         // Is the infantry in vacuum?
         if ((isPlatoon || isBattleArmor) && !te.isDestroyed() && !te.isDoomed()
-                && game.getPlanetaryConditions().isVacuum()) {
+                && game.getPlanetaryConditions().isLessThanThin()) {
             // PBI. Double damage.
             damage *= 2;
             r = new Report(6041);
@@ -27187,10 +27187,11 @@ public class GameManager implements IGameManager {
             int breachroll = 0;
             // set the target roll for the breach
             int target = 10;
+            PlanetaryConditions conditions = game.getPlanetaryConditions();
             // if this is a vacuum check and we are in trace atmosphere then
             // adjust target
             if ((entity.getLocationStatus(loc) == ILocationExposureStatus.VACUUM)
-                    && (game.getPlanetaryConditions().getAtmosphere() == PlanetaryConditions.ATMO_TRACE)) {
+                    && conditions.isTrace()) {
                 target = 12;
             }
             // if this is a surface naval vessel and the attack is not from
@@ -33352,11 +33353,11 @@ public class GameManager implements IGameManager {
 
             //Vacuum shouldn't apply to ASF ejection since they're designed for it, but the rules don't specify
             //High and low pressures make more sense to apply to all
-            if (conditions.getAtmosphere() == PlanetaryConditions.ATMO_VACUUM) {
+            if (conditions.isVacuum()) {
                 rollTarget.addModifier(3, "Vacuum");
-            } else if (conditions.getAtmosphere() == PlanetaryConditions.ATMO_VHIGH) {
+            } else if (conditions.isVeryHigh()) {
                 rollTarget.addModifier(2, "Very High Atmosphere Pressure");
-            } else if (conditions.getAtmosphere() == PlanetaryConditions.ATMO_TRACE) {
+            } else if (conditions.isTrace()) {
                 rollTarget.addModifier(2, "Trace atmosphere");
             }
         }
@@ -33459,7 +33460,7 @@ public class GameManager implements IGameManager {
             r.indent(3);
             vDesc.addElement(r);
             // Don't make ill-equipped pilots abandon into vacuum
-            if (game.getPlanetaryConditions().isVacuum() && !entity.isAero()) {
+            if (game.getPlanetaryConditions().isLessThanThin() && !entity.isAero()) {
                 return vDesc;
             }
 
@@ -33501,7 +33502,7 @@ public class GameManager implements IGameManager {
         else if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLES_CAN_EJECT)
                 && (entity instanceof Tank)) {
             // Don't make them abandon into vacuum
-            if (game.getPlanetaryConditions().isVacuum()) {
+            if (game.getPlanetaryConditions().isLessThanThin()) {
                 return vDesc;
             }
             EjectedCrew crew = new EjectedCrew(entity);

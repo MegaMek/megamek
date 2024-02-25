@@ -4099,7 +4099,7 @@ public class MoveStep implements Serializable {
             return false;
         }
         // are we airborne in non-vacuum?
-        return en.isAirborne() && !game.getPlanetaryConditions().isVacuum();
+        return en.isAirborne() && !game.getPlanetaryConditions().isLessThanThin();
     }
 
     /**

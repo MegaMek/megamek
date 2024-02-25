@@ -199,8 +199,8 @@ public class FighterSquadron extends AeroSpaceFighter {
         }
 
         // add in atmospheric effects later
-        int atmoCond = game.getPlanetaryConditions().getAtmosphere();
-        if (!(game.getBoard().inSpace() || atmoCond == PlanetaryConditions.ATMO_VACUUM)) {
+        PlanetaryConditions conditions = game.getPlanetaryConditions();
+        if (!(game.getBoard().inSpace() || conditions.isVacuum())) {
             prd.addModifier(+2, "Atmospheric operations");
             prd.addModifier(-1, "fighter/ small craft");
         }

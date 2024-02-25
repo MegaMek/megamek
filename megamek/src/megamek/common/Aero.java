@@ -16,6 +16,7 @@ package megamek.common;
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.common.cost.AeroCostCalculator;
 import megamek.common.enums.AimingMode;
+import megamek.common.enums.Atmosphere;
 import megamek.common.options.OptionsConstants;
 import org.apache.logging.log4j.LogManager;
 
@@ -1419,9 +1420,10 @@ public abstract class Aero extends Entity implements IAero, IBomber {
             prd.addModifier(vmod, "Velocity greater than 2x safe thrust");
         }
 
-        int atmoCond = game.getPlanetaryConditions().getAtmosphere();
+        PlanetaryConditions conditions = game.getPlanetaryConditions();
         // add in atmospheric effects later
-        if (!(game.getBoard().inSpace() || (atmoCond == PlanetaryConditions.ATMO_VACUUM)) && isAirborne()) {
+        if (!(game.getBoard().inSpace() || conditions.isVacuum())
+                && isAirborne()) {
             prd.addModifier(+2, "Atmospheric operations");
 
             // check type

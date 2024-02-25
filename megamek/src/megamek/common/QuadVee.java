@@ -154,7 +154,6 @@ public class QuadVee extends QuadMech {
      * damage and various effects of vehicle motive damage.
      */
     public int getCruiseMP(MPCalculationSetting mpCalculationSetting) {
-        PlanetaryConditions conditions = game.getPlanetaryConditions();
         int mp = getOriginalWalkMP();
         if (getMotiveType() == MOTIVE_WHEEL) {
             mp++;
@@ -201,6 +200,7 @@ public class QuadVee extends QuadMech {
         }
 
         if (!mpCalculationSetting.ignoreWeather && (null != game)) {
+            PlanetaryConditions conditions = game.getPlanetaryConditions();
             int weatherMod = conditions.getMovementMods(this);
             mp = Math.max(mp + weatherMod, 0);
 

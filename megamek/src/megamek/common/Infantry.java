@@ -351,7 +351,6 @@ public class Infantry extends Entity {
 
     @Override
     public int getWalkMP(MPCalculationSetting mpCalculationSetting) {
-        PlanetaryConditions conditions = game.getPlanetaryConditions();
         int mp = getOriginalWalkMP();
         // Beast mounted infantry depends entirely on the creature
         if (mount == null) {
@@ -386,6 +385,7 @@ public class Infantry extends Entity {
         }
 
         if (!mpCalculationSetting.ignoreWeather && (null != game)) {
+            PlanetaryConditions conditions = game.getPlanetaryConditions();
             int weatherMod = conditions.getMovementMods(this);
             mp = Math.max(mp + weatherMod, 0);
 
@@ -437,7 +437,6 @@ public class Infantry extends Entity {
 
     @Override
     public int getJumpMP(MPCalculationSetting mpCalculationSetting) {
-        PlanetaryConditions conditions = game.getPlanetaryConditions();
         int mp = hasUMU() ? 0 : getOriginalJumpMP();
         if (mount == null) {
             if ((getSecondaryWeaponsPerSquad() > 1)
@@ -456,6 +455,7 @@ public class Infantry extends Entity {
         }
 
         if (!mpCalculationSetting.ignoreWeather && (null != game)) {
+            PlanetaryConditions conditions = game.getPlanetaryConditions();
             int windCond = conditions.getWindStrength();
             if (windCond >= PlanetaryConditions.WI_STRONG_GALE) {
                 return 0;

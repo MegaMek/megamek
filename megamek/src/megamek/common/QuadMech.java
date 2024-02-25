@@ -83,7 +83,6 @@ public class QuadMech extends Mech {
 
     @Override
     public int getWalkMP(MPCalculationSetting mpCalculationSetting) {
-        PlanetaryConditions conditions = game.getPlanetaryConditions();
         int mp = getOriginalWalkMP();
 
         int legsDestroyed = 0;
@@ -177,6 +176,7 @@ public class QuadMech extends Mech {
         }
 
         if (!mpCalculationSetting.ignoreWeather && (null != game)) {
+            PlanetaryConditions conditions = game.getPlanetaryConditions();
             int weatherMod = conditions.getMovementMods(this);
             mp = Math.max(mp + weatherMod, 0);
 

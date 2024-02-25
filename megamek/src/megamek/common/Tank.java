@@ -277,7 +277,6 @@ public class Tank extends Entity {
 
     @Override
     public int getWalkMP(MPCalculationSetting mpCalculationSetting) {
-        PlanetaryConditions conditions = game.getPlanetaryConditions();
         int mp = getOriginalWalkMP();
         if (engineHit || isImmobile()) {
             return 0;
@@ -292,6 +291,7 @@ public class Tank extends Entity {
         }
 
         if (!mpCalculationSetting.ignoreWeather && (null != game)) {
+            PlanetaryConditions conditions = game.getPlanetaryConditions();
             int weatherMod = conditions.getMovementMods(this);
             mp = Math.max(mp + weatherMod, 0);
 

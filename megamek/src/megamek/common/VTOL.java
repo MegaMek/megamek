@@ -593,7 +593,6 @@ public class VTOL extends Tank implements IBomber {
 
     @Override
     public int getWalkMP(MPCalculationSetting mpCalculationSetting) {
-        PlanetaryConditions conditions = game.getPlanetaryConditions();
         int mp = getOriginalWalkMP();
 
         if (engineHit || isLocationBad(LOC_ROTOR)) {
@@ -607,6 +606,7 @@ public class VTOL extends Tank implements IBomber {
         }
 
         if (!mpCalculationSetting.ignoreWeather && (null != game)) {
+            PlanetaryConditions conditions = game.getPlanetaryConditions();
             int weatherMod = conditions.getMovementMods(this);
             mp = Math.max(mp + weatherMod, 0);
 

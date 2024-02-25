@@ -20,7 +20,6 @@ import java.io.Serializable;
 
 import megamek.common.enums.Light;
 import megamek.common.enums.Weather;
-import org.apache.logging.log4j.LogManager;
 
 /**
  * This class will hold all the information on planetary conditions and a variety of helper functions

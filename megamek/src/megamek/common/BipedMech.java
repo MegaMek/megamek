@@ -86,11 +86,12 @@ public class BipedMech extends Mech {
 
     @Override
     public int getWalkMP(MPCalculationSetting mpCalculationSetting) {
-        PlanetaryConditions conditions = game.getPlanetaryConditions();
         int mp = getOriginalWalkMP();
         int legsDestroyed = 0;
         int hipHits = 0;
         int actuatorHits = 0;
+
+
 
         //A Mech using tracks has its movement reduced by 50% per leg or track destroyed;
         if (getMovementMode() == EntityMovementMode.TRACKED) {
@@ -180,6 +181,7 @@ public class BipedMech extends Mech {
         }
 
         if (!mpCalculationSetting.ignoreWeather && (null != game)) {
+            PlanetaryConditions conditions = game.getPlanetaryConditions();
             int weatherMod = conditions.getMovementMods(this);
             mp = Math.max(mp + weatherMod, 0);
 

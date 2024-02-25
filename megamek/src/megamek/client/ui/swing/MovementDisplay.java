@@ -1096,8 +1096,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             setEvadeAeroEnabled(cmd != null && !cmd.contains(MoveStepType.EVADE));
             setEjectEnabled(true);
             // no turning for spheroids in atmosphere
-            if ((((IAero) ce()).isSpheroid() || clientgui.getClient().getGame()
-                    .getPlanetaryConditions().isLessThanThin())
+            if ((((IAero) ce()).isSpheroid() || clientgui.getClient().getGame().getPlanetaryConditions().isLessThanThin())
                     && !clientgui.getClient().getGame().getBoard().inSpace()) {
                 setTurnEnabled(false);
             }

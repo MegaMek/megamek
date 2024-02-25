@@ -41,7 +41,6 @@ import megamek.common.MovePath.MoveStepType;
 import megamek.common.actions.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.IlluminationLevel;
-import megamek.common.enums.Light;
 import megamek.common.event.*;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;

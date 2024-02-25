@@ -15,11 +15,9 @@
 package megamek.common.actions;
 
 import megamek.client.Client;
-import megamek.client.ui.Messages;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.IlluminationLevel;
-import megamek.common.enums.Light;
 import megamek.common.options.OptionsConstants;
 
 import java.util.Enumeration;

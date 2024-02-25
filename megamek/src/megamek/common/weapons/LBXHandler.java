@@ -26,7 +26,6 @@ import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
 import megamek.server.GameManager;
-import megamek.server.Server;
 
 /**
  * @author Andrew Hunter

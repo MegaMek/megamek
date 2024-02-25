@@ -19,9 +19,7 @@
 package megamek.common.enums;
 
 import megamek.MegaMek;
-import megamek.common.Messages;
 
-import java.util.EnumSet;
 import java.util.ResourceBundle;
 
 public enum Fog {

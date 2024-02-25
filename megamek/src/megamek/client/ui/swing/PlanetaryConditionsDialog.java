@@ -53,7 +53,6 @@ import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
 
 import static megamek.client.ui.swing.util.UIUtil.*;
-import static megamek.common.PlanetaryConditions.*;
 
 /**
  * A dialog that allows for customization of planetary conditions

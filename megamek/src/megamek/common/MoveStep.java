@@ -19,7 +19,6 @@
 package megamek.common;
 
 import megamek.common.MovePath.MoveStepType;
-import megamek.common.enums.Light;
 import megamek.common.enums.MPBoosters;
 import megamek.common.options.OptionsConstants;
 import megamek.common.pathfinder.CachedEntityState;

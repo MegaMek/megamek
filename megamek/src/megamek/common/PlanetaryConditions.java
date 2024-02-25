@@ -30,20 +30,6 @@ public class PlanetaryConditions implements Serializable {
 
     public static final int BLACK_ICE_TEMP      = -30;
 
-    // fog
-    public static final int FOG_NONE  = 0;
-    public static final int FOG_LIGHT = 1;
-    public static final int FOG_HEAVY = 2;
-    private static final String MSG_NAME_FOG_NONE = Messages.getString("PlanetaryConditions.DisplayableName.Fog.None");
-    private static final String MSG_NAME_FOG_LIGHT = Messages.getString("PlanetaryConditions.DisplayableName.Fog.Light Fog");
-    private static final String MSG_NAME_FOG_HEAVY = Messages.getString("PlanetaryConditions.DisplayableName.Fog.Heavy Fog");
-    private static String[] fogNames = { MSG_NAME_FOG_NONE, MSG_NAME_FOG_LIGHT, MSG_NAME_FOG_HEAVY };
-    public static final int FOG_SIZE = fogNames.length;
-    private static final String MSG_INDICATOR_FOG_NONE = Messages.getString("PlanetaryConditions.Indicator.Fog.None");
-    private static final String MSG_INDICATOR_FOG_LIGHT = Messages.getString("PlanetaryConditions.Indicator.Fog.Light");
-    private static final String MSG_INDICATOR_FOG_HEAVY = Messages.getString("PlanetaryConditions.Indicator.Fog.Heavy");
-    private static String[] fogIndicators = { MSG_INDICATOR_FOG_NONE, MSG_INDICATOR_FOG_LIGHT, MSG_INDICATOR_FOG_HEAVY };
-
     // misc
     private boolean blowingSand = false;
     private static final String MSG_NAME_BLOWINGSAND_TRUE = Messages.getString("PlanetaryConditions.DisplayableName.SandBlowing.true");
@@ -66,7 +52,7 @@ public class PlanetaryConditions implements Serializable {
     private boolean shiftWindStrength = false;
     private boolean isSleeting = false;
     private Atmosphere atmosphere = Atmosphere.STANDARD;
-    private int fog = FOG_NONE;
+    private Fog fog = Fog.FOG_NONE;
     private int temperature = 25;
     private int oldTemperature = 25;
     private static final String MSG_NAME_TEMPERATURE_COLD = Messages.getString("PlanetaryConditions.DisplayableName.Temperature.ExtremeCold");
@@ -403,6 +389,27 @@ public class PlanetaryConditions implements Serializable {
         return Atmosphere.isLessThanThin(atmosphere);
     }
 
+    public Fog getFog() {
+        return fog;
+    }
+
+    public void setFog(Fog fog) {
+        this.fog = fog;
+    }
+
+    public boolean isFogNone() {
+        return Fog.isFogNone(fog);
+    }
+
+    public boolean isFogLight() {
+        return Fog.isFogLight(fog);
+    }
+
+    public boolean isFogHeavy() {
+        return Fog.isFogHeavy(fog);
+    }
+
+
     public static String getTemperatureDisplayableName(int temp) {
         if (isExtremeTemperature(temp) && (temp > 0)) {
             return String.format("%d (%s)", temp, MSG_NAME_TEMPERATURE_HEAT);
@@ -411,17 +418,6 @@ public class PlanetaryConditions implements Serializable {
         } else {
             return String.valueOf(temp);
         }
-    }
-
-    public static String getFogDisplayableName(int type) {
-        if ((type >= 0) && (type < FOG_SIZE)) {
-            return fogNames[type];
-        }
-        throw new IllegalArgumentException("Unknown fog condition");
-    }
-
-    public String getFogDisplayableName() {
-        return getFogDisplayableName(fog);
     }
 
     /**
@@ -894,7 +890,7 @@ public class PlanetaryConditions implements Serializable {
 
         int otherRange = 0;
 
-        if (fog == FOG_HEAVY) {
+        if (isFogHeavy()) {
             if (isMechVee || (isAero && (en.getAltitude() < 2))) {
                 otherRange =  5;
             } else if (isAero) {
@@ -945,7 +941,7 @@ public class PlanetaryConditions implements Serializable {
         } else if (isLightSnow()
                 || isLightRain()
                 || isLightHail()
-                || (fog == FOG_LIGHT)) {
+                || isFogLight()) {
             if (isMechVee || (isAero && (en.getAltitude() < 2))) {
                 otherRange = 30;
             } else if (isAero) {
@@ -1035,14 +1031,6 @@ public class PlanetaryConditions implements Serializable {
         return emi;
     }
 
-    public int getFog() {
-        return fog;
-    }
-
-    public void setFog(int fog) {
-        this.fog = fog;
-    }
-
     public void setTerrainAffected(boolean b) {
         terrainAffected = b;
     }
@@ -1053,7 +1041,7 @@ public class PlanetaryConditions implements Serializable {
     }
 
     public boolean isRecklessConditions() {
-        return (fog > FOG_NONE) || Light.isDark(light);
+        return !isFogNone() || isDark();
     }
 
     public boolean isSandBlowing() {
@@ -1159,17 +1147,6 @@ public class PlanetaryConditions implements Serializable {
 
     public boolean isExtremeTemperatureCold() {
         return (isExtremeTemperature() && (temperature < 0));
-    }
-
-    public String getFogIndicator(int type) {
-        if ((type >= 0) && (type < FOG_SIZE)) {
-            return fogIndicators[type];
-        }
-        throw new IllegalArgumentException("Unknown Fog Indicator");
-    }
-
-    public String getFogIndicator() {
-        return  getFogIndicator(fog);
     }
 
     public String getGravityIndicator() {

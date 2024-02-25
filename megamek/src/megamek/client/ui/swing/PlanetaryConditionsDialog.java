@@ -250,8 +250,8 @@ public class PlanetaryConditionsDialog extends ClientDialog {
         for (Atmosphere condition : Atmosphere.values()) {
             comAtmosphere.addItem(condition.toString());
         }
-        for (int i = 0; i < PlanetaryConditions.FOG_SIZE; i++) {
-            comFog.addItem(PlanetaryConditions.getFogDisplayableName(i));
+        for (Fog condition : Fog.values()) {
+            comFog.addItem(condition.toString());
         }
     }
     
@@ -297,7 +297,7 @@ public class PlanetaryConditionsDialog extends ClientDialog {
         comWindTo.setSelectedIndex(conditions.getWindMax().ordinal());
         comWindDirection.setSelectedIndex(conditions.getWindDirection().ordinal());
         comAtmosphere.setSelectedIndex(conditions.getAtmosphere().ordinal());
-        comFog.setSelectedIndex(conditions.getFog());
+        comFog.setSelectedIndex(conditions.getFog().ordinal());
         chkBlowingSands.setSelected(conditions.isSandBlowing());
         chkShiftWindDir.setSelected(conditions.shiftingWindDirection());
         chkShiftWindStr.setSelected(conditions.shiftingWindStrength());
@@ -320,7 +320,7 @@ public class PlanetaryConditionsDialog extends ClientDialog {
         conditions.setWindDirection(WindDirection.getWindDirection(comWindDirection.getSelectedIndex()));
         refreshWindRange();
         conditions.setAtmosphere(Atmosphere.getAtmosphere(comAtmosphere.getSelectedIndex()));
-        conditions.setFog(comFog.getSelectedIndex());
+        conditions.setFog(Fog.getFog(comFog.getSelectedIndex()));
         conditions.setBlowingSand(chkBlowingSands.isSelected());
         conditions.setShiftingWindDirection(chkShiftWindDir.isSelected());
         conditions.setShiftingWindStrength(chkShiftWindStr.isSelected());
@@ -461,7 +461,7 @@ public class PlanetaryConditionsDialog extends ClientDialog {
         removeListeners();
         if (isTraceThin) {
             comWeather.setSelectedIndex(Weather.WEATHER_NONE.ordinal());
-            comFog.setSelectedIndex(PlanetaryConditions.FOG_NONE);
+            comFog.setSelectedIndex(Fog.FOG_NONE.ordinal());
         }
         if (isVacuum) {
             comWind.setSelectedIndex(Wind.CALM.ordinal());
@@ -470,7 +470,7 @@ public class PlanetaryConditionsDialog extends ClientDialog {
             chkShiftWindStr.setSelected(false);
             comWind.setSelectedIndex(Wind.CALM.ordinal());
             comWeather.setSelectedIndex(Weather.WEATHER_NONE.ordinal());
-            comFog.setSelectedIndex(FOG_NONE);
+            comFog.setSelectedIndex(Fog.FOG_NONE.ordinal());
         }
         if (specificWind) {
             chkShiftWindStr.setSelected(false);

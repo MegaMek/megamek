@@ -137,10 +137,10 @@ public class PlanetaryConditionsOverlay extends AbstractBoardViewOverlay {
                 result.add(tmpStr);
             }
 
-            if (showDefaultConditions || (conditions.getFog() != PlanetaryConditions.FOG_NONE)) {
+            if (showDefaultConditions || !conditions.isFogNone()) {
                 tmpStr = (showLabel ? MSG_FOG + "  " : "");
-                tmpStr = tmpStr + (showValue ? conditions.getFogDisplayableName() + "  " : "");
-                tmpStr = tmpStr + (showIndicator ? conditions.getFogIndicator() : "");
+                tmpStr = tmpStr + (showValue ? conditions.getFog().toString() + "  " : "");
+                tmpStr = tmpStr + (showIndicator ? conditions.getFog().getIndicator() : "");
                 result.add(tmpStr);
             }
 

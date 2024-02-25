@@ -422,7 +422,7 @@ public class ScenarioLoader {
         }
 
         if (p.containsKey(PARAM_PLANETCOND_FOG)) {
-            g.getPlanetaryConditions().setFog(Integer.parseInt(p.getString(PARAM_PLANETCOND_FOG)));
+            g.getPlanetaryConditions().setFog(Fog.getFog(StringUtil.toInt(p.getString(PARAM_PLANETCOND_FOG), 0)));
         }
 
         if (p.containsKey(PARAM_PLANETCOND_ATMOS)) {

@@ -2892,8 +2892,10 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
 
         // fog mods (not in space)
-        if (wtype != null && wtype.hasFlag(WeaponType.F_ENERGY) && !game.getBoard().inSpace()
-                && (conditions.getFog() == PlanetaryConditions.FOG_HEAVY)) {
+        if (wtype != null
+                && wtype.hasFlag(WeaponType.F_ENERGY)
+                && !game.getBoard().inSpace()
+                && conditions.isFogHeavy()) {
             weatherToHitMods.addModifier(1, Messages.getString("WeaponAttackAction.HeavyFog"));
         }
 
@@ -5235,8 +5237,9 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
 
                 // Fog Specialist
                 if (ae.getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_FOG)
-                        && wtype.hasFlag(WeaponType.F_ENERGY) && !game.getBoard().inSpace()
-                        && (conditions.getFog() == PlanetaryConditions.FOG_HEAVY)) {
+                        && wtype.hasFlag(WeaponType.F_ENERGY)
+                        && !game.getBoard().inSpace()
+                        && conditions.isFogHeavy()) {
                     toHit.addModifier(-1, Messages.getString("WeaponAttackAction.FogSpec"));
                 }
 

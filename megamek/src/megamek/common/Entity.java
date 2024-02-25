@@ -7374,8 +7374,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
         // this only applies in fog, night conditions, or if a hex along the
         // move path has ice
-        boolean isFoggy = conditions.getFog() != PlanetaryConditions.FOG_NONE;
-        boolean isDark = conditions.isDark();
         boolean isBlackIce;
 
         if (conditions.isIceStorm()
@@ -7394,17 +7392,17 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
         // we need to make this check on the first move forward and anytime the
         // hex is not clear or is a level change
-        if ((isFoggy || isDark) && !lastPos.equals(curPos)
-            && lastPos.equals(step.getEntity().getPosition())) {
+        if (conditions.isRecklessConditions()
+                && !lastPos.equals(curPos)
+                && lastPos.equals(step.getEntity().getPosition())) {
             roll.append(new PilotingRollData(getId(), 0, "moving recklessly"));
         }
         // FIXME: no perfect solution in the current code to determine if hex is
         // clear. I will use movement costs
-        else if ((isFoggy || isDark)
-                 && !lastPos.equals(curPos)
-                 && ((curHex.movementCost(this) > 0) || ((null != prevHex) && (prevHex
-                                                                                       .getLevel() != curHex
-                                                                                       .getLevel())))) {
+        else if (conditions.isRecklessConditions()
+                && !lastPos.equals(curPos)
+                && ((curHex.movementCost(this) > 0)
+                    || ((null != prevHex) && (prevHex.getLevel() != curHex.getLevel())))) {
             roll.append(new PilotingRollData(getId(), 0, "moving recklessly"));
             // ice conditions
         } else if (curHex.containsTerrain(Terrains.ICE)) {
@@ -8064,7 +8062,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                 roll.addModifier(movementMode == EntityMovementMode.TRACKED? 1 : 2, "ice");
             }
             if (conditions.isSleeting()
-                    || conditions.getFog() == PlanetaryConditions.FOG_HEAVY
+                    || conditions.isFogHeavy()
                     || conditions.isHeavyRain()
                     || conditions.isGustingRain()
                     || conditions.isDownpour()) {

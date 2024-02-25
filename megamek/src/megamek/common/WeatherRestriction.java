@@ -16,6 +16,7 @@
 package megamek.common;
 
 import megamek.common.enums.Atmosphere;
+import megamek.common.enums.Fog;
 import megamek.common.enums.Weather;
 import megamek.common.enums.Wind;
 
@@ -38,10 +39,10 @@ public class WeatherRestriction {
         fogRestrictions = new HashMap<>();
 
         WeatherRestriction lightFogRestriction = new WeatherRestriction(Atmosphere.STANDARD.ordinal(), null);
-        fogRestrictions.put(PlanetaryConditions.FOG_LIGHT, lightFogRestriction);
+        fogRestrictions.put(Fog.FOG_LIGHT.ordinal(), lightFogRestriction);
 
         WeatherRestriction heavyFogRestriction = new WeatherRestriction(Atmosphere.STANDARD.ordinal(), null);
-        fogRestrictions.put(PlanetaryConditions.FOG_HEAVY, heavyFogRestriction);
+        fogRestrictions.put(Fog.FOG_HEAVY.ordinal(), heavyFogRestriction);
 
         // init weather restrictions
         weatherRestrictions = new HashMap<>();
@@ -120,7 +121,7 @@ public class WeatherRestriction {
      * Currently validates fog, weather (precipitation) and wind strength
      */
     public static boolean IsRestricted(PlanetaryConditions conditions) {
-        return IsFogRestricted(conditions.getFog(), conditions.getAtmosphere().ordinal(), conditions.getTemperature()) ||
+        return IsFogRestricted(conditions.getFog().ordinal(), conditions.getAtmosphere().ordinal(), conditions.getTemperature()) ||
                 IsWeatherRestricted(conditions.getWeather().ordinal(), conditions.getAtmosphere().ordinal(), conditions.getTemperature()) ||
                 IsWindRestricted(conditions.getWind().ordinal(), conditions.getAtmosphere().ordinal(), conditions.getTemperature());
     }

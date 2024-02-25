@@ -2990,18 +2990,19 @@ public class MoveStep implements Serializable {
                 && !carefulExempt) {
             // Fog
             switch (conditions.getFog()) {
-                case PlanetaryConditions.FOG_LIGHT:
+                case FOG_LIGHT:
                     if (!isFogSpecialist) {
                         mp += 1;
                     }
                     break;
-                case PlanetaryConditions.FOG_HEAVY:
+                case FOG_HEAVY:
                     if (!isFogSpecialist) {
                         mp += 2;
                     } else {
                         mp += 1;
                     }
                     break;
+                default:
             }
 
             // Light

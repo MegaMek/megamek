@@ -3499,7 +3499,7 @@ public class GameManager implements IGameManager {
                 Report rLight = new Report(1032, Report.PUBLIC);
                 rLight.add(conditions.getLight().toString());
                 Report rVis = new Report(1033, Report.PUBLIC);
-                rVis.add(conditions.getFogDisplayableName());
+                rVis.add(conditions.getFog().toString());
                 addReport(rWindDir);
                 addReport(rWindStr);
                 addReport(rWeather);

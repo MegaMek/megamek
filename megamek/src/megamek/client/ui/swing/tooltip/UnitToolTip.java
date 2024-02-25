@@ -1242,6 +1242,7 @@ public final class UnitToolTip {
                                               boolean showBV, boolean showSensors, boolean showSeenBy) {
         Game game = entity.getGame();
         GameOptions gameOptions = game.getOptions();
+        PlanetaryConditions conditions = game.getPlanetaryConditions();
         boolean isGunEmplacement = entity instanceof GunEmplacement;
         String result = "";
 
@@ -1497,7 +1498,6 @@ public final class UnitToolTip {
         }
 
         if (showSensors) {
-            PlanetaryConditions conditions = game.getPlanetaryConditions();
             // If sensors, display what sensors this unit is using
             if (gameOptions.booleanOption(OptionsConstants.ADVANCED_TACOPS_SENSORS)
                     || (gameOptions.booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS)) && entity.isSpaceborne()) {

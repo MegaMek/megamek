@@ -2858,7 +2858,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         // weather mods (not in space)
         int weatherMod = game.getPlanetaryConditions().getWeatherHitPenalty(ae);
         if ((weatherMod != 0) && !game.getBoard().inSpace()) {
-            weatherToHitMods.addModifier(weatherMod, game.getPlanetaryConditions().getWeatherDisplayableName());
+            weatherToHitMods.addModifier(weatherMod, game.getPlanetaryConditions().getWeather().toString());
         }
 
         // wind mods (not in space)
@@ -5163,6 +5163,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
     }
 
     public static ToHitData processAttackerSPAs(ToHitData toHit, Entity ae, Targetable target, Mounted weapon, Game game){
+        PlanetaryConditions conditions = game.getPlanetaryConditions();
 
         // blood stalker SPA
         if (ae.getBloodStalkerTarget() > Entity.NONE) {
@@ -5229,7 +5230,6 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             // Could be pattern-matching instanceof in Java 17
             if (target instanceof Entity) {
                 Entity te = (Entity) target;
-                PlanetaryConditions conditions = game.getPlanetaryConditions();
 
                 // Fog Specialist
                 if (ae.getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_FOG)
@@ -5251,54 +5251,54 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
 
                 // Rain Specialist
                 if (ae.getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_RAIN)) {
-                    if ((conditions.getWeather() == PlanetaryConditions.WE_LIGHT_RAIN)
+                    if (conditions.isLightRain()
                             && ae.isConventionalInfantry()) {
                         toHit.addModifier(-1, Messages.getString("WeaponAttackAction.RainSpec"));
                     }
 
-                    if ((conditions.getWeather() == PlanetaryConditions.WE_MOD_RAIN)
-                            || (conditions.getWeather() == PlanetaryConditions.WE_HEAVY_RAIN)
-                            || (conditions.getWeather() == PlanetaryConditions.WE_GUSTING_RAIN)
-                            || (conditions.getWeather() == PlanetaryConditions.WE_DOWNPOUR)) {
+                    if (conditions.isModerateRain()
+                            || conditions.isHeavyRain()
+                            || conditions.isGustingRain()
+                            || conditions.isDownpour()) {
                         toHit.addModifier(-1, Messages.getString("WeaponAttackAction.RainSpec"));
                     }
                 }
 
                 // Snow Specialist
                 if (ae.getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_SNOW)) {
-                    if ((conditions.getWeather() == PlanetaryConditions.WE_LIGHT_SNOW)
+                    if (conditions.isLightSnow()
                             && ae.isConventionalInfantry()) {
                         toHit.addModifier(-1, Messages.getString("WeaponAttackAction.SnowSpec"));
                     }
 
-                    if ((conditions.getWeather() == PlanetaryConditions.WE_ICE_STORM)
+                    if (conditions.isIceStorm()
                             && wtype.hasFlag(WeaponType.F_MISSILE)) {
                         toHit.addModifier(-1, Messages.getString("WeaponAttackAction.SnowSpec"));
                     }
 
-                    if ((conditions.getWeather() == PlanetaryConditions.WE_SLEET)
-                            || (conditions.getWeather() == PlanetaryConditions.WE_SNOW_FLURRIES)
-                            || (conditions.getWeather() == PlanetaryConditions.WE_MOD_SNOW)
-                            || (conditions.getWeather() == PlanetaryConditions.WE_HEAVY_SNOW)) {
+                    if (conditions.isSleet()
+                            || conditions.isSnowFlurries()
+                            || conditions.isModerateSnow()
+                            || conditions.isHeavySnow()) {
                         toHit.addModifier(-1, Messages.getString("WeaponAttackAction.SnowSpec"));
                     }
                 }
 
                 // Wind Specialist
                 if (ae.getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_WIND)) {
-                    if ((conditions.getWeather() == PlanetaryConditions.WI_MOD_GALE)
+                    if ((conditions.getWindStrength() == PlanetaryConditions.WI_MOD_GALE)
                             && wtype.hasFlag(WeaponType.F_MISSILE)) {
                         toHit.addModifier(-1, Messages.getString("WeaponAttackAction.SnowSpec"));
                     }
 
                     if (wtype.hasFlag(WeaponType.F_MISSILE) && wtype.hasFlag(WeaponType.F_BALLISTIC)
-                            && ((conditions.getWeather() == PlanetaryConditions.WI_STRONG_GALE)
-                            || (conditions.getWeather() == PlanetaryConditions.WI_STORM))) {
+                            && ((conditions.getWindStrength() == PlanetaryConditions.WI_STRONG_GALE)
+                            || (conditions.getWindStrength() == PlanetaryConditions.WI_STORM))) {
                         toHit.addModifier(-1, Messages.getString("WeaponAttackAction.WindSpec"));
                     }
 
-                    if ((conditions.getWeather() == PlanetaryConditions.WI_TORNADO_F13)
-                            || (conditions.getWeather() == PlanetaryConditions.WI_TORNADO_F4)) {
+                    if ((conditions.getWindStrength() == PlanetaryConditions.WI_TORNADO_F13)
+                            || (conditions.getWindStrength() == PlanetaryConditions.WI_TORNADO_F4)) {
                         toHit.addModifier(-1, Messages.getString("WeaponAttackAction.WindSpec"));
                     }
                 }

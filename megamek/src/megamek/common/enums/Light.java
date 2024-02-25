@@ -35,8 +35,7 @@ public enum Light {
     private final String indicator;
 
     Light(final String externalId, final String name, final String indicator) {
-        final ResourceBundle resources = ResourceBundle.getBundle("megamek.common.messages",
-                MegaMek.getMMOptions().getLocale());
+        final ResourceBundle resources = ResourceBundle.getBundle("megamek.common.messages", MegaMek.getMMOptions().getLocale());
         this.externalId = externalId;
         this.name = resources.getString(name);
         this.indicator = resources.getString(indicator);

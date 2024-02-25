@@ -19,6 +19,7 @@ package megamek.common;
 import java.io.Serializable;
 
 import megamek.common.enums.Light;
+import megamek.common.enums.Weather;
 import org.apache.logging.log4j.LogManager;
 
 /**
@@ -29,57 +30,7 @@ public class PlanetaryConditions implements Serializable {
 
     private static final long serialVersionUID = 6838624193286089781L;
 
-    // Weather
-    public static final int WE_NONE             = 0;
-    public static final int WE_LIGHT_RAIN       = 1;
-    public static final int WE_MOD_RAIN         = 2;
-    public static final int WE_HEAVY_RAIN       = 3;
-    public static final int WE_GUSTING_RAIN     = 4;
-    public static final int WE_DOWNPOUR         = 5;
-    public static final int WE_LIGHT_SNOW       = 6;
-    public static final int WE_MOD_SNOW         = 7;
-    public static final int WE_SNOW_FLURRIES    = 8;
-    public static final int WE_HEAVY_SNOW       = 9;
-    public static final int WE_SLEET            = 10;
-    public static final int WE_ICE_STORM        = 11;
-    public static final int WE_LIGHT_HAIL       = 12;// NYI
-    public static final int WE_HEAVY_HAIL       = 13;// NYI
-    public static final int WE_LIGHTNING_STORM  = 14;// NYI
-    //  public static final int WE_BLIZZARD         = 11; does not exist anymore
     public static final int BLACK_ICE_TEMP      = -30;
-    private static final String MSG_NAME_WEATHER_CLEAR = Messages.getString("PlanetaryConditions.DisplayableName.Weather.Clear");
-    private static final String MSG_NAME_WEATHER_LIGHTRAIN = Messages.getString("PlanetaryConditions.DisplayableName.Weather.Light Rain");
-    private static final String MSG_NAME_WEATHER_MODRAIN = Messages.getString("PlanetaryConditions.DisplayableName.Weather.Moderate Rain");
-    private static final String MSG_NAME_WEATHER_HEAVYGRAIN = Messages.getString("PlanetaryConditions.DisplayableName.Weather.Heavy Rain");
-    private static final String MSG_NAME_WEATHER_GUSTINGRAIN = Messages.getString("PlanetaryConditions.DisplayableName.Weather.Gusting Rain");
-    private static final String MSG_NAME_WEATHER_TORRDOWNPOUR = Messages.getString("PlanetaryConditions.DisplayableName.Weather.Torrential Downpour");
-    private static final String MSG_NAME_WEATHER_LIGHTSNOWFALL = Messages.getString("PlanetaryConditions.DisplayableName.Weather.Light Snowfall");
-    private static final String MSG_NAME_WEATHER_MODSNOWFALL = Messages.getString("PlanetaryConditions.DisplayableName.Weather.Moderate Snowfall");
-    private static final String MSG_NAME_WEATHER_SNOWFLUFFIES = Messages.getString("PlanetaryConditions.DisplayableName.Weather.Snow Flurries");
-    private static final String MSG_NAME_WEATHER_HEAVYSNOWFALL = Messages.getString("PlanetaryConditions.DisplayableName.Weather.Heavy Snowfall");
-    private static final String MSG_NAME_WEATHER_SLEET = Messages.getString("PlanetaryConditions.DisplayableName.Weather.Sleet");
-    private static final String MSG_NAME_WEATHER_ICESTORM = Messages.getString("PlanetaryConditions.DisplayableName.Weather.Ice Storm");
-    private static String[] weatherNames = { MSG_NAME_WEATHER_CLEAR, MSG_NAME_WEATHER_LIGHTRAIN, MSG_NAME_WEATHER_MODRAIN,
-            MSG_NAME_WEATHER_HEAVYGRAIN, MSG_NAME_WEATHER_GUSTINGRAIN, MSG_NAME_WEATHER_TORRDOWNPOUR,
-            MSG_NAME_WEATHER_LIGHTSNOWFALL, MSG_NAME_WEATHER_MODSNOWFALL, MSG_NAME_WEATHER_SNOWFLUFFIES,
-            MSG_NAME_WEATHER_HEAVYSNOWFALL, MSG_NAME_WEATHER_SLEET, MSG_NAME_WEATHER_ICESTORM };//, "Light Hail", "Heavy Hail", "Lightning Storm" };
-    public static final int WE_SIZE = weatherNames.length;
-    private static final String MSG_INDICATOR_WEATHER_NONE = Messages.getString("PlanetaryConditions.Indicator.Weather.None");
-    private static final String MSG_INDICATOR_WEATHER_LIGHT_RAIN = Messages.getString("PlanetaryConditions.Indicator.Weather.LightRain");
-    private static final String MSG_INDICATOR_WEATHER_MOD_RAIN = Messages.getString("PlanetaryConditions.Indicator.Weather.ModRain");
-    private static final String MSG_INDICATOR_WEATHER_HEAVY_RAIN = Messages.getString("PlanetaryConditions.Indicator.Weather.HeavyRain");
-    private static final String MSG_INDICATOR_WEATHER_GUSTING_RAIN = Messages.getString("PlanetaryConditions.Indicator.Weather.GustingRain");
-    private static final String MSG_INDICATOR_WEATHER_DOWNPOUR = Messages.getString("PlanetaryConditions.Indicator.Weather.Downpour");
-    private static final String MSG_INDICATOR_WEATHER_LIGHT_SNOW = Messages.getString("PlanetaryConditions.Indicator.Weather.LightSnow");
-    private static final String MSG_INDICATOR_WEATHER_MOD_SNOW = Messages.getString("PlanetaryConditions.Indicator.Weather.ModSnow");
-    private static final String MSG_INDICATOR_WEATHER_SNOW_FLURRIES = Messages.getString("PlanetaryConditions.Indicator.Weather.SnowFlurries");
-    private static final String MSG_INDICATOR_WEATHER_HEAVY_SNOW = Messages.getString("PlanetaryConditions.Indicator.Weather.HeavySnow");
-    private static final String MSG_INDICATOR_WEATHER_SLEET = Messages.getString("PlanetaryConditions.Indicator.Weather.Sleet");
-    private static final String MSG_INDICATOR_WEATHER_ICE_STORM = Messages.getString("PlanetaryConditions.Indicator.Weather.IceStorm");
-    private static String[] weatherIndicators = { MSG_INDICATOR_WEATHER_NONE, MSG_INDICATOR_WEATHER_LIGHT_RAIN, MSG_INDICATOR_WEATHER_MOD_RAIN,
-            MSG_INDICATOR_WEATHER_HEAVY_RAIN, MSG_INDICATOR_WEATHER_GUSTING_RAIN, MSG_INDICATOR_WEATHER_DOWNPOUR,
-            MSG_INDICATOR_WEATHER_LIGHT_SNOW, MSG_INDICATOR_WEATHER_MOD_SNOW,  MSG_INDICATOR_WEATHER_SNOW_FLURRIES,
-            MSG_INDICATOR_WEATHER_HEAVY_SNOW, MSG_INDICATOR_WEATHER_SLEET, MSG_INDICATOR_WEATHER_ICE_STORM};
 
     // Wind
     public static final int WI_NONE        = 0;
@@ -190,8 +141,8 @@ public class PlanetaryConditions implements Serializable {
 
     // set up the specific conditions
     private Light light = Light.DAY;
-    private int weatherConditions = WE_NONE;
-    private int oldWeatherConditions = WE_NONE;
+    private Weather weather = Weather.WEATHER_NONE;
+    private Weather oldWeather = Weather.WEATHER_NONE;
     private int windStrength = WI_NONE;
     private int windDirection = DIR_RANDOM;
     private boolean shiftWindDirection = false;
@@ -229,7 +180,7 @@ public class PlanetaryConditions implements Serializable {
     /** Creates new PlanetaryConditions that is a duplicate of another */
     public PlanetaryConditions(PlanetaryConditions other) {
         light = other.light;
-        weatherConditions = other.weatherConditions;
+        weather = other.weather;
         windStrength = other.windStrength;
         windDirection = other.windDirection;
         shiftWindDirection = other.shiftWindDirection;
@@ -254,7 +205,7 @@ public class PlanetaryConditions implements Serializable {
 
     public void alterConditions(PlanetaryConditions conditions) {
         light = conditions.light;
-        weatherConditions = conditions.weatherConditions;
+        weather = conditions.weather;
         windStrength = conditions.windStrength;
         windDirection = conditions.windDirection;
         shiftWindDirection = conditions.shiftWindDirection;
@@ -341,12 +292,77 @@ public class PlanetaryConditions implements Serializable {
         return Light.isLighted(light);
     }
 
-    public static String getWeatherDisplayableName(int type) {
-        if ((type >= 0) && (type < WE_SIZE)) {
-            return weatherNames[type];
-        }
-        throw new IllegalArgumentException("Unknown weather condition");
+    public void setWeather(Weather weather) {
+        this.weather = weather;
     }
+
+    public Weather getWeather() {
+        return weather;
+    }
+
+    public boolean isWeatherNone() {
+        return Weather.isWeatherNone(weather);
+    }
+
+    public boolean isLightRain() {
+        return Weather.isLightRain(weather);
+    }
+
+    public boolean isModerateRain() {
+        return Weather.isModerateRain(weather);
+    }
+
+    public boolean isHeavyRain() {
+        return Weather.isHeavyRain(weather);
+    }
+
+    public boolean isGustingRain() {
+        return Weather.isGustingRain(weather);
+    }
+
+    public boolean isDownpour() {
+        return Weather.isDownpour(weather);
+    }
+
+    public boolean isLightSnow() {
+        return Weather.isLightSnow(weather);
+    }
+
+    public boolean isModerateSnow() {
+        return Weather.isModerateSnow(weather);
+    }
+
+    public boolean isHeavySnow() {
+        return Weather.isHeavySnow(weather);
+    }
+
+    public boolean isSnowFlurries() {
+        return Weather.isSnowFlurries(weather);
+    }
+
+    public boolean isSleet() {
+        return Weather.isSleet(weather);
+    }
+
+    public boolean isIceStorm() {
+        return Weather.isIceStorm(weather);
+    }
+
+    public boolean isLightHail() {
+        return Weather.isLightHail(weather);
+    }
+
+    public boolean isHeaveHail() {
+        return Weather.isHeaveHail(weather);
+    }
+
+    public boolean isLightningStorm() {
+        return Weather.isLightningStorm(weather);
+    }
+
+
+
+
 
     public static String getTemperatureDisplayableName(int temp) {
         if (isExtremeTemperature(temp) && (temp > 0)) {
@@ -390,10 +406,6 @@ public class PlanetaryConditions implements Serializable {
         return getWindDirDisplayableName(windDirection);
     }
 
-    public String getWeatherDisplayableName() {
-        return getWeatherDisplayableName(weatherConditions);
-    }
-
     public String getWindDisplayableName() {
         return getWindDisplayableName(windStrength);
     }
@@ -432,17 +444,6 @@ public class PlanetaryConditions implements Serializable {
         return penalty;
     }
 
-    /** Returns true when the given weather is prohibited for temperatures of 30 degC and more. */
-    public static boolean requiresLowTemp(int weather) {
-        return weather == WE_LIGHT_HAIL ||
-                weather == WE_HEAVY_HAIL ||
-                weather == WE_LIGHT_SNOW ||
-                weather == WE_SLEET ||
-                weather == WE_SNOW_FLURRIES ||
-                weather == WE_HEAVY_SNOW ||
-                weather == WE_ICE_STORM ||
-                weather == WE_MOD_SNOW;
-    }
 
     /**
      * heat bonus to hit for being overheated in darkness
@@ -466,15 +467,15 @@ public class PlanetaryConditions implements Serializable {
      * to-hit penalty for weather
      */
     public int getWeatherHitPenalty(Entity en) {
-        if (((weatherConditions == WE_LIGHT_RAIN) || (weatherConditions == WE_LIGHT_SNOW))
+        if ((isLightRain() || isLightSnow())
                 && en.isConventionalInfantry()) {
             return 1;
-        } else if ((weatherConditions == WE_MOD_RAIN) || (weatherConditions == WE_HEAVY_RAIN)
-                || (weatherConditions == WE_MOD_SNOW) || (weatherConditions == WE_HEAVY_SNOW)
-                || (weatherConditions == WE_SLEET) || (weatherConditions == WE_GUSTING_RAIN)
-                || (weatherConditions == WE_SNOW_FLURRIES)) {
+        } else if (isModerateRain() || isHeavyRain()
+                || isModerateSnow() || isHeavySnow()
+                || isSleet() || isGustingRain()
+                || isSnowFlurries()) {
             return 1;
-        } else if (weatherConditions == WE_DOWNPOUR) {
+        } else if(isDownpour()) {
             return 2;
         } else  {
             return 0;
@@ -485,10 +486,9 @@ public class PlanetaryConditions implements Serializable {
      * piloting penalty for weather
      */
     public int getWeatherPilotPenalty() {
-        if ((weatherConditions == WE_HEAVY_RAIN) || (weatherConditions == WE_HEAVY_SNOW)
-                || (weatherConditions == WE_GUSTING_RAIN)) {
+        if (isHeavyRain() || isHeavySnow() || isGustingRain()) {
             return 1;
-        } else if (weatherConditions == WE_DOWNPOUR) {
+        } else if (isDownpour()) {
             return 2;
         } else {
             return 0;
@@ -590,18 +590,17 @@ public class PlanetaryConditions implements Serializable {
     public int getIgniteModifiers() {
         int mod = 0;
 
-        if ((weatherConditions == WE_LIGHT_RAIN) || (weatherConditions == WE_MOD_RAIN)) {
+        if (isLightRain() || isModerateRain()) {
             mod += 1;
         }
 
-        if ((weatherConditions == WE_HEAVY_RAIN) || (weatherConditions == WE_DOWNPOUR)
-                || (weatherConditions == WE_LIGHT_SNOW) || (weatherConditions == WE_MOD_SNOW)
-                || (weatherConditions == WE_GUSTING_RAIN) || (weatherConditions == WE_SNOW_FLURRIES)) {
+        if (isHeavyRain() || isDownpour()
+                || isLightSnow() || isModerateSnow()
+                ||isGustingRain() || isSnowFlurries()) {
             mod += 2;
         }
 
-        if ((weatherConditions == WE_HEAVY_SNOW)
-                || (weatherConditions == WE_LIGHT_HAIL) || (weatherConditions == WE_HEAVY_HAIL)) {
+        if (isHeavySnow() || isLightHail() || isHeaveHail()) {
             mod += 3;
         }
 
@@ -609,7 +608,7 @@ public class PlanetaryConditions implements Serializable {
             mod += 2;
         }
 
-        if ((windStrength == WI_STRONG_GALE) || (windStrength == WI_STORM) || (weatherConditions == WE_ICE_STORM)) {
+        if ((windStrength == WI_STRONG_GALE) || (windStrength == WI_STORM) || isIceStorm()) {
             mod += 4;
         }
 
@@ -628,24 +627,24 @@ public class PlanetaryConditions implements Serializable {
      */
     public boolean putOutFire() {
         int roll = Compute.d6(2);
-        switch (weatherConditions) {
-            case WE_LIGHT_HAIL:
-            case WE_LIGHT_RAIN:
-            case WE_LIGHT_SNOW:
+        switch (weather) {
+            case LIGHT_HAIL:
+            case LIGHT_RAIN:
+            case LIGHT_SNOW:
                 roll = roll + 1;
                 break;
-            case WE_HEAVY_HAIL:
-            case WE_MOD_RAIN:
-            case WE_MOD_SNOW:
-            case WE_SNOW_FLURRIES:
+            case HEAVY_HAIL:
+            case MOD_RAIN:
+            case MOD_SNOW:
+            case SNOW_FLURRIES:
                 roll = roll + 2;
                 break;
-            case WE_HEAVY_RAIN:
-            case WE_GUSTING_RAIN:
-            case WE_HEAVY_SNOW:
+            case HEAVY_RAIN:
+            case GUSTING_RAIN:
+            case HEAVY_SNOW:
                 roll = roll + 3;
                 break;
-            case WE_DOWNPOUR:
+            case DOWNPOUR:
                 roll = roll + 4;
                 break;
             default:
@@ -898,13 +897,13 @@ public class PlanetaryConditions implements Serializable {
             } else {
                 otherRange = 2;
             }
-        } else if ((weatherConditions == WE_HEAVY_HAIL)
-                || (weatherConditions == WE_SLEET)
-                || (weatherConditions == WE_HEAVY_SNOW)
+        } else if (isHeaveHail()
+                || isSleet()
+                || isHeavySnow()
                 || (blowingSand && (windStrength >= WI_MOD_GALE))
-                || (weatherConditions == WE_GUSTING_RAIN)
-                || (weatherConditions == WE_ICE_STORM)
-                || (weatherConditions == WE_DOWNPOUR)) {
+                || isGustingRain()
+                || isIceStorm()
+                || isDownpour()) {
             if (isMechVee || (isAero && (en.getAltitude() < 2))) {
                 otherRange = 10;
             } else if (isAero) {
@@ -914,9 +913,9 @@ public class PlanetaryConditions implements Serializable {
             } else {
                 otherRange = 5;
             }
-        } else if ((weatherConditions == WE_HEAVY_RAIN)
-                || (weatherConditions == WE_SNOW_FLURRIES)
-                || (weatherConditions == WE_MOD_SNOW) && (windStrength >= WI_MOD_GALE)) {
+        } else if (isHeavyRain()
+                || isSnowFlurries()
+                || isModerateSnow() && (windStrength >= WI_MOD_GALE)) {
             if (isMechVee || (isAero && (en.getAltitude() < 2))) {
                 otherRange = 15;
             } else if (isAero) {
@@ -926,8 +925,8 @@ public class PlanetaryConditions implements Serializable {
             } else {
                 otherRange = 8;
             }
-        } else if ((weatherConditions == WE_MOD_SNOW)
-                || (weatherConditions == WE_MOD_RAIN)) {
+        } else if (isModerateSnow()
+                || isModerateRain()) {
             if (isMechVee || (isAero && (en.getAltitude() < 2))) {
                 otherRange = 20;
             } else if (isAero) {
@@ -937,9 +936,9 @@ public class PlanetaryConditions implements Serializable {
             } else {
                 otherRange = 10;
             }
-        } else if ((weatherConditions == WE_LIGHT_SNOW)
-                || (weatherConditions == WE_LIGHT_RAIN)
-                || (weatherConditions == WE_LIGHT_HAIL)
+        } else if (isLightSnow()
+                || isLightRain()
+                || isLightHail()
                 || (fog == FOG_LIGHT)) {
             if (isMechVee || (isAero && (en.getAltitude() < 2))) {
                 otherRange = 30;
@@ -979,18 +978,6 @@ public class PlanetaryConditions implements Serializable {
             default:
                 return 3;
         }
-    }
-
-    public void setWeather(int type) {
-        if ((type < 0) || (type >= WE_SIZE)) {
-            LogManager.getLogger().error(String.format("Invalid weather type supplied: %d", type));
-        } else {
-            weatherConditions = type;
-        }
-    }
-
-    public int getWeather() {
-        return weatherConditions;
     }
 
     public void setWindStrength(int type) {
@@ -1115,36 +1102,38 @@ public class PlanetaryConditions implements Serializable {
     }
 
     private void setTempFromWeather() {
-        switch (weatherConditions) {
-            case WE_SLEET:
-            case WE_LIGHT_SNOW:
+        switch (weather) {
+            case SLEET:
+            case LIGHT_SNOW:
                 temperature = -40;
                 break;
-            case WE_MOD_SNOW:
-            case WE_SNOW_FLURRIES:
-            case WE_HEAVY_SNOW:
+            case MOD_SNOW:
+            case SNOW_FLURRIES:
+            case HEAVY_SNOW:
                 temperature = -50;
                 break;
-            case WE_ICE_STORM:
+            case ICE_STORM:
                 temperature = -60;
                 break;
+            default:
         }
     }
 
     private void setWindFromWeather() {
-        switch (weatherConditions) {
-            case WE_SLEET:
+        switch (weather) {
+            case SLEET:
                 setSleet(true);
                 break;
-            case WE_ICE_STORM:
-            case WE_SNOW_FLURRIES:
+            case ICE_STORM:
+            case SNOW_FLURRIES:
                 windStrength = WI_MOD_GALE;
                 shiftWindStrength = false;
                 break;
-            case WE_GUSTING_RAIN:
+            case GUSTING_RAIN:
                 windStrength = WI_STRONG_GALE;
                 shiftWindStrength = false;
                 break;
+            default:
         }
     }
 
@@ -1159,8 +1148,8 @@ public class PlanetaryConditions implements Serializable {
     private void doSleetCheck() {
         if (isSleeting && windStrength < WI_MOD_GALE) {
             setSleet(false);
-            weatherConditions = WE_NONE;
-            oldWeatherConditions = WE_SLEET;
+            weather = Weather.WEATHER_NONE;
+            oldWeather = Weather.SLEET;
             oldTemperature = temperature;
             temperature = 25;
         }
@@ -1168,14 +1157,14 @@ public class PlanetaryConditions implements Serializable {
             shiftWindStrength = false;
             windStrength = WI_MOD_GALE;
         }
-        if ((oldWeatherConditions == WE_SLEET)
+        if ((Weather.isSleet(oldWeather))
                 && (windStrength == WI_MOD_GALE)
                 && !isSleeting()) {
             setSleet(true);
             temperature = oldTemperature;
-            oldWeatherConditions = WE_NONE;
+            oldWeather = Weather.WEATHER_NONE;
             oldTemperature = 25;
-            weatherConditions = WE_SLEET;
+            weather = Weather.SLEET;
         }
     }
 
@@ -1240,17 +1229,6 @@ public class PlanetaryConditions implements Serializable {
 
     public String getWindDirectionIndicator() {
         return getWindDirectionIndicator(windDirection);
-    }
-
-    public String getWeatherIndicator(int type) {
-        if ((type >= 0) && (type < WE_SIZE)) {
-            return weatherIndicators[type];
-        }
-        throw new IllegalArgumentException("Unknown Weather Indicator");
-    }
-
-    public String getWeatherIndicator() {
-        return getWeatherIndicator(weatherConditions);
     }
 
     public String getAtmosphereIndicator(int type) {

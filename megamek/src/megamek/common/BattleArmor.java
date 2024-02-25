@@ -418,6 +418,7 @@ public class BattleArmor extends Infantry {
 
     @Override
     public int getWalkMP(MPCalculationSetting mpCalculationSetting) {
+        PlanetaryConditions conditions = game.getPlanetaryConditions();
         int mp = getOriginalWalkMP();
 
         if (hasMyomerBooster()) {
@@ -440,18 +441,18 @@ public class BattleArmor extends Infantry {
         }
 
         if ((!mpCalculationSetting.ignoreWeather) && (null != game)) {
-            int weatherMod = game.getPlanetaryConditions().getMovementMods(this);
+            int weatherMod = conditions.getMovementMods(this);
             mp = Math.max(mp + weatherMod, 0);
 
-            if ((game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_GUSTING_RAIN)
+            if (conditions.isGustingRain()
                     && getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_RAIN)) {
                 mp += 1;
             }
 
             if (getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_WIND)
-                    && (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_NONE)
-                    && ((game.getPlanetaryConditions().getWindStrength() == PlanetaryConditions.WI_STRONG_GALE)
-                    || (game.getPlanetaryConditions().getWindStrength() == PlanetaryConditions.WI_STORM))) {
+                    && conditions.isWeatherNone()
+                    && ((conditions.getWindStrength() == PlanetaryConditions.WI_STRONG_GALE)
+                    || (conditions.getWindStrength() == PlanetaryConditions.WI_STORM))) {
                 mp += 1;
             }
         }

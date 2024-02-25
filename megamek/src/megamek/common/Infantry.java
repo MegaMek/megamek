@@ -351,6 +351,7 @@ public class Infantry extends Entity {
 
     @Override
     public int getWalkMP(MPCalculationSetting mpCalculationSetting) {
+        PlanetaryConditions conditions = game.getPlanetaryConditions();
         int mp = getOriginalWalkMP();
         // Beast mounted infantry depends entirely on the creature
         if (mount == null) {
@@ -385,10 +386,10 @@ public class Infantry extends Entity {
         }
 
         if (!mpCalculationSetting.ignoreWeather && (null != game)) {
-            int weatherMod = game.getPlanetaryConditions().getMovementMods(this);
+            int weatherMod = conditions.getMovementMods(this);
             mp = Math.max(mp + weatherMod, 0);
 
-            if ((game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_GUSTING_RAIN)
+            if (conditions.isGustingRain()
                     && getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_RAIN)) {
                 if ((mp !=0) || getMovementMode().isMotorizedInfantry()) {
                     mp += 1;
@@ -396,20 +397,20 @@ public class Infantry extends Entity {
             }
 
             if (getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_SNOW)) {
-                if (((game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_SNOW_FLURRIES)
-                        || (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_ICE_STORM))
+                if ((conditions.isSnowFlurries()
+                            || conditions.isIceStorm())
                         && (getOriginalWalkMP() != 0)) {
                     mp += 1;
                 }
             }
 
             if (getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_WIND)
-                    && (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_NONE)) {
-                if (game.getPlanetaryConditions().getWindStrength() == PlanetaryConditions.WI_MOD_GALE) {
+                    && conditions.isWeatherNone()) {
+                if (conditions.getWindStrength() == PlanetaryConditions.WI_MOD_GALE) {
                     mp += 1;
                 }
 
-                if ((game.getPlanetaryConditions().getWindStrength() == PlanetaryConditions.WI_STRONG_GALE)
+                if ((conditions.getWindStrength() == PlanetaryConditions.WI_STRONG_GALE)
                         && ((mp != 0) || getMovementMode().isMotorizedInfantry())) {
                     mp += 1;
                 }
@@ -436,6 +437,7 @@ public class Infantry extends Entity {
 
     @Override
     public int getJumpMP(MPCalculationSetting mpCalculationSetting) {
+        PlanetaryConditions conditions = game.getPlanetaryConditions();
         int mp = hasUMU() ? 0 : getOriginalJumpMP();
         if (mount == null) {
             if ((getSecondaryWeaponsPerSquad() > 1)
@@ -454,7 +456,7 @@ public class Infantry extends Entity {
         }
 
         if (!mpCalculationSetting.ignoreWeather && (null != game)) {
-            int windCond = game.getPlanetaryConditions().getWindStrength();
+            int windCond = conditions.getWindStrength();
             if (windCond >= PlanetaryConditions.WI_STRONG_GALE) {
                 return 0;
             } else if ((windCond == PlanetaryConditions.WI_MOD_GALE)
@@ -463,8 +465,8 @@ public class Infantry extends Entity {
             }
 
             if (getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_SNOW)) {
-                if ((game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_SNOW_FLURRIES)
-                        && (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_ICE_STORM)) {
+                if (conditions.isSnowFlurries()
+                        && conditions.isIceStorm()) {
                     mp += 1;
                 }
             }

@@ -18,6 +18,7 @@ package megamek.common.util;
 import megamek.client.bot.princess.CardinalEdge;
 import megamek.codeUtilities.MathUtility;
 import megamek.common.*;
+import megamek.common.enums.Weather;
 import megamek.common.util.generator.ElevationGenerator;
 import megamek.common.util.generator.SimplexGenerator;
 
@@ -1110,14 +1111,14 @@ public class BoardUtilities {
     /*
      * adjust the board based on weather conditions
      */
-    public static void addWeatherConditions(Board board, int weatherCond, int windCond) {
+    public static void addWeatherConditions(Board board, Weather weatherCond, int windCond) {
         for (int x = 0; x < board.getWidth(); x++) {
             for (int y = 0; y < board.getHeight(); y++) {
                 Coords c = new Coords(x, y);
                 Hex hex = board.getHex(c);
 
                 //moderate rain - mud in clear hexes, depth 0 water, and dirt roads (not implemented yet)
-                if (weatherCond == PlanetaryConditions.WE_MOD_RAIN) {
+                if (Weather.isModerateRain(weatherCond)) {
                     if ((hex.terrainsPresent() == 0) || (hex.containsTerrain(Terrains.WATER) && (hex.depth() == 0))) {
                         hex.addTerrain(new Terrain(Terrains.MUD, 1));
                         if (hex.containsTerrain(Terrains.WATER)) {
@@ -1128,8 +1129,8 @@ public class BoardUtilities {
 
                 //heavy rain - mud in all hexes except buildings, depth 1+ water, and non-dirt roads
                 //rapids in all depth 1+ water
-                if ((weatherCond == PlanetaryConditions.WE_HEAVY_RAIN)
-                        || (weatherCond == PlanetaryConditions.WE_GUSTING_RAIN)) {
+                if (Weather.isHeavyRain(weatherCond)
+                        || Weather.isGustingRain(weatherCond)) {
                     if (hex.containsTerrain(Terrains.WATER) && !hex.containsTerrain(Terrains.RAPIDS) && (hex.depth() > 0)) {
                         hex.addTerrain(new Terrain(Terrains.RAPIDS, 1));
                     } else if (!hex.containsTerrain(Terrains.BUILDING)
@@ -1144,7 +1145,7 @@ public class BoardUtilities {
 
                 //torrential downpour - mud in all hexes except buildings, depth 1+ water, and non-dirt roads
                 //torrent in all depth 1+ water, swamps in all depth 0 water hexes
-                if (weatherCond == PlanetaryConditions.WE_DOWNPOUR) {
+                if (Weather.isDownpour(weatherCond)) {
                     if (hex.containsTerrain(Terrains.WATER) && !(hex.terrainLevel(Terrains.RAPIDS) > 1) && (hex.depth() > 0)) {
                         hex.addTerrain(new Terrain(Terrains.RAPIDS, 2));
                     } else if (hex.containsTerrain(Terrains.WATER)) {

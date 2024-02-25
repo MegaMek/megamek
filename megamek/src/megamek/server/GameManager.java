@@ -3492,7 +3492,7 @@ public class GameManager implements IGameManager {
                 rWindStr.add(game.getPlanetaryConditions().getWindDisplayableName());
                 rWindStr.newlines = 0;
                 Report rWeather = new Report(1031, Report.PUBLIC);
-                rWeather.add(game.getPlanetaryConditions().getWeatherDisplayableName());
+                rWeather.add(game.getPlanetaryConditions().getWeather().toString());
                 rWeather.newlines = 0;
                 Report rLight = new Report(1032, Report.PUBLIC);
                 rLight.add(game.getPlanetaryConditions().getLight().toString());
@@ -7938,7 +7938,7 @@ public class GameManager implements IGameManager {
             int minTemp = -30;
             boolean useBlackIce = game.getOptions().booleanOption(OptionsConstants.ADVANCED_BLACK_ICE);
             boolean goodTemp = game.getPlanetaryConditions().getTemperature() <= minTemp;
-            boolean goodWeather = game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_ICE_STORM;
+            boolean goodWeather = game.getPlanetaryConditions().isIceStorm();
             if (isPavementStep && ((useBlackIce && goodTemp) || goodWeather)) {
                 if (!curHex.containsTerrain(Terrains.BLACK_ICE)) {
                     int blackIceChance = Compute.d6(1);
@@ -8838,7 +8838,7 @@ public class GameManager implements IGameManager {
             // check for black ice
             boolean useBlackIce = game.getOptions().booleanOption(OptionsConstants.ADVANCED_BLACK_ICE);
             boolean goodTemp = game.getPlanetaryConditions().getTemperature() <= PlanetaryConditions.BLACK_ICE_TEMP;
-            boolean goodWeather = game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_ICE_STORM;
+            boolean goodWeather = game.getPlanetaryConditions().isIceStorm();
             if ((useBlackIce && goodTemp) || goodWeather) {
                 if (ServerHelper.checkEnteringBlackIce(this, curPos, curHex, useBlackIce, goodTemp, goodWeather)) {
                     rollTarget = entity.checkLandingOnBlackIce(overallMoveType, curHex);
@@ -33278,6 +33278,7 @@ public class GameManager implements IGameManager {
                                                      boolean autoEject, Coords targetCoords, String desc) {
         PilotingRollData rollTarget = new PilotingRollData(entity.getId(),
                 entity.getCrew().getPiloting(crewPos), desc);
+        PlanetaryConditions conditions = game.getPlanetaryConditions();
         // Per SO p26, fighters can eject as per TO rules on 196 with some exceptions
         if (entity.isProne()) {
             rollTarget.addModifier(5, "Mech is prone");
@@ -33339,35 +33340,36 @@ public class GameManager implements IGameManager {
         if (!entity.isSpaceborne()) {
             // At present, the UI lets you set these atmospheric conditions for a space battle, but it shouldn't
             // That's a fix for another day, probably when I get around to space terrain and 'weather'
-            if (game.getPlanetaryConditions().getGravity() == 0) {
+            if (conditions.getGravity() == 0) {
                 rollTarget.addModifier(3, "Zero-G");
-            } else if (game.getPlanetaryConditions().getGravity() < 0.8) {
+            } else if (conditions.getGravity() < 0.8) {
                 rollTarget.addModifier(2, "Low-G");
-            } else if (game.getPlanetaryConditions().getGravity() > 1.2) {
+            } else if (conditions.getGravity() > 1.2) {
                 rollTarget.addModifier(2, "High-G");
             }
 
             //Vacuum shouldn't apply to ASF ejection since they're designed for it, but the rules don't specify
             //High and low pressures make more sense to apply to all
-            if (game.getPlanetaryConditions().getAtmosphere() == PlanetaryConditions.ATMO_VACUUM) {
+            if (conditions.getAtmosphere() == PlanetaryConditions.ATMO_VACUUM) {
                 rollTarget.addModifier(3, "Vacuum");
-            } else if (game.getPlanetaryConditions().getAtmosphere() == PlanetaryConditions.ATMO_VHIGH) {
+            } else if (conditions.getAtmosphere() == PlanetaryConditions.ATMO_VHIGH) {
                 rollTarget.addModifier(2, "Very High Atmosphere Pressure");
-            } else if (game.getPlanetaryConditions().getAtmosphere() == PlanetaryConditions.ATMO_TRACE) {
+            } else if (conditions.getAtmosphere() == PlanetaryConditions.ATMO_TRACE) {
                 rollTarget.addModifier(2, "Trace atmosphere");
             }
         }
 
-        if ((game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_HEAVY_SNOW)
-                || (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_ICE_STORM)
-                || (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_DOWNPOUR)
-                || (game.getPlanetaryConditions().getWindStrength() == PlanetaryConditions.WI_STRONG_GALE)) {
+
+        if (conditions.isHeavySnow()
+                || conditions.isIceStorm()
+                || conditions.isDownpour()
+                || (conditions.getWindStrength() == PlanetaryConditions.WI_STRONG_GALE)) {
             rollTarget.addModifier(2, "Bad Weather");
         }
 
-        if ((game.getPlanetaryConditions().getWindStrength() >= PlanetaryConditions.WI_STORM)
-                || ((game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_HEAVY_SNOW) && (game
-                .getPlanetaryConditions().getWindStrength() == PlanetaryConditions.WI_STRONG_GALE))) {
+        if ((conditions.getWindStrength() >= PlanetaryConditions.WI_STORM)
+                || (conditions.isHeavySnow()
+                && (conditions.getWindStrength() == PlanetaryConditions.WI_STRONG_GALE))) {
             rollTarget.addModifier(3, "Really Bad Weather");
         }
         return rollTarget;

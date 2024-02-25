@@ -1432,6 +1432,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
             return;
         }
 
+        PlanetaryConditions conditions = game.getPlanetaryConditions();
         long stT = System.nanoTime();
 
         // 1) create or get the hex shadow
@@ -1457,7 +1458,6 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
 
         // Compute shadow angle based on planentary conditions.
         double[] lightDirection = {-19, 7};
-        PlanetaryConditions conditions = game.getPlanetaryConditions();
         if (conditions.isVeryDark()) {
             lightDirection = new double[]{0, 0};
         } else if (conditions.isDusk()) {

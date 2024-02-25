@@ -86,6 +86,7 @@ public class BipedMech extends Mech {
 
     @Override
     public int getWalkMP(MPCalculationSetting mpCalculationSetting) {
+        PlanetaryConditions conditions = game.getPlanetaryConditions();
         int mp = getOriginalWalkMP();
         int legsDestroyed = 0;
         int hipHits = 0;
@@ -179,12 +180,12 @@ public class BipedMech extends Mech {
         }
 
         if (!mpCalculationSetting.ignoreWeather && (null != game)) {
-            int weatherMod = game.getPlanetaryConditions().getMovementMods(this);
+            int weatherMod = conditions.getMovementMods(this);
             mp = Math.max(mp + weatherMod, 0);
 
             if (getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_WIND)
-                    && (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_NONE)
-                    && (game.getPlanetaryConditions().getWindStrength() == PlanetaryConditions.WI_TORNADO_F13)) {
+                    && conditions.isWeatherNone()
+                    && (conditions.getWindStrength() == PlanetaryConditions.WI_TORNADO_F13)) {
                 mp += 1;
             }
         }

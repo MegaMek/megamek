@@ -54,10 +54,10 @@ public class WeatherProcessor extends DynamicTerrainProcessor {
     }
 
     private void resolveWeather() {
+        PlanetaryConditions conditions = game.getPlanetaryConditions();
         Board board = game.getBoard();
         int width = board.getWidth();
         int height = board.getHeight();
-        PlanetaryConditions conditions = game.getPlanetaryConditions();
         boolean lightSnow = false;
         boolean deepSnow = false;
         boolean ice = false;
@@ -67,8 +67,8 @@ public class WeatherProcessor extends DynamicTerrainProcessor {
         }
 
         // first we need to increment the conditions
-        if (conditions.getWeather() == PlanetaryConditions.WE_MOD_SNOW
-                || conditions.getWeather() == PlanetaryConditions.WE_SNOW_FLURRIES
+        if (conditions.isModerateSnow()
+                || conditions.isSnowFlurries()
                 && game.getBoard().onGround()) {
             modSnowTurn = modSnowTurn + 1;
             if (modSnowTurn == 9) {
@@ -79,8 +79,8 @@ public class WeatherProcessor extends DynamicTerrainProcessor {
                 ice = true;
             }
         }
-        if (((conditions.getWeather() == PlanetaryConditions.WE_HEAVY_SNOW)
-                && game.getBoard().onGround())) {
+        if (conditions.isHeavySnow()
+                && game.getBoard().onGround()) {
             heavySnowTurn = heavySnowTurn + 1;
             if (heavySnowTurn == 4) {
                 lightSnow = true;
@@ -92,14 +92,14 @@ public class WeatherProcessor extends DynamicTerrainProcessor {
                 ice = true;
             }
         }
-        if (conditions.getWeather() == PlanetaryConditions.WE_SLEET
+        if (conditions.isSleet()
                 && game.getBoard().onGround()) {
             sleetTurn = sleetTurn + 1;
             if (sleetTurn == 14) {
                 ice = true;
             }
         }
-        if (conditions.getWeather() == PlanetaryConditions.WE_ICE_STORM
+        if (conditions.isIceStorm()
                 && game.getBoard().onGround()) {
             iceTurn = iceTurn + 1;
             if (iceTurn == 9) {

@@ -154,6 +154,7 @@ public class QuadVee extends QuadMech {
      * damage and various effects of vehicle motive damage.
      */
     public int getCruiseMP(MPCalculationSetting mpCalculationSetting) {
+        PlanetaryConditions conditions = game.getPlanetaryConditions();
         int mp = getOriginalWalkMP();
         if (getMotiveType() == MOTIVE_WHEEL) {
             mp++;
@@ -200,12 +201,12 @@ public class QuadVee extends QuadMech {
         }
 
         if (!mpCalculationSetting.ignoreWeather && (null != game)) {
-            int weatherMod = game.getPlanetaryConditions().getMovementMods(this);
+            int weatherMod = conditions.getMovementMods(this);
             mp = Math.max(mp + weatherMod, 0);
 
             if(getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_WIND)
-                    && (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_NONE)
-                    && (game.getPlanetaryConditions().getWindStrength() == PlanetaryConditions.WI_TORNADO_F13)) {
+                    && conditions.isWeatherNone()
+                    && (conditions.getWindStrength() == PlanetaryConditions.WI_TORNADO_F13)) {
                 mp += 1;
             }
         }

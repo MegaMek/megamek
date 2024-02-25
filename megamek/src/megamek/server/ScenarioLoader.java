@@ -21,6 +21,7 @@ import megamek.common.annotations.Nullable;
 import megamek.common.enums.GamePhase;
 import megamek.common.enums.Gender;
 import megamek.common.enums.Light;
+import megamek.common.enums.Weather;
 import megamek.common.icons.Camouflage;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.IOption;
@@ -436,7 +437,7 @@ public class ScenarioLoader {
         }
 
         if (p.containsKey(PARAM_PLANETCOND_WEATHER)) {
-            g.getPlanetaryConditions().setWeather(Integer.parseInt(p.getString(PARAM_PLANETCOND_WEATHER)));
+            g.getPlanetaryConditions().setWeather(Weather.getWeather(StringUtil.toInt(p.getString(PARAM_PLANETCOND_WEATHER), 0)));
         }
 
         if (p.containsKey(PARAM_PLANETCOND_WIND)) {

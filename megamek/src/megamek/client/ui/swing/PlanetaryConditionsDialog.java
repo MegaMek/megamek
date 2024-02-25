@@ -303,7 +303,7 @@ public class PlanetaryConditionsDialog extends ClientDialog {
         chkShiftWindStr.setSelected(conditions.shiftingWindStrength());
         fldTemp.setText(Integer.toString(conditions.getTemperature()));
         fldGrav.setText(Float.toString(conditions.getGravity()));
-        chkEMI.setSelected(conditions.hasEMI());
+        chkEMI.setSelected(conditions.isEMI());
         chkTerrainAffected.setSelected(conditions.isTerrainAffected());
         addListeners();
         refreshWindShift();
@@ -327,7 +327,8 @@ public class PlanetaryConditionsDialog extends ClientDialog {
         conditions.setShiftingWindStrength(chkShiftWindStr.isSelected());
         conditions.setTemperature(Integer.parseInt(fldTemp.getText()));
         conditions.setGravity(Float.parseFloat(fldGrav.getText()));
-        conditions.setEMI(chkEMI.isSelected());
+        EMI emi = chkEMI.isSelected() ? EMI.EMI : EMI.EMI_NONE;
+        conditions.setEMI(emi);
         conditions.setTerrainAffected(chkTerrainAffected.isSelected());
     }
 

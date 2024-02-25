@@ -112,10 +112,10 @@ public class PlanetaryConditionsOverlay extends AbstractBoardViewOverlay {
                 result.add(tmpStr);
             }
 
-            if (showDefaultConditions || (conditions.hasEMI())) {
+            if (showDefaultConditions || conditions.isEMINone()) {
                 tmpStr = (showLabel ? MSG_EMI + "  " : "");
-                tmpStr = tmpStr + (showValue ? conditions.getEMIDisplayableValue() + "  " : "");
-                tmpStr = tmpStr + (showIndicator ? conditions.getEMIIndicator() : "");
+                tmpStr = tmpStr + (showValue ? conditions.getEMI().toString() + "  " : "");
+                tmpStr = tmpStr + (showIndicator ? conditions.getEMI().getIndicator() : "");
                 result.add(tmpStr);
             }
 
@@ -137,14 +137,14 @@ public class PlanetaryConditionsOverlay extends AbstractBoardViewOverlay {
                 result.add(tmpStr);
             }
 
-            if (showDefaultConditions || !conditions.isFogNone()) {
+            if (showDefaultConditions || conditions.isFogNone()) {
                 tmpStr = (showLabel ? MSG_FOG + "  " : "");
                 tmpStr = tmpStr + (showValue ? conditions.getFog().toString() + "  " : "");
                 tmpStr = tmpStr + (showIndicator ? conditions.getFog().getIndicator() : "");
                 result.add(tmpStr);
             }
 
-            if (showDefaultConditions || conditions.isBlowingSand()) {
+            if (showDefaultConditions || conditions.isBlowingSandNone()) {
                 tmpStr = (showLabel ? MSG_BLOWINGSAND + "  " : "");
                 tmpStr = tmpStr + (showValue ? conditions.getBlowingSand().toString() + "  " : "");
                 tmpStr = tmpStr + (showIndicator ? conditions.getBlowingSand().getIndicator() : "");

@@ -72,7 +72,7 @@ public class MPodHandler extends LBXHandler {
         }
         
         
-        if (game.getPlanetaryConditions().hasEMI()) {
+        if (game.getPlanetaryConditions().isEMI()) {
             hitMod -= 2;
         }
 

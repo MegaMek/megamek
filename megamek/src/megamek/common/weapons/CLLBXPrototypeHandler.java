@@ -74,7 +74,7 @@ public class CLLBXPrototypeHandler extends LBXHandler {
             nHitsModifier -= 1;
 
             shotsHit = Compute.missilesHit(wtype.getRackSize(), nHitsModifier,
-                                           game.getPlanetaryConditions().hasEMI());
+                                           game.getPlanetaryConditions().isEMI());
         }
 
         Report r = new Report(3325);

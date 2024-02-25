@@ -33,6 +33,7 @@ public class PlanetaryConditions implements Serializable {
     // set up the specific conditions
     private BlowingSand blowingSand = BlowingSand.BLOWING_SAND_NONE;
     private BlowingSand sandStorm =  BlowingSand.BLOWING_SAND_NONE;
+    private EMI emi = EMI.EMI_NONE;
     private boolean runOnce = false;
     private Light light = Light.DAY;
     private Weather weather = Weather.WEATHER_NONE;
@@ -57,11 +58,6 @@ public class PlanetaryConditions implements Serializable {
     private static final String MSG_INDICATOR_GRAVITY_LOW= Messages.getString("PlanetaryConditions.Indicator.Gravity.Low");
     private static final String MSG_INDICATOR_GRAVITY_NORMAL = Messages.getString("PlanetaryConditions.Indicator.Gravity.Normal");
     private static final String MSG_INDICATOR_GRAVITY_HIGH = Messages.getString("PlanetaryConditions.Indicator.Gravity.High");
-    private boolean emi = false;
-    private static final String MSG_NAME_EMI_TRUE = Messages.getString("PlanetaryConditions.DisplayableName.EMI.true");
-    private static final String MSG_NAME_EMI_FALSE = Messages.getString("PlanetaryConditions.DisplayableName.EMI.false");
-    private static final String MSG_INDICATOR_EMI_TRUE = Messages.getString("PlanetaryConditions.Indicator.EMI.true");
-    private static final String MSG_INDICATOR_EMI_FALSE = Messages.getString("PlanetaryConditions.Indicator.EMI.false");
     private boolean terrainAffected = true;
 
     /**
@@ -418,6 +414,21 @@ public class PlanetaryConditions implements Serializable {
         return BlowingSand.isBlowingSand(blowingSand);
     }
 
+    public void setEMI(EMI emi) {
+        this.emi = emi;
+    }
+
+    public EMI getEMI() {
+        return emi;
+    }
+
+    public boolean isEMINone() {
+        return EMI.isEMINone(emi);
+    }
+
+    public boolean isEMI() {
+        return EMI.isEMI(emi);
+    }
 
     public static String getTemperatureDisplayableName(int temp) {
         if (isExtremeTemperature(temp) && (temp > 0)) {
@@ -1032,14 +1043,6 @@ public class PlanetaryConditions implements Serializable {
         return gravity;
     }
 
-    public void setEMI(boolean b) {
-        emi = b;
-    }
-
-    public boolean hasEMI() {
-        return emi;
-    }
-
     public void setTerrainAffected(boolean b) {
         terrainAffected = b;
     }
@@ -1170,17 +1173,5 @@ public class PlanetaryConditions implements Serializable {
         }
 
         return MSG_INDICATOR_TEMPERATURE_NORMAL;
-    }
-
-    public String getEMIIndicator() {
-        return hasEMI() ? MSG_INDICATOR_EMI_TRUE : MSG_INDICATOR_EMI_FALSE;
-    }
-
-    public String getEMIDisplayableValue() {
-        return hasEMI() ? MSG_NAME_EMI_TRUE : MSG_NAME_EMI_FALSE;
-    }
-
-    public static String  getEMIDisplayableValue(boolean b) {
-        return b ? MSG_NAME_EMI_TRUE : MSG_NAME_EMI_FALSE;
     }
 }

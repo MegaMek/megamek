@@ -110,7 +110,7 @@ public class LBXHandler extends AmmoWeaponHandler {
         } else {
 
             shotsHit = Compute.missilesHit(wtype.getRackSize(), nHitsModifier,
-                                           game.getPlanetaryConditions().hasEMI());
+                                           game.getPlanetaryConditions().isEMI());
         }
 
         Report r = new Report(3325);

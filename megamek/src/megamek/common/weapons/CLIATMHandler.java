@@ -218,7 +218,7 @@ public class CLIATMHandler extends ATMHandler {
         }
 
         // Affects streak too.
-        if (game.getPlanetaryConditions().hasEMI()) {
+        if (game.getPlanetaryConditions().isEMI()) {
             nMissilesModifier -= 2;
         }
 

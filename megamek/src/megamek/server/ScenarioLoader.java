@@ -462,7 +462,8 @@ public class ScenarioLoader {
         }
 
         if (p.containsKey(PARAM_PLANETCOND_EMI)) {
-            g.getPlanetaryConditions().setEMI(parseBoolean(p, PARAM_PLANETCOND_EMI, false));
+            EMI emi = parseBoolean(p, PARAM_PLANETCOND_EMI, false) ? EMI.EMI : EMI.EMI_NONE;
+            g.getPlanetaryConditions().setEMI(emi);
         }
 
         if (p.containsKey(PARAM_PLANETCOND_TERRAINCHANGES)) {

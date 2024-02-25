@@ -5417,7 +5417,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                     if (type.hasFlag(MiscType.F_EW_EQUIPMENT)) {
                         toReturn = 3;
                     }
-                    if (game.getPlanetaryConditions().hasEMI()) {
+                    if (game.getPlanetaryConditions().isEMI()) {
                         return toReturn * 2;
                     }
                     return toReturn;
@@ -5436,7 +5436,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     public boolean hasBAP(boolean checkECM) {
-        if (((game != null) && game.getPlanetaryConditions().hasEMI())
+        if (((game != null) && game.getPlanetaryConditions().isEMI())
             || isShutDown()) {
             return false;
         }
@@ -5486,7 +5486,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * <code>Entity.NONE</code> if no BAP is active.
      */
     public int getBAPRange() {
-        if (game.getPlanetaryConditions().hasEMI() || isShutDown()) {
+        if (game.getPlanetaryConditions().isEMI() || isShutDown()) {
             return Entity.NONE;
         }
         // check for Manei Domini implants

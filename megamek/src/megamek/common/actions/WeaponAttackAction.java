@@ -2925,7 +2925,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
 
         // Electro-Magnetic Interference
-        if (conditions.hasEMI() && !ae.isConventionalInfantry()) {
+        if (conditions.isEMI() && !ae.isConventionalInfantry()) {
             toHit.addModifier(2, Messages.getString("WeaponAttackAction.EMI"));
         }
         return toHit;

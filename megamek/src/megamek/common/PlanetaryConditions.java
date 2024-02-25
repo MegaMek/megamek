@@ -769,6 +769,7 @@ public class PlanetaryConditions implements Serializable {
                     mod -= 2;
                 }
                 break;
+            default:
         }
 
         // atmospheric pressure mods

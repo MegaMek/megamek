@@ -442,7 +442,7 @@ public class ScenarioLoader {
         }
 
         if (p.containsKey(PARAM_PLANETCOND_WINDDIR)) {
-            g.getPlanetaryConditions().setWindDirection(Integer.parseInt(p.getString(PARAM_PLANETCOND_WINDDIR)));
+            g.getPlanetaryConditions().setWindDirection(WindDirection.getWindDirection(StringUtil.toInt(p.getString(PARAM_PLANETCOND_WINDDIR),0)));
         }
 
         if (p.containsKey(PARAM_PLANETCOND_WINDSHIFTINGDIR)) {

@@ -51,6 +51,7 @@ import megamek.common.PlanetaryConditions;
 import megamek.common.enums.Light;
 import megamek.common.enums.Weather;
 import megamek.common.enums.Wind;
+import megamek.common.enums.WindDirection;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
 
@@ -246,8 +247,8 @@ public class PlanetaryConditionsDialog extends ClientDialog {
             comWindFrom.addItem(condition.toString());
             comWindTo.addItem(condition.toString());
         }
-        for (int i = 0; i < PlanetaryConditions.DIR_SIZE; i++) {
-            comWindDirection.addItem(PlanetaryConditions.getWindDirDisplayableName(i));
+        for (WindDirection condition : WindDirection.values()) {
+            comWindDirection.addItem(condition.toString());
         }
         for (int i = 0; i < PlanetaryConditions.ATMO_SIZE; i++) {
             comAtmosphere.addItem(PlanetaryConditions.getAtmosphereDisplayableName(i));
@@ -297,7 +298,7 @@ public class PlanetaryConditionsDialog extends ClientDialog {
         comWind.setSelectedIndex(conditions.getWind().ordinal());
         comWindFrom.setSelectedIndex(conditions.getWindMin().ordinal());
         comWindTo.setSelectedIndex(conditions.getWindMax().ordinal());
-        comWindDirection.setSelectedIndex(conditions.getWindDirection());
+        comWindDirection.setSelectedIndex(conditions.getWindDirection().ordinal());
         comAtmosphere.setSelectedIndex(conditions.getAtmosphere());
         comFog.setSelectedIndex(conditions.getFog());
         chkBlowingSands.setSelected(conditions.isSandBlowing());
@@ -319,7 +320,7 @@ public class PlanetaryConditionsDialog extends ClientDialog {
         conditions.setLight(Light.getLight(comLight.getSelectedIndex()));
         conditions.setWeather(Weather.getWeather(comWeather.getSelectedIndex()));
         conditions.setWind(Wind.getWind(comWind.getSelectedIndex()));
-        conditions.setWindDirection(comWindDirection.getSelectedIndex());
+        conditions.setWindDirection(WindDirection.getWindDirection(comWindDirection.getSelectedIndex()));
         refreshWindRange();
         conditions.setAtmosphere(comAtmosphere.getSelectedIndex());
         conditions.setFog(comFog.getSelectedIndex());

@@ -21,6 +21,7 @@ import java.io.Serializable;
 import megamek.common.enums.Light;
 import megamek.common.enums.Weather;
 import megamek.common.enums.Wind;
+import megamek.common.enums.WindDirection;
 
 /**
  * This class will hold all the information on planetary conditions and a variety of helper functions
@@ -31,32 +32,6 @@ public class PlanetaryConditions implements Serializable {
     private static final long serialVersionUID = 6838624193286089781L;
 
     public static final int BLACK_ICE_TEMP      = -30;
-
-    // wind direction
-    private static final String MSG_NAME_WINDDIRECTION_NORTH = Messages.getString("PlanetaryConditions.DisplayableName.WindDirection.North");
-    private static final String MSG_NAME_WINDDIRECTION_NORTHEAST = Messages.getString("PlanetaryConditions.DisplayableName.WindDirection.Northeast");
-    private static final String MSG_NAME_WINDDIRECTION_SOUTHEAST = Messages.getString("PlanetaryConditions.DisplayableName.WindDirection.Southeast");
-    private static final String MSG_NAME_WINDDIRECTION_SOUTH = Messages.getString("PlanetaryConditions.DisplayableName.WindDirection.South");
-    private static final String MSG_NAME_WINDDIRECTION_SOUTHWEST = Messages.getString("PlanetaryConditions.DisplayableName.WindDirection.Southwest");
-    private static final String MSG_NAME_WINDDIRECTION_NORTHWEST = Messages.getString("PlanetaryConditions.DisplayableName.WindDirection.Northwest");
-    private static final String MSG_NAME_WINDDIRECTION_RANDOM = Messages.getString("PlanetaryConditions.DisplayableName.WindDirection.RandomWindDirection");
-    // no east and west, because the map uses 6 side hex tiles.  east and west are skipped.
-    private static String[] dirNames = { MSG_NAME_WINDDIRECTION_SOUTH, MSG_NAME_WINDDIRECTION_SOUTHWEST,
-            MSG_NAME_WINDDIRECTION_NORTHWEST, MSG_NAME_WINDDIRECTION_NORTH, MSG_NAME_WINDDIRECTION_NORTHEAST,
-            MSG_NAME_WINDDIRECTION_SOUTHEAST, MSG_NAME_WINDDIRECTION_RANDOM };
-    public static final int DIR_SIZE = dirNames.length;
-    public static final int DIR_RANDOM = 6;
-    private static final String MSG_INDICATOR_WINDDIRECTION_NORTH = Messages.getString("PlanetaryConditions.Indicator.WindDirection.North");
-    private static final String MSG_INDICATOR_WINDDIRECTION_NORTHEAST = Messages.getString("PlanetaryConditions.Indicator.WindDirection.Northeast");
-    private static final String MSG_INDICATOR_WINDDIRECTION_SOUTHEAST = Messages.getString("PlanetaryConditions.Indicator.WindDirection.Southeast");
-    private static final String MSG_INDICATOR_WINDDIRECTION_SOUTH = Messages.getString("PlanetaryConditions.Indicator.WindDirection.South");
-    private static final String MSG_INDICATOR_WINDDIRECTION_SOUTHWEST = Messages.getString("PlanetaryConditions.Indicator.WindDirection.Southwest");
-    private static final String MSG_INDICATOR_WINDDIRECTION_NORTHWEST = Messages.getString("PlanetaryConditions.Indicator.WindDirection.Northwest");
-    private static final String MSG_INDICATOR_WINDDIRECTION_RANDOM = Messages.getString("PlanetaryConditions.Indicator.WindDirection.RandomWindDirection");
-    // no east and west, because the map uses 6 side hex tiles.  east and west are skipped.
-    private static String[] windDirectionIndicators = { MSG_INDICATOR_WINDDIRECTION_SOUTH, MSG_INDICATOR_WINDDIRECTION_SOUTHWEST,
-            MSG_INDICATOR_WINDDIRECTION_NORTHWEST, MSG_INDICATOR_WINDDIRECTION_NORTH, MSG_INDICATOR_WINDDIRECTION_NORTHEAST,
-            MSG_INDICATOR_WINDDIRECTION_SOUTHEAST,  MSG_INDICATOR_WINDDIRECTION_RANDOM };
 
     // atmospheric pressure
     public static final int ATMO_VACUUM   = 0;
@@ -114,7 +89,7 @@ public class PlanetaryConditions implements Serializable {
     private Wind wind = Wind.CALM;
     private Wind windMin = Wind.CALM;
     private Wind windMax = Wind.TORNADO_F4;
-    private int windDirection = DIR_RANDOM;
+    private WindDirection windDirection = WindDirection.RANDOM;
     private boolean shiftWindDirection = false;
     private boolean shiftWindStrength = false;
     private boolean isSleeting = false;
@@ -404,6 +379,18 @@ public class PlanetaryConditions implements Serializable {
         return Wind.isLessThanTornadoF1ToF3(wind);
     }
 
+    public void setWindDirection(WindDirection windDirection) {
+        this.windDirection = windDirection;
+    }
+
+    public WindDirection getWindDirection() {
+        return windDirection;
+    }
+
+    public boolean isRandomWindDirection() {
+        return WindDirection.isRandomWindDirection(windDirection);
+    }
+
 
 
     public static String getTemperatureDisplayableName(int temp) {
@@ -414,13 +401,6 @@ public class PlanetaryConditions implements Serializable {
         } else {
             return String.valueOf(temp);
         }
-    }
-
-    public static String getWindDirDisplayableName(int type) {
-        if ((type >= 0) && (type < DIR_SIZE)) {
-            return dirNames[type];
-        }
-        throw new IllegalArgumentException("Unknown wind direction");
     }
 
     public static String getAtmosphereDisplayableName(int type) {
@@ -435,10 +415,6 @@ public class PlanetaryConditions implements Serializable {
             return fogNames[type];
         }
         throw new IllegalArgumentException("Unknown fog condition");
-    }
-
-    public String getWindDirDisplayableName() {
-        return getWindDirDisplayableName(windDirection);
     }
 
     public String getAtmosphereDisplayableName() {
@@ -474,7 +450,6 @@ public class PlanetaryConditions implements Serializable {
 
         return penalty;
     }
-
 
     /**
      * heat bonus to hit for being overheated in darkness
@@ -575,18 +550,18 @@ public class PlanetaryConditions implements Serializable {
     }
 
     public void determineWind() {
-        if (windDirection == DIR_RANDOM) {
+        if (isRandomWindDirection()) {
             // Initial wind direction. If using level 2 rules, this
             // will be the wind direction for the whole battle.
-            windDirection = Compute.d6(1) - 1;
+            windDirection = WindDirection.getWindDirection(Compute.d6(1) - 1);
         } else if (shiftWindDirection) {
             // Wind direction changes on a roll of 1 or 6
             switch (Compute.d6()) {
                 case 1: // rotate clockwise
-                    windDirection = (windDirection + 1) % 6;
+                    windDirection = windDirection.rotateClockwise();
                     break;
                 case 6: // rotate counter-clockwise
-                    windDirection = (windDirection + 5) % 6;
+                    windDirection = windDirection.rotateCounterClockwise();
             }
         }
         if (shiftWindStrength) {
@@ -1011,14 +986,6 @@ public class PlanetaryConditions implements Serializable {
         }
     }
 
-    public void setWindDirection(int type) {
-        windDirection = type;
-    }
-
-    public int getWindDirection() {
-        return windDirection;
-    }
-
     public void setShiftingWindDirection(boolean b) {
         shiftWindDirection = b;
     }
@@ -1214,17 +1181,6 @@ public class PlanetaryConditions implements Serializable {
 
     public String getFogIndicator() {
         return  getFogIndicator(fog);
-    }
-
-    public String getWindDirectionIndicator(int type) {
-        if ((type >= 0) && (type < DIR_SIZE)) {
-            return windDirectionIndicators[type];
-        }
-        throw new IllegalArgumentException("Unknown Wind Direction Indicator");
-    }
-
-    public String getWindDirectionIndicator() {
-        return getWindDirectionIndicator(windDirection);
     }
 
     public String getAtmosphereIndicator(int type) {

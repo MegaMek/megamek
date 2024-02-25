@@ -3488,7 +3488,7 @@ public class GameManager implements IGameManager {
                 // Wind direction and strength
                 PlanetaryConditions conditions = game.getPlanetaryConditions();
                 Report rWindDir = new Report(1025, Report.PUBLIC);
-                rWindDir.add(conditions.getWindDirDisplayableName());
+                rWindDir.add(conditions.getWindDirection().toString());
                 rWindDir.newlines = 0;
                 Report rWindStr = new Report(1030, Report.PUBLIC);
                 rWindStr.add(conditions.getWind().toString());

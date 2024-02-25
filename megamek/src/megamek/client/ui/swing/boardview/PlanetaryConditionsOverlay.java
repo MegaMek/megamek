@@ -132,8 +132,8 @@ public class PlanetaryConditionsOverlay extends AbstractBoardViewOverlay {
                 tmpStr = tmpStr + (showIndicator ? conditions.getWind().getIndicator() : "");
                 result.add(tmpStr);
                 tmpStr = (showLabel ? MSG_DIRECTION + "  " : "");
-                tmpStr = tmpStr + (showValue ? conditions.getWindDirDisplayableName() + "  " : "");
-                tmpStr = tmpStr + (showIndicator ? conditions.getWindDirectionIndicator() : "");
+                tmpStr = tmpStr + (showValue ? conditions.getWindDirection().toString() + "  " : "");
+                tmpStr = tmpStr + (showIndicator ? conditions.getWindDirection().getIndicator() : "");
                 result.add(tmpStr);
             }
 

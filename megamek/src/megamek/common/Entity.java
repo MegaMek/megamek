@@ -40,8 +40,10 @@ import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
 import megamek.common.weapons.infantry.InfantryWeapon;
 import org.apache.logging.log4j.LogManager;
 
+import java.awt.*;
 import java.math.BigInteger;
 import java.util.*;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -721,7 +723,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     private int blueShieldRounds = 0;
 
     // Entity fluff object for use with MegaMekLab
-    protected EntityFluff fluff;
+    protected EntityFluff fluff = new EntityFluff();
 
     // a settable armor tonnage for use with MML - this is not what
     // is calculated by getArmorTonnage
@@ -854,7 +856,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         setC3NetId(this);
         quirks.initialize();
         secondaryPositions = new HashMap<>();
-        fluff = new EntityFluff();
         impThisTurn = 0;
         impLastTurn = 0;
 
@@ -15800,6 +15801,21 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             }
         }
         return -1;
+    }
+
+    @Override
+    public @Nullable Image getFluffImage() {
+        return fluff.getFluffImage();
+    }
+
+    @Override
+    public String generalName() {
+        return getChassis();
+    }
+
+    @Override
+    public String specificName() {
+        return getModel();
     }
 
     @Override

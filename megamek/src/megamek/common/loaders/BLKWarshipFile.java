@@ -210,10 +210,6 @@ public class BLKWarshipFile extends BLKFile implements IMechLoader {
             a.getFluff().setDeployment(dataFile.getDataAsString("deployment")[0]);
         }
 
-        if (dataFile.exists("imagepath")) {
-            a.getFluff().setMMLImagePath(dataFile.getDataAsString("imagepath")[0]);
-        }
-
         if (!dataFile.exists("armor")) {
             throw new EntityLoadingException("Could not find armor block.");
         }

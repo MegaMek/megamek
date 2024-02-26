@@ -198,6 +198,16 @@ public class HexTarget implements Targetable {
         return true;
     }
 
+    @Override
+    public String generalName() {
+        return getDisplayName();
+    }
+
+    @Override
+    public String specificName() {
+        return "";
+    }
+
     // For artillery leading
     public void setOriginalTarget(HexTarget target) {
         this.originalTarget = target;

@@ -11707,8 +11707,9 @@ public class GameManager implements IGameManager {
             if ((entity instanceof Mech) && !entity.isProne()
                     && (hex.terrainLevel(Terrains.WATER) <= partialWaterLevel)) {
                 for (int loop = 0; loop < entity.locations(); loop++) {
+                    boolean aeroSpaceborne = (entity.getEntityType() & Entity.ETYPE_AERO) == 0 && entity.isSpaceborne();
                     if (game.getPlanetaryConditions().isLessThanThin()
-                            || ((entity.getEntityType() & Entity.ETYPE_AERO) == 0 && entity.isSpaceborne())) {
+                            || aeroSpaceborne) {
                         entity.setLocationStatus(loop, ILocationExposureStatus.VACUUM);
                     } else {
                         entity.setLocationStatus(loop, ILocationExposureStatus.NORMAL);
@@ -20283,12 +20284,17 @@ public class GameManager implements IGameManager {
                 continue;
             }
             final Hex curHex = game.getBoard().getHex(entity.getPosition());
-            if ((((entity.getElevation() < 0) && ((curHex
-                    .terrainLevel(Terrains.WATER) > 1) || ((curHex
-                    .terrainLevel(Terrains.WATER) == 1) && entity.isProne()))) || game
-                    .getPlanetaryConditions().isLessThanThin())
-                    && (entity.getHitCriticals(CriticalSlot.TYPE_SYSTEM,
-                    Mech.SYSTEM_LIFE_SUPPORT, Mech.LOC_HEAD) > 0)) {
+
+            boolean depthOneProne = (curHex.terrainLevel(Terrains.WATER) == 1)
+                    && entity.isProne();
+            boolean inWater = (curHex.terrainLevel(Terrains.WATER) > 1)
+                    || depthOneProne;
+            boolean underWater = (entity.getElevation() < 0)
+                    && inWater;
+            boolean canNotBeathe = underWater
+                    || game.getPlanetaryConditions().isLessThanThin();
+            if (canNotBeathe
+                    && (entity.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_LIFE_SUPPORT, Mech.LOC_HEAD) > 0)) {
                 Report r = new Report(6020);
                 r.subject = entity.getId();
                 r.addDesc(entity);
@@ -21807,7 +21813,10 @@ public class GameManager implements IGameManager {
         }
 
         // Is the infantry in vacuum?
-        if ((isPlatoon || isBattleArmor) && !te.isDestroyed() && !te.isDoomed()
+        boolean platoonOrBattleArmor = isPlatoon || isBattleArmor;
+        if (platoonOrBattleArmor
+                && !te.isDestroyed()
+                && !te.isDoomed()
                 && game.getPlanetaryConditions().isLessThanThin()) {
             // PBI. Double damage.
             damage *= 2;

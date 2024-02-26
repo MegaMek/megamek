@@ -58,6 +58,26 @@ public enum Light {
         return Light.values()[i];
     }
 
+    public static boolean isDay(Light light) {
+        return light == DAY;
+    }
+
+    public static boolean isDusk(Light light) {
+        return light == DUSK;
+    }
+
+    public static boolean isFullMoon(Light light) {
+        return light == FULL_MOON;
+    }
+
+    public static boolean isMoonless(Light light) {
+        return light == MOONLESS;
+    }
+
+    public static boolean isPitchBack(Light light) {
+        return light == PITCH_BLACK;
+    }
+
     /**
      * Returns true when visual range is increased by a illumination
      * in the light condition, i.e. in dusk/dawn, full moon,
@@ -94,25 +114,5 @@ public enum Light {
     public static boolean isLighted(Light light) {
         EnumSet<Light> lighted = EnumSet.of(Light.DAY, Light.DUSK);
         return lighted.contains(light);
-    }
-
-    public static boolean isDay(Light light) {
-        return light == DAY;
-    }
-
-    public static boolean isDusk(Light light) {
-        return light == DUSK;
-    }
-
-    public static boolean isFullMoon(Light light) {
-        return light == FULL_MOON;
-    }
-
-    public static boolean isMoonless(Light light) {
-        return light == MOONLESS;
-    }
-
-    public static boolean isPitchBack(Light light) {
-        return light == PITCH_BLACK;
     }
 }

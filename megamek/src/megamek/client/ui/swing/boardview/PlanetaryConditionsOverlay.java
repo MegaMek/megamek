@@ -17,7 +17,6 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.common.PlanetaryConditions;
-import megamek.common.enums.Light;
 import megamek.common.preference.PreferenceChangeEvent;
 
 import java.awt.*;
@@ -97,11 +96,10 @@ public class PlanetaryConditionsOverlay extends AbstractBoardViewOverlay {
                 result.add(tmpStr);
             }
 
-            Light light = conditions.getLight();
             if (showDefaultConditions || !conditions.isDay()) {
                 tmpStr = (showLabel ? MSG_LIGHT + "  " : "");
-                tmpStr = tmpStr + (showValue ? light.toString() + "  " : "");
-                tmpStr = tmpStr + (showIndicator ? light.getIndicator() : "");
+                tmpStr = tmpStr + (showValue ? conditions.getLight().toString() + "  " : "");
+                tmpStr = tmpStr + (showIndicator ? conditions.getLight().getIndicator() : "");
                 result.add(tmpStr);
             }
 

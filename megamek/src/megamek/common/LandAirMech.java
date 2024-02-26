@@ -730,7 +730,8 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
 
             PlanetaryConditions conditions = game.getPlanetaryConditions();
             // add in atmospheric effects later
-            if (!(game.getBoard().inSpace() || conditions.isVacuum())
+            boolean spaceOrVacuum = game.getBoard().inSpace() || conditions.isVacuum();
+            if (!spaceOrVacuum
                     && isAirborne()) {
                 roll.addModifier(+1, "Atmospheric operations");
             }
@@ -2087,12 +2088,13 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
     @Override
     public boolean canSpot() {
         if (getConversionMode() == CONV_MODE_FIGHTER) {
+            boolean hiresLighted = hasWorkingMisc(MiscType.F_HIRES_IMAGER)
+                    && game.getPlanetaryConditions().isLighted();
             return !isAirborne()
                     || hasWorkingMisc(MiscType.F_RECON_CAMERA)
                     || hasWorkingMisc(MiscType.F_INFRARED_IMAGER)
                     || hasWorkingMisc(MiscType.F_HYPERSPECTRAL_IMAGER)
-                    || (hasWorkingMisc(MiscType.F_HIRES_IMAGER)
-                            && game.getPlanetaryConditions().isLighted());
+                    || hiresLighted;
         } else {
             return super.canSpot();
         }

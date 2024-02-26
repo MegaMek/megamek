@@ -449,10 +449,11 @@ public class BattleArmor extends Infantry {
                 mp += 1;
             }
 
+            boolean strongGaleOrStorm = conditions.isStrongGale()
+                    || conditions.isStorm();
             if (getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_WIND)
                     && conditions.isWeatherNone()
-                    && (conditions.isStrongGale()
-                        || conditions.isStorm())) {
+                    && strongGaleOrStorm) {
                 mp += 1;
             }
         }
@@ -514,9 +515,12 @@ public class BattleArmor extends Infantry {
             mp++;
         }
 
+        boolean ignoreGameLessThanThin = mpCalculationSetting.ignoreWeather
+                || (game == null)
+                || !game.getPlanetaryConditions().isLessThanThin();
         if ((mp > 0)
                 && hasWorkingMisc(MiscType.F_PARTIAL_WING)
-                && (mpCalculationSetting.ignoreWeather || (game == null) || !game.getPlanetaryConditions().isLessThanThin())) {
+                && ignoreGameLessThanThin) {
             mp++;
         }
 

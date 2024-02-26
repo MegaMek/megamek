@@ -1422,7 +1422,8 @@ public abstract class Aero extends Entity implements IAero, IBomber {
 
         PlanetaryConditions conditions = game.getPlanetaryConditions();
         // add in atmospheric effects later
-        if (!(game.getBoard().inSpace() || conditions.isVacuum())
+        boolean spaceOrVacuum = game.getBoard().inSpace() || conditions.isVacuum();
+        if (!spaceOrVacuum
                 && isAirborne()) {
             prd.addModifier(+2, "Atmospheric operations");
 
@@ -2687,12 +2688,13 @@ public abstract class Aero extends Entity implements IAero, IBomber {
         // per a recent ruling on the official forums, aero units can't spot
         // for indirect LRM fire, unless they have a recon cam, an infrared or
         // hyperspec imager, or a high-res imager and it's not night
+        boolean hiresLighted = hasWorkingMisc(MiscType.F_HIRES_IMAGER)
+                && game.getPlanetaryConditions().isLighted();
         return !isAirborne()
                 || hasWorkingMisc(MiscType.F_RECON_CAMERA)
                 || hasWorkingMisc(MiscType.F_INFRARED_IMAGER)
                 || hasWorkingMisc(MiscType.F_HYPERSPECTRAL_IMAGER)
-                || (hasWorkingMisc(MiscType.F_HIRES_IMAGER)
-                    && game.getPlanetaryConditions().isLighted());
+                || hiresLighted;
     }
 
     // Damage a fighter that was part of a squadron when splitting it. Per

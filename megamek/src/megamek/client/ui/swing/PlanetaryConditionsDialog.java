@@ -379,9 +379,11 @@ public class PlanetaryConditionsDialog extends ClientDialog {
         
         Wind wind = Wind.getWind(comWind.getSelectedIndex());
         Atmosphere atmo = Atmosphere.getAtmosphere(comAtmosphere.getSelectedIndex());
-        
-        if ((chkBlowingSands.isSelected() && Wind.isLessThanModerateGale(wind))
-                || (chkShiftWindStr.isSelected() && Wind.isLessThanModerateGale(conditions.getWindMax()))) {
+
+        boolean blowingSandsLessThanModerateGale = chkBlowingSands.isSelected() && Wind.isLessThanModerateGale(wind);
+        boolean shiftWindsLessThanModerateGale = chkShiftWindStr.isSelected() && Wind.isLessThanModerateGale(conditions.getWindMax());
+        if (blowingSandsLessThanModerateGale
+                || shiftWindsLessThanModerateGale) {
             windTip.append(Messages.getString("PlanetaryConditionsDialog.invalid.sandsLost"));
             sandTip.append(Messages.getString("PlanetaryConditionsDialog.invalid.sandsLost"));
         }
@@ -631,5 +633,4 @@ public class PlanetaryConditionsDialog extends ClientDialog {
         @Override
         public void focusGained(FocusEvent e) { }
     };
-
 }

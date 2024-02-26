@@ -2436,11 +2436,12 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * Convenience method to determine whether this entity is on a ground map with an atmosphere
      */
     public boolean isOnAtmosphericGroundMap() {
-        return  (getGame().getPlanetaryConditions().isGreaterThanTrace())
-                && (getGame().getBoard().onGround() ||
+        boolean onGroundOrinAtmosphere =  getGame().getBoard().onGround() ||
                 // doesn't make sense in english, but "atmospheric" map actually
                 // covers maps that are within a planet's gravity well
-                getGame().getBoard().inAtmosphere());
+                getGame().getBoard().inAtmosphere();
+        return  getGame().getPlanetaryConditions().isGreaterThanTrace()
+                && onGroundOrinAtmosphere;
     }
 
     /**
@@ -5436,7 +5437,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     public boolean hasBAP(boolean checkECM) {
-        if (((game != null) && game.getPlanetaryConditions().isEMI())
+        boolean hasEmi = (game != null) && game.getPlanetaryConditions().isEMI();
+        if (hasEmi
             || isShutDown()) {
             return false;
         }
@@ -7149,10 +7151,13 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                 roll.addModifier(-1, Messages.getString("PilotingSPA.EnvSpec.SnowSpec"));
             }
 
-            if ((conditions.isSnowFlurries()
+            boolean snow = conditions.isSnowFlurries()
                     || conditions.isSleet()
-                    || conditions.isIceStorm())
-                    && (isAirborneVTOLorWIGE() || isAirborne())) {
+                    || conditions.isIceStorm();
+            boolean airborne = isAirborneVTOLorWIGE()
+                    || isAirborne();
+            if (snow
+                    && airborne) {
                 roll.addModifier(-1, Messages.getString("PilotingSPA.EnvSpec.SnowSpec"));
             }
         }
@@ -7376,9 +7381,10 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         // move path has ice
         boolean isBlackIce;
 
+        boolean blackIceCheck = game.getOptions().booleanOption(OptionsConstants.ADVANCED_BLACK_ICE)
+                && conditions.getTemperature() <= PlanetaryConditions.BLACK_ICE_TEMP;
         if (conditions.isIceStorm()
-                || (game.getOptions().booleanOption(OptionsConstants.ADVANCED_BLACK_ICE)
-                    && conditions.getTemperature() <= PlanetaryConditions.BLACK_ICE_TEMP)) {
+                || blackIceCheck) {
             isBlackIce = true;
         } else {
             isBlackIce = false;
@@ -7392,6 +7398,10 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
         // we need to make this check on the first move forward and anytime the
         // hex is not clear or is a level change
+        boolean levelChange = (null != prevHex)
+                && (prevHex.getLevel() != curHex.getLevel());
+        boolean moved = (curHex.movementCost(this) > 0)
+                || levelChange;
         if (conditions.isRecklessConditions()
                 && !lastPos.equals(curPos)
                 && lastPos.equals(step.getEntity().getPosition())) {
@@ -7401,8 +7411,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         // clear. I will use movement costs
         else if (conditions.isRecklessConditions()
                 && !lastPos.equals(curPos)
-                && ((curHex.movementCost(this) > 0)
-                    || ((null != prevHex) && (prevHex.getLevel() != curHex.getLevel())))) {
+                && moved) {
             roll.append(new PilotingRollData(getId(), 0, "moving recklessly"));
             // ice conditions
         } else if (curHex.containsTerrain(Terrains.ICE)) {

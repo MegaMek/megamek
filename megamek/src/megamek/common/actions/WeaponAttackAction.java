@@ -1898,8 +1898,11 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                     && !game.getBoard().inSpace()) {
                 return Messages.getString("WeaponAttackAction.NoMissileTornado");
             }
-            if (conditions.isTornadoF4() && !game.getBoard().inSpace()
-                    && (wtype.hasFlag(WeaponType.F_MISSILE) || wtype.hasFlag(WeaponType.F_BALLISTIC))) {
+            boolean missleOrBallistic = wtype.hasFlag(WeaponType.F_MISSILE)
+                    || wtype.hasFlag(WeaponType.F_BALLISTIC);
+            if (conditions.isTornadoF4()
+                    && !game.getBoard().inSpace()
+                    && missleOrBallistic) {
                 return Messages.getString("WeaponAttackAction.F4Tornado");
             }
 
@@ -5249,7 +5252,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                             && conditions.isIlluminationEffective()) {
                         toHit.addModifier(-1, Messages.getString("WeaponAttackAction.LightSpec"));
                     } else if (te.isIlluminated()
-                            && (conditions.isPitchBack())) {
+                            && conditions.isPitchBack()) {
                         toHit.addModifier(-1, Messages.getString("WeaponAttackAction.LightSpec"));
                     }
                 }
@@ -5296,8 +5299,10 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                         toHit.addModifier(-1, Messages.getString("WeaponAttackAction.SnowSpec"));
                     }
 
-                    if (wtype.hasFlag(WeaponType.F_MISSILE) && wtype.hasFlag(WeaponType.F_BALLISTIC)
-                            && (conditions.isStrongGale() || conditions.isStorm())) {
+                    boolean strongGaleOrStorm = conditions.isStrongGale() || conditions.isStorm();
+                    if (wtype.hasFlag(WeaponType.F_MISSILE)
+                            && wtype.hasFlag(WeaponType.F_BALLISTIC)
+                            && strongGaleOrStorm) {
                         toHit.addModifier(-1, Messages.getString("WeaponAttackAction.WindSpec"));
                     }
 

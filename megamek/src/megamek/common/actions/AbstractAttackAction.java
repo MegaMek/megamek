@@ -129,8 +129,10 @@ public abstract class AbstractAttackAction extends AbstractEntityAction implemen
         // Searchlights reduce the penalty to zero (or 1 for pitch-black)
         // (except for dusk/dawn)
         int searchlightMod = Math.min(3, night_modifier);
-        if ((te != null) && (conditions.isDark())
-                && (te.isUsingSearchlight() || illuminated)) {
+        boolean lighted = te.isUsingSearchlight() || illuminated;
+        if ((te != null)
+                && (conditions.isDark())
+                && lighted) {
             if (te.isUsingSearchlight()) {
                 toHit.addModifier(-searchlightMod, "target using searchlight");
                 night_modifier = night_modifier - searchlightMod;

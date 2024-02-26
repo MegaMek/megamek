@@ -546,8 +546,8 @@ public class Client implements IClientCommandHandler {
     /**
      * Send mode-change data to the server
      */
-    public void sendAmmoChange(int nEntity, int nWeapon, int nAmmo) {
-        send(new Packet(PacketCommand.ENTITY_AMMOCHANGE, nEntity, nWeapon, nAmmo));
+    public void sendAmmoChange(int nEntity, int nWeapon, int nAmmo, int reason) {
+        send(new Packet(PacketCommand.ENTITY_AMMOCHANGE, nEntity, nWeapon, nAmmo, reason));
     }
 
     /**
@@ -1432,6 +1432,7 @@ public class Client implements IClientCommandHandler {
 
                     if (player != null) {
                         player.setDone(c.getBooleanValue(1));
+                        game.processGameEvent(new GamePlayerChangeEvent(player, player));
                     }
                     break;
                 case PRINCESS_SETTINGS:

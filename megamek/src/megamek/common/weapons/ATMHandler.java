@@ -135,19 +135,10 @@ public class ATMHandler extends MissileWeaponHandler {
         if (atype.getMunitionType().contains(AmmoType.Munitions.M_HIGH_EXPLOSIVE)) {
             if (range == WeaponType.RANGE_SHORT) {
                 av = wtype.getRoundShortAV();
-                av = av + (av / 2);
+                av = av + (int) Math.ceil(av / 2.0);
             }
         } else if (atype.getMunitionType().contains(AmmoType.Munitions.M_EXTENDED_RANGE)) {
-            if (range == WeaponType.RANGE_SHORT) {
-                av = wtype.getRoundShortAV();
-            } else if (range == WeaponType.RANGE_MED) {
-                av = wtype.getRoundMedAV();
-            } else if (range == WeaponType.RANGE_LONG) {
-                av = wtype.getRoundLongAV();
-            } else if (range == WeaponType.RANGE_EXT) {
-                av = wtype.getRoundLongAV();
-            }
-            av = av / 2;
+            av = (int) Math.ceil(wtype.getRoundMedAV() / 2.0);
         } else {
             if (range == WeaponType.RANGE_SHORT) {
                 av = wtype.getRoundShortAV();

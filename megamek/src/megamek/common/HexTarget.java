@@ -21,13 +21,14 @@ public class HexTarget implements Targetable {
     private Coords m_coords;
     private boolean m_bIgnite;
     private int m_type;
+    private HexTarget originalTarget = null;
 
     public HexTarget(Coords c, int nType) {
         m_coords = c;
         m_type = nType;
         m_bIgnite = (nType == Targetable.TYPE_HEX_IGNITE);
     }
-    
+
     /**
      * Creates a new HexTarget given a set of coordinates and a type defined in Targetable.
      * the board parameter is ignored.
@@ -191,7 +192,7 @@ public class HexTarget implements Targetable {
     public int getAltitude() {
         return 0;
     }
-    
+
     @Override
     public boolean isEnemyOf(Entity other) {
         return true;
@@ -206,4 +207,15 @@ public class HexTarget implements Targetable {
     public String specificName() {
         return "";
     }
+
+    // For artillery leading
+    public void setOriginalTarget(HexTarget target) {
+        this.originalTarget = target;
+    }
+
+    // For artillery leading
+    public HexTarget getOriginalTarget() {
+        return this.originalTarget;
+    }
+
 }

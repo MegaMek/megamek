@@ -15,6 +15,8 @@
  */
 package megamek.common;
 
+import megamek.common.weapons.Weapon;
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
@@ -65,6 +67,19 @@ public class ArtilleryTracker implements Serializable {
      */
     public int getSize() {
         return weapons.size();
+    }
+
+    public boolean weaponInList(Mounted mounted) {
+        return (weapons.containsKey(mounted));
+    }
+
+    public boolean ammoTypeInList(int ammoType) {
+        for (Mounted mounted: weapons.keySet()) {
+            if (((WeaponType) mounted.getType()).getAmmoType() == ammoType ) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

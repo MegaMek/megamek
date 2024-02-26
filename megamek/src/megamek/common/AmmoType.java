@@ -13832,7 +13832,13 @@ public class AmmoType extends EquipmentType {
                     index = base.internalName.lastIndexOf("Ammo");
                     nameBuf.insert(index, name);
                     munition.setInternalName(nameBuf.toString());
-                    munition.shortName = munition.name.replace("Prototype ", "p");
+
+                    // ADA full name is embarrassingly long.
+                    if (base.name.contains("ADA")) {
+                        munition.shortName = "ADA Missile";
+                    } else {
+                        munition.shortName = munition.name.replace("Prototype ", "p");
+                    }
 
                     munition.addBeforeString(base, "Ammo", name + " ");
                     munition.addToEnd(base, " - " + name);
@@ -13930,6 +13936,7 @@ public class AmmoType extends EquipmentType {
             }
 
             munition.shortName = munition.shortName.replace("(Clan) ", "");
+            munition.subMunitionName = munition.shortName;
 
             // Assign our munition type.
             munition.munitionType = type;
@@ -14303,7 +14310,7 @@ public class AmmoType extends EquipmentType {
     }
 
     public String getSubMunitionName() {
-        return subMunitionName;
+        return subMunitionName.isBlank() ? getShortName() : subMunitionName;
     }
 
     /**

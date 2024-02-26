@@ -25,7 +25,7 @@ import java.util.*;
 /**
  * Taharqa's attempt at creating an Aerospace entity
  */
-public class Aero extends Entity implements IAero, IBomber {
+public abstract class Aero extends Entity implements IAero, IBomber {
     private static final long serialVersionUID = 7196307097459255187L;
 
     // locations
@@ -88,8 +88,8 @@ public class Aero extends Entity implements IAero, IBomber {
     // and bombs and such
     private static final int[] NUM_OF_SLOTS = {100, 100, 100, 100, 100, 100, 100};
 
-    private static String[] LOCATION_ABBRS = {"NOS", "LWG", "RWG", "AFT", "WNG", "FSLG"};
-    private static String[] LOCATION_NAMES = {"Nose", "Left Wing", "Right Wing", "Aft", "Wings", "Fuselage"};
+    private static final String[] LOCATION_ABBRS = {"NOS", "LWG", "RWG", "AFT", "WNG", "FSLG"};
+    private static final String[] LOCATION_NAMES = {"Nose", "Left Wing", "Right Wing", "Aft", "Wings", "Fuselage"};
 
     @Override
     public String[] getLocationAbbrs() {
@@ -213,7 +213,7 @@ public class Aero extends Entity implements IAero, IBomber {
     private int eccmRoll = 0;
 
     //List of escape craft used by this ship
-    private Set<String> escapeCraftList = new HashSet<>();
+    private final Set<String> escapeCraftList = new HashSet<>();
 
     //Maps unique id of each assigned marine to marine point value
     private Map<UUID, Integer> marines;
@@ -1561,15 +1561,8 @@ public class Aero extends Entity implements IAero, IBomber {
 
     @Override
     public void autoSetInternal() {
-        // should be no internals because only one SI
-        // It doesn't seem to be screwing anything up yet.
-        // Need to figure out how destruction of entity is determined
-        int nInternal = (int) Math.ceil(weight / 10.0);
-        nInternal = 0;
-        // I need to look at safe thrust as well at some point
-
         for (int x = 0; x < locations(); x++) {
-            initializeInternal(nInternal, x);
+            initializeInternal(0, x);
         }
     }
 
@@ -1697,7 +1690,7 @@ public class Aero extends Entity implements IAero, IBomber {
 
     @Override
     public boolean doomedOnGround() {
-        return game != null ? !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_GROUND_MOVE) : false;
+        return (game != null) && !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_GROUND_MOVE);
     }
 
     @Override
@@ -1709,15 +1702,6 @@ public class Aero extends Entity implements IAero, IBomber {
     public boolean doomedInSpace() {
         return false;
     }
-
-    @Override
-    public boolean canGoHullDown() {
-        return false;
-    }
-
-    /*
-     * public void addMovementDamage(int level) { movementDamage += level; }
-     */
 
     @Override
     public void setEngine(Engine e) {
@@ -1780,8 +1764,7 @@ public class Aero extends Entity implements IAero, IBomber {
             return CRIT_NONE;
         }
 
-        int critical = getPotCrit();
-        return critical;
+        return getPotCrit();
     }
 
     /**
@@ -1800,7 +1783,7 @@ public class Aero extends Entity implements IAero, IBomber {
         if (!(isClan() && isFighter())) {
             return;
         }
-        boolean explosiveFound = false;
+        boolean explosiveFound;
         EquipmentType clCase = EquipmentType.get(EquipmentTypeLookup.CLAN_CASE);
         for (int i = 0; i < locations(); i++) {
             // Ignore wings location: it's not a valid loc to put equipment in
@@ -1864,7 +1847,7 @@ public class Aero extends Entity implements IAero, IBomber {
         // compute
         // the targetsidetable. If we come to a higher vector, then replace. If
         // we come to an equal vector then take it if it is better
-        int thrust = 0;
+        int thrust;
         int high = -1;
         int side = -1;
         for (int dir = 0; dir < 6; dir++) {
@@ -2088,11 +2071,6 @@ public class Aero extends Entity implements IAero, IBomber {
     }
 
     @Override
-    public int height() {
-        return 0;
-    }
-
-    @Override
     public int getStraightMoves() {
         return straightMoves;
     }
@@ -2136,11 +2114,6 @@ public class Aero extends Entity implements IAero, IBomber {
         return accDecNow;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see megamek.common.Entity#getTotalCommGearTons()
-     */
     @Override
     public int getTotalCommGearTons() {
         return 1 + getExtraCommGearTons();
@@ -2711,15 +2684,11 @@ public class Aero extends Entity implements IAero, IBomber {
         // per a recent ruling on the official forums, aero units can't spot
         // for indirect LRM fire, unless they have a recon cam, an infrared or
         // hyperspec imager, or a high-res imager and it's not night
-        if (!isAirborne() || hasWorkingMisc(MiscType.F_RECON_CAMERA) || hasWorkingMisc(MiscType.F_INFRARED_IMAGER)
+        return !isAirborne() || hasWorkingMisc(MiscType.F_RECON_CAMERA) || hasWorkingMisc(MiscType.F_INFRARED_IMAGER)
                 || hasWorkingMisc(MiscType.F_HYPERSPECTRAL_IMAGER)
                 || (hasWorkingMisc(MiscType.F_HIRES_IMAGER)
                 && ((game.getPlanetaryConditions().getLight() == PlanetaryConditions.L_DAY)
-                || (game.getPlanetaryConditions().getLight() == PlanetaryConditions.L_DUSK)))) {
-            return true;
-        } else {
-            return false;
-        }
+                || (game.getPlanetaryConditions().getLight() == PlanetaryConditions.L_DUSK)));
     }
 
     // Damage a fighter that was part of a squadron when splitting it. Per
@@ -2782,10 +2751,6 @@ public class Aero extends Entity implements IAero, IBomber {
         return 1;
     }
 
-    @Override
-    public void setNCrew(int crew) {
-    }
-
     /**
      * @return The total number of officers for vessels.
      */
@@ -2809,10 +2774,6 @@ public class Aero extends Entity implements IAero, IBomber {
     @Override
     public int getNPassenger() {
         return 0;
-    }
-
-    @Override
-    public void setNPassenger(int pass) {
     }
 
     /**
@@ -2852,14 +2813,6 @@ public class Aero extends Entity implements IAero, IBomber {
     @Override
     public int getNMarines() {
         return 0;
-    }
-
-    /**
-     * Updates the number of marines aboard
-     * @param marines The number of marines to add/subtract
-     */
-    @Override
-    public void setNMarines(int marines) {
     }
 
     /**
@@ -3008,10 +2961,6 @@ public class Aero extends Entity implements IAero, IBomber {
         return Entity.ETYPE_AERO;
     }
 
-    public boolean isInASquadron() {
-        return false;
-    }
-
     @Override
     public boolean isAero() {
         return true;
@@ -3028,33 +2977,10 @@ public class Aero extends Entity implements IAero, IBomber {
     }
 
     @Override
-    /**
-     * Returns true if this is an aerospace or conventional fighter
-     * but not a larger craft (i.e. "SmallCraft" or "Dropship" and bigger
-     */
-    public boolean isFighter() {
-        return false;
-    }
-
-    @Override
-    /**
-     * Returns true if and only if this is an aerospace fighter.
-     */
-    public boolean isAerospaceFighter() {
-        return false;
-    }
-
-    @Override
     public int availableBombLocation(int cost) {
         return LOC_NOSE;
     }
 
-    /**
-     * Used to determine the draw priority of different Entity subclasses. This
-     * allows different unit types to always be draw above/below other types.
-     *
-     * @return
-     */
     @Override
     public int getSpriteDrawPriority() {
         return 10;
@@ -3063,10 +2989,7 @@ public class Aero extends Entity implements IAero, IBomber {
     @Override
     public List<Mounted> getActiveAMS() {
         //Large craft use AMS and Point Defense bays
-        if ((this instanceof Dropship)
-                || (this instanceof Jumpship)
-                || (this instanceof Warship)
-                || (this instanceof SpaceStation)) {
+        if ((this instanceof Dropship) || (this instanceof Jumpship)) {
 
             ArrayList<Mounted> ams = new ArrayList<>();
             for (Mounted weapon : getWeaponBayList()) {
@@ -3160,7 +3083,7 @@ public class Aero extends Entity implements IAero, IBomber {
                 }
             }
             getSensors().removeAll(sensorsToRemove);
-            if (sensorsToRemove.size() >= 1) {
+            if (!sensorsToRemove.isEmpty()) {
                 setNextSensor(getSensors().firstElement());
             }
         }

@@ -484,7 +484,7 @@ public class TestBattleArmor extends TestEntity {
 
     @Override
     public double getWeightArmor() {
-        return getWeightArmor(1);
+        return getWeightArmor(ba.firstArmorIndex());
     }
 
     @Override

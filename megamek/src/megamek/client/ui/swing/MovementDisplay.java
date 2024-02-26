@@ -5039,12 +5039,12 @@ public class MovementDisplay extends ActionPhaseDisplay {
         } else if (actionCmd.equals(MoveCommand.MOVE_RAISE_ELEVATION.getCmd())) {
             addStepToMovePath(MoveStepType.UP);
         } else if (actionCmd.equals(MoveCommand.MOVE_LOWER_ELEVATION.getCmd())) {
+            boolean spheroidOrLessThanThin = (((IAero) ce).isSpheroid() || clientgui.getClient().getGame().getPlanetaryConditions().isLessThanThin());
             if (ce.isAero()
                     && (null != cmd.getLastStep())
                     && (cmd.getLastStep().getNDown() == 1)
                     && (cmd.getLastStep().getVelocity() < 12)
-                    && !(((IAero) ce).isSpheroid() || clientgui.getClient()
-                    .getGame().getPlanetaryConditions().isLessThanThin())) {
+                    && !spheroidOrLessThanThin) {
                 addStepToMovePath(MoveStepType.ACC, true);
                 computeAeroMovementEnvelope(ce);
             }

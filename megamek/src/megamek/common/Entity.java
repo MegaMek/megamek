@@ -7113,22 +7113,26 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         }
         // check weather conditions for all entities
         int weatherMod = conditions.getWeatherPilotPenalty();
-        if ((weatherMod != 0) && !game.getBoard().inSpace()
-                && ((null == crew) || !hasAbility(OptionsConstants.UNOFF_ALLWEATHER))) {
+        boolean hasAllWeather = (null == crew) || !hasAbility(OptionsConstants.UNOFF_ALLWEATHER);
+        if ((weatherMod != 0)
+                && !game.getBoard().inSpace()
+                && hasAllWeather) {
             roll.addModifier(weatherMod, conditions.getWeather().toString());
         }
 
         // check wind conditions for all entities
         int windMod = conditions.getWindPilotPenalty(this);
-        if ((windMod != 0) && !game.getBoard().inSpace()
-                && ((null == crew) || !hasAbility(OptionsConstants.UNOFF_ALLWEATHER))) {
+        if ((windMod != 0)
+                && !game.getBoard().inSpace()
+                && hasAllWeather) {
             roll.addModifier(windMod, conditions.getWind().toString());
         }
 
         if (!hasAbility(OptionsConstants.UNOFF_ALLWEATHER)
                 && getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_RAIN)) {
             if (conditions.isGustingRain()) {
-                if ((this instanceof Mech) || isAirborne()
+                if ((this instanceof Mech)
+                        || isAirborne()
                         || (getMovementMode() == EntityMovementMode.WHEELED)
                         || (getMovementMode() == EntityMovementMode.TRACKED)) {
                     roll.addModifier(-1, Messages.getString("PilotingSPA.EnvSpec.RainSpec"));
@@ -7170,14 +7174,17 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             }
 
             if (conditions.isStrongGale()) {
-                if ((this instanceof Mech) || isAirborne()
-                        || isAirborneVTOLorWIGE() || (getMovementMode() == EntityMovementMode.HOVER)) {
+                if ((this instanceof Mech)
+                        || isAirborne()
+                        || isAirborneVTOLorWIGE()
+                        || (getMovementMode() == EntityMovementMode.HOVER)) {
                     roll.addModifier(-1, Messages.getString("PilotingSPA.EnvSpec.WindSpec"));
                 }
             }
 
             if (conditions.isStorm()) {
-                if ((this instanceof Mech) || isAirborneVTOLorWIGE()
+                if ((this instanceof Mech)
+                        || isAirborneVTOLorWIGE()
                         || (getMovementMode() == EntityMovementMode.HOVER)) {
                     roll.addModifier(-2, Messages.getString("PilotingSPA.EnvSpec.WindSpec"));
                 }

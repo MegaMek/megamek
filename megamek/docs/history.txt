@@ -8,6 +8,10 @@ MEGAMEK VERSION HISTORY:
 + PR #5156: Internal changes to Player and Team classes
 + Fix #3498: Adding Clan Personnel Tracking to MegaMek; IS pilots in Clan Meks can now go physical!
 + Fix #5189: Weapons will no longer think themselves out of ammo when there is ammo left on the unit
++ Fix #5191: Canon units are again recognized
++ Fix #5193: Weapon bays work again at short range in atmosphere
++ PR #5188: Units on the ground now throw shadows
++ PR #5156: MML and MM can now process unit fluff images embedded in unit files (see MML Fix #269)
 
 
 0.49.18 (2024-02-17 1800 UTC)

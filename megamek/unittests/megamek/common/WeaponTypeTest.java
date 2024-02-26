@@ -18,13 +18,31 @@
  */
 package megamek.common;
 
+import megamek.common.weapons.Weapon;
+import megamek.common.weapons.bayweapons.BayWeapon;
+import megamek.common.weapons.bayweapons.PPCBayWeapon;
+import megamek.common.weapons.ppc.ISERPPC;
+import megamek.common.weapons.ppc.PPCWeapon;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.util.Enumeration;
+import java.util.Vector;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class WeaponTypeTest {
+
+    private Entity mockEntity = mock(Entity.class);
+
+    @BeforeAll
+    static void before(){
+        EquipmentType.initializeTypes();
+    }
+
     @Test
     public void testArtemisCompatibleFlag() {
         for (Enumeration<EquipmentType> e = EquipmentType.getAllTypes(); e.hasMoreElements(); ) {
@@ -44,5 +62,38 @@ public class WeaponTypeTest {
                         || (atype == AmmoType.T_LRM_TORPEDO_COMBO));
             }
         }
+    }
+
+    private Mounted setupBayWeapon(String name){
+        EquipmentType etype = EquipmentType.get(name);
+        Mounted weapon = new Mounted(mockEntity, etype);
+        Mounted bWeapon = new Mounted(mockEntity, ((WeaponType) weapon.getType()).getBayType());
+        bWeapon.addWeaponToBay(mockEntity.getEquipmentNum(weapon));
+        when(mockEntity.getEquipment(anyInt())).thenReturn(weapon);
+
+        return bWeapon;
+    }
+
+    @Test
+    public void testWeaponBaysGetCorrectMaxRanges() {
+        Mounted ppcbay = setupBayWeapon("ISERPPC");
+        WeaponType wtype = (WeaponType) ppcbay.getType();
+        assertEquals(RangeType.RANGE_LONG, wtype.getMaxRange(ppcbay));
+
+        Mounted erplasbay = setupBayWeapon("CLERLargePulseLaser");
+        wtype = (WeaponType) erplasbay.getType();
+        assertEquals(RangeType.RANGE_LONG, wtype.getMaxRange(erplasbay ));
+
+        Mounted islplasbay = setupBayWeapon("ISLargePulseLaser");
+        wtype = (WeaponType) islplasbay.getType();
+        assertEquals(RangeType.RANGE_MEDIUM, wtype.getMaxRange(islplasbay));
+
+        Mounted ersmlasbay = setupBayWeapon("CLERSmallLaser");
+        wtype = (WeaponType) ersmlasbay.getType();
+        assertEquals(RangeType.RANGE_SHORT, wtype.getMaxRange(ersmlasbay));
+
+        Mounted islgaussbay = setupBayWeapon("ISLightGaussRifle");
+        wtype = (WeaponType) islgaussbay .getType();
+        assertEquals(RangeType.RANGE_EXTREME, wtype.getMaxRange(islgaussbay ));
     }
 }

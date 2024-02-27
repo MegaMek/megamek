@@ -1785,7 +1785,9 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
 
             uiThemes.removeAllItems();
             for (LookAndFeelInfo lafInfo : UIManager.getInstalledLookAndFeels()) {
-                uiThemes.addItem(new UITheme(lafInfo.getClassName(), lafInfo.getName()));
+                if (GUIPreferences.isSupportedLookAndFeel(lafInfo)) {
+                    uiThemes.addItem(new UITheme(lafInfo.getClassName(), lafInfo.getName()));
+                }
             }
             uiThemes.setSelectedItem(new UITheme(GUIP.getUITheme()));
 

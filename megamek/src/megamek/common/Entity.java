@@ -15834,12 +15834,12 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Returns true when this unit has an embedded icon, i.e. an icon stored in the unit file rather than
-     * found by the mechset.
+     * found by the mechset. Currently returns false when a mode-specific icon is needed (LAMs/QVs)
      *
      * @return True when this unit has an embedded icon
      */
     public boolean hasEmbeddedIcon() {
-        return !icon.isEmpty();
+        return !icon.isEmpty() && getTilesetModeString().isBlank();
     }
 
     /** @return The embedded icon of this unit in the full Base64Image form. */

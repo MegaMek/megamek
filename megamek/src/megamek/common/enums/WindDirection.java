@@ -92,11 +92,11 @@ public enum WindDirection {
         }
     }
 
-    public static WindDirection getWindDirection(int i) {
-        return WindDirection.values()[i];
+    public boolean isRandomWindDirection() {
+        return this == RANDOM;
     }
 
-    public static boolean isRandomWindDirection(WindDirection windDirection) {
-        return windDirection == RANDOM;
+    public static WindDirection getWindDirection(int i) {
+        return WindDirection.values()[i];
     }
 }

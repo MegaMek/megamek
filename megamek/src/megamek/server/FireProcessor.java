@@ -154,7 +154,7 @@ public class FireProcessor extends DynamicTerrainProcessor {
                             || currentHex.containsTerrain(Terrains.JUNGLE));
                     boolean bInferno = currentHex.terrainLevel(Terrains.FIRE) == 2;
                     PlanetaryConditions conditions = game.getPlanetaryConditions();
-                    if (conditions.isLessThanTornadoF1ToF3()
+                    if (conditions.getWind().isWeakerThan(Wind.TORNADO_F1_TO_F3)
                             && !(game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_FOREST_FIRES_NO_SMOKE)
                             && containsForest
                             && (bldg == null))) {
@@ -213,10 +213,11 @@ public class FireProcessor extends DynamicTerrainProcessor {
         TargetRoll directroll = new TargetRoll(9, "spread downwind");
         TargetRoll obliqueroll = new TargetRoll(11, "spread 60 degrees to downwind");
 
-        if (Wind.isLightGale(windStr) || Wind.isModerateGale(windStr)) {
+        if (windStr.isLightGale()
+                || windStr.isModerateGale()) {
             directroll.addModifier(-2, "light/moderate gale");
             obliqueroll.addModifier(-1, "light/moderate gale");
-        } else if (Wind.isGreaterThanModerateGale(windStr)) {
+        } else if (windStr.isStrongerThan(Wind.MOD_GALE)) {
             directroll.addModifier(-3, "strong gale+");
             directroll.addModifier(-2, "strong gale+");
         }
@@ -273,7 +274,7 @@ public class FireProcessor extends DynamicTerrainProcessor {
 
         // If the Smoke Drift option is turned on, treat wind strength as light gale if there is none
         if (game.getOptions().booleanOption(OptionsConstants.BASE_BREEZE)
-                && conditions.isCalm()) {
+                && conditions.getWind().isCalm()) {
             windStr = Wind.LIGHT_GALE;
         }
 
@@ -387,7 +388,7 @@ public class FireProcessor extends DynamicTerrainProcessor {
         Board board = game.getBoard();
 
         // if the wind conditions are calm, then don't drift it
-        if (Wind.isCalm(windStr)) {
+        if (windStr.isCalm()) {
             return src;
         }
 
@@ -432,7 +433,7 @@ public class FireProcessor extends DynamicTerrainProcessor {
         }
 
         // stronger wind causes smoke to drift farther
-        if (Wind.isGreaterThanModerateGale(windStr)) {
+        if (windStr.isStrongerThan(Wind.MOD_GALE)) {
             return driftAddSmoke(nextCoords, windDir, windStr.lowerWind());
         }
 
@@ -448,7 +449,8 @@ public class FireProcessor extends DynamicTerrainProcessor {
      * @return True when the smoke cloud dissipates by a level or entirely
      */
     public boolean checkSmokeDissipation(SmokeCloud cloud, Wind windStr) {
-        if ((cloud.getDuration() == 1) || Wind.isGreaterThanStorm(windStr)) {
+        if ((cloud.getDuration() == 1)
+                || windStr.isStrongerThan(Wind.STORM)) {
             cloud.setSmokeLevel(0);
             return true;
         } else if (cloud.getDuration() > 1) {
@@ -458,9 +460,10 @@ public class FireProcessor extends DynamicTerrainProcessor {
 
         // Dissipate in various winds
         int roll = Compute.d6(2);
-        return (roll > 10) || ((roll > 9) && Wind.isModerateGale(windStr))
-                || ((roll > 7) && Wind.isStrongGale(windStr))
-                || ((roll > 5) && Wind.isStorm(windStr));
+        return (roll > 10)
+                || ((roll > 9) && windStr.isModerateGale())
+                || ((roll > 7) && windStr.isStrongGale())
+                || ((roll > 5) && windStr.isStorm());
     }
 
     public void driftSmokeReport(SmokeCloud cloud, boolean dissipated) {

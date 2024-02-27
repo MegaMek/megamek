@@ -41,6 +41,7 @@ import megamek.common.MovePath.MoveStepType;
 import megamek.common.actions.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.IlluminationLevel;
+import megamek.common.enums.Light;
 import megamek.common.event.*;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
@@ -1388,7 +1389,8 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
             g.dispose();
             mask = createShadowMask(mask);
             mask = blurOp.filter(mask, null);
-            if (!game.getPlanetaryConditions().isDay()) {
+            PlanetaryConditions conditions = game.getPlanetaryConditions();
+            if (!conditions.getLight().isDay()) {
                 mask = blurOp.filter(mask, null);
             }
             shadowImageCache.put(orig.hashCode(), mask);
@@ -1457,9 +1459,9 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
 
         // Compute shadow angle based on planentary conditions.
         double[] lightDirection = {-19, 7};
-        if (conditions.isVeryDark()) {
+        if (conditions.getLight().isDarkerThan(Light.FULL_MOON)) {
             lightDirection = new double[]{0, 0};
-        } else if (conditions.isDusk()) {
+        } else if (conditions.getLight().isDusk()) {
             // TODO: replace when made user controlled
             lightDirection = new double[]{-38, 14};
         } else {
@@ -2545,7 +2547,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
             Point p2DST = new Point(hex_size.width, hex_size.height);
 
             Composite svComp = g.getComposite();
-            if (conditions.isDay()) {
+            if (conditions.getLight().isDay()) {
                 g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_ATOP, 0.55f));
             } else {
                 g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_ATOP, 0.45f));
@@ -2650,7 +2652,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         // Darken the hex for nighttime, if applicable
         if (GUIP.getDarkenMapAtNight()
                 && IlluminationLevel.determineIlluminationLevel(game, c).isNone()
-                && conditions.isIlluminationEffective()) {
+                && conditions.getLight().isDarkerThan(Light.DAY)) {
             for (int x = 0; x < hexImage.getWidth(); ++x) {
                 for (int y = 0; y < hexImage.getHeight(); ++y) {
                     hexImage.setRGB(x, y, getNightDarkenedColor(hexImage.getRGB(x, y)));
@@ -2863,9 +2865,10 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
                 BufferedImage scaledImage = ImageUtil.createAcceleratedImage(getScaledImage(image, true));
 
                 // Darken the hex for nighttime, if applicable
+                PlanetaryConditions conditions = game.getPlanetaryConditions();
                 if (GUIP.getDarkenMapAtNight()
                         && IlluminationLevel.determineIlluminationLevel(game, c).isNone()
-                        && game.getPlanetaryConditions().isIlluminationEffective()) {
+                        && conditions.getLight().isDarkerThan(Light.DAY)) {
                     for (int x = 0; x < scaledImage.getWidth(null); ++x) {
                         for (int y = 0; y < scaledImage.getHeight(); ++y) {
                             scaledImage.setRGB(x, y, getNightDarkenedColor(scaledImage.getRGB(x, y)));
@@ -6539,7 +6542,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
 
         minSensorRange = 0;
 
-        if (game.getPlanetaryConditions().isIlluminationEffective()) {
+        if (game.getPlanetaryConditions().getLight().isDarkerThan(Light.DAY)) {
             maxSensorRange = Compute.getMaxVisualRange(entity, true);
         } else {
             maxSensorRange = 0;

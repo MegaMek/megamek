@@ -2072,7 +2072,8 @@ public class WeaponHandler implements AttackHandler, Serializable {
             nMissilesModifier += (toHit.getMoS() / 3) * 2;
         }
 
-        if (game.getPlanetaryConditions().isEMI()) {
+        PlanetaryConditions conditions = game.getPlanetaryConditions();
+        if (conditions.getEMI().isEMI()) {
             nMissilesModifier -= 2;
         }
 

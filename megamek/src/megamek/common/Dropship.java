@@ -13,6 +13,7 @@ package megamek.common;
 
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.common.cost.DropShipCostCalculator;
+import megamek.common.enums.Atmosphere;
 import megamek.common.options.OptionsConstants;
 
 import java.util.HashMap;
@@ -741,7 +742,9 @@ public class Dropship extends SmallCraft {
      */
     @Override
     public boolean canLandVertically() {
-        return isSpheroid() || game.getPlanetaryConditions().isLessThanThin();
+        PlanetaryConditions conditions = game.getPlanetaryConditions();
+        return isSpheroid()
+                || conditions.getAtmosphere().isLighterThan(Atmosphere.THIN);
     }
 
     /**
@@ -750,7 +753,9 @@ public class Dropship extends SmallCraft {
      */
     @Override
     public boolean canTakeOffVertically() {
-        boolean spheroidOrLessThanThin = isSpheroid() || game.getPlanetaryConditions().isLessThanThin();
+        PlanetaryConditions conditions = game.getPlanetaryConditions();
+        boolean spheroidOrLessThanThin = isSpheroid()
+                || conditions.getAtmosphere().isLighterThan(Atmosphere.THIN);
         return spheroidOrLessThanThin && (getCurrentThrust() > 2);
     }
 }

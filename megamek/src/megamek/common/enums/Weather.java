@@ -63,67 +63,67 @@ public enum Weather {
         return name;
     }
 
+    public boolean isWeatherNone() {
+        return this == WEATHER_NONE;
+    }
+
+    public boolean isLightRain() {
+        return this == LIGHT_RAIN;
+    }
+
+    public boolean isModerateRain() {
+        return this == MOD_RAIN;
+    }
+
+    public boolean isHeavyRain() {
+        return this == HEAVY_RAIN;
+    }
+
+    public boolean isGustingRain() {
+        return this == GUSTING_RAIN;
+    }
+
+    public boolean isDownpour() {
+        return this == DOWNPOUR;
+    }
+
+    public boolean isLightSnow() {
+        return this == LIGHT_SNOW;
+    }
+
+    public boolean isModerateSnow() {
+        return this == MOD_SNOW;
+    }
+
+    public boolean isSnowFlurries() {
+        return this == SNOW_FLURRIES;
+    }
+
+    public boolean isHeavySnow() {
+        return this == HEAVY_SNOW;
+    }
+
+    public boolean isSleet() {
+        return this == SLEET;
+    }
+
+    public boolean isIceStorm() {
+        return this == ICE_STORM;
+    }
+
+    public boolean isLightHail() {
+        return this == LIGHT_HAIL;
+    }
+
+    public boolean isHeaveHail() {
+        return this == HEAVY_HAIL;
+    }
+
+    public boolean isLightningStorm() {
+        return this == LIGHTNING_STORM;
+    }
+
     public static Weather getWeather(int i) {
         return Weather.values()[i];
-    }
-
-    public static boolean isWeatherNone(Weather weather) {
-        return weather == WEATHER_NONE;
-    }
-
-    public static boolean isLightRain(Weather weather) {
-        return weather == LIGHT_RAIN;
-    }
-
-    public static boolean isModerateRain(Weather weather) {
-        return weather == MOD_RAIN;
-    }
-
-    public static boolean isHeavyRain(Weather weather) {
-        return weather == HEAVY_RAIN;
-    }
-
-    public static boolean isGustingRain(Weather weather) {
-        return weather == GUSTING_RAIN;
-    }
-
-    public static boolean isDownpour(Weather weather) {
-        return weather == DOWNPOUR;
-    }
-
-    public static boolean isLightSnow(Weather weather) {
-        return weather == LIGHT_SNOW;
-    }
-
-    public static boolean isModerateSnow(Weather weather) {
-        return weather == MOD_SNOW;
-    }
-
-    public static boolean isSnowFlurries(Weather weather) {
-        return weather == SNOW_FLURRIES;
-    }
-
-    public static boolean isHeavySnow(Weather weather) {
-        return weather == HEAVY_SNOW;
-    }
-
-    public static boolean isSleet(Weather weather) {
-        return weather == SLEET;
-    }
-
-    public static boolean isIceStorm(Weather weather) {
-        return weather == ICE_STORM;
-    }
-
-    public static boolean isLightHail(Weather weather) {
-        return weather == LIGHT_HAIL;
-    }
-
-    public static boolean isHeaveHail(Weather weather) {
-        return weather == HEAVY_HAIL;
-    }
-
-    public static boolean isLightningStorm(Weather weather) {
-        return weather == LIGHTNING_STORM;
     }
 }

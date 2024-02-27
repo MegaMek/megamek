@@ -180,7 +180,8 @@ public class Sensor implements Serializable {
         }
 
         if ((type != TYPE_MEK_SEISMIC) && (type != TYPE_VEE_SEISMIC)) {
-            if (game.getPlanetaryConditions().isEMI()) {
+            PlanetaryConditions conditions = game.getPlanetaryConditions();
+            if (conditions.getEMI().isEMI()) {
                 range -= 4;
             }
             // TODO: add lightning

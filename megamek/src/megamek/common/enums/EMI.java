@@ -49,15 +49,15 @@ public enum EMI {
         return name;
     }
 
+    public boolean isEMINone() {
+        return this == EMI_NONE;
+    }
+
+    public boolean isEMI() {
+        return this == EMI;
+    }
+
     public static EMI getEMI(int i) {
         return EMI.values()[i];
-    }
-
-    public static boolean isEMINone(EMI emi) {
-        return emi == EMI_NONE;
-    }
-
-    public static boolean isEMI(EMI emi) {
-        return emi == EMI;
     }
 }

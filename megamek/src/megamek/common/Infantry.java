@@ -25,6 +25,7 @@ import megamek.common.annotations.Nullable;
 import megamek.common.cost.InfantryCostCalculator;
 import megamek.common.enums.AimingMode;
 import megamek.common.enums.GamePhase;
+import megamek.common.enums.Wind;
 import megamek.common.options.OptionsConstants;
 import megamek.common.verifier.TestInfantry;
 import megamek.common.weapons.infantry.InfantryWeapon;
@@ -389,7 +390,7 @@ public class Infantry extends Entity {
             int weatherMod = conditions.getMovementMods(this);
             mp = Math.max(mp + weatherMod, 0);
 
-            if (conditions.isGustingRain()
+            if (conditions.getWeather().isGustingRain()
                     && getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_RAIN)) {
                 if ((mp !=0) || getMovementMode().isMotorizedInfantry()) {
                     mp += 1;
@@ -397,20 +398,20 @@ public class Infantry extends Entity {
             }
 
             if (getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_SNOW)) {
-                if ((conditions.isSnowFlurries()
-                            || conditions.isIceStorm())
+                if ((conditions.getWeather().isSnowFlurries()
+                            || conditions.getWeather().isIceStorm())
                         && (getOriginalWalkMP() != 0)) {
                     mp += 1;
                 }
             }
 
             if (getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_WIND)
-                    && conditions.isWeatherNone()) {
-                if (conditions.isModerateGale()) {
+                    && conditions.getWeather().isWeatherNone()) {
+                if (conditions.getWind().isModerateGale()) {
                     mp += 1;
                 }
 
-                if (conditions.isStrongGale()
+                if (conditions.getWind().isStrongGale()
                         && ((mp != 0) || getMovementMode().isMotorizedInfantry())) {
                     mp += 1;
                 }
@@ -456,16 +457,16 @@ public class Infantry extends Entity {
 
         if (!mpCalculationSetting.ignoreWeather && (null != game)) {
             PlanetaryConditions conditions = game.getPlanetaryConditions();
-            if (conditions.isGreaterThanModerateGale()) {
+            if (conditions.getWind().isStrongerThan(Wind.MOD_GALE)) {
                 return 0;
-            } else if (conditions.isModerateGale()
+            } else if (conditions.getWind().isModerateGale()
                     && !getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_WIND)) {
                 mp--;
             }
 
             if (getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_SNOW)) {
-                if (conditions.isSnowFlurries()
-                        && conditions.isIceStorm()) {
+                if (conditions.getWeather().isSnowFlurries()
+                        && conditions.getWeather().isIceStorm()) {
                     mp += 1;
                 }
             }

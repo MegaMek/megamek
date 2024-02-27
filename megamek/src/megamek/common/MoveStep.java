@@ -19,6 +19,8 @@
 package megamek.common;
 
 import megamek.common.MovePath.MoveStepType;
+import megamek.common.enums.Atmosphere;
+import megamek.common.enums.Light;
 import megamek.common.enums.MPBoosters;
 import megamek.common.options.OptionsConstants;
 import megamek.common.pathfinder.CachedEntityState;
@@ -2876,7 +2878,8 @@ public class MoveStep implements Serializable {
         }
 
         // only walking speed in Tornados
-        if (game.getPlanetaryConditions().isTornadoF4()) {
+        PlanetaryConditions conditions = game.getPlanetaryConditions();
+        if (conditions.getWind().isTornadoF4()) {
             if (getMpUsed() > tmpWalkMP) {
                 movementType = EntityMovementType.MOVE_ILLEGAL;
                 return;
@@ -3032,7 +3035,7 @@ public class MoveStep implements Serializable {
                         break;
                     default:
                 }
-            } else if (conditions.isDark()) {
+            } else if (conditions.getLight().isDarkerThan(Light.DUSK)) {
                 setRunProhibited(true);
             }
         }
@@ -3050,7 +3053,7 @@ public class MoveStep implements Serializable {
         // Be careful on pavement during cold weather, there may be black ice.
         boolean useBlackIce = game.getOptions().booleanOption(OptionsConstants.ADVANCED_BLACK_ICE);
         boolean goodTemp = conditions.getTemperature() <= PlanetaryConditions.BLACK_ICE_TEMP;
-        boolean goodWeather = conditions.isIceStorm();
+        boolean goodWeather = conditions.getWeather().isIceStorm();
 
         if (isPavementStep && ((useBlackIce && goodTemp) || goodWeather)) {
             if (destHex.containsTerrain(Terrains.BLACK_ICE)){
@@ -4099,7 +4102,9 @@ public class MoveStep implements Serializable {
             return false;
         }
         // are we airborne in non-vacuum?
-        return en.isAirborne() && !game.getPlanetaryConditions().isLessThanThin();
+        PlanetaryConditions conditions = game.getPlanetaryConditions();
+        return en.isAirborne()
+                && !conditions.getAtmosphere().isLighterThan(Atmosphere.THIN);
     }
 
     /**

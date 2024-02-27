@@ -17,6 +17,7 @@ import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.common.cost.AeroCostCalculator;
 import megamek.common.enums.AimingMode;
 import megamek.common.enums.Atmosphere;
+import megamek.common.enums.Light;
 import megamek.common.options.OptionsConstants;
 import org.apache.logging.log4j.LogManager;
 
@@ -350,8 +351,8 @@ public abstract class Aero extends Entity implements IAero, IBomber {
             int weatherMod = conditions.getMovementMods(this);
             mp = Math.max(mp + weatherMod, 0);
             if (getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_WIND)
-                    && conditions.isTornadoF1ToF3()
-                    && conditions.isWeatherNone()) {
+                    && conditions.getWind().isTornadoF1ToF3()
+                    && conditions.getWeather().isWeatherNone()) {
                 mp += 1;
             }
         }
@@ -1422,7 +1423,8 @@ public abstract class Aero extends Entity implements IAero, IBomber {
 
         PlanetaryConditions conditions = game.getPlanetaryConditions();
         // add in atmospheric effects later
-        boolean spaceOrVacuum = game.getBoard().inSpace() || conditions.isVacuum();
+        boolean spaceOrVacuum = game.getBoard().inSpace()
+                || conditions.getAtmosphere().isVacuum();
         if (!spaceOrVacuum
                 && isAirborne()) {
             prd.addModifier(+2, "Atmospheric operations");
@@ -2689,7 +2691,7 @@ public abstract class Aero extends Entity implements IAero, IBomber {
         // for indirect LRM fire, unless they have a recon cam, an infrared or
         // hyperspec imager, or a high-res imager and it's not night
         boolean hiresLighted = hasWorkingMisc(MiscType.F_HIRES_IMAGER)
-                && game.getPlanetaryConditions().isLighted();
+                && game.getPlanetaryConditions().getLight().isLighterThan(Light.FULL_MOON);
         return !isAirborne()
                 || hasWorkingMisc(MiscType.F_RECON_CAMERA)
                 || hasWorkingMisc(MiscType.F_INFRARED_IMAGER)

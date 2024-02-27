@@ -47,7 +47,7 @@ public class RapidfireHVACWeaponHandler extends RapidfireACWeaponHandler {
     public boolean handle(GamePhase phase, Vector<Report> vPhaseReport) {
         PlanetaryConditions conditions = game.getPlanetaryConditions();
         if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_START_FIRE)
-                && !conditions.isVacuum()) {
+                && !conditions.getAtmosphere().isVacuum()) {
             int rear = (ae.getFacing() + 3 + (weapon.isMechTurretMounted() ? weapon.getFacing() : 0)) % 6;
             Coords src = ae.getPosition();
             Coords rearCoords = src.translated(rear);

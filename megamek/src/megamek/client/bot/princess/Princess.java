@@ -29,6 +29,7 @@ import megamek.common.MovePath.MoveStepType;
 import megamek.common.actions.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.containers.PlayerIDandList;
+import megamek.common.enums.Light;
 import megamek.common.event.GameCFREvent;
 import megamek.common.event.GamePlayerChatEvent;
 import megamek.common.net.enums.PacketCommand;
@@ -2028,7 +2029,7 @@ public class Princess extends BotClient {
         if (possibleToInflictDamage
                 && pathEntity.hasSearchlight()
                 && !pathEntity.isUsingSearchlight()
-                && path.getGame().getPlanetaryConditions().isDark()) {
+                && path.getGame().getPlanetaryConditions().getLight().isDarkerThan(Light.DUSK)) {
             path.addStep(MoveStepType.SEARCHLIGHT);
         }
     }

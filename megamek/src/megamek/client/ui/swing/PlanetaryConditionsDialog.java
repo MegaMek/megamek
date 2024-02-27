@@ -297,12 +297,12 @@ public class PlanetaryConditionsDialog extends ClientDialog {
         comWindDirection.setSelectedIndex(conditions.getWindDirection().ordinal());
         comAtmosphere.setSelectedIndex(conditions.getAtmosphere().ordinal());
         comFog.setSelectedIndex(conditions.getFog().ordinal());
-        chkBlowingSands.setSelected(conditions.isBlowingSand());
+        chkBlowingSands.setSelected(conditions.getBlowingSand().isBlowingSand());
         chkShiftWindDir.setSelected(conditions.shiftingWindDirection());
         chkShiftWindStr.setSelected(conditions.shiftingWindStrength());
         fldTemp.setText(Integer.toString(conditions.getTemperature()));
         fldGrav.setText(Float.toString(conditions.getGravity()));
-        chkEMI.setSelected(conditions.isEMI());
+        chkEMI.setSelected(conditions.getEMI().isEMI());
         chkTerrainAffected.setSelected(conditions.isTerrainAffected());
         addListeners();
         refreshWindShift();
@@ -380,37 +380,41 @@ public class PlanetaryConditionsDialog extends ClientDialog {
         Wind wind = Wind.getWind(comWind.getSelectedIndex());
         Atmosphere atmo = Atmosphere.getAtmosphere(comAtmosphere.getSelectedIndex());
 
-        boolean blowingSandsLessThanModerateGale = chkBlowingSands.isSelected() && Wind.isLessThanModerateGale(wind);
-        boolean shiftWindsLessThanModerateGale = chkShiftWindStr.isSelected() && Wind.isLessThanModerateGale(conditions.getWindMax());
+        boolean blowingSandsLessThanModerateGale = chkBlowingSands.isSelected()
+                && wind.isWeakerThan(Wind.MOD_GALE);
+        boolean shiftWindsLessThanModerateGale = chkShiftWindStr.isSelected()
+                && conditions.getWindMax().isWeakerThan(Wind.MOD_GALE);
         if (blowingSandsLessThanModerateGale
                 || shiftWindsLessThanModerateGale) {
             windTip.append(Messages.getString("PlanetaryConditionsDialog.invalid.sandsLost"));
             sandTip.append(Messages.getString("PlanetaryConditionsDialog.invalid.sandsLost"));
         }
 
-        if (Atmosphere.isTrace(atmo) && Wind.isLightGale(wind)) {
+        if (atmo.isTrace()
+                && wind.isLightGale()) {
             atmoTip.append(Messages.getString("PlanetaryConditionsDialog.invalid.traceLightGale"));
             windTip.append(Messages.getString("PlanetaryConditionsDialog.invalid.traceLightGale"));
         }
         
         // The following temperature checks are not exactly what the rules demand, but see the comment above.
-        if ((Weather.isLightSnow(weather)
-                    || Weather.isSleet(weather)
-                    || Weather.isLightHail(weather)
-                    || Weather.isHeaveHail(weather))
+        if ((weather.isLightSnow()
+                    || weather.isSleet()
+                    || weather.isLightHail()
+                    || weather.isHeaveHail())
                 && (temp > -40)) {
             tempTip.append(Messages.getString("PlanetaryConditionsDialog.invalid.lightSnowTemp"));
             wthrTip.append(Messages.getString("PlanetaryConditionsDialog.invalid.lightSnowTemp"));
         }
-        
-        if ((Weather.isHeavySnow(weather) || Weather.isModerateSnow(weather)
-                || Weather.isSnowFlurries(weather))
+
+        boolean snow = weather.isModerateSnow()
+                || weather.isSnowFlurries();
+        if (snow
                 && (temp > -50)) {
             tempTip.append(Messages.getString("PlanetaryConditionsDialog.invalid.modSnowTemp"));
             wthrTip.append(Messages.getString("PlanetaryConditionsDialog.invalid.modSnowTemp"));
         }
         
-        if (Weather.isIceStorm(weather) && (temp > -60)) {
+        if (weather.isIceStorm() && (temp > -60)) {
             tempTip.append(Messages.getString("PlanetaryConditionsDialog.invalid.iceStormTemp"));
             wthrTip.append(Messages.getString("PlanetaryConditionsDialog.invalid.iceStormTemp"));
         }
@@ -453,13 +457,13 @@ public class PlanetaryConditionsDialog extends ClientDialog {
      * weather to none.
      */
     private void adaptToWeatherAtmo() {
-        boolean isVacuum = Atmosphere.isVacuum(Atmosphere.getAtmosphere(comAtmosphere.getSelectedIndex()));
-        boolean isTraceThin = Atmosphere.isTrace(Atmosphere.getAtmosphere(comAtmosphere.getSelectedIndex()))
-                || Atmosphere.isThin(Atmosphere.getAtmosphere(comAtmosphere.getSelectedIndex()));
+        boolean isVacuum = Atmosphere.getAtmosphere(comAtmosphere.getSelectedIndex()).isVacuum();
+        boolean isTraceThin = Atmosphere.getAtmosphere(comAtmosphere.getSelectedIndex()).isTrace()
+                || Atmosphere.getAtmosphere(comAtmosphere.getSelectedIndex()).isThin();
         boolean isDense = !isVacuum && !isTraceThin;
         Weather weather = Weather.getWeather(comWeather.getSelectedIndex());
-        boolean specificWind = Weather.isSnowFlurries(weather) || Weather.isIceStorm(weather)
-                || Weather.isGustingRain(weather) || Weather.isLightningStorm(weather);
+        boolean specificWind = weather.isSnowFlurries() || weather.isIceStorm()
+                || weather.isGustingRain() || weather.isLightningStorm();
               
         removeListeners();
         if (isTraceThin) {

@@ -19,6 +19,7 @@ import megamek.client.ui.Messages;
 import megamek.common.*;
 import megamek.common.enums.AimingMode;
 import megamek.common.enums.Light;
+import megamek.common.enums.Wind;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.DiveBombAttack;
 import megamek.common.weapons.InfantryAttack;
@@ -1894,13 +1895,13 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
 
             // Ballistic and Missile weapons are subject to wind conditions
             PlanetaryConditions conditions = game.getPlanetaryConditions();
-            if (conditions.isTornadoF1ToF3() && wtype.hasFlag(WeaponType.F_MISSILE)
+            if (conditions.getWind().isTornadoF1ToF3() && wtype.hasFlag(WeaponType.F_MISSILE)
                     && !game.getBoard().inSpace()) {
                 return Messages.getString("WeaponAttackAction.NoMissileTornado");
             }
             boolean missleOrBallistic = wtype.hasFlag(WeaponType.F_MISSILE)
                     || wtype.hasFlag(WeaponType.F_BALLISTIC);
-            if (conditions.isTornadoF4()
+            if (conditions.getWind().isTornadoF4()
                     && !game.getBoard().inSpace()
                     && missleOrBallistic) {
                 return Messages.getString("WeaponAttackAction.F4Tornado");
@@ -2867,29 +2868,29 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
 
         // wind mods (not in space)
         if (!game.getBoard().inSpace()) {
-            if (conditions.isModerateGale()) {
+            if (conditions.getWind().isModerateGale()) {
                 if (wtype != null && wtype.hasFlag(WeaponType.F_MISSILE)) {
                     weatherToHitMods.addModifier(1, conditions.getWind().toString());
                 }
-            } else if (conditions.isModerateGale()) {
+            } else if (conditions.getWind().isModerateGale()) {
                 if (wtype != null && wtype.hasFlag(WeaponType.F_BALLISTIC) && wtype.hasFlag(WeaponType.F_DIRECT_FIRE)) {
                     weatherToHitMods.addModifier(1, conditions.getWind().toString());
                 } else if (wtype != null && wtype.hasFlag(WeaponType.F_MISSILE)) {
                     weatherToHitMods.addModifier(2, conditions.getWind().toString());
                 }
-            } else if (conditions.isStorm()) {
+            } else if (conditions.getWind().isStorm()) {
                 if (wtype != null && wtype.hasFlag(WeaponType.F_BALLISTIC) && wtype.hasFlag(WeaponType.F_DIRECT_FIRE)) {
                     weatherToHitMods.addModifier(2, conditions.getWind().toString());
                 } else if (wtype != null && wtype.hasFlag(WeaponType.F_MISSILE)) {
                     weatherToHitMods.addModifier(3, conditions.getWind().toString());
                 }
-            } else if (conditions.isTornadoF1ToF3()) {
+            } else if (conditions.getWind().isTornadoF1ToF3()) {
                 if (wtype != null && wtype.hasFlag(WeaponType.F_ENERGY)) {
                     weatherToHitMods.addModifier(2, conditions.getWind().toString());
                 } else if (wtype != null && wtype.hasFlag(WeaponType.F_BALLISTIC) && wtype.hasFlag(WeaponType.F_DIRECT_FIRE)) {
                     weatherToHitMods.addModifier(3, conditions.getWind().toString());
                 }
-            } else if (conditions.isTornadoF4()) {
+            } else if (conditions.getWind().isTornadoF4()) {
                 weatherToHitMods.addModifier(3, conditions.getWind().toString());
             }
         }
@@ -2898,7 +2899,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         if (wtype != null
                 && wtype.hasFlag(WeaponType.F_ENERGY)
                 && !game.getBoard().inSpace()
-                && conditions.isFogHeavy()) {
+                && conditions.getFog().isFogHeavy()) {
             weatherToHitMods.addModifier(1, Messages.getString("WeaponAttackAction.HeavyFog"));
         }
 
@@ -2906,8 +2907,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         if (wtype != null
                 && wtype.hasFlag(WeaponType.F_ENERGY)
                 && !game.getBoard().inSpace()
-                && conditions.isBlowingSand()
-                && conditions.isGreaterThanLightGale()) {
+                && conditions.getBlowingSand().isBlowingSand()
+                && conditions.getWind().isStrongerThan(Wind.LIGHT_GALE)) {
             weatherToHitMods.addModifier(1, Messages.getString("WeaponAttackAction.BlowingSand"));
         }
 
@@ -2928,7 +2929,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
 
         // Electro-Magnetic Interference
-        if (conditions.isEMI() && !ae.isConventionalInfantry()) {
+        if (conditions.getEMI().isEMI()
+                && !ae.isConventionalInfantry()) {
             toHit.addModifier(2, Messages.getString("WeaponAttackAction.EMI"));
         }
         return toHit;
@@ -5242,71 +5244,72 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 if (ae.getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_FOG)
                         && wtype.hasFlag(WeaponType.F_ENERGY)
                         && !game.getBoard().inSpace()
-                        && conditions.isFogHeavy()) {
+                        && conditions.getFog().isFogHeavy()) {
                     toHit.addModifier(-1, Messages.getString("WeaponAttackAction.FogSpec"));
                 }
 
                 // Light Specialist
                 if (ae.getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_LIGHT)) {
                     if (!te.isIlluminated()
-                            && conditions.isIlluminationEffective()) {
+                            && conditions.getLight().isDarkerThan(Light.DAY)) {
                         toHit.addModifier(-1, Messages.getString("WeaponAttackAction.LightSpec"));
                     } else if (te.isIlluminated()
-                            && conditions.isPitchBack()) {
+                            && conditions.getLight().isPitchBack()) {
                         toHit.addModifier(-1, Messages.getString("WeaponAttackAction.LightSpec"));
                     }
                 }
 
                 // Rain Specialist
                 if (ae.getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_RAIN)) {
-                    if (conditions.isLightRain()
+                    if (conditions.getWeather().isLightRain()
                             && ae.isConventionalInfantry()) {
                         toHit.addModifier(-1, Messages.getString("WeaponAttackAction.RainSpec"));
                     }
 
-                    if (conditions.isModerateRain()
-                            || conditions.isHeavyRain()
-                            || conditions.isGustingRain()
-                            || conditions.isDownpour()) {
+                    if (conditions.getWeather().isModerateRain()
+                            || conditions.getWeather().isHeavyRain()
+                            || conditions.getWeather().isGustingRain()
+                            || conditions.getWeather().isDownpour()) {
                         toHit.addModifier(-1, Messages.getString("WeaponAttackAction.RainSpec"));
                     }
                 }
 
                 // Snow Specialist
                 if (ae.getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_SNOW)) {
-                    if (conditions.isLightSnow()
+                    if (conditions.getWeather().isLightSnow()
                             && ae.isConventionalInfantry()) {
                         toHit.addModifier(-1, Messages.getString("WeaponAttackAction.SnowSpec"));
                     }
 
-                    if (conditions.isIceStorm()
+                    if (conditions.getWeather().isIceStorm()
                             && wtype.hasFlag(WeaponType.F_MISSILE)) {
                         toHit.addModifier(-1, Messages.getString("WeaponAttackAction.SnowSpec"));
                     }
 
-                    if (conditions.isSleet()
-                            || conditions.isSnowFlurries()
-                            || conditions.isModerateSnow()
-                            || conditions.isHeavySnow()) {
+                    if (conditions.getWeather().isSleet()
+                            || conditions.getWeather().isSnowFlurries()
+                            || conditions.getWeather().isModerateSnow()
+                            || conditions.getWeather().isHeavySnow()) {
                         toHit.addModifier(-1, Messages.getString("WeaponAttackAction.SnowSpec"));
                     }
                 }
 
                 // Wind Specialist
                 if (ae.getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_WIND)) {
-                    if (conditions.isModerateGale()
+                    if (conditions.getWind().isModerateGale()
                             && wtype.hasFlag(WeaponType.F_MISSILE)) {
                         toHit.addModifier(-1, Messages.getString("WeaponAttackAction.SnowSpec"));
                     }
 
-                    boolean strongGaleOrStorm = conditions.isStrongGale() || conditions.isStorm();
+                    boolean strongGaleOrStorm = conditions.getWind().isStrongGale()
+                            || conditions.getWind().isStorm();
                     if (wtype.hasFlag(WeaponType.F_MISSILE)
                             && wtype.hasFlag(WeaponType.F_BALLISTIC)
                             && strongGaleOrStorm) {
                         toHit.addModifier(-1, Messages.getString("WeaponAttackAction.WindSpec"));
                     }
 
-                    if (conditions.isGreaterThanStorm()) {
+                    if (conditions.getWind().isStrongerThan(Wind.STORM)) {
                         toHit.addModifier(-1, Messages.getString("WeaponAttackAction.WindSpec"));
                     }
                 }

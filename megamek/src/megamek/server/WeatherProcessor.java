@@ -17,6 +17,7 @@ package megamek.server;
 import java.util.Vector;
 
 import megamek.common.*;
+import megamek.common.enums.Wind;
 
 /**
  * Cycle through hexes on a map and make any necessary adjustments based on weather
@@ -67,8 +68,8 @@ public class WeatherProcessor extends DynamicTerrainProcessor {
         }
 
         // first we need to increment the conditions
-        if (conditions.isModerateSnow()
-                || conditions.isSnowFlurries()
+        if (conditions.getWeather().isModerateSnow()
+                || conditions.getWeather().isSnowFlurries()
                 && game.getBoard().onGround()) {
             modSnowTurn = modSnowTurn + 1;
             if (modSnowTurn == 9) {
@@ -79,7 +80,7 @@ public class WeatherProcessor extends DynamicTerrainProcessor {
                 ice = true;
             }
         }
-        if (conditions.isHeavySnow()
+        if (conditions.getWeather().isHeavySnow()
                 && game.getBoard().onGround()) {
             heavySnowTurn = heavySnowTurn + 1;
             if (heavySnowTurn == 4) {
@@ -92,14 +93,14 @@ public class WeatherProcessor extends DynamicTerrainProcessor {
                 ice = true;
             }
         }
-        if (conditions.isSleet()
+        if (conditions.getWeather().isSleet()
                 && game.getBoard().onGround()) {
             sleetTurn = sleetTurn + 1;
             if (sleetTurn == 14) {
                 ice = true;
             }
         }
-        if (conditions.isIceStorm()
+        if (conditions.getWeather().isIceStorm()
                 && game.getBoard().onGround()) {
             iceTurn = iceTurn + 1;
             if (iceTurn == 9) {
@@ -216,11 +217,11 @@ public class WeatherProcessor extends DynamicTerrainProcessor {
                 // FIXME: This doesn't seem to be doing anything
                 if (currentHex.containsTerrain(Terrains.WATER)
                         && currentHex.depth(true) > 0) {
-                    if (conditions.isGreaterThanStorm()) {
+                    if (conditions.getWind().isStrongerThan(Wind.STORM)) {
                         if (!(currentHex.terrainLevel(Terrains.RAPIDS) > 1)) {
                             currentHex.addTerrain(new Terrain(Terrains.RAPIDS, 2));
                         }
-                    } else if (conditions.isGreaterThanModerateGale()) {
+                    } else if (conditions.getWind().isStrongerThan(Wind.MOD_GALE)) {
                         if (!currentHex.containsTerrain(Terrains.RAPIDS)) {
                             currentHex.addTerrain(new Terrain(Terrains.RAPIDS, 1));
                         }

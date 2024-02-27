@@ -14,6 +14,7 @@
 package megamek.common.weapons;
 
 import megamek.common.*;
+import megamek.common.enums.Atmosphere;
 import megamek.server.GameManager;
 import org.apache.logging.log4j.LogManager;
 
@@ -124,7 +125,8 @@ public class AreaEffectHelper {
         PlanetaryConditions conditions = game.getPlanetaryConditions();
         // sanity check: if this attack is happening in vacuum through very thin atmo, add that to the phase report and terminate early
 
-        if (game.getBoard().inSpace() || conditions.isLessThanThin()) {
+        if (game.getBoard().inSpace()
+                || conditions.getAtmosphere().isLighterThan(Atmosphere.THIN)) {
             Report r = new Report(9986);
             r.indent(1);
             r.subject = attacker.getId();
@@ -135,7 +137,7 @@ public class AreaEffectHelper {
 
         int blastRadius = getFuelAirBlastRadiusIndex(ordnanceType.getInternalName());
 
-        if (conditions.isThin()) {
+        if (conditions.getAtmosphere().isThin()) {
             Report r = new Report(9990);
             r.indent(1);
             r.subject = attacker.getId();
@@ -159,7 +161,7 @@ public class AreaEffectHelper {
         }
 
         int damage = AreaEffectHelper.fuelAirDamage[damageBracket];
-        if (conditions.isThin()) {
+        if (conditions.getAtmosphere().isThin()) {
             damage = (int) Math.ceil(damage / 2.0);
         }
 
@@ -177,7 +179,8 @@ public class AreaEffectHelper {
         Game game = attacker.getGame();
         PlanetaryConditions conditions = game.getPlanetaryConditions();
         // sanity check: if this attack is happening in vacuum through very thin atmo, add that to the phase report and terminate early
-        if (game.getBoard().inSpace() || conditions.isLessThanThin()) {
+        if (game.getBoard().inSpace()
+                || conditions.getAtmosphere().isLighterThan(Atmosphere.THIN)) {
             Report r = new Report(9986);
             r.indent(1);
             r.subject = attacker.getId();
@@ -188,7 +191,7 @@ public class AreaEffectHelper {
 
         int blastRadius = getFuelAirBlastRadiusIndex(ordnanceType.getInternalName());
 
-        if (conditions.isThin()) {
+        if (conditions.getAtmosphere().isThin()) {
             Report r = new Report(9990);
             r.indent(1);
             r.subject = attacker.getId();
@@ -210,7 +213,7 @@ public class AreaEffectHelper {
             List<Coords> donut = center.allAtDistance(distFromCenter);
             for (Coords coords : donut) {
                 int damage = AreaEffectHelper.fuelAirDamage[damageBracket];
-                if (conditions.isThin()) {
+                if (conditions.getAtmosphere().isThin()) {
                     damage = (int) Math.ceil(damage / 2.0);
                 }
 

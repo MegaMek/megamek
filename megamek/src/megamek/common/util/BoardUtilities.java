@@ -1119,7 +1119,7 @@ public class BoardUtilities {
                 Hex hex = board.getHex(c);
 
                 //moderate rain - mud in clear hexes, depth 0 water, and dirt roads (not implemented yet)
-                if (Weather.isModerateRain(weatherCond)) {
+                if (weatherCond.isModerateRain()) {
                     if ((hex.terrainsPresent() == 0) || (hex.containsTerrain(Terrains.WATER) && (hex.depth() == 0))) {
                         hex.addTerrain(new Terrain(Terrains.MUD, 1));
                         if (hex.containsTerrain(Terrains.WATER)) {
@@ -1130,8 +1130,8 @@ public class BoardUtilities {
 
                 //heavy rain - mud in all hexes except buildings, depth 1+ water, and non-dirt roads
                 //rapids in all depth 1+ water
-                if (Weather.isHeavyRain(weatherCond)
-                        || Weather.isGustingRain(weatherCond)) {
+                if (weatherCond.isHeavyRain()
+                        || weatherCond.isGustingRain()) {
                     if (hex.containsTerrain(Terrains.WATER) && !hex.containsTerrain(Terrains.RAPIDS) && (hex.depth() > 0)) {
                         hex.addTerrain(new Terrain(Terrains.RAPIDS, 1));
                     } else if (!hex.containsTerrain(Terrains.BUILDING)
@@ -1146,7 +1146,7 @@ public class BoardUtilities {
 
                 //torrential downpour - mud in all hexes except buildings, depth 1+ water, and non-dirt roads
                 //torrent in all depth 1+ water, swamps in all depth 0 water hexes
-                if (Weather.isDownpour(weatherCond)) {
+                if (weatherCond.isDownpour()) {
                     if (hex.containsTerrain(Terrains.WATER) && !(hex.terrainLevel(Terrains.RAPIDS) > 1) && (hex.depth() > 0)) {
                         hex.addTerrain(new Terrain(Terrains.RAPIDS, 2));
                     } else if (hex.containsTerrain(Terrains.WATER)) {
@@ -1160,10 +1160,10 @@ public class BoardUtilities {
                 }
 
                 // check for rapids/torrents created by wind
-                if (Wind.isGreaterThanModerateGale(windCond)
+                if (windCond.isStrongerThan(Wind.MOD_GALE)
                         && hex.containsTerrain(Terrains.WATER)
                         && (hex.depth() > 0)) {
-                    if (Wind.isStorm(windCond)) {
+                    if (windCond.isStorm()) {
                         if (!(hex.terrainLevel(Terrains.RAPIDS) > 1)) {
                             hex.addTerrain(new Terrain(Terrains.RAPIDS, 2));
                         }

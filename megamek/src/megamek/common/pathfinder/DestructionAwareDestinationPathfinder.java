@@ -59,7 +59,7 @@ public class DestructionAwareDestinationPathfinder extends BoardEdgePathFinder {
         if (jump
                 && (startPath.getCachedEntityState().getJumpMPWithTerrain() > 0)
                 && !entity.isProne() && !entity.isHullDown()
-                && !entity.getGame().getPlanetaryConditions().isTornadoF4()) {
+                && !entity.getGame().getPlanetaryConditions().getWind().isTornadoF4()) {
             startPath.addStep(MoveStepType.START_JUMP);
         // if we specified a jump path, but can't actually jump
         } else if (jump) {

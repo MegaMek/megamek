@@ -17,6 +17,7 @@ import megamek.client.Client;
 import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
 import megamek.common.*;
+import megamek.common.enums.Light;
 import megamek.common.options.AbstractOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.util.fileUtils.MegaMekFile;
@@ -262,7 +263,7 @@ public class EquipChoicePanel extends JPanel {
 
         // Set up searchlight
         if (!entity.getsAutoExternalSearchlight()
-                && client.getGame().getPlanetaryConditions().isDark()) {
+            && client.getGame().getPlanetaryConditions().getLight().isDarkerThan(Light.DUSK)) {
             add(labSearchlight, GBC.std());
             add(chSearchlight, GBC.eol());
             chSearchlight.setSelected(entity.hasSearchlight()

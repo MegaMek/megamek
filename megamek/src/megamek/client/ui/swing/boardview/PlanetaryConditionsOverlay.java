@@ -96,35 +96,35 @@ public class PlanetaryConditionsOverlay extends AbstractBoardViewOverlay {
                 result.add(tmpStr);
             }
 
-            if (showDefaultConditions || !conditions.isDay()) {
+            if (showDefaultConditions || !conditions.getLight().isDay()) {
                 tmpStr = (showLabel ? MSG_LIGHT + "  " : "");
                 tmpStr = tmpStr + (showValue ? conditions.getLight().toString() + "  " : "");
                 tmpStr = tmpStr + (showIndicator ? conditions.getLight().getIndicator() : "");
                 result.add(tmpStr);
             }
 
-            if (showDefaultConditions || conditions.isStandard()) {
+            if (showDefaultConditions || conditions.getAtmosphere().isStandard()) {
                 tmpStr = (showLabel ? MSG_ATMOSPHERICPREASSURE + "  " : "");
                 tmpStr = tmpStr + (showValue ? conditions.getAtmosphere().toString() + "  " : "");
                 tmpStr = tmpStr + (showIndicator ? conditions.getAtmosphere().getIndicator() : "");
                 result.add(tmpStr);
             }
 
-            if (showDefaultConditions || conditions.isEMINone()) {
+            if (showDefaultConditions || conditions.getEMI().isEMINone()) {
                 tmpStr = (showLabel ? MSG_EMI + "  " : "");
                 tmpStr = tmpStr + (showValue ? conditions.getEMI().toString() + "  " : "");
                 tmpStr = tmpStr + (showIndicator ? conditions.getEMI().getIndicator() : "");
                 result.add(tmpStr);
             }
 
-            if (showDefaultConditions || !conditions.isWeatherNone()) {
+            if (showDefaultConditions || !conditions.getWeather().isWeatherNone()) {
                 tmpStr = (showLabel ? MSG_WEATHER + "  " : "");
                 tmpStr = tmpStr + (showValue ? conditions.getWeather().toString() + "  " : "");
                 tmpStr = tmpStr + (showIndicator ? conditions.getWeather().getIndicator() : "");
                 result.add(tmpStr);
             }
 
-            if (showDefaultConditions || !conditions.isCalm()) {
+            if (showDefaultConditions || !conditions.getWind().isCalm()) {
                 tmpStr = (showLabel ? MSG_WIND + "  " : "");
                 tmpStr = tmpStr + (showValue ? conditions.getWind().toString() + "  " : "");
                 tmpStr = tmpStr + (showIndicator ? conditions.getWind().getIndicator() : "");
@@ -135,14 +135,14 @@ public class PlanetaryConditionsOverlay extends AbstractBoardViewOverlay {
                 result.add(tmpStr);
             }
 
-            if (showDefaultConditions || conditions.isFogNone()) {
+            if (showDefaultConditions || conditions.getFog().isFogNone()) {
                 tmpStr = (showLabel ? MSG_FOG + "  " : "");
                 tmpStr = tmpStr + (showValue ? conditions.getFog().toString() + "  " : "");
                 tmpStr = tmpStr + (showIndicator ? conditions.getFog().getIndicator() : "");
                 result.add(tmpStr);
             }
 
-            if (showDefaultConditions || conditions.isBlowingSandNone()) {
+            if (showDefaultConditions || conditions.getBlowingSand().isBlowingSandNone()) {
                 tmpStr = (showLabel ? MSG_BLOWINGSAND + "  " : "");
                 tmpStr = tmpStr + (showValue ? conditions.getBlowingSand().toString() + "  " : "");
                 tmpStr = tmpStr + (showIndicator ? conditions.getBlowingSand().getIndicator() : "");

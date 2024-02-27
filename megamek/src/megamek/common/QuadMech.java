@@ -180,8 +180,8 @@ public class QuadMech extends Mech {
             mp = Math.max(mp + weatherMod, 0);
 
             if(getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_WIND)
-                    && conditions.isWeatherNone()
-                    && conditions.isTornadoF1ToF3()) {
+                    && conditions.getWeather().isWeatherNone()
+                    && conditions.getWind().isTornadoF1ToF3()) {
                 mp += 1;
             }
         }

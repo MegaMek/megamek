@@ -85,65 +85,44 @@ public enum Wind {
         }
     }
 
+    public boolean isCalm() {
+        return this == CALM;
+    }
+
+    public boolean isLightGale() {
+        return this == LIGHT_GALE;
+    }
+
+    public boolean isModerateGale() {
+        return this == MOD_GALE;
+    }
+
+    public boolean isStrongGale() {
+        return this == STRONG_GALE;
+    }
+
+    public boolean isStorm() {
+        return this == STORM;
+    }
+
+    public boolean isTornadoF1ToF3() {
+        return this == TORNADO_F1_TO_F3;
+    }
+
+    public boolean isTornadoF4() {
+        return this == TORNADO_F4;
+    }
+
+    public boolean isWeakerThan(final Wind wind) {
+        return compareTo(wind) < 0;
+    }
+
+    public boolean isStrongerThan(final Wind wind) {
+        return compareTo(wind) > 0;
+    }
+
     public static Wind getWind(int i) {
         return Wind.values()[i];
     }
 
-    public static boolean isCalm(Wind wind) {
-        return wind == CALM;
-    }
-
-    public static boolean isLightGale(Wind wind) {
-        return wind == LIGHT_GALE;
-    }
-
-    public static boolean isModerateGale(Wind wind) {
-        return wind == MOD_GALE;
-    }
-
-    public static boolean isStrongGale(Wind wind) {
-        return wind == STRONG_GALE;
-    }
-
-    public static boolean isStorm(Wind wind) {
-        return wind == STORM;
-    }
-
-    public static boolean isTornadoF1ToF3(Wind wind) {
-        return wind == TORNADO_F1_TO_F3;
-    }
-
-    public static boolean isTornadoF4(Wind wind) {
-        return wind == TORNADO_F4;
-    }
-
-    public static boolean isGreaterThanLightGale(Wind wind) {
-        EnumSet<Wind> greaterThanLightGale = EnumSet.of(MOD_GALE, STRONG_GALE, STORM, TORNADO_F1_TO_F3, TORNADO_F4);
-        return greaterThanLightGale.contains(wind);
-    }
-
-    public static boolean isGreaterThanModerateGale(Wind wind) {
-        EnumSet<Wind> greaterThanLightGale = EnumSet.of(STRONG_GALE, STORM, TORNADO_F1_TO_F3, TORNADO_F4);
-        return greaterThanLightGale.contains(wind);
-    }
-
-    public static boolean isGreaterThanStrongGale(Wind wind) {
-        EnumSet<Wind> greaterThanLightGale = EnumSet.of(STORM, TORNADO_F1_TO_F3, TORNADO_F4);
-        return greaterThanLightGale.contains(wind);
-    }
-
-    public static boolean isGreaterThanStorm(Wind wind) {
-        EnumSet<Wind> greaterThanLightGale = EnumSet.of(TORNADO_F1_TO_F3, TORNADO_F4);
-        return greaterThanLightGale.contains(wind);
-    }
-
-    public static boolean isLessThanModerateGale(Wind wind) {
-        EnumSet<Wind> greaterThanLightGale = EnumSet.of(CALM, LIGHT_GALE);
-        return greaterThanLightGale.contains(wind);
-    }
-
-    public static boolean isLessThanTornadoF1ToF3(Wind wind) {
-        EnumSet<Wind> greaterThanLightGale = EnumSet.of(CALM, LIGHT_GALE, MOD_GALE, STRONG_GALE, STORM);
-        return greaterThanLightGale.contains(wind);
-    }
 }

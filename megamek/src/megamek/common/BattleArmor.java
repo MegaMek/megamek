@@ -17,6 +17,8 @@ import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.client.ui.swing.calculationReport.DummyCalculationReport;
 import megamek.common.cost.BattleArmorCostCalculator;
 import megamek.common.enums.AimingMode;
+import megamek.common.enums.Atmosphere;
+import megamek.common.enums.Wind;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.InfantryAttack;
 import megamek.common.weapons.infantry.InfantryWeapon;
@@ -444,15 +446,15 @@ public class BattleArmor extends Infantry {
             int weatherMod = conditions.getMovementMods(this);
             mp = Math.max(mp + weatherMod, 0);
 
-            if (conditions.isGustingRain()
+            if (conditions.getWeather().isGustingRain()
                     && getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_RAIN)) {
                 mp += 1;
             }
 
-            boolean strongGaleOrStorm = conditions.isStrongGale()
-                    || conditions.isStorm();
+            boolean strongGaleOrStorm = conditions.getWind().isStrongGale()
+                    || conditions.getWind().isStorm();
             if (getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_WIND)
-                    && conditions.isWeatherNone()
+                    && conditions.getWeather().isWeatherNone()
                     && strongGaleOrStorm) {
                 mp += 1;
             }
@@ -500,7 +502,7 @@ public class BattleArmor extends Infantry {
         if (null != game) {
             PlanetaryConditions conditions = game.getPlanetaryConditions();
             if (!mpCalculationSetting.ignoreWeather
-                    && conditions.isGreaterThanStrongGale()){
+                    && conditions.getWind().isStrongerThan(Wind.STRONG_GALE)){
                 return 0;
             }
         }
@@ -515,16 +517,18 @@ public class BattleArmor extends Infantry {
             mp++;
         }
 
+        PlanetaryConditions conditions = game.getPlanetaryConditions();
         boolean ignoreGameLessThanThin = mpCalculationSetting.ignoreWeather
                 || (game == null)
-                || !game.getPlanetaryConditions().isLessThanThin();
+                || !conditions.getAtmosphere().isLighterThan(Atmosphere.THIN);
         if ((mp > 0)
                 && hasWorkingMisc(MiscType.F_PARTIAL_WING)
                 && ignoreGameLessThanThin) {
             mp++;
         }
 
-        if ((mp > 0) && hasWorkingMisc(MiscType.F_JUMP_BOOSTER)) {
+        if ((mp > 0)
+                && hasWorkingMisc(MiscType.F_JUMP_BOOSTER)) {
             mp++;
         }
 

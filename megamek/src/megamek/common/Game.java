@@ -3106,7 +3106,7 @@ public class Game extends AbstractGame implements Serializable {
                 flare.turnsToBurn--;
                 if (flare.isDrifting()) {
                     Wind wind = planetaryConditions.getWind();
-                    if (!planetaryConditions.isCalm()) {
+                    if (!planetaryConditions.getWind().isCalm()) {
                         WindDirection dir = planetaryConditions.getWindDirection();
                         flare.position = flare.position.translated(dir.ordinal(), (wind.ordinal() > 1) ? (wind.ordinal() - 1) : wind.ordinal());
                         if (getBoard().contains(flare.position)) {

@@ -20,7 +20,6 @@ package megamek.common.enums;
 
 import megamek.MegaMek;
 
-import java.util.EnumSet;
 import java.util.ResourceBundle;
 
 public enum Light {
@@ -54,65 +53,35 @@ public enum Light {
         return name;
     }
 
+    public boolean isDay() {
+        return this == DAY;
+    }
+
+    public boolean isDusk() {
+        return this == DUSK;
+    }
+
+    public boolean isFullMoon() {
+        return this == FULL_MOON;
+    }
+
+    public boolean isMoonless() {
+        return this == MOONLESS;
+    }
+
+    public boolean isPitchBack() {
+        return this == PITCH_BLACK;
+    }
+
+    public boolean isLighterThan(final Light light) {
+        return compareTo(light) < 0;
+    }
+
+    public boolean isDarkerThan(final Light light) {
+        return compareTo(light) > 0;
+    }
+
     public static Light getLight(int i) {
         return Light.values()[i];
-    }
-
-    public static boolean isDay(Light light) {
-        return light == DAY;
-    }
-
-    public static boolean isDusk(Light light) {
-        return light == DUSK;
-    }
-
-    public static boolean isFullMoon(Light light) {
-        return light == FULL_MOON;
-    }
-
-    public static boolean isMoonless(Light light) {
-        return light == MOONLESS;
-    }
-
-    public static boolean isPitchBack(Light light) {
-        return light == PITCH_BLACK;
-    }
-
-    /**
-     * Returns true when visual range is increased by a illumination
-     * in the light condition, i.e. in dusk/dawn, full moon,
-     * moonless and pitch black night.
-     */
-    public static boolean isIlluminationEffective(Light light) {
-        EnumSet<Light> illuminationEffective = EnumSet.of(DUSK,  FULL_MOON, MOONLESS, PITCH_BLACK);
-        return illuminationEffective.contains(light);
-    }
-
-    /**
-     * Returns true when visual range is dark
-     * in the light condition, i.e. in full moon,
-     * moonless and pitch black night.
-     */
-    public static boolean isDark(Light light) {
-        EnumSet<Light> dark = EnumSet.of(FULL_MOON, MOONLESS, PITCH_BLACK);
-        return dark.contains(light);
-    }
-
-    /**
-     * Returns true when visual range is very dark
-     * in the light condition, i.e. in moonless and pitch black night.
-     */
-    public static boolean isVeryDark(Light light) {
-        EnumSet<Light> veryDark = EnumSet.of(MOONLESS, PITCH_BLACK);
-        return veryDark.contains(light);
-    }
-
-    /**
-     * Returns true when visual range is light
-     * in the light condition, i.e. in day, dusk
-     */
-    public static boolean isLighted(Light light) {
-        EnumSet<Light> lighted = EnumSet.of(Light.DAY, Light.DUSK);
-        return lighted.contains(light);
     }
 }

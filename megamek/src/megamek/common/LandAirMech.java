@@ -13,6 +13,7 @@
  */
 package megamek.common;
 
+import megamek.common.enums.Light;
 import megamek.common.enums.MPBoosters;
 import megamek.common.options.OptionsConstants;
 import org.apache.logging.log4j.LogManager;
@@ -356,8 +357,8 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
             }
 
             if(getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_WIND)
-                    && conditions.isWeatherNone()
-                    && conditions.isTornadoF1ToF3()) {
+                    && conditions.getWeather().isWeatherNone()
+                    && conditions.getWind().isTornadoF1ToF3()) {
                 j += 1;
             }
         }
@@ -376,8 +377,8 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
             j = Math.max(j + weatherMod, 0);
 
             if(getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_WIND)
-                    && conditions.isWeatherNone()
-                    && conditions.isTornadoF1ToF3()) {
+                    && conditions.getWeather().isWeatherNone()
+                    && conditions.getWind().isTornadoF1ToF3()) {
                 j += 1;
             }
         }
@@ -730,7 +731,8 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
 
             PlanetaryConditions conditions = game.getPlanetaryConditions();
             // add in atmospheric effects later
-            boolean spaceOrVacuum = game.getBoard().inSpace() || conditions.isVacuum();
+            boolean spaceOrVacuum = game.getBoard().inSpace()
+                    || conditions.getAtmosphere().isVacuum();
             if (!spaceOrVacuum
                     && isAirborne()) {
                 roll.addModifier(+1, "Atmospheric operations");
@@ -2089,7 +2091,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
     public boolean canSpot() {
         if (getConversionMode() == CONV_MODE_FIGHTER) {
             boolean hiresLighted = hasWorkingMisc(MiscType.F_HIRES_IMAGER)
-                    && game.getPlanetaryConditions().isLighted();
+                    && game.getPlanetaryConditions().getLight().isLighterThan(Light.FULL_MOON);
             return !isAirborne()
                     || hasWorkingMisc(MiscType.F_RECON_CAMERA)
                     || hasWorkingMisc(MiscType.F_INFRARED_IMAGER)

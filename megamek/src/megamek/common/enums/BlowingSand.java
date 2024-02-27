@@ -49,15 +49,15 @@ public enum BlowingSand {
         return name;
     }
 
+    public boolean isBlowingSandNone() {
+        return this == BLOWING_SAND_NONE;
+    }
+
+    public boolean isBlowingSand() {
+        return this == BLOWING_SAND;
+    }
+
     public static BlowingSand getBlowingSand(int i) {
         return BlowingSand.values()[i];
-    }
-
-    public static boolean isBlowingSandNone(BlowingSand blowingSand) {
-        return blowingSand == BLOWING_SAND_NONE;
-    }
-
-    public static boolean isBlowingSand(BlowingSand blowingSand) {
-        return blowingSand == BLOWING_SAND;
     }
 }

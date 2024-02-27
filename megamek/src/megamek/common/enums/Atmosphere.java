@@ -54,41 +54,39 @@ public enum Atmosphere {
         return name;
     }
 
+    public boolean isVacuum() {
+        return this == VACUUM;
+    }
+
+    public boolean isTrace() {
+        return this == TRACE;
+    }
+
+    public boolean isThin() {
+        return this == THIN;
+    }
+
+    public boolean isStandard() {
+        return this == STANDARD;
+    }
+
+    public boolean isHigh() {
+        return this == HIGH;
+    }
+
+    public boolean isVeryHigh() {
+        return this == VERY_HIGH;
+    }
+
+    public boolean isLighterThan(final Atmosphere atmosphere) {
+        return compareTo(atmosphere) < 0;
+    }
+
+    public boolean isDenserThan(final Atmosphere atmosphere) {
+        return compareTo(atmosphere) > 0;
+    }
+
     public static Atmosphere getAtmosphere(int i) {
         return Atmosphere.values()[i];
-    }
-
-    public static boolean isVacuum(Atmosphere atmosphere) {
-        return atmosphere == VACUUM;
-    }
-
-    public static boolean isTrace(Atmosphere atmosphere) {
-        return atmosphere == TRACE;
-    }
-
-    public static boolean isThin(Atmosphere atmosphere) {
-        return atmosphere == THIN;
-    }
-
-    public static boolean isStandard(Atmosphere atmosphere) {
-        return atmosphere == STANDARD;
-    }
-
-    public static boolean isHigh(Atmosphere atmosphere) {
-        return atmosphere == HIGH;
-    }
-
-    public static boolean isVeryHigh(Atmosphere atmosphere) {
-        return atmosphere == VERY_HIGH;
-    }
-
-    public static boolean isLessThanThin(Atmosphere atmosphere) {
-        EnumSet<Atmosphere> lessThanThin = EnumSet.of(VACUUM, TRACE);
-        return lessThanThin.contains(atmosphere);
-    }
-
-    public static boolean isGreaterThanTrace(Atmosphere atmosphere) {
-        EnumSet<Atmosphere> greaterThanTrace = EnumSet.of(THIN, STANDARD, HIGH, VERY_HIGH);
-        return greaterThanTrace.contains(atmosphere);
     }
 }

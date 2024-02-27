@@ -50,19 +50,19 @@ public enum Fog {
         return name;
     }
 
+    public boolean isFogNone() {
+        return this == FOG_NONE;
+    }
+
+    public boolean isFogLight() {
+        return this == FOG_LIGHT;
+    }
+
+    public boolean isFogHeavy() {
+        return this == FOG_HEAVY;
+    }
+
     public static Fog getFog(int i) {
         return Fog.values()[i];
-    }
-
-    public static boolean isFogNone(Fog fog) {
-        return fog == FOG_NONE;
-    }
-
-    public static boolean isFogLight(Fog fog) {
-        return fog == FOG_LIGHT;
-    }
-
-    public static boolean isFogHeavy(Fog fog) {
-        return fog == FOG_HEAVY;
     }
 }

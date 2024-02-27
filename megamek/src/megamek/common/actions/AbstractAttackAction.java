@@ -18,6 +18,7 @@ import megamek.client.Client;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.IlluminationLevel;
+import megamek.common.enums.Light;
 import megamek.common.options.OptionsConstants;
 
 import java.util.Enumeration;
@@ -97,7 +98,7 @@ public abstract class AbstractAttackAction extends AbstractEntityAction implemen
         ToHitData toHit = new ToHitData();
 
         PlanetaryConditions conditions = game.getPlanetaryConditions();
-        if (conditions.isDay()) {
+        if (conditions.getLight().isDay()) {
             // It's the day, so just return
             return toHit;
         }
@@ -131,7 +132,7 @@ public abstract class AbstractAttackAction extends AbstractEntityAction implemen
         int searchlightMod = Math.min(3, night_modifier);
         boolean isUsingSearchlight = (te != null) && te.isUsingSearchlight();
         boolean lighted = isUsingSearchlight || illuminated;
-        if (conditions.isDark()
+        if (conditions.getLight().isDarkerThan(Light.DUSK)
                 && lighted) {
             if (isUsingSearchlight) {
                 toHit.addModifier(-searchlightMod, "target using searchlight");
@@ -148,7 +149,7 @@ public abstract class AbstractAttackAction extends AbstractEntityAction implemen
             int fireMod = Math.min(2, night_modifier);
             toHit.addModifier(-fireMod, "target illuminated by fire");
             night_modifier -= fireMod;
-        } else if ((conditions.isDark()) && (hexIllumLvl.isSearchlight())) {
+        } else if ((conditions.getLight().isDarkerThan(Light.DUSK)) && (hexIllumLvl.isSearchlight())) {
             toHit.addModifier(-searchlightMod, "target illuminated by searchlight");
             night_modifier -= searchlightMod;
         } else if (atype != null) {

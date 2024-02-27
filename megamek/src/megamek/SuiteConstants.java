@@ -51,6 +51,7 @@ public abstract class SuiteConstants {
 
     //region File Formats
     public static final String TRUETYPE_FONT = ".ttf";
+    public static final String SCENARIO_EXT = ".mms";
     //endregion File Formats
 
     //region File Paths

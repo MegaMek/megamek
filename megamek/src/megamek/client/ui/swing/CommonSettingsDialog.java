@@ -3109,6 +3109,10 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
     }
 
     public static List<String> filteredFilesWithSubDirs(File path, String fileEnding) {
+        if (!path.exists()) {
+            LogManager.getLogger().warn("Path " + path + " does not exist.");
+            return new ArrayList<>();
+        }
         try (Stream<Path> entries = Files.walk(path.toPath())) {
             return entries.map(Objects::toString).filter(name -> name.endsWith(fileEnding)).collect(toList());
         } catch (IOException e) {

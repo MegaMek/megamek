@@ -82,7 +82,7 @@ public class ScenarioInfoPanel extends JPanel {
         @Override
         public void setFont(Font font) {
             // Keep a higher font size; UIUtil.adjustDialog sets everything to the same absolute font size
-            font = font.deriveFont(1.2f * font.getSize());
+            font = font.deriveFont(1.4f * font.getSize());
             super.setFont(font);
         }
     }

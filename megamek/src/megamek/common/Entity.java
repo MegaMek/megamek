@@ -5439,13 +5439,16 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     public boolean hasBAP(boolean checkECM) {
-        PlanetaryConditions conditions = game.getPlanetaryConditions();
-        boolean hasEmi = (game != null)
-                && conditions.getEMI().isEMI();
-        if (hasEmi
-            || isShutDown()) {
+        if (game != null) {
+            PlanetaryConditions conditions = game.getPlanetaryConditions();
+            if (conditions.getEMI().isEMI()) {
+                return false;
+            }
+        }
+        if (isShutDown()) {
             return false;
         }
+
         for (Mounted m : getMisc()) {
             EquipmentType type = m.getType();
             if ((type instanceof MiscType) && type.hasFlag(MiscType.F_BAP)) {

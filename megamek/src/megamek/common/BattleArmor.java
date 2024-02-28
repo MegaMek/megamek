@@ -517,14 +517,15 @@ public class BattleArmor extends Infantry {
             mp++;
         }
 
-        PlanetaryConditions conditions = game.getPlanetaryConditions();
-        boolean ignoreGameLessThanThin = mpCalculationSetting.ignoreWeather
-                || (game == null)
+        if ((game != null)) {
+            PlanetaryConditions conditions = game.getPlanetaryConditions();
+            boolean ignoreGameLessThanThin = mpCalculationSetting.ignoreWeather
                 || !conditions.getAtmosphere().isLighterThan(Atmosphere.THIN);
-        if ((mp > 0)
-                && hasWorkingMisc(MiscType.F_PARTIAL_WING)
-                && ignoreGameLessThanThin) {
-            mp++;
+            if ((mp > 0)
+                    && hasWorkingMisc(MiscType.F_PARTIAL_WING)
+                    && ignoreGameLessThanThin) {
+                mp++;
+            }
         }
 
         if ((mp > 0)

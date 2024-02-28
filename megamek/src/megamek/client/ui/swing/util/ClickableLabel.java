@@ -29,7 +29,7 @@ import java.util.function.Consumer;
  * like a hyperlink and so indicates that it is clickable. Note that the label always uses HTML to underline
  * its text internally and so does not need an additional HTML tag to show HTML content.
  * This can be used in circumstances where the button's function is less important or a fallback and the
- * label is used to call less attention to it than a button does.
+ * label is used to call less attention to it than a button would.
  * Another use is when a text info label should have the button functionality only as a secondary function.
  * The label calls a callback method when it is clicked.
  */

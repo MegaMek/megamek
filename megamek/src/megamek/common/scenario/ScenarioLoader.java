@@ -354,7 +354,7 @@ public class ScenarioLoader {
 
     public Game createGame() throws Exception {
         LogManager.getLogger().info("Loading scenario from " + scenarioFile);
-        ScenarioFullInfo p = load();
+        ScenarioInfo p = load();
 
         String sCheck = p.getString(PARAM_MMSVERSION);
         if (sCheck == null) {
@@ -421,7 +421,7 @@ public class ScenarioLoader {
         return g;
     }
 
-    private void parsePlanetaryConditions(Game g, ScenarioFullInfo p) {
+    private void parsePlanetaryConditions(Game g, ScenarioInfo p) {
         if (p.containsKey(PARAM_PLANETCOND_TEMP)) {
             g.getPlanetaryConditions().setTemperature(Integer.parseInt(p.getString(PARAM_PLANETCOND_TEMP)));
         }
@@ -483,7 +483,7 @@ public class ScenarioLoader {
         }
     }
 
-    private Collection<Entity> buildFactionEntities(ScenarioFullInfo p, Player player) throws ScenarioLoaderException {
+    private Collection<Entity> buildFactionEntities(ScenarioInfo p, Player player) throws ScenarioLoaderException {
         String faction = player.getName();
         Pattern unitPattern = Pattern.compile(String.format("^Unit_\\Q%s\\E_[^_]+$", faction));
         Pattern unitDataPattern = Pattern.compile(String.format("^(Unit_\\Q%s\\E_[^_]+)_([A-Z][^_]+)$", faction));
@@ -722,7 +722,7 @@ public class ScenarioLoader {
         return param + SEPARATOR_UNDERSCORE + faction;
     }
 
-    private Collection<Player> createPlayers(ScenarioFullInfo p) throws ScenarioLoaderException {
+    private Collection<Player> createPlayers(ScenarioInfo p) throws ScenarioLoaderException {
         String sFactions = p.getString(PARAM_FACTIONS);
         if ((sFactions == null) || sFactions.isEmpty()) {
             throw new ScenarioLoaderException("missingFactions");
@@ -789,7 +789,7 @@ public class ScenarioLoader {
     /**
      * Load board files and create the megaboard.
      */
-    private Board createBoard(ScenarioFullInfo p) throws ScenarioLoaderException {
+    private Board createBoard(ScenarioInfo p) throws ScenarioLoaderException {
         int mapWidth = 16, mapHeight = 17;
         if (p.getString(PARAM_MAP_WIDTH) == null) {
             LogManager.getLogger().info("No map width specified; using " + mapWidth);
@@ -897,8 +897,8 @@ public class ScenarioLoader {
         return BoardUtilities.combine(mapWidth, mapHeight, nWidth, nHeight, ba, rotateBoard, MapSettings.MEDIUM_GROUND);
     }
 
-    public ScenarioFullInfo load() throws ScenarioLoaderException {
-        ScenarioFullInfo props = new ScenarioFullInfo();
+    public ScenarioInfo load() throws ScenarioLoaderException {
+        ScenarioInfo props = new ScenarioInfo();
         props.put(FILENAME, List.of(scenarioFile.toString()));
         try (FileInputStream fis = new FileInputStream(scenarioFile);
              InputStreamReader isr = new InputStreamReader(fis, StandardCharsets.UTF_8);
@@ -933,7 +933,7 @@ public class ScenarioLoader {
     /**
      * Parses out the external game id from the scenario file
      */
-    private int parseExternalGameId(ScenarioFullInfo p) {
+    private int parseExternalGameId(ScenarioInfo p) {
         String sExternalId = p.getString(PARAM_GAME_EXTERNAL_ID);
         int ExternalGameId = 0;
         if (sExternalId != null) {
@@ -959,7 +959,7 @@ public class ScenarioLoader {
      * defaultValue. When the key is present, interprets "true" and "on"  and "1"
      * as true and everything else as false.
      */
-    private boolean parseBoolean(ScenarioFullInfo p, String key, boolean defaultValue) {
+    private boolean parseBoolean(ScenarioInfo p, String key, boolean defaultValue) {
         boolean result = defaultValue;
         if (p.containsKey(key)) {
             if (p.getString(key).equalsIgnoreCase("true")

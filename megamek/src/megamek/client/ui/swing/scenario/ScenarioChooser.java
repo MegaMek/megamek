@@ -30,7 +30,7 @@ import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.Configuration;
 import megamek.common.annotations.Nullable;
 import megamek.common.preference.PreferenceManager;
-import megamek.common.scenario.ScenarioFullInfo;
+import megamek.common.scenario.ScenarioInfo;
 import megamek.common.scenario.ScenarioLoader;
 import org.apache.logging.log4j.LogManager;
 
@@ -40,6 +40,8 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -47,7 +49,7 @@ import java.util.stream.Collectors;
 
 /**
  * This dialog lists all scenarios found in MM's scenario directory as well as the corresponding user directory.
- * The scenarions are grouped by subdirectory (only the one directly below scenarios, further subdirectories
+ * The scenarios are grouped by subdirectory (only the one directly below scenarios, further subdirectories
  * are scanned for scenarios but not used for grouping). After closing, a chosen scenario can be retrieved
  * by calling {@link #getSelectedScenarioFilename()}. As a fallback, the dialog also allows choosing a
  * scenario by file.
@@ -55,8 +57,7 @@ import java.util.stream.Collectors;
 public class ScenarioChooser extends AbstractButtonDialog {
 
     private final JTabbedPane tabbedPane = new JTabbedPane();
-    private final List<ScenarioFullInfo> scenarioInfoList = getScenarioInfos();
-    private final Map<String, List<ScenarioFullInfo>> sortedScenarios = sortScenarios(scenarioInfoList);
+    private final Map<String, List<ScenarioInfo>> sortedScenarios = sortScenarios(getScenarioInfos());
     private String scenarioFileName;
 
     public ScenarioChooser(final JFrame parentFrame) {
@@ -82,13 +83,10 @@ public class ScenarioChooser extends AbstractButtonDialog {
 
     @Override
     protected Container createCenterPane() {
-        ScenarioInfoPane basicPane = new ScenarioInfoPane(sortedScenarios.get(""));
-        tabbedPane.addTab("Basic", basicPane);
-
         for (String directory : sortedScenarios.keySet()) {
             if (!sortedScenarios.get(directory).isEmpty()) {
                 ScenarioInfoPane pane = new ScenarioInfoPane(sortedScenarios.get(directory));
-                tabbedPane.addTab(directory, pane);
+                tabbedPane.addTab(directory.isBlank() ? "Basic" : directory, pane);
             }
         }
         return tabbedPane;
@@ -128,8 +126,8 @@ public class ScenarioChooser extends AbstractButtonDialog {
         return buttonPanel;
     }
 
-    private static List<ScenarioFullInfo> getScenarioInfos() {
-        List<ScenarioFullInfo> scenarios = new ArrayList<>(parseScenariosInDirectory(Configuration.scenariosDir()));
+    private static List<ScenarioInfo> getScenarioInfos() {
+        List<ScenarioInfo> scenarios = new ArrayList<>(parseScenariosInDirectory(Configuration.scenariosDir()));
 
         String userDir = PreferenceManager.getClientPreferences().getUserDir();
         if (!userDir.isBlank()) {
@@ -140,17 +138,18 @@ public class ScenarioChooser extends AbstractButtonDialog {
     }
 
     /**
-     * Searches the provided directory and all subdirectories and registers any truetype
-     * fonts from .ttf files it finds.
+     * Searches the provided directory and all subdirectories for scenario files and returns a list of
+     * them.
      *
      * @param directory the directory to parse
+     * @return a List of scenarios
      */
-    public static List<ScenarioFullInfo> parseScenariosInDirectory(final File directory) {
+    private static List<ScenarioInfo> parseScenariosInDirectory(final File directory) {
         LogManager.getLogger().info("Parsing scenarios from " + directory);
-        List<ScenarioFullInfo> scenarios = new ArrayList<>();
+        List<ScenarioInfo> scenarios = new ArrayList<>();
         for (String scenarioFile : CommonSettingsDialog.filteredFilesWithSubDirs(directory, MMConstants.SCENARIO_EXT)) {
             try {
-                ScenarioFullInfo scenario = new ScenarioLoader(new File(scenarioFile)).load();
+                ScenarioInfo scenario = new ScenarioLoader(new File(scenarioFile)).load();
                 scenarios.add(scenario);
             } catch (Exception ex) {
                 LogManager.getLogger().error("Failed to parse scenario " + scenarioFile, ex);
@@ -159,8 +158,9 @@ public class ScenarioChooser extends AbstractButtonDialog {
         return scenarios;
     }
 
-    private Map<String, List<ScenarioFullInfo>> sortScenarios(List<ScenarioFullInfo> scenarioInfos) {
-        return scenarioInfos.stream().collect(Collectors.groupingBy(ScenarioFullInfo::getSubDirectory, Collectors.toList()));
+    /** Groups the given scenarios by the first subdirectory under scenarios they're in (disregards any deeper dirs) */
+    private Map<String, List<ScenarioInfo>> sortScenarios(List<ScenarioInfo> scenarioInfos) {
+        return scenarioInfos.stream().collect(Collectors.groupingBy(this::getSubDirectory, Collectors.toList()));
     }
 
     @Override
@@ -179,6 +179,39 @@ public class ScenarioChooser extends AbstractButtonDialog {
         if ((returnVal == JFileChooser.APPROVE_OPTION) && (fc.getSelectedFile() != null)) {
             scenarioFileName = fc.getSelectedFile().toString();
             okButtonActionPerformed(null);
+        }
+    }
+
+    /**
+     * @return The first subdirectory under the scenarios directory that the scenario is in; a scenario
+     * in scenarios/tukkayid/secondencounter/ would return "tukkayid". This is used for grouping
+     */
+    private String getSubDirectory(ScenarioInfo scenarioInfo) {
+        String scenariosDir = Configuration.scenariosDir().toString();
+        if (!scenarioInfo.getFileName().contains(scenariosDir)) {
+            return "";
+        } else {
+            return subDirUnderScenarios(directoriesAsList(scenarioInfo.getFileName()));
+        }
+    }
+
+    /** @return The directories (and filename) present in the given full fileName as a list. */
+    private static List<String> directoriesAsList(String fileName) {
+        Path path = Paths.get(fileName);
+        List<String> result = new ArrayList<>();
+        for (int i = 0; i < path.getNameCount(); i++) {
+            result.add(path.getName(i).toString());
+        }
+        return result;
+    }
+
+    private String subDirUnderScenarios(List<String> directoryList) {
+        if (!directoryList.contains("scenarios")) {
+            return "";
+        } else {
+            int index = directoryList.indexOf("scenarios");
+            // The next entry must not be the last, as the last entry is the scenario filename
+            return (index + 2 < directoryList.size()) ? directoryList.get(index + 1) : "";
         }
     }
 }

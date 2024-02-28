@@ -22,7 +22,7 @@ import javax.swing.*;
 import java.awt.*;
 
 /**
- * This component draws a dashed horizontal line, similarly to a JSeparator. It's color and line strength (stroke
+ * This component draws a dashed horizontal line, similarly to a JSeparator. Its color and line strength (stroke
  * width) can be set. Also, its width (the amount of available horizontal space it covers) can be set.
  */
 public class DashedSeparator extends JComponent {

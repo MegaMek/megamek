@@ -19,7 +19,7 @@
 package megamek.client.ui.swing.scenario;
 
 import megamek.common.annotations.Nullable;
-import megamek.common.scenario.ScenarioFullInfo;
+import megamek.common.scenario.ScenarioInfo;
 
 import javax.swing.*;
 import java.util.ArrayList;
@@ -30,22 +30,22 @@ import java.util.List;
  */
 class ScenarioInfoPane extends JScrollPane {
 
-    private JList<ScenarioFullInfo> presets;
-    private final List<ScenarioFullInfo> scenarioInfoList = new ArrayList<>();
+    private JList<ScenarioInfo> presets;
+    private final List<ScenarioInfo> scenarioInfoList = new ArrayList<>();
 
-    public ScenarioInfoPane(List<ScenarioFullInfo> scenarioInfoList) {
+    public ScenarioInfoPane(List<ScenarioInfo> scenarioInfoList) {
         this.scenarioInfoList.addAll(scenarioInfoList);
         setBorder(null);
         getVerticalScrollBar().setUnitIncrement(16);
         initialize();
     }
 
-    public @Nullable ScenarioFullInfo getSelectedPreset() {
+    public @Nullable ScenarioInfo getSelectedPreset() {
         return presets.getSelectedValue();
     }
 
     protected void initialize() {
-        final DefaultListModel<ScenarioFullInfo> listModel = new DefaultListModel<>();
+        final DefaultListModel<ScenarioInfo> listModel = new DefaultListModel<>();
         listModel.addAll(scenarioInfoList);
         presets = new JList<>(listModel);
         presets.setName("ScenarioInfoList");

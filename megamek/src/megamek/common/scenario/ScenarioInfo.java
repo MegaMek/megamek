@@ -18,56 +18,35 @@
  */
 package megamek.common.scenario;
 
-import megamek.common.Configuration;
-
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 
-public class ScenarioFullInfo extends HashMap<String, Collection<String>> {
+/**
+ * This class holds all scenario info loaded from a scenario (.mms) file. It is a map of constants given in
+ * {@link ScenarioLoader} to a list of data for that constant.
+ */
+public class ScenarioInfo extends HashMap<String, Collection<String>> {
 
-
+    /**
+     * @return The name of the scenario; keyword {@link ScenarioLoader#NAME}
+     */
     public String getName() {
         return getString(ScenarioLoader.NAME);
     }
 
+    /**
+     * @return The description of the scenario; keyword {@link ScenarioLoader#DESCRIPTION}
+     */
     public String getDescription() {
         return getString(ScenarioLoader.DESCRIPTION);
     }
 
+    /**
+     * @return The filename including directories of the scenario
+     */
     public String getFileName() {
         return getString(ScenarioLoader.FILENAME);
-    }
-
-    public String getSubDirectory() {
-        String scenariosDir = Configuration.scenariosDir().toString();
-        if (!getFileName().contains(scenariosDir)) {
-            return "";
-        } else {
-            return subDirUnderScenarios(directoriesAsList(getFileName()));
-        }
-    }
-
-    public static List<String> directoriesAsList(String fileName) {
-        Path path = Paths.get(fileName);
-        List<String> result = new ArrayList<>();
-        for (int i = 0; i < path.getNameCount(); i++) {
-            result.add(path.getName(i).toString());
-        }
-        return result;
-    }
-
-    private String subDirUnderScenarios(List<String> directoryList) {
-        if (!directoryList.contains("scenarios")) {
-            return "";
-        } else {
-            int index = directoryList.indexOf("scenarios");
-            // The next entry must not be the last, as the last entry is the scenario filename
-            return (index + 2 < directoryList.size()) ? directoryList.get(index + 1) : "";
-        }
     }
 
     public void put(String key, String value) {

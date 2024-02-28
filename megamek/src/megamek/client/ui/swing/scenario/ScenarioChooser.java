@@ -109,7 +109,7 @@ public class ScenarioChooser extends AbstractButtonDialog {
 
         Box verticalBox = Box.createVerticalBox();
         verticalBox.add(Box.createVerticalGlue());
-        JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
         panel.add(chooseFileLabel);
         panel.add(Box.createHorizontalGlue());
         verticalBox.add(panel);

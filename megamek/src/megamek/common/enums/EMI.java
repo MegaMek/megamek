@@ -23,8 +23,8 @@ import megamek.MegaMek;
 import java.util.ResourceBundle;
 
 public enum EMI {
-    EMI_NONE("EMI_NONE", "PlanetaryConditions.DisplayableName.SandBlowing.false", "PlanetaryConditions.Indicator.SandBlowing.false"),
-    EMI("EMI", "PlanetaryConditions.DisplayableName.SandBlowing.true", "PlanetaryConditions.Indicator.SandBlowing.true");
+    EMI_NONE("EMI_NONE", "PlanetaryConditions.DisplayableName.EMI.false", "\u2301"),
+    EMI("EMI", "PlanetaryConditions.DisplayableName.EMI.true", "\u2312");
     private final String externalId;
     private final String name;
     private final String indicator;
@@ -33,7 +33,7 @@ public enum EMI {
         final ResourceBundle resources = ResourceBundle.getBundle("megamek.common.messages", MegaMek.getMMOptions().getLocale());
         this.externalId = externalId;
         this.name = resources.getString(name);
-        this.indicator = resources.getString(indicator);
+        this.indicator = indicator;
     }
 
     public String getIndicator() {

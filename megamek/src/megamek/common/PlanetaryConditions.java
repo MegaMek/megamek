@@ -49,16 +49,16 @@ public class PlanetaryConditions implements Serializable {
     private int oldTemperature = 25;
 
     public static final int BLACK_ICE_TEMP = -30;
+    private float gravity = (float) 1.0;
+    private boolean terrainAffected = true;
     private static final String MSG_NAME_TEMPERATURE_COLD = Messages.getString("PlanetaryConditions.DisplayableName.Temperature.ExtremeCold");
     private static final String MSG_NAME_TEMPERATURE_HEAT = Messages.getString("PlanetaryConditions.DisplayableName.Temperature.ExtremeHeat");
-    private static final String MSG_INDICATOR_TEMPERATURE_COLD = Messages.getString("PlanetaryConditions.Indicator.Temperature.ExtremeCold");
-    private static final String MSG_INDICATOR_TEMPERATURE_HEAT = Messages.getString("PlanetaryConditions.Indicator.Temperature.ExtremeHeat");
-    private static final String MSG_INDICATOR_TEMPERATURE_NORMAL = Messages.getString("PlanetaryConditions.Indicator.Temperature.Normal");
-    private float gravity = (float) 1.0;
-    private static final String MSG_INDICATOR_GRAVITY_LOW = Messages.getString("PlanetaryConditions.Indicator.Gravity.Low");
-    private static final String MSG_INDICATOR_GRAVITY_NORMAL = Messages.getString("PlanetaryConditions.Indicator.Gravity.Normal");
-    private static final String MSG_INDICATOR_GRAVITY_HIGH = Messages.getString("PlanetaryConditions.Indicator.Gravity.High");
-    private boolean terrainAffected = true;
+    private static final String MSG_INDICATOR_TEMPERATURE_COLD = "\u2744";
+    private static final String MSG_INDICATOR_TEMPERATURE_HEAT = "\uD83D\uDD25";
+    private static final String MSG_INDICATOR_TEMPERATURE_NORMAL = "\uD83C\uDF21";
+    private static final String MSG_INDICATOR_GRAVITY_LOW = "\u2B71";
+    private static final String MSG_INDICATOR_GRAVITY_NORMAL = "\u23AF";
+    private static final String MSG_INDICATOR_GRAVITY_HIGH = "\u2B73";
 
     /**
      * Constructor

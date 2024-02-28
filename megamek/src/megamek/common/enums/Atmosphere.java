@@ -24,12 +24,12 @@ import java.util.EnumSet;
 import java.util.ResourceBundle;
 
 public enum Atmosphere {
-    VACUUM("VACUUM", "PlanetaryConditions.DisplayableName.Atmosphere.Vacuum", "PlanetaryConditions.Indicator.Atmosphere.Vacuum"),
-    TRACE("TRACE", "PlanetaryConditions.DisplayableName.Atmosphere.Trace", "PlanetaryConditions.Indicator.Atmosphere.Trace"),
-    THIN("THIN", "PlanetaryConditions.DisplayableName.Atmosphere.Thin", "PlanetaryConditions.Indicator.Atmosphere.Thin"),
-    STANDARD("STANDARD", "PlanetaryConditions.DisplayableName.Atmosphere.Standard", "PlanetaryConditions.Indicator.Atmosphere.Standard"),
-    HIGH("HIGH", "PlanetaryConditions.DisplayableName.Atmosphere.High", "PlanetaryConditions.Indicator.Atmosphere.High"),
-    VERY_HIGH("VERY_HIGH", "PlanetaryConditions.DisplayableName.Atmosphere.Very High", "PlanetaryConditions.Indicator.Atmosphere.VHigh");
+    VACUUM("VACUUM", "PlanetaryConditions.DisplayableName.Atmosphere.Vacuum", "\u2726 \u2727 \u2727 \u25AF \u2727 \u2727"),
+    TRACE("TRACE", "PlanetaryConditions.DisplayableName.Atmosphere.Trace", "\u2726 \u2726 \u2727 \u25AF \u2727 \u2727"),
+    THIN("THIN", "PlanetaryConditions.DisplayableName.Atmosphere.Thin", "\u2726 \u2726 \u2726 \u25AF \u2727 \u2727"),
+    STANDARD("STANDARD", "PlanetaryConditions.DisplayableName.Atmosphere.Standard", "\u2726 \u2726 \u2726 \u25AE \u2727 \u2727"),
+    HIGH("HIGH", "PlanetaryConditions.DisplayableName.Atmosphere.High", "\u2726 \u2726 \u2726 \u25AE \u2726 \u2727"),
+    VERY_HIGH("VERY_HIGH", "PlanetaryConditions.DisplayableName.Atmosphere.Very High", "\u2726 \u2726 \u2726 \u25AE \u2726 \u2726");
     private final String externalId;
     private final String name;
     private final String indicator;
@@ -38,7 +38,7 @@ public enum Atmosphere {
         final ResourceBundle resources = ResourceBundle.getBundle("megamek.common.messages", MegaMek.getMMOptions().getLocale());
         this.externalId = externalId;
         this.name = resources.getString(name);
-        this.indicator = resources.getString(indicator);
+        this.indicator = indicator;
     }
 
     public String getIndicator() {

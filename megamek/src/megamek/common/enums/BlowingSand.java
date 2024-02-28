@@ -23,8 +23,8 @@ import megamek.MegaMek;
 import java.util.ResourceBundle;
 
 public enum BlowingSand {
-    BLOWING_SAND_NONE("BLOWING_SAND_NONE", "PlanetaryConditions.DisplayableName.SandBlowing.false", "PlanetaryConditions.Indicator.SandBlowing.false"),
-    BLOWING_SAND("BLOWING_SAND", "PlanetaryConditions.DisplayableName.SandBlowing.true", "PlanetaryConditions.Indicator.SandBlowing.true");
+    BLOWING_SAND_NONE("BLOWING_SAND_NONE", "PlanetaryConditions.DisplayableName.SandBlowing.false", "\uD83D\uDC41"),
+    BLOWING_SAND("BLOWING_SAND", "PlanetaryConditions.DisplayableName.SandBlowing.true", "\uD83C\uDF2C");
     private final String externalId;
     private final String name;
     private final String indicator;
@@ -33,7 +33,7 @@ public enum BlowingSand {
         final ResourceBundle resources = ResourceBundle.getBundle("megamek.common.messages", MegaMek.getMMOptions().getLocale());
         this.externalId = externalId;
         this.name = resources.getString(name);
-        this.indicator = resources.getString(indicator);
+        this.indicator = indicator;
     }
 
     public String getIndicator() {

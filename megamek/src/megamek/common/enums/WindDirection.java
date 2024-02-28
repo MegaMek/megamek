@@ -23,13 +23,13 @@ import megamek.MegaMek;
 import java.util.ResourceBundle;
 
 public enum WindDirection {
-    NORTH("NORTH", "PlanetaryConditions.DisplayableName.WindDirection.North", "PlanetaryConditions.Indicator.WindDirection.North"),
-    NORTHEAST("NORTHEAST", "PlanetaryConditions.DisplayableName.WindDirection.Northeast", "PlanetaryConditions.Indicator.WindDirection.Northeast"),
-    SOUTHEAST("SOUTHEAST", "PlanetaryConditions.DisplayableName.WindDirection.Southeast", "PlanetaryConditions.Indicator.WindDirection.Southeast"),
-    SOUTH("SOUTH", "PlanetaryConditions.DisplayableName.WindDirection.South", "PlanetaryConditions.Indicator.WindDirection.South"),
-    SOUTHWEST("SOUTHWEST", "PlanetaryConditions.DisplayableName.WindDirection.Southwest", "PlanetaryConditions.Indicator.WindDirection.Southwest"),
-    NORTHWEST("NORTHWEST", "PlanetaryConditions.DisplayableName.WindDirection.Northwest", "PlanetaryConditions.Indicator.WindDirection.Northwest"),
-    RANDOM("RANDOM", "PlanetaryConditions.DisplayableName.WindDirection.RandomWindDirection", "PlanetaryConditions.Indicator.WindDirection.RandomWindDirection");
+    NORTH("NORTH", "PlanetaryConditions.DisplayableName.WindDirection.North", "\u2193"),
+    NORTHEAST("NORTHEAST", "PlanetaryConditions.DisplayableName.WindDirection.Northeast", "\u2B0B"),
+    SOUTHEAST("SOUTHEAST", "PlanetaryConditions.DisplayableName.WindDirection.Southeast", "\u2B09"),
+    SOUTH("SOUTH", "PlanetaryConditions.DisplayableName.WindDirection.South", "\u2191"),
+    SOUTHWEST("SOUTHWEST", "PlanetaryConditions.DisplayableName.WindDirection.Southwest", "\u2B08"),
+    NORTHWEST("NORTHWEST", "PlanetaryConditions.DisplayableName.WindDirection.Northwest", "\u2B0A"),
+    RANDOM("RANDOM", "PlanetaryConditions.DisplayableName.WindDirection.RandomWindDirection", "");
     private final String externalId;
     private final String name;
     private final String indicator;
@@ -38,7 +38,7 @@ public enum WindDirection {
         final ResourceBundle resources = ResourceBundle.getBundle("megamek.common.messages", MegaMek.getMMOptions().getLocale());
         this.externalId = externalId;
         this.name = resources.getString(name);
-        this.indicator = resources.getString(indicator);
+        this.indicator = indicator;
     }
 
     public String getIndicator() {

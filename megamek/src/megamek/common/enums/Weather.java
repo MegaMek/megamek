@@ -23,21 +23,21 @@ import megamek.MegaMek;
 import java.util.ResourceBundle;
 
 public enum Weather {
-    WEATHER_NONE("WEATHER_NONE", "PlanetaryConditions.DisplayableName.Weather.Clear", "PlanetaryConditions.Indicator.Weather.None"),
-    LIGHT_RAIN("WEATHER_LIGHT_RAIN", "PlanetaryConditions.DisplayableName.Weather.Light Rain", "PlanetaryConditions.Indicator.Weather.LightRain"),
-    MOD_RAIN("WEATHER_MOD_RAIN", "PlanetaryConditions.DisplayableName.Weather.Moderate Rain", "PlanetaryConditions.Indicator.Weather.ModRain"),
-    HEAVY_RAIN("WEATHER_HEAVY_RAIN", "PlanetaryConditions.DisplayableName.Weather.Heavy Rain", "PlanetaryConditions.Indicator.Weather.HeavyRain"),
-    GUSTING_RAIN("WEATHER_GUSTING_RAIN", "PlanetaryConditions.DisplayableName.Weather.Gusting Rain", "PlanetaryConditions.Indicator.Weather.GustingRain"),
-    DOWNPOUR("WEATHER_DOWNPOUR", "PlanetaryConditions.DisplayableName.Weather.Torrential Downpour", "PlanetaryConditions.Indicator.Weather.Downpour"),
-    LIGHT_SNOW("WEATHER_LIGHT_SNOW", "PlanetaryConditions.DisplayableName.Weather.Light Snowfall", "PlanetaryConditions.Indicator.Weather.LightSnow"),
-    MOD_SNOW("WEATHER_MOD_SNOW", "PlanetaryConditions.DisplayableName.Weather.Moderate Snowfall", "PlanetaryConditions.Indicator.Weather.ModSnow"),
-    SNOW_FLURRIES("WEATHER_SNOW_FLURRIES", "PlanetaryConditions.DisplayableName.Weather.Snow Flurries", "PlanetaryConditions.Indicator.Weather.SnowFlurries"),
-    HEAVY_SNOW("WEATHER_HEAVY_SNOW", "PlanetaryConditions.DisplayableName.Weather.Heavy Snowfall", "PlanetaryConditions.Indicator.Weather.HeavySnow"),
-    SLEET("WEATHER_SLEET", "PlanetaryConditions.DisplayableName.Weather.Sleet", "PlanetaryConditions.Indicator.Weather.Sleet"),
-    ICE_STORM("WEATHER_ICE_STORM", "PlanetaryConditions.DisplayableName.Weather.Ice Storm", "PlanetaryConditions.Indicator.Weather.IceStorm"),
-    LIGHT_HAIL("WEATHER_LIGHT_HAIL", "PlanetaryConditions.DisplayableName.Weather.Light Hail", "PlanetaryConditions.Indicator.Weather.LightHail"),
-    HEAVY_HAIL("WEATHER_HEAVY_HAIL", "PlanetaryConditions.DisplayableName.Weather.Heavy Hail", "PlanetaryConditions.Indicator.Weather.HeavyHail"),
-    LIGHTNING_STORM("WEATHER_LIGHTNING_STORM", "PlanetaryConditions.DisplayableName.Weather.Lightning Storm", "PlanetaryConditions.Indicator.Weather.LightningStorm");
+    WEATHER_NONE("WEATHER_NONE", "PlanetaryConditions.DisplayableName.Weather.Clear", "\u239A"),
+    LIGHT_RAIN("WEATHER_LIGHT_RAIN", "PlanetaryConditions.DisplayableName.Weather.Light Rain", "\u2601 \u2022 \u2022 \u2022 \u2022"),
+    MOD_RAIN("WEATHER_MOD_RAIN", "PlanetaryConditions.DisplayableName.Weather.Moderate Rain", "\u2601 \u2601 \u2022 \u2022 \u2022"),
+    HEAVY_RAIN("WEATHER_HEAVY_RAIN", "PlanetaryConditions.DisplayableName.Weather.Heavy Rain", "\u2601 \u2601 \u2601 \u2022 \u2022"),
+    GUSTING_RAIN("WEATHER_GUSTING_RAIN", "PlanetaryConditions.DisplayableName.Weather.Gusting Rain", "\u2601 \u2601 \u2601 \u2601 \u2022"),
+    DOWNPOUR("WEATHER_DOWNPOUR", "PlanetaryConditions.DisplayableName.Weather.Torrential Downpour", "\u2601 \u2601 \u2601 \u2601 \u2601"),
+    LIGHT_SNOW("WEATHER_LIGHT_SNOW", "PlanetaryConditions.DisplayableName.Weather.Light Snowfall", "\u2744 \u2022 \u2022 \u2022"),
+    MOD_SNOW("WEATHER_MOD_SNOW", "PlanetaryConditions.DisplayableName.Weather.Moderate Snowfall", "\u2744 \u2744 \u2022 \u2022"),
+    SNOW_FLURRIES("WEATHER_SNOW_FLURRIES", "PlanetaryConditions.DisplayableName.Weather.Snow Flurries", "\u2744 \u2744 \u2744 \u2022"),
+    HEAVY_SNOW("WEATHER_HEAVY_SNOW", "PlanetaryConditions.DisplayableName.Weather.Heavy Snowfall", "\u2744 \u2744 \u2744 \u2744"),
+    SLEET("WEATHER_SLEET", "PlanetaryConditions.DisplayableName.Weather.Sleet", "\u26C6 \u2022"),
+    ICE_STORM("WEATHER_ICE_STORM", "PlanetaryConditions.DisplayableName.Weather.Ice Storm", "\u26C6 \u26C6"),
+    LIGHT_HAIL("WEATHER_LIGHT_HAIL", "PlanetaryConditions.DisplayableName.Weather.Light Hail", "\u2591 \u2022"),
+    HEAVY_HAIL("WEATHER_HEAVY_HAIL", "PlanetaryConditions.DisplayableName.Weather.Heavy Hail", "\u2591 \u2591"),
+    LIGHTNING_STORM("WEATHER_LIGHTNING_STORM", "PlanetaryConditions.DisplayableName.Weather.Lightning Storm", "\u2608");
 
     private final String externalId;
     private final String name;
@@ -47,7 +47,7 @@ public enum Weather {
         final ResourceBundle resources = ResourceBundle.getBundle("megamek.common.messages", MegaMek.getMMOptions().getLocale());
         this.externalId = externalId;
         this.name = resources.getString(name);
-        this.indicator = resources.getString(indicator);
+        this.indicator = indicator;
     }
 
     public String getIndicator() {

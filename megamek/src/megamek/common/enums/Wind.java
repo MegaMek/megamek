@@ -24,13 +24,13 @@ import java.util.EnumSet;
 import java.util.ResourceBundle;
 
 public enum Wind {
-    CALM("WIND_CALM", "PlanetaryConditions.DisplayableName.WindStrength.Calm", "PlanetaryConditions.Indicator.WindStrength.Calm"),
-    LIGHT_GALE("WIND_LIGHT_GALE", "PlanetaryConditions.DisplayableName.WindStrength.Light Gale", "PlanetaryConditions.Indicator.WindStrength.LightGale"),
-    MOD_GALE("WIND_MOD_GALE", "PlanetaryConditions.DisplayableName.WindStrength.Moderate Gale", "PlanetaryConditions.Indicator.WindStrength.ModGale"),
-    STRONG_GALE("WIND_STRONG_GALE", "PlanetaryConditions.DisplayableName.WindStrength.Strong Gale", "PlanetaryConditions.Indicator.WindStrength.StrongGale"),
-    STORM("WIND_STORM", "PlanetaryConditions.DisplayableName.WindStrength.Storm", "PlanetaryConditions.Indicator.WindStrength.Storm"),
-    TORNADO_F1_TO_F3("WIND_TORNADO_F1_TO_F3", "PlanetaryConditions.DisplayableName.WindStrength.Tornado F1-F3", "PlanetaryConditions.Indicator.WindStrength.TornadoF13"),
-    TORNADO_F4("WIND_TORNADO_F4", "PlanetaryConditions.DisplayableName.WindStrength.Tornado F4", "PlanetaryConditions.Indicator.WindStrength.TornadoF4");
+    CALM("WIND_CALM", "PlanetaryConditions.DisplayableName.WindStrength.Calm", "\u2690"),
+    LIGHT_GALE("WIND_LIGHT_GALE", "PlanetaryConditions.DisplayableName.WindStrength.Light Gale", "\u21F6 \u2022 \u2022 \u2022"),
+    MOD_GALE("WIND_MOD_GALE", "PlanetaryConditions.DisplayableName.WindStrength.Moderate Gale", "\u21F6 \u21F6 \u2022 \u2022"),
+    STRONG_GALE("WIND_STRONG_GALE", "PlanetaryConditions.DisplayableName.WindStrength.Strong Gale", "\u21F6 \u21F6 \u21F6 \u2022"),
+    STORM("WIND_STORM", "PlanetaryConditions.DisplayableName.WindStrength.Storm", "\u21F6 \u21F6 \u21F6 \u21F6"),
+    TORNADO_F1_TO_F3("WIND_TORNADO_F1_TO_F3", "PlanetaryConditions.DisplayableName.WindStrength.Tornado F1-F3", "\uD83C\uDF2A \uD83C\uDF2A \uD83C\uDF2A \u2022"),
+    TORNADO_F4("WIND_TORNADO_F4", "PlanetaryConditions.DisplayableName.WindStrength.Tornado F4", "\uD83C\uDF2A \uD83C\uDF2A \uD83C\uDF2A \uD83C\uDF2A");
     private final String externalId;
     private final String name;
     private final String indicator;
@@ -39,7 +39,7 @@ public enum Wind {
         final ResourceBundle resources = ResourceBundle.getBundle("megamek.common.messages", MegaMek.getMMOptions().getLocale());
         this.externalId = externalId;
         this.name = resources.getString(name);
-        this.indicator = resources.getString(indicator);
+        this.indicator = indicator;
     }
 
     public String getIndicator() {

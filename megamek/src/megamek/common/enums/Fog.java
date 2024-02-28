@@ -23,9 +23,9 @@ import megamek.MegaMek;
 import java.util.ResourceBundle;
 
 public enum Fog {
-    FOG_NONE("FOG_NONE", "PlanetaryConditions.DisplayableName.Fog.None", "PlanetaryConditions.Indicator.Fog.None"),
-    FOG_LIGHT("FOG_LIGHT", "PlanetaryConditions.DisplayableName.Fog.Light Fog", "PlanetaryConditions.Indicator.Fog.Light"),
-    FOG_HEAVY("FOG_HEAVY", "PlanetaryConditions.DisplayableName.Fog.Heavy Fog", "PlanetaryConditions.Indicator.Fog.Heavy");
+    FOG_NONE("FOG_NONE", "PlanetaryConditions.DisplayableName.Fog.None", "\uD83D\uDC41"),
+    FOG_LIGHT("FOG_LIGHT", "PlanetaryConditions.DisplayableName.Fog.Light Fog", "\u2588 \u2022"),
+    FOG_HEAVY("FOG_HEAVY", "PlanetaryConditions.DisplayableName.Fog.Heavy Fog", "\u2588 \u2588");
     private final String externalId;
     private final String name;
     private final String indicator;
@@ -34,7 +34,7 @@ public enum Fog {
         final ResourceBundle resources = ResourceBundle.getBundle("megamek.common.messages", MegaMek.getMMOptions().getLocale());
         this.externalId = externalId;
         this.name = resources.getString(name);
-        this.indicator = resources.getString(indicator);
+        this.indicator = indicator;
     }
 
     public String getIndicator() {

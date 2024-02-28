@@ -23,11 +23,11 @@ import megamek.MegaMek;
 import java.util.ResourceBundle;
 
 public enum Light {
-    DAY("LIGHT_DAY", "PlanetaryConditions.DisplayableName.Light.Daylight", "PlanetaryConditions.Indicator.Light.Day"),
-    DUSK("LIGHT_DUSK", "PlanetaryConditions.DisplayableName.Light.Dusk", "PlanetaryConditions.Indicator.Light.Dusk"),
-    FULL_MOON("LIGHT_FULL_MOON", "PlanetaryConditions.DisplayableName.Light.Full Moon Night", "PlanetaryConditions.Indicator.Light.FullMoon"),
-    MOONLESS("LIGHT_MOONLESS", "PlanetaryConditions.DisplayableName.Light.Moonless Night", "PlanetaryConditions.Indicator.Light.Moonless"),
-    PITCH_BLACK("LIGHT_PITCH_BLACK", "PlanetaryConditions.DisplayableName.Light.Pitch Black", "PlanetaryConditions.Indicator.Light.PitchBlack");
+    DAY("LIGHT_DAY", "PlanetaryConditions.DisplayableName.Light.Daylight", "\u2600"),
+    DUSK("LIGHT_DUSK", "PlanetaryConditions.DisplayableName.Light.Dusk", "\u263D \u263C"),
+    FULL_MOON("LIGHT_FULL_MOON", "PlanetaryConditions.DisplayableName.Light.Full Moon Night", "\u26AB"),
+    MOONLESS("LIGHT_MOONLESS", "PlanetaryConditions.DisplayableName.Light.Moonless Night", "\u26AA"),
+    PITCH_BLACK("LIGHT_PITCH_BLACK", "PlanetaryConditions.DisplayableName.Light.Pitch Black", "\u2588");
 
     private final String externalId;
     private final String name;
@@ -37,7 +37,7 @@ public enum Light {
         final ResourceBundle resources = ResourceBundle.getBundle("megamek.common.messages", MegaMek.getMMOptions().getLocale());
         this.externalId = externalId;
         this.name = resources.getString(name);
-        this.indicator = resources.getString(indicator);
+        this.indicator = indicator;
     }
 
     public String getIndicator() {

@@ -843,36 +843,47 @@ public class PlanetaryConditions implements Serializable {
                 || getLight().isDarkerThan(Light.DUSK);
     }
 
-    private void setTempFromWeather() {
+    private static int setTempFromWeather(Weather weather, int temperature) {
         switch (weather) {
             case SLEET:
             case LIGHT_SNOW:
-                temperature = -40;
-                break;
+                return -40;
             case MOD_SNOW:
             case SNOW_FLURRIES:
             case HEAVY_SNOW:
-                temperature = -50;
-                break;
+                return -50;
             case ICE_STORM:
-                temperature = -60;
-                break;
+                return -60;
             default:
+                return temperature;
+        }
+    }
+
+    private void setTempFromWeather() {
+        temperature = setTempFromWeather(weather, temperature);
+    }
+
+    private static Wind setWindFromWeather(Weather weather, Wind wind) {
+        switch (weather) {
+            case ICE_STORM:
+            case SNOW_FLURRIES:
+                return Wind.MOD_GALE;
+            case GUSTING_RAIN:
+                return Wind.STRONG_GALE;
+            default:
+                return wind;
         }
     }
 
     private void setWindFromWeather() {
+        wind = setWindFromWeather(weather, wind);
+
         switch (weather) {
             case SLEET:
                 setSleet(true);
                 break;
-            case ICE_STORM:
             case SNOW_FLURRIES:
-                wind = Wind.MOD_GALE;
-                shiftWindStrength = false;
-                break;
             case GUSTING_RAIN:
-                wind = Wind.STRONG_GALE;
                 shiftWindStrength = false;
                 break;
             default:

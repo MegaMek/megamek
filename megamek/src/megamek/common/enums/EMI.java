@@ -23,8 +23,8 @@ import megamek.MegaMek;
 import java.util.ResourceBundle;
 
 public enum EMI {
-    EMI_NONE("EMI_NONE", "PlanetaryConditions.DisplayableName.EMI.false", "\u2301"),
-    EMI("EMI", "PlanetaryConditions.DisplayableName.EMI.true", "\u2312");
+    EMI_NONE("EMI_NONE", "PlanetaryConditions.DisplayableName.EMI.false", "\u2312"),
+    EMI("EMI", "PlanetaryConditions.DisplayableName.EMI.true", "\u2301");
     private final String externalId;
     private final String name;
     private final String indicator;

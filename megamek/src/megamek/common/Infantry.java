@@ -376,7 +376,7 @@ public class Infantry extends Entity {
             }
 
             if ((null != getCrew()) && hasAbility(OptionsConstants.INFANTRY_FOOT_CAV)
-                    && ((getMovementMode().isLegInfantry()) || (getMovementMode().isJumpInfantry()))) {
+                    && getMovementMode().isJumpOrLegInfantry()) {
                 mp += 1;
             }
 

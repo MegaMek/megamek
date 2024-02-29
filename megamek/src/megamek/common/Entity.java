@@ -830,7 +830,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      */
     protected ArrayList<WeaponAttackAction> incomingGuidedAttacks;
 
-    /** The iconf or this unit; This is empty unless the unit file has an embedded icon. */
+    /** The icon for this unit; This is empty unless the unit file has an embedded icon. */
     protected Base64Image icon = new Base64Image();
 
     /**

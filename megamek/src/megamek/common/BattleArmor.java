@@ -506,7 +506,7 @@ public class BattleArmor extends Infantry {
         }
 
         int mp = 0;
-        if (getMovementMode() != EntityMovementMode.INF_UMU) {
+        if (!getMovementMode().isUMUInfantry()) {
             mp = getOriginalJumpMP();
         }
         // if we have no normal jump jets, we get 1 jump MP from mechanical jump

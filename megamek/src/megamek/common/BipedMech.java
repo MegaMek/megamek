@@ -91,10 +91,8 @@ public class BipedMech extends Mech {
         int hipHits = 0;
         int actuatorHits = 0;
 
-
-
         //A Mech using tracks has its movement reduced by 50% per leg or track destroyed;
-        if (getMovementMode() == EntityMovementMode.TRACKED) {
+        if (getMovementMode().isTracked()) {
             for (Mounted m : getMisc()) {
                 if (m.getType().hasFlag(MiscType.F_TRACKS)) {
                     if (m.isHit() || isLocationBad(m.getLocation())) {

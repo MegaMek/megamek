@@ -1130,8 +1130,7 @@ public class BoardUtilities {
 
                 //heavy rain - mud in all hexes except buildings, depth 1+ water, and non-dirt roads
                 //rapids in all depth 1+ water
-                if (weatherCond.isHeavyRain()
-                        || weatherCond.isGustingRain()) {
+                if (weatherCond.isHeavyRainOrGustingRain()) {
                     if (hex.containsTerrain(Terrains.WATER) && !hex.containsTerrain(Terrains.RAPIDS) && (hex.depth() > 0)) {
                         hex.addTerrain(new Terrain(Terrains.RAPIDS, 1));
                     } else if (!hex.containsTerrain(Terrains.BUILDING)

@@ -135,6 +135,12 @@ public enum Weather {
                 || isIceStorm();
     }
 
+    public boolean isHeavyRainOrGustingRain() {
+        return isHeavyRain()
+                || isGustingRain();
+    }
+
+
     public boolean isLightRainOrModerateRain() {
         return isLightRain()
                 || isModerateRain();

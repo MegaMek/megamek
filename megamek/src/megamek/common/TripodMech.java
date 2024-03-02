@@ -142,7 +142,7 @@ public class TripodMech extends Mech {
 
         //A Mech using tracks has its movement reduced by 1/3 per leg or track destroyed, based
         //on analogy with biped and quad mechs.
-        if (getMovementMode() == EntityMovementMode.TRACKED) {
+        if (getMovementMode().isTracked()) {
             for (Mounted m : getMisc()) {
                 if (m.getType().hasFlag(MiscType.F_TRACKS)) {
                     if (m.isHit() || isLocationBad(m.getLocation())) {

@@ -7143,12 +7143,11 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             if (conditions.getWeather().isGustingRain()) {
                 if ((this instanceof Mech)
                         || isAirborne()
-                        || (getMovementMode() == EntityMovementMode.WHEELED)
-                        || (getMovementMode() == EntityMovementMode.TRACKED)) {
+                        || getMovementMode().isTrackedOrWheeled()) {
                     roll.addModifier(-1, Messages.getString("PilotingSPA.EnvSpec.RainSpec"));
                 }
 
-                if (isAirborneVTOLorWIGE() || (getMovementMode() == EntityMovementMode.HOVER)) {
+                if (isAirborneVTOLorWIGE() || getMovementMode().isHover()) {
                     roll.addModifier(-2, Messages.getString("PilotingSPA.EnvSpec.RainSpec"));
                 }
             }
@@ -7183,7 +7182,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                 if ((this instanceof Mech)
                         || isAirborne()
                         || isAirborneVTOLorWIGE()
-                        || (getMovementMode() == EntityMovementMode.HOVER)) {
+                        || getMovementMode().isHover()) {
                     roll.addModifier(-1, Messages.getString("PilotingSPA.EnvSpec.WindSpec"));
                 }
             }
@@ -7191,7 +7190,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             if (conditions.getWind().isStorm()) {
                 if ((this instanceof Mech)
                         || isAirborneVTOLorWIGE()
-                        || (getMovementMode() == EntityMovementMode.HOVER)) {
+                        || getMovementMode().isHover()) {
                     roll.addModifier(-2, Messages.getString("PilotingSPA.EnvSpec.WindSpec"));
                 }
 

@@ -2907,8 +2907,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         if (wtype != null
                 && wtype.hasFlag(WeaponType.F_ENERGY)
                 && !game.getBoard().inSpace()
-                && conditions.getBlowingSand().isBlowingSand()
-                && conditions.getWind().isStrongerThan(Wind.LIGHT_GALE)) {
+                && conditions.isBlowingSandActive()) {
             weatherToHitMods.addModifier(1, Messages.getString("WeaponAttackAction.BlowingSand"));
         }
 
@@ -5266,10 +5265,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                         toHit.addModifier(-1, Messages.getString("WeaponAttackAction.RainSpec"));
                     }
 
-                    if (conditions.getWeather().isModerateRain()
-                            || conditions.getWeather().isHeavyRain()
-                            || conditions.getWeather().isGustingRain()
-                            || conditions.getWeather().isDownpour()) {
+                    if (conditions.getWeather().isModerateRainOrHeavyRainOrGustingRainOrDownpour()) {
                         toHit.addModifier(-1, Messages.getString("WeaponAttackAction.RainSpec"));
                     }
                 }
@@ -5286,10 +5282,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                         toHit.addModifier(-1, Messages.getString("WeaponAttackAction.SnowSpec"));
                     }
 
-                    if (conditions.getWeather().isSleet()
-                            || conditions.getWeather().isSnowFlurries()
-                            || conditions.getWeather().isModerateSnow()
-                            || conditions.getWeather().isHeavySnow()) {
+                    if (conditions.getWeather().isModerateSnowOrHeavySnowOrSnowFlurriesOrSleet()) {
                         toHit.addModifier(-1, Messages.getString("WeaponAttackAction.SnowSpec"));
                     }
                 }
@@ -5301,11 +5294,9 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                         toHit.addModifier(-1, Messages.getString("WeaponAttackAction.SnowSpec"));
                     }
 
-                    boolean strongGaleOrStorm = conditions.getWind().isStrongGale()
-                            || conditions.getWind().isStorm();
                     if (wtype.hasFlag(WeaponType.F_MISSILE)
                             && wtype.hasFlag(WeaponType.F_BALLISTIC)
-                            && strongGaleOrStorm) {
+                            && conditions.getWind().isStrongGaleOrStorm()) {
                         toHit.addModifier(-1, Messages.getString("WeaponAttackAction.WindSpec"));
                     }
 

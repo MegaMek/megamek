@@ -300,17 +300,13 @@ public class Tank extends Entity {
                     mp += 2;
                 }
 
-                if (conditions.getWeather().isSleet()
-                        || conditions.getWeather().isLightSnow()
-                        || conditions.getWeather().isModerateSnow()
-                        || conditions.getWeather().isHeavySnow()
-                        || conditions.getWeather().isSnowFlurries()) {
+                if (conditions.getWeather().isLightSnowOrModerateSnowOrSnowFlurriesOrHeavySnowOrSleet()) {
                     mp += 1;
                 }
             }
 
             if(getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_WIND)
-                    && conditions.getWeather().isWeatherNone()
+                    && conditions.getWeather().isClear()
                     && conditions.getWind().isTornadoF1ToF3()) {
                 mp += 1;
             }

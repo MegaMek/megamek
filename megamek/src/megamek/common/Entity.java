@@ -7153,8 +7153,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                 }
             }
 
-            if (conditions.getWeather().isDownpour()
-                    || conditions.getWeather().isHeavyRain()) {
+            if (conditions.getWeather().isHeavyRainOrDownpour()) {
                 roll.addModifier(-1, Messages.getString("PilotingSPA.EnvSpec.RainSpec"));
             }
         }
@@ -7165,19 +7164,16 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                 roll.addModifier(-1, Messages.getString("PilotingSPA.EnvSpec.SnowSpec"));
             }
 
-            boolean snow = conditions.getWeather().isSnowFlurries()
-                    || conditions.getWeather().isSleet()
-                    || conditions.getWeather().isIceStorm();
             boolean airborne = isAirborneVTOLorWIGE()
                     || isAirborne();
-            if (snow
+            if (conditions.getWeather().isSnowFlurriesOrSleetOrIceStorm()
                     && airborne) {
                 roll.addModifier(-1, Messages.getString("PilotingSPA.EnvSpec.SnowSpec"));
             }
         }
 
         if (!hasAbility(OptionsConstants.UNOFF_ALLWEATHER)
-                && conditions.getWeather().isWeatherNone()
+                && conditions.getWeather().isClear()
                 && getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_WIND)) {
             if ((conditions.getWind().isModerateGale()) && isAirborneVTOLorWIGE()) {
                 roll.addModifier(-1, Messages.getString("PilotingSPA.EnvSpec.WindSpec"));
@@ -7654,9 +7650,9 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
         // TODO: add check for elevation of pavement, road,
         // or bridge matches entity elevation.
-        boolean hoverWige = (movementMode == EntityMovementMode.HOVER) || (movementMode == EntityMovementMode.WIGE);
-        boolean iceCheck = !hoverWige || (hoverWige && conditions.getWind().isStrongerThan(Wind.STRONG_GALE));
-        boolean runSprint = (overallMoveType == EntityMovementType.MOVE_RUN) || (overallMoveType == EntityMovementType.MOVE_SPRINT);
+        boolean hoverOrWigeStrongGale = movementMode.isHoverOrWiGE() && conditions.getWind().isStrongerThan(Wind.STRONG_GALE);
+        boolean iceCheck = !movementMode.isHoverOrWiGE() || hoverOrWigeStrongGale;
+        boolean runOrSprint = (overallMoveType == EntityMovementType.MOVE_RUN) || (overallMoveType == EntityMovementType.MOVE_SPRINT);
         if ((prevHex != null)
                 && prevHex.containsTerrain(Terrains.ICE)
                 && iceCheck
@@ -7675,8 +7671,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             adjustDifficultTerrainPSRModifier(roll);
             return roll;
         } else if (prevStepPavement
-                && runSprint
-                && !hoverWige
+                && runOrSprint
+                && !movementMode.isHoverOrWiGE()
                 && (prevFacing != curFacing)
                 && !lastPos.equals(curPos)) {
             if (this instanceof Mech) {
@@ -8089,9 +8085,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             }
             if (conditions.isSleeting()
                     || conditions.getFog().isFogHeavy()
-                    || conditions.getWeather().isHeavyRain()
-                    || conditions.getWeather().isGustingRain()
-                    || conditions.getWeather().isDownpour()) {
+                    || conditions.getWeather().isHeavyRainOrGustingRainOrDownpour()) {
                 roll.addModifier(+1, "fog/rain");
             }
             if (conditions.getWeather().isHeavySnow()) {

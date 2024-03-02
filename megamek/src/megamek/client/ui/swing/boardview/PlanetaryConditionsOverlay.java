@@ -117,7 +117,7 @@ public class PlanetaryConditionsOverlay extends AbstractBoardViewOverlay {
                 result.add(tmpStr);
             }
 
-            if (showDefaultConditions || !conditions.getWeather().isWeatherNone()) {
+            if (showDefaultConditions || !conditions.getWeather().isClear()) {
                 tmpStr = (showLabel ? MSG_WEATHER + "  " : "");
                 tmpStr = tmpStr + (showValue ? conditions.getWeather().toString() + "  " : "");
                 tmpStr = tmpStr + (showIndicator ? conditions.getWeather().getIndicator() : "");

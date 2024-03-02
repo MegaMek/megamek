@@ -68,8 +68,7 @@ public class WeatherProcessor extends DynamicTerrainProcessor {
         }
 
         // first we need to increment the conditions
-        if (conditions.getWeather().isModerateSnow()
-                || conditions.getWeather().isSnowFlurries()
+        if (conditions.getWeather().isModerateSnowOrSnowFlurries()
                 && game.getBoard().onGround()) {
             modSnowTurn = modSnowTurn + 1;
             if (modSnowTurn == 9) {

@@ -615,11 +615,7 @@ public class VTOL extends Tank implements IBomber {
                     mp += 2;
                 }
 
-                if (conditions.getWeather().isSleet()
-                        || conditions.getWeather().isLightSnow()
-                        || conditions.getWeather().isModerateSnow()
-                        || conditions.getWeather().isHeavySnow()
-                        || conditions.getWeather().isSnowFlurries()) {
+                if (conditions.getWeather().isLightSnowOrModerateSnowOrSnowFlurriesOrHeavySnowOrSleet()) {
                     mp += 1;
                 }
             }

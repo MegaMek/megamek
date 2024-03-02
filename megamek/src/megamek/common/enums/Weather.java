@@ -18,12 +18,10 @@
  */
 package megamek.common.enums;
 
-import megamek.MegaMek;
-
-import java.util.ResourceBundle;
+import megamek.common.Messages;
 
 public enum Weather {
-    WEATHER_NONE("WEATHER_NONE", "PlanetaryConditions.DisplayableName.Weather.Clear", "\u239A"),
+    CLEAR("WEATHER_CLEAR", "PlanetaryConditions.DisplayableName.Weather.Clear", "\u239A"),
     LIGHT_RAIN("WEATHER_LIGHT_RAIN", "PlanetaryConditions.DisplayableName.Weather.Light Rain", "\u2601 \u2022 \u2022 \u2022 \u2022"),
     MOD_RAIN("WEATHER_MOD_RAIN", "PlanetaryConditions.DisplayableName.Weather.Moderate Rain", "\u2601 \u2601 \u2022 \u2022 \u2022"),
     HEAVY_RAIN("WEATHER_HEAVY_RAIN", "PlanetaryConditions.DisplayableName.Weather.Heavy Rain", "\u2601 \u2601 \u2601 \u2022 \u2022"),
@@ -44,9 +42,8 @@ public enum Weather {
     private final String indicator;
 
     Weather(final String externalId, final String name, final String indicator) {
-        final ResourceBundle resources = ResourceBundle.getBundle("megamek.common.messages", MegaMek.getMMOptions().getLocale());
         this.externalId = externalId;
-        this.name = resources.getString(name);
+        this.name = name;
         this.indicator = indicator;
     }
 
@@ -60,11 +57,11 @@ public enum Weather {
 
     @Override
     public String toString() {
-        return name;
+        return Messages.getString(name);
     }
 
-    public boolean isWeatherNone() {
-        return this == WEATHER_NONE;
+    public boolean isClear() {
+        return this == CLEAR;
     }
 
     public boolean isLightRain() {
@@ -115,7 +112,7 @@ public enum Weather {
         return this == LIGHT_HAIL;
     }
 
-    public boolean isHeaveHail() {
+    public boolean isHeavyHail() {
         return this == HEAVY_HAIL;
     }
 
@@ -123,7 +120,149 @@ public enum Weather {
         return this == LIGHTNING_STORM;
     }
 
+    public boolean isHeavyRainOrDownpour() {
+        return isHeavyRain()
+                || isDownpour();
+    }
+
+    public boolean isLightRainOrLightSnow() {
+        return isLightRain()
+                || isLightSnow();
+    }
+
+    public boolean isSnowFlurriesOrIceStorm() {
+        return isSnowFlurries()
+                || isIceStorm();
+    }
+
+    public boolean isLightRainOrModerateRain() {
+        return isLightRain()
+                || isModerateRain();
+    }
+
+    public boolean isModerateSnowOrSnowFlurries() {
+        return isModerateSnow()
+                || isSnowFlurries();
+    }
+
+    public boolean isModerateRainOrModerateSnow() {
+        return isModerateRain()
+                || isModerateSnow();
+    }
+
+    public boolean isDownpourOrHeavySnowOrIceStorm() {
+        return isDownpour()
+                || isHeavySnow()
+                || isIceStorm();
+    }
+
+    public boolean isSnowFlurriesOrSleetOrIceStorm() {
+        return isSnowFlurries()
+                || isSleet()
+                || isIceStorm();
+    }
+
+    public boolean isHeavySnowOrLightHailOrHeaveHail() {
+        return isHeavySnow()
+                || isLightHail()
+                || isHeavyHail();
+    }
+
+    public boolean isLightRainOrLightSnowOrLightHail() {
+        return isLightRain()
+                || isLightSnow()
+                || isLightHail();
+    }
+
+    public boolean isHeavyRainOrGustingRainOrDownpour() {
+        return isHeavyRain()
+                || isGustingRain()
+                || isDownpour();
+    }
+
+    public boolean isHeavyRainOrGustingRainOrHeavySnow() {
+        return isHeavyRain()
+                || isGustingRain()
+                || isHeavySnow();
+    }
+
+    public boolean isHeavyRainOrModerateSnowOrSnowFlurries() {
+        return isHeavyRain()
+                || isModerateSnow()
+                || isSnowFlurries();
+    }
+
+    public boolean isModerateSnowOrHeavySnowOrSnowFlurries() {
+        return isModerateSnow()
+                || isHeavySnow()
+                || isSnowFlurries();
+    }
+
+    public boolean isLightSnowOrSleetOrLightHailOrHeavyHail() {
+        return isLightSnow()
+                || isSleet()
+                || isLightHail()
+                || isHeavyHail();
+    }
+
+    public boolean isModerateSnowOrHeavySnowOrSnowFlurriesOrSleet() {
+        return isModerateSnow()
+                || isHeavySnow()
+                || isSnowFlurries()
+                || isSleet();
+    }
+
+    public boolean isModerateRainOrHeavyRainOrGustingRainOrDownpour() {
+        return isModerateRain()
+                || isHeavyRain()
+                || isGustingRain()
+                || isDownpour();
+    }
+
+    public boolean isGustingRainOrSnowFlurriesOrIceStormOrLightningStorm() {
+        return isGustingRain()
+                || isSnowFlurries()
+                || isIceStorm()
+                || isLightningStorm();
+    }
+
+    public boolean isLightSnowOrModerateSnowOrSnowFlurriesOrHeavySnowOrSleet() {
+        return isLightSnow()
+                || isModerateSnow()
+                || isSnowFlurries()
+                || isHeavySnow()
+                || isSleet();
+    }
+
+    public boolean isGustingRainOrDownpourOrHeavySnowOrIceStormOrSleetOrHeavyHail() {
+        return isGustingRain()
+                || isDownpour()
+                || isHeavySnow()
+                || isIceStorm()
+                || isSleet()
+                || isHeavyHail();
+    }
+
+    public boolean isHeavyRainOrGustingRainOrDownpourOrLightSnowOrModerateSnowOrSnowFlurries() {
+        return isHeavyRain()
+                || isGustingRain()
+                || isDownpour()
+                || isLightSnow()
+                || isModerateSnow()
+                || isSnowFlurries();
+    }
+
+    public boolean isModerateRainOrHeavyRainOrGustingRainOrModerateSnowOrSnowFlurriesOrHeavySnowOrSleet() {
+        return isModerateRain()
+                || isHeavyRain()
+                || isGustingRain()
+                || isModerateSnow()
+                || isSnowFlurries()
+                || isHeavySnow()
+                || isSleet();
+    }
+
     public static Weather getWeather(int i) {
-        return Weather.values()[i];
+        return values()[i];
     }
 }

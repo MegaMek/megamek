@@ -398,15 +398,14 @@ public class Infantry extends Entity {
             }
 
             if (getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_SNOW)) {
-                if ((conditions.getWeather().isSnowFlurries()
-                            || conditions.getWeather().isIceStorm())
+                if (conditions.getWeather().isSnowFlurriesOrIceStorm()
                         && (getOriginalWalkMP() != 0)) {
                     mp += 1;
                 }
             }
 
             if (getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_WIND)
-                    && conditions.getWeather().isWeatherNone()) {
+                    && conditions.getWeather().isClear()) {
                 if (conditions.getWind().isModerateGale()) {
                     mp += 1;
                 }

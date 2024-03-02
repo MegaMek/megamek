@@ -451,11 +451,9 @@ public class BattleArmor extends Infantry {
                 mp += 1;
             }
 
-            boolean strongGaleOrStorm = conditions.getWind().isStrongGale()
-                    || conditions.getWind().isStorm();
             if (getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_WIND)
-                    && conditions.getWeather().isWeatherNone()
-                    && strongGaleOrStorm) {
+                    && conditions.getWeather().isClear()
+                    && conditions.getWind().isStrongGaleOrStorm()) {
                 mp += 1;
             }
         }

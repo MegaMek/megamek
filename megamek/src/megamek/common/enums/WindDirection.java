@@ -18,9 +18,7 @@
  */
 package megamek.common.enums;
 
-import megamek.MegaMek;
-
-import java.util.ResourceBundle;
+import megamek.common.Messages;
 
 public enum WindDirection {
     NORTH("NORTH", "PlanetaryConditions.DisplayableName.WindDirection.North", "\u2193"),
@@ -35,9 +33,8 @@ public enum WindDirection {
     private final String indicator;
 
     WindDirection(final String externalId, final String name, final String indicator) {
-        final ResourceBundle resources = ResourceBundle.getBundle("megamek.common.messages", MegaMek.getMMOptions().getLocale());
         this.externalId = externalId;
-        this.name = resources.getString(name);
+        this.name = name;
         this.indicator = indicator;
     }
 
@@ -51,7 +48,7 @@ public enum WindDirection {
 
     @Override
     public String toString() {
-        return name;
+        return Messages.getString(name);
     }
 
     public WindDirection rotateClockwise() {

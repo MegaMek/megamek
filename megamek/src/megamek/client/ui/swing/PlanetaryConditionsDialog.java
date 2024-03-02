@@ -395,24 +395,20 @@ public class PlanetaryConditionsDialog extends ClientDialog {
         }
         
         // The following temperature checks are not exactly what the rules demand, but see the comment above.
-        if ((weather.isLightSnow()
-                    || weather.isSleet()
-                    || weather.isLightHail()
-                    || weather.isHeaveHail())
+        if (weather.isLightSnowOrSleetOrLightHailOrHeavyHail()
                 && (temp > -40)) {
             tempTip.append(Messages.getString("PlanetaryConditionsDialog.invalid.lightSnowTemp"));
             wthrTip.append(Messages.getString("PlanetaryConditionsDialog.invalid.lightSnowTemp"));
         }
 
-        boolean snow = weather.isModerateSnow()
-                || weather.isSnowFlurries();
-        if (snow
+        if (weather.isModerateSnowOrHeavySnowOrSnowFlurries()
                 && (temp > -50)) {
             tempTip.append(Messages.getString("PlanetaryConditionsDialog.invalid.modSnowTemp"));
             wthrTip.append(Messages.getString("PlanetaryConditionsDialog.invalid.modSnowTemp"));
         }
         
-        if (weather.isIceStorm() && (temp > -60)) {
+        if (weather.isIceStorm()
+                && (temp > -60)) {
             tempTip.append(Messages.getString("PlanetaryConditionsDialog.invalid.iceStormTemp"));
             wthrTip.append(Messages.getString("PlanetaryConditionsDialog.invalid.iceStormTemp"));
         }
@@ -456,16 +452,13 @@ public class PlanetaryConditionsDialog extends ClientDialog {
      */
     private void adaptToWeatherAtmo() {
         boolean isVacuum = comAtmosphere.getItemAt(comAtmosphere.getSelectedIndex()).isVacuum();
-        boolean isTraceThin = comAtmosphere.getItemAt(comAtmosphere.getSelectedIndex()).isTrace()
-                || comAtmosphere.getItemAt(comAtmosphere.getSelectedIndex()).isThin();
-        boolean isDense = !isVacuum && !isTraceThin;
+        boolean isTraceOrThin = comAtmosphere.getItemAt(comAtmosphere.getSelectedIndex()).isTraceOrThin();
+        boolean isDense = !isVacuum && !isTraceOrThin;
         Weather weather = comWeather.getItemAt(comWeather.getSelectedIndex());
-        boolean specificWind = weather.isSnowFlurries() || weather.isIceStorm()
-                || weather.isGustingRain() || weather.isLightningStorm();
               
         removeListeners();
-        if (isTraceThin) {
-            comWeather.setSelectedItem(Weather.WEATHER_NONE);
+        if (isTraceOrThin) {
+            comWeather.setSelectedItem(Weather.CLEAR);
             comFog.setSelectedItem(Fog.FOG_NONE);
         }
         if (isVacuum) {
@@ -474,10 +467,10 @@ public class PlanetaryConditionsDialog extends ClientDialog {
             chkShiftWindDir.setSelected(false);
             chkShiftWindStr.setSelected(false);
             comWind.setSelectedItem(Wind.CALM);
-            comWeather.setSelectedItem(Weather.WEATHER_NONE);
+            comWeather.setSelectedItem(Weather.CLEAR);
             comFog.setSelectedItem(Fog.FOG_NONE);
         }
-        if (specificWind) {
+        if (weather.isGustingRainOrSnowFlurriesOrIceStormOrLightningStorm()) {
             chkShiftWindStr.setSelected(false);
             switch (weather) {
                 case LIGHTNING_STORM:
@@ -495,14 +488,14 @@ public class PlanetaryConditionsDialog extends ClientDialog {
         comWeather.setEnabled(isDense);
         labFog.setEnabled(isDense);
         comFog.setEnabled(isDense);
-        labWind.setEnabled(!isVacuum && !specificWind);
-        comWind.setEnabled(!isVacuum && !specificWind);
+        labWind.setEnabled(!isVacuum && !weather.isGustingRainOrSnowFlurriesOrIceStormOrLightningStorm());
+        comWind.setEnabled(!isVacuum && !weather.isGustingRainOrSnowFlurriesOrIceStormOrLightningStorm());
         labBlowingSands.setEnabled(!isVacuum);
         chkBlowingSands.setEnabled(!isVacuum);
         labShiftWindDir.setEnabled(!isVacuum);
         chkShiftWindDir.setEnabled(!isVacuum);
-        labShiftWindStr.setEnabled(!isVacuum && !specificWind);
-        chkShiftWindStr.setEnabled(!isVacuum && !specificWind);
+        labShiftWindStr.setEnabled(!isVacuum && !weather.isGustingRainOrSnowFlurriesOrIceStormOrLightningStorm());
+        chkShiftWindStr.setEnabled(!isVacuum && !weather.isGustingRainOrSnowFlurriesOrIceStormOrLightningStorm());
         comWindDirection.setEnabled(!isVacuum);
         labWindDirection.setEnabled(!isVacuum);
         refreshWindShift();

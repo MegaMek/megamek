@@ -18,10 +18,7 @@
  */
 package megamek.common.enums;
 
-import megamek.MegaMek;
-
-import java.util.EnumSet;
-import java.util.ResourceBundle;
+import megamek.common.Messages;
 
 public enum Wind {
     CALM("WIND_CALM", "PlanetaryConditions.DisplayableName.WindStrength.Calm", "\u2690"),
@@ -36,9 +33,8 @@ public enum Wind {
     private final String indicator;
 
     Wind(final String externalId, final String name, final String indicator) {
-        final ResourceBundle resources = ResourceBundle.getBundle("megamek.common.messages", MegaMek.getMMOptions().getLocale());
         this.externalId = externalId;
-        this.name = resources.getString(name);
+        this.name = name;
         this.indicator = indicator;
     }
 
@@ -52,7 +48,7 @@ public enum Wind {
 
     @Override
     public String toString() {
-        return name;
+        return Messages.getString(name);
     }
 
     public Wind lowerWind() {
@@ -111,6 +107,14 @@ public enum Wind {
 
     public boolean isTornadoF4() {
         return this == TORNADO_F4;
+    }
+
+    public boolean isLightGaleOrModerateGale() {
+        return isLightGale() || isModerateGale();
+    }
+
+    public boolean isStrongGaleOrStorm() {
+        return isStrongGale() || isStorm();
     }
 
     public boolean isWeakerThan(final Wind wind) {

@@ -357,7 +357,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
             }
 
             if(getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_WIND)
-                    && conditions.getWeather().isWeatherNone()
+                    && conditions.getWeather().isClear()
                     && conditions.getWind().isTornadoF1ToF3()) {
                 j += 1;
             }
@@ -377,7 +377,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
             j = Math.max(j + weatherMod, 0);
 
             if(getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_WIND)
-                    && conditions.getWeather().isWeatherNone()
+                    && conditions.getWeather().isClear()
                     && conditions.getWind().isTornadoF1ToF3()) {
                 j += 1;
             }

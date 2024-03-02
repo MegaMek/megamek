@@ -18,10 +18,8 @@
  */
 package megamek.common.enums;
 
-import megamek.MegaMek;
+import megamek.common.Messages;
 
-import java.util.EnumSet;
-import java.util.ResourceBundle;
 
 public enum Atmosphere {
     VACUUM("VACUUM", "PlanetaryConditions.DisplayableName.Atmosphere.Vacuum", "\u2726 \u2727 \u2727 \u25AF \u2727 \u2727"),
@@ -35,9 +33,8 @@ public enum Atmosphere {
     private final String indicator;
 
     Atmosphere(final String externalId, final String name, final String indicator) {
-        final ResourceBundle resources = ResourceBundle.getBundle("megamek.common.messages", MegaMek.getMMOptions().getLocale());
         this.externalId = externalId;
-        this.name = resources.getString(name);
+        this.name = name;
         this.indicator = indicator;
     }
 
@@ -51,7 +48,7 @@ public enum Atmosphere {
 
     @Override
     public String toString() {
-        return name;
+        return Messages.getString(name);
     }
 
     public boolean isVacuum() {
@@ -76,6 +73,11 @@ public enum Atmosphere {
 
     public boolean isVeryHigh() {
         return this == VERY_HIGH;
+    }
+
+    public boolean isTraceOrThin() {
+        return isTrace()
+                || isThin();
     }
 
     public boolean isLighterThan(final Atmosphere atmosphere) {

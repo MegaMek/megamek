@@ -18,9 +18,7 @@
  */
 package megamek.common.enums;
 
-import megamek.MegaMek;
-
-import java.util.ResourceBundle;
+import megamek.common.Messages;
 
 public enum Light {
     DAY("LIGHT_DAY", "PlanetaryConditions.DisplayableName.Light.Daylight", "\u2600"),
@@ -34,9 +32,8 @@ public enum Light {
     private final String indicator;
 
     Light(final String externalId, final String name, final String indicator) {
-        final ResourceBundle resources = ResourceBundle.getBundle("megamek.common.messages", MegaMek.getMMOptions().getLocale());
         this.externalId = externalId;
-        this.name = resources.getString(name);
+        this.name = name;
         this.indicator = indicator;
     }
 
@@ -50,7 +47,7 @@ public enum Light {
 
     @Override
     public String toString() {
-        return name;
+        return Messages.getString(name);
     }
 
     public boolean isDay() {

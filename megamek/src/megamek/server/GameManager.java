@@ -2009,8 +2009,7 @@ public class GameManager implements IGameManager {
                 clearReports();
                 resolveHeat();
                 PlanetaryConditions conditions = game.getPlanetaryConditions();
-                if (conditions.getBlowingSand().isBlowingSand()
-                        && conditions.getWind().isStrongerThan(Wind.LIGHT_GALE)) {
+                if (conditions.isBlowingSandActive()) {
                     addReport(resolveBlowingSandDamage());
                 }
                 addReport(resolveControlRolls());
@@ -33371,9 +33370,7 @@ public class GameManager implements IGameManager {
         }
 
 
-        if (conditions.getWeather().isHeavySnow()
-                || conditions.getWeather().isIceStorm()
-                || conditions.getWeather().isDownpour()
+        if (conditions.getWeather().isDownpourOrHeavySnowOrIceStorm()
                 || conditions.getWind().isStrongGale()) {
             rollTarget.addModifier(2, "Bad Weather");
         }

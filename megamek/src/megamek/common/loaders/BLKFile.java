@@ -103,6 +103,10 @@ public class BLKFile {
             entity.setSource(dataFile.getDataAsString("source")[0]);
         }
 
+        if (dataFile.exists("fluffimage")) {
+            entity.getFluff().setFluffImage(dataFile.getDataAsString("fluffimage")[0]);
+        }
+
         setTechLevel(entity);
         setFluff(entity);
         checkManualBV(entity);
@@ -455,11 +459,6 @@ public class BLKFile {
                     e.getFluff().setSystemModel(comp, fields[1]);
                 }
             }
-        }
-
-        if (dataFile.exists("imagepath")) {
-            e.getFluff().setMMLImagePath(
-                    dataFile.getDataAsString("imagepath")[0]);
         }
 
         if (dataFile.exists("notes")) {
@@ -974,10 +973,6 @@ public class BLKFile {
             blk.writeBlockData("systemModels", list);
         }
 
-        if (!t.getFluff().getMMLImagePath().isBlank()) {
-            blk.writeBlockData("imagepath", t.getFluff().getMMLImagePath());
-        }
-
         if (!t.getFluff().getNotes().isBlank()) {
             blk.writeBlockData("notes", t.getFluff().getNotes());
         }
@@ -1169,6 +1164,10 @@ public class BLKFile {
             blk.writeBlockData("battlearmor", js.getNBattleArmor());
             blk.writeBlockData("life_boat", js.getLifeBoats());
             blk.writeBlockData("escape_pod", js.getEscapePods());
+        }
+
+        if (t.getFluff().hasEmbeddedFluffImage()) {
+            blk.writeBlockData("fluffimage", t.getFluff().getBase64FluffImage().getBase64String());
         }
         return blk;
     }

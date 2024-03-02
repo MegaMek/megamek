@@ -12,7 +12,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  * for more details.
  */
-package megamek.test;
+package megamek.utilities;
 
 import java.io.BufferedReader;
 import java.io.File;

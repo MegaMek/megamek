@@ -281,4 +281,14 @@ public class Warship extends Jumpship {
     public void postProcessFacingChange() {
         mpUsed += 2;
     }
+
+    @Override
+    public boolean isJumpShip() {
+        return false;
+    }
+
+    @Override
+    public boolean isWarShip() {
+        return true;
+    }
 }

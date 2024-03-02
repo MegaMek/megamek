@@ -913,6 +913,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
             case GUIPreferences.FOV_HIGHLIGHT_RINGS_RADII:
             case GUIPreferences.SHADOWMAP:
                 clearHexImageCache();
+                getTilesetManager().reloadUnitIcons();
                 repaint();
                 break;
 

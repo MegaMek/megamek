@@ -1,36 +1,42 @@
 /*
- * MechSelectorDialog.java - Copyright (C) 2009 Jay Lawson
- * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
+ * Copyright (c) 2009 Jay Lawson
+ * Copyright (c) 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
+ * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
 package megamek.client.ui.swing.util;
 
-import megamek.common.*;
-import megamek.common.alphaStrike.ASCardDisplayable;
+import megamek.common.BTObject;
+import megamek.common.Configuration;
+import megamek.common.Mech;
 import megamek.common.annotations.Nullable;
 import megamek.common.preference.PreferenceManager;
-import megamek.common.util.fileUtils.MegaMekFile;
 
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * Looks for a fluff image for an entity based on model and chassis.
- *
- * Heavily based on code from MegaMekLab's ImageHelper.
- * @author Jay Lawson
+ * This class provides methods for retrieving fluff images, for use in MM, MML and MHQ; also
+ * for record sheets (where the fallback image "hud.png" is used).
  */
-public class FluffImageHelper {
+public final class FluffImageHelper {
 
     public static final String DIR_NAME_BA = "BattleArmor";
     public static final String DIR_NAME_CONVFIGHTER = "ConvFighter";
@@ -44,218 +50,167 @@ public class FluffImageHelper {
     public static final String DIR_NAME_SPACESTATION = "Space Station";
     public static final String DIR_NAME_VEHICLE = "Vehicle";
     public static final String DIR_NAME_WARSHIP = "WarShip";
-    public static final String[] EXTENSIONS_FLUFF_IMAGE_FORMATS = { ".PNG", ".png", ".JPG", ".JPEG", ".jpg", ".jpeg", ".GIF", ".gif" };
+    public static final String[] EXTENSIONS_FLUFF_IMAGE_FORMATS = { ".PNG", ".png", ".JPG",
+            ".JPEG", ".jpg", ".jpeg", ".GIF", ".gif" };
 
     /**
-     * Get the fluff image for the specified unit, if available.
-     * @param unit The unit.
-     * @return An image file, if one is available, else {@code null}.
+     * Returns a fluff image for the given unit/object to be shown e.g. in the unit summary.
+     *
+     * <P>If a fluff image is stored in the unit/object itself, e.g. if it was part of the
+     * unit's file or is created by the unit itself, this is returned. Note that this
+     * is not used for canon units, but may be used in custom ones by adding a fluff
+     * image to the unit in MML.
+     *
+     * <P>Otherwise, the fluff images directories are searched. First searches the user dir,
+     * then the internal dir. Tries to match the image by chassis + model or chassis alone.
+     * Chassis and model names are cleaned from " and / characters before matching. For
+     * Meks with clan names, both names and the combinations are searched. The model
+     * alone is not used to search.
+     *
+     * Returns null if no fluff image can be found.
+     *
+     * @param unit The unit
+     * @return a fluff image or null, if no match is found
      */
-    public static Image getFluffImage(final Entity unit) {
-        Image fluff = loadFluffImage(unit);
-
-        if (fluff == null) {
-            fluff = loadFluffImageHeuristic(unit);
-        }
-
-        return fluff;
+    public static @Nullable Image getFluffImage(@Nullable BTObject unit) {
+        return getFluffImage(unit, false);
     }
 
     /**
-     * Attempt to load the fluff image specified in the Entity data.
-     * @param unit The unit.
-     * @return An image or {@code null}.
+     * Returns a fluff image for the given unit for the record sheet, with a fallback
+     * file named "hud.png" if that is present in the right fluff directory, or null if nothing
+     * can be found. See {@link #getFluffImage(BTObject)} for further comments on how the fluff
+     * image is searched.
+     *
+     * @param unit The unit
+     * @return a fluff image or null, if no match is found
      */
-    protected static Image loadFluffImage(final Entity unit) {
-        Image fluff = null;
-        String path = unit.getFluff().getMMLImagePath();
-        if (new File(path).isFile()) {
-            fluff = new ImageIcon(path).getImage();
-        }
-        return fluff;
+    @SuppressWarnings("unused") // used in MML
+    public static @Nullable Image getRecordSheetFluffImage(@Nullable BTObject unit) {
+        return getFluffImage(unit, true);
     }
 
-    /**
-     * Attempt to load a fluff image by combining elements of type and name.
-     * @param entity The unit.
-     * @return An image or {@code null}.
-     */
-    public static @Nullable Image loadFluffImageHeuristic(final Entity entity) {
-        String userDir = PreferenceManager.getClientPreferences().getUserDir();
-        if (!userDir.isBlank()) {
-            var userDirPath = new File(userDir + "/" + Configuration.fluffImagesDir(), getImagePath(entity));
-            Image image = loadFluffImageHeuristic(userDirPath, entity.getModel(), entity.getFullChassis());
-            if (image != null) {
-                return image;
-            }
-        }
-
-        var path = new MegaMekFile(Configuration.fluffImagesDir(), getImagePath(entity));
-        return loadFluffImageHeuristic(path.getFile(), entity.getModel(), entity.getChassis());
-    }
-
-    /**
-     * Attempt to load a fluff image by combining elements of type and name.
-     * @param element The AlphaStrikeElement or MechSummary
-     * @return An image or null
-     */
-    public static @Nullable Image loadFluffImageHeuristic(final ASCardDisplayable element) {
-        String userDir = PreferenceManager.getClientPreferences().getUserDir();
-        if (!userDir.isBlank()) {
-            var userDirPath = new File(userDir + "/" + Configuration.fluffImagesDir(), getImagePath(element));
-            Image image = loadFluffImageHeuristic(userDirPath, element.getModel(), element.getFullChassis());
-            if (image != null) {
-                return image;
-            }
-        }
-
-        var path = new MegaMekFile(Configuration.fluffImagesDir(), getImagePath(element));
-        return loadFluffImageHeuristic(path.getFile(), element.getModel(), element.getFullChassis());
-    }
-
-    private static @Nullable Image loadFluffImageHeuristic(File path, String model, String chassis) {
-        File fluff_image_file = findFluffImage(path, model, chassis);
-        if (fluff_image_file != null) {
-            return new ImageIcon(fluff_image_file.toString()).getImage();
-        } else {
+    private static @Nullable Image getFluffImage(@Nullable BTObject unit, boolean recordSheet) {
+        if (unit == null) {
             return null;
         }
+        Image embeddedFluffImage = unit.getFluffImage();
+        if (embeddedFluffImage != null) {
+            return embeddedFluffImage;
+        } else {
+            File fluffImageFile = findFluffFile(unit, recordSheet);
+            if (fluffImageFile != null) {
+                return new ImageIcon(fluffImageFile.toString()).getImage();
+            } else {
+                return null;
+            }
+        }
     }
 
-    /**
-     * Find a fluff image file for the unit.
-     * 
-     * @param directory Directory to search.
-     * @param origModel The model name of the unit
-     * @param origChassis The chassis name of the unit
-     * @return Path to an appropriate file or {@code null} if none is found
-     */
-    protected static @Nullable File findFluffImage(final File directory, String origModel, String origChassis) {
-        // Search for a file in the specified directory.
-        // Searches for each supported extension on each of the following
-        // combinations:
-        // Chassis + model
-        // Model only
-        // Chassis only
-        // Model needs .replace("\"", "") because Windows disallows double quote
-        // in the filename.
-        File fluff_file = null;
-        // Remove characters that will cause path problems
-        String sanitizedChassis = origChassis.replace("\"", "").replace("/", "");
-        String sanitizedModel = origModel.replace("\"", "").replace("/", "");
-        String[] basenames = {
-                new MegaMekFile(directory, sanitizedChassis + " " + sanitizedModel).toString(),
-                new MegaMekFile(directory, sanitizedModel).toString(),
-                new MegaMekFile(directory, sanitizedChassis).toString(), };
+    private static @Nullable File findFluffFile(BTObject unit, boolean recordSheet) {
+        List<File> fileCandidates = new ArrayList<>();
+        var fluffDir = new File(Configuration.fluffImagesDir(), FluffImageHelper.getFluffPath(unit));
+        var rsFluffSuperDir = new File(Configuration.fluffImagesDir(), "rs");
+        var rsFluffDir = new File(rsFluffSuperDir, FluffImageHelper.getFluffPath(unit));
 
-        for (String basename : basenames) {
-            for (String extension : EXTENSIONS_FLUFF_IMAGE_FORMATS) {
-                File filepath = new File(basename + extension);
-                if (filepath.isFile()) {
-                    fluff_file = filepath;
-                    break;
+        List<String> nameCandidates = nameCandidates(unit);
+
+        // UserDir matches
+        // For internal use: in [user dir]/data/images/fluff/rs/<type> images for record sheets can be placed
+        // These will be preferentially loaded when the recordSheet paremeter is true
+        String userDir = PreferenceManager.getClientPreferences().getUserDir();
+        if (!userDir.isBlank() && new File(userDir).isDirectory()) {
+            var fluffUserDir = new File(userDir, fluffDir.toString());
+            var rsFluffUserDir = new File(userDir, rsFluffDir.toString());
+
+            if (recordSheet) {
+                for (String nameCandidate : nameCandidates) {
+                    for (String ext : EXTENSIONS_FLUFF_IMAGE_FORMATS) {
+                        fileCandidates.add(new File(rsFluffUserDir, nameCandidate + ext));
+                    }
                 }
             }
-            if (fluff_file != null) {
-                break;
-            }
-        }
-        final String model = origModel.replace("\"", "");
-        final String chassisModel = origChassis + " " + model;
-
-        // If the previous checks failed, we're going to try to discount the
-        //  CSO author name, which will make the file look like:
-        //   Chassis + model + [ <author> ] + extension
-        if (fluff_file == null) {
-            File[] files = directory.listFiles((direc, name) -> {
-                boolean extMatch = false;
+            for (String nameCandidate : nameCandidates) {
                 for (String ext : EXTENSIONS_FLUFF_IMAGE_FORMATS) {
-                    extMatch |= name.endsWith(ext);
+                    fileCandidates.add(new File(fluffUserDir, nameCandidate + ext));
                 }
-                return name.contains(chassisModel) && extMatch;
-            });
-
-            if ((files != null) && (files.length > 0)) {
-                fluff_file = files[0];
             }
         }
 
-        // If we still haven't found a file, see if ignoring the model helps
-        if (fluff_file == null) {
-            File[] files = directory.listFiles((direc, name) -> {
-                boolean extMatch = false;
-                for (String ext : EXTENSIONS_FLUFF_IMAGE_FORMATS) {
-                    extMatch |= name.endsWith(ext);
-                }
-                String chassis = name.split("\\[")[0].trim();
-                return chassis.equalsIgnoreCase(origChassis) && extMatch;
-            });
-
-            if ((files != null) && (files.length > 0)) {
-                fluff_file = files[0];
+        // Internal fluff path matches
+        for (String nameCandidate : nameCandidates) {
+            for (String ext : EXTENSIONS_FLUFF_IMAGE_FORMATS) {
+                fileCandidates.add(new File(fluffDir, nameCandidate + ext));
             }
         }
 
-        return fluff_file;
+        // Fallback
+        if (recordSheet) {
+            fileCandidates.add(new File(fluffDir, "hud.png"));
+        }
+
+        for (File possibleFile : fileCandidates) {
+            if (possibleFile.exists() && !possibleFile.isDirectory()) {
+                return possibleFile;
+            }
+        }
+        return null;
+    }
+
+    private static String sanitize(String original) {
+        return original.replace("\"", "").replace("/", "");
+    }
+
+    private static List<String> nameCandidates(BTObject unit) {
+        List<String> nameCandidates = new ArrayList<>();
+
+        String sanitizedChassis = sanitize(unit.generalName());
+        String sanitizedModel = sanitize(unit.specificName());
+        nameCandidates.add((sanitizedChassis + " " + sanitizedModel).trim());
+        if (unit instanceof Mech && !((Mech) unit).getClanChassisName().isBlank()) {
+            Mech mek = (Mech) unit;
+            String fullChassis = sanitize(mek.getFullChassis());
+            nameCandidates.add((fullChassis + " " + sanitizedModel).trim());
+            String clanChassis = sanitize(mek.getClanChassisName());
+            nameCandidates.add((clanChassis + " " + sanitizedModel).trim());
+            nameCandidates.add(fullChassis);
+            nameCandidates.add(clanChassis);
+        }
+        nameCandidates.add(sanitizedChassis);
+        return nameCandidates;
     }
 
     private FluffImageHelper() { }
 
-    private static String getImagePath(final ASCardDisplayable element) {
-        switch (element.getASUnitType()) {
-            case WS:
-                return DIR_NAME_WARSHIP;
-            case SS:
-                return DIR_NAME_SPACESTATION;
-            case JS:
-                return DIR_NAME_JUMPSHIP;
-            case DS:
-            case DA:
-                return DIR_NAME_DROPSHIP;
-            case SC:
-                return DIR_NAME_SMALLCRAFT;
-            case BA:
-                return DIR_NAME_BA;
-            case CI:
-                return DIR_NAME_INFANTRY;
-            case PM:
-                return DIR_NAME_PROTOMEK;
-            case CV:
-            case SV:
-                if (!element.hasMovementMode("a")) {
-                    return DIR_NAME_VEHICLE;
-                } // intentional fall through
-            case CF:
-                return DIR_NAME_CONVFIGHTER;
-            case AF:
-                return DIR_NAME_FIGHTER;
-            default:
-                return DIR_NAME_MECH;
-        }
-    }
-
-    public static String getImagePath(final Entity unit) {
-        if (unit instanceof Warship) {
+    /**
+     * Returns the subdirectory in the fluff images directory suitable for the given
+     * unit, i.e. "ConvFighter" for CF and FWS units.
+     *
+     * @param unit The unit
+     * @return The unit type subdirectory for fluff images
+     */
+    public static String getFluffPath(BTObject unit) {
+        if (unit.isWarShip()) {
             return DIR_NAME_WARSHIP;
-        } else if (unit instanceof SpaceStation) {
+        } else if (unit.isSpaceStation()) {
             return DIR_NAME_SPACESTATION;
-        } else if (unit instanceof Jumpship) {
+        } else if (unit.isJumpShip()) {
             return DIR_NAME_JUMPSHIP;
-        } else if (unit instanceof ConvFighter) {
+        } else if (unit.isConventionalFighter() || unit.isFixedWingSupport()) {
             return DIR_NAME_CONVFIGHTER;
-        } else if (unit instanceof Dropship) {
+        } else if (unit.isDropShip()) {
             return DIR_NAME_DROPSHIP;
-        } else if (unit instanceof SmallCraft) {
+        } else if (unit.isSmallCraft()) {
             return DIR_NAME_SMALLCRAFT;
-        } else if (unit instanceof Aero) {
+        } else if (unit.isFighter()) {
             return DIR_NAME_FIGHTER;
-        } else if (unit instanceof BattleArmor) {
+        } else if (unit.isBattleArmor()) {
             return DIR_NAME_BA;
-        } else if (unit instanceof Infantry) {
+        } else if (unit.isConventionalInfantry()) {
             return DIR_NAME_INFANTRY;
-        } else if (unit instanceof Protomech) {
+        } else if (unit.isProtoMek()) {
             return DIR_NAME_PROTOMEK;
-        } else if (unit instanceof Tank) {
+        } else if (unit.isVehicle()) {
             return DIR_NAME_VEHICLE;
         } else {
             return DIR_NAME_MECH;

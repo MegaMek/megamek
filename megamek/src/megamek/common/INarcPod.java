@@ -231,4 +231,14 @@ public class INarcPod implements Serializable, Targetable {
     public boolean isEnemyOf(Entity other) {
         return true;
     }
+
+    @Override
+    public String generalName() {
+        return toString();
+    }
+
+    @Override
+    public String specificName() {
+        return "";
+    }
 }

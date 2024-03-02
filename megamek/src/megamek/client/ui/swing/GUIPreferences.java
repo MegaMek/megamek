@@ -740,7 +740,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(SKIN_FILE, "BW - Default.xml");
         store.setDefault(SOFTCENTER, false);
         store.setDefault(AUTOCENTER, true);
-        store.setDefault(UI_THEME, UIManager.getSystemLookAndFeelClassName());
+        store.setDefault(UI_THEME, "com.formdev.flatlaf.FlatDarculaLaf");
 
         store.setDefault(RAT_TECH_LEVEL, 0);
         store.setDefault(RAT_BV_MIN, "5800");
@@ -3224,4 +3224,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
         return Color.BLUE;
     }
     //endregion Colours
+
+    /** @return True when the MM suite supports the given laf, currently all formdev "Flat ..." and the system default. */
+    public static boolean isSupportedLookAndFeel(UIManager.LookAndFeelInfo lookAndFeelInfo) {
+        return lookAndFeelInfo.getClassName().toLowerCase().contains("formdev")
+                || UIManager.getSystemLookAndFeelClassName().equals(lookAndFeelInfo.getClassName());
+    }
 }

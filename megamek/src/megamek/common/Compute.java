@@ -7293,6 +7293,10 @@ public class Compute {
                 crew += 5 * (int) m.getSize();
             }
         }
+        if (entity.isSuperHeavy()) {
+            // Tactical Officer
+            return 1;
+        }
         return crew;
     }
 
@@ -7333,6 +7337,8 @@ public class Compute {
             return ((Infantry) entity).getSquadCount() * ((Infantry) entity).getSquadSize();
         } else if (entity instanceof Jumpship || entity instanceof SmallCraft) {
             return getAeroCrewNeeds(entity) + getTotalGunnerNeeds(entity);
+        } else if (entity.isSuperHeavy() || entity.isTripodMek()) {
+            return getTotalDriverNeeds(entity) + getTotalGunnerNeeds(entity) + getAdditionalNonGunner(entity);
         } else {
             return 1;
         }
@@ -7410,7 +7416,10 @@ public class Compute {
     }
 
     public static boolean isFlakAttack(Entity attacker, Entity target) {
-        boolean validLocation = !(attacker.isSpaceborne() || target.isSpaceborne());
+        boolean validLocation = !(attacker.isSpaceborne()
+                || target.isSpaceborne()
+                || attacker.isOffBoard()
+                || target.isOffBoard());
         return validLocation && (target.isAirborne() || target.isAirborneVTOLorWIGE());
     }
 

@@ -62,4 +62,13 @@ public enum Fog {
     public static Fog getFog(int i) {
         return Fog.values()[i];
     }
+
+    public static Fog getFog(String s) {
+        for (Fog condition : Fog.values()) {
+            if (condition.getExternalId().equals(s)) {
+                return condition;
+            }
+        }
+        return Fog.FOG_NONE;
+    }
 }

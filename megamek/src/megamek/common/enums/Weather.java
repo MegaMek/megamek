@@ -271,4 +271,13 @@ public enum Weather {
     public static Weather getWeather(int i) {
         return values()[i];
     }
+
+    public static Weather getWeather(String s) {
+        for (Weather condition : Weather.values()) {
+            if (condition.getExternalId().equals(s)) {
+                return condition;
+            }
+        }
+        return Weather.CLEAR;
+    }
 }

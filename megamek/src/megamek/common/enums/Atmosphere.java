@@ -91,4 +91,13 @@ public enum Atmosphere {
     public static Atmosphere getAtmosphere(int i) {
         return Atmosphere.values()[i];
     }
+
+    public static Atmosphere getAtmosphere(String s) {
+        for (Atmosphere condition : Atmosphere.values()) {
+            if (condition.getExternalId().equals(s)) {
+                return condition;
+            }
+        }
+        return Atmosphere.STANDARD;
+    }
 }

@@ -57,4 +57,13 @@ public enum BlowingSand {
     public static BlowingSand getBlowingSand(int i) {
         return BlowingSand.values()[i];
     }
+
+    public static BlowingSand getBlowingSand(String s) {
+        for (BlowingSand condition : BlowingSand.values()) {
+            if (condition.getExternalId().equals(s)) {
+                return condition;
+            }
+        }
+        return BlowingSand.BLOWING_SAND_NONE;
+    }
 }

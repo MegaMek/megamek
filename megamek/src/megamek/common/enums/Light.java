@@ -81,4 +81,13 @@ public enum Light {
     public static Light getLight(int i) {
         return Light.values()[i];
     }
+
+    public static Light getLight(String s) {
+        for (Light condition : Light.values()) {
+            if (condition.getExternalId().equals(s)) {
+                return condition;
+            }
+        }
+        return Light.DAY;
+    }
 }

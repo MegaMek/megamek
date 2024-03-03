@@ -57,4 +57,13 @@ public enum EMI {
     public static EMI getEMI(int i) {
         return EMI.values()[i];
     }
+
+    public static EMI getEMI(String s) {
+        for (EMI condition : EMI.values()) {
+            if (condition.getExternalId().equals(s)) {
+                return condition;
+            }
+        }
+        return EMI.EMI_NONE;
+    }
 }

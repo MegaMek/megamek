@@ -129,4 +129,12 @@ public enum Wind {
         return Wind.values()[i];
     }
 
+    public static Wind getWind(String s) {
+        for (Wind condition : Wind.values()) {
+            if (condition.getExternalId().equals(s)) {
+                return condition;
+            }
+        }
+        return Wind.CALM;
+    }
 }

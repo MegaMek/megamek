@@ -96,4 +96,13 @@ public enum WindDirection {
     public static WindDirection getWindDirection(int i) {
         return WindDirection.values()[i];
     }
+
+    public static WindDirection getWindDirection(String s) {
+        for (WindDirection condition : WindDirection.values()) {
+            if (condition.getExternalId().equals(s)) {
+                return condition;
+            }
+        }
+        return WindDirection.NORTH;
+    }
 }

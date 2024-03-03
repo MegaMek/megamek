@@ -33376,7 +33376,7 @@ public class GameManager implements IGameManager {
         }
 
         if (conditions.getWind().isStrongerThan(Wind.STRONG_GALE)
-                ||  (conditions.getWeather().isHeavySnow() && conditions.getWind().isStrongGale())) {
+                || (conditions.getWeather().isHeavySnow() && conditions.getWind().isStrongGale())) {
             rollTarget.addModifier(3, "Really Bad Weather");
         }
         return rollTarget;

@@ -267,7 +267,7 @@ public class PlanetaryConditions implements Serializable {
             return 1;
         } else if(getWeather().isDownpour()) {
             return 2;
-        } else  {
+        } else {
             return 0;
         }
     }
@@ -703,11 +703,11 @@ public class PlanetaryConditions implements Serializable {
 
         if (getFog().isFogHeavy()) {
             if (isMechOrVee || isLowAltitudeAero) {
-                otherRange =  5;
+                otherRange = 5;
             } else if (isAero) {
-                otherRange =  10;
+                otherRange = 10;
             } else if (isLargeCraft) {
-                otherRange =  8;
+                otherRange = 8;
             } else {
                 otherRange = 2;
             }
@@ -949,7 +949,7 @@ public class PlanetaryConditions implements Serializable {
     }
 
     public boolean isExtremeTemperatureHeat() {
-        return  (isExtremeTemperature() && (temperature > 0));
+        return (isExtremeTemperature() && (temperature > 0));
     }
 
     public boolean isExtremeTemperatureCold() {
@@ -957,7 +957,7 @@ public class PlanetaryConditions implements Serializable {
     }
 
     public String getGravityIndicator() {
-        if  (gravity > 1.0) {
+        if (gravity > 1.0) {
             return MSG_INDICATOR_GRAVITY_HIGH;
         } else if (gravity < 1.0) {
             return MSG_INDICATOR_GRAVITY_LOW;
@@ -967,7 +967,7 @@ public class PlanetaryConditions implements Serializable {
     }
 
     public String getTemperatureIndicator() {
-        if  (isExtremeTemperatureHeat()) {
+        if (isExtremeTemperatureHeat()) {
             return MSG_INDICATOR_TEMPERATURE_HEAT;
         } else if (isExtremeTemperatureCold()) {
             return MSG_INDICATOR_TEMPERATURE_COLD;

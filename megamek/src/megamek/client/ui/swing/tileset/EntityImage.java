@@ -197,7 +197,13 @@ public class EntityImage {
         decal = getDamageDecal(entity, secondaryPos);
         smoke = getSmokeImage(entity, secondaryPos);
         unitHeight = entity.height();
-        unitElevation = entity.getElevation();
+        int elevation = 0;
+        try {
+            elevation = entity.getElevation();
+        } catch (Exception ignored) {
+            // do nothing; use 0 as elevation
+        }
+        unitElevation = elevation;
     }
 
     /**

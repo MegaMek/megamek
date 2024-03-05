@@ -97,7 +97,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
     static final int HEX_ELEV = 12;
 
     private static final float[] ZOOM_FACTORS = {0.30f, 0.41f, 0.50f, 0.60f,
-            0.68f, 0.79f, 0.90f, 1.00f, 1.09f, 1.17f, 1.3f};
+            0.68f, 0.79f, 0.90f, 1.00f, 1.09f, 1.17f, 1.3f, 1.6f, 2.0f, 3.0f};
 
     private static final int[] ZOOM_SCALE_TYPES = {
             ImageUtil.IMAGE_SCALE_AVG_FILTER, ImageUtil.IMAGE_SCALE_AVG_FILTER,
@@ -105,7 +105,9 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
             ImageUtil.IMAGE_SCALE_BICUBIC, ImageUtil.IMAGE_SCALE_BICUBIC,
             ImageUtil.IMAGE_SCALE_BICUBIC, ImageUtil.IMAGE_SCALE_BICUBIC,
             ImageUtil.IMAGE_SCALE_BICUBIC, ImageUtil.IMAGE_SCALE_BICUBIC,
-            ImageUtil.IMAGE_SCALE_BICUBIC};
+            ImageUtil.IMAGE_SCALE_BICUBIC, ImageUtil.IMAGE_SCALE_BICUBIC,
+            ImageUtil.IMAGE_SCALE_BICUBIC, ImageUtil.IMAGE_SCALE_BICUBIC};
+
 
     public static final int[] allDirections = {0, 1, 2, 3, 4, 5};
 
@@ -130,6 +132,11 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
     private static Font FONT_9 = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN, 9);
     private static Font FONT_10 = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN, 10);
     private static Font FONT_12 = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN, 12);
+    private static Font FONT_14 = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN, 14);
+    private static Font FONT_16 = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN, 16);
+    private static Font FONT_18 = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN, 18);
+    private static Font FONT_24 = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN, 24);
+
 
     Dimension hex_size;
 
@@ -6093,22 +6100,52 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
     }
 
     private void updateFontSizes() {
-        if (zoomIndex <= 4) {
+        if (zoomIndex < 7) {
             font_elev = FONT_7;
             font_hexnum = FONT_7;
             font_minefield = FONT_7;
+            return;
         }
 
-        if ((zoomIndex <= 5) & (zoomIndex > 4)) {
-            font_elev = FONT_8;
-            font_hexnum = FONT_8;
-            font_minefield = FONT_8;
+        if ((zoomIndex < 8)) {
+            font_elev = FONT_10;
+            font_hexnum = FONT_10;
+            font_minefield = FONT_10;
+            return;
         }
 
-        if (zoomIndex > 5) {
-            font_elev = FONT_9;
-            font_hexnum = FONT_9;
-            font_minefield = FONT_9;
+        if ((zoomIndex < 10)) {
+            font_elev = FONT_12;
+            font_hexnum = FONT_12;
+            font_minefield = FONT_12;
+            return;
+        }
+
+        if ((zoomIndex < 11)) {
+            font_elev = FONT_14;
+            font_hexnum = FONT_14;
+            font_minefield = FONT_14;
+            return;
+        }
+
+        if (zoomIndex < 12) {
+            font_elev = FONT_16;
+            font_hexnum = FONT_16;
+            font_minefield = FONT_16;
+            return;
+        }
+
+        if (zoomIndex < 13) {
+            font_elev = FONT_18;
+            font_hexnum = FONT_18;
+            font_minefield = FONT_18;;
+            return;
+        }
+
+        if (zoomIndex < ZOOM_FACTORS.length) {
+            font_elev = FONT_24;
+            font_hexnum = FONT_24;
+            font_minefield = FONT_24;;
         }
     }
 

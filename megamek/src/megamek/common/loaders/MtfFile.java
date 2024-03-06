@@ -798,6 +798,16 @@ public class MtfFile implements IMechLoader {
                                               isTurreted);
                         m.setOmniPodMounted(isOmniPod);
                         hSharedEquip.put(etype, m);
+                    } else if (etype.hasFlag(MiscType.F_TARGCOMP)) {
+                        // Targeting computers are special, they need to be loaded like spreadable equipment, but they aren't spreadable
+                        Mounted m = hSharedEquip.get(etype);
+                        if (m == null) {
+                            m = mech.addEquipment(etype, loc, rearMounted, BattleArmor.MOUNT_LOC_NONE, isArmored, isTurreted);
+                            m.setOmniPodMounted(isOmniPod);
+                            hSharedEquip.put(etype, m);
+                        }
+                        mech.addCritical(loc, new CriticalSlot(m));
+
                     } else if (((etype instanceof WeaponType) && ((WeaponType) etype).isSplitable()) || ((etype instanceof MiscType) && etype.hasFlag(MiscType.F_SPLITABLE))) {
                         // do we already have this one in this or an outer location?
                         Mounted m = null;

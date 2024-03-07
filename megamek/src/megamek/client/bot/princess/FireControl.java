@@ -1202,7 +1202,7 @@ public class FireControl {
                 String shootingCheck;
 
                 // Energy / ammo-independent weapons
-                if (AmmoType.T_NA == wtype.getAmmoType()) {
+                if (Arrays.asList(AmmoType.T_NA, AmmoType.T_INFANTRY).contains(wtype.getAmmoType())) {
                     shootingCheck = checkGuess(shooter, enemy, weapon, null, game);
                     if (null != shootingCheck) {
                         ret.append(shootingCheck);
@@ -1653,7 +1653,7 @@ public class FireControl {
             WeaponFireInfo bestShoot = null;
 
             // Energy / ammo-independent weapons
-            if (AmmoType.T_NA == wtype.getAmmoType()) {
+            if (Arrays.asList(AmmoType.T_NA, AmmoType.T_INFANTRY).contains(wtype.getAmmoType())) {
                 bestShoot = buildWeaponFireInfo(shooter, target, weapon, null, game, true);
             } else {
                 // For certain weapon types, look over all their loaded ammos
@@ -1802,7 +1802,7 @@ public class FireControl {
             WeaponFireInfo bestShoot = null;
 
             // Energy / ammo-independent weapons
-            if (AmmoType.T_NA == wtype.getAmmoType()) {
+            if (Arrays.asList(AmmoType.T_NA, AmmoType.T_INFANTRY).contains(wtype.getAmmoType())) {
                 bestShoot = buildWeaponFireInfo(shooter, target, weapon, null, game, false);
             } else {
                 // For certain weapon types, look over all their loaded ammos
@@ -1977,7 +1977,7 @@ public class FireControl {
             WeaponFireInfo bestShoot = null;
 
             // Energy / ammo-independent weapons
-            if (AmmoType.T_NA == wtype.getAmmoType()) {
+            if (Arrays.asList(AmmoType.T_NA, AmmoType.T_INFANTRY).contains(wtype.getAmmoType())) {
                 bestShoot = buildWeaponFireInfo(shooter, target, weapon, null, game, false);
             } else {
                 // Check _all_ ammunition for _all_ weapons here.
@@ -2637,7 +2637,7 @@ public class FireControl {
             int bestBracket = RangeType.RANGE_OUT;
 
             // For energy weapons / ammo-independent weapons
-            if (AmmoType.T_NA == weaponType.getAmmoType()) {
+            if (Arrays.asList(AmmoType.T_NA, AmmoType.T_INFANTRY).contains(weaponType.getAmmoType())) {
                 bestBracket = RangeType.rangeBracket(range,
                         weaponType.getRanges(weapon),
                         useExtremeRange,
@@ -2722,7 +2722,7 @@ public class FireControl {
             final WeaponType weaponType = (WeaponType) currentWeapon.getType();
 
             // Skip weapons that don't use ammo.
-            if (AmmoType.T_NA == weaponType.getAmmoType()) {
+            if (Arrays.asList(AmmoType.T_NA, AmmoType.T_INFANTRY).contains(weaponType.getAmmoType())) {
                 continue;
             }
 

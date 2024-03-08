@@ -18,6 +18,9 @@
  */
 package megamek.common.strategicBattleSystems;
 
+import com.fasterxml.jackson.annotation.JsonRootName;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.client.ui.swing.calculationReport.DummyCalculationReport;
 import megamek.common.ForceAssignable;
@@ -26,6 +29,8 @@ import megamek.common.alphaStrike.ASSpecialAbilityCollection;
 import megamek.common.alphaStrike.ASSpecialAbilityCollector;
 import megamek.common.alphaStrike.BattleForceSUA;
 import megamek.common.force.Force;
+import megamek.common.jacksonadapters.SBFFormationDeserializer;
+import megamek.common.jacksonadapters.SBFFormationSerializer;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -39,8 +44,11 @@ import static megamek.common.strategicBattleSystems.SBFElementType.LA;
 /**
  * Represents a Strategic Battle Force Formation composed of one or more SBF Units.
  */
+@JsonRootName(value = "SBFFormation")
+@JsonSerialize(using = SBFFormationSerializer.class)
+@JsonDeserialize(using = SBFFormationDeserializer.class)
 public class SBFFormation implements ASSpecialAbilityCollector, BattleForceSUAFormatter, ForceAssignable {
-    
+
     private List<SBFUnit> units = new ArrayList<>();
     private String name;
     protected SBFElementType type;
@@ -160,7 +168,7 @@ public class SBFFormation implements ASSpecialAbilityCollector, BattleForceSUAFo
         return Collections.unmodifiableList(units);
     }
 
-    void addUnit(SBFUnit newUnit) {
+    public void addUnit(SBFUnit newUnit) {
         units.add(newUnit);
     }
 
@@ -245,18 +253,24 @@ public class SBFFormation implements ASSpecialAbilityCollector, BattleForceSUAFo
         return true;
     }
 
-    /** Returns true if this SBF Formation represents an aerospace Team. */
+    /**
+     * Returns true if this SBF Formation represents an aerospace Team.
+     */
     @Override
     public boolean isAerospace() {
         return isAnyTypeOf(AS, LA);
     }
 
-    /** Returns true if this SBF Formation is of the given type. */
+    /**
+     * Returns true if this SBF Formation is of the given type.
+     */
     public boolean isType(SBFElementType tp) {
         return type == tp;
     }
 
-    /** Returns true if this SBF Formation is any of the given types. */
+    /**
+     * Returns true if this SBF Formation is any of the given types.
+     */
     public boolean isAnyTypeOf(SBFElementType type, SBFElementType... types) {
         return isType(type) || Arrays.stream(types).anyMatch(this::isType);
     }

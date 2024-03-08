@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2022, 2024 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -27,11 +27,14 @@ import megamek.common.ForceAssignable;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.alphaStrike.conversion.ASConverter;
 import megamek.common.annotations.Nullable;
+import megamek.common.jacksonadapters.MMUWriter;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -387,6 +390,12 @@ public class ASStatsTablePanel implements ActionListener {
                         reports.put(element, (FlexibleCalculationReport) element.getConversionReport());
                     }
                 }
+            }
+
+            try {
+                MMUWriter.writeMMUFile(new File("aselements.mmu"), elements);
+            } catch (IOException ignored) {
+                // ignored, this is just for testing
             }
         }
     }

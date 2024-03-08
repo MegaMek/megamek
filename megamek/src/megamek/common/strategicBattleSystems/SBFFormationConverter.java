@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2022, 2024 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -30,7 +30,10 @@ import megamek.common.alphaStrike.BattleForceSUA;
 import megamek.common.alphaStrike.conversion.ASConverter;
 import megamek.common.force.Force;
 import megamek.common.force.Forces;
+import megamek.common.jacksonadapters.MMUWriter;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.*;
 import java.util.function.Function;
 
@@ -42,7 +45,7 @@ public final class SBFFormationConverter {
     private final Force force;
     private final Game game;
     private final CalculationReport report;
-    private final SBFFormation formation = new SBFFormation();
+    private SBFFormation formation = new SBFFormation();
 
     public SBFFormationConverter(Force force, Game game) {
         this.force = force;
@@ -75,11 +78,30 @@ public final class SBFFormationConverter {
             }
             SBFUnit convertedUnit = new SBFUnitConverter(thisUnit, subforce.getName(), thisUnitBaseSkill, report).createSbfUnit();
             formation.addUnit(convertedUnit);
+
+            try {
+                MMUWriter.writeMMUFile(new File(convertedUnit.getName() + ".mmu"), convertedUnit);
+            } catch (IOException ignored) {
+                // ignore, this is just for testing
+            }
         }
         formation.setName(force.getName());
         calcSbfFormationStats();
         formation.setConversionReport(report);
+
+        try {
+            MMUWriter.writeMMUFile(new File(force.getName() + ".mmu"), formation);
+        } catch (IOException ignored) {
+            // ignore, this is just for testing
+        }
         return formation;
+    }
+
+    public static void calculateStatsFromUnits(SBFFormation formation) {
+        SBFFormationConverter converter = new SBFFormationConverter(null, null);
+        converter.formation = formation;
+        converter.calcSbfFormationStats();
+        formation.setConversionReport(converter.report);
     }
 
     /** Calculates the SBF Formation stats for the SBF Units it must already contain. */

@@ -28,7 +28,6 @@ import megamek.common.alphaStrike.conversion.ASConverter;
 import megamek.common.loaders.EntityLoadingException;
 
 import java.io.IOException;
-import java.net.Inet4Address;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;

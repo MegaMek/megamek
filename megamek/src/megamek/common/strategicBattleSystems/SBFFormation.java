@@ -362,4 +362,13 @@ public class SBFFormation implements ASSpecialAbilityCollector, BattleForceSUAFo
     public void setForceId(int newId) {
         forceId = newId;
     }
+
+    @Override
+    public String toString() {
+        return "[SBFFormation] " + name + ": " + type + "; SZ" + size + "; TMM" + tmm + "; MV" + movement + movementMode.code
+                + (jumpMove > 0 ? "/" + jumpMove + "j" : "")
+                + (trspMovement != movement || trspMovementMode != movementMode ? "; TRSP" + trspMovement + trspMovementMode.code : "")
+                + "; T" + tactics + "; M" + morale + "; " + pointValue + "@" + skill + "; " + units.size() + " units"
+                + "; " + specialAbilities.getSpecialsDisplayString(this);
+    }
 }

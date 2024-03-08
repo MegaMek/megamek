@@ -267,4 +267,12 @@ public class SBFUnit implements BTObject, ASSpecialAbilityCollector, BattleForce
         return true;
     }
 
+    @Override
+    public String toString() {
+        return "[SBFUnit] " + name + ": " + type + "; SZ" + size + "; TMM" + tmm + "; MV" + movement + movementMode.code
+                + (jumpMove > 0 ? "/" + jumpMove + "j" : "")
+                + (trspMovement != movement || trspMovementMode != movementMode ? "; TRSP" + trspMovement + trspMovementMode.code : "")
+                + "; A" + armor + "; " + damage + "; " + pointValue + "@" + skill + "; " + elements.size() + " elements"
+                + "; " + specialAbilities.getSpecialsDisplayString(this);
+    }
 }

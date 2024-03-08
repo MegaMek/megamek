@@ -80,6 +80,7 @@ public class ASElementDeserializer extends StdDeserializer<AlphaStrikeElement> {
             element = new AlphaStrikeElement();
             element.setChassis(node.get(CHASSIS).textValue());
             element.setModel(node.get(MODEL).textValue());
+            element.setName((element.getChassis() + " " + element.getModel()).trim());
             element.setSkill(skill);
             element.setSize((Integer) node.get(SIZE).numberValue());
             element.setFullArmor((Integer) node.get(ARMOR).numberValue());

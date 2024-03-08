@@ -42,8 +42,8 @@ public class SBFUnitConverter {
     private final CalculationReport report;
     private int roundedAverageMove = 0;
 
-    SBFUnitConverter(List<AlphaStrikeElement> elements, String name,
-                     List<AlphaStrikeElement> elementsBaseSkill, CalculationReport report) {
+    public SBFUnitConverter(List<AlphaStrikeElement> elements, String name,
+                            List<AlphaStrikeElement> elementsBaseSkill, CalculationReport report) {
         this.elements = elements;
         unit.setName(Objects.requireNonNullElse(name, "Unknown"));
         this.elementsBaseSkill = elementsBaseSkill;

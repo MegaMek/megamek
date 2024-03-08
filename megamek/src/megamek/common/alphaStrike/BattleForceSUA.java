@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2022, 2024 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -19,6 +19,7 @@
 package megamek.common.alphaStrike;
 
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.EnumMap;
 import java.util.Map;
 
@@ -56,6 +57,7 @@ public enum BattleForceSUA {
     ;
     
     private static final EnumMap<BattleForceSUA, BattleForceSUA> transportBayDoors = new EnumMap<>(BattleForceSUA.class);
+    private static final String[] sortedNames = new String[values().length];
 
     static {
         transportBayDoors.put(AT, ATxD);
@@ -67,6 +69,10 @@ public enum BattleForceSUA {
         transportBayDoors.put(VTM, VTMxD);
         transportBayDoors.put(VTH, VTHxD);
         transportBayDoors.put(VTS, VTSxD);
+        for (int i = 0; i < values().length; i++) {
+            sortedNames[i] = values()[i].name();
+        }
+        Arrays.sort(sortedNames, Comparator.comparing(s -> -s.length()));
     }
 
     /** @return True when this SUA is an ability that may be associated with a Door value (not IT and DT!). */
@@ -112,34 +118,34 @@ public enum BattleForceSUA {
     }
 
     /** @return True when this SUA uses an Integer as its value. */
-    private boolean usesIntegerObject() {
+    public boolean usesIntegerObject() {
         return isAnyOf(C3BSS, C3M, C3BSM, C3EM, INARC, CNARC, SNARC, RSD, MHQ, DCC, MASH, TSEMP, TSEMPO,
                 CAR, MDS, BOMB, FUEL, PNT, CRW, SCR, DT, BTAS, MTAS, JMPW, JMPS, SUBW, SUBS, SBF_OMNI)
                 || isArtillery();
     }
 
     /** @return True when this SUA uses an Integer or Double value (the transport SUAs). */
-    private boolean usesDoubleOrIntegerObject() {
+    public boolean usesDoubleOrIntegerObject() {
         return isTransport() || this == IT;
     }
 
     /** @return True when this SUA uses an ASDamage as its value (only IF). */
-    private boolean usesASDamageObject() {
+    public boolean usesASDamageObject() {
         return this == IF;
     }
 
     /** @return True when this SUA uses an ASDamageVector as its value, e.g. FLK. */
-    private boolean usesASDamageVectorObject() {
+    public boolean usesASDamageVectorObject() {
         return isAnyOf(SRM, LRM, FLK, REAR, IATM, AC, HT, TOR, STD, MSL, CAP, SCAP);
     }
 
     /** @return True when this SUA uses a Map as its value (LAM and BIM). */
-    private boolean usesMapObject() {
+    public boolean usesMapObject() {
         return isAnyOf(LAM, BIM);
     }
 
     /** @return True when this SUA is not accompanied by a value, e.g. TAG. */
-    private boolean usesNoObject() {
+    public boolean usesNoObject() {
         return !usesASDamageVectorObject() && !usesASDamageObject() && !usesIntegerObject()
                 && !usesDoubleOrIntegerObject() && !(this == TUR) && !usesMapObject();
     }
@@ -153,5 +159,23 @@ public enum BattleForceSUA {
                 || (this == TUR && abilityObject instanceof ASSpecialAbilityCollection)
                 || ((abilityObject == null) && usesNoObject())
                 || ((abilityObject instanceof Map) && usesMapObject());
+    }
+
+    /**
+     * Tries to parse the given text to the appropriate SUA. The text may include a number or other info
+     * belonging to the SUA like "IF2" or "SRM2/2". A "TUR(...)" ability will return TUR. The number or
+     * other info is not checked for validity. Returns UNKNOWN if the text cannot be parsed.
+     *
+     * @param asText The text to translate to a BattleForceSUA
+     * @return The BattleForceSUA represented by the given text or UNKNOWN
+     */
+    public static BattleForceSUA parse(String asText) {
+        if (asText != null) {
+            final String upperCaseText = asText.toUpperCase();
+            String match = Arrays.stream(sortedNames).filter(upperCaseText::startsWith).findAny().orElse("UNKNOWN");
+            return valueOf(match);
+        } else {
+            return UNKNOWN;
+        }
     }
 }

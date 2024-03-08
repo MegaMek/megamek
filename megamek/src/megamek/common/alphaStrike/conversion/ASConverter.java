@@ -20,7 +20,6 @@ package megamek.common.alphaStrike.conversion;
 
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.client.ui.swing.calculationReport.DummyCalculationReport;
-import megamek.codeUtilities.StringUtility;
 import megamek.common.*;
 import megamek.common.alphaStrike.ASArcs;
 import megamek.common.alphaStrike.ASUnitType;
@@ -29,7 +28,7 @@ import megamek.common.alphaStrike.BattleForceSUA;
 import megamek.common.annotations.Nullable;
 import org.apache.logging.log4j.LogManager;
 
-import java.util.*;
+import java.util.Objects;
 
 /**
  * Static AlphaStrike Conversion class; contains all information for conversion except for some weapon specifics
@@ -255,6 +254,27 @@ public final class ASConverter {
         }
     }
 
-    private ASConverter() { }
+    /**
+     * Re-calculates those values of the element that are purely calculated from its other values without
+     * needing the original TW unit. These are TMM, threshold and PV. This means that the conversion methods
+     * called herein do not need the entity and this, entity in conversionData may be null.
+     */
+    static void updateCalculatedValues(ConversionData conversionData) {
+        CalculationReport report = conversionData.conversionReport;
+        AlphaStrikeElement element = conversionData.element;
+        element.setTMM(ASMovementConverter.convertTMM(conversionData));
+        element.setThreshold(ASArmStrConverter.convertThreshold(conversionData));
+        ASPointValueConverter pvConverter = ASPointValueConverter.getPointValueConverter(element, report);
+        element.setPointValue(pvConverter.getSkillAdjustedPointValue());
+    }
 
+    /**
+     * Re-calculates those values of the element that are purely calculated from its other values without
+     * needing the original TW unit. These are TMM, threshold and PV. May be used e.g. after deserialization.
+     */
+    public static void updateCalculatedValues(AlphaStrikeElement element) {
+        updateCalculatedValues(new ConversionData(null, element, new DummyCalculationReport()));
+    }
+
+    private ASConverter() { }
 }

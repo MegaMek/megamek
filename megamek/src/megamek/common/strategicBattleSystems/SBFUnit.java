@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022, 2023 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2022-2024 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -18,7 +18,14 @@
  */
 package megamek.common.strategicBattleSystems;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonRootName;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import megamek.common.BTObject;
 import megamek.common.alphaStrike.*;
+import megamek.common.jacksonadapters.SBFUnitDeserializer;
+import megamek.common.jacksonadapters.SBFUnitSerializer;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,7 +37,10 @@ import static megamek.common.alphaStrike.BattleForceSUA.*;
  * Represents an SBF Unit (Ground SBF Unit or Aerospace Flight) which contains between 1 and 6 AlphaStrike
  * elements and is the building block of SBF Formations.
  */
-public class SBFUnit implements ASSpecialAbilityCollector, BattleForceSUAFormatter {
+@JsonRootName(value = "SBFUnit")
+@JsonSerialize(using = SBFUnitSerializer.class)
+@JsonDeserialize(using = SBFUnitDeserializer.class)
+public class SBFUnit implements BTObject, ASSpecialAbilityCollector, BattleForceSUAFormatter {
 
     private String name = "Unknown";
     private SBFElementType type = SBFElementType.UNKNOWN;
@@ -45,8 +55,10 @@ public class SBFUnit implements ASSpecialAbilityCollector, BattleForceSUAFormatt
     private int skill = 4;
     private ASDamageVector damage = ASDamageVector.ZERO;
     private int pointValue = 0;
+
+    @JsonIgnore
     private final ASSpecialAbilityCollection specialAbilities = new ASSpecialAbilityCollection();
-    private List<AlphaStrikeElement> elements;
+    private List<AlphaStrikeElement> elements = new ArrayList<>();
 
     public String getName() {
         return name;
@@ -172,22 +184,24 @@ public class SBFUnit implements ASSpecialAbilityCollector, BattleForceSUAFormatt
         return specialAbilities;
     }
 
-    /** Returns true if this SBF Unit is of the given type. */
+    /**
+     * Returns true if this SBF Unit is of the given type.
+     */
     public boolean isType(SBFElementType tp) {
         return type == tp;
     }
 
-    /** Returns true if this SBF Unit is any of the given types. */
+    /**
+     * Returns true if this SBF Unit is any of the given types.
+     */
     public boolean isAnyTypeOf(SBFElementType type, SBFElementType... types) {
         return isType(type) || Arrays.stream(types).anyMatch(this::isType);
     }
 
-    /** Returns true if this SBF Unit represents a ground Unit. */
-    public boolean isGround() {
-        return !isAerospace();
-    }
-
-    /** Returns true if this SBF Unit represents an aerospace Unit. */
+    /**
+     * Returns true if this SBF Unit represents an aerospace Unit.
+     */
+    @Override
     public boolean isAerospace() {
         return type.isAerospace();
     }
@@ -247,4 +261,10 @@ public class SBFUnit implements ASSpecialAbilityCollector, BattleForceSUAFormatt
             return sua.toString() + (suaObject != null ? suaObject : "");
         }
     }
+
+    @Override
+    public boolean isUnitGroup() {
+        return true;
+    }
+
 }

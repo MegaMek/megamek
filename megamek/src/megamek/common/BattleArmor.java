@@ -1970,4 +1970,10 @@ public class BattleArmor extends Infantry {
     public boolean isBattleArmor() {
         return true;
     }
+
+    // BA index 0 appears to be a dump slot
+    @Override
+    public int firstArmorIndex() {
+        return 1;
+    }
 }

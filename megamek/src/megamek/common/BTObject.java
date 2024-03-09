@@ -417,4 +417,20 @@ public interface BTObject {
     default @Nullable Image getFluffImage() {
         return null;
     }
+
+    /**
+     * Returns an icon for this unit or object for the game board. Note that this is the 84 x 72 standard
+     * size icon; icons for landed large craft are not handled by this method.
+     * Important: This method returns only an icon that is stored in the object itself, e.g. if it
+     * was part of the unit's file or is created by the unit itself. It does not search for the icon
+     * through the mechset.
+     *
+     * @implNote The default implementation returns null. For canon units, this will return null, as they
+     * do not store icon images in the unit files.
+     *
+     * @return An icon for this object/unit if it contains one as part of the object/unit
+     */
+    default @Nullable Image getIcon() {
+        return null;
+    }
 }

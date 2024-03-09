@@ -154,7 +154,7 @@ public class BLKProtoFile extends BLKFile implements IMechLoader {
             }
 
             // ProtoMech Ammo comes in non-standard amounts.
-            int ammoIndex = equipName.indexOf(" (");
+            int ammoIndex = equipName.lastIndexOf(" (");
             int shotsCount = 0;
             if (ammoIndex > 0) {
                 // Try to get the number of shots.

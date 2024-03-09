@@ -57,6 +57,16 @@ public class Camouflage extends AbstractIcon {
     public Camouflage(final @Nullable String category, final @Nullable String filename) {
         super(category, filename);
     }
+
+    /**
+     * Returns a new camo of the given PlayerColour.
+     *
+     * @param color A PlayerColour
+     * @return A camo of the given PlayerColour color
+     */
+    public static Camouflage of(PlayerColour color) {
+        return new Camouflage(COLOUR_CAMOUFLAGE, color.name());
+    }
     //endregion Constructors
 
     //region Boolean Methods

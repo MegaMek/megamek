@@ -1307,19 +1307,19 @@ public class MiscType extends EquipmentType {
                 return entity.locations() - 1;
             }
         } else if (hasFlag(F_ENDO_STEEL)) {
-            if ((entity instanceof Mech) && ((Mech) entity).isSuperHeavy()) {
-                return 7;
+            if (entity.isSuperHeavy()) {
+                return isClan() ? 4 : 7;
             } else {
-                return 14;
+                return isClan() ? 7 : 14;
             }
-            // Clan Endo Steel doesn't have variable crits
+        } else if (hasFlag(F_ENDO_STEEL_PROTO)) {
+            return entity.isSuperHeavy() ? 8 : 16;
         } else if (hasFlag(F_ENDO_COMPOSITE)) {
-            if ((entity instanceof Mech) && ((Mech) entity).isSuperHeavy()) {
-                return 4;
+            if (entity.isSuperHeavy()) {
+                return isClan() ? 2 : 4;
             } else {
-                return 7;
+                return isClan() ? 4 : 7;
             }
-            // Clan Endo Composite doesn't have variable crits
         } else if (hasFlag(F_FUEL)) {
             return (int) Math.ceil(getTonnage(entity));
         } else if (hasFlag(F_CARGO) || hasFlag(F_LIQUID_CARGO) || hasFlag(F_COMMUNICATIONS)) {
@@ -5502,7 +5502,6 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_TARGCOMP).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT)
                 .or(F_FIGHTER_EQUIPMENT).or(F_HEAVY_EQUIPMENT);
         // see note above
-        misc.spreadable = true;
         String[] modes = { "Normal", "Aimed shot" };
         misc.setModes(modes);
         misc.rulesRefs = "238, TM";
@@ -5530,7 +5529,6 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_TARGCOMP).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT)
                 .or(F_FIGHTER_EQUIPMENT).or(F_HEAVY_EQUIPMENT);
         // see note above
-        misc.spreadable = true;
         String[] modes = { "Normal", "Aimed shot" };
         misc.setModes(modes);
         misc.rulesRefs = "238, TM";
@@ -7644,7 +7642,7 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("IS Endo Steel Prototype Structure");
         misc.addLookupName("IS Endo-Steel Prototype Structure");
         misc.tonnage = TONNAGE_VARIABLE;
-        misc.criticals = 16;
+        misc.criticals = CRITICALS_VARIABLE;
         misc.hittable = false;
         misc.spreadable = true;
         misc.flags = misc.flags.or(F_ENDO_STEEL_PROTO);
@@ -7669,7 +7667,7 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("Clan EndoSteel Structure");
         misc.addLookupName("Clan Endo Steel Structure");
         misc.tonnage = TONNAGE_VARIABLE;
-        misc.criticals = 7;
+        misc.criticals = CRITICALS_VARIABLE;
         misc.hittable = false;
         misc.spreadable = true;
         misc.flags = misc.flags.or(F_ENDO_STEEL);
@@ -7739,7 +7737,7 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("Clan Endo-Composite");
         misc.addLookupName("Clan Endo-Composite Structure");
         misc.tonnage = TONNAGE_VARIABLE;
-        misc.criticals = 4;
+        misc.criticals = CRITICALS_VARIABLE;
         misc.hittable = false;
         misc.spreadable = true;
         misc.flags = misc.flags.or(F_ENDO_COMPOSITE);

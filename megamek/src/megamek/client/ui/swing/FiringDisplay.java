@@ -879,12 +879,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
         // Calculate firing solutions
         Map<Integer, FiringSolution> fs = new HashMap<>();
         for (Entity target : game.getEntitiesVector()) {
-            boolean friendlyFire = game.getOptions().booleanOption(OptionsConstants.BASE_FRIENDLY_FIRE);
-            boolean enemyTarget = target.getOwner().isEnemyOf(ce().getOwner());
-            if ((target.getId() != cen)
-                    && (friendlyFire || enemyTarget)
-                    && (!enemyTarget || EntityVisibilityUtils.detectedOrHasVisual(localPlayer, game, target))
-                    && target.isTargetable()) {
+            if (shouldShowTarget(game, localPlayer, target, ce())) {
                 ToHitData thd = WeaponAttackAction.toHit(game, cen, target);
                 thd.setLocation(target.getPosition());
                 thd.setRange(ce().getPosition().distance(target.getPosition()));

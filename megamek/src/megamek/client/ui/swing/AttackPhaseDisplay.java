@@ -19,7 +19,12 @@
 package megamek.client.ui.swing;
 
 import megamek.client.ui.swing.tooltip.EntityActionLog;
+import megamek.common.Entity;
+import megamek.common.EntityVisibilityUtils;
+import megamek.common.Game;
+import megamek.common.Player;
 import megamek.common.actions.*;
+import megamek.common.options.OptionsConstants;
 
 import java.util.*;
 
@@ -85,5 +90,17 @@ public abstract class AttackPhaseDisplay extends ActionPhaseDisplay {
     {
         attacks.add(entityAction);
         updateDonePanel();
+    }
+
+    protected boolean shouldShowTarget(Game game, Player localPlayer, Entity target, Entity ce) {
+        boolean friendlyFire = game.getOptions().booleanOption(OptionsConstants.BASE_FRIENDLY_FIRE);
+        boolean enemyTarget = target.getOwner().isEnemyOf(ce.getOwner());
+        boolean friendlyFireOrEnemyTarget =  friendlyFire || enemyTarget;
+        boolean NotEnemyTargetOrVisible = !enemyTarget
+                || EntityVisibilityUtils.detectedOrHasVisual(localPlayer, game, target);
+        return (target.getId() != ce.getId())
+                && friendlyFireOrEnemyTarget
+                && NotEnemyTargetOrVisible
+                && target.isTargetable();
     }
 }

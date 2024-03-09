@@ -1174,7 +1174,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             boardPreviewGame.removePlayer(player.getId());
         }
         for (Player player : game().getPlayersList()) {
-            boardPreviewGame.setPlayer(player.getId(), player);
+            boardPreviewGame.setPlayer(player.getId(), player.copy());
         }
         boardPreviewW.setVisible(true);
     }

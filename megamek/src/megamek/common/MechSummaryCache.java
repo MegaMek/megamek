@@ -396,6 +396,9 @@ public class MechSummaryCache {
         ms.setFullAccurateUnitType(Entity.getEntityTypeName(e.getEntityType()));
         ms.setEntityType(e.getEntityType());
         ms.setOmni(e.isOmni());
+        if (e.getFluff().hasEmbeddedFluffImage()) {
+            ms.setFluffImage(e.getFluff().getBase64FluffImage().getBase64String());
+        }
         ms.setMilitary(e.isMilitary());
         ms.setMountedInfantry((e instanceof Infantry) && ((Infantry) e).getMount() != null);
 

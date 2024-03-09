@@ -253,6 +253,17 @@ public class SBFFormation implements ASSpecialAbilityCollector, BattleForceSUAFo
         return true;
     }
 
+    @Override
+    public String generalName() {
+        return name;
+    }
+
+    @Override
+    public String specificName() {
+        return "";
+    }
+
+    /** Returns true if this SBF Formation represents an aerospace Team. */
     /**
      * Returns true if this SBF Formation represents an aerospace Team.
      */

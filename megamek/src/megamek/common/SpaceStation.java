@@ -166,4 +166,13 @@ public class SpaceStation extends Jumpship {
         return Entity.ETYPE_AERO | Entity.ETYPE_JUMPSHIP | Entity.ETYPE_SPACE_STATION;
     }
 
+    @Override
+    public boolean isJumpShip() {
+        return false;
+    }
+
+    @Override
+    public boolean isSpaceStation() {
+        return true;
+    }
 }

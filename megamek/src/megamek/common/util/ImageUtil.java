@@ -120,14 +120,52 @@ public final class ImageUtil {
     }
 
     /**
+     * Converts the given image to a BufferedImage. If it already is a BufferedImage, the image is only
+     * returned with a type cast without doing any further conversion.
+     *
+     * @param image An Image of any type
+     * @return The image as a BufferedImage
+     */
+    public static BufferedImage convertToBufferedImage(Image image) {
+        if (image instanceof BufferedImage) {
+            return (BufferedImage) image;
+        } else {
+            return getScaledImage(image, image.getWidth(null), image.getHeight(null));
+        }
+    }
+
+    /**
+     * Returns a scaled version of the given image. Scaling is adjusted so that the image fits in the
+     * given maximum width and maximum height, keeping the aspect ratio of the image. Either the height
+     * or the width of the resulting image will be equal to the given max width or height, while the other value
+     * will be smaller than the given maximum. Uses the supplied scaling method.
+     *
+     * @param image The image to scale
+     * @param maxWidth The maximum width of the resulting image
+     * @param maxHeight The maximum height of the resulting image
+     * @param scaleType The scale type, {@link #IMAGE_SCALE_BICUBIC} or {@link #IMAGE_SCALE_AVG_FILTER}
+     * @return A scaled image fitting in a rectangle of the size (maxWidth, maxHeight)
+     */
+    public static BufferedImage fitImage(Image image, int maxWidth, int maxHeight, int scaleType) {
+        int width = maxWidth;
+        int height = maxHeight;
+        if ((float) image.getWidth(null) / maxWidth >
+                (float) image.getHeight(null) / maxHeight) {
+            height = image.getHeight(null) * maxWidth / image.getWidth(null);
+        } else {
+            width = image.getWidth(null) * maxHeight / image.getHeight(null);
+        }
+        return getScaledImage(image, width, height, scaleType);
+    }
+
+    /**
      * Get a scaled version of the input image, using the supplied type to
      * select which scaling method to use.
      *
      * @param img
      * @return
      */
-    public static BufferedImage getScaledImage(Image img, int newWidth,
-            int newHeight, int scaleType) {
+    public static BufferedImage getScaledImage(Image img, int newWidth, int newHeight, int scaleType) {
         if (scaleType == IMAGE_SCALE_BICUBIC) {
             BufferedImage scaled = createAcceleratedImage(newWidth, newHeight);
             Graphics2D g2 = (Graphics2D) scaled.getGraphics();
@@ -424,14 +462,19 @@ public final class ImageUtil {
     }
 
     /**
-     * takes an image and converts it to text in the Base64 encoding.
+     * takes an image and converts it to text in the Base64 encoding. When the given image is null, an
+     * empty String is returned.
      */
-    public static String base64TextEncodeImage(BufferedImage img) {
-        String base64Text = "";
+    public static String base64TextEncodeImage(@Nullable Image image) {
+        if (image == null) {
+            return "";
+        }
+        BufferedImage bufferedImage = convertToBufferedImage(image);
+        String base64Text;
 
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            ImageIO.write((RenderedImage) img, "png", baos);
+            ImageIO.write(bufferedImage, "png", baos);
             baos.flush();
             base64Text = Base64.getEncoder().encodeToString(baos.toByteArray());
             baos.close();

@@ -16,6 +16,7 @@ package megamek.common;
 
 import megamek.MMConstants;
 import megamek.client.bot.princess.FireControl;
+import megamek.client.ui.Base64Image;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.client.ui.swing.calculationReport.DummyCalculationReport;
@@ -40,8 +41,10 @@ import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
 import megamek.common.weapons.infantry.InfantryWeapon;
 import org.apache.logging.log4j.LogManager;
 
+import java.awt.*;
 import java.math.BigInteger;
 import java.util.*;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -721,7 +724,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     private int blueShieldRounds = 0;
 
     // Entity fluff object for use with MegaMekLab
-    protected EntityFluff fluff;
+    protected EntityFluff fluff = new EntityFluff();
 
     // a settable armor tonnage for use with MML - this is not what
     // is calculated by getArmorTonnage
@@ -827,6 +830,9 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      */
     protected ArrayList<WeaponAttackAction> incomingGuidedAttacks;
 
+    /** The icon for this unit; This is empty unless the unit file has an embedded icon. */
+    protected Base64Image icon = new Base64Image();
+
     /**
      * Generates a new, blank, entity.
      */
@@ -854,7 +860,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         setC3NetId(this);
         quirks.initialize();
         secondaryPositions = new HashMap<>();
-        fluff = new EntityFluff();
         impThisTurn = 0;
         impLastTurn = 0;
 
@@ -2645,18 +2650,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     public void setSecondaryFacing(int sec_facing) {
-        // Only allow changing secondary facing if we haven't done so in a prior phase
-        GamePhase phase = getGame().getPhase();
-        if (phase != null) {
-            // If we already twisted in an earlier phase, return out
-            if (getAlreadyTwisted()) {
-                return;
-            }
-            if (phase.isOffboard() || phase.isFiring()) {
-                // Only Offboard and Firing phases could conceivably have later phases with twisting
-                setAlreadyTwisted(true);
-            }
-        }
         setSecondaryFacing(sec_facing, true);
     }
 
@@ -2665,7 +2658,23 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * Optionally does not fire a game change event (useful for bot evaluation)
      */
     public void setSecondaryFacing(int sec_facing, boolean fireEvent) {
+        if (game != null) {
+            // Only allow changing secondary facing if we haven't done so in a prior phase
+            GamePhase phase = game.getPhase();
+            if (phase != null) {
+                // If we already twisted in an earlier phase, return out
+                if (getAlreadyTwisted()) {
+                    return;
+                }
+                if (phase.isOffboard() || phase.isFiring()) {
+                    // Only Offboard and Firing phases could conceivably have later phases with twisting
+                    setAlreadyTwisted(true);
+                }
+            }
+        }
+
         this.sec_facing = FireControl.correctFacing(sec_facing);
+
         if (fireEvent && (game != null)) {
             game.processGameEvent(new GameEntityChangeEvent(this, this));
         }
@@ -7373,6 +7382,15 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         // move path has ice
         boolean isFoggy = game.getPlanetaryConditions().getFog() != PlanetaryConditions.FOG_NONE;
         boolean isDark = game.getPlanetaryConditions().getLight() > PlanetaryConditions.L_DUSK;
+        boolean isBlackIce;
+
+        if ((game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_ICE_STORM)
+                || (game.getOptions().booleanOption(OptionsConstants.ADVANCED_BLACK_ICE)
+                && game.getPlanetaryConditions().getTemperature() <= PlanetaryConditions.BLACK_ICE_TEMP)) {
+            isBlackIce = true;
+        } else {
+            isBlackIce = false;
+        }
 
         // if we are jumping, then no worries
         if (moveType == EntityMovementType.MOVE_JUMP) {
@@ -7396,6 +7414,10 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             roll.append(new PilotingRollData(getId(), 0, "moving recklessly"));
             // ice conditions
         } else if (curHex.containsTerrain(Terrains.ICE)) {
+            roll.append(new PilotingRollData(getId(), 0, "moving recklessly"));
+        } else if (curHex.containsTerrain(Terrains.BLACK_ICE)) {
+            roll.append(new PilotingRollData(getId(), 0, "moving recklessly"));
+        } else if (curHex.hasPavement() && isBlackIce) {
             roll.append(new PilotingRollData(getId(), 0, "moving recklessly"));
         } else {
             roll.addModifier(TargetRoll.CHECK_FALSE, "not moving recklessly");
@@ -7497,6 +7519,26 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
+     * Checks if the entity is landing (from a jump) on black ice.
+     */
+    public PilotingRollData checkLandingOnBlackIce(
+            EntityMovementType overallMoveType, Hex curHex) {
+        PilotingRollData roll = getBasePilotingRoll(overallMoveType);
+
+        if (curHex.containsTerrain(Terrains.BLACK_ICE)) {
+            roll.append(new PilotingRollData(getId(), 0,
+                    "landing on black ice"));
+            addPilotingModifierForTerrain(roll);
+            adjustDifficultTerrainPSRModifier(roll);
+        } else {
+            roll.addModifier(TargetRoll.CHECK_FALSE,
+                    "hex is not covered by black ice");
+        }
+
+        return roll;
+    }
+
+    /**
      * return a <code>PilotingRollData</code> checking for whether this Entity
      * moved too fast due to low gravity
      *
@@ -7550,6 +7592,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
         // If we aren't traveling along a road, apply terrain modifiers
+        // Unless said pavement has black ice
         if (!((prevStep == null || prevStep.isPavementStep()) && currStep.isPavementStep())) {
             addPilotingModifierForTerrain(roll, lastPos);
         }
@@ -7602,9 +7645,17 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                                         || (game.getPlanetaryConditions()
                                                 .getWindStrength() >= PlanetaryConditions.WI_STORM))))
                 && (prevFacing != curFacing) && !lastPos.equals(curPos)) {
-            roll.append(new PilotingRollData(getId(),
-                    getMovementBeforeSkidPSRModifier(distance),
-                    "turning on ice"));
+            roll.append(new PilotingRollData(getId(), getMovementBeforeSkidPSRModifier(distance), "turning on ice"));
+            adjustDifficultTerrainPSRModifier(roll);
+            return roll;
+        } else if ((prevHex != null) && prevHex.containsTerrain(Terrains.BLACK_ICE)
+                && (((movementMode != EntityMovementMode.HOVER) && (movementMode != EntityMovementMode.WIGE))
+                || (((movementMode == EntityMovementMode.HOVER) || (movementMode == EntityMovementMode.WIGE))
+                    && ((game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_HEAVY_SNOW)
+                    || (game.getPlanetaryConditions().getWindStrength() >= PlanetaryConditions.WI_STORM))))
+                && (prevFacing != curFacing) && !lastPos.equals(curPos)) {
+            addPilotingModifierForTerrain(roll, lastPos);
+            roll.append(new PilotingRollData(getId(), getMovementBeforeSkidPSRModifier(distance), "turning on black ice"));
             adjustDifficultTerrainPSRModifier(roll);
             return roll;
         } else if ((prevStepPavement
@@ -9973,8 +10024,9 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         }
 
         // check game options
-        if (game.getOptions().booleanOption(OptionsConstants.ALLOWED_NO_CLAN_PHYSICAL) && isClan()
-            && !hasINarcPodsAttached() && (getSwarmAttackerId() == NONE)) {
+        if (game.getOptions().booleanOption(OptionsConstants.ALLOWED_NO_CLAN_PHYSICAL)
+                && getCrew().isClanPilot() && !hasINarcPodsAttached()
+                && (getSwarmAttackerId() == NONE)) {
             return false;
         }
 
@@ -10866,8 +10918,10 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         } else {
             ArmorType armor = ArmorType.forEntity(this);
             if (armor.hasFlag(MiscType.F_SUPPORT_VEE_BAR_ARMOR)) {
-                double total = armor.getSVWeightPerPoint(getArmorTechRating());
+                double total = getTotalOArmor() * armor.getSVWeightPerPoint(getArmorTechRating());
                 return RoundWeight.standard(total, this);
+            } else if (armor.hasFlag(MiscType.F_BA_EQUIPMENT)) {
+                return getTotalOArmor() * armor.getWeightPerPoint();
             } else {
                 double armorPerTon = ArmorType.forEntity(this).getPointsPerTon(this);
                 return RoundWeight.standard(getTotalOArmor() / armorPerTon, this);
@@ -15753,5 +15807,50 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             }
         }
         return -1;
+    }
+
+    @Override
+    public @Nullable Image getFluffImage() {
+        return fluff.getFluffImage();
+    }
+
+    @Override
+    public String generalName() {
+        return getChassis();
+    }
+
+    @Override
+    public String specificName() {
+        return getModel();
+    }
+
+    @Override
+    public Image getIcon() {
+        return icon.getImage();
+    }
+
+    /** Sets the embedded icon for this unit to the given base64 string. */
+    public void setIcon(String icon64) {
+        icon = new Base64Image(icon64);
+    }
+
+    /**
+     * Returns true when this unit has an embedded icon, i.e. an icon stored in the unit file rather than
+     * found by the mechset. Currently returns false when a mode-specific icon is needed (LAMs/QVs)
+     *
+     * @return True when this unit has an embedded icon
+     */
+    public boolean hasEmbeddedIcon() {
+        return !icon.isEmpty() && getTilesetModeString().isBlank();
+    }
+
+    /** @return The embedded icon of this unit in the full Base64Image form. */
+    public Base64Image getBase64Icon() {
+        return icon;
+    }
+
+    @Override
+    public boolean countForStrengthSum() {
+        return !isDestroyed() && !isTrapped() && !isPartOfFighterSquadron();
     }
 }

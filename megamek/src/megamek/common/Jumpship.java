@@ -672,23 +672,23 @@ public class Jumpship extends Aero {
     }
     
     //Methods for dealing with the K-F Drive, Sail and L-F Battery
-    
+
     public void setKFIntegrity(int kf) {
         kf_integrity = kf;
     }
-    
+
     public int getKFIntegrity() {
         return kf_integrity;
     }
-    
+
     public void setOKFIntegrity(int kf) {
         original_kf_integrity = kf;
     }
-    
+
     public int getOKFIntegrity() {
         return original_kf_integrity;
     }
-    
+
     public int getKFDriveDamage() {
         return (getOKFIntegrity() - getKFIntegrity());
     }
@@ -702,7 +702,7 @@ public class Jumpship extends Aero {
                 || getKFChargingSystemHit()
                 || getKFFieldInitiatorHit());
     }
-    
+
     public void setKFHeliumTankIntegrity(int ht) {
         helium_tankage = ht;
     }
@@ -711,63 +711,63 @@ public class Jumpship extends Aero {
     public int getKFHeliumTankIntegrity() {
         return helium_tankage;
     }
-    
+
     public void setKFHeliumTankHit(boolean hit) {
         heliumTankHit = hit;
     }
-    
+
     public boolean getKFHeliumTankHit() {
         return heliumTankHit;
     }
-    
+
     public void setKFDriveCoilHit(boolean hit) {
         driveCoilHit = hit;
     }
-    
+
     public boolean getKFDriveCoilHit() {
         return driveCoilHit;
     }
-    
+
     public void setKFFieldInitiatorHit(boolean hit) {
         fieldInitiatorHit = hit;
     }
-    
+
     public boolean getKFFieldInitiatorHit() {
         return fieldInitiatorHit;
     }
-    
+
     public void setKFChargingSystemHit(boolean hit) {
         chargingSystemHit = hit;
     }
-    
+
     public boolean getKFChargingSystemHit() {
         return chargingSystemHit;
     }
-    
+
     public void setKFDriveControllerHit(boolean hit) {
         driveControllerHit = hit;
     }
-    
+
     public boolean getKFDriveControllerHit() {
         return driveControllerHit;
     }
-    
+
     public boolean getLFBatteryHit() {
         return lfBatteryHit;
     }
-    
+
     public void setLFBatteryHit(boolean hit) {
         lfBatteryHit = hit;
     }
-    
+
     public void setOSailIntegrity(int sail) {
         original_sail_integrity = sail;
     }
-    
+
     public int getOSailIntegrity() {
         return original_sail_integrity;
     }
-    
+
     public int getSailDamage() {
         return (getOSailIntegrity() - getSailIntegrity());
     }
@@ -775,7 +775,7 @@ public class Jumpship extends Aero {
     public void setSailIntegrity(int sail) {
         sail_integrity = sail;
     }
-    
+
     public int getSailIntegrity() {
         return sail_integrity;
     }
@@ -1397,6 +1397,11 @@ public class Jumpship extends Aero {
 
     @Override
     public boolean isCapitalScale() {
+        return true;
+    }
+
+    @Override
+    public boolean isJumpShip() {
         return true;
     }
 }

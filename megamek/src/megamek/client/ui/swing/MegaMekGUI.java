@@ -30,6 +30,7 @@ import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.swing.dialog.MainMenuUnitBrowserDialog;
 import megamek.client.ui.swing.gameConnectionDialogs.ConnectDialog;
 import megamek.client.ui.swing.gameConnectionDialogs.HostDialog;
+import megamek.client.ui.swing.scenario.ScenarioChooser;
 import megamek.client.ui.swing.skinEditor.SkinEditorMainGUI;
 import megamek.client.ui.swing.tooltip.PilotToolTip;
 import megamek.client.ui.swing.util.MegaMekController;
@@ -52,7 +53,7 @@ import megamek.common.util.EmailService;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.server.GameManager;
-import megamek.server.ScenarioLoader;
+import megamek.common.scenario.ScenarioLoader;
 import megamek.server.Server;
 import megamek.utilities.xml.MMXMLUtility;
 import org.apache.logging.log4j.LogManager;
@@ -687,48 +688,13 @@ public class MegaMekGUI implements IPreferenceChangeListener {
      * Host a game constructed from a scenario file
      */
     void scenario() {
-        JFileChooser fc = new JFileChooser("data" + File.separatorChar + "scenarios");
-        fc.setLocation(frame.getLocation().x + 150, frame.getLocation().y + 100);
-        fc.setDialogTitle(Messages.getString("MegaMek.SelectScenarioDialog.title"));
-
-        FileFilter filter = new FileFilter() {
-
-            @Override
-            public boolean accept(File f) {
-                if (f.isDirectory()) {
-                    return true;
-                }
-
-                String ext = null;
-                String s = f.getName();
-                int i = s.lastIndexOf('.');
-
-                if ((i > 0) && (i < (s.length() - 1))) {
-                    ext = s.substring(i + 1).toLowerCase();
-                }
-
-                if (ext != null) {
-                    return ext.equalsIgnoreCase("mms");
-                }
-
-                return false;
-            }
-
-            @Override
-            public String getDescription() {
-                return "MegaMek Scenario Files";
-            }
-
-        };
-        fc.setFileFilter(filter);
-
-        int returnVal = fc.showOpenDialog(frame);
-        if ((returnVal != JFileChooser.APPROVE_OPTION) || (fc.getSelectedFile() == null)) {
-            // I want a file, y'know!
+        ScenarioChooser scenarioChooser = new ScenarioChooser(frame);
+        scenarioChooser.setVisible(true);
+        if (scenarioChooser.getSelectedScenarioFilename() == null) {
             return;
         }
 
-        ScenarioLoader sl = new ScenarioLoader(fc.getSelectedFile());
+        ScenarioLoader sl = new ScenarioLoader(new File(scenarioChooser.getSelectedScenarioFilename()));
         Game g;
         try {
             g = sl.createGame();

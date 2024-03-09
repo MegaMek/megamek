@@ -1761,10 +1761,15 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
 
             // Arty shots have to be with arty, non arty shots with non arty.
             if (wtype.hasFlag(WeaponType.F_ARTILLERY)) {
+
+                // Don't allow Artillery Flak attacks by off-board artillery.
+                if (te != null && te.isAirborne() && ae.isOffBoard()) {
+                    return Messages.getString("WeaponAttackAction.ArtyAttacksOnly");
+                }
+
                 // check artillery is targeted appropriately for its ammo
                 // Artillery only targets hexes unless making a direct fire flak shot or using
                 // homing ammo.
-
                 if ((ttype != Targetable.TYPE_HEX_ARTILLERY) && (ttype != Targetable.TYPE_MINEFIELD_CLEAR)
                         && !(isArtilleryFLAK || (atype != null && atype.countsAsFlak())) && !isHoming && !target.isOffBoard()) {
                     return Messages.getString("WeaponAttackAction.ArtyAttacksOnly");
@@ -1829,6 +1834,9 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
 
             // Direct-fire artillery attacks.
             if (isArtilleryDirect) {
+                if (ae.isOffBoard()) {
+                    return Messages.getString("WeaponAttackAction.ArtyAttacksOnly");
+                }
                 // Cruise missiles cannot make direct-fire attacks
                 if (isCruiseMissile) {
                     return Messages.getString("WeaponAttackAction.NoDirectCruiseMissile");
@@ -4986,7 +4994,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
     private static ToHitData artilleryIndirectToHit(Entity ae, Targetable target,
                   ToHitData toHit, WeaponType wtype, Mounted weapon, SpecialResolutionTracker srt) {
 
-        int mod = 7;
+        // See MegaMek/megamek#5168
+        int mod = (ae.getPosition().distance(target.getPosition()) <= 17) ? 4 : 7;
         if (ae.hasAbility(OptionsConstants.GUNNERY_OBLIQUE_ATTACKER)) {
             mod--;
         }

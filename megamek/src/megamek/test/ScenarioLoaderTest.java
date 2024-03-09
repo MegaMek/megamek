@@ -11,7 +11,7 @@ import java.util.Locale;
 import megamek.common.Game;
 import megamek.common.MechSummaryCache;
 import megamek.server.GameManager;
-import megamek.server.ScenarioLoader;
+import megamek.common.scenario.ScenarioLoader;
 import megamek.server.Server;
 
 public class ScenarioLoaderTest {

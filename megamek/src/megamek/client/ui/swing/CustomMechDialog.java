@@ -688,6 +688,7 @@ public class CustomMechDialog extends AbstractButtonDialog implements ActionList
             for (int i = 0; i < entities.get(0).getCrew().getSlotCount(); i++) {
                 String name = panCrewMember[i].getPilotName();
                 String nick = panCrewMember[i].getNickname();
+                String hits = panCrewMember[i].getHits();
                 Gender gender = panCrewMember[i].getGender();
                 if (gender == Gender.RANDOMIZE) {
                     gender = entities.get(0).getCrew().getGender(i);
@@ -786,7 +787,9 @@ public class CustomMechDialog extends AbstractButtonDialog implements ActionList
                 entity.getCrew().setToughness(tough, i);
                 entity.getCrew().setName(name, i);
                 entity.getCrew().setNickname(nick, i);
+                entity.getCrew().setHits(Integer.parseInt(hits), i);
                 entity.getCrew().setGender(gender, i);
+                entity.getCrew().setClanPilot(panCrewMember[i].isClanPilot(), i);
                 entity.getCrew().setPortrait(panCrewMember[i].getPortrait().clone(), i);
                 if (backup >= 0) {
                     if (i == entity.getCrew().getCrewType().getPilotPos()) {

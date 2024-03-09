@@ -1004,7 +1004,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
     static class CBRenderer<T> extends DefaultListCellRenderer {
         private static final long serialVersionUID = 4895258839502183158L;
 
-        private String nullVal = Messages.getString("ForceGeneratorDialog.default");
+        private String nullVal;
         private Function<T,String> toString;
 
         public CBRenderer(String nullVal) {

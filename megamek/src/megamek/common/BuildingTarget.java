@@ -266,4 +266,14 @@ public class BuildingTarget implements Targetable {
     public boolean isEnemyOf(Entity other) {
         return true;
     }
+
+    @Override
+    public String generalName() {
+        return name;
+    }
+
+    @Override
+    public String specificName() {
+        return "";
+    }
 }

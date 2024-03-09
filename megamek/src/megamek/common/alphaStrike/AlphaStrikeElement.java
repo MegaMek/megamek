@@ -23,14 +23,17 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.client.ui.swing.calculationReport.DummyCalculationReport;
+import megamek.common.EntityFluff;
 import megamek.common.ForceAssignable;
 import megamek.common.UnitRole;
+import megamek.common.annotations.Nullable;
 import megamek.common.force.Force;
 import megamek.common.jacksonadapters.ASElementDeserializer;
 import megamek.common.jacksonadapters.ASElementSerializer;
 import megamek.common.options.Quirks;
 import megamek.common.strategicBattleSystems.BattleForceSUAFormatter;
 
+import java.awt.*;
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -80,6 +83,8 @@ public class AlphaStrikeElement implements Serializable, ASCardDisplayable, ASSp
     private int forceId = Force.NO_FORCE;
     private int id;
     private int ownerId;
+
+    private EntityFluff fluff = new EntityFluff();
 
     private ASUnitType asUnitType;
     private int size;
@@ -619,6 +624,15 @@ public class AlphaStrikeElement implements Serializable, ASCardDisplayable, ASSp
     @Override
     public String formatSUA(BattleForceSUA sua, String delimiter, ASSpecialAbilityCollector collection) {
         return AlphaStrikeHelper.formatAbility(sua, collection, this, delimiter);
+    }
+
+    @Override
+    public @Nullable Image getFluffImage() {
+        return fluff.getFluffImage();
+    }
+
+    public void setFluff(EntityFluff newFluff) {
+        fluff = newFluff;
     }
 
     @Override

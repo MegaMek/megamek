@@ -24,7 +24,7 @@ package megamek;
 public abstract class SuiteConstants {
     //region General Constants
     public static final String PROJECT_NAME = "MegaMek Suite";
-    public static final Version VERSION = new Version("0.49.18-SNAPSHOT");
+    public static final Version VERSION = new Version("0.49.19-SNAPSHOT");
     public static final int MAXIMUM_D6_VALUE = 6;
 
     // This is used in creating the name of save files, e.g. the MekHQ campaign file
@@ -51,6 +51,7 @@ public abstract class SuiteConstants {
 
     //region File Formats
     public static final String TRUETYPE_FONT = ".ttf";
+    public static final String SCENARIO_EXT = ".mms";
     //endregion File Formats
 
     //region File Paths

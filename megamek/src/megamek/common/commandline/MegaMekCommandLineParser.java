@@ -452,7 +452,7 @@ public class MegaMekCommandLineParser extends AbstractCommandLineParser {
                         bw.write(",");
                         bw.write(Integer.toString(unit.getJumpMp()));
                     } else {
-                        bw.write(unit.getChassis()
+                        bw.write(unit.getFullChassis()
                                 + (unit.getModel().isBlank() ? "|" : " " + unit.getModel() + "|"));
                     }
                     bw.newLine();

@@ -1,19 +1,22 @@
 /*
- * MegaMek - Copyright (C) 2003, 2004, 2005 Ben Mazur (bmazur@sev.org)
- * ScenarioLoader - Copyright (C) 2002 Josh Yockey
- * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
+ * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
-package megamek.server;
+package megamek.common.scenario;
 
 import megamek.client.generator.RandomGenderGenerator;
 import megamek.common.*;
@@ -26,6 +29,8 @@ import megamek.common.options.IOption;
 import megamek.common.options.OptionsConstants;
 import megamek.common.util.BoardUtilities;
 import megamek.common.util.fileUtils.MegaMekFile;
+import megamek.server.GameManager;
+import megamek.server.Messages;
 import org.apache.logging.log4j.LogManager;
 
 import java.io.*;
@@ -37,8 +42,12 @@ import java.util.regex.Pattern;
 public class ScenarioLoader {
     private static final String COMMENT_MARK = "#";
 
+    protected static final String NAME = "Name";
+    protected static final String DESCRIPTION = "Description";
+    protected static final String FILENAME = "FileName";
+
     private static final String SEPARATOR_PROPERTY = "=";
-    private static final String SEPARATOR_COMMA = ",";
+    static final String SEPARATOR_COMMA = ",";
     private static final String SEPARATOR_SPACE = " ";
     private static final String SEPARATOR_COLON = ":";
     private static final String SEPARATOR_UNDERSCORE = "_";
@@ -345,7 +354,7 @@ public class ScenarioLoader {
 
     public Game createGame() throws Exception {
         LogManager.getLogger().info("Loading scenario from " + scenarioFile);
-        StringMultiMap p = load();
+        ScenarioInfo p = load();
 
         String sCheck = p.getString(PARAM_MMSVERSION);
         if (sCheck == null) {
@@ -412,7 +421,7 @@ public class ScenarioLoader {
         return g;
     }
 
-    private void parsePlanetaryConditions(Game g, StringMultiMap p) {
+    private void parsePlanetaryConditions(Game g, ScenarioInfo p) {
         if (p.containsKey(PARAM_PLANETCOND_TEMP)) {
             g.getPlanetaryConditions().setTemperature(Integer.parseInt(p.getString(PARAM_PLANETCOND_TEMP)));
         }
@@ -474,7 +483,7 @@ public class ScenarioLoader {
         }
     }
 
-    private Collection<Entity> buildFactionEntities(StringMultiMap p, Player player) throws ScenarioLoaderException {
+    private Collection<Entity> buildFactionEntities(ScenarioInfo p, Player player) throws ScenarioLoaderException {
         String faction = player.getName();
         Pattern unitPattern = Pattern.compile(String.format("^Unit_\\Q%s\\E_[^_]+$", faction));
         Pattern unitDataPattern = Pattern.compile(String.format("^(Unit_\\Q%s\\E_[^_]+)_([A-Z][^_]+)$", faction));
@@ -610,18 +619,18 @@ public class ScenarioLoader {
             if ((parts.length > 4) && parts[4].matches("-?\\d+")) {
                 e.setCrew(new Crew(e.getCrew().getCrewType(), parts[1], 1,
                         Integer.parseInt(parts[2]), Integer.parseInt(parts[3]),
-                        Gender.parseFromString(parts[4]), null));
-                i = 5; // direction will be part 5, as the scenario has the gender of its pilots included
+                        Gender.parseFromString(parts[4]), Boolean.parseBoolean(parts[5]), null));
+                i = 6; // direction will be part 6, as the scenario has the gender of its pilots included
             } else {
                 e.setCrew(new Crew(e.getCrew().getCrewType(), parts[1], 1,
                         Integer.parseInt(parts[2]), Integer.parseInt(parts[3]),
-                        RandomGenderGenerator.generate(), null));
+                        RandomGenderGenerator.generate(), e.isClan(), null));
                 i = 4; // direction will be part 4, as the scenario does not contain gender
             }
 
             // This uses the i value to ensure it is calculated correctly
             if (parts.length >= 7) {
-                String direction = parts[i++].toUpperCase(Locale.ROOT); //grab value at i, then increment
+                String direction = parts[i++].toUpperCase(Locale.ROOT); // grab value at i, then increment
                 switch (direction) {
                     case "N":
                         e.setFacing(0);
@@ -713,7 +722,7 @@ public class ScenarioLoader {
         return param + SEPARATOR_UNDERSCORE + faction;
     }
 
-    private Collection<Player> createPlayers(StringMultiMap p) throws ScenarioLoaderException {
+    private Collection<Player> createPlayers(ScenarioInfo p) throws ScenarioLoaderException {
         String sFactions = p.getString(PARAM_FACTIONS);
         if ((sFactions == null) || sFactions.isEmpty()) {
             throw new ScenarioLoaderException("missingFactions");
@@ -780,7 +789,7 @@ public class ScenarioLoader {
     /**
      * Load board files and create the megaboard.
      */
-    private Board createBoard(StringMultiMap p) throws ScenarioLoaderException {
+    private Board createBoard(ScenarioInfo p) throws ScenarioLoaderException {
         int mapWidth = 16, mapHeight = 17;
         if (p.getString(PARAM_MAP_WIDTH) == null) {
             LogManager.getLogger().info("No map width specified; using " + mapWidth);
@@ -888,8 +897,9 @@ public class ScenarioLoader {
         return BoardUtilities.combine(mapWidth, mapHeight, nWidth, nHeight, ba, rotateBoard, MapSettings.MEDIUM_GROUND);
     }
 
-    private StringMultiMap load() throws ScenarioLoaderException {
-        StringMultiMap props = new StringMultiMap();
+    public ScenarioInfo load() throws ScenarioLoaderException {
+        ScenarioInfo props = new ScenarioInfo();
+        props.put(FILENAME, List.of(scenarioFile.toString()));
         try (FileInputStream fis = new FileInputStream(scenarioFile);
              InputStreamReader isr = new InputStreamReader(fis, StandardCharsets.UTF_8);
              BufferedReader br = new BufferedReader(isr)) {
@@ -923,7 +933,7 @@ public class ScenarioLoader {
     /**
      * Parses out the external game id from the scenario file
      */
-    private int parseExternalGameId(StringMultiMap p) {
+    private int parseExternalGameId(ScenarioInfo p) {
         String sExternalId = p.getString(PARAM_GAME_EXTERNAL_ID);
         int ExternalGameId = 0;
         if (sExternalId != null) {
@@ -949,7 +959,7 @@ public class ScenarioLoader {
      * defaultValue. When the key is present, interprets "true" and "on"  and "1"
      * as true and everything else as false.
      */
-    private boolean parseBoolean(StringMultiMap p, String key, boolean defaultValue) {
+    private boolean parseBoolean(ScenarioInfo p, String key, boolean defaultValue) {
         boolean result = defaultValue;
         if (p.containsKey(key)) {
             if (p.getString(key).equalsIgnoreCase("true")
@@ -1127,7 +1137,7 @@ public class ScenarioLoader {
         }
     }
 
-    private static class ScenarioLoaderException extends Exception {
+    public static class ScenarioLoaderException extends Exception {
         private static final long serialVersionUID = 8622648319531348199L;
 
         private final Object[] params;
@@ -1153,48 +1163,6 @@ public class ScenarioLoader {
                 }
             }
             return result;
-        }
-    }
-
-    private static class StringMultiMap extends HashMap<String, Collection<String>> {
-        private static final long serialVersionUID = 2171662843329151622L;
-
-        public void put(String key, String value) {
-            Collection<String> values = get(key);
-            if (values == null) {
-                values = new ArrayList<>();
-                put(key, values);
-            }
-            values.add(value);
-        }
-
-        public String getString(String key) {
-            return getString(key, SEPARATOR_COMMA);
-        }
-
-        public String getString(String key, String separator) {
-            Collection<String> values = get(key);
-            if ((values == null) || values.isEmpty()) {
-                return null;
-            }
-
-            boolean firstElement = true;
-            StringBuilder sb = new StringBuilder();
-            for (String val : values) {
-                if (firstElement) {
-                    firstElement = false;
-                } else {
-                    sb.append(separator);
-                }
-                sb.append(val);
-            }
-            return sb.toString();
-        }
-
-        /** @return the number of values for this key in the file */
-        public int getNumValues(String key) {
-            Collection<String> values = get(key);
-            return (values == null) ? 0 : values.size();
         }
     }
 

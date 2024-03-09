@@ -16,6 +16,10 @@ MEGAMEK VERSION HISTORY:
 + PR #5208: Off-board arty may no longer attempt Flak attacks at on-board aerospace units
 + PR #5199: Fixes superheavy and tripod crew total calculation
 + Fix #4819: Seabuster Strike Fighter (Early) is missing the floatation hull chassis mod.
++ PR #5217: Log cleanup
++ PR #5212: Updates to unit data
++ PR #5211: Instead of relying on a file chooser, MegaMek now has a dedicated dialog for choosing scenarios
++ PR #5210: We have added some fonts to the distribution: Exo, Jura, Anta and Bitter. These can be chosen for display and print in various places
 
 0.49.18 (2024-02-17 1800 UTC)
 + Fix #5004: Prevents an error when configuring LAMs or quadvees in the lobby

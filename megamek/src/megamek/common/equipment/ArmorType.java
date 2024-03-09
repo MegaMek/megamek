@@ -913,7 +913,7 @@ public class ArmorType extends MiscType {
         armor.name = "Ferro-Lamellor";
         armor.setInternalName("Clan Ferro-Lamellor");
         armor.cost = 35000.0;
-        armor.criticals = 14;
+        armor.criticals = 12;
         armor.tankslots = 1;
         armor.svslots = 1;
         armor.figherSlots = 2;

@@ -462,9 +462,13 @@ public final class ImageUtil {
     }
 
     /**
-     * takes an image and converts it to text in the Base64 encoding.
+     * takes an image and converts it to text in the Base64 encoding. When the given image is null, an
+     * empty String is returned.
      */
-    public static String base64TextEncodeImage(Image image) {
+    public static String base64TextEncodeImage(@Nullable Image image) {
+        if (image == null) {
+            return "";
+        }
         BufferedImage bufferedImage = convertToBufferedImage(image);
         String base64Text;
 

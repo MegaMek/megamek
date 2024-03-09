@@ -41,7 +41,7 @@ import static megamek.common.jacksonadapters.MMUReader.*;
 public class ASElementDeserializer extends StdDeserializer<AlphaStrikeElement> {
 
     private static final List<String> movementModes = List.of("qt", "qw", "t", "w",
-            "h", "v", "n", "s", "m", "j", "f", "g", "a", "p");
+            "h", "v", "n", "s", "m", "j", "f", "g", "a", "p", "k");
 
     public ASElementDeserializer() {
         this(null);
@@ -79,7 +79,11 @@ public class ASElementDeserializer extends StdDeserializer<AlphaStrikeElement> {
             // This is a non-canon unit; its values are set from the YAML info
             element = new AlphaStrikeElement();
             element.setChassis(node.get(CHASSIS).textValue());
-            element.setModel(node.get(MODEL).textValue());
+            if (node.has(MODEL)) {
+                element.setModel(node.get(MODEL).textValue());
+            } else {
+                element.setModel("");
+            }
             element.setName((element.getChassis() + " " + element.getModel()).trim());
             element.setSkill(skill);
             element.setSize((Integer) node.get(SIZE).numberValue());
@@ -89,7 +93,9 @@ public class ASElementDeserializer extends StdDeserializer<AlphaStrikeElement> {
             element.setCurrentStructure(element.getFullStructure());
             element.setType(ASUnitType.valueOf(node.get(AS_TYPE).textValue()));
             element.setOverheat(node.has(OVERHEAT) ? (Integer) node.get(OVERHEAT).numberValue() : 0);
-            element.setStandardDamage(ASDamageVector.parse(node.get(DAMAGE).textValue()));
+            if (node.has(DAMAGE)) {
+                element.setStandardDamage(ASDamageVector.parse(node.get(DAMAGE).textValue()));
+            }
             element.setMovement(parseMovement(node));
             element.setPrimaryMovementMode(parsePrimaryMoveMode(node));
 
@@ -104,19 +110,21 @@ public class ASElementDeserializer extends StdDeserializer<AlphaStrikeElement> {
                 if (matcher.find()) {
                     turret = matcher.group().replaceAll("[)(]", "");
                 }
-
-                Map<BattleForceSUA, Object> noTurretSpecials = parseSpecials(noTurret);
-                for (Map.Entry<BattleForceSUA, Object> entry : noTurretSpecials.entrySet()) {
-                    element.getSpecialAbilities().replaceSUA(entry.getKey(), entry.getValue());
-                }
+                readSpecials(element.getSpecialAbilities(), noTurret);
                 if (!turret.isBlank()) {
-                    ASTurretSummary turretSummary = element.getTUR();
-                    Map<BattleForceSUA, Object> turretSpecials = parseSpecials(turret);
-                    for (Map.Entry<BattleForceSUA, Object> entry : turretSpecials.entrySet()) {
-                        turretSummary.replaceSUA(entry.getKey(), entry.getValue());
-                    }
-                    element.getSpecialAbilities().replaceSUA(BattleForceSUA.TUR, turretSummary);
+                    readSpecials(element.getTUR(), turret);
                 }
+            }
+
+            if (node.has(NOSE_ARC)) {
+                readSpecials(element.getFrontArc(), node.get(NOSE_ARC).textValue());
+            }
+            if (node.has(AFT_ARC)) {
+                readSpecials(element.getRearArc(), node.get(AFT_ARC).textValue());
+            }
+            if (node.has(SIDE_ARC)) {
+                readSpecials(element.getLeftArc(), node.get(SIDE_ARC).textValue());
+                readSpecials(element.getRightArc(), node.get(SIDE_ARC).textValue());
             }
 
             if (node.has(FORCE)) {
@@ -124,7 +132,7 @@ public class ASElementDeserializer extends StdDeserializer<AlphaStrikeElement> {
             }
 
             if (node.has(ROLE)) {
-                element.setRole(UnitRole.valueOf(node.get(ROLE).textValue()));
+                element.setRole(UnitRole.parseRole(node.get(ROLE).textValue()));
             }
 
             if (element.isBattleArmor() && node.has(SQUADSIZE)) {
@@ -181,42 +189,25 @@ public class ASElementDeserializer extends StdDeserializer<AlphaStrikeElement> {
         return moves;
     }
 
+    private void readSpecials(ASSpecialAbilityCollection collection, String specials) {
+        Map<BattleForceSUA, Object> parsedSpecials = parseSpecials(specials);
+        for (Map.Entry<BattleForceSUA, Object> entry : parsedSpecials.entrySet()) {
+            collection.replaceSUA(entry.getKey(), entry.getValue());
+        }
+    }
+
     private Map<BattleForceSUA, Object> parseSpecials(String specials) {
         if (specials.isBlank()) {
             return Collections.emptyMap();
         }
         Map<BattleForceSUA, Object> result = new HashMap<>();
+        specials = specials.replaceAll(" ", ""); // remove empty spaces
         String[] separatedSpecials = specials.split(",");
         for (String special : separatedSpecials) {
-            if (ASDamageVector.canParse(special)) {
-                // A lone damage vector must be the standard damage in a turret
-                result.put(BattleForceSUA.STD, ASDamageVector.parse(special));
-                continue;
-            }
-            BattleForceSUA sua = BattleForceSUA.parse(special);
-            String remainder = special.replace(sua.name(), "");
-            Object suaObject = parseSUAObject(remainder);
-            if (sua == BattleForceSUA.IF && suaObject instanceof Integer) {
-                // Integer and ASDamage cannot be separated automatically except with 0*; IF requires an ASDamage
-                suaObject = new ASDamage((Integer) suaObject, false);
-            }
-            result.put(sua, suaObject);
+            result.putAll(BattleForceSUA.parseFull(special));
         }
         result.remove(BattleForceSUA.UNKNOWN);
         return result;
     }
 
-    private Object parseSUAObject(String asText) {
-        if (asText.isBlank()) {
-            return null;
-        } else if (asText.contains("/")) {
-            return ASDamageVector.parse(asText);
-        } else if (asText.contains(".")) {
-            return Double.parseDouble(asText);
-        } else if (asText.contains("*")) {
-            return ASDamage.parse(asText);
-        } else {
-            return Integer.parseInt(asText);
-        }
-    }
 }

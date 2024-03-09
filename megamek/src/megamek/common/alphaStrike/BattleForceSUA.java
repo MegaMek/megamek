@@ -18,10 +18,10 @@
  */
 package megamek.common.alphaStrike;
 
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.EnumMap;
-import java.util.Map;
+import megamek.codeUtilities.StringUtility;
+import megamek.common.annotations.Nullable;
+
+import java.util.*;
 
 /**
  * This enum contains AlphaStrike, BattleForce and (some - WIP) Strategic BattleForce Special Unit Abilities
@@ -69,10 +69,12 @@ public enum BattleForceSUA {
         transportBayDoors.put(VTM, VTMxD);
         transportBayDoors.put(VTH, VTHxD);
         transportBayDoors.put(VTS, VTSxD);
+        // The sortedNames array holds all SUA names ("BOMB", "AECM", "IF" etc.) in order of descending length
+        // This is used for parsing an SUA from a string such as "JMPS2" where JMP would also match the text start
         for (int i = 0; i < values().length; i++) {
             sortedNames[i] = values()[i].name();
         }
-        Arrays.sort(sortedNames, Comparator.comparing(s -> -s.length()));
+        Arrays.sort(sortedNames, Comparator.comparingInt(String::length).reversed());
     }
 
     /** @return True when this SUA is an ability that may be associated with a Door value (not IT and DT!). */
@@ -176,6 +178,65 @@ public enum BattleForceSUA {
             return valueOf(match);
         } else {
             return UNKNOWN;
+        }
+    }
+
+    public static Map<BattleForceSUA, Object> parseFull(@Nullable String special) {
+        if (StringUtility.isNullOrBlank(special)) {
+            return Collections.emptyMap();
+        }
+        Map<BattleForceSUA, Object> result = new HashMap<>();
+        if (ASDamageVector.canParse(special)) {
+            // A lone damage vector such as "4/3/0*" must be the standard damage in a turret or arc
+            result.put(BattleForceSUA.STD, ASDamageVector.parse(special));
+
+        } else {
+            // The text must begin with an SUA code, such as "SRM2/2"
+            BattleForceSUA sua = BattleForceSUA.parse(special);
+            String remainder = special.replace(sua.name(), "");
+
+            if (sua.isTransport()) {
+                // This SUA, e.g. CT54-D2 may include a door value that must be separated
+                if (remainder.contains("-D")) {
+                    String[] parts = remainder.split("-D");
+                    result.put(sua, parseSUAObject(parts[0], sua));
+                    BattleForceSUA door = sua.getDoor();
+                    result.put(door, parseSUAObject(parts[1], door));
+                } else {
+                    result.put(sua, parseSUAObject(remainder, sua));
+                }
+
+            } else if (sua.isArtillery()) {
+                // Artillery uses a "-" between SUA and number, must avoid parsing this as a negative
+                if (remainder.contains("-")) {
+                    String[] parts = remainder.split("-");
+                    result.put(sua, parseSUAObject(parts[1], sua));
+                }
+
+            } else if (sua == IF) {
+                // IF requires an ASDamage, but a damage like 5 will be converted to an Integer
+                Object suaObject = parseSUAObject(remainder, sua);
+                if (suaObject instanceof Integer) {
+                    result.put(IF, new ASDamage((Integer) suaObject, false));
+                }
+            } else {
+                result.put(sua, parseSUAObject(remainder, sua));
+            }
+        }
+        return result;
+    }
+
+    private static Object parseSUAObject(String asText, BattleForceSUA sua) {
+        if (asText.isBlank()) {
+            return null;
+        } else if (asText.contains("/")) {
+            return ASDamageVector.parse(asText);
+        } else if (asText.contains(".")) {
+            return Double.parseDouble(asText);
+        } else if (asText.contains("*")) {
+            return ASDamage.parse(asText);
+        } else {
+            return Integer.parseInt(asText);
         }
     }
 }

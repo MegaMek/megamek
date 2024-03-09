@@ -268,6 +268,16 @@ public class SBFUnit implements BTObject, ASSpecialAbilityCollector, BattleForce
     }
 
     @Override
+    public String generalName() {
+        return name;
+    }
+
+    @Override
+    public String specificName() {
+        return "";
+    }
+
+    @Override
     public String toString() {
         return "[SBFUnit] " + name + ": " + type + "; SZ" + size + "; TMM" + tmm + "; MV" + movement + movementMode.code
                 + (jumpMove > 0 ? "/" + jumpMove + "j" : "")

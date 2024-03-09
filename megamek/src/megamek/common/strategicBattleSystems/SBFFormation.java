@@ -263,7 +263,6 @@ public class SBFFormation implements ASSpecialAbilityCollector, BattleForceSUAFo
         return "";
     }
 
-    /** Returns true if this SBF Formation represents an aerospace Team. */
     /**
      * Returns true if this SBF Formation represents an aerospace Team.
      */

@@ -25,6 +25,7 @@ import megamek.common.ForceAssignable;
 import megamek.common.MechSummary;
 import megamek.common.MechSummaryCache;
 import megamek.common.UnitRole;
+import megamek.common.alphaStrike.ASArcSummary;
 import megamek.common.alphaStrike.ASCardDisplayable;
 import megamek.common.alphaStrike.AlphaStrikeHelper;
 
@@ -50,21 +51,30 @@ import java.io.IOException;
  */
 public class ASElementSerializer extends StdSerializer<ASCardDisplayable> {
 
+    //+ add constants
+    //TODO: add comments
+    //+ add copyrights
+    //+ test mixture of ASE and SBF
+    //TODO: load SBFunit from numbers
+    //TODO: write example files
+    //+ ser ASE with arcs, test aero
+    //+ deser ASE with arcs
+    //+ ASE with arcs toString
+    //TODO: add YAML include:
+    //TODO: error dealing?
+    //TODO: Add force to converted ASE/SBFU/SBFF
+    //TODO: damage in SBFU / SBFF
+    //TODO: crits in ASE
+
     static final String FULL_NAME = "fullname";
     static final String AS_TYPE = "astype";
     static final String STRUCTURE = "structure";
     static final String SQUADSIZE = "squadsize";
     static final String STRUCTUREDAMAGE = "structuredamage";
     static final String OVERHEAT = "overheat";
-
-
-
-    //TODO: add constants
-    //TODO: add comments
-    //TODO: add copyrights
-    //TODO: test mixture of ASE and SBF
-    //TODO: load SBFunit from numbers
-    //TODO: write example files
+    static final String NOSE_ARC = "nose";
+    static final String AFT_ARC = "aft";
+    static final String SIDE_ARC = "side";
 
     public ASElementSerializer() {
         this(null);
@@ -88,7 +98,9 @@ public class ASElementSerializer extends StdSerializer<ASCardDisplayable> {
             jgen.writeStringField(FULL_NAME, fullName);
         } else {
             jgen.writeStringField(CHASSIS, element.getFullChassis());
-            jgen.writeStringField(MODEL, element.getModel());
+            if (!element.getModel().isBlank()) {
+                jgen.writeStringField(MODEL, element.getModel());
+            }
         }
         if (element instanceof ForceAssignable && ((ForceAssignable)element).partOfForce()) {
             jgen.writeStringField(FORCE, ((ForceAssignable) element).getForceString());
@@ -105,9 +117,18 @@ public class ASElementSerializer extends StdSerializer<ASCardDisplayable> {
             }
 
             // Remove the inch (") sign from movement to avoid escaping; this doesn't lose any information
+            // Also remove "0." from station-keeping (k) movement to simplify parsing
             String movement = AlphaStrikeHelper.getMovementAsString(element);
-            jgen.writeStringField(MOVE, movement.replace("\"", ""));
-            jgen.writeObjectField(DAMAGE, element.getStandardDamage());
+            jgen.writeStringField(MOVE, movement.replace("\"", "").replace("0.", ""));
+            if (!element.usesArcs()) {
+                if (element.getStandardDamage().hasDamage()) {
+                    jgen.writeObjectField(DAMAGE, element.getStandardDamage());
+                }
+            } else {
+                writeArc(element.getFrontArc(), jgen, element, NOSE_ARC);
+                writeArc(element.getRearArc(), jgen, element, AFT_ARC);
+                writeArc(element.getLeftArc(), jgen, element, SIDE_ARC);
+            }
             if (element.getOV() != 0) {
                 jgen.writeNumberField(OVERHEAT, element.getOV());
             }
@@ -125,11 +146,15 @@ public class ASElementSerializer extends StdSerializer<ASCardDisplayable> {
                 jgen.writeNumberField(STRUCTUREDAMAGE, element.getFullStructure() - element.getCurrentStructure());
             }
             //TODO crits
-
             //TODO position and facing
-            //TODO Quirks? AS quirks arent implemented
         }
-
         jgen.writeEndObject();
+    }
+
+    private void writeArc(ASArcSummary arc, JsonGenerator jgen, ASCardDisplayable element, String specName)
+            throws IOException {
+        if (!arc.getSpecialsShortExportString(", ", element).isBlank()) {
+            jgen.writeObjectField(specName, arc.getSpecialsShortExportString(", ", element));
+        }
     }
 }

@@ -27,6 +27,14 @@ import java.io.IOException;
 
 import static megamek.common.jacksonadapters.MMUReader.*;
 
+/**
+ * This Jackson serializer writes an SBF Unit (part of a formation) to YAML output. This can take two forms:
+ * When the unit knows its underlying Alpha Strike elements, it will write the elements but not write its
+ * stats as those can be calculated from the elements. If it does not know its elements (In Battle for Tukayyid,
+ * there are example SBF Units that have stats without listing their ASE), the stats are written instead.
+ *
+ * <P>In addition, any transients like damage are written if present (2024: only partly implemented).</P>
+ */
 public class SBFUnitSerializer extends StdSerializer<SBFUnit> {
 
     static final String SBF_TYPE = "sbftype";
@@ -66,9 +74,9 @@ public class SBFUnitSerializer extends StdSerializer<SBFUnit> {
             jgen.writeNumberField(ARMOR, unit.getArmor());
             jgen.writeStringField(SPECIALS, unit.getSpecialAbilities().getSpecialsDisplayString(unit));
             jgen.writeNumberField(PV, unit.getPointValue());
-
-            //TODO damage
         }
+
+        //TODO damage
 
         jgen.writeEndObject();
     }

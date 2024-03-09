@@ -646,8 +646,7 @@ public class AlphaStrikeElement implements Serializable, ASCardDisplayable, ASSp
         } else {
             return (chassis + " " + model).trim() + ": " + asUnitType + "; SZ" + size + "; THR" + getMovementAsString()
                     + "; A" + fullArmor + "S" + fullStructure + "; PV" + pointValue + "@" + skill
-                    + "; " + specialAbilities.getSpecialsDisplayString(this);
-            //TODO list arcs information
+                    + "; " + AlphaStrikeHelper.getSpecialsExportString(", ", this);
         }
     }
 }

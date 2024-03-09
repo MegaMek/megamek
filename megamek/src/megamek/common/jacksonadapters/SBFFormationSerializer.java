@@ -25,6 +25,13 @@ import megamek.common.strategicBattleSystems.SBFFormation;
 
 import java.io.IOException;
 
+/**
+ * This Jackson serializer writes an SBF Formation to YAML output. Since the base values can be calculated from the
+ * stats of the SBF Units, only the units are written.
+ *
+ * <P>In addition, any transients like damage, crits and position are written if present (2024: only partly
+ * implemented).</P>
+ */
 public class SBFFormationSerializer extends StdSerializer<SBFFormation> {
 
     static final String UNITS = "units";
@@ -44,6 +51,9 @@ public class SBFFormationSerializer extends StdSerializer<SBFFormation> {
         jgen.writeStartObject();
         jgen.writeStringField(MMUReader.TYPE, MMUReader.SBF_FORMATION);
         jgen.writeStringField(MMUReader.GENERAL_NAME, formation.getName());
+        if (!formation.specificName().isBlank()) {
+            jgen.writeStringField(MMUReader.SPECIFIC_NAME, formation.specificName());
+        }
         jgen.writeObjectField(UNITS, formation.getUnits());
         //TODO damage
         jgen.writeEndObject();

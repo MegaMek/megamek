@@ -26,10 +26,6 @@ import megamek.common.Player;
 import megamek.common.actions.*;
 import megamek.common.options.OptionsConstants;
 
-import java.util.*;
-
-import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
-
 public abstract class AttackPhaseDisplay extends ActionPhaseDisplay {
     // client list of attacks user has input
     protected EntityActionLog attacks;

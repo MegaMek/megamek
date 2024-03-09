@@ -24,7 +24,6 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.tooltip.UnitToolTip;
-import megamek.client.ui.swing.util.PlayerColour;
 import megamek.common.*;
 import megamek.common.force.Force;
 import megamek.common.options.GameOptions;

@@ -846,43 +846,10 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
         }
 
         if (GUIP.getFiringSolutions()) {
-            setFiringSolutions();
+            setFiringSolutions(ce());
         } else {
             clientgui.getBoardView().clearFiringSolutionData();
         }
-    }
-
-    public void setFiringSolutions() {
-        // If no Entity is selected, exit
-        if (cen == Entity.NONE) {
-            return;
-        }
-
-        Game game = clientgui.getClient().getGame();
-        Player localPlayer = clientgui.getClient().getLocalPlayer();
-        if (!GUIP.getFiringSolutions()) {
-            return;
-        }
-
-        // Determine which entities are spotted
-        Set<Integer> spottedEntities = new HashSet<>();
-        for (Entity target : game.getEntitiesVector()) {
-            if (!target.isEnemyOf(ce()) && target.isSpotting()) {
-                spottedEntities.add(target.getSpotTargetId());
-            }
-        }
-
-        // Calculate firing solutions
-        Map<Integer, FiringSolution> fs = new HashMap<>();
-        for (Entity target : game.getEntitiesVector()) {
-            if (shouldShowTarget(game, localPlayer, target, ce())) {
-                ToHitData thd = WeaponAttackAction.toHit(game, cen, target);
-                thd.setLocation(target.getPosition());
-                thd.setRange(ce().getPosition().distance(target.getPosition()));
-                fs.put(target.getId(), new FiringSolution(thd, spottedEntities.contains(target.getId())));
-            }
-        }
-        clientgui.getBoardView().setFiringSolutions(ce(), fs);
     }
 
     /**

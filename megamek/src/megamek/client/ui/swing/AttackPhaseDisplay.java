@@ -19,12 +19,15 @@
 package megamek.client.ui.swing;
 
 import megamek.client.ui.swing.tooltip.EntityActionLog;
-import megamek.common.Entity;
-import megamek.common.EntityVisibilityUtils;
-import megamek.common.Game;
-import megamek.common.Player;
+import megamek.common.*;
 import megamek.common.actions.*;
 import megamek.common.options.OptionsConstants;
+import megamek.common.util.FiringSolution;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 public abstract class AttackPhaseDisplay extends ActionPhaseDisplay {
     // client list of attacks user has input
@@ -86,6 +89,39 @@ public abstract class AttackPhaseDisplay extends ActionPhaseDisplay {
     {
         attacks.add(entityAction);
         updateDonePanel();
+    }
+
+    public void setFiringSolutions(Entity ce) {
+        // If no Entity is selected, exit
+        if (ce.getId() == Entity.NONE) {
+            return;
+        }
+
+        Game game = clientgui.getClient().getGame();
+        Player localPlayer = clientgui.getClient().getLocalPlayer();
+        if (!GUIP.getFiringSolutions()) {
+            return;
+        }
+
+        // Determine which entities are spotted
+        Set<Integer> spottedEntities = new HashSet<>();
+        for (Entity target : game.getEntitiesVector()) {
+            if (!target.isEnemyOf(ce) && target.isSpotting()) {
+                spottedEntities.add(target.getSpotTargetId());
+            }
+        }
+
+        // Calculate firing solutions
+        Map<Integer, FiringSolution> fs = new HashMap<>();
+        for (Entity target : game.getEntitiesVector()) {
+            if (shouldShowTarget(game, localPlayer, target, ce)) {
+                ToHitData thd = WeaponAttackAction.toHit(game, ce.getId(), target);
+                thd.setLocation(target.getPosition());
+                thd.setRange(ce.getPosition().distance(target.getPosition()));
+                fs.put(target.getId(), new FiringSolution(thd, spottedEntities.contains(target.getId())));
+            }
+        }
+        clientgui.getBoardView().setFiringSolutions(ce, fs);
     }
 
     protected boolean shouldShowTarget(Game game, Player localPlayer, Entity target, Entity ce) {

@@ -62,12 +62,8 @@ public class ASElementSerializer extends StdSerializer<ASCardDisplayable> {
     //TODO: add constants
     //TODO: add comments
     //TODO: add copyrights
-    //TODO: remove unnecessary annotations
-    //TODO: restore ASE correctly (PV, TMM etc)
     //TODO: test mixture of ASE and SBF
-    //TODO: load ASE from numbers
-    //TODO: add position
-    //TODO: load unit from numbers
+    //TODO: load SBFunit from numbers
     //TODO: write example files
 
     public ASElementSerializer() {
@@ -129,6 +125,7 @@ public class ASElementSerializer extends StdSerializer<ASCardDisplayable> {
                 jgen.writeNumberField(STRUCTUREDAMAGE, element.getFullStructure() - element.getCurrentStructure());
             }
             //TODO crits
+
             //TODO position and facing
             //TODO Quirks? AS quirks arent implemented
         }

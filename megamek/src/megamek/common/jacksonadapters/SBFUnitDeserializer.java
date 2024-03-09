@@ -31,9 +31,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SBFUnitDeserializer extends StdDeserializer<SBFUnit> {
+import static megamek.common.jacksonadapters.SBFUnitSerializer.ELEMENTS;
 
-    private static final String ELEMENTS = "elements";
+public class SBFUnitDeserializer extends StdDeserializer<SBFUnit> {
 
     public SBFUnitDeserializer() {
         this(null);
@@ -61,7 +61,7 @@ public class SBFUnitDeserializer extends StdDeserializer<SBFUnit> {
 
             //TODO: elements without skill?
             return new SBFUnitConverter(elements,
-                    node.get("name").textValue(), elements, new DummyCalculationReport()).createSbfUnit();
+                    node.get(MMUReader.GENERAL_NAME).textValue(), elements, new DummyCalculationReport()).createSbfUnit();
         } else {
             //TODO read values without conversion
             return null;

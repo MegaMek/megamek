@@ -27,6 +27,8 @@ import java.io.IOException;
 
 public class SBFFormationSerializer extends StdSerializer<SBFFormation> {
 
+    static final String UNITS = "units";
+
     public SBFFormationSerializer() {
         this(null);
     }
@@ -40,9 +42,9 @@ public class SBFFormationSerializer extends StdSerializer<SBFFormation> {
             throws IOException {
 
         jgen.writeStartObject();
-        jgen.writeStringField("type", "SBFFormation");
-        jgen.writeStringField("name", formation.getName());
-        jgen.writeObjectField("units", formation.getUnits());
+        jgen.writeStringField(MMUReader.TYPE, MMUReader.SBF_FORMATION);
+        jgen.writeStringField(MMUReader.GENERAL_NAME, formation.getName());
+        jgen.writeObjectField(UNITS, formation.getUnits());
         //TODO damage
         jgen.writeEndObject();
     }

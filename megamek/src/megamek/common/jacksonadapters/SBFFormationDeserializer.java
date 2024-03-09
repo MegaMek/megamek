@@ -28,9 +28,9 @@ import megamek.common.strategicBattleSystems.SBFUnit;
 
 import java.io.IOException;
 
-public class SBFFormationDeserializer extends StdDeserializer<SBFFormation> {
+import static megamek.common.jacksonadapters.SBFFormationSerializer.UNITS;
 
-    private static final String UNITS = "units";
+public class SBFFormationDeserializer extends StdDeserializer<SBFFormation> {
 
     public SBFFormationDeserializer() {
         this(null);
@@ -54,7 +54,7 @@ public class SBFFormationDeserializer extends StdDeserializer<SBFFormation> {
                     .filter(o -> o instanceof SBFUnit)
                     .map(o -> (SBFUnit) o)
                     .forEach(formation::addUnit);
-            formation.setName(node.get("name").textValue());
+            formation.setName(node.get(MMUReader.GENERAL_NAME).textValue());
             SBFFormationConverter.calculateStatsFromUnits(formation);
             return formation;
         } else {

@@ -25,7 +25,13 @@ import megamek.common.strategicBattleSystems.SBFUnit;
 
 import java.io.IOException;
 
+import static megamek.common.jacksonadapters.MMUReader.*;
+
 public class SBFUnitSerializer extends StdSerializer<SBFUnit> {
+
+    static final String SBF_TYPE = "sbftype";
+    static final String ELEMENTS = "elements";
+    static final String PV = "pv";
 
     public SBFUnitSerializer() {
         this(null);
@@ -42,25 +48,24 @@ public class SBFUnitSerializer extends StdSerializer<SBFUnit> {
         boolean hasElements = !unit.getElements().isEmpty();
 
         jgen.writeStartObject();
-        jgen.writeStringField(MMUReader.TYPE, MMUReader.SBF_UNIT);
-        jgen.writeStringField("name", unit.getName());
+        jgen.writeStringField(TYPE, SBF_UNIT);
+        jgen.writeStringField(GENERAL_NAME, unit.getName());
 
         if (hasElements) {
-            jgen.writeObjectField("elements", unit.getElements());
+            jgen.writeObjectField(ELEMENTS, unit.getElements());
         } else {
             if (unit.getSkill() != 4) {
-                jgen.writeNumberField("skill", unit.getSkill());
+                jgen.writeNumberField(SKILL, unit.getSkill());
             }
-            jgen.writeStringField("type", unit.getType().name());
-            jgen.writeNumberField("size", unit.getSize());
-            jgen.writeNumberField("tmm", unit.getTmm());
-            jgen.writeStringField("mv", unit.getMovement() + unit.getMovementCode());
-            jgen.writeNumberField("jump", unit.getJumpMove());
-            jgen.writeStringField("trspmv", unit.getTrspMovement() + unit.getTrspMovementCode());
-            jgen.writeObjectField("damage", unit.getDamage());
-            jgen.writeNumberField("armor", unit.getArmor());
-            jgen.writeStringField("spec", unit.getSpecialAbilities().getSpecialsDisplayString(unit));
-            jgen.writeNumberField("pv", unit.getPointValue());
+            jgen.writeStringField(SBF_TYPE, unit.getType().name());
+            jgen.writeNumberField(SIZE, unit.getSize());
+            jgen.writeStringField(MOVE, unit.getMovement() + unit.getMovementCode());
+            jgen.writeNumberField(JUMP, unit.getJumpMove());
+            jgen.writeStringField(TRSP_MOVE, unit.getTrspMovement() + unit.getTrspMovementCode());
+            jgen.writeObjectField(DAMAGE, unit.getDamage());
+            jgen.writeNumberField(ARMOR, unit.getArmor());
+            jgen.writeStringField(SPECIALS, unit.getSpecialAbilities().getSpecialsDisplayString(unit));
+            jgen.writeNumberField(PV, unit.getPointValue());
 
             //TODO damage
         }

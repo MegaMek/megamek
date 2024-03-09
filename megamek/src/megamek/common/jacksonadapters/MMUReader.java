@@ -41,13 +41,17 @@ public class MMUReader {
     static final String SIZE = "size";
     static final String ROLE = "role";
     static final String FORCE = "force";
-    static final String MODEL = "model";
     static final String CHASSIS = "chassis";
+    static final String MODEL = "model";
+    static final String GENERAL_NAME = "generalname";
+    static final String SPECIFIC_NAME = "specificname";
     static final String DAMAGE = "damage";
     static final String MOVE = "move";
+    static final String TRSP_MOVE = "trspmove";
     static final String ARMORDAMAGE = "armordamage";
     static final String SPECIALS = "specials";
     static final String ARMOR = "armor";
+    static final String JUMP = "jump";
 
     private static final ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
 

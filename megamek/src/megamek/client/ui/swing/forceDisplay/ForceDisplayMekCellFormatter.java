@@ -56,6 +56,8 @@ class ForceDisplayMekCellFormatter {
         GameOptions options = game.getOptions();
         Player localPlayer = client.getLocalPlayer();
         Player owner = entity.getOwner();
+        boolean showAsUnknown = owner.isEnemyOf(localPlayer)
+                && !EntityVisibilityUtils.detectedOrHasVisual(localPlayer, clientGUI.getClient().getGame(), entity);
 
         if (entity.isSensorReturn(localPlayer)) {
             String value = "<NOBR>&nbsp;&nbsp;";
@@ -82,7 +84,7 @@ class ForceDisplayMekCellFormatter {
             uType = DOT_SPACER + uType + DOT_SPACER;
             value += guiScaledFontHTML() + uType + "</FONT>";;
             return UnitToolTip.wrapWithHTML(value);
-        } else if (!entity.isVisibleToEnemy()) {
+        } else if (showAsUnknown) {
             return "";
         }
 

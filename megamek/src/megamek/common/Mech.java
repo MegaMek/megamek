@@ -2745,6 +2745,18 @@ public abstract class Mech extends Entity {
         }
     }
 
+    /**
+     * Adds equipment without adding slots for it.
+     * Specifically for targeting computers, which when loaded from a file don't have a correct size and get loaded slot by slot
+     */
+    public Mounted addTargCompWithoutSlots(EquipmentType etype, int loc, boolean omniPod, boolean armored) throws LocationFullException {
+        Mounted mounted = new Mounted(this, etype);
+        mounted.setOmniPodMounted(omniPod);
+        mounted.setArmored(armored);
+        super.addEquipment(mounted, loc, false);
+        return mounted;
+    }
+
     public Mounted addEquipment(EquipmentType etype, EquipmentType etype2,
             int loc,  boolean omniPod, boolean armored) throws LocationFullException {
         Mounted mounted = new Mounted(this, etype);

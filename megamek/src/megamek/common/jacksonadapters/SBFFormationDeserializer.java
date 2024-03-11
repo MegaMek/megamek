@@ -28,6 +28,7 @@ import megamek.common.strategicBattleSystems.SBFUnit;
 
 import java.io.IOException;
 
+import static megamek.common.jacksonadapters.MMUReader.*;
 import static megamek.common.jacksonadapters.SBFFormationSerializer.UNITS;
 
 public class SBFFormationDeserializer extends StdDeserializer<SBFFormation> {
@@ -41,24 +42,20 @@ public class SBFFormationDeserializer extends StdDeserializer<SBFFormation> {
     }
 
     @Override
-    public SBFFormation deserialize(JsonParser jp, DeserializationContext ctxt)
-            throws IOException {
+    public SBFFormation deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException {
         JsonNode node = jp.getCodec().readTree(jp);
-        if (!node.has(MMUReader.TYPE) || !node.get(MMUReader.TYPE).textValue().equalsIgnoreCase(MMUReader.SBF_FORMATION)) {
-            throw new IOException("SBFFormationDeserializer: Wrong Deserializer chosen!");
+        if (!node.has(TYPE) || !node.get(TYPE).textValue().equalsIgnoreCase(SBF_FORMATION)) {
+            throw new IllegalArgumentException("SBFFormationDeserializer: Wrong Deserializer chosen!");
         }
 
-        if (node.has(UNITS)) {
-            SBFFormation formation = new SBFFormation();
-            new MMUReader().read(node.get(UNITS)).stream()
-                    .filter(o -> o instanceof SBFUnit)
-                    .map(o -> (SBFUnit) o)
-                    .forEach(formation::addUnit);
-            formation.setName(node.get(MMUReader.GENERAL_NAME).textValue());
-            SBFFormationConverter.calculateStatsFromUnits(formation);
-            return formation;
-        } else {
-            return null;
-        }
+        requireFields(SBF_FORMATION, node, GENERAL_NAME, UNITS);
+        SBFFormation formation = new SBFFormation();
+        formation.setName(node.get(GENERAL_NAME).textValue());
+        new MMUReader().read(node.get(UNITS)).stream()
+                .filter(o -> o instanceof SBFUnit)
+                .map(o -> (SBFUnit) o)
+                .forEach(formation::addUnit);
+        SBFFormationConverter.calculateStatsFromUnits(formation);
+        return formation;
     }
 }

@@ -21,7 +21,6 @@ package megamek.common.jacksonadapters;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import megamek.common.BTObject;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.strategicBattleSystems.SBFFormation;
@@ -29,7 +28,10 @@ import megamek.common.strategicBattleSystems.SBFUnit;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Optional;
 
 public class MMUReader {
 
@@ -47,26 +49,25 @@ public class MMUReader {
     static final String SPECIFIC_NAME = "specificname";
     static final String DAMAGE = "damage";
     static final String MOVE = "move";
+    static final String MOVE_MODE = "movemode";
     static final String TRSP_MOVE = "trspmove";
+    static final String TRSP_MOVE_MODE = "trspmovemode";
     static final String ARMORDAMAGE = "armordamage";
     static final String SPECIALS = "specials";
     static final String ARMOR = "armor";
     static final String JUMP = "jump";
+    static final String INCLUDE = "include";
 
-    private static final ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
+    private static final ObjectMapper mapper = MMUWriter.conciseMapper;
 
     // This is currently only for testing purposes with a file format for AS and SBF units
-    public List<BTObject> read(File file) {
-        try {
-            JsonNode node = mapper.readTree(file);
-            List<BTObject> list = read(node);
-            return read(node);
-        } catch (IOException e) {
-            return Collections.emptyList();
-        }
+    public List<BTObject> read(File file) throws IOException {
+        JsonNode node = mapper.readTree(file);
+        List<BTObject> list = read(node);
+        return read(node);
     }
 
-    public List<BTObject> read(JsonNode node) {
+    public List<BTObject> read(JsonNode node) throws IOException {
         List<BTObject> result = new ArrayList<>();
         if (node.isArray()) {
             for (Iterator<JsonNode> it = node.elements(); it.hasNext(); ) {
@@ -79,9 +80,15 @@ public class MMUReader {
         return result;
     }
 
-    static Optional<BTObject> parseNode(JsonNode node) {
+    private Optional<BTObject> parseNode(JsonNode node) throws IOException {
+        if (node.has(INCLUDE)) {
+            node = mapper.readTree(new File(node.get(INCLUDE).textValue()));
+            if (node.isArray()) {
+                throw new IllegalArgumentException("An included MMU file may only contain a single object, not a list!");
+            }
+        }
         if (!node.has(TYPE)) {
-            return Optional.empty();
+            throw new IOException("Missing type info in MMU file!");
         }
         try {
             switch (node.get(TYPE).textValue()) {
@@ -96,6 +103,23 @@ public class MMUReader {
             }
         } catch (JsonProcessingException e) {
             return Optional.empty();
+        }
+    }
+
+    /**
+     * Tests the given node (which should be an object node that holds a full AS element or SBF Unit) if
+     * it has all of the given fields. If any of the given fields is missing, an IllegalArgumentException
+     * is thrown.
+     *
+     * @param objectType The object type such as "ASElement". Only used as part of the exception message
+     * @param node the node containing an object to be deserialized
+     * @param fields The required field names, e.g. "chassis" or "size"
+     */
+    public static void requireFields(String objectType, JsonNode node, String... fields) {
+        for (String field : fields) {
+            if (!node.has(field)) {
+                throw new IllegalArgumentException("Missing field \"" + field + "\" in " + objectType + " definition!");
+            }
         }
     }
 }

@@ -80,7 +80,7 @@ public final class SBFFormationConverter {
             formation.addUnit(convertedUnit);
 
             try {
-                MMUWriter.writeMMUFile(new File(convertedUnit.getName() + ".mmu"), convertedUnit);
+                MMUWriter.writeMMUFileFullStats(new File(convertedUnit.getName() + ".mmu"), convertedUnit);
             } catch (IOException ignored) {
                 // ignore, this is just for testing
             }
@@ -90,7 +90,7 @@ public final class SBFFormationConverter {
         formation.setConversionReport(report);
 
         try {
-            MMUWriter.writeMMUFile(new File(force.getName() + ".mmu"), formation);
+            MMUWriter.writeMMUFileFullStats(new File(force.getName() + ".mmu"), formation);
         } catch (IOException ignored) {
             // ignore, this is just for testing
         }

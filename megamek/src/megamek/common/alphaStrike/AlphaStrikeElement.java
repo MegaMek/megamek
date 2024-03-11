@@ -74,7 +74,7 @@ public class AlphaStrikeElement implements Serializable, ASCardDisplayable, ASSp
     private String name;
 
     private String chassis;
-    private String model;
+    private String model = "";
     private int mulId = -1;
     private int pointValue;
     private transient CalculationReport conversionReport = new DummyCalculationReport();
@@ -99,7 +99,7 @@ public class AlphaStrikeElement implements Serializable, ASCardDisplayable, ASSp
      * Large Aerospace and large SV use the arcs field instead.
      */
     private ASDamageVector standardDamage = ASDamageVector.ZERO;
-    private int overheat;
+    private int overheat = 0;
 
     // The arcs of Large Aerospace units. Other units use standardDamage instead
     private ASArcSummary frontArc = new ASArcSummary();
@@ -107,31 +107,18 @@ public class AlphaStrikeElement implements Serializable, ASCardDisplayable, ASSp
     private ASArcSummary rightArc = new ASArcSummary();
     private ASArcSummary rearArc = new ASArcSummary();
 
-    private int currentArmor;
-    private int currentStructure;
+    private int currentArmor = 0;
+    private int currentStructure = 1;
     private int threshold = 0;
 
-    private int fullArmor;
-    private int fullStructure;
+    private int fullArmor = 0;
+    private int fullStructure = 1;
 
     /**
      * Battle Armor squad size.
      */
     private int squadSize = 0;
 
-    /**
-     * This covers all SpAs, including the damage values such as SRM2/2.
-     * SpAs not associated with a number, e.g. RCN, have null assigned as Object.
-     * SpAs associated with a number, such as MHQ5 (but not IF2), have an Integer or Double as Object.
-     * SpAs assoicated with one or more damage numbers, such as IF2 or AC2/2/-,
-     * have an ASDamageVector or ASDamage as Object.
-     * TUR has a List<List<Object>> wherein each List<Object> contains a
-     * ASDamageVector as the first item and a Map<BattleForceSPA, ASDamageVector> as the second item.
-     * This represents multiple turrets, each with a standard damage value and SpA damage values.
-     * If TUR is present, none of the objects is null and the outer List must contain one item (one turret)
-     * with standard damage at least.
-     * BIM and LAM have a Map<String, Integer> as Object similar to the element's movement field.
-     */
     private ASSpecialAbilityCollection specialAbilities = new ASSpecialAbilityCollection();
 
     /**

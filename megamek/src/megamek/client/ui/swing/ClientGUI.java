@@ -1990,11 +1990,6 @@ public class ClientGUI extends JPanel implements BoardViewListener,
             // Did the player select a file?
             File unitFile = dlgLoadList.getSelectedFile();
 
-            if (unitFile.toString().endsWith(".mmu")) {
-                new MMUReader().read(unitFile);
-                return;
-            }
-
             try {
                 // Read the units from the file.
                 final Vector<Entity> loadedUnits = new MULParser(unitFile, getClient().getGame().getOptions())

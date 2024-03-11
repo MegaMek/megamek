@@ -55,13 +55,11 @@ public class ASElementDeserializer extends StdDeserializer<AlphaStrikeElement> {
     public AlphaStrikeElement deserialize(JsonParser jp, DeserializationContext ctxt)
             throws IOException {
         JsonNode node = jp.getCodec().readTree(jp);
-
-        AlphaStrikeElement element = null;
-        int skill = 4;
-        if (node.has(SKILL)) {
-            skill = (Integer) node.get("skill").numberValue();
+        if (!node.has(MMUReader.TYPE) || !node.get(MMUReader.TYPE).textValue().equalsIgnoreCase(AS_ELEMENT)) {
+            throw new IllegalArgumentException("ASElementDeserializer: Wrong Deserializer chosen!");
         }
 
+        AlphaStrikeElement element;
         if (node.has(FULL_NAME)) {
             // This is a canon unit and can be converted
             String fullName = node.get(FULL_NAME).textValue();
@@ -70,34 +68,34 @@ public class ASElementDeserializer extends StdDeserializer<AlphaStrikeElement> {
                 if (unit != null) {
                     Entity entity = new MechFileParser(unit.getSourceFile(), unit.getEntryName()).getEntity();
                     element = ASConverter.convert(entity);
-                    element.setSkill(skill);
+                } else {
+                    throw new IllegalArgumentException("Could not retrieve unit " + fullName + " from cache!");
                 }
             } catch (EntityLoadingException e) {
-                throw new IOException(e);
+                throw new IllegalArgumentException(e);
             }
         } else {
             // This is a non-canon unit; its values are set from the YAML info
+            requireFields(AS_ELEMENT, node, CHASSIS, SIZE, STRUCTURE, AS_TYPE, MOVE);
             element = new AlphaStrikeElement();
             element.setChassis(node.get(CHASSIS).textValue());
             if (node.has(MODEL)) {
                 element.setModel(node.get(MODEL).textValue());
-            } else {
-                element.setModel("");
             }
             element.setName((element.getChassis() + " " + element.getModel()).trim());
-            element.setSkill(skill);
-            element.setSize((Integer) node.get(SIZE).numberValue());
-            element.setFullArmor((Integer) node.get(ARMOR).numberValue());
-            element.setCurrentArmor(element.getFullArmor());
-            element.setFullStructure((Integer) node.get(STRUCTURE).numberValue());
+            element.setSize(node.get(SIZE).intValue());
+            if (node.has(ARMOR)) {
+                element.setFullArmor(node.get(ARMOR).intValue());
+                element.setCurrentArmor(element.getFullArmor());
+            }
+            element.setFullStructure(node.get(STRUCTURE).intValue());
             element.setCurrentStructure(element.getFullStructure());
             element.setType(ASUnitType.valueOf(node.get(AS_TYPE).textValue()));
-            element.setOverheat(node.has(OVERHEAT) ? (Integer) node.get(OVERHEAT).numberValue() : 0);
+            element.setOverheat(node.has(OVERHEAT) ? node.get(OVERHEAT).intValue() : 0);
             if (node.has(DAMAGE)) {
                 element.setStandardDamage(ASDamageVector.parse(node.get(DAMAGE).textValue()));
             }
-            element.setMovement(parseMovement(node));
-            element.setPrimaryMovementMode(parsePrimaryMoveMode(node));
+            parseMovement(node, element);
 
             if (node.has(SPECIALS)) {
                 String specials = node.get(SPECIALS).textValue();
@@ -112,6 +110,7 @@ public class ASElementDeserializer extends StdDeserializer<AlphaStrikeElement> {
                 }
                 readSpecials(element.getSpecialAbilities(), noTurret);
                 if (!turret.isBlank()) {
+                    element.getSpecialAbilities().replaceSUA(BattleForceSUA.TUR, new ASTurretSummary());
                     readSpecials(element.getTUR(), turret);
                 }
             }
@@ -139,6 +138,7 @@ public class ASElementDeserializer extends StdDeserializer<AlphaStrikeElement> {
                 element.setSquadSize((Integer) node.get(SQUADSIZE).numberValue());
             }
         }
+        element.setSkill(node.has(SKILL) ? node.get(SKILL).intValue() : 4);
         ASConverter.updateCalculatedValues(element);
 
         // Transient values:
@@ -157,24 +157,16 @@ public class ASElementDeserializer extends StdDeserializer<AlphaStrikeElement> {
     }
 
     /** It is assumed that the primary movement mode is the first listed mode */
-    private String parsePrimaryMoveMode(JsonNode node) {
-        String movement = node.get(MOVE).textValue();
-        String[] modes = movement.split("/");
-        if (modes.length > 0) {
-            for (String mode : movementModes) {
-                if (modes[0].endsWith(mode)) {
-                    return mode;
-                }
-            }
-        }
-        return "";
-    }
-
-    private Map<String, Integer> parseMovement(JsonNode node) {
+    private void parseMovement(JsonNode node, AlphaStrikeElement element) {
         Map<String, Integer> moves = new HashMap<>();
         String movement = node.get(MOVE).textValue();
-        String[] modes = movement.split("/");
-        for (String modeText : modes) {
+        String[] parsedModes = movement.split("/");
+        for (String mode : movementModes) {
+            if (parsedModes[0].endsWith(mode)) {
+                element.setPrimaryMovementMode(mode);
+            }
+        }
+        for (String modeText : parsedModes) {
             String currentMode = "";
             for (String mode : movementModes) {
                 if (modeText.endsWith(mode)) {
@@ -186,17 +178,17 @@ public class ASElementDeserializer extends StdDeserializer<AlphaStrikeElement> {
             int currentMove = Integer.parseInt(modeText);
             moves.put(currentMode, currentMove);
         }
-        return moves;
+        element.setMovement(moves);
     }
 
-    private void readSpecials(ASSpecialAbilityCollection collection, String specials) {
+    public static void readSpecials(ASSpecialAbilityCollection collection, String specials) {
         Map<BattleForceSUA, Object> parsedSpecials = parseSpecials(specials);
         for (Map.Entry<BattleForceSUA, Object> entry : parsedSpecials.entrySet()) {
             collection.replaceSUA(entry.getKey(), entry.getValue());
         }
     }
 
-    private Map<BattleForceSUA, Object> parseSpecials(String specials) {
+    public static Map<BattleForceSUA, Object> parseSpecials(String specials) {
         if (specials.isBlank()) {
             return Collections.emptyMap();
         }
@@ -204,7 +196,7 @@ public class ASElementDeserializer extends StdDeserializer<AlphaStrikeElement> {
         specials = specials.replaceAll(" ", ""); // remove empty spaces
         String[] separatedSpecials = specials.split(",");
         for (String special : separatedSpecials) {
-            result.putAll(BattleForceSUA.parseFull(special));
+            result.putAll(BattleForceSUA.parseAlphaStrikeFull(special));
         }
         result.remove(BattleForceSUA.UNKNOWN);
         return result;

@@ -40,6 +40,7 @@ public class SBFUnitSerializer extends StdSerializer<SBFUnit> {
     static final String SBF_TYPE = "sbftype";
     static final String ELEMENTS = "elements";
     static final String PV = "pv";
+    static final String TMM = "tmm";
 
     public SBFUnitSerializer() {
         this(null);
@@ -54,26 +55,42 @@ public class SBFUnitSerializer extends StdSerializer<SBFUnit> {
             throws IOException {
 
         boolean hasElements = !unit.getElements().isEmpty();
+        boolean writeFullStats = MMUWriter.Views.FullStats.class.equals(provider.getActiveView());
 
         jgen.writeStartObject();
         jgen.writeStringField(TYPE, SBF_UNIT);
         jgen.writeStringField(GENERAL_NAME, unit.getName());
 
-        if (hasElements) {
-            jgen.writeObjectField(ELEMENTS, unit.getElements());
-        } else {
+        if (!hasElements || writeFullStats) {
             if (unit.getSkill() != 4) {
                 jgen.writeNumberField(SKILL, unit.getSkill());
             }
             jgen.writeStringField(SBF_TYPE, unit.getType().name());
             jgen.writeNumberField(SIZE, unit.getSize());
-            jgen.writeStringField(MOVE, unit.getMovement() + unit.getMovementCode());
-            jgen.writeNumberField(JUMP, unit.getJumpMove());
-            jgen.writeStringField(TRSP_MOVE, unit.getTrspMovement() + unit.getTrspMovementCode());
-            jgen.writeObjectField(DAMAGE, unit.getDamage());
+            jgen.writeNumberField(TMM, unit.getTmm());
+            // Separating move and mode because the move code is ambiguous and it is unclear to me
+            // if the rules require the exact mode to be known, e.g. if SUBMARINE, MEK_UMU or BA_UMU must be distinct
+            jgen.writeNumberField(MOVE, unit.getMovement());
+            jgen.writeObjectField(MOVE_MODE, unit.getMovementMode());
+            if (unit.getMovement() != unit.getTrspMovement()) {
+                jgen.writeNumberField(TRSP_MOVE, unit.getTrspMovement());
+            }
+            if (unit.getTrspMovementMode() != unit.getTrspMovementMode()) {
+                jgen.writeObjectField(TRSP_MOVE_MODE, unit.getTrspMovementMode());
+            }
+            if (unit.getJumpMove() != 0) {
+                jgen.writeNumberField(JUMP, unit.getJumpMove());
+            }
+            if (unit.getDamage().hasDamage()) {
+                jgen.writeObjectField(DAMAGE, unit.getDamage());
+            }
             jgen.writeNumberField(ARMOR, unit.getArmor());
             jgen.writeStringField(SPECIALS, unit.getSpecialAbilities().getSpecialsDisplayString(unit));
             jgen.writeNumberField(PV, unit.getPointValue());
+        }
+
+        if (hasElements) {
+            jgen.writeObjectField(ELEMENTS, unit.getElements());
         }
 
         //TODO damage

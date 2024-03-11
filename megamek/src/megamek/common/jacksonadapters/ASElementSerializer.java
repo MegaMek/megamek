@@ -55,16 +55,19 @@ public class ASElementSerializer extends StdSerializer<ASCardDisplayable> {
     //TODO: add comments
     //+ add copyrights
     //+ test mixture of ASE and SBF
-    //TODO: load SBFunit from numbers
+    //+ load SBFunit from numbers
     //TODO: write example files
     //+ ser ASE with arcs, test aero
     //+ deser ASE with arcs
     //+ ASE with arcs toString
-    //TODO: add YAML include:
-    //TODO: error dealing?
+    //+ add include:
+    //+ error dealing? IllegalArgument!
     //TODO: Add force to converted ASE/SBFU/SBFF
     //TODO: damage in SBFU / SBFF
     //TODO: crits in ASE
+    //+ validate parsing
+    //+ write full stats ability
+    //TODO and how to ignore damage when reading?
 
     static final String FULL_NAME = "fullname";
     static final String AS_TYPE = "astype";
@@ -90,11 +93,12 @@ public class ASElementSerializer extends StdSerializer<ASCardDisplayable> {
 
         String fullName = (element.getFullChassis() + " " + element.getModel()).trim();
         MechSummary unit = MechSummaryCache.getInstance().getMech(fullName);
-        boolean isCanon = (unit != null) && unit.isCanon();
+        boolean writeCacheLink = (unit != null) && unit.isCanon();
+        writeCacheLink &= !MMUWriter.Views.FullStats.class.equals(provider.getActiveView());
 
         jgen.writeStartObject();
         jgen.writeStringField(TYPE, AS_ELEMENT);
-        if (isCanon) {
+        if (writeCacheLink) {
             jgen.writeStringField(FULL_NAME, fullName);
         } else {
             jgen.writeStringField(CHASSIS, element.getFullChassis());
@@ -109,7 +113,7 @@ public class ASElementSerializer extends StdSerializer<ASCardDisplayable> {
             jgen.writeNumberField(SKILL, element.getSkill());
         }
 
-        if (!isCanon) {
+        if (!writeCacheLink) {
             jgen.writeStringField(AS_TYPE, element.getASUnitType().name());
             jgen.writeNumberField(SIZE, element.getSize());
             if (element.getRole() != UnitRole.UNDETERMINED) {
@@ -134,7 +138,9 @@ public class ASElementSerializer extends StdSerializer<ASCardDisplayable> {
             }
             jgen.writeNumberField(ARMOR, element.getFullArmor());
             jgen.writeNumberField(STRUCTURE, element.getFullStructure());
-            jgen.writeStringField(SPECIALS, element.getSpecialAbilities().getSpecialsDisplayString(element));
+            if (!element.getSpecialAbilities().getSpecialsDisplayString(element).isBlank()) {
+                jgen.writeStringField(SPECIALS, element.getSpecialAbilities().getSpecialsDisplayString(element));
+            }
             if (element.isBattleArmor()) {
                 jgen.writeNumberField(SQUADSIZE, element.getSquadSize());
             }

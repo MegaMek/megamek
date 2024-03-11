@@ -57,7 +57,7 @@ public enum BattleForceSUA {
     ;
     
     private static final EnumMap<BattleForceSUA, BattleForceSUA> transportBayDoors = new EnumMap<>(BattleForceSUA.class);
-    private static final String[] sortedNames = new String[values().length];
+    private static final String[] AS_SUA_SORTED;
 
     static {
         transportBayDoors.put(AT, ATxD);
@@ -71,10 +71,12 @@ public enum BattleForceSUA {
         transportBayDoors.put(VTS, VTSxD);
         // The sortedNames array holds all SUA names ("BOMB", "AECM", "IF" etc.) in order of descending length
         // This is used for parsing an SUA from a string such as "JMPS2" where JMP would also match the text start
-        for (int i = 0; i < values().length; i++) {
-            sortedNames[i] = values()[i].name();
-        }
-        Arrays.sort(sortedNames, Comparator.comparingInt(String::length).reversed());
+
+        AS_SUA_SORTED = Arrays.stream(values())
+                .filter(sua -> !sua.isAnyOf(AC3, COM, SBF_OMNI))
+                .map(BattleForceSUA::name)
+                .sorted(Comparator.comparingInt(String::length).reversed())
+                .toArray(String[]::new);
     }
 
     /** @return True when this SUA is an ability that may be associated with a Door value (not IT and DT!). */
@@ -164,24 +166,16 @@ public enum BattleForceSUA {
     }
 
     /**
-     * Tries to parse the given text to the appropriate SUA. The text may include a number or other info
-     * belonging to the SUA like "IF2" or "SRM2/2". A "TUR(...)" ability will return TUR. The number or
-     * other info is not checked for validity. Returns UNKNOWN if the text cannot be parsed.
+     * Tries to parse the given text for a single SUA (not a list) with its additional information,
+     * e.g. "ECM", "SRM2/2", "ARTAIS-2" or "AT34D2". Returns a map of found SUAs linking to their
+     * value, if any, such as 2/2, 0* or 3.158. Typically the map will contain exactly one SUA.
+     * In some cases, e.g. transport SUAs, the map may have two SUAs, namely the transport (AT) and the
+     * door count (ATxD). If the SUA cannot be parsed entirely, the returned map is empty.
      *
-     * @param asText The text to translate to a BattleForceSUA
-     * @return The BattleForceSUA represented by the given text or UNKNOWN
+     * @param special The text for a single SUA as formatted on the card
+     * @return The SUA(s) and their value, if any; an empty map when an error occurs during parsing
      */
-    public static BattleForceSUA parse(String asText) {
-        if (asText != null) {
-            final String upperCaseText = asText.toUpperCase();
-            String match = Arrays.stream(sortedNames).filter(upperCaseText::startsWith).findAny().orElse("UNKNOWN");
-            return valueOf(match);
-        } else {
-            return UNKNOWN;
-        }
-    }
-
-    public static Map<BattleForceSUA, Object> parseFull(@Nullable String special) {
+    public static Map<BattleForceSUA, Object> parseAlphaStrikeFull(@Nullable String special) {
         if (StringUtility.isNullOrBlank(special)) {
             return Collections.emptyMap();
         }
@@ -199,34 +193,63 @@ public enum BattleForceSUA {
                 // This SUA, e.g. CT54-D2 may include a door value that must be separated
                 if (remainder.contains("-D")) {
                     String[] parts = remainder.split("-D");
-                    result.put(sua, parseSUAObject(parts[0], sua));
+                    result.put(sua, parseSUAObject(parts[0]));
                     BattleForceSUA door = sua.getDoor();
-                    result.put(door, parseSUAObject(parts[1], door));
+                    result.put(door, parseSUAObject(parts[1]));
                 } else {
-                    result.put(sua, parseSUAObject(remainder, sua));
+                    result.put(sua, parseSUAObject(remainder));
                 }
 
             } else if (sua.isArtillery()) {
                 // Artillery uses a "-" between SUA and number, must avoid parsing this as a negative
                 if (remainder.contains("-")) {
                     String[] parts = remainder.split("-");
-                    result.put(sua, parseSUAObject(parts[1], sua));
+                    result.put(sua, parseSUAObject(parts[1]));
                 }
 
             } else if (sua == IF) {
                 // IF requires an ASDamage, but a damage like 5 will be converted to an Integer
-                Object suaObject = parseSUAObject(remainder, sua);
+                Object suaObject = parseSUAObject(remainder);
                 if (suaObject instanceof Integer) {
                     result.put(IF, new ASDamage((Integer) suaObject, false));
                 }
+
             } else {
-                result.put(sua, parseSUAObject(remainder, sua));
+                result.put(sua, parseSUAObject(remainder));
             }
         }
         return result;
     }
 
-    private static Object parseSUAObject(String asText, BattleForceSUA sua) {
+    /**
+     * Tries to parse the given text to the appropriate SUA. The text may include a number or other info
+     * belonging to the SUA like "IF2" or "SRM2/2". A "TUR(...)" ability will return TUR. The number or
+     * other info is not checked for validity. Returns UNKNOWN if the text cannot be parsed. The
+     * text is changed to uppercase, so the parse is case-insensitive. The SUA code must be beginning
+     * of the given text and the text is not trimmed.
+     *
+     * @param asText The text to translate to a BattleForceSUA
+     * @return The BattleForceSUA represented by the given text or UNKNOWN
+     */
+    private static BattleForceSUA parse(String asText) {
+        if (asText != null) {
+            final String upperCaseText = asText.toUpperCase();
+            String match = Arrays.stream(AS_SUA_SORTED).filter(upperCaseText::startsWith).findAny().orElse("UNKNOWN");
+            return valueOf(match);
+        } else {
+            return UNKNOWN;
+        }
+    }
+
+    /**
+     * Tries to parse the given text to an object info belonging to an SUA, if possible.
+     * Text with "/" will be converted to an ASDamageVector, text with "." will be converted to Double,
+     * "0*" to ASDamage and other integers to Integer.
+     *
+     * @param asText The text to translate to a SUA info
+     * @return The text converted to ASDamageVector, Double, ASDamage or Integer
+     */
+    private static Object parseSUAObject(String asText) {
         if (asText.isBlank()) {
             return null;
         } else if (asText.contains("/")) {

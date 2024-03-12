@@ -3199,7 +3199,7 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.name = "Anti-Missile System Ammo [IS]";
-        ammo.shortName = "AMS";
+        ammo.shortName = "AMS Ammo";
         ammo.setInternalName("ISAMS Ammo");
         ammo.addLookupName("IS Ammo AMS");
         ammo.addLookupName("IS AMS Ammo");
@@ -3222,7 +3222,7 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.name = "Anti-Missile System Ammo [Clan]";
-        ammo.shortName = "AMS";
+        ammo.shortName = "AMS Ammo";
         ammo.setInternalName("CLAMS Ammo");
         ammo.addLookupName("Clan Ammo AMS");
         ammo.addLookupName("Clan AMS Ammo");

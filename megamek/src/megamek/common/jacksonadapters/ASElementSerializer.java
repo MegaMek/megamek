@@ -34,39 +34,19 @@ import java.io.IOException;
 /**
  * This Jackson serializer writes AlphaStrikeElements to YAML output.
  *
- * <P>When the unit is canon (found in the
- * MechSummaryCache and marked as canon), then the full name (chassis+model) is written in
- * addition to the unit type (ASElement); for deserialization, the unit is re-converted from the TW Entity.</P>
+ * When the unit is canon (found in the MechSummaryCache and marked as canon), then the full name
+ * (chassis+model) is written in addition to the unit type (ASElement); for deserialization, the unit is
+ * re-converted from the TW Entity.
  *
- * <P>For a non-canon unit, the chassis, model and AS values are written as far as needed to reconstruct the unit
+ * For a non-canon unit, the chassis, model and AS values are written as far as needed to reconstruct the unit
  * without the cache (this does not include TMM, Threshold and PV which can be calculated from the other
- * AS values).</P>
+ * AS values).
  *
- * <P>The pilot skill is written unless it is 4. When the skill is missing, deserialization assumes 4.</P>
+ * The pilot skill is written unless it is 4. When the skill is missing, deserialization assumes 4.
  *
- * <P>In addition, any transients like damage, crits and position are written if present (2024: only partly
- * implemented).</P>
+ * In addition, any transients like damage are written if present (2024: only partially implemented).
  */
 public class ASElementSerializer extends StdSerializer<ASCardDisplayable> {
-
-    //+ add constants
-    //TODO: add comments
-    //+ add copyrights
-    //+ test mixture of ASE and SBF
-    //+ load SBFunit from numbers
-    //TODO: write example files
-    //+ ser ASE with arcs, test aero
-    //+ deser ASE with arcs
-    //+ ASE with arcs toString
-    //+ add include:
-    //+ error dealing? IllegalArgument!
-    //TODO: Add force to converted ASE/SBFU/SBFF
-    //TODO: damage in SBFU / SBFF
-    //TODO: crits in ASE
-    //+ validate parsing
-    //+ write full stats ability
-    //TODO and how to ignore damage when reading?
-    //TODO add id
 
     static final String FULL_NAME = "fullname";
     static final String AS_TYPE = "astype";

@@ -21,20 +21,19 @@ package megamek.common.jacksonadapters;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
+import megamek.common.Entity;
 import megamek.common.strategicBattleSystems.SBFFormation;
 
 import java.io.IOException;
 
 import static megamek.common.jacksonadapters.MMUReader.*;
-import static megamek.common.jacksonadapters.MMUReader.SPECIALS;
 import static megamek.common.jacksonadapters.SBFUnitSerializer.*;
 
 /**
  * This Jackson serializer writes an SBF Formation to YAML output. Since the base values can be calculated from the
- * stats of the SBF formations, only the formations are written.
+ * stats of the SBF units, only the units are written unless the "FullStats" View is used (see {@link MMUWriter}.
  *
- * <P>In addition, any transients like damage, crits and position are written if present (2024: only partly
- * implemented).</P>
+ * In addition, any transients like damage are written if present (2024: only partially implemented).
  */
 public class SBFFormationSerializer extends StdSerializer<SBFFormation> {
 
@@ -60,6 +59,9 @@ public class SBFFormationSerializer extends StdSerializer<SBFFormation> {
         jgen.writeStringField(MMUReader.GENERAL_NAME, formation.getName());
         if (!formation.specificName().isBlank()) {
             jgen.writeStringField(MMUReader.SPECIFIC_NAME, formation.specificName());
+        }
+        if (formation.getId() != Entity.NONE) {
+            jgen.writeNumberField(ID, formation.getId());
         }
         if (writeFullStats) {
             if (formation.getSkill() != 4) {

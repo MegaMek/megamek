@@ -31,6 +31,11 @@ import java.io.IOException;
 import static megamek.common.jacksonadapters.MMUReader.*;
 import static megamek.common.jacksonadapters.SBFFormationSerializer.UNITS;
 
+/**
+ * This Jackson deserializer reads an SBFFormation from an MMU file. As a formation must have its units
+ * fully listed and the stats can then be converted, any given stats in the MMU file are (currently)
+ * ignored.
+ */
 public class SBFFormationDeserializer extends StdDeserializer<SBFFormation> {
 
     public SBFFormationDeserializer() {

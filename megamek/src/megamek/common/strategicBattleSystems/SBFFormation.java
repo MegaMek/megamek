@@ -23,7 +23,9 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.client.ui.swing.calculationReport.DummyCalculationReport;
+import megamek.common.Entity;
 import megamek.common.ForceAssignable;
+import megamek.common.Player;
 import megamek.common.alphaStrike.ASDamageVector;
 import megamek.common.alphaStrike.ASSpecialAbilityCollection;
 import megamek.common.alphaStrike.ASSpecialAbilityCollector;
@@ -68,8 +70,8 @@ public class SBFFormation implements ASSpecialAbilityCollector, BattleForceSUAFo
 
     private String forceString = "";
     private int forceId = Force.NO_FORCE;
-    private int id;
-    private int ownerId;
+    private int id = Entity.NONE;
+    private int ownerId = Player.PLAYER_NONE;
 
 
     public String getName() {

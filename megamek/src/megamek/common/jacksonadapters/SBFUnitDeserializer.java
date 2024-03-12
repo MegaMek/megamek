@@ -22,7 +22,6 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
-import com.fasterxml.jackson.dataformat.yaml.JacksonYAMLParseException;
 import megamek.client.ui.swing.calculationReport.DummyCalculationReport;
 import megamek.common.BTObject;
 import megamek.common.alphaStrike.ASDamageVector;
@@ -35,11 +34,16 @@ import megamek.common.strategicBattleSystems.SBFUnitConverter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import static megamek.common.jacksonadapters.MMUReader.*;
 import static megamek.common.jacksonadapters.SBFUnitSerializer.*;
 
+/**
+ * This Jackson deserializer reads an SBF Unit (part of a formation) from an MMU file. When the MMU file
+ * lists the elements, these will be taken and converted to the SBFUnit (and any transients like damage
+ * applied). When the MMU file doesnt list the elements, it must have the stats; then the SBFUnit will
+ * be constructed without the elements.
+ */
 public class SBFUnitDeserializer extends StdDeserializer<SBFUnit> {
 
     public SBFUnitDeserializer() {
@@ -70,7 +74,7 @@ public class SBFUnitDeserializer extends StdDeserializer<SBFUnit> {
 
             if (node.has(ELEMENTS)) {
                 // When the elements are given, read them and convert
-                List<BTObject> elementsO = new MMUReader().read(node.get(ELEMENTS));
+                List<Object> elementsO = new MMUReader().read(node.get(ELEMENTS));
                 if (elementsO.stream().anyMatch(o -> !(o instanceof AlphaStrikeElement))) {
                     //ERROR - how?
                     throw new IllegalArgumentException("SBFUnits may only contain Alpha Strike Elements!");

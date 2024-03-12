@@ -38,6 +38,11 @@ import java.util.regex.Pattern;
 import static megamek.common.jacksonadapters.ASElementSerializer.*;
 import static megamek.common.jacksonadapters.MMUReader.*;
 
+/**
+ * This Jackson deserializer reads an AlphaStrikeElement from an MMU file. When the MMU file
+ * has the "fullname:" field, the unit is assumed to be canon and converted from the cache.
+ * Otherwise, the MMU file must list the stats; then the element will be constructed from the stats.
+ */
 public class ASElementDeserializer extends StdDeserializer<AlphaStrikeElement> {
 
     private static final List<String> movementModes = List.of("qt", "qw", "t", "w",

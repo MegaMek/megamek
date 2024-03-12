@@ -22,7 +22,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import megamek.common.BTObject;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.strategicBattleSystems.SBFFormation;
 import megamek.common.strategicBattleSystems.SBFUnit;
@@ -34,7 +33,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
-public class MMUReader {
+/**
+ * This class has methods for reading objects such as SBF Formations, Units and AlphaStrikeElements
+ * from a MMU file which uses YAML formatting.
+ */
+public final class MMUReader {
 
     static final String TYPE = "type";
     static final String SBF_FORMATION = "SBFFormation";
@@ -60,18 +63,31 @@ public class MMUReader {
     static final String INCLUDE = "include";
     static final String ID = "id";
 
-    static final ObjectMapper yamlMapper =
+    private static final ObjectMapper yamlMapper =
             new ObjectMapper(new YAMLFactory());
 
-    // This is currently only for testing purposes with a file format for AS and SBF units
-    public List<BTObject> read(File file) throws IOException {
+    /**
+     * Read a list of objects from a given MMU file (YAML format, see {@link MMUWriter}. The list can be empty
+     * or contain one or multiple results. If reading any part of the file fails, an exception is thrown.
+     *
+     * @param file The MMU file to read
+     * @return A list of objects (AlphaStrikeElements, SBFUnits...) contained in the MMU file
+     * @throws IOException When a read error occurs
+     */
+    public List<Object> read(File file) throws IOException {
         JsonNode node = yamlMapper.readTree(file);
-        List<BTObject> list = read(node);
         return read(node);
     }
 
-    public List<BTObject> read(JsonNode node) throws IOException {
-        List<BTObject> result = new ArrayList<>();
+    /**
+     * Read a list of objects from a Jackson JsonNode. Internally used to parse nested objects.
+     *
+     * @param node The node to parse
+     * @return A list of objects (AlphaStrikeElements, SBFUnits...) contained in the node
+     * @throws IOException When a read error occurs
+     */
+    List<Object> read(JsonNode node) throws IOException {
+        List<Object> result = new ArrayList<>();
         if (node.isArray()) {
             for (Iterator<JsonNode> it = node.elements(); it.hasNext(); ) {
                 JsonNode arrayNode = it.next();
@@ -83,7 +99,7 @@ public class MMUReader {
         return result;
     }
 
-    private Optional<BTObject> parseNode(JsonNode node) throws IOException {
+    private Optional<Object> parseNode(JsonNode node) throws IOException {
         if (node.has(INCLUDE)) {
             node = yamlMapper.readTree(new File(node.get(INCLUDE).textValue()));
             if (node.isArray()) {

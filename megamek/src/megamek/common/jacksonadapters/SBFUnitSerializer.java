@@ -33,7 +33,7 @@ import static megamek.common.jacksonadapters.MMUReader.*;
  * stats as those can be calculated from the elements. If it does not know its elements (In Battle for Tukayyid,
  * there are example SBF Units that have stats without listing their ASE), the stats are written instead.
  *
- * <P>In addition, any transients like damage are written if present (2024: only partly implemented).</P>
+ * In addition, any transients like damage are written if present (2024: only partially implemented).
  */
 public class SBFUnitSerializer extends StdSerializer<SBFUnit> {
 

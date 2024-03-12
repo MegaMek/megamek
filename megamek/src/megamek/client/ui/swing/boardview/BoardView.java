@@ -6104,45 +6104,27 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
             font_elev = FONT_7;
             font_hexnum = FONT_7;
             font_minefield = FONT_7;
-            return;
-        }
-
-        if ((zoomIndex < 8)) {
+        } else if ((zoomIndex < 8)) {
             font_elev = FONT_10;
             font_hexnum = FONT_10;
             font_minefield = FONT_10;
-            return;
-        }
-
-        if ((zoomIndex < 10)) {
+        } else if ((zoomIndex < 10)) {
             font_elev = FONT_12;
             font_hexnum = FONT_12;
             font_minefield = FONT_12;
-            return;
-        }
-
-        if ((zoomIndex < 11)) {
+        } else if ((zoomIndex < 11)) {
             font_elev = FONT_14;
             font_hexnum = FONT_14;
             font_minefield = FONT_14;
-            return;
-        }
-
-        if (zoomIndex < 12) {
+        } else if (zoomIndex < 12) {
             font_elev = FONT_16;
             font_hexnum = FONT_16;
             font_minefield = FONT_16;
-            return;
-        }
-
-        if (zoomIndex < 13) {
+        } else if (zoomIndex < 13) {
             font_elev = FONT_18;
             font_hexnum = FONT_18;
             font_minefield = FONT_18;;
-            return;
-        }
-
-        if (zoomIndex < ZOOM_FACTORS.length) {
+        } else {
             font_elev = FONT_24;
             font_hexnum = FONT_24;
             font_minefield = FONT_24;;

@@ -391,12 +391,6 @@ public class ASStatsTablePanel implements ActionListener {
                     }
                 }
             }
-
-            try {
-                MMUWriter.writeMMUFile(new File("aselements.mmu"), elements);
-            } catch (IOException ignored) {
-                // ignored, this is just for testing
-            }
         }
     }
 

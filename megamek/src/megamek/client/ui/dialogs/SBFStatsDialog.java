@@ -28,18 +28,23 @@ import megamek.client.ui.swing.util.UIUtil;
 import megamek.codeUtilities.StringUtility;
 import megamek.common.Game;
 import megamek.common.force.Force;
+import megamek.common.jacksonadapters.MMUWriter;
 import megamek.common.strategicBattleSystems.SBFFormation;
 import megamek.common.strategicBattleSystems.SBFFormationConverter;
 import megamek.common.strategicBattleSystems.SBFRecordSheetBook;
 import megamek.common.strategicBattleSystems.SBFUnit;
 
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
+import java.io.File;
+import java.io.IOException;
 import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 import java.util.Vector;
 import java.util.stream.Collectors;
@@ -54,9 +59,10 @@ public class SBFStatsDialog extends AbstractDialog {
 
     private final Collection<Force> forceList;
     private final Game game;
-    private Collection<SBFFormation> formations;
+    private List<SBFFormation> formations;
     private final MMToggleButton elementsToggle = new MMToggleButton(Messages.getString("SBFStatsDialog.showElements"));
     private final JButton clipBoardButton = new JButton(Messages.getString("SBFStatsDialog.copy"));
+    private final JButton saveButton = new JButton(Messages.getString("Save.text"));
     private final JButton printButton = new JButton(Messages.getString("SBFStatsDialog.print"));
     private final JLabel headerFontLabel = new JLabel(Messages.getString("SBFStatsDialog.headerFont"));
     private JComboBox<String> headerFontChooser;
@@ -92,6 +98,7 @@ public class SBFStatsDialog extends AbstractDialog {
         optionsPanel.add(Box.createHorizontalStrut(25));
         optionsPanel.add(elementsToggle);
         optionsPanel.add(clipBoardButton);
+        optionsPanel.add(saveButton);
 
         headerFontChooser = new JComboBox<>(new Vector<>(FontHandler.getAvailableNonSymbolFonts()));
         headerFontChooser.addItem("");
@@ -116,6 +123,8 @@ public class SBFStatsDialog extends AbstractDialog {
         elementsToggle.setFont(UIUtil.getScaledFont());
         clipBoardButton.addActionListener(e -> copyToClipboard());
         clipBoardButton.setFont(UIUtil.getScaledFont());
+        saveButton.addActionListener(e -> save());
+        saveButton.setFont(UIUtil.getScaledFont());
         printButton.addActionListener(e -> printRecordSheets());
         printButton.setFont(UIUtil.getScaledFont());
         headerFontLabel.setFont(UIUtil.getScaledFont());
@@ -175,6 +184,29 @@ public class SBFStatsDialog extends AbstractDialog {
         StringSelection stringSelection = new StringSelection(clipboardString(formations));
         Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
         clipboard.setContents(stringSelection, null);
+    }
+
+    private void save() {
+        if (formations.isEmpty()) {
+            return;
+        }
+        var fileChooser = new JFileChooser(".");
+        fileChooser.setDialogTitle(Messages.getString("Save.text"));
+        fileChooser.setFileFilter(new FileNameExtensionFilter("MUL files", "mmu"));
+        fileChooser.setSelectedFile(new File(formations.get(0).generalName() + ".mmu"));
+        int returnVal = fileChooser.showSaveDialog(getParent());
+        if ((returnVal != JFileChooser.APPROVE_OPTION) || (fileChooser.getSelectedFile() == null)) {
+            return;
+        }
+
+        File unitFile = fileChooser.getSelectedFile();
+
+        try {
+            MMUWriter.writeMMUFile(unitFile, formations);
+        } catch (IOException | IllegalArgumentException e) {
+            JOptionPane.showMessageDialog(getParent(), "The MMU file could not be written. "
+                    + e.getMessage());
+        }
     }
 
     private String clipboardString(Collection<SBFFormation> formations) {

@@ -78,22 +78,10 @@ public final class SBFFormationConverter {
             }
             SBFUnit convertedUnit = new SBFUnitConverter(thisUnit, subforce.getName(), thisUnitBaseSkill, report).createSbfUnit();
             formation.addUnit(convertedUnit);
-
-            try {
-                MMUWriter.writeMMUFileFullStats(new File(convertedUnit.getName() + ".mmu"), convertedUnit);
-            } catch (IOException ignored) {
-                // ignore, this is just for testing
-            }
         }
         formation.setName(force.getName());
         calcSbfFormationStats();
         formation.setConversionReport(report);
-
-        try {
-            MMUWriter.writeMMUFileFullStats(new File(force.getName() + ".mmu"), formation);
-        } catch (IOException ignored) {
-            // ignore, this is just for testing
-        }
         return formation;
     }
 

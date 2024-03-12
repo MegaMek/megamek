@@ -90,7 +90,7 @@ public class SBFUnitSerializer extends StdSerializer<SBFUnit> {
         }
 
         if (hasElements) {
-            jgen.writeObjectField(ELEMENTS, unit.getElements());
+            provider.defaultSerializeField(ELEMENTS, unit.getElements(), jgen);
         }
 
         //TODO damage

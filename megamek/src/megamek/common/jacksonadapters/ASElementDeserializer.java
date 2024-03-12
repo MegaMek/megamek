@@ -159,24 +159,29 @@ public class ASElementDeserializer extends StdDeserializer<AlphaStrikeElement> {
     /** It is assumed that the primary movement mode is the first listed mode */
     private void parseMovement(JsonNode node, AlphaStrikeElement element) {
         Map<String, Integer> moves = new HashMap<>();
-        String movement = node.get(MOVE).textValue();
-        String[] parsedModes = movement.split("/");
-        for (String mode : movementModes) {
-            if (parsedModes[0].endsWith(mode)) {
-                element.setPrimaryMovementMode(mode);
-            }
-        }
-        for (String modeText : parsedModes) {
-            String currentMode = "";
+        if (node.get(MOVE).isInt()) {
+            moves.put("", node.get(MOVE).intValue());
+
+        } else {
+            String movement = node.get(MOVE).textValue();
+            String[] parsedModes = movement.split("/");
             for (String mode : movementModes) {
-                if (modeText.endsWith(mode)) {
-                    currentMode = mode;
-                    modeText = modeText.replaceFirst(mode, "");
-                    break;
+                if (parsedModes[0].endsWith(mode)) {
+                    element.setPrimaryMovementMode(mode);
                 }
             }
-            int currentMove = Integer.parseInt(modeText);
-            moves.put(currentMode, currentMove);
+            for (String modeText : parsedModes) {
+                String currentMode = "";
+                for (String mode : movementModes) {
+                    if (modeText.endsWith(mode)) {
+                        currentMode = mode;
+                        modeText = modeText.replaceFirst(mode, "");
+                        break;
+                    }
+                }
+                int currentMove = Integer.parseInt(modeText);
+                moves.put(currentMode, currentMove);
+            }
         }
         element.setMovement(moves);
     }

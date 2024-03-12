@@ -23,9 +23,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.client.ui.swing.calculationReport.DummyCalculationReport;
-import megamek.common.EntityFluff;
-import megamek.common.ForceAssignable;
-import megamek.common.UnitRole;
+import megamek.common.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.force.Force;
 import megamek.common.jacksonadapters.ASElementDeserializer;
@@ -81,8 +79,8 @@ public class AlphaStrikeElement implements Serializable, ASCardDisplayable, ASSp
 
     private String forceString = "";
     private int forceId = Force.NO_FORCE;
-    private int id;
-    private int ownerId;
+    private int id = Entity.NONE;
+    private int ownerId = Player.PLAYER_NONE;
 
     private EntityFluff fluff = new EntityFluff();
 

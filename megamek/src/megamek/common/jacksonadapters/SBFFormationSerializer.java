@@ -38,7 +38,7 @@ import static megamek.common.jacksonadapters.SBFUnitSerializer.*;
  */
 public class SBFFormationSerializer extends StdSerializer<SBFFormation> {
 
-    static final String UNITS = "formations";
+    static final String UNITS = "units";
     static final String TACTICS = "tactics";
     static final String MORALE = "morale";
 
@@ -88,7 +88,8 @@ public class SBFFormationSerializer extends StdSerializer<SBFFormation> {
             }
             jgen.writeNumberField(PV, formation.getPointValue());
         }
-        jgen.writeObjectField(UNITS, formation.getUnits());
+        provider.defaultSerializeField(UNITS, formation.getUnits(), jgen);
+
         //TODO damage
         jgen.writeEndObject();
     }

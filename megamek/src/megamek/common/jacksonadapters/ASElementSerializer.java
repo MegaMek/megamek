@@ -21,12 +21,10 @@ package megamek.common.jacksonadapters;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
-import megamek.common.ForceAssignable;
-import megamek.common.MechSummary;
-import megamek.common.MechSummaryCache;
-import megamek.common.UnitRole;
+import megamek.common.*;
 import megamek.common.alphaStrike.ASArcSummary;
 import megamek.common.alphaStrike.ASCardDisplayable;
+import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.alphaStrike.AlphaStrikeHelper;
 
 import static megamek.common.jacksonadapters.MMUReader.*;
@@ -68,6 +66,7 @@ public class ASElementSerializer extends StdSerializer<ASCardDisplayable> {
     //+ validate parsing
     //+ write full stats ability
     //TODO and how to ignore damage when reading?
+    //TODO add id
 
     static final String FULL_NAME = "fullname";
     static final String AS_TYPE = "astype";
@@ -98,6 +97,9 @@ public class ASElementSerializer extends StdSerializer<ASCardDisplayable> {
 
         jgen.writeStartObject();
         jgen.writeStringField(TYPE, AS_ELEMENT);
+        if (element instanceof AlphaStrikeElement && ((AlphaStrikeElement) element).getId() != Entity.NONE) {
+            jgen.writeNumberField(ID, ((AlphaStrikeElement) element).getId());
+        }
         if (writeCacheLink) {
             jgen.writeStringField(FULL_NAME, fullName);
         } else {

@@ -21,6 +21,7 @@ package megamek.common.jacksonadapters;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import megamek.common.BTObject;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.strategicBattleSystems.SBFFormation;
@@ -57,12 +58,14 @@ public class MMUReader {
     static final String ARMOR = "armor";
     static final String JUMP = "jump";
     static final String INCLUDE = "include";
+    static final String ID = "id";
 
-    private static final ObjectMapper mapper = MMUWriter.conciseMapper;
+    static final ObjectMapper yamlMapper =
+            new ObjectMapper(new YAMLFactory());
 
     // This is currently only for testing purposes with a file format for AS and SBF units
     public List<BTObject> read(File file) throws IOException {
-        JsonNode node = mapper.readTree(file);
+        JsonNode node = yamlMapper.readTree(file);
         List<BTObject> list = read(node);
         return read(node);
     }
@@ -82,7 +85,7 @@ public class MMUReader {
 
     private Optional<BTObject> parseNode(JsonNode node) throws IOException {
         if (node.has(INCLUDE)) {
-            node = mapper.readTree(new File(node.get(INCLUDE).textValue()));
+            node = yamlMapper.readTree(new File(node.get(INCLUDE).textValue()));
             if (node.isArray()) {
                 throw new IllegalArgumentException("An included MMU file may only contain a single object, not a list!");
             }
@@ -93,11 +96,11 @@ public class MMUReader {
         try {
             switch (node.get(TYPE).textValue()) {
                 case SBF_FORMATION:
-                    return Optional.of(mapper.treeToValue(node, SBFFormation.class));
+                    return Optional.of(yamlMapper.treeToValue(node, SBFFormation.class));
                 case AS_ELEMENT:
-                    return Optional.of(mapper.treeToValue(node, AlphaStrikeElement.class));
+                    return Optional.of(yamlMapper.treeToValue(node, AlphaStrikeElement.class));
                 case SBF_UNIT:
-                    return Optional.of(mapper.treeToValue(node, SBFUnit.class));
+                    return Optional.of(yamlMapper.treeToValue(node, SBFUnit.class));
                 default:
                     return Optional.empty();
             }

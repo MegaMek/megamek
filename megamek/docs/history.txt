@@ -26,6 +26,8 @@ MEGAMEK VERSION HISTORY:
 + Fix #5224: Infantry Firing issue
 + PR #5241: Add test to ensure every unit can load
 + PR #5244: Fixing MML #1452 Allows you to pod mount null signature system. 
++ Fix #5228: The TAG phase will no longer inadvertently reveal hidden units
++ Fix #5206: Prevent an error with the map preview in the lobby
 
 
 

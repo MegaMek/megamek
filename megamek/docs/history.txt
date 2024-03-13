@@ -22,6 +22,11 @@ MEGAMEK VERSION HISTORY:
 + PR #5210: We have added some fonts to the distribution: Exo, Jura, Anta and Bitter. These can be chosen for display and print in various places
 + Fix #5237: Broken Units with recent changes
 + Fix #5243: AMS Ammo Naming issue.
++ Fix #5214: Exception when loading saved game
++ Fix #5224: Infantry Firing issue
++ PR #5241: Add test to ensure every unit can load
++ PR #5244: Fixing MML #1452 Allows you to pod mount null signature system. 
+
 
 
 0.49.18 (2024-02-17 1800 UTC)

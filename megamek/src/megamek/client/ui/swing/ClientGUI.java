@@ -964,7 +964,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                     bv.clearFiringSolutionData();
                 } else {
                     if (curPanel instanceof FiringDisplay) {
-                        ((FiringDisplay) curPanel).setFiringSolutions();
+                        ((FiringDisplay) curPanel).setFiringSolutions(((FiringDisplay) curPanel).ce());
                     }
                 }
                 bv.refreshDisplayables();

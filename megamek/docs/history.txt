@@ -10,7 +10,7 @@ MEGAMEK VERSION HISTORY:
 + Fix #5189: Weapons will no longer think themselves out of ammo when there is ammo left on the unit
 + Fix #5191: Canon units are again recognized
 + Fix #5193: Weapon bays work again at short range in atmosphere
-+ PR #5188: Units on the ground now throw shadows
++ PR #5188, #5246: Units on the ground (except multi-hex units) now throw shadows
 + PR #5156: MML and MM can now process unit fluff images embedded in unit files (see MML Fix #269)
 + PR #5209: Java LookAndFeels choices have been restricted to FlatLaf and the system default; the default is now FlatLaf Darcula
 + PR #5208: Off-board arty may no longer attempt Flak attacks at on-board aerospace units

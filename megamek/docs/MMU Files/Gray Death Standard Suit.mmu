@@ -1,8 +1,6 @@
 # This is an example MMU file for a single Alpha Strike element
 # This file uses YAML formatting. Always leave a space behind the colon
 # This BA is a canon unit and could be converted from a Total Warfare unit
-# Values that have a default may be omitted
-# TMM, Threshold and PV are calculated from the given values
 type: ASElement
 chassis: Gray Death Standard Suit
 model: "[Laser](Sqd4)"        # square brackets must be enclosed in quotes

@@ -3,10 +3,11 @@
 # Any number of spaces (no TABs) can be used but it must be consistent.
 # Blank lines are optional and have no effect
 - type: ASElement
-  fullname: Atlas AS7-D             # This is a canon unit; no stats need be given, the fullname must be 'chassis model'
+  fullname: Atlas AS7-D             # This is a canon unit; no stats need be given
+                                    # The fullname must be chassis <space> model
 
 - type: ASElement
-  fullname: Ontos Heavy Tank        # This is a canon unit; the stats are converted from the unit cache
+  fullname: Ontos Heavy Tank        # This is also a canon unit; the stats are converted from the unit cache
   skill: 5                          # This element will get a skill of 5 instead of the default 4
 
 - type: ASElement

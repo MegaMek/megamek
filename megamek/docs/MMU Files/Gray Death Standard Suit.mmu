@@ -1,0 +1,17 @@
+# This is an example MMU file for a single Alpha Strike element
+# This file uses YAML formatting. Always leave a space behind the colon
+# This BA is a canon unit and could be converted from a Total Warfare unit
+# Values that have a default may be omitted
+# TMM, Threshold and PV are calculated from the given values
+type: ASElement
+chassis: Gray Death Standard Suit
+model: "[Laser](Sqd4)"        # square brackets must be enclosed in quotes
+astype: BA
+size: 1
+role: Ambusher
+move: 6f
+damage: 2/0/0
+armor: 1
+structure: 2
+specials: "AM, CAR4, MEC, RCN"
+squadsize: 4                  # only on BA; optional (only used to display the squad size on the AS Card)

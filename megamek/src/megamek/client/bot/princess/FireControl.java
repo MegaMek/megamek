@@ -2598,7 +2598,8 @@ public class FireControl {
                                                                              ammoConservation);
             final FiringPlan plan = determineBestFiringPlan(parameters);
 
-            LogManager.getLogger().info(shooter.getDisplayName() + " at " + enemy
+            // Debug logging; Princess does her own info logging
+            LogManager.getLogger().debug(shooter.getDisplayName() + " at " + enemy
                     .getDisplayName() + " - Best Firing Plan: " + plan.getDebugDescription(true));
             if ((null == bestPlan) || (plan.getUtility() > bestPlan.getUtility())) {
                 bestPlan = plan;

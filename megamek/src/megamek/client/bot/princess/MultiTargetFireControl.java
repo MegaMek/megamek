@@ -21,6 +21,7 @@ import java.util.Map;
 
 import megamek.common.*;
 import megamek.common.options.OptionsConstants;
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 
 /**
@@ -78,6 +79,9 @@ public class MultiTargetFireControl extends FireControl {
 
             if (currentPlan.getUtility() > bestPlan.getUtility()) {
                 bestPlan = currentPlan;
+                // Debug logging; Princess does her own info-level logging
+                LogManager.getLogger().debug(shooter.getDisplayName() + " - Best Firing Plan: " +
+                        bestPlan.getDebugDescription(true));
             }
 
             // check the plan where the shooter flips its arms
@@ -111,28 +115,38 @@ public class MultiTargetFireControl extends FireControl {
         WeaponFireInfo bestShot = null;
 
         for (Targetable target : getTargetableEnemyEntities(shooter, owner.getGame(), owner.getFireControlState())) {
+            WeaponFireInfo betterShot = null;
             final int ownerID = (target instanceof Entity) ? ((Entity) target).getOwnerId() : -1;
             if (owner.getHonorUtil().isEnemyBroken(target.getId(), ownerID, owner.getBehaviorSettings().isForcedWithdrawal())) {
                 LogManager.getLogger().info(target.getDisplayName() + " is broken - ignoring");
                 continue;
             }
 
-            ArrayList<Mounted> ammos;
-            if (weapon.getBayWeapons().isEmpty()) {
-                ammos = shooter.getAmmo(weapon);
+            if (((WeaponType) weapon.getType()).getAmmoType() == AmmoType.T_NA) {
+                betterShot = buildWeaponFireInfo(shooter, target, weapon, null, owner.getGame(), false);
             } else {
-                ammos = new ArrayList<>();
-                ammos.add(null);
-            }
-
-            for (Mounted ammo: ammos) {
-                WeaponFireInfo shot = buildWeaponFireInfo(shooter, target, weapon, ammo, owner.getGame(), false);
-
-                // this is a better shot if it has a chance of doing damage and the damage is better than the previous best shot
-                if ((shot.getExpectedDamage() > 0) &&
-                        ((bestShot == null) || (shot.getExpectedDamage() > bestShot.getExpectedDamage()))) {
-                    bestShot = shot;
+                ArrayList<Mounted> ammos;
+                if (weapon.getBayWeapons().isEmpty()) {
+                    ammos = shooter.getAmmo(weapon);
+                } else {
+                    ammos = new ArrayList<>();
+                    ammos.add(null);
                 }
+
+                for (Mounted ammo : ammos) {
+                    WeaponFireInfo shot = buildWeaponFireInfo(shooter, target, weapon, ammo, owner.getGame(), false);
+
+                    // this is a better shot if it has a chance of doing damage and the damage is better than the previous best shot
+                    if ((shot.getExpectedDamage() > 0) &&
+                            ((betterShot == null) || (shot.getExpectedDamage() > betterShot.getExpectedDamage()))) {
+                        betterShot = shot;
+                    }
+                }
+            }
+            // Now do the same comparison for the better shot of all these shots to determine the *best* shot
+            if ((betterShot != null && betterShot.getExpectedDamage() > 0) &&
+                    ((bestShot == null) || (betterShot.getExpectedDamage() > bestShot.getExpectedDamage()))) {
+                bestShot = betterShot;
             }
         }
 
@@ -176,7 +190,7 @@ public class MultiTargetFireControl extends FireControl {
         firingPlan.setUtility(utility);
     }
 
-    FiringPlan calculateFiringPlan(Entity shooter, List<Mounted> weaponList) {
+    protected FiringPlan calculateFiringPlan(Entity shooter, List<Mounted> weaponList) {
         FiringPlan retVal = new FiringPlan();
 
         List<WeaponFireInfo> shotList = new ArrayList<>();
@@ -199,7 +213,7 @@ public class MultiTargetFireControl extends FireControl {
             retVal = calculateIndividualWeaponFiringPlan(shooter, shotList, shooterIsLarge);
         }
 
-        calculateUtility(retVal, calcHeatTolerance(shooter, shooter.isAero()), true);
+        calculateUtility(retVal, calcHeatTolerance(shooter, shooter.isAero()), shooter.isAero());
         return retVal;
     }
 

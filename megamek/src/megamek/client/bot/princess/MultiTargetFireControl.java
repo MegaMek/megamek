@@ -79,6 +79,7 @@ public class MultiTargetFireControl extends FireControl {
 
             if (currentPlan.getUtility() > bestPlan.getUtility()) {
                 bestPlan = currentPlan;
+
                 // Debug logging; Princess does her own info-level logging
                 LogManager.getLogger().debug(shooter.getDisplayName() + " - Best Firing Plan: " +
                         bestPlan.getDebugDescription(true));
@@ -122,7 +123,7 @@ public class MultiTargetFireControl extends FireControl {
                 continue;
             }
 
-            if (((WeaponType) weapon.getType()).getAmmoType() == AmmoType.T_NA) {
+            if (effectivelyAmmoless((WeaponType) weapon.getType())) {
                 betterShot = buildWeaponFireInfo(shooter, target, weapon, null, owner.getGame(), false);
             } else {
                 ArrayList<Mounted> ammos;

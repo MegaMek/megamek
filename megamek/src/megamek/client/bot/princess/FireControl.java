@@ -3612,7 +3612,7 @@ public class FireControl {
      * @param wtype that uses ammo that is not tracked, or not actually ammo
      * @return true if wtype doesn't actually track ammo
      */
-    private static boolean effectivelyAmmoless(WeaponType wtype) {
+    protected static boolean effectivelyAmmoless(WeaponType wtype) {
         List<Integer> atypes = Arrays.asList(
                 AmmoType.T_NA,
                 AmmoType.T_INFANTRY

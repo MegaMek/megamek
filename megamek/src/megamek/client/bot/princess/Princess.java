@@ -609,8 +609,9 @@ public class Princess extends BotClient {
                     getFireControl(shooter).loadAmmo(shooter, plan);
                     plan.sortPlan();
 
+                    // FireControl instances will handle debug logging
                     LogManager.getLogger().info(shooter.getDisplayName() + " - Best Firing Plan: " +
-                            plan.getDebugDescription(LogManager.getLogger().getLevel().isLessSpecificThan(Level.DEBUG)));
+                            plan.getDebugDescription(false));
 
                     // Add expected damage from the chosen FiringPlan to the
                     // damageMap for the target enemy.

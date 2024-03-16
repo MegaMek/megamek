@@ -22,6 +22,7 @@ import megamek.client.ui.swing.util.DashedSeparator;
 import megamek.client.ui.swing.util.LocationBorder;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.scenario.ScenarioInfo;
+import megamek.common.scenario.ScenarioShortInfo2;
 
 import javax.swing.*;
 import java.awt.*;
@@ -61,7 +62,7 @@ public class ScenarioInfoPanel extends JPanel {
         add(textDescription2);
     }
 
-    protected void updateFromPreset(final ScenarioInfo preset) {
+    protected void updateFromPreset(final ScenarioShortInfo2 preset) {
         lblTitle.setText(preset.getName());
         textDescription2.setText("<HTML>" + preset.getDescription());
     }

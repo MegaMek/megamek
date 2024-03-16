@@ -26,7 +26,7 @@ import java.util.HashMap;
  * This class holds all scenario info loaded from a scenario (.mms) file. It is a map of constants given in
  * {@link ScenarioLoader} to a list of data for that constant.
  */
-public class ScenarioInfo extends HashMap<String, Collection<String>> {
+public class ScenarioInfo extends HashMap<String, Collection<String>> implements ScenarioShortInfo2 {
 
     /**
      * @return The name of the scenario; keyword {@link ScenarioLoader#NAME}

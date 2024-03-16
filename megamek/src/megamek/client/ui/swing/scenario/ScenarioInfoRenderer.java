@@ -19,6 +19,7 @@
 package megamek.client.ui.swing.scenario;
 
 import megamek.common.scenario.ScenarioInfo;
+import megamek.common.scenario.ScenarioShortInfo2;
 
 import javax.swing.*;
 import java.awt.*;
@@ -26,11 +27,11 @@ import java.awt.*;
 /**
  * This is a JList renderer for {@link ScenarioInfoPanel}.
  */
-public class ScenarioInfoRenderer extends ScenarioInfoPanel implements ListCellRenderer<ScenarioInfo> {
+public class ScenarioInfoRenderer extends ScenarioInfoPanel implements ListCellRenderer<ScenarioShortInfo2> {
 
     @Override
-    public Component getListCellRendererComponent(final JList<? extends ScenarioInfo> list,
-                                                  final ScenarioInfo value, final int index,
+    public Component getListCellRendererComponent(final JList<? extends ScenarioShortInfo2> list,
+                                                  final ScenarioShortInfo2 value, final int index,
                                                   final boolean isSelected,
                                                   final boolean cellHasFocus) {
         final Color foreground = new Color((isSelected

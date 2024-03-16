@@ -75,57 +75,60 @@ conditions:                                 # default: standard conditions
 # Forces -------------------------------------------------------------------------------------------
 
 Forces:
-- name: Player A
-  team: 1
-  home: W                                   # default: none; other values: N, NE, SE, S, SW, NW
-  deploy: N                                 # default: same as the home edge
-  minefields:                               # optional, availability depending on game type
-  - conventional: 2
-  - command: 0
-  - vibra: 2
-  camo: clans/wolf/Alpha Galaxy.jpg         # image file, relative to the scenario file, or in data/camos otherwise
-  units:
-  - include: Annihilator ANH-13.mmu
-    # at: [7, 4]                            # alternative way to indicate position
-    x: 7                                    # position, indicates that the unit is deployed
-    y: 4                                    # must have both x and y or neither
-    elevation: 5                            # default: 5 for airborne ground; can be used in place of altitude
-    altitude: 8                             # default: 5 for aero
-    status: prone, hidden                   # default: none; other values: shutdown, hulldown
-    offboard: N                             # default: not offboard; values: N, E, S, W
-    crew:                                   # default: unnamed 4/5 pilot
-      name: Cpt. Frederic Nguyen
-      piloting: 4
-      gunnery: 3
-  - type: ASElement                         # default: TW standard unit
-    fullname: Atlas AS7-D
-    x: 5
-    y: 3
-    reinforce: 2                            # default: deploy at start; here: reinforce at the start of round 2
-                                            # cannot be combined with a position
-    crew:
-      name: Cpt. Rhonda Snord
-      piloting: 4
-      gunnery: 3
+  - name: Player A
+    team: 1
+    home: W                                   # default: none; other values: N, NE, SE, S, SW, NW
+    deploy: N                                 # default: same as the home edge
+    minefields:                               # optional, availability depending on game type
+    - conventional: 2
+    - command: 0
+    - vibra: 2
+    camo: clans/wolf/Alpha Galaxy.jpg         # image file, relative to the scenario file, or in data/camos otherwise
+    units:
+    - include: Annihilator ANH-13.mmu
+      # at: [7, 4]                            # alternative way to indicate position
+      x: 7                                    # position, indicates that the unit is deployed
+      y: 4                                    # must have both x and y or neither
+      elevation: 5                            # default: 5 for airborne ground; can be used in place of altitude
+      altitude: 8                             # default: 5 for aero
+      status: prone, hidden                   # default: none; other values: shutdown, hulldown
+      offboard: N                             # default: not offboard; values: N, E, S, W
+      crew:                                   # default: unnamed 4/5 pilot
+        name: Cpt. Frederic Nguyen
+        piloting: 4
+        gunnery: 3
+    - type: ASElement                         # default: TW standard unit
+      fullname: Atlas AS7-D
+      x: 5
+      y: 3
+      reinforce: 2                            # default: deploy at start; here: reinforce at the start of round 2
+                                              # cannot be combined with a position
+      crew:
+        name: Cpt. Rhonda Snord
+        piloting: 4
+        gunnery: 3
 
-- name: "Player B"
-  home: "E"
-  team: 2
+  - name: "Player B"
+    home: "E"
+    team: 2
 
 triggers:
-- message:
-    round: 0
-    phase: before
-    description: >
-      The campaign on Bellatrix against Ajax's Avengers brought McCormack's Fusiliers instant fame.
-      Arriving to find themselves outnumbered three-to-one, the Fusiliers quickly used their superior grasp of
-      tactics and their ferocity to smash the defending unit.  The retreating Avengers tried deperately to shake the
-      Highlanders as they fled east across the southern continent of Bellatrix, but to no avail. Exhausted and bogged
-      down by bad weather, the Avengers had no choice but to stand and fight.
-- message:
-    round: 2
-    phase: before
-    description: Reinforcements have arrived!
+  - message:
+      round: 0
+      phase: before
+      description: >
+        The campaign on Bellatrix against Ajax's Avengers brought McCormack's Fusiliers instant fame.
+        Arriving to find themselves outnumbered three-to-one, the Fusiliers quickly used their superior grasp of
+        tactics and their ferocity to smash the defending unit.  The retreating Avengers tried deperately to shake the
+        Highlanders as they fled east across the southern continent of Bellatrix, but to no avail. Exhausted and bogged
+        down by bad weather, the Avengers had no choice but to stand and fight.
+  - message:
+      round: 2
+      phase: before
+      description: Reinforcements have arrived!
+  - victory:
+      alone: yes                            # no opposition left on the map
+      description: The battlefield is yours! No opposition remains. Well done!
 
 ## Mechlist for each faction -------------------------------------------------
 ##

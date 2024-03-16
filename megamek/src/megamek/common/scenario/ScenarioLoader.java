@@ -381,7 +381,9 @@ public class ScenarioLoader {
 
     public Game createGame() throws Exception {
         LogManager.getLogger().info("Loading scenario from " + scenarioFile);
-        ScenarioInfo p = load();
+        ScenarioShortInfo2 pshort = load();
+        //TODO Check for v2
+        ScenarioInfo p = (ScenarioInfo) pshort;
 
         String sCheck = p.getString(PARAM_MMSVERSION);
         if (sCheck == null) {
@@ -924,7 +926,7 @@ public class ScenarioLoader {
         return BoardUtilities.combine(mapWidth, mapHeight, nWidth, nHeight, ba, rotateBoard, MapSettings.MEDIUM_GROUND);
     }
 
-    public ScenarioInfo load() throws ScenarioLoaderException {
+    public ScenarioShortInfo2 load() throws ScenarioLoaderException {
         try {
             int mmsVersion = findMmsVersion();
             System.out.println(mmsVersion);

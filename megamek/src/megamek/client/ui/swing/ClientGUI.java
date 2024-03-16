@@ -1885,11 +1885,6 @@ public class ClientGUI extends JPanel implements BoardViewListener,
      */
     public boolean doYesNoDialog(String title, String question) {
         ConfirmDialog confirm = new ConfirmDialog(frame, title, question);
-        String closeAction = "closeAction";
-        final KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
-        confirm.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escape, closeAction);
-        confirm.getRootPane().getInputMap(JComponent.WHEN_FOCUSED).put(escape, closeAction);
-        confirm.getRootPane().getActionMap().put(closeAction, new CloseAction(confirm));
         confirm.setVisible(true);
         return confirm.getAnswer();
     }
@@ -1911,11 +1906,6 @@ public class ClientGUI extends JPanel implements BoardViewListener,
      */
     public ConfirmDialog doYesNoBotherDialog(String title, String question) {
         ConfirmDialog confirm = new ConfirmDialog(frame, title, question, true);
-        String closeAction = "closeAction";
-        final KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
-        confirm.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escape, closeAction);
-        confirm.getRootPane().getInputMap(JComponent.WHEN_FOCUSED).put(escape, closeAction);
-        confirm.getRootPane().getActionMap().put(closeAction, new CloseAction(confirm));
         confirm.setVisible(true);
         return confirm;
     }

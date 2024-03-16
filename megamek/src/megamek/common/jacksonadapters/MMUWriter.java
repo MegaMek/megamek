@@ -51,30 +51,6 @@ public class MMUWriter {
                     .enable(YAMLGenerator.Feature.MINIMIZE_QUOTES));
 
     /**
-     * Writes the given object to the given file in MMU (YAML) format if it is of a supported type. Will
-     * do nothing if the object is not supported for serialization. This method will write only necessary
-     * stats and link to the unit cache for canon units.
-     *
-     * @param file The file to write to. Will be overwritten if present.
-     * @param contents The object to write.
-     */
-    public void writeMMUFile(File file, Object contents) throws IOException {
-        writeMMUFile(file, List.of(contents));
-    }
-
-    /**
-     * Writes the given object to the given file in MMU (YAML) format if it is of a supported type. Will
-     * do nothing if the object is not supported for serialization. This method will write the full stats
-     * of the object even if it is a canon unit.
-     *
-     * @param file The file to write to. Will be overwritten if present.
-     * @param contents The object to write.
-     */
-    public void writeMMUFileFullStats(File file, Object contents) throws IOException {
-        writeMMUFileFullStats(file, List.of(contents));
-    }
-
-    /**
      * Writes any of the given objects that are of a supported type to the given file in MMU (YAML) format. Will
      * do nothing if none of the objects are supported for serialization. This method will write only necessary
      * stats and link to the unit cache for canon units.

@@ -569,16 +569,16 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
 
         addLineSpacer(comps);
 
-        comps.add(checkboxEntry(nagForMASC, null));
-        comps.add(checkboxEntry(nagForPSR, null));
-        comps.add(checkboxEntry(nagForWiGELanding, null));
         comps.add(checkboxEntry(nagForNoAction, null));
-        comps.add(checkboxEntry(nagForNoUnJamRAC, null));
-        comps.add(checkboxEntry(nagForOverheat, null));
-        comps.add(checkboxEntry(nagForMechanicalJumpFallDamage, null));
-        comps.add(checkboxEntry(nagForCrushingBuildings, null));
-        comps.add(checkboxEntry(nagForLaunchDoors, null));
+        comps.add(checkboxEntry(nagForPSR, null));
+        comps.add(checkboxEntry(nagForMASC, null));
         comps.add(checkboxEntry(nagForSprint, null));
+        comps.add(checkboxEntry(nagForCrushingBuildings, null));
+        comps.add(checkboxEntry(nagForMechanicalJumpFallDamage, null));
+        comps.add(checkboxEntry(nagForWiGELanding, null));
+        comps.add(checkboxEntry(nagForNoUnJamRAC, null));
+        comps.add(checkboxEntry(nagForLaunchDoors, null));
+        comps.add(checkboxEntry(nagForOverheat, null));
 
         addLineSpacer(comps);
 

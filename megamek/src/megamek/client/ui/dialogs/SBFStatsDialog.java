@@ -202,7 +202,7 @@ public class SBFStatsDialog extends AbstractDialog {
         File unitFile = fileChooser.getSelectedFile();
 
         try {
-            MMUWriter.writeMMUFile(unitFile, formations);
+            new MMUWriter().writeMMUFile(unitFile, formations);
         } catch (IOException | IllegalArgumentException e) {
             JOptionPane.showMessageDialog(getParent(), "The MMU file could not be written. "
                     + e.getMessage());

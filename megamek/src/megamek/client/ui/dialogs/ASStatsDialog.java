@@ -190,7 +190,7 @@ public class ASStatsDialog extends AbstractDialog {
         File unitFile = fileChooser.getSelectedFile();
 
         try {
-            MMUWriter.writeMMUFileFullStats(unitFile, elements);
+            new MMUWriter().writeMMUFileFullStats(unitFile, elements);
         } catch (IOException | IllegalArgumentException e) {
             JOptionPane.showMessageDialog(getParent(), "The MMU file could not be written. "
                     + e.getMessage());

@@ -248,6 +248,7 @@ public enum BattleForceSUA {
      *
      * @param asText The text to translate to a SUA info
      * @return The text converted to ASDamageVector, Double, ASDamage or Integer
+     * @throws NumberFormatException When the given text is malformed
      */
     private static Object parseSUAObject(String asText) {
         if (asText.isBlank()) {

@@ -58,7 +58,7 @@ public class MMUWriter {
      * @param file The file to write to. Will be overwritten if present.
      * @param contents The object to write.
      */
-    public static void writeMMUFile(File file, Object contents) throws IOException {
+    public void writeMMUFile(File file, Object contents) throws IOException {
         writeMMUFile(file, List.of(contents));
     }
 
@@ -70,7 +70,7 @@ public class MMUWriter {
      * @param file The file to write to. Will be overwritten if present.
      * @param contents The object to write.
      */
-    public static void writeMMUFileFullStats(File file, Object contents) throws IOException {
+    public void writeMMUFileFullStats(File file, Object contents) throws IOException {
         writeMMUFileFullStats(file, List.of(contents));
     }
 
@@ -82,7 +82,7 @@ public class MMUWriter {
      * @param file The file to write to. Will be overwritten if present.
      * @param contents The objects to write.
      */
-    public static void writeMMUFile(File file, List<?> contents) throws IOException {
+    public void writeMMUFile(File file, List<?> contents) throws IOException {
         write(file, contents, yamlMapper.writerWithView(Views.CanonCacheLinks.class));
     }
 
@@ -94,7 +94,7 @@ public class MMUWriter {
      * @param file The file to write to. Will be overwritten if present.
      * @param contents The objects to write.
      */
-    public static void writeMMUFileFullStats(File file, List<?> contents) throws IOException {
+    public void writeMMUFileFullStats(File file, List<?> contents) throws IOException {
         write(file, contents, yamlMapper.writerWithView(Views.FullStats.class));
     }
 
@@ -103,15 +103,17 @@ public class MMUWriter {
         if (supportedContents.isEmpty()) {
             return;
         }
-        PrintStream outputStream = new PrintStream(file);
-        outputStream.println(HEADER);
-        if (supportedContents.size() == 1) {
-            writer.writeValue(outputStream, contents.get(0));
-        } else {
-            writer.writeValue(outputStream, contents);
+        try (PrintStream outputStream = new PrintStream(file)) {
+            outputStream.println(HEADER);
+            if (supportedContents.size() == 1) {
+                writer.writeValue(outputStream, contents.get(0));
+            } else {
+                writer.writeValue(outputStream, contents);
+            }
         }
     }
 
+    /** @return True when the given object is currently supported with MM's Jackson YAML serialization. */
     private static boolean isSupported(Object content) {
         return content instanceof ASCardDisplayable || content instanceof SBFFormation || content instanceof SBFUnit;
     }
@@ -125,6 +127,4 @@ public class MMUWriter {
 
         static class CanonCacheLinks { }
     }
-
-    private MMUWriter() { }
 }

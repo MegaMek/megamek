@@ -20,6 +20,10 @@ Thumper Artillery Vehicle
 TAV-1
 </Model>
 
+<mul id:>
+3212
+</mul id:>
+
 <year>
 3072
 </year>
@@ -27,6 +31,10 @@ TAV-1
 <type>
 IS Level 3
 </type>
+
+<role>
+Missile Boat
+</role>
 
 <motion_type>
 Wheeled
@@ -83,7 +91,7 @@ ISERSmallLaser
 </Turret Equipment>
 
 <source>
-TRO 3075 - Jihad
+TRO: 3075
 </source>
 
 <tonnage>

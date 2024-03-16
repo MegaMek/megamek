@@ -1,12 +1,18 @@
-Version:1.0
-Raptor
-RTX1-OG
+chassis:Raptor
+model:RTX1-OG
+mul id:2654
 
 Config:Biped Omnimech
 TechBase:Inner Sphere
 Era:3070
-Source:TRO 3058 - Jihad
+Source:TRO: 3058
 Rules Level:2
+role:Striker
+
+
+
+quirk:easy_maintain
+
 
 Mass:25
 Engine:175 XL Engine(IS)

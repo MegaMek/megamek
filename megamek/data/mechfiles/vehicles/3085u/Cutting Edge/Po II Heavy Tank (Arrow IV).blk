@@ -20,6 +20,10 @@ Po II Heavy Tank
 (Arrow IV)
 </Model>
 
+<mul id:>
+2550
+</mul id:>
+
 <year>
 3085
 </year>
@@ -27,6 +31,10 @@ Po II Heavy Tank
 <type>
 IS Level 3
 </type>
+
+<role>
+Missile Boat
+</role>
 
 <tonnage>
 60
@@ -72,5 +80,5 @@ Machine Gun
 </Turret Equipment>
 
 <source>
-Dark Age
+TRO: 3085
 </source>

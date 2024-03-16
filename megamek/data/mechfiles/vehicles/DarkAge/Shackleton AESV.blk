@@ -16,9 +16,13 @@ SupportTank
 Shackleton AESV
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+5800
+</mul id:>
 
 <year>
 3093
@@ -31,6 +35,10 @@ Shackleton AESV
 <type>
 IS Level 3
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Wheeled
@@ -93,7 +101,7 @@ BeagleActiveProbe
 </structural_tech_rating>
 
 <source>
-Intersteller Players 3 - Early Republic
+Intersteller Players 3
 </source>
 
 <tonnage>

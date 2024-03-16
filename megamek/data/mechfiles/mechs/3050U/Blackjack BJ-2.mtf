@@ -1,12 +1,18 @@
-Version:1.0
-Blackjack
-BJ-2
+chassis:Blackjack
+model:BJ-2
+mul id:377
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3052
-Source:TRO 3050 - Clan Invasion
+Source:TRO: 3050
 Rules Level:2
+role:Sniper
+
+
+
+quirk:bad_rep_is
+
 
 Mass:45
 Engine:180 Fusion Engine
@@ -148,3 +154,19 @@ Jump Jet
 -Empty-
 -Empty-
 
+overview:The original contract between General Motors and the SLDF sought for "a medium BattleMech with insurrection suppression and fire-support capabilities." The outcome was the Blackjack. Despite meeting all of its production requirements, the Blackjack gained an unjust reputation and was rejected by the Star League.
+
+capabilities:The Blackjack's original mission was to assist in suppressing insurgent groups (mostly in the Periphery) that defied Star League authority in the decades preceding its demise. The Blackjack is only a minor success in its secondary capacity as a fire support platform. The autocannons lacked the firepower to take on heavily defended targets. At close range, though, the combination of lasers poses a significantly bigger threat. The addition of jump jets came late in the design phase, but the Whitworth Jetlift units have proven to be a vital asset over the decades. The Blackjack's sole significant disadvantage was negative press, which stated that the entire project was a shambles because the 'Mech's basic architecture was defective and unstable. The 'Mech's tiny footpads were alleged to cause falls and hamper maneuverability, or that the StarGuard II armor was brittle and tended to break off. Despite the fact that none of these accusations were ever proven, the Blackjack went out of favor, and few grieved the loss of GM's production line.
+
+deployment:The BJ-2 was introduced in 3052 by the Federated Suns as the new production model of the Blackjack, based on earlier experimental designs. It upgrades the 'Mech with two Diverse Optics Sunbeam ER large lasers in place of the autocannons, and removes the medium lasers for four Hovertec Streak SRM-2 launchers, two each in the left and right sides of the torso. One ton of ammo for the launchers is kept in the left torso while the single heat sinks were upgraded to double heat sinks.
+
+history:The Blackjack had limited use in the Star League, and manufacture was shortly discontinued. The Blackjack, relegated to service with Hegemony planetary militia or sold to League member nations, can still be encountered on the battlefield today. The majority of them now fight for the Capellan Confederation and the Federated Suns. The Confederation has nothing but disdain for the design. The breakaway St. Ives Compact, on the other hand, could not be as picky, and the Blackjack serves in the St. Ives Lancers. The Federated Suns used the Blackjack in the March Militias until the myth of the Blackjack's inferiority was busted on Xhosa VII in 3022. The Crucis Lancers and Deneb Light Cavalry were re-interested in the 'Mech.
+
+manufacturer:General Motors
+primaryfactory:Talcott
+systemmanufacturer:CHASSIS:GM BJ-1
+systemmanufacturer:ENGINE:GM 180
+systemmanufacturer:ARMOR:StarGuard II
+systemmanufacturer:JUMPJET:Whitworth Jetlift
+systemmanufacturer:COMMUNICATIONS:Dalban Micronics
+systemmanufacturer:TARGETING:Dalban AQ

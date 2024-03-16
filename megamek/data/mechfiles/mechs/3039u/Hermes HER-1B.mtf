@@ -1,12 +1,19 @@
-Version:1.0
-Hermes
-HER-1B
+chassis:Hermes
+model:HER-1B
+mul id:1486
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2856
-Source:TRO 3039 - Succession Wars
+Source:TRO: 3039
 Rules Level:1
+role:Striker
+
+
+
+quirk:imp_com
+quirk:stable
+
 
 Mass:30
 Engine:270 Fusion Engine
@@ -148,9 +155,9 @@ Foot Actuator
 -Empty-
 
 
-Overview: The Star League, showing its industrial and economic might, commissioned a new dedicated scout in 2632.  Irian BattleMechs Unlimited won the contract, and was able to fulfill initial orders for this new Hermes quicker then anticipated.  This caused concern in the SLDF's Quartermaster Command despite the 'Mech apparently meeting all requirements.  These suspicions were quickly confirmed, as many 'Mechs in the initial run had unresolved issues with their electronics that made their targeting systems all but useless. While these problems were eventually rectified, the time needed for the fix was not insignificant, and the 'Mech would develop a negative reputation that would follow it during the remainder of the Star League era.
+Overview: The Star League, showing its industrial and economic might, commissioned a new dedicated scout in 2632. Irian BattleMechs Unlimited won the contract, and was able to fulfill initial orders for this new Hermes quicker then anticipated. This caused concern in the SLDF's Quartermaster Command despite the 'Mech apparently meeting all requirements. These suspicions were quickly confirmed, as many 'Mechs in the initial run had unresolved issues with their electronics that made their targeting systems all but useless. While these problems were eventually rectified, the time needed for the fix was not insignificant, and the 'Mech would develop a negative reputation that would follow it during the remainder of the Star League era.
 
-Capabilities: Emphasizing mobility over firepower, the Hermes was fasther than nearly every 'Mech in service at the time of its introduction. Once the glitches surrounding the targeting systems were fixed, the Alexis Photon proved popular with technicians as it reduced wear and tear on the laser systems. The initial production variant used a fuel-based flamer instead of the more modern version that would tap directlyl into a 'Mech's fusion plant. Considered to be quite safe, MechWarriors piloting Hermes could even choose to jettison the fuel storage cylinders if needed.
+Capabilities: Emphasizing mobility over firepower, the Hermes was faster than nearly every 'Mech in service at the time of its introduction. Once the glitches surrounding the targeting systems were fixed, the Alexis Photon proved popular with technicians as it reduced wear and tear on the laser systems. The initial production variant used a fuel-based flamer instead of the more modern version that would tap directlyl into a 'Mech's fusion plant. Considered to be quite safe, MechWarriors piloting Hermes could even choose to jettison the fuel storage cylinders if needed.
 
 Deployment: The Hermes only served in the SLDF for 19 years, after which they were put in storage or relegated to militia commands. The Succession Wars forced the Hermes back into frontline regiments through sheer need, though Irian chose to re-engineered the 'Mech in the heavier Hermes II instead of putting the base chassis back into production. Instead, Irian would refit existing Hermes chassises into downgraded variants as the Successor Wars spurred technological decline. The HER-1B would be a minor shoot-off of the main downgrade, slightly increasing the 'Mech's firepower. Only seeing service in the Free Worlds League military, the variant would rapidly vanish after the rediscovery of advanced technology in the Helm Core.
 

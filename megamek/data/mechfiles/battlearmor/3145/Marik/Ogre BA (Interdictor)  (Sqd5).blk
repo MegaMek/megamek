@@ -1,0 +1,126 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+Ogre Battle Armor
+</Name>
+
+<Model>
+(Interdictor)(Sqd5)
+</Model>
+
+<mul id:>
+8757
+</mul id:>
+
+<year>
+3091
+</year>
+
+<type>
+IS Level 2
+</type>
+
+<role>
+Juggernaut
+</role>
+
+<motion_type>
+Jump
+</motion_type>
+
+<cruiseMP>
+2
+</cruiseMP>
+
+<armor_type>
+36
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<Squad Equipment>
+ISBASRM2:Body
+BAHeavyBattleClaw:LA
+BAHeavyBattleClaw:RA
+IS BA ECM:Body
+BA-SRM2 Ammo:Body:Shots4#
+BA-SRM2 Ammo:Body:Shots4#
+IS BA Mimetic:Body
+IS BA Mimetic:LA
+IS BA Mimetic:RA
+IS BA Mimetic:RA
+IS BA Mimetic:RA
+IS BA Mimetic:LA
+IS BA Mimetic:LA
+</Squad Equipment>
+
+<source>
+TRO: 3145 Free Worlds League
+</source>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+0
+</jumpingMP>
+
+<armor>
+14
+</armor>
+
+<Trooper Count>
+5
+</Trooper Count>
+
+<weightclass>
+3
+</weightclass>
+
+<overview>
+Ogre battle armor was intended to fill gaps in the various planetary militia forces within the Principality of Regulus and to supplement slower combat vehicle platoons. 
+</overview>
+
+<capabilities>
+The Ogre also had almost a ton of standard armor across its frame, providing considerable battlefield survivability.
+</capabilities>
+
+<deployment>
+In addition to the standard-pattern Ogre, Tvastar has also produced an Interdictor variant that trades away ammunition to add an ECM Suite and upgrade the armor to Mimetic Armor. 
+</deployment>
+
+<history>
+It was the first attempt to enter the battle armor market by Tvastar Enterprises of Regulus, and was introduced to the market at a time when the use of non-BattleMech units in wars and conflicts was on the increase, allowing the Ogre to perform better than Tvastar had anticipated. The Ogre had a physically intimidating appearance, largely due to the twin Heavy Battle Claws used as weapons and Tvastar's choice to use an unusually wide frame for the suit. Despite that appearance, the Ogre wasn't well-suited to fighting conventional infantry, but the heavy armor and weapons mounted on the Ogre allowed it to attack enemy armor, and actions in certain early battles saw the Ogre gain a reputation for tearing tanks in half - a reputation that was rather fanciful, but did serve to enhance the Ogre's reputation. The Ogre went on to be exported outside the Regulan Fiefs by Tvastar, with the Duchy of Andurien and the Lyran Commonwealth both ordering large production runs.
+</history>
+
+<manufacturer>
+Tvastar Enterprises
+</manufacturer>
+
+<primaryFactory>
+Regulus
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+JUMPJET:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>

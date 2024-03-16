@@ -15,6 +15,10 @@ Maxim Mk II Transport
 <Model>
 (Infantry Support) 'Shiloh'
 </Model>
+
+<mul id:>
+2128
+</mul id:>
 <Tonnage>
 50
 </Tonnage>
@@ -48,6 +52,10 @@ TroopSpace:8
 <type>
 IS Level 2
 </type>
+
+<role>
+Sniper
+</role>
 <year>
 3084
 </year>
@@ -64,5 +72,21 @@ IS Level 2
 Hover
 </motion_type>
 <source>
-Dark Age
+TRO: 3085
 </source>
+
+<manufacturer>
+Cyclops Inc.
+</manufacturer>
+
+<primaryFactory>
+Skye
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:165 VOX Fusion
+ARMOR:	ArcShield Heavy Ferro-Fibrous with CASE
+COMMUNICATIONS:Cyclops Surelink
+TARGETING:Scarborough Tracky 3
+</systemManufacturers>

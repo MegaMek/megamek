@@ -16,9 +16,13 @@ SpaceStation
 Crucible Station
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+4028
+</mul id:>
 
 <year>
 3065
@@ -32,8 +36,12 @@ Crucible Station
 IS Level 3
 </type>
 
+<role>
+None
+</role>
+
 <designtype>
-0
+1
 </designtype>
 
 <motion_type>
@@ -169,7 +177,7 @@ IS Ammo SRM-6:30
 </structural_integrity>
 
 <source>
-HB:HL - Civil War
+Handbook: House Liao
 </source>
 
 <tonnage>

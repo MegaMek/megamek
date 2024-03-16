@@ -1,43 +1,46 @@
-Version:1.1
-Burrock
-2
-
+chassis:Burrock
+model:2
+mul id:5694
 Config:Biped
-TechBase:Clan
-Era:3073
-Rules Level:2
-source:3067 Unabridged
+techbase:Clan
+era:3071
+source:Record Sheets: 3067 Unabridged
+rules level:2
+role:Brawler
 
-Mass:75
-Engine:375 XL Fusion Engine
-Structure:Endo-Steel
-Myomer:Standard
+quirk:stable
 
-Heat Sinks:15 Double
-Walk MP:5
-Jump MP:0
 
-Armor:Standard Armor
-LA Armor:21
-RA Armor:21
-LT Armor:21
-RT Armor:21
-CT Armor:28
-HD Armor:9
-LL Armor:28
-RL Armor:28
-RTL Armor:7
-RTR Armor:7
-RTC Armor:9
+mass:75
+engine:375 XL (Clan) Engine(IS)
+structure:Clan Endo Steel
+myomer:Standard
+
+heat sinks:15 Clan Double
+walk mp:5
+jump mp:0
+
+armor:Standard(Clan)
+LA armor:21
+RA armor:21
+LT armor:21
+RT armor:21
+CT armor:28
+HD armor:9
+LL armor:28
+RL armor:28
+RTL armor:7
+RTR armor:7
+RTC armor:9
 
 Weapons:7
-1 CLHeavyMediumLaser, Left Arm
-1 CLERMediumLaser, Left Torso
-1 CLERMediumLaser, Left Torso
-1 CLERMediumLaser, Left Torso
-1 CLHAG40, Right Arm, Ammo:15
-1 CLHeavyMediumLaser, Right Torso
-1 CLHeavyMediumLaser, Left Arm
+Heavy Medium Laser, Left Arm
+Heavy Medium Laser, Left Arm
+HAG/40, Right Arm
+ER Medium Laser, Left Torso
+ER Medium Laser, Left Torso
+ER Medium Laser, Left Torso
+Heavy Medium Laser, Right Torso
 
 Left Arm:
 Shoulder
@@ -68,8 +71,8 @@ CLHAG40
 CLHAG40
 
 Left Torso:
-Engine
-Engine
+Fusion Engine
+Fusion Engine
 CLERMediumLaser
 CLERMediumLaser
 CLERMediumLaser
@@ -82,53 +85,73 @@ CLERMediumLaser
 -Empty-
 
 Right Torso:
-Engine
-Engine
+Fusion Engine
+Fusion Engine
 CLHeavyMediumLaser
 CLHeavyMediumLaser
-CLHAG40 Ammo
-CLHAG40 Ammo
-CLHAG40 Ammo
-CLHAG40 Ammo
-CLHAG40 Ammo
+Hyper-Assault Gauss Rifle/40 Ammo
+Hyper-Assault Gauss Rifle/40 Ammo
+Hyper-Assault Gauss Rifle/40 Ammo
+Hyper-Assault Gauss Rifle/40 Ammo
+Hyper-Assault Gauss Rifle/40 Ammo
 -Empty-
 -Empty-
 -Empty-
 
 Center Torso:
-Engine
-Engine
-Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
 Gyro
 Gyro
 Gyro
 Gyro
-Engine
-Engine
-Engine
-Endo-Steel
-Endo-Steel
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Clan Endo Steel
+Clan Endo Steel
 
 Head:
 Life Support
 Sensors
 Cockpit
-Endo-Steel
+Clan Endo Steel
 Sensors
 Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Left Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo-Steel
-Endo-Steel
+Clan Endo Steel
+Clan Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Right Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo-Steel
-Endo-Steel
+Clan Endo Steel
+Clan Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

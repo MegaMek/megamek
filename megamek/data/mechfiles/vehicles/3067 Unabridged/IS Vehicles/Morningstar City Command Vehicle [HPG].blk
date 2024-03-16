@@ -20,6 +20,10 @@ Morningstar City Command Vehicle
 (HPG)
 </Model>
 
+<mul id:>
+5733
+</mul id:>
+
 <year>
 3076
 </year>
@@ -27,6 +31,10 @@ Morningstar City Command Vehicle
 <type>
 IS Level 3
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Wheeled
@@ -75,3 +83,7 @@ ISMagshotGR
 <tonnage>
 60.0
 </tonnage>
+
+<source>
+TRO: 3067
+</source>

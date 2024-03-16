@@ -1,0 +1,158 @@
+chassis:No-Dachi
+model:NDA-3X
+mul id:2298
+
+Config:Biped
+techbase:Mixed (IS Chassis)
+era:3075
+source:XTR: Kurita
+rules level:4
+role:Missile Boat
+
+
+
+quirk:hyper_actuator
+
+
+mass:70
+engine:350 XL Engine(IS)
+structure:IS Endo Steel
+myomer:Standard
+
+heat sinks:15 Clan Double
+walk mp:5
+jump mp:0
+
+armor:Ferro-Fibrous(Clan)
+LA armor:22
+RA armor:22
+LT armor:22
+RT armor:22
+CT armor:32
+HD armor:9
+LL armor:30
+RL armor:30
+RTL armor:8
+RTR armor:8
+RTC armor:12
+
+Weapons:5
+ER PPC, Left Arm
+LRM 15, Left Torso
+ER Small Laser, Left Torso
+LRM 15, Right Torso
+ER Medium Laser, Head
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLERPPC
+CLERPPC
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISLargeVibroblade
+ISLargeVibroblade
+ISLargeVibroblade
+ISLargeVibroblade
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Supercharger
+CLLRM15
+CLLRM15
+CLArtemisIV
+CLERSmallLaser (R)
+Clan Ammo LRM-15 (Clan) Artemis-capable
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLLRM15
+CLLRM15
+CLArtemisIV
+Clan Ammo LRM-15 (Clan) Artemis-capable
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Endo Steel
+IS Endo Steel
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+IS Ferro-Fibrous
+IS Endo Steel
+
+Head:
+Life Support
+Sensors
+Cockpit (ARMORED)
+CLERMediumLaser
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

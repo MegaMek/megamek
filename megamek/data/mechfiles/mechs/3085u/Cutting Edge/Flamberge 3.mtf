@@ -1,12 +1,16 @@
-Version:1.0
-Flamberge
-3
+chassis:Flamberge
+model:3
+mul id:1115
 
 Config:Biped
 TechBase:Clan
 Era:3087
-Source:Dark Age
+source:TRO: 3085
 Rules Level:4
+role:Skirmisher
+
+quirk:imp_target_med
+
 
 Mass:70
 Engine:280 XL (Clan) Engine(IS)

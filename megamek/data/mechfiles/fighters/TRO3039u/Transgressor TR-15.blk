@@ -1,0 +1,120 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Aero
+</UnitType>
+
+<Name>
+Transgressor
+</Name>
+
+<Model>
+TR-15
+</Model>
+
+<mul id:>
+3286
+</mul id:>
+
+<year>
+3071
+</year>
+
+<originalBuildYear>
+3071
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<role>
+Fire Support
+</role>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+</transporters>
+
+<SafeThrust>
+6
+</SafeThrust>
+
+<cockpit_type>
+0
+</cockpit_type>
+
+<heatsinks>
+25
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+400
+</fuel>
+
+<engine_type>
+2
+</engine_type>
+
+<armor_type>
+19
+</armor_type>
+
+<armor_tech>
+-1
+</armor_tech>
+
+<armor>
+82
+60
+60
+39
+</armor>
+
+<Nose Equipment>
+ISERLargeLaser
+ISERMediumLaser
+</Nose Equipment>
+
+<Left Wing Equipment>
+Heavy PPC
+ISERMediumLaser
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+Heavy PPC
+ISERMediumLaser
+</Right Wing Equipment>
+
+<Aft Equipment>
+ISERMediumLaser
+</Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+</Fuselage Equipment>
+
+<source>
+TRO: 3039
+</source>
+
+<tonnage>
+75.0
+</tonnage>

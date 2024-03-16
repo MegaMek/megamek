@@ -12,9 +12,13 @@ Tank
 <Name>
 Zorya Light Tank
 </Name>
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+3654
+</mul id:>
 <Tonnage>
 35
 </Tonnage>
@@ -43,6 +47,10 @@ CLCASE
 <type>
 Clan Level 2
 </type>
+
+<role>
+Missile Boat
+</role>
 <year>
 2842
 </year>
@@ -59,5 +67,5 @@ Clan Level 2
 Tracked
 </motion_type>
 <source>
-Succession Wars
+TRO: 3060
 </source>

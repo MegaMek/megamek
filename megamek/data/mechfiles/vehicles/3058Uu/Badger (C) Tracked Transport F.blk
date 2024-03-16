@@ -20,6 +20,10 @@ Badger (C) Tracked Transport
 F
 </Model>
 
+<mul id:>
+197
+</mul id:>
+
 <year>
 3072
 </year>
@@ -28,15 +32,16 @@ F
 Clan Level 2
 </type>
 
+<role>
+Scout
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
 
 <transporters>
 troopspace:5.0
-</transporters>
-
-<transporters>
 BattleArmorHandles - troopers:-1
 </transporters>
 
@@ -86,7 +91,7 @@ CLAPGaussRifle:OMNI
 </Turret Equipment>
 
 <source>
-Jihad
+TRO: 3058
 </source>
 
 <tonnage>

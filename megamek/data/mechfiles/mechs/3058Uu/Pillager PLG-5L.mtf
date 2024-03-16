@@ -1,12 +1,19 @@
-Version:1.0
-Pillager
-PLG-5L
+chassis:Pillager
+model:PLG-5L
+mul id:2528
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3068
-Source:TRO 3058 - Jihad
+Source:TRO: 3058
 Rules Level:3
+role:Missile Boat
+
+
+
+quirk:battle_fists_la
+quirk:battle_fists_ra
+
 
 Mass:100
 Engine:300 XL Engine
@@ -150,4 +157,19 @@ IS Gauss Ammo
 -Empty-
 -Empty-
 
+overview:The largest BattleMech ever built by HildCo Interplanetary, the Pillager is built as a larger version of the Victor, and is intended for assaulting urban centers and hardened fortifications.
 
+capabilities:Based on a range of engine types, the Pillager has average mobility for its size, with a top speed of 54 km/h. Three HildCo Model 13 jump jets allow the 'Mech to jump up to ninety meters, increasing its mobility. The Pillager possesses outstanding armor protection and more than enough heat sinks to meet the Pillager's needs.
+
+deployment:The 5L is an upgrade to the original 3Z. It removed one of the Gauss rifles, to make room for an Arrow IV Artillery piece and three tons of ammunition. The remaining rifle has four tons of ammunition. Three lasers remain, all of them ER medium lasers, though the large is upgraded to an ER PPC. Only ten double heat sinks remain, potentially causing serious heat problems for a MechWarrior who wishes to fire indiscriminately. Finally, a Guardian ECM Suite aids the 'Mech defensively.
+
+history:The Pillager was the largest 'Mech ever built by HildCo during the Reunification War. The destruction of the manufacturing facilities that produced the Pillager's advanced technologies halted production during the Second Succession War, but the decoding of the Gray Death memory core allowed the Pillager to be reintroduced to the Inner Sphere. The Pillager has a long and colorful battle history. From the Reunification Battle through the Succession Wars, it has seen action in every war. Records show that during those fights, enemy forces tended to retreat at the sight of approaching Pillagers. The Pillager most recently demonstrated its amazing strength during the FedCom and the Capellan/St. Ives Civil Wars. When a Pillager-led unit attacked, many strongholds and defenses crumbled. Even now, in the struggle between Hasek's Capellan March and House Liao, the Pillager is making an impact on the battlefield, just as it did during the Amaris Civil War. The Pillager now serves in the majority of house militaries and mercenary troops. Because of the reintegration of St. Ives, the Capellan military has the most brawny 'Mechs.
+
+manufacturer:HildCo Interplanetary
+primaryfactory:St. Ives
+systemmanufacturer:CHASSIS:HildCo Heavy Type VIIQT
+systemmanufacturer:ENGINE:Vlar 300 XL
+systemmanufacturer:ARMOR:StarSlab/9.5 Mk II
+systemmanufacturer:JUMPJET:HildCo Model 13
+systemmanufacturer:COMMUNICATIONS:CeresCom Recon Model 12K with ECM
+systemmanufacturer:TARGETING:C-Apple Churchill

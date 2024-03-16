@@ -20,6 +20,10 @@ Aesir Medium AA Vehicle
 (HAG)
 </Model>
 
+<mul id:>
+6250
+</mul id:>
+
 <year>
 3142
 </year>
@@ -27,6 +31,10 @@ Aesir Medium AA Vehicle
 <type>
 Clan Level 3
 </type>
+
+<role>
+Sniper
+</role>
 
 <motion_type>
 Wheeled
@@ -84,9 +92,14 @@ CLCASE
 </Turret Equipment>
 
 <source>
-TRO 3145 The Clans - Late Republic
+TRO: 3145 The Clans
 </source>
 
 <tonnage>
 55.0
 </tonnage>
+
+<quirks>
+anti_air
+</quirks>
+

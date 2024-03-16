@@ -20,6 +20,10 @@ Gaajian System Patrol Boat
 (3060)
 </Model>
 
+<mul id:>
+7770
+</mul id:>
+
 <year>
 3060
 </year>
@@ -31,6 +35,10 @@ Gaajian System Patrol Boat
 <type>
 IS Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Spheroid
@@ -128,7 +136,7 @@ ISHighResImager
 </structural_integrity>
 
 <source>
-HB:House Kurita - Clan Invasion
+Handbook: House Kurita
 </source>
 
 <tonnage>

@@ -15,6 +15,10 @@ Brutus Assault Tank
 <Model>
 (PPC 2)
 </Model>
+
+<mul id:>
+433
+</mul id:>
 <Tonnage>
 75
 </Tonnage>
@@ -45,6 +49,10 @@ ISSRM2 Ammo
 <type>
 IS Level 1
 </type>
+
+<role>
+Juggernaut
+</role>
 <year>
 3011
 </year>
@@ -61,5 +69,5 @@ IS Level 1
 Tracked
 </motion_type>
 <source>
-Succession Wars
+TRO: 3058
 </source>

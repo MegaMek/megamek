@@ -1,12 +1,19 @@
-Version:1.1
-Dragon Fire
-DGR-6FC2 (Gregory)
+chassis:Dragon Fire
+model:DGR-6FC2 (Gregory)
+mul id:916
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3067
-Source:JTP Tharkad
+Source:Jihad Turning Points: Tharkad
 Rules Level:2
+role:Brawler
+
+
+
+quirk:good_rep_1
+quirk:no_arms
+
 
 Mass:75
 Engine:300 Light Engine(IS)

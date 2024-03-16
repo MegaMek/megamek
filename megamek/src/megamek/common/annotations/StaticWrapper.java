@@ -18,7 +18,6 @@
  * You should have received a copy of the GNU General Public License
  * along with starmadaBuilder.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package megamek.common.annotations;
 
 import java.lang.annotation.Documented;
@@ -26,12 +25,11 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Target;
 
 /**
- * Denotes a method created purely for the purposes of wrapping a static method call in a non-static method so that
- * a mock can be created.
+ * Denotes a method created purely for the purposes of wrapping a static method call in a non-static
+ * method so that a mock can be created.
  *
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
- * @since: 2/20/14 7:51 AM
- * @version: %Id%
+ * @since 2/20/14 7:51 AM
  */
 @Target({ElementType.METHOD})
 @Documented

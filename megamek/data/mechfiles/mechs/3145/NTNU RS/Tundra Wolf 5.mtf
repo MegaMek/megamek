@@ -1,12 +1,17 @@
-Version:1.0
-Tundra Wolf
-5
+chassis:Tundra Wolf
+model:5
+mul id:6862
 
 Config:Biped
 TechBase:Clan
 Era:3086
-Source:RS 3145 NT NU
+Source:Record Sheets: 3145 New Tech New Upgrades
 Rules Level:2
+role:Juggernaut
+
+quirk:easy_maintain
+quirk:weak_head_1
+
 
 Mass:75
 Engine:225 XL (Clan) Engine(IS)

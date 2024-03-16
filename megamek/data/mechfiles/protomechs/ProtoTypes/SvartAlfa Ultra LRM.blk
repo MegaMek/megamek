@@ -13,12 +13,16 @@ ProtoMech
 </UnitType>
 
 <Name>
-Svartalfa Ultra ProtoMech
+Svartalfa
 </Name>
 
 <Model>
-(LRM Variant)
+2
 </Model>
+
+<mul id:>
+8092
+</mul id:>
 
 <year>
 3083
@@ -31,6 +35,10 @@ Svartalfa Ultra ProtoMech
 <type>
 Clan Level 3
 </type>
+
+<role>
+Missile Boat
+</role>
 
 <motion_type>
 WiGE
@@ -90,9 +98,42 @@ CLLRM15
 </Main Gun Equipment>
 
 <source>
-TRO Prototypes - Jihad
+TRO: Prototypes
 </source>
 
 <tonnage>
 14.0
 </tonnage>
+
+<capabilities>
+The Svartalfa is 50 percent larger than any other known ProtoMech. To match its huge size, the Svartalfa possesses a tremendous quantity of armor, with more than three tons of UltraProto Standard, it is more protected than most light 'Mechs. However its slow ground speed of 10 km/h, which is matched by unarmored troops, could be its undoing. Apart from obvious variances from other ProtoMech designs, the Svartalfa's size allows it to be configured with a larger-than-average cockpit, allowing even Elemental breeding line pilots to manage this one-of-a-kind Proto.
+</capabilities>
+
+<overview>
+An assault Protomek so intimidating it's presence on the battlefield is often confusing -- too small to be a 'Mech, too large to be a Proto or battle armor -- the defending Wolf warriors were forced into deploying medium and heavy 'Mechs to deal with even a single Svartalfa.
+</overview>
+
+<deployment>
+Though not given a designation, one variant of the Svartalfa replaces all the stock weaponry along with some armor for a pair of LRM-15 Launchers, one in the torso and the other as the main gun.
+</deployment>
+
+<history>
+Clan Smoke Jaguar struggled following the Battle of Tukayyid. Guerrilla attacks and uprisings in their Inner Sphere occupation zone had depleted supplies. Smoke Jaguar scientists discovered that their Clan worlds might soon lose BattleMech ores if nothing was done. The Clan's greatest scientists developed a revolutionary warfare unit that combined BattleMechs and Elemental Battle Armor. The smaller units would weigh one-tenth of BattleMechs and be half their height. With their smaller engines, the Smoke Jaguars could produce more of them for less material. ProtoMechs were designed to make a Point of five work as well as a BattleMech while using half the construction resources. Smoke Jaguar geneticists also started breeding pilots. To fit in a ProtoMech's torso, this new breed would need to be smaller than Elementals. Smoke Jaguar scientists and geneticists began working on ProtoMechs in secret, knowing that their Khans would not consider full-scale manufacturing unless they were proven useful in battle. Smoke Jaguar Khan Lincoln Osis discovered ProtoMechs during the Battle of Huntress. His Clan's dire requirements and the ProtoMechs' good performance against desperate odds mitigated his indignation at being uninformed about the secret endeavor. The Clans couldn't ignore the ProtoMech's premiere, even though the war was lost. After the Great Refusal and the demise of the Smoke Jaguars, numerous Clans raided Huntress to steal its technology. Clan Coyote and Clan Blood Spirit were the first to adopt the ProtoMech and enthusiastically develop it, especially the Spirits, who were resource-poor. Huntress salvaged ProtoMechs for most Clans. The Blood Spirits started a formal training program first. The Inner Sphere was uninterested in ProtoMech development. The machine needed Somebody to control it, and even if it could be reproduced, the moral and ethical issues would hinder broad use. Inner Sphere scientists also lacked the technological ability to reproduce ProtoMech's distinctive internal structure, armoring, and heat sinks, which would have resulted in bigger, less-effective units.
+</history>
+
+<manufacturer>
+Swedenborg Heavy Industries
+</manufacturer>
+
+<primaryFactory>
+Kirchbach
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:SVA-14 Glider
+ENGINE:60 Fusion
+ARMOR:UltraProto Standard
+JUMPJET:Unspecified
+COMMUNICATIONS:Unspecified
+TARGETING:Unspecified
+</systemManufacturers>

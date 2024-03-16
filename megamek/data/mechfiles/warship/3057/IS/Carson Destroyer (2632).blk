@@ -1,0 +1,247 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Warship
+</UnitType>
+
+<Name>
+Carson Destroyer
+</Name>
+
+<Model>
+(2632)
+</Model>
+
+<mul id:>
+3902
+</mul id:>
+
+<year>
+2632
+</year>
+
+<originalBuildYear>
+2632
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<role>
+None
+</role>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+asfbay:6.0:1:1
+smallcraftbay:6.0:1:2
+cargobay:144443.0:1:3
+1stclassquarters:380.0:0
+crewquarters:1190.0:0
+</transporters>
+
+<SafeThrust>
+2
+</SafeThrust>
+
+<heatsinks>
+1500
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+20000
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+13
+</armor_type>
+
+<armor_tech>
+5
+</armor_tech>
+
+<armor>
+42
+35
+35
+31
+35
+35
+</armor>
+
+<Nose Equipment>
+(B) Naval PPC (Medium)
+Naval PPC (Medium)
+(B) Capital Missile Launcher (White Shark)
+Capital Missile Launcher (White Shark)
+Ammo White Shark:30
+</Nose Equipment>
+
+<Left Front Side Equipment>
+(B) Naval Laser 45
+Naval Laser 45
+Naval Laser 45
+Naval Laser 45
+</Left Front Side Equipment>
+
+<Right Front Side Equipment>
+(B) Naval Laser 45
+Naval Laser 45
+Naval Laser 45
+Naval Laser 45
+</Right Front Side Equipment>
+
+<Aft Equipment>
+(B) Naval Laser 45
+Naval Laser 45
+(B) Capital Missile Launcher (White Shark)
+Ammo White Shark:30
+</Aft Equipment>
+
+<Aft Left Side Equipment>
+(B) Naval Autocannon (NAC/30)
+Ammo NAC/30:20
+(B) Naval Laser 45
+</Aft Left Side Equipment>
+
+<Aft Right Side Equipment>
+(B) Naval Autocannon (NAC/30)
+Ammo NAC/30:20
+(B) Naval Laser 45
+</Aft Right Side Equipment>
+
+<Hull Equipment>
+</Hull Equipment>
+
+<Left Broadsides Equipment>
+(B) Naval Autocannon (NAC/30)
+Naval Autocannon (NAC/30)
+Ammo NAC/30:40
+</Left Broadsides Equipment>
+
+<Right Broadsides Equipment>
+(B) Naval Autocannon (NAC/30)
+Naval Autocannon (NAC/30)
+Ammo NAC/30:40
+</Right Broadsides Equipment>
+
+<structural_integrity>
+40
+</structural_integrity>
+
+<capabilities>
+The Carson-class destroyers, manufactured by Thompson's Shipyards, were designed to serve as escort vessels for the expanding Star League Navy. These destroyers incorporated features suitable for extended deployment, including an eighty-meter diameter Grav deck, large cargo capacity, and fuel tank. However, issues arose due to the inexperience of Thompson's Shipyards with WarShip construction. The single Regulis-XII engine, when operated at maximum thrust for extended periods, experienced excessive wear and tear, resulting in reduced maximum thrust and a need for frequent shipyard maintenance. These limitations made the Carson-class destroyers incapable of operating effectively in the new territories, where maintenance yards were scarce.
+</capabilities>
+
+<overview>
+The Carson-class destroyers were a series of escort vessels commissioned by the Star League Navy to cover the expanding territory of the Star League. Manufactured by Thompson's Shipyards, known for their expertise in JumpShip construction, the Carsons featured a generous grav deck, large cargo capacity, and fuel tanks for extended deployment. However, due to engineering oversights, the Carson-class faced challenges with excessive wear and tear on the engines, leading to reduced thrust and a high need for maintenance. Despite their initial role, the introduction of more reliable destroyers eventually led to the retirement of the Carson-class in 2722, marking the end of their service in the Star League Navy.
+</overview>
+
+<history>
+After five years of service, problems with the Carson-class destroyers became evident due to Thompson's Shipyards' oversight in accounting for the engine's wear and tear. The lack of provisions for this issue resulted in reduced thrust and the need for frequent maintenance, making the destroyers unsuitable for operating in the "wilds" of the expanding territories. As a result, a study on replacing the drive deemed it cost-ineffective, leading to the halting of production. The completed Carson-class destroyers were reassigned to patrol more settled regions while more reliable craft, such as the Lola III-class destroyer, became available. The introduction of the Essex-class destroyer in 2722 finally allowed the Navy to retire the Carson-class destroyers from service.
+</history>
+
+<manufacturer>
+Thompson's Shipyards
+</manufacturer>
+
+<primaryFactory>
+Keid
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<use>
+Destroyer
+</use>
+
+<length>
+582 m
+</length>
+
+<height>
+1080 m Sail
+</height>
+
+<source>
+TRO: 3057 Revised
+</source>
+
+<tonnage>
+510000.0
+</tonnage>
+
+<kf_core>
+1
+</kf_core>
+
+<sail>
+1
+</sail>
+
+<grav_decks>
+80
+</grav_decks>
+
+<designtype>
+1
+</designtype>
+
+<crew>
+250
+</crew>
+
+<officers>
+38
+</officers>
+
+<gunners>
+23
+</gunners>
+
+<passengers>
+0
+</passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<life_boat>
+15
+</life_boat>
+
+<escape_pod>
+27
+</escape_pod>
+

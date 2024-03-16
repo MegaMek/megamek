@@ -13,24 +13,19 @@
  */  
 package megamek.common;
 
+import jakarta.xml.bind.*;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import megamek.utilities.xml.MMXMLUtility;
+
+import javax.xml.namespace.QName;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
-
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.PropertyException;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.namespace.QName;
-
-import megamek.utils.MegaMekXmlUtil;
+import java.util.List;
 
 /** 
  * A helper class that is used for storing and retrieving map setups in the 
@@ -47,9 +42,8 @@ import megamek.utils.MegaMekXmlUtil;
  * @author Simon (SJuliez)
  */
 @XmlRootElement(name = "MAPSETUP")
-@XmlAccessorType(XmlAccessType.NONE)
+@XmlAccessorType(value = XmlAccessType.NONE)
 public class MapSetup implements Serializable {
-
     private static final long serialVersionUID = 5219340035488553080L;
 
     @XmlElement(name = "BOARDWIDTH")
@@ -61,7 +55,7 @@ public class MapSetup implements Serializable {
     @XmlElement(name = "MAPHEIGHT")
     private int mapHeight = 1;
     @XmlElement(name = "BOARDS")
-    private ArrayList<String> boards = new ArrayList<>();
+    private List<String> boards = new ArrayList<>();
 
     public MapSetup(MapSettings mapSettings) {
         boardWidth = mapSettings.getBoardWidth();
@@ -72,6 +66,7 @@ public class MapSetup implements Serializable {
     }
     
     public MapSetup() {
+
     }
 
     /** 
@@ -80,7 +75,7 @@ public class MapSetup implements Serializable {
     public static MapSetup load(final InputStream is) throws JAXBException {
         JAXBContext jc = JAXBContext.newInstance(MapSetup.class);
         Unmarshaller um = jc.createUnmarshaller();
-        return (MapSetup) um.unmarshal(MegaMekXmlUtil.createSafeXmlSource(is));
+        return (MapSetup) um.unmarshal(MMXMLUtility.createSafeXmlSource(is));
     }
 
     /** 
@@ -96,15 +91,11 @@ public class MapSetup implements Serializable {
         marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
         // The default header has the encoding and standalone properties
         marshaller.setProperty(Marshaller.JAXB_FRAGMENT, true);
-        try {
-            marshaller.setProperty("com.sun.xml.internal.bind.xmlHeaders", "<?xml version=\"1.0\"?>");
-        } catch (PropertyException ex) {
-            marshaller.setProperty("com.sun.xml.bind.xmlHeaders", "<?xml version=\"1.0\"?>");
-        }
-        JAXBElement<MapSetup> element = new JAXBElement<>(new QName("MAPSETUP"), MapSetup.class, derivedSetup);
+        marshaller.setProperty("org.glassfish.jaxb.xmlHeaders", "<?xml version=\"1.0\"?>");
+        JAXBElement<MapSetup> element = new JAXBElement<>(new QName("MAPSETUP"),
+                MapSetup.class, derivedSetup);
         marshaller.marshal(element, os);
     }
-
 
     public int getBoardWidth() {
         return boardWidth;
@@ -122,10 +113,7 @@ public class MapSetup implements Serializable {
         return mapHeight;
     }
 
-    public ArrayList<String> getBoards() {
+    public List<String> getBoards() {
         return boards;
     }
-    
 }
-
-

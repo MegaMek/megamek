@@ -13,12 +13,16 @@ SpaceStation
 </UnitType>
 
 <Name>
-Unpressurized Yard - Medium
+Unpressurized Yard
 </Name>
 
 <Model>
-(2250)
+Medium (2250)
 </Model>
+
+<mul id:>
+5087
+</mul id:>
 
 <year>
 2250
@@ -31,6 +35,10 @@ Unpressurized Yard - Medium
 <type>
 IS Level 3
 </type>
+
+<role>
+None
+</role>
 
 <designtype>
 0
@@ -115,7 +123,7 @@ cargobay:64545.0:1:7
 </structural_integrity>
 
 <source>
-TRO3057r - Age of War
+TRO: 3057 Revised
 </source>
 
 <tonnage>

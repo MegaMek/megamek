@@ -1,12 +1,18 @@
-Version:1.1
-Daedalus
-DAD-3D
+chassis:Daedalus
+model:DAD-3D
+mul id:790
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3062
-Source:TRO 3055 - Civil War
+Source:TRO: 3055
 Rules Level:4
+role:Striker
+
+
+
+quirk:difficult_maintain
+
 
 Mass:45
 Engine:270 XL Engine

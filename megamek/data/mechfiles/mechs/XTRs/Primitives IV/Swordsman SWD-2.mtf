@@ -1,12 +1,22 @@
-Version:1.0
-Swordsman
-SWD-2
+chassis:Swordsman
+model:SWD-2
+mul id:7182
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2482
-Source:XTRO Primitives IV - Age of War
+Source:XTR: Primitives IV
 Rules Level:1
+role:Brawler
+
+
+
+quirk:searchlight
+quirk:bad_rep_is
+quirk:obsolete
+quirk:poor_work
+weaponquirk:accurate:LT:0:Autocannon/5
+
 
 Mass:40
 Engine:160 Fusion Engine

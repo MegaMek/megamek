@@ -1,12 +1,13 @@
-Version:1.0
-Harvester Ant
-KIC-3M AgroMech (MG)
+chassis:Harvester Ant
+model:KIC-3M AgroMech (MG)
+mul id:7152
 
 Config:Quad
 TechBase:Inner Sphere
 Era:2801
-Source:RS OK - Early Succession War
+Source:Record Sheets: Operation Klondike
 Rules Level:2
+role:Ambusher
 
 Mass:20
 Engine:60 ICE Engine(IS)

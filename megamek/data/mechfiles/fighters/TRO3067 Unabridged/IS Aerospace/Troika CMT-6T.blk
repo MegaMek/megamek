@@ -1,0 +1,127 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Aero
+</UnitType>
+
+<Name>
+Troika
+</Name>
+
+<Model>
+CMT-6T
+</Model>
+
+<mul id:>
+5754
+</mul id:>
+
+<year>
+3079
+</year>
+
+<originalBuildYear>
+3079
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<role>
+Dogfighter
+</role>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+troopspace:4.0
+</transporters>
+
+<SafeThrust>
+6
+</SafeThrust>
+
+<cockpit_type>
+0
+</cockpit_type>
+
+<heatsinks>
+17
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+480
+</fuel>
+
+<engine_type>
+2
+</engine_type>
+
+<armor_type>
+19
+</armor_type>
+
+<armor_tech>
+-1
+</armor_tech>
+
+<armor>
+74
+52
+52
+46
+</armor>
+
+<Nose Equipment>
+RL10
+Heavy PPC
+</Nose Equipment>
+
+<Left Wing Equipment>
+RL10
+ISSmallVSPLaser
+ISSmallVSPLaser
+ISSmallVSPLaser
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+RL10
+ISSmallVSPLaser
+ISSmallVSPLaser
+ISSmallVSPLaser
+</Right Wing Equipment>
+
+<Aft Equipment>
+ISAntiMissileSystem
+</Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+ISAMS Ammo
+ISCASE
+</Fuselage Equipment>
+
+<source>
+TRO: 3067
+</source>
+
+<tonnage>
+65.0
+</tonnage>

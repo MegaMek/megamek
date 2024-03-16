@@ -1,0 +1,173 @@
+chassis:Kingfisher
+model:X
+mul id:1787
+
+Config:Biped Omnimech
+techbase:Clan
+era:3076
+source:Rec Guide:ilClan #18
+rules level:3
+role:Brawler
+
+quirk:rugged_1
+
+
+mass:90
+engine:360 Fusion (Clan) Engine(IS)
+structure:Clan Endo Steel
+myomer:Standard
+
+heat sinks:17 Clan Double
+base chassis heat sinks:14
+walk mp:4
+jump mp:0
+
+armor:Ferro-Fibrous(Clan)
+LA armor:30
+RA armor:30
+LT armor:28
+RT armor:28
+CT armor:44
+HD armor:9
+LL armor:38
+RL armor:38
+RTL armor:10
+RTR armor:10
+RTC armor:13
+
+Weapons:7
+Improved Heavy Medium Laser, Left Arm
+Improved Heavy Medium Laser, Left Arm
+Improved Heavy Medium Laser, Left Arm
+LRM 15, Right Arm
+ER Medium Pulse Laser, Left Torso
+ER Medium Pulse Laser, Right Torso
+ER PPC, Center Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+CLImprovedMediumHeavyLaser (OMNIPOD)
+CLImprovedMediumHeavyLaser (OMNIPOD)
+CLImprovedMediumHeavyLaser (OMNIPOD)
+CLImprovedMediumHeavyLaser (OMNIPOD)
+CLImprovedMediumHeavyLaser (OMNIPOD)
+CLImprovedMediumHeavyLaser (OMNIPOD)
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+CLLRM15 (OMNIPOD)
+CLLRM15 (OMNIPOD)
+CLArtemisV (OMNIPOD)
+CLArtemisV (OMNIPOD)
+Clan Ammo LRM-15 (Clan) Artemis V-capable (OMNIPOD)
+Clan Ammo LRM-15 (Clan) Artemis V-capable (OMNIPOD)
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+CLTargeting Computer (OMNIPOD)
+CLTargeting Computer (OMNIPOD)
+CLTargeting Computer (OMNIPOD)
+CLERMediumPulseLaser (OMNIPOD)
+CLERMediumPulseLaser (OMNIPOD)
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+
+Right Torso:
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLERMediumPulseLaser (OMNIPOD)
+CLERMediumPulseLaser (OMNIPOD)
+CLECMSuite (OMNIPOD)
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLERPPC (OMNIPOD)
+CLERPPC (OMNIPOD)
+
+Head:
+Life Support
+Sensors
+Cockpit
+Clan Ferro-Fibrous
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLDoubleHeatSink
+CLDoubleHeatSink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLDoubleHeatSink
+CLDoubleHeatSink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+overview:An early Clan assault OmniMech that may have influenced all subsequent assault OmniMech design, the Kingfisher is rugged and maneuverable. These traits make the Kingfisher an ideal choice for take and hold missions.
+
+capabilities:The tough Kingfisher mounts fourteen and a half tons of Ferro-Fibrous armor on an Endo Steel chassis, the most it can take. Unlike most modern front-line OmniMechs, the Kingfisher uses a standard engine. The 'Mech also has seventeen fixed double heat sinks, forcing three to be mounted outside of the engine.
+
+deployment:This powerful variant carries an LRM 20 with Artemis IV as its main weapon with a PPC mounted in the center torso. Equipped with two ER Medium Pulse Lasers and three Improved Heavy Medium Lasers for close range. For protection used the X variant an ECM Suite system and all weapons linked to an Targeting Computer.
+
+history:Based off the powerful but dezgra Pulverizer, Clan Snow Raven debuted the Kingfisher in 2887 as an early second-generation OmniMech, the Kingfisher's speed and relative invulnerability have kept it in heavy use even during the Clan Invasion era, especially by Clan Ghost Bear, alongside more recent assault OmniMechs like the Executioner.
+
+manufacturer:Snow Raven Industrial Complex Alpha, Strana Mechty ’Mech Production Facility Beta
+primaryfactory:Dante, Strana Mechty
+systemmanufacturer:CHASSIS:SL YT-A Endo
+systemmanufacturer:ENGINE:Star League Standard 360
+systemmanufacturer:ARMOR:Forging Z5 Ferro-Fibrous
+systemmanufacturer:COMMUNICATIONS:Model 74/129.3 TCS
+systemmanufacturer:TARGETING:S438 Mk. III Mod. 7 TTS

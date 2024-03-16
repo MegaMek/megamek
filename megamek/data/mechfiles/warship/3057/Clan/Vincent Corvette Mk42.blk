@@ -1,0 +1,238 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Warship
+</UnitType>
+
+<Name>
+Vincent Corvette
+</Name>
+
+<Model>
+Mk 42
+</Model>
+
+<mul id:>
+5352
+</mul id:>
+
+<year>
+2997
+</year>
+
+<originalBuildYear>
+2997
+</originalBuildYear>
+
+<type>
+Clan Level 3
+</type>
+
+<role>
+None
+</role>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+smallcraftbay:4.0:1:1
+asfbay:10.0:2:2
+1stclassquarters:280.0:0
+crewquarters:1057.0:0
+cargobay:92187.5:1:5
+</transporters>
+
+<SafeThrust>
+4
+</SafeThrust>
+
+<heatsinks>
+493
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+5000
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+12
+</armor_type>
+
+<armor_tech>
+6
+</armor_tech>
+
+<armor>
+16
+19
+19
+16
+19
+19
+</armor>
+
+<Nose Equipment>
+(B) Capital Missile Launcher (Barracuda)
+Capital Missile Launcher (Barracuda)
+Ammo Barracuda:20
+</Nose Equipment>
+
+<Left Front Side Equipment>
+(B) Naval Autocannon (NAC/10)
+Ammo NAC/10:50
+(B) CLERLargeLaser
+CLERLargeLaser
+</Left Front Side Equipment>
+
+<Right Front Side Equipment>
+(B) Naval Autocannon (NAC/10)
+Ammo NAC/10:50
+(B) CLERLargeLaser
+CLERLargeLaser
+</Right Front Side Equipment>
+
+<Aft Equipment>
+</Aft Equipment>
+
+<Aft Left Side Equipment>
+</Aft Left Side Equipment>
+
+<Aft Right Side Equipment>
+</Aft Right Side Equipment>
+
+<Hull Equipment>
+ISSmallNavalCommScannerSuite
+ISMobileHPG
+</Hull Equipment>
+
+<Left Broadsides Equipment>
+(B) Naval Autocannon (NAC/10)
+Ammo NAC/10:50
+(B) CLERLargeLaser
+CLERLargeLaser
+</Left Broadsides Equipment>
+
+<Right Broadsides Equipment>
+(B) Naval Autocannon (NAC/10)
+Ammo NAC/10:50
+(B) CLERLargeLaser
+CLERLargeLaser
+</Right Broadsides Equipment>
+
+<structural_integrity>
+40
+</structural_integrity>
+
+<source>
+TRO: 3057 Revised
+</source>
+
+<tonnage>
+420000.0
+</tonnage>
+
+<kf_core>
+1
+</kf_core>
+
+<lithium-fusion>
+1
+</lithium-fusion>
+
+<sail>
+1
+</sail>
+
+<grav_decks>
+60
+</grav_decks>
+
+<crew>
+219
+</crew>
+
+<officers>
+28
+</officers>
+
+<gunners>
+24
+</gunners>
+
+<passengers>
+0
+</passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<life_boat>
+0
+</life_boat>
+
+<escape_pod>
+8
+</escape_pod>
+
+<capabilities>
+The Vincent corvette's notable features include its increased size and the implementation of "smart modularity." This innovative approach involved collaboration with other contractors to standardize ship fittings and systems, resulting in the adoption of long-lasting components that are still utilized in newer ships. The spacious interior of the Vincent allowed for the accommodation of various technological advancements over time, enabling engineers to replace engines, computers, and weapons as needed. Equipped with the Ulsop Al Surveillance Computer, the Vincent Mark XXXIX boasts enhanced detection capabilities, almost doubling the range compared to its predecessor, the Mark XXXVIII. With its four naval autocannons, eight lasers, and two missile systems, the Vincent possesses credible firepower, making it a formidable asset, particularly in squadron-based combat situations. Additionally, the Vincent Mark XXXIX is powered by two Howser 2G2 "Hotfire" engines, providing exceptional swiftness and maneuverability. The model in use with Clans during the initial invasion of the Inner Sphere differs little from the Mark 39, the most notable changes being the addition of a Lithium-Fusion Battery System and Clan HarJel-based hull-sealant technology.
+</capabilities>
+
+<overview>
+The Vincent corvette, commissioned by the Hegemony Armed Forces (HAF) to address the need for a powerful patrol vessel, played a vital role in defending Hegemony worlds. With its larger size and "smart modularity" concept, the Vincent stood out among previous corvettes. Delhi Ships, a manufacturer that later became Delhi Warships, won the contract to build the Vincent due to its design capabilities and strategic location. This marked a significant milestone for Delhi, as the Vincent design became widely produced, serving the HAF and Star League Defense Force (SLDF) for over three centuries and establishing Delhi as a major defense contractor.
+</overview>
+
+<history>
+The need for a capable patrol vessel became evident as the Terran Hegemony found itself surrounded by Inner Sphere realms, prompting the HAF to seek a vessel that could effectively deter intruders. However, compromises in previous corvette designs hindered the Hegemony's defense capabilities, leading to the formation of mixed corvette squadrons. These squadrons consisted of Bonaventure Class ships, renowned for their surveillance capabilities but lacking in armament, and Vigilant Class ships, armed but limited in detection capability. The vulnerability of the Hegemony was exposed when the Capellan army invaded Terra Firma in 2409, catching the HAF off guard. Following the eventual recapture of Terra Firma, a portion of the Liao reparations was allocated to commission a new corvette design. Delhi Ships, based on Capella and willing to accept payment in military reparations, won the contract to build the new corvette, named the Vincent. To maintain secrecy regarding Hegemony technology integrated into the Vincent, Delhi Ships agreed to establish a new facility in the Carver System. The Vincent's design, produced in large numbers, served the HAF and SLDF for over three centuries, contributing significantly to Delhi's ascent as a major Star League defense contractor.
+</history>
+
+<manufacturer>
+Refit
+</manufacturer>
+
+<primaryFactory>
+Unknown
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<use>
+Corvette
+</use>
+
+<length>
+402 m
+</length>
+
+<height>
+1005 m Sail
+</height>

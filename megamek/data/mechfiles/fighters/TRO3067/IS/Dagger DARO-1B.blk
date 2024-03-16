@@ -20,6 +20,10 @@ Dagger
 DARO-1B
 </Model>
 
+<mul id:>
+4041
+</mul id:>
+
 <year>
 3062
 </year>
@@ -31,6 +35,10 @@ DARO-1B
 <type>
 IS Level 2
 </type>
+
+<role>
+Fast Dogfighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -110,7 +118,7 @@ IS LB 10-X Cluster Ammo:OMNI
 </Fuselage Equipment>
 
 <source>
-TRO 3067 - Civil War
+TRO: 3067
 </source>
 
 <tonnage>

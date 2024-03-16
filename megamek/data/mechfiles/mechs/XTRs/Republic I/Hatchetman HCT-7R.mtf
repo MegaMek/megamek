@@ -1,12 +1,18 @@
-Version:1.2
-Hatchetman
-HCT-7R
+chassis:Hatchetman
+model:HCT-7R
+mul id:7295
 
 Config:Biped
 techbase:Inner Sphere
 era:3114
-source:XTRO Republic I - Late Republic
+source:XTR: Republic I
 rules level:4
+role:Brawler
+
+
+
+quirk:anti_air
+
 
 mass:45
 engine:225 Light Engine(IS)

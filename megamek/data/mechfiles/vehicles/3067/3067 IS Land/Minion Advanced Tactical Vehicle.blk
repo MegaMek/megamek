@@ -12,9 +12,13 @@ Tank
 <Name>
 Minion Advanced Tactical Vehicle
 </Name>
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+4640
+</mul id:>
 <Tonnage>
 20
 </Tonnage>
@@ -37,6 +41,10 @@ ISC3SlaveUnit
 <type>
 IS Level 2
 </type>
+
+<role>
+Striker
+</role>
 <year>
 3064
 </year>
@@ -52,3 +60,7 @@ IS Level 2
 <motion_type>
 Hover
 </motion_type>
+
+<source>
+TRO: 3067
+</source>

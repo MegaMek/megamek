@@ -16,9 +16,13 @@ FixedWingSupport
 Tsuru VIP Aircraft
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+5779
+</mul id:>
 
 <year>
 3021
@@ -31,6 +35,10 @@ Tsuru VIP Aircraft
 <type>
 IS Level 4
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Aerodyne
@@ -107,7 +115,7 @@ Communications Equipment (3 ton)
 </structural_tech_rating>
 
 <source>
-XTRO Succession Wars - Succession Wars
+XTR: Succession Wars
 </source>
 
 <tonnage>

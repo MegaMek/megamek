@@ -20,6 +20,10 @@ Dreadnought Mk II Land Trailer
 Configuration #3
 </Model>
 
+<mul id:>
+5573
+</mul id:>
+
 <year>
 3081
 </year>
@@ -27,6 +31,10 @@ Configuration #3
 <type>
 IS Level 4
 </type>
+
+<role>
+Ambusher
+</role>
 
 <motion_type>
 Tracked
@@ -85,7 +93,7 @@ Machine Gun
 </Turret Equipment>
 
 <source>
-XTRO Periphery - Jihad
+XTR: Periphery
 </source>
 
 <transporters>
@@ -98,3 +106,8 @@ refrigeratedcargobay:17.4:1
 <tonnage>
 50.0
 </tonnage>
+
+<quirks>
+non_standard
+</quirks>
+

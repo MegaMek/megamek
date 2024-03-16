@@ -1,12 +1,19 @@
-Version:1.0
-Zeus-X
-ZEU-9WD
+chassis:Zeus-X
+model:ZEU-9WD
+mul id:3646
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3067
-Source:TRO 3050U - Civil War
+Source:TRO: 3050
 Rules Level:2
+role:Brawler
+
+
+
+quirk:command_mech
+quirk:difficult_maintain
+
 
 Mass:80
 Engine:320 Light Engine
@@ -147,3 +154,19 @@ Light Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
+
+overview:The original ZEU-X was a technological milestone. It was also an unwieldy mess of patchwork armor, reactive composites, and illogical short-range weapons, the limited manufacturing of which during the Civil War functioned only as propaganda. The following model was a massive failure, as the marriage of armored components and composite structure frequently ended in a pile of intact internal components as the only remains of a defeated ZEU-X2. A 3080s model was an inefficient jumping monster informed by Solaris research on the enigmatic Sasquatch. Only the sub-variant ZEU-WD series, which combined X-series improvements with conventional Zeus chassis, was a success.
+
+capabilities:Manufactured on by Defiance, the Zeus X was both a poster child for excellence in production engineering and an innovative high-technology platform, while at the same time struggling with emerging technologies. 
+
+deployment:Starting life as one of Zeus-X testbeds, ZEUX0003 was gifted by the Kell Hounds to Black Widow Company commander Stacy Church. When Church landed on Outreach in 3071 it mounted a Light Fusion Engine and eleven and half tons of Light Ferro-Fibrous armor, and was armed with a Defiance 2002 Heavy PPC in its right arm, supported by an LB-X AC/20 mounted in the left arm and torso, and a pair of Medium Pulse Lasers. Two heat sinks were dropped to carry three tons of autocannon reloads. 
+
+history:The Zeus personifies Steiner's "wall of steel." The LCAF's indigenous pride and joy was reportedly the ultimate demonstration that superior production quality could compensate for weak battlefield prowess. It was picked for a facelift after three centuries of steadfast service to demonstrate Defiance's reputation as one of the Inner Sphere's major manufacturers. The Zeus X is equal parts celebrity and cutting-edge high-tech platform. Its modifications bring the ancient BattleMech up to date, even by thirty-second-century standards. The Zeus X-series is characterised structurally by a massive engine and a light yet brittle structure coated in layers of experimental armor. These qualities were carefully integrated with appropriate equipment when the ZEU-X4 was ready for manufacturing in the late 3110. The thick reactive plating is now production quality and completely covers the 'Mech. The LCAF received a command 'Mech when a roomy rumble seat was upgraded to a full console. Armed with modest but effective weapons, the ZEU-X4 attacks foes who are nothing more than approaching blots on the horizon. end of the Third Succession War, with the resulting ZEU-6T variant being the standard during the Fourth Succession War and later the War of 3039. The design was also well received by mercenary units, particularly the Zeta Battalion of Wolf's Dragoons.
+
+manufacturer:Defiance Industries,Defiance Manufacturing Annex
+primaryfactory:Hesperus II,Kwangjong-ni
+systemmanufacturer:CHASSIS:Chariot Type III
+systemmanufacturer:ENGINE:Pitban 320 Light
+systemmanufacturer:ARMOR:Kallon Light Ferro-Fibrous with CASE
+systemmanufacturer:COMMUNICATIONS:TharHes Calliope ZE-2
+systemmanufacturer:TARGETING:TharHes Ares-7

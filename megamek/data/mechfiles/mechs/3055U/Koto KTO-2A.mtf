@@ -1,12 +1,18 @@
-Version:1.0
-Koto
-KTO-2A
+chassis:Koto
+model:KTO-2A
+mul id:1837
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3057
-Source:TRO 3055 - Clan Invasion
+Source:TRO: 3055
 Rules Level:4
+role:Striker
+
+
+
+quirk:em_inter_whole
+
 
 Mass:25
 Engine:200 XL Engine

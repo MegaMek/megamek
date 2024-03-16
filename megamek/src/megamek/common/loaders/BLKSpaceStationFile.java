@@ -11,23 +11,15 @@
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
  */
-
-/*
- * BLkFile.java
- *
- * Created on April 6, 2002, 2:06 AM
- */
-
-/**
- *
- * @author taharqa
- * @version
- */
 package megamek.common.loaders;
 
 import megamek.common.*;
 import megamek.common.util.BuildingBlock;
 
+/**
+ * @author taharqa
+ * @since April 6, 2002, 2:06 AM
+ */
 public class BLKSpaceStationFile extends BLKFile implements IMechLoader {
 
     public BLKSpaceStationFile(BuildingBlock bb) {
@@ -38,24 +30,7 @@ public class BLKSpaceStationFile extends BLKFile implements IMechLoader {
     public Entity getEntity() throws EntityLoadingException {
 
         SpaceStation a = new SpaceStation();
-
-        if (!dataFile.exists("Name")) {
-            throw new EntityLoadingException("Could not find name block.");
-        }
-        a.setChassis(dataFile.getDataAsString("Name")[0]);
-        if (dataFile.exists("Model") && (dataFile.getDataAsString("Model")[0] != null)) {
-            a.setModel(dataFile.getDataAsString("Model")[0]);
-        } else {
-            a.setModel("");
-        }
-
-        setTechLevel(a);
-        setFluff(a);
-        checkManualBV(a);
-
-        if (dataFile.exists("source")) {
-            a.setSource(dataFile.getDataAsString("source")[0]);
-        }
+        setBasicEntityData(a);
 
         if (!dataFile.exists("tonnage")) {
             throw new EntityLoadingException("Could not find weight block.");
@@ -150,12 +125,7 @@ public class BLKSpaceStationFile extends BLKFile implements IMechLoader {
         }
 
         if (dataFile.exists("modular")) {
-            a.setBattleStation(true);
-        }
-
-        // BattleStation
-        if (dataFile.exists("Battlestation")) {
-            a.setBattleStation(true);
+            a.setModularOrKFAdapter(true);
         }
 
         // Grav Decks - two approaches
@@ -241,6 +211,7 @@ public class BLKSpaceStationFile extends BLKFile implements IMechLoader {
         addTransports(a);
 
         a.setArmorTonnage(a.getArmorWeight());
+        loadQuirks(a);
         return a;
     }
 

@@ -20,6 +20,10 @@ Avar
 C
 </Model>
 
+<mul id:>
+157
+</mul id:>
+
 <year>
 2878
 </year>
@@ -31,6 +35,10 @@ C
 <type>
 Clan Level 2
 </type>
+
+<role>
+Interceptor
+</role>
 
 <motion_type>
 Aerodyne
@@ -113,7 +121,7 @@ CLCASE
 </Fuselage Equipment>
 
 <source>
-TRO 3055u - Succession Wars
+TRO: 3055 Update
 </source>
 
 <tonnage>

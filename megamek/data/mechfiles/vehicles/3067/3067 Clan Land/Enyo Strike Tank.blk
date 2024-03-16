@@ -16,9 +16,13 @@ Tank
 Enyo Strike Tank
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+4127
+</mul id:>
 
 <year>
 3063
@@ -27,6 +31,10 @@ Enyo Strike Tank
 <type>
 Clan Level 2
 </type>
+
+<role>
+Skirmisher
+</role>
 
 <motion_type>
 Tracked
@@ -87,3 +95,7 @@ CLLargePulseLaser
 <tonnage>
 55.0
 </tonnage>
+
+<source>
+TRO: 3067
+</source>

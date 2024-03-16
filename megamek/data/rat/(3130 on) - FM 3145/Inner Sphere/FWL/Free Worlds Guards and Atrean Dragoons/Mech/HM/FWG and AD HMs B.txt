@@ -1,0 +1,12 @@
+Free Worlds Guards and Atrean Dragoons Heavy Mechs 3130 B
+Rifleman RFL-7M,1
+Thunderbolt TDR-10M,2
+Marauder MAD-9M2,3
+Archer ARC-9M,4
+Orion ON2-M,5
+Hercules HRC-LS-9000,6
+Orion ON3-M,5
+Anzu ZU-G60,4
+Scourge SCG-WF1,3
+Pandarus LFA-1A,2
+Guillotine IIC 2,1

@@ -1,0 +1,233 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Warship
+</UnitType>
+
+<Name>
+Bonaventure Corvette
+</Name>
+
+<Model>
+(2317)
+</Model>
+
+<mul id:>
+3848
+</mul id:>
+
+<year>
+2317
+</year>
+
+<originalBuildYear>
+2317
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<role>
+None
+</role>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+asfbay:6.0:2:1
+smallcraftbay:2.0:1:2
+cargobay:53780.0:1:3
+1stclassquarters:170.0:0
+crewquarters:616.0:0
+</transporters>
+
+<SafeThrust>
+4
+</SafeThrust>
+
+<heatsinks>
+384
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+32500
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+41
+</armor_type>
+
+<armor_tech>
+5
+</armor_tech>
+
+<armor>
+21
+20
+20
+17
+20
+20
+</armor>
+
+<Nose Equipment>
+(B) LRM 15
+LRM 15
+IS Ammo LRM-15:56
+</Nose Equipment>
+
+<Left Front Side Equipment>
+(B) Naval Laser 35
+(B) Large Laser
+</Left Front Side Equipment>
+
+<Right Front Side Equipment>
+(B) Naval Laser 35
+(B) Large Laser
+</Right Front Side Equipment>
+
+<Aft Equipment>
+(B) LRM 15
+LRM 15
+IS Ammo LRM-15:56
+</Aft Equipment>
+
+<Aft Left Side Equipment>
+(B) Large Laser
+</Aft Left Side Equipment>
+
+<Aft Right Side Equipment>
+(B) Large Laser
+</Aft Right Side Equipment>
+
+<Hull Equipment>
+ISSmallNavalCommScannerSuite
+</Hull Equipment>
+
+<Left Broadsides Equipment>
+(B) Autocannon/10
+Autocannon/10
+IS Ammo AC/10:80
+</Left Broadsides Equipment>
+
+<Right Broadsides Equipment>
+(B) Autocannon/10
+Autocannon/10
+IS Ammo AC/10:80
+</Right Broadsides Equipment>
+
+<structural_integrity>
+36
+</structural_integrity>
+
+<capabilities>
+The Bonaventure was poorly armed, even compared with vessels of similar size dating from the Terran Alliance. Only against AeroSpace Fighters was the Bonaventure not severely under-gunned. For naval engagements, the vessel boasted only a single pair of naval lasers. Against smaller targets, the Bonaventure could hold its own with an array of lasers, autocannons and long-range missiles. The Bonaventure-class was not intended for transportation and boasted no DropShip collars. The vessel did possess three cargo bays, one for a pair of small craft, one for a single squadron of fighters, and a last bay capable of storing 53,926 tons of supplies.
+</capabilities>
+
+<overview>
+The Bonaventure-class corvette was developed during the tumultuous era of the Terran Alliance's decline. Led by Admiral James McKenna, the project continued under the newly formed Terran Hegemony, featuring excellent mobility and advanced sensor capabilities. Initially paired with the Vigilant-class corvette, the Bonaventure served in reconnaissance missions and later transitioned to picket duty, providing early warning and intercepting intruders. However, with the advent of the Vincent-class corvette in 2432, the Bonaventure-class was eventually replaced.
+</overview>
+
+<history>
+The development of the Bonaventure-class corvette began during the final days of the Terran Alliance, spearheaded by Admiral James McKenna. As he rose to power and formed the Terran Hegemony, the project continued uninterrupted, showcasing the corvette's impressive mobility and sophisticated sensor suite. However, during the Capella campaign, it became evident that the Bonaventure lacked sufficient firepower. To address this limitation, the Hegemony Armed Forces (HAF) decided to pair the Bonaventure-class with the heavily armed Vigilant-class corvette, forming four-corvette squadrons for data gathering sweeps before invasions. As the borders of the Terran Hegemony stabilized, the Bonaventure shifted to picket duty, utilizing its exceptional long-range detection capabilities to provide early warnings and coordinate interception efforts. During one notable engagement, a Kurita destroyer squadron attacked a HAF patrol squadron, resulting in the destruction of all but the THS Cochran, which evaded pursuit using the Bonaventure-class corvette's advanced sensors and superior speed. The Cochran's successful resistance led to the christening of the next Monsoon-class Battleship as the Cochran, honoring the valor displayed in the battle. However, the Bonaventure-class corvette was eventually replaced by the more versatile Vincent-class corvette upon its introduction in 2432, marking the end of an era for the Bonaventure-class in the Terran Hegemony's naval forces.
+</history>
+
+<manufacturer>
+Boeing Interstellar
+</manufacturer>
+
+<primaryFactory>
+Terra
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<use>
+Corvette
+</use>
+
+<length>
+486 meters
+</length>
+
+<source>
+TRO: 3057 Revised
+</source>
+
+<tonnage>
+240000.0
+</tonnage>
+
+<kf_core>
+1
+</kf_core>
+
+<sail>
+1
+</sail>
+
+<grav_decks>
+50
+</grav_decks>
+
+<designtype>
+1
+</designtype>
+
+<crew>
+127
+</crew>
+
+<officers>
+18
+</officers>
+
+<gunners>
+6
+</gunners>
+
+<passengers>
+0
+</passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<life_boat>
+10
+</life_boat>
+
+<escape_pod>
+17
+</escape_pod>
+

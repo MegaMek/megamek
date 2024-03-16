@@ -20,6 +20,10 @@ Fury Command Tank
 (C3S)
 </Model>
 
+<mul id:>
+1159
+</mul id:>
+
 <year>
 3069
 </year>
@@ -27,6 +31,10 @@ Fury Command Tank
 <type>
 IS Level 2
 </type>
+
+<role>
+Sniper
+</role>
 
 <motion_type>
 Tracked
@@ -83,7 +91,7 @@ ISGaussRifle
 </Turret Equipment>
 
 <source>
-TRO 3050 - Jihad
+TRO: 3050
 </source>
 
 <tonnage>

@@ -20,17 +20,25 @@ Rhino Fire Support Tank
 (Royal)
 </Model>
 
+<mul id:>
+2684
+</mul id:>
+
 <year>
 2708
 </year>
 
 <source>
-Star League
+TRO: 3075
 </source>
 
 <type>
 IS Level 2
 </type>
+
+<role>
+Missile Boat
+</role>
 
 <tonnage>
 80.0

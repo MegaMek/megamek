@@ -1,0 +1,156 @@
+chassis:Orochi
+model:OR-3K
+mul id:7999
+Config:Biped
+techbase:Inner Sphere
+era:3144
+source:Record Sheets: 3150
+rules level:2
+
+
+
+quirk:no_arms
+
+
+mass:90
+engine:360 XL Engine(IS)
+structure:IS Endo Steel
+myomer:Standard
+
+heat sinks:10 IS Double
+walk mp:4
+jump mp:0
+
+armor:Standard(Inner Sphere)
+LA armor:30
+RA armor:30
+LT armor:28
+RT armor:28
+CT armor:44
+HD armor:9
+LL armor:38
+RL armor:38
+RTL armor:10
+RTR armor:10
+RTC armor:14
+
+Weapons:5
+Silver Bullet Gauss Rifle, Left Arm
+ER Large Laser, Left Arm
+Silver Bullet Gauss Rifle, Right Arm
+ER Large Laser, Right Arm
+ER Small Laser, Head
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+ISSBGR
+ISSBGR
+ISSBGR
+ISSBGR
+ISSBGR
+ISSBGR
+ISSBGR
+ISERLargeLaser
+ISERLargeLaser
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+ISSBGR
+ISSBGR
+ISSBGR
+ISSBGR
+ISSBGR
+ISSBGR
+ISSBGR
+ISERLargeLaser
+ISERLargeLaser
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Silver Bullet Gauss Ammo
+Silver Bullet Gauss Ammo
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Silver Bullet Gauss Ammo
+Silver Bullet Gauss Ammo
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+-Empty-
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+ISERSmallLaser
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

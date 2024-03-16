@@ -20,6 +20,10 @@ Interdictor Pocket Warship
 (Sub-Capital)
 </Model>
 
+<mul id:>
+4365
+</mul id:>
+
 <year>
 3075
 </year>
@@ -31,6 +35,10 @@ Interdictor Pocket Warship
 <type>
 IS Level 4
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Aerodyne
@@ -147,7 +155,7 @@ ISAMS Ammo:24
 </structural_integrity>
 
 <source>
-JHS 3076 - Jihad
+Jihad Hot Spots: 3076
 </source>
 
 <tonnage>

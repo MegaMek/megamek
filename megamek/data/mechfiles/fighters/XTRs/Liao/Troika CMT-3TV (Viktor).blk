@@ -20,6 +20,10 @@ Troika
 CMT-3TV (Viktor)
 </Model>
 
+<mul id:>
+3310
+</mul id:>
+
 <year>
 3074
 </year>
@@ -31,6 +35,10 @@ CMT-3TV (Viktor)
 <type>
 Mixed (IS Chassis) Experimental
 </type>
+
+<role>
+Fire Support
+</role>
 
 <motion_type>
 Aerodyne
@@ -105,7 +113,7 @@ Clan Streak LRM 20 Ammo
 </Fuselage Equipment>
 
 <source>
-XTRO Liao - Jihad
+XTR: Liao
 </source>
 
 <tonnage>

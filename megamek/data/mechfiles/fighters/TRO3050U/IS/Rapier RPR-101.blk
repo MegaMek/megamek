@@ -20,6 +20,10 @@ Rapier
 RPR-101
 </Model>
 
+<mul id:>
+2643
+</mul id:>
+
 <year>
 2635
 </year>
@@ -31,6 +35,10 @@ RPR-101
 <type>
 IS Level 2
 </type>
+
+<role>
+Dogfighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -96,7 +104,7 @@ Medium Laser
 </Fuselage Equipment>
 
 <source>
-TRO 3050u - Star League
+TRO: 3050
 </source>
 
 <tonnage>

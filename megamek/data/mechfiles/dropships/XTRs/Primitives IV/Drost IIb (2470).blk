@@ -20,6 +20,10 @@ DroST IIb Transport
 (2470)
 </Model>
 
+<mul id:>
+7200
+</mul id:>
+
 <year>
 2470
 </year>
@@ -31,6 +35,10 @@ DroST IIb Transport
 <type>
 IS Level 4
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Aerodyne
@@ -155,7 +163,7 @@ Medium Laser
 </structural_integrity>
 
 <source>
-XTRO Primitives IV - Age of War
+XTR: Primitives IV
 </source>
 
 <tonnage>
@@ -245,3 +253,10 @@ Cargo Transport
 <height>
 31 meters
 </height>
+
+<quirks>
+atmo_instability
+easy_maintain
+obsolete
+</quirks>
+

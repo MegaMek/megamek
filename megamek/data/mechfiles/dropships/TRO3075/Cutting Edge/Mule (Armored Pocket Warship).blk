@@ -20,6 +20,10 @@ Mule
 (Armored Pocket Warship)
 </Model>
 
+<mul id:>
+4685
+</mul id:>
+
 <year>
 3068
 </year>
@@ -31,6 +35,10 @@ Mule
 <type>
 IS Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Spheroid
@@ -133,7 +141,7 @@ Medium Laser
 </structural_integrity>
 
 <source>
-TRO 3075 - Jihad
+TRO: 3075
 </source>
 
 <tonnage>

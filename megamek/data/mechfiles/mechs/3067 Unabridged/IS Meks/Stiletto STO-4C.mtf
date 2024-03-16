@@ -1,12 +1,19 @@
-Version:1.1
-Stiletto
-STO-4C
+chassis:Stiletto
+model:STO-4C
+mul id:5666
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3076
 Rules Level:2
-source:3067 Unabridged
+role:Striker
+source:Record Sheets: 3067 Unabridged
+
+
+
+quirk:multi_trac
+quirk:difficult_eject
+
 
 Mass:35
 Engine:280 Light Fusion Engine

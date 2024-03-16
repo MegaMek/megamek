@@ -15,6 +15,10 @@ Tokugawa Heavy Tank
 <Model>
 (MRM)
 </Model>
+
+<mul id:>
+3261
+</mul id:>
 <Tonnage>
 60
 </Tonnage>
@@ -48,6 +52,10 @@ ISSRM6 Ammo Artemis-capable
 <type>
 IS Level 2
 </type>
+
+<role>
+Juggernaut
+</role>
 <year>
 3062
 </year>
@@ -64,5 +72,5 @@ IS Level 2
 Wheeled
 </motion_type>
 <source>
-Civil War
+TRO: 3058
 </source>

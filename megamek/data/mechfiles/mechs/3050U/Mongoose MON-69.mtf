@@ -1,12 +1,21 @@
-Version:1.1
-Mongoose
-MON-69
+chassis:Mongoose
+model:MON-69
+mul id:4656
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2819
-Source:TRO 3050 - Succession Wars
+Source:TRO: 3050
 Rules Level:2
+role:Striker
+
+
+
+quirk:command_mech
+quirk:easy_pilot
+weaponquirk:stable_weapon:HD:3:Small Laser
+weaponquirk:stable_weapon:CT:10:Medium Laser
+
 
 Mass:25
 Engine:200 Fusion Engine

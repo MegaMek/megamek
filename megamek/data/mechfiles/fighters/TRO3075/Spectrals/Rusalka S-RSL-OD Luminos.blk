@@ -20,6 +20,10 @@ Rusalka
 S-RSL-OD Luminos
 </Model>
 
+<mul id:>
+4952
+</mul id:>
+
 <year>
 3071
 </year>
@@ -31,6 +35,10 @@ S-RSL-OD Luminos
 <type>
 IS Level 3
 </type>
+
+<role>
+Fast Dogfighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -110,7 +118,7 @@ ISLargePulseLaser:OMNI
 </Fuselage Equipment>
 
 <source>
-TRO 3075 - Jihad
+TRO: 3075
 </source>
 
 <tonnage>

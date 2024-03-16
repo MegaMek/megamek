@@ -1,12 +1,18 @@
-Version:1.0
-UrbanMech IIC
-2
+chassis:UrbanMech IIC
+model:2
+mul id:3362
 
 Config:Biped
 TechBase:Clan
 Era:3070
-Source:TRO 3060
+Source:TRO: 3060
 Rules Level:2
+role:Sniper
+
+quirk:ext_twist
+quirk:low_profile
+quirk:no_arms
+
 
 Mass:30
 Engine:90 Fusion (Clan) Engine
@@ -148,7 +154,7 @@ Heat Sink
 
 overview:The UrbanMech IIC is a Clan IIC-style upgrade of the original UrbanMech.
  
-capabilities:Designed as a cheap, efficient urban combat vehicle, the UrbanMech IIC improves upon its predecessor by utilizing an HAG/20 that allows the 'Mech's main gun to to put down large volumes of fire, though the MechWarrior must still watch ammo consumption carefully. The flamer is a backup weapon that allows the design to stay in the fight after its ammunition has run out.
+capabilities:Designed as a cheap, efficient urban combat vehicle, the UrbanMech IIC improves upon its predecessor by utilizing an HAG/20 that allows the 'Mech's main gun to put down large volumes of fire, though the MechWarrior must still watch ammo consumption carefully. The flamer is a backup weapon that allows the design to stay in the fight after its ammunition has run out.
 
 deployment:Introduced during the Jihad in 3070, the UrbanMech IIC 2 swaps the autocannon and laser for a Class 20 Hyper Assault Gauss Rifle with 2 tons of ammunition and a Flamer. 
 

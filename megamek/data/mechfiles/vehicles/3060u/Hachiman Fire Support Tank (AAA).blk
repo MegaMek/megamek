@@ -20,6 +20,10 @@ Hachiman Fire Support Tank
 (AAA)
 </Model>
 
+<mul id:>
+1358
+</mul id:>
+
 <year>
 3070
 </year>
@@ -27,6 +31,10 @@ Hachiman Fire Support Tank
 <type>
 Clan Level 2
 </type>
+
+<role>
+Sniper
+</role>
 
 <motion_type>
 Tracked
@@ -85,7 +93,7 @@ CLCASE
 </Turret Equipment>
 
 <source>
-Jihad
+TRO: 3060
 </source>
 
 <tonnage>

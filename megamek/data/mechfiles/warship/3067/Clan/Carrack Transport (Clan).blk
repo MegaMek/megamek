@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,6 +20,10 @@ Carrack Transport
 (Clan)
 </Model>
 
+<mul id:>
+3898
+</mul id:>
+
 <year>
 2950
 </year>
@@ -31,6 +35,10 @@ Carrack Transport
 <type>
 Clan Level 3
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Aerodyne
@@ -82,8 +90,8 @@ false
 10
 8
 8
-6
 9
+6
 6
 </armor>
 
@@ -247,12 +255,52 @@ CLAMS Ammo:1488
 15
 </structural_integrity>
 
+<capabilities>
+Due to its role as a military transport, the Carrack features a light array of mixed capital class and anti-fighter weaponry. The nose bay and each broadside featured a pair of NL35s and a single NAC/20, two ER large lasers and four Large pulse lasers, rounded off by four anti-missile systems for point defense. Save for downgrading the Naval Autocannon to a NAC/10, each fore and rear angle as well as directly aft features almost the same layout as well. The Carrack's 63,446 ton cargo hold surrounds the vessel's Compact Kearny-Fuchida Drive core and is flanked in turn by two Small Craft bays on either side. These bays frequently house a pair of aerospace fighters and a pair of shuttlecraft, however the exact composition of the small craft complement appears to depend on each individual vessel's captain.
+</capabilities>
+
+<overview>
+Developed as a merchantman to ply potentially hostile Periphery shipping lanes, the Carrack-class military transport served with the Star League Defense Force and Great House navies.
+</overview>
+
+<deployment>
+The modern Carrack-class transport serves in the fleets of nearly every Clan, but the Merchant Castes of both Clans Diamond Shark and Nova Cat possessed the lion-share. In truth most of these Diamond Shark and Nova Cat Carracks are the downgraded nonmilitary versions stripped of capital grade weaponry, both Clans unwilling to give their Merchant Castes war matériel on par with that of the Warrior Caste
+</deployment>
+
+<history>
+While no examples of the class were known to remain in the Inner Sphere following the maelstrom of the early Succession War era, an undetermined number accompanied the Exodus Fleet, with the modern Clan Carrack military transport first entering service in 2950. ComStar analysts were unable to determine how many of the Carracks which are currently in service among the various Clan toumans are upgraded Star League era vessels and how many are new, Clan-built ships. What ComStar was able to conclude following operations on Wayside V was that the differences between the original Star League and standard Clan Carrack were negligible; while mounting HarJel-based Hull Sealant technology, unlike many redesigned and upgraded Clan vessels the modern Carrack is not equipped with either advanced armor or a Lithium-Fusion Battery.
+</history>
+
+<manufacturer>
+Refit
+</manufacturer>
+
+<primaryFactory>
+Unknown
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
 <notes>
 Cargo 2 tons overweight. Removed it to make it legal.
 </notes>
 
+<use>
+Merchant Transport
+</use>
+
+<length>
+830 m
+</length>
+
 <source>
-TRO3067 - Late Succession War - LosTech
+TRO: 3067
 </source>
 
 <tonnage>
@@ -270,6 +318,10 @@ TRO3067 - Late Succession War - LosTech
 <grav_decks>
 98
 </grav_decks>
+
+<designtype>
+1
+</designtype>
 
 <crew>
 167
@@ -302,3 +354,4 @@ TRO3067 - Late Succession War - LosTech
 <escape_pod>
 4
 </escape_pod>
+

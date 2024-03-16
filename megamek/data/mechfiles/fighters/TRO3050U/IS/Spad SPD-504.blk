@@ -20,6 +20,10 @@ Spad
 SPD-504
 </Model>
 
+<mul id:>
+2988
+</mul id:>
+
 <year>
 3071
 </year>
@@ -31,6 +35,10 @@ SPD-504
 <type>
 IS Level 2
 </type>
+
+<role>
+Fast Dogfighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -100,7 +108,7 @@ ISERSmallLaser
 </Fuselage Equipment>
 
 <source>
-TRO 3050u - Jihad
+TRO: 3050
 </source>
 
 <tonnage>

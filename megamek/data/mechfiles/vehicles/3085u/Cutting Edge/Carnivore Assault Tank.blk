@@ -16,9 +16,13 @@ Tank
 Carnivore Assault Tank
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+465
+</mul id:>
 
 <Tonnage>
 80
@@ -69,12 +73,16 @@ CLCASE
 Clan Level 2
 </type>
 
+<role>
+Brawler
+</role>
+
 <year>
 3082
 </year>
 
 <source>
-Dark Age
+TRO: 3085
 </source>
 
 <internal_type>

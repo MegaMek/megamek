@@ -1,0 +1,120 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+Xiphos Assault Battle Armor
+</Name>
+
+<Model>
+C(Sqd4)
+</Model>
+
+<mul id:>
+6486
+</mul id:>
+
+<year>
+3116
+</year>
+
+<type>
+IS Level 2
+</type>
+
+<role>
+Juggernaut
+</role>
+
+<motion_type>
+Jump
+</motion_type>
+
+<cruiseMP>
+2
+</cruiseMP>
+
+<Squad Equipment>
+ISBAHeatSensor:RA
+ISBAHeavyFlamer:LA
+BABasicManipulator:RA
+</Squad Equipment>
+
+<source>
+TRO: 3145 Free Worlds League
+</source>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+</jumpingMP>
+
+<armor>
+15
+</armor>
+
+<armor_type>
+38
+</armor_type>
+
+<armor_tech>
+3
+</armor_tech>
+
+<Trooper Count>
+4
+</Trooper Count>
+
+<weightclass>
+4
+</weightclass>
+
+<overview>
+The Xiphos assault battle armor was developed by Irian Technologies specifically to create an infantry suit protected against artillery attacks, one of the most commonly-used tactics for defeating battle armor. 
+</overview>
+
+<capabilities>
+All Xiphos suits mount close to a ton of Reactive Armor and mount a Basic Manipulator on the right arm and a Modular Weapon Mount on each arm, although the mount on the left arm has the greater capacity.
+</capabilities>
+
+<deployment>
+This configuration mounts a Heat Sensor in the right arm and a Heavy Flamer with ten rounds of ammunition in the left arm.
+</deployment>
+
+<history>
+Manufactured on Irian and Washburn for the Marik-Stewart Commonwealth (prior to the capture of Washburn by Clan Wolf) the Xiphos was manufactured in three common configurations and specifically incorporated a high-powered communications system to allow battlefield commanders to keep lines of communication open even in the face of hostile electronic countermeasures.
+</history>
+
+<manufacturer>
+Irian Technologies,Irian Technologies
+</manufacturer>
+
+<primaryFactory>
+Irian,Washburn
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+JUMPJET:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<quirks>
+imp_com
+</quirks>
+

@@ -1,70 +1,74 @@
-Version:1.0
-Sha Yu
-SYU-4B
+chassis:Sha Yu
+model:SYU-4B
+mul id:5027
 
 Config:Biped
-TechBase:Inner Sphere
-Era:3065
-Rules Level:2
-source:TRO 3067
+techbase:Inner Sphere
+era:3065
+source:TRO: 3067
+rules level:2
+role:Striker
 
-Mass:40
-Engine:280 XL Engine
-Structure:Endo Steel
-Myomer:Standard
 
-Heat Sinks:11 Double
-Walk MP:7
-Jump MP:0
 
-Armor:Stealth Armor
-LA Armor:12
-RA Armor:12
-LT Armor:15
-RT Armor:15
-CT Armor:17
-HD Armor:9
-LL Armor:20
-RL Armor:20
-RTL Armor:5
-RTR Armor:5
-RTC Armor:6
+quirk:imp_com
 
-Weapons:8
-1 ISMediumPulseLaser, Right Arm
-1 ISMediumPulseLaser, Left Arm
-1 ISLRM5, Right Torso, Ammo:48
-1 ISERMediumLaser, Right Torso
-1 ISC3SlaveUnit, Left Torso
-1 ISERMediumLaser, Left Torso
-1 ISGuardianECM, Center Torso
-1 ISMediumPulseLaser, Head
+
+mass:40
+engine:280 XL Engine(IS)
+structure:IS Endo Steel
+myomer:Standard
+
+heat sinks:11 IS Double
+walk mp:7
+jump mp:0
+
+armor:Stealth(Inner Sphere)
+LA armor:12
+RA armor:12
+LT armor:15
+RT armor:15
+CT armor:17
+HD armor:9
+LL armor:20
+RL armor:20
+RTL armor:5
+RTR armor:5
+RTC armor:6
+
+Weapons:6
+Medium Pulse Laser, Left Arm
+Medium Pulse Laser, Right Arm
+ER Medium Laser, Left Torso
+ER Medium Laser, Right Torso
+LRM 5, Right Torso
+Medium Pulse Laser, Head
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-Lower Arm Actuator
 ISMediumPulseLaser
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Stealth Armor
-Stealth Armor
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Stealth
+IS Stealth
+-Empty-
 -Empty-
 -Empty-
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
-Lower Arm Actuator
 ISMediumPulseLaser
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Stealth Armor
-Stealth Armor
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Stealth
+IS Stealth
+-Empty-
 -Empty-
 -Empty-
 
@@ -74,11 +78,11 @@ Fusion Engine
 Fusion Engine
 ISERMediumLaser
 ISC3SlaveUnit
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Stealth Armor
-Stealth Armor
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Stealth
+IS Stealth
 -Empty-
 -Empty-
 
@@ -87,14 +91,14 @@ Fusion Engine
 Fusion Engine
 Fusion Engine
 ISERMediumLaser
-ISLRM5
-ISLRM5 Ammo
-ISLRM5 Ammo
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Stealth Armor
-Stealth Armor
+LRM 5
+IS Ammo LRM-5
+IS Ammo LRM-5
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Stealth
+IS Stealth
 
 Center Torso:
 Fusion Engine
@@ -107,8 +111,8 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISGuardianECM
-ISGuardianECM
+ISGuardianECMSuite
+ISGuardianECMSuite
 
 Head:
 Life Support
@@ -129,8 +133,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Stealth Armor
-Stealth Armor
+IS Stealth
+IS Stealth
 -Empty-
 -Empty-
 -Empty-
@@ -143,12 +147,13 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Stealth Armor
-Stealth Armor
+IS Stealth
+IS Stealth
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
+
 

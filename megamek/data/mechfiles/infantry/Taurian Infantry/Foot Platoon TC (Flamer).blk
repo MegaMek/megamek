@@ -1,0 +1,76 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Infantry
+</UnitType>
+
+<Name>
+Foot Platoon (Taurian)
+</Name>
+
+<Model>
+(Flamer)
+</Model>
+
+<mul id:>
+9281
+</mul id:>
+
+<year>
+2370
+</year>
+
+<originalBuildYear>
+2370
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Leg
+</motion_type>
+
+<transporters>
+</transporters>
+
+<Field Guns Equipment>
+</Field Guns Equipment>
+
+<source>
+Total Warfare
+</source>
+
+<squad_size>
+10
+</squad_size>
+
+<squadn>
+3
+</squadn>
+
+<secondn>
+2
+</secondn>
+
+<Primary>
+InfantryAssaultRifle
+</Primary>
+
+<Secondary>
+Flamer (Man-Portable)
+</Secondary>
+
+<antimek>
+8
+</antimek>
+

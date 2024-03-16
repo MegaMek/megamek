@@ -1,0 +1,170 @@
+chassis:Iron Cheetah
+model:A
+mul id:8320
+Config:Biped Omnimech
+techbase:Clan
+era:3054
+source:Rec Guide:ilClan #19
+rules level:2
+role:Juggernaut
+
+mass:100
+engine:400 XL (Clan) Engine(IS)
+structure:Clan Endo Steel
+myomer:Standard
+
+heat sinks:18 Clan Double
+base chassis heat sinks:16
+walk mp:4
+jump mp:0
+
+armor:Ferro-Fibrous(Clan)
+LA armor:34
+RA armor:34
+LT armor:32
+RT armor:32
+CT armor:48
+HD armor:9
+LL armor:42
+RL armor:42
+RTL armor:10
+RTR armor:10
+RTC armor:14
+
+Weapons:11
+Large Pulse Laser, Left Arm
+Large Pulse Laser, Left Arm
+Machine Gun, Left Arm
+Machine Gun, Left Arm
+Machine Gun, Left Arm
+Machine Gun, Left Arm
+Ultra AC/20, Right Arm
+Machine Gun, Right Arm
+Streak SRM 6, Left Torso
+Machine Gun, Left Torso
+Streak SRM 6, Right Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+CLLargePulseLaser (OMNIPOD)
+CLLargePulseLaser (OMNIPOD)
+CLLargePulseLaser (OMNIPOD)
+CLLargePulseLaser (OMNIPOD)
+CLMG (OMNIPOD)
+CLMG (OMNIPOD)
+CLMG (OMNIPOD)
+CLMG (OMNIPOD)
+Clan Ferro-Fibrous
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+CLUltraAC20 (OMNIPOD)
+CLUltraAC20 (OMNIPOD)
+CLUltraAC20 (OMNIPOD)
+CLUltraAC20 (OMNIPOD)
+CLUltraAC20 (OMNIPOD)
+CLUltraAC20 (OMNIPOD)
+CLUltraAC20 (OMNIPOD)
+CLUltraAC20 (OMNIPOD)
+CLMG (OMNIPOD)
+Clan Ferro-Fibrous
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLStreakSRM6 (OMNIPOD)
+CLStreakSRM6 (OMNIPOD)
+CLMG (OMNIPOD)
+Clan Machine Gun Ammo - Full (OMNIPOD)
+Clan Streak SRM 6 Ammo (OMNIPOD)
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLStreakSRM6 (OMNIPOD)
+CLStreakSRM6 (OMNIPOD)
+Clan Streak SRM 6 Ammo (OMNIPOD)
+Clan Ultra AC/20 Ammo (OMNIPOD)
+Clan Ultra AC/20 Ammo (OMNIPOD)
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLActiveProbe (OMNIPOD)
+Clan Ferro-Fibrous
+
+Head:
+Life Support
+Sensors
+Cockpit
+Clan Endo Steel
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Clan Endo Steel
+Clan Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Clan Endo Steel
+Clan Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+overview:The final OmniMech of Clan Smoke Jaguar. Designed to represent the pinnacle of 3050's technology.
+capabilities:Designed to improve upon the Dire Wolf, the Iron Cheetah mounts a 400-rated XL engine. This enables to the 'Mech to reach speeds of 64 km/h. While designers feared the increased engine mass would excessively reduce the 'Mech's payload, the increased cooling efficiency meant little impact to the 'Mech's practical punch. Both Endo Steel and ferro-fibrous armor were used to save additional weight.
+deployment:A close-in brawler, the A's primary weapon is a massive Ultra AC/20 mounted in the right arm. Double Streak SRM 6 racks and multiple Machine Guns support the main weapon. A pair of Large Pulse Lasers provide accurate long-range fire. Finally, a single Active Probe helps prevent ambushes.
+history:Even though the Smoke Jaguars were running into issues of limited resources, they were still able to develop one last OmniMech. The Iron Cheetah was designed to supplement the Dire Wolf and represented the pinnacle of 3050's BattleMech technology. The lack of sufficient resources precluded the Jaguar ability to field more than a handful of these machines before their Annihilation at the hands of the Inner Sphere. The Draconis Combine was able to salvage a few chassis, which were assigned to the most prestigious of MechWarriors. The plans for the Iron Cheetah managed to find their way to Clan Diamond Shark but it wasn't until 3080s that the Diamond Sharks were able to put the OmniMech into production. The Republic of the Sphere purchased an exclusivity contract, thus preventing widespread dissemination of the Iron Cheetah. The Republic concentrated its machines in Stone's Brigade and the Fidelis. With the death of the Republic, Clan Sea Fox began selling the Iron Cheetah on the open market, mostly to House Steiner, Marik, and Davion. Only Clan Snow Raven and Clan Wolf-in-Exile have shown interest in the 'Mech.
+manufacturer:Manufacturing Plant SFF
+primaryfactory:Itabaiana
+systemmanufacturer:CHASSIS:DSAM Endo 4
+systemmanufacturer:ENGINE:400 Model SF-3 XL
+systemmanufacturer:ARMOR:Composite A-4 Ferro-Fibrous
+systemmanufacturer:COMMUNICATIONS:TJ6 “Bell” Integrated Communication System
+systemmanufacturer:TARGETING:Series III OPT
+

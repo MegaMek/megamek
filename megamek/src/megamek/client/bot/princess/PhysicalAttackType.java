@@ -14,8 +14,7 @@
 package megamek.client.bot.princess;
 
 /**
- * @version $Id$
- * @lastEditBy Deric "Netzilla" Page (deric dot page at usa dot net)
+ * @author Deric "Netzilla" Page (deric dot page at usa dot net)
  * @since 12/18/13 1:29 PM
  */
 public enum PhysicalAttackType {

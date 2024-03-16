@@ -20,6 +20,10 @@ Chippewa
 CHP-X-P (Gladstone)
 </Model>
 
+<mul id:>
+589
+</mul id:>
+
 <year>
 3074
 </year>
@@ -31,6 +35,10 @@ CHP-X-P (Gladstone)
 <type>
 IS Level 4
 </type>
+
+<role>
+Attack Fighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -143,7 +151,7 @@ TARGETING:Rander TAS
 </systemManufacturers>
 
 <source>
-XTRO Pirates - Jihad
+XTR: Pirates
 </source>
 
 <tonnage>

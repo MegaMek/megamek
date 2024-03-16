@@ -20,6 +20,10 @@ Centurion
 CNT-3S
 </Model>
 
+<mul id:>
+3927
+</mul id:>
+
 <year>
 3068
 </year>
@@ -31,6 +35,10 @@ CNT-3S
 <type>
 IS Level 3
 </type>
+
+<role>
+Interceptor
+</role>
 
 <motion_type>
 Aerodyne
@@ -100,7 +108,7 @@ ISERMediumLaser
 </Fuselage Equipment>
 
 <source>
-TRO 3075 - Jihad
+TRO: 3075
 </source>
 
 <tonnage>

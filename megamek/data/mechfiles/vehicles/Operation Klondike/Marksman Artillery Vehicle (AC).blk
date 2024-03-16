@@ -20,6 +20,10 @@ Marksman Artillery Vehicle
 (AC)
 </Model>
 
+<mul id:>
+2075
+</mul id:>
+
 <year>
 2801
 </year>
@@ -27,6 +31,10 @@ Marksman Artillery Vehicle
 <type>
 IS Level 4
 </type>
+
+<role>
+Brawler
+</role>
 
 <motion_type>
 Tracked
@@ -79,3 +87,8 @@ Large Laser
 <tonnage>
 65.0
 </tonnage>
+
+<source>
+Historical: Operation Klondike
+</source>
+

@@ -20,6 +20,10 @@ Gun Trailer
 (Thunderbolt)
 </Model>
 
+<mul id:>
+6531
+</mul id:>
+
 <year>
 3099
 </year>
@@ -31,6 +35,10 @@ Gun Trailer
 <type>
 IS Level 3
 </type>
+
+<role>
+Missile Boat
+</role>
 
 <motion_type>
 Wheeled
@@ -90,7 +98,7 @@ Thunderbolt 20
 </Turret Equipment>
 
 <source>
-TRO 3145 Mercenaries - Early Republic
+TRO: 3145 Mercenaries
 </source>
 
 <tonnage>

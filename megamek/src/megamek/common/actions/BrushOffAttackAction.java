@@ -26,6 +26,7 @@ import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.ToHitData;
 import megamek.common.options.OptionsConstants;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * The attacker brushes the target off.
@@ -73,12 +74,11 @@ public class BrushOffAttackAction extends AbstractAttackAction {
      * this attack misses, the Mek will suffer punch damage. This same action is
      * used to remove iNARC pods.
      *
-     * @param game - the <code>Game</code> object containing all entities.
+     * @param game The current {@link Game} containing all entities.
      * @return the <code>ToHitData</code> containing the target roll.
      */
     public ToHitData toHit(Game game) {
-        return toHit(game, getEntityId(), game.getTarget(getTargetType(),
-                                                         getTargetId()), getArm());
+        return toHit(game, getEntityId(), game.getTarget(getTargetType(), getTargetId()), getArm());
     }
 
     /**
@@ -86,12 +86,11 @@ public class BrushOffAttackAction extends AbstractAttackAction {
      * this attack misses, the Mek will suffer punch damage. This same action is
      * used to remove iNARC pods.
      *
-     * @param game       - the <code>Game</code> object containing all entities.
-     * @param attackerId - the <code>int</code> ID of the attacking unit.
-     * @param target     - the <code>Targetable</code> object being targeted.
-     * @param arm        - the <code>int</code> of the arm making the attack; this
-     *                   value must be <code>BrushOffAttackAction.RIGHT</code> or
-     *                   <code>BrushOffAttackAction.LEFT</code>.
+     * @param game The current {@link Game} containing all entities.
+     * @param attackerId the <code>int</code> ID of the attacking unit.
+     * @param target the <code>Targetable</code> object being targeted.
+     * @param arm the <code>int</code> of the arm making the attack; this value must be
+     *            <code>BrushOffAttackAction.RIGHT</code> or <code>BrushOffAttackAction.LEFT</code>.
      * @return the <code>ToHitData</code> containing the target roll.
      */
     public static ToHitData toHit(Game game, int attackerId,
@@ -99,13 +98,17 @@ public class BrushOffAttackAction extends AbstractAttackAction {
         final Entity ae = game.getEntity(attackerId);
         int targetId = Entity.NONE;
         Entity te = null;
-        if ((ae == null) || (target == null)) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE,
-                                 "Attacker or target not valid");
+        if (ae == null) {
+            LogManager.getLogger().error("Attacker not valid");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Attacker not valid");
+        }
+        if (target == null) {
+            LogManager.getLogger().error("target not valid");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "target not valid");
         }
         if (target.getTargetType() == Targetable.TYPE_ENTITY) {
             te = (Entity) target;
-            targetId = target.getTargetId();
+            targetId = target.getId();
         }
         final int armLoc = (arm == BrushOffAttackAction.RIGHT) ? Mech.LOC_RARM
                                                                : Mech.LOC_LARM;
@@ -144,7 +147,7 @@ public class BrushOffAttackAction extends AbstractAttackAction {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Arm missing");
         }
 
-        //check for no/minimal arms quirk
+        // check for no/minimal arms quirk
         if (ae.hasQuirk(OptionsConstants.QUIRK_NEG_NO_ARMS)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "No/minimal arms");
         }

@@ -20,6 +20,10 @@ Avar
 E
 </Model>
 
+<mul id:>
+3762
+</mul id:>
+
 <year>
 3063
 </year>
@@ -31,6 +35,10 @@ E
 <type>
 Clan Level 3
 </type>
+
+<role>
+Interceptor
+</role>
 
 <motion_type>
 Aerodyne
@@ -111,7 +119,7 @@ CLCASE
 </Fuselage Equipment>
 
 <source>
-TRO 3055u - Civil War
+TRO: 3055 Update
 </source>
 
 <tonnage>

@@ -20,6 +20,10 @@ Puma Assault Tank
 PAT-002
 </Model>
 
+<mul id:>
+4880
+</mul id:>
+
 <year>
 2657
 </year>
@@ -27,6 +31,10 @@ PAT-002
 <type>
 IS Level 1
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Tracked
@@ -79,7 +87,7 @@ PPC
 </Turret Equipment>
 
 <source>
-TRO 3050 - Star League
+TRO: 3050
 </source>
 
 <tonnage>

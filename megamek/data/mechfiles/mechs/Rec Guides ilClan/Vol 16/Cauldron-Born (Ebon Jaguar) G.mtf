@@ -1,0 +1,167 @@
+chassis:Cauldron-Born
+clanname:Ebon Jaguar
+model:G
+mul id:8211
+
+Config:Biped Omnimech
+techbase:Clan
+era:3125
+source:Rec Guide:ilClan #16
+rules level:2
+role:Skirmisher
+
+quirk:low_profile
+
+
+mass:65
+engine:325 XL (Clan) Engine(IS)
+structure:Clan Endo Steel
+myomer:Standard
+
+heat sinks:13 Clan Double
+base chassis heat sinks:13
+walk mp:5
+jump mp:0
+
+armor:Ferro-Fibrous(Clan)
+LA armor:17
+RA armor:17
+LT armor:22
+RT armor:22
+CT armor:32
+HD armor:9
+LL armor:19
+RL armor:19
+RTL armor:8
+RTR armor:8
+RTC armor:9
+
+Weapons:2
+HAG/40, Left Torso
+Improved Heavy Large Laser, Right Arm
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+CLHAG40 (OMNIPOD)
+CLHAG40 (OMNIPOD)
+CLHAG40 (OMNIPOD)
+CLHAG40 (OMNIPOD)
+CLHAG40 (OMNIPOD)
+CLHAG40 (OMNIPOD)
+CLHAG40 (OMNIPOD)
+CLHAG40 (OMNIPOD)
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+CLImprovedHeavyLargeLaser (OMNIPOD)
+CLImprovedHeavyLargeLaser (OMNIPOD)
+CLImprovedHeavyLargeLaser (OMNIPOD)
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+CLHAG40 (OMNIPOD)
+CLHAG40 (OMNIPOD)
+Hyper-Assault Gauss Rifle/40 Ammo (OMNIPOD)
+Hyper-Assault Gauss Rifle/40 Ammo (OMNIPOD)
+Hyper-Assault Gauss Rifle/40 Ammo (OMNIPOD)
+Hyper-Assault Gauss Rifle/40 Ammo (OMNIPOD)
+Hyper-Assault Gauss Rifle/40 Ammo (OMNIPOD)
+Hyper-Assault Gauss Rifle/40 Ammo (OMNIPOD)
+Clan Endo Steel
+Clan Ferro-Fibrous
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+CLTargeting Computer (OMNIPOD)
+CLTargeting Computer (OMNIPOD)
+CLTargeting Computer (OMNIPOD)
+CLTargeting Computer (OMNIPOD)
+Clan Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Clan Endo Steel
+Clan Ferro-Fibrous
+
+Head:
+Life Support
+Sensors
+Cockpit
+Clan Ferro-Fibrous
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Clan Endo Steel
+Clan Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Clan Endo Steel
+Clan Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+overview:Introduced in 3049 to address flaws in the venerable Hellbringer, by Operation REVIVAL the Ebon Jaguar had only just started to spread through the Jaguar's touman with the Inner Sphere first encountering the design during the Battle of Luthien.
+
+capabilities:The G devotes most of its tonnage to a massive Hyper-Assault Gauss Rifle 40 that is spread between the left arm and torso. This weapon is fed from a three-ton ammunition bay in the left torso. An Improved Heavy Large Laser provides heavy secondary fire from the right arm. A right torso targeting computer enhances the accuracy of both weapons.
+
+history:Facing it for the first time when engaging the First Jaguar Guards Cluster in the Kado-Guchi Valley, the 'Mech's ability to take damage and remain operational led the Inner Sphere warriors who fought it to call it the Cauldron-Born after the unstoppable zombies of Irish myth. Paradoxically many of the other Clans also used the Inner Sphere Cauldron-Born reporting name, having first learned detailed information of the design from Inner Sphere sources. y Operation BULLDOG the Cauldron-Born made up a large proportion of the heavy 'Mechs of the rebuilding Smoke Jaguars, and following their Annihilation the design proliferated the remaining Clans, save the Jade Falcons, Wolves and Coyotes who continued to favor the Hellbringer. Following the Wars of Reaving the Ebon Jaguar had finally supplanted the Hellbringer in most Homeworld Clans, save the Coyotes who remained loyal to redeeming the honor of the design.
+
+manufacturer:Huntress Manufacturing Plant DL-6
+primaryfactory:Huntress
+systemmanufacturer:CHASSIS:CSJ Type 65.43 Endo
+systemmanufacturer:ENGINE:Consolidated Fusion 325 XL
+systemmanufacturer:ARMOR:Composite A-4 Ferro-Fibrous
+systemmanufacturer:COMMUNICATIONS:Hector CC-22E
+systemmanufacturer:TARGETING:Integrated Bravo-7

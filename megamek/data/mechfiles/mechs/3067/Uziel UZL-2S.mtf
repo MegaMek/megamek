@@ -1,12 +1,21 @@
-Version:1.0
-Uziel
-UZL-2S
+chassis:Uziel
+model:UZL-2S
+mul id:5331
 
 Config:Biped
 techbase:Inner Sphere
 era:3063
-source:TRO 3067
+source:TRO: 3067
 rules level:2
+role:Striker
+
+
+
+
+quirk:cowl
+quirk:bad_rep_is
+quirk:exp_actuator
+
 
 mass:50
 engine:300 XL Engine(IS)
@@ -40,12 +49,12 @@ SRM 6, Center Torso
 Left Arm:
 Shoulder
 Upper Arm Actuator
+Lower Arm Actuator
 PPC
 PPC
 PPC
 IS Endo Steel
 IS Endo Steel
--Empty-
 -Empty-
 -Empty-
 -Empty-
@@ -54,12 +63,12 @@ IS Endo Steel
 Right Arm:
 Shoulder
 Upper Arm Actuator
+Lower Arm Actuator
 PPC
 PPC
 PPC
 IS Endo Steel
 IS Endo Steel
--Empty-
 -Empty-
 -Empty-
 -Empty-
@@ -150,11 +159,8 @@ IS Endo Steel
 -Empty-
 
 overview:Built at Defiance Industries' Furillo plant, the Uziel is an effective medium 'Mech that is looked down upon by the LAAF simply because it is produced on Furillo and not at the prestigious Hesperus facility. A varied weapons mix makes the Uziel an excellent trooper 'Mech.
-
 capabilities:The Uziel is built on a Foundation E50 Endo Steel chassis that has a GM 300 XL engine that provides the 'Mech with a top speed of 97.2 km/h. The 'Mech's mobility is enhanced with six Rawlings 50 jump jets that allow the 'Mech to jump up to one hundred and eighty meters. The Uziel is armored with eight tons of Maximillian 100 armor that gives the Uziel adequate protection from enemy fire. To dissipate the heat produced by the 'Mech's weapons, it carries eleven double heat sinks.
-
 deployment:Based on the original prototype of the Uziel developed in 3063, the 2S carries a pair of PPCs as its primary weapons for long range combat. A SRM-6 launcher provides close combat capabilities and a pair of Machine Guns provide anti-infantry capabilities. A Beagle Active Probe allows the 'Mech to detect hidden units and protects the Uziel from ambushes.
-
 manufacturer:Defiance Industries
 primaryfactory:Furillo
 systemmanufacturer:CHASSIS:Foundation E50 Endo Steel

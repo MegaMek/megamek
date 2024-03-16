@@ -20,6 +20,10 @@ Colt Medium Fighter
 (LRM)
 </Model>
 
+<mul id:>
+7415
+</mul id:>
+
 <year>
 2354
 </year>
@@ -31,6 +35,10 @@ Colt Medium Fighter
 <type>
 IS Level 4
 </type>
+
+<role>
+Dogfighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -113,9 +121,15 @@ IS Ammo LRM-5
 </armor_tech_rating>
 
 <source>
-XTRO Primitives V - Age of War
+XTR: Primitives V
 </source>
 
 <tonnage>
 40.0
 </tonnage>
+
+<quirks>
+atmo_flyer
+difficult_eject
+</quirks>
+

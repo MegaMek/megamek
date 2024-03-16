@@ -20,6 +20,10 @@ Stygian Strike Tank
 (WOB)
 </Model>
 
+<mul id:>
+5728
+</mul id:>
+
 <year>
 3068
 </year>
@@ -27,6 +31,10 @@ Stygian Strike Tank
 <type>
 IS Level 2
 </type>
+
+<role>
+Striker
+</role>
 
 <motion_type>
 Hover
@@ -72,7 +80,7 @@ LRM 10
 </Turret Equipment>
 
 <source>
-RS:3067U
+Record Sheets: 3067 Unabridged
 </source>
 
 <tonnage>

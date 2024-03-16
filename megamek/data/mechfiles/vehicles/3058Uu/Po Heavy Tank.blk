@@ -12,9 +12,13 @@ Tank
 <Name>
 Po Heavy Tank
 </Name>
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+2549
+</mul id:>
 <Tonnage>
 60
 </Tonnage>
@@ -43,6 +47,10 @@ ISAC10 Ammo
 <type>
 IS Level 1
 </type>
+
+<role>
+Brawler
+</role>
 <year>
 3031
 </year>
@@ -59,5 +67,5 @@ IS Level 1
 Tracked
 </motion_type>
 <source>
-Succession Wars
+TRO: 3058
 </source>

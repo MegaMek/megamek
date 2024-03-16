@@ -20,6 +20,10 @@ Turk
 E
 </Model>
 
+<mul id:>
+5308
+</mul id:>
+
 <year>
 3075
 </year>
@@ -31,6 +35,10 @@ E
 <type>
 Clan Level 2
 </type>
+
+<role>
+Fast Dogfighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -119,7 +127,7 @@ CLCASE
 </Fuselage Equipment>
 
 <source>
-TRO 3055u - Jihad
+TRO: 3055 Update
 </source>
 
 <tonnage>

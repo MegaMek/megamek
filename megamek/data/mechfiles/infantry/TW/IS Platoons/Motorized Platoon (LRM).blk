@@ -20,6 +20,10 @@ Motorized Platoon
 (LRM)
 </Model>
 
+<mul id:>
+2237
+</mul id:>
+
 <year>
 3057
 </year>
@@ -27,6 +31,10 @@ Motorized Platoon
 <type>
 IS Level 3
 </type>
+
+<role>
+Ambusher
+</role>
 
 <motion_type>
 Motorized
@@ -36,7 +44,7 @@ Motorized
 </Field Guns Equipment>
 
 <source>
-Total Warfare - Succession Wars
+Total Warfare
 </source>
 
 <squad_size>

@@ -1,0 +1,326 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Warship
+</UnitType>
+
+<Name>
+Quixote Frigate
+</Name>
+
+<Model>
+(2350)
+</Model>
+
+<mul id:>
+4890
+</mul id:>
+
+<year>
+2350
+</year>
+
+<originalBuildYear>
+2350
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<role>
+None
+</role>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+asfbay:12.0:4:1
+smallcraftbay:6.0:4:2
+dockingcollar
+dockingcollar
+dockingcollar
+dockingcollar
+dockingcollar
+dockingcollar
+1stclassquarters:560.0:0
+steeragequarters:750.0:0
+crewquarters:1547.0:0
+cargobay:176118.0:1:12
+</transporters>
+
+<SafeThrust>
+2
+</SafeThrust>
+
+<heatsinks>
+1177
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+4750
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+13
+</armor_type>
+
+<armor_tech>
+5
+</armor_tech>
+
+<armor>
+137
+125
+125
+113
+125
+125
+</armor>
+
+<Nose Equipment>
+(B) Capital Missile Launcher (Killer Whale)
+Capital Missile Launcher (Killer Whale)
+Capital Missile Launcher (Killer Whale)
+Capital Missile Launcher (Killer Whale)
+Capital Missile Launcher (Killer Whale)
+Capital Missile Launcher (Killer Whale)
+Ammo Killer Whale:120
+</Nose Equipment>
+
+<Left Front Side Equipment>
+(B) Naval Autocannon (NAC/30)
+Ammo NAC/30:100
+(B) Naval Laser 55
+(B) Capital Missile Launcher (Killer Whale)
+Capital Missile Launcher (Killer Whale)
+Ammo Killer Whale:40
+(B) Capital Missile Launcher (White Shark)
+Capital Missile Launcher (White Shark)
+Capital Missile Launcher (White Shark)
+Capital Missile Launcher (White Shark)
+Ammo White Shark:80
+(B) Capital Missile Launcher (Barracuda)
+Capital Missile Launcher (Barracuda)
+Capital Missile Launcher (Barracuda)
+Capital Missile Launcher (Barracuda)
+Ammo Barracuda:80
+</Left Front Side Equipment>
+
+<Right Front Side Equipment>
+(B) Naval Autocannon (NAC/30)
+Ammo NAC/30:100
+(B) Naval Laser 55
+(B) Capital Missile Launcher (Killer Whale)
+Capital Missile Launcher (Killer Whale)
+Ammo Killer Whale:40
+(B) Capital Missile Launcher (White Shark)
+Capital Missile Launcher (White Shark)
+Capital Missile Launcher (White Shark)
+Capital Missile Launcher (White Shark)
+Ammo White Shark:80
+(B) Capital Missile Launcher (Barracuda)
+Capital Missile Launcher (Barracuda)
+Capital Missile Launcher (Barracuda)
+Capital Missile Launcher (Barracuda)
+Ammo Barracuda:80
+</Right Front Side Equipment>
+
+<Aft Equipment>
+(B) Naval Laser 55
+Naval Laser 55
+</Aft Equipment>
+
+<Aft Left Side Equipment>
+(B) Naval Autocannon (NAC/30)
+Ammo NAC/30:100
+(B) Naval Laser 55
+(B) Capital Missile Launcher (Killer Whale)
+Capital Missile Launcher (Killer Whale)
+Ammo Killer Whale:40
+(B) Capital Missile Launcher (White Shark)
+Capital Missile Launcher (White Shark)
+Capital Missile Launcher (White Shark)
+Capital Missile Launcher (White Shark)
+Ammo White Shark:80
+(B) Capital Missile Launcher (Barracuda)
+Capital Missile Launcher (Barracuda)
+Capital Missile Launcher (Barracuda)
+Capital Missile Launcher (Barracuda)
+Ammo Barracuda:80
+</Aft Left Side Equipment>
+
+<Aft Right Side Equipment>
+(B) Naval Autocannon (NAC/30)
+Ammo NAC/30:100
+(B) Naval Laser 55
+(B) Capital Missile Launcher (Killer Whale)
+Capital Missile Launcher (Killer Whale)
+Ammo Killer Whale:40
+(B) Capital Missile Launcher (White Shark)
+Capital Missile Launcher (White Shark)
+Capital Missile Launcher (White Shark)
+Capital Missile Launcher (White Shark)
+Ammo White Shark:80
+(B) Capital Missile Launcher (Barracuda)
+Capital Missile Launcher (Barracuda)
+Capital Missile Launcher (Barracuda)
+Capital Missile Launcher (Barracuda)
+Ammo Barracuda:80
+</Aft Right Side Equipment>
+
+<Hull Equipment>
+</Hull Equipment>
+
+<Left Broadsides Equipment>
+(B) Capital Missile Launcher (Killer Whale)
+Capital Missile Launcher (Killer Whale)
+Ammo Killer Whale:40
+(B) Capital Missile Launcher (White Shark)
+Capital Missile Launcher (White Shark)
+Capital Missile Launcher (White Shark)
+Capital Missile Launcher (White Shark)
+Ammo White Shark:80
+(B) Capital Missile Launcher (Barracuda)
+Capital Missile Launcher (Barracuda)
+Capital Missile Launcher (Barracuda)
+Capital Missile Launcher (Barracuda)
+Ammo Barracuda:80
+</Left Broadsides Equipment>
+
+<Right Broadsides Equipment>
+(B) Capital Missile Launcher (Killer Whale)
+Capital Missile Launcher (Killer Whale)
+Ammo Killer Whale:40
+(B) Capital Missile Launcher (White Shark)
+Capital Missile Launcher (White Shark)
+Capital Missile Launcher (White Shark)
+Capital Missile Launcher (White Shark)
+Ammo White Shark:80
+(B) Capital Missile Launcher (Barracuda)
+Capital Missile Launcher (Barracuda)
+Capital Missile Launcher (Barracuda)
+Capital Missile Launcher (Barracuda)
+Ammo Barracuda:80
+</Right Broadsides Equipment>
+
+<structural_integrity>
+75
+</structural_integrity>
+
+<capabilities>
+The Quixote-class Frigate, despite its slower speed, possessed notable capabilities and firepower. Its armor featured 1,200 tons of improved ferro-aluminum armor, surpassing the protection of many heavy cruisers. The ship's primary armament consisted of eighteen Killer Whale missiles, the largest in its class, complemented by twenty-four White Shark and Barracuda missile launchers. In addition to its impressive missile batteries, the Quixote carried various heavy naval weapons, making it a formidable force at all ranges. Its role as a surveillance ship allowed it to provide protection to convoy ships and their escorts, ensuring their safety during deployments.
+</capabilities>
+
+<overview>
+The Quixote-class Frigate stands apart from other frigates in its role as a heavily armed surveillance ship. Originally intended as a battlecruiser, it was reclassified as a frigate during the design process. Despite some engineering miscalculations, such as using drives that resulted in slower acceleration, the Quixote proved its worth through modifications and effective armament. It became a missile frigate with formidable firepower and superior armor protection. While eventually replaced by the Congress-class frigate, the Quixote-class vessels were later repurposed as the Volga-class transport.
+</overview>
+
+<history>
+Initially designated as a battlecruiser, the Quixote-class Frigate underwent a reclassification to a frigate by the SLDF. Its design suffered from engineering miscalculations, including the use of smaller drives that affected its speed. Further complicating matters, a procurement department bureaucrat authorized the production of 250 Quixotes, a decision potentially made to restrict spending during resource-constrained times. Recognizing the limitations of the vessel, the Admiralty modified the Quixote by reclassifying it as a missile frigate and equipping it with missile launchers to compensate for its lack of speed. Despite its shortcomings, the Quixote proved to be a valuable asset with its substantial armor protection and formidable missile armament. The Quixote-class Frigate served in the Terran Hegemony and Star League navies until it was eventually replaced by the Congress-class frigate, which offered a more well-rounded design. The Quixote-class vessels were subsequently placed in mothballs, but were later reactivated in 2709 and transformed into the Volga-class transport, assuming a new role as transport vessels.
+</history>
+
+<manufacturer>
+Eaton Aerospace
+</manufacturer>
+
+<primaryFactory>
+Inglesmond
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<use>
+Frigate
+</use>
+
+<length>
+715 m
+</length>
+
+<height>
+1200 m Sail
+</height>
+
+<source>
+TRO: 3057 Revised
+</source>
+
+<tonnage>
+780000.0
+</tonnage>
+
+<kf_core>
+1
+</kf_core>
+
+<sail>
+1
+</sail>
+
+<grav_decks>
+120
+145
+145
+</grav_decks>
+
+<designtype>
+1
+</designtype>
+
+<crew>
+331
+</crew>
+
+<officers>
+56
+</officers>
+
+<gunners>
+76
+</gunners>
+
+<passengers>
+0
+</passengers>
+
+<marines>
+150
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<life_boat>
+44
+</life_boat>
+
+<escape_pod>
+40
+</escape_pod>
+

@@ -20,6 +20,10 @@ Lightning Attack Hovercraft
 (ERML)
 </Model>
 
+<mul id:>
+1880
+</mul id:>
+
 <year>
 3067
 </year>
@@ -27,6 +31,10 @@ Lightning Attack Hovercraft
 <type>
 IS Level 2
 </type>
+
+<role>
+Striker
+</role>
 
 <motion_type>
 Hover
@@ -80,7 +88,7 @@ ISERMediumLaser
 </Rear Equipment>
 
 <source>
-TRO 3050 - Civil War
+TRO: 3050
 </source>
 
 <tonnage>

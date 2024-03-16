@@ -13,21 +13,8 @@
  */
 package megamek.common.actions;
 
-import megamek.common.Compute;
-import megamek.common.Dropship;
-import megamek.common.Entity;
-import megamek.common.GunEmplacement;
-import megamek.common.Game;
-import megamek.common.Hex;
-import megamek.common.ILocationExposureStatus;
-import megamek.common.Infantry;
-import megamek.common.Mech;
-import megamek.common.MiscType;
-import megamek.common.Mounted;
-import megamek.common.Tank;
-import megamek.common.TargetRoll;
-import megamek.common.Targetable;
-import megamek.common.ToHitData;
+import megamek.client.ui.Messages;
+import megamek.common.*;
 
 /**
  * The attacker kicks the target.
@@ -62,7 +49,7 @@ public class KickAttackAction extends PhysicalAttackAction {
 
     /**
      * Damage that the specified mech does with a kick
-     * 
+     *
      * @return The kick damage for the 'Mech, or 0 for non-'Mech entities.
      */
     public static int getDamageFor(Entity entity, int leg,
@@ -134,7 +121,11 @@ public class KickAttackAction extends PhysicalAttackAction {
         if (!(ae instanceof Mech)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Non-'Mechs can't kick.");
         }
-        
+
+        if (ae.isStuck()) {
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Bogged-down units can't kick.");
+        }
+
         String impossible = PhysicalAttackAction.toHitIsImpossible(game, ae, target);
         if (impossible != null) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "impossible");
@@ -219,7 +210,7 @@ public class KickAttackAction extends PhysicalAttackAction {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
                     "Target elevation not in range");
         }
-        
+
         // check facing
         // Don't check arc for stomping infantry or tanks.
         if ((0 != range)
@@ -295,8 +286,8 @@ public class KickAttackAction extends PhysicalAttackAction {
         } else {
             toHit.setHitTable(ToHitData.HIT_NORMAL);
         }
-        
-        //What to do with grounded dropships? Awaiting rules clarification, but 
+
+        //What to do with grounded dropships? Awaiting rules clarification, but
         //until then, we will assume that if the attacker height is less than half
         //the target elevation, then use HIT_KICK, otherwise HIT_NORMAL
         //See Dropship.rollHitLocation to see how HIT_KICK is handled
@@ -319,5 +310,31 @@ public class KickAttackAction extends PhysicalAttackAction {
 
         // done!
         return toHit;
+    }
+
+    @Override
+    public String toSummaryString(final Game game) {
+        String rollLeft;
+        String rollRight;
+        String buffer;
+        final int leg = this.getLeg();
+        switch (leg) {
+            case KickAttackAction.BOTH:
+                rollLeft = KickAttackAction.toHit(game, this.getEntityId(), game.getTarget(this.getTargetType(), this.getTargetId()), KickAttackAction.LEFT).getValueAsString();
+                rollRight = KickAttackAction.toHit(game, this.getEntityId(), game.getTarget(this.getTargetType(), this.getTargetId()), KickAttackAction.RIGHT).getValueAsString();
+                buffer = Messages.getString("BoardView1.kickBoth", rollLeft, rollRight);
+                break;
+            case KickAttackAction.LEFT:
+                rollLeft = KickAttackAction.toHit(game, this.getEntityId(), game.getTarget(this.getTargetType(), this.getTargetId()), KickAttackAction.LEFT).getValueAsString();
+                buffer = Messages.getString("BoardView1.kickLeft", rollLeft);
+                break;
+            case KickAttackAction.RIGHT:
+                rollRight = KickAttackAction.toHit(game, this.getEntityId(), game.getTarget(this.getTargetType(), this.getTargetId()), KickAttackAction.RIGHT).getValueAsString();
+                buffer = Messages.getString("BoardView1.kickRight", rollRight);
+                break;
+            default:
+                buffer = "Error on kick action";
+        }
+        return buffer;
     }
 }

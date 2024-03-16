@@ -20,6 +20,10 @@ Zugvogel Omni Support Aircraft
 E
 </Model>
 
+<mul id:>
+3659
+</mul id:>
+
 <year>
 3086
 </year>
@@ -31,6 +35,10 @@ E
 <type>
 IS Level 2
 </type>
+
+<role>
+Attack Fighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -121,7 +129,7 @@ Advanced Fire Control
 </structural_tech_rating>
 
 <source>
-TRO 3085
+TRO: 3085
 </source>
 
 <tonnage>

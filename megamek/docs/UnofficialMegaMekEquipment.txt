@@ -4,7 +4,7 @@ Ranges are given as Minimum/Short/Medium/Long range values.
 *Phoenix LRMs
 *Hawk SRMs
 *Streak MRMs
-The above unofficial ammo types, while present, do not appear to have any launchers that use them programmed into MegaMek, and can be disregarded.
+These have been removed as of 0.47.7 Development Version.
 ---
 *AC/10i - 10 Damage, 3 Heat, 12 Tons, 7 Crits, Range 1/7/15/20, 10 shots/ton.
 The above item is a non-canon "improved-range" AC/10. It can only use its own "AC/10i" standard ammo. 

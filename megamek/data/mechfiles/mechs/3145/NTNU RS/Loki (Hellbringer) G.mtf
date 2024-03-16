@@ -1,12 +1,17 @@
-Version:1.1
-Loki (Hellbringer)
-G
+chassis:Loki
+clanname:Hellbringer
+model:G
+mul id:6879
 
 Config:Biped Omnimech
 TechBase:Mixed (Clan Chassis)
 Era:3112
-Source:RS 3145 NTNU - Late Republic
+Source:Record Sheets: 3145 New Tech New Upgrades
 Rules Level:3
+role:Skirmisher
+
+quirk:searchlight
+
 
 Mass:65
 Engine:325 XL (Clan) Engine

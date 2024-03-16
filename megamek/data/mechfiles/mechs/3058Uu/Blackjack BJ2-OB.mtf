@@ -1,12 +1,18 @@
-Version:1.0
-Blackjack
-BJ2-OB
+chassis:Blackjack
+model:BJ2-OB
+mul id:380
 
 Config:Biped Omnimech
 TechBase:Inner Sphere
 Era:3057
-Source:TRO 3058 - Clan Invasion
+Source:TRO: 3058
 Rules Level:2
+role:Sniper
+
+
+
+quirk:non_standard
+
 
 Mass:50
 Engine:200 XL Engine(IS)
@@ -150,13 +156,14 @@ Jump Jet
 
 overview:An upgrade of the Blackjack BattleMech, the Blackjack OmniMech is a powerful and adaptable medium weight workhorse.
 
-capabilities:Weighing five tons heavier than its parent design, the use of advanced construction materials gives the OmniMech Blackjack 26.5 tons of pod space, allowing it to carry an impressive weapons payload. A maneuverable and enduring design for its size, four permanently mounted Icarus jump jets that allow the Blackjack to jump up to one hundred and twenty meters, the 'Mech protected by nine-and-a-half tons of armor. The Blackjack is also built with a weight saving Alshain 50 Endo Steel chassis and a Nissan 200 XL Engine giving it a top speed of 64.8 kph. A long-range bombardment configuration, the primary weapon in the B configuration is a Gauss Rifle backed up by an LRM-10 with an Artemis IV fire control system for increased missile accuracy. For token close range defense, this configuration carries a Small Laser. The B configuration is linked to allied C3 networks with its C3 Slave unit making it a highly accurate 'Mech.
+capabilities:Weighing five tons heavier than its parent design, the use of advanced construction materials gives the OmniMech Blackjack 26.5 tons of pod space, allowing it to carry an impressive weapons payload. A maneuverable and enduring design for its size, four permanently mounted Icarus jump jets that allow the Blackjack to jump up to one hundred and twenty meters, the 'Mech protected by nine-and-a-half tons of armor. The Blackjack is also built with a weight saving Alshain 50 Endo Steel chassis and a Nissan 200 XL Engine giving it a top speed of 64.8 kph.
 
-deployment:Manufactured across the Inner Sphere for nearly a decade, after Luthien Armor Works suffered horrendous losses during the opening stages of the Word of Blake Jihad, the increasingly desperate and cash-strapped company sold off the entire engineering and design rights to the Blackjack OmniMech which Irian BattleMechs Unlimited bought after brief negotiations, Ceres accepting a production license from Iran instead. Reworking the design to fit Free Worlds League weapon components, maintenance on Jihad-era Blackjacks require IBMU-certified parts with rumors of incompatibilities with older LAW Blackjack OmniPods.
+deployment:A long-range bombardment configuration, the primary weapon in the B configuration is a Gauss rifle backed up by an LRM-10 with an Artemis IV fire control system for increased missile accuracy. For token close range defense, this configuration carries a small laser. The B configuration is also linked to allied C3 networks with its C3 slave unit, making it a very accurate 'Mech.
+
 history:Much like the Firestarter OmniMech, the genesis of the omni-Blackjack stems from the Combine's technology exchange program during the initial Clan Invasion with Ceres Metals Industries ' St. Ives Compact branch offering Luthien Armor Works specifications and licences to manufacturer the ill-regarded Blackjack. Even though it received the upgraded and more effective BJ-2 version, LAW manufactured only a few examples before reworking and retooling the line to manufacture an OmniMech version. As well as returning the updated Omni version to Ceres, LAW also exported the BJ2-0 Blackjack to the Free Worlds League's Irian BattleMechs Unlimited, making it the first OmniMech exported for manufacturing. Any goodwill LAW earned from this decision was short-lived when both IBMU and CMI discovered the first production runs of their Blackjacks could only mount Inner Sphere OmniPods, accusing the Combine of only exporting so-called "monkey" versions, the Combine company's claims of not having perfected the complex software interfaces to support Clan weapons when the plans were exported ringing hollow when Draconis Combine Mustered Soldiery Blackjacks did not suffer from this lack. LAW eventually offered up the required details allowing both companies to resolve the issue in future production runs with earlier versions being upgraded during their first major overhaul.
-manufacturer:Luthien Armor Works (OmniMech Production Facility), Irian BattleMechs Unlimited, Ceres Metals Industries
-primaryfactory:Luthien, Irian, Shiro III, Warlock, St. Ives
 
+manufacturer:Irian BattleMechs Unlimited,Luthien Armor Works,General Motors/Blackwell Corporation,Irian BattleMechs Unlimited,Ceres Metals Industries,Ceres Metals Industries
+primaryfactory:Irian,Luthien,New Valencia,Shiro III,St. Ives,Warlock
 systemmanufacturer:CHASSIS:Alshain 50 Endo Steel
 systemmanufacturer:ENGINE:Nissan 200 XL
 systemmanufacturer:ARMOR:Mitchell Argon

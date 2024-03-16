@@ -1,12 +1,18 @@
-Version:1.2
-Daishi (Dire Wolf)
-S
+chassis:Daishi
+clanname:Dire Wolf
+model:S
+mul id:819
 
 Config:Biped Omnimech
 TechBase:Clan
 Era:3050
-Source:TRO 3050 - Clan Invasion
+Source:TRO: 3050
 Rules Level:2
+role:Juggernaut
+
+quirk:imp_target_long
+quirk:difficult_eject
+
 
 Mass:100
 Engine:300 XL (Clan) Engine(IS)

@@ -20,6 +20,10 @@ Visigoth
 C
 </Model>
 
+<mul id:>
+3438
+</mul id:>
+
 <year>
 2948
 </year>
@@ -31,6 +35,10 @@ C
 <type>
 Clan Level 2
 </type>
+
+<role>
+Fast Dogfighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -110,7 +118,7 @@ CLCASE
 </Fuselage Equipment>
 
 <source>
-TRO 3055u - Succession Wars
+TRO: 3055 Update
 </source>
 
 <tonnage>

@@ -1,12 +1,19 @@
-Version:1.0
-Catapult
-CPLT-C5A
+chassis:Catapult
+model:CPLT-C5A
+mul id:484
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3068
-Source:Jihad
+source:TRO: 3085
 Rules Level:2
+role:Missile Boat
+
+
+
+quirk:no_arms
+quirk:weak_head_1
+
 
 Mass:65
 Engine:260 Fusion Engine(IS)

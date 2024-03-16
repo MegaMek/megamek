@@ -20,6 +20,10 @@ Leopard CV
 (3054)
 </Model>
 
+<mul id:>
+4497
+</mul id:>
+
 <year>
 3054
 </year>
@@ -31,6 +35,10 @@ Leopard CV
 <type>
 IS Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Aerodyne
@@ -124,7 +132,7 @@ ISMediumPulseLaser
 </structural_integrity>
 
 <source>
-TRO 3057R - Clan Invasion
+TRO: 3057 Revised
 </source>
 
 <tonnage>

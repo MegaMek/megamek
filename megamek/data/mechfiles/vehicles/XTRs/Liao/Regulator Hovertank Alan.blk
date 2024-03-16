@@ -20,17 +20,25 @@ Regulator Hovertank
 (Alan)
 </Model>
 
+<mul id:>
+2674
+</mul id:>
+
 <year>
 3077
 </year>
 
 <source>
-XTRO Liao - Jihad
+XTR: Liao
 </source>
 
 <type>
 IS Level 4
 </type>
+
+<role>
+Scout
+</role>
 
 <tonnage>
 45.0

@@ -20,6 +20,10 @@ Lightning Attack Hovercraft
 (RL)
 </Model>
 
+<mul id:>
+1882
+</mul id:>
+
 <year>
 3067
 </year>
@@ -27,6 +31,10 @@ Lightning Attack Hovercraft
 <type>
 IS Level 2
 </type>
+
+<role>
+Scout
+</role>
 
 <motion_type>
 Hover
@@ -81,7 +89,7 @@ ISAntiMissileSystem
 </Rear Equipment>
 
 <source>
-TRO 3050 - Civil War
+TRO: 3050
 </source>
 
 <tonnage>

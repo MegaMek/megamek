@@ -20,6 +20,10 @@ Myrmidon Medium Tank
 P (Tate)
 </Model>
 
+<mul id:>
+4690
+</mul id:>
+
 <year>
 3069
 </year>
@@ -31,6 +35,10 @@ P (Tate)
 <type>
 IS Level 4
 </type>
+
+<role>
+Skirmisher
+</role>
 
 <motion_type>
 Tracked
@@ -93,7 +101,7 @@ ISSNPPC
 </Turret Equipment>
 
 <source>
-XTR Pirates - Jihad
+XTR: Pirates
 </source>
 
 <tonnage>

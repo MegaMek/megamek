@@ -15,6 +15,10 @@ Saracen Medium Hover Tank
 <Model>
 (MRM)
 </Model>
+
+<mul id:>
+2795
+</mul id:>
 <Tonnage>
 35
 </Tonnage>
@@ -40,6 +44,10 @@ ISStreakSRM2 Ammo
 <type>
 IS Level 2
 </type>
+
+<role>
+Striker
+</role>
 <year>
 3062
 </year>
@@ -56,5 +64,5 @@ IS Level 2
 Hover
 </motion_type>
 <source>
-Civil War
+TRO: 3058
 </source>

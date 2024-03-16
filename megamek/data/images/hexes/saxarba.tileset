@@ -39,7 +39,9 @@ include "Cliff/Cliffs.tileinc"
 include "Structured_Pavement/Structured_Pavement.tileinc"
 include "saxarba/Includes/Pavement.tileinc"
 
+########PICK UP ULYSSES SPRITE FLUFF ADDITIONS
 
+include "UlyssesSprites/UlyssesSprites.tileinc"
 
 #GRAY SAND
 super -3 "sand:*" "lunar" "saxarba/base/base_sand_gray_-3.png"
@@ -312,6 +314,11 @@ super * "woods:1;foliage_elev:*;fluff:12" "desert" "saxarba/vegetation/orchard.p
 super * "woods:1;foliage_elev:*" "desert" "saxarba/vegetation/woods_light_a.png;saxarba/vegetation/woods_light_b.png;saxarba/vegetation/woods_light_c.png;saxarba/vegetation/woods_light_d.png;saxarba/vegetation/woods_light_e.png;saxarba/vegetation/woods_light_f.png"
 super * "woods:2;foliage_elev:*" "desert" "saxarba/vegetation/woods_heavy_a.png;saxarba/vegetation/woods_heavy_b.png;saxarba/vegetation/woods_heavy_c.png;saxarba/vegetation/woods_heavy_d.png"
 
+#FUNGUS THEME TREES
+super * "woods:1;foliage_elev:*" "fungus" "saxarba/theme_fungus/lightwoods_a.png;saxarba/theme_fungus/lightwoods_b.png;saxarba/theme_fungus/lightwoods_c.png;saxarba/theme_fungus/lightwoods_d.png"
+super * "woods:2;foliage_elev:*" "fungus" "saxarba/theme_fungus/hvywoods_a.png;saxarba/theme_fungus/hvywoods_b.png;saxarba/theme_fungus/hvywoods_c.png;saxarba/theme_fungus/hvywoods_d.png"
+super * "woods:3;foliage_elev:*" "fungus" "saxarba/theme_fungus/ultwoods.png"
+
 #TREES
 #LEVEL 1 FOLIAGE
 super * "woods:1;foliage_elev:1" "" "saxarba/L1Foliage/grass_lvl1fol01.png;saxarba/L1Foliage/grass_lvl1fol02.png;saxarba/L1Foliage/grass_lvl1fol03.png;saxarba/L1Foliage/grass_lvl1fol04.png;saxarba/L1Foliage/grass_lvl1fol05.png;saxarba/L1Foliage/grass_lvl1fol06.png"
@@ -409,9 +416,19 @@ super * "ice:1" "" "saxarba/misc/ice.png"
 super * "ice:*" "" "saxarba/misc/ice.png"
 
 
-#SPECIAL SIRMEGAV BUILDINGS
-include "saxarba/SMV_Buildings/SirMegaVBuildings.tileinc"
-include "saxarba/Includes/BuildingsAddtlSaxarba.tileinc"
+
+
+# Quay/Wharf wall pieces - fluff because they must paint above water and the water itself should not contain pavement
+super * "fluff:100:01" "" "Structured_Pavement/Fluff/quay_fluff01.png"
+super * "fluff:100:02" "" "Structured_Pavement/Fluff/quay_fluff02.png"
+super * "fluff:100:03" "" "Structured_Pavement/Fluff/quay_fluff03.png"
+super * "fluff:100:04" "" "Structured_Pavement/Fluff/quay_fluff04.png"
+super * "fluff:100:05" "" "Structured_Pavement/Fluff/quay_fluff05.png"
+super * "fluff:100:06" "" "Structured_Pavement/Fluff/quay_fluff06.png"
+super * "fluff:100:07" "" "Structured_Pavement/Fluff/quay_fluff07.png"
+super * "fluff:100:08" "" "Structured_Pavement/Fluff/quay_fluff08.png"
+
+
 
 #BUILDINGS
 #Standard buildings for mars and lunar and volcano themes
@@ -425,6 +442,10 @@ include "saxarba/Includes/BuildingsNonSClassNoArmor.tileinc"
 include "saxarba/Includes/BuildingsSealedLunar_noClassSpecified.tileinc"
 include "saxarba/Includes/BuildingsSealedMars_noClassSpecified.tileinc"
 include "saxarba/Includes/BuildingsSealedVolcano_noClassSpecified.tileinc"
+
+#SPECIAL SIRMEGAV BUILDINGS
+include "saxarba/SMV_Buildings/SirMegaVBuildings.tileinc"
+include "saxarba/Includes/BuildingsAddtlSaxarba.tileinc"
 
 include "saxarba/Includes/BuildingsSClassArmor_noClassSpecified.tileinc"
 include "saxarba/Includes/BuildingsSClassNoArmor_noClassSpecified.tileinc"
@@ -467,8 +488,6 @@ super * "smoke:*" "" "saxarba/misc/light_smoke.png"
 
 #SCREEN
 super * "screen:*" "" "saxarba/misc/light_smoke.png"
-
-
 
 #####BASE TERRAINS#####
 
@@ -608,6 +627,22 @@ base 7 "" "volcano" "saxarba/theme_volcano/base_volcano_7.png"
 base 8 "" "volcano" "saxarba/theme_volcano/base_volcano_8.png"
 base 9 "" "volcano" "saxarba/theme_volcano/base_volcano_9.png"
 base 10 "" "volcano" "saxarba/theme_volcano/base_volcano_10.png"
+
+#FUNGUS THEME
+base -3 "" "fungus" "saxarba/theme_fungus/base_-3.png"
+base -2 "" "fungus" "saxarba/theme_fungus/base_-2.png"
+base -1 "" "fungus" "saxarba/theme_fungus/base_-1.png"
+base 0 "" "fungus" "saxarba/theme_fungus/base.png"
+base 1 "" "fungus" "saxarba/theme_fungus/base_1.png"
+base 2 "" "fungus" "saxarba/theme_fungus/base_2.png"
+base 3 "" "fungus" "saxarba/theme_fungus/base_3.png"
+base 4 "" "fungus" "saxarba/theme_fungus/base_4.png"
+base 5 "" "fungus" "saxarba/theme_fungus/base_5.png"
+base 6 "" "fungus" "saxarba/theme_fungus/base_6.png"
+base 7 "" "fungus" "saxarba/saxarba/theme_fungus/base_7.png"
+base 8 "" "fungus" "saxarba/theme_fungus/base_8.png"
+base 9 "" "fungus" "saxarba/theme_fungus/base_9.png"
+base 10 "" "fungus" "ssaxarba/theme_fungus/base_10.png"
 
 #TROPICAL THEME
 base -3 "" "tropical" "saxarba/theme_tropical/base_tropical_-3.png"

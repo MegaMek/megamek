@@ -14,6 +14,7 @@
 package megamek.common.weapons.other;
 
 import megamek.common.AmmoType;
+import megamek.common.Mounted;
 import megamek.common.SimpleTechLevel;
 import megamek.common.weapons.lasers.LaserWeapon;
 
@@ -34,7 +35,7 @@ public class CLLaserAMS extends LaserWeapon {
         heat = 5;
         rackSize = 2;
         damage = 3; // for manual operation
-        minimumRange = 0; 
+        minimumRange = 0;
         shortRange = 1;
         mediumRange = 1;
         longRange = 1;
@@ -52,7 +53,7 @@ public class CLLaserAMS extends LaserWeapon {
                 .and(F_DIRECT_FIRE.not());
         setModes(new String[] { "On", "Off" });
         setInstantModeSwitch(false);
-        cost = 100000;
+        cost = 225000;
         rulesRefs = "322, TO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TECH_BASE_CLAN)
@@ -63,5 +64,15 @@ public class CLLaserAMS extends LaserWeapon {
                 .setPrototypeFactions(F_CWF)
                 .setProductionFactions(F_CWF)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
+    }
+
+    @Override
+    public double getBattleForceDamage(int range, Mounted fcs) {
+        return 0;
+    }
+
+    @Override
+    public boolean isAlphaStrikePointDefense() {
+        return true;
     }
 }

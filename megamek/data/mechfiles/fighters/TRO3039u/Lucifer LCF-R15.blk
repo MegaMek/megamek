@@ -1,0 +1,153 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Aero
+</UnitType>
+
+<Name>
+Lucifer
+</Name>
+
+<Model>
+LCF-R15
+</Model>
+
+<mul id:>
+1954
+</mul id:>
+
+<year>
+2526
+</year>
+
+<originalBuildYear>
+2526
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<role>
+Attack Fighter
+</role>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+</transporters>
+
+<SafeThrust>
+5
+</SafeThrust>
+
+<cockpit_type>
+0
+</cockpit_type>
+
+<heatsinks>
+20
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+400
+</fuel>
+
+<engine_type>
+0
+</engine_type>
+
+<armor>
+63
+38
+38
+37
+</armor>
+
+<Nose Equipment>
+LRM 20
+Large Laser
+Large Laser
+</Nose Equipment>
+
+<Left Wing Equipment>
+Small Laser
+Small Laser
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+Small Laser
+Small Laser
+</Right Wing Equipment>
+
+<Aft Equipment>
+Medium Laser
+</Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+IS Ammo LRM-20
+IS Ammo LRM-20
+IS Ammo LRM-20
+IS Ammo LRM-20
+IS Ammo LRM-20
+</Fuselage Equipment>
+
+<source>
+TRO: 3039
+</source>
+
+<tonnage>
+65.0
+</tonnage>
+
+<capabilities>
+However, numerous issues with cooling, targeting, and communications systems have plagued the design, and the ejection system was removed when the frame was refitted for high-G maneuvers. However, the craft is respected for its anti-DropShip mission and the Lyran Commonwealth has invested heavily in production. When supported by other fighters to fend off enemy fighters, the Lucifer is a very effective machine.
+</capabilities>
+
+<overview>
+Considered to be well armored and fairly well armed, the Lucifer is known for its tight maneuvering and prolonged weapons fire capabilities.
+</overview>
+
+<deployment>
+This 2609 Lyran version places more armor and three additional heat sinks, at the expense of the LRM rack, in order to increase the combat loiter time necessary for anti-DropShip operations.
+</deployment>
+
+<history>
+Nicknamed “The Dragger,” the LCF series was plagued with difficulties from the start. Structural problems forced a full recall just two years after production started in 2526. A year later an issue with weapon cooling required widespread modifications. Despite a host of issues, the craft has been manufactured in large numbers and now is House Steiner’s primary medium fighter.
+</history>
+
+<manufacturer>
+Lockheed/CBM Corp,Lyran 'Mech Corporation
+</manufacturer>
+
+<primaryFactory>
+Donegal,Fefferfer
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Lockhead/CBM 200
+ENGINE:WAS 195
+ARMOR:StarScale Type IV
+COMMUNICATIONS:Lockhead/CBM COMSET 100
+TARGETING:Lockhead/CBM TarSet 55
+</systemManufacturers>
+
+
+

@@ -15,16 +15,9 @@ package megamek.common.weapons;
 
 import java.util.Vector;
 
-import megamek.common.AmmoType;
-import megamek.common.BattleArmor;
-import megamek.common.Compute;
-import megamek.common.Game;
-import megamek.common.Infantry;
-import megamek.common.Report;
-import megamek.common.ToHitData;
-import megamek.common.WeaponType;
+import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.server.Server;
+import megamek.server.GameManager;
 
 /**
  * @author Sebastian Brocks
@@ -36,11 +29,11 @@ public class NarcExplosiveHandler extends MissileWeaponHandler {
      * @param t
      * @param w
      * @param g
-     * @param s
+     * @param m
      */
     public NarcExplosiveHandler(ToHitData t, WeaponAttackAction w, Game g,
-            Server s) {
-        super(t, w, g, s);
+            GameManager m) {
+        super(t, w, g, m);
         sSalvoType = " explosive pod ";
     }
 
@@ -79,18 +72,19 @@ public class NarcExplosiveHandler extends MissileWeaponHandler {
             r.indent(1);
             r.subject = subjectId;
             vPhaseReport.add(r);
-            int destroyRoll = Compute.d6();
-            if (destroyRoll <= 3) {
+            Roll diceRoll = Compute.rollD6(1);
+
+            if (diceRoll.getIntValue() <= 3) {
                 r = new Report(3240);
                 r.subject = subjectId;
                 r.add("pod");
-                r.add(destroyRoll);
+                r.add(diceRoll);
                 vPhaseReport.add(r);
                 return 0;
             }
             r = new Report(3241);
             r.add("pod");
-            r.add(destroyRoll);
+            r.add(diceRoll);
             r.subject = subjectId;
             vPhaseReport.add(r);
         }

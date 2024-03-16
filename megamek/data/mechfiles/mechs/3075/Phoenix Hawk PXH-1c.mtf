@@ -1,12 +1,22 @@
-Version:1.0
-Phoenix Hawk
-PXH-1c (Special)
+chassis:Phoenix Hawk
+model:PXH-1c (Special)
+mul id:2493
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2765
-Source:TRO 3075
+source:TRO: 3075
 Rules Level:4
+role:Striker
+
+
+
+quirk:command_mech
+quirk:imp_com
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+weaponquirk:jettison_capable:RA:4:ISSNPPC
+
 
 Mass:45
 Engine:270 XL Engine(IS)

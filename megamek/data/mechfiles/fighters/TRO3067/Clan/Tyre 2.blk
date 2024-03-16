@@ -20,6 +20,10 @@ Tyre
 2
 </Model>
 
+<mul id:>
+5317
+</mul id:>
+
 <year>
 2912
 </year>
@@ -31,6 +35,10 @@ Tyre
 <type>
 Clan Level 2
 </type>
+
+<role>
+Attack Fighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -100,7 +108,7 @@ CLCASE
 </Fuselage Equipment>
 
 <source>
-TRO 3067 - Succession Wars
+TRO: 3067
 </source>
 
 <tonnage>

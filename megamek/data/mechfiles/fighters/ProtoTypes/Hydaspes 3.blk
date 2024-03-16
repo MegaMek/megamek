@@ -20,6 +20,10 @@ Hydaspes
 3
 </Model>
 
+<mul id:>
+4351
+</mul id:>
+
 <year>
 3085
 </year>
@@ -31,6 +35,10 @@ Hydaspes
 <type>
 Clan Level 3
 </type>
+
+<role>
+Attack Fighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -117,9 +125,16 @@ CLCASE
 </Fuselage Equipment>
 
 <source>
-TRO Prototypes - Jihad
+TRO: Prototypes
 </source>
 
 <tonnage>
 95.0
 </tonnage>
+
+<quirks>
+difficult_eject
+imp_life_support
+multi_trac
+</quirks>
+

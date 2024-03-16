@@ -20,6 +20,10 @@ Sabutai
 X
 </Model>
 
+<mul id:>
+4966
+</mul id:>
+
 <year>
 3066
 </year>
@@ -31,6 +35,10 @@ X
 <type>
 Clan Level 4
 </type>
+
+<role>
+Fire Support
+</role>
 
 <motion_type>
 Aerodyne
@@ -123,7 +131,7 @@ CLCASE
 </Fuselage Equipment>
 
 <source>
-TRO 3055u - Civil War
+TRO: 3055 Update
 </source>
 
 <tonnage>

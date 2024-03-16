@@ -1,12 +1,19 @@
-Version:1.0
-Hunchback
-HBK-4SP
+chassis:Hunchback
+model:HBK-4SP
+mul id:1559
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3025
-Source:TRO 3039 - Succession Wars
+Source:TRO: 3039
 Rules Level:1
+role:Juggernaut
+
+
+
+quirk:battle_fists_la
+quirk:battle_fists_ra
+
 
 Mass:50
 Engine:200 Fusion Engine

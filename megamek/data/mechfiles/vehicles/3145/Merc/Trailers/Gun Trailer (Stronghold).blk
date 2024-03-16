@@ -20,6 +20,10 @@ Gun Trailer
 (Stronghold)
 </Model>
 
+<mul id:>
+6527
+</mul id:>
+
 <year>
 3092
 </year>
@@ -31,6 +35,10 @@ Gun Trailer
 <type>
 IS Level 3
 </type>
+
+<role>
+Ambusher
+</role>
 
 <motion_type>
 Tracked
@@ -83,7 +91,7 @@ Light Auto Cannon/5
 </Turret Equipment>
 
 <source>
-TRO 3145 Mercenaries - Early Republic
+TRO: 3145 Mercenaries
 </source>
 
 <tonnage>

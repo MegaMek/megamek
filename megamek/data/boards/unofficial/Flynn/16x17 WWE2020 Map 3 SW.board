@@ -1,4 +1,7 @@
 size 16 17
+tag "HighHills (Auto)"
+tag "DesertTheme (Auto)"
+tag "Woods (Auto)"
 hex 0101 0 "" "desert"
 hex 0201 0 "woods:1;foliage_elev:2" "desert"
 hex 0301 0 "" "desert"

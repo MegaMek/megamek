@@ -48,7 +48,7 @@ public class ISHVAC2 extends HVACWeapon {
         extAV = 2;
         maxRange = RANGE_EXT;
         explosionDamage = 2;
-        rulesRefs = "285,TO";
+        rulesRefs = "285, TO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TECH_BASE_IS)
                 .setTechRating(RATING_D)

@@ -12,9 +12,13 @@ Tank
 <Name>
 Huitzilopochtli Assault Tank 'Huey'
 </Name>
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+1551
+</mul id:>
 <Tonnage>
 85
 </Tonnage>
@@ -58,6 +62,10 @@ CLCASE
 <type>
 Clan Level 3
 </type>
+
+<role>
+Missile Boat
+</role>
 <year>
 2845
 </year>
@@ -74,5 +82,5 @@ Clan Level 3
 Tracked
 </motion_type>
 <source>
-Succession Wars
+Record Sheets: 3067 Unabridged
 </source>

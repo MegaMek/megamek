@@ -1,12 +1,17 @@
-Version:1.0
-Uller (Kit Fox)
-A
+chassis:Uller
+clanname:Kit Fox
+model:A
+mul id:3340
 
 Config:Biped Omnimech
 TechBase:Clan
 Era:2890
-Source:TRO 3050 - Succession Wars
+Source:TRO: 3050
 Rules Level:2
+role:Sniper
+
+quirk:low_profile
+
 
 Mass:30
 Engine:180 XL (Clan) Engine(IS)

@@ -1,12 +1,19 @@
-Version:1.0
-Hunchback
-HBK-4G (Hohiro)
+chassis:Hunchback
+model:HBK-4G (Hohiro)
+mul id:1553
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3056
-Source:Starterbook: Sword and Dragon - Clan Invasion
+Source:Starterbook: Sword and Dragon
 Rules Level:2
+role:Brawler
+
+
+
+quirk:battle_fists_la
+quirk:battle_fists_ra
+
 
 Mass:50
 Engine:200 Fusion Engine

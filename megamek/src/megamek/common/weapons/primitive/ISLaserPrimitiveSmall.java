@@ -63,4 +63,9 @@ public class ISLaserPrimitiveSmall extends LaserWeapon {
                 .setProductionFactions(F_TA)
                 .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }
+    
+    @Override
+    public boolean isAlphaStrikePointDefense() {
+        return true;
+    }
 }

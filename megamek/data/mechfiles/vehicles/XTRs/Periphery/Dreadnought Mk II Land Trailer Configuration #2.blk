@@ -20,6 +20,10 @@ Dreadnought Mk II Land Trailer
 Configuration #2
 </Model>
 
+<mul id:>
+5572
+</mul id:>
+
 <year>
 3081
 </year>
@@ -27,6 +31,10 @@ Configuration #2
 <type>
 IS Level 4
 </type>
+
+<role>
+Missile Boat
+</role>
 
 <motion_type>
 Tracked
@@ -89,9 +97,14 @@ liquidcargobay:18.2:1
 
 
 <source>
-XTRO Periphery - Jihad
+XTR: Periphery
 </source>
 
 <tonnage>
 50.0
 </tonnage>
+
+<quirks>
+non_standard
+</quirks>
+

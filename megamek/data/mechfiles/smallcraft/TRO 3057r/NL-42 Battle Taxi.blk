@@ -20,6 +20,10 @@ Battle Taxi
 NL-42
 </Model>
 
+<mul id:>
+3802
+</mul id:>
+
 <year>
 3053
 </year>
@@ -31,6 +35,10 @@ NL-42
 <type>
 IS Level 2
 </type>
+
+<role>
+Transport
+</role>
 
 <motion_type>
 Spheroid
@@ -107,7 +115,7 @@ ISMediumPulseLaser
 </structural_integrity>
 
 <source>
-TRO 3057-Clan Invasion
+TRO: 3057 Revised
 </source>
 
 <tonnage>

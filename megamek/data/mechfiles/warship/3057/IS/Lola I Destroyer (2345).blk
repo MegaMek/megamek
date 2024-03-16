@@ -1,0 +1,285 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Warship
+</UnitType>
+
+<Name>
+Lola I Destroyer
+</Name>
+
+<Model>
+(2345)
+</Model>
+
+<mul id:>
+4531
+</mul id:>
+
+<year>
+2345
+</year>
+
+<originalBuildYear>
+2345
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<role>
+None
+</role>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+asfbay:6.0:1:1
+smallcraftbay:2.0:1:2
+cargobay:115258.0:1:3
+1stclassquarters:390.0:0
+crewquarters:1274.0:0
+</transporters>
+
+<SafeThrust>
+4
+</SafeThrust>
+
+<heatsinks>
+1850
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+13075
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+41
+</armor_type>
+
+<armor_tech>
+5
+</armor_tech>
+
+<armor>
+48
+48
+48
+48
+48
+48
+</armor>
+
+<Nose Equipment>
+(B) Naval Laser 55
+Naval Laser 55
+Naval Laser 55
+Naval Laser 55
+(B) Naval Autocannon (NAC/10)
+Naval Autocannon (NAC/10)
+Ammo NAC/10:20
+(B) Large Laser
+Large Laser
+Large Laser
+Large Laser
+</Nose Equipment>
+
+<Left Front Side Equipment>
+(B) Naval Laser 55
+Naval Laser 55
+(B) Naval Autocannon (NAC/10)
+Ammo NAC/10:20
+(B) Large Laser
+Large Laser
+Large Laser
+Large Laser
+</Left Front Side Equipment>
+
+<Right Front Side Equipment>
+(B) Naval Laser 55
+Naval Laser 55
+(B) Naval Autocannon (NAC/10)
+Ammo NAC/10:20
+(B) Large Laser
+Large Laser
+Large Laser
+Large Laser
+</Right Front Side Equipment>
+
+<Aft Equipment>
+(B) Naval Laser 55
+Naval Laser 55
+Naval Laser 55
+Naval Laser 55
+(B) Large Laser
+Large Laser
+Large Laser
+Large Laser
+</Aft Equipment>
+
+<Aft Left Side Equipment>
+(B) Naval Laser 55
+Naval Laser 55
+(B) Naval Autocannon (NAC/10)
+Ammo NAC/10:20
+(B) Large Laser
+Large Laser
+Large Laser
+Large Laser
+</Aft Left Side Equipment>
+
+<Aft Right Side Equipment>
+(B) Naval Laser 55
+Naval Laser 55
+(B) Naval Autocannon (NAC/10)
+Ammo NAC/10:20
+(B) Large Laser
+Large Laser
+Large Laser
+Large Laser
+</Aft Right Side Equipment>
+
+<Hull Equipment>
+</Hull Equipment>
+
+<Left Broadsides Equipment>
+(B) Naval Autocannon (NAC/10)
+Naval Autocannon (NAC/10)
+Naval Autocannon (NAC/10)
+Naval Autocannon (NAC/10)
+Ammo NAC/10:100
+(B) Naval Laser 45
+(B) Large Laser
+Large Laser
+Large Laser
+Large Laser
+</Left Broadsides Equipment>
+
+<Right Broadsides Equipment>
+(B) Naval Autocannon (NAC/10)
+Naval Autocannon (NAC/10)
+Naval Autocannon (NAC/10)
+Naval Autocannon (NAC/10)
+Ammo NAC/10:100
+(B) Naval Laser 45
+(B) Large Laser
+Large Laser
+Large Laser
+Large Laser
+</Right Broadsides Equipment>
+
+<structural_integrity>
+50
+</structural_integrity>
+
+<capabilities>
+The Lola-class destroyers were equipped with an impressive array of armaments, including heavy naval lasers and autocannons. They also carried a squadron of heavy fighters for enhanced escort and picket capabilities. The design prioritized armor protection, which increased the ship's mass and required the use of massive Rolls Le Fay drives. This resulted in cramped living conditions for the crew.
+</capabilities>
+
+<overview>
+The Lola-class destroyers were developed as a direct response to the demands of Rear Admiral Adelaide Lola, known for her emphasis on moral and ethical excellence in addition to military skill. These destroyers served as escort and picket ships for centuries and were highly regarded. However, they faced challenges with their heavy armor and mass, leading to cramped living conditions for the crew.
+</overview>
+
+<history>
+In 2345, the first Lola-class destroyer was launched, addressing the concerns raised by Rear Admiral Adelaide Lola. Over time, design flaws and issues with the fuel system emerged, leading to the decommissioning and scrapping of the remaining vessels by the Star League Navy in 2660. However, several Lola IIs resurfaced in the hands of Taurian rebels during the Second Periphery Uprising, raising doubts about the true fate of these ships.
+</history>
+
+<manufacturer>
+Boeing Interstellar
+</manufacturer>
+
+<primaryFactory>
+Terra
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<use>
+Destroyer
+</use>
+
+<length>
+600 m
+</length>
+
+<height>
+100 m Sail
+</height>
+
+<source>
+TRO: 3057 Revised
+</source>
+
+<tonnage>
+680000.0
+</tonnage>
+
+<kf_core>
+1
+</kf_core>
+
+<sail>
+1
+</sail>
+
+<designtype>
+1
+</designtype>
+
+<crew>
+243
+</crew>
+
+<officers>
+39
+</officers>
+
+<gunners>
+40
+</gunners>
+
+<passengers>
+0
+</passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<life_boat>
+20
+</life_boat>
+
+<escape_pod>
+20
+</escape_pod>
+

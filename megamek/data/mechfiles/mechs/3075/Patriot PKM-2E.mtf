@@ -1,12 +1,19 @@
-Version:1.1
-Patriot
-PKM-2E
+chassis:Patriot
+model:PKM-2E
+mul id:2449
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3076
-Source:TRO 3075-Jihad
+Source:TRO: 3075
 Rules Level:3
+role:Sniper
+
+
+
+quirk:pro_actuator
+quirk:stable
+
 
 Mass:65
 Engine:260 XL Engine(IS)

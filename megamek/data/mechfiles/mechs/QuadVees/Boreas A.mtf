@@ -1,12 +1,13 @@
-Version:1.0
-Boreas
-A
+chassis:Boreas
+model:A
+mul id:7352
 
 Config:QuadVee Omnimech
 TechBase:Clan
 Era:3132
-Source:XTRO Republic II - Late Republic
+Source:XTR: Republic II
 Rules Level:3
+role:Sniper
 
 Mass:60
 Engine:240 Fusion (Clan) Engine(IS)
@@ -117,4 +118,20 @@ Foot Actuator
 Conversion Gear
 Tracks
 
+overview:Developed by Clan Hell's Horses in 3132, the Boreas is an experimental Heavy Class hybrid Quad BattleMech / Combat Vehicle known as a QuadVee. 
+
+capabilities:The Boreas utilizes a Standard 240-rated Fusion Engine to move up to 64 km/h while in either Vehicle or BattleMech form. The vehicle is protected by 11.5 tons of armor, giving it less than stellar armor for a typical Clan BattleMech. Aside from its revolutionary conversion abilities, scientists also created a two-man cockpit. The cockpit is set up for pilot and gunner positions. This arrangement allows for the gunner to target multiple enemies with little trouble while the pilot handles the 'Mech's movement. Unlike other quadruped 'Mechs, the Boreas has a turret-like structure mounted on the main body. This allows all weapons mounted in this section to be aimed with any facing the gunner chooses. Should the vehicle's gyro be destroyed during combat, the vehicle can simply convert itself into vehicular form. It would also be able to be change into a 'Mech should one of its four tracks be rendered useless. Built with the modularity of an OmniMech, this OmniQuadVee has twelve tons of Pod Space, which gives some flexibility over later fixed-configuration QuadVees. 
+
+deployment:The A is only armed with a singular weapon, the Class-20 Hyper-Assault Gauss Rifle with two tons of ammunition.
+
+history:Created by Hell's Horses scientists, the Mech has the ability to transform itself from a tracked combat vehicle into a quadruped BattleMech, benefiting from some of the best qualities of both. Developed at the Csesztreg Industriplex Alpha Annex on Csesztreg. The Boreas was the first of its kind to be developed, it would be later in 3136 when production versions of the QuadVee would be fielded in combat with OmniPod technology.
+
+manufacturer:Csesztreg Industriplex Alpha Annex
+primaryfactory:Csesztreg
+systemmanufacturer:CHASSIS:Unknown
+systemmanufacturer:ENGINE:240 Standard Fusion
+systemmanufacturer:ARMOR:Unknown
+systemmanufacturer:JUMPJET:Unknown
+systemmanufacturer:COMMUNICATIONS:Unknown
+systemmanufacturer:TARGETING:Unknown
 

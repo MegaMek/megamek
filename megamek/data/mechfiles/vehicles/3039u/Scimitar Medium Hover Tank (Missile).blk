@@ -20,6 +20,10 @@ Scimitar Medium Hover Tank
 (Missile)
 </Model>
 
+<mul id:>
+2830
+</mul id:>
+
 <year>
 2957
 </year>
@@ -27,6 +31,10 @@ Scimitar Medium Hover Tank
 <type>
 IS Level 1
 </type>
+
+<role>
+Missile Boat
+</role>
 
 <motion_type>
 Hover
@@ -73,7 +81,7 @@ LRM 15
 </Turret Equipment>
 
 <source>
-TRO 3039 - Succession Wars
+TRO: 3039
 </source>
 
 <tonnage>

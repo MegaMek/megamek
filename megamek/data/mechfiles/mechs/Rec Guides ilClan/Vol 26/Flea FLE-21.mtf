@@ -1,0 +1,168 @@
+chassis:Flea
+model:FLE-21
+mul id:9313
+Config:Biped
+techbase:Inner Sphere
+era:3139
+source:Rec Guide:ilClan #26
+rules level:2
+role:Scout
+
+
+
+quirk:easy_maintain
+quirk:imp_life_support
+quirk:no_arms
+
+
+mass:20
+engine:180 Light Engine(IS)
+structure:IS Endo Steel
+myomer:Standard
+
+heat sinks:10 IS Double
+walk mp:9
+jump mp:0
+
+armor:Stealth(Inner Sphere)
+LA armor:4
+RA armor:4
+LT armor:5
+RT armor:5
+CT armor:8
+HD armor:5
+LL armor:4
+RL armor:4
+RTL armor:3
+RTR armor:3
+RTC armor:3
+
+Weapons:3
+ER Medium Laser, Left Arm
+ER Medium Laser, Right Arm
+ER Flamer, Center Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+ISERMediumLaser
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Stealth
+IS Stealth
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+ISERMediumLaser
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Stealth
+IS Stealth
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+IS Endo Steel
+IS Endo Steel
+IS Stealth
+IS Stealth
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISGuardianECMSuite
+ISGuardianECMSuite
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Stealth
+IS Stealth
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ER Flamer
+Supercharger
+
+Head:
+Life Support
+Sensors
+Cockpit
+IS Endo Steel
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Stealth
+IS Stealth
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Stealth
+IS Stealth
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+overview:Focused on speed and firepower, the lightly armored Flea was an extremely rare sight until the arrival of the Wolf's Dragoons mercenary unit, with the design experiencing a revival as an inexpensive recon and anti-personnel militia 'Mech.
+capabilities:The Flea's inability to jump makes it difficult to navigate difficult terrain. Its incredible speed, on the other hand, ensures that few 'Mechs of any era can keep up with it in the open. While this Flea has more weaponry than its ultra-light predecessor, its armour is still incapable of withstanding direct combat. The Flea should only engage in hit and run attacks, with experienced MechWarriors focusing on the run aspect. Another specialty of the Flea, especially in large numbers, is incendiary operations behind enemy lines.
+deployment:No information available on current variant
+history:Initially called the Trooper when it was introduced as the Free Worlds League's first light scout BattleMech in 2475, the design was so heavily flawed that it took 25 years before all the issues were corrected, with a new name selected to escape the bad press. The early prototype was designed by Colonel J. Marcus Llewelyn-Jaymes and his handpicked team at Toddlette Industries in a bid to create a dedicated reconnaissance BattleMech for the Free Worlds League Military. The design was considered highly maneuverable and lightweight at the time, and utilized a basic chassis similar to their larger WorkMechs; the 'Mech's systems appeared straightforward, with a power plant, gyroscope, cockpit, and other critical systems housed in an "armored-box" mounted on reinforced, armored "bird-walker" legs. Only with the help of Col. Llewelyn-Jaymes contacts in the military and government circles, and according to rumors, possible bribery of politicians and decision makers, the FWLM ultimately accepted delivery of the Trooper. While it was considered easy to maintain by technicians and logisticians, it wasn't long before it gained a poor reputation among those that piloted it. Since the design was based off their WorkMechs, it completely lacked any dedicated ejection mechanism, and forced pilots to manually exit should they become disabled. Additionally, the legs proved to be unable to cope with heavy combat, which became apparent in various failed trials before the FWLM's Minister of Defense. Despite these shortcomings, the League's Chief Armorer and Quartermaster General continued purchasing the prototype year after year. This ultimately led to the Trooper being selected as the very first FWLM 'Mech to be upgraded with "modern" technology in 2501 and rechristened as the FLE-4 Flea. While produced on and off until the early Succession Wars, excessive losses of the lightly armored design led Earthwerks to switch its production line to manufacturing heavier designs. This changed with the arrival of Wolf's Dragoons, who brought with them a large number of Fleas and reached an exclusive production arrangement with Earthwerks that resulted in the company opening new lines to replenish the Dragoons' losses in the Fourth Succession War.[9] With multiple lines on Asuncion, Bernardo and Victoria, after letting the Dragoons' exclusivity clause lapse, Earthwerks started selling the easy to manufacture, easy to maintain 'Mech by the DropShip load across the Inner Sphere. Originally produced exclusively for the Dragoons until the Capellan Confederation acquired the design's blueprints via a Maskirovka raid during the 3040s, the post–Helm Memory Core FLE-17 variant is based on the older FLE-15 model. Since the Dragoons used the Flea in a recon role more than an antipersonnel 'Mech, Earthwerks conceived a new design by incorporating recovered technology. Retaining the design's maximum speed of 97.2 km/h, the addition of an endo steel chassis frees up weight for a MASC system that allows the 'Mech's speed to be pushed up to 129.6 km/h in short bursts. The increase of speed is required to ensure survival on the modern battlefield, as the FLE-17 is only clad in a pitiful three tons of Livingston Ceramics armor plating. Once the FLE-17 plans were captured and the Dragoons' contract clause lapsed, Earthwerks began producing the new design almost exclusively for the Confederation until 3053, which saw use within their numerous militias. It was rarely seen among any of the other Great Houses' military, but some sightings did appear after on the mercenary markets with Dragoon serial numbers, which gave some credibility to reports of Wannamaker's Widowmakers operating an extensive salvage operation on Outreach. With the Confederation's later advances in stealth technology and light weaponry, the Flea became a logical test platform for new prototypes. These performed well, which encouraged Earthwerks to refit several older models.
+manufacturer:Earthwerks-FWL, Inc., Earthwerks-FWL, Inc., Earthwerks Ltd. 
+primaryfactory:Asuncion, Bernardo, Grand Base
+systemmanufacturer:CHASSIS:Earthwerk Trooper M
+systemmanufacturer:ENGINE:Unknown Light Fusion
+systemmanufacturer:ARMOR:Livingston Ceramics
+systemmanufacturer:COMMUNICATIONS:Neil 2000
+systemmanufacturer:TARGETING:Dalban HiRez-B
+

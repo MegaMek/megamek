@@ -1,0 +1,12 @@
+Federated Suns Assault Mechs 3130 B
+Sunder SD1-O,1
+Atlas III AS7-D3,2
+Longbow LGB-13C,3
+Pendragon PDG-1R,4
+Sagittaire SGT-10X,5
+Templar TLR1-O,6
+Devastator DVS-2,5
+Orochi OR-2I,4
+Nightstar NSR-9FC,3
+Templar III TLR2-O,2
+Mad Cat Mk II (Standard),1

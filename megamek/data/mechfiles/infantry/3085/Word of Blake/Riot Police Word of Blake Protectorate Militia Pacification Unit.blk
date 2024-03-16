@@ -20,6 +20,10 @@ Riot Police
 Word of Blake Protectorate Militia Pacification Unit
 </Model>
 
+<mul id:>
+2718
+</mul id:>
+
 <year>
 3055
 </year>
@@ -27,6 +31,10 @@ Word of Blake Protectorate Militia Pacification Unit
 <type>
 IS Level 3
 </type>
+
+<role>
+Ambusher
+</role>
 
 <motion_type>
 Motorized
@@ -36,7 +44,7 @@ Motorized
 </Field Guns Equipment>
 
 <source>
-TRO 3085 - Clan Invasion
+TRO: 3085
 </source>
 
 <squad_size>

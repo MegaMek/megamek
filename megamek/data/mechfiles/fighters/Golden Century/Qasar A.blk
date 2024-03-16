@@ -20,6 +20,10 @@ Qasar
 A
 </Model>
 
+<mul id:>
+7663
+</mul id:>
+
 <year>
 2905
 </year>
@@ -31,6 +35,10 @@ A
 <type>
 Clan Level 2
 </type>
+
+<role>
+Fast Dogfighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -98,7 +106,7 @@ CLERLargeLaser:OMNI
 </Fuselage Equipment>
 
 <source>
-Succession Wars
+TRO: Golden Century
 </source>
 
 <tonnage>

@@ -20,6 +20,10 @@ J-27 Ordnance Transport
 K-27 'Killjoy'
 </Model>
 
+<mul id:>
+1647
+</mul id:>
+
 <year>
 2847
 </year>
@@ -27,6 +31,10 @@ K-27 'Killjoy'
 <type>
 IS Level 3
 </type>
+
+<role>
+Ambusher
+</role>
 
 <motion_type>
 Tracked
@@ -70,7 +78,7 @@ SRM 4
 </Turret Equipment>
 
 <source>
-TRO 3039 - Succession Wars
+TRO: 3039
 </source>
 
 <tonnage>

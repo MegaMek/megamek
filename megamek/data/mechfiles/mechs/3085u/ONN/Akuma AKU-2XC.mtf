@@ -1,12 +1,18 @@
-Version:1.1
-Akuma
-AKU-2XC
+chassis:Akuma
+model:AKU-2XC
+mul id:22
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3077
-Source:Jihad
+source:TRO: 3085
 Rules Level:4
+role:Juggernaut
+
+
+
+quirk:easy_maintain
+
 
 Mass:90
 Engine:270 Fusion Engine(IS)
@@ -151,4 +157,18 @@ Endo Steel
 -Empty-
 -Empty-
 
-imagefile:.\data\images\fluff\Mech\TRO3067_Akuma.jpg
+overview:A low-cost alternative to the Atlas-K: the AKU-1X Akuma. 
+
+capabilities:Akuma was smaller and lighter than an Atlas to minimize costs. The lighter fusion engine saved money. Despite its tiny size, the Akuma has comparable armor protection and ground speed. The 'Mech's enormous mask makes it look like the monster it's named after. The Combine MechWarrior fires first after the Akuma scares the adversary. Advanced weaponry function best at short and medium ranges on the 'Mech. The 'Mech's poor speed doesn't matter because it's designed for defense or slow advances against static or dug-in opponents. 
+
+deployment:An offshoot of the 2X, this Akuma model keeps the MRM-40, Apollo FCS, and LB 10-X of the earlier variant. A second Medium Pulse Laser joins the first, and it also carries a C3 boosted slave, Angel ECM Suite, and a Coolant Pod to offset the loss of a heat sink. A Snub-Nose PPC replaces the Heavy PPC. The protection is further enhanced through the use of CASE.
+
+history:During the Clan invasion, Theodore Kurita issued a broad plea to manufacturers to develop more cost-effective BattleMechs, both in terms of original investment and ongoing maintenance. Independence Weaponry, known for their heavy and assault 'Mechs, reacted with the AKU-1X Akuma, a low-cost counterpart to their own Atlas-K. The Akuma shares several components with the original Atlas-D and has a price tag comparable to it. Independence Weaponry decreased the overall cost of both units by increasing demand for the same set of parts. The Ryuken-go have always been the most vocal supporters of the Akuma, fielding it in a variety of attack lances. Other front-line units were slow to embrace the Akuma until it demonstrated its worth during the assault on Clan Smoke Jaguar, and demand has since outstripped supply. The Akuma 1XJ recently made its debut in the counterassaults that eventually took the Davion worlds of Breed and Kesai IV in Duke Robinson's ill-fated onslaught against the Combine.
+
+manufacturer:Independence Weaponry (Refit)
+primaryfactory:New Samarkand
+systemmanufacturer:CHASSIS:Foundation AKU Endo Steel
+systemmanufacturer:ENGINE:GM 270
+systemmanufacturer:ARMOR:Durallex Special Heavy with CASE
+systemmanufacturer:COMMUNICATIONS:Sipher Security Plus
+systemmanufacturer:TARGETING:Matabushi Sentinel

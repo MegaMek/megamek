@@ -20,6 +20,10 @@ Hwacha Urban Combat Vehicle
 HW1
 </Model>
 
+<mul id:>
+4350
+</mul id:>
+
 <year>
 3078
 </year>
@@ -31,6 +35,10 @@ HW1
 <type>
 IS Level 2
 </type>
+
+<role>
+Ambusher
+</role>
 
 <motion_type>
 Wheeled
@@ -135,7 +143,7 @@ Overweight resolved due to errata. Removed 1 ton of Ammo.
 </notes>
 
 <source>
-XTRO RetroTech - Jihad
+XTR: RetroTech
 </source>
 
 <tonnage>

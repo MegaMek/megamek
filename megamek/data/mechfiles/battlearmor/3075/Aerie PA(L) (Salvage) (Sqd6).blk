@@ -1,0 +1,112 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+Aerie PA(L)
+</Name>
+
+<Model>
+(Salvage)(Sqd6)
+</Model>
+
+<mul id:>
+8964
+</mul id:>
+
+<year>
+3069
+</year>
+
+<type>
+Clan Level 2
+</type>
+
+<role>
+Ambusher
+</role>
+
+<motion_type>
+Jump
+</motion_type>
+
+<cruiseMP>
+2
+</cruiseMP>
+
+<armor_type>
+32
+</armor_type>
+
+<armor_tech>
+2
+</armor_tech>
+
+<Point Equipment>
+BASalvageArm:RA
+BAArmoredGlove:LA
+CLBASpaceOperationsAdaptation:Body
+Laser Rifle (Mauser IIC IAS):APM:RA
+Clan BA Stealth (Standard):Body
+Clan BA Stealth (Standard):RA
+Clan BA Stealth (Standard):LA
+Clan BA Stealth (Standard):RA
+</Point Equipment>
+
+<source>
+TRO: 3075
+</source>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+3
+</jumpingMP>
+
+<armor>
+1
+</armor>
+
+<Trooper Count>
+6
+</Trooper Count>
+
+<weightclass>
+0
+</weightclass>
+
+<overview>
+With their expansion into the Deep Periphery in the 3060s, Clan Snow Raven designed a new battle armor for space operations. 
+</overview>
+
+<history>
+The Aerie is the result of the partnership between the Ravens and the Outworlds Alliance: a power armor suit that can fight in space and on the ground. It is best suited to marine actions, as it has only the barest minimum of armor. It has a respectable ground speed that enables it to move nimbly aboard a vessel, but it can also leap up to ninety meters at a time. It also features an Extended Life Support module that allows it to operate for longer periods
+</history>
+
+<capabilities>
+Generally, marines arm themselves with Laser Rifles in order to avoid dealing with recoil in space. Sometimes they do use ballistic weapons, but generally with add-ons to suppress the recoil. The Aerie can engage in anti-'Mech combat, as well as travel mechanized aboard an OmniMech.
+</capabilities>
+
+<deployment>
+The Aerie has no weapons on the suit, but it can use standard infantry weapons. This variant, introduced in 3069,[6] replaces the life support unit with a Salvage Arm so it can assist in salvage operations 
+</deployment>
+
+<manufacturer>
+CSR Battle Armor Facility Alpha 
+</manufacturer>
+
+<primaryFactory>
+Ramora
+</primaryFactory>

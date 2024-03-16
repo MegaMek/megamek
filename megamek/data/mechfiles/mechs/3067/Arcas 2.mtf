@@ -1,12 +1,16 @@
-Version:1.0
-Arcas
-2
+chassis:Arcas
+model:2
+mul id:3718
 
 Config:Biped
 TechBase:Clan
 Era:3061
 Rules Level:2
-source:TRO 3067
+role:Skirmisher
+source:TRO: 3067
+
+quirk:pro_actuator
+
 
 Mass:65
 Engine:325 XL Engine
@@ -152,8 +156,7 @@ overview: First produced in 3061, the Arcas is expensive for a second-line 'Mech
 
 capabilities:It utilizes an XL Engine that enables it to move up to 86 km/h and jump jets for a maximum jump capacity of one hundred fifty meters at a time. The Arcas mounts thirteen and a half tons of standard armor, the most a 'Mech of its size can carry. This variant is used primarily when far from supply lines. It removes the missiles and ER Large Lasers for a pair of ER PPCs and additional double heat sinks. 
 
-history:Following the move of Clan Ghost Bear to the Inner Sphere, Khan Bjorn Jorgensson ordered the creation of a new 
-BattleMech. The Arcas was designed as a symbol to mark the beginning of a new era, so Loremaster Laurie Tseng named it after a character in the mythology of the Greeks who eventually became the constellation known as Ursa Minor.
+history:Following the move of Clan Ghost Bear to the Inner Sphere, Khan Bjorn Jorgensson ordered the creation of a new BattleMech. The Arcas was designed as a symbol to mark the beginning of a new era, so Loremaster Laurie Tseng named it after a character in the mythology of the Greeks who eventually became the constellation known as Ursa Minor.
 
 manufacturer:Bergan Industries
 primaryfactory:Alshain

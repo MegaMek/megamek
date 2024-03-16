@@ -1,0 +1,167 @@
+chassis:Star Crusader
+model:Prime
+mul id:8425
+
+Config:Biped Omnimech
+techbase:Clan
+era:3146
+source:Rec Guide:ilClan #23
+rules level:2
+role:Sniper
+
+
+quirk:stable
+
+
+mass:80
+engine:320 XL (Clan) Engine(IS)
+structure:Clan Endo Steel
+myomer:Standard
+
+heat sinks:13 Clan Double
+base chassis heat sinks:12
+walk mp:4
+jump mp:3
+
+armor:Ferro-Fibrous(Clan)
+LA armor:26
+RA armor:26
+LT armor:24
+RT armor:24
+CT armor:35
+HD armor:9
+LL armor:34
+RL armor:34
+RTL armor:10
+RTR armor:10
+RTC armor:15
+
+Weapons:7
+ER Large Laser, Left Arm
+ER Medium Laser, Left Arm
+ER Large Laser, Right Arm
+ER Medium Laser, Right Arm
+Streak LRM 20, Left Torso
+Streak LRM 20, Right Torso
+Anti-Missile System, Head
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLERLargeLaser (OMNIPOD)
+CLERMediumLaser (OMNIPOD)
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+CLERLargeLaser (OMNIPOD)
+CLERMediumLaser (OMNIPOD)
+CLTargeting Computer (OMNIPOD)
+CLTargeting Computer (OMNIPOD)
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Jump Jet (OMNIPOD)
+CLStreakLRM20 (OMNIPOD)
+CLStreakLRM20 (OMNIPOD)
+CLStreakLRM20 (OMNIPOD)
+CLStreakLRM20 (OMNIPOD)
+CLStreakLRM20 (OMNIPOD)
+Clan Streak LRM 20 Ammo (OMNIPOD)
+Clan Streak LRM 20 Ammo (OMNIPOD)
+Clan Streak LRM 20 Ammo (OMNIPOD)
+CLCASEII (OMNIPOD)
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Jump Jet (OMNIPOD)
+CLStreakLRM20 (OMNIPOD)
+CLStreakLRM20 (OMNIPOD)
+CLStreakLRM20 (OMNIPOD)
+CLStreakLRM20 (OMNIPOD)
+CLStreakLRM20 (OMNIPOD)
+Clan Streak LRM 20 Ammo (OMNIPOD)
+CLCASEII (OMNIPOD)
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet (OMNIPOD)
+CLAMS Ammo (OMNIPOD)
+
+Head:
+Life Support
+Sensors
+Cockpit
+CLAntiMissileSystem (OMNIPOD)
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Clan Endo Steel
+Clan Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+manufacturer:Imperial BattleMechs
+primaryfactory:Antwerp
+systemmanufacturer:CHASSIS:Imperial 4a Endo
+systemmanufacturer:ENGINE:Antwerp 320 XL
+systemmanufacturer:ARMOR:Forging SE09B Ferro-Fibrous with CASE II
+systemmanufacturer:COMMUNICATIONS:CGS-Comm-4
+systemmanufacturer:TARGETING:CGS-TTS-VIIa
+

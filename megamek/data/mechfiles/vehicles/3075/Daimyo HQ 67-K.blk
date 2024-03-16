@@ -20,17 +20,25 @@ Daimyo HQ
 67-K
 </Model>
 
+<mul id:>
+807
+</mul id:>
+
 <year>
 2781
 </year>
 
 <source>
-Succession Wars
+TRO: 3075
 </source>
 
 <type>
 IS Level 2
 </type>
+
+<role>
+Scout
+</role>
 
 <tonnage>
 50.0

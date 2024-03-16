@@ -20,6 +20,10 @@ Ahab
 AHB-643
 </Model>
 
+<mul id:>
+18
+</mul id:>
+
 <year>
 3067
 </year>
@@ -31,6 +35,10 @@ AHB-643
 <type>
 IS Level 2
 </type>
+
+<role>
+Attack Fighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -100,7 +108,7 @@ IS MRM 40 Ammo
 </Fuselage Equipment>
 
 <source>
-TRO 3050u - Civil War
+TRO: 3050
 </source>
 
 <tonnage>
@@ -140,7 +148,7 @@ TARGETING:Antron 7
 </systemManufacturers>
 
 <source>
-TRO 3050u - Star League
+TRO: 3050
 </source>
 
 <tonnage>

@@ -13,12 +13,16 @@ ConvFighter
 </UnitType>
 
 <Name>
-MechBuster
+Mechbuster
 </Name>
 
 <Model>
 (LB-X)
 </Model>
+
+<mul id:>
+2151
+</mul id:>
 
 <year>
 3063
@@ -31,6 +35,10 @@ MechBuster
 <type>
 IS Level 2
 </type>
+
+<role>
+Attack Fighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -91,7 +99,7 @@ IS LB 20-X Cluster Ammo
 </Fuselage Equipment>
 
 <source>
-TRO 3039 - Civil War
+TRO: 3039
 </source>
 
 <tonnage>

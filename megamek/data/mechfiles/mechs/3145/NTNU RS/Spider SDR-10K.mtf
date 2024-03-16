@@ -1,12 +1,20 @@
-Version:1.0
-Spider
-SDR-10K
+chassis:Spider
+model:SDR-10K
+mul id:6934
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3143
-Source:RS 3145 NT NU
+Source:Record Sheets: 3145 New Tech New Upgrades
 Rules Level:3
+role:Scout
+
+
+
+quirk:easy_maintain
+quirk:nimble_jumper
+quirk:no_eject
+
 
 Mass:30
 Engine:240 XL Engine(IS)

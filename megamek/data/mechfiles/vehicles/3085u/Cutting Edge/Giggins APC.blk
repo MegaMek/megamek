@@ -16,9 +16,13 @@ Tank
 Giggins APC
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+1196
+</mul id:>
 
 <Tonnage>
 40
@@ -51,12 +55,16 @@ ISGuardianECMSuite
 IS Level 2
 </type>
 
+<role>
+Skirmisher
+</role>
+
 <year>
 3085
 </year>
 
 <source>
-Dark Age
+TRO: 3085
 </source>
 
 <internal_type>

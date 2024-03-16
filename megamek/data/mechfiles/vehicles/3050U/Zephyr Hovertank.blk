@@ -16,9 +16,13 @@ Tank
 Zephyr Hovertank
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+3632
+</mul id:>
 
 <year>
 2621
@@ -27,6 +31,10 @@ Zephyr Hovertank
 <type>
 IS Level 2
 </type>
+
+<role>
+Striker
+</role>
 
 <motion_type>
 Hover
@@ -84,7 +92,7 @@ ISTAG
 </Turret Equipment>
 
 <source>
-TRO 3050 - Star League
+TRO: 3050
 </source>
 
 <tonnage>

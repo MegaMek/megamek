@@ -27,8 +27,9 @@ import megamek.common.Report;
 import megamek.common.Tank;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.server.GameManager;
 import megamek.server.Server;
-import megamek.server.Server.DamageType;
+import org.apache.logging.log4j.LogManager;
 
 public class PopUpMineLauncherHandler extends AmmoWeaponHandler {
     private static final long serialVersionUID = -6179453250580148965L;
@@ -39,8 +40,8 @@ public class PopUpMineLauncherHandler extends AmmoWeaponHandler {
      * @param g
      */
     public PopUpMineLauncherHandler(ToHitData toHit, WeaponAttackAction waa,
-            Game g, Server s) {
-        super(toHit, waa, g, s);
+            Game g, GameManager m) {
+        super(toHit, waa, g, m);
         sSalvoType = " mine(s) ";
     }
 
@@ -100,7 +101,7 @@ public class PopUpMineLauncherHandler extends AmmoWeaponHandler {
         }
         hit.setGeneralDamageType(generalDamageType);
         // Do criticals.
-        Vector<Report> specialDamageReport = server
+        Vector<Report> specialDamageReport = gameManager
                 .criticalEntity(
                         entityTarget,
                         hit.getLocation(), hit.isRear(),
@@ -112,7 +113,7 @@ public class PopUpMineLauncherHandler extends AmmoWeaponHandler {
             int damage = 4;
             // ASSUMPTION: buildings CAN'T absorb *this* damage.
             // specialDamage = damageEntity(entityTarget, hit, damage);
-            specialDamageReport = server
+            specialDamageReport = gameManager
                     .damageEntity(
                             entityTarget,
                             hit,
@@ -125,9 +126,8 @@ public class PopUpMineLauncherHandler extends AmmoWeaponHandler {
             // add newline _before_ last report
             try {
                 (specialDamageReport.elementAt(specialDamageReport.size() - 2)).newlines++;
-            } catch (ArrayIndexOutOfBoundsException aiobe) {
-                System.err
-                        .println("ERROR: no previous report when trying to add newline");
+            } catch (Exception ignored) {
+                LogManager.getLogger().error("No previous report when trying to add newline");
             }
         }
         // Report the result

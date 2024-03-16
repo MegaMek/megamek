@@ -1,0 +1,168 @@
+chassis:Agrotera
+model:AGT-1A
+mul id:6459
+Config:Biped
+techbase:Inner Sphere
+era:3108
+source:TRO: 3145 Capellan Confederation
+rules level:3
+role:Striker
+
+mass:50
+engine:300 XL Engine(IS)
+structure:IS Endo Steel
+myomer:Standard
+cockpit:Standard Cockpit
+gyro:XL Gyro
+ejection:Full Head Ejection System
+
+heat sinks:10 IS Double
+walk mp:6
+jump mp:6
+
+armor:Standard(Inner Sphere)
+LA armor:16
+RA armor:16
+LT armor:18
+RT armor:18
+CT armor:23
+HD armor:9
+LL armor:18
+RL armor:18
+RTL armor:5
+RTR armor:5
+RTC armor:6
+
+Weapons:6
+ER PPC, Left Arm
+Medium VSP Laser, Right Arm
+Medium Pulse Laser, Right Arm
+Small Pulse Laser, Left Torso
+Small Pulse Laser, Right Torso
+TAG, Head
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISERPPC
+ISERPPC
+ISERPPC
+ISAES
+ISAES
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISMediumVSPLaser
+ISMediumVSPLaser
+ISMediumPulseLaser
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISPartialWing
+ISPartialWing
+ISPartialWing
+ISPartialWing
+Jump Jet
+ISSmallPulseLaser
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISPartialWing
+ISPartialWing
+ISPartialWing
+ISPartialWing
+Jump Jet
+ISSmallPulseLaser
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+
+Head:
+Life Support
+Sensors
+Cockpit
+ISTAG
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+overview:The Agrotera is a medium BattleMech that would go on to serve in the armed forces of both the Magistracy of Canopus and its ally, the Capellan Confederation. Based on the Word of Blake's variant of the Phoenix Hawk, the Agrotera is designed as a multipurpose and ammunition-efficient design.
+capabilities:Designed with advanced technology in mind, the 'Mech's engineers outfitted the Agrotera with new advancements made during the Jihad. Like the 3060s redesigned Phoenix Hawk, the 'Mech is fitted with a Full-Head Ejection System, which allows for increased comfort and safety for the MechWarrior should its nine and a half tons of standard armor fail. A partial wing boosts mobility and cooling. The design also benefits from weight savings by being fitted with a Rawlings 300 XL extralight engine and an XL gyro. TAG equipment is fitted to allow the Agrotera to act as a spotter for friendly fire-support units.
+deployment:The Agrotera's long-range weapon is its Ceres Arms Smasher ER PPC, mounted in its left arm actuator, its accuracy enhanced with the fitting of an Actuator Enhancement System. In addition to the ER PPC, the 'Mech also has a single Diverse Optics medium variable speed pulse laser found in the right arm, a regular medium pulse laser, and a pair of Diverse Optics small pulse lasers, one on each of the side torsos as a means to deter infantry and battle armor threats.[
+history:The design would see action with the MoC's 1st Magistracy Highlanders on Bethonolog in 3108 against more dangerous pirates, where a pair of Agroteras engaged a full lance of heavy BattleMechs. While trying to buy time for the rest of the Highlanders to arrive, the two 'Mechs managed to force the bandits into submission through the Agrotera's steady delivery of damaging blows against them while simultaneously outmaneuvering them. Their performance soon proved to be too much for the pirates, and the survivors surrendered just as the rest of the Highlanders' heavier units arrived on the scene.
+manufacturer:Majesty Metals and Manufacturing
+primaryfactory:Canopus IV
+systemmanufacturer:CHASSIS:Earthwerks PXH II Reinforced Endo Steel
+systemmanufacturer:ENGINE:Rawlings 300 XL
+systemmanufacturer:ARMOR:Durallex Light
+systemmanufacturer:JUMPJET:Rawlings 45 with Partial Wing
+systemmanufacturer:COMMUNICATIONS:Tek BattleCom
+systemmanufacturer:TARGETING:Tek Tru-Trak with TAG
+

@@ -1,12 +1,17 @@
-Version:1.0
-Pack Hunter
-(Standard)
+chassis:Pack Hunter
+model:
+mul id:2392
 
 Config:Biped
 techbase:Clan
 era:3059
-source:TRO 3060
+source:TRO: 3060
 rules level:2
+role:Striker
+
+
+quirk:reinforced_legs
+
 
 mass:30
 engine:210 Fusion (Clan) Engine(IS)

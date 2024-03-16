@@ -1,11 +1,21 @@
-Version:1.1
-Nightstar
-NSR-9J (Brubaker)
+chassis:Nightstar
+model:NSR-9J (Brubaker)
+mul id:4723
 
 Config:Biped
 TechBase:Mixed (IS Chassis)
 Era:3057
 Rules Level:4
+role:Sniper
+Source:Operational Turning Points: Falcon Incursion
+
+
+
+quirk:command_mech
+quirk:good_rep_1
+quirk:variable_range_long
+quirk:difficult_maintain
+
 
 Mass:95
 Engine:285 XL Fusion Engine (Inner Sphere)

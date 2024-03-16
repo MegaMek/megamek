@@ -1,0 +1,14 @@
+3145 Clan Sea Fox Fleet Dropships
+Broadsword (2979),1
+Titan (2953),2
+Nagasawa (Standard),3
+Broadsword (2979),5
+Isegrim Assault DropShip (Standard),6
+Nagasawa (Standard),5
+Noruff (3056),4
+Claymore V3,3
+Vanir Assault Dropship (Standard),2
+Aesir Assault Dropship (Standard),1
+Union C (2829),2
+Union C (2829) (Tank),1
+Union C (2840) (Cargo),1

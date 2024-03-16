@@ -16,9 +16,13 @@ VTOL
 Lamprey Transport Helicopter
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+6540
+</mul id:>
 
 <year>
 3119
@@ -27,6 +31,10 @@ Lamprey Transport Helicopter
 <type>
 IS Level 1
 </type>
+
+<role>
+Striker
+</role>
 
 <motion_type>
 VTOL
@@ -80,9 +88,14 @@ Machine Gun
 </Rotor Equipment>
 
 <source>
-TRO 3145 Mercenaries - Late Republic
+TRO: 3145 Mercenaries
 </source>
 
 <tonnage>
 30.0
 </tonnage>
+
+<quirks>
+easy_pilot
+</quirks>
+

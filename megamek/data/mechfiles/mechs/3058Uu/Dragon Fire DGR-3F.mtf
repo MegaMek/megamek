@@ -1,12 +1,20 @@
-Version:1.0
-Dragon Fire
-DGR-3F
+chassis:Dragon Fire
+model:DGR-3F
+mul id:913
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3058
-Source:TRO 3058 - Clan Invasion
+Source:TRO: 3058
 Rules Level:2
+role:Brawler
+
+
+
+
+quirk:good_rep_1
+quirk:no_arms
+
 
 Mass:75
 Engine:300 XL Engine

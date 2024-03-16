@@ -8,6 +8,7 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Implementation of MovePathFinder designed to find the shortest path between
@@ -25,9 +26,7 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
         private final Coords destination;
 
         public DestinationReachedStopCondition(Coords destination) {
-            if (destination == null)
-                throw new NullPointerException();
-            this.destination = destination;
+            this.destination = Objects.requireNonNull(destination);
         }
 
         @Override
@@ -44,32 +43,28 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
         private final Coords destination;
 
         public MovePathGreedyComparator(Coords destination) {
-            if (destination == null)
-                throw new NullPointerException();
-            this.destination = destination;
+            this.destination = Objects.requireNonNull(destination);
         }
 
         /**
          * Compares MovePaths based on distance from final position to
          * destination. If those distances are equal then spent movement points
          * are compared.
-         * 
          */
         @Override
         public int compare(MovePath mp1, MovePath mp2) {
             int d1 = mp1.getFinalCoords().distance(destination);
             int d2 = mp2.getFinalCoords().distance(destination);
-            if (d1 != d2)
+            if (d1 != d2) {
                 return d1 - d2;
-            else
+            } else {
                 return mp1.getMpUsed() - mp2.getMpUsed();
-
+            }
         }
     }
 
     /**
      * @see #shouldStay(MovePath)
-     * 
      */
     public static class MovePathGreedyFilter extends Filter<MovePath> {
         private Coords dest;
@@ -80,20 +75,21 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
 
         /**
          * Returns true if last step reduces distance to destination or if the
-         * last step is a turn, get_up... .
+         * last step is a turn, get_up...
          */
         @Override
         public boolean shouldStay(MovePath movePath) {
-            if (movePath.length() < 2)
+            if (movePath.length() < 2) {
                 return true;
+            }
             MoveStep prevStep = movePath.getSecondLastStep();
             Coords prevC = prevStep.getPosition();
             int prevDist = dest.distance(prevC), mpDist = dest.distance(movePath.getFinalCoords());
-            if (prevDist > mpDist)
+            if (prevDist > mpDist) {
                 return true;
-            if (prevDist == mpDist) {
-                //the distance has not changed 
-                //if we are in the same hex, then we are changing facing and it's ok.
+            } else if (prevDist == mpDist) {
+                // the distance has not changed
+                // if we are in the same hex, then we are changing facing and it's ok.
                 return prevC.equals(movePath.getFinalCoords());
             }
 
@@ -103,25 +99,26 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
 
     /**
      * Relaxes edge by favouring MovePaths that end in a not prone stance.
-     * 
      */
     public static class MovePathRelaxer
             implements AbstractPathFinder.EdgeRelaxer<MovePath, MovePath> {
         @Override
         public MovePath doRelax(MovePath v, MovePath e, Comparator<MovePath> comparator) {
-            if (v == null)
+            if (v == null) {
                 return e;
+            }
 
             // We have to be standing to be able to move
             // Maybe I should replace this extra condition with a flag in node(?)
             boolean vprone = v.getFinalProne(), eprone = e.getFinalProne();
-            if (vprone != eprone)
+            if (vprone != eprone) {
                 return vprone ? e : null;
+            }
             if (!(v.getEntity() instanceof Tank)) {
-                boolean vhdown = v.getFinalHullDown(), ehdown = e
-                        .getFinalHullDown();
-                if (vhdown != ehdown)
+                boolean vhdown = v.getFinalHullDown(), ehdown = e.getFinalHullDown();
+                if (vhdown != ehdown) {
                     return vhdown ? e : null;
+                }
             }
 
             return comparator.compare(e, v) < 0 ? e : null;
@@ -132,14 +129,14 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
      * Relaxes edge based on the supplied comparator, with special
      * considerations for flying off the map (since this will likely always look
      * back to the comparator).
-     * 
      */
     public static class AeroMovePathRelaxer
             implements AbstractPathFinder.EdgeRelaxer<MovePath, MovePath> {
         @Override
         public MovePath doRelax(MovePath v, MovePath e, Comparator<MovePath> comparator) {
-            if (v == null)
+            if (v == null) {
                 return e;
+            }
             
             return comparator.compare(e, v) < 0 ? e : null;
         }
@@ -152,7 +149,6 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
      * are present.
      * 
      * This comparator is used by A* algorithm.
-     * 
      */
     public static class MovePathAStarComparator implements Comparator<MovePath>, Serializable {
         private static final long serialVersionUID = -2116704925028576850L;
@@ -161,9 +157,7 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
         Board board;
 
         public MovePathAStarComparator(Coords destination, MoveStepType stepType, Board board) {
-            if (destination == null)
-                throw new NullPointerException();
-            this.destination = destination;
+            this.destination = Objects.requireNonNull(destination);
             this.stepType = stepType;
             this.board = board;
         }
@@ -172,7 +166,7 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
         public int compare(MovePath first, MovePath second) {
             int h1 = 0, h2 = 0;
             // We cannot estimate the needed cost for aeros
-            // However, Dropships basically follow ground movement rules
+            // However, DropShips basically follow ground movement rules
             if ((first.getEntity().isAero()) 
                     && !((IAero) first.getEntity()).isSpheroid()) {
                 // We want to pick paths that use fewer MP, and are also shorter
@@ -230,7 +224,7 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
      * 
      * @param destination
      * @param stepType
-     * @param game
+     * @param game The current {@link Game}
      */
     public static ShortestPathFinder newInstanceOfAStar(final Coords destination,
                                                         final MoveStepType stepType, final Game game) {
@@ -251,13 +245,31 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
      * 
      * @param maxMP maximum MP that entity can use
      * @param stepType
-     * @param game
+     * @param game The current {@link Game}
      */
     public static ShortestPathFinder newInstanceOfOneToAll(final int maxMP, final MoveStepType stepType, final Game game) {
         final ShortestPathFinder spf =
                 new ShortestPathFinder(
                         new ShortestPathFinder.MovePathRelaxer(),
                         new ShortestPathFinder.MovePathMPCostComparator(),
+                        stepType, game);
+        spf.addFilter(new MovePathLengthFilter(maxMP));
+        spf.addFilter(new MovePathLegalityFilter(game));
+        return spf;
+    }
+
+    /**
+     * See {@link newInstanceOfOneToAll} - this returns a customized ShortestPathFinder to support Aerodyne units.
+     * @param maxMP maximum MP that entity can use
+     * @param stepType
+     * @param game The current {@link Game}
+     * @return - Customized ShortestPathFinder specifically for Aerodyne unit move envelope.
+     */
+    public static ShortestPathFinder newInstanceOfOneToAllAero(final int maxMP, final MoveStepType stepType, final Game game) {
+        final ShortestPathFinder spf =
+                new ShortestPathFinder(
+                        new ShortestPathFinder.AeroMovePathRelaxer(),
+                        new ShortestPathFinder.MovePathLengthComparator(),
                         stepType, game);
         spf.addFilter(new MovePathLengthFilter(maxMP));
         spf.addFilter(new MovePathLegalityFilter(game));

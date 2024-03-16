@@ -1,0 +1,117 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+Buzzard Hover Tank
+</Name>
+
+<Model>
+
+</Model>
+
+<mul id:>
+9342
+</mul id:>
+
+<year>
+3076
+</year>
+
+<originalBuildYear>
+3076
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<role>
+Striker
+</role>
+
+<motion_type>
+Hover
+</motion_type>
+
+<transporters>
+</transporters>
+
+<cruiseMP>
+8
+</cruiseMP>
+
+<engine_type>
+6
+</engine_type>
+
+<armor>
+24
+16
+16
+16
+16
+</armor>
+
+<Body Equipment>
+IS Ammo MML-7 LRM
+IS Ammo MML-7 LRM
+IS Ammo MML-7 SRM
+IS Ammo MML-7 SRM
+</Body Equipment>
+
+<Front Equipment>
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+Light PPC
+ISMML7
+ISMML7
+</Turret Equipment>
+
+<manufacturer>
+Quikscell Company
+</manufacturer>
+
+<primaryFactory>
+Richvale
+</primaryFactory>
+
+<systemManufacturers>
+ARMOR:ProtecTech Light
+COMMUNICATIONS:Basix 200
+TARGETING:OptiSight-12
+</systemManufacturers>
+
+<source>
+Rec Guide:ilClan #27
+</source>
+
+<tonnage>
+50.0
+</tonnage>
+
+
+<quirks>
+ramshackle
+</quirks>
+

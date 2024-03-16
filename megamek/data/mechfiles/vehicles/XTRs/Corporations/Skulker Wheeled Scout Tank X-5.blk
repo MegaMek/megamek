@@ -1,16 +1,16 @@
 #building block data file
-
 <BlockVersion>
 1
 </BlockVersion>
 
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
 <UnitType>
 Tank
 </UnitType>
-
-<blockversion>
-1
-</blockversion>
 
 <Name>
 Skulker Wheeled Scout Tank
@@ -20,33 +20,40 @@ Skulker Wheeled Scout Tank
 X-5
 </Model>
 
+<mul id:>
+5068
+</mul id:>
+
 <year>
 3071
 </year>
 
-<Source>
-Jihad
-</Source>
+<originalBuildYear>
+3071
+</originalBuildYear>
 
 <type>
 IS Level 4
 </type>
 
-<tonnage>
-20.0
-</tonnage>
+<role>
+Scout
+</role>
 
 <motion_type>
 Wheeled
 </motion_type>
 
-<engine_type>
-0
-</engine_type>
+<transporters>
+</transporters>
 
 <cruiseMP>
 8
 </cruiseMP>
+
+<engine_type>
+0
+</engine_type>
 
 <armor>
 18
@@ -72,4 +79,43 @@ ISERMediumLaser
 
 <Rear Equipment>
 </Rear Equipment>
+
+<capabilities>
+The Skulker is the much larger cousin of the Swift Wind scout car and originally based on the Heavy APC design. Due to it being larger than any scout car, it can act as a mobile communication outpost. With its advanced sensor suite which is tied to both its communication and targeting systems, it can navigate with only its sensors.  The Skulker comes with four and a half tons of armor as standard.
+</capabilities>
+
+<overview>
+While there are many different types of scout units, the majority are small, fast vehicles. Joint Equipment Systems chose a different path, creating a larger and more spacious vehicle. The Skulker does its job well despite its slower speed.
+</overview>
+
+<deployment>
+This model installs a fusion engine, exchanges the medium laser for an ER model and mounts cutting-edge electronics to aid in its scout role. It has a top speed of 120 km/h.
+</deployment>
+
+<history>
+Skulkers are the primary scouting vehicle for the Draconis Combine, and almost all conventional Combine units have at least one. The Skulker's spacious, comfortable interior makes it popular among scouting crews who can obtain them in other countries. The secondhand market for Skulkers is thriving, as are JES's sales when the Combine allows the tank to be exported. Since the end of the Fourth Succession War, sales to the Capellan Confederation and Free Worlds League have increased.
+</history>
+
+<manufacturer>
+Joint Equipment Systems
+</manufacturer>
+
+<primaryFactory>
+Panpour
+</primaryFactory>
+
+<systemManufacturers>
+ENGINE:GM 120
+ARMOR:ProtecTech Light
+COMMUNICATIONS:Communique Equipment
+TARGETING:Targeting System 2.3
+</systemManufacturers>
+
+<source>
+XTR: Corporations
+</source>
+
+<tonnage>
+20.0
+</tonnage>
 

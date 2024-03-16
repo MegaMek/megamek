@@ -20,7 +20,7 @@ import java.awt.Polygon;
 /**
  * This class calculates and stores points of polygon shaped as straight arrow.
  * Minimum required arguments are two Point elements - start and end of arrow.
- * <p/> Special feature of this class is last boolean argument. It defines if it
+ * <p> Special feature of this class is last boolean argument. It defines if it
  * will be full shaped arrow or left half only. Private Polygon hotArea contains
  * same points as an arrow itself except when arrow is changed to halved hotArea
  * stays if full arrow shape. It was done in order to get only one tooltip for
@@ -29,10 +29,6 @@ import java.awt.Polygon;
  * @author Slava Zipunov (zipp32)
  */
 public class StraightArrowPolygon extends Polygon {
-
-    /**
-     * 
-     */
     private static final long serialVersionUID = 6865457471619747091L;
     private Polygon hotArea = new Polygon();
     private Point startPoint;

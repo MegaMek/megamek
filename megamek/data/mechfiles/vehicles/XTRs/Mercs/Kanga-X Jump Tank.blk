@@ -16,9 +16,13 @@ Tank
 Kanga-X Jump Tank
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+1746
+</mul id:>
 
 <year>
 3075
@@ -27,6 +31,10 @@ Kanga-X Jump Tank
 <type>
 Clan Level 4
 </type>
+
+<role>
+Striker
+</role>
 
 <tonnage>
 50.0
@@ -92,3 +100,7 @@ CLLargeChemLaser
 CLStreakLRM10
 CLStreakSRM4
 </Turret Equipment>
+
+<source>
+XTR: Mercenaries
+</source>

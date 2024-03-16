@@ -1,0 +1,116 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Aero
+</UnitType>
+
+<Name>
+Sai
+</Name>
+
+<Model>
+S-4X
+</Model>
+
+<mul id:>
+2774
+</mul id:>
+
+<year>
+3048
+</year>
+
+<originalBuildYear>
+3048
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<role>
+Fast Dogfighter
+</role>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+</transporters>
+
+<SafeThrust>
+8
+</SafeThrust>
+
+<cockpit_type>
+0
+</cockpit_type>
+
+<heatsinks>
+21
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+400
+</fuel>
+
+<engine_type>
+2
+</engine_type>
+
+<armor_type>
+19
+</armor_type>
+
+<armor_tech>
+-1
+</armor_tech>
+
+<armor>
+35
+27
+27
+18
+</armor>
+
+<Nose Equipment>
+ISERLargeLaser
+</Nose Equipment>
+
+<Left Wing Equipment>
+ISMediumPulseLaser
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+ISMediumPulseLaser
+</Right Wing Equipment>
+
+<Aft Equipment>
+</Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+</Fuselage Equipment>
+
+<source>
+TRO: 3039
+</source>
+
+<tonnage>
+40.0
+</tonnage>

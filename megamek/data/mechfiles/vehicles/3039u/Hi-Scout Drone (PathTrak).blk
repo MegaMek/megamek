@@ -15,17 +15,25 @@ Hi-Scout Drone
 (PathTrak)
 </Model>
 
+<mul id:>
+1531
+</mul id:>
+
 <year>
 3000
 </year>
 
 <source>
-TRO 3039 - Succession Wars
+TRO: 3039
 </source>
 
 <type>
 IS Level 3
 </type>
+
+<role>
+Scout
+</role>
 
 <tonnage>
 3.0

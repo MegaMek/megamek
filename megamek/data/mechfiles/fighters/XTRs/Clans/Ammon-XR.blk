@@ -20,6 +20,10 @@ Ammon
 XR
 </Model>
 
+<mul id:>
+3697
+</mul id:>
+
 <year>
 3076
 </year>
@@ -31,6 +35,10 @@ XR
 <type>
 Clan Level 4
 </type>
+
+<role>
+Dogfighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -99,9 +107,15 @@ CLCASE
 </Fuselage Equipment>
 
 <source>
-XTRO Clans - Jihad
+XTR: Clans
 </source>
 
 <tonnage>
 65.0
 </tonnage>
+
+<quirks>
+prototype
+atmo_flyer
+</quirks>
+

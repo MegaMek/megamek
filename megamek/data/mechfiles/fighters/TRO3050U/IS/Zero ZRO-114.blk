@@ -20,6 +20,10 @@ Zero
 ZRO-114
 </Model>
 
+<mul id:>
+3635
+</mul id:>
+
 <year>
 2703
 </year>
@@ -31,6 +35,10 @@ ZRO-114
 <type>
 IS Level 2
 </type>
+
+<role>
+Dogfighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -93,7 +101,7 @@ IS Ammo LRM-10
 </Fuselage Equipment>
 
 <source>
-TRO 3050u - Star League
+TRO: 3050
 </source>
 
 <tonnage>

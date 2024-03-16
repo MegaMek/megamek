@@ -20,17 +20,25 @@ Daimyo HQ
 67-K2
 </Model>
 
+<mul id:>
+808
+</mul id:>
+
 <year>
 3067
 </year>
 
 <source>
-Jihad
+TRO: 3075
 </source>
 
 <type>
 IS Level 2
 </type>
+
+<role>
+Sniper
+</role>
 
 <tonnage>
 50.0

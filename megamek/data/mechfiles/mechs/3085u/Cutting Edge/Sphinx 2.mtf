@@ -1,12 +1,17 @@
-Version:1.0
-Sphinx
-2
+chassis:Sphinx
+model:2
+mul id:3006
 
 Config:Biped
 TechBase:Clan
 Era:3080
-Source:Jihad
+source:TRO: 3085
 Rules Level:2
+role:Skirmisher
+
+quirk:easy_maintain
+quirk:rugged_1
+
 
 Mass:75
 Engine:375 XL (Clan) Engine

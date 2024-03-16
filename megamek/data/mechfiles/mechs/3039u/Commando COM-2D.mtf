@@ -1,12 +1,17 @@
-Version:1.0
-Commando
-COM-2D
+chassis:Commando
+model:COM-2D
+mul id:670
 
 Config:Biped
 techbase:Inner Sphere
 era:2486
-source:TRO 3039 - Age of War
+source:TRO: 3039
 rules level:1
+role:Striker
+
+quirk:low_profile
+quirk:exp_actuator
+
 
 mass:25
 engine:150 Fusion Engine(IS)

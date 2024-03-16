@@ -1,12 +1,20 @@
-Version:1.0
-Marauder
-MAD-7D (Von Staskov)
+chassis:Marauder
+model:MAD-7D (Von Staskov)
+mul id:7697
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3070
-Source:Jihad
+Source:Operational Turning Points: Fronc Reaches
 Rules Level:2
+role:Skirmisher
+
+
+
+quirk:command_mech
+quirk:hyper_actuator
+quirk:low_profile
+
 
 Mass:75
 Engine:300 Light Engine(IS)

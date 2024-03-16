@@ -20,6 +20,10 @@ Buccaneer
 (2709) (Vehicle)
 </Model>
 
+<mul id:>
+3868
+</mul id:>
+
 <year>
 2709
 </year>
@@ -111,7 +115,7 @@ Medium Laser
 </structural_integrity>
 
 <source>
-TRO 3057R - Star League
+TRO: 3057 Revised
 </source>
 
 <tonnage>

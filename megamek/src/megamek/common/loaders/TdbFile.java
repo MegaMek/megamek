@@ -1,57 +1,35 @@
 /*
- * MegaMek - Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2000-2004 - Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.common.loaders;
 
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.Unmarshaller;
+import jakarta.xml.bind.annotation.*;
+import jakarta.xml.bind.annotation.adapters.XmlAdapter;
+import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import megamek.common.*;
+import megamek.utilities.xml.MMXMLUtility;
+
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.XmlValue;
-import javax.xml.bind.annotation.adapters.XmlAdapter;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-
-import megamek.common.BipedMech;
-import megamek.common.Entity;
-import megamek.common.EquipmentType;
-import megamek.common.LocationFullException;
-import megamek.common.Mech;
-import megamek.common.MiscType;
-import megamek.common.Mounted;
-import megamek.common.QuadMech;
-import megamek.common.TechConstants;
-import megamek.common.WeaponType;
-import megamek.utils.MegaMekXmlUtil;
+import java.util.*;
 
 /**
- * TdbFile.java
- *  -based on MtfFile.java, modifications by Ryan McConnell
- * Created on April 1, 2003, 2:48 PM
+ * @author Ryan McConnell
+ * @since April 1, 2003, 2:48 PM
  */
 @XmlRootElement(name = "mech")
-@XmlAccessorType(XmlAccessType.NONE)
+@XmlAccessorType(value = XmlAccessType.NONE)
 public class TdbFile implements IMechLoader {
 
     private static final String DOUBLE = "Double";
@@ -85,7 +63,7 @@ public class TdbFile implements IMechLoader {
             JAXBContext jc = JAXBContext.newInstance(TdbFile.class);
             
             Unmarshaller um = jc.createUnmarshaller();
-            TdbFile tdbFile = (TdbFile) um.unmarshal(MegaMekXmlUtil.createSafeXmlSource(is));
+            TdbFile tdbFile = (TdbFile) um.unmarshal(MMXMLUtility.createSafeXmlSource(is));
             
             return tdbFile;
         } catch (Exception e) {
@@ -243,10 +221,6 @@ public class TdbFile implements IMechLoader {
             // locations first, which is necessary for split crits to work
             for (int i = mech.locations() - 1; i >= 0; i--) {
                 parseCrits(mech, i);
-            }
-
-            if (mech.isClan()) {
-                mech.addClanCase();
             }
 
             mech.setArmorTonnage(mech.getArmorWeight());

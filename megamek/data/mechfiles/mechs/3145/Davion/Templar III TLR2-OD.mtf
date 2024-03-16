@@ -1,37 +1,37 @@
-Version:1.1
-Templar III
-TLR2-OD
-
+chassis:Templar III
+model:TLR2-OD
+mul id:6357
 Config:Biped Omnimech
-TechBase:Mixed (IS Chassis)
-Era:3120
-Source:TRO 3145 Federated Suns - Early Republic
-Rules Level:4
+techbase:Mixed (IS Chassis)
+era:3120
+source:TRO: 3145 Federated Suns
+rules level:4
+role:Brawler
 
-Mass:85
-Engine:340 Light Engine(IS)
-Structure:Clan Endo Steel
-Myomer:Standard
-Cockpit:Standard Cockpit
-Gyro:Heavy Duty Gyro
+mass:85
+engine:340 Light Engine(IS)
+structure:IS Endo Steel
+myomer:Standard
+cockpit:Standard Cockpit
+gyro:Heavy Duty Gyro
 
-Heat Sinks:13 Double
-Base Chassis Heat Sinks:13
-Walk MP:4
-Jump MP:0
+heat sinks:13 IS Double
+base chassis heat sinks:13
+walk mp:4
+jump mp:0
 
-Armor:Standard(Clan)
-LA Armor:28
-RA Armor:28
-LT Armor:26
-RT Armor:26
-CT Armor:44
-HD Armor:9
-LL Armor:36
-RL Armor:36
-RTL Armor:10
-RTR Armor:10
-RTC Armor:10
+armor:Standard(Clan)
+LA armor:28
+RA armor:28
+LT armor:26
+RT armor:26
+CT armor:44
+HD armor:9
+LL armor:36
+RL armor:36
+RTL armor:10
+RTR armor:10
+RTC armor:10
 
 Weapons:6
 ER PPC, Left Arm
@@ -44,8 +44,8 @@ Medium Re-engineered Laser, Center Torso
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLERPPC (omnipod)
-CLERPPC (omnipod)
+CLERPPC (OMNIPOD)
+CLERPPC (OMNIPOD)
 IS Endo Steel
 IS Endo Steel
 IS Endo Steel
@@ -58,11 +58,11 @@ IS Endo Steel
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLLBXAC10 (omnipod)
-CLLBXAC10 (omnipod)
-CLLBXAC10 (omnipod)
-CLLBXAC10 (omnipod)
-CLLBXAC10 (omnipod)
+CLLBXAC10 (OMNIPOD)
+CLLBXAC10 (OMNIPOD)
+CLLBXAC10 (OMNIPOD)
+CLLBXAC10 (OMNIPOD)
+CLLBXAC10 (OMNIPOD)
 -Empty-
 -Empty-
 -Empty-
@@ -72,10 +72,10 @@ CLLBXAC10 (omnipod)
 Left Torso:
 Fusion Engine
 Fusion Engine
-Medium Re-engineered Laser (omnipod)
-Medium Re-engineered Laser (omnipod)
-Medium Re-engineered Laser (omnipod)
-Medium Re-engineered Laser (omnipod)
+Medium Re-engineered Laser (OMNIPOD)
+Medium Re-engineered Laser (OMNIPOD)
+Medium Re-engineered Laser (OMNIPOD)
+Medium Re-engineered Laser (OMNIPOD)
 IS Endo Steel
 IS Endo Steel
 IS Endo Steel
@@ -86,11 +86,11 @@ IS Endo Steel
 Right Torso:
 Fusion Engine
 Fusion Engine
-Medium Re-engineered Laser (omnipod)
-Medium Re-engineered Laser (omnipod)
-Clan LB 10-X AC Ammo (omnipod)
-Clan LB 10-X AC Ammo (omnipod)
-Clan LB 10-X Cluster Ammo (omnipod)
+Medium Re-engineered Laser (OMNIPOD)
+Medium Re-engineered Laser (OMNIPOD)
+Clan LB 10-X AC Ammo (OMNIPOD)
+Clan LB 10-X AC Ammo (OMNIPOD)
+Clan LB 10-X Cluster Ammo (OMNIPOD)
 ISCASE
 IS Endo Steel
 IS Endo Steel
@@ -108,8 +108,8 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Medium Re-engineered Laser (omnipod)
-Medium Re-engineered Laser (omnipod)
+Medium Re-engineered Laser (OMNIPOD)
+Medium Re-engineered Laser (OMNIPOD)
 
 Head:
 Life Support
@@ -154,11 +154,8 @@ IS Endo Steel
 -Empty-
 
 overview:The Templar III is a Dark Age era Assault Class OmniMech, first produced by General Motors for the Federated Suns. It was intended as a replacement for the original Templar, whose factory lines were destroyed during the Jihad. General Motors established a new production line on New Valencia for what was to become the next generation of the Templar with newer technologies.
-
-Like its predecessor, the Templar III is typically utilized as a Command 'Mech by AFFS forces. With its alternate configurations the 'Mech is able to handle various combat situations thanks to access to Advanced equipment.
-
-capabilities:The third of the Templar III's advanced weapons configuration, this one is designed to defeat 'Mechs armored with Reflective Armor. It is armed with four Medium Re-Engineered Lasers, while its more damaging weapons include a Clan LB-10X Class Autocannon and a single Clan ER PPC. The Autocannon is fed by 3 tons of ammunition in the CASE-protected right torso.
-
+capabilities:Like its predecessor, the Templar III is typically utilized as a Command 'Mech by AFFS forces. With its alternate configurations the 'Mech is able to handle various combat situations thanks to access to Advanced equipment.
+deployment:The third of the Templar III's advanced weapons configuration, this one is designed to defeat 'Mechs armored with Reflective Armor. It is armed with four medium re-engineered lasers, while its more damaging weapons include a Clan LB-10X Class Autocannon and a single Clan ER PPC. The Autocannon is fed by 3 tons of ammunition in the CASE-protected right torso.
 history:Among the most noticeable differences when comparing the original Templar to the Templar III is its smaller Pod Capacity. The new 'Mech has a 29 ton Pod capacity in comparison to the old Templar's 40 tons. However, the 'Mech's heavier Light Engine provides improved durability while retaining the original design's maximum speed and armor protection.
 manufacturer:General Motors
 primaryfactory:New Valencia
@@ -167,3 +164,4 @@ systemmanufacturer:ENGINE:GM 340 Light
 systemmanufacturer:ARMOR:StarGuard CIV
 systemmanufacturer:COMMUNICATIONS:Newberg Telescan 17
 systemmanufacturer:TARGETING:Spar 3C MegaTrak
+

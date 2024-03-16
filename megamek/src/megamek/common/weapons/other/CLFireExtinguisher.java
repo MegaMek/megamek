@@ -20,6 +20,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.FireExtinguisherHandler;
 import megamek.common.weapons.Weapon;
+import megamek.server.GameManager;
 import megamek.server.Server;
 
 /**
@@ -59,7 +60,7 @@ public class CLFireExtinguisher extends Weapon {
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, Game game, Server server) {
-        return new FireExtinguisherHandler(toHit, waa, game, server);
+            WeaponAttackAction waa, Game game, GameManager manager) {
+        return new FireExtinguisherHandler(toHit, waa, game, manager);
     }
 }

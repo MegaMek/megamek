@@ -20,6 +20,10 @@ Tigress Close Patrol Craft
 TIG-15
 </Model>
 
+<mul id:>
+5247
+</mul id:>
+
 <year>
 2790
 </year>
@@ -31,6 +35,10 @@ TIG-15
 <type>
 IS Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Aerodyne
@@ -109,7 +117,7 @@ Medium Laser
 </structural_integrity>
 
 <source>
-HB: MPS - Early Succesion War
+Handbook: Major Periphery States
 </source>
 
 <tonnage>

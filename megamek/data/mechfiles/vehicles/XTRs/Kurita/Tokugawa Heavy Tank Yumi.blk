@@ -20,17 +20,25 @@ Tokugawa Heavy Tank
 Yumi
 </Model>
 
+<mul id:>
+3267
+</mul id:>
+
 <year>
 3067
 </year>
 
 <source>
-XTRO Kurita - Civil War
+XTR: Kurita
 </source>
 
 <type>
 Mixed (IS Chassis) Experimental
 </type>
+
+<role>
+Missile Boat
+</role>
 
 <tonnage>
 60.0

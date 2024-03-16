@@ -1,0 +1,79 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Infantry
+</UnitType>
+
+<Name>
+Motorized Platoon (Taurian)
+</Name>
+
+<Model>
+(MG)
+</Model>
+
+<year>
+2335
+</year>
+
+<originalBuildYear>
+2335
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Motorized
+</motion_type>
+
+<transporters>
+</transporters>
+
+<Field Guns Equipment>
+</Field Guns Equipment>
+
+<source>
+Total Warfare
+</source>
+
+<squad_size>
+10
+</squad_size>
+
+<squadn>
+3
+</squadn>
+
+<secondn>
+2
+</secondn>
+
+<Primary>
+InfantryAssaultRifle
+</Primary>
+
+<Secondary>
+Machine Gun (Portable)
+</Secondary>
+
+<antimek>
+6
+</antimek>
+
+<armorKit>
+Generic Infantry Kit
+</armorKit>
+
+<mul id:>
+9285
+</mul id:>

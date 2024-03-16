@@ -20,6 +20,10 @@ Claymore
 Interceptor
 </Model>
 
+<mul id:>
+3959
+</mul id:>
+
 <year>
 3075
 </year>
@@ -31,6 +35,10 @@ Interceptor
 <type>
 Mixed (IS Chassis) Experimental
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Aerodyne
@@ -130,7 +138,7 @@ CLERMediumLaser
 </structural_integrity>
 
 <source>
-XTRO Steiner - Jihad
+XTR: Steiner
 </source>
 
 <tonnage>

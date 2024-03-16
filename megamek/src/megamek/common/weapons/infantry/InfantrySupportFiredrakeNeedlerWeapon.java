@@ -51,7 +51,7 @@ public class InfantrySupportFiredrakeNeedlerWeapon extends InfantryWeapon {
 		shots = 30;
 		bursts = 3;
 		tonnage = .025;
-		rulesRefs = "273,TM";
+		rulesRefs = "273, TM";
 		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3058, 3061, 3075, DATE_NONE, DATE_NONE)
 		        .setISApproximate(true, false, false, false, false)
 		        .setPrototypeFactions(F_LC)

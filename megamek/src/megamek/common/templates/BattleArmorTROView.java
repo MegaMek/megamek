@@ -95,8 +95,8 @@ public class BattleArmorTROView extends TROView {
         final String armorName = EquipmentType.getArmorTypeName(ba.getArmorType(BattleArmor.LOC_TROOPER_1),
                 TechConstants.isClan(ba.getArmorTechLevel(BattleArmor.LOC_TROOPER_1)));
         final EquipmentType armor = EquipmentType.get(armorName);
-        setModelData("armorType", armor.getName().replaceAll("^BA\\s+", ""));
-        setModelData("armorSlots", armor.getCriticals(ba));
+        setModelData("armorType", armor == null ? "Unknown" : armor.getName().replaceAll("^BA\\s+", ""));
+        setModelData("armorSlots", armor == null ? 0 : armor.getCriticals(ba));
         setModelData("armorMass", testBA.getWeightArmor() * 1000);
         setModelData("armorValue", ba.getOArmor(BattleArmor.LOC_TROOPER_1));
         setModelData("internal", ba.getOInternal(BattleArmor.LOC_TROOPER_1));
@@ -139,7 +139,7 @@ public class BattleArmorTROView extends TROView {
     private int addBAEquipment() {
         final List<Map<String, Object>> equipment = new ArrayList<>();
         final List<Map<String, Object>> modularEquipment = new ArrayList<>();
-        final String at = EquipmentType.getBaArmorTypeName(ba.getArmorType(BattleArmor.LOC_TROOPER_1),
+        final String at = EquipmentType.getArmorTypeName(ba.getArmorType(BattleArmor.LOC_TROOPER_1),
                 TechConstants.isClan(ba.getArmorTechLevel(BattleArmor.LOC_TROOPER_1)));
         final EquipmentType armor = EquipmentType.get(at);
         Map<String, Object> row;

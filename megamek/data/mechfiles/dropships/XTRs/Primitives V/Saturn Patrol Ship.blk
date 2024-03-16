@@ -16,9 +16,13 @@ Dropship
 Saturn Patrol Ship
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+7416
+</mul id:>
 
 <year>
 2243
@@ -31,6 +35,10 @@ Saturn Patrol Ship
 <type>
 IS Level 4
 </type>
+
+<role>
+Transport
+</role>
 
 <motion_type>
 Spheroid
@@ -143,7 +151,7 @@ IS Ammo MG - Full:200
 </structural_integrity>
 
 <source>
-XTRO Primitives V - Age of War
+XTR: Primitives V
 </source>
 
 <tonnage>
@@ -189,4 +197,10 @@ XTRO Primitives V - Age of War
 <escape_pod>
 2
 </escape_pod>
+
+
+<quirks>
+imp_com
+atmo_instability
+</quirks>
 

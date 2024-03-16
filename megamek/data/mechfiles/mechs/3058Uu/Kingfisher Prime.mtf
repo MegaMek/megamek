@@ -1,12 +1,17 @@
-Version:1.0
-Kingfisher
-Prime
+chassis:Kingfisher
+model:Prime
+mul id:1786
 
 Config:Biped Omnimech
 TechBase:Clan
 Era:2887
-Source:TRO 3058 - Succession Wars
+Source:TRO: 3058
 Rules Level:2
+role:Brawler
+
+
+quirk:rugged_1
+
 
 Mass:90
 Engine:360 Fusion (Clan) Engine(IS)

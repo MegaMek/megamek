@@ -20,6 +20,10 @@ JES III Missile Carrier
 (Thunderbolt)
 </Model>
 
+<mul id:>
+6703
+</mul id:>
+
 <year>
 3133
 </year>
@@ -31,6 +35,10 @@ JES III Missile Carrier
 <type>
 IS Level 2
 </type>
+
+<role>
+Missile Boat
+</role>
 
 <motion_type>
 Wheeled
@@ -87,10 +95,16 @@ Thunderbolt 10
 </Turret Equipment>
 
 <source>
-TRO 3145 Republic of the Sphere - Dark Ages
+TRO: 3145 Republic of the Sphere
 </source>
 
 <tonnage>
 60.0
 </tonnage>
+
+
+<quirks>
+easy_maintain
+imp_target_long
+</quirks>
 

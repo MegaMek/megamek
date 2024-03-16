@@ -20,6 +20,10 @@ Outpost
 (Defender)
 </Model>
 
+<mul id:>
+4771
+</mul id:>
+
 <year>
 3080
 </year>
@@ -31,6 +35,10 @@ Outpost
 <type>
 Clan Level 3
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Spheroid
@@ -168,7 +176,7 @@ CLLaserAntiMissileSystem
 </structural_integrity>
 
 <source>
-TRO Prototypes - Jihad
+TRO: Prototypes
 </source>
 
 <tonnage>

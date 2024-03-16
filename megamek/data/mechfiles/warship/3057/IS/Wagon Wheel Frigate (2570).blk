@@ -1,0 +1,298 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Warship
+</UnitType>
+
+<Name>
+Wagon Wheel Frigate
+</Name>
+
+<Model>
+(2570)
+</Model>
+
+<mul id:>
+5371
+</mul id:>
+
+<year>
+2570
+</year>
+
+<originalBuildYear>
+2570
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<role>
+None
+</role>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+asfbay:12.0:4:1
+smallcraftbay:4.0:2:2
+cargobay:92478.0:1:3
+dockingcollar
+dockingcollar
+steeragequarters:250.0:0
+2ndclassquarters:280.0:0
+crewquarters:1295.0:0
+1stclassquarters:500.0:0
+</transporters>
+
+<SafeThrust>
+4
+</SafeThrust>
+
+<heatsinks>
+2000
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+20000
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+41
+</armor_type>
+
+<armor_tech>
+5
+</armor_tech>
+
+<armor>
+46
+47
+47
+40
+47
+47
+</armor>
+
+<Nose Equipment>
+(B) Naval Laser 45
+Naval Laser 45
+Naval Laser 45
+(B) Naval PPC (Medium)
+Naval PPC (Medium)
+(B) LRM 15
+LRM 15
+LRM 15
+IS Ammo LRM-15:120
+</Nose Equipment>
+
+<Left Front Side Equipment>
+(B) Capital Missile Launcher (White Shark)
+Capital Missile Launcher (White Shark)
+Capital Missile Launcher (White Shark)
+Ammo White Shark:60
+(B) Naval Laser 35
+(B) SRM 6
+SRM 6
+SRM 6
+IS Ammo SRM-6:300
+</Left Front Side Equipment>
+
+<Right Front Side Equipment>
+(B) Capital Missile Launcher (White Shark)
+Capital Missile Launcher (White Shark)
+Capital Missile Launcher (White Shark)
+Ammo White Shark:60
+(B) Naval Laser 35
+(B) SRM 6
+SRM 6
+SRM 6
+IS Ammo SRM-6:300
+</Right Front Side Equipment>
+
+<Aft Equipment>
+(B) Naval Laser 35
+Naval Laser 35
+(B) Naval Autocannon (NAC/10)
+Naval Autocannon (NAC/10)
+Ammo NAC/10:40
+</Aft Equipment>
+
+<Aft Left Side Equipment>
+(B) Capital Missile Launcher (White Shark)
+Capital Missile Launcher (White Shark)
+Capital Missile Launcher (White Shark)
+Ammo White Shark:60
+</Aft Left Side Equipment>
+
+<Aft Right Side Equipment>
+(B) Capital Missile Launcher (White Shark)
+Capital Missile Launcher (White Shark)
+Capital Missile Launcher (White Shark)
+Ammo White Shark:60
+</Aft Right Side Equipment>
+
+<Hull Equipment>
+</Hull Equipment>
+
+<Left Broadsides Equipment>
+(B) Naval Autocannon (NAC/35)
+Naval Autocannon (NAC/35)
+Ammo NAC/35:20
+(B) Naval Autocannon (NAC/35)
+Naval Autocannon (NAC/35)
+Ammo NAC/35:20
+(B) Autocannon/5
+Autocannon/5
+Autocannon/5
+Autocannon/5
+Autocannon/5
+Autocannon/5
+Autocannon/10
+Autocannon/10
+Autocannon/10
+IS Ammo AC/5:400
+IS Ammo AC/10:120
+</Left Broadsides Equipment>
+
+<Right Broadsides Equipment>
+(B) Naval Autocannon (NAC/35)
+Naval Autocannon (NAC/35)
+Ammo NAC/35:20
+(B) Naval Autocannon (NAC/35)
+Naval Autocannon (NAC/35)
+Ammo NAC/35:20
+(B) Autocannon/5
+Autocannon/5
+Autocannon/5
+Autocannon/5
+Autocannon/5
+Autocannon/5
+Autocannon/10
+Autocannon/10
+Autocannon/10
+IS Ammo AC/5:400
+IS Ammo AC/10:120
+</Right Broadsides Equipment>
+
+<structural_integrity>
+47
+</structural_integrity>
+
+<capabilities>
+Originally intended as a heavy troop transport and carrier, the Wagon Wheel-class frigate underwent changes that transformed it into a fast attack ship. Its design featured three large grav decks and over a dozen docking collars for DropShips, emphasizing troop transport capabilities. However, due to various factors, including financial miscalculations and technical issues, the ship was modified to have only two docking collars while upgrading its engine thrust and firepower. The oversized grav decks, reminiscent of a wagon wheel, remained a distinctive feature of the vessel. However, they also posed limitations on maneuverability and were susceptible to damage during high-stress accelerations and evasive actions.
+</capabilities>
+
+<overview>
+The Wagon Wheel-class frigate was a significant achievement for the Taurian Concordat, representing both their efforts to enhance their space fleet and foster Periphery solidarity. Originally designed as a heavy troop transport and carrier with long-range capabilities, the ship underwent modifications due to technical challenges and financial constraints. Although it entered service as a fast attack ship rather than a heavy transport, it retained oversized grav decks, resembling spokes of an old Terran wagon wheel, which affected its maneuverability.
+</overview>
+
+<history>
+The Taurian Concordat produced only a small number of Wagon Wheel-class frigates before the Reunification War shifted military priorities. Ironically, the destruction of two Wagon Wheels by Davion WarShips in the Malagrotta Affair in 2573 played a significant role in sparking the Reunification War. This event further fueled the historical enmity between the Taurian Concordat and the Federated Suns, a rivalry that persists to this day. Despite its limited production and involvement in a critical historical event, the Wagon Wheel-class frigate symbolizes the Taurian Concordat's ambition to strengthen its space fleet and foster Periphery unity in the face of a resurgent Inner Sphere.
+</history>
+
+<manufacturer>
+Liberty Naval Yards
+</manufacturer>
+
+<primaryFactory>
+Horsham
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<use>
+Frigate
+</use>
+
+<length>
+700 m
+</length>
+
+<height>
+1003 m Sail
+</height>
+
+<source>
+TRO: 3057 Revised
+</source>
+
+<tonnage>
+650000.0
+</tonnage>
+
+<kf_core>
+1
+</kf_core>
+
+<sail>
+1
+</sail>
+
+<grav_decks>
+250
+250
+200
+</grav_decks>
+
+<designtype>
+1
+</designtype>
+
+<crew>
+279
+</crew>
+
+<officers>
+40
+</officers>
+
+<gunners>
+36
+</gunners>
+
+<passengers>
+40
+</passengers>
+
+<marines>
+50
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<life_boat>
+35
+</life_boat>
+
+<escape_pod>
+24
+</escape_pod>
+

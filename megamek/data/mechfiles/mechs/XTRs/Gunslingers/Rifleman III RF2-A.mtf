@@ -1,12 +1,23 @@
-Version:1.0
-Rifleman III
-RF2-A
+chassis:Rifleman III
+model:RF2-A
+mul id:7323
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2776
-Source:XTRO Gunslingers - Star League
+Source:XTR: Gunslingers
 Rules Level:4
+role:Brawler
+
+
+
+
+quirk:prototype
+quirk:fast_reload
+quirk:multi_trac
+quirk:searchlight
+quirk:obsolete
+
 
 Mass:90
 Engine:180 XL Engine(IS)

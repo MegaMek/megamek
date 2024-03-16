@@ -1,12 +1,19 @@
-Version:1.0
-Helios
-HEL-3D
+chassis:Helios
+model:HEL-3D
+mul id:1464
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3058
-Source:TRO 3060
+Source:TRO: 3060
 Rules Level:2
+role:Skirmisher
+
+
+
+
+quirk:easy_maintain
+
 
 Mass:60
 Engine:240 Fusion Engine

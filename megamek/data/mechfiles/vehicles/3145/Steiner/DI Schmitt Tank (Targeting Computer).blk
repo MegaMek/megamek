@@ -20,6 +20,10 @@ DI Schmitt Tank
 (Targeting Computer)
 </Model>
 
+<mul id:>
+6603
+</mul id:>
+
 <year>
 3115
 </year>
@@ -27,6 +31,10 @@ DI Schmitt Tank
 <type>
 IS Level 2
 </type>
+
+<role>
+Juggernaut
+</role>
 
 <motion_type>
 Wheeled
@@ -95,9 +103,15 @@ Machine Gun
 </Turret Equipment>
 
 <source>
-TRO 3145 Lyran Commonwealth - Late Republic
+TRO: 3145 Lyran Commonwealth
 </source>
 
 <tonnage>
 80.0
 </tonnage>
+
+<quirks>
+anti_air
+trailer_hitch
+</quirks>
+

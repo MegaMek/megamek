@@ -20,6 +20,10 @@ Fensalir Combat WiGE
 (XXL)
 </Model>
 
+<mul id:>
+5789
+</mul id:>
+
 <year>
 3084
 </year>
@@ -31,6 +35,10 @@ Fensalir Combat WiGE
 <type>
 IS Level 4
 </type>
+
+<role>
+Skirmisher
+</role>
 
 <motion_type>
 WiGE
@@ -92,9 +100,51 @@ ISSmallPulseLaser
 </Rear Equipment>
 
 <source>
-XTRO Most Wanted - Jihad
+XTR: Most Wanted
 </source>
 
 <tonnage>
 80.0
 </tonnage>
+
+<capabilities>
+The Fensalir at the time was the largest Combat WiGE of its kind. It boasted 11.5 tons of Heavy Ferro-Fibrous armor to protect its hull. The vehicle features an Infantry Transport Bay to allow it to deliver up to 4 tons of troops to a hot zone.
+</capabilities>
+
+<overview>
+The Fensalir Combat WiGE was an attack craft which was built as a joint effort between Johnston Industries and House Steiner based manufacturer Nashan Diversified.
+</overview>
+
+<deployment>
+This variant was used by pro-Lyran forces in the Republic of the Sphere developed in 3084. It's protected by eleven and a half tons of Heavy Ferro-Fibrous armor, while its main striking power comes from a forward-mounted Improved Heavy Gauss Rifle and a single SRM-6. A Small Pulse Laser covers the rear arc of the vehicle, and two Sponson Turrets each contain a pair of Machine Guns. The Machine Guns and SRM have a ton of ammunition available, while the Improved Heavy Gauss Rifle has a standard three ton ammo bay. An XXL engine is used to maintain the standard Fensalir's speed. The four--ton infantry bay has been replaced by a ten ton cargo bay.
+</deployment>
+
+<history>
+The Fensalir was first produced at Nashan's plant on Furillo in 3084, while Johnston - still rebuilding its own manufacturing facilities - shipped components to assemble the WiGEs. When it was first produced, the vehicle initially entered service with the newly-renamed Lyran Commonwealth Armed Forces and later being copied by Clan Wolf-in-Exile for their own use.
+</history>
+
+<manufacturer>
+Nashan Diversified
+</manufacturer>
+
+<primaryFactory>
+Furillo
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+JUMPJET:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<quirks>
+difficult_maintain
+poor_performance
+</quirks>
+
+<weaponQuirks>
+accurate:FR:0:ISImprovedHeavyGaussRifle
+</weaponQuirks>

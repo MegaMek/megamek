@@ -15,6 +15,10 @@ Cavalry Attack Helicopter
 <Model>
 (SRM)
 </Model>
+
+<mul id:>
+505
+</mul id:>
 <Tonnage>
 25
 </Tonnage>
@@ -42,6 +46,10 @@ ISSRM2 Ammo
 <type>
 IS Level 1
 </type>
+
+<role>
+Striker
+</role>
 <year>
 3055
 </year>
@@ -58,5 +66,5 @@ IS Level 1
 VTOL
 </motion_type>
 <source>
-Clan Invasion
+TRO: 3058
 </source>

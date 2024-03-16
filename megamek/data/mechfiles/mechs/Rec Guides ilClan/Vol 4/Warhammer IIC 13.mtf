@@ -1,0 +1,177 @@
+chassis:Warhammer IIC
+model:13
+mul id:7498
+
+Config:Biped
+techbase:Clan
+era:3150
+rules level:2
+role:Brawler
+source:Rec Guide:ilClan #4
+
+quirk:searchlight
+quirk:stable
+
+
+mass:80
+engine:320 XL (Clan) Engine(IS)
+structure:Clan Endo Steel
+myomer:Standard
+
+heat sinks:21 Clan Double
+walk mp:4
+jump mp:0
+
+armor:Standard(Inner Sphere)
+LA armor:20
+RA armor:20
+LT armor:20
+RT armor:20
+CT armor:30
+HD armor:9
+LL armor:26
+RL armor:26
+RTL armor:6
+RTR armor:6
+RTC armor:9
+
+Weapons:10
+ER PPC, Left Arm
+ER PPC, Right Arm
+LRM 15, Left Torso
+Medium Pulse Laser, Left Torso
+Medium Pulse Laser, Left Torso
+LRM 15, Right Torso
+SRM 6, Right Torso
+Medium Pulse Laser, Right Torso
+Medium Pulse Laser, Right Torso
+Medium Pulse Laser, Head
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLERPPC
+CLERPPC
+Clan Endo Steel
+Clan Endo Steel
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLERPPC
+CLERPPC
+Clan Endo Steel
+Clan Endo Steel
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLLRM15
+CLLRM15
+CLMediumPulseLaser
+CLMediumPulseLaser
+Clan Ammo LRM-15
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLLRM15
+CLLRM15
+CLSRM6
+CLMediumPulseLaser
+CLMediumPulseLaser
+Clan Ammo LRM-15
+Clan Ammo LRM-15
+Clan Ammo SRM-6
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLDoubleHeatSink
+CLDoubleHeatSink
+
+Head:
+Life Support
+Sensors
+Cockpit
+CLMediumPulseLaser
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLDoubleHeatSink
+CLDoubleHeatSink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLDoubleHeatSink
+CLDoubleHeatSink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+overview:The Clan's interpretation on the classic Warhammer has never been subtle. The BattleMech's hyper-advanced technology only emphasized and improved its duty as a frontline brawler; boosting its mass by 10 tons (with equivalent increases in armor protection) made it even more powerful.
+
+capabilities:Thanks to their technological expertise, they were able to add ten tons with the same speed and firepower and nearly double the armor of the original. The Warhammer IIC is built on an Endo Steel frame and is protected by tons of ferro-fibrous armor. The result is a dangerous 'Mech, able to hold its own in any battle against the Inner Sphere. Also note that the armor was the primary concern when designing the IIC version rivaling even 100 ton assault 'Mechs in durability and protection.
+
+deployment:A variant produced by the Raven Alliance, this version combines the secondary arrays of the original model and the version 2, at the expense of armor protection. It mounts an ER PPC in each arm and an LRM-15 on each shoulder. Five Medium Pulse Lasers and an SRM-6 launcher add additional power at close range. 
+
+history:The Warhammer IIC is now the most common Clan BattleMech in the Inner Sphere. These remarkable machines are fielded by every major Inner Sphere force, Clan, and many large mercenary groups. It is only found on the periphery, where its equally outstanding price tag is simply too high for these countries to justify.
+
+manufacturer:Snow Raven Industrial Complex Alpha,Mu Manufacturing Plant 3H,Sheridan LM-TA 8-10
+primaryfactory:Dante,Paxon,Sheridan
+systemmanufacturer:CHASSIS:SFX-80 Endo
+systemmanufacturer:ENGINE:Type 320 XL Fusion
+systemmanufacturer:ARMOR:Unknown Standard Armor
+systemmanufacturer:COMMUNICATIONS:TDWS-37 Mk 2.2
+systemmanufacturer:TARGETING:“Hephaestus” CT-44
+

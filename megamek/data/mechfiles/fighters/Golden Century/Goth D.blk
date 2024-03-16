@@ -20,6 +20,10 @@ Goth
 D
 </Model>
 
+<mul id:>
+7662
+</mul id:>
+
 <year>
 3146
 </year>
@@ -31,6 +35,10 @@ D
 <type>
 Mixed (Clan Chassis) Advanced
 </type>
+
+<role>
+Fire Support
+</role>
 
 <motion_type>
 Aerodyne
@@ -116,7 +124,7 @@ Coolant Pod:OMNI
 </Fuselage Equipment>
 
 <source>
-Dark Age
+TRO: Golden Century
 </source>
 
 <tonnage>

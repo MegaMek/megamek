@@ -1,12 +1,19 @@
-Version:1.0
-Galahad
-GLH-1D
+chassis:Galahad
+model:GLH-1D
+mul id:1167
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2570
-Source:TRO 3075
+Source:TRO: 3075
 Rules Level:2
+role:Juggernaut
+
+
+
+
+quirk:difficult_maintain
+
 
 Mass:50
 Engine:150 Fusion Engine

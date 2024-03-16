@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,6 +20,10 @@ Commonwealth Light Cruiser
 (Block II)
 </Model>
 
+<mul id:>
+6986
+</mul id:>
+
 <year>
 2765
 </year>
@@ -31,6 +35,10 @@ Commonwealth Light Cruiser
 <type>
 IS Level 3
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Aerodyne
@@ -258,8 +266,48 @@ Ammo Barracuda:135
 50
 </structural_integrity>
 
+<capabilities>
+The Commonwealth-class light cruiser excelled in several key capabilities. Its extensive missile battery allowed it to outrange many adversaries, providing a significant tactical advantage. Supported by a heavy laser system and autocannons, it possessed formidable offensive capabilities in both long-range and close-range engagements. The cruiser's six docking collars enabled seamless integration with DropShips, ensuring flexibility and adaptability in various operational scenarios. With larger engines and advanced armor, the Commonwealth-class cruiser demonstrated enhanced speed, maneuverability, and protection compared to most non-Terran ships.
+</capabilities>
+
+<overview>
+The Commonwealth-class light cruiser, developed by Di Tron Industries in response to the Lyran Commonwealth's need for domestic WarShip construction, showcased technological advancements and impressive armament. It was slightly heavier and more compact than its predecessor, the Dart-class cruiser, featuring larger engines and sophisticated armor. With its extensive missile battery, reinforced by a heavy laser system and autocannons, the Commonwealth-class cruiser possessed long-range firepower and the capability to discourage enemy vessels from approaching. Its incorporation of six docking collars also reflected the growing trend of DropShip utilization.
+</overview>
+
+<history>
+When the Lyran Commonwealth sought assistance with its initial ventures into domestic WarShip construction, Di Tron Industries, renowned for its Dart-class cruiser, took up the challenge. Ioto Galactic Enterprises emerged through financial manipulation, defying Terran Hegemony legal restrictions on restricted technology sales. The Commonwealth-class light cruiser, slightly heavier but more compact than its predecessor, became a mainstay of the Lyran Navy, produced at the Port Sydney Naval Yards. However, like many vessels of its time, most Commonwealth-class cruisers did not survive long past the Reunification War, as scarce resources led to their scrapping during an era of peace. In the years leading up to Stefan Amaris seizing the throne, the Lyran Commonwealth, facing the need to reinforce its WarShip fleets, returned to the Commonwealth-class design. The newer version, launched in 2765, featured upgraded technologies and played a crucial role as escorts for Tharkad-class battle cruisers during the early Succession Wars. However, powerful adversaries on multiple fronts and the destruction of the Commonwealth's heavy aerospace industries eventually led to the decline and near extinction of the Lyran fleet, including the Commonwealth-class cruisers.
+</history>
+
+<manufacturer>
+Ioto Galactic Enterprises - Port Sydney Naval Yards
+</manufacturer>
+
+<primaryFactory>
+Alarion
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<use>
+Cruiser
+</use>
+
+<length>
+694 m
+</length>
+
+<height>
+1003 m Sail
+</height>
+
 <source>
-FR2765-LCAF - Star League
+Field Report 2765 LCAF
 </source>
 
 <tonnage>
@@ -278,6 +326,10 @@ FR2765-LCAF - Star League
 145
 145
 </grav_decks>
+
+<designtype>
+1
+</designtype>
 
 <crew>
 346
@@ -310,3 +362,4 @@ FR2765-LCAF - Star League
 <escape_pod>
 30
 </escape_pod>
+

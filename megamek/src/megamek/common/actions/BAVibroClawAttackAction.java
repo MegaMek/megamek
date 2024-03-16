@@ -15,6 +15,7 @@ package megamek.common.actions;
 
 import megamek.common.*;
 import megamek.common.options.OptionsConstants;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * A BattleArmor uses its vibroclaws
@@ -48,13 +49,18 @@ public class BAVibroClawAttackAction extends AbstractAttackAction {
         int targetId = Entity.NONE;
         Entity te = null;
         // arguments legal?
-        if ((ae == null) || (target == null)) {
-            throw new IllegalArgumentException("Attacker or target not valid");
+        if (ae == null) {
+            LogManager.getLogger().error("Attacker not valid");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Attacker not valid");
+        }
+        if (target == null) {
+            LogManager.getLogger().error("target not valid");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "target not valid");
         }
 
         if (target.getTargetType() == Targetable.TYPE_ENTITY) {
             te = (Entity) target;
-            targetId = target.getTargetId();
+            targetId = target.getId();
         }
 
         if (!game.getOptions().booleanOption(OptionsConstants.BASE_FRIENDLY_FIRE)) {

@@ -1,0 +1,163 @@
+chassis:Nightsky
+model:NGS-7S
+mul id:9352
+Config:Biped
+techbase:Mixed (IS Chassis)
+era:3142
+source:Rec Guide:ilClan #27
+rules level:3
+role:Striker
+
+mass:50
+engine:300 XL (Clan) Engine
+structure:IS Standard
+myomer:Standard
+
+heat sinks:13 IS Double
+walk mp:6
+jump mp:6
+
+armor:Heavy Ferro-Fibrous(Inner Sphere)
+LA armor:15
+RA armor:15
+LT armor:18
+RT armor:18
+CT armor:23
+HD armor:9
+LL armor:22
+RL armor:22
+RTL armor:5
+RTR armor:5
+RTC armor:6
+
+Weapons:4
+Large X-Pulse Laser, Left Arm
+ER Medium Laser, Left Torso
+ER Medium Laser, Right Torso
+Small X-Pulse Laser, Head
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISLargeXPulseLaser
+ISLargeXPulseLaser
+IS Heavy Ferro-Fibrous
+IS Heavy Ferro-Fibrous
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+Hatchet
+Hatchet
+Hatchet
+Hatchet
+ISAES
+ISAES
+IS Heavy Ferro-Fibrous
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+CLERMediumLaser
+IS Heavy Ferro-Fibrous
+IS Heavy Ferro-Fibrous
+IS Heavy Ferro-Fibrous
+IS Heavy Ferro-Fibrous
+IS Heavy Ferro-Fibrous
+IS Heavy Ferro-Fibrous
+IS Heavy Ferro-Fibrous
+IS Heavy Ferro-Fibrous
+IS Heavy Ferro-Fibrous
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+CLERMediumLaser
+IS Heavy Ferro-Fibrous
+IS Heavy Ferro-Fibrous
+IS Heavy Ferro-Fibrous
+IS Heavy Ferro-Fibrous
+IS Heavy Ferro-Fibrous
+IS Heavy Ferro-Fibrous
+IS Heavy Ferro-Fibrous
+IS Heavy Ferro-Fibrous
+IS Heavy Ferro-Fibrous
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+Jump Jet
+
+Head:
+Life Support
+Sensors
+Cockpit
+ISSmallXPulseLaser
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+overview:The Nightsky was a mid-range continuation of the Federated Commonwealth's successful Hatchetman-Axman series, which established melee combat weapons as a powerful and heat-efficient close-combat option for the experienced MechWarrior. Intended to provide both speed and firepower.
+capabilities:The Nightsky is built around a massive Vlar 300 XL extralight engine that propels the 'Mech up to speeds of 97.2 km/h. Superb ground speed and the added maneuverability provided by six HildCo Model 13 jump jets that allow the Nightsky to jump up to 180 meters make the Nightsky a capable heavy recon 'Mech. It is also protected with nine and a half tons of armor, providing the Nightsky with good armor protection for its size.
+deployment:No information on this variant	
+history:After their introduction in 3053, Nightskys quickly proliferated throughout the Federated Commonwealth, with many replacing Hatchetmen or Axmen lost in the early years of the Clan invasion. The distribution of this design had become fairly even between the two once-allied states by the time of the Lyran secession from the Commonwealth, resulting in Nightskys appearing among as many pro-Victor Davion troops as pro-Katherine Steiner forces during the FedCom Civil War.
+manufacturer:Defiance Industries
+primaryfactory:Hesperus II
+systemmanufacturer:CHASSIS:Dorwinion Standard
+systemmanufacturer:ENGINE:Vlar Light 300
+systemmanufacturer:ARMOR:Kallon Royalstar
+systemmanufacturer:JUMPJET:HildCo Model 13
+systemmanufacturer:COMMUNICATIONS:TharHes Calliope Hm10
+systemmanufacturer:TARGETING:TharHes Ares-8a
+

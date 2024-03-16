@@ -1,0 +1,153 @@
+chassis:Hercules
+model:HRC-LS-9004
+mul id:7991
+Config:Biped
+techbase:Inner Sphere
+era:3141
+source:Record Sheets: 3150
+rules level:4
+
+quirk:difficult_maintain
+
+
+mass:70
+engine:350 XL Engine(IS)
+structure:IS Composite
+myomer:Standard
+
+heat sinks:14 IS Double
+walk mp:5
+jump mp:0
+
+armor:Ferro-Fibrous(Inner Sphere)
+LA armor:18
+RA armor:18
+LT armor:22
+RT armor:22
+CT armor:34
+HD armor:9
+LL armor:24
+RL armor:24
+RTL armor:8
+RTR armor:8
+RTC armor:10
+
+Weapons:4
+ER Medium Laser, Left Arm
+Ultra AC/10, Right Arm
+ER PPC, Right Torso
+Anti-Missile System, Center Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISERMediumLaser
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+Blue Shield Particle Field Damper
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISUltraAC10
+ISUltraAC10
+ISUltraAC10
+ISUltraAC10
+ISUltraAC10
+ISUltraAC10
+ISUltraAC10
+IS Ferro-Fibrous
+Blue Shield Particle Field Damper
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+Blue Shield Particle Field Damper
+-Empty-
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISERPPC
+ISERPPC
+ISERPPC
+IS Ultra AC/10 Ammo
+IS Ultra AC/10 Ammo
+IS Ultra AC/10 Ammo
+ISAMS Ammo
+ISCASEII
+Blue Shield Particle Field Damper
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISAntiMissileSystem
+Blue Shield Particle Field Damper
+
+Head:
+Life Support
+Sensors
+Cockpit
+IS Ferro-Fibrous
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Ferro-Fibrous
+Blue Shield Particle Field Damper
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Ferro-Fibrous
+Blue Shield Particle Field Damper
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

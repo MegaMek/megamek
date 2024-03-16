@@ -20,6 +20,10 @@ Light Strike Fighter
 Owl III
 </Model>
 
+<mul id:>
+1875
+</mul id:>
+
 <year>
 3062
 </year>
@@ -31,6 +35,10 @@ Owl III
 <type>
 IS Level 2
 </type>
+
+<role>
+Interceptor
+</role>
 
 <motion_type>
 Aerodyne
@@ -91,7 +99,7 @@ ISERMediumLaser
 </Fuselage Equipment>
 
 <source>
-TRO 3039 - Civil War
+TRO: 3039
 </source>
 
 <tonnage>

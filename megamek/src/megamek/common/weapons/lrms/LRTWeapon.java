@@ -1,21 +1,33 @@
-/**
- * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+/*
+ * Copyright (c) 2005 - Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This file is part of MegaMek.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
 package megamek.common.weapons.lrms;
 
+import static megamek.common.MountedHelper.isArtemisIV;
+import static megamek.common.MountedHelper.isArtemisProto;
+import static megamek.common.MountedHelper.isArtemisV;
+
 import megamek.common.AmmoType;
+import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.Entity;
 import megamek.common.Game;
+import megamek.common.Mounted;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.GameOptions;
@@ -23,7 +35,7 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.MissileWeaponHandler;
 import megamek.common.weapons.missiles.MissileWeapon;
-import megamek.server.Server;
+import megamek.server.GameManager;
 
 /**
  * @author Sebastian Brocks
@@ -38,7 +50,12 @@ public abstract class LRTWeapon extends MissileWeapon {
         flags = flags.or(F_ARTEMIS_COMPATIBLE);
 
     }
-    
+
+    @Override
+    public boolean hasIndirectFire() {
+        return true;
+    }
+
     @Override
     public double getTonnage(Entity entity, int location, double size) {
         if ((entity != null) && entity.hasETypeFlag(Entity.ETYPE_PROTOMECH)) {
@@ -50,15 +67,47 @@ public abstract class LRTWeapon extends MissileWeapon {
 
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, Game game, Server server) {
-        return new MissileWeaponHandler(toHit, waa, game, server);
+            WeaponAttackAction waa, Game game, GameManager manager) {
+        return new MissileWeaponHandler(toHit, waa, game, manager);
     }
-    
+
     @Override
     public int getBattleForceClass() {
         return BFCLASS_TORP;
     }
-    
+
+    @Override
+    public boolean isAlphaStrikeIndirectFire() {
+        return false;
+    }
+
+    @Override
+    public double getBattleForceDamage(int range, Mounted fcs) {
+        if (isClan()) {
+            if (isArtemisIV(fcs) || isArtemisProto(fcs)) {
+                return (range <= AlphaStrikeElement.LONG_RANGE) ? 0.4 * rackSize / 5 : 0;
+            } else if (isArtemisV(fcs)) {
+                return (range <= AlphaStrikeElement.LONG_RANGE) ? 0.42 * rackSize / 5 : 0;
+            } else {
+                return (range <= AlphaStrikeElement.LONG_RANGE) ? 0.3  * rackSize / 5 : 0;
+            }
+        } else {
+            if (isArtemisIV(fcs) || isArtemisProto(fcs)) {
+                if (range == AlphaStrikeElement.SHORT_RANGE) {
+                    return 0.2 * rackSize / 5;
+                } else {
+                    return (range <= AlphaStrikeElement.LONG_RANGE) ? 0.4 * rackSize / 5 : 0;
+                }
+            } else {
+                if (range == AlphaStrikeElement.SHORT_RANGE) {
+                    return 0.15 * rackSize / 5;
+                } else {
+                    return (range <= AlphaStrikeElement.LONG_RANGE) ? 0.3 * rackSize / 5 : 0;
+                }
+            }
+        }
+    }
+
     @Override
     public void adaptToGameOptions(GameOptions gOp) {
         super.adaptToGameOptions(gOp);

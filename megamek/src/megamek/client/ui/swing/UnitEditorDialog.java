@@ -1,81 +1,36 @@
 /*
  * MechEditor.java - Copyright (C) 2013 Jay Lawson
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
 package megamek.client.ui.swing;
 
-import java.awt.BorderLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.GridLayout;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.Vector;
-import java.util.function.BiConsumer;
-
-import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSpinner;
-import javax.swing.SpinnerNumberModel;
-
 import megamek.client.ui.Messages;
-
-import megamek.common.ASFBay;
-import megamek.common.Aero;
-import megamek.common.Bay;
-import megamek.common.CriticalSlot;
-import megamek.common.DockingCollar;
-import megamek.common.Dropship;
-import megamek.common.Entity;
-import megamek.common.IArmorState;
-import megamek.common.Infantry;
-import megamek.common.Jumpship;
-import megamek.common.LandAirMech;
-import megamek.common.Mech;
-import megamek.common.Mounted;
-import megamek.common.Protomech;
-import megamek.common.QuadMech;
-import megamek.common.QuadVee;
-import megamek.common.SmallCraft;
-import megamek.common.SmallCraftBay;
-import megamek.common.Tank;
-import megamek.common.VTOL;
+import megamek.client.ui.swing.util.UIUtil;
+import megamek.common.*;
 import megamek.common.options.OptionsConstants;
 
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.util.*;
+import java.util.function.BiConsumer;
+
 /**
- *
- * @author Jay Lawson <jaylawson39 at yahoo.com> This dialog will allow the user
- *         to edit the damage and status characteristics of a unit This designed
- *         for use in both MegaMek and MHQ so don't go messing things up for MHQ
- *         by changing a bunch of stuff
+ * This dialog will allow the user to edit the damage and status characteristics of a unit.
+ * This is designed for use in both MegaMek and MHQ so don't go messing things up for MHQ by
+ * changing a bunch of stuff
+ * @author Jay Lawson (jaylawson39 at yahoo.com)
  */
 public class UnitEditorDialog extends JDialog {
-
-    /**
-     *
-     */
     private static final long serialVersionUID = 8144354264100884817L;
 
     private Entity entity;
@@ -178,12 +133,7 @@ public class UnitEditorDialog extends JDialog {
             setVisible(false);
         });
         JButton butCancel = new JButton(Messages.getString("Cancel"));
-        butCancel.addActionListener(new java.awt.event.ActionListener() {
-            @Override
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                setVisible(false);
-            }
-        });
+        butCancel.addActionListener(evt -> setVisible(false));
 
         panButtons.add(butOK);
         panButtons.add(butCancel);
@@ -192,6 +142,7 @@ public class UnitEditorDialog extends JDialog {
 
         // TODO: size right
 
+        adaptToGUIScale();
         pack();
     }
 
@@ -332,7 +283,7 @@ public class UnitEditorDialog extends JDialog {
 
         int men = Math.max(infantry.getShootingStrength(), 0);
         spnInternal[0] = new JSpinner(new SpinnerNumberModel(men, 0,
-                infantry.getSquadN() * infantry.getSquadSize(), 1));
+                infantry.getSquadCount() * infantry.getSquadSize(), 1));
         gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
@@ -365,6 +316,13 @@ public class UnitEditorDialog extends JDialog {
                 hits += entity.getDamagedCriticals(CriticalSlot.TYPE_EQUIPMENT,
                         eqNum, m.getSecondLocation());
             }
+            if (m.getType().hasFlag(MiscType.F_PARTIAL_WING)) {
+                hits = entity.getDamagedCriticals(CriticalSlot.TYPE_EQUIPMENT,
+                        eqNum, Mech.LOC_LT);
+                hits += entity.getDamagedCriticals(CriticalSlot.TYPE_EQUIPMENT,
+                        eqNum, Mech.LOC_RT);
+            }
+
             if (!(entity instanceof Mech)) {
                 nCrits = 1;
                 if (hits > 1) {
@@ -684,7 +642,7 @@ public class UnitEditorDialog extends JDialog {
         gridBagConstraints.weightx = 0.0;
         panSystem.add(new JLabel("<html><b>" + Messages.getString("UnitEditorDialog.sensor") + "</b><br></html>"),
                 gridBagConstraints);
-        sensorCrit = new CheckCritPanel(4, tank.getSensorHits());
+        sensorCrit = new CheckCritPanel(Tank.CRIT_SENSOR_MAX, tank.getSensorHits());
         gridBagConstraints.gridx = 1;
         gridBagConstraints.weightx = 1.0;
         panSystem.add(sensorCrit, gridBagConstraints);
@@ -828,7 +786,7 @@ public class UnitEditorDialog extends JDialog {
         gridBagConstraints.weightx = 0.0;
         panSystem.add(new JLabel("<html><b>" + Messages.getString("UnitEditorDialog.sensor") + "</b><br></html>"),
                 gridBagConstraints);
-        sensorCrit = new CheckCritPanel(4, vtol.getSensorHits());
+        sensorCrit = new CheckCritPanel(Tank.CRIT_SENSOR_MAX, vtol.getSensorHits());
         gridBagConstraints.gridx = 1;
         gridBagConstraints.weightx = 1.0;
         panSystem.add(sensorCrit, gridBagConstraints);
@@ -857,7 +815,6 @@ public class UnitEditorDialog extends JDialog {
             gridBagConstraints.gridx = 1;
             panSystem.add(stabCrit, gridBagConstraints);
         }
-
     }
 
     private void setupAeroSystemPanel() {
@@ -1157,7 +1114,7 @@ public class UnitEditorDialog extends JDialog {
                     + "</b><br></html>"), gridBagConstraints);
             int kfboomHits = 0;
             if (((Dropship) aero).isKFBoomDamaged()) {
-            	kfboomHits = 1;
+                kfboomHits = 1;
             }
             kfboomCrit = new CheckCritPanel(1, kfboomHits);
             gridBagConstraints.gridx = 1;
@@ -1166,41 +1123,66 @@ public class UnitEditorDialog extends JDialog {
         }
         
         if ((aero instanceof SmallCraft) || (aero instanceof Jumpship)) {
-        	int b = 0;
-        	JSpinner bayCrit;
-        	Vector<Bay> bays = aero.getTransportBays();
-        	bayDamage = new JSpinner[bays.size()];
-        	bayDoorCrit = new CheckCritPanel [bays.size()];
-        	for (Bay nextbay : bays) {
-        		gridBagConstraints.gridx = 0;
-        		gridBagConstraints.gridy++;
-        		gridBagConstraints.weightx = 0.0;
-        		panSystem.add(new JLabel("<html><b>" + 
-        		        String.format(Messages.getString("UnitEditorDialog.bayCrit"), nextbay.getType(), nextbay.getBayNumber())
-        		        + "</b><br></html>"), gridBagConstraints);
-    		
-        		bayCrit = new JSpinner(new SpinnerNumberModel(nextbay.getCapacity() - nextbay.getBayDamage(),
+            int b = 0;
+            JSpinner bayCrit;
+            Vector<Bay> bays = aero.getTransportBays();
+            bayDamage = new JSpinner[bays.size()];
+            bayDoorCrit = new CheckCritPanel [bays.size()];
+            for (Bay nextbay : bays) {
+                gridBagConstraints.gridx = 0;
+                gridBagConstraints.gridy++;
+                gridBagConstraints.weightx = 0.0;
+                panSystem.add(new JLabel("<html><b>" +
+                        String.format(Messages.getString("UnitEditorDialog.bayCrit"), nextbay.getType(), nextbay.getBayNumber())
+                        + "</b><br></html>"), gridBagConstraints);
+
+                bayCrit = new JSpinner(new SpinnerNumberModel(nextbay.getCapacity() - nextbay.getBayDamage(),
                         0, nextbay.getCapacity(), nextbay.isCargo() ? 0.5: 1.0));
-        		bayDamage[b] = bayCrit;
-        		gridBagConstraints.gridx = 1;
-        		gridBagConstraints.weightx = 1.0;
-        		panSystem.add(bayCrit, gridBagConstraints);
-    		
+                bayDamage[b] = bayCrit;
+                gridBagConstraints.gridx = 1;
+                gridBagConstraints.weightx = 1.0;
+                panSystem.add(bayCrit, gridBagConstraints);
+
                 gridBagConstraints.gridx = 0;
                 gridBagConstraints.gridy++;
                 gridBagConstraints.weightx = 0.0;
                 panSystem.add(new JLabel("<html><b>" + 
                         String.format(Messages.getString("UnitEditorDialog.bayDoorCrit"), nextbay.getBayNumber())
                         + "</b><br></html>"), gridBagConstraints);
-    		
-        		CheckCritPanel doorCrit = new CheckCritPanel(nextbay.getDoors(), (nextbay.getDoors() - nextbay.getCurrentDoors()));
-        		bayDoorCrit[b] = doorCrit;
-        		gridBagConstraints.gridx = 1;
-        		gridBagConstraints.weightx = 1.0;
-        		panSystem.add(doorCrit, gridBagConstraints);
-        		b++;
-    		}
-    	}
+
+                CheckCritPanel doorCrit = new CheckCritPanel(nextbay.getDoors(), (nextbay.getDoors() - nextbay.getCurrentDoors()));
+                bayDoorCrit[b] = doorCrit;
+                gridBagConstraints.gridx = 1;
+                gridBagConstraints.weightx = 1.0;
+                panSystem.add(doorCrit, gridBagConstraints);
+                b++;
+            }
+        }
+    }
+
+    /** Applies the given number of total crits to a Super-Cooled Myomer (which is spread over 6 locations). */
+    public void damageSCM(Entity entity, int eqNum, int hits) {
+        int nhits = 0;
+        Mounted m = entity.getEquipment(eqNum);
+        for (int loc = 0; loc < entity.locations(); loc++) {
+            for (int i = 0; i < entity.getNumberOfCriticals(loc); i++) {
+                CriticalSlot cs = entity.getCritical(loc, i);
+                if ((cs == null) || (cs.getType() != CriticalSlot.TYPE_EQUIPMENT)
+                        || ((m != cs.getMount()) && (m != cs.getMount2()))) {
+                    continue;
+                }
+
+                if (nhits < hits) {
+                    cs.setHit(true);
+                    cs.setDestroyed(true);
+                    nhits++;
+                } else {
+                    cs.setHit(false);
+                    cs.setDestroyed(false);
+                    cs.setRepairable(true);
+                }
+            }
+        }
     }
 
     private void btnOkayActionPerformed(java.awt.event.ActionEvent evt) {
@@ -1214,9 +1196,6 @@ public class UnitEditorDialog extends JDialog {
                     ((Aero) entity).setSI(internal);
                 } else {
                     entity.setInternal(internal, i);
-                }
-                if (entity.isConventionalInfantry()) {
-                    entity.applyDamage();
                 }
             }
             if (null != spnArmor[i]) {
@@ -1239,10 +1218,20 @@ public class UnitEditorDialog extends JDialog {
             CheckCritPanel crit = equipCrits.get(eqNum);
             if (null != crit) {
                 int hits = crit.getHits();
-                m.setDestroyed(hits > 0);
-                m.setHit(hits > 0);
-                entity.damageSystem(CriticalSlot.TYPE_EQUIPMENT, eqNum, hits);
+                if (m.is(EquipmentTypeLookup.SCM)) {
+                    m.setDestroyed(hits >= 6);
+                    m.setHit(hits >= 6);
+                    damageSCM(entity, eqNum, hits);
+                } else {
+                    m.setDestroyed(hits > 0);
+                    m.setHit(hits > 0);
+                    entity.damageSystem(CriticalSlot.TYPE_EQUIPMENT, eqNum, hits);
+                }
             }
+        }
+        if (entity instanceof Infantry) {
+            ((Infantry) entity).damageOrRestoreFieldWeapons();
+            entity.applyDamage();
         }
 
         // now systems
@@ -1423,39 +1412,39 @@ public class UnitEditorDialog extends JDialog {
                         .setDamageDockCollar(dockCollarCrit.getHits() > 0);
             }
             if ((null != kfboomCrit) && (aero instanceof Dropship)) {
-            	((Dropship) aero)
-            			.setDamageKFBoom(kfboomCrit.getHits() > 0);
+                ((Dropship) aero)
+                        .setDamageKFBoom(kfboomCrit.getHits() > 0);
             }
             // cargo bays and bay doors
             if ((aero instanceof Dropship) || (aero instanceof Jumpship)) {
-            	int b = 0;
-            	for (Bay bay : aero.getTransportBays()) {
-            		JSpinner bayCrit = bayDamage[b];
-            		if (null == bayCrit) {
-            			continue;
-            		}
-            		bay.setBayDamage(bay.getCapacity() - (Double) bayCrit.getModel().getValue());
-            		CheckCritPanel doorCrit = bayDoorCrit[b];
-            		if (null == doorCrit) {
-            			continue;
-            		}
-            		if ((bay.getCurrentDoors() > 0) && (doorCrit.getHits() > 0)) {
-            			bay.setCurrentDoors(bay.getDoors() - doorCrit.getHits());
+                int b = 0;
+                for (Bay bay : aero.getTransportBays()) {
+                    JSpinner bayCrit = bayDamage[b];
+                    if (null == bayCrit) {
+                        continue;
+                    }
+                    bay.setBayDamage(bay.getCapacity() - (Double) bayCrit.getModel().getValue());
+                    CheckCritPanel doorCrit = bayDoorCrit[b];
+                    if (null == doorCrit) {
+                        continue;
+                    }
+                    if ((bay.getCurrentDoors() > 0) && (doorCrit.getHits() > 0)) {
+                        bay.setCurrentDoors(bay.getDoors() - doorCrit.getHits());
 
-            		} else if (doorCrit.getHits() == 0) {
-            			bay.setCurrentDoors(bay.getDoors());
-            		}
-        			// for ASF and SC bays, we have to update recovery slots as doors are changed
-        			if (bay instanceof ASFBay) {
-        				ASFBay a = (ASFBay) bay;
-        				a.initializeRecoverySlots();        				
-        			} 
-        			if (bay instanceof SmallCraftBay) {
-    					SmallCraftBay s = (SmallCraftBay) bay;
-    					s.initializeRecoverySlots();    					
-        			}
-            	b++;
-            	}
+                    } else if (doorCrit.getHits() == 0) {
+                        bay.setCurrentDoors(bay.getDoors());
+                    }
+                    // for ASF and SC bays, we have to update recovery slots as doors are changed
+                    if (bay instanceof ASFBay) {
+                        ASFBay a = (ASFBay) bay;
+                        a.initializeRecoverySlots();
+                    }
+                    if (bay instanceof SmallCraftBay) {
+                        SmallCraftBay s = (SmallCraftBay) bay;
+                        s.initializeRecoverySlots();
+                    }
+                b++;
+                }
             }
             // Jumpship Docking Collars, KF Drive, Sail and Grav Decks
             if (aero instanceof Jumpship) {
@@ -1538,12 +1527,7 @@ public class UnitEditorDialog extends JDialog {
             for (int i = 0; i < crits; i++) {
                 JCheckBox check = new JCheckBox("");
                 check.setActionCommand(Integer.toString(i));
-                check.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent evt) {
-                        checkBoxes(evt);
-                    }
-                });
+                check.addActionListener(this::checkBoxes);
                 checks.add(check);
                 add(check);
             }
@@ -1583,4 +1567,7 @@ public class UnitEditorDialog extends JDialog {
         }
     }
 
+    private void adaptToGUIScale() {
+        UIUtil.adjustDialog(this,  UIUtil.FONT_SCALE1);
+    }
 }

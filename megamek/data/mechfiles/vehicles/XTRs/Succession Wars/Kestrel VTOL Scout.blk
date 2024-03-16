@@ -20,13 +20,21 @@ Kestrel VTOL
 (Scout)
 </Model>
 
+<mul id:>
+5775
+</mul id:>
+
 <year>
 3030
 </year>
 
 <type>
-IS Level 4
+IS Level 3
 </type>
+
+<role>
+Scout
+</role>
 
 <motion_type>
 VTOL
@@ -74,9 +82,14 @@ ISMastMount
 </Rotor Equipment>
 
 <source>
-XTRO Succession Wars - Succession Wars
+XTR: Succession Wars
 </source>
 
 <tonnage>
 25.0
 </tonnage>
+
+<quirks>
+difficult_maintain
+</quirks>
+

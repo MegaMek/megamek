@@ -1,12 +1,20 @@
-Version:1.0
-Viking
-VKG-3W
+chassis:Viking
+model:VKG-3W
+mul id:3420
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3072
-Source:TRO 3060
+Source:TRO: 3060
 Rules Level:2
+role:Missile Boat
+
+
+
+quirk:easy_maintain
+quirk:multi_trac
+quirk:no_arms
+
 
 Mass:90
 Engine:270 Fusion Engine

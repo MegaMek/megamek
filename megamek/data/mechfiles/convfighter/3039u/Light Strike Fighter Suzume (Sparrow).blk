@@ -20,6 +20,10 @@ Light Strike Fighter
 Suzume ('Sparrow')
 </Model>
 
+<mul id:>
+1876
+</mul id:>
+
 <year>
 2801
 </year>
@@ -31,6 +35,10 @@ Suzume ('Sparrow')
 <type>
 IS Level 1
 </type>
+
+<role>
+Fast Dogfighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -91,7 +99,7 @@ IS Ammo LRM-5
 </Fuselage Equipment>
 
 <source>
-TRO 3039 - Succession Wars
+TRO: 3039
 </source>
 
 <tonnage>

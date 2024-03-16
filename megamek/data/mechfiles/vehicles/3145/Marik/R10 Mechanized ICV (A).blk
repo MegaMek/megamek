@@ -20,6 +20,10 @@ R10 Mechanized ICV
 (A)
 </Model>
 
+<mul id:>
+6491
+</mul id:>
+
 <year>
 3097
 </year>
@@ -28,15 +32,16 @@ R10 Mechanized ICV
 IS Level 2
 </type>
 
+<role>
+Brawler
+</role>
+
 <motion_type>
 Wheeled
 </motion_type>
 
 <transporters>
 troopspace:4.0
-</transporters>
-
-<transporters>
 BattleArmorHandles - troopers:-1
 </transporters>
 
@@ -96,7 +101,7 @@ Medium Laser:OMNI
 </Turret Equipment>
 
 <source>
-TRO 3145 Free Worlds League - Early Republic
+TRO: 3145 Free Worlds League
 </source>
 
 <tonnage>
@@ -106,3 +111,9 @@ TRO 3145 Free Worlds League - Early Republic
 <baseChassisTurretWeight>
 1.5
 </baseChassisTurretWeight>
+
+<quirks>
+easy_maintain
+poor_target_long
+</quirks>
+

@@ -15,6 +15,10 @@ Tokugawa Heavy Tank
 <Model>
 TKG-150
 </Model>
+
+<mul id:>
+3265
+</mul id:>
 <Tonnage>
 60
 </Tonnage>
@@ -44,6 +48,10 @@ ISMG Ammo (100)
 <type>
 IS Level 1
 </type>
+
+<role>
+Brawler
+</role>
 <year>
 2792
 </year>
@@ -60,5 +68,5 @@ IS Level 1
 Wheeled
 </motion_type>
 <source>
-Succession Wars
+TRO: 3058
 </source>

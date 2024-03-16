@@ -12,9 +12,13 @@ Tank
 <Name>
 Stygian Strike Tank
 </Name>
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+5158
+</mul id:>
 <Tonnage>
 40
 </Tonnage>
@@ -43,6 +47,10 @@ ISLRM15 Ammo
 <type>
 IS Level 2
 </type>
+
+<role>
+Missile Boat
+</role>
 <year>
 3062
 </year>
@@ -58,3 +66,7 @@ IS Level 2
 <motion_type>
 Hover
 </motion_type>
+
+<source>
+TRO: 3067
+</source>

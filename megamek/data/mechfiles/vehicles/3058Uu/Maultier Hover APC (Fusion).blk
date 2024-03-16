@@ -15,6 +15,10 @@ Maultier Hover APC
 <Model>
 (Fusion)
 </Model>
+
+<mul id:>
+2106
+</mul id:>
 <Tonnage>
 15
 </Tonnage>
@@ -36,6 +40,10 @@ TroopSpace:4
 <type>
 IS Level 2
 </type>
+
+<role>
+Scout
+</role>
 <year>
 3070
 </year>
@@ -52,5 +60,5 @@ IS Level 2
 Hover
 </motion_type>
 <source>
-Jihad
+TRO: 3058
 </source>

@@ -36,7 +36,7 @@ public class PrototypeRL15 extends PrototypeRLWeapon {
         extremeRange = 18;
         tonnage = 1.0;
         criticals = 2;
-        bv = 21;
+        bv = 18;
         cost = 30000;
         shortAV = 9;
         medAV = 9;

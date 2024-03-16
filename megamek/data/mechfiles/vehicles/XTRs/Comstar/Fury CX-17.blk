@@ -20,6 +20,10 @@ Fury Command Tank
 CX-17
 </Model>
 
+<mul id:>
+5556
+</mul id:>
+
 <year>
 3052
 </year>
@@ -27,6 +31,10 @@ CX-17
 <type>
 IS Level 4
 </type>
+
+<role>
+Sniper
+</role>
 
 <motion_type>
 Tracked
@@ -82,9 +90,16 @@ ISLBXAC5
 </Turret Equipment>
 
 <source>
-XTRO ComStar - Clan Invasion
+XTR: ComStar
 </source>
 
 <tonnage>
 80.0
 </tonnage>
+
+<quirks>
+prototype
+anti_air
+trailer_hitch
+</quirks>
+

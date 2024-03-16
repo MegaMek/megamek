@@ -20,6 +20,10 @@ Czar Dropship
 (Mech Carrier)
 </Model>
 
+<mul id:>
+5626
+</mul id:>
+
 <year>
 2505
 </year>
@@ -184,7 +188,7 @@ TARGETING:Unknown
 </height>
 
 <source>
-XTRO Primitives III - Age of War
+XTR: Primitives III
 </source>
 
 <tonnage>
@@ -230,4 +234,14 @@ XTRO Primitives III - Age of War
 <escape_pod>
 4
 </escape_pod>
+
+
+<quirks>
+atmo_instability
+difficult_maintain
+docking_arms
+imp_target_short
+sensor_ghosts
+obsolete
+</quirks>
 

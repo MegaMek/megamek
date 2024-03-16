@@ -20,6 +20,10 @@ Sortek Assault Craft
 (Interdictor)
 </Model>
 
+<mul id:>
+6319
+</mul id:>
+
 <year>
 3101
 </year>
@@ -27,6 +31,10 @@ Sortek Assault Craft
 <type>
 IS Level 3
 </type>
+
+<role>
+Scout
+</role>
 
 <motion_type>
 Hover
@@ -78,7 +86,7 @@ Light PPC
 </Rear Equipment>
 
 <source>
-TRO 3145 Federated Suns - Late Republic
+TRO: 3145 Federated Suns
 </source>
 
 <tonnage>

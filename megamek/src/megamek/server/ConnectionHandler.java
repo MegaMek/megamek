@@ -14,7 +14,7 @@
  */
 package megamek.server;
 
-import megamek.common.net.AbstractConnection;
+import megamek.common.net.connections.AbstractConnection;
 
 /**
  * Thread that runs and checks to see if there's any incoming packets from a connection.

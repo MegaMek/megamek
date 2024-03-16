@@ -1,5 +1,5 @@
-/**
- * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+/*
+ * Copyright (c) 2005 - Ben Mazur (bmazur@sev.org)
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -19,15 +19,8 @@ import megamek.common.SimpleTechLevel;
  * @author Sebastian Brocks
  */
 public class CLSRT4IOS extends SRTWeapon {
-
-    /**
-     *
-     */
     private static final long serialVersionUID = -1622623253640255529L;
 
-    /**
-     *
-     */
     public CLSRT4IOS() {
         super();
         name = "SRT 4 (I-OS)";
@@ -46,17 +39,17 @@ public class CLSRT4IOS extends SRTWeapon {
         bv = 8;
         flags = flags.or(F_NO_FIRES).or(F_ONESHOT).andNot(F_PROTO_WEAPON);
         cost = 48000;
-        rulesRefs = "327,TO";
-        //Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
+        rulesRefs = "327, TO";
+        // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TECH_BASE_CLAN)
-        	.setIntroLevel(false)
-        	.setUnofficial(false)
-            .setTechRating(RATING_B)
-            .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
-            .setClanAdvancement(DATE_NONE, 3058, 3081, DATE_NONE, DATE_NONE)
-            .setClanApproximate(false, false, true, false, false)
-            .setPrototypeFactions(F_CNC)
-            .setProductionFactions(F_CNC)
-            .setStaticTechLevel(SimpleTechLevel.STANDARD);
+                .setIntroLevel(false)
+                .setUnofficial(false)
+                .setTechRating(RATING_B)
+                .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+                .setClanAdvancement(DATE_NONE, 3058, 3081, DATE_NONE, DATE_NONE)
+                .setClanApproximate(false, false, true, false, false)
+                .setPrototypeFactions(F_CNC)
+                .setProductionFactions(F_CNC)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
 }

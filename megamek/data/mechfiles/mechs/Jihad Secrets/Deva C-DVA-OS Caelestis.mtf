@@ -1,11 +1,21 @@
-Version:1.1
-Deva
-C-DVA-OS Caelestis
+chassis:Deva
+model:C-DVA-OS Caelestis
+mul id:891
+source:Jihad Secrets: The Blake Documents
 
 Config:Biped Omnimech
 TechBase:Inner Sphere
 Era:3075
 Rules Level:4
+role:Skirmisher
+
+
+
+quirk:imp_com
+quirk:imp_sensors
+quirk:bad_rep_clan
+quirk:bad_rep_is
+
 
 Mass:70
 Engine:280 Light Engine(IS)

@@ -94,7 +94,7 @@ public class AeroGroundPathFinder {
 
             LogManager.getLogger().error(memoryMessage, e);
         } catch (Exception e) {
-            LogManager.getLogger().error("", e); //do something, don't just swallow the exception, good lord
+            LogManager.getLogger().error("", e); // do something, don't just swallow the exception, good lord
         }
     }
 
@@ -103,12 +103,8 @@ public class AeroGroundPathFinder {
     }
 
     /**
-     *
-     * @author NickAragua
-     *
-     * @param <MovePath> a move path
-     *
      * This class removes all off-board paths, but keeps track of the shortest of all the paths removed
+     * @author NickAragua
      */
     public static class AeroGroundOffBoardFilter extends Filter<MovePath> {
 
@@ -120,7 +116,7 @@ public class AeroGroundPathFinder {
 
         /**
          * Returns filtered collection by removing those objects that fail
-         * {@link #shouldStay(T)} test.
+         * {@link #shouldStay(MovePath)} test.
          *
          * @param collection collection to be filtered
          * @return filtered collection

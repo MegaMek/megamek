@@ -1,12 +1,22 @@
-Version:1.0
-Phoenix Hawk
-PXH-3M (Masters)
+chassis:Phoenix Hawk
+model:PXH-3M (Masters)
+mul id:2500
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3051
-Source:Clan Invasion
+source:TRO: 3085
 Rules Level:2
+role:Striker
+
+
+
+quirk:command_mech
+quirk:imp_com
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+weaponquirk:jettison_capable:RA:4:ISERLargeLaser
+
 
 Mass:45
 Engine:270 XL Engine(IS)

@@ -2,62 +2,128 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 Tank
 </UnitType>
+
 <Name>
 Drillson Heavy Hover Tank
 </Name>
+
 <Model>
 (Sealed)
 </Model>
-<Tonnage>
-50
-</Tonnage>
+
+<mul id:>
+930
+</mul id:>
+
+<year>
+3076
+</year>
+
+<originalBuildYear>
+3076
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<role>
+Striker
+</role>
+
+<motion_type>
+Hover
+</motion_type>
+
+<transporters>
+</transporters>
+
 <cruiseMP>
 9
 </cruiseMP>
-<Armor>
+
+<engine_type>
+0
+</engine_type>
+
+<armor>
 25
 21
 21
 20
 25
-</Armor>
-<Turret Equipment>
-ISLPPC
-ISLPPC
-ISMML3
-</Turret Equipment>
+</armor>
+
 <Body Equipment>
-ISMML3 LRM Ammo
-ISMML3 SRM Ammo
-Cargo (0.5 tons)
+IS Ammo MML-3 LRM
+IS Ammo MML-3 SRM
+Cargo:SIZE:0.5
 ISFlotationHull
 Environmental Sealing
 </Body Equipment>
-<type>
-IS Level 3
-</type>
-<year>
-3076
-</year>
-<internal_type>
-0
-</internal_type>
-<armor_type>
-0
-</armor_type>
-<engine_type>
-0
-</engine_type>
-<motion_type>
-Hover
-</motion_type>
+
+<Front Equipment>
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+Light PPC
+Light PPC
+ISMML3
+</Turret Equipment>
+
 <source>
-Jihad
+TRO: 3085
 </source>
+
+<tonnage>
+50.0
+</tonnage>
+
+<overview>
+Its mix of thick armor, speed, and hitting power quickly made it a favorite of even the most hidebound Lyran generals.
+</overview>
+
+<capabilities>
+The Drillson's electronics are its focal point. During the Fourth Succession War, the Evil Eye targeting and tracking system, a groundbreaking 360-degree vision system similar to the heads-up display in BattleMech targeting systems, proved to be one of the fi nest conventional electronics systems in use. Using a combination of energy and missile armaments, it can hit and damage targets at a variety of ranges. The Drillson's superb armor is what genuinely endears it to Lyran commanders. With over seven tons of ArcShield armor on the chassis, the Drillson can withstand more abuse than most people believe a hovercraft can.
+</capabilities>
+
+<deployment>
+This 3076 version replaces all the standard weaponry with a pair of Light PPCs which are mounted in the turret and an MML-3. It carries sufficient ammunition for extended battles (33 shots SRM + 40 shots LRM). A flotation hull allows this model to support amphibious operations alongside the Plainsman.
+</deployment>
+
+<history>
+The Drillson spread across the Inner Sphere thanks to the rapid increase of production in the early 3030s, while the lion's share remains with the allied states of the Lyran Commonwealth and the Federated Suns. The Capellans have grouped the majority of theirs into Home Guard battalions and numerous renowned Liao-sponsored mercenary formations, such as McCarron's Armored Cavalry. There were frequent rumors that ComStar had approached Cyclops about obtaining the Drillson for its (then) newly-unveiled Com Guards. The LCAF had many holes in its ranks to fill with new vehicles as a result of the slaughter of that battle, and the new agreement with the Federated Suns opened that realm's military to Lyran markets as well. Davion officers, impressed with the Drillson's performance during the Fourth War, persuaded the AFFS Department of the Quartermaster to obtain as many Drillsons as possible. Cyclops opened six more lines on New Earth by 3035 to accommodate demand.
+</history>
+
+<manufacturer>
+Cyclops, Incorporated,Refit
+</manufacturer>
+
+<primaryFactory>
+Skye, Various
+</primaryFactory>
+
+<systemManufacturers>
+ENGINE:MaxLift 215 Fusion
+ARMOR:ArcShield Heavy
+COMMUNICATIONS:Cyclops 1
+TARGETING:Evil Eye
+</systemManufacturers>

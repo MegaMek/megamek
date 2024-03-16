@@ -1,12 +1,18 @@
-Version:1.0
-Thorn
-THE-S
+chassis:Thorn
+model:THE-S
+mul id:3195
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3035
-Source:TRO 3039 - Succession Wars
+Source:TRO: 3039
 Rules Level:1
+role:Striker
+
+
+
+quirk:easy_maintain
+
 
 Mass:20
 Engine:120 Fusion Engine(IS)

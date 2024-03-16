@@ -1,0 +1,161 @@
+chassis:JagerMech
+model:JM7-DD
+
+Config:Biped
+techbase:Mixed (IS Chassis)
+era:3146
+rules level:2
+role:Sniper
+mul id:9487
+Source:Rec Guide:ilClan #32
+
+
+
+quirk:anti_air
+
+
+mass:70
+engine:280 XL Engine(IS)
+structure:IS Endo-Composite
+myomer:Standard
+cockpit:Standard Cockpit
+gyro:XL Gyro
+
+heat sinks:11 IS Double
+walk mp:4
+jump mp:0
+
+armor:Ferro-Fibrous(Inner Sphere)
+LA armor:22
+RA armor:22
+LT armor:24
+RT armor:24
+CT armor:34
+HD armor:9
+LL armor:22
+RL armor:22
+RTL armor:6
+RTR armor:6
+RTC armor:6
+
+Weapons:6
+Ultra AC/10, Left Arm
+Light AC/5, Left Arm
+Ultra AC/10, Right Arm
+Light AC/5, Right Arm
+ER Medium Laser, Left Torso
+ER Medium Laser, Right Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+CLUltraAC10
+CLUltraAC10
+CLUltraAC10
+CLUltraAC10
+Light Auto Cannon/5
+Light Auto Cannon/5
+IS Endo-Composite
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+CLUltraAC10
+CLUltraAC10
+CLUltraAC10
+CLUltraAC10
+Light Auto Cannon/5
+Light Auto Cannon/5
+IS Endo-Composite
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISERMediumLaser
+Clan Ultra AC/10 Ammo
+Clan Ultra AC/10 Ammo
+IS Ammo LAC/5
+ISCASEII
+IS Endo-Composite
+IS Endo-Composite
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISERMediumLaser
+Clan Ultra AC/10 Ammo
+Clan Ultra AC/10 Ammo
+IS Ammo LAC/5
+ISCASEII
+IS Endo-Composite
+IS Endo-Composite
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+
+Head:
+Life Support
+Sensors
+Cockpit
+IS Endo-Composite
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

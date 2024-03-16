@@ -17,7 +17,9 @@ package megamek.client.ui.swing.tileset;
 
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.PlayerColour;
+import megamek.codeUtilities.MathUtility;
 import megamek.common.*;
+import megamek.common.annotations.Nullable;
 import megamek.common.icons.Camouflage;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.AbstractDirectory;
@@ -69,7 +71,17 @@ public class EntityImage {
     private static final int IMG_WIDTH = HexTileset.HEX_W;
     private static final int IMG_HEIGHT = HexTileset.HEX_H;
     private static final int IMG_SIZE = IMG_WIDTH * IMG_HEIGHT;
-    
+
+    private static final float SHADOW_INTENSITY = 0.7f; // 0 = no shadow, 1 = black shadow
+    private static final float SHADOW_OFFSET = 5f; // due to unit height
+    private static final RescaleOp BLACK_FILTER = new RescaleOp(new float[]{0, 0, 0, SHADOW_INTENSITY},
+            new float[]{0, 0, 0, 1 - SHADOW_INTENSITY}, null);
+
+    private static final GUIPreferences GUIP = GUIPreferences.getInstance();
+
+    private static final GraphicsConfiguration GRAPHICS_CONFIGURATION = GraphicsEnvironment
+            .getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
+
     /** Facing-dependent camo overlays (add shadows and highlighting) */ 
     private static final int[][] pOverlays = new int[6][IMG_SIZE];
     static {
@@ -97,7 +109,7 @@ public class EntityImage {
     }
 
     /** The base (unit) image used for this icon. */
-    private Image base;
+    protected Image base;
     /** The wreck base image used for this icon. */
     private Image wreck;
     /** The damage decal image used for this icon. */
@@ -105,9 +117,9 @@ public class EntityImage {
     /** The smoke image used for this icon. */
     private Image smoke;
     /** A smaller icon used for the unit overview. */
-    private Image icon;
+    protected Image icon;
     private Camouflage camouflage;
-    private Image[] facings = new Image[6];
+    protected Image[] facings = new Image[6];
     private Image[] wreckFacings = new Image[6];
     private Component parent;
     /** The damage level, from none to crippled. */
@@ -128,11 +140,38 @@ public class EntityImage {
     private final boolean isSingleHex;
     /** True for tanks */
     private final boolean isTank;
+    private final int unitHeight;
+    private final int unitElevation;
 
+
+    public static EntityImage createIcon(Image base, Camouflage camouflage, Component comp, Entity entity) {
+        return createIcon(base, null, camouflage, comp, entity, -1, true);
+    }
+
+    public static EntityImage createLobbyIcon(Image base, Camouflage camouflage, Component comp, Entity entity) {
+        return createIcon(base, null, camouflage, comp, entity, -1, true);
+    }
+
+    public static EntityImage createIcon(Image base, Image wreck, Camouflage camouflage, Component comp,
+                                         Entity entity, int secondaryPos) {
+        return createIcon(base, wreck, camouflage, comp, entity, secondaryPos, false);
+    }
+
+    public static EntityImage createIcon(Image base, Image wreck, Camouflage camouflage, Component comp,
+                                         Entity entity, int secondaryPos, boolean preview) {
+        if (entity instanceof FighterSquadron) {
+            return new FighterSquadronIcon(base, wreck, camouflage, comp, entity, secondaryPos, preview);
+        } else {
+            return new EntityImage(base, wreck, camouflage, comp, entity, secondaryPos, preview);
+        }
+    }
+
+    // Used by MHQ
     public EntityImage(Image base, Camouflage camouflage, Component comp, Entity entity) {
         this(base, null, camouflage, comp, entity, -1, true);
     }
 
+    // Used by MHQ
     public EntityImage(Image base, Image wreck, Camouflage camouflage, Component comp,
                        Entity entity, int secondaryPos) {
         this(base, wreck, camouflage, comp, entity, secondaryPos, false);
@@ -157,6 +196,8 @@ public class EntityImage {
         isSingleHex = secondaryPos == -1;
         decal = getDamageDecal(entity, secondaryPos);
         smoke = getSmokeImage(entity, secondaryPos);
+        unitHeight = entity.height();
+        unitElevation = entity.getElevation();
     }
 
     /**
@@ -212,7 +253,7 @@ public class EntityImage {
             Image fImage = applyColor(base, i);
 
             // Add damage scars and smoke/fire; not to Infantry
-            if (!isInfantry && GUIPreferences.getInstance().getShowDamageDecal()) {
+            if (!isInfantry && GUIP.getShowDamageDecal()) {
                 fImage = applyDamageDecal(fImage);
                 // No smoke in the lobby
                 if (!isPreview) {
@@ -221,7 +262,12 @@ public class EntityImage {
             }
 
             // Generate rotated images for the unit and for a wreck
-            facings[i] = rotateImage(fImage, i);
+            fImage = rotateImage(fImage, i);
+            if (GUIP.getShadowMap() && isSingleHex) {
+                facings[i] = applyDropShadow(fImage);
+            } else {
+                facings[i] = fImage;
+            }
         }
 
         // Apply the player/unit camouflage
@@ -234,7 +280,7 @@ public class EntityImage {
             wreck = applyColor(wreck, 0);
 
             // Add damage scars and smoke/fire; not to Infantry
-            if (!isInfantry && GUIPreferences.getInstance().getShowDamageDecal()) {
+            if (!isInfantry && GUIP.getShowDamageDecal()) {
                 wreck = applyDamageDecal(wreck);
                 // No smoke in the lobby
                 if (!isPreview) {
@@ -249,7 +295,7 @@ public class EntityImage {
     }
 
     /** Rotates a given unit image into direction dir. */
-    private BufferedImage rotateImage(Image img, int dir) {
+    protected BufferedImage rotateImage(Image img, int dir) {
         double cx = base.getWidth(parent) / 2.0;
         double cy = base.getHeight(parent) / 2.0;
         AffineTransformOp xform = new AffineTransformOp(
@@ -284,7 +330,7 @@ public class EntityImage {
         return icon;
     }
 
-    public Image loadPreviewImage() {
+    public @Nullable Image loadPreviewImage(final boolean showDamage) {
         if (base == null) {
             return null;
         }
@@ -292,7 +338,7 @@ public class EntityImage {
         base = applyColor(getBase(), 0);
 
         // Add damage scars and smoke/fire; not to Infantry
-        if (!isInfantry && GUIPreferences.getInstance().getShowDamageDecal()) {
+        if (showDamage && !isInfantry && GUIP.getShowDamageDecal()) {
             base = applyDamageDecal(getBase());
             // No smoke in the lobby
             if (!isPreview) {
@@ -303,10 +349,11 @@ public class EntityImage {
     }
 
     /** Applies the unit individual or player camouflage to the icon. */
-    private Image applyColor(Image image, int facing) {
+    protected Image applyColor(Image image, int facing) {
         if (image == null) {
             return null;
         }
+        final boolean hasCamouflage = !getCamouflage().hasDefaultCategory();
         final boolean colourCamouflage = getCamouflage().isColourCamouflage();
         final int colour = colourCamouflage ? PlayerColour.parseFromString(getCamouflage().getFilename()).getHex() : -1;
 
@@ -315,64 +362,159 @@ public class EntityImage {
         int[] pCamo = new int[IMG_SIZE];
         try {
             grabImagePixels(image, pMech);
-            if (!colourCamouflage) {
-                grabImagePixels(camouflage.getImage(), pCamo);
+            if (!colourCamouflage && hasCamouflage) {
+                grabImagePixels(getCamouflage().getImage(), pCamo);
             }
-        } catch (Exception e) {
-            LogManager.getLogger().error("Failed to grab pixels for an image to apply the camo." + e.getMessage());
+        } catch (Exception ex) {
+            LogManager.getLogger().error("Failed to grab pixels for an image to apply the camo.", ex);
             return image;
         }
 
-        // Overlay the camo or color
-        for (int i = 0; i < IMG_SIZE; i++) {
-            int pixel = pMech[i];
-            int alpha = (pixel >> 24) & 0xff;
-            int red = (pixel >> 16) & 0xff;
-            int green = (pixel >> 8) & 0xff;
-            int blue = (pixel) & 0xff;
+        if (hasCamouflage) {
+            // Overlay the camo or color
+            for (int i = 0; i < IMG_SIZE; i++) {
+                int pixel = pMech[i];
+                int alpha = (pixel >> 24) & 0xff;
+                int red = (pixel >> 16) & 0xff;
+                int green = (pixel >> 8) & 0xff;
+                int blue = (pixel) & 0xff;
 
-            // Don't apply the camo over colored (not gray) pixels
-            if (!(red == green && green == blue)) {
-                continue;
-            }
-
-            // Apply the camo only on the icon pixels, not on transparent pixels
-            if (alpha != 0) {
-                int pixel1 = colourCamouflage ? colour : pCamo[i];
-                int red1 = (pixel1 >> 16) & 0xff;
-                int green1 = (pixel1 >> 8) & 0xff;
-                int blue1 = (pixel1) & 0xff;
-
-                // Pretreat with the camo overlay (but not Infantry, they're too small, it'll just darken them)
-                int oalpha = 128;
-                if (GUIPreferences.getInstance().getBoolean(GUIPreferences.ADVANCED_USE_CAMO_OVERLAY)
-                        && !isInfantry) {
-                    oalpha = pOverlays[facing][i] & 0xff;
+                // Don't apply the camo over colored (not gray) pixels
+                if (!(red == green && green == blue)) {
+                    continue;
                 }
-                
-                // "Overlay" image combination formula
-                if (oalpha < 128) {
-                    red1 = red1 * 2 * oalpha / 255;
-                    green1 = green1 * 2 * oalpha / 255;
-                    blue1 = blue1 * 2 * oalpha / 255;
-                } else {
-                    red1 = 255 - 2 * (255 - red1) * (255 - oalpha) / 255;
-                    green1 = 255 - 2 * (255 - green1) * (255 - oalpha) / 255;
-                    blue1 = 255 - 2 * (255 - blue1) * (255 - oalpha) / 255;
+
+                // Apply the camo only on the icon pixels, not on transparent pixels
+                if (alpha != 0) {
+                    int pixel1 = colourCamouflage ? colour :
+                            rotatedAndScaledColor(i, getCamouflage().getRotationRadians(), getCamouflage().getScaleFactor(), pCamo);
+                    int red1 = (pixel1 >> 16) & 0xff;
+                    int green1 = (pixel1 >> 8) & 0xff;
+                    int blue1 = (pixel1) & 0xff;
+
+                    // Pretreat with the camo overlay (but not Infantry, they're too small, it'll just darken them)
+                    int oalpha = 128;
+                    if (GUIP.getUseCamoOverlay() && !isInfantry && isSingleHex) {
+                        oalpha = pOverlays[facing][i] & 0xff;
+                    }
+
+                    // "Overlay" image combination formula
+                    if (oalpha < 128) {
+                        red1 = red1 * 2 * oalpha / 255;
+                        green1 = green1 * 2 * oalpha / 255;
+                        blue1 = blue1 * 2 * oalpha / 255;
+                    } else {
+                        red1 = 255 - 2 * (255 - red1) * (255 - oalpha) / 255;
+                        green1 = 255 - 2 * (255 - green1) * (255 - oalpha) / 255;
+                        blue1 = 255 - 2 * (255 - blue1) * (255 - oalpha) / 255;
+                    }
+
+                    int red2 = red1 * blue / 255;
+                    int green2 = green1 * blue / 255;
+                    int blue2 = blue1 * blue / 255;
+                    pMech[i] = (alpha << 24) | (red2 << 16) | (green2 << 8) | blue2;
                 }
-                
-                int red2 = red1 * blue / 255;
-                int green2 = green1 * blue / 255;
-                int blue2 = blue1 * blue / 255;
-                pMech[i] = (alpha << 24) | (red2 << 16) | (green2 << 8) | blue2;
             }
         }
         
-        Image result = parent.createImage(new MemoryImageSource(IMG_WIDTH,
-                IMG_HEIGHT, pMech, 0, IMG_WIDTH));
+        Image result = parent.createImage(new MemoryImageSource(IMG_WIDTH, IMG_HEIGHT, pMech, 0, IMG_WIDTH));
         return ImageUtil.createAcceleratedImage(result);
     }
-    
+
+    /**
+     * Returns a color from the given camoImage lookup array where the given lookup index is rotated by the
+     * given angle and scaled by the given scale.
+     *
+     * @param originalIndex The original lookup index (0 ... 84 x 72 - 1)
+     * @param angle The rotation angle in radians (0 = no change)
+     * @param scale The scale factor (1 = no change)
+     * @param camoImage The image pixelgrabber lookup array
+     * @return The rotated and scaled image pixel color as an int value (as from the image lookup array)
+     */
+    private int rotatedAndScaledColor(int originalIndex, double angle, double scale, int[] camoImage) {
+        // get the pixel coordinates
+        int y = originalIndex / 84;
+        int x = originalIndex - y * 84;
+        // center coordinates to rotate around the image center
+        double cy = y - 35.5;
+        double cx = x - 41.5;
+        // rotate, scale and remove centering
+        double ry = (Math.sin(angle) * cx + Math.cos(angle) * cy) / scale + 35.5;
+        double rx = (Math.cos(angle) * cx - Math.sin(angle) * cy) / scale + 41.5;
+        // interpolate between the four surrounding actual image pixels
+        int rx1 = (int) rx;
+        int rx2 = rx1 + 1;
+        int ry1 = (int) ry;
+        int ry2 = ry1 + 1;
+        double dx = rx - rx1;
+        double dy = ry - ry1;
+        int pixel11 = camoImage[mirroredIndex(rx1, ry1)];
+        int red11 = (pixel11 >> 16) & 0xff;
+        int green11 = (pixel11 >> 8) & 0xff;
+        int blue11 = (pixel11) & 0xff;
+
+        int pixel12 = camoImage[mirroredIndex(rx1, ry2)];
+        int red12 = (pixel12 >> 16) & 0xff;
+        int green12 = (pixel12 >> 8) & 0xff;
+        int blue12 = (pixel12) & 0xff;
+
+        int pixel21 = camoImage[mirroredIndex(rx2, ry1)];
+        int red21 = (pixel21 >> 16) & 0xff;
+        int green21 = (pixel21 >> 8) & 0xff;
+        int blue21 = (pixel21) & 0xff;
+
+        int pixel22 = camoImage[mirroredIndex(rx2, ry2)];
+        int red22 = (pixel22 >> 16) & 0xff;
+        int green22 = (pixel22 >> 8) & 0xff;
+        int blue22 = (pixel22) & 0xff;
+
+        int redx1 = MathUtility.lerp(red11, red21, dx);
+        int redx2 = MathUtility.lerp(red12, red22, dx);
+        int red2 = MathUtility.lerp(redx1, redx2, dy);
+
+        int greenx1 = MathUtility.lerp(green11, green21, dx);
+        int greenx2 = MathUtility.lerp(green12, green22, dx);
+        int green2 = MathUtility.lerp(greenx1, greenx2, dy);
+
+        int bluex1 = MathUtility.lerp(blue11, blue21, dx);
+        int bluex2 = MathUtility.lerp(blue12, blue22, dx);
+        int blue2 = MathUtility.lerp(bluex1, bluex2, dy);
+        return (red2 << 16) | (green2 << 8) | blue2;
+    }
+
+    /**
+     * Returns a valid lookup index for the pixel array for any values of x and y. The lookup is
+     * calculated so that the image is mirrored vertically and horizontally to avoid unnecessary seams at
+     * the image border. Note that for a pixel at (0,0) the pixel color extends from -0.5, -0.5 to +0.5, +0.5.
+     *
+     * @param x the image x coordinate (any value allowed)
+     * @param y the image y coordinate (any value allowed)
+     * @return a lookup within allowed values (0 ... 84 x 72 - 1)
+     */
+    private int mirroredIndex(double x, double y) {
+        // double x values may range from -0.5 to 83.5
+        if (x <= -0.5) {
+            x = -1 - x;
+        }
+        if (x > 0) {
+            x = x % 167; // 2 * (84 - 1) + 1
+        }
+        if (x >= 83.5) {
+            x = 167 - x;
+        }
+        // double y values may range from -0.5 to 71.5
+        if (y <= -0.5) {
+            y = -1 - y;
+        }
+        if (y > 0) {
+            y = y % 143; // 2 * (72 - 1) + 1
+        }
+        if (y >= 71.5) {
+            y = 143 - y;
+        }
+        return (int) (Math.round(x) + Math.round(y) * 84);
+    }
+
     /** Applies the damage decal image to the icon. */
     private Image applyDamageDecal(Image image) {
         if (image == null) {
@@ -482,7 +624,9 @@ public class EntityImage {
         return null;
     }
     
-    /** Returns the smoke/fire image based on damage level. */
+    /**
+     * @return the smoke/fire image based on damage level.
+     */
     private Image getSmokeImage(Entity entity, int pos) {
         try {
             // No smoke and fire for damage up to moderate
@@ -516,8 +660,72 @@ public class EntityImage {
         return null;
     }
 
+    protected Image applyDropShadow(Image image) {
+        if (image == null) {
+            return null;
+        }
+
+        // Create a copy to change into a drop shadow
+        BufferedImage copy = ImageUtil.getScaledImage(image, image.getWidth(null), image.getHeight(null));
+
+        // Set the color of all pixels to black, keeping the alpha
+        BufferedImage blackedOut = BLACK_FILTER.filter(copy, null);
+
+        // Blur operation setup
+        int radius = 5;
+        float sigma = radius / 2f * (unitHeight + 1);
+        if (unitElevation != 0) {
+            radius = 1;
+        }
+        ConvolveOp op = new ConvolveOp(getGaussKernel(2 * radius + 1, sigma), ConvolveOp.EDGE_NO_OP, null);
+
+        // blurring requires a slightly bigger image
+        BufferedImage temp = GRAPHICS_CONFIGURATION.createCompatibleImage(
+                IMG_WIDTH + radius * 2, IMG_HEIGHT + radius * 2, Transparency.TRANSLUCENT);
+        Graphics g = temp.getGraphics();
+        g.drawImage(blackedOut, radius, radius, null);
+        g.dispose();
+        BufferedImage shadow = op.filter(temp, null);
+
+        // reduce back to the correct image size
+        BufferedImage result = GRAPHICS_CONFIGURATION.createCompatibleImage(IMG_WIDTH, IMG_HEIGHT, Transparency.TRANSLUCENT);
+        Graphics gResult = result.getGraphics();
+        int xOffset = 0;
+        if (unitElevation == 0) {
+            xOffset = (int) (SHADOW_OFFSET * (unitHeight + 1));
+        }
+        int yOffset = xOffset * 7 / 19; // values taken from the light direction used in terrain shadows
+        gResult.drawImage(shadow, -xOffset, yOffset, IMG_WIDTH - 1 - xOffset, IMG_HEIGHT - 1 + yOffset,
+                radius, radius, IMG_WIDTH + radius - 1, IMG_HEIGHT + radius - 1, null);
+
+        // re-apply the actual icon on top of the shadow
+        gResult.drawImage(image, 0, 0, null);
+        gResult.dispose();
+        return ImageUtil.createAcceleratedImage(result);
+    }
+
+    public static Kernel getGaussKernel(int W, float sigma) {
+        float[] data = new float[W * W];
+        float mean = W / 2f;
+        float sum = 0;
+        for (int x = 0; x < W; ++x) {
+            for (int y = 0; y < W; ++y) {
+                float value = (float) (Math.exp(-0.5 * (Math.pow((x - mean) / sigma, 2.0) + Math.pow((y - mean) / sigma, 2.0)))
+                                        / (2 * Math.PI * sigma * sigma));
+                data[y * W + x] = value;
+                sum += value;
+            }
+        }
+
+        // Normalize the kernel
+        for (int i = 0; i < W * W; i++) {
+            data[i] /= sum;
+        }
+        return new Kernel(W, W, data);
+    }
+
     /** 
-     * Returns a random image of all the images in the category (= directory) cat.
+     * @return a random image of all the images in the category (= directory) cat.
      * To have reproducible images for individual units the image is chosen 
      * based on the hash value of the name (and the hex in multi-hex units).
      */
@@ -531,10 +739,14 @@ public class EntityImage {
         return (Image) DecalImages.getItem(cat, n);
     }
     
-    /** Returns the size of the collection of an iterator. Local helper function for DirectoryItems. */
+    /**
+     * @return the size of the collection of an iterator. Local helper function for DirectoryItems.
+     */
     private static <T> int getSize(Iterator<T> iter) {
         int result = 0;
-        for (;iter.hasNext();iter.next(), result++);
+        for (; iter.hasNext(); iter.next()) {
+            result++;
+        }
         return result;
     }
 }

@@ -20,6 +20,10 @@ Visigoth
 B
 </Model>
 
+<mul id:>
+3437
+</mul id:>
+
 <year>
 2948
 </year>
@@ -31,6 +35,10 @@ B
 <type>
 Clan Level 2
 </type>
+
+<role>
+Fast Dogfighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -106,7 +114,7 @@ CLMediumPulseLaser:OMNI
 </Fuselage Equipment>
 
 <source>
-TRO 3055u - Succession Wars
+TRO: 3055 Update
 </source>
 
 <tonnage>

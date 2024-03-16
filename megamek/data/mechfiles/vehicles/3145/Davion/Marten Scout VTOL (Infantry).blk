@@ -20,6 +20,10 @@ Marten Scout VTOL
 (Infantry)
 </Model>
 
+<mul id:>
+6314
+</mul id:>
+
 <year>
 3024
 </year>
@@ -27,6 +31,10 @@ Marten Scout VTOL
 <type>
 IS Level 2
 </type>
+
+<role>
+Scout
+</role>
 
 <motion_type>
 VTOL
@@ -72,9 +80,14 @@ RemoteSensorDispenser
 </Rotor Equipment>
 
 <source>
-TRO 3145 Federated Suns - Succession Wars
+TRO: 3145 Federated Suns
 </source>
 
 <tonnage>
 15.0
 </tonnage>
+
+<quirks>
+difficult_maintain
+</quirks>
+

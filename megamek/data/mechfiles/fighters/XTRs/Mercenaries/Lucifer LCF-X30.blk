@@ -20,6 +20,10 @@ Lucifer
 LCF-X30
 </Model>
 
+<mul id:>
+1957
+</mul id:>
+
 <year>
 3074
 </year>
@@ -31,6 +35,10 @@ LCF-X30
 <type>
 IS Level 4
 </type>
+
+<role>
+Attack Fighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -103,7 +111,7 @@ IS Ammo Extended LRM-10
 </Fuselage Equipment>
 
 <source>
-XTRO Mercenaries - Jihad
+XTR: Mercenaries
 </source>
 
 <tonnage>

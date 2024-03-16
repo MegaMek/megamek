@@ -20,6 +20,10 @@ Zugvogel Omni Support Aircraft
 C
 </Model>
 
+<mul id:>
+3657
+</mul id:>
+
 <year>
 3086
 </year>
@@ -31,6 +35,10 @@ C
 <type>
 IS Level 3
 </type>
+
+<role>
+Fire Support
+</role>
 
 <motion_type>
 Aerodyne
@@ -116,7 +124,7 @@ This configuration is 4 tons overweight as given in the official source.
 </notes>
 
 <source>
-TRO 3085
+TRO: 3085
 </source>
 
 <tonnage>

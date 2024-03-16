@@ -1,12 +1,13 @@
-Version:1.1
-Pandarus
-LFA-1X
+chassis:Pandarus
+model:LFA-1X
+mul id:2412
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3078
-Source:XTRO Marik - Jihad
+Source:XTR: Marik
 Rules Level:4
+role:Missile Boat
 
 Mass:75
 Engine:300 Fusion Engine

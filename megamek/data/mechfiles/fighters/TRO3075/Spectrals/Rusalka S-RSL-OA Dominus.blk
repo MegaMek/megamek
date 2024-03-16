@@ -20,6 +20,10 @@ Rusalka
 S-RSL-OA Dominus
 </Model>
 
+<mul id:>
+4949
+</mul id:>
+
 <year>
 3071
 </year>
@@ -31,6 +35,10 @@ S-RSL-OA Dominus
 <type>
 IS Level 3
 </type>
+
+<role>
+Fast Dogfighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -120,7 +128,7 @@ IS Ammo MML-9 LRM Artemis-capable:OMNI
 </Fuselage Equipment>
 
 <source>
-TRO 3075 - Jihad
+TRO: 3075
 </source>
 
 <tonnage>

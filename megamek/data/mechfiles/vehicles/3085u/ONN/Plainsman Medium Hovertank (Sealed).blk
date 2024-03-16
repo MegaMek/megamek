@@ -20,6 +20,10 @@ Plainsman Medium Hovertank
 (Sealed)
 </Model>
 
+<mul id:>
+2540
+</mul id:>
+
 <Tonnage>
 35
 </Tonnage>
@@ -58,12 +62,16 @@ Environmental Sealing
 IS Level 3
 </type>
 
+<role>
+Striker
+</role>
+
 <year>
 3074
 </year>
 
 <source>
-Jihad
+TRO: 3085
 </source>
 
 <internal_type>

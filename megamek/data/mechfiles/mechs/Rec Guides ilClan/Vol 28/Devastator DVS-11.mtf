@@ -1,0 +1,174 @@
+chassis:Devastator
+model:DVS-11
+mul id:9377
+Config:Biped
+techbase:Mixed (IS Chassis)
+era:3146
+source:Rec Guide:ilClan #28
+rules level:3
+role:Juggernaut
+
+
+
+quirk:hyper_actuator
+quirk:searchlight
+
+
+mass:100
+engine:300 XL Engine(IS)
+structure:IS Endo-Composite
+myomer:Standard
+cockpit:Standard Cockpit
+gyro:Compact Gyro
+
+heat sinks:12 IS Double
+walk mp:3
+jump mp:0
+
+armor:Standard(Inner Sphere)
+LA armor:34
+RA armor:34
+LT armor:30
+RT armor:30
+CT armor:47
+HD armor:9
+LL armor:40
+RL armor:40
+RTL armor:10
+RTR armor:10
+RTC armor:12
+
+Weapons:8
+Gauss Rifle, Left Arm
+Gauss Rifle, Right Arm
+Snub-Nose PPC, Left Torso
+Snub-Nose PPC, Right Torso
+ER Medium Laser, Left Torso
+ER Medium Laser, Right Torso
+ER Small Laser, Center Torso
+ER Small Laser, Head
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+IS Endo-Composite
+IS Endo-Composite
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISSNPPC
+ISSNPPC
+CLERMediumLaser
+IS Gauss Ammo
+IS Endo-Composite
+IS Endo-Composite
+IS Endo-Composite
+IS Endo-Composite
+IS Endo-Composite
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISSNPPC
+ISSNPPC
+CLERMediumLaser
+IS Gauss Ammo
+ISMASC
+ISMASC
+ISMASC
+ISMASC
+ISMASC
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLERSmallLaser (R)
+IS Gauss Ammo
+IS Gauss Ammo
+Supercharger
+
+Head:
+Life Support
+Sensors
+Cockpit
+CLERSmallLaser
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+overview:Designed by General Kerensky himself right before the start of the Amaris Civil War, development of the Devastator ended abruptly when Stefan the Usurper took control of the Terran Hegemony.
+capabilities:In order to overcome its poor speed, long-range power was designed. Although the Devastator is capable of holding its own in close quarters battle, its capacity to control heat is its most striking trait. Pilots are able to move with the utmost speed and fire all of the heavy weaponry without fear thanks to fourteen double heat sinks. A Devastator pilot just needs to slightly scale back his movements to prevent the design from overheating, even when doused in inferno gel or subjected to several engine strikes.
+deployment:No information on this variant
+history:Although funds were diverted to the war effort, the design team remained so committed to the project that, just before General Kerensky launched the invasion of Terra, they submitted six prototypes for testing, with team expenses covered out of pocket. As no battle logs for the Devastator have ever been discovered, historians are unable to assess how one of the final original Star League Defense Force designs performed or even if any of the prototypes survived. The blueprints were recovered in 3023 on Hoff by a team looking into a recently found Star League facility, but the first engineers to look at the blueprints were unable to replicate any of the new technology that went into the original. The NAIS didn't build a Devastator prototype utilizing available technologies until 3033. A few years later, moderate production started, and until early 3048, when the Federated Commonwealth was able to start producing a fully equipped version, the low tech DVS-1D was given to elite units.
+manufacturer:Corean Enterprises
+primaryfactory:Augusta
+systemmanufacturer:CHASSIS:Star League XT Endo-Composite
+systemmanufacturer:ENGINE:Vlar 300 XL
+systemmanufacturer:ARMOR:Durallex Heavy
+systemmanufacturer:COMMUNICATIONS:Johnston Wide Band
+systemmanufacturer:TARGETING:Randar Pinpoint-HY
+

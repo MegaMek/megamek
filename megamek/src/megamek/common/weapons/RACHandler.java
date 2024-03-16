@@ -21,7 +21,7 @@ import megamek.common.Infantry;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.server.Server;
+import megamek.server.GameManager;
 
 /**
  * @author Andrew Hunter
@@ -34,15 +34,15 @@ public class RACHandler extends UltraWeaponHandler {
      * @param t
      * @param w
      * @param g
-     * @param s
+     * @param m
      */
-    public RACHandler(ToHitData t, WeaponAttackAction w, Game g, Server s) {
-        super(t, w, g, s);
+    public RACHandler(ToHitData t, WeaponAttackAction w, Game g, GameManager m) {
+        super(t, w, g, m);
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.UltraWeaponHandler#doChecks(java.util.Vector)
      */
     @Override
@@ -50,26 +50,26 @@ public class RACHandler extends UltraWeaponHandler {
         if (doAmmoFeedProblemCheck(vPhaseReport)) {
             return true;
         }
-        
+
         if (ae instanceof Infantry) {
             return false;
         }
         boolean jams = false;
         switch (howManyShots) {
             case 6:
-                if (roll <= 4) {
+                if (roll.getIntValue() <= 4) {
                     jams = true;
                 }
                 break;
             case 5:
             case 4:
-                if (roll <= 3) {
+                if (roll.getIntValue() <= 3) {
                     jams = true;
                 }
                 break;
             case 3:
             case 2:
-                if (roll <= 2) {
+                if (roll.getIntValue() <= 2) {
                     jams = true;
                 }
                 break;
@@ -90,7 +90,7 @@ public class RACHandler extends UltraWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#useAmmo()
      */
     @Override
@@ -98,49 +98,42 @@ public class RACHandler extends UltraWeaponHandler {
         int actualShots;
         setDone();
         checkAmmo();
-        if (weapon.curMode().equals(Weapon.MODE_RAC_SIX_SHOT)) {
-            howManyShots = 6;
-        } else if (weapon.curMode().equals(Weapon.MODE_RAC_FIVE_SHOT)) {
-            howManyShots = 5;
-        } else if (weapon.curMode().equals(Weapon.MODE_RAC_FOUR_SHOT)) {
-            howManyShots = 4;
-        } else if (weapon.curMode().equals(Weapon.MODE_RAC_THREE_SHOT)) {
-            howManyShots = 3;
-        } else if (weapon.curMode().equals(Weapon.MODE_RAC_TWO_SHOT)) {
-            howManyShots = 2;
-        } else if (weapon.curMode().equals(Weapon.MODE_AC_SINGLE)) {
-            howManyShots = 1;
+
+        switch (weapon.curMode().toString()) {
+            case Weapon.MODE_RAC_SIX_SHOT: howManyShots = 6;
+                break;
+            case Weapon.MODE_RAC_FIVE_SHOT: howManyShots = 5;
+                break;
+            case Weapon.MODE_RAC_FOUR_SHOT: howManyShots = 4;
+                break;
+            case Weapon.MODE_RAC_THREE_SHOT: howManyShots = 3;
+                break;
+            case Weapon.MODE_RAC_TWO_SHOT: howManyShots = 2;
+                break;
+            case Weapon.MODE_AC_SINGLE: howManyShots = 1;
+                break;
         }
+
+        // Reduce number of allowed shots to number of remaining rounds of ammo if applicable
         int total = ae.getTotalAmmoOfType(ammo.getType());
-        if (total >= 6) {
-            actualShots = 6;
-        } else if (total >= 5) {
-            actualShots = 5;
-        } else if (total >= 3) {
-            actualShots = 3;
-        } else if (total >= 2) {
-            actualShots = 2;
+        if (total < 0 ) {
+            throw new RuntimeException("Invalid total ammo value < 0!");
+        } else if (total < 6) {
+            actualShots = total;
         } else {
-            actualShots = 1;
+            actualShots = 6;
         }
         if (actualShots < howManyShots) {
             howManyShots = actualShots;
         }
-        int shotsNeedFiring = howManyShots;
-        if (ammo.getUsableShotsLeft() == 0) {
-            ae.loadWeapon(weapon);
-            ammo = weapon.getLinked();
-            // there will be some ammo somewhere, otherwise shot will not have
-            // been fired.
-        }
 
-        while (shotsNeedFiring > ammo.getUsableShotsLeft()) {
-            shotsNeedFiring -= ammo.getBaseShotsLeft();
-            ammo.setShotsLeft(0);
-            ae.loadWeapon(weapon);
-            ammo = weapon.getLinked();
-        }
-        ammo.setShotsLeft(ammo.getBaseShotsLeft() - shotsNeedFiring);
+        int shotsNeedFiring = howManyShots;
+
+        // Try to reload if the linked bin is empty but another exists
+        attemptToReloadWeapon();
+
+        // Reduce linked ammo bin; if it runs out, switch to another.
+        reduceShotsLeft(shotsNeedFiring);
     }
 
     @Override
@@ -149,13 +142,8 @@ public class RACHandler extends UltraWeaponHandler {
     }
 
     @Override
-    protected boolean canDoDirectBlowDamage() {
-        return false;
-    }
-
-    @Override
     protected int calcnClusterAero(Entity entityTarget) {
         return 5;
     }
-    
+
 }

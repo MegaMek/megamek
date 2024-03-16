@@ -1,15 +1,21 @@
-/**
- * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+/*
+ * Copyright (c) 2005 - Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This file is part of MegaMek.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
 package megamek.common.weapons;
 
@@ -19,25 +25,15 @@ import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
+import megamek.server.GameManager;
 import megamek.server.Server;
 import megamek.server.SmokeCloud;
 
 public class RapidfireHVACWeaponHandler extends RapidfireACWeaponHandler {
-
-    /**
-     *
-     */
     private static final long serialVersionUID = 7326881584091651519L;
 
-    /**
-     * @param t
-     * @param w
-     * @param g
-     * @param s
-     */
-    public RapidfireHVACWeaponHandler(ToHitData t, WeaponAttackAction w,
-            Game g, Server s) {
-        super(t, w, g, s);
+    public RapidfireHVACWeaponHandler(ToHitData t, WeaponAttackAction w, Game g, GameManager m) {
+        super(t, w, g, m);
     }
 
     /*
@@ -49,7 +45,6 @@ public class RapidfireHVACWeaponHandler extends RapidfireACWeaponHandler {
      */
     @Override
     public boolean handle(GamePhase phase, Vector<Report> vPhaseReport) {
-
         if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_START_FIRE)
                 && (game.getPlanetaryConditions().getAtmosphere() >= PlanetaryConditions.ATMO_TRACE)) {
             int rear = (ae.getFacing() + 3 + (weapon.isMechTurretMounted() ? weapon.getFacing() : 0)) % 6;
@@ -70,23 +65,18 @@ public class RapidfireHVACWeaponHandler extends RapidfireACWeaponHandler {
                 rearCoords = src;
             }
 
-            server.createSmoke(rearCoords, SmokeCloud.SMOKE_HEAVY, 2);
+            gameManager.createSmoke(rearCoords, SmokeCloud.SMOKE_HEAVY, 2);
         }
         return super.handle(phase, vPhaseReport);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see megamek.common.weapons.WeaponHandler#doChecks(java.util.Vector)
-     */
     @Override
     protected boolean doChecks(Vector<Report> vPhaseReport) {
         if (doAmmoFeedProblemCheck(vPhaseReport)) {
             return true;
         }
         
-        if (roll == 2) {
+        if (roll.getIntValue() == 2) {
             Report r = new Report(3162);
             r.subject = subjectId;
             weapon.setJammed(true);
@@ -104,7 +94,7 @@ public class RapidfireHVACWeaponHandler extends RapidfireACWeaponHandler {
                     break;
                 }
             }
-            vPhaseReport.addAll(server.explodeEquipment(ae, wloc, weapon));
+            vPhaseReport.addAll(gameManager.explodeEquipment(ae, wloc, weapon));
             r.choose(false);
             vPhaseReport.addElement(r);
             return false;
@@ -112,5 +102,4 @@ public class RapidfireHVACWeaponHandler extends RapidfireACWeaponHandler {
             return super.doChecks(vPhaseReport);
         }
     }
-
 }

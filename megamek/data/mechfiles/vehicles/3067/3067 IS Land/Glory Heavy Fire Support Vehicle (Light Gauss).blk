@@ -15,6 +15,10 @@ Glory Heavy Fire Support Vehicle
 <Model>
 (Light Gauss)
 </Model>
+
+<mul id:>
+4218
+</mul id:>
 <Tonnage>
 85
 </Tonnage>
@@ -47,6 +51,10 @@ ISGuardianECM
 <type>
 IS
 </type>
+
+<role>
+Missile Boat
+</role>
 <year>
 3067
 </year>
@@ -62,3 +70,7 @@ IS
 <motion_type>
 Tracked
 </motion_type>
+
+<source>
+TRO: 3067
+</source>

@@ -20,6 +20,10 @@ Thumper Artillery Vehicle
 Angel
 </Model>
 
+<mul id:>
+5229
+</mul id:>
+
 <year>
 3089
 </year>
@@ -27,6 +31,10 @@ Angel
 <type>
 IS Level 3
 </type>
+
+<role>
+Missile Boat
+</role>
 
 <motion_type>
 Wheeled
@@ -77,9 +85,14 @@ Machine Gun(ST)
 </Rear Equipment>
 
 <source>
-TRO:Prototype
+TRO: Prototypes
 </source>
 
 <tonnage>
 60.0
 </tonnage>
+
+<quirks>
+trailer_hitch
+</quirks>
+

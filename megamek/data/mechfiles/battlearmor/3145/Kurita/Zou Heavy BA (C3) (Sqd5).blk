@@ -1,0 +1,129 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+Zou Heavy Battle Armor
+</Name>
+
+<Model>
+(C3)(Sqd5)
+</Model>
+
+<mul id:>
+8742
+</mul id:>
+
+<year>
+3113
+</year>
+
+<type>
+IS Level 3
+</type>
+
+<role>
+Ambusher
+</role>
+
+<motion_type>
+Jump
+</motion_type>
+
+<cruiseMP>
+2
+</cruiseMP>
+
+<armor_type>
+37
+</armor_type>
+
+<armor_tech>
+5
+</armor_tech>
+
+<Squad Equipment>
+BABattleClaw:LA
+ISBAMediumRecoillessRifle:RA
+BattleArmorC3:Body
+IS BA Reflective:LA
+IS BA Reflective:Body
+IS BA Reflective:RA
+IS BA Reflective:LA
+IS BA Reflective:Body
+IS BA Reflective:Body
+IS BA Reflective:Body
+</Squad Equipment>
+
+<source>
+TRO: 3145 Draconis Combine
+</source>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+0
+</jumpingMP>
+
+<armor>
+11
+</armor>
+
+<Trooper Count>
+5
+</Trooper Count>
+
+<weightclass>
+3
+</weightclass>
+
+<overview>
+One of the third generation of battle armor suits to be designed and fielded by the Draconis Combine, the Zou - or "Elephant" - was developed by Ishikawajima-Harima Battle Armor Industries in response to the requirement posted by the High Command for a suit that could act in a command-and-control (C2) role, assisting other units via strategic coordination. 
+</overview>
+
+<capabilities>
+All Xiphos suits mount close to a ton of Reactive Armor and mount a Basic Manipulator on the right arm and a Modular Weapon Mount on each arm, although the mount on the left arm has the greater capacity.
+</capabilities>
+
+<deployment>
+This configuration mounts a Heat Sensor in the right arm and a Heavy Flamer with ten rounds of ammunition in the left arm.
+</deployment>
+
+<history>
+Manufactured on Luthien, the Zou entered service in 3113 and quickly proved a success. Although the Zou was a notable success in the C2 role, the suit was originally developed to be the successor to the Kanazuchi, an assault suit. It was as a part of that stage of the Zou's design and development that it was first fitted with more than half a ton of reflective armor, successfully extending the life of the suit against beam weapons. It wasn't until the Zou was further developed by being upgraded with C2 capabilities that it came into its own, providing Draconis Combine Mustered Soldiery commanders a heavier ground unit when deployed on combined-arms operations, directing troops, calling in long-range fire and artillery. The Zou began to be widely deployed amongst DCMS units in the 3130s as the Combine prepared to invade the Republic of the Sphere.
+</history>
+
+<manufacturer>
+Ishikawajima-Harima BAI
+</manufacturer>
+
+<primaryFactory>
+Luthien
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+JUMPJET:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<quirks>
+easy_pilot
+sensor_ghosts
+</quirks>
+

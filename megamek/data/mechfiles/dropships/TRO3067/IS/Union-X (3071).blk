@@ -20,6 +20,10 @@ Union-X
 (3071)
 </Model>
 
+<mul id:>
+5763
+</mul id:>
+
 <year>
 3071
 </year>
@@ -31,6 +35,10 @@ Union-X
 <type>
 IS Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Spheroid
@@ -156,7 +164,7 @@ Heavy PPC
 </structural_integrity>
 
 <source>
-TRO 3067 - Jihad
+TRO: 3067
 </source>
 
 <tonnage>

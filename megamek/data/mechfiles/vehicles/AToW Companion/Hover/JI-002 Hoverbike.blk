@@ -16,9 +16,13 @@ SupportTank
 JI-002 HoverBike
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+9222
+</mul id:>
 
 <year>
 3050
@@ -31,6 +35,10 @@ JI-002 HoverBike
 <type>
 IS Level 5
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Hover

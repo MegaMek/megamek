@@ -15,6 +15,10 @@ Heavy Support Infantry
 <Model>
 Irian Technologies SWAT Team
 </Model>
+
+<mul id:>
+1449
+</mul id:>
 <squad_size>
 7
 </squad_size>
@@ -36,11 +40,15 @@ Infantry David Light Gauss Rifle
 <type>
 IS Level 3
 </type>
+
+<role>
+Ambusher
+</role>
 <year>
 3063
 </year>
 <era>
-TRO 3085 - Civil War
+TRO: 3085
 </era>
 <motion_type>
 Motorized

@@ -15,6 +15,7 @@ package megamek.common.actions;
 
 import megamek.common.*;
 import megamek.common.options.OptionsConstants;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * The prone attacker thrashes at the target.
@@ -31,7 +32,7 @@ public class ThrashAttackAction extends AbstractAttackAction {
     }
 
     public ThrashAttackAction(int entityId, Targetable target) {
-        super(entityId, target.getTargetType(), target.getTargetId());
+        super(entityId, target.getTargetType(), target.getId());
     }
 
     /**
@@ -40,15 +41,20 @@ public class ThrashAttackAction extends AbstractAttackAction {
      * attack will force a PSR check for the prone Mek; if the PSR is missed,
      * the Mek takes normal falling damage.
      * 
-     * @param game - the <code>Game</code> object containing all entities.
+     * @param game The current {@link Game} containing all entities.
      * @return the <code>ToHitData</code> containing the target roll.
      */
     public ToHitData toHit(Game game) {
         final Entity ae = getEntity(game);
         final Targetable target = getTarget(game);
         // arguments legal?
-        if (ae == null || target == null) {
-            throw new IllegalArgumentException("Attacker or target not valid");
+        if (ae == null) {
+            LogManager.getLogger().error("Attacker not valid");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Attacker not valid");
+        }
+        if (target == null) {
+            LogManager.getLogger().error("target not valid");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "target not valid");
         }
 
         Entity te = null;

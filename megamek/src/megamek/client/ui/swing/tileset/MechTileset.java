@@ -166,6 +166,11 @@ public class MechTileset {
     }
 
     public Image imageFor(Entity entity, int secondaryPos) {
+        // Return the embedded icon, if the unit has one and this is the one-hex icon
+        if ((secondaryPos == -1) && entity.hasEmbeddedIcon()) {
+            return entity.getIcon();
+        }
+
         MechEntry entry = entryFor(entity, secondaryPos);
 
         if (entry == null) {
@@ -196,8 +201,8 @@ public class MechTileset {
         }
 
         // second, check for chassis matches
-        if (chassis.containsKey(entity.getChassis().toUpperCase() + mode + addendum)) {
-            return chassis.get(entity.getChassis().toUpperCase() + mode + addendum);
+        if (chassis.containsKey(entity.getFullChassis().toUpperCase() + mode + addendum)) {
+            return chassis.get(entity.getFullChassis().toUpperCase() + mode + addendum);
         }
 
         // last, the generic model

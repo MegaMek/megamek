@@ -1,151 +1,148 @@
 /*
  * MegaMek - Copyright (C) 2003, 2004 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
 package megamek.common;
+
+import megamek.codeUtilities.StringUtility;
 
 import java.util.Objects;
 
-import megamek.common.util.StringUtil;
-
 /**
- * Class to store pertinent quirk information.
+ * Class to store pertinent quirk information. This class is immutable.
  *
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
- * @version %I% %G%
- * @since 2012-03-05
+ * @author Simon (Juliez)
  */
-class QuirkEntry {
-    private String quirk; //The name of the quirk.
+public class QuirkEntry {
 
-    //The following only apply to weapon quirks.
-    private String location;   //The weapon's location.
-    private int slot;          //The weapon's critical slot.
-    private String weaponName; //The weapon's name.
+    /** The code (OptionsConstants.*) of this quirk. Not the display name. */
+    private final String code;
 
-    private QuirkEntry() {
-    }
+    /** The location String ("LA", "FR" etc.) of this weapon quirk. Empty for unit quirks. */
+    private final String location;
+
+    /** The slot (0 - 11) of this weapon quirk. -1 for unit quirks */
+    private final int slot;
+
+    /** The weapon internal name (e.g. CLERLargeLaser) of this weapon quirk. Empty for unit quirks. */
+    private final String weaponName; //The weapon's name.
 
     /**
      * Use this constructor for building unit quirks.
      *
-     * @param quirk  The quirk being created.
+     * @param code  The quirk being created.
      * @param unitId The ID (chassis & model) of the unit to which the quirk belongs.
      */
-    QuirkEntry(String quirk, String unitId) {
-        if (StringUtil.isNullOrEmpty(quirk)) {
+    @Deprecated
+    public QuirkEntry(String code, String unitId) {
+        if (StringUtility.isNullOrBlank(code)) {
             throw new IllegalArgumentException("Quirk definition missing for " + unitId);
         }
 
-        setQuirk(quirk);
-        setLocation(null);
-        setSlot(-1);
-        setWeaponName(null);
+        this.code = code;
+        this.location = "";
+        this.slot = -1;
+        this.weaponName = "";
+    }
+
+    /**
+     * Creates a unit quirk entry. The code should be a quirk code such as
+     * {@link megamek.common.options.OptionsConstants#QUIRK_POS_COMMAND_MECH}. The code may not be null or empty
+     * but is not otherwise checked if it is a valid value.
+     *
+     * @param code The quirk
+     */
+    public QuirkEntry(String code) {
+        if (StringUtility.isNullOrBlank(code)) {
+            throw new IllegalArgumentException("Invalid quirk code!");
+        }
+
+        this.code = code;
+        this.location = "";
+        this.slot = -1;
+        this.weaponName = "";
     }
 
     /**
      * Use this constructor for building weapon quirks.
      *
-     * @param quirk      The quirk being created.
+     * @param code      The quirk being created.
      * @param location   The weapon's location (RT, LL, FF, LW, etc)
      * @param slot       The critical slot number (0-based) of the weapon's first critical.
      * @param weaponName The MegaMek name for the weapon (i.e. ISERLargeLaser)
      * @param unitId     The ID (chassis & model) of the unit to which the quirk belongs.
      */
-    QuirkEntry(String quirk, String location, int slot, String weaponName, String unitId) {
-        if (StringUtil.isNullOrEmpty(quirk)) {
+    @Deprecated
+    public QuirkEntry(String code, String location, int slot, String weaponName, String unitId) {
+        if (StringUtility.isNullOrBlank(code)) {
             throw new IllegalArgumentException("Quirk definition missing for " + unitId);
-        }
-        if (StringUtil.isNullOrEmpty(location)) {
-            throw new IllegalArgumentException("No location for " + quirk + " : " + unitId);
-        }
-        if (StringUtil.isNullOrEmpty(weaponName)) {
-            throw new IllegalArgumentException("No weapon for " + quirk + " : " + unitId);
-        }
-        if (slot < 0 || slot > 11) {
-            throw new IllegalArgumentException("Invalid slot index (" + slot + ") for " + quirk + " : " + unitId);
+        } else if (StringUtility.isNullOrBlank(location)) {
+            throw new IllegalArgumentException("No location for " + code + " : " + unitId);
+        } else if (StringUtility.isNullOrBlank(weaponName)) {
+            throw new IllegalArgumentException("No weapon for " + code + " : " + unitId);
+        } else if (slot < 0) {
+            throw new IllegalArgumentException("Invalid slot index (" + slot + ") for " + code + " : " + unitId);
         }
 
-        setQuirk(quirk);
-        setLocation(location);
-        setSlot(slot);
-        setWeaponName(weaponName);
-    }
-
-    /**
-     * Returns the chassis location of the quirk (RT, LL, FF, LW, etc).  Only applies to weapon quirks.  For unit quirks
-     * this value will be null.
-     *
-     * @return
-     */
-    public String getLocation() {
-        return location;
-    }
-
-    private void setLocation(String location) {
+        this.code = code;
         this.location = location;
-    }
-
-    /**
-     * Returns the name of the quirk.
-     *
-     * @return
-     */
-    public String getQuirk() {
-        return quirk;
-    }
-
-    private void setQuirk(String quirk) {
-        this.quirk = quirk;
-    }
-
-    /**
-     * Returns the critical slot of the quirk.  Only applies to weapon quirks.  For unit quirks this value will be -1.
-     *
-     * @return
-     */
-    public int getSlot() {
-        return slot;
-    }
-
-    private void setSlot(int slot) {
         this.slot = slot;
-    }
-
-    /**
-     * Returns the name of the weapon to which this quirk belongs.  If this is a unit quirk, this value will be null.
-     *
-     * @return
-     */
-    public String getWeaponName() {
-        return weaponName;
-    }
-
-    private void setWeaponName(String weaponName) {
         this.weaponName = weaponName;
     }
 
     /**
-     * Returns a log statement describing this quirk.
+     * Use this constructor for building weapon quirks.
      *
-     * @return
+     * @param code      The quirk being created.
+     * @param location   The weapon's location (RT, LL, FF, LW, etc)
+     * @param slot       The critical slot number (0-based) of the weapon's first critical.
+     * @param weaponName The MegaMek name for the weapon (i.e. ISERLargeLaser)
      */
-    public String toLog() {
-        String out = getQuirk();
-        if (StringUtil.isNullOrEmpty(getLocation()))
-            return out;
+    public QuirkEntry(String code, String location, int slot, String weaponName) {
+        if (StringUtility.isNullOrBlank(code)) {
+            throw new IllegalArgumentException("Invalid quirk code!");
+        } else if (StringUtility.isNullOrBlank(location)) {
+            throw new IllegalArgumentException("Invalid location!");
+        } else if (StringUtility.isNullOrBlank(weaponName)) {
+            throw new IllegalArgumentException("Invalid weapon name!");
+        } else if (slot < 0) {
+            throw new IllegalArgumentException("Invalid slot index!");
+        }
 
-        return out + "\t" + getLocation() + "\t" + getSlot() + "\t" + getWeaponName();
+        this.code = code;
+        this.location = location;
+        this.slot = slot;
+        this.weaponName = weaponName;
+    }
+
+    /** @return The location String ("LA", "FR" etc.) of this weapon quirk. Empty for unit quirks. */
+    public String getLocation() {
+        return location;
+    }
+
+    /** @return The code (OptionsConstants.*) of this quirk. Not useful as a display name. */
+    public String getQuirk() {
+        return code;
+    }
+
+    /** @return The slot (0 - 11 at most) of this weapon quirk. Returns -1 for unit quirks. */
+    public int getSlot() {
+        return slot;
+    }
+
+    /** @return The weapon internal name (e.g. CLERLargeLaser) of this weapon quirk. Empty for unit quirks. */
+    public String getWeaponName() {
+        return weaponName;
     }
 
     @Override
@@ -158,30 +155,20 @@ class QuirkEntry {
         }
         final QuirkEntry other = (QuirkEntry) obj;
         return Objects.equals(location, other.location) && Objects.equals(weaponName, other.weaponName)
-                && (slot == other.slot);
+                && (slot == other.slot) && Objects.equals(code, other.code);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(location, weaponName, slot);
+        return Objects.hash(code, location, weaponName, slot);
     }
 
-    public QuirkEntry copy() {
-        QuirkEntry copy = new QuirkEntry();
-        copy.setQuirk(String.copyValueOf(getQuirk().toCharArray()));
-
-        // If location is empty, then this is not a weapon quirk.
-        if (StringUtil.isNullOrEmpty(getLocation())) {
-            return copy;
-        }
-
-        copy.setWeaponName(String.copyValueOf(getWeaponName().toCharArray()));
-        copy.setSlot(getSlot());
-        copy.setLocation(String.copyValueOf(getLocation().toCharArray()));
-        return copy;
-    }
-    
     public boolean isWeaponQuirk() {
-        return (weaponName != null);
+        return slot >= 0;
+    }
+
+    @Override
+    public String toString() {
+        return getQuirk() + (isWeaponQuirk() ? " [" + location + slot + ", " + weaponName + "]" : "");
     }
 }

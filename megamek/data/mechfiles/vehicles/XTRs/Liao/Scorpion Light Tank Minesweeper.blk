@@ -20,17 +20,25 @@ Scorpion Light Tank
 (Minesweeper Prototype)
 </Model>
 
+<mul id:>
+2843
+</mul id:>
+
 <year>
 3078
 </year>
 
 <source>
-XTRO Liao - Jihad
+XTR: Liao
 </source>
 
 <type>
 IS Level 4
 </type>
+
+<role>
+Missile Boat
+</role>
 
 <tonnage>
 25.0

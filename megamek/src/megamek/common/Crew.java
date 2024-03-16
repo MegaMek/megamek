@@ -16,6 +16,8 @@
 package megamek.common;
 
 import megamek.client.generator.RandomGenderGenerator;
+import megamek.client.ui.swing.tooltip.PilotToolTip;
+import megamek.codeUtilities.MathUtility;
 import megamek.common.enums.Gender;
 import megamek.common.icons.Portrait;
 import megamek.common.options.IOption;
@@ -48,6 +50,7 @@ public class Crew implements Serializable {
     private final String[] names;
     private final String[] nicknames;
     private final Gender[] genders;
+    private final boolean[] clanPilots;
     private final Portrait[] portraits;
 
     private final int[] gunnery;
@@ -58,17 +61,17 @@ public class Crew implements Serializable {
 
     private final boolean[] unconscious;
     private final boolean[] dead;
-    //Allow for the possibility that the unit is fielded with less than full crew.
+    // Allow for the possibility that the unit is fielded with less than full crew.
     private final boolean[] missing;
 
-    //The following only apply to the entire crew.
+    // The following only apply to the entire crew.
     private boolean doomed; // scheduled to die at end of phase
     private boolean ejected;
 
     // StratOps fatigue points
-    private int fatigue;
-    //also need to track turns for fatigue by pilot because some may have later deployment
-    private int fatigueCount;
+    private int fatiguePoints;
+    // also need to track turns for fatigue by pilot because some may have later deployment
+    private int fatigueTurnCount;
 
     //region RPG Skills
     // MW3e uses 3 different gunnery skills
@@ -107,7 +110,7 @@ public class Crew implements Serializable {
     private final boolean[] koThisRound; // did I go KO this game round?
 
     // TODO: Allow individual crew to have SPAs, which involves determining which work for individuals
-    //and which work for the entire unit.
+    // and which work for the entire unit.
     private PilotOptions options = new PilotOptions();
 
     // SPA RangeMaster range bands
@@ -123,34 +126,19 @@ public class Crew implements Serializable {
     public static final String HUMANTRO_VEE = "Vee";
     public static final String HUMANTRO_BA = "BA";
 
+    // SPA Environmental Specialist types
+    public static final String ENVSPC_NONE = "None";
+    public static final String ENVSPC_FOG = "Fog";
+    public static final String ENVSPC_HAIL = "Hail";
+    public static final String ENVSPC_LIGHT = "Light";
+    public static final String ENVSPC_RAIN = "Rain";
+    public static final String ENVSPC_SNOW = "Snow";
+    public static final String ENVSPC_WIND = "Wind";
+
     public static final String SPECIAL_NONE = "None";
     public static final String SPECIAL_ENERGY = "Energy";
     public static final String SPECIAL_BALLISTIC = "Ballistic";
     public static final String SPECIAL_MISSILE = "Missile";
-
-    private static final double[][] bvMod = new double[][]{
-            {2.42, 2.31, 2.21, 2.10, 1.93, 1.75, 1.68, 1.59, 1.50},
-            {2.21, 2.11, 2.02, 1.92, 1.76, 1.60, 1.54, 1.46, 1.38},
-            {1.93, 1.85, 1.76, 1.68, 1.54, 1.40, 1.35, 1.28, 1.21},
-            {1.66, 1.58, 1.51, 1.44, 1.32, 1.20, 1.16, 1.10, 1.04},
-            {1.38, 1.32, 1.26, 1.20, 1.10, 1.00, 0.95, 0.90, 0.85},
-            {1.31, 1.19, 1.13, 1.08, 0.99, 0.90, 0.86, 0.81, 0.77},
-            {1.24, 1.12, 1.07, 1.02, 0.94, 0.85, 0.81, 0.77, 0.72},
-            {1.17, 1.06, 1.01, 0.96, 0.88, 0.80, 0.76, 0.72, 0.68},
-            {1.10, 0.99, 0.95, 0.90, 0.83, 0.75, 0.71, 0.68, 0.64},
-    };
-
-    private static final double[][] alternateBvMod = new double[][]{
-            {2.70, 2.52, 2.34, 2.16, 1.98, 1.80, 1.75, 1.67, 1.59},
-            {2.40, 2.24, 2.08, 1.98, 1.76, 1.60, 1.58, 1.51, 1.44},
-            {2.10, 1.96, 1.82, 1.68, 1.54, 1.40, 1.33, 1.31, 1.25},
-            {1.80, 1.68, 1.56, 1.44, 1.32, 1.20, 1.14, 1.08, 1.06},
-            {1.50, 1.40, 1.30, 1.20, 1.10, 1.00, 0.95, 0.90, 0.85},
-            {1.50, 1.35, 1.26, 1.17, 1.04, 0.90, 0.86, 0.81, 0.77},
-            {1.43, 1.33, 1.19, 1.11, 0.98, 0.85, 0.81, 0.77, 0.72},
-            {1.36, 1.26, 1.16, 1.04, 0.92, 0.80, 0.76, 0.72, 0.68},
-            {1.28, 1.19, 1.10, 1.01, 0.86, 0.75, 0.71, 0.68, 0.64},
-    };
 
     //region extraData inner map keys
     public static final String MAP_GIVEN_NAME = "givenName";
@@ -158,6 +146,7 @@ public class Crew implements Serializable {
     public static final String MAP_BLOODNAME = "bloodname";
     public static final String MAP_PHENOTYPE = "phenotype";
     //endregion extraData inner map keys
+
     /**
      * The number of hits that a pilot can take before he dies.
      */
@@ -176,68 +165,7 @@ public class Crew implements Serializable {
      * @param crewType the crew type to use.
      */
     public Crew(CrewType crewType) {
-        this(crewType, "Unnamed", crewType.getCrewSlots(), 4, 5, Gender.FEMALE, null);
-    }
-
-    /**
-     * @param name     the name of the crew or commander.
-     * @param size     the crew size.
-     * @param gunnery  the crew's Gunnery skill.
-     * @param piloting the crew's Piloting or Driving skill.
-     * @deprecated by multi-crew cockpit support. Replaced by {@link #Crew(CrewType, String, int, int, int, Gender, Map)}.
-     *
-     * Creates a basic crew for a self-piloted unit. Using this constructor for a naval vessel will
-     * result in a secondary target modifier for additional targets past the first.
-     */
-    @Deprecated
-    public Crew(String name, int size, int gunnery, int piloting) {
-        this(CrewType.SINGLE, name, size, gunnery, gunnery, gunnery, piloting, null);
-    }
-
-    /**
-     * @param crewType the type of crew
-     * @param name     the name of the crew or commander.
-     * @param size     the crew size.
-     * @param gunnery  the crew's Gunnery skill.
-     * @param piloting the crew's Piloting or Driving skill.
-     * @deprecated by gender support. Replaced by {@link #Crew(CrewType, String, int, int, int, Gender, Map)}.
-     */
-    @Deprecated //18-Feb-2020 as part of the addition of gender to MegaMek
-    public Crew(CrewType crewType, String name, int size, int gunnery, int piloting) {
-        this(crewType, name, size, gunnery, gunnery, gunnery, piloting, null);
-    }
-
-    /**
-     * @param crewType the type of crew.
-     * @param name     the name of the crew or commander.
-     * @param size     the crew size.
-     * @param gunneryL the crew's "laser" Gunnery skill.
-     * @param gunneryM the crew's "missile" Gunnery skill.
-     * @param gunneryB the crew's "ballistic" Gunnery skill.
-     * @param piloting the crew's Piloting or Driving skill.
-     * @deprecated by gender support. Replaced by {@link #Crew(CrewType, String, int, int, int, int, int, Gender, Map)}.
-     */
-    @Deprecated //18-Feb-2020 as part of the addition of gender to MegaMek
-    public Crew(CrewType crewType, String name, int size, int gunneryL, int gunneryM, int gunneryB,
-                int piloting) {
-        this(crewType, name, size, gunneryL, gunneryM, gunneryB, piloting, null);
-    }
-
-    /**
-     * @param crewType  the type of crew.
-     * @param name      the name of the crew or commander.
-     * @param size      the crew size.
-     * @param gunneryL  the crew's "laser" Gunnery skill.
-     * @param gunneryM  the crew's "missile" Gunnery skill.
-     * @param gunneryB  the crew's "ballistic" Gunnery skill.
-     * @param piloting  the crew's Piloting or Driving skill.
-     * @param extraData any extra data passed to be stored with this Crew.
-     * @deprecated by gender support. Replaced by {@link #Crew(CrewType, String, int, int, int, int, int, Gender, Map)}.
-     */
-    @Deprecated //18-Feb-2020 as part of the addition of gender to MegaMek
-    public Crew(CrewType crewType, String name, int size, int gunneryL, int gunneryM, int gunneryB,
-                int piloting, Map<Integer, Map<String, String>> extraData) {
-        this(crewType, name, size, gunneryL, gunneryM, gunneryB, piloting, RandomGenderGenerator.generate(), extraData);
+        this(crewType, "Unnamed", crewType.getCrewSlots(), 4, 5, Gender.FEMALE, false, null);
     }
 
     /**
@@ -247,11 +175,12 @@ public class Crew implements Serializable {
      * @param gunnery   the crew's Gunnery skill.
      * @param piloting  the crew's Piloting or Driving skill.
      * @param gender    the gender of the crew or commander
+     * @param clanPilot   if the crew or commander is a clanPilot
      * @param extraData any extra data passed to be stored with this Crew.
      */
     public Crew(CrewType crewType, String name, int size, int gunnery, int piloting, Gender gender,
-                Map<Integer, Map<String, String>> extraData) {
-        this(crewType, name, size, gunnery, gunnery, gunnery, piloting, gender, extraData);
+                boolean clanPilot, Map<Integer, Map<String, String>> extraData) {
+        this(crewType, name, size, gunnery, gunnery, gunnery, piloting, gender, clanPilot, extraData);
     }
 
     /**
@@ -263,10 +192,12 @@ public class Crew implements Serializable {
      * @param gunneryB  the crew's "ballistic" Gunnery skill.
      * @param piloting  the crew's Piloting or Driving skill.
      * @param gender    the gender of the crew or commander
+     * @param clanPilot   if the crew or commander is a clanPilot
      * @param extraData any extra data passed to be stored with this Crew.
      */
     public Crew(CrewType crewType, String name, int size, int gunneryL, int gunneryM, int gunneryB,
-                int piloting, Gender gender, Map<Integer, Map<String, String>> extraData) {
+                int piloting, Gender gender, boolean clanPilot,
+                Map<Integer, Map<String, String>> extraData) {
         this.crewType = crewType;
         this.size = Math.max(size, crewType.getCrewSlots());
         this.currentSize = size;
@@ -281,6 +212,8 @@ public class Crew implements Serializable {
         genders = new Gender[slots];
         Arrays.fill(getGenders(), Gender.RANDOMIZE);
         setGender(gender, 0);
+        clanPilots = new boolean[slots];
+        Arrays.fill(getClanPilots(), clanPilot);
         portraits = new Portrait[slots];
         for (int i = 0; i < slots; i++) {
             setPortrait(new Portrait(), i);
@@ -307,7 +240,7 @@ public class Crew implements Serializable {
         dead = new boolean[slots];
         missing = new boolean[slots];
         koThisRound = new boolean[slots];
-        fatigue = 0;
+        fatiguePoints = 0;
         toughness = new int[slots];
 
         options.initialize();
@@ -325,7 +258,7 @@ public class Crew implements Serializable {
         resetActedFlag();
 
         //set a random UUID for external ID, this will help us sort enemy salvage and prisoners in MHQ
-        //and should have no effect on MM (but need to make sure it doesn't screw up MekWars)
+        // and should have no effect on MM (but need to make sure it doesn't screw up MekWars)
         externalId = new String[slots];
         for (int i = 0; i < slots; i++) {
             externalId[i] = UUID.randomUUID().toString();
@@ -383,6 +316,22 @@ public class Crew implements Serializable {
         getGenders()[pos] = gender;
     }
 
+    public boolean[] getClanPilots() {
+        return clanPilots;
+    }
+
+    public boolean isClanPilot() {
+        return getClanPilots()[0];
+    }
+
+    public boolean isClanPilot(final int position) {
+        return (position < getClanPilots().length) ? getClanPilots()[position] : isClanPilot();
+    }
+
+    public void setClanPilot(final boolean clanPilot, final int position) {
+        getClanPilots()[position] = clanPilot;
+    }
+
     public Portrait[] getPortraits() {
         return portraits;
     }
@@ -393,6 +342,9 @@ public class Crew implements Serializable {
 
     public void setPortrait(final Portrait portrait, final int pos) {
         getPortraits()[pos] = portrait;
+
+        // delete PilotToolTip cache for this portrait
+        PilotToolTip.deleteImageCache(this, pos);
     }
 
     /**
@@ -566,7 +518,7 @@ public class Crew implements Serializable {
     /**
      * Uses the table on TO p206 to calculate the number of crew hits based on percentage
      * of total casualties. Used for ejection, boarding actions and such
-     * @return 
+     * @return The number of crew hits
      */
     public int calculateHits() {
         if (currentSize == 0) {
@@ -996,68 +948,6 @@ public class Crew implements Serializable {
         return (getGunnery() != 4) || (getPiloting() != 5);
     }
 
-    /**
-     * Returns the BV multiplier for this pilot's gunnery/piloting
-     *
-     * @param game the game to use to determine the modifier
-     */
-    public double getBVSkillMultiplier(Game game) {
-        return getBVSkillMultiplier(true, game);
-    }
-
-    /**
-     * Returns the BV multiplier for this pilot's gunnery/piloting
-     *
-     * @param usePiloting whether or not to use the default value non-anti-mech
-     *                    infantry/BA should not use the anti-mech skill
-     * @param game the game to use to determine the modifier
-     */
-    public double getBVSkillMultiplier(boolean usePiloting, Game game) {
-        int pilotVal = getPiloting();
-        if (!usePiloting) {
-            pilotVal = 5;
-        }
-        return getBVImplantMultiplier() * getBVSkillMultiplier(getGunnery(), pilotVal, game);
-    }
-
-    public double getBVImplantMultiplier() {
-
-        // get highest level
-        int level = 1;
-        if (options.booleanOption(OptionsConstants.MD_PAIN_SHUNT)) {
-            level = 2;
-        }
-        if (options.booleanOption(OptionsConstants.MD_VDNI)) {
-            level = 3;
-        }
-        if (options.booleanOption(OptionsConstants.MD_BVDNI)) {
-            level = 5;
-        }
-
-        return (level / 4.0) + 0.75;
-
-    }
-
-    /**
-     * Returns the BV multiplier for a pilots gunnery/piloting. This function is
-     * static to evaluate the BV of a unit, even when they have not yet been
-     * assigned a pilot.
-     *
-     * @param gunnery  the gunnery skill of the pilot
-     * @param piloting the piloting skill of the pilot
-     * @return a multiplier to the BV of whatever unit the pilot is piloting.
-     */
-    public static double getBVSkillMultiplier(int gunnery, int piloting) {
-        return getBVSkillMultiplier(gunnery, piloting, null);
-    }
-
-    public static double getBVSkillMultiplier(int gunnery, int piloting, Game game) {
-        if ((game != null) && game.getOptions().booleanOption(OptionsConstants.ADVANCED_ALTERNATE_PILOT_BV_MOD)) {
-            return alternateBvMod[Math.max(Math.min(8, gunnery), 0)][Math.max(Math.min(8, piloting), 0)];
-        }
-        return bvMod[Math.max(Math.min(8, gunnery), 0)][Math.max(Math.min(8, piloting), 0)];
-    }
-
     public boolean hasEdgeRemaining() {
         return (getOptions().intOption(OptionsConstants.EDGE) > 0);
     }
@@ -1097,47 +987,53 @@ public class Crew implements Serializable {
     }
 
     private int getPilotingFatigueTurn() {
+        // TO:AR p.166 fatigue
+        int rating = tacOpsFatigueRating();
         int turn = 20;
-        if (getPiloting() > 5) {
+        if (rating > 5) {
             turn = 10;
-        } else if (getPiloting() > 3) {
+        } else if (rating > 3) {
             turn = 14;
-        } else if (getPiloting() > 1) {
+        } else if (rating > 1) {
             turn = 17;
         }
-
-        // get fatigue point modifiers
-        int mod = (int) Math.min(Math.max(0, Math.ceil(fatigue / 4.0) - 1), 4);
-        turn = turn - mod;
-
-        return turn;
+        return turn + CamOpsFatigueTurnModifier();
     }
 
     public boolean isPilotingFatigued() {
-        return fatigueCount >= getPilotingFatigueTurn();
+        return fatigueTurnCount >= getPilotingFatigueTurn();
     }
 
     private int getGunneryFatigueTurn() {
-        int turn = 20;
-        if (getPiloting() > 5) {
+        // TO:AR p.166 fatigue
+        int rating = tacOpsFatigueRating();
+        int turn = Integer.MAX_VALUE;
+        if (rating > 5) {
             turn = 14;
-        } else if (getPiloting() > 3) {
+        } else if (rating > 3) {
             turn = 17;
+        } else if (rating > 1) {
+            turn = 20;
         }
-
-        // get fatigue point modifiers
-        int mod = (int) Math.min(Math.max(0, Math.ceil(fatigue / 4.0) - 1), 4);
-        turn = turn - mod;
-
-        return turn;
-
+        return turn + CamOpsFatigueTurnModifier();
     }
 
     public boolean isGunneryFatigued() {
-        if (getPiloting() < 2) {
-            return false;
+        return fatigueTurnCount >= getGunneryFatigueTurn();
+    }
+
+    /** Returns the modifier for the TO:AR p.166 fatigue turn thresholds from CamOps p.219 fatigue points. */
+    private int CamOpsFatigueTurnModifier() {
+        return -MathUtility.clamp((fatiguePoints - 1) / 4, 0, 4);
+    }
+
+    /** Returns the rating used for TO:AR p.166 fatigue. */
+    private int tacOpsFatigueRating() {
+        if (crewType == CrewType.INFANTRY_CREW) {
+            return Math.min(getGunnery(), getPiloting());
+        } else {
+            return getPiloting();
         }
-        return fatigueCount >= getGunneryFatigueTurn();
     }
 
     /**
@@ -1178,7 +1074,7 @@ public class Crew implements Serializable {
      */
     public String getExternalIdAsString() {
         for (int i = 0; i < getSlotCount(); i++) {
-            if (!externalId[i].equals("-1")) {
+            if (externalId != null && !externalId[i].equals("-1")) {
                 return externalId[i];
             }
         }
@@ -1198,22 +1094,22 @@ public class Crew implements Serializable {
     }
 
     public int getFatigue() {
-        return fatigue;
+        return fatiguePoints;
     }
 
     public void setFatigue(int i) {
-        fatigue = i;
+        fatiguePoints = i;
     }
 
     public void incrementFatigueCount() {
-        fatigueCount++;
+        fatigueTurnCount++;
     }
 
     /**
      * Sets crew state fields back to defaults. Used by MekHQ to clear game state.
      */
     public void resetGameState() {
-        fatigueCount = 0;
+        fatigueTurnCount = 0;
         doomed = false;
         ejected = false;
         for (int i = 0; i < crewType.getCrewSlots(); i++) {
@@ -1223,20 +1119,20 @@ public class Crew implements Serializable {
         }
     }
 
-    public int rollGunnerySkill() {
+    public Roll rollGunnerySkill() {
         if (getOptions().booleanOption(OptionsConstants.PILOT_APTITUDE_GUNNERY)) {
-            return Compute.d6(3, 2);
+            return Compute.rollD6(3, 2);
         }
 
-        return Compute.d6(2);
+        return Compute.rollD6(2);
     }
 
-    public int rollPilotingSkill() {
+    public Roll rollPilotingSkill() {
         if (getOptions().booleanOption(OptionsConstants.PILOT_APTITUDE_PILOTING)) {
-            return Compute.d6(3, 2);
+            return Compute.rollD6(3, 2);
         }
 
-        return Compute.d6(2);
+        return Compute.rollD6(2);
     }
 
     public int getCurrentPilotIndex() {
@@ -1284,7 +1180,7 @@ public class Crew implements Serializable {
      */
     private void activeStatusChanged() {
         //Cockpit command console can be swapped deliberately by the player and should not be changed
-        //automatically unless the current pilot becomes inactive.
+        // automatically unless the current pilot becomes inactive.
         if (crewType.equals(CrewType.COMMAND_CONSOLE)
                 && isActive(getCurrentPilotIndex())) {
             return;

@@ -1,34 +1,41 @@
-Version:1.0
-Wraith
-TR1
-
+chassis:Wraith
+model:TR1
+mul id:3588
 Config:Biped
-TechBase:Inner Sphere
-Era:3055
-Source:TRO 3055 - Clan Invasion
-Rules Level:2
+techbase:Inner Sphere
+era:3055
+source:TRO: 3055
+rules level:2
+role:Skirmisher
 
-Mass:55
-Engine:385 XL Engine
-Structure:Endo Steel
-Myomer:Standard
 
-Heat Sinks:10 Double
-Walk MP:7
-Jump MP:7
 
-Armor:Ferro-Fibrous(Inner Sphere)
-LA Armor:14
-RA Armor:14
-LT Armor:18
-RT Armor:18
-CT Armor:23
-HD Armor:8
-LL Armor:20
-RL Armor:20
-RTL Armor:5
-RTR Armor:5
-RTC Armor:7
+
+quirk:ubiquitous_is
+quirk:difficult_maintain
+
+
+mass:55
+engine:385 XL Engine(IS)
+structure:IS Endo Steel
+myomer:Standard
+
+heat sinks:10 IS Double
+walk mp:7
+jump mp:7
+
+armor:Ferro-Fibrous(Inner Sphere)
+LA armor:14
+RA armor:14
+LT armor:18
+RT armor:18
+CT armor:23
+HD armor:8
+LL armor:20
+RL armor:20
+RTL armor:5
+RTR armor:5
+RTC armor:7
 
 Weapons:3
 Medium Pulse Laser, Left Arm
@@ -42,11 +49,11 @@ Lower Arm Actuator
 Hand Actuator
 ISMediumPulseLaser
 ISMediumPulseLaser
-Endo Steel
-Endo Steel
-Endo Steel
-Ferro-Fibrous
-Ferro-Fibrous
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 -Empty-
 
 Right Arm:
@@ -56,11 +63,11 @@ Lower Arm Actuator
 Hand Actuator
 ISLargePulseLaser
 ISLargePulseLaser
-Endo Steel
-Endo Steel
-Endo Steel
-Ferro-Fibrous
-Ferro-Fibrous
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 -Empty-
 
 Left Torso:
@@ -70,12 +77,12 @@ Fusion Engine
 Jump Jet
 Jump Jet
 Jump Jet
-Endo Steel
-Endo Steel
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+IS Endo Steel
+IS Endo Steel
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 
 Right Torso:
 Fusion Engine
@@ -84,12 +91,12 @@ Fusion Engine
 Jump Jet
 Jump Jet
 Jump Jet
-Endo Steel
-Endo Steel
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+IS Endo Steel
+IS Endo Steel
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 
 Center Torso:
 Fusion Engine
@@ -103,13 +110,13 @@ Fusion Engine
 Fusion Engine
 Fusion Engine
 Jump Jet
-Ferro-Fibrous
+IS Ferro-Fibrous
 
 Head:
 Life Support
 Sensors
 Cockpit
-Ferro-Fibrous
+IS Ferro-Fibrous
 Sensors
 Life Support
 -Empty-
@@ -124,8 +131,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -138,8 +145,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -147,4 +154,20 @@ Endo Steel
 -Empty-
 -Empty-
 
+overview:The Wraith is a 'Mech that, when properly employed, can wreak havoc on an enemy with its astounding speed and maneuverability. 
+
+capabilities:It is built around a massive LTV 385 XL engine that allows it to reach speeds of just under 119 km/h. The 'Mech is also fitted with seven CurtissJet 55 jump jets which allow it to jump up to two hundred and ten meters, giving it the ability to outmaneuver most BattleMechs in existence, and also allowing the Wraith to quickly traverse any rough terrain. The 'Mech's speed, firepower, and decent armor make the Wraith a considerable threat to many 'Mechs – some being almost twice its weight.
+
+deployment:The Wraith has a simple, yet effective, weapons payload. The 'Mech is armed with a Tronel XIII Large Pulse Laser that provides the majority of its firepower. Backing this up is a pair of Tronel XII Medium Pulse Lasers that provide firepower for close-in work. This pulse laser weaponry allows the 'Mech to negate most of the side effects on accuracy that are introduced by the Wraith's heavy use of jump jets, making it incredibly accurate and powerful for such a lightly armed 'Mech
+
+history:The Wraith marked Curtiss Militech's entry into BattleMech production. When the design was announced, many felt that the design would be little more than a walking water cooler. What the critics got was a shock. Following the destruction of its sole factory, Curtiss Hydroponics announced its withdrawal from the military market altogether and the sale of its Curtiss Militech assets. By 3085, Hellespont Industrials have expressed interest in the Wraith; and by 3145 Production had been ongoing at one of Hellespont Industrials locations in the Sian Commonality for Capellan use.
+
+manufacturer:Curtiss Militech, Hellespont 'Mech Works
+primaryfactory:Paradise, Sian
+systemmanufacturer:CHASSIS:Curtiss Wraith
+systemmanufacturer:ENGINE:LTV 385 XL
+systemmanufacturer:ARMOR:Kallon FWL Special Ferro-Fibrous
+systemmanufacturer:JUMPJET:CurtissJet 55
+systemmanufacturer:COMMUNICATIONS:CurtissComm Mk I
+systemmanufacturer:TARGETING:Dynatec 2780
 

@@ -14,6 +14,7 @@
 package megamek.server.commands;
 
 import megamek.common.Player;
+import megamek.server.GameManager;
 import megamek.server.Server;
 
 /**
@@ -37,11 +38,14 @@ public class VictoryCommand extends ServerCommand {
                                               "acknowledged by all opponents using the /defeat command or no " +
                                               "victory will occur.";
 
+    private final GameManager gameManager;
+
     /**
      * Creates new VictoryCommand
      */
-    public VictoryCommand(Server server) {
+    public VictoryCommand(Server server, GameManager gameManager) {
         super(server, commandName, helpText);
+        this.gameManager = gameManager;
     }
 
     /**
@@ -81,7 +85,7 @@ public class VictoryCommand extends ServerCommand {
         } else {
             server.sendServerChat(getDeclareTeam(player.getName()));
         }
-        server.forceVictory(player);
+        gameManager.forceVictory(player);
     }
 
 }

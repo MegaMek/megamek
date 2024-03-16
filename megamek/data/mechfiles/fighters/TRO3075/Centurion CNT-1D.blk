@@ -20,6 +20,10 @@ Centurion
 CNT-1D
 </Model>
 
+<mul id:>
+3925
+</mul id:>
+
 <year>
 2473
 </year>
@@ -31,6 +35,10 @@ CNT-1D
 <type>
 IS Level 2
 </type>
+
+<role>
+Interceptor
+</role>
 
 <motion_type>
 Aerodyne
@@ -92,7 +100,7 @@ Medium Laser
 </Fuselage Equipment>
 
 <source>
-TRO 3075 - Age of War
+TRO: 3075
 </source>
 
 <tonnage>

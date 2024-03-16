@@ -20,6 +20,10 @@ Main Gauche Light Support Tank
 (IFV)
 </Model>
 
+<mul id:>
+5727
+</mul id:>
+
 <year>
 3081
 </year>
@@ -27,6 +31,10 @@ Main Gauche Light Support Tank
 <type>
 IS Level 2
 </type>
+
+<role>
+Striker
+</role>
 
 <motion_type>
 Tracked
@@ -77,3 +85,7 @@ Light Machine Gun
 <tonnage>
 30.0
 </tonnage>
+
+<source>
+TRO: 3067
+</source>

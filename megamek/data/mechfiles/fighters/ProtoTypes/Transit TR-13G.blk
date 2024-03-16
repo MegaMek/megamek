@@ -20,6 +20,10 @@ Transit
 TR-13G
 </Model>
 
+<mul id:>
+5274
+</mul id:>
+
 <year>
 3081
 </year>
@@ -31,6 +35,10 @@ TR-13G
 <type>
 IS Level 4
 </type>
+
+<role>
+Fire Support
+</role>
 
 <motion_type>
 Aerodyne
@@ -105,7 +113,7 @@ ISLongTomCannonAmmo
 </Fuselage Equipment>
 
 <source>
-TRO Prototypes - Jihad
+TRO: Prototypes
 </source>
 
 <tonnage>
@@ -141,4 +149,10 @@ TARGETING:Dwyerson Mark XII
 </systemManufacturers>
 
 
+
+
+<quirks>
+hard_pilot
+atmo_flyer
+</quirks>
 

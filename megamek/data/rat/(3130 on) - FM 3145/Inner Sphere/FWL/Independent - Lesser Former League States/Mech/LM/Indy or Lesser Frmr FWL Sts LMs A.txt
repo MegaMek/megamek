@@ -1,0 +1,12 @@
+Independent/Lesser Former League States Light Mechs 3130 A
+Falcon Hawk FNHK-9K,1
+Locust LCT-5W2,2
+Nyx NX-80,3
+Hermes HER-4K,4
+Havoc HVC-P6,5
+Eagle EGL-3M,6
+Wasp WSP-8T,5
+Hammer HMR-3C 'Claw-Hammer',4
+Crimson Hawk (Standard),3
+Koshi (Standard),2
+Jackalope JLP-BD,1

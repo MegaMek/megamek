@@ -1,12 +1,16 @@
-Version:1.0
-Hunchback IIC
-4
+chassis:Hunchback IIC
+model:4
+mul id:1571
 
 Config:Biped
 TechBase:Clan
 Era:3075
-Source:Jihad
+source:TRO: 3085
 Rules Level:4
+role:Brawler
+
+quirk:bad_rep_clan
+
 
 Mass:50
 Engine:200 XL (Clan) Engine

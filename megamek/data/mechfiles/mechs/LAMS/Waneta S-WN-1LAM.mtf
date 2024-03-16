@@ -1,0 +1,159 @@
+chassis:Waneta
+model:S-WN-1LAM
+mul id:5379
+
+Config:LAM
+techbase:Mixed (IS Chassis)
+era:3078
+source:Jihad: Final Reckoning
+rules level:3
+role:None
+
+
+
+
+quirk:non_standard
+
+
+mass:55
+engine:220 Fusion Engine(IS)
+structure:IS Standard
+myomer:Standard
+lam:Standard
+cockpit:Small Cockpit
+gyro:Standard Gyro
+
+heat sinks:10 IS Double
+walk mp:4
+jump mp:4
+
+armor:Standard(Clan)
+LA armor:13
+RA armor:13
+LT armor:15
+RT armor:15
+CT armor:15
+HD armor:9
+LL armor:16
+RL armor:16
+RTL armor:10
+RTR armor:10
+RTC armor:12
+
+Weapons:4
+ER Large Laser, Right Arm
+ER Small Laser, Right Arm
+LRM 15, Left Torso
+LRM 15, Right Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+CLERLargeLaser
+CLERSmallLaser
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Landing Gear
+Avionics
+CLLRM15
+CLLRM15
+Clan Ammo LRM-15
+Jump Jet
+Jump Jet
+Bomb Bay
+Bomb Bay
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+Landing Gear
+Avionics
+CLLRM15
+CLLRM15
+Clan Ammo LRM-15
+Jump Jet
+Jump Jet
+Bomb Bay
+Bomb Bay
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Landing Gear
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+Avionics
+Sensors
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-

@@ -20,6 +20,10 @@ Arcadia
 (3066)
 </Model>
 
+<mul id:>
+3716
+</mul id:>
+
 <year>
 3066
 </year>
@@ -31,6 +35,10 @@ Arcadia
 <type>
 Clan Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Aerodyne
@@ -157,7 +165,7 @@ Clan Streak SRM 6 Ammo:45
 </structural_integrity>
 
 <source>
-TRO 3067 - Civil War
+TRO: 3067
 </source>
 
 <tonnage>

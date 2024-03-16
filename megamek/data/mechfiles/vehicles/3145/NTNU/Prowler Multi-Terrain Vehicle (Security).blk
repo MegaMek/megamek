@@ -20,6 +20,10 @@ Prowler Multi-Terrain Vehicle
 (Security)
 </Model>
 
+<mul id:>
+6790
+</mul id:>
+
 <year>
 3123
 </year>
@@ -27,6 +31,10 @@ Prowler Multi-Terrain Vehicle
 <type>
 IS Level 3
 </type>
+
+<role>
+Scout
+</role>
 
 <motion_type>
 Tracked
@@ -79,7 +87,7 @@ TSEMP Cannon
 </Turret Equipment>
 
 <source>
-RS 3145 NTNU - Late Republic
+Record Sheets: 3145 New Tech New Upgrades
 </source>
 
 <tonnage>

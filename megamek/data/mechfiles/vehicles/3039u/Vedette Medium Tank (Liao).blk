@@ -20,6 +20,10 @@ Vedette Medium Tank
 (Liao)
 </Model>
 
+<mul id:>
+3391
+</mul id:>
+
 <year>
 2968
 </year>
@@ -27,6 +31,10 @@ Vedette Medium Tank
 <type>
 IS Level 1
 </type>
+
+<role>
+Striker
+</role>
 
 <motion_type>
 Tracked
@@ -72,9 +80,41 @@ Medium Laser
 </Turret Equipment>
 
 <source>
-TRO 3039 - Succession Wars
+TRO: 3039
 </source>
 
 <tonnage>
 50.0
 </tonnage>
+
+<capabilities>
+Carrying only one anti-vehicle weapon does not make it a less effective vehicle than a newer tank, but does reduce its ability to deal with a wide variety of targets. The Vedette uses its speed to great effect by moving into optimum autocannon range, opening fire, and then retreating as fast as possible to another fire position.
+</capabilities>
+
+<overview>
+The yardstick against which all other tanks are judged, the Vedette medium tank is one of the most popular and common combat vehicles in the Inner Sphere.
+</overview>
+
+<deployment>
+A 2968 variant, popular with Liao troops, replaces the autocannon with two medium lasers, a power amplifier, and six heat sinks.
+</deployment>
+
+<history>
+There will be at least one Vedette wherever there are armored vehicles. It is not unrealistic to believe that this tank exists on every globe in the Inner Sphere.
+The Vedette, which was first created by the New Earth Trading Company and included specially licensed ComStar electronics, has spread to every realm and is now in routine production in multiple factories while also being a popular special-license item. It may be found in practically every House armored force as well as several mercenary armor battalions. The current technical rebirth brought forth by the memory core discovered on Helm has only increased the popularity of the Vedette, allowing more and more manufacturers to commence manufacturing.
+</history>
+
+<manufacturer>
+Hellespont Industrials
+</manufacturer>
+
+<primaryFactory>
+Sian
+</primaryFactory>
+
+<systemManufacturers>
+ENGINE:Locom-Pack 250 InterComBust ICE
+ARMOR:ProtecTech 6
+COMMUNICATIONS:ComStar Rover
+TARGETING:ComStar Test-2
+</systemManufacturers>

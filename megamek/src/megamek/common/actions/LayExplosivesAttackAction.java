@@ -39,8 +39,9 @@ public class LayExplosivesAttackAction extends AbstractAttackAction {
      * Damage that the specified platoon does with explosives
      */
     public static int getDamageFor(Entity entity) {
-        if (!(entity instanceof Infantry))
+        if (!(entity instanceof Infantry)) {
             return 0;
+        }
         Infantry inf = (Infantry) entity;
         InfantryWeapon srmWeap = (InfantryWeapon) EquipmentType
                 .get("SRM Launcher (Std, Two-Shot)");
@@ -51,8 +52,7 @@ public class LayExplosivesAttackAction extends AbstractAttackAction {
     }
 
     public ToHitData toHit(Game game) {
-        return toHit(game, getEntityId(), game.getTarget(getTargetType(),
-                getTargetId()));
+        return toHit(game, getEntityId(), game.getTarget(getTargetType(), getTargetId()));
     }
 
     /**
@@ -62,19 +62,16 @@ public class LayExplosivesAttackAction extends AbstractAttackAction {
         final Entity ae = game.getEntity(attackerId);
         if ((target.getTargetType() != Targetable.TYPE_BUILDING)
                 && (target.getTargetType() != Targetable.TYPE_FUEL_TANK)) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "You can only target buildings");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "You can only target buildings");
+        } else if (ae == null) {
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "You can't attack from a null entity!");
+        } else if (!(ae instanceof Infantry)) {
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Attacker is not infantry");
         }
-        if (ae == null)
-            return new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "You can't attack from a null entity!");
-        if (!(ae instanceof Infantry))
-            return new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "Attacker is not infantry");
         Infantry inf = (Infantry) ae;
-        if (inf.turnsLayingExplosives > 0)
-            return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS,
-                    "STOP: Expected Damage: " + getDamageFor(ae));
+        if (inf.turnsLayingExplosives > 0) {
+            return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS, "STOP: Expected Damage: " + getDamageFor(ae));
+        }
         boolean ok = false;
         for (Mounted m : ae.getMisc()) {
             if (m.getType().hasFlag(MiscType.F_TOOLS)
@@ -83,8 +80,9 @@ public class LayExplosivesAttackAction extends AbstractAttackAction {
                 break;
             }
         }
-        if (!ok)
+        if (!ok) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "No explosives carried");
+        }
         return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS,
                 "START: Can't move or fire while laying explosives");
     }

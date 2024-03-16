@@ -1,12 +1,19 @@
-Version:1.0
-Gladiator
-GLD-3R
+chassis:Gladiator
+model:GLD-3R
+mul id:1200
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2490
-Source:TRO 3075
+Source:TRO: 3075
 Rules Level:1
+role:Missile Boat
+
+
+
+quirk:cowl
+quirk:bad_rep_is
+
 
 Mass:55
 Engine:275 Fusion Engine
@@ -148,4 +155,20 @@ Foot Actuator
 -Empty-
 -Empty-
 
+overview:The Gladiator, the first homegrown BattleMech of the Draconis Combine, was a product of intense secrecy and innovation. Developed by a dedicated division of New Samarkand Metals under the watchful eyes of the Draconis Elite Strike Teams, the GLD-1R Gladiator represented House Kurita's foray into the BattleMech era. The project, overseen by Coordinator Kozo Von Rohrs, faced numerous challenges, including resource and personnel restrictions due to its secretive nature. This resulted in a prolonged development process, with the Gladiator not reaching full production until 2468. Its design and deployment marked a significant milestone in the technological advancement of the Draconis Combine, despite initial mechanical and technical problems.
+
+capabilities:The GLD-4R Gladiator was known for its straightforward yet effective weapons load-out. It featured a PPC for long-range combat, complemented by twin medium lasers and an SRM 6 rack for close-quarters engagements. The Gladiator was also notable for its impressive mobility, achieving a top speed of eighty-four kilometers per hour. The addition of jump jets in the -4R model further enhanced its maneuverability, allowing it to adapt to various combat situations with agility and effectiveness.
+
+deployment:A Merryweather test bed, the 3R model replaced the large laser with twin LRM 10 racks, maintaining the speed of the 2R.
+
+history:<p>The history of the Gladiator is a saga of ingenuity, perseverance, and evolving military strategy within the Draconis Combine. Initiated in 2461, following a successful raid that netted BattleMech plans, the development of the Gladiator marked the Combine's ambitious entry into the era of BattleMech technology. Coordinated by Kozo Von Rohrs and meticulously overseen by the Draconis Elite Strike Teams, the project was shrouded in secrecy, leading to the establishment of New Samarkand Armor Works for its design and production. Despite significant challenges, including mechanical and electronic instabilities that sometimes caused the Gladiator to topple over or crippled its electronic systems, the GLD-1R model was pressed into service, with continuous field upgrades attempting to address these "minor technical difficulties."</p><p>The Gladiator's operational history was as tumultuous as its development. Early models, particularly the GLD-1R, were quickly pushed into service despite their flaws. The elite Second Sword of Light's failure to secure Nox in 2475, despite being equipped with refit kits, was a notable blot on the Gladiator's record. This episode and subsequent combat performances led to the design falling out of favor with Coordinator Von Rohrs and the Combine's military. While well-armed and armored, it struggled against the Terran Hegemony's larger mechs and lacked the finesse of more experienced Davion or Steiner MechWarriors. Production of the Gladiator officially ceased in 2488, giving way to the Von Rohrs as the new standard. However, the Gladiator lingered in second-line and militia services before fading into obscurity.</p><p>Despite its official retirement, the Gladiator's presence persisted across the Inner Sphere and Periphery, thanks to salvaged models and secondhand markets. Its resilience in various military capacities, even in the face of technological advancements and changing warfare dynamics, highlights its enduring legacy. The Gladiator's story is a reflection of the Draconis Combine's early struggles and eventual strides in the realm of BattleMech engineering, embodying a period of rapid technological adaptation and military innovation.</p>
+
+manufacturer:Merryweather Industries
+primaryfactory:Alula Australis
+systemmanufacturer:CHASSIS:MW240
+systemmanufacturer:ENGINE:CoreTek 275
+systemmanufacturer:ARMOR:Kemplar 5000
+systemmanufacturer:JUMPJET:GE-2200
+systemmanufacturer:COMMUNICATIONS:Fujika Multiband
+systemmanufacturer:TARGETING:General systems AV-12
 

@@ -14,14 +14,17 @@
 package megamek.common.weapons.prototypes;
 
 import megamek.common.AmmoType;
+import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.Game;
 import megamek.common.SimpleTechLevel;
+import megamek.common.Mounted;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.PrototypeACWeaponHandler;
 import megamek.common.weapons.PrototypeLBXHandler;
 import megamek.common.weapons.autocannons.LBXACWeapon;
+import megamek.server.GameManager;
 import megamek.server.Server;
 
 /**
@@ -66,12 +69,17 @@ public class ISLB10XACPrototype extends LBXACWeapon {
 
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
-                                              Server server) {
+                                              GameManager manager) {
         AmmoType atype = (AmmoType) game.getEntity(waa.getEntityId())
                 .getEquipment(waa.getWeaponId()).getLinked().getType();
-        if (atype.getMunitionType() == AmmoType.M_CLUSTER) {
-            return new PrototypeLBXHandler(toHit, waa, game, server);
+        if (atype.getMunitionType().contains(AmmoType.Munitions.M_CLUSTER)) {
+            return new PrototypeLBXHandler(toHit, waa, game, manager);
         }
-        return new PrototypeACWeaponHandler(toHit, waa, game, server);
+        return new PrototypeACWeaponHandler(toHit, waa, game, manager);
+    }
+
+    @Override
+    public double getBattleForceDamage(int range, Mounted fcs) {
+        return (range <= AlphaStrikeElement.LONG_RANGE) ? 0.63 : 0;
     }
 }

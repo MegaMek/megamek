@@ -20,6 +20,10 @@ Narukami Heavy Tank
 NK-BC3
 </Model>
 
+<mul id:>
+6389
+</mul id:>
+
 <year>
 3108
 </year>
@@ -27,6 +31,10 @@ NK-BC3
 <type>
 IS Level 3
 </type>
+
+<role>
+Sniper
+</role>
 
 <motion_type>
 Tracked
@@ -89,9 +97,16 @@ ISSRM2IOS
 </Turret Equipment>
 
 <source>
-TRO 3145 Draconis Combine - Late Republic
+TRO: 3145 Draconis Combine
 </source>
 
 <tonnage>
 90.0
 </tonnage>
+
+<quirks>
+low_profile
+hard_pilot
+fast_reload
+</quirks>
+

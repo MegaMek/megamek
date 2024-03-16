@@ -45,7 +45,8 @@ public class ISBASupportPPC extends PPCWeapon {
         criticals = 2;
         flags = flags.or(F_BA_WEAPON).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON)
                 .andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
-        bv = 12;
+        bv = 14;
+        cost = 14000;
         rulesRefs = "267, TM";
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS)
                 .setISAdvancement(3046, 3053, 3056).setTechRating(RATING_D)

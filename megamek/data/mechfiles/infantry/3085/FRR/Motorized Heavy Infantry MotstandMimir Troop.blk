@@ -15,6 +15,10 @@ Motorized Heavy Infantry
 <Model>
 Motstand/Mimir Troop
 </Model>
+
+<mul id:>
+2232
+</mul id:>
 <squad_size>
 7
 </squad_size>
@@ -33,11 +37,15 @@ InfantryVLAW
 <type>
 IS Level 2
 </type>
+
+<role>
+Ambusher
+</role>
 <year>
 2500
 </year>
 <source>
-TRO 3085 - Age of War
+TRO: 3085
 </source>
 <motion_type>
 Motorized

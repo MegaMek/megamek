@@ -20,6 +20,10 @@ Indra Infantry Transport
 (BA)
 </Model>
 
+<mul id:>
+1612
+</mul id:>
+
 <year>
 3069
 </year>
@@ -27,6 +31,10 @@ Indra Infantry Transport
 <type>
 Clan Level 3
 </type>
+
+<role>
+Brawler
+</role>
 
 <motion_type>
 Wheeled
@@ -92,7 +100,7 @@ CLCASE
 </Turret Equipment>
 
 <source>
-Jihad
+TRO: 3060
 </source>
 
 <tonnage>

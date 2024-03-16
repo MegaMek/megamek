@@ -1,12 +1,18 @@
-Version:1.0
-Brigand
-LDT-XPR1
+chassis:Brigand
+model:LDT-XPR1
+mul id:7313
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3076
-Source:HTP Tortuga
+Source:Historical Turning Points: Tortuga
 Rules Level:4
+role:Striker
+
+
+
+quirk:nimble_jumper
+
 
 Mass:25
 Engine:150 XL Engine(IS)

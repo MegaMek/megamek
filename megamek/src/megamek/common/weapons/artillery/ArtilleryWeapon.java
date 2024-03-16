@@ -17,14 +17,8 @@ import megamek.common.Game;
 import megamek.common.Mounted;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.common.enums.GamePhase;
-import megamek.common.weapons.AmmoWeapon;
-import megamek.common.weapons.ArtilleryWeaponDirectFireHandler;
-import megamek.common.weapons.ArtilleryWeaponDirectHomingHandler;
-import megamek.common.weapons.ArtilleryWeaponIndirectFireHandler;
-import megamek.common.weapons.ArtilleryWeaponIndirectHomingHandler;
-import megamek.common.weapons.AttackHandler;
-import megamek.server.Server;
+import megamek.common.weapons.*;
+import megamek.server.GameManager;
 
 /**
  * @author Sebastian Brocks
@@ -40,9 +34,19 @@ public abstract class ArtilleryWeapon extends AmmoWeapon {
         atClass = CLASS_ARTILLERY;
     }
 
+    @Override
+    public boolean isAlphaStrikeIndirectFire() {
+        return false;
+    }
+
+    @Override
+    public boolean hasIndirectFire() {
+        return true;
+    }
+
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
      * megamek.common.actions.WeaponAttackAction, megamek.common.Game,
@@ -50,19 +54,19 @@ public abstract class ArtilleryWeapon extends AmmoWeapon {
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, Game game, Server server) {
+            WeaponAttackAction waa, Game game, GameManager manager) {
         Mounted ammo = game.getEntity(waa.getEntityId())
                 .getEquipment(waa.getWeaponId()).getLinked();
 
         if (ammo.isHomingAmmoInHomingMode()) {
-            if (game.getPhase() == GamePhase.FIRING) {
-                return new ArtilleryWeaponDirectHomingHandler(toHit, waa, game, server);
+            if (game.getPhase().isFiring()) {
+                return new ArtilleryWeaponDirectHomingHandler(toHit, waa, game, manager);
             }
-            return new ArtilleryWeaponIndirectHomingHandler(toHit, waa, game, server);
-        } else if (game.getPhase() == GamePhase.FIRING) {
-            return new ArtilleryWeaponDirectFireHandler(toHit, waa, game, server);
+            return new ArtilleryWeaponIndirectHomingHandler(toHit, waa, game, manager);
+        } else if (game.getPhase().isFiring()) {
+            return new ArtilleryWeaponDirectFireHandler(toHit, waa, game, manager);
         } else {
-            return new ArtilleryWeaponIndirectFireHandler(toHit, waa, game, server);
+            return new ArtilleryWeaponIndirectFireHandler(toHit, waa, game, manager);
         }
     }
 }

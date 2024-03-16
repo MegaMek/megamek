@@ -13,6 +13,7 @@
  */
 package megamek.common.actions;
 
+import megamek.client.ui.Messages;
 import megamek.common.*;
 import megamek.common.options.OptionsConstants;
 
@@ -38,7 +39,7 @@ public class PushAttackAction extends DisplacementAttackAction {
      * pushes are impossible when physical attacks are impossible, or a
      * retractable blade is extended
      *
-     * @param game
+     * @param game The current {@link Game}
      * @param ae
      * @param target
      * @return
@@ -86,7 +87,7 @@ public class PushAttackAction extends DisplacementAttackAction {
         Entity te = null;
         if (target.getTargetType() == Targetable.TYPE_ENTITY) {
             te = (Entity) target;
-            targetId = target.getTargetId();
+            targetId = target.getId();
         }
 
         if (ae == null) {
@@ -131,7 +132,7 @@ public class PushAttackAction extends DisplacementAttackAction {
         if (ae.entityIsQuad()) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Attacker is a quad");
         }
-        
+
         // LAM AirMechs can only push when grounded.
         if (ae.isAirborneVTOLorWIGE()) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Cannot push while airborne");
@@ -162,7 +163,7 @@ public class PushAttackAction extends DisplacementAttackAction {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Arm missing");
         }
 
-        //check for no/minimal arms quirk
+        // check for no/minimal arms quirk
         if (ae.hasQuirk(OptionsConstants.QUIRK_NEG_NO_ARMS)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "No/minimal arms");
         }
@@ -194,7 +195,7 @@ public class PushAttackAction extends DisplacementAttackAction {
 
         // can't do anything but counter-push if the target of another attack
         if (ae.isTargetOfDisplacementAttack()
-                && (ae.findTargetedDisplacement().getEntityId() != target.getTargetId())) {
+                && (ae.findTargetedDisplacement().getEntityId() != target.getId())) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Attacker is the target of another push/charge/DFA");
         }
 
@@ -204,7 +205,7 @@ public class PushAttackAction extends DisplacementAttackAction {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Target is the target of another push/charge/DFA");
         }
 
-        //can't push airborne targets
+        // can't push airborne targets
         if (te.isAirborne()) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Cannot push an airborne target.");
         }
@@ -324,5 +325,11 @@ public class PushAttackAction extends DisplacementAttackAction {
 
         // done!
         return toHit;
+    }
+
+    @Override
+    public String toSummaryString(final Game game) {
+        final String roll = this.toHit(game).getValueAsString();
+        return Messages.getString("BoardView1.PushAttackAction", roll);
     }
 }

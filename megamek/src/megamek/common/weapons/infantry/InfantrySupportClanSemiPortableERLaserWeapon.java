@@ -47,7 +47,7 @@ public class InfantrySupportClanSemiPortableERLaserWeapon extends InfantryWeapon
 		ammoWeight = 0.003;
 		shots = 15;
 		tonnage = .025;
-		rulesRefs = "273,TM";
+		rulesRefs = "273, TM";
 		techAdvancement.setTechBase(TECH_BASE_CLAN).setClanAdvancement(3056, 3060, DATE_NONE, DATE_NONE, DATE_NONE)
 		        .setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_CSJ)
 		        .setProductionFactions(F_CSJ).setTechRating(RATING_F)

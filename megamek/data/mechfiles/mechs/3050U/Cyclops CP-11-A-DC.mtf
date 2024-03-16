@@ -1,12 +1,21 @@
-Version:1.1
-Cyclops
-CP-11-A-DC
+chassis:Cyclops
+model:CP-11-A-DC
+mul id:4032
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3045
-Source:TRO 3050 - Succession Wars
+Source:TRO: 3050
 Rules Level:3
+role:Sniper
+
+
+
+quirk:battle_computer
+quirk:cowl
+quirk:difficult_eject
+quirk:weak_head_2
+
 
 Mass:90
 Engine:360 Fusion Engine(IS)

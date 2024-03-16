@@ -1,12 +1,18 @@
-Version:1.0
-Ursus
-2
+chassis:Ursus
+model:2
+mul id:3364
 
 Config:Biped
 TechBase:Clan
 Era:3074
-Source:TRO 3060
+Source:TRO: 3060
 Rules Level:2
+role:Striker
+
+quirk:distracting
+quirk:pro_actuator
+quirk:cramped_cockpit
+
 
 Mass:50
 Engine:300 XL (Clan) Engine

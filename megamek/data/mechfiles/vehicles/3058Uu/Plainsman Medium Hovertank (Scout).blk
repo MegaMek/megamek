@@ -20,6 +20,10 @@ Plainsman Medium Hovertank
 (Scout)
 </Model>
 
+<mul id:>
+2539
+</mul id:>
+
 <year>
 3065
 </year>
@@ -27,6 +31,10 @@ Plainsman Medium Hovertank
 <type>
 IS Level 2
 </type>
+
+<role>
+Scout
+</role>
 
 <tonnage>
 35
@@ -75,6 +83,6 @@ SRM 6
 </Turret Equipment>
 
 <source>
-Civil War
+TRO: 3058
 </source>
 

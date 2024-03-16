@@ -13,25 +13,14 @@
  */
 package megamek.common.weapons;
 
-import java.util.List;
-import java.util.Vector;
-
-import megamek.common.BombType;
-import megamek.common.Compute;
-import megamek.common.Coords;
-import megamek.common.EquipmentType;
-import megamek.common.HitData;
-import megamek.common.Game;
-import megamek.common.Mounted;
-import megamek.common.Report;
-import megamek.common.TagInfo;
-import megamek.common.TargetRoll;
-import megamek.common.ToHitData;
-import megamek.common.WeaponType;
+import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
-import megamek.server.Server;
+import megamek.server.GameManager;
+
+import java.util.List;
+import java.util.Vector;
 
 /**
  * @author Jay Lawson
@@ -46,8 +35,8 @@ public class BombAttackHandler extends WeaponHandler {
      * @param g
      */
     public BombAttackHandler(ToHitData toHit, WeaponAttackAction waa, Game g,
-            Server s) {
-        super(toHit, waa, g, s);
+            GameManager m) {
+        super(toHit, waa, g, m);
         generalDamageType = HitData.DAMAGE_NONE;
     }
 
@@ -72,8 +61,12 @@ public class BombAttackHandler extends WeaponHandler {
                 for (Mounted bomb : ae.getBombs()) {
                     if (!bomb.isDestroyed()
                             && (bomb.getUsableShotsLeft() > 0)
-                            && (((BombType) bomb.getType()).getBombType() == type)) {
+                            && (((BombType) bomb.getType()).getBombType() == type)
+                    ) {
                         bomb.setShotsLeft(0);
+                        if (bomb.isInternalBomb()) {
+                            ((IBomber) ae).increaseUsedInternalBombs(1);
+                        }
                         break;
                     }
                 }
@@ -84,7 +77,7 @@ public class BombAttackHandler extends WeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.AttackHandler#handle(int, java.util.Vector)
      */
     @Override
@@ -101,10 +94,18 @@ public class BombAttackHandler extends WeaponHandler {
             typeModifiedToHit.setSideTable(toHit.getSideTable());
 
             // currently, only type of bomb with type-specific to-hit mods
+            // Laser-Guided Bombs are getting errata'ed to get bonus from either A) a tagged hex or B) a tagged target
             boolean laserGuided = false;
             if (type == BombType.B_LG) {
                 for (TagInfo ti : game.getTagInfo()) {
-                    if (target.getTargetId() == ti.target.getTargetId()) {
+                    if (ti.missed || game.getEntity(waa.getEntityId()).isEnemyOf(game.getEntity(ti.attackerId))) {
+                        // Not a usable friendly TAG
+                        continue;
+                    }
+                    if (target.getId() == ti.target.getId()
+                        || ((ti.targetType != Targetable.TYPE_HEX_TAG)
+                            && target.getPosition().equals(ti.target.getPosition()))
+                    ) {
                         typeModifiedToHit.addModifier(-2,
                                 "laser-guided bomb against tagged target");
                         laserGuided = true;
@@ -132,7 +133,7 @@ public class BombAttackHandler extends WeaponHandler {
                 if (wtype != null) {
                     r.add(wtype.getName());
                 } else {
-                    r.add("Error: From Nowhwere");
+                    r.add("Error: From Nowhere");
                 }
 
                 r.add(target.getDisplayName(), true);
@@ -172,10 +173,9 @@ public class BombAttackHandler extends WeaponHandler {
                 vPhaseReport.addElement(r);
 
                 // do we hit?
-                bMissed = roll < typeModifiedToHit.getValue();
+                bMissed = roll.getIntValue() < typeModifiedToHit.getValue();
                 // Set Margin of Success/Failure.
-                typeModifiedToHit.setMoS(
-                        roll - Math.max(2, typeModifiedToHit.getValue()));
+                typeModifiedToHit.setMoS(roll.getIntValue() - Math.max(2, typeModifiedToHit.getValue()));
 
                 if (!bMissed) {
                     r = new Report(3190);
@@ -218,7 +218,7 @@ public class BombAttackHandler extends WeaponHandler {
                         // Retrieve facing at current step in flight path
                         int facing = ae.getPassedThroughFacing().get(idx);
                         // Scatter, based on location and facing
-                        drop = Compute.scatterAltitudeBombs(coords, facing);
+                        drop = Compute.scatterAltitudeBombs(coords, facing, moF);
                     } else {
                         drop = Compute.scatterDiveBombs(coords, moF);
                     }
@@ -244,20 +244,20 @@ public class BombAttackHandler extends WeaponHandler {
                     }
                 }
                 if (type == BombType.B_INFERNO) {
-                    server.deliverBombInferno(drop, ae, subjectId, vPhaseReport);
+                    gameManager.deliverBombInferno(drop, ae, subjectId, vPhaseReport);
                 } else if (type == BombType.B_THUNDER) {
-                    server.deliverThunderMinefield(drop, ae.getOwner().getId(), 20, ae.getId());
+                    gameManager.deliverThunderMinefield(drop, ae.getOwner().getId(), 20, ae.getId());
                     List<Coords> hexes = drop.allAdjacent();
                     for (Coords c : hexes) {
-                        server.deliverThunderMinefield(c, ae.getOwner().getId(), 20, ae.getId());
+                        gameManager.deliverThunderMinefield(c, ae.getOwner().getId(), 20, ae.getId());
                     }
                 } else if (type == BombType.B_FAE_SMALL || type == BombType.B_FAE_LARGE) {
-                    AreaEffectHelper.processFuelAirDamage(drop, EquipmentType.get(BombType.getBombInternalName(type)), ae, vPhaseReport, server);
+                    AreaEffectHelper.processFuelAirDamage(drop, EquipmentType.get(BombType.getBombInternalName(type)), ae, vPhaseReport, gameManager);
                 } else {
-                    server.deliverBombDamage(drop, type, subjectId, ae, vPhaseReport);
+                    gameManager.deliverBombDamage(drop, type, subjectId, ae, vPhaseReport);
                 }
                 // Finally, we need a new attack roll for the next bomb, if any.
-                roll = Compute.d6(2);
+                roll = Compute.rollD6(2);
             }
         }
 

@@ -46,7 +46,7 @@ public class CLSRT6IOS extends SRTWeapon {
         bv = 12;
         flags = flags.or(F_NO_FIRES).or(F_ONESHOT).andNot(F_PROTO_WEAPON);
         cost = 64000;
-        rulesRefs = "327,TO";
+        rulesRefs = "327, TO";
         //Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TECH_BASE_CLAN)
         	.setIntroLevel(false)

@@ -20,6 +20,10 @@ Winston Combat Vehicle
 (XXL)
 </Model>
 
+<mul id:>
+6800
+</mul id:>
+
 <year>
 3133
 </year>
@@ -27,6 +31,10 @@ Winston Combat Vehicle
 <type>
 Mixed (IS Chassis) Experimental
 </type>
+
+<role>
+Sniper
+</role>
 
 <motion_type>
 Tracked
@@ -85,7 +93,7 @@ Large Re-engineered Laser
 </Turret Equipment>
 
 <source>
-RS 3145 NTNU - Dark Ages
+Record Sheets: 3145 New Tech New Upgrades
 </source>
 
 <tonnage>

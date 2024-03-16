@@ -1,12 +1,17 @@
-Version:1.0
-Cougar
-Prime
+chassis:Cougar
+model:Prime
+mul id:712
 
 Config:Biped Omnimech
 TechBase:Clan
 Era:3058
-Source:TRO 3060
+Source:TRO: 3060
 Rules Level:2
+role:Sniper
+
+
+quirk:ubiquitous_clan
+
 
 Mass:35
 Engine:175 XL (Clan) Engine(IS)

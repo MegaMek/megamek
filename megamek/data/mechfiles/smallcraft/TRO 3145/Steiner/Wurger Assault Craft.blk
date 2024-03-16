@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -16,9 +16,13 @@ SmallCraft
 Wurger Assault Craft
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+6640
+</mul id:>
 
 <year>
 3099
@@ -31,6 +35,10 @@ Wurger Assault Craft
 <type>
 IS Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Spheroid
@@ -86,12 +94,6 @@ ISAntiMissileSystem
 ISAMS Ammo
 ISAMS Ammo
 ISAMS Ammo
-ISAMS Ammo
-ISAMS Ammo
-ISAMS Ammo
-ISAMS Ammo
-ISAMS Ammo
-ISAMS Ammo
 </Nose Equipment>
 
 <Left Side Equipment>
@@ -102,6 +104,9 @@ ISERMediumLaser
 ISAntiMissileSystem
 ISAntiMissileSystem
 ISAntiMissileSystem
+ISAMS Ammo
+ISAMS Ammo
+ISAMS Ammo
 </Left Side Equipment>
 
 <Right Side Equipment>
@@ -112,6 +117,9 @@ ISERMediumLaser
 ISAntiMissileSystem
 ISAntiMissileSystem
 ISAntiMissileSystem
+ISAMS Ammo
+ISAMS Ammo
+ISAMS Ammo
 </Right Side Equipment>
 
 <Aft Equipment>
@@ -131,7 +139,7 @@ ISGuardianECMSuite
 </structural_integrity>
 
 <source>
-TRO 3145 Lyran Commonwealth - Early Republic
+TRO: 3145 Lyran Commonwealth
 </source>
 
 <tonnage>
@@ -177,3 +185,10 @@ TRO 3145 Lyran Commonwealth - Early Republic
 <escape_pod>
 0
 </escape_pod>
+
+
+<quirks>
+combat_computer
+atmo_instability
+</quirks>
+

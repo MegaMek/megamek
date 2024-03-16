@@ -20,6 +20,10 @@ Enyo Strike Tank
 (LB-X) 'Sholef'
 </Model>
 
+<mul id:>
+5732
+</mul id:>
+
 <year>
 3075
 </year>
@@ -27,6 +31,10 @@ Enyo Strike Tank
 <type>
 Clan Level 2
 </type>
+
+<role>
+Skirmisher
+</role>
 
 <motion_type>
 Tracked
@@ -89,7 +97,7 @@ CLSRM6
 </Turret Equipment>
 
 <source>
-RS 3067U
+Record Sheets: Record Sheets: 3067 Unabridged
 </source>
 
 <tonnage>

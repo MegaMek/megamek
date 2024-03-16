@@ -20,6 +20,10 @@ Tramp JumpShip
 (2755) (LF)
 </Model>
 
+<mul id:>
+5272
+</mul id:>
+
 <year>
 2755
 </year>
@@ -31,6 +35,10 @@ Tramp JumpShip
 <type>
 IS Level 3
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Aerodyne
@@ -135,7 +143,7 @@ ISAMS Ammo:24
 </structural_integrity>
 
 <source>
-TRO 3057R - Star League
+TRO: 3057 Revised
 </source>
 
 <tonnage>

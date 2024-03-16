@@ -20,6 +20,10 @@ Mechanized Hover Platoon
 (Flamer)
 </Model>
 
+<mul id:>
+2132
+</mul id:>
+
 <year>
 2025
 </year>
@@ -27,6 +31,10 @@ Mechanized Hover Platoon
 <type>
 IS Level 2
 </type>
+
+<role>
+Ambusher
+</role>
 
 <motion_type>
 Hover
@@ -36,7 +44,7 @@ Hover
 </Field Guns Equipment>
 
 <source>
-Total Warfare - Succession Wars
+Total Warfare
 </source>
 
 <squad_size>

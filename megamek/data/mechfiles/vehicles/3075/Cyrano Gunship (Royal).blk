@@ -20,17 +20,25 @@ Cyrano Gunship
 (Royal)
 </Model>
 
+<mul id:>
+786
+</mul id:>
+
 <year>
 2721
 </year>
 
 <source>
-Star League
+TRO: 3075
 </source>
 
 <type>
 IS Level 2
 </type>
+
+<role>
+Scout
+</role>
 
 <tonnage>
 30.0

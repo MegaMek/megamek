@@ -20,6 +20,10 @@ Transit
 TR-13X 'Glare'
 </Model>
 
+<mul id:>
+3291
+</mul id:>
+
 <year>
 3077
 </year>
@@ -31,6 +35,10 @@ TR-13X 'Glare'
 <type>
 IS Level 4
 </type>
+
+<role>
+Dogfighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -105,7 +113,7 @@ ISImprovedHeavyGauss Ammo
 </Fuselage Equipment>
 
 <source>
-XTRO Liao - Jihad
+XTR: Liao
 </source>
 
 <tonnage>

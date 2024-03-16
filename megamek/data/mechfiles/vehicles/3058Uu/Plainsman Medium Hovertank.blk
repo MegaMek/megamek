@@ -12,9 +12,13 @@ Tank
 <Name>
 Plainsman Medium Hovertank
 </Name>
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+2541
+</mul id:>
 <Tonnage>
 35
 </Tonnage>
@@ -43,6 +47,10 @@ ISSRM2 Ammo
 <type>
 IS Level 1
 </type>
+
+<role>
+Striker
+</role>
 <year>
 3030
 </year>
@@ -59,5 +67,5 @@ IS Level 1
 Hover
 </motion_type>
 <source>
-Succession Wars
+TRO: 3058
 </source>

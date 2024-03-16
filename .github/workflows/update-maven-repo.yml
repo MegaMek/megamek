@@ -16,26 +16,26 @@ jobs:
     # Run this job once for each combination in the matrix below.
     strategy:
       matrix:
-        os: [ ubuntu-latest ] # For Maven Repo Update running on *nix is sufficient
+        os: [ ubuntu-latest ] # For Maven Repository Update running on *nix is sufficient
         java-distribution: [ temurin ]
-        java-version: [ 11 ]
+        java-version: [ 17 ]
 
     steps:
     # Put the MM repo in a subfolder to make updating the Maven repo easier
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
       with:
         path: megamek
 
     # Setup the requested Java Distribution and Version from the matrix
     - name: Set up ${{ matrix.java-distribution }} JDK ${{ matrix.java-version }}
-      uses: actions/setup-java@v2
+      uses: actions/setup-java@v3
       with:
         distribution: ${{ matrix.java-distribution }}
         java-version: ${{ matrix.java-version }}
 
     # Make sure we can execute the Gradle wrapper
     - name: Grant execute permission for gradlew (*nix or MacOS)
-      working-directory: megamek  
+      working-directory: megamek
       run: chmod +x gradlew
       if: runner.os != 'Windows'
 
@@ -47,7 +47,7 @@ jobs:
     # Get the current Maven repo contents
     - name: Checkout Maven Repo
       if: github.repository == 'MegaMek/megamek'
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       with:
         repository: MegaMek/mavenrepo
         path: mavenrepo

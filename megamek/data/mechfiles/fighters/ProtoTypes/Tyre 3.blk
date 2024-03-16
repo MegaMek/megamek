@@ -20,6 +20,10 @@ Tyre
 3
 </Model>
 
+<mul id:>
+5315
+</mul id:>
+
 <year>
 3086
 </year>
@@ -31,6 +35,10 @@ Tyre
 <type>
 Clan Level 3
 </type>
+
+<role>
+Attack Fighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -110,9 +118,15 @@ CLCASE
 </Fuselage Equipment>
 
 <source>
-TRO Prototypes - Jihad
+TRO: Prototypes
 </source>
 
 <tonnage>
 55.0
 </tonnage>
+
+<quirks>
+bad_rep_clan
+atmo_instability
+</quirks>
+

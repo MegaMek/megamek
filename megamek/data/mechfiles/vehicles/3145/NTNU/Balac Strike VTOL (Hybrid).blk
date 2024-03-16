@@ -20,6 +20,10 @@ Balac Strike VTOL
 (Hybrid)
 </Model>
 
+<mul id:>
+6750
+</mul id:>
+
 <year>
 3090
 </year>
@@ -27,6 +31,10 @@ Balac Strike VTOL
 <type>
 Clan Level 3
 </type>
+
+<role>
+Striker
+</role>
 
 <motion_type>
 VTOL
@@ -82,9 +90,14 @@ CLHeavyMG
 </Rotor Equipment>
 
 <source>
-Jihad
+TRO: 3145
 </source>
 
 <tonnage>
 25.0
 </tonnage>
+
+<quirks>
+vtol_rotor_coaxial
+</quirks>
+

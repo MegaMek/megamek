@@ -1,12 +1,13 @@
-Version:1.1
-Marco
-MR-8E
+chassis:Marco
+model:MR-8E
+mul id:2074
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2801
 Rules Level:2
-Source:RS OK - Early Succession War
+role:Brawler
+Source:Record Sheets: Operation Klondike
 
 Mass:30
 Engine:120 Fusion Engine

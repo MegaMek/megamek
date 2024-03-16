@@ -20,6 +20,10 @@ Jifty Transportable Field Repair Unit
 JI-50 (MG)
 </Model>
 
+<mul id:>
+4404
+</mul id:>
+
 <year>
 3072
 </year>
@@ -31,6 +35,10 @@ JI-50 (MG)
 <type>
 IS Level 2
 </type>
+
+<role>
+Brawler
+</role>
 
 <motion_type>
 Tracked
@@ -85,7 +93,7 @@ Lift Hoist/Arresting Hoist
 </structural_tech_rating>
 
 <source>
-TRO 3075 - Jihad
+TRO: 3075
 </source>
 
 <tonnage>

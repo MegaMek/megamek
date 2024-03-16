@@ -15,24 +15,17 @@
 */
 package megamek.client.ui.swing;
 
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.geom.Dimension2D;
 import java.util.StringTokenizer;
 
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
+import javax.swing.*;
 
 import megamek.client.ui.Messages;
 import megamek.common.BombType;
@@ -47,6 +40,8 @@ public class BombPayloadDialog extends JDialog implements ActionListener, ItemLi
 
     private boolean confirm = false;
     private int limit;
+    private int internalBombLimit=6;
+    private int internalBombCount=0;
     private int[] bombs;
 
     private JPanel panButtons = new JPanel();
@@ -86,7 +81,7 @@ public class BombPayloadDialog extends JDialog implements ActionListener, ItemLi
     @SuppressWarnings("unchecked")
     private void initialize(JFrame parent, String title, int[] b,
             boolean spaceBomb, boolean bombDump, int lim, int numFighters) {
-        super.setResizable(false);
+        // super.setResizable(false);
 
         this.numFighters = numFighters;
         bombs = b;
@@ -183,20 +178,14 @@ public class BombPayloadDialog extends JDialog implements ActionListener, ItemLi
 
         pack();
         Dimension size = getSize();
-        boolean updateSize = false;
-        if (size.width < GUIPreferences.getInstance().getMinimumSizeWidth()) {
-            size.width = GUIPreferences.getInstance().getMinimumSizeWidth();
-        }
-        if (size.height < GUIPreferences.getInstance().getMinimumSizeHeight()) {
-            size.height = GUIPreferences.getInstance().getMinimumSizeHeight();
-        }
-        if (updateSize) {
-            setSize(size);
-            size = getSize();
-        }
         setLocation((parent.getLocation().x + (parent.getSize().width / 2))
                 - (size.width / 2), (parent.getLocation().y
                 + (parent.getSize().height / 2)) - (size.height / 2));
+    }
+
+    @Override
+    public Dimension getPreferredSize() {
+        return new Dimension(500,200);
     }
 
     private void setupButtons() {
@@ -271,7 +260,7 @@ public class BombPayloadDialog extends JDialog implements ActionListener, ItemLi
             current[i] = b_choices[i].getSelectedIndex();
         }
 
-        //don't factor in your own choice when determining how much is left
+        // don't factor in your own choice when determining how much is left
         int[] left = new int[b_choices.length];
         for (int i = 0; i < left.length; i++) {
             left[i] = limit;

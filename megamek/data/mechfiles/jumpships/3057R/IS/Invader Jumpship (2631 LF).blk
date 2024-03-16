@@ -20,6 +20,10 @@ Invader Jumpship
 (2631) (LF)
 </Model>
 
+<mul id:>
+4373
+</mul id:>
+
 <year>
 2631
 </year>
@@ -31,6 +35,10 @@ Invader Jumpship
 <type>
 IS Level 3
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Aerodyne
@@ -110,7 +118,7 @@ steeragequarters:100.0:0
 </structural_integrity>
 
 <source>
-TRO 3057U - Star League
+TRO: 3057 Revised
 </source>
 
 <tonnage>

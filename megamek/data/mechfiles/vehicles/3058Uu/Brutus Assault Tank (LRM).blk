@@ -15,6 +15,10 @@ Brutus Assault Tank
 <Model>
 (LRM)
 </Model>
+
+<mul id:>
+432
+</mul id:>
 <Tonnage>
 75
 </Tonnage>
@@ -50,6 +54,10 @@ ISLRM20 Ammo
 <type>
 IS Level 1
 </type>
+
+<role>
+Missile Boat
+</role>
 <year>
 3001
 </year>
@@ -66,5 +74,5 @@ IS Level 1
 Tracked
 </motion_type>
 <source>
-Succession Wars
+TRO: 3058
 </source>

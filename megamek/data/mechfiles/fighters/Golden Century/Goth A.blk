@@ -20,6 +20,10 @@ Goth
 A
 </Model>
 
+<mul id:>
+7659
+</mul id:>
+
 <year>
 2873
 </year>
@@ -31,6 +35,10 @@ A
 <type>
 Clan Level 2
 </type>
+
+<role>
+Attack Fighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -114,7 +122,7 @@ Clan Ammo SRM-6:OMNI
 </Fuselage Equipment>
 
 <source>
-Succession Wars
+TRO: Golden Century
 </source>
 
 <tonnage>

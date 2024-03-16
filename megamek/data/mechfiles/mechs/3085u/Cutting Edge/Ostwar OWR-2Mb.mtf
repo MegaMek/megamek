@@ -1,12 +1,18 @@
-Version:1.0
-Ostwar
-OWR-2Mb
+chassis:Ostwar
+model:OWR-2Mb
+mul id:2382
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2620
-Source:Star League
+Source:TRO: 3085
 Rules Level:2
+role:Brawler
+
+
+
+quirk:easy_maintain
+
 
 Mass:65
 Engine:325 XL Engine(IS)

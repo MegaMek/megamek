@@ -15,6 +15,10 @@ Flatbed Truck
 <Model>
 (Mortar)
 </Model>
+
+<mul id:>
+1131
+</mul id:>
 <Tonnage>
 10
 </Tonnage>
@@ -38,6 +42,10 @@ ISArmorPiercingMortarAmmo1
 <type>
 IS Level 3
 </type>
+
+<role>
+Sniper
+</role>
 <year>
 2580
 </year>
@@ -54,5 +62,5 @@ IS Level 3
 Wheeled
 </motion_type>
 <source>
-Star League
+TRO: 3060
 </source>

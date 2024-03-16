@@ -1,0 +1,201 @@
+chassis:Ares
+model:ARS-V1E Apollo
+mul id:9500
+
+Config:Tripod Omnimech
+techbase:Mixed (IS Chassis)
+era:3151
+source:Dominions Divided
+rules level:3
+role:Juggernaut
+
+
+
+quirk:command_mech
+quirk:distracting
+quirk:searchlight
+
+
+mass:135
+engine:270 Fusion Engine(IS)
+structure:IS Endo-Composite
+myomer:Standard
+cockpit:Superheavy Tripod Cockpit
+gyro:Superheavy Gyro
+
+heat sinks:11 IS Double
+base chassis heat sinks:10
+walk mp:2
+jump mp:0
+
+armor:Standard(Inner Sphere)
+LA armor:41
+RA armor:41
+LT armor:40
+RT armor:40
+CT armor:60
+HD armor:12
+LL armor:56
+RL armor:56
+CL armor:56
+RTL armor:16
+RTR armor:16
+RTC armor:22
+
+Weapons:12
+Rotary AC/5, Left Arm
+Improved Heavy Gauss Rifle, Right Arm
+ER Small Laser, Center Torso
+ER Small Laser, Right Torso
+ER Small Laser, Left Torso
+LRM 5, Right Torso
+LRM 5, Left Torso
+SRM 2, Right Torso
+SRM 2, Left Torso
+SRM 2, Center Torso
+ER Medium Laser, Right Torso
+ER Medium Laser, Left Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+CLRotaryAC5 (OMNIPOD)
+CLRotaryAC5 (OMNIPOD)
+CLRotaryAC5 (OMNIPOD)
+CLRotaryAC5 (OMNIPOD)
+CLRotaryAC5 Ammo|CLRotaryAC5 Ammo (OMNIPOD)
+CLRotaryAC5 Ammo|CLRotaryAC5 Ammo (OMNIPOD)
+ISCASEII (OMNIPOD)
+IS Endo-Composite
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+ISDoubleHeatSink (OMNIPOD)
+ISDoubleHeatSink (OMNIPOD)
+ISImprovedHeavyGaussRifle (OMNIPOD)
+ISImprovedHeavyGaussRifle (OMNIPOD)
+ISImprovedHeavyGaussRifle (OMNIPOD)
+ISImprovedHeavyGaussRifle (OMNIPOD)
+ISImprovedHeavyGaussRifle (OMNIPOD)
+ISImprovedHeavyGaussRifle (OMNIPOD)
+ISCASEII (OMNIPOD)
+IS Endo-Composite
+
+Left Torso:
+CLERMediumLaser
+CLERSmallLaser
+LRM 5
+SRM 2
+IS Ammo LRM-5
+ISCASEII
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+CLERMediumLaser
+CLERSmallLaser
+LRM 5
+SRM 2
+IS Ammo SRM-2
+ISImprovedHeavyGauss Ammo|ISImprovedHeavyGauss Ammo (OMNIPOD)
+ISImprovedHeavyGauss Ammo|ISImprovedHeavyGauss Ammo (OMNIPOD)
+ISCASEII
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+CLERSmallLaser
+SRM 2
+IS Endo-Composite
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+IS Endo-Composite
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+ISAntiPersonnelPod
+ISAntiPersonnelPod
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+ISAntiPersonnelPod
+ISAntiPersonnelPod
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+ISAntiPersonnelPod
+ISAntiPersonnelPod
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+
+overview:<p>The Ares BattleMech, a product of the Rhodes Project, represents a significant advancement in super-heavy Mech technology. Developed as a more versatile successor to the Poseidon, the Ares compensates for its heavier weight and slower speed with robust armor, a reconfigurable payload, and the capacity to transport friendly battle armor. Its OmniMech design allows for rapid servicing and a wide array of firepower options, including artillery support. Visually similar to its sister Mech, the Poseidon, the Ares adds an element of unpredictability on the battlefield, keeping enemy commanders guessing about its actual capabilities until it engages in combat.</p>
+
+capabilities:<p>The Ares, built on a unique tripedal humanoid chassis, closely resembles the Poseidon in appearance but is distinct in its operational capabilities. The intentional similarity in design serves not only as an engineering convenience but also as a strategic ploy to confuse observers and enemies. Equipped with a versatile array of weapons configurations, the Ares can adapt to various combat roles, from direct engagement to artillery support. Its various field configurations, each with specialized nomenclature, further contribute to the Mech's versatility and adaptability on the battlefield.</p>
+
+deployment:Tailored for long-range combat with a varied arsenal including an Improved Heavy Gauss Rifle, Rotary AC/5, ER Medium Lasers, LRM-5s, SRM-2s, and A-Pods.
+
+
+history:<p>The Ares BattleMech's story is a narrative of technological evolution and strategic foresight in the wake of the Jihad, as envisioned by the Republic of the Sphere's Rhodes Project. Developed alongside the Poseidon as a more versatile super-heavy Mech, the Ares was designed not just as a response to emerging threats but also as a symbol of a new era in Mech warfare. Its development aimed to push the limits of Mech capabilities, incorporating flexibility in armament and operations, a stark contrast to traditional Mech designs.<p>In the tumultuous period following the Blackout and the rise of the Fortress Republic, the Ares emerged as a critical asset. Prototypes were first deployed at the Serbian proving grounds on Terra in 3135, where they engaged rebel senatorial forces. This conflict marked the Ares's baptism by fire, proving its worth in actual combat conditions. The Mech's performance in this secretive but pivotal engagement informed subsequent refinements, leading to the production of the versatile PSD-V2 models.<p>The deployment of the Ares has been strategic and selective, with units primarily assigned to Stone’s Brigade regiments, notably in the Lament and the Defenders on Terra. Additionally, a significant number of Ares Mechs are stationed at the Devil’s Rock factories, emphasizing their importance in safeguarding key Republic sites. As tensions rise near the Fortress Republic's boundaries, the Ares stands at the forefront of the Republic's defense strategy, particularly against potential Clan invasions.<p>As the Republic's military landscape continues to evolve, the Ares remains a critical component of its armed forces. Its diverse configurations, ranging from the Zeus to the Apollo, illustrate its adaptability and effectiveness in various combat roles. The Ares, with its unique tripedal design and modular weapon systems, represents the Republic's commitment to maintaining a formidable and flexible military presence in an uncertain future.</p>
+
+manufacturer:Rhodes Foundry
+primaryfactory:Devil’s Rock
+systemmanufacturer:CHASSIS:Rhodes-M Endo-Composite
+systemmanufacturer:ENGINE:PlasmaStar 270
+systemmanufacturer:ARMOR:Maximillian 320 with CASE II
+systemmanufacturer:COMMUNICATIONS:Titan’s Shout Mk. IVA
+systemmanufacturer:TARGETING:Titan’s Vantage Mk. II

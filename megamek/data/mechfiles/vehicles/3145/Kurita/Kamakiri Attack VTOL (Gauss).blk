@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -17,20 +17,35 @@ Kamakiri Attack VTOL
 </Name>
 
 <Model>
-(Gauss)
+(Gauss) 'Shi Kamakiri'
 </Model>
+
+<mul id:>
+6383
+</mul id:>
 
 <year>
 3106
 </year>
 
+<originalBuildYear>
+3106
+</originalBuildYear>
+
 <type>
-IS Level 4
+IS Level 3
 </type>
+
+<role>
+Sniper
+</role>
 
 <motion_type>
 VTOL
 </motion_type>
+
+<transporters>
+</transporters>
 
 <cruiseMP>
 7
@@ -79,10 +94,48 @@ ISImprovedHeavyGaussRifle
 <Rotor Equipment>
 </Rotor Equipment>
 
+<capabilities>
+Moving as fast as many reconnaissance and strike platforms in service with the DCMS already thanks to the DAV 155 XL extra light engine, the original specification armor installed by Yan was replaced with seven tons of StarGuard Aurora Reflective at the request of the DCMS, who wanted to improve the Kamakari's protection against energy weapons, although the nature of the Reflective Armor didn't offer any additional protection against the flak commonly directed at VTOLs.
+</capabilities>
+
+<overview>
+The Kamakiri Attack VTOL was developed at the end of the thirty-first century by Yan Manufacturing of New Samarkand as a result of their growing success in the military aerospace market.
+</overview>
+
+<deployment>
+Possibly designed specifically for the Ryuken, the Shi Kamakiri replaces the weapons loadout of the standard Kamakiri with a single Improved Heavy Gauss Rifle and four tons of ammunition.
+</deployment>
+
+<history>
+Dubbed as resembling a praying mantis, the Kamakiri was an immediate success; the Draconis Combine Mustered Soldiery personnel responsible for supervising the first vehicle trial watched for just two minutes before approving the Kamakiri for purchase.
+</history>
+
+<manufacturer>
+Yan Manufacturing
+</manufacturer>
+
+<primaryFactory>
+New Samarkand
+</primaryFactory>
+
+<systemManufacturers>
+ENGINE:DAV 155 XL Fusion
+ARMOR:StarGuard Aurora Reflective
+COMMUNICATIONS:Scuti Dualcom
+TARGETING:Radcom T11
+</systemManufacturers>
+
 <source>
-TRO 3145 Draconis Combine - Late Republic
+TRO: 3145 Draconis Combine
 </source>
 
 <tonnage>
 55.0
 </tonnage>
+
+
+<quirks>
+vtol_rotor_dual
+hard_pilot
+</quirks>
+

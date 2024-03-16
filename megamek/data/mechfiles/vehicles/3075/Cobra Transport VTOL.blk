@@ -16,21 +16,29 @@ VTOL
 Cobra Transport VTOL
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+659
+</mul id:>
 
 <year>
 2620
 </year>
 
 <source>
-Star League
+TRO: 3075
 </source>
 
 <type>
 IS Level 2
 </type>
+
+<role>
+Scout
+</role>
 
 <tonnage>
 30.0

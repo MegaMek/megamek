@@ -1,12 +1,21 @@
-Version:1.0
-Cyclops
-CP-11-G
+chassis:Cyclops
+model:CP-11-G
+mul id:778
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3058
-Source:TRO 3050 - Clan Invasion
+Source:TRO: 3050
 Rules Level:2
+role:Sniper
+
+
+
+quirk:battle_computer
+quirk:cowl
+quirk:difficult_eject
+quirk:weak_head_2
+
 
 Mass:90
 Engine:360 Fusion Engine(IS)

@@ -1,12 +1,19 @@
-Version:1.0
-Panther
-PNT-14S
+chassis:Panther
+model:PNT-14S
+mul id:2422
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3069
-Source:TRO 3050 - Jihad
+Source:TRO: 3050
 Rules Level:2
+role:Scout
+
+
+
+quirk:imp_target_short
+quirk:nimble_jumper
+
 
 Mass:35
 Engine:140 Fusion Engine

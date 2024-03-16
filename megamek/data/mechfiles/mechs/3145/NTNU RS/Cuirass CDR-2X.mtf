@@ -1,12 +1,18 @@
-Version:1.1
-Cuirass
-CDR-2X
+chassis:Cuirass
+model:CDR-2X
+mul id:6921
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3134
-Source:RS 3145 NT NU
+Source:Record Sheets: 3145 New Tech New Upgrades
 Rules Level:3
+role:Sniper
+
+
+
+quirk:easy_maintain
+
 
 Mass:40
 Engine:240 XL Engine(IS)

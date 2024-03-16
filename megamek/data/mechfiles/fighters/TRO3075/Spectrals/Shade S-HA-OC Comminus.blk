@@ -20,6 +20,10 @@ Shade
 S-HA-OC Comminus
 </Model>
 
+<mul id:>
+5032
+</mul id:>
+
 <year>
 3072
 </year>
@@ -31,6 +35,10 @@ S-HA-OC Comminus
 <type>
 IS Level 3
 </type>
+
+<role>
+Fast Dogfighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -113,7 +121,7 @@ ISCASE:OMNI
 </Fuselage Equipment>
 
 <source>
-TRO 3075 - Jihad
+TRO: 3075
 </source>
 
 <tonnage>

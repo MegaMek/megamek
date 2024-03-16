@@ -20,6 +20,10 @@ Mobile Headquarters
 (LRM)
 </Model>
 
+<mul id:>
+2200
+</mul id:>
+
 <year>
 2620
 </year>
@@ -27,6 +31,10 @@ Mobile Headquarters
 <type>
 IS Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Wheeled
@@ -70,7 +78,7 @@ LRM 10
 </Turret Equipment>
 
 <source>
-TRO 3039 - Star League
+TRO: 3039
 </source>
 
 <tonnage>

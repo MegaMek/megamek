@@ -1,0 +1,137 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+SupportTank
+</UnitType>
+
+<Name>
+Auxiliary Defense Tank
+</Name>
+
+<Model>
+ADT-2
+</Model>
+
+<mul id:>
+8303
+</mul id:>
+
+<year>
+2900
+</year>
+
+<originalBuildYear>
+2900
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<transporters>
+pillionseats:5.0:0
+</transporters>
+
+<cruiseMP>
+3
+</cruiseMP>
+
+<engine_type>
+1
+</engine_type>
+
+<internal_type>
+-1
+</internal_type>
+
+<armor>
+14
+10
+10
+8
+10
+</armor>
+
+<Body Equipment>
+Advanced Fire Control
+IS Ammo MG - Full
+IS Ammo AC/5
+IS Ammo AC/5
+</Body Equipment>
+
+<Front Equipment>
+Machine Gun
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+Autocannon/5
+</Turret Equipment>
+
+<barrating>
+6
+</barrating>
+
+<structural_tech_rating>
+4
+</structural_tech_rating>
+
+<engine_tech_rating>
+4
+</engine_tech_rating>
+
+<armor_tech_rating>
+2
+</armor_tech_rating>
+
+<manufacturer>
+Various
+</manufacturer>
+
+<primaryFactory>
+Granada
+</primaryFactory>
+
+<systemManufacturers>
+ENGINE:Colonial Agricultural Standard 85
+ARMOR:Granada Guard Mk 2
+COMMUNICATIONS:Various
+TARGETING:Various
+</systemManufacturers>
+
+<source>
+Touring the Stars: Granada
+</source>
+
+<tonnage>
+28.0
+</tonnage>
+
+<fuel>
+1.0
+</fuel>
+
+<fuelType>
+PETROCHEMICALS
+</fuelType>
+

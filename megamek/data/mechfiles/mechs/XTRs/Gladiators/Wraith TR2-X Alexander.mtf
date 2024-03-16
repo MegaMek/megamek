@@ -1,11 +1,19 @@
-Version:1.1
-Wraith
-TR2-X 'Alexander'
+chassis:Wraith
+model:TR2-X 'Alexander'
+mul id:3590
 
 Config:Biped
 TechBase:Mixed (IS Chassis)
 Era:3076
 Rules Level:4
+role:Skirmisher
+Source:XTR: Gladiators
+
+
+
+quirk:ubiquitous_is
+quirk:difficult_maintain
+
 
 Mass:55
 Engine:385 XL Fusion Engine (Clan)
@@ -127,3 +135,20 @@ Lower Leg Actuator
 Foot Actuator
 Endo-Steel
 Endo-Steel
+
+overview:The Wraith is a 'Mech that, when properly employed, can wreak havoc on an enemy with its astounding speed and maneuverability. 
+
+capabilities:It is built around a massive LTV 385 XL engine that allows it to reach speeds of just under 119 km/h. The 'Mech is also fitted with seven CurtissJet 55 jump jets which allow it to jump up to two hundred and ten meters, giving it the ability to outmaneuver most BattleMechs in existence, and also allowing the Wraith to quickly traverse any rough terrain. The 'Mech's speed, firepower, and decent armor make the Wraith a considerable threat to many 'Mechs – some being almost twice its weight.
+
+deployment:Developed under the guidance of Angelique Claw for Zellbrigen Stables, the Wraith Alexander combines Experimental Technology from the Clans and Inner Sphere to create a unique 'Mech. The use of a Clan-made XL engine keeps the speed high, and allows for the installation of more equipment. The jump jets, Endo Steel structure, and Snub-Nose PPC are of Inner Sphere manufacture, but the two ER Medium Lasers, ferro-fibrous armor, and twin Partial Wings were built by the Clans. The partial wings increase the Wraith's jump range to 270 meters.
+
+history:The Wraith marked Curtiss Militech's entry into BattleMech production. When the design was announced, many felt that the design would be little more than a walking water cooler. What the critics got was a shock. Following the destruction of its sole factory, Curtiss Hydroponics announced its withdrawal from the military market altogether and the sale of its Curtiss Militech assets. By 3085, Hellespont Industrials have expressed interest in the Wraith; and by 3145 Production had been ongoing at one of Hellespont Industrials locations in the Sian Commonality for Capellan use.
+
+manufacturer:Refit
+primaryfactory:Refit
+systemmanufacturer:CHASSIS:Curtiss Wraith Endo
+systemmanufacturer:ENGINE:385 JF Extralight
+systemmanufacturer:ARMOR:Unknown
+systemmanufacturer:JUMPJET:CurtissJet 55
+systemmanufacturer:COMMUNICATIONS:CurtissComm Mk I
+systemmanufacturer:TARGETING:Dynatec 2780

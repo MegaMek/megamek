@@ -16,9 +16,13 @@ SupportTank
 Durandel-British 'Blue Nova' Convertible
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+4105
+</mul id:>
 
 <year>
 3067
@@ -31,6 +35,10 @@ Durandel-British 'Blue Nova' Convertible
 <type>
 IS Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Wheeled
@@ -81,7 +89,7 @@ ConvertibleChassisMod
 </structural_tech_rating>
 
 <source>
-TRO VAr - Civil War
+TRO: Vehicle Annex (Revised)
 </source>
 
 <tonnage>

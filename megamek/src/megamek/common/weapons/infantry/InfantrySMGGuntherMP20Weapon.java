@@ -47,7 +47,7 @@ public class InfantrySMGGuntherMP20Weapon extends InfantryWeapon {
 		ammoCost = 5;
 		shots = 30;
 		bursts = 6;
-		rulesRefs = "273,TM";
+		rulesRefs = "273, TM";
 		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3005, 3007, 3025, DATE_NONE, DATE_NONE)
 		        .setISApproximate(true, false, false, false, false)
 		        .setPrototypeFactions(F_LC)

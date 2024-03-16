@@ -20,6 +20,10 @@ Epona Pursuit Tank
 C
 </Model>
 
+<mul id:>
+993
+</mul id:>
+
 <year>
 2884
 </year>
@@ -27,6 +31,10 @@ C
 <type>
 Clan Level 3
 </type>
+
+<role>
+Striker
+</role>
 
 <motion_type>
 Hover
@@ -89,7 +97,7 @@ CLStreakSRM6:OMNI
 </Turret Equipment>
 
 <source>
-Succession Wars
+TRO: 3060
 </source>
 
 <tonnage>

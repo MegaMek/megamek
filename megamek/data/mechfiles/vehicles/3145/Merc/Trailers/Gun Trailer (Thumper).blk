@@ -20,6 +20,10 @@ Gun Trailer
 (Thumper)
 </Model>
 
+<mul id:>
+6533
+</mul id:>
+
 <year>
 3096
 </year>
@@ -31,6 +35,10 @@ Gun Trailer
 <type>
 IS Level 3
 </type>
+
+<role>
+Missile Boat
+</role>
 
 <motion_type>
 Wheeled
@@ -90,7 +98,7 @@ ISThumper
 </Turret Equipment>
 
 <source>
-TRO 3145 Mercenaries - Early Republic
+TRO: 3145 Mercenaries
 </source>
 
 <tonnage>

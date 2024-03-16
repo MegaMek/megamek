@@ -20,6 +20,10 @@ Mars Assault Vehicle
 (ATM)
 </Model>
 
+<mul id:>
+2080
+</mul id:>
+
 <year>
 3065
 </year>
@@ -31,6 +35,10 @@ Mars Assault Vehicle
 <type>
 Clan Level 3
 </type>
+
+<role>
+Juggernaut
+</role>
 
 <motion_type>
 Tracked
@@ -111,7 +119,7 @@ CLMG
 </Turret Equipment>
 
 <source>
-TRO 3060 - Civil War
+TRO: 3060
 </source>
 
 <tonnage>

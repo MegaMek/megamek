@@ -16,9 +16,13 @@ SmallCraft
 Escape Pod
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+4134
+</mul id:>
 
 <year>
 2647
@@ -31,6 +35,10 @@ Escape Pod
 <type>
 IS Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Aerodyne
@@ -137,3 +145,7 @@ cargobay:0.48:0:1
 <escape_pod>
 0
 </escape_pod>
+
+<source>
+TRO: 3057 Revised
+</source>

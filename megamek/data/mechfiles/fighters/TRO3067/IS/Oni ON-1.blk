@@ -20,6 +20,10 @@ Oni
 ON-1
 </Model>
 
+<mul id:>
+4747
+</mul id:>
+
 <year>
 3066
 </year>
@@ -31,6 +35,10 @@ ON-1
 <type>
 IS Level 2
 </type>
+
+<role>
+Fast Dogfighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -103,7 +111,7 @@ IS MRM 30 Ammo
 </Fuselage Equipment>
 
 <source>
-TRO 3067 - Civil War
+TRO: 3067
 </source>
 
 <tonnage>

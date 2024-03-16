@@ -1,0 +1,169 @@
+chassis:Gladiator
+clanname:Executioner
+model:I
+mul id:6840
+
+Config:Biped Omnimech
+techbase:Clan
+era:3101
+source:Rec Guide:ilClan #9
+rules level:2
+role:Skirmisher
+
+quirk:distracting
+
+
+mass:95
+engine:380 XL (Clan) Engine(IS)
+structure:IS Standard
+myomer:Standard
+
+heat sinks:22 Double
+base chassis heat sinks:15
+walk mp:4
+jump mp:4
+
+armor:Ferro-Fibrous(Clan)
+LA armor:32
+RA armor:32
+LT armor:20
+RT armor:20
+CT armor:37
+HD armor:9
+LL armor:40
+RL armor:40
+RTL armor:10
+RTR armor:10
+RTC armor:9
+
+Weapons:4
+Streak SRM 6, Left Arm
+Streak SRM 6, Left Arm
+Improved Heavy Large Laser, Right Arm
+Improved Heavy Large Laser, Right Arm
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLStreakSRM6 (omnipod)
+CLStreakSRM6 (omnipod)
+CLStreakSRM6 (omnipod)
+CLStreakSRM6 (omnipod)
+Clan Streak SRM 6 Ammo (omnipod)
+Clan Ferro-Fibrous
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+CLImprovedHeavyLargeLaser (omnipod)
+CLImprovedHeavyLargeLaser (omnipod)
+CLImprovedHeavyLargeLaser (omnipod)
+CLImprovedHeavyLargeLaser (omnipod)
+CLImprovedHeavyLargeLaser (omnipod)
+CLImprovedHeavyLargeLaser (omnipod)
+Clan Ferro-Fibrous
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLMASC
+CLMASC
+CLMASC
+CLMASC
+CLTargeting Computer (omnipod)
+CLTargeting Computer (omnipod)
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLECMSuite (omnipod)
+Supercharger (Clan) (omnipod)
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+
+Head:
+Life Support
+Sensors
+Cockpit
+Clan Ferro-Fibrous
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+overview:Fast and powerful, the Executioner, known as the Gladiator in the Inner Sphere, is an assault OmniMech often deployed by Clan Ghost Bear. Though originally produced by Clan Ghost Bear, design schematics for the Executioner were actually acquired in a trial with Clan Burrock. Using a massive Heavy Force 380 XL Engine, the Executioner has a top speed of 64.8 km/h. A MASC system enhances the top speed to 86.4 km/h (albeit only in short bursts), and four permanently mounted Pryzhok WM10 jump jets give the 'Mech the ability to propel itself 120 meters into the air. This unusual emphasis on speed gives the Executioner unmatched speed for its weight class, as it is often capable of keeping up with 'Mechs twenty or thirty tons lighter than itself. The Executioner also carries thirteen and a half tons of Ferro-Fibrous armor, which is below average for its weight class, but generally adequate. Sixteen double heat sinks are mounted to cool the 'Mech down. 
+
+capabilities:This variant carries a pair of Improved Heavy Large Lasers in the right arm. These are supplemented by twin Streak SRM-6 launchers in the left arm. This version also adds an ECM Suite to disrupt enemy electronics, and uses a supercharger to reach a top speed of 100km/h. Twenty-two double heat sinks are installed as well.
+
+deployment:Even though the design has not been used since the 3060s, the Home Clans withdrew it from use after the Wars of Reaving, possibly due to its reputation with the Spheroid Clans like Clan Ghost Bear.
+manufacturer:Alshain BattleWorx 
+primaryfactory:Alshain
+systemmanufacturer:CHASSIS:Clan Series Assault SXE
+systemmanufacturer:ENGINE:380 Heavy Force XL
+systemmanufacturer:ARMOR:Arcadia Compound Delta VII Ferro-Fibrous
+systemmanufacturer:JUMPJET:Pryzhok WM 10
+systemmanufacturer:COMMUNICATIONS:Dash-2 Optima
+systemmanufacturer:TARGETING:Hakkøn-Morris LAP

@@ -20,6 +20,10 @@ Overlord
 (3056)
 </Model>
 
+<mul id:>
+4773
+</mul id:>
+
 <year>
 3056
 </year>
@@ -31,6 +35,10 @@ Overlord
 <type>
 IS Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Spheroid
@@ -139,7 +147,7 @@ Medium Laser
 </structural_integrity>
 
 <source>
-TRO 3057R - Clan Invasion
+TRO: 3057 Revised
 </source>
 
 <tonnage>

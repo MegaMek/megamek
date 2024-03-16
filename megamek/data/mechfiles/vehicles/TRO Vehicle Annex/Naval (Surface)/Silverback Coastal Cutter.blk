@@ -16,9 +16,13 @@ SupportTank
 Silverback Coastal Cutter
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+5062
+</mul id:>
 
 <year>
 3058
@@ -31,6 +35,10 @@ Silverback Coastal Cutter
 <type>
 IS Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Hydrofoil
@@ -93,7 +101,7 @@ Searchlight
 </structural_tech_rating>
 
 <source>
-TRO VAr - Clan Invasion
+TRO: Vehicle Annex (Revised)
 </source>
 
 <tonnage>

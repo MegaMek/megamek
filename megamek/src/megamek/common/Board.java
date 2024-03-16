@@ -14,8 +14,8 @@
  */
 package megamek.common;
 
-import megamek.common.Building.BasementType;
 import megamek.common.annotations.Nullable;
+import megamek.common.enums.BasementType;
 import megamek.common.event.BoardEvent;
 import megamek.common.event.BoardListener;
 import megamek.common.util.fileUtils.MegaMekFile;
@@ -23,6 +23,8 @@ import org.apache.logging.log4j.LogManager;
 
 import java.io.*;
 import java.util.*;
+
+import static java.util.stream.Collectors.toList;
 
 public class Board implements Serializable {
     //region Variable Declarations
@@ -43,12 +45,13 @@ public class Board implements Serializable {
     public static final int START_W = 8;
     public static final int START_EDGE = 9;
     public static final int START_CENTER = 10;
-    
-    //Board Dimensions
-    //Used for things like artillery rules that reference the standard mapsheet dimensions
+    public static final int NUM_ZONES = 11;
+
+    // Board Dimensions
+    // Used for things like artillery rules that reference the standard mapsheet dimensions
     public static final int DEFAULT_BOARD_HEIGHT = 17;
     public static final int DEFAULT_BOARD_WIDTH = 16;
-    //Variable board width and height. Used for most everything else since we're not restricted to paper map sizes
+    // Variable board width and height. Used for most everything else since we're not restricted to paper map sizes
     protected int width;
     protected int height;
 
@@ -59,8 +62,7 @@ public class Board implements Serializable {
 
     private static final String[] typeNames = { "Ground", "Low Atmosphere", "Space" };
 
-    // Min and Max elevation values for when they are undefined (since you cant
-    // set an int to null).
+    // Min and Max elevation values for when they are undefined (since you can't set an int to null).
     private static final int UNDEFINED_MIN_ELEV = 10000;
     private static final int UNDEFINED_MAX_ELEV = -10000;
 
@@ -431,35 +433,35 @@ public class Board implements Serializable {
 
         // Always make the coords of the hex match the actual position on the board
         hex.setCoords(new Coords(x, y));
-        
+
         hex.clearExits();
         for (int i = 0; i < 6; i++) {
             Hex other = getHexInDir(x, y, i);
             hex.setExits(other, i, roadsAutoExit);
         }
-        
+
         // Internally handled terrain (inclines, cliff-bottoms)
         initializeAutomaticTerrain(x, y, /* useInclines: */ true);
-        
+
         // Add woods/jungle elevation where none was saved
         initializeFoliageElev(x, y);
-        
+
         if (event) {
             processBoardEvent(new BoardEvent(this, new Coords(x, y), BoardEvent.BOARD_CHANGED_HEX));
         }
     }
-    
+
     /** Adds the FOLIAGE_ELEV terrain when none is present. */
     private void initializeFoliageElev(int x, int y) {
         Hex hex = getHex(x, y);
 
         // If the foliage elevation is present or the hex doesn't even have foliage,
         // nothing needs to be done
-        if (hex.containsTerrain(Terrains.FOLIAGE_ELEV) || 
+        if (hex.containsTerrain(Terrains.FOLIAGE_ELEV) ||
                 (!hex.containsTerrain(Terrains.WOODS) && !hex.containsTerrain(Terrains.JUNGLE))) {
             return;
         }
-        
+
         // Foliage is missing, therefore add it with the standard TW values
         // elevation 3 for Ultra Woods/Jungle and 2 for Light/Heavy
         if (hex.terrainLevel(Terrains.WOODS) == 3 || hex.terrainLevel(Terrains.JUNGLE) == 3) {
@@ -468,9 +470,9 @@ public class Board implements Serializable {
             hex.addTerrain(new Terrain(Terrains.FOLIAGE_ELEV, 2));
         }
     }
-    
-    /** 
-     * Checks all hex edges of the hex at (x, y) if automatically handled 
+
+    /**
+     * Checks all hex edges of the hex at (x, y) if automatically handled
      * terrains such as inclines must be placed or removed.
      * @param x The hex X-coord.
      * @param y The hex Y-coord.
@@ -488,7 +490,7 @@ public class Board implements Serializable {
 
         // Get the currently set cliff-tops for correction. When exits
         // are not specified, the cliff-tops are removed.
-        if (hex.containsTerrain(Terrains.CLIFF_TOP) 
+        if (hex.containsTerrain(Terrains.CLIFF_TOP)
                 && hex.getTerrain(Terrains.CLIFF_TOP).hasExitsSpecified()) {
             origCliffTopExits = hex.getTerrain(Terrains.CLIFF_TOP).getExits();
         }
@@ -514,26 +516,26 @@ public class Board implements Serializable {
 
             // Should there be an incline top?
             if (((levelDiff == 1) || (levelDiff == 2))
-                    && !cliffTopExitInThisDir 
+                    && !cliffTopExitInThisDir
                     && !inWater
                     && !towardsWater) {
                 inclineTopExits += (1 << i);
             }
-            
+
             if (towardsWater
                     && !inWater
-                    && !cliffTopExitInThisDir 
+                    && !cliffTopExitInThisDir
                     && ((levelDiffToWaterSurface == 1) || levelDiffToWaterSurface == 2)) {
                 inclineTopExits += (1 << i);
             }
 
             // Should there be a high level cliff top?
-            if (levelDiff > 2 
+            if (levelDiff > 2
                     && !inWater
                     && (!towardsWater || levelDiffToWaterSurface > 2)) {
                 highInclineTopExits += (1 << i);
             }
-            
+
             // Should there be an incline bottom or a cliff bottom?
             // This needs to check for a cliff-top in the other hex and
             // in the opposite direction
@@ -565,7 +567,7 @@ public class Board implements Serializable {
         }
     }
 
-    /** 
+    /**
      * Adds automatically handled terrain such as inclines when the given
      * exits value is not 0, otherwise removes it.
      */
@@ -576,7 +578,7 @@ public class Board implements Serializable {
             hex.removeTerrain(terrainType);
         }
     }
-    
+
     /**
      * Rebuilds automatic terrains for the whole board.
      * @param useInclines Indicates whether to use inclines on hex exits.
@@ -604,22 +606,38 @@ public class Board implements Serializable {
     /**
      * Determines whether this Board "contains" the specified Coords.
      *
-     * @param c the Coords.
+     * @param coords the Coords.
      * @return <code>true</code> if the board contains the specified coords
      */
-    public boolean contains(Coords c) {
-        if (c == null) {
-            return false;
-        }
-        return contains(c.getX(), c.getY());
+    public boolean contains(@Nullable Coords coords) {
+        return coords != null && contains(coords.getX(), coords.getY());
     }
 
     /**
-     * @param c the Coords, which may be null
+     * Returns the Hex at the given Coords, both of which may be null.
+     *
+     * @param coords the Coords to look for the Hex
      * @return the Hex at the specified Coords, or null if there is not a hex there
      */
-    public @Nullable Hex getHex(final @Nullable Coords c) {
-        return (c == null) ? null : getHex(c.getX(), c.getY());
+    public @Nullable Hex getHex(final @Nullable Coords coords) {
+        return (coords == null) ? null : getHex(coords.getX(), coords.getY());
+    }
+
+    /**
+     * Returns a list of Hexes at the given coords. The list will never be null but may be empty
+     * depending on the given Coords collection. If the given Coords collection is null, the returned
+     * list will be empty.
+     *
+     * @param coords the Coords to query
+     * @return the Hexes at the specified Coords
+     */
+    public List<Hex> getHexes(final @Nullable Collection<Coords> coords) {
+        if (coords == null) {
+            LogManager.getLogger().warn("Method called with null Coords list!");
+            return new ArrayList<>();
+        } else {
+            return coords.stream().map(this::getHex).filter(Objects::nonNull).collect(toList());
+        }
     }
 
     /**
@@ -672,6 +690,12 @@ public class Board implements Serializable {
             Hex currHex = hexIter.next();
             int x = currCoord.getX();
             int y = currCoord.getY();
+
+            // Client may have sent off-board coordinates or null info; ignore.
+            if (!contains(x,y) || null == currHex){
+                continue;
+            }
+
             data[(y * width) + x] = currHex;
             initializeHex(x, y);
 
@@ -720,9 +744,9 @@ public class Board implements Serializable {
     public static boolean boardIsSize(final File filepath, final BoardDimensions size) {
         int boardx = 0;
         int boardy = 0;
-        try (Reader r = new BufferedReader(new FileReader(filepath))) {
+        try (FileReader fr = new FileReader(filepath); BufferedReader br = new BufferedReader(fr)) {
             // read board, looking for "size"
-            StreamTokenizer st = new StreamTokenizer(r);
+            StreamTokenizer st = new StreamTokenizer(br);
             st.eolIsSignificant(true);
             st.commentChar('#');
             st.quoteChar('"');
@@ -754,9 +778,9 @@ public class Board implements Serializable {
     public static BoardDimensions getSize(final File filepath) {
         int boardx = 0;
         int boardy = 0;
-        try (Reader r = new BufferedReader(new FileReader(filepath))) {
+        try (FileReader fr = new FileReader(filepath); BufferedReader br = new BufferedReader(fr)) {
             // read board, looking for "size"
-            StreamTokenizer st = new StreamTokenizer(r);
+            StreamTokenizer st = new StreamTokenizer(br);
             st.eolIsSignificant(true);
             st.commentChar('#');
             st.quoteChar('"');
@@ -775,13 +799,13 @@ public class Board implements Serializable {
         }
         return new BoardDimensions(boardx, boardy);
     }
-    
+
     /** Inspects the given board file and returns a set of its tags. */
     public static Set<String> getTags(final File filepath) {
         var result = new HashSet<String>();
-        try (Reader r = new BufferedReader(new FileReader(filepath))) {
+        try (FileReader fr = new FileReader(filepath); BufferedReader br = new BufferedReader(fr)) {
             // read board, looking for "size"
-            StreamTokenizer st = new StreamTokenizer(r);
+            StreamTokenizer st = new StreamTokenizer(br);
             st.eolIsSignificant(true);
             st.commentChar('#');
             st.quoteChar('"');
@@ -801,7 +825,7 @@ public class Board implements Serializable {
         }
         return result;
     }
-    
+
     public static boolean isValid(String board) {
         Board tempBoard = new Board(16, 17);
         if (!board.endsWith(".board")) {
@@ -814,64 +838,73 @@ public class Board implements Serializable {
         } catch (IOException ex) {
             return false;
         }
-        
+
         return tempBoard.isValid();
     }
 
     /**
-     * Can the player deploy an entity here? There are no canon rules for the
-     * deployment phase (?!). I'm using 3 hexes from map edge.
+     * Can the given player deploy at these coordinates?
      */
-    public boolean isLegalDeployment(Coords c, int nDir) {
+    public boolean isLegalDeployment(Coords c, Player p) {
+        return isLegalDeployment(c, p.getStartingPos(), p.getStartWidth(), p.getStartOffset(), p.getStartingAnyNWx(), p.getStartingAnyNWy(), p.getStartingAnySEx(), p.getStartingAnySEy());
+    }
+
+    /**
+     * Can the given entity be deployed at these coordinates
+     */
+    public boolean isLegalDeployment(Coords c, Entity e) {
+        if (e == null) {
+            return false;
+        }
+
+        return isLegalDeployment(c, e.getStartingPos(), e.getStartingWidth(), e.getStartingOffset(), e.getStartingAnyNWx(), e.getStartingAnyNWy(), e.getStartingAnySEx(), e.getStartingAnySEy());
+    }
+
+    /**
+     * Can an object be deployed at these coordinates, given a starting zone, width of starting zone and offset from edge of board?
+     */
+    public boolean isLegalDeployment(Coords c, int zoneType, int startingWidth, int startingOffset, int startingAnyNWx, int startingAnyNWy, int startingAnySEx, int startingAnySEy) {
         if ((c == null) || !contains(c)) {
             return false;
         }
 
-        int nLimit = 3;
-        // int nDir = en.getStartingPos();
-        int minx = 0;
-        int maxx = width;
-        int miny = 0;
-        int maxy = height;
-        if (nDir > 10) {
-            // Deep deployment, the board is effectively smaller
-            nDir -= 10;
-            minx = width / 5;
-            maxx -= width / 5;
-            miny = height / 5;
-            maxy -= height / 5;
-            if ((c.getX() < minx) || (c.getY() < miny) || (c.getX() >= maxx) || (c.getY() >= maxy)) {
-                return false;
-            }
-        }
-        switch (nDir) {
+        int nLimit = startingWidth;
+        int minx = startingOffset;
+        int maxx = width - startingOffset;
+        int miny = startingOffset;
+        int maxy = height - startingOffset;
+
+        switch (zoneType) {
             case START_ANY:
-                return true;
+                return (((startingAnyNWx == Entity.STARTING_ANY_NONE) || (c.getX() >= startingAnyNWx))
+                        && ((startingAnySEx == Entity.STARTING_ANY_NONE) || (c.getX() <= startingAnySEx))
+                        && ((startingAnyNWy == Entity.STARTING_ANY_NONE) || (c.getY() >= startingAnyNWy))
+                        && ((startingAnySEy == Entity.STARTING_ANY_NONE) || (c.getY() <= startingAnySEy)));
             case START_NW:
-                return ((c.getX() < (minx + nLimit)) && (c.getX() >= minx) && (c.getY() < (height / 2)))
-                        || ((c.getY() < (miny + nLimit)) && (c.getY() >= miny) && (c.getX() < (width / 2)));
+                return ((c.getX() < (minx + nLimit)) && (c.getX() >= minx) && (c.getY() >= miny) && (c.getY() < (height / 2)))
+                        || ((c.getY() < (miny + nLimit)) && (c.getY() >= miny) && (c.getX() >= minx) && (c.getX() < (width / 2)));
             case START_N:
                 return (c.getY() < (miny + nLimit)) && (c.getY() >= miny);
             case START_NE:
-                return ((c.getX() > (maxx - nLimit)) && (c.getX() < maxx) && (c.getY() < (height / 2)))
-                        || ((c.getY() < (miny + nLimit)) && (c.getY() >= miny) && (c.getX() > (width / 2)));
+                return ((c.getX() >= (maxx - nLimit)) && (c.getX() < maxx) && (c.getY() >= miny) && (c.getY() < (height / 2)))
+                        || ((c.getY() < (miny + nLimit)) && (c.getY() >= miny) && (c.getX() < maxx) && (c.getX() > (width / 2)));
             case START_E:
                 return (c.getX() >= (maxx - nLimit)) && (c.getX() < maxx);
             case START_SE:
-                return ((c.getX() >= (maxx - nLimit)) && (c.getX() < maxx) && (c.getY() > (height / 2)))
-                        || ((c.getY() >= (maxy - nLimit)) && (c.getY() < maxy) && (c.getX() > (width / 2)));
+                return ((c.getX() >= (maxx - nLimit)) && (c.getX() < maxx) && (c.getY() < maxy) && (c.getY() > (height / 2)))
+                        || ((c.getY() >= (maxy - nLimit)) && (c.getY() < maxy) && (c.getX() < maxx) && (c.getX() > (width / 2)));
             case START_S:
                 return (c.getY() >= (maxy - nLimit)) && (c.getY() < maxy);
             case START_SW:
-                return ((c.getX() < (minx + nLimit)) && (c.getX() >= minx) && (c.getY() > (height / 2)))
-                        || ((c.getY() >= (maxy - nLimit)) && (c.getY() < maxy) && (c.getX() < (width / 2)));
+                return ((c.getX() < (minx + nLimit)) && (c.getX() >= minx) && (c.getY() < maxy) && (c.getY() > (height / 2)))
+                        || ((c.getY() >= (maxy - nLimit)) && (c.getY() < maxy) && (c.getX() >= minx) && (c.getX() < (width / 2)));
             case START_W:
                 return (c.getX() < (minx + nLimit)) && (c.getX() >= minx);
             case START_EDGE:
-                return ((c.getX() < (minx + nLimit)) && (c.getX() >= minx))
-                        || ((c.getY() < (miny + nLimit)) && (c.getY() >= miny))
-                        || ((c.getX() >= (maxx - nLimit)) && (c.getX() < maxx))
-                        || ((c.getY() >= (maxy - nLimit)) && (c.getY() < maxy));
+                return ((c.getX() < (minx + nLimit)) && (c.getX() >= minx) && (c.getY() >= miny) && (c.getY() < maxy))
+                        || ((c.getY() < (miny + nLimit)) && (c.getY() >= miny) && (c.getX() >= minx) && (c.getX() < maxx))
+                        || ((c.getX() >= (maxx - nLimit)) && (c.getX() < maxx) && (c.getY() >= miny) && (c.getY() < maxy))
+                        || ((c.getY() >= (maxy - nLimit)) && (c.getY() < maxy) && (c.getX() >= minx) && (c.getX() < maxx));
             case START_CENTER:
                 return (c.getX() >= (width / 3)) && (c.getX() <= ((2 * width) / 3)) && (c.getY() >= (height / 3))
                         && (c.getY() <= ((2 * height) / 3));
@@ -927,8 +960,9 @@ public class Board implements Serializable {
         Hex[] nd = new Hex[0];
         int index = 0;
         resetStoredElevation();
-        try (Reader r = new BufferedReader(new InputStreamReader(is))) {
-            StreamTokenizer st = new StreamTokenizer(r);
+        try (InputStreamReader isr = new InputStreamReader(is);
+             BufferedReader br = new BufferedReader(isr)) {
+            StreamTokenizer st = new StreamTokenizer(br);
             st.eolIsSignificant(true);
             st.commentChar('#');
             st.quoteChar('"');
@@ -1037,7 +1071,6 @@ public class Board implements Serializable {
         } else if (errBuff == null) {
             LogManager.getLogger().error("Invalid board data!");
         }
-
     }
 
     public boolean isValid() {
@@ -1060,30 +1093,31 @@ public class Board implements Serializable {
                 }
                 StringBuffer currBuff = new StringBuffer();
                 boolean valid = hex.isValid(currBuff);
-                
-                // Multi-hex problems 
+
+                // Multi-hex problems
                 // A building hex must only have exits to other building hexes of the same Building Type and Class
                 if (hex.containsTerrain(Terrains.BUILDING) && hex.getTerrain(Terrains.BUILDING).hasExitsSpecified()) {
                     for (int dir = 0; dir < 6; dir++) {
                         Hex adjHex = getHexInDir(x, y, dir);
-                        if ((adjHex != null) 
-                                && adjHex.containsTerrain(Terrains.BUILDING) 
+                        if ((adjHex != null)
+                                && adjHex.containsTerrain(Terrains.BUILDING)
                                 && hex.containsTerrainExit(Terrains.BUILDING, dir)) {
                             if (adjHex.getTerrain(Terrains.BUILDING).getLevel() != hex.getTerrain(Terrains.BUILDING).getLevel()) {
                                 valid = false;
                                 currBuff.append("Building has an exit to a building of another Building Type (Light, Medium...).\n");
                             }
-                            if (hex.containsTerrain(Terrains.BLDG_CLASS) 
-                                    && ((adjHex.containsTerrain(Terrains.BLDG_CLASS) 
-                                            && (adjHex.getTerrain(Terrains.BLDG_CLASS).getLevel() != hex.getTerrain(Terrains.BLDG_CLASS).getLevel()))
-                                            || (!adjHex.containsTerrain(Terrains.BLDG_CLASS)))) {
+                            int thisClass = hex.containsTerrain(Terrains.BLDG_CLASS) ?
+                                    hex.getTerrain(Terrains.BLDG_CLASS).getLevel() : 0;
+                            int adjClass = adjHex.containsTerrain(Terrains.BLDG_CLASS) ?
+                                    adjHex.getTerrain(Terrains.BLDG_CLASS).getLevel() : 0;
+                            if (thisClass != adjClass) {
                                 valid = false;
                                 currBuff.append("Building has an exit in direction ").append(dir).append(" to a building of another Building Class.\n");
                             }
                         }
                     }
                 }
-                
+
                 // Return early if we aren't logging errors
                 if (!valid && (errBuff == null)) {
                     return false;
@@ -1104,7 +1138,7 @@ public class Board implements Serializable {
      */
     public void save(OutputStream os) {
         try (Writer w = new OutputStreamWriter(os)) {
-            w.write("size " + width + " " + height + "\r\n");
+            w.write("size " + width + ' ' + height + "\r\n");
             if (!roadsAutoExit) {
                 w.write("option exit_roads_to_pavement false\r\n");
             }
@@ -1149,10 +1183,6 @@ public class Board implements Serializable {
                 hexBuff.append("\"\r\n");
 
                 w.write(hexBuff.toString());
-                // w.write("hex \"" + hex.getTerrain().name + "\" " +
-                // Terrain.TERRAIN_NAMES[hex.getTerrainType()] + " \"" +
-                // hex.getTerrain().picfile + "\" " + hex.getElevation() +
-                // "\r\n");
             }
             w.write("end\r\n");
             // make sure it's written
@@ -1191,7 +1221,6 @@ public class Board implements Serializable {
 
         // Update the tracker.
         tracker.add(round, hits);
-
     }
 
     /**
@@ -1541,7 +1570,7 @@ public class Board implements Serializable {
     }
 
     /**
-     * @return an <code>Hashtable</code of <code>InfernoTrackers</code> on the board.
+     * @return an <code>Hashtable</code> of <code>InfernoTrackers</code> on the board.
      */
     public Hashtable<Coords, InfernoTracker> getInfernos() {
         return infernos;
@@ -1569,7 +1598,7 @@ public class Board implements Serializable {
         for (Building b : buildings) {
             for (Enumeration<Coords> coords = b.getCoords(); coords.hasMoreElements();) {
                 Coords c = coords.nextElement();
-                if (b.getBasement(c) == BasementType.UNKNOWN) {
+                if (b.getBasement(c).isUnknown()) {
                     b.setBasement(c, BasementType.NONE);
                 }
             }
@@ -1775,7 +1804,7 @@ public class Board implements Serializable {
     }
 
     public boolean hasBoardBackground() {
-        return (backgroundPaths != null) && backgroundPaths.size() > 0;
+        return (backgroundPaths != null) && !backgroundPaths.isEmpty();
     }
 
     /**
@@ -1835,13 +1864,13 @@ public class Board implements Serializable {
         }
     }
 
-    /** 
-     * Sets a tileset theme for all hexes of the board. 
+    /**
+     * Sets a tileset theme for all hexes of the board.
      * Passing null as newTheme resets the theme to the theme specified in the board file.
-     */ 
+     */
     public void setTheme(final @Nullable String newTheme) {
         boolean reset = newTheme == null;
-        
+
         for (int c = 0; c < width * height; c++) {
             if (reset) {
                 data[c].resetTheme();
@@ -1856,9 +1885,9 @@ public class Board implements Serializable {
      * @return true when the given Coord c is on the edge of the board.
      */
     public boolean isOnBoardEdge(Coords c) {
-        return (c.getX() == 0) 
+        return (c.getX() == 0)
                 || (c.getY() == 0)
-                || (c.getX() == (width - 1)) 
+                || (c.getX() == (width - 1))
                 || (c.getY() == (height - 1));
     }
 

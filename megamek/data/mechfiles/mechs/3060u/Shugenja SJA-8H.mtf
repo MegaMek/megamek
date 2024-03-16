@@ -1,12 +1,20 @@
-Version:1.1
-Shugenja
-SJA-8H
+chassis:Shugenja
+model:SJA-8H
+mul id:2943
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3069
-Source:TRO 3060
+Source:TRO: 3060
 Rules Level:2
+role:Brawler
+
+
+
+quirk:cowl
+quirk:hyper_actuator
+quirk:exp_actuator
+
 
 Mass:75
 Engine:300 Light Engine

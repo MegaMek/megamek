@@ -1,12 +1,19 @@
-Version:1.0
-Dervish
-DV-6Mr
+chassis:Dervish
+model:DV-6Mr
+mul id:879
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3073
-Source:Jihad
+source:TRO: 3085
 Rules Level:2
+role:Brawler
+
+
+
+quirk:easy_maintain
+quirk:hyper_actuator
+
 
 Mass:55
 Engine:275 Fusion Engine(IS)
@@ -150,4 +157,20 @@ Jump Jet
 -Empty-
 -Empty-
 
-imagefile:.\data\images\fluff\Mech\3039Dervish.jpg
+overview:At the higher end of the medium class, the Dervish is a highly mobile fire support BattleMech. Commissioned in 2520 by the Lyran Commonwealth
+
+capabilities:The Dervish has a maximum speed of 86.4 km/h, letting it keep up with and support most Succession Wars-era medium and light models. Five jump jets also gives the 'Mech a jumping capability of 150 meters, allowing it to move through rough terrain with ease; these were originally an afterthought in the design but have proven their worth. While regarded by some as a poor man's Archer, the Dervish's speed and weaponry nevertheless allow it to provide quick fire support and free larger 'Mechs for other duties. The design's major flaws lie in its lack of hand actuators and in its armoring. Having no hands limits its usefulness outside of combat and restricts its capability when confronted in close quarters. As for the armor, while sufficient to handle small and medium weapons, it is inadequate against heavier firepower. Commanders cannot overcome the first issue but they can affect the second, albeit at an apparent cost of firepower. The conundrum faced here is that the tradeoff becomes counterintuitive given the 'Mech's primary role in the field.
+
+deployment:A field expedient refit, this Jihad-era upgrade introduced in 3073 takes a standard DV-6M and replaces the SRM-2 launchers with medium pulse lasers. The single heat sinks are traded for double-strength models. 
+
+history:The Dervish was among the first 'Mechs mass produced by the Great Houses and has served as a workhorse for their armies since its introduction. It was eventually commissioned into the Star League Defense Force during the Reunification War, with the Terran Hegemony providing funds to allow their original model Dervishes be upgraded to the DV-6M standard in 2610. Its service in the SLDF ensured the widespread proliferation of the design; even ComStar Explorer Corps missions into the Deep Periphery have found examples of original-model Dervishes among the forces of Nueva Castile. Over the course of the Succession Wars however the 'Mech's numbers decreased due to loss or lack of parts, and all but one of Achernar's factories was destroyed. Though it could still be found throughout the Inner Sphere by the end of the Third Succession War, only the Federated Suns maintained production of the venerable design. The 'Mech remained one of the Suns' most common medium-weight machines, being particularly popular with the Avalon Hussars, and was earmarked for use by several newly forming Federated Commonwealth regiments after the Fourth Succession War. However, interest in the design began to wane in later years, and while the 7D refit of 3047 with its use of lostech generated higher sales, Achernar was forced to heavily lobby House Davion to keep buying them. Ironically the run-up to the FedCom Civil War and the conflict itself was enough to increase demand and prevent the company from retooling its Dervish lines. In the wake of the civil war the Federated Suns continued purchasing upgraded Dervishes while the Lyran Alliance adopted the Griffin. Older models can be found in militia and reserve units in other armies, while small mercenary outfits have found the 'Mech to be durable and easy to maintain. During the Jihad a number of manufacturers began manufacturing "retrotech" 'Mechs using details of the original production standard of primitive 'Mech designs; one of the designs that was reintroduced to service as a part of this retrotech manufacturing production was the original Dervish, with companies such as Sword of the Prophet Enterprises of Algedi producing primitive Dervishes; production at some sites continued beyond 3079.
+
+
+manufacturer:Coalition Armory, Inc., Field Refit
+primaryfactory:Filtvelt, Refit
+systemmanufacturer:CHASSIS:Dorwinion Standard 55T
+systemmanufacturer:ENGINE:Core Tek 275
+systemmanufacturer:ARMOR:Maximillian 105
+systemmanufacturer:JUMPJET:Swingline X-100
+systemmanufacturer:COMMUNICATIONS:Achernar Electronics HID-21
+systemmanufacturer:TARGETING:Federated Hunter Mk. II

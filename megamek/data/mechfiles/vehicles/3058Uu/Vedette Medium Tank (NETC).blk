@@ -2,60 +2,137 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 Tank
 </UnitType>
+
 <Name>
 Vedette Medium Tank
 </Name>
+
 <Model>
 (NETC)
 </Model>
-<Tonnage>
-50
-</Tonnage>
+
+<mul id:>
+3393
+</mul id:>
+
+<year>
+3056
+</year>
+
+<originalBuildYear>
+3056
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<role>
+Sniper
+</role>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<transporters>
+</transporters>
+
 <cruiseMP>
 5
 </cruiseMP>
-<Armor>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
 22
 18
 18
 20
 20
-</Armor>
+</armor>
+
+<Body Equipment>
+IS Ultra AC/5 Ammo
+IS Machine Gun Ammo - Half
+</Body Equipment>
+
+<Front Equipment>
+Machine Gun
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
 <Turret Equipment>
 ISUltraAC5
 </Turret Equipment>
-<Front Equipment>
-ISMachine Gun
-</Front Equipment>
-<Body Equipment>
-ISUltraAC5 Ammo
-ISMG Ammo (100)
-</Body Equipment>
-<type>
-IS Level 2
-</type>
-<year>
-3056
-</year>
-<internal_type>
-0
-</internal_type>
-<armor_type>
-1
-</armor_type>
-<engine_type>
-1
-</engine_type>
-<motion_type>
-Tracked
-</motion_type>
+
+<capabilities>
+Carrying only one anti-vehicle weapon does not make it a less effective vehicle than a newer tank, but does reduce its ability to deal with a wide variety of targets. The Vedette uses its speed to great effect by moving into optimum autocannon range, opening fire, and then retreating as fast as possible to another fire position.
+</capabilities>
+
+<overview>
+The yardstick against which all other tanks are judged, the Vedette medium tank is one of the most popular and common combat vehicles in the Inner Sphere.
+</overview>
+
+<deployment>
+Following Hellespont's lead, NETC also introduced a much more mundane upgrade, also using Ferro-Fibrous armor and an Ultra AC/5, but retaining the original's machine gun, resulting in only a slight increase in overall armor protection.
+</deployment>
+
+<history>
+There will be at least one Vedette wherever there are armored vehicles. It is not unrealistic to believe that this tank exists on every globe in the Inner Sphere.
+</history>
+
+<manufacturer>
+New Earth Trading Company
+</manufacturer>
+
+<primaryFactory>
+New Earth
+</primaryFactory>
+
+<systemManufacturers>
+ENGINE:Locom-Pack 250 InterComBust ICE
+ARMOR:StarSlab-1 Ferro-Fibrous
+COMMUNICATIONS:ComStar Rover
+TARGETING:ComStar Test-2
+</systemManufacturers>
+
 <source>
-Clan Invasion
+TRO: 3058
 </source>
+
+<tonnage>
+50.0
+</tonnage>
+
+<fuelType>
+PETROCHEMICALS
+</fuelType>
+

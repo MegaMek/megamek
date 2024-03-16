@@ -14,6 +14,8 @@
 package megamek.common.weapons.artillery;
 
 import megamek.common.AmmoType;
+import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.Mounted;
 import megamek.common.SimpleTechLevel;
 
 /**
@@ -33,6 +35,7 @@ public class SniperCannon extends ArtilleryCannonWeapon {
         addLookupName("CLSniper Cannon");
         addLookupName("CLSniperArtilleryCannon");
         addLookupName("CL Sniper Cannon");
+        sortingName = "Cannon Arty Sniper";
         heat = 10;
         rackSize = 10;
         ammoType = AmmoType.T_SNIPER_CANNON;
@@ -49,7 +52,7 @@ public class SniperCannon extends ArtilleryCannonWeapon {
         medAV = 10;
         longAV = 10;
         maxRange = RANGE_MED;
-        rulesRefs = "285,TO";
+        rulesRefs = "285, TO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TECH_BASE_ALL)
                 .setTechRating(RATING_B).setAvailability(RATING_X, RATING_F, RATING_E, RATING_D)
@@ -60,4 +63,16 @@ public class SniperCannon extends ArtilleryCannonWeapon {
                 .setPrototypeFactions(F_LC,F_CWF).setProductionFactions(F_LC)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     }
+
+    @Override
+    public double getBattleForceDamage(int range, Mounted fcs) {
+        if (range == AlphaStrikeElement.SHORT_RANGE) {
+            return 0.83;
+        } else if (range == AlphaStrikeElement.MEDIUM_RANGE) {
+            return 1;
+        } else {
+            return 0;
+        }
+    }
+
 }

@@ -14,6 +14,7 @@
 package megamek.common.weapons.other;
 
 import megamek.common.AmmoType;
+import megamek.common.Mounted;
 import megamek.common.SimpleTechLevel;
 import megamek.common.weapons.lasers.LaserWeapon;
 
@@ -49,7 +50,7 @@ public class ISLaserAMS extends LaserWeapon {
         atClass = CLASS_AMS;
         // we need to remove the direct fire flag again, so TC weight is not
         // affected
-        flags = flags.or(F_MECH_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON)
+        flags = flags.or(F_MECH_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON).andNot(F_PROTO_WEAPON)
                 .or(F_AUTO_TARGET).or(F_AMS).or(F_ENERGY).and(F_DIRECT_FIRE.not());
         setModes(new String[] { "On", "Off" });
         setInstantModeSwitch(false);
@@ -64,5 +65,15 @@ public class ISLaserAMS extends LaserWeapon {
                 .setPrototypeFactions(F_FS)
                 .setProductionFactions(F_FS)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
+    }
+
+    @Override
+    public double getBattleForceDamage(int range, Mounted fcs) {
+        return 0;
+    }
+
+    @Override
+    public boolean isAlphaStrikePointDefense() {
+        return true;
     }
 }

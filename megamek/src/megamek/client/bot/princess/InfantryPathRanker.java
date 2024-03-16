@@ -92,7 +92,7 @@ public class InfantryPathRanker extends BasicPathRanker implements IPathRanker {
         // then we want it to move closer. Otherwise, let's avoid charging up to unmoved units,
         // that's not going to end well.
         if (maximumDamageDone <= 0) {
-        	utility -= calculateAggressionMod(movingUnit, pathCopy, game, formula);
+            utility -= calculateAggressionMod(movingUnit, pathCopy, game, formula);
         }
         
         // The further I am from my teammates, the lower this path 
@@ -146,20 +146,20 @@ public class InfantryPathRanker extends BasicPathRanker implements IPathRanker {
         // (unless you're using "dig in" rules, but we're not there yet)
         returnResponse.addToMyEstimatedDamage(
                     ((InfantryFireControl) getFireControl(path.getEntity())).getMaxDamageAtRange(
-						path,
-						blankEnemyPath,
-						range,
-						useExtremeRange,
-						useLOSRange) * damageDiscount);
+                        path,
+                        blankEnemyPath,
+                        range,
+                        useExtremeRange,
+                        useLOSRange) * damageDiscount);
 
         //in general if an enemy can end its position in range, it can hit me
         returnResponse.addToEstimatedEnemyDamage(
-        		((InfantryFireControl) getOwner().getFireControl(FireControlType.Infantry)).getMaxDamageAtRange(
-        				blankEnemyPath,
-        				path,
-        				range,
-        				useExtremeRange,
-        				useLOSRange) * damageDiscount);
+                ((InfantryFireControl) getOwner().getFireControl(FireControlType.Infantry)).getMaxDamageAtRange(
+                        blankEnemyPath,
+                        path,
+                        range,
+                        useExtremeRange,
+                        useLOSRange) * damageDiscount);
         
         //It is especially embarrassing if the enemy can move behind or flank me and then kick me
         if (canFlankAndKick(enemy, behind, leftFlank, rightFlank, myFacing)) {

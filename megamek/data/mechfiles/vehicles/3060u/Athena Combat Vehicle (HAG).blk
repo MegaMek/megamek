@@ -20,6 +20,10 @@ Athena Combat Vehicle
 (HAG)
 </Model>
 
+<mul id:>
+136
+</mul id:>
+
 <year>
 3071
 </year>
@@ -27,6 +31,10 @@ Athena Combat Vehicle
 <type>
 Clan Level 3
 </type>
+
+<role>
+Juggernaut
+</role>
 
 <motion_type>
 Tracked
@@ -89,7 +97,7 @@ CLAPGaussRifle
 </Turret Equipment>
 
 <source>
-Jihad
+TRO: 3060
 </source>
 
 <tonnage>

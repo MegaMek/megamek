@@ -1,85 +1,43 @@
 package megamek.client.ui.swing.unitDisplay;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Image;
-import java.awt.Rectangle;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseEvent;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Vector;
-
-import javax.swing.AbstractListModel;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.DefaultListModel;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.event.MouseInputAdapter;
-
+import megamek.MMConstants;
+import megamek.client.Client;
 import megamek.client.event.MechDisplayEvent;
 import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
-import megamek.client.ui.swing.ClientGUI;
-import megamek.client.ui.swing.FiringDisplay;
-import megamek.client.ui.swing.MovementDisplay;
-import megamek.client.ui.swing.TargetingPhaseDisplay;
-import megamek.client.ui.swing.widget.BackGroundDrawer;
-import megamek.client.ui.swing.widget.PMUtil;
-import megamek.client.ui.swing.widget.PicMap;
-import megamek.client.ui.swing.widget.SkinXMLHandler;
-import megamek.client.ui.swing.widget.UnitDisplaySkinSpecification;
-import megamek.common.Aero;
-import megamek.common.AmmoType;
-import megamek.common.Compute;
-import megamek.common.Configuration;
-import megamek.common.Coords;
-import megamek.common.Entity;
-import megamek.common.FighterSquadron;
-import megamek.common.Game;
-import megamek.common.Hex;
-import megamek.common.ILocationExposureStatus;
-import megamek.common.Infantry;
-import megamek.common.Jumpship;
-import megamek.common.LandAirMech;
-import megamek.common.Mech;
-import megamek.common.Mounted;
-import megamek.common.RangeType;
-import megamek.common.SmallCraft;
-import megamek.common.Targetable;
-import megamek.common.Terrains;
-import megamek.common.WeaponComparatorArc;
-import megamek.common.WeaponComparatorCustom;
-import megamek.common.WeaponComparatorDamage;
-import megamek.common.WeaponComparatorNum;
-import megamek.common.WeaponComparatorRange;
-import megamek.common.WeaponType;
-import megamek.common.enums.GamePhase;
+import megamek.client.ui.baseComponents.MMComboBox;
+import megamek.client.ui.swing.*;
+import megamek.client.ui.swing.tooltip.UnitToolTip;
+import megamek.client.ui.swing.util.UIUtil;
+import megamek.client.ui.swing.widget.*;
+import megamek.common.*;
+import megamek.common.annotations.Nullable;
+import megamek.common.enums.WeaponSortOrder;
 import megamek.common.options.OptionsConstants;
+import megamek.common.preference.IPreferenceChangeListener;
+import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.util.fileUtils.MegaMekFile;
+import megamek.common.weapons.AreaEffectHelper;
 import megamek.common.weapons.bayweapons.BayWeapon;
 import megamek.common.weapons.gaussrifles.HAGWeapon;
 import megamek.common.weapons.infantry.InfantryWeapon;
 
+import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.event.MouseInputAdapter;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.util.List;
+import java.util.*;
+
 /**
  * This class contains the all the gizmos for firing the mech's weapons.
  */
-public class WeaponPanel extends PicMap implements ListSelectionListener, ActionListener {
-    
+public class WeaponPanel extends PicMap implements ListSelectionListener, ActionListener, IPreferenceChangeListener {
     /**
      * Mouse adaptor for the weapon list.  Supports rearranging the weapons
      * to define a custom ordering.
@@ -110,7 +68,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         @Override
         public void mouseDragged(MouseEvent e) {
             removeListeners();
-            
+
             Object src = e.getSource();
             // Check to see if we are in a state we care about
             if (!mouseDragging || !(src instanceof JList)) {
@@ -125,14 +83,14 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                 srcModel.swapIdx(dragSourceIndex, dragTargetIndex);
                 dragSourceIndex = currentIndex;
                 Entity ent = weap1.getEntity();
-                // Is the sort order custom?
-                int customId = Entity.WeaponSortOrder.CUSTOM.ordinal();
-                // Update weap sort order drop down
-                if (weapSortOrder.getSelectedIndex() != customId) {
+
+                // If this is a Custom Sort Order, update the weapon sort order drop down
+                if (!Objects.requireNonNull(comboWeaponSortOrder.getSelectedItem()).isCustom()) {
                     // Set the order to custom
-                    ent.setWeaponSortOrder(Entity.WeaponSortOrder.CUSTOM);
-                    weapSortOrder.setSelectedIndex(customId);
+                    ent.setWeaponSortOrder(WeaponSortOrder.CUSTOM);
+                    comboWeaponSortOrder.setSelectedItem(WeaponSortOrder.CUSTOM);
                 }
+
                 // Update custom order
                 for (int i = 0; i < srcModel.getSize(); i++) {
                     Mounted m = srcModel.getWeaponAt(i);
@@ -142,7 +100,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
             addListeners();
         }
     }
-    
+
     /**
      * ListModel implementation that supports keeping track of a list of Mounted
      * instantiations, how to display them in the JList, and an ability to sort
@@ -269,9 +227,9 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                     || (en.isSupportVehicle() && (wtype.getAmmoType() == AmmoType.T_INFANTRY))) {
                 int shotsLeft = 0;
                 int totalShots = 0;
-                long munition = ((AmmoType) mounted.getLinked().getType()).getMunitionType();
+                EnumSet<AmmoType.Munitions> munition = ((AmmoType) mounted.getLinked().getType()).getMunitionType();
                 for (Mounted current = mounted.getLinked(); current != null; current = current.getLinked()) {
-                    if (((AmmoType) current.getType()).getMunitionType() == munition) {
+                    if (((AmmoType) current.getType()).getMunitionType().equals(munition)) {
                         shotsLeft += current.getUsableShotsLeft();
                         totalShots += current.getOriginalShots();
                     }
@@ -291,9 +249,9 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
             }
 
             // Fire Mode - lots of things have variable modes
-            if (wtype.hasModes()) {
+            if (mounted.hasModes()) {
                 wn.append(' ');
-                
+
                 wn.append(mounted.curMode().getDisplayableName());
                 if (!mounted.pendingMode().equals("None")) {
                     wn.append(" (next turn, ");
@@ -326,13 +284,12 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
             weapons.sort(comparator);
             fireContentsChanged(this, 0, weapons.size() - 1);
         }
-
     }
 
     private final UnitDisplay unitDisplay;
+    private final Client client;
 
-    private static final long serialVersionUID = -5728839963281503332L;
-    private JComboBox<String> weapSortOrder;
+    private MMComboBox<WeaponSortOrder> comboWeaponSortOrder;
     public JList<String> weaponList;
     /**
      * Keep track of the previous target, used for certain weapons (like VGLs)
@@ -340,6 +297,9 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
      * after the forced target.
      */
     private Targetable prevTarget = null;
+    private JPanel panelMain;
+    private JPanel panelLower;
+    private JScrollPane tWeaponScroll;
     private JComboBox<String> m_chAmmo;
     public JComboBox<String> m_chBayWeapon;
 
@@ -371,14 +331,9 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
     private JLabel wExtAVR;
     private JLabel currentHeatBuildupL;
     private JLabel currentHeatBuildupR;
-
-    private JLabel wTargetL;
     private JLabel wRangeL;
-    private JLabel wToHitL;
-    public JLabel wTargetR;
+    public JLabel wTargetExtraInfo;
     public JLabel wRangeR;
-    public JLabel wToHitR;
-
     private JLabel wDamageTrooperL;
     private JLabel wDamageTrooperR;
     private JLabel wInfantryRange0L;
@@ -393,8 +348,9 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
     private JLabel wInfantryRange4R;
     private JLabel wInfantryRange5L;
     private JLabel wInfantryRange5R;
-
-    public JTextArea toHitText;
+    private JTextPane toHitText;
+    private JTextPane wTargetInfo;
+    private Targetable target;
 
     // I need to keep a pointer to the weapon list of the
     // currently selected mech.
@@ -404,412 +360,566 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
     private int minTopMargin = 8;
     private int minLeftMargin = 8;
 
-    WeaponPanel(UnitDisplay unitDisplay) {
+    Color [] bgcolors = {Color.gray, Color.darkGray};
+    int gridy = 0;
+    public static final int INTERNAL_PANE_WIDTH = 400;
+    public static  final int LINE_HEIGHT = 25;
+    public static final Color COLOR_FG = Color.WHITE;
+    public static final Color TEXT_BG = Color.DARK_GRAY;
 
+    private static final GUIPreferences GUIP = GUIPreferences.getInstance();
+
+    WeaponPanel(UnitDisplay unitDisplay, Client client) {
         this.unitDisplay = unitDisplay;
-        setLayout(new GridBagLayout());
+        this.client = client;
+        panelMain = new JPanel();
+        panelMain.setOpaque(false);
+        panelMain.setLayout(new GridBagLayout());
+        panelMain.setAlignmentX(Component.LEFT_ALIGNMENT);
+        panelMain.setAlignmentY(Component.TOP_ALIGNMENT);
+        panelMain.setPreferredSize(new Dimension(INTERNAL_PANE_WIDTH, 20));
+        // having a max size set causes odd draw issues
+        panelMain.setMaximumSize(null);
 
-        int gridy = 0;
+        gridy = 0;
+        createWeaponList(panelMain);
+        createWeaponDisplay(panelMain);
+        createRangeDisplay(panelMain);
+        createToHitDisplay(panelMain);
+
+        panelLower = new JPanel();
+        panelLower.setOpaque(false);
+        panelLower.setLayout(new GridBagLayout());
+        panelLower.setAlignmentX(Component.LEFT_ALIGNMENT);
+        panelLower.setAlignmentY(Component.TOP_ALIGNMENT);
+        panelLower.setPreferredSize(new Dimension(INTERNAL_PANE_WIDTH, 20));
+        panelLower.setMaximumSize(null);
+
+        gridy = 0;
+        createTargetDisplay(panelLower);
+
+        JSplitPane splitPane = new JSplitPane( JSplitPane.VERTICAL_SPLIT, panelMain, panelLower);
+        splitPane.setOpaque(false);
+        this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+        this.add(splitPane);
+
+        addListeners();
+        adaptToGUIScale();
+        GUIP.addPreferenceChangeListener(this);
+
+        setBackGround();
+        onResize();
+    }
+
+    void setupLabel(JComponent label) {
+        label.setOpaque(false);
+        label.setForeground(COLOR_FG);
+        label.setBackground(TEXT_BG);
+    }
+
+    void setupTextPane(JTextPane pane) {
+        pane.setContentType("text/html");
+        pane.setForeground(COLOR_FG);
+        pane.setBackground(TEXT_BG);
+        pane.setEditable(false);
+        pane.setOpaque(true);
+        pane.setFont(new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN, 10));
+    }
+
+    private void addSubdisplay(JPanel parent, JComponent child, int minHeight, int fill) {
+        child.setMinimumSize( new Dimension(INTERNAL_PANE_WIDTH, minHeight));
+        // null means allow UI to recompute
+        child.setMaximumSize(new Dimension(INTERNAL_PANE_WIDTH, minHeight*2));
+        child.setPreferredSize(null);
+        child.setAlignmentX(Component.LEFT_ALIGNMENT);
+        child.setAlignmentY(Component.TOP_ALIGNMENT);
+        child.setBackground(bgcolors[ (gridy++) % bgcolors.length]);
+        child.setOpaque(false);
+
+        Dimension min = parent.getMinimumSize();
+        min.height += minHeight;
+        parent.setMinimumSize(min);
+
+        Dimension pref = parent.getPreferredSize();
+        pref.height += minHeight;
+        parent.setPreferredSize(pref);
+
+        parent.add(child,GBC.eol()
+                .gridy(gridy++)
+                .insets(10, 1, 10, 1)
+                .weighty(1)
+                .fill(fill)
+        );
+    }
+
+    private void createWeaponList(JPanel parent) {
         wSortOrder = new JLabel(
                 Messages.getString("MechDisplay.WeaponSortOrder.label"),
                 SwingConstants.LEFT);
-        wSortOrder.setOpaque(false);
-        wSortOrder.setForeground(Color.WHITE);
-        add(wSortOrder, GBC.std().fill(GridBagConstraints.HORIZONTAL)
-               .insets(15, 9, 1, 1).gridy(gridy).gridx(0));
-        weapSortOrder = new JComboBox<>();
-        for (Entity.WeaponSortOrder s : Entity.WeaponSortOrder.values()) {
-            String entry = "MechDisplay.WeaponSortOrder." + s.i18nEntry;
-            weapSortOrder.addItem(Messages.getString(entry));
-        }
-        add(weapSortOrder,
-                GBC.eol().insets(15, 9, 15, 1)
-                   .fill(GridBagConstraints.HORIZONTAL)
-                   .anchor(GridBagConstraints.CENTER).gridy(gridy)
-                   .gridx(1));
-        gridy++;
+        setupLabel(wSortOrder);
+
+        JPanel pWeaponOrder = new JPanel(new GridBagLayout());
+        pWeaponOrder.setOpaque(false);
+        int pgridy = 0;
+
+        pWeaponOrder.add(wSortOrder,
+                GBC.std().insets(15, 1, 1, 1).gridy(pgridy).gridx(0));
+        comboWeaponSortOrder = new MMComboBox<>("comboWeaponSortOrder", WeaponSortOrder.values());
+        pWeaponOrder.add(comboWeaponSortOrder, GBC.eol()
+                .fill(GridBagConstraints.HORIZONTAL)
+                .anchor(GridBagConstraints.WEST)
+                .insets(15, 9, 15, 1).gridy(pgridy).gridx(1));
+        addSubdisplay(parent, pWeaponOrder, LINE_HEIGHT, GridBagConstraints.BOTH);
 
         // weapon list
         weaponList = new JList<>(new DefaultListModel<>());
         WeaponListMouseAdapter mouseAdapter = new WeaponListMouseAdapter();
         weaponList.addMouseListener(mouseAdapter);
         weaponList.addMouseMotionListener(mouseAdapter);
-        JScrollPane tWeaponScroll = new JScrollPane(weaponList);
-        tWeaponScroll.setMinimumSize(new Dimension(200, 100));
-        tWeaponScroll.setPreferredSize(new Dimension(200, 100));
-        add(tWeaponScroll,
-            GBC.eol().insets(15, 9, 15, 9)
-               .fill(GridBagConstraints.HORIZONTAL)
-               .anchor(GridBagConstraints.CENTER).gridy(gridy)
-               .gridx(0));
-        gridy++;
+
+        tWeaponScroll = new JScrollPane(weaponList);
+        addSubdisplay(parent, tWeaponScroll, GUIP.getUnitDisplayWeaponListHeight(), GridBagConstraints.BOTH);
+
         weaponList.resetKeyboardActions();
         for (KeyListener key : weaponList.getKeyListeners()) {
             weaponList.removeKeyListener(key);
         }
 
         // adding Ammo choice + label
-
         wAmmo = new JLabel(Messages.getString("MechDisplay.Ammo"), SwingConstants.LEFT);
-        wAmmo.setOpaque(false);
-        wAmmo.setForeground(Color.WHITE);
+        setupLabel(wAmmo);
         m_chAmmo = new JComboBox<>();
 
         wBayWeapon = new JLabel(Messages.getString("MechDisplay.Weapon"), SwingConstants.LEFT);
-        wBayWeapon.setOpaque(false);
-        wBayWeapon.setForeground(Color.WHITE);
+        setupLabel(wBayWeapon);
         m_chBayWeapon = new JComboBox<>();
 
-        add(wBayWeapon, GBC.std().insets(15, 1, 1, 1).gridy(gridy).gridx(0));
+        JPanel pAmmo = new JPanel(new GridBagLayout());
+        pAmmo.setOpaque(false);
+        pgridy = 0;
 
-        add(m_chBayWeapon, GBC.std().fill(GridBagConstraints.HORIZONTAL)
-                              .insets(1, 1, 15, 1).gridy(gridy).gridx(1));
-        gridy++;
-        add(wAmmo, GBC.std().insets(15, 9, 1, 1).gridy(gridy).gridx(0));
+        pAmmo.add(wBayWeapon, GBC.std().insets(15, 1, 1, 1).gridy(pgridy).gridx(0));
+        pAmmo.add(m_chBayWeapon, GBC.std().fill(GridBagConstraints.HORIZONTAL)
+                .insets(15, 1, 15, 1).gridy(pgridy).gridx(1));
+        pgridy++;
 
-        add(m_chAmmo,
-            GBC.eol().fill(GridBagConstraints.HORIZONTAL)
-               .insets(1, 9, 15, 1).gridy(gridy).gridx(1));
-        gridy++;
-        // Adding Heat Buildup
+        pAmmo.add(wAmmo, GBC.std().insets(15, 9, 1, 1).gridy(pgridy).gridx(0));
 
-        currentHeatBuildupL = new JLabel(Messages.getString("MechDisplay.HeatBuildup"), SwingConstants.RIGHT);
-        currentHeatBuildupL.setOpaque(false);
-        currentHeatBuildupL.setForeground(Color.WHITE);
-        currentHeatBuildupR = new JLabel("--", SwingConstants.LEFT);
-        currentHeatBuildupR.setOpaque(false);
-        currentHeatBuildupR.setForeground(Color.WHITE);
+        pAmmo.add(m_chAmmo,
+                GBC.eol().fill(GridBagConstraints.HORIZONTAL)
+                        .anchor(GridBagConstraints.WEST)
+                        .insets(15, 9, 15, 1).gridy(pgridy).gridx(1));
 
-        add(currentHeatBuildupL,
-            GBC.std().fill(GridBagConstraints.HORIZONTAL)
-               .anchor(GridBagConstraints.EAST).insets(9, 1, 1, 9)
-               .gridy(gridy).gridx(0));
+        addSubdisplay(parent, pAmmo, LINE_HEIGHT *3 / 2, GridBagConstraints.BOTH);
 
-        add(currentHeatBuildupR,
-            GBC.std().fill(GridBagConstraints.HORIZONTAL)
-               .insets(1, 1, 9, 9).gridy(gridy).gridx(1));
-        gridy++;
+    }
 
+    private void createWeaponDisplay(JPanel parent) {
         // Adding weapon display labels
         wNameL = new JLabel(Messages.getString("MechDisplay.Name"), SwingConstants.CENTER);
-        wNameL.setOpaque(false);
-        wNameL.setForeground(Color.WHITE);
+        setupLabel(wNameL);
         wHeatL = new JLabel(Messages.getString("MechDisplay.Heat"), SwingConstants.CENTER);
-        wHeatL.setOpaque(false);
-        wHeatL.setForeground(Color.WHITE);
+        setupLabel(wHeatL);
         wDamL = new JLabel(Messages.getString("MechDisplay.Damage"), SwingConstants.CENTER);
-        wDamL.setOpaque(false);
-        wDamL.setForeground(Color.WHITE);
+        setupLabel(wDamL);
         wArcHeatL = new JLabel(Messages.getString("MechDisplay.ArcHeat"), SwingConstants.CENTER);
-        wArcHeatL.setOpaque(false);
-        wArcHeatL.setForeground(Color.WHITE);
+        setupLabel(wArcHeatL);
+
         wNameR = new JLabel("", SwingConstants.CENTER);
-        wNameR.setOpaque(false);
-        wNameR.setForeground(Color.WHITE);
+        setupLabel(wNameR);
+
         wHeatR = new JLabel("--", SwingConstants.CENTER);
-        wHeatR.setOpaque(false);
-        wHeatR.setForeground(Color.WHITE);
+        setupLabel(wHeatR);
+
         wDamR = new JLabel("--", SwingConstants.CENTER);
-        wDamR.setOpaque(false);
-        wDamR.setForeground(Color.WHITE);
+        setupLabel(wDamR);
+
         wArcHeatR = new JLabel("--", SwingConstants.CENTER);
-        wArcHeatR.setOpaque(false);
-        wArcHeatR.setForeground(Color.WHITE);
+        setupLabel(wArcHeatR);
 
         wDamageTrooperL = new JLabel(Messages.getString("MechDisplay.DamageTrooper"), SwingConstants.CENTER);
-        wDamageTrooperL.setOpaque(false);
-        wDamageTrooperL.setForeground(Color.WHITE);
+        setupLabel(wDamageTrooperL);
+
         wDamageTrooperR = new JLabel("---", SwingConstants.CENTER);
-        wDamageTrooperR.setOpaque(false);
-        wDamageTrooperR.setForeground(Color.WHITE);
+        setupLabel(wDamageTrooperR);
 
-        add(wNameL,
-            GBC.std().fill(GridBagConstraints.HORIZONTAL)
-               .insets(1, 9, 1, 1).gridy(gridy).gridx(0));
+        JPanel pCurrentWeapon = new JPanel(new GridBagLayout());
+        pCurrentWeapon.setOpaque(false);
+        int pgridy = 0;
 
-        add(wHeatL,
-            GBC.std().fill(GridBagConstraints.HORIZONTAL)
-               .insets(1, 9, 1, 1).gridy(gridy).gridx(1));
+        pCurrentWeapon.add(wNameL, GBC.std().fill(GridBagConstraints.NONE).anchor(GridBagConstraints.WEST).insets(5, 9, 1, 1).gridy(pgridy).gridx(0).weightx(1));
 
-        add(wDamL,
-            GBC.std().fill(GridBagConstraints.HORIZONTAL)
-               .insets(1, 9, 1, 1).gridy(gridy).gridx(2));
+        pCurrentWeapon.add(wHeatL, GBC.std().fill(GridBagConstraints.NONE).anchor(GridBagConstraints.WEST).insets(15, 9, 1, 1).gridy(pgridy).gridx(1).weightx(1));
 
-        add(wArcHeatL, GBC.std().fill(GridBagConstraints.HORIZONTAL)
-                          .insets(1, 9, 1, 1).gridy(gridy).gridx(3));
+        pCurrentWeapon.add(wDamL, GBC.std().fill(GridBagConstraints.NONE).anchor(GridBagConstraints.WEST).insets(15, 9, 1, 1).gridy(pgridy).gridx(2).weightx(1));
 
-        add(wDamageTrooperL, GBC.std().fill(GridBagConstraints.HORIZONTAL)
-                                .insets(1, 9, 1, 1).gridy(gridy).gridx(3));
-        gridy++;
-        add(wNameR,
-            GBC.std().fill(GridBagConstraints.HORIZONTAL)
-               .insets(1, 9, 1, 1).gridy(gridy).gridx(0));
+        pCurrentWeapon.add(wArcHeatL, GBC.std().fill(GridBagConstraints.NONE).anchor(GridBagConstraints.WEST).insets(15, 9, 1, 1).gridy(pgridy).gridx(3).weightx(1));
 
-        add(wHeatR,
-            GBC.std().fill(GridBagConstraints.HORIZONTAL)
-               .insets(1, 9, 1, 1).gridy(gridy).gridx(1));
+        pCurrentWeapon.add(wDamageTrooperL, GBC.std().fill(GridBagConstraints.NONE).anchor(GridBagConstraints.WEST).insets(15, 9, 1, 1).gridy(pgridy).gridx(3).weightx(1));
+        pgridy++;
+        pCurrentWeapon.add(wNameR, GBC.std().fill(GridBagConstraints.NONE).anchor(GridBagConstraints.WEST).insets(5, 1, 1, 1).gridy(pgridy).gridx(0).weightx(1));
 
-        add(wDamR,
-            GBC.std().fill(GridBagConstraints.HORIZONTAL)
-               .insets(1, 9, 1, 1).gridy(gridy).gridx(2));
+        pCurrentWeapon.add(wHeatR, GBC.std().fill(GridBagConstraints.NONE).anchor(GridBagConstraints.WEST).insets(15, 1, 1, 1).gridy(pgridy).gridx(1).weightx(1));
 
-        add(wArcHeatR, GBC.std().fill(GridBagConstraints.HORIZONTAL)
-                          .insets(1, 9, 1, 1).gridy(gridy).gridx(3));
+        pCurrentWeapon.add(wDamR, GBC.std().fill(GridBagConstraints.NONE).anchor(GridBagConstraints.WEST).insets(15, 1, 1, 1).gridy(pgridy).gridx(2).weightx(1));
 
-        add(wDamageTrooperR, GBC.std().fill(GridBagConstraints.HORIZONTAL)
-                                .insets(1, 9, 1, 1).gridy(gridy).gridx(3));
-        gridy++;
+        pCurrentWeapon.add(wArcHeatR, GBC.std().fill(GridBagConstraints.NONE).anchor(GridBagConstraints.WEST).insets(15, 1, 1, 1).gridy(pgridy).gridx(3).weightx(1));
+
+        pCurrentWeapon.add(wDamageTrooperR, GBC.std().fill(GridBagConstraints.NONE).anchor(GridBagConstraints.WEST).insets(15, 1, 1, 1).gridy(pgridy).gridx(3).weightx(1));
+
+        addSubdisplay(parent, pCurrentWeapon, LINE_HEIGHT*2, GridBagConstraints.NONE);
+    }
+
+    private void createRangeDisplay(JPanel parent) {
         // Adding range labels
         wMinL = new JLabel(Messages.getString("MechDisplay.Min"), SwingConstants.CENTER);
-        wMinL.setOpaque(false);
-        wMinL.setForeground(Color.WHITE);
+        setupLabel(wMinL);
         wShortL = new JLabel(Messages.getString("MechDisplay.Short"), SwingConstants.CENTER);
-        wShortL.setOpaque(false);
-        wShortL.setForeground(Color.WHITE);
+        setupLabel(wShortL);
+
         wMedL = new JLabel(Messages.getString("MechDisplay.Med"), SwingConstants.CENTER);
-        wMedL.setOpaque(false);
-        wMedL.setForeground(Color.WHITE);
+        setupLabel(wMedL);
+
         wLongL = new JLabel(Messages.getString("MechDisplay.Long"), SwingConstants.CENTER);
-        wLongL.setOpaque(false);
-        wLongL.setForeground(Color.WHITE);
+        setupLabel(wLongL);
+
         wExtL = new JLabel(Messages.getString("MechDisplay.Ext"), SwingConstants.CENTER);
-        wExtL.setOpaque(false);
-        wExtL.setForeground(Color.WHITE);
+        setupLabel(wExtL);
+
         wMinR = new JLabel("---", SwingConstants.CENTER);
-        wMinR.setOpaque(false);
-        wMinR.setForeground(Color.WHITE);
+        setupLabel(wMinR);
+
         wShortR = new JLabel("---", SwingConstants.CENTER);
-        wShortR.setOpaque(false);
-        wShortR.setForeground(Color.WHITE);
+        setupLabel(wShortR);
+
         wMedR = new JLabel("---", SwingConstants.CENTER);
-        wMedR.setOpaque(false);
-        wMedR.setForeground(Color.WHITE);
+        setupLabel(wMedR);
+
         wLongR = new JLabel("---", SwingConstants.CENTER);
-        wLongR.setOpaque(false);
-        wLongR.setForeground(Color.WHITE);
+        setupLabel(wLongR);
+
         wExtR = new JLabel("---", SwingConstants.CENTER);
-        wExtR.setOpaque(false);
-        wExtR.setForeground(Color.WHITE);
+        setupLabel(wExtR);
+
         wAVL = new JLabel(Messages.getString("MechDisplay.AV"), SwingConstants.CENTER);
-        wAVL.setOpaque(false);
-        wAVL.setForeground(Color.WHITE);
+        setupLabel(wAVL);
+
         wShortAVR = new JLabel("---", SwingConstants.CENTER);
-        wShortAVR.setOpaque(false);
-        wShortAVR.setForeground(Color.WHITE);
+        setupLabel(wShortAVR);
+
         wMedAVR = new JLabel("---", SwingConstants.CENTER);
-        wMedAVR.setOpaque(false);
-        wMedAVR.setForeground(Color.WHITE);
+        setupLabel(wMedAVR);
+
         wLongAVR = new JLabel("---", SwingConstants.CENTER);
-        wLongAVR.setOpaque(false);
-        wLongAVR.setForeground(Color.WHITE);
+        setupLabel(wLongAVR);
+
         wExtAVR = new JLabel("---", SwingConstants.CENTER);
-        wExtAVR.setOpaque(false);
-        wExtAVR.setForeground(Color.WHITE);
+        setupLabel(wExtAVR);
+
 
         wInfantryRange0L = new JLabel("---", SwingConstants.CENTER);
-        wInfantryRange0L.setOpaque(false);
-        wInfantryRange0L.setForeground(Color.WHITE);
+        setupLabel(wInfantryRange0L);
+
         wInfantryRange0R = new JLabel("---", SwingConstants.CENTER);
-        wInfantryRange0R.setOpaque(false);
-        wInfantryRange0R.setForeground(Color.WHITE);
+        setupLabel(wInfantryRange0R);
+
         wInfantryRange1L = new JLabel("---", SwingConstants.CENTER);
-        wInfantryRange1L.setOpaque(false);
-        wInfantryRange1L.setForeground(Color.WHITE);
+        setupLabel(wInfantryRange1L);
+
         wInfantryRange1R = new JLabel("---", SwingConstants.CENTER);
-        wInfantryRange1R.setOpaque(false);
-        wInfantryRange1R.setForeground(Color.WHITE);
+        setupLabel(wInfantryRange1R);
+
         wInfantryRange2L = new JLabel("---", SwingConstants.CENTER);
-        wInfantryRange2L.setOpaque(false);
-        wInfantryRange2L.setForeground(Color.WHITE);
+        setupLabel(wInfantryRange2L);
+
         wInfantryRange2R = new JLabel("---", SwingConstants.CENTER);
-        wInfantryRange2R.setOpaque(false);
-        wInfantryRange2R.setForeground(Color.WHITE);
+        setupLabel(wInfantryRange2R);
+
         wInfantryRange3L = new JLabel("---", SwingConstants.CENTER);
-        wInfantryRange3L.setOpaque(false);
-        wInfantryRange3L.setForeground(Color.WHITE);
+        setupLabel(wInfantryRange3L);
+
         wInfantryRange3R = new JLabel("---", SwingConstants.CENTER);
-        wInfantryRange3R.setOpaque(false);
-        wInfantryRange3R.setForeground(Color.WHITE);
+        setupLabel(wInfantryRange3R);
+
         wInfantryRange4L = new JLabel("---", SwingConstants.CENTER);
-        wInfantryRange4L.setOpaque(false);
-        wInfantryRange4L.setForeground(Color.WHITE);
+        setupLabel(wInfantryRange4L);
+
         wInfantryRange4R = new JLabel("---", SwingConstants.CENTER);
-        wInfantryRange4R.setOpaque(false);
-        wInfantryRange4R.setForeground(Color.WHITE);
+        setupLabel(wInfantryRange4R);
+
         wInfantryRange5L = new JLabel("---", SwingConstants.CENTER);
-        wInfantryRange5L.setOpaque(false);
-        wInfantryRange5L.setForeground(Color.WHITE);
+        setupLabel(wInfantryRange5L);
+
         wInfantryRange5R = new JLabel("---", SwingConstants.CENTER);
-        wInfantryRange5R.setOpaque(false);
-        wInfantryRange5R.setForeground(Color.WHITE);
+        setupLabel(wInfantryRange5R);
 
-        add(wMinL,
-            GBC.std().fill(GridBagConstraints.HORIZONTAL)
-               .insets(1, 9, 9, 1).gridy(gridy).gridx(0));
 
-        add(wShortL,
-            GBC.std().fill(GridBagConstraints.HORIZONTAL)
-               .insets(1, 9, 9, 1).gridy(gridy).gridx(1));
+        // range panel
+        JPanel pRange = new JPanel(new GridBagLayout());
+        pRange.setAlignmentX(Component.LEFT_ALIGNMENT);
+        pRange.setAlignmentY(Component.TOP_ALIGNMENT);
+        pRange.setOpaque(false);
+        int pgridy = 0;
 
-        add(wMedL,
-            GBC.std().fill(GridBagConstraints.HORIZONTAL)
-               .insets(1, 9, 9, 1).gridy(gridy).gridx(2));
+        pRange.add(wMinL,
+                GBC.std().fill(GridBagConstraints.NONE)
+                        .anchor(GridBagConstraints.WEST)
+                        .insets(15, 9, 9, 1).gridy(pgridy).gridx(0).weightx(1));
 
-        add(wLongL,
-            GBC.std().fill(GridBagConstraints.HORIZONTAL)
-               .insets(1, 9, 9, 1).gridy(gridy).gridx(3));
+        pRange.add(wShortL,
+                GBC.std().fill(GridBagConstraints.NONE)
+                        .anchor(GridBagConstraints.WEST)
+                        .insets(15, 9, 9, 1).gridy(pgridy).gridx(1).weightx(1));
 
-        add(wExtL,
-            GBC.std().fill(GridBagConstraints.HORIZONTAL)
-               .insets(1, 9, 9, 1).gridy(gridy).gridx(4));
+        pRange.add(wMedL,
+                GBC.std().fill(GridBagConstraints.NONE)
+                        .anchor(GridBagConstraints.WEST)
+                        .insets(15, 9, 9, 1).gridy(pgridy).gridx(2).weightx(1));
 
-        add(wInfantryRange0L, GBC.std().fill(GridBagConstraints.HORIZONTAL)
-                .insets(1, 9, 9, 1).gridy(gridy).gridx(0));
+        pRange.add(wLongL,
+                GBC.std().fill(GridBagConstraints.NONE)
+                        .anchor(GridBagConstraints.WEST)
+                        .insets(15, 9, 9, 1).gridy(pgridy).gridx(3).weightx(1));
 
-        add(wInfantryRange1L, GBC.std().fill(GridBagConstraints.HORIZONTAL)
-                            .insets(1, 9, 9, 1).gridy(gridy).gridx(1));
+        pRange.add(wExtL,
+                GBC.std().fill(GridBagConstraints.NONE)
+                        .anchor(GridBagConstraints.WEST)
+                        .insets(15, 9, 9, 1).gridy(pgridy).gridx(4).weightx(1));
 
-        add(wInfantryRange2L, GBC.std().fill(GridBagConstraints.HORIZONTAL)
-                            .insets(1, 9, 9, 1).gridy(gridy).gridx(2));
+        pgridy++;
 
-        add(wInfantryRange3L, GBC.std().fill(GridBagConstraints.HORIZONTAL)
-                            .insets(1, 9, 9, 1).gridy(gridy).gridx(3));
+        pRange.add(wInfantryRange0L, GBC.std().fill(GridBagConstraints.NONE)
+                .anchor(GridBagConstraints.WEST)
+                .insets(15, 9, 9, 1).gridy(pgridy).gridx(0).weightx(1));
 
-        add(wInfantryRange4L, GBC.std().fill(GridBagConstraints.HORIZONTAL)
-                            .insets(1, 9, 9, 1).gridy(gridy).gridx(4));
+        pRange.add(wInfantryRange1L, GBC.std().fill(GridBagConstraints.NONE)
+                .anchor(GridBagConstraints.WEST)
+                .insets(15, 9, 9, 1).gridy(pgridy).gridx(1).weightx(1));
 
-        add(wInfantryRange5L, GBC.std().fill(GridBagConstraints.HORIZONTAL)
-                            .insets(1, 9, 9, 1).gridy(gridy).gridx(4));
+        pRange.add(wInfantryRange2L, GBC.std().fill(GridBagConstraints.NONE)
+                .anchor(GridBagConstraints.WEST)
+                .insets(15, 9, 9, 1).gridy(pgridy).gridx(2).weightx(1));
 
-        gridy++;
+        pRange.add(wInfantryRange3L, GBC.std().fill(GridBagConstraints.NONE)
+                .anchor(GridBagConstraints.WEST)
+                .insets(15, 9, 9, 1).gridy(pgridy).gridx(3).weightx(1));
+
+        pRange.add(wInfantryRange4L, GBC.std().fill(GridBagConstraints.NONE)
+                .anchor(GridBagConstraints.WEST)
+                .insets(15, 9, 9, 1).gridy(pgridy).gridx(4).weightx(1));
+
+        pRange.add(wInfantryRange5L, GBC.std().fill(GridBagConstraints.NONE)
+                .anchor(GridBagConstraints.WEST)
+                .insets(15, 9, 9, 1).gridy(pgridy).gridx(4).weightx(1));
+
+        pgridy++;
         // ----------------
 
-        add(wMinR,
-            GBC.std().fill(GridBagConstraints.HORIZONTAL)
-               .insets(1, 9, 9, 1).gridy(gridy).gridx(0));
+        pRange.add(wMinR,
+                GBC.std().fill(GridBagConstraints.NONE)
+                        .anchor(GridBagConstraints.WEST)
+                        .insets(15, 1, 9, 1).gridy(pgridy).gridx(0).weightx(1));
 
-        add(wShortR,
-            GBC.std().fill(GridBagConstraints.HORIZONTAL)
-               .insets(1, 9, 9, 1).gridy(gridy).gridx(1));
+        pRange.add(wShortR,
+                GBC.std().fill(GridBagConstraints.NONE)
+                        .anchor(GridBagConstraints.WEST)
+                        .insets(15, 1, 9, 1).gridy(pgridy).gridx(1).weightx(1));
 
-        add(wMedR,
-            GBC.std().fill(GridBagConstraints.HORIZONTAL)
-               .insets(1, 9, 9, 1).gridy(gridy).gridx(2));
+        pRange.add(wMedR,
+                GBC.std().fill(GridBagConstraints.NONE)
+                        .anchor(GridBagConstraints.WEST)
+                        .insets(15, 1, 9, 1).gridy(pgridy).gridx(2).weightx(1));
 
-        add(wLongR,
-            GBC.std().fill(GridBagConstraints.HORIZONTAL)
-               .insets(1, 9, 9, 1).gridy(gridy).gridx(3));
+        pRange.add(wLongR,
+                GBC.std().fill(GridBagConstraints.NONE)
+                        .anchor(GridBagConstraints.WEST)
+                        .insets(15, 1, 9, 1).gridy(pgridy).gridx(3).weightx(1));
 
-        add(wExtR,
-            GBC.std().fill(GridBagConstraints.HORIZONTAL)
-               .insets(1, 9, 9, 1).gridy(gridy).gridx(4));
+        pRange.add(wExtR,
+                GBC.std().fill(GridBagConstraints.NONE)
+                        .anchor(GridBagConstraints.WEST)
+                        .insets(15, 1, 9, 1).gridy(pgridy).gridx(4).weightx(1));
 
-        add(wInfantryRange0R, GBC.std().fill(GridBagConstraints.HORIZONTAL)
-                .insets(1, 9, 9, 1).gridy(gridy).gridx(0));
+        pRange.add(wInfantryRange0R, GBC.std().fill(GridBagConstraints.NONE)
+                .anchor(GridBagConstraints.WEST)
+                .insets(15, 1, 9, 1).gridy(pgridy).gridx(0).weightx(1));
 
-        add(wInfantryRange1R, GBC.std().fill(GridBagConstraints.HORIZONTAL)
-                            .insets(1, 9, 9, 1).gridy(gridy).gridx(1));
+        pRange.add(wInfantryRange1R, GBC.std().fill(GridBagConstraints.NONE)
+                .anchor(GridBagConstraints.WEST)
+                .insets(15, 1, 9, 1).gridy(pgridy).gridx(1).weightx(1));
 
-        add(wInfantryRange2R, GBC.std().fill(GridBagConstraints.HORIZONTAL)
-                            .insets(1, 9, 9, 1).gridy(gridy).gridx(2));
+        pRange.add(wInfantryRange2R, GBC.std().fill(GridBagConstraints.NONE)
+                .anchor(GridBagConstraints.WEST)
+                .insets(15, 1, 9, 1).gridy(pgridy).gridx(2).weightx(1));
 
-        add(wInfantryRange3R, GBC.std().fill(GridBagConstraints.HORIZONTAL)
-                            .insets(1, 9, 9, 1).gridy(gridy).gridx(3));
+        pRange.add(wInfantryRange3R, GBC.std().fill(GridBagConstraints.NONE)
+                .anchor(GridBagConstraints.WEST)
+                .insets(15, 1, 9, 1).gridy(pgridy).gridx(3).weightx(1));
 
-        add(wInfantryRange4R, GBC.std().fill(GridBagConstraints.HORIZONTAL)
-                            .insets(1, 9, 9, 1).gridy(gridy).gridx(4));
+        pRange.add(wInfantryRange4R, GBC.std().fill(GridBagConstraints.NONE)
+                .anchor(GridBagConstraints.WEST)
+                .insets(15, 1, 9, 1).gridy(pgridy).gridx(4).weightx(1));
 
-        add(wInfantryRange5R, GBC.std().fill(GridBagConstraints.HORIZONTAL)
-                            .insets(1, 9, 9, 1).gridy(gridy).gridx(5));
+        pRange.add(wInfantryRange5R, GBC.std().fill(GridBagConstraints.NONE)
+                .anchor(GridBagConstraints.WEST)
+                .insets(15, 1, 9, 1).gridy(pgridy).gridx(5).weightx(1));
 
-        gridy++;
+        pgridy++;
         // ----------------
-        add(wAVL,
-            GBC.std().fill(GridBagConstraints.HORIZONTAL)
-               .insets(1, 9, 9, 1).gridy(gridy).gridx(0));
+        pRange.add(wAVL,
+                GBC.std().fill(GridBagConstraints.NONE)
+                        .anchor(GridBagConstraints.WEST)
+                        .insets(15, 1, 9, 1).gridy(pgridy).gridx(0).weightx(1));
 
-        add(wShortAVR, GBC.std().fill(GridBagConstraints.HORIZONTAL)
-                          .insets(1, 9, 9, 1).gridy(gridy).gridx(1));
+        pRange.add(wShortAVR, GBC.std().fill(GridBagConstraints.NONE)
+                .anchor(GridBagConstraints.WEST)
+                .insets(15, 1, 9, 1).gridy(pgridy).gridx(1).weightx(1));
 
-        add(wMedAVR,
-            GBC.std().fill(GridBagConstraints.HORIZONTAL)
-               .insets(1, 9, 9, 1).gridy(gridy).gridx(2));
+        pRange.add(wMedAVR,
+                GBC.std().fill(GridBagConstraints.NONE)
+                        .anchor(GridBagConstraints.WEST)
+                        .insets(15, 1, 9, 1).gridy(pgridy).gridx(2).weightx(1));
 
-        add(wLongAVR,
-            GBC.std().fill(GridBagConstraints.HORIZONTAL)
-               .insets(1, 9, 9, 1).gridy(gridy).gridx(3));
+        pRange.add(wLongAVR,
+                GBC.std().fill(GridBagConstraints.NONE)
+                        .anchor(GridBagConstraints.WEST)
+                        .insets(15, 1, 9, 1).gridy(pgridy).gridx(3).weightx(1));
 
-        add(wExtAVR,
-            GBC.std().fill(GridBagConstraints.HORIZONTAL)
-               .insets(1, 9, 9, 1).gridy(gridy).gridx(4));
+        pRange.add(wExtAVR,
+                GBC.std().fill(GridBagConstraints.NONE)
+                        .anchor(GridBagConstraints.WEST)
+                        .insets(15, 1, 9, 1).gridy(pgridy).gridx(4).weightx(1));
 
-        gridy++;
+        pRange.setMinimumSize(new Dimension(INTERNAL_PANE_WIDTH, LINE_HEIGHT));
+        pRange.setMaximumSize(new Dimension(INTERNAL_PANE_WIDTH, LINE_HEIGHT));
+        pRange.setPreferredSize(new Dimension(INTERNAL_PANE_WIDTH, LINE_HEIGHT));
+        addSubdisplay(parent, pRange, LINE_HEIGHT*2, GridBagConstraints.NONE);
+    }
 
+    private void createToHitDisplay(JPanel parent) {
+        // to hit  panel
+        JPanel pTargetInfo = new JPanel(new GridBagLayout());
+        pTargetInfo.setOpaque(true);
 
+        wRangeL = new JLabel(Messages.getString("MechDisplay.Range"), SwingConstants.LEFT);
+        setupLabel(wRangeL);
 
-        // target panel
-        wTargetL = new JLabel(Messages.getString("MechDisplay.Target"), SwingConstants.CENTER);
-        wTargetL.setOpaque(false);
-        wTargetL.setForeground(Color.WHITE);
-        wRangeL = new JLabel(Messages.getString("MechDisplay.Range"), SwingConstants.CENTER);
-        wRangeL.setOpaque(false);
-        wRangeL.setForeground(Color.WHITE);
-        wToHitL = new JLabel(Messages.getString("MechDisplay.ToHit"), SwingConstants.CENTER);
-        wToHitL.setOpaque(false);
-        wToHitL.setForeground(Color.WHITE);
-
-        wTargetR = new JLabel("---", SwingConstants.CENTER);
-        wTargetR.setOpaque(false);
-        wTargetR.setForeground(Color.WHITE);
         wRangeR = new JLabel("---", SwingConstants.CENTER);
-        wRangeR.setOpaque(false);
-        wRangeR.setForeground(Color.WHITE);
-        wToHitR = new JLabel("---", SwingConstants.CENTER);
-        wToHitR.setOpaque(false);
-        wToHitR.setForeground(Color.WHITE);
+        setupLabel(wRangeR);
 
-        add(wTargetL,
-            GBC.std().fill(GridBagConstraints.HORIZONTAL)
-               .insets(1, 9, 1, 1).gridy(gridy).gridx(0));
+        currentHeatBuildupL = new JLabel(Messages.getString("MechDisplay.HeatBuildup"), SwingConstants.RIGHT);
+        setupLabel(currentHeatBuildupL);
 
-        add(wTargetR,
-            GBC.eol().fill(GridBagConstraints.HORIZONTAL)
-               .insets(1, 9, 1, 1).gridy(gridy).gridx(1));
-        gridy++;
+        currentHeatBuildupR = new JLabel("--", SwingConstants.LEFT);
+        setupLabel(currentHeatBuildupR);
 
-        add(wRangeL,
-            GBC.std().fill(GridBagConstraints.HORIZONTAL)
-               .insets(1, 9, 1, 1).gridy(gridy).gridx(0));
+        wTargetExtraInfo = new JLabel();
+        setupLabel(wTargetExtraInfo);
 
-        add(wRangeR,
-            GBC.eol().fill(GridBagConstraints.HORIZONTAL)
-               .insets(1, 9, 1, 1).gridy(gridy).gridx(1));
-        gridy++;
+        int pgridy = 0;
+        wTargetExtraInfo.setMinimumSize(new Dimension(20, LINE_HEIGHT));
+        pTargetInfo.add(wTargetExtraInfo,
+                GBC.eol().fill(GridBagConstraints.BOTH)
+                        .anchor(GridBagConstraints.WEST)
+                        .insets(5, 1, 5, 1).gridy(pgridy).gridx(0));
+        pgridy++;
 
-        add(wToHitL,
-            GBC.std().fill(GridBagConstraints.HORIZONTAL)
-               .insets(1, 9, 1, 1).gridy(gridy).gridx(0));
+        pTargetInfo.add(currentHeatBuildupL,
+                GBC.std().fill(GridBagConstraints.NONE)
+                        .anchor(GridBagConstraints.WEST)
+                        .insets(5, 1, 1, 1).gridy(pgridy).gridx(0));
 
-        add(wToHitR,
-            GBC.eol().fill(GridBagConstraints.HORIZONTAL)
-               .insets(1, 9, 1, 1).gridy(gridy).gridx(1));
-        gridy++;
+        pTargetInfo.add(currentHeatBuildupR,
+                GBC.std().fill(GridBagConstraints.NONE)
+                        .anchor(GridBagConstraints.WEST)
+                        .insets(2, 1, 1, 1).gridy(pgridy).gridx(1));
 
-        // to-hit text
-        toHitText = new JTextArea("", 2, 20);
-        toHitText.setEditable(false);
-        toHitText.setLineWrap(true);
-        toHitText.setFont(new Font("SansSerif", Font.PLAIN, 10));
-        add(toHitText,
-            GBC.eol().fill(GridBagConstraints.BOTH)
-               .insets(15, 9, 15, 9).gridy(gridy).gridx(0)
-               .gridheight(2));
-        gridy++;
+        pTargetInfo.add(wRangeL,
+                GBC.std().fill(GridBagConstraints.NONE)
+                        .anchor(GridBagConstraints.WEST)
+                        .insets(15, 1, 1, 1).gridy(pgridy).gridx(2));
 
-        addListeners();
-        
-        setBackGround();
-        onResize();
+        pTargetInfo.add(wRangeR,
+                GBC.eol().fill(GridBagConstraints.NONE)
+                        .anchor(GridBagConstraints.WEST)
+                        .insets(5, 1, 5, 1).gridy(pgridy).gridx(3));
+
+        toHitText = new JTextPane();
+        setupTextPane(toHitText);
+
+        JScrollPane toHitScroll = new JScrollPane(toHitText);
+
+        addSubdisplay(parent, pTargetInfo, LINE_HEIGHT*2, GridBagConstraints.HORIZONTAL);
+        addSubdisplay(parent, toHitScroll, LINE_HEIGHT * 3, GridBagConstraints.BOTH);
+    }
+
+    private void createTargetDisplay(JPanel parent) {
+        wTargetInfo = new JTextPane();
+        setupTextPane(wTargetInfo);
+        addSubdisplay(parent, wTargetInfo, LINE_HEIGHT * 2, GridBagConstraints.BOTH);
+    }
+
+    public void clearToHit() {
+        toHitText.setText("---");
+    }
+
+    public void setToHit(ToHitData toHit) {
+        setToHit(toHit, false);
+    }
+
+    public void setToHit(ToHitData toHit, boolean natAptGunnery) {
+        String txt = "";
+
+        switch (toHit.getValue()) {
+            case TargetRoll.IMPOSSIBLE:
+            case TargetRoll.AUTOMATIC_FAIL:
+                txt = String.format("To Hit: (0%%) %s", toHit.getDesc());
+                break;
+            case TargetRoll.AUTOMATIC_SUCCESS:
+                txt = String.format("To Hit: (100%%) %s", toHit.getDesc());
+                break;
+            default:
+                txt = String.format("<font color=\"%s\">To Hit: <b>%2d (%2.0f%%)</b></font> = %s",
+                        GUIP.hexColor(GUIP.getUnitToolTipHighlightColor()),
+                        toHit.getValue(),
+                        Compute.oddsAbove(toHit.getValue(), natAptGunnery),
+                        toHit.getDesc());
+                break;
+        }
+
+        toHitText.setText(UnitToolTip.wrapWithHTML(txt));
+        toHitText.setCaretPosition(0);
+    }
+
+    public void setToHit(String message) {
+        toHitText.setText(UnitToolTip.wrapWithHTML(message));
+    }
+
+    public void setTarget(@Nullable Targetable target, @Nullable String extraInfo) {
+        this.target = target;
+        updateTargetInfo();
+        String txt = "";
+
+        if (extraInfo == null || extraInfo.isEmpty()) {
+            wTargetExtraInfo.setOpaque(false);
+        } else {
+            txt = extraInfo;
+            wTargetExtraInfo.setOpaque(true);
+        }
+
+        wTargetExtraInfo.setText(UnitToolTip.wrapWithHTML(txt));
+    }
+
+    private void updateTargetInfo() {;
+        String txt = "";
+
+        if (target == null) {
+            txt = Messages.getString("MechDisplay.NoTarget");
+        } else {
+            txt = UnitToolTip.getTargetTipDetail(target, client);
+        }
+
+        wTargetInfo.setText(UnitToolTip.wrapWithHTML(txt));
     }
 
     @Override
@@ -828,89 +938,75 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
     }
 
     private void setBackGround() {
-        UnitDisplaySkinSpecification udSpec = SkinXMLHandler
-                .getUnitDisplaySkin();
+        UnitDisplaySkinSpecification udSpec = SkinXMLHandler.getUnitDisplaySkin();
 
-        Image tile = getToolkit()
-                .getImage(
-                        new MegaMekFile(Configuration.widgetsDir(), udSpec
-                                .getBackgroundTile()).toString());
+        Image tile = getToolkit().getImage(
+                new MegaMekFile(Configuration.widgetsDir(), udSpec.getBackgroundTile()).toString());
         PMUtil.setImage(tile, this);
         int b = BackGroundDrawer.TILING_BOTH;
         addBgDrawer(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.TILING_HORIZONTAL | BackGroundDrawer.VALIGN_TOP;
         tile = getToolkit().getImage(
-                new MegaMekFile(Configuration.widgetsDir(), udSpec.getTopLine())
-                        .toString());
+                new MegaMekFile(Configuration.widgetsDir(), udSpec.getTopLine()).toString());
         PMUtil.setImage(tile, this);
         addBgDrawer(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.TILING_HORIZONTAL | BackGroundDrawer.VALIGN_BOTTOM;
         tile = getToolkit().getImage(
-                new MegaMekFile(Configuration.widgetsDir(), udSpec.getBottomLine())
-                        .toString());
+                new MegaMekFile(Configuration.widgetsDir(), udSpec.getBottomLine()).toString());
         PMUtil.setImage(tile, this);
         addBgDrawer(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.TILING_VERTICAL | BackGroundDrawer.HALIGN_LEFT;
         tile = getToolkit().getImage(
-                new MegaMekFile(Configuration.widgetsDir(), udSpec.getLeftLine())
-                        .toString());
+                new MegaMekFile(Configuration.widgetsDir(), udSpec.getLeftLine()).toString());
         PMUtil.setImage(tile, this);
         addBgDrawer(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.TILING_VERTICAL | BackGroundDrawer.HALIGN_RIGHT;
         tile = getToolkit().getImage(
-                new MegaMekFile(Configuration.widgetsDir(), udSpec.getRightLine())
-                        .toString());
+                new MegaMekFile(Configuration.widgetsDir(), udSpec.getRightLine()).toString());
         PMUtil.setImage(tile, this);
         addBgDrawer(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_TOP
                 | BackGroundDrawer.HALIGN_LEFT;
-        tile = getToolkit()
-                .getImage(
-                        new MegaMekFile(Configuration.widgetsDir(), udSpec
-                                .getTopLeftCorner()).toString());
+        tile = getToolkit().getImage(
+                new MegaMekFile(Configuration.widgetsDir(), udSpec.getTopLeftCorner()).toString());
         PMUtil.setImage(tile, this);
         addBgDrawer(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_BOTTOM
                 | BackGroundDrawer.HALIGN_LEFT;
         tile = getToolkit().getImage(
-                new MegaMekFile(Configuration.widgetsDir(), udSpec
-                        .getBottomLeftCorner()).toString());
+                new MegaMekFile(Configuration.widgetsDir(), udSpec.getBottomLeftCorner()).toString());
         PMUtil.setImage(tile, this);
         addBgDrawer(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_TOP
                 | BackGroundDrawer.HALIGN_RIGHT;
-        tile = getToolkit()
-                .getImage(
-                        new MegaMekFile(Configuration.widgetsDir(), udSpec
-                                .getTopRightCorner()).toString());
+        tile = getToolkit().getImage(
+                new MegaMekFile(Configuration.widgetsDir(), udSpec.getTopRightCorner()).toString());
         PMUtil.setImage(tile, this);
         addBgDrawer(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_BOTTOM
                 | BackGroundDrawer.HALIGN_RIGHT;
         tile = getToolkit().getImage(
-                new MegaMekFile(Configuration.widgetsDir(), udSpec
-                        .getBottomRightCorner()).toString());
+                new MegaMekFile(Configuration.widgetsDir(), udSpec.getBottomRightCorner()).toString());
         PMUtil.setImage(tile, this);
         addBgDrawer(new BackGroundDrawer(tile, b));
-
     }
 
     /**
      * updates fields for the specified mech
-     * <p/>
+     * <p>
      * fix the ammo when it's added
      */
     public void displayMech(Entity en) {
         removeListeners();
-        
+
         // Grab a copy of the game.
         Game game = null;
 
@@ -927,7 +1023,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
             max_ext_heat = 15; // Standard value specified in TW p.159
         }
 
-        int currentHeatBuildup = (en.heat // heat from last round                
+        int currentHeatBuildup = (en.heat // heat from last round
                 + en.getEngineCritHeat() // heat engine crits will add
                 + Math.min(max_ext_heat, en.heatFromExternal) // heat from external sources
                 + en.heatBuildup) // heat we're building up this round
@@ -937,18 +1033,17 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
             if (en.infernos.isStillBurning()) { // hit with inferno ammo
                 currentHeatBuildup += en.infernos.getHeat();
             }
+
             if (!((Mech) en).hasLaserHeatSinks()) {
                 // extreme temperatures.
                 if ((game != null) && (game.getPlanetaryConditions().getTemperature() > 0)) {
-                    int buildup = game.getPlanetaryConditions()
-                                      .getTemperatureDifference(50, -30);
+                    int buildup = game.getPlanetaryConditions().getTemperatureDifference(50, -30);
                     if (((Mech) en).hasIntactHeatDissipatingArmor()) {
                         buildup /= 2;
                     }
                     currentHeatBuildup += buildup;
                 } else if (game != null) {
-                    currentHeatBuildup -= game.getPlanetaryConditions()
-                                              .getTemperatureDifference(50, -30);
+                    currentHeatBuildup -= game.getPlanetaryConditions().getTemperatureDifference(50, -30);
                 }
             }
         }
@@ -965,6 +1060,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                     currentHeatBuildup += 5;
                 }
             }
+
             if (hex.terrainLevel(Terrains.MAGMA) == 1) {
                 if ((en instanceof Mech)
                     && ((Mech) en).hasIntactHeatDissipatingArmor()) {
@@ -981,10 +1077,10 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                 }
             }
         }
+
         if ((((en instanceof Mech) || (en instanceof Aero)) && en.isStealthActive())
-            || en.isNullSigActive() || en.isVoidSigActive()) {
-            currentHeatBuildup += 10; // active stealth/null sig/void sig
-            // heat
+                || en.isNullSigActive() || en.isVoidSigActive()) {
+            currentHeatBuildup += 10; // active stealth/null sig/void sig heat
         }
 
         if ((en instanceof Mech) && en.isChameleonShieldOn()) {
@@ -1023,19 +1119,18 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                     && !mounted.getType().hasFlag(WeaponType.F_TAG)) {
                 continue;
             }
-            
+
             ((WeaponListModel) weaponList.getModel()).addWeapon(mounted);
             if (mounted.isUsedThisRound()
-                && (game.getPhase() == mounted.usedInPhase())
-                && (game.getPhase() == GamePhase.FIRING)) {
+                    && (game.getPhase() == mounted.usedInPhase())
+                    && game.getPhase().isFiring()) {
                 hasFiredWeapons = true;
                 // add heat from weapons fire to heat tracker
                 if (entity.usesWeaponBays()) {
                     // if using bay heat option then don't add total arc
                     if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_HEAT_BY_BAY)) {
                         for (int wId : mounted.getBayWeapons()) {
-                            currentHeatBuildup += entity.getEquipment(wId)
-                                                        .getCurrentHeat();
+                            currentHeatBuildup += entity.getEquipment(wId).getCurrentHeat();
                         }
                     } else {
                         // check whether arc has fired
@@ -1043,14 +1138,12 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                         boolean rearMount = mounted.isRearMounted();
                         if (!rearMount) {
                             if (!usedFrontArc[loc]) {
-                                currentHeatBuildup += entity.getHeatInArc(
-                                        loc, rearMount);
+                                currentHeatBuildup += entity.getHeatInArc(loc, rearMount);
                                 usedFrontArc[loc] = true;
                             }
                         } else {
                             if (!usedRearArc[loc]) {
-                                currentHeatBuildup += entity.getHeatInArc(
-                                        loc, rearMount);
+                                currentHeatBuildup += entity.getHeatInArc(loc, rearMount);
                                 usedRearArc[loc] = true;
                             }
                         }
@@ -1062,43 +1155,16 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                 }
             }
         }
-        weapSortOrder.setSelectedIndex(entity.getWeaponSortOrder().ordinal());
-        setWeaponComparator(weapSortOrder.getSelectedIndex());
+        comboWeaponSortOrder.setSelectedItem(entity.getWeaponSortOrder());
+        setWeaponComparator(comboWeaponSortOrder.getSelectedItem());
 
         if (en.hasDamagedRHS() && hasFiredWeapons) {
             currentHeatBuildup++;
         }
 
-        // This code block copied from the MovementPanel class,
-        // bad coding practice (duplicate code).
-        int heatCap;
-        if (en instanceof Mech) {
-            heatCap = ((Mech) en).getHeatCapacity(true, false);
-        } else if (en instanceof Aero) {
-            heatCap = en.getHeatCapacity(false);
-        } else {
-            heatCap = en.getHeatCapacity();
+        if (en.hasQuirk(OptionsConstants.QUIRK_POS_COMBAT_COMPUTER)) {
+            currentHeatBuildup -= 4;
         }
-        int heatCapWater = en.getHeatCapacityWithWater();
-        if (en.getCoolantFailureAmount() > 0) {
-            heatCap -= en.getCoolantFailureAmount();
-            heatCapWater -= en.getCoolantFailureAmount();
-        }
-        if (en.hasActivatedRadicalHS()) {
-            if (en instanceof Mech) {
-                heatCap += ((Mech) en).getActiveSinks();
-                heatCapWater += ((Mech) en).getActiveSinks();
-            } else if (en instanceof Aero) {
-                heatCap += ((Aero) en).getHeatSinks();
-                heatCapWater += ((Aero) en).getHeatSinks();
-            }
-        }
-        String heatCapacityStr = Integer.toString(heatCap);
-
-        if (heatCap < heatCapWater) {
-            heatCapacityStr = heatCap + " [" + heatCapWater + ']';
-        }
-        // end duplicate block
 
         // check for negative values due to extreme temp
         if (currentHeatBuildup < 0) {
@@ -1106,11 +1172,19 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         }
 
         String heatText = Integer.toString(currentHeatBuildup);
-        if (currentHeatBuildup > en.getHeatCapacityWithWater()) {
+        UnitToolTip.HeatDisplayHelper hdh = UnitToolTip.getHeatCapacityForDisplay(en);
+        String heatCapacityStr = hdh.heatCapacityStr;
+        int heatOverCapacity = currentHeatBuildup - hdh.heatCapWater;
+
+        String sheatOverCapacity = "";
+        if (heatOverCapacity > 0) {
             heatText += "*"; // overheat indication
+            String msg_over = Messages.getString("MechDisplay.over");
+            sheatOverCapacity = " " + heatOverCapacity + " " + msg_over;
         }
 
-        currentHeatBuildupR.setText(heatText + " (" + heatCapacityStr + ')');
+        currentHeatBuildupR.setForeground(GUIP.getColorForHeat(heatOverCapacity, Color.WHITE));
+        currentHeatBuildupR.setText(heatText + " (" + heatCapacityStr + ')' + sheatOverCapacity);
 
         // change what is visible based on type
         if (entity.usesWeaponBays()) {
@@ -1195,16 +1269,14 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
     }
 
     /**
-     * Returns the Mounted for the selected weapon in the weapon list.
-     * @return
+     * @return the Mounted for the selected weapon in the weapon list.
      */
     public Mounted getSelectedWeapon() {
         int selected = weaponList.getSelectedIndex();
         if (selected == -1) {
             return null;
         }
-        return ((WeaponListModel) weaponList.getModel())
-                .getWeaponAt(selected);
+        return ((WeaponListModel) weaponList.getModel()).getWeaponAt(selected);
     }
 
     /**
@@ -1215,8 +1287,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         if (selected == -1) {
             return -1;
         }
-        return entity.getEquipmentNum(((WeaponListModel) weaponList
-                .getModel()).getWeaponAt(selected));
+        return entity.getEquipmentNum(((WeaponListModel) weaponList.getModel()).getWeaponAt(selected));
     }
 
     /**
@@ -1225,9 +1296,8 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
      */
     public int selectFirstWeapon() {
         // Entity has no weapons, return -1;
-        if (entity.getWeaponList().size() == 0
-                || (entity.usesWeaponBays() 
-                        && entity.getWeaponBayList().size() == 0)) {
+        if (entity.getWeaponList().isEmpty()
+                || (entity.usesWeaponBays() && entity.getWeaponBayList().isEmpty())) {
             return -1;
         }
         WeaponListModel weapList = (WeaponListModel) weaponList.getModel();
@@ -1252,7 +1322,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         }
         Mounted selectedWeap;
         int initialSelection = selected;
-        
+
         boolean hasLooped = false;
         do {
             selected++;
@@ -1271,9 +1341,9 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
             return selected;
         } else {
             return -1;
-        } 
+        }
     }
-    
+
     public int getPrevWeaponListIdx() {
         int selected = weaponList.getSelectedIndex();
         // In case nothing was selected
@@ -1302,7 +1372,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
             return -1;
         }
     }
-    
+
     public int getNextWeaponNum() {
         int selected = getNextWeaponListIdx();
         if ((selected >= 0) && (selected < entity.getWeaponList().size())) {
@@ -1312,7 +1382,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
             return -1;
         }
     }
-    
+
     /**
      * Selects the next valid weapon in the weapon list.
      *
@@ -1447,10 +1517,10 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
             if (inftype.hasFlag(WeaponType.F_INF_BURST)) {
                 zeromods--;
             }
-            
+
             int range = inftype.getInfantryRange();
             if (entity.getLocationStatus(mounted.getLocation()) == ILocationExposureStatus.WET) {
-            	range /= 2;
+                range /= 2;
             }
             switch (range) {
                 case 0:
@@ -1672,17 +1742,29 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         } else if (wtype.getDamage() == WeaponType.DAMAGE_SPECIAL) {
             wDamR.setText(Messages.getString("MechDisplay.Special"));
         } else if (wtype.getDamage() == WeaponType.DAMAGE_ARTILLERY) {
-            StringBuffer damage = new StringBuffer();
+            StringBuilder damage = new StringBuilder();
             int artyDamage = wtype.getRackSize();
             damage.append(artyDamage);
-            artyDamage -= 10;
-            while (artyDamage > 0) {
-                damage.append('/').append(artyDamage);
-                artyDamage -= 10;
+            int falloff = 10;
+            boolean specialArrowIV = false;
+            if ((mounted.getLinked() != null) && (mounted.getLinked().getType() instanceof AmmoType)) {
+                AmmoType ammoType = (AmmoType) mounted.getLinked().getType();
+                specialArrowIV = (ammoType.is(AmmoType.T_ARROW_IV)
+                        && (ammoType.getMunitionType().contains(AmmoType.Munitions.M_ADA)
+                        || ammoType.getMunitionType().contains(AmmoType.Munitions.M_HOMING)));
+                int attackingBA = (entity instanceof BattleArmor) ? ((BattleArmor) entity).getShootingStrength() : -1;
+                falloff = AreaEffectHelper.calculateDamageFallOff(ammoType, attackingBA, false).falloff;
+            }
+            if (!specialArrowIV) {
+                artyDamage -= falloff;
+                while ((artyDamage > 0) && (falloff > 0)) {
+                    damage.append('/').append(artyDamage);
+                    artyDamage -= falloff;
+                }
             }
             wDamR.setText(damage.toString());
         } else if (wtype.hasFlag(WeaponType.F_ENERGY)
-                   && wtype.hasModes()
+                   && mounted.hasModes()
                    && (unitDisplay.getClientGUI() != null) && unitDisplay.getClientGUI().getClient().getGame().getOptions().booleanOption(
                 OptionsConstants.ADVCOMBAT_TACOPS_ENERGY_WEAPONS)) {
             if (mounted.hasChargedCapacitor() != 0) {
@@ -1710,15 +1792,16 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         if (mounted.isInBearingsOnlyMode()) {
             extremeR = RangeType.RANGE_BEARINGS_ONLY_OUT;
         }
+        // Show water ranges for submerged weapons and those that have only water ranges (torpedoes)
         if ((entity.getLocationStatus(mounted.getLocation()) == ILocationExposureStatus.WET)
-            || (longR == 0)) {
+                || ((longR == 0) && wtype.getWLongRange() > 0)) {
             shortR = wtype.getWShortRange();
             mediumR = wtype.getWMediumRange();
             longR = wtype.getWLongRange();
             extremeR = wtype.getWExtremeRange();
         } else if (wtype.hasFlag(WeaponType.F_PDBAY)) {
-        //Point Defense bays have a variable range, depending on the mode they're in
-            if (wtype.hasModes() && mounted.curMode().equals("Point Defense")) {
+            //Point Defense bays have a variable range, depending on the mode they're in
+            if (mounted.hasModes() && mounted.curMode().equals("Point Defense")) {
                 shortR = 1;
                 wShortR.setText("1");
             } else {
@@ -1832,7 +1915,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                                                  .elementAt(n));
             wtype = (WeaponType) mounted.getType();
         }
-        
+
         if (wtype.getAmmoType() == AmmoType.T_NA) {
             m_chAmmo.setEnabled(false);
         } else if (wtype.hasFlag(WeaponType.F_DOUBLE_ONESHOT)
@@ -1890,8 +1973,8 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                 if (entity.usesWeaponBays() && !(entity instanceof FighterSquadron)) {
                     rightBay = oldmount.ammoInBay(entity.getEquipmentNum(mountedAmmo));
                 }
-                
-                // covers the situation where a weapon using non-caseless ammo should 
+
+                // covers the situation where a weapon using non-caseless ammo should
                 // not be able to switch to caseless on the fly and vice versa
                 boolean canSwitchToAmmo = AmmoType.canSwitchToAmmo(mounted, atype);
 
@@ -1915,23 +1998,24 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
 
         // send event to other parts of the UI which care
         if (oldmount.isInWaypointLaunchMode()) {
-            setFieldofFire(oldmount);
+            setFieldOfFire(oldmount);
         } else {
-            setFieldofFire(mounted);
+            setFieldOfFire(mounted);
         }
         unitDisplay.processMechDisplayEvent(new MechDisplayEvent(this, entity, mounted));
         onResize();
         addListeners();
     }
-    
-    // this gathers all the range data 
+
+    // this gathers all the range data
     // it is a boiled down version of displaySelected,
-    // updateAttackValues, updateRangeDisplayforAmmo
-    private void setFieldofFire(Mounted mounted) {
+    // updateAttackValues, updateRangeDisplayForAmmo
+    private void setFieldOfFire(Mounted mounted) {
         // No field of fire without ClientGUI
-        if (unitDisplay.getClientGUI() == null) 
+        if (unitDisplay.getClientGUI() == null) {
             return;
-        
+        }
+
         ClientGUI gui = unitDisplay.getClientGUI();
 
         WeaponType wtype = (WeaponType) mounted.getType();
@@ -1939,8 +2023,9 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         ranges[0] = wtype.getRanges(mounted);
 
         AmmoType atype = null;
-        if (mounted.getLinked() != null) 
+        if ((mounted.getLinked() != null) && (mounted.getLinked().getType() instanceof AmmoType)) {
             atype = (AmmoType) mounted.getLinked().getType();
+        }
 
         // gather underwater ranges
         ranges[1] = wtype.getWRanges();
@@ -1951,25 +2036,23 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                     || (wtype.getAmmoType() == AmmoType.T_LRM)
                     || (wtype.getAmmoType() == AmmoType.T_LRM_IMP)
                     || (wtype.getAmmoType() == AmmoType.T_MML)) {
-                if (atype.getMunitionType() == AmmoType.M_TORPEDO) {
+                if (atype.getMunitionType().contains(AmmoType.Munitions.M_TORPEDO)) {
                     ranges[1] = wtype.getRanges(mounted);
-                } else if (atype.getMunitionType() == AmmoType.M_MULTI_PURPOSE) {
+                } else if (atype.getMunitionType().contains(AmmoType.Munitions.M_MULTI_PURPOSE)) {
                     ranges[1] = wtype.getRanges(mounted);
                 }
             }
         }
 
-        // Infantry range types 4+ are simplified to 
+        // Infantry range types 4+ are simplified to
         // the usual range types as displaying 5 range circles
         // would be visual overkill (and besides this makes
         // things easier)
         if (wtype instanceof InfantryWeapon) {
             InfantryWeapon inftype = (InfantryWeapon) wtype;
             int iR = inftype.getInfantryRange();
-            ranges[0] = 
-                    new int[] { 0, iR, iR * 2, iR * 3, 0 };
-            ranges[1] =
-            		new int[] { 0, iR / 2, (iR / 2) * 2, (iR / 2) * 3, 0 }; 
+            ranges[0] = new int[] { 0, iR, iR * 2, iR * 3, 0 };
+            ranges[1] = new int[] { 0, iR / 2, (iR / 2) * 2, (iR / 2) * 3, 0 };
         }
 
         // Artillery gets fixed ranges, 100 as an arbitrary
@@ -1977,42 +2060,52 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         // 6 to 17 in the other phases as it will be
         // direct fire then
         if (wtype.hasFlag(WeaponType.F_ARTILLERY)) {
+            boolean isADA = (mounted.getLinked() != null
+                    && ((AmmoType) mounted.getLinked().getType()).getMunitionType().contains(AmmoType.Munitions.M_ADA));
             if (gui.getCurrentPanel() instanceof TargetingPhaseDisplay) {
-                ranges[0] = new int[] { 0, 0, 0, 100, 0 };  
-                ranges[1] = new int[] { 0, 0, 0, 0, 0 };
+                ranges[0] = (!isADA? new int[] { 0, 0, 0, 100, 0 } : new int[] { 0, 0, 0, 51, 0 });
             } else {
-                ranges[0] = new int[] { 6, 0, 0, 17, 0 };  
-                ranges[1] = new int[] { 0, 0, 0, 0, 0 };
+                ranges[0] = (!isADA? new int[] { 6, 0, 0, 17, 0 } : wtype.getRanges(mounted));
             }
+            ranges[1] = new int[] { 0, 0, 0, 0, 0 };
         }
 
         // Override for the various ATM and MML ammos
         if (atype != null) {
             if (atype.getAmmoType() == AmmoType.T_ATM) {
-                if (atype.getMunitionType() == AmmoType.M_EXTENDED_RANGE) 
-                    ranges[0] = new int[] { 4, 9, 18, 27, 36 }; 
-                else if (atype.getMunitionType() == AmmoType.M_HIGH_EXPLOSIVE) 
-                    ranges[0] = new int[] { 0, 3, 6, 9, 12 };
-                else 
-                    ranges[0] = new int[] { 4, 5, 10, 15, 20 };
-            } 
-            else if (atype.getAmmoType() == AmmoType.T_MML) {
-                if (atype.hasFlag(AmmoType.F_MML_LRM)) 
-                    ranges[0] = new int[] { 6, 7, 14, 21, 28 };
-                else 
-                    ranges[0] = new int[] { 0, 3, 6, 9, 12 };
-            } else if (atype.getAmmoType() == AmmoType.T_IATM) {
-                if (atype.getMunitionType() == AmmoType.M_EXTENDED_RANGE) 
+                if (atype.getMunitionType().contains(AmmoType.Munitions.M_EXTENDED_RANGE)) {
                     ranges[0] = new int[] { 4, 9, 18, 27, 36 };
-                else if (atype.getMunitionType() == AmmoType.M_HIGH_EXPLOSIVE) 
+                } else if (atype.getMunitionType().contains(AmmoType.Munitions.M_HIGH_EXPLOSIVE)) {
                     ranges[0] = new int[] { 0, 3, 6, 9, 12 };
-                else if (atype.getMunitionType() == AmmoType.M_IATM_IMP) 
-                    ranges[0] = new int[] { 0, 3, 6, 9, 12 };
-                else  
+                } else {
                     ranges[0] = new int[] { 4, 5, 10, 15, 20 };
+                }
+            } else if (atype.getAmmoType() == AmmoType.T_MML) {
+                if (atype.hasFlag(AmmoType.F_MML_LRM)) {
+                    if (atype.getMunitionType().contains(AmmoType.Munitions.M_DEAD_FIRE)) {
+                        ranges[0] = new int[] { 4, 5, 10, 15, 20 };
+                    } else {
+                        ranges[0] = new int[] { 6, 7, 14, 21, 28 };
+                    }
+                } else {
+                    if (atype.getMunitionType().contains(AmmoType.Munitions.M_DEAD_FIRE)) {
+                        ranges[0] = new int[] { 0, 2, 4, 6, 8 };
+                    } else {
+                        ranges[0] = new int[] { 0, 3, 6, 9, 12 };
+                    }
+                }
+            } else if (atype.getAmmoType() == AmmoType.T_IATM) {
+                if (atype.getMunitionType().contains(AmmoType.Munitions.M_EXTENDED_RANGE)) {
+                    ranges[0] = new int[] { 4, 9, 18, 27, 36 };
+                } else if (atype.getMunitionType().contains(AmmoType.Munitions.M_HIGH_EXPLOSIVE)) {
+                    ranges[0] = new int[] { 0, 3, 6, 9, 12 };
+                } else if (atype.getMunitionType().contains(AmmoType.Munitions.M_IATM_IMP)) {
+                    ranges[0] = new int[] { 0, 3, 6, 9, 12 };
+                } else {
+                    ranges[0] = new int[] { 4, 5, 10, 15, 20 };
+                }
             }
         }
-
         // No minimum range for hotload
         if ((mounted.getLinked() != null) && mounted.getLinked().isHotLoaded()) {
             ranges[0][0] = 0;
@@ -2022,43 +2115,43 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         if (entity.isAirborne()) {
 
             // prepare fresh ranges, no underwater
-            ranges[0] = new int[] { 0, 0, 0, 0, 0 };  
+            ranges[0] = new int[] { 0, 0, 0, 0, 0 };
             ranges[1] = new int[] { 0, 0, 0, 0, 0 };
             int maxr = WeaponType.RANGE_SHORT;
-            
+
             // In the WeaponPanel, when the weapon is out of ammo
             // or otherwise nonfunctional, SHORT range will be listed;
             // the field of fire is instead disabled
             // Here as well as in WeaponPanel, choosing a specific ammo
             // only works for the current player's units
-            if (!mounted.isBreached() && !mounted.isMissing() 
-                    && !mounted.isDestroyed() && !mounted.isJammed() 
-                    && ((mounted.getLinked() == null) 
+            if (!mounted.isBreached() && !mounted.isMissing()
+                    && !mounted.isDestroyed() && !mounted.isJammed()
+                    && ((mounted.getLinked() == null)
                             || (mounted.getLinked().getUsableShotsLeft() > 0))) {
                 maxr = wtype.getMaxRange(mounted);
 
                 if (atype != null) {
                     if (atype.getAmmoType() == AmmoType.T_ATM) {
-                        if (atype.getMunitionType() == AmmoType.M_EXTENDED_RANGE) {
+                        if (atype.getMunitionType().contains(AmmoType.Munitions.M_EXTENDED_RANGE)) {
                             maxr = WeaponType.RANGE_EXT;
-                        } else if (atype.getMunitionType() == AmmoType.M_HIGH_EXPLOSIVE) {
+                        } else if (atype.getMunitionType().contains(AmmoType.Munitions.M_HIGH_EXPLOSIVE)) {
                             maxr = WeaponType.RANGE_SHORT;
                         }
                     } else if (atype.getAmmoType() == AmmoType.T_MML) {
                         if (!atype.hasFlag(AmmoType.F_MML_LRM)) {
-                            maxr = WeaponType.RANGE_SHORT; 
+                            maxr = WeaponType.RANGE_SHORT;
                         }
-                    } 
+                    }
                 }
 
                 // set the standard ranges, depending on capital or no
-                //boolean isCap = wtype.isCapital();
+                // boolean isCap = wtype.isCapital();
                 int rangeMultiplier = wtype.isCapital() ? 2 : 1;
                 final Game game = unitDisplay.getClientGUI().getClient().getGame();
                 if (game.getBoard().onGround()) {
                     rangeMultiplier *= 8;
                 }
-                
+
                 for (int rangeIndex = RangeType.RANGE_MINIMUM; rangeIndex <= RangeType.RANGE_EXTREME; rangeIndex++) {
                     if (maxr >= rangeIndex) {
                         ranges[0][rangeIndex] = WeaponType.AIRBORNE_WEAPON_RANGES[rangeIndex] * rangeMultiplier;
@@ -2066,27 +2159,34 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                 }
             }
         }
-        
+
         // pass all this to the Displays
         int arc = entity.getWeaponArc(entity.getEquipmentNum(mounted));
         int loc = mounted.getLocation();
-        
+
         if (gui.getCurrentPanel() instanceof FiringDisplay) {
             // twisting
             int facing = entity.getFacing();
-            if (entity.isSecondaryArcWeapon(entity.getEquipmentNum(mounted))) 
+            if (entity.isSecondaryArcWeapon(entity.getEquipmentNum(mounted))) {
                 facing = entity.getSecondaryFacing();
-            ((FiringDisplay) gui.getCurrentPanel()).FieldofFire(entity, ranges, arc, loc, facing);
+            }
+            ((FiringDisplay) gui.getCurrentPanel()).setWeaponFieldOfFire(entity, ranges, arc, loc, facing);
         } else if (gui.getCurrentPanel() instanceof TargetingPhaseDisplay) {
             // twisting
             int facing = entity.getFacing();
-            if (entity.isSecondaryArcWeapon(entity.getEquipmentNum(mounted))) 
+            if (entity.isSecondaryArcWeapon(entity.getEquipmentNum(mounted))) {
                 facing = entity.getSecondaryFacing();
-            ((TargetingPhaseDisplay) gui.getCurrentPanel()).FieldofFire(entity, ranges, arc, loc, facing);
+            }
+            ((TargetingPhaseDisplay) gui.getCurrentPanel()).setWeaponFieldOfFire(entity, ranges, arc, loc, facing);
         } else if (gui.getCurrentPanel() instanceof MovementDisplay) {
             // no twisting here
-            ((MovementDisplay) gui.getCurrentPanel()).FieldOfFire(entity, ranges, arc, loc);
+            ((MovementDisplay) gui.getCurrentPanel()).setWeaponFieldOfFire(entity, ranges, arc, loc);
+        }  else if (gui.getCurrentPanel() instanceof DeploymentDisplay) {
+            // no twisting here
+            ((DeploymentDisplay) gui.getCurrentPanel()).setWeaponFieldOfFire(entity, ranges, arc, loc);
         }
+
+        unitDisplay.getClientGUI().getBoardView().setSensorRange(entity, entity.getPosition());
     }
 
     private String formatAmmo(Mounted m) {
@@ -2128,13 +2228,13 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         AmmoType atype = (AmmoType) mAmmo.getType();
         // Only override the display for the various ATM and MML ammos
         if (atype.getAmmoType() == AmmoType.T_ATM) {
-            if (atype.getMunitionType() == AmmoType.M_EXTENDED_RANGE) {
+            if (atype.getMunitionType().contains(AmmoType.Munitions.M_EXTENDED_RANGE)) {
                 wMinR.setText("4");
                 wShortR.setText("1 - 9");
                 wMedR.setText("10 - 18");
                 wLongR.setText("19 - 27");
                 wExtR.setText("28 - 36");
-            } else if (atype.getMunitionType() == AmmoType.M_HIGH_EXPLOSIVE) {
+            } else if (atype.getMunitionType().contains(AmmoType.Munitions.M_HIGH_EXPLOSIVE)) {
                 wMinR.setText("---");
                 wShortR.setText("1 - 3");
                 wMedR.setText("4 - 6");
@@ -2149,38 +2249,54 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
             }
         } else if (atype.getAmmoType() == AmmoType.T_MML) {
             if (atype.hasFlag(AmmoType.F_MML_LRM)) {
-                wMinR.setText("6");
-                wShortR.setText("1 - 7");
-                wMedR.setText("8 - 14");
-                wLongR.setText("15 - 21");
-                wExtR.setText("21 - 28");
+                if (atype.getMunitionType().contains(AmmoType.Munitions.M_DEAD_FIRE)) {
+                    wMinR.setText("4");
+                    wShortR.setText("1 - 5");
+                    wMedR.setText("6 - 10");
+                    wLongR.setText("11 - 15");
+                    wExtR.setText("16 - 20");
+                } else {
+                    wMinR.setText("6");
+                    wShortR.setText("1 - 7");
+                    wMedR.setText("8 - 14");
+                    wLongR.setText("15 - 21");
+                    wExtR.setText("21 - 28");
+                }
             } else {
-                wMinR.setText("---");
-                wShortR.setText("1 - 3");
-                wMedR.setText("4 - 6");
-                wLongR.setText("7 - 9");
-                wExtR.setText("10 - 12");
+                if (atype.getMunitionType().contains(AmmoType.Munitions.M_DEAD_FIRE)) {
+                    wMinR.setText("---");
+                    wShortR.setText("1 - 2");
+                    wMedR.setText("3 - 4");
+                    wLongR.setText("5 - 6");
+                    wExtR.setText("7 - 8");
+                } else {
+                    wMinR.setText("---");
+                    wShortR.setText("1 - 3");
+                    wMedR.setText("4 - 6");
+                    wLongR.setText("7 - 9");
+                    wExtR.setText("10 - 12");
+                }
             }
         } else if (atype.getAmmoType() == AmmoType.T_IATM) {
-            if (atype.getMunitionType() == AmmoType.M_EXTENDED_RANGE) {
+            if (atype.getMunitionType().contains(AmmoType.Munitions.M_EXTENDED_RANGE)) {
                 wMinR.setText("4");
                 wShortR.setText("1 - 9");
                 wMedR.setText("10 - 18");
                 wLongR.setText("19 - 27");
                 wExtR.setText("28 - 36");
-            } else if (atype.getMunitionType() == AmmoType.M_HIGH_EXPLOSIVE) {
+            } else if (atype.getMunitionType().contains(AmmoType.Munitions.M_HIGH_EXPLOSIVE)) {
                 wMinR.setText("---");
                 wShortR.setText("1 - 3");
                 wMedR.setText("4 - 6");
                 wLongR.setText("7 - 9");
                 wExtR.setText("10 - 12");
-            } else if (atype.getMunitionType() == AmmoType.M_IATM_IIW) {
+            } else if (atype.getMunitionType().contains(AmmoType.Munitions.M_IATM_IIW)) {
                 wMinR.setText("4");
                 wShortR.setText("1 - 5");
                 wMedR.setText("6 - 10");
                 wLongR.setText("11 - 15");
                 wExtR.setText("16 - 20");
-            } else if (atype.getMunitionType() == AmmoType.M_IATM_IMP) {
+            } else if (atype.getMunitionType().contains(AmmoType.Munitions.M_IATM_IMP)) {
                 wMinR.setText("---");
                 wShortR.setText("1 - 3");
                 wMedR.setText("4 - 6");
@@ -2192,7 +2308,29 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                 wMedR.setText("6 - 10");
                 wLongR.setText("11 - 15");
                 wExtR.setText("16 - 20");
-            }           
+            }
+        } else if ((atype.getAmmoType() == AmmoType.T_LRM) && (atype.getMunitionType().contains(AmmoType.Munitions.M_DEAD_FIRE))) {
+            wMinR.setText("4");
+            wShortR.setText("1 - 5");
+            wMedR.setText("6 - 10");
+            wLongR.setText("11 - 15");
+            wExtR.setText("16 - 20");
+        } else if ((atype.getAmmoType() == AmmoType.T_SRM) && (atype.getMunitionType().contains(AmmoType.Munitions.M_DEAD_FIRE))) {
+            wMinR.setText("---");
+            wShortR.setText("1 - 2");
+            wMedR.setText("3 - 4");
+            wLongR.setText("5 - 6");
+            wExtR.setText("7 - 8");
+        } else if (atype.getAmmoType() == AmmoType.T_ARROW_IV) {
+            // Special casing for ADA ranges
+            if (atype.getMunitionType().contains(AmmoType.Munitions.M_ADA)) {
+                wMinR.setText("---");
+                wShortR.setText("1 - 17 [0]");
+                wMedR.setText("18 - 34 [1]");
+                wLongR.setText("35 - 51 [2]");
+                wExtR.setText("---");
+            }
+
         }
 
         // Min range 0 for hotload
@@ -2246,7 +2384,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
             wShortR.setText("1-12");
         } else if (wtype.hasFlag(WeaponType.F_PDBAY)) {
                 //Point Defense bays have a variable range too, depending on the mode they're in
-                if (wtype.hasModes() && weapon.curMode().equals("Point Defense")) {
+                if (weapon.hasModes() && weapon.curMode().equals("Point Defense")) {
                     wShortR.setText("1");
                 } else {
                     wShortR.setText("1-6");
@@ -2286,13 +2424,13 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                                         double avMed, double avLong, double avExt, int maxr) {
 
         if (AmmoType.T_ATM == atype.getAmmoType()) {
-            if (atype.getMunitionType() == AmmoType.M_EXTENDED_RANGE) {
+            if (atype.getMunitionType().contains(AmmoType.Munitions.M_EXTENDED_RANGE)) {
                 maxr = WeaponType.RANGE_EXT;
                 avShort = avShort / 2;
                 avMed = avMed / 2;
                 avLong = avMed;
                 avExt = avMed;
-            } else if (atype.getMunitionType() == AmmoType.M_HIGH_EXPLOSIVE) {
+            } else if (atype.getMunitionType().contains(AmmoType.Munitions.M_HIGH_EXPLOSIVE)) {
                 maxr = WeaponType.RANGE_SHORT;
                 avShort = avShort + (avShort / 2);
                 avMed = 0;
@@ -2303,7 +2441,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         else if (atype.getAmmoType() == AmmoType.T_MML) {
             // first check for artemis
             int bonus = 0;
-            if (atype.getMunitionType() == AmmoType.M_ARTEMIS_CAPABLE) {
+            if (atype.getMunitionType().contains(AmmoType.Munitions.M_ARTEMIS_CAPABLE)) {
                 int rack = atype.getRackSize();
                 if (rack == 5) {
                     bonus += 1;
@@ -2322,12 +2460,12 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                 avExt = 0;
             }
         } // end weapon is MML
-        else if ((atype.getAmmoType() == AmmoType.T_LRM) 
+        else if ((atype.getAmmoType() == AmmoType.T_LRM)
                 || (atype.getAmmoType() == AmmoType.T_LRM_IMP)
                 || (atype.getAmmoType() == AmmoType.T_SRM)
                 || (atype.getAmmoType() == AmmoType.T_SRM_IMP)) {
 
-            if (atype.getMunitionType() == AmmoType.M_ARTEMIS_CAPABLE) {
+            if (atype.getMunitionType().contains(AmmoType.Munitions.M_ARTEMIS_CAPABLE)) {
                 if ((atype.getAmmoType() == AmmoType.T_LRM) || (atype.getAmmoType() == AmmoType.T_LRM_IMP)) {
                     int bonus = (int) Math.ceil(atype.getRackSize() / 5.0);
                     avShort = avShort + bonus;
@@ -2339,7 +2477,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                 }
             }
         } else if (atype.getAmmoType() == AmmoType.T_AC_LBX) {
-            if (atype.getMunitionType() == AmmoType.M_CLUSTER) {
+            if (atype.getMunitionType().contains(AmmoType.Munitions.M_CLUSTER)) {
                 int newAV = (int) Math.floor(0.6 * atype.getRackSize());
                 avShort = newAV;
                 if (avMed > 0) {
@@ -2384,7 +2522,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                 avShort = 1000;
                 avMed = 1000;
                 avLong = 1000;
-                avExt = 1000; 
+                avExt = 1000;
             } else {
                 avShort = 4;
                 avMed = 4;
@@ -2396,7 +2534,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                 avShort = 100;
                 avMed = 100;
                 avLong = 100;
-                avExt = 100; 
+                avExt = 100;
             } else {
                 avShort = 3;
                 avMed = 3;
@@ -2471,13 +2609,13 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         }
         // check for bracketing
         double mult = 1.0;
-        if (wtype.hasModes() && weapon.curMode().equals("Bracket 80%")) {
+        if (weapon.hasModes() && weapon.curMode().equals("Bracket 80%")) {
             mult = 0.8;
         }
-        if (wtype.hasModes() && weapon.curMode().equals("Bracket 60%")) {
+        if (weapon.hasModes() && weapon.curMode().equals("Bracket 60%")) {
             mult = 0.6;
         }
-        if (wtype.hasModes() && weapon.curMode().equals("Bracket 40%")) {
+        if (weapon.hasModes() && weapon.curMode().equals("Bracket 40%")) {
             mult = 0.4;
         }
         avShort = mult * avShort;
@@ -2533,12 +2671,12 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         }
         if (event.getSource().equals(weaponList)) {
             displaySelected();
-            
+
             // Can't do anything if ClientGUI is null
             if (unitDisplay.getClientGUI() == null) {
                 return;
             }
-            
+
             JComponent currPanel = unitDisplay.getClientGUI().getCurrentPanel();
             // When in the Firing Phase, update the targeting information.
             if (currPanel instanceof FiringDisplay) {
@@ -2552,7 +2690,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                             .getSelectedIndex());
                 }
                 Mounted prevMounted = null;
-                if ((event.getLastIndex() != -1) 
+                if ((event.getLastIndex() != -1)
                         && (event.getLastIndex() < weaponModel.getSize())) {
                     prevMounted = weaponModel.getWeaponAt(event.getLastIndex());
                 }
@@ -2560,12 +2698,12 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                 // in the target method
                 if (mounted != null
                         && mounted.getType().hasFlag(WeaponType.F_VGL)) {
-                    // Store previous target, if it's a weapon that doesn't 
+                    // Store previous target, if it's a weapon that doesn't
                     // have a forced target
                     if ((prevMounted != null)
                             && !prevMounted.getType().hasFlag(WeaponType.F_VGL)) {
                         prevTarget = firingDisplay.getTarget();
-                    }                    
+                    }
                     firingDisplay.target(null);
                 } else {
                     if (prevTarget != null) {
@@ -2580,11 +2718,12 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
             } else if (currPanel instanceof TargetingPhaseDisplay) {
                 ((TargetingPhaseDisplay) currPanel).updateTarget();
             }
-            
-            // Tell the <Phase>Display to update the 
+
+            // Tell the <Phase>Display to update the
             // firing arc info when a weapon has been de-selected
             if (weaponList.getSelectedIndex() == -1) {
-                unitDisplay.getClientGUI().getBoardView().clearFieldofF();
+                unitDisplay.getClientGUI().getBoardView().clearFieldOfFire();
+                unitDisplay.getClientGUI().getBoardView().clearSensorsRanges();
             }
         }
         onResize();
@@ -2632,7 +2771,8 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                         clientgui.getClient().sendAmmoChange(
                                 entity.getId(),
                                 entity.getEquipmentNum(bWeap),
-                                entity.getEquipmentNum(mAmmo));
+                                entity.getEquipmentNum(mAmmo),
+                                0);
                     }
                 }
             } else {
@@ -2640,7 +2780,8 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                 // Alert the server of the update.
                 clientgui.getClient().sendAmmoChange(entity.getId(),
                         entity.getEquipmentNum(mWeap),
-                        entity.getEquipmentNum(mAmmo));
+                        entity.getEquipmentNum(mAmmo),
+                        0);
             }
 
             // Refresh for hot load change
@@ -2682,52 +2823,35 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                 return;
             }
             displaySelected();
-        } else if (ev.getSource().equals(weapSortOrder)) {
-            setWeaponComparator(weapSortOrder.getSelectedIndex());
+        } else if (ev.getSource().equals(comboWeaponSortOrder)) {
+            setWeaponComparator(comboWeaponSortOrder.getSelectedItem());
+            if (entity.getOwner().equals(unitDisplay.getClientGUI().getClient().getLocalPlayer())) {
+                unitDisplay.getClientGUI().getClient().sendEntityWeaponOrderUpdate(entity);
+            }
         }
         onResize();
     }
 
-    void setWeaponComparator(int sortIdx) {
-        Comparator<Mounted> weapComparator;
-        if (sortIdx == Entity.WeaponSortOrder.RANGE_LH.ordinal()) {
-            entity.setWeaponSortOrder(Entity.WeaponSortOrder.RANGE_LH);
-            weapComparator = new WeaponComparatorRange(true);
-        } else if (sortIdx == Entity.WeaponSortOrder.RANGE_HL.ordinal()) {
-            entity.setWeaponSortOrder(Entity.WeaponSortOrder.RANGE_HL);
-            weapComparator = new WeaponComparatorRange(false);
-        } else if (sortIdx == Entity.WeaponSortOrder.DAMAGE_LH.ordinal()) {
-            entity.setWeaponSortOrder(Entity.WeaponSortOrder.DAMAGE_LH);
-            weapComparator = new WeaponComparatorDamage(true);
-        } else if (sortIdx == Entity.WeaponSortOrder.DAMAGE_HL.ordinal()) {
-            entity.setWeaponSortOrder(Entity.WeaponSortOrder.DAMAGE_HL);
-            weapComparator = new WeaponComparatorDamage(false);
-        } else if (sortIdx == Entity.WeaponSortOrder.CUSTOM.ordinal()) {
-            entity.setWeaponSortOrder(Entity.WeaponSortOrder.CUSTOM);
-            weapComparator = new WeaponComparatorCustom(entity);
-        } else if (sortIdx == Entity.WeaponSortOrder.ARC.ordinal()) {
-            entity.setWeaponSortOrder(Entity.WeaponSortOrder.ARC);
-            weapComparator = new WeaponComparatorArc(entity);
-        } else { // Default
-            entity.setWeaponSortOrder(Entity.WeaponSortOrder.DEFAULT);
-            weapComparator = new WeaponComparatorNum(entity);
+    void setWeaponComparator(final @Nullable WeaponSortOrder weaponSortOrder) {
+        if (weaponSortOrder == null) {
+            return;
         }
-        ((WeaponListModel) weaponList.getModel()).sort(weapComparator);
+
+        entity.setWeaponSortOrder(weaponSortOrder);
+        ((WeaponListModel) weaponList.getModel()).sort(weaponSortOrder.getWeaponSortComparator(entity));
     }
-    
+
     private void addListeners() {
-        weapSortOrder.addActionListener(this);
+        comboWeaponSortOrder.addActionListener(this);
         m_chAmmo.addActionListener(this);
         m_chBayWeapon.addActionListener(this);
-        
         weaponList.addListSelectionListener(this);
     }
-    
+
     private void removeListeners() {
-        weapSortOrder.removeActionListener(this);
+        comboWeaponSortOrder.removeActionListener(this);
         m_chAmmo.removeActionListener(this);
         m_chBayWeapon.removeActionListener(this);
-        
         weaponList.removeListSelectionListener(this);
     }
 
@@ -2737,5 +2861,22 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
 
     public void setPrevTarget(Targetable prevTarget) {
         this.prevTarget = prevTarget;
+    }
+
+    private void adaptToGUIScale() {
+        UIUtil.adjustContainer(panelMain, UIUtil.FONT_SCALE1);
+    }
+
+    @Override
+    public void preferenceChange(PreferenceChangeEvent e) {
+        // Update the text size when the GUI scaling changes
+        if (e.getName().equals(GUIPreferences.GUI_SCALE)) {
+            adaptToGUIScale();
+        } else if (e.getName().equals(GUIPreferences.UNIT_DISPLAY_WEAPON_LIST_HEIGHT)) {
+            tWeaponScroll.setMinimumSize(new Dimension(500, GUIP.getUnitDisplayWeaponListHeight()));
+            tWeaponScroll.setPreferredSize(new Dimension(500, GUIP.getUnitDisplayWeaponListHeight()));
+            tWeaponScroll.revalidate();
+            tWeaponScroll.repaint();
+        }
     }
 }

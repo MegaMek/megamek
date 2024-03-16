@@ -20,6 +20,10 @@ Demon Tank
 (PPC)
 </Model>
 
+<mul id:>
+874
+</mul id:>
+
 <year>
 2729
 </year>
@@ -31,6 +35,10 @@ Demon Tank
 <type>
 IS Level 2
 </type>
+
+<role>
+Sniper
+</role>
 
 <motion_type>
 Wheeled
@@ -77,7 +85,7 @@ PPC
 </Turret Equipment>
 
 <source>
-TRO 3050 - Star League
+TRO: 3050
 </source>
 
 <tonnage>

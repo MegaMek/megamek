@@ -16,9 +16,13 @@ Dropship
 Vampire II
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+5611
+</mul id:>
 
 <year>
 3070
@@ -31,6 +35,10 @@ Vampire II
 <type>
 IS Level 4
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Aerodyne
@@ -115,7 +123,7 @@ Communications Equipment (8 ton)
 </structural_integrity>
 
 <source>
-XTRO Phantoms - Jihad
+XTR: Phantoms
 </source>
 
 <tonnage>

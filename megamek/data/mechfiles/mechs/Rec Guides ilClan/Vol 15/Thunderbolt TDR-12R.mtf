@@ -1,0 +1,164 @@
+chassis:Thunderbolt
+model:TDR-12R
+mul id:8194
+
+Config:Biped
+techbase:Mixed (IS Chassis)
+era:3127
+source:Rec Guide:ilClan #15
+rules level:3
+role:Juggernaut
+
+
+
+quirk:multi_trac
+quirk:rugged_2
+quirk:ubiquitous_is
+
+
+mass:65
+engine:195 Fusion Engine(IS)
+structure:IS Standard
+myomer:Standard
+
+heat sinks:12 IS Double
+walk mp:3
+jump mp:0
+
+armor:Reflective(Inner Sphere)
+LA armor:20
+RA armor:20
+LT armor:24
+RT armor:24
+CT armor:30
+HD armor:9
+LL armor:29
+RL armor:29
+RTL armor:6
+RTR armor:6
+RTC armor:11
+
+Weapons:9
+Medium Laser, Left Arm
+Medium Laser, Left Arm
+Plasma Rifle, Right Arm
+LRM 15, Left Torso
+Small VSP Laser, Left Torso
+Small VSP Laser, Left Torso
+Small VSP Laser, Left Torso
+Thunderbolt 5, Right Torso
+Thunderbolt 5, Right Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+Medium Laser
+Medium Laser
+IS Reflective
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISPlasmaRifle
+ISPlasmaRifle
+IS Reflective
+-Empty-
+-Empty-
+
+Left Torso:
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+CLLRM15
+CLLRM15
+ISSmallVSPLaser
+ISSmallVSPLaser
+ISSmallVSPLaser
+IS Reflective
+
+Right Torso:
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+Thunderbolt 5
+Thunderbolt 5
+IS Ammo Thunderbolt-5
+IS Ammo Thunderbolt-5
+Clan Ammo LRM-15
+Clan Ammo LRM-15
+ISPlasmaRifleAmmo
+ISCASEII
+IS Reflective
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISPlasmaRifleAmmo
+IS Reflective
+
+Head:
+Life Support
+Sensors
+Cockpit
+IS Reflective
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Reflective
+IS Reflective
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Reflective
+IS Reflective
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

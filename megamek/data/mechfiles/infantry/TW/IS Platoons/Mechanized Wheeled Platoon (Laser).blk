@@ -20,6 +20,10 @@ Mechanized Wheeled Platoon
 (Laser)
 </Model>
 
+<mul id:>
+2145
+</mul id:>
+
 <year>
 2405
 </year>
@@ -27,6 +31,10 @@ Mechanized Wheeled Platoon
 <type>
 IS Level 2
 </type>
+
+<role>
+Ambusher
+</role>
 
 <motion_type>
 Wheeled
@@ -36,7 +44,7 @@ Wheeled
 </Field Guns Equipment>
 
 <source>
-Total Warfare - Succession Wars
+Total Warfare
 </source>
 
 <squad_size>

@@ -20,6 +20,10 @@ Ibex RV
 (Militarized:MG)
 </Model>
 
+<mul id:>
+4356
+</mul id:>
+
 <year>
 3049
 </year>
@@ -31,6 +35,10 @@ Ibex RV
 <type>
 IS Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Wheeled
@@ -85,7 +93,7 @@ Machine Gun (Light)(PT)
 </structural_tech_rating>
 
 <source>
-HB:House Marik - Clan Invasion
+Handbook: House Marik
 </source>
 
 <tonnage>

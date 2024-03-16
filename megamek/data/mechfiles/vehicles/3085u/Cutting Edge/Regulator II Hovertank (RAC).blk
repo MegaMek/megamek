@@ -20,6 +20,10 @@ Regulator II Hovertank
 (RAC)
 </Model>
 
+<mul id:>
+2678
+</mul id:>
+
 <Tonnage>
 50
 </Tonnage>
@@ -53,12 +57,16 @@ ISGuardianECMSuite
 IS Level 2
 </type>
 
+<role>
+Skirmisher
+</role>
+
 <year>
 3083
 </year>
 
 <source>
-Dark Age
+TRO: 3085
 </source>
 
 <internal_type>

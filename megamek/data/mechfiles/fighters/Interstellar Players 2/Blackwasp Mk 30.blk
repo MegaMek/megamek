@@ -20,6 +20,10 @@ Blackwasp
 Mk. 30
 </Model>
 
+<mul id:>
+390
+</mul id:>
+
 <year>
 2728
 </year>
@@ -31,6 +35,10 @@ Mk. 30
 <type>
 IS Level 2
 </type>
+
+<role>
+Fast Dogfighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -92,7 +100,7 @@ ISERLargeLaser
 </Fuselage Equipment>
 
 <source>
-Interstellar Players 2 - Star League
+Interstellar Players 2
 </source>
 
 <tonnage>

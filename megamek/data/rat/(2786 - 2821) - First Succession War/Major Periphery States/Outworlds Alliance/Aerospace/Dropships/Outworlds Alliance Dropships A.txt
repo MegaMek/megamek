@@ -1,7 +1,7 @@
 Outworlds Alliance Dropships A
 Vulture (2312),1
 Gazelle (2531),2
-Dictator (Standard),3
+Dictator,3
 Leopard CV (2581),4
 Trojan (Blockade Runner),5
 Triumph (2593),6

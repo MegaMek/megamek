@@ -1,5 +1,6 @@
 /*
- * MegaMek - Copyright (C) 2002-2018 Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2002-2018 - Ben Mazur (bmazur@sev.org).
+ * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -11,7 +12,6 @@
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
  */
-
 package megamek.common;
 
 import java.util.ArrayList;
@@ -22,16 +22,9 @@ import java.util.Vector;
 /**
  * Represents a trailer hitch that allows a wheeled or tracked vehicle to tow trailers.
  *
- * @see megamek.common.MechFileParser#postLoadInit
+ * @see MechFileParser#postLoadInit
  */
-
 public class TankTrailerHitch implements Transporter {
-
-    // Private attributes, constants and helper functions.
-
-    /**
-     * 
-     */
     private static final long serialVersionUID = 1193349063084937973L;
     
     /**
@@ -59,12 +52,10 @@ public class TankTrailerHitch implements Transporter {
      */
     private static final String HAVE_VACANCY_STRING = "One trailer";
 
-    // Protected constructors and methods.
-
     /**
      * Get the <code>String</code> to report the presence (or lack thereof) of a
      * towed trailer.
-     * <p/>
+     * <p>
      * Sub-classes are encouraged to override this method.
      *
      * @param isLoaded
@@ -80,8 +71,6 @@ public class TankTrailerHitch implements Transporter {
         }
         return TankTrailerHitch.HAVE_VACANCY_STRING;
     }
-
-    // Public constructors and methods.
 
     /**
      * Create a new hitch, specified as a (front) or rear mount.
@@ -123,12 +112,8 @@ public class TankTrailerHitch implements Transporter {
     /**
      * Load the given unit.
      *
-     * @param unit
-     *            - the <code>Entity</code> to be loaded.
-     * @exception IllegalArgumentException
-     *                - If the unit can't be loaded, an
-     *                <code>IllegalArgumentException</code> exception will be
-     *                thrown.
+     * @param unit the <code>Entity</code> to be loaded.
+     * @throws IllegalArgumentException If the unit can't be loaded
      */
     @Override
     public final void load(Entity unit) throws IllegalArgumentException {
@@ -168,8 +153,8 @@ public class TankTrailerHitch implements Transporter {
      *
      * @param unit
      *            - the <code>Entity</code> to be unloaded.
-     * @return <code>true</code> if the unit was contain is loadeded in this
-     *         space, <code>false</code> otherwise.
+     * @return <code>true</code> if the unit was contained is loaded in this space,
+     * <code>false</code> otherwise.
      */
     @Override
     public final boolean unload(Entity unit) {
@@ -237,7 +222,6 @@ public class TankTrailerHitch implements Transporter {
      * more than one unit can be at any single location; that same unit can be
      * "spread" over multiple locations.
      * <p>
-     * Sub-classes should override the <code>getExteriorLocs</code> method.
      *
      * @param loc
      *            - the <code>int</code> location hit by attack.
@@ -248,7 +232,6 @@ public class TankTrailerHitch implements Transporter {
      * @return The <code>Entity</code> being transported on the outside at that
      *         location. This value will be <code>null</code> if no unit is
      *         transported on the outside at that location.
-     * @see megamek.common.TankTrailerHitch#getExteriorLocs(boolean)
      */
     @Override
     public final Entity getExteriorUnitAt(int loc, boolean isRear) {
@@ -270,11 +253,6 @@ public class TankTrailerHitch implements Transporter {
     }
     
     @Override
-    public int hardpointCost() {
-        return 0;
-    }
-
-    @Override
     public String toString() {
         return "Trailer Hitch:" + getUnused();
     }
@@ -283,4 +261,4 @@ public class TankTrailerHitch implements Transporter {
     public void setGame(Game game) {
         this.game = game;
     }
-} // End package class TankTrailerHitch implements Transporter
+}

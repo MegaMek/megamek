@@ -1,3 +1,7 @@
+
+<mul id:>
+1151
+</mul id:>
 #building block data file
 <BlockVersion>
 1
@@ -14,7 +18,7 @@ Fox Armored Car
 </Name>
 
 <model>
-(Standard)
+
 </model>
 
 <Tonnage>
@@ -40,6 +44,10 @@ ISSmallPulseLaser
 <type>
 IS Level 2
 </type>
+
+<role>
+Scout
+</role>
 <year>
 3084
 </year>
@@ -56,5 +64,5 @@ IS Level 2
 Hover
 </motion_type>
 <source>
-TRO 3085
+TRO: 3085
 </source>

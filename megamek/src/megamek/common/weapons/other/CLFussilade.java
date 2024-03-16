@@ -13,7 +13,8 @@
  */
 package megamek.common.weapons.other;
 
-import megamek.common.BattleForceElement;
+import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.Mounted;
 import megamek.common.SimpleTechLevel;
 import megamek.common.WeaponType;
 import megamek.common.weapons.CLIATMWeapon;
@@ -61,24 +62,14 @@ public class CLFussilade extends CLIATMWeapon {
     }
 
     @Override
-    public double getBattleForceDamage(int range) {
-        double damage = 0;
-        if (range <= getLongRange()) {
-            damage = getRackSize();
-            if (range < BattleForceElement.MEDIUM_RANGE) {
-                damage *= 3;
-            } else if (range < BattleForceElement.LONG_RANGE) {
-                damage *= 2;
-            }
-            if (range == BattleForceElement.SHORT_RANGE && getMinimumRange() > 0) {
-                damage = adjustBattleForceDamageForMinRange(damage);
-            }
+    public double getBattleForceDamage(int range, Mounted fcs) {
+        if (range == AlphaStrikeElement.SHORT_RANGE) {
+            return 0.45;
+        } else if (range == AlphaStrikeElement.MEDIUM_RANGE) {
+            return 0.3;
+        } else {
+            return 0;
         }
-        return damage / 10.0;
     }
-    
-    @Override
-    public int getBattleForceClass() {
-        return BFCLASS_IATM;
-    }
+
 }

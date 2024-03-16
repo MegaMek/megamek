@@ -1,12 +1,16 @@
-Version:1.1
-Woodsman
-B
+chassis:Woodsman
+model:B
+mul id:7643
 
 Config:Biped Omnimech
 techbase:Clan
 era:2866
-source:Succession Wars
+source:TRO: Golden Century
 rules level:2
+role:Sniper
+
+quirk:easy_maintain
+
 
 mass:75
 engine:300 Fusion (Clan) Engine(IS)

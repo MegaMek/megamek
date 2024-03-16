@@ -1,12 +1,22 @@
-Version:1.1
-Marauder
-MAD-9W
+chassis:Marauder
+model:MAD-9W
+mul id:2050
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3071
-Source:Jihad
+source:TRO: 3085
 Rules Level:2
+role:Skirmisher
+
+
+
+quirk:command_mech
+quirk:hyper_actuator
+quirk:low_profile
+weaponquirk:direct_torso_mount:RT:7:ISSNPPC
+weaponquirk:exposed_linkage:RT:7:ISSNPPC
+
 
 Mass:75
 Engine:225 Light Engine(IS)

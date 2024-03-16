@@ -20,6 +20,10 @@ Ironsides
 IRN-SD1b
 </Model>
 
+<mul id:>
+4374
+</mul id:>
+
 <year>
 2760
 </year>
@@ -31,6 +35,10 @@ IRN-SD1b
 <type>
 IS Level 2
 </type>
+
+<role>
+Dogfighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -101,7 +109,7 @@ ISCASE
 </Fuselage Equipment>
 
 <source>
-TRO 3075 - Star League
+TRO: 3075
 </source>
 
 <tonnage>

@@ -20,6 +20,10 @@ Light Strike Fighter
 Comet
 </Model>
 
+<mul id:>
+1872
+</mul id:>
+
 <year>
 2703
 </year>
@@ -31,6 +35,10 @@ Comet
 <type>
 IS Level 1
 </type>
+
+<role>
+Interceptor
+</role>
 
 <motion_type>
 Aerodyne
@@ -91,7 +99,7 @@ IS Ammo SRM-4
 </Fuselage Equipment>
 
 <source>
-TRO 3039 - Star League
+TRO: 3039
 </source>
 
 <tonnage>

@@ -20,6 +20,10 @@ Phalanx Support Tank
 (Prototype)
 </Model>
 
+<mul id:>
+2480
+</mul id:>
+
 <year>
 3079
 </year>
@@ -27,6 +31,10 @@ Phalanx Support Tank
 <type>
 IS Level 4
 </type>
+
+<role>
+Brawler
+</role>
 
 <tonnage>
 40.0
@@ -82,5 +90,5 @@ ISSniperCannon
 </Turret Equipment>
 
 <source>
-XTRO Marik - Jihad
+XTR: Marik
 </source>

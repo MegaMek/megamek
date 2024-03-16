@@ -1,0 +1,134 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+Demolisher II Heavy Tank
+</Name>
+
+<Model>
+II-X
+</Model>
+
+<mul id:>
+4069
+</mul id:>
+
+<year>
+3077
+</year>
+
+<type>
+Mixed (IS Chassis) Experimental
+</type>
+
+<role>
+Sniper
+</role>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<cruiseMP>
+3
+</cruiseMP>
+
+<engine_type>
+4
+</engine_type>
+
+<armor_type>
+6
+</armor_type>
+
+<armor_tech>
+7
+</armor_tech>
+
+<armor>
+55
+53
+53
+52
+54
+</armor>
+
+<Body Equipment>
+ISCASE
+ISImprovedHeavyGauss Ammo
+ISImprovedHeavyGauss Ammo
+ISImprovedHeavyGauss Ammo
+Clan Ultra AC/10 Ammo
+Clan Ultra AC/10 Ammo
+Clan Ultra AC/10 Ammo
+ISImprovedHeavyGauss Ammo
+</Body Equipment>
+
+<Front Equipment>
+ISImprovedHeavyGaussRifle
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+CLUltraAC10
+CLUltraAC10
+</Turret Equipment>
+
+<tonnage>
+100.0
+</tonnage>
+
+<source>
+XTR: Steiner
+</source>
+
+<capabilities>
+The result is a slow-moving tank that can literally demolish anything in its path. CASE protects the crew of this vehicle from potentially-lethal ammunition explosions. Fourteen and a half tons of ferro-fibrous armor protect the vehicle from all but the most determined and concentrated of assaults.
+</capabilities>
+
+<overview>
+The 'Demolisher II heavy tank is an upgrade of the original Demolisher, whose factory on Sudeten was lost to Clan Jade Falcon. 
+</overview>
+
+<deployment>
+This variant of the Demolisher II returns to the traditional large bore autocannons used by the Demolisher family, but with a twist. The II-X carries an Improved Heavy Gauss Rifle and twin Clan-made Ultra AC/10s in the turret. Power is provided by a light fusion engine and keeps the II-X at the same speed as the baseline model. Thirteen and a half tons of Heavy Ferro-Fibrous armor protect the tank from enemy fire, and a CASE system protects the crew from a Gauss Rifle explosion.
+</deployment>
+
+<history>
+Since the Typhoon stayed concentrated within traditionally Federated Suns unit within the Federated Commonwealth, when the Lyran Alliance broke away, they needed their own urban combat vehicle. Production began in 3059.
+</history>
+
+<manufacturer>
+Defiance Manufacturing Annex
+</manufacturer>
+
+<primaryFactory>
+Kwangjong-ni
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Vlar 300 fusion
+ARMOR:Starslab/6 ferro-fibrous w/ CASE
+COMMUNICATIONS:Neil 9000
+TARGETING:Angst Clear View 2A
+</systemManufacturers>

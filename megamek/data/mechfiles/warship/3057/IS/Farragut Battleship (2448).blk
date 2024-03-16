@@ -1,0 +1,364 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Warship
+</UnitType>
+
+<Name>
+Farragut Battleship
+</Name>
+
+<Model>
+(2448)
+</Model>
+
+<mul id:>
+4156
+</mul id:>
+
+<year>
+2448
+</year>
+
+<originalBuildYear>
+2448
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<role>
+None
+</role>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+smallcraftbay:10.0:2:1
+asfbay:12.0:2:2
+asfbay:12.0:2:3
+asfbay:12.0:2:4
+cargobay:183415.0:2:5
+dockingcollar
+dockingcollar
+1stclassquarters:810.0:0
+crewquarters:2639.0:0
+steeragequarters:750.0:0
+</transporters>
+
+<SafeThrust>
+3
+</SafeThrust>
+
+<heatsinks>
+4130
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+3482
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+11
+</armor_type>
+
+<armor_tech>
+5
+</armor_tech>
+
+<armor>
+200
+250
+250
+143
+250
+250
+</armor>
+
+<Nose Equipment>
+(B) Naval Gauss (Heavy)
+Naval Gauss (Heavy)
+Ammo Heavy N-Gauss:40
+(B) Naval Gauss (Heavy)
+Naval Gauss (Heavy)
+Ammo Heavy N-Gauss:40
+(B) Capital Missile Launcher (Killer Whale)
+Capital Missile Launcher (Killer Whale)
+Ammo Killer Whale:20
+(B) Large Laser
+Large Laser
+Large Laser
+Large Laser
+Large Laser
+</Nose Equipment>
+
+<Left Front Side Equipment>
+(B) Naval Autocannon (NAC/40)
+Ammo NAC/40:30
+(B) Naval Autocannon (NAC/40)
+Ammo NAC/40:30
+(B) Naval Gauss (Heavy)
+Naval Gauss (Heavy)
+Ammo Heavy N-Gauss:20
+(B) Naval PPC (Heavy)
+Naval PPC (Heavy)
+Naval PPC (Heavy)
+(B) Capital Missile Launcher (Killer Whale)
+Capital Missile Launcher (Killer Whale)
+Capital Missile Launcher (Killer Whale)
+Ammo Killer Whale:30
+(B) Large Laser
+Large Laser
+Large Laser
+Large Laser
+Large Laser
+</Left Front Side Equipment>
+
+<Right Front Side Equipment>
+(B) Naval Autocannon (NAC/40)
+Ammo NAC/40:30
+(B) Naval Autocannon (NAC/40)
+Ammo NAC/40:30
+(B) Naval Gauss (Heavy)
+Naval Gauss (Heavy)
+Ammo Heavy N-Gauss:20
+(B) Naval PPC (Heavy)
+Naval PPC (Heavy)
+Naval PPC (Heavy)
+(B) Capital Missile Launcher (Killer Whale)
+Capital Missile Launcher (Killer Whale)
+Capital Missile Launcher (Killer Whale)
+Ammo Killer Whale:30
+(B) Large Laser
+Large Laser
+Large Laser
+Large Laser
+Large Laser
+</Right Front Side Equipment>
+
+<Aft Equipment>
+(B) Naval Autocannon (NAC/40)
+Ammo NAC/40:30
+(B) Naval Autocannon (NAC/40)
+Ammo NAC/40:30
+(B) Naval Gauss (Heavy)
+Naval Gauss (Heavy)
+Ammo Heavy N-Gauss:20
+(B) Naval PPC (Heavy)
+Naval PPC (Heavy)
+Naval PPC (Heavy)
+(B) Capital Missile Launcher (Killer Whale)
+Capital Missile Launcher (Killer Whale)
+Ammo Killer Whale:20
+(B) Large Laser
+Large Laser
+Large Laser
+Large Laser
+Large Laser
+</Aft Equipment>
+
+<Aft Left Side Equipment>
+(B) Naval Autocannon (NAC/40)
+Ammo NAC/40:30
+(B) Naval Autocannon (NAC/40)
+Ammo NAC/40:30
+(B) Naval Gauss (Heavy)
+Naval Gauss (Heavy)
+Ammo Heavy N-Gauss:20
+(B) Capital Missile Launcher (Killer Whale)
+Capital Missile Launcher (Killer Whale)
+Capital Missile Launcher (Killer Whale)
+Ammo Killer Whale:30
+(B) Large Laser
+Large Laser
+Large Laser
+Large Laser
+Large Laser
+</Aft Left Side Equipment>
+
+<Aft Right Side Equipment>
+(B) Naval Autocannon (NAC/40)
+Ammo NAC/40:30
+(B) Naval Autocannon (NAC/40)
+Ammo NAC/40:30
+(B) Naval Gauss (Heavy)
+Naval Gauss (Heavy)
+Ammo Heavy N-Gauss:20
+(B) Capital Missile Launcher (Killer Whale)
+Capital Missile Launcher (Killer Whale)
+Capital Missile Launcher (Killer Whale)
+Ammo Killer Whale:30
+(B) Large Laser
+Large Laser
+Large Laser
+Large Laser
+Large Laser
+</Aft Right Side Equipment>
+
+<Hull Equipment>
+</Hull Equipment>
+
+<Left Broadsides Equipment>
+(B) Naval Autocannon (NAC/40)
+Ammo NAC/40:30
+(B) Naval Autocannon (NAC/40)
+Ammo NAC/40:30
+(B) Naval Gauss (Heavy)
+Naval Gauss (Heavy)
+Ammo Heavy N-Gauss:20
+(B) Naval PPC (Heavy)
+Naval PPC (Heavy)
+Naval PPC (Heavy)
+(B) Capital Missile Launcher (Killer Whale)
+Capital Missile Launcher (Killer Whale)
+Capital Missile Launcher (Killer Whale)
+Ammo Killer Whale:30
+(B) Large Laser
+Large Laser
+Large Laser
+Large Laser
+Large Laser
+</Left Broadsides Equipment>
+
+<Right Broadsides Equipment>
+(B) Naval Autocannon (NAC/40)
+Ammo NAC/40:30
+(B) Naval Autocannon (NAC/40)
+Ammo NAC/40:30
+(B) Naval Gauss (Heavy)
+Naval Gauss (Heavy)
+Ammo Heavy N-Gauss:20
+(B) Naval PPC (Heavy)
+Naval PPC (Heavy)
+Naval PPC (Heavy)
+(B) Capital Missile Launcher (Killer Whale)
+Capital Missile Launcher (Killer Whale)
+Capital Missile Launcher (Killer Whale)
+Ammo Killer Whale:30
+(B) Large Laser
+Large Laser
+Large Laser
+Large Laser
+Large Laser
+</Right Broadsides Equipment>
+
+<structural_integrity>
+95
+</structural_integrity>
+
+<capabilities>
+The Farragut-class battleship was armed with eighteen naval gauss rifles, fourteen naval autocannons, twenty-two Killer Whale missile launchers, heavy naval PPCs, and an array of large lasers for anti-fighter defense. Its weapons systems were among the largest and most powerful ever mounted on a WarShip. The ship's hull was exceptionally strong and stress-resistant, providing superior protection, thanks to over 1,500 tons of ferro-carbide armor. Additionally, the Farragut carried a full wing of aerospace fighters to enhance its defensive capabilities. It could operate independently or as the flagship of a fleet.
+</capabilities>
+
+<overview>
+The Farragut-class battleship was developed as a replacement for the aging Dreadnought-class and Monsoon-class ships in the Terran Hegemony's navy. It was designed to be a true battleship, capable of defeating any ship used by the House navies. The largest battleship of its time, the Farragut featured a formidable array of weapons, including naval gauss rifles, naval autocannons, Killer Whale missile launchers, heavy naval PPCs, and large lasers for anti-fighter defense. Its robust hull was heavily armored with ferro-carbide, and it also carried a full wing of aerospace fighters.
+</overview>
+
+<history>
+Lord Richard Cameron initiated the development of the Farragut-class battleships in 2430 to upgrade the Hegemony's aging navy. However, he passed away before witnessing the commissioning of the first Farragut. Production of the Farragut-class battleships ceased in 2500 due to high costs. These vessels proved their worth in numerous engagements until changes in the Star League's strategic doctrine led to the development of the McKenna-class Battleship. On December 20, 2766, the last remaining Farragut battleship was dismantled, marking the end of its service
+</history>
+
+<manufacturer>
+Krester Ship Construction
+</manufacturer>
+
+<primaryFactory>
+Terra
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<use>
+Battleship
+</use>
+
+<length>
+1405 m
+</length>
+
+<height>
+1700 m Sail
+</height>
+
+<source>
+TRO: 3057 Revised
+</source>
+
+<tonnage>
+1680000.0
+</tonnage>
+
+<kf_core>
+1
+</kf_core>
+
+<sail>
+1
+</sail>
+
+<grav_decks>
+45
+150
+</grav_decks>
+
+<designtype>
+1
+</designtype>
+
+<crew>
+580
+</crew>
+
+<officers>
+81
+</officers>
+
+<gunners>
+76
+</gunners>
+
+<passengers>
+0
+</passengers>
+
+<marines>
+150
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<life_boat>
+50
+</life_boat>
+
+<escape_pod>
+75
+</escape_pod>
+

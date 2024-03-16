@@ -20,6 +20,10 @@ Puma Assault Tank
 PAT-007
 </Model>
 
+<mul id:>
+2601
+</mul id:>
+
 <year>
 3069
 </year>
@@ -27,6 +31,10 @@ PAT-007
 <type>
 IS Level 2
 </type>
+
+<role>
+Missile Boat
+</role>
 
 <motion_type>
 Tracked
@@ -98,7 +106,7 @@ Heavy PPC
 </Turret Equipment>
 
 <source>
-TRO 3050 - Jihad
+TRO: 3050
 </source>
 
 <tonnage>

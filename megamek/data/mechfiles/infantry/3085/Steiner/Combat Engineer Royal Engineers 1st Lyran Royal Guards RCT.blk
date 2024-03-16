@@ -20,6 +20,10 @@ Combat Engineer
 Royal Engineers; 1st Lyran Royal Guards RCT
 </Model>
 
+<mul id:>
+664
+</mul id:>
+
 <year>
 3045
 </year>
@@ -27,6 +31,10 @@ Royal Engineers; 1st Lyran Royal Guards RCT
 <type>
 IS Level 3
 </type>
+
+<role>
+Ambusher
+</role>
 
 <motion_type>
 Motorized

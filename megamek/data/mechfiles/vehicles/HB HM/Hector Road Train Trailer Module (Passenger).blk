@@ -20,6 +20,10 @@ Hector Road Train Trailer Module
 (Passenger)
 </Model>
 
+<mul id:>
+4289
+</mul id:>
+
 <year>
 2500
 </year>
@@ -31,6 +35,10 @@ Hector Road Train Trailer Module
 <type>
 IS Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Wheeled
@@ -96,7 +104,7 @@ Unit is overweight by design. To be legal it would need a couple of 2 less infan
 </history>
 
 <source>
-HB:House Marik - Age of War
+Handbook: House Marik
 </source>
 
 <tonnage>

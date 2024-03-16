@@ -1,0 +1,169 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Dropship
+</UnitType>
+
+<Name>
+Hoshiryokou
+</Name>
+
+<model>
+
+</model>
+
+<mul id:>
+7768
+</mul id:>
+
+<year>
+2480
+</year>
+
+<originalBuildYear>
+2480
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<role>
+None
+</role>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+1stclassquarters:10.0:0
+crewquarters:28.0:0
+2ndclassquarters:0.0:0
+steeragequarters:45.0:0
+cargobay:15.0:1:5
+</transporters>
+
+<SafeThrust>
+5
+</SafeThrust>
+
+<heatsinks>
+8
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+1200
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+41
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
+122
+92
+92
+82
+</armor>
+
+<Nose Equipment>
+(B) Large Laser
+(B) Small Laser
+Small Laser
+</Nose Equipment>
+
+<Left Side Equipment>
+</Left Side Equipment>
+
+<Right Side Equipment>
+</Right Side Equipment>
+
+<Aft Equipment>
+(B) Small Laser
+</Aft Equipment>
+
+<Hull Equipment>
+Cargo Container (10 tons)
+Cargo Container (10 tons)
+Cargo Container (10 tons)
+Cargo Container (10 tons)
+Cargo Container (10 tons)
+Cargo Container (10 tons)
+Cargo Container (10 tons)
+Cargo Container (10 tons)
+Cargo Container (10 tons)
+Cargo Container (10 tons)
+</Hull Equipment>
+
+<structural_integrity>
+25
+</structural_integrity>
+
+<source>
+Handbook: House Kurita
+</source>
+
+<tonnage>
+800.0
+</tonnage>
+
+<designtype>
+0
+</designtype>
+
+<crew>
+5
+</crew>
+
+<officers>
+1
+</officers>
+
+<gunners>
+1
+</gunners>
+
+<passengers>
+9
+</passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<otherpassenger>
+0
+</otherpassenger>
+
+<life_boat>
+0
+</life_boat>
+
+<escape_pod>
+1
+</escape_pod>

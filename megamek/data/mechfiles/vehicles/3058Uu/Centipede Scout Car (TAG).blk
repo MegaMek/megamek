@@ -15,6 +15,10 @@ Centipede Scout Car
 <Model>
 (TAG)
 </Model>
+
+<mul id:>
+515
+</mul id:>
 <Tonnage>
 20
 </Tonnage>
@@ -41,6 +45,10 @@ ISGuardianECM
 <type>
 IS Level 2
 </type>
+
+<role>
+Scout
+</role>
 <year>
 3067
 </year>
@@ -57,5 +65,5 @@ IS Level 2
 Hover
 </motion_type>
 <source>
-Civil War
+TRO: 3058
 </source>

@@ -1,12 +1,20 @@
-Version:1.1
-Scarecrow
-UCU-F4r 'Hobbled Scarecrow'
+chassis:Scarecrow
+model:UCU-F4r 'Hobbled Scarecrow'
+mul id:6337
 
 Config:Biped
 TechBase:Mixed (IS Chassis)
 Era:3122
-Source:TRO 3145 Federated Suns - Late Republic
+Source:TRO: 3145 Federated Suns
 Rules Level:4
+role:Brawler
+
+
+
+quirk:bad_rep_is
+quirk:difficult_maintain
+quirk:no_arms
+
 
 Mass:40
 Engine:200 XL Engine(IS)

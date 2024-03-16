@@ -20,28 +20,28 @@ import megamek.common.AmmoType;
  * @since Sep 7, 2005
  */
 public class InfantryArchaicPolearmWeapon extends InfantryWeapon {
-	private static final long serialVersionUID = -3164871600230559641L;
+    private static final long serialVersionUID = -3164871600230559641L;
 
-	public InfantryArchaicPolearmWeapon() {
-		super();
+    public InfantryArchaicPolearmWeapon() {
+        super();
 
-		name = "Staff (Pole Arm) (Unofficial)";
-		// IO Combines the Staff (Pole Arm) types into the Nunchaku Weapon
-		setInternalName(name);
-		addLookupName("InfantryPolearm");
-		addLookupName("Polearm");
-		ammoType = AmmoType.T_NA;
-		cost = 50;
-		bv = 0.04;
+        name = "Staff (Pole Arm) (Unofficial)";
+        // IO Combines the Staff (Pole Arm) types into the Nunchaku Weapon
+        setInternalName(name);
+        addLookupName("InfantryPolearm");
+        addLookupName("Polearm");
+        ammoType = AmmoType.T_NA;
+        cost = 50;
+        bv = 0.04;
         tonnage = .006; 
-		flags = flags.or(F_NO_FIRES).or(F_INF_POINT_BLANK).or(F_INF_ARCHAIC);
-		infantryDamage = 0.04;
-		infantryRange = 0;
-		rulesRefs = "272, TM";
-		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
-				.setISApproximate(false, false, false, false, false)
-				.setClanAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
-				.setClanApproximate(false, false, false, false, false).setTechRating(RATING_A)
-				.setAvailability(RATING_A, RATING_A, RATING_A, RATING_B);
-	}
+        flags = flags.or(F_NO_FIRES).or(F_INF_POINT_BLANK).or(F_INF_ARCHAIC);
+        infantryDamage = 0.04;
+        infantryRange = 0;
+        rulesRefs = "272, TM";
+        techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
+                .setISApproximate(false, false, false, false, false)
+                .setClanAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
+                .setClanApproximate(false, false, false, false, false).setTechRating(RATING_A)
+                .setAvailability(RATING_A, RATING_A, RATING_A, RATING_B);
+    }
 }

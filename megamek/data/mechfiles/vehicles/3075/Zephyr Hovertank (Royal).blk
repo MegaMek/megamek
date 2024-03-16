@@ -20,17 +20,25 @@ Zephyr Hovertank
 (Royal)
 </Model>
 
+<mul id:>
+3631
+</mul id:>
+
 <year>
 2621
 </year>
 
 <source>
-Star League
+TRO: 3075
 </source>
 
 <type>
 IS Level 2
 </type>
+
+<role>
+Striker
+</role>
 
 <tonnage>
 40.0

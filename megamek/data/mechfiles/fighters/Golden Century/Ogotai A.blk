@@ -20,6 +20,10 @@ Ogotai
 A
 </Model>
 
+<mul id:>
+4742
+</mul id:>
+
 <year>
 2874
 </year>
@@ -31,6 +35,10 @@ A
 <type>
 Clan Level 2
 </type>
+
+<role>
+Fast Dogfighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -105,7 +113,7 @@ Clan Ammo SRM-6 (Clan) Artemis-capable:OMNI
 </Fuselage Equipment>
 
 <source>
-Succession Wars
+TRO: Golden Century
 </source>
 
 <tonnage>

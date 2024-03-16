@@ -1,0 +1,132 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+Marauder Battle Armor
+</Name>
+
+<model>
+(Sqd4)
+</Model>
+
+<mul id:>
+6525
+</mul id:>
+
+<year>
+3110
+</year>
+
+<type>
+IS Level 2
+</type>
+
+<role>
+Ambusher
+</role>
+
+<motion_type>
+Leg
+</motion_type>
+
+<cruiseMP>
+1
+</cruiseMP>
+
+<Squad Equipment>
+ISBASupportPPC:RA
+ISBASupportPPC:LA
+ISLight Recoilless Rifle:Body
+ISBALightTAG:Body
+BAAPMount:RA
+InfantryAssaultRifle:RA:APM
+BAAPMount:LA
+InfantryAssaultRifle:LA:APM
+BA-Magnetic Clamp:Body
+</Squad Equipment>
+
+<source>
+TRO: 3145 Mercenaries
+</source>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+0
+</jumpingMP>
+
+<armor>
+9
+</armor>
+
+<Trooper Count>
+4
+</Trooper Count>
+
+<weightclass>
+3
+</weightclass>
+
+<armor_type>
+28
+</armor_type>
+<armor_tech>
+3
+</armor_tech>
+
+<overview>
+The Marauder battle armor was developed by the Marian Hegemony as a followup to their Ravager design.
+</overview>
+
+<capabilities>
+he Marauder is both lighter and more heavily armed than its predecessor. The exchange for the increased weaponry is the very low speed. To compensate for this, the Marauder is equipped with Magnetic Clamps which allow it to be carried by friendly units. The chassis is very open, allowing easy access to the armor systems. This makes it very popular with technical support crews. The Marauder only carries half as much armor as the Ravager.
+</capabilities>
+
+<deployment>
+The Marauder's weaponry was apparently inspired by the Marauder BattleMech's armament. Each arm mounts a Support PPC and an Anti-Personnel Weapon Mount, while a Light Recoilless Rifle is mounted to the body. This armament is a battle-armor sized version of the twin PPCs and Autocannon/5 used by the MAD-3R. One improvement over the 'Mech is the inclusion of a Light TAG unit. With this equipment, the Marauder can provide guidance for Arrow IV missiles and Semi-Guided LRMs.
+</deployment>
+
+<history>
+The design has been licensed to Pinard Protectorates Limited in the Taurian Concordat. The Hegemony and Concordat sell the Marauder to mercenaries in their employ.
+</history>
+
+<manufacturer>
+Marian Arms, Inc.,Pinard Protectorates Limited
+</manufacturer>
+
+<primaryFactory>
+Horatius,Macleod's Land
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+JUMPJET:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<notes>
+</notes>
+
+<quirks>
+easy_maintain
+</quirks>
+
+<weaponQuirks>
+accurate:Squad:2:ISLight Recoilless Rifle
+</weaponQuirks>

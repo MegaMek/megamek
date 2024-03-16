@@ -20,6 +20,10 @@ Guardian Fighter
 C
 </Model>
 
+<mul id:>
+1336
+</mul id:>
+
 <year>
 3058
 </year>
@@ -31,6 +35,10 @@ C
 <type>
 IS Level 2
 </type>
+
+<role>
+Fast Dogfighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -95,7 +103,7 @@ IS Streak SRM 4 Ammo
 </Fuselage Equipment>
 
 <source>
-TRO 3039 - Clan Invasion
+TRO: 3039
 </source>
 
 <tonnage>

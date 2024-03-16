@@ -20,6 +20,10 @@ Sabre
 SB-27
 </Model>
 
+<mul id:>
+4959
+</mul id:>
+
 <year>
 2519
 </year>
@@ -31,6 +35,10 @@ SB-27
 <type>
 IS Level 2
 </type>
+
+<role>
+Interceptor
+</role>
 
 <motion_type>
 Aerodyne
@@ -92,7 +100,7 @@ Medium Laser
 </Fuselage Equipment>
 
 <source>
-TRO 3075 - Age of War
+TRO: 3075
 </source>
 
 <tonnage>

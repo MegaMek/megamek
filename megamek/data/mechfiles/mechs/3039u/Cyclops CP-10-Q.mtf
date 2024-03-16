@@ -1,12 +1,21 @@
-Version:1.0
-Cyclops
-CP-10-Q
+chassis:Cyclops
+model:CP-10-Q
+mul id:771
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2801
-Source:TRO 3039 - Succession Wars
+Source:TRO: 3039
 Rules Level:1
+role:Missile Boat
+
+
+
+quirk:battle_computer
+quirk:cowl
+quirk:difficult_eject
+quirk:weak_head_2
+
 
 Mass:90
 Engine:360 Fusion Engine

@@ -15,6 +15,10 @@ Mechanized Tracked Platoon
 <Model>
 (Rifle AA)
 </Model>
+
+<mul id:>
+4614
+</mul id:>
 <squad_size>
 7
 </squad_size>
@@ -33,6 +37,10 @@ InfantryMk2PortableAA
 <type>
 IS Level 2
 </type>
+
+<role>
+None
+</role>
 <year>
 3067
 </year>

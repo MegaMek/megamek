@@ -20,6 +20,10 @@ Sabre
 SB-26
 </Model>
 
+<mul id:>
+4958
+</mul id:>
+
 <year>
 2314
 </year>
@@ -31,6 +35,10 @@ SB-26
 <type>
 IS Level 4
 </type>
+
+<role>
+Fast Dogfighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -100,7 +108,7 @@ Medium Laser
 </Fuselage Equipment>
 
 <source>
-TRO 3075 - Age of War
+TRO: 3075
 </source>
 
 <tonnage>

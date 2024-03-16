@@ -15,6 +15,10 @@ Missile Artillery Infantry
 <Model>
 Kommando Special Forces
 </Model>
+
+<mul id:>
+2190
+</mul id:>
 <squad_size>
 6
 </squad_size>
@@ -37,11 +41,15 @@ ISArrowIVAmmo
 <type>
 IS Level 3
 </type>
+
+<role>
+Missile Boat
+</role>
 <year>
 2600
 </year>
 <source>
-TRO 3085 - Age of War
+TRO: 3085
 </source>
 <motion_type>
 Wheeled

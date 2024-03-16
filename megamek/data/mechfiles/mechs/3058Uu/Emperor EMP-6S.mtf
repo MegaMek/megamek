@@ -1,12 +1,18 @@
-Version:1.0
-Emperor
-EMP-6S
+chassis:Emperor
+model:EMP-6S
+mul id:970
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3069
-Source:TRO 3058 - Jihad
+Source:TRO: 3058
 Rules Level:2
+role:Juggernaut
+
+
+
+quirk:command_mech
+
 
 Mass:90
 Engine:270 XL Engine

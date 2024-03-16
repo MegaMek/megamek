@@ -1,12 +1,20 @@
-Version:1.0
-Tai-sho
-TSH-7S
+chassis:Tai-sho
+model:TSH-7S
+mul id:3150
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3061
-Source:TRO 3060
+Source:TRO: 3060
 Rules Level:2
+role:Sniper
+
+
+
+
+quirk:imp_com
+weaponquirk:stable_weapon:RT:0:ISUltraAC10
+
 
 Mass:85
 Engine:255 Fusion Engine

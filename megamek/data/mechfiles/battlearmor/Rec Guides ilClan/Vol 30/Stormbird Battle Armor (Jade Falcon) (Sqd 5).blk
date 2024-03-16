@@ -1,0 +1,121 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+Stormbird Battle Armor
+</Name>
+
+<Model>
+(Jade Falcon)(Sqd5)
+</Model>
+
+<mul id:>
+9415
+</mul id:>
+
+<year>
+3092
+</year>
+
+<originalBuildYear>
+3092
+</originalBuildYear>
+
+<type>
+Mixed (Clan Chassis)
+</type>
+
+<role>
+Ambusher
+</role>
+
+<motion_type>
+Jump
+</motion_type>
+
+<transporters>
+</transporters>
+
+<cruiseMP>
+1
+</cruiseMP>
+
+<armor_type>
+35
+</armor_type>
+
+<armor_tech>
+2
+</armor_tech>
+
+<Point Equipment>
+BABasicManipulator:LA
+CLBAAPGaussRifle:RA
+CLBASRM3:Body
+BA-Magnetic Clamp:Body
+BA-SRM3 Ammo:Body:Shots4#
+BA Fire Resistant:LA
+BA Fire Resistant:LA
+BA Fire Resistant:RA
+BA Fire Resistant:Body
+BA Fire Resistant:LA
+</Point Equipment>
+
+<Trooper 1 Equipment>
+</Trooper 1 Equipment>
+
+<Trooper 2 Equipment>
+</Trooper 2 Equipment>
+
+<Trooper 3 Equipment>
+</Trooper 3 Equipment>
+
+<Trooper 4 Equipment>
+</Trooper 4 Equipment>
+
+<Trooper 5 Equipment>
+</Trooper 5 Equipment>
+
+<manufacturer>
+CSR Battle Armor Facility Beta, Olivetti Weaponry
+</manufacturer>
+
+<primaryFactory>
+Quatre Belle (CSR Beta), Sudeten (Olivetti
+</primaryFactory>
+
+<source>
+Rec Guide:ilClan #30
+</source>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+2
+</jumpingMP>
+
+<armor>
+13
+</armor>
+
+<Trooper Count>
+5
+</Trooper Count>
+
+<weightclass>
+3
+</weightclass>
+

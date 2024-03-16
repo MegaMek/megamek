@@ -1,12 +1,13 @@
-Version:1.1
-Cestus
-CTS-6Y-EC
+chassis:Cestus
+model:CTS-6Y-EC
+mul id:7681
 
 Config:Biped
 techbase:Mixed (Clan Chassis)
-era:2822
-source:Succession Wars
+era:2825
+source:TRO: Golden Century
 rules level:4
+role:Brawler
 
 mass:65
 engine:260 XL Engine(IS)
@@ -149,5 +150,19 @@ Foot Actuator
 -Empty-
 -Empty-
 
-history:A rare Fire Mandrill upgrade that added two prototype ER medium lasers taken from the Falcons, two Improved large lasers and an Improved Gauss Rifle.  
+overview:The SLDF's original design specifications for the Cestus, a medium fire-support BattleMech, asked for two PPCs, two big lasers, and a pair of medium pulse lasers.	
+
+capabilities:The new generation of Cestus BattleMechs produced in the last decade is powered by GM's efficient 260 XL engine, with a top speed of 64 kph—a rating that many perceive to be on the slow side for a 'Mech at the light end of the heavy spectrum. The Cestus' weaponry, on the other hand, makes it a lethal foe at any range. The huge torso-mounted Gauss gun can provide catastrophic damage at long range. The Gauss rifle is supported by large and medium lasers installed in each arm. The Cestus retains both of its hand actuators for close-range fighting, capable of gripping or striking an opponent as needed.
+
+deployment:Clan Fire Mandrill refitted their rare Cestuses with prototype ER medium lasers, Improved Large Lasers, and an Improved Gauss Rifle. The Gauss Rifle has four tons of ammunition, and fourteen double heat sinks keep the heat under control. 
+
+history:The CTS-6Y Cestus began production for the Star League Defense Force in 2766. However the original CTS-6X Cestus was produced during 2603. Introduced by General Motors and constructed at their Kathil plant, the Cestus served in the Armed Forces of the Federated Suns after the Fall of the Star League until its factory became a casualty during a Capellan Confederation Armed Forces raid at the beginning of the Second TRO: Golden Century. The 'Mech was originally designed to carry a heavy energy weapons payload, but because of complications encountered with the heat sinks on the 'Mech, the upgraded Cestus was modified to carry a mix of ballistic and energy weapons. The Cestus was reintroduced by both Blue Shot Weapons and General Motors in the mid-3050s.
+
+manufacturer:Field Refit
+primaryfactory:Various
+systemmanufacturer:CHASSIS:GM Heavy CVA
+systemmanufacturer:ENGINE:GM 260 XL
+systemmanufacturer:ARMOR:Durallex Special Heavy
+systemmanufacturer:COMMUNICATIONS:TharHes Thalia HM-22
+systemmanufacturer:TARGETING:Salamander Systems CommPhase Unit
 

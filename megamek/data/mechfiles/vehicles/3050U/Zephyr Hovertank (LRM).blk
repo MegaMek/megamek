@@ -20,6 +20,10 @@ Zephyr Hovertank
 (LRM)
 </Model>
 
+<mul id:>
+3630
+</mul id:>
+
 <year>
 3063
 </year>
@@ -27,6 +31,10 @@ Zephyr Hovertank
 <type>
 IS Level 2
 </type>
+
+<role>
+Missile Boat
+</role>
 
 <motion_type>
 Hover
@@ -82,7 +90,7 @@ ISERMediumLaser
 </Turret Equipment>
 
 <source>
-TRO 3050 - Civil War
+TRO: 3050
 </source>
 
 <tonnage>

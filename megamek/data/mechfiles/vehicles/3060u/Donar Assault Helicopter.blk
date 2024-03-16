@@ -16,9 +16,13 @@ VTOL
 Donar Assault Helicopter
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+906
+</mul id:>
 
 <year>
 3017
@@ -27,6 +31,10 @@ Donar Assault Helicopter
 <type>
 Clan Level 2
 </type>
+
+<role>
+Striker
+</role>
 
 <motion_type>
 VTOL
@@ -80,7 +88,7 @@ CLStreakSRM2
 </Rotor Equipment>
 
 <source>
-Succession Wars
+TRO: 3060
 </source>
 
 <tonnage>

@@ -20,6 +20,10 @@ Leopard CV
 (2581)
 </Model>
 
+<mul id:>
+4496
+</mul id:>
+
 <year>
 2581
 </year>
@@ -31,6 +35,10 @@ Leopard CV
 <type>
 IS Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Aerodyne
@@ -121,7 +129,7 @@ Medium Laser
 </structural_integrity>
 
 <source>
-TRO 3057R - Star League
+TRO: 3057 Revised
 </source>
 
 <tonnage>

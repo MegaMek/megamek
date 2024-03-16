@@ -16,9 +16,13 @@ ConvFighter
 Drake Medium Strike Fighter
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+928
+</mul id:>
 
 <year>
 3073
@@ -31,6 +35,10 @@ Drake Medium Strike Fighter
 <type>
 IS Level 4
 </type>
+
+<role>
+Attack Fighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -109,7 +117,7 @@ IS Ammo MML-3 SRM
 </Fuselage Equipment>
 
 <source>
-XTRO Boondocks - Jihad
+XTR: Boondocks
 </source>
 
 <tonnage>

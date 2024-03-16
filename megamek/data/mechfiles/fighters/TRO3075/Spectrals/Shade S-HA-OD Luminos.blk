@@ -20,6 +20,10 @@ Shade
 S-HA-OD Luminos
 </Model>
 
+<mul id:>
+5033
+</mul id:>
+
 <year>
 3072
 </year>
@@ -31,6 +35,10 @@ S-HA-OD Luminos
 <type>
 IS Level 3
 </type>
+
+<role>
+Fast Dogfighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -106,7 +114,7 @@ ISERSmallLaser:OMNI
 </Fuselage Equipment>
 
 <source>
-TRO 3075 - Jihad
+TRO: 3075
 </source>
 
 <tonnage>

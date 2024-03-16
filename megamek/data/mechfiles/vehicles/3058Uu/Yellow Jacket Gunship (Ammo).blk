@@ -15,6 +15,10 @@ Yellow Jacket Gunship
 <Model>
 (Ammo)
 </Model>
+
+<mul id:>
+3613
+</mul id:>
 <Tonnage>
 30
 </Tonnage>
@@ -39,6 +43,10 @@ ISGauss Ammo
 <type>
 IS
 </type>
+
+<role>
+Sniper
+</role>
 <year>
 3058
 </year>
@@ -55,5 +63,5 @@ IS
 VTOL
 </motion_type>
 <source>
-Clan Invasion
+TRO: 3058
 </source>

@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,6 +20,10 @@ Black Lion I Battlecruiser
 
 </Model>
 
+<mul id:>
+6983
+</mul id:>
+
 <year>
 2315
 </year>
@@ -31,6 +35,10 @@ Black Lion I Battlecruiser
 <type>
 IS Level 3
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Aerodyne
@@ -334,8 +342,48 @@ IS Ammo AC/2:90
 75
 </structural_integrity>
 
+<capabilities>
+The original Black Lion-class battle cruisers were designed to be larger and more massive than contemporary cruisers. They served as command assets and scouting wings, providing maneuverability preferred by Admiral McKenna over the Dreadnought-class. Over time, advancements like docking collars made the original Black Lions outdated, leading to attempts to replace them with newer designs. However, they continued to serve for an extended period until the decision to refit the Aegis-class ships for modern heavy cruisers. The legacy of the original Black Lions lived on in the larger Black Lion-class introduced by Boeing Interstellar for the Star League Navy in the 2600s, featuring heavier armor, weaponry, and the capability to transport supporting DropShips.
+</capabilities>
+
+<overview>
+The Black Lion-class battle cruisers were designed by Admiral McKenna of the Terran Hegemony as a more mobile and affordable complement to the Dreadnought-class battleships. These living WarShips incorporated numerous features requested by Admiral McKenna and shared components with the Dreadnought-class to keep costs down. Serving as command assets for cruiser squadrons and scouting wings for battleships, the Black Lion-class defined the nature of the Hegemony battle cruiser.
+</overview>
+
+<history>
+Admiral McKenna's desire for more mobile and affordable vessels led to the design of the Black Lion-class battle cruisers. These ships served as command assets and scouting wings, but their initial designs quickly became outdated with the introduction of new innovations. The original Black Lions were gradually replaced by newer designs like the Quixote-class, and most of them were sold to the Great Houses prior to the Reunification War. While serving the Great House navies, some were eventually mothballed or stripped for germanium cores during the Golden Age and Succession Wars. However, in the 2600s, Boeing Interstellar revived the Black Lion-class for the Star League Navy, based on the specifications of the original ship, creating a larger version with enhanced capabilities and a distinguished reputation.
+</history>
+
+<manufacturer>
+Boeing Interstellar
+</manufacturer>
+
+<primaryFactory>
+Terra
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<use>
+Battlecruiser
+</use>
+
+<length>
+743 m
+</length>
+
+<height>
+1105 m Sail
+</height>
+
 <source>
-FR2765-CCAF - Star League
+Field Report 2765 CCAF
 </source>
 
 <tonnage>
@@ -354,6 +402,10 @@ FR2765-CCAF - Star League
 150
 150
 </grav_decks>
+
+<designtype>
+1
+</designtype>
 
 <crew>
 717
@@ -386,3 +438,4 @@ FR2765-CCAF - Star League
 <escape_pod>
 36
 </escape_pod>
+

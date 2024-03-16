@@ -20,6 +20,10 @@ Vulture
 (2312)
 </Model>
 
+<mul id:>
+5369
+</mul id:>
+
 <year>
 2312
 </year>
@@ -31,6 +35,10 @@ Vulture
 <type>
 IS Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Spheroid
@@ -125,7 +133,7 @@ IS Ammo LRM-5:72
 </structural_integrity>
 
 <source>
-TRO 3075 - Age of War
+TRO: 3075
 </source>
 
 <tonnage>

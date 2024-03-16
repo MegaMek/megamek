@@ -16,9 +16,13 @@ SupportTank
 Raptor RRV
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+4900
+</mul id:>
 
 <year>
 3059
@@ -27,6 +31,10 @@ Raptor RRV
 <type>
 IS Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Tracked
@@ -85,7 +93,7 @@ ISERSmallLaser
 </Turret Equipment>
 
 <source>
-TRO VAr - Clan Invasion
+TRO: Vehicle Annex (Revised)
 </source>
 
 <tonnage>

@@ -13,12 +13,16 @@ Tank
 </blockversion>
 
 <Name>
-Marsden II MBT
+Marsden MBT
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+II 
+</model>
+
+<mul id:>
+2084
+</mul id:>
 
 <year>
 2473
@@ -85,3 +89,6 @@ Machine Gun
 Machine Gun
 </Turret Equipment>
 
+<source>
+TRO: 3075
+</source>

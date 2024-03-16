@@ -20,6 +20,10 @@ Jengiz
 Prime
 </Model>
 
+<mul id:>
+1685
+</mul id:>
+
 <year>
 3032
 </year>
@@ -31,6 +35,10 @@ Prime
 <type>
 Clan Level 2
 </type>
+
+<role>
+Attack Fighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -117,7 +125,7 @@ CLCASE
 </Fuselage Equipment>
 
 <source>
-TRO 3055u - Succession War
+TRO: 3055 Update
 </source>
 
 <tonnage>

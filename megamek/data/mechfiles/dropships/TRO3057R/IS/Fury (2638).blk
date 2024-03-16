@@ -20,6 +20,10 @@ Fury
 (2638)
 </Model>
 
+<mul id:>
+4191
+</mul id:>
+
 <year>
 2638
 </year>
@@ -31,6 +35,10 @@ Fury
 <type>
 IS Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Aerodyne
@@ -114,7 +122,7 @@ IS Ammo AC/10:20
 </structural_integrity>
 
 <source>
-TRO 3057R - Star League
+TRO: 3057 Revised
 </source>
 
 <tonnage>

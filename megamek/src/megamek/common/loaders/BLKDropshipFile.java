@@ -11,23 +11,15 @@
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
  */
-
-/*
- * BLkFile.java
- *
- * Created on April 6, 2002, 2:06 AM
- */
-
-/**
- *
- * @author taharqa
- * @version
- */
 package megamek.common.loaders;
 
 import megamek.common.*;
 import megamek.common.util.BuildingBlock;
 
+/**
+ * @author taharqa
+ * @since April 6, 2002, 2:06 AM
+ */
 public class BLKDropshipFile extends BLKFile implements IMechLoader {
 
     public BLKDropshipFile(BuildingBlock bb) {
@@ -38,24 +30,7 @@ public class BLKDropshipFile extends BLKFile implements IMechLoader {
     public Entity getEntity() throws EntityLoadingException {
 
         Dropship a = new Dropship();
-
-        if (!dataFile.exists("Name")) {
-            throw new EntityLoadingException("Could not find name block.");
-        }
-        a.setChassis(dataFile.getDataAsString("Name")[0]);
-        if (dataFile.exists("Model")
-                && (dataFile.getDataAsString("Model")[0] != null)) {
-            a.setModel(dataFile.getDataAsString("Model")[0]);
-        } else {
-            a.setModel("");
-        }
-        setTechLevel(a);
-        setFluff(a);
-        checkManualBV(a);
-
-        if (dataFile.exists("source")) {
-            a.setSource(dataFile.getDataAsString("source")[0]);
-        }
+        setBasicEntityData(a);
 
         if (dataFile.exists("originalBuildYear")) {
             a.setOriginalBuildYear(dataFile.getDataAsInt("originalBuildYear")[0]);
@@ -116,9 +91,10 @@ public class BLKDropshipFile extends BLKFile implements IMechLoader {
             a.setSpheroid(true);
         }
         a.setMovementMode(nMotion);
-        if (a.isSpheroid()) {
-            a.setVSTOL(true);
-        }
+
+        // All dropships are VSTOL and can hover
+        a.setVSTOL(true);
+
 
         // figure out structural integrity
         if (!dataFile.exists("structural_integrity")) {
@@ -190,10 +166,10 @@ public class BLKDropshipFile extends BLKFile implements IMechLoader {
             throw new EntityLoadingException("Incorrect armor array length");
         }
 
-        a.initializeArmor(armor[BLKAeroFile.NOSE], Dropship.LOC_NOSE);
-        a.initializeArmor(armor[BLKAeroFile.RW], Dropship.LOC_RWING);
-        a.initializeArmor(armor[BLKAeroFile.LW], Dropship.LOC_LWING);
-        a.initializeArmor(armor[BLKAeroFile.AFT], Dropship.LOC_AFT);
+        a.initializeArmor(armor[BLKAeroSpaceFighterFile.NOSE], Dropship.LOC_NOSE);
+        a.initializeArmor(armor[BLKAeroSpaceFighterFile.RW], Dropship.LOC_RWING);
+        a.initializeArmor(armor[BLKAeroSpaceFighterFile.LW], Dropship.LOC_LWING);
+        a.initializeArmor(armor[BLKAeroSpaceFighterFile.AFT], Dropship.LOC_AFT);
         a.initializeArmor(IArmorState.ARMOR_NA, Dropship.LOC_HULL);
 
         a.autoSetInternal();
@@ -210,7 +186,12 @@ public class BLKDropshipFile extends BLKFile implements IMechLoader {
         }
 
         addTransports(a);
+
+        // how many bombs can it carry; depends on transport bays
+        a.autoSetMaxBombPoints();
+
         a.setArmorTonnage(a.getArmorWeight());
+        loadQuirks(a);
         return a;
     }
 

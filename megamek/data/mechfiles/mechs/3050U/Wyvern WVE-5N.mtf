@@ -1,12 +1,19 @@
-Version:1.0
-Wyvern
-WVE-5N
+chassis:Wyvern
+model:WVE-5N
+mul id:3597
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2660
-Source:TRO 3050 - Star League
+Source:TRO: 3050
 Rules Level:2
+role:Brawler
+
+
+
+
+quirk:rugged_1
+
 
 Mass:45
 Engine:180 Fusion Engine

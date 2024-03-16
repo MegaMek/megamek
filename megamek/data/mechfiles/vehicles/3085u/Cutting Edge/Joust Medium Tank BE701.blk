@@ -20,6 +20,10 @@ Joust Medium Tank
 BE701
 </Model>
 
+<mul id:>
+1712
+</mul id:>
+
 <year>
 3086
 </year>
@@ -27,6 +31,10 @@ BE701
 <type>
 Clan Level 3
 </type>
+
+<role>
+Skirmisher
+</role>
 
 <motion_type>
 Tracked
@@ -88,7 +96,7 @@ CLLightMG
 </Turret Equipment>
 
 <source>
-Dark Age
+TRO: 3085
 </source>
 
 <tonnage>

@@ -20,6 +20,10 @@ Deusenberg VIP Luxury Hovercar
 (Original)
 </Model>
 
+<mul id:>
+4073
+</mul id:>
+
 <year>
 3024
 </year>
@@ -27,6 +31,10 @@ Deusenberg VIP Luxury Hovercar
 <type>
 IS Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Hover
@@ -78,7 +86,7 @@ Armored Chassis
 </Rear Equipment>
 
 <source>
-TRO VAr - Succession Wars
+TRO: Vehicle Annex (Revised)
 </source>
 
 <tonnage>

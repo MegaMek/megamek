@@ -1,298 +1,145 @@
 /*
-* MegaMek -
-* Copyright (C) 2003, 2004 Ben Mazur (bmazur@sev.org)
-* Copyright (C) 2018 The MegaMek Team
-*
-* This program is free software; you can redistribute it and/or modify it under
-* the terms of the GNU General Public License as published by the Free Software
-* Foundation; either version 2 of the License, or (at your option) any later
-* version.
-*
-* This program is distributed in the hope that it will be useful, but WITHOUT
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
-* details.
-*/
-
+ * Copyright (c) 2003-2004 - Ben Mazur (bmazur@sev.org).
+ * Copyright (c) 2018-2022 - The MegaMek Team. All Rights Reserved.
+ *
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later
+ * version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ */
 package megamek.common;
 
+import megamek.common.annotations.Nullable;
+import org.apache.logging.log4j.LogManager;
+
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Vector;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
- * Represents a docking collar with which a Jumpship can carry a DropShip
- *
+ * Represents a Docking Collar (Docking Hardpoint, TO: AUE p.116) with which a JumpShip,
+ * WarShip, Space Station or Mobile Structure can carry one DropShip.
  */
-
 public class DockingCollar implements Transporter {
-
-    // Private attributes and helper functions.
-
-    /**
-     *
-     */
     private static final long serialVersionUID = -4699786673513410716L;
 
-    /**
-     * The troops being carried.
-     */
-    /* package */Vector<Integer> troops = new Vector<>();
-
+    private final Set<Integer> dockedUnits = new HashSet<>();
     private boolean damaged = false;
-    private int collarNumber = 0;
-
+    private final int collarId;
     transient Game game;
 
     /**
-     * The total amount of space available for troops.
-     */
-    /* package */int totalSpace;
-
-    /**
-     * The current amount of space available for troops.
-     */
-    /* package */int currentSpace;
-
-    // Protected constructors and methods.
-
-    /**
-     * The default constructor is only for serialization.
-     */
-
-    protected DockingCollar() {
-        totalSpace = 0;
-        currentSpace = 0;
-    }
-
-    // Public constructors and methods.
-
-    /**
-     * Create a Jumpship collar that can carry one dropship
+     * Creates a JumpShip Docking Collar that can carry one dropship.
      *
-     * @param docks Capacity. A collar can always carry one dropship.
-     * @param collarNumber the Id of this collar, used for tracking in MHQ 
+     * @param collarId the Id of this collar, used for tracking in MHQ
      */
-    public DockingCollar(int docks, int collarNumber) {
-        totalSpace = docks;
-        currentSpace = docks;
-        this.collarNumber = collarNumber;
+    public DockingCollar(int collarId) {
+        this.collarId = collarId;
     }
 
-    // Type is Docking Collar
     public String getType() {
         return "Docking Collar";
     }
 
-    /**
-     * Determines if this object can accept the given unit. The unit may not be
-     * of the appropriate type or there may be no room for the unit.
-     *
-     * @param unit
-     *            - the <code>Entity</code> to be loaded.
-     * @return <code>true</code> if the unit can be loaded, <code>false</code>
-     *         otherwise.
-     */
     @Override
     public boolean canLoad(Entity unit) {
-        // Assume that we cannot carry the unit.
-        boolean result = false;
-
-        /*
-         * For now disable everything until I get docking worked out
-         */
-        if (unit instanceof Dropship) {
-            // Dropships are all that collars can carry
-            Dropship ds = (Dropship) unit;
-            result = true;
-
-            // If the dropship's collar is damaged, or it's a primitive without a collar
-            // we can't mate with it.
-            if (ds.isDockCollarDamaged()) {
-                result = false;
-            }
-
-            // If this collar is in use, or if it's damaged, then we can't
-            if ((currentSpace < 1) || isDamaged()) {
-                result = false;
-            }
-        }
-
-        // Return our result.
-        return result;
+        return (unit instanceof Dropship) && !((Dropship) unit).isDockCollarDamaged()
+                && (getUnused() == 1) && !isDamaged();
     }
 
-    /**
-     * Load the given unit.
-     *
-     * @param unit
-     *            - the <code>Entity</code> to be loaded.
-     * @exception - If the unit can't be loaded, an
-     *            <code>IllegalArgumentException</code> exception will be
-     *            thrown.
-     */
     @Override
     public void load(Entity unit) throws IllegalArgumentException {
-        // If we can't load the unit, throw an exception.
         if (!canLoad(unit)) {
-            throw new IllegalArgumentException("Can not load "
-                    + unit.getShortName() + " into this bay.");
+            throw new IllegalArgumentException("Cannot load "
+                    + unit.getShortName() + " into this Docking Collar.");
         }
-
-        // Decrement the available space.
-        // POSSIBLE BUG: we may have to take the Math.ceil() of the weight.
-        currentSpace -= 1;
-
-        // Add the unit to our list of troops.
-        troops.addElement(unit.getId());
+        dockedUnits.add(unit.getId());
     }
 
     // Recovery is different from loading in that it uses up a recovery slot
     // load is only used in deployment phase
     public void recover(Entity unit) throws IllegalArgumentException {
-        // If we can't load the unit, throw an exception.
         if (!canLoad(unit)) {
-            throw new IllegalArgumentException("Can not recover "
-                    + unit.getShortName() + " into this bay. " + currentSpace);
+            throw new IllegalArgumentException("Cannot recover "
+                    + unit.getShortName() + " into this Docking Collar.");
         }
-
-        currentSpace -= 1;
-
-        // Add the unit to our list of troops.
-        troops.addElement(unit.getId());
+        dockedUnits.add(unit.getId());
     }
 
-    /**
-     * Get a <code>List</code> of the units currently loaded into this payload.
-     *
-     * @return A <code>List</code> of loaded <code>Entity</code> units. This
-     *         list will never be <code>null</code>, but it may be empty. The
-     *         returned <code>List</code> is independant from the under- lying
-     *         data structure; modifying one does not affect the other.
-     */
     @Override
-    public Vector<Entity> getLoadedUnits() {
-        // Return a copy of our list of troops.
-        Vector<Entity> loaded = new Vector<>();
-        for (int id : troops) {
-            Entity entity = game.getEntity(id);
-            
-            if (entity != null) {
-                loaded.add(game.getEntity(id));
-            }
-        }
-        return loaded;
+    public List<Entity> getLoadedUnits() {
+        correctDockedUnitList();
+        return dockedUnits.stream()
+                .map(id -> game.getEntity(id))
+                .collect(Collectors.toList());
     }
 
     /**
-     * get a vector of launchable units. This is different from loaded in that
-     * units in recovery cannot launch
+     * Cleans out docked unit IDs that no longer match an active entity. This is a precaution
+     * that ideally shouldn't be necessary.
      */
-    public Vector<Entity> getLaunchableUnits() {
-
-        Vector<Entity> launchable = new Vector<>();
-
-        for (int i = 0; i < troops.size(); i++) {
-            Entity nextUnit = game.getEntity(troops.elementAt(i));
-            if ((nextUnit.getRecoveryTurn() == 0) && !damaged) {
-                if (nextUnit instanceof Dropship) {
-                    Dropship ds = (Dropship) nextUnit;
-                    if (!ds.isDockCollarDamaged()) {
-                        launchable.add(nextUnit);
-                    }
-                }
-            }
+    private void correctDockedUnitList() {
+        if (dockedUnits.removeIf(id -> game.getEntity(id) == null)) {
+            LogManager.getLogger().warn("Unit IDs mapping to a null Entity found in this docking collar.");
         }
-
-        return launchable;
     }
 
     /**
-     * Unload the given unit.
+     * DropShips launchable from this Docking Collar. This is different from loaded in that
+     * units in recovery cannot launch.
      *
-     * @param unit
-     *            - the <code>Entity</code> to be unloaded.
-     * @return <code>true</code> if the unit was contained in this space,
-     *         <code>false</code> otherwise.
+     * @return A list of DropShips that can launch from this Docking Collar. The list may be empty
+     * but not null.
      */
+    public List<Entity> getLaunchableUnits() {
+        if (damaged) {
+            return new ArrayList<>();
+        } else {
+            correctDockedUnitList();
+            return dockedUnits.stream()
+                    .map(id -> game.getEntity(id))
+                    .filter(entity -> entity.getRecoveryTurn() == 0)
+                    .filter(entity -> entity instanceof Dropship)
+                    .filter(entity -> !((Dropship) entity).isDockCollarDamaged())
+                    .collect(Collectors.toList());
+        }
+    }
+
     @Override
     public boolean unload(Entity unit) {
-
-        // can we unload?
-        if (isDamaged()) {
-            return false;
-        }
-
-        // Remove the unit if we are carrying it.
-        boolean retval = troops.removeElement(unit.getId());
-
-        // If we removed it, restore our space.
-        if (retval) {
-            currentSpace += 1;
-        }
-
-        // Return our status
-        return retval;
+        return !isDamaged() && dockedUnits.remove(unit.getId());
     }
 
-    /**
-     * Return a string that identifies the unused capacity of this transporter.
-     *
-     * @return A <code>String</code> meant for a human.
-     */
     @Override
     public String getUnusedString() {
-        return "Dropship - " + currentSpace + " units";
+        return "Dropship - " + ((getUnused() == 1) ? "1 unit" : "Docking Collar occupied");
     }
 
     @Override
     public double getUnused() {
-        return currentSpace;
+        return dockedUnits.isEmpty() ? 1 : 0;
     }
 
-    /**
-     * Determine if transported units prevent a weapon in the given location
-     * from firing.
-     *
-     * @param loc
-     *            - the <code>int</code> location attempting to fire.
-     * @param isRear
-     *            - a <code>boolean</code> value stating if the given location
-     *            is rear facing; if <code>false</code>, the location is front
-     *            facing.
-     * @return <code>true</code> if a transported unit is in the way,
-     *         <code>false</code> if the weapon can fire.
-     */
     @Override
     public boolean isWeaponBlockedAt(int loc, boolean isRear) {
         return false;
     }
 
-    /**
-     * If a unit is being transported on the outside of the transporter, it can
-     * suffer damage when the transporter is hit by an attack. Currently, no
-     * more than one unit can be at any single location; that same unit can be
-     * "spread" over multiple locations.
-     *
-     * @param loc
-     *            - the <code>int</code> location hit by attack.
-     * @param isRear
-     *            - a <code>boolean</code> value stating if the given location
-     *            is rear facing; if <code>false</code>, the location is front
-     *            facing.
-     * @return The <code>Entity</code> being transported on the outside at that
-     *         location. This value will be <code>null</code> if no unit is
-     *         transported on the outside at that location.
-     */
     @Override
-    public Entity getExteriorUnitAt(int loc, boolean isRear) {
+    public @Nullable Entity getExteriorUnitAt(int loc, boolean isRear) {
         return null;
     }
 
     @Override
     public final List<Entity> getExternalUnits() {
-        ArrayList<Entity> rv = new ArrayList<>(1);
-        return rv;
+        return new ArrayList<>();
     }
 
     @Override
@@ -304,8 +151,8 @@ public class DockingCollar implements Transporter {
         return damaged;
     }
 
-    public void setDamaged(boolean b) {
-        damaged = b;
+    public void setDamaged(boolean newStatus) {
+        damaged = newStatus;
     }
 
     @Override
@@ -320,8 +167,7 @@ public class DockingCollar implements Transporter {
 
     @Override
     public void resetTransporter() {
-        troops = new Vector<>();
-        currentSpace = totalSpace;
+        dockedUnits.clear();
     }
 
     @Override
@@ -330,7 +176,6 @@ public class DockingCollar implements Transporter {
     }
     
     public int getCollarNumber() {
-        return collarNumber;
+        return collarId;
     }
-
-} // End package class DockingCollar implements Transporter
+}

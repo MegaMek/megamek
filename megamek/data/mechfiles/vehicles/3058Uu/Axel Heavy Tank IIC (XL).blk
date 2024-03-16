@@ -20,13 +20,21 @@ Axel Heavy Tank IIC
 (XL)
 </Model>
 
+<mul id:>
+183
+</mul id:>
+
 <year>
 3074
 </year>
 
 <type>
-Clan Level 3
+Clan Level 2
 </type>
+
+<role>
+Brawler
+</role>
 
 <motion_type>
 Tracked
@@ -91,9 +99,43 @@ CLArtemisIV
 </Turret Equipment>
 
 <source>
-Jihad
+TRO: 3058
 </source>
 
 <tonnage>
 65.0
 </tonnage>
+
+<capabilities>
+To make room for the engine, the tank is only protected by ten and a half tons of armor. The internal combustion engine also reduces the top speed of the tank to 54 km/h.
+</capabilities>
+
+<overview>
+The Axel series of heavy tanks are based on the popular Rommel design, but uses an internal combustion engine.
+</overview>
+
+<deployment>
+Also introduced during the Jihad, this version of the Axel uses an XL fusion engine to reach a top speed of 84 km/h. Like the standard Axel IIC, the tank is protected by an ECM Suite, CASE and eleven and a half tons of ferro-fibrous armor. The weapons include an AP Gauss Rifle, ER Large Laser, and two LRM-15 missile launchers equipped with Artemis IV fire control systems. It also carries an advanced Targeting Computer. 
+</deployment>
+
+<history>
+The tank was produced by engineers working for the Free Rasalhague Republic. Despite the lighter armor and lower top speed, the Axel family was widely used by the Free Rasalhague Republic.
+</history>
+
+<manufacturer>
+Benson and Bjorn
+</manufacturer>
+
+<primaryFactory>
+Spittal
+</primaryFactory>
+
+<source>
+Rec Guide:ilClan #27
+</source>
+
+<quirks>
+low_profile
+poor_target_short
+</quirks>
+

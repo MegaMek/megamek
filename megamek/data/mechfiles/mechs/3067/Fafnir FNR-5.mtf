@@ -1,12 +1,21 @@
-Version:1.0
-Fafnir
-FNR-5
+chassis:Fafnir
+model:FNR-5
+mul id:4152
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3063
 Rules Level:2
-source:TRO 3067
+role:Juggernaut
+source:TRO: 3067
+
+
+
+
+quirk:no_arms
+weaponquirk:stable_weapon:RT:0:ISHeavyGaussRifle
+weaponquirk:stable_weapon:LT:0:ISHeavyGaussRifle
+
 
 Mass:100
 Engine:300 Fusion Engine

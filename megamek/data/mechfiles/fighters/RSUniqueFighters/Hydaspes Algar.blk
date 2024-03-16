@@ -20,6 +20,10 @@ Hydaspes
 (Algar)
 </Model>
 
+<mul id:>
+1593
+</mul id:>
+
 <year>
 3070
 </year>
@@ -31,6 +35,10 @@ Hydaspes
 <type>
 Clan Level 2
 </type>
+
+<role>
+Attack Fighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -118,7 +126,7 @@ CLCASE
 </Fuselage Equipment>
 
 <source>
-RS Unique Fighters - Jihad
+Record Sheets: Unique Fighters
 </source>
 
 <tonnage>

@@ -1,39 +1,37 @@
 /*
  * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
-/*
- * SkipCommand.java
- *
- * Created on February 19, 2003, 12:16 PM
- */
-
 package megamek.server.commands;
 
+import megamek.common.Game;
+import megamek.server.GameManager;
 import megamek.server.Server;
 
 /**
  * Skips the current player's turn, if possible.
  * 
  * @author Ben
- * @version
+ * @since February 19, 2003, 12:16 PM
  */
 public class SkipCommand extends ServerCommand {
 
+    private final GameManager gameManager;
+
     /** Creates a new instance of SkipCommand */
-    public SkipCommand(Server server) {
+    public SkipCommand(Server server, GameManager gameManager) {
         super(server, "skip",
                 "Skips the current turn, if possible.  Usage: /skip");
+        this.gameManager = gameManager;
     }
 
     /**
@@ -47,10 +45,10 @@ public class SkipCommand extends ServerCommand {
             return;
         }
 
-        if (server.isTurnSkippable()) {
+        if (gameManager.isTurnSkippable()) {
             server.sendServerChat(server.getPlayer(connId).getName()
                     + " has issued the skip command...");
-            server.skipCurrentTurn();
+            gameManager.skipCurrentTurn();
         } else {
             server.sendServerChat("/skip : skip failed.");
         }

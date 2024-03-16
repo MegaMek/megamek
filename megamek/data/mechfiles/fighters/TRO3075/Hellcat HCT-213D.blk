@@ -20,6 +20,10 @@ Hellcat
 HCT-213D
 </Model>
 
+<mul id:>
+4296
+</mul id:>
+
 <year>
 2701
 </year>
@@ -31,6 +35,10 @@ HCT-213D
 <type>
 IS Level 2
 </type>
+
+<role>
+Dogfighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -132,7 +140,7 @@ TARGETING:Telecron M75
 </systemManufacturers>
 
 <source>
-TRO 3075 - Star League
+TRO: 3075
 </source>
 
 <tonnage>

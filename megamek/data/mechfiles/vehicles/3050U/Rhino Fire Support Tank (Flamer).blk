@@ -20,6 +20,10 @@ Rhino Fire Support Tank
 (Flamer)
 </Model>
 
+<mul id:>
+2681
+</mul id:>
+
 <year>
 2835
 </year>
@@ -27,6 +31,10 @@ Rhino Fire Support Tank
 <type>
 IS Level 1
 </type>
+
+<role>
+Missile Boat
+</role>
 
 <motion_type>
 Tracked
@@ -79,7 +87,7 @@ LRM 20
 </Turret Equipment>
 
 <source>
-TRO 3050 - Succession Wars
+TRO: 3050
 </source>
 
 <tonnage>

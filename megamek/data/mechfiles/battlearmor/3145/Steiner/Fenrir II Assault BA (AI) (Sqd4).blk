@@ -1,0 +1,143 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+Fenrir II Assault Battle Armor
+</Name>
+
+<Model>
+(AI)(Sqd4)
+</Model>
+
+<mul id:>
+6593
+</mul id:>
+
+<year>
+3119
+</year>
+
+<type>
+Mixed (IS Chassis) Advanced
+</type>
+
+<role>
+Juggernaut
+</role>
+
+<motion_type>
+Leg
+</motion_type>
+
+<cruiseMP>
+3
+</cruiseMP>
+
+<armor_type>
+30
+</armor_type>
+
+<armor_tech>
+11
+</armor_tech>
+
+<Squad Equipment>
+Machine Gun (Bearhunter AC):TU
+Machine Gun (Bearhunter AC):TU
+CLBAMG:TU
+CLBAMG:TU
+BA Advanced:Body
+BA Advanced:Body
+BA Advanced:Body
+BA Advanced:Body
+BA Advanced:Body
+</Squad Equipment>
+
+<Trooper 1 Equipment>
+</Trooper 1 Equipment>
+
+<Trooper 2 Equipment>
+</Trooper 2 Equipment>
+
+<Trooper 3 Equipment>
+</Trooper 3 Equipment>
+
+<Trooper 4 Equipment>
+</Trooper 4 Equipment>
+
+<source>
+TRO: 3145 Lyran Commonwealth
+</source>
+
+<chassis>
+quad
+</chassis>
+
+<turret>
+Modular:6
+</turret>
+
+<jumpingMP>
+0
+</jumpingMP>
+
+<armor>
+17
+</armor>
+
+<Trooper Count>
+4
+</Trooper Count>
+
+<weightclass>
+4
+</weightclass>
+
+<overview>
+The Fenrir II Assault Battle Armor may have allegedly originated as the result of a bet between Archon Adam Steiner and Duke Vedet Brewer of Hesperus II, but Duke Brewer's vision of "a monstrous wolf straight from the nightmares of our ancestors" proved to be one of the most popular battle suits on the market after its introduction to service in 3119.
+</overview>
+
+<capabilities>
+The Fenrir II was designed to use a Modular Turret Mount capable of mounting a number of different weapon configurations. The available options were: a single Medium Laser with thirty rounds of ammunition, a pair of Medium Recoilless Rifles with twenty rounds of ammunition for each, a Clan-tech LRM-4 with ten reloads, a Clan-tech SRM-5 with six reloads or a pair of Clan-tech Bearhunter Superheavy Autocannons (each with 20 rounds of ammunition) and a pair of Machine Guns with fifty rounds of ammunition for each.
+</capabilities>
+
+<deployment>
+The use of Clantech weaponry kept the firepower available almost identical to the Fenrir while allowing the suit to mount almost three times as much armor. With a full 680 kilos of Advanced Armor a Fenrir II suit was capable of shrugging off a hit from even a Gauss rifle.
+</deployment>
+
+<history>
+Manufactured by TharHes Industries from their plant on Tharkad, the Fenrir II quickly supplanted the original Fenrir, having adjusted the key suit capabilities; the Fenrir II could only reach a top speed some three-quarters of that of the original.
+</history>
+
+<manufacturer>
+TharHes Industries
+</manufacturer>
+
+<primaryFactory>
+Tharkad
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+JUMPJET:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<quirks>
+distracting
+</quirks>
+

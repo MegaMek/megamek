@@ -1,12 +1,18 @@
-Version:1.0
-Ymir
-BWP-2B
+chassis:Ymir
+model:BWP-2B
+mul id:3620
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2475
-Source:TRO 3075
+Source:TRO: 3075
 Rules Level:1
+role:Missile Boat
+
+
+
+quirk:stable
+
 
 Mass:90
 Engine:360 Fusion Engine

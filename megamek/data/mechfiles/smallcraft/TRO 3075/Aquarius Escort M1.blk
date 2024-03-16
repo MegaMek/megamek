@@ -20,6 +20,10 @@ Aquarius Escort
 M1
 </Model>
 
+<mul id:>
+3710
+</mul id:>
+
 <year>
 3073
 </year>
@@ -31,6 +35,10 @@ M1
 <type>
 IS Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Aerodyne
@@ -112,7 +120,7 @@ ISERMediumLaser
 </structural_integrity>
 
 <source>
-TRO 3075 - Jihad
+TRO: 3075
 </source>
 
 <tonnage>

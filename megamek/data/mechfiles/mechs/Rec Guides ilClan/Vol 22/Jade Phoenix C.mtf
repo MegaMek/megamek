@@ -1,0 +1,163 @@
+chassis:Jade Phoenix
+model:C
+mul id:8401
+
+Config:Biped Omnimech
+techbase:Clan
+era:3148
+source:Rec Guide:ilClan #22
+rules level:3
+role:Skirmisher
+
+mass:85
+engine:340 XL (Clan) Engine(IS)
+structure:Clan Endo-Composite
+myomer:Standard
+
+heat sinks:13 Clan Double
+base chassis heat sinks:13
+walk mp:4
+jump mp:4
+
+armor:Ferro-Fibrous(Clan)
+LA armor:26
+RA armor:26
+LT armor:26
+RT armor:26
+CT armor:44
+HD armor:9
+LL armor:36
+RL armor:36
+RTL armor:10
+RTR armor:10
+RTC armor:10
+
+Weapons:6
+ATM 12, Left Arm
+ATM 12, Right Arm
+SRM 6, Left Torso
+SRM 6, Right Torso
+ER Medium Laser, Center Torso
+ER Medium Laser, Center Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+CLATM12 (OMNIPOD)
+CLATM12 (OMNIPOD)
+CLATM12 (OMNIPOD)
+CLATM12 (OMNIPOD)
+CLATM12 (OMNIPOD)
+Clan Ammo ATM-12 (OMNIPOD)
+Clan Endo-Composite
+Clan Endo-Composite
+Clan Endo-Composite
+Clan Endo-Composite
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+CLATM12 (OMNIPOD)
+CLATM12 (OMNIPOD)
+CLATM12 (OMNIPOD)
+CLATM12 (OMNIPOD)
+CLATM12 (OMNIPOD)
+Clan Ammo ATM-12 (OMNIPOD)
+Clan Ammo ATM-12 ER (OMNIPOD)
+Clan Ammo ATM-12 HE (OMNIPOD)
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+CLPartialWing
+CLPartialWing
+CLPartialWing
+Jump Jet (OMNIPOD)
+Jump Jet (OMNIPOD)
+CLSRM6 (OMNIPOD)
+Clan Ammo SRM-6 (OMNIPOD)
+Clan Ammo ATM-12 ER (OMNIPOD)
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+CLPartialWing
+CLPartialWing
+CLPartialWing
+Jump Jet (OMNIPOD)
+Jump Jet (OMNIPOD)
+CLSRM6 (OMNIPOD)
+Clan Ammo SRM-6 (OMNIPOD)
+Clan Ammo ATM-12 HE (OMNIPOD)
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLERMediumLaser (OMNIPOD)
+CLERMediumLaser (OMNIPOD)
+
+Head:
+Life Support
+Sensors
+Cockpit
+Clan Ferro-Fibrous
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Talons (OMNIPOD)
+Talons (OMNIPOD)
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Talons (OMNIPOD)
+Talons (OMNIPOD)
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+overview:The Jade Phoenix is a workhorse OmniMech with astraightforward armament intended for clean and honorable fights.
+manufacturer:CJF Factory Zone 4
+primaryfactory:Alyina
+systemmanufacturer:CHASSIS:JF 8 Light Endo-Composite
+systemmanufacturer:ENGINE:JF 340 XL
+systemmanufacturer:ARMOR:Compound JF Ferro-Fibrous
+systemmanufacturer:COMMUNICATIONS:JF Integrated
+systemmanufacturer:TARGETING:Goshawk E-Series
+

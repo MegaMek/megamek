@@ -1,12 +1,17 @@
-Version:1.0
-Eagle
-EGL-2M
+chassis:Eagle
+model:EGL-2M
+mul id:937
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3058
-Source:TRO 3060
+Source:TRO: 3060
 Rules Level:2
+role:Brawler
+
+quirk:ext_twist
+quirk:weak_head_1
+
 
 Mass:25
 Engine:125 Fusion Engine

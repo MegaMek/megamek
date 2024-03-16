@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -13,24 +13,39 @@ VTOL
 </UnitType>
 
 <Name>
-Vector
+Vector Combat Support VTOL
 </Name>
 
 <Model>
 (EW)
 </Model>
 
+<mul id:>
+6770
+</mul id:>
+
 <year>
 2730
 </year>
 
+<originalBuildYear>
+2730
+</originalBuildYear>
+
 <type>
-IS Level 3
+IS Level 2
 </type>
+
+<role>
+Striker
+</role>
 
 <motion_type>
 VTOL
 </motion_type>
+
+<transporters>
+</transporters>
 
 <cruiseMP>
 12
@@ -64,6 +79,7 @@ ISGuardianECMSuite
 ISSmallPulseLaser
 Medium Laser
 Medium Laser
+ISTAG
 </Front Equipment>
 
 <Right Equipment>
@@ -77,13 +93,37 @@ Medium Laser
 
 <Rotor Equipment>
 ISMastMount
-ISTAG
 </Rotor Equipment>
 
+<capabilities>
+The EW Vector replaced the infantry seats in place for a Guardian ECM Suite and added a Small Laser with Target Acquisition Gear in the nose.
+</capabilities>
+
+<overview>
+The Star League Defense Force requested the next generation of combat support VTOL in 2708.
+</overview>
+
+<deployment>
+The design also incorporated a fusion engine to power the craft and the energy weapons which would eliminate the need for a fuel source and ammunition dependency.
+</deployment>
+
+<history>
+It took more than two decades with hundreds of different people being involved and only finally getting realistic specifications laid out by Aleksandr Kerensky. It was finally awarded to General Motors who created a VTOL which could replace other VTOLs in their specific roles with one design which would simplify the replacement parts process. By the middle of the twenty-eight century, over ten thousand Vectors were manufactured allowing every infantry brigade in the SLDF to possess at least one battalion of the VTOL. The Vector proved itself time and time again during the Periphery Uprising and the Amaris Civil War. While the specialized VTOLs were grounded due to not having any spare parts around, the Vectors were able to keep flying due to the cannibalization of parts from other craft. By the end of the twenty-ninth century, all surviving Vectors had been scrapped.
+</history>
+
+<manufacturer>
+General Motors
+</manufacturer>
+
+<primaryFactory>
+Outreach
+</primaryFactory>
+
 <source>
-HIST LOT II
+Historical: Liberation of Terra II
 </source>
 
 <tonnage>
 22.0
 </tonnage>
+

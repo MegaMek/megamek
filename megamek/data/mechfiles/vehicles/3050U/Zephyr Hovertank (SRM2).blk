@@ -20,6 +20,10 @@ Zephyr Hovertank
 (SRM2)
 </Model>
 
+<mul id:>
+5435
+</mul id:>
+
 <year>
 2620
 </year>
@@ -27,6 +31,10 @@ Zephyr Hovertank
 <type>
 IS Level 2
 </type>
+
+<role>
+Striker
+</role>
 
 <motion_type>
 Hover
@@ -84,7 +92,7 @@ Medium Laser
 </Turret Equipment>
 
 <source>
-TRO 3050 - Star League
+TRO: 3050
 </source>
 
 <tonnage>

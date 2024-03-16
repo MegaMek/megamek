@@ -20,6 +20,10 @@ Manteuffel Attack Tank
 E
 </Model>
 
+<mul id:>
+6797
+</mul id:>
+
 <year>
 3087
 </year>
@@ -27,6 +31,10 @@ E
 <type>
 IS Level 3
 </type>
+
+<role>
+Brawler
+</role>
 
 <motion_type>
 Tracked
@@ -94,7 +102,7 @@ Mek Taser:OMNI
 </Turret Equipment>
 
 <source>
-RS 3145 NTNU - Early Republic
+Record Sheets: 3145 New Tech New Upgrades
 </source>
 
 <tonnage>

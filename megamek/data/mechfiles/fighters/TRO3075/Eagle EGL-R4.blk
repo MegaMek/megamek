@@ -20,6 +20,10 @@ Eagle
 EGL-R4
 </Model>
 
+<mul id:>
+4109
+</mul id:>
+
 <year>
 2492
 </year>
@@ -31,6 +35,10 @@ EGL-R4
 <type>
 IS Level 4
 </type>
+
+<role>
+Attack Fighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -104,7 +112,7 @@ Medium Laser
 </Fuselage Equipment>
 
 <source>
-TRO 3075 - Age of War
+TRO: 3075
 </source>
 
 <tonnage>

@@ -20,6 +20,10 @@ Hammerhead
 HMR-HF
 </Model>
 
+<mul id:>
+1376
+</mul id:>
+
 <year>
 3068
 </year>
@@ -31,6 +35,10 @@ HMR-HF
 <type>
 IS Level 2
 </type>
+
+<role>
+Fast Dogfighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -102,7 +110,7 @@ IS LB 10-X Cluster Ammo
 </Fuselage Equipment>
 
 <source>
-TRO 3050u - Jihad
+TRO: 3050
 </source>
 
 <tonnage>

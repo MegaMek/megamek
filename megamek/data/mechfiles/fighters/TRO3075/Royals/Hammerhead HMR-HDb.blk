@@ -20,6 +20,10 @@ Hammerhead
 HMR-HDb
 </Model>
 
+<mul id:>
+4261
+</mul id:>
+
 <year>
 2731
 </year>
@@ -31,6 +35,10 @@ HMR-HDb
 <type>
 IS Level 2
 </type>
+
+<role>
+Fire Support
+</role>
 
 <motion_type>
 Aerodyne
@@ -100,7 +108,7 @@ IS Gauss Ammo
 </Fuselage Equipment>
 
 <source>
-TRO 3075 - Star League
+TRO: 3075
 </source>
 
 <tonnage>

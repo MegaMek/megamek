@@ -1,12 +1,22 @@
-Version:1.0
-Marauder
-MAD-3L
+chassis:Marauder
+model:MAD-3L
+mul id:2036
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2905
-Source:TRO 3039 - Succession Wars
+Source:TRO: 3039
 Rules Level:1
+role:Brawler
+
+
+
+quirk:command_mech
+quirk:hyper_actuator
+quirk:low_profile
+weaponquirk:direct_torso_mount:RT:0:Autocannon/5
+weaponquirk:exposed_linkage:RT:0:Autocannon/5
+
 
 Mass:75
 Engine:300 Fusion Engine

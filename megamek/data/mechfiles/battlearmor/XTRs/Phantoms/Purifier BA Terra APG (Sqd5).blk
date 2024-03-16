@@ -1,0 +1,125 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+Purifier Battle Armor Terra
+</Name>
+
+<Model>
+[AP Gauss](Sqd5)
+</Model>
+
+<mul id:>
+8713
+</mul id:>
+
+<year>
+3075
+</year>
+
+<type>
+Mixed (IS Chassis) Advanced
+</type>
+
+<role>
+Ambusher
+</role>
+
+<motion_type>
+Jump
+</motion_type>
+
+<cruiseMP>
+1
+</cruiseMP>
+
+<armor_type>
+28
+</armor_type>
+
+<armor_tech>
+2
+</armor_tech>
+
+<Squad Equipment>
+BABattleClaw:RA
+SwarmMek
+SwarmWeaponMek
+StopSwarm
+LegAttack
+CLBAAPGaussRifle:LA
+</Squad Equipment>
+
+<source>
+XTR: Phantoms
+</source>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+3
+</jumpingMP>
+
+<armor>
+10
+</armor>
+
+<Trooper Count>
+5
+</Trooper Count>
+
+<weightclass>
+2
+</weightclass>
+
+<overview>
+The Purifier Adaptive battle armor is produced by Word of Blake, though the original data was stolen from ComStar. 
+</overview>
+
+<capabilities>
+The Mimetic Armor makes the Purifier Adaptive much more difficult to target, especially when it is motionless. The drawback comes in the amount of armor it carries; only enough to stop a blast from a Medium Pulse Laser. It does, however, mount enough jump jets to leap ninety meters at a time. 
+</capabilities>
+
+<deployment>
+Based on the standard Purifier suit, the primary difference is the removal of the mimetic armor and its replacement with Clan standard armor identical to that used on the Elemental suit. The Purifier Terra uses a Modular Weapon Mount to provide a variety of weapons options. The Coalition encountered variants equipped with Clan level ER Small Laser, Small Pulse Laser, and AP Gauss Rifle. Other variants used a Medium Recoilless Rifle. Beyond that, any equipment that could fit into a 400kg MWM could be carried.
+</deployment>
+
+<history>
+When the Word conquered Terra in 3058, they found the research that ComStar scientists had started only months before. For their part, ComStar believed the data had been destroyed, so they were as shocked as everybody else when a prototype turned up in August 3061. The Purifier Adaptive is revolutionary in that it uses mimetic, color-shifting armor. It has dozens of tiny cameras that feed data concerning the environment back to a computer that shifts the colors of the suit to camouflage, much like a chameleon does naturally. This effect is much better the less the armor moves, as the computer does not have to struggle to keep up with the background. The Republic of the Sphere captured many Purifier suits and put them into service. The Republic Armed Forces organized their troops into four man squads. Aside from this organizational change, the Purifier operated in exactly the same manner as the Word of Blake version.
+</history>
+
+<manufacturer>
+Refit
+</manufacturer>
+
+<primaryFactory>
+Terra
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+JUMPJET:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<quirks>
+bad_rep_is
+difficult_maintain
+</quirks>
+

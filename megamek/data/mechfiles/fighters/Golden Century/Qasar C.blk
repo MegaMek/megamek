@@ -20,6 +20,10 @@ Qasar
 C
 </Model>
 
+<mul id:>
+7665
+</mul id:>
+
 <year>
 3137
 </year>
@@ -31,6 +35,10 @@ C
 <type>
 Clan Level 2
 </type>
+
+<role>
+Fire Support
+</role>
 
 <motion_type>
 Aerodyne
@@ -100,7 +108,7 @@ CLRotaryAC5 Ammo:OMNI
 </Fuselage Equipment>
 
 <source>
-Dark Age
+TRO: Golden Century
 </source>
 
 <tonnage>

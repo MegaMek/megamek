@@ -20,6 +20,10 @@ Seydlitz
 SYD-45X 'Starling'
 </Model>
 
+<mul id:>
+2879
+</mul id:>
+
 <year>
 3073
 </year>
@@ -31,6 +35,10 @@ SYD-45X 'Starling'
 <type>
 IS Level 4
 </type>
+
+<role>
+Interceptor
+</role>
 
 <motion_type>
 Aerodyne
@@ -99,7 +107,7 @@ ISChaffPod
 </Fuselage Equipment>
 
 <source>
-XTRO Mercenaries - Jihad
+XTR: Mercenaries
 </source>
 
 <tonnage>

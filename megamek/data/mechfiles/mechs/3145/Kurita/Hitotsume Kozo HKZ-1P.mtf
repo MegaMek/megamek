@@ -1,12 +1,13 @@
-Version:1.1
-Hitotsume Kozo
-HKZ-1P
+chassis:Hitotsume Kozo
+model:HKZ-1P
+mul id:6413
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3136
-Source:TRO 3145 Draconis Combine - Dark Ages
+Source:TRO: 3145 Draconis Combine
 Rules Level:3
+role:Brawler
 
 Mass:55
 Engine:275 XL Engine(IS)

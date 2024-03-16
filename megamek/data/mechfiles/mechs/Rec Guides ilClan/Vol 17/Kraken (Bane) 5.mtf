@@ -1,0 +1,172 @@
+chassis:Kraken
+clanname:Bane
+model:5
+mul id:8242
+
+Config:Biped
+techbase:Clan
+era:3105
+source:Rec Guide:ilClan #17
+rules level:2
+role:Sniper
+
+quirk:ext_twist
+quirk:pro_actuator
+
+
+mass:100
+engine:300 XL (Clan) Engine(IS)
+structure:Clan Endo-Composite
+myomer:Standard
+
+heat sinks:17 Clan Double
+walk mp:3
+jump mp:0
+
+armor:Standard(Clan)
+LA armor:34
+RA armor:34
+LT armor:32
+RT armor:32
+CT armor:46
+HD armor:9
+LL armor:42
+RL armor:42
+RTL armor:10
+RTR armor:10
+RTC armor:13
+
+Weapons:7
+Rotary AC/2, Left Arm
+Rotary AC/2, Left Arm
+Rotary AC/2, Right Arm
+Rotary AC/2, Right Arm
+LRM 10, Left Torso
+ER Large Laser, Right Torso
+LRM 10, Right Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLRotaryAC2
+CLRotaryAC2
+CLRotaryAC2
+CLRotaryAC2
+CLRotaryAC2
+CLRotaryAC2
+CLRotaryAC2
+CLRotaryAC2
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLRotaryAC2
+CLRotaryAC2
+CLRotaryAC2
+CLRotaryAC2
+CLRotaryAC2
+CLRotaryAC2
+CLRotaryAC2
+CLRotaryAC2
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLLRM10
+Clan Ammo LRM-10
+CLRotaryAC2 Ammo
+CLRotaryAC2 Ammo
+CLRotaryAC2 Ammo
+CLCASEII
+-Empty-
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLERLargeLaser
+CLLRM10
+Clan Ammo LRM-10
+CLRotaryAC2 Ammo
+CLRotaryAC2 Ammo
+CLRotaryAC2 Ammo
+CLCASEII
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLDoubleHeatSink
+CLDoubleHeatSink
+
+Head:
+Life Support
+Sensors
+Cockpit
+CLECMSuite
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Clan Endo-Composite
+Clan Endo-Composite
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Clan Endo-Composite
+Clan Endo-Composite
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+overview:The Bane is a BattleMech that is based upon a Star League prototype that was never put into production. Tagged the Kraken by Inner Sphere forces who opposed it.
+
+capabilities:The Bane was first built in 2827. It was originally a significant part of many Clan toumans, but was gradually relegated to second-line status following the introduction of the OmniMech. As such, it is still critical to many defensive units. The design uses a lightweight XL Engine so that it can mount the arsenal that it does. Nineteen tons of armor protects this venerable assault 'Mech.
+
+deployment:This Dark Age version uses an Endo Composite structure to free weight. Each arm carries a pair of Rotary AC/2 autocannon. The left and right torso each carry an LRM-10; The right torso also carries an ER Large Laser. Each side torso has a ton of LRM ammo and three tons of Rotary AC ammunition in a CASE II protected bay. Seventeen double heat sinks are fitted, and a head mounted ECM Suite interferes with targeting systems.
+
+manufacturer:Tokasha MechWorks Alpha, Olivetti Weapons
+primaryfactory:Tokasha, Sudetan
+systemmanufacturer:CHASSIS:Type AXT, Mk. XX
+systemmanufacturer:ENGINE:Fusion 300 XL
+systemmanufacturer:ARMOR:Forging C745
+systemmanufacturer:COMMUNICATIONS:JNE Integrated
+systemmanufacturer:TARGETING:Series VI TTS

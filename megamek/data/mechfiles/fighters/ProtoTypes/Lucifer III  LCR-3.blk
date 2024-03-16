@@ -20,6 +20,10 @@ Lucifer III
 LCR-3
 </Model>
 
+<mul id:>
+4541
+</mul id:>
+
 <year>
 3086
 </year>
@@ -31,6 +35,10 @@ LCR-3
 <type>
 IS Level 4
 </type>
+
+<role>
+Attack Fighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -105,7 +113,7 @@ IS Ammo Extended LRM-10
 </Fuselage Equipment>
 
 <source>
-TRO Prototypes - Early Republic
+TRO: Prototypes
 </source>
 
 <tonnage>
@@ -146,4 +154,10 @@ TARGETING:O/P 3000
 
 
 
+
+
+<quirks>
+difficult_eject
+easy_pilot
+</quirks>
 

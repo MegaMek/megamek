@@ -12,9 +12,13 @@ Tank
 <Name>
 Speeder
 </Name>
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+5105
+</mul id:>
 <Tonnage>
 5
 </Tonnage>
@@ -30,6 +34,10 @@ Speeder
 <type>
 IS Level 1
 </type>
+
+<role>
+None
+</role>
 <year>
 2300
 </year>
@@ -45,3 +53,7 @@ IS Level 1
 <motion_type>
 Wheeled
 </motion_type>
+
+<source>
+TRO: 3025
+</source>

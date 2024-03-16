@@ -1,12 +1,20 @@
-Version:1.1
-Malak
-C-MK-O (Mi)
+chassis:Malak
+model:C-MK-O (Mi)
+mul id:1993
 
 Config:Biped Omnimech
 TechBase:Inner Sphere
 Era:3071
-Source:Starterbook: Wolf & Blake - Jihad
+Source:Starterbook: Wolf & Blake
 Rules Level:4
+role:Striker
+
+
+
+quirk:imp_com
+quirk:imp_sensors
+quirk:bad_rep_is
+
 
 Mass:30
 Engine:210 Light Engine(IS)

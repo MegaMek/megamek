@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,17 +20,32 @@ Axel Heavy Tank
 Mk 1
 </Model>
 
+<mul id:>
+180
+</mul id:>
+
 <year>
 3036
 </year>
+
+<originalBuildYear>
+3036
+</originalBuildYear>
 
 <type>
 IS Level 1
 </type>
 
+<role>
+Juggernaut
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
+
+<transporters>
+</transporters>
 
 <cruiseMP>
 3
@@ -77,10 +92,45 @@ Machine Gun
 Autocannon/20
 </Turret Equipment>
 
+<capabilities>
+To make room for the engine, the tank is only protected by ten and a half tons of armor. The internal combustion engine also reduces the top speed of the tank to 54 km/h.
+</capabilities>
+
+<overview>
+The Axel series of heavy tanks are based on the popular Rommel design, but uses an internal combustion engine.
+</overview>
+
+<deployment>
+The Axel Mk 1 retains the heavy hitting AC/20 of the Rommel, and upgrades the LRM system to a ten tube launcher. A Machine Gun mounted in the bow of the tank allows the driver to engage infantry units, while a second machine gun is added to the turret. The LRM has two tons of ammunition available, while the autocannon has four tons of ammo. A half ton of machine gun ammunition is provided.
+</deployment>
+
+<history>
+The tank was produced by engineers working for the Free Rasalhague Republic. Despite the lighter armor and lower top speed, the Axel family was widely used by the Free Rasalhague Republic.
+</history>
+
+<manufacturer>
+Benson and Bjorn
+</manufacturer>
+
+<primaryFactory>
+Spittal
+</primaryFactory>
+
 <source>
-TRO 3039 - Succession Wars
+TRO: 3039
 </source>
 
 <tonnage>
 65.0
 </tonnage>
+
+<fuelType>
+PETROCHEMICALS
+</fuelType>
+
+
+<quirks>
+low_profile
+poor_target_short
+</quirks>
+

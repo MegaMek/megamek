@@ -1,12 +1,20 @@
-Version:1.0
-Mjolnir
-MLR-B2
+chassis:Mjolnir
+model:MLR-B2
+mul id:2194
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3077
-Source:Jihad
+source:TRO: 3085
 Rules Level:3
+role:Scout
+
+
+
+
+quirk:easy_maintain
+weaponquirk:accurate:LA:4:Mace
+
 
 Mass:25
 Engine:150 Fusion Engine

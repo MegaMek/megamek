@@ -65,8 +65,8 @@ public class InfantryPathFinder {
             infantryPaths.addAll(rotatedPaths);
             
             // add "flee" option if we haven't done anything else
-            if (game.getBoard().isOnBoardEdge(startingEdge.getFinalCoords()) &&
-                    startingEdge.getStepVector().size() == 0) {
+            if (game.getBoard().isOnBoardEdge(startingEdge.getFinalCoords())
+                    && startingEdge.getStepVector().isEmpty()) {
                 MovePath fleePath = startingEdge.clone();
                 fleePath.addStep(MoveStepType.FLEE);
                 infantryPaths.add(fleePath);
@@ -77,14 +77,13 @@ public class InfantryPathFinder {
              * save in memory too many paths. Usually we can recover from this
              * by ending prematurely while preserving already computed results.
              */
-
             final String memoryMessage = "Not enough memory to analyse all options."
                     + " Try setting time limit to lower value, or "
                     + "increase java memory limit.";
             
             LogManager.getLogger().error(memoryMessage, e);
         } catch (Exception e) {
-            LogManager.getLogger().error("", e); //do something, don't just swallow the exception, good lord
+            LogManager.getLogger().error("", e); // do something, don't just swallow the exception, good lord
         }
     }
     
@@ -107,9 +106,15 @@ public class InfantryPathFinder {
         // we've visited this hex already
         // we are walking and at or past our movement mp
         // we are jumping and at or past our jump mp
-        if (visitedCoords.contains(startingPath.getFinalCoords()) ||
-                (!startingPath.isJumping() && (startingPath.getMpUsed() >= startingPath.getEntity().getRunMP()))||
-                (startingPath.isJumping() && (startingPath.getMpUsed() >= startingPath.getEntity().getJumpMP()))) {
+        int mp;
+        if (startingPath.isJumping() || startingPath.getEntity().getMovementMode().isVTOL()) {
+            mp = startingPath.getEntity().getJumpMP();
+        } else if (startingPath.getEntity().hasUMU()) {
+            mp = startingPath.getEntity().getActiveUMUCount();
+        } else {
+            mp = startingPath.getEntity().getRunMP();
+        }
+        if (visitedCoords.contains(startingPath.getFinalCoords()) || (startingPath.getMpUsed() >= mp)) {
             return retval;
         }
         

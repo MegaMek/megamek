@@ -1,12 +1,20 @@
-Version:1.0
-Highlander IIC
-(Standard)
+chassis:Highlander IIC
+model:
+mul id:1524
 
 Config:Biped
 techbase:Clan
 era:2858
-source:TRO 3060
+source:TRO: 3060
 rules level:2
+role:Missile Boat
+
+
+quirk:command_mech
+quirk:cowl
+quirk:reinforced_legs
+quirk:difficult_eject
+
 
 mass:90
 engine:270 Fusion (Clan) Engine(IS)

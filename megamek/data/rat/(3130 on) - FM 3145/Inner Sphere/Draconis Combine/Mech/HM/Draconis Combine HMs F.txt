@@ -1,0 +1,12 @@
+Draconis Combine Heavy Mechs 3130 F
+Bombardier BMB-14K,1
+Archer ARC-9K,2
+Grand Dragon DRG-7K,3
+Ostroc OSR-4K,4
+Ninja-To NJT-4,5
+No-Dachi NDA-2KC,6
+Marauder MAD-9W2,5
+Maelstrom MTR-6E,4
+Grasshopper GHR-7K,3
+Shiro SH-1V,2
+Daikyu DAI-03,1

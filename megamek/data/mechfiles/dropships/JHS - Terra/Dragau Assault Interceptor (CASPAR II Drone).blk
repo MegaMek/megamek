@@ -20,6 +20,10 @@ Dragau Assault Interceptor
 (CASPAR II Drone)
 </Model>
 
+<mul id:>
+907
+</mul id:>
+
 <year>
 3065
 </year>
@@ -31,6 +35,10 @@ Dragau Assault Interceptor
 <type>
 IS Level 4
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Aerodyne
@@ -146,7 +154,7 @@ Piloting 5).
 </notes>
 
 <source>
-Jihad Hot Spots: Terra - Civil War
+Jihad Hot Spots: Terra
 </source>
 
 <tonnage>

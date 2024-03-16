@@ -1,62 +1,140 @@
-# building block data file
+#building block data file
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 VTOL
 </UnitType>
+
 <Name>
 Warrior Attack Helicopter
 </Name>
+
 <Model>
 HX-9
 </Model>
-<Tonnage>
-21
-</Tonnage>
-<cruiseMP>
-10
-</cruiseMP>
-<Armor>
-6
-5
-5
-6
-2
-</Armor>
-<Front Equipment>
-ISHVAC2
-</Front Equipment>
-<Body Equipment>
-ISHVAC2 Ammo
-ISGuardianECM
-ISVTOLJetBooster
-</Body Equipment>
-<type>
-IS Level 4
-</type>
+
+<mul id:>
+3518
+</mul id:>
+
 <year>
 3073
 </year>
-<source>
-XTR Mercs
-</source>
-<internal_type>
-0
-</internal_type>
-<armor_type>
-22
-</armor_type>
-<armor_tech>
-7
-</armor_tech>
-<engine_type>
-2
-</engine_type>
+
+<originalBuildYear>
+3073
+</originalBuildYear>
+
+<type>
+IS Level 4
+</type>
+
+<role>
+Scout
+</role>
+
 <motion_type>
 VTOL
 </motion_type>
+
+<transporters>
+</transporters>
+
+<cruiseMP>
+10
+</cruiseMP>
+
+<engine_type>
+2
+</engine_type>
+
+<armor_type>
+22
+</armor_type>
+
+<armor_tech>
+7
+</armor_tech>
+
+<armor>
+6
+5
+5
+6
+2
+</armor>
+
+<Body Equipment>
+IS Vehicular Stealth
+IS Ammo HVAC/2
+ISGuardianECMSuite
+ISVTOLJetBooster
+</Body Equipment>
+
+<Front Equipment>
+Hyper Velocity Auto Cannon/2
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Rotor Equipment>
+</Rotor Equipment>
+
+<capabilities>
+The aircraft itself is a standard rotary wing design. The two counter-rotating rotor systems negate the need for a tail rotor, as there is no drive torque to be canceled. Capable of speeds of 162 km/h, the Warrior can range across the battlefield with ease, Weapons are mated to an N&D Handsfree targeting and tracking system linked to the pilot's helmet, allowing the pilot to merely look at what he wants to target and pull the trigger. One ton of reloads each give the helicopter decent endurance in combat.
+</capabilities>
+
+<overview>
+First produced in 2950, the Warrior H-7 attack helicopter is a common sight across the Inner Sphere, serving as a highly mobile fire support unit.
+</overview>
+
+<deployment>
+An experimental variant developed by the Capellan Confederation around 3073, the HX-9 is powered by an extralight fusion engine and equipped with nearly all the new technologies available to the CCAF in this era. It is armed with a prototype Hyper-Velocity Autocannon/2 and protected with Vehicular Stealth Armor, Guardian ECM Suite and CASE. A VTOL Jet Booster allows this craft to reach incredible speeds in short bursts, long enough to escape anything that threatens it.
+</deployment>
+
+<history>
+Privately designed by Lockheed-CBM as a cheaper and more easily produced substitute for light BattleMechs in the notoriously top-heavy and sluggish Lyran Commonwealth Armed Forces' Third Succession War–era BattleMech regiments, the Lyran High Command originally dismissed the Warrior as a worthless "flying toy" in 2957 until the Ninth Battle of Hesperus that same year damaged Defiance Industries' facilities to the point the LCAF were desperate for any military hardware, placing heavy orders and ensuring continued production since.
+</history>
+
+<manufacturer>
+Tengo Aerospace (Refit)
+</manufacturer>
+
+<primaryFactory>
+Sarna
+</primaryFactory>
+
+<systemManufacturers>
+ENGINE:GM 70 XL
+ARMOR:Hellespont Lite Stealth
+COMMUNICATIONS:Endicott Type 11 Maser w/Guardian ECM
+TARGETING:Dwyerson Mk XIX
+</systemManufacturers>
+
+<source>
+XTR: Mercenaries
+</source>
+
+<tonnage>
+21.0
+</tonnage>
+
+
+<quirks>
+vtol_rotor_coaxial
+</quirks>
+

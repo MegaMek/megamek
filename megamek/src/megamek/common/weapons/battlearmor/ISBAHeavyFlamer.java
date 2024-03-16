@@ -15,6 +15,7 @@ package megamek.common.weapons.battlearmor;
 
 import megamek.common.TechAdvancement;
 import megamek.common.WeaponType;
+import megamek.common.alphaStrike.AlphaStrikeElement;
 
 
 /**
@@ -45,10 +46,20 @@ public class ISBAHeavyFlamer extends BAFlamerWeapon {
         flags = flags.or(F_FLAMER).or(F_ENERGY).or(F_BA_WEAPON)
                 .or(F_BURST_FIRE).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
         rulesRefs = "312, TO";
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL)
+			.setTechRating(RATING_C)
+			.setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+			.setISAdvancement(3070, 3073, 3075, DATE_NONE, DATE_NONE)
+			.setISApproximate(true, false, false, false, false)
+			.setClanAdvancement(DATE_NONE, 3073, 3075, DATE_NONE, DATE_NONE)
+			.setClanApproximate(false, true, false, false, false)
+			.setPrototypeFactions(F_LC)
+			.setProductionFactions(F_LC,F_CJF);
+        
+    }
 
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        techAdvancement.setISAdvancement(3065, 3073, 3075);
-        techAdvancement.setTechRating(RATING_C);
-        techAdvancement.setAvailability(RATING_X, RATING_X, RATING_E, RATING_D);
+    @Override
+    public int getAlphaStrikeHeatDamage(int rangeband) {
+        return (rangeband == AlphaStrikeElement.RANGE_BAND_SHORT) ? 4 : 0;
     }
 }

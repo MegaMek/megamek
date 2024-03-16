@@ -20,6 +20,10 @@ Scytha
 X
 </Model>
 
+<mul id:>
+5003
+</mul id:>
+
 <year>
 3074
 </year>
@@ -31,6 +35,10 @@ X
 <type>
 Clan Level 4
 </type>
+
+<role>
+Dogfighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -126,7 +134,7 @@ CLCASE
 </Fuselage Equipment>
 
 <source>
-TRO 3055u - Jihad
+TRO: 3055 Update
 </source>
 
 <tonnage>

@@ -20,6 +20,10 @@ Generic Expandable Services Vehicle
 (Field Kitchen)
 </Model>
 
+<mul id:>
+4207
+</mul id:>
+
 <year>
 3066
 </year>
@@ -89,7 +93,7 @@ OmniChassisMod
 </structural_tech_rating>
 
 <source>
-HB:House Davion - Civil War
+Handbook: House Davion
 </source>
 
 <tonnage>

@@ -1,12 +1,18 @@
-Version:1.0
-Nightsky
-NGS-6S
+chassis:Nightsky
+model:NGS-6S
+mul id:2283
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3066
-Source:TRO 3055 - Civil War
+Source:TRO: 3055
 Rules Level:2
+role:Striker
+
+
+
+weaponquirk:mod_weapons:RA:4:Hatchet
+
 
 Mass:50
 Engine:300 Light Engine
@@ -151,4 +157,19 @@ Jump Jet
 -Empty-
 -Empty-
 
+overview:The Nightsky was a mid-range continuation of the Federated Commonwealth's successful Hatchetman-Axman series, which established melee combat weapons as a powerful and heat-efficient close-combat option for the experienced MechWarrior. Intended to provide both speed and firepower.
 
+capabilities:The Nightsky is built around a massive Vlar 300 XL extralight engine that propels the 'Mech up to speeds of 97.2 km/h. Superb ground speed and the added maneuverability provided by six HildCo Model 13 jump jets that allow the Nightsky to jump up to 180 meters make the Nightsky a capable heavy recon 'Mech. It is also protected with nine and a half tons of armor, providing the Nightsky with good armor protection for its size.
+
+deployment:This modification of the Nightsky intended to make the 'Mech more durable and gave it a longer life on the battlefield. The 'Mech replaces the 300-rated XL engine with a 300 light fusion engine. The 'Mech also removes all of its ranged weaponry and replaces it with seven ER medium lasers. When combined with the hatchet, the 'Mech is a monster, both against battle armor and in an urban environment. 
+
+history:After their introduction in 3053, Nightskys quickly proliferated throughout the Federated Commonwealth, with many replacing Hatchetmen or Axmen lost in the early years of the Clan invasion. The distribution of this design had become fairly even between the two once-allied states by the time of the Lyran secession from the Commonwealth, resulting in Nightskys appearing among as many pro-Victor Davion troops as pro-Katherine Steiner forces during the FedCom Civil War.
+
+manufacturer:Defiance Industries
+primaryfactory:Hesperus II
+systemmanufacturer:CHASSIS:Dorwinion Standard
+systemmanufacturer:ENGINE:Vlar Light 300
+systemmanufacturer:ARMOR:Kallon Royalstar
+systemmanufacturer:JUMPJET:HildCo Model 13
+systemmanufacturer:COMMUNICATIONS:TharHes Calliope Hm10
+systemmanufacturer:TARGETING:TharHes Ares-8a

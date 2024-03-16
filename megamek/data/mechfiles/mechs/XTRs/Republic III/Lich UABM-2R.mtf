@@ -1,12 +1,23 @@
-Version:1.1
-Lich
-UABM-2R
+chassis:Lich
+model:UABM-2R
+mul id:7385
 
 Config:Quad
 TechBase:Mixed (IS Chassis)
 Era:3140
-Source:XTRO Republic III - Dark Ag
+Source:XTR: Republic III
 Rules Level:3
+role:Sniper
+
+
+
+
+quirk:difficult_maintain
+weaponquirk:mod_weapons:RT:3:CLERLargeLaser
+weaponquirk:mod_weapons:RT:4:ISLightGaussRifle
+weaponquirk:mod_weapons:LT:3:CLERLargeLaser
+weaponquirk:mod_weapons:LT:4:ISLightGaussRifle
+
 
 Mass:90
 Engine:270 XL Engine(IS)

@@ -20,6 +20,10 @@ Chevalier Light Tank
 (Speed)
 </Model>
 
+<mul id:>
+581
+</mul id:>
+
 <year>
 3051
 </year>
@@ -31,6 +35,10 @@ Chevalier Light Tank
 <type>
 IS Level 2
 </type>
+
+<role>
+Striker
+</role>
 
 <motion_type>
 Wheeled
@@ -77,7 +85,7 @@ ISERLargeLaser
 </Turret Equipment>
 
 <source>
-Clan Invasion
+TRO: 3060
 </source>
 
 <tonnage>

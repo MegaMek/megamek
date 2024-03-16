@@ -17,9 +17,13 @@ import megamek.common.AmmoType;
 import megamek.common.Game;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.alphaStrike.ASRange;
+import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.GRHandler;
-import megamek.server.Server;
+import megamek.server.GameManager;
+
+import java.math.BigDecimal;
 
 /**
  * @author Andrew Hunter
@@ -52,7 +56,7 @@ public class ISGaussRifle extends GaussWeapon {
         longAV = 15;
         maxRange = RANGE_LONG;
         explosionDamage = 20;
-        rulesRefs = "219,TM";
+        rulesRefs = "219, TM";
         flags = flags.andNot(F_PROTO_WEAPON);
         techAdvancement.setTechBase(TECH_BASE_IS)
                 .setIntroLevel(false)
@@ -68,7 +72,18 @@ public class ISGaussRifle extends GaussWeapon {
 
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
-                                              Server server) {
-        return new GRHandler(toHit, waa, game, server);
+                                              GameManager manager) {
+        return new GRHandler(toHit, waa, game, manager);
+    }
+
+    @Override
+    public double getBattleForceDamage(int range) {
+        if (range == AlphaStrikeElement.SHORT_RANGE) {
+            return 1.245;
+        } else if (range < AlphaStrikeElement.EXTREME_RANGE) {
+            return 1.5;
+        } else {
+            return 0;
+        }
     }
 }

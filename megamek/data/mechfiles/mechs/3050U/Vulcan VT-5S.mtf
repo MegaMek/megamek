@@ -1,12 +1,16 @@
-Version:1.0
-Vulcan
-VT-5S
+chassis:Vulcan
+model:VT-5S
+mul id:3462
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3050
-Source:TRO 3050 - Clan Invasion
+Source:TRO: 3050
 Rules Level:2
+role:Striker
+
+quirk:low_profile
+
 
 Mass:40
 Engine:240 XL Engine(IS)
@@ -148,4 +152,19 @@ Ferro-Fibrous
 -Empty-
 -Empty-
 
+overview:The Vulcan was designed as an anti-infantry 'Mech in 2775 during the closing years of the Amaris Civil War. 
 
+capabilities:The Vulcan is lightly armored at only five tons, though this is typically sufficient when facing infantry forces and its narrow profile makes it a harder target to hit. A cruising speed of 97.2 km/h is enhanced by six jump jets mounted in the rear of the Vulcan's torso, specially vented to reduce heat buildup, giving it a jumping range of 180 meters.
+
+deployment:The 5S Vulcan is a 3050 upgrade of the 2T version used by House Steiner which replaces the standard fusion engine with an extralight engine and also upgrades the armor to Lexington Ltd. High Grade ferro-fibrous with CASE to protect itself from ammunition explosions. The inclusion of MASC enables the 5S to move up to 129 km/h in short bursts. Additionally, the Autocannon/2 has been replaced with an Imperator Ultra Autocannon/5.
+
+history:As the SLDF battled Republican troops in the streets and thoroughfares of the Terran Hegemony, many 'Mechs were destroyed by dug-in infantry during these urban battles. In response to this problem, MatherTechno Inc. designed the Vulcan to pack weaponry capable of taking out large numbers of enemy troops and capable of unparalleled mobility in an urban environment, though not intended to engage in all-out battles with larger 'Mechs. The Vulcan's distinct profile would eventually give rise to its nickname "Scarecrow." Production of the Vulcan began as soon as MatherTechno's factory on Northwind was liberated by the SLDF, with Aleksandr Kerensky himself specifically ordering their production lines converted to produce the Vulcan. The design's baptism of fire came during Operation Liberation, the final battle of the civil war to liberate Terra from Stefan Amaris, where it served as part of the Volunteer Regiments and earned its reputation as a tough city fighter. Each of the Great Houses had a sizable number of Vulcans at the start of the First Succession War when, just a few months into the conflict, MatherTechno's factory on Northwind was destroyed. Only the Lyran Commonwealth and Free Worlds League managed to acquire the design specifications for the Vulcan and keep it in limited production throughout the rest of the Succession Wars, with the League awarding the schematics to Nimakachi Fusion Products Limited and the Commonwealth giving theirs to Coventry Metal Works. Of the other Great Houses the Capellan Confederation had the fewest number of Vulcans as a result of the loss of Sappho, where the majority of their Vulcans were stationed, to House Marik during the Second Succession War. The Federated Suns kept their Vulcans going thanks to several spare part supply dumps located in their territory, and used the 'Mech extensively during the reconquest of Kentares IV. The majority of the Draconis Combine's Vulcan inventory was used during a raid on Dobson in 3020 where they decimated several key Davion aerospace fighter bases. Following the recovery of several lostech components Nimakachi was able to create a new variant, the VT-5M, and begin limited production in 3050,eventually increasing their lines to produce twenty a month. Coventry Metal Works produced their own upgraded variant around the same time, the VT-5S, which played a pivotal role during the FedCom Civil War as part of the Allied forces. The Word of Blake purchased a number of Vulcans in preparation for their seizure of Terra in 3058, codenamed Operation Odysseus. The Blakists would go on to seize more Vulcans after the start of the Jihad following their sacking of Nimakachi's Tematagi plant in 3069, with many transferred to the Protectorate Militia for policing duties.
+
+manufacturer:Coventry Metal Works
+primaryfactory:Coventry
+systemmanufacturer:CHASSIS:Mather Tech 500
+systemmanufacturer:ENGINE:GM 240 XL
+systemmanufacturer:ARMOR:Lexington Ltd. High Grade
+systemmanufacturer:COMMUNICATIONS:Hartford 200S
+systemmanufacturer:TARGETING:Hartford TA10
+systemmanufacturer:JUMPJET:Model 9 Pitban

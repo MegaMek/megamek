@@ -20,6 +20,10 @@ Enyo Strike Tank
 (ER Pulse)
 </Model>
 
+<mul id:>
+4126
+</mul id:>
+
 <year>
 3083
 </year>
@@ -27,6 +31,10 @@ Enyo Strike Tank
 <type>
 Clan Level 4
 </type>
+
+<role>
+Skirmisher
+</role>
 
 <motion_type>
 Tracked
@@ -81,9 +89,17 @@ CLERMediumPulseLaser
 </Turret Equipment>
 
 <source>
-TRO:Prototypes
+TRO: Prototypes
 </source>
 
 <tonnage>
 55.0
 </tonnage>
+
+<quirks>
+bad_rep_clan
+poor_sealing
+imp_target_short
+trailer_hitch
+</quirks>
+

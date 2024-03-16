@@ -13,12 +13,16 @@ SpaceStation
 </UnitType>
 
 <Name>
-Pressurized Yard - Huge
+Pressurized Yard
 </Name>
 
 <Model>
-(2450)
+Huge (2450)
 </Model>
+
+<mul id:>
+4483
+</mul id:>
 
 <year>
 2350
@@ -31,6 +35,10 @@ Pressurized Yard - Huge
 <type>
 IS Level 3
 </type>
+
+<role>
+None
+</role>
 
 <designtype>
 0
@@ -117,7 +125,7 @@ cargobay:127647.5:1:7
 </structural_integrity>
 
 <source>
-TRO3057r - Age of War
+TRO: 3057 Revised
 </source>
 
 <tonnage>

@@ -20,6 +20,10 @@ TAG Spotter Infantry
 Stalwart Support - Spotter Infantry
 </Model>
 
+<mul id:>
+3149
+</mul id:>
+
 <year>
 3055
 </year>
@@ -27,6 +31,10 @@ Stalwart Support - Spotter Infantry
 <type>
 IS Level 3
 </type>
+
+<role>
+Ambusher
+</role>
 
 <motion_type>
 Leg

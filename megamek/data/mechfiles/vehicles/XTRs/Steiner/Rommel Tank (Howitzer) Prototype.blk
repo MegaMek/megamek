@@ -20,6 +20,10 @@ Rommel Tank
 (Howitzer) Prototype
 </Model>
 
+<mul id:>
+4933
+</mul id:>
+
 <year>
 3077
 </year>
@@ -27,6 +31,10 @@ Rommel Tank
 <type>
 IS Level 4
 </type>
+
+<role>
+Brawler
+</role>
 
 <tonnage>
 65.0
@@ -87,7 +95,43 @@ ISLongTomCannon
 Thunderbolt 5
 </Turret Equipment>
 
+<capabilities>
+With its default main weapon being the massive and immensely powerful but short-ranged AC/20, the Rommel is best suited to close range and urban fighting, where its heavy gun can be put to excellent use. A Rommel may lie in wait around a corner or down an alley, and then use its devastating armament to cripple or destroy a BattleMech when it comes into view. The main advantage the Rommel has over other, older designs is a combination of higher speed and more armor. With even more armor than a Demolisher tank, the Rommel can sustain more punishment, yet slip away faster to fight again from another position.
+</capabilities>
+
+<overview>
+The Rommel tank is a 65-ton armored combat vehicle, specializing in close range fighting and urban combat. Identical to its twin, the Patton, in every way but armament and armor configuration, the Rommel has primarily served with the Lyran Commonwealth and the Lyran Alliance.
+</overview>
+
+<deployment>
+This version of the Rommel removes the standard weaponry and replaces it with weapons that are allegedly easier for newer troops to use and less likely to fall victim to electronic warfare or Anti-Missile systems. The main gun is a Long Tom Artillery Cannon. This weapon can inflict massive amounts of damage on the target and its immediate surroundings and it doesn't require a great gunner. The LRM-5 was replaced by a Thunderbolt 5 launcher to provide more punch at the cost of range. Two front-mounted ER medium lasers provide ammunition-independent fire. Twelve tons of Heavy Ferro-Fibrous armor protects the tank.
+</deployment>
+
+<history>
+The Rommel was designed concurrently with the Patton in the early 3000s, when Defiance Industries decided that an armored combat vehicle capable of replacing 'Mechs was needed. Since 'Mech production was nearly at a standstill, the ability to produce and field armored vehicles became a necessity for every Successor State.
+</history>
+
+<manufacturer>
+Defiance Manufacturing Annex
+</manufacturer>
+
+<primaryFactory>
+Kwangjong-ni
+</primaryFactory>
+
+<systemManufacturers>
+ENGINE:Magna 260
+ARMOR:Durallex Special Heavy Ferro-Fibrous
+COMMUNICATIONS:TharHes Muse 54-58K
+TARGETING:TharHes Mars5
+</systemManufacturers>
+
 <source>
-XTRO Steiner - Jihad
+XTR: Steiner
 </source>
+
+<quirks>
+low_profile
+poor_target_short
+</quirks>
 

@@ -20,6 +20,10 @@ Long-Range Shuttlecraft
 KR-61C
 </Model>
 
+<mul id:>
+4538
+</mul id:>
+
 <year>
 2851
 </year>
@@ -31,6 +35,10 @@ KR-61C
 <type>
 Clan Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Aerodyne
@@ -99,7 +107,7 @@ cargobay:14.5:1:5
 </structural_integrity>
 
 <source>
-2850
+TRO: 3057 Revised
 </source>
 
 <tonnage>

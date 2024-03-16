@@ -20,6 +20,10 @@ Hiryo Armored Infantry Transport
 (MRM)
 </Model>
 
+<mul id:>
+1527
+</mul id:>
+
 <Tonnage>
 40
 </Tonnage>
@@ -49,12 +53,16 @@ ISMRM20 Ammo
 IS Level 2
 </type>
 
+<role>
+Striker
+</role>
+
 <year>
 3070
 </year>
 
 <source>
-Jihad
+TRO: 3075
 </source>
 
 <internal_type>

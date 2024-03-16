@@ -20,6 +20,10 @@ Anhur Transport
 (BA)
 </Model>
 
+<mul id:>
+34
+</mul id:>
+
 <year>
 3069
 </year>
@@ -27,6 +31,10 @@ Anhur Transport
 <type>
 Clan Level 2
 </type>
+
+<role>
+Scout
+</role>
 
 <motion_type>
 VTOL
@@ -86,7 +94,7 @@ CLAPGaussRifle
 </Rotor Equipment>
 
 <source>
-Jihad
+TRO: 3060
 </source>
 
 <tonnage>

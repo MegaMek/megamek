@@ -245,4 +245,4 @@ Snub-Nosed PPC (Single), 6
 'Mech Mortar/8 Battery (Triple), 4
 Snub-Nosed PPC (Dual), 3
 Snub-Nosed PPC (Triple), 2
-Calliope Turret (Standard), 1
+Calliope Turret (3053), 1

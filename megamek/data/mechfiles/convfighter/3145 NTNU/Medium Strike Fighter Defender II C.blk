@@ -1,0 +1,124 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+ConvFighter
+</UnitType>
+
+<Name>
+Medium Strike Fighter Defender II
+</Name>
+
+<Model>
+C
+</Model>
+
+<mul id:>
+8013
+</mul id:>
+
+<year>
+3142
+</year>
+
+<originalBuildYear>
+3142
+</originalBuildYear>
+
+<type>
+Clan Level 2
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+</transporters>
+
+<SafeThrust>
+6
+</SafeThrust>
+
+<cockpit_type>
+0
+</cockpit_type>
+
+<heatsinks>
+0
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+480
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<clan_engine>
+false
+</clan_engine>
+
+<armor>
+7
+6
+6
+5
+</armor>
+
+<Nose Equipment>
+CLMediumChemicalLaser
+CLMediumChemicalLaser
+CLMediumChemicalLaser
+</Nose Equipment>
+
+<Left Wing Equipment>
+CLAPGaussRifle
+CLAPGaussRifle
+CLCASE
+CLCASE
+CLCASE
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+CLAPGaussRifle
+CLAPGaussRifle
+CLCASE
+CLCASE
+CLCASE
+</Right Wing Equipment>
+
+<Aft Equipment>
+</Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+CLMediumChemLaserAmmo
+CLAPGaussRifle Ammo
+CLCASE
+CLCASE
+CLCASE
+</Fuselage Equipment>
+
+<source>
+Record Sheets: 3150
+</source>
+
+<tonnage>
+25.0
+</tonnage>
+

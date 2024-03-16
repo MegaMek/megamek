@@ -1,51 +1,60 @@
-Version:1.0
-Behemoth (Stone Rhino)
-6
-
+chassis:Behemoth
+clanname:Stone Rhino
+model:6
+mul id:3816
 Config:Biped
-TechBase:Clan
-Era:2999
-Source:TRO 3055 - Succession Wars
-Rules Level:2
+techbase:Clan
+era:2999
+source:TRO: 3055
+rules level:2
+role:Brawler
 
-Mass:100
-Engine:400 XL (Clan) Engine(IS)
-Structure:IS Standard
-Myomer:Standard
+quirk:barrel_fists_la
+quirk:barrel_fists_ra
+quirk:pro_actuator
+quirk:oversized
+quirk:poor_performance
+quirk:weak_head_1
 
-Heat Sinks:18 Double
-Walk MP:4
-Jump MP:2
 
-Armor:Ferro-Fibrous(Clan)
-LA Armor:34
-RA Armor:34
-LT Armor:26
-RT Armor:26
-CT Armor:43
-HD Armor:9
-LL Armor:42
-RL Armor:42
-RTL Armor:16
-RTR Armor:16
-RTC Armor:19
+mass:100
+engine:400 XL (Clan) Engine(IS)
+structure:IS Standard
+myomer:Standard
+
+heat sinks:18 Clan Double
+walk mp:4
+jump mp:2
+
+armor:Ferro-Fibrous(Clan)
+LA armor:34
+RA armor:34
+LT armor:26
+RT armor:26
+CT armor:43
+HD armor:9
+LL armor:42
+RL armor:42
+RTL armor:16
+RTR armor:16
+RTC armor:19
 
 Weapons:15
+Medium Pulse Laser, Left Torso
+Medium Pulse Laser, Left Torso
+Medium Pulse Laser, Left Torso
+Medium Pulse Laser, Left Torso
+Medium Pulse Laser, Left Torso
+Medium Pulse Laser, Left Torso
+Medium Pulse Laser, Left Torso
+Medium Pulse Laser, Right Torso
+Medium Pulse Laser, Right Torso
+Medium Pulse Laser, Right Torso
+Medium Pulse Laser, Right Torso
+Medium Pulse Laser, Right Torso
+Medium Pulse Laser, Right Torso
+Medium Pulse Laser, Right Torso
 ER Small Laser, Head
-Medium Pulse Laser, Left Torso
-Medium Pulse Laser, Left Torso
-Medium Pulse Laser, Left Torso
-Medium Pulse Laser, Left Torso
-Medium Pulse Laser, Right Torso
-Medium Pulse Laser, Right Torso
-Medium Pulse Laser, Left Torso
-Medium Pulse Laser, Right Torso
-Medium Pulse Laser, Right Torso
-Medium Pulse Laser, Left Torso
-Medium Pulse Laser, Right Torso
-Medium Pulse Laser, Right Torso
-Medium Pulse Laser, Right Torso
-Medium Pulse Laser, Left Torso
 
 Left Arm:
 Shoulder
@@ -54,7 +63,7 @@ Lower Arm Actuator
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
--Empty-
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -68,7 +77,7 @@ Lower Arm Actuator
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
-Clan Ferro-Fibrous
+-Empty-
 -Empty-
 -Empty-
 -Empty-
@@ -160,13 +169,9 @@ CLDoubleHeatSink
 -Empty-
 
 overview:The Stone Rhino was one of the most remarkable surprises sprung upon the Inner Sphere by the invading Clans. The Inner Sphere named the 'Mech Behemoth. It was apparently derived from the Matar, which was also known as "Amaris' Folly".
-
 capabilities:Though visually resembling the Matar, the Stone Rhino is ten tons lighter than "Amaris' Folly", marking it an assault-class 'Mech instead of a superheavy design. Despite the reduced weight it achieves a roughly similar damage output through superior Clan weaponry. Similar to its progenitor, the Stone Rhino is a fairly slow design with the addition of Jump Jets barely mitigating the mobility issues over short distances. Eighteen tons of armor provides reasonable protection until the 'Mech becomes a target of priority. Thus, despite bringing awesome firepower to the battlefield, these machines often cannot be used effectively by field commanders because they ultimately cannot afford to lose one.
-
 deployment:A close combat dueling design based on the Stone Rhino 5, the Stone Rhino 6 is armed with a simple yet effective loadout of 14 Medium Pulse Lasers. These are backed up by a single ER Small Laser.
-
 history:Developed during the Golden Century as somewhat of a passion project, the Scientist Caste of Clan Smoke Jaguar sought to prove the superiority of the Clans by turning the flawed Matar into a successful design to achieve what the Inner Sphere could not. The resulting 'Mech was christened the Stone Rhino in honor of the nearly indestructible beast native to Eden. Mainly seen in the Smoke Jaguars touman, scattered examples of the Stone Rhino do appear in other Clans even though it was produced in somewhat limited numbers. Because of these low production numbers, most Stone Rhinos in existence are ancient machines with long and storied histories of their combat actions and their quirks in the hangar. Following the fall of the Smoke Jaguars, Clan Goliath Scorpion's need for new machines to defend their captured Jaguar holdings led them to revisit the Matars original design specs. They rapidly developed a visually different and powerful "new" 'Mech that was immediately put into production on Tokasha while still using the Stone Rhino name. However, the Scorpions would soon need to scramble to establish new production elsewhere after Clan Hell's Horses captured their Tokasha holdings. This allowed the Horses to produce new variants, and the Horses ultimately established a production line for the 'Mech on Csesztreg following their ejection from the Clan Homeworlds.
-
 manufacturer:Tokasha Mechworks
 primaryfactory:Tokasha
 systemmanufacturer:CHASSIS:Star League Monster (Standard)
@@ -175,3 +180,4 @@ systemmanufacturer:ARMOR:Compound 12A1 Standard with CASE
 systemmanufacturer:JUMPJET:Grandthrust Mk. 5
 systemmanufacturer:COMMUNICATIONS:Garret L15
 systemmanufacturer:TARGETING:RCA Instatrac Version 8a
+

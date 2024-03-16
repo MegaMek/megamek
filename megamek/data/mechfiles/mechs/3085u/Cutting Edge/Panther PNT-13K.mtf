@@ -1,12 +1,19 @@
-Version:1.1
-Panther
-PNT-13K
+chassis:Panther
+model:PNT-13K
+mul id:2421
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3076
-Source:Jihad
+source:TRO: 3085
 Rules Level:2
+role:Striker
+
+
+
+quirk:imp_target_short
+quirk:nimble_jumper
+
 
 Mass:35
 Engine:175 XL Engine

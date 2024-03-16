@@ -13,12 +13,16 @@ ConvFighter
 </UnitType>
 
 <Name>
-SeaBuster Strike Fighter
+Seabuster Strike Fighter
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+5010
+</mul id:>
 
 <year>
 3081
@@ -31,6 +35,10 @@ SeaBuster Strike Fighter
 <type>
 IS Level 3
 </type>
+
+<role>
+Attack Fighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -106,7 +114,7 @@ IS Ultra AC/20 Ammo
 </Fuselage Equipment>
 
 <source>
-TRO Prototypes - Jihad
+TRO: Prototypes
 </source>
 
 <tonnage>

@@ -20,6 +20,10 @@ Foot Platoon
 (SRM)
 </Model>
 
+<mul id:>
+1148
+</mul id:>
+
 <year>
 2370
 </year>
@@ -27,6 +31,10 @@ Foot Platoon
 <type>
 IS Level 2
 </type>
+
+<role>
+Ambusher
+</role>
 
 <motion_type>
 Leg
@@ -36,7 +44,7 @@ Leg
 </Field Guns Equipment>
 
 <source>
-Total Warfare - Succession Wars
+Total Warfare
 </source>
 
 <squad_size>

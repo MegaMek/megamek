@@ -1,12 +1,18 @@
-Version:1.0
-Black Hawk (Nova)
-U
+chassis:Black Hawk
+clanname:Nova
+model:U
+mul id:344
 
 Config:Biped Omnimech
 techbase:Mixed (Clan Chassis)
 era:3077
-source:Jihad
+source:TRO: 3085
 rules level:4
+role:Striker
+
+quirk:combat_computer
+quirk:low_profile
+
 
 mass:50
 engine:250 XL (Clan) Engine

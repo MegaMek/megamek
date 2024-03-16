@@ -16,9 +16,13 @@ SupportTank
 Baleena Passenger Submarine
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+3778
+</mul id:>
 
 <year>
 2545
@@ -31,6 +35,10 @@ Baleena Passenger Submarine
 <type>
 IS Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Submarine
@@ -92,7 +100,7 @@ Cargo Container (10 tons)
 </structural_tech_rating>
 
 <source>
-TRO VAr - Age of War
+TRO: Vehicle Annex (Revised)
 </source>
 
 <tonnage>

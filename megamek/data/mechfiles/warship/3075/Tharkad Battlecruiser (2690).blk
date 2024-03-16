@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,6 +20,10 @@ Tharkad Battlecruiser
 (2690)
 </Model>
 
+<mul id:>
+5219
+</mul id:>
+
 <year>
 2690
 </year>
@@ -31,6 +35,10 @@ Tharkad Battlecruiser
 <type>
 IS Level 3
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Aerodyne
@@ -45,7 +53,7 @@ dockingcollar
 dockingcollar
 dockingcollar
 dockingcollar
-cargobay:53914.5:1:3
+cargobay:53914.5:1:9
 1stclassquarters:620.0:0
 crewquarters:2100.0:0
 </transporters>
@@ -274,8 +282,48 @@ IS Ammo LRM-10:120
 80
 </structural_integrity>
 
+<capabilities>
+The Tharkad-class battlecruiser excelled in terms of its capabilities, surpassing many of its contemporaries. Its design prioritized speed, enabling it to outrun or overtake most older Star League cruisers while maintaining superior firepower. The battlecruiser boasted a wide array of weapons, including powerful guns, and was accompanied by six squadrons of fighters. Additionally, it featured DropShip docking collars, enabling it to bring its own fire support when needed. The Tharkad-class battlecruisers were renowned for their combination of speed, armor, firepower, and fighter support, making them a formidable force in combat.
+</capabilities>
+
+<overview>
+The Tharkad-class battlecruiser, designed in 2685 to bolster the Lyran Commonwealth's naval fleet, was hailed as the pride of the Lyran navy. Built at the Bolson-Tamar Shipyards, these battlecruisers were renowned for their superior acceleration, armor, and firepower. They outmatched many older Star League vessels and set the stage for an arms race with the Terran Hegemony. Equipped with a formidable arsenal, fighter squadrons, and DropShip docking collars, the Tharkad-class battlecruisers were formidable warships.
+</overview>
+
+<history>
+The Tharkad-class battlecruisers were introduced as new warships for the Lyran Commonwealth during the Star League era. Between 2685 and the beginning of the First Succession War, 28 battlecruisers were produced at the Bolson-Tamar Shipyards. They quickly became a symbol of Lyran military might, enforcing Lyran will across the nation. However, the destruction of the shipyards marked a significant setback for the production of Tharkad-class battlecruisers. Only one Tharkad-class battlecruiser, the LCS Invincible, survived the conflicts that erupted after the fall of the Star League. Despite suffering significant damage in a fierce engagement over Moore, the Invincible was brought back into service in 2853 during a desperate Lyran attempt to break a Kurita siege on Hesperus II. The battlecruiser played a pivotal role in turning the tide of the conflict, but was presumably destroyed due to a jump drive failure during its return flight to Tharkad. In a surprising turn of events, the LCS Invincible reappeared over Tharkad in 3067 under the control of a Word of Blake crew, sporting a complete refurbishment and retrofitted with a lithium-fusion battery. The vessel, capable of making two rapid jumps, demonstrated the extent and expense of the retrofit. The Tharkad-class battlecruiser regained its original functionality during the liberation of Tharkad in January 3072, capturing the attention of allied forces who were astounded by the vessel's transformation and the commander's decision not to employ the advanced system to escape during the battle. Despite the limited number of Tharkad-class battlecruisers produced and the destruction of the shipyards, these warships left a lasting impact on Lyran military history. They represented a pinnacle of Lyran naval technology during the Star League era and played crucial roles in significant engagements. The reemergence of the LCS Invincible as a refurbished vessel under different control added another chapter to the battlecruiser's storied history.
+</history>
+
+<manufacturer>
+Bolson-Tamar Shipyards
+</manufacturer>
+
+<primaryFactory>
+Tamar
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<use>
+Battlecruiser
+</use>
+
+<length>
+975 m
+</length>
+
+<height>
+1490m Sail
+</height>
+
 <source>
-TRO3075 - Star League
+TRO: 3075
 </source>
 
 <tonnage>
@@ -294,6 +342,10 @@ TRO3075 - Star League
 95
 95
 </grav_decks>
+
+<designtype>
+1
+</designtype>
 
 <crew>
 474
@@ -326,3 +378,4 @@ TRO3075 - Star League
 <escape_pod>
 30
 </escape_pod>
+

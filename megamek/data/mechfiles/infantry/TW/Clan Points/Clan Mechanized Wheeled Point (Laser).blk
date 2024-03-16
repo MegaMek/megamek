@@ -20,6 +20,10 @@ Clan Mechanized Wheeled Point
 (Laser)
 </Model>
 
+<mul id:>
+630
+</mul id:>
+
 <year>
 2815
 </year>
@@ -32,6 +36,10 @@ Clan Mechanized Wheeled Point
 Clan Level 2
 </type>
 
+<role>
+Ambusher
+</role>
+
 <motion_type>
 Wheeled
 </motion_type>
@@ -43,7 +51,7 @@ Wheeled
 </Field Guns Equipment>
 
 <source>
-Total Warfare - Succession Wars
+Total Warfare
 </source>
 
 <squad_size>

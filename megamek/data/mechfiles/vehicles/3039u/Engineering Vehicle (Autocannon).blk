@@ -20,6 +20,10 @@ Engineering Vehicle
 (AC)
 </Model>
 
+<mul id:>
+988
+</mul id:>
+
 <year>
 2570
 </year>
@@ -27,6 +31,10 @@ Engineering Vehicle
 <type>
 IS Level 1
 </type>
+
+<role>
+Striker
+</role>
 
 <motion_type>
 Tracked
@@ -65,7 +73,7 @@ Autocannon/20
 </Rear Equipment>
 
 <source>
-TRO 3039 - Age of War
+TRO: 3039
 </source>
 
 <tonnage>

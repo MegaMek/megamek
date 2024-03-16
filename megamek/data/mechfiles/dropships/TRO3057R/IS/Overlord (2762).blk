@@ -20,6 +20,10 @@ Overlord
 (2762)
 </Model>
 
+<mul id:>
+4772
+</mul id:>
+
 <year>
 2762
 </year>
@@ -31,6 +35,10 @@ Overlord
 <type>
 IS Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Spheroid
@@ -143,7 +151,7 @@ Medium Laser
 </structural_integrity>
 
 <source>
-TRO 3057R - Star League
+TRO: 3057 Revised
 </source>
 
 <tonnage>

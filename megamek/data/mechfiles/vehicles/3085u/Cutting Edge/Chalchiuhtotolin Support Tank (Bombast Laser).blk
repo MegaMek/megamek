@@ -20,6 +20,10 @@ Chalchiuhtotolin Support Tank
 (Bombast Laser)
 </Model>
 
+<mul id:>
+536
+</mul id:>
+
 <year>
 3085
 </year>
@@ -27,6 +31,10 @@ Chalchiuhtotolin Support Tank
 <type>
 Mixed (Clan Chassis) Experimental
 </type>
+
+<role>
+Brawler
+</role>
 
 <motion_type>
 Wheeled
@@ -86,7 +94,7 @@ CLStreakSRM4
 </Turret Equipment>
 
 <source>
-Dark Age
+TRO: 3085
 </source>
 
 <tonnage>

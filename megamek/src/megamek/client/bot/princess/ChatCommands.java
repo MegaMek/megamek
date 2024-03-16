@@ -2,7 +2,6 @@ package megamek.client.bot.princess;
 
 /**
  * @author Deric Page (deric.page@nisc.coop) (ext 2335)
- * @version %Id%
  * @since 10/24/2014 9:57 AM
  */
 public enum ChatCommands {
@@ -25,7 +24,8 @@ public enum ChatCommands {
                                                           "list."),
     SHOW_BEHAVIOR("sh", "princessName: showBehavior", "Princess will state the name of her current behavior."),
     LIST__COMMANDS("li", "princessName: listCommands", "Displays this list of commands."),
-    IGNORE_TARGET("ig", "princessName: ignoreTarget: unitId", "Will not fire on the entity with this ID.");
+    IGNORE_TARGET("ig", "princessName: ignoreTarget: unitId", "Will not fire on the entity with this ID."),
+    SHOW_DISHONORED("di", "princessName: dishonored", "Show the players on the dishonored enemies list.");
 
     private final String abbreviation;
     private final String syntax;
@@ -47,5 +47,15 @@ public enum ChatCommands {
 
     public String getDescription() {
         return description;
+    }
+
+    public static ChatCommands getByValue(String s) {
+        for (ChatCommands cc : ChatCommands.values()) {
+            if (cc.getAbbreviation().equals(s)) {
+                return cc;
+            }
+        }
+
+        return null;
     }
 }

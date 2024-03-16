@@ -1,12 +1,13 @@
-Version:1.0
-Carbine CON-9M-D ConstructionMech
-MOD
+chassis:Carbine
+model:CON-9M-D ConstructionMech MOD
+mul id:8098
 
 Config:Biped
 techbase:Mixed (IS Chassis)
 era:3133
-source:Dark Age
+source:XTR: Caveat Emptor
 rules level:5
+role:Ambusher
 
 mass:30
 engine:90 ICE Engine(IS)

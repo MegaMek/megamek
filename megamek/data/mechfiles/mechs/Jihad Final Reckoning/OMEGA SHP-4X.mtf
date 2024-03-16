@@ -1,35 +1,36 @@
-Version:1.1
-'OMEGA'
-SHP-4X
-
+chassis:Omega
+model:SHP-4X
+mul id:4746
 Config:Biped
-TechBase:Inner Sphere
-Era:3078
-Rules Level:4
+techbase:Inner Sphere
+era:3077
+source:Jihad: Final Reckoning
+rules level:4
+role:Sniper
 
-Mass:150
-Engine:300 XL Engine(IS)
-Structure:IS Endo Steel
-Myomer:Standard
-Cockpit:Superheavy Cockpit
-Gyro:Superheavy Gyro
+mass:150
+engine:300 XL Engine(IS)
+structure:IS Endo Steel
+myomer:Standard
+cockpit:Superheavy Cockpit
+gyro:Superheavy Gyro
 
-Heat Sinks:10 Single
-Walk MP:2
-Jump MP:0
+heat sinks:10 Single
+walk mp:2
+jump mp:0
 
-Armor:Standard(Inner Sphere)
-LA Armor:44
-RA Armor:44
-LT Armor:45
-RT Armor:45
-CT Armor:60
-HD Armor:12
-LL Armor:62
-RL Armor:62
-RTL Armor:19
-RTR Armor:19
-RTC Armor:20
+armor:Standard(Inner Sphere)
+LA armor:44
+RA armor:44
+LT armor:45
+RT armor:45
+CT armor:60
+HD armor:12
+LL armor:62
+RL armor:62
+RTL armor:19
+RTR armor:19
+RTC armor:20
 
 Weapons:5
 LB 10-X AC, Left Arm

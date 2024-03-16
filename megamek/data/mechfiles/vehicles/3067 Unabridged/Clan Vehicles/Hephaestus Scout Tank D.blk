@@ -20,6 +20,10 @@ Hephaestus Scout Tank
 D
 </Model>
 
+<mul id:>
+5726
+</mul id:>
+
 <year>
 3071
 </year>
@@ -28,15 +32,16 @@ D
 Clan Level 2
 </type>
 
+<role>
+Scout
+</role>
+
 <motion_type>
 Hover
 </motion_type>
 
 <transporters>
 troopspace:5.0
-</transporters>
-
-<transporters>
 BattleArmorHandles - troopers:-1
 </transporters>
 
@@ -98,7 +103,7 @@ CLERMediumLaser:OMNI
 </Turret Equipment>
 
 <source>
-RS 3067U
+Record Sheets: Record Sheets: 3067 Unabridged
 </source>
 
 <tonnage>

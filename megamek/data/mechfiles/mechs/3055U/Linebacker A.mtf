@@ -1,12 +1,16 @@
-Version:1.0
-Linebacker
-A
+chassis:Linebacker
+model:A
+mul id:1886
 
 Config:Biped Omnimech
 TechBase:Clan
 Era:3052
-Source:TRO 3055 - Clan Invasion
+Source:TRO: 3055
 Rules Level:2
+role:Sniper
+
+quirk:stable
+
 
 Mass:65
 Engine:390 XL (Clan) Engine(IS)

@@ -44,7 +44,7 @@ public class ISBALaserMedium extends LaserWeapon {
         shortAV = 5;
         flags = flags.or(F_BA_WEAPON).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
         maxRange = RANGE_SHORT;
-        rulesRefs = "258,TM";
+        rulesRefs = "258, TM";
         techAdvancement.setTechBase(TECH_BASE_IS)
                 .setIntroLevel(false)
                 .setUnofficial(false)
@@ -52,7 +52,7 @@ public class ISBALaserMedium extends LaserWeapon {
                 .setAvailability(RATING_X, RATING_X, RATING_B, RATING_B)
                 .setISAdvancement(3050, 3050, 3050, DATE_NONE, DATE_NONE)
                 .setISApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_FS,F_LC)
-                .setProductionFactions(F_FS,F_LC,F_DC);
+                .setPrototypeFactions(F_FS, F_LC)
+                .setProductionFactions(F_FS, F_LC, F_DC);
     }
 }

@@ -1,12 +1,18 @@
-Version:1.1
-Tian-Zong
-TNZ-N3 'Jasminda'
+chassis:Tian-Zong
+model:TNZ-N3 'Jasminda'
+mul id:7402
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3140
-Source:OTP Capellan Crusades - Dark Age
+Source:Operational Turning Points: Capellan Crusades
 Rules Level:3
+role:Sniper
+
+
+
+quirk:command_mech
+
 
 Mass:75
 Engine:300 XL Engine(IS)

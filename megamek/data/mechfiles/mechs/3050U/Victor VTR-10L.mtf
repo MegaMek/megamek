@@ -1,12 +1,18 @@
-Version:1.0
-Victor
-VTR-10L
+chassis:Victor
+model:VTR-10L
+mul id:3405
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3066
-Source:TRO 3050 - Civil War
+Source:TRO: 3050
 Rules Level:2
+role:Skirmisher
+
+
+
+quirk:rugged_1
+
 
 Mass:80
 Engine:320 Fusion Engine
@@ -155,8 +161,7 @@ capabilities:Standing at 14 meters tall, the Victor approaches the concept of su
 
 deployment:The 10L is armed with a Gauss Rifle as its primary long ranged weapon. This is backed up by three ER Medium Lasers and a Streak SRM-6 launcher for close combat. The 'Mech carries an ECM Suite as part of its Stealth Armor system, which allows it to reduce its radar signature and makes the 'Mech harder to target, especially at long range, and also four jump jets that allow the 'Mech to seize the high ground, making this variant of the Victor an excellent sniper.
 
-history:An estimated one thousand Victors had been produced by the time the Star League fell. Many of these left with Aleksandr Kerensky during the Exodus, and when HildCo Interplanetary's three Victor factories were destroyed during the First Succession War, the 'Mech became a prized target with all sides scrambling to salvage serviceable units. Only Independence Weaponry retained the ability to build new Victors, and with their capture by the Federated Suns during the Second Succession War it became the AFFS' primary assault 'Mech and a favorite command model for battalion and regimental commanders. Though the Draconis Combine would eventually retake the company following the War of 3039, most Kurita samurai were too proud to adopt a 'Mech now associated with their enemy, while the Davions made do with purchasing new models from the rebuilt HildCo factory in the St. Ives Compact and funding the construction of Styk's Tao MechWorks.
-By the time of the Clan Invasion new models of Victors were being produced which incorporated new-found lostech into their design. The formation of the Second Star League and destruction of Clan Smoke Jaguar would finally win the design acceptance by Combine warriors, while the conquest of Styk and St. Ives by the Capellan Confederation forced the Federated Commonwealth to contract General Motors to build more Victors. Though it had officially fallen out of favor, during the FedCom Civil War the Victor remained the favorite of Allied forces, with newer variants seeing use in the years afterwards
+history:An estimated one thousand Victors had been produced by the time the Star League fell. Many of these left with Aleksandr Kerensky during the Exodus, and when HildCo Interplanetary's three Victor factories were destroyed during the First Succession War, the 'Mech became a prized target with all sides scrambling to salvage serviceable units. Only Independence Weaponry retained the ability to build new Victors, and with their capture by the Federated Suns during the Second Succession War it became the AFFS' primary assault 'Mech and a favorite command model for battalion and regimental commanders. Though the Draconis Combine would eventually retake the company following the War of 3039, most Kurita samurai were too proud to adopt a 'Mech now associated with their enemy, while the Davions made do with purchasing new models from the rebuilt HildCo factory in the St. Ives Compact and funding the construction of Styk's Tao MechWorks. By the time of the Clan Invasion new models of Victors were being produced which incorporated new-found lostech into their design. The formation of the Second Star League and destruction of Clan Smoke Jaguar would finally win the design acceptance by Combine warriors, while the conquest of Styk and St. Ives by the Capellan Confederation forced the Federated Commonwealth to contract General Motors to build more Victors. Though it had officially fallen out of favor, during the FedCom Civil War the Victor remained the favorite of Allied forces, with newer variants seeing use in the years afterwards
 
 manufacturer:HildCo Interplanetary, HildCo Interplanetary, General Motors/Blackwell Corporation, Independence Weaponry, Robinson Standard BattleWorks, Tao 'Mechworks, TharHes Industries
 primaryfactory:St. Ives, Carver V/Liberty, New Valencia, Quentin, Robinson, Styk, Tharkad

@@ -20,6 +20,10 @@ Thunderbird
 TRB-D36b
 </Model>
 
+<mul id:>
+3227
+</mul id:>
+
 <year>
 2715
 </year>
@@ -31,6 +35,10 @@ TRB-D36b
 <type>
 IS Level 2
 </type>
+
+<role>
+Attack Fighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -112,7 +120,7 @@ IS Gauss Ammo
 </Fuselage Equipment>
 
 <source>
-H:Operation Klondyke - Star League
+Historical: Operation Klondike
 </source>
 
 <tonnage>

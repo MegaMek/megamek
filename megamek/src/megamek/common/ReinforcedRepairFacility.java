@@ -74,7 +74,7 @@ public class ReinforcedRepairFacility extends NavalRepairFacility {
     }
 
     @Override
-    public String getUnusedString(boolean showrecovery) {
+    public String getUnusedString(boolean showRecovery) {
         StringBuilder sb = new StringBuilder("Reinforced Naval Repair Facility: ");
         sb.append(DecimalFormat.getInstance().format(totalSpace)).append(" tons");
         return sb.toString();

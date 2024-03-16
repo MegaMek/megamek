@@ -1,56 +1,61 @@
-Version:1.0
-Black Knight
-BL-6-KNT
-
+chassis:Black Knight
+model:BL-6-KNT
+mul id:358
 Config:Biped
-TechBase:Inner Sphere
-Era:2578
-Source:TRO 3050 - Star League
-Rules Level:2
+techbase:Inner Sphere
+era:2578
+source:TRO: 3050
+rules level:2
+role:Brawler
 
-Mass:75
-Engine:300 Fusion Engine
-Structure:Endo Steel
-Myomer:Standard
 
-Heat Sinks:20 Single
-Walk MP:4
-Jump MP:0
 
-Armor:Standard Armor
-LA Armor:24
-RA Armor:24
-LT Armor:24
-RT Armor:24
-CT Armor:29
-HD Armor:9
-LL Armor:24
-RL Armor:24
-RTL Armor:8
-RTR Armor:8
-RTC Armor:10
 
-Weapons:9
-1 ISPPC, Right Arm
-1 ISLargeLaser, Left Torso
-1 ISLargeLaser, Right Torso
-1 ISMediumLaser, Left Torso
-1 ISMediumLaser, Right Torso
-1 ISMediumLaser, Left Arm
-1 ISMediumLaser, Right Arm
-1 ISSmallLaser, Head
-1 ISBeagleActiveProbe, Center Torso
+quirk:command_mech
+
+
+mass:75
+engine:300 Fusion Engine(IS)
+structure:IS Endo Steel
+myomer:Standard
+
+heat sinks:20 Single
+walk mp:4
+jump mp:0
+
+armor:Standard(Inner Sphere)
+LA armor:24
+RA armor:24
+LT armor:24
+RT armor:24
+CT armor:29
+HD armor:9
+LL armor:24
+RL armor:24
+RTL armor:8
+RTR armor:8
+RTC armor:10
+
+Weapons:8
+Medium Laser, Left Arm
+PPC, Right Arm
+Medium Laser, Right Arm
+Large Laser, Left Torso
+Medium Laser, Left Torso
+Large Laser, Right Torso
+Medium Laser, Right Torso
+Small Laser, Head
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-ISMediumLaser
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
+Medium Laser
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -60,24 +65,24 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-ISPPC
-ISPPC
-ISPPC
-ISMediumLaser
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
+PPC
+PPC
+PPC
+Medium Laser
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Left Torso:
 Heat Sink
 Heat Sink
-ISLargeLaser
-ISLargeLaser
-ISMediumLaser
-Endo-Steel
-Endo-Steel
-Endo-Steel
+Large Laser
+Large Laser
+Medium Laser
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -86,12 +91,12 @@ Endo-Steel
 Right Torso:
 Heat Sink
 Heat Sink
-ISLargeLaser
-ISLargeLaser
-ISMediumLaser
-Endo-Steel
-Endo-Steel
-Endo-Steel
+Large Laser
+Large Laser
+Medium Laser
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -108,14 +113,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISBeagleActiveProbe
-ISBeagleActiveProbe
+BeagleActiveProbe
+BeagleActiveProbe
 
 Head:
 Life Support
 Sensors
 Cockpit
-ISSmallLaser
+Small Laser
 Sensors
 Life Support
 -Empty-
@@ -153,20 +158,19 @@ Heat Sink
 -Empty-
 -Empty-
 
+overview:The Black Knight was introduced in 2578 both as a front-line combatant and as a command BattleMech at the company and battalion level for the Star League Defense Force. 
 
-Overview: A superbly-designed BattleMech, the Black Knight has seen nothing but success since its introduction. The design, developed and produced by Kong Interstellar Corporation, would mate heavy durability with an energy-based armament, giving the Black Knight lasting ability rivaled by few other designs. Though the devastation of its primary manufacturer during the Succession Wars greatly curtailed its numbers, production began once more in 3065 to the joy of many a MechWarrior.
+capabilities:Thirteen tons of armor protection on an Endo Steel frame allows the Black Knight to withstand significant punishment. The biggest disadvantage of the design is its challenging heat curve, though the fact that it mounts twenty of them ensures that the Black Knight can still disperse a significant amount of heat produced by its weapons. However, if the 'Mech is involved in a prolonged combat situation, a less experienced MechWarrior who is not competent at heat management may be in trouble. The Black Knight's superior communications equipment allowed it to readily coordinate a whole company of 'Mechs at the same time, as well as link together the command frequencies of an entire parent regiment and connect with orbital support satellites. Improved construction materials provided the Black Knight with a light but sturdy chassis capable of carrying more weaponry and armor for less weight. With the type and amount of weapons carried by the 'Mech, the only challenge the Black Knight faces is heat management.
 
-Capabilities: With no explosive components, a durable engine, and a thick shell of armor, Black Knight BattleMechs can take staggering amounts of damage before finally collapsing. In addition, a fantastic communications suite gives it the ability to link with orbital satellites and coordinate other ground forces. The Beagle Active Probe found in the base design gives it additional scanning capabilities, and the design rapidly found a niche a potent command platform.
+deployment:The Black Knight is an all-energy weapon 'Mech, with its primary armament being a Magna Hellstar II PPC in the right arm. The PPC is supported by two McCorkel Lasers in each side torso, which may do significant damage when the Black Knight approaches its foe. Finally, the 'Mech has four Maxell DT medium lasers, one in each arm and side torso, and a single Magna Small Laser in the head for close-range combat. The small laser, in particular, is directly linked to the Beagle Active Probe, which is positioned in the scanner's middle midsection, allowing the scanner to piggyback a low-power laser beam past any interfering obstacles. While this allows for a more deep inspection of items, the laser's restricted range limits this form of scanning to adjacent targets.
 
-Deployment: The Black Knight, with its limited production, was never a common design during the Succession Wars. ComStar would horde the greatest number of the design, with many appearing on Tukayyid during their climactic battle against the Clans. The original -6 variant would become slightly more common with the discovery of the Helm Core; Kong would offer kits for the variant to Free Worlds League MechWarriors, while the Combine would claim a few thanks to Operation:Rosebud. The design would gradually spread thanks to the reconstruction of its lines, eventually becoming a common sight throughout the entire Inner Sphere.
+history:The Black Knight first debuted in the Reunification War when they were fielded by the 3rd Heavy Assault Regiment in combat with the Taurian Concordat; following its success it was soon adopted by I Corps and the rest of the SLDF. When the Star League collapsed, Kong Interstellar continued producing Black Knights until their Connaught orbital factory was destroyed in 2802. In 2809, Kong was able to restart their production line, but was no longer capable of producing many of the more advanced components found in the Black Knight. As a result, Kong was forced to design a downgraded version, the BL-7-KNT. Finally the Black Knight production line was permanently destroyed in a raid by the Capellan Confederation in 2820, reducing the company to producing low-grade spare parts and performing maintenance. During the Succession Wars many Black Knights fell into the hands of the Great Houses, although as the years progressed they were increasingly forced to repair them with inferior components and their numbers slowly decreased. Some were modified with a number of nonstandard components such as jump jets but few if any survived into the thirty-first century. ComStar's stockpiles of Star League 'Mechs included the Black Knight, which they found to be an excellent command unit for Level II and Level III units when the Com Guards were formed, but the very few Black Knights gifted to the Draconis Combine during Operation ROSEBUD was apparently the result of a clerical error. For their part the Clans maintained the Black Knight, although by the time of the Clan Invasion it was reserved for solahma units. The Black Knight was one of several Clanbusters put together by ComStar leading up to the Battle of Tukayyid, and in 3063 Robinson Standard BattleWorks secured a license from Kong Interstellar to build a new variant, the BL-12-KNT. Two years later KIC finished rebuilding their plant and began producing Black Knights of their own.
 
-systemmanufacturer:CHASSIS:Technicron
-systemmode:CHASSIS:1L Endo Steel
-systemmanufacturer:ENGINE:Vlar
-systemmode:ENGINE:300
-systemmanufacturer:ARMOR:Valiant
-systemmode:ARMOR:Lamellor
-systemmanufacturer:COMMUNICATIONS:TransComm
-systemmode:COMMUNICATIONS:Alpha
-systemmanufacturer:TARGETING:TransComm
-systemmode:TARGETING:Beta
+manufacturer:Kong Interstellar Corporation
+primaryfactory:Connaught
+systemmanufacturer:CHASSIS:Technicron 1L Endo Steel
+systemmanufacturer:ENGINE:Vlar 300
+systemmanufacturer:ARMOR:Valiant Lamellor
+systemmanufacturer:COMMUNICATIONS:TransComm Alpha
+systemmanufacturer:TARGETING:TransComm Beta
+

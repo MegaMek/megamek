@@ -1,12 +1,19 @@
-Version:1.0
-Gallant
-GLT-10-0
+chassis:Gallant
+model:GLT-10-0
+mul id:6872
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3130
-Source:RS 3145 NTNU
+Source:Record Sheets: 3145 New Tech New Upgrades
 Rules Level:3
+role:Skirmisher
+
+
+
+weaponquirk:stable_weapon:RA:2:Large Re-engineered Laser
+weaponquirk:stable_weapon:RA:7:Large Re-engineered Laser
+
 
 Mass:70
 Engine:210 Light Engine(IS)

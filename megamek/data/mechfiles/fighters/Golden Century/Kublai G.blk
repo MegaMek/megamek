@@ -20,6 +20,10 @@ Kublai
 G
 </Model>
 
+<mul id:>
+7669
+</mul id:>
+
 <year>
 3143
 </year>
@@ -31,6 +35,10 @@ G
 <type>
 Mixed (Clan Chassis) Advanced
 </type>
+
+<role>
+Fast Dogfighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -108,7 +116,7 @@ IS MRM 30 Ammo:OMNI
 </Fuselage Equipment>
 
 <source>
-Dark Age
+TRO: Golden Century
 </source>
 
 <tonnage>

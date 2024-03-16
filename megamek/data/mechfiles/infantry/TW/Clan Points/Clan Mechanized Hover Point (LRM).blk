@@ -20,6 +20,10 @@ Clan Mechanized Hover Point
 (LRM)
 </Model>
 
+<mul id:>
+618
+</mul id:>
+
 <year>
 3065
 </year>
@@ -27,6 +31,10 @@ Clan Mechanized Hover Point
 <type>
 Clan Level 5
 </type>
+
+<role>
+Ambusher
+</role>
 
 <motion_type>
 Hover
@@ -36,7 +44,7 @@ Hover
 </Field Guns Equipment>
 
 <source>
-Total Warfare - Succession Wars
+Total Warfare
 </source>
 
 <squad_size>

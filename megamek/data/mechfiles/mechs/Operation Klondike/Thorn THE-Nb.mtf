@@ -1,11 +1,18 @@
-Version:1.1
-Thorn
-THE-Nb
+chassis:Thorn
+model:THE-Nb
+mul id:3194
+source:Historical: Operation Klondike
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2743
 Rules Level:2
+role:Striker
+
+
+
+quirk:easy_maintain
+
 
 Mass:20
 Engine:120 XL Engine

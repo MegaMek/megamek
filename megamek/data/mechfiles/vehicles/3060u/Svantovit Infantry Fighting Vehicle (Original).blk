@@ -20,6 +20,10 @@ Svantovit Infantry Fighting Vehicle
 (Original)
 </Model>
 
+<mul id:>
+3138
+</mul id:>
+
 <year>
 2843
 </year>
@@ -27,6 +31,10 @@ Svantovit Infantry Fighting Vehicle
 <type>
 Clan Level 3
 </type>
+
+<role>
+Striker
+</role>
 
 <motion_type>
 Hover
@@ -89,7 +97,7 @@ CLStreakSRM4
 </Turret Equipment>
 
 <source>
-Succession Wars
+TRO: 3060
 </source>
 
 <tonnage>

@@ -20,6 +20,10 @@ Leopard
 (3056)
 </Model>
 
+<mul id:>
+4494
+</mul id:>
+
 <year>
 3056
 </year>
@@ -31,6 +35,10 @@ Leopard
 <type>
 IS Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Aerodyne
@@ -123,7 +131,7 @@ ISMediumPulseLaser
 </structural_integrity>
 
 <source>
-TRO 3057R - Clan Invasion
+TRO: 3057 Revised
 </source>
 
 <tonnage>

@@ -1,12 +1,17 @@
-Version:1.0
-Supernova
-(Standard)
+chassis:Supernova
+model:
+mul id:3132
 
 Config:Biped
 TechBase:Clan
 Era:2846
-Source:TRO 3058 - Succession Wars
+Source:TRO: 3058
 Rules Level:2
+role:Sniper
+
+
+quirk:imp_target_long
+
 
 Mass:90
 Engine:270 Fusion (Clan) Engine

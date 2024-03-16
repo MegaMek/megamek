@@ -20,6 +20,10 @@ Thrush
 (Maximilian)'C-1247'
 </Model>
 
+<mul id:>
+3200
+</mul id:>
+
 <year>
 3067
 </year>
@@ -31,6 +35,10 @@ Thrush
 <type>
 IS Level 2
 </type>
+
+<role>
+Interceptor
+</role>
 
 <motion_type>
 Aerodyne
@@ -91,7 +99,7 @@ ISERMediumLaser
 </Fuselage Equipment>
 
 <source>
-RS Unique Fighters - Civil War
+Record Sheets: Unique Fighters
 </source>
 
 <tonnage>

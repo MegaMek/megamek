@@ -15,6 +15,10 @@ Alacorn Heavy Tank
 <Model>
 Mk VI
 </Model>
+
+<mul id:>
+25
+</mul id:>
 <Tonnage>
 95
 </Tonnage>
@@ -43,6 +47,10 @@ ISGauss Ammo
 <type>
 IS
 </type>
+
+<role>
+Sniper
+</role>
 <year>
 2590
 </year>
@@ -59,5 +67,5 @@ IS
 Tracked
 </motion_type>
 <source>
-Star League
+TRO: 3058
 </source>

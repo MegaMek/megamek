@@ -1,0 +1,163 @@
+chassis:Rattlesnake 
+model:JR7-31
+
+Config:Biped
+techbase:Inner Sphere
+era:3042
+source:Shrapnel #9
+rules level:2
+role:Striker
+mul id:9238
+
+mass:35
+engine:245 XL Engine(IS)
+structure:IS Standard
+myomer:Standard
+
+heat sinks:11 IS Double
+walk mp:7
+jump mp:7
+
+armor:Ferro-Fibrous(Inner Sphere)
+LA armor:11
+RA armor:11
+LT armor:11
+RT armor:11
+CT armor:15
+HD armor:9
+LL armor:16
+RL armor:16
+RTL armor:5
+RTR armor:5
+RTC armor:6
+
+Weapons:7
+Medium Laser, Right Arm
+Medium Laser, Left Arm
+Medium Laser, Right Torso
+Medium Laser, Left Torso
+Medium Laser, Left Torso
+Medium Laser, Center Torso
+Medium Laser, Right Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+Medium Laser
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+Medium Laser
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+Jump Jet
+Jump Jet
+Medium Laser
+Medium Laser
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+-Empty-
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+Jump Jet
+Jump Jet
+Medium Laser
+Medium Laser
+ISGuardianECMSuite
+ISGuardianECMSuite
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+Medium Laser
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+manufacturer:General Motors
+primaryfactory:New Valencia
+systemmanufacturer:CHASSIS:NCIA Endo Steel Type R
+systemmanufacturer:ENGINE:315 Consolidated XL
+systemmanufacturer:ARMOR:Alpha 3-E Compound Ferro-Fibrous
+systemmanufacturer:JUMPJET:Rawlings 45
+systemmanufacturer:COMMUNICATIONS:Hammerstorm Hugin Mk XXI-E with ECM
+systemmanufacturer:TARGETING:Hammerstorm Munin XVI
+

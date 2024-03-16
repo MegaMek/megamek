@@ -16,9 +16,13 @@ Tank
 Marksman Artillery Vehicle
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+2077
+</mul id:>
 
 <year>
 2702
@@ -27,6 +31,10 @@ Marksman Artillery Vehicle
 <type>
 IS Level 3
 </type>
+
+<role>
+Missile Boat
+</role>
 
 <motion_type>
 Tracked
@@ -79,7 +87,7 @@ Large Laser
 </Turret Equipment>
 
 <source>
-TRO 3050 - Star League
+TRO: 3050
 </source>
 
 <tonnage>

@@ -20,6 +20,10 @@ Mountaineer
 45th Cerulean Mountain Infantry; 3rd Davion Guards
 </Model>
 
+<mul id:>
+2242
+</mul id:>
+
 <year>
 3064
 </year>
@@ -27,6 +31,10 @@ Mountaineer
 <type>
 IS Level 3
 </type>
+
+<role>
+Ambusher
+</role>
 
 <motion_type>
 Leg
@@ -64,5 +72,5 @@ DavionKit
 </armorKit>
 
 <era>
-TRO 3085 - Civil War
+TRO: 3085
 </era>

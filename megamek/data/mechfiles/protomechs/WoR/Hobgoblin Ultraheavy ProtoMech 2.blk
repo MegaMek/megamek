@@ -20,6 +20,10 @@ Hobgoblin Ultraheavy ProtoMech
 2
 </Model>
 
+<mul id:>
+5634
+</mul id:>
+
 <year>
 3072
 </year>
@@ -31,6 +35,10 @@ Hobgoblin Ultraheavy ProtoMech
 <type>
 Clan Level 4
 </type>
+
+<role>
+Ambusher
+</role>
 
 <motion_type>
 Biped
@@ -92,9 +100,42 @@ CLAPGaussRifle
 </Legs Equipment>
 
 <source>
-WoRS - Jihad
+Wars of Reaving
 </source>
 
 <tonnage>
 10.0
 </tonnage>
+
+<capabilities>
+While not being intended for use on the battlefield, the Society was able to quickly put the tested Hobgoblin design into production to supplement their forces. The magnetic clamp system, which allowed Society BattleMechs to transport the Hobgoblin to various danger places on the battlefield, compensated for the poor top speed. This was a significant advantage because the Hobgoblin's slow speed made it an easy target.
+</capabilities>
+
+<overview>
+The Hobgoblin ultraheavy ProtoMech was developed by The Society as a test vehicle for the Fusillade weapon system and ProtoMech-scale Magnetic Clamps.
+</overview>
+
+<deployment>
+This variant removes some armor and the Fusillade. Instead the Hobgoblin 2 carries three more AP Gauss Rifles, bringing the total to four. Each has five reloads, which is enough to devastate conventional infantry forces, but not enough to turn the tide of a battle.
+</deployment>
+
+<history>
+Clan Smoke Jaguar struggled following the Battle of Tukayyid. Guerrilla attacks and uprisings in their Inner Sphere occupation zone had depleted supplies. Smoke Jaguar scientists discovered that their Clan worlds might soon lose BattleMech ores if nothing was done. The Clan's greatest scientists developed a revolutionary warfare unit that combined BattleMechs and Elemental Battle Armor. The smaller units would weigh one-tenth of BattleMechs and be half their height. With their smaller engines, the Smoke Jaguars could produce more of them for less material. ProtoMechs were designed to make a Point of five work as well as a BattleMech while using half the construction resources. Smoke Jaguar geneticists also started breeding pilots. To fit in a ProtoMech's torso, this new breed would need to be smaller than Elementals. Smoke Jaguar scientists and geneticists began working on ProtoMechs in secret, knowing that their Khans would not consider full-scale manufacturing unless they were proven useful in battle. Smoke Jaguar Khan Lincoln Osis discovered ProtoMechs during the Battle of Huntress. His Clan's dire requirements and the ProtoMechs' good performance against desperate odds mitigated his indignation at being uninformed about the secret endeavor. The Clans couldn't ignore the ProtoMech's premiere, even though the war was lost. After the Great Refusal and the demise of the Smoke Jaguars, numerous Clans raided Huntress to steal its technology. Clan Coyote and Clan Blood Spirit were the first to adopt the ProtoMech and enthusiastically develop it, especially the Spirits, who were resource-poor. Huntress salvaged ProtoMechs for most Clans. The Blood Spirits started a formal training program first. The Inner Sphere was uninterested in ProtoMech development. The machine needed Somebody to control it, and even if it could be reproduced, the moral and ethical issues would hinder broad use. Inner Sphere scientists also lacked the technological ability to reproduce ProtoMech's distinctive internal structure, armoring, and heat sinks, which would have resulted in bigger, less-effective units.
+</history>
+
+<manufacturer>
+Chiaroscuro Testing Site
+</manufacturer>
+
+<primaryFactory>
+Ironhold
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:HOB/11
+ENGINE:60 Fusion
+ARMOR:ProtoMech Standard/2
+JUMPJET:Unspecified
+COMMUNICATIONS:PMT-429
+TARGETING:Ribaldi 402 TTS
+</systemManufacturers>

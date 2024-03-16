@@ -20,6 +20,10 @@ Issedone
 A
 </Model>
 
+<mul id:>
+7651
+</mul id:>
+
 <year>
 2871
 </year>
@@ -31,6 +35,10 @@ A
 <type>
 Clan Level 2
 </type>
+
+<role>
+Fire Support
+</role>
 
 <motion_type>
 Aerodyne
@@ -102,7 +110,7 @@ CLCASE
 </Fuselage Equipment>
 
 <source>
-TRO Golden Century
+TRO: Golden Century
 </source>
 
 <tonnage>

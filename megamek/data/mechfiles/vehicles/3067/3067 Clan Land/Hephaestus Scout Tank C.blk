@@ -20,6 +20,10 @@ Hephaestus Scout Tank
 C
 </Model>
 
+<mul id:>
+4315
+</mul id:>
+
 <year>
 3064
 </year>
@@ -28,15 +32,16 @@ C
 Clan Level 2
 </type>
 
+<role>
+Scout
+</role>
+
 <motion_type>
 Hover
 </motion_type>
 
 <transporters>
 troopspace:4.0
-</transporters>
-
-<transporters>
 BattleArmorHandles - troopers:-1
 </transporters>
 
@@ -100,3 +105,7 @@ CLATM3:OMNI
 <baseChassisTurretWeight>
 0.5
 </baseChassisTurretWeight>
+
+<source>
+TRO: 3067
+</source>

@@ -20,6 +20,10 @@ Lion
 (3005) (WD)
 </Model>
 
+<mul id:>
+4526
+</mul id:>
+
 <year>
 3005
 </year>
@@ -31,6 +35,10 @@ Lion
 <type>
 Mixed (Clan Chassis) Advanced
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Spheroid
@@ -200,7 +208,7 @@ ISAMS Ammo:96
 </structural_integrity>
 
 <source>
-TRO 3057R - Late Succession War - Lostech
+TRO: 3057 Revised
 </source>
 
 <tonnage>
@@ -260,7 +268,7 @@ Some versions of the Lion in service with Wolf's Dragoons carried a company of h
 </deployment>
 
 <history>
-Introduced in 2595, the Lion would serve throughout the Inner Sphere up to the Amaris Civil War, when many left with the Exodus Fleet. Heavy fighting during the Succession Wars would reduce the number of Lions still in service in the Inner Sphere to a mere handful by the thirty-first century. The Clans eventually refitted the Lion for their revised unit structure, though they could never manage a refit that could support Elementals. This relegated the ship for use by dezgra and freeborn units, who continued to use it in its combined-arms role. Likewise, all Lions in service with the Clans date from the original Exodus, with no new ships having been built. When the Wolf's Dragoons returned to the the Inner Sphere in 3005, they brought with them Lion-class ships, stripped of most of their advanced Clan equipment. However, the sudden sight of so many rare DropShips immediately raised questions, though the Dragoons remained quiet about their origin. In an effort to allay any further suspicion, these ships were restricted to carrying two lances of BattleMechs, though they would switch to openly using the Clan organization after the Fourth Succession War.
+Introduced in 2595, the Lion would serve throughout the Inner Sphere up to the Amaris Civil War, when many left with the Exodus Fleet. Heavy fighting during the Succession Wars would reduce the number of Lions still in service in the Inner Sphere to a mere handful by the thirty-first century. The Clans eventually refitted the Lion for their revised unit structure, though they could never manage a refit that could support Elementals. This relegated the ship for use by dezgra and freeborn units, who continued to use it in its combined-arms role. Likewise, all Lions in service with the Clans date from the original Exodus, with no new ships having been built. When the Wolf's Dragoons returned to the Inner Sphere in 3005, they brought with them Lion-class ships, stripped of most of their advanced Clan equipment. However, the sudden sight of so many rare DropShips immediately raised questions, though the Dragoons remained quiet about their origin. In an effort to allay any further suspicion, these ships were restricted to carrying two lances of BattleMechs, though they would switch to openly using the Clan organization after the Fourth Succession War.
 </history>
 
 <manufacturer>

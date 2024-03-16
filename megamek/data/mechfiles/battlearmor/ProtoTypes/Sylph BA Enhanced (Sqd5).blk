@@ -1,0 +1,131 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+Sylph Battle Armor
+</Name>
+
+<Model>
+(Enhanced)(Sqd5)
+</Model>
+
+<mul id:>
+8678
+</mul id:>
+
+<year>
+3085
+</year>
+
+<type>
+Clan Level 2
+</type>
+
+<role>
+Scout
+</role>
+
+<motion_type>
+Leg
+</motion_type>
+
+<cruiseMP>
+3
+</cruiseMP>
+
+<armor_type>
+28
+</armor_type>
+
+<armor_tech>
+6
+</armor_tech>
+
+<Point Equipment>
+BABasicManipulator:LA
+BABasicManipulator:RA
+CLBAMyomerBooster:Body
+CLBAERMicroLaser:RA
+SwarmMek
+SwarmWeaponMek
+StopSwarm
+LegAttack
+BAAPMount:LA
+Infantry Auto Rifle:APM
+</Point Equipment>
+
+<source>
+TRO: Prototypes
+</source>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+0
+</jumpingMP>
+
+<armor>
+5
+</armor>
+
+<Trooper Count>
+5
+</Trooper Count>
+
+<weightclass>
+1
+</weightclass>
+
+<overview>
+The Sylph was created by Clan Cloud Cobra to augment their vast aerospace forces with a fully-airborne Battle Armor suit.
+</overview>
+
+<capabilities>
+The centerpiece of the Sylph suit's design is its advanced propulsion system, adapted from the jump jets standard on other battle suits, which can maintain a steady air speed of 53 km/h. In addition to the normal controls found in other suits the Sylph utilizes a complex system of pedals and leg harness when in flight; any loss in concentration will more likely than not send the Sylph into an uncontrollable death spiral. The ability to hover is regulated by computer controls which divert thrust from the main jets through dozens of directional exhaust ports, which also gives the suit its incredible agility. The price for this however is that the Sylph mounts half as much armor as the Elemental suit and carries only a lightweight weapons package.
+</capabilities>
+
+<deployment>
+This is the production version of the Sylph-XR first introduced by the Snow Ravens. While it maintains the battle armor myomer booster, the light machine guns and searchlight were replaced with a single ER Micro Laser in the right arm, an Anti-Personnel Weapon Mount in the left and, perhaps most significantly, the use of Basic Manipulators to allow the Enhanced Sylph to perform anti-'Mech attacks and ride on OmniMechs. While additional cooling systems were installed to address the XR's other major drawback, it still remains the least comfortable battle suit to pilot and requires extra physical conditioning to withstand the waste heat. The Enhanced Sylph's first major engagement was against a band of pirates led by former Clan Smoke Jaguar warriors. The faster Sylphs were able to outmaneuver the slower Elementals and force the pirate infantry to withdraw, leaving their 'Mechs exposed. Although twenty percent of the Enhanced Sylph force was lost, the Snow Ravens believed this would have been greater had they used slower suits instead and possibly resulted in a stalemate. 
+</deployment>
+
+<history>
+Naming it after elemental spirits representing air, development of the suit was driven as much by the Cloud Cobra's faith as it was by Khan Din Steiner's orders. Despite their scientist caste's vast knowledge of aircraft, the Clan had a great deal of trouble getting the VTOL capabilities of the Sylph to function, with a number of test pilots dying during its secretive development. As it is, the Sylph only possesses limited flight capabilities, but even this remains an impressive accomplishment. First deployed in 3060 the Sylph has since become a staple of the Cloud Cobra touman. The training necessary to pilot a Sylph is far more intensive for other suits, but those who succeed are given as much respect as pilots. Another interesting byproduct of the Sylph is that the Cobras obviously invested heavily in the design before it was even completed, having already graduated sibkos of mixed Elemental and fighter pilot bloodlines specifically to operate the suits. Outside of the Cloud Cobras the other Clans have adopted the suit with more caution. Both Clan Snow Raven and Clan Diamond Shark obtained a handful of suits through Trials of Possession, though they've since limited their use to test deployments, while Clan Star Adder began deploying the suits with their Alpha and Beta Galaxies.
+</history>
+
+<manufacturer>
+CSR Battle Armor Facility Alpha
+</manufacturer>
+
+<primaryFactory>
+Ramora
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+JUMPJET:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<quirks>
+hard_pilot
+</quirks>
+
+<weaponQuirks>
+accurate:Point:3:CLBAERMicroLaser
+</weaponQuirks>

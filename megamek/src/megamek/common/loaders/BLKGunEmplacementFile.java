@@ -12,24 +12,16 @@
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
  */
-
-/*
- * BLkFile.java
- *
- * Created on April 6, 2002, 2:06 AM
- */
-
-/**
- *
- * @author njrkrynn
- * @version
- */
 package megamek.common.loaders;
 
 import megamek.common.Entity;
 import megamek.common.GunEmplacement;
 import megamek.common.util.BuildingBlock;
 
+/**
+ * @author njrkrynn
+ * @since April 6, 2002, 2:06 AM
+ */
 public class BLKGunEmplacementFile extends BLKFile implements IMechLoader {
 
     public BLKGunEmplacementFile(BuildingBlock bb) {
@@ -40,25 +32,7 @@ public class BLKGunEmplacementFile extends BLKFile implements IMechLoader {
     public Entity getEntity() throws EntityLoadingException {
 
         GunEmplacement e = new GunEmplacement();
-
-        if (!dataFile.exists("Name")) {
-            throw new EntityLoadingException("Could not find name block.");
-        }
-        e.setChassis(dataFile.getDataAsString("Name")[0]);
-
-        if (dataFile.exists("Model") && (dataFile.getDataAsString("Model")[0] != null)) {
-            e.setModel(dataFile.getDataAsString("Model")[0]);
-        } else {
-            e.setModel("");
-        }
-
-        setTechLevel(e);
-        setFluff(e);
-        checkManualBV(e);
-
-        if (dataFile.exists("source")) {
-            e.setSource(dataFile.getDataAsString("source")[0]);
-        }
+        setBasicEntityData(e);
 
         if (dataFile.exists("Turret")) {
             if (dataFile.getDataAsInt("Turret")[0] != 1) {
@@ -71,6 +45,7 @@ public class BLKGunEmplacementFile extends BLKFile implements IMechLoader {
 
         loadEquipment(e, "Guns", GunEmplacement.LOC_GUNS);
         e.setArmorTonnage(e.getArmorWeight());
+        loadQuirks(e);
         return e;
     }
 }

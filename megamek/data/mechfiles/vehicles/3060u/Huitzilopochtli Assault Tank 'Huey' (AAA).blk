@@ -20,6 +20,10 @@ Huitzilopochtli Assault Tank 'Huey'
 (AAA)
 </Model>
 
+<mul id:>
+1550
+</mul id:>
+
 <year>
 3070
 </year>
@@ -27,6 +31,10 @@ Huitzilopochtli Assault Tank 'Huey'
 <type>
 Clan Level 3
 </type>
+
+<role>
+Missile Boat
+</role>
 
 <motion_type>
 Tracked
@@ -95,7 +103,7 @@ CLCASE
 </Turret Equipment>
 
 <source>
-Jihad
+TRO: 3060
 </source>
 
 <tonnage>

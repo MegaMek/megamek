@@ -20,6 +20,10 @@ Eldingar Hover Sled
 (Streak)
 </Model>
 
+<mul id:>
+948
+</mul id:>
+
 <year>
 3085
 </year>
@@ -27,6 +31,10 @@ Eldingar Hover Sled
 <type>
 Clan Level 4
 </type>
+
+<role>
+Skirmisher
+</role>
 
 <motion_type>
 Hover
@@ -82,7 +90,7 @@ CLStreakLRM15
 </Turret Equipment>
 
 <source>
-Dark Age
+TRO: 3085
 </source>
 
 <tonnage>

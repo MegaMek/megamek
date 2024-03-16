@@ -1,12 +1,22 @@
-Version:1.2
-Phoenix Hawk
-PXH-7S
+chassis:Phoenix Hawk
+model:PXH-7S
+mul id:2509
 
 Config:Biped
 techbase:Inner Sphere
 era:3067
-source:TRO Project Pheonix - Civil War
+source:TRO: Project Pheonix
 rules level:2
+role:Striker
+
+
+
+quirk:command_mech
+quirk:imp_com
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+weaponquirk:jettison_capable:RA:4:ISLargePulseLaser
+
 
 mass:45
 engine:270 Light Engine(IS)

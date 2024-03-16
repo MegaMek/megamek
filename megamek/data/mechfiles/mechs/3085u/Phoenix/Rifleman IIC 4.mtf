@@ -1,12 +1,17 @@
-Version:1.0
-Rifleman IIC
-4
+chassis:Rifleman IIC
+model:4
+mul id:2713
 
 Config:Biped
 TechBase:Clan
 Era:3065
-Source:Civil War
+source:TRO: 3085u 
 Rules Level:2
+role:Sniper
+
+quirk:anti_air
+quirk:imp_com
+
 
 Mass:65
 Engine:195 Fusion (Clan) Engine
@@ -154,9 +159,7 @@ capabilities:Five tons heavier than the design it is based on, the Rifleman IIC 
 
 deployment:The IIC 4 retains two of the Large Pulse Lasers from the base variant, but adds a pair of ATM 9s, each of which can draw on two tons of ammunition. Sixteen double heat sinks are all that is needed to keep all heat from the weapons under control. 
 
-history:An ancient rebuild of an already ancient design, the Rifleman IIC has soldiered on throughout the centuries. The ’Mech can be found in service with most Clans (a
-notable exception is Clan Wolf, which prefers the Glass Spider) and several Inner Sphere powers. Its simplicity is matched only by its effectiveness, and new variants
-continue to debut.
+history:An ancient rebuild of an already ancient design, the Rifleman IIC has soldiered on throughout the centuries. The ’Mech can be found in service with most Clans (a notable exception is Clan Wolf, which prefers the Glass Spider) and several Inner Sphere powers. Its simplicity is matched only by its effectiveness, and new variants continue to debut.
 
 manufacturer:Trellshire Heavy Industries (Refits), Complex H-4 CCC 
 primaryfactory:Twycross, Hector

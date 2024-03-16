@@ -1,0 +1,12 @@
+Federated Suns Medium Mechs 3130 D
+Sentry SNT-04,1
+Dervish DV-9D,2
+Enforcer III ENF-6M,3
+Hatchetman HCT-6D,4
+Scarecrow UCU-F4,5
+Centurion CN9-D5,6
+Hellspawn HSN-10SR,5
+Antlion LK-3D,4
+Legionnaire LGN-2D,3
+Blackjack BJ2-O,2
+Centurion CN11-O,1

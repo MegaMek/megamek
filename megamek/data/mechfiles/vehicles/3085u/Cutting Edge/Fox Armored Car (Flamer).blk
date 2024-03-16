@@ -15,6 +15,10 @@ Fox Armored Car
 <Model>
 (Flamer)
 </Model>
+
+<mul id:>
+1150
+</mul id:>
 <Tonnage>
 20
 </Tonnage>
@@ -38,6 +42,10 @@ ISFlamer
 <type>
 IS Level 2
 </type>
+
+<role>
+Scout
+</role>
 <year>
 3084
 </year>
@@ -54,5 +62,5 @@ IS Level 2
 Hover
 </motion_type>
 <source>
-Dark Age
+TRO: 3085
 </source>

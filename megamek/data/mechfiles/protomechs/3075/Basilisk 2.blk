@@ -20,6 +20,10 @@ Basilisk
 2
 </Model>
 
+<mul id:>
+3798
+</mul id:>
+
 <year>
 3064
 </year>
@@ -31,6 +35,10 @@ Basilisk
 <type>
 Clan Level 2
 </type>
+
+<role>
+Brawler
+</role>
 
 <motion_type>
 Biped
@@ -95,9 +103,42 @@ CLSRM2
 </Main Gun Equipment>
 
 <source>
-TRO 3075 - Civil War
+TRO: 3075
 </source>
 
 <tonnage>
 7.0
 </tonnage>
+
+<capabilities>
+Unlike most second generation Protos, the Basilisk has a relatively low top speed. This allows it to keep pace with larger 'Mechs and move faster than standard battle armor units. The smaller engine also allows more weight for armor, which is good because the slow top speed means a Basilisk will spend more time under enemy guns as it closes the range.
+</capabilities>
+
+<overview>
+The Basilisk ProtoMech was designed and built by Clan Cloud Cobra to support their Elemental and OmniMech forces. 
+</overview>
+
+<deployment>
+This variant of the Basilisk removes the standard weapons mix and replaces them with a Small Laser, two Micro Lasers, a Short Range Missile launcher, and jump jets. This allows the Basilisk 2 to get into close combat much more quickly.
+</deployment>
+
+<history>
+Clan Smoke Jaguar struggled following the Battle of Tukayyid. Guerrilla attacks and uprisings in their Inner Sphere occupation zone had depleted supplies. Smoke Jaguar scientists discovered that their Clan worlds might soon lose BattleMech ores if nothing was done. The Clan's greatest scientists developed a revolutionary warfare unit that combined BattleMechs and Elemental Battle Armor. The smaller units would weigh one-tenth of BattleMechs and be half their height. With their smaller engines, the Smoke Jaguars could produce more of them for less material. ProtoMechs were designed to make a Point of five work as well as a BattleMech while using half the construction resources. Smoke Jaguar geneticists also started breeding pilots. To fit in a ProtoMech's torso, this new breed would need to be smaller than Elementals. Smoke Jaguar scientists and geneticists began working on ProtoMechs in secret, knowing that their Khans would not consider full-scale manufacturing unless they were proven useful in battle. Smoke Jaguar Khan Lincoln Osis discovered ProtoMechs during the Battle of Huntress. His Clan's dire requirements and the ProtoMechs' good performance against desperate odds mitigated his indignation at being uninformed about the secret endeavor. The Clans couldn't ignore the ProtoMech's premiere, even though the war was lost. After the Great Refusal and the demise of the Smoke Jaguars, numerous Clans raided Huntress to steal its technology. Clan Coyote and Clan Blood Spirit were the first to adopt the ProtoMech and enthusiastically develop it, especially the Spirits, who were resource-poor. Huntress salvaged ProtoMechs for most Clans. The Blood Spirits started a formal training program first. The Inner Sphere was uninterested in ProtoMech development. The machine needed Somebody to control it, and even if it could be reproduced, the moral and ethical issues would hinder broad use. Inner Sphere scientists also lacked the technological ability to reproduce ProtoMech's distinctive internal structure, armoring, and heat sinks, which would have resulted in bigger, less-effective units.
+</history>
+
+<manufacturer>
+Complex H-6 CCC,Unknown
+</manufacturer>
+
+<primaryFactory>
+Homer,Unknown
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unspecified
+ENGINE:Unspecified
+ARMOR:Unspecified
+JUMPJET:Unspecified
+COMMUNICATIONS:Unspecified
+TARGETING:Unspecified
+</systemManufacturers>

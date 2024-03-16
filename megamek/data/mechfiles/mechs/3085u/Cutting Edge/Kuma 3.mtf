@@ -1,34 +1,37 @@
-Version:1.0
-Kuma
-3
-
+generator:MegaMek Suite 0.49.16-SNAPSHOT on 2023-12-29
+chassis:Kuma
+model:3
+mul id:1848
 Config:Biped
-TechBase:Clan
-Era:3085
-Source:Dark Age
-Rules Level:4
+techbase:Clan
+era:3085
+source:TRO: 3085
+rules level:4
+role:Scout
 
-Mass:60
-Engine:420 Large XXL (Clan) Engine
-Structure:Endo Steel
-Myomer:Standard
+quirk:hard_pilot
 
-Heat Sinks:10 Double
-Walk MP:7
-Jump MP:10
+mass:60
+engine:420 Large XXL (Clan) Engine(IS)
+structure:Clan Endo Steel
+myomer:Standard
 
-Armor:Ferro-Fibrous(Clan)
-LA Armor:8
-RA Armor:8
-LT Armor:8
-RT Armor:8
-CT Armor:11
-HD Armor:8
-LL Armor:11
-RL Armor:11
-RTL Armor:4
-RTR Armor:4
-RTC Armor:5
+heat sinks:10 Clan Double
+walk mp:7
+jump mp:10
+
+armor:Ferro-Fibrous(Clan)
+LA armor:8
+RA armor:8
+LT armor:8
+RT armor:8
+CT armor:11
+HD armor:8
+LL armor:11
+RL armor:11
+RTL armor:4
+RTR armor:4
+RTC armor:5
 
 Weapons:0
 
@@ -37,13 +40,13 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 
 Right Arm:
@@ -51,13 +54,13 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 
 Left Torso:
@@ -65,28 +68,28 @@ Fusion Engine
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Clan Improved Jump Jet
-Clan Improved Jump Jet
-Clan Improved Jump Jet
-Clan Improved Jump Jet
-Clan Improved Jump Jet
-Clan Improved Jump Jet
-Clan Improved Jump Jet
-Clan Improved Jump Jet
+Improved Jump Jet
+Improved Jump Jet
+Improved Jump Jet
+Improved Jump Jet
+Improved Jump Jet
+Improved Jump Jet
+Improved Jump Jet
+Improved Jump Jet
 
 Right Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Clan Improved Jump Jet
-Clan Improved Jump Jet
-Clan Improved Jump Jet
-Clan Improved Jump Jet
-Clan Improved Jump Jet
-Clan Improved Jump Jet
-Clan Improved Jump Jet
-Clan Improved Jump Jet
+Improved Jump Jet
+Improved Jump Jet
+Improved Jump Jet
+Improved Jump Jet
+Improved Jump Jet
+Improved Jump Jet
+Improved Jump Jet
+Improved Jump Jet
 
 Center Torso:
 Fusion Engine
@@ -121,8 +124,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Clan Improved Jump Jet
-Clan Improved Jump Jet
+Improved Jump Jet
+Improved Jump Jet
 -Empty-
 -Empty-
 -Empty-
@@ -135,8 +138,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Clan Improved Jump Jet
-Clan Improved Jump Jet
+Improved Jump Jet
+Improved Jump Jet
 -Empty-
 -Empty-
 -Empty-

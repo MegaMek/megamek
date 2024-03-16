@@ -79,6 +79,7 @@ public class ModelRecord extends AbstractUnitRecord {
         if (unitType == UnitType.MEK) {
             //TODO: id quads and tripods
             movementMode = EntityMovementMode.BIPED;
+            omni = ms.getUnitSubType().equals("Omni");
         } else {
             movementMode = EntityMovementMode.parseFromString(ms.getUnitSubType().toLowerCase());
         }
@@ -101,7 +102,7 @@ public class ModelRecord extends AbstractUnitRecord {
             if (eq == null) {
                 continue;
             }
-            if (!eq.isAvailableIn(3000)) {
+            if (!eq.isAvailableIn(3000, false)) {
                 //FIXME: needs to filter out primitive
                 losTech = true;
             }
@@ -277,14 +278,18 @@ public class ModelRecord extends AbstractUnitRecord {
     }
 
     public void addRoles(String str) {
-        String[] fields = str.split(",");
-        for (String role : fields) {
-            MissionRole mr = MissionRole.parseRole(role);
-            if (mr != null) {
-                roles.add(mr);
-            } else {
-                LogManager.getLogger().error("Could not parse mission role for "
-                        + getChassis() + " " + getModel() + ": " + role);
+        if (str.isBlank()) {
+            roles.clear();
+        } else {
+            String[] fields = str.split(",");
+            for (String role : fields) {
+                MissionRole mr = MissionRole.parseRole(role);
+                if (mr != null) {
+                    roles.add(mr);
+                } else {
+                    LogManager.getLogger().error("Could not parse mission role for "
+                            + getChassis() + " " + getModel() + ": " + role);
+                }
             }
         }
     }

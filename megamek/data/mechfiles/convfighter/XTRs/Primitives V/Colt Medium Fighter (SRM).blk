@@ -20,6 +20,10 @@ Colt Medium Fighter
 (SRM)
 </Model>
 
+<mul id:>
+7428
+</mul id:>
+
 <year>
 2375
 </year>
@@ -31,6 +35,10 @@ Colt Medium Fighter
 <type>
 IS Level 4
 </type>
+
+<role>
+Dogfighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -113,9 +121,15 @@ IS Ammo SRM-4
 </armor_tech_rating>
 
 <source>
-XTRO Primitives IV - Age of War
+XTR: Primitives IV
 </source>
 
 <tonnage>
 40.0
 </tonnage>
+
+<quirks>
+atmo_flyer
+difficult_eject
+</quirks>
+

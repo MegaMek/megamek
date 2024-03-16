@@ -1,12 +1,19 @@
-Version:1.0
-Scarabus
-SCB-9A
+chassis:Scarabus
+model:SCB-9A
+mul id:2813
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3053
-Source:TRO 3055 - Clan Invasion
+Source:TRO: 3055
 Rules Level:2
+role:Scout
+
+
+
+
+quirk:rugged_1
+
 
 Mass:30
 Engine:300 XL Engine

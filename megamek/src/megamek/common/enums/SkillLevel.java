@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2021 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2020-2022 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -19,7 +19,6 @@
 package megamek.common.enums;
 
 import megamek.MegaMek;
-import megamek.common.util.EncodeControl;
 import org.apache.logging.log4j.LogManager;
 
 import java.util.List;
@@ -35,7 +34,8 @@ public enum SkillLevel {
     REGULAR("SkillLevel.REGULAR.text", "SkillLevel.REGULAR.toolTipText"),
     VETERAN("SkillLevel.VETERAN.text", "SkillLevel.VETERAN.toolTipText"),
     ELITE("SkillLevel.ELITE.text", "SkillLevel.ELITE.toolTipText"),
-    HEROIC("SkillLevel.HEROIC.text", "SkillLevel.HEROIC.toolTipText");
+    HEROIC("SkillLevel.HEROIC.text", "SkillLevel.HEROIC.toolTipText"),
+    LEGENDARY("SkillLevel.LEGENDARY.text", "SkillLevel.LEGENDARY.toolTipText");
     //endregion Enum Declarations
 
     //region Variable Declarations
@@ -46,7 +46,7 @@ public enum SkillLevel {
     //region Constructors
     SkillLevel(final String name, final String toolTipText) {
         final ResourceBundle resources = ResourceBundle.getBundle("megamek.common.messages",
-                MegaMek.getMMOptions().getLocale(), new EncodeControl());
+                MegaMek.getMMOptions().getLocale());
         this.name = resources.getString(name);
         this.toolTipText = resources.getString(toolTipText);
     }
@@ -87,14 +87,41 @@ public enum SkillLevel {
         return this == HEROIC;
     }
 
+    public boolean isLegendary() {
+        return this == LEGENDARY;
+    }
+
+    public boolean isUltraGreenOrGreater() {
+        return isUltraGreen() || isGreenOrGreater();
+    }
+
+    public boolean isGreenOrGreater() {
+        return isGreen() || isRegularOrGreater();
+    }
+
+    public boolean isRegularOrGreater() {
+        return isRegular() || isVeteranOrGreater();
+    }
+
     public boolean isVeteranOrGreater() {
         return isVeteran() || isEliteOrGreater();
     }
 
     public boolean isEliteOrGreater() {
-        return isElite() || isHeroic();
+        return isElite() || isHeroicOrGreater();
+    }
+
+    public boolean isHeroicOrGreater() {
+        return isHeroic() || isLegendary();
     }
     //endregion Boolean Comparisons
+
+    /**
+     * @return the skill level adjusted so that 0 is the level for Ultra-Green
+     */
+    public int getAdjustedValue() {
+        return ordinal() - 1;
+    }
 
     /**
      * This returns the default skill values by level. This should never return the value for NONE,
@@ -105,20 +132,22 @@ public enum SkillLevel {
         switch (this) {
             case NONE:
                 LogManager.getLogger().error("Attempting to get illegal default skill values for NONE Skill Level. Returning { 8, 8 }");
-                return new int[]{ 8, 8 };
+                return new int[] { 8, 8 };
             case ULTRA_GREEN:
-                return new int[]{ 6, 7 };
+                return new int[] { 6, 7 };
             case GREEN:
-                return new int[]{ 5, 6 };
+                return new int[] { 5, 6 };
             case VETERAN:
-                return new int[]{ 3, 4 };
+                return new int[] { 3, 4 };
             case ELITE:
-                return new int[]{ 2, 3 };
+                return new int[] { 2, 3 };
             case HEROIC:
-                return new int[]{ 1, 2 };
+                return new int[] { 1, 2 };
+            case LEGENDARY:
+                return new int[] { 0, 1 };
             case REGULAR:
             default:
-                return new int[]{ 4, 5 };
+                return new int[] { 4, 5 };
         }
     }
 

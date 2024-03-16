@@ -20,6 +20,10 @@ Corax
 CRX-OC
 </Model>
 
+<mul id:>
+3999
+</mul id:>
+
 <year>
 3067
 </year>
@@ -31,6 +35,10 @@ CRX-OC
 <type>
 IS Level 2
 </type>
+
+<role>
+Fast Dogfighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -96,7 +104,7 @@ IS MRM 20 Ammo:OMNI
 </Fuselage Equipment>
 
 <source>
-TRO 3067 - Civil War
+TRO: 3067
 </source>
 
 <tonnage>

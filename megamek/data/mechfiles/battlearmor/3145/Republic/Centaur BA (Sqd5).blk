@@ -1,0 +1,126 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+Centaur Battle Armor
+</Name>
+
+<model>
+(Sqd5)
+</Model>
+
+<mul id:>
+8781
+</mul id:>
+
+<year>
+3136
+</year>
+
+<originalBuildYear>
+3136
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<role>
+Missile Boat
+</role>
+
+<motion_type>
+Leg
+</motion_type>
+
+<transporters>
+</transporters>
+
+<cruiseMP>
+2
+</cruiseMP>
+
+<armor_type>
+38
+</armor_type>
+
+<armor_tech>
+5
+</armor_tech>
+
+<Squad Equipment>
+BABasicManipulator:LA
+BABasicManipulator:RA
+ISBATubeArtillery:DWP
+ISDetachableWeaponPack:Body
+BA-Magnetic Clamp:Body
+ISBASmallLaser:LA
+ISBATubeArtilleryAmmo:DWP:Shots4#
+ISBATubeArtilleryAmmo:DWP:Shots4#
+IS BA Reactive (Blazer):Body
+IS BA Reactive (Blazer):Body
+IS BA Reactive (Blazer):RA
+IS BA Reactive (Blazer):LA
+IS BA Reactive (Blazer):RA
+IS BA Reactive (Blazer):LA
+IS BA Reactive (Blazer):Body
+</Squad Equipment>
+
+<source>
+TRO: 3145 Republic of the Sphere
+</source>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+0
+</jumpingMP>
+
+<armor>
+7
+</armor>
+
+<Trooper Count>
+5
+</Trooper Count>
+
+<weightclass>
+3
+</weightclass>
+
+<capabilities>
+The heavy suit is weighted down by its primary weapon, the battle armor artillery battery. Intended to be an anti-infantry and battle armor weapon, this tubed artillery weapon is heavy enough to slow down the Centaur to just barely 10 km/h. However, the entire weapon is detachable, and once dropped the armor can move upwards to 20 km/h. The tubed weapon system is limited to eight rounds of fire. For its only backup weapon, the Centaur has a right arm-mounted Small Laser. To help the Centaur to get into position against a potential enemy, the suit is equipped with Magnetic Clamps. Protecting the suit from counterbattery fire or missile based weaponry is 420 kilograms of Reactive Armor.
+</capabilities>
+
+<overview>
+Designed in secrecy, the Centaur is a Heavy-weight battle armor, first designed for the Republic of the Sphere's armed forces during the later Dark Age era. This was part of an effort by the Republic to develop a highly mobile battle armor-scale artillery piece.
+</overview>
+
+<deployment>
+The Centaur would first see combat in false-flag raids as part of the Republic's efforts to destabilize enemy forces outside of the nation's Fortress Walls.
+</deployment>
+
+<history>
+It was first built on Devil's Rock at the highly secretive Rhodes Foundry Ltd. factory, along with other secret projects. The battle armor first entered production in 3136 along with the Simian battle armor, and they would often be teamed up in the years ahead.
+</history>
+
+<manufacturer>
+Rhodes Foundry
+</manufacturer>
+
+<primaryFactory>
+Devil's Rock
+</primaryFactory>

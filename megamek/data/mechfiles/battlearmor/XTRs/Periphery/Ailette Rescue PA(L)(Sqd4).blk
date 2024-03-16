@@ -1,0 +1,117 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+Ailette Rescue PA(L)
+</Name>
+
+<Model>
+(Sqd4)
+</Model>
+
+<mul id:>
+5579
+</mul id:>
+
+<year>
+3080
+</year>
+
+<type>
+IS Level 4
+</type>
+
+<role>
+Ambusher
+</role>
+
+<motion_type>
+Jump
+</motion_type>
+
+<cruiseMP>
+1
+</cruiseMP>
+
+<armor_type>
+28
+</armor_type>
+
+<armor_tech>
+2
+</armor_tech>
+
+<Squad Equipment>
+ISImprovedSensors:RA
+ISBASpaceOperationsAdaptation:Body
+ISBAExtendedLifeSupport:Body
+ISMechanicalJumpBooster:Body
+BASalvageArm:LA
+BAArmoredGlove:RA
+InfantryAssaultRifle:RA:APM
+</Squad Equipment>
+
+<source>
+XTR: Periphery
+</source>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+0
+</jumpingMP>
+
+<armor>
+1
+</armor>
+
+<Trooper Count>
+4
+</Trooper Count>
+
+<weightclass>
+0
+</weightclass>
+
+<overview>
+The Ailette Zero-G Exoskeleton is an engineering Exoskeleton which was developed for heavy labor in space and produced by Federated Boeing of Galax.
+</overview>
+
+<history>
+The suit was created to enhance workers' performance at the orbiting Port Simon Naval Shipyards. After the destruction of Galax in 3069, it is unknown if the Ailette was put into production elsewhere for Federated Boeing. Taurus Territorial Industries did produce a version of the suit however. An experimental refit variant was later created by Taurus Territorial Industries in 3074 as a rescue Power Armor.
+</history>
+
+<capabilities>
+The Ailette's exterior appearance mirrors that of a normal hardened space suit, but the suit has been equipped with advanced sensors to allow the user to be able to operate in the hazardous environment of space. This includes an automatic “attitude maintenance mode” which allows the exoskeleton to compensate for movement in Zero Gravity. 
+</capabilities>
+
+<deployment>
+The Ailette's principal equipment includes a salvage arm mounted on the right arm, while the left has an Armored Glove to allow the suit's operator to handle hand tools. For operations in vacuum of space, the Ailette is fitted with an Extended Life Support for extended operations in space and Space Adaptation Gear, both mounted on the main body of the suit. Its user is encased by 50 kilograms of standard armor, preventing damage from minor space objects.
+</deployment>
+
+<manufacturer>
+Federated-Boeing Interstellar,Taurus Territorial Industries
+</manufacturer>
+
+<primaryFactory>
+Galax,Sterope
+</primaryFactory>
+
+<quirks>
+prototype
+easy_pilot
+</quirks>
+

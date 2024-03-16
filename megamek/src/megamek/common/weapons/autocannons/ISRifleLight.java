@@ -49,11 +49,11 @@ public class ISRifleLight extends RifleWeapon {
         extAV = 3;
         maxRange = RANGE_MED;
         explosionDamage = 0;
-        rulesRefs = "338,TO";
+        rulesRefs = "338, TO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_B)
                 .setAvailability(RATING_C, RATING_F, RATING_X, RATING_D)
-                .setISAdvancement(DATE_PS, DATE_NONE, 3084, DATE_NONE, DATE_NONE)
+                .setISAdvancement(DATE_PS, DATE_PS, 3084, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, true, false, false)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }

@@ -15,6 +15,10 @@ Flatbed Truck
 <Model>
 (SRM)
 </Model>
+
+<mul id:>
+1133
+</mul id:>
 <Tonnage>
 10
 </Tonnage>
@@ -40,6 +44,10 @@ ISSRM2 Ammo
 <type>
 IS Level 1
 </type>
+
+<role>
+Scout
+</role>
 <year>
 2580
 </year>
@@ -56,5 +64,5 @@ IS Level 1
 Wheeled
 </motion_type>
 <source>
-Star League
+TRO: 3060
 </source>

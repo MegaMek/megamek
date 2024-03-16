@@ -20,6 +20,10 @@ Harasser Missile Platform
 (Flamer)
 </Model>
 
+<mul id:>
+1388
+</mul id:>
+
 <year>
 2851
 </year>
@@ -27,6 +31,10 @@ Harasser Missile Platform
 <type>
 IS Level 1
 </type>
+
+<role>
+Striker
+</role>
 
 <motion_type>
 Hover
@@ -73,9 +81,41 @@ SRM 4
 </Turret Equipment>
 
 <source>
-TRO 3039 - Succession Wars
+TRO: 3039
 </source>
 
 <tonnage>
 25.0
 </tonnage>
+
+<capabilities>
+Equipped with a pair of SRM 6 racks, the Harasser earned its moniker “Poor man’s artillery,” capable of rapid and concentrated fire. Its impressive speed is, however, offset by a mere one and a half tons of armor, rendering it highly susceptible to damage. The vulnerability was exacerbated by an unsuccessful attempt to install a backup fire control for the commander, leading to its eventual recall due to safety concerns.
+</capabilities>
+
+<overview>
+The Harasser Missile Platform, conceived to augment the Free Worlds League's armored forces, marked a shift in design philosophy by emphasizing speed and short-ranged firepower. Distinct from traditional support vehicles, its role was envisioned to complement the Galleon light tanks, offering a dynamic and agile approach to armored warfare.
+</overview>
+
+<deployment>
+This close-combat oriented model replaces standard armaments with a vehicle Flamer and two SRM-4 racks, ideal for anti-infantry operations.
+</deployment>
+
+<history>
+The Harasser Missile Platform emerged as a tactical innovation during the decline of the Star League, initially conceptualized to complement the Free Worlds League's Galleon light tanks. With the onset of the Second Succession War, the Harasser's role transcended its original design, becoming integral to local militias due to the heavy attrition of regular military units. This widespread deployment marked a shift in its operational use, adapting from a theoretical vanguard role to a more pragmatic and versatile battlefield asset.<p>During this period, tactical doctrines evolved in response to the Harasser's vulnerabilities and strengths. Commanders, recognizing the platform's susceptibility to heavy fire, modified engagement strategies. What was once envisaged as a swift strike force to soften enemy positions, evolved into a more nuanced approach. The Harassers, often concealed, would lie in wait as Galleons engaged the enemy. This tactic of ambush and flanking, leveraging the Harasser’s firepower in coordination with the more durable Galleons, proved to be an effective adaptation to the realities of mechanized warfare.</p><p>As the Third Succession War waned, bringing a period of relative military exhaustion to the Inner Sphere, the Free Worlds League was afforded the opportunity to reassess the Harasser's use. The lessons learned from years of conflict influenced further tactical refinements and a reevaluation of its pairing with Galleon units. The Harasser's history, thus, is not just a record of technological development, but a testament to the evolving nature of battlefield tactics and the adaptability of commanders in the face of changing warfare dynamics.</p>
+</history>
+
+<manufacturer>
+Andurien,Irian,Pompey,Suzano,Various
+</manufacturer>
+
+<primaryFactory>
+Brooks Incorporated,Hadrian Mechanized Industries,Refit - Field
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:GM 120 Classic II ICE
+ARMOR:StarSlab/2
+COMMUNICATIONS:Maxell 500
+TARGETING:Maxell TA 55
+</systemManufacturers>

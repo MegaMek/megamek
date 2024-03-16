@@ -16,9 +16,13 @@ ConvFighter
 Bullet Suicide Drone
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+3875
+</mul id:>
 
 <year>
 3080
@@ -31,6 +35,10 @@ Bullet Suicide Drone
 <type>
 IS Level 4
 </type>
+
+<role>
+Dogfighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -93,7 +101,7 @@ IS Ammo SRM-2
 </Fuselage Equipment>
 
 <source>
-TRO Prototypes - Jihad
+TRO: Prototypes
 </source>
 
 <tonnage>

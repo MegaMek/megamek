@@ -20,6 +20,10 @@ Trident
 TRN-3Tb
 </Model>
 
+<mul id:>
+5276
+</mul id:>
+
 <year>
 2718
 </year>
@@ -31,6 +35,10 @@ TRN-3Tb
 <type>
 IS Level 2
 </type>
+
+<role>
+Interceptor
+</role>
 
 <motion_type>
 Aerodyne
@@ -101,7 +109,7 @@ Small Laser
 </Fuselage Equipment>
 
 <source>
-TRO 3050u - Succession Wars
+TRO: 3050
 </source>
 
 <tonnage>

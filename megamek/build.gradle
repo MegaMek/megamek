@@ -1,7 +1,10 @@
+import java.time.LocalDateTime
+
 plugins {
     id 'application'
     id 'maven-publish'
-    id 'edu.sc.seis.launch4j' version '2.5.1'
+    id 'edu.sc.seis.launch4j' version '2.5.4'
+    id 'jacoco'
 }
 
 sourceSets {
@@ -24,49 +27,55 @@ sourceSets {
 }
 
 dependencies {
-    implementation 'com.fasterxml.jackson.core:jackson-core:2.13.1'
-    implementation 'com.formdev:flatlaf:1.6.5'
+    implementation 'com.fasterxml.jackson.core:jackson-core:2.14.2'
+    implementation 'com.formdev:flatlaf:3.0'
     implementation 'com.github.ikkisoft:SerialKiller:master-SNAPSHOT'
     implementation 'com.sun.mail:jakarta.mail:2.0.1'
-    implementation 'com.thoughtworks.xstream:xstream:1.4.14'
-    implementation 'jakarta.xml.bind:jakarta.xml.bind-api:2.3.2'
-    implementation 'org.apache.commons:commons-text:1.9'
-    implementation 'org.apache.logging.log4j:log4j-core:2.17.1'
+    implementation 'com.thoughtworks.xstream:xstream:1.4.20'
+    implementation 'jakarta.xml.bind:jakarta.xml.bind-api:4.0.0'
+    implementation 'org.apache.commons:commons-text:1.10.0'
+    implementation 'org.apache.logging.log4j:log4j-core:2.20.0'
     implementation 'org.freemarker:freemarker:2.3.31'
 
-    runtimeOnly 'org.glassfish.jaxb:jaxb-runtime:2.3.2'
+    runtimeOnly 'org.glassfish.jaxb:jaxb-runtime:4.0.2'
 
-    testImplementation 'junit:junit:4.13.2'
-    testImplementation 'org.mockito:mockito-core:4.2.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.9.2'
+    testImplementation 'org.mockito:mockito-core:5.2.0'
 }
 
 mainClassName = 'megamek.MegaMek'
 
 ext {
-    jvmOptions = ['-Xmx2048m']
-    userdata = "userdata"
-    data = "data"
-    conf = "mmconf"
-    log = "logs"
-    docs = "docs"
-    lib = "lib"
-    distributionDir = "${buildDir}/distributions"
-    fileStagingDir = "${buildDir}/files"
-    repoDir = "${buildDir}/repo"
-    atlasedImages = "${fileStagingDir}/atlasedImages.txt"
+    mmJvmOptions = ['-Xmx4096m', '--add-opens', 'java.base/java.util=ALL-UNNAMED', '--add-opens', 'java.base/java.util.concurrent=ALL-UNNAMED', '-Dsun.awt.disablegrab=true']
+    data = 'data'
     unitFiles = "${data}/mechfiles"
     rats = "${data}/rat"
+    docs = "docs"
+    lib = "lib"
+    log = "logs"
+    mmconf = "mmconf"
+    userdata = 'userdata'
+    distributionDir = "${buildDir}/distributions"
+    fileStagingDir = "${buildDir}/files"
+    mmRepoDir = "${buildDir}/repo"
+    atlasedImages = "${fileStagingDir}/atlasedImages.txt"
     mavenPublishDir = "${buildDir}/mavenrepo"
     scriptsDir = "${projectDir}/scripts"
     scriptTemplate = "${scriptsDir}/startScriptTemplate.txt"
 }
 
+run {
+    jvmArgs = mmJvmOptions
+}
+
 jar {
     archiveFileName = 'MegaMek.jar'
     manifest {
-        attributes "Main-Class": mainClassName
-        attributes 'Class-Path' : project.sourceSets.main.runtimeClasspath.files
+        attributes "Main-Class" : mainClassName
+        attributes "Class-Path" : project.sourceSets.main.runtimeClasspath.files
             .findAll { it.name.endsWith(".jar") }.collect { "${lib}/${it.name}" }.join(' ')
+        attributes "Add-Opens" : 'java.base/java.util java.base/java.util.concurrent'
+        attributes "Build-Date" : LocalDateTime.now()
     }
 }
 
@@ -74,7 +83,7 @@ task officialUnitList(type: JavaExec, dependsOn: jar) {
     description = 'Compiles a list of all units that come from official sources and saves it in the docs folder.'
     group = 'build'
     classpath = sourceSets.main.runtimeClasspath
-    main = 'megamek.MegaMek'
+    mainClass = 'megamek.MegaMek'
     args '-oul'
     inputs.dir "${projectDir}/${unitFiles}"
     outputs.file "${fileStagingDir}/docs/OfficialUnitList.txt"
@@ -84,7 +93,7 @@ task equipmentList(type: JavaExec, dependsOn: jar) {
     description = 'Generate current equipment.txt'
     group = 'build'
     classpath = sourceSets.main.runtimeClasspath
-    main = 'megamek.MegaMek'
+    mainClass = 'megamek.MegaMek'
     args = [ '-eqdb', 'docs/equipment.txt' ]
     inputs.files sourceSets.main.allJava
     outputs.file "${fileStagingDir}/docs/equipment.txt"
@@ -92,27 +101,27 @@ task equipmentList(type: JavaExec, dependsOn: jar) {
 
 task copyFiles(type: Copy) {
     description = 'Stages files that are to be copied into the distribution.'
-    
+
     dependsOn officialUnitList
     dependsOn equipmentList
-    
+
     from projectDir
-    
+
     include "${data}/**"
-    include "${conf}/**"
     include "${docs}/**"
+    include "${mmconf}/**"
     include "${rootDir}/license.txt"
     exclude "**/*.psd"
     // No need to copy the files that are going to be zipped
     exclude { it.file.isDirectory() && (it.file in file(unitFiles).listFiles()) }
     exclude "${rats}/**"
     include "${userdata}/"
-    
+
     into fileStagingDir
-    
+
     inputs.dir "${data}"
-    inputs.dir "${conf}"
     inputs.dir "${docs}"
+    inputs.dir "${mmconf}"
     inputs.file "${rootDir}/license.txt"
     outputs.dir fileStagingDir
 }
@@ -120,7 +129,7 @@ task copyFiles(type: Copy) {
 task createImageAtlases(type: JavaExec, dependsOn: copyFiles) {
     description = 'Combines individual image files into a set of image atlases.'
     classpath = sourceSets.main.runtimeClasspath
-    main = "megamek.utils.CreateImageAtlases"
+    mainClass = "megamek.utilities.CreateImageAtlases"
     workingDir = file(fileStagingDir)
     inputs.dir "${projectDir}/${data}/images/units"
     outputs.dir "${fileStagingDir}/${data}/images/units"
@@ -167,21 +176,20 @@ task stageFiles {
     dependsOn unitFilesZip
     dependsOn ratZip
     dependsOn deleteAtlasedImages
-    
+
     doLast {
         mkdir "${fileStagingDir}/${log}"
-        ant.touch(file: "${fileStagingDir}/${log}/timestamp")
     }
 }
 
 task createStartScripts (type: CreateStartScripts) {
     description = 'Create shell script for generic distribution.'
-    applicationName = 'startup'
-    mainClassName = project.mainClassName
+    applicationName = 'mm'
+    mainClass = project.mainClassName
     outputDir = startScripts.outputDir
     classpath = jar.outputs.files + files(project.sourceSets.main.runtimeClasspath.files)
             .filter { it.name.endsWith(".jar") }
-    defaultJvmOpts = project.ext.jvmOptions
+    defaultJvmOpts = project.ext.mmJvmOptions
     // The default template assumes the start script is in a subdirectory and always
     // sets APP_HOME to the parent directory of the one containing the script.
     // So we provide a modified template.
@@ -203,7 +211,7 @@ distributions {
         contents {
             from fileStagingDir
             from(createStartScripts.outputs.files) {
-                include "startup*"
+                include "mm*"
             }
             from(jar)
             from (project.sourceSets.main.runtimeClasspath.files
@@ -233,16 +241,15 @@ createExe {
     mainClassName = project.mainClassName
     outfile = 'MegaMek.exe'
     icon = "${projectDir}/data/images/misc/megamek.ico"
-    def inifile = outfile.replace('.exe', '.l4j.ini')
+    def iniFile = outfile.replace('.exe', '.l4j.ini')
     jar = "${project.tasks.getByName("jar").archiveFile.get()}"
-    inputs.file  jar
     outputs.file "${buildDir}/launch4j/${outfile}"
-    outputs.file "${buildDir}/launch4j/${inifile}"
+    outputs.file "${buildDir}/launch4j/${iniFile}"
     doLast {
-        new File("${buildDir}/${outputDir}/${inifile}").text = """# Launch4j runtime config
+        new File("${buildDir}/${outputDir}/${iniFile}").text = """# Launch4j runtime config
 # you can add arguments here that will be processed by the JVM at runtime
-${project.ext.jvmOptions.join('\n')}
-"""        
+${project.ext.mmJvmOptions.join('\n')}
+"""
     }
 }
 
@@ -261,12 +268,12 @@ unixDistTar {
 
 // The repository can only be cloned into an empty directory so we need to delete anything left over
 // from a previous build
-task deleteRepoDir (type: Delete) {
-    delete = "${repoDir}"
+task deleteMMRepoDir (type: Delete) {
+    delete = "${mmRepoDir}"
 }
 
-task cloneRepo (type: Exec, dependsOn: deleteRepoDir) {
-    description = 'Clones the repository to ensure we are working with a clean directory tree'
+task cloneMMRepo (type: Exec, dependsOn: deleteMMRepoDir) {
+    description = 'Clones the MegaMek repository to ensure we are working with a clean directory tree'
     group = 'distribution'
     commandLine "git"
     args "clone", "--branch", mmBranch, "--single-branch", mmGitRoot, "${buildDir}/repo"
@@ -312,10 +319,9 @@ task assembleDist(overwrite: true) {
 task buildFromRepo (type: GradleBuild) {
     description = 'Assembles the distribution packages in the clean repository copy'
     group = 'distribution'
-    dependsOn cloneRepo
-    
-    buildFile = "${repoDir}/build.gradle"
-    dir = "${repoDir}"
+    dependsOn cloneMMRepo
+
+    dir = "${mmRepoDir}"
     tasks = [ ':megamek:assembleDist' ]
 }
 
@@ -323,7 +329,7 @@ task release (type: Copy) {
     description = 'Builds the release packages from the repository and copies them into the project build directory'
     group = 'distribution'
     dependsOn buildFromRepo
-    
+
     from (buildFromRepo)
     into "${distributionDir}"
 }
@@ -346,13 +352,12 @@ publishing {
             artifactId = "megamek${mmBranchTag}"
             from components.java
             artifact sourcesJar
-// Javadoc is full of errors
 //            artifact javadocJar
 
             pom {
                 name = "MegaMek"
                 description = "MegaMek"
-                url = "http://megamek.org"
+                url = "https://megamek.org"
                 licenses {
                     license {
                         name = "GNU General Public License, version 2"
@@ -375,3 +380,17 @@ task cleanPublishingDir (type: Delete) {
 
 publishPublishMMLibraryPublicationToMavenRepository.dependsOn cleanPublishingDir
 
+test {
+    useJUnitPlatform()
+    // report is always generated after tests run
+    finalizedBy jacocoTestReport
+}
+
+jacocoTestReport {
+    // tests are required to run before generating the report
+    dependsOn test
+    reports {
+        xml.required = true
+        html.required = true
+    }
+}

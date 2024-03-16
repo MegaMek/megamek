@@ -1,39 +1,48 @@
-Version:1.0
-Clint
-CLNT-2-3T
-
+chassis:Clint
+model:CLNT-2-3T
+mul id:644
 Config:Biped
-TechBase:Inner Sphere
-Era:2608
-Source:TRO 3039 - Star League
-Rules Level:1
+techbase:Inner Sphere
+era:2608
+source:TRO: 3039
+rules level:1
+role:Striker
 
-Mass:40
-Engine:240 Fusion Engine
-Structure:Standard
-Myomer:Standard
 
-Heat Sinks:10 Single
-Walk MP:6
-Jump MP:6
 
-Armor:Standard(Inner Sphere)
-LA Armor:6
-RA Armor:6
-LT Armor:6
-RT Armor:6
-CT Armor:11
-HD Armor:9
-LL Armor:8
-RL Armor:8
-RTL Armor:4
-RTR Armor:4
-RTC Armor:4
+quirk:imp_target_long
+quirk:imp_target_med
+quirk:difficult_maintain
+quirk:exp_actuator
+quirk:non_standard
+
+
+mass:40
+engine:240 Fusion Engine(IS)
+structure:IS Standard
+myomer:Standard
+
+heat sinks:10 Single
+walk mp:6
+jump mp:6
+
+armor:Standard(Inner Sphere)
+LA armor:6
+RA armor:6
+LT armor:6
+RT armor:6
+CT armor:11
+HD armor:9
+LL armor:8
+RL armor:8
+RTL armor:4
+RTR armor:4
+RTC armor:4
 
 Weapons:3
+AC/5, Right Arm
 Medium Laser, Left Torso
 Medium Laser, Center Torso
-Autocannon/5, Right Arm
 
 Left Arm:
 Shoulder
@@ -147,20 +156,20 @@ Jump Jet
 -Empty-
 -Empty-
 
+overview:The Clint was primarily designed as a cheap recon unit, with the capabilities of a well-armed, low-end medium weight 'Mech, and in this regard it served well.
 
-Overview: Not every BattleMech developed for the Star League was a  technological marvel. The Clint, for example, won its contract through the generous use of cost-cutting and a refusal by Andoran Industries to use any advanced technology on the design. Though a middling, average BattleMechs can still have its uses, the Clint is also an absolute technical nightmare. Many of the parts that are often interchangable between BattleMechs have to be custom made for the Clint. Even worse, the shoddy quality of the parts themselves often require them to be replaced at a much higher rate than normal. If technicians are able to work past these flaws, though, the Clint mounts a surprisingly advanced targeting system that has few peers.
+capabilities:With a top speed of 97.2 km/h and a jumping capability of 180 meters, the Clint can easily keep up with other recon elements and maneuver through mountainous or urban terrain. Its Sloan 220 Lockover T&T system in particular shines, as it is simple to use and provides the pilot with excellent battlefield data. Although the 'Mech has limited ammunition reserves for its autocannon, the Sloane 220 ensures that whatever the Clint shoots at, it hits.
 
-Capabilities: The Clint mostly operates as a heavier recon 'Mech or lower-end skirmisher. In these roles it serves well, and it demands respect from common scouting designs such as the Stinger or Wasp. The Sloane 220 targeting computer means that its firepower hits more often than average, giving the Clint a higher punch than what might be thought at first sight.
+deployment:The Clint was initially intended to carry an Armstrong Buster AC/10, but due to issues with the 'Mech's stress limits, the autocannon was lowered to an Armstrong J11 AC/5 with one ton of ammunition. The Clint carries two Martell midrange lasers as backup weaponry. When combined with the Clint's above-average mobility for its size, this well-balanced arsenal of weapons makes the Clint a very effective multirole BattleMech.
 
-Deployment: The Clint was found in every army in the Inner Sphere during the Succession Wars. No factories produced the design, but notable concentrations were found in the Federated Commonwealth and Capellan Confederation. Certain other states, such as the Free Worlds League, often used their Clints for little more than spare parts. The CLNT-2-3T remained present in most conflicts up until the end of the FedCom Civil War. The Jihad was unkind on this base variant, though, and none remained in any standing 'Mech armies after the Word of Blake forces were finally defeated.
+history:The Clint was built in 2607 as a direct result of the Star League Armaments Act, a law intended to provide frontier areas with cutting-edge warfare technology. However, Andoran Industries Ltd., a tiny BattleMech firm based on Bell, won the project by undercutting its competitors with cost-cutting design features. The Clint was not only made with substandard parts that rarely lasted a year, but it also employed very few standard components; modular pieces that could be easily transferred between many different 'Mechs could not be used in the Clint without extensive modification. The machine became a technician's nightmare, requiring more time to fix than comparable 'Mechs and allowing Andoran to recoup the Clint's low purchase price with a costly service contract. Before the Star League crumbled, over 300 Clints were created, and Andoran's factories were destroyed during conflict between the Federated Suns and the Capellan Confederation. House Davion and House Liao seized the majority of the remaining Clints and dispatched them to isolated regions inside their realms for defense purposes, however the Capellans retained several of the 'Mechs in front-line troops. Nonetheless, the explosion of the Bell facility destroyed not only the original Clint blueprints, effectively terminating new unit and spare part production, but also records of the exact number of Clints made and variants created. Clints could therefore be found across the Inner Sphere throughout the Succession Wars, proving rather popular in the Periphery, although the origins of many of these machines, and whether their different loadouts were official manufacture modifications or simple field-refits, remained unknown. Furthermore, the Clint's non-standard components quickly rose in price - the gyro, in instance, became worth its weight in gold - and many were simply stripped for parts to fix damaged machines.Despite the design's inherent maintenance challenges, an estimated 200 Clints remained in service until the Clan Invasion, largely in the hands of the Capellans or scattered throughout the Suns' border regions. The Confederation also created the 3U model, which the Federated Commonwealth swiftly adopted after the Bell Refit Yards were erected on the ruins of the original factory complex. The designs for the design finally made their way to Defiance Industries of Furillo, which began constructing new Clints for the first time in millennia in 3055.
 
-systemmanufacturer:CHASSIS:Andoran
-systemmode:CHASSIS:Model III
-systemmanufacturer:ENGINE:Pitban
-systemmode:ENGINE:240
-systemmanufacturer:ARMOR:Durallex
-systemmode:ARMOR:Medium
-systemmanufacturer:COMMUNICATIONS:Raldon
-systemmode:COMMUNICATIONS:R1
-systemmanufacturer:TARGETING:Sloane
-systemmode:TARGETING:220 Lockover System
+manufacturer:Andoran Industries Ltd.,Colonial Tractors
+primaryfactory:Bell,Fronc
+systemmanufacturer:CHASSIS:Andoran Model III
+systemmanufacturer:ENGINE:Pitban 240
+systemmanufacturer:ARMOR:Durallex Medium
+systemmanufacturer:JUMPJET:Andoran Model JJII
+systemmanufacturer:COMMUNICATIONS:Raldon R1
+systemmanufacturer:TARGETING:Sloane 220 Lockover System
+

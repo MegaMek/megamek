@@ -1,0 +1,334 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Warship
+</UnitType>
+
+<Name>
+Impavido Destroyer
+</Name>
+
+<Model>
+(3058)
+</Model>
+
+<mul id:>
+4359
+</mul id:>
+
+<year>
+3058
+</year>
+
+<originalBuildYear>
+3058
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<role>
+None
+</role>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+asfbay:18.0:4:1
+cargobay:25502.0:2:2
+dockingcollar
+dockingcollar
+1stclassquarters:390.0:0
+steeragequarters:270.0:0
+crewquarters:1414.0:0
+</transporters>
+
+<SafeThrust>
+5
+</SafeThrust>
+
+<heatsinks>
+587
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+4250
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+13
+</armor_type>
+
+<armor_tech>
+5
+</armor_tech>
+
+<armor>
+50
+55
+55
+50
+54
+54
+</armor>
+
+<Nose Equipment>
+(B) Naval Autocannon (NAC/20)
+Naval Autocannon (NAC/20)
+Naval Autocannon (NAC/10)
+Ammo NAC/20:70
+Ammo NAC/10:35
+(B) Naval Laser 45
+(B) Naval PPC (Light)
+(B) ISGaussRifle
+ISGaussRifle
+IS Gauss Ammo:88
+(B) ISERLargeLaser
+Large Laser
+(B) LRM 20
+LRM 20
+IS Ammo LRM-20 Artemis-capable:24
+ISArtemisIV
+ISArtemisIV
+(B) ISAntiMissileSystem
+ISAntiMissileSystem
+ISAMS Ammo:120
+</Nose Equipment>
+
+<Left Front Side Equipment>
+(B) Naval Autocannon (NAC/20)
+Naval Autocannon (NAC/20)
+Naval Autocannon (NAC/10)
+Ammo NAC/20:70
+Ammo NAC/10:35
+(B) Naval Laser 45
+(B) ISERLargeLaser
+Large Laser
+(B) LRM 20
+LRM 20
+IS Ammo LRM-20 Artemis-capable:24
+ISArtemisIV
+ISArtemisIV
+</Left Front Side Equipment>
+
+<Right Front Side Equipment>
+(B) Naval Autocannon (NAC/20)
+Naval Autocannon (NAC/20)
+Naval Autocannon (NAC/10)
+Ammo NAC/20:70
+Ammo NAC/10:35
+(B) Naval Laser 45
+(B) ISERLargeLaser
+Large Laser
+(B) LRM 20
+LRM 20
+IS Ammo LRM-20 Artemis-capable:24
+ISArtemisIV
+ISArtemisIV
+</Right Front Side Equipment>
+
+<Aft Equipment>
+(B) Naval Autocannon (NAC/20)
+Naval Autocannon (NAC/20)
+Naval Autocannon (NAC/10)
+Ammo NAC/20:70
+Ammo NAC/10:35
+(B) Naval Laser 45
+(B) ISERLargeLaser
+Large Laser
+(B) LRM 20
+LRM 20
+IS Ammo LRM-20 Artemis-capable:24
+ISArtemisIV
+ISArtemisIV
+(B) ISAntiMissileSystem
+ISAntiMissileSystem
+ISAMS Ammo:120
+</Aft Equipment>
+
+<Aft Left Side Equipment>
+(B) Naval Autocannon (NAC/20)
+Naval Autocannon (NAC/20)
+Naval Autocannon (NAC/10)
+Ammo NAC/20:70
+Ammo NAC/10:35
+(B) Naval Laser 45
+(B) ISERLargeLaser
+Large Laser
+(B) LRM 20
+LRM 20
+IS Ammo LRM-20 Artemis-capable:24
+ISArtemisIV
+ISArtemisIV
+</Aft Left Side Equipment>
+
+<Aft Right Side Equipment>
+(B) Naval Autocannon (NAC/20)
+Naval Autocannon (NAC/20)
+Naval Autocannon (NAC/10)
+Ammo NAC/20:70
+Ammo NAC/10:35
+(B) Naval Laser 45
+(B) ISERLargeLaser
+Large Laser
+(B) LRM 20
+LRM 20
+IS Ammo LRM-20 Artemis-capable:24
+ISArtemisIV
+ISArtemisIV
+</Aft Right Side Equipment>
+
+<Hull Equipment>
+</Hull Equipment>
+
+<Left Broadsides Equipment>
+(B) Naval Laser 45
+Naval Laser 45
+(B) Naval PPC (Light)
+(B) ISERLargeLaser
+Large Laser
+(B) LRM 20
+LRM 20
+IS Ammo LRM-20 Artemis-capable:24
+ISArtemisIV
+ISArtemisIV
+(B) ISLargePulseLaser
+</Left Broadsides Equipment>
+
+<Right Broadsides Equipment>
+(B) Naval Laser 45
+Naval Laser 45
+(B) Naval PPC (Light)
+(B) ISERLargeLaser
+Large Laser
+(B) LRM 20
+LRM 20
+IS Ammo LRM-20 Artemis-capable:24
+ISArtemisIV
+ISArtemisIV
+(B) ISLargePulseLaser
+</Right Broadsides Equipment>
+
+<structural_integrity>
+50
+</structural_integrity>
+
+<capabilities>
+The Impavido-class destroyer boasts formidable capabilities, designed to rival the emerging fleets of other Great Houses. Its advanced maneuvering drive, of particular interest, enables exceptional agility and speed, outmaneuvering most transport vessels. Armed with a combination of naval gauss rifles, naval autocannons, heavy naval PPCs, and an array of lasers and missile launchers, the Impavido possesses a potent offensive arsenal. Its advanced ferro-aluminum armor provides superior protection compared to similar-sized Star League ships. The ship's primary mission is often perceived as raiding, given its agility and firepower. However, it can also serve as a picket ship, fulfilling multiple roles within a fleet. The Impavido-class destroyer's deployment is limited to select factions, including Clan Nova Cat, Clan Ghost Bear, and possibly Clan Steel Viper. Its existence and development are met with concern due to the secretive involvement of the Word of Blake and the potential implications for the balance of power in the Inner Sphere.
+</capabilities>
+
+<overview>
+The Impavido-class destroyer is a highly secretive and technologically advanced WarShip prototype developed through collaboration between the Free Worlds League, Capellan Confederation, and the Word of Blake. Its production at Technicron Manufacturing in the Free Worlds League has generated intrigue and speculation. The ship's origins and advanced systems remain shrouded in mystery, leading to theories about their source and implications.
+</overview>
+
+<history>
+The history of the Impavido-class destroyer is rooted in the efforts of the Free Worlds League and the Capellan Confederation to establish their own WarShip fleets, aiming to compete with other Great Houses. The collaboration between these factions and the clandestine involvement of the Word of Blake in its development raised suspicions and speculation among intelligence agencies. The exact source of the Impavido's advanced systems remains unknown, with theories ranging from newly discovered Star League caches to salvaging from derelict vessels. As the prototype ship was being constructed at Technicron Manufacturing, its progress and technological advancements garnered attention. The launch of the Impavido-class destroyer was projected for the early months of 3058, but its internal arrangement and capabilities were closely guarded secrets. Concerns were raised about the involvement of the Word of Blake and the potential consequences of unchecked WarShip production. The Impavido-class destroyer stands as a symbol of technological advancement and political intrigue in the ongoing power struggles of the Inner Sphere.
+</history>
+
+<manufacturer>
+Brigadier Corporation Technicron Manufacturing Corp., Tamarind Yards
+</manufacturer>
+
+<primaryFactory>
+MacKenzie,Tamarind
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<use>
+Destroyer
+</use>
+
+<length>
+450 m
+</length>
+
+<height>
+1060 m Sail
+</height>
+
+<source>
+TRO: 3057 Revised
+</source>
+
+<tonnage>
+490000.0
+</tonnage>
+
+<kf_core>
+1
+</kf_core>
+
+<lithium-fusion>
+1
+</lithium-fusion>
+
+<sail>
+1
+</sail>
+
+<grav_decks>
+96
+</grav_decks>
+
+<designtype>
+1
+</designtype>
+
+<crew>
+277
+</crew>
+
+<officers>
+39
+</officers>
+
+<gunners>
+37
+</gunners>
+
+<passengers>
+0
+</passengers>
+
+<marines>
+54
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<life_boat>
+0
+</life_boat>
+
+<escape_pod>
+40
+</escape_pod>
+

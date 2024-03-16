@@ -20,6 +20,10 @@ Cargomaster
 (2790)
 </Model>
 
+<mul id:>
+3897
+</mul id:>
+
 <year>
 2790
 </year>
@@ -31,6 +35,10 @@ Cargomaster
 <type>
 IS Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Spheroid
@@ -139,7 +147,7 @@ Medium Laser
 </structural_integrity>
 
 <source>
-TRO 3057R - Early Succession War
+TRO: 3057 Revised
 </source>
 
 <tonnage>

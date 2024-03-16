@@ -20,6 +20,10 @@ Excalibur
 (3056)
 </Model>
 
+<mul id:>
+4142
+</mul id:>
+
 <year>
 3056
 </year>
@@ -31,6 +35,10 @@ Excalibur
 <type>
 IS Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Spheroid
@@ -132,7 +140,7 @@ ISMediumPulseLaser
 </structural_integrity>
 
 <source>
-TRO 3057R - Clan Invasion
+TRO: 3057 Revised
 </source>
 
 <tonnage>

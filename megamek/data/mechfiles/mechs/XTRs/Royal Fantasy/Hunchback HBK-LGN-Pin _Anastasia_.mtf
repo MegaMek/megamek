@@ -1,12 +1,19 @@
-Version:1.0
-Hunchback
-HBK-LGN-Pin 'Anastasia'
+chassis:Hunchback
+model:HBK-LGN-Pin 'Anastasia'
+mul id:8374
 
 Config:Biped
 techbase:Mixed (IS Chassis)
 era:3100
-source:XTRO Royal Fantasy
-rules level:5
+source:XTR: Royal Fantasy
+rules level:2
+role:Juggernaut
+
+
+
+quirk:battle_fists_la
+quirk:battle_fists_ra
+
 
 mass:50
 engine:200 Fusion Engine(IS)

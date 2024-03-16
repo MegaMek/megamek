@@ -20,6 +20,10 @@ Achilles
 (3088)
 </Model>
 
+<mul id:>
+6820
+</mul id:>
+
 <year>
 3088
 </year>
@@ -31,6 +35,10 @@ Achilles
 <type>
 IS Level 4
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Aerodyne
@@ -145,7 +153,7 @@ ISNC3
 </structural_integrity>
 
 <source>
-RS 3145 NTNU - Early Republic
+Record Sheets: 3145 New Tech New Upgrades
 </source>
 
 <tonnage>

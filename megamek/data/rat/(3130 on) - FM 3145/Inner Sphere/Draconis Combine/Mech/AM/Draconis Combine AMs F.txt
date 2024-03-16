@@ -1,0 +1,12 @@
+Draconis Combine Assault Mechs 3130 F
+Katana (Crockett) CRK-5003-C,1
+Victor VTR-9K,2
+Charger CGR-3K,3
+O-Bakemono OBK-M12,4
+Mauler MAL-3R,5
+Tai-sho TSH-8S,6
+Akuma AKU-2XC,5
+Cyclops CP-11-B,4
+Cerberus MR-V3,3
+Hatamoto-Suna HTM-30S,2
+Orochi OR-2I,1

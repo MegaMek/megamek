@@ -297,9 +297,13 @@ public class MapDimensionsDialog extends JDialog implements ActionListener {
     @Override
     public void setVisible(boolean b) {
         if (b) {
-            UIUtil.adjustDialog(getContentPane());
+            adaptToGUIScale();;
             pack();
         }
         super.setVisible(b);
+    }
+
+    private void adaptToGUIScale() {
+        UIUtil.adjustDialog(this,  UIUtil.FONT_SCALE1);
     }
 }

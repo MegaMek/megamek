@@ -15,6 +15,10 @@ Maultier Hover APC
 <Model>
 (Basic)
 </Model>
+
+<mul id:>
+2105
+</mul id:>
 <Tonnage>
 15
 </Tonnage>
@@ -39,6 +43,10 @@ ISSRM2 Ammo
 <type>
 IS Level 1
 </type>
+
+<role>
+Scout
+</role>
 <year>
 3019
 </year>
@@ -55,5 +63,5 @@ IS Level 1
 Hover
 </motion_type>
 <source>
-Succession Wars
+TRO: 3058
 </source>

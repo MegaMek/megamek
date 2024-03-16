@@ -1,12 +1,18 @@
-Version:1.0
-Champion
-CHP-2N
+chassis:Champion
+model:CHP-2N
+mul id:551
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2810
-Source:TRO 3039 - Succession Wars
+Source:TRO: 3039
 Rules Level:1
+role:Skirmisher
+
+
+
+quirk:no_arms
+
 
 Mass:60
 Engine:300 Fusion Engine
@@ -161,7 +167,7 @@ systemmanufacturer:CHASSIS:Bergan
 systemmode:CHASSIS:XI
 systemmanufacturer:ENGINE:Vlar
 systemmode:ENGINE:300
-systemmanufacturer:StarSlab
+systemmanufacturer:ARMOR:StarSlab
 systemmode:ARMOR:/2
 systemmanufacturer:COMMUNICATIONS:Garret
 systemmode:COMMUNICATIONS:T-11C

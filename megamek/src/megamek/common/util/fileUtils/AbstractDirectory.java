@@ -134,7 +134,7 @@ public abstract class AbstractDirectory {
      *
      * @param categoryName the <code>String</code> name of the category whose item names are required
      * @param itemName the <code>String</code> name of the indicated item
-     * @return the <code>Object<code> in the given category with the given name
+     * @return the <code>Object</code> in the given category with the given name
      * @throws Exception if there's any error getting the item
      */
     public @Nullable Object getItem(final @Nullable String categoryName,
@@ -148,4 +148,22 @@ public abstract class AbstractDirectory {
         return (entry == null) ? null : entry.getItem();
     }
     //endregion Getters/Setters
+
+    /**
+     * Adds the given AbstractDirectory's contents to this one's. Note: equally named categories are integrated
+     * into one another, but for items in the exact same category (file path) and with the same name the
+     * item of other will replace the item in this AbstractDirectory.
+     *
+     * @param other The AbstractDirectory to merge into this one
+     */
+    public void merge(AbstractDirectory other) {
+        getItems().putAll(other.getItems());
+        for (Map.Entry<String, AbstractDirectory> categoryEntry : other.getCategories().entrySet()) {
+            if (categories.containsKey(categoryEntry.getKey())) {
+                categories.get(categoryEntry.getKey()).merge(categoryEntry.getValue());
+            } else {
+                categories.put(categoryEntry.getKey(), categoryEntry.getValue());
+            }
+        }
+    }
 }

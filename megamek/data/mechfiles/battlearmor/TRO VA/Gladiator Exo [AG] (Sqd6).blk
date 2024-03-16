@@ -1,0 +1,130 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+Gladiator Exoskeleton
+</Name>
+
+<model>
+[AG](Sqd6)
+</Model>
+
+<mul id:>
+8984
+</mul id:>
+
+<year>
+3056
+</year>
+
+<type>
+IS Level 2
+</type>
+
+<role>
+None
+</role>
+
+<motion_type>
+Leg
+</motion_type>
+
+<cruiseMP>
+1
+</cruiseMP>
+
+<armor_type>
+28
+</armor_type>
+
+<armor_tech>
+-1
+</armor_tech>
+
+<Squad Equipment>
+BAMEA:LA
+BAMEA:RA
+BAArmoredGlove:LA
+BAArmoredGlove:RA
+SwarmMek
+SwarmWeaponMek
+StopSwarm
+LegAttack
+</Squad Equipment>
+
+<source>
+TRO: Vehicle Annex Revised
+</source>
+
+<chassis>
+biped
+</chassis>
+
+<exoskeleton>
+true
+</exoskeleton>
+
+<jumpingMP>
+0
+</jumpingMP>
+
+<armor>
+2
+</armor>
+
+<Trooper Count>
+6
+</Trooper Count>
+
+<weightclass>
+0
+</weightclass>
+
+<overview>
+The Gladiator Exoskeleton was created for the thrills and chills of the Class 1 fighting circuit on Solaris VII.
+</overview>
+
+<capabilities>
+The exoskeleton was designed to handle any of a wide array of handheld infantry arms and also heavy melee weaponry for show fights. It is noted for its sturdy and easy to maintain design. The suit visually resembles a mechanical knight. The suit is typically equipped with a pair of Armored Gloves and has 100 kg worth of Standard Armor protecting its hull. Weaponry typically used for the Gladiator was primarily arena restricted weaponry. It also could have its manipulators changed for other equipment. One popular modification was equipped with an Industrial Drill.
+</capabilities>
+
+<deployment>
+</deployment>
+
+<history>
+The Gladiator was Solaris Arms' entry against similar Pit Fighters to get notoriety. Solaris Arms hoped that by demonstrating their Exoskeleton's capacities in the arena, they would catch the eye of military organizations. They hoped to lure them into purchasing the design for anti-BattleMech combat applications. However, the general consensus from the Inner Sphere powers was that it was more prudent to concentrate their funding into battle armor development. The Solaris Arms plant was destroyed in 3071, but StarCorps put the design into production on Emris IV.
+</history>
+
+
+<manufacturer>
+Solaris Arms
+</manufacturer>
+
+<primaryFactory>
+Solaris VII
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+JUMPJET:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<quirks>
+difficult_maintain
+</quirks>
+

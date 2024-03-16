@@ -20,6 +20,10 @@ Demon Medium Tank
 (Armor)
 </Model>
 
+<mul id:>
+6754
+</mul id:>
+
 <year>
 3100
 </year>
@@ -27,6 +31,10 @@ Demon Medium Tank
 <type>
 IS Level 2
 </type>
+
+<role>
+Striker
+</role>
 
 <motion_type>
 Wheeled
@@ -82,9 +90,25 @@ ISERMediumLaser
 </Turret Equipment>
 
 <source>
-RS 3145 NTNU - Late Republic
+Record Sheets: 3145 New Tech New Upgrades
 </source>
 
 <tonnage>
 45.0
 </tonnage>
+
+<manufacturer>
+Brigadier Corporation
+</manufacturer>
+
+<primaryFactory>
+Oliver
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:295 GM Fusion
+ARMOR:Leopard II Heavy Ferro-Fibrous
+COMMUNICATIONS:Exeter LongScan
+TARGETING:Standard TargetTrack
+</systemManufacturers>

@@ -20,6 +20,10 @@ Manteuffel Attack Tank
 B
 </Model>
 
+<mul id:>
+4585
+</mul id:>
+
 <year>
 3062
 </year>
@@ -31,6 +35,10 @@ B
 <type>
 IS Level 2
 </type>
+
+<role>
+Skirmisher
+</role>
 
 <motion_type>
 Tracked
@@ -108,3 +116,7 @@ Configuration B - change Turret weaponry from 1 ML & 1 ERSL to 3 ERSL
 <baseChassisTurretWeight>
 1.5
 </baseChassisTurretWeight>
+
+<source>
+TRO: 3067
+</source>

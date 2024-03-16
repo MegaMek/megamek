@@ -20,6 +20,10 @@ Chaparral Missile Artillery Tank
 (MG)
 </Model>
 
+<mul id:>
+556
+</mul id:>
+
 <year>
 3062
 </year>
@@ -27,6 +31,10 @@ Chaparral Missile Artillery Tank
 <type>
 IS Level 3
 </type>
+
+<role>
+Missile Boat
+</role>
 
 <motion_type>
 Tracked
@@ -73,7 +81,7 @@ Machine Gun
 </Rear Equipment>
 
 <source>
-TRO 3050 - Civil War
+TRO: 3050
 </source>
 
 <tonnage>

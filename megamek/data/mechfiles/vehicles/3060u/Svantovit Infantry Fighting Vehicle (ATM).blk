@@ -20,6 +20,10 @@ Svantovit Infantry Fighting Vehicle
 (ATM) 'Masada'
 </Model>
 
+<mul id:>
+3137
+</mul id:>
+
 <year>
 3069
 </year>
@@ -27,6 +31,10 @@ Svantovit Infantry Fighting Vehicle
 <type>
 Clan Level 3
 </type>
+
+<role>
+Striker
+</role>
 
 <motion_type>
 Hover
@@ -88,7 +96,7 @@ CLCASE
 </Turret Equipment>
 
 <source>
-Jihad
+TRO: 3060
 </source>
 
 <tonnage>

@@ -20,6 +20,10 @@ Thumper Artillery Vehicle
 Maxwell
 </Model>
 
+<mul id:>
+3211
+</mul id:>
+
 <year>
 3079
 </year>
@@ -27,6 +31,10 @@ Maxwell
 <type>
 IS Level 4
 </type>
+
+<role>
+Missile Boat
+</role>
 
 <tonnage>
 60.0
@@ -81,5 +89,5 @@ Machine Gun(ST)
 </Rear Equipment>
 
 <source>
-XTRO Marik - Jihad
+XTR: Marik
 </source>

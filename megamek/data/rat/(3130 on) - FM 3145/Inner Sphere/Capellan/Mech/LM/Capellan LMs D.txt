@@ -1,0 +1,12 @@
+Capellan Confederation Light Mechs 3130 D
+Locust LCT-1Vb,1
+UrbanMech UM-R80,2
+Anubis ABS-3T,3
+Duan Gung D9-G9,4
+Raven RVN-4Lr,5
+Stinger STG-6L,6
+Anubis ABS-5Y,5
+Dola DOL-1A1,4
+Ebony MEB-9,3
+Havoc HVC-P6,2
+Gun GN-2O,1

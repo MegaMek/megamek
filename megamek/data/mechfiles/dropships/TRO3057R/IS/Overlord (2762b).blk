@@ -20,6 +20,10 @@ Overlord
 (2762b)
 </Model>
 
+<mul id:>
+4772
+</mul id:>
+
 <year>
 2762
 </year>
@@ -147,7 +151,7 @@ ISERPPC
 </structural_integrity>
 
 <source>
-TRO 3057R - Star League
+TRO: 3057 Revised
 </source>
 
 <tonnage>

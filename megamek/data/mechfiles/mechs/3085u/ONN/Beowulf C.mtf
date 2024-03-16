@@ -1,12 +1,20 @@
-Version:1.0
-Beowulf
-C
+chassis:Beowulf
+model:C
+mul id:8073
 
 Config:Biped
 TechBase:Clan
 Era:3074
-Source:Jihad
+source:TRO: 3085
 Rules Level:2
+role:None
+
+
+
+quirk:command_mech
+quirk:ext_twist
+quirk:exp_actuator
+
 
 Mass:45
 Engine:270 XL (Clan) Engine(IS)
@@ -147,5 +155,3 @@ Clan Improved Jump Jet
 -Empty-
 -Empty-
 -Empty-
-
-

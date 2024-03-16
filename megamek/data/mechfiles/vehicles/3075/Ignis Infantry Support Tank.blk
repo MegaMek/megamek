@@ -16,9 +16,13 @@ Tank
 Ignis Infantry Support Tank
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+1605
+</mul id:>
 
 <year>
 2512
@@ -27,6 +31,10 @@ Ignis Infantry Support Tank
 <type>
 IS Level 1
 </type>
+
+<role>
+Juggernaut
+</role>
 
 <source>
 Star League

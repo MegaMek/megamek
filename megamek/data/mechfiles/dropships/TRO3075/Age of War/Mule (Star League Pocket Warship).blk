@@ -20,6 +20,10 @@ Mule
 (Star League Pocket Warship)
 </Model>
 
+<mul id:>
+4686
+</mul id:>
+
 <year>
 2756
 </year>
@@ -31,6 +35,10 @@ Mule
 <type>
 IS Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Spheroid
@@ -135,7 +143,7 @@ Medium Laser
 </structural_integrity>
 
 <source>
-TRO 3075 - Star League
+TRO: 3075
 </source>
 
 <tonnage>

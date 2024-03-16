@@ -1,34 +1,39 @@
-Version:1.0
-Marauder IIC
-2
-
+chassis:Marauder IIC
+model:2
+mul id:2066
 Config:Biped
-TechBase:Clan
-Era:3063
-Source:Civil War
-Rules Level:2
+techbase:Clan
+era:3063
+source:TRO: Clan Invasion
+rules level:2
+role:Skirmisher
 
-Mass:85
-Engine:340 Fusion (Clan) Engine
-Structure:Endo Steel
-Myomer:Standard
+quirk:command_mech
+quirk:hyper_actuator
+quirk:exp_actuator
 
-Heat Sinks:24 Double
-Walk MP:4
-Jump MP:4
 
-Armor:Ferro-Fibrous(Clan)
-LA Armor:25
-RA Armor:25
-LT Armor:28
-RT Armor:28
-CT Armor:33
-HD Armor:9
-LL Armor:32
-RL Armor:32
-RTL Armor:8
-RTR Armor:8
-RTC Armor:12
+mass:85
+engine:340 Fusion (Clan) Engine(IS)
+structure:Clan Endo Steel
+myomer:Standard
+
+heat sinks:24 Clan Double
+walk mp:4
+jump mp:4
+
+armor:Ferro-Fibrous(Clan)
+LA armor:25
+RA armor:25
+LT armor:28
+RT armor:28
+CT armor:33
+HD armor:9
+LL armor:32
+RL armor:32
+RTL armor:8
+RTR armor:8
+RTC armor:12
 
 Weapons:5
 Heavy Large Laser, Left Arm
@@ -47,9 +52,9 @@ CLHeavyLargeLaser
 CLHeavyLargeLaser
 CLHeavyLargeLaser
 CLMediumPulseLaser
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 
 Right Arm:
 Shoulder
@@ -61,9 +66,9 @@ CLHeavyLargeLaser
 CLHeavyLargeLaser
 CLHeavyLargeLaser
 CLMediumPulseLaser
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 
 Left Torso:
 CLDoubleHeatSink
@@ -76,8 +81,8 @@ CLDoubleHeatSink
 CLDoubleHeatSink
 Jump Jet
 Jump Jet
-Endo Steel
-Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 
 Right Torso:
 CLDoubleHeatSink
@@ -88,10 +93,10 @@ CLDoubleHeatSink
 CLDoubleHeatSink
 Jump Jet
 Jump Jet
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 
 Center Torso:
 Fusion Engine
@@ -105,13 +110,13 @@ Fusion Engine
 Fusion Engine
 Fusion Engine
 CLERLargeLaser
-Endo Steel
+Clan Endo Steel
 
 Head:
 Life Support
 Sensors
 Cockpit
-Ferro-Fibrous
+Clan Ferro-Fibrous
 Sensors
 Life Support
 -Empty-
@@ -149,4 +154,20 @@ CLDoubleHeatSink
 -Empty-
 -Empty-
 
+overview:Given the Marauder's outstanding performance and sterling reputation, it was only natural for the Clans to commit resources to constructing a worthy successor.
+
+capabilities:While fundamentally comparable to the original Marauder in many aspects, even Golden Century ClanTech's sophisticated capabilities could not prevent the BattleMech's chassis from growing to accommodate all of its enhancements. As a result, the Marauder IIC received ten tons of overall bulk, similar to other classic 'Mechs modified by the Clans at the period. The IIC followed in both function and form the huge footsteps of its ancestor, emphasizing a perfect blend of long-range, high yield firepower, robust armor, and the mobility to keep up with its supporting troops. Although the Clans' dueling heritage prized individual warrior prowess and rapid encounters over drawn-out campaigns, their choice for high-power energy weapons over ballistics and missiles allows this 'Mech to stay lethal in the hands of an expert MechWarrior nearly indefinitely. When combined with its other characteristics, the Marauder IIC's battlefield durability cemented its position as a suitable command 'Mech, as well as its appeal among the glory-seeking warriors that comprise the majority of the Clan officer corps.
+
+deployment:In order to humiliate Clan Blood Spirit, Clan Star Adder upgraded their second-line forces and used them to retaliate against that Clan's interference in their Absorption of Clan Burrock. Part of this upgrade was the Marauder IIC 2. Adder scientists retained the Medium Pulse Lasers, but exchanged the PPCs and small lasers for two Series 4D-2 Heavy Large Lasers and a dorsal mounted Series XIV ER Large Laser. The result is a hard-hitting design that is most effective at close range. In order to help the 'Mech get to close range, it includes four Guld Mk. III jump jets that are capable of vaulting the 'Mech up to 120 meters in a single bound. Three extra heat sinks enable the firing of all the close-range weapons. The weight left over was used in the form of an additional ton of armor, bringing it to twelve-and-a-half tons, equivalent to fifteen tons of standard armor.
+
+history:The Marauder IIC had that designation prior to the introduction of Omni technology and the construction of the Timber Wolf. The Marauder IIC was built from the ground up in the image of its forefather, taking full advantage of the cutting-edge technology available at the time to improve on every aspect of the original. The end result was a bigger, stronger, more resilient, and durable Marauder—one that is still popular today, despite being classified as a "second-line" BattleMech. The Jade Falcons continue to build the Marauder IIC in its original architecture, joining the Rasalhague Dominion's "Phoenix" versions as the fearsome core of numerous Clan attack formations.
+
+manufacturer:Albion MMA Complex,Gorton, Kingsley, & Thorpe Enterprises (Refit),Olivetti Weaponry (Refit)
+primaryfactory:Albion (New Bergan),Satalice,Sudeten
+systemmanufacturer:CHASSIS:Type 850 Light
+systemmanufacturer:ENGINE:Consolidated Fusion 340
+systemmanufacturer:ARMOR:Forging MD4 Ferro-Fibrous
+systemmanufacturer:JUMPJET:Unknown
+systemmanufacturer:COMMUNICATIONS:Series D8 CC-25Xa
+systemmanufacturer:TARGETING:“Hermes” CT-42 Mk. II
 

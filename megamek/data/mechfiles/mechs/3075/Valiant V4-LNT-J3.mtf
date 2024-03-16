@@ -1,12 +1,20 @@
-Version:1.0
-Valiant
-V4-LNT-J3
+chassis:Valiant
+model:V4-LNT-J3
+mul id:3368
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3074
-Source:TRO 3075
+Source:TRO: 3075
 Rules Level:4
+role:Striker
+
+
+
+quirk:imp_target_short
+quirk:pro_actuator
+quirk:weak_head_1
+
 
 Mass:30
 Engine:210 Light Engine

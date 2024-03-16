@@ -16,9 +16,13 @@ Tank
 Hi-Scout Drone Carrier
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+1532
+</mul id:>
 
 <year>
 3000
@@ -27,6 +31,10 @@ Hi-Scout Drone Carrier
 <type>
 IS Level 3
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Tracked
@@ -79,7 +87,7 @@ SRM 2
 </Turret Equipment>
 
 <source>
-TRO 3039 - Succession Wars
+TRO: 3039
 </source>
 
 <tonnage>

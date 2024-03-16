@@ -20,6 +20,10 @@ Heavy Hover APC
 (SRM)
 </Model>
 
+<mul id:>
+1434
+</mul id:>
+
 <year>
 2470
 </year>
@@ -27,6 +31,10 @@ Heavy Hover APC
 <type>
 IS Level 1
 </type>
+
+<role>
+Scout
+</role>
 
 <motion_type>
 Hover
@@ -72,7 +80,7 @@ Machine Gun
 </Rear Equipment>
 
 <source>
-Star League
+TRO: 3060
 </source>
 
 <tonnage>

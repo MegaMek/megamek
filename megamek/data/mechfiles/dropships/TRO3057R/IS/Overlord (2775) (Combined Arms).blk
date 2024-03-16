@@ -20,6 +20,10 @@ Overlord
 (2775) (Combined Arms)
 </Model>
 
+<mul id:>
+4775
+</mul id:>
+
 <year>
 2775
 </year>
@@ -31,6 +35,10 @@ Overlord
 <type>
 IS Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Spheroid
@@ -144,7 +152,7 @@ Medium Laser
 </structural_integrity>
 
 <source>
-TRO 3057R - Star League
+TRO: 3057 Revised
 </source>
 
 <tonnage>

@@ -1,12 +1,18 @@
-Version:1.0
-Chimera
-CMA-C
+chassis:Chimera
+model:CMA-C
+mul id:3951
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3063
 Rules Level:2
-source:TRO 3067
+role:Striker
+source:TRO: 3067
+
+
+
+quirk:nimble_jumper
+
 
 Mass:40
 Engine:240 XL Engine

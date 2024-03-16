@@ -16,9 +16,13 @@ SpaceStation
 Hong Lung Interdiction Station
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+4328
+</mul id:>
 
 <year>
 3024
@@ -31,6 +35,10 @@ Hong Lung Interdiction Station
 <type>
 IS Level 3
 </type>
+
+<role>
+None
+</role>
 
 <designtype>
 1
@@ -189,7 +197,7 @@ Medium Laser
 </structural_integrity>
 
 <source>
-HB HL - Late Succession War - Renaissance
+Handbook: House Liao
 </source>
 
 <tonnage>

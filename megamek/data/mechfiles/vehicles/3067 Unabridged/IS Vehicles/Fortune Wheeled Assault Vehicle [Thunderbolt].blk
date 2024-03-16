@@ -20,6 +20,10 @@ Fortune Wheeled Assault Vehicle
 (Thunderbolt)
 </Model>
 
+<mul id:>
+5737
+</mul id:>
+
 <year>
 3075
 </year>
@@ -27,6 +31,10 @@ Fortune Wheeled Assault Vehicle
 <type>
 IS Level 3
 </type>
+
+<role>
+Missile Boat
+</role>
 
 <motion_type>
 Wheeled
@@ -82,3 +90,7 @@ Thunderbolt 15
 <tonnage>
 80.0
 </tonnage>
+
+<source>
+TRO: 3067
+</source>

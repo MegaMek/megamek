@@ -14,7 +14,8 @@
 package megamek.client.ratgenerator;
 
 import megamek.client.generator.RandomNameGenerator;
-import megamek.utils.MegaMekXmlUtil;
+import megamek.common.annotations.Nullable;
+import megamek.utilities.xml.MMXMLUtility;
 import org.apache.logging.log4j.LogManager;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -203,7 +204,7 @@ public class Ruleset {
                     rs = null;
                 } else {
                     rs = rulesets.get(rs.getParent());
-                }				
+                }
             } else {
                 applied = fn.apply(fd);
                 LogManager.getLogger().debug("Selecting force node " + fn.show()
@@ -214,7 +215,7 @@ public class Ruleset {
         int count = fd.getSubforces().size() + fd.getAttached().size();
 
         //Process subforces recursively. It is possible that the subforce has
-        //a different faction, in which case the ruleset appropriate to that faction is used.
+        // a different faction, in which case the ruleset appropriate to that faction is used.
         for (ForceDescriptor sub : fd.getSubforces()) {
             rs = this;
             if (!fd.getFaction().equals(sub.getFaction())) {
@@ -232,14 +233,14 @@ public class Ruleset {
             buildForceTree(sub, l, progress / count);
         }
         /*
-		//Each attached formation is essentially a new top-level node
-		for (ForceDescriptor sub : fd.getAttached()) {
-		    sub.generateUnits(l, progress * 0.7 / count);
-			sub.assignCommanders();
-			sub.assignPositions();
-			sub.loadEntities(l, progress * 0.1 / count);
-//			sub.assignBloodnames();
-		}
+        // Each attached formation is essentially a new top-level node
+        for (ForceDescriptor sub : fd.getAttached()) {
+            sub.generateUnits(l, progress * 0.7 / count);
+            sub.assignCommanders();
+            sub.assignPositions();
+            sub.loadEntities(l, progress * 0.1 / count);
+            sub.assignBloodnames();
+        }
          */
         if (count == 0 && null != l) {
             l.updateProgress(progress, "Building force tree");
@@ -275,7 +276,7 @@ public class Ruleset {
             if (n.getEschelon().equals(fd.getEschelon()) && n.matches(fd)) {
                 return n;
             }
-        }		
+        }
         return null;
     }
 
@@ -284,7 +285,7 @@ public class Ruleset {
             if (n.getEschelon() == eschelon && n.matches(fd, augmented)) {
                 return n;
             }
-        }		
+        }
         return null;
     }
 
@@ -400,15 +401,13 @@ public class Ruleset {
         initializing = false;
     }
 
-    private static Ruleset createFromFile(File f) {
-        Document xmlDoc = null;
+    private static @Nullable Ruleset createFromFile(File f) {
+        Document xmlDoc;
 
         DocumentBuilder db;
-        try {
-            FileInputStream fis = new FileInputStream(f);
-            db = MegaMekXmlUtil.newSafeDocumentBuilder();
+        try (FileInputStream fis = new FileInputStream(f)) {
+            db = MMXMLUtility.newSafeDocumentBuilder();
             xmlDoc = db.parse(fis);
-            fis.close();
         } catch (Exception ex) {
             LogManager.getLogger().error("Failed loading force template from file " + f.getName(), ex);
             return null;
@@ -421,13 +420,14 @@ public class Ruleset {
             LogManager.getLogger().error("Could not find ruleset element in file " + f.getName());
             return null;
         }
-        if (elem.getAttribute("faction").length() > 0) {
+
+        if (!elem.getAttribute("faction").isBlank()) {
             retVal.faction = elem.getAttribute("faction");
         } else {
             LogManager.getLogger().error("Faction is not declared in ruleset file " + f.getName());
             return null;
         }
-        if (elem.getAttribute("parent").length() > 0) {
+        if (!elem.getAttribute("parent").isBlank()) {
             retVal.parent = elem.getAttribute("parent");
         } else {
             if (retVal.faction.contains(".")) {
@@ -443,13 +443,14 @@ public class Ruleset {
                 } else {
                     retVal.parent = "IS";
                 }
+
                 if (retVal.faction.equals(retVal.parent)) {
                     retVal.parent = null;
                 }
             }
         }
-        //Rating system defaults to IS if not present. If present but cannot be parsed, is set to NONE.
-        if (elem.getAttribute("ratingSystem").length() > 0) {
+        // Rating system defaults to IS if not present. If present but cannot be parsed, is set to NONE.
+        if (!elem.getAttribute("ratingSystem").isBlank()) {
             switch (elem.getAttribute("ratingSystem")) {
                 case "IS":
                     retVal.ratingSystem = RatingSystem.IS;
@@ -468,7 +469,7 @@ public class Ruleset {
                     break;
             }
         } else {
-            retVal.ratingSystem = RatingSystem.IS;			
+            retVal.ratingSystem = RatingSystem.IS;
         }
         NodeList nl = elem.getChildNodes();
         elem.normalize();
@@ -512,7 +513,7 @@ public class Ruleset {
                     }
                     break;
             }
-        }		
+        }
 
         return retVal;
     }

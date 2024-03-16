@@ -24,15 +24,11 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.util.Vector;
 
-import javax.swing.JCheckBox;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.SwingConstants;
+import javax.swing.*;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.UIUtil;
+import megamek.server.Server;
 
 /**
  * The host game dialog shown when hosting a new game and when loading a game
@@ -130,7 +126,7 @@ public class HostDialog extends AbstractGameConnectionDialog {
     }
 
     public void setServerPass(String serverPass) {
-        this.serverPass = serverPass;
+        this.serverPass = serverPass == null ? null : serverPass.trim();
     }
 
     public boolean isRegister() {
@@ -153,7 +149,14 @@ public class HostDialog extends AbstractGameConnectionDialog {
     //region Validation
     @Override
     public boolean dataValidation(String errorTitleKey) {
-        return super.dataValidation(errorTitleKey) && (getServerPass() != null);
+        try {
+            setServerPass(Server.validatePassword(getServerPass()));
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(getOwner(), Messages.getString("MegaMek.ServerPasswordError"),
+                    Messages.getString(errorTitleKey), JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        return super.dataValidation(errorTitleKey);
     }
     //endregion Validation
 
@@ -175,9 +178,13 @@ public class HostDialog extends AbstractGameConnectionDialog {
     @Override
     public void setVisible(boolean b) {
         if (b) {
-            UIUtil.adjustDialog(getContentPane());
+            adaptToGUIScale();
             pack();
         }
         super.setVisible(b);
+    }
+
+    private void adaptToGUIScale() {
+        UIUtil.adjustDialog(this,  UIUtil.FONT_SCALE1);
     }
 }

@@ -58,7 +58,7 @@ public class INarcPod implements Serializable, Targetable {
     }
 
     /**
-     * Determine if the other object is an equivalent INarc pod. <p/> Overrides
+     * Determine if the other object is an equivalent INarc pod. <p> Overrides
      * <code>Object#equals(Object)</code>.
      *
      * @param obj the other <code>Object</code> which may be an equivalent
@@ -84,7 +84,7 @@ public class INarcPod implements Serializable, Targetable {
     }
 
     /**
-     * Get a <code>String</code> representing this INarc pod. <p/> Overrides
+     * Get a <code>String</code> representing this INarc pod. <p> Overrides
      * <code>Object#toString()</code>.
      *
      * @return a <code>String</code> that represents this INarc pod.
@@ -130,10 +130,20 @@ public class INarcPod implements Serializable, Targetable {
     }
 
     @Override
-    public int getTargetId() {
+    public int getId() {
         // All INarcPods of the same type from the
         // same team are interchangable targets.
         return ((team << 4) + type);
+    }
+
+    @Override
+    public int getOwnerId() {
+        return Player.PLAYER_NONE;
+    }
+
+    @Override
+    public int getStrength() {
+        return 0;
     }
 
     @Override
@@ -220,5 +230,15 @@ public class INarcPod implements Serializable, Targetable {
     @Override
     public boolean isEnemyOf(Entity other) {
         return true;
+    }
+
+    @Override
+    public String generalName() {
+        return toString();
+    }
+
+    @Override
+    public String specificName() {
+        return "";
     }
 }

@@ -1,12 +1,22 @@
-Version:1.1
-Archangel
-C-ANG-O (Berith)
+chassis:Archangel
+model:C-ANG-O (Berith)
+mul id:64
 
 Config:Biped Omnimech
 TechBase:Inner Sphere
 Era:3072
-Source:Starterbook: Wolf & Blake - Jihad
+Source:Starterbook: Wolf & Blake
 Rules Level:4
+role:Juggernaut
+
+
+
+quirk:command_mech
+quirk:imp_com
+quirk:imp_sensors
+quirk:bad_rep_clan
+quirk:bad_rep_is
+
 
 Mass:100
 Engine:300 Compact Engine(IS)

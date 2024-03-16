@@ -13,6 +13,8 @@
  */
 package megamek.client.ui.swing.widget;
 
+import megamek.common.annotations.Nullable;
+
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FontMetrics;
@@ -46,17 +48,17 @@ public class WidgetUtils {
         return l;
     }
 
-    public static PMValueLabel createValueLabel(int x, int y, String v,
-            FontMetrics fm) {
+    public static PMValueLabel createValueLabel(int x, int y, String v, FontMetrics fm) {
         PMValueLabel l = new PMValueLabel(fm, Color.red);
         centerLabelAt(l, x, y);
         l.setValue(v);
         return l;
     }
 
-    public static void centerLabelAt(PMSimpleLabel l, int x, int y) {
-        if (l == null)
+    public static void centerLabelAt(@Nullable PMSimpleLabel l, int x, int y) {
+        if (l == null) {
             return;
+        }
         Dimension d = l.getSize();
         l.moveTo(x - d.width / 2, y + d.height / 2);
     }

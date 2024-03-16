@@ -1,12 +1,18 @@
-Version:1.0
-Daishi (Dire Wolf)
-U
+chassis:Daishi
+clanname:Dire Wolf
+model:U
+mul id:820
 
 Config:Biped Omnimech
 techbase:Clan
 era:3077
-source:Jihad
+source:TRO: 3085
 rules level:4
+role:Juggernaut
+
+quirk:imp_target_long
+quirk:difficult_eject
+
 
 mass:100
 engine:300 XL (Clan) Engine(IS)

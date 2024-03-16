@@ -6,10 +6,12 @@
   Current Maintainer:
      MegaMek GitHub Organization <https://github.com/MegaMek>
 
-  Active Developers:
+ Website:
+    megamek.org
+
+   Active Developers:
 	 Carl "Neoancient" Spain
 	 NickAragua
-	 Christopher Watford
 	 Juliez
 	 Justin "Windchild" Bowen
 
@@ -101,8 +103,10 @@
      Michael Rowlett <eventsbeyondme@users.sourceforge.net>
 	 Juliez <juliez@users.sourceforge.net>
 	 Derrick Turk <derrickturk@users.sourceforge.net>
-	 Justin "Windchild" Bowen
 	 Graysho
+	 kuronekochomusuke
+	 PakFront
+	 sleet01
 
   XML Parser:
      Tom Gibara (original URL: http://gibaradunn.srac.org/tiny/index.shtml)
@@ -132,6 +136,10 @@
 	 Kaji
 	 UlyssesSockdrawer
 	 Stonewall072
+	 Ashnod
+	 Pokefan548
+	 MadCartographer
+	 Jacob "Lanceman" Wall
   
   German Readme:
      Black Ice <WKA_Online@yahoo.de>
@@ -144,24 +152,24 @@
      Martis Truesight
      Taerkar
      coralbeach
-     Robert Heath <blasty_mcnasty@users.sourceforge.net>
-     Jacob Wall <lancemanprime@users.sourceforge.net>
-     Alexander Schölling <schoelling@users.sourceforge.net>
-     fastsammy <fastsammy@users.sourceforge.net>
-     Sni77 <sni77@users.sourceforge.net>
+     Robert Heath
+     Alexander Schölling
+     fastsammy
+     Jacob "Lanceman" Wall
+     Sni77
      Jellico
-     Brock Peterman <bh-21@users.sourceforge.net>
+     Brock Peterman
      DarkISI
-     Dave Nawton <hammer-gs@users.sourceforge.net>
+     Dave Nawton
      Phoenixstorm
 	 Greekfire
 	 SuperStucco
 
   Updates to the Ant build file:
-     Robert Schuster <thebohemian@users.sourceforge.net>
+     Robert Schuster
 
   Testing, Ideas and Feedback (just a few of many):
-     Jeff "Shrike" Biron <Shrike@dropshipcommand.com>
+     Jeff "Shrike" Biron
      Jason Kean
      Jess Freeman
      Jeff Kean
@@ -176,8 +184,8 @@
 
   Various Images(including Sprites):
      Nehal Mistry
-     Paolo D'Inca <paolodinca@hotmail.com>
-     Ian Hamilton <jabberwocky@planethalflife.com>
+     Paolo D'Inca
+     Ian Hamilton
      Charlie Brown
      <Cyric27@users.sourceforge.net>
      <rakkasan@users.sourceforge.net>
@@ -259,6 +267,7 @@
      Jörg Harder <joergharder@t-online.de>
      Alexander Schölling <schoelling@users.sourceforge.net>
      Alexander "Twin_81" Manturov
+     IsWas - Spanish
 
   MegaMek Developers, Emeritus
      James Lacy <freakboy2571@users.sourceforge.net>
@@ -266,6 +275,7 @@
  	 Nicholas Walczak <arlith@users.sourceforge.net>
 	 Deric "Netzilla" Page <dericpage@users.sourceforge.net>
      Dylan Myers <https://github.com/Dylan-M>
+     Christopher Watford
 
   Icons and Images
       FatCow (http://www.fatcow.com), licensed under CC Attribution (http://creativecommons.org/licenses/by/3.0/)

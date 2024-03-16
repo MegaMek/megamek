@@ -1,12 +1,16 @@
-Version:1.0
-Hellfire
-2
+chassis:Hellfire
+model:2
+mul id:4301
 
 Config:Biped
 TechBase:Clan
 Era:3067
 Rules Level:2
-source:TRO 3067
+role:Skirmisher
+source:TRO: 3067
+
+quirk:difficult_maintain
+
 
 Mass:60
 Engine:300 XL Engine

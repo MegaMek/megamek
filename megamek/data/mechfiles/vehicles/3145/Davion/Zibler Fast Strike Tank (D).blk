@@ -20,6 +20,10 @@ Zibler Fast Strike Tank
 (D)
 </Model>
 
+<mul id:>
+6325
+</mul id:>
+
 <year>
 3096
 </year>
@@ -27,6 +31,10 @@ Zibler Fast Strike Tank
 <type>
 IS Level 3
 </type>
+
+<role>
+Sniper
+</role>
 
 <motion_type>
 Hover
@@ -86,7 +94,7 @@ Heavy PPC:OMNI
 </Turret Equipment>
 
 <source>
-TRO 3145 Federated Suns - Early Republic
+TRO: 3145 Federated Suns
 </source>
 
 <tonnage>
@@ -96,3 +104,8 @@ TRO 3145 Federated Suns - Early Republic
 <baseChassisTurretWeight>
 2.0
 </baseChassisTurretWeight>
+
+<quirks>
+fast_reload
+</quirks>
+

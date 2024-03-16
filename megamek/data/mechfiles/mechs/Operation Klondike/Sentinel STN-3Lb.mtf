@@ -1,11 +1,18 @@
-Version:1.1
-Sentinel
-STN-3Lb
+chassis:Sentinel
+model:STN-3Lb
+mul id:2861
+source:Historical: Operation Klondike
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2715
 Rules Level:2
+role:Sniper
+
+
+
+quirk:imp_com
+
 
 Mass:40
 Engine:240 XL Engine

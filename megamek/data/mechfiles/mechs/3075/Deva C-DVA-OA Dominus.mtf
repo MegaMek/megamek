@@ -1,37 +1,46 @@
-Version:1.1
-Deva
-C-DVA-OA Dominus
+chassis:Deva
+model:C-DVA-OA Dominus
+mul id:886
 
 Config:Biped Omnimech
-TechBase:Inner Sphere
-Era:3069
-Source:TRO 3075
-Rules Level:2
+techbase:Inner Sphere
+era:3069
+source:TRO: 3075
+rules level:2
+role:Brawler
 
-Mass:70
-Engine:280 Light Engine(IS)
-Structure:IS Endo Steel
-Myomer:Standard
-Cockpit:Small Cockpit
-Gyro:Heavy Duty Gyro
 
-Heat Sinks:11 Double
-Base Chassis Heat Sinks:11
-Walk MP:4
-Jump MP:0
 
-Armor:Standard(Inner Sphere)
-LA Armor:22
-RA Armor:22
-LT Armor:20
-RT Armor:20
-CT Armor:33
-HD Armor:9
-LL Armor:30
-RL Armor:30
-RTL Armor:10
-RTR Armor:10
-RTC Armor:10
+quirk:imp_com
+quirk:imp_sensors
+quirk:bad_rep_clan
+quirk:bad_rep_is
+
+
+mass:70
+engine:280 Light Engine(IS)
+structure:IS Endo Steel
+myomer:Standard
+cockpit:Small Cockpit
+gyro:Heavy Duty Gyro
+
+heat sinks:11 IS Double
+base chassis heat sinks:11
+walk mp:4
+jump mp:0
+
+armor:Standard(Inner Sphere)
+LA armor:22
+RA armor:22
+LT armor:20
+RT armor:20
+CT armor:33
+HD armor:9
+LL armor:30
+RL armor:30
+RTL armor:10
+RTR armor:10
+RTC armor:10
 
 Weapons:6
 Rotary AC/5, Left Arm
@@ -44,13 +53,13 @@ Light PPC, Head
 Left Arm:
 Shoulder
 Upper Arm Actuator
-ISRotaryAC5 (omnipod)
-ISRotaryAC5 (omnipod)
-ISRotaryAC5 (omnipod)
-ISRotaryAC5 (omnipod)
-ISRotaryAC5 (omnipod)
-ISRotaryAC5 (omnipod)
-ISERSmallLaser (omnipod)
+ISRotaryAC5 (OMNIPOD)
+ISRotaryAC5 (OMNIPOD)
+ISRotaryAC5 (OMNIPOD)
+ISRotaryAC5 (OMNIPOD)
+ISRotaryAC5 (OMNIPOD)
+ISRotaryAC5 (OMNIPOD)
+ISERSmallLaser (OMNIPOD)
 IS Endo Steel
 IS Endo Steel
 -Empty-
@@ -59,25 +68,25 @@ Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-Hand Actuator
-ISMML7 (omnipod)
-ISMML7 (omnipod)
-ISMML7 (omnipod)
-ISMML7 (omnipod)
+ISMML7 (OMNIPOD)
+ISMML7 (OMNIPOD)
+ISMML7 (OMNIPOD)
+ISMML7 (OMNIPOD)
 IS Endo Steel
 IS Endo Steel
+-Empty-
 -Empty-
 -Empty-
 
 Left Torso:
 Fusion Engine
 Fusion Engine
-ISRotaryAC5 Ammo (omnipod)
-ISRotaryAC5 Ammo (omnipod)
-ISRotaryAC5 Ammo (omnipod)
-IS Ammo MML-7 LRM (omnipod)
-IS Ammo MML-7 SRM (omnipod)
-ISCASE (omnipod)
+ISRotaryAC5 Ammo (OMNIPOD)
+ISRotaryAC5 Ammo (OMNIPOD)
+ISRotaryAC5 Ammo (OMNIPOD)
+IS Ammo MML-7 LRM (OMNIPOD)
+IS Ammo MML-7 SRM (OMNIPOD)
+ISCASE (OMNIPOD)
 IS Endo Steel
 IS Endo Steel
 IS Endo Steel
@@ -86,14 +95,14 @@ IS Endo Steel
 Right Torso:
 Fusion Engine
 Fusion Engine
-ISERMediumLaser (omnipod)
-ISERMediumLaser (omnipod)
+ISERMediumLaser (OMNIPOD)
+ISERMediumLaser (OMNIPOD)
 ISC3iUnit
 ISC3iUnit
-ISTargeting Computer (omnipod)
-ISTargeting Computer (omnipod)
-ISTargeting Computer (omnipod)
-ISTargeting Computer (omnipod)
+ISTargeting Computer (OMNIPOD)
+ISTargeting Computer (OMNIPOD)
+ISTargeting Computer (OMNIPOD)
+ISTargeting Computer (OMNIPOD)
 IS Endo Steel
 IS Endo Steel
 
@@ -116,8 +125,8 @@ Life Support
 Sensors
 Cockpit
 Sensors
-Light PPC (omnipod)
-Light PPC (omnipod)
+Light PPC (OMNIPOD)
+Light PPC (OMNIPOD)
 -Empty-
 -Empty-
 -Empty-

@@ -1,12 +1,22 @@
-Version:1.0
-Flea
-FLE-14
+chassis:Flea
+model:FLE-14
+mul id:5769
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2519
-Source:XTRO Succession Wars - Age of War
+Source:XTR: Succession Wars
 Rules Level:4
+role:Scout
+
+
+
+quirk:easy_maintain
+quirk:imp_life_support
+quirk:no_arms
+quirk:low_profile
+quirk:hard_pilot
+
 
 Mass:15
 Engine:135 Fusion Engine(IS)

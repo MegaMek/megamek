@@ -146,11 +146,12 @@ public class DestructionAwareDestinationPathfinder extends BoardEdgePathFinder {
      * Function that generates all possible "legal" moves resulting from the given path
      * and updates the set of visited coordinates so we don't visit them again.
      * @param parentPath The path for which to generate child nodes
-     * @param visitedCoords Set of visited coordinates so we don't loop around
      * @return List of valid children. Between 0 and 3 inclusive.
      */
-    protected List<BulldozerMovePath> generateChildNodes(BulldozerMovePath parentPath, Map<Coords, BulldozerMovePath> shortestPathsToCoords,
-            BoardClusterTracker clusterTracker, Coords destinationCoords) {
+    protected List<BulldozerMovePath> generateChildNodes(BulldozerMovePath parentPath,
+                                                         Map<Coords, BulldozerMovePath> shortestPathsToCoords,
+                                                         BoardClusterTracker clusterTracker,
+                                                         Coords destinationCoords) {
         List<BulldozerMovePath> children = new ArrayList<>();
 
         // there are six possible children of a move path, defined in AeroPathUtil.TURNS
@@ -268,7 +269,8 @@ public class DestructionAwareDestinationPathfinder extends BoardEdgePathFinder {
         // - is friendly
         // - if we care only about mobile units, has no MP 
         for (Entity entity : game.getEntitiesVector(position, true)) {
-            if (!entity.isEnemyOf(shooter) && (includeMobileUnits || (entity.getWalkMP(true, false) == 0))) {
+            if (!entity.isEnemyOf(shooter)
+                    && (includeMobileUnits || (entity.getWalkMP(MPCalculationSetting.STANDARD) == 0))) {
                 friendlyFireCheckResults.put(position, true);
                 return true;
             }

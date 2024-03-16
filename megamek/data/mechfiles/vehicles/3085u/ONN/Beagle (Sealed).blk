@@ -20,6 +20,10 @@ Beagle Hover Scout
 (Sealed)
 </Model>
 
+<mul id:>
+311
+</mul id:>
+
 <year>
 3076
 </year>
@@ -27,6 +31,10 @@ Beagle Hover Scout
 <type>
 IS Level 3
 </type>
+
+<role>
+Scout
+</role>
 
 <tonnage>
 15
@@ -65,5 +73,5 @@ ISC3iUnit
 </Turret Equipment>
 
 <source>
-Jihad
+TRO: 3085
 </source>

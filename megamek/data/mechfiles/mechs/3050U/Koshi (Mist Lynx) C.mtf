@@ -1,12 +1,18 @@
-Version:1.0
-Koshi (Mist Lynx)
-C
+chassis:Koshi
+clanname:Mist Lynx
+model:C
+mul id:1829
 
 Config:Biped Omnimech
 TechBase:Clan
 Era:2926
-Source:TRO 3050 - Succession Wars
+Source:TRO: 3050
 Rules Level:2
+role:Striker
+
+quirk:imp_sensors
+quirk:low_profile
+
 
 Mass:25
 Engine:175 XL (Clan) Engine(IS)

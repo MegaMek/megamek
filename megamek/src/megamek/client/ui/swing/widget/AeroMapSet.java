@@ -15,23 +15,15 @@
 
 package megamek.client.ui.swing.widget;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Image;
-import java.awt.Polygon;
-import java.util.Vector;
-
-import javax.swing.JComponent;
-
+import megamek.MMConstants;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.unitDisplay.UnitDisplay;
-import megamek.common.Aero;
-import megamek.common.Configuration;
-import megamek.common.Dropship;
-import megamek.common.Entity;
-import megamek.common.SmallCraft;
+import megamek.common.*;
 import megamek.common.util.fileUtils.MegaMekFile;
+
+import javax.swing.*;
+import java.awt.*;
+import java.util.Vector;
 
 /**
  * Class which keeps set of all areas required to represent ASF unit in
@@ -67,10 +59,11 @@ public class AeroMapSet implements DisplayMapSet {
     private Polygon aftArmor = new Polygon(new int[] { 45, 45, 30, 30, 95, 95,
             80, 80 }, new int[] { 160, 180, 190, 200, 200, 190, 180, 160 }, 8);
 
-    private static final Font FONT_LABEL = new Font("SansSerif", Font.PLAIN,
-            GUIPreferences.getInstance().getInt("AdvancedMechDisplayArmorSmallFontSize"));
-    private static final Font FONT_VALUE = new Font("SansSerif", Font.PLAIN,
-            GUIPreferences.getInstance().getInt("AdvancedMechDisplayArmorLargeFontSize"));
+    private static final GUIPreferences GUIP = GUIPreferences.getInstance();
+    private static final Font FONT_LABEL = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN,
+            GUIP.getUnitDisplayMechArmorSmallFontSize());
+    private static final Font FONT_VALUE = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN,
+            GUIP.getUnitDisplayMechArmorLargeFontSize());
 
     public AeroMapSet(JComponent c, UnitDisplay unitDisplay) {
         this.unitDisplay = unitDisplay;
@@ -133,18 +126,18 @@ public class AeroMapSet implements DisplayMapSet {
         }
         
         if (t instanceof Dropship) {
-        	// add kf boom and docking collar
-        	Dropship ds = (Dropship) t;
-        	int kfboom = 0;
-        	int collar = 0;
-        	if (ds.isKFBoomDamaged()) {
-        		kfboom = 1;
-        	}
-        	vLabels[11].setValue(getCriticalHitTally(kfboom, 1));
-        	if (ds.isDockCollarDamaged()) {
-        		collar = 1;
-        	}
-        	vLabels[12].setValue(getCriticalHitTally(collar, 1));
+            // add kf boom and docking collar
+            Dropship ds = (Dropship) t;
+            int kfboom = 0;
+            int collar = 0;
+            if (ds.isKFBoomDamaged()) {
+                kfboom = 1;
+            }
+            vLabels[11].setValue(getCriticalHitTally(kfboom, 1));
+            if (ds.isDockCollarDamaged()) {
+                collar = 1;
+            }
+            vLabels[12].setValue(getCriticalHitTally(collar, 1));
         }
 
     }

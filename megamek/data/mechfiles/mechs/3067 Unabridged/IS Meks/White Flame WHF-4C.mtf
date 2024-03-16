@@ -1,12 +1,23 @@
-Version:1.1
-White Flame
-WHF-4C
+chassis:White Flame
+model:WHF-4C
+mul id:5693
 
 Config:Quad
 techbase:Inner Sphere
 era:3077
-source:3067 Unabridged
+source:Record Sheets: 3067 Unabridged
 rules level:2
+role:Skirmisher
+
+
+
+quirk:bad_rep_is
+quirk:exp_actuator
+weaponquirk:direct_torso_mount:RT:2:ISSNPPC
+weaponquirk:direct_torso_mount:RT:4:ISERMediumLaser
+weaponquirk:direct_torso_mount:LT:2:ISMediumPulseLaser
+weaponquirk:direct_torso_mount:LT:3:ISMediumPulseLaser
+
 
 mass:70
 engine:350 Light Engine(IS)

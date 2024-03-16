@@ -40,7 +40,7 @@ import megamek.common.Game;
  */
 public interface IVictoryConditions {
     /**
-     * @param game - the game (state) we are playing
+     * @param game The current {@link Game}
      * @param context - a map Strings to simple serializable objects (preferably
      *            Integers , Strings ,Doubles etc) which are used to store state
      *            between executions if such feature is absolutely required.. as

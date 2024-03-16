@@ -1,0 +1,12 @@
+Capellan Confederation Medium Mechs 3130 B
+Shadow Hawk SHD-8L,1
+Griffin GRF-5L,2
+Osprey OSP-26,3
+Vindicator VND-6L,4
+Eyleuka EYL-45A,5
+Firestarter FS9-O,6
+Raven II RVN-5X,5
+Men Shen MS1-O,4
+Yao Lien YOL-4C,3
+Agrotera AGT-1A,2
+Goshawk II (Standard),1

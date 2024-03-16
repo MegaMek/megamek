@@ -16,9 +16,13 @@ Tank
 Nuberu Anti Aircraft Tank
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+4737
+</mul id:>
 
 <year>
 3083
@@ -27,6 +31,10 @@ Nuberu Anti Aircraft Tank
 <type>
 Clan Level 4
 </type>
+
+<role>
+Sniper
+</role>
 
 <motion_type>
 Tracked
@@ -85,9 +93,16 @@ CLLBXAC5
 </Front Turret Equipment>
 
 <source>
-TRO:Prototypes
+TRO: Prototypes
 </source>
 
 <tonnage>
 60.0
 </tonnage>
+
+<quirks>
+gas_hog
+anti_air
+trailer_hitch
+</quirks>
+

@@ -1,12 +1,21 @@
-Version:1.1
-Targe
-TRG-1N
+chassis:Targe
+model:TRG-1N
+mul id:3164
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3081
-Source:Republic
+Source:TRO: 3085
 Rules Level:2
+role:Striker
+
+
+
+
+quirk:ext_twist
+quirk:bad_rep_is
+quirk:no_arms
+
 
 Mass:40
 Engine:320 Light Engine

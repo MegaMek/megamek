@@ -20,6 +20,10 @@ Thunderbird
 TRB-D46
 </Model>
 
+<mul id:>
+5232
+</mul id:>
+
 <year>
 2724
 </year>
@@ -31,6 +35,10 @@ TRB-D46
 <type>
 IS Level 2
 </type>
+
+<role>
+Attack Fighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -132,7 +140,7 @@ TARGETING:N&D Longreach
 </systemManufacturers>
 
 <source>
-TRO 3075 - Star League
+TRO: 3075
 </source>
 
 <tonnage>

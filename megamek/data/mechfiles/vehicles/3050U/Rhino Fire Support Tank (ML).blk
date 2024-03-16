@@ -20,6 +20,10 @@ Rhino Fire Support Tank
 (ML)
 </Model>
 
+<mul id:>
+2683
+</mul id:>
+
 <year>
 3068
 </year>
@@ -27,6 +31,10 @@ Rhino Fire Support Tank
 <type>
 IS Level 1
 </type>
+
+<role>
+Missile Boat
+</role>
 
 <motion_type>
 Tracked
@@ -78,7 +86,7 @@ LRM 20
 </Turret Equipment>
 
 <source>
-TRO 3050 - Jihad
+TRO: 3050
 </source>
 
 <tonnage>

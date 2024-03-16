@@ -20,6 +20,10 @@ Sulla
 B
 </Model>
 
+<mul id:>
+3118
+</mul id:>
+
 <year>
 2998
 </year>
@@ -31,6 +35,10 @@ B
 <type>
 Clan Level 2
 </type>
+
+<role>
+Fire Support
+</role>
 
 <motion_type>
 Aerodyne
@@ -109,7 +117,7 @@ CLCASE
 </Fuselage Equipment>
 
 <source>
-TRO 3055u - Succession Wars
+TRO: 3055 Update
 </source>
 
 <tonnage>

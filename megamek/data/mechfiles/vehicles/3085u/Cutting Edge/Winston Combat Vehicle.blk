@@ -16,9 +16,13 @@ Tank
 Winston Combat Vehicle
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+3553
+</mul id:>
 
 <year>
 3086
@@ -27,6 +31,10 @@ Winston Combat Vehicle
 <type>
 IS Level 2
 </type>
+
+<role>
+Missile Boat
+</role>
 
 <tonnage>
 70.0
@@ -91,3 +99,6 @@ Light PPC
 Light PPC
 </Turret Equipment>
 
+<source>
+TRO: 3085
+</source>

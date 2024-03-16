@@ -20,6 +20,10 @@ Chalchiuhtotolin Support Tank
 (XL)
 </Model>
 
+<mul id:>
+6756
+</mul id:>
+
 <year>
 3120
 </year>
@@ -27,6 +31,10 @@ Chalchiuhtotolin Support Tank
 <type>
 Clan Level 4
 </type>
+
+<role>
+Brawler
+</role>
 
 <motion_type>
 Wheeled
@@ -86,7 +94,7 @@ CLStreakLRM15
 </Turret Equipment>
 
 <source>
-RS 3145 NTNU - Late Republic
+Record Sheets: 3145 New Tech New Upgrades
 </source>
 
 <tonnage>

@@ -20,6 +20,10 @@ Scapha Hovertank
 (F)
 </Model>
 
+<mul id:>
+6664
+</mul id:>
+
 <year>
 3123
 </year>
@@ -27,6 +31,10 @@ Scapha Hovertank
 <type>
 IS Level 3
 </type>
+
+<role>
+Scout
+</role>
 
 <motion_type>
 Hover
@@ -88,7 +96,7 @@ ISTAG:OMNI
 </Turret Equipment>
 
 <source>
-TRO 3145 Republic of the Sphere - Late Republic
+TRO: 3145 Republic of the Sphere
 </source>
 
 <tonnage>

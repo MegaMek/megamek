@@ -40,7 +40,7 @@ public abstract class TurnOrdered implements ITurnOrdered {
     /**
      * Return the number of "normal" turns that this item requires. This is
      * normally the sum of multi-unit turns and the other turns.
-     * <p/>
+     * <p>
      * Subclasses are expected to override this value in order to make the "move
      * even" code work correctly.
      *
@@ -48,7 +48,7 @@ public abstract class TurnOrdered implements ITurnOrdered {
      *         take in a phase.
      */
     @Override
-    public int getNormalTurns(Game game) {
+    public int getNormalTurns(IGame game) {
         return getMultiTurns(game) + getOtherTurns();
     }
 
@@ -63,7 +63,7 @@ public abstract class TurnOrdered implements ITurnOrdered {
     }
 
     @Override
-    public int getMultiTurns(Game game) {
+    public int getMultiTurns(IGame game) {
         int turns = 0;
         // turns_multi is transient, so it could be null
         if (turns_multi == null) {
@@ -312,13 +312,10 @@ public abstract class TurnOrdered implements ITurnOrdered {
                 for (ITurnOrdered item : v) {
                     if (!item.equals(winningElement)) {
                         int newBonus = 0;
-                        boolean observer = false;
+                        boolean observer = ((item instanceof Player) && ((Player) item).isObserver())
+                                || ((item instanceof Team) && ((Team) item).isObserverTeam());
                         // Observers don't have initiative, and they don't get initiative compensation
-                        if (((item instanceof Player) && ((Player) item).isObserver())
-                                || ((item instanceof Team) && ((Team) item).isObserverTeam())) {
-                            observer = true;
-                        }
-                        
+
                         if (!item.equals(lastRoundInitWinner) && !observer) {
                             newBonus = item.getInitCompensationBonus() + 1;
                         }
@@ -340,7 +337,7 @@ public abstract class TurnOrdered implements ITurnOrdered {
      * 
      * @param v
      *            A vector of items that need to have turns.
-     * @param rerollRequests
+     * @param rerollRequests null when there should be no re-rolls
      * @param bInitCompBonus
      *            A flag that determines whether initiative compensation bonus
      *            should be used: used to prevent one side getting long init win
@@ -411,7 +408,7 @@ public abstract class TurnOrdered implements ITurnOrdered {
     /**
      * This takes a Vector of TurnOrdered and generates a TurnVector.
      */
-    public static TurnVectors generateTurnOrder(List<? extends ITurnOrdered> v, Game game) {
+    public static TurnVectors generateTurnOrder(List<? extends ITurnOrdered> v, IGame game) {
         int[] num_even_turns = new int[v.size()];
         int[] num_normal_turns = new int[v.size()];
         int[] num_space_station_turns = new int[v.size()];

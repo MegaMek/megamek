@@ -13,6 +13,8 @@
  */
 package megamek.common;
 
+import org.apache.logging.log4j.LogManager;
+
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Vector;
@@ -209,6 +211,7 @@ public class MMRoll extends Roll {
     }
 
     /**
+     * FIXME : Convert to actual unit testing
      * Test harness for this class.
      * 
      * @param args - the array of <code>String</code> arguments: first is the
@@ -241,16 +244,14 @@ public class MMRoll extends Roll {
             
             // Make sure that we got good input.
             if (count < 1) {
-                System.err.println("You must specify at least one roll.");
+                LogManager.getLogger().error("You must specify at least one roll.");
                 System.exit(2);
-            }
-            if (sides < 2) {
-                System.err.println("You must specify at least two faces.");
+            } else if (sides < 2) {
+                LogManager.getLogger().error("You must specify at least two faces.");
                 System.exit(3);
             }
-        } catch (NumberFormatException nfe) {
-            System.err.println("You must only supply integers.");
-            System.err.println(nfe.getMessage());
+        } catch (Exception ex) {
+            LogManager.getLogger().error("You must only supply integers.", ex);
             System.exit(1);
         }
 
@@ -261,16 +262,18 @@ public class MMRoll extends Roll {
 
         // Roll the virtual dice.
         MMRoll roll = new MMRoll(rng, sides, start);
-        for (int loop = 1; loop < count; loop++)
+        for (int loop = 1; loop < count; loop++) {
             roll.addRoll(rng);
+        }
 
         // Output results.
         Roll.output(roll);
 
         // Get a second roll.
         MMRoll roll2 = new MMRoll(rng, sides, start);
-        for (int loop = 1; loop < count; loop++)
+        for (int loop = 1; loop < count; loop++) {
             roll2.addRoll(rng);
+        }
 
         // Output second results.
         Roll.output(roll2);

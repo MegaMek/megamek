@@ -1,12 +1,20 @@
-Version:1.0
-Toyama
-TYM-1A
+chassis:Toyama
+model:TYM-1A
+mul id:3278
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3057
-Source:TRO 3060
+Source:TRO: 3060
 Rules Level:2
+role:Sniper
+
+
+
+
+quirk:bad_rep_clan
+quirk:bad_rep_is
+
 
 Mass:75
 Engine:300 XL Engine

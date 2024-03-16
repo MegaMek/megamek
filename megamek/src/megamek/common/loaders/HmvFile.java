@@ -363,9 +363,9 @@ public class HmvFile implements IMechLoader {
             }
 
             dis.close();
-        } catch (IOException ex) {
-            ex.printStackTrace();
-            throw new EntityLoadingException("I/O Error reading file");
+        } catch (Exception ex) {
+            LogManager.getLogger().error("", ex);
+            throw new EntityLoadingException("Error reading file");
         }
     }
 
@@ -1095,7 +1095,6 @@ public class HmvFile implements IMechLoader {
         mixedAmmo.put(0xE2L, "CLSRT2 Ammo");
         mixedAmmo.put(0xE3L, "CLSRT4 Ammo");
         mixedAmmo.put(0xE4L, "CLSRT6 Ammo");
-
     }
 
     private String getEquipmentName(long equipment, HMVTechType techType) {
@@ -1103,16 +1102,16 @@ public class HmvFile implements IMechLoader {
     }
 
     private String getEquipmentName(Long equipment, HMVTechType techType) {
-        if (equipment.longValue() > Short.MAX_VALUE) {
-            equipment = equipment.longValue() & 0xFFFF;
+        if (equipment > Short.MAX_VALUE) {
+            equipment = equipment & 0xFFFF;
         }
-        final long value = equipment.longValue();
+        final long value = equipment;
 
         String equipName = null;
         try {
             equipName = EQUIPMENT.get(techType).get(equipment);
-        } catch (NullPointerException e) {
-            // is handeled by the if below.
+        } catch (Exception ignored) {
+            // is handled by the if below.
         }
         if (equipName == null) {
             Hashtable<Long, String> techEquipment = EQUIPMENT.get(techType);
@@ -1167,7 +1166,7 @@ public class HmvFile implements IMechLoader {
         try {
             ammoName = AMMO.get(techType).get(ammo);
         } catch (NullPointerException e) {
-            // is handeled by the if below.
+            // is handled by the if below.
         }
         if (ammoName == null) {
             Hashtable<Long, String> techAmmo = AMMO.get(techType);

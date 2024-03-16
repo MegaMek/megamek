@@ -1,12 +1,17 @@
-Version:1.0
-Warhammer IIC
-10
+chassis:Warhammer IIC
+model:10
+mul id:6859
 
 Config:Biped
 TechBase:Clan
 Era:3120
-Source:RS 3145 NT NU
+Source:Record Sheets: 3145 New Tech New Upgrades 
 Rules Level:2
+role:Sniper
+
+quirk:searchlight
+quirk:stable
+
 
 Mass:80
 Engine:320 Fusion (Clan) Engine(IS)
@@ -151,4 +156,18 @@ CLDoubleHeatSink
 -Empty-
 -Empty-
 
+overview:The Clan's interpretation on the classic Warhammer has never been subtle. The BattleMech's hyper-advanced technology only emphasized and improved its duty as a frontline brawler; boosting its mass by 10 tons (with equivalent increases in armor protection) made it even more powerful.
 
+capabilities:Thanks to their technological expertise, they were able to add ten tons with the same speed and firepower and nearly double the armor of the original. The Warhammer IIC is built on an Endo Steel frame and is protected by tons of ferro-fibrous armor. The result is a dangerous 'Mech, able to hold its own in any battle against the Inner Sphere. Also note that the armor was the primary concern when designing the IIC version rivaling even 100 ton assault 'Mechs in durability and protection.
+
+deployment:Introduced in the Dark Age era, this version carries four ER Large Lasers supported by twin SRM-6 launchers. A single ER Small Laser rounds out the armament. It's powered by a standard fusion engine, but uses an Endo Steel frame and ferro-fibrous armor. 
+
+history:The Warhammer IIC is now the most common Clan BattleMech in the Inner Sphere. These remarkable machines are fielded by every major Inner Sphere force, Clan, and many large mercenary groups. It is only found on the periphery, where its equally outstanding price tag is simply too high for these countries to justify.
+
+manufacturer:Snow Raven Industrial Complex Alpha,Mu Manufacturing Plant 3H,Sheridan LM-TA 8-10
+primaryfactory:Dante,Paxon,Sheridan
+systemmanufacturer:CHASSIS:SFX-80 Endo
+systemmanufacturer:ENGINE:Type 320 Fusion
+systemmanufacturer:ARMOR:Forging ZM15 Ferro-Fibrous
+systemmanufacturer:COMMUNICATIONS:TDWS-37 Mk 2.2
+systemmanufacturer:TARGETING:“Hephaestus” CT-44

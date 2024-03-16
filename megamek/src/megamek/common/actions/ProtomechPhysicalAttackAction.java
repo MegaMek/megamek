@@ -14,8 +14,10 @@
 
 package megamek.common.actions;
 
+import megamek.client.ui.Messages;
 import megamek.common.*;
 import megamek.common.options.OptionsConstants;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * The attacking ProtoMech makes its combo physical attack action.
@@ -79,13 +81,18 @@ public class ProtomechPhysicalAttackAction extends AbstractAttackAction {
         int targetId = Entity.NONE;
         Entity te = null;
         // arguments legal?
-        if ((ae == null) || (target == null)) {
-            throw new IllegalArgumentException("Attacker or target not valid");
+        if (ae == null) {
+            LogManager.getLogger().error("Attacker not valid");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Attacker not valid");
+        }
+        if (target == null) {
+            LogManager.getLogger().error("target not valid");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "target not valid");
         }
 
         if (target.getTargetType() == Targetable.TYPE_ENTITY) {
             te = (Entity) target;
-            targetId = target.getTargetId();
+            targetId = target.getId();
         }
 
         if (!game.getOptions().booleanOption(OptionsConstants.BASE_FRIENDLY_FIRE)) {
@@ -108,9 +115,9 @@ public class ProtomechPhysicalAttackAction extends AbstractAttackAction {
         final int attackerElevation = ae.getElevation() + attHex.getLevel();
         final int targetHeight = target.relHeight() + targHex.getLevel();
         final int targetElevation = target.getElevation() + targHex.getLevel();
-        
+
         boolean inSameBuilding = Compute.isInSameBuilding(game, ae, te);
-        
+
         ToHitData toHit;
 
         // can't target yourself
@@ -177,7 +184,7 @@ public class ProtomechPhysicalAttackAction extends AbstractAttackAction {
         // target terrain
         if (te != null) {
             toHit.append(Compute.getTargetTerrainModifier(game, te, 0, inSameBuilding));
-        }        
+        }
 
         // target prone
         if ((te != null) && te.isProne()) {
@@ -201,5 +208,11 @@ public class ProtomechPhysicalAttackAction extends AbstractAttackAction {
 
         // done!
         return toHit;
+    }
+
+    @Override
+    public String toSummaryString(final Game game) {
+        final String roll = this.toHit(game).getValueAsString();
+        return Messages.getString("BoardView1.ProtomechPhysicalAttackAction", roll);
     }
 }

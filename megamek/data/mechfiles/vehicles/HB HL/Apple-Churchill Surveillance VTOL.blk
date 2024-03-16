@@ -16,9 +16,13 @@ SupportVTOL
 Apple-Churchill Surveillance VTOL
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+3708
+</mul id:>
 
 <year>
 2971
@@ -27,6 +31,10 @@ Apple-Churchill Surveillance VTOL
 <type>
 IS Level 3
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 VTOL
@@ -91,7 +99,7 @@ cargobay:.5:1
 </transporters>
 
 <source>
-HB:House Liao - Succession Wars
+Handbook: House Liao
 </source>
 
 <tonnage>

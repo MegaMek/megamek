@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2021-2022 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -18,14 +18,15 @@
  */
 package megamek;
 
+import megamek.codeUtilities.StringUtility;
 import megamek.common.annotations.Nullable;
-import megamek.common.util.StringUtil;
-import megamek.utils.MegaMekXmlUtil;
+import megamek.utilities.xml.MMXMLUtility;
 import org.apache.logging.log4j.LogManager;
 
 import javax.swing.*;
 import java.io.PrintWriter;
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * This is used for versioning, and to track the current Version the suite is running at.
@@ -45,7 +46,7 @@ public final class Version implements Comparable<Version>, Serializable {
      * This Constructor is not to be used outside of unit testing
      */
     public Version() {
-        setRelease(1);
+        setRelease(0);
         setMajor(0);
         setMinor(0);
         setSnapshot(false);
@@ -54,6 +55,15 @@ public final class Version implements Comparable<Version>, Serializable {
     public Version(final @Nullable String text) {
         this();
         fillFromText(text);
+    }
+
+    public Version(final String release, final String major, final String minor,
+                   final String snapshot) throws NumberFormatException {
+        this();
+        setRelease(Integer.parseInt(release));
+        setMajor(Integer.parseInt(major));
+        setMinor(Integer.parseInt(minor));
+        setSnapshot(Boolean.parseBoolean(snapshot));
     }
     //endregion Constructors
 
@@ -194,14 +204,14 @@ public final class Version implements Comparable<Version>, Serializable {
 
     //region File I/O
     public void writeToXML(final PrintWriter pw, final int indent) {
-        MegaMekXmlUtil.writeSimpleXMLTag(pw, indent, "version", toString());
+        MMXMLUtility.writeSimpleXMLTag(pw, indent, "version", toString());
     }
 
     public void fillFromText(final @Nullable String text) {
-        if (StringUtil.isNullOrEmpty(text)) {
+        if (StringUtility.isNullOrBlank(text)) {
             final String message = String.format(
                     "Cannot parse the version from %s. This may lead to severe issues that cannot be otherwise explained.",
-                    ((text == null) ? "a null string" : text));
+                    ((text == null) ? "a null string" : "a blank string"));
             LogManager.getLogger().fatal(message);
             JOptionPane.showMessageDialog(null, message, "Version Parsing Failure",
                     JOptionPane.ERROR_MESSAGE);

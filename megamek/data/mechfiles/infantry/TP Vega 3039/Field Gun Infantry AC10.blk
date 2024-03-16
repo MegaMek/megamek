@@ -13,12 +13,16 @@ Infantry
 </UnitType>
 
 <Name>
-Autocannon/10 Field Gun Infantry
+Field Gun Infantry Platoon (AC/10)
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+8410
+</mul id:>
 
 <year>
 2500
@@ -31,6 +35,10 @@ Autocannon/10 Field Gun Infantry
 <type>
 IS Level 3
 </type>
+
+<role>
+Ambusher
+</role>
 
 <motion_type>
 Motorized

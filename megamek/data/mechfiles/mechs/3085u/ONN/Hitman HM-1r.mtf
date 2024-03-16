@@ -1,12 +1,19 @@
-Version:1.1
-Hitman
-HM-1r
+chassis:Hitman
+model:HM-1r
+mul id:1534
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3069
-Source:Jihad
+source:TRO: 3085
 Rules Level:2
+role:Striker
+
+
+
+weaponquirk:accurate:HD:3:ISTAG
+weaponquirk:stable_weapon:HD:3:ISTAG
+
 
 Mass:30
 Engine:210 XL Engine

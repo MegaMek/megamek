@@ -20,6 +20,10 @@ Light Strike Fighter
 Andurien
 </Model>
 
+<mul id:>
+6966
+</mul id:>
+
 <year>
 3064
 </year>
@@ -31,6 +35,10 @@ Andurien
 <type>
 IS Level 2
 </type>
+
+<role>
+Fast Dogfighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -92,7 +100,7 @@ ISERSmallLaser
 </Fuselage Equipment>
 
 <source>
-TRO 3039 - Civil War
+TRO: 3039
 </source>
 
 <tonnage>

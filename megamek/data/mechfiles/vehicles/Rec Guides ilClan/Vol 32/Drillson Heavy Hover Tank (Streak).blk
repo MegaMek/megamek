@@ -1,0 +1,135 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+Drillson Heavy Hover Tank
+</Name>
+
+<Model>
+(Streak)
+</Model>
+
+<mul id:>
+933
+</mul id:>
+
+<year>
+3053
+</year>
+
+<originalBuildYear>
+3053
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<role>
+Striker
+</role>
+
+<motion_type>
+Hover
+</motion_type>
+
+<transporters>
+</transporters>
+
+<cruiseMP>
+9
+</cruiseMP>
+
+<engine_type>
+0
+</engine_type>
+
+<armor>
+25
+21
+21
+20
+25
+</armor>
+
+<Body Equipment>
+IS Streak SRM 2 Ammo
+IS Streak SRM 2 Ammo
+</Body Equipment>
+
+<Front Equipment>
+ISStreakSRM2
+ISStreakSRM2
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+ISLargePulseLaser
+ISStreakSRM2
+ISStreakSRM2
+</Turret Equipment>
+
+<source>
+Rec Guide:ilClan #32
+</source>
+
+<tonnage>
+50.0
+</tonnage>
+
+<systemManufacturers>
+ENGINE:MaxLift 215 Fusion
+ARMOR:ArcShield Heavy
+COMMUNICATIONS:Cyclops 1
+TARGETING:Evil Eye
+</systemManufacturers>
+
+<overview>
+Its mix of thick armor, speed, and hitting power quickly made it a favorite of even the most hidebound Lyran generals.
+</overview>
+
+<capabilities>
+The Drillson's electronics are its focal point. During the Fourth Succession War, the Evil Eye targeting and tracking system, a groundbreaking 360-degree vision system similar to the heads-up display in BattleMech targeting systems, proved to be one of the fi nest conventional electronics systems in use. Using a combination of energy and missile armaments, it can hit and damage targets at a variety of ranges. The Drillson's superb armor is what genuinely endears it to Lyran commanders. With over seven tons of ArcShield armor on the chassis, the Drillson can withstand more abuse than most people believe a hovercraft can.
+</capabilities>
+
+<deployment>
+This updated post–Clan Invasion model of the Drillson from 3053 features an updated weapons package. The HoverTech SRM racks have been removed and more efficient Streak SRM-2s fitted. The venerable Cyclops Eye system has been retired in favor of a modern Large Pulse Laser .
+</deployment>
+
+<history>
+The Drillson spread across the Inner Sphere thanks to the rapid increase of production in the early 3030s, while the lion's share remains with the allied states of the Lyran Commonwealth and the Federated Suns. The Capellans have grouped the majority of theirs into Home Guard battalions and numerous renowned Liao-sponsored mercenary formations, such as McCarron's Armored Cavalry. There were frequent rumors that ComStar had approached Cyclops about obtaining the Drillson for its (then) newly-unveiled Com Guards. The LCAF had many holes in its ranks to fill with new vehicles as a result of the slaughter of that battle, and the new agreement with the Federated Suns opened that realm's military to Lyran markets as well. Davion officers, impressed with the Drillson's performance during the Fourth War, persuaded the AFFS Department of the Quartermaster to obtain as many Drillsons as possible. Cyclops opened six more lines on New Earth by 3035 to accommodate demand.
+</history>
+
+<manufacturer>
+Cyclops Incorporated
+</manufacturer>
+
+<primaryFactory>
+New Earth	
+</primaryFactory>
+
+<systemManufacturers>
+ENGINE:MaxLift 215 Fusion
+ARMOR:ArcShield Heavy
+COMMUNICATIONS:Cyclops 1
+TARGETING:Evil Eye
+</systemManufacturers>

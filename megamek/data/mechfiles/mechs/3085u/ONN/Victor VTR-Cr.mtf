@@ -1,12 +1,18 @@
-Version:1.0
-Victor
-VTR-Cr
+chassis:Victor
+model:VTR-Cr
+mul id:3416
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3069
-Source:Jihad
+source:TRO: 3085
 Rules Level:4
+role:Skirmisher
+
+
+
+quirk:rugged_1
+
 
 Mass:80
 Engine:320 Fusion Engine(IS)
@@ -154,8 +160,7 @@ capabilities:Standing at 14 meters tall, the Victor approaches the concept of su
 
 deployment:A 3069 field refit, this version uses an then experimental C3 Boosted Slave to cut through the electronic interference common on Jihad battlefields. In addition it replaces the AC/20 with a Hypervelocity AC/10. A Streak SRM-4 and pair of Medium Lasers round out the armament. CASE systems protect the ammunition. 
 
-history:An estimated one thousand Victors had been produced by the time the Star League fell. Many of these left with Aleksandr Kerensky during the Exodus, and when HildCo Interplanetary's three Victor factories were destroyed during the First Succession War, the 'Mech became a prized target with all sides scrambling to salvage serviceable units. Only Independence Weaponry retained the ability to build new Victors, and with their capture by the Federated Suns during the Second Succession War it became the AFFS' primary assault 'Mech and a favorite command model for battalion and regimental commanders. Though the Draconis Combine would eventually retake the company following the War of 3039, most Kurita samurai were too proud to adopt a 'Mech now associated with their enemy, while the Davions made do with purchasing new models from the rebuilt HildCo factory in the St. Ives Compact and funding the construction of Styk's Tao MechWorks.
-By the time of the Clan Invasion new models of Victors were being produced which incorporated new-found lostech into their design. The formation of the Second Star League and destruction of Clan Smoke Jaguar would finally win the design acceptance by Combine warriors, while the conquest of Styk and St. Ives by the Capellan Confederation forced the Federated Commonwealth to contract General Motors to build more Victors. Though it had officially fallen out of favor, during the FedCom Civil War the Victor remained the favorite of Allied forces, with newer variants seeing use in the years afterwards
+history:An estimated one thousand Victors had been produced by the time the Star League fell. Many of these left with Aleksandr Kerensky during the Exodus, and when HildCo Interplanetary's three Victor factories were destroyed during the First Succession War, the 'Mech became a prized target with all sides scrambling to salvage serviceable units. Only Independence Weaponry retained the ability to build new Victors, and with their capture by the Federated Suns during the Second Succession War it became the AFFS' primary assault 'Mech and a favorite command model for battalion and regimental commanders. Though the Draconis Combine would eventually retake the company following the War of 3039, most Kurita samurai were too proud to adopt a 'Mech now associated with their enemy, while the Davions made do with purchasing new models from the rebuilt HildCo factory in the St. Ives Compact and funding the construction of Styk's Tao MechWorks. By the time of the Clan Invasion new models of Victors were being produced which incorporated new-found lostech into their design. The formation of the Second Star League and destruction of Clan Smoke Jaguar would finally win the design acceptance by Combine warriors, while the conquest of Styk and St. Ives by the Capellan Confederation forced the Federated Commonwealth to contract General Motors to build more Victors. Though it had officially fallen out of favor, during the FedCom Civil War the Victor remained the favorite of Allied forces, with newer variants seeing use in the years afterwards
 
 manufacturer:HildCo Interplanetary, HildCo Interplanetary, General Motors/Blackwell Corporation, Independence Weaponry, Robinson Standard BattleWorks, Tao 'Mechworks, TharHes Industries
 primaryfactory:St. Ives, Carver V/Liberty, New Valencia, Quentin, Robinson, Styk, Tharkad
@@ -165,8 +170,3 @@ systemmanufacturer:ARMOR:Durallex Heavy with CASE
 systemmanufacturer:JUMPJET:Lexington Ltd. Lifters
 systemmanufacturer:COMMUNICATIONS:Sipher Security Plus
 systemmanufacturer:TARGETING:Matabushi Sentinel
-
-
-
-
-

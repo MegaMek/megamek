@@ -1,12 +1,24 @@
-Version:1.1
-Bellerophon
-BEL-1X
+chassis:Bellerophon
+model:BEL-1X
+mul id:3817
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2442
-Source:XTRO Primitives III - Age of War
+Source:XTR: Primitives III
 Rules Level:4
+role:Brawler
+
+
+
+
+quirk:cowl
+quirk:prototype
+quirk:unbalanced
+quirk:obsolete
+weaponquirk:em_interference:RA:3:ISLargeLaser
+weaponquirk:em_interference:RA:5:ISLargeLaser
+
 
 Mass:60
 Engine:290 Fusion Engine(IS)

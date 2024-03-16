@@ -16,9 +16,13 @@ Tank
 Sokar Urban Combat Unit
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+5096
+</mul id:>
 
 <year>
 3084
@@ -27,6 +31,10 @@ Sokar Urban Combat Unit
 <type>
 Clan Level 3
 </type>
+
+<role>
+Ambusher
+</role>
 
 <motion_type>
 Wheeled
@@ -89,9 +97,17 @@ CLAPGaussRifle
 </Turret Equipment>
 
 <source>
-TRO:Prototype
+TRO: Prototypes
 </source>
 
 <tonnage>
 50.0
 </tonnage>
+
+<quirks>
+gas_hog
+poor_work
+imp_target_short
+trailer_hitch
+</quirks>
+

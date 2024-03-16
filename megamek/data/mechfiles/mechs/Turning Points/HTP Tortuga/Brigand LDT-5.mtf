@@ -1,12 +1,18 @@
-Version:1.0
-Brigand
-LDT-5
+chassis:Brigand
+model:LDT-5
+mul id:7312
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3083
-Source:HTP Tortuga
+Source:Historical Turning Points: Tortuga
 Rules Level:3
+role:Striker
+
+
+
+quirk:nimble_jumper
+
 
 Mass:25
 Engine:175 XL Engine(IS)

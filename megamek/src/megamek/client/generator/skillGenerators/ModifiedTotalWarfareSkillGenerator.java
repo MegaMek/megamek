@@ -23,10 +23,6 @@ import megamek.client.generator.enums.SkillGeneratorType;
 import megamek.common.*;
 
 public class ModifiedTotalWarfareSkillGenerator extends TotalWarfareSkillGenerator {
-    //region Variable Declarations
-    private static final long serialVersionUID = -4805975255577570411L;
-    //endregion Variable Declarations
-
     //region Constructors
     public ModifiedTotalWarfareSkillGenerator() {
         super(SkillGeneratorMethod.MODIFIED_TOTAL_WARFARE);
@@ -34,8 +30,9 @@ public class ModifiedTotalWarfareSkillGenerator extends TotalWarfareSkillGenerat
     //endregion Constructors
 
     @Override
-    protected int determineBonus(final Entity entity, final boolean forceClan) {
-        final SkillGeneratorType type = (forceClan && entity.isClan()) ? SkillGeneratorType.CLAN : getType();
+    protected int determineBonus(final Entity entity, final boolean clanPilot,
+                                 final boolean forceClan) {
+        final SkillGeneratorType type = (forceClan && clanPilot) ? SkillGeneratorType.CLAN : getType();
 
         int bonus = 0;
         if (type.isClan()) {
@@ -46,6 +43,10 @@ public class ModifiedTotalWarfareSkillGenerator extends TotalWarfareSkillGenerat
             }
         } else if (type.isManeiDomini()) {
             bonus++;
+        } else if (type.isSociety()) {
+            if ((entity instanceof Mech) || (entity instanceof Tank)) {
+                bonus -= 1;
+            }
         }
 
         // Demands of dual training

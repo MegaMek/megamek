@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,50 +20,112 @@ Skulker Wheeled Scout Tank
 (C3M)
 </Model>
 
-<Tonnage>
-20
-</Tonnage>
-
-<cruiseMP>
-7
-</cruiseMP>
-
-#Order is Tank/VTOL/LST
-<Armor>
-18
-18
-18
-17
-</Armor>
-
-<Body Equipment>
-ISC3MasterUnit
-</Body Equipment>
-
-<type>
-IS Level 2
-</type>
+<mul id:>
+2955
+</mul id:>
 
 <year>
 3077
 </year>
 
-<source>
-Jihad
-</source>
+<originalBuildYear>
+3077
+</originalBuildYear>
 
-<internal_type>
-0
-</internal_type>
+<type>
+IS Level 2
+</type>
 
-<armor_type>
-1
-</armor_type>
+<role>
+Scout
+</role>
+
+<motion_type>
+Wheeled
+</motion_type>
+
+<transporters>
+</transporters>
+
+<cruiseMP>
+7
+</cruiseMP>
 
 <engine_type>
 1
 </engine_type>
 
-<motion_type>
-Wheeled
-</motion_type>
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
+18
+18
+18
+17
+</armor>
+
+<Body Equipment>
+ISC3MasterUnit
+</Body Equipment>
+
+<Front Equipment>
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<capabilities>
+The Skulker is the much larger cousin of the Swift Wind scout car and originally based on the Heavy APC design. Due to it being larger than any scout car, it can act as a mobile communication outpost. With its advanced sensor suite which is tied to both its communication and targeting systems, it can navigate with only its sensors.  The Skulker comes with four and a half tons of armor as standard.
+</capabilities>
+
+<overview>
+While there are many different types of scout units, the majority are small, fast vehicles. Joint Equipment Systems chose a different path, creating a larger and more spacious vehicle. The Skulker does its job well despite its slower speed.
+</overview>
+
+<deployment>
+This variant, developed during the Jihad, carries no weapons of any sort. Instead it provides combat targeting coordination via a C3 master computer. After installing the master, engineers added more armor protection.
+</deployment>
+
+<history>
+Skulkers are the primary scouting vehicle for the Draconis Combine, and almost all conventional Combine units have at least one. The Skulker's spacious, comfortable interior makes it popular among scouting crews who can obtain them in other countries. The secondhand market for Skulkers is thriving, as are JES's sales when the Combine allows the tank to be exported. Since the end of the Fourth Succession War, sales to the Capellan Confederation and Free Worlds League have increased.
+</history>
+
+<manufacturer>
+Field Refit
+</manufacturer>
+
+<primaryFactory>
+Various
+</primaryFactory>
+
+<systemManufacturers>
+ENGINE:GM 120 Classic ICE
+ARMOR:ProtecTech Light
+COMMUNICATIONS:Communique Equipment
+TARGETING:Targeting System 2.3
+</systemManufacturers>
+
+<source>
+TRO: 3085
+</source>
+
+<tonnage>
+20.0
+</tonnage>
+
+<fuelType>
+PETROCHEMICALS
+</fuelType>
+

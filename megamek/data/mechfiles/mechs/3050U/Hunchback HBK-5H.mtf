@@ -1,12 +1,19 @@
-Version:1.0
-Hunchback
-HBK-5H
+chassis:Hunchback
+model:HBK-5H
+mul id:1560
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3064
-Source:TRO 3050 - Civil War
+Source:TRO: 3050
 Rules Level:2
+role:Juggernaut
+
+
+
+quirk:battle_fists_la
+quirk:battle_fists_ra
+
 
 Mass:50
 Engine:200 Fusion Engine

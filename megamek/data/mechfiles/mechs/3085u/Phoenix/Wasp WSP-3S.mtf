@@ -1,12 +1,21 @@
-Version:1.2
-Wasp
-WSP-3S
+chassis:Wasp
+model:WSP-3S
+mul id:3529
 
 Config:Biped
 techbase:Inner Sphere
 era:3067
-source:TRO Project Pheonix - Civil War
+source:TRO: Project Pheonix
 rules level:2
+role:Scout
+
+
+
+quirk:easy_maintain
+quirk:ext_twist
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+
 
 mass:20
 engine:120 Light Engine(IS)

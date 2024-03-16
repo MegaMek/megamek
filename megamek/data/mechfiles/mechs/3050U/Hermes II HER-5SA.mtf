@@ -1,12 +1,19 @@
-Version:1.0
-Hermes II
-HER-5SA
+chassis:Hermes II
+model:HER-5SA
+mul id:1502
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3068
-Source:TRO 3050 - Jihad
+Source:TRO: 3050
 Rules Level:2
+role:Striker
+
+
+
+quirk:easy_maintain
+quirk:imp_com
+
 
 Mass:40
 Engine:240 XL Engine

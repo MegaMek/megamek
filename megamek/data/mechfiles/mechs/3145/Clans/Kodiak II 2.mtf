@@ -1,12 +1,17 @@
-Version:1.0
-Kodiak II
-2
+chassis:Kodiak II
+model:2
+mul id:6296
 
 Config:Biped
 TechBase:Clan
 Era:3139
-Source:TRO 3145 The Clans - Late Republic
+Source:TRO: 3145 The Clans
 Rules Level:4
+role:Brawler
+
+quirk:command_mech
+quirk:distracting
+
 
 Mass:100
 Engine:400 XXL (Clan) Engine(IS)

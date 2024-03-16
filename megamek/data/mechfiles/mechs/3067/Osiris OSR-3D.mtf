@@ -1,69 +1,79 @@
-Version:1.0
-Osiris
-OSR-3D
+chassis:Osiris
+model:OSR-3D
+mul id:4763
 
 Config:Biped
-TechBase:Inner Sphere
-Era:3063
-Rules Level:2
-source:TRO 3067
+techbase:Inner Sphere
+era:3063
+source:TRO: 3067
+rules level:2
+role:Striker
 
-Mass:30
-Engine:240 XL Engine
-Structure:Endo Steel
-Myomer:Standard
 
-Heat Sinks:10 Double
-Walk MP:8
-Jump MP:4
 
-Armor:Ferro-Fibrous
-LA Armor:8
-RA Armor:8
-LT Armor:8
-RT Armor:8
-CT Armor:10
-HD Armor:7
-LL Armor:11
-RL Armor:11
-RTL Armor:3
-RTR Armor:3
-RTC Armor:3
 
-Weapons:5
-2 ISERMediumLaser, Right Arm
-1 ISSRM6, Left Arm, Ammo:15
-1 ISERMediumLaser, Right Torso
-1 ISMachine Gun, Left Torso, Ammo:100
-2 ISERMediumLaser, Center Torso
+quirk:ext_twist
+weaponquirk:direct_torso_mount:CT:10:ISERMediumLaser
+
+
+mass:30
+engine:240 XL Engine(IS)
+structure:IS Endo Steel
+myomer:Standard
+
+heat sinks:10 IS Double
+walk mp:8
+jump mp:4
+
+armor:Ferro-Fibrous(Inner Sphere)
+LA armor:8
+RA armor:8
+LT armor:8
+RT armor:8
+CT armor:10
+HD armor:7
+LL armor:11
+RL armor:11
+RTL armor:3
+RTR armor:3
+RTC armor:3
+
+Weapons:7
+SRM 6, Left Arm
+ER Medium Laser, Right Arm
+ER Medium Laser, Right Arm
+Machine Gun, Left Torso
+ER Medium Laser, Right Torso
+ER Medium Laser, Center Torso
+ER Medium Laser, Center Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-ISSRM6
-ISSRM6
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
+SRM 6
+SRM 6
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
 ISERMediumLaser
 ISERMediumLaser
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 
 Left Torso:
 Fusion Engine
@@ -71,13 +81,13 @@ Fusion Engine
 Fusion Engine
 Jump Jet
 Jump Jet
-ISMachine Gun
-ISSRM6 Ammo
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
+Machine Gun
+IS Machine Gun Ammo - Half
+IS Ammo SRM-6
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Right Torso:
 Fusion Engine
@@ -86,12 +96,12 @@ Fusion Engine
 Jump Jet
 Jump Jet
 ISERMediumLaser
-ISMG Ammo (100)
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+IS Endo Steel
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 
 Center Torso:
 Fusion Engine
@@ -111,7 +121,7 @@ Head:
 Life Support
 Sensors
 Cockpit
-Endo-Steel
+IS Endo Steel
 Sensors
 Life Support
 -Empty-
@@ -126,8 +136,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Ferro-Fibrous
-Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -140,8 +150,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Ferro-Fibrous
-Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -150,11 +160,8 @@ Ferro-Fibrous
 -Empty-
 
 overview:The Osiris was essentially modeled after the Clan Dragonfly and designed by the same engineers who designed the Anubis. The Osiris was designed to be a fast, hit-and-fade style offensive platform and can perform well in that capacity with its awesome speed, although it does appear to rely too heavily on its mobility to protect it from damage.
-
 capabilities:While the limits of Inner Sphere technology forced the designers to skimp on the specifications somewhat, the Osiris does maintain the same speed as the design it is based off of with its powerful Pharaoh 240 XL. The armor and jump capacity are sadly lacking, however, as the Osiris can only jump half as far as the Dragonfly with its four Rawlings 61 jump jets and is armored with four and a half tons of StarGuard Ferro-Fibrous.
-
 deployment:The Osiris' primary weapons are its five Bright Bloom ER Medium Lasers. They can dish out a lot of damage very quickly, and are perfect for a light 'Mech that may be operating far from resupply. The Harpoon-6 SRM-6 gives the 'Mech a supplementary short range punch, while the Double-Gun Machine Gun can quickly deal with unarmored infantry. Pilots do have to be very careful, however, as the 'Mech can overheat rather rapidly if it gets pushed too hard.
-
 manufacturer:Achernar BattleMechs
 primaryfactory:New Avalon
 systemmanufacturer:CHASSIS:FITES-O
@@ -162,3 +169,4 @@ systemmanufacturer:ENGINE:Pharaoh 240 XL
 systemmanufacturer:ARMOR:StarGuard Ferro-Fibrous
 systemmanufacturer:COMMUNICATIONS:Achernar Electronics HID-8.7
 systemmanufacturer:TARGETING:Federated Hunter Mk. VII
+

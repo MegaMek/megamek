@@ -14,6 +14,8 @@
 package megamek.common.weapons.autocannons;
 
 import megamek.common.AmmoType;
+import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.Mounted;
 import megamek.common.SimpleTechLevel;
 
 /**
@@ -41,7 +43,9 @@ public class CLImprovedAC2 extends ACWeapon {
         criticals = 1;
         bv = 37;
         cost = 75000;
-        shortAV = 20;
+        shortAV = 2;
+        medAV = 2;
+        longAV = 2;
         maxRange = RANGE_LONG;
         explosionDamage = damage;
         ammoType = AmmoType.T_AC_IMP;
@@ -52,5 +56,10 @@ public class CLImprovedAC2 extends ACWeapon {
                 .setClanApproximate(false, true, false, false, false)
                 .setProductionFactions(F_CLAN).setReintroductionFactions(F_EI)
                 .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+    }
+
+    @Override
+    public double getBattleForceDamage(int range, Mounted ignore) {
+        return range == AlphaStrikeElement.SHORT_RANGE ? 0.132 : 0.2;
     }
 }

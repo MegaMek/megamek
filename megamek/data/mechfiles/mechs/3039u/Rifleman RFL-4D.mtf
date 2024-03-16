@@ -1,12 +1,22 @@
-Version:1.0
-Rifleman
-RFL-4D
+chassis:Rifleman
+model:RFL-4D
+mul id:2698
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3021
-Source:TRO 3039 - Succession Wars
+Source:TRO: 3039
 Rules Level:1
+role:Sniper
+
+
+
+quirk:anti_air
+quirk:imp_com
+quirk:searchlight
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+
 
 Mass:60
 Engine:240 Fusion Engine

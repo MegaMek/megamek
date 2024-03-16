@@ -1,12 +1,18 @@
-Version:1.1
-Parash
-3
+chassis:Parash
+model:3
+mul id:7375
 
 Config:Biped
-TechBase:Mixed (IS Chassis)
+TechBase:Mixed (Clan Chassis)
 Era:3083
-Source:XTR Republic III - Jihad
+Source:XTR: Republic III
 Rules Level:4
+role:Striker
+
+quirk:low_profile
+weaponquirk:jettison_capable:RA:4:CLLargePulseLaser
+quirk:non_standard
+
 
 Mass:35
 Engine:245 XL (Clan) Engine

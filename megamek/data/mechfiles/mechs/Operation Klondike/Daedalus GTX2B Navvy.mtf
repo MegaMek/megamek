@@ -1,51 +1,56 @@
-Version:1.1
-Daedalus
-GTX2B 'Navvy'
+chassis:Daedalus
+model:GTX2B 'Navvy'
+mul id:795
 
 Config:Quad
-TechBase:Inner Sphere
-Era:2750
-Rules Level:2
+techbase:Inner Sphere
+era:2750
+source:Historical: Operation Klondike
+rules level:2
+role:Ambusher
 
-Mass:60
-Engine:240 Fusion Engine
-Structure:Industrial
-Myomer:Standard
-Cockpit:Industrial Cockpit
 
-Heat Sinks:10 Single
-Walk MP:4
-Jump MP:0
 
-Armor:Standard Armor
-LA Armor:19
-RA Armor:19
-LT Armor:14
-RT Armor:14
-CT Armor:22
-HD Armor:9
-LL Armor:19
-RL Armor:19
-RTL Armor:5
-RTR Armor:5
-RTC Armor:7
+quirk:difficult_maintain
 
-Weapons:9
-1 Lift Hoist, Right Torso
-1 Lift Hoist, Left Torso
-1 Cargo (1 ton), Left Torso
-1 Cargo (1 ton), Left Torso
-1 Cargo (1 ton), Right Torso
-1 Cargo (1 ton), Right Torso
-1 Cargo (1 ton), Right Torso
-1 Backhoe, Left Torso
-1 Rock Cutter, Right Torso
+
+mass:60
+engine:240 Fusion Engine(IS)
+structure:IS Industrial
+myomer:Standard
+cockpit:Industrial Cockpit
+gyro:Standard Gyro
+
+heat sinks:10 Single
+walk mp:4
+jump mp:0
+
+armor:Standard(Inner Sphere)
+FLL armor:19
+FRL armor:19
+LT armor:14
+RT armor:14
+CT armor:22
+HD armor:9
+RLL armor:19
+RRL armor:19
+RTL armor:5
+RTR armor:5
+RTC armor:7
+
+Weapons:0
 
 Front Left Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 -Empty-
 -Empty-
 
@@ -56,46 +61,52 @@ Lower Leg Actuator
 Foot Actuator
 -Empty-
 -Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Left Torso:
-Lift Hoist
-Lift Hoist
-Lift Hoist
+Lift Hoist/Arresting Hoist
+Lift Hoist/Arresting Hoist
+Lift Hoist/Arresting Hoist
 Backhoe
 Backhoe
 Backhoe
 Backhoe
 Backhoe
 Backhoe
-Cargo (1 ton)
-Cargo (1 ton)
+Cargo:SIZE:1.0
+Cargo:SIZE:1.0
 -Empty-
 
 Right Torso:
-Lift Hoist
-Lift Hoist
-Lift Hoist
+Lift Hoist/Arresting Hoist
+Lift Hoist/Arresting Hoist
+Lift Hoist/Arresting Hoist
 Rock Cutter
 Rock Cutter
 Rock Cutter
 Rock Cutter
 Rock Cutter
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
+Cargo:SIZE:1.0
+Cargo:SIZE:1.0
+Cargo:SIZE:1.0
 -Empty-
 
 Center Torso:
-Engine
-Engine
-Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
 Gyro
 Gyro
 Gyro
 Gyro
-Engine
-Engine
-Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
 -Empty-
 -Empty-
 
@@ -106,12 +117,24 @@ Cockpit
 Heat Sink
 Sensors
 Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Rear Left Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 -Empty-
 -Empty-
 
@@ -122,3 +145,11 @@ Lower Leg Actuator
 Foot Actuator
 -Empty-
 -Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

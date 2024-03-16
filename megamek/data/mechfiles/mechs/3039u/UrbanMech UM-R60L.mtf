@@ -1,12 +1,20 @@
-Version:1.0
-UrbanMech
-UM-R60L
+chassis:UrbanMech
+model:UM-R60L
+mul id:3355
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2925
-Source:TRO 3039 - Succession Wars
+Source:TRO: 3039
 Rules Level:1
+role:Ambusher
+
+
+
+quirk:ext_twist
+quirk:low_profile
+quirk:no_arms
+
 
 Mass:30
 Engine:60 Fusion Engine

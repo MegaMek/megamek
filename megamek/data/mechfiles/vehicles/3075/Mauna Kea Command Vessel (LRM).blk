@@ -20,17 +20,25 @@ Mauna Kea Command Vessel
 (LRM)
 </Model>
 
+<mul id:>
+2111
+</mul id:>
+
 <year>
 2515
 </year>
 
 <source>
-Star League
+TRO: 3075
 </source>
 
 <type>
 IS Level 2
 </type>
+
+<role>
+Missile Boat
+</role>
 
 <tonnage>
 85.0

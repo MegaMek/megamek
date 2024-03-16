@@ -1,0 +1,157 @@
+chassis:Supernova
+model:5
+mul id:8132
+
+Config:Biped
+techbase:Clan
+era:3144
+source:Rec Guide:ilClan #13
+rules level:2
+role:Sniper
+
+quirk:imp_target_long
+
+
+mass:90
+engine:270 Fusion (Clan) Engine(IS)
+structure:Clan Endo Steel
+myomer:Standard
+
+heat sinks:24 Clan Double
+walk mp:3
+jump mp:3
+
+armor:Standard(Clan)
+LA armor:30
+RA armor:30
+LT armor:30
+RT armor:30
+CT armor:45
+HD armor:9
+LL armor:36
+RL armor:36
+RTL armor:8
+RTR armor:8
+RTC armor:10
+
+Weapons:6
+ER Large Laser, Left Arm
+ER Large Laser, Left Arm
+ER Large Laser, Left Arm
+ER Large Laser, Right Arm
+ER Large Laser, Right Arm
+ER Large Laser, Right Arm
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+Clan Endo Steel
+Clan Endo Steel
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+Clan Endo Steel
+Clan Endo Steel
+
+Left Torso:
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+Coolant Pod
+Coolant Pod
+Jump Jet
+Clan Endo Steel
+
+Right Torso:
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+Coolant Pod
+Coolant Pod
+Jump Jet
+Clan Endo Steel
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+Clan Endo Steel
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLDoubleHeatSink
+CLDoubleHeatSink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLDoubleHeatSink
+CLDoubleHeatSink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

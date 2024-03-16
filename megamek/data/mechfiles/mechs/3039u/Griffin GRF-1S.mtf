@@ -1,12 +1,23 @@
-Version:1.0
-Griffin
-GRF-1S
+chassis:Griffin
+model:GRF-1S
+mul id:1298
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2857
-Source:TRO 3039 - Succession Wars
+Source:TRO: 3039
 Rules Level:1
+role:Skirmisher
+
+
+
+quirk:battle_fists_la
+quirk:battle_fists_ra
+quirk:rugged_1
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+weaponquirk:jettison_capable:RA:4:Large Laser
+
 
 Mass:55
 Engine:275 Fusion Engine

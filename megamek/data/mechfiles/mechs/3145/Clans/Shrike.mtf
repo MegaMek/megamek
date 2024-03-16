@@ -1,0 +1,177 @@
+chassis:Shrike
+model:
+mul id:6292
+
+Config:Biped
+TechBase:Clan
+Era:3113
+Source:TRO: 3145 The Clans
+Rules Level:3
+role:Sniper
+
+
+quirk:command_mech
+quirk:distracting
+quirk:reinforced_legs
+weaponquirk:exposed_linkage:LA:3:CLUltraAC5
+weaponquirk:exposed_linkage:LA:6:CLUltraAC5
+
+
+Mass:95
+Engine:380 XL (Clan) Engine(IS)
+Structure:Clan Endo Steel
+Myomer:Standard
+
+Heat Sinks:12 Laser
+Walk MP:4
+Jump MP:4
+
+Armor:Ferro-Fibrous(Clan)
+LA Armor:32
+RA Armor:32
+LT Armor:29
+RT Armor:29
+CT Armor:44
+HD Armor:9
+LL Armor:39
+RL Armor:39
+RTL Armor:10
+RTR Armor:10
+RTC Armor:15
+
+Weapons:5
+ER Large Laser, Left Torso
+ER Large Laser, Right Torso
+Ultra AC/5, Left Arm
+Ultra AC/5, Left Arm
+LRM 10, Center Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+CLUltraAC5
+CLUltraAC5
+CLUltraAC5
+CLUltraAC5
+CLUltraAC5
+CLUltraAC5
+Clan Ultra AC/5 Ammo
+Clan Ultra AC/5 Ammo
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+CLTargeting Computer
+CLTargeting Computer
+CLTargeting Computer
+CLTargeting Computer
+CLTargeting Computer
+Clan Endo Steel
+Clan Ferro-Fibrous
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+CLPartialWing
+CLPartialWing
+CLPartialWing
+Jump Jet
+Jump Jet
+CLERLargeLaser
+Clan Endo Steel
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+CLPartialWing
+CLPartialWing
+CLPartialWing
+Jump Jet
+Jump Jet
+CLERLargeLaser
+Clan Ammo LRM-10
+Clan Endo Steel
+Clan Ferro-Fibrous
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLLRM10
+Clan Ferro-Fibrous
+
+Head:
+Life Support
+Sensors
+Cockpit
+Clan Endo Steel
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Clan Endo Steel
+Clan Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Clan Endo Steel
+Clan Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+overview:The Shrike's humble origins derive from Red Devil Industries' Onager, which was clearly inspired by the aesthetics of Olivetti's Flamberge and Eyrie.	
+
+capabilities:Despite being heavier than its spiritual forefather, the Shrike outperforms the Onager in every way. It can outmaneuver many heavy and assault 'Mechs, and jump jets combined with a partial wing allow the Shrike to reach regions where most 'Mechs in its weight class cannot. The Shrike's armaments and targeting computer let it to remain a safe distance from its opponents, perhaps keeping the pilot safe without sacrificing accuracy, and reinforced legs promote Death From Above strikes on those who get too close. The Shrike is a command 'Mech with heavy armor, a command station, and a terrifying falcon shape.		
+
+deployment:The Shrike is outfitted with a powerful Targeting Computer that allows it to bring accurate firepower to bear on the battlefield. It has a hard-hitting armament that gives the 'Mech a powerful sting in combat at most ranges. A Type X "Long Bow" LRM-10-rack allows pilots to engage enemies at long range, and two Type 9 Ultra Autocannon/5s are effective against even other assault-class 'Mechs. Lastly, two Series 2b ER Large Lasers provide a fairly powerful punch should the other weapon systems deplete their ammunition.
+
+history:At first appearance, one might mistake the ferocious Shrike for another falcon-themed BattleMech manufactured by Olivetti Weaponry.  Eagle Craft Group adopted the Onager concept and retooled it to fit the Clan Council's rejuvenation mandates and design philosophy, following in the footsteps of the Eyrie. The heavier Shrike, which debuted shortly after Olivetti's similarly fashioned Gyrfalcon, drew praise from the warrior caste when it outperformed the Onager in every category. Many Falcon fighters issued Trials of Possession for Shrikes after observing them struggle against fast, heavy 'Mechs. Because of its agility, thick armor, range, precision, and terrifying battlefield presence, the Shrike has quickly become a favorite among Galaxy and Cluster commanders. Although a few salvaged chassis have appeared on Lyran black markets, the Shrike remains a Jade Falcon asset.
+
+manufacturer:Eagle Craft Group
+primaryfactory:Erewhon
+systemmanufacturer:CHASSIS:DSAM Endo 4
+systemmanufacturer:ENGINE:Olivetti 380 XL
+systemmanufacturer:ARMOR:Forging ZM15 Ferro-Fibrous
+systemmanufacturer:JUMPJET:Grandthrust Mk 5 with Partial Wing
+systemmanufacturer:COMMUNICATIONS:Raptor X-T Type iii
+systemmanufacturer:TARGETING:Goshawk E-Series
+

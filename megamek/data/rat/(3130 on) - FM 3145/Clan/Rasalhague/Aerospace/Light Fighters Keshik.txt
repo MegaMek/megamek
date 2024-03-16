@@ -1,0 +1,12 @@
+3145 Rasalhague Dominion Light Fighters - Keshik
+Chaeronea (Standard),1
+Issus (Standard),2
+Vandal Prime,3
+Batu Prime,4
+Avar Prime,5
+Sulla Prime,6
+Bashkir Prime,5
+Avar Prime,4
+Batu Prime,3
+Vandal Prime,2
+Sulla Prime,1

@@ -15,6 +15,10 @@ Challenger MBT
 <Model>
 XIVs
 </Model>
+
+<mul id:>
+541
+</mul id:>
 <Tonnage>
 90
 </Tonnage>
@@ -61,6 +65,10 @@ Environmental Sealing
 <type>
 IS Level 3
 </type>
+
+<role>
+Juggernaut
+</role>
 <year>
 3077
 </year>
@@ -77,5 +85,5 @@ IS Level 3
 Tracked
 </motion_type>
 <source>
-Jihad
+TRO: 3085
 </source>

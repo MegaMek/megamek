@@ -47,7 +47,7 @@ public interface ITechnology {
     int DATE_PS = 1950;
     int DATE_ES = 2100;
 
-    //codes for recording which factions had access to technology at various points
+    // codes for recording which factions had access to technology at various points
     int F_NONE = -1; // Indicates that factions should be ignored when calculating tech level.
     int F_IS = 0;
     int F_CC = 1;
@@ -281,12 +281,14 @@ public interface ITechnology {
                 || year < getReintroductionDate());
     }
 
-    default boolean isAvailableIn(int year, boolean clan) {
-        return year >= getIntroductionDate(clan) && getIntroductionDate(clan) != DATE_NONE  && !isExtinct(year, clan);
+    default boolean isAvailableIn(int year, boolean clan, boolean ignoreExtinction) {
+        return year >= getIntroductionDate(clan) && (getIntroductionDate(clan) != DATE_NONE)
+                && (ignoreExtinction || !isExtinct(year, clan));
     }
 
-    default boolean isAvailableIn(int year) {
-        return year >= getIntroductionDate() && getIntroductionDate() != DATE_NONE && !isExtinct(year);
+    default boolean isAvailableIn(int year, boolean ignoreExtinction) {
+        return year >= getIntroductionDate() && (getIntroductionDate() != DATE_NONE)
+                && (ignoreExtinction || !isExtinct(year));
     }
 
     default boolean isAvailableIn(int year, boolean clan, int faction) {
@@ -296,12 +298,12 @@ public interface ITechnology {
 
     default boolean isLegal(int year, int techLevel, boolean mixedTech) {
         return isLegal(year, SimpleTechLevel.convertCompoundToSimple(techLevel),
-                TechConstants.isClan(techLevel), mixedTech);
+                TechConstants.isClan(techLevel), mixedTech, false);
     }
 
-    default boolean isLegal(int year, SimpleTechLevel simpleRulesLevel, boolean clanBase, boolean mixedTech) {
+    default boolean isLegal(int year, SimpleTechLevel simpleRulesLevel, boolean clanBase, boolean mixedTech, boolean ignoreExtinct) {
         if (mixedTech) {
-            if (!isAvailableIn(year)) {
+            if (!isAvailableIn(year, ignoreExtinct)) {
                 return false;
             } else {
                 return getSimpleLevel(year).ordinal() <= simpleRulesLevel.ordinal();
@@ -311,7 +313,7 @@ public interface ITechnology {
                     && clanBase != isClan()) {
                 return false;
             }
-            if (!isAvailableIn(year, clanBase)) {
+            if (!isAvailableIn(year, clanBase, ignoreExtinct)) {
                 return false;
             }
             return getSimpleLevel(year, clanBase).ordinal() <= simpleRulesLevel.ordinal();

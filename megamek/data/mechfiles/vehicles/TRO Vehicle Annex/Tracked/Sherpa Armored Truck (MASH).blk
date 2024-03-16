@@ -20,6 +20,10 @@ Sherpa Armored Truck
 (MASH)
 </Model>
 
+<mul id:>
+5047
+</mul id:>
+
 <year>
 2430
 </year>
@@ -27,6 +31,10 @@ Sherpa Armored Truck
 <type>
 IS Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Tracked
@@ -86,7 +94,7 @@ Machine Gun
 </Turret Equipment>
 
 <source>
-TRO VAr - Age of War
+TRO: Vehicle Annex (Revised)
 </source>
 
 <tonnage>

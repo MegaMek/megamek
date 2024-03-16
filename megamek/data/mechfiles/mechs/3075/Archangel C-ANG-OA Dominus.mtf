@@ -1,12 +1,22 @@
-Version:1.1
-Archangel
-C-ANG-OA Dominus
+chassis:Archangel
+model:C-ANG-OA Dominus
+mul id:66
 
 Config:Biped Omnimech
 TechBase:Inner Sphere
 Era:3069
-Source:TRO 3075
+Source:TRO: 3075
 Rules Level:2
+role:Juggernaut
+
+
+
+quirk:command_mech
+quirk:imp_com
+quirk:imp_sensors
+quirk:bad_rep_clan
+quirk:bad_rep_is
+
 
 Mass:100
 Engine:300 Compact Engine(IS)

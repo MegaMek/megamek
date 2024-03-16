@@ -12,9 +12,13 @@ Tank
 <Name>
 Chevalier Light Tank
 </Name>
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+582
+</mul id:>
 <Tonnage>
 35
 </Tonnage>
@@ -41,6 +45,10 @@ ISStreakSRM2 Ammo
 <type>
 IS Level 2
 </type>
+
+<role>
+Striker
+</role>
 <year>
 2690
 </year>
@@ -57,5 +65,5 @@ IS Level 2
 Wheeled
 </motion_type>
 <source>
-Star League
+TRO: 3060
 </source>

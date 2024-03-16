@@ -20,6 +20,10 @@ Overlord
 A3
 </Model>
 
+<mul id:>
+4776
+</mul id:>
+
 <year>
 3058
 </year>
@@ -31,6 +35,10 @@ A3
 <type>
 IS Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Spheroid
@@ -188,7 +196,7 @@ ISArtemisIV
 </structural_integrity>
 
 <source>
-TRO 3067 - Clan Invasion
+TRO: 3067
 </source>
 
 <tonnage>

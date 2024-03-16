@@ -1,11 +1,19 @@
-Version:1.1
-Spatha
-SP2-X 'Warlord'
+chassis:Spatha
+model:SP2-X 'Warlord'
+mul id:2999
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3069
 Rules Level:4
+role:Skirmisher
+Source:XTR: Gladiators
+
+
+
+quirk:difficult_maintain
+quirk:non_standard
+
 
 Mass:60
 Engine:360 XXL Fusion Engine

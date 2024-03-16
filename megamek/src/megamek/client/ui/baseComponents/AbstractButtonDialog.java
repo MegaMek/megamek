@@ -20,7 +20,7 @@ package megamek.client.ui.baseComponents;
 
 import megamek.MegaMek;
 import megamek.client.ui.enums.DialogResult;
-import megamek.common.util.EncodeControl;
+import org.apache.logging.log4j.LogManager;
 
 import javax.swing.*;
 import java.awt.*;
@@ -35,10 +35,10 @@ import java.util.ResourceBundle;
  * Inheriting classes must call initialize() in their constructors and override createCenterPane()
  *
  * The resources associated with this dialog need to contain at least the following keys:
- * - "Ok.text" -> text for the ok button
- * - "Ok.toolTipText" -> toolTipText for the ok button
- * - "Cancel.text" -> text for the cancel button
- * - "Cancel.toolTipText" -> toolTipText for the cancel button
+ * - "Ok.text" - text for the ok button
+ * - "Ok.toolTipText" - toolTipText for the ok button
+ * - "Cancel.text" - text for the cancel button
+ * - "Cancel.toolTipText" - toolTipText for the cancel button
  *
  * This is directly tied to MekHQ's AbstractMHQButtonDialog, and any changes here MUST be verified
  * there.
@@ -63,8 +63,8 @@ public abstract class AbstractButtonDialog extends AbstractDialog {
      */
     protected AbstractButtonDialog(final JFrame frame, final boolean modal, final String name,
                                    final String title) {
-        this(frame, modal, ResourceBundle.getBundle("megamek.client.messages", 
-                MegaMek.getMMOptions().getLocale(), new EncodeControl()), name, title);
+        this(frame, modal, ResourceBundle.getBundle("megamek.client.messages",
+                MegaMek.getMMOptions().getLocale()), name, title);
     }
 
     /**
@@ -74,6 +74,15 @@ public abstract class AbstractButtonDialog extends AbstractDialog {
     protected AbstractButtonDialog(final JFrame frame, final boolean modal, final ResourceBundle resources,
                                    final String name, final String title) {
         super(frame, modal, resources, name, title);
+        setResult(DialogResult.CANCELLED); // Default result is cancelled
+    }
+
+    /**
+     * This constructor is provided for uses cases where this dialog needs another dialog as a parent.
+     */
+    protected AbstractButtonDialog(final JDialog dialog, final JFrame frame, final boolean modal, final ResourceBundle resources,
+                                   final String name, final String title) {
+        super(dialog, frame, modal, resources, name, title);
         setResult(DialogResult.CANCELLED); // Default result is cancelled
     }
     //endregion Constructors
@@ -100,7 +109,11 @@ public abstract class AbstractButtonDialog extends AbstractDialog {
         setLayout(new BorderLayout());
         add(createCenterPane(), BorderLayout.CENTER);
         add(createButtonPanel(), BorderLayout.PAGE_END);
-        finalizeInitialization();
+        try {
+            finalizeInitialization();
+        } catch (Exception ex) {
+            LogManager.getLogger().error("Error finalizing the dialog. Returning the created dialog, but this is likely to cause some oddities.", ex);
+        }
     }
 
     /**

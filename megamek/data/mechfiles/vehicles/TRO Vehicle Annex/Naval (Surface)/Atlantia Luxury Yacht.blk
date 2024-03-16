@@ -11,21 +11,29 @@ SupportTank
 Atlantia Luxury Yacht
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+3748
+</mul id:>
 
 <year>
 2890
 </year>
 
 <source>
-TRO VAr - Succession Wars
+TRO: Vehicle Annex (Revised)
 </source>
 
 <type>
 IS Level 2
 </type>
+
+<role>
+None
+</role>
 
 <tonnage>
 190

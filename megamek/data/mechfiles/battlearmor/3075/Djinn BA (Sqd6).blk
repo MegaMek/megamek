@@ -1,0 +1,118 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+Djinn Battle Armor
+</Name>
+
+<model>
+(Sqd6)
+</Model>
+
+<mul id:>
+8978
+</mul id:>
+
+<year>
+3070
+</year>
+
+<type>
+IS Level 2
+</type>
+
+<role>
+Scout
+</role>
+
+<motion_type>
+Jump
+</motion_type>
+
+<cruiseMP>
+1
+</cruiseMP>
+
+<armor_type>
+30
+</armor_type>
+
+<armor_tech>
+11
+</armor_tech>
+
+<Squad Equipment>
+ISBAMG:RA
+ISBALightTAG:Body
+BAPartialWing:Body
+BABattleClaw:LA
+BABattleClaw:RA
+SwarmMek
+SwarmWeaponMek
+StopSwarm
+LegAttack
+IS BA Advanced:LA
+IS BA Advanced:LA
+IS BA Advanced:RA
+IS BA Advanced:Body
+IS BA Advanced:Body
+</Squad Equipment>
+
+<source>
+TRO: 3075
+</source>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+3
+</jumpingMP>
+
+<armor>
+5
+</armor>
+
+<Trooper Count>
+6
+</Trooper Count>
+
+<weightclass>
+1
+</weightclass>
+
+<overview>
+The Djinn is the first known example of the so-called Demon Series of battle armor designs produced by Word of Blake for their Manei Domini. 
+</overview>
+
+<history>
+The Djinn was created by the same Doctor Cortland who created the Celestial line of OmniMechs and is named after the wicked spirits of Islamic mythology. The Djinn were utilised in battle for the first time in 3070, although it would be another year before a sizable number of them were observed taking part in big fights. Since then, especially in regards to Galatea and Gibson, they have come to represent Blakist persecution.
+</history>
+
+<capabilities>
+The Djinn has been expertly created to frighten its adversaries. Due to the Manei Domini troopers' employment of cybernetic upgrades to compensate for the physical heft that "frail" Elementals and their Inner Sphere counterparts need to operate battle armour, it is clear from its slender appearance that it was specifically created for them. Its armour, which weighs 200 kg and is state-of-the-art, can stop a Medium Laser, and its superior mobility allow it to get to and from danger regions rapidly. Its firepower is designed to clear urban areas of unarmored soldiers.
+</capabilities>
+
+<deployment>
+The Djinn's machine gun is its main weapon. A Djinn squad can completely destroy an infantry platoon in a matter of seconds, however it is only marginally effective against armoured targets. The battlesuit poses a threat to any unit because each trooper also carries a Light TAG, which can summon homing artillery and missiles with equal ease. The Djinn has arms that finish in Battle Claws, which help it during anti-Mech strikes and let it ride an OmniMech into battle. It can also jump 120 metres thanks to a partial wing structure.
+</deployment>
+
+<manufacturer>
+Gibson Federated BattleMechs (A Division of Free Worlds Defense Industries)
+</manufacturer>
+
+<primaryFactory>
+Gibson
+</primaryFactory>

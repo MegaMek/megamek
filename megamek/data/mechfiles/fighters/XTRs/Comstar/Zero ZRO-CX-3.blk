@@ -20,6 +20,10 @@ Zero
 ZRO-CX-3
 </Model>
 
+<mul id:>
+5557
+</mul id:>
+
 <year>
 3073
 </year>
@@ -31,6 +35,10 @@ ZRO-CX-3
 <type>
 IS Level 4
 </type>
+
+<role>
+Fire Support
+</role>
 
 <motion_type>
 Aerodyne
@@ -93,7 +101,7 @@ ISEnhancedLRM5 Ammo
 </Fuselage Equipment>
 
 <source>
-XTRO ComStar - Jihad
+XTR: ComStar
 </source>
 
 <tonnage>
@@ -133,4 +141,11 @@ TARGETING:PS/1/12
 </systemManufacturers>
 
 
+
+
+<quirks>
+prototype
+atmo_flyer
+fragile_fuel
+</quirks>
 

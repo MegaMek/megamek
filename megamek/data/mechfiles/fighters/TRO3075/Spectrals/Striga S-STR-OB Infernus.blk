@@ -20,6 +20,10 @@ Striga
 S-STR-OB Infernus
 </Model>
 
+<mul id:>
+5150
+</mul id:>
+
 <year>
 3072
 </year>
@@ -31,6 +35,10 @@ S-STR-OB Infernus
 <type>
 IS Level 3
 </type>
+
+<role>
+Dogfighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -113,7 +121,7 @@ ISERSmallLaser:OMNI
 </Fuselage Equipment>
 
 <source>
-TRO 3075 - Jihad
+TRO: 3075
 </source>
 
 <tonnage>

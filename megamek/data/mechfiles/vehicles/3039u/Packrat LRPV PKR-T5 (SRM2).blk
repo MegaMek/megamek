@@ -20,6 +20,10 @@ Packrat LRPV
 PKR-T5 (SRM2)
 </Model>
 
+<mul id:>
+2402
+</mul id:>
+
 <year>
 2824
 </year>
@@ -27,6 +31,10 @@ PKR-T5 (SRM2)
 <type>
 IS Level 1
 </type>
+
+<role>
+Scout
+</role>
 
 <motion_type>
 Wheeled
@@ -71,7 +79,7 @@ Flamer
 </Rear Equipment>
 
 <source>
-TRO 3039 - Succession Wars
+TRO: 3039
 </source>
 
 <tonnage>

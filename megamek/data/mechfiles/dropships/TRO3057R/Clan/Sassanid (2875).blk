@@ -20,6 +20,10 @@ Sassanid
 (2875)
 </Model>
 
+<mul id:>
+4976
+</mul id:>
+
 <year>
 2875
 </year>
@@ -31,6 +35,10 @@ Sassanid
 <type>
 Clan Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Spheroid
@@ -163,7 +171,7 @@ CLMediumPulseLaser
 </structural_integrity>
 
 <source>
-TRO 3057R - Early Succession War
+TRO: 3057 Revised
 </source>
 
 <tonnage>

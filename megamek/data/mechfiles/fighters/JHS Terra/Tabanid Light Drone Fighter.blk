@@ -16,9 +16,13 @@ Aero
 Tabanid Light Drone Fighter
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+3148
+</mul id:>
 
 <year>
 3072
@@ -31,6 +35,10 @@ Tabanid Light Drone Fighter
 <type>
 IS Level 4
 </type>
+
+<role>
+Interceptor
+</role>
 
 <motion_type>
 Aerodyne
@@ -100,7 +108,7 @@ ImprovedSmartRoboticControlSystem
 </Fuselage Equipment>
 
 <source>
-JHS Terra - Jihad
+Jihad Hot Spots: Terra
 </source>
 
 <tonnage>

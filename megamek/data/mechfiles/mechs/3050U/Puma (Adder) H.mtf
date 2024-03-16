@@ -1,12 +1,17 @@
-Version:1.0
-Puma (Adder)
-H
+chassis:Puma
+clanname:Adder
+model:H
+mul id:2596
 
 Config:Biped Omnimech
 TechBase:Clan
 Era:3059
-Source:TRO 3050 - Clan Invasion
+Source:TRO: 3050
 Rules Level:2
+role:Brawler
+
+quirk:low_profile
+
 
 Mass:35
 Engine:210 XL (Clan) Engine(IS)
@@ -159,11 +164,11 @@ history:The Adder was designed by Clan Star Adder in preparation for the invasio
 manufacturer:Sheridan LM-TA 8-10, W-7 Facilities,Wolf Clan Site 3, Assault Tech Industries
 primaryfactory:Sheridan LM-TA 8-10, W-7 Facilities,Wolf Clan Site 3, Assault Tech Industries
 systemmanufacturer:CHASSIS:Hooded Endo-Lite
-systemmodel:CHASSIS:Endo Steel
+systemmode:CHASSIS:Endo Steel
 systemmanufacturer:ENGINE:Great Father 210 XL
-systemmanufacturer:ARMOR:Star Lite 
-systemmodel:ARMOR:Ferro-Fibrous
+systemmanufacturer:ARMOR:Star Lite
+systemmode:ARMOR:Ferro-Fibrous
 systemmanufacturer:COMMUNICATIONS:Trueborn Ultra
-systemmodel:COMMUNICATIONS:945B
-systemmanufacturer:TARGETING:Adder Special 
-systemmodel:TARGETING:V8.6
+systemmode:COMMUNICATIONS:945B
+systemmanufacturer:TARGETING:Adder Special
+systemmode:TARGETING:V8.6

@@ -2,46 +2,99 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 Infantry
 </UnitType>
+
 <Name>
 SpecOps Paratrooper
 </Name>
+
 <Model>
 MI6 Extraction Team
 </Model>
-<squad_size>
-7
-</squad_size>
-<squadn>
-3
-</squadn>
-<Primary>
-InfantryFederatedBarrettM42B
-</Primary>
-<Secondary>
-InfantrySonicStunnerpistol
-</Secondary>
-<secondn>
-1
-</secondn>
-<armorKit>
-ISSneakSuitCamoIRECM
-</armorKit>
-<type>
-IS Level 3
-</type>
+
+<mul id:>
+3001
+</mul id:>
+
 <year>
 2500
 </year>
-<era>
-TRO 3085 - Age of War
-</era>
+
+<originalBuildYear>
+2500
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<role>
+Ambusher
+</role>
+
 <motion_type>
 Leg
 </motion_type>
+
+<transporters>
+</transporters>
+
+<Field Guns Equipment>
+</Field Guns Equipment>
+
+<source>
+TRO: 3085
+</source>
+
+<squad_size>
+7
+</squad_size>
+
+<squadn>
+3
+</squadn>
+
+<secondn>
+2
+</secondn>
+
+<Primary>
+InfantryFederatedBarrettM42B
+</Primary>
+
+<Secondary>
+Sonic Stunner
+</Secondary>
+
+<antimek>
+8
+</antimek>
+
+<armorKit>
+Sneak Suit (Camo/IR/ECM)
+</armorKit>
+
+<sneakcamo>
+true
+</sneakcamo>
+
+<sneakir>
+true
+</sneakir>
+
+<sneakecm>
+true
+</sneakecm>
+
+<specialization>
+512
+</specialization>
+

@@ -20,6 +20,10 @@ Thrush
 TR-5
 </Model>
 
+<mul id:>
+5227
+</mul id:>
+
 <year>
 2560
 </year>
@@ -31,6 +35,10 @@ TR-5
 <type>
 IS Level 3
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Aerodyne
@@ -100,7 +108,7 @@ Medium Laser
 </Fuselage Equipment>
 
 <source>
-Field Report 2765 Liao - Age of War
+Field Report 2765 CCAF
 </source>
 
 <tonnage>

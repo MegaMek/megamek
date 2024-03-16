@@ -13,6 +13,8 @@
  */
 package megamek.common.weapons.gaussrifles;
 
+import megamek.common.SimpleTechLevel;
+
 /**
  * @author Sebastian Brocks
  * @since Oct 19, 2004
@@ -43,14 +45,16 @@ public class CLHAG20 extends HAGWeapon {
         maxRange = RANGE_LONG;
         explosionDamage = rackSize / 2;
         rulesRefs = "219, TM";
+        //Jan 22 - Errata issued by CGL (Greekfire) for HAGs        
         techAdvancement.setTechBase(TECH_BASE_CLAN)
                 .setIntroLevel(false)
                 .setUnofficial(false)
                 .setTechRating(RATING_F)
                 .setAvailability(RATING_X, RATING_F, RATING_E, RATING_D)
-                .setClanAdvancement(3062, 3068, 3072, DATE_NONE, DATE_NONE)
-                .setClanApproximate(true, false, false, false, false)
+                .setClanAdvancement(DATE_NONE, 3062, 3068, DATE_NONE, DATE_NONE)
+                .setClanApproximate(false, true, false, false, false)
                 .setPrototypeFactions(F_CHH)
-                .setProductionFactions(F_CHH);
+                .setProductionFactions(F_CHH)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
 }

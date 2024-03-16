@@ -15,6 +15,10 @@ Thor Artillery Vehicle
 <Model>
 (AC)
 </Model>
+
+<mul id:>
+3186
+</mul id:>
 <Tonnage>
 55
 </Tonnage>
@@ -47,6 +51,10 @@ ISMG Ammo (100)
 <type>
 IS Level 4
 </type>
+
+<role>
+Brawler
+</role>
 <year>
 2801
 </year>
@@ -62,3 +70,7 @@ IS Level 4
 <motion_type>
 Wheeled
 </motion_type>
+
+<source>
+Historical: Operation Klondike
+</source>

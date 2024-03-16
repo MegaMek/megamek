@@ -20,6 +20,10 @@ Shiva
 SHV-OB
 </Model>
 
+<mul id:>
+5054
+</mul id:>
+
 <year>
 3060
 </year>
@@ -31,6 +35,10 @@ SHV-OB
 <type>
 IS Level 2
 </type>
+
+<role>
+Attack Fighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -118,7 +126,7 @@ ISCASE:OMNI
 </Fuselage Equipment>
 
 <source>
-TRO 3067 - Clan Invasion
+TRO: 3067
 </source>
 
 <tonnage>

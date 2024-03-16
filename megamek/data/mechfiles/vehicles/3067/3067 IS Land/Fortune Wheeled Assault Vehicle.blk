@@ -12,9 +12,13 @@ Tank
 <Name>
 Fortune Wheeled Assault Vehicle
 </Name>
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+4181
+</mul id:>
 <Tonnage>
 80
 </Tonnage>
@@ -45,6 +49,10 @@ ISLBXAC20 Ammo
 <type>
 IS Level 2
 </type>
+
+<role>
+Juggernaut
+</role>
 <year>
 3067
 </year>
@@ -60,3 +68,7 @@ IS Level 2
 <motion_type>
 Wheeled
 </motion_type>
+
+<source>
+TRO: 3067
+</source>

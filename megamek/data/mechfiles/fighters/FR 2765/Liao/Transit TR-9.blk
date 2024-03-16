@@ -20,6 +20,10 @@ Transit
 TR-9
 </Model>
 
+<mul id:>
+8119
+</mul id:>
+
 <year>
 2571
 </year>
@@ -31,6 +35,10 @@ TR-9
 <type>
 IS Level 2
 </type>
+
+<role>
+Dogfighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -105,7 +113,7 @@ IS Ammo AC/20
 </Fuselage Equipment>
 
 <source>
-Field Report 2765 Liao - Age of War
+Field Report 2765 CCAF
 </source>
 
 <tonnage>

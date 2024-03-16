@@ -20,6 +20,10 @@ Triumph
 (3057)
 </Model>
 
+<mul id:>
+5296
+</mul id:>
+
 <year>
 3057
 </year>
@@ -31,6 +35,10 @@ Triumph
 <type>
 IS Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Aerodyne
@@ -130,7 +138,7 @@ ISMediumPulseLaser
 </structural_integrity>
 
 <source>
-TRO 3057R - Clan Invasion
+TRO: 3057 Revised
 </source>
 
 <tonnage>

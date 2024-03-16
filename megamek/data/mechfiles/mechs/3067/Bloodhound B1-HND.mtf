@@ -1,12 +1,20 @@
-Version:1.0
-Bloodhound
-B1-HND
+chassis:Bloodhound
+model:B1-HND
+mul id:3838
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3064
 Rules Level:2
-source:TRO 3067
+role:Striker
+source:TRO: 3067
+
+
+
+
+quirk:imp_sensors
+quirk:pro_actuator
+
 
 Mass:45
 Engine:315 XL Engine

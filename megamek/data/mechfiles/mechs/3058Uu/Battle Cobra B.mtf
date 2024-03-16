@@ -1,12 +1,16 @@
-Version:1.0
-Battle Cobra
-B
+chassis:Battle Cobra
+model:B
+mul id:262
 
 Config:Biped Omnimech
 TechBase:Clan
 Era:2873
-Source:TRO 3058 - Succession Wars
+Source:TRO: 3058
 Rules Level:2
+role:Sniper
+
+quirk:ext_twist
+
 
 Mass:40
 Engine:240 Fusion (Clan) Engine(IS)

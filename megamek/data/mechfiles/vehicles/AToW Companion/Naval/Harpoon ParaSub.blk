@@ -16,9 +16,13 @@ SupportTank
 Harpoon ParaSub
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+9230
+</mul id:>
 
 <year>
 2545
@@ -31,6 +35,10 @@ Harpoon ParaSub
 <type>
 IS Level 5
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Submarine

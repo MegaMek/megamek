@@ -1,0 +1,110 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+Command Van
+</Name>
+
+<Model>
+
+</Model>
+
+<year>
+2577
+</year>
+
+<originalBuildYear>
+2577
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<role>
+Scout
+</role>
+
+<motion_type>
+Wheeled
+</motion_type>
+
+<transporters>
+</transporters>
+
+<cruiseMP>
+7
+</cruiseMP>
+
+<engine_type>
+0
+</engine_type>
+
+<armor>
+16
+14
+14
+12
+</armor>
+
+<Body Equipment>
+IS Machine Gun Ammo - Half
+Communications Equipment:SIZE:4.0
+</Body Equipment>
+
+<Front Equipment>
+Machine Gun
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<manufacturer>
+Mitchell Vehicles
+</manufacturer>
+
+<primaryFactory>
+Terra
+</primaryFactory>
+
+<systemManufacturers>
+ENGINE:Omni 85 Fusion
+ARMOR:StarSlab/3
+COMMUNICATIONS:Domman CommSet (Echo IX)
+TARGETING:Wayne SweepSight
+</systemManufacturers>
+
+<tonnage>
+15.0
+</tonnage>
+
+<source>
+Rec Guide:ilClan #29
+</source>
+
+<mul id:>
+9385
+</mul id:>
+
+<quirks>
+imp_com
+difficult_maintain
+</quirks>
+

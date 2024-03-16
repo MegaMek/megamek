@@ -1,12 +1,17 @@
-Version:1.0
-Mandrill
-(Standard)
+chassis:Mandrill
+model:
+mul id:2011
 
 Config:Biped
 TechBase:Clan
 Era:2829
-Source:TRO 3060
+Source:TRO: 3060
 Rules Level:2
+role:Missile Boat
+
+
+quirk:low_profile
+
 
 Mass:30
 Engine:120 XL (Clan) Engine

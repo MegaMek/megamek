@@ -20,6 +20,10 @@ Corsair
 (Bob) 'Roswell'
 </Model>
 
+<mul id:>
+4008
+</mul id:>
+
 <year>
 3070
 </year>
@@ -31,6 +35,10 @@ Corsair
 <type>
 IS Level 2
 </type>
+
+<role>
+Dogfighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -96,7 +104,7 @@ IS Streak SRM 6 Ammo
 </Fuselage Equipment>
 
 <source>
-RS Unique Fighters - Jihad
+Record Sheets: Unique Fighters
 </source>
 
 <tonnage>

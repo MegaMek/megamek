@@ -1,12 +1,22 @@
-Version:1.0
-Rifleman
-C 2
+chassis:Rifleman
+model:C 2
+mul id:2694
 
 Config:Biped
 TechBase:Clan
 Era:3083
-Source:Dark Age
+source:TRO: 3085
 Rules Level:4
+role:Skirmisher
+
+
+
+quirk:anti_air
+quirk:imp_com
+quirk:searchlight
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+
 
 Mass:60
 Engine:360 XXL (Clan) Engine(IS)

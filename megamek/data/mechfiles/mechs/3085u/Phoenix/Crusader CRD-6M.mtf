@@ -1,12 +1,23 @@
-Version:1.0
-Crusader
-CRD-6M
+chassis:Crusader
+model:CRD-6M
+mul id:761
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3074
-Source:Jihad
+source:TRO: 3085
 Rules Level:2
+role:Skirmisher
+
+
+
+quirk:easy_maintain
+quirk:rugged_1
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+weaponquirk:stable_weapon:RL:4:ISStreakSRM4
+weaponquirk:stable_weapon:LL:4:ISStreakSRM4
+
 
 Mass:65
 Engine:195 XL Engine(IS)
@@ -152,8 +163,7 @@ ISStreakSRM4
 
 overview:The Crusader was initially designed as a close combat BattleMech for the Star League Defense Force, but soon proved itself to be a very adaptable, multi-role design. This reliable workhorse of the SLDF, while not excelling in any one job, was quite capable of accomplishing just about any mission, whether it be close assault, anti-aircraft, counter-insurgency, or even reconnaissance. Its versatility and large number of manufacturers ensured the Crusader its place as one of the most common heavy 'Mechs in the Inner Sphere.
 
-capabilities:Each arm was equipped with an LRM launcher, laser and machine gun, while the SRM launchers were built into the legs and mounted at hip height to provide a stable firing location and avoid interference with the LRMs' flight path. Early Crusader models had issues with the arm-mounted launchers and lasers overheating and causing stress to the actuators and internal structure, but this was rectified with the additions of the now-distinctive collars which deflect hot gasses away. 
-The Crusader was well-protected with twelve tons of armor, particularly around the legs, which made it a good hand-to-hand combatant. A thirteen and a half ton fusion engine allowed the Crusader to achieve a decent cruising speed of 43.2 km/h. One disadvantage to the Crusader was its inadequate heat management system, carrying just ten standard heat sinks to handle all the waste heat produced by its weapons and equipment.
+capabilities:Each arm was equipped with an LRM launcher, laser and machine gun, while the SRM launchers were built into the legs and mounted at hip height to provide a stable firing location and avoid interference with the LRMs' flight path. Early Crusader models had issues with the arm-mounted launchers and lasers overheating and causing stress to the actuators and internal structure, but this was rectified with the additions of the now-distinctive collars which deflect hot gasses away. The Crusader was well-protected with twelve tons of armor, particularly around the legs, which made it a good hand-to-hand combatant. A thirteen and a half ton fusion engine allowed the Crusader to achieve a decent cruising speed of 43.2 km/h. One disadvantage to the Crusader was its inadequate heat management system, carrying just ten standard heat sinks to handle all the waste heat produced by its weapons and equipment.
 
 deployment:This variant was produced in the Free Worlds League starting in 3074 during the Jihad. It carries two Streak SRM-4 launchers in the legs, while each arm carries a Light PPC and MML-7. The 'Mech's top speed was reduced, so engineers fitted Improved Jump Jets to compensate.
 
@@ -166,7 +176,3 @@ systemmanufacturer:ENGINE:Hermes 260 XL
 systemmanufacturer:ARMOR:Riese-500 with CASE
 systemmanufacturer:COMMUNICATIONS:Garret T11-b
 systemmanufacturer:TARGETING:Garret A6
-
-
-
-

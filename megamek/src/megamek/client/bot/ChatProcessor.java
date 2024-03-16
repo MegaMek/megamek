@@ -15,27 +15,29 @@
 package megamek.client.bot;
 
 import megamek.client.bot.princess.*;
+import megamek.codeUtilities.StringUtility;
 import megamek.common.Coords;
-import megamek.common.Entity;
 import megamek.common.Game;
 import megamek.common.Player;
 import megamek.common.event.GamePlayerChatEvent;
 import megamek.common.util.StringUtil;
 import megamek.server.Server;
 import megamek.server.commands.DefeatCommand;
+import megamek.server.commands.GameMasterCommand;
 import megamek.server.commands.JoinTeamCommand;
 import org.apache.logging.log4j.LogManager;
 
 import java.util.Enumeration;
 import java.util.StringTokenizer;
+import java.util.stream.Collectors;
 
 public class ChatProcessor {
 
     boolean shouldBotAcknowledgeDefeat(String message, BotClient bot) {
         boolean result = false;
-        if (!StringUtil.isNullOrEmpty(message) &&
-            (message.contains("declares individual victory at the end of the turn.")
-             || message.contains("declares team victory at the end of the turn."))) {
+        if (!StringUtility.isNullOrBlank(message) &&
+                (message.contains("declares individual victory at the end of the turn.")
+                        || message.contains("declares team victory at the end of the turn."))) {
             String[] splitMessage = message.split(" ");
             int i = 1;
             String name = splitMessage[i];
@@ -43,7 +45,7 @@ public class ChatProcessor {
                 name += " " + splitMessage[i + 1];
                 i++;
             }
-            for (Player p : bot.getGame().getPlayersVector()) {
+            for (Player p : bot.getGame().getPlayersList()) {
                 if (p.getName().equals(name)) {
                     if (p.isEnemyOf(bot.getLocalPlayer())) {
                         bot.sendChat("/defeat");
@@ -59,13 +61,12 @@ public class ChatProcessor {
     boolean shouldBotAcknowledgeVictory(String message, BotClient bot) {
         boolean result = false;
 
-        if (!StringUtil.isNullOrEmpty(message) &&
-            (message.contains(DefeatCommand.wantsDefeat))) {
+        if (!StringUtility.isNullOrBlank(message) && message.contains(DefeatCommand.wantsDefeat)) {
             String[] splitMessage = message.split(" ");
             int i = 1;
             String name = splitMessage[i];
             while (!splitMessage[i + 1].equals("wants")
-                   && !splitMessage[i + 1].equals("admits")) {
+                    && !splitMessage[i + 1].equals("admits")) {
                 name += " " + splitMessage[i + 1];
                 i++;
             }
@@ -115,72 +116,14 @@ public class ChatProcessor {
             String msg = st.nextToken();
             if (msg.contains(JoinTeamCommand.SERVER_VOTE_PROMPT_MSG)) {
                 bot.sendChat("/allowTeamChange");
+            } else if (msg.contains(GameMasterCommand.SERVER_VOTE_PROMPT_MSG)) {
+                bot.sendChat("/allowGM");
             }
             return;
         } else if (p == null) {
             return;
         }
-        if (bot instanceof TestBot) {
-            additionalTestBotCommands(st, (TestBot) bot, p);
-        } else if (bot instanceof Princess) {
-            additionalPrincessCommands(ge, (Princess) bot);
-        }
-    }
-
-    private void additionalTestBotCommands(StringTokenizer st, TestBot tb, Player p) {
-        try {
-            if (st.hasMoreTokens()
-                && st.nextToken().trim()
-                     .equalsIgnoreCase(tb.getLocalPlayer().getName())) {
-                if (!p.isEnemyOf(tb.getLocalPlayer())) {
-                    if (st.hasMoreTokens()) {
-                        String command = st.nextToken().trim();
-                        boolean understood = false;
-                        // should create a command factory and a
-                        // command object...
-                        if (command.equalsIgnoreCase("echo")) {
-                            understood = true;
-                        } else if (command.equalsIgnoreCase("calm down")) {
-                            for (Entity entity : tb.getEntitiesOwned()) {
-                                CEntity cen = tb.centities.get(entity);
-                                if (cen.strategy.attack > 1) {
-                                    cen.strategy.attack = 1;
-                                }
-                            }
-                            understood = true;
-                        } else if (command.equalsIgnoreCase("be aggressive")) {
-                            for (Entity entity : tb.getEntitiesOwned()) {
-                                CEntity cen = tb.centities.get(entity);
-                                cen.strategy.attack = Math.min(
-                                        cen.strategy.attack * 1.2, 1.5);
-                            }
-                            understood = true;
-                        } else if (command.equalsIgnoreCase("attack")) {
-                            int x = Integer.parseInt(st.nextToken().trim());
-                            int y = Integer.parseInt(st.nextToken().trim());
-                            Entity en = tb.getGame().getFirstEntity(new Coords(
-                                    x - 1, y - 1));
-                            if (en != null) {
-                                if (en.isEnemyOf(tb.getEntitiesOwned().get(0))) {
-                                    CEntity cen = tb.centities.get(en);
-                                    cen.strategy.target += 3;
-                                    LogManager.getLogger().info(cen.entity.getShortName() + " " + cen.strategy.target);
-                                    understood = true;
-                                }
-                            }
-                        }
-
-                        if (understood) {
-                            tb.sendChat("Understood " + p.getName());
-                        }
-                    }
-                } else {
-                    tb.sendChat("I can't do that, " + p.getName());
-                }
-            }
-        } catch (Exception ex) {
-            LogManager.getLogger().error("", ex);
-        }
+        additionalPrincessCommands(ge, (Princess) bot);
     }
 
     private Player getPlayer(Game game, String playerName) {
@@ -196,7 +139,7 @@ public class ChatProcessor {
 
     void additionalPrincessCommands(GamePlayerChatEvent chatEvent, Princess princess) {
         // Commands should be sent in this format:
-        //   <botName>: <command> : <arguments>
+        // <botName>: <command> : <arguments>
 
         StringTokenizer tokenizer = new StringTokenizer(chatEvent.getMessage(), ":");
         if (tokenizer.countTokens() < 3) {
@@ -245,7 +188,7 @@ public class ChatProcessor {
 
         // Tell me what behavior you are using.
         if (command.toLowerCase().startsWith(ChatCommands.SHOW_BEHAVIOR.getAbbreviation())) {
-            msg = "Current Behavior: " + princess.getBehaviorSettings().getDescription();
+            msg = "Current Behavior: " + princess.getBehaviorSettings().toLog();
             princess.sendChat(msg);
             LogManager.getLogger().info(msg);
         }
@@ -258,26 +201,27 @@ public class ChatProcessor {
             }
             princess.sendChat(out.toString());
         }
-        
+
         if (command.toLowerCase().startsWith(ChatCommands.IGNORE_TARGET.getAbbreviation())) {
             if ((arguments == null) || (arguments.length == 0)) {
                 msg = "Please specify entity ID to ignore.";
                 princess.sendChat(msg);
                 return;
             }
-            
+
             Integer targetID = null;
-            
+
             try {
                 targetID = Integer.parseInt(arguments[0]);
-            } catch (Exception ignored) { }
-            
+            } catch (Exception ignored) {
+            }
+
             if (targetID == null) {
                 msg = "Please specify entity ID as an integer to ignore.";
                 princess.sendChat(msg);
                 return;
             }
-            
+
             princess.getBehaviorSettings().addIgnoredUnitTarget(targetID);
             msg = "Ignoring target with ID " + targetID;
             princess.sendChat(msg);
@@ -287,7 +231,7 @@ public class ChatProcessor {
         // Make sure the command came from my team.
         int speakerTeam = speakerPlayer.getTeam();
         int princessTeam = princessPlayer.getTeam();
-        if (princessTeam != speakerTeam) {
+        if ((princessTeam != speakerTeam) && !speakerPlayer.getGameMaster()) {
             msg = "You are not my boss. [wrong team]";
             princess.sendChat(msg);
             LogManager.getLogger().warn(msg);
@@ -301,20 +245,21 @@ public class ChatProcessor {
                 princess.sendChat(msg);
                 return;
             }
-            
+
             CardinalEdge edge = null;
-            
+
             try {
                 int edgeIndex = Integer.parseInt(arguments[0]);
                 edge = CardinalEdge.getCardinalEdge(edgeIndex);
-            } catch (Exception ignored) { }
-            
+            } catch (Exception ignored) {
+            }
+
             if (edge == null) {
                 msg = "Please specify valid retreat edge, a number between 0 and 4 inclusive.";
                 princess.sendChat(msg);
                 return;
             }
-            
+
             msg = "Received flee order - " + edge;
             LogManager.getLogger().debug(msg);
             princess.sendChat(msg);
@@ -360,7 +305,7 @@ public class ChatProcessor {
             newFallShame += princess.calculateAdjustment(adjustment);
             princess.getBehaviorSettings().setFallShameIndex(newFallShame);
             msg = "Piloting Caution changed from " + currentFallShame + " to " +
-                  princess.getBehaviorSettings().getFallShameIndex();
+                    princess.getBehaviorSettings().getFallShameIndex();
             princess.sendChat(msg);
         }
 
@@ -379,7 +324,7 @@ public class ChatProcessor {
             newSelfPreservation += princess.calculateAdjustment(adjustment);
             princess.getBehaviorSettings().setSelfPreservationIndex(newSelfPreservation);
             msg = "Self Preservation changed from " + currentSelfPreservation + " to " +
-                  princess.getBehaviorSettings().getSelfPreservationIndex();
+                    princess.getBehaviorSettings().getSelfPreservationIndex();
             princess.sendChat(msg);
         }
 
@@ -398,7 +343,7 @@ public class ChatProcessor {
             newAggression += princess.calculateAdjustment(adjustment);
             princess.getBehaviorSettings().setHyperAggressionIndex(newAggression);
             msg = "Aggression changed from " + currentAggression + " to " +
-                  princess.getBehaviorSettings().getHyperAggressionIndex();
+                    princess.getBehaviorSettings().getHyperAggressionIndex();
             princess.sendChat(msg);
             princess.resetSpinupThreshold();
         }
@@ -418,7 +363,7 @@ public class ChatProcessor {
             newHerding += princess.calculateAdjustment(adjustment);
             princess.getBehaviorSettings().setHerdMentalityIndex(newHerding);
             msg = "Herding changed from " + currentHerding + " to " +
-                  princess.getBehaviorSettings().getHerdMentalityIndex();
+                    princess.getBehaviorSettings().getHerdMentalityIndex();
             princess.sendChat(msg);
         }
 
@@ -437,7 +382,7 @@ public class ChatProcessor {
             newBravery += princess.calculateAdjustment(adjustment);
             princess.getBehaviorSettings().setBraveryIndex(newBravery);
             msg = "Bravery changed from " + currentBravery + " to " +
-                  princess.getBehaviorSettings().getBraveryIndex();
+                    princess.getBehaviorSettings().getBraveryIndex();
             princess.sendChat(msg);
         }
 
@@ -492,6 +437,13 @@ public class ChatProcessor {
             princess.getBehaviorSettings().addPriorityUnit(id);
             msg = "Unit " + id + " added to priority unit targets list.";
             princess.sendChat(msg);
+        }
+
+        // Specify a priority unit target.
+        if (command.toLowerCase().startsWith(ChatCommands.SHOW_DISHONORED.getAbbreviation())) {
+            msg = "Dishonored Player ids: " + princess.getHonorUtil().getDishonoredEnemies().stream().map(Object::toString).collect(Collectors.joining(", "));
+            princess.sendChat(msg);
+            LogManager.getLogger().info(msg);
         }
     }
 }

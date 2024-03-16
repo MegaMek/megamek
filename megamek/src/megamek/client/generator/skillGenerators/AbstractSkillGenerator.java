@@ -25,12 +25,8 @@ import megamek.common.Infantry;
 import megamek.common.LAMPilot;
 import megamek.common.enums.SkillLevel;
 
-import java.io.Serializable;
-
-public abstract class AbstractSkillGenerator implements Serializable {
+public abstract class AbstractSkillGenerator {
     //region Variable Declarations
-    private static final long serialVersionUID = 8475341940660043659L;
-
     private final SkillGeneratorMethod method;
     private SkillLevel level;
     private SkillGeneratorType type;
@@ -89,7 +85,7 @@ public abstract class AbstractSkillGenerator implements Serializable {
      * Generates random skills based on an entity crewmember by crewmember, and then assigns the
      * values to the crew before sorting them.
      * @param entity the Entity whose skills are to be randomly set
-     * @param forceClan forces the type to be clan if the entity is a clan unit
+     * @param forceClan forces the type to be clan if the crew are led by a clan pilot
      */
     public void setRandomSkills(final Entity entity, final boolean forceClan) {
         for (int i = 0; i < entity.getCrew().getSlotCount(); i++) {
@@ -109,7 +105,7 @@ public abstract class AbstractSkillGenerator implements Serializable {
     }
 
     /**
-     * Generates random skills for an entity based on the current settings of the random skills
+     * Generates random skills for an entity based on the current settings of the random skill
      * generator, but does not assign those new skills to that entity
      * @param entity the Entity to generate a random skill array for
      * @return an integer array containing the (Gunnery, Piloting) skill values, or an alternative
@@ -120,7 +116,7 @@ public abstract class AbstractSkillGenerator implements Serializable {
     }
 
     /**
-     * Generates random skills for an entity based on the current settings of the random skills
+     * Generates random skills for an entity based on the current settings of the random skill
      * generator, but does not assign those new skills to that entity. The return value MUST be
      * cleaned with cleanReturn for this setup to work properly.
      * @param entity the Entity to generate a random skill array for
@@ -128,7 +124,22 @@ public abstract class AbstractSkillGenerator implements Serializable {
      * @return an integer array containing the (Gunnery, Piloting) skill values, or an alternative
      * pairing if applicable [(Gunnery, Anti-'Mech) for infantry]
      */
-    public abstract int[] generateRandomSkills(final Entity entity, final boolean forceClan);
+    public int[] generateRandomSkills(final Entity entity, final boolean forceClan) {
+        return generateRandomSkills(entity, entity.getCrew().isClanPilot(), forceClan);
+    }
+
+    /**
+     * Generates random skills for an entity based on the current settings of the random skill
+     * generator, but does not assign those new skills to that entity. The return value MUST be
+     * cleaned with cleanReturn for this setup to work properly.
+     * @param entity the Entity to generate a random skill array for
+     * @param clanPilot if the crew to generate a random skills array for are a clan crew
+     * @param forceClan forces the type to be clan if the crew are a clan crew
+     * @return an integer array containing the (Gunnery, Piloting) skill values, or an alternative
+     * pairing if applicable [(Gunnery, Anti-'Mech) for infantry]
+     */
+    public abstract int[] generateRandomSkills(final Entity entity, final boolean clanPilot,
+                                               final boolean forceClan);
 
     /**
      * This cleans up the return value before the final return, and by doing so to handling two
@@ -143,8 +154,8 @@ public abstract class AbstractSkillGenerator implements Serializable {
         // For conventional infantry, piloting doubles as anti-mek skill, and this is set
         // based on whether the unit has anti-mek training, which gets set in the BLK file.
         // We therefore check if they are anti-mek trained before setting
-        if (entity.isConventionalInfantry() && !((Infantry) entity).isAntiMekTrained()) {
-            skills[1] = Infantry.ANTI_MECH_SKILL_UNTRAINED;
+        if (entity.isConventionalInfantry() && !((Infantry) entity).hasAntiMekGear()) {
+            skills[1] = Infantry.ANTI_MECH_SKILL_NO_GEAR;
         } else if (isForceClose()) {
             skills[1] = skills[0] + 1;
         }

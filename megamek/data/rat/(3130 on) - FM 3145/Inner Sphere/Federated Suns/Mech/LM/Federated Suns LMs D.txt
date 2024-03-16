@@ -1,0 +1,12 @@
+Federated Suns Light Mechs 3130 D
+Blade BLD-XL,1
+Valiant V4-LNT-J3,2
+Valkyrie VLK-QD3,3
+Gunsmith CH11-NG,4
+Javelin JVN-11F,5
+Fireball ALM-10D,6
+Locust LCT-5M,5
+Javelin JVN-11D,4
+Osiris OSR-4D,3
+Valkyrie VLK-QD4,2
+Prey Seeker PY-SR10,1

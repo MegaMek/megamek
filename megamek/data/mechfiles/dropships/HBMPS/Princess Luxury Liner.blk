@@ -16,9 +16,13 @@ Dropship
 Princess Luxury Liner
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+4864
+</mul id:>
 
 <year>
 2657
@@ -31,6 +35,10 @@ Princess Luxury Liner
 <type>
 IS Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Spheroid
@@ -127,7 +135,7 @@ IS Machine Gun Ammo - Half:100
 </structural_integrity>
 
 <source>
-HB:Major Periphery States - Star League
+Handbook: Major Periphery States
 </source>
 
 <tonnage>

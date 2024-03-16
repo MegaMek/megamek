@@ -38,11 +38,10 @@ import megamek.client.ui.Messages;
 
 /**
  * A (somewhat primitive) dialog that asks a question and lets the player select
- * from the available choices. The question string is tokenised on "\n". <p/>
+ * from the available choices. The question string is tokenised on "\n". <p>
  * Refactored from SingleChoiceDialog (which was based on Confirm)
  * 
  * @author suvarov454@sourceforge.net
- * @version $version: $
  */
 public class ChoiceDialog extends JDialog implements ActionListener {
     private static final long serialVersionUID = 3093043054221558221L;
@@ -137,19 +136,12 @@ public class ChoiceDialog extends JDialog implements ActionListener {
                     radioGroup.add(checkboxes[loop]);
                     choiceArea.add(checkboxes[loop]);
                 }
-            }
-
-            // All others use check boxes.
-            else {
+            } else {
+                // All others use check boxes.
                 checkboxes = new JCheckBox[choices.length];
                 for (int loop = 0; loop < choices.length; loop++) {
                     checkboxes[loop] = new JCheckBox(choices[loop], false);
-                    checkboxes[loop].addActionListener(new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent evt) {
-                            checkDisableChoices();
-                        }
-                    });
+                    checkboxes[loop].addActionListener(evt -> checkDisableChoices());
                     choiceArea.add(checkboxes[loop]);
                 }
                 
@@ -168,8 +160,7 @@ public class ChoiceDialog extends JDialog implements ActionListener {
                 butClearAll.addActionListener(this);
                 getContentPane().add(panAllButtons, center);
             }
-
-        } // End have-choices
+        }
         
         // Allow the player to confirm or abort the choice.
         setupButtons();
@@ -239,8 +230,7 @@ public class ChoiceDialog extends JDialog implements ActionListener {
                     checkboxes[loop].setEnabled(false);
                 }              
             }
-        }
-        else {
+        } else {
             for (int loop = 0; loop < checkboxes.length; loop++) {
                 checkboxes[loop].setEnabled(true);           
             }
@@ -320,8 +310,7 @@ public class ChoiceDialog extends JDialog implements ActionListener {
             setVisible(false);
         } else if (e.getSource().equals(checkboxes)) {
             
-        }
-        else {
+        } else {
             confirm = false;
             setVisible(false);
         }

@@ -20,6 +20,10 @@ Titan
 (2647b)
 </Model>
 
+<mul id:>
+5248
+</mul id:>
+
 <year>
 2647
 </year>
@@ -157,7 +161,7 @@ ISMediumPulseLaser
 </structural_integrity>
 
 <source>
-TRO 3057R - Star League
+TRO: 3057 Revised
 </source>
 
 <tonnage>

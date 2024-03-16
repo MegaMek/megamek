@@ -1,0 +1,123 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+Ravager Assault Battle Armor
+</Name>
+
+<Model>
+(LRM)(Sqd4)
+</Model>
+
+<mul id:>
+6746
+</mul id:>
+
+<year>
+3101
+</year>
+
+<type>
+IS Level 2
+</type>
+
+<role>
+Missile Boat
+</role>
+
+<motion_type>
+Leg
+</motion_type>
+
+<cruiseMP>
+2
+</cruiseMP>
+
+<armor_type>
+30
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<Squad Equipment>
+ISBALightRecoillessRifle:RA
+ISBALRM3:Body
+BABattleClaw:LA
+IS BA Ammo LRM-3:Body:Shots4#
+IS BA Ammo LRM-3:Body:Shots4#
+IS BA Advanced:RA
+IS BA Advanced:LA
+IS BA Advanced:LA
+IS BA Advanced:Body
+IS BA Advanced:LA
+</Squad Equipment>
+
+<source>
+Record Sheets: 3145 New Tech New Upgrades
+</source>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+0
+</jumpingMP>
+
+<armor>
+18
+</armor>
+
+<Trooper Count>
+4
+</Trooper Count>
+
+<weightclass>
+4
+</weightclass>
+
+<overview>
+A product made possible from the upheaval of the chaotic Jihad era, the Ravager is an Assault Battle Armor first produced in the Marian Hegemony. 
+</overview>
+
+<capabilities>
+The Ravager boasts nearly a ton of Standard Battle Armor, allowing it to survive considerable damage from even BattleMech weaponry. Its other noteworthy quality is its speed, which has been clocked at a brisk 20 km/h.
+</capabilities>
+
+<deployment>
+Developed during the Dark Age in 3101, the LRM model downsizes the Heavy Recoilless Rifle to a light model. It also replaces the rocket launchers with a single LRM-3 with eight reloads and carries more armor than the original Ravager, meaning it can survive a hit from a PPC and a Large Laser.
+</deployment>
+
+<history>
+Prior to the Jihad, the Hegemony briefly had an alliance with the Word of Blake who, in working with the current Caesar, constructed a Battle Armor production line on Horatius. However, during the alliance, Julius O'Reilly became the new Caesar, and subsequently evicted the Blakists, leaving behind a partially built Battle Armor production line. Julius's son, Cassius O'Reilly, recruited a former Irian Technologies scientist during the Jihad to help complete the production line and give birth to the Ravager. Dr. Dafyyad Rou designed the Ravager with common technology available to the Hegemony, and had the suit in production by 3084. The Marian Hegemony soon began marketing the suit for sale to the open market to help bolster the Hegemony's coffers.
+</history>
+
+<manufacturer>
+Marian Arms Inc.
+</manufacturer>
+
+<primaryFactory>
+Horatius
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+JUMPJET:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>

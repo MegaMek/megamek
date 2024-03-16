@@ -13,17 +13,12 @@
  */
 package megamek.common.weapons.bayweapons;
 
-import megamek.common.Entity;
-import megamek.common.Game;
-import megamek.common.Mounted;
-import megamek.common.SimpleTechLevel;
-import megamek.common.TechAdvancement;
-import megamek.common.ToHitData;
-import megamek.common.WeaponType;
+import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.BayWeaponHandler;
 import megamek.common.weapons.Weapon;
+import megamek.server.GameManager;
 import megamek.server.Server;
 
 /**
@@ -46,28 +41,33 @@ public abstract class BayWeapon extends Weapon {
     }
 
     @Override
-    public AttackHandler fire(WeaponAttackAction waa, Game game, Server server) {
+    public AttackHandler fire(WeaponAttackAction waa, Game game, GameManager manager) {
         // Just in case. Often necessary when/if multiple ammo weapons are
         // fired; if this line not present
         // then when one ammo slots run dry the rest silently don't fire.
-        return super.fire(waa, game, server);
+        return super.fire(waa, game, manager);
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
      * megamek.common.actions.WeaponAttackAction, megamek.common.Game)
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, Game game, Server server) {
-        return new BayWeaponHandler(toHit, waa, game, server);
+            WeaponAttackAction waa, Game game, GameManager manager) {
+        return new BayWeaponHandler(toHit, waa, game, manager);
     }
-    
+
     @Override
     public int getMaxRange(Mounted weapon) {
+        return getMaxRange(weapon, null);
+    }
+
+    @Override
+    public int getMaxRange(Mounted weapon, Mounted ammo) {
         int mrange = RANGE_SHORT;
         Entity ae = weapon.getEntity();
         if (null != ae) {

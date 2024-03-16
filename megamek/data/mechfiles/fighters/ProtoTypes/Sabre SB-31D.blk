@@ -20,6 +20,10 @@ Sabre
 SB-31D
 </Model>
 
+<mul id:>
+4963
+</mul id:>
+
 <year>
 3079
 </year>
@@ -31,6 +35,10 @@ SB-31D
 <type>
 IS Level 3
 </type>
+
+<role>
+Interceptor
+</role>
 
 <motion_type>
 Aerodyne
@@ -103,7 +111,7 @@ ISLaserAntiMissileSystem
 </Fuselage Equipment>
 
 <source>
-TRO Prototypes - Jihad
+TRO: Prototypes
 </source>
 
 <tonnage>
@@ -143,4 +151,10 @@ TARGETING:Ki-II TTS
 </systemManufacturers>
 
 
+
+
+<quirks>
+cramped_cockpit
+atmo_flyer
+</quirks>
 

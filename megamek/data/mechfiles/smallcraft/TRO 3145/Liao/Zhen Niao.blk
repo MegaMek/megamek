@@ -16,9 +16,13 @@ SmallCraft
 Zhen Niao
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+6474
+</mul id:>
 
 <year>
 3101
@@ -31,6 +35,10 @@ Zhen Niao
 <type>
 IS Level 3
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Aerodyne
@@ -105,7 +113,7 @@ ISSpaceMineDispenser
 </structural_integrity>
 
 <source>
-TRO 3145 Capellan Confederation - Late Republic
+TRO: 3145 Capellan Confederation
 </source>
 
 <tonnage>
@@ -151,3 +159,8 @@ TRO 3145 Capellan Confederation - Late Republic
 <escape_pod>
 0
 </escape_pod>
+
+<quirks>
+imp_com
+</quirks>
+

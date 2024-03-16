@@ -20,6 +20,10 @@ Scout JumpShip
 (2712)
 </Model>
 
+<mul id:>
+4999
+</mul id:>
+
 <year>
 2712
 </year>
@@ -31,6 +35,10 @@ Scout JumpShip
 <type>
 IS Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Aerodyne
@@ -108,7 +116,7 @@ cargobay:519.5:1:5
 </structural_integrity>
 
 <source>
-TRO 3057R - Star League
+TRO: 3057 Revised
 </source>
 
 <tonnage>

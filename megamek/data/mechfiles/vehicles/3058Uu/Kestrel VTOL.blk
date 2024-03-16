@@ -12,9 +12,13 @@ VTOL
 <Name>
 Kestrel VTOL
 </Name>
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+1769
+</mul id:>
 <Tonnage>
 25
 </Tonnage>
@@ -44,6 +48,10 @@ ISMG Ammo (100)
 <type>
 IS Level 1
 </type>
+
+<role>
+Scout
+</role>
 <year>
 3007
 </year>
@@ -60,5 +68,5 @@ IS Level 1
 VTOL
 </motion_type>
 <source>
-Succession Wars
+TRO: 3058
 </source>

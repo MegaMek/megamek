@@ -16,9 +16,13 @@ VTOL
 Pinto Attack VTOL
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+2532
+</mul id:>
 
 <year>
 3055
@@ -27,6 +31,10 @@ Pinto Attack VTOL
 <type>
 IS Level 2
 </type>
+
+<role>
+Striker
+</role>
 
 <motion_type>
 VTOL
@@ -86,7 +94,7 @@ BeagleActiveProbe
 </Rotor Equipment>
 
 <source>
-Clan Invasion
+TRO: 3060
 </source>
 
 <tonnage>

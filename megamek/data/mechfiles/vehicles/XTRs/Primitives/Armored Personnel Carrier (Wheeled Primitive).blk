@@ -20,6 +20,10 @@ Armored Personnel Carrier
 (Wheeled Primitive)
 </Model>
 
+<mul id:>
+123
+</mul id:>
+
 <year>
 2390
 </year>
@@ -27,6 +31,10 @@ Armored Personnel Carrier
 <type>
 IS Level 2
 </type>
+
+<role>
+Scout
+</role>
 
 <motion_type>
 Wheeled
@@ -88,7 +96,7 @@ Machine Gun
 </Turret Equipment>
 
 <source>
-XTRO Primitives I - Age of War
+XTR: Primitives I
 </source>
 
 <tonnage>

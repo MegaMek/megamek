@@ -20,6 +20,10 @@ Deathstalker
 XF-78
 </Model>
 
+<mul id:>
+5609
+</mul id:>
+
 <year>
 3068
 </year>
@@ -31,6 +35,10 @@ XF-78
 <type>
 IS Level 4
 </type>
+
+<role>
+Attack Fighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -107,9 +115,14 @@ ISImprovedHeavyGauss Ammo
 </Fuselage Equipment>
 
 <source>
-XTRO Phantoms - Jihad
+XTR: Phantoms
 </source>
 
 <tonnage>
 80.0
 </tonnage>
+
+<quirks>
+atmo_flyer
+</quirks>
+

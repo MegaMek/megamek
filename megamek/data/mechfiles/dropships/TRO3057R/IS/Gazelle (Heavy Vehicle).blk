@@ -20,6 +20,10 @@ Gazelle
 (Heavy Vehicle)
 </Model>
 
+<mul id:>
+4206
+</mul id:>
+
 <year>
 2857
 </year>
@@ -31,6 +35,10 @@ Gazelle
 <type>
 IS Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Aerodyne
@@ -120,7 +128,7 @@ Medium Laser
 </structural_integrity>
 
 <source>
-TRO 3057R - Succession Wars
+TRO: 3057 Revised
 </source>
 
 <tonnage>

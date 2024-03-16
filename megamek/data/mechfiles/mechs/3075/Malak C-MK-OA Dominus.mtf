@@ -1,12 +1,20 @@
-Version:1.1
-Malak
-C-MK-OA Dominus
+chassis:Malak
+model:C-MK-OA Dominus
+mul id:1995
 
 Config:Biped Omnimech
 TechBase:Inner Sphere
 Era:3069
-Source:TRO 3075
+Source:TRO: 3075
 Rules Level:2
+role:Striker
+
+
+
+quirk:imp_com
+quirk:imp_sensors
+quirk:bad_rep_is
+
 
 Mass:30
 Engine:210 Light Engine(IS)

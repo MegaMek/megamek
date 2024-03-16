@@ -17,7 +17,7 @@ on:
     - 'megamek/src/megamek/common/Board.java'
     - 'megamek/src/megamek/common/Building.java'
     - 'megamek/src/megamek/common/Terrains.java'
-    - 'megamek/src/megamek/utils/BoardsValidator.java'
+    - 'megamek/src/megamek/utilities/BoardsValidator.java'
   pull_request:
     branches: [ master ]
     paths:
@@ -25,7 +25,7 @@ on:
     - 'megamek/src/megamek/common/Board.java'
     - 'megamek/src/megamek/common/Building.java'
     - 'megamek/src/megamek/common/Terrains.java'
-    - 'megamek/src/megamek/utils/BoardsValidator.java'
+    - 'megamek/src/megamek/utilities/BoardsValidator.java'
 
 jobs:
   board_validator:
@@ -36,14 +36,14 @@ jobs:
       matrix:
         os: [ ubuntu-latest ] # For Board Validation running on *nix is sufficient
         java-distribution: [ temurin ]
-        java-version: [ 11 ]
+        java-version: [ 17 ]
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
 
     # Setup the requested Java Distribution and Version from the matrix
     - name: Set up ${{ matrix.java-distribution }} JDK ${{ matrix.java-version }}
-      uses: actions/setup-java@v2
+      uses: actions/setup-java@v3
       with:
         distribution: ${{ matrix.java-distribution }}
         java-version: ${{ matrix.java-version }}
@@ -64,4 +64,4 @@ jobs:
       # the ./data directory of the current working directory.
       #
       # The -q flag tells the validator to only print the filenames that are invalid.
-      run: java -cp build/libs/MegaMek.jar megamek.utils.BoardsValidator -q
+      run: java -cp build/libs/MegaMek.jar megamek.utilities.BoardsValidator -q

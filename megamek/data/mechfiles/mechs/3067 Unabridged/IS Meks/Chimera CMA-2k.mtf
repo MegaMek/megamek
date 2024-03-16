@@ -1,12 +1,18 @@
-Version:1.1
-Chimera
-CMA-2K
+chassis:Chimera
+model:CMA-2K
+mul id:5667
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3069
 Rules Level:2
-source:3067 Unabridged
+role:Striker
+source:Record Sheets: 3067 Unabridged
+
+
+
+quirk:nimble_jumper
+
 
 Mass:40
 Engine:280 XL Fusion Engine

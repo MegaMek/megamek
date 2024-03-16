@@ -13,12 +13,16 @@ ConvFighter
 </UnitType>
 
 <Name>
-Medium Strike Fighter Steinadler
+Medium Strike Fighter 
 </Name>
 
 <Model>
-(Golden Eagle)
+Steinadler (Golden Eagle)
 </Model>
+
+<mul id:>
+2159
+</mul id:>
 
 <year>
 2720
@@ -31,6 +35,10 @@ Medium Strike Fighter Steinadler
 <type>
 IS Level 1
 </type>
+
+<role>
+Fire Support
+</role>
 
 <motion_type>
 Aerodyne
@@ -94,7 +102,7 @@ IS Ammo LRM-5
 </Fuselage Equipment>
 
 <source>
-TRO 3039 - Star League
+TRO: 3039
 </source>
 
 <tonnage>

@@ -80,7 +80,7 @@ public class ForceNode extends RulesetNode {
                         }
                         break;
                     case "chassis":
-                        if (fd.getChassis().size() == 0
+                        if (fd.getChassis().isEmpty()
                         || rule.predicates.containsKey("ifChassis")) {
                             ValueNode n = rule.selectOption(fd, true);
                             if (n != null) {
@@ -91,8 +91,7 @@ public class ForceNode extends RulesetNode {
                         }
                         break;
                     case "variant":
-                        if (fd.getVariants().size() == 0
-                        || rule.predicates.containsKey("ifVariant")) {
+                        if (fd.getVariants().isEmpty() || rule.predicates.containsKey("ifVariant")) {
                             ValueNode n = rule.selectOption(fd, true);
                             if (n != null) {
                                 for (String c : n.getContent().split(",")) {
@@ -217,7 +216,7 @@ public class ForceNode extends RulesetNode {
         }
 
         String generate = assertions.getProperty("generate");
-        if (subforces.size() == 0) {
+        if (subforces.isEmpty()) {
             generate = "model";
         }
 
@@ -329,9 +328,7 @@ public class ForceNode extends RulesetNode {
         try {
             eschelon = Integer.parseInt(assertions.getProperty("eschelon"));
             assertions.remove("eschelon");
-        } catch (NullPointerException ex) {
-            throw new IllegalArgumentException("Force Generator: force node is missing eschelon attribute.");
-        } catch (NumberFormatException ex) {
+        } catch (Exception ex) {
             throw new IllegalArgumentException("Force Generator: force node is missing eschelon attribute.");
         }
 

@@ -16,9 +16,13 @@ Tank
 Ku Wheeled Assault Tank
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+1846
+</mul id:>
 
 <year>
 2842
@@ -27,6 +31,10 @@ Ku Wheeled Assault Tank
 <type>
 Clan Level 2
 </type>
+
+<role>
+Brawler
+</role>
 
 <motion_type>
 Wheeled
@@ -83,7 +91,7 @@ CLUltraAC10
 </Turret Equipment>
 
 <source>
-Succession Wars
+TRO: 3060
 </source>
 
 <tonnage>

@@ -20,6 +20,10 @@ Brunel Dump Truck
 (LRM)
 </Model>
 
+<mul id:>
+3865
+</mul id:>
+
 <year>
 2801
 </year>
@@ -27,6 +31,10 @@ Brunel Dump Truck
 <type>
 IS Level 3
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Wheeled
@@ -110,7 +118,7 @@ ISLRM20
 </tonnage>
 
 <source>
-H:Operation Klondike - Succession Wars
+Historical: Operation Klondike
 </source>
 
 <history>

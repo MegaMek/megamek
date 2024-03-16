@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -17,8 +17,12 @@ Cruiser
 </Name>
 
 <Model>
-(Standard)
+
 </Model>
+
+<mul id:>
+6989
+</mul id:>
 
 <year>
 2325
@@ -31,6 +35,10 @@ Cruiser
 <type>
 IS Level 3
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Aerodyne
@@ -217,8 +225,48 @@ Ammo Barracuda:30
 75
 </structural_integrity>
 
+<capabilities>
+The Cruiser was a missile cruiser armed with bow-mounted White Shark missile launchers and Barracuda arrays for anti-fighter defense. However, the decision to use conventional kinetic-kill warheads instead of nuclear warheads limited its offensive power. The ship also had tertiary naval autocannons to deal with smaller craft and DropShuttles. Its design included interconnected large nose bays for DropShuttles, small craft, and cargo, but the shifting center of mass between empty and full bays caused maneuverability issues.
+</capabilities>
+
+<overview>
+The Cruiser-class cruiser, also known as the "Beercan Battleship" due to its squat and compact design, was originally a Terran ship class contemporary to the Dreadnought. It served as a vanguard vessel during James McKenna's campaigns in the early days of the Hegemony. However, its career with the Hegemony navy was relatively short-lived, and the last Cruisers were mothballed in 2405 before being sold to the Great Houses.
+</overview>
+
+<history>
+The Cruiser's service in the Terran navy was marked by operational and design deficiencies that led to its retirement. Crews and admirals found the ship's design unappealing, earning it nicknames like "Beercan Battleship" and "Killer Space Keg." Despite its flaws, the Cruiser performed adequately in its era, particularly in high-speed closing engagements against contemporary WarShips and armed merchant vessels. After its retirement from Terran service, several Cruisers found new life after being sold to the Great Houses, while the rest were mothballed.
+</history>
+
+<manufacturer>
+Boeing Interstellar
+</manufacturer>
+
+<primaryFactory>
+Terra
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<use>
+Cruiser
+</use>
+
+<length>
+240 m
+</length>
+
+<height>
+1200 m Sail
+</height>
+
 <source>
-FR2765-DCMS - Star League
+Field Report 2765 DCMS
 </source>
 
 <tonnage>
@@ -236,6 +284,10 @@ FR2765-DCMS - Star League
 <grav_decks>
 100
 </grav_decks>
+
+<designtype>
+1
+</designtype>
 
 <crew>
 320
@@ -268,3 +320,4 @@ FR2765-DCMS - Star League
 <escape_pod>
 150
 </escape_pod>
+

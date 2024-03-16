@@ -15,6 +15,10 @@ Koryu Submarine
 <Model>
 (Civilian)
 </Model>
+
+<mul id:>
+1818
+</mul id:>
 <Tonnage>
 30
 </Tonnage>
@@ -43,6 +47,10 @@ cargobay:5.5:1
 IS Level 2
 </type>
 
+<role>
+None
+</role>
+
 <year>
 3025
 </year>
@@ -62,3 +70,7 @@ IS Level 2
 <motion_type>
 Submarine
 </motion_type>
+
+<source>
+Historical Turning Points: Glengarry
+</source>

@@ -20,6 +20,10 @@ Sabre
 SB-27b-EC
 </Model>
 
+<mul id:>
+7687
+</mul id:>
+
 <year>
 2819
 </year>
@@ -31,6 +35,10 @@ SB-27b-EC
 <type>
 Mixed (IS Chassis) Experimental
 </type>
+
+<role>
+Interceptor
+</role>
 
 <motion_type>
 Aerodyne
@@ -105,7 +113,7 @@ Cloud Cobra technicians modified the Clan’s remaining stock of Royal Sabres wi
 </history>
 
 <source>
-TRO Golden Century - Succession Wars
+TRO: Golden Century
 </source>
 
 <tonnage>

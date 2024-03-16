@@ -1,12 +1,18 @@
-Version:1.0
-Thorn
-THE-N1
+chassis:Thorn
+model:THE-N1
+mul id:3192
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3051
-Source:TRO 3050 - Clan Invasion
+Source:TRO: 3050
 Rules Level:2
+role:Sniper
+
+
+
+quirk:easy_maintain
+
 
 Mass:20
 Engine:120 XL Engine

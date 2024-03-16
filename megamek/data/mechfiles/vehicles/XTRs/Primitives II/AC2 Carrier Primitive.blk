@@ -20,6 +20,10 @@ AC/2 Carrier
 (Primitive)
 </Model>
 
+<mul id:>
+5588
+</mul id:>
+
 <year>
 2440
 </year>
@@ -27,6 +31,10 @@ AC/2 Carrier
 <type>
 IS Level 4
 </type>
+
+<role>
+Sniper
+</role>
 
 <motion_type>
 Tracked
@@ -82,9 +90,18 @@ Autocannon/2
 </Rear Equipment>
 
 <source>
-XTRO Primitives II - Age of War
+XTR: Primitives II
 </source>
 
 <tonnage>
 55.0
 </tonnage>
+
+<quirks>
+easy_maintain
+low_profile
+fast_reload
+poor_performance
+obsolete
+</quirks>
+

@@ -20,6 +20,10 @@ Narukami Heavy Tank
 NK-1C
 </Model>
 
+<mul id:>
+6388
+</mul id:>
+
 <year>
 3097
 </year>
@@ -27,6 +31,10 @@ NK-1C
 <type>
 IS Level 3
 </type>
+
+<role>
+Sniper
+</role>
 
 <motion_type>
 Tracked
@@ -85,9 +93,16 @@ ISAntiMissileSystem
 </Turret Equipment>
 
 <source>
-TRO 3145 Draconis Combine - Early Republic
+TRO: 3145 Draconis Combine
 </source>
 
 <tonnage>
 90.0
 </tonnage>
+
+<quirks>
+low_profile
+hard_pilot
+fast_reload
+</quirks>
+

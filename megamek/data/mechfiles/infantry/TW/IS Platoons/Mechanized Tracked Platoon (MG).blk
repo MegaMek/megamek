@@ -20,6 +20,10 @@ Mechanized Tracked Platoon
 (MG)
 </Model>
 
+<mul id:>
+2141
+</mul id:>
+
 <year>
 1950
 </year>
@@ -27,6 +31,10 @@ Mechanized Tracked Platoon
 <type>
 IS Level 2
 </type>
+
+<role>
+Ambusher
+</role>
 
 <motion_type>
 Tracked
@@ -36,7 +44,7 @@ Tracked
 </Field Guns Equipment>
 
 <source>
-Total Warfare - Succession Wars
+Total Warfare
 </source>
 
 <squad_size>

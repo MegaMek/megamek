@@ -1,12 +1,18 @@
-Version:1.1
-Osiris
-OSR-5D
+chassis:Osiris
+model:OSR-5D
+mul id:5660
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3081
 Rules Level:2
-source:3067 Unabridged
+role:Striker
+source:Record Sheets: 3067 Unabridged
+
+
+
+quirk:ext_twist
+
 
 Mass:30
 Engine:210 XL Fusion Engine

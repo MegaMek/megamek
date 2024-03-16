@@ -1,12 +1,18 @@
-Version:1.0
-Templar
-TLR1-OE
+chassis:Templar
+model:TLR1-OE
+mul id:5708
 
 Config:Biped Omnimech
 TechBase:Inner Sphere
 Era:3064
-Source:3067 Unabridged
+source:Record Sheets: 3067 Unabridged
 Rules Level:2
+role:Missile Boat
+
+
+
+quirk:easy_maintain
+
 
 Mass:85
 Engine:340 XL Engine(IS)

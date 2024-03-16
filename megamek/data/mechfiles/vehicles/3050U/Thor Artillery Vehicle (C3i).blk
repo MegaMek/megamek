@@ -20,6 +20,10 @@ Thor Artillery Vehicle
 (C3i)
 </Model>
 
+<mul id:>
+3187
+</mul id:>
+
 <year>
 3066
 </year>
@@ -27,6 +31,10 @@ Thor Artillery Vehicle
 <type>
 IS Level 3
 </type>
+
+<role>
+Missile Boat
+</role>
 
 <motion_type>
 Wheeled
@@ -76,7 +84,7 @@ ISThumper
 </Rear Equipment>
 
 <source>
-TRO 3050 - Civil War
+TRO: 3050
 </source>
 
 <tonnage>

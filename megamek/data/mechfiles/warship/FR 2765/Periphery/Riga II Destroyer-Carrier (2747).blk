@@ -1,0 +1,256 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Warship
+</UnitType>
+
+<Name>
+Riga II Destroyer-Carrier
+</Name>
+
+<Model>
+(2747)
+</Model>
+
+<mul id:>
+6994
+</mul id:>
+
+<year>
+2747
+</year>
+
+<originalBuildYear>
+2747
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+asfbay:18.0:4:1
+asfbay:18.0:4:2
+smallcraftbay:5.0:2:3
+dockingcollar
+dockingcollar
+1stclassquarters:400.0:0
+crewquarters:1400.0:0
+cargobay:73888.0:1:8
+</transporters>
+
+<SafeThrust>
+4
+</SafeThrust>
+
+<heatsinks>
+581
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+22500
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+12
+</armor_type>
+
+<armor_tech>
+5
+</armor_tech>
+
+<armor>
+120
+100
+100
+120
+100
+100
+</armor>
+
+<Nose Equipment>
+(B) Naval PPC (Medium)
+Naval PPC (Medium)
+Naval PPC (Medium)
+Naval PPC (Medium)
+(B) Naval Autocannon (NAC/40)
+Ammo NAC/40:20
+(B) Naval Autocannon (NAC/40)
+Ammo NAC/40:20
+</Nose Equipment>
+
+<Left Front Side Equipment>
+(B) Naval Laser 45
+Naval Laser 45
+Naval Laser 35
+Naval Laser 35
+</Left Front Side Equipment>
+
+<Right Front Side Equipment>
+(B) Naval Laser 45
+Naval Laser 45
+Naval Laser 35
+Naval Laser 35
+</Right Front Side Equipment>
+
+<Aft Equipment>
+(B) Naval Laser 45
+Naval Laser 45
+Naval Laser 35
+Naval Laser 35
+</Aft Equipment>
+
+<Aft Left Side Equipment>
+(B) Naval Laser 45
+Naval Laser 45
+Naval Laser 35
+Naval Laser 35
+</Aft Left Side Equipment>
+
+<Aft Right Side Equipment>
+(B) Naval Laser 45
+Naval Laser 45
+Naval Laser 35
+Naval Laser 35
+</Aft Right Side Equipment>
+
+<Hull Equipment>
+</Hull Equipment>
+
+<Left Broadsides Equipment>
+(B) Naval Autocannon (NAC/30)
+Naval Autocannon (NAC/30)
+Ammo NAC/30:200
+</Left Broadsides Equipment>
+
+<Right Broadsides Equipment>
+(B) Naval Autocannon (NAC/30)
+Naval Autocannon (NAC/30)
+Ammo NAC/30:200
+</Right Broadsides Equipment>
+
+<structural_integrity>
+60
+</structural_integrity>
+
+<capabilities>
+The Riga II was specifically designed to bridge the gap between destroyers and cruisers, offering enhanced firepower and resilience. Its heavy armor, surpassing that of typical destroyers, provided superior protection on the battlefield. Equipped with energy-based weapon systems, the Riga II eliminated the need for ammunition storage, ensuring sustained combat effectiveness. This made it a versatile and efficient asset for extended operations and independent duty. In terms of offensive capabilities, the Riga II boasted a formidable arsenal. It carried a variety of missiles, including the powerful Killer Whale missiles, along with White Shark and Barracuda missile launchers. These weapons enabled the Riga II to engage targets effectively at different ranges. Furthermore, the ship's complement of fighters ensured its self-defense against enemy fighters, safeguarding its operational effectiveness.
+</capabilities>
+
+<overview>
+The Riga II destroyer, a remarkable vessel within the Star League Defense Force fleet, defied the conventional norms of cheap and expendable destroyers. With its robust armor and unique combination of destroyer and frigate capabilities, the Riga II stood out as a formidable force. It was a product of the technological advancements of the time, embodying the revolutionary lithium-fusion battery technology that revolutionized the SLDF fleet.
+</overview>
+
+<history>
+The Riga II destroyer emerged in response to the need for a vessel that could combine the qualities of a destroyer and a cruiser. Its development took place during the era of the lithium-fusion battery revolution within the SLDF. Despite initial skepticism from the Navy, the Riga II was authorized and began production in 2766. During the Reunification War, the Riga II played a crucial role as an escort ship for Monsoon and Aegis-class WarShips, proving its worth in long-range operations. The ship's resilience and firepower made it an invaluable asset during the conflict. However, the Riga II faced its greatest challenges during the campaign against Amaris, engaging the relentless Caspar drones. While the Riga II suffered losses, its survival rate outperformed other destroyer classes. Following the Amaris campaign, the Riga II continued its service within the Star League Defense Force. After arriving in the Pentagon worlds, most Riga IIs remained active, fulfilling important patrol duties. However, they met their demise during Operation Klondike. A small number of surviving Riga IIs found new purpose within the Clans. Undergoing significant refits, they were transformed into the modern York-class destroyers, carrying on the legacy and capabilities of the esteemed Riga II. The York-class served the Clans for a century, upholding the spirit of the Riga II in the ever-evolving landscape of interstellar warfare.
+</history>
+
+<manufacturer>
+Boeing Interstellar
+</manufacturer>
+
+<primaryFactory>
+New Earth
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<use>
+Destroyer-Carrier
+</use>
+
+<length>
+630 m
+</length>
+
+<height>
+1180 m Sail
+</height>
+
+<source>
+Field Report 2765 Periphery
+</source>
+
+<tonnage>
+600000.0
+</tonnage>
+
+<kf_core>
+1
+</kf_core>
+
+<lithium-fusion>
+1
+</lithium-fusion>
+
+<sail>
+1
+</sail>
+
+<grav_decks>
+140
+65
+</grav_decks>
+
+<designtype>
+1
+</designtype>
+
+<crew>
+337
+</crew>
+
+<officers>
+40
+</officers>
+
+<gunners>
+42
+</gunners>
+
+<passengers>
+0
+</passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<life_boat>
+30
+</life_boat>
+
+<escape_pod>
+20
+</escape_pod>
+

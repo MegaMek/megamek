@@ -20,6 +20,10 @@ Cobra VTOL Transport
 (Fusion)
 </Model>
 
+<mul id:>
+7190
+</mul id:>
+
 <year>
 2489
 </year>
@@ -27,6 +31,10 @@ Cobra VTOL Transport
 <type>
 IS Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 VTOL
@@ -86,9 +94,16 @@ Machine Gun
 </Rotor Equipment>
 
 <source>
-XTRO Primitives IV - Age of War
+XTR: Primitives IV
 </source>
 
 <tonnage>
 30.0
 </tonnage>
+
+<quirks>
+non_standard
+obsolete
+vtol_rotor_dual
+</quirks>
+

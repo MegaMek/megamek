@@ -1,12 +1,18 @@
-Version:1.1
-Thor (Summoner)
-Z
+chassis:Thor
+clanname:Summoner
+model:Z
+mul id:5821
 
 Config:Biped Omnimech
 TechBase:Clan
 Era:3072
-Source:WoR - Jihad
+source:Wars of Reaving
 Rules Level:4
+role:Skirmisher
+
+quirk:imp_com
+quirk:ubiquitous_clan
+
 
 Mass:70
 Engine:350 XL (Clan) Engine(IS)

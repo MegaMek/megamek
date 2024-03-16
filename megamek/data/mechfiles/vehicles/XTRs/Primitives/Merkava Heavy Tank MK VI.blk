@@ -20,6 +20,10 @@ Merkava Heavy Tank
 Mk VI
 </Model>
 
+<mul id:>
+2175
+</mul id:>
+
 <year>
 2384
 </year>
@@ -31,6 +35,10 @@ Mk VI
 <type>
 IS Level 2
 </type>
+
+<role>
+Missile Boat
+</role>
 
 <motion_type>
 Tracked
@@ -100,7 +108,7 @@ Machine Gun
 </armor_tech_rating>
 
 <source>
-XTRO Primitives I - Age of War
+XTR: Primitives I
 </source>
 
 <tonnage>

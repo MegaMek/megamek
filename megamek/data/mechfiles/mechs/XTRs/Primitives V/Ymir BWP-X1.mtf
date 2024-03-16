@@ -1,12 +1,19 @@
-Version:1.1
-Ymir
-BWP-X1 'Bipedal Weapons Platform'
+chassis:Ymir
+model:BWP-X1 'Bipedal Weapons Platform'
+mul id:3623
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2462
-Source:XTRO Primitives V - Age of War
+Source:XTR: Primitives V
 Rules Level:4
+role:Missile Boat
+
+
+
+
+quirk:stable
+
 
 Mass:90
 Engine:325 Fusion Engine(IS)

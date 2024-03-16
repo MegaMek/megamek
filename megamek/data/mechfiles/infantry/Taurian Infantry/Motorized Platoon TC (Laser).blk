@@ -1,0 +1,71 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Infantry
+</UnitType>
+
+<Name>
+Motorized Platoon (Taurian)
+</Name>
+
+<Model>
+(Laser)
+</Model>
+
+<year>
+2405
+</year>
+
+<originalBuildYear>
+2405
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Motorized
+</motion_type>
+
+<transporters>
+</transporters>
+
+<Field Guns Equipment>
+</Field Guns Equipment>
+
+<source>
+Total Warfare
+</source>
+
+<squad_size>
+10
+</squad_size>
+
+<squadn>
+3
+</squadn>
+
+<Primary>
+Laser Rifle
+</Primary>
+
+<antimek>
+6
+</antimek>
+
+<armorKit>
+Generic Infantry Kit
+</armorKit>
+
+<mul id:>
+9283
+</mul id:>

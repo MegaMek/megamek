@@ -18,6 +18,9 @@
  */
 package megamek.client.ui.preferences;
 
+import megamek.codeUtilities.StringUtility;
+import org.apache.logging.log4j.LogManager;
+
 import javax.swing.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -37,7 +40,7 @@ public class JSplitPanePreference extends PreferenceElement implements PropertyC
     //endregion Variable Declarations
 
     //region Constructors
-    public JSplitPanePreference(final JSplitPane splitPane) {
+    public JSplitPanePreference(final JSplitPane splitPane) throws Exception {
         super(splitPane.getName());
         setDividerLocation(splitPane.getDividerLocation());
         weakReference = new WeakReference<>(splitPane);
@@ -66,8 +69,11 @@ public class JSplitPanePreference extends PreferenceElement implements PropertyC
     }
 
     @Override
-    protected void initialize(final String value) {
-        assert (value != null) && !value.isBlank();
+    protected void initialize(final String value) throws Exception {
+        if (StringUtility.isNullOrBlank(value)) {
+            LogManager.getLogger().error("Cannot create a JSplitPanePreference because of a null or blank input value");
+            throw new Exception();
+        }
 
         final JSplitPane element = getWeakReference().get();
         if (element != null) {

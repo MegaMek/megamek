@@ -1,12 +1,17 @@
-Version:1.0
-Centurion
-CN9-YLW 'Yen Lo Wang'
+chassis:Centurion
+model:CN9-YLW 'Yen Lo Wang'
+mul id:525
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3027
-Source:TRO 3039 - Succession Wars
+Source:TRO: 3039
 Rules Level:1
+role:Juggernaut
+
+quirk:imp_target_short
+quirk:non_standard
+
 
 Mass:50
 Engine:200 Fusion Engine

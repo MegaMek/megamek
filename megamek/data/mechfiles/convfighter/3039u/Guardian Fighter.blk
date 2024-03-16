@@ -16,9 +16,13 @@ ConvFighter
 Guardian Fighter
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+1334
+</mul id:>
 
 <year>
 2831
@@ -31,6 +35,10 @@ Guardian Fighter
 <type>
 IS Level 1
 </type>
+
+<role>
+Fast Dogfighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -95,7 +103,7 @@ IS Ammo SRM-6
 </Fuselage Equipment>
 
 <source>
-TRO 3039 - Succession Wars
+TRO: 3039
 </source>
 
 <tonnage>

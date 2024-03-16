@@ -20,6 +20,10 @@ Gun Trailer
 (Artillery/AA)
 </Model>
 
+<mul id:>
+6529
+</mul id:>
+
 <year>
 3096
 </year>
@@ -27,6 +31,10 @@ Gun Trailer
 <type>
 IS Level 3
 </type>
+
+<role>
+Missile Boat
+</role>
 
 <motion_type>
 Wheeled
@@ -83,7 +91,7 @@ ISArrowIV
 </Turret Equipment>
 
 <source>
-TRO 3145 Mercenaries - Early Republic
+TRO: 3145 Mercenaries
 </source>
 
 <tonnage>

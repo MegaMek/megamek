@@ -92,7 +92,9 @@ class AimedShotHandler implements ActionListener, ItemListener {
                     this.firingDisplay.clientgui.frame,
                     Messages.getString("FiringDisplay.AimedShotDialog.title"),
                     Messages.getString("FiringDisplay.AimedShotDialog.message"),
-                    options, enabled, aimingAt, this, this);
+                    options, enabled, aimingAt,
+                    this.firingDisplay.clientgui, this.firingDisplay.target,
+                    this, this);
 
             asd.setVisible(true);
             this.firingDisplay.updateTarget();
@@ -305,7 +307,7 @@ class AimedShotHandler implements ActionListener, ItemListener {
             if (this.firingDisplay.target instanceof GunEmplacement) {
                 return GunEmplacement.HIT_LOCATION_NAMES[aimingAt];
             } else if (this.firingDisplay.target instanceof Entity) {
-                return ((Entity) this.firingDisplay.target).getLocationAbbrs()[aimingAt];
+                return ((Entity) this.firingDisplay.target).getLocationName(aimingAt);
             }
         }
         return null;

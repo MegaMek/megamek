@@ -16,9 +16,13 @@ SmallCraft
 Condottiere Assault Craft
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+6578
+</mul id:>
 
 <year>
 3093
@@ -31,6 +35,10 @@ Condottiere Assault Craft
 <type>
 IS Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Aerodyne
@@ -118,7 +126,7 @@ ISERMediumLaser
 </structural_integrity>
 
 <source>
-TRO 3145 Mercenaries - Late Republic
+TRO: 3145 Mercenaries
 </source>
 
 <tonnage>
@@ -164,3 +172,9 @@ TRO 3145 Mercenaries - Late Republic
 <escape_pod>
 0
 </escape_pod>
+
+<quirks>
+easy_pilot
+cramped_cockpit
+</quirks>
+

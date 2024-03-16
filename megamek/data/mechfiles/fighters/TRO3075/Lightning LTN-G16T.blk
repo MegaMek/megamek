@@ -20,6 +20,10 @@ Lightning
 LTN-G16T
 </Model>
 
+<mul id:>
+4518
+</mul id:>
+
 <year>
 3069
 </year>
@@ -31,6 +35,10 @@ LTN-G16T
 <type>
 IS Level 2
 </type>
+
+<role>
+Dogfighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -106,7 +114,7 @@ IS Ammo AC/20
 </Fuselage Equipment>
 
 <source>
-TRO 3075 - Jihad
+TRO: 3075
 </source>
 
 <tonnage>

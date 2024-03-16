@@ -1,12 +1,22 @@
-Version:1.0
-Atlas
-AS7-K3
+chassis:Atlas
+model:AS7-K3
+mul id:146
 
 Config:Biped
 techbase:Inner Sphere
 era:3083
-source:Dark Age
+source:TRO: 3085
 rules level:2
+role:Sniper
+
+
+
+quirk:battle_fists_la
+quirk:battle_fists_ra
+quirk:command_mech
+quirk:distracting
+quirk:imp_com
+
 
 mass:100
 engine:400 XL Engine(IS)

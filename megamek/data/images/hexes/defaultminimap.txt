@@ -1,5 +1,5 @@
 #
-# MiniMap configuration file
+# Minimap configuration file
 # Lines starting with "#" (like this one) are comments
 #
 

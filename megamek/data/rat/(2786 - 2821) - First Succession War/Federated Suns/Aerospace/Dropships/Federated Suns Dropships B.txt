@@ -1,8 +1,8 @@
 Federated Suns Dropships B
-Vampire (Standard),1
+Vampire,1
 Leopard (2537),2
 Lion (2595),3
-Dictator (Standard),4
+Dictator,4
 Union (2708),5
 Leopard CV (2581),6
 Triumph (2593),5

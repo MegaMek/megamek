@@ -15,6 +15,10 @@ Padilla Tube Artillery Tank
 <Model>
 (Thumper)
 </Model>
+
+<mul id:>
+2407
+</mul id:>
 <Tonnage>
 55
 </Tonnage>
@@ -47,6 +51,10 @@ ISGuardianECMSuite
 <type>
 IS Level 3
 </type>
+
+<role>
+Missile Boat
+</role>
 <year>
 3082
 </year>
@@ -63,5 +71,5 @@ IS Level 3
 Wheeled
 </motion_type>
 <source>
-Jihad
+TRO: 3085
 </source>

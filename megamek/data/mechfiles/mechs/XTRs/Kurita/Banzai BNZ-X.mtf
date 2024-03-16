@@ -1,56 +1,65 @@
-Version:1.1
-Banzai
-BNZ-X
-
+chassis:Banzai
+model:BNZ-X
+mul id:251
 Config:Biped
-TechBase:Mixed (IS Chassis)
-Era:3076
-Source:XTRO Kurita - Jihad
-Rules Level:4
+techbase:Mixed (IS Chassis)
+era:3076
+source:XTR: Kurita
+rules level:4
+role:Skirmisher
 
-Mass:90
-Engine:360 XL Fusion Engine (Inner Sphere)
-Structure:Endo-Steel
-Myomer:ISMASC
 
-Heat Sinks:15 Double (Inner Sphere)
-Walk MP:4
-Jump MP:0
 
-Armor:Standard Armor (Clan)
-LA Armor:30
-RA Armor:30
-LT Armor:28
-RT Armor:28
-CT Armor:44
-HD Armor:9
-LL Armor:38
-RL Armor:38
-RTL Armor:10
-RTR Armor:10
-RTC Armor:14
 
-Weapons:6
-1 CLLargePulseLaser, Right Arm
-1 CLLargePulseLaser, Right Arm
-1 CLMediumPulseLaser, Right Torso
-1 CLMediumPulseLaser, Right Torso
-1 ISLargeVibroBlade, Left Arm
-1 CLERSmallLaser, Head
+quirk:difficult_maintain
+quirk:non_standard
+quirk:prototype
+weaponquirk:stable_weapon:RA:4:CLLargePulseLaser
+
+
+mass:90
+engine:360 XL Engine(IS)
+structure:IS Endo Steel
+myomer:Standard
+ejection:Full Head Ejection System
+
+heat sinks:15 IS Double
+walk mp:4
+jump mp:0
+
+armor:Standard(Clan)
+LA armor:30
+RA armor:30
+LT armor:28
+RT armor:28
+CT armor:44
+HD armor:9
+LL armor:38
+RL armor:38
+RTL armor:10
+RTR armor:10
+RTC armor:14
+
+Weapons:5
+Large Pulse Laser, Right Arm
+Large Pulse Laser, Right Arm
+Medium Pulse Laser, Right Torso
+Medium Pulse Laser, Right Torso
+ER Small Laser, Head
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-ISLargeVibroBlade
-ISLargeVibroBlade
-ISLargeVibroBlade
-ISLargeVibroBlade
+ISLargeVibroblade
+ISLargeVibroblade
+ISLargeVibroblade
+ISLargeVibroblade
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
-Endo-Steel
-Endo-Steel
-Endo-Steel
 
 Right Arm:
 Shoulder
@@ -61,52 +70,52 @@ CLLargePulseLaser
 CLLargePulseLaser
 CLLargePulseLaser
 CLLargePulseLaser
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
-Endo-Steel
-Endo-Steel
-Endo-Steel
 
 Left Torso:
-Engine
-Engine
-Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
 ISMASC
 ISMASC
 ISMASC
 ISMASC
 ISMASC
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
-Endo-Steel
-Endo-Steel
 
 Right Torso:
-Engine
-Engine
-Engine
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
 CLMediumPulseLaser
 CLMediumPulseLaser
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
-Endo-Steel
-Endo-Steel
 
 Center Torso:
-Engine
-Engine
-Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
 Gyro
 Gyro
 Gyro
 Gyro
-Engine
-Engine
-Engine
-CL Super Charger
--Empty-
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISBoobyTrap
+Supercharger
 
 Head:
 Life Support
@@ -115,19 +124,39 @@ Cockpit
 CLERSmallLaser
 Sensors
 Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Left Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo-Steel
-Endo-Steel
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Right Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo-Steel
-Endo-Steel
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

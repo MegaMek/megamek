@@ -1,12 +1,19 @@
-Version:1.1
-Mad Cat (Timber Wolf)
-Prime
+chassis:Mad Cat
+clanname:Timber Wolf
+model:Prime
+mul id:1985
 
 Config:Biped Omnimech
 techbase:Clan
 era:2945
-source:TRO 3050 - Succession Wars
+source:TRO: 3050
 rules level:2
+role:Brawler
+
+
+quirk:imp_target_med
+quirk:weak_head_1
+
 
 mass:75
 engine:375 XL (Clan) Engine(IS)
@@ -158,10 +165,10 @@ overview:overview:The Timber Wolf is a fast, heavy OmniMech. A signature design 
 
 capabilities:The default configuration of the Timber Wolf features a well blended mix of energy and missile weaponry; primarily extended-range lasers and long range missile racks that give the Timber Wolf considerable firepower at medium and long range. A pair of LRM-20 racks supplemented by two Extended Range Large Lasers make up the bulk of the Timber Wolf's firepower. The Timber Wolf also has an array of lighter, shorter ranged weaponry for use once the 'Mech draws closer to its prey: two ER Medium Lasers and a Medium Pulse Laser. Finally, it has two Machine Guns for point defense against infantry. Even on the modern battlefield the primary configuration of the Timber Wolf is a force to be reckoned with.
 
-deployment:First introduced in 2945, the Timber Wolf was designed by Clan Wolf as a second generation OmniMech along with the Gargoyle and the Naga to replace the aging Woodsman. While the Gargoyle may have been a very capable, fast assault OmniMech, and the Naga may have been an excellent fire-support OmniMech, Clan Wolf (and indeed every other Clan) instantly realized the value of the Timber Wolf; thus, production rights to the Timber Wolf were jealously (and successfully) defended. Only through trade, gifts and battlefield salvage has the Timber Wolf entered the armies of other Clans. Until the invasion of the Inner Sphere, production of the Timber Wolf has been limited to a single facility on Strana Mechty.
+deployment:First introduced in 2945, the Timber Wolf was designed by Clan Wolf as a second generation OmniMech along with the Gargoyle and the Naga to replace the aging Woodsman. While the Gargoyle may have been a very capable, fast assault OmniMech, and the Naga may have been an excellent fire-support OmniMech, Clan Wolf (and indeed every other Clan) instantly realized the value of the Timber Wolf; thus, production rights to the Timber Wolf were jealously (and successfully) defended. Only through trade, gifts and battlefield salvage has the Timber Wolf entered the armies of other Clans. Until the invasion of the Inner Sphere, production of the Timber Wolf has been limited to a single facility on Strana Mechty. Despite it's prominence among the Wolves during the Clan Invasion, Refusal War and Word of Blake Jihad, the Timber Wolf became increasingly rare following the sundering of ties with the Homeworld Clans during the Wars of Reaving and Blakist scouring of Tamar. Being built by hand at W-7 plant on Weingarten as of 3080, with some parts even being individually machined due to missing data,[1] attrition vastly outstripped supply as the Wolves looked toward other designs. When Alaric Ward forged the Wolf Empire, he left the W-7 facilities to Clan Hell's Horses and ordered the Kallon plant on Thermopolis be retooled for Timber Wolf production, restoring it's position within the Wolves touman.
 
-Despite it's prominence among the Wolves during the Clan Invasion, Refusal War and Word of Blake Jihad, the Timber Wolf became increasingly rare following the sundering of ties with the Homeworld Clans during the Wars of Reaving and Blakist scouring of Tamar. Being built by hand at W-7 plant on Weingarten as of 3080, with some parts even being individually machined due to missing data,[1] attrition vastly outstripped supply as the Wolves looked toward other designs. When Alaric Ward forged the Wolf Empire, he left the W-7 facilities to Clan Hell's Horses and ordered the Kallon plant on Thermopolis be retooled for Timber Wolf production, restoring it's position within the Wolves touman.
 history:Vaguely resembling a cross-over between the MAD (Marauder) and CAT (Catapult) series, the Timber Wolf was tagged with the Inner Sphere reporting name Mad Cat on first contact. (The targeting computer on Phelan Kell's Wolfhound switched between MAD and CAT when trying to identify it; upon analyzing the data recording from Kell's 'Mech, Precentor Martial Anastasius Focht later officially designated it "Mad Cat".
+
 manufacturer:Wolf Clan Site #1, Wolf Clan Site #2, W-7 Facilities, Kallon Weapon Industries
 primaryfactory:Arc-Royal, Strana Mechty, Weingarten, Thermopolis 
 systemmanufacturer:CHASSIS:Type W3 Endo-steel
@@ -169,5 +176,3 @@ systemmanufacturer:ENGINE:Starfire 375 XL
 systemmanufacturer:ARMOR:Composite A-2 Ferro-Fibrous
 systemmanufacturer:COMMUNICATIONS:Khan Series (Type 2c)
 systemmanufacturer:TARGETING:Series III OPT
-
-

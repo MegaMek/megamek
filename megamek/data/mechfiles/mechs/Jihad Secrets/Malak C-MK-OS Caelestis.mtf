@@ -1,11 +1,20 @@
-Version:1.1
-Malak
-C-MK-OS Caelestis
+chassis:Malak
+model:C-MK-OS Caelestis
+mul id:2000
+source:Jihad Secrets: The Blake Documents
 
 Config:Biped Omnimech
 TechBase:Inner Sphere
 Era:3075
 Rules Level:4
+role:Striker
+
+
+
+quirk:imp_com
+quirk:imp_sensors
+quirk:bad_rep_is
+
 
 Mass:30
 Engine:210 Light Engine(IS)

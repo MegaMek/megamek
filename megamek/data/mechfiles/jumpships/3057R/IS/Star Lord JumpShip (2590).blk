@@ -20,6 +20,10 @@ Star Lord JumpShip
 (2590)
 </Model>
 
+<mul id:>
+5125
+</mul id:>
+
 <year>
 2590
 </year>
@@ -114,7 +118,7 @@ dockingcollar
 </structural_integrity>
 
 <source>
-TRO 3057R - Star League
+TRO: 3057 Revised
 </source>
 
 <tonnage>

@@ -1,0 +1,180 @@
+chassis:Warhammer
+model:C 2
+mul id:7565
+Config:Biped
+techbase:Mixed (IS Chassis)
+era:3052
+source:Rec Guide:ilClan #7
+rules level:3
+role:Brawler
+
+
+
+quirk:rugged_2
+quirk:searchlight
+quirk:stable
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+
+
+mass:70
+engine:280 Fusion Engine(IS)
+structure:IS Standard
+myomer:Standard
+
+heat sinks:18 IS Double
+walk mp:4
+jump mp:0
+
+armor:Standard(Clan)
+LA armor:20
+RA armor:20
+LT armor:17
+RT armor:17
+CT armor:22
+HD armor:9
+LL armor:15
+RL armor:15
+RTL armor:8
+RTR armor:8
+RTC armor:9
+
+Weapons:9
+ER PPC, Left Arm
+ER PPC, Right Arm
+Medium Pulse Laser, Left Torso
+ER Small Laser, Left Torso
+Small Pulse Laser, Left Torso
+Streak SRM 6, Right Torso
+Medium Pulse Laser, Right Torso
+ER Small Laser, Right Torso
+Small Pulse Laser, Right Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+CLERPPC
+CLERPPC
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+CLERPPC
+CLERPPC
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+CLMediumPulseLaser
+CLERSmallLaser
+CLSmallPulseLaser
+
+Right Torso:
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+CLStreakSRM6
+CLStreakSRM6
+CLMediumPulseLaser
+CLERSmallLaser
+CLSmallPulseLaser
+Clan Streak SRM 6 Ammo
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+-Empty-
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+overview:The Warhammer proved to be a very capable 'Mech, and for centuries practically defined the entire class of heavy 'Mechs. Boasting incredible firepower and respectable armoring, the Warhammer served prominently in the Star League Defense Force and was one of the premier 'Mechs in the Gunslinger Program. Indeed, many of the greatest MechWarriors in history were Warhammer pilots.
+
+capabilities:The Warhammer was well-protected with strong armor for its age and weight, and the large number of heat sinks allowed it to "fire and maneuver" without fear. The most common engine arrangement propels the 'Mech to a cruising speed of 43.2 km/h and a top speed of 64.8 km/h, which is quick enough to keep up with most battles. The 'Mech's electronics, albeit antiquated by the 31st Century, were basic and functional, allowing it to assume command tasks when necessary. The targeting mechanism, in particular, made use of an unique Searchlight positioned above the 'Mech's left shoulder. The device could act as a conventional searchlight or immediately connect to the O/P 1500 ARB tracking system, transforming the 'Mech into a capable night fighter.
+
+deployment:The C2 is a further upgrade of previously upgraded Inner Sphere Warhammers. Retaining its Inner Sphere engine, internal structure, armor, and 18 double heat sinks the C2 completely upgrades the weaponry to Clan standards. Clan ER PPCs sit in the arms. Each side torso houses a Clan Medium Pulse Laser, and both a pulse and ER Small Laser. A Streak SRM-6 replaces the typical shoulder-mounted SRMs; its one ton of ammo is in the right torso. Both the lack of CASE and low amount of armor makes this Warhammer a bit of a glass cannon. 
+
+history:StarCorps Industries introduced the Warhammer BattleMech in 2515 as "a mobile 'Mech with adequate firepower to destroy or severely damage any 'Mech of the same weight class or lower." The Warhammer continued to serve in the forces of the Great Houses throughout the Succession Wars after the Star League's demise. Despite very modest production rates, the large number of Warhammer factories dispersed over both the Inner Sphere and Periphery contributed to its endurance; Ronin Inc. was never able to construct more than five Warhammers per year from their Wallis factory. The recovery of the Helm Memory Core would prompt Inner Sphere manufacturers to create a slew of new Lostech-powered Warhammer versions, while the Periphery continued to produce original models for mercenaries and black marketeers. After the Clan Invasion, StarCorps chose to rehabilitate the ancient 'Mech with the greatest technological advancements, giving it new life. Initially, the business planned to construct only one new variety from its Crofton plant, but when word of the idea spread, other departments within StarCorps became involved and gathered on Crofton for a week-long conference to iron out the details. The conference turned out to be more jubilant than expected, and at the end of the bacchanalian "negotiations," it was determined that four new variations would be built: one for each of the Federated Suns, Capellan, Free Worlds League, and Lyran forces, employing technology unique to each realm. During the FedCom Civil War, some of these new 'Mechs were put through their paces.
+
+manufacturer:Olivetti Weaponry
+primaryfactory:Sudeten
+systemmanufacturer:CHASSIS:StarCorps 100
+systemmanufacturer:ENGINE:VOX 280
+systemmanufacturer:ARMOR:Leviathon Plus
+systemmanufacturer:COMMUNICATIONS:O/P 3000 COMSET
+systemmanufacturer:TARGETING:O/P 1500 ARB
+

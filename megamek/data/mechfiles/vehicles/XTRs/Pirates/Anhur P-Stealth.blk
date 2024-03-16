@@ -20,6 +20,10 @@ Anhur
 (P-Stealth)
 </Model>
 
+<mul id:>
+33
+</mul id:>
+
 <year>
 3074
 </year>
@@ -31,6 +35,10 @@ Anhur
 <type>
 Mixed (Clan Chassis) Experimental
 </type>
+
+<role>
+Missile Boat
+</role>
 
 <motion_type>
 VTOL
@@ -94,7 +102,7 @@ CLLRM15
 </Rotor Equipment>
 
 <source>
-XTR Pirates - Jihad
+XTR: Pirates
 </source>
 
 <tonnage>

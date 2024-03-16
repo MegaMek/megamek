@@ -13,12 +13,16 @@ Dropship
 </UnitType>
 
 <Name>
-Leopard PA-Class Dropship
+Leopard
 </Name>
 
 <Model>
-
+PA-Class Dropship
 </Model>
+
+<mul id:>
+1867
+</mul id:>
 
 <year>
 3073
@@ -31,6 +35,10 @@ Leopard PA-Class Dropship
 <type>
 IS Level 4
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Aerodyne
@@ -141,7 +149,7 @@ ISMediumPulseLaser
 </structural_integrity>
 
 <source>
-XTRO Pirates - Jihad
+XTR: Pirates
 </source>
 
 <tonnage>

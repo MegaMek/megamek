@@ -20,6 +20,10 @@ Zugvogel Omni Support Aircraft
 F
 </Model>
 
+<mul id:>
+6807
+</mul id:>
+
 <year>
 3095
 </year>
@@ -31,6 +35,10 @@ F
 <type>
 Mixed (IS Chassis) Advanced
 </type>
+
+<role>
+Fire Support
+</role>
 
 <motion_type>
 Aerodyne
@@ -137,7 +145,7 @@ Advanced Fire Control
 </structural_tech_rating>
 
 <source>
-RS 3145 NT NU
+Record Sheets: 3145 New Tech New Upgrades
 </source>
 
 <tonnage>

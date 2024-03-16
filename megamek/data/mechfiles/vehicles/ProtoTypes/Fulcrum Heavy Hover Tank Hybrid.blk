@@ -20,6 +20,10 @@ Fulcrum Heavy HoverTank
 (Hybrid)
 </Model>
 
+<mul id:>
+4188
+</mul id:>
+
 <year>
 3084
 </year>
@@ -27,6 +31,10 @@ Fulcrum Heavy HoverTank
 <type>
 Mixed (IS Chassis) Experimental
 </type>
+
+<role>
+Striker
+</role>
 
 <motion_type>
 Hover
@@ -84,9 +92,15 @@ ISMagshotGR
 </Turret Equipment>
 
 <source>
-TRO:Prototypes
+TRO: Prototypes
 </source>
 
 <tonnage>
 50.0
 </tonnage>
+
+<quirks>
+non_standard
+easy_maintain
+</quirks>
+

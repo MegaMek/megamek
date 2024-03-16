@@ -20,6 +20,10 @@ Manteuffel Attack Tank
 C
 </Model>
 
+<mul id:>
+5734
+</mul id:>
+
 <year>
 3068
 </year>
@@ -27,6 +31,10 @@ C
 <type>
 IS Level 3
 </type>
+
+<role>
+Sniper
+</role>
 
 <motion_type>
 Tracked
@@ -97,3 +105,7 @@ ISGaussRifle:OMNI
 <baseChassisTurretWeight>
 1.5
 </baseChassisTurretWeight>
+
+<source>
+TRO: 3067
+</source>

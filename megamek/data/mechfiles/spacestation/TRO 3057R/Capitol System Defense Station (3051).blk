@@ -20,6 +20,10 @@ Capitol System Defense Station
 (3051)
 </Model>
 
+<mul id:>
+3893
+</mul id:>
+
 <year>
 3051
 </year>
@@ -31,6 +35,10 @@ Capitol System Defense Station
 <type>
 IS Level 3
 </type>
+
+<role>
+None
+</role>
 
 <designtype>
 1
@@ -255,7 +263,7 @@ ISArtemisIV
 </structural_integrity>
 
 <source>
-TRO3057r - Clan Invasion
+TRO: 3057 Revised
 </source>
 
 <tonnage>

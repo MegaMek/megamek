@@ -20,6 +20,10 @@ Olympus Recharge Station
 (2663)
 </Model>
 
+<mul id:>
+4745
+</mul id:>
+
 <year>
 2663
 </year>
@@ -31,6 +35,10 @@ Olympus Recharge Station
 <type>
 IS Level 3
 </type>
+
+<role>
+None
+</role>
 
 <designtype>
 1
@@ -274,7 +282,7 @@ Small Laser
 </structural_integrity>
 
 <source>
-TRO3057r - Star League
+TRO: 3057 Revised
 </source>
 
 <tonnage>

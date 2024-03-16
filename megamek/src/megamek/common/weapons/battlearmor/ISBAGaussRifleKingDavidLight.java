@@ -48,7 +48,7 @@ public class ISBAGaussRifleKingDavidLight extends Weapon {
                 .setUnofficial(false)
                 .setTechRating(RATING_E)
                 .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
-                .setISAdvancement(3057, 3059, 3060, DATE_NONE, DATE_NONE)
+                .setISAdvancement(3058, 3063, 3065, DATE_NONE, DATE_NONE)
                 .setISApproximate(true, false, false, false, false)
                 .setPrototypeFactions(F_FS)
                 .setProductionFactions(F_FS);

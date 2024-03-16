@@ -20,6 +20,10 @@ Hercules
 (3053)
 </Model>
 
+<mul id:>
+4318
+</mul id:>
+
 <year>
 3053
 </year>
@@ -31,6 +35,10 @@ Hercules
 <type>
 IS Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Spheroid
@@ -144,7 +152,7 @@ ISArtemisIV
 </structural_integrity>
 
 <source>
-TRO 3057R - Clan Invasion
+TRO: 3057 Revised
 </source>
 
 <tonnage>

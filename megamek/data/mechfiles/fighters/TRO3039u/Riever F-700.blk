@@ -1,0 +1,120 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Aero
+</UnitType>
+
+<Name>
+Riever
+</Name>
+
+<Model>
+F-700
+</Model>
+
+<mul id:>
+2690
+</mul id:>
+
+<year>
+3050
+</year>
+
+<originalBuildYear>
+3050
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<role>
+Dogfighter
+</role>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+</transporters>
+
+<SafeThrust>
+6
+</SafeThrust>
+
+<cockpit_type>
+0
+</cockpit_type>
+
+<heatsinks>
+20
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+400
+</fuel>
+
+<engine_type>
+2
+</engine_type>
+
+<armor>
+81
+60
+60
+47
+</armor>
+
+<Nose Equipment>
+Autocannon/20
+LRM 10
+</Nose Equipment>
+
+<Left Wing Equipment>
+SRM 6
+SRM 6
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+SRM 6
+SRM 6
+</Right Wing Equipment>
+
+<Aft Equipment>
+</Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+IS Ammo AC/20
+IS Ammo AC/20
+IS Ammo AC/20
+IS Ammo LRM-10
+IS Ammo LRM-10
+IS Ammo SRM-6
+IS Ammo SRM-6
+IS Ammo SRM-6
+IS Ammo SRM-6
+</Fuselage Equipment>
+
+<source>
+TRO: 3039
+</source>
+
+<tonnage>
+100.0
+</tonnage>

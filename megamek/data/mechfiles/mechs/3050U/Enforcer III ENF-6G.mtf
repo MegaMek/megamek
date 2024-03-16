@@ -1,12 +1,20 @@
-Version:1.0
-Enforcer III
-ENF-6G
+chassis:Enforcer III
+model:ENF-6G
+mul id:980
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3062
-Source:TRO 3050 - Civil War
+Source:TRO: 3050
 Rules Level:2
+role:Skirmisher
+
+
+
+quirk:barrel_fists_ra
+quirk:battle_fists_la
+weaponquirk:fast_reload:RA:3:ISGaussRifle
+
 
 Mass:50
 Engine:250 XL Engine

@@ -20,6 +20,10 @@ Chimeisho JumpShip
 (3056)
 </Model>
 
+<mul id:>
+3949
+</mul id:>
+
 <year>
 3056
 </year>
@@ -31,6 +35,10 @@ Chimeisho JumpShip
 <type>
 IS Level 3
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Aerodyne
@@ -117,7 +125,7 @@ ISERLargeLaser
 </structural_integrity>
 
 <source>
-TRO 3057R - Clan Invasion
+TRO: 3057 Revised
 </source>
 
 <tonnage>

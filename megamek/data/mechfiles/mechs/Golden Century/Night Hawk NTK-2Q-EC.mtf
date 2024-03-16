@@ -1,12 +1,18 @@
-Version:1.1
-Night Hawk
-NTK-2Q-EC
+chassis:Night Hawk
+model:NTK-2Q-EC
+mul id:7676
 
 Config:Biped
 techbase:Mixed (IS Chassis)
 era:2819
-source:Succession Wars
+source:TRO: Golden Century
 rules level:4
+role:Striker
+
+
+
+quirk:easy_maintain
+
 
 mass:35
 engine:210 XL Engine(IS)

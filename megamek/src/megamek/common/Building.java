@@ -15,6 +15,7 @@
 */
 package megamek.common;
 
+import megamek.common.enums.BasementType;
 import org.apache.logging.log4j.LogManager;
 
 import java.io.Serializable;
@@ -22,6 +23,12 @@ import java.util.*;
 
 /**
  * This class represents a single, possibly multi-hex building on the board.
+ *
+ * FIXME : This needs a complete rewrite to properly handle the latest building rules
+ *
+ * Rewrite Notes:
+ * TODO : 1) Migrate Magic Numbers to Enums
+ * TODO : 2) Offboard Gun Emplacements: Revisit with a required rules query (CustomMechDialog - 22-Feb-2022)
  *
  * @author Suvarov454@sourceforge.net (James A. Damour)
  */
@@ -71,7 +78,7 @@ public class Building implements Serializable {
     /**
      * The Basement type of the building.
      */
-    private Map<Coords,BasementType> basement = new HashMap<>();
+    private Map<Coords, BasementType> basement = new HashMap<>();
 
     private int collapsedHexes = 0;
 
@@ -150,9 +157,9 @@ public class Building implements Serializable {
      * Update this building to include the new hex (and all hexes off the new
      * hex, which aren't already included).
      *
-     * @param coords tthe <code>Coords</code> of the new hex.
+     * @param coords the <code>Coords</code> of the new hex.
      * @param board the game's <code>Board</code> object.
-     * @exception IllegalArgumentException will be thrown if the given coordinates do not contain a
+     * @throws IllegalArgumentException will be thrown if the given coordinates do not contain a
      * building, or if the building covers multiple hexes with different CF.
      */
     protected void include(Coords coords, Board board, int structureType) {
@@ -218,52 +225,6 @@ public class Building implements Serializable {
 
         }
 
-    } // End void protected include( Coords, Board )
-
-
-    /**
-     * Basement handlers
-     */
-    public enum BasementType {
-        UNKNOWN(0, 0, "Building.BasementUnknown"),
-        NONE(1, 0, "Building.BasementNone"),
-        TWO_DEEP_FEET(2, 2, "Building.BasementTwoDeepFeet"),
-        ONE_DEEP_FEET(3, 1, "Building.BasementOneDeepFeet"),
-        ONE_DEEP_NORMAL(4, 1, "Building.BasementOneDeepNormal"),
-        ONE_DEEP_NORMALINFONLY(5, 1, "Building.BasementOneDeepNormalInfOnly"),
-        ONE_DEEP_HEAD(6, 1, "Building.BasementOneDeepHead"),
-        TWO_DEEP_HEAD(7, 2, "Building.BasementTwoDeepHead");
-
-        private int value;
-        private int depth;
-        private String desc;
-
-        BasementType(int type, int depth, String desc) {
-            value = type;
-            this.depth = depth;
-            this.desc = desc;
-        }
-
-        public int getValue() {
-            return value;
-        }
-
-        public int getDepth() {
-            return depth;
-        }
-
-        public String getDesc() {
-            return Messages.getString(desc);
-        }
-
-        public static BasementType getType(int value) {
-            for (BasementType type : BasementType.values()) {
-                if (type.getValue() == value) {
-                    return type;
-                }
-            }
-            return UNKNOWN;
-        }
     }
 
     /**
@@ -275,7 +236,7 @@ public class Building implements Serializable {
      *               multiple hexes, this constructor will include them all in this building
      *               automatically.
      * @param board the game's <code>Board</code> object.
-     * @exception IllegalArgumentException will be thrown if the given coordinates do not contain a
+     * @throws IllegalArgumentException will be thrown if the given coordinates do not contain a
      * building, or if the building covers multiple hexes with different CFs.
      */
     public Building(Coords coords, Board board, int structureType, BasementType basementType) {
@@ -441,13 +402,11 @@ public class Building implements Serializable {
         return basementCollapsed.get(coords);
     }
 
-    public void collapseBasement(Coords coords, Board board,
-            Vector<Report> vPhaseReport) {
-        if ((basement.get(coords) == BasementType.NONE) || (basement.get(coords) == BasementType.ONE_DEEP_NORMALINFONLY)) {
+    public void collapseBasement(Coords coords, Board board, Vector<Report> vPhaseReport) {
+        if (basement.get(coords).isNone() || basement.get(coords).isOneDeepNormalInfantryOnly()) {
             LogManager.getLogger().error("Hex has no basement to collapse");
             return;
-        }
-        if (basementCollapsed.get(coords)) {
+        } else if (basementCollapsed.get(coords)) {
             LogManager.getLogger().error("Hex has basement that already collapsed");
             return;
         }
@@ -463,45 +422,47 @@ public class Building implements Serializable {
 
     /**
      * Roll what kind of basement this building has
-     * @param coords the <code>Coords</code> of theb building to roll for
-     * @param vPhaseReport the <code>Vector<Report></code> containing the phasereport
-     * @return a <code>boolean</code> indicating wether the hex and building was changed or not
+     * @param coords the <code>Coords</code> of the building to roll for
+     * @param vPhaseReport the {@link Report} <code>Vector</code> containing the phasereport
+     * @return a <code>boolean</code> indicating weather the hex and building was changed or not
      */
     public boolean rollBasement(Coords coords, Board board, Vector<Report> vPhaseReport) {
-        if (basement.get(coords) == BasementType.UNKNOWN) {
+        if (basement.get(coords).isUnknown()) {
             Hex hex = board.getHex(coords);
             Report r = new Report(2111, Report.PUBLIC);
             r.add(getName());
             r.add(coords.getBoardNum());
-            int basementRoll = Compute.d6(2);
-            r.add(basementRoll);
-            if (basementRoll == 2) {
+            Roll diceRoll = Compute.rollD6(2);
+            r.add(diceRoll);
+
+            if (diceRoll.getIntValue() == 2) {
                 basement.put(coords, BasementType.TWO_DEEP_FEET);
-                hex.addTerrain(new Terrain(Terrains.BLDG_BASEMENT_TYPE, basement.get(coords).getValue()));
-            } else if (basementRoll == 3) {
+                hex.addTerrain(new Terrain(Terrains.BLDG_BASEMENT_TYPE, basement.get(coords).ordinal()));
+            } else if (diceRoll.getIntValue() == 3) {
                 basement.put(coords, BasementType.ONE_DEEP_FEET);
-                hex.addTerrain(new Terrain(Terrains.BLDG_BASEMENT_TYPE, basement.get(coords).getValue()));
-            } else if (basementRoll == 4) {
+                hex.addTerrain(new Terrain(Terrains.BLDG_BASEMENT_TYPE, basement.get(coords).ordinal()));
+            } else if (diceRoll.getIntValue() == 4) {
                 basement.put(coords, BasementType.ONE_DEEP_NORMAL);
-                hex.addTerrain(new Terrain(Terrains.BLDG_BASEMENT_TYPE, basement.get(coords).getValue()));
-            } else if (basementRoll == 10) {
+                hex.addTerrain(new Terrain(Terrains.BLDG_BASEMENT_TYPE, basement.get(coords).ordinal()));
+            } else if (diceRoll.getIntValue() == 10) {
                 basement.put(coords, BasementType.ONE_DEEP_NORMAL);
-                hex.addTerrain(new Terrain(Terrains.BLDG_BASEMENT_TYPE, basement.get(coords).getValue()));
-            } else if (basementRoll == 11) {
+                hex.addTerrain(new Terrain(Terrains.BLDG_BASEMENT_TYPE, basement.get(coords).ordinal()));
+            } else if (diceRoll.getIntValue() == 11) {
                 basement.put(coords, BasementType.ONE_DEEP_HEAD);
-                hex.addTerrain(new Terrain(Terrains.BLDG_BASEMENT_TYPE, basement.get(coords).getValue()));
-            } else if (basementRoll == 12) {
+                hex.addTerrain(new Terrain(Terrains.BLDG_BASEMENT_TYPE, basement.get(coords).ordinal()));
+            } else if (diceRoll.getIntValue() == 12) {
                 basement.put(coords, BasementType.TWO_DEEP_HEAD);
-                hex.addTerrain(new Terrain(Terrains.BLDG_BASEMENT_TYPE, basement.get(coords).getValue()));
+                hex.addTerrain(new Terrain(Terrains.BLDG_BASEMENT_TYPE, basement.get(coords).ordinal()));
             } else {
                 basement.put(coords, BasementType.NONE);
-                hex.addTerrain(new Terrain(Terrains.BLDG_BASEMENT_TYPE, basement.get(coords).getValue()));
+                hex.addTerrain(new Terrain(Terrains.BLDG_BASEMENT_TYPE, basement.get(coords).ordinal()));
             }
 
-            r.add(BasementType.getType(hex.terrainLevel(Terrains.BLDG_BASEMENT_TYPE)).getDesc());
+            r.add(BasementType.getType(hex.terrainLevel(Terrains.BLDG_BASEMENT_TYPE)).toString());
             vPhaseReport.add(r);
             return true;
         }
+
         return false;
     }
 
@@ -509,8 +470,7 @@ public class Building implements Serializable {
      * Get the current construction factor of the building hex at the passed
      * coords. Any damage immediately updates this value.
      *
-     * @param coords
-     *            - the <code>Coords> of the hex in question
+     * @param coords the <code>Coords</code> of the hex in question
      *
      * @return the <code>int</code> value of the building hex's current
      *         construction factor. This value will be greater than or equal to
@@ -525,8 +485,7 @@ public class Building implements Serializable {
      * the start of the current phase. Damage that is received during the phase
      * is applied at the end of the phase.
      *
-     * @param coords
-     *            - the <code>Coords> of the hex in question
+     * @param coords the <code>Coords</code> of the hex in question
      * @return the <code>int</code> value of the building's construction factor
      *         at the start of this phase. This value will be greater than or
      *         equal to zero.
@@ -543,10 +502,10 @@ public class Building implements Serializable {
      * Set the current construction factor of the building hex. Call this method
      * immediately when the building sustains any damage.
      *
-     * @param coords the <code>Coords> of the hex in question
+     * @param coords the <code>Coords</code> of the hex in question
      * @param cf the <code>int</code> value of the building hex's current construction factor. This
      *           value must be greater than or equal to zero.
-     * @exception IllegalArgumentException if the passed value is less than zero
+     * @throws IllegalArgumentException if the passed value is less than zero
      */
     public void setCurrentCF(int cf, Coords coords) {
         if (cf < 0) {
@@ -561,10 +520,10 @@ public class Building implements Serializable {
      * phase. Call this method at the end of the phase to apply damage sustained
      * by the building during the phase.
      *
-     * @param coords the <code>Coords> of the hex in question
+     * @param coords the <code>Coords</code> of the hex in question
      * @param cf the <code>int</code> value of the building hex's current construction factor. This
      *           value must be greater than or equal to zero.
-     * @exception IllegalArgumentException if the passed value is less than zero
+     * @throws IllegalArgumentException if the passed value is less than zero
      */
     public void setPhaseCF(int cf, Coords coords) {
         if (cf < 0) {
@@ -630,7 +589,7 @@ public class Building implements Serializable {
      * @return <code>true</code> if the other object is the same as this
      *         <code>Building</code>. The value <code>false</code> will be
      *         returned if the other object is <code>null</code>, is not a
-     *         <code>Buildig</code>, or if it is not the same as this
+     *         <code>Building</code>, or if it is not the same as this
      *         <code>Building</code>.
      */
     @Override

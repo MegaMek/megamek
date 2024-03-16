@@ -1,16 +1,20 @@
 package megamek.client.ui.swing.unitDisplay;
 
+import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.client.ui.baseComponents.MMComboBox;
-import megamek.client.ui.swing.ClientGUI;
-import megamek.client.ui.swing.HeatEffects;
-import megamek.client.ui.swing.Slider;
+import megamek.client.ui.swing.*;
+import megamek.client.ui.swing.lobby.LobbyUtility;
+import megamek.client.ui.swing.util.UIUtil;
 import megamek.client.ui.swing.widget.*;
+import megamek.client.ui.swing.tooltip.UnitToolTip;
 import megamek.common.*;
 import megamek.common.enums.GamePhase;
+import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
+import megamek.common.preference.IPreferenceChangeListener;
+import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.util.fileUtils.MegaMekFile;
-import megamek.common.weapons.other.TSEMPWeapon;
 
 import javax.swing.*;
 import java.awt.*;
@@ -18,16 +22,15 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.util.Enumeration;
 
 /**
  * This class shows information about a unit that doesn't belong elsewhere.
  */
-class ExtraPanel extends PicMap implements ActionListener, ItemListener {
-    private static final long serialVersionUID = -4907296187995261075L;
-
+class ExtraPanel extends PicMap implements ActionListener, ItemListener, IPreferenceChangeListener {
     private final UnitDisplay unitDisplay;
 
+    private JPanel panelMain;
+    private JScrollPane scrollPane;
     private JLabel lblLastTarget;
     private JLabel curSensorsL;
     private JLabel narcLabel;
@@ -42,6 +45,7 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
     private JTextArea sinksR;
     private JButton sinks2B;
     private JButton dumpBombs;
+    private JButton unitReadout;
     private JList<String> narcList;
     private int myMechId;
 
@@ -117,6 +121,8 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
         lblLastTarget.setForeground(Color.WHITE);
         lblLastTarget.setOpaque(false);
         lastTargetR = new JTextArea("", 4, 25);
+        lastTargetR.setLineWrap(true);
+        lastTargetR.setWrapStyleWord(true);
         lastTargetR.setEditable(false);
         lastTargetR.setOpaque(false);
         lastTargetR.setForeground(Color.WHITE);
@@ -147,80 +153,88 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
             }
         });
 
+        unitReadout = new JButton(Messages.getString("MechDisplay.UnitReadout"));
+        unitReadout.setActionCommand("UnitReadout");
+        unitReadout.addActionListener(this);
+
         // layout choice panel
         GridBagLayout gridbag;
         GridBagConstraints c;
 
         gridbag = new GridBagLayout();
         c = new GridBagConstraints();
-        setLayout(gridbag);
+        panelMain = new JPanel(gridbag);
 
-        c.fill = GridBagConstraints.BOTH;
-        c.insets = new Insets(15, 9, 1, 9);
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.insets = new Insets(5, 9, 1, 9);
         c.gridwidth = GridBagConstraints.REMAINDER;
-        c.anchor = GridBagConstraints.CENTER;
-        c.weighty = 1.0;
+        c.anchor = GridBagConstraints.NORTHWEST;
+        c.weighty = 0;
+        c.gridy = 0;
+        c.gridx = 0;
+        panelMain.add(curSensorsL, c);
+        c.gridy++;
+        panelMain.add(chSensors, c);
 
-        gridbag.setConstraints(curSensorsL, c);
-        add(curSensorsL);
-
-        gridbag.setConstraints(chSensors, c);
-        add(chSensors);
-
-        gridbag.setConstraints(narcLabel, c);
-        add(narcLabel);
-
+        c.gridy++;
+        panelMain.add(narcLabel, c);
+        c.gridy++;
         c.insets = new Insets(1, 9, 1, 9);
-        JScrollPane scrollPane = new JScrollPane(narcList);
+        scrollPane = new JScrollPane(narcList);
         scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-        gridbag.setConstraints(scrollPane, c);
-        add(scrollPane);
+        panelMain.add(scrollPane, c);
 
-        gridbag.setConstraints(unusedL, c);
-        add(unusedL);
+        c.gridy++;
+        panelMain.add(unusedL, c);
+        c.gridy++;
+        panelMain.add(unusedR, c);
 
-        gridbag.setConstraints(unusedR, c);
-        add(unusedR);
+        c.gridy++;
+        panelMain.add(carrysL, c);
+        c.gridy++;
+        panelMain.add(carrysR, c);
 
-        gridbag.setConstraints(carrysL, c);
-        add(carrysL);
+        c.gridy++;
+        panelMain.add(dumpBombs, c);
 
-        gridbag.setConstraints(carrysR, c);
-        add(carrysR);
+        c.gridy++;
+        panelMain.add(sinksL, c);
+        c.gridy++;
+        panelMain.add(sinksR, c);
+        c.gridy++;
+        panelMain.add(sinks2B, c);
 
-        gridbag.setConstraints(dumpBombs, c);
-        add(dumpBombs);
+        c.gridy++;
+        panelMain.add(heatL, c);
+        c.gridy++;
+        c.insets = new Insets(1, 9, 5, 9);
+        panelMain.add(heatR, c);
 
-        gridbag.setConstraints(sinksL, c);
-        add(sinksL);
-
-        gridbag.setConstraints(sinksR, c);
-        add(sinksR);
-
-        gridbag.setConstraints(sinks2B, c);
-        add(sinks2B);
-
-        gridbag.setConstraints(heatL, c);
-        add(heatL);
-
-        c.insets = new Insets(1, 9, 18, 9);
-        gridbag.setConstraints(heatR, c);
-        add(heatR);
-        
+        c.gridy++;
         c.insets = new Insets(0, 0, 0, 0);
-        gridbag.setConstraints(lblLastTarget, c);
-        add(lblLastTarget);
-        
-        c.insets = new Insets(1, 9, 18, 9);
-        gridbag.setConstraints(lastTargetR, c);
-        add(lastTargetR);
+        panelMain.add(lblLastTarget, c);
+        c.gridy++;
+        c.insets = new Insets(1, 9, 5, 9);
+        panelMain.add(lastTargetR, c);
 
-        c.insets = new Insets(1, 9, 1, 9);
-        gridbag.setConstraints(activateHidden, c);
+        c.gridy++;
         c.insets = new Insets(1, 9, 6, 9);
-        gridbag.setConstraints(comboActivateHiddenPhase, c);
-        add(activateHidden);
-        add(comboActivateHiddenPhase);
+        panelMain.add(activateHidden, c);
+        c.gridy++;
+        panelMain.add(comboActivateHiddenPhase, c);
+
+        c.gridy++;
+        panelMain.add(unitReadout, c);
+
+        c.weightx = 1;
+        c.weighty = 1;
+        panelMain.add(new Label(" "), c);
+
+        adaptToGUIScale();
+        GUIPreferences.getInstance().addPreferenceChangeListener(this);
+        setLayout(new BorderLayout());
+        add(panelMain, BorderLayout.NORTH);
+        panelMain.setOpaque(false);
 
         setBackGround();
         onResize();
@@ -320,13 +334,15 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
             chSensors.setEnabled(true);
             dontChange = false;
         }
+
         // Walk through the list of teams. There
         // can't be more teams than players.
         StringBuffer buff;
         if (clientgui != null) {
-            Enumeration<Player> loop = clientgui.getClient().getGame().getPlayers();
-            while (loop.hasMoreElements()) {
-                Player player = loop.nextElement();
+            Game game = clientgui.getClient().getGame();
+            GameOptions gameOptions = game.getOptions();
+
+            for (Player player : game.getPlayersList()) {
                 int team = player.getTeam();
                 if (en.isNarcedBy(team) && !player.isObserver()) {
                     buff = new StringBuffer(Messages.getString("MechDisplay.NARCedBy"));
@@ -416,7 +432,7 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
             }
 
             // suffering from TSEMP Interference?
-            if (en.getTsempEffect() == TSEMPWeapon.TSEMP_EFFECT_INTERFERENCE) {
+            if (en.getTsempEffect() == MMConstants.TSEMP_EFFECT_INTERFERENCE) {
                 ((DefaultListModel<String>) narcList.getModel())
                         .addElement(Messages.getString("MechDisplay.TSEMPInterference"));
             }
@@ -454,79 +470,84 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
             if (narcList.getModel().getSize() == 0) {
                 ((DefaultListModel<String>) narcList.getModel()).addElement(" ");
             }
-        }
 
 
-        // transport values
-        String unused = en.getUnusedString();
-        if (unused.isBlank()) {
-            unused = Messages.getString("MechDisplay.None");
-        }
-        unusedR.setText(unused);
-        carrysR.setText(null);
-        // boolean hasText = false;
-        for (Entity other : en.getLoadedUnits()) {
-            carrysR.append(other.getShortName());
-            carrysR.append("\n");
-        }
+            // transport values
+            String unused = en.getUnusedString();
+            if (unused.isBlank()) {
+                unused = Messages.getString("MechDisplay.None");
+            }
+            unusedR.setText(unused);
+            carrysR.setText(null);
+            // boolean hasText = false;
+            for (Entity other : en.getLoadedUnits()) {
+                carrysR.append(other.getShortName());
+                carrysR.append("\n");
+            }
 
-        // Show club(s).
-        for (Mounted club : en.getClubs()) {
-            carrysR.append(club.getName());
-            carrysR.append("\n");
-        }
+            // Show club(s).
+            for (Mounted club : en.getClubs()) {
+                carrysR.append(club.getName());
+                carrysR.append("\n");
+            }
 
-        // Show searchlight
-        if (en.hasSearchlight()) {
-            if (en.isUsingSearchlight()) {
-                carrysR.append(Messages.getString("MechDisplay.SearchlightOn"));
+            // Show searchlight
+            if (en.hasSearchlight()) {
+                if (en.isUsingSearchlight()) {
+                    carrysR.append(Messages.getString("MechDisplay.SearchlightOn"));
+                } else {
+                    carrysR.append(Messages.getString("MechDisplay.SearchlightOff"));
+                }
+            }
+
+            // Show Heat Effects, but only for Mechs.
+            heatR.setText("");
+            sinksR.setText("");
+
+            if (en instanceof Mech) {
+                Mech m = (Mech) en;
+
+                sinks2B.setEnabled(!dontChange);
+                sinks = m.getActiveSinksNextRound();
+                if (m.hasDoubleHeatSinks()) {
+                    sinksR.append(Messages.getString("MechDisplay.activeSinksTextDouble",
+                            sinks, sinks * 2));
+                } else {
+                    sinksR.append(Messages.getString("MechDisplay.activeSinksTextSingle", sinks));
+                }
+
+                boolean hasTSM = false;
+                boolean mtHeat = false;
+                if (((Mech) en).hasTSM(false)) {
+                    hasTSM = true;
+                }
+
+                if (gameOptions.booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_HEAT)) {
+                    mtHeat = true;
+                }
+                heatR.setForeground(GUIPreferences.getInstance().getColorForHeat(en.heat));
+                heatR.append(HeatEffects.getHeatEffects(en.heat, mtHeat, hasTSM));
             } else {
-                carrysR.append(Messages.getString("MechDisplay.SearchlightOff"));
+                // Non-Mechs cannot configure their heat sinks
+                sinks2B.setEnabled(false);
             }
-        }
 
-        // Show Heat Effects, but only for Mechs.
-        heatR.setText("");
-        sinksR.setText("");
+            dumpBombs.setEnabled(false);
 
-        if (en instanceof Mech) {
-            Mech m = (Mech) en;
+            refreshSensorChoices(en);
 
-            sinks2B.setEnabled(!dontChange);
-            sinks = m.getActiveSinksNextRound();
-            if (m.hasDoubleHeatSinks()) {
-                sinksR.append(Messages.getString("MechDisplay.activeSinksTextDouble",
-                        sinks, sinks * 2));
+            if (null != en.getActiveSensor()) {
+                String sensorDesc = "";
+                if (gameOptions.booleanOption(OptionsConstants.ADVANCED_TACOPS_SENSORS)
+                        || (gameOptions.booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS)) && en.isSpaceborne()) {
+                    sensorDesc = UnitToolTip.getSensorDesc(en);
+                }
+                String tmpStr = Messages.getString("MechDisplay.CurrentSensors") + " " + sensorDesc;
+                tmpStr = String.format("<html><div WIDTH=%d>%s</div></html>",  250, tmpStr);
+                curSensorsL.setText(tmpStr);
             } else {
-                sinksR.append(Messages.getString("MechDisplay.activeSinksTextSingle", sinks));
+                curSensorsL.setText((Messages.getString("MechDisplay.CurrentSensors")).concat(" "));
             }
-
-            boolean hasTSM = false;
-            boolean mtHeat = false;
-            if (((Mech) en).hasTSM(false)) {
-                hasTSM = true;
-            }
-
-            if ((clientgui != null)
-                    && clientgui.getClient().getGame().getOptions()
-                            .booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_HEAT)) {
-                mtHeat = true;
-            }
-            heatR.append(HeatEffects.getHeatEffects(en.heat, mtHeat, hasTSM));
-        } else {
-            // Non-Mechs cannot configure their heat sinks
-            sinks2B.setEnabled(false);
-        }
-
-        dumpBombs.setEnabled(false);
-
-        refreshSensorChoices(en);
-
-        if (null != en.getActiveSensor()) {
-            curSensorsL.setText((Messages.getString("MechDisplay.CurrentSensors")).concat(" ")
-                    .concat(en.getSensorDesc()));
-        } else {
-            curSensorsL.setText((Messages.getString("MechDisplay.CurrentSensors")).concat(" "));
         }
         
         if (en.getLastTarget() != Entity.NONE) {
@@ -551,7 +572,7 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
                 condition = " (Disabled)";
             }
             chSensors.addItem(sensor.getDisplayName() + condition);
-            if (sensor.getType() == en.getNextSensor().getType()) {
+            if ((en.getNextSensor() != null) && (sensor.getType() == en.getNextSensor().getType())) {
                 chSensors.setSelectedIndex(i);
             }
         }
@@ -605,6 +626,23 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
         } else if (activateHidden.equals(ae.getSource()) && !dontChange) {
             final GamePhase phase = comboActivateHiddenPhase.getSelectedItem();
             clientgui.getClient().sendActivateHidden(myMechId, (phase == null) ? GamePhase.UNKNOWN : phase);
+        } else if (unitReadout.equals(ae.getSource())) {
+            Entity entity = clientgui.getClient().getGame().getEntity(myMechId);
+            LobbyUtility.mechReadout(entity, 0, false, clientgui.getFrame());
+        }
+    }
+
+    private void adaptToGUIScale() {
+        UIUtil.adjustContainer(panelMain, UIUtil.FONT_SCALE1);
+        scrollPane.setMinimumSize(new Dimension(200, UIUtil.scaleForGUI(100)));
+        scrollPane.setPreferredSize(new Dimension(200, UIUtil.scaleForGUI(100)));
+    }
+
+    @Override
+    public void preferenceChange(PreferenceChangeEvent e) {
+        // Update the text size when the GUI scaling changes
+        if (e.getName().equals(GUIPreferences.GUI_SCALE)) {
+            adaptToGUIScale();
         }
     }
 }

@@ -1,4 +1,9 @@
 size 32 34
+tag "Fields (Auto)"
+tag "Roads (Auto)"
+tag "Flat (Auto)"
+tag "DesertTheme (Auto)"
+tag "Woods (Auto)"
 hex 0101 0 "planted_fields:6" "desert"
 hex 0201 0 "planted_fields:6" "desert"
 hex 0301 0 "planted_fields:6" "desert"

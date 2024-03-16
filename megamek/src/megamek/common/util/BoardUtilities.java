@@ -16,6 +16,7 @@
 package megamek.common.util;
 
 import megamek.client.bot.princess.CardinalEdge;
+import megamek.codeUtilities.MathUtility;
 import megamek.common.*;
 import megamek.common.util.generator.ElevationGenerator;
 import megamek.common.util.generator.SimplexGenerator;
@@ -90,7 +91,7 @@ public class BoardUtilities {
             }
         }
 
-        //assuming that the map setting and board types match
+        // assuming that the map setting and board types match
         result.setType(medium);
 
         return result;
@@ -180,19 +181,20 @@ public class BoardUtilities {
         // Add the woods
         int count = mapSettings.getMinForestSpots();
         if (mapSettings.getMaxForestSpots() > 0) {
-            count += Compute.randomInt(mapSettings.getMaxForestSpots());
+            count += Compute.randomInt(mapSettings.getMaxForestSpots() + 1);
         }
         count = (int) Math.round(count * sizeScale);
         for (int i = 0; i < count; i++) {
             placeSomeTerrain(result, Terrains.WOODS,
-                    mapSettings.getProbHeavy(), mapSettings.getMinForestSize(),
+                    mapSettings.getProbHeavy(), mapSettings.getProbUltra(),
+                    mapSettings.getMinForestSize(),
                     mapSettings.getMaxForestSize(), reverseHex, true);
         }
         
         // Add foliage (1 elevation high woods)
         count = mapSettings.getMinFoliageSpots();
         if (mapSettings.getMaxFoliageSpots() > 0) {
-            count += Compute.randomInt(mapSettings.getMaxFoliageSpots());
+            count += Compute.randomInt(mapSettings.getMaxFoliageSpots() + 1);
         }
         count = (int) Math.round(count * sizeScale);
         for (int i = 0; i < count; i++) {
@@ -200,15 +202,28 @@ public class BoardUtilities {
                     mapSettings.getProbFoliageHeavy(), mapSettings.getMinFoliageSize(),
                     mapSettings.getMaxFoliageSize(), reverseHex, true);
         }
+
+        // Add the jungle
+        count = mapSettings.getMinJungleSpots();
+        if (mapSettings.getMaxJungleSpots() > 0) {
+            count += Compute.randomInt(mapSettings.getMaxJungleSpots() + 1);
+        }
+        count = (int) Math.round(count * sizeScale);
+        for (int i = 0; i < count; i++) {
+            placeSomeTerrain(result, Terrains.JUNGLE,
+                    mapSettings.getProbHeavyJungle(), mapSettings.getProbUltraJungle(),
+                    mapSettings.getMinJungleSize(),
+                    mapSettings.getMaxJungleSize(), reverseHex, true);
+        }
         
         // Add the rough
         count = mapSettings.getMinRoughSpots();
         if (mapSettings.getMaxRoughSpots() > 0) {
-            count += Compute.randomInt(mapSettings.getMaxRoughSpots());
+            count += Compute.randomInt(mapSettings.getMaxRoughSpots() + 1);
         }
         count = (int) Math.round(count * sizeScale);
         for (int i = 0; i < count; i++) {
-            placeSomeTerrain(result, Terrains.ROUGH, 0, mapSettings
+            placeSomeTerrain(result, Terrains.ROUGH, mapSettings.getProbUltraRough(), mapSettings
                     .getMinRoughSize(), mapSettings.getMaxRoughSize(),
                     reverseHex, true);
         }
@@ -216,7 +231,7 @@ public class BoardUtilities {
         // Add the sand
         count = mapSettings.getMinSandSpots();
         if (mapSettings.getMaxSandSpots() > 0) {
-            count += Compute.randomInt(mapSettings.getMaxSandSpots());
+            count += Compute.randomInt(mapSettings.getMaxSandSpots() + 1);
         }
         count = (int) Math.round(count * sizeScale);
         for (int i = 0; i < count; i++) {
@@ -225,10 +240,34 @@ public class BoardUtilities {
                     reverseHex, true);
         }
 
+        // Add the snow
+        count = mapSettings.getMinSnowSpots();
+        if (mapSettings.getMaxSnowSpots() > 0) {
+            count += Compute.randomInt(mapSettings.getMaxSnowSpots() + 1);
+        }
+        count = (int) Math.round(count * sizeScale);
+        for (int i = 0; i < count; i++) {
+            placeSomeTerrain(result, Terrains.SNOW, 0, mapSettings
+                            .getMinSnowSize(), mapSettings.getMaxSnowSize(),
+                    reverseHex, true);
+        }
+
+        // Add the tundra
+        count = mapSettings.getMinTundraSpots();
+        if (mapSettings.getMaxTundraSpots() > 0) {
+            count += Compute.randomInt(mapSettings.getMaxTundraSpots() + 1);
+        }
+        count = (int) Math.round(count * sizeScale);
+        for (int i = 0; i < count; i++) {
+            placeSomeTerrain(result, Terrains.TUNDRA, 0, mapSettings
+                            .getMinTundraSize(), mapSettings.getMaxTundraSize(),
+                    reverseHex, true);
+        }
+
         // Add the planted field
         count = mapSettings.getMinPlantedFieldSpots();
         if (mapSettings.getMaxPlantedFieldSpots() > 0) {
-            count += Compute.randomInt(mapSettings.getMaxPlantedFieldSpots());
+            count += Compute.randomInt(mapSettings.getMaxPlantedFieldSpots() + 1);
         }
         count = (int) Math.round(count * sizeScale);
         for (int i = 0; i < count; i++) {
@@ -240,7 +279,7 @@ public class BoardUtilities {
         // Add the swamp
         count = mapSettings.getMinSwampSpots();
         if (mapSettings.getMaxSwampSpots() > 0) {
-            count += Compute.randomInt(mapSettings.getMaxSwampSpots());
+            count += Compute.randomInt(mapSettings.getMaxSwampSpots() + 1);
         }
         count = (int) Math.round(count * sizeScale);
         for (int i = 0; i < count; i++) {
@@ -252,7 +291,7 @@ public class BoardUtilities {
         // Add the Fortified hexes
         count = mapSettings.getMinFortifiedSpots();
         if (mapSettings.getMaxFortifiedSpots() > 0) {
-            count += Compute.randomInt(mapSettings.getMaxFortifiedSpots());
+            count += Compute.randomInt(mapSettings.getMaxFortifiedSpots() + 1);
         }
         count = (int) Math.round(count * sizeScale);
         for (int i = 0; i < count; i++) {
@@ -264,11 +303,11 @@ public class BoardUtilities {
         // Add the rubble
         count = mapSettings.getMinRubbleSpots();
         if (mapSettings.getMaxRubbleSpots() > 0) {
-            count += Compute.randomInt(mapSettings.getMaxRubbleSpots());
+            count += Compute.randomInt(mapSettings.getMaxRubbleSpots() + 1);
         }
         count = (int) Math.round(count * sizeScale);
         for (int i = 0; i < count; i++) {
-            placeSomeTerrain(result, Terrains.RUBBLE, 0, mapSettings
+            placeSomeTerrain(result, Terrains.RUBBLE, mapSettings.getProbUltraRubble(), mapSettings
                     .getMinRubbleSize(), mapSettings.getMaxRubbleSize(),
                     reverseHex, true);
         }
@@ -276,7 +315,7 @@ public class BoardUtilities {
         // Add the water
         count = mapSettings.getMinWaterSpots();
         if (mapSettings.getMaxWaterSpots() > 0) {
-            count += Compute.randomInt(mapSettings.getMaxWaterSpots());
+            count += Compute.randomInt(mapSettings.getMaxWaterSpots() + 1);
         }
         count = (int) Math.round(count * sizeScale);
         for (int i = 0; i < count; i++) {
@@ -287,7 +326,7 @@ public class BoardUtilities {
         // Add the pavements
         count = mapSettings.getMinPavementSpots();
         if (mapSettings.getMaxPavementSpots() > 0) {
-            count += Compute.randomInt(mapSettings.getMaxPavementSpots());
+            count += Compute.randomInt(mapSettings.getMaxPavementSpots() + 1);
         }
         count = (int) Math.round(count * sizeScale);
         for (int i = 0; i < count; i++) {
@@ -298,7 +337,7 @@ public class BoardUtilities {
         // Add the ice
         count = mapSettings.getMinIceSpots();
         if (mapSettings.getMaxIceSpots() > 0) {
-            count += Compute.randomInt(mapSettings.getMaxIceSpots());
+            count += Compute.randomInt(mapSettings.getMaxIceSpots() + 1);
         }
         count = (int) Math.round(count * sizeScale);
         for (int i = 0; i < count; i++) {
@@ -341,7 +380,7 @@ public class BoardUtilities {
         // add buildings
         ArrayList<BuildingTemplate> buildings = mapSettings.getBoardBuildings();
         CityBuilder cityBuilder = new CityBuilder(mapSettings, result);
-        if (buildings.size() == 0) {
+        if (buildings.isEmpty()) {
             buildings = cityBuilder.generateCity(roadNeeded);
         }
 
@@ -384,7 +423,15 @@ public class BoardUtilities {
     }
 
     /**
-     * Places randomly some connected Woods.
+     * Overload that places some connected terrain with no chance of "ultra" version
+     */
+    protected static void placeSomeTerrain(Board board, int terrainType, int probMore, int minHexes,
+                                           int maxHexes, Map<Hex, Point> reverseHex, boolean exclusive) {
+        placeSomeTerrain(board, terrainType, probMore, 0, minHexes, maxHexes, reverseHex, exclusive);
+    }
+
+    /**
+     * Places randomly some connected terrain.
      *
      * @param board The board the terrain goes on.
      * @param terrainType The type of terrain to place {@link Terrains}.
@@ -393,12 +440,12 @@ public class BoardUtilities {
      * @param reverseHex
      * @param exclusive Set TRUE if this terrain cannot be combined with any other terrain types.
      */
-    protected static void placeSomeTerrain(Board board, int terrainType, int probMore, int minHexes,
+    protected static void placeSomeTerrain(Board board, int terrainType, int probMore, int probUltra, int minHexes,
                                            int maxHexes, Map<Hex, Point> reverseHex, boolean exclusive) {
         Point p = new Point(Compute.randomInt(board.getWidth()), Compute.randomInt(board.getHeight()));
         int count = minHexes;
         if ((maxHexes - minHexes) > 0) {
-            count += Compute.randomInt(maxHexes - minHexes);
+            count += Compute.randomInt(maxHexes - minHexes + 1);
         }
         Hex field;
 
@@ -424,12 +471,10 @@ public class BoardUtilities {
             if (exclusive) {
                 field.removeAllTerrains();
             }
-            int tempInt = (Compute.randomInt(100) < probMore) ? 2 : 1;
-            Terrain tempTerrain = new Terrain(terrainType, tempInt);
+            int terrainDensity = pickTerrainDensity(terrainType, probMore, probUltra);
+            Terrain tempTerrain = new Terrain(terrainType, terrainDensity);
             field.addTerrain(tempTerrain);
-            if (terrainType == Terrains.WOODS) {
-                field.addTerrain(new Terrain(Terrains.FOLIAGE_ELEV, 2));
-            }
+            growTreesIfNecessary(field, terrainType, terrainDensity);
             unUsed.remove(field);
             findAllUnused(board, terrainType, alreadyUsed, unUsed, field, reverseHex);
         }
@@ -455,9 +500,63 @@ public class BoardUtilities {
 
         }
     }
+
+    /**
+     * Worker function that picks a terrain density (light, heavy, ultra) based on the passed-in weights.
+     * Likelyhood of light is 100 - probHeavy.
+     */
+    private static int pickTerrainDensity(int terrainType, int probHeavy, int probUltra) {
+        int heavyThreshold = 100 - probHeavy;
+        int ultraThreshold = 100;
+        int sum = 100 + probUltra;
+
+        int roll = Compute.randomInt(sum);
+
+        // for most terrains, this results in "standard/heavy/ultra" versions of the terrain
+        // but rubble is implemented weirdly, and there are probably maps that use the current
+        // implementation of rubble so here we are
+        if (roll < heavyThreshold) {
+            return terrainType == Terrains.RUBBLE ? pickRandomRubble() : 1;
+        } else if (roll < ultraThreshold) {
+            // rubble 6 is considered "ultra"
+            return terrainType == Terrains.RUBBLE ? 6 : 2;
+        } else {
+            return 3;
+        }
+    }
+
+    /**
+     * Worker method to pick out a random usable type of "standard" rubble
+     */
+    private static int pickRandomRubble() {
+        // there are three usable types of rubble, so we pick one
+        int roll = Compute.randomInt(3) + 1;
+
+        // rubble 3 looks identical to rubble 6, which is ultra-rough, so we don't want
+        // to visually deceive the user, thus 3 becomes 4
+        if (roll == 3) {
+            roll = 4;
+        }
+
+        return roll;
+    }
+
+    /**
+     * Helper method that places a FOLIAGE_ELEV terrain if necessary
+     */
+    private static void growTreesIfNecessary(Hex field, int terrainType, int terrainDensity) {
+        // light/heavy woods and jungle go up two levels
+        if (((terrainType == Terrains.WOODS) || (terrainType == Terrains.JUNGLE))
+                && ((terrainDensity == 1) || (terrainDensity == 2))) {
+            field.addTerrain(new Terrain(Terrains.FOLIAGE_ELEV, 2));
+        // ultra woods and jungle go up three levels
+        } else if ((terrainType == Terrains.WOODS) && (terrainDensity == 3)) {
+            field.addTerrain(new Terrain(Terrains.FOLIAGE_ELEV, 3));
+        }
+    }
     
     /**
-     * Places randomly some connected Woods.
+     * Places randomly some connected foliage.
      *
      * @param board The board the terrain goes on.
      * @param terrainType The type of terrain to place {@link Terrains}.
@@ -471,7 +570,7 @@ public class BoardUtilities {
         Point p = new Point(Compute.randomInt(board.getWidth()), Compute.randomInt(board.getHeight()));
         int count = minHexes;
         if ((maxHexes - minHexes) > 0) {
-            count += Compute.randomInt(maxHexes - minHexes);
+            count += Compute.randomInt(maxHexes - minHexes + 1);
         }
         Hex field;
 
@@ -553,7 +652,7 @@ public class BoardUtilities {
         // Calculate number of craters to generate.
         int numberCraters = minCraters;
         if (maxCraters > minCraters) {
-            numberCraters += Compute.randomInt(maxCraters - minCraters);
+            numberCraters += Compute.randomInt(maxCraters - minCraters + 1);
         }
 
         // Stay within the board boundaries.
@@ -569,7 +668,7 @@ public class BoardUtilities {
             Point center = new Point(Compute.randomInt(width), Compute.randomInt(height));
 
             // What is the diameter of this crater?
-            int radius = Compute.randomInt(maxRadius - minRadius) + minRadius;
+            int radius = Compute.randomInt(maxRadius - minRadius + 1) + minRadius;
 
             // Terrestrial crater depth to radius ratio is typically 1:5 to 1:7.
             // Hexes are 30m across and levels are 6m high.
@@ -824,7 +923,7 @@ public class BoardUtilities {
     }
 
     /**
-     * Converts water hexes to ice hexes. Works best with snow&ice theme.
+     * Converts water hexes to ice hexes. Works best with snow and ice themes.
      */
     protected static void postProcessDeepFreeze(Hex[] hexSet, int modifier) {
         int n;
@@ -1058,7 +1157,7 @@ public class BoardUtilities {
                     }
                 }
 
-                //check for rapids/torrents created by wind
+                // check for rapids/torrents created by wind
                 if ((windCond > PlanetaryConditions.WI_MOD_GALE)
                         && hex.containsTerrain(Terrains.WATER) && (hex.depth() > 0)) {
 
@@ -1136,8 +1235,8 @@ public class BoardUtilities {
         int[] elevationCount = new int[range + 1];
         for (int w = 0; w < width; w++) {
             for (int h = 0; h < height; h++) {
-                elevationMap[w][h] = (int) Math.ceil(elevationMap[w][h] * scale) + inc;
-                elevationCount[elevationMap[w][h]]++;
+                elevationMap[w][h] = (int) Math.round(elevationMap[w][h] * scale) + inc;
+                elevationCount[MathUtility.clamp(elevationMap[w][h], 0, range)]++;
             }
         }
 

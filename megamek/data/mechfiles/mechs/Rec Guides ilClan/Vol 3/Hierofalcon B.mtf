@@ -1,0 +1,173 @@
+chassis:Hierofalcon
+model:B
+mul id:7486
+
+Config:Biped Omnimech
+techbase:Clan
+era:3148
+source:Rec Guide:ilClan #3
+rules level:3
+role:Striker
+
+mass:45
+engine:270 XL (Clan) Engine(IS)
+structure:Clan Endo Steel
+myomer:Standard
+
+heat sinks:10 Clan Double
+base chassis heat sinks:10
+walk mp:6
+jump mp:6
+
+armor:Ferro-Fibrous(Clan)
+LA armor:14
+RA armor:14
+LT armor:15
+RT armor:15
+CT armor:21
+HD armor:8
+LL armor:18
+RL armor:18
+RTL armor:7
+RTR armor:7
+RTC armor:7
+
+Weapons:9
+SRM 6, Left Arm
+ER Small Laser, Left Arm
+SRM 6, Right Arm
+ER Small Laser, Right Arm
+SRM 6, Right Torso
+SRM 6, Left Torso
+SRM 6, Left Torso
+SRM 6, Right Torso
+ER Medium Laser, Center Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+CLSRM6 (OMNIPOD)
+CLERSmallLaser (OMNIPOD)
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+CLSRM6 (OMNIPOD)
+CLERSmallLaser (OMNIPOD)
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+CLPartialWing
+CLPartialWing
+CLPartialWing
+Jump Jet (OMNIPOD)
+CLSRM6 (OMNIPOD)
+CLSRM6 (OMNIPOD)
+Clan Ammo SRM-6 (OMNIPOD)
+Clan Ammo SRM-6 (OMNIPOD)
+CLCASEII (OMNIPOD)
+Clan Endo Steel
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+CLPartialWing
+CLPartialWing
+CLPartialWing
+Jump Jet (OMNIPOD)
+CLSRM6 (OMNIPOD)
+CLSRM6 (OMNIPOD)
+Clan Ammo SRM-6 (OMNIPOD)
+Clan Ammo SRM-6 (OMNIPOD)
+CLCASEII (OMNIPOD)
+Clan Ferro-Fibrous
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLERMediumLaser (OMNIPOD)
+Clan Ferro-Fibrous
+
+Head:
+Life Support
+Sensors
+Cockpit
+Clan Ferro-Fibrous
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet (OMNIPOD)
+Jump Jet (OMNIPOD)
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet (OMNIPOD)
+Jump Jet (OMNIPOD)
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+overview:The Hierofalcon is a Medium Clan OmniMech designed primarily as a striker type design by Clan Jade Falcon. Developed by the Falcons in the mid-3140s as part of the Clan's increasing emphases on maneuverability and fast movement.
+
+capabilities:As part of the push to be ever more flexible in movement, the 'Mech features a 270 Rated Extra-Light Engine. The addition of a permanently equipped Partial Wing adds to its maneuverability and cooling abilities. The 'Mech's hull is protected by 7.5 tons of Ferro-Fibrous Armor, giving it modest protection from enemy fire, while an ECM Suite provides additional protection from other threats. The Mech was constructed to handle 19 tons of OmniPods for weapons and equipment.
+
+deployment:A missile oriented configuration, The Hierofalcon B's main payload consists of six 6-Tubed Short Range Missile Launchers. Each side torso mounts a pair of the SRMs, while one launcher can be found in each arm. Two ammo bins of 30 missiles are mounted in each of the side torsos with CASE II ensuring lucky hits do not take out the 'Mech. The configuration's missile armaments are backed up by arm-mounted ER Small Lasers and an ER Medium Laser in the center torso. For added mobility, the 'Mech features six standard Jump Jets.
+
+history:Developed by the Falcons in the mid-3140s as part of the Clan's increasing emphases on maneuverability and fast movement, the 'Mech began construction in 3148 on Alyina's CJF Factory Zone 4, The Hierofalcon was designed at the same time as the larger Jade Phoenix. The duo were part of a new generation of OmniMechs intended to eventually replace the Standard BattleMechs used by the Clan. One of its noted early actions was in 3149, in a skirmish against the Falcons' former close allies, Clan Hell's Horses on Hyperion. The light and swift Hieronfalcons overwhelmed the Horses' Nova, gaining a reputation among the Horses as being a terror on the battlefield.
+
+manufacturer:CJF Factory Zone 4
+primaryfactory:Alyina
+systemmanufacturer:CHASSIS:JF 4 Light Endo Steel
+systemmanufacturer:ENGINE:Light Force 270 XL
+systemmanufacturer:ARMOR:Compound JF Ferro-Fibrous
+systemmanufacturer:COMMUNICATIONS:JF Integrated
+systemmanufacturer:TARGETING:Series JFVII Integrated
+

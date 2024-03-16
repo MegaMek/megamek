@@ -1,0 +1,12 @@
+Lyran Commonwealth Medium Mechs 3130 C
+Hatchetman HCT-7S,1
+Griffin GRF-6S,2
+Starslayer STY-3Dr,3
+Phoenix Hawk PXH-7S,4
+Uziel UZL-8S,5
+Nightsky NGS-6T,6
+Gauntlet GTL-1O,5
+Blitzkrieg BTZ-4F,4
+Thunder Fox TFT-L8,3
+Mongoose II MON-267,2
+Mad Cat III (Standard),1

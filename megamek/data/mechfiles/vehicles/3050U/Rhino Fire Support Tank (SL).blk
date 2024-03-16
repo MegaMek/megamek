@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,17 +20,32 @@ Rhino Fire Support Tank
 (SL)
 </Model>
 
+<mul id:>
+2685
+</mul id:>
+
 <year>
-2840
+2724
 </year>
+
+<originalBuildYear>
+2724
+</originalBuildYear>
 
 <type>
 IS Level 1
 </type>
 
+<role>
+Missile Boat
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
+
+<transporters>
+</transporters>
 
 <cruiseMP>
 3
@@ -80,9 +95,10 @@ LRM 20
 </Turret Equipment>
 
 <source>
-TRO 3050 - Succession Wars
+TRO: 3050
 </source>
 
 <tonnage>
 80.0
 </tonnage>
+

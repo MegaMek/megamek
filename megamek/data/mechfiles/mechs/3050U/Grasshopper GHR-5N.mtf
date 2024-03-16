@@ -1,12 +1,18 @@
-Version:1.0
-Grasshopper
-GHR-5N
+chassis:Grasshopper
+model:GHR-5N
+mul id:4232
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3040
-Source:TRO 3050 - Succession Wars
+Source:TRO: 3050
 Rules Level:1
+role:Skirmisher
+
+
+
+quirk:rugged_1
+
 
 Mass:70
 Engine:280 Fusion Engine

@@ -17,7 +17,7 @@ import megamek.common.Game;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.server.Server;
+import megamek.server.GameManager;
 
 import java.util.Vector;
 
@@ -31,11 +31,11 @@ public class LRMDeadFireHandler extends LRMHandler {
      * @param t
      * @param w
      * @param g
-     * @param s
+     * @param m
      */
     public LRMDeadFireHandler(ToHitData t, WeaponAttackAction w, Game g,
-            Server s) {
-        super(t, w, g, s);
+            GameManager m) {
+        super(t, w, g, m);
         sSalvoType = " dead fire missile(s) ";
     }
     

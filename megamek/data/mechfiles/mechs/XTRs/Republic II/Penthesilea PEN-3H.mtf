@@ -1,12 +1,19 @@
-Version:1.1
-Penthesilea
-PEN-3H
+chassis:Penthesilea
+model:PEN-3H
+mul id:7347
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3129
-Source:XTRO Republic II - Late Republic
+Source:XTR: Republic II
 Rules Level:4
+role:Juggernaut
+
+
+
+quirk:rugged_1
+weaponquirk:em_interference:RA:3:Bombast Laser
+
 
 Mass:75
 Engine:225 Compact Engine(IS)

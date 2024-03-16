@@ -20,6 +20,10 @@ Ibex RV
 (Militarized:Gauss)
 </Model>
 
+<mul id:>
+4355
+</mul id:>
+
 <year>
 3064
 </year>
@@ -31,6 +35,10 @@ Ibex RV
 <type>
 IS Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Wheeled
@@ -85,7 +93,7 @@ PintleTurret
 </structural_tech_rating>
 
 <source>
-HB:House Marik - Civil War
+Handbook: House Marik
 </source>
 
 <tonnage>

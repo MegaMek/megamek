@@ -14,7 +14,6 @@
 package megamek.common;
 
 import megamek.MegaMek;
-import megamek.common.util.EncodeControl;
 
 import java.text.MessageFormat;
 import java.util.MissingResourceException;
@@ -22,7 +21,7 @@ import java.util.ResourceBundle;
 
 public class ReportMessages {
     private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle("megamek.common.report-messages",
-            MegaMek.getMMOptions().getLocale(), new EncodeControl());
+            MegaMek.getMMOptions().getLocale());
 
     private ReportMessages() {
     }
@@ -44,8 +43,9 @@ public class ReportMessages {
      */
     public static String getString(String key, Object... args) {
         String s = getString(key);
-        if (s != null)
+        if (s != null) {
             return MessageFormat.format(getString(key), args);
+        }
         return null;
     }
 }

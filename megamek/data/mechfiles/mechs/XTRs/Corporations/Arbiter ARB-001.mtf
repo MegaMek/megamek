@@ -1,11 +1,12 @@
-Version:1.1
-Arbiter SecurityMech
-ARB-001
+chassis:Arbiter
+model:ARB-001 SecurityMech
+mul id:3714
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3074
 Rules Level:4
+source:XTR: Corporations
 
 Mass:35
 Engine:175 Fuel-Cell Engine

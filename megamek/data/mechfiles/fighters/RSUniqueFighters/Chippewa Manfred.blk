@@ -20,6 +20,10 @@ Chippewa
 CHP-W7 (Manfred)
 </Model>
 
+<mul id:>
+3952
+</mul id:>
+
 <year>
 3068
 </year>
@@ -31,6 +35,10 @@ CHP-W7 (Manfred)
 <type>
 IS Level 2
 </type>
+
+<role>
+Attack Fighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -114,7 +122,7 @@ IS Ammo SRM-6
 </Fuselage Equipment>
 
 <source>
-RS Unique Fighters - Jihad
+Record Sheets: Unique Fighters
 </source>
 
 <tonnage>
@@ -150,7 +158,7 @@ TARGETING:Rander TAS
 </systemManufacturers>
 
 <source>
-RS: Unique Fighters - Jihad
+RS: Unique Fighters
 </source>
 
 <tonnage>

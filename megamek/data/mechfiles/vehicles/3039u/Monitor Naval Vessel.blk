@@ -16,9 +16,13 @@ Tank
 Monitor Naval Vessel
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+2219
+</mul id:>
 
 <year>
 2910
@@ -31,6 +35,10 @@ Monitor Naval Vessel
 <type>
 IS Level 1
 </type>
+
+<role>
+Juggernaut
+</role>
 
 <motion_type>
 Naval
@@ -84,7 +92,7 @@ Autocannon/20
 </Turret Equipment>
 
 <source>
-TRO 3039 - Succession Wars
+TRO: 3039
 </source>
 
 <tonnage>

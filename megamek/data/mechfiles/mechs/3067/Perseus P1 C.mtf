@@ -1,12 +1,19 @@
-Version:1.0
-Perseus
-P1C
+chassis:Perseus
+model:P1C
+mul id:4811
 
 Config:Biped Omnimech
 techbase:Inner Sphere
 era:3058
-source:TRO 3067
+source:TRO: 3067
 rules level:2
+role:Brawler
+
+
+
+quirk:anti_air
+quirk:easy_maintain
+
 
 mass:75
 engine:300 XL Engine(IS)

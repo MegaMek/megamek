@@ -20,6 +20,10 @@ Katya Ground Assault Craft
 C-904(RL15)
 </Model>
 
+<mul id:>
+4439
+</mul id:>
+
 <year>
 3067
 </year>
@@ -31,6 +35,10 @@ C-904(RL15)
 <type>
 IS Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Aerodyne
@@ -96,7 +104,7 @@ IS Light Machine Gun Ammo - Half
 </Fuselage Equipment>
 
 <source>
-HB:House Liao - Civil War
+Handbook: House Liao
 </source>
 
 <tonnage>

@@ -20,6 +20,10 @@ Cardinal Transport
 (RAF)
 </Model>
 
+<mul id:>
+6543
+</mul id:>
+
 <year>
 3112
 </year>
@@ -31,6 +35,10 @@ Cardinal Transport
 <type>
 Mixed (Clan Chassis) Experimental
 </type>
+
+<role>
+Striker
+</role>
 
 <motion_type>
 VTOL
@@ -89,9 +97,14 @@ ISMML5
 </Rotor Equipment>
 
 <source>
-TRO 3145 Mercenaries - Late Republic
+TRO: 3145 Mercenaries
 </source>
 
 <tonnage>
 50.0
 </tonnage>
+
+<quirks>
+vtol_rotor_dual
+</quirks>
+

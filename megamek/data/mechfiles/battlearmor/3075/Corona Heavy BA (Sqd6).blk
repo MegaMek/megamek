@@ -1,0 +1,105 @@
+
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+Corona Heavy Battle Armor
+</Name>
+
+<model>
+(Sqd6)
+</model>
+
+<mul id:>
+8977
+</mul id:>
+
+<chassis>
+biped
+</chassis>
+
+<weightclass>
+3
+</weightclass>
+
+<Trooper Count>
+6
+</Trooper Count>
+
+<cruiseMP>
+2
+</cruiseMP>
+
+<Armor>
+8
+</Armor>
+
+<Point Equipment>
+CLBAMediumPulseLaser:Body
+BABattleClaw:LA
+BABasicManipulator:RA
+BAAPMount:RA
+InfantryAssaultRifle:RA:APM
+</Point Equipment>
+
+<type>
+Clan Level 2
+</type>
+
+<role>
+Ambusher
+</role>
+
+<year>
+3060
+</year>
+
+<motion_type>
+Leg
+</motion_type>
+
+<source>
+TRO: 3075
+</source>
+
+<armor_type>
+28
+</armor_type>
+
+<armor_tech>
+2
+</armor_tech>
+
+<overview>
+The Corona is a battle armor design that was created by Clan Star Adder following the Trials to determine which Clans would take part in Operation REVIVAL.
+</overview>
+
+<history>
+Khan Cassius N'Buta understood that the Clans would be forever altered by their contact with the Inner Sphere, so he created a team of warriors and scientists to create new technologies and designs to help the Adders keep their edge.
+</history>
+
+<capabilities>
+The Corona was constructed in this think tank, but it took 10 years for new strategies to be developed to make advantage of it because it wasn't exactly like the Elemental combat armour. The design team made the choice to centre the battlesuit around a weapon that could remotely threaten 'Mechs. Despite a fifty percent increase in mass overall, the weight of the heavy weapon required to mount led to a twenty percent reduction in armour and the loss of the jump pack. Despite not being able to jump, the Corona can be transported to the battlefield on omniMechs and has a ground speed that is twice as fast as the Elemental suit's. However, due to its size, it is unable to launch anti-'Mech strikes. They began producing the Corona after Clan Burrock was absorbed by Adder, but it took them years before they really deployed it in battle.
+</capabilities>
+
+<deployment>
+The entire Corona is constructed around a single Medium Pulse Laser. Even longer than the range of its missiles, this weapon is extremely accurate and has a significantly wider field of fire than any heavy weapon the Elemental suit can mount. A Corona Point is a major danger to any adversary and the laser can support other units. If a Corona unit encounters unarmored infantry, it is equipped with an anti-personnel weapon mount that can be mounted with a light weapon to deal with the threat.
+</deployment>
+
+<manufacturer>
+Facility C-BA-32
+</manufacturer>
+
+<primaryFactory>
+Sheridan
+</primaryFactory>

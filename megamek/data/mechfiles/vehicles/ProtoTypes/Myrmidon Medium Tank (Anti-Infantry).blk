@@ -20,6 +20,10 @@ Myrmidon Medium Tank
 (Anti-Infantry)
 </Model>
 
+<mul id:>
+4689
+</mul id:>
+
 <year>
 3080
 </year>
@@ -27,6 +31,10 @@ Myrmidon Medium Tank
 <type>
 IS Level 4
 </type>
+
+<role>
+Brawler
+</role>
 
 <motion_type>
 Tracked
@@ -76,9 +84,18 @@ ISERLargeLaser
 </Turret Equipment>
 
 <source>
-TRO:Prototype
+TRO: Prototypes
 </source>
 
 <tonnage>
 40.0
 </tonnage>
+
+<quirks>
+poor_work
+trailer_hitch
+</quirks>
+
+<weaponQuirks>
+accurate:TU:0:ISERLargeLaser
+</weaponQuirks>

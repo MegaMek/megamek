@@ -20,6 +20,10 @@ Winston Combat Vehicle
 (TSEMP)
 </Model>
 
+<mul id:>
+6799
+</mul id:>
+
 <year>
 3114
 </year>
@@ -27,6 +31,10 @@ Winston Combat Vehicle
 <type>
 Mixed (IS Chassis) Experimental
 </type>
+
+<role>
+Sniper
+</role>
 
 <motion_type>
 Tracked
@@ -88,7 +96,7 @@ TSEMP Cannon
 </Turret Equipment>
 
 <source>
-RS 3145 NTNU - Late Republic
+Record Sheets: 3145 New Tech New Upgrades
 </source>
 
 <tonnage>

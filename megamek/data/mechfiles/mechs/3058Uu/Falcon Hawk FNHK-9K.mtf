@@ -1,12 +1,19 @@
-Version:1.0
-Falcon Hawk
-FNHK-9K
+chassis:Falcon Hawk
+model:FNHK-9K
+mul id:1030
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3057
-Source:TRO 3058 - Clan Invasion
+Source:TRO: 3058
 Rules Level:2
+role:Brawler
+
+
+
+
+quirk:good_rep_1
+
 
 Mass:35
 Engine:175 XL Engine

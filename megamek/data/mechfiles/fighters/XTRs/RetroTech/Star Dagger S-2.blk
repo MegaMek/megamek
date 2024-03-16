@@ -20,17 +20,25 @@ Star Dagger
 S-2
 </Model>
 
+<mul id:>
+5123
+</mul id:>
+
 <year>
-3077
+2330
 </year>
 
 <originalBuildYear>
-3077
+2330
 </originalBuildYear>
 
 <type>
 IS Level 4
 </type>
+
+<role>
+Fast Dogfighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -103,7 +111,7 @@ IS Ammo MG - Full
 </Fuselage Equipment>
 
 <source>
-XTRO RetroTech - Jihad
+XTR: RetroTech
 </source>
 
 <tonnage>

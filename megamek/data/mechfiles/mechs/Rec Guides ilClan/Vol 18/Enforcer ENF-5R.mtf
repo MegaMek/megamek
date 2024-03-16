@@ -1,0 +1,164 @@
+chassis:Enforcer
+model:ENF-5R
+mul id:8249
+
+Config:Biped
+techbase:Inner Sphere
+era:3142
+source:Rec Guide:ilClan #18
+rules level:3
+role:Brawler
+
+mass:50
+engine:200 Light Engine(IS)
+structure:IS Standard
+myomer:Standard
+
+heat sinks:10 IS Double
+walk mp:4
+jump mp:4
+
+armor:Ferro-Fibrous(Inner Sphere)
+LA armor:16
+RA armor:16
+LT armor:19
+RT armor:19
+CT armor:23
+HD armor:9
+LL armor:21
+RL armor:21
+RTL armor:5
+RTR armor:5
+RTC armor:7
+
+Weapons:3
+Large Re-engineered Laser, Left Arm
+LB 10-X AC, Right Arm
+ER Small Laser, Left Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Large Re-engineered Laser
+Large Re-engineered Laser
+Large Re-engineered Laser
+Large Re-engineered Laser
+Large Re-engineered Laser
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISERSmallLaser
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+IS LB 10-X AC Ammo
+IS LB 10-X Cluster Ammo
+ISCASEII
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+-Empty-
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+overview:Since it first walked off of the production line, the Enforcer has been the iconic medium-weight workhorse of the Federated Suns' Succession Wars era military.
+
+capabilities:The Enforcer fulfilled the roles of a mobile barrage vehicle, laying down an intense hail of fire as a prelude to an offensive or to blunt an enemy's attack, and as a trooper 'Mech, using its thick frontal armor and good jumping distance of one hundred and twenty meters to effectively brawl with the enemy despite lacking hand actuators. The sturdy and inexpensive design's mobility also made it an ideal city fighter, especially when sniping the enemy during hit-and-run attacks. One of the design's problems was that, with most of its nine tons of armor concentrated forward, the amount of protection in its rear torso is less than on some light 'Mechs. The Enforcer's biggest flaw though was its limited ammunition stores, though when possible a truck-and-crane reloading system is used during less-mobile battles. Attempts were made to replace the small laser with another ton of ammunition, however there were complicated linkage problems in getting the ammo from the left torso to the right arm, increasing the rate of jamming or reducing the rate of fire to unacceptable levels. What's more the rounds had to be routed along the 'Mechs back where its armor was weakest.
+
+history:This is in large part due to production of the Enforcer remaining largely undisturbed throughout the Succession Wars, despite the relative lack of industrialization that has long hampered the Federated Suns. With the autocannon-obsessed Armed Forces of the Federated Suns building up its BattleMech forces upon the collapse of the Star League, the discovery on Achernar of schematics for an unbuilt autocannon-carrying Star League 'Mech was a case of perfect timing. Modifying the design by swapping two medium lasers for a single larger one, Achernar BattleMechs rushed it through development and began production in 2777.
+
+manufacturer:Kallon Industries
+primaryfactory:Wernke
+systemmanufacturer:CHASSIS:Dorwinion Standard
+systemmanufacturer:ENGINE:Magna 250 XL
+systemmanufacturer:ARMOR:StarGuard CIV Ferro-Fibrous with CASE
+systemmanufacturer:JUMPJET:McCloud Specials
+systemmanufacturer:COMMUNICATIONS:Achernar Electronics HICS-11
+systemmanufacturer:TARGETING:Federated Hunter

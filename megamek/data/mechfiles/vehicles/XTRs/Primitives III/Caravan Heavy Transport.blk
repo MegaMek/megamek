@@ -16,9 +16,13 @@ FixedWingSupport
 Caravan Heavy Transport
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+5624
+</mul id:>
 
 <year>
 2346
@@ -31,6 +35,10 @@ Caravan Heavy Transport
 <type>
 IS Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Aerodyne
@@ -98,9 +106,19 @@ cargobay:60.0:4:1
 </structural_tech_rating>
 
 <source>
-XTRO Primitives III - Age of War
+XTR: Primitives III
 </source>
 
 <tonnage>
 200.0
 </tonnage>
+
+<quirks>
+atmo_flyer
+easy_maintain
+fragile_fuel
+gas_hog
+no_eject
+obsolete
+</quirks>
+

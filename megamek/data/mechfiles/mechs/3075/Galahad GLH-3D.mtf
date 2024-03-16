@@ -1,12 +1,18 @@
-Version:1.1
-Galahad
-GLH-3D
+chassis:Galahad
+model:GLH-3D
+mul id:1169
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3070
-Source:TRO 3075
+Source:TRO: 3075
 Rules Level:2
+role:Sniper
+
+
+
+quirk:difficult_maintain
+
 
 Mass:60
 Engine:240 Light Engine

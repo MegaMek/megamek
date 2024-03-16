@@ -13,12 +13,16 @@ SpaceStation
 </UnitType>
 
 <Name>
-Factory - Small
+Factory
 </Name>
 
 <Model>
-(2300)
+ Small (2300)
 </Model>
+
+<mul id:>
+5084
+</mul id:>
 
 <year>
 2300
@@ -31,6 +35,10 @@ Factory - Small
 <type>
 IS Level 3
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Aerodyne
@@ -106,7 +114,7 @@ cargobay:1197.0:1:4
 </structural_integrity>
 
 <source>
-TRO3057r -
+TRO: 3057 Revised
 </source>
 
 <tonnage>

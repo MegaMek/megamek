@@ -20,6 +20,10 @@ Trident
 TRN-3V
 </Model>
 
+<mul id:>
+5278
+</mul id:>
+
 <year>
 3069
 </year>
@@ -31,6 +35,10 @@ TRN-3V
 <type>
 IS Level 2
 </type>
+
+<role>
+Interceptor
+</role>
 
 <motion_type>
 Aerodyne
@@ -101,7 +109,7 @@ ISERSmallLaser
 </Fuselage Equipment>
 
 <source>
-TRO 3050u - Jihad
+TRO: 3050
 </source>
 
 <tonnage>

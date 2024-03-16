@@ -1,12 +1,23 @@
-Version:1.0
-Atlas II
-AS7-D-H
+chassis:Atlas II
+model:AS7-D-H
+mul id:152
 
 Config:Biped
 techbase:Inner Sphere
 era:2765
-source:TRO 3075 - Star League
+source:TRO: 3075
 rules level:2
+role:Juggernaut
+
+
+
+
+quirk:battle_fists_la
+quirk:battle_fists_ra
+quirk:command_mech
+quirk:distracting
+quirk:imp_com
+
 
 mass:100
 engine:300 Fusion Engine(IS)
@@ -150,6 +161,7 @@ IS Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
+
 
 overview:The technologically-advanced Hegemony counterpart to the SLDF's regular army's AS7-D Atlas, the Atlas II was exclusively reserved for SLDF Royal Regiments.
 

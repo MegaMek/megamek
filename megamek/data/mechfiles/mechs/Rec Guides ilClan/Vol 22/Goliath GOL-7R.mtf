@@ -1,0 +1,174 @@
+chassis:Goliath
+model:GOL-7R
+mul id:8408
+
+Config:Quad
+techbase:Inner Sphere
+era:3133
+source:Rec Guide:ilClan #22
+rules level:2
+role:Sniper
+
+
+
+quirk:multi_trac
+quirk:exp_actuator
+
+
+mass:80
+engine:320 Light Engine(IS)
+structure:IS Standard
+myomer:Standard
+
+heat sinks:10 IS Double
+walk mp:4
+jump mp:0
+
+armor:Light Ferro-Fibrous(Inner Sphere)
+FLL armor:32
+FRL armor:32
+LT armor:21
+RT armor:21
+CT armor:30
+HD armor:9
+RLL armor:32
+RRL armor:32
+RTL armor:13
+RTR armor:13
+RTC armor:19
+
+Weapons:5
+LRM 10, Left Torso
+LRM 10, Right Torso
+ER Medium Laser, Center Torso
+ER Medium Laser, Left Torso
+Gauss Rifle, Right Torso
+
+Front Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Light Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Front Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Light Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+LRM 10
+LRM 10
+ISERMediumLaser
+IS Ammo LRM-10
+IS Ammo LRM-10
+IS Gauss Ammo
+ISCASEII
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+LRM 10
+LRM 10
+ISCASEII
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISERMediumLaser
+IS Gauss Ammo
+
+Head:
+Life Support
+Sensors
+Cockpit
+IS Light Ferro-Fibrous
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Rear Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Light Ferro-Fibrous
+IS Light Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Rear Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Light Ferro-Fibrous
+IS Light Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+overview:The Goliath is used as a general assault 'Mech and until recently was not usually seen in large numbers because of the bias against quad 'Mechs prior to the 3060s. 
+
+capabilities:The Goliath is armed with what would be considered a paltry armament for a 'Mech of its size.
+
+deployment:Unknown
+
+history:The Goliath is the second 'Mech built in 2652 by Brigadier Corporation. The Goliath is based on lessons that were learned from the Scorpion. The first and most important difference is that the Goliath weighs in at 80 tons allowing it to carry a much heavier weapons payload and armor at the cost of mobility. In the late 3060s the Goliath saw renewed production and renewed popularity and has since become a powerful and respected assault 'Mech. In 3143, The Corean Enterprises - MacAdams-Suharno plant on Stewart was captured by Clan Wolf, and it's GOL-6M variant production line converted to produce a Clan version of the 'Mech.
+
+manufacturer:Brigadier Corporation
+primaryfactory:Oliver
+systemmanufacturer:CHASSIS:Brigadier 1000F
+systemmanufacturer:ENGINE:Pitban 320 Light
+systemmanufacturer:ARMOR:StarSlab/4 Light Ferro-Fibrous with CASE II
+systemmanufacturer:COMMUNICATIONS:Garret 600
+systemmanufacturer:TARGETING:Garret GRNDTRK 15
+

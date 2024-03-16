@@ -16,9 +16,13 @@ SmallCraft
 Mowang Courier
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+4681
+</mul id:>
 
 <year>
 2835
@@ -31,6 +35,10 @@ Mowang Courier
 <type>
 IS Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Aerodyne
@@ -99,7 +107,7 @@ cargobay:26.5:1:5
 </structural_integrity>
 
 <source>
-Handbook:Liao - Early Succesion Wars
+Handbook: House Liao
 </source>
 
 <tonnage>

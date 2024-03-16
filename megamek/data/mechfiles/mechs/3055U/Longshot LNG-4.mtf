@@ -1,12 +1,18 @@
-Version:1.0
-Longshot
-LNG-4
+chassis:Longshot
+model:LNG-4
+mul id:1950
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3068
-Source:TRO 3055 - Jihad
+Source:TRO: 3055
 Rules Level:4
+role:Striker
+
+
+
+quirk:difficult_maintain
+
 
 Mass:35
 Engine:245 XXL Engine

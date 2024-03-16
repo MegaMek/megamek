@@ -20,6 +20,10 @@ Snowden Mining Station
 (MK I)
 </Model>
 
+<mul id:>
+5094
+</mul id:>
+
 <year>
 2390
 </year>
@@ -31,6 +35,10 @@ Snowden Mining Station
 <type>
 IS Level 3
 </type>
+
+<role>
+None
+</role>
 
 <designtype>
 0
@@ -156,7 +164,7 @@ Small Laser
 </structural_integrity>
 
 <source>
-HB:MPS - Age of War
+Handbook: Major Periphery States
 </source>
 
 <tonnage>

@@ -1,0 +1,267 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Warship
+</UnitType>
+
+<Name>
+Riga Frigate
+</Name>
+
+<Model>
+(2440)
+</Model>
+
+<mul id:>
+4922
+</mul id:>
+
+<year>
+2440
+</year>
+
+<originalBuildYear>
+2440
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<role>
+None
+</role>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+asfbay:12.0:2:1
+smallcraftbay:4.0:2:2
+cargobay:124350.0:2:3
+dockingcollar
+dockingcollar
+1stclassquarters:400.0:0
+crewquarters:1393.0:0
+</transporters>
+
+<SafeThrust>
+3
+</SafeThrust>
+
+<heatsinks>
+2100
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+26400
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+11
+</armor_type>
+
+<armor_tech>
+5
+</armor_tech>
+
+<armor>
+70
+65
+65
+67
+65
+65
+</armor>
+
+<Nose Equipment>
+(B) Naval PPC (Heavy)
+(B) Naval Laser 55
+Naval Laser 55
+(B) Naval Autocannon (NAC/30)
+Naval Autocannon (NAC/30)
+Ammo NAC/30:100
+</Nose Equipment>
+
+<Left Front Side Equipment>
+(B) Naval PPC (Light)
+(B) Naval Laser 45
+Naval Laser 45
+(B) Naval Autocannon (NAC/25)
+Naval Autocannon (NAC/25)
+Ammo NAC/25:100
+</Left Front Side Equipment>
+
+<Right Front Side Equipment>
+(B) Naval PPC (Light)
+(B) Naval Laser 45
+Naval Laser 45
+(B) Naval Autocannon (NAC/25)
+Naval Autocannon (NAC/25)
+Ammo NAC/25:100
+</Right Front Side Equipment>
+
+<Aft Equipment>
+(B) Naval PPC (Light)
+(B) Naval Laser 45
+Naval Laser 45
+</Aft Equipment>
+
+<Aft Left Side Equipment>
+(B) Naval PPC (Light)
+(B) Naval Laser 45
+Naval Laser 45
+(B) Naval Autocannon (NAC/25)
+Naval Autocannon (NAC/25)
+Ammo NAC/25:100
+</Aft Left Side Equipment>
+
+<Aft Right Side Equipment>
+(B) Naval PPC (Light)
+(B) Naval Laser 45
+Naval Laser 45
+(B) Naval Autocannon (NAC/25)
+Naval Autocannon (NAC/25)
+Ammo NAC/25:100
+</Aft Right Side Equipment>
+
+<Hull Equipment>
+ISSmallNavalCommScannerSuite
+</Hull Equipment>
+
+<Left Broadsides Equipment>
+(B) Naval PPC (Heavy)
+(B) Naval Laser 55
+Naval Laser 55
+(B) Naval Autocannon (NAC/30)
+Naval Autocannon (NAC/30)
+Ammo NAC/30:100
+</Left Broadsides Equipment>
+
+<Right Broadsides Equipment>
+(B) Naval PPC (Heavy)
+(B) Naval Laser 55
+Naval Laser 55
+(B) Naval Autocannon (NAC/30)
+Naval Autocannon (NAC/30)
+Ammo NAC/30:100
+</Right Broadsides Equipment>
+
+<structural_integrity>
+70
+</structural_integrity>
+
+<capabilities>
+The Riga-class frigate excelled in extended operations and independent missions. It incorporated new maneuver drives that maximized fuel efficiency without compromising speed. The ship's energy-based weapon systems eliminated the need for ammunition, enhancing its operational effectiveness. To address concerns about firepower at close range, autocannons were added, complemented by large magazine stores. The Riga's armored hull provided battlecruiser-level protection, and it carried two squadrons of fighters for self-defense and protection against enemy fighters. These capabilities made the Riga an effective escort ship during fleet deployments and enabled successful long-range operations during the Reunification War.
+</capabilities>
+
+<overview>
+The Riga-class frigate was developed by the Terran Hegemony to address deficiencies in their naval assets. Designed to fulfill the roles of a destroyer and cruiser, the Riga was optimized for extended operations and independent duty. It featured efficient maneuver drives, energy-based weapon systems, and a battlecruiser-level armor hull. Despite initial concerns about firepower at shorter ranges, a compromise was reached with the inclusion of autocannons. The Riga also served as an escort ship during fleet deployments and played a significant role in the Reunification War. The production of Riga-class frigates eventually gave way to the Congress-class in 2542.
+</overview>
+
+<history>
+The development of the Riga-class frigate came as a result of a study conducted by the Terran Hegemony's Center of Strategic Studies and Naval Command, aiming to address the lack of assets to meet mission objectives. The Riga, a Boeing Interstellar design, was authorized in 2438 after negotiations and political maneuvering. Construction commenced in 2439, and the first ship was commissioned in 2440. The production of Rigas continued until the introduction of the Congress-class frigate in 2542. During their service, Riga-class frigates played a crucial role in the Reunification War and proved their capability for extended operations. However, they were retired in 2735 to make way for the Sovetskii Soyuz-class heavy cruisers. The last Riga-class vessel was mothballed in 2740. The Word of Blake surprised the Inner Sphere by deploying two recovered Rigas during the Jihad, but both ships were destroyed by 3073. After the decommissioning of the original Riga class, a second block of Rigas, known as the Riga II, was produced for the Star League Defense Force between 2747 and 2766. The Riga II had a smaller mass than its predecessor and was designated as a destroyer and escort carrier rather than a frigate.
+</history>
+
+<manufacturer>
+Boeing Interstellar
+</manufacturer>
+
+<primaryFactory>
+Terra
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<use>
+Frigate
+</use>
+
+<length>
+693 m
+</length>
+
+<height>
+1375 m Sail
+</height>
+
+<source>
+TRO: 3057 Revised
+</source>
+
+<tonnage>
+750000.0
+</tonnage>
+
+<kf_core>
+1
+</kf_core>
+
+<sail>
+1
+</sail>
+
+<grav_decks>
+140
+65
+</grav_decks>
+
+<designtype>
+1
+</designtype>
+
+<crew>
+283
+</crew>
+
+<officers>
+40
+</officers>
+
+<gunners>
+38
+</gunners>
+
+<passengers>
+0
+</passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<life_boat>
+20
+</life_boat>
+
+<escape_pod>
+31
+</escape_pod>
+

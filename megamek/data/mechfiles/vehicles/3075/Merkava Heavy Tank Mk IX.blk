@@ -20,17 +20,25 @@ Merkava Heavy Tank
 Mk IX
 </Model>
 
+<mul id:>
+2174
+</mul id:>
+
 <year>
 3073
 </year>
 
 <source>
-Jihad
+TRO: 3075
 </source>
 
 <type>
 IS Level 2
 </type>
+
+<role>
+Missile Boat
+</role>
 
 <tonnage>
 75.0

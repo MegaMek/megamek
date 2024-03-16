@@ -1,5 +1,4 @@
-#building block data file
-
+#Saved from version 0.49.18-SNAPSHOT on 2024-01-07
 <BlockVersion>
 1
 </BlockVersion>
@@ -7,10 +6,6 @@
 <UnitType>
 Tank
 </UnitType>
-
-<blockversion>
-1
-</blockversion>
 
 <Name>
 Goblin Medium Tank
@@ -20,37 +15,49 @@ Goblin Medium Tank
 X
 </Model>
 
+<mul id:>
+1227
+</mul id:>
+
 <year>
 3073
 </year>
+
+<originalBuildYear>
+3073
+</originalBuildYear>
 
 <type>
 IS Level 4
 </type>
 
-<tonnage>
-45.0
-</tonnage>
+<role>
+Brawler
+</role>
 
 <motion_type>
 Tracked
 </motion_type>
 
 <transporters>
-TroopSpace: 8.0
+troopspace:8.0
 </transporters>
-
-<engine_type>
-3
-</engine_type>
 
 <cruiseMP>
 4
 </cruiseMP>
 
+<engine_type>
+3
+</engine_type>
+
 <armor_type>
 6
 </armor_type>
+
+<armor_tech>
+7
+</armor_tech>
 
 <armor>
 40
@@ -90,4 +97,44 @@ ISMML9
 ISMagshotGR
 ISMagshotGR
 </Front Turret Equipment>
+
+<capabilities>
+The Goblin's distinctive feature is its main weapon, a potent BlazeFire Systems Large Laser. This energy weapon boasts impressive range and firepower without the need for ammunition, all housed in a compact turret design. The BlazeFire targeting system even offers link-ups to the tank's crew, allowing alternate crew members to fire the main weapon if the gunner becomes incapacitated. Additionally, the tank features a MiniGun for anti-infantry purposes, although only the driver can operate it.<p>What truly sets the Goblin apart is its spacious infantry compartment in the rear, accommodating up to seven infantrymen or a support weapons team. This versatility makes it an invaluable asset in urban combat scenarios, providing organic infantry support and unhampered turret maneuverability.</p>
+</capabilities>
+
+<overview>
+The enigmatic Goblin Medium Tank, with an unclear origin dating back to the Age of War or the early Star League era, remains a unique combat vehicle. Johnston Industries took over its production during the tumultuous First Succession War, adding to its mystique.
+</overview>
+
+<deployment>
+The Goblin-X boasts high mobility with an XXL engine, formidable firepower with a Light PPC and MML-9, and improved anti-battle armor defense. Nevertheless, it has limited anti-infantry capabilities, potential overheating issues due to energy weapons, and complex maintenance requirements.
+</deployment>
+
+<history>
+The Goblin has found favor with Federated Suns mechanized infantry regiments and armored battalions regularly working with infantry units. It has also gained popularity among the esteemed Ceti Hussar regiments. During the Second and Third Succession Wars, captured Goblins were pressed into service by Kuritan and Capellan forces.<p>The true origins of the Goblin remain shrouded in mystery, even as several were discovered among the cache of arms on Terra, from which the Com Guards were formed. Detailed examination failed to unveil the Goblin's true creators.</p><p>One remarkable episode in the Goblin's history occurred during a desperate situation on the Combine world of Weisau. A detachment of Goblins from the Third Ceti Hussars, cut off from their DropShips by enemy forces, embarked on a daring mission led by Captain Reginald Rosseter. Operating with infantry support, they executed raids on small towns, villages, 'Mech and vehicle repair stations, and even transmitted their location to friendly forces, ultimately escaping Weisau.</p>
+</history>
+
+<manufacturer>
+Jalastar Aerospace
+</manufacturer>
+
+<primaryFactory>
+Panpour
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unlknown
+ENGINE:PlasmaStar 180 XXL
+ARMOR:ProtecTec 19 Heavy Ferro-Fibrous
+COMMUNICATIONS:CommuTech XL
+TARGETING:BlazeFire tracker with RangeCheck
+</systemManufacturers>
+
+<source>
+XTR: Boondocks
+</source>
+
+<tonnage>
+45.0
+</tonnage>
 

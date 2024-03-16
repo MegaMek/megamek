@@ -16,9 +16,13 @@ ConvFighter
 Boeing Jump Bomber
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+409
+</mul id:>
 
 <year>
 3037
@@ -31,6 +35,10 @@ Boeing Jump Bomber
 <type>
 IS Level 1
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Aerodyne
@@ -93,7 +101,7 @@ Aerodyne
 </Fuselage Equipment>
 
 <source>
-TRO 3039 - Succession Wars
+TRO: 3039
 </source>
 
 <tonnage>

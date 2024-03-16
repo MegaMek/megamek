@@ -20,6 +20,10 @@ Lexan Oceanic Luxury VTOL
 Series VI
 </Model>
 
+<mul id:>
+4504
+</mul id:>
+
 <year>
 3053
 </year>
@@ -27,6 +31,10 @@ Series VI
 <type>
 IS Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 VTOL
@@ -82,7 +90,7 @@ cargobay:1.5:1
 </transporters>
 
 <source>
-TRO VAr - Clan Invasion
+TRO: Vehicle Annex (Revised)
 </source>
 
 <tonnage>

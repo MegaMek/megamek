@@ -1,12 +1,20 @@
-Version:1.0
-Emperor
-EMP-5A
+chassis:Emperor
+model:EMP-5A
+mul id:963
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2502
-Source:TRO 3058 - Age of War
+Source:TRO: 3058
 Rules Level:1
+role:Juggernaut
+
+
+
+quirk:command_mech
+weaponquirk:imp_cooling:RA:3:Large Laser
+weaponquirk:imp_cooling:LA:3:Large Laser
+
 
 Mass:90
 Engine:270 Fusion Engine

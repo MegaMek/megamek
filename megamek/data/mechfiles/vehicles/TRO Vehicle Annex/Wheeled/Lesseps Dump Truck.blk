@@ -1,0 +1,111 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+SupportTank
+</UnitType>
+
+<Name>
+Lesseps Dump Truck
+</Name>
+
+<Model>
+
+</Model>
+
+<mul id:>
+4499
+</mul id:>
+
+<year>
+2523
+</year>
+
+<originalBuildYear>
+2523
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<role>
+None
+</role>
+
+<motion_type>
+Wheeled
+</motion_type>
+
+<transporters>
+</transporters>
+
+<cruiseMP>
+3
+</cruiseMP>
+
+<engine_type>
+11
+</engine_type>
+
+<armor>
+28
+19
+19
+12
+</armor>
+
+<Body Equipment>
+ISOffRoadChassis
+</Body Equipment>
+
+<Front Equipment>
+Backhoe
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+Dumper (Rear)
+Cargo:SIZE:20.0
+</Rear Equipment>
+
+<barrating>
+5
+</barrating>
+
+<structural_tech_rating>
+3
+</structural_tech_rating>
+
+<engine_tech_rating>
+3
+</engine_tech_rating>
+
+<armor_tech_rating>
+3
+</armor_tech_rating>
+
+<source>
+TRO: Vehicle Annex (Revised)
+</source>
+
+<tonnage>
+50.0
+</tonnage>
+
+<fuel>
+4.0
+</fuel>
+

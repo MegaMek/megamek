@@ -20,6 +20,10 @@ Cheetah
 OF-17
 </Model>
 
+<mul id:>
+578
+</mul id:>
+
 <year>
 3076
 </year>
@@ -31,6 +35,10 @@ OF-17
 <type>
 IS Level 4
 </type>
+
+<role>
+Interceptor
+</role>
 
 <motion_type>
 Aerodyne
@@ -101,7 +109,7 @@ IS Vehicular Stealth
 </Fuselage Equipment>
 
 <source>
-XTRO Marik - Jihad
+XTR: Marik
 </source>
 
 <tonnage>

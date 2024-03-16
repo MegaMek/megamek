@@ -20,6 +20,10 @@ Augustus MBT
 A3
 </Model>
 
+<mul id:>
+154
+</mul id:>
+
 <year>
 2439
 </year>
@@ -31,6 +35,10 @@ A3
 <type>
 IS Level 2
 </type>
+
+<role>
+Sniper
+</role>
 
 <motion_type>
 Tracked
@@ -100,7 +108,7 @@ Autocannon/2
 </armor_tech_rating>
 
 <source>
-TRO 3085 - Age of War
+TRO: 3085
 </source>
 
 <tonnage>

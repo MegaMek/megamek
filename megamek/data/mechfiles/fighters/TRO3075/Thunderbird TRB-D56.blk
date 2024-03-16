@@ -20,6 +20,10 @@ Thunderbird
 TRB-D56
 </Model>
 
+<mul id:>
+5234
+</mul id:>
+
 <year>
 3074
 </year>
@@ -31,6 +35,10 @@ TRB-D56
 <type>
 IS Level 2
 </type>
+
+<role>
+Attack Fighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -141,7 +149,7 @@ TARGETING:N&D Longreach
 </systemManufacturers>
 
 <source>
-TRO 3075 - Jihad
+TRO: 3075
 </source>
 
 <tonnage>

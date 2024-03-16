@@ -20,6 +20,10 @@ Swift Wind Scout Car
 (ICE - Speed)
 </Model>
 
+<mul id:>
+3143
+</mul id:>
+
 <year>
 2891
 </year>
@@ -27,6 +31,10 @@ Swift Wind Scout Car
 <type>
 IS Level 1
 </type>
+
+<role>
+Scout
+</role>
 
 <motion_type>
 Wheeled
@@ -67,7 +75,7 @@ cargobay:2.0:1
 </Rear Equipment>
 
 <source>
-TRO 3039 - Succession Wars
+TRO: 3039
 </source>
 
 <tonnage>

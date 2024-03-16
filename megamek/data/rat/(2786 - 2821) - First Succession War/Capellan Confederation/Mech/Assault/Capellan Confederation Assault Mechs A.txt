@@ -1,0 +1,12 @@
+Capellan Confederation Assault Mechs A
+Longbow LGB-0W,1
+Victor VTR-9B,2
+Stalker STK-3F,3
+Highlander HGN-732,4
+Thug THG-11E,5
+BattleMaster BLR-1G,6
+Longbow LGB-7Q,5
+Xanthos XNT-3O,4
+Pillager PLG-3Z,3
+Cyclops CP-10-Z,2
+King Crab KGC-000,1

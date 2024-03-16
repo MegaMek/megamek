@@ -20,6 +20,10 @@ Transportable Field Repair Unit
 JI-100
 </Model>
 
+<mul id:>
+1706
+</mul id:>
+
 <year>
 3074
 </year>
@@ -27,6 +31,10 @@ JI-100
 <type>
 IS Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Tracked
@@ -69,7 +77,7 @@ Lift Hoist
 </Rear Equipment>
 
 <source>
-Jihad
+TRO: 3085
 </source>
 
 <tonnage>

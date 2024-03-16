@@ -1,12 +1,18 @@
-Version:1.0
-Daikyu
-DAI-01r
+chassis:Daikyu
+model:DAI-01r
+mul id:799
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3076
-Source:Jihad
+source:TRO: 3085
 Rules Level:4
+role:Sniper
+
+
+
+quirk:ext_twist
+
 
 Mass:70
 Engine:350 XL Engine(IS)

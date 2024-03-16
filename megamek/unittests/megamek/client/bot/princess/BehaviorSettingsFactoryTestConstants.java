@@ -1,30 +1,33 @@
 /*
- * MegaMek - Copyright (C) 2000-2011 Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2000-2011 - Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This file is part of MegaMek.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
 package megamek.client.bot.princess;
 
 /**
- * Created with IntelliJ IDEA.
- *
- * @version $Id$
- * @author: Deric "Netzilla" Page (deric dot page at usa dot net)
- * @since: 9/6/13 10:51 PM
+ * @author Deric "Netzilla" Page (deric dot page at usa dot net)
+ * @since 9/6/13 10:51 PM
  */
 public class BehaviorSettingsFactoryTestConstants {
 
     public static final String NM_RECKLESS = "reckless";
     /**
-     * Home Edge: {@link megamek.client.bot.princess.CardinalEdge#NORTH} <br>
+     * Home Edge: {@link CardinalEdge#NORTH} <br>
      * Forced Withdrawal: False <br>
      * Go Home: False <br>
      * Auto Flee: False <br>
@@ -52,7 +55,7 @@ public class BehaviorSettingsFactoryTestConstants {
 
     public static final String NM_COWARDLY = BehaviorSettingsFactory.COWARDLY_BEHAVIOR_DESCRIPTION;
     /**
-     * Home Edge: {@link megamek.client.bot.princess.CardinalEdge#NORTH} <br>
+     * Home Edge: {@link CardinalEdge#NORTH} <br>
      * Forced Withdrawal: True <br>
      * Go Home: False <br>
      * Auto Flee: False <br>
@@ -80,7 +83,7 @@ public class BehaviorSettingsFactoryTestConstants {
 
     public static final String NM_ESCAPE = BehaviorSettingsFactory.ESCAPE_BEHAVIOR_DESCRIPTION;
     /**
-     * Home Edge: {@link megamek.client.bot.princess.CardinalEdge#NORTH} <br>
+     * Home Edge: {@link CardinalEdge#NORTH} <br>
      * Forced Withdrawal: True <br>
      * Go Home: True <br>
      * Auto Flee: True <br>

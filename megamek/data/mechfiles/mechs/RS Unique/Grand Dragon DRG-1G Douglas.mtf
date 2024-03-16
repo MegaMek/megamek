@@ -1,11 +1,20 @@
-Version:1.1
-Grand Dragon
-DRG-1G (Douglas)
+chassis:Grand Dragon
+model:DRG-1G (Douglas)
+mul id:1257
+source:Record Sheets: Unique Mechs
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3028
 Rules Level:1
+role:Skirmisher
+
+
+
+quirk:ext_twist
+quirk:low_profile
+quirk:stable
+
 
 Mass:60
 Engine:300 Fusion Engine

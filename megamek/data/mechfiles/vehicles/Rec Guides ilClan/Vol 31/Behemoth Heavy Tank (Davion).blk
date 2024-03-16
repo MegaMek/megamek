@@ -1,0 +1,151 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+Behemoth Heavy Tank
+</Name>
+
+<Model>
+(Davion)
+</Model>
+
+<mul id:>
+9457
+</mul id:>
+
+<year>
+3087
+</year>
+
+<originalBuildYear>
+3087
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<transporters>
+</transporters>
+
+<cruiseMP>
+2
+</cruiseMP>
+
+<engine_type>
+0
+</engine_type>
+
+<armor_type>
+6
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
+48
+40
+40
+42
+48
+</armor>
+
+<Body Equipment>
+ISCASE
+IS Gauss Ammo
+IS Gauss Ammo
+IS Gauss Ammo
+IS Gauss Ammo
+IS Gauss Ammo
+IS Ammo SRM-2
+IS Ammo SRM-2
+IS Streak SRM 6 Ammo
+ISMagshotGR Ammo
+SponsonTurret
+</Body Equipment>
+
+<Front Equipment>
+ISERMediumLaser
+ISERMediumLaser
+SRM 2
+SRM 2
+RL10
+RL10
+</Front Equipment>
+
+<Right Equipment>
+SRM 2(ST)
+ISMagshotGR(ST)
+</Right Equipment>
+
+<Left Equipment>
+SRM 2(ST)
+ISMagshotGR(ST)
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+ISGaussRifle
+ISGaussRifle
+ISStreakSRM6
+ISStreakSRM6
+</Turret Equipment>
+
+<capabilities>
+Despite the fact that the initial design plan allowed for a whopping twenty-one tons of armor, only thirteen were used to offer greater weight for weaponry. Though not as thick as originally envisioned, the protection is adequate against the majority of threats. With a peak speed of only 32 kph, even the slowest 'Mech can readily catch up to the Behemoth if it's ready to face the firepower.
+</capabilities>
+
+<overview>
+The Behemoth was designed for increased firepower and heavy armor rather than speed or maneuverability. The design allowed the Behemoth to engage both distant and short-range targets, while allowing it to stand up to almost any type of unit possible.
+</overview>
+
+<deployment>
+Twin Gauss rifles have the range and punch of modern assault tanks like the Kelswa, but rocket launchers replaced the LRMs to preserve mass for the upgrades. The tertiary side mounts are now housed in powered turrets, allowing fire to be directed forward. They also give any foe attempting to attack the Behemoth from behind a severe surprise. The addition of CASE provides sailors confidence in their ability to survive.
+</deployment>
+
+<history>
+House Davion's Federated Suns troops are noted for their quick deployments and quick combat strategies. AFFS opponents soon learn to expect their adversaries to arrive anywhere, at any moment. The idea of that army commissioning something as ponderous and unmaneuvrable as the Behemoth Heavy Tank is unthinkable to most Davion military planners, but Aldis Industries debuted the vehicle to the AFFS in 2952. At the time, the conventional vehicle's purpose on the 'Mech-equipped battlefield was debatable. A vehicle must either be fast enough to dodge the BattleMech's weaponry or carry guns capable of threatening the armor of a 'Mech. The Aldis team's approach was to equip the Behemoth with cannons powerful enough to overpower a 'Mech while also carrying enough backup weapons to keep it safe from secondary threats. Although the AFFS provided the initial commission, Aldis has always been happy to sell to any interested customer. To date, the Behemoth has infiltrated practically every Successor State military, with the AFFS and the Draconis Combine Mustered Soldiery having the highest concentrations.
+</history>
+
+<manufacturer>
+General Motors
+</manufacturer>
+
+<primaryFactory>
+Salem
+</primaryFactory>
+
+<systemManufacturers>
+ENGINE:GM 200 Fusion
+ARMOR:Valiant Plate Heavy Ferro-Fibrous with CASE
+COMMUNICATIONS:Olmstead 30
+TARGETING:Cirxese Ballista- Check with Cirxese RockeCheck
+</systemManufacturers>
+
+<source>
+Rec Guide:ilClan #31
+</source>
+
+<tonnage>
+100.0
+</tonnage>
+

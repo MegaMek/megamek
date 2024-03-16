@@ -36,13 +36,13 @@ public class SuperHeavyTank extends Tank {
     private static final int[] NUM_OF_SLOTS =
         { 25, 25, 25, 25, 25, 25, 25, 25, 25 };
 
-    private static String[] LOCATION_ABBRS = { "BD", "FR", "FRRS", "FRLS",
+    private static final String[] LOCATION_ABBRS = { "BD", "FR", "FRRS", "FRLS",
         "RRRS", "RRLS", "RR", "TU", "FT" };
 
-    private static String[] LOCATION_NAMES = { "Body", "Front", "Front Right",
+    private static final String[] LOCATION_NAMES = { "Body", "Front", "Front Right",
         "Front Left", "Rear Right", "Rear Left", "Rear", "Turret" };
 
-    private static String[] LOCATION_NAMES_DUAL_TURRET = { "Body", "Front", "Front Right",
+    private static final String[] LOCATION_NAMES_DUAL_TURRET = { "Body", "Front", "Front Right",
         "Front Left", "Rear Right", "Rear Left", "Rear", "Rear Turret", "Front Turret" };
 
     @Override
@@ -67,8 +67,8 @@ public class SuperHeavyTank extends Tank {
     public int getLocTurret2() {
         return LOC_TURRET_2;
     }
-    
-    //Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS   
+
+    //Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
     private static final TechAdvancement TA_SUPERHEAVY_TANK = new TechAdvancement(TECH_BASE_ALL)
             .setAdvancement(2470, DATE_NONE, 3075)
             .setApproximate(true, false, true).setPrototypeFactions(F_LC)
@@ -81,9 +81,6 @@ public class SuperHeavyTank extends Tank {
         return TA_SUPERHEAVY_TANK;
     }
 
-    /**
-     * Rolls up a hit location
-     */
     @Override
     public HitData rollHitLocation(int table, int side, int aimedLocation, AimingMode aimingMode,
                                    int cover) {
@@ -328,9 +325,6 @@ public class SuperHeavyTank extends Tank {
         }
     }
 
-    /**
-     * Returns the number of locations in the entity
-     */
     @Override
     public int locations() {
         if (m_bHasNoDualTurret) {
@@ -354,9 +348,6 @@ public class SuperHeavyTank extends Tank {
         return NUM_OF_SLOTS;
     }
 
-    /**
-     * Returns the Compute.ARC that the weapon fires into.
-     */
     @Override
     public int getWeaponArc(int wn) {
         final Mounted mounted = getEquipment(wn);
@@ -372,8 +363,7 @@ public class SuperHeavyTank extends Tank {
         }
         switch (mounted.getLocation()) {
             case LOC_BODY:
-                // Body mounted C3Ms fire into the front arc,
-                // per
+                // Body mounted C3Ms fire into the front arc, per
                 // http://forums.classicbattletech.com/index.php/topic,9400.0.html
             case LOC_FRONT:
                 if (mounted.isPintleTurretMounted()) {
@@ -457,14 +447,12 @@ public class SuperHeavyTank extends Tank {
             return true;
         }
 
-        // If this is not a military vehicle, we don't need to do a weapon
-        // check.
+        // If this is not a military vehicle, we don't need to do a weapon check.
         if (!isMilitary()) {
             return false;
         }
 
-        // no weapons can fire anymore, can cause no more than 5 points of
-        // combined weapons damage,
+        // no weapons can fire anymore, can cause no more than 5 points of combined weapons damage,
         // or has no weapons with range greater than 5 hexes
         if (!hasViableWeapons()) {
             LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: has no more viable weapons.");
@@ -473,53 +461,9 @@ public class SuperHeavyTank extends Tank {
 
         return false;
     }
-
+    
     @Override
     public long getEntityType() {
         return Entity.ETYPE_TANK | Entity.ETYPE_SUPER_HEAVY_TANK;
-    }
-
-    @Override
-    public int getNumBattleForceWeaponsLocations() {
-        if (m_bHasNoTurret) {
-            return 4;
-        } else if (m_bHasNoDualTurret) {
-            return 5;
-        } else {
-            return 6;
-        }
-    }
-    
-    @Override
-    public double getBattleForceLocationMultiplier(int index, int location, boolean rearMounted) {
-        if ((index == 0 && location == LOC_FRONT)
-                || (index == 1 && (location == LOC_FRONTLEFT || location == LOC_REARLEFT))
-                || (index == 2 && (location == LOC_FRONTRIGHT || location == LOC_REARRIGHT))
-                || (index == 3 && location == LOC_REAR)
-                || (index == 4 && location == LOC_TURRET)
-                || (index == 5 && location == LOC_TURRET_2)) {
-            return 1.0;
-        }
-        return 0;
-    }
-    
-    @Override
-    public String getBattleForceLocationName(int index) {
-        switch (index) {
-            case 0:
-                return LOCATION_ABBRS[LOC_FRONT];
-            case 1:
-                return "LS";
-            case 2:
-                return "RS";
-            case 3:
-                return LOCATION_ABBRS[LOC_REAR];
-            case 4:
-                return LOCATION_ABBRS[LOC_TURRET];
-            case 5:
-                return LOCATION_ABBRS[LOC_TURRET_2];
-            default:
-                return "?";
-        }
     }
 }

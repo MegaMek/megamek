@@ -20,6 +20,10 @@ Seeker
 (2815) (Mech)
 </Model>
 
+<mul id:>
+5013
+</mul id:>
+
 <year>
 2815
 </year>
@@ -119,7 +123,7 @@ MASH Core Component
 </structural_integrity>
 
 <source>
-TRO 3057R - Early Succession War
+TRO: 3057 Revised
 </source>
 
 <tonnage>

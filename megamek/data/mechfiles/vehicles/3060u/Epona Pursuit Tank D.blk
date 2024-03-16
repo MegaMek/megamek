@@ -20,6 +20,10 @@ Epona Pursuit Tank
 D
 </Model>
 
+<mul id:>
+994
+</mul id:>
+
 <year>
 3068
 </year>
@@ -27,6 +31,10 @@ D
 <type>
 Clan Level 3
 </type>
+
+<role>
+Striker
+</role>
 
 <motion_type>
 Hover
@@ -91,7 +99,7 @@ CLCASE:OMNI
 </Turret Equipment>
 
 <source>
-Jihad
+TRO: 3060
 </source>
 
 <tonnage>

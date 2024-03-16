@@ -1,19 +1,21 @@
-/**
- * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
- *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
- */
 /*
- * Created on Sep 23, 2004
+ * Copyright (c) 2005 - Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
  *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
 package megamek.common.weapons;
 
@@ -31,25 +33,18 @@ import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
+import megamek.server.GameManager;
 import megamek.server.Server;
 
 /**
  * @author Sebastian Brocks
+ * @since Sept 23, 2004
  */
 public class LegAttackHandler extends WeaponHandler {
-    /**
-     *
-     */
     private static final long serialVersionUID = 4429993211361286138L;
 
-    /**
-     * @param toHit
-     * @param waa
-     * @param g
-     */
-    public LegAttackHandler(ToHitData toHit, WeaponAttackAction waa, Game g,
-            Server s) {
-        super(toHit, waa, g, s);
+    public LegAttackHandler(ToHitData toHit, WeaponAttackAction waa, Game g, GameManager m) {
+        super(toHit, waa, g, m);
     }
 
     /*
@@ -96,7 +91,7 @@ public class LegAttackHandler extends WeaponHandler {
         }
 
         // ASSUMPTION: buildings CAN'T absorb *this* damage.
-        vPhaseReport.addAll(server.damageEntity(entityTarget, hit, damage,
+        vPhaseReport.addAll(gameManager.damageEntity(entityTarget, hit, damage,
                 false, damageType, false, false, throughFront, underWater));
         Report.addNewline(vPhaseReport);
         // Do criticals.
@@ -107,6 +102,6 @@ public class LegAttackHandler extends WeaponHandler {
         if (ae.hasAbility(OptionsConstants.MISC_HUMAN_TRO,Crew.HUMANTRO_MECH)) {
             critMod += 1;
         }
-        vPhaseReport.addAll(server.criticalEntity(entityTarget, hit.getLocation(), hit.isRear(), critMod, damage));
+        vPhaseReport.addAll(gameManager.criticalEntity(entityTarget, hit.getLocation(), hit.isRear(), critMod, damage));
     }
 }

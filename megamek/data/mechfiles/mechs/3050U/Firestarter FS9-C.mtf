@@ -1,12 +1,21 @@
-Version:1.0
-Firestarter
-FS9-C
+chassis:Firestarter
+model:FS9-C
+mul id:1111
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3064
-Source:TRO 3050 - Civil War
+Source:TRO: 3050
 Rules Level:2
+role:Striker
+
+
+
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+weaponquirk:exposed_linkage:RA:3:Flamer
+weaponquirk:exposed_linkage:LA:3:Flamer
+
 
 Mass:35
 Engine:210 Fusion Engine(IS)
@@ -154,3 +163,19 @@ Ferro-Fibrous
 -Empty-
 -Empty-
 
+overview:Originally intended as a mobile incendiary ’Mech, the Firestarter evolved into a decent scouting and reconnaissance platform.
+
+capabilities:Despite being shielded by five and a half tons of armor and capable of jumping 180 meters, the Firestarter was powerless against medium or heavyweight opponents. Instead, an entire strategy was built around its ability to cause wildfires, with strategically positioned blazes routing an opponent or covering a withdrawal and impeding any pursuit. Firestarter MechWarriors enjoyed setting fire to densely forested areas when enemy 'Mechs marched through them, as well as any buildings where the enemy was hiding. Other applications for the 'Mech included scorched earth tactics, though this grew less common as it became more important to capture rather than destroy the declining amount of precious resources, or leading units of Wasps and Stingers in deep penetration scouting and light raiding operations.This approach altered in the later Succession Wars when it was discovered that the Firestarter could not only set flames to prevent an enemy from following it, but also clear ambush spots for the advancing of friendly forces.
+
+deployment:The FS9-C is an upgrade of the Firestarter manufactured by Coventry Metal Works for the Periphery starting in 3064. The armor has been upgraded to ferro-fibrous and the 'Mech carries two flamers, two medium lasers, two RL-15s, and four RL-10s, giving it an incredible one-shot kill capability against heavier 'Mechs. The already overwhelming number of Firestarters in the near Periphery led to the failure of this variant. 
+
+history:Firestarters, both ancient and contemporary, can still be found in abundance among planetary militias and House troops. Even though Blakist forces have taken over CMW's principal plant on Coventry, spare parts are still accessible from other Firestarter producers (including LAW, Ceres Metals, Defiance, and Independence Weaponry). Loki field offices near the Circinus Federation frontier are concerned about reports of a new variety using endo steel technology on Federation- occupied worlds. With its particular load-out, this new variation appears to be designed to spread chaos and destruction. Firestarters have also been seen in Level II formations with Blakist soldiers in their Protectorate, most frequently at "police demonstrations" and guarding suspected prison sites. These versions are thought to be Coventry goods.
+
+manufacturer:Gift of the Magi, Inc.
+primaryfactory:Baltazar III
+systemmanufacturer:CHASSIS:Foundation Ultralight Endo Steel
+systemmanufacturer:ENGINE:Omni 210
+systemmanufacturer:ARMOR:Lexington Ltd. High Grade
+systemmanufacturer:JUMPJET:Luxor Load Lifters
+systemmanufacturer:COMMUNICATIONS:Cyclops 14
+systemmanufacturer:TARGETING:Tansech C30-97

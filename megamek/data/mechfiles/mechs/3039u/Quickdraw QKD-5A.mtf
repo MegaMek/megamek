@@ -1,12 +1,19 @@
-Version:1.0
-Quickdraw
-QKD-5A
+chassis:Quickdraw
+model:QKD-5A
+mul id:2612
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3002
-Source:TRO 3039 - Succession Wars
+Source:TRO: 3039
 Rules Level:1
+role:Skirmisher
+
+
+
+quirk:hyper_actuator
+quirk:exp_actuator
+
 
 Mass:60
 Engine:300 Fusion Engine

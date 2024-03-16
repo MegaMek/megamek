@@ -20,6 +20,10 @@ Dragau II
 (3097)
 </Model>
 
+<mul id:>
+6819
+</mul id:>
+
 <year>
 3097
 </year>
@@ -31,6 +35,10 @@ Dragau II
 <type>
 IS Level 4
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Aerodyne
@@ -143,7 +151,7 @@ ISNC3
 </structural_integrity>
 
 <source>
-RS 3145 NTNU - Early Republic
+Record Sheets: 3145 New Tech New Upgrades
 </source>
 
 <tonnage>

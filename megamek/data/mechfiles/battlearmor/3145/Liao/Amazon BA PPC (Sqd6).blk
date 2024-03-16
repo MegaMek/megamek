@@ -1,0 +1,132 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+Amazon Battle Armor
+</Name>
+
+<Model>
+[Support PPC](Sqd6)
+</Model>
+
+<mul id:>
+9107
+</mul id:>
+
+<year>
+3101
+</year>
+
+<type>
+IS Level 2
+</type>
+
+<role>
+Ambusher
+</role>
+
+<motion_type>
+Jump
+</motion_type>
+
+<cruiseMP>
+1
+</cruiseMP>
+
+<armor_type>
+30
+</armor_type>
+
+<armor_tech>
+11
+</armor_tech>
+
+<Squad Equipment>
+BABattleClaw:LA
+ISBASupportPPC:RA
+SwarmMek
+SwarmWeaponMek
+StopSwarm
+LegAttack
+IS BA Advanced:Body
+IS BA Advanced:LA
+IS BA Advanced:Body
+IS BA Advanced:LA
+IS BA Advanced:Body
+</Squad Equipment>
+
+<Trooper 1 Equipment>
+</Trooper 1 Equipment>
+
+<Trooper 2 Equipment>
+</Trooper 2 Equipment>
+
+<Trooper 3 Equipment>
+</Trooper 3 Equipment>
+
+<Trooper 4 Equipment>
+</Trooper 4 Equipment>
+
+<source>
+TRO: 3145 Capellan Confederation
+</source>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+3
+</jumpingMP>
+
+<armor>
+10
+</armor>
+
+<Trooper Count>
+6
+</Trooper Count>
+
+<weightclass>
+2
+</weightclass>
+
+<overview>
+The Amazon battle armor was created by the Magistracy of Canopus. 
+</overview>
+
+<history>
+The Amazon is used by both the Magistracy and the Capellan Confederation. Amazons deployed by the Capellan Confederation Armed Forces faced Cavalier battle armor and turned in a better performance.
+</history>
+
+<capabilities>
+Based on the standard Inner Sphere battle armor, the Amazon uses advanced armor to increase protection and provides a jump capability of 90 meters. This allows Amazon-equipped troops to clear obstacles that would stop other battle armor units. 
+</capabilities>
+
+<deployment>
+The Amazon has a Modular Weapon Mount on the right arm which can be configured to support either a Medium Recoilless Rifle or a Support PPC. The left arm carries a Battle Claw which allows Amazon pilots to make anti-'Mech attacks or ride an Omnimech into battle.
+</deployment>
+
+<manufacturer>
+Foxx Infantry Systems
+</manufacturer>
+
+<primaryFactory>
+Royal Foxx
+</primaryFactory>
+
+<quirks>
+easy_pilot
+</quirks>
+

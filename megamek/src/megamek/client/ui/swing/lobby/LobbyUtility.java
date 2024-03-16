@@ -18,25 +18,29 @@
  */
 package megamek.client.ui.swing.lobby;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.StringTokenizer;
-
+import megamek.MMConstants;
 import megamek.client.ui.Messages;
+import megamek.client.ui.dialogs.BVDisplayDialog;
+import megamek.client.ui.dialogs.CostDisplayDialog;
+import megamek.client.ui.dialogs.EntityReadoutDialog;
+import megamek.client.ui.swing.ForceGeneratorViewUi;
 import megamek.client.ui.swing.GUIPreferences;
+import megamek.client.ui.swing.RandomArmyDialog;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.*;
 import megamek.common.force.Force;
+import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
+import org.apache.logging.log4j.LogManager;
+
+import javax.swing.*;
+import javax.swing.table.AbstractTableModel;
+import java.awt.*;
+import java.io.File;
+import java.util.*;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /** 
  * This class provides static helper functions for the Lobby aka ChatLounge. 
@@ -69,11 +73,22 @@ public class LobbyUtility {
         if (!isExclusiveDeployment(game)) {
             return true;
         } else {
+            final GameOptions gOpts = game.getOptions();
+            List<Player> players = game.getPlayersList();
+
+            if (gOpts.booleanOption(OptionsConstants.BASE_SET_PLAYER_DEPLOYMENT_TO_PLAYER0) && !player.isBot() && player.getId() != 0) {
+                return true;
+            }
+
+            if (gOpts.booleanOption(OptionsConstants.BASE_SET_PLAYER_DEPLOYMENT_TO_PLAYER0)) {
+                players = players.stream().filter(p -> p.isBot() || p.getId() == 0).collect(Collectors.toList());
+            }
+
             if (isTeamsShareVision(game)) {
-                return game.getPlayersVector().stream().filter(p -> p.isEnemyOf(player))
+                return players.stream().filter(p -> p.isEnemyOf(player))
                         .noneMatch(p -> startPosOverlap(pos, p.getStartingPos()));
             } else {
-                return game.getPlayersVector().stream().filter(p -> !p.equals(player))
+                return players.stream().filter(p -> !p.equals(player))
                         .noneMatch(p -> startPosOverlap(pos, p.getStartingPos()));
             }
         }
@@ -146,14 +161,14 @@ public class LobbyUtility {
      * lower edge of the image for which the graphics g is given.
      */
     static void drawMinimapLabel(String text, int w, int h, Graphics g, boolean invalid) {
-        if (text.length() == 0) {
+        if (text.isBlank()) {
             return;
         }
-        GUIPreferences.AntiAliasifSet(g);
+        UIUtil.setHighQualityRendering(g);
         // The text size may grow with the width of the image, but no bigger than 16*guiscale
         // to avoid huge text
         int fontSize = Math.min(w / 10, UIUtil.scaleForGUI(16));
-        Font font = new Font("Dialog", Font.PLAIN, fontSize);
+        Font font = new Font(MMConstants.FONT_DIALOG, Font.PLAIN, fontSize);
         g.setFont(font);
         FontMetrics fm = g.getFontMetrics(font);
         int th = fm.getAscent() + fm.getDescent(); // The text height
@@ -282,8 +297,8 @@ public class LobbyUtility {
      */
     static boolean validateLobbyLoad(Collection<Entity> entities, Entity loader, int bayNumber,
             boolean loadRear, StringBuilder errorMsg) {
-        // Protomek loading uses only 1 entity, get that (doesnt matter if it's something else):
-        Entity soleProtomek = entities.stream().findAny().get();
+        // ProtoMek loading uses only 1 entity, get that (doesn't matter if it's something else)
+        Entity soleProtoMek = entities.stream().findAny().get();
         double capacity;
         boolean hasEnoughCargoCapacity;
         String errorMessage = "";
@@ -297,9 +312,9 @@ public class LobbyUtility {
                 errorMessage = Messages.getString("LoadingBay.baytoomany",
                         (int) bay.getUnusedSlots(), bay.getDefaultSlotDescription());
             } else if (loader.hasETypeFlag(Entity.ETYPE_MECH)
-                    && soleProtomek.hasETypeFlag(Entity.ETYPE_PROTOMECH)) {
+                    && soleProtoMek.hasETypeFlag(Entity.ETYPE_PROTOMECH)) {
                 // We're also using bay number to distinguish between front and rear locations
-                // for protomech mag clamp systems
+                // for ProtoMek mag clamp systems
                 hasEnoughCargoCapacity = entities.size() == 1;
                 errorMessage = Messages.getString("LoadingBay.protostoomany");
             } else {
@@ -421,11 +436,6 @@ public class LobbyUtility {
         return hasEnoughCargoCapacity;
     }
 
-    
-    // PRIVATE
-    //  
-    //
-
     /** 
      * Returns true when the two starting positions overlap, i.e.
      * if they are equal or adjacent (e.g. E and NE, SW and S).
@@ -458,5 +468,139 @@ public class LobbyUtility {
         // the rest of the positions overlap if they're 1 apart
         // NW = 1 and W = 8 also overlap
         return ((a - b == 1) || (a == 8 && b == 1));
+    }
+
+    /**
+     * Converts an id list of the form 1,2,4,12 to a set of corresponding entities.
+     * Ignores entity ids that don't exist. The resulting list may be empty but not null.
+     */
+    public static HashSet<Entity> getEntities(String idList, AbstractTableModel utm) {
+        StringTokenizer st = new StringTokenizer(idList, ",");
+        HashSet<Entity> result = new HashSet<>();
+
+        while (st.hasMoreTokens()) {
+            int id = -1;
+
+            try {
+                id = Integer.parseInt(st.nextToken());
+            } catch (NumberFormatException e){
+            }
+
+            MechSummary ms = null;
+
+            if (utm instanceof RandomArmyDialog.UnitTableModel) {
+                ms = ((RandomArmyDialog.UnitTableModel) utm).getUnitAt(id);
+            } else if (utm instanceof RandomArmyDialog.RATTableModel) {
+                ms = ((RandomArmyDialog.RATTableModel) utm).getUnitAt(id);
+            }  else if (utm instanceof ForceGeneratorViewUi.ChosenEntityModel) {
+                ms = ((ForceGeneratorViewUi.ChosenEntityModel) utm).getUnitAt(id);
+            }
+
+            if (ms != null) {
+                try {
+                    Entity e = new MechFileParser(ms.getSourceFile(), ms.getEntryName()).getEntity();
+                    e.setId(id);
+                    result.add(e);
+                } catch (EntityLoadingException ex) {
+                    LogManager.getLogger().error(String.format("Unable to load Mek: %s: %s",
+                            ms.getSourceFile(), ms.getEntryName()), ex);
+                }
+            }
+        }
+
+        return result;
+    }
+
+    /**
+     * Returns a list of the selected entities in the Mek table.
+     * The list may be empty but not null.
+     */
+    public static List<Integer> getSelectedEntities(JTable sTable) {
+        ArrayList<Integer> result = new ArrayList<>();
+        int[] rows = sTable.getSelectedRows();
+
+        for (int i = 0; i < rows.length; i++) {
+            result.add(sTable.convertRowIndexToModel(rows[i]));
+        }
+
+        return result;
+    }
+
+    /**
+     * Shows the unit summaries for the given units, but not for hidden units (blind drop)
+     * and not for more than 10 units at a time (because that's likely a misclick).
+     */
+    public static void mechReadoutAction(Collection<Entity> entities, boolean canSeeAll, boolean modal, JFrame frame) {
+        if (entities.size() > 10) {
+            LobbyErrors.showTenUnits(frame);
+        } else if (!canSeeAll) {
+            LobbyErrors.showCannotViewHidden(frame);
+        } else {
+            int index = 0;
+
+            for (Entity entity : entities) {
+                mechReadout(entity, index++, modal, frame);
+            }
+        }
+    }
+
+    /**
+     * Shows the unit summary for the given unit. Moves the dialog a bit depending on index
+     * so that multiple dialogs dont appear exactly on top of each other.
+     */
+    public static void mechReadout(Entity entity, int index, boolean modal, JFrame frame) {
+        final EntityReadoutDialog dialog = new EntityReadoutDialog(frame, entity);
+        dialog.setModal(modal);
+        dialog.setVisible(true);
+        dialog.setLocation(dialog.getLocation().x + index * 10, dialog.getLocation().y + index * 10);
+    }
+
+    /**
+     * Shows the battle value calculation for the given units, but not for hidden units (blind drop)
+     * and not for more than 10 units at a time (because that's likely a misclick).
+     *
+     * @param entities The units to the bv report for
+     */
+    public static void mechBVAction(final Set<Entity> entities, boolean canSeeAll, boolean modal, JFrame frame) {
+        if (entities.size() > 10) {
+            LobbyErrors.showTenUnits(frame);
+        } else if (!canSeeAll) {
+            LobbyErrors.showCannotViewHidden(frame);
+        } else {
+            for (final Entity entity : entities) {
+                new BVDisplayDialog(frame, modal, entity).setVisible(true);
+            }
+        }
+    }
+
+    /**
+     * Shows the cost calculation for the given units, but not for hidden units (blind drop)
+     * and not for more than 10 units at a time (because that's likely a misclick).
+     *
+     * @param entities The units to the cost report for
+     */
+    public static void mechCostAction(final Set<Entity> entities, boolean canSeeAll, boolean modal, JFrame frame) {
+        if (entities.size() > 10) {
+            LobbyErrors.showTenUnits(frame);
+        } else if (!canSeeAll) {
+            LobbyErrors.showCannotViewHidden(frame);
+        } else {
+            for (final Entity entity : entities) {
+                new CostDisplayDialog(frame, modal, entity).setVisible(true);
+            }
+        }
+    }
+
+    /**
+     * Returns a command string token containing the IDs of the given entities and a leading |
+     * E.g. |2,14,44,22
+     */
+    public static String enToken(Collection<Integer> entities) {
+        if (entities.isEmpty()) {
+            return "|-1";
+        }
+
+        List<String> ids = entities.stream().map(Object::toString).collect(Collectors.toList());
+        return "|" + String.join(",", ids);
     }
 }

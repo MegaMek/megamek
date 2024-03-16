@@ -1,12 +1,19 @@
-Version:1.1
-Volkh
-VKH-68
+chassis:Volkh
+model:VKH-68
+mul id:8107
 
 Config:Biped
 techbase:Inner Sphere
 era:3133
-source:Dark Age
+source:XTR: Caveat Emptor
 rules level:3
+role:Striker
+
+
+
+quirk:non_standard
+quirk:pro_actuator
+
 
 mass:45
 engine:225 XXL Engine(IS)

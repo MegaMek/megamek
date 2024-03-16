@@ -20,6 +20,10 @@ Mao-Heng Charioteer
 (Original)
 </Model>
 
+<mul id:>
+4588
+</mul id:>
+
 <year>
 2797
 </year>
@@ -27,6 +31,10 @@ Mao-Heng Charioteer
 <type>
 IS Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Wheeled
@@ -80,7 +88,7 @@ troopspace:.6
 </transporters>
 
 <source>
-TRO VAr - Succession Wars
+TRO: Vehicle Annex (Revised)
 </source>
 
 <tonnage>

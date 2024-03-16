@@ -47,7 +47,7 @@ public class InfantryPistolSeaEagleNeedlerPistolWeapon extends InfantryWeapon {
 		ammoCost = 5;
 		shots = 10;
 		bursts = 2;
-		rulesRefs = "273,TM";
+		rulesRefs = "273, TM";
 		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3030, 3035, 3052, DATE_NONE, DATE_NONE)
 				.setISApproximate(true, false, false, false, false)
 				.setPrototypeFactions(F_FW)

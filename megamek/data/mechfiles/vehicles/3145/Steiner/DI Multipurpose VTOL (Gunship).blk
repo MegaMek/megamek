@@ -20,13 +20,21 @@ DI Multipurpose VTOL
 (Gunship)
 </Model>
 
+<mul id:>
+6596
+</mul id:>
+
 <year>
 3097
 </year>
 
 <type>
-IS Level 4
+IS Level 2
 </type>
+
+<role>
+Striker
+</role>
 
 <motion_type>
 VTOL
@@ -83,9 +91,15 @@ Light PPC
 </Turret Equipment>
 
 <source>
-TRO 3145 Lyran Commonwealth - Early Republic
+TRO: 3145 Lyran Commonwealth
 </source>
 
 <tonnage>
 25.0
 </tonnage>
+
+<quirks>
+imp_com
+vtol_rotor_coaxial
+</quirks>
+

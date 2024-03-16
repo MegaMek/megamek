@@ -20,6 +20,10 @@ Gun Trailer
 (Sniper Cannon)
 </Model>
 
+<mul id:>
+6534
+</mul id:>
+
 <year>
 3101
 </year>
@@ -31,6 +35,10 @@ Gun Trailer
 <type>
 IS Level 3
 </type>
+
+<role>
+Ambusher
+</role>
 
 <motion_type>
 Wheeled
@@ -90,7 +98,7 @@ ISSniperCannon
 </Turret Equipment>
 
 <source>
-TRO 3145 Mercenaries - Late Republic
+TRO: 3145 Mercenaries
 </source>
 
 <tonnage>

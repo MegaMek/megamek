@@ -1,0 +1,157 @@
+chassis:Caesar
+model:CES-5D
+mul id:7982
+Config:Biped
+techbase:Mixed (IS Chassis)
+era:3148
+source:Record Sheets: 3150
+rules level:3
+
+
+
+quirk:hyper_actuator
+
+
+mass:70
+engine:280 XL Engine(IS)
+structure:IS Endo Steel
+myomer:Triple-Strength
+cockpit:Standard Cockpit
+gyro:XL Gyro
+
+heat sinks:10 IS Double
+walk mp:4
+jump mp:0
+
+armor:Hardened(Inner Sphere)
+LA armor:22
+RA armor:22
+LT armor:22
+RT armor:22
+CT armor:30
+HD armor:9
+LL armor:27
+RL armor:27
+RTL armor:8
+RTR armor:8
+RTC armor:11
+
+Weapons:4
+Medium Pulse Laser, Left Arm
+ER PPC, Right Arm
+Medium Pulse Laser, Right Arm
+HAG/20, Right Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+CLMediumPulseLaser
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+Triple Strength Myomer
+Triple Strength Myomer
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+CLERPPC
+CLERPPC
+CLMediumPulseLaser
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Supercharger
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+Triple Strength Myomer
+Triple Strength Myomer
+Triple Strength Myomer
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLHAG20
+CLHAG20
+CLHAG20
+CLHAG20
+CLHAG20
+CLHAG20
+Hyper-Assault Gauss Rifle/20 Ammo
+Hyper-Assault Gauss Rifle/20 Ammo
+Triple Strength Myomer
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Talons
+Talons
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Talons
+Talons
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

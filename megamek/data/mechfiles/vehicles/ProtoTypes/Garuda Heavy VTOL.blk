@@ -16,9 +16,13 @@ VTOL
 Garuda Heavy VTOL
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+4202
+</mul id:>
 
 <year>
 3084
@@ -27,6 +31,10 @@ Garuda Heavy VTOL
 <type>
 Clan Level 3
 </type>
+
+<role>
+Sniper
+</role>
 
 <motion_type>
 VTOL
@@ -85,9 +93,15 @@ CLTAG
 </Turret Equipment>
 
 <source>
-TRO:Prototypes
+TRO: Prototypes
 </source>
 
 <tonnage>
 40.0
 </tonnage>
+
+<quirks>
+non_standard
+searchlight
+</quirks>
+

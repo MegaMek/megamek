@@ -20,6 +20,10 @@ Eisensturm
 EST-OC
 </Model>
 
+<mul id:>
+4118
+</mul id:>
+
 <year>
 3066
 </year>
@@ -31,6 +35,10 @@ EST-OC
 <type>
 IS Level 2
 </type>
+
+<role>
+Dogfighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -122,7 +130,7 @@ IS Ammo SRM-6 Artemis-capable:OMNI
 </Fuselage Equipment>
 
 <source>
-TRO 3067 - Civil War
+TRO: 3067
 </source>
 
 <tonnage>

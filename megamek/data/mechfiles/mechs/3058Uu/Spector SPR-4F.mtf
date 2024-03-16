@@ -1,34 +1,41 @@
-Version:1.0
-Spector
-SPR-4F
-
+chassis:Spector
+model:SPR-4F
+mul id:3002
 Config:Biped
-TechBase:Inner Sphere
-Era:2640
-Source:TRO 3058 - Star League
-Rules Level:4
+techbase:Inner Sphere
+era:2640
+source:TRO: 3058
+rules level:4
+role:Striker
 
-Mass:35
-Engine:245 XL Engine
-Structure:Standard
-Myomer:Standard
 
-Heat Sinks:10 Double
-Walk MP:7
-Jump MP:7
 
-Armor:Standard(Inner Sphere)
-LA Armor:12
-RA Armor:12
-LT Armor:12
-RT Armor:12
-CT Armor:17
-HD Armor:9
-LL Armor:16
-RL Armor:16
-RTL Armor:4
-RTR Armor:4
-RTC Armor:5
+
+quirk:rugged_1
+quirk:difficult_maintain
+
+
+mass:35
+engine:245 XL Engine(IS)
+structure:IS Standard
+myomer:Standard
+
+heat sinks:10 IS Double
+walk mp:7
+jump mp:7
+
+armor:Standard(Inner Sphere)
+LA armor:12
+RA armor:12
+LT armor:12
+RT armor:12
+CT armor:17
+HD armor:9
+LL armor:16
+RL armor:16
+RTL armor:4
+RTR armor:4
+RTC armor:5
 
 Weapons:3
 Medium Laser, Left Arm
@@ -42,7 +49,7 @@ Lower Arm Actuator
 Hand Actuator
 Medium Laser
 Medium Laser
-Chameleon Light Polarization Field
+Chameleon Light Polarization Shield
 Mek Null Signature System
 -Empty-
 -Empty-
@@ -55,7 +62,7 @@ Upper Arm Actuator
 Lower Arm Actuator
 Large Laser
 Large Laser
-Chameleon Light Polarization Field
+Chameleon Light Polarization Shield
 Mek Null Signature System
 -Empty-
 -Empty-
@@ -73,7 +80,7 @@ ISDoubleHeatSink
 Jump Jet
 Jump Jet
 Jump Jet
-Chameleon Light Polarization Field
+Chameleon Light Polarization Shield
 Mek Null Signature System
 -Empty-
 
@@ -86,7 +93,7 @@ Jump Jet
 Jump Jet
 ISGuardianECMSuite
 ISGuardianECMSuite
-Chameleon Light Polarization Field
+Chameleon Light Polarization Shield
 Mek Null Signature System
 -Empty-
 -Empty-
@@ -124,7 +131,7 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Chameleon Light Polarization Field
+Chameleon Light Polarization Shield
 Mek Null Signature System
 -Empty-
 -Empty-
@@ -138,7 +145,7 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Chameleon Light Polarization Field
+Chameleon Light Polarization Shield
 Mek Null Signature System
 -Empty-
 -Empty-
@@ -147,4 +154,20 @@ Mek Null Signature System
 -Empty-
 -Empty-
 
+overview:The Spector was originally designed by Norse Technologies to be a lighter version of the Exterminator BattleMech, made to hunt down light command 'Mechs.
+
+capabilities:The Spector was originally designed to use the advanced Null-Signature system, able to hide the 'Mech's radar and heat signatures, and Chameleon Light Polarization Shield, capable of obscuring the BattleMech's appearance. However, these technologies were lost during the Succession Wars and have not yet been replicated. The current incarnation of the Spector, SPR-5F, does not carry a Null Signature System nor the Chameleon LPS because of this.
+
+deployment:This variant carries a Guardian ECM suite, one large laser in the right arm and two medium lasers in the left. More importantly, the SPR-4F is extremely stealthy, mounting both a Chameleon LPS and a Null-Signature system. 
+
+history:The first Spector rolled off the assembly line on June 6th, 2639, and following extensive testing the SLDF ordered 600 units, the first run of which were delivered in April of 2640. The Star League's enthusiasm for the Spector is due to the BattleMechs stealth capabilities, combining both Chameleon Light Polarization Shield and a Null-Signature system. All Spectors, and all reports on them, were believed lost with the fall of the Star League until 3048, when rumors spread that the mercenary units McCarron's Armored Cavalry and Storm's Metal Thunder were fielding Spectors, presumably recovered from an ancient cache, although neither admitted to fielding vintage Star League era 'Mechs.
+
+manufacturer:Norse Technologies
+primaryfactory:Loxley
+systemmanufacturer:CHASSIS:Norse XT-Light Type AE (Endo)
+systemmanufacturer:ENGINE:Magna 245 XL
+systemmanufacturer:ARMOR:Starshield Light
+systemmanufacturer:JUMPJET:HildCo Model 11c
+systemmanufacturer:COMMUNICATIONS:AR-12 Sheathed Directional Beacon with Norse Guardian ECM Suite
+systemmanufacturer:TARGETING:DLK Type Phased Array Sensor System
 

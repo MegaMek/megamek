@@ -20,6 +20,10 @@ Trojan
 (Blockade Runner)
 </Model>
 
+<mul id:>
+5300
+</mul id:>
+
 <year>
 2745
 </year>
@@ -31,6 +35,10 @@ Trojan
 <type>
 IS Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Spheroid
@@ -122,7 +130,7 @@ Medium Laser
 </structural_integrity>
 
 <source>
-Jihad Secrets: The Blake Documents - Star League
+Jihad Secrets: The Blake Documents
 </source>
 
 <tonnage>

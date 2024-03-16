@@ -16,9 +16,13 @@ SupportTank
 Carter Medical Emergency Response Vehicle
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+5620
+</mul id:>
 
 <year>
 2341
@@ -31,6 +35,10 @@ Carter Medical Emergency Response Vehicle
 <type>
 IS Level 2
 </type>
+
+<role>
+Scout
+</role>
 
 <motion_type>
 Wheeled
@@ -86,7 +94,7 @@ Paramedic Equipment
 </structural_tech_rating>
 
 <source>
-XTRO Primitives III - Age of War
+XTR: Primitives III
 </source>
 
 <tonnage>
@@ -100,3 +108,10 @@ XTRO Primitives III - Age of War
 <fuelType>
 PETROCHEMICALS
 </fuelType>
+
+<quirks>
+easy_maintain
+gas_hog
+obsolete
+</quirks>
+

@@ -16,9 +16,13 @@ Tank
 Mars Assault Vehicle
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+2082
+</mul id:>
 
 <year>
 2871
@@ -31,6 +35,10 @@ Mars Assault Vehicle
 <type>
 Clan Level 2
 </type>
+
+<role>
+Missile Boat
+</role>
 
 <motion_type>
 Tracked
@@ -111,7 +119,7 @@ CLMG
 </Turret Equipment>
 
 <source>
-TRO 3060 - Succession Wars
+TRO: 3060
 </source>
 
 <tonnage>

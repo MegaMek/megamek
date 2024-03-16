@@ -20,6 +20,10 @@ Striga
 S-STR-OD Luminos
 </Model>
 
+<mul id:>
+5152
+</mul id:>
+
 <year>
 3072
 </year>
@@ -31,6 +35,10 @@ S-STR-OD Luminos
 <type>
 IS Level 3
 </type>
+
+<role>
+Dogfighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -114,7 +122,7 @@ ISERSmallLaser:OMNI
 </Fuselage Equipment>
 
 <source>
-TRO 3075 - Jihad
+TRO: 3075
 </source>
 
 <tonnage>

@@ -20,6 +20,10 @@ Raubvogel Aerobomber
 AB-18C
 </Model>
 
+<mul id:>
+4903
+</mul id:>
+
 <year>
 3064
 </year>
@@ -31,6 +35,10 @@ AB-18C
 <type>
 IS Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Aerodyne
@@ -95,7 +103,7 @@ IS Streak SRM 4 Ammo
 </Fuselage Equipment>
 
 <source>
-HB:House Steiner - Civil War
+Handbook: House Steiner
 </source>
 
 <tonnage>

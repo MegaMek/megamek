@@ -1,12 +1,19 @@
-Version:1.0
-Gauntlet
-GTL-1O
+chassis:Gauntlet
+model:GTL-1O
+mul id:6621
 
 Config:Biped Omnimech
 TechBase:Inner Sphere
 Era:3128
-Source:TRO 3145 Lyran Commonwealth - Late Republic
+Source:TRO: 3145 Lyran Commonwealth
 Rules Level:2
+role:Skirmisher
+
+
+
+
+quirk:poor_life_support
+
 
 Mass:55
 Engine:275 Light Engine(IS)

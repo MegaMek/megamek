@@ -1,12 +1,20 @@
-Version:1.0
-Orion
-ON1-VA
+chassis:Orion
+model:ON1-VA
+mul id:2336
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2901
-Source:TRO 3039 - Succession Wars
+Source:TRO: 3039
 Rules Level:1
+role:Juggernaut
+
+
+
+quirk:anti_air
+quirk:easy_maintain
+quirk:rugged_1
+
 
 Mass:75
 Engine:300 Fusion Engine

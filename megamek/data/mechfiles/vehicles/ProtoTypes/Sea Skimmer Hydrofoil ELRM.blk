@@ -20,17 +20,25 @@ Sea Skimmer Hydrofoil
 (ELRM)
 </Model>
 
+<mul id:>
+5006
+</mul id:>
+
 <year>
 3081
 </year>
 
 <Source>
-TRO:Prototypes
+TRO: Prototypes
 </Source>
 
 <type>
 IS Level 4
 </type>
+
+<role>
+Missile Boat
+</role>
 
 <tonnage>
 25.0
@@ -86,3 +94,12 @@ ISExtendedLRM10
 </Rear Equipment>
 
 
+
+<quirks>
+poor_performance
+searchlight
+</quirks>
+
+<weaponQuirks>
+accurate:TU:0:ISExtendedLRM10
+</weaponQuirks>

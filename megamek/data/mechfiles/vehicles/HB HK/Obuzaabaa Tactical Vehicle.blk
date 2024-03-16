@@ -16,9 +16,13 @@ SupportTank
 Obuzaabaa Tactical Vehicle
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+7771
+</mul id:>
 
 <year>
 2965
@@ -27,6 +31,10 @@ Obuzaabaa Tactical Vehicle
 <type>
 IS Level 3
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Wheeled
@@ -82,7 +90,7 @@ Communications Equipment (2 ton)
 </Rear Equipment>
 
 <source>
-HB:House Kurita - Succession Wars
+Handbook: House Kurita
 </source>
 
 <tonnage>

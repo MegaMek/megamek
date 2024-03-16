@@ -1,12 +1,19 @@
-Version:1.0
-BattleMaster
-BLR-1Gb
+chassis:BattleMaster
+model:BLR-1Gb
+mul id:285
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2760
-Source:TRO 3075 - Star League
+Source:TRO: 3075
 Rules Level:2
+role:Brawler
+
+
+
+quirk:command_mech
+quirk:weak_head_1
+
 
 Mass:85
 Engine:340 Fusion Engine

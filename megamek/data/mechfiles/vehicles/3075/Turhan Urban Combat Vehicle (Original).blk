@@ -20,6 +20,10 @@ Turhan Urban Combat Vehicle
 (Original)
 </Model>
 
+<mul id:>
+5306
+</mul id:>
+
 <year>
 2530
 </year>
@@ -27,6 +31,10 @@ Turhan Urban Combat Vehicle
 <type>
 IS Level 2
 </type>
+
+<role>
+Brawler
+</role>
 
 <motion_type>
 Wheeled
@@ -81,7 +89,7 @@ Machine Gun
 </Turret Equipment>
 
 <source>
-TRO 3075 - Age of War
+TRO: 3075
 </source>
 
 <tonnage>

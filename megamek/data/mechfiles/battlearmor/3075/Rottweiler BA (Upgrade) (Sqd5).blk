@@ -1,0 +1,126 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+Rottweiler Battle Armor
+</Name>
+
+<Model>
+(Upgrade)(Sqd5)
+</Model>
+
+<mul id:>
+8665
+</mul id:>
+
+<year>
+3070
+</year>
+
+<originalBuildYear>
+3070
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<role>
+Scout
+</role>
+
+<motion_type>
+Leg
+</motion_type>
+
+<transporters>
+</transporters>
+
+<cruiseMP>
+5
+</cruiseMP>
+
+<armor_type>
+31
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<Squad Equipment>
+ISBAKingDavidLightGaussRifle:Body
+IS BA Stealth (Basic):Body
+IS BA Stealth (Basic):Body
+IS BA Stealth (Basic):Body
+ISBARemoteSensorDispenser:Body
+Mission Equipment Storage (5kg):Body
+</Squad Equipment>
+
+<source>
+TRO: 3075
+</source>
+
+<chassis>
+quad
+</chassis>
+
+<jumpingMP>
+0
+</jumpingMP>
+
+<armor>
+7
+</armor>
+
+<Trooper Count>
+5
+</Trooper Count>
+
+<weightclass>
+2
+</weightclass>
+
+<overview>
+The Rottweiler is a battle armor suit that Lyran Alliance scientists designed as a fast scout. 
+</overview>
+
+<capabilities>
+Their efforts resulted in a top speed of 54 km/h. The Rottweiler is an electronics marvel. It has stealth armor that enables the suit to evade detection and makes targeting it more difficult along with advanced sensors so that the unit is never surprised. It mounts enough armor to stop a Clan Medium Pulse Laser. The Rottweiler also incorporates a hatch in its front that mimics a mouth and can carry up to five kilograms of equipment.
+</capabilities>
+
+<deployment>
+This variant only keeps the mission equipment. Instead of the integral sensors, it uses a remote sensor dispenser to keep track of enemy movement. A "King David" Light Gauss Rifle provides some ranged firepower.
+</deployment>
+
+<history>
+The Fenrir showed how fast a quadruped battlesuit could move, so the team decided to push the envelope with the Rottweiler.
+</history>
+
+<manufacturer>
+TharHes Industries
+</manufacturer>
+
+<primaryFactory>
+Eutin
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+JUMPJET:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>

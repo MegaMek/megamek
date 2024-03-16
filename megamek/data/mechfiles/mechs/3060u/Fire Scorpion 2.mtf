@@ -1,12 +1,16 @@
-Version:1.0
-Fire Scorpion
-2
+chassis:Fire Scorpion
+model:2
+mul id:1072
 
 Config:Quad
 TechBase:Clan
 Era:3060
-Source:TRO 3060
+Source:TRO: 3060
 Rules Level:2
+role:Missile Boat
+
+quirk:cowl
+
 
 Mass:65
 Engine:260 Fusion (Clan) Engine

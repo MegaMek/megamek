@@ -12,7 +12,9 @@ import java.awt.image.ImageObserver;
 import static megamek.client.ui.swing.boardview.HexDrawUtilities.*;
 
 import megamek.client.ui.swing.GUIPreferences;
+import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.Coords;
+import megamek.common.RangeType;
 
 /**
  * This sprite is used to paint the field of fire 
@@ -23,18 +25,14 @@ import megamek.common.Coords;
  * @author Simon
  */
 public class FieldofFireSprite extends MovementEnvelopeSprite {
-    
     // ### Control values
     
     // thick border
     private static final int borderW = 10;
     private static final int borderOpac = 120;
-    // colors for Min,S,M,L,E ranges
-    public static final Color[] fieldofFireColors = { new Color(255, 100, 100),
-        new Color(100, 255, 100), new Color(80, 200, 80), 
-        new Color(60, 150, 60), new Color(40, 100, 40)
-    };
-    
+
+    private static final GUIPreferences GUIP = GUIPreferences.getInstance();
+
     // thin line
     private static final float lineThickness = 1.4f;
     private static final Color lineColor = Color.WHITE;
@@ -54,30 +52,85 @@ public class FieldofFireSprite extends MovementEnvelopeSprite {
         0, 1, 6, 5, 1, 6, 7, 4, 2, 5, 3, 8, 0, 1, 4, 2, 6, 6, 7, 3,
         0, 7, 2, 5, 6, 4, 5, 8, 1, 2, 6, 3, 7, 5, 4, 8, 2, 3, 5, 8, 3, 8, 8, 0
     };
-    
+
+    private static final int COLORS_MAX = 5;
+
     // in this sprite type, the images are very repetitive
     // therefore they get saved in a static array
     // they will be painted only once for each border
     // arrangement and color and repainted only when
     // the board is zoomed
-    private static Image[][] images = new Image[64][5];
-    private static float oldZoom;
+    private static Image[][] images = new Image[64][COLORS_MAX];
+    private float oldZoom;
     
     // individual sprite values
-    private final Color fillColor;
+    private Color fillColor;
     private final int rangeBracket;
-    
+
+
     public FieldofFireSprite(BoardView boardView1, int rangeBracket, Coords l,
                              int borders) {
         // the color of the super doesn't matter
         super(boardView1, Color.BLACK, l, borders);
-        fillColor = new Color(fieldofFireColors[rangeBracket].getRed(), 
-                fieldofFireColors[rangeBracket].getGreen(),
-                fieldofFireColors[rangeBracket].getBlue(), 
-                borderOpac);
+        Color c = getFieldOfFireColor(rangeBracket);
+        fillColor = new Color(c.getRed(), c.getGreen(), c.getBlue(), borderOpac);
         this.rangeBracket = rangeBracket;
     }
-    
+
+    public static Color getFieldOfFireColor(int rangeBracket) {
+        // colors for Min,S,M,L,E ranges
+        switch (rangeBracket) {
+            case RangeType.RANGE_MINIMUM:
+                return GUIP.getFieldOfFireMinColor();
+            case RangeType.RANGE_SHORT:
+                return GUIP.getFieldOfFireShortColor();
+            case RangeType.RANGE_MEDIUM:
+                return GUIP.getFieldOfFireMediumColor();
+            case RangeType.RANGE_LONG:
+                return GUIP.getFieldOfFireLongColor();
+            case RangeType.RANGE_EXTREME:
+                return GUIP.getFieldOfFireExtremeColor();
+            default:
+                return new Color(0,0,0);
+        }
+    }
+
+    protected void setFillColor(Color c) {
+        fillColor = c;
+    }
+
+    protected int getBorderOpac() {
+        return borderOpac;
+    }
+
+    protected float getOldZoom() {
+        return oldZoom;
+    }
+
+    protected void setOldZoom(float f) {
+        oldZoom = f;
+    }
+
+    protected int getRangeBracket() {
+        return rangeBracket;
+    }
+
+    protected Stroke getLineStroke() {
+        return lineStroke;
+    }
+
+    protected int[] getBTypes() {
+        return bTypes;
+    }
+
+    protected int[] getBDir() {
+        return bDir;
+    }
+
+    protected int getBorderW() {
+        return borderW;
+    }
+
     @Override
     public void prepare() {
         // adjust bounds (image size) to board zoom
@@ -85,18 +138,20 @@ public class FieldofFireSprite extends MovementEnvelopeSprite {
         
         // when the zoom hasn't changed and there is already
         // a prepared image for these borders, then do nothing more
-        if ((bv.scale == oldZoom) && isReady()) return;
+        if ((bv.scale == oldZoom) && isReady()) {
+            return;
+        }
         
         // when the board is rezoomed, ditch all images
         if (bv.scale != oldZoom) {
             oldZoom = bv.scale;
-            images = new Image[64][5];
+            images = new Image[64][COLORS_MAX];
         }
 
         // create image for buffer
         images[borders][rangeBracket] = createNewHexImage();
         Graphics2D graph = (Graphics2D) images[borders][rangeBracket].getGraphics();
-        GUIPreferences.AntiAliasifSet(graph);
+        UIUtil.setHighQualityRendering(graph);
 
         // scale the following draws according to board zoom
         graph.scale(bv.scale, bv.scale);
@@ -151,7 +206,7 @@ public class FieldofFireSprite extends MovementEnvelopeSprite {
         graph.dispose();
     }
     
-    private void drawBorderXC(Graphics2D graph, Shape fillShape, Shape lineShape) {
+    protected void drawBorderXC(Graphics2D graph, Shape fillShape, Shape lineShape) {
         // 1) thick transparent border
         graph.setColor(fillColor);
         graph.fill(fillShape);
@@ -160,8 +215,8 @@ public class FieldofFireSprite extends MovementEnvelopeSprite {
         graph.setColor(lineColor);
         graph.draw(lineShape);
     }
-    
-    private void drawLoneBorder(Graphics2D graph, int dir) {
+
+    protected void drawLoneBorder(Graphics2D graph, int dir) {
         // 1) thick transparent border
         graph.setColor(fillColor);
         graph.fill(getHexBorderArea(dir, CUT_BORDER, borderW));
@@ -171,7 +226,7 @@ public class FieldofFireSprite extends MovementEnvelopeSprite {
         graph.draw(getHexBorderLine(dir));
     }
     
-    private void drawNormalBorders(Graphics2D graph) {
+    protected void drawNormalBorders(Graphics2D graph) {
         // cycle through directions
         for (int i = 0; i < 6; i++) {
             if ((borders & (1 << i)) != 0) {
@@ -191,28 +246,22 @@ public class FieldofFireSprite extends MovementEnvelopeSprite {
     
     @Override
     public boolean isReady() {
-        if (bv.scale != oldZoom) return false;
-        return images[borders][rangeBracket] != null;
+        return (bv.scale == oldZoom) && (images[borders][rangeBracket] != null);
     }
 
     @Override
-    public void drawOnto(Graphics g, int x, int y, ImageObserver observer,
-            boolean makeTranslucent) {
+    public void drawOnto(Graphics g, int x, int y, ImageObserver observer, boolean makeTranslucent) {
         if (isReady()) {
             if (makeTranslucent) {
                 Graphics2D g2 = (Graphics2D) g;
-                g2.setComposite(AlphaComposite.getInstance(
-                        AlphaComposite.SRC_OVER, 0.5f));
+                g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
                 g2.drawImage(images[borders][rangeBracket], x, y, observer);
-                g2.setComposite(AlphaComposite.getInstance(
-                        AlphaComposite.SRC_OVER, 1.0f));
+                g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
             } else {
                 g.drawImage(images[borders][rangeBracket], x, y, observer);
             }
         } else {
-            // grrr... we'll be ready next time!
             prepare();
         }
     }
-
 }

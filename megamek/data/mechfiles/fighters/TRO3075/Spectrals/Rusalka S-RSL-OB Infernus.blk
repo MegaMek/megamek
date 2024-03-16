@@ -20,6 +20,10 @@ Rusalka
 S-RSL-OB Infernus
 </Model>
 
+<mul id:>
+4950
+</mul id:>
+
 <year>
 3072
 </year>
@@ -31,6 +35,10 @@ S-RSL-OB Infernus
 <type>
 IS Level 3
 </type>
+
+<role>
+Fast Dogfighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -112,7 +120,7 @@ ISMediumVSPLaser:OMNI
 </Fuselage Equipment>
 
 <source>
-TRO 3075 - Jihad
+TRO: 3075
 </source>
 
 <tonnage>

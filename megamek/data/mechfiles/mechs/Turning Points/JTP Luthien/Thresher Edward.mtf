@@ -1,47 +1,52 @@
-Version:1.0
-Thresher
-(Edward)
+chassis:Thresher
+model:(Edward)
+mul id:3197
 
 Config:Biped
-TechBase:Mixed (Clan Chassis)
-Era:3058
-Rules Level:4
+techbase:Mixed (Clan Chassis)
+era:3058
+source:Jihad Turning Points: Luthien
+rules level:4
+role:Skirmisher
 
-Mass:60
-Engine:300 XL Engine
-Structure:Endo Steel
-Myomer:MASC
+quirk:imp_target_med
 
-Heat Sinks:12 Double
-Walk MP:5
-Jump MP:5
 
-Armor:Standard
-LA Armor:14
-RA Armor:14
-LT Armor:17
-RT Armor:17
-CT Armor:22
-HD Armor:9
-LL Armor:21
-RL Armor:21
-RTL Armor:5
-RTR Armor:5
-RTC Armor:7
+mass:60
+engine:300 XL (Clan) Engine
+structure:Clan Endo Steel
+myomer:Standard
+
+heat sinks:12 Clan Double
+walk mp:5
+jump mp:5
+
+armor:Standard(Clan)
+LA armor:14
+RA armor:14
+LT armor:17
+RT armor:17
+CT armor:22
+HD armor:9
+LL armor:21
+RL armor:21
+RTL armor:5
+RTR armor:5
+RTC armor:7
 
 Weapons:5
-1 UnknownCritical(0xda), Right Arm, Ammo:12
-1 ISERMediumLaser, Right Arm
-1 ISERMediumLaser, Left Arm
-1 CLUltraAC10, Right Torso, Ammo:20
-1 CLERMediumLaser, Left Torso
+ER Medium Laser, Left Arm
+MRM 20, Right Arm
+ER Medium Laser, Right Arm
+ER Medium Laser, Left Torso
+Ultra AC/10, Right Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 ISERMediumLaser
-Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -54,12 +59,12 @@ Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-ISMRM20
-ISMRM20
-ISMRM20
+MRM 20
+MRM 20
+MRM 20
 ISERMediumLaser
-ISMRM20 Ammo
-Endo Steel
+IS MRM 20 Ammo
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -70,8 +75,8 @@ Fusion Engine
 CLERMediumLaser
 CLMASC
 CLMASC
-Endo Steel
-Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -85,10 +90,10 @@ CLUltraAC10
 CLUltraAC10
 CLUltraAC10
 CLUltraAC10
-CLUltraAC10 Ammo
-CLUltraAC10 Ammo
-Endo Steel
-Endo Steel
+Clan Ultra AC/10 Ammo
+Clan Ultra AC/10 Ammo
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 
@@ -104,7 +109,7 @@ Fusion Engine
 Fusion Engine
 Fusion Engine
 Jump Jet
-Endo Steel
+Clan Endo Steel
 
 Head:
 Life Support
@@ -147,3 +152,5 @@ Jump Jet
 -Empty-
 -Empty-
 -Empty-
+
+

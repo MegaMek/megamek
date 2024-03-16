@@ -1,0 +1,125 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+Fusilier Battle Armor
+</Name>
+
+<model>
+(Sqd6)
+</Model>
+
+<mul id:>
+9097
+</mul id:>
+
+<year>
+3121
+</year>
+
+<type>
+IS Level 3
+</type>
+
+<role>
+Juggernaut
+</role>
+
+<motion_type>
+Jump
+</motion_type>
+
+<cruiseMP>
+1
+</cruiseMP>
+
+<armor_type>
+31
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<Squad Equipment>
+ISBAMagshotGR:RA
+ISBALightMachineGun:Body
+ISBAJumpBooster:Body
+BAArmoredGlove:LA
+Infantry Auto Rifle:APM:LA
+IS BA Stealth (Basic):Body
+IS BA Stealth (Basic):LA
+IS BA Stealth (Basic):Body
+</Squad Equipment>
+
+<source>
+TRO: 3145 Federated Suns
+</source>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+1
+</jumpingMP>
+
+<armor>
+15
+</armor>
+
+<Trooper Count>
+6
+</Trooper Count>
+
+<weightclass>
+4
+</weightclass>
+
+<overview>
+A "solid" heavy combat suit used mostly by Mercenaries and the Federated Suns. 
+</overview>
+
+<capabilities>
+The Fusilier mounted two weapon systems, a Magshot Gauss Rifle with ten rounds of ammunition in the right arm and a Light Machine Gun with fifty rounds of ammunition in the body. An Armored Glove was installed on the left arm.
+</capabilities>
+
+<deployment>
+As a heavy combat suit, the Fusilier combined aspects of the Grenadier and Sea Fox, and was designed to serve as a line unit alongside other similar suits. Because it was so slow-moving, the Fusilier mounted a Jump Booster to increase its mobility.
+</deployment>
+
+<history>
+General Motors began production of the Fusilier battle armor suit at their plant in Salem in the early 3120s while there was no particular demand for the suit; despite being both too heavy and too slow, the Armed Forces of the Federated Suns purchased supplies of the Fusilier for a decade before GM began producing an upgraded version, but the Fusilier would continue to remain an odd capability within AFFS units.
+</history>
+
+<manufacturer>
+General Motors
+</manufacturer>
+
+<primaryFactory>
+Salem
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+JUMPJET:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<weaponQuirks>
+accurate:Squad:1:ISBALightMachineGun
+</weaponQuirks>

@@ -15,6 +15,7 @@ package megamek.common.weapons.flamers;
 
 import megamek.common.SimpleTechLevel;
 import megamek.common.WeaponType;
+import megamek.common.alphaStrike.AlphaStrikeElement;
 
 /**
  * @author Sebastian Brocks
@@ -55,5 +56,10 @@ public class ISERFlamer extends FlamerWeapon {
                 .setISApproximate(false, true, false, false, false)
                 .setProductionFactions(F_FS)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
+    }
+
+    @Override
+    public int getAlphaStrikeHeatDamage(int rangeband) {
+        return (rangeband <= AlphaStrikeElement.RANGE_BAND_MEDIUM) ? 2 : 0;
     }
 }

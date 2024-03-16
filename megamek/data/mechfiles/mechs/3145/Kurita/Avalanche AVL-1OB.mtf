@@ -1,12 +1,18 @@
-Version:1.0
-Avalanche
-AVL-1OB
+chassis:Avalanche
+model:AVL-1OB
+mul id:6398
 
 Config:Biped Omnimech
 TechBase:Inner Sphere
 Era:3133
-Source:TRO 3145 Draconis Combine - Dark Ages
+Source:TRO: 3145 Draconis Combine
 Rules Level:2
+role:Skirmisher
+
+
+
+quirk:bad_rep_is
+
 
 Mass:50
 Engine:250 Fusion Engine(IS)
@@ -151,4 +157,20 @@ Foot Actuator
 -Empty-
 -Empty-
 
+overview:The Avalanche is a thirty-second century medium OmniMech, first deployed by the Draconis Combine and Clan Nova Cat. 
+
+capabilities:Constructed using Inner Sphere technologies, the 'Mech design was envisioned with economics in mind. The Avalanche is powered by a 250-rated fusion engine, giving it a modest maximum speed of 86 km/h, while its hull is protected by 10 tons of standard armor, which gives it less armor protection than other designs of the time. Mobility is enhanced with five jump jets, and CASE mounted in its right torso protected against complete destruction from a magazine detonation. Additional equipment and weapons are allotted 16 tons of pod space, giving decent flexibility.
+
+deployment:A long-range fighter, this configuration features a light PPC and ER medium laser in each arm, while each of its side torsos receives a Thunderbolt 5 missile launcher, fed by two tons of ammunition located in the right torso. 
+
+history:The 'Mech was conceived as part of a joint project between House Kurita and its then ally Clan Nova Cat, and served as part of an effort to aid in the rebuilding the Clan's depleted touman as a result of the aftermath of the 2nd Combine-Dominion War that ended in 3101. The 'Mech would be developed over the next 30 years, however development would prove to be challenging for both groups. After decades of development, the Avalanche would still have a number of design flaws which would give it a bad reputation among warriors of Clan Nova Cat. The 'Mech would soon be deployed shortly before House Kurita's invasion of the Republic of the Sphere, where it would serve among House Kurita's elite forces. After the destruction of Clan Nova Cat, as a result of its revolt against Coordinator Yori Kurita, the dead Clan's allotment of Avalanches would be sold off to other Inner Sphere powers.
+
+manufacturer:Luthien Armor Works
+primaryfactory:Luthien
+systemmanufacturer:CHASSIS:Luthien Class M Endo Steel
+systemmanufacturer:ENGINE:Hermes 250
+systemmanufacturer:ARMOR:Mitchel Argon Standard with CASE
+systemmanufacturer:JUMPJET:Icarus Standard
+systemmanufacturer:COMMUNICATIONS:Sipher CommCon SCU-9
+systemmanufacturer:TARGETING:Matabushi Stalker
 

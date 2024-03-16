@@ -1,12 +1,20 @@
-Version:1.0
-Fafnir
-FNR-5X
+chassis:Fafnir
+model:FNR-5X
+mul id:1021
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3078
-Source:Jihad
+source:TRO: 3085
 Rules Level:4
+role:Sniper
+
+
+
+quirk:no_arms
+weaponquirk:stable_weapon:RT:0:ISImprovedHeavyGaussRifle
+weaponquirk:stable_weapon:LT:0:ISImprovedHeavyGaussRifle
+
 
 Mass:100
 Engine:300 Fusion Engine(IS)
@@ -148,4 +156,4 @@ ISImprovedHeavyGauss Ammo
 -Empty-
 -Empty-
 
-imagefile:.\data\images\fluff\Mech\TRO3067_Fafnir.jpg
+

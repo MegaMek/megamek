@@ -1,12 +1,18 @@
-Version:1.0
-Dola
-DOL-1A2 'Yoh Ti Ts'angs'
+chassis:Dola
+model:DOL-1A2 'Yoh Ti Ts'angs'
+mul id:4087
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3083
-Source:TRO:Prototypes
+Source:TRO: Prototypes
 Rules Level:4
+role:Scout
+
+
+
+weaponquirk:jettison_capable:RA:4:Small Vibroblade
+
 
 Mass:30
 Engine:240 XL Engine(IS)

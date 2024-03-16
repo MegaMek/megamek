@@ -1,0 +1,176 @@
+chassis:Daishi
+clanname:Dire Wolf
+model:T
+mul id:8133
+
+Config:Biped Omnimech
+techbase:Clan
+era:3142
+source:Rec Guide:ilClan #13
+rules level:2
+role:Juggernaut
+
+quirk:imp_target_long
+quirk:difficult_eject
+
+
+mass:100
+engine:300 XL (Clan) Engine(IS)
+structure:IS Standard
+myomer:Standard
+
+heat sinks:20 Clan Double
+base chassis heat sinks:12
+walk mp:3
+jump mp:0
+
+armor:Standard(Clan)
+LA armor:34
+RA armor:34
+LT armor:32
+RT armor:32
+CT armor:47
+HD armor:9
+LL armor:41
+RL armor:41
+RTL armor:10
+RTR armor:10
+RTC armor:14
+
+Weapons:11
+HAG/20, Left Arm
+ER Medium Laser, Left Arm
+ER Medium Laser, Left Arm
+Medium Pulse Laser, Left Arm
+Medium Pulse Laser, Left Arm
+HAG/20, Right Arm
+ER Medium Laser, Right Arm
+ER Medium Laser, Right Arm
+Medium Pulse Laser, Right Arm
+Medium Pulse Laser, Right Arm
+Streak LRM 10, Left Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+CLHAG20 (OMNIPOD)
+CLHAG20 (OMNIPOD)
+CLHAG20 (OMNIPOD)
+CLHAG20 (OMNIPOD)
+CLHAG20 (OMNIPOD)
+CLHAG20 (OMNIPOD)
+CLERMediumLaser (OMNIPOD)
+CLERMediumLaser (OMNIPOD)
+CLMediumPulseLaser (OMNIPOD)
+CLMediumPulseLaser (OMNIPOD)
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+CLHAG20 (OMNIPOD)
+CLHAG20 (OMNIPOD)
+CLHAG20 (OMNIPOD)
+CLHAG20 (OMNIPOD)
+CLHAG20 (OMNIPOD)
+CLHAG20 (OMNIPOD)
+CLERMediumLaser (OMNIPOD)
+CLERMediumLaser (OMNIPOD)
+CLMediumPulseLaser (OMNIPOD)
+CLMediumPulseLaser (OMNIPOD)
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLStreakLRM10 (OMNIPOD)
+CLStreakLRM10 (OMNIPOD)
+Clan Streak LRM 10 Ammo (OMNIPOD)
+Hyper-Assault Gauss Rifle/20 Ammo (OMNIPOD)
+Hyper-Assault Gauss Rifle/20 Ammo (OMNIPOD)
+Supercharger (Clan) (OMNIPOD)
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+Hyper-Assault Gauss Rifle/20 Ammo (OMNIPOD)
+Hyper-Assault Gauss Rifle/20 Ammo (OMNIPOD)
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Hyper-Assault Gauss Rifle/20 Ammo (OMNIPOD)
+Hyper-Assault Gauss Rifle/20 Ammo (OMNIPOD)
+
+Head:
+Life Support
+Sensors
+Cockpit
+CLLightActiveProbe (OMNIPOD)
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLDoubleHeatSink
+CLDoubleHeatSink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+overview:The Dire Wolf is one of the OmniMechs that became feared throughout the Inner Sphere during the initial Clan Invasion and rightly so.
+capabilities:The Dire Wolf weighs in at an impressive one hundred tons and has a relatively slow cruising speed of 54 km/h provided by a 300 XL engine. Its speed and armor protection matches that of an Atlas, but it has superior potential firepower with fifty and a half tons of free pod space for weapons and equipment. It is these traits which saw the 'Mech christened Daishi (pseudo-Japanese for "Great Death") by the criminal underbelly of the Draconis Combine, a name that would be proven grimly accurate time and time again.
+deployment:This Clan Hell's Horses configuration was introduced in 3149. Each arm carries a HAG 20, two ER Medium Lasers, and two Medium Pulse Lasers. For long range support a Streak LRM-10 is carried in the left torso. To increase speed, an engine Supercharger is fitted as well. A Light Active Probe detects hidden foes. Five extra double heat sinks are carried as well.
+history:The Dire Wolf was the brainchild of the Clan Wolf scientist caste, but was actually first produced by Clan Smoke Jaguar. Hearing rumors that Clan Wolf was developing the "Ultimate Assault OmniMech", the Jaguars won the plans and production rights in a trial that, rumor has it, was fought dishonorably. Production commenced on Huntress in 3010. In 3019, Clan Wolf began production of the OmniMech on Strana Mechty as well; Star Colonel Ulric won a trial of possession to expand manufacture into Clan Wolf. Beyond the limited manufacture of the Dire Wolf on Outreach, all Dire Wolves outside of Clans Smoke Jaguar and Wolf (or the Wolf's Dragoons) are either gifts, isorla, or were acquired through trade.
+manufacturer:Phan Industriplex, Wolf Clan Site #1, Svarstaad Industriplex Delta
+primaryfactory:Huntress, Strana Mechty, Svarstaad
+systemmanufacturer:CHASSIS:Titan HX
+systemmanufacturer:ENGINE:Starfire 300 XL
+systemmanufacturer:ARMOR:Compound 12B2 Standard
+systemmanufacturer:COMMUNICATIONS:TJ6 “Bell” Integrated Communication System
+systemmanufacturer:TARGETING:Mars System 9
+

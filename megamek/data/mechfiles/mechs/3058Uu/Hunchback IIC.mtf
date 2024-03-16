@@ -1,12 +1,17 @@
-Version:1.0
-Hunchback IIC
-(Standard)
+chassis:Hunchback IIC
+model:
+mul id:1568
 
 Config:Biped
 TechBase:Clan
 Era:2856
-Source:TRO 3058 - Succession Wars
+Source:TRO: 3058
 Rules Level:2
+role:Ambusher
+
+
+quirk:bad_rep_clan
+
 
 Mass:50
 Engine:200 XL (Clan) Engine

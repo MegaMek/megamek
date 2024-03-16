@@ -13,12 +13,16 @@ ConvFighter
 </UnitType>
 
 <Name>
-Medium Strike Fighter Defender II
+Medium Strike Fighter
 </Name>
 
 <Model>
-
+Defender II
 </Model>
+
+<mul id:>
+2157
+</mul id:>
 
 <year>
 3038
@@ -31,6 +35,10 @@ Medium Strike Fighter Defender II
 <type>
 IS Level 2
 </type>
+
+<role>
+Fire Support
+</role>
 
 <motion_type>
 Aerodyne
@@ -94,7 +102,7 @@ IS Ammo LRM-5 Artemis-capable
 </Fuselage Equipment>
 
 <source>
-TRO 3039 - Succession Wars
+TRO: 3039
 </source>
 
 <tonnage>

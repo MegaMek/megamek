@@ -1,12 +1,7 @@
-#building block data file
+#Saved from version 0.49.18-SNAPSHOT on 2024-01-07
 <BlockVersion>
 1
 </BlockVersion>
-
-#Write the version number just in case...
-<Version>
-MAM0
-</Version>
 
 <UnitType>
 Tank
@@ -20,72 +15,112 @@ Marksman MBT
 M1A
 </Model>
 
-<Tonnage>
-95
-</Tonnage>
-
-<cruiseMP>
-3
-</cruiseMP>
-
-#Order is Tank/VTOL/LST
-<Armor>
-73
-62
-62
-50
-60
-</Armor>
-
-<Turret Equipment>
-ISGaussRifle
-ISMML9
-ISMML9
-ISMediumLaser
-ISMediumLaser
-ISMediumLaser
-ISMediumLaser
-ISMachine Gun
-ISMachine Gun
-ISMachine Gun
-ISMachine Gun
-</Turret Equipment>
-
-<Body Equipment>
-ISGauss Ammo
-ISGauss Ammo
-ISMML9 LRM Ammo
-ISMML9 LRM Ammo
-ISMML9 SRM Ammo
-ISMML9 SRM Ammo
-ISMG Ammo (200)
-ISCASE
-</Body Equipment>
-
-<type>
-IS Level 2
-</type>
+<mul id:>
+2079
+</mul id:>
 
 <year>
 3088
 </year>
 
-<source>
-Dark Age
-</source>
+<originalBuildYear>
+3088
+</originalBuildYear>
 
-<internal_type>
-0
-</internal_type>
+<type>
+IS Level 2
+</type>
 
-<armor_type>
-6
-</armor_type>
+<role>
+Juggernaut
+</role>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<cruiseMP>
+3
+</cruiseMP>
 
 <engine_type>
 4
 </engine_type>
 
-<motion_type>
-Tracked
-</motion_type>
+<armor_type>
+6
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
+73
+62
+62
+50
+60
+</armor>
+
+<Body Equipment>
+IS Gauss Ammo
+IS Gauss Ammo
+IS Ammo MML-9 LRM
+IS Ammo MML-9 LRM
+IS Ammo MML-9 SRM
+IS Ammo MML-9 SRM
+IS Ammo MG - Full
+ISCASE
+</Body Equipment>
+
+<Front Equipment>
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+ISGaussRifle
+ISMML9
+ISMML9
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+Machine Gun
+Machine Gun
+Machine Gun
+Machine Gun
+</Turret Equipment>
+
+<manufacturer>
+Pandora Mech Works
+</manufacturer>
+
+<primaryFactory>
+Terra
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:285 Edasich Motors Light Fusion
+ARMOR:	AmberStar Weave Heavy Ferro with CASE
+COMMUNICATIONS:COMTEC 400E
+TARGETING:GroundTracker EE-4
+</systemManufacturers>
+
+<source>
+TRO: 3085
+</source>
+
+<tonnage>
+95.0
+</tonnage>
+

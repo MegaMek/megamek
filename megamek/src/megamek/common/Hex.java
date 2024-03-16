@@ -13,13 +13,19 @@
  */
 package megamek.common;
 
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.StringTokenizer;
-
-import megamek.common.Building.BasementType;
 import megamek.common.annotations.Nullable;
+import megamek.common.enums.BasementType;
+import org.apache.logging.log4j.LogManager;
+
+import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.Transferable;
+import java.io.Serializable;
+import java.util.*;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Hex represents a single hex on the board.
@@ -62,11 +68,12 @@ public class Hex implements Serializable {
         this.level = level;
         coords = c;
         for (final Terrain t : terrains) {
-            if (t != null)
+            if (t != null) {
                 this.terrains.put(t.getType(), t);
+            }
         }
 
-        if ((theme == null) || (theme.length() > 0)) {
+        if ((theme == null) || !theme.isBlank()) {
             this.theme = theme;
         } else {
             this.theme = null;
@@ -185,7 +192,7 @@ public class Hex implements Serializable {
             // (hex == null) should usually look like ocean and 
             // therefore always gets connection to outside the board 
             if ((cTerr.getType() == Terrains.WATER) && (other == null)) {
-            	cTerr.setExit(direction, true);
+                cTerr.setExit(direction, true);
             }
 
             // Roads exit into pavement, too.
@@ -480,19 +487,6 @@ public class Hex implements Serializable {
      */
     public void removeAllTerrains() {
         terrains.clear();
-    }
-
-    /**
-     * @return the number of terrain attributes present that are displayable in tooltips
-     */
-    public int displayableTerrainsPresent() {
-        int present = 0;
-        for (Integer i : terrains.keySet()) {
-            if ((null != Terrains.getDisplayName(i, terrains.get(i).getLevel()))) {
-                present++;
-            }
-        }
-        return present;
     }
 
     /**
@@ -806,5 +800,67 @@ public class Hex implements Serializable {
         }
 
         return sb.toString();
+    }
+
+    /**
+     * Returns a string representation of this Hex to use for copy/paste actions. The string contains
+     * the elevation, theme and terrains of this Hex except automatic terrains (such as inclines). The
+     * generated string can be parsed to generate a copy of the hex using {@link #parseClipboardString(String)}.
+     *
+     * @return A string representation to use when copying a hex to the clipboard.
+     */
+    public String getClipboardString() {
+        StringBuilder hexString = new StringBuilder("MegaMek Hex///");
+        hexString.append("Level###").append(getLevel()).append("///");
+        hexString.append("Theme###").append(getTheme()).append("///");
+        hexString.append("Terrain###");
+        List<String> terrains = Arrays.stream(getTerrainTypes())
+                .filter(t -> !Terrains.AUTOMATIC.contains(t))
+                .mapToObj(t -> getTerrain(t).toString()).collect(Collectors.toList());
+        hexString.append(String.join(";", terrains));
+        return hexString.toString();
+    }
+
+    /**
+     * Returns a new Hex parsed from a clipboard string representation.
+     * Returns null when the clipboard String is not created by {@link #getClipboardString()}
+     * (i.e., when it does not at least start with "MegaMek Hex").
+     *
+     * @param clipboardString The string representation of the Hex to parse
+     * @return A hex containing any features that could be parsed from clipboardString
+     */
+    public static @Nullable Hex parseClipboardString(String clipboardString) {
+        if (!clipboardString.startsWith("MegaMek Hex")) {
+            return null;
+        }
+
+        String theme = "";
+        int hexLevel = 0;
+        String terrainString = "";
+        String[] tokens = clipboardString.split("///");
+        for (String token : tokens) {
+            String[] infos = token.split("###");
+            if (infos.length < 2) {
+                continue;
+            }
+            switch (infos[0]) {
+                case "MegaMek Hex":
+                    // This is just a header
+                case "Level":
+                    try {
+                        hexLevel = Integer.parseInt(infos[1]);
+                    } catch (NumberFormatException ignored) {
+                        // hexLevel stays at 0
+                    }
+                    break;
+                case "Theme":
+                    theme = infos[1];
+                    break;
+                case "Terrain":
+                    terrainString = infos[1];
+                    break;
+            }
+        }
+        return new Hex(hexLevel, terrainString, theme, new Coords(0, 0));
     }
 }

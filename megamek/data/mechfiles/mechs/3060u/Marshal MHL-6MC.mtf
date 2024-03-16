@@ -1,43 +1,49 @@
-Version:1.0
-Marshal
-MHL-6MC
-
+chassis:Marshal
+model:MHL-6MC
+mul id:2089
 Config:Biped
-TechBase:Inner Sphere
-Era:3073
-Source:TRO 3060
-Rules Level:2
+techbase:Inner Sphere
+era:3073
+source:TRO 3060
+rules level:2
+role:Skirmisher
 
-Mass:55
-Engine:220 Light Engine
-Structure:Standard
-Myomer:Standard
 
-Heat Sinks:10 Double
-Walk MP:4
-Jump MP:4
 
-Armor:Ferro-Fibrous(Inner Sphere)
-LA Armor:18
-RA Armor:18
-LT Armor:19
-RT Armor:19
-CT Armor:27
-HD Armor:9
-LL Armor:24
-RL Armor:24
-RTL Armor:7
-RTR Armor:7
-RTC Armor:7
+quirk:easy_maintain
+quirk:rugged_2
+
+
+mass:55
+engine:220 Light Engine(IS)
+structure:IS Standard
+myomer:Standard
+
+heat sinks:10 IS Double
+walk mp:4
+jump mp:4
+
+armor:Ferro-Fibrous(Inner Sphere)
+LA armor:18
+RA armor:18
+LT armor:19
+RT armor:19
+CT armor:27
+HD armor:9
+LL armor:24
+RL armor:24
+RTL armor:7
+RTR armor:7
+RTC armor:7
 
 Weapons:7
 Light PPC, Left Arm
 Plasma Rifle, Right Arm
-Machine Gun Array, Left Torso
 Light Machine Gun, Left Torso
 Light Machine Gun, Left Torso
 MML 9, Right Torso
 Medium Pulse Laser, Right Torso
+Light Machine Gun Array, Left Torso
 
 Left Arm:
 Shoulder
@@ -49,9 +55,9 @@ ISDoubleHeatSink
 ISDoubleHeatSink
 Light PPC
 Light PPC
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 
 Right Arm:
 Shoulder
@@ -72,28 +78,28 @@ Fusion Engine
 Fusion Engine
 Light Machine Gun
 Light Machine Gun
-ISMGA
+ISLMGA
 IS Light Machine Gun Ammo - Half
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-ISMML9
-ISMML9
-ISMML9
-ISMML9
-ISMML9
 ISMediumPulseLaser
-IS Ammo MML-9 LRM
+ISMML9
+ISMML9
+ISMML9
+ISMML9
+ISMML9
 IS Ammo MML-9 SRM
-Ferro-Fibrous
-Ferro-Fibrous
+IS Ammo MML-9 LRM
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 
 Center Torso:
 Fusion Engine
@@ -106,14 +112,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Ferro-Fibrous
-Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 
 Head:
 Life Support
 Sensors
 Cockpit
-Ferro-Fibrous
+IS Ferro-Fibrous
 Sensors
 Life Support
 -Empty-

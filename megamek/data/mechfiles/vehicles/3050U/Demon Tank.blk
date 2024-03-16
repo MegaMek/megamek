@@ -16,9 +16,13 @@ Tank
 Demon Tank
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+876
+</mul id:>
 
 <year>
 2716
@@ -27,6 +31,10 @@ Demon Tank
 <type>
 IS Level 2
 </type>
+
+<role>
+Brawler
+</role>
 
 <motion_type>
 Wheeled
@@ -76,7 +84,7 @@ ISGaussRifle
 </Turret Equipment>
 
 <source>
-TRO 3050 - Star League
+TRO: 3050
 </source>
 
 <tonnage>

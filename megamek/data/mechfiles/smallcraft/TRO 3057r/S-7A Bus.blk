@@ -20,6 +20,10 @@ Bus
 S-7A
 </Model>
 
+<mul id:>
+3879
+</mul id:>
+
 <year>
 2602
 </year>
@@ -31,6 +35,10 @@ S-7A
 <type>
 IS Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Aerodyne
@@ -99,7 +107,7 @@ steeragequarters:15.0:0
 </structural_integrity>
 
 <source>
-TRO 3057R- Star League
+TRO: 3057 Revised
 </source>
 
 <tonnage>

@@ -1,12 +1,17 @@
-Version:1.1
-Rabid Coyote
-2
+chassis:Rabid Coyote
+model:2
+mul id:5682
 
 Config:Biped
 TechBase:Clan
 Era:3071
 Rules Level:2
-source:3067 Unabridged
+role:Skirmisher
+source:Record Sheets: 3067 Unabridged
+
+quirk:imp_target_short
+quirk:bad_rep_clan
+
 
 Mass:55
 Engine:275 XL Fusion Engine

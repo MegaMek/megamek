@@ -1,12 +1,21 @@
-Version:1.1
-Defiance
-DFN-3C
+chassis:Defiance
+model:DFN-3C
+mul id:849
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3057
-Source:TRO 3075
+Source:TRO: 3075
 Rules Level:4
+role:Brawler
+
+
+quirk:barrel_fists_la
+quirk:barrel_fists_ra
+quirk:hyper_actuator
+quirk:searchlight
+quirk:stable
+
 
 Mass:75
 Engine:300 XL Engine

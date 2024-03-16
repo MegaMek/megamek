@@ -1,0 +1,172 @@
+chassis:Bull Shark
+model:BSK-MAZ
+
+Config:Biped
+techbase:Mixed (Clan Chassis)
+era:3012
+source:Videogame (Apocryphal)
+rules level:4
+
+
+
+
+quirk:distracting
+
+
+mass:95
+engine:285 XL (Clan) Engine
+structure:Clan Endo Steel
+myomer:Standard
+
+heat sinks:13 Clan Double
+walk mp:3
+jump mp:0
+
+armor:Standard(Inner Sphere)
+LA armor:28
+RA armor:28
+LT armor:31
+RT armor:31
+CT armor:40
+HD armor:9
+LL armor:26
+RL armor:26
+RTL armor:9
+RTR armor:9
+RTC armor:11
+
+Weapons:9
+LB 10-X AC, Left Arm
+Ultra AC/5, Left Arm
+LB 10-X AC, Right Arm
+Ultra AC/5, Right Arm
+ER Medium Laser, Left Torso
+ER Medium Laser, Left Torso
+ER Medium Laser, Right Torso
+ER Medium Laser, Right Torso
+Thumper Cannon, Right Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+CLUltraAC5
+CLUltraAC5
+CLUltraAC5
+Clan Endo Steel
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+CLUltraAC5
+CLUltraAC5
+CLUltraAC5
+Clan Endo Steel
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+CLERMediumLaser
+CLERMediumLaser
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+Clan Ultra AC/5 Ammo
+Clan Ultra AC/5 Ammo
+Clan Endo Steel
+Clan Endo Steel
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+CLERMediumLaser
+CLERMediumLaser
+ISThumperCannon
+ISThumperCannon
+ISThumperCannon
+ISThumperCannon
+ISThumperCannon
+ISThumperCannon
+ISThumperCannon
+ISThumperCannonAmmo
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Clan Endo Steel
+Clan Endo Steel
+
+Head:
+Life Support
+Sensors
+Cockpit
+Clan Endo Steel
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS LB 10-X AC Ammo
+Clan Ultra AC/5 Ammo
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS LB 10-X Cluster Ammo
+Clan Ultra AC/5 Ammo
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+overview:"I've never seen anything like this, Commander. This 'Mech oozes deadly grace and can obviously devastate anything in its path. It's... otherworldly, but clearly influenced by Star League 'tech. It has a mounted artillery piece to boot - I wonder where it came from." - Yang Virtanen
+deployment:The Bull Shark is a 95-ton Assault 'Mech described as a "Heavy Brawler", and is equipped to engage targets across a fairly wide range bracket with its somewhat unusual arsenal. Some of its long-range firepower comes from a Thumper Artillery Cannon that takes up most of the right torso. This is backed up by two extended range medium lasers in each torso, while each arm mounts an LB 10-X AC and an Ultra AC/5. The design features two tons of LB 10-X ammo and four tons of Ultra AC/5 ammo. Thirteen Double Heat Sinks (two in the left torso plus eleven in the engine) attempt to keep the very high heat generation of its ER medium lasers in check.
+history:The Bull Shark is a myterious singular 'Mech of unknown origin and design discovered aboard an abandoned jumpship in the times of the Arano Restoration. Little clue was left as for who made it or why it was left behind, other than the ship's name - 'Dobrev' - and references to an old Terran mammal known as a wolverine. What is known is that it carries a powerful armament of ballistic weaponry and advanced 'tech that harkens back to the days of the Star League, even exceeding it somehow. Word of the discovery through black market commmunications and rumours brought the Black Widow Company's Natasha Karensky to fight the legendary Bounty Hunter, the Baumann Group, and a small mercenary company in an attempt to destroy the ship and everything aboard.
+manufacturer:Minnesota Tribe
+primaryfactory:Dobrev
+notes:The following regards tabletop play: Thumper Cannon may be treated as preloaded with two shots, and only two shots. Optionally remove Thumper ammo bin and replace with LB 10-X ammo, otherwise add 4 points armour to each arm and leg. Thumper Cannon may use an updated damage profile of 15/5A if agreed upon. Suggest following the above note of preloaded ammo. The following regards derivation of loadout: Clan Wolverine was Annihilated in 2823. ER Med. Laser (C) available in 2824. UAC/5 (C) available in 2825. LB 10-X (C) available in 2828. UAC/5 (C) used because frankly the design mandates it. Assume it was somehow sourced by survivors. Since ER Med. Lasers were available the year before, assume they were sourced as well. [In tabletop] If you wish to use prototype ER lasers, the stats for those are identical to ER Med. (IS) but weighing 1.5 tons each. Remove the Thumper ammo bin and one ton of armour. LB 10-X (C) assumed to be too late to source, and relic LB 10-X (IS) are mounted instead; also to enforce the mixed tech nature of the 'mech and follow the weight layout.
+systemmode:CHASSIS:Endo-Steel
+systemmode:ENGINE:285 XL
+systemmode:ARMOR:Standard
+systemmanufacturer:JUMPJET:N/A
+systemmode:JUMPJET:N/A
+

@@ -1,0 +1,105 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+SupportTank
+</UnitType>
+
+<Name>
+Freedom 900 Hover Jeep
+</Name>
+
+<model>
+
+</model>
+
+<mul id:>
+4187
+</mul id:>
+
+<year>
+3013
+</year>
+
+<originalBuildYear>
+3013
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<role>
+None
+</role>
+
+<motion_type>
+Hover
+</motion_type>
+
+<transporters>
+cargobay:0.304:1:1
+standardseats:4.0:0
+</transporters>
+
+<cruiseMP>
+10
+</cruiseMP>
+
+<engine_type>
+1
+</engine_type>
+
+<armor>
+2
+2
+2
+1
+</armor>
+
+<Body Equipment>
+ConvertibleChassisMod
+</Body Equipment>
+
+<Front Equipment>
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<barrating>
+6
+</barrating>
+
+<structural_tech_rating>
+3
+</structural_tech_rating>
+
+<source>
+TRO: Vehicle Annex (Revised)
+</source>
+
+<tonnage>
+3.0
+</tonnage>
+
+<fuel>
+0.3
+</fuel>
+
+<fuelType>
+PETROCHEMICALS
+</fuelType>

@@ -1,35 +1,39 @@
-Version:1.0
-Balius
-Prime
-
+chassis:Balius
+model:Prime
+mul id:215
 Config:Quad Omnimech
-TechBase:Clan
-Era:3075
-Source:TRO 3075
-Rules Level:2
+techbase:Clan
+era:3075
+source:TRO: 3075
+rules level:2
+role:Skirmisher
 
-Mass:65
-Engine:390 XL (Clan) Engine(IS)
-Structure:Clan Endo Steel
-Myomer:Standard
 
-Heat Sinks:14 Double
-Base Chassis Heat Sinks:10
-Walk MP:6
-Jump MP:0
+quirk:rugged_1
 
-Armor:Ferro-Fibrous(Clan)
-FLL Armor:27
-FRL Armor:27
-LT Armor:20
-RT Armor:20
-CT Armor:30
-HD Armor:9
-RLL Armor:27
-RRL Armor:27
-RTL Armor:7
-RTR Armor:7
-RTC Armor:10
+
+mass:65
+engine:390 XL (Clan) Engine(IS)
+structure:Clan Endo Steel
+myomer:Standard
+
+heat sinks:14 Clan Double
+base chassis heat sinks:10
+walk mp:6
+jump mp:0
+
+armor:Ferro-Fibrous(Clan)
+FLL armor:27
+FRL armor:27
+LT armor:20
+RT armor:20
+CT armor:30
+HD armor:9
+RLL armor:27
+RRL armor:27
+RTL armor:7
+RTR armor:7
+RTC armor:10
 
 Weapons:7
 ER Large Laser, Left Torso
@@ -71,12 +75,12 @@ Clan Ferro-Fibrous
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
-CLERLargeLaser (omnipod)
-CLMediumPulseLaser (omnipod)
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLERLargeLaser (OMNIPOD)
+CLMediumPulseLaser (OMNIPOD)
 Clan Endo Steel
 Clan Endo Steel
 Clan Endo Steel
@@ -85,12 +89,12 @@ Clan Endo Steel
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
-CLERLargeLaser (omnipod)
-CLMediumPulseLaser (omnipod)
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLERLargeLaser (OMNIPOD)
+CLMediumPulseLaser (OMNIPOD)
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
@@ -107,8 +111,8 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLMediumPulseLaser (R) (omnipod)
-CLMediumPulseLaser (R) (omnipod)
+CLMediumPulseLaser (R) (OMNIPOD)
+CLMediumPulseLaser (R) (OMNIPOD)
 
 Head:
 Life Support
@@ -152,4 +156,19 @@ Clan Ferro-Fibrous
 -Empty-
 -Empty-
 
+overview:The Balius is a quadrupedal, front-line OmniMech produced by Clan Hell's Horses. 
+
+capabilities:The Balius, a true frontline Omni, employs weight-saving technologies such as an Endo Steel chassis, eleven tons of ferro-fibrous armor, and an XL engine. In a quad, though, this leaves limited room for other components. The Balius, on the other hand, has a top speed of 97 km/h, which is fairly fast for a 'Mech of its size. The Balius is equipped with a Creosote Special-H Flamer that can be used against troops as well as as a psychological weapon.
+
+deployment:The primary configuration mounts two ER Large Lasers. These are supplemented by a pair of Medium Pulse Lasers for close range work. Every configuration of the Balius mounts rear-facing weapons to counter the inability of a quad to torso-twist. The prime carries another pair of Medium Pulse Lasers for this job. Four extra double heat sinks keep heat levels in check.
+
+history:As of 3075, few details were available about the 'Mech. It is a totem 'Mech, resembling a horse, that is meant to improve morale as much as to be an effective combat unit. There is apparently no factory producing this design. Instead, it is hand-crafted by a crew of technicians specifically selected for the task by the Khan. This has led to few Balius' being produced, so the 'Mech is only in the hands of select Bloodnamed warriors.
+
+manufacturer:Manufacturing Site #3,Transitional Facility HH-Beta  
+primaryfactory:New Oslo,Nouveaux Paris 
+systemmanufacturer:CHASSIS:Type BMHQ-5 Endo Steel
+systemmanufacturer:ENGINE:390 XL
+systemmanufacturer:ARMOR:Forged Type HH35 Ferro-Fibrous
+systemmanufacturer:COMMUNICATIONS:Unknown
+systemmanufacturer:TARGETING:Unknown
 

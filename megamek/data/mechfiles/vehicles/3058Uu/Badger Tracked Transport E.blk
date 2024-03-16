@@ -20,6 +20,10 @@ Badger Tracked Transport
 E
 </Model>
 
+<mul id:>
+204
+</mul id:>
+
 <year>
 3008
 </year>
@@ -28,15 +32,16 @@ E
 IS Level 2
 </type>
 
+<role>
+Scout
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
 
 <transporters>
 troopspace:4.0
-</transporters>
-
-<transporters>
 BattleArmorHandles - troopers:-1
 </transporters>
 
@@ -89,7 +94,7 @@ Small Laser:OMNI
 </Turret Equipment>
 
 <source>
-Succession Wars
+TRO: 3058
 </source>
 
 <tonnage>

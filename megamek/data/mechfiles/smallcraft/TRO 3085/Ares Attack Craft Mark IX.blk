@@ -20,6 +20,10 @@ Ares Attack Craft
 Mark IX
 </Model>
 
+<mul id:>
+3726
+</mul id:>
+
 <year>
 3077
 </year>
@@ -31,6 +35,10 @@ Mark IX
 <type>
 IS Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Aerodyne
@@ -106,7 +114,7 @@ BeagleActiveProbe
 </structural_integrity>
 
 <source>
-TRO 3085 - Jihad
+TRO: 3085
 </source>
 
 <tonnage>

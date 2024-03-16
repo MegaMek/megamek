@@ -20,6 +20,10 @@ Confederate
 (2602) (Mech)
 </Model>
 
+<mul id:>
+3986
+</mul id:>
+
 <year>
 2602
 </year>
@@ -134,7 +138,7 @@ Medium Laser
 </structural_integrity>
 
 <source>
-TRO 3057R - Star League
+TRO: 3057 Revised
 </source>
 
 <tonnage>

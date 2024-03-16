@@ -1,11 +1,21 @@
-Version:1.0
-Rampage
-RMP-5G
+chassis:Rampage
+model:RMP-5G
+mul id:2637
+source:Jihad Conspiracies: Interstellar Players 2
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2767
 Rules Level:2
+role:Skirmisher
+
+
+
+quirk:vestigial_hands_ra
+quirk:bad_rep_clan
+quirk:bad_rep_is
+quirk:obsolete
+
 
 Mass:85
 Engine:340 XL Engine

@@ -16,9 +16,13 @@ Tank
 Scimitar Medium Hover Tank
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+2831
+</mul id:>
 
 <year>
 2937
@@ -27,6 +31,10 @@ Scimitar Medium Hover Tank
 <type>
 IS Level 1
 </type>
+
+<role>
+Striker
+</role>
 
 <motion_type>
 Hover
@@ -72,7 +80,7 @@ Autocannon/5
 </Turret Equipment>
 
 <source>
-TRO 3039 - Succession Wars
+TRO: 3039
 </source>
 
 <tonnage>

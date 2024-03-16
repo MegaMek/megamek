@@ -1,0 +1,175 @@
+chassis:Firestarter
+model:FS9-M 'Mirage II'
+mul id:9374
+Config:Biped
+techbase:Mixed (IS Chassis)
+era:3143
+source:Rec Guide:ilClan #28
+rules level:3
+role:Striker
+
+
+
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+weaponquirk:exposed_linkage:RA:4:Flamer
+weaponquirk:exposed_linkage:LA:4:Flamer
+
+
+mass:35
+engine:210 XL (Clan) Engine
+structure:IS Endo-Composite
+myomer:Standard
+
+heat sinks:11 IS Double
+walk mp:6
+jump mp:6
+
+armor:Reflective(Inner Sphere)
+LA armor:12
+RA armor:12
+LT armor:12
+RT armor:12
+CT armor:16
+HD armor:9
+LL armor:16
+RL armor:16
+RTL armor:4
+RTR armor:4
+RTC armor:6
+
+Weapons:8
+ER Medium Laser, Left Arm
+ER Medium Laser, Right Arm
+ER Small Laser, Left Torso
+ER Small Laser, Right Torso
+Plasma Cannon, Center Torso
+Flamer, Right Arm
+Flamer, Center Torso
+Flamer, Left Arm
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+CLERMediumLaser
+Flamer
+IS Endo-Composite
+IS Endo-Composite
+IS Reflective
+IS Reflective
+IS Reflective
+IS Reflective
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+CLERMediumLaser
+Flamer
+IS Endo-Composite
+IS Endo-Composite
+IS Reflective
+IS Reflective
+IS Reflective
+IS Reflective
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+Jump Jet
+Jump Jet
+Jump Jet
+CLERSmallLaser
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+Jump Jet
+Jump Jet
+Jump Jet
+CLERSmallLaser
+CLPlasmaCannonAmmo
+IS Reflective
+IS Reflective
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLPlasmaCannon
+Flamer (R)
+
+Head:
+Life Support
+Sensors
+Cockpit
+IS Endo-Composite
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Endo-Composite
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Endo-Composite
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+overview:Originally intended as a mobile incendiary ’Mech, the Firestarter evolved into a decent scouting and reconnaissance platform.
+capabilities:Despite being shielded by five and a half tons of armor and capable of jumping 180 meters, the Firestarter was powerless against medium or heavyweight opponents. Instead, an entire strategy was built around its ability to cause wildfires, with strategically positioned blazes routing an opponent or covering a withdrawal and impeding any pursuit. Firestarter MechWarriors enjoyed setting fire to densely forested areas when enemy 'Mechs marched through them, as well as any buildings where the enemy was hiding. 
+deployment:No information on this variant
+history:Firestarters, both ancient and contemporary, can still be found in abundance among planetary militias and House troops. Even though Blakist forces have taken over CMW's principal plant on Coventry, spare parts are still accessible from other Firestarter producers (including LAW, Ceres Metals, Defiance, and Independence Weaponry). Loki field offices near the Circinus Federation frontier are concerned about reports of a new variety using endo steel technology on Federation- occupied worlds. With its particular load-out, this new variation appears to be designed to spread chaos and destruction. Firestarters have also been seen in Level II formations with Blakist soldiers in their Protectorate, most frequently at "police demonstrations" and guarding suspected prison sites. These versions are thought to be Coventry goods.
+manufacturer:Defiance Industries
+primaryfactory:Kwangjong-ni
+systemmanufacturer:CHASSIS:Foundation Endo-Composite
+systemmanufacturer:ENGINE:Great Father 210 XL
+systemmanufacturer:ARMOR:Unknown Reflective Armor
+systemmanufacturer:JUMPJET:Luxor Load Lifters
+systemmanufacturer:COMMUNICATIONS:Cyclops 14
+systemmanufacturer:TARGETING:Tansech C30-97
+

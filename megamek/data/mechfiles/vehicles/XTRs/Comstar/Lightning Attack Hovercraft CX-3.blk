@@ -20,6 +20,10 @@ Lightning Attack Hovercraft
 CX-3
 </Model>
 
+<mul id:>
+5554
+</mul id:>
+
 <year>
 3069
 </year>
@@ -31,6 +35,10 @@ CX-3
 <type>
 IS Level 4
 </type>
+
+<role>
+Striker
+</role>
 
 <motion_type>
 Hover
@@ -88,13 +96,20 @@ RL15(ST)
 </Rear Equipment>
 
 <notes>
-Vehicle overweight and Heat wrong in TRO. No errata at this time.
+Vehicle overweight and Heat wrong in TRO:. No errata at this time.
 </notes>
 
 <source>
-XTRO ComStar - Jihad
+XTR: ComStar
 </source>
 
 <tonnage>
 35.0
 </tonnage>
+
+<quirks>
+prototype
+easy_pilot
+low_profile
+</quirks>
+

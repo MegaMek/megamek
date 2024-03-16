@@ -13,24 +13,12 @@
  */
 package megamek.common.loaders;
 
+import megamek.common.*;
+import megamek.common.util.BuildingBlock;
+import org.apache.logging.log4j.LogManager;
+
 import java.util.List;
 import java.util.Vector;
-
-import megamek.common.BattleArmor;
-import megamek.common.BipedMech;
-import megamek.common.CriticalSlot;
-import megamek.common.Engine;
-import megamek.common.Entity;
-import megamek.common.EquipmentType;
-import megamek.common.LocationFullException;
-import megamek.common.Mech;
-import megamek.common.MiscType;
-import megamek.common.Mounted;
-import megamek.common.QuadMech;
-import megamek.common.TechConstants;
-import megamek.common.WeaponType;
-import megamek.common.loaders.BLKFile;
-import megamek.common.util.BuildingBlock;
 
 /**
  * @author njrkrynn
@@ -78,21 +66,8 @@ public class BLKMechFile extends BLKFile implements IMechLoader {
             mech = new BipedMech();
         }
 
+        setBasicEntityData(mech);
         // Do I even write the year for these??
-
-        if (!dataFile.exists("name")) {
-            throw new EntityLoadingException("Could not find block.");
-        }
-        mech.setChassis(dataFile.getDataAsString("Name")[0]);
-
-        if (!dataFile.exists("model")) {
-            throw new EntityLoadingException("Could not find block.");
-        }
-        mech.setModel(dataFile.getDataAsString("Model")[0]);
-
-        setTechLevel(mech);
-        setFluff(mech);
-        checkManualBV(mech);
 
         if (!dataFile.exists("tonnage")) {
             throw new EntityLoadingException("Could not find block.");
@@ -154,14 +129,11 @@ public class BLKMechFile extends BLKFile implements IMechLoader {
             throw new EntityLoadingException("Could not find block.");
         }
 
-        int[] armor = new int[11]; // only 11 locations...
-
         if (dataFile.getDataAsInt("armor").length < 11) {
-            System.err.println("BLKMechFile->Read armor array doesn't match my armor array...");
+            LogManager.getLogger().error("Read armor array doesn't match my armor array...");
             throw new EntityLoadingException("Could not find block.");
-
         }
-        armor = dataFile.getDataAsInt("Armor");
+        int[] armor = dataFile.getDataAsInt("Armor");
 
         mech.initializeArmor(armor[BLKMechFile.HD], Mech.LOC_HEAD);
 
@@ -320,16 +292,13 @@ public class BLKMechFile extends BLKFile implements IMechLoader {
             }// end of specific location
         }// end of all crits
 
-        if (mech.isClan()) {
-            mech.addClanCase();
-        }
-
         if (dataFile.exists("omni")) {
             mech.setOmni(true);
         }
 
         mech.setArmorTonnage(mech.getArmorWeight());
 
+        loadQuirks(mech);
         return mech;
 
     }

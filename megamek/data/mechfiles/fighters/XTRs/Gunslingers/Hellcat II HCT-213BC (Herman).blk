@@ -20,6 +20,10 @@ Hellcat II
 HCT-213BC (Herman)
 </Model>
 
+<mul id:>
+7325
+</mul id:>
+
 <year>
 2774
 </year>
@@ -31,6 +35,10 @@ HCT-213BC (Herman)
 <type>
 IS Level 3
 </type>
+
+<role>
+Fast Dogfighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -101,9 +109,16 @@ ISSpaceMineDispenser
 </Fuselage Equipment>
 
 <source>
-XTRO Gunslingers - Star League
+XTR: Gunslingers
 </source>
 
 <tonnage>
 50.0
 </tonnage>
+
+<quirks>
+easy_maintain
+imp_com
+obsolete
+</quirks>
+

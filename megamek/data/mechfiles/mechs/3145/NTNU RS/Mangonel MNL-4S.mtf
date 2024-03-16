@@ -1,34 +1,40 @@
-Version:1.0
-Mangonel
-MNL-4S
-
+chassis:Mangonel
+model:MNL-4S
+mul id:6871
 Config:Biped
-TechBase:Mixed (IS Chassis)
-Era:3088
-Source:RS 3145  NTNU
-Rules Level:3
+techbase:Mixed (IS Chassis)
+era:3088
+source:Record Sheets: 3145 New Tech New Upgrades
+rules level:3
+role:Brawler
 
-Mass:70
-Engine:350 Light Engine(IS)
-Structure:Clan Endo Steel
-Myomer:Standard
 
-Heat Sinks:10 Double
-Walk MP:5
-Jump MP:0
 
-Armor:Ferro-Fibrous(Inner Sphere)
-LA Armor:16
-RA Armor:16
-LT Armor:22
-RT Armor:22
-CT Armor:29
-HD Armor:9
-LL Armor:22
-RL Armor:22
-RTL Armor:7
-RTR Armor:7
-RTC Armor:7
+quirk:difficult_maintain
+quirk:no_arms
+
+
+mass:70
+engine:350 Light Engine(IS)
+structure:IS Endo Steel
+myomer:Standard
+
+heat sinks:10 IS Double
+walk mp:5
+jump mp:0
+
+armor:Ferro-Fibrous(Inner Sphere)
+LA armor:16
+RA armor:16
+LT armor:22
+RT armor:22
+CT armor:29
+HD armor:9
+LL armor:22
+RL armor:22
+RTL armor:7
+RTR armor:7
+RTC armor:7
 
 Weapons:5
 Medium Pulse Laser, Left Arm
@@ -68,11 +74,11 @@ IS Ferro-Fibrous
 Left Torso:
 Fusion Engine
 Fusion Engine
-HAG/40 Ammo
-HAG/40 Ammo
-HAG/40 Ammo
-HAG/40 Ammo
-HAG/40 Ammo
+Hyper-Assault Gauss Rifle/40 Ammo
+Hyper-Assault Gauss Rifle/40 Ammo
+Hyper-Assault Gauss Rifle/40 Ammo
+Hyper-Assault Gauss Rifle/40 Ammo
+Hyper-Assault Gauss Rifle/40 Ammo
 IS Endo Steel
 IS Endo Steel
 IS Ferro-Fibrous

@@ -15,6 +15,10 @@ Morrigu Fire Support Vehicle
 <Model>
 (Laser)
 </Model>
+
+<mul id:>
+4673
+</mul id:>
 <Tonnage>
 80
 </Tonnage>
@@ -36,6 +40,10 @@ CLERLargeLaser
 <type>
 Clan
 </type>
+
+<role>
+Sniper
+</role>
 <year>
 3067
 </year>
@@ -51,3 +59,7 @@ Clan
 <motion_type>
 Tracked
 </motion_type>
+
+<source>
+TRO: 3067
+</source>

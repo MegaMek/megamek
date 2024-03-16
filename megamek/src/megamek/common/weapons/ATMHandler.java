@@ -37,7 +37,7 @@ import megamek.common.ToHitData;
 import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
-import megamek.server.Server;
+import megamek.server.GameManager;
 
 /**
  * @author Sebastian Brocks
@@ -49,10 +49,10 @@ public class ATMHandler extends MissileWeaponHandler {
      * @param t
      * @param w
      * @param g
-     * @param s
+     * @param m
      */
-    public ATMHandler(ToHitData t, WeaponAttackAction w, Game g, Server s) {
-        super(t, w, g, s);
+    public ATMHandler(ToHitData t, WeaponAttackAction w, Game g, GameManager m) {
+        super(t, w, g, m);
     }
 
     /*
@@ -64,10 +64,10 @@ public class ATMHandler extends MissileWeaponHandler {
     protected int calcDamagePerHit() {
         double toReturn;
         AmmoType atype = (AmmoType) ammo.getType();
-        if (atype.getMunitionType() == AmmoType.M_HIGH_EXPLOSIVE) {
+        if (atype.getMunitionType().contains(AmmoType.Munitions.M_HIGH_EXPLOSIVE)) {
             sSalvoType = " high-explosive missile(s) ";
             toReturn = 3;
-        } else if (atype.getMunitionType() == AmmoType.M_EXTENDED_RANGE) {
+        } else if (atype.getMunitionType().contains(AmmoType.Munitions.M_EXTENDED_RANGE)) {
             sSalvoType = " extended-range missile(s) ";
             toReturn = 1;
         } else {
@@ -110,7 +110,7 @@ public class ATMHandler extends MissileWeaponHandler {
         int hits;
         AmmoType atype = (AmmoType) ammo.getType();
         // TacOPs p.84 Cluster Hit Penalites will only effect ATM HE
-        if (atype.getMunitionType() == AmmoType.M_HIGH_EXPLOSIVE) {
+        if (atype.getMunitionType().contains(AmmoType.Munitions.M_HIGH_EXPLOSIVE)) {
             hits = super.calcHits(vPhaseReport);
         } else {
             hits = calcStandardAndExtendedAmmoHits(vPhaseReport);
@@ -132,22 +132,13 @@ public class ATMHandler extends MissileWeaponHandler {
         int counterAV = 0;
         int range = RangeType.rangeBracket(nRange, wtype.getATRanges(), true, false);
         AmmoType atype = (AmmoType) ammo.getType();
-        if (atype.getMunitionType() == AmmoType.M_HIGH_EXPLOSIVE) {
+        if (atype.getMunitionType().contains(AmmoType.Munitions.M_HIGH_EXPLOSIVE)) {
             if (range == WeaponType.RANGE_SHORT) {
                 av = wtype.getRoundShortAV();
-                av = av + (av / 2);
+                av = av + (int) Math.ceil(av / 2.0);
             }
-        } else if (atype.getMunitionType() == AmmoType.M_EXTENDED_RANGE) {
-            if (range == WeaponType.RANGE_SHORT) {
-                av = wtype.getRoundShortAV();
-            } else if (range == WeaponType.RANGE_MED) {
-                av = wtype.getRoundMedAV();
-            } else if (range == WeaponType.RANGE_LONG) {
-                av = wtype.getRoundLongAV();
-            } else if (range == WeaponType.RANGE_EXT) {
-                av = wtype.getRoundLongAV();
-            }
-            av = av / 2;
+        } else if (atype.getMunitionType().contains(AmmoType.Munitions.M_EXTENDED_RANGE)) {
+            av = (int) Math.ceil(wtype.getRoundMedAV() / 2.0);
         } else {
             if (range == WeaponType.RANGE_SHORT) {
                 av = wtype.getRoundShortAV();
@@ -159,11 +150,11 @@ public class ATMHandler extends MissileWeaponHandler {
                 av = wtype.getRoundExtAV();
             }
         }
-        
+
         //Point Defenses engage the missiles still aimed at us
         counterAV = calcCounterAV();
         av = av - counterAV;
-        
+
         if (bDirect) {
             av = Math.min(av + (toHit.getMoS() / 3), av * 2);
         }
@@ -211,7 +202,7 @@ public class ATMHandler extends MissileWeaponHandler {
         Mounted mLinker = weapon.getLinkedBy();
         AmmoType atype = (AmmoType) ammo.getType();
 
-        int nMissilesModifier = getClusterModifiers(atype.getMunitionType() == AmmoType.M_HIGH_EXPLOSIVE);
+        int nMissilesModifier = getClusterModifiers(atype.getMunitionType().contains(AmmoType.Munitions.M_HIGH_EXPLOSIVE));
 
         // is any hex in the flight path of the missile ECM affected?
         boolean bECMAffected = false;
@@ -225,7 +216,7 @@ public class ATMHandler extends MissileWeaponHandler {
                 && !mLinker.isDestroyed() && !mLinker.isMissing()
                 && !mLinker.isBreached() && mLinker.getType().hasFlag(
                 MiscType.F_ARTEMIS))
-                && (atype.getMunitionType() == AmmoType.M_ARTEMIS_CAPABLE)) {
+                && (atype.getMunitionType().contains(AmmoType.Munitions.M_ARTEMIS_CAPABLE))) {
             if (bECMAffected) {
                 // ECM prevents bonus
                 Report r = new Report(3330);
@@ -270,7 +261,7 @@ public class ATMHandler extends MissileWeaponHandler {
             if (((atype.getAmmoType() == AmmoType.T_LRM) || (atype
                     .getAmmoType() == AmmoType.T_SRM))
                     || ((atype.getAmmoType() == AmmoType.T_MML)
-                            && (atype.getMunitionType() == AmmoType.M_NARC_CAPABLE) && ((weapon
+                            && (atype.getMunitionType().contains(AmmoType.Munitions.M_NARC_CAPABLE)) && ((weapon
                             .curMode() == null) || !weapon.curMode().equals(
                             "Indirect")))) {
                 if (bTargetECMAffected) {
@@ -287,7 +278,7 @@ public class ATMHandler extends MissileWeaponHandler {
 
         // add AMS mods
         nMissilesModifier += getAMSHitsMod(vPhaseReport);
-        
+
         if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)
                 && entityTarget != null && entityTarget.isLargeCraft()) {
             nMissilesModifier -= getAeroSanityAMSHitsMod();
@@ -354,14 +345,14 @@ public class ATMHandler extends MissileWeaponHandler {
             ArrayList<Minefield> mfRemoved = new ArrayList<>();
             while (minefields.hasMoreElements()) {
                 Minefield mf = minefields.nextElement();
-                if (server.clearMinefield(mf, ae,
+                if (gameManager.clearMinefield(mf, ae,
                         Minefield.CLEAR_NUMBER_WEAPON, vPhaseReport)) {
                     mfRemoved.add(mf);
                 }
             }
             // we have to do it this way to avoid a concurrent error problem
             for (Minefield mf : mfRemoved) {
-                server.removeMinefield(mf);
+                gameManager.removeMinefield(mf);
             }
             return true;
         }

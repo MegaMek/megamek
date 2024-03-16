@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -17,8 +17,12 @@ Leviathan II Battleship
 </Name>
 
 <Model>
-(Standard)
+
 </Model>
+
+<mul id:>
+4501
+</mul id:>
 
 <year>
 3066
@@ -31,6 +35,10 @@ Leviathan II Battleship
 <type>
 Clan Level 3
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Aerodyne
@@ -50,7 +58,7 @@ dockingcollar
 1stclassquarters:1950.0:0
 crewquarters:6825.0:0
 2ndclassquarters:1575.0:0
-cargobay:50293.0:10:6
+cargobay:50293.0:10:14
 </transporters>
 
 <SafeThrust>
@@ -72,6 +80,10 @@ cargobay:50293.0:10:6
 <engine_type>
 1
 </engine_type>
+
+<clan_engine>
+false
+</clan_engine>
 
 <armor_type>
 11
@@ -674,8 +686,48 @@ Clan Streak SRM 6 Ammo:300
 150
 </structural_integrity>
 
+<capabilities>
+The Leviathan II Heavy Battleships are known for their impressive firepower, exceptional armor, and immense size. Equipped with a variety of capital-grade and conventional weaponry, the Leviathan II can engage both large and small targets with devastating effect. Its armament includes heavy naval Gauss rifles, NAC/35s, naval PPCs, missile launchers, and a host of lasers. The ship's robust armor and extensive defensive systems make it a formidable opponent, capable of withstanding heavy firepower. Originally repurposed as massive transports, the Leviathan II vessels possess ample cargo capacity, allowing for the transportation of large amounts of personnel and supplies. This logistical capability played a crucial role in the Ghost Bear Clan's successful relocation to the Inner Sphere. With their endurance and spacious cargo holds, the Leviathan II Heavy Battleships are versatile assets in supporting Clan operations.
+</capabilities>
+
+<overview>
+The Leviathan-class WarShip, authorized by Ghost Bear Khans Nornian Tseng and Ursula Jorgensson, is the epitome of Clan Ghost Bear's ambition and engineering prowess. Originally conceived as the largest WarShip ever constructed, the Leviathan underwent a unique transformation to serve as a massive armored transport during the Ghost Bear Clan's secret relocation to the Inner Sphere. Subsequently, efforts have been made to restore the Leviathans to their intended military configurations, resulting in the formidable Leviathan II Heavy Battleships.
+</overview>
+
+<history>
+In 3044, Ghost Bear Khans Nornian Tseng and Ursula Jorgensson authorized the creation of the Leviathan-class WarShip, aspiring to build the largest vessel of its kind. However, the technical challenges proved insurmountable for Ghost Bear scientists, leading them to seek assistance from their allies in Clan Snow Raven. Construction began but stalled during the Trials for Operation REVIVAL. After the Battle of Tukayyid, the Ghost Bear Khans made the monumental decision to relocate the entire Ghost Bear Clan to the Inner Sphere. In need of a covert means to transport millions of people across a thousand light-years, the partially completed Leviathan hulls were repurposed as heavily armored transports. The vessels underwent modifications to accommodate cargo while maintaining their fearsome appearance. Following the successful relocation, the Ghost Bear Clan directed efforts to restore the Leviathans to their original military configurations. However, the Combine assault on Alshain and subsequent war disrupted the project's progress, causing significant delays. Despite the setbacks, the Leviathan II Heavy Battleships stand as a symbol of the Ghost Bear Clan's determination and resilience. With their impressive firepower, extensive armor, and logistical capabilities, these WarShips embody the strength and ambition of Clan Ghost Bear in the Inner Sphere.
+</history>
+
+<manufacturer>
+Alshain Naval Yards
+</manufacturer>
+
+<primaryFactory>
+Alshain
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<use>
+Battleship
+</use>
+
+<length>
+1623 m
+</length>
+
+<height>
+1560 m Sail
+</height>
+
 <source>
-TRO3067 - Civil War
+TRO: 3067
 </source>
 
 <tonnage>
@@ -704,6 +756,10 @@ TRO3067 - Civil War
 95
 95
 </grav_decks>
+
+<designtype>
+1
+</designtype>
 
 <crew>
 1770
@@ -736,3 +792,4 @@ TRO3067 - Civil War
 <escape_pod>
 150
 </escape_pod>
+

@@ -1,12 +1,13 @@
-Version:1.0
-Shadow Hawk LAM
-SHD-X2
+chassis:Shadow Hawk LAM
+model:SHD-X2
+mul id:5040
 
 Config:LAM
 TechBase:Inner Sphere
 Era:2684
-Source:TRO3085
+Source:TRO: 3085
 Rules Level:4
+role:Sniper
 
 Mass:55
 Engine:220 Fusion Engine(IS)
@@ -71,10 +72,10 @@ Jump Jet
 Jump Jet
 ISERLargeLaser
 ISERLargeLaser
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
+Bomb Bay
+Bomb Bay
+Bomb Bay
+Bomb Bay
 -Empty-
 -Empty-
 

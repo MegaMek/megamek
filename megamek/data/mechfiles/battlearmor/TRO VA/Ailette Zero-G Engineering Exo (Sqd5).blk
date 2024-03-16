@@ -1,0 +1,108 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+Ailette Zero-G Engineering Exoskeleton
+</Name>
+
+<model>
+(Sqd5)
+</Model>
+
+<mul id:>
+8605
+</mul id:>
+
+<year>
+3056
+</year>
+
+<type>
+IS Level 2
+</type>
+
+<role>
+None
+</role>
+
+<motion_type>
+Leg
+</motion_type>
+
+<cruiseMP>
+1
+</cruiseMP>
+
+<armor_type>
+28
+</armor_type>
+
+<armor_tech>
+-1
+</armor_tech>
+
+<Squad Equipment>
+BASalvageArm:LA
+BAArmoredGlove:RA
+ISBASpaceOperationsAdaptation:Body
+ISBAExtendedLifeSupport:Body
+</Squad Equipment>
+
+<source>
+TRO: Vehicle Annex Revised
+</source>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+0
+</jumpingMP>
+
+<armor>
+0
+</armor>
+
+<Trooper Count>
+5
+</Trooper Count>
+
+<weightclass>
+0
+</weightclass>
+
+<overview>
+The Ailette Zero-G Exoskeleton is an engineering Exoskeleton which was developed for heavy labor in space and produced by Federated Boeing of Galax.
+</overview>
+
+<history>
+The suit was created to enhance workers' performance at the orbiting Port Simon Naval Shipyards. After the destruction of Galax in 3069, it is unknown if the Ailette was put into production elsewhere for Federated Boeing. Taurus Territorial Industries did produce a version of the suit however. An experimental refit variant was later created by Taurus Territorial Industries in 3074 as a rescue Power Armor.
+</history>
+
+<capabilities>
+The Ailette's exterior appearance mirrors that of a normal hardened space suit, but the suit has been equipped with advanced sensors to allow the user to be able to operate in the hazardous environment of space. This includes an automatic “attitude maintenance mode” which allows the exoskeleton to compensate for movement in Zero Gravity. 
+</capabilities>
+
+<deployment>
+This was an Experimental refit variant of the Ailette, which was produced in the Taurian Concordat during the early Jihad. Created as a SAR (Search and Rescue) Power Armor, the suit was enhanced slightly from the original model. The suit was upgraded to Power Armor (Light), had its ground speed increased to 20 km/h, and was given a Mechanical Jump Booster to improve its movement in space. Along with the Ailette's standard equipment, the suit now features Improved Sensors which are found in its right arm. 
+</deployment>
+
+<manufacturer>
+Taurus Territorial Industries
+</manufacturer>
+
+<primaryFactory>
+Sterope
+</primaryFactory>

@@ -20,6 +20,10 @@ Bashkir
 E
 </Model>
 
+<mul id:>
+3795
+</mul id:>
+
 <year>
 3071
 </year>
@@ -31,6 +35,10 @@ E
 <type>
 Clan Level 2
 </type>
+
+<role>
+Interceptor
+</role>
 
 <motion_type>
 Aerodyne
@@ -113,7 +121,7 @@ CLCASE
 </Fuselage Equipment>
 
 <source>
-TRO 3055u - Jihad
+TRO: 3055 Update
 </source>
 
 <tonnage>

@@ -1,12 +1,17 @@
-Version:1.0
-Rifleman IIC
-6
+chassis:Rifleman IIC
+model:6
+mul id:2715
 
 Config:Biped
 TechBase:Clan
 Era:3071
-Source:Jihad
+source:TRO: 3085
 Rules Level:2
+role:Sniper
+
+quirk:anti_air
+quirk:imp_com
+
 
 Mass:65
 Engine:195 Fusion (Clan) Engine
@@ -154,9 +159,7 @@ capabilities:Five tons heavier than the design it is based on, the Rifleman IIC 
 
 deployment:The IIC 6 goes in the opposite direction of the IIC 5 by removing the jump jets entirely. This makes room for two HAG 30s, each of which is adjacent to an Anti-Missile System. Seven tons of ammunition provide enough ammunition for most Clan engagements. The ER Small Laser and Active Probe of the original are retained.
 
-history:An ancient rebuild of an already ancient design, the Rifleman IIC has soldiered on throughout the centuries. The ’Mech can be found in service with most Clans (a
-notable exception is Clan Wolf, which prefers the Glass Spider) and several Inner Sphere powers. Its simplicity is matched only by its effectiveness, and new variants
-continue to debut.
+history:An ancient rebuild of an already ancient design, the Rifleman IIC has soldiered on throughout the centuries. The ’Mech can be found in service with most Clans (a notable exception is Clan Wolf, which prefers the Glass Spider) and several Inner Sphere powers. Its simplicity is matched only by its effectiveness, and new variants continue to debut.
 
 manufacturer:Complex H-4 CCC,Trellshire Heavy Industries 
 primaryfactory:Hector,Twycross

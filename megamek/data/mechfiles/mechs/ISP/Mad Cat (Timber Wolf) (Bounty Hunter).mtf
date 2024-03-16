@@ -1,12 +1,18 @@
-Version:1.0
-Mad Cat (Timber Wolf)
-(Bounty Hunter)
+chassis:Mad Cat
+clanname:Timber Wolf
+model:(Bounty Hunter)
+mul id:1976
 
 Config:Biped Omnimech
 techbase:Clan
 era:3060
-source:BattleTech Dossiers: The Bounty Hunter - Clan Invasion
+source:BattleTech Dossiers: The Bounty Hunter
 rules level:2
+role:Brawler
+
+quirk:imp_target_med
+quirk:weak_head_1
+
 
 mass:75
 engine:375 XL (Clan) Engine(IS)
@@ -157,9 +163,10 @@ overview:The Timber Wolf is a fast, heavy OmniMech. A signature design of the Cl
 capabilities:The first custom configuration used by the infamous Bounty Hunter of the time of the initial Clan Invasion, it mounted a Large Pulse Laser and a Medium Pulse Laser in each arm. It also had a Medium Pulse Laser in both the left and right torso with a Clan Light TAG in the center torso. A Light Active Probe, ECM suite, and a Targeting Computer provided stealth and increased accuracy.
 deployment:Always a MechWarrior, the Bounty Hunter piloted a variety of BattleMechs, typically leading a BattleMech lance. His 'Mechs were invariably painted a bright green with currency symbols on it, a feared sight on the battlefield, and often custom-modified, allowing for his or her PA(L) armor to be worn while piloting to further conceal the pilot's identity.
 
-The Bounty Hunter has been active for more than a century, leading to speculation that the PA(L) suit, the modified 'Mechs that he piloted, and even the mythos surrounding the individual were passed from person to person via the death or retirement of the former MechWarrior whose personified him. Known people to have been the Bounty Hunter were Michi Noketsuna and Vic Travers, who inherited the equipment and a book referred to as "the tradition".[1] Travers eventually passed the legacy on to one of his aides going by the name of Walt Urizeman, though that name is held to be just one of the man's several fake identities.
+history:Vaguely resembling a cross-over between the MAD (Marauder) and CAT (Catapult) series, the Timber Wolf was tagged with the Inner Sphere reporting name Mad Cat on first contact. (The targeting computer on Phelan Kell's Wolfhound switched between MAD and CAT when trying to identify it; upon analyzing the data recording from Kell's 'Mech, Precentor Martial Anastasius Focht later officially designated it "Mad Cat".
 
-The "Bounty Hunter" legend was the topic of a hero team-style tri-vid show called "The Bounty Hunters". Though tapping into the Bounty Hunter's reputation, the producers instead developed their own mythos almost completely unrelated to the real person. The popularity of the series was such that many people in the Inner Sphere cannot separate the fiction of the holovid from the reality of the true Bounty Hunter.
+deployment:The Bounty Hunter has been active for more than a century, leading to speculation that the PA(L) suit, the modified 'Mechs that he piloted, and even the mythos surrounding the individual were passed from person to person via the death or retirement of the former MechWarrior whose personified him. Known people to have been the Bounty Hunter were Michi Noketsuna and Vic Travers, who inherited the equipment and a book referred to as "the tradition". Travers eventually passed the legacy on to one of his aides going by the name of Walt Urizeman, though that name is held to be just one of the man's several fake identities. The "Bounty Hunter" legend was the topic of a hero team-style tri-vid show called "The Bounty Hunters". Though tapping into the Bounty Hunter's reputation, the producers instead developed their own mythos almost completely unrelated to the real person. The popularity of the series was such that many people in the Inner Sphere cannot separate the fiction of the holovid from the reality of the true Bounty Hunter.
+
 manufacturer:Wolf Clan Site #1, Wolf Clan Site #2, W-7 Facilities, Kallon Weapon Industries
 primaryfactory:Arc-Royal, Strana Mechty, Weingarten, Thermopolis 
 systemmanufacturer:CHASSIS:Type W3 Endo-steel

@@ -1,0 +1,125 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+Raiden Battle Armor
+</Name>
+
+<Model>
+(Anti-Infantry)(Sqd4)
+</Model>
+
+<mul id:>
+2619
+</mul id:>
+
+<year>
+3058
+</year>
+
+<type>
+IS Level 2
+</type>
+
+<role>
+Ambusher
+</role>
+
+<motion_type>
+Jump
+</motion_type>
+
+<cruiseMP>
+1
+</cruiseMP>
+
+<armor_type>
+30
+</armor_type>
+
+<armor_tech>
+11
+</armor_tech>
+
+<Squad Equipment>
+ISBAMG:LA
+ISBAFlamer:RA
+BABattleClawVibro:RA
+SwarmMek
+SwarmWeaponMek
+StopSwarm
+LegAttack
+IS BA Advanced:LA
+IS BA Advanced:Body
+IS BA Advanced:Body
+IS BA Advanced:RA
+IS BA Advanced:Body
+</Squad Equipment>
+
+<source>
+TRO: 3085
+</source>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+3
+</jumpingMP>
+
+<armor>
+9
+</armor>
+
+<Trooper Count>
+4
+</Trooper Count>
+
+<weightclass>
+2
+</weightclass>
+
+<overview>
+The Raiden is a battle armor design that hails from the Draconis Combine. It is essentially the Combine's take on the Inner Sphere Standard which, though debuting first and also produced by the Kuritans themselves, represents an improvement on the design. 
+</overview>
+
+<capabilities>
+It lacks the missile launcher and anti-personnel weapon mount of the Elemental battle armor it was based on, though it has the same jump capacity of ninety meters and also mounts a Battle Claw in the left arm that enables it to hitch a ride on OmniMechs and make anti-'Mech attacks. As promised the suit's 450kg of armor does allow it to survive a hit from a Large Laser, even an Inner Sphere Large Pulse Laser, and remain functional. The suit is also slightly stronger and possess greater reflexes than the Standard suit, features which improved its hand-to-hand capabilities. S
+</capabilities>
+
+<deployment>
+Like the Inner Sphere Standard, the Raiden has a Modular Weapon Mount in its right arm that can accept a Small Laser, Flamer or Machine Gun to accommodate for preference or mission parameters.[10] Also like the Standard this mount can instead accept a pair of smaller 'secondary' weapons which may prove more suitable for anti-infantry work. Equipped with a Vibro-Claw, Flamer, and Machine Gun, this 3058 variant is fearsome in urban combat and devastating to conventional infantry platoons.
+</deployment>
+
+<history>
+Creation of the Raiden first began in November 3050, after the Combine's stunning success in the Battle of Wolcott netted them a grand prize of twenty-four Elemental battle suits from Clan Smoke Jaguar. The first prototype was produced in April 3052 and presented before Coordinator Takashi Kurita in June in a live-fire trial. Unlike the early models of the Inner Sphere Standard, this prototype had both decent ground speed and jump capability, though the Federated Commonwealth was currently working on a redesigned Standard which would match these attributes. It was armed with a Small Laser in its right arm and shoulder-mounted single-shot SRM launcher. Most importantly it mounted more armoring than the Standard thanks to a unique polymer bonding method, allowing it to survive a hit from a medium laser and several missile strikes. However the Coordinator was unimpressed. He ordered the development team to rework the suit so that it could survive a hit from a Large Laser and present the modified prototype for his inspection within the year. He also commanded that the team's 70-year-old director, Dr. Guthrie, would personally wear the suit during its next demonstration. The redesigned suit was ready after nine months of work and again was demonstrated before the Coordinator in a life-fire exercise in February 3053. The team managed to mount more armor on the suit by removing the SRM launcher, which had the added benefit of improving balance. Despite the fact that the septuagenarian had neither the training nor strength to properly control the Raiden, in a testament to his faith in the suit and loyalty to his leader, he nevertheless strapped himself and marched it out onto the firing range. For the next few moments the suit was engulfed in a firestorm of laser and missiles. When it was over, the suit remained functional, albeit barely, and the scientist was still alive if not in great pain. With an effort of will he saluted the Coordinator before collapsing and spent the next month in the hospital recovering from five broken bones. The Coordinator rewarded Dr. Guthrie's dedication by promoting him to the head of the Internal Security Force's Research and Development department, and when he died a year later he was laid to rest by a Raiden honor guard. Full-scale production of the suit finally begin after his death in January 3055.
+</history>
+
+<manufacturer>
+Luthien Armor Works,New Samarkand Metals, Refit
+</manufacturer>
+
+<primaryFactory>
+Luthien,New Samarkand,Various
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+JUMPJET:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>

@@ -20,6 +20,10 @@ Heimdall Ground Monitor Tank
 A
 </Model>
 
+<mul id:>
+4292
+</mul id:>
+
 <year>
 3063
 </year>
@@ -27,6 +31,10 @@ A
 <type>
 Clan Level 2
 </type>
+
+<role>
+Juggernaut
+</role>
 
 <motion_type>
 Tracked
@@ -96,3 +104,7 @@ CLHeavyMediumLaser:OMNI
 <baseChassisTurretWeight>
 1.5
 </baseChassisTurretWeight>
+
+<source>
+TRO: 3067
+</source>

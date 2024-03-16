@@ -17,8 +17,12 @@ Swift
 </Name>
 
 <Model>
-SWF-606 (Aaron)
+SWF-606CA (Aaron)
 </Model>
+
+<mul id:>
+7326
+</mul id:>
 
 <year>
 2756
@@ -31,6 +35,10 @@ SWF-606 (Aaron)
 <type>
 IS Level 4
 </type>
+
+<role>
+Interceptor
+</role>
 
 <motion_type>
 Aerodyne
@@ -135,5 +143,5 @@ TARGETING:PhantomTrac 55
 </systemManufacturers>
 
 <source>
-XTRO Gunslingers - Star League
+XTR: Gunslingers
 </source>

@@ -20,17 +20,25 @@ Stuka
 STU-K5b
 </Model>
 
+<mul id:>
+3111
+</mul id:>
+
 <year>
-2709
+2751
 </year>
 
 <originalBuildYear>
-2709
+2751
 </originalBuildYear>
 
 <type>
 IS Level 2
 </type>
+
+<role>
+Attack Fighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -84,13 +92,13 @@ Medium Laser
 </Nose Equipment>
 
 <Left Wing Equipment>
-PPC
-PPC
+ISERPPC
+ISERPPC
 </Left Wing Equipment>
 
 <Right Wing Equipment>
-PPC
-PPC
+ISERPPC
+ISERPPC
 </Right Wing Equipment>
 
 <Aft Equipment>
@@ -108,7 +116,7 @@ IS Ammo AC/20
 </Fuselage Equipment>
 
 <source>
-H:Operation Klondyke - Star League
+Historical: Operation Klondike
 </source>
 
 <tonnage>
@@ -152,7 +160,7 @@ This variant is unique to the MUL as it has the ER PPCs. But I've adjusted the d
 </notes>
 
 <source>
-H:Operation Klondyke - Star League
+Historical: Operation Klondike
 </source>
 
 <tonnage>

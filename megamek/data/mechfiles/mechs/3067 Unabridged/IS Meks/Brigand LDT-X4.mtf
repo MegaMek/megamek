@@ -1,12 +1,18 @@
-Version:1.0
-Brigand
-LDT-X4
+chassis:Brigand
+model:LDT-X4
+mul id:5654
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3078
-Source:3067 Unabridged
+Source:Record Sheets: 3067 Unabridged
 Rules Level:2
+role:Striker
+
+
+
+quirk:nimble_jumper
+
 
 Mass:25
 Engine:150 Light Engine(IS)

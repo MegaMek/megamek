@@ -1,34 +1,41 @@
-Version:1.0
-Jinggau
-JN-G8A
-
+chassis:Jinggau
+model:JN-G8A
+mul id:1708
 Config:Biped
-TechBase:Inner Sphere
-Era:3060
-Source:TRO 3060
-Rules Level:2
+techbase:Inner Sphere
+era:3060
+source:TRO: 3060
+rules level:2
+role:Skirmisher
 
-Mass:65
-Engine:325 XL Engine
-Structure:Endo Steel
-Myomer:Standard
 
-Heat Sinks:13 Double
-Walk MP:5
-Jump MP:5
 
-Armor:Standard(Inner Sphere)
-LA Armor:17
-RA Armor:17
-LT Armor:24
-RT Armor:24
-CT Armor:28
-HD Armor:9
-LL Armor:22
-RL Armor:22
-RTL Armor:6
-RTR Armor:6
-RTC Armor:9
+
+quirk:low_profile
+quirk:weak_head_2
+
+
+mass:65
+engine:325 XL Engine(IS)
+structure:IS Endo Steel
+myomer:Standard
+
+heat sinks:13 IS Double
+walk mp:5
+jump mp:5
+
+armor:Standard(Inner Sphere)
+LA armor:17
+RA armor:17
+LT armor:24
+RT armor:24
+CT armor:28
+HD armor:9
+LL armor:22
+RL armor:22
+RTL armor:6
+RTR armor:6
+RTC armor:9
 
 Weapons:6
 ER Medium Laser, Left Arm
@@ -70,13 +77,13 @@ Left Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 
@@ -86,13 +93,13 @@ Fusion Engine
 Fusion Engine
 IS Gauss Ammo
 IS Gauss Ammo
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Center Torso:
 Fusion Engine
@@ -150,4 +157,20 @@ Jump Jet
 -Empty-
 -Empty-
 
+overview:The Jinggau is made to engage in direct combat, not lurk at the periphery or wait for a few fortunate long-range hits.
+
+capabilities:It can close relatively easily in virtually any terrain thanks to its top-end mobility for its weight, which includes a running speed of over 85 kph and a 150-meter leap capacity. With more than eleven tons of armor, the Jinggau has a very good chance of surviving whether traversing wide terrain or fighting in stand-up combat. The major offense comes from a number of strong hitting primary weapons including the Zhi-tong-yao ("painkiller") Gauss rifle. The weapon fires piercing shots until the Jinggau is within striking distance of its secondary lasers, which can frighten the pilot of even an assault mech. At that point, the main armaments continue to unleash their knockdown power punches while the lasers look for vulnerable areas to butcher an enemy machine.
+
+deployment:The primary weapon on the Jinggau is a powerful Zhi-tong-yao Gauss rifle that gives the 'Mech a maximum striking distance of up to six hundred and sixty meters which allows the Jinggau the opportunity to draw the first blood on the battlefield. For close combat, the Jinggau has a set of four Diverse Optics Type ER medium lasers and a single, highly accurate, Raker-IV medium pulse laser.
+
+history:Word of Blake's Toyama faction started sending technicians and supplies to Capellan Chancellor Sun-Tzu Liao toward the end of 3058 to assist with the completion of overhauling the old Star League production facility on Victoria. This assistance, which appeared to be a personal debt owed to Chancellor Liao, aided the Capellans in finishing up construction on the Jinggau assembly line and increased production of the Duan Gung BattleMech design. The first Jinggau, which is Chinese for siren, is said to have left the factory in early 3059, but for unknown reasons, production was suspended for more than a year before being partially resumed. Presenting a lance of Jinggau to the Fourth Tau Ceti Rangers, Sun-Tzu Liao said, “This is not a ’Mech relegated to support roles, or reconnaissance or garrison duty. This is a BattleMech for seeking out your opponent and doing him harm. This is a ’Mech with which to make your enemy miserable.” The Jinggau's extended-range medium lasers, which are made by the Free Worlds League, intrigue engineers studying it. All of the Jinggau's components, with the exception of its jump jets and targeting system, are supposed to be constructed on Victoria, just like the Duan Gung.
+
+manufacturer:Shengli Arms
+primaryfactory:Victoria
+systemmanufacturer:CHASSIS:Chariot Type II Endo Steel
+systemmanufacturer:ENGINE:VOX 325 XL
+systemmanufacturer:ARMOR:Valiant DefCo
+systemmanufacturer:JUMPJET:Hellespont Leapers
+systemmanufacturer:COMMUNICATIONS:Dian-bao Comms, heavily insulated
+systemmanufacturer:TARGETING:Dynatec Special T&T
 

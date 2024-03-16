@@ -20,6 +20,10 @@ Prowler Multi-Terrain Vehicle
 (WoB)
 </Model>
 
+<mul id:>
+2589
+</mul id:>
+
 <Tonnage>
 55
 </Tonnage>
@@ -58,12 +62,16 @@ ISFullyAmphibiousChassis
 IS Level 3
 </type>
 
+<role>
+Brawler
+</role>
+
 <year>
 3077
 </year>
 
 <source>
-Jihad
+TRO: 3085
 </source>
 
 <internal_type>

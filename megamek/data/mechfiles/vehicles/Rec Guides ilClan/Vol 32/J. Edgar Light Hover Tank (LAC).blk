@@ -1,0 +1,139 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+J. Edgar Light Hover Tank
+</Name>
+
+<Model>
+(LAC)
+</Model>
+
+<year>
+3070
+</year>
+
+<originalBuildYear>
+3070
+</originalBuildYear>
+
+<mul id:>
+9474
+</mul id:>
+
+<type>
+IS Level 2
+</type>
+
+<role>
+Scout
+</role>
+
+<motion_type>
+Hover
+</motion_type>
+
+<transporters>
+</transporters>
+
+<cruiseMP>
+8
+</cruiseMP>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+6
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
+26
+16
+16
+11
+20
+</armor>
+
+<Body Equipment>
+IS Ammo LAC/5
+</Body Equipment>
+
+<Front Equipment>
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+Light Auto Cannon/5
+RL10
+RL10
+RL10
+RL10
+</Turret Equipment>
+
+<source>
+Rec Guide:ilClan #32
+</source>
+
+<tonnage>
+25.0
+</tonnage>
+
+<fuelType>
+PETROCHEMICALS
+</fuelType>
+
+<capabilities>
+With very light armor, the J. Edgar is dependent on it's extreme speed for protection. Attempts over the years have aimed at improving it's armor while not sacrificing it's incredible speed.
+</capabilities>
+
+<overview>
+The J. Edgar is a lightweight, speedy hovercraft. The J. Edgar's speed and the infinite endurance provided by a fusion engine make it ideal for reconnaissance and raiding missions.
+</overview>
+
+<deployment>
+Alphard Trade Corporation catered to the Marian Hegemony's reality by producing an ICE-powered model that foregoes complicated energy weaponry in favor of the near-ubiquitous Pontiac light autocannon.
+</deployment>
+
+<history>
+The J. Edgar is one of the Alphard Trade Corporation's few vehicles. ATC decided to build a number of military and civilian vehicles to sell to any globe, country, or individual willing to buy them in order to grow its market and generate profits. Although the vehicles sold well at first, the diversification failed over time, and ATC closed down all vehicle manufacturing plants in 2732. The Alphard Trade Corporation's final military vehicle was the J. Edgar. The J. Edgar, which was designed as a low-cost, fast, and effective fighter, was only a moderate success throughout its ten-year production period. Many anticipated the J. Edgar to simply vanish, but in 2755, Pinard Protectorates Ltd. licensed the design and began manufacturing it for the Taurian Concordat. In 3006, the newly formed Olivetti Weaponry also began to produce the vehicle, albeit they failed to license the concept from ATC; this fact ensnared both parties in decades-long litigation (later worsened by the Jade Falcon conquest of Sudeten). During the New Vandenburg Rebellion, the reconstituted Taurian Defense Force made heavy use of the J. Edgar. The vehicle later became a key component of Taurian light armor formations. The Draconis Combine purchased many of ATC's original run of manufacturing, but two centuries of attrition significantly reduced their numbers. Most of the survivors were relegated to armor units supporting the Legion of Vega and the Ghost Regiments as they became increasingly difficult to sustain. During the 3039 counter-offensive against the Federated Suns, both commands deployed the quick J. Edgar to great advantage as rapid raiders. Old J. Edgars still arise from time to time with planetary militia and mercenary commands. The Com Guards also have a limited number of soldiers selected from their massive stores of Star League-era equipment on Terra. By the partnership with the Lyran Commonwealth that resulted in the formidable Federated Commonwealth, the Federated Suns got access to new J. Edgars. The Davions prefer to concentrate their vehicles in companies connected to the Avalon Hussars and Deneb Light Cavalry, whilst the Lyrans distribute them piecemeal to fill gaps in their scout and light armor groups.
+</history>
+
+<manufacturer>
+Alphard Trading Company,Alphard Trading Company
+</manufacturer>
+
+<primaryFactory>
+Alphard,Addhara
+</primaryFactory>
+
+<systemManufacturers>
+ENGINE:70 ICE
+ARMOR:ProtecTech 19 Heavy Ferro-Fibrous
+COMMUNICATIONS:Alphard Original Two
+TARGETING:RCA Instatrac Mk. II
+</systemManufacturers>

@@ -1,0 +1,150 @@
+chassis:Exo HaulerMech
+model:HMX-3
+mul id:7842
+
+Config:Biped
+techbase:Inner Sphere
+era:3081
+source:TRO: Irregulars
+rules level:3
+role:None
+
+mass:10
+engine:40 Fuel Cell Engine(IS)
+structure:IS Industrial
+myomer:Industrial Triple-Strength
+cockpit:Industrial Cockpit
+gyro:Standard Gyro
+
+heat sinks:1 Single
+walk mp:4
+jump mp:0
+
+armor:Heavy Industrial(Inner Sphere)
+LA armor:2
+RA armor:2
+LT armor:2
+RT armor:2
+CT armor:3
+HD armor:3
+LL armor:2
+RL armor:2
+RTL armor:2
+RTR armor:2
+RTC armor:2
+
+Weapons:0
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+Environmental Sealing
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+Environmental Sealing
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Environmental Sealing
+Industrial Triple Strength Myomer
+Industrial Triple Strength Myomer
+Industrial Triple Strength Myomer
+Industrial Triple Strength Myomer
+Industrial Triple Strength Myomer
+Industrial Triple Strength Myomer
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+Environmental Sealing
+Industrial Triple Strength Myomer
+Industrial Triple Strength Myomer
+Industrial Triple Strength Myomer
+Industrial Triple Strength Myomer
+Industrial Triple Strength Myomer
+Industrial Triple Strength Myomer
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Environmental Sealing
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+Environmental Sealing
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Environmental Sealing
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Environmental Sealing
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

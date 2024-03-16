@@ -1,85 +1,91 @@
-Version:1.0
-Caesar
-CES-4R
+chassis:Caesar
+model:CES-4R
+mul id:457
 
 Config:Biped
-TechBase:Inner Sphere
-Era:3067
-Source:TRO 3050 - Civil War
-Rules Level:2
+techbase:Inner Sphere
+era:3067
+source:TRO: 3050
+rules level:2
+role:Skirmisher
 
-Mass:70
-Engine:280 XL Engine
-Structure:Standard
-Myomer:MASC
 
-Heat Sinks:13 Double
-Walk MP:4
-Jump MP:0
 
-Armor:Ferro-Fibrous
-LA Armor:22
-RA Armor:22
-LT Armor:22
-RT Armor:22
-CT Armor:28
-HD Armor:9
-LL Armor:27
-RL Armor:27
-RTL Armor:8
-RTR Armor:8
-RTC Armor:11
+quirk:hyper_actuator
 
-Weapons:6
-1 ISSNPPC, Right Arm
-1 ISMediumPulseLaser, Right Arm
-1 ISMediumPulseLaser, Left Arm
-1 ISGaussRifle, Right Torso, Ammo:16
-1 ISERMediumLaser, Right Torso
-1 ISERMediumLaser, Left Torso
-1 ISERMediumLaser, Center Torso (R)
+
+mass:70
+engine:280 XL Engine(IS)
+structure:IS Standard
+myomer:Standard
+
+heat sinks:13 IS Double
+walk mp:4
+jump mp:0
+
+armor:Ferro-Fibrous(Inner Sphere)
+LA armor:22
+RA armor:22
+LT armor:22
+RT armor:22
+CT armor:28
+HD armor:9
+LL armor:27
+RL armor:27
+RTL armor:8
+RTR armor:8
+RTC armor:11
+
+Weapons:7
+Medium Pulse Laser, Left Arm
+Snub-Nose PPC, Right Arm
+Medium Pulse Laser, Right Arm
+ER Medium Laser, Left Torso
+Gauss Rifle, Right Torso
+ER Medium Laser, Right Torso
+ER Medium Laser, Center Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
 ISMediumPulseLaser
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
 ISSNPPC
 ISSNPPC
 ISMediumPulseLaser
-Ferro-Fibrous
-Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 
 Left Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
 ISERMediumLaser
-ISGauss Ammo
-ISGauss Ammo
+IS Gauss Ammo
+IS Gauss Ammo
 ISMASC
 ISMASC
 ISMASC
 ISMASC
-Ferro-Fibrous
-Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 
 Right Torso:
 Fusion Engine
@@ -107,13 +113,13 @@ Fusion Engine
 Fusion Engine
 Fusion Engine
 ISERMediumLaser (R)
-Ferro-Fibrous
+IS Ferro-Fibrous
 
 Head:
 Life Support
 Sensors
 Cockpit
-Ferro-Fibrous
+IS Ferro-Fibrous
 Sensors
 Life Support
 -Empty-
@@ -128,8 +134,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Ferro-Fibrous
-Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -142,11 +148,27 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Ferro-Fibrous
-Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
+
+overview:Originally a reverse engineered version of the Capellan Confederation's Cataphract intended to mask development of the Federated Commonwealth's fearsome Axman, the Caesar would turn out to be a good but not great BattleMech in its own right.
+
+capabilities:The Caesar was built to do as much damage to an enemy at as great a stand-off range as possible. The 'Mech therefore carries primarily long-ranged armament. The 'Mech also uses an 280-rated XL engine and sixteen double heat sinks, both of which save significant amounts of weight, in order to carry as many weapons and as much armor as possible. The 'Mech utilizes CASE to protect against ammunition explosions should an enemy be able to breach the ten and a half tons of armor that protect it.
+
+deployment:A variant that first saw action during the Jihad, the -4R attempts to improve upon the -3R variant marketed in the Federated Suns. Designed with short-range combat in mind, it drops the rear-facing pulse lasers and three heat sinks in favor of additional armor and three ER medium lasers; the armor is upgraded to regular ferro-fibrous. MASC enables the Caesar to close more quickly and bring its snub-nose PPC to bear.
+
+history:Supposedly the sole design intended to come out of Johnston Industries' then-new 'Mech lines on New Syrtis, the Caesar received notable public attention in an attempt to distract from development of the Axman. The finished 'Mech surprisingly enough proved to be a high-quality design itself. Though never attracting great sales, the Caesar would prove to be relatively popular in the Capellan March, among Lyran units on the Clan front, and with both FedCom-employed mercenaries and the Com Guards. Johnston attempted to redress its mediocre sales in the wake of the FedCom Civil War, developing two new variants intended to focus specifically on the qualities desired by the Lyran Alliance and Federated Suns. The resulting upswing in sales saw the Caesar in increasing use among those opposing the Word of Blake during the Jihad, with the LAAF in particular adopting the design almost as a means of honoring the assassinated Caesar Steiner.
+
+manufacturer:Johnston Industries
+primaryfactory:New Syrtis
+systemmanufacturer:CHASSIS:Dorwinion CES Standard
+systemmanufacturer:ENGINE:GM 280 Extralight
+systemmanufacturer:ARMOR:Kallon Unity Weave Ferro-Fibrous with CASE
+systemmanufacturer:COMMUNICATIONS:Johnston Wide Band
+systemmanufacturer:TARGETING:Randar Pinpoint-HY

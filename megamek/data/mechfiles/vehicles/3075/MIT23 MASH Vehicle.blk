@@ -16,9 +16,13 @@ Tank
 MIT23 MASH Vehicle
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+2191
+</mul id:>
 
 <year>
 3067
@@ -31,6 +35,10 @@ MIT23 MASH Vehicle
 <type>
 IS Level 3
 </type>
+
+<role>
+Scout
+</role>
 
 <motion_type>
 Wheeled
@@ -75,7 +83,7 @@ MASH Equipment:SIZE:7
 </Rear Equipment>
 
 <source>
-Clan Invasion
+TRO: 3075
 </source>
 
 <tonnage>

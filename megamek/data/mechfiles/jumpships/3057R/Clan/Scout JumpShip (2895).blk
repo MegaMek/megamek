@@ -20,6 +20,10 @@ Scout JumpShip
 (2895)
 </Model>
 
+<mul id:>
+4998
+</mul id:>
+
 <year>
 2895
 </year>
@@ -31,6 +35,10 @@ Scout JumpShip
 <type>
 Clan Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Aerodyne
@@ -109,7 +117,7 @@ ISMobileHPG
 </structural_integrity>
 
 <source>
-TRO 3057R -
+TRO: 3057 Revised
 </source>
 
 <tonnage>

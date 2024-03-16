@@ -20,6 +20,10 @@ Corsair
 CSR-12D
 </Model>
 
+<mul id:>
+4009
+</mul id:>
+
 <year>
 3081
 </year>
@@ -31,6 +35,10 @@ CSR-12D
 <type>
 IS Level 4
 </type>
+
+<role>
+Fast Dogfighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -134,10 +142,16 @@ TARGETING:Ranker TA1000
 </systemManufacturers>
 
 <source>
-TRO Prototypes - Jihad
+TRO: Prototypes
 </source>
 
 <tonnage>
 50.0
 </tonnage>
+
+
+<quirks>
+weak_undercarriage
+easy_maintain
+</quirks>
 

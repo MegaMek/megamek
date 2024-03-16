@@ -1,0 +1,173 @@
+chassis:Merlin
+model:MLN-1D
+mul id:9316
+Config:Biped
+techbase:Inner Sphere
+era:3090
+source:Rec Guide:ilClan #26 
+rules level:2
+role:Sniper
+
+quirk:easy_maintain
+quirk:rugged_1
+
+
+mass:60
+engine:240 Fusion Engine(IS)
+structure:IS Standard
+myomer:Standard
+
+heat sinks:13 IS Double
+walk mp:4
+jump mp:4
+
+armor:Standard(Inner Sphere)
+LA armor:16
+RA armor:16
+LT armor:18
+RT armor:18
+CT armor:26
+HD armor:9
+LL armor:19
+RL armor:19
+RTL armor:8
+RTR armor:8
+RTC armor:11
+
+Weapons:6
+Light PPC, Right Arm
+PPC, Right Torso
+LRM 5, Right Torso
+Heavy Machine Gun, Left Torso
+Flamer, Left Torso
+Light PPC, Left Arm
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Light PPC
+Light PPC
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Light PPC
+Light PPC
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+Heavy Machine Gun
+Flamer
+IS Ammo LRM-5
+IS Heavy Machine Gun Ammo - Half
+ISCASE
+-Empty-
+
+Right Torso:
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+PPC
+PPC
+PPC
+LRM 5
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+-Empty-
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+overview:The Merlin uses components that are all reliable and readily available, making the Merlin a durable and easy-to-repair 'Mech. 
+
+capabilities:The 'Mech is powered by a Pitban 240 fusion engine that gives it a top speed of 64.8 km/h. The Merlin carries ten and a half tons of armor, which is a respectable amount of protection for its weight. Additionally, the Merlin carries eighteen heat sinks to handle its heavy heat load.
+
+deployment:No Information Available
+
+history:The Merlin debuted in 3010 as a product of the rebuilt Mountain Wolf BattleMechs. The Merlin was hailed as a technological marvel at the time it was released, as it was the first completely new design to be developed in over 100 years.
+
+manufacturer:Mountain Wolf BattleMechs, Vandenberg Mechanized Industries
+primaryfactory:Alpheratz, New Vandenberg
+systemmanufacturer:CHASSIS:Heavy Star QAT-4
+systemmanufacturer:ENGINE:Pitban 240
+systemmanufacturer:ARMOR:Longanecker PlastiSteel with CASE
+systemmanufacturer:JUMPJET:Pitban LFT 50
+systemmanufacturer:COMMUNICATIONS:Magestrix Alpha
+systemmanufacturer:TARGETING:Magestrix Gamma
+

@@ -1,12 +1,19 @@
-Version:1.0
-Nexus
-NXS1-A
+chassis:Nexus
+model:NXS1-A
+mul id:2259
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3054
-Source:TRO 3055 - Clan Invasion
+Source:TRO: 3055
 Rules Level:2
+role:Striker
+
+
+
+
+quirk:bad_rep_is
+
 
 Mass:25
 Engine:175 Fusion Engine

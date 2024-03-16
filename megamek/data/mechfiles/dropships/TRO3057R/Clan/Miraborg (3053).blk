@@ -20,6 +20,10 @@ Miraborg
 (3053)
 </Model>
 
+<mul id:>
+4646
+</mul id:>
+
 <year>
 3053
 </year>
@@ -31,6 +35,10 @@ Miraborg
 <type>
 Clan Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Spheroid
@@ -172,7 +180,7 @@ CLMediumPulseLaser
 </structural_integrity>
 
 <source>
-TRO 3057R - Clan Invasion
+TRO: 3057 Revised
 </source>
 
 <tonnage>

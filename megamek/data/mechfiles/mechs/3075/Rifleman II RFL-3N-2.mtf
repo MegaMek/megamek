@@ -1,12 +1,21 @@
-Version:1.0
-Rifleman II
-RFL-3N-2
+chassis:Rifleman II
+model:RFL-3N-2
+mul id:2709
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2720
-Source:TRO 3075
+source:TRO: 3075
 Rules Level:2
+role:Brawler
+
+
+
+
+quirk:anti_air
+quirk:imp_com
+quirk:searchlight
+
 
 Mass:80
 Engine:320 XL Engine

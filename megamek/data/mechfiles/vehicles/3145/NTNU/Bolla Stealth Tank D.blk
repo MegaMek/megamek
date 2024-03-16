@@ -20,6 +20,10 @@ Bolla Stealth Tank (RotS)
 D
 </Model>
 
+<mul id:>
+6791
+</mul id:>
+
 <year>
 3091
 </year>
@@ -28,15 +32,16 @@ D
 Mixed (IS Chassis) Advanced
 </type>
 
+<role>
+Brawler
+</role>
+
 <motion_type>
 Wheeled
 </motion_type>
 
 <transporters>
 troopspace:4.0
-</transporters>
-
-<transporters>
 BattleArmorHandles - troopers:-1
 </transporters>
 
@@ -99,7 +104,7 @@ ISSniperCannon:OMNI
 </Turret Equipment>
 
 <source>
-RS 3145 NTNU - Early Republic
+Record Sheets: 3145 New Tech New Upgrades
 </source>
 
 <tonnage>
@@ -109,3 +114,19 @@ RS 3145 NTNU - Early Republic
 <baseChassisTurretWeight>
 1.5
 </baseChassisTurretWeight>
+
+<manufacturer>
+Maxwell-Pulaski Motors Krupp Armaments Works
+</manufacturer>
+
+<primaryFactory>
+Terra Terra
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:280 VOX XL Fusion
+ARMOR:Krupp Stealth
+COMMUNICATIONS:GPT Multi-Track Enhanced
+TARGETING:Baltex K590
+</systemManufacturers>

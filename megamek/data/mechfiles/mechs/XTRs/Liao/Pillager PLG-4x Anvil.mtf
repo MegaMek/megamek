@@ -1,36 +1,42 @@
-Version:1.1
-Pillager
-PLG-4X 'Anvil'
-
+chassis:Pillager
+model:PLG-4X 'Anvil'
+mul id:2526
 Config:Biped
-TechBase:Inner Sphere
-Era:3077
-Source:XTRO Liao - Jihad
-Rules Level:4
+techbase:Inner Sphere
+era:3077
+source:XTR: Liao
+rules level:3
+role:Missile Boat
 
-Mass:100
-Engine:300 Light Engine(IS)
-Structure:IS Standard
-Myomer:Standard
-Cockpit:Small Cockpit
-Gyro:Standard Gyro
 
-Heat Sinks:14 Double
-Walk MP:3
-Jump MP:0
 
-Armor:Standard(Inner Sphere)
-LA Armor:30
-RA Armor:30
-LT Armor:30
-RT Armor:30
-CT Armor:41
-HD Armor:9
-LL Armor:38
-RL Armor:38
-RTL Armor:8
-RTR Armor:8
-RTC Armor:10
+quirk:battle_fists_la
+quirk:battle_fists_ra
+
+
+mass:100
+engine:300 Light Engine(IS)
+structure:IS Standard
+myomer:Standard
+cockpit:Small Cockpit
+gyro:Standard Gyro
+
+heat sinks:14 IS Double
+walk mp:3
+jump mp:0
+
+armor:Standard(Inner Sphere)
+LA armor:30
+RA armor:30
+LT armor:30
+RT armor:30
+CT armor:41
+HD armor:9
+LL armor:38
+RL armor:38
+RTL armor:8
+RTR armor:8
+RTC armor:10
 
 Weapons:3
 Long Tom Cannon, Left Torso
@@ -104,8 +110,8 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-IS Coolant Pod
-IS Coolant Pod
+Coolant Pod
+Coolant Pod
 
 Head:
 Life Support
@@ -149,4 +155,19 @@ ISLongTomCannonAmmo
 -Empty-
 -Empty-
 
+overview:The largest BattleMech ever built by HildCo Interplanetary, the Pillager is built as a larger version of the Victor, and is intended for assaulting urban centers and hardened fortifications.
 
+capabilities:Based on a range of engine types, the Pillager has average mobility for its size, with a top speed of 54 km/h. Three HildCo Model 13 jump jets allow the 'Mech to jump up to ninety meters, increasing its mobility. The Pillager possesses outstanding armor protection and more than enough heat sinks to meet the Pillager's needs.
+
+deployment:Created as a defensive artillery unit, the Pillager Anvil replaces all the standard weaponry, equipment, and torso with two Long Tom Artillery Cannons. A head mounted Laser AMS required the use of a Small Cockpit. A Light Engine allows the Pillager Anvil to retain the movement curve of the original, but the jump jets and two tons of armor were replaced by experimental Coolant Pods to keep the Pillager Anvil's heat under control.
+
+history:The Pillager was the largest 'Mech ever built by HildCo during the Reunification War. The destruction of the manufacturing facilities that produced the Pillager's advanced technologies halted production during the Second Succession War, but the decoding of the Gray Death memory core allowed the Pillager to be reintroduced to the Inner Sphere. The Pillager has a long and colorful battle history. From the Reunification Battle through the Succession Wars, it has seen action in every war. Records show that during those fights, enemy forces tended to retreat at the sight of approaching Pillagers. The Pillager most recently demonstrated its amazing strength during the FedCom and the Capellan/St. Ives Civil Wars. When a Pillager-led unit attacked, many strongholds and defenses crumbled. Even now, in the struggle between Hasek's Capellan March and House Liao, the Pillager is making an impact on the battlefield, just as it did during the Amaris Civil War. The Pillager now serves in the majority of house militaries and mercenary troops. Because of the reintegration of St. Ives, the Capellan military has the most brawny 'Mechs.
+
+manufacturer:General Motors,HildCo Interplanetary
+primaryfactory:Kathil,St. Ives
+systemmanufacturer:CHASSIS:HildCo Heavy Type VIIQT
+systemmanufacturer:ENGINE:Vlar 300 Light
+systemmanufacturer:ARMOR:StarSlab/9.5 Mk II
+systemmanufacturer:JUMPJET:HildCo Model 13
+systemmanufacturer:COMMUNICATIONS:CeresCom Recon Model 12K
+systemmanufacturer:TARGETING:C-Apple Churchill

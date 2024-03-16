@@ -1,4 +1,11 @@
 size 64 68
+tag "Rough (Auto)"
+tag "Foliage (Auto)"
+tag "Water (Auto)"
+tag "HighHills (Auto)"
+tag "TropicalTheme (Auto)"
+tag "Woods (Auto)"
+tag "DenseForest (Auto)"
 hex 0101 -2 "woods:2;foliage_elev:2" "tropical"
 hex 0201 -2 "woods:2;foliage_elev:2" "tropical"
 hex 0301 -2 "woods:2;foliage_elev:2" "tropical"

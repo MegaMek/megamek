@@ -1,0 +1,12 @@
+Mercenary Medium Mechs 3130 B
+Violator VT-U1,1
+Shockwave SKW-2F,2
+Night Stalker NSR-K1,3
+Gravedigger GDR-1C,4
+Dasher II (Standard),5
+Thunder Fox TFT-L8,6
+Centurion CN11-O,5
+Hunchback HBK-7R,4
+Exhumer EXR-2X,3
+Mongrel MGL-T2,2
+Black Hawk (Standard),1

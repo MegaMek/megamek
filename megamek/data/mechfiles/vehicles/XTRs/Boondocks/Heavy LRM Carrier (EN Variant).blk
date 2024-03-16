@@ -20,6 +20,10 @@ Heavy LRM Carrier
 (EN Variant)
 </Model>
 
+<mul id:>
+1439
+</mul id:>
+
 <year>
 3073
 </year>
@@ -27,6 +31,10 @@ Heavy LRM Carrier
 <type>
 IS Level 4
 </type>
+
+<role>
+Missile Boat
+</role>
 
 <tonnage>
 80.0
@@ -89,3 +97,6 @@ ISExtendedLRM15
 ISExtendedLRM15
 </Turret Equipment>
 
+<source>
+XTR: Boondocks
+</source>

@@ -20,6 +20,10 @@ Badger (C) Tracked Transport
 B
 </Model>
 
+<mul id:>
+193
+</mul id:>
+
 <year>
 2875
 </year>
@@ -28,15 +32,16 @@ B
 Clan Level 2
 </type>
 
+<role>
+Scout
+</role>
+
 <motion_type>
 Tracked
 </motion_type>
 
 <transporters>
 troopspace:5.0
-</transporters>
-
-<transporters>
 BattleArmorHandles - troopers:-1
 </transporters>
 
@@ -83,7 +88,7 @@ CLStreakSRM2:OMNI
 </Turret Equipment>
 
 <source>
-Succession Wars
+TRO: 3058
 </source>
 
 <tonnage>

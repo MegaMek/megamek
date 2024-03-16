@@ -1,7 +1,7 @@
 Mercenary Battle Armor - 3135+
 Gladiator Exoskeleton (Standard) [AG],1
 Smoothdavid PA(L) II,2
-Tunnel Rat Mining Exoskeleton IV [Armored Glove/LMG],3
+Tunnel Rat IV Mining Exoskeleton [Armored Glove/LMG](Sqd4),3
 Infiltrator Mk. I Battle Armor 'Waddle',4
 Gladiator Battle Armor S,5
 Gray Death Standard Suit [Laser],6

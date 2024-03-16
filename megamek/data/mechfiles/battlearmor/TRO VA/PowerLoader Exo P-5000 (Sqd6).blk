@@ -1,0 +1,120 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+PowerLoader Exoskeleton
+</Name>
+
+<Model>
+P-5000(Sqd6)
+</Model>
+
+<mul id:>
+9022
+</mul id:>
+
+<year>
+3054
+</year>
+
+<type>
+IS Level 2
+</type>
+
+<role>
+None
+</role>
+
+<motion_type>
+Leg
+</motion_type>
+
+<cruiseMP>
+2
+</cruiseMP>
+
+<armor_type>
+28
+</armor_type>
+
+<armor_tech>
+-1
+</armor_tech>
+
+<Squad Equipment>
+BACargoLifter:LA:SIZE:2
+BACargoLifter:RA:SIZE:2
+BACuttingTorch:Body
+</Squad Equipment>
+
+<source>
+TRO: Vehicle Annex Revised
+</source>
+
+<chassis>
+biped
+</chassis>
+
+<exoskeleton>
+true
+</exoskeleton>
+
+<jumpingMP>
+0
+</jumpingMP>
+
+<armor>
+1
+</armor>
+
+<Trooper Count>
+6
+</Trooper Count>
+
+<weightclass>
+0
+</weightclass>
+
+<overview>
+The P-5000 PowerLoader is a cargo handling industrial Exoskeleton which is produced by the Free Worlds League corporation Waytani, Inc.
+</overview>
+
+<capabilities>
+The design is noted for its speed and armor protection which is greater than its nearest competitor, GM's HeavyHauler.
+</capabilities>
+
+<deployment>
+The PowerLoader is fitted with two Cargo Lifter manipulators, which when working together can lift up to 2 tons. The suit has also been given a minimum of 50 kilograms of armor to protect its user and features a searchlight and a torch cutter.
+</deployment>
+
+<history>
+Waytani was created solely to produce and bring the exoskeleton to market. The company's initial successful holovid advertising campaign was a boon for the company contributing to its success in both the League and the Capellan Confederation. Easily able to handle the most Alien of loads. 
+</history>
+
+<manufacturer>
+Waytani, Inc,Waytani, Inc
+</manufacturer>
+
+<primaryFactory>
+Marik,Pollux
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+JUMPJET:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>

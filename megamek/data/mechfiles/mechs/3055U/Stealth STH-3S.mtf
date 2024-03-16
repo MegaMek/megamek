@@ -1,12 +1,18 @@
-Version:1.0
-Stealth
-STH-3S
+chassis:Stealth
+model:STH-3S
+mul id:3057
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3067
-Source:TRO 3055 - Civil War
+Source:TRO: 3055
 Rules Level:2
+role:Scout
+
+
+
+quirk:imp_sensors
+
 
 Mass:45
 Engine:315 XL Engine

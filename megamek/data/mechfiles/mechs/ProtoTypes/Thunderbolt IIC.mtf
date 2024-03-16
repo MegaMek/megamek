@@ -1,33 +1,44 @@
-Version:1.0
-Thunderbolt IIC
-(Standard)
-
+generator:MegaMek Suite 0.49.16-SNAPSHOT on 2023-12-29
+chassis:Thunderbolt IIC
+model:
+mul id:5239
 Config:Biped
-TechBase:Clan
-Era:3085
-Rules Level:4
+techbase:Clan
+era:3085
+source:TRO: Prototypes
+rules level:4
+role:Brawler
 
-Mass:70
-Engine:350 XL (Clan) Engine(IS)
-Structure:IS Standard
-Myomer:Standard
+quirk:difficult_maintain
+quirk:pro_actuator
+weaponquirk:mod_weapons:LA:4:CLImprovedHeavyLargeLaser
+weaponquirk:mod_weapons:RA:4:CLImprovedHeavyLargeLaser
+weaponquirk:mod_weapons:LT:4:CLERMediumLaser
+weaponquirk:mod_weapons:LT:5:CLERMediumLaser
+weaponquirk:mod_weapons:LT:6:CLERMediumLaser
+weaponquirk:mod_weapons:RT:4:CLStreakLRM15
 
-Heat Sinks:17 Double
-Walk MP:5
-Jump MP:0
+mass:70
+engine:350 XL (Clan) Engine(IS)
+structure:IS Standard
+myomer:Standard
 
-Armor:Standard(Clan)
-LA Armor:22
-RA Armor:22
-LT Armor:24
-RT Armor:24
-CT Armor:33
-HD Armor:9
-LL Armor:30
-RL Armor:30
-RTL Armor:6
-RTR Armor:6
-RTC Armor:10
+heat sinks:17 Clan Double
+walk mp:5
+jump mp:0
+
+armor:Standard(Clan)
+LA armor:22
+RA armor:22
+LT armor:24
+RT armor:24
+CT armor:33
+HD armor:9
+LL armor:30
+RL armor:30
+RTL armor:6
+RTR armor:6
+RTC armor:10
 
 Weapons:6
 Improved Heavy Large Laser, Left Arm
@@ -149,17 +160,14 @@ Foot Actuator
 -Empty-
 -Empty-
 
-overview:The Thunderbolt IIC is a second-line heavy BattleMech that was originally developed for Clan Jade Falcon in 3085. 
-
+overview:The Thunderbolt IIC is a second-line heavy BattleMech that was originally developed for Clan Jade Falcon in 3085.
 capabilities:The Thunderbolt IIC is a blend of standard and Advanced Clan technology. Due to the then-experimental nature of its weaponry, its MechWarriors were required to keep detailed logs noting the equipment's performance.
-
 deployment:The design's XL Engine allows it to maintain pace with contemporary heavy designs in the Falcons' Touman. The weight-saving property of the engine allows the Thunderbolt IIC to be fitted with 13.5 tons of armor on its hull. The 'Mech's main weaponry is its two Series XVI-a Improved Heavy Large Lasers, with a laser system mounted in each arm. These weapons offer tremendous damage at medium to short ranges. A MechWarrior will find, however, that by firing both arm-mounted lasers alone, they will be overtaxing the 'Mech’s Double Heat sinks. For the Thunderbolt IIC's long-range firepower, the 'Mech sports a highly ammo-efficient Type XV-S Streak LRM 15 Launcher. The weapon is supplied with two tons of ammunition which are protected by CASE II. Three Series 7Ja Extended Range Medium Lasers serve as this 'Mech's secondary weaponry, rounding out the rest of its arsenal.
-
 history:The design came into existence due to that Clan's need to re-purpose surplus components being produced for their Loki and Thor OmniMech designs. Using one of Olivetti Weaponry's previous Inner Sphere designs, the classic Thunderbolt, they reworked it as a replacement for second-line 'Mechs lost during the Jihad.
-
 manufacturer:Olivetti Weaponry
 primaryfactory:Sudeten
 systemmanufacturer:CHASSIS:Olivetti TDR-II
 systemmanufacturer:ARMOR:Forging Omni H24
 systemmanufacturer:COMMUNICATIONS:Model J-D 067
 systemmanufacturer:TARGETING:Hawkeye 58
+

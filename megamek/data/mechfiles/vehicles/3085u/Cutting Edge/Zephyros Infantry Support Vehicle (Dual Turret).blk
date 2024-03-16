@@ -20,6 +20,10 @@ Zephyros Infantry Support Vehicle
 (Dual Turret)
 </Model>
 
+<mul id:>
+3633
+</mul id:>
+
 <year>
 3086
 </year>
@@ -27,6 +31,10 @@ Zephyros Infantry Support Vehicle
 <type>
 Clan Level 2
 </type>
+
+<role>
+Striker
+</role>
 
 <motion_type>
 Wheeled
@@ -86,7 +94,7 @@ CLERMediumLaser
 </Front Turret Equipment>
 
 <source>
-Dark Age
+TRO: 3085
 </source>
 
 <tonnage>

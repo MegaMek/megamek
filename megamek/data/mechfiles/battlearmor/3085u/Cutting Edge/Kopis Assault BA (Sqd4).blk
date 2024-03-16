@@ -1,0 +1,122 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+Kopis Assault Battle Armor
+</Name>
+
+<Model>
+'The Dark Alley'(Sqd4)
+</Model>
+
+<mul id:>
+1814
+</mul id:>
+
+<chassis>
+biped
+</chassis>
+
+<weightclass>
+4
+</weightclass>
+
+<Trooper Count>
+4
+</Trooper Count>
+
+<cruiseMP>
+1
+</cruiseMP>
+
+<Armor>
+10
+</Armor>
+
+<armor_type>
+30
+</armor_type>
+
+<armor_tech>
+3
+</armor_tech>
+
+<Squad Equipment>
+ISBAMediumLaser:Body
+ISBAMediumLaser:Body
+BAAPMount:RA
+InfantryAssaultRifle:RA:APM
+BAAPMount:LA
+InfantryAssaultRifle:LA:APM
+BAHeavyBattleClaw:RA
+BAHeavyBattleClaw:LA
+IS BA Advanced:LA
+IS BA Advanced:RA
+IS BA Advanced:LA
+IS BA Advanced:RA
+IS BA Advanced:RA
+</Squad Equipment>
+
+<type>
+IS Level 2
+</type>
+
+<role>
+Ambusher
+</role>
+
+<year>
+3077
+</year>
+
+<motion_type>
+Leg
+</motion_type>
+
+<source>
+TRO: 3085
+</source>
+
+<overview>
+The Kopis battle armor was designed by StarCorps Industries as an assault unit. 
+</overview>
+
+<capabilities>
+Slow but heavily armed, the Kopis can remain on the battlefield supporting friendly units for a long time. The advanced armor used by the Kopis designers allows it to stand up to most weaponry, shrugging off anything short of a PPC or AC/10 hit. The low top speed is mitigated through the use of VTOL transportation for offensive operations, while smart commanders use the Kopis as a defense unit for cities or other tight terrain. In those restricted environments the low top speed isn't a factor.
+</capabilities>
+
+<deployment>
+Carrying nearly as much firepower as a Succession Wars-era Stinger, the Kopis is equipped with a pair of Medium Lasers. Instead of mounting heavy missile racks that provide a few salvos of firepower, the Kopis' designers used energy weapons backed up by enough power packs to ensure that the armor would be useful on the battlefield for a long time. The power packs allow the Kopis to fire the lasers thirty times before running out of power. For anti-infantry work the Kopis mounts a Heavy Battle Claw and an Anti-Personnel Weapon Mount on each arm. These claws are fearsome melee combat weapons, and the AP Weapon mounts allow the trooper to carry smaller anti-infantry weapons without using the Medium Lasers.
+</deployment>
+
+<history>
+ The standard model was given the nickname of "The Dark Alley".
+</history>
+
+<manufacturer>
+Grumium Creations
+</manufacturer>
+
+<primaryFactory>
+Grumium	
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+JUMPJET:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>

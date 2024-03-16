@@ -40,8 +40,7 @@ import java.util.zip.ZipFile;
  * line of the file should give the unit type number corresponding to
  * UnitType.java The remaining lines should be comma split. The first field
  * should give the frequency of that unit and the second line should give the
- * name of that unit written as <Model> <Chassis> Comment lines can also be
- * added with "#"
+ * name of that unit written as { Model } { Chassis }. Comment lines can also be added with "#".
  * </p>
  *
  * @author Jay Lawson
@@ -49,15 +48,11 @@ import java.util.zip.ZipFile;
 public class RandomUnitGenerator implements Serializable {
     private static final long serialVersionUID = 5765118329881301375L;
 
-    // The RATs are stored in a hashmap of string vectors. The keys are the RAT
-    // names
-    // and the vectors just contain the unit names listed a number of times
-    // equal to
-    // the frequency
-    private Map<String, RatEntry> rats;
+    // The RATs are stored in a hashmap of string vectors. The keys are the RAT names
+    // and the vectors just contain the unit names listed a number of times equal to the frequency
+    private final Map<String, RatEntry> rats = new HashMap<>();
     private static RandomUnitGenerator rug;
     private static boolean interrupted = false;
-    private static boolean dispose = false;
     private Thread loader;
     private boolean initialized;
     private boolean initializing;
@@ -89,7 +84,6 @@ public class RandomUnitGenerator implements Serializable {
      * its change of appearing (weight).
      *
      * @author arlith
-     *
      */
     protected class RatEntry {
         private Vector<String> units;
@@ -126,16 +120,11 @@ public class RandomUnitGenerator implements Serializable {
         listeners = new ArrayList<>();
     }
 
-    protected void initRats() {
-        rats = new HashMap<>();
-    }
-
     protected void initRatTree() {
         ratTree = new RatTreeNode("Random Assignment Tables");
     }
 
     public synchronized void populateUnits() {
-        initRats();
         initRatTree();
 
         // Give the MSC some time to initialize
@@ -155,22 +144,12 @@ public class RandomUnitGenerator implements Serializable {
             rug.initialized = true;
             rug.notifyListenersOfInitialization();
         }
-
-        if (dispose) {
-            clear();
-            dispose = false;
-        }
     }
 
     public synchronized void registerListener(ActionListener l) {
         listeners.add(l);
     }
 
-
-    // todo Not being used.  Is this really needed?
-    public synchronized void removeListener(ActionListener l) {
-        listeners.remove(l);
-    }
 
     /**
      * Notifies all the listeners that initialization is finished
@@ -188,7 +167,8 @@ public class RandomUnitGenerator implements Serializable {
     }
 
     private void readRat(InputStream is, RatTreeNode node, String fileName, MechSummaryCache msc) throws IOException {
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
+        try (InputStreamReader isr = new InputStreamReader(is, StandardCharsets.UTF_8);
+             BufferedReader reader = new BufferedReader(isr)) {
             int lineNumber = 0;
             String key = "Huh";
             float totalWeight = 0.0f;
@@ -261,7 +241,7 @@ public class RandomUnitGenerator implements Serializable {
         RatTreeNode result = root;
         String[] pathElements = path.split("/", -1);
         for (int i = 0; i < pathElements.length - 1; i++) {
-            if (pathElements[i].length() == 0) {
+            if (pathElements[i].isBlank()) {
                 continue;
             }
             RatTreeNode subNode = null;
@@ -345,8 +325,8 @@ public class RandomUnitGenerator implements Serializable {
                             }
                         }
                     }
-                } catch (IOException e) {
-                    LogManager.getLogger().error("Unable to load " + ratFile.getName());
+                } catch (Exception ex) {
+                    LogManager.getLogger().error("Unable to load " + ratFile.getName(), ex);
                 }
             }
 
@@ -356,8 +336,8 @@ public class RandomUnitGenerator implements Serializable {
 
             try (InputStream ratInputStream = new FileInputStream(ratFile)) {
                 readRat(ratInputStream, node, ratFile.getName(), msc);
-            } catch (Exception e) {
-                LogManager.getLogger().error("Unable to load " + ratFile.getName(), e);
+            } catch (Exception ex) {
+                LogManager.getLogger().error("Unable to load " + ratFile.getName(), ex);
             }
         }
     }
@@ -368,17 +348,17 @@ public class RandomUnitGenerator implements Serializable {
      * @return - a string giving the name
      */
     public ArrayList<MechSummary> generate(int numRolls, String ratName) {
-    	return generate(numRolls, ratName, null);
+        return generate(numRolls, ratName, null);
     }
 
-	/**
+    /**
      * Generate a list of units from the RAT.
-	 *     
-	 * @param numRolls - the number of units to roll from the RAT
-	 * @param ratName - name of the RAT to roll on
-	 * @param filter - entries in the RAT must pass this condition to be included. If null, no filter is applied.
+     *
+     * @param numRolls - the number of units to roll from the RAT
+     * @param ratName - name of the RAT to roll on
+     * @param filter - entries in the RAT must pass this condition to be included. If null, no filter is applied.
      * @return - a list of units determined by the random rolls
-	 */
+     */
     public ArrayList<MechSummary> generate(int numRolls, String ratName, Predicate<MechSummary> filter) {
         ArrayList<MechSummary> units = new ArrayList<>();
 
@@ -386,13 +366,13 @@ public class RandomUnitGenerator implements Serializable {
             int retryCount = 0;
             
             // give the RATs a few seconds to load
-            while (!initialized && retryCount < 5) {
+            while (!initialized && (retryCount < 5)) {
                 try {
                     Thread.sleep(1000);
-                } catch (Exception e) {
+                } catch (Exception ignored) {
                     
                 }
-                
+
                 retryCount++;
             }
             
@@ -400,26 +380,26 @@ public class RandomUnitGenerator implements Serializable {
             if (null != ratMap) {
                 RatEntry re = ratMap.get(ratName);
                 if (filter != null) {
-                	RatEntry filtered = new RatEntry();
-                	float totalWeight = 0.0f;
-                	MechSummaryCache msc = MechSummaryCache.getInstance();
-                	for (int i = 0; i < re.getUnits().size(); i++) {
-                		if (!re.getUnits().get(i).startsWith("@")) {
-	                		MechSummary ms = msc.getMech(re.getUnits().get(i));
-	                		if (ms == null || !filter.test(ms)) {
-	                			continue;
-	                		}
-                		}
-            			filtered.getUnits().add(re.getUnits().get(i));
-            			filtered.getWeights().add(re.getWeights().get(i));
-            			totalWeight += re.getWeights().get(i);
-                	}
-                	for (int i = 0; i < filtered.getWeights().size(); i++) {
-                		filtered.getWeights().set(i, filtered.getWeights().get(i) / totalWeight);
-                	}
-                	re = filtered;
+                    RatEntry filtered = new RatEntry();
+                    float totalWeight = 0.0f;
+                    MechSummaryCache msc = MechSummaryCache.getInstance();
+                    for (int i = 0; i < re.getUnits().size(); i++) {
+                        if (!re.getUnits().get(i).startsWith("@")) {
+                            MechSummary ms = msc.getMech(re.getUnits().get(i));
+                            if (ms == null || !filter.test(ms)) {
+                                continue;
+                            }
+                        }
+                        filtered.getUnits().add(re.getUnits().get(i));
+                        filtered.getWeights().add(re.getWeights().get(i));
+                        totalWeight += re.getWeights().get(i);
+                    }
+                    for (int i = 0; i < filtered.getWeights().size(); i++) {
+                        filtered.getWeights().set(i, filtered.getWeights().get(i) / totalWeight);
+                    }
+                    re = filtered;
                 }
-                if ((null != re) && (re.getUnits().size() > 0)) {
+                if ((null != re) && !re.getUnits().isEmpty()) {
                     for (int roll = 0; roll < numRolls; roll++) {
                         double rand = getRandom();
                         int i = 0;
@@ -477,9 +457,6 @@ public class RandomUnitGenerator implements Serializable {
     }
 
     public Iterator<String> getRatList() {
-        if (null == rats) {
-            return null;
-        }
         return rats.keySet().iterator();
     }
 
@@ -487,30 +464,14 @@ public class RandomUnitGenerator implements Serializable {
         return ratTree;
     }
 
-    public void dispose() {
-        interrupted = true;
-        dispose = true;
-        if (initialized) {
-            clear();
-        }
-    }
-
-    public void clear() {
-        rug = null;
-        rats = null;
-        ratTree = null;
-        initialized = false;
-        initializing = false;
-    }
-
     public static synchronized RandomUnitGenerator getInstance() {
         if (null == rug) {
             rug = new RandomUnitGenerator();
         }
+
         if (!rug.initialized && !rug.initializing) {
             rug.initializing = true;
             interrupted = false;
-            dispose = false;
             rug.loader = new Thread(() -> {
                 long start = System.currentTimeMillis();
                 rug.populateUnits();

@@ -1,12 +1,18 @@
-Version:1.0
-Dragonfly (Viper)
-G
+chassis:Dragonfly
+clanname:Viper
+model:G
+mul id:923
 
 Config:Biped Omnimech
 TechBase:Clan
 Era:3071
-Source:TRO 3050 - Jihad
+Source:TRO: 3050
 Rules Level:2
+role:Striker
+
+quirk:imp_target_long
+quirk:low_profile
+
 
 Mass:40
 Engine:320 XL (Clan) Engine(IS)

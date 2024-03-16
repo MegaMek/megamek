@@ -20,6 +20,10 @@ Stingray
 F-92 (Michael)
 </Model>
 
+<mul id:>
+3072
+</mul id:>
+
 <year>
 3068
 </year>
@@ -31,6 +35,10 @@ F-92 (Michael)
 <type>
 IS Level 2
 </type>
+
+<role>
+Dogfighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -97,7 +105,7 @@ Medium Laser
 </Fuselage Equipment>
 
 <source>
-RS Unique Fighters - Jihad
+Record Sheets: Unique Fighters
 </source>
 
 <tonnage>

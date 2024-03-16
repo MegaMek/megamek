@@ -20,6 +20,10 @@ Ceremonial Guard
 Caesar's Royal Guard; Marion Hegemony
 </Model>
 
+<mul id:>
+530
+</mul id:>
+
 <year>
 2950
 </year>
@@ -27,6 +31,10 @@ Caesar's Royal Guard; Marion Hegemony
 <type>
 IS Level 3
 </type>
+
+<role>
+Ambusher
+</role>
 
 <motion_type>
 Leg
@@ -36,7 +44,7 @@ Leg
 </Field Guns Equipment>
 
 <source>
-TRO 3085
+TRO: 3085
 </source>
 
 <squad_size>

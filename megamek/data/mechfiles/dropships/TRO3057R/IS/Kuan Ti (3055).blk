@@ -20,6 +20,10 @@ Kuan Ti
 (3055)
 </Model>
 
+<mul id:>
+4466
+</mul id:>
+
 <year>
 3055
 </year>
@@ -31,6 +35,10 @@ Kuan Ti
 <type>
 IS Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Aerodyne
@@ -162,7 +170,7 @@ ISAMS Ammo:24
 </structural_integrity>
 
 <source>
-TRO 3057R - Clan Invasion
+TRO: 3057 Revised
 </source>
 
 <tonnage>

@@ -20,6 +20,10 @@ Striga
 S-STR-OE Eminus
 </Model>
 
+<mul id:>
+5153
+</mul id:>
+
 <year>
 3072
 </year>
@@ -31,6 +35,10 @@ S-STR-OE Eminus
 <type>
 IS Level 3
 </type>
+
+<role>
+Dogfighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -112,7 +120,7 @@ ISCASE:OMNI
 </Fuselage Equipment>
 
 <source>
-TRO 3075 - Jihad
+TRO: 3075
 </source>
 
 <tonnage>

@@ -1,0 +1,175 @@
+chassis:Gunslinger
+model:GUN-3ERD
+mul id:9354
+Config:Biped
+techbase:Mixed (IS Chassis)
+era:3131
+source:Rec Guide:ilClan #27
+rules level:3
+role:Juggernaut
+
+
+
+quirk:cowl
+
+
+mass:85
+engine:255 XL (Clan) Engine
+structure:IS Standard
+myomer:Standard
+cockpit:Standard Cockpit
+gyro:XL Gyro
+
+heat sinks:10 IS Double
+walk mp:3
+jump mp:2
+
+armor:Ballistic-Reinforced(Inner Sphere)
+LA armor:25
+RA armor:25
+LT armor:25
+RT armor:25
+CT armor:34
+HD armor:9
+LL armor:32
+RL armor:32
+RTL armor:11
+RTR armor:11
+RTC armor:17
+
+Weapons:9
+Small X-Pulse Laser, Right Leg
+Small X-Pulse Laser, Head
+Gauss Rifle, Left Arm
+Gauss Rifle, Right Arm
+ER Medium Laser, Left Torso
+ER Medium Laser, Left Torso
+ER Medium Laser, Right Torso
+ER Medium Laser, Right Torso
+Small X-Pulse Laser, Left Leg
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISCASEII
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISCASEII
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+CLERMediumLaser
+CLERMediumLaser
+IS Gauss Ammo
+IS Gauss Ammo
+IS Ballistic-Reinforced
+IS Ballistic-Reinforced
+IS Ballistic-Reinforced
+IS Ballistic-Reinforced
+IS Ballistic-Reinforced
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+CLERMediumLaser
+CLERMediumLaser
+IS Gauss Ammo
+IS Gauss Ammo
+IS Ballistic-Reinforced
+IS Ballistic-Reinforced
+IS Ballistic-Reinforced
+IS Ballistic-Reinforced
+IS Ballistic-Reinforced
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+
+Head:
+Life Support
+Sensors
+Cockpit
+ISSmallXPulseLaser
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+ISSmallXPulseLaser (R)
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+ISSmallXPulseLaser (R)
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+overview:The Clan invasion produced some strange bedfellows, the most unlikely of which was the Federated Commonwealth-Draconis Combine quasi-alliance. Though that relationship has deteriorated over the years, the Gunslinger stands as a testament to what can happen when two bitter enemies put aside their mutual hatred and work together to achieve a common goal.
+capabilities:To power the Gunslinger, a VOX 255 XL engine is used to give the 'Mech a top speed of 54 km/h. This is augmented by a pair of HildCo Model 12 jump jets that allow the Gunslinger to traverse rough terrain and provide extra mobility at close ranges. The 'Mech is also equipped with a Guardian ECM Suite and a Beagle Active Probe, giving the Gunslinger superior detection capabilities and protection from advanced enemy electronic warfare equipment. Finally, the Gunslinger is protected by fifteen and a half tons of armor, giving the 'Mech excellent armor protection.
+deployment:No information on this variant
+history:On December 5, 3053, the first FedCom Gunslinger rolled off the assembly line at Defiance Industries. Because of issues with the Gauss weapons, it took nearly two years for the first Combine Gunslinger to leave the Quentin plant. Since then, both plants have built as many Gunslingers as they possibly can each year, severely taxing their resources while breaking production records year after year. Beginning with Operation Guerrero in 3057 and the Lyran Alliance's Jade Falcon invasion in 3058, the Gunslinger demonstrated its capabilities, as it has in every other significant military operation in the Inner Sphere since. As a result, the Gunslinger is still in high demand.
+manufacturer:Defiance Industries, Independence Weaponry
+primaryfactory:Hesperus II,Quentin
+systemmanufacturer:CHASSIS:Star League XT
+systemmanufacturer:ENGINE:Various Clan 255 XL
+systemmanufacturer:ARMOR:Kevlar 5000
+systemmanufacturer:JUMPJET:HildCo Model 12
+systemmanufacturer:COMMUNICATIONS:Nashan Quartet ComSy with Guardian ECM
+systemmanufacturer:TARGETING:Nashan Diana Mark II Targeting Computer
+

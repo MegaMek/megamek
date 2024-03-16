@@ -20,6 +20,10 @@ Rapier
 RPR-300X
 </Model>
 
+<mul id:>
+4896
+</mul id:>
+
 <year>
 3070
 </year>
@@ -31,6 +35,10 @@ RPR-300X
 <type>
 IS Level 4
 </type>
+
+<role>
+Dogfighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -109,7 +117,7 @@ IS Ammo Extended LRM-10
 </Fuselage Equipment>
 
 <source>
-XTRO Steiner - Jihad
+XTR: Steiner
 </source>
 
 <tonnage>

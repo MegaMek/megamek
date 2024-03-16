@@ -1,3 +1,7 @@
+
+<mul id:>
+1744
+</mul id:>
 #building block data file
 <BlockVersion>
 1
@@ -38,11 +42,7 @@ IS Machine Gun
 ISAC10
 ISLRM10
 </Front Equipment>
-<Turret Equipment>
-CLLargeChemLaser
-CLStreakLRM10
-CLStreakSRM4
-</Turret Equipment>
+
 <Body Equipment>
 ISLRM10 Ammo
 ISAC10 Ammo
@@ -52,6 +52,10 @@ ISMG Ammo (100)
 <type>
 IS Level 1
 </type>
+
+<role>
+Striker
+</role>
 
 <year>
 2801
@@ -69,3 +73,7 @@ IS Level 1
 <motion_type>
 Hover
 </motion_type>
+
+<source>
+Historical: Operation Klondike
+</source>

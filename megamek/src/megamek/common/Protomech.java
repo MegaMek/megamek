@@ -13,12 +13,18 @@
  */
 package megamek.common;
 
-import java.io.PrintWriter;
-import java.util.*;
-import java.util.stream.Collectors;
-
+import megamek.client.ui.swing.calculationReport.CalculationReport;
+import megamek.common.cost.ProtoMekCostCalculator;
 import megamek.common.enums.AimingMode;
+import megamek.common.equipment.ArmorType;
 import megamek.common.preference.PreferenceManager;
+import org.apache.logging.log4j.LogManager;
+
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Vector;
+import java.util.stream.Collectors;
 
 /**
  * Protomechs. Level 2 Clan equipment.
@@ -38,7 +44,7 @@ public class Protomech extends Entity {
     private int[] pilotDamageTaken = { 0, 0, 0, 0, 0, 0, 0 };
 
     /**
-     * Not every Protomech has a main gun. N.B. Regardless of the value set
+     * Not every ProtoMek has a main gun. N.B. Regardless of the value set
      * here, the variable is initialized to <code>false</code> until after the
      * <code>Entity</code> is initialized, which is too late to allow main gun
      * armor, hence the convoluted reverse logic.
@@ -85,12 +91,20 @@ public class Protomech extends Entity {
     private int grappled_id = Entity.NONE;
 
     private boolean isGrappleAttacker = false;
-    
+
     private boolean grappledThisRound = false;
 
     private boolean edpCharged = true;
 
     private int edpChargeTurns = 0;
+
+    // jump types
+    public static final int JUMP_UNKNOWN = -1;
+    public static final int JUMP_NONE = 0;
+    public static final int JUMP_STANDARD = 1;
+    public static final int JUMP_IMPROVED = 2;
+
+    private int jumpType = JUMP_UNKNOWN;
 
     private boolean isQuad = false;
     private boolean isGlider = false;
@@ -212,70 +226,52 @@ public class Protomech extends Entity {
     }
 
     @Override
-    public int getWalkMP(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
+    public int getWalkMP(MPCalculationSetting mpCalculationSetting) {
         if (isEngineHit()) {
             return 0;
         }
-        int wmp = getOriginalWalkMP();
-        int j;
-        if (null != game) {
-            int weatherMod = game.getPlanetaryConditions()
-                    .getMovementMods(this);
-            if (weatherMod != 0) {
-                wmp = Math.max(wmp + weatherMod, 0);
-            }
+        int mp = getOriginalWalkMP();
+
+        if (!mpCalculationSetting.ignoreWeather && (game != null)) {
+            int weatherMod = game.getPlanetaryConditions().getMovementMods(this);
+            mp = Math.max(mp + weatherMod, 0);
         }
         // Gravity, Protos can't get faster
-        if (gravity) {
-            j = applyGravityEffectsOnMP(wmp);
-        } else {
-            j = wmp;
+        if (!mpCalculationSetting.ignoreGravity) {
+            mp = Math.min(mp, applyGravityEffectsOnMP(mp));
         }
-        if (j < wmp) {
-            wmp = j;
-        }
+
         if (isGlider()) {
             // Torso crits reduce glider mp as jump
-            int torsoCrits = getCritsHit(LOC_TORSO);
-            switch (torsoCrits) {
-                case 0:
-                    break;
-                case 1:
-                    if (wmp > 0) {
-                        wmp--;
-                    }
-                    break;
-                case 2:
-                    wmp /= 2;
-                    break;
+            int torsoCrits = getCritsHit(Protomech.LOC_TORSO);
+            if (torsoCrits == 1) {
+                mp--;
+            } else if (torsoCrits == 2) {
+                mp /= 2;
             }
             // Near misses damage the wings/flight systems, which reduce MP by one per hit.
-            wmp = Math.max(0, wmp - wingHits);
+            mp -= getWingHits();
         } else {
-            int legCrits = getCritsHit(LOC_LEG);
-            switch (legCrits) {
-                case 0:
-                    break;
-                case 1:
-                    wmp--;
-                    break;
-                case 2:
-                    wmp = wmp / 2;
-                    break;
-                case 3:
-                    wmp = 0;
-                    break;
+            int legCrits = getCritsHit(Protomech.LOC_LEG);
+            if (legCrits == 1) {
+                mp--;
+            } else if (legCrits == 2) {
+                mp /= 2;
+            } else if (legCrits == 3) {
+                mp = 0;
             }
         }
-        return wmp;
+
+        return Math.max(mp, 0);
     }
 
     @Override
     public String getRunMPasString() {
         if (hasMyomerBooster()) {
-            return getRunMPwithoutMyomerBooster(true, false, false) + "(" + getRunMP() + ")";
+            return getRunMP(MPCalculationSetting.NO_MYOMERBOOSTER) + "(" + getRunMP() + ")";
+        } else {
+            return Integer.toString(getRunMP());
         }
-        return Integer.toString(getRunMP());
     }
 
     /**
@@ -305,7 +301,7 @@ public class Protomech extends Entity {
     public PilotingRollData addEntityBonuses(PilotingRollData roll) {
         return roll;
     }
-    
+
     /**
      * Returns the number of total critical slots in a location
      */
@@ -327,7 +323,7 @@ public class Protomech extends Entity {
         }
         return 0;
     }
-    
+
     public static final TechAdvancement TA_STANDARD_PROTOMECH = new TechAdvancement(TECH_BASE_CLAN)
             .setClanAdvancement(3055, 3059, 3060).setClanApproximate(true, false, false)
             .setPrototypeFactions(F_CSJ).setProductionFactions(F_CSJ)
@@ -398,18 +394,18 @@ public class Protomech extends Entity {
             }
         }
         setSecondaryFacing(getFacing());
-        
+
         grappledThisRound = false;
-        
+
         super.newRound(roundNumber);
 
     } // End public void newRound()
 
-    /**
-     * This pmech's jumping MP modified for missing jump jets and gravity.
-     */
     @Override
-    public int getJumpMP(boolean gravity) {
+    public int getJumpMP(MPCalculationSetting mpCalculationSetting) {
+        if (mpCalculationSetting.ignoreSubmergedJumpJets && isUnderwater()) {
+            return 0;
+        }
         int jump = jumpMP;
         int torsoCrits = getCritsHit(LOC_TORSO);
         switch (torsoCrits) {
@@ -424,7 +420,7 @@ public class Protomech extends Entity {
                 jump = jump / 2;
                 break;
         }
-        if (hasWorkingMisc(MiscType.F_PARTIAL_WING)) {
+        if (!mpCalculationSetting.ignoreWeather && hasWorkingMisc(MiscType.F_PARTIAL_WING)) {
             int atmo = PlanetaryConditions.ATMO_STANDARD;
             if (game != null) {
                 atmo = game.getPlanetaryConditions().getAtmosphere();
@@ -443,35 +439,8 @@ public class Protomech extends Entity {
                     break;
             }
         }
-        if (!gravity) {
-            return jump;
-        } else {
-            if (applyGravityEffectsOnMP(jump) > jump) {
-                return jump;
-            }
-            return applyGravityEffectsOnMP(jump);
-        }
-    }
 
-    public int getJumpJets() {
-        return jumpMP;
-    }
-
-    /**
-     * Returns this mech's jumping MP, modified for missing & underwater jets.
-     */
-    @Override
-    public int getJumpMPWithTerrain() {
-        if (getPosition() == null) {
-            return getJumpMP();
-        }
-
-        int waterLevel = game.getBoard().getHex(getPosition())
-                .terrainLevel(Terrains.WATER);
-        if ((waterLevel <= 0) || (getElevation() >= 0)) {
-            return getJumpMP();
-        }
-        return 0;
+        return mpCalculationSetting.ignoreGravity ? jump : Math.min(applyGravityEffectsOnMP(jump), jump);
     }
 
     @Override
@@ -538,7 +507,7 @@ public class Protomech extends Entity {
 
     @Override
     public boolean canChangeSecondaryFacing() {
-        return !(getCritsHit(LOC_LEG) > 2) && !isBracing();
+        return !((getCritsHit(LOC_LEG) > 2) || isBracing() || getAlreadyTwisted());
     }
 
     @Override
@@ -577,8 +546,7 @@ public class Protomech extends Entity {
 
     @Override
     public double getArmorWeight() {
-        return RoundWeight.standard(EquipmentType.getProtomechArmorWeightPerPoint(getArmorType(LOC_TORSO))
-                * getTotalOArmor(), this);
+        return RoundWeight.standard(ArmorType.forEntity(this).getWeightPerPoint() * getTotalOArmor(), this);
     }
 
     @Override
@@ -586,33 +554,16 @@ public class Protomech extends Entity {
         return false;
     }
 
-    /**
-     * get this ProtoMech's run MP without factoring in a possible myomer
-     * booster
-     *
-     * @param gravity
-     * @param ignoreheat
-     * @return
-     */
-    public int getRunMPwithoutMyomerBooster(boolean gravity,
-            boolean ignoreheat, boolean ignoremodulararmor) {
-        return super.getRunMP(gravity, ignoreheat, ignoremodulararmor);
-    }
-
     @Override
-    public int getRunMP(boolean gravity, boolean ignoreheat,
-            boolean ignoremodulararmor) {
-        if (hasMyomerBooster()) {
-            return (getWalkMP(gravity, ignoreheat, ignoremodulararmor) * 2);
+    public int getRunMP(MPCalculationSetting mpCalculationSetting) {
+        if (!mpCalculationSetting.ignoreMyomerBooster && hasMyomerBooster()) {
+            return (getWalkMP(mpCalculationSetting) * 2);
+        } else {
+            return super.getRunMP(mpCalculationSetting);
         }
-        return super.getRunMP(gravity, ignoreheat, ignoremodulararmor);
     }
 
-    /**
-     * does this protomech mount a myomer booster?
-     *
-     * @return
-     */
+    /** @return True if this ProtoMek mounts an operable Myomer Booster. See {@link Mounted#isOperable()}. */
     public boolean hasMyomerBooster() {
         for (Mounted mEquip : getMisc()) {
             MiscType mtype = (MiscType) mEquip.getType();
@@ -689,8 +640,7 @@ public class Protomech extends Entity {
 
         roll = Compute.d6(2);
         try {
-            PrintWriter pw = PreferenceManager.getClientPreferences()
-                    .getMekHitLocLog();
+            PrintWriter pw = PreferenceManager.getClientPreferences().getMekHitLocLog();
 
             if (pw != null) {
                 pw.print(table);
@@ -699,8 +649,8 @@ public class Protomech extends Entity {
                 pw.print("\t");
                 pw.println(roll);
             }
-        } catch (Throwable thrown) {
-            thrown.printStackTrace();
+        } catch (Throwable t) {
+            LogManager.getLogger().error("", t);
         }
 
         switch (roll) {
@@ -798,7 +748,7 @@ public class Protomech extends Entity {
 
         return LOC_NONE;
     }
-    
+
     @Override
     public int firstArmorIndex() {
         return LOC_HEAD;
@@ -985,735 +935,6 @@ public class Protomech extends Entity {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see megamek.common.Entity#calculateBattleValue()
-     */
-    @Override
-    public int calculateBattleValue() {
-        if (useManualBV) {
-            return manualBV;
-        }
-        return calculateBattleValue(false, false);
-    }
-
-    /**
-     * Calculates the battle value of this pmech.
-     */
-    @Override
-    public int calculateBattleValue(boolean ignoreC3, boolean ignorePilot) {
-        if (useManualBV) {
-            return manualBV;
-        }
-        
-        bvText = new StringBuffer(
-                "<HTML><BODY><CENTER><b>Battle Value Calculations For ");
-
-        bvText.append(getChassis());
-        bvText.append(" ");
-        bvText.append(getModel());
-        bvText.append("</b></CENTER>");
-        bvText.append(nl);
-
-        bvText.append("<b>Defensive Battle Rating Calculation:</b>");
-        bvText.append(nl);
-        bvText.append(startTable);
-        
-        double dbv = 0; // defensive battle value
-        double obv = 0; // offensive bv
-
-        // total armor points
-        dbv += getTotalArmor() * 2.5;
-        
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append("Total Armor (" + getTotalArmor() +") x 2.5");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(getTotalArmor() * 2.5);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        // total internal structure
-        dbv += getTotalInternal() * 1.5;
-        
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append("Total I.S. Points (" + getTotalInternal() +") x 1.5");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(getTotalInternal() * 1.5);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        // add defensive equipment
-        double dEquipmentBV = 0;
-        double amsBV = 0;
-        double amsAmmoBV = 0;
-        for (Mounted mounted : getAmmo()) {
-            AmmoType atype = (AmmoType) mounted.getType();
-            if (atype.getAmmoType() == AmmoType.T_AMS) {
-                amsAmmoBV += atype.getBV(this);
-            }
-        }
-        for (Mounted mounted : getEquipment()) {
-            EquipmentType etype = mounted.getType();
-
-            // don't count destroyed equipment
-            if (mounted.isDestroyed()) {
-                continue;
-            }
-
-            if (((etype instanceof WeaponType) && etype
-                    .hasFlag(WeaponType.F_AMS))
-                    || ((etype instanceof MiscType) && (etype
-                            .hasFlag(MiscType.F_ECM)
-                            || etype.hasFlag(MiscType.F_VIRAL_JAMMER_DECOY)
-                            || etype.hasFlag(MiscType.F_VIRAL_JAMMER_HOMING)
-                            || etype.hasFlag(MiscType.F_BAP)))) {
-                dEquipmentBV += etype.getBV(this);
-            }
-            if (etype instanceof WeaponType) {
-                WeaponType wtype = (WeaponType) etype;
-                if (wtype.hasFlag(WeaponType.F_AMS)
-                        && (wtype.getAmmoType() == AmmoType.T_AMS)) {
-                    amsBV += etype.getBV(this);
-                }
-            }
-        }
-        if (amsAmmoBV > 0) {
-            dEquipmentBV += Math.min(amsBV, amsAmmoBV);
-        }
-        dbv += dEquipmentBV;
-        
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append("Total Equipment BV");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(dEquipmentBV);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-        
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-
-        bvText.append("-------------");
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(dbv);
-        bvText.append(endColumn);
-
-        // adjust for target movement modifier
-        double tmmRan = Compute.getTargetMovementModifier(getRunMP(false, true, true), false, false, game).getValue();
-        // Gliders get +1 for being airborne.
-        if (isGlider) {
-            tmmRan++;
-        }
-        
-        final int jumpMP = getJumpMP(false);
-        final int tmmJumped = (jumpMP > 0) ? Compute.
-                getTargetMovementModifier(jumpMP, true, false, game).getValue()
-                : 0;
-
-        final int umuMP = getActiveUMUCount();
-        final int tmmUMU = (umuMP > 0) ? Compute.
-                getTargetMovementModifier(umuMP, false, false, game).getValue()
-                : 0;
-
-        double tmmFactor = 1 + (Math.max(tmmRan, Math.max(tmmJumped, tmmUMU))
-                / 10.0) + 0.1;
-        // Round to 4 decimal places, just to cut off some numeric error
-        tmmFactor = Math.round(tmmFactor * 1000) / 1000.0;
-        dbv *= tmmFactor;
-        
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append("Target Movement Modifer For Run");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(tmmRan);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-        
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append("Target Movement Modifer For Jumping");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(tmmJumped);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-        
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append("Target Movement Modifer For UMUs");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(tmmUMU);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-        
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append("Multiply by Defensive Movement Factor of ");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(tmmFactor);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(" x ");
-        bvText.append(tmmFactor);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append("-------------");
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-
-        bvText.append("Defensive Battle Value");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append("= ");
-        bvText.append(dbv);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append(startRow);
-        bvText.append(endRow);
-        
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append("<b>Offensive Battle Rating Calculation:</b>");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-        
-        double weaponBV = 0;
-
-        // figure out base weapon bv
-        boolean hasTargComp = hasTargComp();
-        // and add up BVs for ammo-using weapon types for excessive ammo rule
-        Map<String, Double> weaponsForExcessiveAmmo = new HashMap<>();
-        for (Mounted mounted : getWeaponList()) {
-            WeaponType wtype = (WeaponType) mounted.getType();
-            double dBV = wtype.getBV(this);
-            
-            String name = mounted.getName();
-
-            // don't count destroyed equipment
-            if (mounted.isDestroyed()) {
-                continue;
-            }
-
-            // don't count AMS, it's defensive
-            if (wtype.hasFlag(WeaponType.F_AMS)) {
-                continue;
-            }
-
-            // artemis bumps up the value
-            if (mounted.getLinkedBy() != null) {
-                Mounted mLinker = mounted.getLinkedBy();
-                if ((mLinker.getType() instanceof MiscType)
-                        && mLinker.getType().hasFlag(MiscType.F_ARTEMIS)) {
-                    dBV *= 1.2;
-                    name = name.concat(" with Artemis IV");
-                }
-                if ((mLinker.getType() instanceof MiscType)
-                        && mLinker.getType().hasFlag(MiscType.F_ARTEMIS_PROTO)) {
-                    dBV *= 1.2;
-                    name = name.concat(" with Artemis IV Prototype");
-                }
-                if ((mLinker.getType() instanceof MiscType)
-                        && mLinker.getType().hasFlag(MiscType.F_ARTEMIS_V)) {
-                    dBV *= 1.3;
-                    name = name.concat(" with Artemis V");
-                }
-                if ((mLinker.getType() instanceof MiscType)
-                        && mLinker.getType().hasFlag(MiscType.F_APOLLO)) {
-                    dBV *= 1.15;
-                    name = name.concat(" with Apollo");
-                }
-                if ((mLinker.getType() instanceof MiscType)
-                        && mLinker.getType().hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)) {
-                    dBV *= 1.15;
-                }
-            }
-
-            // and we'll add the tcomp here too
-            if (wtype.hasFlag(WeaponType.F_DIRECT_FIRE) && hasTargComp) {
-                dBV *= 1.25;
-                name = name.concat(" with Targeting Computer");
-            }
-            weaponBV += dBV;
-            
-            bvText.append(startRow);
-            bvText.append(startColumn);
-            bvText.append(name);
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append(dBV);
-            bvText.append(endColumn);
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append(endRow);
-            
-            // add up BV of ammo-using weapons for each type of weapon,
-            // to compare with ammo BV later for excessive ammo BV rule
-            if (!(wtype.hasFlag(WeaponType.F_ENERGY)
-                    || wtype.hasFlag(WeaponType.F_ONESHOT)
-                    || wtype.hasFlag(WeaponType.F_INFANTRY) || (wtype
-                        .getAmmoType() == AmmoType.T_NA))) {
-                String key = wtype.getAmmoType() + ":" + wtype.getRackSize();
-                if (!weaponsForExcessiveAmmo.containsKey(key)) {
-                    weaponsForExcessiveAmmo.put(key, wtype.getBV(this));
-                } else {
-                    weaponsForExcessiveAmmo.put(key, wtype.getBV(this)
-                            + weaponsForExcessiveAmmo.get(key));
-                }
-            }
-        }
-        
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append("-------------");
-        bvText.append(endColumn);
-        bvText.append(endRow);
-        
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append("Total Weapons BV");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(weaponBV);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        // add ammo bv
-        double ammoBV = 0;
-        // extra BV for when we have semiguided LRMs and someone else has TAG on
-        // our team
-        double tagBV = 0;
-        Map<String, Double> ammo = new HashMap<>();
-        ArrayList<String> keys = new ArrayList<>();
-        for (Mounted mounted : getAmmo()) {
-            AmmoType atype = (AmmoType) mounted.getType();
-
-            // don't count depleted ammo
-            if (mounted.getUsableShotsLeft() == 0) {
-                continue;
-            }
-
-            // don't count AMS, it's defensive
-            if (atype.getAmmoType() == AmmoType.T_AMS) {
-                continue;
-            }
-
-            // don't count oneshot ammo, it's considered part of the launcher.
-            if (mounted.getLocation() == Entity.LOC_NONE) {
-                // assumption: ammo without a location is for a oneshot weapon
-                continue;
-            }
-            // semiguided or homing ammo might count double
-            if ((atype.getMunitionType() == AmmoType.M_SEMIGUIDED)
-                    || (atype.getMunitionType() == AmmoType.M_HOMING)) {
-                Player tmpP = getOwner();
-                // Okay, actually check for friendly TAG.
-                if (tmpP.hasTAG()) {
-                    tagBV += atype.getBV(this);
-                } else if ((tmpP.getTeam() != Player.TEAM_NONE) && (game != null)) {
-                    for (Enumeration<Team> e = game.getTeams(); e.hasMoreElements();) {
-                        Team m = e.nextElement();
-                        if (m.getId() == tmpP.getTeam()) {
-                            if (m.hasTAG(game)) {
-                                tagBV += atype.getBV(this);
-                            }
-                            // A player can't be on two teams.
-                            // If we check his team and don't give the penalty,
-                            // that's it.
-                            break;
-                        }
-                    }
-                }
-            }
-            String key = atype.getAmmoType() + ":" + atype.getRackSize();
-            if (!keys.contains(key)) {
-                keys.add(key);
-            }
-            if (!ammo.containsKey(key)) {
-                ammo.put(key, atype.getProtoBV(mounted.getUsableShotsLeft()));
-            } else {
-                ammo.put(key, atype.getProtoBV(mounted.getUsableShotsLeft())
-                        + ammo.get(key));
-            }
-        }
-        // excessive ammo rule:
-        // only count BV for ammo for a weapontype until the BV of all weapons
-        // of that
-        // type on the mech is reached
-        for (String key : keys) {
-            if (weaponsForExcessiveAmmo.containsKey(key)
-                    && (ammo.get(key) > weaponsForExcessiveAmmo.get(key))) {
-                ammoBV += weaponsForExcessiveAmmo.get(key);
-            } else {
-                ammoBV += ammo.get(key);
-            }
-        }
-        weaponBV += ammoBV;
-        
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append("Total Ammo BV");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(String.format("%.1f", ammoBV));
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        // add offensive misc. equipment BV (everything except AMS, A-Pod, ECM -
-        // BMR p152)
-        double oEquipmentBV = 0;
-        boolean hasMiscEq = false;
-        for (Mounted mounted : getMisc()) {
-            MiscType mtype = (MiscType) mounted.getType();
-
-            // don't count destroyed equipment
-            if (mounted.isDestroyed()) {
-                continue;
-            }
-
-            if (mtype.hasFlag(MiscType.F_ECM)
-                    || mtype.hasFlag(MiscType.F_AP_POD)
-                    || mtype.hasFlag(MiscType.F_VIRAL_JAMMER_DECOY)
-                    || mtype.hasFlag(MiscType.F_VIRAL_JAMMER_HOMING)
-                    || mtype.hasFlag(MiscType.F_BAP)
-                    || mtype.hasFlag(MiscType.F_TARGCOMP)) {
-                // weapons
-                continue;
-            }
-            oEquipmentBV += mtype.getBV(this);
-            
-            bvText.append(startRow);
-            bvText.append(startColumn);
-            bvText.append(mounted.getName());
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append(mtype.getBV(this));
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append(endColumn);
-            bvText.append(endRow);
-            hasMiscEq = true;
-        }
-
-        weaponBV += oEquipmentBV;
-        
-        if (hasMiscEq) {
-            bvText.append(startRow);
-            bvText.append(startColumn);
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append("-------------");
-            bvText.append(endColumn);
-            bvText.append(endRow);
-        }
-        
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append("Total Equipment BV");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(oEquipmentBV);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        // adjust further for speed factor
-        int mp = getRunMPwithoutMyomerBooster(false, true, true)
-                + (int) Math.round(Math.max(jumpMP, umuMP) / 2.0);
-        // Unlike MASC and superchargers, which use walk x 2 for speed factor, myomer booster adds
-        // one to run + 1/2 jump MP
-        if (hasMyomerBooster()) {
-            mp++;
-        }
-        double speedFactor = Math.round(Math.pow(1 + ((mp - 5) / 10.0), 1.2) * 100.0) / 100.0;
-
-        obv = weaponBV * speedFactor;
-        
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append("-------------");
-        bvText.append(endColumn);
-        bvText.append(endRow);
-        
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(weaponBV);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-        
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append("Multiply by Speed Factor of ");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(speedFactor);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(" x ");
-        bvText.append(speedFactor);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append("-------------");
-        bvText.append(endColumn);
-        bvText.append(endRow);
-        
-        bvText.append("Offensive Battle Value");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append("= ");
-        bvText.append(obv);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append(startRow);
-        bvText.append(endRow);
-        
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append("<b>Extra Battle Rating Calculation:</b>");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-        
-        // we get extra bv from some stuff
-        double xbv = 0.0;
-        // extra BV for semi-guided lrm when TAG in our team
-        xbv += tagBV;
-        
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append("Tag BV");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(tagBV);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-        
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append("-------------");
-        bvText.append(endColumn);
-        bvText.append(endRow);
-        
-        bvText.append("Extra Battle Value");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append("= ");
-        bvText.append(xbv);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append(startRow);
-        bvText.append(endRow);
-        
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append("<b>Final BV Calculation:</b>");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-        
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append("Deffensive BV");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(dbv);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-        
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append("Offensive BV");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(obv);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-        
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append("Extra BV");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(xbv);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-        
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append("-------------");
-        bvText.append(endColumn);
-        bvText.append(endRow);
-        
-        int finalBV;
-        if (useGeometricMeanBV()) {
-            finalBV = (int) Math.round((2 * Math.sqrt(obv * dbv)) + xbv);
-            if (finalBV == 0) {
-                finalBV = (int) Math.round(dbv + obv);
-            }
-            
-            bvText.append("Geometric Mean (2Sqrt(O*D) + X");
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append("= ");
-            bvText.append(finalBV);
-        } else {
-            finalBV = (int) Math.round(dbv + obv + xbv);
-            bvText.append("Sum");
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append("= ");
-            bvText.append(finalBV);
-        }
-        
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        // and then factor in pilot
-        double pilotFactor = 1;
-        if (!ignorePilot) {
-            pilotFactor = getCrew().getBVSkillMultiplier(game);
-        }
-        
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append("Multiply by Pilot Factor of ");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(pilotFactor);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(" x ");
-        bvText.append(pilotFactor);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-        
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append("-------------");
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        int retVal = (int) Math.round((finalBV) * pilotFactor);
-        
-        bvText.append("<b>Final Battle Value</b>");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append("= ");
-        bvText.append(retVal);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-        
-        bvText.append(endTable);
-        return retVal;
-    }
-
     @Override
     public Vector<Report> victoryReport() {
         Vector<Report> vDesc = new Vector<>();
@@ -1849,80 +1070,14 @@ public class Protomech extends Entity {
         return false;
     }
 
-    /**
-     * @return The cost in C-Bills of the ProtoMech in question.
-     */
     @Override
-    public double getCost(boolean ignoreAmmo) {
-        double retVal = 0;
-
-        // Add the cockpit, a constant cost.
-        if (weight >= 10) {
-            retVal += 800000;
-        } else {
-            retVal += 500000;
-        }
-
-        // Add life support, a constant cost.
-        retVal += 75000;
-
-        // Sensor cost is based on tonnage.
-        retVal += 2000 * weight;
-
-        // Musculature cost is based on tonnage.
-        retVal += 2000 * weight;
-
-        // Internal Structure cost is based on tonnage.
-        if (isGlider) {
-            retVal += 600 * weight;
-        } else if (isQuad) {
-            retVal += 500 * weight;
-        } else {
-            retVal += 400 * weight;
-        }
-
-        // Arm actuators are based on tonnage.
-        // Their cost is listed separately?
-        retVal += 2 * 180 * weight;
-
-        // Leg actuators are based on tonnage.
-        retVal += 540 * weight;
-
-        // Engine cost is based on tonnage and rating.
-        if (hasEngine()) {
-            retVal += (5000 * weight * getEngine().getRating()) / 75;
-        }
-
-        // Jump jet cost is based on tonnage and jump MP.
-        retVal += weight * getJumpMP() * getJumpMP() * 200;
-
-        // Heat sinks is constant per sink.
-        // per the construction rules, we need enough sinks to sink all energy
-        // weapon heat, so we just calculate the cost that way.
-        int sinks = 0;
-        for (Mounted mount : getWeaponList()) {
-            if (mount.getType().hasFlag(WeaponType.F_ENERGY)) {
-                WeaponType wtype = (WeaponType) mount.getType();
-                sinks += wtype.getHeat();
-            }
-        }
-        retVal += 2000 * sinks;
-
-        // Armor is linear on the armor value of the Protomech
-        retVal += getTotalArmor() * EquipmentType.getProtomechArmorCostPerPoint(getArmorType(firstArmorIndex()));
-
-        // Add in equipment cost.
-        retVal += getWeaponsAndEquipmentCost(ignoreAmmo);
-
-        // Finally, apply the Final ProtoMech Cost Multiplier
-        retVal *= getPriceMultiplier();
-
-        return retVal;
+    public double getCost(CalculationReport calcReport, boolean ignoreAmmo) {
+        return ProtoMekCostCalculator.calculateCost(this, calcReport, ignoreAmmo);
     }
 
     @Override
     public double getPriceMultiplier() {
-        return 1 + (weight / 100.0); // weight multiplier
+        return 1 + (weight / 100.0);
     }
 
     @Override
@@ -2015,12 +1170,12 @@ public class Protomech extends Entity {
     public int getGrappled() {
         return grappled_id;
     }
-    
+
     @Override
     public boolean isGrappledThisRound() {
         return grappledThisRound;
     }
-    
+
     @Override
     public void setGrappledThisRound(boolean grappled) {
         grappledThisRound = grappled;
@@ -2085,70 +1240,17 @@ public class Protomech extends Entity {
     }
 
     @Override
-    public int getRunMPwithoutMASC(boolean gravity, boolean ignoreheat,
-            boolean ignoremodulararmor) {
-        return getRunMP(gravity, ignoreheat, ignoremodulararmor);
-    }
-
-    @Override
-    public void setAlphaStrikeMovement(Map<String,Integer> moves) {
-        double walk = getWalkMP();
-        if (hasMyomerBooster()) {
-            walk *= 1.25;
-        }
-        int baseWalk = (int) Math.round(walk * 2);
-        int baseJump = getJumpMP() * 2;
-        if (baseJump > 0) {
-            if (baseJump != baseWalk) {
-                moves.put("", baseWalk);
-            }
-            moves.put("j", baseJump);
-        } else {
-            moves.put(getMovementModeAsBattleForceString(), baseWalk);
-        }
-    }
-    
-    @Override
-    /*
-     * Each ProtoMech has 1 Structure point
-     */
-    public int getBattleForceStructurePoints() {
-        return 1;
-    }
-
-    @Override
-    public void addBattleForceSpecialAbilities(Map<BattleForceSPA,Integer> specialAbilities) {
-        super.addBattleForceSpecialAbilities(specialAbilities);
-        for (Mounted m : getEquipment()) {
-            if (!(m.getType() instanceof MiscType)) {
-                continue;
-            }
-            if (m.getType().hasFlag(MiscType.F_MAGNETIC_CLAMP)) {
-                if (getWeight() < 10) {
-                    specialAbilities.put(BattleForceSPA.MCS, null);
-                } else {
-                    specialAbilities.put(BattleForceSPA.UCS, null);                    
-                }
-            }
-        }
-        specialAbilities.put(BattleForceSPA.SOA, null);
-        if (getMovementMode().equals(EntityMovementMode.WIGE)) {
-            specialAbilities.put(BattleForceSPA.GLD, null);
-        }
-    }
-    
-    @Override
     public int getEngineHits() {
         if (this.isEngineHit()) {
             return 1;
         }
         return 0;
     }
-    
+
     public int getWingHits() {
         return wingHits;
     }
-    
+
     public void setWingHits(int hits) {
         wingHits = hits;
     }
@@ -2179,29 +1281,29 @@ public class Protomech extends Entity {
     public void setIsQuad(boolean isQuad) {
         this.isQuad = isQuad;
     }
-    
+
     public boolean isGlider() {
         return isGlider;
     }
-    
+
     public void setIsGlider(boolean isGlider) {
         this.isGlider = isGlider;
     }
-    
+
     /**
      * WoB protomech interface allows it to be piloted by a quadruple amputee with a VDNI implant.
      * No effect on game play.
-     * 
+     *
      * @return Whether the protomech is equipped with an Inner Sphere Protomech Interface.
      */
     public boolean hasInterfaceCockpit() {
         return interfaceCockpit;
     }
-    
+
     /**
      * Sets whether the protomech has an Inner Sphere Protomech Interface. This will also determine
      * whether it is a mixed tech unit.
-     * 
+     *
      * @param interfaceCockpit Whether the protomech has an IS interface
      */
     public void setInterfaceCockpit(boolean interfaceCockpit) {
@@ -2212,10 +1314,8 @@ public class Protomech extends Entity {
     @Override
     public boolean isCrippled() {
         if ((getCrew() != null) && (getCrew().getHits() >= 4)) {
-            if (PreferenceManager.getClientPreferences().debugOutputOn())
-            {
-                System.out.println(getDisplayName()
-                        + " CRIPPLED: Pilot has taken 4+ damage.");
+            if (PreferenceManager.getClientPreferences().debugOutputOn()) {
+                LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: Pilot has taken 4+ damage.");
             }
             return true;
         }
@@ -2225,14 +1325,13 @@ public class Protomech extends Entity {
                 return false;
             }
         }
-        if (PreferenceManager.getClientPreferences().debugOutputOn())
-        {
-            System.out.println(getDisplayName()
-                    + " CRIPPLED: has no more viable weapons.");
+
+        if (PreferenceManager.getClientPreferences().debugOutputOn()) {
+            LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: has no more viable weapons.");
         }
         return true;
     }
-    
+
     @Override
     public boolean isCrippled(boolean checkCrew) {
         return isCrippled();
@@ -2323,29 +1422,29 @@ public class Protomech extends Entity {
     public long getEntityType() {
         return Entity.ETYPE_PROTOMECH;
     }
-    
+
     @Override
-    public PilotingRollData checkLandingInHeavyWoods(
-            EntityMovementType overallMoveType, Hex curHex) {
+    public PilotingRollData checkLandingInHeavyWoods(EntityMovementType overallMoveType,
+                                                     Hex curHex) {
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
-        roll.addModifier(TargetRoll.CHECK_FALSE,
-                         "Protomechs cannot fall");
+        roll.addModifier(TargetRoll.CHECK_FALSE, "ProtoMeks cannot fall");
         return roll;
     }
-    
+
     /**
-     * Based on the protomech's current damage status, return valid brace locations.
+     * Based on the ProtoMek's current damage status, return valid brace locations.
      */
+    @Override
     public List<Integer> getValidBraceLocations() {
         List<Integer> validLocations = new ArrayList<>();
-        
+
         if (!isLocationBad(Protomech.LOC_MAINGUN)) {
             validLocations.add(Protomech.LOC_MAINGUN);
         }
-        
+
         return validLocations;
     }
-    
+
     /**
      * Protomechs can brace if not prone, crew conscious and have a main gun
      */
@@ -2355,9 +1454,35 @@ public class Protomech extends Entity {
                 getCrew().isActive() &&
                 !isLocationBad(Protomech.LOC_MAINGUN);
     }
-    
+
     @Override
     public int getBraceMPCost() {
         return 0;
     }
+
+    @Override
+    public boolean isProtoMek() {
+        return true;
+    }
+
+
+    /**
+     * Returns the type of jump jet system the Protomech has.
+     */
+    @Override
+    public int getJumpType() {
+        jumpType = JUMP_NONE;
+        for (Mounted m : miscList) {
+            if (m.getType().hasFlag(MiscType.F_JUMP_JET)) {
+                if (m.getType().hasSubType(MiscType.S_IMPROVED)) {
+                    jumpType = JUMP_IMPROVED;
+                } else {
+                    jumpType = JUMP_STANDARD;
+                }
+            }
+
+        }
+        return jumpType;
+    }
+
 }

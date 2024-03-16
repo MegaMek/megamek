@@ -20,6 +20,10 @@ Cheetah
 OF-17A-R
 </Model>
 
+<mul id:>
+3946
+</mul id:>
+
 <year>
 3080
 </year>
@@ -31,6 +35,10 @@ OF-17A-R
 <type>
 IS Level 4
 </type>
+
+<role>
+Interceptor
+</role>
 
 <motion_type>
 Aerodyne
@@ -104,9 +112,14 @@ Small Laser
 </Fuselage Equipment>
 
 <source>
-TRO Prototypes - Jihad
+TRO: Prototypes
 </source>
 
 <tonnage>
 25.0
 </tonnage>
+
+<weaponQuirks>
+mod_weapons:AFT:1:Small Laser
+mod_weapons:AFT:2:Small Laser
+</weaponQuirks>

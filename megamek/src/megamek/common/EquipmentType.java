@@ -1,34 +1,46 @@
 /*
  * MegaMek - Copyright (C) 2002-2004 Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2018-2024 - The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it under the terms of the
- * GNU General Public License as published by the Free Software* Foundation; either version 2 of the
- * License, or (at your option) any later version.
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later
+ * version.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
- * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  */
 package megamek.common;
-
-import megamek.common.annotations.Nullable;
-import megamek.common.options.GameOptions;
-import megamek.common.weapons.autocannons.HVACWeapon;
-import megamek.common.weapons.defensivepods.BPodWeapon;
-import megamek.common.weapons.defensivepods.MPodWeapon;
-import megamek.common.weapons.ppc.PPCWeapon;
-import megamek.server.Server;
-import org.apache.logging.log4j.LogManager;
 
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.math.BigInteger;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Vector;
 import java.util.stream.Collectors;
 
+import org.apache.logging.log4j.LogManager;
+
+import megamek.common.annotations.Nullable;
+import megamek.common.equipment.ArmorType;
+import megamek.common.weapons.autocannons.HVACWeapon;
+import megamek.common.weapons.defensivepods.BPodWeapon;
+import megamek.common.weapons.defensivepods.MPodWeapon;
+import megamek.common.weapons.ppc.PPCWeapon;
+
 /**
- * Represents any type of equipment mounted on a 'Mek, excluding systems and actuators.
+ * Represents any type of equipment mounted on a 'Mek, excluding systems and
+ * actuators.
  *
  * @author Ben
  * @since April 1, 2002, 1:35 PM
@@ -38,8 +50,9 @@ public class EquipmentType implements ITechnology {
     public static final int CRITICALS_VARIABLE = Integer.MIN_VALUE;
     public static final int BV_VARIABLE = Integer.MIN_VALUE;
     public static final int COST_VARIABLE = Integer.MIN_VALUE;
-    /** Default value for support vehicle slot cost. Those that differ from mechs are assigned
-     * a value >= 0
+    /**
+     * Default value for support vehicle slot cost. Those that differ from `Mechs
+     * are assigned a value >= 0
      */
     private static final int MECH_SLOT_COST = -1;
 
@@ -55,9 +68,9 @@ public class EquipmentType implements ITechnology {
     public static final int T_ARMOR_STEALTH = 8;
     public static final int T_ARMOR_FERRO_FIBROUS_PROTO = 9;
     public static final int T_ARMOR_COMMERCIAL = 10;
-    public static final int T_ARMOR_LC_FERRO_CARBIDE = 11;  //Large Craft Only
-    public static final int T_ARMOR_LC_LAMELLOR_FERRO_CARBIDE = 12; //Large Craft Only
-    public static final int T_ARMOR_LC_FERRO_IMP = 13; //Large Craft Only
+    public static final int T_ARMOR_LC_FERRO_CARBIDE = 11; // Large Craft Only
+    public static final int T_ARMOR_LC_LAMELLOR_FERRO_CARBIDE = 12; // Large Craft Only
+    public static final int T_ARMOR_LC_FERRO_IMP = 13; // Large Craft Only
     public static final int T_ARMOR_INDUSTRIAL = 14;
     public static final int T_ARMOR_HEAVY_INDUSTRIAL = 15;
     public static final int T_ARMOR_FERRO_LAMELLOR = 16;
@@ -86,6 +99,16 @@ public class EquipmentType implements ITechnology {
     public static final int T_ARMOR_PRIMITIVE_FIGHTER = 39;
     public static final int T_ARMOR_PRIMITIVE_AERO = 40;
     public static final int T_ARMOR_AEROSPACE = 41;
+    public static final int T_ARMOR_STANDARD_PROTOMEK = 42;
+    public static final int T_ARMOR_SV_BAR_2 = 43;
+    public static final int T_ARMOR_SV_BAR_3 = 44;
+    public static final int T_ARMOR_SV_BAR_4 = 45;
+    public static final int T_ARMOR_SV_BAR_5 = 46;
+    public static final int T_ARMOR_SV_BAR_6 = 47;
+    public static final int T_ARMOR_SV_BAR_7 = 48;
+    public static final int T_ARMOR_SV_BAR_8 = 49;
+    public static final int T_ARMOR_SV_BAR_9 = 50;
+    public static final int T_ARMOR_SV_BAR_10 = 51;
 
     public static final int T_STRUCTURE_UNKNOWN = -1;
     public static final int T_STRUCTURE_STANDARD = 0;
@@ -96,50 +119,26 @@ public class EquipmentType implements ITechnology {
     public static final int T_STRUCTURE_COMPOSITE = 5;
     public static final int T_STRUCTURE_ENDO_COMPOSITE = 6;
 
-    public static final String[] armorNames = { "Standard", "Ferro-Fibrous",
-            "Reactive", "Reflective", "Hardened", "Light Ferro-Fibrous",
-            "Heavy Ferro-Fibrous", "Patchwork", "Stealth",
-            "Ferro-Fibrous Prototype", "Commercial", "Ferro-Carbide",
-            "Lamellor Ferro-Carbide", "Improved Ferro-Aluminum",
-            /* extra space at the end on purpose */ "Industrial ",
-            "Heavy Industrial", "Ferro-Lamellor", "Primitive",
-            "Electric Discharge ProtoMech", "Ferro-Aluminum",
-            "Heavy Ferro-Aluminum", "Light Ferro-Aluminum",
-            "Vehicular Stealth", "Anti-Penetrative Ablation",
-            "Heat-Dissipating", "Impact-Resistant", "Ballistic-Reinforced",
-            "Prototype Ferro-Aluminum", "BA Standard (Basic)",
-            "BA Standard (Prototype)", "BA Advanced", "BA Stealth (Basic)",
-            "BA Stealth (Standard)", "BA Stealth (Improved)", "BA Stealth (Prototype)",
-            "BA Fire Resistant", "BA Mimetic", "BA Laser Reflective (Reflec/Glazed)", "BA Reactive (Blazer)",
-            "Primitive Fighter", "Primitive Aerospace", "Standard Aerospace"};
-
-
-    public static final String[] structureNames = { "Standard", "Industrial",
-            "Endo Steel", "Endo Steel Prototype", "Reinforced", "Composite",
-            "Endo-Composite" };
+    public static final String[] structureNames = {
+            "Standard",
+            "Industrial",
+            "Endo Steel",
+            "Endo Steel Prototype",
+            "Reinforced",
+            "Composite",
+            "Endo-Composite"
+    };
 
     // Assume for now that prototype is not more expensive
-    public static final double[] structureCosts = { 400, 300, 1600, 4800, 6400,
-            1600, 3200 };
-
-    // Assume for now that prototype is not more expensive
-    public static final double[] armorCosts = {
-            10000, 20000, 30000, 30000, 15000, 15000, 25000, /* patchwork */0, 50000, 60000,
-            3000, 75000, 100000, 50000, 5000, 10000, 35000, 5000, 10000, 20000,
-            25000, 15000, 50000, 15000, 25000, 20000, 25000, 60000, 10000, 10000,
-            12500, 12000, 15000, 20000, 50000, 10000, 15000, 37000, 37000, 5000,
-            5000, 10000};
-
-    public static final double[] armorPointMultipliers = {
-            1, 1.12, 1, 1, 0.5, 1.06, 1.24, 1, 1, 1.12,
-            1.5, 1.52, 1.72, 1.32, 0.67, 1.0, 0.875, 0.67, 1, 1.12,
-            1.24, 1.06, 1, 0.75, 0.625, 0.875, 0.75, 1.12, 0.8, 1.6,
-            0.64, 0.48, 0.96, 0.96, 1.6, 0.48, 0.8, 0.88, 0.96, 0.67,
-            0.66, 1 };
-
-    public static final double POINT_MULTIPLIER_UNKNOWN = 1;
-    public static final double POINT_MULTIPLIER_CLAN_FF = 1.2;
-    public static final double POINT_ADDITION_CLAN_FF = 0.08;
+    public static final double[] structureCosts = {
+            400,
+            300,
+            1600,
+            4800,
+            6400,
+            1600,
+            3200
+    };
 
     protected String name = null;
 
@@ -148,10 +147,12 @@ public class EquipmentType implements ITechnology {
 
     protected String internalName = null;
 
-    /** Sorting lists of equipment by this string groups and sorts equipment better. */
+    /**
+     * Sorting lists of equipment by this string groups and sorts equipment better.
+     */
     protected String sortingName;
 
-    private Vector<String> namesVector = new Vector<>();
+    private Vector<String> namesVector = new Vector<String>();
 
     protected double tonnage = 0;
     protected int criticals = 0;
@@ -161,22 +162,20 @@ public class EquipmentType implements ITechnology {
     protected boolean explosive = false;
     protected boolean hittable = true; // if false, reroll critical hits
 
-    /** can the crits for this be spread over locations? */
+    /** can the criticals for this be spread over locations? */
     protected boolean spreadable = false;
     protected int toHitModifier = 0;
 
-//    protected Map<Integer,Integer> techLevel = new HashMap<>();
-    
     protected TechAdvancement techAdvancement = new TechAdvancement();
 
-    protected BigInteger flags = BigInteger.valueOf(0);
+    protected BigInteger flags = BigInteger.ZERO;
 
     protected long subType = 0;
 
     protected double bv = 0; // battle value point system
     protected double cost = 0; // The C-Bill cost of the item.
 
-    // For equipment that cannot be pod-mounted on an omni unit
+    // For equipment that cannot be pod-mounted on an Omni unit
     protected boolean omniFixedOnly = false;
 
     /**
@@ -193,15 +192,15 @@ public class EquipmentType implements ITechnology {
      * instantly In that case, the specific end of turn mode names can be added
      * here
      */
-    public Vector<String> endTurnModes = new Vector<>();
+    public Vector<String> endTurnModes = new Vector<String>();
 
     // static list of eq
     protected static Vector<EquipmentType> allTypes;
     protected static Hashtable<String, EquipmentType> lookupHash;
-    
+
     /**
-    * Keeps track of page numbers for rules references.
-    */
+     * Keeps track of page numbers for rules references.
+     */
     public String rulesRefs = "";
 
     /** Creates new EquipmentType */
@@ -216,7 +215,7 @@ public class EquipmentType implements ITechnology {
     public long getSubType() {
         return subType;
     }
-    
+
     public void setSubType(int newFlags) {
         subType = newFlags;
     }
@@ -252,17 +251,19 @@ public class EquipmentType implements ITechnology {
     public String getInternalName() {
         return internalName;
     }
-    
+
     public String getRulesRefs() {
         return rulesRefs;
     }
 
     /**
-     * @deprecated The old tech progression system has been replaced by the TechAdvancement class.
+     * @deprecated The old tech progression system has been replaced by the
+     *             TechAdvancement class.
      */
-    @Deprecated
+    // @Deprecated This is using the new TechAdvancement class under the hood.
+    // Should it really be deprecated now?
     public Map<Integer, Integer> getTechLevels() {
-        Map<Integer,Integer> techLevel = new HashMap<>();
+        Map<Integer, Integer> techLevel = new HashMap<Integer, Integer>();
         if (isUnofficial()) {
             if (techAdvancement.getTechBase() == TECH_BASE_CLAN) {
                 techLevel.put(techAdvancement.getIntroductionDate(true), TechConstants.T_CLAN_UNOFFICIAL);
@@ -271,18 +272,23 @@ public class EquipmentType implements ITechnology {
             }
             return techLevel;
         }
+
         if (techAdvancement.getPrototypeDate(true) > 0) {
             techLevel.put(techAdvancement.getPrototypeDate(true), TechConstants.T_CLAN_EXPERIMENTAL);
         }
+
         if (techAdvancement.getPrototypeDate(false) > 0) {
             techLevel.put(techAdvancement.getPrototypeDate(false), TechConstants.T_IS_EXPERIMENTAL);
         }
+
         if (techAdvancement.getProductionDate(true) > 0) {
             techLevel.put(techAdvancement.getProductionDate(true), TechConstants.T_CLAN_ADVANCED);
         }
+
         if (techAdvancement.getProductionDate(false) > 0) {
             techLevel.put(techAdvancement.getProductionDate(false), TechConstants.T_IS_ADVANCED);
         }
+
         if (techAdvancement.getTechBase() == TECH_BASE_ALL
                 && techAdvancement.getCommonDate() > 0) {
             techLevel.put(techAdvancement.getCommonDate(true), TechConstants.T_TW_ALL);
@@ -292,6 +298,7 @@ public class EquipmentType implements ITechnology {
             techLevel.put(techAdvancement.getCommonDate(false),
                     isIntroLevel() ? TechConstants.T_INTRO_BOXSET : TechConstants.T_IS_TW_NON_BOX);
         }
+
         return techLevel;
     }
 
@@ -299,12 +306,12 @@ public class EquipmentType implements ITechnology {
     public int getTechLevel(int date) {
         return techAdvancement.getTechLevel(date);
     }
-    
+
     @Override
     public int getTechLevel(int date, boolean clan) {
         return techAdvancement.getTechLevel(date, clan);
     }
-    
+
     @Override
     public SimpleTechLevel getStaticTechLevel() {
         if (null != techAdvancement.getStaticTechLevel()) {
@@ -315,54 +322,58 @@ public class EquipmentType implements ITechnology {
     }
 
     /**
-     * Calculates the weight of the equipment. If {@code entity} is {@code null}, equipment without
-     * a fixed weight will return {@link EquipmentType#TONNAGE_VARIABLE}.
+     * Calculates the weight of the equipment. If {@code entity} is {@code null},
+     * equipment without a fixed weight will return
+     * {@link EquipmentType#TONNAGE_VARIABLE}.
      *
      * @param entity The unit the equipment is mounted on
-     * @return       The weight of the equipment in tons
+     * @return The weight of the equipment in tons
      */
     public double getTonnage(@Nullable Entity entity) {
         return getTonnage(entity, Entity.LOC_NONE, 1.0);
     }
 
     /**
-     * Calculates the weight of the equipment. If {@code entity} is {@code null}, equipment without
-     * a fixed weight will return {@link EquipmentType#TONNAGE_VARIABLE}.
+     * Calculates the weight of the equipment. If {@code entity} is {@code null},
+     * equipment without a fixed weight will return
+     * {@link EquipmentType#TONNAGE_VARIABLE}.
      *
      * @param entity The unit the equipment is mounted on
      * @param size   The size of variable-sized equipment
-     * @return       The weight of the equipment in tons
+     * @return The weight of the equipment in tons
      */
     public double getTonnage(@Nullable Entity entity, double size) {
         return getTonnage(entity, Entity.LOC_NONE, size);
     }
 
     /**
-     * Calculates the weight of the equipment. If {@code entity} is {@code null}, equipment without
-     * a fixed weight will return {@link EquipmentType#TONNAGE_VARIABLE}.
+     * Calculates the weight of the equipment. If {@code entity} is {@code null},
+     * equipment without a fixed weight will return
+     * {@link EquipmentType#TONNAGE_VARIABLE}.
      *
      * @param entity   The unit the equipment is mounted on
      * @param location The mount location
      * @param size     The size (for variable-sized equipment)
-     * @return         The weight of the equipment in tons
+     * @return The weight of the equipment in tons
      */
     public double getTonnage(Entity entity, int location, double size) {
         return tonnage;
     }
 
     /**
-     * Calculates the weight of the equipment, with the option to override the standard rounding based on unit
-     * type. This allows for the optional fractional accounting construction rules.
-     * If {@code entity} is {@code null}, equipment without a fixed weight will
-     * return {@link EquipmentType#TONNAGE_VARIABLE}.
+     * Calculates the weight of the equipment, with the option to override the
+     * standard rounding based on unit type. This allows for the optional fractional
+     * accounting construction rules. If {@code entity} is {@code null}, equipment
+     * without a fixed weight will return {@link EquipmentType#TONNAGE_VARIABLE}.
      *
      * @param entity        The unit the equipment is mounted on
      * @param location      The mount location
      * @param size          The size (for variable-sized equipment)
-     * @param defaultMethod The rounding method to use for any variable weight equipment. Any equipment
-     *                      that is normally rounded to either the half ton or kg based on unit type
-     *                      will have this method applied instead.
-     * @return              The weight of the equipment in tons
+     * @param defaultMethod The rounding method to use for any variable weight
+     *                      equipment. Any equipment that is normally rounded to
+     *                      either the half ton or kg based on unit type will have
+     *                      this method applied instead.
+     * @return The weight of the equipment in tons
      */
     public double getTonnage(Entity entity, int location, double size, RoundWeight defaultMethod) {
         // Default implementation does not deal with variable-weight equipment.
@@ -400,14 +411,13 @@ public class EquipmentType implements ITechnology {
         if (null == mounted) {
             return explosive;
         }
-        
+
         // Special case: discharged M- and B-pods shouldn't explode.
         if (((this instanceof MPodWeapon) || (this instanceof BPodWeapon))
                 && ((mounted.getLinked() == null) || (mounted.getLinked()
                         .getUsableShotsLeft() == 0))) {
             return false;
         }
-
 
         // special case: RISC laser pulse module are only explosive when the
         // laser they're linked to is working
@@ -436,7 +446,7 @@ public class EquipmentType implements ITechnology {
             }
             Mounted ammo = mounted.getLinked();
             if ((ammo == null) || !(ammo.getType() instanceof AmmoType)
-                    || (((AmmoType) ammo.getType()).getMunitionType() != AmmoType.M_INCENDIARY_AC)) {
+                    || (!((AmmoType) ammo.getType()).getMunitionType().contains(AmmoType.Munitions.M_INCENDIARY_AC))) {
                 return false;
             }
         }
@@ -461,7 +471,7 @@ public class EquipmentType implements ITechnology {
 
         // special case. PPC with Capacitor only explodes when charged
         if (ignoreCharge) {
-            // for BV purposes, we need to ignore the chargedness and check only
+            // for BV purposes, we need to ignore the charged-ness and check only
             // if there's a capacitor
             if ((mounted.getType() instanceof PPCWeapon)
                     && (mounted.getLinkedBy() != null)) {
@@ -507,7 +517,7 @@ public class EquipmentType implements ITechnology {
     }
 
     public boolean hasFlag(BigInteger flag) {
-        return !(flags.and(flag)).equals(BigInteger.valueOf(0));
+        return !(flags.and(flag)).equals(BigInteger.ZERO);
     }
 
     public double getBV(Entity entity) {
@@ -515,8 +525,8 @@ public class EquipmentType implements ITechnology {
     }
 
     /**
-     * @return - whether the equipment must be considered part of the base chassis when
-     *           mounted on an omni unit
+     * @return - whether the equipment must be considered part of the base chassis
+     *         when mounted on an omni unit
      */
     public boolean isOmniFixedOnly() {
         return omniFixedOnly;
@@ -529,24 +539,26 @@ public class EquipmentType implements ITechnology {
     public boolean hasModes() {
         return (modes != null) && (!modes.isEmpty());
     }
-    
+
     /**
      * Simple way to check if a piece of equipment has a specific usage/firing mode
+     *
      * @param modeType The name of the mode to check.
      * @return True or false.
      */
     public boolean hasModeType(String modeType) {
-    	if (!hasModes()) {
-    		return false;
-    	}
-    	
-    	for (EquipmentMode mode : modes) {
-    		if (mode.getName().equals(modeType)) {
-    			return true;
-    		}
-    	}
-    	
-    	return false;
+        if (!hasModes()) {
+            return false;
+        }
+
+        // Beware concurrent modification
+        for (EquipmentMode mode : modes) {
+            if (mode.getName().equals(modeType)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -588,11 +600,9 @@ public class EquipmentType implements ITechnology {
      * EquipmentType doesn't have the modes, so don't try to call this method
      * with null or empty argument.
      *
-     * @param modes
-     *            non null, non empty list of available mode names.
+     * @param modes non null, non empty list of available mode names.
      */
-    protected void setModes(String[] modes) {
-        assert ((modes != null) && (modes.length > 0)) : "List of modes must not be null or empty";
+    protected void setModes(String... modes) {
         Vector<EquipmentMode> newModes = new Vector<>(modes.length);
         for (String mode : modes) {
             newModes.addElement(EquipmentMode.getMode(mode));
@@ -613,12 +623,13 @@ public class EquipmentType implements ITechnology {
             return false;
         }
     }
-    
+
     /**
      * Add a mode to the Equipment
      *
      * @param mode The mode to be added
-     * @return true if the mode was added; false if modes was null or the mode was already present
+     * @return true if the mode was added; false if modes was null or the mode was
+     *         already present
      * @author Simon (Juliez)
      */
     public boolean addMode(String mode) {
@@ -652,9 +663,8 @@ public class EquipmentType implements ITechnology {
      * vector of names. It is used by the {@link Mounted#setMode(int)} method to
      * distinguish instant and end of turn switching.
      *
-     * @param mode
-     *            - the <code>String</code> of the mode name involved in the
-     *            switch
+     * @param mode - the <code>String</code> of the mode name involved in the
+     *             switch
      * @return true if the mode name is found in the next turn mode vector
      */
     public boolean isNextTurnModeSwitch(String mode) {
@@ -670,9 +680,9 @@ public class EquipmentType implements ITechnology {
      * <p>
      * Returns the mode number <code>modeNum</code> from the list of modes
      * available for this type of equipment. Modes are numbered from
-     * <code>0<code> to
-     * <code>getModesCount()-1</code>
-     * <p>
+     * <code>0</code> to <code>getModesCount() - 1</code>
+     * </p>
+     *
      * Fails if this type of the equipment doesn't have modes, or given mode is
      * out of the valid range.
      *
@@ -682,7 +692,6 @@ public class EquipmentType implements ITechnology {
      * @see #hasModes()
      */
     public EquipmentMode getMode(int modeNum) {
-        assert ((modes != null) && (modeNum >= 0) && (modeNum < modes.size())) : "Invalid Mode";
         return modes.elementAt(modeNum);
     }
 
@@ -704,7 +713,16 @@ public class EquipmentType implements ITechnology {
         namesVector.addElement(s); // member variable
     }
 
-    public static EquipmentType get(String key) {
+    /**
+     * Returns an EquipmentType having the given internal name or lookup name (but
+     * not the "name" which is the display text unless it's equal to the internal
+     * name). Internal names may be taken from {@link EquipmentTypeLookup}. Returns
+     * null if there is none with that name.
+     *
+     * @param key The internal name or lookup name
+     * @return The EquipmentType with the given internal name or lookup name
+     */
+    public static @Nullable EquipmentType get(String key) {
         if (null == EquipmentType.lookupHash) {
             EquipmentType.initializeTypes();
         }
@@ -725,6 +743,7 @@ public class EquipmentType implements ITechnology {
             MiscType.initializeTypes();
             BombType.initializeTypes();
             SmallWeaponAmmoType.initializeTypes();
+            ArmorType.initializeTypes();
             for (EquipmentType et : allTypes) {
                 if (et.getTechAdvancement().getStaticTechLevel() == null) {
                     et.getTechAdvancement().setStaticTechLevel(et.getTechAdvancement()
@@ -741,6 +760,17 @@ public class EquipmentType implements ITechnology {
         return EquipmentType.allTypes.elements();
     }
 
+    /**
+     * @return All equipment types as a List. The list is a copy and can safely be
+     *         modified.
+     */
+    public static List<EquipmentType> allTypes() {
+        if (EquipmentType.allTypes == null) {
+            EquipmentType.initializeTypes();
+        }
+        return new ArrayList<EquipmentType>(EquipmentType.allTypes);
+    }
+
     protected static void addType(EquipmentType type) {
         if (null == EquipmentType.allTypes) {
             EquipmentType.initializeTypes();
@@ -749,45 +779,44 @@ public class EquipmentType implements ITechnology {
     }
 
     public static int getArmorType(EquipmentType et) {
-        if (null == et) {
+        if (et instanceof ArmorType) {
+            return ((ArmorType) et).getArmorType();
+        } else {
             return T_ARMOR_UNKNOWN;
         }
-        for (int x = 0; x < armorNames.length; x++) {
-            // Some armor names (Industrial), have a space in the name, so trim
-            if (armorNames[x].trim().equals(et.getName().trim())) {
-                return x;
-            }
-        }
-        return T_ARMOR_UNKNOWN;
     }
 
     public static String getArmorTypeName(int armorType) {
-        if ((armorType < 0) || (armorType >= armorNames.length)) {
+        ArmorType armor = ArmorType.of(armorType, false);
+        if (armor == null) {
+            armor = ArmorType.of(armorType, true);
+        }
+        if (armor != null) {
+            return armor.getName();
+        } else {
             return "UNKNOWN";
         }
-        return armorNames[armorType];
     }
 
     public static String getArmorTypeName(int armorType, boolean clan) {
-        if ((armorType < 0) || (armorType >= armorNames.length)) {
+        ArmorType armor = ArmorType.of(armorType, clan);
+        if (armor != null) {
+            return clan ? "Clan " + armor.getName() : "IS " + armor.getName();
+        } else {
             return "UNKNOWN";
         }
-        return clan ? "Clan " + armorNames[armorType] : "IS "
-                + armorNames[armorType];
     }
 
     /**
-     * Convenience method to test whether an EquipmentType instance is armor. This works
-     * by comparing the results of {@link #getName()} to the armor names array and returning
-     * {@code true} if there is a match.
+     * Convenience method to test whether an EquipmentType instance is armor.
      *
      * @param et The equipment instance to test
-     * @return   Whether the equipment is an armor type
+     * @return Whether the equipment is an armor type
      */
     public static boolean isArmorType(EquipmentType et) {
-        return getArmorType(et) != T_ARMOR_UNKNOWN;
+        return et instanceof ArmorType;
     }
-    
+
     public static int getStructureType(EquipmentType et) {
         if (et == null) {
             return T_STRUCTURE_UNKNOWN;
@@ -811,164 +840,45 @@ public class EquipmentType implements ITechnology {
         if ((structureType < 0) || (structureType >= structureNames.length)) {
             return "UNKNOWN";
         }
-        return clan ? "Clan " + structureNames[structureType] : "IS "
-                + structureNames[structureType];
+        return clan ? "Clan " + structureNames[structureType]
+                : "IS " + structureNames[structureType];
     }
 
     /**
-     * Convenience method to test whether an EquipmentType instance is mech structure. This works
-     * by comparing the results of {@link #getName()} to the structure names array and returning
-     * {@code true} if there is a match.
+     * Convenience method to test whether an EquipmentType instance is mech
+     * structure. This works by comparing the results of {@link #getName()} to the
+     * structure names array and returning {@code true} if there is a match.
      *
      * @param et The equipment instance to test
-     * @return   Whether the equipment is a structure type
+     * @return Whether the equipment is a structure type
      */
     public static boolean isStructureType(EquipmentType et) {
         return getStructureType(et) != T_STRUCTURE_UNKNOWN;
-    }
-
-    public static String getBaArmorTypeName(int armorType) {
-        return getArmorTypeName(armorType);
-    }
-
-    public static String getBaArmorTypeName(int armorType, boolean clan) {
-        return getArmorTypeName(armorType, clan);
-    }
-
-    public static double getBaArmorWeightPerPoint(int type, boolean isClan) {
-        switch (type) {
-            case T_ARMOR_BA_STANDARD_PROTOTYPE:
-                return 0.1;
-            case T_ARMOR_BA_STANDARD_ADVANCED:
-                return 0.04;
-            case T_ARMOR_BA_STEALTH:
-                if (isClan) {
-                    return 0.035;
-                }
-                return 0.06;
-            case T_ARMOR_BA_STEALTH_BASIC:
-                if (isClan) {
-                    return 0.03;
-                }
-                return 0.055;
-            case T_ARMOR_BA_STEALTH_IMP:
-                if (isClan) {
-                    return 0.035;
-                }
-                return 0.06;
-            case T_ARMOR_BA_STEALTH_PROTOTYPE:
-                return 0.1;
-            case T_ARMOR_BA_FIRE_RESIST:
-                return 0.03;
-            case T_ARMOR_BA_MIMETIC:
-                return 0.05;
-            case T_ARMOR_BA_REFLECTIVE:
-                if (isClan) {
-                    return 0.03;
-                } else {
-                    return 0.055;
-                }
-            case T_ARMOR_BA_REACTIVE:
-                if (isClan) {
-                    return 0.035;
-                } else {
-                    return 0.06;
-                }
-            case T_ARMOR_BA_STANDARD:
-            default:
-                if (isClan) {
-                    return 0.025;
-                }
-                return 0.05;
-        }
-    }
-    
-    /**
-     * Computes protomech armor weight by point.
-     *  
-     * @param type    The armor type
-     * @return        The weight of a point of armor in kg
-     */
-    public static double getProtomechArmorWeightPerPoint(int type) {
-        if (type == T_ARMOR_EDP) {
-            return 0.075;
-        }
-        return 0.05;
-    }
-
-    /**
-     * Lookup method for protomech armor cost
-     * @param type The type of armor.
-     * @return     The cost per point in C-bills
-     */
-    public static int getProtomechArmorCostPerPoint(int type) {
-        // currently only one type of specialized armor for protomechs; anything else is treated as standard
-        if (type == T_ARMOR_EDP) {
-            return 1250;
-        }
-        return 625;
     }
 
     /**
      * Gives the weight of a single point of armor at a particular BAR for a
      * given tech level.
      */
-    private static final double[][] SV_ARMOR_WEIGHT =
-            {{0.0, 0.0, 0.0, 0.0, 0.0, 0.0},
-                    {0.0, 0.0, 0.0, 0.0, 0.0, 0.0},
-                    {.040, .025, .016, .013, .012, .011},
-                    {.060, .038, .024, .019, .017, .016},
-                    {.000, .050, .032, .026, .023, .021},
-                    {.000, .063, .040, .032, .028, .026},
-                    {.000, .000, .048, .038, .034, .032},
-                    {.000, .000, .056, .045, .040, .037},
-                    {.000, .000, .000, .051, .045, .042},
-                    {.000, .000, .000, .057, .051, .047},
-                    {.000, .000, .000, .063, .056, .052}};
-
-    /**
-     * `Lookup method for the weight of a point of support vehicle armor.
-     *
-     * @param bar        The armor's barrier armor rating
-     * @param techRating The armor's tech rating (0-5 corresponds to A-F)
-     * @return           The weight of a point of armor in tons. Returns 0.0 for invalid value.
-     */
-    public static double getSupportVehicleArmorWeightPerPoint(int bar, int techRating) {
-        if ((bar >= 0) && (techRating >= 0)
-                && (bar < SV_ARMOR_WEIGHT.length) && (techRating < SV_ARMOR_WEIGHT[bar].length)) {
-            return SV_ARMOR_WEIGHT[bar][techRating];
-        }
-        return 0.0;
-    }
-
-    /**
-     * Cost in C-bills of a single point of SV armor for various BAR values.
-     */
-    private static int[] SV_ARMOR_COST = {
-            0, 0, 50, 100, 150, 200, 250, 300, 400, 500, 625
+    private static final double[][] SV_ARMOR_WEIGHT = {
+            { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 },
+            { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 },
+            { .040, .025, .016, .013, .012, .011 },
+            { .060, .038, .024, .019, .017, .016 },
+            { .000, .050, .032, .026, .023, .021 },
+            { .000, .063, .040, .032, .028, .026 },
+            { .000, .000, .048, .038, .034, .032 },
+            { .000, .000, .056, .045, .040, .037 },
+            { .000, .000, .000, .051, .045, .042 },
+            { .000, .000, .000, .057, .051, .047 },
+            { .000, .000, .000, .063, .056, .052 }
     };
 
-    /**
-     * Cost lookup for standard SV armor.
-     *
-     * @param bar The barrier armor rating of the support vehicle armor
-     * @return    The cost per point, in C-bills.
-     */
-    public static double getSupportVehicleArmorCostPerPoint(int bar) {
-        if (bar < 0) {
-            return 0;
-        }
-        return SV_ARMOR_COST[Math.min(bar, SV_ARMOR_COST.length - 1)];
-    }
-    
-    /* Armor and structure are stored as integers and standard uses a generic MiscType that
-     * does not have its own TechAdvancement.
+    /*
+     * Armor and structure are stored as integers and standard uses a generic
+     * MiscType that does not have its own TechAdvancement.
      */
 
-    protected static final TechAdvancement TA_STANDARD_ARMOR = new TechAdvancement(TECH_BASE_ALL)
-            .setAdvancement(2460, 2470, 2470).setApproximate(true, false, false)
-            .setTechRating(RATING_D).setAvailability(RATING_C, RATING_C, RATING_C, RATING_B)
-            .setStaticTechLevel(SimpleTechLevel.INTRO);
     protected static final TechAdvancement TA_STANDARD_STRUCTURE = new TechAdvancement(TECH_BASE_ALL)
             .setAdvancement(2430, 2439, 2505).setApproximate(true, false, false).setIntroLevel(true)
             .setTechRating(RATING_D).setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
@@ -977,77 +887,6 @@ public class EquipmentType implements ITechnology {
             .setAdvancement(DATE_NONE).setTechRating(RATING_A)
             .setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
             .setStaticTechLevel(SimpleTechLevel.INTRO);
-    private static final TechAdvancement[] TA_SV_ARMOR = {
-            TA_NONE, // Placeholder for index 0
-            TA_NONE, // Placeholder for index 1
-            new TechAdvancement(TECH_BASE_ALL).setAdvancement(DATE_PS, DATE_PS, DATE_PS)
-                    .setTechRating(RATING_A).setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
-                    .setStaticTechLevel(SimpleTechLevel.STANDARD), // BAR 2
-            new TechAdvancement(TECH_BASE_ALL).setAdvancement(DATE_PS, DATE_PS, DATE_PS)
-                    .setTechRating(RATING_A).setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
-                    .setStaticTechLevel(SimpleTechLevel.STANDARD), // BAR 3
-            new TechAdvancement(TECH_BASE_ALL).setAdvancement(DATE_PS, DATE_PS, DATE_PS)
-                    .setTechRating(RATING_B).setAvailability(RATING_B, RATING_B, RATING_A, RATING_A)
-                    .setStaticTechLevel(SimpleTechLevel.STANDARD), // BAR 4
-            new TechAdvancement(TECH_BASE_ALL).setAdvancement(DATE_ES, DATE_ES, DATE_ES)
-                    .setTechRating(RATING_B).setAvailability(RATING_B, RATING_B, RATING_B, RATING_A)
-                    .setStaticTechLevel(SimpleTechLevel.STANDARD), // BAR 5
-            new TechAdvancement(TECH_BASE_ALL).setAdvancement(DATE_ES, DATE_ES, DATE_ES)
-                    .setTechRating(RATING_C).setAvailability(RATING_C, RATING_B, RATING_B, RATING_A)
-                    .setStaticTechLevel(SimpleTechLevel.STANDARD), // BAR 6
-            new TechAdvancement(TECH_BASE_ALL).setAdvancement(2250, 2300, 2305)
-                    .setApproximate(true, true, false).setPrototypeFactions(F_TA)
-                    .setProductionFactions(F_TA).setTechRating(RATING_C)
-                    .setAvailability(RATING_C, RATING_B, RATING_B, RATING_B)
-                    .setStaticTechLevel(SimpleTechLevel.STANDARD), // BAR 7
-            new TechAdvancement(TECH_BASE_ALL).setAdvancement(2425, 2435, 22445)
-                    .setPrototypeFactions(F_TH).setProductionFactions(F_TH)
-                    .setTechRating(RATING_D)
-                    .setAvailability(RATING_C, RATING_C, RATING_B, RATING_B)
-                    .setStaticTechLevel(SimpleTechLevel.STANDARD), // BAR 8
-            new TechAdvancement(TECH_BASE_ALL).setAdvancement(2440, 2450, 2470)
-                    .setPrototypeFactions(F_TH).setProductionFactions(F_TH)
-                    .setTechRating(RATING_D)
-                    .setAvailability(RATING_C, RATING_C, RATING_C, RATING_B)
-                    .setStaticTechLevel(SimpleTechLevel.STANDARD), // BAR 9
-            new TechAdvancement(TECH_BASE_ALL).setAdvancement(2460, 2470, 2505)
-                    .setPrototypeFactions(F_TH).setProductionFactions(F_TH)
-                    .setApproximate(true, false, false).setTechRating(RATING_D)
-                    .setAvailability(RATING_D, RATING_D, RATING_D, RATING_C)
-                    .setStaticTechLevel(SimpleTechLevel.STANDARD) // BAR 10
-    };
-
-    /**
-     * Tech advancement for armor based on the armor type index and tech base
-     * 
-     * @param at   The armor type constant
-     * @param clan The armor tech base
-     * @return     The tech advancement for the armor
-     */
-    public static TechAdvancement getArmorTechAdvancement(int at, boolean clan) {
-        if (at == T_ARMOR_STANDARD) {
-            return TA_STANDARD_ARMOR;
-        }
-        String armorName = EquipmentType.getArmorTypeName(at, clan);
-        EquipmentType armor = EquipmentType.get(armorName);
-        if (armor != null) {
-            return armor.getTechAdvancement();
-        }
-        return TA_NONE;
-    }
-
-    /**
-     * Tech advancement for support vehicle armor
-     *
-     * @param bar The armor's barrier armor rating
-     * @return    The armor tech advancement
-     */
-    public static TechAdvancement getSVArmorTechAdvancement(int bar) {
-        if ((bar >= 0) && (bar < TA_SV_ARMOR.length)) {
-            return TA_SV_ARMOR[bar];
-        }
-        return TA_NONE;
-    }
 
     public static TechAdvancement getStructureTechAdvancement(int at, boolean clan) {
         if (at == T_STRUCTURE_STANDARD) {
@@ -1082,7 +921,8 @@ public class EquipmentType implements ITechnology {
     }
 
     /**
-     * @return Whether the item weight varies according to the unit it's installed on
+     * @return Whether the item weight varies according to the unit it's installed
+     *         on
      */
     public boolean isVariableTonnage() {
         return tonnage == TONNAGE_VARIABLE;
@@ -1137,36 +977,16 @@ public class EquipmentType implements ITechnology {
         return techAdvancement.getTechRating();
     }
 
-    /**
-     * @deprecated Use {@link #calcEraAvailability(int, boolean) calcEraAvailability to get availability
-     *      for IS/Clan in a given year, or {@link #getBaseAvailability(int) getBaseAvailability}
-     *      to get the base code for the era type, or getBaseEraAvailability to get the base code.
-     */
-    @Deprecated
-    public int getAvailability(int era) {
-        return calcEraAvailability(era);
-    }
-
-    /**
-     * @deprecated Use {@link #getYearAvailabilityName(int, boolean) getYearAvailabilityName}
-     *      to get availability for IS or Clan in a specific year,
-     *      or {@link #getEraAvailabilityName(int) getEraAvailabilityName to get code(s) for the era.
-     */
-    @Deprecated
-    public String getAvailabilityName(int era) {
-        return getEraAvailabilityName(era);
-    }
-
     @Override
     public boolean isClan() {
         return techAdvancement.getTechBase() == TECH_BASE_CLAN;
     }
-    
+
     @Override
     public boolean isMixedTech() {
         return techAdvancement.getTechBase() == TECH_BASE_ALL;
     }
-    
+
     @Override
     public int getTechBase() {
         return techAdvancement.getTechBase();
@@ -1180,17 +1000,17 @@ public class EquipmentType implements ITechnology {
         }
 
     }
-    
+
     @Override
     public int getIntroductionDate(boolean clan) {
         return techAdvancement.getIntroductionDate(clan);
     }
-    
+
     @Override
     public int getIntroductionDate() {
         return techAdvancement.getIntroductionDate();
     }
-    
+
     @Override
     public int getIntroductionDate(boolean clan, int faction) {
         return techAdvancement.getIntroductionDate(clan, faction);
@@ -1226,52 +1046,11 @@ public class EquipmentType implements ITechnology {
         return techAdvancement.getReintroductionDate(clan, faction);
     }
 
-    public static double getArmorCost(int inArmor) {
-        if ((inArmor < 0) || (inArmor >= armorCosts.length)) {
-            return -1;
-        }
-        return armorCosts[inArmor];
-    }
-
     public static double getStructureCost(int inStructure) {
         if ((inStructure < 0) || (inStructure >= structureCosts.length)) {
             return -1;
         }
         return structureCosts[inStructure];
-    }
-
-    public static double getArmorPointMultiplier(int inArmor) {
-        return EquipmentType.getArmorPointMultiplier(inArmor,
-                TechConstants.T_IS_TW_NON_BOX);
-    }
-
-    public static double getArmorPointMultiplier(int inArmor, int inTechLevel) {
-        return EquipmentType
-                .getArmorPointMultiplier(
-                        inArmor,
-                        ((inTechLevel == TechConstants.T_CLAN_TW) || (inTechLevel == TechConstants.T_CLAN_ADVANCED))
-                                || (inTechLevel == TechConstants.T_CLAN_EXPERIMENTAL)
-                                || (inTechLevel == TechConstants.T_CLAN_UNOFFICIAL));
-    }
-
-    public static double getArmorPointMultiplier(int inArmor, boolean clanArmor) {
-        if ((inArmor < 0) || (inArmor >= armorPointMultipliers.length)) {
-            return POINT_MULTIPLIER_UNKNOWN;
-        }
-        /*
-         * now handled in a single if statement
-        if ((inArmor == T_ARMOR_FERRO_FIBROUS) && clanArmor) {
-            return POINT_MULTIPLIER_CLAN_FF;
-        }
-        if ((inArmor == T_ARMOR_ALUM) && clanArmor) {
-            return POINT_MULTIPLIER_CLAN_FF;
-        }*/
-        // Clan armors of these types have a multiplier exactly 0.08 higher than the I.S. variety
-        if (clanArmor && ((inArmor == T_ARMOR_ALUM) || (inArmor == T_ARMOR_FERRO_FIBROUS))) {
-            return armorPointMultipliers[inArmor] + POINT_ADDITION_CLAN_FF;
-
-        }
-        return armorPointMultipliers[inArmor];
     }
 
     @Override
@@ -1285,7 +1064,7 @@ public class EquipmentType implements ITechnology {
         final EquipmentType other = (EquipmentType) obj;
         return Objects.equals(internalName, other.internalName);
     }
-    
+
     @Override
     public int hashCode() {
         return Objects.hashCode(internalName);
@@ -1340,99 +1119,517 @@ public class EquipmentType implements ITechnology {
 
     public static void writeEquipmentExtendedDatabase(File f) {
         try {
-            BufferedWriter w = new BufferedWriter(new FileWriter(f));
-            w.write("MegaMek Equipment Extended Database");
-            w.newLine();
-            w.write("This file can be regenerated with java -jar MegaMek.jar -eqedb ");
-            w.write(f.toString());
-            w.newLine();
-            w.write("Type,Name,Tech Base,Rules,Tech Rating,Static Tech Level,Introduction Date,Prototype Date,Production Date,Common Date,Extinction Date,Re-Introduction Date,Tonnage,Crits,Cost,BV,Alias");
-            w.newLine();
-            for (Enumeration<EquipmentType> e = EquipmentType.getAllTypes(); e
+            BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(f));
+            bufferedWriter.write("MegaMek Equipment Extended Database");
+            bufferedWriter.newLine();
+            bufferedWriter.write("This file can be regenerated with java -jar MegaMek.jar -eqedb ");
+            bufferedWriter.write(f.toString());
+            bufferedWriter.newLine();
+            bufferedWriter.write(
+                    "Type,Name,Tech Base,Rules,Tech Rating,Static Tech Level,Introduction Date,Prototype Date,Production Date,Common Date,Extinction Date,Re-Introduction Date,Tonnage,CriticalSlots,Cost,BV,RulesRef,Alias");
+            bufferedWriter.newLine();
+            for (Enumeration<EquipmentType> equipmentTypes = EquipmentType.getAllTypes(); equipmentTypes
                     .hasMoreElements();) {
-                EquipmentType type = e.nextElement();
-                if (type instanceof AmmoType) {
-                    w.write("A");
-                } else if (type instanceof WeaponType) {
-                    w.write("W");
+                EquipmentType equipmentType = equipmentTypes.nextElement();
+                if (equipmentType instanceof AmmoType) {
+                    bufferedWriter.write("A");
+                } else if (equipmentType instanceof WeaponType) {
+                    bufferedWriter.write("W");
                 } else {
-                    w.write("M");
+                    bufferedWriter.write("M");
                 }
 
-                w.write(",\"");
-                w.write(type.getName());
+                bufferedWriter.write(",\"");
+                bufferedWriter.write(equipmentType.getName());
 
                 // Gather the unique tech levels for this equipment ...
-                List<Integer> levels = type.getTechLevels().keySet().stream()
-                        .map(type::getTechLevel)
-                        .sorted()   // ordered for ease of use
+                List<Integer> levels = equipmentType.getTechLevels().keySet().stream()
+                        .map(equipmentType::getTechLevel)
+                        .sorted() // ordered for ease of use
                         .distinct()
                         .collect(Collectors.toList());
 
                 // ... and use them to output the tech names ...
-                w.write("\",\"");
-                w.write(levels.stream()
+                bufferedWriter.write("\",\"");
+                bufferedWriter.write(levels.stream()
                         .map(TechConstants::getTechName)
                         .distinct()
                         .collect(Collectors.joining("/")));
 
                 // ... and associated rules levels.
-                w.write("\",\"");
-                w.write(levels.stream()
+                bufferedWriter.write("\",\"");
+                bufferedWriter.write(levels.stream()
                         .map(TechConstants::getLevelName)
                         .distinct()
                         .collect(Collectors.joining("/")));
 
-                w.write("\",\"");
-                w.write(type.getFullRatingName());
-                w.write("\",\"");
-                w.write(type.getTechAdvancement().getStaticTechLevel().toString());
-                w.write("\",\"");
-                w.write(type.getTechAdvancement().getIntroductionDateName());
-                w.write("\",\"");
-                w.write(type.getTechAdvancement().getPrototypeDateName());
-                w.write("\",\"");
-                w.write(type.getTechAdvancement().getProductionDateName());
-                w.write("\",\"");
-                w.write(type.getTechAdvancement().getCommonDateName());
-                w.write("\",\"");
-                w.write(type.getTechAdvancement().getExtinctionDateName());
-                w.write("\",\"");
-                w.write(type.getTechAdvancement().getReintroductionDateName());
-                w.write("\",");
-                if (type.tonnage == EquipmentType.TONNAGE_VARIABLE) {
-                    w.write("Variable");
+                bufferedWriter.write("\",\"");
+                bufferedWriter.write(equipmentType.getFullRatingName());
+
+                bufferedWriter.write("\",\"");
+                bufferedWriter.write(equipmentType.getTechAdvancement().getStaticTechLevel().toString());
+
+                bufferedWriter.write("\",\"");
+                bufferedWriter.write(equipmentType.getTechAdvancement().getIntroductionDateName());
+
+                bufferedWriter.write("\",\"");
+                bufferedWriter.write(equipmentType.getTechAdvancement().getPrototypeDateName());
+
+                bufferedWriter.write("\",\"");
+                bufferedWriter.write(equipmentType.getTechAdvancement().getProductionDateName());
+
+                bufferedWriter.write("\",\"");
+                bufferedWriter.write(equipmentType.getTechAdvancement().getCommonDateName());
+
+                bufferedWriter.write("\",\"");
+                bufferedWriter.write(equipmentType.getTechAdvancement().getExtinctionDateName());
+
+                bufferedWriter.write("\",\"");
+                bufferedWriter.write(equipmentType.getTechAdvancement().getReintroductionDateName());
+
+                bufferedWriter.write("\",");
+                if (equipmentType.tonnage == EquipmentType.TONNAGE_VARIABLE) {
+                    bufferedWriter.write("Variable");
                 } else {
-                    w.write(Double.toString(type.tonnage));
+                    bufferedWriter.write(Double.toString(equipmentType.tonnage));
                 }
-                w.write(",");
-                if (type.criticals == EquipmentType.CRITICALS_VARIABLE) {
-                    w.write("Variable");
+
+                bufferedWriter.write(",");
+                if (equipmentType.criticals == EquipmentType.CRITICALS_VARIABLE) {
+                    bufferedWriter.write("Variable");
                 } else {
-                    w.write(Integer.toString(type.criticals));
+                    bufferedWriter.write(Integer.toString(equipmentType.criticals));
                 }
-                w.write(",");
-                if (type.cost == EquipmentType.COST_VARIABLE) {
-                    w.write("Variable");
+
+                bufferedWriter.write(",");
+                if (equipmentType.cost == EquipmentType.COST_VARIABLE) {
+                    bufferedWriter.write("Variable");
                 } else {
-                    w.write(Double.toString(type.getCost(null, false, -1, 1.0)));
+                    bufferedWriter.write(Double.toString(equipmentType.getCost(null, false, -1, 1.0)));
                 }
-                w.write(",");
-                if (type.bv == EquipmentType.BV_VARIABLE) {
-                    w.write("Variable");
+
+                bufferedWriter.write(",");
+                if (equipmentType.bv == EquipmentType.BV_VARIABLE) {
+                    bufferedWriter.write("Variable");
                 } else {
-                    w.write(Double.toString(type.bv));
+                    bufferedWriter.write(Double.toString(equipmentType.bv));
                 }
-                w.write(",");
-                for (Enumeration<String> names = type.getNames(); names
-                        .hasMoreElements();) {
+
+                bufferedWriter.write(",\"");
+                bufferedWriter.write(equipmentType.getRulesRefs());
+
+                bufferedWriter.write("\",\"");
+                for (Enumeration<String> names = equipmentType.getNames(); names.hasMoreElements();) {
                     String name = names.nextElement();
-                    w.write("\"" + name + "\",");
+                    bufferedWriter.write(name + ",");
                 }
-                w.newLine();
+                bufferedWriter.write("\"");
+                bufferedWriter.newLine();
             }
-            w.flush();
-            w.close();
+            bufferedWriter.flush();
+            bufferedWriter.close();
+        } catch (Exception e) {
+            LogManager.getLogger().error("", e);
+        }
+    }
+
+    public static void writeEquipmentWeaponDatabase(File f) {
+        try {
+            BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(f));
+            bufferedWriter.write("MegaMek Equipment Weapon Database");
+            bufferedWriter.newLine();
+            bufferedWriter.write("This file can be regenerated with java -jar MegaMek.jar -eqwdb ");
+            bufferedWriter.write(f.toString());
+            bufferedWriter.newLine();
+            bufferedWriter.write(
+                    "Name,Tech Base,Rules,Tech Rating,Static Tech Level,Introduction Date,Prototype Date,Production Date,Common Date,Extinction Date,Re-Introduction Date,Tonnage,CriticalSlots,Cost,BV,RulesRef,MinimalRange,ShortRange,MediumRange,LongRange,ExtremeRange,ShortWaterRange,MediumWaterRange,LongWaterRange,ExtremeWaterRange,MinimalDamage,ShortDamage,MediumDamage,LongDamage,ExtremeDamage,Alias");
+            bufferedWriter.newLine();
+
+            for (Enumeration<EquipmentType> equipmentTypes = EquipmentType.getAllTypes(); equipmentTypes
+                    .hasMoreElements();) {
+                EquipmentType equipmentType = equipmentTypes.nextElement();
+                if (!(equipmentType instanceof WeaponType)) {
+                    continue;
+                }
+                WeaponType weaponType = (WeaponType) equipmentType;
+
+                bufferedWriter.write("\"");
+                bufferedWriter.write(weaponType.getName());
+
+                // Gather the unique tech levels for this equipment ...
+                List<Integer> levels = weaponType.getTechLevels().keySet().stream()
+                        .map(weaponType::getTechLevel)
+                        .sorted() // ordered for ease of use
+                        .distinct()
+                        .collect(Collectors.toList());
+
+                // ... and use them to output the tech names ...
+                bufferedWriter.write("\",\"");
+                bufferedWriter.write(levels.stream()
+                        .map(TechConstants::getTechName)
+                        .distinct()
+                        .collect(Collectors.joining("/")));
+
+                // ... and associated rules levels.
+                bufferedWriter.write("\",\"");
+                bufferedWriter.write(levels.stream()
+                        .map(TechConstants::getLevelName)
+                        .distinct()
+                        .collect(Collectors.joining("/")));
+
+                bufferedWriter.write("\",\"");
+                bufferedWriter.write(weaponType.getFullRatingName());
+                bufferedWriter.write("\",\"");
+                bufferedWriter.write(weaponType.getTechAdvancement().getStaticTechLevel().toString());
+                bufferedWriter.write("\",\"");
+                bufferedWriter.write(weaponType.getTechAdvancement().getIntroductionDateName());
+                bufferedWriter.write("\",\"");
+                bufferedWriter.write(weaponType.getTechAdvancement().getPrototypeDateName());
+                bufferedWriter.write("\",\"");
+                bufferedWriter.write(weaponType.getTechAdvancement().getProductionDateName());
+                bufferedWriter.write("\",\"");
+                bufferedWriter.write(weaponType.getTechAdvancement().getCommonDateName());
+                bufferedWriter.write("\",\"");
+                bufferedWriter.write(weaponType.getTechAdvancement().getExtinctionDateName());
+                bufferedWriter.write("\",\"");
+                bufferedWriter.write(weaponType.getTechAdvancement().getReintroductionDateName());
+                bufferedWriter.write("\",");
+                if (weaponType.tonnage == EquipmentType.TONNAGE_VARIABLE) {
+                    bufferedWriter.write("Variable");
+                } else {
+                    bufferedWriter.write(Double.toString(weaponType.tonnage));
+                }
+                bufferedWriter.write(",");
+                if (weaponType.criticals == EquipmentType.CRITICALS_VARIABLE) {
+                    bufferedWriter.write("Variable");
+                } else {
+                    bufferedWriter.write(Integer.toString(weaponType.criticals));
+                }
+                bufferedWriter.write(",");
+                if (weaponType.cost == EquipmentType.COST_VARIABLE) {
+                    bufferedWriter.write("Variable");
+                } else {
+                    bufferedWriter.write(Double.toString(weaponType.getCost(null, false, -1, 1.0)));
+                }
+                bufferedWriter.write(",");
+                if (weaponType.bv == EquipmentType.BV_VARIABLE) {
+                    bufferedWriter.write("Variable");
+                } else {
+                    bufferedWriter.write(Double.toString(weaponType.bv));
+                }
+
+                bufferedWriter.write(",\"");
+                bufferedWriter.write(weaponType.getRulesRefs());
+
+                int minimalRange = weaponType.getMinimumRange();
+                minimalRange = (minimalRange < 0) ? -1 : minimalRange;
+                bufferedWriter.write("\",");
+                bufferedWriter.write(Integer.toString(minimalRange));
+
+                bufferedWriter.write(",");
+                bufferedWriter.write(Integer.toString(weaponType.getShortRange()));
+
+                bufferedWriter.write(",");
+                bufferedWriter.write(Integer.toString(weaponType.getMediumRange()));
+
+                bufferedWriter.write(",");
+                bufferedWriter.write(Integer.toString(weaponType.getLongRange()));
+
+                bufferedWriter.write(",");
+                bufferedWriter.write(Integer.toString(weaponType.getExtremeRange()));
+
+                bufferedWriter.write(",");
+                bufferedWriter.write(Integer.toString(weaponType.getWShortRange()));
+
+                bufferedWriter.write(",");
+                bufferedWriter.write(Integer.toString(weaponType.getWMediumRange()));
+
+                bufferedWriter.write(",");
+                bufferedWriter.write(Integer.toString(weaponType.getWLongRange()));
+
+                bufferedWriter.write(",");
+                bufferedWriter.write(Integer.toString(weaponType.getWExtremeRange()));
+
+                bufferedWriter.write(",");
+                bufferedWriter.write(Integer.toString(weaponType.getDamage(RangeType.RANGE_MINIMUM)));
+
+                bufferedWriter.write(",");
+                bufferedWriter.write(Integer.toString(weaponType.getDamage(RangeType.RANGE_SHORT)));
+
+                bufferedWriter.write(",");
+                bufferedWriter.write(Integer.toString(weaponType.getDamage(RangeType.RANGE_MEDIUM)));
+
+                bufferedWriter.write(",");
+                bufferedWriter.write(Integer.toString(weaponType.getDamage(RangeType.RANGE_LONG)));
+
+                bufferedWriter.write(",");
+                bufferedWriter.write(Integer.toString(weaponType.getDamage(RangeType.RANGE_EXTREME)));
+
+                bufferedWriter.write(",\"");
+                for (Enumeration<String> names = weaponType.getNames(); names.hasMoreElements();) {
+                    String name = names.nextElement();
+                    bufferedWriter.write(name + ",");
+                }
+
+                bufferedWriter.write("\"");
+                bufferedWriter.newLine();
+            }
+            bufferedWriter.flush();
+            bufferedWriter.close();
+        } catch (Exception e) {
+            LogManager.getLogger().error("", e);
+        }
+    }
+
+    public static void writeEquipmentAmmoDatabase(File f) {
+        try {
+            BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(f));
+            bufferedWriter.write("MegaMek Equipment Armor Database");
+            bufferedWriter.newLine();
+            bufferedWriter.write("This file can be regenerated with java -jar MegaMek.jar -eqadb ");
+            bufferedWriter.write(f.toString());
+            bufferedWriter.newLine();
+            bufferedWriter.write(
+                    "Name,Tech Base,Rules,Tech Rating,Static Tech Level,Introduction Date,Prototype Date,Production Date,Common Date,Extinction Date,Re-Introduction Date,Tonnage,CriticalSlots,Cost,BV,RulesRef,CountAsFlak?,MunitionType,DamagePerShot,RackSize,Shots,AmmoRatio,IsCapital,KgPerShot,AeroUse?,Alias");
+            bufferedWriter.newLine();
+            for (Enumeration<EquipmentType> equipmentTypes = EquipmentType.getAllTypes(); equipmentTypes
+                    .hasMoreElements();) {
+                EquipmentType equipmentType = equipmentTypes.nextElement();
+                if (!(equipmentType instanceof AmmoType)) {
+                    continue;
+                }
+                AmmoType ammoType = (AmmoType) equipmentType;
+
+                bufferedWriter.write("\"");
+                bufferedWriter.write(ammoType.getName());
+
+                // Gather the unique tech levels for this equipment ...
+                List<Integer> levels = ammoType.getTechLevels().keySet().stream()
+                        .map(ammoType::getTechLevel)
+                        .sorted() // ordered for ease of use
+                        .distinct()
+                        .collect(Collectors.toList());
+
+                // ... and use them to output the tech names ...
+                bufferedWriter.write("\",\"");
+                bufferedWriter.write(levels.stream()
+                        .map(TechConstants::getTechName)
+                        .distinct()
+                        .collect(Collectors.joining("/")));
+
+                // ... and associated rules levels.
+                bufferedWriter.write("\",\"");
+                bufferedWriter.write(levels.stream()
+                        .map(TechConstants::getLevelName)
+                        .distinct()
+                        .collect(Collectors.joining("/")));
+
+                bufferedWriter.write("\",\"");
+                bufferedWriter.write(ammoType.getFullRatingName());
+
+                bufferedWriter.write("\",\"");
+                bufferedWriter.write(ammoType.getTechAdvancement().getStaticTechLevel().toString());
+
+                bufferedWriter.write("\",\"");
+                bufferedWriter.write(ammoType.getTechAdvancement().getIntroductionDateName());
+
+                bufferedWriter.write("\",\"");
+                bufferedWriter.write(ammoType.getTechAdvancement().getPrototypeDateName());
+
+                bufferedWriter.write("\",\"");
+                bufferedWriter.write(ammoType.getTechAdvancement().getProductionDateName());
+
+                bufferedWriter.write("\",\"");
+                bufferedWriter.write(ammoType.getTechAdvancement().getCommonDateName());
+
+                bufferedWriter.write("\",\"");
+                bufferedWriter.write(ammoType.getTechAdvancement().getExtinctionDateName());
+
+                bufferedWriter.write("\",\"");
+                bufferedWriter.write(ammoType.getTechAdvancement().getReintroductionDateName());
+
+                bufferedWriter.write("\",");
+                if (ammoType.tonnage == EquipmentType.TONNAGE_VARIABLE) {
+                    bufferedWriter.write("Variable");
+                } else {
+                    bufferedWriter.write(Double.toString(ammoType.tonnage));
+                }
+
+                bufferedWriter.write(",");
+                if (ammoType.criticals == EquipmentType.CRITICALS_VARIABLE) {
+                    bufferedWriter.write("Variable");
+                } else {
+                    bufferedWriter.write(Integer.toString(ammoType.criticals));
+                }
+
+                bufferedWriter.write(",");
+                if (ammoType.cost == EquipmentType.COST_VARIABLE) {
+                    bufferedWriter.write("Variable");
+                } else {
+                    bufferedWriter.write(Double.toString(ammoType.getCost(null, false, -1, 1.0)));
+                }
+
+                bufferedWriter.write(",");
+                if (ammoType.bv == EquipmentType.BV_VARIABLE) {
+                    bufferedWriter.write("Variable");
+                } else {
+                    bufferedWriter.write(Double.toString(ammoType.bv));
+                }
+
+                bufferedWriter.write(",\"");
+                bufferedWriter.write(ammoType.getRulesRefs());
+
+                bufferedWriter.write("\",");
+                bufferedWriter.write(Boolean.toString(ammoType.countsAsFlak()));
+
+                bufferedWriter.write(",");
+                bufferedWriter.write(ammoType.getMunitionType().toString());
+
+                bufferedWriter.write(",");
+                bufferedWriter.write(Integer.toString(ammoType.getDamagePerShot()));
+
+                bufferedWriter.write(",");
+                bufferedWriter.write(Integer.toString(ammoType.getRackSize()));
+
+                bufferedWriter.write(",");
+                bufferedWriter.write(Integer.toString(ammoType.getShots()));
+
+                bufferedWriter.write(",");
+                bufferedWriter.write(Double.toString(ammoType.getAmmoRatio()));
+
+                bufferedWriter.write(",");
+                bufferedWriter.write(Boolean.toString(ammoType.isCapital()));
+
+                bufferedWriter.write(",");
+                bufferedWriter.write(Double.toString(ammoType.getKgPerShot()));
+
+                bufferedWriter.write(",");
+                bufferedWriter.write(Boolean.toString(ammoType.canAeroUse()));
+
+                bufferedWriter.write(",\"");
+                for (Enumeration<String> names = ammoType.getNames(); names.hasMoreElements();) {
+                    String name = names.nextElement();
+                    bufferedWriter.write(name + ",");
+                }
+                bufferedWriter.write("\"");
+                bufferedWriter.newLine();
+            }
+            bufferedWriter.flush();
+            bufferedWriter.close();
+        } catch (Exception e) {
+            LogManager.getLogger().error("", e);
+        }
+    }
+
+    public static void writeEquipmentMiscDatabase(File f) {
+        try {
+            BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(f));
+            bufferedWriter.write("MegaMek Equipment Extended Database");
+            bufferedWriter.newLine();
+            bufferedWriter.write("This file can be regenerated with java -jar MegaMek.jar -eqmdb ");
+            bufferedWriter.write(f.toString());
+            bufferedWriter.newLine();
+            bufferedWriter.write(
+                    "Name,Tech Base,Rules,Tech Rating,Static Tech Level,Introduction Date,Prototype Date,Production Date,Common Date,Extinction Date,Re-Introduction Date,Tonnage,CriticalSlots,Cost,BV,RulesRef,Alias");
+            bufferedWriter.newLine();
+            for (Enumeration<EquipmentType> equipmentTypes = EquipmentType.getAllTypes(); equipmentTypes
+                    .hasMoreElements();) {
+                EquipmentType equipmentType = equipmentTypes.nextElement();
+                if ((equipmentType instanceof AmmoType) || (equipmentType instanceof WeaponType)) {
+                    continue;
+                }
+
+                bufferedWriter.write("\"");
+                bufferedWriter.write(equipmentType.getName());
+
+                // Gather the unique tech levels for this equipment ...
+                List<Integer> levels = equipmentType.getTechLevels().keySet().stream()
+                        .map(equipmentType::getTechLevel)
+                        .sorted() // ordered for ease of use
+                        .distinct()
+                        .collect(Collectors.toList());
+
+                // ... and use them to output the tech names ...
+                bufferedWriter.write("\",\"");
+                bufferedWriter.write(levels.stream()
+                        .map(TechConstants::getTechName)
+                        .distinct()
+                        .collect(Collectors.joining("/")));
+
+                // ... and associated rules levels.
+                bufferedWriter.write("\",\"");
+                bufferedWriter.write(levels.stream()
+                        .map(TechConstants::getLevelName)
+                        .distinct()
+                        .collect(Collectors.joining("/")));
+
+                bufferedWriter.write("\",\"");
+                bufferedWriter.write(equipmentType.getFullRatingName());
+
+                bufferedWriter.write("\",\"");
+                bufferedWriter.write(equipmentType.getTechAdvancement().getStaticTechLevel().toString());
+
+                bufferedWriter.write("\",\"");
+                bufferedWriter.write(equipmentType.getTechAdvancement().getIntroductionDateName());
+
+                bufferedWriter.write("\",\"");
+                bufferedWriter.write(equipmentType.getTechAdvancement().getPrototypeDateName());
+
+                bufferedWriter.write("\",\"");
+                bufferedWriter.write(equipmentType.getTechAdvancement().getProductionDateName());
+
+                bufferedWriter.write("\",\"");
+                bufferedWriter.write(equipmentType.getTechAdvancement().getCommonDateName());
+
+                bufferedWriter.write("\",\"");
+                bufferedWriter.write(equipmentType.getTechAdvancement().getExtinctionDateName());
+
+                bufferedWriter.write("\",\"");
+                bufferedWriter.write(equipmentType.getTechAdvancement().getReintroductionDateName());
+
+                bufferedWriter.write("\",");
+                if (equipmentType.tonnage == EquipmentType.TONNAGE_VARIABLE) {
+                    bufferedWriter.write("Variable");
+                } else {
+                    bufferedWriter.write(Double.toString(equipmentType.tonnage));
+                }
+
+                bufferedWriter.write(",");
+                if (equipmentType.criticals == EquipmentType.CRITICALS_VARIABLE) {
+                    bufferedWriter.write("Variable");
+                } else {
+                    bufferedWriter.write(Integer.toString(equipmentType.criticals));
+                }
+
+                bufferedWriter.write(",");
+                if (equipmentType.cost == EquipmentType.COST_VARIABLE) {
+                    bufferedWriter.write("Variable");
+                } else {
+                    bufferedWriter.write(Double.toString(equipmentType.getCost(null, false, -1, 1.0)));
+                }
+
+                bufferedWriter.write(",");
+                if (equipmentType.bv == EquipmentType.BV_VARIABLE) {
+                    bufferedWriter.write("Variable");
+                } else {
+                    bufferedWriter.write(Double.toString(equipmentType.bv));
+                }
+
+                bufferedWriter.write(",\"");
+                bufferedWriter.write(equipmentType.getRulesRefs());
+
+                bufferedWriter.write("\",\"");
+                for (Enumeration<String> names = equipmentType.getNames(); names.hasMoreElements();) {
+                    String name = names.nextElement();
+                    bufferedWriter.write(name + ",");
+                }
+
+                bufferedWriter.write("\"");
+                bufferedWriter.newLine();
+            }
+
+            bufferedWriter.flush();
+            bufferedWriter.close();
         } catch (Exception e) {
             LogManager.getLogger().error("", e);
         }
@@ -1440,23 +1637,11 @@ public class EquipmentType implements ITechnology {
 
     @Override
     public String toString() {
-        return "EquipmentType: " + name;
-    }
-
-    protected static GameOptions getGameOptions() {
-        if (Server.getServerInstance() == null) {
-            return null;
-        } else if (Server.getServerInstance().getGame() == null) {
-            return null;
-        }
-        return Server.getServerInstance().getGame().getOptions();
+        return "[Equipment] " + internalName;
     }
 
     public String getShortName() {
-        if (shortName.isBlank()) {
-            return getName();
-        }
-        return shortName;
+        return shortName.isBlank() ? getName() : shortName;
     }
 
     public String getShortName(double size) {
@@ -1504,9 +1689,10 @@ public class EquipmentType implements ITechnology {
     }
 
     /**
-     * This does not include heat generated by stealth armor, as that depends on whether
-     * it is installed as patchwork and does not appear in the equipment list of all unit types.
-     * 
+     * This does not include heat generated by stealth armor, as that depends on
+     * whether it is installed as patchwork and does not appear in the equipment
+     * list of all unit types.
+     *
      * @return The amount of heat generated by the equipment
      */
     public int getHeat() {
@@ -1514,12 +1700,62 @@ public class EquipmentType implements ITechnology {
     }
 
     /**
-     * Sorting with the String returned by this method results in an improved ordering and grouping
-     * of equipment than by getName(); for example, AC2/5/10/20 will appear in that
-     * order instead of the order AC10/2/20/5 and S/M/L Lasers will be grouped together.
-     * @return A String similar to getName() but modified to support a better sorting
+     * Sorting with the String returned by this method results in an improved
+     * ordering and grouping of equipment than by getName(); for example,
+     * AC2/5/10/20 will appear in that order instead of the order AC10/2/20/5 and
+     * S/M/L Lasers will be grouped together.
+     *
+     * @return A String similar to getName() but modified to support a better
+     *         sorting
      */
     public String getSortingName() {
         return (sortingName != null) ? sortingName : name;
+    }
+
+    /**
+     * Returns true if this equipment is any of those identified by the given type
+     * Strings. The given typeInternalNames are compared to the internal name of
+     * this EquipmentType, not the (display) name!
+     *
+     * Best use the constants defined in EquipmentTypeLookup.
+     *
+     * @param typeInternalName  An Equipment internal name to check
+     * @param typeInternalNames More Equipment internal names to check
+     * @return true if the internalName of this equipment matches any of the given
+     *         types
+     */
+    public boolean isAnyOf(String typeInternalName, String... typeInternalNames) {
+        return internalName.equals(typeInternalName) || Arrays.asList(typeInternalNames).contains(internalName);
+    }
+
+    /**
+     * Returns true if this equipment is that identified by the given
+     * typeInternalName String. The given typeInternalName is compared to the
+     * internal name of this EquipmentType, not the (display) name!
+     *
+     * Best use the constants defined in EquipmentTypeLookup. Calling this is
+     * equivalent to {@link #isAnyOf(String, String...)} with only the one
+     * parameter.
+     *
+     * @param typeInternalName An Equipment internal name to check
+     * @return true if the internalName of this equipment matches the given type
+     */
+    public boolean is(String typeInternalName) {
+        return isAnyOf(typeInternalName);
+    }
+
+    public static Map<Integer, String> getAllStructureCodeName() {
+        Map<Integer, String> result = new HashMap<Integer, String>();
+
+        result.put(T_STRUCTURE_UNKNOWN, getStructureTypeName(T_STRUCTURE_UNKNOWN));
+        result.put(T_STRUCTURE_STANDARD, getStructureTypeName(T_STRUCTURE_STANDARD));
+        result.put(T_STRUCTURE_INDUSTRIAL, getStructureTypeName(T_STRUCTURE_INDUSTRIAL));
+        result.put(T_STRUCTURE_ENDO_STEEL, getStructureTypeName(T_STRUCTURE_ENDO_STEEL));
+        result.put(T_STRUCTURE_ENDO_PROTOTYPE, getStructureTypeName(T_STRUCTURE_ENDO_PROTOTYPE));
+        result.put(T_STRUCTURE_REINFORCED, getStructureTypeName(T_STRUCTURE_REINFORCED));
+        result.put(T_STRUCTURE_COMPOSITE, getStructureTypeName(T_STRUCTURE_COMPOSITE));
+        result.put(T_STRUCTURE_ENDO_COMPOSITE, getStructureTypeName(T_STRUCTURE_ENDO_COMPOSITE));
+
+        return result;
     }
 }

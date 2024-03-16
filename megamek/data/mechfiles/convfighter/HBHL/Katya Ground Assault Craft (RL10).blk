@@ -17,8 +17,12 @@ Katya Ground Assault Craft
 </Name>
 
 <Model>
-(RL10)
+C-906(RL10)
 </Model>
+
+<mul id:>
+4437
+</mul id:>
 
 <year>
 3067
@@ -31,6 +35,10 @@ Katya Ground Assault Craft
 <type>
 IS Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Aerodyne
@@ -100,7 +108,7 @@ IS Light Machine Gun Ammo - Half
 </Fuselage Equipment>
 
 <source>
-HB:House Liao - Civil War
+Handbook: House Liao
 </source>
 
 <tonnage>

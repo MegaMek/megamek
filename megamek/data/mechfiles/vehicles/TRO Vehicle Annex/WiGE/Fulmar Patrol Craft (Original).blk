@@ -20,6 +20,10 @@ Fulmar Patrol Craft
 (Original)
 </Model>
 
+<mul id:>
+4189
+</mul id:>
+
 <year>
 3056
 </year>
@@ -27,6 +31,10 @@ Fulmar Patrol Craft
 <type>
 IS Level 3
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 WiGE
@@ -88,7 +96,7 @@ ISVehicularMineDispenser
 </Rear Equipment>
 
 <source>
-TRO VAr - Clan Invasion
+TRO: Vehicle Annex (Revised)
 </source>
 
 <tonnage>

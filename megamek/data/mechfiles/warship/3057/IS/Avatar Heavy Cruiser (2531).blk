@@ -1,0 +1,366 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Warship
+</UnitType>
+
+<Name>
+Avatar Heavy Cruiser
+</Name>
+
+<Model>
+(2531)
+</Model>
+
+<mul id:>
+3764
+</mul id:>
+
+<year>
+2531
+</year>
+
+<originalBuildYear>
+2531
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<role>
+None
+</role>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+asfbay:12.0:4:1
+asfbay:12.0:4:2
+cargobay:58685.0:1:3
+dockingcollar
+dockingcollar
+dockingcollar
+dockingcollar
+dockingcollar
+dockingcollar
+steeragequarters:125.0:0
+1stclassquarters:550.0:0
+crewquarters:1764.0:0
+</transporters>
+
+<SafeThrust>
+3
+</SafeThrust>
+
+<heatsinks>
+2399
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+11250
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+41
+</armor_type>
+
+<armor_tech>
+5
+</armor_tech>
+
+<armor>
+103
+93
+93
+83
+93
+93
+</armor>
+
+<Nose Equipment>
+(B) Naval Laser 55
+Naval Laser 55
+Naval Laser 55
+Naval Laser 55
+Naval Laser 55
+Naval Laser 55
+(B) Naval PPC (Heavy)
+Naval PPC (Heavy)
+Naval PPC (Heavy)
+Naval PPC (Heavy)
+</Nose Equipment>
+
+<Left Front Side Equipment>
+(B) Naval Autocannon (NAC/20)
+Naval Autocannon (NAC/20)
+Ammo NAC/20:80
+(B) Naval PPC (Heavy)
+Naval PPC (Heavy)
+(B) Capital Missile Launcher (Killer Whale)
+Capital Missile Launcher (Killer Whale)
+Capital Missile Launcher (Killer Whale)
+Ammo Killer Whale:50
+(B) Naval Laser 35
+Naval Laser 35
+Naval Laser 35
+(B) LRM 20
+LRM 20
+LRM 20
+IS Ammo LRM-20 Artemis-capable:30
+ISArtemisIV
+ISArtemisIV
+ISArtemisIV
+</Left Front Side Equipment>
+
+<Right Front Side Equipment>
+(B) Naval Autocannon (NAC/20)
+Naval Autocannon (NAC/20)
+Ammo NAC/20:80
+(B) Naval PPC (Heavy)
+Naval PPC (Heavy)
+(B) Capital Missile Launcher (Killer Whale)
+Capital Missile Launcher (Killer Whale)
+Capital Missile Launcher (Killer Whale)
+Ammo Killer Whale:50
+(B) Naval Laser 35
+Naval Laser 35
+Naval Laser 35
+(B) LRM 20
+LRM 20
+LRM 20
+IS Ammo LRM-20 Artemis-capable:30
+ISArtemisIV
+ISArtemisIV
+ISArtemisIV
+</Right Front Side Equipment>
+
+<Aft Equipment>
+(B) Naval Autocannon (NAC/20)
+Naval Autocannon (NAC/20)
+Ammo NAC/20:80
+(B) Naval Laser 35
+Naval Laser 35
+Naval Laser 35
+Naval Laser 35
+Naval Laser 35
+Naval Laser 35
+(B) LRM 20
+LRM 20
+LRM 20
+IS Ammo LRM-20 Artemis-capable:30
+ISArtemisIV
+ISArtemisIV
+ISArtemisIV
+</Aft Equipment>
+
+<Aft Left Side Equipment>
+(B) Naval Autocannon (NAC/20)
+Naval Autocannon (NAC/20)
+Ammo NAC/20:80
+(B) Naval PPC (Heavy)
+Naval PPC (Heavy)
+(B) Capital Missile Launcher (Killer Whale)
+Capital Missile Launcher (Killer Whale)
+Capital Missile Launcher (Killer Whale)
+Ammo Killer Whale:50
+(B) Naval Laser 35
+Naval Laser 35
+Naval Laser 35
+(B) LRM 20
+LRM 20
+LRM 20
+IS Ammo LRM-20 Artemis-capable:30
+ISArtemisIV
+ISArtemisIV
+ISArtemisIV
+</Aft Left Side Equipment>
+
+<Aft Right Side Equipment>
+(B) Naval Autocannon (NAC/20)
+Naval Autocannon (NAC/20)
+Ammo NAC/20:80
+(B) Naval PPC (Heavy)
+Naval PPC (Heavy)
+(B) Capital Missile Launcher (Killer Whale)
+Capital Missile Launcher (Killer Whale)
+Capital Missile Launcher (Killer Whale)
+Ammo Killer Whale:50
+(B) Naval Laser 35
+Naval Laser 35
+Naval Laser 35
+(B) LRM 20
+LRM 20
+LRM 20
+IS Ammo LRM-20 Artemis-capable:30
+ISArtemisIV
+ISArtemisIV
+ISArtemisIV
+</Aft Right Side Equipment>
+
+<Hull Equipment>
+</Hull Equipment>
+
+<Left Broadsides Equipment>
+(B) Naval Autocannon (NAC/30)
+Naval Autocannon (NAC/30)
+Ammo NAC/30:60
+(B) Naval PPC (Heavy)
+Naval PPC (Heavy)
+Naval PPC (Heavy)
+Naval PPC (Heavy)
+(B) Capital Missile Launcher (Killer Whale)
+Capital Missile Launcher (Killer Whale)
+Capital Missile Launcher (Killer Whale)
+Ammo Killer Whale:50
+(B) Naval Laser 35
+Naval Laser 35
+Naval Laser 35
+Naval Laser 35
+Naval Laser 35
+Naval Laser 35
+</Left Broadsides Equipment>
+
+<Right Broadsides Equipment>
+(B) Naval Autocannon (NAC/30)
+Naval Autocannon (NAC/30)
+Ammo NAC/30:60
+(B) Naval PPC (Heavy)
+Naval PPC (Heavy)
+Naval PPC (Heavy)
+Naval PPC (Heavy)
+(B) Capital Missile Launcher (Killer Whale)
+Capital Missile Launcher (Killer Whale)
+Capital Missile Launcher (Killer Whale)
+Ammo Killer Whale:50
+(B) Naval Laser 35
+Naval Laser 35
+Naval Laser 35
+Naval Laser 35
+Naval Laser 35
+Naval Laser 35
+</Right Broadsides Equipment>
+
+<structural_integrity>
+85
+</structural_integrity>
+
+<capabilities>
+The Avatar-class cruiser excelled in its weaponry, with a devastating broadside of naval PPCs, autocannons, and supplementary weaponry. The installation of large maneuvering thrusters significantly enhanced the ship's agility and maneuverability. Despite the electrical system problem, the Avatar's combat capabilities made it a formidable presence on the battlefield.
+</capabilities>
+
+<overview>
+The Avatar-class cruiser replaced the Aegis-class Heavy Cruisers in the Terran Hegemony in 2531. Weighing 85,000 tons more than its predecessor, the Avatar boasted heavier armor, weaponry, and improved maneuverability. Its primary strength was its formidable weapons system, combining naval PPCs, autocannons, Killer Whale launchers, and naval lasers. However, the class suffered from electrical system issues that were never resolved, leading to its eventual demise.
+</overview>
+
+<history>
+In the early 28th century, the Avatar-class cruiser was replaced by the Luxor-class cruiser. Many Avatars were either placed in reserve fleets or repurposed as training vessels. During Stephan Amaris' seizure of Terra in 2766, three Avatar-class vessels undergoing refitting at the Ian Cameron yards fell under his control. By the end of the war, six Avatars remained, with five serving in the SLDF and one captured by the Rim Worlds. Despite their obsolescence, General Kerensky chose to include these vessels in the Exodus fleet due to their cargo and DropShip capacities, and they are currently stored in naval caches.
+</history>
+
+<manufacturer>
+Daussault-Shimmon Enterprises
+</manufacturer>
+
+<primaryFactory>
+New Earth
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<use>
+Cruiser
+</use>
+
+<length>
+855 m
+</length>
+
+<height>
+1250 m Sail
+</height>
+
+<source>
+TRO: 3057 Revised
+</source>
+
+<tonnage>
+830000.0
+</tonnage>
+
+<kf_core>
+1
+</kf_core>
+
+<lithium-fusion>
+1
+</lithium-fusion>
+
+<sail>
+1
+</sail>
+
+<grav_decks>
+185
+145
+</grav_decks>
+
+<designtype>
+1
+</designtype>
+
+<crew>
+355
+</crew>
+
+<officers>
+55
+</officers>
+
+<gunners>
+91
+</gunners>
+
+<passengers>
+0
+</passengers>
+
+<marines>
+25
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<life_boat>
+60
+</life_boat>
+
+<escape_pod>
+40
+</escape_pod>
+

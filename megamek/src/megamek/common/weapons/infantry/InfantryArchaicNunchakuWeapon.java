@@ -24,30 +24,30 @@ import megamek.common.AmmoType;
  */
 public class InfantryArchaicNunchakuWeapon extends InfantryWeapon {
 
-	/**
-	 *
-	 */
-	private static final long serialVersionUID = -3164871600230559641L;
+    /**
+     *
+     */
+    private static final long serialVersionUID = -3164871600230559641L;
 
-	public InfantryArchaicNunchakuWeapon() {
-		super();
+    public InfantryArchaicNunchakuWeapon() {
+        super();
 
-		name = "Staff (Nunchaku/Pole Arm)";
-		setInternalName(name);
-		addLookupName("InfantryNunchaku");
-		ammoType = AmmoType.T_NA;
-		cost = 10;
-		bv = 0.02;
+        name = "Staff (Nunchaku/Pole Arm)";
+        setInternalName(name);
+        addLookupName("InfantryNunchaku");
+        ammoType = AmmoType.T_NA;
+        cost = 10;
+        bv = 0.02;
         tonnage = .00015; 
-		flags = flags.or(F_NO_FIRES).or(F_INF_POINT_BLANK).or(F_INF_ARCHAIC);
-		infantryDamage = 0.02;
-		infantryRange = 0;
-		rulesRefs = "272, TM";
-		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
-				.setISApproximate(false, false, false, false, false)
-				.setClanAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
-				.setClanApproximate(false, false, false, false, false).setTechRating(RATING_A)
-				.setAvailability(RATING_B, RATING_B, RATING_B, RATING_B);
+        flags = flags.or(F_NO_FIRES).or(F_INF_POINT_BLANK).or(F_INF_ARCHAIC);
+        infantryDamage = 0.02;
+        infantryRange = 0;
+        rulesRefs = "272, TM";
+        techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
+                .setISApproximate(false, false, false, false, false)
+                .setClanAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
+                .setClanApproximate(false, false, false, false, false).setTechRating(RATING_A)
+                .setAvailability(RATING_B, RATING_B, RATING_B, RATING_B);
 
-	}
+    }
 }

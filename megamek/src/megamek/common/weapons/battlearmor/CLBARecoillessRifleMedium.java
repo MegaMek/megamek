@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2004-2005 - Ben Mazur (bmazur@sev.org).
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -35,6 +35,7 @@ public class CLBARecoillessRifleMedium extends Weapon {
         addLookupName("ISBAMedium Recoilless Rifle");
         addLookupName("ISBAMediumRecoillessRifle");
         sortingName = "Recoilless Rifle C";
+        shortName = "Medium Recoiless Rifle";
         heat = 0;
         damage = 3;
         infDamageClass = WeaponType.WEAPON_BURST_2D6;
@@ -48,7 +49,7 @@ public class CLBARecoillessRifleMedium extends Weapon {
         bv = 19;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_BA_WEAPON).or(F_BURST_FIRE).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
         cost = 3000;
-        rulesRefs = "268,TM";
+        rulesRefs = "268, TM";
         techAdvancement.setTechBase(TECH_BASE_ALL)
                 .setIntroLevel(false)
                 .setUnofficial(false)
@@ -58,7 +59,7 @@ public class CLBARecoillessRifleMedium extends Weapon {
                 .setISApproximate(true, false, false, false, false)
                 .setClanAdvancement(DATE_NONE, DATE_NONE, 3062, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, false, true, false, false)
-                .setPrototypeFactions(F_FS,F_LC)
-                .setProductionFactions(F_FS,F_LC);
+                .setPrototypeFactions(F_FS, F_LC)
+                .setProductionFactions(F_FS, F_LC);
     }
 }

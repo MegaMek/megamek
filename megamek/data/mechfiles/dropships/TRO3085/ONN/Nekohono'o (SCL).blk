@@ -20,6 +20,10 @@ Nekohono'o
 (SCL)
 </Model>
 
+<mul id:>
+2257
+</mul id:>
+
 <year>
 3080
 </year>
@@ -31,6 +35,10 @@ Nekohono'o
 <type>
 IS Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Spheroid
@@ -200,7 +208,7 @@ ISNC3
 </structural_integrity>
 
 <source>
-TRO 3085 - Jihad
+TRO: 3085
 </source>
 
 <tonnage>

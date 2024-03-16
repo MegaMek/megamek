@@ -1,7 +1,7 @@
 Federated Suns Dropships A
 Leopard (2537),1
 Lion (2595),2
-Dictator (Standard),3
+Dictator,3
 Union (2708),4
 Leopard CV (2581),5
 Triumph (2593),6

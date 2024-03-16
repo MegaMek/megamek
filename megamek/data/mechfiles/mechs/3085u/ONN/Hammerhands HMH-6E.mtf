@@ -1,12 +1,20 @@
-Version:1.0
-Hammerhands
-HMH-6E
+chassis:Hammerhands
+model:HMH-6E
+mul id:1373
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3077
-Source:Jihad
+source:TRO: 3085
 Rules Level:2
+role:Skirmisher
+
+
+
+quirk:barrel_fists_la
+quirk:barrel_fists_ra
+quirk:pro_actuator
+
 
 Mass:75
 Engine:225 Fusion Engine

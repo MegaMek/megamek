@@ -20,6 +20,10 @@ Eagle
 EGL-R6
 </Model>
 
+<mul id:>
+4110
+</mul id:>
+
 <year>
 2501
 </year>
@@ -31,6 +35,10 @@ EGL-R6
 <type>
 IS Level 2
 </type>
+
+<role>
+Dogfighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -96,7 +104,7 @@ Medium Laser
 </Fuselage Equipment>
 
 <source>
-TRO 3075 - Age of War
+TRO: 3075
 </source>
 
 <tonnage>

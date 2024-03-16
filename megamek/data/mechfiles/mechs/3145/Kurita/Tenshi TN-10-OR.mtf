@@ -1,37 +1,45 @@
-Version:1.1
-Tenshi
-TN-10-OR
+chassis:Tenshi
+model:TN-10-OR
+mul id:6424
 
 Config:Biped Omnimech
-TechBase:Mixed (IS Chassis)
-Era:3101
-Source:TRO 3145 Draconis Combine - Late Republic
-Rules Level:4
+techbase:Mixed (IS Chassis)
+era:3101
+source:TRO: 3145 Draconis Combine
+rules level:4
+role:Missile Boat
 
-Mass:95
-Engine:285 Light Engine(IS)
-Structure:IS Endo-Composite
-Myomer:Standard
-Cockpit:Standard Cockpit
-Gyro:Compact Gyro
 
-Heat Sinks:12 Double
-Base Chassis Heat Sinks:11
-Walk MP:3
-Jump MP:0
 
-Armor:Standard(Clan)
-LA Armor:32
-RA Armor:32
-LT Armor:30
-RT Armor:30
-CT Armor:45
-HD Armor:9
-LL Armor:40
-RL Armor:40
-RTL Armor:10
-RTR Armor:10
-RTC Armor:15
+quirk:distracting
+quirk:searchlight
+quirk:difficult_eject
+
+
+mass:95
+engine:285 Light Engine(IS)
+structure:IS Endo-Composite
+myomer:Standard
+cockpit:Standard Cockpit
+gyro:Compact Gyro
+
+heat sinks:12 IS Double
+base chassis heat sinks:11
+walk mp:3
+jump mp:0
+
+armor:Standard(Clan)
+LA armor:32
+RA armor:32
+LT armor:30
+RT armor:30
+CT armor:45
+HD armor:9
+LL armor:40
+RL armor:40
+RTL armor:10
+RTR armor:10
+RTC armor:15
 
 Weapons:7
 ER Medium Laser, Left Arm
@@ -45,11 +53,11 @@ ER Medium Laser, Center Torso
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLERMediumLaser (omnipod)
-CLERMediumLaser (omnipod)
-IS Ammo Extended LRM-20 (omnipod)
-IS Ammo Extended LRM-20 (omnipod)
-IS Ammo Extended LRM-20 (omnipod)
+CLERMediumLaser (OMNIPOD)
+CLERMediumLaser (OMNIPOD)
+IS Ammo Extended LRM-20 (OMNIPOD)
+IS Ammo Extended LRM-20 (OMNIPOD)
+IS Ammo Extended LRM-20 (OMNIPOD)
 -Empty-
 -Empty-
 -Empty-
@@ -59,11 +67,11 @@ IS Ammo Extended LRM-20 (omnipod)
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLERMediumLaser (omnipod)
-CLERMediumLaser (omnipod)
-IS Ammo Extended LRM-20 (omnipod)
-IS Ammo Extended LRM-20 (omnipod)
-IS Ammo Extended LRM-20 (omnipod)
+CLERMediumLaser (OMNIPOD)
+CLERMediumLaser (OMNIPOD)
+IS Ammo Extended LRM-20 (OMNIPOD)
+IS Ammo Extended LRM-20 (OMNIPOD)
+IS Ammo Extended LRM-20 (OMNIPOD)
 -Empty-
 -Empty-
 -Empty-
@@ -73,28 +81,28 @@ IS Ammo Extended LRM-20 (omnipod)
 Left Torso:
 Fusion Engine
 Fusion Engine
-Extended LRM 20 (omnipod)
-Extended LRM 20 (omnipod)
-Extended LRM 20 (omnipod)
-Extended LRM 20 (omnipod)
-Extended LRM 20 (omnipod)
-Extended LRM 20 (omnipod)
-Extended LRM 20 (omnipod)
-Extended LRM 20 (omnipod)
+Extended LRM 20 (OMNIPOD)
+Extended LRM 20 (OMNIPOD)
+Extended LRM 20 (OMNIPOD)
+Extended LRM 20 (OMNIPOD)
+Extended LRM 20 (OMNIPOD)
+Extended LRM 20 (OMNIPOD)
+Extended LRM 20 (OMNIPOD)
+Extended LRM 20 (OMNIPOD)
 IS Endo-Composite
--Empty-
+IS Endo-Composite
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-Extended LRM 20 (omnipod)
-Extended LRM 20 (omnipod)
-Extended LRM 20 (omnipod)
-Extended LRM 20 (omnipod)
-Extended LRM 20 (omnipod)
-Extended LRM 20 (omnipod)
-Extended LRM 20 (omnipod)
-Extended LRM 20 (omnipod)
+Extended LRM 20 (OMNIPOD)
+Extended LRM 20 (OMNIPOD)
+Extended LRM 20 (OMNIPOD)
+Extended LRM 20 (OMNIPOD)
+Extended LRM 20 (OMNIPOD)
+Extended LRM 20 (OMNIPOD)
+Extended LRM 20 (OMNIPOD)
+Extended LRM 20 (OMNIPOD)
 IS Endo-Composite
 IS Endo-Composite
 
@@ -107,10 +115,10 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
-CLERMediumLaser (omnipod)
+ISDoubleHeatSink (OMNIPOD)
+ISDoubleHeatSink (OMNIPOD)
+ISDoubleHeatSink (OMNIPOD)
+CLERMediumLaser (OMNIPOD)
 
 Head:
 Life Support
@@ -155,13 +163,9 @@ IS Endo-Composite
 -Empty-
 
 overview:The Tenshi, ("Angel" in japanese), is an Assault Class OmniMech, which was manufactured during the early thirty-second century for the Draconis Combine's armed forces.
-
 capabilities:Among the Tenshi's design features is its durability and having a heavy equipment payload. The designers saw fit to equip the 'Mech with a Compact Gyro and 18.5 tons of Standard Armor. The Tenshi also uses a number of new technologies that had finally entered production in the decades preceding the Jihad. The use of an Endo-Composite internal structure and a Light Fusion Engine granted the design a huge pod capacity of 48 tons. However, this large capacity had come at a price; that price being a slightly lower maximum speed than other comparable designs of the era.
-
 deployment:This configuration utilizes a mix of Inner Sphere and Clan Technologies. The R configuration's long-range firepower comes from a pair of side-torso mounted 20-Tubed Extended Long-Range Missile Launchers with six tons of ammunition. Other weapons include five Clan Tech ER Medium Lasers found in the arms and in the center torso. A single Double Heat Sink is added to help manage heat.
-
 history:A product of House Kurita's hidden efforts to rebuild its decimated 'Mech regiments, the Tenshi was designed to use resources found within the Combine. The Tenshi was first deployed among the ranks of the Ghost Regiments in the early 3100s, its deployment with a less-renowned brigade was part of the DCMS' two-fold effort of testing the 'Mech while also providing a fire-wall to save face should the design prove to be a failure in combat. One of its first deployments was in 3103, when the 1st Ghost conducted a raid on the Ghost Bear Dominion world of Grumium. The eight Tenshis among the Ghosts' ranks performed well, with most of their numbers returning to
-
 manufacturer:Luthien Armor Works
 primaryfactory:Luthien
 systemmanufacturer:CHASSIS:Luthien Class 105A
@@ -169,3 +173,4 @@ systemmanufacturer:ENGINE:Hermes 285 Light
 systemmanufacturer:ARMOR:Mitchel Argon Standard
 systemmanufacturer:COMMUNICATIONS:Sipher Clarion
 systemmanufacturer:TARGETING:Matabushi Tenbatsu
+

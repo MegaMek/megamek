@@ -1,11 +1,11 @@
-Version:1.0
-Arana MilitiaMech
-ARA-S-1
+chassis:Arana
+model:ARA-S-1 MilitiaMech
+mul id:5798
 
 Config:Quad
 TechBase:Clan
 Era:3087
-Source:ISP3
+Source:Intersteller Players 3
 Rules Level:3
 
 Mass:40
@@ -146,5 +146,3 @@ Heat Sink
 -Empty-
 -Empty-
 -Empty-
-
-

@@ -1,0 +1,137 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+Infiltrator Mk. I Battle Armor
+</Name>
+
+<Model>
+(Special Ops)(Sqd6)
+</Model>
+
+<mul id:>
+8897
+</mul id:>
+
+<year>
+3062
+</year>
+
+<type>
+IS Level 3
+</type>
+
+<role>
+Ambusher
+</role>
+
+<motion_type>
+Leg
+</motion_type>
+
+<cruiseMP>
+2
+</cruiseMP>
+
+<armor_type>
+34
+</armor_type>
+
+<armor_tech>
+7
+</armor_tech>
+
+<Squad Equipment>
+ISImprovedSensors:Body
+ISBARemoteSensorDispenser:Body
+BAAPMount:LA
+Infantry Auto Rifle:APM:LA
+BABasicManipulator:LA
+IS BA Stealth (Prototype):RA
+IS BA Stealth (Prototype):LA
+IS BA Stealth (Prototype):Body
+IS BA Stealth (Prototype):Body
+</Squad Equipment>
+
+<Trooper 1 Equipment>
+</Trooper 1 Equipment>
+
+<Trooper 2 Equipment>
+</Trooper 2 Equipment>
+
+<Trooper 3 Equipment>
+</Trooper 3 Equipment>
+
+<Trooper 4 Equipment>
+</Trooper 4 Equipment>
+
+<source>
+TRO: 3058 Upgrade
+</source>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+0
+</jumpingMP>
+
+<armor>
+5
+</armor>
+
+<Trooper Count>
+6
+</Trooper Count>
+
+<weightclass>
+1
+</weightclass>
+
+<overview>
+The Infiltrator is part of the so-called "first generation" of battle armor created by the Federated Commonwealth. 
+</overview>
+
+<capabilities>
+The centerpiece of the Infiltrator are its stealth and sensor systems. Clad in 500kg of Prototype Stealth armor, the Infiltrator mimics the capabilities of a combination ECM/IR Sneak Suit mounting radar, infrared, and acoustic-suppressing systems. Used in combination with conventional stealth techniques the Infiltrator is able to sneak into enemy-controlled areas, where it begins gathering and recording data via passive heat sensor, magnetic-anomaly detectors, and other equipment. Unfortunately this armor provides only enough protection to stop a single hit from a medium laser.
+</capabilities>
+
+<deployment>
+Given its nature, it is unsurprising that the Infiltrator became popular with the intelligence agencies that operated within the Federated Commonwealth. This special ops variant, first deployed in 3062, was created specifically to help those individuals in their specific tasks. The grenade launcher was replaced with an Anti-Personnel Weapon Mount and sensors were removed for a Remote Sensor Dispenser, Improved Sensors, and a Laser Microphone. These all assist in information-gathering, but still allow the unit to engage in headhunter missions.
+</deployment>
+
+<history>
+Thanks to salvage captured from the Clans, the New Avalon Institute of Science was able to reverse engineer the technology for battle suits, and decided to create a lighter type than the Inner Sphere Standard which was geared towards reconnaissance and stealth. The result was a unit armored with an early form of stealth armor and sophisticated sensing equipment, meant to operate deep behind enemy lines and gather intelligence. The first prototype Infiltrator was sent to the 1st Somerset Strikers in 3050 to take part in their campaign against Clan Jade Falcon; for reasons unknown the Strikers chose as its first test operator Cadet Katiara Kylie, an Aerospace Fighter pilot. The suit's first combat experience came during live-fire exercises on Waldorff V when the renegade Falcon's Claws unit unexpectedly attacked. Despite being taken by surprise and having to fight in swampy terrain, the Infiltrator proved itself by using its stealth systems to hide from the enemy and launch surprise attacks. Based on its performance the Infiltrator was approved for full-scale production shortly thereafter. As the Infiltrator began reaching combat units, its shortcomings became apparent to many. Infiltrator operators began to dub their suits the "Waddle" for its ungainly gait and poor mobility. The advanced stealth armor it carried, while hiding the suit from enemy detection, was only strong enough to resist small-arms fire, and its paltry firepower was only sufficient for taking on unarmored infantry and vehicles. These disadvantages were only further highlighted when FedCom commanders overestimated the suit's capabilities and sent them on missions more suited to combat-focused battle armor. While eventually superseded by the Infiltrator Mk. II, the original Infiltrator Mk. I suit as it now became known continued to see service throughout the Federated Commonwealth, with thousands of suits stationed across the Commonwealth by the time of the FedCom Civil War. Used for its intended mission by those who know its capabilities, the Infiltrator is an excellent suit for the mission of deep reconnaissance and raiding. Since the FedCom schism special forces units have continued to use the original Infiltrator suit, as well as military commanders in both the AFFS and LAAF unable to procure the more advanced model. As of 3070, the Infiltrator Mk. I is no longer in production.
+</history>
+
+<manufacturer>
+Albion Advanced Technologies and Products
+</manufacturer>
+
+<primaryFactory>
+New Avalon
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+JUMPJET:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+
+

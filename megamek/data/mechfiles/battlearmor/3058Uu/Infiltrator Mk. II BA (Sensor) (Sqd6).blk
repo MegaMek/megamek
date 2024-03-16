@@ -1,0 +1,126 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+Infiltrator Mk. II Battle Armor
+</Name>
+
+<Model>
+(Sensor)(Sqd6)
+</Model>
+
+<mul id:>
+8901
+</mul id:>
+
+<chassis>
+biped
+</chassis>
+
+<weightclass>
+2
+</weightclass>
+
+<Trooper Count>
+6
+</Trooper Count>
+
+<cruiseMP>
+1
+</cruiseMP>
+
+<jumpingMP>
+3
+</jumpingMP>
+
+<Armor>
+6
+</Armor>
+
+<armor_type>
+32
+</armor_type>
+
+<Squad Equipment>
+BA Machine Gun:RA
+IS BA ECM:Body
+BAParafoil:Body
+ISBAImprovedSensors:Body
+BAAPMount:RA
+BAAPMount:LA
+InfantryAssaultRifle:LA:APM
+InfantryAssaultRifle:RA:APM
+BABasicManipulator:LA
+BABasicManipulator:RA
+IS BA Stealth:Body
+IS BA Stealth:RA
+IS BA Stealth:LA
+IS BA Stealth:LA
+</Squad Equipment>
+
+<type>
+IS Level 2
+</type>
+
+<role>
+Ambusher
+</role>
+
+<year>
+3063
+</year>
+
+<motion_type>
+Jump
+</motion_type>
+
+<source>
+TRO: 3058 Upgrade
+</source>
+
+<armor_tech>
+3
+</armor_tech>
+
+<overview>
+The Infiltrator Mk. II is a battle armor suit designed as a replacement for the earlier Infiltrator Mk. I. 
+</overview>
+
+<capabilities>
+Although the Puma has just a top ground speed of 10.8 km/h, the inclusion of integral Jump Jets allows it to jump 90 meters at a time. The 360kg of Standard Stealth armor the Mk. II caries not only allows it to withstand a full burst from an Inner Sphere Medium Pulse Laser and keep fighting, it also mimics the effect of a combination IR/ECM Sneak Suit, continually recharged by the suit to allow indefinite operation. Providing additional electronic protection is a personal-sized ECM Suite. Finally the suit includes an optional Parafoil attachment that aids in HALO drops.
+</capabilities>
+
+<deployment>
+The sensor variant introduced in 3063 removes the Magshot to make way for a more dedicated scout. It mounts improved sensors for this role. Offensively, the variant mounts an additional anti-personnel weapon mount and a heavier Machine Gun on the right arm, making it devastating to unarmored infantry.
+</deployment>
+
+<history>
+The original Infiltrator had long served the Armed Forces of the Federated Commonwealth (as well as DMI and MIIO) as a stealth suit that was a capable scout and could easily penetrate enemy lines. It did, however, have a number of drawbacks to its design and as one of the first generation of battle armor it no longer served the needs of the Federated Commonwealth's intelligence agencies sufficiently. Despite this need for a replacement, it took some time for the Commonwealth to respond as they had more units to equip with battle armor than any other nation and were still in the midst of rebuilding many units shattered during the Clan Invasion. Initial research and development on the new suit began in February 3056, when the Intelligence Secretariat directed the Office of Science and Technology to coordinate with the New Avalon Institute of Science on a replacement, but it wasn't until a year later when they received a startling breakthrough. The Gray Death Legion had located an ancient Star League vault on Karbala and retrieved several Nighthawk power armor suits from the hidden cache. Under orders from his liege Archon-Prince Victor Steiner-Davion, Grayson Carlyle was forced to hand the suits over to the NAIS in August 3057, where they were dismantled entirely. The destruction of the Nighthawk suits provided invaluable data to the NAIS scientists, who in January 3059 began producing prototype suits; full-scale production would finally start in March 3060. The Infiltrator Mk. II, nicknamed the "Puma" by many troopers, proved to be superior to the original Infiltrator in nearly every way except cost. This was especially true when performing "direct actions" as the Mk. II was far more combat-capable than the original. Demand for the new suit exceeded supply in the early years - both FedCom intelligence agencies bought up nearly half of all Mk. IIs produced - and this shortage was only exacerbated after casualties suffered during the FedCom Civil War. Despite this the Mk. II could be found in most Regimental Combat Teams and dedicated special forces units for years to come.
+</history>
+
+<manufacturer>
+Albion Advanced Technologies and Products
+</manufacturer>
+
+<primaryFactory>
+New Avalon
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+JUMPJET:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>

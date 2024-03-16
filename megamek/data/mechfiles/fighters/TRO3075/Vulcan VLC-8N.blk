@@ -20,6 +20,10 @@ Vulcan
 VLC-8N
 </Model>
 
+<mul id:>
+5367
+</mul id:>
+
 <year>
 3074
 </year>
@@ -31,6 +35,10 @@ VLC-8N
 <type>
 IS Level 2
 </type>
+
+<role>
+Attack Fighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -108,7 +116,7 @@ IS Light Gauss Ammo
 </Fuselage Equipment>
 
 <source>
-TRO 3075 - Jihad
+TRO: 3075
 </source>
 
 <tonnage>

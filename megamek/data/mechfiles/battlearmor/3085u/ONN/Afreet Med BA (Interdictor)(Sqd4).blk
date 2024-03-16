@@ -1,0 +1,94 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+Afreet Medium Battle Armor
+</Name>
+
+<Model>
+(Interdictor)(Sqd4)
+</Model>
+
+<mul id:>
+16
+</mul id:>
+
+<year>
+3076
+</year>
+
+<type>
+Clan Level 2
+</type>
+
+<role>
+Scout
+</role>
+
+<motion_type>
+Jump
+</motion_type>
+
+<cruiseMP>
+1
+</cruiseMP>
+
+<armor_type>
+35
+</armor_type>
+
+<armor_tech>
+12
+</armor_tech>
+
+<Point Equipment>
+CLBAHeavyMG:RA
+CL BA ECM:Body
+CLBAJumpBooster:Body
+BABattleClawVibro:LA
+BABattleClawVibro:RA
+SwarmMek
+SwarmWeaponMek
+StopSwarm
+LegAttack
+Clan BA Fire Resistant:LA
+Clan BA Fire Resistant:LA
+Clan BA Fire Resistant:LA
+Clan BA Fire Resistant:RA
+Clan BA Fire Resistant:Body
+</Point Equipment>
+
+<source>
+TRO: 3085
+</source>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+3
+</jumpingMP>
+
+<armor>
+5
+</armor>
+
+<Trooper Count>
+4
+</Trooper Count>
+
+<weightclass>
+2
+</weightclass>

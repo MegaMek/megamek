@@ -1,0 +1,169 @@
+chassis:Man O' War
+clanname:Gargoyle
+model:K
+mul id:7759
+
+Config:Biped Omnimech
+techbase:Mixed (Clan Chassis)
+era:3140
+rules level:2
+role:Skirmisher
+source:Rec Guide:ilClan #11
+
+mass:80
+engine:400 XL (Clan) Engine
+structure:IS Standard
+myomer:Standard
+
+heat sinks:16 Double
+base chassis heat sinks:16
+walk mp:5
+jump mp:0
+
+armor:Ferro-Fibrous(Clan)
+LA armor:23
+RA armor:23
+LT armor:24
+RT armor:24
+CT armor:30
+HD armor:9
+LL armor:24
+RL armor:24
+RTL armor:10
+RTR armor:10
+RTC armor:10
+
+Weapons:7
+Improved Heavy Medium Laser, Left Arm
+Improved Heavy Medium Laser, Left Arm
+Improved Heavy Medium Laser, Left Arm
+Improved Heavy Medium Laser, Left Arm
+Streak SRM 4, Left Torso
+Streak SRM 4, Right Torso
+Streak SRM 4, Center Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+CLImprovedMediumHeavyLaser (omnipod)
+CLImprovedMediumHeavyLaser (omnipod)
+CLImprovedMediumHeavyLaser (omnipod)
+CLImprovedMediumHeavyLaser (omnipod)
+CLImprovedMediumHeavyLaser (omnipod)
+CLImprovedMediumHeavyLaser (omnipod)
+CLImprovedMediumHeavyLaser (omnipod)
+CLImprovedMediumHeavyLaser (omnipod)
+Clan Ferro-Fibrous
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+Hatchet (omnipod)
+Hatchet (omnipod)
+Hatchet (omnipod)
+Hatchet (omnipod)
+Hatchet (omnipod)
+Hatchet (omnipod)
+Clan Ferro-Fibrous
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+CLStreakSRM4 (omnipod)
+Clan Streak SRM 4 Ammo (omnipod)
+CLCASEII (omnipod)
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+CLStreakSRM4 (omnipod)
+CLActiveProbe (omnipod)
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLStreakSRM4 (omnipod)
+Supercharger (omnipod)
+
+Head:
+Life Support
+Sensors
+Cockpit
+Clan Ferro-Fibrous
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+overview:The Gargoyle is an extremely fast assault OmniMech developed with the Timber Wolf as replacements for the first-generation Woodsman OmniMech. The Gargoyle is therefore commonly seen among Clan Wolf, and was a featured assault OmniMech during the Clan Invasion. The Gargoyle earned the name Man O' War from the Inner Sphere forces because of its effectiveness. Along with the Timber Wolf and Naga, the Gargoyle debuted in 2945.
+
+capabilities:Following on the heels of the Jade Falcon’s adoption of physical attacks, the Gargoyle K represents a paradigm shift in tactics of other Clans. Mounting a six ton Hatchet in its right arm the Gargoyle K is the first Clan mech so equipped. Adding to the danger of the hatchet is a Supercharger that allows the K to run at over 100kph, a staggering speed for an assault mech. Focused solely on short range destruction, the K’s other weapons are for use up close. Each of the mech’s torsos comes equipped with a Streak SRM-4 launcher. All three launchers are fed by a single ton of ammo in the CASE II protected left torso. Four Imp. Heavy Medium Lasers reside in the left arm. To ensure no targets can hide from the K an Active Probe is housed in the right torso.
+
+deployment:The Gargoyle is capable of reaching ground speeds of up to 86.4 km/h thanks to its massive 400 Model SF-3 XL Engine, accounting for over twenty percent of the 'Mech's mass. Built on a standard structure, the Gargoyle has sixteen double heat sinks in its base chassis, which can dissipate heat from most of the Gargoyle's configurations quite effectively. The Gargoyle carries eleven tons of Ferro-Fibrous armor which is light for its size, but provides protection equal to that of most heavy 'Mechs. Even the Gargoyles relatively light twenty-one and half tons of available pod space emphasizes speed; all Gargoyle configs mount weaponry almost exclusively in the arms, reducing the amount of time required to alter the weapon systems; however, with most of the weaponry placed in the arms, the Gargoyle is at the risk of being disarmed by a couple of well-placed shots.
+manufacturer:Wolf Clan Site OZ-1, Tokasha Mechworks, Tamar HH Industriplex Alpha
+primaryfactory:Tamar, Tokasha,  Tamar
+systemmanufacturer:CHASSIS:Clan Series Assault SXC
+systemmanufacturer:ENGINE:400 Model SF-3 XL
+systemmanufacturer:ARMOR:Forging C629/j Ferro-Fibrous
+systemmanufacturer:COMMUNICATIONS:Raldon R1
+systemmanufacturer:TARGETING:Version Kappa-III TTS
+

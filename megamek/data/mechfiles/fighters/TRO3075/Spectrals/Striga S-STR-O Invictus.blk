@@ -20,6 +20,10 @@ Striga
 S-STR-O Invictus
 </Model>
 
+<mul id:>
+5148
+</mul id:>
+
 <year>
 3072
 </year>
@@ -31,6 +35,10 @@ S-STR-O Invictus
 <type>
 IS Level 3
 </type>
+
+<role>
+Fire Support
+</role>
 
 <motion_type>
 Aerodyne
@@ -115,7 +123,7 @@ ISCASE:OMNI
 </Fuselage Equipment>
 
 <source>
-TRO 3075 - Jihad
+TRO: 3075
 </source>
 
 <tonnage>

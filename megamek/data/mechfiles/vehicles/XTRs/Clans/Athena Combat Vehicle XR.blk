@@ -20,6 +20,10 @@ Athena Combat Vehicle
 XR
 </Model>
 
+<mul id:>
+3747
+</mul id:>
+
 <year>
 3068
 </year>
@@ -31,6 +35,10 @@ XR
 <type>
 Clan Level 4
 </type>
+
+<role>
+Juggernaut
+</role>
 
 <motion_type>
 Tracked
@@ -110,9 +118,16 @@ CLMG
 </Front Turret Equipment>
 
 <source>
-XTRO Clans - Jihad
+XTR: Clans
 </source>
 
 <tonnage>
 75.0
 </tonnage>
+
+<quirks>
+poor_performance
+prototype
+trailer_hitch
+</quirks>
+

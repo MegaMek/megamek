@@ -20,6 +20,10 @@ Gun Trailer
 (Ambush)
 </Model>
 
+<mul id:>
+6528
+</mul id:>
+
 <year>
 3092
 </year>
@@ -31,6 +35,10 @@ Gun Trailer
 <type>
 IS Level 2
 </type>
+
+<role>
+Ambusher
+</role>
 
 <motion_type>
 Tracked
@@ -77,7 +85,7 @@ RL15
 </Rear Equipment>
 
 <source>
-TRO 3145 Mercenaries - Early Republic
+TRO: 3145 Mercenaries
 </source>
 
 <tonnage>

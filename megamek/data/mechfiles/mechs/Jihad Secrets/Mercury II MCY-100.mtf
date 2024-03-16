@@ -1,11 +1,21 @@
-Version:1.0
-Mercury II
-MCY-100
+chassis:Mercury II
+model:MCY-100
+mul id:2173
+source:Jihad Secrets: The Blake Documents
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2823
 Rules Level:2
+role:Striker
+
+
+
+
+quirk:low_profile
+quirk:bad_rep_clan
+weaponquirk:stable_weapon:CT:10:Medium Laser
+
 
 Mass:40
 Engine:280 XL Engine

@@ -20,6 +20,10 @@ J-27 Ordnance Transport
 (Trailer)
 </Model>
 
+<mul id:>
+1646
+</mul id:>
+
 <year>
 2650
 </year>
@@ -27,6 +31,10 @@ J-27 Ordnance Transport
 <type>
 IS Level 1
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Tracked
@@ -68,7 +76,7 @@ Hitch
 </Rear Equipment>
 
 <source>
-TRO 3039 - Star League
+TRO: 3039
 </source>
 
 <tonnage>

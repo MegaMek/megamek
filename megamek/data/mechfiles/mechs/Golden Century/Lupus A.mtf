@@ -1,11 +1,17 @@
-Version:1.1
-Lupus
-A
+chassis:Lupus
+model:A
+mul id:1963
 
 Config:Biped Omnimech
 TechBase:Clan
 Era:2857
 Rules Level:2
+role:Brawler
+source:TRO: Golden Century
+
+
+quirk:exp_actuator
+
 
 Mass:60
 Engine:300 Fusion (Clan) Engine(IS)

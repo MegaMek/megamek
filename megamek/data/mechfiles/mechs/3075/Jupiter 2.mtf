@@ -1,34 +1,40 @@
-Version:1.0
-Jupiter
-2
+chassis:Jupiter
+model:2
+mul id:1726
 
 Config:Biped
-TechBase:Clan
-Era:3070
-Source:TRO 3075
-Rules Level:2
+techbase:Clan
+era:3070
+source:TRO: 3075
+rules level:2
+role:Sniper
 
-Mass:100
-Engine:300 XL (Clan) Engine
-Structure:Endo Steel
-Myomer:Standard
+quirk:fine_manipulators
+quirk:imp_sensors
+quirk:imp_target_long
 
-Heat Sinks:17 Double
-Walk MP:3
-Jump MP:3
 
-Armor:Standard(Clan)
-LA Armor:34
-RA Armor:34
-LT Armor:32
-RT Armor:32
-CT Armor:46
-HD Armor:9
-LL Armor:42
-RL Armor:42
-RTL Armor:10
-RTR Armor:10
-RTC Armor:16
+mass:100
+engine:300 XL (Clan) Engine(IS)
+structure:Clan Endo Steel
+myomer:Standard
+
+heat sinks:17 Clan Double
+walk mp:3
+jump mp:3
+
+armor:Standard(Clan)
+LA armor:34
+RA armor:34
+LT armor:32
+RT armor:32
+CT armor:46
+HD armor:9
+LL armor:42
+RL armor:42
+RTL armor:10
+RTR armor:10
+RTC armor:16
 
 Weapons:6
 Ultra AC/10, Left Arm
@@ -41,6 +47,7 @@ LRM 15, Right Torso
 Left Arm:
 Shoulder
 Upper Arm Actuator
+Lower Arm Actuator
 CLDoubleHeatSink
 CLDoubleHeatSink
 CLDoubleHeatSink
@@ -49,22 +56,21 @@ CLUltraAC10
 CLUltraAC10
 CLUltraAC10
 CLUltraAC10
-Endo Steel
-Endo Steel
+Clan Endo Steel
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
+Lower Arm Actuator
 CLDoubleHeatSink
 CLDoubleHeatSink
 CLUltraAC10
 CLUltraAC10
 CLUltraAC10
 CLUltraAC10
-Endo Steel
-Endo Steel
--Empty-
--Empty-
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 
 Left Torso:
 Fusion Engine
@@ -75,10 +81,10 @@ CLERPPC
 CLLRM15
 CLLRM15
 CLArtemisIV
-Clan Ultra AC/10 Ammo
-Clan Ultra AC/10 Ammo
 Clan Ammo LRM-15 (Clan) Artemis-capable
-Endo Steel
+Clan Ultra AC/10 Ammo
+Clan Ultra AC/10 Ammo
+Clan Endo Steel
 
 Right Torso:
 Fusion Engine
@@ -89,10 +95,10 @@ CLERPPC
 CLLRM15
 CLLRM15
 CLArtemisIV
-Clan Ultra AC/10 Ammo
-Clan Ultra AC/10 Ammo
 Clan Ammo LRM-15 (Clan) Artemis-capable
-Endo Steel
+Clan Ultra AC/10 Ammo
+Clan Ultra AC/10 Ammo
+Clan Endo Steel
 
 Center Torso:
 Fusion Engine
@@ -112,7 +118,7 @@ Head:
 Life Support
 Sensors
 Cockpit
-Endo Steel
+Clan Endo Steel
 Sensors
 Life Support
 -Empty-

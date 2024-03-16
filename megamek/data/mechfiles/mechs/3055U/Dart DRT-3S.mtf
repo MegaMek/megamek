@@ -1,12 +1,19 @@
-Version:1.0
-Dart
-DRT-3S
+chassis:Dart
+model:DRT-3S
+mul id:828
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3051
-Source:TRO 3055 - Clan Invasion
+Source:TRO: 3055
 Rules Level:2
+role:Scout
+
+
+
+
+quirk:ext_twist
+
 
 Mass:25
 Engine:225 Fusion Engine

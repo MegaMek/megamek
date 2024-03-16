@@ -20,6 +20,10 @@ Sabre
 SB-27b
 </Model>
 
+<mul id:>
+2762
+</mul id:>
+
 <year>
 2722
 </year>
@@ -31,6 +35,10 @@ SB-27b
 <type>
 IS Level 2
 </type>
+
+<role>
+Interceptor
+</role>
 
 <motion_type>
 Aerodyne
@@ -103,7 +111,7 @@ Medium Laser
 </Fuselage Equipment>
 
 <source>
-TRO 3075 - Star League
+TRO: 3075
 </source>
 
 <tonnage>

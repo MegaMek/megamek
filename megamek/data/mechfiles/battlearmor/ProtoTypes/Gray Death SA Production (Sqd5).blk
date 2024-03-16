@@ -1,0 +1,118 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+Gray Death Strike Suit
+</Name>
+
+<model>
+(Sqd5)
+</Model>
+
+<mul id:>
+8626
+</mul id:>
+
+<chassis>
+biped
+</chassis>
+
+<weightclass>
+2
+</weightclass>
+
+<Trooper Count>
+5
+</Trooper Count>
+
+<cruiseMP>
+3
+</cruiseMP>
+
+<Armor>
+9
+</Armor>
+
+<armor_type>
+28
+</armor_type>
+
+<armor_tech>
+3
+</armor_tech>
+
+<Squad Equipment>
+ISBASRM3:Body
+BA-SRM3 Ammo:Body:Shots2#
+ISBALightTAG:RA
+BABasicManipulator:LA
+BABasicManipulator:RA
+</Squad Equipment>
+
+<type>
+IS Level 2
+</type>
+
+<role>
+Ambusher
+</role>
+
+<year>
+3080
+</year>
+
+<motion_type>
+Leg
+</motion_type>
+
+<source>
+TRO: Prototypes
+</source>
+
+<overview>
+Gray Death Strike battle armor is a production version of the prototype. 
+</overview>
+
+<capabilities>
+Defiance Industries wasn't able to secure a consistent source of the Clan technologies used in the prototype and made the decision to move to more accessible Inner Sphere technologies. 
+</capabilities>
+
+<deployment>
+As a result, Defiance used a single SRM-3 with two reloads. To make room for this the Gray Death Strike Suit replaced the Battle Claws of the prototype with Basic Manipulators. The launcher can be jettisoned as well, allowing the unit to move slightly more quickly. The Light TAG system mounted in the arm allows armor that has jettisoned the SRM launcher to remain useful on the battlefield, designating enemy units for artillery and missile strikes.
+</deployment>
+
+<history>
+The Jihad stopped production at the Gray Death Technologies plants, and then Defiance Industries took over production. Defiance then moved production of the battle armor to Furillo, which slowed production even more. After the Gray Death Technology plant was destroyed in 3074, it would be six years before Defiance produced a new Gray Death Strike suit.
+</history>
+
+<manufacturer>
+Defiance Industries
+</manufacturer>
+
+<primaryFactory>
+Furillo
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+JUMPJET:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<quirks>
+distracting
+</quirks>
+

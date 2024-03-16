@@ -1,12 +1,19 @@
-Version:1.0
-Dragon
-DRG-5N
+chassis:Dragon
+model:DRG-5N
+mul id:911
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3047
-Source:TRO 3050 - Succession Wars
+Source:TRO: 3050
 Rules Level:2
+role:Skirmisher
+
+
+
+quirk:low_profile
+quirk:stable
+
 
 Mass:60
 Engine:300 Fusion Engine

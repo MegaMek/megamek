@@ -20,6 +20,10 @@ Schiltron Mobile Fire-Support Platform
 F
 </Model>
 
+<mul id:>
+2820
+</mul id:>
+
 <year>
 3072
 </year>
@@ -27,6 +31,10 @@ F
 <type>
 IS Level 3
 </type>
+
+<role>
+Missile Boat
+</role>
 
 <motion_type>
 Wheeled
@@ -104,7 +112,7 @@ ISERMediumLaser:OMNI
 </Turret Equipment>
 
 <source>
-Jihad
+TRO: 3060
 </source>
 
 <tonnage>

@@ -11,23 +11,15 @@
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
  */
-
-/*
- * BLkFile.java
- *
- * Created on April 6, 2002, 2:06 AM
- */
-
-/**
- *
- * @author taharqa
- * @version
- */
 package megamek.common.loaders;
 
 import megamek.common.*;
 import megamek.common.util.BuildingBlock;
 
+/**
+ * @author taharqa
+ * @since April 6, 2002, 2:06 AM
+ */
 public class BLKJumpshipFile extends BLKFile implements IMechLoader {
 
     public BLKJumpshipFile(BuildingBlock bb) {
@@ -38,24 +30,7 @@ public class BLKJumpshipFile extends BLKFile implements IMechLoader {
     public Entity getEntity() throws EntityLoadingException {
 
         Jumpship a = new Jumpship();
-
-        if (!dataFile.exists("Name")) {
-            throw new EntityLoadingException("Could not find name block.");
-        }
-        a.setChassis(dataFile.getDataAsString("Name")[0]);
-        if (dataFile.exists("Model") && (dataFile.getDataAsString("Model")[0] != null)) {
-            a.setModel(dataFile.getDataAsString("Model")[0]);
-        } else {
-            a.setModel("");
-        }
-
-        setTechLevel(a);
-        setFluff(a);
-        checkManualBV(a);
-
-        if (dataFile.exists("source")) {
-            a.setSource(dataFile.getDataAsString("source")[0]);
-        }
+        setBasicEntityData(a);
 
         if (!dataFile.exists("tonnage")) {
             throw new EntityLoadingException("Could not find weight block.");
@@ -240,11 +215,11 @@ public class BLKJumpshipFile extends BLKFile implements IMechLoader {
         // get docking collars (legacy BLK files)
         int docks = dataFile.getDataAsInt("docking_collar")[0];
         while (docks > 0) {
-            a.addTransporter(new DockingCollar(1, (a.getTransports().size() + 1)));
+            a.addTransporter(new DockingCollar(a.getTransports().size() + 1));
             docks--;
         }
         a.setArmorTonnage(a.getArmorWeight());
-
+        loadQuirks(a);
         return a;
     }
 

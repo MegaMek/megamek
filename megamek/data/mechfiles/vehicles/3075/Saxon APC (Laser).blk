@@ -20,17 +20,25 @@ Saxon APC
 (Laser)
 </Model>
 
+<mul id:>
+2809
+</mul id:>
+
 <year>
 3071
 </year>
 
 <source>
-Jihad
+TRO: 3075
 </source>
 
 <type>
 IS Level 2
 </type>
+
+<role>
+Scout
+</role>
 
 <tonnage>
 35.0

@@ -20,6 +20,7 @@ package megamek.server.commands;
 
 import megamek.common.Entity;
 import megamek.common.Player;
+import megamek.server.GameManager;
 import megamek.server.Server;
 
 /**
@@ -29,12 +30,15 @@ import megamek.server.Server;
  */
 public class TraitorCommand extends ServerCommand {
 
-    public TraitorCommand(Server server) {
+    private final GameManager gameManager;
+
+    public TraitorCommand(Server server, GameManager gameManager) {
         super(server,
                 "traitor",
                 "Switches a player's entity to another player during the end phase. "
                         + "Usage: /traitor # # where the first number is the entity id and "
                         + "the second is the new player id.");
+        this.gameManager = gameManager;
     }
 
     /**
@@ -46,7 +50,7 @@ public class TraitorCommand extends ServerCommand {
     public void run(int connId, String[] args) {
         try {
             int eid = Integer.parseInt(args[1]);
-            Entity ent = server.getGame().getEntity(eid);
+            Entity ent = gameManager.getGame().getEntity(eid);
             int pid = Integer.parseInt(args[2]);
             Player player = server.getGame().getPlayer(pid);
             if (null == ent) {

@@ -1,12 +1,18 @@
-Version:1.0
-Strider
-SR1-OB
+chassis:Strider
+model:SR1-OB
+mul id:3086
 
 Config:Biped Omnimech
 TechBase:Inner Sphere
 Era:3057
-Source:TRO 3058 - Clan Invasion
+Source:TRO: 3058
 Rules Level:2
+role:Missile Boat
+
+
+
+quirk:easy_pilot
+
 
 Mass:40
 Engine:240 Fusion Engine(IS)

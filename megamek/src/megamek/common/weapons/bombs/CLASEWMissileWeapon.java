@@ -21,7 +21,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.ASEWMissileWeaponHandler;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.missiles.ThunderBoltWeapon;
-import megamek.server.Server;
+import megamek.server.GameManager;
 
 /**
  * @author Jay Lawson
@@ -59,7 +59,7 @@ public class CLASEWMissileWeapon extends ThunderBoltWeapon {
         this.ammoType = AmmoType.T_ASEW_MISSILE;
         this.capital = false;
         this.missileArmor = 30;
-        rulesRefs = "358,TO";
+        rulesRefs = "358, TO";
         techAdvancement.setTechBase(TECH_BASE_IS)
     	.setIntroLevel(false)
     	.setUnofficial(true)
@@ -72,7 +72,7 @@ public class CLASEWMissileWeapon extends ThunderBoltWeapon {
     
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, Game game, Server server) {
-        return new ASEWMissileWeaponHandler(toHit, waa, game, server);
+            WeaponAttackAction waa, Game game, GameManager manager) {
+        return new ASEWMissileWeaponHandler(toHit, waa, game, manager);
     }
 }

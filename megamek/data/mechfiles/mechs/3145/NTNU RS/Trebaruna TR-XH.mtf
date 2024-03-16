@@ -1,12 +1,18 @@
-Version:1.0
-Trebaruna
-TR-XH
+chassis:Trebaruna
+model:TR-XH
+mul id:6834
 
 Config:Quad
 TechBase:Inner Sphere
 Era:3115
-Source:RS 3145 NT NU
+Source:Record Sheets: 3145 New Tech New Upgrades
 Rules Level:3
+role:Sniper
+
+
+
+quirk:command_mech
+
 
 Mass:95
 Engine:285 XL Engine(IS)

@@ -20,6 +20,10 @@ Sabre
 SB-29
 </Model>
 
+<mul id:>
+4961
+</mul id:>
+
 <year>
 3068
 </year>
@@ -31,6 +35,10 @@ SB-29
 <type>
 IS Level 3
 </type>
+
+<role>
+Interceptor
+</role>
 
 <motion_type>
 Aerodyne
@@ -100,7 +108,7 @@ ISERMediumLaser
 </Fuselage Equipment>
 
 <source>
-TRO 3075 - Jihad
+TRO: 3075
 </source>
 
 <tonnage>

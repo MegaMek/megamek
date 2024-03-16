@@ -20,6 +20,10 @@ Saxon APC
 (HQ)
 </Model>
 
+<mul id:>
+2808
+</mul id:>
+
 <year>
 3074
 </year>
@@ -27,6 +31,10 @@ Saxon APC
 <type>
 IS Level 2
 </type>
+
+<role>
+Scout
+</role>
 
 <motion_type>
 Hover
@@ -75,7 +83,7 @@ ISTAG
 </Turret Equipment>
 
 <source>
-Jihad
+TRO: 3075
 </source>
 
 <tonnage>

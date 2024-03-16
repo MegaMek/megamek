@@ -1,12 +1,18 @@
-Version:1.1
-Prefect
-PRF-3R
+chassis:Prefect
+model:PRF-3R
+mul id:6865
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3110
-Source:RS 3145 NT NU
+Source:Record Sheets: 3145 New Tech New Upgrades
 Rules Level:3
+role:Skirmisher
+
+
+
+quirk:ext_twist
+
 
 Mass:75
 Engine:375 XL Engine(IS)

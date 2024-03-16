@@ -20,6 +20,10 @@ Achilles
 (2721b)
 </Model>
 
+<mul id:>
+3667
+</mul id:>
+
 <year>
 2721
 </year>
@@ -158,7 +162,7 @@ ISMediumPulseLaser
 </structural_integrity>
 
 <source>
-TRO 3057R - Star League
+TRO: 3057 Revised
 </source>
 
 <tonnage>

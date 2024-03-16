@@ -13,12 +13,16 @@ SpaceStation
 </UnitType>
 
 <Name>
-Habitat - Large
+Habitat
 </Name>
 
 <Model>
-(2750)
+Large (2750)
 </Model>
+
+<mul id:>
+4482
+</mul id:>
 
 <year>
 2750
@@ -122,7 +126,7 @@ ISSmallPulseLaser
 </structural_integrity>
 
 <source>
-TRO3057r - Age of War
+TRO: 3057 Revised
 </source>
 
 <tonnage>

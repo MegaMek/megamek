@@ -14,7 +14,7 @@
 package megamek.common.weapons.autocannons;
 
 import megamek.common.AmmoType;
-import megamek.common.BattleForceElement;
+import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.Compute;
 import megamek.common.Game;
 import megamek.common.ToHitData;
@@ -23,7 +23,7 @@ import megamek.common.weapons.ACWeaponHandler;
 import megamek.common.weapons.AmmoWeapon;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.LBXHandler;
-import megamek.server.Server;
+import megamek.server.GameManager;
 
 /**
  * @author Andrew Hunter
@@ -34,7 +34,7 @@ public abstract class LBXACWeapon extends AmmoWeapon {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
      * megamek.common.actions.WeaponAttackAction, megamek.common.Game,
@@ -42,13 +42,13 @@ public abstract class LBXACWeapon extends AmmoWeapon {
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
-                                              Server server) {
+                                              GameManager manager) {
         AmmoType atype = (AmmoType) game.getEntity(waa.getEntityId())
                 .getEquipment(waa.getWeaponId()).getLinked().getType();
-        if (atype.getMunitionType() == AmmoType.M_CLUSTER) {
-            return new LBXHandler(toHit, waa, game, server);
+        if (atype.getMunitionType().contains(AmmoType.Munitions.M_CLUSTER)) {
+            return new LBXHandler(toHit, waa, game, manager);
         }
-        return new ACWeaponHandler(toHit, waa, game, server);
+        return new ACWeaponHandler(toHit, waa, game, manager);
     }
 
     public LBXACWeapon() {
@@ -58,20 +58,20 @@ public abstract class LBXACWeapon extends AmmoWeapon {
         ammoType = AmmoType.T_AC_LBX;
         atClass = CLASS_LBX_AC;
     }
-    
+
     @Override
     public double getBattleForceDamage(int range) {
         double damage = 0;
         if (range <= getLongRange()) {
             damage = Compute.calculateClusterHitTableAmount(7, getRackSize()) / 10.0;
             damage *= 1.05; // -1 to hit
-            if (range == BattleForceElement.SHORT_RANGE && getMinimumRange() > 0) {
+            if ((range == AlphaStrikeElement.SHORT_RANGE) && (getMinimumRange() > 0)) {
                 damage = adjustBattleForceDamageForMinRange(damage);
             }
         }
         return damage;
     }
-    
+
     @Override
     public int getBattleForceClass() {
         return BFCLASS_FLAK;

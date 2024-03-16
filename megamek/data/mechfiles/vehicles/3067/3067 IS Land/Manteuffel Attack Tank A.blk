@@ -20,6 +20,10 @@ Manteuffel Attack Tank
 A
 </Model>
 
+<mul id:>
+4584
+</mul id:>
+
 <year>
 3062
 </year>
@@ -27,6 +31,10 @@ A
 <type>
 IS Level 2
 </type>
+
+<role>
+Skirmisher
+</role>
 
 <motion_type>
 Tracked
@@ -100,3 +108,7 @@ ISUltraAC20:OMNI
 <baseChassisTurretWeight>
 1.5
 </baseChassisTurretWeight>
+
+<source>
+TRO: 3067
+</source>

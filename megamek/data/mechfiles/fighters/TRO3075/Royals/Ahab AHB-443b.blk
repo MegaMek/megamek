@@ -20,6 +20,10 @@ Ahab
 AHB-443b
 </Model>
 
+<mul id:>
+3681
+</mul id:>
+
 <year>
 2703
 </year>
@@ -31,6 +35,10 @@ AHB-443b
 <type>
 IS Level 2
 </type>
+
+<role>
+Attack Fighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -117,7 +125,7 @@ IS Ammo SRM-6
 </Fuselage Equipment>
 
 <source>
-TRO 3075 - Star League
+TRO: 3075
 </source>
 
 <tonnage>
@@ -157,7 +165,7 @@ TARGETING:Antron 7
 </systemManufacturers>
 
 <source>
-TRO 3050u - Star League
+TRO: 3050
 </source>
 
 <tonnage>

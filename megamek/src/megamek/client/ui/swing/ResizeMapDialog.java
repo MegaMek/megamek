@@ -17,8 +17,8 @@ import megamek.client.Client;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.VerifyInRange;
 import megamek.client.ui.swing.widget.VerifiableTextField;
+import megamek.codeUtilities.StringUtility;
 import megamek.common.MapSettings;
-import megamek.common.util.StringUtil;
 import org.apache.logging.log4j.LogManager;
 
 import javax.swing.*;
@@ -40,9 +40,6 @@ import java.util.Set;
 public class ResizeMapDialog extends JDialog implements ActionListener, KeyListener {
 
     private static final long serialVersionUID = 7758433698878123806L;
-    // Views.
-    private static final String VIEW_BASIC = Messages.getString("RandomMapDialog.Normal");
-    private static final String VIEW_ADVANCED = Messages.getString("RandomMapDialog.Advanced");
 
     // External helpers.
     private final JFrame PARENT;
@@ -55,8 +52,8 @@ public class ResizeMapDialog extends JDialog implements ActionListener, KeyListe
     // View switching objects.
     private final RandomMapPanelBasic basicPanel;
     private final RandomMapPanelAdvanced advancedPanel;
-    private final JRadioButton basicButton = new JRadioButton(VIEW_BASIC);
-    private final JRadioButton advancedButton = new JRadioButton(VIEW_ADVANCED);
+    private final JRadioButton basicButton = new JRadioButton(Messages.getString("RandomMapDialog.Normal"));
+    private final JRadioButton advancedButton = new JRadioButton(Messages.getString("RandomMapDialog.Advanced"));
     private final CardLayout cardLayout = new CardLayout(0, 0);
     private final JPanel mainDisplay = new JPanel();
 
@@ -141,12 +138,12 @@ public class ResizeMapDialog extends JDialog implements ActionListener, KeyListe
         contentPanel.add(setupControlsPanel(), BorderLayout.SOUTH);
 
         add(contentPanel);
-        switchView(VIEW_BASIC, true);
+        switchView(false, true);
     }
 
-    private void switchView(String viewName, boolean initializing) {
+    private void switchView(boolean advanced, boolean initializing) {
         // Copy the updated map settings to the other panel.
-        if (!initializing && VIEW_ADVANCED.equalsIgnoreCase(viewName)) {
+        if (!initializing && !advanced) {
             mapSettings = basicPanel.getMapSettings();
             if (mapSettings == null) {
                 basicButton.setSelected(true);
@@ -162,14 +159,14 @@ public class ResizeMapDialog extends JDialog implements ActionListener, KeyListe
             basicPanel.setMapSettings(mapSettings);
         }
 
-        cardLayout.show(mainDisplay, viewName);
+        cardLayout.show(mainDisplay, (advanced ? advancedButton : basicButton).getText());
         mainDisplay.revalidate();
     }
 
     private void setupMainPanel() {
         mainDisplay.setLayout(cardLayout);
-        mainDisplay.add(basicPanel, VIEW_BASIC);
-        mainDisplay.add(advancedPanel, VIEW_ADVANCED);
+        mainDisplay.add(basicPanel, Messages.getString("RandomMapDialog.Normal"));
+        mainDisplay.add(advancedPanel, Messages.getString("RandomMapDialog.Advanced"));
         mainDisplay.setBorder(new LineBorder(Color.black, 1));
     }
 
@@ -319,18 +316,17 @@ public class ResizeMapDialog extends JDialog implements ActionListener, KeyListe
 
     private File fileBrowser(String title, String targetDir, String fileName, final String extension,
                              final String description, boolean isSave) {
-
         // Create a new instance of the file chooser.
         JFileChooser fileChooser = new JFileChooser(targetDir);
 
-        // Only allow selectoin of one file.
+        // Only allow selection of one file.
         fileChooser.setMultiSelectionEnabled(false);
 
         // Give the file chooser a title.
         fileChooser.setDialogTitle(title);
 
         // If we have a file to start with, select it.
-        if (!StringUtil.isNullOrEmpty(fileName)) {
+        if (!StringUtility.isNullOrBlank(fileName)) {
             fileChooser.setSelectedFile(new File(targetDir + fileName));
         }
 
@@ -367,10 +363,9 @@ public class ResizeMapDialog extends JDialog implements ActionListener, KeyListe
     }
 
     private void doLoad() {
-
         // Get the user-selected file.
         File selectedFile = fileBrowser(Messages.getString("RandomMapDialog.FileLoadDialog"),
-                                        "data" + File.separator + "mapgen", null, ".xml", "(*.xml)", false);
+                "data" + File.separator + "mapgen", null, ".xml", "(*.xml)", false);
         
         // If we don't have a file, there's nothing to load.
         if (selectedFile == null) {
@@ -391,7 +386,6 @@ public class ResizeMapDialog extends JDialog implements ActionListener, KeyListe
     }
 
     private boolean doSave() {
-
         // Apply the changes.
         if (!doApply()) {
             return false;
@@ -410,7 +404,7 @@ public class ResizeMapDialog extends JDialog implements ActionListener, KeyListe
         try (InputStream is = new FileInputStream(selectedFile)) {
             mapSettings = MapSettings.getInstance(is);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            LogManager.getLogger().error("", ex);
         }
         return true;
     }
@@ -455,9 +449,9 @@ public class ResizeMapDialog extends JDialog implements ActionListener, KeyListe
     @Override
     public void actionPerformed(ActionEvent e) {
         if (basicButton.equals(e.getSource())) {
-            switchView(VIEW_BASIC, false);
+            switchView(false, false);
         } else if (advancedButton.equals(e.getSource())) {
-            switchView(VIEW_ADVANCED, false);
+            switchView(true, false);
         } else if (loadButton.equals(e.getSource())) {
             doLoad();
         } else if (saveButton.equals(e.getSource())) {
@@ -501,22 +495,19 @@ public class ResizeMapDialog extends JDialog implements ActionListener, KeyListe
     private boolean isExpandWestProblem() {
         return mapSouthField.verifyText() &&
                 mapWestField.verifyText() &&
-                ((getExpandWest() & 1) == 1) && 
+                ((getExpandWest() & 1) == 1) &&
                 (getExpandSouth() < 1);
     }
 
     @Override
-    public void keyPressed(KeyEvent arg0) {
+    public void keyPressed(KeyEvent evt) {
+
     }
 
     @Override
-    public void keyReleased(KeyEvent arg0) {
+    public void keyReleased(KeyEvent evt) {
         // Disable the Okay button when the input is invalid
-        if (!isExpandValid()) {
-            okayButton.setEnabled(false);
-        } else {
-            okayButton.setEnabled(true);
-        }
+        okayButton.setEnabled(isExpandValid());
 
         // Give notice when having an odd west expansion and no south expansion
         if (isExpandWestProblem()) {
@@ -530,16 +521,21 @@ public class ResizeMapDialog extends JDialog implements ActionListener, KeyListe
     }
 
     @Override
-    public void keyTyped(KeyEvent arg0) {
+    public void keyTyped(KeyEvent evt) {
+
     }
     
-    /** Updates the theme list and sets the dialog to visible. Returns true if the user pressed Cancel. */
+    /**
+     * Updates the theme list and sets the dialog to visible.
+     * @return true if the user pressed Cancel.
+     */
     public boolean activateDialog(Set<String> themeList) {
-        for (String s: themeList) choTheme.addItem(s);
+        for (String s : themeList) {
+            choTheme.addItem(s);
+        }
         choTheme.setSelectedItem(mapSettings.getTheme());
         userCancel = false;
         setVisible(true);
         return userCancel;
     }
-
 }

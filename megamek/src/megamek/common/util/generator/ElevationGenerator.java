@@ -26,7 +26,7 @@ public interface ElevationGenerator {
      * @param hilliness 1-100
      * @param width width of the map, in hexes
      * @param height height of the map, in hexes
-     * @param elevationMap the target elevation map, indexed as <tt>elevationMap[width][height]</tt>
+     * @param elevationMap the target elevation map, indexed as elevationMap[width][height]
      */
     void generate(int hilliness, int width, int height, int[][] elevationMap);
 }

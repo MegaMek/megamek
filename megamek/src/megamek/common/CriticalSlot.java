@@ -1,33 +1,31 @@
-/**
+/*
  * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
 package megamek.common;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class CriticalSlot implements Serializable {
-    /**
-     *
-     */
     private static final long serialVersionUID = -8744251501251495923L;
     public static final int TYPE_SYSTEM = 0;
     public static final int TYPE_EQUIPMENT = 1;
 
     /**
      * Determines what the type of this CriticalSlot is, either system or
-     * equipment.  Systems represent core components of a unit that are located
+     * equipment. Systems represent core components of a unit that are located
      * in specific criticals, such as gyros, engines, and cockpits.  Equipment
      * represents everything else, and will have an entry in an EquipmentType
      * subclass.
@@ -35,7 +33,7 @@ public class CriticalSlot implements Serializable {
     private int type;
 
     /**
-     * Index is only used for system type critical slots.  It is used as an
+     * Index is only used for system type critical slots. It is used as an
      * index into a collection to determine what the system actually is.
      */
     private int index = -1;
@@ -67,8 +65,7 @@ public class CriticalSlot implements Serializable {
     }
 
     public CriticalSlot(Mounted mount) {
-        this(TYPE_EQUIPMENT, -1, mount.getType().isHittable(), mount
-                .isArmored());
+        this(TYPE_EQUIPMENT, -1, mount.getType().isHittable(), mount.isArmored());
         this.mount = mount;
     }
 
@@ -186,8 +183,7 @@ public class CriticalSlot implements Serializable {
     }
 
     /**
-     * @param mount
-     *            the mount to set
+     * @param mount the mount to set
      */
     public void setMount(Mounted mount) {
         this.mount = mount;
@@ -201,8 +197,7 @@ public class CriticalSlot implements Serializable {
     }
 
     /**
-     * @param mount
-     *            the mount to set
+     * @param mount the mount to set
      */
     public void setMount2(Mounted mount) {
         mount2 = mount;
@@ -231,4 +226,21 @@ public class CriticalSlot implements Serializable {
         return repairable;
     }
 
+    @Override
+    public String toString() {
+        String typeString = type == 0 ? "System Slot" : "Equipment Slot";
+        List<String> state = new ArrayList<>();
+        if (type == 0) state.add("System No: " + index);
+        if (mount != null) state.add("[" + mount.equipmentIndex() + "] " + mount.getType().getInternalName());
+        if (mount2 != null) state.add("Mount 2: [" + mount2.equipmentIndex() + "] " + mount2.getType().getInternalName());
+        if (destroyed) state.add("Destroyed");
+        if (hit) state.add("Hit");
+        if (!hittable) state.add("Not hittable");
+        if (breached) state.add("Breached");
+        if (missing) state.add("Missing");
+        if (armored) state.add("Armored");
+        if (repairing) state.add("Repairing");
+        if (!repairable) state.add("Not repairable");
+        return typeString + " { " + String.join(", ", state) + " }";
+    }
 }

@@ -1,12 +1,17 @@
-Version:1.0
-Vulture (Mad Dog)
-E
+chassis:Vulture
+clanname:Mad Dog
+model:E
+mul id:3470
 
 Config:Biped Omnimech
 techbase:Clan
 era:3069
-source:TRO 3050 - Jihad
+source:TRO: 3050
 rules level:2
+role:Sniper
+
+quirk:imp_target_med
+
 
 mass:60
 engine:300 XL (Clan) Engine(IS)

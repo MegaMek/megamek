@@ -20,6 +20,10 @@ Vulcan
 VLC-5N
 </Model>
 
+<mul id:>
+5365
+</mul id:>
+
 <year>
 2650
 </year>
@@ -31,6 +35,10 @@ VLC-5N
 <type>
 IS Level 2
 </type>
+
+<role>
+Attack Fighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -98,7 +106,7 @@ IS Ammo AC/10
 </Fuselage Equipment>
 
 <source>
-TRO 3075 - Star League
+TRO: 3075
 </source>
 
 <tonnage>

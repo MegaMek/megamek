@@ -20,6 +20,10 @@ Flatbed Truck
 (RL)
 </Model>
 
+<mul id:>
+1132
+</mul id:>
+
 <year>
 2801
 </year>
@@ -27,6 +31,10 @@ Flatbed Truck
 <type>
 IS Level 4
 </type>
+
+<role>
+Scout
+</role>
 
 <motion_type>
 Wheeled
@@ -69,3 +77,7 @@ CLRocketLauncher15Prototype
 <tonnage>
 10.0
 </tonnage>
+
+<source>
+Historical: Operation Klondike
+</source>

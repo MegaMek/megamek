@@ -13,6 +13,7 @@
  */
 package megamek.common.weapons.autocannons;
 
+import megamek.common.Mounted;
 import megamek.common.SimpleTechLevel;
 
 /**
@@ -45,7 +46,7 @@ public class ISHVAC10 extends HVACWeapon {
         longAV = 10;
         maxRange = RANGE_LONG;
         explosionDamage = 10;
-        rulesRefs = "285,TO";
+        rulesRefs = "285, TO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TECH_BASE_IS)
                 .setTechRating(RATING_D)
@@ -54,4 +55,10 @@ public class ISHVAC10 extends HVACWeapon {
                 .setPrototypeFactions(F_CC).setProductionFactions(F_CC)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     }
+
+    @Override
+    public double getBattleForceDamage(int range, Mounted ignore) {
+        return 1;
+    }
+
 }

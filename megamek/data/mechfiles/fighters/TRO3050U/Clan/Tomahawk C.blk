@@ -20,6 +20,10 @@ Tomahawk
 'C'
 </Model>
 
+<mul id:>
+3268
+</mul id:>
+
 <year>
 2833
 </year>
@@ -31,6 +35,10 @@ Tomahawk
 <type>
 Clan Level 2
 </type>
+
+<role>
+Fast Dogfighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -100,7 +108,7 @@ CLERLargeLaser
 </Fuselage Equipment>
 
 <source>
-TRO 3050u - Succession Wars
+TRO: 3050
 </source>
 
 <tonnage>

@@ -1,0 +1,140 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+Galleon Light Tank
+</Name>
+
+<Model>
+GAL-200R
+</Model>
+
+<mul id:>
+9338
+</mul id:>
+
+<year>
+3081
+</year>
+
+<originalBuildYear>
+3081
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<role>
+Ambusher
+</role>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<transporters>
+</transporters>
+
+<cruiseMP>
+6
+</cruiseMP>
+
+<engine_type>
+1
+</engine_type>
+
+<armor>
+14
+13
+13
+14
+18
+</armor>
+
+<Body Equipment>
+IS Machine Gun Ammo - Half
+</Body Equipment>
+
+<Front Equipment>
+RL10
+RL10
+RL10
+RL10
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+Machine Gun
+Machine Gun
+RL20
+RL20
+</Turret Equipment>
+
+<capabilities>
+With a top speed faster than most 'Mechs, the Galleon was well-armed but lacked protection, carrying only three and a half tons of armor.
+</capabilities>
+
+<overview>
+A light combat vehicle that first saw production in 2692] the Galleon proved to be an economical means of supporting infantry and BattleMechs.
+</overview>
+
+<deployment>
+No information available on this variant
+</deployment>
+
+<history>
+Despite this, the vehicle served well during the Amaris Civil War, and after the Exodus, these tracked vehicles mostly fell into the possession of the Draconis Combine and the Free Worlds League. The Galleon is often paired with the Harasser Missile Platform.
+</history>
+
+<manufacturer>
+Field Refit
+</manufacturer>
+
+<primaryFactory>
+Various
+</primaryFactory>
+
+<systemManufacturers>
+ENGINE:GTEM 180
+ARMOR:3/StarSlab 6
+COMMUNICATIONS:Maxell 500
+TARGETING:Maxell TA50
+</systemManufacturers>
+
+<source>
+Rec Guide:ilClan #27
+</source>
+
+<tonnage>
+30.0
+</tonnage>
+
+<fuelType>
+PETROCHEMICALS
+</fuelType>
+
+
+<quirks>
+ubiquitous_is
+</quirks>
+

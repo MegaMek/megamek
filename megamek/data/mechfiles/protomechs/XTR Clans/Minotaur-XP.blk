@@ -20,6 +20,10 @@ Minotaur
 XP
 </Model>
 
+<mul id:>
+4644
+</mul id:>
+
 <year>
 3078
 </year>
@@ -31,6 +35,10 @@ XP
 <type>
 Clan Level 4
 </type>
+
+<role>
+Juggernaut
+</role>
 
 <motion_type>
 Biped
@@ -90,9 +98,48 @@ CLSRM5
 </Main Gun Equipment>
 
 <source>
-XTRO Clans - Jihad
+XTR: Clans
 </source>
 
 <tonnage>
 9.0
 </tonnage>
+
+<capabilities>
+Weighing more than any other ProtoMech, it trades speed for armor and weaponry. Intended for defensive operations, the Minotaur's lack of speed isn't an obstacle to completing its mission, and its impressive firepower means an entire Point working together can quickly take down a single target. The drawback to this power however is a slow cruising speed of 32 km/h, which is somewhat compensated by a jumping capacity of 90 meters thanks to its Jump Jets.
+</capabilities>
+
+<overview>
+The Minotaur is the "assault class" of the first generation ProtoMechs. 
+</overview>
+
+<deployment>
+This version of the Minotaur was created by Clan Hell's Horses. The jump jets and standard weapons were removed and replaced by two Improved Heavy Small Lasers and an SRM-5 launcher. The weight saved from this weapon switch allowed the engineers to maximize the armor protection of the Minotaur-XP, making it popular with pilots. 
+</deployment>
+
+<history>
+One of the first ProtoMech's Task Force Serpent encounter in it's attack on Huntress. After the fall of Clan Smoke Jaguar the Minotaur was quickly adopted by Clans Goliath Scorpion, Hell's Horses and Star Adder before spreading to many other Clans in the following decades.
+</history>
+
+<manufacturer>
+Niles Industriplex Alpha
+</manufacturer>
+
+<primaryFactory>
+Niles
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unspecified
+ENGINE:Unspecified
+ARMOR:Unspecified
+JUMPJET:Unspecified
+COMMUNICATIONS:Unspecified
+TARGETING:Unspecified
+</systemManufacturers>
+
+<quirks>
+prototype
+distracting
+</quirks>
+

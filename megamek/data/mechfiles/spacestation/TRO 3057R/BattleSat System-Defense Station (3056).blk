@@ -20,6 +20,10 @@ BattleSat System Defense Station
 (3056)
 </Model>
 
+<mul id:>
+3807
+</mul id:>
+
 <year>
 3056
 </year>
@@ -31,6 +35,10 @@ BattleSat System Defense Station
 <type>
 IS Level 3
 </type>
+
+<role>
+None
+</role>
 
 <designtype>
 1
@@ -112,7 +120,7 @@ cargobay:145.5:1:5
 </structural_integrity>
 
 <source>
-TRO3057r - Clan Invasion
+TRO: 3057 Revised
 </source>
 
 <tonnage>

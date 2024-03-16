@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -17,8 +17,12 @@ Aquilla Transport Jumpship
 </Name>
 
 <Model>
-(Standard)
+
 </Model>
+
+<mul id:>
+3713
+</mul id:>
 
 <year>
 2148
@@ -31,6 +35,10 @@ Aquilla Transport Jumpship
 <type>
 IS Level 3
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Aerodyne
@@ -118,8 +126,52 @@ cargobay:10100.0:1:7
 10
 </structural_integrity>
 
+<capabilities>
+The Aquilla-class vessel, developed during the period known as The Exodus, served as a crucial interstellar transport for humanity's colonization efforts. Operating primarily in the core systems around Terra, it transported low bulk/high value cargo and carried large numbers of passengers to colonize new star systems. The vessel relied on its fusion reactor and internal fuel bunkers to charge its primitive drive core, as the more advanced technologies of the modern JumpShips were not yet developed. Additionally, the Aquilla-class was occasionally repurposed as a naval auxiliary, taking part in activities such as mining jump points and engaging in combat during conflicts like the Outer Reaches Rebellion and the Reunification War.
+</capabilities>
+
+<overview>
+The Kearny-Fuchida Drive revolutionized space travel for humanity, leading to a mass exodus from Terra in search of freedom, adventure, and opportunity. In response to the demand for interstellar transports, the Aquilla-class vessel was developed by Boeing Interstellar. However, during its time, the manipulation of the KF-field was still in its early stages, limiting the jump range to a maximum of fifteen light-years. Unlike the modern JumpShips, the Aquilla relied on powerful drive systems and internal fuel bunkers, lacking the DropShip/JumpShip combination and Jump Sails that would be developed later. Despite these limitations, the Aquilla-class played a crucial role in mankind's colonization efforts and served as a naval auxiliary during conflicts such as the Outer Reaches Rebellion and the Reunification War. However, the introduction of the more efficient JumpShip/DropShip combination eventually rendered the aging Aquilla-class obsolete.
+</overview>
+
+<history>
+The Aquilla-class vessels played a significant role in humanity's colonization of the stars, with Samantha Calderon leading a flotilla of converted Aquilla-class transports into uncharted space and ultimately establishing the Taurian Concordat. These vessels were also employed by the Periphery states during the Reunification War, with up-gunned versions being used as armed merchants to compensate for the lack of a strong war fleet. However, as the more advanced and cost-effective JumpShip/DropShip combination emerged, the aging Aquilla-class became obsolete and was phased out.
+</history>
+
+<manufacturer>
+Boeing Interestellar
+</manufacturer>
+
+<primaryFactory>
+Terra
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<use>
+Transport
+</use>
+
+<length>
+305 m
+</length>
+
+<width>
+53 m
+</width>
+
+<height>
+45 m
+</height>
+
 <source>
-IO - Age of War
+XTR: Primitives I
 </source>
 
 <tonnage>
@@ -137,6 +189,10 @@ IO - Age of War
 <sail>
 0
 </sail>
+
+<designtype>
+1
+</designtype>
 
 <crew>
 107
@@ -169,3 +225,4 @@ IO - Age of War
 <escape_pod>
 20
 </escape_pod>
+

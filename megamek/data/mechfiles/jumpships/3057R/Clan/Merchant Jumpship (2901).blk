@@ -20,6 +20,10 @@ Merchant Jumpship
 (2901)
 </Model>
 
+<mul id:>
+4622
+</mul id:>
+
 <year>
 2901
 </year>
@@ -31,6 +35,10 @@ Merchant Jumpship
 <type>
 Clan Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Aerodyne
@@ -110,7 +118,7 @@ ISMobileHPG
 </structural_integrity>
 
 <source>
-TRO 3057R - Late Succession War - Lostech
+TRO: 3057 Revised
 </source>
 
 <tonnage>

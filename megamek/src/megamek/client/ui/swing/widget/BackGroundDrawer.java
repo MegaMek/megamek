@@ -13,7 +13,6 @@
 * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 * details.
 */
-
 package megamek.client.ui.swing.widget;
 
 import java.awt.Graphics;
@@ -24,11 +23,12 @@ import java.awt.Image;
  * draws it according specified rules. For example, we can order to draw image
  * by fully tiling it over all area, or tile it in a single row or column with
  * desired alignment, or draw it just once. Alignment of drawing can be
+ * <ol>
  * <li>logical (top, bottom, center for vertical alignment and left, right,
  * center for horizontal one)</li>
  * <li>or given by exact number of pixels from top or left borders of area</li>
+ * </ol>
  */
-
 public class BackGroundDrawer {
     /**
      * Single copy of image will be drawn.
@@ -202,9 +202,9 @@ public class BackGroundDrawer {
      */
 
     public void drawInto(Graphics g, int width, int height) {
-
-        if (mainImage == null)
+        if (mainImage == null) {
             return;
+        }
 
         // Checking behavior of painter
         if ((behavior & NO_TILING) != 0) {
@@ -226,7 +226,6 @@ public class BackGroundDrawer {
             drawTilingHorizontal(g, width, height);
             return;
         }
-
     }
 
     private void drawNoTiling(Graphics g, int width, int height) {
@@ -239,11 +238,13 @@ public class BackGroundDrawer {
         int tileWidth = mainImage.getWidth(null);
         int tileHeight = mainImage.getHeight(null);
         int countX = (width / tileWidth);
-        if (width % tileWidth != 0)
+        if (width % tileWidth != 0) {
             countX++;
+        }
         int countY = (height / tileHeight);
-        if (height % tileHeight != 0)
+        if (height % tileHeight != 0) {
             countY++;
+        }
         for (int i = 0; i < countX; i++) {
             for (int j = 0; j < countY; j++) {
                 g.drawImage(mainImage, i * tileWidth, j * tileHeight, null);
@@ -255,8 +256,9 @@ public class BackGroundDrawer {
         int dx = getDX(width);
         int tileHeight = mainImage.getHeight(null);
         int countY = (height / tileHeight);
-        if (height % tileHeight != 0)
+        if (height % tileHeight != 0) {
             countY++;
+        }
         for (int j = 0; j < countY; j++) {
             g.drawImage(mainImage, dx, j * tileHeight, null);
         }
@@ -266,45 +268,41 @@ public class BackGroundDrawer {
         int dy = getDY(height);
         int tileWidth = mainImage.getWidth(null);
         int countX = (width / tileWidth);
-        if (width % tileWidth != 0)
+        if (width % tileWidth != 0) {
             countX++;
+        }
         for (int i = 0; i < countX; i++) {
             g.drawImage(mainImage, i * tileWidth, dy, null);
         }
     }
 
     private int getDX(int width) {
-        int dx = 0;
         int tw = mainImage.getWidth(null);
         if ((behavior & HALIGN_LEFT) != 0) {
-            dx = 0;
+            return 0;
         } else if ((behavior & HALIGN_CENTER) != 0) {
-            dx = (width - tw) / 2;
-            if (dx < 0)
-                dx = 0;
+            return Math.max((width - tw) / 2, 0);
         } else if ((behavior & HALIGN_RIGHT) != 0) {
-            dx = width - tw;
+            return width - tw;
         } else if ((behavior & HALIGN_EXACT) != 0) {
-            dx = fixedX;
+            return fixedX;
+        } else {
+            return 0;
         }
-        return dx;
     }
 
     private int getDY(int height) {
-        int dy = 0;
         int th = mainImage.getHeight(null);
-
         if ((behavior & VALIGN_TOP) != 0) {
-            dy = 0;
+            return 0;
         } else if ((behavior & VALIGN_CENTER) != 0) {
-            dy = (height - th) / 2;
-            if (dy < 0)
-                dy = 0;
+            return Math.max((height - th) / 2, 0);
         } else if ((behavior & VALIGN_BOTTOM) != 0) {
-            dy = height - th;
+            return height - th;
         } else if ((behavior & VALIGN_EXACT) != 0) {
-            dy = fixedY;
+            return fixedY;
+        } else {
+            return 0;
         }
-        return dy;
     }
 }

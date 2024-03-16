@@ -20,6 +20,10 @@ Typhoon
 TFN-3A
 </Model>
 
+<mul id:>
+5311
+</mul id:>
+
 <year>
 2469
 </year>
@@ -31,6 +35,10 @@ TFN-3A
 <type>
 IS Level 2
 </type>
+
+<role>
+Attack Fighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -124,3 +132,7 @@ ARMOR:Lexington Lite Standard
 COMMUNICATIONS:CBM COMSET 3
 TARGETING:CBM TRAK-2
 </systemManufacturers>
+
+<source>
+TRO: 3075 
+</source>

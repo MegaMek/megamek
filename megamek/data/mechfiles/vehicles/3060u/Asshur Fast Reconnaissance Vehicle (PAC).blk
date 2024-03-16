@@ -20,6 +20,10 @@ Asshur Fast Reconnaissance Vehicle
 (Proto AC)
 </Model>
 
+<mul id:>
+134
+</mul id:>
+
 <Tonnage>
 20
 </Tonnage>
@@ -50,6 +54,10 @@ CLCASE
 Clan Level 3
 </type>
 
+<role>
+Scout
+</role>
+
 <year>
 3073
 </year>
@@ -71,5 +79,5 @@ Hover
 </motion_type>
 
 <source>
-Jihad
+TRO: 3060
 </source>

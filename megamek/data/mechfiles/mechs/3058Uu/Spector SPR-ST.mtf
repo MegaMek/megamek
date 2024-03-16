@@ -1,12 +1,19 @@
-Version:1.0
-Spector
-SPR-ST
+chassis:Spector
+model:SPR-ST
+mul id:3005
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3068
-Source:TRO 3058 - Jihad
+Source:TRO: 3058
 Rules Level:2
+role:Striker
+
+
+
+quirk:rugged_1
+quirk:difficult_maintain
+
 
 Mass:35
 Engine:245 XL Engine
@@ -147,4 +154,18 @@ Stealth
 -Empty-
 -Empty-
 
+overview:The Spector was originally designed by Norse Technologies to be a lighter version of the Exterminator BattleMech, made to hunt down light command 'Mechs.
 
+capabilities:The Spector was originally designed to use the advanced Null-Signature system, able to hide the 'Mech's radar and heat signatures, and Chameleon Light Polarization Shield, capable of obscuring the BattleMech's appearance. However, these technologies were lost during the Succession Wars and have not yet been replicated. The current incarnation of the Spector, SPR-5F, does not carry a Null Signature System nor the Chameleon LPS because of this.
+
+deployment:A more radical variant removes the jump jets and mounts an ER large laser and twin ER medium lasers using the freed space. It retains the stealth armor and Guardian ECM suite, but also adds a targeting computer to make the lasers more accurate. MASC enables the ST to move in bursts up to 151 km/h.
+
+history:The first Spector rolled off the assembly line on June 6th, 2639, and following extensive testing the SLDF ordered 600 units, the first run of which were delivered in April of 2640. The Star League's enthusiasm for the Spector is due to the BattleMechs stealth capabilities, combining both Chameleon Light Polarization Shield and a Null-Signature system. All Spectors, and all reports on them, were believed lost with the fall of the Star League until 3048, when rumors spread that the mercenary units McCarron's Armored Cavalry and Storm's Metal Thunder were fielding Spectors, presumably recovered from an ancient cache, although neither admitted to fielding vintage Star League era 'Mechs.
+
+manufacturer:Norse Technologies
+primaryfactory:Loxley
+systemmanufacturer:CHASSIS:Norse XT-Light Type AE (Endo)
+systemmanufacturer:ENGINE:Magna 245 XL with MASC
+systemmanufacturer:ARMOR:Starshield Light Stealth
+systemmanufacturer:COMMUNICATIONS:AR-12 Sheathed Directional Beacon with Norse Guardian ECM Suite
+systemmanufacturer:TARGETING:DLK Type Phased Array Sensor System

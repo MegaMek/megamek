@@ -20,6 +20,10 @@ Banshee
 BSE-X2
 </Model>
 
+<mul id:>
+5855
+</mul id:>
+
 <year>
 3050
 </year>
@@ -31,6 +35,10 @@ BSE-X2
 <type>
 IS Level 4
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Aerodyne
@@ -91,7 +99,7 @@ Medium Laser
 </Fuselage Equipment>
 
 <source>
-Somerset Stikers
+Somerset Strikers
 </source>
 
 <tonnage>

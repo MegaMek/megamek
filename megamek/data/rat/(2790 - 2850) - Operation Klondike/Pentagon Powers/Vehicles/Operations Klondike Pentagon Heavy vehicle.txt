@@ -1,6 +1,6 @@
 2821 Operations Klondike Pentagon Heavy Vehicle
 Von Luckner Heavy Tank (Royal),1
-Marsden II MBT (Standard),2
+Marsden MBT II,2
 Padilla Heavy Artillery Tank (Standard),3
 Marksman Artillery Vehicle (AC),4
 Merkava Heavy Tank Mk VIII,5

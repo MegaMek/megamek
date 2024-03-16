@@ -327,7 +327,7 @@ Thunderbolt 15 Turret (Single), 13
 Thunderbolt 10 Turret (Dual), 12
 Thunderbolt 10 Turret (Triple), 11
 Snub-Nosed PPC (Triple), 10
-Calliope Turret (Standard), 9
+Calliope Turret (3053), 9
 Thunderbolt 20 Turret (Single), 8
 Thunderbolt 15 Turret (Dual), 7
 Thunderbolt 10 Turret (Quad), 6

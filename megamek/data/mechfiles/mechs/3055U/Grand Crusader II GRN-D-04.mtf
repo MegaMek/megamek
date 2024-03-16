@@ -1,12 +1,20 @@
-Version:1.0
-Grand Crusader II
-GRN-D-04
+chassis:Grand Crusader II
+model:GRN-D-04
+mul id:1255
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3066
-Source:TRO 3055 - Civil War
+Source:TRO: 3055
 Rules Level:2
+role:Brawler
+
+
+
+quirk:easy_maintain
+quirk:stable
+quirk:bad_rep_is
+
 
 Mass:80
 Engine:320 Light Engine

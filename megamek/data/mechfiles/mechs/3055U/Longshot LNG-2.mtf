@@ -1,12 +1,18 @@
-Version:1.0
-Longshot
-LNG-2
+chassis:Longshot
+model:LNG-2
+mul id:1947
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3058
-Source:TRO 3055 - Clan Invasion
+Source:TRO: 3055
 Rules Level:4
+role:Striker
+
+
+
+quirk:difficult_maintain
+
 
 Mass:35
 Engine:245 XL Engine

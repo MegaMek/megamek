@@ -15,6 +15,10 @@ Minion Advanced Tactical Vehicle
 <Model>
 (TAG)
 </Model>
+
+<mul id:>
+4641
+</mul id:>
 <Tonnage>
 20
 </Tonnage>
@@ -35,6 +39,10 @@ ISTAG
 <type>
 IS
 </type>
+
+<role>
+Striker
+</role>
 <year>
 3067
 </year>
@@ -50,3 +58,7 @@ IS
 <motion_type>
 Hover
 </motion_type>
+
+<source>
+TRO: 3067
+</source>

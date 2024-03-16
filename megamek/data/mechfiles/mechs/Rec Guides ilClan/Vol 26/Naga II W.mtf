@@ -1,0 +1,173 @@
+generator:MegaMek Suite 0.49.18-SNAPSHOT on 2024-01-09
+chassis:Naga II
+model:W
+mul id:9327
+Config:Biped Omnimech
+techbase:Clan
+era:3138
+source:Rec Guide:ilClan #26
+rules level:2
+role:Sniper
+
+quirk:ext_twist
+quirk:bad_rep_clan
+weaponquirk:stable_weapon:LA:2:CLRotaryAC5
+weaponquirk:stable_weapon:RA:2:CLERPPC
+weaponquirk:stable_weapon:LT:4:CLERMediumLaser
+weaponquirk:stable_weapon:RT:2:CLStreakLRM15
+weaponquirk:stable_weapon:CT:10:CLERSmallLaser
+
+mass:80
+engine:400 XL (Clan) Engine(IS)
+structure:Clan Endo Steel
+myomer:Standard
+
+heat sinks:13 Clan Double
+base chassis heat sinks:12
+walk mp:5
+jump mp:0
+
+armor:Standard(Inner Sphere)
+LA armor:14
+RA armor:14
+LT armor:15
+RT armor:15
+CT armor:17
+HD armor:9
+LL armor:16
+RL armor:16
+RTL armor:9
+RTR armor:9
+RTC armor:10
+
+Weapons:5
+Rotary AC/5, Left Arm
+ER PPC, Right Arm
+ER Medium Laser, Left Torso
+Streak LRM 15, Right Torso
+ER Small Laser, Center Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+CLRotaryAC5 (OMNIPOD)
+CLRotaryAC5 (OMNIPOD)
+CLRotaryAC5 (OMNIPOD)
+CLRotaryAC5 (OMNIPOD)
+CLRotaryAC5 (OMNIPOD)
+CLRotaryAC5 (OMNIPOD)
+CLRotaryAC5 (OMNIPOD)
+CLRotaryAC5 (OMNIPOD)
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+CLERPPC (OMNIPOD)
+CLERPPC (OMNIPOD)
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLERMediumLaser (OMNIPOD)
+CLRotaryAC5 Ammo (OMNIPOD)
+CLRotaryAC5 Ammo (OMNIPOD)
+CLRotaryAC5 Ammo (OMNIPOD)
+CLCASEII (OMNIPOD)
+Clan Endo Steel
+-Empty-
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+CLStreakLRM15 (OMNIPOD)
+CLStreakLRM15 (OMNIPOD)
+CLStreakLRM15 (OMNIPOD)
+Clan Streak LRM 15 Ammo (OMNIPOD)
+Clan Streak LRM 15 Ammo (OMNIPOD)
+CLCASEII (OMNIPOD)
+Clan Endo Steel
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLERSmallLaser (OMNIPOD)
+Clan Endo Steel
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Clan Endo Steel
+Clan Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Clan Endo Steel
+Clan Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+overview:The Naga II is a refashioned version of the early Clan Woodsman OmniMech, developed by Clan Wolf. This model diverged from the initial Woodsman design due to technical challenges with its XL engine and endo-steel structure, which led to the creation of the Naga and eventually the Naga II. The Naga II's existence is primarily attributed to necessity, utilized when more advanced OmniMechs are not available.
+capabilities:Engineered with a focus on heavy firepower, the Naga II serves as a formidable artillery platform. Its design allows for significant weapon customization due to its ample pod space. Despite its notable firepower, the Naga II is encumbered by lighter armor compared to contemporary OmniMechs. This makes it a suitable choice for specific combat roles, particularly in scenarios requiring heavy bombardment from a distance.
+deployment:The Naga II Model W variant, an 80-ton Clan OmniMech, is tailored for sniper roles with its specialized weaponry and design. Powered by a 400 XL Clan Engine within a Clan Endo Steel structure, it achieves a top speed of 54 km/h, which is impressive for its weight class.<p>This variant's armament is optimized for long-range engagements. It features a Clan ER PPC in the right arm, providing powerful, long-range energy attacks, while the left arm is equipped with a Clan Rotary AC/5, offering a rapid-firing ballistic option. Supplementing this is a Clan ER Medium Laser in the left torso, enhancing its versatility in various combat scenarios. For indirect fire support, a Clan Streak LRM 15 launcher in the right torso allows for accurate missile strikes. A Clan ER Small Laser in the center torso adds a layer of close-range defense.</p><p>However, the Naga II W has some trade-offs. The heavy emphasis on ranged firepower may leave it vulnerable in close-quarters combat scenarios. Also, managing the heat output from its diverse arsenal, especially the ER PPC, could be a challenge, despite its 13 Clan Double Heat Sinks. Furthermore, the lack of jump capability limits its mobility in complex terrains, making it more suitable for open-field engagements rather than urban warfare or environments with numerous obstacles.</p><p>In summary, the Naga II Model W excels as a long-range combatant, capable of delivering high-impact attacks from a distance. While it offers a formidable combination of energy, ballistic, and missile weapons, pilots must skillfully manage its heat and position on the battlefield to maximize its effectiveness.</p>
+history:The Naga II saw initial use within Clan Wolf’s garrison clusters after Operation Revival. Its combat effectiveness, however, was questioned following a notable engagement in 3055, where its vulnerabilities were exposed during a raid on Icar. Despite this, conversions from Naga to Naga II continued as situational demands arose. The Exiled Wolves also utilized the Naga II, notably during conflicts like the fall of Arc-Royal, further indicating the continued, albeit limited, relevance of the Naga II in modern Clan warfare. Its deployment, while effective in certain contexts, often highlights the trade-off between its powerful offensive capabilities and its defensive shortcomings.
+manufacturer:Refit
+primaryfactory:Various
+systemmanufacturer:CHASSIS:Type BMH-7 Endo Steel
+systemmanufacturer:ENGINE:Fusion 400 XL
+systemmanufacturer:ARMOR:Forged Type 34 Standard
+systemmanufacturer:COMMUNICATIONS:Type G3, Mk. XII
+systemmanufacturer:TARGETING:Version Kappa-III TTS
+

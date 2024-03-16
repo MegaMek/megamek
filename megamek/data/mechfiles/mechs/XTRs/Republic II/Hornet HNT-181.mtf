@@ -1,12 +1,19 @@
-Version:1.0
-Hornet
-HNT-181
+chassis:Hornet
+model:HNT-181
+mul id:7396
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3130
-Source:XTRO Republic II - Late Republic
+Source:XTR: Republic II
 Rules Level:4
+role:Striker
+
+
+
+quirk:low_profile
+quirk:no_arms
+
 
 Mass:20
 Engine:100 XL Engine(IS)

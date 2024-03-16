@@ -20,6 +20,10 @@ Tatsu
 MIK-OA
 </Model>
 
+<mul id:>
+5181
+</mul id:>
+
 <year>
 3063
 </year>
@@ -31,6 +35,10 @@ MIK-OA
 <type>
 IS Level 2
 </type>
+
+<role>
+Attack Fighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -107,7 +115,7 @@ ISMediumPulseLaser:OMNI
 </Fuselage Equipment>
 
 <source>
-TRO 3067 - Civil War
+TRO: 3067
 </source>
 
 <tonnage>

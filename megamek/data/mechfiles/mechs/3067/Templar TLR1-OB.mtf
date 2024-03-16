@@ -1,12 +1,18 @@
-Version:1.0
-Templar
-TLR1-OB
+chassis:Templar
+model:TLR1-OB
+mul id:5196
 
 Config:Biped Omnimech
 TechBase:Inner Sphere
 Era:3062
-Source:TRO 3067
+Source:TRO: 3067
 Rules Level:2
+role:Sniper
+
+
+
+quirk:easy_maintain
+
 
 Mass:85
 Engine:340 XL Engine(IS)

@@ -1,0 +1,316 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Warship
+</UnitType>
+
+<Name>
+Aegis Heavy Cruiser
+</Name>
+
+<Model>
+(2372)
+</Model>
+
+<mul id:>
+3670
+</mul id:>
+
+<year>
+2372
+</year>
+
+<originalBuildYear>
+2372
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<role>
+None
+</role>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+smallcraftbay:10.0:2:1
+asfbay:18.0:4:2
+dockingcollar
+dockingcollar
+dockingcollar
+dockingcollar
+1stclassquarters:650.0:0
+crewquarters:2275.0:0
+cargobay:128089.5:1:9
+</transporters>
+
+<SafeThrust>
+2
+</SafeThrust>
+
+<heatsinks>
+2046
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+2500
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+11
+</armor_type>
+
+<armor_tech>
+5
+</armor_tech>
+
+<armor>
+91
+101
+101
+91
+101
+101
+</armor>
+
+<Nose Equipment>
+(B) Naval Autocannon (NAC/10)
+Naval Autocannon (NAC/10)
+Naval Autocannon (NAC/10)
+Naval Autocannon (NAC/10)
+Ammo NAC/10:60
+</Nose Equipment>
+
+<Left Front Side Equipment>
+(B) Naval Autocannon (NAC/10)
+Naval Autocannon (NAC/10)
+Naval Autocannon (NAC/10)
+Naval Autocannon (NAC/10)
+Ammo NAC/10:60
+(B) Capital Missile Launcher (White Shark)
+Capital Missile Launcher (White Shark)
+Capital Missile Launcher (White Shark)
+Ammo White Shark:30
+</Left Front Side Equipment>
+
+<Right Front Side Equipment>
+(B) Naval Autocannon (NAC/10)
+Naval Autocannon (NAC/10)
+Naval Autocannon (NAC/10)
+Naval Autocannon (NAC/10)
+Ammo NAC/10:60
+(B) Capital Missile Launcher (White Shark)
+Capital Missile Launcher (White Shark)
+Capital Missile Launcher (White Shark)
+Ammo White Shark:30
+</Right Front Side Equipment>
+
+<Aft Equipment>
+(B) Capital Missile Launcher (White Shark)
+Capital Missile Launcher (White Shark)
+Ammo White Shark:20
+(B) Naval Autocannon (NAC/10)
+Naval Autocannon (NAC/10)
+Naval Autocannon (NAC/10)
+Naval Autocannon (NAC/10)
+Ammo NAC/10:60
+(B) Naval Laser 45
+Naval Laser 45
+Naval Laser 45
+Naval Laser 45
+</Aft Equipment>
+
+<Aft Left Side Equipment>
+(B) Capital Missile Launcher (White Shark)
+Ammo White Shark:10
+(B) Naval Laser 55
+Naval Laser 55
+Naval Laser 55
+(B) Naval Autocannon (NAC/10)
+Naval Autocannon (NAC/10)
+Naval Autocannon (NAC/10)
+Naval Autocannon (NAC/10)
+Naval Autocannon (NAC/10)
+Naval Autocannon (NAC/10)
+Ammo NAC/10:100
+</Aft Left Side Equipment>
+
+<Aft Right Side Equipment>
+(B) Capital Missile Launcher (White Shark)
+Ammo White Shark:10
+(B) Naval Laser 55
+Naval Laser 55
+Naval Laser 55
+(B) Naval Autocannon (NAC/10)
+Naval Autocannon (NAC/10)
+Naval Autocannon (NAC/10)
+Naval Autocannon (NAC/10)
+Naval Autocannon (NAC/10)
+Naval Autocannon (NAC/10)
+Ammo NAC/10:100
+</Aft Right Side Equipment>
+
+<Hull Equipment>
+</Hull Equipment>
+
+<Left Broadsides Equipment>
+(B) Naval Autocannon (NAC/10)
+Naval Autocannon (NAC/10)
+Naval Autocannon (NAC/10)
+Naval Autocannon (NAC/10)
+Naval Autocannon (NAC/10)
+Ammo NAC/10:100
+(B) Naval Laser 55
+Naval Laser 55
+Naval Laser 55
+(B) Naval Autocannon (NAC/10)
+Naval Autocannon (NAC/10)
+Naval Autocannon (NAC/10)
+Naval Autocannon (NAC/10)
+Naval Autocannon (NAC/10)
+Ammo NAC/10:100
+(B) Capital Missile Launcher (White Shark)
+Ammo White Shark:10
+</Left Broadsides Equipment>
+
+<Right Broadsides Equipment>
+(B) Naval Autocannon (NAC/10)
+Naval Autocannon (NAC/10)
+Naval Autocannon (NAC/10)
+Naval Autocannon (NAC/10)
+Naval Autocannon (NAC/10)
+Ammo NAC/10:100
+(B) Naval Laser 55
+Naval Laser 55
+Naval Laser 55
+(B) Naval Autocannon (NAC/10)
+Naval Autocannon (NAC/10)
+Naval Autocannon (NAC/10)
+Naval Autocannon (NAC/10)
+Naval Autocannon (NAC/10)
+Ammo NAC/10:100
+(B) Capital Missile Launcher (White Shark)
+Ammo White Shark:10
+</Right Broadsides Equipment>
+
+<structural_integrity>
+75
+</structural_integrity>
+
+<capabilities>
+The Aegis-class cruisers were known for their excellent firepower and maneuverability. They incorporated detachable jump sails, allowing for efficient energy collection and faster jumps. The refitted Aegis cruisers featured 18 autocannons housed in six turrets as their main firepower, along with secondary armament consisting of lasers, cannons, and missiles. The interior of the cruisers was relatively spacious, allowing for ample ammunition storage. However, the outdated materials and construction techniques used in their hulls made them weaker and more easily detectable compared to newer ships.
+</capabilities>
+
+<overview>
+The Aegis-class WarShip, launched in 2372, was a powerful heavy cruiser and one of the most sophisticated vessels of its time. Initially phased out in favor of newer designs, the Aegis was later reactivated during the Reunification War. After extensive refits, the Aegis became a highly effective combat craft with impressive firepower and a complement of fighters. Despite being lightly armored, several Aegis cruisers survived the fall of the Star League and found their way into Clan fleets, particularly the Jade Falcon Touman.
+</overview>
+
+<history>
+The Aegis-class WarShip, developed by Di Tron Heavy Industries, was first launched in 2372 and quickly gained acclaim as an excellent heavy cruiser. Incorporating the latest technological innovations, including detachable jump sails, the Aegis showcased the Terran Hegemony's love for tradition and proven designs. With its firepower and mobility, the Aegis served the Hegemony navy for a century and a half, undergoing several refits to take advantage of new equipment and technologies. However, by 2531, the Aegis cruisers started to be phased out in favor of the newer Avatar-class heavy cruisers. The decision to retire the Aegis cruisers was influenced by their design deficiencies and the need for more advanced vessels. A few Aegis cruisers remained in the navy as training vessels, while the rest were mothballed and placed in reserve status. Deborah Cameron, the Director-General of the Terran Hegemony at the time, chose to send them to mothballs instead of scrapping them, guarding against future wars. For the next 30 years, the mothballed Aegis cruisers orbited Sol between Terra and Mars, waiting for a new purpose. The founding of the Star League and the ensuing Reunification War created a critical need for warships, prompting First Lord Ian Cameron to reactivate the Aegis cruisers in 2582. Thirty of the cruisers were distributed among the Star League member states, while the remaining seventy underwent extensive refitting at Hegemony shipyards. Di Tron Heavy Industries took on the task of refitting the Aegis cruisers, utilizing the latest technologies available. The refitted Aegis cruisers, known as Block II ships, underwent significant upgrades. They were armed with a formidable arsenal, including 18 turret-mounted autocannons as their main firepower, along with smaller cannons, naval lasers, and missile systems. These enhancements transformed the aging cruisers into highly effective fighting craft, capable of repelling enemy attacks and carrying a full complement of fighters for defense against enemy aerospace threats. Despite their refits, the Aegis cruisers remained lightly armored, which became a notable weakness. However, their firepower and capabilities made them formidable opponents, and they performed admirably in battle, especially when engaging larger warships. The Aegis cruisers played a vital role in the early years of the Star League Navy, providing a significant boost during its crucial formation. Their revitalized presence added strength to the Navy's ranks, even as more modern ship designs emerged. Following the fall of the Star League, several Aegis cruisers survived the ensuing chaos and departure of Inner Sphere forces during the Exodus. These surviving cruisers found their way into Clan aerospace fleets, notably serving in the Jade Falcon Touman. In the Clan forces, they fulfilled roles such as escort and transport duties, still demonstrating their capabilities even centuries after their initial launch. The Aegis-class cruisers serve as a testament to the Terran Hegemony's tradition and adherence to proven designs. Despite their age, the Aegis cruisers left a lasting impact on the history of WarShips, playing vital roles in the Terran Hegemony and later the Star League Navy, and even finding new life within the Clans.
+</history>
+
+<manufacturer>
+Di Tron Heavy Industries
+</manufacturer>
+
+<primaryFactory>
+Terra
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<use>
+Cruiser
+</use>
+
+<length>
+725 m
+</length>
+
+<height>
+1308 m Sail
+</height>
+
+<source>
+TRO: 3057 Revised
+</source>
+
+<tonnage>
+750000.0
+</tonnage>
+
+<kf_core>
+1
+</kf_core>
+
+<sail>
+1
+</sail>
+
+<grav_decks>
+90
+90
+</grav_decks>
+
+<designtype>
+1
+</designtype>
+
+<crew>
+476
+</crew>
+
+<officers>
+65
+</officers>
+
+<gunners>
+120
+</gunners>
+
+<passengers>
+0
+</passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<life_boat>
+20
+</life_boat>
+
+<escape_pod>
+0
+</escape_pod>
+

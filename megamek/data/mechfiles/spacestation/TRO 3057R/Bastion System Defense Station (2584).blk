@@ -20,6 +20,10 @@ Bastion System Defense Station
 (2584)
 </Model>
 
+<mul id:>
+3800
+</mul id:>
+
 <year>
 2584
 </year>
@@ -31,6 +35,10 @@ Bastion System Defense Station
 <type>
 IS Level 3
 </type>
+
+<role>
+None
+</role>
 
 <designtype>
 1
@@ -329,7 +337,7 @@ Small Laser
 </structural_integrity>
 
 <source>
-TRO3057r - Star League
+TRO: 3057 Revised
 </source>
 
 <tonnage>

@@ -1,0 +1,130 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Aero
+</UnitType>
+
+<Name>
+Wusun
+</Name>
+
+<Model>
+C
+</Model>
+
+<mul id:>
+3594
+</mul id:>
+
+<year>
+3084
+</year>
+
+<originalBuildYear>
+3084
+</originalBuildYear>
+
+<type>
+Clan Level 2
+</type>
+
+<role>
+Fast Dogfighter
+</role>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+</transporters>
+
+<SafeThrust>
+8
+</SafeThrust>
+
+<cockpit_type>
+0
+</cockpit_type>
+
+<heatsinks>
+21
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<omnipodheatsinks>
+11
+</omnipodheatsinks>
+
+<fuel>
+320
+</fuel>
+
+<engine_type>
+2
+</engine_type>
+
+<armor_type>
+19
+</armor_type>
+
+<armor_tech>
+2
+</armor_tech>
+
+<omni>
+1
+</omni>
+
+<armor>
+74
+55
+55
+36
+</armor>
+
+<Nose Equipment>
+CLERLargeLaser:OMNI
+CLTargeting Computer:OMNI
+CLActiveProbe:OMNI
+</Nose Equipment>
+
+<Left Wing Equipment>
+CLHeavyMediumLaser:OMNI
+CLHeavyMediumLaser:OMNI
+CLHeavyMediumLaser:OMNI
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+CLHeavyMediumLaser:OMNI
+CLHeavyMediumLaser:OMNI
+CLHeavyMediumLaser:OMNI
+</Right Wing Equipment>
+
+<Aft Equipment>
+</Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+</Fuselage Equipment>
+
+<source>
+TRO: 3085
+</source>
+
+<tonnage>
+55.0
+</tonnage>

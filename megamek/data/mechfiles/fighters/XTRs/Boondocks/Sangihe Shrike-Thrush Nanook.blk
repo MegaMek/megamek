@@ -20,6 +20,10 @@ Sangihe Shrike-Thrush 'Nanook'
 
 </Model>
 
+<mul id:>
+2794
+</mul id:>
+
 <year>
 3068
 </year>
@@ -31,6 +35,10 @@ Sangihe Shrike-Thrush 'Nanook'
 <type>
 Mixed (IS Chassis) Experimental
 </type>
+
+<role>
+Interceptor
+</role>
 
 <motion_type>
 Aerodyne
@@ -138,7 +146,7 @@ Small Laser
 </Fuselage Equipment>
 
 <source>
-XTRO Boondocks - Jihad
+XTR: Boondocks
 </source>
 
 <tonnage>

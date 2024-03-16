@@ -20,6 +20,10 @@ Recon Infantry
 Recon Battalion; 201st Pesht Assault Team; 3rd Proserpina Hussars
 </Model>
 
+<mul id:>
+2673
+</mul id:>
+
 <year>
 2500
 </year>
@@ -27,6 +31,10 @@ Recon Battalion; 201st Pesht Assault Team; 3rd Proserpina Hussars
 <type>
 IS Level 3
 </type>
+
+<role>
+Scout
+</role>
 
 <motion_type>
 Hover
@@ -56,5 +64,5 @@ KuritaKit
 </specialization>
 
 <source>
-TRO 3085 - Age of War
+TRO: 3085
 </source>

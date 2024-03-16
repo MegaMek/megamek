@@ -1,12 +1,19 @@
-Version:1.0
-Hermes II
-HER-5S
+chassis:Hermes II
+model:HER-5S
+mul id:1501
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3050
-Source:TRO 3050 - Clan Invasion
+Source:TRO: 3050
 Rules Level:2
+role:Striker
+
+
+
+quirk:easy_maintain
+quirk:imp_com
+
 
 Mass:40
 Engine:240 Fusion Engine

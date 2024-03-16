@@ -1,11 +1,20 @@
-Version:1.1
-Sagittaire
-SGT-10X
+chassis:Sagittaire
+model:SGT-10X
+mul id:5718
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3084
-Rules Level:3
+Rules Level:2
+role:Brawler
+source:Record Sheets: 3067 Unabridged
+
+
+
+quirk:imp_target_short
+quirk:difficult_maintain
+quirk:weak_head_1
+
 
 Mass:95
 Engine:285 Light Fusion Engine
@@ -134,17 +143,18 @@ ISImprovedJump Jet
 
 overview:The Sagittaire is built to fight in the confines of an urban battlefield.
 
-capabilities:Weighing in at a massive ninety-five tons, the Sagittaire started production in mid 3063 and began to trickle out to units clamoring for close combat 'Mechs in the midst of the FedCom Civil War. As a power source, the 'Mech has a Pitban 285 XL engine. The XL engine saves weight at the cost of survivability and gives the 'Mech a top speed of 54.0 km/h while its mobility is enhanced with three HildCo LFT 9-X jump jets, allowing the 'Mech to jump up to ninety meters. The Sagittaire has seventeen double heat sinks to handle its massive heat load, and is protected by eighteen tons of Starshield Special Heavy armor, allowing the 'Mech to stand up to a great deal of punishment in spite of its engine.
+capabilities:The laser-heavy Sagittaire is powered by a Pitban extralight engine and has a top speed of 54 kph, which is comparable to 'Mechs of similar weight. The HildCo lifters fitted in the legs and midline, however, make the Sagittaire one of the few assault 'Mechs with jumping capacity, offering it a great deal of tactical versatility. That, of course, does not account for the psychological impact of witnessing a 95-ton BattleMech fly through the air on inexperienced troops. As if that weren't enough, the Sagittaire's pulse-technology lasers combined with the targeting computer enable a MechWarrior to retain a high rate of movement while still outperforming most other BattleMechs. With eighteen tons of armor, the need for such a strategy is questionable. The design is truly deadly when the Sagittaire's feet are firmly planted on the earth.
 
-deployment:This variant uses a Light Fusion Engine to increase survivability. All the weapons have been removed and replaced with four Medium Variable Speed Pulse Lasers and two Light PPCs. Five Improved Jump Jets allow the massive Sagittaire to cover 150 meters, and eighteen double heat sinks keep the pilot cool.
+deployment:This variant uses a Light Fusion Engine to increase survivability. All the weapons have been removed and replaced with four Medium Variable Speed Pulse Lasers and two Light PPCs. Five Improved Jump Jets allow the massive Sagittaire to cover 150 meters, and eighteen double heat sinks keep the pilot cool. 
 
-history:Production of the Sagittaire was halted due to the damage inflicted on Robinson Standard BattleWorks during the Jihad.
+history:When it was originally deployed from Robinson BattleWorks in 3063, the machine saw considerable battle against House Kurita as Duke James Sandoval dedicated heavy resources to taking and retaining a half-dozen Combine worlds. The Sagittaire was crucial in the attack on Proserpina, where one of these robots slaughtered a company of Ninth Benjamin Regulars samurai in a series of ill-fated one-on-one duels. Later, following House Kurita's successful counter-assault, the Dragon made a deliberate effort to acquire or salvage multiple Sagittaire-designed 'Mechs for its own usage. Duke Sandoval later permitted additional of these vehicles to be sold into her loyalist army as Katherine Steiner-Davion tightened her grip on the Draconis March. This was short-lived, since Tancred Sandoval removed his father as March Lord not long after. He then directed the entire Sagittaire line to reinforce his own soldiers as well as the regiments supporting Victor Steiner-Davion. As an illustration of the Sagittaire's broad appeal, an allied company and a loyalist company were stationed on New Avalon, each with a lance of Sagittaires. During the battle for the continental capital of Flensburg, only three allied robots escaped under their own power. They were all Sagittarius. They were responsible for eight "kills" out of twelve enemy 'Mechs.
+
 manufacturer:Robinson Standard BattleWorks
-
 primaryfactory:Robinson
+
 systemmanufacturer:CHASSIS:Skuel Heavy TRQ
-systemmanufacturer:ENGINE:Pitban 285 XL
+systemmanufacturer:ENGINE:Pitban 285 Light
 systemmanufacturer:ARMOR:Starshield Special Heavy
-systemmanufacturer:JUMPJET:HildCo LFT 9-X
+systemmanufacturer:JUMPJET:Unknown Improved Jump Jet
 systemmanufacturer:COMMUNICATIONS:Sony MSF-31
 systemmanufacturer:TARGETING:Federated Stalker with Targeting Module

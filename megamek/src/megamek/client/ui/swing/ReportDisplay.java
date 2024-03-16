@@ -13,39 +13,78 @@
  */
 package megamek.client.ui.swing;
 
-import megamek.client.Client;
-import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
-import megamek.client.ui.swing.util.BASE64ToolKit;
-import megamek.client.ui.swing.util.UIUtil;
+import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.widget.MegamekButton;
-import megamek.client.ui.swing.widget.SkinSpecification;
-import megamek.common.Entity;
-import megamek.common.Report;
 import megamek.common.enums.GamePhase;
 import megamek.common.event.GamePhaseChangeEvent;
-import megamek.common.preference.IPreferenceChangeListener;
-import megamek.common.preference.PreferenceChangeEvent;
 
-import javax.swing.*;
-import javax.swing.event.HyperlinkEvent;
-import javax.swing.event.HyperlinkListener;
-import javax.swing.text.html.HTMLEditorKit;
-import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
-public class ReportDisplay extends AbstractPhaseDisplay implements
-        ActionListener, HyperlinkListener, IPreferenceChangeListener {
+import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
+import static megamek.client.ui.swing.util.UIUtil.uiLightViolet;
+
+public class ReportDisplay extends StatusBarPhaseDisplay  {
     private static final long serialVersionUID = 6185643976857892270L;
 
-    // displays
-    private JTabbedPane tabs;
+    public static enum ReportCommand implements PhaseCommand {
+        REPORT_REPORT("reportReport"),
+        REPORT_PLAYERLIST("reportPlayerList"),
+        REPORT_REROLLINITIATIVE("reportRerollInitiative");
+
+        String cmd;
+
+        /**
+         * Priority that determines this buttons order
+         */
+        public int priority;
+
+        private ReportCommand(String c) {
+            cmd = c;
+        }
+
+        @Override
+        public String getCmd() {
+            return cmd;
+        }
+
+        @Override
+        public int getPriority() {
+            return priority;
+        }
+
+        @Override
+        public void setPriority(int p) {
+            priority = p;
+        }
+
+        @Override
+        public String toString() {
+            return Messages.getString("ReportDisplay." + getCmd());
+        }
+
+        public String getHotKeyDesc() {
+            String result = "";
+
+            if (this ==REPORT_REPORT) {
+                result = "<BR>";
+                result += "&nbsp;&nbsp;" + KeyCommandBind.getDesc(KeyCommandBind.ROUND_REPORT);
+            }
+
+            return result;
+        }
+    }
 
     // buttons
-    private JButton rerollInitiativeB;
-
+    private Map<ReportCommand, MegamekButton> buttons;
     private boolean rerolled; // have we rerolled an init?
+
+    private static final String RD_REPORTDISPLAY = "ReportDisplay.";
+    private static final String RD_TOOLTIP = ".tooltip";
 
     /**
      * Creates and lays out a new movement phase display for the specified
@@ -53,58 +92,61 @@ public class ReportDisplay extends AbstractPhaseDisplay implements
      */
     public ReportDisplay(ClientGUI clientgui) {
         super(clientgui);
-        butDone = new MegamekButton("",
-                SkinSpecification.UIComponents.PhaseDisplayDoneButton.getComp());
-        butDone.setActionCommand("doneButton");
-        butDone.addActionListener(new AbstractAction() {
-            private static final long serialVersionUID = -5034474968902280850L;
 
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (e.getActionCommand().equals("doneButton")) {
-                    ready();
-                }
-            }
-        });
-        clientgui.getClient().getGame().addGameListener(this);
+        if (clientgui == null) {
+            return;
+        }
 
-        // Create a tabbed panel to hold our reports.
-        tabs = new JTabbedPane();
+        setupStatusBar("");
 
-        Font tabPanelFont = new Font("Dialog", Font.BOLD,
-                GUIPreferences.getInstance().getInt("AdvancedChatLoungeTabFontSize"));
-        tabs.setFont(tabPanelFont);
-
-        resetTabs();
+        setButtons();
+        setButtonsTooltips();
 
         butDone.setText(Messages.getString("ReportDisplay.Done"));
+        butDone.setEnabled(false);
 
-        rerollInitiativeB = new JButton(Messages.getString("ReportDisplay.Reroll"));
-        rerollInitiativeB.setActionCommand("reroll_initiative");
-        rerollInitiativeB.addActionListener(this);
+        setupButtonPanel();
 
-        // layout screen
-        setLayout(new GridBagLayout());
-        add(tabs, GBC.eol().fill(GridBagConstraints.BOTH));
-        JPanel panButtons = new JPanel();
-        panButtons.setLayout(new GridLayout(1, 8));
-        panButtons.add(rerollInitiativeB);
-        for (int padding = 0; padding < 6; padding++) {
-            panButtons.add(new JLabel(""));
+        clientgui.getClient().getGame().addGameListener(this);
+        clientgui.getBoardView().addBoardViewListener(this);
+        clientgui.getBoardView().addKeyListener(this);
+    }
+
+    @Override
+    protected void setButtons() {
+        buttons = new HashMap<>((int) (ReportCommand.values().length * 1.25 + 0.5));
+        for (ReportCommand cmd : ReportCommand.values()) {
+            buttons.put(cmd, createButton(cmd.getCmd(), RD_REPORTDISPLAY));
         }
-        add(panButtons, GBC.eol().fill(GridBagConstraints.HORIZONTAL));
-        GUIPreferences.getInstance().addPreferenceChangeListener(this);
+        numButtonGroups = (int) Math.ceil((buttons.size() + 0.0) / buttonsPerGroup);
+    }
+
+    @Override
+    protected void setButtonsTooltips() {
+        for (ReportCommand cmd : ReportCommand.values()) {
+            String tt = createToolTip(cmd.getCmd(), RD_REPORTDISPLAY, cmd.getHotKeyDesc());
+            buttons.get(cmd).setToolTipText(tt);
+        }
+    }
+
+    @Override
+    protected ArrayList<MegamekButton> getButtonList() {
+        ArrayList<MegamekButton> buttonList = new ArrayList<>();
+        ReportCommand[] commands = ReportCommand.values();
+        CommandComparator comparator = new CommandComparator();
+        Arrays.sort(commands, comparator);
+        for (ReportCommand cmd : commands) {
+            buttonList.add(buttons.get(cmd));
+        }
+        return buttonList;
     }
 
     /**
-     * Show or hide the "reroll inititiative" button in this report display.
-     *
-     * @param show
-     *            a <code>boolean</code> that indicates that the button should
-     *            be shown in this report display.
+     * Clears all current actions
      */
-    public void showRerollButton(boolean show) {
-        rerollInitiativeB.setVisible(show);
+    @Override
+    public void clear() {
+
     }
 
     /**
@@ -112,9 +154,37 @@ public class ReportDisplay extends AbstractPhaseDisplay implements
      */
     @Override
     public void ready() {
-        rerollInitiativeB.setEnabled(false);
+        if (!clientgui.getBoardView().isTileImagesLoaded()) {
+            return;
+        }
+
         butDone.setEnabled(false);
+        setReportEnabled(false);
+        setPlayerListEnabled(false);
+        setRerollInitiativeEnabled(false);
         clientgui.getClient().sendDone(true);
+    }
+
+    public void setReportEnabled(boolean enabled) {
+        buttons.get(ReportCommand.REPORT_REPORT).setEnabled(enabled);
+    }
+
+    public void setPlayerListEnabled(boolean enabled) {
+        buttons.get(ReportCommand.REPORT_PLAYERLIST).setEnabled(enabled);
+    }
+
+    public void setRerollInitiativeEnabled(boolean enabled) {
+        buttons.get(ReportCommand.REPORT_REROLLINITIATIVE).setEnabled(enabled);
+    }
+
+    public void resetRerollInitiativeEnabled() {
+        if (!rerolled) {
+            setRerollInitiativeEnabled(true);
+        }
+    }
+
+    public void setDoneEnabled(boolean enabled) {
+        butDone.setEnabled(enabled);
     }
 
     /**
@@ -122,127 +192,8 @@ public class ReportDisplay extends AbstractPhaseDisplay implements
      */
     public void rerollInitiative() {
         rerolled = true;
-        rerollInitiativeB.setEnabled(false);
-        //butDone.setEnabled(false);
+        setRerollInitiativeEnabled(false);
         clientgui.getClient().sendRerollInitiativeRequest();
-    }
-
-    /**
-     * have we rerolled init this round?
-     */
-    public boolean hasRerolled() {
-        return rerolled;
-    }
-
-    public void resetButtons() {
-        resetReadyButton();
-        if ((clientgui.getClient().getGame().getPhase() == GamePhase.INITIATIVE_REPORT) && clientgui.getClient().getGame().hasTacticalGenius(clientgui.getClient().getLocalPlayer())) {
-            showRerollButton(true);
-        } else {
-            showRerollButton(false);
-        }
-        rerollInitiativeB.setEnabled(true);
-    }
-
-    public void resetReadyButton() {
-        butDone.setEnabled(true);
-    }
-
-    public void resetRerollButton() {
-        rerollInitiativeB.setEnabled(true);
-    }
-
-    public void setReportTab(int round, String roundText, String phaseText) {
-        if (round == 0) {
-            // The deployment reports (round 0) are combined with round one's
-            // report.
-            round = 1;
-        }
-        if (tabs.indexOfTab("Round " + round) == -1) {
-            // Need a new tab for the new round.
-
-            // get rid of phase tab
-            int phaseTab = tabs.indexOfTab("Phase");
-            if (phaseTab >= 0) {
-                tabs.removeTabAt(phaseTab);
-            }
-            if (phaseTab == -1) {
-                phaseTab += 1; // special handling for round 0
-            }
-
-            // add as many round tabs as necessary to catch us up
-            JTextPane ta;
-            // TODO: we should remove the use of client
-            final Client client = clientgui.getClient();
-            for (int catchup = phaseTab + 1; catchup <= round; catchup++) {
-                if (tabs.indexOfTab("Round " + catchup) != -1) {
-                    ((JTextPane) ((JScrollPane) tabs.getComponentAt(tabs
-                            .indexOfTab("Round " + catchup))).getViewport()
-                            .getView()).setText("<pre>"
-                            + client.receiveReport(client.getGame().getReports(
-                                    catchup)) + "</pre>");
-                    continue;
-                }
-                String text = roundText;
-                if (catchup != round) {
-                    text = client.receiveReport(client.getGame().getReports(catchup));
-                }
-                ta = new JTextPane();
-                ta.addHyperlinkListener(this);
-                setupStylesheet(ta);
-                BASE64ToolKit toolKit = new BASE64ToolKit();
-                ta.setEditorKit(toolKit);
-                ta.setText("<pre>" + text + "</pre>");
-                ta.setEditable(false);
-                ta.setOpaque(false);
-                tabs.add("Round " + catchup, new JScrollPane(ta));
-            }
-
-            // add the new current phase tab
-            ta = new JTextPane();
-            ta.addHyperlinkListener(this);
-            setupStylesheet(ta);
-            BASE64ToolKit toolKit = new BASE64ToolKit();
-            ta.setEditorKit(toolKit);
-            ta.setText("<pre>" + phaseText + "</pre>");
-            ta.setEditable(false);
-            ta.setOpaque(false);
-
-
-            JScrollPane sp = new JScrollPane(ta);
-            tabs.add("Phase", sp);
-            tabs.setSelectedComponent(sp);
-        } else {
-            // Update the existing round tab and the phase tab.
-            ((JTextPane) ((JScrollPane) tabs.getComponentAt(tabs.indexOfTab("Round " + round))).getViewport().getView()).setText("<pre>" + roundText + "</pre>");
-            ((JTextPane) ((JScrollPane) tabs.getComponentAt(tabs.indexOfTab("Phase"))).getViewport().getView()).setText("<pre>" + phaseText + "</pre>");
-        }
-    }
-
-    public static void setupStylesheet(JTextPane pane) {
-        pane.setContentType("text/html");
-        Font font = UIManager.getFont("Label.font");
-        int size = UIUtil.scaleForGUI(UIUtil.FONT_SCALE1);
-        ((HTMLEditorKit) pane.getEditorKit()).getStyleSheet().addRule(
-                "pre { font-family: " + font.getFamily() + "; font-size: " + size + "pt; font-style:normal;}");
-    }
-    
-    public void appendReportTab(String additionalText) {
-        int phaseTab = tabs.indexOfTab("Phase");
-        if (phaseTab > 0) {
-            JTextPane pane = ((JTextPane) ((JScrollPane) tabs.getComponentAt(phaseTab - 1)).getViewport().getView());
-            BASE64ToolKit toolKit = new BASE64ToolKit();
-            pane.setEditorKit(toolKit);
-            pane.setText(pane.getText() + "<pre>"+additionalText+"</pre>");
-        }
-        JTextPane pane = ((JTextPane) ((JScrollPane) tabs.getComponentAt(phaseTab)).getViewport().getView());
-        BASE64ToolKit toolKit = new BASE64ToolKit();
-        pane.setEditorKit(toolKit);
-        pane.setText(pane.getText() + "<pre>"+additionalText+"</pre>");
-    }
-
-    public void resetTabs() {
-        tabs.removeAll();
     }
 
     //
@@ -250,39 +201,54 @@ public class ReportDisplay extends AbstractPhaseDisplay implements
     //
     @Override
     public void actionPerformed(ActionEvent ev) {
-        if (ev.getActionCommand().equalsIgnoreCase("reroll_initiative")) {
+        if (ev.getActionCommand().equalsIgnoreCase(ReportCommand.REPORT_REROLLINITIATIVE.getCmd())) {
             rerollInitiative();
+        } else if ((ev.getActionCommand().equalsIgnoreCase(ReportCommand.REPORT_REPORT.getCmd()))) {
+            GUIP.toggleRoundReportEnabled();
+        } else if ((ev.getActionCommand().equalsIgnoreCase(ReportCommand.REPORT_PLAYERLIST.getCmd()))) {
+            GUIP.togglePlayerListEnabled();
+        }
+    }
+
+    private void resetButtons() {
+        butDone.setEnabled(!clientgui.getClient().getLocalPlayer().isDone());
+        setReportEnabled(true);
+        setPlayerListEnabled(true);
+
+        if ((clientgui.getClient().getGame().getPhase() == GamePhase.INITIATIVE_REPORT) && clientgui.getClient().getGame().hasTacticalGenius(clientgui.getClient().getLocalPlayer())) {
+            setRerollInitiativeEnabled(true);
         }
     }
 
     @Override
     public void gamePhaseChange(GamePhaseChangeEvent e) {
-
         // Are we ignoring events?
         if (isIgnoringEvents()) {
             return;
         }
 
-        setReportTab(clientgui.getClient().getGame().getRoundCount(), clientgui.getClient().roundReport, clientgui.getClient().phaseReport);
-        resetButtons();
         rerolled = false;
 
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                int phaseTab = tabs.indexOfTab("Phase");
-                if (phaseTab > 0) {
-                    JViewport vp = ((JScrollPane) tabs.getComponentAt(phaseTab - 1)).getViewport();
-                    vp.setViewPosition(new Point());
-                }
-                JViewport vp = ((JScrollPane) tabs.getComponentAt(phaseTab)).getViewport();
-                vp.setViewPosition(new Point());
-            }
-        });
-    }
-    
-    public void clear() {
-        // move along, move along, nothing to see here
+        GamePhase phase = clientgui.getClient().getGame().getPhase();
+
+        switch (phase) {
+            case INITIATIVE_REPORT:
+            case TARGETING_REPORT:
+            case MOVEMENT_REPORT:
+            case OFFBOARD_REPORT:
+            case FIRING_REPORT:
+            case PHYSICAL_REPORT:
+            case END_REPORT:
+            case VICTORY:
+                resetButtons();
+                setStatusBarWithNotDonePlayers();
+                break;
+            default:
+                setStatusBarText(phase.toString());
+                break;
+        }
+
+        clientgui.bingMyTurn();
     }
 
     /**
@@ -291,61 +257,7 @@ public class ReportDisplay extends AbstractPhaseDisplay implements
     @Override
     public void removeAllListeners() {
         clientgui.getClient().getGame().removeGameListener(this);
-        GUIPreferences.getInstance().removePreferenceChangeListener(this);
+        clientgui.getBoardView().removeBoardViewListener(this);
+        clientgui.getBoardView().removeKeyListener(this);
     }
-
-    private JComponent activePane() {
-        return (JComponent) ((JScrollPane) tabs.getSelectedComponent()).getViewport().getView();
-    }
-
-    @Override
-    public void hyperlinkUpdate(HyperlinkEvent evt) {
-        String evtDesc = evt.getDescription();
-        if (evt.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-            if (evtDesc.startsWith(Report.ENTITY_LINK)) {
-                String idString = evtDesc.substring(Report.ENTITY_LINK.length());
-                int id;
-                try {
-                    id = Integer.parseInt(idString);
-                } catch (Exception ex) {
-                    id = -1;
-                }
-                Entity ent = clientgui.getClient().getGame().getEntity(id);
-                if (ent != null) {
-                    clientgui.mechD.displayEntity(ent);
-                    clientgui.setUnitDisplayVisible(true);
-                }
-            } else if (evtDesc.startsWith(Report.TOOLTIP_LINK)) {
-                String desc = evtDesc.substring(Report.TOOLTIP_LINK.length());
-                JOptionPane.showMessageDialog(clientgui, desc, Messages.getString("ReportDisplay.Details"),
-                        JOptionPane.PLAIN_MESSAGE);
-            }
-        } else if (evt.getEventType() == HyperlinkEvent.EventType.ENTERED) {
-            if (evtDesc.startsWith(Report.TOOLTIP_LINK)) {
-                String desc = evtDesc.substring(Report.TOOLTIP_LINK.length());
-                activePane().setToolTipText(desc);
-            }
-        } else if (evt.getEventType() == HyperlinkEvent.EventType.EXITED) {
-            activePane().setToolTipText(null);
-        }
-    }
-
-    @Override
-    public void preferenceChange(PreferenceChangeEvent e) {
-        // Update the text size when the GUI scaling changes
-        if (e.getName().equals(GUIPreferences.GUI_SCALE)) {
-            for (int i = 0; i < tabs.getTabCount(); i++) {
-                Component cp = tabs.getComponentAt(i);
-                if (cp instanceof JScrollPane) {
-                    Component pane = ((JScrollPane) cp).getViewport().getView();
-                    if (pane instanceof JTextPane) {
-                        JTextPane tp = (JTextPane) pane;
-                        setupStylesheet(tp);
-                        tp.setText(tp.getText());
-                    }
-                }
-            }
-        } 
-    }
-
 }

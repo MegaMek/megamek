@@ -1,0 +1,172 @@
+chassis:Carrion Crow
+model:B
+mul id:7777
+
+Config:Biped Omnimech
+techbase:Clan
+era:3145
+source:Rec Guide:ilClan #12
+rules level:2
+role:Sniper
+
+quirk:imp_target_short
+quirk:unbalanced
+
+
+mass:40
+engine:280 XL (Clan) Engine(IS)
+structure:Clan Endo Steel
+myomer:Standard
+
+heat sinks:10 Clan Double
+base chassis heat sinks:10
+walk mp:7
+jump mp:0
+
+armor:Ferro-Lamellor(Clan)
+LA armor:11
+RA armor:11
+LT armor:16
+RT armor:16
+CT armor:19
+HD armor:9
+LL armor:19
+RL armor:19
+RTL armor:4
+RTR armor:4
+RTC armor:5
+
+Weapons:3
+ER Large Laser, Left Arm
+Improved Heavy Medium Laser, Right Arm
+ATM 9, Left Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+CLERLargeLaser (OMNIPOD)
+Clan Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+CLImprovedMediumHeavyLaser (OMNIPOD)
+CLImprovedMediumHeavyLaser (OMNIPOD)
+Clan Ferro-Lamellor
+Clan Ferro-Lamellor
+Clan Ferro-Lamellor
+Clan Ferro-Lamellor
+Clan Ferro-Lamellor
+Clan Ferro-Lamellor
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+CLATM9 (OMNIPOD)
+CLATM9 (OMNIPOD)
+CLATM9 (OMNIPOD)
+CLATM9 (OMNIPOD)
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Ferro-Lamellor
+Clan Ferro-Lamellor
+Clan Ferro-Lamellor
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Clan Ammo ATM-9 (OMNIPOD)
+Clan Ammo ATM-9 (OMNIPOD)
+Supercharger (Clan) (OMNIPOD)
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Ferro-Lamellor
+Clan Ferro-Lamellor
+Clan Ferro-Lamellor
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+WatchdogECMSuite (OMNIPOD)
+WatchdogECMSuite (OMNIPOD)
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+overview:The Carrion Crow is a Raven Alliance OmniMech designed alongside the heavier and more expensive War Crow.
+
+capabilities:An extralight engine drives the 'Mech at a top speed of 111km/h. Protection for the engine and Endo-Steel chassis is provided by nine and a half tons of Ferro-Lamellor armor. Fourteen and a half tons of pod space allows the Carrion Crow to carry weapons that let it effectively fight heavier units.
+
+deployment:An Improved Heavy Medium Laser is in the right arm, while the left arm carries an ER Large Laser. Supplementing this is an ATM 9 in the left torso, and two tons of ammunition is in the right torso. Also present is an engine Supercharger for sprint speeds, and a Watchdog CEWS is mounted in the center torso to disrupt enemy networks.
+
+history:Deployment of the Carrion Crow is limited to the Raven touman with the Alliance Military Corps not receiving any of these 'Mechs. A fast 'Mech, the Carrion Crow is intended to be a standard medium 'Mech for the Alliance.
+
+manufacturer:Snow Raven Industrial Complex Beta
+primaryfactory:Mitchella
+systemmanufacturer:CHASSIS:Raven Endo Steel
+systemmode:CHASSIS:WC2
+systemmanufacturer:ENGINE:Type 280 Extralight
+systemmanufacturer:ARMOR:Compound LZ-7 Ferro-Lamellor
+systemmanufacturer:COMMUNICATIONS:TDWS-37 Mk. 2.2
+systemmanufacturer:TARGETING:“Hermes” CT-44
+

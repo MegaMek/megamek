@@ -1,11 +1,11 @@
-Version:1.0
-Crosscut
-ED-X2 (RL)
+chassis:Crosscut
+model:ED-X2 LoggerMech (RL)
+mul id:6973
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2810
-Source:RS OK - Early Succession War
+Source:Record Sheets: Operation Klondike
 Rules Level:4
 
 Mass:30

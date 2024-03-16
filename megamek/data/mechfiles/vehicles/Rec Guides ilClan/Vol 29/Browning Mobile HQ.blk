@@ -1,0 +1,116 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+Browning Mobile HQ
+</Name>
+
+<Model>
+
+</Model>
+
+<year>
+2625
+</year>
+
+<originalBuildYear>
+2625
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<role>
+Scout
+</role>
+
+<motion_type>
+Wheeled
+</motion_type>
+
+<transporters>
+</transporters>
+
+<cruiseMP>
+7
+</cruiseMP>
+
+<engine_type>
+0
+</engine_type>
+
+<armor>
+15
+15
+15
+15
+12
+</armor>
+
+<Body Equipment>
+Communications Equipment:SIZE:4.0
+ISGuardianECMSuite
+ISCASE
+ISAMS Ammo
+</Body Equipment>
+
+<Front Equipment>
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+ISAntiMissileSystem
+</Turret Equipment>
+
+<manufacturer>
+Mitchell Vehicles
+</manufacturer>
+
+<primaryFactory>
+Terra
+</primaryFactory>
+
+<systemManufacturers>
+ENGINE:Omni 155 Fusion
+ARMOR:StarSlab/3 with CASE
+COMMUNICATIONS:Domman CommSet (Echo IX) with Guardian ECM
+TARGETING:Wayne SweepSight
+</systemManufacturers>
+
+<tonnage>
+25.0
+</tonnage>
+
+<source>
+Rec Guide:ilClan #29
+</source>
+
+<mul id:>
+9399
+</mul id:>
+
+<quirks>
+imp_com
+difficult_maintain
+</quirks>
+

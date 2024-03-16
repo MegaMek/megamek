@@ -20,6 +20,10 @@ SmallCraft
 LC-100
 </Model>
 
+<mul id:>
+3742
+</mul id:>
+
 <year>
 2953
 </year>
@@ -31,6 +35,10 @@ LC-100
 <type>
 IS Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Aerodyne
@@ -98,7 +106,7 @@ cargobay:6.0:1:4
 </structural_integrity>
 
 <source>
-HB: House Steiner
+Handbook: House Steiner
 </source>
 
 <tonnage>

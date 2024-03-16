@@ -16,9 +16,13 @@ Tank
 LTV-4 Hover Tank
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+5587
+</mul id:>
 
 <year>
 2464
@@ -70,9 +74,16 @@ SRM 4
 </Turret Equipment>
 
 <source>
-XTRO Primitives II - Age of War
+XTR: Primitives II
 </source>
 
 <tonnage>
 50.0
 </tonnage>
+
+<quirks>
+easy_maintain
+low_profile
+obsolete
+</quirks>
+

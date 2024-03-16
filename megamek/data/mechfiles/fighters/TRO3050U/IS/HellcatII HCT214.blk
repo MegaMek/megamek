@@ -20,6 +20,10 @@ Hellcat II
 HCT-214
 </Model>
 
+<mul id:>
+1471
+</mul id:>
+
 <year>
 2715
 </year>
@@ -31,6 +35,10 @@ HCT-214
 <type>
 IS Level 2
 </type>
+
+<role>
+Fast Dogfighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -102,7 +110,7 @@ Medium Laser
 </Fuselage Equipment>
 
 <source>
-TRO 3050u - Star League
+TRO: 3050
 </source>
 
 <tonnage>

@@ -2,46 +2,83 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 Infantry
 </UnitType>
+
 <Name>
 Anti-Infantry Unit
 </Name>
+
 <Model>
 Second Lyran Armored Infantry
 </Model>
-<squad_size>
-7
-</squad_size>
-<squadn>
-4
-</squadn>
-<Primary>
-InfantryMGFlechette
-</Primary>
-<Secondary>
-InfantrySupportNeedler
-</Secondary>
-<secondn>
-2
-</secondn>
-<armorKit>
-SteinerKit3060
-</armorKit>
-<type>
-IS Level 3
-</type>
+
+<mul id:>
+46
+</mul id:>
+
 <year>
 3060
 </year>
-<era>
-TRO 3085
-</era>
+
+<originalBuildYear>
+3060
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
 <motion_type>
 Motorized
 </motion_type>
+
+<transporters>
+</transporters>
+
+<Field Guns Equipment>
+</Field Guns Equipment>
+
+<source>
+TRO: 3085
+</source>
+
+<squad_size>
+7
+</squad_size>
+
+<squadn>
+4
+</squadn>
+
+<secondn>
+2
+</secondn>
+
+<Primary>
+Needler Rifle (M&G Flechette)
+</Primary>
+
+<Secondary>
+Needler, Support (Firedrake)
+</Secondary>
+
+<antimek>
+8
+</antimek>
+
+<armorKit>
+Lyran Alliance/Lyran Commonwealth (3060+) Infantry Kit
+</armorKit>
+
+<armordivisor>
+2.0
+</armordivisor>
+

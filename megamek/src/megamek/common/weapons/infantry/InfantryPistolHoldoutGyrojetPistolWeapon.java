@@ -47,34 +47,34 @@ import megamek.common.AmmoType;
  */
 public class InfantryPistolHoldoutGyrojetPistolWeapon extends InfantryWeapon {
 
-	/**
-	 *
-	 */
-	private static final long serialVersionUID = -3164871600230559641L;
+    /**
+     *
+     */
+    private static final long serialVersionUID = -3164871600230559641L;
 
-	public InfantryPistolHoldoutGyrojetPistolWeapon() {
-		super();
+    public InfantryPistolHoldoutGyrojetPistolWeapon() {
+        super();
 
-		name = "Gyrojet Pistol (Hold-Out)";
-		setInternalName(name);
-		addLookupName("InfantryHoldoutGyrojetpistol");
-		addLookupName("Holdout Gyrojet Pistol");
-		ammoType = AmmoType.T_INFANTRY;
-		cost = 30;
-		bv = 0.04;
-		tonnage = .00005;
-		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
-		infantryDamage = 0.04;
-		infantryRange = 0;
-		ammoWeight = 0.00002;
-		ammoCost = 1;
-		shots = 2;
-		rulesRefs = " 273,TM";
-		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2100, 2100, 2100, DATE_NONE, DATE_NONE)
-				.setISApproximate(false, false, false, false, false)
-				.setClanAdvancement(2100, 2100, 2100, DATE_NONE, DATE_NONE)
-				.setClanApproximate(false, false, false, false, false).setTechRating(RATING_D)
-				.setAvailability(RATING_D, RATING_D, RATING_C, RATING_B);
+        name = "Gyrojet Pistol (Hold-Out)";
+        setInternalName(name);
+        addLookupName("InfantryHoldoutGyrojetpistol");
+        addLookupName("Holdout Gyrojet Pistol");
+        ammoType = AmmoType.T_INFANTRY;
+        cost = 30;
+        bv = 0.04;
+        tonnage = .00005;
+        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
+        infantryDamage = 0.04;
+        infantryRange = 0;
+        ammoWeight = 0.00002;
+        ammoCost = 1;
+        shots = 2;
+        rulesRefs = " 273, TM";
+        techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2100, 2100, 2100, DATE_NONE, DATE_NONE)
+                .setISApproximate(false, false, false, false, false)
+                .setClanAdvancement(2100, 2100, 2100, DATE_NONE, DATE_NONE)
+                .setClanApproximate(false, false, false, false, false).setTechRating(RATING_D)
+                .setAvailability(RATING_D, RATING_D, RATING_C, RATING_B);
 
-	}
+    }
 }

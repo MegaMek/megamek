@@ -1,12 +1,18 @@
-Version:1.0
-Axman
-AXM-2N
+chassis:Axman
+model:AXM-2N
+mul id:185
 
 Config:Biped
 techbase:Inner Sphere
 era:3049
-source:TRO 3050 - Clan Invasion
+source:TRO: 3050
 rules level:2
+role:Skirmisher
+
+
+
+quirk:pro_actuator
+
 
 mass:65
 engine:260 XL Engine(IS)

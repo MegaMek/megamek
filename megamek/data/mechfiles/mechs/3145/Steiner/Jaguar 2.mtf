@@ -1,12 +1,16 @@
-Version:1.0
-Jaguar
-2
+chassis:Jaguar
+model:2
+mul id:6613
 
 Config:Quad
 TechBase:Clan
 Era:3123
-Source:TRO 3145 Lyran Commonwealth - Late Republic
+Source:TRO: 3145 Lyran Commonwealth
 Rules Level:2
+role:Striker
+
+quirk:pro_actuator
+
 
 Mass:35
 Engine:280 XL (Clan) Engine(IS)

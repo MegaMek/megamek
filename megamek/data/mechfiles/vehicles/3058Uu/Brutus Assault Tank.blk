@@ -12,9 +12,13 @@ Tank
 <Name>
 Brutus Assault Tank
 </Name>
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+435
+</mul id:>
 <Tonnage>
 75
 </Tonnage>
@@ -48,6 +52,10 @@ ISLRM20 Ammo
 <type>
 IS Level 1
 </type>
+
+<role>
+Juggernaut
+</role>
 <year>
 2998
 </year>
@@ -64,5 +72,5 @@ IS Level 1
 Tracked
 </motion_type>
 <source>
-Succession Wars
+TRO: 3058
 </source>

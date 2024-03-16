@@ -1,12 +1,19 @@
-Version:1.0
-Lu Wei Bing
-LN-4B
+chassis:Lu Wei Bing
+model:LN-4B
+mul id:6471
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3110
-Source:TRO 3145 Capellan Confederation - Late Republic
+Source:TRO: 3145 Capellan Confederation
 Rules Level:2
+role:Brawler
+
+
+
+
+quirk:easy_maintain
+
 
 Mass:85
 Engine:340 Light Engine(IS)

@@ -1,12 +1,19 @@
-Version:1.0
-Zeus-X
-ZEU-X2
+chassis:Zeus-X
+model:ZEU-X2
+mul id:6632
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3069
-Source:TRO 3145 Lyran Commonwealth - Jihad
+Source:TRO: 3145 Lyran Commonwealth
 Rules Level:4
+role:Skirmisher
+
+
+
+quirk:command_mech
+quirk:difficult_maintain
+
 
 Mass:80
 Engine:400 XXL Engine(IS)
@@ -148,4 +155,19 @@ IS Reactive
 -Empty-
 -Empty-
 
+overview:The original ZEU-X was a technological milestone. It was also an unwieldy mess of patchwork armor, reactive composites, and illogical short-range weapons, the limited manufacturing of which during the Civil War functioned only as propaganda. The following model was a massive failure, as the marriage of armored components and composite structure frequently ended in a pile of intact internal components as the only remains of a defeated ZEU-X2. A 3080s model was an inefficient jumping monster informed by Solaris research on the enigmatic Sasquatch. Only the sub-variant ZEU-WD series, which combined X-series improvements with conventional Zeus chassis, was a success.
+
+capabilities:Manufactured on by Defiance, the Zeus X was both a poster child for excellence in production engineering and an innovative high-technology platform, while at the same time struggling with emerging technologies. 
+
+deployment:Developed during the FedCom Civil War and built using the same engine and chassis as the ZEU-X, the -X2 took its weapons cues from the ZEU-9T model of Zeus; the -X2 carried an ER PPC as its main weapon, giving it a much greater range than the LB-X Autocannon/20 carried by the ZEU-X model, along with a smaller MRM 20 in place of the larger launcher on the -X, with just a single ton of ammunition. It was highly effective as a sniper 'Mech, with its high mobility giving it the ability to dictate the range of an engagement. Although it mounted a ton less armor, the -X2 carried eighteen double heat sinks, half again as many as the -X.
+
+history:The Zeus personifies Steiner's "wall of steel." The LCAF's indigenous pride and joy was reportedly the ultimate demonstration that superior production quality could compensate for weak battlefield prowess. It was picked for a facelift after three centuries of steadfast service to demonstrate Defiance's reputation as one of the Inner Sphere's major manufacturers. The Zeus X is equal parts celebrity and cutting-edge high-tech platform. Its modifications bring the ancient BattleMech up to date, even by thirty-second-century standards. The Zeus X-series is characterised structurally by a massive engine and a light yet brittle structure coated in layers of experimental armor. These qualities were carefully integrated with appropriate equipment when the ZEU-X4 was ready for manufacturing in the late 3110. The thick reactive plating is now production quality and completely covers the 'Mech. The LCAF received a command 'Mech when a roomy rumble seat was upgraded to a full console. Armed with modest but effective weapons, the ZEU-X4 attacks foes who are nothing more than approaching blots on the horizon. end of the Third Succession War, with the resulting ZEU-6T variant being the standard during the Fourth Succession War and later the War of 3039. The design was also well received by mercenary units, particularly the Zeta Battalion of Wolf's Dragoons.
+
+manufacturer:Defiance Manufacturing Annex
+primaryfactory:Kwangjong-ni
+systemmanufacturer:CHASSIS:Chariot III Ultralight Composite
+systemmanufacturer:ENGINE:Defiance 400 XXL
+systemmanufacturer:ARMOR:Valiant Lamellor/Durallex Shockwave Reactive with CASE II
+systemmanufacturer:COMMUNICATIONS:TharHes Calliope ZE-5A2
+systemmanufacturer:TARGETING:TharHes Ares-X9-B
 

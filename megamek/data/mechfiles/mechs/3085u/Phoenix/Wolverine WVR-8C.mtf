@@ -1,12 +1,25 @@
-Version:1.0
-Wolverine
-WVR-8C
+chassis:Wolverine
+model:WVR-8C
+mul id:3577
 
 Config:Biped
 techbase:Inner Sphere
 era:3067
-source:Civil War
+source:TRO: 3085u 
 rules level:2
+role:Skirmisher
+
+
+
+quirk:command_mech
+quirk:ext_twist
+quirk:imp_com
+quirk:pro_actuator
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+quirk:cramped_cockpit
+weaponquirk:jettison_capable:RA:4:ISLargePulseLaser
+
 
 mass:55
 engine:275 XL Engine(IS)

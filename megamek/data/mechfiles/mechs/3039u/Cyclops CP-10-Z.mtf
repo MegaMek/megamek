@@ -1,12 +1,22 @@
-Version:1.0
-Cyclops
-CP-10-Z
+chassis:Cyclops
+model:CP-10-Z
+mul id:772
 
 Config:Biped
 techbase:Inner Sphere
 era:2710
-source:TRO 3039 - Star League
+source:TRO: 3039
 rules level:1
+role:Juggernaut
+
+
+
+
+quirk:battle_computer
+quirk:cowl
+quirk:difficult_eject
+quirk:weak_head_2
+
 
 mass:90
 engine:360 Fusion Engine(IS)

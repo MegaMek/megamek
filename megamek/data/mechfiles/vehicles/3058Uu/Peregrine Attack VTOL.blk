@@ -12,9 +12,13 @@ VTOL
 <Name>
 Peregrine Attack VTOL
 </Name>
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+2479
+</mul id:>
 <Tonnage>
 30
 </Tonnage>
@@ -48,6 +52,10 @@ ISMG Ammo (200)
 <type>
 IS Level 1
 </type>
+
+<role>
+Striker
+</role>
 <year>
 3021
 </year>
@@ -64,5 +72,5 @@ IS Level 1
 VTOL
 </motion_type>
 <source>
-Succession Wars
+TRO: 3058
 </source>

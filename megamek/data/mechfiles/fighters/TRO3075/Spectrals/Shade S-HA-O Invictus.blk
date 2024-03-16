@@ -20,6 +20,10 @@ Shade
 S-HA-O Invictus
 </Model>
 
+<mul id:>
+5029
+</mul id:>
+
 <year>
 3072
 </year>
@@ -31,6 +35,10 @@ S-HA-O Invictus
 <type>
 IS Level 3
 </type>
+
+<role>
+Fast Dogfighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -105,7 +113,7 @@ ISGuardianECMSuite:OMNI
 </Fuselage Equipment>
 
 <source>
-TRO 3075 - Jihad
+TRO: 3075
 </source>
 
 <tonnage>

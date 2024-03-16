@@ -1,11 +1,18 @@
-Version:1.0
-Ursus
-3
+chassis:Ursus
+model:3
+mul id:5329
 
 Config:Biped
 TechBase:Clan
 Era:3079
 Rules Level:4
+role:Juggernaut
+Source:TRO: Prototypes 
+
+quirk:distracting
+quirk:pro_actuator
+quirk:cramped_cockpit
+
 
 Mass:50
 Engine:200 Fusion (Clan) Engine(IS)

@@ -1,40 +1,45 @@
-Version:1.0
-JagerMech
-JM6-DGr
-
+chassis:JagerMech
+model:JM6-DGr
+mul id:4389
 Config:Biped
-TechBase:Inner Sphere
-Era:3058
-Source:TRO 3050 - Clan Invasion
-Rules Level:2
+techbase:Inner Sphere
+era:3058
+source:TRO: 3050
+rules level:2
+role:Sniper
 
-Mass:65
-Engine:260 XL Engine(IS)
-Structure:IS Standard
-Myomer:Standard
 
-Heat Sinks:10 Single
-Walk MP:4
-Jump MP:0
 
-Armor:Ferro-Fibrous(Inner Sphere)
-LA Armor:8
-RA Armor:8
-LT Armor:17
-RT Armor:17
-CT Armor:18
-HD Armor:9
-LL Armor:12
-RL Armor:12
-RTL Armor:5
-RTR Armor:5
-RTC Armor:5
+quirk:anti_air
+
+
+mass:65
+engine:260 XL Engine(IS)
+structure:IS Standard
+myomer:Standard
+
+heat sinks:10 IS Double
+walk mp:4
+jump mp:0
+
+armor:Ferro-Fibrous(Inner Sphere)
+LA armor:8
+RA armor:8
+LT armor:17
+RT armor:17
+CT armor:18
+HD armor:9
+LL armor:12
+RL armor:12
+RTL armor:5
+RTR armor:5
+RTC armor:5
 
 Weapons:4
-ER Medium Laser, Center Torso
-ER Medium Laser, Center Torso
-Gauss Rifle, Right Arm
 Gauss Rifle, Left Arm
+Gauss Rifle, Right Arm
+ER Medium Laser, Center Torso
+ER Medium Laser, Center Torso
 
 Left Arm:
 Shoulder
@@ -147,3 +152,5 @@ Foot Actuator
 -Empty-
 -Empty-
 -Empty-
+
+

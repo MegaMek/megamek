@@ -13,19 +13,23 @@ Tank
 </blockversion>
 
 <Name>
-Marsden II MBT
+Marsden MBT
 </Name>
 
 <Model>
 II (Primitive)
 </Model>
 
+<mul id:>
+2085
+</mul id:>
+
 <year>
 2463
 </year>
 
 <source>
-Star League
+TRO: 3075
 </source>
 
 <type>

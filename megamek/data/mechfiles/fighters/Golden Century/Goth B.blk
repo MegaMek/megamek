@@ -20,6 +20,10 @@ Goth
 B
 </Model>
 
+<mul id:>
+7660
+</mul id:>
+
 <year>
 2873
 </year>
@@ -31,6 +35,10 @@ B
 <type>
 Clan Level 2
 </type>
+
+<role>
+Fire Support
+</role>
 
 <motion_type>
 Aerodyne
@@ -110,7 +118,7 @@ CLERLargeLaser:OMNI
 </Fuselage Equipment>
 
 <source>
-Succession Wars
+TRO: Golden Century
 </source>
 
 <tonnage>

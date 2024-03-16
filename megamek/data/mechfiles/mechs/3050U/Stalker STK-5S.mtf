@@ -1,12 +1,20 @@
-Version:1.0
-Stalker
-STK-5S
+chassis:Stalker
+model:STK-5S
+mul id:3041
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3050
-Source:TRO 3050 - Clan Invasion
+Source:TRO: 3050
 Rules Level:2
+role:Juggernaut
+
+
+
+quirk:combat_computer
+quirk:ubiquitous_is
+quirk:no_arms
+
 
 Mass:85
 Engine:255 XL Engine
@@ -153,8 +161,7 @@ Heat Sink
 -Empty-
 -Empty-
 
-overview:"It's not flashy. It's not the cutting edge. It just keeps coming.”
--From Triad Technologies marketing campaign
+overview:"It's not flashy. It's not the cutting edge. It just keeps coming.” -From Triad Technologies marketing campaign
 
 capabilities:Relatively common as assault 'Mechs go, the 85-ton Stalker has been a staple of assault 'Mech formations for centuries. The Stalker's weapons array is geared to increase damage as it closes with its target. The number of weapons carried by the Stalker is so great that should a pilot attempt to fire them all at once they would easily overload the twenty heat sinks the 'Mech carries. Originally, the Stalker used a special fire-control computer which determined the range to the enemy and suggested the optimal mix of weapons to avoid such a problem occurring, although with the ravages of age, many older 'Mechs lack this vital piece of equipment. (By the late Succession Wars era, a functional Spar 3c Tight Band targeting & tracking system was considered very valuable.) These pilots therefore must take care when in combat: thirteen and a half tons of armor may defend against the enemy's blows, but will do nothing to prevent an ammunition cook-off caused by overheating. 
 

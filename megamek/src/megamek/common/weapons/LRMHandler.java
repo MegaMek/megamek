@@ -35,7 +35,7 @@ import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.lrms.ExtendedLRMWeapon;
-import megamek.server.Server;
+import megamek.server.GameManager;
 
 /**
  * @author Sebastian Brocks
@@ -47,15 +47,15 @@ public class LRMHandler extends MissileWeaponHandler {
      * @param t
      * @param w
      * @param g
-     * @param s
+     * @param m
      */
-    public LRMHandler(ToHitData t, WeaponAttackAction w, Game g, Server s) {
-        this(t, w, g, s, 0);
+    public LRMHandler(ToHitData t, WeaponAttackAction w, Game g, GameManager m) {
+        this(t, w, g, m, 0);
     }
 
-    public LRMHandler(ToHitData t, WeaponAttackAction w, Game g, Server s,
+    public LRMHandler(ToHitData t, WeaponAttackAction w, Game g, GameManager m,
             int salvoMod) {
-        super(t, w, g, s);
+        super(t, w, g, m);
         nSalvoBonus = salvoMod;
     }
 
@@ -83,14 +83,14 @@ public class LRMHandler extends MissileWeaponHandler {
             ArrayList<Minefield> mfRemoved = new ArrayList<>();
             while (minefields.hasMoreElements()) {
                 Minefield mf = minefields.nextElement();
-                if (server.clearMinefield(mf, ae,
+                if (gameManager.clearMinefield(mf, ae,
                         Minefield.CLEAR_NUMBER_WEAPON, vPhaseReport)) {
                     mfRemoved.add(mf);
                 }
             }
             // we have to do it this way to avoid a concurrent error problem
             for (Minefield mf : mfRemoved) {
-                server.removeMinefield(mf);
+                gameManager.removeMinefield(mf);
             }
             return true;
         }
@@ -149,7 +149,7 @@ public class LRMHandler extends MissileWeaponHandler {
                 && !mLinker.isDestroyed() && !mLinker.isMissing()
                 && !mLinker.isBreached() && mLinker.getType().hasFlag(
                 MiscType.F_ARTEMIS))
-                && (atype.getMunitionType() == AmmoType.M_ARTEMIS_CAPABLE)
+                && (atype.getMunitionType().contains(AmmoType.Munitions.M_ARTEMIS_CAPABLE))
                 && !weapon.curMode().equals("Indirect")) {
             if (bECMAffected) {
                 // ECM prevents bonus
@@ -166,13 +166,13 @@ public class LRMHandler extends MissileWeaponHandler {
             } else {
                 nMissilesModifier += 2;
             }
-            
+
         } else if (((mLinker != null)
                 && (mLinker.getType() instanceof MiscType)
                 && !mLinker.isDestroyed() && !mLinker.isMissing()
                 && !mLinker.isBreached() && mLinker.getType().hasFlag(
                 MiscType.F_ARTEMIS_PROTO))
-                && (atype.getMunitionType() == AmmoType.M_ARTEMIS_CAPABLE)) {
+                && (atype.getMunitionType().contains(AmmoType.Munitions.M_ARTEMIS_CAPABLE))) {
             if (bECMAffected) {
                 // ECM prevents bonus
                 Report r = new Report(3330);
@@ -188,14 +188,14 @@ public class LRMHandler extends MissileWeaponHandler {
             } else {
                 nMissilesModifier += 1;
             }
-            
-            
+
+
         } else if (((mLinker != null)
                 && (mLinker.getType() instanceof MiscType)
                 && !mLinker.isDestroyed() && !mLinker.isMissing()
                 && !mLinker.isBreached() && mLinker.getType().hasFlag(
                 MiscType.F_ARTEMIS_V))
-                && (atype.getMunitionType() == AmmoType.M_ARTEMIS_V_CAPABLE)) {
+                && (atype.getMunitionType().contains(AmmoType.Munitions.M_ARTEMIS_V_CAPABLE))) {
             if (bECMAffected) {
                 // ECM prevents bonus
                 Report r = new Report(3330);
@@ -243,7 +243,7 @@ public class LRMHandler extends MissileWeaponHandler {
                     || (atype.getAmmoType() == AmmoType.T_SRM_IMP)
                     || (atype.getAmmoType() == AmmoType.T_MML)
                     || (atype.getAmmoType() == AmmoType.T_NLRM))
-                    && (atype.getMunitionType() == AmmoType.M_NARC_CAPABLE)
+                    && (atype.getMunitionType().contains(AmmoType.Munitions.M_NARC_CAPABLE))
                     && ((weapon.curMode() == null) || !weapon.curMode().equals(
                             "Indirect"))) {
                 if (bTargetECMAffected) {
@@ -260,7 +260,7 @@ public class LRMHandler extends MissileWeaponHandler {
 
         // add AMS mods
         nMissilesModifier += getAMSHitsMod(vPhaseReport);
-        
+
         if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)
                 && entityTarget != null && entityTarget.isLargeCraft()) {
             nMissilesModifier -= getAeroSanityAMSHitsMod();
@@ -268,7 +268,7 @@ public class LRMHandler extends MissileWeaponHandler {
 
         int rackSize = wtype.getRackSize();
         boolean minRangeELRMAttack = false;
-        
+
         // ELRMs only hit with half their rack size rounded up at minimum range.
         // Ignore this for space combat. 1 hex is 18km across.
         if (wtype instanceof ExtendedLRMWeapon
@@ -277,7 +277,7 @@ public class LRMHandler extends MissileWeaponHandler {
             rackSize = rackSize / 2 + rackSize % 2;
             minRangeELRMAttack = true;
         }
-        
+
         if (allShotsHit()) {
             // We want buildings and large craft to be able to affect this number with AMS
             // treat as a Streak launcher (cluster roll 11) to make this happen

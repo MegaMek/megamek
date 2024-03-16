@@ -13,7 +13,10 @@
  */
 package megamek.client.bot.princess;
 
+import megamek.codeUtilities.StringUtility;
+import megamek.common.annotations.Nullable;
 import megamek.common.util.StringUtil;
+import megamek.utilities.xml.MMXMLUtility;
 import org.apache.logging.log4j.LogManager;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -46,16 +49,16 @@ public class BehaviorSettings implements Serializable {
             30};
     static final int[] FALL_SHAME_VALUES = {
             10,
-            20,
             40,
-            60,
             80,
             100,
-            120,
-            140,
             160,
-            180,
-            200};
+            500,
+            500,
+            500,
+            500,
+            500,
+            500};
     protected static final double[] BRAVERY = {
             0.1,
             0.3,
@@ -77,9 +80,9 @@ public class BehaviorSettings implements Serializable {
             2.5,
             3,
             3.5,
-            4,
-            4.5,
-            5};
+            10,
+            50,
+            500};
     static final double[] HERD_MENTALITY_VALUES = {
             0.1,
             0.2,
@@ -108,7 +111,7 @@ public class BehaviorSettings implements Serializable {
     private final Set<Integer> priorityUnitTargets = new HashSet<>(); // What units do I especially want to blow up?
     private int herdMentalityIndex = 5; // How close do I want to stick to my teammates?
     private int braveryIndex = 5; // How quickly will I try to escape once damaged?
-    
+
     private final Set<Integer> ignoredUnitTargets = new HashSet<>();
     //endregion Variable Declarations
 
@@ -141,7 +144,7 @@ public class BehaviorSettings implements Serializable {
         for (final Integer i : getIgnoredUnitTargets()) {
             copy.addIgnoredUnitTarget(i);
         }
-        
+
         return copy;
     }
 
@@ -184,7 +187,7 @@ public class BehaviorSettings implements Serializable {
      * @param description The name to be used.
      */
     public void setDescription(final String description) throws PrincessException {
-        if (StringUtil.isNullOrEmpty(description)) {
+        if (StringUtility.isNullOrBlank(description)) {
             throw new PrincessException("Description is required!");
         }
         this.description = description.trim();
@@ -205,7 +208,7 @@ public class BehaviorSettings implements Serializable {
      * @param target The target to be added.
      */
     public void addStrategicTarget(final String target) {
-        if (StringUtil.isNullOrEmpty(target)) {
+        if (StringUtility.isNullOrBlank(target)) {
             return;
         }
         strategicBuildingTargets.add(target);
@@ -226,28 +229,28 @@ public class BehaviorSettings implements Serializable {
     public Set<Integer> getIgnoredUnitTargets() {
         return new HashSet<>(ignoredUnitTargets);
     }
-    
+
     /**
      * Add the given unit ID to the ignored target list.
      */
     public void addIgnoredUnitTarget(int unitID) {
         ignoredUnitTargets.add(unitID);
     }
-    
+
     /**
      * Remove the given unit ID from the ignored target list.
      */
     public void removeIgnoredUnitTarget(int unitID) {
         ignoredUnitTargets.remove(unitID);
     }
-    
+
     /**
      * Empty out the ignored target list.
      */
     public void clearIgnoredUnitTargets() {
         ignoredUnitTargets.clear();
     }
-    
+
     /**
      * @return A list of enemy units that Princess will prioritize over others.
      */
@@ -488,9 +491,10 @@ public class BehaviorSettings implements Serializable {
      *
      * @param destinationEdge The {@link CardinalEdge} princess should flee to.
      */
-    public void setDestinationEdge(final CardinalEdge destinationEdge) {
-        if (null == destinationEdge)
+    public void setDestinationEdge(final @Nullable CardinalEdge destinationEdge) {
+        if (null == destinationEdge) {
             return;
+        }
 
         this.destinationEdge = destinationEdge;
     }
@@ -516,7 +520,7 @@ public class BehaviorSettings implements Serializable {
             throw new PrincessException("Invalid destinationEdge value.", e);
         }
     }
-    
+
     /**
      * Princess's home edge.
      *
@@ -531,9 +535,10 @@ public class BehaviorSettings implements Serializable {
      *
      * @param retreatEdge The {@link CardinalEdge} princess should flee to.
      */
-    public void setRetreatEdge(final CardinalEdge retreatEdge) {
-        if (null == retreatEdge)
+    public void setRetreatEdge(final @Nullable CardinalEdge retreatEdge) {
+        if (null == retreatEdge) {
             return;
+        }
 
         this.retreatEdge = retreatEdge;
     }
@@ -730,13 +735,13 @@ public class BehaviorSettings implements Serializable {
             final Element behavior = doc.createElement("behavior");
 
             final Element nameNode = doc.createElement("name");
-            nameNode.setTextContent(StringUtil.makeXmlSafe(getDescription()));
+            nameNode.setTextContent(MMXMLUtility.escape(getDescription()));
             behavior.appendChild(nameNode);
 
             final Element destinationEdgeNode = doc.createElement("destinationEdge");
             destinationEdgeNode.setTextContent(getDestinationEdge().toString());
             behavior.appendChild(destinationEdgeNode);
-            
+
             final Element retreatEdgeNode = doc.createElement("retreatEdge");
             retreatEdgeNode.setTextContent(getRetreatEdge().toString());
             behavior.appendChild(retreatEdgeNode);
@@ -777,7 +782,7 @@ public class BehaviorSettings implements Serializable {
             if (includeTargets) {
                 for (final String t : getStrategicBuildingTargets()) {
                     final Element targetElement = doc.createElement("target");
-                    targetElement.setTextContent(StringUtil.makeXmlSafe(t));
+                    targetElement.setTextContent(MMXMLUtility.escape(t));
                     targetsNode.appendChild(targetElement);
                 }
                 for (final int id : getPriorityUnitTargets()) {
@@ -806,24 +811,24 @@ public class BehaviorSettings implements Serializable {
      */
     public String toLog() {
         final StringBuilder out = new StringBuilder("Princess Behavior: ").append(getDescription());
-        out.append("\n\tDestination Edge: ").append(getDestinationEdge());
-        out.append("\n\tRetreat Edge: ").append(getRetreatEdge());
-        out.append("\n\tForced Withdrawal: ").append(isForcedWithdrawal());
-        out.append("\n\tSelf Preservation: ").append(getSelfPreservationIndex());
-        out.append("\n\tHyper Aggression: ").append(getHyperAggressionIndex());
-        out.append("\n\tFall Shame: ").append(getFallShameIndex());
-        out.append("\n\tBravery: ").append(getBraveryIndex());
-        out.append("\n\tHerd Mentality: ").append(getHerdMentalityIndex());
-        out.append("\n\tTargets:");
-        out.append("\n\t\tCoords: ");
+        out.append("\n\t Destination Edge: ").append(getDestinationEdge());
+        out.append("\n\t Retreat Edge: ").append(getRetreatEdge());
+        out.append("\n\t Forced Withdrawal: ").append(isForcedWithdrawal());
+        out.append("\n\t Self Preservation: ").append(getSelfPreservationIndex()).append(":").append(getSelfPreservationValue(getSelfPreservationIndex()));
+        out.append("\n\t Hyper Aggression: ").append(getHyperAggressionIndex()).append(":").append(getHyperAggressionValue(getHyperAggressionIndex()));
+        out.append("\n\t Fall Shame: ").append(getFallShameIndex()).append(":").append(getFallShameValue(getFallShameIndex()));
+        out.append("\n\t Bravery: ").append(getBraveryIndex()).append(":").append(getBraveryValue(getBraveryIndex()));
+        out.append("\n\t Herd Mentality: ").append(getHerdMentalityIndex()).append(":").append(getHerdMentalityValue(getHerdMentalityIndex()));
+        out.append("\n\t Targets:");
+        out.append("\n\t\t Priority Coords: ");
         for (final String t : getStrategicBuildingTargets()) {
             out.append("  ").append(t);
         }
-        out.append("\n\t\tUnits:");
+        out.append("\n\t\t Priority Units:");
         for (final int id : getPriorityUnitTargets()) {
             out.append("  ").append(id);
         }
-        out.append("\n\t\tIgnored Units:");
+        out.append("\n\t\t Ignored Units:");
         for (final int id : getIgnoredUnitTargets()) {
             out.append("  ").append(id);
         }
@@ -832,36 +837,44 @@ public class BehaviorSettings implements Serializable {
 
     @Override
     public boolean equals(final Object o) {
-        if (this == o) return true;
-        if (!(o instanceof BehaviorSettings)) return false;
+        if (this == o) {
+            return true;
+        } else if (!(o instanceof BehaviorSettings)) {
+            return false;
+        }
 
         final BehaviorSettings that = (BehaviorSettings) o;
-
-        if (autoFlee != that.autoFlee) return false;
-        if (braveryIndex != that.braveryIndex) return false;
-        if (fallShameIndex != that.fallShameIndex) return false;
-        if (forcedWithdrawal != that.forcedWithdrawal) return false;
-        if (goHome != that.goHome) return false;
-        if (herdMentalityIndex != that.herdMentalityIndex) return false;
-        if (hyperAggressionIndex != that.hyperAggressionIndex) return false;
-        if (selfPreservationIndex != that.selfPreservationIndex) return false;
-        if (!description.equals(that.description)) return false;
-        if (destinationEdge != that.destinationEdge) return false;
-        if (retreatEdge != that.retreatEdge) return false;
-
-        if (!strategicBuildingTargets.equals(that.strategicBuildingTargets)) {
+        if (autoFlee != that.autoFlee) {
             return false;
-        }
-
-        if (!priorityUnitTargets.equals(that.priorityUnitTargets)) {
+        } else if (braveryIndex != that.braveryIndex) {
             return false;
-        }
-        
-        if (!ignoredUnitTargets.equals(that.ignoredUnitTargets)) {
+        } else if (fallShameIndex != that.fallShameIndex) {
             return false;
+        } else if (forcedWithdrawal != that.forcedWithdrawal) {
+            return false;
+        } else if (goHome != that.goHome) {
+            return false;
+        } else if (herdMentalityIndex != that.herdMentalityIndex) {
+            return false;
+        } else if (hyperAggressionIndex != that.hyperAggressionIndex) {
+            return false;
+        } else if (selfPreservationIndex != that.selfPreservationIndex) {
+            return false;
+        } else if (!description.equals(that.description)) {
+            return false;
+        } else if (destinationEdge != that.destinationEdge) {
+            return false;
+        } else if (retreatEdge != that.retreatEdge) {
+            return false;
+        } else if (!strategicBuildingTargets.equals(that.strategicBuildingTargets)) {
+            return false;
+        } else if (!priorityUnitTargets.equals(that.priorityUnitTargets)) {
+            return false;
+        } else if (!ignoredUnitTargets.equals(that.ignoredUnitTargets)) {
+            return false;
+        } else {
+            return true;
         }
-
-        return true;
     }
 
     @Override

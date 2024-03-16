@@ -1,12 +1,19 @@
-Version:1.0
-Goliath
-GOL-2H
+chassis:Goliath
+model:GOL-2H
+mul id:1230
 
 Config:Quad
 TechBase:Inner Sphere
 Era:3067
-Source:Civil War
+source:TRO: 3085u 
 Rules Level:2
+role:Sniper
+
+
+
+quirk:multi_trac
+quirk:exp_actuator
+
 
 Mass:80
 Engine:320 Fusion Engine

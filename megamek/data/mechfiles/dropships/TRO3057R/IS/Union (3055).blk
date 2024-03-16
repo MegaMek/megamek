@@ -20,6 +20,10 @@ Union
 (3055)
 </Model>
 
+<mul id:>
+5324
+</mul id:>
+
 <year>
 3055
 </year>
@@ -31,6 +35,10 @@ Union
 <type>
 IS Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Spheroid
@@ -142,7 +150,7 @@ Medium Laser
 </structural_integrity>
 
 <source>
-TRO 3057R - Clan Invasion
+TRO: 3057 Revised
 </source>
 
 <tonnage>

@@ -2,72 +2,147 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 Tank
 </UnitType>
+
 <Name>
 Ontos Heavy Tank
 </Name>
+
 <Model>
 (3053 Upgrade)
 </Model>
-<Tonnage>
-95
-</Tonnage>
+
+<mul id:>
+2325
+</mul id:>
+
+<year>
+3053
+</year>
+
+<originalBuildYear>
+3053
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<role>
+Juggernaut
+</role>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<transporters>
+</transporters>
+
 <cruiseMP>
 3
 </cruiseMP>
-<Armor>
+
+<engine_type>
+0
+</engine_type>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
 40
 32
 32
 30
 36
-</Armor>
-<Turret Equipment>
-ISMediumLaser
-ISMediumLaser
-ISMediumLaser
-ISMediumLaser
-ISMediumPulseLaser
-ISMediumPulseLaser
-ISMediumPulseLaser
-ISLRM15
-ISArtemisIV
-ISSRM4
-ISArtemisIV
-ISSRM6
-ISArtemisIV
-</Turret Equipment>
+</armor>
+
 <Body Equipment>
-ISLRM15 Ammo Artemis-capable
-ISLRM15 Ammo Artemis-capable
-ISSRM6 Ammo Artemis-capable
-ISSRM4 Ammo Artemis-capable
+IS Ammo LRM-15 Artemis-capable
+IS Ammo LRM-15 Artemis-capable
+IS Ammo SRM-6 Artemis-capable
+IS Ammo SRM-4 Artemis-capable
 ISCASE
 </Body Equipment>
-<type>
-IS Level 2
-</type>
-<year>
-3053
-</year>
-<internal_type>
-0
-</internal_type>
-<armor_type>
-1
-</armor_type>
-<engine_type>
-0
-</engine_type>
-<motion_type>
-Tracked
-</motion_type>
+
+<Front Equipment>
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+LRM 15
+ISArtemisIV
+SRM 4
+ISArtemisIV
+SRM 6
+ISArtemisIV
+</Turret Equipment>
+
+<capabilities>
+The Ontos weighs 95 tons and has a top speed of 54 kilometers per hour. Though typical for a vehicle of its size, its short-ranged armaments make this speed a significant disadvantage. The Ontos' incredible array of turret-mounted lasers is its heart. To keep the tank's Heavy Load Internal Combustion Engine from being damaged, support components such as power amplifiers and heat sinks take up more than three times the weight and area taken up by the energy weapons. Despite its flaws, the tank can still remove over three tons of armor in a single round, and many crews praise the tank's ability to go through long campaigns without reloading different types of ammunition.
+</capabilities>
+
+<overview>
+The Ontos is designed for close combat where it can it massive array of lasers to bare.
+</overview>
+
+<deployment>
+The influx of rediscovered technology allowed Grumman to replace the ICE with a new GM 285 Cold-Start Fusion engine, which removed the need for power amplifiers and increased available space. While four of the original medium lasers were retained, now Hellion V models, the remainder were replaced with a trio of Intek Medium Pulse Lasers. The twin LRM-5 racks were replaced by a single Delta Dart LRM-15 which utilized an Artemis IV tracking system. An additional Hovertec SRM-4 and Harpoon-6 SRM-6 missile rack, both mounting Artemis IV, were also added to further increase the Ontos' short range firepower. Protection was not ignored, with the new Ontos incorporating a CASE system, and mounting over nine tons of ferro-fibrous armor.
+</deployment>
+
+<history>
+The original myth behind the Ontos was that a history loving designer based the tank on an ancient design, much to the dismay of his coworkers. Though designed in Capellan space, the Ontos became a favorite of House Marik after it captured Shiro III during the Succession Wars (and later, after the annexation of Nanking, the Federated Commonwealth), and the vehicle now serves as the backbone of many of the Free Worlds League's heavy tank regiments. The Marik military's preference for larger-than-average vehicle formations provided ample support for the heavy tanks, offsetting their limited range. Stories abound of Ontos units ambushing unsuspecting enemy from secret emplacements and destroying their formation in seconds. A force of Marik raiders landed on Nanking to put the defending Federated Commonwealth to the test. Both sides were armed with an army of Ontoses. The tanks were left in defensive positions as the opponents squared off, while BattleMechs were deployed to lure the enemies into various traps. Neither force's BattleMechs made contact, instead stumbling onto the other side's Ontoses. The Ontoses annihilated both BattleMech troops, which then fled their places to hunt each other out. The combat between the two tank formations left only three functioning tanks fighting their way off the battlefield, and the fight convinced the Marik raiders of the Federated Commonwealth's determination to keep Nanking.
+</history>
+
+<manufacturer>
+Grumman Amalgamated
+</manufacturer>
+
+<primaryFactory>
+Shiro III
+</primaryFactory>
+
+<systemManufacturers>
+ENGINE:GM 285 Cold-Start Fusion
+ARMOR:Durallex Light Ferro-Fibrous with CASE
+COMMUNICATIONS:Easy Talk-2
+TARGETING:GuideRite with Laser Coordination Link and Artemis FCS
+</systemManufacturers>
+
 <source>
-Clan Invasion
+TRO: 3058
 </source>
+
+<tonnage>
+95.0
+</tonnage>
+

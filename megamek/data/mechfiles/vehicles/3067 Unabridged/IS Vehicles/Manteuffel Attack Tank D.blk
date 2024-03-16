@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,28 +20,33 @@ Manteuffel Attack Tank
 D
 </Model>
 
+<mul id:>
+5735
+</mul id:>
+
 <year>
 3075
 </year>
 
+<originalBuildYear>
+3075
+</originalBuildYear>
+
 <type>
 IS Level 3
 </type>
+
+<role>
+Sniper
+</role>
 
 <motion_type>
 Tracked
 </motion_type>
 
 <transporters>
-troopspace:8.0
-</transporters>
-
-<transporters>
 BattleArmorHandles - troopers:-1
-</transporters>
-
-<transporters>
-troopspace:8.0
+troopspace:8.0:omni
 </transporters>
 
 <cruiseMP>
@@ -99,6 +104,10 @@ Light PPC:OMNI
 Light PPC:OMNI
 </Turret Equipment>
 
+<source>
+TRO: 3067
+</source>
+
 <tonnage>
 70.0
 </tonnage>
@@ -106,3 +115,4 @@ Light PPC:OMNI
 <baseChassisTurretWeight>
 1.5
 </baseChassisTurretWeight>
+

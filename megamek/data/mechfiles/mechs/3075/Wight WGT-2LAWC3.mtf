@@ -1,12 +1,19 @@
-Version:1.0
-Wight
-WGT-2LAWC3
+chassis:Wight
+model:WGT-2LAWC3
+mul id:3549
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3075
-Source:TRO 3075
+Source:TRO: 3075
 Rules Level:2
+role:Scout
+
+
+
+quirk:exp_actuator
+quirk:weak_legs
+
 
 Mass:35
 Engine:175 Compact Engine

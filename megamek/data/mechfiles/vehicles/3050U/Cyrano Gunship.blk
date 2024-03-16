@@ -16,9 +16,13 @@ VTOL
 Cyrano Gunship
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+787
+</mul id:>
 
 <year>
 2622
@@ -27,6 +31,10 @@ Cyrano Gunship
 <type>
 IS Level 2
 </type>
+
+<role>
+Scout
+</role>
 
 <motion_type>
 VTOL
@@ -77,7 +85,7 @@ BeagleActiveProbe
 </Rotor Equipment>
 
 <source>
-TRO 3050 - Star League
+TRO: 3050
 </source>
 
 <tonnage>

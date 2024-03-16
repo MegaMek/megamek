@@ -1,12 +1,18 @@
-Version:1.0
-Lao Hu
-LHU-3C
+chassis:Lao Hu
+model:LHU-3C
+mul id:4480
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3064
 Rules Level:2
-source:TRO 3067
+role:Sniper
+source:TRO: 3067
+
+
+
+quirk:good_rep_1
+
 
 Mass:75
 Engine:375 XL Engine

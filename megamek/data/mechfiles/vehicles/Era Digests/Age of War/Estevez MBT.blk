@@ -1,3 +1,7 @@
+
+<mul id:>
+4139
+</mul id:>
 #building block data file
 <BlockVersion>
 1
@@ -17,7 +21,7 @@ Estevez MBT
 </Name>
 
 <model>
-(Standard)
+
 </model>
 
 <Tonnage>
@@ -75,6 +79,10 @@ ISVehicularGrenadeLauncher (FL)
 IS Level 4
 </type>
 
+<role>
+Sniper
+</role>
+
 <year>
 2310
 </year>
@@ -106,3 +114,9 @@ Era Digest: Age of War
 <motion_type>
 Tracked
 </motion_type>
+
+<quirks>
+gas_hog
+obsolete
+</quirks>
+

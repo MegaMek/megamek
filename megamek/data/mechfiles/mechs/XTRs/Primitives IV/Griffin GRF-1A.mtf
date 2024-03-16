@@ -1,12 +1,21 @@
-Version:1.1
-Griffin
-GRF-1A
+chassis:Griffin
+model:GRF-1A
+mul id:7185
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2465
-Source:XTRO Primitives IV - Age of War
+Source:XTR: Primitives IV
 Rules Level:4
+role:Sniper
+
+
+
+
+quirk:obsolete
+quirk:poor_sealing
+weaponquirk:imp_cooling:RA:3:Primitive Prototype PPC
+
 
 Mass:60
 Engine:290 Fusion Engine(IS)

@@ -1,12 +1,16 @@
-Version:1.0
-Woodsman
-D
+chassis:Woodsman
+model:D
+mul id:7645
 
 Config:Biped Omnimech
 techbase:Clan
 era:3149
-source:Dark Age
+source:TRO: Golden Century
 rules level:3
+role:Missile Boat
+
+quirk:easy_maintain
+
 
 mass:75
 engine:300 Fusion (Clan) Engine(IS)

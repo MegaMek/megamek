@@ -20,6 +20,10 @@ Jengiz
 A
 </Model>
 
+<mul id:>
+1681
+</mul id:>
+
 <year>
 3032
 </year>
@@ -31,6 +35,10 @@ A
 <type>
 Clan Level 2
 </type>
+
+<role>
+Attack Fighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -112,7 +120,7 @@ CLERSmallLaser:OMNI
 </Fuselage Equipment>
 
 <source>
-TRO 3055u - Succession Wars
+TRO: 3055 Update
 </source>
 
 <tonnage>

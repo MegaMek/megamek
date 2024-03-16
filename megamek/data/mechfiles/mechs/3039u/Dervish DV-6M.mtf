@@ -1,42 +1,48 @@
-Version:1.0
-Dervish
-DV-6M
-
+chassis:Dervish
+model:DV-6M
+mul id:878
 Config:Biped
-TechBase:Inner Sphere
-Era:2610
-Source:TRO 3039 - Star League
-Rules Level:1
+techbase:Inner Sphere
+era:2570
+source:TRO: 3039
+rules level:1
+role:Missile Boat
 
-Mass:55
-Engine:275 Fusion Engine
-Structure:Standard
-Myomer:Standard
 
-Heat Sinks:10 Single
-Walk MP:5
-Jump MP:5
 
-Armor:Standard(Inner Sphere)
-LA Armor:10
-RA Armor:10
-LT Armor:15
-RT Armor:15
-CT Armor:20
-HD Armor:8
-LL Armor:15
-RL Armor:15
-RTL Armor:4
-RTR Armor:4
-RTC Armor:4
+quirk:easy_maintain
+quirk:hyper_actuator
+
+
+mass:55
+engine:275 Fusion Engine(IS)
+structure:IS Standard
+myomer:Standard
+
+heat sinks:10 Single
+walk mp:5
+jump mp:5
+
+armor:Standard(Inner Sphere)
+LA armor:10
+RA armor:10
+LT armor:15
+RT armor:15
+CT armor:20
+HD armor:8
+LL armor:15
+RL armor:15
+RTL armor:4
+RTR armor:4
+RTC armor:4
 
 Weapons:6
-Medium Laser, Right Arm
 Medium Laser, Left Arm
+SRM 2, Left Arm
+Medium Laser, Right Arm
+SRM 2, Right Arm
 LRM 10, Left Torso
 LRM 10, Right Torso
-SRM 2, Left Arm
-SRM 2, Right Arm
 
 Left Arm:
 Shoulder
@@ -150,20 +156,16 @@ Jump Jet
 -Empty-
 -Empty-
 
+overview:At the higher end of the medium class, the Dervish is a highly mobile fire support BattleMech. Commissioned in 2520 by the Lyran Commonwealth
+capabilities:The Dervish has a maximum speed of 86.4 km/h, letting it keep up with and support most Succession Wars-era medium and light models. Five jump jets also gives the 'Mech a jumping capability of 150 meters, allowing it to move through rough terrain with ease; these were originally an afterthought in the design but have proven their worth. While regarded by some as a poor man's Archer, the Dervish's speed and weaponry nevertheless allow it to provide quick fire support and free larger 'Mechs for other duties. The design's major flaws lie in its lack of hand actuators and in its armoring. Having no hands limits its usefulness outside of combat and restricts its capability when confronted in close quarters. As for the armor, while sufficient to handle small and medium weapons, it is inadequate against heavier firepower. Commanders cannot overcome the first issue but they can affect the second, albeit at an apparent cost of firepower. The conundrum faced here is that the tradeoff becomes counterintuitive given the 'Mech's primary role in the field.
+deployment:The Dervish carries as its main weapons two Federated 10-Shot LRM-10 launchers. These missile launchers give the Dervish the long-range capability needed to provide fire support to friendly units and are safely embedded in the torso as opposed to the exposed launchers on other 'Mechs. One ton of ammunition per launcher provides sufficient endurance for any but the most prolonged battles. For close combat, the Dervish carries two Federated 2-Shot SRM-2 launchers and two ChisComp 39 medium lasers. The SRM launchers are completely self-contained within the forearms, allowing them to be aimed quickly, and fed by one ton of ammunition each, while the lasers are placed just above the launchers and ensure the 'Mech is still capable of fighting should it run out of missiles. The Dervish is capable of jumping 150 meters and is protected by seven and a half tons of armor.
+history:The Dervish was among the first 'Mechs mass produced by the Great Houses and has served as a workhorse for their armies since its introduction. It was eventually commissioned into the Star League Defense Force during the Reunification War, with the Terran Hegemony providing funds to allow their original model Dervishes be upgraded to the DV-6M standard in 2610. Its service in the SLDF ensured the widespread proliferation of the design; even ComStar Explorer Corps missions into the Deep Periphery have found examples of original-model Dervishes among the forces of Nueva Castile. Over the course of the Succession Wars however the 'Mech's numbers decreased due to loss or lack of parts, and all but one of Achernar's factories was destroyed. Though it could still be found throughout the Inner Sphere by the end of the Third Succession War, only the Federated Suns maintained production of the venerable design. The 'Mech remained one of the Suns' most common medium-weight machines, being particularly popular with the Avalon Hussars, and was earmarked for use by several newly forming Federated Commonwealth regiments after the Fourth Succession War. However, interest in the design began to wane in later years, and while the 7D refit of 3047 with its use of lostech generated higher sales, Achernar was forced to heavily lobby House Davion to keep buying them. Ironically the run-up to the FedCom Civil War and the conflict itself was enough to increase demand and prevent the company from retooling its Dervish lines. In the wake of the civil war the Federated Suns continued purchasing upgraded Dervishes while the Lyran Alliance adopted the Griffin. Older models can be found in militia and reserve units in other armies, while small mercenary outfits have found the 'Mech to be durable and easy to maintain. During the Jihad a number of manufacturers began manufacturing "retrotech" 'Mechs using details of the original production standard of primitive 'Mech designs; one of the designs that was reintroduced to service as a part of this retrotech manufacturing production was the original Dervish, with companies such as Sword of the Prophet Enterprises of Algedi producing primitive Dervishes; production at some sites continued beyond 3079.
+manufacturer:Confederation Defense Corporation,Coventry Metal Works,Achernar Battlemechs,Luthien Armor Works,Oriente Weapon Works,Hope Industrial Works
+primaryfactory:Boardwalk,Coventry,New Avalon,New Samarkand,Oriente,Randis IV
+systemmanufacturer:CHASSIS:Dorwinion Standard 55T
+systemmanufacturer:ENGINE:Core Tek 275
+systemmanufacturer:ARMOR:Maximillian 105
+systemmanufacturer:JUMPJET:Swingline X-100
+systemmanufacturer:COMMUNICATIONS:Achernar Electronics HID-21
+systemmanufacturer:TARGETING:Federated Hunter Mk. II
 
-Overview: One of the few workhorses of the Succession Wars not first designed for the SLDF, the Dervish has served with distinction in all of the armies of the Great Houses for centuries. Not a flashy design, it primarily acts as a fire-support 'Mech in many formations, but its generous secondary weaponry let it stand on its own if needed.
-
-Capabilities: A combination of LRMs, SRMs, and lasers make each Dervish self-sufficient and able to fill multiple roles. The missile racks are well-protected and reliable, and each SRM pod is able to draw upon its own ton of ammo. The jump jets give another layer of depth to the Dervish, allowing it to reposition with the flow of the battle or flank a mispositioned enemy. The Dervish does suffer from weaker armor than many designs of its weight. In addition, the lack of hand actuators hampers it in raiding operations. Many MechWarriors are able to overlook these flaws, prefering the generalist nature of the design over other similar models such as the Shadow Hawk.
-
-Deployment: While primarily a House Davion BattleMech, the Dervish was widely available to every power of note at the onset of the Succession Wars. Attrition would take its toll, however, and the number of the design found outside of Federated Suns borders would dwindle. House Davion would shift some production to the Lyran Commonwealth at the onset of their alliance, keeping the quantity of Dervishes in those two states high even today.
-
-systemmanufacturer:CHASSIS:Dorwinion
-systemmode:CHASSIS:Standard 55T
-systemmanufacturer:ENGINE:Core Tek
-systemmode:ENGINE:275
-systemmanufacturer:ARMOR:Maximillian
-systemmode:ARMOR:105
-systemmanufacturer:COMMUNICATIONS:Achernar Electronics
-systemmode:COMMUNICATIONS:HID-21
-systemmanufacturer:TARGETING:Federated Hunter
-systemmode:TARGETING:Mk. II

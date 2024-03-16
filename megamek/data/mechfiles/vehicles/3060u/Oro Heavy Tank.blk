@@ -16,9 +16,13 @@ Tank
 Oro Heavy Tank
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+2342
+</mul id:>
 
 <year>
 2844
@@ -27,6 +31,10 @@ Oro Heavy Tank
 <type>
 Clan Level 2
 </type>
+
+<role>
+Brawler
+</role>
 
 <motion_type>
 Tracked
@@ -81,7 +89,7 @@ CLLBXAC20
 </Turret Equipment>
 
 <source>
-Succession Wars
+TRO: 3060
 </source>
 
 <tonnage>

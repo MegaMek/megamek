@@ -20,6 +20,10 @@ Saladin Mk II HCV
 (BC3)
 </Model>
 
+<mul id:>
+6372
+</mul id:>
+
 <year>
 3138
 </year>
@@ -27,6 +31,10 @@ Saladin Mk II HCV
 <type>
 IS Level 4
 </type>
+
+<role>
+Scout
+</role>
 
 <motion_type>
 Hover
@@ -75,7 +83,7 @@ RL10
 </Rear Equipment>
 
 <source>
-TRO 3145 Draconis Combine - Dark Ages
+TRO: 3145 Draconis Combine
 </source>
 
 <tonnage>

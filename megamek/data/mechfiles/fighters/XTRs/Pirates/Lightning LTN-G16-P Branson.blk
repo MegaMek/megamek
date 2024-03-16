@@ -20,6 +20,10 @@ Lightning
 LTN-G16-P (Branson)
 </Model>
 
+<mul id:>
+1879
+</mul id:>
+
 <year>
 3071
 </year>
@@ -31,6 +35,10 @@ LTN-G16-P (Branson)
 <type>
 Mixed (IS Chassis) Experimental
 </type>
+
+<role>
+Dogfighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -105,7 +113,7 @@ IS Ammo HVAC/10
 </Fuselage Equipment>
 
 <source>
-XTRO Pirates - Jihad
+XTR: Pirates
 </source>
 
 <tonnage>

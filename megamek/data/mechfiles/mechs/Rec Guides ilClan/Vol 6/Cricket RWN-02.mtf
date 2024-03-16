@@ -1,0 +1,170 @@
+chassis:Cricket
+model:RWN-02
+mul id:9406
+Config:Biped
+techbase:Inner Sphere
+era:3142
+source:Rec Guide:ilClan #6
+rules level:3
+role:Scout
+
+
+
+quirk:low_profile
+quirk:difficult_maintain
+quirk:weak_legs
+
+
+mass:30
+engine:270 XXL Engine(IS)
+structure:IS Composite
+myomer:Standard
+cockpit:Small Cockpit
+gyro:XL Gyro
+
+heat sinks:10 IS Double
+walk mp:9
+jump mp:6
+
+armor:Ballistic-Reinforced(Inner Sphere)
+LA armor:10
+RA armor:10
+LT armor:11
+RT armor:11
+CT armor:17
+HD armor:9
+LL armor:14
+RL armor:14
+RTL armor:3
+RTR armor:3
+RTC armor:3
+
+Weapons:2
+Light PPC, Right Torso
+Light PPC, Left Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+IS Ballistic-Reinforced
+IS Ballistic-Reinforced
+IS Ballistic-Reinforced
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+IS Ballistic-Reinforced
+IS Ballistic-Reinforced
+IS Ballistic-Reinforced
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+Jump Jet
+Light PPC
+Light PPC
+IS Ballistic-Reinforced
+IS Ballistic-Reinforced
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+Jump Jet
+Light PPC
+Light PPC
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+
+Head:
+Life Support
+Sensors
+Cockpit
+Sensors
+ISTargeting Computer
+ISTargeting Computer
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+IS Ballistic-Reinforced
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+IS Ballistic-Reinforced
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+overview:The Cricket 'Mech was developed by the DCMS as a raider and harasser. 
+capabilities:The Cricket was constructed using every delicate, weight-saving technique available. These technologies are frequently derided as being too risky for use in line units. The spindly Cricket, on the other hand, is designed to harass opposing forces, following in the footsteps of long-time Kuritan favorites the Spider and Venom. The 'Mech makes good use of the weight saved by its delicate internals. When employing MASC, it can achieve even greater ground speed than its forefathers, but it also integrates as much ballistic-reinforced plate as could be put on its shell before the frame buckled. In this sense, the designers may have made a mistake: the Cricket has become renowned as a hanger queen, frequently requiring costly chassis work. Despite its all-energy weapon loadout, it has proven unpopular as a scout or guerilla unit due to its tiny cockpit, which makes extended durations in the field exhausting. However, the Cricket's mix of speed and lethal precise long-range PPCs has made it a favorite among DCMS skirmishers.
+deployment:Built on a composite chassis and equipped with a small cockpit, XL gyro, and XXL engine, the Cricket carries a pair of light PPCs tied into an advanced targeting computer to allow accurate long-ranged fire. The smaller, lighter equipment allows the Cricket to carry nine tons of ballistic reinforced armor. This makes it resistant to the weapons often employed by the AFFS. The downside to these advanced systems is increased maintenance times; The Cricket has developed a reputation as a "hangar queen".
+history:The Cricket made its debut on Dieron during 3132's confusing free for all, one of the first actions after the Blackout. Though Katana Tormark's Dragon's Fury received no official Kuritan help, LAW surreptitiously deployed a lance of Cricket prototypes to assist her (and generate valuable field-test data). It was not a good start: the prototypes spent nearly as much time on gantries as they did in the field. When they were operational, however, they were incredibly effective at distracting Exarch Redburn's forces. In one memorable instance, a Cricket landed squarely in the sights of a Republic Legionnaire and took a full barrage of rotary autocannon fire, only to shake it off, giggle mockingly, and run away. Such interactions aided in convincing the DCMS that the 'Mech was worthy of production.
+manufacturer:Luthien Armor Works
+primaryfactory:New Samarkand
+systemmanufacturer:CHASSIS:New Samarkand Class 22 Composite
+systemmanufacturer:ENGINE:GM 210 XXL
+systemmanufacturer:ARMOR:Durallex Ballistic-Reinforced
+systemmanufacturer:JUMPJET:Icarus 81
+systemmanufacturer:COMMUNICATIONS:Sipher CommSys 4
+systemmanufacturer:TARGETING:Dynatec 990 with Targeting Computer
+

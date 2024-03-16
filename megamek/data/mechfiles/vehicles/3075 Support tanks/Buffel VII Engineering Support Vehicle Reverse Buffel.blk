@@ -20,6 +20,10 @@ Buffel Engineering Support Vehicle VII
 (Reverse)
 </Model>
 
+<mul id:>
+5476
+</mul id:>
+
 <year>
 2552
 </year>
@@ -31,6 +35,10 @@ Buffel Engineering Support Vehicle VII
 <type>
 IS Level 3
 </type>
+
+<role>
+Ambusher
+</role>
 
 <motion_type>
 Tracked
@@ -95,7 +103,7 @@ Lift Hoist/Arresting Hoist
 </structural_tech_rating>
 
 <source>
-TRO 3075 - Age of War
+TRO: 3075
 </source>
 
 <tonnage>

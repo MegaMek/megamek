@@ -20,6 +20,10 @@ Union-X
 (3065)
 </Model>
 
+<mul id:>
+5326
+</mul id:>
+
 <year>
 3065
 </year>
@@ -31,6 +35,10 @@ Union-X
 <type>
 IS Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Spheroid
@@ -155,7 +163,7 @@ ISERMediumLaser
 </structural_integrity>
 
 <source>
-TRO 3067 - Civil War
+TRO: 3067
 </source>
 
 <tonnage>

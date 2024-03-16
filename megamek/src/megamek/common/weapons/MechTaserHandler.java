@@ -15,18 +15,9 @@ package megamek.common.weapons;
 
 import java.util.Vector;
 
-import megamek.common.Aero;
-import megamek.common.BattleArmor;
-import megamek.common.Compute;
-import megamek.common.Entity;
-import megamek.common.HitData;
-import megamek.common.Game;
-import megamek.common.Mech;
-import megamek.common.Protomech;
-import megamek.common.Report;
-import megamek.common.Tank;
-import megamek.common.ToHitData;
+import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.server.GameManager;
 import megamek.server.Server;
 
 public class MechTaserHandler extends AmmoWeaponHandler {
@@ -42,8 +33,8 @@ public class MechTaserHandler extends AmmoWeaponHandler {
      * @param w
      * @param g
      */
-    public MechTaserHandler(ToHitData t, WeaponAttackAction w, Game g, Server s) {
-        super(t, w, g, s);
+    public MechTaserHandler(ToHitData t, WeaponAttackAction w, Game g, GameManager m) {
+        super(t, w, g, m);
         generalDamageType = HitData.DAMAGE_ENERGY;
     }
 
@@ -61,8 +52,8 @@ public class MechTaserHandler extends AmmoWeaponHandler {
             return done;
         }
         Report r = new Report(3700);
-        int taserRoll = Compute.d6(2);
-        r.add(taserRoll);
+        Roll diceRoll = Compute.rollD6(2);
+        r.add(diceRoll);
         r.newlines = 0;
         vPhaseReport.add(r);
         if (entityTarget.getWeight() > 100) {
@@ -78,13 +69,13 @@ public class MechTaserHandler extends AmmoWeaponHandler {
             entityTarget.destroyLocation(hit.getLocation());
             // Check to see if the squad has been eliminated
             if (entityTarget.getTransferLocation(hit).getLocation() == Entity.LOC_DESTROYED) {
-                vPhaseReport.addAll(server.destroyEntity(entityTarget,
+                vPhaseReport.addAll(gameManager.destroyEntity(entityTarget,
                         "all troopers eliminated", false));
             }
             done = true;
         } else if (entityTarget instanceof Mech) {
             if (((Mech) entityTarget).isIndustrial()) {
-                if (taserRoll >= 8) {
+                if (diceRoll.getIntValue() >= 8) {
                     r = new Report(3705);
                     r.addDesc(entityTarget);
                     r.add(4);
@@ -98,7 +89,7 @@ public class MechTaserHandler extends AmmoWeaponHandler {
                     entityTarget.setTaserInterference(2, 4, true);
                 }
             } else {
-                if (taserRoll >= 11) {
+                if (diceRoll.getIntValue() >= 11) {
                     r = new Report(3705);
                     r.addDesc(entityTarget);
                     r.add(3);
@@ -116,7 +107,7 @@ public class MechTaserHandler extends AmmoWeaponHandler {
         } else if ((entityTarget instanceof Protomech)
                 || (entityTarget instanceof Tank)
                 || (entityTarget instanceof Aero)) {
-            if (taserRoll >= 8) {
+            if (diceRoll.getIntValue() >= 8) {
                 r = new Report(3705);
                 r.addDesc(entityTarget);
                 r.add(4);

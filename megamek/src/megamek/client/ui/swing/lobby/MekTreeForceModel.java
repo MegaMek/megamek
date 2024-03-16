@@ -18,15 +18,19 @@
  */
 package megamek.client.ui.swing.lobby;
 
-import java.util.ArrayList;
-import javax.swing.tree.*;
-
 import megamek.client.ui.swing.lobby.sorters.MekTreeTopLevelSorter;
 import megamek.common.Entity;
+import megamek.common.ForceAssignable;
 import megamek.common.Game;
 import megamek.common.Player;
-import megamek.common.force.*;
+import megamek.common.force.Force;
+import megamek.common.force.Forces;
 import megamek.common.options.OptionsConstants;
+
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MekTreeForceModel extends DefaultTreeModel {
 
@@ -66,7 +70,7 @@ public class MekTreeForceModel extends DefaultTreeModel {
             Forces forces = lobby.game().getForces();
             Force pnt = (Force) parent;
             if (index < pnt.entityCount()) {
-                return forces.getEntity(pnt.getEntityId(index));
+                return lobby.game().getEntity(pnt.getEntityId(index));
             } else if (index < pnt.getChildCount()) {
                 return forces.getForce(pnt.getSubForceId(index - pnt.entityCount()));
             } 
@@ -100,12 +104,13 @@ public class MekTreeForceModel extends DefaultTreeModel {
         boolean realBD = game.getOptions().booleanOption(OptionsConstants.BASE_REAL_BLIND_DROP);
         Forces forces = lobby.game().getForces();
         Player localPlayer = lobby.getClientgui().getClient().getLocalPlayer();
+        boolean localGM = localPlayer.isGameMaster();
         ArrayList<Force> toplevel = new ArrayList<>(forces.getTopLevelForces());
-        if (realBD) {
+        if (!localGM && realBD) {
             toplevel.removeIf(f -> localPlayer.isEnemyOf(forces.getOwner(f)));
         }
-        ArrayList<Entity> forceless = new ArrayList<>(forces.forcelessEntities());
-        if (realBD) {
+        List<Entity> forceless = ForceAssignable.filterToEntityList(forces.forcelessEntities());
+        if (!localGM && realBD) {
             forceless.removeIf(e -> localPlayer.isEnemyOf(e.getOwner()));
         }
         allToplevel = new ArrayList<>(toplevel);
@@ -120,8 +125,7 @@ public class MekTreeForceModel extends DefaultTreeModel {
 
     @Override
     public int getIndexOfChild(Object parent, Object child) {
-        if (parent == null || child == null || child == root 
-                || !(parent instanceof Force) 
+        if (child == root || !(parent instanceof Force)
                 || !((child instanceof Force) || (child instanceof Entity))) {
             return -1;
         }

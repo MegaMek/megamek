@@ -13,7 +13,6 @@
 * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 * details.
 */
-
 package megamek.client.ui;
 
 import java.awt.GridBagConstraints;
@@ -23,12 +22,8 @@ import java.awt.Insets;
  * A helper class for setting line-wise GridBagLayouts
  * Do not use this if you need a Component to span two rows
  * @author beerockxs
- *
  */
 public class GBC extends GridBagConstraints {
-    /**
-     *
-     */
     private static final long serialVersionUID = 6653886439201996453L;
 
     private GBC() {

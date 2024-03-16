@@ -20,6 +20,10 @@ Hawk Moth II Gunship
 (MML)
 </Model>
 
+<mul id:>
+6697
+</mul id:>
+
 <year>
 3114
 </year>
@@ -27,6 +31,10 @@ Hawk Moth II Gunship
 <type>
 IS Level 2
 </type>
+
+<role>
+Striker
+</role>
 
 <motion_type>
 VTOL
@@ -85,9 +93,14 @@ ISERMediumLaser
 </Turret Equipment>
 
 <source>
-TRO 3145 Republic of the Sphere - Late Republic
+TRO: 3145 Republic of the Sphere
 </source>
 
 <tonnage>
 25.0
 </tonnage>
+
+<quirks>
+vtol_rotor_coaxial
+</quirks>
+

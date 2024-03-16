@@ -20,6 +20,10 @@ JES II Strategic Missile Carrier
 (Support)
 </Model>
 
+<mul id:>
+6805
+</mul id:>
+
 <year>
 3088
 </year>
@@ -27,6 +31,10 @@ JES II Strategic Missile Carrier
 <type>
 IS Level 2
 </type>
+
+<role>
+Missile Boat
+</role>
 
 <motion_type>
 Tracked
@@ -85,7 +93,7 @@ ISArtemisIV
 </Rear Equipment>
 
 <source>
-RS 3145 NT NU
+Record Sheets: 3145 New Tech New Upgrades
 </source>
 
 <tonnage>

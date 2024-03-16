@@ -1,0 +1,132 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+Fenrir Battle Armor
+</Name>
+
+<Model>
+[VSP](Sqd4)
+</Model>
+
+<mul id:>
+1045
+</mul id:>
+
+<year>
+3071
+</year>
+
+<type>
+IS Level 3
+</type>
+
+<role>
+Scout
+</role>
+
+<motion_type>
+Leg
+</motion_type>
+
+<cruiseMP>
+4
+</cruiseMP>
+
+<armor_type>
+28
+</armor_type>
+
+<armor_tech>
+3
+</armor_tech>
+
+<Squad Equipment>
+ISBASmallVSPLaser:TU
+CLBAHeavyGrenadeLauncher:TU
+</Squad Equipment>
+
+<Trooper 1 Equipment>
+</Trooper 1 Equipment>
+
+<Trooper 2 Equipment>
+</Trooper 2 Equipment>
+
+<Trooper 3 Equipment>
+</Trooper 3 Equipment>
+
+<Trooper 4 Equipment>
+</Trooper 4 Equipment>
+
+<source>
+TRO: 3058 Upgrade
+</source>
+
+<chassis>
+quad
+</chassis>
+
+<turret>
+Modular:3
+</turret>
+
+<jumpingMP>
+0
+</jumpingMP>
+
+<armor>
+5
+</armor>
+
+<Trooper Count>
+4
+</Trooper Count>
+
+<weightclass>
+4
+</weightclass>
+
+<overview>
+The Fenrir was, in many ways, the successor to the failed Sloth battle armor design.
+</overview>
+
+<capabilities>
+Named for the demonic wolf of Germanic myth, the Fenrir was less a traditional battle suit and more a mobile fire support platform. The trooper controlling the suit was situated inside a cramped "cockpit" and piloted the Fenrir like a small walking tank. The single, configurable turret mounted on the suit could accept a wide variety of weapon configurations and the Fenrir's sturdy, powerful legs could propel it to much greater speeds than the Sloth. While the design team initially tried to increase the armor protection on the Fenrir, this was sacrificed to accommodate the increase in firepower. The weak armor protection was considered acceptable given its intended role as a hit-and-run fighter; in true Lyran tradition Fenrir pilots were encouraged to use overwhelming firepower to defeat their enemies before they could exploit this weakness.
+</capabilities>
+
+<deployment>
+he Fenrir features a dorsal Modular Turret Mount, similar to the configurable mounts found on humanoid battle armor designs, with a 300° field of fire. It carries a heavier arsenal than its progenitor, which can be configured in a number of different ways. For use against conventional infantry or other battlesuits, the Fenrir can carry a trio of Machine Guns or Small Lasers or twin Small Pulse Lasers. Against armored targets, a Medium Pulse Laser or SRM-4 with four reloads provides withering firepower. Starting in 3064 the Fenrir could mount two additional weapon configurations: an ER Medium Laser that can hurt opponents from a distance, or a Heavy Mortar to provide indirect fire backed up with a Machine Gun for self-defense. The 250kg of armoring carried by the Fenrir offers the same amount of protection as on the Sloth. This includes the suit's legs which, while appearing to be quite resilient, are actually fairly vulnerable to weapons fire. The minimal armor protecting the Fenrir and its legs were necessary features to in order to mount more and heavier weapons. Also like the Sloth, the Fenrir's quadruped design prevents it from making anti-'Mech attacks or traveling via OmniMech handholds.
+</deployment>
+
+<history>
+Following the secession of the Lyran Alliance in 3057, Archon Katherine Steiner-Davion ordered the production of a new battlesuit to better underscore her new realm's independence from the Federated Commonwealth. Thanks to its lack of success and the fact that the Federated Suns half of the Commonwealth never liked it, the Lyran design team had many Sloth battlesuits to work with when development began on 9 November 3057. Identifying the only positive aspect of the Sloth - its stability and capacity to carry tremendous firepower - the team focused their efforts on accentuating these features in its heavier successor. Design and production of the first prototype began on 22 October 3058, with final mass production starting 4 January 3060. The Fenrir had a great effect on the battlefields of the FedCom Civil War against Allied forces. Its interchangeable weapon packages allowed these suits to bring tremendous firepower against a variety of targets. The suits also accounted well for themselves during the Jihad, and achieved legendary status in the ultimately futile defense of Defiance Industries on Hesperus II.
+</history>
+
+<manufacturer>
+TharHes Industries
+</manufacturer>
+
+<primaryFactory>
+Tharkad
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+JUMPJET:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+

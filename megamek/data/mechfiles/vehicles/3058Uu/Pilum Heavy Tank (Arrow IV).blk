@@ -15,6 +15,10 @@ Pilum Heavy Tank
 <Model>
 (Arrow IV)
 </Model>
+
+<mul id:>
+2530
+</mul id:>
 <Tonnage>
 70
 </Tonnage>
@@ -47,6 +51,10 @@ ISStreakSRM2 Ammo
 <type>
 IS Level 3
 </type>
+
+<role>
+Missile Boat
+</role>
 <year>
 3059
 </year>
@@ -63,5 +71,5 @@ IS Level 3
 Wheeled
 </motion_type>
 <source>
-Clan Invasion
+TRO: 3058
 </source>

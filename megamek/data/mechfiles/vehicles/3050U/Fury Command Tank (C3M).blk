@@ -20,6 +20,10 @@ Fury Command Tank
 (C3M)
 </Model>
 
+<mul id:>
+1158
+</mul id:>
+
 <year>
 3070
 </year>
@@ -27,6 +31,10 @@ Fury Command Tank
 <type>
 IS Level 2
 </type>
+
+<role>
+Brawler
+</role>
 
 <motion_type>
 Tracked
@@ -84,7 +92,7 @@ ISRotaryAC5
 </Turret Equipment>
 
 <source>
-TRO 3050 - Jihad
+TRO: 3050
 </source>
 
 <tonnage>

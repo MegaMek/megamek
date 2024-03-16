@@ -1,0 +1,335 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Warship
+</UnitType>
+
+<Name>
+McKenna Battleship
+</Name>
+
+<Model>
+(2851)
+</Model>
+
+<mul id:>
+4610
+</mul id:>
+
+<year>
+2851
+</year>
+
+<originalBuildYear>
+2851
+</originalBuildYear>
+
+<type>
+Clan Level 3
+</type>
+
+<role>
+None
+</role>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+smallcraftbay:16.0:2:1
+asfbay:25.0:4:2
+asfbay:25.0:4:3
+cargobay:255528.0:2:4
+dockingcollar
+dockingcollar
+dockingcollar
+dockingcollar
+dockingcollar
+dockingcollar
+1stclassquarters:970.0:0
+crewquarters:3374.0:0
+</transporters>
+
+<SafeThrust>
+3
+</SafeThrust>
+
+<heatsinks>
+6325
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+4000
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<clan_engine>
+false
+</clan_engine>
+
+<armor_type>
+11
+</armor_type>
+
+<armor_tech>
+6
+</armor_tech>
+
+<armor>
+200
+250
+250
+143
+250
+250
+</armor>
+
+<Nose Equipment>
+(B) Naval Autocannon (NAC/40)
+Ammo NAC/40:40
+(B) Naval Autocannon (NAC/40)
+Ammo NAC/40:40
+(B) Naval Laser 55
+Naval Laser 55
+</Nose Equipment>
+
+<Left Front Side Equipment>
+(B) Naval Autocannon (NAC/40)
+Ammo NAC/40:40
+(B) Naval Autocannon (NAC/40)
+Ammo NAC/40:40
+(B) Naval Autocannon (NAC/40)
+Ammo NAC/40:40
+(B) Naval Laser 55
+Naval Laser 55
+Naval Laser 55
+(B) Capital Missile Launcher (AR10 Launcher)
+Capital Missile Launcher (AR10 Launcher)
+Ammo AR10 Barracuda:10
+Ammo AR10 White Shark:7
+Ammo AR10 Killer Whale:7
+</Left Front Side Equipment>
+
+<Right Front Side Equipment>
+(B) Naval Autocannon (NAC/40)
+Ammo NAC/40:40
+(B) Naval Autocannon (NAC/40)
+Ammo NAC/40:40
+(B) Naval Autocannon (NAC/40)
+Ammo NAC/40:40
+(B) Naval Laser 55
+Naval Laser 55
+Naval Laser 55
+(B) Capital Missile Launcher (AR10 Launcher)
+Capital Missile Launcher (AR10 Launcher)
+Ammo AR10 Barracuda:10
+Ammo AR10 White Shark:7
+Ammo AR10 Killer Whale:7
+</Right Front Side Equipment>
+
+<Aft Equipment>
+(B) Naval Laser 55
+Naval Laser 55
+Naval Laser 55
+Naval Laser 55
+(B) Capital Missile Launcher (AR10 Launcher)
+Capital Missile Launcher (AR10 Launcher)
+Ammo AR10 Barracuda:10
+Ammo AR10 White Shark:6
+Ammo AR10 Killer Whale:6
+(B) Naval Autocannon (NAC/40)
+Ammo NAC/40:40
+(B) Naval Autocannon (NAC/40)
+Ammo NAC/40:40
+(B) Naval Autocannon (NAC/40)
+Ammo NAC/40:40
+(B) Naval Autocannon (NAC/40)
+Ammo NAC/40:40
+</Aft Equipment>
+
+<Aft Left Side Equipment>
+(B) Naval PPC (Heavy)
+Naval PPC (Heavy)
+Naval PPC (Heavy)
+Naval PPC (Heavy)
+(B) Naval PPC (Heavy)
+Naval PPC (Heavy)
+Naval PPC (Heavy)
+Naval PPC (Heavy)
+(B) Naval PPC (Heavy)
+Naval PPC (Heavy)
+Naval PPC (Heavy)
+Naval PPC (Heavy)
+</Aft Left Side Equipment>
+
+<Aft Right Side Equipment>
+(B) Naval PPC (Heavy)
+Naval PPC (Heavy)
+Naval PPC (Heavy)
+Naval PPC (Heavy)
+(B) Naval PPC (Heavy)
+Naval PPC (Heavy)
+Naval PPC (Heavy)
+Naval PPC (Heavy)
+(B) Naval PPC (Heavy)
+Naval PPC (Heavy)
+Naval PPC (Heavy)
+Naval PPC (Heavy)
+</Aft Right Side Equipment>
+
+<Hull Equipment>
+ISMobileHPG
+</Hull Equipment>
+
+<Left Broadsides Equipment>
+(B) Naval PPC (Heavy)
+Naval PPC (Heavy)
+Naval PPC (Heavy)
+Naval PPC (Heavy)
+(B) Naval PPC (Heavy)
+Naval PPC (Heavy)
+Naval PPC (Heavy)
+Naval PPC (Heavy)
+(B) Naval PPC (Heavy)
+Naval PPC (Heavy)
+Naval PPC (Heavy)
+Naval PPC (Heavy)
+</Left Broadsides Equipment>
+
+<Right Broadsides Equipment>
+(B) Naval PPC (Heavy)
+Naval PPC (Heavy)
+Naval PPC (Heavy)
+Naval PPC (Heavy)
+(B) Naval PPC (Heavy)
+Naval PPC (Heavy)
+Naval PPC (Heavy)
+Naval PPC (Heavy)
+(B) Naval PPC (Heavy)
+Naval PPC (Heavy)
+Naval PPC (Heavy)
+Naval PPC (Heavy)
+</Right Broadsides Equipment>
+
+<structural_integrity>
+95
+</structural_integrity>
+
+<capabilities>
+The McKenna-class battleship possesses unmatched firepower and defensive capabilities. Equipped with a vast array of weapons, including forty-eight Kreuss PPCs and a mix of White Shark and Barracuda missile launchers, it can engage and neutralize targets within an extensive range. The battleship also carries a complement of eight aerospace fighter squadrons and six DropShips, augmenting its offensive capabilities and providing additional protection against enemy fighters. Notably, the McKenna-class battleship incorporates a Lithium-Fusion Battery system, which allows for immediate jumps to friendly star systems, enhancing its strategic flexibility.
+</capabilities>
+
+<overview>
+The McKenna-class battleship is a renowned warship recognized for its imposing size, angular turrets, and towering sensor islands. Serving as flagship vessels, these battleships are the highlight of naval careers and are highly sought-after assignments. With their fearsome reputation and distinctive features, McKenna-class battleships are instantly recognizable and command respect on the battlefield.
+</overview>
+
+<history>
+Introduced in 2652, the McKenna-class battleship quickly earned a reputation as an exceptional combat vessel. Serving on a McKenna-class ship became a highlight of naval careers, signifying prestige and honor. However, during the war to liberate Terra, McKennas became prime targets, resulting in significant losses. Out of the 280 McKenna-class battleships produced in the 130 years before the fall of the Star League, only 29 survived to witness the liberation. Eleven of these vessels were extensively damaged and scuttled. The remaining ships joined the Exodus fleet, with only three observed in service with the Clans. One notable McKenna-class battleship, McKenna's Pride, serves as the flagship of Aleksandr and later Nicholas Kerensky. It is said to maintain a geosynchronous orbit above Strana Mechty, carefully preserved by technicians from all Clans. Rumors suggest that McKenna's Pride is a centerpiece of the Clan Founding Day celebrations, symbolizing their aspiration to capture Terra and establish an ilClan. Until that day comes, the majestic McKenna's Pride continues to watch over Strana Mechty, a testament to the enduring legacy of the McKenna-class battleships. The McKenna-class battleship has left an indelible mark in history, not only for its formidable capabilities but also for the valor of those who served on these impressive vessels. Despite their losses, McKennas remain a symbol of power and prestige, embodying the steadfast determination and military prowess of their crews.
+</history>
+
+<manufacturer>
+Unknown
+</manufacturer>
+
+<primaryFactory>
+Refit
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<use>
+Battleship
+</use>
+
+<length>
+1405 m
+</length>
+
+<height>
+1560 m Sail
+</height>
+
+<source>
+TRO: 3057 Revised
+</source>
+
+<tonnage>
+1930000.0
+</tonnage>
+
+<kf_core>
+1
+</kf_core>
+
+<lithium-fusion>
+1
+</lithium-fusion>
+
+<sail>
+1
+</sail>
+
+<grav_decks>
+45
+45
+75
+</grav_decks>
+
+<designtype>
+1
+</designtype>
+
+<crew>
+759
+</crew>
+
+<officers>
+97
+</officers>
+
+<gunners>
+78
+</gunners>
+
+<passengers>
+0
+</passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<life_boat>
+30
+</life_boat>
+
+<escape_pod>
+30
+</escape_pod>
+

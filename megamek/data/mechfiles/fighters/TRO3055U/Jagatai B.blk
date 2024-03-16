@@ -20,6 +20,10 @@ Jagatai
 B
 </Model>
 
+<mul id:>
+1660
+</mul id:>
+
 <year>
 3019
 </year>
@@ -31,6 +35,10 @@ B
 <type>
 Clan Level 2
 </type>
+
+<role>
+Fire Support
+</role>
 
 <motion_type>
 Aerodyne
@@ -112,7 +120,7 @@ Clan Gauss Ammo:OMNI
 </Fuselage Equipment>
 
 <source>
-TRO 3055u - Succession Wars
+TRO: 3055 Update
 </source>
 
 <tonnage>

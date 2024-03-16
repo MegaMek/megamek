@@ -1,18 +1,28 @@
-/**
- * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+/*
+ * Copyright (c) 2005 - Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This file is part of MegaMek.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
 package megamek.common.weapons.srms;
 
+import megamek.common.Mounted;
+import megamek.common.alphaStrike.AlphaStrikeElement;
+
+import static megamek.common.MountedHelper.*;
 /**
  * @author Sebastian Brocks
  */
@@ -45,7 +55,7 @@ public class CLSRM6 extends SRMWeapon {
         cost = 80000;
         shortAV = 8;
         maxRange = RANGE_SHORT;
-        rulesRefs = "229,TM";
+        rulesRefs = "229, TM";
         techAdvancement.setTechBase(TECH_BASE_CLAN)
         	.setIntroLevel(false)
         	.setUnofficial(false)
@@ -55,5 +65,16 @@ public class CLSRM6 extends SRMWeapon {
             .setClanApproximate(true, false, false,false, false)
             .setPrototypeFactions(F_CCC)
             .setProductionFactions(F_CCC);
+    }
+
+    @Override
+    public double getBattleForceDamage(int range, Mounted fcs) {
+        if (isArtemisIV(fcs) || isArtemisProto(fcs)) {
+            return (range <= AlphaStrikeElement.MEDIUM_RANGE) ? 1 : 0;
+        } else if (isArtemisV(fcs)) {
+            return (range <= AlphaStrikeElement.MEDIUM_RANGE) ? 1.05 : 0;
+        } else {
+            return (range <= AlphaStrikeElement.MEDIUM_RANGE) ? 0.8 : 0;
+        }
     }
 }

@@ -1,0 +1,165 @@
+chassis:Spirit Walker
+model:A
+
+Config:Biped Omnimech
+techbase:Clan
+era:2866
+source:Turning Points: Foster
+rules level:2
+role:Brawler
+mul id:9236
+
+mass:75
+engine:300 Fusion (Clan) Engine(IS)
+structure:IS Standard
+myomer:Standard
+
+heat sinks:16 Clan Double
+base chassis heat sinks:12
+walk mp:4
+jump mp:0
+
+armor:Standard(Inner Sphere)
+LA armor:18
+RA armor:18
+LT armor:20
+RT armor:20
+CT armor:29
+HD armor:9
+LL armor:23
+RL armor:23
+RTL armor:5
+RTR armor:5
+RTC armor:6
+
+Weapons:9
+Gauss Rifle, Right Arm
+ER Medium Laser, Left Torso
+ER Medium Laser, Right Torso
+ER Medium Laser, Right Arm
+Small Pulse Laser, Left Torso
+Small Pulse Laser, Right Torso
+Machine Gun, Left Torso
+Machine Gun, Right Torso
+ER Small Laser, Head
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLGaussRifle (OMNIPOD)
+CLGaussRifle (OMNIPOD)
+CLGaussRifle (OMNIPOD)
+CLGaussRifle (OMNIPOD)
+CLGaussRifle (OMNIPOD)
+CLGaussRifle (OMNIPOD)
+CLERMediumLaser (OMNIPOD)
+-Empty-
+
+Left Torso:
+CLERMediumLaser (OMNIPOD)
+CLSmallPulseLaser (OMNIPOD)
+CLMG (OMNIPOD)
+Clan Machine Gun Ammo - Half (OMNIPOD)
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+CLERMediumLaser (OMNIPOD)
+CLSmallPulseLaser (OMNIPOD)
+CLMG (OMNIPOD)
+Clan Gauss Ammo (OMNIPOD)
+Clan Gauss Ammo (OMNIPOD)
+CLTargeting Computer (OMNIPOD)
+CLTargeting Computer (OMNIPOD)
+CLTargeting Computer (OMNIPOD)
+CLTargeting Computer (OMNIPOD)
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLActiveProbe (OMNIPOD)
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+CLERSmallLaser
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+manufacturer:Various
+primaryfactory:Various
+systemmanufacturer:CHASSIS:TC-1X Modified
+systemmanufacturer:ENGINE:Type 300 Standard Fusion
+systemmanufacturer:ARMOR:CI Ferro
+systemmanufacturer:COMMUNICATIONS:CI-Com 4
+systemmanufacturer:TARGETING:CI-TransComm with Active Probe
+

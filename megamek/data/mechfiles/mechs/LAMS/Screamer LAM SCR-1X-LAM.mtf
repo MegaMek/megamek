@@ -1,12 +1,21 @@
-Version:1.0
-Screamer LAM
-SCR-1X-LAM
+chassis:Screamer LAM
+model:SCR-1X-LAM
+mul id:7320
 
 Config:LAM
 techbase:Inner Sphere
 era:2774
-source:XTRO Gunslingers - Star League
+source:XTR: Gunslingers
 rules level:2
+role:Striker
+
+
+
+
+quirk:prototype
+quirk:obsolete
+weaponquirk:jettison_capable:RA:4:ISERPPC
+
 
 mass:55
 engine:275 Fusion Engine(IS)

@@ -1,12 +1,13 @@
-Version:1.1
-Firestarter
-FS9-X81
+chassis:Firestarter
+model:FS9-X81
+mul id:1092
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3074
-Source:Jihad
+source:XTR: Corporations
 Rules Level:4
+role:Striker
 
 Mass:35
 Engine:210 XXL Fusion Engine
@@ -131,3 +132,20 @@ Lower Leg Actuator
 Foot Actuator
 -Empty-
 -Empty-
+
+overview:Originally intended as a mobile incendiary ’Mech, the Firestarter evolved into a decent scouting and reconnaissance platform.
+
+capabilities:Despite being shielded by five and a half tons of armor and capable of jumping 180 meters, the Firestarter was powerless against medium or heavyweight opponents. Instead, an entire strategy was built around its ability to cause wildfires, with strategically positioned blazes routing an opponent or covering a withdrawal and impeding any pursuit. Firestarter MechWarriors enjoyed setting fire to densely forested areas when enemy 'Mechs marched through them, as well as any buildings where the enemy was hiding. Other applications for the 'Mech included scorched earth tactics, though this grew less common as it became more important to capture rather than destroy the declining amount of precious resources, or leading units of Wasps and Stingers in deep penetration scouting and light raiding operations.This approach altered in the later Succession Wars when it was discovered that the Firestarter could not only set flames to prevent an enemy from following it, but also clear ambush spots for the advancing of friendly forces.
+
+deployment:This is an experimental prototype of the Firestarter that was created by Defiance Industries of Kwangjong-ni. Only three of these prototypes were produced as of 3074, and suffered from developmental problems with their components. Using the FS9-H as its base, the 'Mech is fitted with an XXL engine, a plasma rifle with 10 rounds as its main weapon, and a pair of medium X-Pulse lasers, both mounted in the right arm. The 'Mech retains the original base model's flamers and jump capabilities. 
+
+history:Firestarters, both ancient and contemporary, can still be found in abundance among planetary militias and House troops. Even though Blakist forces have taken over CMW's principal plant on Coventry, spare parts are still accessible from other Firestarter producers (including LAW, Ceres Metals, Defiance, and Independence Weaponry). Loki field offices near the Circinus Federation frontier are concerned about reports of a new variety using endo steel technology on Federation- occupied worlds. With its particular load-out, this new variation appears to be designed to spread chaos and destruction. Firestarters have also been seen in Level II formations with Blakist soldiers in their Protectorate, most frequently at "police demonstrations" and guarding suspected prison sites. These versions are thought to be Coventry goods.
+
+manufacturer:Defiance Industries (Refit)
+primaryfactory:Kwangjong-ni
+systemmanufacturer:CHASSIS:Argile H/09
+systemmanufacturer:ENGINE:GM 210 XXL
+systemmanufacturer:ARMOR:Livingston Ceramics
+systemmanufacturer:JUMPJET:Luxor Load Lifters
+systemmanufacturer:COMMUNICATIONS:Cyclops 14
+systemmanufacturer:TARGETING:Cyclops 9

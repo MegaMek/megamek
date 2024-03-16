@@ -1,12 +1,19 @@
-Version:1.0
-BattleMaster
-BLR-5M
+chassis:BattleMaster
+model:BLR-5M
+mul id:297
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3067
-Source:Civil War
+source:TRO: 3085u 
 Rules Level:2
+role:Brawler
+
+
+
+quirk:command_mech
+quirk:weak_head_1
+
 
 Mass:85
 Engine:340 Fusion Engine

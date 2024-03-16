@@ -12,9 +12,13 @@ VTOL
 <Name>
 Yellow Jacket Gunship
 </Name>
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+3617
+</mul id:>
 <Tonnage>
 30
 </Tonnage>
@@ -38,6 +42,10 @@ ISGauss Ammo
 <type>
 IS Level 2
 </type>
+
+<role>
+Sniper
+</role>
 <year>
 3058
 </year>
@@ -57,5 +65,5 @@ IS Level 2
 VTOL
 </motion_type>
 <source>
-Clan Invasion
+TRO: 3058
 </source>

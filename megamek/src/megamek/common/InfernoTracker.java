@@ -1,43 +1,34 @@
-/**
+/*
  * MegaMek - Copyright (C) 2002-2003 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
- *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
- *  for more details.
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
 package megamek.common;
 
 import java.io.Serializable;
 
 /**
  * This class records and defines the effects of hits by Inferno rounds on units
- * and hexes. It does not *apply* the effect, it just defines it. <p/> It makes
+ * and hexes. It does not *apply* the effect, it just defines it. <p> It makes
  * use of an inner class to define an Inferno round. This inner class should not
- * be directly accessed, but instead refered to by the constants:
+ * be directly accessed, but instead referred to by the constants:
  * <code>STANDARD_ROUND</code> and <code>INFERNO_IV_ROUND</code>.
  */
 public class InfernoTracker implements Serializable, RoundUpdated {
-    // Private helper classes, methods, and attributes.
-
-    /**
-     * 
-     */
     private static final long serialVersionUID = -5256053831078922473L;
 
     /**
      * This class defines the effects of a single hit by an Inferno round.
      */
-    /* package */static class Inferno implements Serializable {
-        /**
-         * 
-         */
+    static class Inferno implements Serializable {
         private static final long serialVersionUID = 1799687411697517801L;
         private int heatPerRound;
         private int burnRoundsPerHit;
@@ -59,8 +50,7 @@ public class InfernoTracker implements Serializable, RoundUpdated {
         public int getBurnRoundsPerHit() {
             return burnRoundsPerHit;
         }
-
-    } // End /* package */ class Inferno implements Serializable
+    }
 
     /**
      * The number of turns of standard Inferno burn remaining.
@@ -71,8 +61,6 @@ public class InfernoTracker implements Serializable, RoundUpdated {
      * The number of turns of Inferno IV burn remaining.
      */
     private int turnsIVLeftToBurn = 0;
-
-    // Public constants, constructors, and methods.
 
     /**
      * The hit from a standard Inferno round.
@@ -98,6 +86,7 @@ public class InfernoTracker implements Serializable, RoundUpdated {
      * Create an empty tracker.
      */
     public InfernoTracker() {
+
     }
 
     /**
@@ -114,12 +103,10 @@ public class InfernoTracker implements Serializable, RoundUpdated {
     public void add(Inferno round, int hits) {
         // Make sure the # of hits is valid.
         if (hits < 0) {
-            throw new IllegalArgumentException(
-                    "InfernoTracker can't track negative hits. ");
+            throw new IllegalArgumentException("InfernoTracker can't track negative hits.");
         }
 
-        // Add a number of turns to the appropriate
-        // track, based on the round that hit.
+        // Add a number of turns to the appropriate track, based on the round that hit.
         switch (round.getHeatPerRound()) {
             case 6:
                 this.turnsLeftToBurn += round.getBurnRoundsPerHit() * hits;
@@ -128,10 +115,8 @@ public class InfernoTracker implements Serializable, RoundUpdated {
                 this.turnsIVLeftToBurn += round.getBurnRoundsPerHit() * hits;
                 break;
             default:
-                throw new IllegalArgumentException(
-                        "Unknown Inferno round added to the InfernoTracker.");
+                throw new IllegalArgumentException("Unknown Inferno round added to the InfernoTracker.");
         }
-
     }
 
     /**
@@ -145,15 +130,11 @@ public class InfernoTracker implements Serializable, RoundUpdated {
     /**
      * Determine if the unit or hex still has inferno rounds that are burning.
      * 
-     * @return <code>true</code> if there are inferno rounds that are still
-     *         still burning. <code>false</code> if no inferno rounds have hit
-     *         yet, or if they have burned out.
+     * @return <code>true</code> if there are inferno rounds that are still burning.
+     * <code>false</code> if no inferno rounds have hit yet, or if they have burned out.
      */
     public boolean isStillBurning() {
-        if (turnsLeftToBurn > 0 || turnsIVLeftToBurn > 0) {
-            return true;
-        }
-        return false;
+        return (turnsLeftToBurn > 0) || (turnsIVLeftToBurn > 0);
     }
 
     /**
@@ -161,14 +142,12 @@ public class InfernoTracker implements Serializable, RoundUpdated {
      */
     @Override
     public void newRound(int roundNumber) {
-
         // BMRr, pg. 77 makes me think that Inferno IVs
         // burn in parallel with standard rounds.
         if (turnsIVLeftToBurn > 0) {
             turnsIVLeftToBurn--;
-        }
-        // Decrement the standard rounds' track.
-        else if (turnsLeftToBurn > 0) {
+        } else if (turnsLeftToBurn > 0) {
+            // Decrement the standard rounds' track.
             turnsLeftToBurn--;
         }
     }
@@ -201,12 +180,8 @@ public class InfernoTracker implements Serializable, RoundUpdated {
      *         It will not be negative.
      */
     public int getArrowIVTurnsLeftToBurn() {
-        int result = 0;
-
         // Add the number of standard burn turns to Inferno IV turns.
-        result = turnsIVLeftToBurn;
-
-        return result;
+        return turnsIVLeftToBurn;
     }
 
     /**
@@ -222,10 +197,8 @@ public class InfernoTracker implements Serializable, RoundUpdated {
         // Use Inferno IV heat, if any is burning.
         if (turnsIVLeftToBurn > 0) {
             result = 10;
-        }
-
-        // Decrement the standard rounds' track.
-        else if (turnsLeftToBurn > 0) {
+        } else if (turnsLeftToBurn > 0) {
+            // Decrement the standard rounds' track.
             result = 6;
         }
 
@@ -235,5 +208,4 @@ public class InfernoTracker implements Serializable, RoundUpdated {
     public void setTurnsLeftToBurn(int turnsLeftToBurn) {
         this.turnsLeftToBurn = turnsLeftToBurn;
     }
-
 }

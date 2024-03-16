@@ -20,6 +20,10 @@ Eisensturm
 EST-R3
 </Model>
 
+<mul id:>
+4119
+</mul id:>
+
 <year>
 3063
 </year>
@@ -31,6 +35,10 @@ EST-R3
 <type>
 IS Level 2
 </type>
+
+<role>
+Dogfighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -107,7 +115,7 @@ IS Gauss Ammo
 </Fuselage Equipment>
 
 <source>
-TRO 3067 - Civil War
+TRO: 3067
 </source>
 
 <tonnage>

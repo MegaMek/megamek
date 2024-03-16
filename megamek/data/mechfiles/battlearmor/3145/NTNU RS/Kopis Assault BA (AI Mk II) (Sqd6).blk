@@ -1,0 +1,137 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+Kopis Assault Battle Armor
+</Name>
+
+<Model>
+(AI Mk II)(Sqd6)
+</Model>
+
+<mul id:>
+9161
+</mul id:>
+
+<year>
+3090
+</year>
+
+<type>
+IS Level 2
+</type>
+
+<role>
+Ambusher
+</role>
+
+<motion_type>
+Leg
+</motion_type>
+
+<cruiseMP>
+1
+</cruiseMP>
+
+<armor_type>
+30
+</armor_type>
+
+<armor_tech>
+11
+</armor_tech>
+
+<Squad Equipment>
+BAHeavyBattleClaw:LA
+BAHeavyBattleClaw:RA
+ISBAHeavyRecoillessRifle:Body
+ISBAHeavyRecoillessRifle:Body
+ISImprovedSensors:LA
+ISBAHeavyGrenadeLauncher:LA
+ISBAHeavyGrenadeLauncher:RA
+IS BA Advanced:LA
+IS BA Advanced:RA
+IS BA Advanced:LA
+IS BA Advanced:RA
+IS BA Advanced:RA
+</Squad Equipment>
+
+<Trooper 1 Equipment>
+</Trooper 1 Equipment>
+
+<Trooper 2 Equipment>
+</Trooper 2 Equipment>
+
+<Trooper 3 Equipment>
+</Trooper 3 Equipment>
+
+<Trooper 4 Equipment>
+</Trooper 4 Equipment>
+
+<source>
+Record Sheets: 3145 New Tech New Upgrades
+</source>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+0
+</jumpingMP>
+
+<armor>
+10
+</armor>
+
+<Trooper Count>
+6
+</Trooper Count>
+
+<weightclass>
+4
+</weightclass>
+
+<overview>
+The Kopis battle armor was designed by StarCorps Industries as an assault unit. 
+</overview>
+
+<capabilities>
+Slow but heavily armed, the Kopis can remain on the battlefield supporting friendly units for a long time. The advanced armor used by the Kopis designers allows it to stand up to most weaponry, shrugging off anything short of a PPC or AC/10 hit. The low top speed is mitigated through the use of VTOL transportation for offensive operations, while smart commanders use the Kopis as a defense unit for cities or other tight terrain. In those restricted environments the low top speed isn't a factor.
+</capabilities>
+
+<deployment>
+This variant replaced the Anti-Infantry model in 3090, equipped with two Heavy Battle Claws, two Heavy Grenade Launchers, and two Heavy Recoilless Rifles. It also carries Improved Sensors. 
+</deployment>
+
+<history>
+ The standard model was given the nickname of "The Dark Alley".
+</history>
+
+<manufacturer>
+Grumium Creations
+</manufacturer>
+
+<primaryFactory>
+Grumium	
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+JUMPJET:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>

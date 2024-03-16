@@ -20,6 +20,10 @@ Cargo King
 (2790)
 </Model>
 
+<mul id:>
+3896
+</mul id:>
+
 <year>
 2790
 </year>
@@ -31,6 +35,10 @@ Cargo King
 <type>
 IS Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Spheroid
@@ -132,7 +140,7 @@ Medium Laser
 </structural_integrity>
 
 <source>
-TRO 3057R - Early Succession War
+TRO: 3057 Revised
 </source>
 
 <tonnage>

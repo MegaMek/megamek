@@ -1,0 +1,126 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Aero
+</UnitType>
+
+<Name>
+Sulla
+</Name>
+
+<Model>
+F
+</Model>
+
+<mul id:>
+6816
+</mul id:>
+
+<year>
+3108
+</year>
+
+<originalBuildYear>
+3108
+</originalBuildYear>
+
+<type>
+Clan Level 3
+</type>
+
+<role>
+Fast Dogfighter
+</role>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+</transporters>
+
+<SafeThrust>
+9
+</SafeThrust>
+
+<cockpit_type>
+0
+</cockpit_type>
+
+<heatsinks>
+18
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<omnipodheatsinks>
+5
+</omnipodheatsinks>
+
+<fuel>
+400
+</fuel>
+
+<engine_type>
+2
+</engine_type>
+
+<armor_type>
+19
+</armor_type>
+
+<armor_tech>
+2
+</armor_tech>
+
+<omni>
+1
+</omni>
+
+<armor>
+46
+41
+41
+35
+</armor>
+
+<Nose Equipment>
+</Nose Equipment>
+
+<Left Wing Equipment>
+CLImprovedHeavyLargeLaser:OMNI
+CLCASE
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+CLImprovedHeavyLargeLaser:OMNI
+CLCASE
+</Right Wing Equipment>
+
+<Aft Equipment>
+WatchdogECMSuite:OMNI
+</Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+</Fuselage Equipment>
+
+<source>
+TRO: 3145 NTNU
+</source>
+
+<tonnage>
+45.0
+</tonnage>

@@ -20,6 +20,10 @@ Eagle
 EGL-R6b
 </Model>
 
+<mul id:>
+939
+</mul id:>
+
 <year>
 2765
 </year>
@@ -31,6 +35,10 @@ EGL-R6b
 <type>
 IS Level 2
 </type>
+
+<role>
+Dogfighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -106,7 +114,7 @@ Medium Laser
 </Fuselage Equipment>
 
 <source>
-H:Operation Klondyke - Star League
+Historical: Operation Klondike
 </source>
 
 <tonnage>

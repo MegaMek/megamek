@@ -1,13 +1,18 @@
-Version:1.0
-Spirit
-(Standard)
+chassis:Spirit
+model:
+mul id:5108
 
 
 Config:Biped
 TechBase:Clan
 Era:3063
 Rules Level:2
-source:TRO 3067
+role:Striker
+source:TRO: 3067
+
+
+weaponquirk:jettison_capable:RA:4:CLStreakSRM4
+
 
 Mass:35
 Engine:245 XL Engine

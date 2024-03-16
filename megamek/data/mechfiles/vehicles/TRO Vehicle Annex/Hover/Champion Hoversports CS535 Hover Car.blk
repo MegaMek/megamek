@@ -1,0 +1,105 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+SupportTank
+</UnitType>
+
+<Name>
+Champion Hoversports CS535 Hover Car
+</Name>
+
+<model>
+
+</model>
+
+<mul id:>
+3942
+</mul id:>
+
+<year>
+3065
+</year>
+
+<originalBuildYear>
+3065
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<role>
+None
+</role>
+
+<motion_type>
+Hover
+</motion_type>
+
+<transporters>
+cargobay:0.214:1:1
+standardseats:2.0:0
+</transporters>
+
+<cruiseMP>
+15
+</cruiseMP>
+
+<engine_type>
+1
+</engine_type>
+
+<armor>
+1
+1
+1
+1
+</armor>
+
+<Body Equipment>
+UltraLightChassisMod
+</Body Equipment>
+
+<Front Equipment>
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<barrating>
+2
+</barrating>
+
+<structural_tech_rating>
+4
+</structural_tech_rating>
+
+<source>
+TRO: Vehicle Annex (Revised)
+</source>
+
+<tonnage>
+3.0
+</tonnage>
+
+<fuel>
+0.1
+</fuel>
+
+<fuelType>
+PETROCHEMICALS
+</fuelType>

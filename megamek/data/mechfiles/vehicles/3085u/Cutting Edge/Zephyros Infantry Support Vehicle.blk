@@ -16,9 +16,13 @@ Tank
 Zephyros Infantry Support Vehicle
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+3634
+</mul id:>
 
 <year>
 3084
@@ -27,6 +31,10 @@ Zephyros Infantry Support Vehicle
 <type>
 Clan Level 2
 </type>
+
+<role>
+Striker
+</role>
 
 <motion_type>
 Wheeled
@@ -82,7 +90,7 @@ CLLightMG
 </Turret Equipment>
 
 <source>
-TRO 3085
+TRO: 3085
 </source>
 
 <tonnage>

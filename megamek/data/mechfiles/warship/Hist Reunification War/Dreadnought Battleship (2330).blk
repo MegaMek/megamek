@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,6 +20,10 @@ Dreadnought Battleship
 (2330)
 </Model>
 
+<mul id:>
+4098
+</mul id:>
+
 <year>
 2300
 </year>
@@ -31,6 +35,10 @@ Dreadnought Battleship
 <type>
 IS Level 3
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Aerodyne
@@ -327,8 +335,48 @@ IS Ammo AC/2:90
 60
 </structural_integrity>
 
+<capabilities>
+Designed to operate independently, the Dreadnought-class ships were equipped with a vast array of naval autocannons, both naval-grade and fighter-scale. These vessels had the ability to repulse fighter assaults and carried their own complement of fighters or small craft. With a cargo capacity of over 100,000 tons, the Dreadnought required frequent resupply due to its heavy-bore cannon consuming ammunition at a significant rate.
+</capabilities>
+
+<overview>
+The TAS Dreadnought, launched in 2300, was the first true combat vessel and the lead ship of its class. It played a crucial role in establishing the Terran Hegemony under the leadership of James McKenna. While initially perceived as mere playthings, the Dreadnought-class ships proved their worth through firepower demonstrations. Several ships of the class served the Hegemony Navy and were later surpassed by newer designs, eventually being retired and preserved as museum exhibits.
+</overview>
+
+<history>
+The Dreadnought class played a significant role in the Reunification War, performing admirably in the campaign. However, it marked the last major engagement for the class. By 2602, the Dreadnoughts were formally retired, with the remaining vessels either scrapped or gifted to Inner Sphere museums. The SLS Dreadnought, the last operational ship of the class, met its end during the Amaris Coup while escorting refugee vessels out of the occupied Hegemony before being scuttled due to catastrophic damage.
+</history>
+
+<manufacturer>
+Krester Ship Construction
+</manufacturer>
+
+<primaryFactory>
+Terra
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<use>
+Battleship
+</use>
+
+<length>
+890 m
+</length>
+
+<height>
+1050 m Sail
+</height>
+
 <source>
-Hist:Rw - Age of War
+Historical: Reunification War
 </source>
 
 <tonnage>
@@ -347,6 +395,10 @@ Hist:Rw - Age of War
 150
 150
 </grav_decks>
+
+<designtype>
+1
+</designtype>
 
 <crew>
 882
@@ -379,3 +431,4 @@ Hist:Rw - Age of War
 <escape_pod>
 60
 </escape_pod>
+

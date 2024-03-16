@@ -1,12 +1,16 @@
-Version:1.0
-Crossbow
-H
+chassis:Crossbow
+model:H
+mul id:738
 
 Config:Biped Omnimech
 TechBase:Clan
 Era:3061
-Source:TRO 3058 - Clan Invasion
+Source:TRO: 3058
 Rules Level:2
+role:Skirmisher
+
+quirk:imp_target_short
+
 
 Mass:65
 Engine:325 Fusion (Clan) Engine(IS)

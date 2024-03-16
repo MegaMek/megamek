@@ -20,6 +20,10 @@ Kublai
 E
 </Model>
 
+<mul id:>
+7667
+</mul id:>
+
 <year>
 3143
 </year>
@@ -31,6 +35,10 @@ E
 <type>
 Mixed (Clan Chassis) Advanced
 </type>
+
+<role>
+Fast Dogfighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -112,7 +120,7 @@ IS Ultra AC/10 Ammo:OMNI
 </Fuselage Equipment>
 
 <source>
-Dark Age
+TRO: Golden Century
 </source>
 
 <tonnage>

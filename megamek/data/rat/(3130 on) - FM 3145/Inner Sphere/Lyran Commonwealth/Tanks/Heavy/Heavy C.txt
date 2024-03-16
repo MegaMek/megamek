@@ -1,0 +1,12 @@
+3145 LCAF Heavy Vehicles C
+Merkava Heavy Tank Mk IX, 1
+Marsden MBT II-A (LB-X), 2
+LRM Carrier (3055 Upgrade), 3
+Manticore Heavy Tank (3055 Upgrade), 4
+JES III Missile Carrier (Standard), 5
+Patton Tank (Ultra), 6
+Kinnol MBT (Standard), 5
+Rommel Tank (Gauss), 4
+Manticore II Heavy Tank (Standard), 3
+Manteuffel Attack Tank Prime, 2
+Marksman Artillery Vehicle (Light PPC), 1

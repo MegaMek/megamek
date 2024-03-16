@@ -1,12 +1,19 @@
-Version:1.0
-Catapult
-CPLT-C1 (Jenny) 'Butterbee'
+chassis:Catapult
+model:CPLT-C1 (Jenny) 'Butterbee'
+mul id:479
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3027
-Source:TRO 3039 - Succession Wars
+Source:TRO: 3039
 Rules Level:1
+role:Skirmisher
+
+
+
+quirk:no_arms
+quirk:weak_head_1
+
 
 Mass:65
 Engine:260 Fusion Engine

@@ -1,0 +1,12 @@
+3145 Wolf Empire Battle Armor - Front Line
+Undine Battle Armor (Upgrade),1
+Elemental Battle Armor (Headhunter),2
+Elemental Battle Armor [Laser],3
+Clan Medium Battle Armor (Rache),4
+Elemental II Battle Armor (Standard),5
+Black Wolf Battle Armor [ERSPL],6
+Warg Assault Battle Armor (Standard),5
+Elemental Battle Armor [Laser],4
+Elemental Battle Armor [Laser],3
+Warg Assault Battle Armor (Standard),2
+Wraith Battle Armor (Anti-Infantry),1

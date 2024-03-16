@@ -20,7 +20,7 @@ import megamek.common.Game;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.server.Server;
+import megamek.server.GameManager;
 
 /**
  * Deric "Netzilla" Page (deric dot page at usa dot net)
@@ -33,8 +33,8 @@ public class PrimitiveACWeaponHandler extends ACWeaponHandler {
      * @param w
      * @param g
      */
-    public PrimitiveACWeaponHandler(ToHitData t, WeaponAttackAction w, Game g, Server s) {
-        super(t, w, g, s);
+    public PrimitiveACWeaponHandler(ToHitData t, WeaponAttackAction w, Game g, GameManager m) {
+        super(t, w, g, m);
     }
 
     @Override
@@ -43,7 +43,7 @@ public class PrimitiveACWeaponHandler extends ACWeaponHandler {
             return true;
         }
         
-        if (roll == 2) {
+        if (roll.getIntValue() == 2) {
             Report r = new Report(3161);
             r.subject = subjectId;
             r.newlines = 0;

@@ -20,6 +20,10 @@ Outpost
 (3070)
 </Model>
 
+<mul id:>
+5764
+</mul id:>
+
 <year>
 3070
 </year>
@@ -31,6 +35,10 @@ Outpost
 <type>
 Clan Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Spheroid
@@ -176,7 +184,7 @@ CLAMS Ammo:72
 </structural_integrity>
 
 <source>
-TRO 3067 - Jihad
+TRO: 3067
 </source>
 
 <tonnage>

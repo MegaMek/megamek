@@ -20,6 +20,10 @@ Marksman MBT
 M1
 </Model>
 
+<mul id:>
+2078
+</mul id:>
+
 <Tonnage>
 95
 </Tonnage>
@@ -64,12 +68,16 @@ ISMG Ammo (100)
 IS Level 2
 </type>
 
+<role>
+Juggernaut
+</role>
+
 <year>
 3088
 </year>
 
 <source>
-Dark Age
+TRO: 3085
 </source>
 
 <internal_type>

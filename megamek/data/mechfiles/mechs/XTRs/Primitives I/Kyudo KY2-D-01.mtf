@@ -1,12 +1,20 @@
-Version:1.1
-Kyudo
-KY2-D-01
+chassis:Kyudo
+model:KY2-D-01
+mul id:1850
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2443
-Source:XTRO Primitives I - Age of War
+Source:XTR: Primitives I
 Rules Level:4
+role:Missile Boat
+
+
+
+
+quirk:easy_pilot
+quirk:exp_actuator
+
 
 Mass:45
 Engine:220 Primitive Fusion Engine

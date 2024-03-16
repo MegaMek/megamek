@@ -16,9 +16,13 @@ VTOL
 Ripper Infantry Transport
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+2725
+</mul id:>
 
 <year>
 2680
@@ -27,6 +31,10 @@ Ripper Infantry Transport
 <type>
 IS Level 2
 </type>
+
+<role>
+Scout
+</role>
 
 <motion_type>
 VTOL
@@ -81,7 +89,7 @@ Medium Laser
 </Rotor Equipment>
 
 <source>
-TRO 3050 - Star League
+TRO: 3050
 </source>
 
 <tonnage>

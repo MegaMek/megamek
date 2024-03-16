@@ -1,0 +1,162 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+Oni Battle Armor
+</Name>
+
+<Model>
+[Narc](Sqd6)
+</Model>
+
+<mul id:>
+9102
+</mul id:>
+
+<year>
+3134
+</year>
+
+<type>
+Mixed (IS Chassis)
+</type>
+
+<role>
+Ambusher
+</role>
+
+<motion_type>
+Jump
+</motion_type>
+
+<cruiseMP>
+3
+</cruiseMP>
+
+<armor_type>
+35
+</armor_type>
+
+<armor_tech>
+12
+</armor_tech>
+
+<Squad Equipment>
+BAHeavyBattleClawVibro:LA
+BABasicManipulator:RA
+ISBAExtendedLifeSupport:Body
+SwarmMek
+SwarmWeaponMek
+StopSwarm
+LegAttack
+IS BA ECM:Body
+Clan BA Fire Resistant:LA
+Clan BA Fire Resistant:LA
+Clan BA Fire Resistant:LA
+Clan BA Fire Resistant:Body
+Clan BA Fire Resistant:RA
+</Squad Equipment>
+
+<Trooper 1 Equipment>
+ISBACompactNarc:RA
+BA-Compact Narc Ammo:RA:Shots4#
+</Trooper 1 Equipment>
+
+<Trooper 2 Equipment>
+ISBACompactNarc:RA
+BA-Compact Narc Ammo:RA:Shots4#
+</Trooper 2 Equipment>
+
+<Trooper 3 Equipment>
+ISBACompactNarc:RA
+BA-Compact Narc Ammo:RA:Shots4#
+</Trooper 3 Equipment>
+
+<Trooper 4 Equipment>
+ISBACompactNarc:RA
+BA-Compact Narc Ammo:RA:Shots4#
+</Trooper 4 Equipment>
+
+<Trooper 5 Equipment>
+ISBACompactNarc:RA
+BA-Compact Narc Ammo:RA:Shots4#
+</Trooper 5 Equipment>
+
+<Trooper 6 Equipment>
+ISBACompactNarc:RA
+BA-Compact Narc Ammo:RA:Shots4#
+</Trooper 6 Equipment>
+
+<source>
+TRO: 3145 Draconis Combine
+</source>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+0
+</jumpingMP>
+
+<armor>
+10
+</armor>
+
+<Trooper Count>
+6
+</Trooper Count>
+
+<weightclass>
+2
+</weightclass>
+
+<overview>
+Originally developed in the thirty-second century as a replacement for the Raiden suit, the Oni was considered an ugly and generally unimpressive battle suit by the majority of the Draconis Combine Mustered Soldiery.
+</overview>
+
+<capabilities>
+the suit has continued to be a presence in militia units throughout the first half of the thirty-second century, in part because of the third of a ton of Clan-spec fire resistant armor the Oni mounts. The Oni also mounts both an Extended Life Support system and an ECM Suite, and is also capable of making swarm and leg attacks as well as serving as a mechanized unit.
+</capabilities>
+
+<deployment>
+The primary weapon system the Oni possesses is the Modular Weapon Mount fitted onto the right arm, designed to mount one of four weapon systems: a Bearhunter Superheavy Autocannon with twenty rounds of ammunition, a Medium Recoilless Rifle with twenty rounds of ammunition, a Support PPC with fourteen rounds of ammunition or a Compact Narc Launcher with four shots. The right arm is also equipped with a Basic Manipulator, while the left arm mounts a Heavy Vibro Claw.
+</deployment>
+
+<history>
+generally issued to either garrison units or units suffering the disfavor of the Procurement Department. While warriors of the Combine generally prefer honor and prestige over performance, the Ogre has been generally unimpressive at both performance and looks - with "Oni" translating from Japanese as "Ogre". Perhaps what has been hampering the Oni is its lack of a specialism; where other suits fill specific capability roles, the Oni has no role other than standard battlefield performance. Outmatched in large battles or conflicts and no faster than most armor units of the same period, the Oni also suffers from supply issues. While the Oni has been manufactured on both Luthien and Savinsville by Luthien Armor Works with the intent - at least theoretically - of using the Modular Weapon Mount to enable the Oni to be fitted with weapons that suit the predicted mission profile or the style of the demanding unit, the Procurement Department has a history of simply shipping the weapons it believes a unit needs or deserves to it, rather than responding to demands. That has resulted in a substantial gray market for weapons as unit quartermasters work through their contacts to trade weapons back and forth. 
+</history>
+
+<manufacturer>
+Luthien Armor Works,Luthien Armor Works
+</manufacturer>
+
+<primaryFactory>
+Luthien,Savinsville
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+JUMPJET:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<quirks>
+fast_reload
+non_standard
+</quirks>
+

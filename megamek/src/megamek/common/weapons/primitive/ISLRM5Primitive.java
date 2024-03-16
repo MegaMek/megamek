@@ -22,7 +22,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.LRMHandler;
 import megamek.common.weapons.lrms.LRMWeapon;
-import megamek.server.Server;
+import megamek.server.GameManager;
 
 /**
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
@@ -70,7 +70,7 @@ public class ISLRM5Primitive extends LRMWeapon {
 
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
-                                              Server server) {
-        return new LRMHandler(toHit, waa, game, server, -2);
+                                              GameManager manager) {
+        return new LRMHandler(toHit, waa, game, manager, -2);
     }
 }

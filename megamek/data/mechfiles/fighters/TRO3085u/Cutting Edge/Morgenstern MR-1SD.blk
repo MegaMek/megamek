@@ -1,0 +1,136 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Aero
+</UnitType>
+
+<Name>
+Morgenstern
+</Name>
+
+<Model>
+MR-1SD
+</Model>
+
+<mul id:>
+2224
+</mul id:>
+
+<year>
+3086
+</year>
+
+<originalBuildYear>
+3086
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<role>
+Fire Support
+</role>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+</transporters>
+
+<SafeThrust>
+6
+</SafeThrust>
+
+<cockpit_type>
+0
+</cockpit_type>
+
+<heatsinks>
+11
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<omnipodheatsinks>
+1
+</omnipodheatsinks>
+
+<fuel>
+320
+</fuel>
+
+<engine_type>
+0
+</engine_type>
+
+<armor_type>
+19
+</armor_type>
+
+<armor_tech>
+-1
+</armor_tech>
+
+<omni>
+1
+</omni>
+
+<armor>
+93
+71
+71
+51
+</armor>
+
+<Nose Equipment>
+ISERLargeLaser:OMNI
+ISERMediumLaser:OMNI
+ISMML7:OMNI
+ISArtemisIV:OMNI
+</Nose Equipment>
+
+<Left Wing Equipment>
+ISMML7:OMNI
+ISArtemisIV:OMNI
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+ISMML7:OMNI
+ISArtemisIV:OMNI
+</Right Wing Equipment>
+
+<Aft Equipment>
+ISERMediumLaser:OMNI
+Small Laser:OMNI
+ISTargeting Computer:OMNI
+</Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+IS Ammo MML-7 LRM Artemis-capable:OMNI
+IS Ammo MML-7 SRM Artemis-capable:OMNI
+IS Ammo MML-7 LRM Artemis-capable:OMNI
+IS Ammo MML-7 SRM Artemis-capable:OMNI
+</Fuselage Equipment>
+
+<source>
+TRO: 3085
+</source>
+
+<tonnage>
+70.0
+</tonnage>

@@ -1,0 +1,124 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+Tengu Heavy Battle Armor
+</Name>
+
+<Model>
+[ML](Sqd4)
+</Model>
+
+<mul id:>
+5199
+</mul id:>
+
+<year>
+3074
+</year>
+
+<type>
+IS Level 3
+</type>
+
+<role>
+Juggernaut
+</role>
+
+<motion_type>
+Leg
+</motion_type>
+
+<cruiseMP>
+2
+</cruiseMP>
+
+<armor_type>
+30
+</armor_type>
+
+<armor_tech>
+5
+</armor_tech>
+
+<Squad Equipment>
+ISDetachableWeaponPack:LA
+BA Medium Laser:DWP
+BABasicManipulator:LA
+BABasicManipulator:RA
+BAAPMount:RA
+InfantryAssaultRifle:RA:APM
+IS BA Advanced:Body
+IS BA Advanced:Body
+IS BA Advanced:Body
+IS BA Advanced:Body
+IS BA Advanced:Body
+</Squad Equipment>
+
+<source>
+TRO: 3075
+</source>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+2
+</jumpingMP>
+
+<armor>
+12
+</armor>
+
+<Trooper Count>
+4
+</Trooper Count>
+
+<weightclass>
+3
+</weightclass>
+
+<overview>
+The second of the Demon Series of battle armor to be spotted, the Tengu also appears to feature the most experimentation.
+</overview>
+
+<capabilities>
+Its 520kg of advanced armor is enough to stop two Medium Pulse Laser blasts and still have a little left, and though it has four primary configurations, the nature of the Tengu allows for a wide array of variants including several unconfirmed variations such as a weaponless electronic warfare suit and a Rocket Launcher-equipped anti-infantry suit.
+</capabilities>
+
+<deployment>
+A slight variation on the “Small VSP Laser” variant, this version swaps out the small VSP laser for a Medium Laser. It too cannot jump and has its speed cut in half until the laser is jettisoned, though its AP mount can carry weapons up to 10kg in weight. 
+</deployment>
+
+<history>
+Named after Japanese demons, the Tengu is unique for boasting both an enhanced ground speed and jump jets allowing it to leap sixty meters at a time in what some observers call "an overworked motive system arrangement." This runs counter to the conventional wisdom of battle armor design, which seeks to save as much weight as possible by emphasizing only one mode of travel above another. Another unique feature of the Tengu compared to other Demon designs is its modular layout whereas the others employed fixed systems. The prevailing theory is that the Tengu was a testbed design made by Dr. Devon Cortland to see if he could build a battle suit with the same flexibility as the Celestial series of OmniMechs. While Dr. Cortland switched to using hard-wired systems in other suits, the Tengu nevertheless went on to become a fixture in the Shadow Divisions of the Manei Domini, serving in a variety of roles. 
+</history>
+
+<manufacturer>
+Gibson Federated BattleMechs (A Division of Free Worlds Defense Industries)
+</manufacturer>
+
+<primaryFactory>
+Gibson
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+JUMPJET:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>

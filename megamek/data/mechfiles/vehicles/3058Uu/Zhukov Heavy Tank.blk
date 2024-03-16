@@ -12,9 +12,13 @@ Tank
 <Name>
 Zhukov Heavy Tank
 </Name>
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+3650
+</mul id:>
 <Tonnage>
 75
 </Tonnage>
@@ -43,6 +47,10 @@ ISSRM6 Ammo
 <type>
 IS Level 1
 </type>
+
+<role>
+Juggernaut
+</role>
 <year>
 3030
 </year>
@@ -59,5 +67,5 @@ IS Level 1
 Tracked
 </motion_type>
 <source>
-Succession Wars
+TRO: 3058
 </source>

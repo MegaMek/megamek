@@ -15,6 +15,10 @@ Tufana Hovercraft
 <Model>
 (iNarc)
 </Model>
+
+<mul id:>
+3313
+</mul id:>
 <Tonnage>
 35
 </Tonnage>
@@ -45,6 +49,10 @@ IS iNarc Missile Beacon Ammo
 <type>
 IS Level 2
 </type>
+
+<role>
+Striker
+</role>
 <year>
 3083
 </year>
@@ -61,5 +69,5 @@ IS Level 2
 Hover
 </motion_type>
 <source>
-Dark Age
+TRO: 3085
 </source>

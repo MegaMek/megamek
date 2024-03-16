@@ -16,9 +16,13 @@ Aero
 Ammon
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+3696
+</mul id:>
 
 <year>
 3064
@@ -31,6 +35,10 @@ Ammon
 <type>
 Clan Level 2
 </type>
+
+<role>
+Dogfighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -97,7 +105,7 @@ CLCASE
 </Fuselage Equipment>
 
 <source>
-TRO 3067 - Civil War
+TRO: 3067
 </source>
 
 <tonnage>

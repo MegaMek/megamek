@@ -20,6 +20,10 @@ Fensalir Combat WiGE
 (Infantry)
 </Model>
 
+<mul id:>
+1056
+</mul id:>
+
 <Tonnage>
 80
 </Tonnage>
@@ -60,12 +64,16 @@ TroopSpace:16
 IS Level 2
 </type>
 
+<role>
+Skirmisher
+</role>
+
 <year>
 3084
 </year>
 
 <source>
-Dark Age
+TRO: 3085
 </source>
 
 <internal_type>
@@ -83,3 +91,36 @@ Dark Age
 <motion_type>
 WIGE
 </motion_type>
+
+<capabilities>
+The Fensalir at the time was the largest Combat WiGE of its kind. It boasted 11.5 tons of Heavy Ferro-Fibrous armor to protect its hull. The vehicle features an Infantry Transport Bay to allow it to deliver up to 4 tons of troops to a hot zone.
+</capabilities>
+
+<overview>
+The Fensalir Combat WiGE was an attack craft which was built as a joint effort between Johnston Industries and House Steiner based manufacturer Nashan Diversified.
+</overview>
+
+<deployment>
+Introduced also in 3084 and based on the Nashan's original 50 ton infantry version of the WiGE, this version of the Fensalir revisits those features. The Infantry version allows for expansion of the Infantry bay to handle a platoon's worth of Battle Armor. To allow for the expanded troop capacity, the designers drop the MMLs and its ammo bays. The vehicle has been given three Machine Guns which are mounted in the nose and the two sides of the vehicle. With the addition of a half ton of armor, the vehicle's ammunition bay is enhanced with CASE
+</deployment>
+
+<history>
+The Fensalir was first produced at Nashan's plant on Furillo in 3084, while Johnston - still rebuilding its own manufacturing facilities - shipped components to assemble the WiGEs. When it was first produced, the vehicle initially entered service with the newly-renamed Lyran Commonwealth Armed Forces and later being copied by Clan Wolf-in-Exile for their own use.
+</history>
+
+<manufacturer>
+Nashan Diversified
+</manufacturer>
+
+<primaryFactory>
+Furillo
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+JUMPJET:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>

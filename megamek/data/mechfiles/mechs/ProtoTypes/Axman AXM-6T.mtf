@@ -1,11 +1,18 @@
-Version:1.1
-Axman
-AXM-6T
+chassis:Axman
+model:AXM-6T
+mul id:3771
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3083
 Rules Level:2
+role:Missile Boat
+Source:TRO: Prototypes 
+
+
+
+quirk:pro_actuator
+
 
 Mass:65
 Engine:325 XL Fusion Engine

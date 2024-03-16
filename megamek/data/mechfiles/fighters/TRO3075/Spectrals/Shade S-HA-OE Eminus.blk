@@ -20,6 +20,10 @@ Shade
 S-HA-OE Eminus
 </Model>
 
+<mul id:>
+5034
+</mul id:>
+
 <year>
 3072
 </year>
@@ -31,6 +35,10 @@ S-HA-OE Eminus
 <type>
 IS Level 3
 </type>
+
+<role>
+Fast Dogfighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -106,7 +114,7 @@ ISCASE:OMNI
 </Fuselage Equipment>
 
 <source>
-TRO 3075 - Jihad
+TRO: 3075
 </source>
 
 <tonnage>

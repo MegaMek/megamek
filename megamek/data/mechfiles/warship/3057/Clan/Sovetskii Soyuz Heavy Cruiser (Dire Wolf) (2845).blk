@@ -1,0 +1,262 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Warship
+</UnitType>
+
+<Name>
+Sovetskii Soyuz Heavy Cruiser (Dire Wolf)
+</Name>
+
+<Model>
+(2845)
+</Model>
+
+<mul id:>
+5098
+</mul id:>
+
+<year>
+2845
+</year>
+
+<originalBuildYear>
+2845
+</originalBuildYear>
+
+<type>
+Clan Level 3
+</type>
+
+<role>
+None
+</role>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+asfbay:20.0:4:1
+smallcraftbay:8.0:2:2
+dockingcollar
+dockingcollar
+dockingcollar
+dockingcollar
+dockingcollar
+1stclassquarters:420.0:0
+crewquarters:1477.0:0
+dockingcollar
+cargobay:209401.5:1:5
+</transporters>
+
+<SafeThrust>
+2
+</SafeThrust>
+
+<heatsinks>
+1075
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+3500
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+13
+</armor_type>
+
+<armor_tech>
+6
+</armor_tech>
+
+<armor>
+74
+88
+88
+68
+88
+88
+</armor>
+
+<Nose Equipment>
+(B) Capital Missile Launcher (Killer Whale)
+Capital Missile Launcher (Killer Whale)
+Ammo Killer Whale:20
+</Nose Equipment>
+
+<Left Front Side Equipment>
+(B) Naval Laser 45
+Naval Laser 45
+Naval Laser 45
+(B) Capital Missile Launcher (Barracuda)
+Ammo Barracuda:10
+</Left Front Side Equipment>
+
+<Right Front Side Equipment>
+(B) Naval Laser 45
+Naval Laser 45
+Naval Laser 45
+(B) Capital Missile Launcher (Barracuda)
+Ammo Barracuda:10
+</Right Front Side Equipment>
+
+<Aft Equipment>
+</Aft Equipment>
+
+<Aft Left Side Equipment>
+(B) Naval Autocannon (NAC/20)
+Naval Autocannon (NAC/20)
+Naval Autocannon (NAC/20)
+Ammo NAC/20:300
+(B) Naval PPC (Medium)
+Naval PPC (Medium)
+(B) Capital Missile Launcher (Barracuda)
+Ammo Barracuda:10
+</Aft Left Side Equipment>
+
+<Aft Right Side Equipment>
+(B) Naval Autocannon (NAC/20)
+Naval Autocannon (NAC/20)
+Naval Autocannon (NAC/20)
+Ammo NAC/20:300
+(B) Naval PPC (Medium)
+Naval PPC (Medium)
+(B) Capital Missile Launcher (Barracuda)
+Ammo Barracuda:10
+</Aft Right Side Equipment>
+
+<Hull Equipment>
+ISMobileHPG
+</Hull Equipment>
+
+<Left Broadsides Equipment>
+(B) Naval Autocannon (NAC/20)
+Naval Autocannon (NAC/20)
+Naval Autocannon (NAC/20)
+Ammo NAC/20:300
+(B) Naval PPC (Medium)
+Naval PPC (Medium)
+</Left Broadsides Equipment>
+
+<Right Broadsides Equipment>
+(B) Naval Autocannon (NAC/20)
+Naval Autocannon (NAC/20)
+Naval Autocannon (NAC/20)
+Ammo NAC/20:300
+(B) Naval PPC (Medium)
+Naval PPC (Medium)
+</Right Broadsides Equipment>
+
+<structural_integrity>
+80
+</structural_integrity>
+
+<source>
+TRO: 3057 Revised
+</source>
+
+<tonnage>
+830000.0
+</tonnage>
+
+<kf_core>
+1
+</kf_core>
+
+<lithium-fusion>
+1
+</lithium-fusion>
+
+<sail>
+1
+</sail>
+
+<grav_decks>
+55
+90
+</grav_decks>
+
+<crew>
+333
+</crew>
+
+<officers>
+43
+</officers>
+
+<gunners>
+32
+</gunners>
+
+<passengers>
+0
+</passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<life_boat>
+0
+</life_boat>
+
+<escape_pod>
+20
+</escape_pod>
+
+<capabilities>
+The Sovetskii Soyuz cruiser, known for its fearsome combat abilities, surpassed its counterparts in firepower. Equipped with twelve autocannon turrets, it delivered devastating blows to enemy vessels. The cruiser's formidable arsenal also included three missile launchers, housing both the powerful Killer Whales and the agile Barracudas. To optimize ammunition management, the ship implemented advanced automation systems. The Hornblower computer systems, developed by the Nirasaki Computers Collective, efficiently monitored and directed the ammunition-feed systems, reducing crew workload. This automation allowed for increased ammunition storage and a substantial fighter hangar capable of accommodating 18 fighters. The Sovetskii Soyuz prioritized firepower and automation, while skilled Star League ship commanders adeptly utilized the vessel's strengths and mitigated its lighter armor.
+</capabilities>
+
+<overview>
+The Sovetskii Soyuz-class heavy cruiser SLS Kharkov played a crucial role within the 14th Line Squadron of the SLDF navy, serving as part of the First Fleet under the flagship SLS Enterprise. Designed by Blue Nose Clipperships, the Sovetskii Soyuz cruiser exemplified the Star League Defense Force's commitment to bolstering its naval capabilities. Its exceptional combat capabilities, including autocannons and missile launchers, set it apart as a formidable vessel, often regarded as a battlecruiser. The ship's design prioritized firepower, automation, and a sizable fighter complement.
+</overview>
+
+<history>
+The Sovetskii Soyuz-class heavy cruiser SLS Kharkov served within the 14th Line Squadron of the SLDF navy as part of the First Fleet under the command of the flagship SLS Enterprise. During the tumultuous period of Stefan Amaris' coup on Terra in late December 2766, the Enterprise and its squadron, including the Kharkov, played a pivotal role. They were responsible for destroying the Rim Worlds Republic flagship and other Republican WarShips, while covering the evacuation of the surviving SLDF High Command staff from Terra. Despite the Enterprise's eventual destruction, the Kharkov and two other vessels managed to escape, participating in subsequent battles against the Rim Worlds Republic forces. Following the Exodus, the Kharkov joined the "Secret Fleet" and became one of the surviving Sovetskii Soyuz-class vessels. It played a vital role within the Clan Wolf touman after the rise of the Clans, serving as the flagship and renamed the Dire Wolf. The Dire Wolf, listed among Alpha Galaxy's Trinary Clan Command, stood as one of the few Clan Wolf WarShips active during the initial Clan Invasion in the Inner Sphere. It further distinguished itself in the Battle of Radstadt, where ilKhan Leo Showers was killed during Tyra Miraborg's suicide attack. Throughout the centuries, the Dire Wolf remained an active part of Clan Wolf, surviving various conflicts and even the Jihad. Its service continued into the Dark Age, serving as a formidable asset within the Wolf touman. However, the maintenance and support of the diminished WarShip fleet posed ongoing challenges for Clan Wolf due to the lack of shipyards. Despite this, the Dire Wolf persevered, serving alongside other Clan Wolf Naval Star vessels and contributing to the establishment of the new Wolf Empire. The Dire Wolf's resilience and combat effectiveness solidified its place as a respected and powerful WarShip within Clan Wolf's storied history.
+</history>
+
+<manufacturer>
+Unknown
+</manufacturer>
+
+<primaryFactory>
+Refit
+</primaryFactory>
+
+<use>
+Heavy Cruiser
+</use>
+
+<capabilities>
+In its Clan variant, the Sovetskii Soyuz underwent significant enhancements to its capabilities. One notable upgrade is the addition of a fifth docking hardpoint along the vessel's spine, expanding its capacity to carry and support a larger complement of DropShips. This modification further enhanced the ship's versatility and logistical capabilities. Another significant improvement is the integration of a lithium-fusion battery system, augmenting the vessel's power supply and providing increased energy reserves for its advanced systems. This technology, harnessed from the Clan's technological advancements, contributed to the ship's overall performance and operational efficiency. Furthermore, the Clan Soyuz boasts the capability to deploy two full Stars of OmniFighters, greatly enhancing its offensive and defensive capabilities. These agile and versatile OmniFighters complement the Sovetskii Soyuz's arsenal, allowing for precise strikes and efficient engagement with enemy forces in both space and atmospheric combat scenarios. To bolster its defensive capabilities, the Clan Soyuz features an upgraded armor composition made of ferro-aluminum. This advanced armor material offers superior protection while reducing the tonnage required for armor, allowing for increased space and weight allocations for other critical systems and armaments. With these enhancements, the Clan version of the Sovetskii Soyuz represents an even more formidable and versatile WarShip, exemplifying the technological advancements and combat prowess of the Clans in the ongoing conflicts within the Inner Sphere and beyond.
+</capabilities>
+
+<overview>
+The Sovetskii Soyuz, renowned for its devastating weaponry and formidable firepower, underwent modifications in the Clan era, transforming it into an even more formidable vessel. With the addition of a fifth docking hardpoint and a lithium-fusion battery system, as well as an enhanced armor made of ferro-aluminum, the Clan version of the Sovetskii Soyuz showcased further advancements in its capabilities.
+</overview>
+
+<history>
+The Sovetskii Soyuz was commissioned as part of the Star League's effort to revitalize its military capabilities under General Rebecca Fredasa's New Arms Order. This initiative aimed to rectify the neglect the SLDF had suffered under Lord Jonathan Cameron, who had prioritized ineffective automated space defense systems over maintaining a strong military. Facing the growing military strength of the League's member states, General Fredasa called for extensive upgrades to the SLDF's ships and weapons. The Sovetskii Soyuz emerged as one of the prominent designs from this endeavor, showcasing the latest Star League technology and a formidable armament. During the campaign to liberate Terra, many of the original 400 Sovetskii Soyuz-class vessels were destroyed. However, around forty of these powerful cruisers survived and became part of the Exodus fleet. Over time, these vessels formed the core of the Clan fleet, carrying their formidable reputation into the Clan era. Notably, the SLS Kharkov, one of the surviving Sovetskii Soyuz-class vessels, was later renamed the Dire Wolf and became the flagship of the Wolf Clan, attesting to the enduring legacy and significance of the Sovetskii Soyuz-class cruisers in shaping the course of interstellar conflicts.
+</history>

@@ -20,6 +20,10 @@ Lancer
 LX-2
 </Model>
 
+<mul id:>
+4471
+</mul id:>
+
 <year>
 3064
 </year>
@@ -31,6 +35,10 @@ LX-2
 <type>
 IS Level 2
 </type>
+
+<role>
+Fast Dogfighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -94,7 +102,7 @@ IS Ammo LRM-10 Artemis-capable
 </Fuselage Equipment>
 
 <source>
-TRO 3067 - Civil War
+TRO: 3067
 </source>
 
 <tonnage>

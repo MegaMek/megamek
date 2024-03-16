@@ -20,6 +20,10 @@ Magi Infantry Support Vehicle
 (UCSV)
 </Model>
 
+<mul id:>
+1992
+</mul id:>
+
 <year>
 3068
 </year>
@@ -31,6 +35,10 @@ Magi Infantry Support Vehicle
 <type>
 IS Level 2
 </type>
+
+<role>
+Skirmisher
+</role>
 
 <motion_type>
 Tracked
@@ -92,7 +100,7 @@ Medium Laser
 </Rear Equipment>
 
 <source>
-TRO 3050 - Jihad
+TRO: 3050
 </source>
 
 <tonnage>

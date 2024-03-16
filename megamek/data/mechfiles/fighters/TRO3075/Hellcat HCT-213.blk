@@ -20,6 +20,10 @@ Hellcat
 HCT-213
 </Model>
 
+<mul id:>
+4295
+</mul id:>
+
 <year>
 2671
 </year>
@@ -31,6 +35,10 @@ HCT-213
 <type>
 IS Level 2
 </type>
+
+<role>
+Dogfighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -97,7 +105,7 @@ Medium Laser
 </Fuselage Equipment>
 
 <source>
-TRO 3075 - Star League
+TRO: 3075
 </source>
 
 <tonnage>

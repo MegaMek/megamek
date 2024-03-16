@@ -1,12 +1,18 @@
-Version:1.1
-Cronus
-CNS-5M
+chassis:Cronus
+model:CNS-5M
+mul id:4021
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3060
 Rules Level:2
-source:TRO 3067
+role:Skirmisher
+source:TRO: 3067
+
+
+
+quirk:easy_maintain
+
 
 Mass:55
 Engine:330 XL Fusion Engine

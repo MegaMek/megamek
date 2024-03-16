@@ -19,13 +19,9 @@ package megamek.common.weapons;
 
 import java.util.Vector;
 
-import megamek.common.Compute;
-import megamek.common.Game;
-import megamek.common.Infantry;
-import megamek.common.Report;
-import megamek.common.ToHitData;
+import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.server.Server;
+import megamek.server.GameManager;
 
 /**
  * @author Dave Nawton
@@ -42,8 +38,8 @@ public class ACCaselessHandler extends ACWeaponHandler {
      * @param g
      */
     public ACCaselessHandler (ToHitData t, WeaponAttackAction w,
-            Game g, Server s) {
-        super(t, w, g, s);
+            Game g, GameManager m) {
+        super(t, w, g, m);
     }
 
     @Override
@@ -52,14 +48,14 @@ public class ACCaselessHandler extends ACWeaponHandler {
             return true;
         }
         
-        if ((roll <= 2) && !(ae instanceof Infantry)) {
-            int caselesscrit = Compute.d6(2);
+        if ((roll.getIntValue() <= 2) && !(ae instanceof Infantry)) {
+            Roll diceRoll = Compute.rollD6(2);
 
             Report r = new Report(3164);
             r.subject = subjectId;
-            r.add(caselesscrit);
+            r.add(diceRoll);
 
-            if (caselesscrit >= 8) {
+            if (diceRoll.getIntValue() >= 8) {
                 // Round explodes destroying weapon
                 weapon.setDestroyed(true);
                 r.choose(false);

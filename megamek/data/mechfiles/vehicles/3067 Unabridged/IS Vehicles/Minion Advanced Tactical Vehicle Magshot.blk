@@ -20,6 +20,10 @@ Minion Advanced Tactical Vehicle
 (Gauss) 'Sandblaster'
 </Model>
 
+<mul id:>
+5725
+</mul id:>
+
 <year>
 3080
 </year>
@@ -27,6 +31,10 @@ Minion Advanced Tactical Vehicle
 <type>
 IS Level 3
 </type>
+
+<role>
+Striker
+</role>
 
 <motion_type>
 Hover
@@ -74,3 +82,7 @@ ISMagshotGR
 <tonnage>
 20.0
 </tonnage>
+
+<source>
+TRO: 3067
+</source>

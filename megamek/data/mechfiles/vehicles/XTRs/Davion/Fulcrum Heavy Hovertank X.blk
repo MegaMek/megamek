@@ -20,6 +20,10 @@ Fulcrum Heavy HoverTank
 X
 </Model>
 
+<mul id:>
+1157
+</mul id:>
+
 <year>
 3075
 </year>
@@ -27,6 +31,10 @@ X
 <type>
 Mixed (IS Chassis) Experimental
 </type>
+
+<role>
+Striker
+</role>
 
 <motion_type>
 Hover
@@ -85,3 +93,7 @@ ISMagshotGR
 <tonnage>
 50.0
 </tonnage>
+
+<source>
+XTR: Davion
+</source>

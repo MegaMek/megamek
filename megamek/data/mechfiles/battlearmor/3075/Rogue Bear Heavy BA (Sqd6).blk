@@ -1,0 +1,119 @@
+
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+Rogue Bear Heavy Battle Armor
+</Name>
+
+<model>
+(Sqd6)
+</model>
+
+<mul id:>
+9025
+</mul id:>
+
+<chassis>
+biped
+</chassis>
+
+<weightclass>
+3
+</weightclass>
+
+<Trooper Count>
+6
+</Trooper Count>
+
+<cruiseMP>
+1
+</cruiseMP>
+
+<jumpingMP>
+2
+</jumpingMP>
+
+<Armor>
+13
+</Armor>
+
+<Point Equipment>
+Clan BA Machine Gun:LA
+Clan BA Machine Gun:RA
+CLBASRM3:Body
+BASRM3 Ammo:Body:Shots4#
+BABattleClawVibro:LA
+BABattleClawVibro:RA
+</Point Equipment>
+
+<type>
+Clan Level 2
+</type>
+
+<role>
+Ambusher
+</role>
+
+<year>
+3073
+</year>
+
+<motion_type>
+Jump
+</motion_type>
+
+<source>
+TRO: 3075
+</source>
+
+<armor_type>
+28
+</armor_type>
+
+<armor_tech>
+2
+</armor_tech>
+
+<overview>
+First known to have been deployed in 3073, the Rogue Bear is a battle armor design produced by Clan Ghost Bear. 
+</overview>
+
+<capabilities>
+The Rogue Bear can jump up to sixty meters at a time. It is protected by almost enough armor to stop a Gauss rifle. The battlesuit uses mostly standard components with no disposable weaponry. 
+</capabilities>
+
+<deployment>
+The Rogue Bear's primary anti-vehicle weaponry is a Short Range Missile launcher that can fire three warheads and has four shots. Two Machine Guns can make short work of infantry forces. In case a Rogue Bear Point ends up in melee combat, the armor's arms end in Vibro-Claws that make mincemeat of flesh and armor alike. They also allow the heavy suit to ride OmniMechs.
+</deployment>
+
+<history>
+Initially confused for the Golem, the Rogue Bear is a heavy battlesuit that was initially deployed with garrison units, especially those of the KungsArmé who were incorporated into the Ghost Bear touman.  Though it fits with their hatred of waste, this seems to underscore the difficulties the Bears are having maintaining their touman through the Jihad and the troubles in the Clan homeworlds. The Constable Pacification Suit introduced by the Ghost Bear Dominion in 3092 to combat the terrorist organization named Motstånd and to enhance the capabilities of their police forces was based on a lighter version of the Rogue Bear. The Rogue Bear is also related to the Wraith suit, which was originally prototyped as the Rogue bear.
+</history>
+
+<manufacturer>
+BA Facility Gamma
+</manufacturer>
+
+<primaryFactory>
+Mannedorf
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+JUMPJET:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>

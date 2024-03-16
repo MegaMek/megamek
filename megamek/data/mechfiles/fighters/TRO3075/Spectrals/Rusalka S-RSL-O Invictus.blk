@@ -20,6 +20,10 @@ Rusalka
 S-RSL-O Invictus
 </Model>
 
+<mul id:>
+4948
+</mul id:>
+
 <year>
 3071
 </year>
@@ -31,6 +35,10 @@ S-RSL-O Invictus
 <type>
 IS Level 3
 </type>
+
+<role>
+Fast Dogfighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -118,7 +126,7 @@ ISCASE:OMNI
 </Fuselage Equipment>
 
 <source>
-TRO 3075 - Jihad
+TRO: 3075
 </source>
 
 <tonnage>

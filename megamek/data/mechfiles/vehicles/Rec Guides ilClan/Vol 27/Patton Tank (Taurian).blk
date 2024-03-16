@@ -1,0 +1,145 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+Patton Tank
+</Name>
+
+<Model>
+(Taurian)
+</Model>
+
+<mul id:>
+9343
+</mul id:>
+
+<year>
+3115
+</year>
+
+<originalBuildYear>
+3115
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<role>
+Brawler
+</role>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<transporters>
+</transporters>
+
+<cruiseMP>
+4
+</cruiseMP>
+
+<engine_type>
+0
+</engine_type>
+
+<armor_type>
+6
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
+50
+44
+44
+40
+50
+</armor>
+
+<Body Equipment>
+Supercharger
+IS LB 10-X AC Ammo
+IS LB 10-X AC Ammo
+IS LB 10-X Cluster Ammo
+IS Ammo LRM-5
+</Body Equipment>
+
+<Front Equipment>
+ISERMediumLaser
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+Flamer
+</Rear Equipment>
+
+<Turret Equipment>
+ISLBXAC10
+LRM 5
+</Turret Equipment>
+
+<capabilities>
+The Patton mounts an AC/10, giving it twice the ammunition capacity and superior firing range while also enabling it to be fitted with more armor. The Patton is capable of fighting in short-ranged and urban environments, but is far more suited than the Rommel to engaging targets at medium to long range.
+</capabilities>
+
+<overview>
+The Patton tank is a 65-ton armored combat vehicle, specializing in conventional armored warfare. Identical to its twin, the Rommel, in every way but armament and armor configuration, the Patton has primarily served with the Lyran Commonwealth and the Lyran Alliance.
+</overview>
+
+<deployment>
+No information on this variant
+</deployment>
+
+<history>
+Designed concurrently with the Rommel, Defiance Industries decided that a vehicle to replace 'Mechs was needed in the early 3000s. Since 'Mech production was nearly at a standstill, the ability to produce and field armored vehicles became a necessity no Successor State could ignore.
+</history>
+
+<manufacturer>
+Unknown
+</manufacturer>
+
+<primaryFactory>
+Unknown
+</primaryFactory>
+
+<systemManufacturers>
+ENGINE:Magna 260
+ARMOR:Durallex Heavy
+COMMUNICATIONS:TharHes Muse 54-58K
+TARGETING:TharHes Mars5
+</systemManufacturers>
+
+<source>
+Rec Guide:ilClan #27
+</source>
+
+<tonnage>
+65.0
+</tonnage>
+
+
+<quirks>
+low_profile
+poor_target_short
+</quirks>
+

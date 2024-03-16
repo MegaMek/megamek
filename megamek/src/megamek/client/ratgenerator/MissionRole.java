@@ -101,7 +101,7 @@ public enum MissionRole {
             case ESCORT:
             case INTERCEPTOR:
             case GROUND_SUPPORT:
-            //case STRIKE:
+            // case STRIKE:
                 return unitType == UnitType.AERO || unitType == UnitType.CONV_FIGHTER;
 
             case ASSAULT:
@@ -163,7 +163,8 @@ public enum MissionRole {
         for (int i = 0; i < avAdj.length; i++) {
             avAdj[i] = (i + 1) * strictness / 3.0;
         }
-        if (desiredRoles.size() > 0) {
+
+        if (!desiredRoles.isEmpty()) {
             roleApplied = true;
             for (MissionRole role : desiredRoles) {
                 switch (role) {
@@ -657,7 +658,7 @@ public enum MissionRole {
                 return INTERCEPTOR;
             case "ground support":
                 return GROUND_SUPPORT;
-            //case "strike":
+            // case "strike":
                 //return STRIKE;
             case "training":
                 return TRAINING;

@@ -1,12 +1,17 @@
-Version:1.0
-Clint IIC
-2
+chassis:Clint IIC
+model:2
+mul id:653
 
 Config:Biped
 TechBase:Clan
 Era:3073
-Source:TRO 3060
+Source:TRO: 3060
 Rules Level:2
+role:Striker
+
+quirk:imp_target_long
+quirk:imp_target_med
+
 
 Mass:40
 Engine:240 XL (Clan) Engine(IS)
@@ -149,4 +154,19 @@ Clan Improved Jump Jet
 -Empty-
 -Empty-
 
+overview:The Clan refit of the prototyle Clint the SLDF took into exile. Primarily designed as a cheap recon unit, with the capabilities of a well-armed, low-end medium weight 'Mech, and in this regard it served well. 
 
+capabilities:It is capable of ranging far beyond supply lines thanks to its four tons of ammunition, though it only uses 10 single heat sinks and seven tons of standard armor.	
+
+deployment:Developed during the Jihad in 3073, the Clint IIC 2 was fitted with an all-energy weapons configuration. The 'Mech mounts five medium pulse lasers divided amongst its center torso, left torso, and right arm; one in each of the torso locations, and the remaining three in the arm. This variant has been provided eight improved jump jets to greatly enhance its mobility in tactical situations. To cope with the new levels of heat, 10 double heat sinks are used instead of the single versions. Additionally, an ECM suite has been allocated to the head. Lastly, ferro-fibrous armor now protects the design in place of the original standard armor. 
+
+history:When General Aleksandr Kerensky led most of the Star League Defense Force into exile in 2784, they brought prototypes of the Clint BattleMech with them. After the annihilation of Clan Wolverine, Clan Snow Raven revisited these prototypes and was able to begin mass-production of the 'Mech in 2830 and introduced them in 2842. They ensured that it kept up with advances in Clan technology, eventually becoming the design that is now known as the Clint IIC. Production ceased in 2917, and in the late 30th century, the Ravens decided to decommission many less-effective designs of all sorts. It seemed fortuitous, then, when Clan Blood Spirit offered to trade some of their WarShips to the Ravens in exchange for ground units. The Ravens were only too happy to get rid of vehicles that were going to be stockpiled anyways, so many Clint IICs found their way into Clan Blood Spirit, but most of them were subsequently destroyed during the Spirits' conflict with the Adders and Burrocks. The waning fortunes of the Clint IIC were reversed in 3052, when the Ravens restarted production of the 'Mech to trade to the invading Clans for resources from the Inner Sphere.
+
+manufacturer:Eden Rose [Potemkin Class]/Facility 12-D (Refit), Snow Raven Industrial Complex Alpha (Refit) 
+primaryfactory:Eden Rose [Potemkin Class], Unknown
+systemmanufacturer:CHASSIS:SR 2830/b
+systemmanufacturer:ENGINE:Type 81 Fusion 240 XL
+systemmanufacturer:ARMOR:Alpha Compound Ferro-Fibrous
+systemmanufacturer:JUMPJET:Andoran Model JJII-Improved
+systemmanufacturer:COMMUNICATIONS:Raldon R1 with ECM
+systemmanufacturer:TARGETING:Sloane 220 Lockover System

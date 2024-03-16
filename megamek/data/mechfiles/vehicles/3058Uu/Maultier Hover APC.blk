@@ -12,9 +12,13 @@ Tank
 <Name>
 Maultier Hover APC
 </Name>
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+2109
+</mul id:>
 <Tonnage>
 15
 </Tonnage>
@@ -39,6 +43,10 @@ ISStreakSRM2 Ammo
 <type>
 IS Level 2
 </type>
+
+<role>
+Scout
+</role>
 <year>
 2647
 </year>
@@ -55,5 +63,5 @@ IS Level 2
 Hover
 </motion_type>
 <source>
-Star League
+TRO: 3058
 </source>

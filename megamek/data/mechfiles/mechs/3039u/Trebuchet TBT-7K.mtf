@@ -1,12 +1,19 @@
-Version:1.0
-Trebuchet
-TBT-7K
+chassis:Trebuchet
+model:TBT-7K
+mul id:3299
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3025
-Source:TRO 3039 - Succession Wars
+Source:TRO: 3039
 Rules Level:1
+role:Sniper
+
+
+
+quirk:easy_maintain
+weaponquirk:fast_reload:LT:0:Autocannon/5
+
 
 Mass:50
 Engine:250 Fusion Engine

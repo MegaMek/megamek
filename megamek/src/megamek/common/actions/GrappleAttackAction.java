@@ -35,7 +35,10 @@ public class GrappleAttackAction extends PhysicalAttackAction {
     }
 
     /**
-     * To-hit number
+     * @param game The current {@link Game}
+     * @param attackerId the attacking entity id
+     * @param target the attack's target
+     * @return the to hit number for the current grapple attack
      */
     public static ToHitData toHit(Game game, int attackerId, Targetable target) {
         return toHit(game, attackerId, target, Entity.GRAPPLE_BOTH, false);
@@ -44,7 +47,7 @@ public class GrappleAttackAction extends PhysicalAttackAction {
     /**
      * Calculates ToHitData for a grapple attack.
      * 
-     * @param game
+     * @param game The current {@link Game}
      * @param attackerId
      * @param target
      * @param grappleSide
@@ -174,18 +177,20 @@ public class GrappleAttackAction extends PhysicalAttackAction {
     /**
      * Various modifiers to check to see if the grapple attack is illegal.
      * 
-     * @param game
+     * @param game The current {@link Game}
      * @param ae
      * @param target
      * @param grappleSide
      * @return
      */
     public static ToHitData checkIllegal(Game game, Entity ae, Targetable target, int grappleSide) {
-        if (ae == null)
+        if (ae == null) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "You can't attack from a null entity!");
+        }
 
-        if (!game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_GRAPPLING))
+        if (!game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_GRAPPLING)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "grappling attack not allowed");
+        }
 
         // LAM AirMechs can only grapple when grounded.
         if (ae.isAirborneVTOLorWIGE()) {
@@ -299,7 +304,7 @@ public class GrappleAttackAction extends PhysicalAttackAction {
         int atGr = ae.getGrappled();
         int deGr = te.getGrappled();
         if ((atGr != Entity.NONE || deGr != Entity.NONE)
-                && atGr != target.getTargetId() && te.isGrappleAttacker()) {
+                && atGr != target.getId() && te.isGrappleAttacker()) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Already grappled");
         }
 

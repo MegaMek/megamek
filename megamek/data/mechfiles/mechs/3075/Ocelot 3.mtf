@@ -1,34 +1,38 @@
-Version:1.0
-Ocelot
-3
-
+generator:MegaMek Suite 0.49.16-SNAPSHOT on 2023-12-29
+chassis:Ocelot
+model:3
+mul id:2315
 Config:Biped
-TechBase:Clan
-Era:3075
-Source:TRO 3075
-Rules Level:2
+techbase:Clan
+era:3075
+source:TRO: 3075
+rules level:2
+role:Striker
 
-Mass:35
-Engine:210 XL (Clan) Engine
-Structure:Standard
-Myomer:Standard
+weaponquirk:jettison_capable:RA:4:CLHeavyMediumLaser
+weaponquirk:jettison_capable:RA:6:CLHeavyMediumLaser
 
-Heat Sinks:12 Double
-Walk MP:6
-Jump MP:6
+mass:35
+engine:210 XL (Clan) Engine(IS)
+structure:IS Standard
+myomer:Standard
 
-Armor:Ferro-Fibrous
-LA Armor:12
-RA Armor:12
-LT Armor:12
-RT Armor:12
-CT Armor:16
-HD Armor:9
-LL Armor:16
-RL Armor:16
-RTL Armor:4
-RTR Armor:4
-RTC Armor:6
+heat sinks:12 Clan Double
+walk mp:6
+jump mp:6
+
+armor:Ferro-Fibrous(Clan)
+LA armor:12
+RA armor:12
+LT armor:12
+RT armor:12
+CT armor:16
+HD armor:9
+LL armor:16
+RL armor:16
+RTL armor:4
+RTR armor:4
+RTC armor:6
 
 Weapons:3
 Heavy Medium Laser, Right Arm
@@ -40,9 +44,9 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -58,8 +62,8 @@ CLHeavyMediumLaser
 CLHeavyMediumLaser
 CLHeavyMediumLaser
 CLHeavyMediumLaser
-Ferro-Fibrous
-Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 
@@ -85,8 +89,8 @@ CLDoubleHeatSink
 Jump Jet
 Jump Jet
 Jump Jet
-Ferro-Fibrous
-Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-

@@ -20,6 +20,10 @@ Predator Tank Destroyer
 (Original)
 </Model>
 
+<mul id:>
+6442
+</mul id:>
+
 <year>
 2942
 </year>
@@ -27,6 +31,10 @@ Predator Tank Destroyer
 <type>
 IS Level 1
 </type>
+
+<role>
+Striker
+</role>
 
 <motion_type>
 Tracked
@@ -65,9 +73,15 @@ Autocannon/20
 </Rear Equipment>
 
 <source>
-TRO 3145 Capellan Confederation - Succession Wars
+TRO: 3145 Capellan Confederation
 </source>
 
 <tonnage>
 45.0
 </tonnage>
+
+<quirks>
+easy_maintain
+low_profile
+</quirks>
+

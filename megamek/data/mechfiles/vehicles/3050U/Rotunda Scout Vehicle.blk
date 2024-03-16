@@ -20,6 +20,10 @@ Rotunda Scout Vehicle
 RND-J-1-11
 </Model>
 
+<mul id:>
+2745
+</mul id:>
+
 <year>
 2725
 </year>
@@ -27,6 +31,10 @@ RND-J-1-11
 <type>
 IS Level 2
 </type>
+
+<role>
+Scout
+</role>
 
 <motion_type>
 Wheeled
@@ -74,7 +82,7 @@ SRM 2
 </Rear Equipment>
 
 <source>
-TRO 3050 - Star League
+TRO: 3050
 </source>
 
 <tonnage>

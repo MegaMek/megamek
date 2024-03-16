@@ -20,6 +20,10 @@ Giggins APC
 (Fire Support)
 </Model>
 
+<mul id:>
+1195
+</mul id:>
+
 <Tonnage>
 40
 </Tonnage>
@@ -52,12 +56,16 @@ ISMML5 SRM Ammo
 IS Level 2
 </type>
 
+<role>
+Skirmisher
+</role>
+
 <year>
 3085
 </year>
 
 <source>
-Dark Age
+TRO: 3085
 </source>
 
 <internal_type>

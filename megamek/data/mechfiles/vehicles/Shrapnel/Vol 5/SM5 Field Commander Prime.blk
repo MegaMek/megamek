@@ -20,6 +20,10 @@ SM5 Field Commander
 Prime
 </Model>
 
+<mul id:>
+8265
+</mul id:>
+
 <year>
 3151
 </year>
@@ -31,6 +35,10 @@ Prime
 <type>
 Mixed (Clan Chassis) Experimental
 </type>
+
+<role>
+Striker
+</role>
 
 <motion_type>
 Hover
@@ -100,7 +108,7 @@ ISTAG:OMNI
 </Turret Equipment>
 
 <capabilities>
-The vehicle has unique "glass" dual cockpits on the front of the vehicle that are functionally identical while mounting a smaller anti-infantry turret just behind its left side cockpit.[5] The vehicle's unique split cockpit design allows the cockpit modules to eject from the vehicle. Due to its appearance, the SM1 was dubbed the "Suicide Machine" by its first pilots because they felt over-exposed with the tank's all ferro-glass cockpit.
+The vehicle has unique "glass" dual cockpits on the front of the vehicle that are functionally identical while mounting a smaller anti-infantry turret just behind its left side cockpit. The vehicle's unique split cockpit design allows the cockpit modules to eject from the vehicle. Due to its appearance, the SM1 was dubbed the "Suicide Machine" by its first pilots because they felt over-exposed with the tank's all ferro-glass cockpit.
 </capabilities>
 
 <overview>
@@ -131,10 +139,15 @@ TARGETING:Able-Seven Sensor Suite
 </systemManufacturers>
 
 <source>
-Shrapnel 6 - ilClan
+Shrapnel #6
 </source>
 
 <tonnage>
 50.0
 </tonnage>
+
+
+<quirks>
+prototype
+</quirks>
 

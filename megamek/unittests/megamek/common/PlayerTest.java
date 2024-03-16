@@ -1,13 +1,10 @@
 package megamek.common;
 
 import megamek.client.ui.swing.util.PlayerColour;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@RunWith(JUnit4.class)
 public class PlayerTest {
 
     @Test
@@ -20,7 +17,5 @@ public class PlayerTest {
         Player player2 = new Player(1, playerName);
         player2.setColour(PlayerColour.FUCHSIA);
         assertEquals("<B><font color='f000f0'>" + playerName + "</font></B>", player2.getColorForPlayer());
-
     }
-
 }

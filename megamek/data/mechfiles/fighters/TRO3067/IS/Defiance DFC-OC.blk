@@ -20,6 +20,10 @@ Defiance
 DFC-OC
 </Model>
 
+<mul id:>
+4063
+</mul id:>
+
 <year>
 3067
 </year>
@@ -31,6 +35,10 @@ DFC-OC
 <type>
 IS Level 2
 </type>
+
+<role>
+Dogfighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -104,7 +112,7 @@ ISSmallPulseLaser:OMNI
 </Fuselage Equipment>
 
 <source>
-TRO 3067 - Civil War
+TRO: 3067
 </source>
 
 <tonnage>

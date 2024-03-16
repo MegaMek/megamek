@@ -1,0 +1,159 @@
+chassis:Shogun
+model:C 2
+mul id:8002
+Config:Biped
+techbase:Clan
+era:3139
+source:Record Sheets: 3150
+rules level:3
+
+
+
+quirk:barrel_fists_la
+quirk:barrel_fists_ra
+quirk:difficult_maintain
+quirk:non_standard
+
+
+mass:85
+engine:255 Fusion (Clan) Engine(IS)
+structure:IS Standard
+myomer:Standard
+
+heat sinks:14 Clan Double
+walk mp:3
+jump mp:3
+
+armor:Standard(Clan)
+LA armor:28
+RA armor:28
+LT armor:27
+RT armor:27
+CT armor:40
+HD armor:9
+LL armor:28
+RL armor:28
+RTL armor:9
+RTR armor:9
+RTC armor:12
+
+Weapons:5
+Streak LRM 15, Left Arm
+Streak LRM 15, Right Arm
+Streak SRM 6, Left Torso
+ER PPC, Right Torso
+Streak SRM 6, Right Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLStreakLRM15
+CLStreakLRM15
+CLStreakLRM15
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLStreakLRM15
+CLStreakLRM15
+CLStreakLRM15
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLStreakSRM6
+CLStreakSRM6
+Clan Streak SRM 6 Ammo
+Clan Streak LRM 15 Ammo
+Clan Streak LRM 15 Ammo
+CLCASEII
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLERPPC
+CLERPPC
+CLStreakSRM6
+CLStreakSRM6
+Clan Streak SRM 6 Ammo
+Clan Streak LRM 15 Ammo
+Clan Streak LRM 15 Ammo
+CLCASEII
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

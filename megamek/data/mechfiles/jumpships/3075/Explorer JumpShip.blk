@@ -16,9 +16,13 @@ Jumpship
 Explorer JumpShip
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+4145
+</mul id:>
 
 <year>
 2703
@@ -31,6 +35,10 @@ Explorer JumpShip
 <type>
 IS Level 3
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Aerodyne
@@ -107,7 +115,7 @@ cargobay:275.0:1:5
 </structural_integrity>
 
 <source>
-TRO 3075 - Star League
+TRO: 3075
 </source>
 
 <tonnage>

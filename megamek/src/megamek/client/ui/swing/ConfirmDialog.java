@@ -37,6 +37,7 @@ import javax.swing.JTextArea;
 import javax.swing.KeyStroke;
 
 import megamek.client.ui.Messages;
+import megamek.client.ui.swing.util.UIUtil;
 
 /**
  * A simple yes/no confirmation dialog.
@@ -125,6 +126,8 @@ public class ConfirmDialog extends JDialog{
         } else {
             defaultButton = butYes;
         }
+
+        adaptToGUIScale();
         finishSetup(p);
     }
 
@@ -140,12 +143,11 @@ public class ConfirmDialog extends JDialog{
         };
         butYes = new JButton(yesAction);
         butYes.setText(Messages.getString("Yes"));
-	butYes.setMnemonic(KeyEvent.VK_Y);
+        butYes.setMnemonic(KeyEvent.VK_Y);
         KeyStroke ks = null;
         ks = KeyStroke.getKeyStroke(KeyEvent.VK_Y, 0);
 
-        InputMap imap = butYes
-        .getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
+        InputMap imap = butYes.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
         ActionMap amap = butYes.getActionMap();
         imap.put(ks, YESACTION);
         amap.put(YESACTION, yesAction);
@@ -161,7 +163,7 @@ public class ConfirmDialog extends JDialog{
         };
         butNo = new JButton(noAction);
         butNo.setText(Messages.getString("No"));
-	butNo.setMnemonic(KeyEvent.VK_N);
+        butNo.setMnemonic(KeyEvent.VK_N);
         ks = KeyStroke.getKeyStroke(KeyEvent.VK_N, 0);
         imap = butNo.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
         amap = butNo.getActionMap();
@@ -176,7 +178,7 @@ public class ConfirmDialog extends JDialog{
         c.gridheight = 2;
         c.insets = new Insets(5, 5, 5, 5);
         gridbag.setConstraints(questionLabel, c);
-        getContentPane().add(questionLabel);
+        add(questionLabel);
     }
 
     private void addInputs() {
@@ -189,7 +191,7 @@ public class ConfirmDialog extends JDialog{
 
             c.gridy = y++;
             gridbag.setConstraints(botherCheckbox, c);
-            getContentPane().add(botherCheckbox);
+            add(botherCheckbox);
         }
 
         GridBagLayout buttonGridbag = new GridBagLayout();
@@ -206,7 +208,7 @@ public class ConfirmDialog extends JDialog{
         c.gridy = y;
 
         gridbag.setConstraints(panButtons, c);
-        getContentPane().add(panButtons);
+        add(panButtons);
     }
 
     private void finishSetup(JFrame p) {
@@ -260,5 +262,9 @@ public class ConfirmDialog extends JDialog{
             return true;
         }
         return !botherCheckbox.isSelected();
+    }
+
+    private void adaptToGUIScale() {
+        UIUtil.adjustDialog(this, UIUtil.FONT_SCALE1);
     }
 }

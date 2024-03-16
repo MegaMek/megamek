@@ -47,7 +47,7 @@ public class InfantryPistolStettaAutoPistolWeapon extends InfantryWeapon {
         ammoCost = 10;
         shots = 100;
         bursts = 10;
-        rulesRefs = "273,TM";
+        rulesRefs = "273, TM";
 		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3005, 3010, 3050, DATE_NONE, DATE_NONE)
 		        .setISApproximate(true, false, false, false, false).setPrototypeFactions(F_LC)
 		        .setProductionFactions(F_LC).setTechRating(RATING_D)

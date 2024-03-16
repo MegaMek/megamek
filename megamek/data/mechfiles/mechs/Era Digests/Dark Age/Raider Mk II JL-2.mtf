@@ -1,34 +1,34 @@
-Version:1.0
-Raider Mk II
-JL-2
-
+chassis:Raider Mk II
+model:JL-2
+mul id:6956
 Config:Biped
-TechBase:Inner Sphere
-Era:3134
-Source:ED: Dark Age
-Rules Level:4
+techbase:Inner Sphere
+era:3134
+source:Era Digest: Dark Age
+rules level:2
+role:Brawler
 
-Mass:50
-Engine:150 I.C.E. Engine
-Structure:IS Standard
-Myomer:Triple-Strength
+mass:50
+engine:150 ICE Engine(IS)
+structure:IS Standard
+myomer:Triple-Strength
 
-Heat Sinks:2 Single
-Walk MP:3
-Jump MP:0
+heat sinks:2 Single
+walk mp:3
+jump mp:0
 
-Armor:Standard(Inner Sphere)
-LA Armor:16
-RA Armor:16
-LT Armor:18
-RT Armor:18
-CT Armor:24
-HD Armor:9
-LL Armor:20
-RL Armor:20
-RTL Armor:6
-RTR Armor:6
-RTC Armor:7
+armor:Standard(Inner Sphere)
+LA armor:16
+RA armor:16
+LT armor:18
+RT armor:18
+CT armor:24
+HD armor:9
+LL armor:20
+RL armor:20
+RTL armor:6
+RTR armor:6
+RTC armor:7
 
 Weapons:1
 Rotary AC/2, Right Arm
@@ -44,7 +44,7 @@ Dual Saw
 Dual Saw
 Dual Saw
 Dual Saw
-TSM
+Triple Strength Myomer
 -Empty-
 
 Right Arm:
@@ -57,12 +57,12 @@ ISRotaryAC2
 ISRotaryAC2
 ISRotaryAC2 Ammo
 ISRotaryAC2 Ammo
-TSM
+Triple Strength Myomer
 -Empty-
 -Empty-
 
 Left Torso:
-TSM
+Triple Strength Myomer
 -Empty-
 -Empty-
 -Empty-
@@ -76,7 +76,7 @@ TSM
 -Empty-
 
 Right Torso:
-TSM
+Triple Strength Myomer
 -Empty-
 -Empty-
 -Empty-
@@ -122,7 +122,7 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-TSM
+Triple Strength Myomer
 -Empty-
 -Empty-
 -Empty-
@@ -136,7 +136,7 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-TSM
+Triple Strength Myomer
 -Empty-
 -Empty-
 -Empty-

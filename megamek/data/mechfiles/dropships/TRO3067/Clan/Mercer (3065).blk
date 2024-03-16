@@ -20,6 +20,10 @@ Mercer
 (3065)
 </Model>
 
+<mul id:>
+4621
+</mul id:>
+
 <year>
 3065
 </year>
@@ -31,6 +35,10 @@ Mercer
 <type>
 Clan Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Spheroid
@@ -178,7 +186,7 @@ CLArtemisIV
 </structural_integrity>
 
 <source>
-TRO 3067 - Civil War
+TRO: 3067
 </source>
 
 <tonnage>

@@ -20,17 +20,25 @@ Neptune Submarine
 (LRT)
 </Model>
 
+<mul id:>
+4709
+</mul id:>
+
 <year>
 2971
 </year>
 
 <source>
-TRO 3039 - Succession Wars
+TRO: 3039
 </source>
 
 <type>
 IS Level 2
 </type>
+
+<role>
+Sniper
+</role>
 
 <tonnage>
 100.0

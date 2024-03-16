@@ -12,9 +12,13 @@ VTOL
 <Name>
 Mantis Light Attack VTOL
 </Name>
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+2029
+</mul id:>
 <Tonnage>
 15
 </Tonnage>
@@ -43,6 +47,10 @@ ISBeagleActiveProbe
 <type>
 IS Level 2
 </type>
+
+<role>
+Scout
+</role>
 <year>
 3061
 </year>
@@ -60,5 +68,5 @@ VTOL
 </motion_type>
 
 <source>
-Civil War
+TRO: 3060
 </source>

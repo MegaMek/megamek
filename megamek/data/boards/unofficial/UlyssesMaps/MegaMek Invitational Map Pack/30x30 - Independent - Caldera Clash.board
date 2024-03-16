@@ -1,4 +1,8 @@
 size 30 30
+tag "Rough (Auto)"
+tag "Cliffs (Auto)"
+tag "HighHills (Auto)"
+tag "Lava (Auto)"
 hex 0101 0 "pavement:1" "volcano"
 hex 0201 0 "pavement:1" "volcano"
 hex 0301 0 "pavement:1" "volcano"

@@ -47,6 +47,8 @@ class MovementSprite extends Sprite {
 
     private int vel;
 
+    private static final GUIPreferences GUIP = GUIPreferences.getInstance();
+
     public MovementSprite(BoardView boardView1, Entity e, int[] v, Color col, boolean isCurrent) {
         // this.mv = en.getMV();
 
@@ -77,15 +79,13 @@ class MovementSprite extends Sprite {
         // red if offboard
         if (!this.bv.game.getBoard().contains(end)) {
             int colour = 0xff0000; // red
-            int transparency = GUIPreferences.getInstance().getInt(
-                    GUIPreferences.ADVANCED_ATTACK_ARROW_TRANSPARENCY);
+            int transparency = GUIP.getAttachArrowTransparency();
             moveColor = new Color(colour | (transparency << 24), true);
         }
         // dark gray if done
         if (en.isDone()) {
             int colour = 0x696969; // gray
-            int transparency = GUIPreferences.getInstance().getInt(
-                    GUIPreferences.ADVANCED_ATTACK_ARROW_TRANSPARENCY);
+            int transparency = GUIP.getAttachArrowTransparency();
             moveColor = new Color(colour | (transparency << 24), true);
         }
 

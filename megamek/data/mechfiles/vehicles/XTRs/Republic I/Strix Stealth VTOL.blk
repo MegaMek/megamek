@@ -1,0 +1,107 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+VTOL
+</UnitType>
+
+<Name>
+Strix Stealth VTOL
+</Name>
+
+<model>
+
+</model>
+
+<mul id:>
+7298
+</mul id:>
+
+<year>
+3117
+</year>
+
+<type>
+Mixed (Clan Chassis) Experimental
+</type>
+
+<role>
+Scout
+</role>
+
+<motion_type>
+VTOL
+</motion_type>
+
+<cruiseMP>
+7
+</cruiseMP>
+
+<engine_type>
+0
+</engine_type>
+
+<armor_type>
+22
+</armor_type>
+
+<armor_tech>
+8
+</armor_tech>
+
+<armor>
+18
+13
+13
+10
+2
+8
+</armor>
+
+<Body Equipment>
+WatchdogECMSuite
+CLTargeting Computer
+Clan Ultra AC/2 Ammo
+CLVTOLJetBooster
+</Body Equipment>
+
+<Front Equipment>
+CLUltraAC2
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Rotor Equipment>
+</Rotor Equipment>
+
+<Turret Equipment>
+CLERSmallLaser
+CLERSmallLaser
+</Turret Equipment>
+
+<source>
+XTR: Republic I
+</source>
+
+<tonnage>
+30.0
+</tonnage>
+
+<quirks>
+anti_air
+</quirks>
+

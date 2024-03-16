@@ -1,12 +1,19 @@
-Version:1.0
-Hellspawn
-HSN-7D
+chassis:Hellspawn
+model:HSN-7D
+mul id:4307
 
 Config:Biped
 techbase:Inner Sphere
 era:3062
-source:TRO 3067
+source:TRO: 3067
 rules level:2
+role:Missile Boat
+
+
+
+
+quirk:bad_rep_is
+
 
 mass:45
 engine:270 XL Engine(IS)

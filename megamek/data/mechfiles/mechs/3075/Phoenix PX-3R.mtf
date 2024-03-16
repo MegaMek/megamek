@@ -1,12 +1,19 @@
-Version:1.0
-Phoenix
-PX-3R
+chassis:Phoenix
+model:PX-3R
+mul id:2489
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2520
-Source:TRO 3075
+Source:TRO: 3075
 Rules Level:1
+role:Skirmisher
+
+
+
+weaponquirk:direct_torso_mount:LT:1:SRM 2
+weaponquirk:direct_torso_mount:LT:2:SRM 2
+
 
 Mass:50
 Engine:250 Fusion Engine

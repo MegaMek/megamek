@@ -1,12 +1,17 @@
-Version:1.1
-Woodsman
-Prime
+chassis:Woodsman
+model:Prime
+mul id:3587
 
 Config:Biped Omnimech
 techbase:Clan
 era:2866
-source:Succession Wars
+source:TRO: Golden Century
 rules level:2
+role:Brawler
+
+
+quirk:easy_maintain
+
 
 mass:75
 engine:300 Fusion (Clan) Engine(IS)

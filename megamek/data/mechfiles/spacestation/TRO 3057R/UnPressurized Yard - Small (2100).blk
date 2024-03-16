@@ -13,12 +13,16 @@ SpaceStation
 </UnitType>
 
 <Name>
-Unpressurized Yard - Small
+Unpressurized Yard
 </Name>
 
 <Model>
-(2100)
+Small (2100)
 </Model>
+
+<mul id:>
+5087
+</mul id:>
 
 <year>
 2100
@@ -114,7 +118,7 @@ cargobay:34477.0:1:2
 </structural_integrity>
 
 <source>
-TRO3057r - Age of War
+TRO: 3057 Revised
 </source>
 
 <tonnage>

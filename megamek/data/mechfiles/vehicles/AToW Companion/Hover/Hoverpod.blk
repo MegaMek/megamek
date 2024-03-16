@@ -16,9 +16,13 @@ SupportTank
 HoverPod
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+9221
+</mul id:>
 
 <year>
 2500
@@ -31,6 +35,10 @@ HoverPod
 <type>
 IS Level 4
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Hover

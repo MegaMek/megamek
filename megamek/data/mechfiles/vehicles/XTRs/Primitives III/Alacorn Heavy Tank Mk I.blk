@@ -20,6 +20,10 @@ Alacorn Heavy Tank
 Mk I
 </Model>
 
+<mul id:>
+5622
+</mul id:>
+
 <year>
 2561
 </year>
@@ -27,6 +31,10 @@ Mk I
 <type>
 IS Level 4
 </type>
+
+<role>
+Juggernaut
+</role>
 
 <motion_type>
 Tracked
@@ -83,9 +91,18 @@ Autocannon/10
 </Turret Equipment>
 
 <source>
-XTRO Primitives III - Age of War
+XTR: Primitives III
 </source>
 
 <tonnage>
 95.0
 </tonnage>
+
+<quirks>
+difficult_maintain
+imp_com
+poor_performance
+trailer_hitch
+obsolete
+</quirks>
+

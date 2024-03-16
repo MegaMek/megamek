@@ -120,13 +120,13 @@ public class DialogOptionComponent extends FixedYPanel implements ItemListener, 
 
     public static String convertToHtml(String source) {
         StringBuilder result = new StringBuilder();
-        result.append("<html>");
+        result.append("<html><div width=500>");
         StringTokenizer tok = new StringTokenizer(source, "\n");
         while (tok.hasMoreTokens()) {
             result.append(tok.nextToken());
             result.append("<br>");
         }
-        result.append("</html>");
+        result.append("</DIV></html>");
         return result.toString();
     }
     

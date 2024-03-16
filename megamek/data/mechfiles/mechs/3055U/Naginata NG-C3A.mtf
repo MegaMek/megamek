@@ -1,12 +1,20 @@
-Version:1.0
-Naginata
-NG-C3A
+chassis:Naginata
+model:NG-C3A
+mul id:2252
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3055
-Source:TRO 3055 - Clan Invasion
+Source:TRO: 3055
 Rules Level:2
+role:Missile Boat
+
+
+
+
+quirk:cowl
+quirk:stable
+
 
 Mass:95
 Engine:285 Fusion Engine

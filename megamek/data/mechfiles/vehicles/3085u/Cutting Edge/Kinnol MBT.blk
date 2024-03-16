@@ -16,9 +16,13 @@ Tank
 Kinnol MBT
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+1789
+</mul id:>
 
 
 <year>
@@ -28,6 +32,10 @@ Kinnol MBT
 <type>
 IS Level 2
 </type>
+
+<role>
+Skirmisher
+</role>
 
 <tonnage>
 70.0
@@ -92,3 +100,7 @@ ISMML5
 ISLBXAC10
 ISERMediumLaser
 </Turret Equipment>
+
+<source>
+TRO: 3085
+</source>

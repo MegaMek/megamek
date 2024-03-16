@@ -1,12 +1,23 @@
-Version:1.1
-Archangel
-C-ANG-O Invictus
+chassis:Archangel
+model:C-ANG-O Invictus
+mul id:65
 
 Config:Biped Omnimech
 techbase:Inner Sphere
 era:3069
-source:TRO 3075
+source:TRO: 3075
 rules level:2
+role:Sniper
+
+
+
+
+quirk:command_mech
+quirk:imp_com
+quirk:imp_sensors
+quirk:bad_rep_clan
+quirk:bad_rep_is
+
 
 mass:100
 engine:300 Compact Engine(IS)

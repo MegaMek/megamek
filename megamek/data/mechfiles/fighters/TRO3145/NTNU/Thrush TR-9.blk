@@ -1,0 +1,116 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Aero
+</UnitType>
+
+<Name>
+Thrush
+</Name>
+
+<Model>
+TR-9
+</Model>
+
+<mul id:>
+8015
+</mul id:>
+
+<year>
+3143
+</year>
+
+<originalBuildYear>
+3143
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+</transporters>
+
+<SafeThrust>
+12
+</SafeThrust>
+
+<cockpit_type>
+0
+</cockpit_type>
+
+<heatsinks>
+10
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+320
+</fuel>
+
+<engine_type>
+2
+</engine_type>
+
+<armor_type>
+3
+</armor_type>
+
+<armor_tech>
+5
+</armor_tech>
+
+<armor>
+16
+14
+14
+12
+</armor>
+
+<Nose Equipment>
+ISERMediumLaser
+</Nose Equipment>
+
+<Left Wing Equipment>
+ISERMediumLaser
+Medium Re-engineered Laser
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+Medium Re-engineered Laser
+ISERMediumLaser
+</Right Wing Equipment>
+
+<Aft Equipment>
+IS Reflective
+</Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+</Fuselage Equipment>
+
+<source>
+Record Sheets: 3150
+</source>
+
+<tonnage>
+25.0
+</tonnage>
+

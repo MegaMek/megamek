@@ -1,12 +1,21 @@
-Version:1.0
-HawkWolf
-HWK-4F
+chassis:HawkWolf
+model:HWK-4F
+mul id:6576
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3100
-Source:TRO 3145 Mercenaries - Late Republic
+Source:TRO: 3145 Mercenaries
 Rules Level:2
+role:Missile Boat
+
+
+
+quirk:easy_maintain
+quirk:fast_reload
+quirk:no_arms
+quirk:pro_actuator
+
 
 Mass:80
 Engine:320 Fusion Engine(IS)

@@ -16,9 +16,13 @@ SupportTank
 Prometheus Combat Support Bridgelayer
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+4872
+</mul id:>
 
 <year>
 2471
@@ -27,6 +31,10 @@ Prometheus Combat Support Bridgelayer
 <type>
 IS Level 3
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Tracked
@@ -83,7 +91,7 @@ HeavyBridgeLayer
 </Rear Equipment>
 
 <source>
-TRO 3075 - Age of War
+TRO: 3075
 </source>
 
 <tonnage>

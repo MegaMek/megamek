@@ -20,6 +20,10 @@ Saladin Assault Hover Tank
 (Armor)
 </Model>
 
+<mul id:>
+2777
+</mul id:>
+
 <year>
 2960
 </year>
@@ -27,6 +31,10 @@ Saladin Assault Hover Tank
 <type>
 IS Level 1
 </type>
+
+<role>
+Striker
+</role>
 
 <motion_type>
 Hover
@@ -66,7 +74,7 @@ Autocannon/20
 </Rear Equipment>
 
 <source>
-TRO 3039 - Succession Wars
+TRO: 3039
 </source>
 
 <tonnage>

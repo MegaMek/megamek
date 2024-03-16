@@ -1,12 +1,22 @@
-Version:1.0
-Locust
-LCT-1S
+chassis:Locust
+model:LCT-1S
+mul id:1900
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2567
-Source:TRO 3039 - Age of War
+Source:TRO: 3039
 Rules Level:1
+role:Scout
+
+
+
+quirk:compact_mech
+quirk:low_profile
+quirk:cramped_cockpit
+quirk:no_arms
+quirk:weak_legs
+
 
 Mass:20
 Engine:160 Fusion Engine

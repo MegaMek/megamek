@@ -20,6 +20,10 @@ Chippewa
 CHP-W5b
 </Model>
 
+<mul id:>
+585
+</mul id:>
+
 <year>
 2731
 </year>
@@ -31,6 +35,10 @@ CHP-W5b
 <type>
 IS Level 2
 </type>
+
+<role>
+Attack Fighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -113,7 +121,7 @@ IS Ammo LRM-15 Artemis-capable
 </Fuselage Equipment>
 
 <source>
-H:Operation Klondyke - Star League
+Historical: Operation Klondike
 </source>
 
 <tonnage>
@@ -149,7 +157,7 @@ TARGETING:Rander TAS
 </systemManufacturers>
 
 <source>
-Hist Operation Klondike - Succession Wars
+Hist Operation Klondike
 </source>
 
 <tonnage>

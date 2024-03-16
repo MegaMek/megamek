@@ -20,6 +20,10 @@ Saurer-Bucher Fire Engine
 TLF-LL6500
 </Model>
 
+<mul id:>
+4980
+</mul id:>
+
 <year>
 2400
 </year>
@@ -31,6 +35,10 @@ TLF-LL6500
 <type>
 IS Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Wheeled
@@ -87,7 +95,7 @@ Tank Sprayer
 </structural_tech_rating>
 
 <source>
-TRO VAr - Age of War
+TRO: Vehicle Annex (Revised)
 </source>
 
 <tonnage>

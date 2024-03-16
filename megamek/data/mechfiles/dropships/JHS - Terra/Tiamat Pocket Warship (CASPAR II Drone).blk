@@ -20,6 +20,10 @@ Tiamat Pocket Warship
 (CASPAR II Drone)
 </Model>
 
+<mul id:>
+3256
+</mul id:>
+
 <year>
 3079
 </year>
@@ -31,6 +35,10 @@ Tiamat Pocket Warship
 <type>
 IS Level 4
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Spheroid
@@ -243,7 +251,7 @@ Piloting 5).
 </notes>
 
 <source>
-Jihad Hot Spots: Terra - Jihad
+Jihad Hot Spots: Terra
 </source>
 
 <tonnage>

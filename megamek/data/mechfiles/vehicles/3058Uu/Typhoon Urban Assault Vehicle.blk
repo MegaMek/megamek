@@ -12,9 +12,13 @@ Tank
 <Name>
 Typhoon Urban Assault Vehicle
 </Name>
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+3337
+</mul id:>
 <Tonnage>
 70
 </Tonnage>
@@ -54,6 +58,10 @@ ISSRM6 Ammo
 <type>
 IS Level 2
 </type>
+
+<role>
+Juggernaut
+</role>
 <year>
 3057
 </year>
@@ -70,5 +78,5 @@ IS Level 2
 Wheeled
 </motion_type>
 <source>
-Clan Invasion
+TRO: 3058
 </source>

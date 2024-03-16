@@ -45,7 +45,7 @@ public class InfantryRifleSunbeamStarfireERLaserWeapon extends InfantryWeapon {
 		infantryRange = 3;
 		ammoWeight = 0.0003;
 		shots = 5;
-		rulesRefs = "273,TM";
+		rulesRefs = "273, TM";
 		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3050, 3052, 3075, DATE_NONE, DATE_NONE)
 		        .setISApproximate(true, false, false, false, false)
 		        .setPrototypeFactions(F_FW)

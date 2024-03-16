@@ -1,12 +1,22 @@
-Version:1.0
-Warhammer
-WHM-11T
+chassis:Warhammer
+model:WHM-11T
+mul id:3482
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3084
-Source:Dark Age
+Source:Record Sheets: 3085 Unabridged - Project Phoenix
 Rules Level:2
+role:Skirmisher
+
+
+
+quirk:rugged_2
+quirk:searchlight
+quirk:stable
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+
 
 Mass:70
 Engine:280 XL Engine(IS)
@@ -151,4 +161,19 @@ Improved Jump Jet
 -Empty-
 -Empty-
 
-imagefile:.\data\images\fluff\Mech\3085 Warhammer .jpg
+overview:The Warhammer proved to be a very capable 'Mech, and for centuries practically defined the entire class of heavy 'Mechs. Boasting incredible firepower and respectable armoring, the Warhammer served prominently in the Star League Defense Force and was one of the premier 'Mechs in the Gunslinger Program. Indeed, many of the greatest MechWarriors in history were Warhammer pilots.
+
+capabilities:The Warhammer was well-protected with strong armor for its age and weight, and the large number of heat sinks allowed it to "fire and maneuver" without fear. The most common engine arrangement propels the 'Mech to a cruising speed of 43.2 km/h and a top speed of 64.8 km/h, which is quick enough to keep up with most battles. The 'Mech's electronics, albeit antiquated by the 31st Century, were basic and functional, allowing it to assume command tasks when necessary. The targeting mechanism, in particular, made use of an unique Searchlight positioned above the 'Mech's left shoulder. The device could act as a conventional searchlight or immediately connect to the O/P 1500 ARB tracking system, transforming the 'Mech into a capable night fighter.
+
+deployment:This Taurian Concordat variant, introduced in 3084, replaced all the standard weapons with two Snub-Nose PPCs, two Light PPCs, two ER medium lasers, and an MML-5. Light ferro-fibrous armor and CASE protect the 'Mech. The most interesting update was the inclusion of five Improved Jump Jets. Thirteen double heat sinks and an XL engine completed the 'Mech. 
+
+history:StarCorps Industries introduced the Warhammer BattleMech in 2515 as "a mobile 'Mech with adequate firepower to destroy or severely damage any 'Mech of the same weight class or lower." The Warhammer continued to serve in the forces of the Great Houses throughout the Succession Wars after the Star League's demise. Despite very modest production rates, the large number of Warhammer factories dispersed over both the Inner Sphere and Periphery contributed to its endurance; Ronin Inc. was never able to construct more than five Warhammers per year from their Wallis factory. The recovery of the Helm Memory Core would prompt Inner Sphere manufacturers to create a slew of new Lostech-powered Warhammer versions, while the Periphery continued to produce original models for mercenaries and black marketeers. After the Clan Invasion, StarCorps chose to rehabilitate the ancient 'Mech with the greatest technological advancements, giving it new life. Initially, the business planned to construct only one new variety from its Crofton plant, but when word of the idea spread, other departments within StarCorps became involved and gathered on Crofton for a week-long conference to iron out the details. The conference turned out to be more jubilant than expected, and at the end of the bacchanalian "negotiations," it was determined that four new variations would be built: one for each of the Federated Suns, Capellan, Free Worlds League, and Lyran forces, employing technology unique to each realm. During the FedCom Civil War, some of these new 'Mechs were put through their paces.
+
+manufacturer:Taurus Territorial Industries (Refit)
+primaryfactory:Taurus
+systemmanufacturer:CHASSIS:StarCorps 100
+systemmanufacturer:ENGINE:VOX 280 XL
+systemmanufacturer:ARMOR:Valiant Ringmail Light Ferro-Fibrous with CASE
+systemmanufacturer:JUMPJET:Unknown Improved Jump Jet
+systemmanufacturer:COMMUNICATIONS:O/P 3000 COMSET
+systemmanufacturer:TARGETING:O/P 1500 ARB

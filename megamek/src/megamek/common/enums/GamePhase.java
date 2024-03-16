@@ -21,7 +21,6 @@ package megamek.common.enums;
 import megamek.MegaMek;
 import megamek.common.*;
 import megamek.common.options.OptionsConstants;
-import megamek.common.util.EncodeControl;
 
 import java.util.Objects;
 import java.util.ResourceBundle;
@@ -37,11 +36,13 @@ public enum GamePhase {
     INITIATIVE_REPORT("GamePhase.INITIATIVE_REPORT.text"),
     TARGETING("GamePhase.TARGETING.text"),
     TARGETING_REPORT("GamePhase.TARGETING_REPORT.text"),
+    PREMOVEMENT("GamePhase.PREMOVEMENT.text"),
     MOVEMENT("GamePhase.MOVEMENT.text"),
     MOVEMENT_REPORT("GamePhase.MOVEMENT_REPORT.text"),
     OFFBOARD("GamePhase.OFFBOARD.text"),
     OFFBOARD_REPORT("GamePhase.OFFBOARD_REPORT.text"),
     POINTBLANK_SHOT("GamePhase.POINTBLANK_SHOT.text"), // Fake phase only reached through hidden units
+    PREFIRING("GamePhase.PREFIRING.text"),
     FIRING("GamePhase.FIRING.text"),
     FIRING_REPORT("GamePhase.FIRING_REPORT.text"),
     PHYSICAL("GamePhase.PHYSICAL.text"),
@@ -61,7 +62,7 @@ public enum GamePhase {
     //region Constructors
     GamePhase(final String name) {
         final ResourceBundle resources = ResourceBundle.getBundle("megamek.common.messages",
-                MegaMek.getMMOptions().getLocale(), new EncodeControl());
+                MegaMek.getMMOptions().getLocale());
         this.name = resources.getString(name);
     }
     //endregion Constructors
@@ -103,6 +104,10 @@ public enum GamePhase {
         return this == TARGETING_REPORT;
     }
 
+    public boolean isPremovement() {
+        return this == PREMOVEMENT;
+    }
+
     public boolean isMovement() {
         return this == MOVEMENT;
     }
@@ -121,6 +126,10 @@ public enum GamePhase {
 
     public boolean isPointblankShot() {
         return this == POINTBLANK_SHOT;
+    }
+
+    public boolean isPrefiring() {
+        return this == PREFIRING;
     }
 
     public boolean isFiring() {
@@ -172,6 +181,7 @@ public enum GamePhase {
             case FIRING_REPORT:
             case PHYSICAL_REPORT:
             case END_REPORT:
+            case VICTORY:
                 return true;
             default:
                 return false;
@@ -185,12 +195,22 @@ public enum GamePhase {
         switch (this) {
             case DEPLOYMENT:
             case TARGETING:
+            case PREMOVEMENT:
             case MOVEMENT:
             case OFFBOARD:
+            case PREFIRING:
             case FIRING:
             case PHYSICAL:
             case DEPLOY_MINEFIELDS:
             case SET_ARTILLERY_AUTOHIT_HEXES:
+            case INITIATIVE_REPORT:
+            case TARGETING_REPORT:
+            case MOVEMENT_REPORT:
+            case OFFBOARD_REPORT:
+            case FIRING_REPORT:
+            case PHYSICAL_REPORT:
+            case END_REPORT:
+            case VICTORY:
                 return true;
             default:
                 return false;
@@ -207,7 +227,9 @@ public enum GamePhase {
                 return false;
             case DEPLOYMENT:
             case TARGETING:
+            case PREMOVEMENT:
             case MOVEMENT:
+            case PREFIRING:
             case FIRING:
             case PHYSICAL:
             case DEPLOY_MINEFIELDS:
@@ -245,7 +267,7 @@ public enum GamePhase {
                         || (ammoType.getAmmoType() == AmmoType.T_LONG_TOM)
                         || (ammoType.getAmmoType() == AmmoType.T_SNIPER)
                         || (ammoType.getAmmoType() == AmmoType.T_THUMPER))
-                        && (ammoType.getMunitionType() == AmmoType.M_HOMING)) {
+                        && (ammoType.getMunitionType().contains(AmmoType.Munitions.M_HOMING))) {
                     return true;
                 }
             }
@@ -261,9 +283,8 @@ public enum GamePhase {
         // is playable. This prevents issues from aerospace homing artillery with the aerospace
         // unit having left the field already, for example
         return game.getAttacksVector().stream()
-                .map(attackHandler -> attackHandler.getWaa().getEntity(game).getEquipment(attackHandler.getWaa().getAmmoId()))
-                .filter(Objects::nonNull).map(ammo -> (AmmoType) ammo.getType())
-                .anyMatch(ammoType -> ammoType.getMunitionType() == AmmoType.M_HOMING);
+                .map(attackHandler -> attackHandler.getWaa())
+                .filter(Objects::nonNull).anyMatch(waa -> waa.getAmmoMunitionType().contains(AmmoType.Munitions.M_HOMING));
     }
 
     /**
@@ -275,7 +296,9 @@ public enum GamePhase {
             case SET_ARTILLERY_AUTOHIT_HEXES:
             case DEPLOY_MINEFIELDS:
             case DEPLOYMENT:
+            case PREMOVEMENT:
             case MOVEMENT:
+            case PREFIRING:
             case FIRING:
             case PHYSICAL:
             case TARGETING:
@@ -287,7 +310,7 @@ public enum GamePhase {
     }
 
     /**
-     * @param game the current game
+     * @param game The current {@link Game}
      * @return true if this phase is simultaneous
      */
     public boolean isSimultaneous(final Game game) {
@@ -303,6 +326,9 @@ public enum GamePhase {
             case TARGETING:
             case OFFBOARD:
                 return game.getOptions().booleanOption(OptionsConstants.INIT_SIMULTANEOUS_TARGETING);
+            case PREMOVEMENT:
+            case PREFIRING:
+                return true;
             default:
                 return false;
         }

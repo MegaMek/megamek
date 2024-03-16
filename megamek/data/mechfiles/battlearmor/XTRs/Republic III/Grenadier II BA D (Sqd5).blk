@@ -1,0 +1,127 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+Grenadier II Battle Armor
+</Name>
+
+<Model>
+D(Sqd5)
+</Model>
+
+<mul id:>
+8833
+</mul id:>
+
+<year>
+3137
+</year>
+
+<type>
+Mixed (IS Chassis) Advanced
+</type>
+
+<role>
+Missile Boat
+</role>
+
+<motion_type>
+Leg
+</motion_type>
+
+<cruiseMP>
+2
+</cruiseMP>
+
+<armor_type>
+32
+</armor_type>
+
+<armor_tech>
+2
+</armor_tech>
+
+<Squad Equipment>
+BABasicManipulator:LA
+ISBAFireDrakeNeedler:LA
+ISBATubeArtillery:Body
+ISBATubeArtilleryAmmo:Body:Shots4#
+ISBATubeArtilleryAmmo:Body:Shots4#
+Clan BA Stealth:LA
+Clan BA Stealth:LA
+Clan BA Stealth:RA
+Clan BA Stealth:RA
+</Squad Equipment>
+
+<source>
+XTR: Republic III
+</source>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+0
+</jumpingMP>
+
+<armor>
+12
+</armor>
+
+<Trooper Count>
+5
+</Trooper Count>
+
+<weightclass>
+3
+</weightclass>
+
+<overview>
+The Grenadier II battle armor suit is an evolution of the Grenadier suit already in use by the AFFS.
+</overview>
+
+<capabilities>
+The Grenadier II has a Modular Weapon Mount in the left arm and a second mounted in the body. The right arm has a single Basic Manipulator.
+</capabilities>
+
+<deployment>
+Exclusive to The Republic of the Sphere, this configuration carries a Firedrake Support Needler on the arm mount and a BA Tube Artillery system on the body mount. The artillery system has an eight shot magazine.
+</deployment>
+
+<history>
+It uses lighter Clan-spec Standard Stealth armor mated to an Inner Sphere chassis to save weight. This allows the Grenadier II to pack as much firepower and protection as a Grenadier, but at a lighter weight. In addition, the lighter weight of the Grenadier II means it can be transported by OmniMechs.
+</history>
+
+<manufacturer>
+General Motors
+</manufacturer>
+
+<primaryFactory>
+Talcott
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+JUMPJET:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<quirks>
+difficult_maintain
+</quirks>
+

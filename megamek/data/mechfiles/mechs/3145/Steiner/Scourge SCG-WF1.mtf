@@ -1,12 +1,18 @@
-Version:1.0
-Scourge
-SCG-WF1
+chassis:Scourge
+model:SCG-WF1
+mul id:6625
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3133
-Source:TRO 3145 Lyran Commonwealth - Dark Ages
+Source:TRO: 3145 Lyran Commonwealth
 Rules Level:3
+role:Skirmisher
+
+
+
+quirk:reinforced_legs
+
 
 Mass:65
 Engine:325 XL Engine(IS)

@@ -15,19 +15,27 @@ Tank
 <Name>
 JES I Tactical Missile Carrier
 </Name>
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+1703
+</mul id:>
 <year>
 3075
 </year>
 <source>
-Jihad
+TRO: 3075
 </source>
 
 <type>
 IS Level 2
 </type>
+
+<role>
+Striker
+</role>
 
 <tonnage>
 50.0

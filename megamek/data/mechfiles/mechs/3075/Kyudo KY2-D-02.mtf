@@ -1,12 +1,19 @@
-Version:1.0
-Kyudo
-KY2-D-02
+chassis:Kyudo
+model:KY2-D-02
+mul id:1851
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2625
-Source:TRO 3075
+source:TRO: 3075
 Rules Level:2
+role:Missile Boat
+
+
+
+quirk:easy_pilot
+quirk:exp_actuator
+
 
 Mass:45
 Engine:225 Fusion Engine

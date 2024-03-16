@@ -15,6 +15,10 @@ Po Heavy Tank
 <Model>
 (LB-X)
 </Model>
+
+<mul id:>
+2547
+</mul id:>
 <Tonnage>
 60
 </Tonnage>
@@ -44,6 +48,10 @@ ISMG Ammo (200)
 <type>
 IS Level 2
 </type>
+
+<role>
+Brawler
+</role>
 <year>
 3069
 </year>
@@ -60,5 +68,5 @@ IS Level 2
 Tracked
 </motion_type>
 <source>
-Jihad
+TRO: 3058
 </source>

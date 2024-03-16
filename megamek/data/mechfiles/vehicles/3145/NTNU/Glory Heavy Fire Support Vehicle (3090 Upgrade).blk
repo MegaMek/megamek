@@ -20,6 +20,10 @@ Glory Heavy Fire Support Vehicle
 (3090 Upgrade)
 </Model>
 
+<mul id:>
+6803
+</mul id:>
+
 <year>
 3090
 </year>
@@ -27,6 +31,10 @@ Glory Heavy Fire Support Vehicle
 <type>
 IS Level 2
 </type>
+
+<role>
+Juggernaut
+</role>
 
 <motion_type>
 Tracked
@@ -96,7 +104,7 @@ ISArtemisIV
 </Turret Equipment>
 
 <source>
-RS 3145 NT NU
+Record Sheets: 3145 New Tech New Upgrades
 </source>
 
 <tonnage>

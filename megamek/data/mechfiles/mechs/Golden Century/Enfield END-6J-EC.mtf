@@ -1,12 +1,19 @@
-Version:1.1
-Enfield
-END-6J-EC
+chassis:Enfield
+model:END-6J-EC
+mul id:7679
 
 Config:Biped
 techbase:Mixed (Clan Chassis)
 era:2825
-source:Succession Wars
+source:TRO: Golden Century
 rules level:4
+role:Skirmisher
+
+
+
+
+quirk:ext_twist
+
 
 mass:50
 engine:250 XL Engine(IS)
@@ -147,5 +154,5 @@ IS Endo Steel
 -Empty-
 -Empty-
 
-history:A popular Mongoose ’Mech the Enfield was upgraded with a prototype ultra-autocannon and laser package that came with an increase in heat. 
+history:A popular Mongoose BattleMech the Enfield was upgraded with a prototype ultra-autocannon and laser package that came with an increase in heat.
 

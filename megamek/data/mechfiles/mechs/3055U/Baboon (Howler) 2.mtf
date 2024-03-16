@@ -1,12 +1,19 @@
-Version:1.0
-Baboon (Howler)
-2
+chassis:Baboon
+clanname:Howler
+model:2
+mul id:190
 
 Config:Biped
 TechBase:Clan
 Era:3063
-Source:TRO 3055 - Civil War
+Source:TRO: 3055
 Rules Level:2
+role:Striker
+
+quirk:ext_twist
+quirk:low_profile
+quirk:searchlight
+
 
 Mass:20
 Engine:120 XL (Clan) Engine
@@ -148,4 +155,18 @@ CLDoubleHeatSink
 -Empty-
 -Empty-
 
+overview:The Howler is a potent missile boat for its size. Meant to provide fire support to light garrison Stars.		
 
+capabilities:It is relatively fast for a 'Mech its size, topping out at 119 km/h. Its good speed and armament is made possible by the use of an endo steel structure and three tons of ferro-fibrous armor.	
+
+deployment:The Howler was redesigned by Clan Steel Viper scientists to improve their light second-line units after the Clan was expelled from the Inner Sphere by Clan Jade Falcon. A smaller extralight engine provides the space for four ATM-3s along with two tons of ammunition. Though the 'Mech's running speed is reduced, it uses MASC to accelerate to 130 km/h in short bursts.
+
+history:The Howler (or Baboon, as the Inner Sphere calls it) was first seen in Clan Jade Falcon's second-line Clusters. Once thought to be unique to that Clan, the design has now appeared among the Snow Ravens, Star Adders, and Steel Vipers. The Steel Vipers returned to the Clan homeworlds and restructured their touman after the Jade Falcons kicked them out of the Inner Sphere occupied zones. Aside from improvements in front-line troops, numerous second-line units gained new people and equipment. Steel Vipers addressed the needs of its heavy forces with designs like as the Matador, Scylla, the heavy laser form of the Phoenix Hawk IIC, and the upgraded version of the Viper. Lighter second-line BattleMech formations, on the other hand, lagged behind. The Viper Khans explored acceptable designs to correct this imbalance and eventually settled on the successful Baboon.
+
+manufacturer:Novy Minsky Armaments Plant
+primaryfactory:New Kent
+systemmanufacturer:CHASSIS:Type-A Endo Steel
+systemmanufacturer:ENGINE:General Systems 120 XL
+systemmanufacturer:ARMOR:Type 2 Ferro Fibrous w/CASE
+systemmanufacturer:COMMUNICATIONS:Mercer 973
+systemmanufacturer:TARGETING:GEG Pattern 490/1

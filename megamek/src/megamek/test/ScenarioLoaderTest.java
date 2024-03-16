@@ -10,7 +10,8 @@ import java.util.Locale;
 
 import megamek.common.Game;
 import megamek.common.MechSummaryCache;
-import megamek.server.ScenarioLoader;
+import megamek.server.GameManager;
+import megamek.common.scenario.ScenarioLoader;
 import megamek.server.Server;
 
 public class ScenarioLoaderTest {
@@ -59,7 +60,7 @@ public class ScenarioLoaderTest {
         while (!msc.isInitialized()) {
             try {
                 Thread.sleep(1000);
-            } catch (InterruptedException e) {
+            } catch (InterruptedException ignored) {
 
             }
         }
@@ -82,15 +83,16 @@ public class ScenarioLoaderTest {
             ScenarioLoader loader = new ScenarioLoader(file);
             try {
                 Game game = loader.createGame();
-                Server server = new Server("test", port + 1);
+                GameManager gameManager = new GameManager();
+                Server server = new Server("test", port + 1, gameManager);
                 server.setGame(game);
-                loader.applyDamage(server);
+                loader.applyDamage(gameManager);
                 server.die();
-            } catch (Exception e) {
-                e.printStackTrace();
+            } catch (Exception ex) {
+                ex.printStackTrace();
             }
             
-            if (errCache.size() > 0) {
+            if (!errCache.isEmpty()) {
                 errorAccumulator.add("ERROR in " + file.getPath());
                 originalErr.println("ERROR in " + file.getPath());
                 for (String line : errCache) {

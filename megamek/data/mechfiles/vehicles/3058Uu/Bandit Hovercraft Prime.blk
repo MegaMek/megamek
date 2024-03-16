@@ -20,6 +20,10 @@ Bandit Hovercraft
 Prime
 </Model>
 
+<mul id:>
+239
+</mul id:>
+
 <year>
 3008
 </year>
@@ -28,15 +32,16 @@ Prime
 IS Level 2
 </type>
 
+<role>
+Striker
+</role>
+
 <motion_type>
 Hover
 </motion_type>
 
 <transporters>
 troopspace:4.0
-</transporters>
-
-<transporters>
 BattleArmorHandles - troopers:-1
 </transporters>
 
@@ -87,7 +92,7 @@ Medium Laser:OMNI
 </Turret Equipment>
 
 <source>
-Succession Wars
+TRO: 3058
 </source>
 
 <tonnage>
@@ -97,3 +102,12 @@ Succession Wars
 <baseChassisTurretWeight>
 1.0
 </baseChassisTurretWeight>
+
+<weaponQuirks>
+mod_weapons:FR:0:SRM 2
+mod_weapons:FR:1:SRM 2
+mod_weapons:FR:2:Machine Gun
+mod_weapons:TU:0:Medium Laser
+mod_weapons:TU:1:Medium Laser
+mod_weapons:TU:2:Medium Laser
+</weaponQuirks>

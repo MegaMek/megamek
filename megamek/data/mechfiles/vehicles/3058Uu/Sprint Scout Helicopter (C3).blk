@@ -15,6 +15,10 @@ Sprint Scout Helicopter
 <Model>
 (C3)
 </Model>
+
+<mul id:>
+3022
+</mul id:>
 <Tonnage>
 10
 </Tonnage>
@@ -35,6 +39,10 @@ ISBeagleActiveProbe
 <type>
 IS Level 2
 </type>
+
+<role>
+Scout
+</role>
 <year>
 3057
 </year>
@@ -51,5 +59,5 @@ IS Level 2
 VTOL
 </motion_type>
 <source>
-Clan Invasion
+TRO: 3058
 </source>

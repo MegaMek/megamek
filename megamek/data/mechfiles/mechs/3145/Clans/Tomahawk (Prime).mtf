@@ -1,12 +1,13 @@
-Version:1.0
-Tomahawk
-(Prime)
+chassis:Tomahawk
+model:(Prime)
+mul id:6298
 
 Config:Biped Omnimech
 techbase:Clan
 era:3063
-source:TRO 3145 The Clans - Civil War
+source:TRO: 3145 The Clans
 rules level:2
+role:Juggernaut
 
 mass:100
 engine:300 XL (Clan) Engine(IS)

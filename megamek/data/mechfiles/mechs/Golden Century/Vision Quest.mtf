@@ -1,12 +1,13 @@
-Version:1.1
-Vision Quest
-(Standard)
+chassis:Vision Quest
+model:
+mul id:7638
 
 Config:Biped
 techbase:Clan
 era:2832
-source:Succession Wars
+source:TRO: Golden Century
 rules level:2
+role:Brawler
 
 mass:60
 engine:300 XL (Clan) Engine(IS)

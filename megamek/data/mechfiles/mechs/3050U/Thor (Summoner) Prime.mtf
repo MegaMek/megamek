@@ -1,12 +1,19 @@
-Version:1.0
-Thor (Summoner)
-Prime
+chassis:Thor
+clanname:Summoner
+model:Prime
+mul id:3183
 
 Config:Biped Omnimech
 techbase:Clan
 era:2872
-source:TRO Clan Invasion - Succession Wars
+source:TRO: Clan Invasion
 rules level:2
+role:Sniper
+
+
+quirk:imp_com
+quirk:ubiquitous_clan
+
 
 mass:70
 engine:350 XL (Clan) Engine(IS)

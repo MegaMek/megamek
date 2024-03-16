@@ -1,12 +1,18 @@
-Version:1.0
-Ostroc
-OSR-5C
+chassis:Ostroc
+model:OSR-5C
+mul id:2358
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3082
-Source:Dark Age
+source:TRO: 3085
 Rules Level:2
+role:Skirmisher
+
+
+
+quirk:low_profile
+
 
 Mass:60
 Engine:360 XL Engine(IS)

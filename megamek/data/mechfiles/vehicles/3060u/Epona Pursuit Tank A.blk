@@ -20,6 +20,10 @@ Epona Pursuit Tank
 A
 </Model>
 
+<mul id:>
+991
+</mul id:>
+
 <year>
 2884
 </year>
@@ -27,6 +31,10 @@ A
 <type>
 Clan Level 3
 </type>
+
+<role>
+Missile Boat
+</role>
 
 <motion_type>
 Hover
@@ -93,7 +101,7 @@ CLLRM20:OMNI
 </Turret Equipment>
 
 <source>
-Succession Wars
+TRO: 3060
 </source>
 
 <tonnage>

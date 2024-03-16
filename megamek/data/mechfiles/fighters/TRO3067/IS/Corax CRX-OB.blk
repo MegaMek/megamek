@@ -20,6 +20,10 @@ Corax
 CRX-OB
 </Model>
 
+<mul id:>
+3998
+</mul id:>
+
 <year>
 3067
 </year>
@@ -31,6 +35,10 @@ CRX-OB
 <type>
 IS Level 2
 </type>
+
+<role>
+Fast Dogfighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -101,7 +109,7 @@ Small Laser:OMNI
 </Fuselage Equipment>
 
 <source>
-TRO 3067 - Civil War
+TRO: 3067
 </source>
 
 <tonnage>

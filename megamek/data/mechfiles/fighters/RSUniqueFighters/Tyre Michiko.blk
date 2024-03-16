@@ -20,6 +20,10 @@ Tyre
 (Michiko)
 </Model>
 
+<mul id:>
+3339
+</mul id:>
+
 <year>
 3064
 </year>
@@ -31,6 +35,10 @@ Tyre
 <type>
 Clan Level 2
 </type>
+
+<role>
+Fast Dogfighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -100,7 +108,7 @@ CLCASE
 </Fuselage Equipment>
 
 <source>
-RS Unique Fighters - Civil War
+Record Sheets: Unique Fighters
 </source>
 
 <tonnage>

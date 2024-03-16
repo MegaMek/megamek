@@ -1,5 +1,6 @@
 /*
- * MegaMek - Copyright (C) 2004 Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2004 - Ben Mazur (bmazur@sev.org).
+ * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -26,16 +27,17 @@ import megamek.common.ToHitData;
 import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
+import megamek.server.GameManager;
 import megamek.server.Server;
 
 /**
  * @author Andrew Hunter
- * Created on Sep 29, 2004
+ * @since Sept 29, 2004
  */
 public class UltraWeaponHandler extends AmmoWeaponHandler {
     private static final long serialVersionUID = 7551194199079004134L;
     int howManyShots;
-    private final boolean twoRollsUltra; // Tracks whether or not this is an
+    private final boolean twoRollsUltra; // Tracks whether this is an
 
     // ultra AC using the unofficial "two rolls" rule. Can be final because
     // this isn't really going to change over the course of a game.
@@ -45,76 +47,76 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
      * @param w
      * @param g
      */
-    public UltraWeaponHandler(ToHitData t, WeaponAttackAction w, Game g,
-            Server s) {
-        super(t, w, g, s);
+    public UltraWeaponHandler(ToHitData t, WeaponAttackAction w, Game g, GameManager m) {
+        super(t, w, g, m);
         twoRollsUltra = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_UAC_TWOROLLS)
-                && ((wtype.getAmmoType() == AmmoType.T_AC_ULTRA) || (wtype
-                        .getAmmoType() == AmmoType.T_AC_ULTRA_THB));
+                && ((wtype.getAmmoType() == AmmoType.T_AC_ULTRA)
+                        || (wtype.getAmmoType() == AmmoType.T_AC_ULTRA_THB));
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#addHeatUseAmmo()
      */
     @Override
     protected void useAmmo() {
         setDone();
         checkAmmo();
+        howManyShots = (weapon.curMode().equals(Weapon.MODE_AC_SINGLE) ? 1 : 2);
         int total = ae.getTotalAmmoOfType(ammo.getType());
-        if ((total > 1) && !weapon.curMode().equals(Weapon.MODE_AC_SINGLE)) {
-            howManyShots = 2;
-        } else {
+        if (total > 1 ) {
+            // No need to change howManyShots
+        } else if (total == 1) {
             howManyShots = 1;
+        } else {
+            howManyShots = 0;
         }
-        if (total == 0) {
-            // can't happen?
 
-        }
+        // Handle bins that are empty or will be emptied by this attack
+        attemptToReloadWeapon();
+        reduceShotsLeft(howManyShots);
+    }
+
+    protected void attemptToReloadWeapon() {
+        // We _may_ be able to reload from another ammo source, but in case
+        // a previous attack burned through all the ammo, this attack may be SOL.
         if (ammo.getUsableShotsLeft() == 0) {
             ae.loadWeapon(weapon);
             ammo = weapon.getLinked();
-            // there will be some ammo somewhere, otherwise shot will not have
-            // been fired.
         }
-        if (ammo.getUsableShotsLeft() == 1) {
-            ammo.setShotsLeft(0);
-            ae.loadWeapon(weapon);
-            ammo = weapon.getLinked();
-            // that fired one, do we need to fire another?
-            ammo.setShotsLeft(ammo.getBaseShotsLeft()
-                    - ((howManyShots == 2) ? 1 : 0));
-        } else {
-            ammo.setShotsLeft(ammo.getBaseShotsLeft() - howManyShots);
-        }
+    }
 
+    protected void reduceShotsLeft(int shotsNeedFiring) {
+        while (shotsNeedFiring > ammo.getUsableShotsLeft()) {
+            shotsNeedFiring -= ammo.getBaseShotsLeft();
+            ammo.setShotsLeft(0);
+            attemptToReloadWeapon();
+        }
+        ammo.setShotsLeft(ammo.getBaseShotsLeft() - shotsNeedFiring);
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#calcHits(java.util.Vector)
      */
     @Override
     protected int calcHits(Vector<Report> vPhaseReport) {
-        // conventional infantry gets hit in one lump
-        // BAs can't mount UACS/RACs
+        // conventional infantry gets hit in one lump BAs can't mount UACS/RACs
         if (target.isConventionalInfantry()) {
             return 1;
         }
-
-        bSalvo = true;
 
         if (howManyShots == 1 || twoRollsUltra) {
             return 1;
         }
 
-        int shotsHit;
+        bSalvo = true;
+
         int nMod = getClusterModifiers(true);
 
-        shotsHit = allShotsHit() ? howManyShots : Compute.missilesHit(
-                howManyShots, nMod);
+        int shotsHit = allShotsHit() ? howManyShots : Compute.missilesHit(howManyShots, nMod);
 
         // report number of shots that hit only when weapon doesn't jam
         if (!weapon.isJammed()) {
@@ -145,7 +147,7 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#doChecks(java.util.Vector)
      */
     @Override
@@ -153,8 +155,8 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
         if (super.doChecks(vPhaseReport)) {
             return true;
         }
-        
-        if ((roll == 2) && (howManyShots == 2) && !(ae instanceof Infantry)) {
+
+        if ((roll.getIntValue() == 2) && (howManyShots == 2) && !(ae instanceof Infantry)) {
             Report r = new Report();
             r.subject = subjectId;
             weapon.setJammed(true);
@@ -172,7 +174,7 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
     @Override
@@ -180,7 +182,7 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
         double toReturn = wtype.getDamage();
         // infantry get hit by all shots
         if (target.isConventionalInfantry()) {
-            if (howManyShots > 1) { // Is this a cluser attack?
+            if (howManyShots > 1) { // Is this a cluster attack?
                 // Compute maximum damage potential for cluster weapons
                 toReturn = howManyShots * wtype.getDamage();
                 toReturn = Compute.directBlowInfantryDamage(toReturn,
@@ -211,8 +213,7 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
                 && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
             toReturn = (int) Math.floor(toReturn * .75);
         }
-        if (game.getOptions().booleanOption(
-                OptionsConstants.ADVCOMBAT_TACOPS_LOS_RANGE)
+        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_LOS_RANGE)
                 && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_EXTREME])) {
             toReturn = (int) Math.floor(toReturn * .5);
         }
@@ -226,12 +227,11 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
 
     @Override
     protected int calcnClusterAero(Entity entityTarget) {
-        if (usesClusterTable() && !ae.isCapitalFighter()
-                && (entityTarget != null) && !entityTarget.isCapitalScale()) {
+        if (usesClusterTable() && !ae.isCapitalFighter() && (entityTarget != null)
+                && !entityTarget.isCapitalScale()) {
             return (int) Math.ceil(attackValue / 2.0);
         } else {
             return 1;
         }
     }
-
 }

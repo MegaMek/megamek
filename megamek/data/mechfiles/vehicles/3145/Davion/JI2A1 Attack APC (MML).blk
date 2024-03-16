@@ -20,6 +20,10 @@ JI2A1 Attack APC
 (MML)
 </Model>
 
+<mul id:>
+6316
+</mul id:>
+
 <year>
 3093
 </year>
@@ -27,6 +31,10 @@ JI2A1 Attack APC
 <type>
 IS Level 3
 </type>
+
+<role>
+Missile Boat
+</role>
 
 <motion_type>
 Hover
@@ -83,7 +91,7 @@ ISMML3
 </Turret Equipment>
 
 <source>
-TRO 3145 Federated Suns - Early Republic
+TRO: 3145 Federated Suns
 </source>
 
 <tonnage>

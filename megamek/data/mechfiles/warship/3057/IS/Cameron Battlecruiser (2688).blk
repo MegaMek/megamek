@@ -1,0 +1,287 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Warship
+</UnitType>
+
+<Name>
+Cameron Battlecruiser
+</Name>
+
+<Model>
+(2688)
+</Model>
+
+<mul id:>
+3890
+</mul id:>
+
+<year>
+2688
+</year>
+
+<originalBuildYear>
+2688
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<role>
+None
+</role>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+smallcraftbay:2.0:2:1
+asfbay:16.0:4:2
+cargobay:187395.5:1:3
+dockingcollar
+dockingcollar
+1stclassquarters:480.0:0
+crewquarters:1673.0:0
+</transporters>
+
+<SafeThrust>
+2
+</SafeThrust>
+
+<heatsinks>
+2430
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+2500
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+11
+</armor_type>
+
+<armor_tech>
+5
+</armor_tech>
+
+<armor>
+120
+128
+128
+118
+128
+128
+</armor>
+
+<Nose Equipment>
+(B) Naval PPC (Heavy)
+Naval PPC (Heavy)
+</Nose Equipment>
+
+<Left Front Side Equipment>
+(B) Capital Missile Launcher (AR10 Launcher)
+Capital Missile Launcher (AR10 Launcher)
+Ammo AR10 Killer Whale:8
+Ammo AR10 White Shark:6
+Ammo AR10 Barracuda:6
+(B) Naval PPC (Heavy)
+Naval PPC (Heavy)
+</Left Front Side Equipment>
+
+<Right Front Side Equipment>
+(B) Capital Missile Launcher (AR10 Launcher)
+Capital Missile Launcher (AR10 Launcher)
+Ammo AR10 Killer Whale:8
+Ammo AR10 White Shark:6
+Ammo AR10 Barracuda:6
+(B) Naval PPC (Heavy)
+Naval PPC (Heavy)
+</Right Front Side Equipment>
+
+<Aft Equipment>
+(B) Naval PPC (Heavy)
+Naval PPC (Heavy)
+</Aft Equipment>
+
+<Aft Left Side Equipment>
+(B) Naval Autocannon (NAC/25)
+Naval Autocannon (NAC/25)
+Ammo NAC/25:25
+(B) Naval Autocannon (NAC/25)
+Naval Autocannon (NAC/25)
+Ammo NAC/25:25
+(B) Naval Laser 55
+Naval Laser 55
+(B) Capital Missile Launcher (AR10 Launcher)
+Capital Missile Launcher (AR10 Launcher)
+Ammo AR10 Killer Whale:8
+Ammo AR10 White Shark:6
+Ammo AR10 Barracuda:6
+(B) Naval PPC (Heavy)
+Naval PPC (Heavy)
+</Aft Left Side Equipment>
+
+<Aft Right Side Equipment>
+(B) Naval Autocannon (NAC/25)
+Naval Autocannon (NAC/25)
+Ammo NAC/25:25
+(B) Naval Autocannon (NAC/25)
+Naval Autocannon (NAC/25)
+Ammo NAC/25:25
+(B) Naval Laser 55
+Naval Laser 55
+(B) Capital Missile Launcher (AR10 Launcher)
+Capital Missile Launcher (AR10 Launcher)
+Ammo AR10 Killer Whale:8
+Ammo AR10 White Shark:6
+Ammo AR10 Barracuda:6
+(B) Naval PPC (Heavy)
+Naval PPC (Heavy)
+</Aft Right Side Equipment>
+
+<Hull Equipment>
+</Hull Equipment>
+
+<Left Broadsides Equipment>
+(B) Naval Autocannon (NAC/25)
+Naval Autocannon (NAC/25)
+Ammo NAC/25:25
+(B) Naval Autocannon (NAC/25)
+Naval Autocannon (NAC/25)
+Ammo NAC/25:25
+(B) Naval Laser 35
+Naval Laser 35
+Naval Laser 35
+</Left Broadsides Equipment>
+
+<Right Broadsides Equipment>
+(B) Naval Autocannon (NAC/25)
+Naval Autocannon (NAC/25)
+Ammo NAC/25:25
+(B) Naval Autocannon (NAC/25)
+Naval Autocannon (NAC/25)
+Ammo NAC/25:25
+(B) Naval Laser 35
+Naval Laser 35
+Naval Laser 35
+</Right Broadsides Equipment>
+
+<structural_integrity>
+80
+</structural_integrity>
+
+<capabilities>
+The Cameron-class battlecruiser possesses a formidable arsenal, including Series-25 autocannons, naval lasers, and naval PPCs, providing both close-in and long-range firepower. Its anti-fighter defense is augmented by Maelstrom AR-10 missile launchers capable of firing missiles of various sizes. However, the flawed power distribution system of the original design led to critical failures, as illustrated by the loss of the SLS Saint Joan during an attack by Periphery pirates.
+</capabilities>
+
+<overview>
+The Cameron-class battlecruiser was commissioned by the SLDF with the expectation of a swift and powerful WarShip to bridge the gap between cruisers and battleships. However, the actual performance of the Cameron fell short of expectations, with issues in weight, acceleration, and power systems. Despite these shortcomings, the SLDF ordered 40 of the vessels due to budget constraints and the ship's excellent weaponry and armor.
+</overview>
+
+<history>
+The initial Cameron-class ships faced significant challenges due to their design flaws. The failure of the power system during the engagement with Periphery pirates led to the destruction of the SLS Saint Joan, resulting in the resignation of senior admirals and the appropriation of Daussault-Shimmon's shipyards by the Star League. The existing Camerons were then relegated to transport duties. The Clans, along with ComStar, later adopted a modified version of the Cameron. While this improved version addressed some of the original flaws by correcting the power distribution system and adding a lithium-fusion battery system, it still fell short of meeting the performance specifications of the SLDF-commissioned Cameron. Nevertheless, the modified Cameron proved to be an excellent mobile command center for the Clans.
+</history>
+
+<manufacturer>
+Daussault-Shimmon Enterprises
+</manufacturer>
+
+<primaryFactory>
+New Earth
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<use>
+Battlecruiser
+</use>
+
+<length>
+839 m
+</length>
+
+<height>
+1450 m Sail
+</height>
+
+<source>
+TRO: 3057 Revised
+</source>
+
+<tonnage>
+860000.0
+</tonnage>
+
+<kf_core>
+1
+</kf_core>
+
+<sail>
+1
+</sail>
+
+<grav_decks>
+75
+75
+</grav_decks>
+
+<designtype>
+1
+</designtype>
+
+<crew>
+329
+</crew>
+
+<officers>
+48
+</officers>
+
+<gunners>
+46
+</gunners>
+
+<passengers>
+0
+</passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<life_boat>
+20
+</life_boat>
+
+<escape_pod>
+30
+</escape_pod>
+

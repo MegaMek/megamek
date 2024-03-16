@@ -15,10 +15,9 @@ package megamek.client.ui.swing;
 
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
+import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.widget.MegamekButton;
-import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.common.*;
-import megamek.common.enums.GamePhase;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
 
@@ -26,42 +25,63 @@ import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.util.*;
 
+import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
+import static megamek.client.ui.swing.util.UIUtil.uiLightViolet;
+
 public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
     private static final long serialVersionUID = -1243277953037374936L;
 
     /**
      * This enumeration lists all of the possible ActionCommands that can be
-     * carried out during the deploy minefield phase.  Each command has a string 
-     * for the command plus a flag that determines what unit type it is 
+     * carried out during the deploy minefield phase.  Each command has a string
+     * for the command plus a flag that determines what unit type it is
      * appropriate for.
      * @author arlith
      */
-    public enum Command {
+    public static enum DeployMinefieldCommand implements PhaseCommand {
         DEPLOY_MINE_CONV("deployMineConv"),
         DEPLOY_MINE_COM("deployMineCom"),
         DEPLOY_MINE_VIBRA("deployMineVibra"),
         DEPLOY_MINE_ACTIVE("deployMineActive"),
         DEPLOY_MINE_INFERNO("deployMineInferno"),
         REMOVE_MINES("removeMines");
-    
+
+        /**
+         * Priority that determines this buttons order
+         */
+        public int priority;
         String cmd;
-        Command(String c) {
+
+        DeployMinefieldCommand(String c) {
             cmd = c;
         }
-        
+
+        @Override
         public String getCmd() {
             return cmd;
         }
-        
+        @Override
+        public int getPriority() {
+            return priority;
+        }
+        @Override
+        public void setPriority(int p) {
+            priority = p;
+        }
+
         @Override
         public String toString() {
-            return cmd;
+            return Messages.getString("DeployMinefieldDisplay." + getCmd());
+        }
+
+        public String getHotKeyDesc() {
+            return "";
         }
     }
 
     // buttons
-    protected Map<Command,MegamekButton> buttons;
-    
+    protected Map<DeployMinefieldCommand,MegamekButton> buttons;
+
     private boolean deployM = false;
     private boolean deployC = false;
     private boolean deployV = false;
@@ -85,33 +105,36 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
 
         p = clientgui.getClient().getLocalPlayer();
 
-        buttons = new HashMap<>((int) (Command.values().length * 1.25 + 0.5));
-        for (Command cmd : Command.values()) {
-            String title = Messages.getString("DeployMinefieldDisplay."
-                    + cmd.getCmd());
-            MegamekButton newButton = new MegamekButton(title,
-                    SkinSpecification.UIComponents.PhaseDisplayButton.getComp());
-            String ttKey = "DeployMinefieldDisplay." + cmd.getCmd() + ".tooltip";
-            if (Messages.keyExists(ttKey)) {
-                newButton.setToolTipText(Messages.getString(ttKey));
-            }
-            newButton.addActionListener(this);
-            newButton.setActionCommand(cmd.getCmd());
-            newButton.setEnabled(false);
-            buttons.put(cmd, newButton);
-        }          
-        numButtonGroups = (int) Math.ceil((buttons.size()+0.0) / buttonsPerGroup);
-        
+        setButtons();
+        setButtonsTooltips();
+
         butDone.setText(Messages.getString("DeployMinefieldDisplay.Done"));
         butDone.setEnabled(false);
-        
+
         setupButtonPanel();
+    }
+
+    @Override
+    protected void setButtons() {
+        buttons = new HashMap<>((int) (DeployMinefieldCommand.values().length * 1.25 + 0.5));
+        for (DeployMinefieldCommand cmd : DeployMinefieldCommand.values()) {
+            buttons.put(cmd, createButton(cmd.getCmd(), "DeployMinefieldDisplay."));
+        }
+        numButtonGroups = (int) Math.ceil((buttons.size()+0.0) / buttonsPerGroup);
+    }
+
+    @Override
+    protected void setButtonsTooltips() {
+        for (DeployMinefieldCommand cmd : DeployMinefieldCommand.values()) {
+            String tt = createToolTip(cmd.getCmd(), "DeployMinefieldDisplay.", cmd.getHotKeyDesc());
+            buttons.get(cmd).setToolTipText(tt);
+        }
     }
 
     @Override
     protected ArrayList<MegamekButton> getButtonList() {
         ArrayList<MegamekButton> buttonList = new ArrayList<>();
-        for (Command cmd : Command.values()) {
+        for (DeployMinefieldCommand cmd : DeployMinefieldCommand.values()) {
             buttonList.add(buttons.get(cmd));
         }
         return buttonList;
@@ -129,12 +152,16 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
         setInfernoEnabled(p.getNbrMFInferno());
         setRemoveMineEnabled(true);
         butDone.setEnabled(true);
+
+        startTimer();
     }
 
     /**
      * Clears out old deployment data and disables relevant buttons.
      */
     private void endMyTurn() {
+        stopTimer();
+
         // end my turn, then.
         disableButtons();
         clientgui.getBoardView().select(null);
@@ -231,7 +258,7 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
                 }
                 MineDensityDialog mfd = new MineDensityDialog(clientgui.frame);
                 mfd.setVisible(true);
-                
+
                 if (mfd.getDensity() > 0) {
                     mf = Minefield.createMinefield(coords, p.getId(),
                             Minefield.TYPE_CONVENTIONAL, mfd.getDensity(), sea,
@@ -361,8 +388,8 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
 
         if (clientgui.getClient().isMyTurn()) {
             beginMyTurn();
-            setStatusBarText(Messages
-                    .getString("DeployMinefieldDisplay.its_your_turn"));
+            setStatusBarText(Messages.getString("DeployMinefieldDisplay.its_your_turn"));
+            clientgui.bingMyTurn();
         } else {
             String playerName;
             if (e.getPlayer() != null) {
@@ -370,8 +397,8 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
             } else {
                 playerName = "Unknown";
             }
-            setStatusBarText(Messages.getString("DeployMinefieldDisplay."
-                    + "its_others_turn", playerName));
+            setStatusBarText(Messages.getString("DeployMinefieldDisplay.its_others_turn", playerName));
+            clientgui.bingOthersTurn();
         }
     }
 
@@ -383,12 +410,12 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
         }
 
         if (clientgui.getClient().isMyTurn()
-                && (clientgui.getClient().getGame().getPhase() != GamePhase.DEPLOY_MINEFIELDS)) {
+                && !clientgui.getClient().getGame().getPhase().isDeployMinefields()) {
             endMyTurn();
         }
-        if (clientgui.getClient().getGame().getPhase() == GamePhase.DEPLOY_MINEFIELDS) {
-            setStatusBarText(Messages
-                    .getString("DeployMinefieldDisplay.waitingForDeploymentPhase"));
+
+        if (clientgui.getClient().getGame().getPhase().isDeployMinefields()) {
+            setStatusBarText(Messages.getString("DeployMinefieldDisplay.waitingForDeploymentPhase"));
         }
     }
 
@@ -405,42 +432,42 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
         if (!clientgui.getClient().isMyTurn()) {
             // odd...
             return;
-        } else if (ev.getActionCommand().equals(Command.DEPLOY_MINE_CONV.getCmd())) {
+        } else if (ev.getActionCommand().equals(DeployMinefieldCommand.DEPLOY_MINE_CONV.getCmd())) {
             deployM = true;
             deployC = false;
             deployV = false;
             deployA = false;
             deployI = false;
             remove = false;
-        } else if (ev.getActionCommand().equals(Command.DEPLOY_MINE_COM.getCmd())) {
+        } else if (ev.getActionCommand().equals(DeployMinefieldCommand.DEPLOY_MINE_COM.getCmd())) {
             deployM = false;
             deployC = true;
             deployV = false;
             deployA = false;
             deployI = false;
             remove = false;
-        } else if (ev.getActionCommand().equals(Command.DEPLOY_MINE_VIBRA.getCmd())) {
+        } else if (ev.getActionCommand().equals(DeployMinefieldCommand.DEPLOY_MINE_VIBRA.getCmd())) {
             deployM = false;
             deployC = false;
             deployV = true;
             deployA = false;
             deployI = false;
             remove = false;
-        } else if (ev.getActionCommand().equals(Command.DEPLOY_MINE_ACTIVE.getCmd())) {
+        } else if (ev.getActionCommand().equals(DeployMinefieldCommand.DEPLOY_MINE_ACTIVE.getCmd())) {
             deployM = false;
             deployC = false;
             deployV = false;
             deployA = true;
             deployI = false;
             remove = false;
-        } else if (ev.getActionCommand().equals(Command.DEPLOY_MINE_INFERNO.getCmd())) {
+        } else if (ev.getActionCommand().equals(DeployMinefieldCommand.DEPLOY_MINE_INFERNO.getCmd())) {
             deployM = false;
             deployC = false;
             deployV = false;
             deployA = false;
             deployI = true;
             remove = false;
-        } else if (ev.getActionCommand().equals(Command.REMOVE_MINES.getCmd())) {
+        } else if (ev.getActionCommand().equals(DeployMinefieldCommand.REMOVE_MINES.getCmd())) {
             deployM = false;
             deployC = false;
             deployV = false;
@@ -458,37 +485,37 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
     }
 
     private void setConventionalEnabled(int nbr) {
-        buttons.get(Command.DEPLOY_MINE_CONV).setText(Messages.getString(
-                "DeployMinefieldDisplay." + Command.DEPLOY_MINE_CONV.getCmd(), nbr));
-        buttons.get(Command.DEPLOY_MINE_CONV).setEnabled(nbr > 0);
+        buttons.get(DeployMinefieldCommand.DEPLOY_MINE_CONV).setText(Messages.getString(
+                "DeployMinefieldDisplay." + DeployMinefieldCommand.DEPLOY_MINE_CONV.getCmd(), nbr));
+        buttons.get(DeployMinefieldCommand.DEPLOY_MINE_CONV).setEnabled(nbr > 0);
     }
 
     private void setCommandEnabled(int nbr) {
-        buttons.get(Command.DEPLOY_MINE_COM).setText(Messages.getString(
-                "DeployMinefieldDisplay." + Command.DEPLOY_MINE_COM.getCmd(), nbr));
-        buttons.get(Command.DEPLOY_MINE_COM).setEnabled(nbr > 0);
+        buttons.get(DeployMinefieldCommand.DEPLOY_MINE_COM).setText(Messages.getString(
+                "DeployMinefieldDisplay." + DeployMinefieldCommand.DEPLOY_MINE_COM.getCmd(), nbr));
+        buttons.get(DeployMinefieldCommand.DEPLOY_MINE_COM).setEnabled(nbr > 0);
     }
 
     private void setVibrabombEnabled(int nbr) {
-        buttons.get(Command.DEPLOY_MINE_VIBRA).setText(Messages.getString(
-                "DeployMinefieldDisplay." + Command.DEPLOY_MINE_VIBRA.getCmd(), nbr));
-        buttons.get(Command.DEPLOY_MINE_VIBRA).setEnabled(nbr > 0);
+        buttons.get(DeployMinefieldCommand.DEPLOY_MINE_VIBRA).setText(Messages.getString(
+                "DeployMinefieldDisplay." + DeployMinefieldCommand.DEPLOY_MINE_VIBRA.getCmd(), nbr));
+        buttons.get(DeployMinefieldCommand.DEPLOY_MINE_VIBRA).setEnabled(nbr > 0);
     }
 
     private void setActiveEnabled(int nbr) {
-        buttons.get(Command.DEPLOY_MINE_ACTIVE).setText(Messages.getString(
-                "DeployMinefieldDisplay." + Command.DEPLOY_MINE_ACTIVE.getCmd(), nbr));
-        buttons.get(Command.DEPLOY_MINE_ACTIVE).setEnabled(nbr > 0);
+        buttons.get(DeployMinefieldCommand.DEPLOY_MINE_ACTIVE).setText(Messages.getString(
+                "DeployMinefieldDisplay." + DeployMinefieldCommand.DEPLOY_MINE_ACTIVE.getCmd(), nbr));
+        buttons.get(DeployMinefieldCommand.DEPLOY_MINE_ACTIVE).setEnabled(nbr > 0);
     }
 
     private void setInfernoEnabled(int nbr) {
-        buttons.get(Command.DEPLOY_MINE_INFERNO).setText(Messages.getString(
-                "DeployMinefieldDisplay." + Command.DEPLOY_MINE_INFERNO.getCmd(), nbr));
-        buttons.get(Command.DEPLOY_MINE_INFERNO).setEnabled(nbr > 0);
+        buttons.get(DeployMinefieldCommand.DEPLOY_MINE_INFERNO).setText(Messages.getString(
+                "DeployMinefieldDisplay." + DeployMinefieldCommand.DEPLOY_MINE_INFERNO.getCmd(), nbr));
+        buttons.get(DeployMinefieldCommand.DEPLOY_MINE_INFERNO).setEnabled(nbr > 0);
     }
 
     private void setRemoveMineEnabled(boolean enable) {
-        buttons.get(Command.REMOVE_MINES).setEnabled(enable);
+        buttons.get(DeployMinefieldCommand.REMOVE_MINES).setEnabled(enable);
     }
 
     /**

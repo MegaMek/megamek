@@ -1,0 +1,138 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+Eurus MBT
+</Name>
+
+<Model>
+D
+</Model>
+
+<mul id:>
+9393
+</mul id:>
+
+<year>
+3146
+</year>
+
+<originalBuildYear>
+3146
+</originalBuildYear>
+
+<type>
+Clan Level 3
+</type>
+
+<role>
+Brawler
+</role>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<transporters>
+BattleArmorHandles - troopers:-1
+</transporters>
+
+<cruiseMP>
+5
+</cruiseMP>
+
+<engine_type>
+2
+</engine_type>
+
+<armor_type>
+16
+</armor_type>
+
+<armor_tech>
+6
+</armor_tech>
+
+<omni>
+1
+</omni>
+
+<armor>
+42
+33
+33
+20
+33
+</armor>
+
+<Body Equipment>
+Clan Streak SRM 6 Ammo:OMNI
+Clan Streak SRM 6 Ammo:OMNI
+Clan Streak SRM 6 Ammo:OMNI
+</Body Equipment>
+
+<Front Equipment>
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+CLERPPC:OMNI
+CLStreakSRM6:OMNI
+CLStreakSRM6:OMNI
+CLStreakSRM6:OMNI
+</Turret Equipment>
+
+<overview>
+The Eurus is a robust front-line battle tank that serves as an anvil for lighter units like the Zephyros to drive its adversaries against.
+</overview>
+
+<manufacturer>
+Swedenborg Heavy Industries
+</manufacturer>
+
+<primaryFactory>
+Kirchbach
+</primaryFactory>
+
+<systemManufacturers>
+ENGINE:300 Fusion Extralight
+ARMOR:Composite Alpha-V1 Ferro-Lamellor
+COMMUNICATIONS:Build 1685 Tacticom
+TARGETING:Series XL FWS
+</systemManufacturers>
+
+<source>
+Rec Guide:ilClan #29
+</source>
+
+<tonnage>
+60.0
+</tonnage>
+
+<baseChassisTurretWeight>
+2.0
+</baseChassisTurretWeight>
+
+<baseChassisTurret2Weight>
+0.0
+</baseChassisTurret2Weight>
+

@@ -1,0 +1,133 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+Trinity Medium Battle Armor
+</Name>
+
+<Model>
+(Asterion Upgrade)[MRR](Sqd5)
+</Model>
+
+<mul id:>
+8592
+</mul id:>
+
+<year>
+3073
+</year>
+
+<originalBuildYear>
+3073
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<role>
+Ambusher
+</role>
+
+<motion_type>
+Leg
+</motion_type>
+
+<transporters>
+</transporters>
+
+<cruiseMP>
+3
+</cruiseMP>
+
+<armor_type>
+30
+</armor_type>
+
+<armor_tech>
+11
+</armor_tech>
+
+<Squad Equipment>
+CLBAMedium Recoilless Rifle:Body
+CLBAMG:Body
+BABattleClaw:LA
+BABattleClawVibro:RA
+SwarmMek
+SwarmWeaponMek
+StopSwarm
+LegAttack
+BA Advanced:RA
+BA Advanced:Body
+BA Advanced:RA
+BA Advanced:LA
+BA Advanced:LA
+</Squad Equipment>
+
+<source>
+TRO: 3085
+</source>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+0
+</jumpingMP>
+
+<armor>
+8
+</armor>
+
+<Trooper Count>
+5
+</Trooper Count>
+
+<weightclass>
+2
+</weightclass>
+
+<overview>
+Following the introduction of the Fa Shih, Capellan Confederation Armed Forces leaders wanted battle armor to be made available to more units than just the most prestigious. 
+</overview>
+
+<capabilities>
+All three versions of the Trinity mount enough armor to stop a Large Laser and can move swiftly at 32 km/h on the ground. The Battle Claws used by the battlesuit enable it to make anti-'Mech attacks and ride OmniMechs into battle.
+</capabilities>
+
+<deployment>
+Much like the upgraded PPC Asterion, this version uses Advanced Armor for increased protection, and carries a Vibro Claw and Machine Gun for swarm attacks. The only difference is that this version carries a Medium Recoilless Rifle in its weapons mount. 
+</deployment>
+
+<history>
+urprisingly, the Strategios listened and commissioned the design of a new battle armor. With funding from their Trinity Alliance allies, the CCAF put together a new unit in record time, leading to speculation that the design was already on the drawing board. The Trinity is really three different battle armors, all initially constructed by the Capellan Confederation. The Ying Long ("Shadow Dragon") uses the mimetic armor first created by Word of Blake for their Purifier, though how they acquired the technology is unknown. The Asterion and Theseus are functionally identical, but have different aesthetics. The Taurian Concordat is apparently unhappy at the decision of the Magistracy of Canopus to name their version after the legendary founder of Athens who slew the Minotaur. The Periphery nations became more and more agitated when convenient mishaps kept production solely in the hands in the Capellans. Both nations finally resorted to reverse engineering the design, then put them quietly into production. This left the Capellans with egg on their face as their allies suddenly stopped purchasing the production runs. 
+</history>
+
+<manufacturer>
+Taurus Territorial Industries
+</manufacturer>
+
+<primaryFactory>
+Sterope
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+JUMPJET:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>

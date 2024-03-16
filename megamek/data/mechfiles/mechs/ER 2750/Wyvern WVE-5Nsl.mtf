@@ -1,12 +1,18 @@
-Version:1.0
-Wyvern
-WVE-5Nsl
+chassis:Wyvern
+model:WVE-5Nsl
+mul id:5875
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2750
-Source:ER 2750
+source:Era Report 2750
 Rules Level:4
+role:Missile Boat
+
+
+
+quirk:rugged_1
+
 
 Mass:45
 Engine:180 Fusion Engine(IS)

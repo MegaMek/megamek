@@ -20,6 +20,10 @@ Excalibur
 (2786)
 </Model>
 
+<mul id:>
+4141
+</mul id:>
+
 <year>
 2786
 </year>
@@ -31,6 +35,10 @@ Excalibur
 <type>
 IS Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Spheroid
@@ -126,7 +134,7 @@ Medium Laser
 </structural_integrity>
 
 <source>
-TRO 3057R - Early Succession War
+TRO: 3057 Revised
 </source>
 
 <tonnage>

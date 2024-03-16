@@ -1,12 +1,16 @@
-Version:1.0
-Deimos
-E
+chassis:Deimos
+model:E
+mul id:6855
 
 Config:Biped Omnimech
 TechBase:Mixed (Clan Chassis)
 Era:3140
-Source:RS 3145 NTNU - Dark Ages
+Source:Record Sheets: 3145 New Tech New Upgrades
 Rules Level:3
+role:Brawler
+
+quirk:anti_air
+
 
 Mass:85
 Engine:255 XL (Clan) Engine

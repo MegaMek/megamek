@@ -20,6 +20,10 @@ Visigoth
 D
 </Model>
 
+<mul id:>
+3439
+</mul id:>
+
 <year>
 3066
 </year>
@@ -31,6 +35,10 @@ D
 <type>
 Clan Level 2
 </type>
+
+<role>
+Fast Dogfighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -110,7 +118,7 @@ CLCASE
 </Fuselage Equipment>
 
 <source>
-TRO 3055u - Civil War
+TRO: 3055 Update
 </source>
 
 <tonnage>

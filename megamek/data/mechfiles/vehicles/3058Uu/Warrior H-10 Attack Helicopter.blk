@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,60 +20,119 @@ Warrior Attack Helicopter
 H-10
 </Model>
 
-<Tonnage>
-20
-</Tonnage>
-
-<cruiseMP>
-10
-</cruiseMP>
-
-#Order is Tank/VTOL/LST
-<Armor>
-14
-10
-10
-8
-2
-</Armor>
-
-<Front Equipment>
-IS Machine Gun
-IS Machine Gun
-</Front Equipment>
-
-<Body Equipment>
-IS Ammo MG - Full
-</Body Equipment>
-
-<type>
-IS Level 2
-</type>
+<mul id:>
+3512
+</mul id:>
 
 <year>
 3070
 </year>
 
-<internal_type>
-0
-</internal_type>
+<originalBuildYear>
+3070
+</originalBuildYear>
 
-<armor_type>
-1
-</armor_type>
+<type>
+IS Level 2
+</type>
 
-<engine_type>
-0
-</engine_type>
+<role>
+Scout
+</role>
 
 <motion_type>
 VTOL
 </motion_type>
 
 <transporters>
-TroopSpace:5
+troopspace:5.0
 </transporters>
 
+<cruiseMP>
+10
+</cruiseMP>
+
+<engine_type>
+0
+</engine_type>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
+14
+10
+10
+8
+2
+</armor>
+
+<Body Equipment>
+IS Ammo MG - Full
+</Body Equipment>
+
+<Front Equipment>
+Machine Gun
+Machine Gun
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Rotor Equipment>
+</Rotor Equipment>
+
+<capabilities>
+The aircraft itself is a standard rotary wing design. The two counter-rotating rotor systems negate the need for a tail rotor, as there is no drive torque to be canceled. Capable of speeds of 162 km/h, the Warrior can range across the battlefield with ease, Weapons are mated to an N&D Handsfree targeting and tracking system linked to the pilot's helmet, allowing the pilot to merely look at what he wants to target and pull the trigger. One ton of reloads each give the helicopter decent endurance in combat.
+</capabilities>
+
+<overview>
+First produced in 2950, the Warrior H-7 attack helicopter is a common sight across the Inner Sphere, serving as a highly mobile fire support unit.
+</overview>
+
+<deployment>
+An even more radical variation of the H-8, the H-10 was redesigned as a battle armor transport, trading all weaponry for two Heavy Machine Guns while freeing up the space required for a five-ton infantry bay.
+</deployment>
+
+<history>
+Privately designed by Lockheed-CBM as a cheaper and more easily produced substitute for light BattleMechs in the notoriously top-heavy and sluggish Lyran Commonwealth Armed Forces' Third Succession War–era BattleMech regiments, the Lyran High Command originally dismissed the Warrior as a worthless "flying toy" in 2957 until the Ninth Battle of Hesperus that same year damaged Defiance Industries' facilities to the point the LCAF were desperate for any military hardware, placing heavy orders and ensuring continued production since.
+</history>
+
+<manufacturer>
+Lockheed/CBM Corp.
+</manufacturer>
+
+<primaryFactory>
+Furillo
+</primaryFactory>
+
+<systemManufacturers>
+ENGINE:Lockheed 70 Micro-Fusion
+ARMOR:Kallon Unity Weave
+COMMUNICATIONS:Xilex-2000
+TARGETING:N&D Handsfree
+</systemManufacturers>
+
+<tonnage>
+20.0
+</tonnage>
+
 <source>
-Jihad
+TRO: 3058
 </source>
+
+<quirks>
+vtol_rotor_coaxial
+</quirks>
+

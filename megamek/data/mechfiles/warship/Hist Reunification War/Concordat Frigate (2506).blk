@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,6 +20,10 @@ Concordat Frigate
 (2506)
 </Model>
 
+<mul id:>
+3981
+</mul id:>
+
 <year>
 2506
 </year>
@@ -31,6 +35,10 @@ Concordat Frigate
 <type>
 IS Level 3
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Aerodyne
@@ -235,8 +243,48 @@ IS Ammo LRM-15:80
 60
 </structural_integrity>
 
+<capabilities>
+The Concordat frigate fulfilled multiple roles with its impressive capabilities. Its heavy naval lasers positioned at the fore provided effective long-range engagement, while the medium-caliber naval autocannons delivered devastating firepower against even Star League battleships. Equipped with LRM and laser turrets covering each quarter, the Concordat possessed formidable defense against fighters and DropShips. It could accommodate a single squadron of fighters or small craft, and up to four DropShips, typically carrying fighters, could dock with the WarShip. The Concordat also carried shuttles and small craft for routine inspections and boarding actions, supported by its two platoons of marines.
+</capabilities>
+
+<overview>
+The TCS Concordat, developed by the Taurian Concordat in response to the expanding borders of neighboring realms, served as a versatile frigate bridging the gap between corvettes and destroyers. Its primary role was to patrol Periphery space lanes, commanding task forces and engaging enemy WarShips. With a combination of heavy naval lasers and medium-caliber naval autocannons, the Concordat excelled in long-range engagements and anti-WarShip firepower. It also boasted a robust defense system against fighters and DropShips, with multiple turrets and screen launchers.
+</overview>
+
+<history>
+The Taurian Concordat commenced the construction of the TCS Concordat in the early 26th century amidst the expansion of the Capellan Confederation and the Federated Suns. The frigate was designed to patrol Periphery space lanes, serve as a command ship for task forces, and directly engage enemy WarShips. Throughout the 26th century, the Concordat proved instrumental to the Taurian Navy and the Magistracy of Canopus, forming the backbone of their WarShip fleets. With over four dozen frigates in operation, the Taurian Navy held the largest WarShip fleet in the Periphery. While achieving remarkable successes against Inner Sphere fleets during the Reunification War, the Taurian Navy ultimately succumbed to the might of the Star League. Although no more Concordats were built after the war, a few of them survived until the First Succession War.
+</history>
+
+<manufacturer>
+Liberty Naval Yards, Concordat Aerospace Limited
+</manufacturer>
+
+<primaryFactory>
+Horsham,Taurus
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<use>
+Frigate
+</use>
+
+<length>
+485 m
+</length>
+
+<height>
+1220 m Sail
+</height>
+
 <source>
-Hist:RW - Age of War
+Historical: Reunification War
 </source>
 
 <tonnage>
@@ -254,6 +302,10 @@ Hist:RW - Age of War
 <grav_decks>
 130
 </grav_decks>
+
+<designtype>
+1
+</designtype>
 
 <crew>
 327
@@ -286,3 +338,4 @@ Hist:RW - Age of War
 <escape_pod>
 25
 </escape_pod>
+

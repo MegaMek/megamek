@@ -1,19 +1,25 @@
-Version:1.1
-Pulverizer
-PUL-3R
-
+generator:MegaMek Suite 0.49.16-SNAPSHOT on 2023-12-29
+chassis:Pulverizer
+model:PUL-3R
+mul id:7647
 Config:Biped
 techbase:Mixed (IS Chassis)
 era:2823
-source:Succession Wars
-rules level:4
+source:TRO: Golden Century
+rules level:3
+role:Brawler
+
+quirk:easy_maintain
+quirk:bad_rep_clan
+quirk:pro_actuator
+weaponquirk:accurate:RT:3:CLWERPPC
 
 mass:90
 engine:360 Fusion Engine(IS)
 structure:IS Endo Steel
 myomer:Standard
 
-heat sinks:18 Double
+heat sinks:18 IS Double
 walk mp:4
 jump mp:0
 

@@ -1,0 +1,108 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+Afreet Medium Battle Armor
+</Name>
+
+<Model>
+(Hell's Horses)(Sqd6)
+</Model>
+
+<mul id:>
+8966
+</mul id:>
+
+<chassis>
+biped
+</chassis>
+
+<weightclass>
+2
+</weightclass>
+
+<Trooper Count>
+6
+</Trooper Count>
+
+<cruiseMP>
+1
+</cruiseMP>
+
+<jumpingMP>
+3
+</jumpingMP>
+
+<Armor>
+5
+</Armor>
+
+<Point Equipment>
+CLBearhunter Superheavy AC:RA
+CLBASRM3OS:Body
+CLBAJumpBooster:Body
+BABattleClawVibro:LA
+BABattleClawVibro:RA
+</Point Equipment>
+
+<type>
+Clan Level 2
+</type>
+
+<role>
+Scout
+</role>
+
+<year>
+3072
+</year>
+
+<motion_type>
+Jump
+</motion_type>
+
+<source>
+TRO: 3075
+</source>
+
+<armor_type>
+28
+</armor_type>
+
+<armor_tech>
+2
+</armor_tech>
+
+<overview>
+The Afreet is a battle armor design created by Clan Ice Hellion. The Afreet was created when Khan Raina Montose ordered two other projects merged, resulting in a battlesuit that seems to fit in well with the Hellion belief in speed over all else. 
+</overview>
+
+<history>
+Following the Hellion invasion of the Inner Sphere, both Clan Jade Falcon and Clan Hell's Horses salvaged and produced their own versions.
+</history>
+
+<capabilities>
+The primary feature of the Afreet is its ability to leap one hundred twenty meters at a time. This comes at a sacrifice to armor, as the Afreet is only able to stop a Clan ER Small Laser. It does, however, use Improved Sensors, a holdover from one of the suits it descended from.
+</capabilities>
+
+<deployment>
+The Horses variant was introduced in the same year as the Jade Falcon one, and replaces the same equipment with a One-Shot SRM-3 and a Bearhunter Autocannon
+</deployment>
+
+<manufacturer>
+Csesztreg Industriplex Gamma (Refit),Transitional Facility A-4(Refit) 
+</manufacturer>
+
+<primaryFactory>
+Csesztreg,Nouveaux Paris
+</primaryFactory>

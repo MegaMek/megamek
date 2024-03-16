@@ -20,6 +20,10 @@ Overlord
 A3A
 </Model>
 
+<mul id:>
+5766
+</mul id:>
+
 <year>
 3076
 </year>
@@ -31,6 +35,10 @@ A3A
 <type>
 IS Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Spheroid
@@ -188,7 +196,7 @@ Ammo Screen:10
 </structural_integrity>
 
 <source>
-TRO 3067 - Jihad
+TRO: 3067
 </source>
 
 <tonnage>

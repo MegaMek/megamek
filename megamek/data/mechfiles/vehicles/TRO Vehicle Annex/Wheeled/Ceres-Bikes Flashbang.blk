@@ -20,6 +20,10 @@ Ceres-Bikes Flashbang
 ZZ10000
 </Model>
 
+<mul id:>
+3933
+</mul id:>
+
 <year>
 3058
 </year>
@@ -31,6 +35,10 @@ ZZ10000
 <type>
 IS Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Wheeled
@@ -81,7 +89,7 @@ BicycleChassisMod
 </structural_tech_rating>
 
 <source>
-TRO VAr - Clan Invasion
+TRO: Vehicle Annex (Revised)
 </source>
 
 <tonnage>

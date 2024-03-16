@@ -20,6 +20,10 @@ Zugvogel Omni Support Aircraft
 Prime
 </Model>
 
+<mul id:>
+3660
+</mul id:>
+
 <year>
 3086
 </year>
@@ -31,6 +35,10 @@ Prime
 <type>
 IS Level 2
 </type>
+
+<role>
+Fire Support
+</role>
 
 <motion_type>
 Aerodyne
@@ -121,7 +129,7 @@ Advanced Fire Control
 </structural_tech_rating>
 
 <source>
-TRO 3085
+TRO: 3085
 </source>
 
 <tonnage>

@@ -16,21 +16,29 @@ Tank
 Sea Skimmer Hydrofoil
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+5009
+</mul id:>
 
 <year>
 2867
 </year>
 
 <source>
-TRO 3039 - Succession Wars
+TRO: 3039
 </source>
 
 <type>
 IS Level 1
 </type>
+
+<role>
+Scout
+</role>
 
 <tonnage>
 25.0

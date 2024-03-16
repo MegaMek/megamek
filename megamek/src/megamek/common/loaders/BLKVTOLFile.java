@@ -45,25 +45,9 @@ public class BLKVTOLFile extends BLKFile implements IMechLoader {
 
     @Override
     public Entity getEntity() throws EntityLoadingException {
+
         VTOL t = new VTOL();
-
-        if (!dataFile.exists("Name")) {
-            throw new EntityLoadingException("Could not find name block.");
-        }
-        t.setChassis(dataFile.getDataAsString("Name")[0]);
-        if (dataFile.exists("Model") && (dataFile.getDataAsString("Model")[0] != null)) {
-            t.setModel(dataFile.getDataAsString("Model")[0]);
-        } else {
-            t.setModel("");
-        }
-
-        setTechLevel(t);
-        setFluff(t);
-        checkManualBV(t);
-
-        if (dataFile.exists("source")) {
-            t.setSource(dataFile.getDataAsString("source")[0]);
-        }
+        setBasicEntityData(t);
 
         if (!dataFile.exists("tonnage")) {
             throw new EntityLoadingException("Could not find weight block.");
@@ -185,7 +169,7 @@ public class BLKVTOLFile extends BLKFile implements IMechLoader {
         if (dataFile.exists("baseChassisSponsonPintleWeight")) {
             t.setBaseChassisSponsonPintleWeight(dataFile.getDataAsDouble("baseChassisSponsonPintleWeight")[0]);
         }
-
+        loadQuirks(t);
         return t;
     }
 }

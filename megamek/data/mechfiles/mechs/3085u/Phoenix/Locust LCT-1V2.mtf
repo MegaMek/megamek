@@ -1,12 +1,22 @@
-Version:1.0
-Locust
-LCT-1V2
+chassis:Locust
+model:LCT-1V2
+mul id:1902
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3065
-Source:Civil War
+source:TRO: 3085u 
 Rules Level:2
+role:Scout
+
+
+
+quirk:compact_mech
+quirk:low_profile
+quirk:cramped_cockpit
+quirk:no_arms
+quirk:weak_legs
+
 
 Mass:20
 Engine:160 Fusion Engine

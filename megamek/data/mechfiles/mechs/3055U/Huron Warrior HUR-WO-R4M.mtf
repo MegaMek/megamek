@@ -1,12 +1,18 @@
-Version:1.0
-Huron Warrior
-HUR-WO-R4M
+chassis:Huron Warrior
+model:HUR-WO-R4M
+mul id:1581
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3056
-Source:TRO 3055 - Clan Invasion
+Source:TRO: 3055
 Rules Level:2
+role:Skirmisher
+
+
+
+quirk:imp_sensors
+
 
 Mass:50
 Engine:250 XL Engine

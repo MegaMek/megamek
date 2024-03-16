@@ -1,12 +1,18 @@
-Version:1.0
-Strider
-SR1-OM
+chassis:Strider
+model:SR1-OM
+mul id:6916
 
 Config:Biped Omnimech
 TechBase:Inner Sphere
 Era:3135
-Source:RS 3145 NTNU - Dark Ages
+Source:Record Sheets: 3145 New Tech New Upgrades
 Rules Level:3
+role:Scout
+
+
+
+quirk:easy_pilot
+
 
 Mass:40
 Engine:240 Fusion Engine(IS)

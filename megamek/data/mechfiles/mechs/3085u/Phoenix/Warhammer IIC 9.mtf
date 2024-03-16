@@ -1,12 +1,17 @@
-Version:1.0
-Warhammer IIC
-9
+chassis:Warhammer IIC
+model:9
+mul id:3508
 
 Config:Biped
 TechBase:Clan
 Era:3086
-Source:Dark Age
+Source:Record Sheets: 3085 Unabridged - Project Phoenix
 Rules Level:4
+role:Skirmisher
+
+quirk:searchlight
+quirk:stable
+
 
 Mass:80
 Engine:400 XXL (Clan) Engine(IS)
@@ -151,4 +156,18 @@ Ferro-Fibrous
 -Empty-
 -Empty-
 
-imagefile:.\data\images\fluff\Mech\3085 Warhammer IIC .jpg
+overview:The Clan's interpretation on the classic Warhammer has never been subtle. The BattleMech's hyper-advanced technology only emphasized and improved its duty as a frontline brawler; boosting its mass by 10 tons (with equivalent increases in armor protection) made it even more powerful.
+
+capabilities:Thanks to their technological expertise, they were able to add ten tons with the same speed and firepower and nearly double the armor of the original. The Warhammer IIC is built on an Endo Steel frame and is protected by tons of ferro-fibrous armor. The result is a dangerous 'Mech, able to hold its own in any battle against the Inner Sphere. Also note that the armor was the primary concern when designing the IIC version rivaling even 100 ton assault 'Mechs in durability and protection.
+
+deployment:This version drops the ER PPCs and replaces them with experimental Rotary AC/5s. An XXL fusion engine provides enough power for a top speed of 86 km/h. The RACs are backed up by a pair of ER Medium Lasers and ER Small Lasers, and the missile launcher is now an LRM-10. In addition to the ferro-fibrous armor, an ECM Suite in the head disrupts enemy electronics. 
+
+history:The Warhammer IIC is now the most common Clan BattleMech in the Inner Sphere. These remarkable machines are fielded by every major Inner Sphere force, Clan, and many large mercenary groups. It is only found on the periphery, where its equally outstanding price tag is simply too high for these countries to justify.
+
+manufacturer:Trellshire Heavy Industries
+primaryfactory:Twycross
+systemmanufacturer:CHASSIS:SFX-80 Endo
+systemmanufacturer:ENGINE:Type 79 400 XL
+systemmanufacturer:ARMOR:Forging ZM15 Ferro-Fibrous
+systemmanufacturer:COMMUNICATIONS:TDWS-37 Mk 2.2
+systemmanufacturer:TARGETING:“Hephaestus” CT-44

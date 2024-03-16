@@ -21,7 +21,6 @@ package megamek.client.ui.baseComponents;
 import megamek.MegaMek;
 import megamek.client.ui.enums.ValidationState;
 import megamek.common.annotations.Nullable;
-import megamek.common.util.EncodeControl;
 import org.apache.logging.log4j.LogManager;
 
 import javax.swing.*;
@@ -38,12 +37,12 @@ import java.util.ResourceBundle;
  * and validateAction();
  *
  * The resources associated with this dialog need to contain at least the following keys:
- * - "Ok.text" -> text for the Ok button
- * - "Ok.toolTipText" -> toolTipText for the Ok button
- * - "Validate.text" -> text for the Validate button
- * - "Validate.toolTipText" -> toolTipText for the Validate button
- * - "Cancel.text" -> text for the Cancel button
- * - "Cancel.toolTipText" -> toolTipText for the Cancel button
+ * - "Ok.text" - text for the Ok button
+ * - "Ok.toolTipText" - toolTipText for the Ok button
+ * - "Validate.text" - text for the Validate button
+ * - "Validate.toolTipText" - toolTipText for the Validate button
+ * - "Cancel.text" - text for the Cancel button
+ * - "Cancel.toolTipText" - toolTipText for the Cancel button
  *
  * This is directly tied to MekHQ's AbstractMHQValidationButtonDialog, and any changes here MUST be
  * verified there.
@@ -70,7 +69,7 @@ public abstract class AbstractValidationButtonDialog extends AbstractButtonDialo
     protected AbstractValidationButtonDialog(final JFrame frame, final boolean modal,
                                              final String name, final String title) {
         this(frame, modal, ResourceBundle.getBundle("megamek.client.messages", 
-                MegaMek.getMMOptions().getLocale(), new EncodeControl()), name, title);
+                MegaMek.getMMOptions().getLocale()), name, title);
     }
 
     /**
@@ -81,6 +80,16 @@ public abstract class AbstractValidationButtonDialog extends AbstractButtonDialo
                                              final ResourceBundle resources, final String name,
                                              final String title) {
         super(frame, modal, resources, name, title);
+        setState(ValidationState.PENDING);
+    }
+
+    /**
+     * Allows a dialog to be passed in as the owner
+     */
+    protected AbstractValidationButtonDialog(final JDialog owner, final JFrame frame, final boolean modal,
+                                             final ResourceBundle resources, final String name,
+                                             final String title) {
+        super(owner, frame, modal, resources, name, title);
         setState(ValidationState.PENDING);
     }
     //endregion Constructors

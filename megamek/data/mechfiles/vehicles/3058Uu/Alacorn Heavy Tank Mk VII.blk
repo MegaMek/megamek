@@ -15,6 +15,10 @@ Alacorn Heavy Tank
 <Model>
 Mk VII
 </Model>
+
+<mul id:>
+26
+</mul id:>
 <Tonnage>
 95
 </Tonnage>
@@ -48,6 +52,10 @@ ISHeavyGauss Ammo
 <type>
 IS Level 2
 </type>
+
+<role>
+Juggernaut
+</role>
 <year>
 3063
 </year>
@@ -64,5 +72,5 @@ IS Level 2
 Tracked
 </motion_type>
 <source>
-Civil War
+TRO: 3058
 </source>

@@ -20,6 +20,10 @@ Union C
 (2829)
 </Model>
 
+<mul id:>
+5325
+</mul id:>
+
 <year>
 2829
 </year>
@@ -138,7 +142,7 @@ CLMediumPulseLaser
 </structural_integrity>
 
 <source>
-TRO 3057R - Early Succession War
+TRO: 3057 Revised
 </source>
 
 <tonnage>

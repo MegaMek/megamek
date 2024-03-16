@@ -16,9 +16,13 @@ Tank
 Heavy MML Carrier
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+1441
+</mul id:>
 
 <year>
 3075
@@ -27,6 +31,10 @@ Heavy MML Carrier
 <type>
 IS Level 2
 </type>
+
+<role>
+Missile Boat
+</role>
 
 <tonnage>
 80
@@ -89,5 +97,5 @@ ISMML9
 </Turret Equipment>
 
 <source>
-Jihad
+TRO: 3060
 </source>

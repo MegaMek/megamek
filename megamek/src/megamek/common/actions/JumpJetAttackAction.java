@@ -13,19 +13,7 @@
  */
 package megamek.common.actions;
 
-import megamek.common.Compute;
-import megamek.common.Entity;
-import megamek.common.GunEmplacement;
-import megamek.common.Game;
-import megamek.common.Hex;
-import megamek.common.ILocationExposureStatus;
-import megamek.common.LandAirMech;
-import megamek.common.Mech;
-import megamek.common.MiscType;
-import megamek.common.Mounted;
-import megamek.common.TargetRoll;
-import megamek.common.Targetable;
-import megamek.common.ToHitData;
+import megamek.common.*;
 import megamek.common.options.OptionsConstants;
 
 /**
@@ -62,9 +50,9 @@ public class JumpJetAttackAction extends PhysicalAttackAction {
      * Damage that the specified mech does with a JJ attack
      */
     public static int getDamageFor(Entity entity, int leg) {
-
-        if (leg == BOTH)
+        if (leg == BOTH) {
             return getDamageFor(entity, LEFT) + getDamageFor(entity, RIGHT);
+        }
 
         int[] kickLegs = new int[2];
         if (entity.entityIsQuad() && !entity.isProne()) {
@@ -75,7 +63,7 @@ public class JumpJetAttackAction extends PhysicalAttackAction {
             kickLegs[1] = Mech.LOC_LLEG;
         }
 
-        final int legLoc = (leg == RIGHT) ? kickLegs[0] : kickLegs[1];
+        final int legLoc = kickLegs[(leg == RIGHT) ? 0 : 1];
 
         // underwater damage is 0
         if (entity.getLocationStatus(legLoc) == ILocationExposureStatus.WET) {
@@ -100,14 +88,17 @@ public class JumpJetAttackAction extends PhysicalAttackAction {
 
     /**
      * To-hit number for the specified leg to kick
+     * @param game The current {@link Game}
      */
     public static ToHitData toHit(Game game, int attackerId, Targetable target, int leg) {
         final Entity ae = game.getEntity(attackerId);
-        if (ae == null)
+        if (ae == null) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "You can't attack from a null entity!");
+        }
 
-        if (!game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_JUMP_JET_ATTACK))
+        if (!game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_JUMP_JET_ATTACK)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "no Jump Jet attack");
+        }
 
         String impossible = toHitIsImpossible(game, ae, target);
         if (impossible != null) {
@@ -160,8 +151,8 @@ public class JumpJetAttackAction extends PhysicalAttackAction {
         }
 
         // check if attacker even has jump jets!
+        boolean hasJJ = false;
         for (Mounted m : ae.getMisc()) {
-            boolean hasJJ = false;
             int loc = m.getLocation();
             if (m.getType().hasFlag(MiscType.F_JUMP_JET)
                     && m.isReady()
@@ -169,10 +160,15 @@ public class JumpJetAttackAction extends PhysicalAttackAction {
                 hasJJ = true;
                 break;
             }
-            if (!hasJJ) {
-                return new ToHitData(TargetRoll.IMPOSSIBLE,
-                        "Jump jets missing or destroyed");
-            }
+        }
+        if (!hasJJ) {
+            return new ToHitData(TargetRoll.IMPOSSIBLE,
+                    "Jump jets missing or destroyed");
+        }
+
+        if (ae.moved == EntityMovementType.MOVE_JUMP) {
+            return new ToHitData(TargetRoll.IMPOSSIBLE,
+                    "Attacker jumped this turn");
         }
 
         // check if attacker has fired leg-mounted weapons

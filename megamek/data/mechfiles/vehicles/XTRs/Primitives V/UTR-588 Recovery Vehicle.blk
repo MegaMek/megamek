@@ -16,9 +16,13 @@ SupportTank
 UTR-588 Recovery Vehicle
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+7412
+</mul id:>
 
 <year>
 2439
@@ -27,6 +31,10 @@ UTR-588 Recovery Vehicle
 <type>
 IS Level 4
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Tracked
@@ -77,9 +85,14 @@ cargobay:40:1
 </transporters>
 
 <source>
-XTRO Primitives V - Age of War
+XTR: Primitives V
 </source>
 
 <tonnage>
 90.0
 </tonnage>
+
+<quirks>
+poor_performance
+</quirks>
+

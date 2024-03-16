@@ -20,6 +20,10 @@ Hawk Moth Gunship
 (Armor)
 </Model>
 
+<mul id:>
+1426
+</mul id:>
+
 <year>
 3060
 </year>
@@ -27,6 +31,10 @@ Hawk Moth Gunship
 <type>
 IS Level 2
 </type>
+
+<role>
+Sniper
+</role>
 
 <motion_type>
 VTOL
@@ -77,7 +85,7 @@ ISLightGaussRifle
 </Rotor Equipment>
 
 <source>
-Clan Invasion
+TRO: 3060
 </source>
 
 <tonnage>

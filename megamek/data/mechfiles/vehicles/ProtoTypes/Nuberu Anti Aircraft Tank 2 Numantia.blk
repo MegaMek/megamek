@@ -20,6 +20,10 @@ Nuberu Anti Aircraft Tank
 2 'Numantia'
 </Model>
 
+<mul id:>
+4738
+</mul id:>
+
 <year>
 3083
 </year>
@@ -27,6 +31,10 @@ Nuberu Anti Aircraft Tank
 <type>
 Clan Level 4
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Tracked
@@ -100,9 +108,16 @@ CLStreakSRM6
 </Front Turret Equipment>
 
 <source>
-TRO:Prototypes
+TRO: Prototypes
 </source>
 
 <tonnage>
 60.0
 </tonnage>
+
+<quirks>
+gas_hog
+anti_air
+trailer_hitch
+</quirks>
+

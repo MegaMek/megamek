@@ -22,6 +22,7 @@ package megamek.server.commands;
 
 import java.io.File;
 
+import megamek.MMConstants;
 import megamek.common.options.OptionsConstants;
 import megamek.server.Server;
 
@@ -48,8 +49,8 @@ public class LocalSaveGameCommand extends ServerCommand {
             server
                     .sendServerChat("Local Save only outside double blind games.");
         } else {
-            String fileName = "savegame.sav";
-            String localPath = "savegames"+ File.separator;
+            String fileName = MMConstants.DEFAULT_SAVEGAME_NAME;
+            String localPath = MMConstants.SAVEGAME_DIR + File.separator;
             if (args.length > 1) {
                 fileName = args[1];
             }

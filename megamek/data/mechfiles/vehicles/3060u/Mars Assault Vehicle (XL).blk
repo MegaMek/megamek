@@ -20,6 +20,10 @@ Mars Assault Vehicle
 (XL)
 </Model>
 
+<mul id:>
+2083
+</mul id:>
+
 <year>
 3061
 </year>
@@ -27,6 +31,10 @@ Mars Assault Vehicle
 <type>
 Clan Level 3
 </type>
+
+<role>
+Missile Boat
+</role>
 
 <motion_type>
 Tracked
@@ -97,7 +105,7 @@ CLGaussRifle
 </Turret Equipment>
 
 <source>
-TRO 3060 - Clan Invasion
+TRO: 3060
 </source>
 
 <tonnage>

@@ -20,6 +20,10 @@ Commando
 Battlefield Infiltration Units
 </Model>
 
+<mul id:>
+665
+</mul id:>
+
 <year>
 2500
 </year>
@@ -27,6 +31,10 @@ Battlefield Infiltration Units
 <type>
 IS Level 3
 </type>
+
+<role>
+Ambusher
+</role>
 
 <motion_type>
 Jump
@@ -56,5 +64,5 @@ ISSneakSuitCamoIRECM
 </armorKit>
 
 <source>
-TRO 3085 - Age of War
+TRO: 3085
 </source>

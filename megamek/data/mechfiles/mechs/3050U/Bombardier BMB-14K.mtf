@@ -1,12 +1,18 @@
-Version:1.0
-Bombardier
-BMB-14K
+chassis:Bombardier
+model:BMB-14K
+mul id:425
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3071
-Source:TRO 3050 - Jihad
+Source:TRO: 3050
 Rules Level:2
+role:Missile Boat
+
+
+
+quirk:bad_rep_is
+
 
 Mass:65
 Engine:325 XL Engine

@@ -1,44 +1,50 @@
-Version:1.0
-Devastator
-DVS-2
-
+chassis:Devastator
+model:DVS-2
+mul id:894
 Config:Biped
-TechBase:Inner Sphere
-Era:3048
-Source:TRO 3058 - Succession Wars
-Rules Level:2
+techbase:Inner Sphere
+era:3048
+source:TRO: 3058
+rules level:2
+role:Juggernaut
 
-Mass:100
-Engine:300 XL Engine
-Structure:Standard
-Myomer:Standard
 
-Heat Sinks:14 Double
-Walk MP:3
-Jump MP:0
 
-Armor:Standard(Inner Sphere)
-LA Armor:34
-RA Armor:34
-LT Armor:30
-RT Armor:30
-CT Armor:47
-HD Armor:9
-LL Armor:40
-RL Armor:40
-RTL Armor:10
-RTR Armor:10
-RTC Armor:12
+quirk:hyper_actuator
+quirk:searchlight
+
+
+mass:100
+engine:300 XL Engine(IS)
+structure:IS Standard
+myomer:Standard
+
+heat sinks:14 IS Double
+walk mp:3
+jump mp:0
+
+armor:Standard(Inner Sphere)
+LA armor:34
+RA armor:34
+LT armor:30
+RT armor:30
+CT armor:47
+HD armor:9
+LL armor:40
+RL armor:40
+RTL armor:10
+RTR armor:10
+RTC armor:12
 
 Weapons:8
+Gauss Rifle, Left Arm
+Gauss Rifle, Right Arm
+PPC, Left Torso
 Medium Laser, Left Torso
+PPC, Right Torso
 Medium Laser, Right Torso
 Medium Laser, Center Torso
 Medium Laser, Head
-Particle Cannon, Left Torso
-Particle Cannon, Right Torso
-Gauss Rifle, Left Arm
-Gauss Rifle, Right Arm
 
 Left Arm:
 Shoulder
@@ -75,9 +81,9 @@ Fusion Engine
 ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
-Particle Cannon
-Particle Cannon
-Particle Cannon
+PPC
+PPC
+PPC
 Medium Laser
 IS Gauss Ammo
 -Empty-
@@ -89,9 +95,9 @@ Fusion Engine
 ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
-Particle Cannon
-Particle Cannon
-Particle Cannon
+PPC
+PPC
+PPC
 Medium Laser
 IS Gauss Ammo
 -Empty-
@@ -152,4 +158,19 @@ Foot Actuator
 -Empty-
 -Empty-
 
+overview:Designed by General Kerensky himself right before the start of the Amaris Civil War, development of the Devastator ended abruptly when Stefan the Usurper took control of the Terran Hegemony.
+
+capabilities:In order to overcome its poor speed, long-range power was designed. Although the Devastator is capable of holding its own in close quarters battle, its capacity to control heat is its most striking trait. Pilots are able to move with the utmost speed and fire all of the heavy weaponry without fear thanks to fourteen double heat sinks. A Devastator pilot just needs to slightly scale back his movements to prevent the design from overheating, even when doused in inferno gel or subjected to several engine strikes.
+
+deployment:The Devastator carries an arsenal focused on long-range combat. The primary weapons are a pair of Poland Main Model A Gauss rifles backed up by two Donal PPCs. For close combat, the Devastator carries four Intek medium lasers, one of which is mounted in the rear of the center torso to keep enemy infantry from getting too ambitious.
+
+history:Although funds were diverted to the war effort, the design team remained so committed to the project that, just before General Kerensky launched the invasion of Terra, they submitted six prototypes for testing, with team expenses covered out of pocket. As no battle logs for the Devastator have ever been discovered, historians are unable to assess how one of the final original Star League Defense Force designs performed or even if any of the prototypes survived. The blueprints were recovered in 3023 on Hoff by a team looking into a recently found Star League facility, but the first engineers to look at the blueprints were unable to replicate any of the new technology that went into the original. The NAIS didn't build a Devastator prototype utilizing available technologies until 3033. A few years later, moderate production started, and until early 3048, when the Federated Commonwealth was able to start producing a fully equipped version, the low tech DVS-1D was given to elite units.
+
+manufacturer:NAIS
+primaryfactory:New Avalon
+systemmanufacturer:CHASSIS:Star League XT
+systemmanufacturer:ENGINE:Vlar 300 XL
+systemmanufacturer:ARMOR:Durallex Heavy
+systemmanufacturer:COMMUNICATIONS:Johnston Wide Band
+systemmanufacturer:TARGETING:Randar Pinpoint-HY
 

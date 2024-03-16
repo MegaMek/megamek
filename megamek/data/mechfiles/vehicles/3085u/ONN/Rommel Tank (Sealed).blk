@@ -15,6 +15,10 @@ Rommel Tank
 <Model>
 (Sealed)
 </Model>
+
+<mul id:>
+2736
+</mul id:>
 <Tonnage>
 65
 </Tonnage>
@@ -52,6 +56,10 @@ Environmental Sealing
 <type>
 IS Level 3
 </type>
+
+<role>
+Sniper
+</role>
 <year>
 3076
 </year>
@@ -67,6 +75,49 @@ IS Level 3
 <motion_type>
 Tracked
 </motion_type>
+
+
+<capabilities>
+With its default main weapon being the massive and immensely powerful but short-ranged AC/20, the Rommel is best suited to close range and urban fighting, where its heavy gun can be put to excellent use. A Rommel may lie in wait around a corner or down an alley, and then use its devastating armament to cripple or destroy a BattleMech when it comes into view. The main advantage the Rommel has over other, older designs is a combination of higher speed and more armor. With even more armor than a Demolisher tank, the Rommel can sustain more punishment, yet slip away faster to fight again from another position.
+</capabilities>
+
+<overview>
+The Rommel tank is a 65-ton armored combat vehicle, specializing in close range fighting and urban combat. Identical to its twin, the Patton, in every way but armament and armor configuration, the Rommel has primarily served with the Lyran Commonwealth and the Lyran Alliance.
+</overview>
+
+<deployment>
+This 3076 variant uses Environmental Sealing to participate in amphibious attacks. It carries Heavy Ferro-Fibrous armor and a Guardian ECM Suite to protect itself, and trades in its weaponry for a Heavy PPC and a Streak SRM-6. To defend itself in the water, it also carries a bow-mounted SRT-4 system. Two MG provide additinal protection on both sides against conventional infantry.
+</deployment>
+
+<history>
+The Rommel was designed concurrently with the Patton in the early 3000s, when Defiance Industries decided that an armored combat vehicle capable of replacing 'Mechs was needed. Since 'Mech production was nearly at a standstill, the ability to produce and field armored vehicles became a necessity for every Successor State.
+</history>
+
+<manufacturer>
+Defiance Industries, General Motors
+</manufacturer>
+
+<primaryFactory>
+Hesperus II,Salem
+</primaryFactory>
+
+<systemManufacturers>
+ENGINE:Magna 260
+ARMOR:Durallex Special Heavy Ferro-Fibrous
+COMMUNICATIONS:TharHes Muse 54-58K with ECM
+TARGETING:TharHes Mars5
+</systemManufacturers>
+
 <source>
-Jihad
+TRO: 3085
 </source>
+
+<tonnage>
+65.0
+</tonnage>
+
+<quirks>
+low_profile
+poor_target_short
+</quirks>
+

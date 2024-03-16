@@ -11,23 +11,15 @@
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
  */
-
-/*
- * BLkFile.java
- *
- * Created on April 6, 2002, 2:06 AM
- */
-
-/**
- *
- * @author taharqa
- * @version
- */
 package megamek.common.loaders;
 
 import megamek.common.*;
 import megamek.common.util.BuildingBlock;
 
+/**
+ * @author taharqa
+ * @since April 6, 2002, 2:06 AM
+ */
 public class BLKWarshipFile extends BLKFile implements IMechLoader {
 
     public BLKWarshipFile(BuildingBlock bb) {
@@ -38,29 +30,12 @@ public class BLKWarshipFile extends BLKFile implements IMechLoader {
     public Entity getEntity() throws EntityLoadingException {
 
         Warship a = new Warship();
-
-        if (!dataFile.exists("Name")) {
-            throw new EntityLoadingException("Could not find name block.");
-        }
-        a.setChassis(dataFile.getDataAsString("Name")[0]);
-        if (dataFile.exists("Model") && (dataFile.getDataAsString("Model")[0] != null)) {
-            a.setModel(dataFile.getDataAsString("Model")[0]);
-        } else {
-            a.setModel("");
-        }
-
-        if (dataFile.exists("source")) {
-            a.setSource(dataFile.getDataAsString("source")[0]);
-        }
+        setBasicEntityData(a);
 
         if (!dataFile.exists("year")) {
             throw new EntityLoadingException("Could not find year block.");
         }
         a.setYear(dataFile.getDataAsInt("year")[0]);
-
-        setTechLevel(a);
-        setFluff(a);
-        checkManualBV(a);
 
         // Tonnage
         if (!dataFile.exists("tonnage")) {
@@ -170,9 +145,9 @@ public class BLKWarshipFile extends BLKFile implements IMechLoader {
             a.setSail(dataFile.getDataAsInt("sail")[0] != 0);
         }
 
-		if (dataFile.exists("overview")) {
-			a.getFluff().setOverview(dataFile.getDataAsString("overview")[0]);
-		}
+        if (dataFile.exists("overview")) {
+            a.getFluff().setOverview(dataFile.getDataAsString("overview")[0]);
+        }
         // Grav Decks - two approaches
         // First, the old method, where a number of grav decks for each category is specified
         //  This doesn't allow us to specify precise size
@@ -235,10 +210,6 @@ public class BLKWarshipFile extends BLKFile implements IMechLoader {
             a.getFluff().setDeployment(dataFile.getDataAsString("deployment")[0]);
         }
 
-        if (dataFile.exists("imagepath")) {
-            a.getFluff().setMMLImagePath(dataFile.getDataAsString("imagepath")[0]);
-        }
-
         if (!dataFile.exists("armor")) {
             throw new EntityLoadingException("Could not find armor block.");
         }
@@ -278,11 +249,11 @@ public class BLKWarshipFile extends BLKFile implements IMechLoader {
         // get docking collars (legacy BLK files)
         int docks = dataFile.getDataAsInt("docking_collar")[0];
         while (docks > 0) {
-            a.addTransporter(new DockingCollar(1, (a.getTransports().size() + 1)));
+            a.addTransporter(new DockingCollar(a.getTransports().size() + 1));
             docks--;
         }
         a.setArmorTonnage(a.getArmorWeight());
-
+        loadQuirks(a);
         return a;
     }
 

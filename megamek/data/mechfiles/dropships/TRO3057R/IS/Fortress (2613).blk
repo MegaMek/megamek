@@ -20,6 +20,10 @@ Fortress
 (2613)
 </Model>
 
+<mul id:>
+4179
+</mul id:>
+
 <year>
 2613
 </year>
@@ -31,6 +35,10 @@ Fortress
 <type>
 IS Level 3
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Spheroid
@@ -164,7 +172,7 @@ Medium Laser
 </structural_integrity>
 
 <source>
-TRO 3057R - Star League
+TRO: 3057 Revised
 </source>
 
 <tonnage>

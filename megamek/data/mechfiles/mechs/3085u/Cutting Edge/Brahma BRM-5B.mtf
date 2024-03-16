@@ -1,34 +1,34 @@
-Version:1.0
-Brahma
-BRM-5B
-
+chassis:Brahma
+model:BRM-5B
+mul id:427
 Config:Biped
-TechBase:Inner Sphere
-Era:3080
-Source:Jihad
-Rules Level:4
+techbase:Inner Sphere
+era:3080
+source:Record Sheets: 3085 Unabridged - Cutting Edge
+rules level:2
+role:Skirmisher
 
-Mass:60
-Engine:300 XL Engine
-Structure:Standard
-Myomer:Standard
+mass:60
+engine:300 XL Engine(IS)
+structure:IS Standard
+myomer:Standard
 
-Heat Sinks:15 Double
-Walk MP:5
-Jump MP:3
+heat sinks:15 IS Double
+walk mp:5
+jump mp:3
 
-Armor:Standard(Inner Sphere)
-LA Armor:20
-RA Armor:20
-LT Armor:20
-RT Armor:20
-CT Armor:29
-HD Armor:9
-LL Armor:28
-RL Armor:28
-RTL Armor:8
-RTR Armor:8
-RTC Armor:10
+armor:Standard(Inner Sphere)
+LA armor:20
+RA armor:20
+LT armor:20
+RT armor:20
+CT armor:29
+HD armor:9
+LL armor:28
+RL armor:28
+RTL armor:8
+RTR armor:8
+RTC armor:10
 
 Weapons:6
 ER Medium Laser, Right Arm

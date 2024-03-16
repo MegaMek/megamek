@@ -20,6 +20,10 @@ Rogue
 RGU-133LP
 </Model>
 
+<mul id:>
+2733
+</mul id:>
+
 <year>
 3055
 </year>
@@ -31,6 +35,10 @@ RGU-133LP
 <type>
 IS Level 2
 </type>
+
+<role>
+Fast Dogfighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -101,7 +109,7 @@ ISMediumPulseLaser
 </Fuselage Equipment>
 
 <source>
-TRO 3050u - Clan Invasion
+TRO: 3050
 </source>
 
 <tonnage>

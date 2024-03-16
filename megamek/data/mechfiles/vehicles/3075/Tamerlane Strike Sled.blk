@@ -16,21 +16,29 @@ Tank
 Tamerlane Strike Sled
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+3158
+</mul id:>
 
 <year>
 3071
 </year>
 
 <source>
-Jihad
+TRO: 3075
 </source>
 
 <type>
 IS Level 2
 </type>
+
+<role>
+Scout
+</role>
 
 <tonnage>
 20.0

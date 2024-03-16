@@ -1,0 +1,131 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+Elemental Battle Armor
+</Name>
+
+<Model>
+[Flamer](Sqd6)
+</Model>
+
+<mul id:>
+8859
+</mul id:>
+
+<year>
+2868
+</year>
+
+<originalBuildYear>
+2868
+</originalBuildYear>
+
+<type>
+Clan Level 2
+</type>
+
+<role>
+Ambusher
+</role>
+
+<motion_type>
+Jump
+</motion_type>
+
+<transporters>
+</transporters>
+
+<cruiseMP>
+1
+</cruiseMP>
+
+<armor_type>
+28
+</armor_type>
+
+<armor_tech>
+2
+</armor_tech>
+
+<Point Equipment>
+CLBAFlamer:RA
+CLBASRM2:Body
+BA-SRM2 Ammo:Body:Shots2#
+BAAPMount:LA
+InfantryAssaultRifle:APM:LA
+SwarmMek
+SwarmWeaponMek
+StopSwarm
+LegAttack
+BABattleClaw:LA
+</Point Equipment>
+
+<source>
+TRO: 3058 Upgrade
+</source>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+3
+</jumpingMP>
+
+<armor>
+10
+</armor>
+
+<Trooper Count>
+6
+</Trooper Count>
+
+<weightclass>
+2
+</weightclass>
+
+<capabilities>
+The roots of the Elemental battle armor can be traced back to pressurized diving suits built by Clan Goliath Scorpion. These underwater suits already had most of the basic equipment common to current battle armor designs: myomer musculature, self-contained air-supply and life support systems, and heavy, atmospherically sealed bodies designed to handle extreme conditions. Clan Wolf saw the diving suit's military potential, but instead of claiming the designs through combat, they directed their merchant caste to acquire a number through trade. Weaponization of these suits began with adding armor, weapons, and small jump jets until proof of concept was established. Advanced manufacturing then ensued, and while Clan Wolf did experiment with specialist suits designed for specific environments, they eventually settled on a general purpose design that defined the standard used by all Clans for over two centuries. The specialist suits would later go on to inspire the Gnome, Salamander, Sylph and Undine.
+</capabilities>
+
+<overview>
+It was a marvel of Clan engineering that allowed a small group of operators to take down large 'Mechs and survive the encounter. While it is possible for a normal-sized human to use the battle armor, this design is tailored for the Clans' giant Elemental warriors and only they can bring out its fullest potential.
+</overview>
+
+<deployment>
+Clan Elemental battle armor mounts one primary and one secondary weapon, plus a detachable SRM-2 pack. If two missiles are fired, the trooper may aim them at the same target or at two different targets that both lie within the firer's forward 90-degree firing arc. The launcher holds a total of four missiles. Once the missiles have been expended the launcher may be jettisoned, improving mobility. The modular weapon mount may accommodate a variety of heavy weapons: initially a Small Laser, Flamer or a Machine Gun, later options include a Heavy Machine Gun, ER Micro Laser, or Micro Pulse Laser. The Anti-Personnel Weapon Mount typically carries a projectile weapon that is effective against unarmored targets, such as an anti-personnel machine gun.
+</deployment>
+
+<history>
+The standard against which all battle armor is measured, the Elemental battle armor was first introduced in 2868 by Clan Wolf in a Trial of Possession against the Nova Cats. After the first use of the battle armor in 2868 against the Nova Cats, the Wolves entered into a series of trials later that year with Clan Hell's Horses. The Wolves put their new battle armor up against the Hell's Horses genetically engineered infantry, the precursor to the modern Clan Elemental. When the trials were over, the Hell's Horses had won the Wolves battle armor technology, and the Wolves had gotten the needed information to breed their own Elementals. Almost immediately, each Clan combined their own technology with that of the other, creating the tradition of matching Elemental troops with battle armor. Within a short period of time, battle armored Elemental troop deployments spread across Clan forces. The appearance of Elemental battle armor during the Clan Invasion of the Inner Sphere struck awe and fear in the MechWarriors who first faced them: to see swarms of armored infantrymen bouncing across the battlefield, survive direct hits even from a Medium Laser, and literally tear apart 'Mechs contributed to their initial impression that they were fighting aliens. The suits' ability to survive deadly hits and make great leaps inspired Victor Steiner-Davion to first nickname them "Toads," an epithet which continues to be used by Spheroids.
+</history>
+
+<manufacturer>
+Swedenborg Heavy Industries,Bergan Industries BA Annex,WC Site 2,Clan Diamond Shark IndustriPlex-C,Unknown,Olivetti Weaponry,WC Site OZ-2,W-7 Facilities,Trellshire Heavy Industries,W-7 Facilities,Elemental Facility 4 
+</manufacturer>
+
+<primaryFactory>
+Kirchbach,Alshain,Arc-Royal,Itabaiana,Strana Mechty,Sudeten,Tamar,Tranquil,Twycross,Weingarten
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Various
+ENGINE:Various
+ARMOR:Various
+JUMPJET:Various
+COMMUNICATIONS:Various
+TARGETING:Various
+</systemManufacturers>
+

@@ -1,12 +1,19 @@
-Version:1.1
-Crossbow
-CRS-X
+chassis:Crossbow
+model:CRS-X
+mul id:5583
 
 Config:Biped
 techbase:Inner Sphere
 era:2468
-source:XTRO Primitives II - Age of War
+source:XTR: Primitives II
 rules level:4
+role:Missile Boat
+
+quirk:obsolete
+quirk:poor_target_long
+quirk:prototype
+weaponquirk:poor_cooling:RT:0:Large Laser
+
 
 mass:60
 engine:290 Fusion Engine(IS)

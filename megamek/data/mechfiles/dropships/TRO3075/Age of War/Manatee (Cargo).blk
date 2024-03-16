@@ -20,6 +20,10 @@ Manatee
 (Cargo)
 </Model>
 
+<mul id:>
+4579
+</mul id:>
+
 <year>
 2403
 </year>
@@ -31,6 +35,10 @@ Manatee
 <type>
 IS Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Spheroid
@@ -97,7 +105,7 @@ crewquarters:35.0:0
 </structural_integrity>
 
 <source>
-TRO 3075 - Age of War
+TRO: 3075
 </source>
 
 <tonnage>

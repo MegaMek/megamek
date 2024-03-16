@@ -20,6 +20,10 @@ Merkava Heavy Tank
 Mk VII
 </Model>
 
+<mul id:>
+4628
+</mul id:>
+
 <year>
 2435
 </year>
@@ -27,6 +31,10 @@ Mk VII
 <type>
 IS Level 1
 </type>
+
+<role>
+Sniper
+</role>
 
 <motion_type>
 Tracked
@@ -85,7 +93,7 @@ Machine Gun
 </Turret Equipment>
 
 <source>
-TRO 3075 - Age of War
+TRO: 3075
 </source>
 
 <tonnage>

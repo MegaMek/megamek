@@ -16,9 +16,13 @@ Tank
 Chaparral Missile Artillery Tank
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+558
+</mul id:>
 
 <year>
 2611
@@ -27,6 +31,10 @@ Chaparral Missile Artillery Tank
 <type>
 IS Level 3
 </type>
+
+<role>
+Missile Boat
+</role>
 
 <motion_type>
 Tracked
@@ -71,7 +79,7 @@ SRM 6
 </Rear Equipment>
 
 <source>
-TRO 3050 - Star League
+TRO: 3050
 </source>
 
 <tonnage>

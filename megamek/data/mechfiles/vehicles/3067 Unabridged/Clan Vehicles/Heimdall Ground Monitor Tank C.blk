@@ -20,6 +20,10 @@ Heimdall Ground Monitor Tank
 C
 </Model>
 
+<mul id:>
+5743
+</mul id:>
+
 <year>
 3075
 </year>
@@ -27,6 +31,10 @@ C
 <type>
 Clan Level 2
 </type>
+
+<role>
+Juggernaut
+</role>
 
 <motion_type>
 Tracked
@@ -88,7 +96,7 @@ CLMediumPulseLaser:OMNI
 </Turret Equipment>
 
 <source>
-RS 3067U
+Record Sheets: Record Sheets: 3067 Unabridged
 </source>
 
 <tonnage>

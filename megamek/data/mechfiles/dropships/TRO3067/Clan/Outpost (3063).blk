@@ -20,6 +20,10 @@ Outpost
 (3063)
 </Model>
 
+<mul id:>
+4770
+</mul id:>
+
 <year>
 3063
 </year>
@@ -31,6 +35,10 @@ Outpost
 <type>
 Clan Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Spheroid
@@ -186,7 +194,7 @@ Clan Streak SRM 6 Ammo:75
 </structural_integrity>
 
 <source>
-TRO 3067 - Civil War
+TRO: 3067
 </source>
 
 <tonnage>

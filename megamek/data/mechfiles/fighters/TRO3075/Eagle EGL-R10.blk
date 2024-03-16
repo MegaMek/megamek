@@ -20,6 +20,10 @@ Eagle
 EGL-R10
 </Model>
 
+<mul id:>
+4107
+</mul id:>
+
 <year>
 2684
 </year>
@@ -31,6 +35,10 @@ EGL-R10
 <type>
 IS Level 2
 </type>
+
+<role>
+Dogfighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -100,7 +108,7 @@ Medium Laser
 </Fuselage Equipment>
 
 <source>
-TRO 3075 - Succession Wars
+TRO: 3075
 </source>
 
 <tonnage>

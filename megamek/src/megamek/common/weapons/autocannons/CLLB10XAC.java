@@ -13,6 +13,8 @@
  */
 package megamek.common.weapons.autocannons;
 
+import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.Mounted;
 /**
  * @author Andrew Hunter
  * @since Oct 15, 2004
@@ -40,7 +42,7 @@ public class CLLB10XAC extends LBXACWeapon {
         this.shortAV = 10;
         this.medAV = 10;
         this.maxRange = RANGE_MED;
-        rulesRefs = "207,TM";
+        rulesRefs = "207, TM";
         techAdvancement.setTechBase(TECH_BASE_CLAN)
                 .setIntroLevel(false)
                 .setTechRating(RATING_F)
@@ -49,5 +51,10 @@ public class CLLB10XAC extends LBXACWeapon {
                 .setClanApproximate(true, true, false, false, false)
                 .setProductionFactions(F_CLAN)
                 .setReintroductionFactions(F_CLAN);
+    }
+
+    @Override
+    public double getBattleForceDamage(int range, Mounted fcs) {
+        return (range <= AlphaStrikeElement.LONG_RANGE) ? 0.63 : 0;
     }
 }

@@ -13,7 +13,8 @@
  */
 package megamek.client.bot.princess;
 
-import megamek.utils.MegaMekXmlUtil;
+import megamek.common.annotations.Nullable;
+import megamek.utilities.xml.MMXMLUtility;
 import org.apache.logging.log4j.LogManager;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -111,19 +112,19 @@ public class BehaviorSettingsFactory {
         return behaviorMap.get(desc);
     }
 
-    private Document buildPrincessBehaviorDoc() {
-        
+    private @Nullable Document buildPrincessBehaviorDoc() {
         try {
             File behaviorFile = new File(PRINCESS_BEHAVIOR_PATH);
             if (!behaviorFile.exists() || !behaviorFile.isFile()) {
                 LogManager.getLogger().error("Could not load " + PRINCESS_BEHAVIOR_PATH);
                 return null;
             }
+
             try (InputStream is = new FileInputStream(behaviorFile)) {
-                return MegaMekXmlUtil.newSafeDocumentBuilder().parse(is);
+                return MMXMLUtility.newSafeDocumentBuilder().parse(is);
             }
-        } catch (Exception e) {
-            LogManager.getLogger().error("", e);
+        } catch (Exception ex) {
+            LogManager.getLogger().error("", ex);
             return null;
         }
     }
@@ -182,7 +183,7 @@ public class BehaviorSettingsFactory {
                 return false;
             }
 
-            Document behaviorDoc = MegaMekXmlUtil.newSafeDocumentBuilder().newDocument();
+            Document behaviorDoc = MMXMLUtility.newSafeDocumentBuilder().newDocument();
             Node rootNode = behaviorDoc.createElement("princessBehaviors");
             synchronized (behaviorMap) {
                 for (String key : behaviorMap.keySet()) {
@@ -235,8 +236,8 @@ public class BehaviorSettingsFactory {
     // DEFAULT BEHAVIORS
     //******************
     /**
-     * Destination Edge: {@link CardinalEdge#NEAREST_OR_NONE} <br>
-     * Retreat Edge: {@link CardinalEdge#NEAREST_OR_NONE} <br>
+     * Destination Edge: {@link CardinalEdge#NONE} <br>
+     * Retreat Edge: {@link CardinalEdge#NONE} <br>
      * Forced Withdrawal: False <br>
      * Go Home: False <br>
      * Auto Flee: False <br>
@@ -274,8 +275,8 @@ public class BehaviorSettingsFactory {
     }
 
     /**
-     * Destination Edge: {@link CardinalEdge#NEAREST_OR_NONE} <br>
-     * Retreat Edge: {@link CardinalEdge#NEAREST_OR_NONE} <br>
+     * Destination Edge: {@link CardinalEdge#NONE} <br>
+     * Retreat Edge: {@link CardinalEdge#NEAREST} <br>
      * Forced Withdrawal: True <br>
      * Go Home: False <br>
      * Auto Flee: False <br>
@@ -310,8 +311,8 @@ public class BehaviorSettingsFactory {
     }
 
     /**
-     * Destination Edge: {@link CardinalEdge#NEAREST_OR_NONE} <br>
-     * Retreat Edge: {@link CardinalEdge#NEAREST_OR_NONE} <br>
+     * Destination Edge: {@link CardinalEdge#NONE} <br>
+     * Retreat Edge: {@link CardinalEdge#NEAREST} <br>
      * Forced Withdrawal: True <br>
      * Go Home: True <br>
      * Auto Flee: True <br>
@@ -349,8 +350,8 @@ public class BehaviorSettingsFactory {
     }
 
     /**
-     * Destination Edge: {@link CardinalEdge#NEAREST_OR_NONE} <br>
-     * Retreat Edge: {@link CardinalEdge#NEAREST_OR_NONE} <br>
+     * Destination Edge: {@link CardinalEdge#NONE} <br>
+     * Retreat Edge: {@link CardinalEdge#NEAREST} <br>
      * Forced Withdrawal: True <br>
      * Go Home: False <br>
      * Auto Flee: False <br>

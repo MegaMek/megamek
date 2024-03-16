@@ -20,6 +20,10 @@ Fox Armored Car
 (Interdictor)
 </Model>
 
+<mul id:>
+6749
+</mul id:>
+
 <year>
 3088
 </year>
@@ -27,6 +31,10 @@ Fox Armored Car
 <type>
 IS Level 2
 </type>
+
+<role>
+Scout
+</role>
 
 <motion_type>
 Hover
@@ -78,3 +86,8 @@ Machine Gun
 <tonnage>
 20.0
 </tonnage>
+
+<source>
+TRO: 3145 NTNU
+</source>
+

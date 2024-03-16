@@ -20,6 +20,10 @@ Kruger Combat Car
 (Original)
 </Model>
 
+<mul id:>
+6312
+</mul id:>
+
 <year>
 2620
 </year>
@@ -27,6 +31,10 @@ Kruger Combat Car
 <type>
 IS Level 2
 </type>
+
+<role>
+Scout
+</role>
 
 <motion_type>
 Wheeled
@@ -69,9 +77,15 @@ Medium Laser
 </Turret Equipment>
 
 <source>
-TRO 3145 Federated Suns - Star League
+TRO: 3145 Federated Suns
 </source>
 
 <tonnage>
 10.0
 </tonnage>
+
+<quirks>
+imp_com
+power_reverse
+</quirks>
+

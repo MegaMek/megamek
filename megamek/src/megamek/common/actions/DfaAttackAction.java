@@ -15,6 +15,7 @@ package megamek.common.actions;
 
 import java.util.Enumeration;
 
+import megamek.client.ui.Messages;
 import megamek.common.*;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.options.OptionsConstants;
@@ -63,8 +64,8 @@ public class DfaAttackAction extends DisplacementAttackAction {
     }
 
     /**
-     * Checks if a death from above attack can hit the target, including
-     * movement
+     * Checks if a death from above attack can hit the target, including movement
+     * @param game The current {@link Game}
      */
     public static ToHitData toHit(Game game, int attackerId,
                                   Targetable target, MovePath md) {
@@ -172,8 +173,8 @@ public class DfaAttackAction extends DisplacementAttackAction {
     }
 
     /**
-     * To-hit number for a death from above attack, assuming that movement has
-     * been handled
+     * To-hit number for a death from above attack, assuming that movement has been handled
+     * @param game The current {@link Game}
      */
     public static ToHitData toHit(Game game, int attackerId,
                                   Targetable target, Coords src) {
@@ -193,7 +194,7 @@ public class DfaAttackAction extends DisplacementAttackAction {
         Entity te = null;
         if (target.getTargetType() == Targetable.TYPE_ENTITY) {
             te = (Entity) target;
-            targetId = target.getTargetId();
+            targetId = target.getId();
         } else {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Invalid Target");
         }
@@ -419,5 +420,11 @@ public class DfaAttackAction extends DisplacementAttackAction {
         }
 
         return false;
+    }
+
+    @Override
+    public String toSummaryString(final Game game) {
+        final String roll = this.toHit(game).getValueAsString();
+        return Messages.getString("BoardView1.DfaAttackAction", roll);
     }
 }

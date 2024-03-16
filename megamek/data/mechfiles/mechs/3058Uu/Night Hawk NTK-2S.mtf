@@ -1,12 +1,18 @@
-Version:1.0
-Night Hawk
-NTK-2S
+chassis:Night Hawk
+model:NTK-2S
+mul id:2272
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3059
-Source:TRO 3058 - Clan Invasion
+Source:TRO: 3058
 Rules Level:2
+role:Striker
+
+
+
+quirk:easy_maintain
+
 
 Mass:35
 Engine:210 XL Engine

@@ -16,9 +16,13 @@ ConvFighter
 Saroyan Jump Bomber
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+6472
+</mul id:>
 
 <year>
 3096
@@ -31,6 +35,10 @@ Saroyan Jump Bomber
 <type>
 IS Level 3
 </type>
+
+<role>
+Fast Dogfighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -107,10 +115,15 @@ ISGuardianECMSuite
 </Fuselage Equipment>
 
 <source>
-TRO 3145 Capellan Confederation - Early Republic
+TRO: 3145 Capellan Confederation
 </source>
 
 <tonnage>
 25.0
 </tonnage>
+
+
+<quirks>
+poor_work
+</quirks>
 

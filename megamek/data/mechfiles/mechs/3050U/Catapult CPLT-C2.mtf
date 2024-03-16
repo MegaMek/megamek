@@ -1,12 +1,19 @@
-Version:1.0
-Catapult
-CPLT-C2
+chassis:Catapult
+model:CPLT-C2
+mul id:5452
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3062
-Source:TRO 3050 - Civil War
+Source:TRO: 3050
 Rules Level:2
+role:Missile Boat
+
+
+
+quirk:no_arms
+quirk:weak_head_1
+
 
 Mass:65
 Engine:260 XL Engine

@@ -20,6 +20,10 @@ Issedone
 D
 </Model>
 
+<mul id:>
+7654
+</mul id:>
+
 <year>
 3146
 </year>
@@ -31,6 +35,10 @@ D
 <type>
 Clan Level 2
 </type>
+
+<role>
+Fast Dogfighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -105,7 +113,7 @@ CLCASE
 </Fuselage Equipment>
 
 <source>
-Dark Age
+TRO: Golden Century
 </source>
 
 <tonnage>

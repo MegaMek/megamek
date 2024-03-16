@@ -1,34 +1,38 @@
-Version:1.0
-Grizzly
-(Standard)
-
+generator:MegaMek Suite 0.49.18-SNAPSHOT on 2024-01-09
+chassis:Grizzly
+model:
+mul id:1332
 Config:Biped
-TechBase:Clan
-Era:2947
-Source:TRO 3058 - Succession Wars
-Rules Level:2
+techbase:Clan
+era:2947
+source:TRO: 3058
+rules level:2
+role:Skirmisher
 
-Mass:70
-Engine:280 Fusion (Clan) Engine
-Structure:Endo Steel
-Myomer:Standard
+quirk:exp_actuator
+quirk:difficult_maintain
 
-Heat Sinks:11 Double
-Walk MP:4
-Jump MP:4
+mass:70
+engine:280 Fusion (Clan) Engine(IS)
+structure:Clan Endo Steel
+myomer:Standard
 
-Armor:Standard(Clan)
-LA Armor:22
-RA Armor:22
-LT Armor:23
-RT Armor:23
-CT Armor:31
-HD Armor:9
-LL Armor:27
-RL Armor:27
-RTL Armor:7
-RTR Armor:7
-RTC Armor:10
+heat sinks:11 Clan Double
+walk mp:4
+jump mp:4
+
+armor:Standard(Clan)
+LA armor:22
+RA armor:22
+LT armor:23
+RT armor:23
+CT armor:31
+HD armor:9
+LL armor:27
+RL armor:27
+RTL armor:7
+RTR armor:7
+RTC armor:10
 
 Weapons:5
 Large Pulse Laser, Left Arm
@@ -45,8 +49,8 @@ CLLargePulseLaser
 CLLargePulseLaser
 CLMediumPulseLaser
 CLSmallPulseLaser
-Endo Steel
-Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -80,8 +84,8 @@ Clan Ammo LRM-10
 -Empty-
 
 Right Torso:
-Endo Steel
-Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -104,14 +108,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Endo Steel
-Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 
 Head:
 Life Support
 Sensors
 Cockpit
-Endo Steel
+Clan Endo Steel
 Sensors
 Life Support
 -Empty-
@@ -149,4 +153,15 @@ Jump Jet
 -Empty-
 -Empty-
 
+overview:The Grizzly is a multi-role heavy 'Mech with design elements shared with Clan Ghost Bear's two most common Omnis, the Vulture and the Gladiator. Because it lacks a specific combat emphasis, it has been plagued with the "jack of all trades, master of none" stigma and has never truly found a role in the Ghost Bear troops.
+capabilities:Despite problems in its design—its layers of sloped armor tend to lodge in place when destroyed, causing havoc with joints and even weapon ports—it is still used by several garrison troops. The Grizzly can jump and has a variety of weaponry that cover a wide spectrum of fighting ranges.
+deployment:The Grizzly actually packs a solid long-range punch with a Omega 12-coil Gauss rifle and a Type X "Short Bow" LRM-10 Launcher. At closer ranges, a brace of pulse lasers provides accurate fire in the form of a Kolibri Delta Series Large Pulse Laser, Kolibri Delta Series Medium Pulse Laser, and a Chi Series Small Pulse Laser.
+history:Because it lacks a specific combat emphasis, it has been plagued with the "jack of all trades, master of none" stigma and has never truly found a role in the Ghost Bear troops. With reports of atrocities in the Rasalhague Republic during the current Jihad, the Bear Touman has began to reconsider this out-of-production design for immediate production in order to fast augment material for their anticipated entry into conflict. The Grizzly's production ended in 3013, yet there are still a big number of the design distributed around the Ghost Bear Touman. After the Combine War in 3063 revealed that the Combine was using combat armor personnel more successfully, a recent redesign of the Grizzly was tested. In tandem with the Golem battle armor project, the Technician and Scientist Caste set out to create a 'Mech design to compliment the urban-style defensive armor. Most deployed Grizzlys are being recalled to be reconfigured as a newer, more lethal urban defence variant.
+manufacturer:Arcadia BattleMech Plant CM-T02
+primaryfactory:Arcadia
+systemmanufacturer:CHASSIS:Type 56-45C Modified Endo Steel
+systemmanufacturer:ARMOR:Arcadia Compound Delta VII Standard
+systemmanufacturer:JUMPJET:Clan Standard 14X Series
+systemmanufacturer:COMMUNICATIONS:Garret T10B
+systemmanufacturer:TARGETING:Series VI KITT
 

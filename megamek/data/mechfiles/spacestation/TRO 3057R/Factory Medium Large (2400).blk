@@ -13,12 +13,16 @@ SpaceStation
 </UnitType>
 
 <Name>
-Factory - Medium/Large
+Factory
 </Name>
 
 <Model>
-(2400)
+Medium/Large (2400)
 </Model>
+
+<mul id:>
+4618
+</mul id:>
 
 <year>
 2400
@@ -31,6 +35,10 @@ Factory - Medium/Large
 <type>
 IS Level 3
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Aerodyne
@@ -125,7 +133,7 @@ Small Laser
 </structural_integrity>
 
 <source>
-TRO3057r - Age of War
+TRO: 3057 Revised
 </source>
 
 <tonnage>

@@ -1,12 +1,21 @@
-Version:1.0
-Nightstar
-NSR-9FC
+chassis:Nightstar
+model:NSR-9FC
+mul id:2285
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3057
-Source:TRO 3058 - Clan Invasion
+Source:TRO: 3058
 Rules Level:2
+role:Juggernaut
+
+
+
+quirk:command_mech
+quirk:good_rep_1
+quirk:variable_range_long
+quirk:difficult_maintain
+
 
 Mass:95
 Engine:380 XL Engine

@@ -1,0 +1,102 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+Galleon Light Tank
+</Name>
+
+<Model>
+GAL-105
+</Model>
+
+<mul id:>
+8041
+</mul id:>
+
+<source>
+Record Sheets: 3150
+</source>
+
+<year>
+3134
+</year>
+
+<type>
+IS Level 3
+</type>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<cruiseMP>
+6
+</cruiseMP>
+
+<engine_type>
+2
+</engine_type>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+5
+</armor_tech>
+
+<armor>
+20
+17
+17
+17
+18
+</armor>
+
+<Body Equipment>
+ISThumperCannonAmmo
+ISCASE
+</Body Equipment>
+
+<Front Equipment>
+</Front Equipment>
+
+<Right Equipment>
+ISERMediumLaser(ST)
+</Right Equipment>
+
+<Left Equipment>
+ISERMediumLaser(ST)
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+ISThumperCannon
+</Turret Equipment>
+
+<source>
+Dark Age
+</source>
+
+<tonnage>
+30.0
+</tonnage>
+
+
+<quirks>
+ubiquitous_is
+</quirks>
+

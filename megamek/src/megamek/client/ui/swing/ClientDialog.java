@@ -112,10 +112,13 @@ public class ClientDialog extends JDialog {
         // their OS setup.
         int screenBorder = Math.max((int) (screenSize.width * TASKBAR_SIZE),
                 (int) (screenSize.height * TASKBAR_SIZE));
-        if (height == screenSize.height)
+        if (height == screenSize.height) {
             height = screenSize.height - 2 * screenBorder;
-        if (width == screenSize.width)
+        }
+
+        if (width == screenSize.width) {
             width = screenSize.width - 2 * screenBorder;
+        }
 
         setSize(width, height);
         setLocationRelativeTo(owner);
@@ -183,9 +186,13 @@ public class ClientDialog extends JDialog {
      * by {@link java.awt.Container#getComponent(int)}. 
      */
     public void guiScale() {
-        UIUtil.adjustDialog(getContentPane());
+        adaptToGUIScale();
         pack();
         center();
+    }
+
+    private void adaptToGUIScale() {
+        UIUtil.adjustDialog(this,  UIUtil.FONT_SCALE1);
     }
 
 }

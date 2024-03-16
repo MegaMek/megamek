@@ -1,0 +1,127 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+Warg Assault Battle Armor
+</Name>
+
+<Model>
+(Reactive)(Sqd6)
+</Model>
+
+<mul id:>
+9165
+</mul id:>
+
+<year>
+3122
+</year>
+
+<type>
+Clan Level 3
+</type>
+
+<role>
+Juggernaut
+</role>
+
+<motion_type>
+Leg
+</motion_type>
+
+<cruiseMP>
+1
+</cruiseMP>
+
+<armor_type>
+38
+</armor_type>
+
+<armor_tech>
+6
+</armor_tech>
+
+<Point Equipment>
+CLBASmallPulseLaser:RA
+CLAdvancedSRM2:Body
+BA-Advanced SRM-2 Ammo:Body:Shots3#
+CLAdvancedSRM2:Body
+BA-Advanced SRM-2 Ammo:Body:Shots3#
+BAHeavyBattleClaw:LA
+BABasicManipulator:RA
+Clan BA Reactive:LA
+Clan BA Reactive:LA
+Clan BA Reactive:RA
+Clan BA Reactive:LA
+Clan BA Reactive:RA
+Clan BA Reactive:RA
+Clan BA Reactive:LA
+</Point Equipment>
+
+<source>
+Record Sheets: 3145 New Tech New Upgrades
+</source>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+0
+</jumpingMP>
+
+<armor>
+16
+</armor>
+
+<Trooper Count>
+6
+</Trooper Count>
+
+<weightclass>
+4
+</weightclass>
+
+<overview>
+Created in the post-Jihad era, the Warg assault battle armor was Clan Wolf's response to the growing number of assault weight battle armor units being introduced after the Word of Blake's Jihad. 
+</overview>
+
+<capabilities>
+The Warg is protected by 400 kgs worth of standard armor, and is only able to move at 10 km/h.
+</capabilities>
+
+<deployment>
+Introduced in 3122, this Warg variant is protected by Reactive Armor. It removes the Light Machine Gun, but the SRM launchers are upgraded to Advanced SRM models.
+</deployment>
+
+<history>
+Built in Clan Wolf's factory on Tamar, the Warg was developed over the course of six years to finally start deployment in 3085. The Warg differs from Clan Wolf's past preference of mobility over firepower.
+</history>
+
+<manufacturer>
+Corean Enterprises - MacAdams-Suharno,WC Site OZ-2
+</manufacturer>
+
+<primaryFactory>
+Stewart,Tamar
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+JUMPJET:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>

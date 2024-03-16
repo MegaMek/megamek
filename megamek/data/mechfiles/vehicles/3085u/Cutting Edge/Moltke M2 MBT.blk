@@ -15,6 +15,10 @@ Moltke MBT
 <Model>
 M2
 </Model>
+
+<mul id:>
+2206
+</mul id:>
 <Tonnage>
 75
 </Tonnage>
@@ -49,6 +53,10 @@ ISMML7 SRM Ammo
 <type>
 IS Level 2
 </type>
+
+<role>
+Missile Boat
+</role>
 <year>
 3077
 </year>
@@ -65,5 +73,5 @@ IS Level 2
 Tracked
 </motion_type>
 <source>
-Jihad
+TRO: 3085
 </source>

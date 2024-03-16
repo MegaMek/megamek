@@ -1,12 +1,7 @@
-#building block data file
+#Saved from version 0.49.18-SNAPSHOT on 2024-01-07
 <BlockVersion>
 1
 </BlockVersion>
-
-# Write the version number just in case...
-<Version>
-MAM0
-</Version>
 
 <UnitType>
 Tank
@@ -20,13 +15,25 @@ Goblin Medium Tank
 (LRM)
 </Model>
 
+<mul id:>
+1223
+</mul id:>
+
 <year>
 2500
 </year>
 
+<originalBuildYear>
+2500
+</originalBuildYear>
+
 <type>
 IS Level 1
 </type>
+
+<role>
+Missile Boat
+</role>
 
 <motion_type>
 Tracked
@@ -77,10 +84,47 @@ LRM 10
 LRM 10
 </Turret Equipment>
 
+<capabilities>
+The Goblin's distinctive feature is its main weapon, a potent BlazeFire Systems Large Laser. This energy weapon boasts impressive range and firepower without the need for ammunition, all housed in a compact turret design. The BlazeFire targeting system even offers link-ups to the tank's crew, allowing alternate crew members to fire the main weapon if the gunner becomes incapacitated. Additionally, the tank features a MiniGun for anti-infantry purposes, although only the driver can operate it.<p>What truly sets the Goblin apart is its spacious infantry compartment in the rear, accommodating up to seven infantrymen or a support weapons team. This versatility makes it an invaluable asset in urban combat scenarios, providing organic infantry support and unhampered turret maneuverability.</p>
+</capabilities>
+
+<overview>
+The enigmatic Goblin Medium Tank, with an unclear origin dating back to the Age of War or the early Star League era, remains a unique combat vehicle. Johnston Industries took over its production during the tumultuous First Succession War, adding to its mystique.
+</overview>
+
+<deployment>
+The LRM variant enhances its indirect fire capabilities with LRM-10 launchers, making it useful for engaging targets from a distance. However, it suffers from a limited ammunition capacity, reduced anti-infantry capabilities, and potential vulnerability in close combat situations.
+</deployment>
+
+<history>
+The Goblin has found favor with Federated Suns mechanized infantry regiments and armored battalions regularly working with infantry units. It has also gained popularity among the esteemed Ceti Hussar regiments. During the Second and Third Succession Wars, captured Goblins were pressed into service by Kuritan and Capellan forces.<p>The true origins of the Goblin remain shrouded in mystery, even as several were discovered among the cache of arms on Terra, from which the Com Guards were formed. Detailed examination failed to unveil the Goblin's true creators.</p><p>One remarkable episode in the Goblin's history occurred during a desperate situation on the Combine world of Weisau. A detachment of Goblins from the Third Ceti Hussars, cut off from their DropShips by enemy forces, embarked on a daring mission led by Captain Reginald Rosseter. Operating with infantry support, they executed raids on small towns, villages, 'Mech and vehicle repair stations, and even transmitted their location to friendly forces, ultimately escaping Weisau.</p>
+</history>
+
+<manufacturer>
+Ceres Metals Industries,Alphard Trading Corporation,Johnston Industries,Aldis Industries
+</manufacturer>
+
+<primaryFactory>
+Indicass,Leximon,New Syrtis,Terra
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unlknown
+ENGINE:LongWay 180 ICE
+ARMOR:ProtecTech 9
+COMMUNICATIONS:CommuTech XL
+TARGETING:BlazeFire tracker with RangeCheck
+</systemManufacturers>
+
 <source>
-TRO 3039 - Age of War
+TRO: 3039
 </source>
 
 <tonnage>
 45.0
 </tonnage>
+
+<fuelType>
+PETROCHEMICALS
+</fuelType>
+

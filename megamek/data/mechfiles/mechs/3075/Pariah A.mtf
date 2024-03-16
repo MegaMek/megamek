@@ -1,12 +1,18 @@
-Version:1.1
-Pariah (Septicemia)
-A
+chassis:Pariah (Septicemia)
+model:A
+mul id:5019
 
 Config:Biped Omnimech
 TechBase:Clan
 Era:3072
-Source:TRO 3075- Jihad
+Source:TRO: 3075
 Rules Level:2
+role:Scout
+
+quirk:ext_twist
+quirk:multi_trac
+quirk:bad_rep_clan
+
 
 Mass:55
 Engine:275 XL (Clan) Engine(IS)
@@ -153,15 +159,14 @@ CLDoubleHeatSink (omnipod)
 -Empty-
 -Empty-
 
-overview:The backbone of The Society's military forces, the Septicemia was a utilitarian medium-class workhorse.
-
-Devoid of the more experimental technology utilized by the Cephalus and Osteon to allow it to be built in higher volumes, the Septicemia saves weight with an XL Engine, Endo Steel chassis, and nine tons of Ferro-Fibrous armor. While the location of its weaponry in its torsos hampers its ability to carry Battle Armor, this was intentional to try and ensure hand actuators were retained to maximize its physical combat abilities.
+overview:The backbone of The Society's military forces, the Septicemia was a utilitarian medium-class workhorse. Devoid of the more experimental technology utilized by the Cephalus and Osteon to allow it to be built in higher volumes, the Septicemia saves weight with an XL Engine, Endo Steel chassis, and nine tons of Ferro-Fibrous armor. While the location of its weaponry in its torsos hampers its ability to carry Battle Armor, this was intentional to try and ensure hand actuators were retained to maximize its physical combat abilities.
 
 capabilities:A support variant, the second most-commonly seen version of the Septicemia mounts two ATM 12s with three tons of ammunition for each. These are supplemented by three Heavy Small Lasers in each arm. Extra double heat sinks keeps heat levels in check.
 
 deployment:Planning their OmniMech forces around a single mass-produced design intended to work in concert with two rarer but cutting-edge units, the Septicemia was built using proven technology with a focus towards mutual support on the battlefield, its every aspect intended to allow it to engage the Clan toumans using methods of warfare they found dezgra. Appearing during the Wars of Reaving when Clan warriors were even more intent on an exceedingly strict adherence of zellbrigen to avoid accusations of Taint, the Septicemia would prove frighteningly effective, earning it the nickname of "Pariah" by the Clan Diamond Shark forces that first faced it on Babylon in 3072.
 
 history:Despite its role in the Wars of Reaving, the Septicemia would see service after the conflict in the toumans of the four surviving Homeworld Clans. Avoiding extinction unlike the Cephalus and Osteon due to the capture of its production plant and lack of integrated Nova Combined Electronic Warfare System, while the other surviving Clans would push for a renaming of the Septicemia to excise its Taint (Void and Codex being popular suggestions), Khan Magnus DelVillar from Clan Stone Lion successfully campaigned against any moves to rename or remodel the design, citing that it would serve as a constant reminder of the dark crucible from which the Clans had emerged. 
+
 manufacturer:Kerensky Memorial Manufacturing
 primaryfactory:Strana Mechty
 systemmanufacturer:CHASSIS:55T Battle Epsilon-5 Profile Endo-Steel

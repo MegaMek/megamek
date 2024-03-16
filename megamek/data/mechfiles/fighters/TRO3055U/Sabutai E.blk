@@ -20,6 +20,10 @@ Sabutai
 E
 </Model>
 
+<mul id:>
+4965
+</mul id:>
+
 <year>
 3071
 </year>
@@ -31,6 +35,10 @@ E
 <type>
 Clan Level 2
 </type>
+
+<role>
+Dogfighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -116,7 +124,7 @@ Hyper-Assault Gauss Rifle/40 Ammo:OMNI
 </Fuselage Equipment>
 
 <source>
-TRO 3055u - Jihad
+TRO: 3055 Update
 </source>
 
 <tonnage>

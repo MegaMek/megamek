@@ -20,6 +20,10 @@ Dagger
 DARO-1
 </Model>
 
+<mul id:>
+4038
+</mul id:>
+
 <year>
 3062
 </year>
@@ -31,6 +35,10 @@ DARO-1
 <type>
 IS Level 2
 </type>
+
+<role>
+Fast Dogfighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -113,7 +121,7 @@ ISRotaryAC5 Ammo:OMNI
 </Fuselage Equipment>
 
 <source>
-TRO 3067 - Civil War
+TRO: 3067
 </source>
 
 <tonnage>

@@ -20,6 +20,10 @@ Fortune Wheeled Assault Vehicle
 (C3M)
 </Model>
 
+<mul id:>
+1149
+</mul id:>
+
 <Tonnage>
 80
 </Tonnage>
@@ -57,12 +61,16 @@ ISCASE
 IS Level 2
 </type>
 
+<role>
+Juggernaut
+</role>
+
 <year>
 3077
 </year>
 
 <source>
-Jihad
+TRO: 3085
 </source>
 
 <internal_type>

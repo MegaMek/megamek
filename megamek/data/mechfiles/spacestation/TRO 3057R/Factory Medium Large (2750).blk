@@ -13,12 +13,16 @@ SpaceStation
 </UnitType>
 
 <Name>
-Factory - Medium/Large
+Factory
 </Name>
 
 <Model>
-(2750)
+Medium/Large (2750)
 </Model>
+
+<mul id:>
+4618
+</mul id:>
 
 <year>
 2750
@@ -130,7 +134,7 @@ ISSmallPulseLaser
 </structural_integrity>
 
 <source>
-TRO3057r - Star League
+TRO: 3057 Revised
 </source>
 
 <tonnage>

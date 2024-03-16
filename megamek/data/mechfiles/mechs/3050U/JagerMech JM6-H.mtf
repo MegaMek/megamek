@@ -1,12 +1,18 @@
-Version:1.0
-JagerMech
-JM6-H
+chassis:JagerMech
+model:JM6-H
+mul id:1669
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3064
-Source:TRO 3050 - Civil War
+Source:TRO: 3050
 Rules Level:2
+role:Brawler
+
+
+
+quirk:anti_air
+
 
 Mass:65
 Engine:260 Fusion Engine

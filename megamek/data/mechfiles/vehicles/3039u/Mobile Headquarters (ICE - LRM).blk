@@ -20,6 +20,10 @@ Mobile Headquarters
 (ICE - LRM)
 </Model>
 
+<mul id:>
+2197
+</mul id:>
+
 <year>
 2850
 </year>
@@ -27,6 +31,10 @@ Mobile Headquarters
 <type>
 IS Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Wheeled
@@ -74,7 +82,7 @@ LRM 10
 </Turret Equipment>
 
 <source>
-TRO 3039 - Succession Wars
+TRO: 3039
 </source>
 
 <tonnage>

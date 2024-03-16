@@ -1,49 +1,56 @@
-Version:1.0
-Exterminator
-EXT-4A
-
+chassis:Exterminator
+model:EXT-4A
+mul id:4147
 Config:Biped
-TechBase:Inner Sphere
-Era:3007
-Source:TRO 3050 - Succession Wars
-Rules Level:1
+techbase:Inner Sphere
+era:3007
+source:TRO: 3050
+rules level:1
+role:Skirmisher
 
-Mass:65
-Engine:325 Fusion Engine
-Structure:Standard
-Myomer:Standard
 
-Heat Sinks:10 Single
-Walk MP:5
-Jump MP:5
 
-Armor:Standard(Inner Sphere)
-LA Armor:19
-RA Armor:19
-LT Armor:22
-RT Armor:22
-CT Armor:23
-HD Armor:9
-LL Armor:19
-RL Armor:19
-RTL Armor:8
-RTR Armor:8
-RTC Armor:8
+quirk:difficult_maintain
 
-Weapons:5
-1 ISLRM10, Left Torso, Ammo:12
-2 ISMediumLaser, Right Arm
-2 ISMediumLaser, Left Arm
-1 ISSmallLaser, Head
-1 ISMachine Gun, Right Torso, Ammo:200
+
+mass:65
+engine:325 Fusion Engine(IS)
+structure:IS Standard
+myomer:Standard
+
+heat sinks:10 Single
+walk mp:5
+jump mp:5
+
+armor:Standard(Inner Sphere)
+LA armor:19
+RA armor:19
+LT armor:22
+RT armor:22
+CT armor:23
+HD armor:9
+LL armor:19
+RL armor:19
+RTL armor:8
+RTR armor:8
+RTC armor:8
+
+Weapons:7
+Medium Laser, Left Arm
+Medium Laser, Left Arm
+Medium Laser, Right Arm
+Medium Laser, Right Arm
+LRM 10, Left Torso
+Machine Gun, Right Torso
+Small Laser, Head
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-ISMediumLaser
-ISMediumLaser
+Medium Laser
+Medium Laser
 -Empty-
 -Empty-
 -Empty-
@@ -56,8 +63,8 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-ISMediumLaser
-ISMediumLaser
+Medium Laser
+Medium Laser
 -Empty-
 -Empty-
 -Empty-
@@ -68,8 +75,8 @@ ISMediumLaser
 Left Torso:
 Jump Jet
 Jump Jet
-ISLRM10
-ISLRM10
+LRM 10
+LRM 10
 -Empty-
 -Empty-
 -Empty-
@@ -82,8 +89,8 @@ ISLRM10
 Right Torso:
 Jump Jet
 Jump Jet
-ISMachine Gun
-ISMG Ammo (200)
+Machine Gun
+IS Ammo MG - Full
 -Empty-
 -Empty-
 -Empty-
@@ -105,13 +112,13 @@ Fusion Engine
 Fusion Engine
 Fusion Engine
 Jump Jet
-ISLRM10 Ammo
+IS Ammo LRM-10
 
 Head:
 Life Support
 Sensors
 Cockpit
-ISSmallLaser
+Small Laser
 Sensors
 Life Support
 -Empty-
@@ -149,11 +156,20 @@ Foot Actuator
 -Empty-
 -Empty-
 
-Overview:The Exterminator is a BattleMech that was designed for the most dubious, but necessary, of purposes: Head-hunting. The Exterminator was outfitted with a special Null Signature System, heat baffles and, in some cases, a Chameleon Light Polarization Shield. These advanced systems allowed it to easily infiltrate enemy lines. Once the Exterminator had breached the enemy's rear, its mission was to find and destroy as much of the enemy's command structure as possible. This mission profile included attacking Mobile Headquarters, field bases and command level officers. Rather than be part of the standard formation, Exterminators were attached to a regimental or higher headquarters unit, often as a fifth member of the command lance itself, before being assigned to individual units. A regiment was considered lucky to have more than one Exterminator, and it was not unusual for its parent unit to pull all assigned Exterminators and pool them for a specific mission.
-It was widely believed that the Exterminator had not survived the fighting of the First Succession War as there were lances whose sole mission was to hunt down and destroy this type of 'Mech (coupled with the destruction of General Systems' primary factory on Caph in 2793). In 3007, Kallon Industries (Nanking, Capellan Confederation), looking for a replacement for their aging Wolverine, recovered blueprints for the Exterminator and immediately modified the design so that it could be built using the technology readily available. The result was a BattleMech not only far less effective than the original, but below the capabilities of even the Wolverine it was meant to replace. Only twenty-five of these Exterminators were produced and none survived past the Fourth Succession War, making the design effectively extinct in the Inner Sphere.[4]
-Only later was it revealed that the Exterminator still existed in ComStar's private army, the Com Guard, although even here few were of the hyper-advanced stealth models, and while the Exterminator was retained by the Clans its decidedly "dishonorable" method of fighting meant few were used. ComStar continued to produce variants which took advantage of recovered lostech, and the design was used by the Word of Blake during the Jihad.
+overview:The Exterminator is a BattleMech that was designed in 2630 for the most dubious, but necessary, of purposes: Head Hunting.
 
-Capabilities:The weapons used by the Exterminator are not nearly as unique or high tech as the electronics on board. The primary weapons of the Exterminator are four Averell Highpoint Medium Lasers, two of each in either arm. For long range engagements, the 'Mech also carries a Deadeye-10 LRM-10 launcher with one ton of reloads in the center torso. These weapons are backed up by a single Dinatech Mark III Small Laser mounted in the head for when engagements close to point blank range, and, for defense against missile attacks, the Exterminator has a Buzzsaw Anti-Missile System in the right torso with one ton of ammo.[7][8]
-For manoeuvrability the Exterminator carries five jump jets, two of each in either leg and one in its rear torso, allowing it to make leaps of up to 150 meters. Combined with an extralight engine these give the Exterminator the manoeuvrability of 'Mechs a fraction its size. Ten and a half tons of armor also give it good protection for close-quarters combat while eleven heat sinks provide adequate heat management.
+capabilities:The weapons used by the Exterminator are not nearly as unique or high tech as the electronics on board. The primary weapons of the Exterminator are medium weight lasers, two of each in either arm. For long range engagements, the 'Mech also carries a missile launcher with one ton of reloads in the center torso. These weapons are backed up by a short range laser mounted in the head for when engagements close to point blank range, and, for defense against missile attacks, the Exterminator has a Anti-Missile System in the right torso with one ton of ammo.
 
-Deployment:All over the place.
+deployment:The 4A is what became of the Exterminator during the Succession Wars, revived by Kallon Industries when they came across blueprints for the design in 3007. The resulting 'Mech resembles the Exterminator outwardly and carries an almost identical weapons load but otherwise is not the same machine. The only weapons change is the use of an M100 heavy machine gun with a half-ton of ammo in place of the anti-missile system. A smaller VOX 325 standard fusion engine reduces its top speed by about 10 km/h. The armor is still identical to that of the original Exterminator, but unfortunately the Null-Signature System could not be saved. This version also made use of a Tek BattleCom communication system and Tek LOR T13d targeting system.
+
+history:The Exterminator was outfitted with a special Null-Signature System, heat baffles and, in some cases, a Chameleon Light Polarization Shield. These advanced systems allowed it to easily infiltrate enemy lines. Once the Exterminator breached the enemy's rear, its mission was to find and destroy as much of the enemy's command structure as possible. This mission profile included attacking mobile headquarters, field bases and command level officers. Rather than be part of the standard formation, Exterminators were attached to a regimental or higher headquarters unit, often as a fifth member of the command lance itself, before being assigned to individual units. A regiment was considered lucky to have more than one Exterminator, and it was not unusual for its parent unit to pull all assigned Exterminators and pool them for a specific mission. It was widely believed that the Exterminator had not survived the fighting of the First Succession War as there were lances whose sole mission was to hunt down and destroy this type of 'Mech (coupled with the destruction of General Systems' primary factory on Caph in 2793). In 3007, Kallon Industries (Thermopolis, Free Worlds League), looking for a replacement for their aging Wolverine, recovered blueprints for the Exterminator and immediately modified the design so that it could be built using the technology readily available. The result was a BattleMech not only far less effective than the original, but below the capabilities of even the Wolverine it was meant to replace. Only twenty-five of these Exterminators were produced and none survived past the Fourth Succession War, making the design effectively extinct in the Inner Sphere. Only later was it revealed that the Exterminator still existed in ComStar's private army, the Com Guards, although even here few were of the hyper-advanced stealth models, and while the Exterminator was retained by the Clans its decidedly "dishonorable" method of fighting meant few were used. ComStar continued to produce variants which took advantage of recovered lostech, and the design was used by the Word of Blake during the Jihad.
+
+manufacturer:Kallon Weapon Industries
+primaryfactory:Thermopolis
+systemmanufacturer:CHASSIS:SL Special
+systemmanufacturer:ENGINE:Magna 390 XL
+systemmanufacturer:ARMOR:Fibrolyte Armorscale
+systemmanufacturer:JUMPJET:Chevron II
+systemmanufacturer:COMMUNICATIONS:Tek BattleCom
+systemmanufacturer:TARGETING:Tek LOR T13d
+

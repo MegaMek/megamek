@@ -20,6 +20,10 @@ Nagumo
 (3056)
 </Model>
 
+<mul id:>
+4694
+</mul id:>
+
 <year>
 3056
 </year>
@@ -31,6 +35,10 @@ Nagumo
 <type>
 IS Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Aerodyne
@@ -151,7 +159,7 @@ ISArtemisIV
 </structural_integrity>
 
 <source>
-TRO 3057R - Clan Invasion
+TRO: 3057 Revised
 </source>
 
 <tonnage>

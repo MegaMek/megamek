@@ -1,12 +1,18 @@
-Version:1.0
-Ronin
-SA-RN7
+chassis:Ronin
+model:SA-RN7
+mul id:2739
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3063
-Source:TRO 3055 - Civil War
+Source:TRO: 3055
 Rules Level:3
+role:Skirmisher
+
+
+
+quirk:non_standard
+
 
 Mass:50
 Engine:250 XL Engine

@@ -81,12 +81,12 @@ public class HexTileset implements BoardListener {
     
     /**
      * This assigns images to a hex based on the best matches it can find.
-     * <p/>
+     * <p>
      * First it assigns any images to be superimposed on a hex. These images must
      * have a match value of 1.0 to be added, and any time a match of this level is
      * achieved, any terrain involved in the match is removed from further
      * consideration.
-     * <p/>
+     * <p>
      * Any terrain left is used to match a base image for the hex. This time, a
      * match can be any value, and the first, best image is used.
      */
@@ -218,7 +218,8 @@ public class HexTileset implements BoardListener {
             }
         }
 
-        Image img = bestMatch.getImage(comp, hex.getCoords().hashCode());
+        Random random = new Random(hex.getCoords().hashCode());
+        Image img = bestMatch.getImage(comp, Math.abs(random.nextInt() * random.nextInt()));
         if (img == null) {
             img = ImageUtil.createAcceleratedImage(HEX_W, HEX_H);
         }
@@ -288,7 +289,7 @@ public class HexTileset implements BoardListener {
                 incDepth++;
                 if (incDepth < 100) {
                     String incFile = st.sval;
-                    LogManager.getLogger().info("Including " + incFile);
+                    LogManager.getLogger().debug("Including " + incFile);
                     loadFromFile(incFile);
                 }
             }
@@ -299,10 +300,10 @@ public class HexTileset implements BoardListener {
         
         String loadInfo = String.format("Loaded %o base images, %o super images and %o ortho images", 
                 bases.size(), supers.size(), orthos.size());
-        LogManager.getLogger().info(loadInfo);
+        LogManager.getLogger().debug(loadInfo);
         
         if (incDepth == 0) {
-            LogManager.getLogger().info("HexTileset loaded in " + (endTime - startTime) + "ms.");
+            LogManager.getLogger().info("HexTileset " + filename + " loaded in " + (endTime - startTime) + "ms.");
         }
         incDepth--;
     }
@@ -363,7 +364,7 @@ public class HexTileset implements BoardListener {
      * Match the two hexes using the "ortho" super* formula. All matches must be
      * exact, however the match only depends on the original hex matching all the
      * elements of the comparison, not vice versa.
-     * <p/>
+     * <p>
      * EXCEPTION: a themed original matches any unthemed comparison.
      */
     private double orthoMatch(Hex org, Hex com) {
@@ -385,8 +386,9 @@ public class HexTileset implements BoardListener {
         }
 
         // org terrains must match com terrains
-        if (org.terrainsPresent() < com.terrainsPresent())
+        if (org.terrainsPresent() < com.terrainsPresent()) {
             return 0.0;
+        }
 
         // check terrain
         int[] cTerrainTypes = com.getTerrainTypes();
@@ -409,9 +411,9 @@ public class HexTileset implements BoardListener {
     /**
      * Match the two hexes using the "super" formula. All matches must be exact,
      * however the match only depends on the original hex matching all the elements
-     * of the comparision, not vice versa.
-     * <p/>
-     * EXCEPTION: a themed original matches any unthemed comparason.
+     * of the comparison, not vice versa.
+     * <p>
+     * EXCEPTION: a themed original matches any unthemed comparison.
      */
     private double superMatch(Hex org, Hex com) {
         // exact elevation
@@ -432,8 +434,9 @@ public class HexTileset implements BoardListener {
         }
 
         // org terrains must match com terrains
-        if (org.terrainsPresent() < com.terrainsPresent())
+        if (org.terrainsPresent() < com.terrainsPresent()) {
             return 0.0;
+        }
 
         // check terrain
         int[] cTerrainTypes = com.getTerrainTypes();
@@ -455,8 +458,8 @@ public class HexTileset implements BoardListener {
 
     /**
      * Match the two hexes using the "base" formula.
-     * <p/>
-     * Returns a value indicating how close of a match the original hex is to the
+     *
+     * @return a value indicating how close of a match the original hex is to the
      * comparison hex. 0 means no match, 1 means perfect match.
      */
     private double baseMatch(Hex org, Hex com) {

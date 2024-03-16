@@ -29,16 +29,14 @@ public final class TipUtil {
     
     final static boolean BR = true;
     final static boolean NOBR = false;
-    final static String TABLE_BEGIN = "<TABLE CELLSPACING=0 CELLPADDING=0><TBODY><TR><TD VALIGN=TOP>"; 
-    final static String TABLE_END = "</TR></TBODY></TABLE>";
-    
-    /** 
+
+    /**
      * Returns a List wherein each element consists of an option group of the given 
      * optGroups, which is e.g. crew.getOptions().getGroups() or entity.getQuirks().getGroups()
      * as well as the count of active options within that group, e.g. "Manei Domini (2)".
      * A counter function for the options of a group must be supplied, in the form of
-     * e.g. e -> crew.countOptions(e) or e -> entity.countQuirks(e).
-     * A namer function for the group names must be supplied, e.g. (e) -> weapon.getDesc().
+     * e.g. e -&gt; crew.countOptions(e) or e -&gt; entity.countQuirks(e).
+     * A namer function for the group names must be supplied, e.g. (e) -&gt; weapon.getDesc().
      */
     public static List<String> getOptionListArray(Enumeration<IOptionGroup> optGroups, 
             Function<String, Integer> counter, Function<IOptionGroup, String> namer) {
@@ -58,8 +56,8 @@ public final class TipUtil {
      * Returns an HTML String listing the options given as optGroups, which
      * is e.g. crew.getOptions().getGroups() or entity.getQuirks().getGroups().
      * A counter function for the options of a group must be supplied, in the form of
-     * e.g. e -> crew.countOptions(e) or e -> entity.countQuirks(e).
-     * A namer function for the group names must be supplied, e.g. (e) -> weapon.getDesc().
+     * e.g. e -&gt; crew.countOptions(e) or e -&gt; entity.countQuirks(e).
+     * A namer function for the group names must be supplied, e.g. (e) -&gt; weapon.getDesc().
      * The group names are italicized.
      * The list is 40 characters wide with \u2B1D as option separator.
      */
@@ -76,7 +74,7 @@ public final class TipUtil {
      * Returns an HTML String listing the options given as optGroups, which
      * is e.g. crew.getOptions().getGroups() or entity.getQuirks().getGroups().
      * A counter function for the options of a group must be supplied, in the form of
-     * e.g. e -> crew.countOptions(e) or e -> entity.countQuirks(e).
+     * e.g. e -&gt; crew.countOptions(e) or e -&gt; entity.countQuirks(e).
      * The list is 40 characters wide with \u2B1D as option separator.
      */
     public static String getOptionList(Enumeration<IOptionGroup> optGroups,
@@ -110,7 +108,7 @@ public final class TipUtil {
                 List<String> origList = new ArrayList<>();
                 for (Enumeration<IOption> advs = advGroup.getOptions(); advs.hasMoreElements();) {
                     IOption adv = advs.nextElement();
-                    if (adv.booleanValue()) {
+                    if (adv != null && adv.booleanValue()) {
                         origList.add(adv.getDisplayableNameWithValue());
                     }
                 }

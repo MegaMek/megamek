@@ -20,6 +20,10 @@ Long-Range Shuttlecraft
 KR-61
 </Model>
 
+<mul id:>
+4537
+</mul id:>
+
 <year>
 2598
 </year>
@@ -31,6 +35,10 @@ KR-61
 <type>
 IS Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Aerodyne
@@ -99,7 +107,7 @@ cargobay:3.5:0:5
 </structural_integrity>
 
 <source>
-TRO 3057 - Star League
+TRO: 3057 Revised
 </source>
 
 <tonnage>

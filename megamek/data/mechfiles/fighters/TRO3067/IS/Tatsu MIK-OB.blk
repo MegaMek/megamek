@@ -20,6 +20,10 @@ Tatsu
 MIK-OB
 </Model>
 
+<mul id:>
+5182
+</mul id:>
+
 <year>
 3063
 </year>
@@ -31,6 +35,10 @@ MIK-OB
 <type>
 IS Level 2
 </type>
+
+<role>
+Attack Fighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -114,7 +122,7 @@ IS Ammo LRM-15 Artemis-capable:OMNI
 </Fuselage Equipment>
 
 <source>
-TRO 3067 - Civil War
+TRO: 3067
 </source>
 
 <tonnage>

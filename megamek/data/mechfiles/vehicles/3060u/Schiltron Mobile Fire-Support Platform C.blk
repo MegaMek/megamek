@@ -20,6 +20,10 @@ Schiltron Mobile Fire-Support Platform
 C
 </Model>
 
+<mul id:>
+2817
+</mul id:>
+
 <year>
 3059
 </year>
@@ -27,6 +31,10 @@ C
 <type>
 IS Level 2
 </type>
+
+<role>
+Juggernaut
+</role>
 
 <motion_type>
 Wheeled
@@ -89,7 +97,7 @@ Large Laser:OMNI
 </Turret Equipment>
 
 <source>
-Clan Invasion
+TRO: 3060
 </source>
 
 <tonnage>

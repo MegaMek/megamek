@@ -29,7 +29,7 @@ public class AirmechRamAttackAction extends DisplacementAttackAction {
     private static final long serialVersionUID = 5110608317218688433L;
 
     public AirmechRamAttackAction(Entity attacker, Targetable target) {
-        this(attacker.getId(), target.getTargetType(), target.getTargetId(), target.getPosition());
+        this(attacker.getId(), target.getTargetType(), target.getId(), target.getPosition());
     }
 
     public AirmechRamAttackAction(int entityId, int targetType, int targetId, Coords targetPos) {
@@ -38,6 +38,8 @@ public class AirmechRamAttackAction extends DisplacementAttackAction {
 
     /**
      * To-hit number for a ram, assuming that movement has been handled
+     *
+     * @param game The current {@link Game}
      */
     public ToHitData toHit(Game game) {
         final Entity entity = game.getEntity(getEntityId());
@@ -47,6 +49,8 @@ public class AirmechRamAttackAction extends DisplacementAttackAction {
 
     /**
      * To-hit number for a ram, assuming that movement has been handled
+     *
+     * @param game The current {@link Game}
      */
     public ToHitData toHit(Game game, Targetable target, Coords src,
                            int elevation, EntityMovementType movement) {
@@ -70,7 +74,7 @@ public class AirmechRamAttackAction extends DisplacementAttackAction {
         Entity te = null;
         if (target.getTargetType() == Targetable.TYPE_ENTITY) {
             te = (Entity) target;
-            targetId = target.getTargetId();
+            targetId = target.getId();
         } else {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Invalid Target");
         }

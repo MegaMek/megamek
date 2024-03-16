@@ -16,9 +16,13 @@ SupportTank
 Beast Riot Car
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+9224
+</mul id:>
 
 <year>
 3062
@@ -31,6 +35,10 @@ Beast Riot Car
 <type>
 IS Level 4
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Wheeled

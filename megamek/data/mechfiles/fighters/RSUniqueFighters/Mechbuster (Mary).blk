@@ -20,6 +20,10 @@ Mechbuster
 (Mary)
 </Model>
 
+<mul id:>
+2152
+</mul id:>
+
 <year>
 3071
 </year>
@@ -31,6 +35,10 @@ Mechbuster
 <type>
 IS Level 2
 </type>
+
+<role>
+Attack Fighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -92,7 +100,7 @@ IS Light Gauss Ammo
 </Fuselage Equipment>
 
 <source>
-RS Unique Fighters
+Record Sheets: Unique Fighters
 </source>
 
 <tonnage>

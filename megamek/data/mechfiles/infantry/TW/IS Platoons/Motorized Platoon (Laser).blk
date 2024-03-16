@@ -20,6 +20,10 @@ Motorized Platoon
 (Laser)
 </Model>
 
+<mul id:>
+2236
+</mul id:>
+
 <year>
 2405
 </year>
@@ -27,6 +31,10 @@ Motorized Platoon
 <type>
 IS Level 2
 </type>
+
+<role>
+Ambusher
+</role>
 
 <motion_type>
 Motorized
@@ -36,7 +44,7 @@ Motorized
 </Field Guns Equipment>
 
 <source>
-Total Warfare - Succession Wars
+Total Warfare
 </source>
 
 <squad_size>

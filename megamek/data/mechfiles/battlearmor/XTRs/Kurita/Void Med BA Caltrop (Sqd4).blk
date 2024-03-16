@@ -1,0 +1,126 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+Void Medium Battle Armor
+</Name>
+
+<Model>
+Caltrop(Sqd4)
+</Model>
+
+<mul id:>
+3446
+</mul id:>
+
+<year>
+3078
+</year>
+
+<type>
+Mixed (IS Chassis)
+</type>
+
+<role>
+Ambusher
+</role>
+
+<motion_type>
+Jump
+</motion_type>
+
+<cruiseMP>
+2
+</cruiseMP>
+
+<armor_type>
+33
+</armor_type>
+
+<armor_tech>
+2
+</armor_tech>
+
+<Squad Equipment>
+BAHeavyBattleClaw:LA
+BAHeavyBattleClaw:RA
+SwarmMek
+SwarmWeaponMek
+StopSwarm
+LegAttack
+CLBAERSmallLaser:RA
+ISBAMineDispenser:Body
+Clan BA Stealth (Improved):LA
+Clan BA Stealth (Improved):LA
+Clan BA Stealth (Improved):LA
+Clan BA Stealth (Improved):Body
+Clan BA Stealth (Improved):RA
+</Squad Equipment>
+
+<source>
+XTR: Kurita
+</source>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+1
+</jumpingMP>
+
+<armor>
+7
+</armor>
+
+<Trooper Count>
+4
+</Trooper Count>
+
+<weightclass>
+2
+</weightclass>
+
+<overview>
+The Void is a battle armor design that is produced by the Draconis Combine.
+</overview>
+
+<capabilities>
+The Void is protected by enough improved stealth armor to stop a medium laser. The stealth armor makes it more difficult to target the trooper, while also making it all but invisible to enemy detection devices, such as Active Probes. Like the Kage, the Void can jump one hundred and twenty meters, though it achieves this through the use of a jump booster instead of the partial wing. The Void can mount and ride OmniMechs.
+</capabilities>
+
+<deployment>
+Developed in 3078 by Dante Harima, this Experimental Tech version of the Void uses a mix of experimental Inner Sphere and Clan Technology. Its original weaponry is replaced with a Clan ER Small Laser in the right arm. A Mine Dispenser is added to the suit's body to help slow down enemy combatants. In place of its Jump Jets, its been fitted with experimental Mechanical Jump Boosters. For protection and stealth, Clan Improved Stealth armor has been added.
+</deployment>
+
+<history>
+ The DCMS decided to push its battle armor development program to continue producing new designs following the surge of the 3050s. Though the Combine-Ghost Bear War set the timetable back, the Void debuted in 3067 to a lukewarm reception. It was only after the High Command and Procurement Department realized that part of the design process involved making the suit specifically adjustable to accommodate Elementals, and fully understood the possibilities for trade and partnership with Clan Nova Cat, that a battlesuit that so closely resembles the Kage it was based upon was approved for production. 
+</history>
+
+<manufacturer>
+Ishikawajima-Harima BAI
+</manufacturer>
+
+<primaryFactory>
+Luthien
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+JUMPJET:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>

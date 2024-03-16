@@ -20,6 +20,10 @@ Pentagon
 'Pocket Warship'
 </Model>
 
+<mul id:>
+4802
+</mul id:>
+
 <year>
 3075
 </year>
@@ -31,6 +35,10 @@ Pentagon
 <type>
 IS Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Spheroid
@@ -139,7 +147,7 @@ Medium Laser
 </structural_integrity>
 
 <source>
-TRO 3075 - Civil War
+TRO: 3075
 </source>
 
 <tonnage>

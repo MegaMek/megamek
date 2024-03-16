@@ -20,6 +20,10 @@ Hoshiryokou
 (Tug Boat)
 </Model>
 
+<mul id:>
+7768
+</mul id:>
+
 <year>
 2480
 </year>
@@ -112,7 +116,7 @@ Cargo Container (10 tons)
 </structural_integrity>
 
 <source>
-HB:House Kurita - Age of War
+Handbook: House Kurita
 </source>
 
 <tonnage>

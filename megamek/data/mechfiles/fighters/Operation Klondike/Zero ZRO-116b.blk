@@ -20,6 +20,10 @@ Zero
 ZRO-116b
 </Model>
 
+<mul id:>
+3637
+</mul id:>
+
 <year>
 2707
 </year>
@@ -31,6 +35,10 @@ ZRO-116b
 <type>
 IS Level 2
 </type>
+
+<role>
+Dogfighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -101,7 +109,7 @@ ISMediumPulseLaser
 </Fuselage Equipment>
 
 <source>
-H:Operation Klondyke - Star League
+Historical: Operation Klondike
 </source>
 
 <tonnage>

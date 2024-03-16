@@ -15,6 +15,10 @@ Cavalry Attack Helicopter
 <Model>
 (TAG)
 </Model>
+
+<mul id:>
+507
+</mul id:>
 <Tonnage>
 25
 </Tonnage>
@@ -38,6 +42,10 @@ ISLRM10 Ammo
 <type>
 IS Level 2
 </type>
+
+<role>
+Missile Boat
+</role>
 <year>
 3059
 </year>
@@ -54,5 +62,5 @@ IS Level 2
 VTOL
 </motion_type>
 <source>
-Clan Invasion
+TRO: 3058
 </source>

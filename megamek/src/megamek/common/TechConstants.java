@@ -162,10 +162,8 @@ public class TechConstants {
     }
 
     /**
-     * Returns the Game's tech level as an integer.
-     *
-     * @param game
-     * @return
+     * @param game The current {@link Game}
+     * @return  the Game's tech level as an integer.
      */
     public static int getSimpleLevel(Game game) {
         return getSimpleLevel(game.getOptions().stringOption("techlevel"));
@@ -223,9 +221,9 @@ public class TechConstants {
      * Use the game's simple tech level and a flag to return the tech level +
      * tech type.
      *
-     * @param game
-     * @param isClan
-     * @return
+     * @param game The current {@link Game}
+     * @param isClan if the tech base is clan
+     * @return Tech Level and Type magic number to use for the current {@link Game}
      */
     public static int getGameTechLevel(Game game, boolean isClan) {
         // Get the integer simple level based on the string game option
@@ -265,7 +263,7 @@ public class TechConstants {
             boolean ignoreUnknown, boolean mixed) {
         // If it's allowed to all, ALWAYS return true.
         if (equipmentTechlevel == T_ALLOWED_ALL
-        		|| equipmentTechlevel == T_ALL) {
+                || equipmentTechlevel == T_ALL) {
             return true;
         }
 

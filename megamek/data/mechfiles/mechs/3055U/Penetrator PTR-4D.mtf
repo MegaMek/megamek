@@ -1,34 +1,41 @@
-Version:1.0
-Penetrator
-PTR-4D
-
+chassis:Penetrator
+model:PTR-4D
+mul id:2465
 Config:Biped
-TechBase:Inner Sphere
-Era:3053
-Source:TRO 3055 - Clan Invasion
-Rules Level:2
+techbase:Inner Sphere
+era:3053
+source:TRO: 3055
+rules level:2
+role:Skirmisher
 
-Mass:75
-Engine:300 Fusion Engine
-Structure:Standard
-Myomer:Standard
 
-Heat Sinks:12 Double
-Walk MP:4
-Jump MP:4
 
-Armor:Standard(Inner Sphere)
-LA Armor:21
-RA Armor:21
-LT Armor:24
-RT Armor:24
-CT Armor:34
-HD Armor:9
-LL Armor:26
-RL Armor:26
-RTL Armor:7
-RTR Armor:7
-RTC Armor:9
+
+quirk:good_rep_1
+quirk:stable
+
+
+mass:75
+engine:300 Fusion Engine(IS)
+structure:IS Standard
+myomer:Standard
+
+heat sinks:12 IS Double
+walk mp:4
+jump mp:4
+
+armor:Standard(Inner Sphere)
+LA armor:21
+RA armor:21
+LT armor:24
+RT armor:24
+CT armor:34
+HD armor:9
+LL armor:26
+RL armor:26
+RTL armor:7
+RTR armor:7
+RTC armor:9
 
 Weapons:9
 ER Large Laser, Left Arm
@@ -39,7 +46,7 @@ Medium Pulse Laser, Left Torso
 Medium Pulse Laser, Right Torso
 Medium Pulse Laser, Right Torso
 Medium Pulse Laser, Right Torso
-AMS, Center Torso
+Anti-Missile System, Center Torso
 
 Left Arm:
 Shoulder
@@ -153,4 +160,19 @@ Jump Jet
 -Empty-
 -Empty-
 
+overview:The designers at Kallon Industries used the Black Hawk Clan OmniMech as the basis for the Penetrator.
 
+capabilities:The Penetrator has an all energy weapons arsenal and uses twelve double heat sinks to handle the massive heat load from its weapons. The 'Mech is lacking in speed though when compared to the Black Hawk. This is because the 'Mechs designers used a Vlar 300 fusion engine for its combat durability, giving the 'Mech a top speed of 64.8 km/h. To help offset the 'Mech's lack of mobility, the Penetrator has four Anderson 398 jump jets giving it added mobility with a jumping distance of one hundred and twenty meters. The Penetrator also carries a respectable thirteen tons of armor. The 'Mech's heavy armor protection, combined with its standard engine and unlimited amounts of ammunition, make for a 'Mech that is very rugged and hard to kill.
+
+deployment:The Penetrator carries a blistering laser array. The primary weapons are a pair of arm mounted Diverse Optics Sunbeam ER Large Lasers for long range firepower. For close range combat, the 'Mech carries six Sutel Precision Line Medium Pulse Lasers which are mounted in its right and left torsos. Finally, the 'Mech carries its only ammunition-based weapon, a Yori Flyswatter anti-missile system, for added defense against missile attacks
+
+history:With the threat of the Clans looming over it, the Federated Commonwealth dispatched a large number of Penetrators to units stationed in Lyran space. Following the secession of the Commonwealth's Lyran half and the formation of the Lyran Alliance under Katherine Steiner-Davion in 3058, many Penetrators ended up on the LAAF's rolls. Penetrators served on both sides of the FedCom Civil War, demonstrating their toughness yet again. The 'Mech's low reliance on ammunition made it ideal for the mobile campaigns that defined that conflict. Archer's Avengers and other allied forces conducted a planet-hopping campaign, always staying one step ahead of the Loyalist forces pursuing them. The Avengers had to live off the land because reliable supply lines were almost non-existent. The Penetrator was an ideal combat unit because it required little ammunition and had few advanced components. Several Penetrators were captured by mercenary units during the FedCom Civil War. According to rumors, Kallon Industries may soon change its policy of only selling the design to the Federated Commonwealth and now the Federated Suns.
+
+manufacturer:Kallon Weapon Industries,Kallon Weapon Industries
+primaryfactory:Talon (Wernke), Victoria 
+systemmanufacturer:CHASSIS:Crucis G
+systemmanufacturer:ENGINE:Vlar 300
+systemmanufacturer:ARMOR:Durallex Heavy
+systemmanufacturer:JUMPJET:Anderson 398
+systemmanufacturer:COMMUNICATIONS:Dalban Micronics
+systemmanufacturer:TARGETING:Matabushi Sentinel

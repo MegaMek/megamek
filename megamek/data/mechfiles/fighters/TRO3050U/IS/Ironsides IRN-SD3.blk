@@ -20,6 +20,10 @@ Ironsides
 IRN-SD3
 </Model>
 
+<mul id:>
+1626
+</mul id:>
+
 <year>
 3070
 </year>
@@ -31,6 +35,10 @@ IRN-SD3
 <type>
 IS Level 2
 </type>
+
+<role>
+Dogfighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -101,7 +109,7 @@ IS MRM 10 Ammo
 </Fuselage Equipment>
 
 <source>
-TRO 3050u - Jihad
+TRO: 3050
 </source>
 
 <tonnage>

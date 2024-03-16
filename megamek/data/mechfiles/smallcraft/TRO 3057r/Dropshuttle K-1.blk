@@ -20,6 +20,10 @@ DropShuttle
 K-1
 </Model>
 
+<mul id:>
+4100
+</mul id:>
+
 <year>
 2536
 </year>
@@ -31,6 +35,10 @@ K-1
 <type>
 IS Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Spheroid
@@ -106,7 +114,7 @@ Small Laser
 </structural_integrity>
 
 <source>
-TRO 3057R - Age of War
+TRO: 3057 Revised
 </source>
 
 <tonnage>

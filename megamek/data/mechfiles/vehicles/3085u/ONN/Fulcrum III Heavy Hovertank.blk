@@ -15,6 +15,10 @@ Fulcrum Heavy Hovertank
 <Model>
 III
 </Model>
+
+<mul id:>
+1156
+</mul id:>
 <Tonnage>
 50
 </Tonnage>
@@ -44,6 +48,10 @@ ISMML7 SRM Ammo
 <type>
 IS Level 2
 </type>
+
+<role>
+Striker
+</role>
 <year>
 3078
 </year>
@@ -60,5 +68,5 @@ IS Level 2
 Hover
 </motion_type>
 <source>
-Jihad
+TRO: 3085
 </source>

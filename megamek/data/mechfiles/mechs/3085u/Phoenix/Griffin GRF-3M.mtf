@@ -1,12 +1,23 @@
-Version:1.0
-Griffin
-GRF-3M
+chassis:Griffin
+model:GRF-3M
+mul id:1300
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3049
-Source:Clan Invasion
+source:TRO: 3085
 Rules Level:2
+role:Sniper
+
+
+
+quirk:battle_fists_la
+quirk:battle_fists_ra
+quirk:rugged_1
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+weaponquirk:jettison_capable:RA:7:ISERPPC
+
 
 Mass:55
 Engine:275 XL Engine(IS)

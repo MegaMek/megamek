@@ -1,43 +1,50 @@
-Version:1.1
-Banshee
-BNC-1E
-
+chassis:Banshee
+model:BNC-1E
+mul id:3785
 Config:Biped
-TechBase:Inner Sphere
-Era:2445
-Source:XTRO Primitives II - Age of War
-Rules Level:4
+techbase:Inner Sphere
+era:2445
+source:XTR: Primitives II
+rules level:4
+role:Sniper
 
-Mass:95
-Engine:345 Fusion Engine(IS)
-Structure:Standard
-Myomer:Standard
-Cockpit:Primitive Cockpit
-Gyro:Standard Gyro
 
-Heat Sinks:16 Single
-Walk MP:3
-Jump MP:0
+quirk:rugged_1
+quirk:bad_rep_is
+quirk:distracting
+quirk:easy_maintain
 
-Armor:Primitive(Inner Sphere)
-LA Armor:21
-RA Armor:21
-LT Armor:30
-RT Armor:30
-CT Armor:41
-HD Armor:9
-LL Armor:26
-RL Armor:26
-RTL Armor:10
-RTR Armor:10
-RTC Armor:17
+
+mass:95
+engine:345 Fusion Engine(IS)
+structure:IS Standard
+myomer:Standard
+cockpit:Primitive Cockpit
+gyro:Standard Gyro
+
+heat sinks:16 Single
+walk mp:3
+jump mp:0
+
+armor:Primitive(Inner Sphere)
+LA armor:21
+RA armor:21
+LT armor:30
+RT armor:30
+CT armor:41
+HD armor:9
+LL armor:26
+RL armor:26
+RTL armor:10
+RTR armor:10
+RTC armor:17
 
 Weapons:5
 AC/5, Left Torso
-PPC, Right Torso
 Medium Laser, Center Torso
 Medium Laser, Center Torso
 Small Laser, Head
+Primitive Prototype PPC, Right Torso
 
 Left Arm:
 Shoulder
@@ -82,9 +89,9 @@ IS Ammo AC/5
 -Empty-
 
 Right Torso:
-PPC
-PPC
-PPC
+Primitive Prototype PPC
+Primitive Prototype PPC
+Primitive Prototype PPC
 -Empty-
 -Empty-
 -Empty-
@@ -151,4 +158,21 @@ Heat Sink
 -Empty-
 -Empty-
 
+overview:The Banshee, introduced in 2445 by the Terran Hegemony, is a 'Mech that was designed specifically for close-assault operations during the early years of BattleMech warfare.
+
+capabilities:A contemporary of the Mackie and Emperor, the Banshee is undeniably fast for one of the heaviest 'Mechs ever produced, and with fifteen tons of armor it is better protected than most other assault 'Mechs. However the use of a massive GM 380 fusion engine left little room for weaponry, and even at the time of its introduction the Banshee was considered undergunned compared to its privately-built competition. As critics noted, what use was impressive armor and mobility if a better-armed enemy could overwhelm and destroy it? The result was a mediocre 'Mech which even the lowly Rifleman could beat as long as it prevented the Banshee's mass from coming into play.
+
+deployment:The original design first produced in 2445, this Banshee variant carries the PPC, Autocannon/5, and Small Laser of the later 3E, as well as a pair of medium lasers. As one of the largest 'Mechs produced with primitive technology, the engine was restricted to a top speed of 54 km/h. More than twenty-two tons of Primitive Armor provided protection to the MechWarrior. The poor top speed of the Banshee-1E was the core design obstacle later engineers would try to overcome in the 3E series. They succeeded, but at the cost of firepower.
+
+history: The Hegemony soldiered on though, producing five thousand Banshees in a decade before its poor combat performance finally forced them to stop production in 2455 and the 'Mech was relegated to training and militia units for the next few centuries. Even during the Succession Wars the 'Mech's poor reputation meant many commanders saw it as a liability rather than an asset; unless they were fighting on a backwater Periphery world or as part of a poorly-equipped outfit, most Banshees were placed in second-line reserves to provide fire support or fulfill the role of brawlers so that better-armed 'Mechs need not engage in hand-to-hand combat. In this way fully a third of the original Banshee production run remained operational by the dawn of the thirty-first century and could be found throughout the Inner Sphere and Periphery, with the lion's share residing within the Lyran Commonwealth. Though a few attempts had been made over the years to improve the Banshee, Defiance Industries was the first to produce a variant which markedly improved on the original and was suggested by many of its original critics. With help from the Federated Suns and access to blueprints from the original Hesperus II factories, the BNC-3S proved to be such a success the Lyrans began fielding them in front line units, surprising their enemies who ignored them to focus on "real" threats with thoroughly unexpected firepower. Under the Federated Commonwealth improvements would continue to be made, though not at the same priority level as other projects, and the much-improved BNC-5S was active in time to meet the Clan Invasion.
+
+manufacturer:Hegemony Weapons Research, Star League Weapons Research 
+primaryfactory:New Earth, New Earth
+
+systemmanufacturer:CHASSIS:Unknown
+systemmanufacturer:ENGINE:Unknown
+systemmanufacturer:ARMOR:Unknown
+systemmanufacturer:JUMPJET:Unknown
+systemmanufacturer:COMMUNICATIONS:Unknown
+systemmanufacturer:TARGETING:Unknown
 

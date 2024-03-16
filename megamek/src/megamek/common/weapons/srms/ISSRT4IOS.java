@@ -1,4 +1,4 @@
-/**
+/*
  * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
  *
  * This program is free software; you can redistribute it and/or modify it under
@@ -19,15 +19,8 @@ import megamek.common.SimpleTechLevel;
  * @author Sebastian Brocks
  */
 public class ISSRT4IOS extends SRTWeapon {
-
-    /**
-     *
-     */
     private static final long serialVersionUID = 1994847810524115314L;
 
-    /**
-     *
-     */
     public ISSRT4IOS() {
         super();
         name = "SRT 4 (I-OS)";
@@ -46,17 +39,17 @@ public class ISSRT4IOS extends SRTWeapon {
         bv = 8;
         flags = flags.or(F_NO_FIRES).or(F_ONESHOT);
         cost = 48000;
-        rulesRefs = "327,TO";
-        //Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
+        rulesRefs = "327, TO";
+        // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TECH_BASE_IS)
-        	.setIntroLevel(false)
-        	.setUnofficial(false)
-            .setTechRating(RATING_B)
-            .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
-            .setISAdvancement(DATE_NONE, 3056, 3081, DATE_NONE, DATE_NONE)
-            .setISApproximate(false, false, true,false, false)
-            .setPrototypeFactions(F_DC)
-            .setProductionFactions(F_DC)
-            .setStaticTechLevel(SimpleTechLevel.STANDARD);
+                .setIntroLevel(false)
+                .setUnofficial(false)
+                .setTechRating(RATING_B)
+                .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+                .setISAdvancement(DATE_NONE, 3056, 3081, DATE_NONE, DATE_NONE)
+                .setISApproximate(false, false, true,false, false)
+                .setPrototypeFactions(F_DC)
+                .setProductionFactions(F_DC)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
 }

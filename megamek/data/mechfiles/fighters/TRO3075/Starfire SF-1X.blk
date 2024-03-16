@@ -20,6 +20,10 @@ Starfire
 SF-1X
 </Model>
 
+<mul id:>
+5129
+</mul id:>
+
 <year>
 3028
 </year>
@@ -31,6 +35,10 @@ SF-1X
 <type>
 IS Level 2
 </type>
+
+<role>
+Fast Dogfighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -104,9 +112,23 @@ IS Ultra AC/5 Ammo
 </Fuselage Equipment>
 
 <source>
-XTRO Succession Wars I - Succession Wars
+XTR: Succession Wars
 </source>
 
 <tonnage>
 55.0
 </tonnage>
+
+<quirks>
+atmo_flyer
+obsolete
+</quirks>
+
+<weaponQuirks>
+mod_weapons:NOS:0:ISUltraAC5
+mod_weapons:LWG:0:Medium Laser
+mod_weapons:LWG:1:Medium Laser
+mod_weapons:RWG:0:Medium Laser
+mod_weapons:RWG:1:Medium Laser
+mod_weapons:AFT:0:Small Laser
+</weaponQuirks>

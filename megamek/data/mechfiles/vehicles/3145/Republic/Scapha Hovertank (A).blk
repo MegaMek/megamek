@@ -20,6 +20,10 @@ Scapha Hovertank
 (A)
 </Model>
 
+<mul id:>
+6659
+</mul id:>
+
 <year>
 3123
 </year>
@@ -27,6 +31,10 @@ Scapha Hovertank
 <type>
 IS Level 4
 </type>
+
+<role>
+Striker
+</role>
 
 <motion_type>
 Hover
@@ -87,7 +95,7 @@ ISRotaryAC5:OMNI
 </Turret Equipment>
 
 <source>
-TRO 3145 Republic
+TRO: 3145 Republic
 </source>
 
 <tonnage>

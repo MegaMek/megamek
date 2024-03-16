@@ -20,6 +20,10 @@ Daimyo HQ
 67-NC
 </Model>
 
+<mul id:>
+8297
+</mul id:>
+
 <year>
 2781
 </year>
@@ -31,6 +35,10 @@ Daimyo HQ
 <type>
 IS Level 2
 </type>
+
+<role>
+Scout
+</role>
 
 <motion_type>
 Wheeled
@@ -85,7 +93,7 @@ Machine Gun
 </Turret Equipment>
 
 <source>
-Succession Wars
+TRO: 3075
 </source>
 
 <tonnage>

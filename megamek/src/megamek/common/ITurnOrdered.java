@@ -22,20 +22,20 @@ import java.io.Serializable;
 public interface ITurnOrdered extends Serializable {
     /**
      * Return the number of "normal" turns that this item requires. This is
-     * normally the sum of multi-unit turns and the other turns. <p/> Subclasses
+     * normally the sum of multi-unit turns and the other turns. <p> Subclasses
      * are expected to override this value in order to make the "move even" code
      * work correctly.
      *
      * @return the <code>int</code> number of "normal" turns this item should
      *         take in a phase.
      */
-    int getNormalTurns(Game game);
+    int getNormalTurns(IGame game);
 
     int getOtherTurns();
 
     int getEvenTurns();
 
-    int getMultiTurns(Game game);
+    int getMultiTurns(IGame game);
 
     int getSpaceStationTurns();
 

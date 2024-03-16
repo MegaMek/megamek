@@ -36,6 +36,7 @@ import megamek.common.preference.PreferenceManager;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Arrays;
 import java.util.Map;
 
 public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
@@ -58,11 +59,12 @@ public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
     @Override
     public void updateOptionValues() {
         gameOptions = clientGUI.getClient().getGame().getOptions();
-        enableYearLimits = gameOptions.booleanOption(OptionsConstants.ALLOWED_ERA_BASED);
+        enableYearLimits = true;
         allowedYear = gameOptions.intOption(OptionsConstants.ALLOWED_YEAR);
         canonOnly = gameOptions.booleanOption(OptionsConstants.ALLOWED_CANON_ONLY);
         allowInvalid = gameOptions.booleanOption(OptionsConstants.ALLOWED_ALLOW_ILLEGAL_UNITS);
         gameTechLevel = TechConstants.getSimpleLevel(gameOptions.stringOption("techlevel"));
+        eraBasedTechLevel = gameOptions.booleanOption(OptionsConstants.ALLOWED_ERA_BASED);
     }
 
     //region Button Methods
@@ -100,9 +102,10 @@ public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
         Entity e = getSelectedEntity();
         if (e != null) {
             Client client = null;
+            String name = (String) comboPlayer.getSelectedItem();
+
             if (comboPlayer.getSelectedIndex() > 0) {
-                String name = (String) comboPlayer.getSelectedItem();
-                client = clientGUI.getBots().get(name);
+                client = clientGUI.getLocalBots().get(name);
             }
 
             if (client == null) {
@@ -111,7 +114,11 @@ public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
             autoSetSkillsAndName(e, client.getLocalPlayer());
             e.setOwner(client.getLocalPlayer());
             client.sendAddEntity(e);
+
+            String msg = clientGUI.getClient().getLocalPlayer() + " selected a unit for player: " + name;
+            clientGUI.getClient().sendServerChat(Player.PLAYER_NONE, msg);
         }
+
         if (close) {
             setVisible(false);
         }
@@ -120,8 +127,9 @@ public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
     private void autoSetSkillsAndName(Entity e, Player player) {
         ClientPreferences cs = PreferenceManager.getClientPreferences();
 
+        Arrays.fill(e.getCrew().getClanPilots(), e.isClan());
         if (cs.useAverageSkills()) {
-            clientGUI.getClient().getSkillGenerator().setRandomSkills(e, true);
+            clientGUI.getClient().getSkillGenerator().setRandomSkills(e);
         }
 
         for (int i = 0; i < e.getCrew().getSlotCount(); i++) {
@@ -129,8 +137,8 @@ public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
                 Gender gender = RandomGenderGenerator.generate();
                 e.getCrew().setGender(gender, i);
                 e.getCrew().setName((player != null)
-                        ? RandomNameGenerator.getInstance().generate(gender, player.getName())
-                        : RandomNameGenerator.getInstance().generate(gender), i);
+                        ? RandomNameGenerator.getInstance().generate(gender, e.getCrew().isClanPilot(i), player.getName())
+                        : RandomNameGenerator.getInstance().generate(gender, e.getCrew().isClanPilot(i)), i);
             }
         }
     }
@@ -141,7 +149,7 @@ public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
         comboPlayer.removeAllItems();
         comboPlayer.setEnabled(true);
         comboPlayer.addItem(clientName);
-        for (Client client : clientGUI.getBots().values()) {
+        for (Client client : clientGUI.getLocalBots().values()) {
             comboPlayer.addItem(client.getName());
         }
         if (comboPlayer.getItemCount() == 1) {
@@ -171,7 +179,7 @@ public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
         // we don't care about the failed loads.
         if (mscInstance.isInitialized()) {
             final Map<String, String> hFailedFiles = MechSummaryCache.getInstance().getFailedFiles();
-            if ((hFailedFiles != null) && (hFailedFiles.size() > 0)) {
+            if ((hFailedFiles != null) && !hFailedFiles.isEmpty()) {
                 // self-showing dialog
                 new UnitFailureDialog(frame, hFailedFiles);
             }
@@ -180,7 +188,7 @@ public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
 
     @Override
     public void setVisible(boolean visible) {
-        // Set the cursor in the text filter and mark the content so it can be directly replaced
+        // Set the cursor in the text filter and mark the content, so it can be directly replaced
         textFilter.grabFocus();
         textFilter.select(0, textFilter.getText().length());
         updatePlayerChoice();

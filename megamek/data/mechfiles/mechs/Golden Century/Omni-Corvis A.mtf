@@ -1,12 +1,16 @@
-Version:1.1
-Omni-Corvis
-A
+chassis:Omni-Corvis
+model:A
+mul id:7611
 
 Config:Biped Omnimech
 techbase:Clan
 era:2921
-source:Succession Wars
+source:TRO: Golden Century
 rules level:2
+role:Striker
+
+quirk:prototype
+
 
 mass:50
 engine:250 Fusion (Clan) Engine(IS)

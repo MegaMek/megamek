@@ -16,9 +16,13 @@ Tank
 Ground Car
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+4251
+</mul id:>
 
 <year>
 1950
@@ -27,6 +31,10 @@ Ground Car
 <type>
 IS Level 1
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Wheeled
@@ -70,6 +78,6 @@ troopspace:0.5
 3.0
 </tonnage>
 
-<bv>
-55
-</bv>
+<source>
+TRO: 3025
+</source>

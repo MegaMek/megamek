@@ -20,6 +20,10 @@ J-37 Ordnance Transport
 (Original)
 </Model>
 
+<mul id:>
+1648
+</mul id:>
+
 <year>
 2824
 </year>
@@ -31,6 +35,10 @@ J-37 Ordnance Transport
 <type>
 IS Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Wheeled
@@ -86,7 +94,7 @@ Small Laser
 </structural_tech_rating>
 
 <source>
-TRO 3085 - Succession Wars
+TRO: 3085
 </source>
 
 <tonnage>

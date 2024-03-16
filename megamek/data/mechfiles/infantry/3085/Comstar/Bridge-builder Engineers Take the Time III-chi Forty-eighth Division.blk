@@ -20,6 +20,10 @@ Bridge-builder Engineers
 Take the Time III-chi; Forty-eighth Division
 </Model>
 
+<mul id:>
+428
+</mul id:>
+
 <year>
 2830
 </year>
@@ -27,6 +31,10 @@ Take the Time III-chi; Forty-eighth Division
 <type>
 IS Level 3
 </type>
+
+<role>
+Ambusher
+</role>
 
 <motion_type>
 Tracked
@@ -56,5 +64,5 @@ Infantry bridge-building equipment not coded in MM.  Unit included for completen
 </history>
 
 <era>
-TRO 3085 - Early Succession War
+TRO: 3085
 </era>

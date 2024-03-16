@@ -20,6 +20,10 @@ Goth
 Prime
 </Model>
 
+<mul id:>
+7658
+</mul id:>
+
 <year>
 2873
 </year>
@@ -31,6 +35,10 @@ Prime
 <type>
 Clan Level 2
 </type>
+
+<role>
+Fire Support
+</role>
 
 <motion_type>
 Aerodyne
@@ -118,9 +126,17 @@ Clan Ammo LRM-15 (Clan) Artemis-capable:OMNI
 </Fuselage Equipment>
 
 <source>
-Succession Wars
+TRO: Golden Century
 </source>
 
 <tonnage>
 60.0
 </tonnage>
+
+<quirks>
+combat_computer
+easy_maintain
+atmo_instability
+obsolete
+</quirks>
+

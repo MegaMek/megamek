@@ -1,12 +1,18 @@
-Version:1.0
-Templar
-TLR1-OC
+chassis:Templar
+model:TLR1-OC
+mul id:5197
 
 Config:Biped Omnimech
 techbase:Inner Sphere
 era:3062
-source:TRO 3067
+source:TRO: 3067
 rules level:2
+role:Brawler
+
+
+
+quirk:easy_maintain
+
 
 mass:85
 engine:340 XL Engine(IS)

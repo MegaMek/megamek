@@ -20,6 +20,10 @@ Magellan Jumpship
 (2960)
 </Model>
 
+<mul id:>
+4567
+</mul id:>
+
 <year>
 2960
 </year>
@@ -31,6 +35,10 @@ Magellan Jumpship
 <type>
 IS Level 3
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Aerodyne
@@ -144,7 +152,7 @@ ISMobileHPG
 </structural_integrity>
 
 <source>
-TRO 3057R - Late Succession War - Lostech
+TRO: 3057 Revised
 </source>
 
 <tonnage>

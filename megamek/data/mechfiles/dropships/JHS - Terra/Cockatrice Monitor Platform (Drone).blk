@@ -20,6 +20,10 @@ Cockatrice Monitor Platform
 (Drone)
 </Model>
 
+<mul id:>
+660
+</mul id:>
+
 <year>
 3062
 </year>
@@ -31,6 +35,10 @@ Cockatrice Monitor Platform
 <type>
 IS Level 4
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Spheroid
@@ -136,7 +144,7 @@ Weapons:
 </notes>
 
 <source>
-Jihad Hot Spots: Terra - Civil War
+Jihad Hot Spots: Terra
 </source>
 
 <tonnage>

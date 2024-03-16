@@ -20,6 +20,10 @@ Schiltron Mobile Fire-Support Platform
 Prime
 </Model>
 
+<mul id:>
+2821
+</mul id:>
+
 <year>
 3059
 </year>
@@ -27,6 +31,10 @@ Prime
 <type>
 IS Level 3
 </type>
+
+<role>
+Missile Boat
+</role>
 
 <motion_type>
 Wheeled
@@ -101,7 +109,7 @@ Small Laser:OMNI
 </Turret Equipment>
 
 <source>
-Clan Invasion
+TRO: 3060
 </source>
 
 <tonnage>

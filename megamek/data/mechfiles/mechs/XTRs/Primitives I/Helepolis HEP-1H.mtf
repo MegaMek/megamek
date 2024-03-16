@@ -1,12 +1,20 @@
-Version:1.1
-Helepolis
-HEP-1H
+chassis:Helepolis
+model:HEP-1H
+mul id:1460
 
 Config:Biped
 techbase:Inner Sphere
 era:2460
-source:XTRO Primitives I - Age of War
-rules level:4
+source:XTR: Primitives I
+rules level:3
+role:Missile Boat
+
+
+
+
+quirk:reinforced_legs
+quirk:stable
+
 
 mass:75
 engine:180 Fusion Engine(IS)
@@ -152,4 +160,18 @@ Foot Actuator
 -Empty-
 -Empty-
 
+overview:First unleashed by the Terran Hegemony in 2460, the Helepolis is a ponderous BattleMech designed to deliver artillery fire. 	
 
+capabilities:The Helepolis is built around an Armstrong Industries Sniper Artillery Piece. The accurate, long-range fire makes it effective against static defenses. 
+
+deployment:The earliest version, designed by Gregory Kean, used standard heat sinks and its primitive engine could only manage 30 km/h. This proved to be a challenge as the early Helepolis needed to completely stop to fire the Sniper artillery and then start moving again before counterbattery fire could destroy the unit. Twenty and a half tons of Primitive Armor protected the Helepolis from enemy fire. The weight and bulk of the primitive systems prevented the designers from installing the long range missiles used on later models
+
+history:The 'Mech was proven ineffective on multiple occasions and, following the destruction of the production facilities in 2775, the design was lost during the Succession Wars. The HEP-2H dates to 2567, replacing the 2X. The Helepolis is a slow heavy 'Mech with a maximum speed of 54 km/h. It has a respectable thirteen tons of armor, however. When rebels within the Hegemony military launched the September Revolt, the new Director-General, Ian Cameron deployed batteries of Helepolis 'Mechs to keep them pinned down within the capital city of Geneva on Terra.
+
+manufacturer:Ceres Metals Industries
+primaryfactory:Ward
+systemmanufacturer:CHASSIS:Mitchell Heavy HEP
+systemmanufacturer:ENGINE:VOX 180
+systemmanufacturer:ARMOR:Armorscale
+systemmanufacturer:COMMUNICATIONS:Exeter Longscan 100
+systemmanufacturer:TARGETING:Tacticon Tracer 150b

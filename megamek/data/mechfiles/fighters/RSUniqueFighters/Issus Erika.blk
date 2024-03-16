@@ -20,6 +20,10 @@ Issus
 (Erika)
 </Model>
 
+<mul id:>
+1636
+</mul id:>
+
 <year>
 3065
 </year>
@@ -31,6 +35,10 @@ Issus
 <type>
 Clan Level 2
 </type>
+
+<role>
+Fast Dogfighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -103,7 +111,7 @@ CLCASE
 </Fuselage Equipment>
 
 <source>
-RS Unique Fighters - Civil War
+Record Sheets: Unique Fighters
 </source>
 
 <tonnage>

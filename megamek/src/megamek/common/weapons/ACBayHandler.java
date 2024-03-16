@@ -22,7 +22,7 @@ import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.server.Server;
+import megamek.server.GameManager;
 
 /**
  * @author Jay Lawson
@@ -35,10 +35,10 @@ public class ACBayHandler extends AmmoBayWeaponHandler {
      * @param t
      * @param w
      * @param g
-     * @param s
+     * @param m
      */
-    public ACBayHandler(ToHitData t, WeaponAttackAction w, Game g, Server s) {
-        super(t, w, g, s);
+    public ACBayHandler(ToHitData t, WeaponAttackAction w, Game g, GameManager m) {
+        super(t, w, g, m);
     }
 
     /*
@@ -56,19 +56,19 @@ public class ACBayHandler extends AmmoBayWeaponHandler {
                 boolean jams = false;
                 switch (ammoUsed) {
                     case 6:
-                        if (roll <= 4) {
+                        if (roll.getIntValue() <= 4) {
                             jams = true;
                         }
                         break;
                     case 5:
                     case 4:
-                        if (roll <= 3) {
+                        if (roll.getIntValue() <= 3) {
                             jams = true;
                         }
                         break;
                     case 3:
                     case 2:
-                        if (roll <= 2) {
+                        if (roll.getIntValue() <= 2) {
                             jams = true;
                         }
                         break;
@@ -84,7 +84,7 @@ public class ACBayHandler extends AmmoBayWeaponHandler {
                     bayW.setJammed(true);
                 }
             } else if (bayWType.getAmmoType() == AmmoType.T_AC_ULTRA) {
-                if (roll == 2 && ammoUsed == 2) {
+                if (roll.getIntValue() == 2 && ammoUsed == 2) {
                     Report r = new Report();
                     r.subject = subjectId;
                     r.messageId = 3160;

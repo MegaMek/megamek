@@ -1,0 +1,129 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Aero
+</UnitType>
+
+<Name>
+Hydaspes
+</Name>
+
+<Model>
+2
+</Model>
+
+<mul id:>
+4353
+</mul id:>
+
+<year>
+3064
+</year>
+
+<originalBuildYear>
+3064
+</originalBuildYear>
+
+<type>
+Clan Level 2
+</type>
+
+<role>
+Attack Fighter
+</role>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+</transporters>
+
+<SafeThrust>
+5
+</SafeThrust>
+
+<cockpit_type>
+0
+</cockpit_type>
+
+<heatsinks>
+25
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+640
+</fuel>
+
+<engine_type>
+2
+</engine_type>
+
+<armor_type>
+19
+</armor_type>
+
+<armor_tech>
+2
+</armor_tech>
+
+<armor>
+138
+106
+106
+82
+</armor>
+
+<Nose Equipment>
+CLHeavyMediumLaser
+CLHeavyMediumLaser
+CLTargeting Computer
+</Nose Equipment>
+
+<Left Wing Equipment>
+CLHeavyLargeLaser
+CLATM9
+CLATM9
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+CLHeavyLargeLaser
+CLATM9
+CLATM9
+</Right Wing Equipment>
+
+<Aft Equipment>
+</Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+Clan Ammo ATM-9
+Clan Ammo ATM-9
+Clan Ammo ATM-9
+Clan Ammo ATM-9
+Clan Ammo ATM-9
+Clan Ammo ATM-9
+CLCASE
+</Fuselage Equipment>
+
+<source>
+TRO: 3067
+</source>
+
+<tonnage>
+95.0
+</tonnage>

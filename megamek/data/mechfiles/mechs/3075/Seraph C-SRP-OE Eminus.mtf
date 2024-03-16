@@ -1,12 +1,22 @@
-Version:1.1
-Seraph
-C-SRP-OE Eminus
+chassis:Seraph
+model:C-SRP-OE Eminus
+mul id:2874
 
 Config:Biped Omnimech
 TechBase:Inner Sphere
 Era:3072
-Source:TRO 3075
+Source:TRO: 3075
 Rules Level:3
+role:Missile Boat
+
+
+
+quirk:imp_com
+quirk:imp_sensors
+quirk:low_profile
+quirk:bad_rep_clan
+quirk:bad_rep_is
+
 
 Mass:85
 Engine:255 Light Engine(IS)

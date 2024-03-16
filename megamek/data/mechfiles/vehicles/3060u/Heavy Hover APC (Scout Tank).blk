@@ -20,6 +20,10 @@ Heavy Hover APC
 (Scout Tank)
 </Model>
 
+<mul id:>
+1433
+</mul id:>
+
 <Tonnage>
 20
 </Tonnage>
@@ -86,6 +90,10 @@ ISCASE
 IS Level 2
 </type>
 
+<role>
+Scout
+</role>
+
 <year>
 3070
 </year>
@@ -111,5 +119,5 @@ Hover
 </motion_type>
 
 <source>
-Jihad
+TRO: 3060
 </source>

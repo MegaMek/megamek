@@ -20,6 +20,10 @@ Sabutai
 D
 </Model>
 
+<mul id:>
+2767
+</mul id:>
+
 <year>
 3067
 </year>
@@ -31,6 +35,10 @@ D
 <type>
 Clan Level 2
 </type>
+
+<role>
+Dogfighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -114,7 +122,7 @@ CLERMediumLaser:OMNI
 </Fuselage Equipment>
 
 <source>
-TRO 3055u - Civil War
+TRO: 3055 Update
 </source>
 
 <tonnage>

@@ -1,0 +1,153 @@
+chassis:Omega
+model:SHP-5R
+mul id:7997
+Config:Biped
+techbase:Inner Sphere
+era:3103
+source:Record Sheets: 3150
+rules level:3
+
+mass:150
+engine:300 XL Engine(IS)
+structure:IS Standard
+myomer:Standard
+cockpit:Superheavy Cockpit
+gyro:Superheavy Gyro
+
+heat sinks:23 IS Double
+walk mp:2
+jump mp:0
+
+armor:Standard(Inner Sphere)
+LA armor:44
+RA armor:44
+LT armor:45
+RT armor:45
+CT armor:60
+HD armor:12
+LL armor:62
+RL armor:62
+RTL armor:19
+RTR armor:19
+RTC armor:20
+
+Weapons:5
+LB 10-X AC, Left Arm
+LB 10-X AC, Right Arm
+Heavy PPC, Left Torso
+Heavy PPC, Right Torso
+Heavy PPC, Center Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+IS LB 10-X AC Ammo|IS LB 10-X AC Ammo
+ISCASEII
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+IS LB 10-X Cluster Ammo|IS LB 10-X Cluster Ammo
+ISCASEII
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Heavy PPC
+Heavy PPC
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Heavy PPC
+Heavy PPC
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Heavy PPC
+Heavy PPC
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISGuardianECMSuite
+ISC3SlaveUnit
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+ISDoubleHeatSink
+ISDoubleHeatSink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+ISDoubleHeatSink
+ISDoubleHeatSink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

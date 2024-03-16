@@ -20,6 +20,10 @@ Armored Personnel Carrier
 (Wheeled SRM)
 </Model>
 
+<mul id:>
+124
+</mul id:>
+
 <year>
 2500
 </year>
@@ -27,6 +31,10 @@ Armored Personnel Carrier
 <type>
 IS Level 1
 </type>
+
+<role>
+Scout
+</role>
 
 <motion_type>
 Wheeled
@@ -73,7 +81,7 @@ SRM 2
 </Turret Equipment>
 
 <source>
-TRO 3039 - Age of War
+TRO: 3039
 </source>
 
 <tonnage>

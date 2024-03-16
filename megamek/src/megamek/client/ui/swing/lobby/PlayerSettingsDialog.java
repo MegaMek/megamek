@@ -23,6 +23,7 @@ import megamek.client.Client;
 import megamek.client.bot.BotClient;
 import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.bot.princess.Princess;
+import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
 import megamek.client.ui.baseComponents.AbstractButtonDialog;
 import megamek.client.ui.dialogs.BotConfigDialog;
@@ -30,16 +31,24 @@ import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.panels.SkillGenerationOptionsPanel;
 import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.GUIPreferences;
+import megamek.client.ui.swing.boardview.BoardView;
 import megamek.client.ui.swing.util.UIUtil;
+import megamek.common.Entity;
 import megamek.common.IStartingPositions;
+import megamek.common.OffBoardDirection;
 import megamek.common.Player;
+import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.text.DefaultFormatterFactory;
+import javax.swing.text.NumberFormatter;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.NumberFormat;
 
 import static megamek.client.ui.Messages.getString;
 import static megamek.client.ui.swing.lobby.LobbyUtility.isValidStartPos;
@@ -54,18 +63,33 @@ import static megamek.client.ui.swing.util.UIUtil.*;
  */
 public class PlayerSettingsDialog extends AbstractButtonDialog {
 
-    public PlayerSettingsDialog(ClientGUI cg, Client cl) {
+    public PlayerSettingsDialog(ClientGUI cg, Client cl, BoardView bv) {
         super(cg.frame, "PlayerSettingsDialog", "PlayerSettingsDialog.title");
         client = cl;
         clientgui = cg;
+        this.bv = bv;
         currentPlayerStartPos = cl.getLocalPlayer().getStartingPos();
         if (currentPlayerStartPos > 10) {
             currentPlayerStartPos -= 10;
         }
+        
+        numFormatter.setMinimum(0);
+        numFormatter.setCommitsOnValidEdit(true);
+
         initialize();
-        UIUtil.adjustDialog(this);
     }
-    
+
+    @Override
+    protected void finalizeInitialization() throws Exception {
+        adaptToGUIScale();
+        super.finalizeInitialization();
+    }
+
+    @Override
+    protected void okAction() {
+        apply();
+    }
+
     /** Returns the chosen initiative modifier. */
     public int getInit() {
         return parseField(fldInit);
@@ -91,9 +115,35 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
         return parseField(fldVibrabomb);
     }
     
+    /** Returns the start location offset */
+    public int getStartOffset() {
+        return parseField(txtOffset);
+    }
+    
+    /** Returns the player start location width */
+    public int getStartWidth() {
+        return parseField(txtWidth);
+    }
+    
     /** Returns the chosen deployment position. */
     public int getStartPos() {
         return currentPlayerStartPos;
+    }
+
+    public int getStartingAnyNWx() {
+        return Math.min((Integer) spinStartingAnyNWx.getValue(), (Integer) spinStartingAnySEx.getValue()) - 1;
+    }
+
+    public int getStartingAnyNWy() {
+        return Math.min((Integer) spinStartingAnyNWy.getValue(), (Integer) spinStartingAnySEy.getValue()) - 1;
+    }
+
+    public int getStartingAnySEx() {
+        return Math.max((Integer) spinStartingAnyNWx.getValue(), (Integer) spinStartingAnySEx.getValue()) - 1;
+    }
+
+    public int getStartingAnySEy() {
+        return Math.max((Integer) spinStartingAnyNWy.getValue(), (Integer) spinStartingAnySEy.getValue()) - 1;
     }
 
     /**
@@ -112,6 +162,7 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
 
     private final Client client;
     private final ClientGUI clientgui;
+    private final BoardView bv;
     
     // Initiative Section
     private final JLabel labInit = new TipLabel(Messages.getString("PlayerSettingsDialog.initMod"), SwingConstants.RIGHT);
@@ -137,6 +188,16 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
     // Deployment Section
     private final JPanel panStartButtons = new JPanel();
     private final TipButton[] butStartPos = new TipButton[11];
+    // this might seem like kind of a dumb way to declare it, but JFormattedTextField doesn't have an overload that
+    // takes both a number formatter and a default value.
+    private final NumberFormatter numFormatter = new NumberFormatter(NumberFormat.getIntegerInstance());
+    private final DefaultFormatterFactory formatterFactory = new DefaultFormatterFactory(numFormatter);
+    private final JFormattedTextField txtOffset = new JFormattedTextField(formatterFactory, 0);
+    private final JFormattedTextField txtWidth = new JFormattedTextField(formatterFactory, 3);
+    private JSpinner spinStartingAnyNWx;
+    private JSpinner spinStartingAnyNWy;
+    private JSpinner spinStartingAnySEx;
+    private JSpinner spinStartingAnySEy;
 
     // Bot Settings Section
     private final JButton butBotSettings = new JButton(Messages.getString("PlayerSettingsDialog.botSettings"));
@@ -194,13 +255,100 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
     
     private JPanel startSection() {
         JPanel result = new OptionPanel("PlayerSettingsDialog.header.startPos");
-        Content panContent = new Content(new GridLayout(1, 1));
+        Content panContent = new Content(new GridBagLayout());
         result.add(panContent);
         setupStartGrid();
-        panContent.add(panStartButtons);
+        panContent.add(panStartButtons, GBC.eol());
+        panContent.add(deploymentParametersPanel(), GBC.eol());
         return result;
     }
     
+    private JPanel deploymentParametersPanel() {
+        GridBagLayout gbl = new GridBagLayout();
+        JPanel result = new JPanel(gbl);
+       
+        JLabel lblOffset = new JLabel(Messages.getString("CustomMechDialog.labDeploymentOffset"));
+        lblOffset.setToolTipText(Messages.getString("CustomMechDialog.labDeploymentOffsetTip"));
+        JLabel lblWidth = new JLabel(Messages.getString("CustomMechDialog.labDeploymentWidth"));
+        lblWidth.setToolTipText(Messages.getString("CustomMechDialog.labDeploymentWidthTip"));
+        
+        txtOffset.setColumns(4);
+        txtWidth.setColumns(4);
+        
+        result.add(lblOffset, GBC.std());
+        result.add(txtOffset, GBC.eol());
+        result.add(lblWidth, GBC.std());
+        result.add(txtWidth, GBC.eol());
+
+        result.add(new JLabel(Messages.getString("CustomMechDialog.labDeploymentAnyNW")), GBC.std());
+        result.add(spinStartingAnyNWx, GBC.std());
+        result.add(spinStartingAnyNWy, GBC.eol());
+        result.add(new JLabel(Messages.getString("CustomMechDialog.labDeploymentAnySE")), GBC.std());
+        result.add(spinStartingAnySEx, GBC.std());
+        result.add(spinStartingAnySEy, GBC.eol());
+
+        JButton btnUseRuler = new JButton(Messages.getString("CustomMechDialog.BtnDeploymentUseRuler"));
+        btnUseRuler.setToolTipText(Messages.getString("CustomMechDialog.BtnDeploymentUseRulerTip"));
+        btnUseRuler.addActionListener(e -> useRuler());
+        result.add(btnUseRuler, GBC.std());
+        JButton btnApply = new JButton(Messages.getString("CustomMechDialog.BtnDeploymentApply"));
+        btnApply.setToolTipText(Messages.getString("CustomMechDialog.BtnDeploymentApplyTip"));
+        btnApply.addActionListener(e -> apply());
+        result.add(btnApply, GBC.eol());
+
+        return result;
+    }
+
+
+    private void useRuler() {
+        if (bv.getRulerStart() != null && bv.getRulerEnd() != null) {
+            int x = Math.min(bv.getRulerStart().getX(), bv.getRulerEnd().getX());
+            spinStartingAnyNWx.setValue(x + 1);
+            int y = Math.min(bv.getRulerStart().getY(), bv.getRulerEnd().getY());
+            spinStartingAnyNWy.setValue(y + 1);
+            x = Math.max(bv.getRulerStart().getX(), bv.getRulerEnd().getX());
+            spinStartingAnySEx.setValue(x + 1);
+            y = Math.max(bv.getRulerStart().getY(), bv.getRulerEnd().getY());
+            spinStartingAnySEy.setValue(y + 1);
+        }
+    }
+
+    private void apply() {
+        Player player = client.getLocalPlayer();
+
+        player.setConstantInitBonus(getInit());
+        player.setNbrMFConventional(getCnvMines());
+        player.setNbrMFVibra(getVibMines());
+        player.setNbrMFActive(getActMines());
+        player.setNbrMFInferno(getInfMines());
+        getSkillGenerationOptionsPanel().updateClient();
+        player.setEmail(getEmail());
+
+        final GameOptions gOpts = clientgui.getClient().getGame().getOptions();
+
+        // If the gameoption set_arty_player_homeedge is set, adjust the player's offboard
+        // arty units to be behind the newly selected home edge.
+        OffBoardDirection direction = OffBoardDirection.translateStartPosition(getStartPos());
+        if (direction != OffBoardDirection.NONE &&
+                gOpts.booleanOption(OptionsConstants.BASE_SET_ARTY_PLAYER_HOMEEDGE)) {
+            for (Entity entity: client.getGame().getPlayerEntities(client.getLocalPlayer(), false)) {
+                if (entity.getOffBoardDirection() != OffBoardDirection.NONE) {
+                    entity.setOffBoard(entity.getOffBoardDistance(), direction);
+                }
+            }
+        }
+
+        // The deployment position
+        player.setStartingPos(getStartPos());
+        player.setStartOffset(getStartOffset());
+        player.setStartWidth(getStartWidth());
+        player.setStartingAnyNWx(getStartingAnyNWx());
+        player.setStartingAnyNWy(getStartingAnyNWy());
+        player.setStartingAnySEx(getStartingAnySEx());
+        player.setStartingAnySEy(getStartingAnySEy());
+        client.sendPlayerInfo();
+    }
+
     private JPanel initiativeSection() {
         JPanel result = new OptionPanel("PlayerSettingsDialog.header.initMod");
         Content panContent = new Content(new GridLayout(1, 2, 10, 5));
@@ -256,6 +404,29 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
         fldActive.setText(Integer.toString(player.getNbrMFActive()));
         fldInferno.setText(Integer.toString(player.getNbrMFInferno()));
         fldEmail.setText(player.getEmail());
+        txtWidth.setText(Integer.toString(player.getStartWidth()));
+        txtOffset.setText(Integer.toString(player.getStartOffset()));
+
+        int bh = clientgui.getClient().getMapSettings().getBoardHeight();
+        int bw = clientgui.getClient().getMapSettings().getBoardWidth();
+
+        SpinnerNumberModel mStartingAnyNWx = new SpinnerNumberModel(0, 0,bw, 1);
+        spinStartingAnyNWx = new JSpinner(mStartingAnyNWx);
+        SpinnerNumberModel mStartingAnyNWy = new SpinnerNumberModel(0, 0, bh, 1);
+        spinStartingAnyNWy = new JSpinner(mStartingAnyNWy);
+        SpinnerNumberModel mStartingAnySEx = new SpinnerNumberModel(0, 0, bw, 1);
+        spinStartingAnySEx = new JSpinner(mStartingAnySEx);
+        SpinnerNumberModel mStartingAnySEy = new SpinnerNumberModel(0, -0, bh, 1);
+        spinStartingAnySEy = new JSpinner(mStartingAnySEy);
+
+        int x = Math.min(player.getStartingAnyNWx() + 1, bw);
+        spinStartingAnyNWx.setValue(x);
+        int y = Math.min(player.getStartingAnyNWy() + 1, bh);
+        spinStartingAnyNWy.setValue(y);
+        x = Math.min(player.getStartingAnySEx() + 1, bw);
+        spinStartingAnySEx.setValue(x);
+        y = Math.min(player.getStartingAnySEy() + 1, bh);
+        spinStartingAnySEy.setValue(y);
     }
 
     private void setupStartGrid() {
@@ -363,5 +534,7 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
             return 0;
         }
     }
-
+    private void adaptToGUIScale() {
+        UIUtil.adjustDialog(this,  UIUtil.FONT_SCALE1);
+    }
 }

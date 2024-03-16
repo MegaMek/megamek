@@ -1,12 +1,21 @@
-Version:1.0
-Crusader
-CRD-7L
+chassis:Crusader
+model:CRD-7L
+mul id:762
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3067
-Source:Civil War
+source:TRO: 3085u 
 Rules Level:2
+role:Missile Boat
+
+
+
+quirk:easy_maintain
+quirk:rugged_1
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+
 
 Mass:65
 Engine:195 Fusion Engine
@@ -152,8 +161,7 @@ Stealth
 
 overview:The Crusader was initially designed as a close combat BattleMech for the Star League Defense Force, but soon proved itself to be a very adaptable, multi-role design. This reliable workhorse of the SLDF, while not excelling in any one job, was quite capable of accomplishing just about any mission, whether it be close assault, anti-aircraft, counter-insurgency, or even reconnaissance. Its versatility and large number of manufacturers ensured the Crusader its place as one of the most common heavy 'Mechs in the Inner Sphere.
 
-capabilities:Each arm was equipped with an LRM launcher, laser and machine gun, while the SRM launchers were built into the legs and mounted at hip height to provide a stable firing location and avoid interference with the LRMs' flight path. Early Crusader models had issues with the arm-mounted launchers and lasers overheating and causing stress to the actuators and internal structure, but this was rectified with the additions of the now-distinctive collars which deflect hot gasses away. 
-The Crusader was well-protected with twelve tons of armor, particularly around the legs, which made it a good hand-to-hand combatant. A thirteen and a half ton fusion engine allowed the Crusader to achieve a decent cruising speed of 43.2 km/h. One disadvantage to the Crusader was its inadequate heat management system, carrying just ten standard heat sinks to handle all the waste heat produced by its weapons and equipment.
+capabilities:Each arm was equipped with an LRM launcher, laser and machine gun, while the SRM launchers were built into the legs and mounted at hip height to provide a stable firing location and avoid interference with the LRMs' flight path. Early Crusader models had issues with the arm-mounted launchers and lasers overheating and causing stress to the actuators and internal structure, but this was rectified with the additions of the now-distinctive collars which deflect hot gasses away. The Crusader was well-protected with twelve tons of armor, particularly around the legs, which made it a good hand-to-hand combatant. A thirteen and a half ton fusion engine allowed the Crusader to achieve a decent cruising speed of 43.2 km/h. One disadvantage to the Crusader was its inadequate heat management system, carrying just ten standard heat sinks to handle all the waste heat produced by its weapons and equipment.
 
 deployment:Utilizing some of the newest technology available in the Capellan Confederation, the 7L was built by Tao 'Mechworks in 3067. It used Stealth Armor, making it harder to target. The 'Mech also used double heat sinks and is armed with two LRM-15 launchers, two Streak SRM-4 launchers, and two ER Medium Lasers. Finally, the 'Mech carried a Guardian ECM Suite to allow its Stealth Armor to work. In order to make room, the top speed was lowered to 53 km/h by replacing the engine with a Nissan Fusion 195, though jump jets offset that through increased maneuverability. Despite its Liao origins, half of the first production run was sold to the Word of Blake.
 

@@ -20,6 +20,10 @@ Hector Road Train Trailer Module
 (Livestock)
 </Model>
 
+<mul id:>
+4288
+</mul id:>
+
 <year>
 2500
 </year>
@@ -27,6 +31,10 @@ Hector Road Train Trailer Module
 <type>
 IS Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Wheeled
@@ -77,7 +85,7 @@ livestockcargobay:55.5:4
 </transporters>
 
 <source>
-HB:House Marik - Age of War
+Handbook: House Marik
 </source>
 
 <tonnage>

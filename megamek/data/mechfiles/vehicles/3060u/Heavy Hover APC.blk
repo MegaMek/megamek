@@ -16,9 +16,13 @@ Tank
 Heavy Hover APC
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+1435
+</mul id:>
 
 <year>
 2470
@@ -27,6 +31,10 @@ Heavy Hover APC
 <type>
 IS Level 1
 </type>
+
+<role>
+Scout
+</role>
 
 <motion_type>
 Hover
@@ -70,7 +78,7 @@ Machine Gun
 </Rear Equipment>
 
 <source>
-Star League
+TRO: 3060
 </source>
 
 <tonnage>

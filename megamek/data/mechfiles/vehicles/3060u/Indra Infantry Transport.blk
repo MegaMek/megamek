@@ -16,9 +16,13 @@ Tank
 Indra Infantry Transport
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+1613
+</mul id:>
 
 <year>
 2842
@@ -27,6 +31,10 @@ Indra Infantry Transport
 <type>
 Clan Level 2
 </type>
+
+<role>
+Sniper
+</role>
 
 <motion_type>
 Wheeled
@@ -86,7 +94,7 @@ CLMG
 </Turret Equipment>
 
 <source>
-Succession Wars
+TRO: 3060
 </source>
 
 <tonnage>

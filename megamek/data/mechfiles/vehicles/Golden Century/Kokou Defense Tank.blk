@@ -19,6 +19,10 @@ Kokou Defense Tank
 <Model>
 </Model>
 
+<mul id:>
+7672
+</mul id:>
+
 <year>
 2843
 </year>
@@ -30,6 +34,10 @@ Kokou Defense Tank
 <type>
 Clan Level 2
 </type>
+
+<role>
+Sniper
+</role>
 
 <motion_type>
 Tracked
@@ -91,7 +99,7 @@ CLLargePulseLaser
 </Turret Equipment>
 
 <source>
-Succession Wars
+TRO: Golden Century
 </source>
 
 <tonnage>

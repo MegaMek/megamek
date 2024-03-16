@@ -12,9 +12,13 @@ Tank
 <Name>
 Tyr Infantry Support Tank
 </Name>
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+5314
+</mul id:>
 <Tonnage>
 45
 </Tonnage>
@@ -44,6 +48,10 @@ CLCASE
 <type>
 Clan Level 2
 </type>
+
+<role>
+Striker
+</role>
 <year>
 3063
 </year>
@@ -59,3 +67,7 @@ Clan Level 2
 <motion_type>
 Hover
 </motion_type>
+
+<source>
+TRO: 3067
+</source>

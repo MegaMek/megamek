@@ -1,0 +1,12 @@
+Lyran Commonwealth Assault Mechs 3130 C
+Longbow LGB-12R,1
+Zeus ZEU-9T,2
+Banshee BNC-9S,3
+Berserker BRZ-C3,4
+BattleMaster BLR-10S,5
+Zeus-X ZEU-X4,6
+Atlas AS7-S2,5
+Fafnir FNR-5X,4
+Atlas II AS7-D-H,3
+Sunder SD1-O,2
+King Crab KGC-009,1

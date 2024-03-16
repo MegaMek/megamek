@@ -20,6 +20,10 @@ Fury Command Tank
 (Fury II)
 </Model>
 
+<mul id:>
+4193
+</mul id:>
+
 <year>
 2732
 </year>
@@ -27,6 +31,10 @@ Fury Command Tank
 <type>
 IS Level 2
 </type>
+
+<role>
+Sniper
+</role>
 
 <motion_type>
 Tracked
@@ -78,7 +86,7 @@ ISGaussRifle
 </Turret Equipment>
 
 <source>
-TRO 3050 - Star League
+TRO: 3050
 </source>
 
 <tonnage>

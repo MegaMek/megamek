@@ -20,6 +20,10 @@ Vengeance
 (3056)
 </Model>
 
+<mul id:>
+5343
+</mul id:>
+
 <year>
 3056
 </year>
@@ -31,6 +35,10 @@ Vengeance
 <type>
 IS Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Aerodyne
@@ -141,7 +149,7 @@ Medium Laser
 </structural_integrity>
 
 <source>
-TRO 3057R - Clan Invasion
+TRO: 3057 Revised
 </source>
 
 <tonnage>

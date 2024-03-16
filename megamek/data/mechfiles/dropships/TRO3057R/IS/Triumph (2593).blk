@@ -20,6 +20,10 @@ Triumph
 (2593)
 </Model>
 
+<mul id:>
+5295
+</mul id:>
+
 <year>
 2593
 </year>
@@ -31,6 +35,10 @@ Triumph
 <type>
 IS Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Aerodyne
@@ -126,7 +134,7 @@ IS Ammo LRM-10:12
 </structural_integrity>
 
 <source>
-TRO 3057R - Star League
+TRO: 3057 Revised
 </source>
 
 <tonnage>

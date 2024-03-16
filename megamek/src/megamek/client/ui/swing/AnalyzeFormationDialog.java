@@ -5,10 +5,10 @@ import megamek.client.ratgenerator.ModelRecord;
 import megamek.client.ratgenerator.RATGenerator;
 import megamek.client.ratgenerator.UnitTable;
 import megamek.client.ui.Messages;
+import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.EntityWeightClass;
 import megamek.common.MechSummary;
 import megamek.common.UnitRole;
-import megamek.common.UnitRoleHandler;
 
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
@@ -199,6 +199,8 @@ public class AnalyzeFormationDialog extends JDialog {
         JButton btnOk = new JButton(Messages.getString("Okay"));
         btnOk.addActionListener(ev -> setVisible(false));
         getContentPane().add(btnOk, BorderLayout.SOUTH);
+
+        adaptToGUIScale();
         
         pack();
     }
@@ -318,12 +320,16 @@ public class AnalyzeFormationDialog extends JDialog {
                     if (null == mr) {
                         return UnitRole.UNDETERMINED.toString();
                     } else {
-                        return UnitRoleHandler.getRoleFor(mr.getKey()).toString();
+                        return mr.getMechSummary().getRole().toString();
                     }
                 default:
                     Function<MechSummary,?> metric = formationType.getReportMetric(colNames.get(columnIndex));
                     return metric == null? "?" : metric.apply(ms);
             }
         }
+    }
+
+    private void adaptToGUIScale() {
+        UIUtil.adjustDialog(this, UIUtil.FONT_SCALE1);
     }
 }

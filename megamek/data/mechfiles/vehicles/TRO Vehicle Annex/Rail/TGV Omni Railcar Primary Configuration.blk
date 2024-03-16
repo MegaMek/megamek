@@ -20,6 +20,10 @@ TGV Omni Railcar
 Primary Configuration
 </Model>
 
+<mul id:>
+5217
+</mul id:>
+
 <year>
 3062
 </year>
@@ -31,6 +35,10 @@ Primary Configuration
 <type>
 IS Level 3
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Rail
@@ -93,7 +101,7 @@ OmniChassisMod
 </structural_tech_rating>
 
 <source>
-TRO: Vehicle Annex
+TRO: Vehicle Annex (Revised)
 </source>
 
 <tonnage>

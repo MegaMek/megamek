@@ -1,12 +1,17 @@
-Version:1.0
-Crossbow
-Prime
+chassis:Crossbow
+model:Prime
+mul id:739
 
 Config:Biped Omnimech
 techbase:Clan
 era:2870
-source:TRO 3058 - Succession Wars
+source:TRO: 3058
 rules level:2
+role:Missile Boat
+
+
+quirk:imp_target_short
+
 
 mass:65
 engine:325 Fusion (Clan) Engine(IS)

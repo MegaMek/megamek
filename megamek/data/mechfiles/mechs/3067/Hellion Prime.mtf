@@ -1,12 +1,17 @@
-Version:1.0
-Hellion
-Prime
+chassis:Hellion
+model:Prime
+mul id:4306
 
 Config:Biped Omnimech
 techbase:Clan
 era:3059
-source:TRO 3067
+source:TRO: 3067
 rules level:2
+role:Striker
+
+
+quirk:weak_head_1
+
 
 mass:30
 engine:210 XL (Clan) Engine(IS)

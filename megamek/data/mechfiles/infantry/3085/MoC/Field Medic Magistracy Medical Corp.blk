@@ -20,6 +20,10 @@ Field Medic
 Magistracy Medical Corp
 </Model>
 
+<mul id:>
+1062
+</mul id:>
+
 <year>
 2500
 </year>
@@ -27,6 +31,10 @@ Magistracy Medical Corp
 <type>
 IS Level 3
 </type>
+
+<role>
+Ambusher
+</role>
 
 <motion_type>
 Leg
@@ -36,7 +44,7 @@ Leg
 </Field Guns Equipment>
 
 <source>
-TRO 3085
+TRO: 3085
 </source>
 
 <squad_size>

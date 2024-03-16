@@ -1,12 +1,17 @@
-Version:1.0
-Rifleman IIC
-3
+chassis:Rifleman IIC
+model:3
+mul id:2712
 
 Config:Biped
 TechBase:Clan
 Era:3062
-Source:Civil War
+source:TRO: 3085u 
 Rules Level:2
+role:Juggernaut
+
+quirk:anti_air
+quirk:imp_com
+
 
 Mass:65
 Engine:195 Fusion (Clan) Engine
@@ -154,9 +159,7 @@ capabilities:Five tons heavier than the design it is based on, the Rifleman IIC 
 
 deployment:Following the surprise invasion of Huntress, most of the Clans looked to upgrade the defenders of their homeworlds. In so doing, Clan Cloud Cobra decided to upgrade their aging Rifleman IICs. The IIC 3 first entered service in the early part of 3062. Based upon the original design, it nonetheless uses two Model HHC-30 Ultra Autocannon/2s to plink at a target from long range. Any opponent who believes he or she is facing a IIC 2 is quickly surprised, however, when the IIC 3 opens up with its paired Series 4D-2 Heavy Large Lasers. Twenty one double heat sinks keep this design cool-running. This rebuilt version still mounts the Active Probe.
 
-history:An ancient rebuild of an already ancient design, the Rifleman IIC has soldiered on throughout the centuries. The ’Mech can be found in service with most Clans (a
-notable exception is Clan Wolf, which prefers the Glass Spider) and several Inner Sphere powers. Its simplicity is matched only by its effectiveness, and new variants
-continue to debut.
+history:An ancient rebuild of an already ancient design, the Rifleman IIC has soldiered on throughout the centuries. The ’Mech can be found in service with most Clans (a notable exception is Clan Wolf, which prefers the Glass Spider) and several Inner Sphere powers. Its simplicity is matched only by its effectiveness, and new variants continue to debut.
 
 manufacturer:Complex H-4 CCC 
 primaryfactory:Hector

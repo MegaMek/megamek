@@ -1,12 +1,13 @@
-Version:1.0
-Phoenix Hawk LAM
-PHX-HK2M
+chassis:Phoenix Hawk LAM
+model:PHX-HK2M
+mul id:4823
 
 Config:LAM
 TechBase:Inner Sphere
 Era:2953
-Source:TRO3085
+Source:TRO: 3085
 Rules Level:3
+role:Striker
 
 Mass:50
 Engine:250 Fusion Engine(IS)

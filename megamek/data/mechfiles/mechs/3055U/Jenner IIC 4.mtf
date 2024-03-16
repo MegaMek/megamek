@@ -1,12 +1,16 @@
-Version:1.0
-Jenner IIC
-4
+chassis:Jenner IIC
+model:4
+mul id:1701
 
 Config:Biped
 TechBase:Clan
 Era:3061
-Source:TRO 3055 - Clan Invasion
+Source:TRO: 3055
 Rules Level:2
+role:Striker
+
+quirk:no_arms
+
 
 Mass:35
 Engine:315 XL (Clan) Engine

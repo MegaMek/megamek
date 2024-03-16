@@ -13,12 +13,11 @@
  */
 package megamek.server.commands;
 
+import megamek.MMConstants;
 import megamek.common.Player;
-import megamek.common.net.AbstractConnection;
 import megamek.server.Server;
 
 import java.io.File;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -46,14 +45,14 @@ public class LoadGameCommand extends ServerCommand {
         }
         if (args.length > 1) {
             String sFinalFile = args[1];
-            if (!sFinalFile.endsWith(".sav") 
-                    && !sFinalFile.endsWith(".sav.gz")) {
-                sFinalFile = sFinalFile + ".sav";
+            if (!sFinalFile.endsWith(MMConstants.SAVE_FILE_EXT)
+                    && !sFinalFile.endsWith(MMConstants.SAVE_FILE_GZ_EXT)) {
+                sFinalFile = sFinalFile + MMConstants.SAVE_FILE_EXT;
             }
-            if (!sFinalFile.endsWith(".gz")) {
-                sFinalFile = sFinalFile + ".gz";
+            if (!sFinalFile.endsWith(MMConstants.GZ_FILE_EXT)) {
+                sFinalFile = sFinalFile + MMConstants.GZ_FILE_EXT;
             }
-            load(new File("savegames", sFinalFile), connId);
+            load(new File(MMConstants.SAVEGAME_DIR, sFinalFile), connId);
         } else {
             server.sendServerChat(connId, "you must provide a file name");
         }
@@ -74,12 +73,7 @@ public class LoadGameCommand extends ServerCommand {
         } else {
             server.remapConnIds(nameToIdMap, idToNameMap);
             // update all the clients with the new game info
-            Enumeration<AbstractConnection> connEnum = server.getConnections();
-            while (connEnum.hasMoreElements()) {
-                AbstractConnection conn = connEnum.nextElement();
-                server.sendCurrentInfo(conn.getId());
-            }
+            server.forEachConnection(conn -> server.sendCurrentInfo(conn.getId()));
         }
     }
-
 }

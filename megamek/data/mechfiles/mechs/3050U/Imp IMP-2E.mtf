@@ -1,12 +1,19 @@
-Version:1.0
-Imp
-IMP-2E
+chassis:Imp
+model:IMP-2E
+mul id:4358
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3005
-Source:TRO 3050 - Succession Wars
+Source:TRO: 3050
 Rules Level:1
+role:Juggernaut
+
+
+
+quirk:command_mech
+quirk:difficult_maintain
+
 
 Mass:100
 Engine:300 Fusion Engine

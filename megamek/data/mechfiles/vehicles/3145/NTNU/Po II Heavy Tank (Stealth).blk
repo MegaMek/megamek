@@ -20,6 +20,10 @@ Po II Heavy Tank
 (Stealth)
 </Model>
 
+<mul id:>
+6795
+</mul id:>
+
 <year>
 3089
 </year>
@@ -27,6 +31,10 @@ Po II Heavy Tank
 <type>
 IS Level 3
 </type>
+
+<role>
+Brawler
+</role>
 
 <motion_type>
 Tracked
@@ -86,7 +94,7 @@ SRM 6
 </Turret Equipment>
 
 <source>
-RS 3145 NTNU - Early Republic
+Record Sheets: 3145 New Tech New Upgrades
 </source>
 
 <tonnage>

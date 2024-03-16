@@ -20,6 +20,10 @@ Bandit Hovercraft
 C
 </Model>
 
+<mul id:>
+232
+</mul id:>
+
 <year>
 3008
 </year>
@@ -28,15 +32,16 @@ C
 IS Level 2
 </type>
 
+<role>
+Striker
+</role>
+
 <motion_type>
 Hover
 </motion_type>
 
 <transporters>
 troopspace:4.0
-</transporters>
-
-<transporters>
 BattleArmorHandles - troopers:-1
 </transporters>
 
@@ -82,7 +87,7 @@ SRM 6:OMNI
 </Turret Equipment>
 
 <source>
-Succession Wars
+TRO: 3058
 </source>
 
 <tonnage>
@@ -92,3 +97,8 @@ Succession Wars
 <baseChassisTurretWeight>
 1.0
 </baseChassisTurretWeight>
+
+<weaponQuirks>
+mod_weapons:TU:0:SRM 6
+mod_weapons:TU:1:SRM 6
+</weaponQuirks>

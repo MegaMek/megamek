@@ -1,12 +1,19 @@
-Version:1.0
-BattleMaster
-C
+chassis:BattleMaster
+model:C
+mul id:303
 
 Config:Biped
 TechBase:Clan
 Era:3070
-Source:RS 3085 - Jihad
+Source:Record Sheets: 3085 Unabridged - Project Phoenix
 Rules Level:2
+role:Brawler
+
+
+
+quirk:command_mech
+quirk:weak_head_1
+
 
 Mass:85
 Engine:340 XL (Clan) Engine(IS)

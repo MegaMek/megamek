@@ -1,12 +1,19 @@
-Version:1.0
-Dragon
-DRG-1N
+chassis:Dragon
+model:DRG-1N
+mul id:909
 
 Config:Biped
 techbase:Inner Sphere
 era:2754
-source:TRO 3039 - Star League
+source:TRO: 3039
 rules level:1
+role:Skirmisher
+
+
+
+quirk:low_profile
+quirk:stable
+
 
 mass:60
 engine:300 Fusion Engine(IS)

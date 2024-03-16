@@ -20,6 +20,10 @@ Oni
 ON-2
 </Model>
 
+<mul id:>
+5752
+</mul id:>
+
 <year>
 3078
 </year>
@@ -31,6 +35,10 @@ ON-2
 <type>
 IS Level 3
 </type>
+
+<role>
+Fast Dogfighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -108,7 +116,7 @@ IS MRM 40 Ammo
 </Fuselage Equipment>
 
 <source>
-TRO 3067 - Jihad
+TRO: 3067
 </source>
 
 <tonnage>

@@ -1,0 +1,167 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Aero
+</UnitType>
+
+<Name>
+Chippewa
+</Name>
+
+<Model>
+CHP-W8
+</Model>
+
+<mul id:>
+588
+</mul id:>
+
+<year>
+3068
+</year>
+
+<originalBuildYear>
+3068
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<role>
+Attack Fighter
+</role>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+</transporters>
+
+<SafeThrust>
+5
+</SafeThrust>
+
+<cockpit_type>
+0
+</cockpit_type>
+
+<heatsinks>
+24
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+400
+</fuel>
+
+<engine_type>
+2
+</engine_type>
+
+<armor_type>
+20
+</armor_type>
+
+<armor_tech>
+-1
+</armor_tech>
+
+<armor>
+60
+33
+33
+42
+</armor>
+
+<Nose Equipment>
+ISMML7
+ISArtemisIV
+ISMML7
+ISArtemisIV
+ISMML7
+ISArtemisIV
+</Nose Equipment>
+
+<Left Wing Equipment>
+ISLargePulseLaser
+ISLargePulseLaser
+Medium Laser
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+ISLargePulseLaser
+ISLargePulseLaser
+Medium Laser
+</Right Wing Equipment>
+
+<Aft Equipment>
+ISERSmallLaser
+ISERSmallLaser
+</Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+IS Ammo MML-7 LRM Artemis-capable
+IS Ammo MML-7 LRM Artemis-capable
+IS Ammo MML-7 SRM Artemis-capable
+</Fuselage Equipment>
+
+<source>
+TRO: 3039
+</source>
+
+<tonnage>
+90.0
+</tonnage>
+
+<overview>
+Designed by the Star League, the heavy Chippewa isn't extremely fast, but it has an impressive array of armament.
+</overview>
+
+<deployment>
+This variant exchanges the LRM and SRM launchers in the nose for an MML-7 with Artemis IV for better close combat ability.
+</deployment>
+
+<history>
+Mostly used in the Lyran Commonwealth, the Chippewa has become House Steiner's main heavy fighter. Prior to the start of the First Succession War Steiner captured the Bowie Industries plant on Dell, where W5 models were produced until House Kurita successfully destroyed the plant in a raid. Another major production site was the Bowie Industries in the planet Wyatt, untill 3068, when the Word of Blake nuked it during the Jihad. A heavy fighter, the Chippewa utilizes its large wings to provide added maneuverability when fighting in an atmosphere. The outer portions of each wing can retract inward, allowing for the fighter to be stored aboard transports more easily.
+</history>
+
+<manufacturer>
+Bowie Industries
+</manufacturer>
+
+<primaryFactory>
+Alarion
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Bowie 50
+ENGINE:PlasmaStar 270
+ARMOR:Wyatt Coresteel Standard
+COMMUNICATIONS:Rander 200
+TARGETING:Rander TAS
+</systemManufacturers>
+
+<source>
+TRO: 3039
+</source>
+
+<tonnage>
+90.0
+</tonnage>
+

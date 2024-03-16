@@ -20,6 +20,10 @@ Hamilcar
 (3084)
 </Model>
 
+<mul id:>
+4259
+</mul id:>
+
 <year>
 3084
 </year>
@@ -230,3 +234,6 @@ Space Assault Ship
 4
 </escape_pod>
 
+<source>
+TRO: 3057 Revised
+</source>

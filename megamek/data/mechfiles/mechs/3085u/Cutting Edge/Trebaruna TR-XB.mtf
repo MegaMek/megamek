@@ -1,12 +1,19 @@
-Version:1.1
-Trebaruna
-TR-XB
+chassis:Trebaruna
+model:TR-XB
+mul id:3292
 
 Config:Quad
 TechBase:Inner Sphere
 Era:3081
-Source:Jihad
+source:TRO: 3085
 Rules Level:2
+role:Sniper
+
+
+
+
+quirk:command_mech
+
 
 Mass:95
 Engine:285 Fusion Engine

@@ -16,9 +16,13 @@ LargeSupportTank
 Wayland Mobile Base
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+5396
+</mul id:>
 
 <year>
 2541
@@ -27,6 +31,10 @@ Wayland Mobile Base
 <type>
 IS Level 2
 </type>
+
+<role>
+Juggernaut
+</role>
 
 <motion_type>
 Tracked
@@ -94,7 +102,7 @@ Medium Laser
 </Turret Equipment>
 
 <source>
-Hist:Reunification War
+Historical: Reunification War
 </source>
 
 <tonnage>

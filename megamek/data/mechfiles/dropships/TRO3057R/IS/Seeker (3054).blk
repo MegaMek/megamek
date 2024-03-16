@@ -20,6 +20,10 @@ Seeker
 (3054)
 </Model>
 
+<mul id:>
+5014
+</mul id:>
+
 <year>
 3054
 </year>
@@ -31,6 +35,10 @@ Seeker
 <type>
 IS Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Spheroid
@@ -118,7 +126,7 @@ MASH Core Component
 </structural_integrity>
 
 <source>
-TRO 3057R - Clan Invasion
+TRO: 3057 Revised
 </source>
 
 <tonnage>

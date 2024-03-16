@@ -1,42 +1,48 @@
-Version:1.0
-Cataphract
-CTF-1X
-
+chassis:Cataphract
+model:CTF-1X
+mul id:466
 Config:Biped
-TechBase:Inner Sphere
-Era:3025
-Source:TRO 3039 - Succession Wars
-Rules Level:1
+techbase:Inner Sphere
+era:3025
+source:TRO: 3039
+rules level:1
+role:Brawler
 
-Mass:70
-Engine:280 Fusion Engine
-Structure:Standard
-Myomer:Standard
 
-Heat Sinks:16 Single
-Walk MP:4
-Jump MP:0
 
-Armor:Standard(Inner Sphere)
-LA Armor:22
-RA Armor:22
-LT Armor:16
-RT Armor:16
-CT Armor:26
-HD Armor:9
-LL Armor:22
-RL Armor:22
-RTL Armor:6
-RTR Armor:6
-RTC Armor:9
+
+quirk:pro_actuator
+
+
+mass:70
+engine:280 Fusion Engine(IS)
+structure:IS Standard
+myomer:Standard
+
+heat sinks:16 Single
+walk mp:4
+jump mp:0
+
+armor:Standard(Inner Sphere)
+LA armor:22
+RA armor:22
+LT armor:16
+RT armor:16
+CT armor:26
+HD armor:9
+LL armor:22
+RL armor:22
+RTL armor:6
+RTR armor:6
+RTC armor:9
 
 Weapons:6
-PPC, Right Arm
-Medium Laser, Right Torso
-Medium Laser, Left Torso
 Medium Laser, Left Arm
+PPC, Right Arm
 Medium Laser, Right Arm
-Autocannon/10, Right Torso
+Medium Laser, Left Torso
+AC/10, Right Torso
+Medium Laser, Right Torso
 
 Left Arm:
 Shoulder
@@ -150,4 +156,19 @@ Heat Sink
 -Empty-
 -Empty-
 
+overview:The Cataphract is a heavy BattleMech and one of the first original designs since the start of the Succession Wars.	
+
+capabilities:The Cataphract, with its armor layers, can easily absorb damage, but it can also deal it. The CeresArms Smasher PPC (taken from the Vindicator) and the SarLon MaxiCannon combine to deliver a brutal punch at greater ranges. A quartet of CeresArms medium lasers close in to give short-range firepower to both the front and rear.
+
+deployment:The original Cataphract, the 1X model is armed with a Ceres Arms Smasher PPC as its primary weapon, backed up by a SarLon MaxiCannon autocannon/10 with one ton of ammo and the four Ceres Arms medium lasers. Built before the discovery of the Helm Memory Core, it lacks any advanced Star League technology and is built with a standard VOX 280 engine. The 'Mech also lacks the jump jets of the 3D model.
+
+history:Desperate for a heavy 'Mech design that could be produced and maintained sustainably by their deteriorating infrastructure, the Capellan Confederation built the Cataphract in 3025 to be assembled from pieces they could still manufacture. The Cataphract, dubbed a FrankenMech for its appearance and built with parts from the Marauder, Shadow Hawk, and Phoenix Hawk, was destined to become the Confederation's new standard heavy 'Mech. It entered service just before the Fourth Succession War, when the Tikonov production line was taken over by the Federated Suns. This humiliating defeat was exacerbated when numerous Davion troops, especially the Crucis Lancers, adopted the Cataphract as their own. Tikonov's product quality, on the other hand, left the Federated Suns wanting (at least in part due to deliberate obstruction by workers still loyal to the Confederation). The Confederation finally restored the lost plant with one on Betelgeuse in 3032, building their own Cataphracts in time for the Andurien Crisis. Shortly after seizing Tikonov, the Federated Commonwealth began development of the CTF-3D, which was designed to compete with an attack 'Mech while being as adaptable as feasible. Despite the modifications, the CTF-3D was only used sparingly by the Armed Forces of the Federated Commonwealth before being consigned to the Crucis March Militia as an affront to the Capellans. When the Clan Invasion began, everything that was still in production, including the Cataphract, was rushed to the front lines. The Capellans, for their part, were able to manufacture the CTF-3D from stolen schematics and went on to create their own variant, the CTF-3L, which would go on to account for 25% of all newly acquired heavy 'Mechs during the 3050s. The design's popularity would decrease in the years that followed, while a few new varieties would continue to be created as new technologies and demands arose.
+
+manufacturer:Earthwerks Ltd., Earthwerks Ltd. 
+primaryfactory:Grand Base,Tikonov
+systemmanufacturer:CHASSIS:Earthwerks CTF
+systemmanufacturer:ENGINE:VOX 280
+systemmanufacturer:ARMOR:Kallon Royalstar
+systemmanufacturer:COMMUNICATIONS:CommuTech Multi-Channel 10
+systemmanufacturer:TARGETING:BlazeFire Sightlock
 

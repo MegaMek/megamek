@@ -1,12 +1,16 @@
-Version:1.0
-Stooping Hawk
-B
+chassis:Stooping Hawk
+model:B
+mul id:3077
 
 Config:Biped Omnimech
 TechBase:Clan
 Era:2970
-Source:TRO 3060
+Source:TRO: 3060
 Rules Level:2
+role:Missile Boat
+
+quirk:rugged_2
+
 
 Mass:55
 Engine:275 Fusion (Clan) Engine(IS)

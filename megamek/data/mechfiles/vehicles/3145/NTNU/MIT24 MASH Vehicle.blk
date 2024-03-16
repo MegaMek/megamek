@@ -16,9 +16,13 @@ Tank
 MIT24 MASH Vehicle
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+6753
+</mul id:>
 
 <year>
 3086
@@ -31,6 +35,10 @@ MIT24 MASH Vehicle
 <type>
 IS Level 3
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Wheeled
@@ -76,7 +84,7 @@ Flamer
 </Rear Equipment>
 
 <source>
-RS 3145 NTNU - Early Republic
+Record Sheets: 3145 New Tech New Upgrades
 </source>
 
 <tonnage>

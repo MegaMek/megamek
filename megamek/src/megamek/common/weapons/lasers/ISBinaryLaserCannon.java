@@ -48,6 +48,7 @@ public class ISBinaryLaserCannon extends LaserWeapon {
         shortAV = 12;
         medAV = 12;
         maxRange = RANGE_MED;
+        flags = flags.andNot(F_PROTO_WEAPON);
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         rulesRefs = "319, TO";
         techAdvancement.setTechBase(TECH_BASE_IS)

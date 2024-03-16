@@ -20,6 +20,10 @@ Monarch
 (2759)
 </Model>
 
+<mul id:>
+4654
+</mul id:>
+
 <year>
 2759
 </year>
@@ -31,6 +35,10 @@ Monarch
 <type>
 IS Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Aerodyne
@@ -98,7 +106,7 @@ cargobay:1119.0:1:4
 </structural_integrity>
 
 <source>
-TRO 3057R - Star League
+TRO: 3057 Revised
 </source>
 
 <tonnage>

@@ -19,6 +19,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
+import megamek.client.ui.swing.unitSelector.ASAdvancedSearchPanel;
 import megamek.common.Compute;
 import megamek.common.MechSearchFilter;
 import megamek.common.MechSummary;
@@ -91,6 +92,7 @@ public class RandomArmyCreator {
          * Advanced options for search
          */
         public MechSearchFilter advancedSearchFilter = null;
+        public ASAdvancedSearchPanel asPanel = null;
     }
 
     /**
@@ -157,6 +159,10 @@ public class RandomArmyCreator {
     }
 
     public static void main(String[] args) {
+        StringBuilder sbMech = new StringBuilder();
+        StringBuilder sbVehicle = new StringBuilder();
+        StringBuilder sbBattleArmor = new StringBuilder();
+        StringBuilder sbInfantry = new StringBuilder();
         Parameters p = new Parameters();
         p.mechs = 4;
         p.tanks = 4;
@@ -169,7 +175,7 @@ public class RandomArmyCreator {
         p.tech = TechConstants.T_IS_TW_NON_BOX;
         p.canon = true;
         p.padWithInfantry = true;
-        List<MechSummary> units = generateArmy(p);
+        List<MechSummary> units = generateArmy(p, sbMech, sbVehicle, sbBattleArmor, sbInfantry);
 
         int totalBV = 0;
         for (MechSummary m : units) {
@@ -182,10 +188,9 @@ public class RandomArmyCreator {
         }
         System.out.print("Total: ");
         System.out.println(totalBV);
-
     }
 
-    public static List<MechSummary> generateArmy(Parameters p) {
+    public static List<MechSummary> generateArmy(Parameters p, StringBuilder sbMech, StringBuilder sbVehicle, StringBuilder sbBattleArmor, StringBuilder sbInfantry) {
         int allowedVariance = java.lang.Math.abs(p.maxBV - p.minBV);
         MechSummary[] all = MechSummaryCache.getInstance().getAllMechs();
         List<MechSummary> allMechs = new ArrayList<>();
@@ -246,16 +251,21 @@ public class RandomArmyCreator {
                 continue;
             }
 
-
             //ignoring infantry, BA and Proto for advancedSearch filter
-            if (((!m.getUnitType().equals(UnitType.getTypeName(UnitType.INFANTRY)))
-                    && (!m.getUnitType().equals(UnitType.getTypeName(UnitType.PROTOMEK)))
-                    && (!m.getUnitType().equals(UnitType.getTypeName(UnitType.BATTLE_ARMOR))))
-                    && (p.advancedSearchFilter != null && !MechSearchFilter.isMatch(m, p.advancedSearchFilter)))
-            {
+            if (!m.getUnitType().equals(UnitType.getTypeName(UnitType.INFANTRY))
+                    && !m.getUnitType().equals(UnitType.getTypeName(UnitType.PROTOMEK))
+                    && !m.getUnitType().equals(UnitType.getTypeName(UnitType.BATTLE_ARMOR))
+                    && (p.advancedSearchFilter != null && !MechSearchFilter.isMatch(m, p.advancedSearchFilter))) {
                 continue;
             }
 
+            //ignoring infantry, BA and Proto for AS filter
+            if (!m.getUnitType().equals(UnitType.getTypeName(UnitType.INFANTRY))
+                && !m.getUnitType().equals(UnitType.getTypeName(UnitType.PROTOMEK))
+                && !m.getUnitType().equals(UnitType.getTypeName(UnitType.BATTLE_ARMOR))
+                && !p.asPanel.matches(m)) {
+                continue;
+            }
 
             // Unit accepted, add to the appropriate list
             if (m.getUnitType().equals(UnitType.getTypeName(UnitType.MEK))) {
@@ -285,21 +295,21 @@ public class RandomArmyCreator {
                 * averageTankBV + p.infantry * averageInfBV + p.ba * averageBaBV);
 
         int baBV = (p.ba * averageBaBV * p.maxBV) / helpWeight;
-        if ((p.ba > 0) && (allBA.size() > 0)) {
+        if ((p.ba > 0) && !allBA.isEmpty()) {
             baBV = Math.max(baBV, p.ba * allBA.get(0).getBV());
             baBV = Math.min(baBV, p.ba * allBA.get(allBA.size() - 1).getBV());
         } else {
             baBV = 0;
         }
         int mechBV = (p.mechs * averageMechBV * p.maxBV) / helpWeight;
-        if ((p.mechs > 0) && (allMechs.size() > 0)) {
+        if ((p.mechs > 0) && !allMechs.isEmpty()) {
             mechBV = Math.max(mechBV, p.mechs * allMechs.get(0).getBV());
             mechBV = Math.min(mechBV, p.mechs * allMechs.get(allMechs.size() - 1).getBV());
         } else {
             mechBV = 0;
         }
         int tankBV = (p.tanks * averageTankBV * p.maxBV) / helpWeight;
-        if ((p.tanks > 0) && (allTanks.size() > 0)) {
+        if ((p.tanks > 0) && !allTanks.isEmpty()) {
             tankBV = Math.max(tankBV, p.tanks * allTanks.get(0).getBV());
             tankBV = Math.min(tankBV, p.tanks * allTanks.get(allTanks.size() - 1).getBV());
         } else {
@@ -325,6 +335,11 @@ public class RandomArmyCreator {
             units.addAll(generateArmy(allInfantry, p.infantry, p.maxBV
                     - countBV(units), allowedVariance));
         }
+
+        sbMech.append(allMechs.size());
+        sbVehicle.append(allTanks.size());
+        sbBattleArmor.append(allBA.size());
+        sbInfantry.append(allInfantry.size());
         return units;
     }
 }

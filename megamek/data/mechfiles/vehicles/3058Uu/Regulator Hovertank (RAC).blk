@@ -15,6 +15,10 @@ Regulator Hovertank
 <Model>
 (RAC)
 </Model>
+
+<mul id:>
+2676
+</mul id:>
 <Tonnage>
 45
 </Tonnage>
@@ -42,6 +46,10 @@ ISCASE
 <type>
 IS Level 2
 </type>
+
+<role>
+Striker
+</role>
 <year>
 3068
 </year>
@@ -58,5 +66,5 @@ IS Level 2
 Hover
 </motion_type>
 <source>
-Jihad
+TRO: 3058
 </source>

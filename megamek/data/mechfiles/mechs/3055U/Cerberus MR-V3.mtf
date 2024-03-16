@@ -1,12 +1,22 @@
-Version:1.0
-Cerberus
-MR-V3
+chassis:Cerberus
+model:MR-V3
+mul id:529
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3062
-Source:TRO 3055 - Civil War
+Source:TRO: 3055
 Rules Level:2
+role:Brawler
+
+
+
+quirk:barrel_fists_la
+quirk:barrel_fists_ra
+quirk:imp_target_long
+quirk:vestigial_hands_la
+quirk:vestigial_hands_ra
+
 
 Mass:95
 Engine:380 XL Engine

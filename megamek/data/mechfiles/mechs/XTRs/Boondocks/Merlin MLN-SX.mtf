@@ -1,12 +1,17 @@
-Version:1.0
-Merlin
-MLN-SX
+chassis:Merlin
+model:MLN-SX
+mul id:2181
 
 Config:Biped
 techbase:Inner Sphere
 era:3075
-source:XTRO Boondocks - Jihad
+source:XTR: Boondocks
 rules level:4
+role:Juggernaut
+
+quirk:easy_maintain
+quirk:rugged_1
+
 
 mass:60
 engine:240 Light Engine(IS)
@@ -148,4 +153,19 @@ Jump Jet
 -Empty-
 -Empty-
 
+overview:The Merlin uses components that are all reliable and readily available, making the Merlin a durable and easy-to-repair 'Mech. 
 
+capabilities:The 'Mech is powered by a Pitban 240 fusion engine that gives it a top speed of 64.8 km/h. The Merlin carries ten and a half tons of armor, which is a respectable amount of protection for its weight. Additionally, the Merlin carries eighteen heat sinks to handle its heavy heat load.
+
+deployment:An experimental variant of the Merlin which was created by the FedSuns' Sabanillas Mining Company and developed in 3075. Created by retired FedSun Major Caleb Gruber, he used his company to produce three of these modified Merlins. Gruber had the Merlin's internal structured strengthened by installing Endo-Composite Internal Structure and switching out the Standard Pitban Fusion Engine for a Lighter version. He then added five tons of Armored Shielding to protect the 'Mech's engine and side torsos. Gruber then exchanged the original 1A's medium lasers for Blakist tech Medium VSP Lasers. He then added ancient or Retrotech Laser Insulators to help cool down the VSP lasers. Lastly, he exchanged the old PPC for a Bombast Laser. The MLN-SX also sports 14 Double heat sinks. 
+
+history:The Merlin debuted in 3010 as a product of the rebuilt Mountain Wolf BattleMechs. The Merlin was hailed as a technological marvel at the time it was released, as it was the first completely new design to be developed in over 100 years.
+
+manufacturer:Sabanillas Mining Company
+primaryfactory:Sabanillas
+systemmanufacturer:CHASSIS:Heavy Star QAT-4 Endo-Composite
+systemmanufacturer:ENGINE:Pitban 240 Light Fusion 
+systemmanufacturer:ARMOR:Longanecker PlastiSteel with CASE
+systemmanufacturer:JUMPJET:Pitban LFT 50
+systemmanufacturer:COMMUNICATIONS:Magestrix Alpha
+systemmanufacturer:TARGETING:Magestrix Gamma

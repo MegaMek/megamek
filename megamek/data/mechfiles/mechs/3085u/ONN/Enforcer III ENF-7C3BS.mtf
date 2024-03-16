@@ -1,12 +1,19 @@
-Version:1.0
-Enforcer III
-ENF-7C3BS
+chassis:Enforcer III
+model:ENF-7C3BS
+mul id:986
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3075
-Source:Jihad
+source:TRO: 3085
 Rules Level:4
+role:Sniper
+
+
+
+quirk:barrel_fists_ra
+quirk:battle_fists_la
+
 
 Mass:50
 Engine:250 XL Engine(IS)

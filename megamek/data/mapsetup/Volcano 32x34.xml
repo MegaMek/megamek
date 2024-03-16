@@ -4,8 +4,8 @@
     <BOARDHEIGHT>17</BOARDHEIGHT>
     <MAPWIDTH>2</MAPWIDTH>
     <MAPHEIGHT>2</MAPHEIGHT>
-    <BOARDS>\unofficial\Razorback\Volcano Northwest</BOARDS>
-    <BOARDS>\unofficial\Razorback\Volcano Northeast</BOARDS>
-    <BOARDS>\unofficial\Razorback\Volcano Southwest</BOARDS>
-    <BOARDS>\unofficial\Razorback\Volcano Southeast</BOARDS>
+    <BOARDS>/unofficial/Razorback/16x17 Volcano Northwest</BOARDS>
+    <BOARDS>/unofficial/Razorback/16x17 Volcano Northeast</BOARDS>
+    <BOARDS>/unofficial/Razorback/16x17 Volcano Southwest</BOARDS>
+    <BOARDS>/unofficial/Razorback/16x17 Volcano Southeast</BOARDS>
 </MAPSETUP>

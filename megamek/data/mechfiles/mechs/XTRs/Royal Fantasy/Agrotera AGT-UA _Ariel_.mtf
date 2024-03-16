@@ -1,17 +1,19 @@
-Version:1.0
-Agrotera 
-AGT-UA 'Ariel'
+chassis:Agrotera 
+model:AGT-UA 'Ariel'
+mul id:8365
 
 Config:Biped
 techbase:Mixed (IS Chassis)
 era:3137
-source:XTRO: Royal Fantasy
-rules level:5
+source:XTR: Royal Fantasy
+rules level:3
+role:Striker
 
 mass:50
 engine:300 XL Engine(IS)
 structure:IS Endo Steel
 myomer:Standard
+ejection:Full Head Ejection System
 
 heat sinks:10 Double
 walk mp:6

@@ -16,9 +16,13 @@ LargeSupportTank
 Dromedary Water Transport
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+4099
+</mul id:>
 
 <year>
 2562
@@ -31,6 +35,10 @@ Dromedary Water Transport
 <type>
 IS Level 3
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Wheeled
@@ -103,7 +111,7 @@ Machine Gun
 </armor_tech_rating>
 
 <source>
-TRO 3075 - Age of War
+TRO: 3075
 </source>
 
 <tonnage>

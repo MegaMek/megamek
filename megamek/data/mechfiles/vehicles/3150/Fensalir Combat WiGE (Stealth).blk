@@ -1,0 +1,141 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+Fensalir Combat WiGE
+</Name>
+
+<Model>
+(Stealth)
+</Model>
+
+<mul id:>
+8040
+</mul id:>
+
+<year>
+3141
+</year>
+
+<originalBuildYear>
+3141	
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<role>
+Sniper
+</role>
+
+<motion_type>
+WiGE
+</motion_type>
+
+<transporters>
+</transporters>
+
+<cruiseMP>
+5
+</cruiseMP>
+
+<engine_type>
+2
+</engine_type>
+
+<armor_type>
+22
+</armor_type>
+
+<armor_tech>
+7
+</armor_tech>
+
+<armor>
+52
+42
+42
+32
+</armor>
+
+<Body Equipment>
+IS Vehicular Stealth
+ISGuardianECMSuite
+ISCASE
+ISImprovedHeavyGauss Ammo
+ISImprovedHeavyGauss Ammo
+ISImprovedHeavyGauss Ammo
+ISTargeting Computer
+IS Ammo LRM-10 Artemis-capable
+ISAMS Ammo
+</Body Equipment>
+
+<Front Equipment>
+ISImprovedHeavyGaussRifle
+LRM 10
+ISArtemisIV
+ISAntiMissileSystem
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+ISAntiMissileSystem
+</Rear Equipment>
+
+<tonnage>
+80.0
+</tonnage>
+
+<capabilities>
+The Fensalir at the time was the largest Combat WiGE of its kind. It boasted 11.5 tons of Heavy Ferro-Fibrous armor to protect its hull. The vehicle features an Infantry Transport Bay to allow it to deliver up to 4 tons of troops to a hot zone.
+</capabilities>
+
+<overview>
+The Fensalir Combat WiGE was an attack craft which was built as a joint effort between Johnston Industries and House Steiner based manufacturer Nashan Diversified.
+</overview>
+
+<deployment>
+This version is protected by Vehicular Stealth Armor and carries an Improved Heavy Gauss Rifle. It lacks the upgrades of the 3132 and 3137 versions.
+</deployment>
+
+<history>
+The Fensalir was first produced at Nashan's plant on Furillo in 3084, while Johnston - still rebuilding its own manufacturing facilities - shipped components to assemble the WiGEs. When it was first produced, the vehicle initially entered service with the newly-renamed Lyran Commonwealth Armed Forces and later being copied by Clan Wolf-in-Exile for their own use.
+</history>
+
+<manufacturer>
+Nashan Diversified
+</manufacturer>
+
+<primaryFactory>
+Furillo
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+JUMPJET:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<source>
+TRO: 3150
+</source>

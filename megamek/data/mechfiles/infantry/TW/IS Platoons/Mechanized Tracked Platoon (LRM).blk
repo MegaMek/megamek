@@ -20,6 +20,10 @@ Mechanized Tracked Platoon
 (LRM)
 </Model>
 
+<mul id:>
+2140
+</mul id:>
+
 <year>
 3057
 </year>
@@ -27,6 +31,10 @@ Mechanized Tracked Platoon
 <type>
 IS Level 3
 </type>
+
+<role>
+Ambusher
+</role>
 
 <motion_type>
 Tracked
@@ -36,7 +44,7 @@ Tracked
 </Field Guns Equipment>
 
 <source>
-Total Warfare - Succession Wars
+Total Warfare
 </source>
 
 <squad_size>

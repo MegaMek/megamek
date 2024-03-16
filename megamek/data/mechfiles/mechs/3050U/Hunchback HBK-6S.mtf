@@ -1,12 +1,19 @@
-Version:1.0
-Hunchback
-HBK-6S
+chassis:Hunchback
+model:HBK-6S
+mul id:5447
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3063
-Source:TRO 3050 - Civil War
+Source:TRO: 3050
 Rules Level:2
+role:Striker
+
+
+
+quirk:battle_fists_la
+quirk:battle_fists_ra
+
 
 Mass:50
 Engine:300 XL Engine(IS)

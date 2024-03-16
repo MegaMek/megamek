@@ -1,12 +1,19 @@
-Version:1.0
-Hachiwara
-HCA-3T
+chassis:Hachiwara
+model:HCA-3T
+mul id:1360
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3064
-Source:TRO 3055 - Civil War
+Source:TRO: 3055
 Rules Level:4
+role:Skirmisher
+
+
+
+
+quirk:difficult_maintain
+
 
 Mass:70
 Engine:350 XL Engine

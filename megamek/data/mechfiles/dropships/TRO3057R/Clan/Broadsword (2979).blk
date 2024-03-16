@@ -20,6 +20,10 @@ Broadsword
 (2979)
 </Model>
 
+<mul id:>
+3863
+</mul id:>
+
 <year>
 2979
 </year>
@@ -31,6 +35,10 @@ Broadsword
 <type>
 Clan Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Aerodyne
@@ -133,7 +141,7 @@ Clan Streak SRM 6 Ammo:60
 </structural_integrity>
 
 <source>
-TRO 3057R - Late Succession War - Lostech
+TRO: 3057 Revised
 </source>
 
 <tonnage>

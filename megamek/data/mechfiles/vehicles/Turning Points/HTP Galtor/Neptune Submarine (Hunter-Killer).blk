@@ -15,6 +15,10 @@ Neptune Submarine
 <Model>
 (Hunter-Killer)
 </Model>
+
+<mul id:>
+2258
+</mul id:>
 <Tonnage>
 100
 </Tonnage>
@@ -50,6 +54,10 @@ ISSRT6 Ammo
 <type>
 IS Level 2
 </type>
+
+<role>
+Juggernaut
+</role>
 <year>
 3024
 </year>
@@ -65,3 +73,7 @@ IS Level 2
 <motion_type>
 Submarine
 </motion_type>
+
+<source>
+Historical Turning Points: Glengarry
+</source>

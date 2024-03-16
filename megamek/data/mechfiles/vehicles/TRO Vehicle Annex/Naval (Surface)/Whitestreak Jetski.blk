@@ -16,9 +16,13 @@ SupportTank
 Whitestreak Jetski
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+5407
+</mul id:>
 
 <year>
 2320
@@ -31,6 +35,10 @@ Whitestreak Jetski
 <type>
 IS Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Naval
@@ -80,7 +88,7 @@ cargobay:0.009:1:1
 </structural_tech_rating>
 
 <source>
-TRO VAr - Age of War
+TRO: Vehicle Annex (Revised)
 </source>
 
 <tonnage>

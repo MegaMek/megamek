@@ -1,12 +1,20 @@
-Version:1.0
-Spider
-SDR-8X
+chassis:Spider
+model:SDR-8X
+mul id:3019
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3078
-Source:Jihad
+source:TRO: 3085
 Rules Level:4
+role:Striker
+
+
+
+quirk:easy_maintain
+quirk:nimble_jumper
+quirk:no_eject
+
 
 Mass:30
 Engine:240 XL Engine

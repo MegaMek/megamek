@@ -20,6 +20,10 @@ Sabutai
 Z
 </Model>
 
+<mul id:>
+5834
+</mul id:>
+
 <year>
 3072
 </year>
@@ -31,6 +35,10 @@ Z
 <type>
 Clan Level 4
 </type>
+
+<role>
+Dogfighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -128,7 +136,7 @@ CLCASE
 </Fuselage Equipment>
 
 <source>
-The Wars of Reaving (s) - Jihad
+The Wars of Reaving (s)
 </source>
 
 <tonnage>

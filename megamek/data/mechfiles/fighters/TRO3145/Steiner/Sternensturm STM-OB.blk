@@ -1,0 +1,133 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Aero
+</UnitType>
+
+<Name>
+Sternensturm
+</Name>
+
+<Model>
+STM-OB
+</Model>
+
+<mul id:>
+6639
+</mul id:>
+
+<year>
+3098
+</year>
+
+<originalBuildYear>
+3098
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<role>
+Interceptor
+</role>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+</transporters>
+
+<SafeThrust>
+10
+</SafeThrust>
+
+<cockpit_type>
+0
+</cockpit_type>
+
+<heatsinks>
+10
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+320
+</fuel>
+
+<engine_type>
+2
+</engine_type>
+
+<armor_type>
+20
+</armor_type>
+
+<armor_tech>
+-1
+</armor_tech>
+
+<omni>
+1
+</omni>
+
+<armor>
+76
+57
+57
+38
+</armor>
+
+<Nose Equipment>
+BeagleActiveProbe:OMNI
+</Nose Equipment>
+
+<Left Wing Equipment>
+ISERMediumLaser:OMNI
+ISERMediumLaser:OMNI
+ISAntiMissileSystem:OMNI
+ISAntiMissileSystem:OMNI
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+ISERMediumLaser:OMNI
+ISERMediumLaser:OMNI
+ISAntiMissileSystem:OMNI
+ISAntiMissileSystem:OMNI
+</Right Wing Equipment>
+
+<Aft Equipment>
+ISGuardianECMSuite:OMNI
+</Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+ISAMS Ammo:OMNI
+</Fuselage Equipment>
+
+<source>
+TRO: 3145 Lyran Commonwealth
+</source>
+
+<tonnage>
+40.0
+</tonnage>
+
+<quirks>
+easy_pilot
+</quirks>
+

@@ -1,12 +1,17 @@
-Version:1.0
-Buccaneer
-BCN-6W
+chassis:Buccaneer
+model:BCN-6W
+mul id:438
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3073
-Source:TRO 3060
+Source:TRO: 3060
 Rules Level:2
+role:Missile Boat
+
+quirk:imp_target_short
+quirk:bad_rep_is
+
 
 Mass:55
 Engine:275 XL Engine

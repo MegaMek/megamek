@@ -1,0 +1,108 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+Pandion Combat WiGE
+</Name>
+
+<Model>
+(3135 Upgrade)
+</Model>
+
+<mul id:>
+8046
+</mul id:>
+
+<year>
+3135
+</year>
+
+<originalBuildYear>
+3135
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<role>
+Striker
+</role>
+
+<motion_type>
+WiGE
+</motion_type>
+
+<transporters>
+</transporters>
+
+<cruiseMP>
+10
+</cruiseMP>
+
+<engine_type>
+2
+</engine_type>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+7
+</armor_tech>
+
+<armor>
+20
+13
+13
+13
+12
+</armor>
+
+<Body Equipment>
+Jump Jet
+Jump Jet
+Jump Jet
+Jump Jet
+Jump Jet
+IS Ammo SRM-4
+</Body Equipment>
+
+<Front Equipment>
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+ISERMediumLaser
+ISERMediumLaser
+SRM 4
+</Turret Equipment>
+
+<source>
+TRO: 3150
+</source>
+
+<tonnage>
+20.0
+</tonnage>
+

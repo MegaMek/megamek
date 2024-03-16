@@ -1,45 +1,49 @@
-Version:1.0
-Banshee
-BNC-5S (Sawyer)
-
+chassis:Banshee
+model:BNC-5S (Sawyer)
+mul id:3786
 Config:Biped
-TechBase:Inner Sphere
-Era:3057
-Source:TRO 3050 - Clan Invasion
-Rules Level:2
+techbase:Inner Sphere
+era:3057
+source:TRO: 3050
+rules level:2
+role:Sniper
 
-Mass:95
-Engine:380 XL Engine(IS)
-Structure:IS Standard
-Myomer:Standard
+quirk:rugged_1
+quirk:bad_rep_is
 
-Heat Sinks:13 Double
-Walk MP:4
-Jump MP:4
 
-Armor:Standard(Inner Sphere)
-LA Armor:21
-RA Armor:21
-LT Armor:30
-RT Armor:30
-CT Armor:40
-HD Armor:9
-LL Armor:26
-RL Armor:26
-RTL Armor:10
-RTR Armor:10
-RTC Armor:17
+mass:95
+engine:380 XL Engine(IS)
+structure:IS Standard
+myomer:Standard
+
+heat sinks:13 IS Double
+walk mp:4
+jump mp:4
+
+armor:Standard(Inner Sphere)
+LA armor:21
+RA armor:21
+LT armor:30
+RT armor:30
+CT armor:40
+HD armor:9
+LL armor:26
+RL armor:26
+RTL armor:10
+RTR armor:10
+RTC armor:17
 
 Weapons:9
-Small Laser, Center Torso
-Small Laser, Head
+Medium Laser, Left Arm
+Medium Laser, Left Arm
+SRM 6, Right Arm
+Gauss Rifle, Left Torso
+Medium Laser, Left Torso
 ER PPC, Right Torso
 Medium Laser, Right Torso
-Medium Laser, Left Arm
-Medium Laser, Left Arm
-Medium Laser, Left Torso
-Gauss Rifle, Left Torso
-SRM 6, Right Arm
+Small Laser, Center Torso
+Small Laser, Head
 
 Left Arm:
 Shoulder
@@ -153,20 +157,24 @@ Jump Jet
 -Empty-
 -Empty-
 
+overview:The Banshee, introduced in 2445 by the Terran Hegemony, is a 'Mech that was designed specifically for close-assault operations during the early years of BattleMech warfare.
 
-Overview: One of the oldest assault 'Mechs still in general usage, the Banshee was created to fill a close-combat role within Terran Hegemony forces. Although initially a powerful design, the steady advance of technology soon relegated the Banshee into militia or training roles. Many would survive the ensuing Succession Wars, offering lackluster but steady service up until the design was brought back to the forefront in 3026. A new Banshee variant, offered by Defiance Industries through their factories on Hesperus II, would completely change the BattleMech and its lasting reputation. The BNC-3S, by reducing the design's engine size, finally allowed the Banshee to mount an array of weaponry well-suited to its size. Nearly all future variants would use this successful adaptation of the model as their base, proving that the Banshee could be viable once more.
+capabilities:A contemporary of the Mackie and Emperor, the Banshee is undeniably fast for one of the heaviest 'Mechs ever produced, and with fifteen tons of armor it is better protected than most other assault 'Mechs. However the use of a massive GM 380 fusion engine left little room for weaponry, and even at the time of its introduction the Banshee was considered undergunned compared to its privately-built competition. As critics noted, what use was impressive armor and mobility if a better-armed enemy could overwhelm and destroy it? The result was a mediocre 'Mech which even the lowly Rifleman could beat as long as it prevented the Banshee's mass from coming into play.
+deployment:A customized BNC-5S that sacrifices weaponry for mobility. An ER PPC and heat sink are removed to add four jump jets.
 
-Capabilities: Most Succession War-era Banshees share the same oversized engine and light firepower. While still capable, the design often finds itself outperformed by similarly-massed BattleMechs, and as a result tend to be rather unpopular rides. The slower Banshee dynasty, more akin to the Awesome, Atlas, or Stalker, can singlehandedly dismantle entire lances of lighter 'Mechs. With the firepower to fight at all ranges and the heat dissipation to handle most of the weaponry, they were quickly accepted as a premier assault BattleMech.
+history: The Hegemony soldiered on though, producing five thousand Banshees in a decade before its poor combat performance finally forced them to stop production in 2455 and the 'Mech was relegated to training and militia units for the next few centuries. Even during the Succession Wars the 'Mech's poor reputation meant many commanders saw it as a liability rather than an asset; unless they were fighting on a backwater Periphery world or as part of a poorly-equipped outfit, most Banshees were placed in second-line reserves to provide fire support or fulfill the role of brawlers so that better-armed 'Mechs need not engage in hand-to-hand combat. In this way fully a third of the original Banshee production run remained operational by the dawn of the thirty-first century and could be found throughout the Inner Sphere and Periphery, with the lion's share residing within the Lyran Commonwealth. Though a few attempts had been made over the years to improve the Banshee, Defiance Industries was the first to produce a variant which markedly improved on the original and was suggested by many of its original critics. With help from the Federated Suns and access to blueprints from the original Hesperus II factories, the BNC-3S proved to be such a success the Lyrans began fielding them in front line units, surprising their enemies who ignored them to focus on "real" threats with thoroughly unexpected firepower. Under the Federated Commonwealth improvements would continue to be made, though not at the same priority level as other projects, and the much-improved BNC-5S was active in time to meet the Clan Invasion.
 
-Deployment: The original Banshee found its way throughout the entire Inner Sphere and Periphery during the Succession Wars. The Banshee -3S—and the -5S that would follow it—would prove to be the new gold standard fo the chassis. Trent "Bullfrog" Sawyer of Bronson's Horde fame would modify his Banshee to fit his need. Sacrificing some of his ranged punch for a full complement of jump jets, his assault 'Mech would prove to be a true terror in close quarters combat.
-
+manufacturer:Field Refit
+primaryfactory:Field Refit
 systemmanufacturer:CHASSIS:Foundation
 systemmode:CHASSIS:210
 systemmanufacturer:ENGINE:Edasich Motors
 systemmode:ENGINE:380 XL
 systemmanufacturer:ARMOR:Longanecker
 systemmode:ARMOR:PlastiSteel
+systemmanufacturer:JUMPJET:Unknown
 systemmanufacturer:COMMUNICATIONS:Angst
 systemmode:COMMUNICATIONS:Clear Channel 3
 systemmanufacturer:TARGETING:Angst
 systemmode:TARGETING:Clear View 2A
+

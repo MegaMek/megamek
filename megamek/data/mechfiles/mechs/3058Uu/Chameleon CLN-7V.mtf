@@ -1,12 +1,18 @@
-Version:1.0
-Chameleon
-CLN-7V
+chassis:Chameleon
+model:CLN-7V
+mul id:543
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3056
-Source:TRO 3058 - Clan Invasion
+Source:TRO: 3058
 Rules Level:1
+role:Scout
+
+
+
+quirk:easy_pilot
+
 
 Mass:50
 Engine:300 Fusion Engine
@@ -152,4 +158,20 @@ Jump Jet
 -Empty-
 -Empty-
 
+overview:Since the Terran Hegemony introduced it in 2510, the Chameleon has been the premiere training BattleMech for light- and medium-BattleMech MechWarriors. 
+
+capabilities:The Chameleon was designed to help a new MechWarrior master the skills of maneuvering and heat management, with a top speed of 97.2 km/h and a jumping distance of 180 meters. The 'Mech also had an almost all energy weapons loadout, but cooled only by 10 single heat sinks; this paucity of freezers forces MechWarriors to concentrate on the 'Mech's heat levels.
+
+deployment:The Chameleon carried a basic arsenal that allowed a MechWarrior-in-training to learn the skill of heat management. The 'Mech's reliable low-tech arsenal had proven effective when forced into combat; the primary weapon was a Cyclops Eye large laser, backed up by two Intek medium lasers, and a trio of Defiance B3S small lasers. To make the threat of overheating more real to the new MechWarrior, the 'Mech carried two Scatter Gun Light machine guns that can be used for anti-infantry training.
+
+history:In fact, with its role away from the battlefield, except in the most desperate of circumstances, the Chameleon has suffered relatively little attrition. Combined with its continuous production on Hesperus II, the Chameleon is one of the most common BattleMechs. Even in the 31st century, the Chameleon is widely used at academies and training cadres throughout the Inner Sphere. In some instances, the Chameleon had been forced into combat situations, notably during the Dragoon Civil War. Production of the Chameleon halted briefly in 3052 when Defiance Industries decided to switch its production to the Nightsky, but was quickly resumed when J.B. BattleMechs Incorporated purchased the rights to the design. J.B. BattleMechs also introduced two battleworthy variants of the Chameleon. The Chameleon is a training 'Mech, intended to simulate a variety of opponents by mounting a wide variety of weapon systems. While a medium 'Mech by design, it doesn't always look like one; it can be fitted out with extra plates to modify its appearance, and carries special electronics to falsify its signature. It is these special abilities that let it look and scan as something other than what it is, hence the machine's name.
+
+manufacturer:J.B. BattleMechs Inc.
+primaryfactory:Storfors
+systemmanufacturer:CHASSIS:Enran TXS2A
+systemmanufacturer:ENGINE:Vlar 300
+systemmanufacturer:ARMOR:SimplePlate Manufacturers Type M
+systemmanufacturer:JUMPJET:McCloud Specials
+systemmanufacturer:COMMUNICATIONS:Jolex Systems
+systemmanufacturer:TARGETING:Optisight-12
 

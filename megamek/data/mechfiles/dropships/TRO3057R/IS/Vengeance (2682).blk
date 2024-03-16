@@ -20,6 +20,10 @@ Vengeance
 (2682)
 </Model>
 
+<mul id:>
+5342
+</mul id:>
+
 <year>
 2682
 </year>
@@ -31,6 +35,10 @@ Vengeance
 <type>
 IS Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Aerodyne
@@ -138,7 +146,7 @@ Medium Laser
 </structural_integrity>
 
 <source>
-TRO 3057R - Star League
+TRO: 3057 Revised
 </source>
 
 <tonnage>

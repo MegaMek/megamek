@@ -20,6 +20,10 @@ Batu
 Prime
 </Model>
 
+<mul id:>
+309
+</mul id:>
+
 <year>
 2987
 </year>
@@ -31,6 +35,10 @@ Prime
 <type>
 Clan Level 2
 </type>
+
+<role>
+Fast Dogfighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -112,7 +120,7 @@ CLERMediumLaser:OMNI
 </Fuselage Equipment>
 
 <source>
-TRO 3055u - Succession Wars
+TRO: 3055 Update
 </source>
 
 <tonnage>

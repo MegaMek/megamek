@@ -20,6 +20,10 @@ J-27 Ordnance Transport
 (Fusion)
 </Model>
 
+<mul id:>
+1644
+</mul id:>
+
 <year>
 2578
 </year>
@@ -27,6 +31,10 @@ J-27 Ordnance Transport
 <type>
 IS Level 3
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Tracked
@@ -74,7 +82,7 @@ Machine Gun
 </Turret Equipment>
 
 <source>
-TRO 3039 - Star League
+TRO: 3039
 </source>
 
 <tonnage>

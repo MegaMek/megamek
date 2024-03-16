@@ -17,6 +17,7 @@ package megamek.common.util;
 import jakarta.mail.*;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
+import megamek.codeUtilities.StringUtility;
 import megamek.common.Game;
 import megamek.common.Player;
 import megamek.common.Report;
@@ -103,7 +104,6 @@ public class EmailService {
 
     }
 
-
     private InternetAddress from;
     private Map<Player, Integer> messageSequences = new HashMap<>();
     private Properties mailProperties;
@@ -123,7 +123,7 @@ public class EmailService {
         Authenticator auth = null;
         var login = mailProperties.getProperty("megamek.smtp.login", "").trim();
         var password = mailProperties.getProperty("megamek.smtp.password", "").trim();
-        if (login.length() > 0 && password.length() > 0) {
+        if (!login.isBlank() && !password.isBlank()) {
             auth = new Authenticator() {
                     @Override
                     protected PasswordAuthentication getPasswordAuthentication() {
@@ -134,19 +134,14 @@ public class EmailService {
 
         mailSession = Session.getInstance(mailProperties, auth);
 
-        mailWorker = new Thread() {
-                @Override
-                public void run() {
-                    workerMain();
-                }
-            };
+        mailWorker = new Thread(this::workerMain);
         mailWorker.start();
     }
 
     public Vector<Player> getEmailablePlayers(Game game) {
         Vector<Player> emailable = new Vector<>();
         for (var player: game.getPlayersVector()) {
-            if (!StringUtil.isNullOrEmpty(player.getEmail()) && !player.isBot()
+            if (!StringUtility.isNullOrBlank(player.getEmail()) && !player.isBot()
                     && !player.isObserver()) {
                 emailable.add(player);
             }
@@ -154,9 +149,7 @@ public class EmailService {
         return emailable;
     }
 
-    public Message newReportMessage(Game game,
-                                    Vector<Report> reports,
-                                    Player player) throws Exception {
+    public Message newReportMessage(Game game, Vector<Report> reports, Player player) throws Exception {
         int nextSequence = 0;
         synchronized (messageSequences) {
             var messageSequence = messageSequences.get(player);
@@ -189,8 +182,7 @@ public class EmailService {
                 // blocks until a message is received
                 var message = mailQueue.take();
 
-                var transport = mailSession.getTransport(message.getFrom()[0]);
-                try {
+                try (Transport transport = mailSession.getTransport(message.getFrom()[0])) {
                     transport.connect();
                     while (message != null) {
                         message.saveChanges();
@@ -201,8 +193,6 @@ public class EmailService {
                         // still open. This doesn't block;
                         message = mailQueue.poll();
                     }
-                } finally {
-                    transport.close();
                 }
             } catch (InterruptedException ex) {
                 // All good, just shut down

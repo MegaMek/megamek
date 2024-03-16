@@ -49,14 +49,14 @@ public class TargetRoll implements Serializable {
     }
 
     /**
-     * Creates a new TargetRoll with a base value & desc
+     * Creates a new TargetRoll with a base value and desc
      */
     public TargetRoll(int value, String desc) {
         addModifier(value, desc);
     }
 
     /**
-     * Creates a new TargetRoll with a base value & desc, which is possibly
+     * Creates a new TargetRoll with a base value and desc, which is possibly
      * not cumulative
      *
      * @param value
@@ -126,7 +126,20 @@ public class TargetRoll implements Serializable {
 
         return allDesc.toString();
     }
-    
+
+    public boolean needsRoll()
+    {
+        switch (total) {
+            case IMPOSSIBLE:
+            case AUTOMATIC_FAIL:
+            case AUTOMATIC_SUCCESS:
+            case CHECK_FALSE:
+                return false;
+            default:
+                return true;
+        }
+    }
+
     @Override
     public String toString() {
         return getDesc();

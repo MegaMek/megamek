@@ -16,9 +16,13 @@ Tank
 Aithon Assault Transport
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+3685
+</mul id:>
 
 <year>
 3084
@@ -27,6 +31,10 @@ Aithon Assault Transport
 <type>
 Clan Level 4
 </type>
+
+<role>
+Missile Boat
+</role>
 
 <motion_type>
 Tracked
@@ -89,9 +97,15 @@ CLMediumPulseLaser
 </Turret Equipment>
 
 <source>
-TRO:Prototype
+TRO: Prototypes
 </source>
 
 <tonnage>
 100.0
 </tonnage>
+
+<quirks>
+distracting
+trailer_hitch
+</quirks>
+

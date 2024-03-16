@@ -1,12 +1,21 @@
-Version:1.1
-Highlander
-HGN-734
+chassis:Highlander
+model:HGN-734
+mul id:1520
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3062
-Source:TRO 3050 - Civil War
+Source:TRO: 3050
 Rules Level:2
+role:Juggernaut
+
+
+
+quirk:command_mech
+quirk:cowl
+quirk:reinforced_legs
+quirk:difficult_eject
+
 
 Mass:90
 Engine:270 Light Fusion Engine

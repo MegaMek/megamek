@@ -20,17 +20,25 @@ Bellona Hover Tank
 (Laser)
 </Model>
 
+<mul id:>
+325
+</mul id:>
+
 <year>
 3076
 </year>
 
 <source>
-Jihad
+TRO: 3075
 </source>
 
 <type>
 Clan Level 2
 </type>
+
+<role>
+Missile Boat
+</role>
 
 <tonnage>
 45.0

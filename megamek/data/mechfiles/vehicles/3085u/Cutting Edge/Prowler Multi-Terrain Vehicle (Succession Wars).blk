@@ -20,6 +20,10 @@ Prowler Multi-Terrain Vehicle
 (Succession Wars)
 </Model>
 
+<mul id:>
+2587
+</mul id:>
+
 <Tonnage>
 55
 </Tonnage>
@@ -65,12 +69,16 @@ ISFullyAmphibiousChassis
 IS Level 3
 </type>
 
+<role>
+Missile Boat
+</role>
+
 <year>
 2863
 </year>
 
 <source>
-Succession Wars
+TRO: 3085
 </source>
 
 <internal_type>

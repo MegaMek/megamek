@@ -1,0 +1,116 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Aero
+</UnitType>
+
+<Name>
+Corax
+</Name>
+
+<Model>
+CRX-OR
+</Model>
+
+<mul id:>
+5746
+</mul id:>
+
+<year>
+3076
+</year>
+
+<originalBuildYear>
+3076
+</originalBuildYear>
+
+<type>
+Mixed (IS Chassis) Experimental
+</type>
+
+<role>
+Fast Dogfighter
+</role>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+</transporters>
+
+<SafeThrust>
+9
+</SafeThrust>
+
+<cockpit_type>
+0
+</cockpit_type>
+
+<heatsinks>
+10
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+400
+</fuel>
+
+<engine_type>
+2
+</engine_type>
+
+<omni>
+1
+</omni>
+
+<armor>
+44
+33
+33
+26
+</armor>
+
+<Nose Equipment>
+CLERMediumLaser:OMNI
+CLERMediumLaser:OMNI
+CLERMediumLaser:OMNI
+</Nose Equipment>
+
+<Left Wing Equipment>
+CLStreakSRM4:OMNI
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+CLStreakSRM4:OMNI
+</Right Wing Equipment>
+
+<Aft Equipment>
+CLTargeting Computer:OMNI
+</Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+Clan Streak SRM 4 Ammo:OMNI
+</Fuselage Equipment>
+
+<source>
+TRO: 3067
+</source>
+
+<tonnage>
+30.0
+</tonnage>

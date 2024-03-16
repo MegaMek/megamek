@@ -1,12 +1,16 @@
-Version:1.0
-Stooping Hawk
-A
+chassis:Stooping Hawk
+model:A
+mul id:3076
 
 Config:Biped Omnimech
 TechBase:Clan
 Era:2970
-Source:TRO 3060
+Source:TRO: 3060
 Rules Level:2
+role:Sniper
+
+quirk:rugged_2
+
 
 Mass:55
 Engine:275 Fusion (Clan) Engine(IS)

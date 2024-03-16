@@ -20,6 +20,10 @@ Heavy Strike Fighter
 Meteor
 </Model>
 
+<mul id:>
+1446
+</mul id:>
+
 <year>
 2665
 </year>
@@ -31,6 +35,10 @@ Meteor
 <type>
 IS Level 1
 </type>
+
+<role>
+Attack Fighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -95,7 +103,7 @@ IS Ammo SRM-4
 </Fuselage Equipment>
 
 <source>
-TRO 3039 - Star League
+TRO: 3039
 </source>
 
 <tonnage>

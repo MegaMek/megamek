@@ -20,6 +20,10 @@ Slayer
 SL-CX1
 </Model>
 
+<mul id:>
+2966
+</mul id:>
+
 <year>
 3075
 </year>
@@ -31,6 +35,10 @@ SL-CX1
 <type>
 Mixed (IS Chassis) Experimental
 </type>
+
+<role>
+Dogfighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -105,7 +113,7 @@ ISRotaryAC5 Ammo
 </Fuselage Equipment>
 
 <source>
-XTRO Mercenaries - Jihad
+XTR: Mercenaries
 </source>
 
 <tonnage>

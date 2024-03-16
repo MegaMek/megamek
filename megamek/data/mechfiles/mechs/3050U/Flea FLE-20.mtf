@@ -1,12 +1,20 @@
-Version:1.0
-Flea
-FLE-20
+chassis:Flea
+model:FLE-20
+mul id:1139
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3071
-Source:TRO 3050 - Jihad
+Source:TRO: 3050
 Rules Level:2
+role:Striker
+
+
+
+quirk:easy_maintain
+quirk:imp_life_support
+quirk:no_arms
+
 
 Mass:20
 Engine:120 Fusion Engine

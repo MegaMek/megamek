@@ -14,7 +14,9 @@
 package megamek.common.weapons.capitalweapons;
 
 import megamek.common.AmmoType;
+import megamek.common.Mounted;
 import megamek.common.SimpleTechLevel;
+import megamek.common.alphaStrike.AlphaStrikeElement;
 
 /**
  * @author Jay Lawson
@@ -46,7 +48,7 @@ public class SubCapMissilePiranhaWeapon extends SubCapMissileWeapon {
         maxRange = RANGE_LONG;
         flags = flags.or(F_AERO_WEAPON).or(F_MISSILE);
         this.atClass = CLASS_CAPITAL_MISSILE;
-        rulesRefs = "345,TO";
+        rulesRefs = "345, TO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TECH_BASE_ALL)
                 .setIntroLevel(false)
@@ -60,5 +62,10 @@ public class SubCapMissilePiranhaWeapon extends SubCapMissileWeapon {
                 .setPrototypeFactions(F_WB)
                 .setProductionFactions(F_WB)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
+    }
+
+    @Override
+    public double getBattleForceDamage(int range, Mounted linked) {
+        return (range <= AlphaStrikeElement.LONG_RANGE) ? 3 : 0;
     }
 }

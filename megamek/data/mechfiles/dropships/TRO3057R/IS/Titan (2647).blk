@@ -20,6 +20,10 @@ Titan
 (2647)
 </Model>
 
+<mul id:>
+5248
+</mul id:>
+
 <year>
 2647
 </year>
@@ -31,6 +35,10 @@ Titan
 <type>
 IS Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Aerodyne
@@ -199,3 +207,7 @@ Medium Laser
 <escape_pod>
 4
 </escape_pod>
+
+<source>
+TRO: 3057 Revised
+</source>

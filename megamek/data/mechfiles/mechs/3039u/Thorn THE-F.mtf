@@ -1,12 +1,19 @@
-Version:1.0
-Thorn
-THE-F
+chassis:Thorn
+model:THE-F
+mul id:3190
 
 Config:Biped
 techbase:Inner Sphere
 era:2490
-source:TRO 3039 - Age of War
+source:TRO: 3039
 rules level:1
+role:Striker
+
+
+
+
+quirk:easy_maintain
+
 
 mass:20
 engine:120 Fusion Engine(IS)

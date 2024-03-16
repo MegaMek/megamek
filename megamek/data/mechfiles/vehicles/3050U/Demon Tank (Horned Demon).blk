@@ -20,6 +20,10 @@ Demon Tank
 (Horned Demon)
 </Model>
 
+<mul id:>
+873
+</mul id:>
+
 <year>
 2721
 </year>
@@ -27,6 +31,10 @@ Demon Tank
 <type>
 IS Level 2
 </type>
+
+<role>
+Brawler
+</role>
 
 <motion_type>
 Wheeled
@@ -75,7 +83,7 @@ ISGaussRifle
 </Turret Equipment>
 
 <source>
-TRO 3050 - Star League
+TRO: 3050
 </source>
 
 <tonnage>

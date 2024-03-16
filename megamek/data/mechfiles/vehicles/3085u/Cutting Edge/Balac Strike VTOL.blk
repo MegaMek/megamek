@@ -16,9 +16,13 @@ VTOL
 Balac Strike VTOL
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+210
+</mul id:>
 
 <year>
 3079
@@ -27,6 +31,10 @@ Balac Strike VTOL
 <type>
 Clan Level 2
 </type>
+
+<role>
+Striker
+</role>
 
 <motion_type>
 VTOL
@@ -83,9 +91,14 @@ CLATM6
 </Rotor Equipment>
 
 <source>
-Jihad
+TRO: 3085
 </source>
 
 <tonnage>
 25.0
 </tonnage>
+
+<quirks>
+vtol_rotor_coaxial
+</quirks>
+

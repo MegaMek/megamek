@@ -20,6 +20,10 @@ Jonah Submarine
 JN-002
 </Model>
 
+<mul id:>
+4408
+</mul id:>
+
 <year>
 2714
 </year>
@@ -31,6 +35,10 @@ JN-002
 <type>
 IS Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Submarine
@@ -98,7 +106,7 @@ Armor exceeds point limit for 2.0-ton Submarine support vehicle: 5 points > 4.
 </notes>
 
 <source>
-TRO VAr - Star League
+TRO: Vehicle Annex (Revised)
 </source>
 
 <tonnage>

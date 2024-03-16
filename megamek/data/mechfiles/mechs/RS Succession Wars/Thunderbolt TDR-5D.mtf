@@ -1,12 +1,20 @@
-Version:1.0
-Thunderbolt
-TDR-5D
+chassis:Thunderbolt
+model:TDR-5D
+mul id:7431
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2821
-Source:RS:Succession Wars - Succession Wars
+Source:Record Sheets: Succession Wars
 Rules Level:1
+role:Brawler
+
+
+
+quirk:multi_trac
+quirk:rugged_2
+quirk:ubiquitous_is
+
 
 Mass:65
 Engine:260 Fusion Engine(IS)
@@ -149,11 +157,10 @@ Heat Sink
 manufacturer:Earthwerks Incorporated
 primaryFactory:Keystone
 systemmanufacturer:CHASSIS:Earthwerks
-systemmodel:CHASSIS:TDR Standard
+systemmode:CHASSIS:TDR Standard
 systemmanufacturer:ENGINE:Magna
-systemmodel:ENGINE:260
+systemmode:ENGINE:260
 systemmanufacturer:COMMUNICATIONS:Neil
-systemmodel:COMMUNICATIONS:8000
+systemmode:COMMUNICATIONS:8000
 systemmanufacturer:TARGETING:RCA
-systemmodel:TARGETING:Instatrac Mark X
-
+systemmode:TARGETING:Instatrac Mark X

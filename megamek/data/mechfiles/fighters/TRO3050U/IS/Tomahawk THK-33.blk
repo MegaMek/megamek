@@ -20,6 +20,10 @@ Tomahawk
 THK-33
 </Model>
 
+<mul id:>
+3270
+</mul id:>
+
 <year>
 2642
 </year>
@@ -31,6 +35,10 @@ THK-33
 <type>
 IS Level 2
 </type>
+
+<role>
+Fast Dogfighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -92,7 +100,7 @@ Large Laser
 </Fuselage Equipment>
 
 <source>
-TRO 3050u - Star League
+TRO: 3050
 </source>
 
 <tonnage>

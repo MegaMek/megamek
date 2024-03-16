@@ -19,7 +19,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.TAGHandler;
 import megamek.common.weapons.Weapon;
-import megamek.server.Server;
+import megamek.server.GameManager;
 
 /**
  * @author Sebastian Brocks
@@ -32,12 +32,11 @@ public abstract class TAGWeapon extends Weapon {
         super();
         flags = flags.or(F_MECH_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON)
                 .or(F_TAG).or(F_NO_FIRES);
-        setModes(new String[] { "1-shot", "2-shot", "3-shot", "4-shot" });
     }
 
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
-                                              Server server) {
-        return new TAGHandler(toHit, waa, game, server);
+                                              GameManager manager) {
+        return new TAGHandler(toHit, waa, game, manager);
     }
 }

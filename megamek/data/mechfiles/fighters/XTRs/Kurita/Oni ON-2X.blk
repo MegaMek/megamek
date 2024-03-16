@@ -20,6 +20,10 @@ Oni
 ON-2X
 </Model>
 
+<mul id:>
+2320
+</mul id:>
+
 <year>
 3077
 </year>
@@ -31,6 +35,10 @@ ON-2X
 <type>
 IS Level 4
 </type>
+
+<role>
+Fast Dogfighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -109,7 +117,7 @@ IS MRM 30 Ammo
 </Fuselage Equipment>
 
 <source>
-XTRO Kurita - Jihad
+XTR: Kurita
 </source>
 
 <tonnage>

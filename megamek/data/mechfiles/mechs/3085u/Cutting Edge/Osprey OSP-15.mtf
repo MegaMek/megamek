@@ -1,12 +1,20 @@
-Version:1.0
-Osprey
-OSP-15
+chassis:Osprey
+model:OSP-15
+mul id:2344
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2738
-Source:Star League
+Source:TRO: 3085
 Rules Level:2
+role:Sniper
+
+
+
+
+quirk:no_arms
+weaponquirk:direct_torso_mount:RT:4:ISGaussRifle
+
 
 Mass:55
 Engine:220 XL Engine(IS)

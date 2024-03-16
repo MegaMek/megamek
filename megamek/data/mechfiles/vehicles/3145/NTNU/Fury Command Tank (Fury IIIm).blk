@@ -20,6 +20,10 @@ Fury Command Tank
 (Fury IIIm)
 </Model>
 
+<mul id:>
+6802
+</mul id:>
+
 <year>
 3114
 </year>
@@ -27,6 +31,10 @@ Fury Command Tank
 <type>
 Mixed (IS Chassis) Advanced
 </type>
+
+<role>
+Sniper
+</role>
 
 <motion_type>
 Tracked
@@ -85,9 +93,25 @@ CLRotaryAC5
 </Turret Equipment>
 
 <source>
-RS 3145 NTNU - Late Republic
+Record Sheets: 3145 New Tech New Upgrades
 </source>
 
 <tonnage>
 80.0
 </tonnage>
+
+<manufacturer>
+Jolassa Armored Vehicles
+</manufacturer>
+
+<primaryFactory>
+Tybalt
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:320 Pitban XL Fusion
+ARMOR:PyroTec ArmorSlab Hvy Ferro-Fibrous
+COMMUNICATIONS:HIV-13
+TARGETING:Quadrant XD
+</systemManufacturers>

@@ -1,0 +1,119 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Aero
+</UnitType>
+
+<Name>
+Riever
+</Name>
+
+<Model>
+F-100a
+</Model>
+
+<mul id:>
+2688
+</mul id:>
+
+<year>
+2829
+</year>
+
+<originalBuildYear>
+2829
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<role>
+Attack Fighter
+</role>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+</transporters>
+
+<SafeThrust>
+5
+</SafeThrust>
+
+<cockpit_type>
+0
+</cockpit_type>
+
+<heatsinks>
+28
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+400
+</fuel>
+
+<engine_type>
+0
+</engine_type>
+
+<armor>
+86
+61
+61
+48
+</armor>
+
+<Nose Equipment>
+Autocannon/20
+SRM 6
+SRM 6
+</Nose Equipment>
+
+<Left Wing Equipment>
+SRM 6
+SRM 6
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+SRM 6
+SRM 6
+</Right Wing Equipment>
+
+<Aft Equipment>
+</Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+IS Ammo AC/20
+IS Ammo AC/20
+IS Ammo SRM-6
+IS Ammo SRM-6
+IS Ammo SRM-6
+IS Ammo SRM-6
+IS Ammo SRM-6
+</Fuselage Equipment>
+
+<source>
+TRO: 3039
+</source>
+
+<tonnage>
+100.0
+</tonnage>

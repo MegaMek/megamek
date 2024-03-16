@@ -1,0 +1,12 @@
+3145 LCAF Medium Vehicles D
+Schildkrote Line Tank,1
+Vedette Medium Tank (NETC), 2
+Drillson Heavy Hover Tank (Standard), 3
+Fulcrum Heavy Hovertank (Standard), 4
+JES I Tactical Missile Carrier (Standard), 5
+Vedette Medium Tank (Cell), 6
+JES I Tactical Missile Carrier (3082 Upgrade), 5
+Drillson Heavy Hover Tank (Streak), 4
+Maxim Mk II Transport (Infantry Support) 'Shiloh', 3
+Condor Heavy Hover Tank (Upgrade), 2
+Bishop Transport VTOL (Standard), 1

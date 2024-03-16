@@ -1,12 +1,18 @@
-Version:1.0
-Marauder IIC
-4
+chassis:Marauder IIC
+model:4
+mul id:2068
 
 Config:Biped
 TechBase:Clan
 Era:3070
-Source:Jihad
+Source:Record Sheets: 3085 Unabridged - Project Phoenix
 Rules Level:2
+role:Sniper
+
+quirk:command_mech
+quirk:hyper_actuator
+quirk:exp_actuator
+
 
 Mass:85
 Engine:340 XL (Clan) Engine(IS)
@@ -146,4 +152,19 @@ HAG/40 Ammo
 -Empty-
 -Empty-
 
-imagefile:.\data\images\fluff\Mech\3085 Marauder IIC .jpg
+overview:Given the Marauder's outstanding performance and sterling reputation, it was only natural for the Clans to commit resources to constructing a worthy successor.
+
+capabilities:While fundamentally comparable to the original Marauder in many aspects, even Golden Century ClanTech's sophisticated capabilities could not prevent the BattleMech's chassis from growing to accommodate all of its enhancements. As a result, the Marauder IIC received ten tons of overall bulk, similar to other classic 'Mechs modified by the Clans at the period. The IIC followed in both function and form the huge footsteps of its ancestor, emphasizing a perfect blend of long-range, high yield firepower, robust armor, and the mobility to keep up with its supporting troops. Although the Clans' dueling heritage prized individual warrior prowess and rapid encounters over drawn-out campaigns, their choice for high-power energy weapons over ballistics and missiles allows this 'Mech to stay lethal in the hands of an expert MechWarrior nearly indefinitely. When combined with its other characteristics, the Marauder IIC's battlefield durability cemented its position as a suitable command 'Mech, as well as its appeal among the glory-seeking warriors that comprise the majority of the Clan officer corps.
+
+deployment:Developed by Gorton, Kingsley & Thorpe Enterprises in 3070 to fill the Ghost Bear touman's appetite for the Marauder IIC after a shadow trade war with the Diamond Sharks cut off supply, this variant mounts two of the largest weapon now available to the Clans, the HAG 40, in its arms. Ten tons of ammunition supply these mammoth guns, while fifteen tons of armor protect the 'Mech. The inclusion of the HAGs only allowed for three jump jets to be added, meaning that the IIC 4 can leap up to 90 meters. Even with only 10 double heat sinks, the IIC 4 has no heat concerns.
+
+history:The Marauder IIC had that designation prior to the introduction of Omni technology and the construction of the Timber Wolf. The Marauder IIC was built from the ground up in the image of its forefather, taking full advantage of the cutting-edge technology available at the time to improve on every aspect of the original. The end result was a bigger, stronger, more resilient, and durable Marauder—one that is still popular today, despite being classified as a "second-line" BattleMech. The Jade Falcons continue to build the Marauder IIC in its original architecture, joining the Rasalhague Dominion's "Phoenix" versions as the fearsome core of numerous Clan attack formations.
+
+manufacturer:Gorton, Kingsley, & Thorpe Enterprises
+primaryfactory:Satalice
+systemmanufacturer:CHASSIS:Type GB-850 Light
+systemmanufacturer:ENGINE:Consolidated Fusion 340
+systemmanufacturer:ARMOR:Compound 12A1 Standard with CASE
+systemmanufacturer:COMMUNICATIONS:Series D8 CC-25Xa
+systemmanufacturer:TARGETING:“Hermes” CT-42 Mk. II
+systemmanufacturer:JUMPJET:Unknown

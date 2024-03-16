@@ -1,12 +1,18 @@
-Version:1.2
-Axman
-AXM-6X
+chassis:Axman
+model:AXM-6X
+mul id:3772
 
 Config:Biped
 TechBase:Mixed (IS Chassis)
 Era:3074
-Source:XTRO Steiner - Jihad
+Source:XTR: Steiner
 Rules Level:3
+role:Missile Boat
+
+
+
+quirk:pro_actuator
+
 
 Mass:65
 Engine:325 XL (Clan) Engine

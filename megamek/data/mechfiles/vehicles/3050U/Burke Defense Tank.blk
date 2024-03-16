@@ -16,9 +16,13 @@ Tank
 Burke Defense Tank
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+445
+</mul id:>
 
 <year>
 2580
@@ -27,6 +31,10 @@ Burke Defense Tank
 <type>
 IS Level 2
 </type>
+
+<role>
+Sniper
+</role>
 
 <motion_type>
 Tracked
@@ -80,7 +88,7 @@ PPC
 </Turret Equipment>
 
 <source>
-TRO 3050 - Star League
+TRO: 3050
 </source>
 
 <tonnage>

@@ -1,12 +1,17 @@
-Version:1.0
-Sun Cobra
-(Standard)
+chassis:Sun Cobra
+model:
+mul id:3122
 
 Config:Biped
 TechBase:Clan
 Era:3074
-Source:TRO 3075
+Source:TRO: 3075
 Rules Level:2
+role:Sniper
+
+
+quirk:pro_actuator
+
 
 Mass:55
 Engine:220 XL (Clan) Engine

@@ -1,12 +1,23 @@
-Version:1.0
-Phoenix Hawk
-PXH-1
+chassis:Phoenix Hawk
+model:PXH-1
+mul id:2491
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2568
-Source:TRO 3039 - Age of War
+Source:TRO: 3039
 Rules Level:1
+role:Skirmisher
+
+
+
+
+quirk:command_mech
+quirk:imp_com
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+weaponquirk:jettison_capable:RA:4:Large Laser
+
 
 Mass:45
 Engine:270 Fusion Engine

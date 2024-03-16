@@ -20,6 +20,10 @@ Qasar
 Prime
 </Model>
 
+<mul id:>
+4883
+</mul id:>
+
 <year>
 2905
 </year>
@@ -31,6 +35,10 @@ Prime
 <type>
 Clan Level 2
 </type>
+
+<role>
+Fast Dogfighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -97,9 +105,17 @@ CLERMediumLaser:OMNI
 </Aft Equipment>
 
 <source>
-Succession Wars
+TRO: Golden Century
 </source>
 
 <tonnage>
 80.0
 </tonnage>
+
+<quirks>
+atmo_flyer
+easy_pilot
+obsolete
+weak_undercarriage
+</quirks>
+

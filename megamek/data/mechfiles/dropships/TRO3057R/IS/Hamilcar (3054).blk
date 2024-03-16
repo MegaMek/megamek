@@ -20,6 +20,10 @@ Hamilcar
 (3054)
 </Model>
 
+<mul id:>
+4259
+</mul id:>
+
 <year>
 3054
 </year>
@@ -31,6 +35,10 @@ Hamilcar
 <type>
 IS Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Aerodyne
@@ -134,7 +142,7 @@ ISArtemisIV
 </structural_integrity>
 
 <source>
-TRO 3057R - Clan Invasion
+TRO: 3057 Revised
 </source>
 
 <tonnage>

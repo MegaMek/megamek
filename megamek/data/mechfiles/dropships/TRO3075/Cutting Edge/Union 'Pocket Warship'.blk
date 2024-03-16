@@ -20,6 +20,10 @@ Union
 'Pocket Warship'
 </Model>
 
+<mul id:>
+5322
+</mul id:>
+
 <year>
 3071
 </year>
@@ -31,6 +35,10 @@ Union
 <type>
 IS Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Spheroid
@@ -153,7 +161,7 @@ ISERMediumLaser
 </structural_integrity>
 
 <source>
-TRO 3075 - Jihad
+TRO: 3075
 </source>
 
 <tonnage>

@@ -24,29 +24,29 @@ import megamek.common.AmmoType;
  */
 public class InfantryArchaicDaoWeapon extends InfantryWeapon {
 
-	/**
-	 *
-	 */
-	private static final long serialVersionUID = -3164871600230559641L;
+    /**
+     *
+     */
+    private static final long serialVersionUID = -3164871600230559641L;
 
-	public InfantryArchaicDaoWeapon() {
-		super();
+    public InfantryArchaicDaoWeapon() {
+        super();
 
-		name = "Blade (Dao/Katana/No-Dachi/Sword/Wakizashi)";
-		setInternalName(name);
-		addLookupName("InfantryDaoSword");
-		addLookupName("Dao");
-		ammoType = AmmoType.T_NA;
-		cost = 200;
-		bv = 0.04;
+        name = "Blade (Dao/Katana/No-Dachi/Sword/Wakizashi)";
+        setInternalName(name);
+        addLookupName("InfantryDaoSword");
+        addLookupName("Dao");
+        ammoType = AmmoType.T_NA;
+        cost = 200;
+        bv = 0.04;
         tonnage = .003;
-		flags = flags.or(F_NO_FIRES).or(F_INF_POINT_BLANK).or(F_INF_ARCHAIC);
-		infantryDamage = 0.04;
-		infantryRange = 0;
-		rulesRefs = "272, TM";
-		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
-				.setISApproximate(false, false, false, false, false).setTechRating(RATING_A)
-				.setAvailability(RATING_C, RATING_C, RATING_C, RATING_C);
+        flags = flags.or(F_NO_FIRES).or(F_INF_POINT_BLANK).or(F_INF_ARCHAIC);
+        infantryDamage = 0.04;
+        infantryRange = 0;
+        rulesRefs = "272, TM";
+        techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
+                .setISApproximate(false, false, false, false, false).setTechRating(RATING_A)
+                .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C);
 
-	}
+    }
 }

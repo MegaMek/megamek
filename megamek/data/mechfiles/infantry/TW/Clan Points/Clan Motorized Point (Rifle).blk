@@ -20,6 +20,10 @@ Clan Motorized Point
 (Rifle)
 </Model>
 
+<mul id:>
+640
+</mul id:>
+
 <year>
 2815
 </year>
@@ -27,6 +31,10 @@ Clan Motorized Point
 <type>
 Clan Level 2
 </type>
+
+<role>
+Ambusher
+</role>
 
 <motion_type>
 Motorized
@@ -36,7 +44,7 @@ Motorized
 </Field Guns Equipment>
 
 <source>
-Total Warfare - Succession Wars
+Total Warfare
 </source>
 
 <squad_size>

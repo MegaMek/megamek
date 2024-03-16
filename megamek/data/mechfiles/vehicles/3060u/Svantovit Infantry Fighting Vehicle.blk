@@ -16,9 +16,13 @@ Tank
 Svantovit Infantry Fighting Vehicle
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+3139
+</mul id:>
 
 <year>
 2870
@@ -27,6 +31,10 @@ Svantovit Infantry Fighting Vehicle
 <type>
 Clan Level 2
 </type>
+
+<role>
+Missile Boat
+</role>
 
 <motion_type>
 Hover
@@ -89,7 +97,7 @@ CLStreakSRM2
 </Turret Equipment>
 
 <source>
-Succession Wars
+TRO: 3060
 </source>
 
 <tonnage>

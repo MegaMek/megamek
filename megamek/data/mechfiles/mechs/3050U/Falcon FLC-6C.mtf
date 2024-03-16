@@ -1,12 +1,18 @@
-Version:1.0
-Falcon
-FLC-6C
+chassis:Falcon
+model:FLC-6C
+mul id:1029
 
 Config:Biped
 TechBase:Clan
 Era:3065
-Source:TRO 3050 - Civil War
+Source:TRO: 3050
 Rules Level:2
+role:Sniper
+
+
+
+quirk:low_profile
+
 
 Mass:30
 Engine:180 Fusion Engine

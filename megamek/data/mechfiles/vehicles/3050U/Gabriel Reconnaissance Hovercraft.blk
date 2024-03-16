@@ -16,9 +16,13 @@ Tank
 Gabriel Reconnaissance Hovercraft
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+1165
+</mul id:>
 
 <year>
 2712
@@ -27,6 +31,10 @@ Gabriel Reconnaissance Hovercraft
 <type>
 IS Level 2
 </type>
+
+<role>
+Scout
+</role>
 
 <motion_type>
 Hover
@@ -76,7 +84,7 @@ Medium Laser
 </Turret Equipment>
 
 <source>
-TRO 3050 - Star League
+TRO: 3050
 </source>
 
 <tonnage>

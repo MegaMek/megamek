@@ -1,0 +1,105 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+SupportTank
+</UnitType>
+
+<Name>
+Prairie Schooner Module
+</Name>
+
+<model>
+
+</model>
+
+<mul id:>
+7335
+</mul id:>
+
+<year>
+3058
+</year>
+
+<type>
+IS Level 3
+</type>
+
+<role>
+Scout
+</role>
+
+<motion_type>
+Wheeled
+</motion_type>
+
+<cruiseMP>
+0
+</cruiseMP>
+
+<engine_type>
+8
+</engine_type>
+
+<fuel>
+0
+</fuel>
+
+<armor>
+22
+15
+15
+12
+</armor>
+
+<barrating>
+6
+</barrating>
+
+<structural_tech_rating>
+4
+</structural_tech_rating>
+
+<Body Equipment>
+Tractor
+Trailer
+ISOffRoadChassis
+</Body Equipment>
+
+<Front Equipment>
+</Front Equipment>
+
+<Front Right Equipment>
+</Front Right Equipment>
+
+<Front Left Equipment>
+</Front Left Equipment>
+
+<Rear Right Equipment>
+</Rear Right Equipment>
+
+<Rear Left Equipment>
+</Rear Left Equipment>
+
+<Rear Equipment>
+
+</Rear Equipment>
+
+<transporters>
+cargobay:21.5:2
+</transporters>
+
+<source>
+TRO: Vehicle Annex (Revised)
+</source>
+
+<tonnage>
+30
+</tonnage>

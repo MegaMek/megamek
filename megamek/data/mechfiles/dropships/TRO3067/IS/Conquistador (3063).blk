@@ -20,6 +20,10 @@ Conquistador
 (3063)
 </Model>
 
+<mul id:>
+3992
+</mul id:>
+
 <year>
 3063
 </year>
@@ -31,6 +35,10 @@ Conquistador
 <type>
 IS Level 3
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Aerodyne
@@ -258,7 +266,7 @@ ISAMS Ammo:168
 </structural_integrity>
 
 <source>
-TRO 3067 - Civil War
+TRO: 3067
 </source>
 
 <tonnage>

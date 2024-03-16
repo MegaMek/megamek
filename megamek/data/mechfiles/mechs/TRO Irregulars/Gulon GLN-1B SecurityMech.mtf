@@ -1,0 +1,152 @@
+chassis:Gulon SecurityMech
+model:GLN-1B
+mul id:7845
+
+Config:Biped
+techbase:Inner Sphere
+era:3000
+source:TRO: Irregulars
+rules level:2
+role:Ambusher
+
+mass:25
+engine:100 Fission Engine(IS)
+structure:IS Industrial
+myomer:Standard
+
+heat sinks:5 Single
+walk mp:4
+jump mp:0
+
+armor:Heavy Industrial(Inner Sphere)
+LA armor:7
+RA armor:7
+LT armor:8
+RT armor:8
+CT armor:13
+HD armor:8
+LL armor:10
+RL armor:10
+RTL armor:3
+RTR armor:3
+RTC armor:3
+
+Weapons:4
+Small Laser, Left Arm
+Small Laser, Left Arm
+Small Laser, Left Arm
+Medium Laser, Left Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Small Laser
+Small Laser
+Small Laser
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+MiningDrill
+MiningDrill
+MiningDrill
+MiningDrill
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Medium Laser
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+-Empty-
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

@@ -20,6 +20,10 @@ Schiltron Mobile Fire-Support Platform
 D
 </Model>
 
+<mul id:>
+2818
+</mul id:>
+
 <year>
 3063
 </year>
@@ -27,6 +31,10 @@ D
 <type>
 IS Level 2
 </type>
+
+<role>
+Juggernaut
+</role>
 
 <motion_type>
 Wheeled
@@ -99,7 +107,7 @@ ISRotaryAC5:OMNI
 </Turret Equipment>
 
 <source>
-Civil War
+TRO: 3060
 </source>
 
 <tonnage>

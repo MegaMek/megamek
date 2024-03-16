@@ -20,6 +20,10 @@ DI Morgan Assault Tank
 (Gauss)
 </Model>
 
+<mul id:>
+898
+</mul id:>
+
 <Tonnage>
 100
 </Tonnage>
@@ -63,12 +67,16 @@ ISTargeting Computer
 IS Level 2
 </type>
 
+<role>
+Sniper
+</role>
+
 <year>
 3075
 </year>
 
 <source>
-Jihad
+TRO: 3075
 </source>
 
 <internal_type>
@@ -86,3 +94,19 @@ Jihad
 <motion_type>
 Tracked
 </motion_type>
+
+<manufacturer>
+Defiance Motors, Defiance Industries
+</manufacturer>
+
+<primaryFactory>
+Tharkad, Hesperus II
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:300 GM XL Fusion
+ARMOR:Durallex Super Hvy Ferro-Fibrous
+COMMUNICATIONS:Neil 6000V
+TARGETING:Angst ClearView 2AV
+</systemManufacturers>

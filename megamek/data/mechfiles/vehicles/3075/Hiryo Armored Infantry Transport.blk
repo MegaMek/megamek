@@ -16,9 +16,13 @@ Tank
 Hiryo Armored Infantry Transport
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+1528
+</mul id:>
 
 <Tonnage>
 40
@@ -47,12 +51,16 @@ ISSNPPC
 IS Level 2
 </type>
 
+<role>
+Scout
+</role>
+
 <year>
 3069
 </year>
 
 <source>
-Jihad
+TRO: 3075
 </source>
 
 <internal_type>

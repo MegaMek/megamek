@@ -1,0 +1,164 @@
+chassis:Thunderbolt
+model:TDR-7M
+mul id:3244
+
+Config:Biped
+techbase:Inner Sphere
+era:3049
+source:Rec Guide:ilClan #15
+rules level:3
+role:Brawler
+
+
+
+quirk:multi_trac
+quirk:rugged_2
+quirk:ubiquitous_is
+
+
+mass:65
+engine:260 Fusion Engine(IS)
+structure:IS Standard
+myomer:Standard
+
+heat sinks:15 IS Double
+walk mp:4
+jump mp:0
+
+armor:Ferro-Fibrous(Inner Sphere)
+LA armor:20
+RA armor:20
+LT armor:24
+RT armor:24
+CT armor:30
+HD armor:9
+LL armor:28
+RL armor:28
+RTL armor:6
+RTR armor:6
+RTC armor:11
+
+Weapons:8
+Machine Gun, Left Arm
+Machine Gun, Left Arm
+ER Large Laser, Right Arm
+Medium Laser, Left Torso
+Medium Laser, Left Torso
+Medium Laser, Left Torso
+Streak SRM 2, Left Torso
+LRM 15, Right Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+Machine Gun
+Machine Gun
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISERLargeLaser
+ISERLargeLaser
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+
+Left Torso:
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+Medium Laser
+Medium Laser
+Medium Laser
+ISStreakSRM2
+IS Ammo LRM-15
+IS Ammo LRM-15
+IS Ammo MG - Full
+ISCASE
+IS Ferro-Fibrous
+
+Right Torso:
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+LRM 15
+LRM 15
+LRM 15
+IS Streak SRM 2 Ammo
+ISCASE
+IS Ferro-Fibrous
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+IS Ferro-Fibrous
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+IS Ferro-Fibrous
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+imagefile:.\data\images\fluff\Mech\Thunderbolt3050.jpg
+

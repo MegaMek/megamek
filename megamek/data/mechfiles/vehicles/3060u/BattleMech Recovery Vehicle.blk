@@ -12,9 +12,13 @@ Tank
 <Name>
 BattleMech Recovery Vehicle
 </Name>
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+304
+</mul id:>
 <Tonnage>
 50
 </Tonnage>
@@ -37,6 +41,10 @@ cargobay:10:1
 <type>
 IS Level 1
 </type>
+
+<role>
+None
+</role>
 <year>
 2500
 </year>
@@ -53,5 +61,5 @@ IS Level 1
 Wheeled
 </motion_type>
 <source>
-Star League
+TRO: 3060
 </source>

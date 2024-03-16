@@ -20,6 +20,10 @@ Shilone
 SL-17X
 </Model>
 
+<mul id:>
+2927
+</mul id:>
+
 <year>
 3075
 </year>
@@ -31,6 +35,10 @@ SL-17X
 <type>
 Mixed (IS Chassis) Experimental
 </type>
+
+<role>
+Dogfighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -106,7 +114,7 @@ ISImprovedHeavyGauss Ammo
 </Fuselage Equipment>
 
 <source>
-XTRO Kurita - Jihad
+XTR: Kurita
 </source>
 
 <tonnage>

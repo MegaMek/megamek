@@ -15,6 +15,10 @@ Tokugawa Heavy Tank
 <Model>
 (C3)
 </Model>
+
+<mul id:>
+3260
+</mul id:>
 <Tonnage>
 60
 </Tonnage>
@@ -47,6 +51,10 @@ ISC3SlaveUnit
 <type>
 IS Level 2
 </type>
+
+<role>
+Brawler
+</role>
 <year>
 3061
 </year>
@@ -63,5 +71,5 @@ IS Level 2
 Wheeled
 </motion_type>
 <source>
-Civil War
+TRO: 3058
 </source>

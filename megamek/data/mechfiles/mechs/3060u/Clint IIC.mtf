@@ -1,34 +1,39 @@
-Version:1.0
-Clint IIC
-(Standard)
-
+chassis:Clint IIC
+model:
+mul id:652
 Config:Biped
-TechBase:Clan
-Era:2842
-Source:TRO 3060
-Rules Level:2
+techbase:Clan
+era:2842
+source:TRO: 3060
+rules level:2
+role:Striker
 
-Mass:40
-Engine:240 XL (Clan) Engine
-Structure:Endo Steel
-Myomer:Standard
 
-Heat Sinks:10 Single
-Walk MP:6
-Jump MP:6
+quirk:imp_target_long
+quirk:imp_target_med
 
-Armor:Standard(Clan)
-LA Armor:9
-RA Armor:9
-LT Armor:13
-RT Armor:13
-CT Armor:15
-HD Armor:9
-LL Armor:16
-RL Armor:16
-RTL Armor:4
-RTR Armor:4
-RTC Armor:4
+
+mass:40
+engine:240 XL (Clan) Engine(IS)
+structure:Clan Endo Steel
+myomer:Standard
+
+heat sinks:10 Single
+walk mp:6
+jump mp:6
+
+armor:Standard(Clan)
+LA armor:9
+RA armor:9
+LT armor:13
+RT armor:13
+CT armor:15
+HD armor:9
+LL armor:16
+RL armor:16
+RTL armor:4
+RTR armor:4
+RTC armor:4
 
 Weapons:3
 LB 10-X AC, Right Arm
@@ -68,9 +73,9 @@ Fusion Engine
 Fusion Engine
 Jump Jet
 CLERMediumLaser
-Endo Steel
-Endo Steel
-Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -86,9 +91,9 @@ Clan LB 10-X AC Ammo
 Clan LB 10-X AC Ammo
 Clan LB 10-X Cluster Ammo
 Clan LB 10-X Cluster Ammo
-Endo Steel
-Endo Steel
-Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 
 Center Torso:
@@ -103,7 +108,7 @@ Fusion Engine
 Fusion Engine
 Fusion Engine
 CLERMediumLaser
-Endo Steel
+Clan Endo Steel
 
 Head:
 Life Support
@@ -147,4 +152,20 @@ Jump Jet
 -Empty-
 -Empty-
 
+overview:The Clan refit of the prototyle Clint the SLDF took into exile. Primarily designed as a cheap recon unit, with the capabilities of a well-armed, low-end medium weight 'Mech, and in this regard it served well. 
+
+capabilities:It is capable of ranging far beyond supply lines thanks to its four tons of ammunition, though it only uses 10 single heat sinks and seven tons of standard armor.	
+
+deployment:This speedy medium 'Mech is armed with a Type KOV LB 10-X AC and a pair of Series 2d ER medium lasers. This makes the Clint IIC an effective light 'Mech killer. 
+
+history:When General Aleksandr Kerensky led most of the Star League Defense Force into exile in 2784, they brought prototypes of the Clint BattleMech with them. After the annihilation of Clan Wolverine, Clan Snow Raven revisited these prototypes and was able to begin mass-production of the 'Mech in 2830 and introduced them in 2842. They ensured that it kept up with advances in Clan technology, eventually becoming the design that is now known as the Clint IIC. Production ceased in 2917, and in the late 30th century, the Ravens decided to decommission many less-effective designs of all sorts. It seemed fortuitous, then, when Clan Blood Spirit offered to trade some of their WarShips to the Ravens in exchange for ground units. The Ravens were only too happy to get rid of vehicles that were going to be stockpiled anyways, so many Clint IICs found their way into Clan Blood Spirit, but most of them were subsequently destroyed during the Spirits' conflict with the Adders and Burrocks. The waning fortunes of the Clint IIC were reversed in 3052, when the Ravens restarted production of the 'Mech to trade to the invading Clans for resources from the Inner Sphere.
+
+manufacturer:Clan Snow Raven Industrial Complex Chi,Snow Raven Industrial Complex Alpha (Refit)
+primaryfactory:Dante, Unknown
+systemmanufacturer:CHASSIS:SR 2830/b
+systemmanufacturer:ENGINE:Type 81 Fusion 240 XL
+systemmanufacturer:ARMOR:Forging C629/j
+systemmanufacturer:JUMPJET:Andoran Model JJII
+systemmanufacturer:COMMUNICATIONS:Raldon R1
+systemmanufacturer:TARGETING:Sloane 220 Lockover System
 

@@ -20,6 +20,10 @@ Model 96 'Elephant'
 Mk I
 </Model>
 
+<mul id:>
+4650
+</mul id:>
+
 <year>
 2600
 </year>
@@ -31,6 +35,10 @@ Mk I
 <type>
 IS Level 3
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Spheroid
@@ -166,7 +174,7 @@ ISNavalTugAdaptor
 </structural_integrity>
 
 <source>
-TRO 3075 - Star League
+TRO: 3075
 </source>
 
 <tonnage>

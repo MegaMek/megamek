@@ -1,38 +1,44 @@
-Version:1.0
-Helepolis
-HEP-2H
-
+chassis:Helepolis
+model:HEP-2H
+mul id:1461
 Config:Biped
-TechBase:Inner Sphere
-Era:2488
-Source:TRO 3075
-Rules Level:3
+techbase:Inner Sphere
+era:2567
+source:TRO: 3075
+rules level:3
+role:Missile Boat
 
-Mass:75
-Engine:225 Fusion Engine
-Structure:Standard
-Myomer:Standard
 
-Heat Sinks:10 Double
-Walk MP:3
-Jump MP:0
 
-Armor:Standard(Inner Sphere)
-LA Armor:22
-RA Armor:22
-LT Armor:21
-RT Armor:21
-CT Armor:31
-HD Armor:9
-LL Armor:25
-RL Armor:25
-RTL Armor:10
-RTR Armor:10
-RTC Armor:12
+quirk:reinforced_legs
+quirk:stable
+
+
+mass:75
+engine:225 Fusion Engine(IS)
+structure:IS Standard
+myomer:Standard
+
+heat sinks:10 IS Double
+walk mp:3
+jump mp:0
+
+armor:Standard(Inner Sphere)
+LA armor:22
+RA armor:22
+LT armor:21
+RT armor:21
+CT armor:31
+HD armor:9
+LL armor:25
+RL armor:25
+RTL armor:10
+RTR armor:10
+RTC armor:12
 
 Weapons:5
-Sniper, Right Arm
 Large Laser, Left Arm
+Sniper, Right Torso
 LRM 10, Left Torso
 SRM 6, Center Torso
 Medium Laser, Head
@@ -149,4 +155,19 @@ Foot Actuator
 -Empty-
 -Empty-
 
+overview:First unleashed by the Terran Hegemony in 2460, the Helepolis is a ponderous BattleMech designed to deliver artillery fire. 	
+
+capabilities:The Helepolis is built around an Armstrong Industries Sniper Artillery Piece. The accurate, long-range fire makes it effective against static defenses. 
+
+deployment:The 'Mech does carry some backup weapons to augment its screening forces. It can defend itself with a Coventry Starfire LRM-10 and Nova Large Laser. If an enemy gets close, the MechWarrior can call upon a Thunderstroke SRM-6 and a Starflash medium laser.
+
+history:The 'Mech was proven ineffective on multiple occasions and, following the destruction of the production facilities in 2775, the design was lost during the Succession Wars. The HEP-2H dates to 2567, replacing the 2X. The Helepolis is a slow heavy 'Mech with a maximum speed of 54 km/h. It has a respectable thirteen tons of armor, however. When rebels within the Hegemony military launched the September Revolt, the new Director-General, Ian Cameron deployed batteries of Helepolis 'Mechs to keep them pinned down within the capital city of Geneva on Terra.
+
+manufacturer:Mitchell Vehicles
+primaryfactory:Graham IV
+systemmanufacturer:CHASSIS:Mitchell Heavy HEP
+systemmanufacturer:ENGINE:VOX 225
+systemmanufacturer:ARMOR:Armorscale with CASE
+systemmanufacturer:COMMUNICATIONS:Exeter Longscan 100
+systemmanufacturer:TARGETING:Tacticon Tracer 150b
 

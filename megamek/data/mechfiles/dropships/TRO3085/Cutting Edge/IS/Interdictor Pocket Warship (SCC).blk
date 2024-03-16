@@ -20,6 +20,10 @@ Interdictor Pocket Warship
 (SCC)
 </Model>
 
+<mul id:>
+4366
+</mul id:>
+
 <year>
 3078
 </year>
@@ -31,6 +35,10 @@ Interdictor Pocket Warship
 <type>
 IS Level 3
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Aerodyne
@@ -189,7 +197,7 @@ IS Ammo MML-9 SRM Artemis-capable:66
 </structural_integrity>
 
 <source>
-TRO 3085 - Jihad
+TRO: 3085
 </source>
 
 <tonnage>

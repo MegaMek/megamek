@@ -1,34 +1,40 @@
-Version:1.0
-Nightsky
-NGS-4S
-
+chassis:Nightsky
+model:NGS-4S
+mul id:2279
 Config:Biped
-TechBase:Inner Sphere
-Era:3053
-Source:TRO 3055 - Clan Invasion
-Rules Level:2
+techbase:Inner Sphere
+era:3053
+source:TRO: 3055
+rules level:2
+role:Striker
 
-Mass:50
-Engine:300 XL Engine
-Structure:Standard
-Myomer:Standard
 
-Heat Sinks:11 Double
-Walk MP:6
-Jump MP:6
 
-Armor:Standard(Inner Sphere)
-LA Armor:14
-RA Armor:14
-LT Armor:18
-RT Armor:18
-CT Armor:23
-HD Armor:9
-LL Armor:20
-RL Armor:20
-RTL Armor:5
-RTR Armor:5
-RTC Armor:6
+
+weaponquirk:mod_weapons:RA:4:Hatchet
+
+
+mass:50
+engine:300 XL Engine(IS)
+structure:IS Standard
+myomer:Standard
+
+heat sinks:11 IS Double
+walk mp:6
+jump mp:6
+
+armor:Standard(Inner Sphere)
+LA armor:14
+RA armor:14
+LT armor:18
+RT armor:18
+CT armor:23
+HD armor:9
+LL armor:20
+RL armor:20
+RTL armor:5
+RTR armor:5
+RTC armor:6
 
 Weapons:4
 Large Pulse Laser, Left Arm
@@ -148,4 +154,20 @@ Jump Jet
 -Empty-
 -Empty-
 
+overview:The Nightsky was a mid-range continuation of the Federated Commonwealth's successful Hatchetman-Axman series, which established melee combat weapons as a powerful and heat-efficient close-combat option for the experienced MechWarrior. Intended to provide both speed and firepower.
+
+capabilities:The Nightsky is built around a massive Vlar 300 XL extralight engine that propels the 'Mech up to speeds of 97.2 km/h. Superb ground speed and the added maneuverability provided by six HildCo Model 13 jump jets that allow the Nightsky to jump up to 180 meters make the Nightsky a capable heavy recon 'Mech. It is also protected with nine and a half tons of armor, providing the Nightsky with good armor protection for its size.
+
+deployment:The Nightsky is built with a powerful close range arsenal. The centerpiece of this is a massive four-ton hatchet that is built into its right arm, which allows the 'Mech to cut through another 'Mech's armor. The Nightsky is also armed with a Sutel Precision Line large pulse laser for medium to long range firepower, supported by two Sutel Precision Line medium pulse lasers and a Sutel Precision Line small pulse laser for close range support.
+
+history:After their introduction in 3053, Nightskys quickly proliferated throughout the Federated Commonwealth, with many replacing Hatchetmen or Axmen lost in the early years of the Clan invasion. The distribution of this design had become fairly even between the two once-allied states by the time of the Lyran secession from the Commonwealth, resulting in Nightskys appearing among as many pro-Victor Davion troops as pro-Katherine Steiner forces during the FedCom Civil War.
+
+manufacturer:Defiance Industries
+primaryfactory:Hesperus II
+systemmanufacturer:CHASSIS:Dorwinion Standard
+systemmanufacturer:ENGINE:Vlar 300 XL
+systemmanufacturer:ARMOR:Kallon Royalstar
+systemmanufacturer:JUMPJET:HildCo Model 13
+systemmanufacturer:COMMUNICATIONS:TharHes Calliope Hm10
+systemmanufacturer:TARGETING:TharHes Ares-8a
 

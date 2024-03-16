@@ -1,33 +1,41 @@
-Version:1.0
-Pendragon
-PDG-1R
-
+chassis:Pendragon
+model:PDG-1R
+mul id:4799
 Config:Biped
-TechBase:Inner Sphere
-Era:3083
-Rules Level:4
+techbase:Inner Sphere
+era:3083
+source:TRO: Prototypes
+rules level:3
+role:Missile Boat
 
-Mass:95
-Engine:380 XL Engine(IS)
-Structure:Composite
-Myomer:Standard
 
-Heat Sinks:14 Double
-Walk MP:4
-Jump MP:0
 
-Armor:Ferro-Fibrous(Inner Sphere)
-LA Armor:32
-RA Armor:32
-LT Armor:30
-RT Armor:30
-CT Armor:48
-HD Armor:9
-LL Armor:40
-RL Armor:40
-RTL Armor:10
-RTR Armor:10
-RTC Armor:12
+quirk:no_arms
+quirk:difficult_maintain
+quirk:imp_target_long
+
+
+mass:95
+engine:380 XL Engine(IS)
+structure:IS Composite
+myomer:Standard
+
+heat sinks:14 IS Double
+walk mp:4
+jump mp:0
+
+armor:Ferro-Fibrous(Inner Sphere)
+LA armor:32
+RA armor:32
+LT armor:30
+RT armor:30
+CT armor:48
+HD armor:9
+LL armor:40
+RL armor:40
+RTL armor:10
+RTR armor:10
+RTC armor:12
 
 Weapons:6
 Extended LRM 15, Left Arm
@@ -73,11 +81,11 @@ ISERPPC
 ISERPPC
 ISERPPC
 PPC Capacitor
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 
 Right Torso:
 Fusion Engine
@@ -86,11 +94,11 @@ Fusion Engine
 ISERMediumLaser
 ISERMediumLaser
 ISERMediumLaser
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 -Empty-
 
 Center Torso:
@@ -126,8 +134,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Ferro-Fibrous
-Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -140,8 +148,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Ferro-Fibrous
-Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-

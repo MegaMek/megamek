@@ -20,6 +20,10 @@ Generic Expandable Services Vehicle
 (Command Post)
 </Model>
 
+<mul id:>
+4207
+</mul id:>
+
 <year>
 3066
 </year>
@@ -31,6 +35,10 @@ Generic Expandable Services Vehicle
 <type>
 IS Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Wheeled
@@ -89,7 +97,7 @@ RemoteSensorDispenser:OMNI
 </structural_tech_rating>
 
 <source>
-HB:House Davion - Civil War
+Handbook: House Davion
 </source>
 
 <tonnage>

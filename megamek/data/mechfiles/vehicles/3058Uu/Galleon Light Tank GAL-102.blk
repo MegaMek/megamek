@@ -15,6 +15,10 @@ Galleon Light Tank
 <Model>
 GAL-102
 </Model>
+
+<mul id:>
+1176
+</mul id:>
 <Tonnage>
 30
 </Tonnage>
@@ -43,6 +47,10 @@ ISBeagleActiveProbe
 <type>
 IS Level 2
 </type>
+
+<role>
+Striker
+</role>
 <year>
 3048
 </year>
@@ -58,6 +66,43 @@ IS Level 2
 <motion_type>
 Tracked
 </motion_type>
+
+<capabilities>
+With a top speed faster than most 'Mechs, the Galleon was well-armed but lacked protection, carrying only three and a half tons of armor.
+</capabilities>
+
+<overview>
+A light combat vehicle that first saw production in 2692 the Galleon proved to be an economical means of supporting infantry and BattleMechs.
+</overview>
+
+<deployment>
+This 3048 upgrade uses a fusion engine to increase the Galleon's top speed to 119 km/h. The medium laser is upgraded to a Priestly 600p Medium Pulse Laser, while the small Model 12s are upgraded to Hellion-V medium lasers. Jolassa 328 ferro-fibrous armor improved the protection for this tank, while a Beagle Active Probe enables the Galleon to find hidden units, its also equipped with a Maxell 500 comsys. Production of this model first began in 3048.
+</deployment>
+
+<history>
+Despite this, the vehicle served well during the Amaris Civil War, and after the Exodus, these tracked vehicles mostly fell into the possession of the Draconis Combine and the Free Worlds League. The Galleon is often paired with the Harasser Missile Platform.
+</history>
+
+<manufacturer>
+Irian,Kendall
+</manufacturer>
+
+<primaryFactory>
+Brooks Incorporated,Brooks Incorporated
+</primaryFactory>
+
+<systemManufacturers>
+ENGINE:GTEM 200 Fusion
+ARMOR:Jolassa 328 Ferro-Fibrous
+COMMUNICATIONS:Maxell 500
+TARGETING:Maxell TA50 with Beagle active Probe
+</systemManufacturers>
+
 <source>
-Succession Wars
+TRO: 3058 Upgrade
 </source>
+
+<quirks>
+ubiquitous_is
+</quirks>
+

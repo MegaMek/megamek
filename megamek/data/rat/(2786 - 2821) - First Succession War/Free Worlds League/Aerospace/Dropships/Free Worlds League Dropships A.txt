@@ -1,5 +1,5 @@
 Free Worlds League Dropships A
-Dictator (Standard),1
+Dictator,1
 Leopard CV (2581),2
 Triumph (2593),3
 Union (2708),4

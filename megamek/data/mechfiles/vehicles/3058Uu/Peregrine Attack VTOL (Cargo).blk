@@ -15,6 +15,10 @@ Peregrine Attack VTOL
 <Model>
 (Cargo)
 </Model>
+
+<mul id:>
+2477
+</mul id:>
 <Tonnage>
 30
 </Tonnage>
@@ -40,6 +44,10 @@ Cargo (1 ton)
 <type>
 IS Level 1
 </type>
+
+<role>
+None
+</role>
 <year>
 3036
 </year>
@@ -56,5 +64,5 @@ IS Level 1
 VTOL
 </motion_type>
 <source>
-Succession Wars
+TRO: 3058
 </source>

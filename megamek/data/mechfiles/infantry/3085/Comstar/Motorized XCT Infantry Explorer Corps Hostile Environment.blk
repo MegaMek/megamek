@@ -15,6 +15,10 @@ Motorized XCT Infantry
 <Model>
 Explorer Corps Hostile Environment
 </Model>
+
+<mul id:>
+2241
+</mul id:>
 <squad_size>
 6
 </squad_size>
@@ -36,11 +40,15 @@ ISEnvironmentSuitHostile
 <type>
 IS Level 3
 </type>
+
+<role>
+Scout
+</role>
 <year>
 3058				
 </year>
 <era>
-TRO 3085 - Clan Invasion
+TRO: 3085
 </era>
 <motion_type>
 Motorized

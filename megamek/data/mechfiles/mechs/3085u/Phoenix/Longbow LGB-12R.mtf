@@ -1,12 +1,21 @@
-Version:1.0
-Longbow
-LGB-12R
+chassis:Longbow
+model:LGB-12R
+mul id:1932
 
 Config:Biped
 techbase:Inner Sphere
 era:3082
-source:Dark Age
+source:TRO: 3085
 rules level:2
+role:Missile Boat
+
+
+
+quirk:anti_air
+quirk:searchlight
+quirk:ubiquitous_is
+quirk:no_arms
+
 
 mass:85
 engine:255 Light Engine(IS)

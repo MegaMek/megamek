@@ -1,12 +1,19 @@
-Version:1.0
-Vulture Mk IV (Mad Dog Mk IV)
-A
+chassis:Vulture Mk IV
+clanname:Mad Dog Mk IV
+model:A
+mul id:6559
 
 Config:Biped Omnimech
 TechBase:Clan
 Era:3137
-Source:TRO 3145 Mercenaries - Dark Ages
+Source:TRO: 3145 Mercenaries
 Rules Level:3
+role:Sniper
+
+quirk:stable
+quirk:pro_actuator
+quirk:non_standard
+
 
 Mass:60
 Engine:300 XL (Clan) Engine(IS)

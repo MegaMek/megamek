@@ -15,6 +15,10 @@ Tokugawa Heavy Tank
 <Model>
 (Streak)
 </Model>
+
+<mul id:>
+3264
+</mul id:>
 <Tonnage>
 60
 </Tonnage>
@@ -45,6 +49,10 @@ IS Streak SRM 6 Ammo
 <type>
 IS Level 2
 </type>
+
+<role>
+Brawler
+</role>
 <year>
 3063
 </year>
@@ -61,5 +69,5 @@ IS Level 2
 Wheeled
 </motion_type>
 <source>
-Civil War
+TRO: 3058
 </source>

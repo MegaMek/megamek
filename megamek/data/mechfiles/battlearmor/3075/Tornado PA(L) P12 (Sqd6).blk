@@ -1,0 +1,116 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+Tornado PA(L)
+</Name>
+
+<Model>
+P12 'Hurricane'(Sqd6)
+</Model>
+
+<mul id:>
+9056
+</mul id:>
+
+<chassis>
+biped
+</chassis>
+
+<weightclass>
+0
+</weightclass>
+
+<Trooper Count>
+6
+</Trooper Count>
+
+<cruiseMP>
+1
+</cruiseMP>
+
+<Armor>
+2
+</Armor>
+
+<Squad Equipment>
+BAAPMount:RA
+Simple Camo:Body
+BAArmoredGlove:LA
+BAArmoredGlove:RA
+InfantryAssaultRifle:RA:APM
+IS BA Stealth (Basic):RA
+IS BA Stealth (Basic):LA
+IS BA Stealth (Basic):LA
+</Squad Equipment>
+
+<type>
+IS Level 2
+</type>
+
+<role>
+Ambusher
+</role>
+
+<year>
+2905
+</year>
+
+<motion_type>
+Leg
+</motion_type>
+
+<source>
+TRO: 3075
+</source>
+
+<armor_type>
+31
+</armor_type>
+
+<armor_tech>
+3
+</armor_tech>
+
+<overview>
+The Tornado is a Power Armor (Light) suit, created by ComStar in the late twenty-ninth century to equip their special forces units with added protection. The Tornado is based on the Star League Defense Force Nighthawk suit which, though they had acquired several, ComStar at the time was unable to produce. 
+</overview>
+
+<capabilities>
+Incorporating stealth armor and an adaptive Camo System which mimics the effects of a combination Camo/IR/ECM Sneak Suit, hiding the Tornado from all types of sensors. The armor is also good enough to stop small-arms fire and even heavy weapons like a Flamer from hurting the wearer. A built-in HUD system provides a wealth of information on the suit and surrounding environment, including low-light and visual magnification gear, though some chose to forgo the protection and electronic aids for unimpeded hearing and vision. The suit does not aid mobility in any way though, so a Tornado squad is no faster than a comparable squad of foot infantry, though it does include two connection ports at the waist allowing modified weapons to draw energy from its military power pack. In a similar fashion to the Nighthawk it is based on, the Tornado mounts no integral weapon systems. It does, however, incorporate two Armored Gloves, allowing the wearer to use standard infantry weapons. The gloves also permit the wearer to perform anti-'Mech swarming attacks and to use the handholds on OmniMechs. The suit functions without the gloves as well, so a trooper can remove them to improve his or her manual dexterity at the expense of protection.
+</capabilities>
+
+<deployment>
+In a similar fashion to the Nighthawk it is based on, the Tornado mounts no integral weapon systems. It does, however, incorporate two Armored Gloves, allowing the wearer to use standard infantry weapons. The gloves also permit the wearer to perform anti-'Mech swarming attacks and to use the handholds on OmniMechs. The suit functions without the gloves as well, so a trooper can remove them to improve his or her manual dexterity at the expense of protection.
+</deployment>
+
+<history>
+The Tornado is based on the Star League Defense Force Nighthawk suit which, though they had acquired several, ComStar at the time was unable to produce. The Tornado is custom-fitted to the wearer, which makes them unusable by anyone else without major adjustments and also means the user must maintain their physical condition. The advantages of the suit make up for this drawback, as it increases the wearer's strength, allowing them to hit hard and faster than unarmored infantry while avoiding the bulk of full battle armor. The P12 Tornado was used multiple times throughout the thirtieth and thirty-first century by ComStar and its intelligence service ROM, particularly against the Draconis Combine, though in the wake of the ComStar Schism these suits also fell into the hands of the Word of Blake. During the infamous Operation Odysseus, Blakist special forces wearing Tornado suits were able to overpower the unarmored guards protecting Terra's SDS in advance of the main invasion force, and were later instrumental in securing the Titan Shipyards. While ComStar still maintains their P12 "Hurricane" models, the Word of Blake changed the designation of their Tornado suits designation to "G12" and altered the software and user interface, not only to prevent possible ComStar infiltration but to also enhance situational awareness so that users were less inclined to remove the helmet. Additionally they increased production of their Tornado suits, though not for their personal use since it had fallen out of favor for the SLDF Nighthawk suits which the Word of Blake could now build on their own. Instead these new "G12"s were used to equip Blakist marines and security troops as well as being sold to the Free Worlds League, with Free World Defense Industries producing their own versions of the suits on Gibson.
+</history>
+
+<manufacturer>
+Free Worlds Defence Industries,Krupp Armament Works
+</manufacturer>
+
+<primaryFactory>
+Gibson,Terra,Various
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+JUMPJET:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>

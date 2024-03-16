@@ -14,7 +14,10 @@
 
 package megamek.common;
 
+import megamek.common.weapons.Weapon;
+
 import java.util.Hashtable;
+import java.util.Objects;
 
 /**
  * <p>
@@ -27,7 +30,7 @@ import java.util.Hashtable;
  * to the mode identified by the given name.
  * <p>
  * There is no way to create the instance of the <code>EquipmentMode</code>
- * directly, use </code>EquipmentMode#getMode</code> instead.
+ * directly, use <code>EquipmentMode#getMode</code> instead.
  * 
  * @see megamek.common.EquipmentType
  * @see megamek.common.Mounted
@@ -55,8 +58,7 @@ public class EquipmentMode {
      * @param name unique mode identifier
      */
     protected EquipmentMode(String name) {
-        assert (name != null) : "Name must not be null";
-        this.name = name;
+        this.name = Objects.requireNonNull(name);
     }
 
     /**
@@ -78,8 +80,10 @@ public class EquipmentMode {
      */
     public String getDisplayableName(boolean wantNormal) {
         String result = EquipmentMessages.getString("EquipmentMode." + name);
-        if ((result != null) && (!wantNormal || result.length() > 0))
+        if ((result != null) && (!wantNormal || !result.isBlank())) {
             return result;
+        }
+
         if (wantNormal) {
             return EquipmentMessages.getString("EquipmentMode.Normal");
         } else {
@@ -112,5 +116,13 @@ public class EquipmentMode {
     @Override
     public String toString() {
         return getName();
+    }
+
+    public boolean isHeat() {
+        return name.equals(Weapon.MODE_FLAMER_HEAT) || name.equals(Weapon.MODE_INDIRECT_HEAT);
+    }
+
+    public boolean isIndirect() {
+        return name.equals(Weapon.MODE_MISSILE_INDIRECT) || name.equals(Weapon.MODE_INDIRECT_HEAT);
     }
 }

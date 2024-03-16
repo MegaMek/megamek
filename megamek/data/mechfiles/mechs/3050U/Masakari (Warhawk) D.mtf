@@ -1,12 +1,17 @@
-Version:1.1
-Masakari (Warhawk)
-D
+chassis:Masakari
+clanname:Warhawk
+model:D
+mul id:2094
 
 Config:Biped Omnimech
 TechBase:Clan
 Era:3054
-Source:TRO 3050 - Clan Invasion
+Source:TRO: 3050
 Rules Level:2
+role:Sniper
+
+quirk:imp_target_long
+
 
 Mass:85
 Engine:340 XL (Clan) Engine(IS)
@@ -164,5 +169,4 @@ systemmanufacturer:CHASSIS:Huntress WH
 systemmanufacturer:ENGINE:General Systems 340 XL
 systemmanufacturer:ARMOR:Forging X85 Ferro-Fibrous
 systemmanufacturer:COMMUNICATIONS:Series 10 CBS MultiFreq
-systemmanufacturer:TARGETING:HawkEye J360 CBS MultiFreq
 systemmanufacturer:TARGETING:HawkEye J360

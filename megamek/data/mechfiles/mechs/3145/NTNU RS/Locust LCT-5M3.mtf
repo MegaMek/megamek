@@ -1,12 +1,22 @@
-Version:1.0
-Locust
-LCT-5M3
+chassis:Locust
+model:LCT-5M3
+mul id:6948
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3088
-Source:RS 3145 NT NU
+Source:Record Sheets: 3145 New Tech New Upgrades
 Rules Level:2
+role:Scout
+
+
+
+quirk:compact_mech
+quirk:low_profile
+quirk:cramped_cockpit
+quirk:no_arms
+quirk:weak_legs
+
 
 Mass:20
 Engine:180 XL Engine(IS)

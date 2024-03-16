@@ -20,6 +20,10 @@ Intruder
 (2655)
 </Model>
 
+<mul id:>
+4368
+</mul id:>
+
 <year>
 2655
 </year>
@@ -31,6 +35,10 @@ Intruder
 <type>
 IS Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Spheroid
@@ -151,7 +159,7 @@ Medium Laser
 </structural_integrity>
 
 <source>
-TRO 3057R - Star League
+TRO: 3057 Revised
 </source>
 
 <tonnage>

@@ -20,6 +20,10 @@ Defiance
 DFC-O
 </Model>
 
+<mul id:>
+4059
+</mul id:>
+
 <year>
 3067
 </year>
@@ -31,6 +35,10 @@ DFC-O
 <type>
 IS Level 2
 </type>
+
+<role>
+Dogfighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -104,7 +112,7 @@ IS Gauss Ammo:OMNI
 </Fuselage Equipment>
 
 <source>
-TRO 3067 - Civil War
+TRO: 3067
 </source>
 
 <tonnage>

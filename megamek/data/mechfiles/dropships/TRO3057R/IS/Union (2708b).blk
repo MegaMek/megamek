@@ -20,6 +20,10 @@ Union
 (2708b)
 </Model>
 
+<mul id:>
+5323
+</mul id:>
+
 <year>
 2708
 </year>
@@ -138,7 +142,7 @@ ISMediumPulseLaser
 </structural_integrity>
 
 <source>
-TRO 3057R - Star League
+TRO: 3057 Revised
 </source>
 
 <tonnage>

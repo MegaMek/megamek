@@ -45,7 +45,7 @@ public class CLProtoMechAC4 extends ProtoMechACWeapon {
         longAV = 4;
         maxRange = RANGE_MED;
         explosionDamage = damage;
-        rulesRefs = "286,TO";
+        rulesRefs = "286, TO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TECH_BASE_CLAN)
                 .setTechRating(RATING_F).setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)

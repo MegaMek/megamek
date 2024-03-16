@@ -20,6 +20,10 @@ Prowler Multi-Terrain Vehicle
 (Sealed)
 </Model>
 
+<mul id:>
+2585
+</mul id:>
+
 <Tonnage>
 55
 </Tonnage>
@@ -63,12 +67,16 @@ Environmental Sealing
 IS Level 3
 </type>
 
+<role>
+Brawler
+</role>
+
 <year>
 2960
 </year>
 
 <source>
-Succession Wars
+TRO: 3085
 </source>
 
 <internal_type>

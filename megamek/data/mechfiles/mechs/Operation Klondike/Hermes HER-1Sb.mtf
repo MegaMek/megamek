@@ -1,12 +1,19 @@
-Version:1.0
-Hermes
-HER-1Sb
+chassis:Hermes
+model:HER-1Sb
+mul id:1488
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2740
-Source:Hist:Op Klondike - Star League
+Source:Historical: Operation Klondike
 Rules Level:2
+role:Striker
+
+
+
+quirk:imp_com
+quirk:stable
+
 
 Mass:30
 Engine:270 XL Engine(IS)

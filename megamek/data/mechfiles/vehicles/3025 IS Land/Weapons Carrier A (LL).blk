@@ -15,6 +15,10 @@ Weapons Carrier A
 <Model>
 (LL)
 </Model>
+
+<mul id:>
+5397
+</mul id:>
 <Tonnage>
 25
 </Tonnage>
@@ -37,6 +41,10 @@ TroopSpace:6
 <type>
 IS
 </type>
+
+<role>
+None
+</role>
 <year>
 2925
 </year>
@@ -52,3 +60,7 @@ IS
 <motion_type>
 Hover
 </motion_type>
+
+<source>
+TRO: 3025
+</source>

@@ -1,12 +1,22 @@
-Version:1.1
-Eisenfaust
-EFT-2
+chassis:Eisenfaust
+model:EFT-2
+mul id:5618
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2471
-Source:XTRO Primitives III - Age of War
+Source:XTR: Primitives III
 Rules Level:4
+role:Juggernaut
+
+
+
+
+quirk:obsolete
+quirk:poor_performance
+quirk:prototype
+weaponquirk:poor_cooling:LA:4:Large Laser
+
 
 Mass:45
 Engine:110 Fusion Engine(IS)

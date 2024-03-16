@@ -20,6 +20,10 @@ Heavy Wheeled APC
 (WoB)
 </Model>
 
+<mul id:>
+1459
+</mul id:>
+
 <Tonnage>
 20
 </Tonnage>
@@ -85,6 +89,10 @@ ISSmallVariableSpeedLaser
 IS Level 3
 </type>
 
+<role>
+Scout
+</role>
+
 <year>
 3072
 </year>
@@ -114,5 +122,5 @@ TroopSpace:6
 </transporters>
 
 <source>
-Jihad
+TRO: 3060
 </source>

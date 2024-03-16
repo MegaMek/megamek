@@ -12,8 +12,8 @@
  */
 package megamek.common;
 
-import java.text.NumberFormat;
-
+import megamek.client.ui.swing.calculationReport.CalculationReport;
+import megamek.common.cost.SpaceStationCostCalculator;
 import megamek.common.options.OptionsConstants;
 
 /**
@@ -22,9 +22,12 @@ import megamek.common.options.OptionsConstants;
  */
 public class SpaceStation extends Jumpship {
     private static final long serialVersionUID = -3160156173650960985L;
-    
+
+    /** A station over this weight in may built as a modular station. */
+    public static final double MODULAR_MININUM_WEIGHT = 100000.0;
+
     // This only affects cost, but may have an effect in a large-scale strategic setting.
-    private boolean modular = false;
+    private boolean modularOrKFAdapter = false;
     
     @Override
     public int getUnitType() {
@@ -43,6 +46,14 @@ public class SpaceStation extends Jumpship {
             .setAvailability(RATING_C, RATING_D, RATING_C, RATING_C)
             .setStaticTechLevel(SimpleTechLevel.ADVANCED);
 
+    private static final TechAdvancement TA_SPACE_STATION_KF_ADAPTER = new TechAdvancement(TECH_BASE_ALL)
+            .setISAdvancement(2350, 2375, DATE_NONE, 2850, 3048).setClanAdvancement(2350, 2375)
+            .setPrototypeFactions(F_TH).setProductionFactions(F_TH)
+            // The adapter itself is tech rating C, but this is the base for a station with an adapter.
+            .setReintroductionFactions(F_FS).setTechRating(RATING_D)
+            .setAvailability(RATING_D, RATING_F, RATING_D, RATING_D)
+            .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+
     private static final TechAdvancement TA_SPACE_STATION_MODULAR = new TechAdvancement(TECH_BASE_ALL)
             .setISAdvancement(2565, 2585, DATE_NONE, 2790, 3090).setClanAdvancement(2565, 2585)
             .setPrototypeFactions(F_TH).setProductionFactions(F_TH)
@@ -52,186 +63,59 @@ public class SpaceStation extends Jumpship {
 
     @Override
     public TechAdvancement getConstructionTechAdvancement() {
-        return modular? TA_SPACE_STATION_MODULAR : TA_SPACE_STATION;
+        if (isModular()) {
+            return TA_SPACE_STATION_MODULAR;
+        } else if (hasKFAdapter()) {
+            return TA_SPACE_STATION_KF_ADAPTER;
+        } else {
+            return TA_SPACE_STATION;
+        }
     }
-    
+
+    public static TechAdvancement getKFAdapterTA() { return TA_SPACE_STATION_KF_ADAPTER; }
+
     public static TechAdvancement getModularTA() {
         return TA_SPACE_STATION_MODULAR;
     }
-    
+
     /**
      * Designates whether this is a modular space station
-     * @param modular
+     * @param modularOrKFAdapter Whether the space station can be transported by jumpship.
      */
-    public void setModular(boolean modular) {
-        this.modular = modular;
+    public void setModularOrKFAdapter(boolean modularOrKFAdapter) {
+        this.modularOrKFAdapter = modularOrKFAdapter;
     }
     
     /**
-     * @return True if this space station has a modular construction, otherwise false.
+     * @return True if this space station has a modular construction (or has a KF adapter for stations less than 100kt,
+     *         otherwise false.
      */
+    public boolean isModularOrKFAdapter() {
+        return modularOrKFAdapter;
+    }
+
     public boolean isModular() {
-        return modular;
+        return modularOrKFAdapter && getWeight() > MODULAR_MININUM_WEIGHT;
+    }
+
+    public boolean hasKFAdapter() {
+        return modularOrKFAdapter && getWeight() <= MODULAR_MININUM_WEIGHT;
     }
 
     @Override
-    public double getCost(boolean ignoreAmmo) {
-        double[] costs = new double[21];
-        int costIdx = 0;
-        double cost = 0;
-
-        // Control Systems
-        // Bridge
-        costs[costIdx++] += 200000 + 10 * weight;
-        // Computer
-        costs[costIdx++] += 200000;
-        // Life Support
-        costs[costIdx++] += 5000 * (getNCrew() + getNPassenger());
-        // Sensors
-        costs[costIdx++] += 80000;
-        // Fire Control Computer
-        costs[costIdx++] += 100000;
-        // Gunnery Control Systems
-        costs[costIdx++] += 10000 * getArcswGuns();
-        // Structural Integrity
-        costs[costIdx++] += 100000 * getSI();
-
-        // Station-Keeping Drive
-        // Engine
-        costs[costIdx++] += 1000 * weight * 0.012;
-        // Engine Control Unit
-        costs[costIdx++] += 1000;
-
-        // Additional Ships Systems
-        // Attitude Thrusters
-        costs[costIdx++] += 25000;
-        // Docking Collars
-        costs[costIdx++] += 100000 * getDocks();
-        // Fuel Tanks
-        costs[costIdx++] += (200 * getFuel()) / getFuelPerTon() * 1.02;
-
-        // Armor
-        costs[costIdx++] += getArmorWeight() * EquipmentType.getArmorCost(armorType[0]);
-
-        // Heat Sinks
-        int sinkCost = 2000 + (4000 * getHeatType());
-        costs[costIdx++] += sinkCost * getHeatSinks();
-
-        // Escape Craft
-        costs[costIdx++] += 5000 * (getLifeBoats() + getEscapePods());
-
-        // Grav Decks
-        double deckCost = 0;
-        deckCost += 5000000 * getGravDeck();
-        deckCost += 10000000 * getGravDeckLarge();
-        deckCost += 40000000 * getGravDeckHuge();
-        costs[costIdx++] += deckCost;
-
-        // Transport Bays
-        int baydoors = 0;
-        long bayCost = 0;
-        long quartersCost = 0;
-        // Passenger and crew quarters and infantry bays are considered part of the structure
-        // and don't add to the cost
-        for (Bay next : getTransportBays()) {
-            baydoors += next.getDoors();
-            if (!next.isQuarters() && !(next instanceof InfantryBay) && !(next instanceof BattleArmorBay)) {
-                bayCost += next.getCost();
-            }
-        }
-
-        costs[costIdx++] += bayCost + (baydoors * 1000L);
-        costs[costIdx++] = quartersCost;
-
-        // Weapons and Equipment
-        // HPG
-        if (hasHPG()) {
-            costs[costIdx++] += 1000000000;
-        } else {
-            costs[costIdx++] += 0;
-        }
-        // Weapons and Equipment
-        costs[costIdx++] += getWeaponsAndEquipmentCost(ignoreAmmo);
-
-        // Sum Costs
-        for (int i = 0; i < costIdx; i++) {
-            cost += costs[i];
-        }
-
-        costs[costIdx++] = -getPriceMultiplier(); // Negative indicates multiplier
-        cost = Math.round(cost * getPriceMultiplier());
-        addCostDetails(cost, costs);
-        return cost;
-
+    public double getCost(CalculationReport calcReport, boolean ignoreAmmo) {
+        return SpaceStationCostCalculator.calculateCost(this, calcReport, ignoreAmmo);
     }
 
     @Override
     public double getPriceMultiplier() {
-        return modular ? 50.0 : 5.0; // weight multiplier
-    }
-
-    private void addCostDetails(double cost, double[] costs) {
-        bvText = new StringBuffer();
-        String[] left = { "Bridge", "Computer", "Life Support", "Sensors", "FCS", "Gunnery Control Systems",
-                "Structural Integrity", "Engine", "Engine Control Unit",
-                "Attitude Thrusters", "Docking Collars",
-                "Fuel Tanks", "Armor", "Heat Sinks", "Life Boats/Escape Pods", "Grav Decks",
-                "Bays", "Quarters", "HPG", "Weapons/Equipment", "Weight Multiplier" };
-
-        NumberFormat commafy = NumberFormat.getInstance();
-
-        bvText.append("<HTML><BODY><CENTER><b>Cost Calculations For ");
-        bvText.append(getChassis());
-        bvText.append(" ");
-        bvText.append(getModel());
-        bvText.append("</b></CENTER>");
-        bvText.append(nl);
-
-        bvText.append(startTable);
-        // find the maximum length of the columns.
-        for (int l = 0; l < left.length; l++) {
-
-            if (l == 18) {
-                getWeaponsAndEquipmentCost(true);
-            } else {
-                bvText.append(startRow);
-                bvText.append(startColumn);
-                bvText.append(left[l]);
-                bvText.append(endColumn);
-                bvText.append(startColumn);
-
-                if (costs[l] == 0) {
-                    bvText.append("N/A");
-                } else if (costs[l] < 0) {
-                    bvText.append("x ");
-                    bvText.append(commafy.format(-costs[l]));
-                } else {
-                    bvText.append(commafy.format(costs[l]));
-
-                }
-                bvText.append(endColumn);
-                bvText.append(endRow);
-            }
+        if (isModular()) {
+            return 50.0;
+        } else if (hasKFAdapter()) {
+            return 20.0;
+        } else {
+            return 5.0;
         }
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append("-------------");
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append("Total Cost:");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(commafy.format(cost));
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append(endTable);
-        bvText.append("</BODY></HTML>");
     }
 
     /**
@@ -268,6 +152,11 @@ public class SpaceStation extends Jumpship {
     }
 
     @Override
+    public boolean isBattleStation() {
+        return designType == MILITARY;
+    }
+
+    @Override
     public double getBVTypeModifier() {
         return 0.7;
     }
@@ -277,4 +166,13 @@ public class SpaceStation extends Jumpship {
         return Entity.ETYPE_AERO | Entity.ETYPE_JUMPSHIP | Entity.ETYPE_SPACE_STATION;
     }
 
+    @Override
+    public boolean isJumpShip() {
+        return false;
+    }
+
+    @Override
+    public boolean isSpaceStation() {
+        return true;
+    }
 }

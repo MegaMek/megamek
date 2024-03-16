@@ -1,12 +1,17 @@
-Version:1.0
-Shadow Cat II
-2
+chassis:Shadow Cat II
+model:2
+mul id:2893
 
 Config:Biped
 TechBase:Clan
 Era:3077
-Source:Jihad
+source:TRO: 3085
 Rules Level:4
+role:Skirmisher
+
+quirk:easy_maintain
+quirk:low_profile
+
 
 Mass:60
 Engine:360 XL (Clan) Engine

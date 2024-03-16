@@ -20,6 +20,10 @@ Boreas Cavalry Hovercraft
 (Prime)
 </Model>
 
+<mul id:>
+9217
+</mul id:>
+
 <year>
 3015
 </year>
@@ -31,6 +35,10 @@ Boreas Cavalry Hovercraft
 <type>
 Clan Level 5
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Hover

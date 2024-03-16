@@ -20,6 +20,10 @@ Buccaneer
 (2708)
 </Model>
 
+<mul id:>
+3868
+</mul id:>
+
 <year>
 2708
 </year>
@@ -31,6 +35,10 @@ Buccaneer
 <type>
 IS Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Aerodyne
@@ -109,7 +117,7 @@ Medium Laser
 </structural_integrity>
 
 <source>
-TRO 3057R - Star League
+TRO: 3057 Revised
 </source>
 
 <tonnage>

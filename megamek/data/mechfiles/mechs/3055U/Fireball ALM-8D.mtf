@@ -1,12 +1,19 @@
-Version:1.0
-Fireball
-ALM-8D
+chassis:Fireball
+model:ALM-8D
+mul id:1076
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3054
-Source:TRO 3055 - Clan Invasion
+Source:TRO: 3055
 Rules Level:2
+role:Scout
+
+
+
+quirk:imp_com
+quirk:low_profile
+
 
 Mass:20
 Engine:220 XL Engine

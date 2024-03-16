@@ -1,0 +1,61 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Infantry
+</UnitType>
+
+<Name>
+Beast Infantry (Horse)
+</Name>
+
+<Model>
+(Sniper)
+</Model>
+
+<year>
+2500
+</year>
+
+<originalBuildYear>
+2500
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<motion_type>
+Beast:Horse
+</motion_type>
+
+<Field Guns Equipment>
+</Field Guns Equipment>
+
+<squad_size>
+7
+</squad_size>
+
+<squadn>
+3
+</squadn>
+
+<Primary>
+Sniper Rifle (Bolt Action)
+</Primary>
+
+<antimek>
+5
+</antimek>
+
+<armorKit>
+Generic Infantry Kit
+</armorKit>
+

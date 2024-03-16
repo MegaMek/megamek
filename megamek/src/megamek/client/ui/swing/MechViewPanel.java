@@ -19,19 +19,21 @@
  */
 package megamek.client.ui.swing;
 
-import java.awt.ComponentOrientation;
-import java.awt.Dimension;
-import java.awt.GridLayout;
-import java.awt.Image;
-import java.awt.event.*;
+import megamek.client.ui.swing.util.FluffImageHelper;
+import megamek.client.ui.swing.util.UIUtil;
+import megamek.client.ui.swing.util.UIUtil.FixedXPanel;
+import megamek.common.Entity;
+import megamek.common.MechView;
+import megamek.common.Report;
+import megamek.common.templates.TROView;
+import org.apache.logging.log4j.LogManager;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-
-import megamek.client.ui.swing.util.FluffImageHelper;
-import megamek.client.ui.swing.util.UIUtil.FixedXPanel;
-import megamek.common.*;
-import megamek.common.templates.TROView;
+import javax.swing.event.HyperlinkEvent;
+import java.awt.*;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 
 /**
  * @author Jay Lawson
@@ -53,33 +55,53 @@ public class MechViewPanel extends JPanel {
     }
 
     public MechViewPanel(int width, int height, boolean noBorder) {
-        ReportDisplay.setupStylesheet(txtMek);
+        Report.setupStylesheet(txtMek);
         txtMek.setEditable(false);
         txtMek.setBorder(new EmptyBorder(5, 10, 0, 0));
+        txtMek.setMinimumSize(new Dimension(width, height));
         txtMek.setPreferredSize(new Dimension(width, height));
+        txtMek.addHyperlinkListener(e -> {
+            if (HyperlinkEvent.EventType.ACTIVATED == e.getEventType()) {
+                UIUtil.browse(e.getURL().toString(), this);
+            }
+        });
         scrMek = new JScrollPane(txtMek);
+        scrMek.getVerticalScrollBar().setUnitIncrement(16);
+
         if (noBorder) {
             scrMek.setBorder(null);
         }
         scrMek.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
-        scrMek.setPreferredSize(new Dimension(width, height));
-        scrMek.setMinimumSize(new Dimension(width, height));
 
-        var textPanel = new FixedXPanel(new GridLayout(1, 1));
+        var textPanel = new JPanel(new GridLayout(1, 1));
+        textPanel.setMinimumSize(new Dimension(width, height));
+        textPanel.setPreferredSize(new Dimension(width, height));
         textPanel.add(scrMek);
 
         var fluffPanel = new FixedXPanel();
+        fluffPanel.setMinimumSize(new Dimension(width, height));
+        fluffPanel.setPreferredSize(new Dimension(width, height));
         fluffPanel.add(lblMek);
 
-        setLayout(new BoxLayout(this, BoxLayout.LINE_AXIS));
-        add(textPanel);
-        add(fluffPanel);
-        add(Box.createHorizontalGlue());
+        JPanel p = new JPanel();
+        p.setLayout(new BoxLayout(p, BoxLayout.LINE_AXIS));
+        p.add(textPanel);
+        p.add(fluffPanel);
+        p.add(Box.createHorizontalGlue());
+        JScrollPane sp = new JScrollPane(p);
+        setLayout(new BorderLayout());
+        add(sp);
         addMouseWheelListener(wheelForwarder);
     }
 
     public void setMech(Entity entity, MechView mechView) {
         txtMek.setText(mechView.getMechReadout());
+        txtMek.setCaretPosition(0);
+        setFluffImage(entity);
+    }
+
+    public void setMech(Entity entity, MechView mechView, String fontName) {
+        txtMek.setText(mechView.getMechReadout(fontName));
         txtMek.setCaretPosition(0);
         setFluffImage(entity);
     }
@@ -93,6 +115,11 @@ public class MechViewPanel extends JPanel {
     public void setMech(Entity entity, boolean useAlternateCost) {
         MechView mechView = new MechView(entity, false, useAlternateCost);
         setMech(entity, mechView);
+    }
+
+    public void setMech(Entity entity, String fontName) {
+        MechView mechView = new MechView(entity, false, false);
+        setMech(entity, mechView, fontName);
     }
 
     private void setFluffImage(Entity entity) {

@@ -20,6 +20,10 @@ Phalanx Support Tank
 (Production)
 </Model>
 
+<mul id:>
+4816
+</mul id:>
+
 <year>
 3080
 </year>
@@ -27,6 +31,10 @@ Phalanx Support Tank
 <type>
 IS Level 3
 </type>
+
+<role>
+Sniper
+</role>
 
 <motion_type>
 Tracked
@@ -74,9 +82,18 @@ ISSniperCannon
 </Turret Equipment>
 
 <source>
-Jihad
+TRO: Prototypes
 </source>
 
 <tonnage>
 40.0
 </tonnage>
+
+<quirks>
+difficult_maintain
+trailer_hitch
+</quirks>
+
+<weaponQuirks>
+inaccurate:FR:0:ISMG
+</weaponQuirks>

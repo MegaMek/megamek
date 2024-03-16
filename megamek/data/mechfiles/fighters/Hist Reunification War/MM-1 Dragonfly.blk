@@ -20,6 +20,10 @@ DragonFly
 MM-1
 </Model>
 
+<mul id:>
+4093
+</mul id:>
+
 <year>
 2574
 </year>
@@ -31,6 +35,10 @@ MM-1
 <type>
 IS Level 2
 </type>
+
+<role>
+Attack Fighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -96,7 +104,7 @@ Medium Laser
 </Fuselage Equipment>
 
 <source>
-H:Reunification War - Age of War
+Historical: Reunification War
 </source>
 
 <tonnage>

@@ -50,7 +50,7 @@ public class InfantrySupportLRMInfernoWeapon extends InfantryWeapon {
         flags = flags.or(F_INFERNO).or(F_DIRECT_FIRE).or(F_MISSILE).or(F_INF_ENCUMBER).or(F_INF_SUPPORT);
         infantryDamage = 0.19;
         infantryRange = 3;
-        rulesRefs = "273,TM";
+        rulesRefs = "273, TM";
         techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3055, 3057, 3065, DATE_NONE, DATE_NONE)
                 .setISApproximate(true, false, false, false, false)
                 .setPrototypeFactions(F_FW, F_CC)
@@ -61,15 +61,21 @@ public class InfantrySupportLRMInfernoWeapon extends InfantryWeapon {
     
     @Override
     public void adaptToGameOptions(GameOptions gOp) {
+        removeMode("");
+        removeMode(MODE_MISSILE_INDIRECT);
+        removeMode(MODE_INDIRECT_HEAT);
+        // add heat options
         super.adaptToGameOptions(gOp);
 
         // Indirect Fire
         if (gOp.booleanOption(OptionsConstants.BASE_INDIRECT_FIRE)) {
-            addMode("");
-            addMode("Indirect");
-        } else {
-            removeMode("");
-            removeMode("Indirect");
+            if (gOp.booleanOption(OptionsConstants.BASE_INFANTRY_DAMAGE_HEAT)) {
+                addMode("");
+                addMode(MODE_MISSILE_INDIRECT);
+            } else {
+                addMode(MODE_MISSILE_INDIRECT);
+                addMode(MODE_INDIRECT_HEAT);
+            }
         }
     }
 }

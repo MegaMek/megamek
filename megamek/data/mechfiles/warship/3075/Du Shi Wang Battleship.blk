@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -17,8 +17,12 @@ Du Shi Wang Battleship
 </Name>
 
 <Model>
-(Standard)
+
 </Model>
+
+<mul id:>
+4103
+</mul id:>
 
 <year>
 2380
@@ -32,6 +36,10 @@ Du Shi Wang Battleship
 IS Level 3
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -44,7 +52,7 @@ dockingcollar
 crewquarters:1855.0:0
 1stclassquarters:650.0:0
 steeragequarters:50.0:0
-cargobay:73529.0:4:6
+cargobay:73529.0:4:8
 </transporters>
 
 <SafeThrust>
@@ -141,8 +149,48 @@ Naval Laser 45
 150
 </structural_integrity>
 
+<capabilities>
+The Du Shi Wang battleship was designed for prolonged patrols, equipped with energy-based weaponry that eliminated the need for ammunition storage and reloading systems. Its primary offensive power came from four heavy naval PPCs mounted on the front, supported by significant frontal armor. This configuration allowed devastating frontal assaults, quickly overwhelming opponents when the battleship gained a tactical advantage. However, maneuvering relied heavily on the skill of the navigation crew, as the engines provided a standard two-and-a-half Gs of thrust. Despite its impressive capabilities, the Du Shi Wang had its limitations. The ship suffered from a class-based Capellan military mentality, with the majority of the crew residing in the forward section while senior officers, marines, and passengers occupied the rear. Lifeboats and escape pods were also insufficiently distributed, primarily serving the rear quarters and bridge, posing a challenge for crew members in other areas of the ship. These flaws became apparent during the intense fighting of the Age of War.
+</capabilities>
+
+<overview>
+The Du Shi Wang, the first battleship of the Capellan Confederation, was a formidable vessel designed to anchor the massive Capellan fleet. It was named after the god of burning suffocation, reflecting the destructive power it brought to the battlefield. As a long-range patrol ship, the Du Shi Wang featured energy-based weaponry and a pair of grav decks for crew well-being. While lacking the extensive broadsides of other battleships, its frontal assault capabilities with heavy naval PPCs and reinforced armor made it a fearsome opponent.
+</overview>
+
+<history>
+The Du Shi Wang battleship played a significant role in the opening engagements of the Age of War, showcasing its power and capabilities on the battlefield. It gained further recognition for its novel use of orbital bombardment during the Novaya Zemlya conflict in 2399. However, the Du Shi Wang class faced significant attrition over time. By the First Succession War, only a few vessels of its class remained, and by the end of the Second Succession War, all Du Shi Wang battleships had been lost. Despite its relatively short service life, the Du Shi Wang battleship left a lasting impact as the pioneering battleship of the Capellan Confederation. Its name became synonymous with devastating firepower and its involvement in crucial conflicts marked its place in the annals of warfare. The Du Shi Wang class battleships stood as a testament to the ambitious naval developments undertaken by the Duchy of Liao and the Capellan Confederation in their quest to establish a formidable fleet.
+</history>
+
+<manufacturer>
+Cynthiana Shipwrights Ltd.
+</manufacturer>
+
+<primaryFactory>
+Aldebaran
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<use>
+Battleship
+</use>
+
+<length>
+870 m
+</length>
+
+<height>
+1300 m Sail
+</height>
+
 <source>
-TRO3075 - Star League
+TRO: 3075
 </source>
 
 <tonnage>
@@ -161,6 +209,10 @@ TRO3075 - Star League
 150
 70
 </grav_decks>
+
+<designtype>
+1
+</designtype>
 
 <crew>
 361
@@ -193,3 +245,4 @@ TRO3075 - Star League
 <escape_pod>
 15
 </escape_pod>
+

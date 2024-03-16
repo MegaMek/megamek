@@ -20,6 +20,10 @@ Schiltron Mobile Fire-Support Platform
 E
 </Model>
 
+<mul id:>
+2819
+</mul id:>
+
 <year>
 3068
 </year>
@@ -27,6 +31,10 @@ E
 <type>
 IS Level 2
 </type>
+
+<role>
+Missile Boat
+</role>
 
 <motion_type>
 Wheeled
@@ -100,7 +108,7 @@ Light Auto Cannon/5:OMNI
 </Turret Equipment>
 
 <source>
-Jihad
+TRO: 3060
 </source>
 
 <tonnage>

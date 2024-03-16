@@ -20,6 +20,10 @@ Clan Mechanized Tracked Point
 (MG)
 </Model>
 
+<mul id:>
+626
+</mul id:>
+
 <year>
 2815
 </year>
@@ -27,6 +31,10 @@ Clan Mechanized Tracked Point
 <type>
 Clan Level 2
 </type>
+
+<role>
+Ambusher
+</role>
 
 <motion_type>
 Tracked
@@ -36,7 +44,7 @@ Tracked
 </Field Guns Equipment>
 
 <source>
-Total Warfare - Succession Wars
+Total Warfare
 </source>
 
 <squad_size>

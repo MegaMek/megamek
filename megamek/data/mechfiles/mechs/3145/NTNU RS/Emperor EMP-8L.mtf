@@ -1,12 +1,18 @@
-Version:1.0
-Emperor
-EMP-8L
+chassis:Emperor
+model:EMP-8L
+mul id:6851
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3127
-Source:RS 3145 NT NU
+Source:Record Sheets: 3145 New Tech New Upgrades
 Rules Level:3
+role:Juggernaut
+
+
+
+quirk:command_mech
+
 
 Mass:90
 Engine:270 Fusion Engine(IS)

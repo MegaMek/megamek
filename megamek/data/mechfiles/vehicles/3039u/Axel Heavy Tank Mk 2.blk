@@ -20,6 +20,10 @@ Axel Heavy Tank
 Mk 2
 </Model>
 
+<mul id:>
+181
+</mul id:>
+
 <year>
 3036
 </year>
@@ -27,6 +31,10 @@ Mk 2
 <type>
 IS Level 1
 </type>
+
+<role>
+Juggernaut
+</role>
 
 <motion_type>
 Tracked
@@ -79,9 +87,47 @@ Autocannon/20
 </Turret Equipment>
 
 <source>
-TRO 3039 - Succession Wars
+TRO: 3039
 </source>
 
 <tonnage>
 65.0
 </tonnage>
+
+<capabilities>
+To make room for the engine, the tank is only protected by ten and a half tons of armor. The internal combustion engine also reduces the top speed of the tank to 54 km/h.
+</capabilities>
+
+<overview>
+The Axel series of heavy tanks are based on the popular Rommel design, but uses an internal combustion engine.
+</overview>
+
+<deployment>
+Developed in parallel with the Axel Mk 1, the Axel Mk 2 removes a half-ton of armor and one ton of LRM ammunition to make room for a Vehicle Flamer. It has the same performance and protection as the Axel Mk 1.
+</deployment>
+
+<history>
+The tank was produced by engineers working for the Free Rasalhague Republic. Despite the lighter armor and lower top speed, the Axel family was widely used by the Free Rasalhague Republic.
+</history>
+
+<manufacturer>
+Benson and Bjorn
+</manufacturer>
+
+<primaryFactory>
+Spittal
+</primaryFactory>
+
+<source>
+TRO: 3039
+</source>
+
+<fuelType>
+PETROCHEMICALS
+</fuelType>
+
+<quirks>
+low_profile
+poor_target_short
+</quirks>
+

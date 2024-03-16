@@ -15,6 +15,10 @@ Typhoon Urban Assault Vehicle
 <Model>
 (Tracked)
 </Model>
+
+<mul id:>
+3338
+</mul id:>
 <Tonnage>
 70
 </Tonnage>
@@ -54,6 +58,10 @@ ISSRM6 Ammo
 <type>
 IS Level 2
 </type>
+
+<role>
+Juggernaut
+</role>
 <year>
 3057
 </year>
@@ -70,5 +78,5 @@ IS Level 2
 Tracked
 </motion_type>
 <source>
-Clan Invasion
+TRO: 3058
 </source>

@@ -1,36 +1,41 @@
-Version:1.1
-Jenner
-JR10-X
-
+chassis:Jenner
+model:JR10-X
+mul id:1686
 Config:Biped
-TechBase:Inner Sphere
-Era:3072
-Source:XTRO Kurita - Jihad
-Rules Level:4
+techbase:Inner Sphere
+era:3072
+source:XTR: Kurita
+rules level:4
+role:Striker
 
-Mass:35
-Engine:245 XL Engine(IS)
-Structure:Composite
-Myomer:Standard
-Cockpit:Torso-Mounted Cockpit
-Gyro:Compact Gyro
 
-Heat Sinks:10 Double
-Walk MP:7
-Jump MP:7
 
-Armor:Light Ferro-Fibrous(Inner Sphere)
-LA Armor:12
-RA Armor:12
-LT Armor:12
-RT Armor:12
-CT Armor:16
-HD Armor:9
-LL Armor:16
-RL Armor:16
-RTL Armor:4
-RTR Armor:4
-RTC Armor:5
+quirk:no_arms
+
+
+mass:35
+engine:245 XL Engine(IS)
+structure:IS Composite
+myomer:Standard
+cockpit:Torso-Mounted Cockpit
+gyro:Compact Gyro
+
+heat sinks:10 IS Double
+walk mp:7
+jump mp:7
+
+armor:Light Ferro-Fibrous(Inner Sphere)
+LA armor:12
+RA armor:12
+LT armor:12
+RT armor:12
+CT armor:16
+HD armor:9
+LL armor:16
+RL armor:16
+RTL armor:4
+RTR armor:4
+RTC armor:5
 
 Weapons:6
 Medium Laser, Left Arm
@@ -43,13 +48,13 @@ Medium Laser, Head
 Left Arm:
 Shoulder
 Upper Arm Actuator
-Lower Arm Actuator
-Hand Actuator
 Medium Laser
 Medium Laser
-Light Ferro-Fibrous
-Light Ferro-Fibrous
+IS Light Ferro-Fibrous
+IS Light Ferro-Fibrous
 Mek Null Signature System
+-Empty-
+-Empty-
 -Empty-
 -Empty-
 -Empty-
@@ -57,13 +62,13 @@ Mek Null Signature System
 Right Arm:
 Shoulder
 Upper Arm Actuator
-Lower Arm Actuator
-Hand Actuator
 Medium Laser
 Medium Laser
-Light Ferro-Fibrous
-Light Ferro-Fibrous
+IS Light Ferro-Fibrous
+IS Light Ferro-Fibrous
 Mek Null Signature System
+-Empty-
+-Empty-
 -Empty-
 -Empty-
 -Empty-
@@ -79,7 +84,7 @@ ISDoubleHeatSink
 Jump Jet
 Jump Jet
 Jump Jet
-Light Ferro-Fibrous
+IS Light Ferro-Fibrous
 Mek Null Signature System
 
 Right Torso:
@@ -92,7 +97,7 @@ ISAngelECMSuite
 Jump Jet
 Jump Jet
 Jump Jet
-Light Ferro-Fibrous
+IS Light Ferro-Fibrous
 Mek Null Signature System
 -Empty-
 
@@ -115,7 +120,7 @@ Sensors
 Sensors
 Medium Laser
 Medium Laser
-Light Ferro-Fibrous
+IS Light Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -153,19 +158,15 @@ Mek Null Signature System
 -Empty-
 
 overview:The Jenner became the standard light warhorse of the DCMS with the outbreak of the First Succession War, though its reputation would be forever tarnished following its role in the Kentares Massacre.
-
 capabilities:Five Smithson Lifter jump jets, two in each side torso and one in the center torso gave it a jumping distance of 150 meters, while its 245-rated Magna fusion engine allowed for a top speed of over 118 km/h, making it faster than most other 'Mechs. A favorite tactic of Jenner lances was to gang up on larger 'Mechs and unleash a devastating alpha strike. One or two of the 'Mechs would be equipped with inferno rounds, so even if the enemy survived the first strike they were badly damaged and running hot, allowing the Jenners to jump to safety and cool down themselves. A few seconds later the attack would be repeated until finally, the enemy was dead. It was also common practice to pair the Jenner with another Combine 'Mech, the Panther, creating a deadly combination of sheer speed and firepower with the slower Panther provided cover fire for the Jenner's flanking attack. The Jenner was such a favorite among Kurita MechWarriors that it became the benchmark against which all other newly designed Combine 'Mechs were compared.
-
 deployment:A Experimental variant of the Jenner developed during the Jihad. It was a test-bed chassis for LAW on New Samarkand in 3072. Using the JR7-K as its base, with extensive revisions. Its internal structure was changed for a Composite Internal Structure. Its engine changed out for a 245 rated XL Engine, which helps maintain the Jenner's original speed. The designer moved the forward jutting cockpit to a Torso Mounted Cockpit. Its missile weaponry was completely dropped in favor of increasing the 'Mech's medium laser armament up to six Medium Lasers. Jump Jets increased from base module to seven. For the 'Mech's protection, it has an Angel ECM and its hull has been encased with seven tons of Light Ferro-Fibrous Armor. For its stealth capacities, the 'Mech has been given an Experimental Null-Signature System. Only seven of these 'Mechs were known to have been built.
-
 history:The Jenner became the standard light warhorse of the DCMS with the outbreak of the First Succession War, though its reputation would be forever tarnished following its role in the Kentares Massacre. The Jenner became the standard light warhorse of the DCMS with the outbreak of the First Succession War, though its reputation would be forever tarnished following its role in the Kentares Massacre. Construction of new Jenners continued at Diplan MechYard's factory on Ozawa until a raw mineral shortage caused a halt in 2815, though they continued to produce new chassis. In 2823 production resumed on Ozawa, with some three thousand chassis shipped to Diplan's subsidiary on Luthien for final assembly, which itself was retooling to begin full-scale production; by 2830 both production lines were producing 1,350 Jenners a year. The sheer destruction of the Succession Wars finally took their toll when the last Jenner factory was destroyed in 2848, though so many Jenners had been produced by then that nearly every DCMS battalion had at least one of these 'Mechs well into the War of 3039. While the other Successor States eventually managed to procure operational Jenners (every AFFS regiment along the Combine border had at least one), the design remained in predominant use by House Kurita.
-
 manufacturer:Luthien Armor Works, Diplan 'Mechyards, Luthien Armor Works, Luthien Armor Works, Diplan 'Mechyards
 primaryfactory:Luthien, Abiy Adi, New Samarkand, Ozawa
-
 systemmanufacturer:CHASSIS:Alshain Class 48
 systemmanufacturer:ENGINE:Magna 245
 systemmanufacturer:ARMOR:New Samarkand Royal Ferro-Fibrous with CASE
 systemmanufacturer:JUMPJET:Lexington Ltd. Lifters
 systemmanufacturer:COMMUNICATIONS:Sipher Security Plus
 systemmanufacturer:TARGETING:Matabushi Sentinel
+

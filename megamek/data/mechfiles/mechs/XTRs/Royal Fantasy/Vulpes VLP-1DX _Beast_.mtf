@@ -1,12 +1,13 @@
-Version:1.0
-Vulpes
-VLP-1DX 'Beast'
+chassis:Vulpes
+model:VLP-1DX 'Beast'
+mul id:8382
 
 Config:Biped
 techbase:Mixed (IS Chassis)
 era:3134
-source:TRO 3145 Federated Suns - Dark Ages
-rules level:5
+source:TRO: 3145 Federated Suns
+rules level:3
+role:Brawler
 
 mass:60
 engine:240 XL (Clan) Engine

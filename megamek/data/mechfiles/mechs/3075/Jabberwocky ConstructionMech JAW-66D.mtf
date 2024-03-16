@@ -1,40 +1,40 @@
-Version:1.1
-Jabberwocky ConstructionMech
-JAW-66D
-
+chassis:Jabberwocky
+model:JAW-66D ConstructionMech
+mul id:1652
 Config:Biped
-TechBase:Inner Sphere
-Era:3070
-Source:TRO 3075
-Rules Level:2
+techbase:Inner Sphere
+era:3070
+source:TRO: 3075
+rules level:2
+role:Juggernaut
 
-Mass:50
-Engine:200 Fusion Engine
-Structure:Industrial
-Myomer:Industrial Triple-Strength
-Cockpit:Industrial Cockpit
-Gyro:Standard Gyro
+mass:50
+engine:200 Fusion Engine(IS)
+structure:IS Industrial
+myomer:Industrial Triple-Strength
+cockpit:Industrial Cockpit
+gyro:Standard Gyro
 
-Heat Sinks:10 Single
-Walk MP:4
-Jump MP:3
+heat sinks:10 Single
+walk mp:4
+jump mp:3
 
-Armor:Heavy Industrial(Inner Sphere)
-LA Armor:6
-RA Armor:6
-LT Armor:5
-RT Armor:5
-CT Armor:9
-HD Armor:6
-LL Armor:6
-RL Armor:6
-RTL Armor:2
-RTR Armor:2
-RTC Armor:3
+armor:Heavy Industrial(Inner Sphere)
+LA armor:6
+RA armor:6
+LT armor:5
+RT armor:5
+CT armor:9
+HD armor:6
+LL armor:6
+RL armor:6
+RTL armor:2
+RTR armor:2
+RTC armor:3
 
 Weapons:2
-Nail/Rivet Gun, Right Arm
 Nail/Rivet Gun, Left Arm
+Nail/Rivet Gun, Right Arm
 
 Left Arm:
 Shoulder
@@ -43,9 +43,9 @@ Lower Arm Actuator
 Nail/Rivet Gun
 Spot Welder
 Environmental Sealing
-Industrial TSM
-Industrial TSM
-Industrial TSM
+Industrial Triple Strength Myomer
+Industrial Triple Strength Myomer
+Industrial Triple Strength Myomer
 -Empty-
 -Empty-
 -Empty-
@@ -58,9 +58,9 @@ Nail/Rivet Gun
 Salvage Arm
 Salvage Arm
 Environmental Sealing
-Industrial TSM
-Industrial TSM
-Industrial TSM
+Industrial Triple Strength Myomer
+Industrial Triple Strength Myomer
+Industrial Triple Strength Myomer
 -Empty-
 -Empty-
 
@@ -69,11 +69,11 @@ Heat Sink
 Jump Jet
 Searchlight
 IS Ammo Nail/Rivet - Full
-Cargo (1 ton)
+Cargo:SIZE:1.0
 Environmental Sealing
-Industrial TSM
-Industrial TSM
-Industrial TSM
+Industrial Triple Strength Myomer
+Industrial Triple Strength Myomer
+Industrial Triple Strength Myomer
 -Empty-
 -Empty-
 -Empty-
@@ -81,13 +81,13 @@ Industrial TSM
 Right Torso:
 Heat Sink
 Jump Jet
-Lift Hoist (R)
-Lift Hoist (R)
-Lift Hoist (R)
+Lift Hoist/Arresting Hoist (R)
+Lift Hoist/Arresting Hoist (R)
+Lift Hoist/Arresting Hoist (R)
 Environmental Sealing
-Industrial TSM
-Industrial TSM
-Industrial TSM
+Industrial Triple Strength Myomer
+Industrial Triple Strength Myomer
+Industrial Triple Strength Myomer
 -Empty-
 -Empty-
 -Empty-
@@ -148,4 +148,19 @@ Environmental Sealing
 -Empty-
 -Empty-
 
+overview:<p>The JAW-66A Jabberwocky, originally developed in 2549 as a general military support unit, fell short of expectations and was relegated to less critical tasks. However, its fortunes changed dramatically by 3069 when the Federated Suns, amid widespread devastation, urgently mobilized every available armed machine for combat, including the Jabberwocky. In response to the dire need for fortified engineering units, Jalastar Aerospace took the initiative in 3070 to introduce a completely reworked Jabberwocky, transforming it into a versatile and efficient IndustrialMech.</p>
+
+capabilities:<p>The JAW-66B Jabberwocky stands out for its simplicity in maintenance, thanks to its Panpour-produced components that are readily available. Unlike many IndustrialMechs, the Jabberwocky utilizes old neurohelmets, providing pilots with enhanced control over the 50-ton chassis. It is equipped with a salvage arm, spot welder, and a pair of Industrial-TSM powered lift hoists, allowing it to carry double its weight in salvage. The tracked propulsion system grants higher speed on paved surfaces, and its three jump jets add to its maneuverability in rough terrain. Additionally, its environmental sealing and searchlight make it suitable for operations in various hostile environments. The semi-modularity of the design, akin to the Mercury Mech rather than an OmniMech, allows for easy replacement of its rear torso or arms with different industrial equipment.</p>
+
+deployment:<p>Tailored for construction projects, the 66D variant features a pair of rivet guns, one in each arm, supported by a one-ton internal cargo bay for carrying nails or rivets. The left lift hoist is removed in this variant to make room for additional construction materials, making it an ideal choice for post-battlefield reconstruction and fortification efforts.</p>
+
+history:<p>The Jabberwocky IndustrialMech, originally developed in 2549, has undergone a remarkable transformation from an underperforming military support unit to a critical asset in engineering and battlefield operations. Its journey from obscurity to prominence is closely intertwined with the shifting demands and challenges faced by the Federated Suns during periods of intense conflict.<p>Initially intended for general military support, the JAW-66A Jabberwocky's limitations led to its relegation to secondary roles. However, the widespread devastation of the Jihad in 3069 compelled the Federated Suns to mobilize all available resources, resurrecting the Jabberwocky from storage and support units for frontline deployment. This move stripped many engineering units of their equipment, leaving them struggling with massive fortification and reconstruction efforts.<p>In 3070, amidst these challenges, Jalastar Aerospace recognized an opportunity to expand its market and introduced a completely reworked Jabberwocky, tailored for versatility in battlefield salvage and engineering tasks. The redesign, featuring components produced on Panpour and a track propulsion system for enhanced mobility, quickly garnered attention. Orders for the new Jabberwocky surged, with both Federated Suns support units and mercenary groups seeking to replenish their ranks with this adaptable machine.<p>Today, the Jabberwocky IndustrialMech stands as a testament to innovative engineering and adaptability in the face of adversity. Its various configurations, from the initial JAW-65A to the more versatile JAW-66B and specialized variants like the "Demolition" and "Construction" models, highlight the Mech's journey from an overlooked unit to an indispensable tool in both military and civilian engineering operations. The Jabberwocky's evolution not only reflects the changing landscape of Mech technology but also exemplifies the resilience and ingenuity of those who operate and maintain these machines in the ever-evolving theater of war.</p>
+
+manufacturer:Jalastar Aerospace
+primaryfactory:Panpour
+systemmanufacturer:CHASSIS:Corean Model KL80 Industrial
+systemmanufacturer:ENGINE:GM 200
+systemmanufacturer:ARMOR:ArcShield Maxi Special (Industrial Heavy)
+systemmanufacturer:COMMUNICATIONS:O/P R Janxiir
+systemmanufacturer:TARGETING:Jal ConstrucTrak Mk I
 

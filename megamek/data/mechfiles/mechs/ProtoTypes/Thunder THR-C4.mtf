@@ -1,11 +1,21 @@
-Version:1.1
-Thunder
-THR-C4
+chassis:Thunder
+model:THR-C4
+mul id:5230
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3083
 Rules Level:3
+role:Skirmisher
+Source:TRO: Prototypes 
+
+
+
+quirk:cowl
+quirk:hard_pilot
+quirk:easy_maintain
+quirk:reinforced_legs
+
 
 Mass:70
 Engine:280 XL Fusion Engine

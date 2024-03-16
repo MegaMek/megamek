@@ -20,6 +20,10 @@ Noruff
 (3056)
 </Model>
 
+<mul id:>
+4735
+</mul id:>
+
 <year>
 3056
 </year>
@@ -31,6 +35,10 @@ Noruff
 <type>
 Clan Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Aerodyne
@@ -165,7 +173,7 @@ Clan Streak SRM 6 Ammo:15
 </structural_integrity>
 
 <source>
-TRO 3057R - Clan Invasion
+TRO: 3057 Revised
 </source>
 
 <tonnage>

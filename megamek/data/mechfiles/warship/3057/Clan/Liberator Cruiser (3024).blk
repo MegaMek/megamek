@@ -1,0 +1,411 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Warship
+</UnitType>
+
+<Name>
+Liberator Cruiser
+</Name>
+
+<Model>
+(3024)
+</Model>
+
+<mul id:>
+4508
+</mul id:>
+
+<year>
+3024
+</year>
+
+<originalBuildYear>
+3024
+</originalBuildYear>
+
+<type>
+Clan Level 3
+</type>
+
+<role>
+None
+</role>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+asfbay:30.0:6:1
+battlearmorbay:10.0:2:2
+cargobay:58645.0:1:3
+dockingcollar
+dockingcollar
+dockingcollar
+dockingcollar
+dockingcollar
+dockingcollar
+1stclassquarters:710.0:0
+crewquarters:2436.0:0
+</transporters>
+
+<SafeThrust>
+3
+</SafeThrust>
+
+<heatsinks>
+592
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+11250
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<clan_engine>
+false
+</clan_engine>
+
+<armor_type>
+11
+</armor_type>
+
+<armor_tech>
+6
+</armor_tech>
+
+<armor>
+240
+110
+110
+229
+110
+110
+</armor>
+
+<Nose Equipment>
+(B) CLUltraAC10
+CLUltraAC10
+CLUltraAC10
+CLUltraAC10
+CLUltraAC10
+Clan Ultra AC/10 Ammo:100
+(B) CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+(B) CLERSmallLaser
+CLERSmallLaser
+CLERSmallLaser
+CLERSmallLaser
+CLERSmallLaser
+CLERSmallLaser
+(B) Naval Laser 45
+Naval Laser 45
+Naval Laser 45
+Naval Laser 45
+Naval Laser 45
+Naval Laser 45
+</Nose Equipment>
+
+<Left Front Side Equipment>
+(B) Naval Autocannon (NAC/20)
+Naval Autocannon (NAC/20)
+Ammo NAC/20:200
+(B) Naval PPC (Heavy)
+Naval PPC (Heavy)
+(B) CLLRM20
+CLLRM20
+CLLRM20
+Clan Ammo LRM-20 (Clan) Artemis-capable:54
+CLArtemisIV
+CLArtemisIV
+CLArtemisIV
+(B) CLMediumPulseLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+</Left Front Side Equipment>
+
+<Right Front Side Equipment>
+(B) Naval Autocannon (NAC/20)
+Naval Autocannon (NAC/20)
+Ammo NAC/20:200
+(B) Naval PPC (Heavy)
+Naval PPC (Heavy)
+(B) CLLRM20
+CLLRM20
+CLLRM20
+Clan Ammo LRM-20 (Clan) Artemis-capable:54
+CLArtemisIV
+CLArtemisIV
+CLArtemisIV
+(B) CLMediumPulseLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+</Right Front Side Equipment>
+
+<Aft Equipment>
+(B) CLUltraAC10
+CLUltraAC10
+CLUltraAC10
+CLUltraAC10
+CLUltraAC10
+Clan Ultra AC/20 Ammo:100
+(B) CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+(B) CLERSmallLaser
+CLERSmallLaser
+CLERSmallLaser
+CLERSmallLaser
+CLERSmallLaser
+CLERSmallLaser
+(B) Naval Laser 55
+Naval Laser 55
+Naval Laser 55
+Naval Laser 55
+Naval Laser 55
+Naval Laser 55
+</Aft Equipment>
+
+<Aft Left Side Equipment>
+(B) Naval Autocannon (NAC/20)
+Naval Autocannon (NAC/20)
+Ammo NAC/20:400
+(B) Naval Laser 55
+Naval Laser 55
+Naval Laser 55
+(B) Naval PPC (Heavy)
+Naval PPC (Heavy)
+(B) CLLRM20
+CLLRM20
+CLLRM20
+Clan Ammo LRM-20 (Clan) Artemis-capable:54
+CLArtemisIV
+CLArtemisIV
+CLArtemisIV
+(B) CLLBXAC20
+CLLBXAC20
+CLLBXAC20
+CLLBXAC20
+Clan LB 20-X AC Ammo:40
+</Aft Left Side Equipment>
+
+<Aft Right Side Equipment>
+(B) Naval Autocannon (NAC/20)
+Naval Autocannon (NAC/20)
+Ammo NAC/20:400
+(B) Naval Laser 55
+Naval Laser 55
+Naval Laser 55
+(B) Naval PPC (Heavy)
+Naval PPC (Heavy)
+(B) CLLRM20
+CLLRM20
+CLLRM20
+Clan Ammo LRM-20 (Clan) Artemis-capable:54
+CLArtemisIV
+CLArtemisIV
+CLArtemisIV
+(B) CLLBXAC20
+CLLBXAC20
+CLLBXAC20
+CLLBXAC20
+Clan LB 20-X AC Ammo:40
+</Aft Right Side Equipment>
+
+<Hull Equipment>
+ISMobileHPG
+</Hull Equipment>
+
+<Left Broadsides Equipment>
+(B) Naval Autocannon (NAC/30)
+Naval Autocannon (NAC/30)
+Ammo NAC/30:200
+(B) Naval Laser 35
+Naval Laser 35
+Naval Laser 35
+Naval Laser 35
+Naval Laser 35
+Naval Laser 35
+(B) Naval Gauss (Medium)
+Naval Gauss (Heavy)
+Ammo Medium N-Gauss:100
+Ammo Heavy N-Gauss:100
+(B) Naval Gauss (Medium)
+Naval Gauss (Heavy)
+Ammo Medium N-Gauss:100
+Ammo Heavy N-Gauss:100
+(B) CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+(B) CLERSmallLaser
+CLERSmallLaser
+CLERSmallLaser
+CLERSmallLaser
+CLERSmallLaser
+CLERSmallLaser
+</Left Broadsides Equipment>
+
+<Right Broadsides Equipment>
+(B) Naval Autocannon (NAC/30)
+Naval Autocannon (NAC/30)
+Ammo NAC/30:200
+(B) Naval Laser 35
+Naval Laser 35
+Naval Laser 35
+Naval Laser 35
+Naval Laser 35
+Naval Laser 35
+(B) Naval Gauss (Medium)
+Naval Gauss (Heavy)
+Ammo Medium N-Gauss:100
+Ammo Heavy N-Gauss:100
+(B) Naval Gauss (Medium)
+Naval Gauss (Heavy)
+Ammo Medium N-Gauss:100
+Ammo Heavy N-Gauss:100
+(B) CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+(B) CLERSmallLaser
+CLERSmallLaser
+CLERSmallLaser
+CLERSmallLaser
+CLERSmallLaser
+CLERSmallLaser
+</Right Broadsides Equipment>
+
+<structural_integrity>
+85
+</structural_integrity>
+
+<capabilities>
+The Liberator-class cruiser is armed with advanced Clan weaponry, with a particular focus on anti-fighter systems rather than anti-ship capabilities. Its ferro-carbide armor provides nearly 50% more protection compared to the Avatar's conventional armor, while still maintaining a massive cargo facility. The Liberator is equipped with three Stars of OmniFighters to enhance its armaments. Additionally, the cruiser features quarters for two Stars of battle-armored Elementals, who serve to protect the vessel against boarding actions and conduct their own boarding operations against enemy craft. The Liberator also has additional cabins that allow for the transportation of an additional Cluster of conventional troops, although this capability is rarely utilized. The versatility of the Liberator-class cruiser enables it to undertake various missions, ranging from small planetary assaults to naval battles and boarding actions, making it a formidable asset in combat.
+</capabilities>
+
+<overview>
+The Liberator-class cruiser is a refitted design based on the Avatar-class heavy cruiser of the Star League Defense Force (SLDF). Originally introduced in 2531, the Avatar was later phased out and replaced by the Luxor-class WarShip. However, a few Avatars survived and were included in Aleksandr Kerensky's Exodus fleet due to their valuable cargo and DropShip capacities. In the 31st century, the Clans upgraded and renamed these vessels to become the Liberator-class cruisers.
+</overview>
+
+<history>
+The Liberator-class cruiser is derived from the Avatar-class heavy cruiser, which was initially introduced by the SLDF in 2531. As the SLDF transitioned to newer designs like the Luxor-class, many Avatars were placed in reserve fleets or repurposed as training vessels. However, during Stephan Amaris' takeover of Terra in 2766, the usurpers gained control of three Avatar-class vessels that were undergoing refitting at the Ian Cameron yards. Only six Avatars survived until the end of the wars, with five remaining in service with the SLDF and one captured by the Rim Worlds Republic. When Aleksandr Kerensky led the Exodus fleet, the Avatars were taken along due to their valuable cargo and DropShip capacities. Upon arriving at the Pentagon worlds, the Avatars, including the Liberator-class cruisers, were mothballed and remained in storage until the Clans began preparing for their invasion of the Inner Sphere. Clan technicians upgraded and renamed the Avatars, converting them into the formidable Liberator-class cruisers. The upgrades included the installation of Ferro-Carbide armor for enhanced protection, advanced Clan weaponry, and provisions for battle-armored Elementals to engage in boarding actions. With their versatility and upgraded capabilities, the Liberator-class cruisers became valuable assets for the Clans during their conquest of the Inner Sphere, capable of executing a range of military operations independently.
+</history>
+
+<manufacturer>
+Refit
+</manufacturer>
+
+<primaryFactory>
+Unknown
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<use>
+Cruiser
+</use>
+
+<length>
+855 m
+</length>
+
+<height>
+1450 m Sail
+</height>
+
+<source>
+TRO: 3057 Revised
+</source>
+
+<tonnage>
+830000.0
+</tonnage>
+
+<kf_core>
+1
+</kf_core>
+
+<lithium-fusion>
+1
+</lithium-fusion>
+
+<sail>
+1
+</sail>
+
+<grav_decks>
+145
+</grav_decks>
+
+<designtype>
+1
+</designtype>
+
+<crew>
+539
+</crew>
+
+<officers>
+71
+</officers>
+
+<gunners>
+73
+</gunners>
+
+<passengers>
+0
+</passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<life_boat>
+40
+</life_boat>
+
+<escape_pod>
+60
+</escape_pod>
+

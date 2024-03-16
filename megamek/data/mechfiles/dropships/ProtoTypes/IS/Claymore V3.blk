@@ -20,6 +20,10 @@ Claymore
 V3
 </Model>
 
+<mul id:>
+3960
+</mul id:>
+
 <year>
 3086
 </year>
@@ -31,6 +35,10 @@ V3
 <type>
 IS Level 3
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Aerodyne
@@ -130,7 +138,7 @@ ISERMediumLaser
 </structural_integrity>
 
 <source>
-TRO Prototypes - Early Republic
+TRO: Prototypes
 </source>
 
 <tonnage>
@@ -176,3 +184,9 @@ TRO Prototypes - Early Republic
 <escape_pod>
 0
 </escape_pod>
+
+<quirks>
+bad_rep_is
+atmo_flyer
+</quirks>
+

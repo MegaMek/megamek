@@ -1,12 +1,21 @@
-Version:1.0
-Longbow
-LGB-7V
+chassis:Longbow
+model:LGB-7V
+mul id:1937
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3056
-Source:TRO 3058 - Clan Invasion
+Source:TRO: 3058
 Rules Level:2
+role:Missile Boat
+
+
+
+quirk:anti_air
+quirk:searchlight
+quirk:ubiquitous_is
+quirk:no_arms
+
 
 Mass:85
 Engine:255 XL Engine

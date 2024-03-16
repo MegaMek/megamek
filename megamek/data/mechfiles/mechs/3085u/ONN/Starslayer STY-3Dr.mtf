@@ -1,12 +1,18 @@
-Version:1.0
-Starslayer
-STY-3Dr
+chassis:Starslayer
+model:STY-3Dr
+mul id:3051
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3075
-Source:Jihad
+source:TRO: 3085
 Rules Level:2
+role:Sniper
+
+
+
+quirk:rugged_1
+
 
 Mass:50
 Engine:250 Fusion Engine
@@ -148,4 +154,19 @@ Light Ferro-Fibrous
 -Empty-
 -Empty-
 
+overview:The Starslayer was intended to replace the Crab as the Star League's standard medium 'Mech after Cosara Weaponries were unable to meet the SLDF's required production volumes.
 
+capabilities:The Starslayer is built on a lightweight Thor-4 Endo Steel chassis and reaches a top speed of 86.4 km/h with its Magna 250 fusion engine. The Starslayer also has five Odin's Own Model 34z jump jets which give it the ability to jump up to one hundred and fifty meters. Finally, the design carries nine and a half tons of Norse-34 ferro-fibrous with CASE. The CASE protects the BattleMech from complete destruction in the event of an ammunition explosion.
+
+deployment:A heavy PPC forms the main gun for this variant. A Guardian ECM suite disrupts any C3 networks in the area. Turning the heat of the PPC into an asset, the Starslayer uses triple strength myomer to inflict heavy damage at close range. Light ferro-fibrous armor protects this 'Mech.
+
+history:Though Blue Shot's design won selection in 2765, the Starslayer would also be plagued with technical delays with its tracking system that would delay full production until 2772 and the Amaris Civil War. Despite the SLDF's desperate need for matériel, tensions between General Kerensky and Archon Robert Steiner II would result in Blue Shot delaying SLDF shipments until 2781 due to lack of "up-to-date" shipping information and as a result the Starslayer would be far more common in the LCAF service than the SLDF. By now a thoroughly Lyran Commonwealth design, production of the original 2C Starslayer would cease during the technological decline of the early Succession Wars, with Blue Shot Weaponry resuming with the superior and updated STY-3C model in wake of the Clan Invasion.
+
+manufacturer:Field Refit
+primaryfactory:Various
+systemmanufacturer:CHASSIS:Thor-4 Endo Steel
+systemmanufacturer:ENGINE:Magna 250
+systemmanufacturer:ARMOR:Unknown
+systemmanufacturer:JUMPJET:Odin’s Own Model 34z
+systemmanufacturer:COMMUNICATIONS:Tek BattleCom with ECM
+systemmanufacturer:TARGETING:FireScan with IndirecTrack

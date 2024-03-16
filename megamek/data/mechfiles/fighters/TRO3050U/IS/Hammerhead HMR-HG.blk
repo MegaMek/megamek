@@ -20,6 +20,10 @@ Hammerhead
 HMR-HG
 </Model>
 
+<mul id:>
+1377
+</mul id:>
+
 <year>
 3075
 </year>
@@ -31,6 +35,10 @@ HMR-HG
 <type>
 IS Level 2
 </type>
+
+<role>
+Fast Dogfighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -128,7 +136,7 @@ TARGETING:BANDAR 9
 </systemManufacturers>
 
 <source>
-TRO 3050u - Jihad
+TRO: 3050
 </source>
 
 <tonnage>

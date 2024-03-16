@@ -21,7 +21,6 @@ package megamek.client.ui.baseComponents;
 import megamek.MegaMek;
 import megamek.client.ui.preferences.JWindowPreference;
 import megamek.client.ui.preferences.PreferencesNode;
-import megamek.common.util.EncodeControl;
 import org.apache.logging.log4j.LogManager;
 
 import javax.swing.*;
@@ -63,13 +62,20 @@ public abstract class AbstractDialog extends JDialog implements WindowListener {
      * modal dialogs.
      */
     protected AbstractDialog(final JFrame frame, final boolean modal, final String name, final String title) {
-        this(frame, modal, ResourceBundle.getBundle("megamek.client.messages", 
-                MegaMek.getMMOptions().getLocale(), new EncodeControl()), name, title);
+        this(frame, modal, ResourceBundle.getBundle("megamek.client.messages",
+                MegaMek.getMMOptions().getLocale()), name, title);
     }
 
     /**
      * This creates an AbstractDialog using the specified resource bundle. This is not recommended
      * by default.
+     *
+     * @param frame the dialog's parent frame
+     * @param modal if this dialog is modal
+     * @param resources the resource bundle for this dialog
+     * @param name the dialog's name
+     * @param title the dialog's title resource key. This is required for accessibility reasons, and
+     *              the method will error out if it isn't valid.
      */
     protected AbstractDialog(final JFrame frame, final boolean modal, final ResourceBundle resources,
                              final String name, final String title) {
@@ -79,6 +85,29 @@ public abstract class AbstractDialog extends JDialog implements WindowListener {
         setFrame(frame);
         this.resources = resources;
     }
+
+    /**
+     * This allows Swing to create the dialog with another dialog as the parent. Which dialog swing renders on top
+     * is somewhat undefined, depending on the window manager. This can cause problems in the case of modal dialogs
+     * that show up behind other dialogs and you cannot get to them.
+     *
+     * @param dialog Owning dialog, for dialogs on dialogs
+     * @param frame Owning frame
+     * @param modal if this dialog is modal
+     * @param resources the resource bundle for this dialog
+     * @param name the dialog's name
+     * @param title the dialog's title resource key. This is required for accessibility reasons, and
+     *              the method will error out if it isn't valid.
+     */
+    protected AbstractDialog(final JDialog dialog, JFrame frame, final boolean modal, final ResourceBundle resources,
+                             final String name, final String title) {
+        super(dialog, modal);
+        setTitle(resources.getString(title));
+        setName(name);
+        setFrame(frame);
+        this.resources = resources;
+    }
+
     //endregion Constructors
 
     //region Getters/Setters
@@ -101,7 +130,11 @@ public abstract class AbstractDialog extends JDialog implements WindowListener {
     protected void initialize() {
         setLayout(new BorderLayout());
         add(createCenterPane(), BorderLayout.CENTER);
-        finalizeInitialization();
+        try {
+            finalizeInitialization();
+        } catch (Exception ex) {
+            LogManager.getLogger().error("Error finalizing the dialog. Returning the created dialog, but this is likely to cause some oddities.", ex);
+        }
     }
 
     /**
@@ -113,8 +146,11 @@ public abstract class AbstractDialog extends JDialog implements WindowListener {
     /**
      * This MUST be called at the end of initialization to finalize it. This is the key method for
      * this being the abstract basis for all other dialogs.
+     * @throws Exception if there's an issue finishing initialization. Normally this means there's
+     * an issue setting the preferences, which normally means that a component has had its name
+     * value set.
      */
-    protected void finalizeInitialization() {
+    protected void finalizeInitialization() throws Exception {
         // Pack and fit only affect dialogs when shown for the absolute first time; at any later time,
         // the setPreferences() below overwrites size and position with stored values
         pack();
@@ -139,10 +175,35 @@ public abstract class AbstractDialog extends JDialog implements WindowListener {
     }
 
     /**
-     * Re-sizes the dialog to a maximum width and height of 80% of the screen size
-     * when necessary. Then centers the dialog on the screen.
+     * Re-sizes the dialog to a maximum width and height of 80% of the screen size when necessary.
+     * If the dialog goes off-screen, center it
      */
-    private void fitAndCenter() {
+    protected void fit() {
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        int maxWidth = (int) (screenSize.width * 0.8);
+        int maxHeight = (int) (screenSize.height * 0.8);
+
+        int width = Math.min(maxWidth, getWidth());
+        int height = Math.min(maxHeight, getHeight());
+
+        setSize(new Dimension(width, height));
+        // get again in case changed by setSize
+        width = getSize().width;
+        height = getSize().height;
+
+        // center if dialog out of screen bounds
+        Point p = getLocation();
+        if (p.x < 0 || (p.x + width) > screenSize.width
+                || p.y < 0 || (p.y + height) > screenSize.height) {
+            setLocation((screenSize.width - width) / 2, (screenSize.height - height) / 2);
+        }
+    }
+
+    /**
+     * Re-sizes the dialog to a maximum width and height of 80% of the screen size when necessary.
+     * It then centers the dialog on the screen.
+     */
+    protected void fitAndCenter() {
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         int maxWidth = (int) (screenSize.width * 0.8);
         int maxHeight = (int) (screenSize.height * 0.8);
@@ -152,16 +213,20 @@ public abstract class AbstractDialog extends JDialog implements WindowListener {
 
     /**
      * This is used to set preferences based on the preference node for this class. It is overridden
-     * for MekHQ usage
+     * for MekHQ usage.
+     * @throws Exception if there's an issue initializing the preferences. Normally this means
+     * a component has <strong>not</strong> had its name value set.
      */
-    protected void setPreferences() {
+    protected void setPreferences() throws Exception {
         setPreferences(MegaMek.getMMPreferences().forClass(getClass()));
     }
 
     /**
      * This sets the base preferences for this class, and calls the custom preferences method
+     * @throws Exception if there's an issue initializing the preferences. Normally this means
+     * a component has <strong>not</strong> had its name value set.
      */
-    protected void setPreferences(final PreferencesNode preferences) {
+    protected void setPreferences(final PreferencesNode preferences) throws Exception {
         preferences.manage(new JWindowPreference(this));
         setCustomPreferences(preferences);
     }
@@ -173,8 +238,10 @@ public abstract class AbstractDialog extends JDialog implements WindowListener {
      * and position of the dialog. Other preferences can be added by overriding
      * this method.
      * @param preferences the preference node for this dialog
+     * @throws Exception if there's an issue initializing the preferences. Normally this means
+     * a component has <strong>not</strong> had its name value set.
      */
-    protected void setCustomPreferences(final PreferencesNode preferences) {
+    protected void setCustomPreferences(final PreferencesNode preferences) throws Exception {
 
     }
     //endregion Initialization
@@ -185,8 +252,8 @@ public abstract class AbstractDialog extends JDialog implements WindowListener {
     protected void cancelActionPerformed(final ActionEvent evt) {
         try {
             cancelAction();
-        } catch (Exception e) {
-            LogManager.getLogger().error("", e);
+        } catch (Exception ex) {
+            LogManager.getLogger().error("", ex);
         } finally {
             setVisible(false);
         }
@@ -208,8 +275,8 @@ public abstract class AbstractDialog extends JDialog implements WindowListener {
     public void windowClosing(final WindowEvent evt) {
         try {
             cancelAction();
-        } catch (Exception e) {
-            LogManager.getLogger().error("", e);
+        } catch (Exception ex) {
+            LogManager.getLogger().error("", ex);
         }
     }
 

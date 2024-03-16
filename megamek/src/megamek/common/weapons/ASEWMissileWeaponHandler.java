@@ -1,39 +1,34 @@
-/**
- * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+/*
+ * Copyright (c) 2005 - Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This file is part of MegaMek.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
 package megamek.common.weapons;
 
-import java.util.Vector;
-
-import megamek.common.Building;
-import megamek.common.Dropship;
-import megamek.common.Entity;
-import megamek.common.Game;
-import megamek.common.Jumpship;
-import megamek.common.Report;
-import megamek.common.ToHitData;
-import megamek.common.Warship;
+import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.server.Server;
+import megamek.server.GameManager;
+
+import java.util.Vector;
 
 /**
  * @author MKerensky
  */
 public class ASEWMissileWeaponHandler extends ThunderBoltWeaponHandler {
-
-    /**
-     *
-     */
     private static final long serialVersionUID = 6359291710822171023L;
 
     /**
@@ -42,11 +37,10 @@ public class ASEWMissileWeaponHandler extends ThunderBoltWeaponHandler {
      * @param t - ToHit roll data
      * @param w - The weapon attack action for this ASEW missile
      * @param g - The current game
-     * @param s - The current server instance
+     * @param m - The current GameManager instance
      */
-    public ASEWMissileWeaponHandler(ToHitData t, WeaponAttackAction w, Game g,
-            Server s) {
-        super(t, w, g, s);
+    public ASEWMissileWeaponHandler(ToHitData t, WeaponAttackAction w, Game g, GameManager m) {
+        super(t, w, g, m);
     }
     
     /*
@@ -67,7 +61,7 @@ public class ASEWMissileWeaponHandler extends ThunderBoltWeaponHandler {
                 waa.getAimingMode(), toHit.getCover());
         hit.setGeneralDamageType(generalDamageType);
         hit.setCapital(wtype.isCapital());
-        hit.setBoxCars(roll == 12);
+        hit.setBoxCars(roll.getIntValue() == 12);
         hit.setCapMisCritMod(getCapMisMod());
         hit.setFirstHit(firstHit);
         hit.setAttackerId(getAttackerId());

@@ -1,0 +1,132 @@
+#Saved from version 0.49.18-SNAPSHOT on 2024-01-09
+<BlockVersion>
+1
+</BlockVersion>
+
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+Pegasus Scout Hover Tank
+</Name>
+
+<Model>
+(MML)
+</Model>
+
+<mul id:>
+9254
+</mul id:>
+
+<year>
+3091
+</year>
+
+<originalBuildYear>
+3091
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<role>
+Scout
+</role>
+
+<motion_type>
+Hover
+</motion_type>
+
+<cruiseMP>
+9
+</cruiseMP>
+
+<engine_type>
+4
+</engine_type>
+
+<armor_type>
+6
+</armor_type>
+
+<armor_tech>
+5
+</armor_tech>
+
+<armor>
+27
+20
+20
+20
+22
+</armor>
+
+<Body Equipment>
+BeagleActiveProbe
+Supercharger
+IS Ammo MML-3 LRM
+IS Ammo MML-3 SRM
+</Body Equipment>
+
+<Front Equipment>
+ISMediumXPulseLaser
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+ISMML3
+ISMML3
+ISMML3
+ISMML3
+</Turret Equipment>
+
+<capabilities>
+The Pegasus, often referred to as a "Harasser on Steroids," carries much of the same armament in the form of turret-mounted missile racks for its main offensive and defensive armament. The Pegasus is equipped with a single medium laser, which, despite being inefficient for its weight on this internal combustion vehicle, allows it to operate behind enemy lines even after its missiles run out. With six-and-a-half tonnes of ProtecTech on its frame, the Pegasus is reasonably armoured for a hover tank of its size. Though crews are trained to avoid enemy contact whenever possible, the tank's armour has allowed it to survive several lucky large laser hits to any location. Unless it is hidden from enemy patrols, the Pegasus has a respectable top speed of nearly 130 kph.
+</capabilities>
+
+<overview>
+The Pegasus first appeared as a low-cost recon unit during the First Succession War, when the Houses were forced to redirect scout BattleMechs to frontline duty. The Pegasus is unique among scout vehicles in terms of its user base.
+</overview>
+
+<deployment>
+No information available for variant
+</deployment>
+
+<history>
+The Pegasus, unlike many nation-specific designs, is used by virtually every major military organisation. This proliferation is the result of a successful licencing agreement between the original manufacturer, the Exeter Organization, and Red Devil Industries of Pandora, in which Red Devil exchanged a licence to build the dependable Defiance B3M laser (along with a large sum of money) for the licence to build the Pegasus. Illegal copies made by Sian's Hellespont Industries keep Pegasi in abundance as well. Exeter has attempted several times to serve cease-and-desist orders on Hellespont Industries on Sian for illegally reproducing the Pegasus, but both the current and previous Chancellors have blocked diplomatic missives and court actions. Hellespont has been selling at reduced rates to the Capellan Confederation (via the TransBoost), which explains the blatant protectionism by a realm desperate for any and all military equipment. Red Devil's production line remained fully operational for the newly formed Federated Commonwealth. However, a lack of funds for upkeep and maintenance has begun to impact the production line. In the face of the Clan threat, Red Devil maintained this haphazard maintenance policy; ironically, Pandora fell to the Jade Falcons in 3064, only two years after the facility was finally upgraded. Scarborough Manufacturing of Al Na'ir also makes a Pegasus, though it lacks the sophisticated electronics—Exeter refused to licence these in protest of Scarborough's failure to pay FWL import taxes.
+</history>
+
+<manufacturer>
+Hellespont Industries,Scarborough Manufacturers,Exeter Organization,Valiant Systems,Quikscell Company
+</manufacturer>
+
+<primaryFactory>
+Sian,Al Na’ir,Keystone,Johnsondale,Broken Wheel
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:ProtecTech 6
+COMMUNICATIONS:Salamander Systems CommPhase Unit
+TARGETING:Exeter LongScan with ReconLock
+</systemManufacturers>
+
+<source>
+Rec Guide:ilClan #25
+</source>
+
+<tonnage>
+35.0
+</tonnage>
+

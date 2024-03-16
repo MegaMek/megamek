@@ -16,9 +16,13 @@ VTOL
 Ferret Light Scout VTOL
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+1060
+</mul id:>
 
 <year>
 2904
@@ -27,6 +31,10 @@ Ferret Light Scout VTOL
 <type>
 IS Level 1
 </type>
+
+<role>
+Scout
+</role>
 
 <motion_type>
 VTOL
@@ -73,7 +81,7 @@ Machine Gun
 </Rotor Equipment>
 
 <source>
-TRO 3039 - Succession War
+TRO: 3039
 </source>
 
 <tonnage>

@@ -20,6 +20,10 @@ Moray Heavy Attack Submarine
 (Original)
 </Model>
 
+<mul id:>
+4662
+</mul id:>
+
 <year>
 2635
 </year>
@@ -27,6 +31,10 @@ Moray Heavy Attack Submarine
 <type>
 IS Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Submarine
@@ -95,7 +103,7 @@ SRT 6
 </Turret Equipment>
 
 <source>
-TRO 3085S - Star League
+TRO: 3085 Supplemental
 </source>
 
 <tonnage>

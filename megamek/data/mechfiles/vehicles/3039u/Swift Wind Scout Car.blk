@@ -16,9 +16,13 @@ Tank
 Swift Wind Scout Car
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+3145
+</mul id:>
 
 <year>
 2817
@@ -27,6 +31,10 @@ Swift Wind Scout Car
 <type>
 IS Level 1
 </type>
+
+<role>
+Scout
+</role>
 
 <motion_type>
 Wheeled
@@ -68,7 +76,7 @@ Communications Equipment (2 ton)
 </Rear Equipment>
 
 <source>
-TRO 3039 - Succession Wars
+TRO: 3039
 </source>
 
 <tonnage>

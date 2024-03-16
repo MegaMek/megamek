@@ -1,46 +1,52 @@
-Version:1.0
-Juliano
-JLN-5A
-
+chassis:Juliano
+model:JLN-5A
+mul id:6516
 Config:Biped
-TechBase:Mixed (IS Chassis)
-Era:3116
-Source:TRO 3145 Free Worlds League - Late Republic
-Rules Level:4
+techbase:Mixed (IS Chassis)
+era:3116
+source:TRO: 3145 Free Worlds League
+rules level:2
+role:Brawler
 
-Mass:90
-Engine:360 XL Engine(IS)
-Structure:IS Endo-Composite
-Myomer:Standard
 
-Heat Sinks:16 Double
-Walk MP:4
-Jump MP:0
 
-Armor:Light Ferro-Fibrous(Inner Sphere)
-LA Armor:30
-RA Armor:30
-LT Armor:30
-RT Armor:30
-CT Armor:47
-HD Armor:9
-LL Armor:38
-RL Armor:38
-RTL Armor:8
-RTR Armor:8
-RTC Armor:11
+
+quirk:combat_computer
+
+
+mass:90
+engine:360 XL Engine(IS)
+structure:IS Endo-Composite
+myomer:Standard
+
+heat sinks:16 IS Double
+walk mp:4
+jump mp:0
+
+armor:Light Ferro-Fibrous(Inner Sphere)
+LA armor:30
+RA armor:30
+LT armor:30
+RT armor:30
+CT armor:47
+HD armor:9
+LL armor:38
+RL armor:38
+RTL armor:8
+RTR armor:8
+RTC armor:11
 
 Weapons:10
 Streak SRM 6, Left Arm
-Streak SRM 6, Right Arm
-Streak SRM 6, Right Arm
 Streak SRM 6, Left Arm
+ER Medium Laser, Left Arm
+Streak SRM 6, Right Arm
+Streak SRM 6, Right Arm
+ER Medium Laser, Right Arm
+ER Large Laser, Left Torso
 ER Large Laser, Right Torso
 ER Large Laser, Center Torso
-ER Large Laser, Left Torso
 ER Medium Laser, Head
-ER Medium Laser, Right Arm
-ER Medium Laser, Left Arm
 
 Left Arm:
 Shoulder
@@ -115,7 +121,7 @@ ISERLargeLaser
 Head:
 Life Support
 Sensors
-Cockpit (armored)
+Cockpit (ARMORED)
 ISERMediumLaser
 Sensors
 Life Support

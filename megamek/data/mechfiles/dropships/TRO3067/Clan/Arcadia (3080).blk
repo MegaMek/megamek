@@ -20,6 +20,10 @@ Arcadia
 (3080)
 </Model>
 
+<mul id:>
+5762
+</mul id:>
+
 <year>
 3080
 </year>
@@ -31,6 +35,10 @@ Arcadia
 <type>
 Clan Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Aerodyne
@@ -154,7 +162,7 @@ Clan Ammo ATM-9:14
 </structural_integrity>
 
 <source>
-TRO 3067 - Jihad
+TRO: 3067
 </source>
 
 <tonnage>

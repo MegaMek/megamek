@@ -1,12 +1,13 @@
-Version:1.1
-Crosscut
-ED-X2 LoggerMech
+chassis:Crosscut
+model:ED-X2 LoggerMech
+mul id:741
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2715 
 Rules Level:2
-Source:RS OK - Star League
+role:Ambusher
+Source:Record Sheets: Operation Klondike
 
 Mass:30
 Engine:90 I.C.E. Engine

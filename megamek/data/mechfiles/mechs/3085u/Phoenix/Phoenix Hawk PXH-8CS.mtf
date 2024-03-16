@@ -1,12 +1,22 @@
-Version:1.2
-Phoenix Hawk
-PXH-8CS
+chassis:Phoenix Hawk
+model:PXH-8CS
+mul id:2510
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3080
-Source:Jihad
+source:TRO: 3085
 Rules Level:4
+role:Striker
+
+
+
+quirk:command_mech
+quirk:imp_com
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+weaponquirk:jettison_capable:RA:7:ISSNPPC
+
 
 Mass:45
 Engine:315 XXL Engine(IS)

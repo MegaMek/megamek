@@ -20,6 +20,10 @@ Shuttle
 ST-46
 </Model>
 
+<mul id:>
+5060
+</mul id:>
+
 <year>
 2528
 </year>
@@ -31,6 +35,10 @@ ST-46
 <type>
 IS Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Aerodyne
@@ -99,7 +107,7 @@ steeragequarters:15.0:0
 </structural_integrity>
 
 <source>
-TRO 3057 - Age of War
+TRO: 3057 Revised
 </source>
 
 <tonnage>

@@ -1,0 +1,157 @@
+chassis:Awesome
+model:AWS-11V
+mul id:7977
+Config:Biped
+techbase:Inner Sphere
+era:3135
+source:Record Sheets: 3150
+rules level:2
+
+
+
+quirk:battle_fists_la
+
+
+mass:80
+engine:240 Fusion Engine(IS)
+structure:IS Endo Steel
+myomer:Standard
+cockpit:Standard Cockpit
+gyro:Compact Gyro
+
+heat sinks:12 IS Double
+walk mp:3
+jump mp:0
+
+armor:Standard(Clan)
+LA armor:26
+RA armor:26
+LT armor:24
+RT armor:24
+CT armor:30
+HD armor:9
+LL armor:23
+RL armor:23
+RTL armor:7
+RTR armor:7
+RTC armor:9
+
+Weapons:4
+ER PPC, Right Arm
+Light Gauss Rifle, Left Torso
+Extended LRM 15, Right Torso
+ER Medium Laser, Head
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISAngelECMSuite
+ISAngelECMSuite
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISERPPC
+ISERPPC
+ISERPPC
+PPC Capacitor
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+-Empty-
+
+Left Torso:
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISLightGaussRifle
+ISLightGaussRifle
+ISLightGaussRifle
+ISLightGaussRifle
+ISLightGaussRifle
+IS Light Gauss Ammo
+IS Light Gauss Ammo
+ISCASEII
+IS Endo Steel
+
+Right Torso:
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+Extended LRM 15
+Extended LRM 15
+Extended LRM 15
+Extended LRM 15
+Extended LRM 15
+Extended LRM 15
+IS Endo Steel
+IS Endo Steel
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+IS Ammo Extended LRM-15
+IS Ammo Extended LRM-15
+IS Ammo Extended LRM-15
+ISCASEII
+
+Head:
+Life Support
+Sensors
+Cockpit
+ISERMediumLaser
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

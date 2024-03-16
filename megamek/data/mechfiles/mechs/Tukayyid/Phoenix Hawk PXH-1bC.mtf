@@ -1,12 +1,20 @@
-Version:1.0
-Phoenix Hawk
-PXH-1bC
+chassis:Phoenix Hawk
+model:PXH-1bC
+mul id:7602
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3052
-Source:Clan Invasion
+source:Battle of Tukayyid
 Rules Level:2
+role:Skirmisher
+
+
+
+quirk:command_mech
+quirk:imp_com
+weaponquirk:jettison_capable:RA:7:ISERLargeLaser
+
 
 Mass:45
 Engine:270 XL Engine(IS)

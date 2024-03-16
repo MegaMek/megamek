@@ -16,9 +16,13 @@ Tank
 Luduan Scout Vehicle
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+6437
+</mul id:>
 
 <year>
 3136
@@ -27,6 +31,10 @@ Luduan Scout Vehicle
 <type>
 IS Level 3
 </type>
+
+<role>
+Scout
+</role>
 
 <motion_type>
 Hover
@@ -82,9 +90,14 @@ ISTAG
 </Turret Equipment>
 
 <source>
-TRO 3145 Capellan Confederation - Dark Ages
+TRO: 3145 Capellan Confederation
 </source>
 
 <tonnage>
 25.0
 </tonnage>
+
+<quirks>
+imp_com
+</quirks>
+

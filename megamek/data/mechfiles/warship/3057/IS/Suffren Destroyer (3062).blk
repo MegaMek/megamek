@@ -1,0 +1,317 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Warship
+</UnitType>
+
+<Name>
+Suffren Destroyer
+</Name>
+
+<Model>
+(3062)
+</Model>
+
+<mul id:>
+5159
+</mul id:>
+
+<year>
+3062
+</year>
+
+<originalBuildYear>
+3062
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<role>
+None
+</role>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+smallcraftbay:8.0:1:1
+cargobay:91458.0:1:2
+dockingcollar
+dockingcollar
+dockingcollar
+dockingcollar
+steeragequarters:1260.0:0
+1stclassquarters:420.0:0
+crewquarters:1456.0:0
+</transporters>
+
+<SafeThrust>
+3
+</SafeThrust>
+
+<heatsinks>
+486
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+10000
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+13
+</armor_type>
+
+<armor_tech>
+5
+</armor_tech>
+
+<armor>
+80
+63
+63
+70
+60
+60
+</armor>
+
+<Nose Equipment>
+(B) Naval Autocannon (NAC/40)
+Ammo NAC/40:100
+(B) Naval Autocannon (NAC/40)
+Ammo NAC/40:100
+(B) Naval PPC (Heavy)
+Naval PPC (Heavy)
+Naval PPC (Heavy)
+(B) ISGaussRifle
+ISGaussRifle
+IS Gauss Ammo:64
+(B) ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+(B) LRM 20
+LRM 20
+IS Ammo LRM-20 Artemis-capable:48
+ISArtemisIV
+ISArtemisIV
+(B) ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+</Nose Equipment>
+
+<Left Front Side Equipment>
+(B) Naval Laser 45
+Naval Laser 45
+Naval Laser 45
+(B) ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+</Left Front Side Equipment>
+
+<Right Front Side Equipment>
+(B) Naval Laser 45
+Naval Laser 45
+Naval Laser 45
+(B) ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+</Right Front Side Equipment>
+
+<Aft Equipment>
+(B) Naval Autocannon (NAC/40)
+Ammo NAC/40:100
+(B) Naval Autocannon (NAC/40)
+Ammo NAC/40:100
+(B) ISGaussRifle
+ISGaussRifle
+IS Gauss Ammo:64
+(B) ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+(B) LRM 20
+LRM 20
+IS Ammo LRM-20 Artemis-capable:48
+ISArtemisIV
+ISArtemisIV
+(B) ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+</Aft Equipment>
+
+<Aft Left Side Equipment>
+(B) Naval Laser 45
+Naval Laser 45
+Naval Laser 45
+(B) ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+</Aft Left Side Equipment>
+
+<Aft Right Side Equipment>
+(B) Naval Laser 45
+Naval Laser 45
+Naval Laser 45
+(B) ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+</Aft Right Side Equipment>
+
+<Hull Equipment>
+ISMobileHPG
+</Hull Equipment>
+
+<Left Broadsides Equipment>
+(B) Naval Autocannon (NAC/20)
+Naval Autocannon (NAC/20)
+Ammo NAC/20:200
+(B) Naval PPC (Medium)
+(B) LRM 20
+LRM 20
+IS Ammo LRM-20 Artemis-capable:48
+ISArtemisIV
+ISArtemisIV
+(B) ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+</Left Broadsides Equipment>
+
+<Right Broadsides Equipment>
+(B) Naval Autocannon (NAC/20)
+Naval Autocannon (NAC/20)
+Ammo NAC/20:200
+(B) Naval PPC (Medium)
+(B) LRM 20
+LRM 20
+IS Ammo LRM-20 Artemis-capable:48
+ISArtemisIV
+ISArtemisIV
+(B) ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+</Right Broadsides Equipment>
+
+<structural_integrity>
+60
+</structural_integrity>
+
+<capabilities>
+The vessel's use of such materials as Ferro-Aluminum armor and Double Heat Sinks mark the Suffren as the height of advanced tech, capable of unleashing and weathering impressive nose and broadside barrages, also including a Lithium-Fusion Battery as standard. The Suffren features an arsenal of fairly even mix of conventional anti-aerospace and capital class weaponry. The nose bays feature two NAC/40s and a trio of Heavy Naval PPCs, twin Gauss rifles, eight ER Large Lasers, two Artemis IV FCS enhanced LRM-20s and six Small Pulse Lasers for point defense, the aft bays mirrorring the nose save for excluding the Naval PPCs. The fore and aft angles feature three Naval Laser 45s, two ER and three standard Large Lasers each, with twin NAC/20s, a Medium Naval PPC, double LRM-20s and six point defense small pulse lasers mounted in each broadside. Beyond its four DropShip capacity and sizable 92,727 tons of stores, the Suffren is designed to carry eight Small Craft and a full marine battalion, allowing the destroyer to repel boarding attempt on itself or seize control of any non-Clan vessels with ease.
+</capabilities>
+
+<overview>
+The Suffren-class destroyer is among the first generation of post–Clan Invasion WarShips, and ComStar's first new WarShip design since the Dante in 2941.
+</overview>
+
+<history>
+Initiated after the Battle of Tukayyid and the subsequent Reformation, while the Com Guards had a large array of old SLDF WarShips, Precentor Martial Anastasius Focht desired a vessel which would not be familiar to the Clan Touman. The project lacked the pace of comparable Successor State WarShip programs because of those existing vessels, with virtual reality technology similar to that used by the Precentor Martial to coordinate the fighting on Tukayyid used to discover and resolve design flaws while waiting for the Titan Yards to be upgraded to produce the most modern design possible. Ultimately the delay led to only two examples of the class constructed prior to the loss of the Titan Yards to the Word of Blake.
+</history>
+
+<manufacturer>
+O'Neil Yards - Titan Yards
+</manufacturer>
+
+<primaryFactory>
+Terra
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<use>
+Destroyer
+</use>
+
+<length>
+590 m
+</length>
+
+<source>
+TRO: 3057 Revised
+</source>
+
+<tonnage>
+540000.0
+</tonnage>
+
+<kf_core>
+1
+</kf_core>
+
+<lithium-fusion>
+1
+</lithium-fusion>
+
+<sail>
+1
+</sail>
+
+<grav_decks>
+125
+115
+</grav_decks>
+
+<designtype>
+1
+</designtype>
+
+<crew>
+290
+</crew>
+
+<officers>
+42
+</officers>
+
+<gunners>
+33
+</gunners>
+
+<passengers>
+0
+</passengers>
+
+<marines>
+252
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<life_boat>
+150
+</life_boat>
+
+<escape_pod>
+100
+</escape_pod>
+

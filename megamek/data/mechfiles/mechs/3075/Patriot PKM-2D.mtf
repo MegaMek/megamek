@@ -1,12 +1,19 @@
-Version:1.1
-Patriot
-PKM-2D
+chassis:Patriot
+model:PKM-2D
+mul id:2448
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3072
-Source:TRO 3075 - Jihad
+Source:TRO: 3075
 Rules Level:3
+role:Brawler
+
+
+
+quirk:pro_actuator
+quirk:stable
+
 
 Mass:65
 Engine:260 XL Engine(IS)

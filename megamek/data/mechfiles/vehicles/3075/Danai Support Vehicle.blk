@@ -16,21 +16,29 @@ Tank
 Danai Support Vehicle
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+822
+</mul id:>
 
 <year>
 3073
 </year>
 
 <source>
-Jihad
+TRO: 3075
 </source>
 
 <type>
 IS Level 3
 </type>
+
+<role>
+Missile Boat
+</role>
 
 <tonnage>
 45.0

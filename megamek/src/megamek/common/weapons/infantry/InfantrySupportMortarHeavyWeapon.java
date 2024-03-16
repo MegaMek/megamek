@@ -18,6 +18,8 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
+import megamek.common.options.GameOptions;
+import megamek.common.options.OptionsConstants;
 
 /**
  * @author Ben Grills
@@ -47,12 +49,26 @@ public class InfantrySupportMortarHeavyWeapon extends InfantryWeapon {
 		ammoWeight = 0.004;
 		ammoCost = 32;
 		shots = 1;
-		rulesRefs = " 273,TM";
+		rulesRefs = " 273, TM";
 		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
 		        .setISApproximate(false, false, false, false, false)
 		        .setClanAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
 		        .setClanApproximate(false, false, false, false, false).setTechRating(RATING_B)
 		        .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C);
 
+	}
+
+	@Override
+	public void adaptToGameOptions(GameOptions gOp) {
+		super.adaptToGameOptions(gOp);
+
+		// Indirect Fire
+		if (gOp.booleanOption(OptionsConstants.BASE_INDIRECT_FIRE)) {
+			addMode("");
+			addMode("Indirect");
+		} else {
+			removeMode("");
+			removeMode("Indirect");
+		}
 	}
 }

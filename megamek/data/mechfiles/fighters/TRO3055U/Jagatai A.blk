@@ -20,6 +20,10 @@ Jagatai
 A
 </Model>
 
+<mul id:>
+1659
+</mul id:>
+
 <year>
 3019
 </year>
@@ -31,6 +35,10 @@ A
 <type>
 Clan Level 2
 </type>
+
+<role>
+Dogfighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -117,7 +125,7 @@ CLCASE
 </Fuselage Equipment>
 
 <source>
-TRO 3055u - Succession Wars
+TRO: 3055 Update
 </source>
 
 <tonnage>

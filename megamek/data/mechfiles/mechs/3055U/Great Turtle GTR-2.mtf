@@ -1,12 +1,19 @@
-Version:1.1
-Great Turtle
-GTR-2
+chassis:Great Turtle
+model:GTR-2
+mul id:1282
 
 Config:Quad
 TechBase:Inner Sphere
 Era:3068
-Source:TRO 3055 - Jihad
+Source:TRO: 3055
 Rules Level:4
+role:Juggernaut
+
+
+
+quirk:imp_target_short
+quirk:poor_performance
+
 
 Mass:100
 Engine:300 Compact Engine

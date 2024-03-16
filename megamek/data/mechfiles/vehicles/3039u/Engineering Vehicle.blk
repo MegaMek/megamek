@@ -16,9 +16,13 @@ Tank
 Engineering Vehicle
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+990
+</mul id:>
 
 <year>
 2570
@@ -27,6 +31,10 @@ Engineering Vehicle
 <type>
 IS Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Tracked
@@ -69,7 +77,7 @@ Backhoe
 </Turret Equipment>
 
 <source>
-TRO 3039 - Age of War
+TRO: 3039
 </source>
 
 <tonnage>

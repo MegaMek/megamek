@@ -45,7 +45,7 @@ public class ProbabilityCalculator {
         if (attackedfrom_facing == 2) {
             return hit_probabilities_rside[hit_location];
         }
-        //assume attackedfrom_facing==4
+        // assume attackedfrom_facing==4
         return hit_probabilities_lside[hit_location];
     }
 
@@ -59,7 +59,7 @@ public class ProbabilityCalculator {
         if (attackedfrom_facing == 2) {
             return hit_probabilities_punch_rside[hit_location];
         }
-        //assume attackedfrom_facing==4
+        // assume attackedfrom_facing==4
         return hit_probabilities_punch_lside[hit_location];
     }
 
@@ -73,7 +73,7 @@ public class ProbabilityCalculator {
         if (attackedfrom_facing == 2) {
             return hit_probabilities_kick_rside[hit_location];
         }
-        //assume attackedfrom_facing==4
+        // assume attackedfrom_facing==4
         return hit_probabilities_kick_lside[hit_location];
     }
 

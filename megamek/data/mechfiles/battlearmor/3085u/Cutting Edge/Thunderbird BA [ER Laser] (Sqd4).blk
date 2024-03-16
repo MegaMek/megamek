@@ -1,0 +1,124 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+Thunderbird Battle Armor
+</Name>
+
+<Model>
+[ER Laser](Sqd4)
+</Model>
+
+<mul id:>
+3229
+</mul id:>
+
+<year>
+3086
+</year>
+
+<originalBuildYear>
+3086
+</originalBuildYear>
+
+<type>
+Clan Level 2
+</type>
+
+<role>
+Ambusher
+</role>
+
+<motion_type>
+Jump
+</motion_type>
+
+<transporters>
+</transporters>
+
+<cruiseMP>
+1
+</cruiseMP>
+
+<armor_type>
+28
+</armor_type>
+
+<armor_tech>
+2
+</armor_tech>
+
+<Point Equipment>
+CLBAERSmallLaser:RA
+BAJumpBooster:Body
+BABasicManipulator:RA
+BAHeavyBattleClawVibro:LA
+</Point Equipment>
+
+<source>
+TRO: 3085
+</source>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+2
+</jumpingMP>
+
+<armor>
+10
+</armor>
+
+<Trooper Count>
+4
+</Trooper Count>
+
+<weightclass>
+3
+</weightclass>
+
+<overview>
+The Thunderbird was created by Clan Nova Cat as a replacement Heavy Battle Armor.
+</overview>
+
+<capabilities>
+The armor's other qualities include a Jump Booster for added mobility and 250 kilograms of standard armor.
+</capabilities>
+
+<deployment>
+The Thunderbird's main weapons are interchangeable due to its Modular Weapon Mount in its right arm.  A Vibro Claw is found in its left hand allowing for the armor to latch onto friendly OmniMechs and other vehicles. This version carries an ER Small Laser and enough energy for 20 rounds of fire. 
+</deployment>
+
+<history>
+Its development started in the mid-3080s as a needed replacement for their Touman's dwindling supply of frontline Elemental Battle Armor. The Nova Cats' supply of Elemental Suits had been rapidly been depleted due to its Abjuration in 3060 and the late conflicts of the Jihad. Development of the suit started when Khan Santin West firmly pressed his Technician and Scientist Castes to create a replacement suit in 3084. The Thunderbird first saw combat in October 3085, where it was deployed in combat in a Battle Armor Trinary with the 489th Assault Cluster. A combined arms raiding force of Inner Sphere Standard Battle Armor and 'Mechs raided Labrea where the 489th was stationed. The Thunderbirds of the Trinary showed their mettle with other Nova Cat Battle Armor troops. The design remained exclusively the Nova Cats' property despite inquires by various allies. The DCMS used information gathered from its evaluations of the Thunderbird for its own Kishi and Oni battle armor.
+</history>
+
+<manufacturer>
+Barcella Battle Armor Facility
+</manufacturer>
+
+<primaryFactory>
+Irece
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+JUMPJET:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>

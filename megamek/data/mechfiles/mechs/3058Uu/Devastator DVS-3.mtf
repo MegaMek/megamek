@@ -1,12 +1,19 @@
-Version:1.0
-Devastator
-DVS-3
+chassis:Devastator
+model:DVS-3
+mul id:895
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3058
-Source:TRO 3058 - Clan Invasion
+Source:TRO: 3058
 Rules Level:2
+role:Sniper
+
+
+
+quirk:hyper_actuator
+quirk:searchlight
+
 
 Mass:100
 Engine:300 XL Engine
@@ -150,4 +157,18 @@ Foot Actuator
 -Empty-
 -Empty-
 
+overview:Designed by General Kerensky himself right before the start of the Amaris Civil War, development of the Devastator ended abruptly when Stefan the Usurper took control of the Terran Hegemony.
 
+capabilities:In order to overcome its poor speed, long-range power was designed. Although the Devastator is capable of holding its own in close quarters battle, its capacity to control heat is its most striking trait. Pilots are able to move with the utmost speed and fire all of the heavy weaponry without fear thanks to fourteen double heat sinks. A Devastator pilot just needs to slightly scale back his movements to prevent the design from overheating, even when doused in inferno gel or subjected to several engine strikes.
+
+deployment:The DVS-3 variant of the Devastator increases the 'Mech's longevity on the battlefield. To do this, the 'Mech has increased its ammunition load for its Gauss Rifles by two tons and the armor protection has been increased by half a ton. The 'Mech mounts a rear-mounted Small Laser with the rear-mounted medium laser, using the weight left over by the removal of the four forward facing medium lasers.
+
+history:Although funds were diverted to the war effort, the design team remained so committed to the project that, just before General Kerensky launched the invasion of Terra, they submitted six prototypes for testing, with team expenses covered out of pocket. As no battle logs for the Devastator have ever been discovered, historians are unable to assess how one of the final original Star League Defense Force designs performed or even if any of the prototypes survived. The blueprints were recovered in 3023 on Hoff by a team looking into a recently found Star League facility, but the first engineers to look at the blueprints were unable to replicate any of the new technology that went into the original. The NAIS didn't build a Devastator prototype utilizing available technologies until 3033. A few years later, moderate production started, and until early 3048, when the Federated Commonwealth was able to start producing a fully equipped version, the low tech DVS-1D was given to elite units.
+
+manufacturer:Norse-Storm Technologies, Inc
+primaryfactory:Loxley
+systemmanufacturer:CHASSIS:Star League XT
+systemmanufacturer:ENGINE:Vlar 300 XL
+systemmanufacturer:ARMOR:Durallex Heavy
+systemmanufacturer:COMMUNICATIONS:Johnston Wide Band
+systemmanufacturer:TARGETING:Randar Pinpoint-HY

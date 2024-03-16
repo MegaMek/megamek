@@ -20,6 +20,10 @@ Batu
 Z
 </Model>
 
+<mul id:>
+3809
+</mul id:>
+
 <year>
 3072
 </year>
@@ -31,6 +35,10 @@ Z
 <type>
 Clan Level 4
 </type>
+
+<role>
+Fast Dogfighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -114,7 +122,7 @@ CLCASE
 </Fuselage Equipment>
 
 <source>
-The Wars of Reaving (s) - Jihad
+The Wars of Reaving (s)
 </source>
 
 <tonnage>

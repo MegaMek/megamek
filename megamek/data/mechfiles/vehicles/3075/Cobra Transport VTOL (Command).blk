@@ -20,17 +20,25 @@ Cobra Transport VTOL
 (Command)
 </Model>
 
+<mul id:>
+657
+</mul id:>
+
 <year>
 2622
 </year>
 
 <source>
-Jihad
+TRO: 3075
 </source>
 
 <type>
 IS Level 2
 </type>
+
+<role>
+Scout
+</role>
 
 <tonnage>
 30.0

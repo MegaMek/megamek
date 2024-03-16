@@ -1,12 +1,17 @@
-Version:1.0
-Ocelot
-2
+chassis:Ocelot
+model:2
+mul id:2314
 
 Config:Biped
 TechBase:Clan
 Era:3070
-Source:TRO 3075
+Source:TRO: 3075
 Rules Level:2
+role:Striker
+
+weaponquirk:jettison_capable:RA:4:CLERMediumLaser
+weaponquirk:jettison_capable:RA:5:CLERMediumLaser
+
 
 Mass:35
 Engine:210 XL (Clan) Engine

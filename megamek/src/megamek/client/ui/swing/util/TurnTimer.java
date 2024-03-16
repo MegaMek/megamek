@@ -13,13 +13,11 @@
  */
 package megamek.client.ui.swing.util;
 
-
 import megamek.client.Client;
 import megamek.client.ui.swing.AbstractPhaseDisplay;
 import megamek.client.ui.swing.GUIPreferences;
-import megamek.common.Game;
 import megamek.common.enums.GamePhase;
-import megamek.common.options.Option;
+import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 
 import javax.swing.*;
@@ -31,7 +29,6 @@ import java.awt.event.ActionListener;
  * This class takes a time limit, which is to be set in Basic Options and counts down to zero
  * When zero is reached, the ready() method of the given {@link AbstractPhaseDisplay} is called
  * to end the users current turn.
- *
  */
 public class TurnTimer {
     private Timer timer;
@@ -41,21 +38,35 @@ public class TurnTimer {
     private JPanel display;
     private int timeLimit;
     private AbstractPhaseDisplay phaseDisplay;
+    private boolean extendTimer;
+    private boolean allowExtension;
+    private Client client;
 
-    public TurnTimer(int limit, AbstractPhaseDisplay pD) {
+    private static final GUIPreferences GUIP = GUIPreferences.getInstance();
+
+    public TurnTimer(int limit, AbstractPhaseDisplay pD, Client client) {
         phaseDisplay = pD;
-        // make it minutes here.
-        timeLimit = limit * 60;
+        // linit in seconds.
+        timeLimit = limit;
+        extendTimer = false;
+        this.client = client;
 
         display = new JPanel();
         progressBar = new JProgressBar(JProgressBar.HORIZONTAL, 0, timeLimit);
         progressBar.setValue(timeLimit);
-        progressBar.setForeground(Color.RED);
-        remaining = new JLabel((timeLimit / 60) + ":" + (timeLimit % 60));
+        progressBar.setForeground(GUIP.getCautionColor());
+        int seconds = timeLimit % 60;
+        int minutes = timeLimit / 60;
+        remaining = new JLabel(String.format("%s:%02d", minutes, seconds));
         phaseDisplay.getClientgui().getMenuBar().add(display);
         display.setLayout(new FlowLayout());
         display.add(remaining);
         display.add(progressBar);
+
+        UIUtil.adjustContainer(display, UIUtil.FONT_SCALE1);
+
+        GameOptions options = client.getGame().getOptions();
+        allowExtension = options.getOption(OptionsConstants.BASE_TURN_TIMER_ALLOW_EXTENSION).booleanValue();
 
         listener = new ActionListener() {
             int counter = timeLimit;
@@ -64,10 +75,21 @@ public class TurnTimer {
                 counter--;
                 int seconds = counter % 60;
                 int minutes = counter / 60;
-                remaining.setText(minutes + ":" + seconds);
+                String extended = (extendTimer && allowExtension) ? "\u2B50" : "";
+                String text = String.format("%s:%02d %s", minutes, seconds, extended);
+                remaining.setText(text);
+                Color c = counter  >= 10 ? GUIP.getCautionColor() : GUIP.getWarningColor();
+                progressBar.setForeground(c);
                 progressBar.setValue(counter);
 
-                if (counter < 1) {
+                UIUtil.adjustContainer(display, UIUtil.FONT_SCALE1);
+
+                if (counter < 2 && extendTimer && allowExtension) {
+                    timer.restart();
+                    counter = timeLimit;
+                    extendTimer = false;
+                    client.sendChat("Turn Timer extended");
+                } else if (counter < 1) {
                     // get the NagForNoAction setting here
                     boolean nagSet = GUIPreferences.getInstance().getNagForNoAction();
                     // prevent the popup dialog from breaking time limit
@@ -93,38 +115,54 @@ public class TurnTimer {
 
         });
     }
+
     public void stopTimer() {
         display.setVisible(false);
-        phaseDisplay.getClientgui().getMenuBar().remove(display);
+
+        if (phaseDisplay.getClientgui().getMenuBar() != null) {
+            phaseDisplay.getClientgui().getMenuBar().remove(display);
+        }
+
         timer.stop();
     }
 
+    public void setExtendTimer() {
+        extendTimer = true;
+    }
+
     public static TurnTimer init(AbstractPhaseDisplay phaseDisplay, Client client) {
-        //check if there should be a turn timer running
-        if (timerShouldStart(client)) {
-            Option timer = (Option) client.getGame().getOptions().getOption("turn_timer");
-            TurnTimer tt = new TurnTimer(timer.intValue(), phaseDisplay);
+        // check if there should be a turn timer running
+        GameOptions options = client.getGame().getOptions();
+        GamePhase phase = client.getGame().getPhase();
+
+        int timerLimit = 0;
+
+        switch (phase) {
+            case TARGETING:
+            case SET_ARTILLERY_AUTOHIT_HEXES:
+            case DEPLOY_MINEFIELDS:
+                timerLimit = options.getOption(OptionsConstants.BASE_TURN_TIMER_TARGETING).intValue();
+                break;
+            case MOVEMENT:
+                timerLimit = options.getOption(OptionsConstants.BASE_TURN_TIMER_MOVEMENT).intValue();
+                break;
+            case FIRING:
+                timerLimit = options.getOption(OptionsConstants.BASE_TURN_TIMER_FIRING).intValue();
+                break;
+            case PHYSICAL:
+                timerLimit = options.getOption(OptionsConstants.BASE_TURN_TIMER_PHYSICAL).intValue();
+                break;
+            default:
+                timerLimit = 0;
+        }
+
+        if (timerLimit > 0) {
+            TurnTimer tt = new TurnTimer(timerLimit, phaseDisplay, client);
             tt.startTimer();
             return tt;
         }
+
         return null;
     }
 
-    /**
-     * Checks if a turn time limit is set in options
-     * limit is only imposed on movement, firing
-     */
-    //TODO: add timer to physical and targeting phase currently it is only in movement and fire
-    private static boolean timerShouldStart(Client client) {
-        // check if there is a timer set
-        Option timer = (Option) client.getGame().getOptions().getOption(OptionsConstants.BASE_TURN_TIMER);
-        // if timer is set to 0 in options, it is disabled so we only create one if a limit is set in options
-        if (timer.intValue() > 0) {
-            GamePhase phase = client.getGame().getPhase();
-
-            // turn timer should only kick in on firing, targeting, movement and physical attack phase
-            return phase == GamePhase.MOVEMENT || phase == GamePhase.FIRING || phase == GamePhase.PHYSICAL || phase == GamePhase.TARGETING;
-        }
-        return false;
-    }
 }

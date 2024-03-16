@@ -1,0 +1,127 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Aero
+</UnitType>
+
+<Name>
+Huscarl
+</Name>
+
+<Model>
+HSCL-1-OR
+</Model>
+
+<mul id:>
+5758
+</mul id:>
+
+<year>
+3079
+</year>
+
+<originalBuildYear>
+3079
+</originalBuildYear>
+
+<type>
+Mixed (IS Chassis) Experimental
+</type>
+
+<role>
+Attack Fighter
+</role>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+</transporters>
+
+<SafeThrust>
+5
+</SafeThrust>
+
+<cockpit_type>
+0
+</cockpit_type>
+
+<heatsinks>
+14
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+400
+</fuel>
+
+<engine_type>
+2
+</engine_type>
+
+<omni>
+1
+</omni>
+
+<armor>
+70
+59
+59
+52
+</armor>
+
+<Nose Equipment>
+CLUltraAC20:OMNI
+</Nose Equipment>
+
+<Left Wing Equipment>
+CLPlasmaCannon:OMNI
+CLLRM20:OMNI
+CLArtemisIV:OMNI
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+CLPlasmaCannon:OMNI
+CLLRM20:OMNI
+CLArtemisIV:OMNI
+</Right Wing Equipment>
+
+<Aft Equipment>
+CLPlasmaCannon:OMNI
+</Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+Clan Ultra AC/20 Ammo:OMNI
+Clan Ultra AC/20 Ammo:OMNI
+Clan Ultra AC/20 Ammo:OMNI
+Clan Ultra AC/20 Ammo:OMNI
+CLPlasmaCannonAmmo:OMNI
+Clan Ammo LRM-20 (Clan) Artemis-capable:OMNI
+Clan Ammo LRM-20 (Clan) Artemis-capable:OMNI
+CLPlasmaCannonAmmo:OMNI
+Clan Ammo LRM-20 (Clan) Artemis-capable:OMNI
+Clan Ammo LRM-20 (Clan) Artemis-capable:OMNI
+</Fuselage Equipment>
+
+<source>
+TRO: 3067
+</source>
+
+<tonnage>
+75.0
+</tonnage>

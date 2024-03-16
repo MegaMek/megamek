@@ -15,6 +15,10 @@ Kestrel VTOL
 <Model>
 (MedEvac)
 </Model>
+
+<mul id:>
+1765
+</mul id:>
 <Tonnage>
 25
 </Tonnage>
@@ -40,8 +44,12 @@ Paramedic Equipment
 Paramedic Equipment
 </Body Equipment>
 <type>
-IS Level 2
+IS Level 3
 </type>
+
+<role>
+None
+</role>
 <year>
 3022
 </year>
@@ -58,5 +66,5 @@ IS Level 2
 VTOL
 </motion_type>
 <source>
-Succession Wars
+TRO: 3058
 </source>

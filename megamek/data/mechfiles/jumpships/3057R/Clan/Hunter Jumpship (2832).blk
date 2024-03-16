@@ -20,6 +20,10 @@ Hunter Jumpship
 (2832)
 </Model>
 
+<mul id:>
+4340
+</mul id:>
+
 <year>
 2832
 </year>
@@ -31,6 +35,10 @@ Hunter Jumpship
 <type>
 Clan Level 3
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Aerodyne
@@ -125,7 +133,7 @@ ISMobileHPG
 </structural_integrity>
 
 <source>
-TRO 3057R - Early Succession War
+TRO: 3057 Revised
 </source>
 
 <tonnage>

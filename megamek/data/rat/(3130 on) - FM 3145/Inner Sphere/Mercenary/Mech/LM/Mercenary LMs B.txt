@@ -1,0 +1,12 @@
+Mercenary Light Mechs 3130 B
+Hollander III BZK-D3,1
+Spider SDR-8R,2
+Havoc HVC-P6,3
+Wolfhound WLF-5,4
+Stiletto STO-6S,5
+Nyx NX-80,6
+Phoenix Hawk L 'Fenikkusu Taka' PXH-11K,5
+Spector SPR-5S,4
+Gambit GBT-1G,3
+Wolfhound WLF-2H,2
+Arbalest (Standard),1

@@ -1,0 +1,296 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Warship
+</UnitType>
+
+<Name>
+Potemkin Troop Cruiser
+</Name>
+
+<Model>
+(2875)
+</Model>
+
+<mul id:>
+4847
+</mul id:>
+
+<year>
+2875
+</year>
+
+<originalBuildYear>
+2875
+</originalBuildYear>
+
+<type>
+Clan Level 3
+</type>
+
+<role>
+None
+</role>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+smallcraftbay:5.0:1:1
+smallcraftbay:5.0:1:2
+cargobay:371293.5:1:3
+dockingcollar
+dockingcollar
+dockingcollar
+dockingcollar
+dockingcollar
+dockingcollar
+dockingcollar
+dockingcollar
+dockingcollar
+dockingcollar
+dockingcollar
+dockingcollar
+dockingcollar
+dockingcollar
+dockingcollar
+dockingcollar
+dockingcollar
+dockingcollar
+dockingcollar
+dockingcollar
+dockingcollar
+dockingcollar
+dockingcollar
+dockingcollar
+dockingcollar
+1stclassquarters:680.0:0
+crewquarters:2359.0:0
+</transporters>
+
+<SafeThrust>
+2
+</SafeThrust>
+
+<heatsinks>
+3325
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+25000
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<clan_engine>
+false
+</clan_engine>
+
+<armor_type>
+11
+</armor_type>
+
+<armor_tech>
+6
+</armor_tech>
+
+<armor>
+179
+201
+201
+156
+201
+201
+</armor>
+
+<Nose Equipment>
+(B) Naval Laser 45
+Naval Laser 45
+</Nose Equipment>
+
+<Left Front Side Equipment>
+(B) Naval Laser 45
+Naval Laser 45
+Naval Laser 45
+(B) Capital Missile Launcher (Barracuda)
+Capital Missile Launcher (Barracuda)
+Ammo Barracuda:20
+</Left Front Side Equipment>
+
+<Right Front Side Equipment>
+(B) Naval Laser 45
+Naval Laser 45
+Naval Laser 45
+(B) Capital Missile Launcher (Barracuda)
+Capital Missile Launcher (Barracuda)
+Ammo Barracuda:20
+</Right Front Side Equipment>
+
+<Aft Equipment>
+(B) Capital Missile Launcher (Barracuda)
+Capital Missile Launcher (Barracuda)
+Capital Missile Launcher (Barracuda)
+Capital Missile Launcher (Barracuda)
+Ammo Barracuda:40
+</Aft Equipment>
+
+<Aft Left Side Equipment>
+(B) Naval PPC (Heavy)
+Naval PPC (Heavy)
+Naval PPC (Heavy)
+(B) Naval PPC (Heavy)
+Naval PPC (Heavy)
+Naval PPC (Heavy)
+(B) Naval Laser 45
+Naval Laser 45
+Naval Laser 45
+Naval Laser 45
+</Aft Left Side Equipment>
+
+<Aft Right Side Equipment>
+(B) Naval PPC (Heavy)
+Naval PPC (Heavy)
+Naval PPC (Heavy)
+(B) Naval PPC (Heavy)
+Naval PPC (Heavy)
+Naval PPC (Heavy)
+(B) Naval Laser 45
+Naval Laser 45
+Naval Laser 45
+Naval Laser 45
+</Aft Right Side Equipment>
+
+<Hull Equipment>
+ISMobileHPG
+</Hull Equipment>
+
+<Left Broadsides Equipment>
+(B) Naval PPC (Heavy)
+Naval PPC (Heavy)
+Naval PPC (Heavy)
+(B) Naval PPC (Heavy)
+Naval PPC (Heavy)
+Naval PPC (Heavy)
+</Left Broadsides Equipment>
+
+<Right Broadsides Equipment>
+(B) Naval PPC (Heavy)
+Naval PPC (Heavy)
+Naval PPC (Heavy)
+(B) Naval PPC (Heavy)
+Naval PPC (Heavy)
+Naval PPC (Heavy)
+</Right Broadsides Equipment>
+
+<structural_integrity>
+80
+</structural_integrity>
+
+<capabilities>
+The Potemkin-class troop cruiser, originally designed to address the vulnerability of poorly protected transports, underwent modifications and upgrades throughout its service history. After General Kerensky's Exodus, the Potemkins that accompanied him continued to serve in Clan fleets, undergoing routine Clan upgrades. The most significant change involved the incorporation of a Lithium-Fusion Battery, resulting in the sacrifice of a portion of cargo space. This enhancement provided improved power supply and operational efficiency. In the aftermath of the Jihad, Clan Sea Fox repurposed numerous Potemkin-class ships into mobile habitats known as ArcShips and CargoShips. The CargoShips were extensively redesigned WarShips transformed into dedicated roving, long-term habitats, and mobile supply stations. They formed the core of a typical Aimag fleet and featured permanently attached DropShips, such as the Behemoth-class, to expand living and working space. On the other hand, ArcShips, also derived from redesigned Potemkin-class WarShips, served as societal points of congress and housed the core governmental structures for entire Clans. These ships underwent extensive modifications, including lengthening, widening, and increased mass. Habitat additions were made in former cargo bays and along the outer hull, allowing for expanded living areas. Among the largest ArcShips was the Poseidon, with a staggering mass of 2.5 million tons.
+</capabilities>
+
+<overview>
+The Potemkin-class troop cruiser, known as the "Corncob Cruiser," played a significant role in mass transportation during the Star League era. Its immense size, distinctive DropShip docking collar arrangement, and formidable defensive capabilities made it a recognizable and formidable presence in the Star League Defense Force fleet. Despite its eventual decline in deployment, the Potemkin's legacy endured as a testament to its role in protecting and transporting troops and equipment.
+</overview>
+
+<history>
+The Potemkin-class troop cruisers that accompanied General Kerensky on the Exodus continued to serve in Clan fleets, benefiting from routine Clan upgrades and modifications. The Clans recognized the potential of these ships and leveraged their capabilities in various roles. However, improvements in escort tactics and the development of smaller craft eventually led to a decline in Potemkin deployment.
+Following the Jihad, Clan Sea Fox repurposed many Potemkin-class ships into ArcShips and CargoShips. These modifications allowed the vessels to serve as mobile habitats and supply stations, providing essential resources and serving as hubs for Clan operations. The CargoShips, equipped with permanently attached DropShips, became dedicated long-term habitats and supply stations. The ArcShips, extensively modified Potemkin-class WarShips, served as societal and governmental centers for entire Clans. While the Potemkin-class troop cruiser's original purpose was transportation and protection, its adaptability allowed it to evolve and find new roles within the Clan fleets. The legacy of the Potemkin class lives on, as these vessels continue to serve as essential components of Clan operations, providing habitation, supply support, and strategic coordination capabilities.
+</history>
+
+<manufacturer>
+Refit
+</manufacturer>
+
+<primaryFactory>
+Unknown
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<use>
+Troop Cruiser
+</use>
+
+<source>
+TRO: 3057 Revised
+</source>
+
+<tonnage>
+1510000.0
+</tonnage>
+
+<kf_core>
+1
+</kf_core>
+
+<lithium-fusion>
+1
+</lithium-fusion>
+
+<sail>
+1
+</sail>
+
+<grav_decks>
+95
+</grav_decks>
+
+<designtype>
+1
+</designtype>
+
+<crew>
+455
+</crew>
+
+<officers>
+68
+</officers>
+
+<gunners>
+48
+</gunners>
+
+<passengers>
+0
+</passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<life_boat>
+50
+</life_boat>
+
+<escape_pod>
+50
+</escape_pod>
+

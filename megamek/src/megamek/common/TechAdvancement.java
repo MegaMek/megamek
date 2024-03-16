@@ -28,11 +28,11 @@ public class TechAdvancement implements ITechnology {
     //Dates that are approximate can be pushed this many years earlier (or later for extinctions).
     public static final int APPROXIMATE_MARGIN = 5;
 
-	public static final int PROTOTYPE    = 0;
-	public static final int PRODUCTION   = 1;
-	public static final int COMMON       = 2;
-	public static final int EXTINCT      = 3;
-	public static final int REINTRODUCED = 4;
+    public static final int PROTOTYPE    = 0;
+    public static final int PRODUCTION   = 1;
+    public static final int COMMON       = 2;
+    public static final int EXTINCT      = 3;
+    public static final int REINTRODUCED = 4;
 
     private int techBase = TECH_BASE_ALL;
     private int[] isAdvancement = new int[5];
@@ -250,7 +250,7 @@ public class TechAdvancement implements ITechnology {
      * is not among them, the prototype date is DATE_NONE.
      *
      * @param clan Whether to use Clan or IS progression dates
-     * @faction    The index of the faction (F_* constant). If < 0, the prototype factions are ignored.
+     * @param faction The index of the faction (F_* constant). If &lt; 0, the prototype factions are ignored.
      */
     @Override
     public int getPrototypeDate(boolean clan, int faction) {
@@ -293,7 +293,7 @@ public class TechAdvancement implements ITechnology {
      * is not among them, the production date is DATE_NONE.
      *
      * @param clan Whether to use Clan or IS progression dates
-     * @faction    The index of the faction (F_* constant). If < 0, the production factions are ignored.
+     * @param faction The index of the faction (F_* constant). If &lt; 0, the production factions are ignored.
      */
     @Override
     public int getProductionDate(boolean clan, int faction) {
@@ -343,7 +343,7 @@ public class TechAdvancement implements ITechnology {
      * is not among them, the extinction date is DATE_NONE.
      *
      * @param clan Whether to use Clan or IS progression dates
-     * @faction    The index of the faction (F_* constant). If < 0, the extinction factions are ignored.
+     * @param faction The index of the faction (F_* constant). If &lt; 0, the extinction factions are ignored.
      */
     @Override
     public int getExtinctionDate(boolean clan, int faction) {
@@ -377,7 +377,7 @@ public class TechAdvancement implements ITechnology {
      * is not among them, the reintroduction date is DATE_NONE.
      *
      * @param clan Whether to use Clan or IS progression dates
-     * @faction    The index of the faction (F_* constant). If < 0, the reintroduction factions are ignored.
+     * @param faction The index of the faction (F_* constant). If &lt; 0, the reintroduction factions are ignored.
      */
     @Override
     public int getReintroductionDate(boolean clan, int faction) {

@@ -1,0 +1,142 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Aero
+</UnitType>
+
+<Name>
+Transit
+</Name>
+
+<Model>
+TR-12
+</Model>
+
+<mul id:>
+3290
+</mul id:>
+
+<year>
+3063
+</year>
+
+<originalBuildYear>
+3063
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<role>
+Fast Dogfighter
+</role>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+</transporters>
+
+<SafeThrust>
+7
+</SafeThrust>
+
+<cockpit_type>
+0
+</cockpit_type>
+
+<heatsinks>
+12
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+400
+</fuel>
+
+<engine_type>
+2
+</engine_type>
+
+<armor>
+69
+39
+39
+37
+</armor>
+
+<Nose Equipment>
+ISLBXAC20
+ISERMediumLaser
+ISERMediumLaser
+</Nose Equipment>
+
+<Left Wing Equipment>
+ISERMediumLaser
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+ISERMediumLaser
+</Right Wing Equipment>
+
+<Aft Equipment>
+</Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+IS LB 20-X Cluster Ammo
+IS LB 20-X Cluster Ammo
+IS LB 20-X Cluster Ammo
+IS LB 20-X Cluster Ammo
+</Fuselage Equipment>
+
+<source>
+TRO: 3039
+</source>
+
+<tonnage>
+50.0
+</tonnage>
+
+<capabilities>
+Built as a 'Mech-buster and DropShip attack craft, the Transit isn't fast or agile, but is easy to control and has had few loss of control accidents.
+</capabilities>
+
+<overview>
+A common sight in House Liao and Capellan Confederation air lances, the Transit has armor and weapons to spare.
+</overview>
+
+<deployment>
+The TR-12 is a total redesign, fitted with a Rawlings Extra-Light 250 engine, saving weight for the Lasers to be upgrade to Extended Range versions. The standard autocannon is replaced with a LB 20-X AC with an additional ton of ammunition and an extra ton of armor was added on.
+</deployment>
+
+<manufacturer>
+Ceres Metals Industries
+</manufacturer>
+
+<primaryFactory>
+Capella
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Mujika Aerospace Type 18
+ENGINE:Rawlings 250 XL
+ARMOR:Mujika AeroFiber 
+COMMUNICATIONS:Endicott Type 28 Maser
+TARGETING:Dwyerson Mark XII
+</systemManufacturers>

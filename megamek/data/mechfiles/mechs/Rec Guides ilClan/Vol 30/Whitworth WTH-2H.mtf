@@ -1,0 +1,175 @@
+chassis:Whitworth
+model:WTH-2H
+mul id:9428
+Config:Biped
+techbase:Inner Sphere
+era:3139
+source:Rec Guide:ilClan #30
+rules level:2
+role:Brawler
+
+
+
+quirk:rugged_1
+quirk:weak_legs
+
+
+mass:40
+engine:200 Fusion Engine(IS)
+structure:IS Standard
+myomer:Standard
+
+heat sinks:10 IS Double
+walk mp:5
+jump mp:4
+
+armor:Heavy Ferro-Fibrous(Inner Sphere)
+LA armor:12
+RA armor:12
+LT armor:12
+RT armor:12
+CT armor:16
+HD armor:9
+LL armor:18
+RL armor:18
+RTL armor:6
+RTR armor:6
+RTC armor:7
+
+Weapons:5
+ER Medium Laser, Right Arm
+ER Medium Laser, Left Arm
+MRM 10, Left Torso
+MRM 10, Right Torso
+Medium Laser, Head
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISERMediumLaser
+IS Heavy Ferro-Fibrous
+IS Heavy Ferro-Fibrous
+IS Heavy Ferro-Fibrous
+IS Heavy Ferro-Fibrous
+IS Heavy Ferro-Fibrous
+IS Heavy Ferro-Fibrous
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISERMediumLaser
+IS Heavy Ferro-Fibrous
+IS Heavy Ferro-Fibrous
+IS Heavy Ferro-Fibrous
+IS Heavy Ferro-Fibrous
+IS Heavy Ferro-Fibrous
+IS Heavy Ferro-Fibrous
+-Empty-
+-Empty-
+
+Left Torso:
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+MRM 10
+MRM 10
+ISApollo
+IS MRM 10 Ammo
+IS MRM 10 Ammo
+ISCASEII
+IS Heavy Ferro-Fibrous
+IS Heavy Ferro-Fibrous
+IS Heavy Ferro-Fibrous
+
+Right Torso:
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+MRM 10
+MRM 10
+ISApollo
+IS Heavy Ferro-Fibrous
+IS Heavy Ferro-Fibrous
+IS Heavy Ferro-Fibrous
+IS Heavy Ferro-Fibrous
+IS Heavy Ferro-Fibrous
+IS Heavy Ferro-Fibrous
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+-Empty-
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+Medium Laser
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+
+
+overview:The Whitworth was created in 2610 as a scout 'Mech to bridge the gap between the light Wasp and medium Phoenix Hawk variants.
+
+capabilities:Although the Whitworth is limited at short range, its missile launchers provide exceptional long-range capabilities. While its heft allows it to compete in combat with units of same and lesser size, the 'Mech is not intended to be a brawler by any means. The Whitworth is not a good short-range slugger since it lacks hand actuators, has a terrible short-range weapon loadout, and lacks the high speed curve of lighter 'Mechs. Pilots who try to utilize it as such often find themselves rocketing into the sky on their ejection seat. Furthermore, the design incorporates a faulty actuator system in the hips and legs (replacing the system would require a complete reworking of the lower half of the torso and leg assembly), resulting in far too many MechWarriors being sprawled on the battlefield and unable to move due to unresponsive (or even missing) legs.
+
+deployment:The original production model of the Whitworth prior to its service in the Star League armies. The two LRM-10 missile launchers are replaced with two SRM-6 launchers and four additional heat sinks, allowing the MechWarrior better heat management capabilities. However since this loadout encourages a close combat approach for which the 'Mech is grossly ill-equipped, these were phased out and the variant remains extremely rare.
+
+history:The Whitworth Company's think tank produced a mediocre design that, while well equipped, was slower than either the Wasp or the P-Hawk. The Whitworth was adequately armored and had some staying power on the battlefield, but it couldn't hope to keep up with its lance companions in a running conflict. After observing that many Whitworth pilots would rush into close-range combat in order to successfully deploy its armament loadout, Star League designers pushed the manufacturer to upgrade to the extended reach of the Longbow LRM 10 series (despite the fact that most pilots were Kuritan in origin and adhered to the samurai-style of fighting). The Whitworth, dubbed the "Tin Woodsman" by both critics and fans, served the SLDF as a reconnaissance unit or as a part of a mobile striking lance. Because many Whitworths were allocated to severe battle zones, the death of the Star League resulted in the destruction of hundreds of them. Though survivors were rapidly recruited into the military machine of the Great Houses, the loss of so many industries signaled that the design was doomed to fade away at some point in the future. The initial WTH-1S series was found in Star League troops, often in strongly reinforced urban attack companies. Many Rim Worlds Republic troops deployed Whitworths in a more brutal manner, stockpiling half of their SRM ammo bins with inferno rounds capable of igniting large towns. Many Whitworths were incorporated into the Great Houses following the demise of the Star League. Because the Whitworth Company's large complex on Dieron was destroyed during the Amaris Crisis, these Whitworths were operated until they could no longer be maintained and then became "parts storage," as the actuator and structural mounts were adaptable to numerous medium 'Mech designs. Fewer than 300 Whitworths are thought to be operable, largely in the hands of families and passed down through MechWarrior generations. Spare components are scarce, but that began to change in 3035, when Whitworth Specialty Manufacturing established on Benjamin in the Draconis Combine and began producing spare parts for the WTH-1 design. Rumors circulated that ComStar was significant in the company's early days and was somehow connected to the secret arrangement reached in 3034 between that group and Theodore Kurita.
+
+manufacturer:Marian Arms Inc
+primaryfactory:Alphard
+systemmanufacturer:CHASSIS:Whitworth Type I
+systemmanufacturer:ENGINE:LTV 160
+systemmanufacturer:ARMOR:Durallex Light
+systemmanufacturer:JUMPJET:Whitworth Jetlift
+systemmanufacturer:COMMUNICATIONS:Garret T14
+systemmanufacturer:TARGETING:Garret D2j

@@ -83,8 +83,9 @@ public class GameEntityChangeEvent extends GameEntityEvent {
     
     @Override
     public String toString() {
-        if (movePath == null)
+        if (movePath == null) {
             return "There is nothing to move!";
+        }
         
         try {
             return getEntity().toString() + " moved to "

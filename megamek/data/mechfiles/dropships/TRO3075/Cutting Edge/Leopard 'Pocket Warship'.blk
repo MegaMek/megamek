@@ -20,6 +20,10 @@ Leopard
 'Pocket Warship'
 </Model>
 
+<mul id:>
+4492
+</mul id:>
+
 <year>
 3073
 </year>
@@ -31,6 +35,10 @@ Leopard
 <type>
 IS Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Aerodyne
@@ -126,7 +134,7 @@ ISMediumPulseLaser
 </structural_integrity>
 
 <source>
-TRO 3075 - Jihad
+TRO: 3075
 </source>
 
 <tonnage>

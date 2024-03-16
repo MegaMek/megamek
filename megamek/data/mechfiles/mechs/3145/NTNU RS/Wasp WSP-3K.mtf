@@ -1,12 +1,21 @@
-Version:1.2
-Wasp
-WSP-3K
+chassis:Wasp
+model:WSP-3K
+mul id:6949
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3110
-Source:RS 3145 NT NU 
+Source:Record Sheets: 3145 New Tech New Upgrades 
 Rules Level:2
+role:Scout
+
+
+
+quirk:easy_maintain
+quirk:ext_twist
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+
 
 Mass:20
 Engine:120 XL Engine(IS)

@@ -15,6 +15,10 @@ Hetzer Wheeled Assault Gun
 <Model>
 (LB-X)
 </Model>
+
+<mul id:>
+1508
+</mul id:>
 <Tonnage>
 40
 </Tonnage>
@@ -40,6 +44,10 @@ ISLBXAC20 CL Ammo
 <type>
 IS Level 2
 </type>
+
+<role>
+Ambusher
+</role>
 <year>
 3063
 </year>
@@ -56,5 +64,43 @@ IS Level 2
 Wheeled
 </motion_type>
 <source>
-Civil War
+TRO: 3039
 </source>
+
+<capabilities>
+Its primary and only weapon is in the front, meaning the unit lacks a turret, making it difficult to employ in roles other than defensive ones. Also, its wheeled chassis restricts its mobility.
+</capabilities>
+
+<overview>
+The Hetzer was designed as a cheap, self-propelled artillery-piece to be stationed on worlds deemed worthy to defend, but not valuable enough to station a complete garrison force or even BattleMechs.
+</overview>
+
+<deployment>
+Introduced during the FedCom Civil War, the original Assault Cannon is replaced by an LB 20-X AC variant with five tons of ammo. The I.C.E was replaced with a Fusion Engine. Furthermore the vehicle is better protected by the increase of its armor at the flanks and the rear.
+</deployment>
+
+<history>
+Due to its decent protection of six tons of standard armor and its Crusher SH Cannon, combined with its low price, the Hetzer is still a valuable asset for poor commands and is especially popular throughout the Periphery. However, Quikscell Company is largely known for its poor manufacturing standards, resulting in many Hetzers being shipped with only half their components installed or even completely lacking some of them. Crews reportedly refused new Hetzers meant to replace their older ones, because they couldn't be sure that the new models would work properly.
+</history>
+
+<manufacturer>
+Ceres Metals Industries
+</manufacturer>
+
+<primaryFactory>
+Indicass
+</primaryFactory>
+
+<systemManufacturers>
+ENGINE:CitiCide 140 ICE
+ARMOR:StarSlab/6
+COMMUNICATIONS:Johnston Q-Band
+TARGETING:Scantrex Dual Tac
+</systemManufacturers>
+
+<quirks>
+low_profile
+bad_rep_is
+poor_work
+</quirks>
+

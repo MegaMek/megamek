@@ -15,9 +15,11 @@ package megamek.common.weapons.infantry;
 
 import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.options.GameOptions;
+import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.Weapon;
-import megamek.server.Server;
+import megamek.server.GameManager;
 
 /**
  * @author Sebastian Brocks
@@ -120,6 +122,11 @@ public abstract class InfantryWeapon extends Weapon {
 
     @Override
     public int getMaxRange(Mounted weapon) {
+        return getMaxRange(weapon, null);
+    }
+
+    @Override
+    public int getMaxRange(Mounted weapon, Mounted ammo) {
         for (int range = RangeType.RANGE_EXTREME; range >= RangeType.RANGE_SHORT; range--) {
             if (infantryRange * 3 > AIRBORNE_WEAPON_RANGES[range - 1]) {
                 return range;
@@ -131,7 +138,7 @@ public abstract class InfantryWeapon extends Weapon {
     public int getCrew() {
         return crew;
     }
-    
+
     /**
      * The long range of this weapon type. Infantry weapons calculate ranges based on the "infantry range" value rather than
      * explicit short/long/medium ranges
@@ -234,7 +241,7 @@ public abstract class InfantryWeapon extends Weapon {
     public int getSupportVeeSlots(Entity entity) {
         return 1;
     }
-    
+
     /*
      * (non-Javadoc)
      *
@@ -243,15 +250,39 @@ public abstract class InfantryWeapon extends Weapon {
      * megamek.common.actions.WeaponAttackAction, megamek.common.Game)
      */
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game, Server server) {
+    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game, GameManager manager) {
         Mounted m = game.getEntity(waa.getEntityId()).getEquipment(waa.getWeaponId());
-        if (((null != m) && (m.curMode().equals(Weapon.MODE_FLAMER_HEAT)
+        if (((null != m) && ((m.hasModes() && m.curMode().isHeat())
                 || (waa.getEntity(game).isSupportVehicle()
-                    && m.getLinked() != null
-                    && m.getLinked().getType() != null
-                    && (((AmmoType) m.getLinked().getType()).getMunitionType() == AmmoType.M_INFERNO))))) {
-            return new InfantryHeatWeaponHandler(toHit, waa, game, server);
+                && m.getLinked() != null
+                && m.getLinked().getType() != null
+                && (((AmmoType) m.getLinked().getType()).getMunitionType().contains(AmmoType.Munitions.M_INFERNO)))))) {
+            return new InfantryHeatWeaponHandler(toHit, waa, game, manager);
+        } else if (game.getOptions().booleanOption(OptionsConstants.BASE_INFANTRY_DAMAGE_HEAT)
+                && (isFlameBased() || (m instanceof InfantryWeaponMounted)
+                                        &&  ((InfantryWeaponMounted) m).getOtherWeapon().isFlameBased())) {
+            return new InfantryHeatWeaponHandler(toHit, waa, game, manager);
         }
-        return new InfantryWeaponHandler(toHit, waa, game, server);
+        return new InfantryWeaponHandler(toHit, waa, game, manager);
+    }
+
+    @Override
+    public void adaptToGameOptions(GameOptions gOp) {
+        if (isFlameBased()) {
+            if (!gOp.booleanOption(OptionsConstants.BASE_INFANTRY_DAMAGE_HEAT)) {
+                addMode(MODE_FLAMER_DAMAGE);
+                addMode(MODE_FLAMER_HEAT);
+            } else {
+                removeMode(MODE_FLAMER_DAMAGE);
+                removeMode(MODE_FLAMER_HEAT);
+            }
+        }
+    }
+
+    public boolean isFlameBased() {
+        return hasFlag(WeaponType.F_FLAMER)
+                || hasFlag(WeaponType.F_INFERNO)
+                || hasFlag(WeaponType.F_INCENDIARY_NEEDLES)
+                || hasFlag(WeaponType.F_PLASMA);
     }
 }

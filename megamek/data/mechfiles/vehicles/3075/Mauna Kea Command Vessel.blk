@@ -1,3 +1,7 @@
+
+<mul id:>
+2113
+</mul id:>
 #building block data file
 
 <BlockVersion>
@@ -17,7 +21,7 @@ Mauna Kea Command Vessel
 </Name>
 
 <model>
-(Standard)
+
 </model>
 
 <year>
@@ -25,12 +29,16 @@ Mauna Kea Command Vessel
 </year>
 
 <source>
-Star League
+TRO: 3075
 </source>
 
 <type>
 IS Level 1
 </type>
+
+<role>
+Missile Boat
+</role>
 
 <tonnage>
 85.0

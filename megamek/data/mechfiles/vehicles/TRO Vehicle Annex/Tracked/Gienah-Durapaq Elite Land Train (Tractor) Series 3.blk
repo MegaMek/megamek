@@ -20,6 +20,10 @@ Gienah-Durapaq Elite Land Train
 (Tractor) Series 3
 </Model>
 
+<mul id:>
+4211
+</mul id:>
+
 <year>
 2899
 </year>
@@ -27,6 +31,10 @@ Gienah-Durapaq Elite Land Train
 <type>
 IS Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Tracked
@@ -93,7 +101,7 @@ cargobay:2:1
 </transporters>
 
 <source>
-TRO VAr - Succession Wars
+TRO: Vehicle Annex (Revised)
 </source>
 
 <tonnage>

@@ -1,18 +1,40 @@
+/*
+ * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ */
 package megamek.common.verifier;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
-
-import org.junit.Test;
-
 import megamek.common.*;
+import megamek.common.InfantryBay.PlatoonType;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class BayDataTest {
     
     private Entity createEntity(long etype) {
         Entity entity = mock(Entity.class);
         when(entity.hasETypeFlag(anyLong())).thenAnswer(inv ->
-            (((Long) inv.getArguments()[0]).longValue() & etype) != 0);
+            ((Long) inv.getArguments()[0] & etype) != 0);
         return entity;
     }
 
@@ -93,28 +115,28 @@ public class BayDataTest {
 
     @Test
     public void identifyFootInfantryBay() {
-        Bay bay = new InfantryBay(1, 1, 0, InfantryBay.PlatoonType.FOOT);
+        Bay bay = new InfantryBay(1, 1, 0, PlatoonType.FOOT);
         
         assertEquals(BayData.getBayType(bay), BayData.INFANTRY_FOOT);
     }
 
     @Test
     public void identifyJumpInfantryBay() {
-        Bay bay = new InfantryBay(1, 1, 0, InfantryBay.PlatoonType.JUMP);
+        Bay bay = new InfantryBay(1, 1, 0, PlatoonType.JUMP);
         
         assertEquals(BayData.getBayType(bay), BayData.INFANTRY_JUMP);
     }
 
     @Test
     public void identifyMotorizedInfantryBay() {
-        Bay bay = new InfantryBay(1, 1, 0, InfantryBay.PlatoonType.MOTORIZED);
+        Bay bay = new InfantryBay(1, 1, 0, PlatoonType.MOTORIZED);
         
         assertEquals(BayData.getBayType(bay), BayData.INFANTRY_MOTORIZED);
     }
 
     @Test
     public void identifyMechanizedInfantryBay() {
-        Bay bay = new InfantryBay(1, 1, 0, InfantryBay.PlatoonType.MECHANIZED);
+        Bay bay = new InfantryBay(1, 1, 0, PlatoonType.MECHANIZED);
         
         assertEquals(BayData.getBayType(bay), BayData.INFANTRY_MECHANIZED);
     }

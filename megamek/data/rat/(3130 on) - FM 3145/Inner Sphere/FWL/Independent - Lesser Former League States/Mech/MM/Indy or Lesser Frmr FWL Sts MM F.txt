@@ -1,0 +1,12 @@
+Independent or Lesser Former League States Medium Mechs 3130 F
+Icarus II ICR-2S,1
+Bloodhound B3-HND,2
+Hermes II HER-5Sr,3
+Violator VT-U1,4
+Centurion CN9-D3D,5
+Griffin GRF-2N,6
+Hunchback HBK-6N,5
+Shadow Hawk SHD-7M,4
+Shockwave SKW-4G,3
+Wolverine WVR-9M,2
+Chimera CMA-1S,1

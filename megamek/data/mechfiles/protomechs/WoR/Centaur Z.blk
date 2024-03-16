@@ -20,6 +20,10 @@ Centaur
 Z
 </Model>
 
+<mul id:>
+5628
+</mul id:>
+
 <year>
 3072
 </year>
@@ -31,6 +35,10 @@ Z
 <type>
 Clan Level 4
 </type>
+
+<role>
+Missile Boat
+</role>
 
 <motion_type>
 Biped
@@ -94,9 +102,42 @@ CLERMicroLaser
 </Main Gun Equipment>
 
 <source>
-WoRS - Jihad
+Wars of Reaving
 </source>
 
 <tonnage>
 5.0
 </tonnage>
+
+<capabilities>
+Its armoring is also relatively light; a single hit from a Large Laser will penetrate the center torso. The 45-rated fusion engine helps it maintain a good cruising speed of 65 km/h.
+</capabilities>
+
+<overview>
+The Centaur combines high speed, decent armor, and a varied weapons mix.
+</overview>
+
+<deployment>
+Developed by The Society this version uses an ER Micro Laser and LRM-4. It is also equipped with a Magnetic Clamp system so it can move around the battlefield more efficiently.
+</deployment>
+
+<history>
+One of the best first generation ProtoMechs.
+</history>
+
+<manufacturer>
+Csesztreg Industriplex Epsilon, Unknown
+</manufacturer>
+
+<primaryFactory>
+Csesztreg,Unknown
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unspecified
+ENGINE:45 Fusion
+ARMOR:Unspecified
+JUMPJET:Unspecified
+COMMUNICATIONS:Unspecified
+TARGETING:Unspecified
+</systemManufacturers>

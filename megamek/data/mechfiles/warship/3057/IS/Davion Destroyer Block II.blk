@@ -1,0 +1,335 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Warship
+</UnitType>
+
+<Name>
+Davion Destroyer
+</Name>
+
+<Model>
+(Block II)
+</Model>
+
+<mul id:>
+4053
+</mul id:>
+
+<year>
+2552
+</year>
+
+<originalBuildYear>
+2552
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+smallcraftbay:18.0:6:1
+dockingcollar
+dockingcollar
+steeragequarters:280.0:0
+crewquarters:1120.0:0
+1stclassquarters:990.0:0
+cargobay:72216.5:2:7
+</transporters>
+
+<SafeThrust>
+4
+</SafeThrust>
+
+<heatsinks>
+1000
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+12500
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+11
+</armor_type>
+
+<armor_tech>
+5
+</armor_tech>
+
+<armor>
+105
+90
+90
+80
+85
+85
+</armor>
+
+<Nose Equipment>
+(B) Naval Autocannon (NAC/25)
+Naval Autocannon (NAC/25)
+Ammo NAC/25:100
+(B) Naval Autocannon (NAC/25)
+Naval Autocannon (NAC/25)
+Ammo NAC/25:100
+(B) PPC
+PPC
+PPC
+PPC
+(B) LRM 15
+LRM 15
+LRM 15
+LRM 15
+IS Ammo LRM-15:208
+</Nose Equipment>
+
+<Left Front Side Equipment>
+(B) Naval Autocannon (NAC/40)
+Ammo NAC/40:50
+(B) PPC
+PPC
+PPC
+PPC
+(B) Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+(B) LRM 15
+LRM 15
+IS Ammo LRM-15:112
+</Left Front Side Equipment>
+
+<Right Front Side Equipment>
+(B) Naval Autocannon (NAC/40)
+Ammo NAC/40:50
+(B) PPC
+PPC
+PPC
+PPC
+(B) Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+(B) LRM 15
+LRM 15
+IS Ammo LRM-15:112
+</Right Front Side Equipment>
+
+<Aft Equipment>
+(B) Naval Autocannon (NAC/25)
+Naval Autocannon (NAC/25)
+Ammo NAC/25:100
+(B) Naval Autocannon (NAC/25)
+Naval Autocannon (NAC/25)
+Ammo NAC/25:50
+(B) PPC
+PPC
+PPC
+PPC
+(B) LRM 15
+LRM 15
+LRM 15
+LRM 15
+IS Ammo LRM-15:160
+(B) Large Laser
+Large Laser
+Large Laser
+Large Laser
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+</Aft Equipment>
+
+<Aft Left Side Equipment>
+(B) Naval Autocannon (NAC/25)
+Ammo NAC/25:50
+(B) LRM 15
+LRM 15
+IS Ammo LRM-15:104
+(B) Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+</Aft Left Side Equipment>
+
+<Aft Right Side Equipment>
+(B) Naval Autocannon (NAC/25)
+Ammo NAC/25:50
+(B) LRM 15
+LRM 15
+IS Ammo LRM-15:104
+(B) Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+</Aft Right Side Equipment>
+
+<Hull Equipment>
+</Hull Equipment>
+
+<Left Broadsides Equipment>
+(B) Naval Autocannon (NAC/30)
+Naval Autocannon (NAC/30)
+Ammo NAC/30:100
+(B) Large Laser
+Large Laser
+Large Laser
+Large Laser
+Large Laser
+Large Laser
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+</Left Broadsides Equipment>
+
+<Right Broadsides Equipment>
+(B) Naval Autocannon (NAC/30)
+Naval Autocannon (NAC/30)
+Ammo NAC/30:100
+(B) Large Laser
+Large Laser
+Large Laser
+Large Laser
+Large Laser
+Large Laser
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+</Right Broadsides Equipment>
+
+<structural_integrity>
+60
+</structural_integrity>
+
+<capabilities>
+The Block II Davion-class destroyers were substantially improved compared to their Block I counterparts. They boasted twice the armor protection, increased firepower, and carried a full fighter wing. Notably, they had the ability to dock two DropShips, allowing for additional operational flexibility. These upgrades made the Block II Davions a formidable force in naval engagements.
+</capabilities>
+
+<overview>
+The Davion-class destroyer, once the backbone of the Federated Suns' WarShip fleet, had a service life spanning three centuries due to significant modifications. The Block I series of Davions, plagued by bureaucratic issues and underwhelming performance, saw limited use in secondary duties. However, the Block II ships, authorized by Prince Alexander Davion, featured enhanced armor, firepower, and the ability to dock two DropShips, becoming a formidable asset for the Federated Suns' navy.
+</overview>
+
+<history>
+The initial Block I Davions faced numerous setbacks and shortcomings, leading to limited deployment and lackluster performance. However, Prince Alexander Davion revitalized the Davion program, resulting in the development of the Block II ships. The Block II Davions served during the Succession Wars but were eventually destroyed. Surprisingly, several surviving Block I Davions found their way into the service of the Clans. Prince Alexander leased most of the surviving Block I Davions to the SLDF, which were later acquired and upgraded by the Star League and the Clans, becoming known as the Whirlwind-class destroyers.
+</history>
+
+<manufacturer>
+Challenge Systems
+</manufacturer>
+
+<primaryFactory>
+Galax
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<use>
+Destroyer
+</use>
+
+<length>
+685 m
+</length>
+
+<source>
+TRO: 3057 Revised
+</source>
+
+<tonnage>
+580000.0
+</tonnage>
+
+<kf_core>
+1
+</kf_core>
+
+<sail>
+1
+</sail>
+
+<grav_decks>
+65
+65
+</grav_decks>
+
+<designtype>
+1
+</designtype>
+
+<crew>
+295
+</crew>
+
+<officers>
+45
+</officers>
+
+<gunners>
+31
+</gunners>
+
+<passengers>
+54
+</passengers>
+
+<marines>
+56
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<life_boat>
+24
+</life_boat>
+
+<escape_pod>
+30
+</escape_pod>
+

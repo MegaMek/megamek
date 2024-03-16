@@ -20,6 +20,10 @@ Bandit Hovercraft
 I
 </Model>
 
+<mul id:>
+238
+</mul id:>
+
 <year>
 3070
 </year>
@@ -28,15 +32,16 @@ I
 IS Level 2
 </type>
 
+<role>
+Striker
+</role>
+
 <motion_type>
 Hover
 </motion_type>
 
 <transporters>
 troopspace:4.0
-</transporters>
-
-<transporters>
 BattleArmorHandles - troopers:-1
 </transporters>
 
@@ -83,7 +88,7 @@ Light PPC:OMNI
 </Turret Equipment>
 
 <source>
-Jihad
+TRO: 3058
 </source>
 
 <tonnage>
@@ -93,3 +98,9 @@ Jihad
 <baseChassisTurretWeight>
 1.0
 </baseChassisTurretWeight>
+
+<weaponQuirks>
+mod_weapons:FR:0:Light Machine Gun
+mod_weapons:TU:0:Light PPC
+mod_weapons:TU:1:Light PPC
+</weaponQuirks>

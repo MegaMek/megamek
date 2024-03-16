@@ -16,9 +16,13 @@ SupportVTOL
 Strike Falcon Attack VTOL
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+5585
+</mul id:>
 
 <year>
 2371
@@ -27,6 +31,10 @@ Strike Falcon Attack VTOL
 <type>
 IS Level 2
 </type>
+
+<role>
+Striker
+</role>
 
 <motion_type>
 VTOL
@@ -92,9 +100,15 @@ Machine Gun
 </barrating>
 
 <source>
-XTRO Primitives II - Age of War
+XTR: Primitives II
 </source>
 
 <tonnage>
 30.0
 </tonnage>
+
+<quirks>
+easy_pilot
+obsolete
+</quirks>
+

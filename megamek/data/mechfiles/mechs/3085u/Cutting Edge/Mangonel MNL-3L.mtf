@@ -1,12 +1,20 @@
-Version:1.0
-Mangonel
-MNL-3L
+chassis:Mangonel
+model:MNL-3L
+mul id:2012
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3079
-Source:Jihad
+source:TRO: 3085
 Rules Level:2
+role:Skirmisher
+
+
+
+
+quirk:difficult_maintain
+quirk:no_arms
+
 
 Mass:70
 Engine:350 Light Engine

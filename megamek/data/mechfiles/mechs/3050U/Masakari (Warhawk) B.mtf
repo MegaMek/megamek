@@ -1,12 +1,17 @@
-Version:1.2
-Masakari (Warhawk)
-B
+chassis:Masakari
+clanname:Warhawk
+model:B
+mul id:2092
 
 Config:Biped Omnimech
 TechBase:Clan
 Era:2999
-Source:TRO 3050 - Succession Wars
+Source:TRO: 3050
 Rules Level:2
+role:Brawler
+
+quirk:imp_target_long
+
 
 Mass:85
 Engine:340 XL (Clan) Engine(IS)

@@ -1,12 +1,18 @@
-Version:1.0
-Dart
-DRT-6T
+chassis:Dart
+model:DRT-6T
+mul id:831
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3077
-Source:Jihad
+source:TRO: 3085
 Rules Level:2
+role:Scout
+
+
+
+quirk:ext_twist
+
 
 Mass:25
 Engine:225 Light Engine

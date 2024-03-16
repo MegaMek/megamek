@@ -1,34 +1,38 @@
-Version:1.0
-Goshawk II
-3
-
+chassis:Goshawk II
+model:3
+mul id:1248
 Config:Biped
-TechBase:Clan
-Era:3086
-Source:Dark Age
-Rules Level:4
+techbase:Clan
+era:3086
+source:TRO: 3085
+rules level:2
+role:Striker
 
-Mass:45
-Engine:315 XL (Clan) Engine
-Structure:Endo Steel
-Myomer:Standard
+quirk:imp_life_support
+quirk:nimble_jumper
 
-Heat Sinks:10 Double
-Walk MP:7
-Jump MP:7
 
-Armor:Standard(Clan)
-LA Armor:12
-RA Armor:12
-LT Armor:16
-RT Armor:16
-CT Armor:20
-HD Armor:9
-LL Armor:20
-RL Armor:20
-RTL Armor:6
-RTR Armor:6
-RTC Armor:7
+mass:45
+engine:315 XL (Clan) Engine(IS)
+structure:Clan Endo Steel
+myomer:Standard
+
+heat sinks:10 Clan Double
+walk mp:7
+jump mp:7
+
+armor:Standard(Clan)
+LA armor:12
+RA armor:12
+LT armor:16
+RT armor:16
+CT armor:20
+HD armor:9
+LL armor:20
+RL armor:20
+RTL armor:6
+RTR armor:6
+RTC armor:7
 
 Weapons:3
 ER Large Laser, Right Arm
@@ -40,7 +44,7 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -54,7 +58,7 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 CLERLargeLaser
-Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -72,8 +76,8 @@ Jump Jet
 CLMediumPulseLaser
 CLTargeting Computer
 CLTargeting Computer
-Endo Steel
-Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 
@@ -84,8 +88,8 @@ Jump Jet
 Jump Jet
 Jump Jet
 CLMediumPulseLaser
-Endo Steel
-Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -103,13 +107,13 @@ Fusion Engine
 Fusion Engine
 Fusion Engine
 Jump Jet
-Liquid Storage (1 ton)
+Liquid Storage:SIZE:1.0
 
 Head:
 Life Support
 Sensors
-Cockpit (armored)
-Endo Steel
+Cockpit (ARMORED)
+Clan Endo Steel
 Sensors
 Life Support
 -Empty-

@@ -46,24 +46,7 @@ public class BLKSupportVTOLFile extends BLKFile implements IMechLoader {
     @Override
     public Entity getEntity() throws EntityLoadingException {
         SupportVTOL t = new SupportVTOL();
-
-        if (!dataFile.exists("Name")) {
-            throw new EntityLoadingException("Could not find name block.");
-        }
-        t.setChassis(dataFile.getDataAsString("Name")[0]);
-        if (dataFile.exists("Model") && (dataFile.getDataAsString("Model")[0] != null)) {
-            t.setModel(dataFile.getDataAsString("Model")[0]);
-        } else {
-            t.setModel("");
-        }
-
-        setTechLevel(t);
-        setFluff(t);
-        checkManualBV(t);
-
-        if (dataFile.exists("source")) {
-            t.setSource(dataFile.getDataAsString("source")[0]);
-        }
+        setBasicEntityData(t);
 
         if (!dataFile.exists("tonnage")) {
             throw new EntityLoadingException("Could not find weight block.");
@@ -101,6 +84,8 @@ public class BLKSupportVTOLFile extends BLKFile implements IMechLoader {
         t.setEngine(new Engine(engineRating, BLKFile.translateEngineCode(engineCode), engineFlags));
         t.setOriginalWalkMP(dataFile.getDataAsInt("cruiseMP")[0]);
 
+        loadSVArmor(t);
+
         if (dataFile.exists("internal_type")) {
             t.setStructureType(dataFile.getDataAsInt("internal_type")[0]);
         } else {
@@ -126,32 +111,6 @@ public class BLKSupportVTOLFile extends BLKFile implements IMechLoader {
             t.initializeArmor(fullArmor[x], x);
         }
 
-        boolean patchworkArmor = false;
-        if (dataFile.exists("armor_type")) {
-            if (dataFile.getDataAsInt("armor_type")[0] == EquipmentType.T_ARMOR_PATCHWORK) {
-                patchworkArmor = true;
-            } else {
-                t.setArmorType(dataFile.getDataAsInt("armor_type")[0]);
-            }
-        } else {
-            t.setArmorType(EquipmentType.T_ARMOR_STANDARD);
-        }
-        if (!patchworkArmor && dataFile.exists("armor_tech")) {
-            t.setArmorTechLevel(dataFile.getDataAsInt("armor_tech")[0]);
-        }
-        if (!patchworkArmor) {
-            if (!dataFile.exists("barrating")) {
-                throw new EntityLoadingException("Could not find barrating block.");
-            }
-            t.setBARRating(dataFile.getDataAsInt("barrating")[0]);
-        } else {
-            for (int i = 1; i < t.locations(); i++) {
-                t.setArmorType(dataFile.getDataAsInt(t.getLocationName(i) + "_armor_type")[0], i);
-                t.setArmorTechLevel(dataFile.getDataAsInt(t.getLocationName(i) + "_armor_type")[0], i);
-                t.setBARRating(dataFile.getDataAsInt(t.getLocationName(i) + "_barrating")[0], i);
-            }
-        }
-        
         // Set the structural tech rating
         if (!dataFile.exists("structural_tech_rating")) {
             throw new EntityLoadingException("Could not find " +
@@ -214,7 +173,7 @@ public class BLKSupportVTOLFile extends BLKFile implements IMechLoader {
         if (dataFile.exists("baseChassisFireConWeight")) {
             t.setBaseChassisFireConWeight((dataFile.getDataAsDouble("baseChassisFireConWeight")[0]));
         }
-
+        loadQuirks(t);
         return t;
     }
 

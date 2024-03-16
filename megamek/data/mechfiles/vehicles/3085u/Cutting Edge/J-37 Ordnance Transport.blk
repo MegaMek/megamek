@@ -1,3 +1,7 @@
+
+<mul id:>
+1649
+</mul id:>
 #building block data file
 <BlockVersion>
 1
@@ -17,7 +21,6 @@ J-37 Ordnance Transport
 </Name>
 
 <model>
-(Standard)	
 </model>
 
 <Tonnage>
@@ -60,7 +63,7 @@ IS Level 2
 </year>
 
 <source>
-TRO 3085 - Jihad
+TRO: 3085
 </source>
 
 <internal_type>

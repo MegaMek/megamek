@@ -20,6 +20,10 @@ Seydlitz
 (Mary) 'Yari'
 </Model>
 
+<mul id:>
+2877
+</mul id:>
+
 <year>
 3069
 </year>
@@ -31,6 +35,10 @@ Seydlitz
 <type>
 IS Level 2
 </type>
+
+<role>
+Interceptor
+</role>
 
 <motion_type>
 Aerodyne
@@ -90,7 +98,7 @@ ISSNPPC
 </Fuselage Equipment>
 
 <source>
-RS Unique Fighters - Jihad
+Record Sheets: Unique Fighters
 </source>
 
 <tonnage>

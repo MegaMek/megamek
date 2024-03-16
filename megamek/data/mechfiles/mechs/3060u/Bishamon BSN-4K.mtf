@@ -1,12 +1,18 @@
-Version:1.0
-Bishamon
-BSN-4K
+chassis:Bishamon
+model:BSN-4K
+mul id:333
 
 Config:Quad
 TechBase:Inner Sphere
 Era:3060
-Source:TRO 3060
+Source:TRO: 3060
 Rules Level:2
+role:Striker
+
+
+
+quirk:difficult_maintain
+
 
 Mass:45
 Engine:315 XL Engine

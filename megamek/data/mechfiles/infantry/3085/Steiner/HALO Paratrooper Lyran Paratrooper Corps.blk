@@ -2,46 +2,91 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 Infantry
 </UnitType>
+
 <Name>
 HALO Paratrooper
 </Name>
+
 <Model>
 Lyran Paratrooper Corps
 </Model>
-<squad_size>
-7
-</squad_size>
-<squadn>
-3
-</squadn>
-<Primary>
-InfantryM&GG150
-</Primary>
-<Secondary>
-InfantryHRR
-</Secondary>
-<secondn>
-1
-</secondn>
-<armorKit>
-SteinerKit3060
-</armorKit>
-<type>
-IS Level 3
-</type>
+
+<mul id:>
+1364
+</mul id:>
+
 <year>
 3045
 </year>
-<era>
-TRO 3085
-</era>
+
+<originalBuildYear>
+3045
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<role>
+Ambusher
+</role>
+
 <motion_type>
 Leg
 </motion_type>
+
+<transporters>
+</transporters>
+
+<Field Guns Equipment>
+</Field Guns Equipment>
+
+<source>
+TRO: 3085
+</source>
+
+<squad_size>
+7
+</squad_size>
+
+<squadn>
+3
+</squadn>
+
+<secondn>
+2
+</secondn>
+
+<Primary>
+Rifle (M&G G-150)
+</Primary>
+
+<Secondary>
+InfantryHRR
+</Secondary>
+
+<antimek>
+8
+</antimek>
+
+<armorKit>
+Lyran Alliance/Lyran Commonwealth (3060+) Infantry Kit
+</armorKit>
+
+<armordivisor>
+2.0
+</armordivisor>
+
+<specialization>
+512
+</specialization>
+

@@ -15,6 +15,10 @@ Clan Mechanized Infantry
 <Model>
 Mimir/Watch Counter Insurgency Point
 </Model>
+
+<mul id:>
+622
+</mul id:>
 <squad_size>
 5
 </squad_size>
@@ -34,11 +38,15 @@ InfantrySupportPulseLaser
 <type>
 Clan Level 3
 </type>
+
+<role>
+Ambusher
+</role>
 <year>
 2900
 </year>
 <source>
-TRO 3085 - Early Succession War
+TRO: 3085
 </source>
 <motion_type>
 Tracked

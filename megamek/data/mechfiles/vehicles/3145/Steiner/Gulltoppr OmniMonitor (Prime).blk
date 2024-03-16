@@ -20,6 +20,10 @@ Gulltoppr OmniMonitor
 (Prime)
 </Model>
 
+<mul id:>
+6606
+</mul id:>
+
 <year>
 3102
 </year>
@@ -31,6 +35,10 @@ Gulltoppr OmniMonitor
 <type>
 IS Level 3
 </type>
+
+<role>
+Sniper
+</role>
 
 <motion_type>
 Tracked
@@ -107,7 +115,7 @@ ISGaussRifle:OMNI
 </Front Turret Equipment>
 
 <source>
-TRO 3145 Lyran Commonwealth - Late Republic
+TRO: 3145 Lyran Commonwealth
 </source>
 
 <tonnage>
@@ -121,4 +129,13 @@ TRO 3145 Lyran Commonwealth - Late Republic
 <baseChassisTurret2Weight>
 3.0
 </baseChassisTurret2Weight>
+
+
+<quirks>
+battle_computer
+difficult_maintain
+non_standard
+oversized
+poor_performance
+</quirks>
 

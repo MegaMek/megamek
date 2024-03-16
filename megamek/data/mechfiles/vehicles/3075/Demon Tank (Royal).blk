@@ -20,6 +20,10 @@ Demon Tank
 (Royal)
 </Model>
 
+<mul id:>
+875
+</mul id:>
+
 <year>
 2744
 </year>
@@ -31,6 +35,10 @@ Demon Tank
 <type>
 IS Level 2
 </type>
+
+<role>
+Skirmisher
+</role>
 
 <motion_type>
 Wheeled
@@ -88,7 +96,7 @@ ISGaussRifle
 </Turret Equipment>
 
 <source>
-Star League
+TRO: 3075
 </source>
 
 <tonnage>

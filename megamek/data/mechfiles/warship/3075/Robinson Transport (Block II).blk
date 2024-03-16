@@ -1,0 +1,298 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Warship
+</UnitType>
+
+<Name>
+Robinson Transport
+</Name>
+
+<Model>
+(Block II)
+</Model>
+
+<mul id:>
+4925
+</mul id:>
+
+<year>
+2705
+</year>
+
+<originalBuildYear>
+2705
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+asfbay:24.0:4:1
+smallcraftbay:12.0:2:2
+mechbay:36.0:4
+dockingcollar
+dockingcollar
+dockingcollar
+dockingcollar
+1stclassquarters:460.0:0
+crewquarters:833.0:0
+cargobay:54989.0:2:10
+</transporters>
+
+<SafeThrust>
+3
+</SafeThrust>
+
+<heatsinks>
+3344
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+6500
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+11
+</armor_type>
+
+<armor_tech>
+5
+</armor_tech>
+
+<armor>
+104
+93
+93
+84
+93
+93
+</armor>
+
+<Nose Equipment>
+(B) Naval Autocannon (NAC/30)
+Naval Autocannon (NAC/30)
+Ammo NAC/30:20
+(B) Naval PPC (Heavy)
+(B) PPC
+PPC
+PPC
+PPC
+</Nose Equipment>
+
+<Left Front Side Equipment>
+(B) Naval PPC (Light)
+Naval PPC (Light)
+Naval PPC (Light)
+(B) Large Laser
+Large Laser
+Medium Laser
+Medium Laser
+(B) LRM 20
+LRM 20
+IS Ammo LRM-20:96
+</Left Front Side Equipment>
+
+<Right Front Side Equipment>
+(B) Naval PPC (Light)
+Naval PPC (Light)
+Naval PPC (Light)
+(B) Large Laser
+Large Laser
+Medium Laser
+Medium Laser
+(B) LRM 20
+LRM 20
+IS Ammo LRM-20:96
+</Right Front Side Equipment>
+
+<Aft Equipment>
+(B) Naval PPC (Heavy)
+(B) Naval Laser 35
+Naval Laser 35
+(B) LRM 20
+LRM 20
+LRM 20
+LRM 20
+LRM 20
+LRM 20
+IS Ammo LRM-20:60
+(B) Large Laser
+Large Laser
+Medium Laser
+Medium Laser
+</Aft Equipment>
+
+<Aft Left Side Equipment>
+(B) Naval Laser 45
+Naval Laser 45
+Naval Laser 45
+(B) Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+</Aft Left Side Equipment>
+
+<Aft Right Side Equipment>
+(B) Naval Laser 45
+Naval Laser 45
+Naval Laser 45
+(B) Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+</Aft Right Side Equipment>
+
+<Hull Equipment>
+</Hull Equipment>
+
+<Left Broadsides Equipment>
+(B) Naval PPC (Medium)
+Naval PPC (Medium)
+(B) PPC
+PPC
+PPC
+(B) LRM 20
+LRM 20
+LRM 20
+IS Ammo LRM-20:30
+</Left Broadsides Equipment>
+
+<Right Broadsides Equipment>
+(B) Naval PPC (Medium)
+Naval PPC (Medium)
+(B) PPC
+PPC
+PPC
+(B) LRM 20
+LRM 20
+LRM 20
+IS Ammo LRM-20:30
+</Right Broadsides Equipment>
+
+<structural_integrity>
+80
+</structural_integrity>
+
+<capabilities>
+The Robinson Block II incorporated cutting-edge technologies obtained from the Terran Hegemony, enabling it to achieve superior armor protection and enhanced defense against aerospace fighters. With the integration of Double Heat Sinks, the ship's heat dissipation capabilities were significantly improved, allowing for prolonged operations in combat scenarios. The implementation of Ferro-Carbide armor provided twice the armor protection compared to previous versions, ensuring increased resilience against enemy attacks. These advancements made the Robinson Block II a formidable transport vessel that could withstand heavy firepower while preserving its cargo space for the transportation of troops and BattleMechs.
+</capabilities>
+
+<overview>
+The Robinson Block II, introduced in 2705, represents an advanced iteration of the Robinson-class WarShip. Benefiting from advanced naval components developed by the Terran Hegemony, the Block II variant showcased significant enhancements in armor protection and defensive capabilities. Despite these improvements, the ship maintained its primary function as a versatile transport vessel. The integration of technologies such as Double Heat Sinks and Ferro-Carbide armor bolstered its resilience without sacrificing cargo capacity.
+</overview>
+
+<history>
+The introduction of the Robinson Block II in 2705 marked a significant milestone in the evolution of the Robinson-class WarShip. With the loosening of the Terran Hegemony's control over advanced military technologies, the Federated Suns gained access to crucial naval components that propelled the Robinson's capabilities to new heights. The integration of Double Heat Sinks and Ferro-Carbide armor not only enhanced the ship's defensive capabilities but also reflected the continuous advancements in the field of WarShip design.The Robinson Block II, retaining its role as a versatile transport vessel, played a vital role in various military operations of the Federated Suns. Its ability to transport troops, BattleMechs, and supplies while offering robust defensive capabilities made it an indispensable asset on the battlefield. The integration of advanced technologies allowed the Robinson Block II to excel in combat scenarios, ensuring the safe delivery of ground forces and providing crucial support during operations.As the Federated Suns faced numerous conflicts and challenges, the Robinson Block II proved its worth and resilience. Its deployment in key regions and alongside frontline units safeguarded vital territories and contributed to the success of numerous military campaigns. The Robinson Block II stands as a testament to the advancements made in WarShip technology and its significant impact on the Federated Suns' military capabilities.
+</history>
+
+<manufacturer>
+Challenge Systems
+</manufacturer>
+
+<primaryFactory>
+Galax
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<use>
+Transport
+</use>
+
+<length>
+537 m
+</length>
+
+<height>
+968 m Sail
+</height>
+
+<source>
+TRO: 3075
+</source>
+
+<tonnage>
+400000.0
+</tonnage>
+
+<kf_core>
+1
+</kf_core>
+
+<sail>
+1
+</sail>
+
+<grav_decks>
+75
+75
+</grav_decks>
+
+<designtype>
+1
+</designtype>
+
+<crew>
+345
+</crew>
+
+<officers>
+46
+</officers>
+
+<gunners>
+33
+</gunners>
+
+<passengers>
+0
+</passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<life_boat>
+0
+</life_boat>
+
+<escape_pod>
+30
+</escape_pod>
+

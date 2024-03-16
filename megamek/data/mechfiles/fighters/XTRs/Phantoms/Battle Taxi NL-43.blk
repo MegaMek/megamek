@@ -20,6 +20,10 @@ Battle Taxi
 NL-43
 </Model>
 
+<mul id:>
+5610
+</mul id:>
+
 <year>
 3074
 </year>
@@ -31,6 +35,10 @@ NL-43
 <type>
 IS Level 4
 </type>
+
+<role>
+Dogfighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -113,9 +121,14 @@ IS Vehicular Stealth
 </Fuselage Equipment>
 
 <source>
-XTRO Phantoms - Jihad
+XTR: Phantoms
 </source>
 
 <tonnage>
 100.0
 </tonnage>
+
+<quirks>
+non_standard
+</quirks>
+

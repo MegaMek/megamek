@@ -14,14 +14,15 @@
 package megamek.common.weapons.ppc;
 
 import megamek.common.AmmoType;
-import megamek.common.BattleForceElement;
+import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.Game;
+import megamek.common.Mounted;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AmmoWeapon;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.PlasmaCannonHandler;
-import megamek.server.Server;
+import megamek.server.GameManager;
 
 /**
  * @author Sebastian Brocks
@@ -74,15 +75,17 @@ public class CLPlasmaCannon extends AmmoWeapon {
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
-                                              Server server) {
-        return new PlasmaCannonHandler(toHit, waa, game, server);
+                                              GameManager manager) {
+        return new PlasmaCannonHandler(toHit, waa, game, manager);
     }
 
     @Override
-    public int getBattleForceHeatDamage(int range) {
-        if (range <= BattleForceElement.LONG_RANGE) {
-            return 7;
-        }
+    public int getAlphaStrikeHeatDamage(int rangeband) {
+        return (rangeband <= AlphaStrikeElement.RANGE_BAND_LONG) ? 7 : 0;
+    }
+
+    @Override
+    public double getBattleForceDamage(int range, Mounted linked) {
         return 0;
     }
 }

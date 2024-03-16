@@ -20,6 +20,10 @@ SM2 Heavy Artillery Vehicle
 (LTC)
 </Model>
 
+<mul id:>
+6387
+</mul id:>
+
 <year>
 3093
 </year>
@@ -27,6 +31,10 @@ SM2 Heavy Artillery Vehicle
 <type>
 Clan Level 3
 </type>
+
+<role>
+Sniper
+</role>
 
 <motion_type>
 Tracked
@@ -82,7 +90,7 @@ CLHeavyMG
 </Rear Equipment>
 
 <source>
-TRO 3145 Draconis Combine - Early Republic
+TRO: 3145 Draconis Combine
 </source>
 
 <tonnage>

@@ -1,35 +1,42 @@
 /*
- * MegaAero - Copyright (C) 2007 Jay Lawson
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * Copyright (c) 2007 - Jay Lawson
+ * Copyright (c) 2023 - The MegaMek Team. All Rights Reserved.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
 package megamek.common;
 
+import megamek.client.ui.swing.calculationReport.CalculationReport;
+
 /**
  * @author Jay Lawson
- * @since Jun 17, 2007
  */
 public class TeleMissile extends Aero {
     private static final long serialVersionUID = -5932720323745597199L;
 
     public static final int LOC_BODY = 0;
 
-    private static String[] LOCATION_ABBRS = { "BODY" };
-    private static String[] LOCATION_NAMES = { "Body" };
+    private static final String[] LOCATION_ABBRS = { "BODY" };
+    private static final String[] LOCATION_NAMES = { "Body" };
 
     private int originalRideId;
-
     private int critMod = 0;
 
-    //need another type of boolean for out-of-control status that indicates
-    //lack of contact with originating unit
+    // need another type of boolean for out-of-control status that indicates
+    // lack of contact with originating unit
     private boolean outContact = false;
     
     public TeleMissile() {
@@ -37,10 +44,6 @@ public class TeleMissile extends Aero {
         damThresh = new int[] { 0 };
     }
 
-    /**
-     * Telemissiles shouldn't get a firing phase
-     * @return false
-     */
     @Override
     public boolean isEligibleForFiring() {
         return false;
@@ -48,28 +51,28 @@ public class TeleMissile extends Aero {
 
     public TeleMissile(Entity originalRide, int damageValue, int armorValue, double weight, int type, int capMisMod) {
         this();
-                
-        //fuel
-        int fuel = 0;
-        String name = "T-Op Missile";
+
+        String name;
+        int fuel;
         switch (type) {
-            case(AmmoType.T_KRAKEN_T):
-                fuel = 25;
+            case AmmoType.T_KRAKEN_T:
                 name = "Kraken-T Missile";
+                fuel = 25;
                 break;
-            case(AmmoType.T_WHITE_SHARK_T):
-                fuel = 40;
+            case AmmoType.T_WHITE_SHARK_T:
                 name = "White Shark-T Missile";
+                fuel = 40;
                 break;
-            case(AmmoType.T_KILLER_WHALE_T):
-                fuel = 30;
+            case AmmoType.T_KILLER_WHALE_T:
                 name = "Killer Whale-T Missile";
-                break;
-            case(AmmoType.T_BARRACUDA_T):
                 fuel = 30;
+                break;
+            case AmmoType.T_BARRACUDA_T:
                 name = "Barracuda-T Missile";
+                fuel = 30;
                 break;
             default:
+                name = "T-Op Missile";
                 fuel = 30;
                 break;
         }
@@ -87,7 +90,6 @@ public class TeleMissile extends Aero {
         initializeSI(0);
         setMovementMode(EntityMovementMode.AERODYNE);
 
-        // Finish initializing this unit.
         setOwner(originalRide.getOwner());
         initializeInternal(1, LOC_BODY);
         setOriginalRideId(originalRide.getId());
@@ -149,41 +151,29 @@ public class TeleMissile extends Aero {
         return LOCATION_NAMES;
     }
 
-    /**
-     * Telemissiles don't mount Stealth systems. Would be kind of cool if they did, though.
-     */
     @Override
     public boolean hasStealth() {
         return false;
     }
 
     @Override
-    public int calculateBattleValue() {
+    public int doBattleValueCalculation(boolean ignoreC3, boolean ignoreSkill, CalculationReport calculationReport) {
         return 0;
     }
-    
-    /**
-     * Returns this entity's safe thrust, factored for heat, extreme
-     * temperatures, gravity, partial repairs and bomb load (not that
-     * telemissiles are affected by anything but remaining fuel...).
-     */
+
     @Override
-    public int getWalkMP(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
+    public int getWalkMP(MPCalculationSetting mpCalculationSetting) {
         return getCurrentFuel();
     }
 
-    /**
-     * Telemissiles don't have runMP like other units
-     */
     @Override
-    public int getRunMP(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
-        return getWalkMP(gravity, ignoreheat, ignoremodulararmor);
+    public int getRunMP(MPCalculationSetting mpCalculationSetting) {
+        return getWalkMP(mpCalculationSetting);
     }
 
     @Override
     public PilotingRollData checkThrustSI(int thrust, EntityMovementType overallMoveType) {
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
-
         roll.addModifier(TargetRoll.CHECK_FALSE,"Check false: Entity is not exceeding SI");
         return roll;
     }
@@ -191,7 +181,6 @@ public class TeleMissile extends Aero {
     @Override
     public PilotingRollData checkThrustSITotal(int thrust, EntityMovementType overallMoveType) {
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
-
         roll.addModifier(TargetRoll.CHECK_FALSE,"Check false: Entity is not exceeding SI");
         return roll;
     }
@@ -206,7 +195,7 @@ public class TeleMissile extends Aero {
 
     @Override
     public boolean isOutControlTotal() {
-        //due to control roll, heat, shut down, or crew unconscious
+        // due to control roll, heat, shut down, or crew unconscious
         return (isOutControl() || outContact || shutDown || getCrew().isUnconscious());
     }
 

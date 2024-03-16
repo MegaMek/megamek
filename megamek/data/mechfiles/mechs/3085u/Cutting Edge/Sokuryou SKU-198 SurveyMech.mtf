@@ -1,12 +1,13 @@
-Version:1.0
-Sokuryou
-SKU-198 SurveyMech
+chassis:Sokuryou
+model:SKU-198 SurveyMech
+mul id:2984
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3085
-Source:Dark Age
+source:TRO: 3085
 Rules Level:2
+role:Scout
 
 Mass:25
 Engine:150 Fusion Engine(IS)

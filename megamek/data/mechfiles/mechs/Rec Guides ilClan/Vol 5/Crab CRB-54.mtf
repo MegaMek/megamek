@@ -1,0 +1,172 @@
+chassis:Crab
+model:CRB-54
+mul id:7510
+
+Config:Biped
+techbase:Inner Sphere
+era:3144
+rules level:4
+role:Skirmisher
+source:Rec Guide:ilClan #5
+
+
+
+quirk:easy_maintain
+
+
+mass:50
+engine:350 XXL Engine(IS)
+structure:IS Composite
+myomer:Standard
+
+heat sinks:15 IS Double
+walk mp:7
+jump mp:0
+
+armor:Heavy Ferro-Fibrous(Inner Sphere)
+LA armor:16
+RA armor:16
+LT armor:17
+RT armor:17
+CT armor:21
+HD armor:9
+LL armor:22
+RL armor:22
+RTL armor:6
+RTR armor:6
+RTC armor:6
+
+Weapons:4
+Plasma Rifle, Left Arm
+Plasma Rifle, Right Arm
+ER Medium Laser, Center Torso
+ER Small Laser, Head
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISPlasmaRifle
+ISPlasmaRifle
+IS Heavy Ferro-Fibrous
+IS Heavy Ferro-Fibrous
+IS Heavy Ferro-Fibrous
+IS Heavy Ferro-Fibrous
+IS Heavy Ferro-Fibrous
+IS Heavy Ferro-Fibrous
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISPlasmaRifle
+ISPlasmaRifle
+IS Heavy Ferro-Fibrous
+IS Heavy Ferro-Fibrous
+IS Heavy Ferro-Fibrous
+IS Heavy Ferro-Fibrous
+IS Heavy Ferro-Fibrous
+IS Heavy Ferro-Fibrous
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISPlasmaRifleAmmo
+ISPlasmaRifleAmmo
+IS Heavy Ferro-Fibrous
+IS Heavy Ferro-Fibrous
+IS Heavy Ferro-Fibrous
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISPlasmaRifleAmmo
+IS Heavy Ferro-Fibrous
+IS Heavy Ferro-Fibrous
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISERMediumLaser
+Supercharger
+
+Head:
+Life Support
+Sensors
+Cockpit
+ISERSmallLaser
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Heavy Ferro-Fibrous
+IS Heavy Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Heavy Ferro-Fibrous
+IS Heavy Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+overview:Designed in 2719 during the last days of the Star League, the Crab was built as a medium-weight raider and guerrilla fighter for the Star League Defense Force.
+
+capabilities:Although lacking hand actuators or jump jets, it possessed good overland speed and its all-energy weapons payload was suitable for long-range missions without the prospect for resupply. The Crab also boasted a highly advanced communications system, the Dalban Series K, and was built mostly with proven parts easy to maintain.  The term "Crab walk" soon became synonymous with easy duty, since technicians spent less than half the time maintaining the Crab than with other 'Mechs of the same weight class
+
+deployment:This Crab variant uses a Composite Structure and a 350-rated XXL Engine to reach speeds of 110km/h. A Supercharger allows it to sprint at 140km/h which is good for leaving the field when its armor is breached. Main firepower comes from a pair of Plasma Rifles supported by an ER Medium Laser and an ER Small Laser.
+
+history:Less than a thousand Crabs had been produced when the Succession Wars began. So popular was the Crab that many believed it was likely to become the standard medium 'Mech of the SLDF. Unfortunately the Amaris Civil War and the dissolution of the Star League put an end to any future plans for the Crab. Cosara Weaponries' Crab factory on Northwind was practically destroyed in 2786, one of many strategic targets attacked in the opening salvos of the First Succession War. Although dedicated technicians were able to keep portions of the assembly line open, producing what spare parts they still could to rebuild damaged Crabs, the technology used for both the original's advanced armor plating and communications system became lost. Designated as CRB-20 models, these Crabs were only slightly inferior to the original: with the destruction of the military infrastructure necessary for the Dalban Series K's more advanced functions to work, its replacement by lesser systems ironically became less of an issue. By the end of the Fourth Succession War a hundred or so Crabs were still active in the Inner Sphere and all were CRB-20s. Unbeknownst to many, ComStar had secreted away massive stockpiles of Star League technology and 'Mechs, including the Crab. When it came time to form their own military original CRB-27 Crabs were used to outfit the Com Guards, while at the same time gifting downgraded CRB-20s to the Draconis Combine during the War of 3039 as part of Operation Rosebud. Concurrently the discovery of the Helm Memory Core allowed the refit line on Northwind to start upgrading the remaining downgraded Crabs to their original specification. Unknown to anyone in the Inner Sphere was the continued existence of the Crab in the arsenal of the Clans, although by the time of the Clan Invasion these had been relegated to second-line and garrison units. Eventually Cosara Weaponries was able to restart production of the original Crab in the 3050s and brand-new variants began turning up. Among these were new CRB-30s built by ComStar (later acquired by the Word of Blake) which made use of new C3 technology; it was also rumored ComStar sold these models to the rump Free Rasalhague Republic. During the Jihad the Word of Blake managed to capture the Northwind factory and begin producing their own radical variant known as the CRB-45.
+
+manufacturer:Cosara Weaponries
+primaryfactory:Northwind
+systemmanufacturer:CHASSIS:Hollis Mark 1A-Composite
+systemmanufacturer:ENGINE:Magna 350 XXL with Supercharger
+systemmanufacturer:ARMOR:Paulina Heavy Ferro-Fibrous
+systemmanufacturer:COMMUNICATIONS:Dalban Series K
+systemmanufacturer:TARGETING:650 RND
+

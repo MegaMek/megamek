@@ -1,12 +1,19 @@
-Version:1.0
-Gauss-Buster MilitiaMech
-
+chassis:Gauss-Buster MilitiaMech
+model:
+mul id:8100
 
 Config:Biped
 techbase:Inner Sphere
 era:3090
-source:Jihad
+source:XTR: Caveat Emptor
 rules level:5
+role:Sniper
+
+
+quirk:easy_maintain
+quirk:stable
+quirk:illegal_design
+
 
 mass:50
 engine:150 ICE Engine(IS)

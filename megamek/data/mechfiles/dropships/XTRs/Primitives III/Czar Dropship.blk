@@ -16,9 +16,13 @@ Dropship
 Czar Dropship
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+5626
+</mul id:>
 
 <year>
 2462
@@ -184,7 +188,7 @@ Combat Transport
 </height>
 
 <source>
-XTRO Primitives III - Age of War
+XTR: Primitives III
 </source>
 
 <tonnage>
@@ -230,4 +234,14 @@ XTRO Primitives III - Age of War
 <escape_pod>
 4
 </escape_pod>
+
+
+<quirks>
+atmo_instability
+difficult_maintain
+docking_arms
+imp_target_short
+sensor_ghosts
+obsolete
+</quirks>
 

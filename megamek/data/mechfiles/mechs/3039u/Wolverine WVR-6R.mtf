@@ -1,12 +1,25 @@
-Version:1.0
-Wolverine
-WVR-6R
+chassis:Wolverine
+model:WVR-6R
+mul id:3573
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2575
-Source:TRO 3039 - Star League
+Source:TRO: 3039
 Rules Level:1
+role:Skirmisher
+
+
+
+quirk:command_mech
+quirk:ext_twist
+quirk:imp_com
+quirk:pro_actuator
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+quirk:cramped_cockpit
+weaponquirk:jettison_capable:RA:4:Autocannon/5
+
 
 Mass:55
 Engine:275 Fusion Engine
@@ -147,14 +160,11 @@ Jump Jet
 -Empty-
 -Empty-
 
-
 overview:The Wolverine commonly served as a heavy scout unit. Often deployed in situations where heavy opposition could easily destroy lighter BattleMechs, it has had a reliable service record ever since its initial deployment within the Star League Defense Force. With respectable armor, speed, and firepower, it can easily outfight lighter enemy scouts and defend itself capably if ambushed.
 
 capabilities:The autocannon, missile system and laser found on most Wolverines are all reliable and well-storied systems. Unfortunately, the jump jets suffer from an opposing reputation; the Northrup 12000's are underpowered and prone to breakdowns. The one defining system to be found on the Wolverine, however, are its superb Tek BattleCom and Garret T11-b communications systems. The comgear, regardless of the manufacturer, is well-shielded and features a multi-channel transmitter and receiver, making the Wolverine a powerful Command BattleMech for scouting formations.
 
-deployment:The Wolverine carries a weapons payload that is both versatile and, at the same time, limited by its ammunition dependencies. The primary weapon on board is a GM Whirlwind Autocannon/5. This weapon, mounted in the right arm along with one ton of ammunition, allows the Wolverine to cause damage to the enemy at respectable ranges. This is backed up for short range work by a Harpoon-6 SRM-6 launcher with one ton of reloads in the left torso and a single Magna Mk II Medium Laser mounted in the head. The laser is the most unique aspect of the Wolverine as it is mounted in a ball turret originally providing a 360° field of fire on early models of the Wolverine. Following the addition of the Harpoon launcher and Tek BattleCom electronics blister, a fire-interrupt circuit had to be added to prevent pilots from shooting their own 'Mech. Five Northrup 120000 jump jets, with two in either leg and the fifth in the rear torso, improves upon the Wolverine's relatively fast cruising speed of 54 km/h by allowing it to jump up to 150 meters at a time. Unfortunately the jets are slightly underpowered for this role and must be operated near maximum thrust to achieve their potential, resulting in increased wear and tear on the components. For this reason a number of variants were introduced which simply removed the jump jets.
-
-Nine and a half tons of armor make the Wolverine well-protected and emphasize its survivability when undertaking dangerous reconnaissance missions. Twelve heat sinks also provide adequate heat dissipation even in the event of damage to the fusion engine, further emphasizing the durability of the machine. In its role as a command 'Mech the Wolverine is well equipped with the same Tek BattleCom system with multi-channel transceiver/receiver as found on the Phoenix Hawk. Well-shielded in the head blister this set-up allows the Wolverine to provide superior electronic support when leading other 'Mechs or conducting reconnaissance on its own.
+deployment:The Wolverine carries a weapons payload that is both versatile and, at the same time, limited by its ammunition dependencies. The primary weapon on board is a GM Whirlwind Autocannon/5. This weapon, mounted in the right arm along with one ton of ammunition, allows the Wolverine to cause damage to the enemy at respectable ranges. This is backed up for short range work by a Harpoon-6 SRM-6 launcher with one ton of reloads in the left torso and a single Magna Mk II Medium Laser mounted in the head. The laser is the most unique aspect of the Wolverine as it is mounted in a ball turret originally providing a 360° field of fire on early models of the Wolverine. Following the addition of the Harpoon launcher and Tek BattleCom electronics blister, a fire-interrupt circuit had to be added to prevent pilots from shooting their own 'Mech. Five Northrup 120000 jump jets, with two in either leg and the fifth in the rear torso, improves upon the Wolverine's relatively fast cruising speed of 54 km/h by allowing it to jump up to 150 meters at a time. Unfortunately the jets are slightly underpowered for this role and must be operated near maximum thrust to achieve their potential, resulting in increased wear and tear on the components. For this reason a number of variants were introduced which simply removed the jump jets. Nine and a half tons of armor make the Wolverine well-protected and emphasize its survivability when undertaking dangerous reconnaissance missions. Twelve heat sinks also provide adequate heat dissipation even in the event of damage to the fusion engine, further emphasizing the durability of the machine. In its role as a command 'Mech the Wolverine is well equipped with the same Tek BattleCom system with multi-channel transceiver/receiver as found on the Phoenix Hawk. Well-shielded in the head blister this set-up allows the Wolverine to provide superior electronic support when leading other 'Mechs or conducting reconnaissance on its own.
 
 history:A widespread part of every major military, the Wolverine has manufacturing plants scattered throughout the entire Inner Sphere. While certain states-notable the Free Worlds League-have larger numbers of the design, only the Capellans began facing a shortage of the Wolverine after the loss of their Nanking facilities.
 

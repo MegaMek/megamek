@@ -16,9 +16,13 @@ SupportTank
 Randolph Support Vehicle
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+5586
+</mul id:>
 
 <year>
 2300
@@ -27,6 +31,10 @@ Randolph Support Vehicle
 <type>
 IS Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Tracked
@@ -81,7 +89,7 @@ Machine Gun
 </Rear Equipment>
 
 <source>
-XTRO Primitives II - Age of War
+XTR: Primitives II
 </source>
 
 <transporters>
@@ -91,3 +99,14 @@ cargobay:9:1
 <tonnage>
 35.0
 </tonnage>
+
+<quirks>
+easy_maintain
+obsolete
+</quirks>
+
+<weaponQuirks>
+mod_weapons:FR:0:Machine Gun
+mod_weapons:RS:0:Machine Gun
+mod_weapons:LS:0:Machine Gun
+</weaponQuirks>

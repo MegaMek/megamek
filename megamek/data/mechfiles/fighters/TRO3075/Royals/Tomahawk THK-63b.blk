@@ -20,6 +20,10 @@ Tomahawk
 THK-63b
 </Model>
 
+<mul id:>
+5255
+</mul id:>
+
 <year>
 2751
 </year>
@@ -31,6 +35,10 @@ THK-63b
 <type>
 IS Level 2
 </type>
+
+<role>
+Fast Dogfighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -100,7 +108,7 @@ Large Laser
 </Fuselage Equipment>
 
 <source>
-TRO 3075 - Star League
+TRO: 3075
 </source>
 
 <tonnage>

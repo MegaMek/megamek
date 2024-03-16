@@ -20,6 +20,10 @@ Light Strike Fighter
 Owl II
 </Model>
 
+<mul id:>
+1874
+</mul id:>
+
 <year>
 2711
 </year>
@@ -31,6 +35,10 @@ Owl II
 <type>
 IS Level 1
 </type>
+
+<role>
+Interceptor
+</role>
 
 <motion_type>
 Aerodyne
@@ -92,7 +100,7 @@ Small Laser
 </Fuselage Equipment>
 
 <source>
-TRO 3039 - Star League
+TRO: 3039
 </source>
 
 <tonnage>

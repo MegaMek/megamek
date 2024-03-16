@@ -1,0 +1,12 @@
+Draconis Combine Light Mechs 3130 F
+Stinger STG-3P,1
+Spider SDR-8K,2
+Kabuto KBO-7A,3
+Nyx NX-90,4
+Jenner JR7-C3,5
+Panther PNT-16K,6
+Hitman HM-2,5
+Rokurokubi RK-4T,4
+Valiant V4-LNT-K7,3
+Venom SDR-9KB,2
+Wight WGT-1LAW/SC,1

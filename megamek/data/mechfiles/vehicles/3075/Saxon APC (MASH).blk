@@ -20,6 +20,10 @@ Saxon APC
 (MASH)
 </Model>
 
+<mul id:>
+2810
+</mul id:>
+
 <year>
 3071
 </year>
@@ -27,6 +31,10 @@ Saxon APC
 <type>
 IS Level 3
 </type>
+
+<role>
+Scout
+</role>
 
 <motion_type>
 Hover
@@ -75,7 +83,7 @@ Machine Gun
 </Turret Equipment>
 
 <source>
-Jihad
+TRO: 3075
 </source>
 
 <tonnage>

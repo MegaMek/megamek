@@ -20,6 +20,10 @@ Gotha
 GTHA-600
 </Model>
 
+<mul id:>
+1251
+</mul id:>
+
 <year>
 3067
 </year>
@@ -31,6 +35,10 @@ GTHA-600
 <type>
 IS Level 3
 </type>
+
+<role>
+Dogfighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -110,7 +118,7 @@ IS Ammo SRM-6
 </Fuselage Equipment>
 
 <source>
-TRO 3050u - Star League
+TRO: 3050
 </source>
 
 <tonnage>

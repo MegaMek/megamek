@@ -20,6 +20,10 @@ Tiger Medium Tank
 T-12
 </Model>
 
+<mul id:>
+5244
+</mul id:>
+
 <year>
 2478
 </year>
@@ -27,6 +31,10 @@ T-12
 <type>
 IS Level 1
 </type>
+
+<role>
+Brawler
+</role>
 
 <motion_type>
 Tracked
@@ -76,7 +84,7 @@ Machine Gun
 </Turret Equipment>
 
 <source>
-Hist:Reunification War
+Historical: Reunification War
 </source>
 
 <tonnage>

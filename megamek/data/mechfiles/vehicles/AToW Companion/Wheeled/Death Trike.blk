@@ -16,9 +16,13 @@ SupportTank
 Death Trike
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+9225
+</mul id:>
 
 <year>
 2469
@@ -31,6 +35,10 @@ Death Trike
 <type>
 IS Level 4
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Wheeled

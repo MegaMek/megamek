@@ -1,12 +1,20 @@
-Version:1.0
-Onager
-(Standard)
+chassis:Onager
+model:
+mul id:2319
 
 Config:Biped
 TechBase:Clan
 Era:3083
-Source:Dark Age
+source:TRO: 3085
 Rules Level:2
+role:Skirmisher
+
+
+quirk:battle_fists_ra
+quirk:exp_actuator
+weaponquirk:exposed_linkage:LA:2:CLHAG30
+weaponquirk:exposed_linkage:LA:7:CLHAG30
+
 
 Mass:90
 Engine:270 Fusion (Clan) Engine

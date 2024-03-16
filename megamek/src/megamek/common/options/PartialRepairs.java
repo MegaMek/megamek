@@ -21,9 +21,8 @@ import megamek.common.*;
  * @author Neth (Thomas Pfau)
  */
 public class PartialRepairs extends AbstractOptions {
-    private static final long serialVersionUID =  7618380522964885742L;
+    private static final long serialVersionUID = 7618380522964885742L;
     public static final String PART_REPAIRS  = "PartRepairs"; 
-//    public static final String NEG_QUIRKS = "NegQuirks";
 
     public PartialRepairs() {
         super();
@@ -57,11 +56,6 @@ public class PartialRepairs extends AbstractOptions {
         addOption(partRep, "aero_gear_crit", false); 
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see megamek.common.options.AbstractOptions#getOptionsInfoImp()
-     */
     @Override
     protected AbstractOptionsInfo getOptionsInfoImp() {
         return PartialRepairInfo.getInstance();

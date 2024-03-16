@@ -20,13 +20,21 @@ Von Luckner Heavy Tank
 VNL-X71 (Yakuza)
 </Model>
 
+<mul id:>
+5788
+</mul id:>
+
 <year>
 3076
 </year>
 
 <type>
-IS Level 4
+IS Level 3
 </type>
+
+<role>
+Juggernaut
+</role>
 
 <motion_type>
 Tracked
@@ -84,9 +92,47 @@ ISArtemisIV
 </Turret Equipment>
 
 <source>
-XTRO Most Wanted - Jihad
+XTR: Most Wanted
 </source>
 
 <tonnage>
 75.0
 </tonnage>
+
+
+<capabilities>
+The Von Luckner's fusion power plant provides it with the same level of efficiency and mobility as a BattleMech of comparable weight, as well as the indefinite operating range that only fusion can deliver. The Von Luckner's primary armament is typically comprised of powerful autocannons supported by missile racks, as well as a variety of light close-in weaponry deployed to protect against infantry and battlearmor. Finally, its rather thick armor hide helps it to stay in a combat for an extended period of time.
+</capabilities>
+
+<overview>
+This heavily armored and armed vehicle was intended as a BattleMech without legs, fueled by a fusion reactor and equipped with enough firepower to threaten 'Mechs up to its own weight.
+</overview>
+
+<deployment>
+This Von Luckner variant is frequently seen in the hands of the Yakuza of The Republic of the Sphere in Prefectures I through III. The turret carries a single LB 20-X autocannon, Medium Pulse Laser, and SRM-4 with Artemis IV FCS. The tank uses an XL Fusion engine to maintain a top speed of 54 km/h. The tank is protected by both CASE and thirty tons of Hardened Armor, making it difficult to destroy. In fact on Altais two of these tanks destroyed a militia 'Mech lance that was searching for yakuza warehouses. Republic intelligence thinks that the Combine's Ghost Regiments are helping refit these tanks, but no evidence has come to light.
+</deployment>
+
+<history>
+After the Reunification War, HartfordCo Industries of Bryant produced the VNLK65N Von Luckner Heavy Tank. Count Felix von Luckner, a prominent twentieth-century Terran raider, inspired the name. The Von Luckner's power and resiliency make it a perfect choice for beefing up crucial defensive positions from the Terran Hegemony homeworlds to the far reaches of the Star League's newly gained Periphery territories. Though the Von Luckner became a mainstay of Terran and Star League defensive forces during the Star League's existence, the loss of the HartfordCo factories on Bryant in 2840—due to worsening global storms caused by the destruction of Bryant's Storm Inhibitors—instantly placed the vehicle on the endangered list. During the Amaris Coup and the First Succession War, several advanced Star League vehicles met this end. With many more cannibalized for BattleMech spare parts—an ironic twist on the vehicle's design standards—only a few Von Luckners remained in service as of 3030. Formerly common throughout the Inner Sphere, only Houses Davion, Steiner, Marik, and Kurita still deployed Von Luckners in significant numbers by 3039.
+</history>
+
+<manufacturer>
+Various
+</manufacturer>
+
+<primaryFactory>
+Various
+</primaryFactory>
+
+<systemManufacturers>
+ENGINE:VOX 225 XL Fusion
+ARMOR:New Samarkand Teppeki Hardened
+COMMUNICATIONS:O/P 300
+TARGETING:O/P GRNDSTAT 50A
+</systemManufacturers>
+
+<quirks>
+difficult_maintain
+imp_com
+</quirks>
+

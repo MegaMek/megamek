@@ -20,6 +20,10 @@ Pentagon
 (2751)
 </Model>
 
+<mul id:>
+7339
+</mul id:>
+
 <year>
 2751
 </year>
@@ -31,6 +35,10 @@ Pentagon
 <type>
 IS Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Spheroid
@@ -157,7 +165,7 @@ Medium Laser
 </structural_integrity>
 
 <source>
-TRO 3075 - Star League
+TRO: 3075
 </source>
 
 <tonnage>

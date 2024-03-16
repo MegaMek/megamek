@@ -1,12 +1,22 @@
-Version:1.0
-Phoenix Hawk
-PXH-2
+chassis:Phoenix Hawk
+model:PXH-2
+mul id:2496
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2599
-Source:Star League
+Source:TRO: 3085
 Rules Level:2
+role:Striker
+
+
+
+quirk:command_mech
+quirk:imp_com
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+weaponquirk:jettison_capable:RA:4:Large Laser
+
 
 Mass:45
 Engine:270 Fusion Engine(IS)

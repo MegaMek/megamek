@@ -1,12 +1,19 @@
-Version:1.0
-Ronin
-SA-RN
+chassis:Ronin
+model:SA-RN
+mul id:2738
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3051
-Source:TRO 3055 - Clan Invasion
+Source:TRO: 3055
 Rules Level:3
+role:Striker
+
+
+
+
+quirk:non_standard
+
 
 Mass:50
 Engine:250 XL Engine

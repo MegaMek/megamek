@@ -16,9 +16,13 @@ Tank
 Kalki Cruise Missile Launcher
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+4416
+</mul id:>
 
 <year>
 3079
@@ -27,6 +31,10 @@ Kalki Cruise Missile Launcher
 <type>
 IS Level 4
 </type>
+
+<role>
+Missile Boat
+</role>
 
 <motion_type>
 Tracked
@@ -80,9 +88,40 @@ ISMagshotGR
 </Turret Equipment>
 
 <source>
-TRO:Prototype
+TRO: Prototypes
 </source>
 
 <tonnage>
 150.0
 </tonnage>
+
+<capabilities>
+For point-blank anti-infantry protection, the SturmFeur carries two huge missile racks backed up by machine guns. The SturmFeur is extensively armored, more so than many frontline tanks, in comparison to many other fire-support vehicles. The SturmFeur's 19-and-a-half tons of armor allow it to resist massive damage, which is appreciated by missile carrier operators who are used to paper-thin armor that disintegrates (as the sailors will tell you) "when given a filthy look."
+</capabilities>
+
+<overview>
+The SturmFeur debuted in 3018. At that time, it was the largest combat vehicle dedicated to providing missile support in the Inner Sphere.
+</overview>
+
+<deployment>
+The production version of the Kalki is a complete redesign of the experimental version. Many components from the SturmFeur are reused, but the chassis has been updated to 150 tons. The Kalki is now powered by a fuel cell-powered motor, which reduces cost. It also mounts a pair of Magshots for protection. The Cruise Missile 50 launcher still only has one reload, but engineers were able to upgrade the armor protection to seven tons. 
+</deployment>
+
+<history>
+During the Fourth Succession War, conventional units particularly valued the SturmFeur. Its low profile proved to be the scourge of many Free Worlds League and Kuritan troops, who came under fire from these tanks that seemed to be able to hide behind even the most minor piece of terrain. It took a few ambushes for these troops to stop taking supposedly abandoned villages and parking lots for granted. It was considerably more popular among units stationed on worlds bordering the Periphery who obtained them. The majority of bandit gangs used lighter BattleMechs with less weaponry and armor. When confronted by these raiders, the SturmFeurs would deploy in a staggered formation, such that when bandits closed in on one tank in an attempt to get out of range of its missiles, they would find themselves within ideal range of the remaining defenders. To the chagrin of the attackers, the targeted SturmFeur's substantial armor allowed it to survive the attacks. Others have combined it with Demolishers, who require cover fire as they approach. Outside of the Federated Commonwealth coalition, however, very few units exhibited interest, preferring the far less expensive (albeit more vulnerable) LRM Carrier for support. Those who do obtain a SturmFeur sometimes use it as a command vehicle for their fire-support troops, depending on its substantial armor to keep the commanders alive.
+</history>
+
+<manufacturer>
+Kallon Weapon Industries
+</manufacturer>
+
+<primaryFactory>
+Kirklin
+</primaryFactory>
+
+<systemManufacturers>
+ENGINE:Locom 300 Fuel Cell
+ARMOR:StarSlab/7
+COMMUNICATIONS:JoLex Systems
+TARGETING:StratSight v.9
+</systemManufacturers>

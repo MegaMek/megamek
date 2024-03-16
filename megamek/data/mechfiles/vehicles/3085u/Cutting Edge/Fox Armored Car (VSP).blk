@@ -15,6 +15,10 @@ Fox Armored Car
 <Model>
 (VSP)
 </Model>
+
+<mul id:>
+1152
+</mul id:>
 <Tonnage>
 20
 </Tonnage>
@@ -37,6 +41,10 @@ ISSVSPL
 <type>
 IS Level 3
 </type>
+
+<role>
+Scout
+</role>
 <year>
 3084
 </year>
@@ -53,5 +61,5 @@ IS Level 3
 Hover
 </motion_type>
 <source>
-Dark Age
+TRO: 3085
 </source>

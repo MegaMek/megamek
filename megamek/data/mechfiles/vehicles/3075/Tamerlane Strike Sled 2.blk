@@ -20,17 +20,25 @@ Tamerlane Strike Sled
 2
 </Model>
 
+<mul id:>
+3159
+</mul id:>
+
 <year>
 3073
 </year>
 
 <source>
-Jihad
+TRO: 3075
 </source>
 
 <type>
 IS Level 2
 </type>
+
+<role>
+Scout
+</role>
 
 <tonnage>
 20.0

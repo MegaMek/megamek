@@ -20,6 +20,10 @@ Condor
 (3079)
 </Model>
 
+<mul id:>
+3984
+</mul id:>
+
 <year>
 3079
 </year>
@@ -123,7 +127,7 @@ MASH Core Component
 </structural_integrity>
 
 <source>
-TRO 3057R - Jihad
+TRO: 3057 Revised
 </source>
 
 <tonnage>

@@ -13,12 +13,16 @@ Tank
 </UnitType>
 
 <Name>
-Marsden II MBT
+Marsden MBT
 </Name>
 
 <Model>
 II-A (LB-X)
 </Model>
+
+<mul id:>
+2087
+</mul id:>
 
 <year>
 3068
@@ -81,7 +85,7 @@ ISLBXAC10
 </Turret Equipment>
 
 <source>
-Jihad
+TRO: 3075
 </source>
 
 <tonnage>

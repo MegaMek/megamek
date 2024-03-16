@@ -1,12 +1,23 @@
-Version:1.2
-Griffin
-GRF-6S2
+chassis:Griffin
+model:GRF-6S2
+mul id:6899
 
 Config:Biped
 TechBase:Mixed (IS Chassis)
 Era:3123
-Source:RS 3145 NTNU - Late Republic
+Source:Record Sheets: 3145 New Tech New Upgrades
 Rules Level:3
+role:Sniper
+
+
+
+quirk:battle_fists_la
+quirk:battle_fists_ra
+quirk:rugged_1
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+weaponquirk:jettison_capable:RA:4:ISERPPC
+
 
 Mass:55
 Engine:275 Light Engine(IS)

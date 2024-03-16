@@ -1,12 +1,13 @@
-Version:1.0
-Calliope
-CAL-1MAFSW 'Snow White'
+chassis:Calliope
+model:CAL-1MAFSW 'Snow White'
+mul id:8368
 
 Config:Biped
 techbase:Mixed (IS Chassis)
 era:3127
-source:XTRO Royal Fantasy
-rules level:5
+source:XTR: Royal Fantasy
+rules level:3
+role:Brawler
 
 mass:40
 engine:200 Fusion Engine(IS)

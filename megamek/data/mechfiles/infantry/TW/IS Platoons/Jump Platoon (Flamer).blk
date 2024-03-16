@@ -20,6 +20,10 @@ Jump Platoon
 (Flamer)
 </Model>
 
+<mul id:>
+1718
+</mul id:>
+
 <year>
 2025
 </year>
@@ -27,6 +31,10 @@ Jump Platoon
 <type>
 IS Level 2
 </type>
+
+<role>
+Ambusher
+</role>
 
 <motion_type>
 Jump
@@ -36,7 +44,7 @@ Jump
 </Field Guns Equipment>
 
 <source>
-Total Warfare - Succession Wars
+Total Warfare
 </source>
 
 <squad_size>

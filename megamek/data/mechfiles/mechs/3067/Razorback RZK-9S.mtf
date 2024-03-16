@@ -1,12 +1,20 @@
-Version:1.0
-Razorback
-RZK-9S
+chassis:Razorback
+model:RZK-9S
+mul id:4904
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3063
 Rules Level:2
-source:TRO 3067
+role:Striker
+source:TRO: 3067
+
+
+
+
+quirk:low_profile
+quirk:no_arms
+
 
 Mass:30
 Engine:180 Light Engine

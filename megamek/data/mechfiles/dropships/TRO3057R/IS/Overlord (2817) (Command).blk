@@ -20,6 +20,10 @@ Overlord
 (2817) (Command)
 </Model>
 
+<mul id:>
+4774
+</mul id:>
+
 <year>
 2817
 </year>
@@ -31,6 +35,10 @@ Overlord
 <type>
 IS Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Spheroid
@@ -145,7 +153,7 @@ Communications Equipment (15 ton)
 </structural_integrity>
 
 <source>
-TRO 3057R - Early Succession War
+TRO: 3057 Revised
 </source>
 
 <tonnage>

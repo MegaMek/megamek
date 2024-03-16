@@ -1,35 +1,40 @@
-Version:1.0
-Fafnir
-FNR-6U
+chassis:Fafnir
+model:FNR-6U
+mul id:5720
 
 Config:Biped
-TechBase:Inner Sphere
-Era:3081
-Source:RS:3067 Unabridged
-Rules Level:2
-source:3067 Unabridged
+techbase:Inner Sphere
+era:3081
+source:Record Sheets: 3067 Unabridged
+rules level:2
+role:Juggernaut
 
-Mass:100
-Engine:300 Light Engine(IS)
-Structure:Standard
-Myomer:Standard
 
-Heat Sinks:12 Double
-Walk MP:3
-Jump MP:0
 
-Armor:Light Ferro-Fibrous(Inner Sphere)
-LA Armor:34
-RA Armor:34
-LT Armor:32
-RT Armor:32
-CT Armor:46
-HD Armor:9
-LL Armor:42
-RL Armor:42
-RTL Armor:10
-RTR Armor:10
-RTC Armor:16
+quirk:no_arms
+
+
+mass:100
+engine:300 Light Engine(IS)
+structure:IS Standard
+myomer:Standard
+
+heat sinks:12 IS Double
+walk mp:3
+jump mp:0
+
+armor:Light Ferro-Fibrous(Inner Sphere)
+LA armor:34
+RA armor:34
+LT armor:32
+RT armor:32
+CT armor:46
+HD armor:9
+LL armor:42
+RL armor:42
+RTL armor:10
+RTR armor:10
+RTC armor:16
 
 Weapons:6
 Ultra AC/20, Left Arm
@@ -78,8 +83,8 @@ IS Ultra AC/20 Ammo
 IS Ultra AC/20 Ammo
 IS Ultra AC/20 Ammo
 ISCASE
-Light Ferro-Fibrous
-Light Ferro-Fibrous
+IS Light Ferro-Fibrous
+IS Light Ferro-Fibrous
 
 Right Torso:
 Fusion Engine
@@ -92,8 +97,8 @@ IS Ultra AC/20 Ammo
 IS Ultra AC/20 Ammo
 IS Ultra AC/20 Ammo
 ISCASE
-Light Ferro-Fibrous
-Light Ferro-Fibrous
+IS Light Ferro-Fibrous
+IS Light Ferro-Fibrous
 
 Center Torso:
 Fusion Engine
@@ -106,14 +111,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Light Ferro-Fibrous
-Light Ferro-Fibrous
+IS Light Ferro-Fibrous
+IS Light Ferro-Fibrous
 
 Head:
 Life Support
 Sensors
 Cockpit
-Light Ferro-Fibrous
+IS Light Ferro-Fibrous
 Sensors
 Life Support
 -Empty-
@@ -142,7 +147,7 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Light Ferro-Fibrous
+-Empty-
 -Empty-
 -Empty-
 -Empty-

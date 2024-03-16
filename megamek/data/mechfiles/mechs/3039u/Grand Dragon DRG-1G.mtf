@@ -1,12 +1,21 @@
-Version:1.0
-Grand Dragon
-DRG-1G
+chassis:Grand Dragon
+model:DRG-1G
+mul id:1256
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3024
-Source:TRO 3039 - Succession Wars
+Source:TRO: 3039
 Rules Level:1
+role:Skirmisher
+
+
+
+
+quirk:ext_twist
+quirk:low_profile
+quirk:stable
+
 
 Mass:60
 Engine:300 Fusion Engine

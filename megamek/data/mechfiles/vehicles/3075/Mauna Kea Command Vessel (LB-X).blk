@@ -20,17 +20,25 @@ Mauna Kea Command Vessel
 (LB-X)
 </Model>
 
+<mul id:>
+2110
+</mul id:>
+
 <year>
 3076
 </year>
 
 <source>
-Jihad
+TRO: 3075
 </source>
 
 <type>
 IS Level 2
 </type>
+
+<role>
+Missile Boat
+</role>
 
 <tonnage>
 85.0

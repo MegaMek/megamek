@@ -1,0 +1,128 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+Water Elemental Mining Suit
+</Name>
+
+<model>
+(Sqd6)
+</Model>
+
+<year>
+2842	
+</year>
+
+<originalBuildYear>
+2842
+</originalBuildYear>
+
+<type>
+Mixed (IS Chassis) Experimental
+</type>
+
+<motion_type>
+UMU
+</motion_type>
+
+<transporters>
+</transporters>
+
+<cruiseMP>
+1
+</cruiseMP>
+
+<armor_type>
+28
+</armor_type>
+
+<armor_tech>
+7
+</armor_tech>
+
+<Squad Equipment>
+BABasicManipulator:LA
+BAIndustrialDrill:RA
+BACuttingTorch:RA
+BACuttingTorch:LA
+ISBAExtendedLifeSupport:Body
+BAPowerpack:Body
+HHSearchlight
+Mission Equipment Storage (200 kg):Body
+</Squad Equipment>
+
+<manufacturer>
+Clan Goliath Scorpion
+</manufacturer>
+
+<primaryFactory>
+Hades Industrial Complex
+</primaryFactory>
+
+<source>
+TRO: Golden Century
+</source>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+2
+</jumpingMP>
+
+<armor>
+7
+</armor>
+
+<Trooper Count>
+6
+</Trooper Count>
+
+<weightclass>
+2
+</weightclass>
+
+<overview>
+The Water Elemental Mining Suit were sophisticated underwater mining and construction units created by Clan Goliath Scorpion that provided the technological and engineering basis for the creation of Clan battle armor.
+</overview>
+
+<capabilities>
+While not intended for combat, circumstances arose that pushed the units into battle. In 2860, visiting Clan Wolf forces on the world of Dagda became aware of the Goliath Scorpions' underwater mining programs, as well as the suits they used. A Wolf Star Captain, sensing the combat potential of the suits, issued a Trial of Possession for one of the units. The defense of the suits was assigned to Goliath Scorpion Point Commander Sarah who sensed that the Wolf forces eagerness could be used against them. She selected a nearby wetland with deep water ways, dangerous fauna, and hazardous terrain as the place for the Trial. Clan Wolf bid a Star of Jump Infantry against Scorpion warriors in the Water Elemental Mining Suits. In the end, Sarah had bargained well and the mobility of the Water Elemental Mining Suits in the wetlands allowed the Scorpions to defeat the Wolves with only the loss of one pilot. This defeat convinced Clan Wolf to acquire the suits via trade between the Merchant Castes. In another instance during the Golden Century, Star Commander Vikram of Clan Goliath Scorpion pressed a Star of Water Elementals into service on Circe to defeat Clan Mongoose in a rare and unusual underwater Trial
+</capabilities>
+
+<deployment>
+The Water Elemental Mining Suit was not built for combat. It was equipped with cutting torches, a searchlight, an industrial drill, and a basic manipulator for underwater industrial work.
+</deployment>
+
+<history>
+The suit was produced at the Hades Industrial Complex on Dagda. The mining suit moved effortlessly through the water thanks to a series of synchronized micro thrusters linked to pressure sensors in its inner lining. The wearer of the suit could easily control their movements with just a few simple gestures, allowing them to complete complicated underwater tasks simply. The unit also had advanced software that could control the thrusters to hold the suite motionless against a strong current. This allowed for precision work without the concerns of being moved by the shifting water around the wearer. A series of pressure protections, buoyancy control devices, and an array of sensors prevented the divers from ascending too quickly while also monitoring remaining power and air supply.
+</history>
+
+<manufacturer>
+Hades Industrial Complex
+</manufacturer>
+
+<primaryFactory>
+Dagda
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+JUMPJET:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>

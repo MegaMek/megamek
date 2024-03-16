@@ -1,0 +1,12 @@
+Capellan Confederation Assault Mechs 3130 B
+Emperor EMP-6L,1
+Goliath GOL-3L,2
+Emperor EMP-7L,3
+Yu Huang Y-H10G,4
+BattleMaster BLR-4L,5
+Xanthos XNT-4O,6
+Trebaruna TR-XL,5
+Lu Wei Bing LN-4B,4
+Pillager PLG-5Z,3
+Phoenix Hawk IIC 3,2
+Mad Cat Mk II (Standard),1

@@ -16,9 +16,13 @@ Dropship
 Black Eagle
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+5593
+</mul id:>
 
 <year>
 2453
@@ -31,6 +35,10 @@ Black Eagle
 <type>
 IS Level 3
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Spheroid
@@ -169,7 +177,7 @@ We've reduced the cargo space to make the unit valid.
 </height>
 
 <source>
-TRO Primitives II - Age of War
+TRO: Primitives II
 </source>
 
 <tonnage>
@@ -215,3 +223,9 @@ TRO Primitives II - Age of War
 <escape_pod>
 8
 </escape_pod>
+
+<quirks>
+easy_maintain
+obsolete
+</quirks>
+

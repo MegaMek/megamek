@@ -1,12 +1,17 @@
-Version:1.0
-Griffin IIC
-6
+chassis:Griffin IIC
+model:6
+mul id:1315
 
 Config:Biped
 TechBase:Clan
 Era:3073
-Source:Jihad
+source:TRO: 3085
 Rules Level:2
+role:Striker
+
+quirk:battle_fists_la
+quirk:battle_fists_ra
+
 
 Mass:40
 Engine:200 Fusion (Clan) Engine

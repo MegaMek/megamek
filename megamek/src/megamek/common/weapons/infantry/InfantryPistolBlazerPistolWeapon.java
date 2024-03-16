@@ -40,13 +40,13 @@ public class InfantryPistolBlazerPistolWeapon extends InfantryWeapon {
         ammoType = AmmoType.T_INFANTRY;
         cost = 3000;
         bv = 0.79;
-		tonnage = .002;
+        tonnage = .002;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY);
         infantryDamage = 0.26;
         infantryRange = 1;
         ammoWeight = 0.0003;
         shots = 8;
-        rulesRefs = "273,TM";
+        rulesRefs = "273, TM";
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
         techAdvancement.setISAdvancement(2100, 2290, 2350);
         techAdvancement.setTechRating(RATING_D);

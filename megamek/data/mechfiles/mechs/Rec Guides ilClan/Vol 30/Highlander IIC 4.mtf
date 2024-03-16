@@ -1,0 +1,172 @@
+chassis:Highlander IIC
+model:4
+mul id:9433
+Config:Biped
+techbase:Clan
+era:3147
+source:Rec Guide:ilClan #30
+rules level:2
+role:Missile Boat
+
+quirk:command_mech
+quirk:cowl
+quirk:reinforced_legs
+quirk:difficult_eject
+
+
+mass:90
+engine:270 Fusion (Clan) Engine(IS)
+structure:IS Standard
+myomer:Standard
+
+heat sinks:12 Clan Double
+walk mp:3
+jump mp:3
+
+armor:Ferro-Fibrous(Clan)
+LA armor:30
+RA armor:30
+LT armor:28
+RT armor:28
+CT armor:40
+HD armor:9
+LL armor:38
+RL armor:38
+RTL armor:10
+RTR armor:10
+RTC armor:17
+
+Weapons:7
+ATM 6, Left Arm
+ATM 6, Left Arm
+Gauss Rifle, Right Arm
+ER Medium Laser, Left Torso
+ER Medium Laser, Left Torso
+ER Medium Laser, Left Torso
+LRM 20, Right Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+CLATM6
+CLATM6
+CLATM6
+CLATM6
+CLATM6
+CLATM6
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+CLGaussRifle
+CLGaussRifle
+CLGaussRifle
+CLGaussRifle
+CLGaussRifle
+CLGaussRifle
+Clan Gauss Ammo
+Clan Gauss Ammo
+CLCASEII
+
+Left Torso:
+Jump Jet
+CLERMediumLaser
+CLERMediumLaser
+CLERMediumLaser
+Clan Ammo ATM-6 HE
+Clan Ammo ATM-6
+Clan Ammo ATM-6 ER
+CLCASEII
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+
+Right Torso:
+Jump Jet
+CLLRM20
+CLLRM20
+CLLRM20
+CLLRM20
+CLArtemisV
+CLArtemisV
+Clan Ammo LRM-20 (Clan) Artemis V-capable
+Clan Ammo LRM-20 (Clan) Artemis V-capable
+Clan Ammo LRM-20 (Clan) Artemis V-capable
+CLCASEII
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+Clan Ferro-Fibrous
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLDoubleHeatSink
+CLDoubleHeatSink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLDoubleHeatSink
+CLDoubleHeatSink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+overview:One of the most popular Star League BattleMechs, many a Highlander accompanied General Aleksandr Kerensky into exile. Some were mothballed, but many found their way into the toumans of the Clans.
+capabilities:With the use of newer, lighter weapons, the damage potential of the Highlander has roughly doubled. The IIC also contains enough ammunition that it rarely needs to conserve any during Trials. Clan scientists were forced to rearrange the placement of some weapons within the 'Mech to allow it proper ammo feeds, but the design is largely unchanged. It carries the maximum amount of Ferro-Fibrous armor that can be crammed on the frame, fourteen and a half tons. As with the original, the IIC carries enough jump jets to move up to ninety meters at a time, allowing MechWarriors to execute the "Highlander Burial".
+deployment:Clan Hell's Horses did not take everything when they took the W-7 Facilities location in 3142. Highlanders had been refitted to IIC standards for seventy years, therefore the boneyard was enormous. Spare Highlanders suitable for upgrading were few in the Inner Sphere, so the Horses modified the line to construct the SL-XT chassis while sourcing parts from New Oslo to Alnabog, the latter to our advantage. While not identical to the ancient Clan 'Mech, the new Highlander IIC 4 proved to be a formidable package when unleashed in Operation Noyan.
+history:As technology advanced, the weapons systems were upgraded until the design known as the Highlander IIC finally emerged. Though no new Highlanders have been produced in over a century, several hundred are still in scattered use throughout the touman of every Clan.
+manufacturer:W-7 Facilities
+primaryfactory:Weingarten
+systemmanufacturer:CHASSIS:SL-XT Modified
+systemmanufacturer:ENGINE:Fusion 270 Standard
+systemmanufacturer:ARMOR:Arcadia Compound Delta VII Ferro-Fibrous
+systemmanufacturer:JUMPJET:Prentiss-IIIA
+systemmanufacturer:COMMUNICATIONS:C-XII Series B4 GDS
+systemmanufacturer:TARGETING:C-12 Mk. III with Artemis IV FCS
+

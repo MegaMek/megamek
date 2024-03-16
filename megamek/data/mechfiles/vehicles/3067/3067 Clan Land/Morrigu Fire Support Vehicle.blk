@@ -12,9 +12,13 @@ Tank
 <Name>
 Morrigu Fire Support Vehicle
 </Name>
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+4674
+</mul id:>
 <Tonnage>
 80
 </Tonnage>
@@ -52,6 +56,10 @@ CLCASE
 <type>
 Clan Level 2
 </type>
+
+<role>
+Missile Boat
+</role>
 <year>
 3064
 </year>
@@ -67,3 +75,7 @@ Clan Level 2
 <motion_type>
 Tracked
 </motion_type>
+
+<source>
+TRO: 3067
+</source>

@@ -1,12 +1,19 @@
-Version:1.1
-Raven X
-RVN-3X
+chassis:Raven X
+model:RVN-3X
+mul id:2672
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3078
-Source:XTRO Liao - Jihad
+Source:XTR: Liao
 Rules Level:4
+role:Scout
+
+
+
+
+quirk:imp_sensors
+
 
 Mass:35
 Engine:210 XL Engine(IS)

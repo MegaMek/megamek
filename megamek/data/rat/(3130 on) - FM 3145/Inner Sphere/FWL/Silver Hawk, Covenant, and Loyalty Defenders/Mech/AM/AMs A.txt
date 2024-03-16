@@ -1,0 +1,12 @@
+Silver Hawk Irregulars, Covenant Guards, and Loyalty Defenders Assault Mechs 3130 A
+Albatross ALB-3Ur,1
+Awesome AWS-10KM,2
+Grand Titan T-IT-N11M,3
+Longbow LGB-13C,4
+Cerberus MR-5M,5
+Trebaruna TR-XJ,6
+Trebaruna TR-XB,5
+Warhammer IIC 8,4
+Goliath GOL-6M,3
+Phoenix Hawk IIC 7,2
+Mad Cat Mk II (Standard),1

@@ -1,44 +1,53 @@
-Version:1.0
-Firestarter
-FS9-A
-
+chassis:Firestarter
+model:FS9-A
+mul id:1093
 Config:Biped
-TechBase:Inner Sphere
-Era:2550
-Source:TRO 3039 - Age of War
-Rules Level:1
+techbase:Inner Sphere
+era:2550
+source:TRO: 3039
+rules level:1
+role:Scout
 
-Mass:35
-Engine:210 Fusion Engine
-Structure:Standard
-Myomer:Standard
 
-Heat Sinks:10 Single
-Walk MP:6
-Jump MP:6
 
-Armor:Standard(Inner Sphere)
-LA Armor:10
-RA Armor:10
-LT Armor:11
-RT Armor:11
-CT Armor:13
-HD Armor:9
-LL Armor:12
-RL Armor:12
-RTL Armor:5
-RTR Armor:5
-RTC Armor:6
+
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+weaponquirk:exposed_linkage:RA:4:Flamer
+weaponquirk:exposed_linkage:LA:4:Flamer
+
+
+mass:35
+engine:210 Fusion Engine(IS)
+structure:IS Standard
+myomer:Standard
+
+heat sinks:10 Single
+walk mp:6
+jump mp:6
+
+armor:Standard(Inner Sphere)
+LA armor:10
+RA armor:10
+LT armor:11
+RT armor:11
+CT armor:13
+HD armor:9
+LL armor:12
+RL armor:12
+RTL armor:5
+RTR armor:5
+RTC armor:6
 
 Weapons:8
-Flamer, Center Torso
-Flamer, Center Torso
-Flamer, Right Arm
-Flamer, Left Arm
 Medium Laser, Left Arm
+Flamer, Left Arm
 Medium Laser, Right Arm
+Flamer, Right Arm
 Small Laser, Left Torso
 Small Laser, Right Torso
+Flamer, Center Torso
+Flamer, Center Torso
 
 Left Arm:
 Shoulder
@@ -152,20 +161,19 @@ Heat Sink
 -Empty-
 -Empty-
 
+overview:Originally intended as a mobile incendiary ’Mech, the Firestarter evolved into a decent scouting and reconnaissance platform.
 
-Overview: The Firestarter is a specialized BattleMech. Its role is somewhat self evident; it has served as an incendiary 'Mech for centuries, and has only undergone minor updates that rarely detract from its primary role. Due to its value as a niche combatant, most Firestarters are not assigned to standard lances in a force's TOE. Instead, they are often attached to forces on a company or even regimental level, where they act as force multipliers for these larger commands. It was only the sudden and real shortage of BattleMechs during the Succession Wars that would lead to the inclusion of the Firestarter in more generalized commands.
+capabilities:Despite being shielded by five and a half tons of armor and capable of jumping 180 meters, the Firestarter was powerless against medium or heavyweight opponents. Instead, an entire strategy was built around its ability to cause wildfires, with strategically positioned blazes routing an opponent or covering a withdrawal and impeding any pursuit. Firestarter MechWarriors enjoyed setting fire to densely forested areas when enemy 'Mechs marched through them, as well as any buildings where the enemy was hiding. Other applications for the 'Mech included scorched earth tactics, though this grew less common as it became more important to capture rather than destroy the declining amount of precious resources, or leading units of Wasps and Stingers in deep penetration scouting and light raiding operations.This approach altered in the later Succession Wars when it was discovered that the Firestarter could not only set flames to prevent an enemy from following it, but also clear ambush spots for the advancing of friendly forces.
 
-Capabilities: The many Flamers on the Firestarter betray its main purpose. As an incendiary platform, the 'Mech is often deployed to scout, interdict, or screen other 'Mechs in wooded or grassy terrain. Its armor and firepower also make it effective against other lighter 'Mechs, and it can quickly break contact with hostile forces by starting fires as needed. The Succession Wars would bring forth a darker side of the Firestarter; many would be used for scorched-earth tactics, denying assets to the enemy even in retreat.
+deployment:The original Firestarter, production of it ceased with the introduction of the FS9-H. It carried small lasers instead of machine guns and mounted an additional ton of armor.
 
-Deployment: Argile Technologies produced many Firestarters during the height of the Star League. Although the company's destruction would temporarily stop production, Coventry MetalWorks would claim the design and continue manufacturing the design. Even so, the original FS9-A Firestarter has not been seen for some time. The popularity of the most common -H variant was so universal that Coventry Metalworks chose not to put this original variant into production.
+history:Firestarters, both ancient and contemporary, can still be found in abundance among planetary militias and House troops. Even though Blakist forces have taken over CMW's principal plant on Coventry, spare parts are still accessible from other Firestarter producers (including LAW, Ceres Metals, Defiance, and Independence Weaponry). Loki field offices near the Circinus Federation frontier are concerned about reports of a new variety using endo steel technology on Federation- occupied worlds. With its particular load-out, this new variation appears to be designed to spread chaos and destruction. Firestarters have also been seen in Level II formations with Blakist soldiers in their Protectorate, most frequently at "police demonstrations" and guarding suspected prison sites. These versions are thought to be Coventry goods.
 
-systemmanufacturer:CHASSIS:Argile
-systemmode:CHASSIS:H/09
-systemmanufacturer:ENGINE:Omni
-systemmode:ENGINE:210
-systemmanufacturer:ARMOR:Livingston
-systemmode:ARMOR:Ceramics
-systemmanufacturer:COMMUNICATIONS:Cyclops
-systemmode:COMMUNICATIONS:14
-systemmanufacturer:TARGETING:Tansech
-systemmode:TARGETING:C39-97
+manufacturer:Argile Technologies
+primaryfactory:Skye
+systemmanufacturer:CHASSIS:Argile H/09
+systemmanufacturer:ENGINE:Omni 210
+systemmanufacturer:ARMOR:Livingston Ceramics
+systemmanufacturer:JUMPJET:Luxor Load Lifters
+systemmanufacturer:COMMUNICATIONS:Cyclops 14
+systemmanufacturer:TARGETING:Tansech C30-97

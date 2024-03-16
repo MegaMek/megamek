@@ -234,15 +234,14 @@ public class SkinSpecification {
     }
     
     public boolean hasBorder() {
-        // Return false if any corner doesn't exsit
+        // Return false if any corner doesn't exist
         if (tl_corner.isBlank() || tr_corner.isBlank()
                 || bl_corner.isBlank() || br_corner.isBlank()) {
             return false;
         }
         
-        // Return false if any edge doesn't exsit
-        if (topEdge.size() == 0 || rightEdge.size() == 0
-                || bottomEdge.size() == 0 || leftEdge.size() == 0) {
+        // Return false if any edge doesn't exist
+        if (topEdge.isEmpty() || rightEdge.isEmpty() || bottomEdge.isEmpty() || leftEdge.isEmpty()) {
             return false;
         }
         
@@ -275,7 +274,7 @@ public class SkinSpecification {
     }
     
     public boolean hasBackgrounds() {
-        if (backgrounds.size() == 0) {
+        if (backgrounds.isEmpty()) {
             return false;
         }
         

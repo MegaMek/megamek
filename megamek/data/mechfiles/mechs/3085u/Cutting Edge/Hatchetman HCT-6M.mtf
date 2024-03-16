@@ -1,12 +1,18 @@
-Version:1.2
-Hatchetman
-HCT-6M
+chassis:Hatchetman
+model:HCT-6M
+mul id:1416
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3084
-Source:Dark Age
+source:TRO: 3085
 Rules Level:2
+role:Brawler
+
+
+
+quirk:anti_air
+
 
 Mass:45
 Engine:180 XL Engine(IS)

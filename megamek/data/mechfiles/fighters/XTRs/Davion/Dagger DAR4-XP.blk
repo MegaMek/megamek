@@ -20,6 +20,10 @@ Dagger
 DAR4-XP
 </Model>
 
+<mul id:>
+796
+</mul id:>
+
 <year>
 3070
 </year>
@@ -31,6 +35,10 @@ DAR4-XP
 <type>
 IS Level 4
 </type>
+
+<role>
+Fast Dogfighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -100,7 +108,7 @@ ISMediumVSPLaser
 </Fuselage Equipment>
 
 <source>
-XTRO Davion - Jihad
+XTR: Davion
 </source>
 
 <tonnage>

@@ -1,12 +1,16 @@
-Version:1.0
-Stooping Hawk
-G
+chassis:Stooping Hawk
+model:G
+mul id:3082
 
 Config:Biped Omnimech
 TechBase:Clan
 Era:3073
-Source:TRO 3060
+Source:TRO: 3060
 Rules Level:3
+role:Skirmisher
+
+quirk:rugged_2
+
 
 Mass:55
 Engine:275 Fusion (Clan) Engine(IS)

@@ -1,12 +1,19 @@
-Version:1.0
-Catapult
-CPLT-C5
+chassis:Catapult
+model:CPLT-C5
+mul id:483
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3061
-Source:TRO 3050 - Clan Invasion
+Source:TRO: 3050
 Rules Level:3
+role:Missile Boat
+
+
+
+quirk:no_arms
+quirk:weak_head_1
+
 
 Mass:65
 Engine:260 Fusion Engine

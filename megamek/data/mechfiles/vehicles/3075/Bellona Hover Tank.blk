@@ -16,21 +16,29 @@ Tank
 Bellona Hover Tank
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+326
+</mul id:>
 
 <year>
 3070
 </year>
 
 <source>
-Jihad
+TRO: 3075
 </source>
 
 <type>
 Clan Level 2
 </type>
+
+<role>
+Striker
+</role>
 
 <tonnage>
 45.0

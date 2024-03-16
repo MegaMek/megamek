@@ -1,12 +1,22 @@
-Version:1.0
-Marauder
-MAD-5M
+chassis:Marauder
+model:MAD-5M
+mul id:2041
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3051
-Source:Clan Invasion
+source:TRO: 3085
 Rules Level:2
+role:Skirmisher
+
+
+
+quirk:command_mech
+quirk:hyper_actuator
+quirk:low_profile
+weaponquirk:direct_torso_mount:RT:6:ISLBXAC10
+weaponquirk:exposed_linkage:RT:6:ISLBXAC10
+
 
 Mass:75
 Engine:300 XL Engine

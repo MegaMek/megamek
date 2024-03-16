@@ -20,6 +20,10 @@ Mechanized Wheeled Platoon
 (LRM)
 </Model>
 
+<mul id:>
+2146
+</mul id:>
+
 <year>
 3057
 </year>
@@ -27,6 +31,10 @@ Mechanized Wheeled Platoon
 <type>
 IS Level 3
 </type>
+
+<role>
+Ambusher
+</role>
 
 <motion_type>
 Wheeled
@@ -36,7 +44,7 @@ Wheeled
 </Field Guns Equipment>
 
 <source>
-Total Warfare - Succession Wars
+Total Warfare
 </source>
 
 <squad_size>

@@ -20,6 +20,10 @@ Centurion
 CNT-2D
 </Model>
 
+<mul id:>
+3926
+</mul id:>
+
 <year>
 2837
 </year>
@@ -31,6 +35,10 @@ CNT-2D
 <type>
 IS Level 2
 </type>
+
+<role>
+Interceptor
+</role>
 
 <motion_type>
 Aerodyne
@@ -94,7 +102,7 @@ IS Ammo SRM-6
 </Fuselage Equipment>
 
 <source>
-TRO 3075 - Succession Wars
+TRO: 3075
 </source>
 
 <tonnage>

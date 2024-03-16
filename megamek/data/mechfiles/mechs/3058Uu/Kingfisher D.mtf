@@ -1,12 +1,16 @@
-Version:1.0
-Kingfisher
-D
+chassis:Kingfisher
+model:D
+mul id:1782
 
 Config:Biped Omnimech
 TechBase:Clan
 Era:2887
-Source:TRO 3058 - Succession Wars
+Source:TRO: 3058
 Rules Level:2
+role:Sniper
+
+quirk:rugged_1
+
 
 Mass:90
 Engine:360 Fusion (Clan) Engine(IS)

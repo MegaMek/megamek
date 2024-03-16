@@ -20,6 +20,10 @@ Typhoon
 TFN-5H
 </Model>
 
+<mul id:>
+5313
+</mul id:>
+
 <year>
 3074
 </year>
@@ -31,6 +35,10 @@ TFN-5H
 <type>
 IS Level 2
 </type>
+
+<role>
+Attack Fighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -140,3 +148,7 @@ ARMOR:Lexington Lite Ferro-Aluminum
 COMMUNICATIONS:CBM COMSET 3
 TARGETING:CBM TRAK-2
 </systemManufacturers>
+
+<source>
+TRO: 3075
+</source>

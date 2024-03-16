@@ -20,6 +20,10 @@ Generic Expandable Services Vehicle Trailer
 (Bunk)
 </Model>
 
+<mul id:>
+4208
+</mul id:>
+
 <year>
 3066
 </year>
@@ -31,6 +35,10 @@ Generic Expandable Services Vehicle Trailer
 <type>
 IS Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Wheeled
@@ -88,7 +96,7 @@ OmniChassisMod
 </structural_tech_rating>
 
 <source>
-HB:House Davion - Civil War
+Handbook: House Davion
 </source>
 
 <tonnage>

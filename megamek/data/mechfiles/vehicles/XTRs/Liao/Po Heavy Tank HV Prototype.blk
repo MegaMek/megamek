@@ -20,6 +20,10 @@ Po Heavy Tank
 (HV Prototype)
 </Model>
 
+<mul id:>
+2546
+</mul id:>
+
 <year>
 3077
 </year>
@@ -27,6 +31,10 @@ Po Heavy Tank
 <type>
 IS Level 4
 </type>
+
+<role>
+Brawler
+</role>
 
 <tonnage>
 60.0
@@ -84,5 +92,5 @@ Hyper Velocity Auto Cannon/10
 </Turret Equipment>
 
 <source>
-XTRO Liao - Jihad
+XTR: Liao
 </source>

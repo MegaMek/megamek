@@ -20,6 +20,10 @@ Model 97 'Octopus'
 (3051)
 </Model>
 
+<mul id:>
+4651
+</mul id:>
+
 <year>
 3051
 </year>
@@ -31,6 +35,10 @@ Model 97 'Octopus'
 <type>
 IS Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Spheroid
@@ -137,7 +145,7 @@ ISNavalTugAdaptor
 </structural_integrity>
 
 <source>
-TRO 3057R - Clan Invasion
+TRO: 3057 Revised
 </source>
 
 <tonnage>

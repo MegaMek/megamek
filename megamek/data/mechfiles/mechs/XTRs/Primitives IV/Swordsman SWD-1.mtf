@@ -1,12 +1,23 @@
-Version:1.1
-Swordsman
-SWD-1
+chassis:Swordsman
+model:SWD-1
+mul id:7181
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2463
-Source:XTRO Primitives IV - Age of War
+Source:XTR: Primitives IV
 Rules Level:4
+role:Sniper
+
+
+
+
+quirk:searchlight
+quirk:bad_rep_is
+quirk:obsolete
+quirk:poor_work
+weaponquirk:accurate:LT:1:Autocannon/5
+
 
 Mass:40
 Engine:145 Fusion Engine(IS)

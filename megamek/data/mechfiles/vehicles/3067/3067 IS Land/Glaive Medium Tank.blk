@@ -16,9 +16,13 @@ Tank
 Glaive Medium Tank
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+4217
+</mul id:>
 
 <year>
 3066
@@ -31,6 +35,10 @@ Glaive Medium Tank
 <type>
 IS Level 2
 </type>
+
+<role>
+Sniper
+</role>
 
 <motion_type>
 Wheeled
@@ -82,7 +90,7 @@ Machine Gun
 </Turret Equipment>
 
 <source>
-TRO 3067 - Civil War
+TRO: 3067
 </source>
 
 <tonnage>

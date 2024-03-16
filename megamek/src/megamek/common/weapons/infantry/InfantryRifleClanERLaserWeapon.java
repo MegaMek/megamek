@@ -45,7 +45,7 @@ public class InfantryRifleClanERLaserWeapon extends InfantryWeapon {
 		infantryRange = 3;
 		ammoWeight = 0.0003;
 		shots = 6;
-		rulesRefs = "273,TM";
+		rulesRefs = "273, TM";
 		techAdvancement.setTechBase(TECH_BASE_CLAN).setClanAdvancement(2840, 2845, DATE_NONE, DATE_NONE, DATE_NONE)
 		        .setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_CSA)
 		        .setProductionFactions(F_CSA).setTechRating(RATING_F)

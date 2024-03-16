@@ -20,6 +20,10 @@ Lightning
 LTN-G15
 </Model>
 
+<mul id:>
+4513
+</mul id:>
+
 <year>
 2511
 </year>
@@ -31,6 +35,10 @@ LTN-G15
 <type>
 IS Level 2
 </type>
+
+<role>
+Dogfighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -96,7 +104,7 @@ IS Ammo AC/20
 </Fuselage Equipment>
 
 <source>
-TRO 3075 - Age of War
+TRO: 3075
 </source>
 
 <tonnage>

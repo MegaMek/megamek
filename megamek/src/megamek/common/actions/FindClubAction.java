@@ -40,7 +40,8 @@ public class FindClubAction extends AbstractEntityAction {
     }
 
     /**
-     * Returns whether an entity can find a club in its current location
+     * @param game The current {@link Game}
+     * @return whether an entity can find a club in its current location
      */
     public static boolean canMechFindClub(Game game, int entityId) {
         final Entity entity = game.getEntity(entityId);
@@ -60,7 +61,8 @@ public class FindClubAction extends AbstractEntityAction {
         }
 
         // Check game options
-        if (game.getOptions().booleanOption(OptionsConstants.ALLOWED_NO_CLAN_PHYSICAL) && entity.isClan()) {
+        if (game.getOptions().booleanOption(OptionsConstants.ALLOWED_NO_CLAN_PHYSICAL)
+                && entity.getCrew().isClanPilot()) {
             return false;
         }
 
@@ -76,7 +78,7 @@ public class FindClubAction extends AbstractEntityAction {
         }
 
         // also, need shoulders and hands
-        // Claws can subtitue as hands --Torren
+        // Claws can substitute as hands --Torren
         if (!entity.hasWorkingSystem(Mech.ACTUATOR_SHOULDER, Mech.LOC_RARM)
                 || !entity.hasWorkingSystem(Mech.ACTUATOR_SHOULDER, Mech.LOC_LARM)
                 || (!entity.hasWorkingSystem(Mech.ACTUATOR_HAND, Mech.LOC_RARM) && !((Mech) entity).hasClaw(Mech.LOC_RARM))
@@ -84,17 +86,12 @@ public class FindClubAction extends AbstractEntityAction {
             return false;
         }
 
-        //check for no/minimal arms quirk
+        // check for no/minimal arms quirk
         if (entity.hasQuirk(OptionsConstants.QUIRK_NEG_NO_ARMS)) {
             return false;
         }
 
         // and last, check if you already have a club, greedy
-        if (entity.getClubs().size() > 0) {
-            return false;
-        }
-
-        return true;
+        return entity.getClubs().isEmpty();
     }
-
 }

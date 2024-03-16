@@ -1,4 +1,9 @@
 size 32 34
+tag "Cliffs (Auto)"
+tag "Roads (Auto)"
+tag "HeavyUrban (Auto)"
+tag "DesertTheme (Auto)"
+tag "Woods (Auto)"
 hex 0101 0 "" "desert"
 hex 0201 0 "" "desert"
 hex 0301 0 "" "desert"

@@ -23,12 +23,25 @@ package megamek;
  */
 public abstract class SuiteConstants {
     //region General Constants
-    public static final Version VERSION = new Version("0.49.7-SNAPSHOT");
+    public static final String PROJECT_NAME = "MegaMek Suite";
+    public static final Version VERSION = new Version("0.49.19-SNAPSHOT");
     public static final int MAXIMUM_D6_VALUE = 6;
 
     // This is used in creating the name of save files, e.g. the MekHQ campaign file
     public static final String FILENAME_DATE_FORMAT = "yyyyMMdd";
     //endregion General Constants
+
+    //region Font Constants
+    // FIXME : These uses all need to be converted into SuiteOptions, and this step was done to
+    // FIXME : simplify and isolate places that will be required
+    // FIXME : This is an accessibility issue
+    public static final String FONT_ARIAL = "Arial";
+    public static final String FONT_COURIER_NEW = "Courier New";
+    public static final String FONT_DIALOG = "Dialog";
+    public static final String FONT_HELVETICA = "Helvetica";
+    public static final String FONT_MONOSPACED = "Monospaced";
+    public static final String FONT_SANS_SERIF = "Sans Serif";
+    //endregion Font Constants
 
     //region GUI Constants
     //endregion GUI Constants
@@ -36,7 +49,13 @@ public abstract class SuiteConstants {
     //region SuiteOptions
     //endregion SuiteOptions
 
+    //region File Formats
+    public static final String TRUETYPE_FONT = ".ttf";
+    public static final String SCENARIO_EXT = ".mms";
+    //endregion File Formats
+
     //region File Paths
+    public static final String FONT_DIRECTORY = "data/fonts/";
     public static final String MHQ_PREFERENCES_FILE = "mmconf/mhq.preferences";
     public static final String MM_PREFERENCES_FILE = "mmconf/mm.preferences";
     public static final String MML_PREFERENCES_FILE = "mmconf/mml.preferences";

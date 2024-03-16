@@ -20,6 +20,10 @@ Lightning
 LTN-G15b
 </Model>
 
+<mul id:>
+1878
+</mul id:>
+
 <year>
 2721
 </year>
@@ -31,6 +35,10 @@ LTN-G15b
 <type>
 IS Level 2
 </type>
+
+<role>
+Dogfighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -106,7 +114,7 @@ IS Gauss Ammo
 </Fuselage Equipment>
 
 <source>
-TRO 3075 - Star League
+TRO: 3075
 </source>
 
 <tonnage>

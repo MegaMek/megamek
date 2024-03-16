@@ -1,12 +1,13 @@
-Version:1.0
-Wasp LAM
-WSP-110
+chassis:Wasp LAM
+model:WSP-110
+mul id:5391
 
 Config:LAM
 TechBase:Inner Sphere
 Era:3075
-Source:TRO3085
+Source:TRO: 3085
 Rules Level:4
+role:Scout
 
 Mass:30
 Engine:150 Fusion Engine(IS)

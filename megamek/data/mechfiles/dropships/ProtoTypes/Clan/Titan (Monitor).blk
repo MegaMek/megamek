@@ -20,6 +20,10 @@ Titan
 (Monitor)
 </Model>
 
+<mul id:>
+5250
+</mul id:>
+
 <year>
 3086
 </year>
@@ -31,6 +35,10 @@ Titan
 <type>
 Clan Level 3
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Aerodyne
@@ -144,7 +152,7 @@ ISMobileHPG
 </structural_integrity>
 
 <source>
-TRO Prototypes - Early Republic
+TRO: Prototypes
 </source>
 
 <tonnage>

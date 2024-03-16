@@ -12,9 +12,13 @@ Tank
 <Name>
 Shoden Assault Vehicle
 </Name>
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+5056
+</mul id:>
 <Tonnage>
 70
 </Tonnage>
@@ -59,6 +63,10 @@ CLCASE
 <type>
 Clan Level 2
 </type>
+
+<role>
+Brawler
+</role>
 <year>
 3064
 </year>
@@ -74,3 +82,7 @@ Clan Level 2
 <motion_type>
 Wheeled
 </motion_type>
+
+<source>
+TRO: 3067
+</source>

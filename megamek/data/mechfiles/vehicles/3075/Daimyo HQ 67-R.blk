@@ -20,17 +20,25 @@ Daimyo HQ
 67-R
 </Model>
 
+<mul id:>
+809
+</mul id:>
+
 <year>
 3068
 </year>
 
 <source>
-Jihad
+TRO: 3075
 </source>
 
 <type>
 IS Level 2
 </type>
+
+<role>
+Brawler
+</role>
 
 <tonnage>
 50.0

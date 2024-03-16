@@ -15,6 +15,10 @@ Chevalier Light Tank
 <Model>
 (MML)
 </Model>
+
+<mul id:>
+580
+</mul id:>
 <Tonnage>
 35
 </Tonnage>
@@ -41,6 +45,10 @@ IS Ammo MML-5 SRM
 <type>
 IS Level 2
 </type>
+
+<role>
+Sniper
+</role>
 <year>
 3069
 </year>
@@ -57,5 +65,5 @@ IS Level 2
 Wheeled
 </motion_type>
 <source>
-Jihad
+TRO: 3060
 </source>

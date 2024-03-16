@@ -1,0 +1,133 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+FixedWingSupport
+</UnitType>
+
+<Name>
+King Karnov Transport
+</Name>
+
+<Model>
+KC-6
+</Model>
+
+<mul id:>
+4446
+</mul id:>
+
+<year>
+3015
+</year>
+
+<originalBuildYear>
+3015
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<role>
+None
+</role>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+cargobay:59.5:1:1
+</transporters>
+
+<SafeThrust>
+3
+</SafeThrust>
+
+<cockpit_type>
+0
+</cockpit_type>
+
+<vstol>
+1
+</vstol>
+
+<heatsinks>
+0
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+190
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor>
+34
+33
+33
+33
+</armor>
+
+<Nose Equipment>
+</Nose Equipment>
+
+<Left Wing Equipment>
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+</Right Wing Equipment>
+
+<Aft Equipment>
+</Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Body Equipment>
+PropChassisMod
+VSTOLChassisMod
+</Body Equipment>
+
+<barrating>
+7
+</barrating>
+
+<structural_tech_rating>
+3
+</structural_tech_rating>
+
+<engine_tech_rating>
+3
+</engine_tech_rating>
+
+<armor_tech_rating>
+3
+</armor_tech_rating>
+
+<notes>
+Based on fluff
+</notes>
+
+<source>
+TRO: Vehicle Annex Revised
+</source>
+
+<tonnage>
+200.0
+</tonnage>
+

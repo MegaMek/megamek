@@ -20,6 +20,10 @@ Padilla Heavy Artillery Tank
 (LRM)
 </Model>
 
+<mul id:>
+2403
+</mul id:>
+
 <year>
 2830
 </year>
@@ -27,6 +31,10 @@ Padilla Heavy Artillery Tank
 <type>
 IS Level 2
 </type>
+
+<role>
+Missile Boat
+</role>
 
 <tonnage>
 75
@@ -78,6 +86,6 @@ LRM 20
 </Rear Equipment>
 
 <source>
-Succession Wars
+TRO: 3058
 </source>
 

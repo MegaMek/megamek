@@ -21,7 +21,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.HVACWeaponHandler;
 import megamek.common.weapons.RapidfireHVACWeaponHandler;
-import megamek.server.Server;
+import megamek.server.GameManager;
 
 /**
  * @author Jason Tighe
@@ -45,11 +45,16 @@ public abstract class HVACWeapon extends ACWeapon {
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
-                                              Server server) {
+                                              GameManager manager) {
         Mounted weapon = game.getEntity(waa.getEntityId()).getEquipment(waa.getWeaponId());
         if (weapon.curMode().equals("Rapid")) {
-            return new RapidfireHVACWeaponHandler(toHit, waa, game, server);
+            return new RapidfireHVACWeaponHandler(toHit, waa, game, manager);
         }
-        return new HVACWeaponHandler(toHit, waa, game, server);
+        return new HVACWeaponHandler(toHit, waa, game, manager);
+    }
+
+    @Override
+    public int getBattleForceClass() {
+        return BFCLASS_STANDARD;
     }
 }

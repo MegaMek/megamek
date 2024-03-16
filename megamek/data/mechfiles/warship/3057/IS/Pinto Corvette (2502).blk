@@ -1,0 +1,400 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Warship
+</UnitType>
+
+<Name>
+Pinto Corvette
+</Name>
+
+<Model>
+(2502)
+</Model>
+
+<mul id:>
+4832
+</mul id:>
+
+<year>
+2502
+</year>
+
+<originalBuildYear>
+2502
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<role>
+None
+</role>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+smallcraftbay:2.0:1:1
+asfbay:12.0:2:2
+cargobay:10943.0:1:3
+dockingcollar
+steeragequarters:140.0:0
+1stclassquarters:250.0:0
+crewquarters:742.0:0
+</transporters>
+
+<SafeThrust>
+5
+</SafeThrust>
+
+<heatsinks>
+800
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+25000
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+41
+</armor_type>
+
+<armor_tech>
+5
+</armor_tech>
+
+<armor>
+14
+12
+12
+11
+12
+12
+</armor>
+
+<Nose Equipment>
+(B) Naval PPC (Light)
+Naval PPC (Light)
+(B) Large Laser
+Large Laser
+Large Laser
+Large Laser
+Large Laser
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+</Nose Equipment>
+
+<Left Front Side Equipment>
+(B) Naval Laser 35
+(B) Small Laser
+Small Laser
+Small Laser
+Small Laser
+Small Laser
+Small Laser
+Small Laser
+Small Laser
+Small Laser
+Small Laser
+Small Laser
+Small Laser
+Machine Gun
+Machine Gun
+Machine Gun
+Machine Gun
+Machine Gun
+Machine Gun
+Machine Gun
+Machine Gun
+Machine Gun
+Machine Gun
+Machine Gun
+Machine Gun
+Machine Gun
+Machine Gun
+Machine Gun
+Machine Gun
+Machine Gun
+Machine Gun
+Machine Gun
+Machine Gun
+IS Ammo MG - Full:1800
+</Left Front Side Equipment>
+
+<Right Front Side Equipment>
+(B) Naval Laser 35
+(B) Small Laser
+Small Laser
+Small Laser
+Small Laser
+Small Laser
+Small Laser
+Small Laser
+Small Laser
+Small Laser
+Small Laser
+Small Laser
+Small Laser
+Machine Gun
+Machine Gun
+Machine Gun
+Machine Gun
+Machine Gun
+Machine Gun
+Machine Gun
+Machine Gun
+Machine Gun
+Machine Gun
+Machine Gun
+Machine Gun
+Machine Gun
+Machine Gun
+Machine Gun
+Machine Gun
+Machine Gun
+Machine Gun
+Machine Gun
+Machine Gun
+IS Ammo MG - Full:1800
+</Right Front Side Equipment>
+
+<Aft Equipment>
+(B) Naval Laser 35
+</Aft Equipment>
+
+<Aft Left Side Equipment>
+(B) Capital Missile Launcher (Barracuda)
+Capital Missile Launcher (Barracuda)
+Ammo Barracuda:60
+(B) Small Laser
+Small Laser
+Small Laser
+Small Laser
+Small Laser
+Small Laser
+Small Laser
+Small Laser
+Small Laser
+Small Laser
+Small Laser
+Small Laser
+Machine Gun
+Machine Gun
+Machine Gun
+Machine Gun
+Machine Gun
+Machine Gun
+Machine Gun
+Machine Gun
+Machine Gun
+Machine Gun
+Machine Gun
+Machine Gun
+Machine Gun
+Machine Gun
+Machine Gun
+Machine Gun
+Machine Gun
+Machine Gun
+Machine Gun
+Machine Gun
+IS Ammo MG - Full:1800
+</Aft Left Side Equipment>
+
+<Aft Right Side Equipment>
+(B) Capital Missile Launcher (Barracuda)
+Capital Missile Launcher (Barracuda)
+Ammo Barracuda:60
+(B) Small Laser
+Small Laser
+Small Laser
+Small Laser
+Small Laser
+Small Laser
+Small Laser
+Small Laser
+Small Laser
+Small Laser
+Small Laser
+Small Laser
+Machine Gun
+Machine Gun
+Machine Gun
+Machine Gun
+Machine Gun
+Machine Gun
+Machine Gun
+Machine Gun
+Machine Gun
+Machine Gun
+Machine Gun
+Machine Gun
+Machine Gun
+Machine Gun
+Machine Gun
+Machine Gun
+Machine Gun
+Machine Gun
+Machine Gun
+Machine Gun
+IS Ammo MG - Full:1800
+</Aft Right Side Equipment>
+
+<Hull Equipment>
+</Hull Equipment>
+
+<Left Broadsides Equipment>
+(B) Naval Autocannon (NAC/10)
+Ammo NAC/10:60
+(B) Autocannon/20
+Autocannon/20
+Autocannon/5
+Autocannon/5
+Autocannon/5
+Autocannon/5
+Autocannon/5
+IS Ammo AC/20:100
+IS Ammo AC/5:400
+</Left Broadsides Equipment>
+
+<Right Broadsides Equipment>
+(B) Naval Autocannon (NAC/10)
+Ammo NAC/10:60
+(B) Autocannon/20
+Autocannon/20
+Autocannon/5
+Autocannon/5
+Autocannon/5
+Autocannon/5
+Autocannon/5
+IS Ammo AC/20:100
+IS Ammo AC/5:400
+</Right Broadsides Equipment>
+
+<structural_integrity>
+29
+</structural_integrity>
+
+<capabilities>
+The Pinto-class corvette was built for light duty but possessed superior armor, particularly in the front, compared to the Hegemony's Vincent-class. It boasted a powerful arsenal of capital and conventional weaponry and featured a DropShip transport capability. Additionally, it was supported by two fighter squadrons, making it versatile enough to support small invasions or hold defensive lines.
+</capabilities>
+
+<overview>
+The Pinto-class corvette, originating from the Rim Worlds Republic, was initially developed as a defensive picket ship during the period of Periphery independence. While many were sold to other realms, sales were discontinued during the Reunification War to maintain a facade of loyalty to the Star League. The Pinto proved to be superior to the Hegemony's Vincent-class corvette in terms of armor, weaponry, and versatility, capable of supporting invasions or defending against enemy forces. However, the Pintos met their demise during Kerensky's return and subsequent conflicts, with rumors suggesting that a few crippled vessels may have survived in uncharted regions of the Deep Periphery.
+</overview>
+
+<history>
+The Pinto-class corvette originated in the Rim Worlds Republic as a defensive picket ship during the time of Periphery independence. After discontinuing sales to maintain loyalty to the Star League during the Reunification War, Tedeo Amaris restarted the construction of Pintos in 2650 as part of a military buildup. Despite pressure from the Star League, no demands were made to reduce the RWR fleet, which would later become a regret for the Terran Hegemony. During the Amaris crisis, the Rim Worlds' fleet possessed a significant number of Pintos, ready to strike against the League defenders once Kerensky's attention was diverted. However, the Pinto class faced its downfall when the SLDF WarShips returned under Kerensky's command to overthrow the Republican forces. Throughout the campaigns in the Periphery and the liberation of worlds, the Pinto class was apparently destroyed, along with the destruction of the WarShip's two shipyards in the shattered Rim Worlds Republic. Nevertheless, rumors persist of a few crippled Pintos that may have withdrawn to uncharted regions of the Deep Periphery, where they remain as derelicts to this day.
+</history>
+
+<manufacturer>
+Unknown, Roe Weapon Systems, Rockwell-Vasquez Starcraft Inc.
+</manufacturer>
+
+<primaryFactory>
+Alpheratz, Finmark, Zertarum
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<use>
+Corvette
+</use>
+
+<length>
+298 m
+</length>
+
+<height>
+505 m Sail
+</height>
+
+<source>
+TRO: 3057 Revised
+</source>
+
+<tonnage>
+160000.0
+</tonnage>
+
+<kf_core>
+1
+</kf_core>
+
+<sail>
+1
+</sail>
+
+<grav_decks>
+45
+</grav_decks>
+
+<designtype>
+1
+</designtype>
+
+<crew>
+165
+</crew>
+
+<officers>
+25
+</officers>
+
+<gunners>
+38
+</gunners>
+
+<passengers>
+0
+</passengers>
+
+<marines>
+28
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<life_boat>
+10
+</life_boat>
+
+<escape_pod>
+10
+</escape_pod>
+

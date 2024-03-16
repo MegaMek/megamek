@@ -15,6 +15,10 @@ Mechanized Assault XCT
 <Model>
 Word of Blake Militia NBC
 </Model>
+
+<mul id:>
+2130
+</mul id:>
 <squad_size>
 6
 </squad_size>
@@ -38,11 +42,15 @@ ISEnvironmentSuitMarine
 <type>
 IS Level 3
 </type>
+
+<role>
+Ambusher
+</role>
 <year>
 3065
 </year>
 <era>
-TRO 3085 - Civil Wa
+TRO: 3085 - Civil Wa
 </era>
 <motion_type>
 Wheeled

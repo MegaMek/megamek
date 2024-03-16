@@ -20,6 +20,10 @@ Eagle
 EGL-R11
 </Model>
 
+<mul id:>
+4108
+</mul id:>
+
 <year>
 3071
 </year>
@@ -31,6 +35,10 @@ EGL-R11
 <type>
 IS Level 2
 </type>
+
+<role>
+Dogfighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -95,7 +103,7 @@ Medium Laser
 </Fuselage Equipment>
 
 <source>
-TRO 3075 - Jihad
+TRO: 3075
 </source>
 
 <tonnage>

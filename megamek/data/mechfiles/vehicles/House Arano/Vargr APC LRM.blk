@@ -20,6 +20,10 @@ Vargr APC Tank
 (LRM)
 </Model>
 
+<mul id:>
+7616
+</mul id:>
+
 <year>
 2945
 </year>
@@ -31,6 +35,10 @@ Vargr APC Tank
 <type>
 IS Level 1
 </type>
+
+<role>
+Skirmisher
+</role>
 
 <motion_type>
 Wheeled

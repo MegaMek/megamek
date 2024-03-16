@@ -20,6 +20,10 @@ Donar Assault Helicopter
 (Close Support)
 </Model>
 
+<mul id:>
+904
+</mul id:>
+
 <year>
 3066
 </year>
@@ -27,6 +31,10 @@ Donar Assault Helicopter
 <type>
 Clan Level 3
 </type>
+
+<role>
+Striker
+</role>
 
 <motion_type>
 VTOL
@@ -82,7 +90,7 @@ CLMastMount
 </Rotor Equipment>
 
 <source>
-Civil War
+TRO: 3060
 </source>
 
 <tonnage>

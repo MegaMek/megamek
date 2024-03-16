@@ -1,12 +1,21 @@
-Version:1.0
-Eisenfaust
-EFT-8X
+chassis:Eisenfaust
+model:EFT-8X
+mul id:946
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3080
-Source:Dark Age
+source:TRO: 3085
 Rules Level:4
+role:Brawler
+
+
+
+quirk:battle_fists_la
+quirk:battle_fists_ra
+quirk:easy_maintain
+quirk:pro_actuator
+
 
 Mass:45
 Engine:180 XL Engine

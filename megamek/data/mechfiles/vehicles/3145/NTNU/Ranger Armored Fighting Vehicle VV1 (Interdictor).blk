@@ -20,6 +20,10 @@ Ranger Armored Fighting Vehicle
 VV1 (Interdictor)
 </Model>
 
+<mul id:>
+6755
+</mul id:>
+
 <year>
 3087
 </year>
@@ -27,6 +31,10 @@ VV1 (Interdictor)
 <type>
 IS Level 2
 </type>
+
+<role>
+Scout
+</role>
 
 <motion_type>
 Wheeled
@@ -81,7 +89,7 @@ Machine Gun
 </Turret Equipment>
 
 <source>
-RS 3145 NTNU - Early Republic
+Record Sheets: 3145 New Tech New Upgrades
 </source>
 
 <tonnage>

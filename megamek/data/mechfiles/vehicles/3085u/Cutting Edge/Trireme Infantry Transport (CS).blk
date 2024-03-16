@@ -20,6 +20,10 @@ Trireme Infantry Transport
 (CS)
 </Model>
 
+<mul id:>
+3308
+</mul id:>
+
 <Tonnage>
 60
 </Tonnage>
@@ -59,12 +63,16 @@ Armored Chassis
 IS Level 2
 </type>
 
+<role>
+None
+</role>
+
 <year>
 3086
 </year>
 
 <source>
-TRO 3085 - Early Republic
+TRO: 3085
 </source>
 
 <internal_type>

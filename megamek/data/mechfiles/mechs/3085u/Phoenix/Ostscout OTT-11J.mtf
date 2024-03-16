@@ -1,12 +1,21 @@
-Version:1.0
-Ostscout
-OTT-11J
+chassis:Ostscout
+model:OTT-11J
+mul id:2365
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3078
-Source:Jihad
+source:TRO: 3085
 Rules Level:2
+role:Scout
+
+
+
+quirk:imp_com
+quirk:imp_sensors
+quirk:low_profile
+quirk:rugged_1
+
 
 Mass:35
 Engine:315 XL Engine(IS)
@@ -161,5 +170,5 @@ systemmanufacturer:CHASSIS:Krupp 255 Endo Steel
 systemmanufacturer:ENGINE:GM 315 XL
 systemmanufacturer:ARMOR:Krupp 156 Ferro-Fibrous
 systemmanufacturer:COMMUNICATIONS:Exeter Longscan 300
-systemmanufacturer:TRSS Eagle Eye with TAG
+systemmanufacturer:TARGETING:TRSS Eagle Eye with TAG
 systemmanufacturer:JUMPJET:Ostmann Sct-A

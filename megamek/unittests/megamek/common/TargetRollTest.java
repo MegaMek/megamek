@@ -1,22 +1,36 @@
 /*
- * Copyright 2020 - The MegaMek Team
+ * Copyright (c) 2020-2022 - The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
-
 package megamek.common;
 
-import static org.junit.Assert.*;
+import megamek.client.ui.swing.calculationReport.CalculationReport;
+import megamek.common.battlevalue.BVCalculator;
+import megamek.common.options.GameOptions;
+import megamek.common.options.OptionsConstants;
+import org.junit.jupiter.api.Test;
 
-import org.junit.Test;
+import java.util.ArrayList;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class TargetRollTest {
     @Test
@@ -60,7 +74,7 @@ public class TargetRollTest {
         assertEquals("Automatic Success", roll.getValueAsString());
         assertEquals("great success", roll.getDesc());
     }
-    
+
     @Test
     public void checkFalseTest() {
         TargetRoll roll = new TargetRoll(TargetRoll.CHECK_FALSE, "check one, check one two");
@@ -101,5 +115,33 @@ public class TargetRollTest {
         assertEquals("1 (first) - 2 (second) + 3 (third) + 0 (fourth)", roll.getDesc());
         assertEquals(2, roll.getValue());
         assertEquals("2", roll.getValueAsString());
+    }
+
+    // Check to-hit roll mods for VTOL, WiGE, jumping Hovers, etc.
+    private Game setupGame() {
+        Game game = new Game();
+        GameOptions gOp = new GameOptions();
+        game.setOptions(gOp);
+        return game;
+    }
+
+    @Test
+    public void addOneForFlyingVTOL() {
+        int distance = 1;
+        boolean jumped = false;
+        boolean vtol = true;
+        Game game = setupGame();
+        ToHitData thd = Compute.getTargetMovementModifier(distance, jumped, vtol, game);
+        assertEquals(1, thd.getValue());
+    }
+
+    @Test
+    public void addOneForJumping() {
+        int distance = 1;
+        boolean jumped = true;
+        boolean vtol = false;
+        Game game = setupGame();
+        ToHitData thd = Compute.getTargetMovementModifier(distance, jumped, vtol, game);
+        assertEquals(1, thd.getValue());
     }
 }

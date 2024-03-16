@@ -1,12 +1,18 @@
-Version:1.0
-Tsunami
-TS-P1D
+chassis:Tsunami
+model:TS-P1D
+mul id:3312
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3063
-Source:TRO 3055 - Civil War
+Source:TRO: 3055
 Rules Level:3
+role:Striker
+
+
+
+quirk:difficult_maintain
+
 
 Mass:40
 Engine:240 Fusion Engine

@@ -20,6 +20,10 @@ Defiance
 DFC-OA
 </Model>
 
+<mul id:>
+4061
+</mul id:>
+
 <year>
 3067
 </year>
@@ -31,6 +35,10 @@ DFC-OA
 <type>
 IS Level 2
 </type>
+
+<role>
+Fire Support
+</role>
 
 <motion_type>
 Aerodyne
@@ -103,7 +111,7 @@ IS Ammo SRM-2:OMNI
 </Fuselage Equipment>
 
 <source>
-TRO 3067 - Civil War
+TRO: 3067
 </source>
 
 <tonnage>

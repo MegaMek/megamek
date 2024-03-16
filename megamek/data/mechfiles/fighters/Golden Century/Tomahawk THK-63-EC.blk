@@ -20,6 +20,10 @@ Tomahawk
 THK-63-EC
 </Model>
 
+<mul id:>
+7688
+</mul id:>
+
 <year>
 2818
 </year>
@@ -31,6 +35,10 @@ THK-63-EC
 <type>
 Mixed (Clan Chassis) Experimental
 </type>
+
+<role>
+Fast Dogfighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -108,7 +116,7 @@ Very popular with early clan pilots, technicians swapped the twin large lasers f
 </history>
 
 <source>
-Succession War
+TRO: Golden Century
 </source>
 
 <tonnage>

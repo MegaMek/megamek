@@ -20,6 +20,10 @@ Hephaestus Scout Tank
 A
 </Model>
 
+<mul id:>
+4313
+</mul id:>
+
 <year>
 3064
 </year>
@@ -28,15 +32,16 @@ A
 Clan Level 2
 </type>
 
+<role>
+Missile Boat
+</role>
+
 <motion_type>
 Hover
 </motion_type>
 
 <transporters>
 troopspace:4.0
-</transporters>
-
-<transporters>
 BattleArmorHandles - troopers:-1
 </transporters>
 
@@ -99,3 +104,7 @@ CLERSmallLaser:OMNI
 <baseChassisTurretWeight>
 0.5
 </baseChassisTurretWeight>
+
+<source>
+TRO: 3067
+</source>

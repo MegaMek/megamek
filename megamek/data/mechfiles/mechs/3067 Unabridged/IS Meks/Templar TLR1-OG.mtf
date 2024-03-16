@@ -1,12 +1,18 @@
-Version:1.0
-Templar
-TLR1-OG
+chassis:Templar
+model:TLR1-OG
+mul id:5710
 
 Config:Biped Omnimech
 TechBase:Inner Sphere
 Era:3069
-Source:3067 Unabridged
+Source:TRO: Jihad
 Rules Level:2
+role:Sniper
+
+
+
+quirk:easy_maintain
+
 
 Mass:85
 Engine:340 XL Engine(IS)

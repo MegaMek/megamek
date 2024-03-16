@@ -1,12 +1,21 @@
-Version:1.1
-Hector
-HOR-1B
+chassis:Hector
+model:HOR-1B
+mul id:4283
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2471
 Source:Era Digest: Age of War
 Rules Level:4
+role:Brawler
+
+
+
+
+quirk:bad_rep_is
+quirk:exp_actuator
+quirk:obsolete
+
 
 Mass:70
 Engine:340 Fusion Engine(IS)

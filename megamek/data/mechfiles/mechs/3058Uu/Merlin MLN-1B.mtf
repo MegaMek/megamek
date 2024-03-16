@@ -1,12 +1,17 @@
-Version:1.0
-Merlin
-MLN-1B
+chassis:Merlin
+model:MLN-1B
+mul id:2178
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3053
-Source:TRO 3058 - Clan Invasion
+Source:TRO: 3058
 Rules Level:1
+role:Brawler
+
+quirk:easy_maintain
+quirk:rugged_1
+
 
 Mass:60
 Engine:240 Fusion Engine
@@ -149,4 +154,19 @@ Jump Jet
 -Empty-
 -Empty-
 
+overview:The Merlin uses components that are all reliable and readily available, making the Merlin a durable and easy-to-repair 'Mech. 
 
+capabilities:The 'Mech is powered by a Pitban 240 fusion engine that gives it a top speed of 64.8 km/h. The Merlin carries ten and a half tons of armor, which is a respectable amount of protection for its weight. Additionally, the Merlin carries eighteen heat sinks to handle its heavy heat load.
+
+deployment:The 1B variant introduced in 3053 removes the Machine Gun and its ammunition and replaces them with an additional heat sink to help handle the Merlin's heat load.
+
+history:The Merlin debuted in 3010 as a product of the rebuilt Mountain Wolf BattleMechs. The Merlin was hailed as a technological marvel at the time it was released, as it was the first completely new design to be developed in over 100 years.
+
+manufacturer:Field Refit
+primaryfactory:Various
+systemmanufacturer:CHASSIS:Heavy Star QAT-4
+systemmanufacturer:ENGINE:Pitban 240
+systemmanufacturer:ARMOR:Longanecker PlastiSteel
+systemmanufacturer:JUMPJET:Pitban LFT 50
+systemmanufacturer:COMMUNICATIONS:Magestrix Alpha
+systemmanufacturer:TARGETING:Magestrix Gamma

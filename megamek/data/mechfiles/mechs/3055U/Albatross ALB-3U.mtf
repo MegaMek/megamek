@@ -1,34 +1,38 @@
-Version:1.0
-Albatross
-ALB-3U
-
+generator:MegaMek Suite 0.49.16-SNAPSHOT on 2023-12-29
+chassis:Albatross
+model:ALB-3U
+mul id:27
 Config:Biped
-TechBase:Inner Sphere
-Era:3053
-Source:TRO 3055 - Clan Invasion
-Rules Level:2
+techbase:Inner Sphere
+era:3053
+source:TRO: 3055
+rules level:2
+role:Brawler
 
-Mass:95
-Engine:380 XL Engine
-Structure:Standard
-Myomer:Standard
+quirk:imp_target_long
+quirk:easy_maintain
 
-Heat Sinks:14 Double
-Walk MP:4
-Jump MP:0
+mass:95
+engine:380 XL Engine(IS)
+structure:IS Standard
+myomer:Standard
 
-Armor:Standard(Inner Sphere)
-LA Armor:21
-RA Armor:21
-LT Armor:24
-RT Armor:24
-CT Armor:37
-HD Armor:9
-LL Armor:23
-RL Armor:23
-RTL Armor:8
-RTR Armor:8
-RTC Armor:10
+heat sinks:14 IS Double
+walk mp:4
+jump mp:0
+
+armor:Standard(Inner Sphere)
+LA armor:21
+RA armor:21
+LT armor:24
+RT armor:24
+CT armor:37
+HD armor:9
+LL armor:23
+RL armor:23
+RTL armor:8
+RTR armor:8
+RTC armor:10
 
 Weapons:7
 LB 10-X AC, Left Arm
@@ -151,4 +155,15 @@ Foot Actuator
 -Empty-
 -Empty-
 
+overview:The Albatross, designed by the Free Worlds League in 3053 in anticipation of a potential conflict with the advancing Clans, is a versatile workhorse 'Mech that does not specialize in one specific role.
+capabilities:Weighing 95 tons, it is one of House Marik's heaviest 'Mechs and utilizes a GM 380 XL engine, enabling speeds of up to 65 kph. To prioritize weapon capacity, the designers opted against incorporating an endo steel chassis or ferro-fibrous armor. The Albatross boasts impressive weaponry designed for various engagement ranges. It features an LRM rack and extended-range lasers for potent long-range firepower, while a combination of an autocannon and lasers effectively engages foes at closer distances. For opponents closing in, MechWarriors can employ the SRMs. With thirteen tons of armor, the Albatross offers enhanced battlefield survivability, though it is prone to overheating. Additionally, the 'Mech incorporates CASE technology for safeguarding against ammunition explosions.
+deployment:The 3U exhibits a versatile and multifunctional design, lacking specialization in a specific role. It is equipped with an Irian Weapons Works V7 LRM-15 launcher, providing long-range capabilities and indirect fire support. Additionally, it features an Oriente Model O LB-X Autocannon/10 and a Diverse Optics Sunbeam ER Large Laser, delivering a powerful punch in long-range engagements. To engage enemies at the edge of the medium to long-range envelope, the Albatross carries a Tronel PPL-20 Large Pulse Laser. For close combat encounters, it is armed with an Irian Weapons Works 60mm SRM-6 and two Irian Weapons Works Super 6 medium lasers.
+history:Following its commissioning, the first Albatross 'Mech rolled off the production line in 3053, becoming the signature 'Mech of the Knights of the Inner Sphere rather than being distributed among regular line units. As Operation Guerrero and the counterassault against the Clans unfolded, the Albatross saw increased deployment. While primarily limited to prestigious Free Worlds League Military (FWLM) units, a small number were exported to close League allies. Initially, the Albatross symbolized a bright future as the distinguished BattleMech of the noble Knights of the Inner Sphere. However, with the fall of the Knights and their ideals early in the Jihad, the Albatross became associated with the shame and fracture of the Free Worlds League rather than a symbol of renewal. Despite this tarnished reputation, the Albatross remained a formidable presence on the battlefield, with Irian BattleMechs producing various variants for the Army of the Marik-Stewart Commonwealth (AMSC), although export sales were limited. The Albatross demonstrated mobility and power, albeit with a reputation for being temperamental. Its solid performance during the doomed AMSC campaign against Operation Hammerfall helped restore some of its standing just as the re-formed Free Worlds League had to relinquish the factory to the emerging Wolf Empire.
+manufacturer:Irian BattleMechs Unlimited
+primaryfactory:Irian
+systemmanufacturer:CHASSIS:Albat-50
+systemmanufacturer:ENGINE:GM 380 XL
+systemmanufacturer:ARMOR:StarSlab/3 with CASE
+systemmanufacturer:COMMUNICATIONS:Irian Technologies HMR-35s
+systemmanufacturer:TARGETING:Omicron TrackerKeeper
 

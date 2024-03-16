@@ -20,6 +20,10 @@ Sparrowhawk
 SPR-DH
 </Model>
 
+<mul id:>
+5103
+</mul id:>
+
 <year>
 3076
 </year>
@@ -31,6 +35,10 @@ SPR-DH
 <type>
 IS Level 4
 </type>
+
+<role>
+Fast Dogfighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -101,7 +109,7 @@ ISERSmallLaser
 </Fuselage Equipment>
 
 <source>
-XTRO RetroTech - Jihad
+XTR: RetroTech
 </source>
 
 <tonnage>

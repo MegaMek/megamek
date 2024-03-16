@@ -20,6 +20,10 @@ R10 Mechanized ICV
 (Coolant Truck)
 </Model>
 
+<mul id:>
+6493
+</mul id:>
+
 <year>
 3097
 </year>
@@ -31,6 +35,10 @@ R10 Mechanized ICV
 <type>
 IS Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Wheeled
@@ -87,10 +95,16 @@ Flamer (Vehicle)
 </Turret Equipment>
 
 <source>
-TRO 3145 Free Worlds League - Early Republic
+TRO: 3145 Free Worlds League
 </source>
 
 <tonnage>
 45.0
 </tonnage>
+
+
+<quirks>
+easy_maintain
+poor_target_long
+</quirks>
 

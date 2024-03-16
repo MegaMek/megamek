@@ -1,0 +1,293 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Warship
+</UnitType>
+
+<Name>
+Potemkin Troop Cruiser
+</Name>
+
+<Model>
+(2611)
+</Model>
+
+<mul id:>
+4846
+</mul id:>
+
+<year>
+2611
+</year>
+
+<originalBuildYear>
+2611
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<role>
+None
+</role>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+smallcraftbay:10.0:2:1
+cargobay:386362.0:1:2
+dockingcollar
+dockingcollar
+dockingcollar
+dockingcollar
+dockingcollar
+dockingcollar
+dockingcollar
+dockingcollar
+dockingcollar
+dockingcollar
+dockingcollar
+dockingcollar
+dockingcollar
+dockingcollar
+dockingcollar
+dockingcollar
+dockingcollar
+dockingcollar
+dockingcollar
+dockingcollar
+dockingcollar
+dockingcollar
+dockingcollar
+dockingcollar
+dockingcollar
+1stclassquarters:680.0:0
+crewquarters:2289.0:0
+</transporters>
+
+<SafeThrust>
+2
+</SafeThrust>
+
+<heatsinks>
+3325
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+25000
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+11
+</armor_type>
+
+<armor_tech>
+5
+</armor_tech>
+
+<armor>
+179
+201
+201
+156
+201
+201
+</armor>
+
+<Nose Equipment>
+(B) Naval Laser 45
+Naval Laser 45
+</Nose Equipment>
+
+<Left Front Side Equipment>
+(B) Naval Laser 45
+Naval Laser 45
+Naval Laser 45
+(B) Capital Missile Launcher (Barracuda)
+Capital Missile Launcher (Barracuda)
+Ammo Barracuda:20
+</Left Front Side Equipment>
+
+<Right Front Side Equipment>
+(B) Naval Laser 45
+Naval Laser 45
+Naval Laser 45
+(B) Capital Missile Launcher (Barracuda)
+Capital Missile Launcher (Barracuda)
+Ammo Barracuda:20
+</Right Front Side Equipment>
+
+<Aft Equipment>
+(B) Capital Missile Launcher (Barracuda)
+Capital Missile Launcher (Barracuda)
+Capital Missile Launcher (Barracuda)
+Capital Missile Launcher (Barracuda)
+Ammo Barracuda:40
+</Aft Equipment>
+
+<Aft Left Side Equipment>
+(B) Naval PPC (Heavy)
+Naval PPC (Heavy)
+Naval PPC (Heavy)
+(B) Naval PPC (Heavy)
+Naval PPC (Heavy)
+Naval PPC (Heavy)
+(B) Naval Laser 45
+Naval Laser 45
+Naval Laser 45
+Naval Laser 45
+</Aft Left Side Equipment>
+
+<Aft Right Side Equipment>
+(B) Naval PPC (Heavy)
+Naval PPC (Heavy)
+Naval PPC (Heavy)
+(B) Naval PPC (Heavy)
+Naval PPC (Heavy)
+Naval PPC (Heavy)
+(B) Naval Laser 45
+Naval Laser 45
+Naval Laser 45
+Naval Laser 45
+</Aft Right Side Equipment>
+
+<Hull Equipment>
+</Hull Equipment>
+
+<Left Broadsides Equipment>
+(B) Naval PPC (Heavy)
+Naval PPC (Heavy)
+Naval PPC (Heavy)
+(B) Naval PPC (Heavy)
+Naval PPC (Heavy)
+Naval PPC (Heavy)
+</Left Broadsides Equipment>
+
+<Right Broadsides Equipment>
+(B) Naval PPC (Heavy)
+Naval PPC (Heavy)
+Naval PPC (Heavy)
+(B) Naval PPC (Heavy)
+Naval PPC (Heavy)
+Naval PPC (Heavy)
+</Right Broadsides Equipment>
+
+<structural_integrity>
+80
+</structural_integrity>
+
+<capabilities>
+The Potemkin-class troop cruiser was purpose-built for mass transportation, accommodating the movement of an entire division of troops. Its immense size, measuring over a kilometer in length and weighing one and a half million tons, enabled it to serve as a reliable transport platform. The cruiser's distinctive feature was its five concentric rings, each equipped with five docking collars, providing a total of twenty-five DropShip hardpoints—the highest number ever seen on a deployed vessel. Enhanced with thick armor and formidable weaponry comparable to that of a heavy cruiser, the Potemkin possessed the ability to protect its attached DropShips without compromise. This capability not only ensured the survival of the Potemkin itself but also facilitated the safe transport of troops and equipment in the face of enemy threats. However, the Potemkin was not without its drawbacks. The deployment of such a massive vessel made it a prime target for enemy forces seeking to disable the attached DropShips. The extensive fuel requirements for operating the twenty-five DropShips necessitated the use of accompanying tankers, further increasing the need for protection. Additionally, the facilities onboard the ship primarily catered to the Potemkin's crew, with limited amenities for the DropShip crews, which could lead to discomfort during extended stays.
+</capabilities>
+
+<overview>
+The Potemkin-class troop cruiser, known as the "Corncob Cruiser," was developed in the early 2600s to address the vulnerability of poorly protected transports. With a massive size exceeding that of many battleships and an arrangement of twenty-five DropShip docking collars encircling its hull, the Potemkin became the largest vessel ever deployed for transportation purposes. Its robust armor and powerful weaponry allowed it to safeguard its attached DropShips effectively, making it a formidable presence in war zones.
+</overview>
+
+<history>
+The Potemkin-class troop cruiser production ceased in 2781 as advancements in escort tactics and smaller craft diminished the need for such large ships. A total of 106 Potemkins were built, with approximately 30 surviving the Amaris coup and departing with General Aleksandr Kerensky during the Exodus. Notably, the LCS Nightwind, one of the Potemkins, remained in the Inner Sphere and served during the tumultuous First Succession War. Despite its eventual decline in deployment, the Potemkin's legacy endured as a testament to its role in mass transportation and its ability to protect the DropShips under its charge. The design's sheer size and formidable capabilities made it an imposing force on the battlefield, although its vulnerabilities and logistical challenges necessitated careful strategic considerations during its operational lifespan.
+</history>
+
+<manufacturer>
+Riga Interstellar Shipyards
+</manufacturer>
+
+<primaryFactory>
+Dyev
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:KF Mark LC
+ENGINE:Chatham 7500
+ARMOR:Grumman TR8
+COMMUNICATIONS:TelStar HN
+TARGETING:KTI 6001
+</systemManufacturers>
+
+<use>
+Troop Cruiser
+</use>
+
+<length>
+1508 m
+</length>
+
+<height>
+1345 m Sail
+</height>
+
+<source>
+TRO: 3057 Revised
+</source>
+
+<tonnage>
+1510000.0
+</tonnage>
+
+<kf_core>
+1
+</kf_core>
+
+<sail>
+1
+</sail>
+
+<grav_decks>
+95
+</grav_decks>
+
+<designtype>
+1
+</designtype>
+
+<crew>
+445
+</crew>
+
+<officers>
+68
+</officers>
+
+<gunners>
+48
+</gunners>
+
+<passengers>
+0
+</passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<life_boat>
+50
+</life_boat>
+
+<escape_pod>
+50
+</escape_pod>
+

@@ -1,50 +1,57 @@
-Version:1.0
-Blue Flame
-BLF-21
+chassis:Blue Flame
+model:BLF-21
+mul id:3840
 
 Config:Quad
-TechBase:Inner Sphere
-Era:3062
-Rules Level:2
-source:TRO 3067
+techbase:Inner Sphere
+era:3062
+source:TRO: 3067
+rules level:2
+role:Sniper
 
-Mass:45
-Engine:225 Light Engine
-Structure:Endo Steel
-Myomer:Standard
 
-Heat Sinks:10 Double
-Walk MP:5
-Jump MP:0
 
-Armor:Standard Armor
-LA Armor:22
-RA Armor:22
-LT Armor:15
-RT Armor:15
-CT Armor:21
-HD Armor:9
-LL Armor:22
-RL Armor:22
-RTL Armor:7
-RTR Armor:7
-RTC Armor:7
 
-Weapons:6
-1 ISERLargeLaser, Right Torso
-1 ISStreakSRM2, Right Torso, Ammo:50
-1 ISERLargeLaser, Left Torso
-1 ISStreakSRM2, Left Torso
-1 ISImprovedC3CPU, Center Torso
-1 ISStreakSRM2, Head
+quirk:directional_torso_mount
+quirk:bad_rep_is
+
+
+mass:45
+engine:225 Light Engine(IS)
+structure:IS Endo Steel
+myomer:Standard
+
+heat sinks:10 IS Double
+walk mp:5
+jump mp:0
+
+armor:Standard(Inner Sphere)
+FLL armor:22
+FRL armor:22
+LT armor:15
+RT armor:15
+CT armor:21
+HD armor:9
+RLL armor:22
+RRL armor:22
+RTL armor:7
+RTR armor:7
+RTC armor:7
+
+Weapons:5
+ER Large Laser, Left Torso
+Streak SRM 2, Left Torso
+ER Large Laser, Right Torso
+Streak SRM 2, Right Torso
+Streak SRM 2, Head
 
 Front Left Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo-Steel
-Endo-Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -57,8 +64,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo-Steel
-Endo-Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -72,24 +79,24 @@ Fusion Engine
 ISERLargeLaser
 ISERLargeLaser
 ISStreakSRM2
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
 ISERLargeLaser
 ISERLargeLaser
 ISStreakSRM2
-ISStreakSRM2 Ammo
+IS Streak SRM 2 Ammo
 -Empty-
 -Empty-
 -Empty-
@@ -105,8 +112,8 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISImprovedC3CPU
-ISImprovedC3CPU
+ISC3iUnit
+ISC3iUnit
 
 Head:
 Life Support
@@ -127,8 +134,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo-Steel
-Endo-Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -141,12 +148,13 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo-Steel
-Endo-Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
+
 

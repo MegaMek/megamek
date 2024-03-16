@@ -20,6 +20,10 @@ Cellco Ranger
 UPU-3000
 </Model>
 
+<mul id:>
+3915
+</mul id:>
+
 <year>
 3022
 </year>
@@ -31,6 +35,10 @@ UPU-3000
 <type>
 IS Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Tracked
@@ -100,7 +108,7 @@ HHSearchlight
 </armor_tech_rating>
 
 <source>
-TRO VAr - Succession Wars
+TRO: Vehicle Annex (Revised)
 </source>
 
 <tonnage>

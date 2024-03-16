@@ -1,12 +1,19 @@
-Version:1.0
-Imp
-IMP-3E
+chassis:Imp
+model:IMP-3E
+mul id:1610
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3050
-Source:TRO 3050 - Clan Invasion
+Source:TRO: 3050
 Rules Level:2
+role:Juggernaut
+
+
+
+quirk:command_mech
+quirk:difficult_maintain
+
 
 Mass:100
 Engine:300 XL Engine

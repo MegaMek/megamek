@@ -56,10 +56,10 @@ public class InfantryTROView extends TROView {
         addEntityFluff(inf);
         setModelData("transportWeight", inf.getWeight());
         setModelData("weaponPrimary", String.format("%d %s",
-                (inf.getSquadSize() - inf.getSecondaryN()) * inf.getSquadN(), inf.getPrimaryWeapon().getName()));
+                (inf.getSquadSize() - inf.getSecondaryWeaponsPerSquad()) * inf.getSquadCount(), inf.getPrimaryWeapon().getName()));
         setModelData("weaponSecondary", (inf.getSecondaryWeapon() == null)
                 ? Messages.getString("TROView.None")
-                : String.format("%d %s", inf.getSecondaryN() * inf.getSquadN(), inf.getSecondaryWeapon().getName()));
+                : String.format("%d %s", inf.getSecondaryWeaponsPerSquad() * inf.getSquadCount(), inf.getSecondaryWeapon().getName()));
         final EquipmentType armorKit = inf.getArmorKit();
         if (null != armorKit) {
             setModelData("armorKit", armorKit.getName());
@@ -77,22 +77,26 @@ public class InfantryTROView extends TROView {
             setModelData("notes", String.join(" ", notes));
         }
 
-        switch (inf.getMovementMode()) {
-            case INF_LEG:
-                setModelData("motiveType", Messages.getString("TROView.Foot"));
-                break;
-            case TRACKED:
-            case HOVER:
-            case WHEELED:
-                setModelData("motiveType",
-                        Messages.getString("TROView.Mechanized") + "/" + inf.getMovementModeAsString());
-                break;
-            case SUBMARINE:
-                setModelData("motiveType", Messages.getString("TROView.MechanizedSCUBA"));
-                break;
-            default:
-                setModelData("motiveType", inf.getMovementModeAsString());
-                break;
+        if (inf.getMount() != null) {
+            setModelData("motiveType", Messages.getString("TROView.BeastMounted") + ", " + inf.getMount().getName());
+        } else {
+            switch (inf.getMovementMode()) {
+                case INF_LEG:
+                    setModelData("motiveType", Messages.getString("TROView.Foot"));
+                    break;
+                case TRACKED:
+                case HOVER:
+                case WHEELED:
+                    setModelData("motiveType",
+                            Messages.getString("TROView.Mechanized") + "/" + inf.getMovementModeAsString());
+                    break;
+                case SUBMARINE:
+                    setModelData("motiveType", Messages.getString("TROView.MechanizedSCUBA"));
+                    break;
+                default:
+                    setModelData("motiveType", inf.getMovementModeAsString());
+                    break;
+            }
         }
         StringJoiner sj = new StringJoiner(", ");
         for (int i = 0; i < Infantry.NUM_SPECIALIZATIONS; i++) {
@@ -100,7 +104,7 @@ public class InfantryTROView extends TROView {
                 sj.add(Infantry.getSpecializationName(1 << i));
             }
         }
-        if (sj.toString().length() > 0) {
+        if (!sj.toString().isBlank()) {
             setModelData("specialty", sj.toString());
         } else {
             setModelData("specialty", Messages.getString("TROView.None"));
@@ -117,10 +121,10 @@ public class InfantryTROView extends TROView {
             setModelData("umuMP", inf.getOriginalJumpMP());
         }
         setModelData("squadSize", inf.getSquadSize());
-        setModelData("squadCount", inf.getSquadN());
+        setModelData("squadCount", inf.getSquadCount());
         setModelData("armorDivisor", inf.calcDamageDivisor());
         InfantryWeapon rangeWeapon = inf.getPrimaryWeapon();
-        if ((inf.getSecondaryN() > 1) && (inf.getSecondaryWeapon() != null)) {
+        if ((inf.getSecondaryWeaponsPerSquad() > 1) && (inf.getSecondaryWeapon() != null)) {
             rangeWeapon = inf.getSecondaryWeapon();
         }
 
@@ -175,11 +179,11 @@ public class InfantryTROView extends TROView {
         if (fieldGuns.size() > 1) {
             notes.add(String.format(Messages.getString("TROView.InfantryNote.FieldGuns"), fieldGuns.size(),
                     fieldGuns.get(0).getName(), shots / fieldGuns.size(), (int) fieldGuns.get(0).getTonnage(inf)));
-        } else if (fieldGuns.size() > 0) {
+        } else if (!fieldGuns.isEmpty()) {
             notes.add(String.format(Messages.getString("TROView.InfantryNote.SingleFieldGun"),
                     fieldGuns.get(0).getName(), shots, (int) fieldGuns.get(0).getTonnage(inf)));
         }
-        if ((inf.getSecondaryN() > 1) && (inf.getSecondaryWeapon() != null)) {
+        if ((inf.getSecondaryWeaponsPerSquad() > 1) && (inf.getSecondaryWeapon() != null)) {
             if (inf.getSecondaryWeapon().hasFlag(WeaponType.F_INF_BURST)) {
                 notes.add(Messages.getString("TROView.InfantryNote.Burst"));
             }
@@ -191,6 +195,20 @@ public class InfantryTROView extends TROView {
             }
             if (inf.getSecondaryWeapon().hasFlag(WeaponType.F_FLAMER)) {
                 notes.add(Messages.getString("TROView.InfantryNote.Heat"));
+            }
+        }
+        if (inf.getMount() != null) {
+            if (inf.getMount().getBurstDamageDice() > 0) {
+                notes.add(String.format(Messages.getString("TROView.InfantryNote.MountInfantryDamage.format"),
+                        inf.getMount().getBurstDamageDice()));
+            }
+            if (inf.getMount().getVehicleDamage() > 0) {
+                notes.add(String.format(Messages.getString("TROView.InfantryNote.MountVehicleDamage.format"),
+                        inf.getMount().getVehicleDamage()));
+            }
+            if (inf.getMount().getSize().toHitMod != 0) {
+                notes.add(String.format(Messages.getString("TROView.InfantryNote.MountSizeMod.format"),
+                        inf.getMount().getSize().toHitMod));
             }
         }
     }

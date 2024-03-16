@@ -1,0 +1,169 @@
+chassis:Prey Seeker
+model:PY-SR20
+mul id:8068
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3140
+Source:TRO: 3150
+Rules Level:3
+
+Mass:15
+Engine:180 XXL Engine(IS)
+Structure:IS Endo Steel
+Myomer:Standard
+Cockpit:Small Cockpit
+Gyro:XL Gyro
+
+Heat Sinks:10 Double
+Walk MP:12
+Jump MP:0
+
+Armor:Standard(Clan)
+LA Armor:4
+RA Armor:4
+LT Armor:7
+RT Armor:7
+CT Armor:9
+HD Armor:9
+LL Armor:6
+RL Armor:6
+RTL Armor:1
+RTR Armor:1
+RTC Armor:1
+
+Weapons:4
+ER Medium Laser, Right Arm
+ER Medium Laser, Right Arm
+ER Medium Laser, Left Arm
+ER Medium Laser, Left Arm
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISERMediumLaser
+ISERMediumLaser
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISERMediumLaser
+ISERMediumLaser
+IS Endo Steel
+IS Endo Steel
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+IS Endo Steel
+-Empty-
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+IS Endo Steel
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+
+Head:
+Life Support
+Sensors
+Cockpit
+Sensors
+ISTargeting Computer
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+overview:Achernar BattleMechs' Prey Seeker evolved from a variety of sources. Its off-putting arm construction, as well as its phenomenal speed, harkens back to the Clan Dasher's distinctive profile, but its role—old-fashioned BattleMech scouting—speaks to a quiet dissatisfaction among the AFFS' MechWarriors who feel increasingly marginalized by the rise of combined- arms warfare.
+
+capabilities:Capable of running at a staggering 194 km/h thanks to the extralight, but frighteningly expensive, Magna 180 XXL engine, the Prey Seeker takes a minimalist approach to equipment to pay for that high rate of speed. Mounting a small cockpit and an XL gyro, the Prey Seeker mounts three and a half tons of armor and lacks jump jets. The minimal armor present over the rear of the Prey Seeker means that if hit from behind by any but the lightest of weapons, the Prey Seeker runs the risk of taking internal damage.
+
+deployment:No information on this variant
+
+history:Soon after Fortress Republic, Prey Seekers were pressed into combat deployments.
+Without appropriate time for testing and doctrine formation, many MechWarriors were forced to discover and define what successful—and failing—tactics would be. The extended raid is one role that the Prey Seekers have proved to excel in. Many AFFS commanders have deployed small bands of Prey Seekers on long paths around enemy concentrations, despite their uncomfortable cockpits.
+
+manufacturer:Achernar BattleMechs
+primaryfactory:Cahokia
+systemmanufacturer:CHASSIS:A1 Type 22 Ultralight Endo Steel
+systemmanufacturer:ENGINE:Magna 180 XXL
+systemmanufacturer:ARMOR:StarGuard CIV
+systemmanufacturer:COMMUNICATIONS:PCE-4X “Blaster“
+systemmanufacturer:TARGETING:Federated Hunter Mk.VII
+

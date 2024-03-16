@@ -16,9 +16,13 @@ Tank
 Kanga Medium Hovertank
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+1745
+</mul id:>
 
 <year>
 2653
@@ -27,6 +31,10 @@ Kanga Medium Hovertank
 <type>
 IS Level 2
 </type>
+
+<role>
+Striker
+</role>
 
 <motion_type>
 Hover
@@ -81,7 +89,7 @@ Machine Gun
 </Rear Equipment>
 
 <source>
-TRO 3050 - Star League
+TRO: 3050
 </source>
 
 <tonnage>

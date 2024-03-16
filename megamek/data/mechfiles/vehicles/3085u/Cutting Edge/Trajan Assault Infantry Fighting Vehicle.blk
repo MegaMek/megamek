@@ -16,9 +16,13 @@ Tank
 Trajan Assault Infantry Fighting Vehicle
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+3282
+</mul id:>
 
 <Tonnage>
 85
@@ -80,12 +84,16 @@ ISC3SlaveUnit
 IS Level 2
 </type>
 
+<role>
+Juggernaut
+</role>
+
 <year>
 3080
 </year>
 
 <source>
-Jihad
+TRO: 3085
 </source>
 
 <internal_type>

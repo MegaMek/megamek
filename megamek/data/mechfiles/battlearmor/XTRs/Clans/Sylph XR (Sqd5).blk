@@ -1,0 +1,114 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+Sylph Battle Armor
+</Name>
+
+<Model>
+XR(Sqd5)
+</Model>
+
+<mul id:>
+8677
+</mul id:>
+
+<chassis>
+biped
+</chassis>
+<weightclass>
+1
+</weightclass>
+
+<Trooper Count>
+5
+</Trooper Count>
+
+<cruiseMP>
+3
+</cruiseMP>
+
+<Armor>
+5
+</Armor>
+<Point Equipment>
+BABasicManipulator:LA
+BABasicManipulator:RA
+CLBAMyomerBooster:Body
+CLBALightMG:RA
+CLBALightMG:LA
+BASearchlight:Body
+</Point Equipment>
+
+<type>
+Clan Level 3
+</type>
+
+<role>
+Scout
+</role>
+<year>
+3077
+</year>
+<motion_type>
+Leg
+</motion_type>
+<source>
+XTR: Clans
+</source>
+
+<armor_type>
+28
+</armor_type>
+<armor_tech>
+2
+</armor_tech>
+
+<overview>
+The Sylph was created by Clan Cloud Cobra to augment their vast aerospace forces with a fully-airborne Battle Armor suit.
+</overview>
+
+<capabilities>
+The centerpiece of the Sylph suit's design is its advanced propulsion system, adapted from the jump jets standard on other battle suits, which can maintain a steady air speed of 53 km/h. In addition to the normal controls found in other suits the Sylph utilizes a complex system of pedals and leg harness when in flight; any loss in concentration will more likely than not send the Sylph into an uncontrollable death spiral. The ability to hover is regulated by computer controls which divert thrust from the main jets through dozens of directional exhaust ports, which also gives the suit its incredible agility. The price for this however is that the Sylph mounts half as much armor as the Elemental suit and carries only a lightweight weapons package.
+</capabilities>
+
+<deployment>
+Created by Clan Snow Raven in 3077 during the Jihad, this unique variant trades the original's flight capability for increased ground speed. A Battle Armor Myomer Booster system in place of the flight pack allows it to reach speeds of 58 km/h, faster than most any other suit, while the bomb rack and laser were traded in for a pair of arm-mounted Light Machine Guns and a body-mounted Searchlight. The result of these changes was an excellent anti-infantry and counterinsurgency unit, able to outrun most infantry units and inflict massive amounts of damage on them. Several Points of these suits were first put to use in trial runs on Ramora to flush out Blakist terror groups. While successful, a common complaint was a lack of heavy weaponry for fighting tougher opponents and extreme user discomfort caused by insufficient thermal insulation around the booster. A few Sylph-XR pilots were killed when they opened their visors for a breath of fresh air, only to be targeted by eagle-eyed snipers. 
+</deployment>
+
+<history>
+Naming it after elemental spirits representing air, development of the suit was driven as much by the Cloud Cobra's faith as it was by Khan Din Steiner's orders. Despite their scientist caste's vast knowledge of aircraft, the Clan had a great deal of trouble getting the VTOL capabilities of the Sylph to function, with a number of test pilots dying during its secretive development. As it is, the Sylph only possesses limited flight capabilities, but even this remains an impressive accomplishment. First deployed in 3060 the Sylph has since become a staple of the Cloud Cobra touman. The training necessary to pilot a Sylph is far more intensive for other suits, but those who succeed are given as much respect as pilots. Another interesting byproduct of the Sylph is that the Cobras obviously invested heavily in the design before it was even completed, having already graduated sibkos of mixed Elemental and fighter pilot bloodlines specifically to operate the suits. Outside of the Cloud Cobras the other Clans have adopted the suit with more caution. Both Clan Snow Raven and Clan Diamond Shark obtained a handful of suits through Trials of Possession, though they've since limited their use to test deployments, while Clan Star Adder began deploying the suits with their Alpha and Beta Galaxies.
+</history>
+
+<manufacturer>
+CSR Battle Armor Facility Alpha (Refit)
+</manufacturer>
+
+<primaryFactory>
+Ramora
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+JUMPJET:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<quirks>
+hard_pilot
+prototype
+</quirks>
+

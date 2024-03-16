@@ -1,12 +1,19 @@
-Version:1.0
-Wolf Trap (Tora)
-WFT-B
+chassis:Wolf Trap (Tora)
+model:WFT-B
+mul id:3558
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3069
-Source:TRO 3050 - Jihad
+Source:TRO: 3050
 Rules Level:2
+role:Striker
+
+
+
+quirk:bad_rep_is
+quirk:bad_rep_clan
+
 
 Mass:45
 Engine:270 XL Engine

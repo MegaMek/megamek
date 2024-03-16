@@ -50,7 +50,7 @@ public class InfantrySupportMGSemiPortableWeapon extends InfantryWeapon {
 		ammoCost = 10;
 		shots = 80;
 		bursts = 4;
-		rulesRefs = " 273,TM";
+		rulesRefs = " 273, TM";
 		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
 		        .setISApproximate(false, false, false, false, false)
 		        .setClanAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)

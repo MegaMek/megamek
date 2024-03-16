@@ -1,0 +1,160 @@
+chassis:Ostsol
+model:C
+mul id:8163
+
+Config:Biped
+techbase:Clan
+era:3145
+source:Rec Guide:ilClan #14
+rules level:3
+role:Skirmisher
+
+
+
+quirk:imp_sensors
+quirk:low_profile
+
+
+mass:60
+engine:300 Fusion (Clan) Engine(IS)
+structure:IS Standard
+myomer:Standard
+
+heat sinks:15 Clan Double
+walk mp:5
+jump mp:0
+
+armor:Reflective(Clan)
+LA armor:8
+RA armor:8
+LT armor:22
+RT armor:22
+CT armor:22
+HD armor:8
+LL armor:20
+RL armor:20
+RTL armor:4
+RTR armor:4
+RTC armor:6
+
+Weapons:6
+ER Large Laser, Left Torso
+Improved Heavy Medium Laser, Left Torso
+ER Large Laser, Right Torso
+Improved Heavy Medium Laser, Right Torso
+ER Medium Laser, Center Torso
+ER Medium Laser, Center Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+Clan Reflective
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+Clan Reflective
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLERLargeLaser
+CLImprovedMediumHeavyLaser
+CLImprovedMediumHeavyLaser
+Clan Reflective
+Clan Reflective
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+CLERLargeLaser
+CLImprovedMediumHeavyLaser
+CLImprovedMediumHeavyLaser
+CLTargeting Computer
+CLTargeting Computer
+CLTargeting Computer
+Clan Reflective
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLERMediumLaser (R)
+CLERMediumLaser (R)
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLDoubleHeatSink
+CLDoubleHeatSink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLDoubleHeatSink
+CLDoubleHeatSink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

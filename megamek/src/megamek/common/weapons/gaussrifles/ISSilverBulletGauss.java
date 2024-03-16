@@ -14,7 +14,7 @@
 package megamek.common.weapons.gaussrifles;
 
 import megamek.common.AmmoType;
-import megamek.common.BattleForceElement;
+import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.Compute;
 import megamek.common.Game;
 import megamek.common.SimpleTechLevel;
@@ -22,11 +22,14 @@ import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.LBXHandler;
-import megamek.server.Server;
+import megamek.server.GameManager;
 
 /**
  * @author Andrew Hunter
  * @since Oct 15, 2004
+ *
+ * Note: The AV values declared here are then processed by the LBXHandler to arrive at the correct
+ * ASF AV values at runtime.  This seems less janky than writing a new handler, but only just.
  */
 public class ISSilverBulletGauss extends GaussWeapon {
     private static final long serialVersionUID = -6873790245999096707L;
@@ -50,9 +53,9 @@ public class ISSilverBulletGauss extends GaussWeapon {
         criticals = 7;
         bv = 198;
         cost = 350000;
-        shortAV = 9;
-        medAV = 9;
-        longAV = 9;
+        shortAV = 15; // Due to LBXHandler
+        medAV = 15;   // Due to LBXHandler
+        longAV = 15;  // Due to LBXHandler
         maxRange = RANGE_LONG;
         ammoType = AmmoType.T_SBGAUSS;
         // SB Gauss rifles can neither benefit from a targeting computer nor
@@ -80,22 +83,22 @@ public class ISSilverBulletGauss extends GaussWeapon {
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
-                                              Server server) {
-        return new LBXHandler(toHit, waa, game, server);
+                                              GameManager manager) {
+        return new LBXHandler(toHit, waa, game, manager);
     }
-    
+
     @Override
     public double getBattleForceDamage(int range) {
         double damage = 0;
         if (range <= getLongRange()) {
             damage = Compute.calculateClusterHitTableAmount(7, getRackSize()) / 10.0;
             damage *= 1.05; // -1 to hit
-            if (range == BattleForceElement.SHORT_RANGE && getMinimumRange() > 0) {
+            if ((range == AlphaStrikeElement.SHORT_RANGE) && (getMinimumRange() > 0)) {
                 damage = adjustBattleForceDamageForMinRange(damage);
             }
         }
         return damage;
-    }    
+    }
 
     @Override
     public int getBattleForceClass() {

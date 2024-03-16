@@ -15,16 +15,11 @@ package megamek.common.weapons;
 
 import java.util.Vector;
 
-import megamek.common.Compute;
-import megamek.common.CriticalSlot;
-import megamek.common.HitData;
-import megamek.common.Game;
-import megamek.common.Mounted;
-import megamek.common.Report;
-import megamek.common.ToHitData;
+import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
-import megamek.server.Server;
+import megamek.server.GameManager;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * @author Andrew Hunter
@@ -39,28 +34,18 @@ public class AmmoWeaponHandler extends WeaponHandler {
         // deserialization only
     }
 
-    /**
-     * @param t
-     * @param w
-     * @param g
-     */
-    public AmmoWeaponHandler(ToHitData t, WeaponAttackAction w, Game g,
-            Server s) {
-        super(t, w, g, s);
+    public AmmoWeaponHandler(ToHitData t, WeaponAttackAction w, Game g, GameManager m) {
+        super(t, w, g, m);
         generalDamageType = HitData.DAMAGE_BALLISTIC;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see megamek.common.weapons.WeaponHandler#UseAmmo()
-     */
     @Override
     protected void useAmmo() {
         checkAmmo();
-        if (ammo == null) {// Can't happen. w/o legal ammo, the weapon
-            // *shouldn't* fire.
-            System.out.println("Handler can't find any ammo!  Oh no!");
+        if (ammo == null) {
+            // Can't happen. w/o legal ammo, the weapon *shouldn't* fire.
+            LogManager.getLogger().error("Handler can't find any ammo! Oh no!", new Exception());
+            return;
         }
 
         if (ammo.getUsableShotsLeft() <= 0) {
@@ -68,6 +53,11 @@ public class AmmoWeaponHandler extends WeaponHandler {
             ammo = weapon.getLinked();
         }
         ammo.setShotsLeft(ammo.getBaseShotsLeft() - 1);
+
+        if (weapon.isInternalBomb()) {
+            ((IBomber) ae).increaseUsedInternalBombs(1);
+        }
+
         super.useAmmo();
     }
 
@@ -78,13 +68,12 @@ public class AmmoWeaponHandler extends WeaponHandler {
             ammo = weapon.getLinked();
         }
     }
-    
+
     /**
      * For ammo weapons, this number can be less than the full number if the
      * amount of ammo is not high enough
-     * 
-     * @return the number of weapons of this type firing (for squadron weapon
-     *         groups)
+     *
+     * @return the number of weapons of this type firing (for squadron weapon groups)
      */
     @Override
     protected int getNumberWeapons() {
@@ -98,12 +87,12 @@ public class AmmoWeaponHandler extends WeaponHandler {
                 (int) Math.floor((double) totalShots
                         / (double) weapon.getCurrentShots()));
     }
-    
+
     @Override
     protected boolean doChecks(Vector<Report> vPhaseReport) {
         return doAmmoFeedProblemCheck(vPhaseReport);
     }
-    
+
     /**
      * Carry out an 'ammo feed problems' check on the weapon. Return true if it blew up.
      */
@@ -113,23 +102,23 @@ public class AmmoWeaponHandler extends WeaponHandler {
         if (!weapon.hasQuirk(OptionsConstants.QUIRK_WEAP_NEG_AMMO_FEED_PROBLEMS)) {
             return false;
         // attack roll was a 2, may explode
-        } else if (roll <= 2) {
-            int jamRoll = Compute.d6(2);
-            
+        } else if (roll.getIntValue() <= 2) {
+            Roll diceRoll = Compute.rollD6(2);
+
             Report r = new Report(3173);
             r.subject = subjectId;
             r.newlines = 0;
-            r.add(jamRoll);
-            vPhaseReport.addElement(r);                
-            
-            if (jamRoll == 12) {
+            r.add(diceRoll);
+            vPhaseReport.addElement(r);
+
+            if (diceRoll.getIntValue() == 12) {
                 // round explodes in weapon
                 r = new Report(3163);
                 r.subject = subjectId;
                 vPhaseReport.addElement(r);
-                
+
                 explodeRoundInBarrel(vPhaseReport);
-            } else if (jamRoll >= 10) {
+            } else if (diceRoll.getIntValue() >= 10) {
                 // plain old weapon jam
                 r = new Report(3161);
                 r.subject = subjectId;
@@ -146,22 +135,21 @@ public class AmmoWeaponHandler extends WeaponHandler {
         } else {
             return false;
         }
-        
+
         return true;
     }
-    
+
     /**
      * Worker function that explodes a round in the barrel of the attack's weapon
      */
     protected void explodeRoundInBarrel(Vector<Report> vPhaseReport) {
         weapon.setJammed(true);
         weapon.setHit(true);
-        
+
         int wloc = weapon.getLocation();
         for (int i = 0; i < ae.getNumberOfCriticals(wloc); i++) {
             CriticalSlot slot1 = ae.getCritical(wloc, i);
-            if ((slot1 == null) || 
-                    (slot1.getType() == CriticalSlot.TYPE_SYSTEM)) {
+            if ((slot1 == null) || (slot1.getType() == CriticalSlot.TYPE_SYSTEM)) {
                 continue;
             }
             Mounted mounted = slot1.getMount();
@@ -170,8 +158,8 @@ public class AmmoWeaponHandler extends WeaponHandler {
                 break;
             }
         }
-        
-        // if we're here, the weapon is going to explode whether it's flagged as explosive or not 
-        vPhaseReport.addAll(server.explodeEquipment(ae, wloc, weapon, true));
+
+        // if we're here, the weapon is going to explode whether it's flagged as explosive or not
+        vPhaseReport.addAll(gameManager.explodeEquipment(ae, wloc, weapon, true));
     }
 }

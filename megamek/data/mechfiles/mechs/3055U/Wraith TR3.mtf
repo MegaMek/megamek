@@ -1,12 +1,19 @@
-Version:1.0
-Wraith
-TR3
+chassis:Wraith
+model:TR3
+mul id:3591
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3065
-Source:TRO 3055 - Civil War
+Source:TRO: 3055
 Rules Level:2
+role:Skirmisher
+
+
+
+quirk:ubiquitous_is
+quirk:difficult_maintain
+
 
 Mass:55
 Engine:385 XL Engine
@@ -147,4 +154,19 @@ Endo Steel
 -Empty-
 -Empty-
 
+overview:The Wraith is a 'Mech that, when properly employed, can wreak havoc on an enemy with its astounding speed and maneuverability. 
 
+capabilities:It is built around a massive LTV 385 XL engine that allows it to reach speeds of just under 119 km/h. The 'Mech is also fitted with seven CurtissJet 55 jump jets which allow it to jump up to two hundred and ten meters, giving it the ability to outmaneuver most BattleMechs in existence, and also allowing the Wraith to quickly traverse any rough terrain. The 'Mech's speed, firepower, and decent armor make the Wraith a considerable threat to many 'Mechs – some being almost twice its weight.
+
+deployment:A modification of the Wraith made by the Word of Blake, the TR3 replaces the two Medium Pulse Lasers with two ER Medium Lasers while one of the jump jets is removed to make room for an improved C3 computer, making the Wraith an incredibly powerful point 'Mech for units equipped with C3i equipment.
+
+history:The Wraith marked Curtiss Militech's entry into BattleMech production. When the design was announced, many felt that the design would be little more than a walking water cooler. What the critics got was a shock. Following the destruction of its sole factory, Curtiss Hydroponics announced its withdrawal from the military market altogether and the sale of its Curtiss Militech assets. By 3085, Hellespont Industrials have expressed interest in the Wraith; and by 3145 Production had been ongoing at one of Hellespont Industrials locations in the Sian Commonality for Capellan use.
+
+manufacturer:Refit
+primaryfactory:Refit
+systemmanufacturer:CHASSIS:Curtiss Wraith
+systemmanufacturer:ENGINE:LTV 385 XL
+systemmanufacturer:ARMOR:Kallon FWL Special Ferro-Fibrous
+systemmanufacturer:JUMPJET:CurtissJet 55
+systemmanufacturer:COMMUNICATIONS:CurtissComm Mk I with C3I
+systemmanufacturer:TARGETING:Dynatec 2780

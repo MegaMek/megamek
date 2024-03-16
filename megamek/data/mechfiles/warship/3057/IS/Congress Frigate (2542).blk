@@ -1,0 +1,260 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Warship
+</UnitType>
+
+<Name>
+Congress Frigate
+</Name>
+
+<Model>
+(2542)
+</Model>
+
+<mul id:>
+3989
+</mul id:>
+
+<year>
+2542
+</year>
+
+<originalBuildYear>
+2542
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<role>
+None
+</role>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+asfbay:6.0:1:1
+smallcraftbay:4.0:1:2
+cargobay:171591.5:1:3
+dockingcollar
+dockingcollar
+1stclassquarters:430.0:0
+crewquarters:1491.0:0
+</transporters>
+
+<SafeThrust>
+3
+</SafeThrust>
+
+<heatsinks>
+604
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+5000
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+11
+</armor_type>
+
+<armor_tech>
+5
+</armor_tech>
+
+<armor>
+75
+72
+72
+75
+72
+72
+</armor>
+
+<Nose Equipment>
+(B) Capital Missile Launcher (Killer Whale)
+Ammo Killer Whale:10
+</Nose Equipment>
+
+<Left Front Side Equipment>
+(B) Naval Autocannon (NAC/10)
+Naval Autocannon (NAC/10)
+Ammo NAC/10:70
+</Left Front Side Equipment>
+
+<Right Front Side Equipment>
+(B) Naval Autocannon (NAC/10)
+Naval Autocannon (NAC/10)
+Ammo NAC/10:70
+</Right Front Side Equipment>
+
+<Aft Equipment>
+(B) Naval Autocannon (NAC/30)
+Naval Autocannon (NAC/30)
+Ammo NAC/30:50
+</Aft Equipment>
+
+<Aft Left Side Equipment>
+(B) Naval Autocannon (NAC/10)
+Naval Autocannon (NAC/10)
+Naval Autocannon (NAC/30)
+Ammo NAC/10:70
+Ammo NAC/30:25
+(B) Large Laser
+Large Laser
+</Aft Left Side Equipment>
+
+<Aft Right Side Equipment>
+(B) Naval Autocannon (NAC/10)
+Naval Autocannon (NAC/10)
+Naval Autocannon (NAC/30)
+Ammo NAC/10:70
+Ammo NAC/30:25
+(B) Large Laser
+Large Laser
+</Aft Right Side Equipment>
+
+<Hull Equipment>
+ISLargeNavalCommScannerSuite
+</Hull Equipment>
+
+<Left Broadsides Equipment>
+(B) Naval Autocannon (NAC/10)
+Naval Autocannon (NAC/10)
+Ammo NAC/10:70
+(B) Large Laser
+Large Laser
+(B) Capital Missile Launcher (White Shark)
+Ammo White Shark:10
+</Left Broadsides Equipment>
+
+<Right Broadsides Equipment>
+(B) Naval Autocannon (NAC/10)
+Naval Autocannon (NAC/10)
+Ammo NAC/10:70
+(B) Large Laser
+Large Laser
+(B) Capital Missile Launcher (White Shark)
+Ammo White Shark:10
+</Right Broadsides Equipment>
+
+<structural_integrity>
+75
+</structural_integrity>
+
+<capabilities>
+The Congress frigate excelled in its dual mission as a convoy escort and intelligence-gathering vessel. It boasted swiftness, advanced snooping gear, and the ability to endure extended voyages under challenging conditions. With an emphasis on functionality and accessibility, the interior design of the Congress frigates maximized efficiency and ease of maintenance. The ship's primary armament included eight cannons in five turrets, a missile launcher capable of launching Killer Whale missiles, and two additional missile launchers for White Shark missiles. It could also accommodate two DropShips for various purposes, including troop and 'Mech transport. Fighter carriers, such as the Vengeance-class, often accompanied Congress frigates to provide fighter support.
+</capabilities>
+
+<overview>
+The Congress-class frigates emerged as a pivotal asset in both the Terran Hegemony Navy and the Star League Navy. These versatile vessels, designed by Dekirk Aerospace, replaced the outdated Quixote-class frigates and became renowned for their exceptional capabilities. With a dual mission of convoy escort and intelligence gathering, the Congress frigates boasted impressive speed, advanced snooping equipment, and extended voyage endurance, making them an indispensable presence in enemy territory. Their reputation for functionality, accessibility, and crew comfort further solidified the Congress-class frigates' status as an esteemed and reliable fleet unit.
+</overview>
+
+<history>
+The Congress-class frigates entered the scene in 2536, as the admirals of the Terran Hegemony recognized the limitations of the aging Quixote-class frigates. Engagements with foreign warships demonstrated the Quixote's vulnerability and prompted the search for a more capable replacement. Dekirk Aerospace, known for its innovative designs, presented a remarkable proposal that earned swift approval from the Hegemony Navy in the following year. However, the construction of the first Congress frigates faced a significant setback due to a lawsuit filed by the Federated Suns against Dekirk Aerospace and the Hegemony government. Challenge Systems, a shipbuilding firm from the Davion world of Galax, accused Dekirk of industrial espionage, claiming that much of the Congress frigate design was stolen from their own creations. This legal dispute continued for three years, ultimately leading to a compromise agreement in 2540. The agreement involved Challenge Systems becoming a partner in the construction of the Congress frigates, and the Federated Suns acquired some of the frigates at a reduced price, albeit without the advanced Hegemony technology.
+</history>
+
+<manufacturer>
+Challenge Systems,Dekirk Aerospace
+</manufacturer>
+
+<primaryFactory>
+Galax,Graham IV
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Endo Steel AN
+ENGINE:GM 8050 Starlifters
+ARMOR:Blue Nose 440CL
+COMMUNICATIONS:5T Vargas
+TARGETING:Wolf 157
+</systemManufacturers>
+
+<use>
+Frigate
+</use>
+
+<length>
+703 m
+</length>
+
+<height>
+1207 m Sail
+</height>
+
+<source>
+TRO: 3057 Revised
+</source>
+
+<tonnage>
+760000.0
+</tonnage>
+
+<kf_core>
+1
+</kf_core>
+
+<sail>
+1
+</sail>
+
+<grav_decks>
+90
+</grav_decks>
+
+<designtype>
+1
+</designtype>
+
+<crew>
+288
+</crew>
+
+<officers>
+43
+</officers>
+
+<gunners>
+21
+</gunners>
+
+<passengers>
+0
+</passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<life_boat>
+8
+</life_boat>
+
+<escape_pod>
+8
+</escape_pod>
+

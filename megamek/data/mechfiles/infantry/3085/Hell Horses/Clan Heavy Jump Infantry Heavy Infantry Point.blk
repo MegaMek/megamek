@@ -15,6 +15,10 @@ Clan Heavy Jump Infantry
 <Model>
 Heavy Infantry Point
 </Model>
+
+<mul id:>
+609
+</mul id:>
 <squad_size>
 5
 </squad_size>
@@ -36,11 +40,15 @@ ClanKit
 <type>
 Clan Level 3
 </type>
+
+<role>
+Ambusher
+</role>
 <year>
 3015
 </year>
 <era>
-TRO 3085 - Late Succession War - LosTech
+TRO: 3085
 </era>
 <motion_type>
 Jump

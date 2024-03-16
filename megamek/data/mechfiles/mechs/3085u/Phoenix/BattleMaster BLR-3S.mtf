@@ -1,12 +1,19 @@
-Version:1.0
-BattleMaster
-BLR-3S
+chassis:BattleMaster
+model:BLR-3S
+mul id:292
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3050
-Source:Clan Invasion
+source:TRO: 3085
 Rules Level:2
+role:Brawler
+
+
+
+quirk:command_mech
+quirk:weak_head_1
+
 
 Mass:85
 Engine:340 XL Engine(IS)

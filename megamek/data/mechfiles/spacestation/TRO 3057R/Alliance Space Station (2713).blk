@@ -20,6 +20,10 @@ Alliance Space Station
 (2713)
 </Model>
 
+<mul id:>
+3695
+</mul id:>
+
 <year>
 2713
 </year>
@@ -31,6 +35,10 @@ Alliance Space Station
 <type>
 IS Level 3
 </type>
+
+<role>
+None
+</role>
 
 <designtype>
 1
@@ -202,7 +210,7 @@ Medium Laser
 </structural_integrity>
 
 <source>
-DJ - Star League
+Dropships & Jumpships
 </source>
 
 <tonnage>

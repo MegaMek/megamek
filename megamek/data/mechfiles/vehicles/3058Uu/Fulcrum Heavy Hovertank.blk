@@ -12,9 +12,13 @@ Tank
 <Name>
 Fulcrum Heavy Hovertank
 </Name>
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+1154
+</mul id:>
 <Tonnage>
 50
 </Tonnage>
@@ -46,6 +50,10 @@ ISLRM10 Ammo
 <type>
 IS Level 2
 </type>
+
+<role>
+Striker
+</role>
 <year>
 3057
 </year>
@@ -62,5 +70,5 @@ IS Level 2
 Hover
 </motion_type>
 <source>
-Clan Invasion
+TRO: 3058
 </source>

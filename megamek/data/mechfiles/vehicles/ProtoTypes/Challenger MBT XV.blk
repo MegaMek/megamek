@@ -20,6 +20,10 @@ Challenger MBT
 Mk. XV
 </Model>
 
+<mul id:>
+3939
+</mul id:>
+
 <year>
 3081
 </year>
@@ -27,6 +31,10 @@ Mk. XV
 <type>
 IS Level 3
 </type>
+
+<role>
+Sniper
+</role>
 
 <motion_type>
 Tracked
@@ -90,9 +98,15 @@ ISSBGR
 </Turret Equipment>
 
 <source>
-TRO:Prototypes
+TRO: Prototypes
 </source>
 
 <tonnage>
 90.0
 </tonnage>
+
+<quirks>
+poor_performance
+trailer_hitch
+</quirks>
+

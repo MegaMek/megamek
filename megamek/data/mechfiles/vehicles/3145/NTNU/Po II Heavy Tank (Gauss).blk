@@ -20,6 +20,10 @@ Po II Heavy Tank
 (Gauss)
 </Model>
 
+<mul id:>
+6794
+</mul id:>
+
 <year>
 3086
 </year>
@@ -27,6 +31,10 @@ Po II Heavy Tank
 <type>
 IS Level 2
 </type>
+
+<role>
+Brawler
+</role>
 
 <motion_type>
 Tracked
@@ -79,7 +87,7 @@ ISSRM2IOS
 </Turret Equipment>
 
 <source>
-RS 3145 NTNU - Early Republic
+Record Sheets: 3145 New Tech New Upgrades
 </source>
 
 <tonnage>

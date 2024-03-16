@@ -20,6 +20,10 @@ Rogue
 RGU-133F
 </Model>
 
+<mul id:>
+2731
+</mul id:>
+
 <year>
 2639
 </year>
@@ -31,6 +35,10 @@ RGU-133F
 <type>
 IS Level 2
 </type>
+
+<role>
+Fast Dogfighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -107,7 +115,7 @@ IS Ammo SRM-6
 </Fuselage Equipment>
 
 <source>
-TRO 3050u - Star League
+TRO: 3050
 </source>
 
 <tonnage>

@@ -20,6 +20,10 @@ Lightning
 LTN-G14
 </Model>
 
+<mul id:>
+4512
+</mul id:>
+
 <year>
 2465
 </year>
@@ -31,6 +35,10 @@ LTN-G14
 <type>
 IS Level 4
 </type>
+
+<role>
+Dogfighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -104,7 +112,7 @@ IS Ammo AC/10
 </Fuselage Equipment>
 
 <source>
-TRO 3075 - Age of War
+TRO: 3075
 </source>
 
 <tonnage>

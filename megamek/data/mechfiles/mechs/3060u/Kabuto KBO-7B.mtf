@@ -1,12 +1,18 @@
-Version:1.0
-Kabuto
-KBO-7B
+chassis:Kabuto
+model:KBO-7B
+mul id:1729
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3068
-Source:TRO 3060
+Source:TRO: 3060
 Rules Level:2
+role:Scout
+
+
+
+quirk:ext_twist
+
 
 Mass:20
 Engine:140 XL Engine

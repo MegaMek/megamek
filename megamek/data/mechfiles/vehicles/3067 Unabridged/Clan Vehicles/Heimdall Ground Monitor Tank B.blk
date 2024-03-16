@@ -20,6 +20,10 @@ Heimdall Ground Monitor Tank
 B
 </Model>
 
+<mul id:>
+5742
+</mul id:>
+
 <year>
 3068
 </year>
@@ -27,6 +31,10 @@ B
 <type>
 Clan Level 2
 </type>
+
+<role>
+Missile Boat
+</role>
 
 <motion_type>
 Tracked
@@ -90,7 +98,7 @@ CLLRM20:OMNI
 </Turret Equipment>
 
 <source>
-RS 3067U
+Record Sheets: Record Sheets: 3067 Unabridged
 </source>
 
 <tonnage>

@@ -20,6 +20,10 @@ Conquistador
 'Blockade Runner'
 </Model>
 
+<mul id:>
+686
+</mul id:>
+
 <year>
 3074
 </year>
@@ -31,6 +35,10 @@ Conquistador
 <type>
 IS Level 4
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Aerodyne
@@ -238,7 +246,7 @@ ISLaserAntiMissileSystem
 </structural_integrity>
 
 <source>
-XTRO Davion - Jihad
+XTR: Davion
 </source>
 
 <tonnage>

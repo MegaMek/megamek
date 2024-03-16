@@ -1,12 +1,18 @@
-Version:1.0
-Javelin
-JVN-10A
+chassis:Javelin
+model:JVN-10A
+mul id:7429
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2752
-Source:RS:Succession Wars - Succession Wars
+Source:Record Sheets: Succession Wars
 Rules Level:1
+role:Striker
+
+
+
+quirk:unbalanced
+
 
 Mass:30
 Engine:180 Fusion Engine(IS)
@@ -145,4 +151,18 @@ Jump Jet
 -Empty-
 -Empty-
 
+overview:The Javelin was first built in 2751 by Stormvanger Assemblies as a recon 'Mech meant to be exported to the member states of the Star League. 
 
+capabilities:A compromise between speed and firepower, the Javelin was fast enough to avoid engagements with heavier 'Mechs while still having sufficient firepower to dissuade pursuit. In particular, the 'Mech's maneuverability meant that while its main function was to perform reconnaissance, the Javelin became adept at conducting ambushes, gaining a reputation for appearing out of nowhere and giving rise to the phrase "sneaky as a Javelin." Notably, the missiles and their ammunition stores are placed so far forward in the 'Mech's torso that the Javelin has a front-heavy center of gravity, causing MechWarriors unfamiliar with the design's forward-lean while running to be prone to falling over while moving at high speeds in difficult terrain.			
+
+deployment:Introduced in 2752, the 10A is a long-range harasser. Both SRM-6 racks are replaced by one LRM-15 in the right torso with one ton of reloads. 
+
+history:The Javelin had yet to be integrated into most SLDF regiments when the Amaris Civil War struck and Stormvanger Assemblies' factory on Caph was destroyed in 2774, ending all production of the Javelin design. Despite this, the Federated Suns - who had purchased the largest total number of Javelins from Stormvanger Assemblies - succeeded in their plans to incorporate the design into practically all of their 'Mech regiments at the start of the First Succession War, where its appearance took many enemy combatants off-guard. Though employed to varying degrees by the other Successor States, the Javelin quickly became synonymous with the Federated Suns, often anchoring scout lances, or, in certain units, teaming up with other Javelins to create mobile fire support lances. Following the creation of the Federated Commonwealth, the design was upgraded with newly-recovered lostech during the latter part of the 3040s, and at the behest of AFFC High Command, Jalastar Aerospace began production of new Javelins in 3055. Since then, the sturdy and reliable scout 'Mech has continued to serve with distinction on the battlefield; though the original's level of armor protection has been deemed as insufficient by some, new variants continue to be introduced as technology progresses, ensuring its continued service towards the end of the thirty-first century.
+
+manufacturer:Refit
+primaryfactory:Various
+systemmanufacturer:CHASSIS:Duralyte 246
+systemmanufacturer:ENGINE:GM 180
+systemmanufacturer:ARMOR:StarGuard I
+systemmanufacturer:COMMUNICATIONS:Garret T10B
+systemmanufacturer:TARGETING:Dynatec 128C

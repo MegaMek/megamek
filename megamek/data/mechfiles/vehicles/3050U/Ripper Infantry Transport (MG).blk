@@ -20,6 +20,10 @@ Ripper Infantry Transport
 (MG)
 </Model>
 
+<mul id:>
+2722
+</mul id:>
+
 <year>
 3053
 </year>
@@ -27,6 +31,10 @@ Ripper Infantry Transport
 <type>
 IS Level 2
 </type>
+
+<role>
+Scout
+</role>
 
 <motion_type>
 VTOL
@@ -82,7 +90,7 @@ Machine Gun
 </Rotor Equipment>
 
 <source>
-TRO 3050 - Clan Invasion
+TRO: 3050
 </source>
 
 <tonnage>

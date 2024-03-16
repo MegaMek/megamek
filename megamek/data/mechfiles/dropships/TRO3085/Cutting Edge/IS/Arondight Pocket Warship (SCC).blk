@@ -20,6 +20,10 @@ Arondight Pocket Warship
 (SCC)
 </Model>
 
+<mul id:>
+3733
+</mul id:>
+
 <year>
 3077
 </year>
@@ -31,6 +35,10 @@ Arondight Pocket Warship
 <type>
 IS Level 3
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Spheroid
@@ -186,7 +194,7 @@ ISAMS Ammo:72
 </structural_integrity>
 
 <source>
-TRO 3085 - Jihad
+TRO: 3085
 </source>
 
 <tonnage>

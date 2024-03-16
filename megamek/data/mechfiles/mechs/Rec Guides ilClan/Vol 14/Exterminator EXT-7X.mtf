@@ -1,0 +1,176 @@
+chassis:Exterminator
+model:EXT-7X
+mul id:8161
+
+Config:Biped
+techbase:Inner Sphere
+era:3148
+source:Rec Guide:ilClan #14
+rules level:2
+role:Skirmisher
+
+
+
+quirk:difficult_maintain
+
+
+mass:65
+engine:325 XXL Engine(IS)
+structure:IS Composite
+myomer:Standard
+
+heat sinks:13 IS Double
+walk mp:5
+jump mp:5
+
+armor:Stealth(Inner Sphere)
+LA armor:20
+RA armor:20
+LT armor:22
+RT armor:22
+CT armor:31
+HD armor:9
+LL armor:29
+RL armor:29
+RTL armor:8
+RTR armor:8
+RTC armor:10
+
+Weapons:7
+Medium VSP Laser, Left Arm
+Medium VSP Laser, Left Arm
+Medium VSP Laser, Right Arm
+Medium VSP Laser, Right Arm
+MRM 10, Left Torso
+Laser AMS, Right Torso
+ER Small Laser, Head
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISMediumVSPLaser
+ISMediumVSPLaser
+ISMediumVSPLaser
+ISMediumVSPLaser
+IS MRM 10 Ammo
+Coolant Pod
+IS Stealth
+IS Stealth
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISMediumVSPLaser
+ISMediumVSPLaser
+ISMediumVSPLaser
+ISMediumVSPLaser
+ISGuardianECMSuite
+ISGuardianECMSuite
+IS Stealth
+IS Stealth
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+Jump Jet
+MRM 10
+MRM 10
+IS Stealth
+IS Stealth
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+Jump Jet
+ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+IS Stealth
+IS Stealth
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+Supercharger
+
+Head:
+Life Support
+Sensors
+Cockpit
+ISERSmallLaser
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Stealth
+IS Stealth
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Stealth
+IS Stealth
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+overview:The Exterminator is a BattleMech that was designed in 2630 for the most dubious, but necessary, of purposes: Head Hunting.	
+
+capabilities:The weapons used by the Exterminator are not nearly as unique or high tech as the electronics on board. The primary weapons of the Exterminator are medium weight lasers, two of each in either arm. For long range engagements, the 'Mech also carries a missile launcher with one ton of reloads in the center torso. These weapons are backed up by a short range laser mounted in the head for when engagements close to point blank range, and, for defense against missile attacks, the Exterminator has a Anti-Missile System in the right torso with one ton of ammo.
+
+deployment:Appearing in the Dark Age, this variant uses an XXL fusion engine and composite internal structure to save weight. Slower than other Exterminators, it has a top speed of 86 km/h in most cases, but can use an engine supercharger to reach a sprint speed of 108 km/h; five jump jets let it cover 150 meters at a time. It is protected by thirteen tons of stealth armor driven by a Guardian ECM suite. A laser AMS destroys incoming missiles. The main firepower comes from two medium variable speed pulse lasers in each arm, while the missile launcher is an MRM-10 with one ton of ammunition. The final weapon is an ER small laser mounted in the head. Thirteen double heat sinks are also fitted and supplemented by a coolant pod for emergency use. 
+
+history:The Exterminator was outfitted with a special Null-Signature System, heat baffles and, in some cases, a Chameleon Light Polarization Shield. These advanced systems allowed it to easily infiltrate enemy lines. Once the Exterminator breached the enemy's rear, its mission was to find and destroy as much of the enemy's command structure as possible. This mission profile included attacking mobile headquarters, field bases and command level officers. Rather than be part of the standard formation, Exterminators were attached to a regimental or higher headquarters unit, often as a fifth member of the command lance itself, before being assigned to individual units. A regiment was considered lucky to have more than one Exterminator, and it was not unusual for its parent unit to pull all assigned Exterminators and pool them for a specific mission. It was widely believed that the Exterminator had not survived the fighting of the First Succession War as there were lances whose sole mission was to hunt down and destroy this type of 'Mech (coupled with the destruction of General Systems' primary factory on Caph in 2793). In 3007, Kallon Industries (Thermopolis, Free Worlds League), looking for a replacement for their aging Wolverine, recovered blueprints for the Exterminator and immediately modified the design so that it could be built using the technology readily available. The result was a BattleMech not only far less effective than the original, but below the capabilities of even the Wolverine it was meant to replace. Only twenty-five of these Exterminators were produced and none survived past the Fourth Succession War, making the design effectively extinct in the Inner Sphere. Only later was it revealed that the Exterminator still existed in ComStar's private army, the Com Guards, although even here few were of the hyper-advanced stealth models, and while the Exterminator was retained by the Clans its decidedly "dishonorable" method of fighting meant few were used. ComStar continued to produce variants which took advantage of recovered lostech, and the design was used by the Word of Blake during the Jihad.
+
+manufacturer:Unknown
+primaryfactory:Unknown
+systemmanufacturer:CHASSIS:SL Special
+systemmanufacturer:ENGINE:Magna 325 XXL
+systemmanufacturer:ARMOR:Unknown Stealth armor
+systemmanufacturer:COMMUNICATIONS:Tek BattleCom
+systemmanufacturer:TARGETING:Tek LOR T13d
+systemmanufacturer:JUMPJET:Chevron II
+

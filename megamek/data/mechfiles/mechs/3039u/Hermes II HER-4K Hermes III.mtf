@@ -1,13 +1,20 @@
-Version:1.0
-Hermes II
-HER-4K 'Hermes III'
+chassis:Hermes II
+model:HER-4K 'Hermes III'
+mul id:1498
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3025
-Source:TRO 3039 - Succession Wars
+Source:TRO: 3039
 Rules Level:1
+role:Scout
 History:Also sometimes referred to as the Hermes III, this variant of the Hermes II.  It solely appears in the Draconis Combine, suggesting that it was an export-only version. (The HER-4K Hermes III should not be confused with the HER-4K variant of the Hermes, which was an export version for the Draconis Combine of the Hermes II's predecessor.) 
+
+
+
+quirk:easy_maintain
+quirk:imp_com
+
 
 Mass:40
 Engine:240 Fusion Engine

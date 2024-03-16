@@ -16,9 +16,13 @@ Tank
 Regulator II Hovertank
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+2679
+</mul id:>
 
 <Tonnage>
 50
@@ -50,12 +54,16 @@ ISGauss Ammo
 IS Level 2
 </type>
 
+<role>
+Sniper
+</role>
+
 <year>
 3076
 </year>
 
 <source>
-Jihad
+TRO: 3085
 </source>
 
 <internal_type>

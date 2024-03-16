@@ -1,0 +1,121 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+HeavyHauler Exoskeleton
+</Name>
+
+<model>
+(Sqd5)
+</Model>
+
+<mul id:>
+8638
+</mul id:>
+
+<year>
+3052
+</year>
+
+<type>
+IS Level 2
+</type>
+
+<role>
+None
+</role>
+
+<motion_type>
+Leg
+</motion_type>
+
+<cruiseMP>
+1
+</cruiseMP>
+
+<armor_type>
+28
+</armor_type>
+
+<armor_tech>
+-1
+</armor_tech>
+
+<Squad Equipment>
+BACargoLifter:RA:SIZE:2.5
+BACargoLifter:LA:SIZE:2.5
+BACuttingTorch:Body
+BASearchlight:Body
+</Squad Equipment>
+
+<source>
+TRO: Vehicle Annex Revised
+</source>
+
+<chassis>
+biped
+</chassis>
+
+<exoskeleton>
+true
+</exoskeleton>
+
+<jumpingMP>
+0
+</jumpingMP>
+
+<armor>
+0
+</armor>
+
+<Trooper Count>
+5
+</Trooper Count>
+
+<weightclass>
+0
+</weightclass>
+
+<overview>
+The HeavyHauler is an industrial Exoskeleton which was designed for heavy-lifting and cargo handling.
+</overview>
+
+<capabilities>
+The exoskeleton is equipped with two Cargo Lifter manipulators, when used together these can lift up to a total of two and a half tons.
+</capabilities>
+
+<deployment>
+side from its lifters, the suit has been given a searchlight and cutting torch mounted on the body.
+</deployment>
+
+<history>
+Designed by GM of Kathil, the HeavyHauler became popular with various commercial industries due to its significant lifting power. However, for the exoskeleton to achieve notable lifting abilities, its designs excluded use of any armor protection or significant speed.
+</history>
+
+<manufacturer>
+General Motors,Albion Advanced Technologies and Products
+</manufacturer>
+
+<primaryFactory>
+Kathil,New Avalon
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+JUMPJET:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>

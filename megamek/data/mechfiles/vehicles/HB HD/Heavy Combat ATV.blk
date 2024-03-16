@@ -16,9 +16,13 @@ SupportTank
 Heavy Combat ATV
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+4831
+</mul id:>
 
 <year>
 3001
@@ -31,6 +35,10 @@ Heavy Combat ATV
 <type>
 IS Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Wheeled
@@ -85,7 +93,7 @@ PintleTurret
 </structural_tech_rating>
 
 <source>
-HB:House Davion - Succession Wars
+Handbook: House Davion
 </source>
 
 <tonnage>

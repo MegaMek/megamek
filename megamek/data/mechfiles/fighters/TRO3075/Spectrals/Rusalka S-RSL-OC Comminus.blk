@@ -20,6 +20,10 @@ Rusalka
 S-RSL-OC Comminus
 </Model>
 
+<mul id:>
+4951
+</mul id:>
+
 <year>
 3071
 </year>
@@ -31,6 +35,10 @@ S-RSL-OC Comminus
 <type>
 IS Level 3
 </type>
+
+<role>
+Fast Dogfighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -117,7 +125,7 @@ ISCASE:OMNI
 </Fuselage Equipment>
 
 <source>
-TRO 3075 - Jihad
+TRO: 3075
 </source>
 
 <tonnage>

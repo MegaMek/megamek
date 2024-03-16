@@ -26,7 +26,7 @@ public class ISLaserMedium extends LaserWeapon {
         setInternalName(this.name);
         addLookupName("IS Medium Laser");
         addLookupName("ISMediumLaser");
-        sortingName = "Laser C";
+        sortingName = "Laser AA C";
         heat = 3;
         damage = 5;
         shortRange = 3;

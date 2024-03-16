@@ -17,7 +17,6 @@ import java.text.DecimalFormat;
 
 /**
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
- * @version $Id$
  * @since 12/10/13 3:19 PM
  */
 public class EntityEvaluationResponse {

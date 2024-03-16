@@ -1,12 +1,13 @@
-Version:1.1
-Patron LoaderMech
-(Standard)
+chassis:Patron LoaderMech
+model:
+mul id:4792
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2550
-Source:TRO 3075
+Source:TRO: 3075
 Rules Level:2
+role:Ambusher
 
 Mass:15
 Engine:30 Fuel Cell Engine

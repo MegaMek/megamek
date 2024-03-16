@@ -1,12 +1,19 @@
-Version:1.0
-Mantis
-SA-MN
+chassis:Mantis
+model:SA-MN
+mul id:2027
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3052
-Source:TRO 3055 - Clan Invasion
+Source:TRO: 3055
 Rules Level:3
+role:Scout
+
+
+
+
+quirk:non_standard
+
 
 Mass:30
 Engine:270 XL Engine

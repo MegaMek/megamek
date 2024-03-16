@@ -13,13 +13,15 @@
  */
 package megamek.common.weapons.gaussrifles;
 
+import megamek.common.*;
 import megamek.common.AmmoType;
 import megamek.common.Game;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.HGRHandler;
-import megamek.server.Server;
+import megamek.server.GameManager;
 
 /**
  * @author Andrew Hunter
@@ -82,7 +84,20 @@ public class ISHGaussRifle extends GaussWeapon {
 
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
-                                              Server server) {
-        return new HGRHandler(toHit, waa, game, server);
+                                              GameManager manager) {
+        return new HGRHandler(toHit, waa, game, manager);
+    }
+
+    @Override
+    public double getBattleForceDamage(int range, Mounted fcs) {
+        if (range == AlphaStrikeElement.LONG_RANGE) {
+            return 1;
+        } else if (range == AlphaStrikeElement.MEDIUM_RANGE) {
+            return 2;
+        } else if (range == AlphaStrikeElement.SHORT_RANGE) {
+            return 1.65;
+        } else {
+            return 0;
+        }
     }
 }

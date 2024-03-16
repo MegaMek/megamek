@@ -1,0 +1,311 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Warship
+</UnitType>
+
+<Name>
+League Destroyer
+</Name>
+
+<Model>
+(Block I)
+</Model>
+
+<mul id:>
+6995
+</mul id:>
+
+<year>
+2368
+</year>
+
+<originalBuildYear>
+2368
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<role>
+None
+</role>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+asfbay:12.0:3:1
+smallcraftbay:6.0:1:2
+dropshuttlebay:2.0:1:4:f4
+dropshuttlebay:2.0:1:5:f5
+1stclassquarters:400.0:0
+crewquarters:1344.0:0
+cargobay:108805.5:1:7
+</transporters>
+
+<SafeThrust>
+3
+</SafeThrust>
+
+<heatsinks>
+1300
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+10000
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+41
+</armor_type>
+
+<armor_tech>
+5
+</armor_tech>
+
+<armor>
+35
+43
+43
+34
+43
+43
+</armor>
+
+<Nose Equipment>
+(B) Naval Autocannon (NAC/20)
+Naval Autocannon (NAC/20)
+Ammo NAC/20:40
+(B) Large Laser
+Large Laser
+Large Laser
+Large Laser
+(B) Small Laser
+Small Laser
+Small Laser
+Small Laser
+Small Laser
+Small Laser
+</Nose Equipment>
+
+<Left Front Side Equipment>
+(B) Naval Autocannon (NAC/10)
+Ammo NAC/10:30
+(B) Naval Laser 45
+Naval Laser 35
+(B) Small Laser
+Small Laser
+Small Laser
+Small Laser
+Small Laser
+Small Laser
+</Left Front Side Equipment>
+
+<Right Front Side Equipment>
+(B) Naval Autocannon (NAC/10)
+Ammo NAC/10:30
+(B) Naval Laser 45
+Naval Laser 35
+(B) Small Laser
+Small Laser
+Small Laser
+Small Laser
+Small Laser
+Small Laser
+</Right Front Side Equipment>
+
+<Aft Equipment>
+(B) Naval Autocannon (NAC/20)
+Naval Autocannon (NAC/10)
+Ammo NAC/20:20
+Ammo NAC/10:30
+(B) Large Laser
+Large Laser
+Large Laser
+Large Laser
+(B) Small Laser
+Small Laser
+Small Laser
+Small Laser
+Small Laser
+Small Laser
+</Aft Equipment>
+
+<Aft Left Side Equipment>
+(B) Naval Autocannon (NAC/10)
+Ammo NAC/10:30
+(B) Naval Laser 45
+Naval Laser 35
+(B) Small Laser
+Small Laser
+Small Laser
+Small Laser
+Small Laser
+Small Laser
+</Aft Left Side Equipment>
+
+<Aft Right Side Equipment>
+(B) Naval Autocannon (NAC/10)
+Ammo NAC/10:30
+(B) Naval Laser 45
+Naval Laser 35
+(B) Small Laser
+Small Laser
+Small Laser
+Small Laser
+Small Laser
+Small Laser
+</Aft Right Side Equipment>
+
+<Hull Equipment>
+</Hull Equipment>
+
+<Left Broadsides Equipment>
+(B) Naval Autocannon (NAC/40)
+Ammo NAC/40:20
+(B) Large Laser
+Large Laser
+Large Laser
+Large Laser
+(B) Small Laser
+Small Laser
+Small Laser
+Small Laser
+Small Laser
+Small Laser
+</Left Broadsides Equipment>
+
+<Right Broadsides Equipment>
+(B) Naval Autocannon (NAC/40)
+Ammo NAC/40:20
+(B) Large Laser
+Large Laser
+Large Laser
+Large Laser
+(B) Small Laser
+Small Laser
+Small Laser
+Small Laser
+Small Laser
+Small Laser
+</Right Broadsides Equipment>
+
+<structural_integrity>
+48
+</structural_integrity>
+
+<capabilities>
+League destroyers were designed to engage a range of opponents and carried a mix of capital autocannons, lighter cannons, naval lasers, and conventional lasers. They also had hangars to accommodate a wing of fighters and shuttles, enhancing their versatility. These ships were well-suited for antipiracy duties and providing escort support to larger battleships like the Atreus. In the twenty-eighth century, the League-class saw a resurgence as decommissioned vessels were reactivated and upgraded to meet modern standards. The Block II Leagues featured improved armor composites and replaced their autocannon bays with naval Gauss rifles, showcasing technological advancements.
+</capabilities>
+
+<overview>
+The League-class destroyers of the Free Worlds League became the backbone of their fleet during the Age of War. Despite being constructed from components sourced across League space, these ships proved rugged and reliable. Equipped with capital autocannons as their primary firepower, complemented by lighter cannons, naval lasers, and conventional lasers, the League destroyers were versatile combatants suitable for various missions, including antipiracy patrols and escorting battleships. However, age and combat eventually led to the decommissioning or capture of many League-class ships.
+</overview>
+
+<history>
+The League-class destroyers initially served as the mainstay of the Free Worlds League fleet, constructed through distributed assembly at various locations within League space and final assembly at the SelaSys yards at Loyalty. Over time, decommissioning and piracy depleted the League-class ships, with FWLS Palatine being the last active-duty vessel destroyed in combat. In the twenty-eighth century, the League-class experienced a revival as restrictions on House fleets were eased, leading to the reactivation and upgrading of decommissioned ships. The final Block II Leagues suffered from energy shortages due to the power demands of the naval Gauss rifles and maintenance challenges.
+</history>
+
+<manufacturer>
+SelaSys Inc.
+</manufacturer>
+
+<primaryFactory>
+Loyalty
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<use>
+Destroyer
+</use>
+
+<length>
+450 m
+</length>
+
+<height>
+1000 m Sail
+</height>
+
+<source>
+Field Report 2765 FWLM
+</source>
+
+<tonnage>
+550000.0
+</tonnage>
+
+<kf_core>
+1
+</kf_core>
+
+<sail>
+1
+</sail>
+
+<grav_decks>
+75
+</grav_decks>
+
+<designtype>
+1
+</designtype>
+
+<crew>
+286
+</crew>
+
+<officers>
+40
+</officers>
+
+<gunners>
+32
+</gunners>
+
+<passengers>
+0
+</passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<life_boat>
+12
+</life_boat>
+
+<escape_pod>
+12
+</escape_pod>
+

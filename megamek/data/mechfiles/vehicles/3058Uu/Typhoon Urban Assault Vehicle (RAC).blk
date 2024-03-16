@@ -15,6 +15,10 @@ Typhoon Urban Assault Vehicle
 <Model>
 (RAC)
 </Model>
+
+<mul id:>
+3336
+</mul id:>
 <Tonnage>
 70
 </Tonnage>
@@ -51,6 +55,10 @@ ISStreakSRM2 Ammo
 <type>
 IS Level 2
 </type>
+
+<role>
+Juggernaut
+</role>
 <year>
 3064
 </year>
@@ -67,5 +75,5 @@ IS Level 2
 Wheeled
 </motion_type>
 <source>
-Civil War
+TRO: 3058
 </source>

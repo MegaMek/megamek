@@ -16,9 +16,13 @@ Tank
 Vidar Heavy Defense Tank
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+5348
+</mul id:>
 
 <year>
 3085
@@ -27,6 +31,10 @@ Vidar Heavy Defense Tank
 <type>
 Clan Level 3
 </type>
+
+<role>
+Missile Boat
+</role>
 
 <motion_type>
 Tracked
@@ -101,9 +109,16 @@ CLLargeChemLaser
 </Front Turret Equipment>
 
 <source>
-TRO:Prototypes
+TRO: Prototypes
 </source>
 
 <tonnage>
 75.0
 </tonnage>
+
+<quirks>
+bad_rep_clan
+poor_performance
+trailer_hitch
+</quirks>
+

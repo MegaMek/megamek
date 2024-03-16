@@ -1,12 +1,16 @@
-Version:1.1
-Coyotl
-B
+chassis:Coyotl
+model:B
+mul id:7606
 
 Config:Biped Omnimech
 techbase:Clan
 era:2854
-source:Succession Wars
+source:TRO: Golden Century
 rules level:2
+role:Striker
+
+quirk:ext_twist
+
 
 mass:40
 engine:280 XL (Clan) Engine(IS)
@@ -148,4 +152,19 @@ Foot Actuator
 -Empty-
 -Empty-
 
+overview:The Coyotl has the honor of being the first OmniMech. 
+
+capabilities:Built on an endo steel chassis and powered by a Pitban 280 XL engine, these lightweight technologies allowed the Coyotl to carry a great deal of equipment. The powerful engine allowed the 'Mech to move up to 118.8 km/h, giving it the ability to avoid enemy fire as well as dash about the battlefield
+
+deployment:The first of several configurations introduced by the Sea Foxes in 3149, this configuration uses a UAC/10 in the right arm as its main firepower, supported by an ER medium laser and SRM-6 launcher.
+
+history:Developed by Clan Coyote with some help from Clan Sea Fox, the Coyotl was first fielded in 2854. Taking the modular nature of the earlier Mercury to its logical conclusion, the Coyotl was originally developed along the same lines. When the Coyote scientists saw that they could create the OmniMech, they jumped at the chance. The result was a 'Mech that could have its weapons load tailored for a particular mission, though the Coyotes did not fully capitalize on Omni technology until 2859, when the Coyotes equipped all of their Alpha Galaxy with OmniMechs and expanded rapidly within the Kerensky Cluster. Though a useful 'Mech that demonstrated how effective an OmniMech could be, the Coyotl couldn't compete with later designs from other Clans. Furthermore, the Coyotl production became ever more stifled as the fortunes of Clan Coyote waned and territory was lost. With the supply of spare parts dwindling, the Coyotes shut down their production lines in 2943. Sensing a sales opportunity, the Coyotl was one of a number of Golden Century designs Clan Sea Fox would revive to sell during the Dark Age era.
+
+manufacturer:Drennan Industriplex,Manufacturing Plant SFF-TU1
+primaryfactory:Tamaron,Tukayyid
+systemmanufacturer:CHASSIS:Coyotl
+systemmanufacturer:ENGINE:Pitban 280 XL
+systemmanufacturer:ARMOR:CI Standard
+systemmanufacturer:COMMUNICATIONS:CI-Com 2
+systemmanufacturer:TARGETING:CI-X 2
 

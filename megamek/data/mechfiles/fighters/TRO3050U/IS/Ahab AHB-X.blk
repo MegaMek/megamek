@@ -20,6 +20,10 @@ Ahab
 AHB-X
 </Model>
 
+<mul id:>
+20
+</mul id:>
+
 <year>
 2697
 </year>
@@ -31,6 +35,10 @@ AHB-X
 <type>
 IS Level 2
 </type>
+
+<role>
+Attack Fighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -137,7 +145,7 @@ TARGETING:Antron 7
 </systemManufacturers>
 
 <source>
-TRO 3050u - Star League
+TRO: 3050
 </source>
 
 <tonnage>

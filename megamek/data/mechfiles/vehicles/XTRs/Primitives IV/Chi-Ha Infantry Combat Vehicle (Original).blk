@@ -20,6 +20,10 @@ Chi-Ha Infantry Combat Vehicle
 (Original)
 </Model>
 
+<mul id:>
+7188
+</mul id:>
+
 <year>
 2284
 </year>
@@ -27,6 +31,10 @@ Chi-Ha Infantry Combat Vehicle
 <type>
 IS Level 4
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Tracked
@@ -89,9 +97,15 @@ Machine Gun
 </Turret Equipment>
 
 <source>
-XTRO Primitives IV - Age of War
+XTR: Primitives IV
 </source>
 
 <tonnage>
 22.0
 </tonnage>
+
+<quirks>
+low_profile
+obsolete
+</quirks>
+

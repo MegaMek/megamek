@@ -20,6 +20,10 @@ Behemoth
 (2782)
 </Model>
 
+<mul id:>
+3812
+</mul id:>
+
 <year>
 2782
 </year>
@@ -31,6 +35,10 @@ Behemoth
 <type>
 IS Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Spheroid
@@ -116,7 +124,7 @@ Medium Laser
 </structural_integrity>
 
 <source>
-TRO 3057R - Early Succession War
+TRO: 3057 Revised
 </source>
 
 <tonnage>

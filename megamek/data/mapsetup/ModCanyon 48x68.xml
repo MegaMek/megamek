@@ -4,35 +4,35 @@
     <BOARDHEIGHT>17</BOARDHEIGHT>
     <MAPWIDTH>3</MAPWIDTH>
     <MAPHEIGHT>4</MAPHEIGHT>
-    <BOARDS>[SURPRISE]\unofficial\ModCan\ModCan21 16x17
-\unofficial\ModCan\ModCan22 16x17
-\unofficial\ModCan\ModCan23 16x17</BOARDS>
-    <BOARDS>[SURPRISE]\unofficial\ModCan\ModCan17 16x17
-\unofficial\ModCan\ModCan19 16x17
-\unofficial\ModCan\ModCan20 16x17</BOARDS>
-    <BOARDS>[SURPRISE]\unofficial\ModCan\ModCan03 16x17
-\unofficial\ModCan\ModCan04 16x17</BOARDS>
-    <BOARDS>[SURPRISE]\unofficial\ModCan\ModCan09 16x17
-\unofficial\ModCan\ModCan10 16x17
-\unofficial\ModCan\ModCan11 16x17</BOARDS>
-    <BOARDS>\unofficial\ModCan\ModCan15 16x17</BOARDS>
-    <BOARDS>\unofficial\ModCan\ModCan16 16x17</BOARDS>
-    <BOARDS>\unofficial\ModCan\ModCan15 16x17</BOARDS>
-    <BOARDS>[SURPRISE]\unofficial\ModCan\ModCan24 16x17
-\unofficial\ModCan\ModCan25 16x17
-\unofficial\ModCan\ModCan26 16x17
-\unofficial\ModCan\ModCan27 16x17
-\unofficial\ModCan\ModCan28 16x17
-\unofficial\ModCan\ModCan29 16x17
-\unofficial\ModCan\ModCan30 16x17
-\unofficial\ModCan\ModCan31 16x17
-\unofficial\ModCan\ModCan32 16x17
-\unofficial\ModCan\ModCan33 16x17
-\unofficial\ModCan\ModCan34 16x17</BOARDS>
-    <BOARDS>\unofficial\ModCan\ModCan16 16x17</BOARDS>
-    <BOARDS>[SURPRISE]\unofficial\ModCan\ModCan07 16x17
-\unofficial\ModCan\ModCan08 16x17</BOARDS>
-    <BOARDS>\unofficial\ModCan\ModCan18 16x17</BOARDS>
-    <BOARDS>[SURPRISE]\unofficial\ModCan\ModCan25 16x17
-\unofficial\ModCan\ModCan30 16x17</BOARDS>
+    <BOARDS>[SURPRISE]/unofficial/ModCan/16x17 ModCan21
+/unofficial/ModCan/16x17 ModCan22
+/unofficial/ModCan/16x17 ModCan23</BOARDS>
+    <BOARDS>[SURPRISE]/unofficial/ModCan/16x17 ModCan17
+/unofficial/ModCan/16x17 ModCan19
+/unofficial/ModCan/16x17 ModCan20</BOARDS>
+    <BOARDS>[SURPRISE]/unofficial/ModCan/16x17 ModCan03
+/unofficial/ModCan/16x17 ModCan04</BOARDS>
+    <BOARDS>[SURPRISE]/unofficial/ModCan/16x17 ModCan09
+/unofficial/ModCan/16x17 ModCan10
+/unofficial/ModCan/16x17 ModCan11</BOARDS>
+    <BOARDS>/unofficial/ModCan/16x17 ModCan15</BOARDS>
+    <BOARDS>/unofficial/ModCan/16x17 ModCan16</BOARDS>
+    <BOARDS>/unofficial/ModCan/16x17 ModCan15</BOARDS>
+    <BOARDS>[SURPRISE]/unofficial/ModCan/16x17 ModCan24
+/unofficial/ModCan/16x17 ModCan25
+/unofficial/ModCan/16x17 ModCan26
+/unofficial/ModCan/16x17 ModCan27
+/unofficial/ModCan/16x17 ModCan28
+/unofficial/ModCan/16x17 ModCan29
+/unofficial/ModCan/16x17 ModCan30
+/unofficial/ModCan/16x17 ModCan31
+/unofficial/ModCan/16x17 ModCan32
+/unofficial/ModCan/16x17 ModCan33
+/unofficial/ModCan/16x17 ModCan34</BOARDS>
+    <BOARDS>/unofficial/ModCan/16x17 ModCan16</BOARDS>
+    <BOARDS>[SURPRISE]/unofficial/ModCan/16x17 ModCan07
+/unofficial/ModCan/16x17 ModCan08</BOARDS>
+    <BOARDS>/unofficial/ModCan/16x17 ModCan18</BOARDS>
+    <BOARDS>[SURPRISE]/unofficial/ModCan/16x17 ModCan25
+/unofficial/ModCan/16x17 ModCan30</BOARDS>
 </MAPSETUP>

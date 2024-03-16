@@ -1,12 +1,17 @@
-Version:1.0
-Tundra Wolf
-3
+chassis:Tundra Wolf
+model:3
+mul id:3317
 
 Config:Biped
 TechBase:Clan
 Era:3076
-Source:Jihad
+source:TRO: 3085
 Rules Level:2
+role:Brawler
+
+quirk:easy_maintain
+quirk:weak_head_1
+
 
 Mass:75
 Engine:300 XL (Clan) Engine(IS)

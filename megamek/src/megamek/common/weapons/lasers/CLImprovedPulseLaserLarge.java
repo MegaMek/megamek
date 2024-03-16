@@ -28,6 +28,7 @@ public class CLImprovedPulseLaserLarge extends PulseLaserWeapon {
         setInternalName("ImprovedLargePulseLaser");
         addLookupName("Improved Pulse Large Laser");
         addLookupName("ImpLargePulseLaser");
+        sortingName = "Laser Pulse Imp D";
         heat = 10;
         damage = 9;
         toHitModifier = -2;

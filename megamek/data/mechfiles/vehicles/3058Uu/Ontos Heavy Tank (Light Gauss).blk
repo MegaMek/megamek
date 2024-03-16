@@ -2,32 +2,94 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 Tank
 </UnitType>
+
 <Name>
 Ontos Heavy Tank
 </Name>
+
 <Model>
 (Light Gauss)
 </Model>
-<Tonnage>
-95
-</Tonnage>
+
+<mul id:>
+2327
+</mul id:>
+
+<year>
+3065
+</year>
+
+<originalBuildYear>
+3065
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<role>
+Sniper
+</role>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<transporters>
+</transporters>
+
 <cruiseMP>
 3
 </cruiseMP>
-<Armor>
+
+<engine_type>
+0
+</engine_type>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
 40
 32
 32
 30
 36
-</Armor>
+</armor>
+
+<Body Equipment>
+IS Light Gauss Ammo
+IS Light Gauss Ammo
+IS Light Gauss Ammo
+IS Light Gauss Ammo
+</Body Equipment>
+
+<Front Equipment>
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
 <Turret Equipment>
 ISLightGaussRifle
 ISLightGaussRifle
@@ -35,30 +97,43 @@ ISLightGaussRifle
 ISERMediumLaser
 ISERMediumLaser
 </Turret Equipment>
-<Body Equipment>
-ISLightGauss Ammo
-ISLightGauss Ammo
-ISLightGauss Ammo
-ISLightGauss Ammo
-</Body Equipment>
-<type>
-IS
-</type>
-<year>
-3065
-</year>
-<internal_type>
-0
-</internal_type>
-<armor_type>
-1
-</armor_type>
-<engine_type>
-0
-</engine_type>
-<motion_type>
-Tracked
-</motion_type>
+
+<capabilities>
+The Ontos weighs 95 tons and has a top speed of 54 kilometers per hour. Though typical for a vehicle of its size, its short-ranged armaments make this speed a significant disadvantage. The Ontos' incredible array of turret-mounted lasers is its heart. To keep the tank's Heavy Load Internal Combustion Engine from being damaged, support components such as power amplifiers and heat sinks take up more than three times the weight and area taken up by the energy weapons. Despite its flaws, the tank can still remove over three tons of armor in a single round, and many crews praise the tank's ability to go through long campaigns without reloading different types of ammunition.
+</capabilities>
+
+<overview>
+The Ontos is designed for close combat where it can it massive array of lasers to bare.
+</overview>
+
+<deployment>
+A further update of the 3058 Ontos, the light Gauss Ontos removes all weapons to mount three Light Gauss Rifles, four tons of ammunition, and two ER Medium Lasers.
+</deployment>
+
+<history>
+The original myth behind the Ontos was that a history loving designer based the tank on an ancient design, much to the dismay of his coworkers. Though designed in Capellan space, the Ontos became a favorite of House Marik after it captured Shiro III during the Succession Wars (and later, after the annexation of Nanking, the Federated Commonwealth), and the vehicle now serves as the backbone of many of the Free Worlds League's heavy tank regiments. The Marik military's preference for larger-than-average vehicle formations provided ample support for the heavy tanks, offsetting their limited range. Stories abound of Ontos units ambushing unsuspecting enemy from secret emplacements and destroying their formation in seconds. A force of Marik raiders landed on Nanking to put the defending Federated Commonwealth to the test. Both sides were armed with an army of Ontoses. The tanks were left in defensive positions as the opponents squared off, while BattleMechs were deployed to lure the enemies into various traps. Neither force's BattleMechs made contact, instead stumbling onto the other side's Ontoses. The Ontoses annihilated both BattleMech troops, which then fled their places to hunt each other out. The combat between the two tank formations left only three functioning tanks fighting their way off the battlefield, and the fight convinced the Marik raiders of the Federated Commonwealth's determination to keep Nanking.
+</history>
+
+<manufacturer>
+Grumman Amalgamated
+</manufacturer>
+
+<primaryFactory>
+Shiro III
+</primaryFactory>
+
+<systemManufacturers>
+ENGINE:GM 285 Cold-Start Fusion
+ARMOR:Durallex Light Ferro-Fibrous with CASE
+COMMUNICATIONS:Easy Talk-2
+TARGETING:GuideRite with Laser Coordination Link and Artemis FCS
+</systemManufacturers>
+
 <source>
-Civil War
+TRO: 3058
 </source>
+
+<tonnage>
+95.0
+</tonnage>
+

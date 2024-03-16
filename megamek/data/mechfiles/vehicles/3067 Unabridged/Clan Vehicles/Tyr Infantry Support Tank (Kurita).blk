@@ -20,6 +20,10 @@ Tyr Infantry Support Tank
 (Kurita)
 </Model>
 
+<mul id:>
+5730
+</mul id:>
+
 <year>
 3070
 </year>
@@ -27,6 +31,10 @@ Tyr Infantry Support Tank
 <type>
 IS Level 2
 </type>
+
+<role>
+Missile Boat
+</role>
 
 <motion_type>
 Hover
@@ -78,7 +86,7 @@ Light Machine Gun
 </Turret Equipment>
 
 <source>
-RS 3067U
+Record Sheets: Record Sheets: 3067 Unabridged
 </source>
 
 <tonnage>

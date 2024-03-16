@@ -16,9 +16,13 @@ Tank
 Athena Combat Vehicle
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+137
+</mul id:>
 
 <year>
 3008
@@ -27,6 +31,10 @@ Athena Combat Vehicle
 <type>
 Clan Level 2
 </type>
+
+<role>
+Juggernaut
+</role>
 
 <motion_type>
 Tracked
@@ -89,7 +97,7 @@ CLMG
 </Turret Equipment>
 
 <source>
-Succession Wars
+TRO: 3060
 </source>
 
 <tonnage>

@@ -1,0 +1,128 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+Golem Assault Armor
+</Name>
+
+<Model>
+(Support)(Sqd6)
+</Model>
+
+<mul id:>
+8886
+</mul id:>
+
+<year>
+3076
+</year>
+
+<type>
+Clan Level 2
+</type>
+
+<role>
+Juggernaut
+</role>
+
+<motion_type>
+Leg
+</motion_type>
+
+<cruiseMP>
+2
+</cruiseMP>
+
+<armor_type>
+35
+</armor_type>
+
+<armor_tech>
+2
+</armor_tech>
+
+<Point Equipment>
+BAAPMount:RA
+BAAPMount:LA
+Infantry Auto Rifle:APM
+Infantry Auto Rifle:APM
+CLAdvancedSRM6:Body
+BA-Advanced SRM-6 Ammo:Body:Shots4#
+BA-Advanced SRM-6 Ammo:Body:Shots2#
+BABasicManipulator:LA
+BABasicManipulator:RA
+Clan BA Fire Resistant:LA
+Clan BA Fire Resistant:RA
+Clan BA Fire Resistant:LA
+Clan BA Fire Resistant:RA
+Clan BA Fire Resistant:RA
+</Point Equipment>
+
+<source>
+TRO: 3085
+</source>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+0
+</jumpingMP>
+
+<armor>
+18
+</armor>
+
+<Trooper Count>
+6
+</Trooper Count>
+
+<weightclass>
+4
+</weightclass>
+
+<overview>
+The Golem is a battle armor design that was created by Clan Ghost Bear. 
+</overview>
+
+<capabilities>
+In addition, this armor is fire resistant, so it is unaffected by Flamers and Inferno rounds. Though it cannot jump, the Golem is still speedier than the other assault-class designs. While that does not make this battlesuit fast, it does give it the ability to bring its strong weapons to bear on a target, even as it can withstand the punishment meted out by an enemy.
+</capabilities>
+
+<deployment>
+This Ghost Bear variant replaced the standard equipment, with an Advanced SRM 6 and a dual Anti-Personnel Weapon Mount.
+</deployment>
+
+<history>
+Following their conflicts with first the Draconis Combine, then Clan Hell's Horses, the Bears decided they wanted something that could compete with the Kanazuchi and Gnome. The Golem is the result of that process and features enough armor to shrug off a Heavy Large Laser. 
+</history>
+
+
+<manufacturer>
+Bergan Industries BA Annex
+</manufacturer>
+
+<primaryFactory>
+Alshain
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+JUMPJET:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>

@@ -13,12 +13,16 @@ Dropship
 </UnitType>
 
 <Name>
-M3 Drone
+Drone
 </Name>
 
 <Model>
-CASPAR
+M-3
 </Model>
+
+<mul id:>
+7147
+</mul id:>
 
 <year>
 2698
@@ -31,6 +35,10 @@ CASPAR
 <type>
 IS Level 4
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Spheroid
@@ -220,12 +228,16 @@ SDS Drone
 </height>
 
 <source>
-H:Liberation of Terra I - Star League
+Historical: Liberation of Terra I
 </source>
 
 <tonnage>
 4000.0
 </tonnage>
+
+<bv>
+21351
+</bv>
 
 <designtype>
 1

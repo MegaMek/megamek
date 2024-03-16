@@ -20,6 +20,10 @@ Wildkatze
 WKT-2S
 </Model>
 
+<mul id:>
+5411
+</mul id:>
+
 <year>
 3090
 </year>
@@ -31,6 +35,10 @@ WKT-2S
 <type>
 IS Level 4
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Aerodyne
@@ -107,7 +115,7 @@ ISAMS Ammo
 </Fuselage Equipment>
 
 <source>
-TRO Prototypes - Jihad
+TRO: Prototypes
 </source>
 
 <tonnage>

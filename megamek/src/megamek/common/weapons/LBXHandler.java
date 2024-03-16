@@ -25,6 +25,7 @@ import megamek.common.ToHitData;
 import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
+import megamek.server.GameManager;
 import megamek.server.Server;
 
 /**
@@ -38,16 +39,16 @@ public class LBXHandler extends AmmoWeaponHandler {
      * @param t
      * @param w
      * @param g
-     * @param s
+     * @param m
      */
-    public LBXHandler(ToHitData t, WeaponAttackAction w, Game g, Server s) {
-        super(t, w, g, s);
+    public LBXHandler(ToHitData t, WeaponAttackAction w, Game g, GameManager m) {
+        super(t, w, g, m);
         sSalvoType = " pellet(s) ";
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
     @Override
@@ -81,7 +82,7 @@ public class LBXHandler extends AmmoWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#calcHits(Vector<Report>
      * vPhaseReport)
      */
@@ -139,12 +140,7 @@ public class LBXHandler extends AmmoWeaponHandler {
 
     @Override
     protected boolean usesClusterTable() {
-        return ((AmmoType) ammo.getType()).getMunitionType() == AmmoType.M_CLUSTER;
-    }
-
-    @Override
-    protected boolean canDoDirectBlowDamage() {
-        return false;
+        return ((AmmoType) ammo.getType()).getMunitionType().contains(AmmoType.Munitions.M_CLUSTER);
     }
 
 }

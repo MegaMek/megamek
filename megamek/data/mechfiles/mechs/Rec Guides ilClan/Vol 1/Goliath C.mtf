@@ -1,0 +1,179 @@
+chassis:Goliath
+model:C
+mul id:7438
+
+Config:Quad
+techbase:Mixed (IS Chassis)
+era:3143
+source:Rec Guide:ilClan #1
+rules level:3
+role:Sniper
+
+
+
+quirk:multi_trac
+quirk:exp_actuator
+
+
+mass:80
+engine:240 Fusion Engine(IS)
+structure:IS Standard
+myomer:Standard
+cockpit:Standard Cockpit
+gyro:Compact Gyro
+
+heat sinks:11 IS Double
+walk mp:3
+jump mp:0
+
+armor:Standard(Inner Sphere)
+FLL armor:24
+FRL armor:24
+LT armor:20
+RT armor:20
+CT armor:30
+HD armor:9
+RLL armor:30
+RRL armor:30
+RTL armor:13
+RTR armor:13
+RTC armor:19
+
+Weapons:9
+Anti-BattleArmor Pods (B-Pods), Rear Left Leg
+Anti-BattleArmor Pods (B-Pods), Rear Right Leg
+Anti-BattleArmor Pods (B-Pods), Front Left Leg
+Anti-BattleArmor Pods (B-Pods), Front Right Leg
+Gauss Rifle, Left Torso
+ER Large Laser, Left Torso
+Micro Pulse Laser, Left Torso
+ATM 9, Right Torso
+ER Medium Laser, Head
+
+Front Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+ISBPod
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Front Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+ISBPod
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+CLGaussRifle (T)
+CLGaussRifle (T)
+CLGaussRifle (T)
+CLGaussRifle (T)
+CLGaussRifle (T)
+CLGaussRifle (T)
+CLERLargeLaser (T)
+CLMicroPulseLaser (T)
+Clan Gauss Ammo
+Clan Ammo ATM-9
+ISQuadTurret
+CLCASEII
+
+Right Torso:
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+CLATM9
+CLATM9
+CLATM9
+CLATM9
+Clan Ammo ATM-9
+CLCASEII
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLTargeting Computer
+CLTargeting Computer
+CLTargeting Computer
+CLTargeting Computer
+
+Head:
+Life Support
+Sensors
+Cockpit
+CLERMediumLaser
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Rear Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+ISBPod
+Clan Gauss Ammo
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Rear Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+ISBPod
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+overview:The Goliath is used as a general assault 'Mech and until recently was not usually seen in large numbers because of the bias against quad 'Mechs prior to the 3060s. 
+
+capabilities:The Goliath is armed with what would be considered a paltry armament for a 'Mech of its size.
+
+deployment:An Advanced Clan Tech conversion of the GOL-6M created by Clan Wolf in 3143. The weapons are converted to Clan versions while retaining the BattleMech Quad Turret. The Quad Turret houses a Clan Gauss Rifle, teamed with Clan ER Large Laser and Micro Pulse Laser. A single ATM 9 with two tons of ammo, and a single Clan ER Medium Laser in the head round out the 'Mechs offensive weaponry. On each leg the 'Mech has a B-Pod, and CASE II is mounted in of the 'Mech's legs. The hull of the 'Mech is protected by fourteen and a half tons of Inner Sphere armor. 
+
+history:The Goliath is the second 'Mech built in 2652 by Brigadier Corporation. The Goliath is based on lessons that were learned from the Scorpion. The first and most important difference is that the Goliath weighs in at 80 tons allowing it to carry a much heavier weapons payload and armor at the cost of mobility. In the late 3060s the Goliath saw renewed production and renewed popularity and has since become a powerful and respected assault 'Mech. In 3143, The Corean Enterprises - MacAdams-Suharno plant on Stewart was captured by Clan Wolf, and it's GOL-6M variant production line converted to produce a Clan version of the 'Mech.
+
+manufacturer:Corean Enterprises - MacAdams-Suharno
+primaryfactory:Stewart
+systemmanufacturer:CHASSIS:Corean VIII
+systemmanufacturer:ENGINE:Hermes 240
+systemmanufacturer:ARMOR:Starshield with CASE
+systemmanufacturer:COMMUNICATIONS:Corean TransBand-J9
+systemmanufacturer:TARGETING:Corean B-Tech

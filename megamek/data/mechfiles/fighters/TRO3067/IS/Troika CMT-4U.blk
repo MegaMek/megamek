@@ -20,6 +20,10 @@ Troika
 CMT-4U
 </Model>
 
+<mul id:>
+5299
+</mul id:>
+
 <year>
 3066
 </year>
@@ -31,6 +35,10 @@ CMT-4U
 <type>
 IS Level 2
 </type>
+
+<role>
+Dogfighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -110,7 +118,7 @@ RL15
 </Fuselage Equipment>
 
 <source>
-TRO 3067 - Civil War
+TRO: 3067
 </source>
 
 <tonnage>

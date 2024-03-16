@@ -16,9 +16,13 @@ Tank
 Testudo Siege Tank
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+6544
+</mul id:>
 
 <year>
 3131
@@ -27,6 +31,10 @@ Testudo Siege Tank
 <type>
 IS Level 3
 </type>
+
+<role>
+Missile Boat
+</role>
 
 <motion_type>
 Tracked
@@ -87,9 +95,14 @@ ISArrowIV
 </Turret Equipment>
 
 <source>
-TRO 3145 Mercenaries - Dark Ages
+TRO: 3145 Mercenaries
 </source>
 
 <tonnage>
 75.0
 </tonnage>
+
+<quirks>
+distracting
+</quirks>
+

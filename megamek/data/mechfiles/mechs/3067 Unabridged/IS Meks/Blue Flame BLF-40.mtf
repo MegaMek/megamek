@@ -1,11 +1,19 @@
-Version:1.1
-Blue Flame
-BLF-40
+chassis:Blue Flame
+model:BLF-40
+mul id:5672
 
 Config:Quad
 techbase:Inner Sphere
 era:3073
 rules level:3
+role:Sniper
+source:Record Sheets: 3067 Unabridged
+
+
+
+quirk:directional_torso_mount
+quirk:bad_rep_is
+
 
 mass:45
 engine:225 Light Engine(IS)

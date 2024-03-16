@@ -20,6 +20,10 @@ Foxhound Gunboat
 TIG-40
 </Model>
 
+<mul id:>
+4184
+</mul id:>
+
 <year>
 3083
 </year>
@@ -31,6 +35,10 @@ TIG-40
 <type>
 IS Level 3
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Spheroid
@@ -154,3 +162,15 @@ ISLaserAntiMissileSystem
 <escape_pod>
 0
 </escape_pod>
+
+<source>
+TRO: Prototypes
+</source>
+
+<quirks>
+difficult_maintain
+hard_pilot
+non_standard
+imp_target_long
+</quirks>
+

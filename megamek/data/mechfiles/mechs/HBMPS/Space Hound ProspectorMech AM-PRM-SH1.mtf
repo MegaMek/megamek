@@ -1,11 +1,13 @@
-Version:1.0
-Space Hound ProspectorMech
-AM-PRM-SH1
+chassis:Space Hound ProspectorMech
+model:AM-PRM-SH1
+mul id:5101
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3047
 Rules Level:2
+role:None
+source:Handbook: Major Periphery States
 
 Mass:40
 Engine:160 Fusion Engine(IS)

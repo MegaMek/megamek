@@ -16,9 +16,13 @@ SupportTank
 Buffel Engineering Support Vehicle VIII
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+5478
+</mul id:>
 
 <year>
 3074
@@ -31,6 +35,10 @@ Buffel Engineering Support Vehicle VIII
 <type>
 IS Level 3
 </type>
+
+<role>
+Ambusher
+</role>
 
 <motion_type>
 Tracked
@@ -92,7 +100,7 @@ Lift Hoist/Arresting Hoist
 </structural_tech_rating>
 
 <source>
-TRO 3075 - Jihad
+TRO: 3075
 </source>
 
 <tonnage>

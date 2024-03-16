@@ -1,12 +1,18 @@
-Version:1.1
-Prefect
-PRF-1R (Veronica)
+chassis:Prefect
+model:PRF-1R (Veronica)
+mul id:2570
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3085
-Source:TRO 3085/Lamenkov's Liability - Jihad
+Source:BattleTech Dossiers: Lamenkov's Liability
 Rules Level:2
+role:Skirmisher
+
+
+
+quirk:ext_twist
+
 
 Mass:75
 Engine:375 Light Fusion Engine

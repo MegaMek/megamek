@@ -16,9 +16,13 @@ VTOL
 Gossamer VTOL
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+6537
+</mul id:>
 
 <year>
 3123
@@ -27,6 +31,10 @@ Gossamer VTOL
 <type>
 Clan Level 3
 </type>
+
+<role>
+Striker
+</role>
 
 <motion_type>
 VTOL
@@ -78,7 +86,7 @@ CLMediumPulseLaser
 </Rotor Equipment>
 
 <source>
-TRO 3145 Mercenaries - Late Republic
+TRO: 3145 Mercenaries
 </source>
 
 <tonnage>

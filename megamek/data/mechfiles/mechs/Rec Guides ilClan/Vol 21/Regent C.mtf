@@ -1,0 +1,161 @@
+chassis:Regent
+model:C
+mul id:8362
+
+Config:Biped Omnimech
+techbase:Mixed (Clan Chassis)
+era:3145
+source:Rec Guide:ilClan #21
+rules level:2
+role:Sniper
+
+quirk:easy_maintain
+
+
+mass:90
+engine:270 Fusion (Clan) Engine
+structure:IS Standard
+myomer:Standard
+
+heat sinks:10 Clan Double
+base chassis heat sinks:10
+walk mp:3
+jump mp:0
+
+armor:Standard(Inner Sphere)
+LA armor:30
+RA armor:30
+LT armor:28
+RT armor:28
+CT armor:42
+HD armor:9
+LL armor:38
+RL armor:38
+RTL armor:10
+RTR armor:10
+RTC armor:16
+
+Weapons:2
+HAG/40, Left Torso
+Improved Heavy Gauss Rifle, Right Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+CLHAG40 (OMNIPOD)
+CLHAG40 (OMNIPOD)
+CLHAG40 (OMNIPOD)
+CLHAG40 (OMNIPOD)
+CLHAG40 (OMNIPOD)
+CLHAG40 (OMNIPOD)
+CLHAG40 (OMNIPOD)
+CLHAG40 (OMNIPOD)
+CLHAG40 (OMNIPOD)
+CLHAG40 (OMNIPOD)
+Hyper-Assault Gauss Rifle/40 Ammo (OMNIPOD)
+Hyper-Assault Gauss Rifle/40 Ammo (OMNIPOD)
+
+Right Torso:
+ISImprovedHeavyGaussRifle (OMNIPOD)
+ISImprovedHeavyGaussRifle (OMNIPOD)
+ISImprovedHeavyGaussRifle (OMNIPOD)
+ISImprovedHeavyGaussRifle (OMNIPOD)
+ISImprovedHeavyGaussRifle (OMNIPOD)
+ISImprovedHeavyGaussRifle (OMNIPOD)
+ISImprovedHeavyGaussRifle (OMNIPOD)
+ISImprovedHeavyGaussRifle (OMNIPOD)
+ISImprovedHeavyGaussRifle (OMNIPOD)
+ISImprovedHeavyGaussRifle (OMNIPOD)
+ISImprovedHeavyGaussRifle (OMNIPOD)
+ISImprovedHeavyGauss Ammo (OMNIPOD)
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Hyper-Assault Gauss Rifle/40 Ammo (OMNIPOD)
+ISImprovedHeavyGauss Ammo (OMNIPOD)
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Hyper-Assault Gauss Rifle/40 Ammo (OMNIPOD)
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+ISImprovedHeavyGauss Ammo (OMNIPOD)
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+manufacturer:CSF Project Reynard with Coventry Metal Works and Technicron Manufacturing
+primaryfactory:Coventry, Savannah
+systemmanufacturer:CHASSIS:Reynard Standard Type
+systemmanufacturer:ENGINE:GM 270
+systemmanufacturer:ARMOR:Durallex Heavy Special
+systemmanufacturer:COMMUNICATIONS:MegaBand System 21
+systemmanufacturer:TARGETING:Dtrac Suite 4
+

@@ -1,0 +1,96 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+Shandra Advanced Scout Vehicle
+</Name>
+
+<model>
+
+</model>
+
+<mul id:>
+6654
+</mul id:>
+
+<year>
+3089
+</year>
+
+<type>
+IS Level 2
+</type>
+
+<role>
+Scout
+</role>
+
+<motion_type>
+Wheeled
+</motion_type>
+
+<cruiseMP>
+8
+</cruiseMP>
+
+<engine_type>
+0
+</engine_type>
+
+<armor>
+24
+15
+15
+10
+</armor>
+
+<Body Equipment>
+ISGuardianECMSuite
+IS Ammo SRM-4
+IS Machine Gun Ammo - Half
+</Body Equipment>
+
+<Front Equipment>
+SRM 4
+ISERSmallLaser
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+Machine Gun
+Machine Gun
+</Rear Equipment>
+
+<source>
+TRO: 3145 Republic of the Sphere
+</source>
+
+<tonnage>
+25.0
+</tonnage>
+
+<quirks>
+poor_sealing
+power_reverse
+</quirks>
+
+<weaponQuirks>
+exposed_linkage:RR:0:Machine Gun
+exposed_linkage:RR:1:Machine Gun
+</weaponQuirks>

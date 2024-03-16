@@ -20,13 +20,11 @@ package megamek.client.ui.swing.lobby;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.ClientGUI;
+import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.tooltip.PilotToolTip;
 import megamek.client.ui.swing.tooltip.UnitToolTip;
 import megamek.client.ui.swing.util.UIUtil;
-import megamek.common.Configuration;
-import megamek.common.Entity;
-import megamek.common.MapSettings;
-import megamek.common.Player;
+import megamek.common.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.icons.Camouflage;
 import megamek.common.icons.Portrait;
@@ -49,8 +47,6 @@ import static megamek.client.ui.swing.util.UIUtil.uiGreen;
 
 public class MekTableModel extends AbstractTableModel {
     //region Variable Declarations
-    private static final long serialVersionUID = 4819661751806908535L;
-
     private enum COLS { UNIT, PILOT, PLAYER, BV }
 
     public static final int COL_UNIT = COLS.UNIT.ordinal();
@@ -72,23 +68,24 @@ public class MekTableModel extends AbstractTableModel {
             Portrait.DEFAULT_PORTRAIT_FILENAME).toString();
 
     // Parent access
-    private ClientGUI clientGui;
-    private ChatLounge chatLounge;
+    private final ClientGUI clientGui;
+    private final ChatLounge chatLounge;
 
     /** The displayed entities. This list is the actual table data. */
-    private ArrayList<Entity> entities = new ArrayList<>();
+    private final ArrayList<InGameObject> entities = new ArrayList<>();
     /** The contents of the battle value column. Gets formatted for display (font scaling). */
-    private ArrayList<Integer> bv = new ArrayList<>();
+    private final ArrayList<Integer> bv = new ArrayList<>();
     /** The displayed contents of the Unit column. */
-    private ArrayList<String> unitCells = new ArrayList<>();
+    private final ArrayList<String> unitCells = new ArrayList<>();
     /** The displayed contents of the Pilot column. */
-    private ArrayList<String> pilotCells = new ArrayList<>();
+    private final ArrayList<String> pilotCells = new ArrayList<>();
     /** The list of cached tooltips for the displayed units. */
-    private ArrayList<String> unitTooltips = new ArrayList<>();
+    private final ArrayList<String> unitTooltips = new ArrayList<>();
     /** The list of cached tooltips for the displayed pilots. */
-    private ArrayList<String> pilotTooltips = new ArrayList<>();
+    private final ArrayList<String> pilotTooltips = new ArrayList<>();
     /** The displayed contents of the Player column. */
-    private ArrayList<String> playerCells = new ArrayList<>();
+    private final ArrayList<String> playerCells = new ArrayList<>();
+    private static final GUIPreferences GUIP = GUIPreferences.getInstance();
     //endregion Variable Declarations
 
     //region Constructors
@@ -100,7 +97,7 @@ public class MekTableModel extends AbstractTableModel {
 
     @Override
     public Object getValueAt(int row, int col) {
-        final Entity entity = entities.get(row);
+        final InGameObject entity = entities.get(row);
         if (entity == null) {
             return "Error: Unit not found";
         }
@@ -108,7 +105,8 @@ public class MekTableModel extends AbstractTableModel {
         if (col == COLS.BV.ordinal()) {
             boolean isEnemy = clientGui.getClient().getLocalPlayer().isEnemyOf(ownerOf(entity));
             boolean isBlindDrop = clientGui.getClient().getGame().getOptions().booleanOption(OptionsConstants.BASE_BLIND_DROP);
-            boolean hideEntity = isEnemy && isBlindDrop;
+            boolean localGM = clientGui.getClient().getLocalPlayer().isGameMaster();
+            boolean hideEntity = !localGM && isEnemy && isBlindDrop;
             float size = chatLounge.isCompact() ? 0 : 0.2f;
             return hideEntity ? "" : guiScaledFontHTML(size) + NumberFormat.getIntegerInstance().format(bv.get(row));
             
@@ -154,14 +152,14 @@ public class MekTableModel extends AbstractTableModel {
         playerCells.clear();
         unitCells.clear();
         pilotCells.clear();
-        for (Entity entity: entities) {
+        for (InGameObject entity : entities) {
             addCellData(entity);
         }
         fireTableDataChanged();
     }
 
     /** Adds the given entity to the table and builds the display content. */
-    public void addUnit(Entity entity) {
+    public void addUnit(InGameObject entity) {
         entities.add(entity);
         addCellData(entity);
         fireTableDataChanged();
@@ -172,34 +170,35 @@ public class MekTableModel extends AbstractTableModel {
      * The entity is assumed to be the last entity added to the table and 
      * the display content will be added as a new last table row. 
      */  
-    private void addCellData(Entity entity) {
-        bv.add(entity.calculateBattleValue());
+    private void addCellData(InGameObject entity) {
+        bv.add(entity.getStrength());
         playerCells.add(playerCellContent(entity));
 
         Player owner = ownerOf(entity);
         // Note that units of a player's bots are obscured because they could be added from
         // a MekHQ AtB campaign. Thus, the player can still configure them and so can identify
         // the obscured units but has to actively decide to do it.
-        boolean hideEntity = clientGui.getClient().getLocalPlayer().isEnemyOf(owner)
+        boolean localGM = clientGui.getClient().getLocalPlayer().isGameMaster();
+        boolean hideEntity = !localGM && clientGui.getClient().getLocalPlayer().isEnemyOf(owner)
                 && clientGui.getClient().getGame().getOptions().booleanOption(OptionsConstants.BASE_BLIND_DROP);
+
         if (hideEntity) {
             unitTooltips.add(null);
             pilotTooltips.add(null);
         } else {
             MapSettings mset = chatLounge.mapSettings;
             Player lPlayer = clientGui.getClient().getLocalPlayer();
-            unitTooltips.add("<HTML>" + UnitToolTip.getEntityTipLobby(entity, lPlayer, mset));
-            pilotTooltips.add("<HTML>" + PilotToolTip.getPilotTipDetailed(entity));
+            String s = UnitToolTip.lobbyTip(entity, lPlayer, mset).toString();
+            unitTooltips.add(UnitToolTip.wrapWithHTML(s));
+            s = PilotToolTip.lobbyTip(entity).toString();
+            if (entity instanceof Entity) {
+                s += PilotToolTip.getCrewAdvs((Entity) entity, true).toString();
+            }
+            pilotTooltips.add(UnitToolTip.wrapWithHTML(s));
         }
         final boolean rpgSkills = clientGui.getClient().getGame().getOptions().booleanOption(OptionsConstants.RPG_RPG_GUNNERY);
-        if (chatLounge.isCompact()) {
-            unitCells.add(LobbyMekCellFormatter.formatUnitCompact(entity, chatLounge, false));
-            pilotCells.add(LobbyMekCellFormatter.formatPilotCompact(entity, hideEntity, rpgSkills));
-        } else {
-            unitCells.add(LobbyMekCellFormatter.formatUnitFull(entity, chatLounge, false));
-            pilotCells.add(LobbyMekCellFormatter.formatPilotFull(entity, hideEntity));
-        }
-
+        unitCells.add(LobbyMekCellFormatter.unitTableEntry(entity, chatLounge, false, chatLounge.isCompact()));
+        pilotCells.add(LobbyMekCellFormatter.pilotTableEntry(entity, chatLounge.isCompact(), hideEntity, rpgSkills));
     }
     
     /** Returns the tooltip for the given row and column from the tooltip cache. */
@@ -234,12 +233,16 @@ public class MekTableModel extends AbstractTableModel {
     }
 
     /** Returns the owner of the given entity. Prefer this over entity.getOwner(). */
-    private Player ownerOf(Entity entity) {
+    private Player ownerOf(InGameObject entity) {
         return clientGui.getClient().getGame().getPlayer(entity.getOwnerId());
     }
     
     /** Creates and returns the display content of the "Player" column for the given entity. */
-    private String playerCellContent(final Entity entity) {
+    private String playerCellContent(final InGameObject entity) {
+        if (entity == null) {
+            return "";
+        }
+
         StringBuilder result = new StringBuilder("<HTML><NOBR>");
         Player owner = ownerOf(entity);
         boolean isEnemy = clientGui.getClient().getLocalPlayer().isEnemyOf(owner);
@@ -253,24 +256,8 @@ public class MekTableModel extends AbstractTableModel {
     }
     
     /** Returns the entity of the given table row. */
-    public Entity getEntityAt(int row) {
+    public InGameObject getEntityAt(int row) {
         return entities.get(row);
-    }
-    
-    public static int columnPilot() {
-        return COLS.PILOT.ordinal();
-    }
-    
-    public static int columnBV() {
-        return COLS.BV.ordinal();
-    }
-    
-    public static int columnUnit() {
-        return COLS.UNIT.ordinal();
-    }
-    
-    public static int columnPlayer() {
-        return COLS.PLAYER.ordinal();
     }
     
     /** Returns the subclassed cell renderer for all columns except the force column. */
@@ -281,15 +268,13 @@ public class MekTableModel extends AbstractTableModel {
     /** A specialized renderer for the mek table. */
     public class Renderer extends DefaultTableCellRenderer implements TableCellRenderer {
         
-        private static final long serialVersionUID = -9154596036677641620L;
-        
         @Override
         public Component getTableCellRendererComponent(final JTable table,
                                                        final @Nullable Object value,
                                                        final boolean isSelected,
                                                        final boolean hasFocus,
                                                        final int row, final int column) {
-            final Entity entity = getEntityAt(row);
+            final InGameObject entity = getEntityAt(row);
             if ((entity == null) || (value == null)) {
                 return null;
             }
@@ -314,7 +299,8 @@ public class MekTableModel extends AbstractTableModel {
             }
 
             Player owner = ownerOf(entity);
-            boolean showAsUnknown = clientGui.getClient().getLocalPlayer().isEnemyOf(owner)
+            boolean localGM = clientGui.getClient().getLocalPlayer().isGameMaster();
+            boolean showAsUnknown = !localGM && clientGui.getClient().getLocalPlayer().isEnemyOf(owner)
                     && clientGui.getClient().getGame().getOptions().booleanOption(OptionsConstants.BASE_BLIND_DROP);
             int size = UIUtil.scaleForGUI(MEKTABLE_IMGHEIGHT);
 
@@ -332,19 +318,21 @@ public class MekTableModel extends AbstractTableModel {
             } else {
                 if (column == COLS.UNIT.ordinal()) {
                     setToolTipText(unitTooltips.get(row));
-                    final Camouflage camouflage = entity.getCamouflageOrElse(entity.getOwner().getCamouflage());
-                    final Image icon = clientGui.getBoardView().getTilesetManager().loadPreviewImage(entity, camouflage, this);
-                    if (!compact) {
-                        setIcon(icon, size);
-                        setIconTextGap(UIUtil.scaleForGUI(10));
-                    } else {
-                        setIcon(icon, size / 3);
-                        setIconTextGap(UIUtil.scaleForGUI(5));
+                    if (entity instanceof Entity) {
+                        final Camouflage camouflage = ((Entity) entity).getCamouflageOrElseOwners();
+                        final Image icon = clientGui.getBoardView().getTilesetManager().loadPreviewImage((Entity) entity, camouflage, this);
+                        if (!compact) {
+                            setIcon(icon, size);
+                            setIconTextGap(UIUtil.scaleForGUI(10));
+                        } else {
+                            setIcon(icon, size / 3);
+                            setIconTextGap(UIUtil.scaleForGUI(5));
+                        }
                     }
                 } else if (column == COLS.PILOT.ordinal()) {
                     setToolTipText(pilotTooltips.get(row));
-                    if (!compact) {
-                        setIcon(new ImageIcon(entity.getCrew().getPortrait(0).getImage(size)));
+                    if (!compact && (entity instanceof Entity)) {
+                        setIcon(new ImageIcon(((Entity) entity).getCrew().getPortrait(0).getImage(size)));
                     }
                 } else {
                     setToolTipText(null);

@@ -20,6 +20,10 @@ Issedone
 Prime
 </Model>
 
+<mul id:>
+7650
+</mul id:>
+
 <year>
 2871
 </year>
@@ -31,6 +35,10 @@ Prime
 <type>
 Clan Level 2
 </type>
+
+<role>
+Fast Dogfighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -99,9 +107,16 @@ CLERMediumLaser:OMNI
 </Fuselage Equipment>
 
 <source>
-Succession Wars
+TRO: Golden Century
 </source>
 
 <tonnage>
 30.0
 </tonnage>
+
+<quirks>
+easy_maintain
+rugged_2
+obsolete
+</quirks>
+

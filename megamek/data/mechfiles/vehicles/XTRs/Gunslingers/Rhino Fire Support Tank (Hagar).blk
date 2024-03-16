@@ -20,6 +20,10 @@ Rhino Fire Support Tank
 (Hagar)
 </Model>
 
+<mul id:>
+7327
+</mul id:>
+
 <year>
 2765
 </year>
@@ -27,6 +31,10 @@ Rhino Fire Support Tank
 <type>
 IS Level 4
 </type>
+
+<role>
+Missile Boat
+</role>
 
 <motion_type>
 Tracked
@@ -81,9 +89,16 @@ Medium Laser
 </Front Turret Equipment>
 
 <source>
-XTRO Gunslingers - Star League
+XTR: Gunslingers
 </source>
 
 <tonnage>
 80.0
 </tonnage>
+
+<quirks>
+non_standard
+trailer_hitch
+obsolete
+</quirks>
+

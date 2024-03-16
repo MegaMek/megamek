@@ -1,12 +1,21 @@
-Version:1.2
-Stinger
-STG-5T
+chassis:Stinger
+model:STG-5T
+mul id:3065
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3068
-Source:Jihad
+source:TRO: 3085
 Rules Level:2
+role:Scout
+
+
+
+quirk:rugged_1
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+quirk:cramped_cockpit
+
 
 Mass:20
 Engine:120 XL Engine

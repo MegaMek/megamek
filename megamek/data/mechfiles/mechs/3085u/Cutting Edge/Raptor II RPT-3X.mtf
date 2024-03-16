@@ -1,12 +1,19 @@
-Version:1.1
-Raptor II
-RPT-3X
+chassis:Raptor II
+model:RPT-3X
+mul id:2659
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3084
-Source:Dark Age
+source:TRO: 3085
 Rules Level:4
+role:Striker
+
+
+
+quirk:no_arms
+quirk:no_eject
+
 
 Mass:40
 Engine:280 XL Engine

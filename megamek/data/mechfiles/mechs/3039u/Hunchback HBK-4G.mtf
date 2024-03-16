@@ -1,12 +1,20 @@
-Version:1.0
-Hunchback
-HBK-4G
+chassis:Hunchback
+model:HBK-4G
+mul id:1552
 
 Config:Biped
 techbase:Inner Sphere
 era:2572
-source:TRO 3039 - Star League
+source:TRO: 3039
 rules level:1
+role:Juggernaut
+
+
+
+
+quirk:battle_fists_la
+quirk:battle_fists_ra
+
 
 mass:50
 engine:200 Fusion Engine(IS)

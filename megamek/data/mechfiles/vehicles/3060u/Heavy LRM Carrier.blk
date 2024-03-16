@@ -12,9 +12,13 @@ Tank
 <Name>
 Heavy LRM Carrier
 </Name>
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+1440
+</mul id:>
 <Tonnage>
 80
 </Tonnage>
@@ -47,6 +51,10 @@ ISLRM20 Ammo
 <type>
 IS Level 1
 </type>
+
+<role>
+Missile Boat
+</role>
 <year>
 3058
 </year>
@@ -63,5 +71,5 @@ IS Level 1
 Tracked
 </motion_type>
 <source>
-Clan Invasion
+TRO: 3060
 </source>

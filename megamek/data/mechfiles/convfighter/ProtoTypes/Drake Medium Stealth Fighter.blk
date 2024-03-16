@@ -16,9 +16,13 @@ ConvFighter
 Drake Medium Stealth Fighter
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+4096
+</mul id:>
 
 <year>
 3087
@@ -29,8 +33,12 @@ Drake Medium Stealth Fighter
 </originalBuildYear>
 
 <type>
-IS Level 4
+IS Level 2
 </type>
+
+<role>
+Fire Support
+</role>
 
 <motion_type>
 Aerodyne
@@ -107,9 +115,16 @@ IS Ammo MML-3 SRM
 </Fuselage Equipment>
 
 <source>
-TRO Prototypes - Early Republic
+TRO: Prototypes
 </source>
 
 <tonnage>
 35.0
 </tonnage>
+
+<quirks>
+atmo_flyer
+non_standard
+difficult_maintain
+</quirks>
+

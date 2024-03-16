@@ -16,9 +16,13 @@ Tank
 Bulwark Assault Vehicle
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+6498
+</mul id:>
 
 <year>
 3114
@@ -27,6 +31,10 @@ Bulwark Assault Vehicle
 <type>
 IS Level 2
 </type>
+
+<role>
+Sniper
+</role>
 
 <motion_type>
 Tracked
@@ -81,9 +89,14 @@ Heavy PPC
 </Turret Equipment>
 
 <source>
-TRO 3145 Free Worlds League - Late Republic
+TRO: 3145 Free Worlds League
 </source>
 
 <tonnage>
 85.0
 </tonnage>
+
+<weaponQuirks>
+accurate:FR:0:ISImprovedHeavyGaussRifle
+exposed_linkage:FR:0:ISImprovedHeavyGaussRifle
+</weaponQuirks>

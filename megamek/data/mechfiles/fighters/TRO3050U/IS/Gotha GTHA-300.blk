@@ -20,6 +20,10 @@ Gotha
 GTHA-300
 </Model>
 
+<mul id:>
+4227
+</mul id:>
+
 <year>
 2657
 </year>
@@ -31,6 +35,10 @@ GTHA-300
 <type>
 IS Level 2
 </type>
+
+<role>
+Attack Fighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -107,7 +115,7 @@ IS Ammo LRM-15
 </Fuselage Equipment>
 
 <source>
-TRO 3050u - Star League
+TRO: 3050
 </source>
 
 <tonnage>

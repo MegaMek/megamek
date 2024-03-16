@@ -1,0 +1,146 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+Hetzer Wheeled Assault Gun
+</Name>
+
+<Model>
+C
+</Model>
+
+<mul id:>
+9388
+</mul id:>
+
+<year>
+3107
+</year>
+
+<originalBuildYear>
+3107
+</originalBuildYear>
+
+<type>
+Clan Level 2
+</type>
+
+<role>
+Ambusher
+</role>
+
+<motion_type>
+Wheeled
+</motion_type>
+
+<transporters>
+</transporters>
+
+<cruiseMP>
+4
+</cruiseMP>
+
+<engine_type>
+1
+</engine_type>
+
+<clan_engine>
+false
+</clan_engine>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+2
+</armor_tech>
+
+<armor>
+34
+27
+27
+27
+</armor>
+
+<Body Equipment>
+Hyper-Assault Gauss Rifle/30 Ammo
+Hyper-Assault Gauss Rifle/30 Ammo
+Hyper-Assault Gauss Rifle/30 Ammo
+Hyper-Assault Gauss Rifle/30 Ammo
+Hyper-Assault Gauss Rifle/30 Ammo
+</Body Equipment>
+
+<Front Equipment>
+CLHAG30
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<capabilities>
+Its primary and only weapon is in the front, meaning the unit lacks a turret, making it difficult to employ in roles other than defensive ones. Also, its wheeled chassis restricts its mobility.
+</capabilities>
+
+<overview>
+The Hetzer was designed as a cheap, self-propelled artillery-piece to be stationed on worlds deemed worthy to defend, but not valuable enough to station a complete garrison force or even BattleMechs.
+</overview>
+
+<deployment>
+No information on this variant
+</deployment>
+
+<history>
+Due to its decent protection of six tons of standard armor and its Crusher SH Cannon, combined with its low price, the Hetzer is still a valuable asset for poor commands and is especially popular throughout the Periphery. However, Quikscell Company is largely known for its poor manufacturing standards, resulting in many Hetzers being shipped with only half their components installed or even completely lacking some of them. Crews reportedly refused new Hetzers meant to replace their older ones, because they couldn't be sure that the new models would work properly.
+</history>
+
+<manufacturer>
+Joint Equipment Systems/Quikscell Company,Quikscell Company
+</manufacturer>
+
+<primaryFactory>
+Alshain,Kalidasa
+</primaryFactory>
+
+<systemManufacturers>
+ENGINE:CitiCide 140 ICE
+COMMUNICATIONS:Johnston Q-Band
+TARGETING:Scantrex Dual Tac
+</systemManufacturers>
+
+<source>
+Rec Guide:ilClan #29
+</source>
+
+<tonnage>
+40.0
+</tonnage>
+
+<fuelType>
+PETROCHEMICALS
+</fuelType>
+
+
+<quirks>
+low_profile
+bad_rep_is
+poor_work
+</quirks>
+

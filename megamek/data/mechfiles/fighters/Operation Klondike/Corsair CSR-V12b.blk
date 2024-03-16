@@ -20,6 +20,10 @@ Corsair
 CSR-V12b
 </Model>
 
+<mul id:>
+694
+</mul id:>
+
 <year>
 2780
 </year>
@@ -31,6 +35,10 @@ CSR-V12b
 <type>
 IS Level 2
 </type>
+
+<role>
+Dogfighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -136,7 +144,7 @@ TARGETING:Ranker TA800
 </systemManufacturers>
 
 <source>
-H:Operation Klondyke - Star League
+Historical: Operation Klondike
 </source>
 
 <tonnage>

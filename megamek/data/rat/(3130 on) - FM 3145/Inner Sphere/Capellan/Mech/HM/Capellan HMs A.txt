@@ -1,0 +1,12 @@
+Capellan Confederation Heavy Mechs 3130 A
+Cataphract CTF-4L,1
+Crusader CRD-8L,2
+Thunder THR-C4,3
+Warhammer WHD-10CT,4
+Lao Hu LHU-4E,5
+Avatar AV1-O,6
+Tian-Zong TNZ-N3,5
+Vandal LI-O,4
+Rifleman IIC 8,3
+Catapult II CPLT-L7,2
+Vulture Mk IV (Mad Dog Mk IV) Prime,1

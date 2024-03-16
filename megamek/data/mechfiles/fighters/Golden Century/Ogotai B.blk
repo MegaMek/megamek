@@ -20,6 +20,10 @@ Ogotai
 B
 </Model>
 
+<mul id:>
+7657
+</mul id:>
+
 <year>
 2874
 </year>
@@ -31,6 +35,10 @@ B
 <type>
 Clan Level 2
 </type>
+
+<role>
+Fast Dogfighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -104,7 +112,7 @@ Clan Ammo LRM-20:OMNI
 </Fuselage Equipment>
 
 <source>
-Succession Wars
+TRO: Golden Century
 </source>
 
 <tonnage>

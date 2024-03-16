@@ -16,9 +16,13 @@ FixedWingSupport
 Hurricane Conventional Fighter
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+1584
+</mul id:>
 
 <year>
 2297
@@ -31,6 +35,10 @@ Hurricane Conventional Fighter
 <type>
 IS Level 2
 </type>
+
+<role>
+Dogfighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -103,7 +111,7 @@ External Stores Hardpoint
 </structural_tech_rating>
 
 <source>
-XTRO Primitives I - Age of War
+XTR: Primitives I
 </source>
 
 <tonnage>

@@ -16,9 +16,13 @@ Tank
 Palmoni Assault Infantry Fighting Vehicle
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+2411
+</mul id:>
 
 <Tonnage>
 85
@@ -79,12 +83,16 @@ ISC3iUnit
 IS Level 2
 </type>
 
+<role>
+Juggernaut
+</role>
+
 <year>
 3076
 </year>
 
 <source>
-Jihad
+TRO: 3085
 </source>
 
 <internal_type>
@@ -108,5 +116,5 @@ TroopSpace:8
 </transporters>
 
 <history>
-Based of the Trajan Design - Designed original for the Word of Blake Militia, the Palmoni had C3i Computer instead of C3 and Guardian ECM.  See TRO 3085
+Based of the Trajan Design - Designed original for the Word of Blake Militia, the Palmoni had C3i Computer instead of C3 and Guardian ECM.  See TRO: 3085
 </history>

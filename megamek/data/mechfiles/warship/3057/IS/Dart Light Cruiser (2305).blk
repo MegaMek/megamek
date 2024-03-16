@@ -1,0 +1,270 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Warship
+</UnitType>
+
+<Name>
+Dart Light Cruiser
+</Name>
+
+<Model>
+(2305)
+</Model>
+
+<mul id:>
+4048
+</mul id:>
+
+<year>
+2305
+</year>
+
+<originalBuildYear>
+2305
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<role>
+None
+</role>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+smallcraftbay:6.0:2:1
+cargobay:139159.0:2:2
+dockingcollar
+dockingcollar
+dockingcollar
+dockingcollar
+dockingcollar
+dockingcollar
+steeragequarters:600.0:0
+1stclassquarters:450.0:0
+crewquarters:1204.0:0
+</transporters>
+
+<SafeThrust>
+2
+</SafeThrust>
+
+<heatsinks>
+2358
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+22437
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+41
+</armor_type>
+
+<armor_tech>
+5
+</armor_tech>
+
+<armor>
+101
+88
+88
+79
+88
+88
+</armor>
+
+<Nose Equipment>
+(B) Naval Autocannon (NAC/20)
+Naval Autocannon (NAC/20)
+Ammo NAC/20:100
+(B) Naval Laser 45
+Naval Laser 45
+(B) Capital Missile Launcher (Killer Whale)
+Capital Missile Launcher (Killer Whale)
+Capital Missile Launcher (Killer Whale)
+Capital Missile Launcher (Killer Whale)
+Ammo Killer Whale:40
+</Nose Equipment>
+
+<Left Front Side Equipment>
+(B) Naval Laser 35
+Naval Laser 35
+(B) Naval Autocannon (NAC/25)
+Naval Autocannon (NAC/25)
+Ammo NAC/25:40
+</Left Front Side Equipment>
+
+<Right Front Side Equipment>
+(B) Naval Laser 35
+Naval Laser 35
+(B) Naval Autocannon (NAC/25)
+Naval Autocannon (NAC/25)
+Ammo NAC/25:40
+</Right Front Side Equipment>
+
+<Aft Equipment>
+(B) Naval Laser 35
+Naval Laser 35
+(B) Naval Autocannon (NAC/25)
+Naval Autocannon (NAC/25)
+Ammo NAC/25:25
+</Aft Equipment>
+
+<Aft Left Side Equipment>
+(B) Naval Laser 35
+Naval Laser 35
+(B) Naval Autocannon (NAC/25)
+Naval Autocannon (NAC/25)
+Ammo NAC/25:40
+</Aft Left Side Equipment>
+
+<Aft Right Side Equipment>
+(B) Naval Laser 35
+Naval Laser 35
+(B) Naval Autocannon (NAC/25)
+Naval Autocannon (NAC/25)
+Ammo NAC/25:40
+</Aft Right Side Equipment>
+
+<Hull Equipment>
+</Hull Equipment>
+
+<Left Broadsides Equipment>
+(B) Naval Autocannon (NAC/30)
+Naval Autocannon (NAC/30)
+Ammo NAC/30:40
+(B) Naval PPC (Light)
+Naval PPC (Light)
+</Left Broadsides Equipment>
+
+<Right Broadsides Equipment>
+(B) Naval Autocannon (NAC/30)
+Naval Autocannon (NAC/30)
+Ammo NAC/30:40
+(B) Naval PPC (Light)
+Naval PPC (Light)
+</Right Broadsides Equipment>
+
+<structural_integrity>
+90
+</structural_integrity>
+
+<capabilities>
+The Dart-class cruiser featured a unique design optimized for independent duty. It had a substantial cargo bay comprising over 15% of the ship's mass, along with six drop collars for handling military and civilian DropShips. The ship's maneuver drives, the Century 4000s, were known for their robustness and reliability. The Dart-class was equipped with a combination of heavy energy weapons and naval autocannons, providing firepower for various combat scenarios.
+</capabilities>
+
+<overview>
+The Dart-class cruiser was developed by Di Tron Heavy Industries in response to the Terran Navy's need for a versatile WarShip that could operate independently in various roles, including combat, exploration, and cargo transport. With its large fuel storage tanks, significant cargo bay, and reinforced structure, the Dart-class was designed to withstand the demands of space exploration and combat in the harsh environments of the Inner Sphere and beyond.
+</overview>
+
+<history>
+The Dart-class cruisers served the Terran Navy for nearly 200 years before being retired and replaced by the new Avatar cruisers. However, many of these retired Darts were purchased by Periphery nations and repurposed for non-military roles. They continued to see service, albeit with their weapons removed, during the Reunification War. The last known Dart-class cruiser, SLS Gettysburg, was destroyed during the New Vandenberg revolt in 2722. It faced an attempt by fanatical Periphery separatists to destroy the newer Essex-class destroyer. By the end of their operational life, the Dart-class cruisers had become a relic, making way for more advanced WarShips in the ever-evolving landscape of naval warfare.
+</history>
+
+<manufacturer>
+Di Tron Heavy Industries, Di Tron Heavy Industries
+</manufacturer>
+
+<primaryFactory>
+Terra, Zebebelgenubi
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<use>
+Light Cruiser
+</use>
+
+<length>
+703 m
+</length>
+
+<height>
+1135 m Sail
+</height>
+
+<source>
+TRO: 3057 Revised
+</source>
+
+<tonnage>
+680000.0
+</tonnage>
+
+<kf_core>
+1
+</kf_core>
+
+<sail>
+1
+</sail>
+
+<grav_decks>
+145
+145
+</grav_decks>
+
+<designtype>
+1
+</designtype>
+
+<crew>
+247
+</crew>
+
+<officers>
+45
+</officers>
+
+<gunners>
+36
+</gunners>
+
+<passengers>
+0
+</passengers>
+
+<marines>
+120
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<life_boat>
+35
+</life_boat>
+
+<escape_pod>
+29
+</escape_pod>
+

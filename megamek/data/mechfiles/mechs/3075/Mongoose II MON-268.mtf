@@ -1,12 +1,19 @@
-Version:1.0
-Mongoose II
-MON-268
+chassis:Mongoose II
+model:MON-268
+mul id:2218
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3076
-Source:TRO 3075
+Source:TRO: 3075
 Rules Level:2
+role:Striker
+
+
+
+quirk:command_mech
+quirk:imp_com
+
 
 Mass:40
 Engine:320 XL Engine

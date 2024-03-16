@@ -20,6 +20,10 @@ Lancer
 LX-2A
 </Model>
 
+<mul id:>
+4472
+</mul id:>
+
 <year>
 3066
 </year>
@@ -31,6 +35,10 @@ LX-2A
 <type>
 IS Level 2
 </type>
+
+<role>
+Fast Dogfighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -92,7 +100,7 @@ ISLargePulseLaser
 </Fuselage Equipment>
 
 <source>
-TRO 3067 - Civil War
+TRO: 3067
 </source>
 
 <tonnage>

@@ -1,0 +1,176 @@
+chassis:Shogun
+model:C 3
+
+Config:Biped
+techbase:Clan
+era:3139
+rules level:2
+role:Sniper
+Source:Rec Guide:ilClan #31
+mul id:9463
+
+
+
+quirk:barrel_fists_la
+quirk:barrel_fists_ra
+quirk:difficult_maintain
+quirk:non_standard
+
+
+mass:85
+engine:340 XL (Clan) Engine(IS)
+structure:IS Standard
+myomer:Standard
+
+heat sinks:17 Clan Double
+walk mp:4
+jump mp:4
+
+armor:Ferro-Fibrous(Clan)
+LA armor:28
+RA armor:28
+LT armor:27
+RT armor:27
+CT armor:40
+HD armor:9
+LL armor:30
+RL armor:30
+RTL armor:9
+RTR armor:9
+RTC armor:12
+
+Weapons:5
+ER PPC, Right Torso
+LRM 15, Right Arm
+LRM 15, Left Arm
+ATM 6, Right Torso
+ATM 6, Left Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLLRM15
+CLLRM15
+CLArtemisV
+CLArtemisV
+Clan Ferro-Fibrous
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLLRM15
+CLLRM15
+CLArtemisV
+CLArtemisV
+Clan Ferro-Fibrous
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+CLATM6
+CLATM6
+CLATM6
+Clan Ammo LRM-15 (Clan) Artemis V-capable
+Clan Ammo LRM-15 (Clan) Artemis V-capable
+Clan Ammo ATM-6
+Clan Ammo ATM-6 ER
+CLCASEII
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+CLERPPC
+CLERPPC
+PPC Capacitor
+CLATM6
+CLATM6
+CLATM6
+Clan Ammo ATM-6 HE
+Clan Ammo LRM-15 (Clan) Artemis V-capable
+Clan Ammo LRM-15 (Clan) Artemis V-capable
+CLCASEII
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+Jump Jet
+
+Head:
+Life Support
+Sensors
+Cockpit
+Clan Ferro-Fibrous
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Clan Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Clan Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+overview:The initial specifications for the 'Mech were for a "highly survivable multi-role assault BattleMech." When the Shogun project started the design phase in 2771, those needs had altered little, save to compensate for fundamental flaws in the Stalker's design.
+
+capabilities:Though the Shogun isn't any faster than its predecessor, the inclusion of jump jets allows it to be much more maneuverable. The Shogun's CASE and ferro fiber armor also make it significantly more survivable than the Stalker.
+
+deployment:A complete redesign of the Shogun using Clan technology that is used exclusively by Wolf's Dragoons, the Shogun C is armed with two LRM-20 missile racks with an Artemis IV fire control system for greater missile accuracy. The 'Mech also carries an ER PPC and four Streak SRM-6 launchers, giving it a devastating close range damage capability.
+
+history:The Shogun's history was cloaked in myth and legend, at least until the Clan and Inner Sphere records could be compared. The SLDF issued the original requirements for the Shogun in the late 26th century, although the 'Mech itself did not reach construction for another two centuries. The success and widespread distribution of the Stalker—which served the role of the Shogun, if imperfectly—along with the outbreak of the Reunification War, and then the tranquility of the Star League's Golden Age, saw the original design criteria scrapped. After General Kerensky's conflict, the SLDF needed a new attack BattleMech to replenish its ranks. The Shogun had a good chance of succeeding the Stalker, but Kerensky's Exodus and the First Succession War interfered. Mitchell Vehicles, who won the design when the SLDF regained Graham IV, completed only eight manufacturing runs prior to the Exodus, and only a few more before their plants were destroyed in the First Succession War. That left the Shogun to slip into obscurity—at least until the Wolf's Dragoons returned a few to the Inner Sphere before the Exodus, and only a few more runs before their factories were destroyed in the First Succession War. As a result, the Shogun died quickly—at least until the Wolf's Dragoons returned a few to the Inner Sphere.
+
+manufacturer:Manufacturing Plant SFF-TU1
+primaryfactory:Tukayyid
+systemmanufacturer:CHASSIS:Kitushi Shogun
+systemmanufacturer:ENGINE:Type I 340 XL
+systemmanufacturer:ARMOR:Forging AM15 with CASEII
+systemmanufacturer:JUMPJET:Anderson Propulsion 21
+systemmanufacturer:COMMUNICATIONS:HartfordCo COM 5000
+systemmanufacturer:TARGETING:Dtrac Suite 5

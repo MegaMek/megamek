@@ -1,0 +1,57 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Infantry
+</UnitType>
+
+<Name>
+Beast Infantry (Branth)
+</Name>
+
+<Model>
+(Auto-Rifle)
+</Model>
+
+<year>
+2401
+</year>
+
+<originalBuildYear>
+2401
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<motion_type>
+Beast:Branth
+</motion_type>
+
+<Field Guns Equipment>
+</Field Guns Equipment>
+
+<squad_size>
+7
+</squad_size>
+
+<squadn>
+1
+</squadn>
+
+<Primary>
+InfantryAssaultRifle
+</Primary>
+
+<armorKit>
+Clothing, Fatigues/Civilian/Non-Armored
+</armorKit>
+

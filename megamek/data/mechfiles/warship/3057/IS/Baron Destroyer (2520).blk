@@ -1,0 +1,269 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Warship
+</UnitType>
+
+<Name>
+Baron Destroyer
+</Name>
+
+<Model>
+(2520)
+</Model>
+
+<mul id:>
+3792
+</mul id:>
+
+<year>
+2520
+</year>
+
+<originalBuildYear>
+2520
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<role>
+None
+</role>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+asfbay:6.0:2:1
+smallcraftbay:6.0:1:2
+cargobay:137961.0:1:3
+2ndclassquarters:140.0:0
+crewquarters:1351.0:0
+1stclassquarters:500.0:0
+</transporters>
+
+<SafeThrust>
+2
+</SafeThrust>
+
+<heatsinks>
+1100
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+16250
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+13
+</armor_type>
+
+<armor_tech>
+5
+</armor_tech>
+
+<armor>
+31
+29
+29
+25
+29
+29
+</armor>
+
+<Nose Equipment>
+(B) Naval Laser 35
+Naval Laser 35
+Naval Laser 35
+Naval Laser 35
+Naval Laser 35
+Naval Laser 35
+</Nose Equipment>
+
+<Left Front Side Equipment>
+(B) Naval Autocannon (NAC/10)
+Naval Autocannon (NAC/10)
+Ammo NAC/10:80
+(B) Capital Missile Launcher (White Shark)
+Capital Missile Launcher (White Shark)
+Ammo White Shark:20
+</Left Front Side Equipment>
+
+<Right Front Side Equipment>
+(B) Naval Autocannon (NAC/10)
+Naval Autocannon (NAC/10)
+Ammo NAC/10:80
+(B) Capital Missile Launcher (White Shark)
+Capital Missile Launcher (White Shark)
+Ammo White Shark:20
+</Right Front Side Equipment>
+
+<Aft Equipment>
+(B) Naval Laser 35
+Naval Laser 35
+Naval Laser 35
+(B) Capital Missile Launcher (White Shark)
+Capital Missile Launcher (White Shark)
+Ammo White Shark:20
+</Aft Equipment>
+
+<Aft Left Side Equipment>
+(B) Naval Autocannon (NAC/10)
+Naval Autocannon (NAC/10)
+Ammo NAC/10:80
+</Aft Left Side Equipment>
+
+<Aft Right Side Equipment>
+(B) Naval Autocannon (NAC/10)
+Naval Autocannon (NAC/10)
+Ammo NAC/10:80
+</Aft Right Side Equipment>
+
+<Hull Equipment>
+</Hull Equipment>
+
+<Left Broadsides Equipment>
+(B) Naval Laser 35
+Naval Laser 35
+Naval Laser 35
+Naval Laser 35
+Naval Laser 35
+Naval Laser 35
+Naval Laser 35
+Naval Laser 35
+Naval Laser 35
+Naval Laser 35
+</Left Broadsides Equipment>
+
+<Right Broadsides Equipment>
+(B) Naval Laser 35
+Naval Laser 35
+Naval Laser 35
+Naval Laser 35
+Naval Laser 35
+Naval Laser 35
+Naval Laser 35
+Naval Laser 35
+Naval Laser 35
+Naval Laser 35
+</Right Broadsides Equipment>
+
+<structural_integrity>
+30
+</structural_integrity>
+
+<capabilities>
+The Baron-class Destroyer, constructed in the Terran Hegemony, was intended to support the strategy of "aggressive peacemaking" by providing a technological advantage. However, delays caused by flaws in the Palenkov-Reese engines hindered the class's performance, making it less effective than anticipated. Nevertheless, the Baron-class Destroyers offered generously sized fuel bunkers and extra accommodation for thirty passengers, which made them suitable as armed transports for high-ranking Star League diplomats, officials, and officers during travel, particularly in the Periphery.
+</capabilities>
+
+<overview>
+By the beginning of the twenty-sixth century, the Terran Hegemony adopted a strategy of "aggressive peacemaking" in dealing with other Inner Sphere powers. To support this policy, the Hegemony Armed Forces focused on maintaining technological superiority, even as diplomatic efforts were made to establish trade and peace treaties. However, the rapid pace of technological development often rendered equipment outdated before it could enter service. The Baron-class Destroyer, initially promising, faced significant delays and flaws in its engines, ultimately leading to disappointing performance. Despite this, the Baron-class Destroyers found use as armed transports for high-ranking Star League personnel, especially in the Periphery. The SLDF decommissioned the class in 2720, selling them to member states, and the last remaining Baron-class Destroyer was destroyed in 2853.
+</overview>
+
+<deployment>
+In 2515, construction began on the first Baron-class Destroyer, but flaws in the Palenkov-Reese engines were discovered, leading to a two-year delay for corrections. However, the drive performance of the class remained significantly reduced. Despite their disappointing performance, over half of the existing Baron-class Destroyers were distributed to Star League member states in 2582, while the remainder served in the SLDF. Although the Baron-class Destroyers saw action during the Reunification War, their performance remained lackluster. The SLDF decommissioned the class in 2720, selling the vessels to member states. The last Baron-class Destroyer, the DCS Yedo, was destroyed in 2853 by the battlecruiser LCS Invincible at the nadir jump point of the Hesperus system.
+</deployment>
+
+<manufacturer>
+Krester Ship Construction
+</manufacturer>
+
+<primaryFactory>
+Terra
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<use>
+Destroyer
+</use>
+
+<length>
+545.5 m
+</length>
+
+<height>
+1150 m Sail
+</height>
+
+<source>
+TRO: 3057 Revised
+</source>
+
+<tonnage>
+480000.0
+</tonnage>
+
+<kf_core>
+1
+</kf_core>
+
+<sail>
+1
+</sail>
+
+<grav_decks>
+65
+</grav_decks>
+
+<designtype>
+1
+</designtype>
+
+<crew>
+275
+</crew>
+
+<officers>
+40
+</officers>
+
+<gunners>
+43
+</gunners>
+
+<passengers>
+30
+</passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<life_boat>
+13
+</life_boat>
+
+<escape_pod>
+38
+</escape_pod>
+

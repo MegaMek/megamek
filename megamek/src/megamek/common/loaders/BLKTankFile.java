@@ -23,9 +23,9 @@ import org.apache.logging.log4j.LogManager;
  * @since April 6, 2002, 2:06 AM
  */
 public class BLKTankFile extends BLKFile implements IMechLoader {
-    
+
     private boolean superheavy = false;
-    
+
     public BLKTankFile(BuildingBlock bb) {
         dataFile = bb;
     }
@@ -111,20 +111,7 @@ public class BLKTankFile extends BLKFile implements IMechLoader {
         }
 
         t.setWeight(weight);
-
-        if (!dataFile.exists("Name")) {
-            throw new EntityLoadingException("Could not find name block.");
-        }
-        t.setChassis(dataFile.getDataAsString("Name")[0]);
-        if (dataFile.exists("Model") && (dataFile.getDataAsString("Model")[0] != null)) {
-            t.setModel(dataFile.getDataAsString("Model")[0]);
-        } else {
-            t.setModel("");
-        }
-
-        setTechLevel(t);
-        setFluff(t);
-        checkManualBV(t);
+        setBasicEntityData(t);
 
         if (!dataFile.exists("motion_type")) {
             throw new EntityLoadingException("Could not find movement block.");
@@ -216,9 +203,8 @@ public class BLKTankFile extends BLKFile implements IMechLoader {
                 t.setArmorTechLevel(dataFile.getDataAsInt(t.getLocationName(i) + "_armor_type")[0], i);
             }
         }
-        
+
         t.autoSetInternal();
-        t.recalculateTechAdvancement();
 
         if (superheavy) {
             loadEquipment(t, "Front", Tank.LOC_FRONT);
@@ -290,7 +276,8 @@ public class BLKTankFile extends BLKFile implements IMechLoader {
         if (dataFile.exists("trailer")) {
             t.setTrailer(true);
         }
-
+        t.recalculateTechAdvancement();
+        loadQuirks(t);
         return t;
     }
 }

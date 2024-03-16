@@ -1,12 +1,20 @@
-Version:1.0
-Apollo
-APL-1M
+chassis:Apollo
+model:APL-1M
+mul id:54
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3054
-Source:TRO 3055 - Clan Invasion
+Source:TRO: 3055
 Rules Level:2
+role:Missile Boat
+
+
+
+
+quirk:fast_reload
+quirk:rugged_1
+
 
 Mass:55
 Engine:220 Fusion Engine

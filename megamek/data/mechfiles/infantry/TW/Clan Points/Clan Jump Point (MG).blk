@@ -20,6 +20,10 @@ Clan Jump Point
 (MG)
 </Model>
 
+<mul id:>
+613
+</mul id:>
+
 <year>
 2815
 </year>
@@ -27,6 +31,10 @@ Clan Jump Point
 <type>
 Clan Level 2
 </type>
+
+<role>
+Ambusher
+</role>
 
 <motion_type>
 Jump
@@ -36,7 +44,7 @@ Jump
 </Field Guns Equipment>
 
 <source>
-Total Warfare - Succession Wars
+Total Warfare
 </source>
 
 <squad_size>

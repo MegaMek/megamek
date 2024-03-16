@@ -39,16 +39,16 @@ public class ISMekMortar4 extends MekMortarWeapon {
         cost = 32000;
         rulesRefs = "324, TO";
         techAdvancement.setTechBase(TECH_BASE_ALL)
-        	.setIntroLevel(false)
-        	.setUnofficial(false)
-            .setTechRating(RATING_B)
-            .setAvailability(RATING_D, RATING_F, RATING_F, RATING_E)
-            .setISAdvancement(2526, 2531, 3052, 2819, 3043)
-            .setISApproximate(true, false, false, false, false)
-            .setClanAdvancement(2526, 2531, DATE_NONE, DATE_NONE, DATE_NONE)
-            .setClanApproximate(false, false, false, false, false)
-            .setPrototypeFactions(F_TH)
-            .setProductionFactions(F_TH)
-            .setReintroductionFactions(F_FS,F_LC);
+                .setIntroLevel(false)
+                .setUnofficial(false)
+                .setTechRating(RATING_B)
+                .setAvailability(RATING_D, RATING_F, RATING_F, RATING_E)
+                .setISAdvancement(2526, 2531, 3052, 2819, 3043)
+                .setISApproximate(true, false, false, false, false)
+                .setClanAdvancement(2526, 2531, DATE_NONE, DATE_NONE, DATE_NONE)
+                .setClanApproximate(false, false, false, false, false)
+                .setPrototypeFactions(F_TH)
+                .setProductionFactions(F_TH)
+                .setReintroductionFactions(F_FS, F_LC);
     }
 }

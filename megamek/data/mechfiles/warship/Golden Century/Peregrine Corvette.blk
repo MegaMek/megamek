@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,6 +20,10 @@ Peregrine Corvette
 (2969)
 </Model>
 
+<mul id:>
+4805
+</mul id:>
+
 <year>
 2969
 </year>
@@ -31,6 +35,10 @@ Peregrine Corvette
 <type>
 Clan Level 3
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Aerodyne
@@ -139,12 +147,48 @@ ISMobileHPG
 30
 </structural_integrity>
 
-<imagepath>
-.\data\images\fluff\Aero\Peregrine (2969).png
-</imagepath>
+<capabilities>
+Equipped with a conservative yet effective design, the Peregrine-class WarShip demonstrates its capabilities through a modest yet formidable armament. Dual large lasers on each facing, a half dozen naval lasers, and a pair of 35-class naval autocannons in the nose provide the bulk of its offensive power. With 77 tons of Lamellor ferro-carbide armor, the Peregrine-class offers robust protection against non-capital fire. Its maximum acceleration of 4.5 Gs grants exceptional maneuverability, making it a nimble adversary in combat. The inclusion of a lithium-fusion battery further enhances its survivability and allows it to extricate itself from unfavorable situations. Although lacking a grav deck, the Peregrine-class is ideally suited for short missions within Clan space, showcasing its adaptability and versatility in various deployment scenarios.
+</capabilities>
+
+<overview>
+The Peregrine-class WarShips, originating from Clan Jade Falcon, hold a unique position in naval warfare. While not posing a major threat to well-prepared defenders, they are far from easy prey for aggressors. Originally overshadowed, these WarShips experienced a resurgence during the chaotic Jihad era, finding new purpose and playing a significant role in Clan operations.
+</overview>
+
+<history>
+Initially overlooked during the Golden Century, the Peregrine-class WarShips gained renewed significance during the tumultuous Jihad era. Born out of the Jade Falcons' pragmatic approach and pride, the Peregrine-class represented a conservative response to the growing Clan WarShip fleets. While other Clans focused on grand battleships, the Falcons recognized the need for a smaller, more practical option. The Peregrine-class WarShip proved to be the answer. One notable engagement involved the Green Kestrel, a prominent Peregrine-class vessel. In the Acadia system, it engaged in a Trial of Possession against Clan Blood Spirit forces over the Arcadian Russets. Despite both sides presenting standard forces, the Green Kestrel's arrival in orbit was unhindered, thanks to the Spirits' decision to allow it without interference. The ensuing battle, involving fighter engagements and ground combat, ultimately saw the Green Kestrel's devastating bombardment turn the tide in favor of the Falcons. This triumph secured the Russets for the Jade Falcons. Another renowned Peregrine-class WarShip, the Silver Merlin, gained fame for its relentless pursuit and eradication of members associated with the Dark Caste. Its successful missions granted the vessel increased autonomy and prolonged periods of active duty. However, the fate of the Silver Merlin remains unknown after its departure on a hunting mission in 3045. Unconfirmed reports from the Deep Periphery suggest a potential connection to the Blakist-affiliated Green Ghosts and an unidentified Peregrine-class vessel. Throughout their history, the Peregrine-class WarShips have proven their worth, displaying their adaptability, maneuverability, and firepower. Their ability to play a significant role in Clan operations during critical periods highlights their importance as valuable assets within the Clan naval arsenal.
+</history>
+
+<manufacturer>
+Unknown
+</manufacturer>
+
+<primaryFactory>
+Unknown
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<use>
+Corvette
+</use>
+
+<length>
+400 m
+</length>
+
+<height>
+950 m Sail
+</height>
 
 <source>
-Succession Wars
+TRO: Golden Century
 </source>
 
 <tonnage>
@@ -162,6 +206,10 @@ Succession Wars
 <sail>
 1
 </sail>
+
+<designtype>
+1
+</designtype>
 
 <crew>
 129
@@ -194,3 +242,4 @@ Succession Wars
 <escape_pod>
 10
 </escape_pod>
+

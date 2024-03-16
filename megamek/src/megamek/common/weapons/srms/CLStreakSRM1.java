@@ -42,7 +42,7 @@ public class CLStreakSRM1 extends StreakSRMWeapon {
         		.andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON);
         // Per Herb all ProtoMech launcher use the ProtoMech Chassis progression. 
         //But SRM Tech Base and Avail Ratings.
-        rulesRefs = "230,TM";
+        rulesRefs = "230, TM";
         techAdvancement.setTechBase(TECH_BASE_CLAN)
         	.setIntroLevel(false)
         	.setUnofficial(false)

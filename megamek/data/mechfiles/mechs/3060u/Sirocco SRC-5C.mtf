@@ -1,12 +1,26 @@
-Version:1.0
-Sirocco
-SRC-5C
+chassis:Sirocco
+model:SRC-5C
+mul id:2952
 
 Config:Quad
 TechBase:Inner Sphere
 Era:3060
-Source:TRO 3060
+Source:TRO: 3060
 Rules Level:2
+role:Juggernaut
+
+
+
+quirk:difficult_maintain
+weaponquirk:direct_torso_mount:RT:3:ISLightGaussRifle
+weaponquirk:direct_torso_mount:RT:8:ISERMediumLaser
+weaponquirk:direct_torso_mount:RT:9:SRM 4
+weaponquirk:direct_torso_mount:RT:10:ISERMediumLaser
+weaponquirk:direct_torso_mount:LT:0:ISLightGaussRifle
+weaponquirk:direct_torso_mount:LT:5:ISERMediumLaser
+weaponquirk:direct_torso_mount:LT:6:SRM 4
+weaponquirk:direct_torso_mount:LT:7:ISERMediumLaser
+
 
 Mass:95
 Engine:285 Fusion Engine

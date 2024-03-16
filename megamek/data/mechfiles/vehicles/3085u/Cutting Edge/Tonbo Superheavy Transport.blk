@@ -16,9 +16,13 @@ SupportVTOL
 Tonbo Superheavy Transport
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+3275
+</mul id:>
 
 <Tonnage>
 56
@@ -61,12 +65,16 @@ Lift Hoist
 IS Level 2
 </type>
 
+<role>
+None
+</role>
+
 <year>
 3059
 </year>
 
 <source>
-TRO 3085 - Clan Invasion
+TRO: 3085
 </source>
 
 <internal_type>

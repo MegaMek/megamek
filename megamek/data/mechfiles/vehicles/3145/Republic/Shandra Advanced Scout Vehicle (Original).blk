@@ -20,6 +20,10 @@ Shandra Advanced Scout Vehicle
 (Original)
 </Model>
 
+<mul id:>
+6699
+</mul id:>
+
 <year>
 3087
 </year>
@@ -27,6 +31,10 @@ Shandra Advanced Scout Vehicle
 <type>
 IS Level 2
 </type>
+
+<role>
+Scout
+</role>
 
 <motion_type>
 Wheeled
@@ -67,9 +75,19 @@ Machine Gun
 </Rear Equipment>
 
 <source>
-TRO 3145 Republic of the Sphere - Early Republic
+TRO: 3145 Republic of the Sphere
 </source>
 
 <tonnage>
 25.0
 </tonnage>
+
+<quirks>
+poor_sealing
+power_reverse
+</quirks>
+
+<weaponQuirks>
+exposed_linkage:RR:0:Machine Gun
+exposed_linkage:RR:1:Machine Gun
+</weaponQuirks>

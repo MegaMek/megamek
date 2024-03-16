@@ -8,5 +8,5 @@ Vedette Medium Tank (NETC),6
 Fulcrum Heavy Hovertank (Standard),5
 JES I Tactical Missile Carrier (Standard),4
 Hetzer Wheeled Assault Gun (LB-X),3
-Condor Heavy Hover Tank (Upgrade) (Standard),2
+Condor Heavy Hover Tank (Upgrade),2
 Vedette Medium Tank (Cell),1

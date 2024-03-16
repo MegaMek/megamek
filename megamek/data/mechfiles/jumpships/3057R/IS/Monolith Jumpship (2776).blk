@@ -20,6 +20,10 @@ Monolith Jumpship
 (2776)
 </Model>
 
+<mul id:>
+4658
+</mul id:>
+
 <year>
 2776
 </year>
@@ -31,6 +35,10 @@ Monolith Jumpship
 <type>
 IS Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Aerodyne
@@ -116,7 +124,7 @@ dockingcollar
 </structural_integrity>
 
 <source>
-TRO 3057R - Star League
+TRO: 3057 Revised
 </source>
 
 <tonnage>

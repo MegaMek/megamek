@@ -1,12 +1,18 @@
-Version:1.1
-Kodiak
-3
+chassis:Kodiak
+model:3
+mul id:1807
 
 Config:Biped
 TechBase:Clan
 Era:3068
-Source:TRO 3058 - Jihad
+Source:TRO: 3058
 Rules Level:2
+role:Brawler
+
+quirk:battle_fists_la
+quirk:battle_fists_ra
+quirk:distracting
+
 
 Mass:100
 Engine:400 XL (Clan) Engine

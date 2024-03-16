@@ -15,6 +15,10 @@ Morningstar City Command Vehicle
 <Model>
 (Company Command)
 </Model>
+
+<mul id:>
+4669
+</mul id:>
 <Tonnage>
 60
 </Tonnage>
@@ -54,6 +58,10 @@ ISC3MasterComputer
 <type>
 IS
 </type>
+
+<role>
+Skirmisher
+</role>
 <year>
 3068
 </year>
@@ -69,3 +77,7 @@ IS
 <motion_type>
 Wheeled
 </motion_type>
+
+<source>
+TRO: 3067
+</source>

@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Vector;
 
+import megamek.client.ui.Messages;
 import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
@@ -47,33 +48,29 @@ public class SearchlightAttackAction extends AbstractAttackAction {
     }
 
     public boolean isPossible(Game game) {
-        return SearchlightAttackAction.isPossible(game, getEntityId(), game
-                .getTarget(getTargetType(), getTargetId()), this);
+        return SearchlightAttackAction.isPossible(game, getEntityId(), game.getTarget(getTargetType(), getTargetId()), this);
     }
 
-    public static boolean isPossible(Game game, int attackerId,
-            Targetable target, SearchlightAttackAction exempt) {
+    public static boolean isPossible(Game game, int attackerId, Targetable target, SearchlightAttackAction exempt) {
         final Entity attacker = game.getEntity(attackerId);
-        
+
         // can't light up if either you or the target don't exist, or you don't have your light on
         if ((attacker == null) || !attacker.isUsingSearchlight() || (target == null)) {
             return false;
         }
-        
+
         // can't light up if you're stunned
         if ((attacker instanceof Tank) && (((Tank) attacker).getStunnedTurns() > 0)) {
             return false;
         }
-        
+
         // can't searchlight if target is outside of the front firing arc
-        if (!Compute.isInArc(attacker.getPosition(), attacker
-                .getSecondaryFacing(), target,
-                attacker.getForwardArc())) {
+        if (!Compute.isInArc(attacker.getPosition(), attacker.getSecondaryFacing(), target, attacker.getForwardArc())) {
             return false;
         }
-        
+
         // can't light up more than once per round
-        for (Enumeration<EntityAction> actions = game.getActions(); actions.hasMoreElements();) {
+        for (Enumeration<EntityAction> actions = game.getActions(); actions.hasMoreElements(); ) {
             EntityAction action = actions.nextElement();
             if (action instanceof SearchlightAttackAction) {
                 SearchlightAttackAction act = (SearchlightAttackAction) action;
@@ -85,14 +82,14 @@ public class SearchlightAttackAction extends AbstractAttackAction {
                 }
             }
         }
-        
+
         // per TacOps, integrated searchlights have max range of 30 hexes
         // hand-held ones have a max range of 10 hexes, but are not implemented
         if (attacker.getPosition().distance(target.getPosition()) > 30) {
             return false;
         }
-        
-        // can't light up if out of LOS. Most expensive calculation, so keep it last        
+
+        // can't light up if out of LOS. Most expensive calculation, so keep it last
         return LosEffects.calculateLOS(game, attacker, target).canSee();
     }
 
@@ -125,8 +122,8 @@ public class SearchlightAttackAction extends AbstractAttackAction {
         attacker.setUsedSearchlight(true);
 
         ArrayList<Coords> in = Coords.intervening(apos, tpos); // nb includes
-                                                                // attacker &
-                                                                // target
+        // attacker &
+        // target
         for (Coords c : in) {
             for (Entity en : game.getEntitiesVector(c)) {
                 LosEffects los = LosEffects.calculateLOS(game, attacker, en);
@@ -143,16 +140,16 @@ public class SearchlightAttackAction extends AbstractAttackAction {
         }
         return reports;
     }
-    
+
     /**
      * Updates the supplied Game's list of hexes illuminated.
-     * 
-     * @param game      The game to update
-     * @return          True if new hexes were added, else false.
+     *
+     * @param game The {@link Game} to update
+     * @return True if new hexes were added, else false.
      */
     public boolean setHexesIlluminated(Game game) {
         boolean hexesAdded = false;
-        
+
         final Entity attacker = getEntity(game);
         final Coords apos = attacker.getPosition();
         final Targetable target = getTarget(game);
@@ -177,8 +174,8 @@ public class SearchlightAttackAction extends AbstractAttackAction {
         final Coords tpos = target.getPosition();
 
         ArrayList<Coords> in = Coords.intervening(apos, tpos); // nb includes
-                                                                // attacker &
-                                                                // target
+        // attacker &
+        // target
         for (Coords c : in) {
             for (Entity en : game.getEntitiesVector(c)) {
                 LosEffects los = LosEffects.calculateLOS(game, attacker, en);
@@ -188,5 +185,11 @@ public class SearchlightAttackAction extends AbstractAttackAction {
             }
         }
         return false;
+    }
+
+    @Override
+    public String toSummaryString(final Game game) {
+        Entity target = game.getEntity(this.getTargetId());
+        return Messages.getString("BoardView1.SearchlightAttackAction") + ((target != null) ? ' ' + target.getShortName() : "");
     }
 }

@@ -16,9 +16,13 @@ Tank
 Mobile Headquarters
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+2201
+</mul id:>
 
 <year>
 2620
@@ -27,6 +31,10 @@ Mobile Headquarters
 <type>
 IS Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Wheeled
@@ -73,7 +81,7 @@ Medium Laser
 </Turret Equipment>
 
 <source>
-TRO 3039 - Star League
+TRO: 3039
 </source>
 
 <tonnage>

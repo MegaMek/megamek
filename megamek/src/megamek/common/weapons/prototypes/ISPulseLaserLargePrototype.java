@@ -20,7 +20,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.PrototypeLaserHandler;
 import megamek.common.weapons.lasers.PulseLaserWeapon;
-import megamek.server.Server;
+import megamek.server.GameManager;
 
 /**
  * @author David Nawton
@@ -50,7 +50,7 @@ public class ISPulseLaserLargePrototype extends PulseLaserWeapon {
         waterExtremeRange = 10;
         tonnage = 7.0;
         criticals = 2;
-        bv = 119;
+        bv = 108;
         cost = 875000;
         shortAV = 9;
         medAV = 9;
@@ -78,8 +78,13 @@ public class ISPulseLaserLargePrototype extends PulseLaserWeapon {
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
-                                              Server server) {
-        return new PrototypeLaserHandler(toHit, waa, game, server);
+                                              GameManager manager) {
+        return new PrototypeLaserHandler(toHit, waa, game, manager);
+    }
+
+    @Override
+    public int getAlphaStrikeHeat() {
+        return 13;
     }
 }
 

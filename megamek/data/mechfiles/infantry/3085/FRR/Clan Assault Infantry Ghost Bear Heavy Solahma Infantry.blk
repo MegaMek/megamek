@@ -15,6 +15,10 @@ Clan Assault Infantry
 <Model>
 Ghost Bear Heavy Solahma Infantry
 </Model>
+
+<mul id:>
+600
+</mul id:>
 <squad_size>
 5
 </squad_size>
@@ -36,11 +40,15 @@ ClanKit
 <type>
 Clan Level 3
 </type>
+
+<role>
+Ambusher
+</role>
 <year>
 3015
 </year>
 <source>
-TRO 3085 - Late Succession War - LosTech
+TRO: 3085
 </source>
 <motion_type>
 Jump

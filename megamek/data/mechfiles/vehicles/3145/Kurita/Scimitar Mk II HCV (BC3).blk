@@ -20,6 +20,10 @@ Scimitar Mk II HCV
 (BC3)
 </Model>
 
+<mul id:>
+6377
+</mul id:>
+
 <year>
 3138
 </year>
@@ -27,6 +31,10 @@ Scimitar Mk II HCV
 <type>
 IS Level 3
 </type>
+
+<role>
+Striker
+</role>
 
 <motion_type>
 Hover
@@ -79,7 +87,7 @@ SRM 4
 </Turret Equipment>
 
 <source>
-TRO 3145 Draconis Combine - Dark Ages
+TRO: 3145 Draconis Combine
 </source>
 
 <tonnage>

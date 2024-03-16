@@ -20,6 +20,10 @@ Hammerhead
 HMR-HC
 </Model>
 
+<mul id:>
+7194
+</mul id:>
+
 <year>
 2485
 </year>
@@ -31,6 +35,10 @@ HMR-HC
 <type>
 IS Level 2
 </type>
+
+<role>
+Dogfighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -91,7 +99,7 @@ Large Laser
 </Fuselage Equipment>
 
 <source>
-XTRO Primitives IV - Age of War
+XTR: Primitives IV
 </source>
 
 <tonnage>
@@ -125,4 +133,12 @@ ARMOR:Boeing C-tran Ferro-Aluminum
 COMMUNICATIONS:Lassitor FibroLink
 TARGETING:BANDAR 9
 </systemManufacturers>
+
+
+<quirks>
+atmo_flyer
+obsolete
+poor_life_support
+weak_undercarriage
+</quirks>
 

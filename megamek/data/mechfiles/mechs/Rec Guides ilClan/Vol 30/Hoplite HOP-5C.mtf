@@ -1,0 +1,165 @@
+chassis:Hoplite
+model:HOP-5C
+mul id:9431
+Config:Biped
+techbase:Mixed (IS Chassis)
+era:3138
+source:Rec Guide:ilClan #30
+rules level:3
+role:Brawler
+
+
+
+quirk:no_arms
+
+
+mass:55
+engine:220 Light Engine(IS)
+structure:IS Endo Steel
+myomer:Standard
+
+heat sinks:10 Clan Double
+walk mp:4
+jump mp:0
+
+armor:Ballistic-Reinforced(Inner Sphere)
+LA armor:18
+RA armor:18
+LT armor:18
+RT armor:18
+CT armor:28
+HD armor:9
+LL armor:26
+RL armor:26
+RTL armor:8
+RTR armor:8
+RTC armor:8
+
+Weapons:2
+MML 5, Left Arm
+Ultra AC/10, Right Arm
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+ISMML5
+ISMML5
+ISMML5
+ISAES
+ISAES
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Ballistic-Reinforced
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+CLUltraAC10
+CLUltraAC10
+CLUltraAC10
+CLUltraAC10
+ISAES
+ISAES
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Ballistic-Reinforced
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+CLDoubleHeatSink
+CLDoubleHeatSink
+IS Ammo MML-5 SRM
+IS Ammo MML-5 LRM
+CLCASEII
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Ballistic-Reinforced
+IS Ballistic-Reinforced
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+CLDoubleHeatSink
+CLDoubleHeatSink
+Clan Ultra AC/10 Ammo
+Clan Ultra AC/10 Ammo
+Clan Ultra AC/10 Ammo
+CLCASEII
+IS Endo Steel
+IS Endo Steel
+IS Ballistic-Reinforced
+IS Ballistic-Reinforced
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+IS Endo Steel
+IS Endo Steel
+
+Head:
+Life Support
+Sensors
+Cockpit
+IS Endo Steel
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Ballistic-Reinforced
+IS Ballistic-Reinforced
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Ballistic-Reinforced
+IS Ballistic-Reinforced
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+overview:Martinson Armaments designed the Hoplite as a support 'Mech for deployment alongside the infantry divisions of the newly formed Star League Defense Force.
+capabilities:The Hoplite is slow for a medium 'Mech, with a top speed of only 64.8 km/h. However its 11.5 tons of armor and heavy arsenal, both impressive for a 'Mech of its size, makes the Hoplite a rugged machine able to fight its way out of most situations using superior firepower.
+deployment:No Information on this Variant	
+history:The Hoplite first saw service with the newly formed Star League Defense Force during the Reunification War before being relegated to Terran Hegemony militia units in the twenty-seventh century. While every Hoplite in the Inner Sphere was destroyed during the Amaris Crisis and the early Succession Wars, Aleksandr Kerensky's SLDF exiles found the simple and rugged design ideal for bolstering their forces in the months prior to the Exodus Civil War. Selected by Wolf's Dragoons in the belief that the ancient design wouldn't arouse undue attention, it had the complete opposite effect, and only raised more questions as to the Dragoons' origins when they arrived in 3005. After the mercenaries cut ties with the Clan Homeworlds in 3020, they also lost access to replacement Hoplites, with attrition bringing the design close to extinction by the Jihad. During the Jihad, when the surviving Dragoons relocated to Arc-Royal, experimental refits were performed on the remaining Hoplites, which continued after the conflict's end.
+manufacturer:Arc-Royal MechWorks
+primaryfactory:Arc-Royal
+systemmanufacturer:CHASSIS:Star League HO-01E
+systemmanufacturer:ENGINE:Magna 220 Light
+systemmanufacturer:ARMOR:Durallex Ballistic-Reinforced
+systemmanufacturer:COMMUNICATIONS:MultiGab 2000
+systemmanufacturer:TARGETING:Dalban HiRez II with Probe
+

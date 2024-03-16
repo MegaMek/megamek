@@ -1,7 +1,7 @@
 Lyran Commonwealth Heavy Vehicles 3135+
 SRM Carrier (C3),1
 Rommel Tank (Standard),2
-Marsden II MBT II-A (LB-X),3
+Marsden MBT II-A (LB-X),3
 Manticore Heavy Tank (3055 Upgrade),4
 Patton Tank (Ultra),5
 Rommel Tank (Gauss),6

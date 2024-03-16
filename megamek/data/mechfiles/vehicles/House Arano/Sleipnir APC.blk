@@ -16,9 +16,13 @@ Tank
 Sleipnir APC Tank
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+7613
+</mul id:>
 
 <year>
 3002
@@ -31,6 +35,10 @@ Sleipnir APC Tank
 <type>
 IS Level 1
 </type>
+
+<role>
+Brawler
+</role>
 
 <motion_type>
 Wheeled

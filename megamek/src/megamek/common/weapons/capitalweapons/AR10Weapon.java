@@ -13,6 +13,8 @@
 package megamek.common.weapons.capitalweapons;
 
 import megamek.common.AmmoType;
+import megamek.common.Mounted;
+import megamek.common.alphaStrike.AlphaStrikeElement;
 
 /**
  * @author Jay Lawson
@@ -47,7 +49,7 @@ public class AR10Weapon extends CapitalMissileWeapon {
         this.extAV = 2;
         this.maxRange = RANGE_EXT;
         this.atClass = CLASS_AR10;
-        rulesRefs = "210,TM";
+        rulesRefs = "210, TM";
         techAdvancement.setTechBase(TECH_BASE_ALL)
                 .setIntroLevel(false)
                 .setUnofficial(false)
@@ -60,5 +62,10 @@ public class AR10Weapon extends CapitalMissileWeapon {
                 .setPrototypeFactions(F_TH)
                 .setProductionFactions(F_TH)
                 .setReintroductionFactions(F_FS, F_LC);
+    }
+
+    @Override
+    public double getBattleForceDamage(int range, Mounted linked) {
+        return 3;
     }
 }

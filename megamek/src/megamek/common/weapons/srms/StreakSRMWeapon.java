@@ -1,33 +1,32 @@
-/**
+/*
  * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
- *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
- *  for more details.
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.common.weapons.srms;
 
 import megamek.common.AmmoType;
 import megamek.common.Entity;
 import megamek.common.Game;
+import megamek.common.Mounted;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.StreakHandler;
-import megamek.server.Server;
+import megamek.server.GameManager;
 
 /**
  * @author Sebastian Brocks
  */
-
 public abstract class StreakSRMWeapon extends SRMWeapon {
-
     private static final long serialVersionUID = 9157660680598071296L;
 
     public StreakSRMWeapon() {
@@ -46,20 +45,20 @@ public abstract class StreakSRMWeapon extends SRMWeapon {
     }
 
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, Game game, Server server) {
-        return new StreakHandler(toHit, waa, game, server);
+    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
+                                              GameManager manager) {
+        return new StreakHandler(toHit, waa, game, manager);
     }
 
     @Override
-    public double getBattleForceDamage(int range) {
+    public double getBattleForceDamage(int range, Mounted fcs) {
         double damage = 0;
         if (range <= getLongRange()) {
             damage = getRackSize() * 2;
         }
         return damage / 10.0;
     }
-    
+
     @Override
     public int getBattleForceClass() {
         return BFCLASS_STANDARD;

@@ -1,12 +1,18 @@
-Version:1.0
-Peacekeeper
-PKP-2K
+chassis:Peacekeeper
+model:PKP-2K
+mul id:6836
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3116
-Source:RS 3145 NT NU
+Source:Record Sheets: 3145 New Tech New Upgrades
 Rules Level:3
+role:Sniper
+
+
+
+quirk:rugged_1
+
 
 Mass:95
 Engine:380 XL Engine(IS)

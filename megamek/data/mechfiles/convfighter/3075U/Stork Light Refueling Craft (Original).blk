@@ -20,6 +20,10 @@ Stork Light Refueling Craft
 (Original)
 </Model>
 
+<mul id:>
+5143
+</mul id:>
+
 <year>
 2623
 </year>
@@ -31,6 +35,10 @@ Stork Light Refueling Craft
 <type>
 IS Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Aerodyne
@@ -104,7 +112,7 @@ IS Ammo SRM-4
 </structural_tech_rating>
 
 <source>
-TRO 3075 - Star League
+TRO: 3075
 </source>
 
 <tonnage>

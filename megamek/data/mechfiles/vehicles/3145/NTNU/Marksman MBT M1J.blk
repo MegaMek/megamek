@@ -20,6 +20,10 @@ Marksman MBT
 M1J
 </Model>
 
+<mul id:>
+6806
+</mul id:>
+
 <year>
 3128
 </year>
@@ -27,6 +31,10 @@ M1J
 <type>
 IS Level 2
 </type>
+
+<role>
+Juggernaut
+</role>
 
 <motion_type>
 Tracked
@@ -93,7 +101,7 @@ Machine Gun
 </Turret Equipment>
 
 <source>
-RS 3145 NTNU - Late Republic
+Record Sheets: 3145 New Tech New Upgrades
 </source>
 
 <tonnage>

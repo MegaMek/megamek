@@ -1,12 +1,18 @@
-Version:1.0
-Marauder IIC
-6
+chassis:Marauder IIC
+model:6
+mul id:2070
 
 Config:Biped
 techbase:Clan
 era:3077
-source:Jihad
+source:TRO: 3085
 rules level:2
+role:Skirmisher
+
+quirk:command_mech
+quirk:hyper_actuator
+quirk:exp_actuator
+
 
 mass:85
 engine:340 XL (Clan) Engine(IS)
@@ -149,5 +155,20 @@ Improved Jump Jet
 -Empty-
 -Empty-
 
-imagefile:.\data\images\fluff\Mech\3085 Marauder IIC .jpg
+overview:Given the Marauder's outstanding performance and sterling reputation, it was only natural for the Clans to commit resources to constructing a worthy successor.
+
+capabilities:While fundamentally comparable to the original Marauder in many aspects, even Golden Century ClanTech's sophisticated capabilities could not prevent the BattleMech's chassis from growing to accommodate all of its enhancements. As a result, the Marauder IIC received ten tons of overall bulk, similar to other classic 'Mechs modified by the Clans at the period. The IIC followed in both function and form the huge footsteps of its ancestor, emphasizing a perfect blend of long-range, high yield firepower, robust armor, and the mobility to keep up with its supporting troops. Although the Clans' dueling heritage prized individual warrior prowess and rapid encounters over drawn-out campaigns, their choice for high-power energy weapons over ballistics and missiles allows this 'Mech to stay lethal in the hands of an expert MechWarrior nearly indefinitely. When combined with its other characteristics, the Marauder IIC's battlefield durability cemented its position as a suitable command 'Mech, as well as its appeal among the glory-seeking warriors that comprise the majority of the Clan officer corps.
+
+deployment:Another Jade Falcon built variation first appearing in 3081, the arms of this version feature a Gauss rifle in its right and an LB 10-X AC in its left, supported by a pair of ER Medium Lasers and a dorsal-mounted Heavy Large Laser. Its loadout made possible by an XL engine, the Marauder IIC 6 also mounts six Improved Jump Jets, which provide an interesting surprise for the largely Clan Wolf forces that face it. Thirteen tons of standard armor provide protection.
+
+history:The Marauder IIC had that designation prior to the introduction of Omni technology and the construction of the Timber Wolf. The Marauder IIC was built from the ground up in the image of its forefather, taking full advantage of the cutting-edge technology available at the time to improve on every aspect of the original. The end result was a bigger, stronger, more resilient, and durable Marauder—one that is still popular today, despite being classified as a "second-line" BattleMech. The Jade Falcons continue to build the Marauder IIC in its original architecture, joining the Rasalhague Dominion's "Phoenix" versions as the fearsome core of numerous Clan attack formations.
+
+manufacturer:Olivetti Weaponry
+primaryfactory:Sudeten
+systemmanufacturer:CHASSIS:Type 850 Light
+systemmanufacturer:ENGINE:Consolidated Fusion 340 XL
+systemmanufacturer:ARMOR:Compound 12A1 Standard with CASE
+systemmanufacturer:COMMUNICATIONS:Series D8 CC-25Xa
+systemmanufacturer:TARGETING:“Hermes” CT-42 Mk. II
+systemmanufacturer:JUMPJET:Unknown Improved
 

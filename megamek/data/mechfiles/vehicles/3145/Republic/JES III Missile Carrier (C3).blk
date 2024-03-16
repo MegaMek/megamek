@@ -20,6 +20,10 @@ JES III Missile Carrier
 (C3)
 </Model>
 
+<mul id:>
+6700
+</mul id:>
+
 <year>
 3140
 </year>
@@ -31,6 +35,10 @@ JES III Missile Carrier
 <type>
 IS Level 2
 </type>
+
+<role>
+Missile Boat
+</role>
 
 <motion_type>
 Wheeled
@@ -87,10 +95,16 @@ LRM 15
 </Turret Equipment>
 
 <source>
-TRO 3145 Republic of the Sphere - Dark Ages
+TRO: 3145 Republic of the Sphere
 </source>
 
 <tonnage>
 60.0
 </tonnage>
+
+
+<quirks>
+easy_maintain
+imp_target_long
+</quirks>
 

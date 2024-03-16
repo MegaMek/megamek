@@ -12,9 +12,9 @@ Tank
 <Name>
 Hover Tank
 </Name>
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
 <Tonnage>
 50
 </Tonnage>
@@ -57,3 +57,7 @@ IS Level 1
 <motion_type>
 Hover
 </motion_type>
+
+<source>
+TRO: 3025
+</source>

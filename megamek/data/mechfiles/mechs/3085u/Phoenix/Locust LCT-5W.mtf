@@ -1,12 +1,22 @@
-Version:1.0
-Locust
-LCT-5W
+chassis:Locust
+model:LCT-5W
+mul id:1911
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3076
-Source:Jihad
+source:TRO: 3085
 Rules Level:2
+role:Scout
+
+
+
+quirk:compact_mech
+quirk:low_profile
+quirk:cramped_cockpit
+quirk:no_arms
+quirk:weak_legs
+
 
 Mass:20
 Engine:180 XL Engine(IS)

@@ -16,9 +16,13 @@ FixedWingSupport
 Vendetta Medium Fighter
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+5625
+</mul id:>
 
 <year>
 2328
@@ -31,6 +35,10 @@ Vendetta Medium Fighter
 <type>
 IS Level 4
 </type>
+
+<role>
+Attack Fighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -122,9 +130,19 @@ External Stores Hardpoint
 </armor_tech_rating>
 
 <source>
-XTRO Prim III - Age of War
+XTR: Primitives III
 </source>
 
 <tonnage>
 60.0
 </tonnage>
+
+<quirks>
+atmo_flyer
+cramped_cockpit
+difficult_eject
+variable_range_short
+weak_undercarriage
+obsolete
+</quirks>
+

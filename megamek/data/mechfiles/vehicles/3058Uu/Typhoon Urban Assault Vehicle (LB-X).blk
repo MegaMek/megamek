@@ -15,6 +15,10 @@ Typhoon Urban Assault Vehicle
 <Model>
 (LB-X)
 </Model>
+
+<mul id:>
+3335
+</mul id:>
 <Tonnage>
 70
 </Tonnage>
@@ -50,6 +54,10 @@ ISStreakSRM4 Ammo
 <type>
 IS Level 2
 </type>
+
+<role>
+Juggernaut
+</role>
 <year>
 3065
 </year>
@@ -66,5 +74,5 @@ IS Level 2
 Wheeled
 </motion_type>
 <source>
-Civil War
+TRO: 3058
 </source>

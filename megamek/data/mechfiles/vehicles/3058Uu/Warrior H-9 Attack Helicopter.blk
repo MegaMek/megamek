@@ -2,56 +2,136 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 VTOL
 </UnitType>
+
 <Name>
 Warrior Attack Helicopter
 </Name>
+
 <Model>
 H-9
 </Model>
-<Tonnage>
-20
-</Tonnage>
+
+<mul id:>
+3517
+</mul id:>
+
+<year>
+3068
+</year>
+
+<originalBuildYear>
+3068
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<role>
+Scout
+</role>
+
+<motion_type>
+VTOL
+</motion_type>
+
+<transporters>
+</transporters>
+
 <cruiseMP>
 10
 </cruiseMP>
-<Armor>
+
+<engine_type>
+2
+</engine_type>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
 15
 14
 14
 8
 2
-</Armor>
-<Front Equipment>
-ISRotaryAC2
-</Front Equipment>
+</armor>
+
 <Body Equipment>
 ISRotaryAC2 Ammo
 </Body Equipment>
-<type>
-IS Level 2
-</type>
-<year>
-3068
-</year>
-<internal_type>
-0
-</internal_type>
-<armor_type>
-1
-</armor_type>
-<engine_type>
-2
-</engine_type>
-<motion_type>
-VTOL
-</motion_type>
+
+<Front Equipment>
+ISRotaryAC2
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Rotor Equipment>
+</Rotor Equipment>
+
+<capabilities>
+The aircraft itself is a standard rotary wing design. The two counter-rotating rotor systems negate the need for a tail rotor, as there is no drive torque to be canceled. Capable of speeds of 162 km/h, the Warrior can range across the battlefield with ease, Weapons are mated to an N&D Handsfree targeting and tracking system linked to the pilot's helmet, allowing the pilot to merely look at what he wants to target and pull the trigger. One ton of reloads each give the helicopter decent endurance in combat.
+</capabilities>
+
+<overview>
+First produced in 2950, the Warrior H-7 attack helicopter is a common sight across the Inner Sphere, serving as a highly mobile fire support unit.
+</overview>
+
+<deployment>
+A post–FedCom Civil War variation of the H-8, the 9 replaces all the missile launchers with a Thor 40mm Rotary autocannon.
+</deployment>
+
+<history>
+Privately designed by Lockheed-CBM as a cheaper and more easily produced substitute for light BattleMechs in the notoriously top-heavy and sluggish Lyran Commonwealth Armed Forces' Third Succession War–era BattleMech regiments, the Lyran High Command originally dismissed the Warrior as a worthless "flying toy" in 2957 until the Ninth Battle of Hesperus that same year damaged Defiance Industries' facilities to the point the LCAF were desperate for any military hardware, placing heavy orders and ensuring continued production since.
+</history>
+
+<manufacturer>
+Lockheed/CBM Corp.
+</manufacturer>
+
+<primaryFactory>
+Furillo
+</primaryFactory>
+
+<systemManufacturers>
+ENGINE:Lockheed 70 Micro-Fusion
+ARMOR:Kallon Unity Weave
+COMMUNICATIONS:Xilex-2000
+TARGETING:N&D Handsfree
+</systemManufacturers>
+
 <source>
-Jihad
+TRO: 3058
 </source>
+
+<tonnage>
+20.0
+</tonnage>
+
+
+<quirks>
+vtol_rotor_coaxial
+</quirks>
+

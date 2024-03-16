@@ -20,6 +20,10 @@ Centurion
 CNT-1A
 </Model>
 
+<mul id:>
+3924
+</mul id:>
+
 <year>
 2430
 </year>
@@ -31,6 +35,10 @@ CNT-1A
 <type>
 IS Level 4
 </type>
+
+<role>
+Fast Dogfighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -100,7 +108,7 @@ Medium Laser
 </Fuselage Equipment>
 
 <source>
-TRO 3075 - Age of War
+TRO: 3075
 </source>
 
 <tonnage>

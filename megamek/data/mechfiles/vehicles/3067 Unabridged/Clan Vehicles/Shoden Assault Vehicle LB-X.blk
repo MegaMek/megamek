@@ -20,6 +20,10 @@ Shoden Assault Vehicle
 (LB-X)
 </Model>
 
+<mul id:>
+5736
+</mul id:>
+
 <year>
 3073
 </year>
@@ -27,6 +31,10 @@ Shoden Assault Vehicle
 <type>
 Clan Level 3
 </type>
+
+<role>
+Brawler
+</role>
 
 <motion_type>
 Wheeled
@@ -89,7 +97,7 @@ CLLBXAC10
 </Turret Equipment>
 
 <source>
-RS 3067U
+Record Sheets: Record Sheets: 3067 Unabridged
 </source>
 
 <tonnage>

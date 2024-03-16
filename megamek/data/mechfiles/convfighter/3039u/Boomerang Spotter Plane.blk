@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -16,9 +16,13 @@ FixedWingSupport
 Boomerang Spotter Plane
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+3854
+</mul id:>
 
 <year>
 2888
@@ -32,13 +36,17 @@ Boomerang Spotter Plane
 IS Level 2
 </type>
 
+<role>
+Attack Fighter
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
 
 <transporters>
 ejectionseats:1.0:0
-cargobay:0.013:1:1
+cargobay:0.013:1:2
 </transporters>
 
 <SafeThrust>
@@ -111,9 +119,10 @@ STOLChassisMod
 </armor_tech_rating>
 
 <source>
-TRO 3039 - Early Succession War
+TRO: 3039
 </source>
 
 <tonnage>
 4.999
 </tonnage>
+

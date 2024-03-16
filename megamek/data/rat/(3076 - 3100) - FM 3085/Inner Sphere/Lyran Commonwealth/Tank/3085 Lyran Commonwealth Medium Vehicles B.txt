@@ -6,7 +6,7 @@ Myrmidon Medium Tank (Standard),4
 Vedette Medium Tank (Cell),5
 Fulcrum Heavy Hovertank (Standard),6
 Glaive Medium Tank (Standard),5
-Condor Heavy Hover Tank (Upgrade) (Standard),4
+Condor Heavy Hover Tank (Upgrade),4
 Fulcrum Heavy Hovertank III,3
 Condor Heavy Hover Tank (Upgrade) (Laser),2
 Maxim Mk II Transport (Standard),1

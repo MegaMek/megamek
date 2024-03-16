@@ -1,0 +1,12 @@
+Lyran Commonwealth Heavy Mechs 3130 F
+Warhammer WHM-9S,1
+Rifleman RFL-7M,2
+Axman AXM-3S,3
+Thunderbolt TDR-17S,4
+Gallant GLT-7-0,5
+Thanatos TNS-6S,6
+Archer ARC-7S,5
+Defiance DFN-3S,4
+Marauder MAD-9W2,3
+Barghest BGS-4T,2
+Black Hawk-KU BHKU-O,1

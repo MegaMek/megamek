@@ -20,6 +20,10 @@ Visigoth
 E
 </Model>
 
+<mul id:>
+5354
+</mul id:>
+
 <year>
 3072
 </year>
@@ -31,6 +35,10 @@ E
 <type>
 Clan Level 2
 </type>
+
+<role>
+Fast Dogfighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -113,7 +121,7 @@ Hyper-Assault Gauss Rifle/30 Ammo:OMNI
 </Fuselage Equipment>
 
 <source>
-TRO 3055u - Jihad
+TRO: 3055 Update
 </source>
 
 <tonnage>

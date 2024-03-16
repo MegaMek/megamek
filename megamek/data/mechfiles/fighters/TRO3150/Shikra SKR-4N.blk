@@ -1,0 +1,119 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Aero
+</UnitType>
+
+<Name>
+Shikra
+</Name>
+
+<Model>
+SKR-4N
+</Model>
+
+<mul id:>
+8060
+</mul id:>
+
+<year>
+3144
+</year>
+
+<originalBuildYear>
+3144
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+</transporters>
+
+<SafeThrust>
+6
+</SafeThrust>
+
+<cockpit_type>
+0
+</cockpit_type>
+
+<heatsinks>
+16
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+400
+</fuel>
+
+<engine_type>
+2
+</engine_type>
+
+<armor_type>
+20
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
+111
+83
+83
+70
+</armor>
+
+<Nose Equipment>
+ISGaussRifle
+</Nose Equipment>
+
+<Left Wing Equipment>
+Heavy PPC
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+Heavy PPC
+</Right Wing Equipment>
+
+<Aft Equipment>
+ISMediumPulseLaser
+ISChaffPod
+ISChaffPod
+</Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+IS Gauss Ammo
+IS Gauss Ammo
+IS Gauss Ammo
+</Fuselage Equipment>
+
+<source>
+Record Sheets: 3150
+</source>
+
+<tonnage>
+90.0
+</tonnage>
+

@@ -1,12 +1,18 @@
-Version:1.0
-Tessen
-TSN-1Cr
+chassis:Tessen
+model:TSN-1Cr
+mul id:3172
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3069
-Source:Jihad
+source:TRO: 3085
 Rules Level:2
+role:Skirmisher
+
+
+
+quirk:bad_rep_is
+
 
 Mass:50
 Engine:300 XL Engine(IS)
@@ -148,4 +154,4 @@ Ferro-Fibrous
 -Empty-
 -Empty-
 
-imagefile:.\data\images\fluff\Mech\TRO3067_Tessen.jpg
+

@@ -20,6 +20,10 @@ Manei Domini Recon Squad
 'Tau Wraith'
 </Model>
 
+<mul id:>
+3166
+</mul id:>
+
 <year>
 3065
 </year>
@@ -27,6 +31,10 @@ Manei Domini Recon Squad
 <type>
 IS Level 4
 </type>
+
+<role>
+Scout
+</role>
 
 <motion_type>
 Leg
@@ -36,7 +44,7 @@ Leg
 </Field Guns Equipment>
 
 <source>
-TRO 3085 - Civil War
+TRO: 3085
 </source>
 
 <squad_size>

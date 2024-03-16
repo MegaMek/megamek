@@ -1,12 +1,20 @@
-Version:1.0
-UrbanMech
-UM-R80
+chassis:UrbanMech
+model:UM-R80
+mul id:3360
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3076
-Source:Jihad
+source:TRO: 3085
 Rules Level:2
+role:Ambusher
+
+
+
+quirk:ext_twist
+quirk:low_profile
+quirk:no_arms
+
 
 Mass:30
 Engine:60 Fusion Engine

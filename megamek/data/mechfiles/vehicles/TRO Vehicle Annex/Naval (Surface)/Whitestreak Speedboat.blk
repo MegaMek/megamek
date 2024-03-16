@@ -16,9 +16,13 @@ SupportTank
 Whitestreak Speedboat
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+5408
+</mul id:>
 
 <year>
 2322
@@ -31,6 +35,10 @@ Whitestreak Speedboat
 <type>
 IS Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Naval
@@ -80,7 +88,7 @@ UltraLightChassisMod
 </structural_tech_rating>
 
 <source>
-TRO VAr - Age of War
+TRO: Vehicle Annex (Revised)
 </source>
 
 <tonnage>

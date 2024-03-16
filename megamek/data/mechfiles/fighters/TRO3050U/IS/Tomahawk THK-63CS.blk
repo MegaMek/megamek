@@ -20,6 +20,10 @@ Tomahawk
 THK-63CS
 </Model>
 
+<mul id:>
+3274
+</mul id:>
+
 <year>
 3069
 </year>
@@ -31,6 +35,10 @@ THK-63CS
 <type>
 IS Level 2
 </type>
+
+<role>
+Fire Support
+</role>
 
 <motion_type>
 Aerodyne
@@ -100,7 +108,7 @@ ISERLargeLaser
 </Fuselage Equipment>
 
 <source>
-TRO 3050u - Jihad
+TRO: 3050
 </source>
 
 <tonnage>

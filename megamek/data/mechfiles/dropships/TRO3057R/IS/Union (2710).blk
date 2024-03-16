@@ -20,6 +20,10 @@ Union
 (2710) (CV)
 </Model>
 
+<mul id:>
+5323
+</mul id:>
+
 <year>
 2710
 </year>
@@ -139,7 +143,7 @@ Medium Laser
 </structural_integrity>
 
 <source>
-TRO 3057R - Star League
+TRO: 3057 Revised
 </source>
 
 <tonnage>

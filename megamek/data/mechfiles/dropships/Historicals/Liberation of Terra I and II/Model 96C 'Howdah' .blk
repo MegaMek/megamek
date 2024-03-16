@@ -13,12 +13,16 @@ Dropship
 </UnitType>
 
 <Name>
-Model 96C 'Howdah'
+Model 96C
 </Name>
 
 <Model>
-
+'Howdah' SDS Command Ship
 </Model>
+
+<mul id:>
+7149
+</mul id:>
 
 <year>
 2695
@@ -38,10 +42,10 @@ Spheroid
 
 <transporters>
 smallcraftbay:2.0:2:2
-artsasfbay:6.0:4:5
+artsasfbay:6.0:4:3
+cargobay:1283.0:2:1
 steeragequarters:235.0:0
 2ndclassquarters:63.0:0
-cargobay:1283.0:2:1
 </transporters>
 
 <SafeThrust>
@@ -155,6 +159,7 @@ ISArtemisIV
 
 <Hull Equipment>
 ISNavalTugAdaptor
+AutoTacticalAnalysisComputer:SIZE:20.0
 </Hull Equipment>
 
 <structural_integrity>
@@ -194,7 +199,7 @@ TARGETING:Unknown
 </systemManufacturers>
 
 <notes>
-Unit overweight per TRO entry. Dropped Cargo to make it legal.
+Unit overweight per TRO: entry. Dropped Cargo to make it legal.
 </notes>
 
 <use>
@@ -214,7 +219,7 @@ Tug/ SDS Controller
 </height>
 
 <source>
-H:Liberation of Terra I - Star League
+Historical: Liberation of Terra I
 </source>
 
 <tonnage>

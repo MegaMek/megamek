@@ -20,6 +20,10 @@ Weapon Carrier (Tracked)
 (AC/20)
 </Model>
 
+<mul id:>
+6778
+</mul id:>
+
 <year>
 2775
 </year>
@@ -27,6 +31,10 @@ Weapon Carrier (Tracked)
 <type>
 IS Level 2
 </type>
+
+<role>
+Ambusher
+</role>
 
 <motion_type>
 Tracked
@@ -78,9 +86,16 @@ Autocannon/20
 </Rear Equipment>
 
 <source>
-Hist LOT II
+Historical: Liberation of Terra II
 </source>
 
 <tonnage>
 60.0
 </tonnage>
+
+<quirks>
+trailer_hitch
+difficult_maintain
+poor_work
+</quirks>
+

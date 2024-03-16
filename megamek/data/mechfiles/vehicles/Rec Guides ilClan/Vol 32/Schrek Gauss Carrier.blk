@@ -1,0 +1,113 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+Schrek Gauss Carrier
+</Name>
+
+<Model>
+
+</Model>
+
+<year>
+3119
+</year>
+
+<originalBuildYear>
+3119
+</originalBuildYear>
+
+<mul id:>
+9478
+</mul id:>
+
+<type>
+IS Level 2
+</type>
+
+<role>
+Sniper
+</role>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<transporters>
+</transporters>
+
+<cruiseMP>
+3
+</cruiseMP>
+
+<engine_type>
+4
+</engine_type>
+
+<armor_type>
+22
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
+36
+24
+24
+24
+36
+</armor>
+
+<Body Equipment>
+IS Vehicular Stealth
+IS Light Gauss Ammo
+IS Light Gauss Ammo
+IS Light Gauss Ammo
+IS Light Gauss Ammo
+ISGuardianECMSuite
+</Body Equipment>
+
+<Front Equipment>
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+ISLightGaussRifle
+ISLightGaussRifle
+ISLightGaussRifle
+</Turret Equipment>
+
+<source>
+Rec Guide:ilClan #32
+</source>
+
+<tonnage>
+80.0
+</tonnage>
+
+
+<quirks>
+low_profile
+</quirks>
+

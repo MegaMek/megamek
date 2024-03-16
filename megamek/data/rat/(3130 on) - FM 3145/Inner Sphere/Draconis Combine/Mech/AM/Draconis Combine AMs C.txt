@@ -1,0 +1,12 @@
+Draconis Combine Assault Mechs 3130 C
+Mauler MAL-3R,1
+Tai-sho TSH-8S,2
+Akuma AKU-2XC,3
+Cyclops CP-11-B,4
+Cerberus MR-V3,5
+Hatamoto-Suna HTM-30S,6
+Orochi OR-2I,5
+Atlas AS7-K3,4
+BattleMaster BLR-K4,3
+Tenshi TN-10-O,2
+Peacekeeper PKP-1B,1

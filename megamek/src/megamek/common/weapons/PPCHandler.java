@@ -1,58 +1,41 @@
-/**
- * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
- *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
- */
 /*
- * Created on Sept 5, 2005
+ * Copyright (c) 2005 - Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
  *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
 package megamek.common.weapons;
 
 import java.util.Vector;
 
-import megamek.common.BattleArmor;
-import megamek.common.Compute;
-import megamek.common.CriticalSlot;
-import megamek.common.Entity;
-import megamek.common.HitData;
-import megamek.common.Game;
-import megamek.common.Infantry;
-import megamek.common.Mounted;
-import megamek.common.RangeType;
-import megamek.common.Report;
-import megamek.common.ToHitData;
+import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
-import megamek.server.Server;
-import megamek.server.Server.DamageType;
+import megamek.server.GameManager;
 
 /**
  * @author Sebastian Brocks
+ * @since Sept 5, 2005
  */
 public class PPCHandler extends EnergyWeaponHandler {
-    /**
-     *
-     */
     private static final long serialVersionUID = 5545991061428671743L;
     private int chargedCapacitor = 0;
 
-    /**
-     * @param t
-     * @param w
-     * @param g
-     * @param s
-     */
-    public PPCHandler(ToHitData t, WeaponAttackAction w, Game g, Server s) {
-        super(t, w, g, s);
+    public PPCHandler(ToHitData t, WeaponAttackAction w, Game g, GameManager m) {
+        super(t, w, g, m);
         // remember capacitor state and turn it off here,
         // so a crit in the firing phase does not cause an explosion, per the
         // rules in TO
@@ -78,7 +61,7 @@ public class PPCHandler extends EnergyWeaponHandler {
         double toReturn = wtype.getDamage(nRange);
 
         if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_ENERGY_WEAPONS)
-                && wtype.hasModes()) {
+                && weapon.hasModes()) {
             toReturn = Compute.dialDownDamage(weapon, wtype, nRange);
         }
 
@@ -89,7 +72,7 @@ public class PPCHandler extends EnergyWeaponHandler {
         if ((ae instanceof BattleArmor)
                 && (weapon.getLocation() == BattleArmor.LOC_SQUAD)
                 && !(weapon.isSquadSupportWeapon())
-                && (ae.getSwarmTargetId() == target.getTargetId())) {
+                && (ae.getSwarmTargetId() == target.getId())) {
             toReturn *= ((BattleArmor) ae).getShootingStrength();
         }
 
@@ -143,10 +126,10 @@ public class PPCHandler extends EnergyWeaponHandler {
     protected boolean doChecks(Vector<Report> vPhaseReport) {
         // Resolve roll for disengaged field inhibitors on PPCs, if needed
         if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_PPC_INHIBITORS)
-                && wtype.hasModes()
+                && weapon.hasModes()
                 && weapon.curMode().equals("Field Inhibitor OFF")) {
             int rollTarget = 0;
-            int dieRoll = Compute.d6(2);
+            Roll diceRoll = Compute.rollD6(2);
             int distance = Compute.effectiveDistance(game, ae, target);
 
             if (distance >= 3) {
@@ -166,8 +149,9 @@ public class PPCHandler extends EnergyWeaponHandler {
             r.subject = subjectId;
             r.indent();
             r.add(rollTarget);
-            r.add(dieRoll);
-            if (dieRoll < rollTarget) {
+            r.add(diceRoll);
+
+            if (diceRoll.getIntValue() < rollTarget) {
                 // Oops, we ruined our day...
                 int wlocation = weapon.getLocation();
                 weapon.setHit(true);
@@ -190,7 +174,7 @@ public class PPCHandler extends EnergyWeaponHandler {
                 r.choose(false);
                 r.indent(2);
                 vPhaseReport.addElement(r);
-                Vector<Report> newReports = server.damageEntity(ae,
+                Vector<Report> newReports = gameManager.damageEntity(ae,
                         new HitData(wlocation), 10, false, DamageType.NONE,
                         true);
                 for (Report rep : newReports) {
@@ -198,7 +182,7 @@ public class PPCHandler extends EnergyWeaponHandler {
                 }
                 vPhaseReport.addAll(newReports);
                 // Deal 2 damage to the pilot
-                vPhaseReport.addAll(server.damageCrew(ae, 2, ae.getCrew().getCurrentPilotIndex()));
+                vPhaseReport.addAll(gameManager.damageCrew(ae, 2, ae.getCrew().getCurrentPilotIndex()));
                 r = new Report(3185);
                 r.subject = subjectId;
                 vPhaseReport.addElement(r);
@@ -209,7 +193,7 @@ public class PPCHandler extends EnergyWeaponHandler {
         }
         // resolve roll for charged capacitor
         if (chargedCapacitor != 0) {
-            if (roll == 2) {
+            if (roll.getIntValue() == 2) {
                 Report r = new Report(3178);
                 r.subject = ae.getId();
                 r.indent();

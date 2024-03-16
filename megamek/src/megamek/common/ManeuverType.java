@@ -66,22 +66,20 @@ public class ManeuverType {
         }
 
         switch (type) {
-            case (MAN_NONE):
+            case MAN_NONE:
+            case MAN_HAMMERHEAD:
+            case MAN_HALF_ROLL:
                 return true;
-            case (MAN_LOOP):
+            case MAN_LOOP:
                 return velocity >= 4;
-            case (MAN_IMMELMAN):
+            case MAN_IMMELMAN:
                 return (velocity >= 3) && (altitude < 9);
-            case (MAN_SPLIT_S):
+            case MAN_SPLIT_S:
                 return (altitude + 2) > ceiling;
-            case (MAN_HAMMERHEAD):
-                return true;
-            case (MAN_HALF_ROLL):
-                return true;
-            case (MAN_BARREL_ROLL):
+            case MAN_BARREL_ROLL:
                 return velocity >= 2;
-            case (MAN_SIDE_SLIP_LEFT):
-            case (MAN_SIDE_SLIP_RIGHT):
+            case MAN_SIDE_SLIP_LEFT:
+            case MAN_SIDE_SLIP_RIGHT:
                 if (velocity > 0) {
                     // If we're on a ground map, we need to make sure we can move
                     //  all 16 hexes
@@ -89,13 +87,13 @@ public class ManeuverType {
                         MovePath tmpMp = mp.clone();                    
                         for (int i = 0; i < 8; i++) {
                             if (type == MAN_SIDE_SLIP_LEFT) {
-                                tmpMp.addStep(MoveStepType.LATERAL_LEFT, true, true);
+                                tmpMp.addStep(MoveStepType.LATERAL_LEFT, true, true, type);
                             } else {
-                                tmpMp.addStep(MoveStepType.LATERAL_RIGHT, true, true);
+                                tmpMp.addStep(MoveStepType.LATERAL_RIGHT, true, true, type);
                             }
                         }
                         for (int i = 0; i < 8; i++) {
-                            tmpMp.addStep(MoveStepType.FORWARDS, true, true);
+                            tmpMp.addStep(MoveStepType.FORWARDS, true, true, type);
                         }                    
                         return tmpMp.getLastStep().isLegal(tmpMp);
                     } else {
@@ -104,7 +102,7 @@ public class ManeuverType {
                 } else {
                     return false;
                 }
-            case (MAN_VIFF):
+            case MAN_VIFF:
                 return isVTOL;
             default:
                 return false;
@@ -112,26 +110,23 @@ public class ManeuverType {
     }
 
     /**
-     * thrust cost of maneuver
+     * Thrust cost of maneuver
      */
     public static int getCost(int type, int velocity) {
         switch (type) {
-            case (MAN_LOOP):
+            case MAN_LOOP:
+            case MAN_IMMELMAN:
                 return 4;
-            case (MAN_IMMELMAN):
-                return 4;
-            case (MAN_SPLIT_S):
+            case MAN_SPLIT_S:
                 return 2;
-            case (MAN_HAMMERHEAD):
+            case MAN_HAMMERHEAD:
                 return velocity;
-            case (MAN_HALF_ROLL):
+            case MAN_HALF_ROLL:
+            case MAN_BARREL_ROLL:
+            case MAN_SIDE_SLIP_LEFT:
+            case MAN_SIDE_SLIP_RIGHT:
                 return 1;
-            case (MAN_BARREL_ROLL):
-                return 1;
-            case (MAN_SIDE_SLIP_LEFT):
-            case (MAN_SIDE_SLIP_RIGHT):
-                return 1;
-            case (MAN_VIFF):
+            case MAN_VIFF:
                 return velocity + 2;
             default:
                 return 0;
@@ -150,30 +145,22 @@ public class ManeuverType {
      */
     public static int getMod(int type, boolean isVSTOLCF) {
         switch (type) {
-            case (MAN_LOOP):
+            case MAN_LOOP:
+            case MAN_IMMELMAN:
                 return 1;
-            case (MAN_IMMELMAN):
-                return 1;
-            case (MAN_SPLIT_S):
+            case MAN_SPLIT_S:
+            case MAN_VIFF:
                 return 2;
-            case (MAN_HAMMERHEAD):
+            case MAN_HAMMERHEAD:
                 return 3;
-            case (MAN_HALF_ROLL):
+            case MAN_HALF_ROLL:
                 return -1;
-            case (MAN_BARREL_ROLL):
-                return 0;
-            case (MAN_SIDE_SLIP_LEFT):
-            case (MAN_SIDE_SLIP_RIGHT):
-                if (isVSTOLCF) {
-                    return -1;
-                } else {
-                    return 0;
-                }
-            case (MAN_VIFF):
-                return 2;
+            case MAN_SIDE_SLIP_LEFT:
+            case MAN_SIDE_SLIP_RIGHT:
+                return isVSTOLCF ? -1 : 0;
+            case MAN_BARREL_ROLL:
             default:
                 return 0;
         }
     }
-
 }

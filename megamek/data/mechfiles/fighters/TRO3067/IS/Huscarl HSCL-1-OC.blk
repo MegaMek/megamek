@@ -20,6 +20,10 @@ Huscarl
 HSCL-1-OC
 </Model>
 
+<mul id:>
+4349
+</mul id:>
+
 <year>
 3064
 </year>
@@ -31,6 +35,10 @@ HSCL-1-OC
 <type>
 IS Level 2
 </type>
+
+<role>
+Attack Fighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -109,7 +117,7 @@ IS Ultra AC/20 Ammo:OMNI
 </Fuselage Equipment>
 
 <source>
-TRO 3067 - Civil War
+TRO: 3067
 </source>
 
 <tonnage>

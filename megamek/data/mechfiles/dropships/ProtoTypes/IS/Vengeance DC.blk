@@ -20,6 +20,10 @@ Vengeance
 DC
 </Model>
 
+<mul id:>
+5344
+</mul id:>
+
 <year>
 3083
 </year>
@@ -31,6 +35,10 @@ DC
 <type>
 IS Level 3
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Aerodyne
@@ -179,7 +187,7 @@ ISSmallNavalCommScannerSuite
 </structural_integrity>
 
 <source>
-TRO Prototypes - Jihad
+TRO: Prototypes
 </source>
 
 <tonnage>
@@ -225,3 +233,8 @@ TRO Prototypes - Jihad
 <escape_pod>
 33
 </escape_pod>
+
+<quirks>
+unstreamlined
+</quirks>
+

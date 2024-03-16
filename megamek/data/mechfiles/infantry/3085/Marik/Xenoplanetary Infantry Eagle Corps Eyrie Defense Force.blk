@@ -15,6 +15,10 @@ Xenoplanetary Infantry
 <Model>
 Eagle Corps Eyrie Defense Force
 </Model>
+
+<mul id:>
+3608
+</mul id:>
 <squad_size>
 7
 </squad_size>
@@ -34,6 +38,10 @@ InfantryERLaser
 <type>
 IS Level 3
 </type>
+
+<role>
+Ambusher
+</role>
 <year>
 2600
 </year>

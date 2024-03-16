@@ -20,6 +20,10 @@ Zephyr Hovertank
 (Omnidrone) Prime
 </Model>
 
+<mul id:>
+7300
+</mul id:>
+
 <year>
 3096
 </year>
@@ -27,6 +31,10 @@ Zephyr Hovertank
 <type>
 IS Level 3
 </type>
+
+<role>
+Striker
+</role>
 
 <motion_type>
 Hover
@@ -88,7 +96,7 @@ PPC Capacitor:OMNI
 </Turret Equipment>
 
 <source>
-XTRO Republic I - Early Republic
+XTR: Republic I
 </source>
 
 <tonnage>

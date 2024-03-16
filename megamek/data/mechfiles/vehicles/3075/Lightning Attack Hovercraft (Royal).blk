@@ -20,17 +20,25 @@ Lightning Attack Hovercraft
 (Royal)
 </Model>
 
+<mul id:>
+1883
+</mul id:>
+
 <year>
 2720
 </year>
 
 <source>
-Star League
+TRO: 3075
 </source>
 
 <type>
 IS Level 2
 </type>
+
+<role>
+Striker
+</role>
 
 <tonnage>
 35.0

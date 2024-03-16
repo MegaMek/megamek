@@ -16,9 +16,13 @@ Tank
 Vargr APC Tank
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+7615
+</mul id:>
 
 <year>
 2944
@@ -31,6 +35,10 @@ Vargr APC Tank
 <type>
 IS Level 1
 </type>
+
+<role>
+Brawler
+</role>
 
 <motion_type>
 Wheeled

@@ -20,6 +20,10 @@ King Karnov Transport
 KC-9
 </Model>
 
+<mul id:>
+4447
+</mul id:>
+
 <year>
 3053
 </year>
@@ -31,6 +35,10 @@ KC-9
 <type>
 IS Level 2
 </type>
+
+<role>
+Transport
+</role>
 
 <motion_type>
 Aerodyne
@@ -113,7 +121,7 @@ VSTOLChassisMod
 </armor_tech_rating>
 
 <source>
-TRO Vehicle Annex (r) - Clan Invasion
+TRO: Vehicle Annex Revised
 </source>
 
 <tonnage>

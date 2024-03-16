@@ -1,12 +1,13 @@
-Version:1.0
-Inquisitor II
-ITW-200
+chassis:Inquisitor II
+model:ITW-200
+mul id:7332
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3130
-Source:TP Irian - Dark Ages
+Source:Turning Points: Irian
 Rules Level:3
+role:Sniper
 
 Mass:50
 Engine:200 Fusion Engine(IS)

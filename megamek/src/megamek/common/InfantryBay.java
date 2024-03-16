@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2003, 2004 Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2003-2004 Ben Mazur (bmazur@sev.org).
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -14,15 +14,12 @@
 package megamek.common;
 
 /**
- * Represents a volume of space set aside for carrying infantry platoons
- * aboard large spacecraft and mobile structures.  Marines count as crew and should have at least steerage quarters.
+ * Represents a volume of space set aside for carrying infantry platoons aboard large spacecraft
+ * and mobile structures. Marines count as crew and should have at least steerage quarters.
  */
 public final class InfantryBay extends Bay {
-
-    // Protected constructors and methods.
-
     private static final long serialVersionUID = 946578184870030662L;
-    
+
     /** The amount of space taken up by an infantry unit in a transport bay differs from the space
      * in an infantry compartment (used in APCs) due to quarters, equipment storage, and maintenance
      * equipment. A single cubicle holds a platoon, except in the case of mechanized which requires
@@ -32,34 +29,34 @@ public final class InfantryBay extends Bay {
         JUMP (6, 21, 20),
         MOTORIZED (7, 28, 25),
         MECHANIZED (8, 7, 5);
-        
+
         private int weight;
         private int isPersonnel;
         private int clanPersonnel;
-        
+
         PlatoonType(int weight, int isPersonnel, int clanPersonnel) {
             this.weight = weight;
             this.isPersonnel = isPersonnel;
             this.clanPersonnel = clanPersonnel;
         }
-        
+
         public int getWeight() {
             return weight;
         }
-        
+
         public int getISPersonnel() {
             return isPersonnel;
         }
-        
+
         public int getClanPersonnel() {
             return clanPersonnel;
         }
-        
+
         @Override
         public String toString() {
             return name().charAt(0) + name().substring(1).toLowerCase();
         }
-        
+
         public static PlatoonType getPlatoonType(Entity en) {
             switch (en.getMovementMode()) {
                 case TRACKED:
@@ -77,11 +74,11 @@ public final class InfantryBay extends Bay {
             }
         }
     }
-    
+
     // This represents the "factory setting" of the bay, and is used primarily by the construction rules.
     // In practice we support loading any type of infantry into the bay as long as there is room to avoid
     // the headache of having to do formal reconfigurations.
-    private PlatoonType platoonType = PlatoonType.FOOT; 
+    private PlatoonType platoonType = PlatoonType.FOOT;
 
     /**
      * The default constructor is only for serialization.
@@ -90,8 +87,6 @@ public final class InfantryBay extends Bay {
         totalSpace = 0;
         currentSpace = 0;
     }
-
-    // Public constructors and methods.
 
     /**
      * Create a space for the given tonnage of troops. This is the total tonnage of the bay;
@@ -106,18 +101,19 @@ public final class InfantryBay extends Bay {
         // We need to track by total tonnage rather than individual platoons
         totalSpace = space * bayType.getWeight();
         currentSpace = totalSpace;
+        this.minDoors = 0;
         this.doors = doors;
         doorsNext = doors;
         this.bayNumber = bayNumber;
         currentdoors = doors;
         this.platoonType = bayType;
     }
-    
+
     @Override
     public double spaceForUnit(Entity unit) {
         PlatoonType type = PlatoonType.getPlatoonType(unit);
         if ((unit instanceof Infantry) && (type == PlatoonType.MECHANIZED)) {
-            return type.getWeight() * ((Infantry) unit).getSquadN();
+            return type.getWeight() * ((Infantry) unit).getSquadCount();
         } else {
             return type.getWeight();
         }
@@ -147,13 +143,13 @@ public final class InfantryBay extends Bay {
         if (currentdoors < loadedThisTurn) {
             result = false;
         }
-        
+
         // Return our result.
         return result;
     }
 
     @Override
-    public String getUnusedString(boolean showrecovery) {
+    public String getUnusedString(boolean showRecovery) {
         StringBuilder sb = new StringBuilder();
         sb.append("Infantry Bay ").append(numDoorsString()).append(" - ")
                 .append(getUnusedSlots())
@@ -168,7 +164,7 @@ public final class InfantryBay extends Bay {
         }
         return sb.toString();
     }
-    
+
     @Override
     public double getUnusedSlots() {
         return currentSpace / platoonType.getWeight() - getBayDamage();
@@ -192,10 +188,18 @@ public final class InfantryBay extends Bay {
 
     @Override
     public String toString() {
-        return "infantrybay:" + (totalSpace / platoonType.getWeight()) + ":" + doors + ":"
-                + bayNumber + ":" + platoonType;
+        String bayType = "infantrybay";
+        return this.bayString(
+                bayType,
+                (totalSpace / platoonType.getWeight()),
+                doors,
+                bayNumber,
+                platoonType.toString(),
+                Entity.LOC_NONE,
+                0
+        );
     }
-    
+
     public PlatoonType getPlatoonType() {
         return platoonType;
     }

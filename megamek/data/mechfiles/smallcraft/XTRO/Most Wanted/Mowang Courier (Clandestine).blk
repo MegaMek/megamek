@@ -1,0 +1,162 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+SmallCraft
+</UnitType>
+
+<Name>
+Mowang Courier
+</Name>
+
+<Model>
+(Clandestine)
+</Model>
+
+<mul id:>
+5790
+</mul id:>
+
+<year>
+3073
+</year>
+
+<originalBuildYear>
+3073
+</originalBuildYear>
+
+<type>
+IS Level 4
+</type>
+
+<role>
+Transport
+</role>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+battlearmorbay:2.0:1:1:C*
+cargobay:11.5:1:2
+2ndclassquarters:0.0:0
+1stclassquarters:0.0:0
+crewquarters:0.0:0
+steeragequarters:15.0:0
+</transporters>
+
+<SafeThrust>
+3
+</SafeThrust>
+
+<heatsinks>
+0
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+1680
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+41
+</armor_type>
+
+<armor_tech>
+7
+</armor_tech>
+
+<armor>
+16
+16
+16
+16
+</armor>
+
+<Nose Equipment>
+</Nose Equipment>
+
+<Left Side Equipment>
+</Left Side Equipment>
+
+<Right Side Equipment>
+</Right Side Equipment>
+
+<Aft Equipment>
+</Aft Equipment>
+
+<Hull Equipment>
+ISAngelECMSuite
+</Hull Equipment>
+
+<structural_integrity>
+6
+</structural_integrity>
+
+<source>
+XTR: Most Wanted
+</source>
+
+<tonnage>
+100.0
+</tonnage>
+
+<designtype>
+1
+</designtype>
+
+<crew>
+15
+</crew>
+
+<officers>
+1
+</officers>
+
+<gunners>
+0
+</gunners>
+
+<passengers>
+0
+</passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<otherpassenger>
+0
+</otherpassenger>
+
+<life_boat>
+0
+</life_boat>
+
+<escape_pod>
+0
+</escape_pod>
+
+<quirks>
+internal_bomb
+</quirks>
+

@@ -12,9 +12,13 @@ Tank
 <Name>
 Flatbed Truck
 </Name>
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+1134
+</mul id:>
 <Tonnage>
 10
 </Tonnage>
@@ -53,5 +57,5 @@ IS Level 1
 Wheeled
 </motion_type>
 <source>
-Star League
+TRO: 3060
 </source>

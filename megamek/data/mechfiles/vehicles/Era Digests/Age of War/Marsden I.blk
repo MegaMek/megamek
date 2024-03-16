@@ -13,12 +13,16 @@ SupportTank
 </UnitType>
 
 <Name>
-Marsden
+Marsden MBT
 </Name>
 
 <Model>
 I
 </Model>
+
+<mul id:>
+4602
+</mul id:>
 
 <year>
 2396

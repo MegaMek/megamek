@@ -2,70 +2,148 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 Tank
 </UnitType>
+
 <Name>
 Von Luckner Heavy Tank
 </Name>
+
 <Model>
 (Star League)
 </Model>
-<Tonnage>
-75
-</Tonnage>
+
+<mul id:>
+3450
+</mul id:>
+
+<year>
+2683
+</year>
+
+<originalBuildYear>
+2683
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<role>
+Brawler
+</role>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<transporters>
+</transporters>
+
 <cruiseMP>
 3
 </cruiseMP>
-<Armor>
+
+<engine_type>
+0
+</engine_type>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
 41
 40
 40
 31
 45
-</Armor>
+</armor>
+
+<Body Equipment>
+IS Ammo AC/20
+IS Ammo AC/20
+IS Ammo AC/20
+IS Ammo LRM-15 Artemis-capable
+IS Ammo LRM-15 Artemis-capable
+IS Streak SRM 2 Ammo
+</Body Equipment>
+
+<Front Equipment>
+ISSmallPulseLaser
+LRM 15
+ISArtemisIV
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+Small Laser
+</Rear Equipment>
+
 <Turret Equipment>
-ISAC20
+Autocannon/20
 ISStreakSRM2
 ISStreakSRM2
 ISStreakSRM2
 ISStreakSRM2
 </Turret Equipment>
-<Front Equipment>
-ISSmallPulseLaser
-IS LRM-15
-ISArtemisIV
-</Front Equipment>
-<Rear Equipment>
-ISSmallLaser
-</Rear Equipment>
-<Body Equipment>
-ISAC20 Ammo
-ISAC20 Ammo
-ISAC20 Ammo
-IS Ammo LRM-15 Artemis-capable
-IS Ammo LRM-15 Artemis-capable
-ISStreakSRM2 Ammo
-</Body Equipment>
-<type>
-IS Level 2
-</type>
-<year>
-2683
-</year>
-<internal_type>
-0
-</internal_type>
-<armor_type>
-1
-</armor_type>
-<engine_type>
-0
-</engine_type>
-<motion_type>
-Tracked
-</motion_type>
+
+<capabilities>
+The Von Luckner's fusion power plant provides it with the same level of efficiency and mobility as a BattleMech of comparable weight, as well as the indefinite operating range that only fusion can deliver. The Von Luckner's primary armament is typically comprised of powerful autocannons supported by missile racks, as well as a variety of light close-in weaponry deployed to protect against infantry and battlearmor. Finally, its rather thick armor hide helps it to stay in a combat for an extended period of time.
+</capabilities>
+
+<overview>
+This heavily armored and armed vehicle was intended as a BattleMech without legs, fueled by a fusion reactor and equipped with enough firepower to threaten 'Mechs up to its own weight.
+</overview>
+
+<deployment>
+Another Star League-era upgrade had four Streak SRM-2 missile launchers, a front-facing Small Pulse Laser, a rear-mounted Small Laser, a forward-launching LRM-15 with Artemis IV, and ferro-fibrous armor, primarily on the sides.
+</deployment>
+
+<history>
+After the Reunification War, HartfordCo Industries of Bryant produced the VNLK65N Von Luckner Heavy Tank. Count Felix von Luckner, a prominent twentieth-century Terran raider, inspired the name. The Von Luckner's power and resiliency make it a perfect choice for beefing up crucial defensive positions from the Terran Hegemony homeworlds to the far reaches of the Star League's newly gained Periphery territories. Though the Von Luckner became a mainstay of Terran and Star League defensive forces during the Star League's existence, the loss of the HartfordCo factories on Bryant in 2840—due to worsening global storms caused by the destruction of Bryant's Storm Inhibitors—instantly placed the vehicle on the endangered list. During the Amaris Coup and the First Succession War, several advanced Star League vehicles met this end. With many more cannibalized for BattleMech spare parts—an ironic twist on the vehicle's design standards—only a few Von Luckners remained in service as of 3030. Formerly common throughout the Inner Sphere, only Houses Davion, Steiner, Marik, and Kurita still deployed Von Luckners in significant numbers by 3039.
+</history>
+
+<manufacturer>
+HartfordCo,HartfordCo
+</manufacturer>
+
+<primaryFactory>
+Bryant,Pardeau
+</primaryFactory>
+
+<systemManufacturers>
+ENGINE:VOX 225 Fusion
+ARMOR:StarSlab/4
+COMMUNICATIONS:O/P 300
+TARGETING:O/P GRNDSTAT 50A
+</systemManufacturers>
+
+<tonnage>
+75.0
+</tonnage>
+
+<source>
+Historical: Operation Klondike
+</source>
+
+<quirks>
+difficult_maintain
+</quirks>
+

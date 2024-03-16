@@ -1,0 +1,138 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Aero
+</UnitType>
+
+<Name>
+Schrack
+</Name>
+
+<Model>
+SCK-OA
+</Model>
+
+<mul id:>
+6691
+</mul id:>
+
+<year>
+3097
+</year>
+
+<originalBuildYear>
+3097
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<role>
+Dogfighter
+</role>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+</transporters>
+
+<SafeThrust>
+7
+</SafeThrust>
+
+<cockpit_type>
+0
+</cockpit_type>
+
+<heatsinks>
+16
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<omnipodheatsinks>
+6
+</omnipodheatsinks>
+
+<fuel>
+400
+</fuel>
+
+<engine_type>
+2
+</engine_type>
+
+<armor_type>
+20
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<omni>
+1
+</omni>
+
+<armor>
+81
+61
+61
+45
+</armor>
+
+<Nose Equipment>
+ISGaussRifle:OMNI
+</Nose Equipment>
+
+<Left Wing Equipment>
+ISERMediumLaser:OMNI
+ISERMediumLaser:OMNI
+ISERMediumLaser:OMNI
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+ISERMediumLaser:OMNI
+ISERMediumLaser:OMNI
+ISERMediumLaser:OMNI
+</Right Wing Equipment>
+
+<Aft Equipment>
+ISERMediumLaser:OMNI
+</Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+IS Gauss Ammo:OMNI
+IS Gauss Ammo:OMNI
+</Fuselage Equipment>
+
+<source>
+TRO: 3145 Republic of the Sphere
+</source>
+
+<tonnage>
+60.0
+</tonnage>
+
+<quirks>
+easy_pilot
+non_standard
+difficult_maintain
+</quirks>
+

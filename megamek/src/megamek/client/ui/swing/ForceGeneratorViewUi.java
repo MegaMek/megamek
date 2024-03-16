@@ -18,9 +18,13 @@ import megamek.client.ratgenerator.ForceDescriptor;
 import megamek.client.ratgenerator.RATGenerator;
 import megamek.client.ratgenerator.Ruleset;
 import megamek.client.ui.Messages;
-import megamek.common.Entity;
-import megamek.common.UnitType;
-import megamek.common.enums.GamePhase;
+import megamek.client.ui.swing.calculationReport.FlexibleCalculationReport;
+import megamek.client.ui.swing.lobby.LobbyUtility;
+import megamek.client.ui.swing.util.UIUtil;
+import megamek.common.*;
+import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.alphaStrike.conversion.ASConverter;
+import megamek.common.annotations.Nullable;
 import megamek.common.enums.SkillLevel;
 import org.apache.logging.log4j.LogManager;
 
@@ -29,25 +33,24 @@ import javax.swing.event.TreeExpansionEvent;
 import javax.swing.event.TreeExpansionListener;
 import javax.swing.event.TreeModelListener;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.TableRowSorter;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.*;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
  * Presents controls for selecting parameters of the force to generate and a tree structure showing
  * the generated force. The left and right sides of the view are made available separately for use by
  * RandomArmyDialog.
- * 
+ *
  * @author Neoancient
  */
-public class ForceGeneratorViewUi {
+public class ForceGeneratorViewUi implements ActionListener {
 
     private JPanel leftPanel;
     private JPanel rightPanel;
@@ -62,7 +65,14 @@ public class ForceGeneratorViewUi {
     private JTable tblChosen;
     private ChosenEntityModel modelChosen;
 
+    protected TableRowSorter<ChosenEntityModel> sorterChosen;
+
+    static final String FGV_BV = "FGV_BV";
+    static final String FGV_COST = "FGV_COST";
+    static final String FGV_VIEW = "FGV_VIEW";
+
     ClientGUI clientGui;
+    protected static MechSummaryCache mscInstance = MechSummaryCache.getInstance();
 
     public ForceGeneratorViewUi(ClientGUI gui) {
         clientGui = gui;
@@ -116,15 +126,17 @@ public class ForceGeneratorViewUi {
 
         forceTree = new JTree(new ForceTreeModel(null));
         forceTree.setCellRenderer(new UnitRenderer());
-        forceTree.setRowHeight(80);
+        // JTree setRowHeight(0) the height for each row is determined by the renderer
+        forceTree.setRowHeight(0);
         forceTree.setVisibleRowCount(12);
         forceTree.addTreeExpansionListener(new TreeExpansionListener() {
             @Override
-            public void treeCollapsed(TreeExpansionEvent arg0) {
+            public void treeCollapsed(TreeExpansionEvent evt) {
+
             }
 
             @Override
-            public void treeExpanded(TreeExpansionEvent arg0) {
+            public void treeExpanded(TreeExpansionEvent evt) {
                 if (forceTree.getPreferredSize().getWidth() > paneForceTree.getSize().getWidth()) {
                     rightPanel.setMinimumSize(new Dimension(forceTree.getMinimumSize().width, rightPanel.getMinimumSize().height));
                     rightPanel.setPreferredSize(new Dimension(forceTree.getPreferredSize().width, rightPanel.getPreferredSize().height));
@@ -177,17 +189,21 @@ public class ForceGeneratorViewUi {
 
         modelChosen = new ChosenEntityModel();
         tblChosen = new JTable(modelChosen);
+        sorterChosen = new TableRowSorter<>(modelChosen);
+        tblChosen.setRowSorter(sorterChosen);
         tblChosen.setIntercellSpacing(new Dimension(0, 0));
         tblChosen.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         JScrollPane scroll = new JScrollPane(tblChosen);
         scroll.setBorder(BorderFactory.createTitledBorder(Messages.getString("RandomArmyDialog.Army")));
         tblChosen.addMouseListener(tableMouseListener);
         tblChosen.addKeyListener(tableKeyListener);
-        
+
         leftPanel = new JPanel();
         leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
         leftPanel.add(panControls);
         leftPanel.add(scroll);
+
+        adaptToGUIScale();
     }
 
     public Component getLeftPanel() {
@@ -210,18 +226,18 @@ public class ForceGeneratorViewUi {
                 && (forceTree.getModel().getRoot() instanceof ForceDescriptor)) {
             configureNetworks((ForceDescriptor) forceTree.getModel().getRoot());
         }
-        
+
         List<Entity> entities = new ArrayList<>(modelChosen.allEntities().size());
         Client c = null;
         if (null != playerName) {
-            c = clientGui.getBots().get(playerName);
+            c = clientGui.getLocalBots().get(playerName);
         }
         if (null == c) {
             c = clientGui.getClient();
         }
         for (Entity e : modelChosen.allEntities()) {
             e.setOwner(c.getLocalPlayer());
-            if (c.getGame().getPhase() != GamePhase.LOUNGE) {
+            if (!c.getGame().getPhase().isLounge()) {
                 e.setDeployRound(c.getGame().getRoundCount() + 1);
                 e.setGame(c.getGame());
                 // Set these to true, otherwise units reinforced in
@@ -232,7 +248,10 @@ public class ForceGeneratorViewUi {
             entities.add(e);
         }
         c.sendAddEntity(entities);
-        
+
+        String msg = clientGui.getClient().getLocalPlayer() + " loaded Units from Random Army for player: "  + playerName + " ["+ entities.size() + " units]";
+        clientGui.getClient().sendServerChat(Player.PLAYER_NONE, msg);
+
         modelChosen.clearData();
     }
 
@@ -301,24 +320,22 @@ public class ForceGeneratorViewUi {
             lblFaction.setText("");
             lblRating.setText("");
         }
-
     }
 
     private MouseListener treeMouseListener = new MouseAdapter() {
+        @Override
+        public void mousePressed(MouseEvent evt) {
+            showPopup(evt);
+        }
 
         @Override
-        public void mousePressed(MouseEvent e) {
-            showPopup(e);
+        public void mouseReleased(MouseEvent evt) {
+            showPopup(evt);
         }
-        
-        @Override
-        public void mouseReleased(MouseEvent e) {
-            showPopup(e);
-        }
-        
-        private void showPopup(MouseEvent e) {
-            if (e.isPopupTrigger()) {
-                TreePath path = forceTree.getPathForLocation(e.getX(), e.getY());
+
+        private void showPopup(MouseEvent evt) {
+            if (evt.isPopupTrigger()) {
+                TreePath path = forceTree.getPathForLocation(evt.getX(), evt.getY());
                 if (path == null) {
                     return;
                 }
@@ -326,75 +343,108 @@ public class ForceGeneratorViewUi {
                 if (node instanceof ForceDescriptor) {
                     final ForceDescriptor fd = (ForceDescriptor) node;
                     JPopupMenu menu = new JPopupMenu();
-                    
+
                     JMenuItem item = new JMenuItem("Add to game");
                     item.addActionListener(ev -> modelChosen.addEntities(fd));
                     menu.add(item);
-                    
+
                     item = new JMenuItem("Export as MUL");
                     item.addActionListener(ev -> panControls.exportMUL(fd));
                     menu.add(item);
-                    menu.show(e.getComponent(), e.getX(), e.getY());
+                    UIUtil.scaleMenu(menu);
+                    menu.show(evt.getComponent(), evt.getX(), evt.getY());
                 }
             }
         }
     };
 
     private MouseListener tableMouseListener = new MouseAdapter() {
+        @Override
+        public void mousePressed(MouseEvent evt) {
+            showPopup(evt);
+        }
 
         @Override
-        public void mousePressed(MouseEvent e) {
-            showPopup(e);
+        public void mouseReleased(MouseEvent evt) {
+            showPopup(evt);
         }
-        
-        @Override
-        public void mouseReleased(MouseEvent e) {
-            showPopup(e);
-        }
-        
-        private void showPopup(MouseEvent e) {
-            if (e.isPopupTrigger()) {
+
+        private void showPopup(MouseEvent evt) {
+            if (evt.isPopupTrigger()) {
                 if (tblChosen.getSelectedRowCount() > 0) {
                     JPopupMenu menu = new JPopupMenu();
-                    
+
+                    List<Integer> entities = LobbyUtility.getSelectedEntities(tblChosen);
+                    int[] ents = entities.stream().mapToInt(Integer::intValue).toArray();
+
                     JMenuItem item = new JMenuItem("Remove");
-                    item.addActionListener(ev -> modelChosen.removeEntities(tblChosen.getSelectedRows()));
+                    item.addActionListener(ev -> modelChosen.removeEntities(ents));
                     menu.add(item);
-                    
-                    menu.show(e.getComponent(), e.getX(), e.getY());
-                    
+
+
+                    // All command strings should follow the layout COMMAND|INFO|ID1,ID2,I3...
+                    // and use -1 when something is not needed (COMMAND|-1|-1)
+                    String eIds = LobbyUtility.enToken(entities);
+
+                    String msg_view = Messages.getString("RandomArmyDialog.View");
+                    String msg_viewbv = Messages.getString("RandomArmyDialog.ViewBV");
+                    String msg_viewcost = Messages.getString("RandomArmyDialog.ViewCost");
+
+                    menu.add(UIUtil.menuItem(msg_view, FGV_VIEW + eIds, true, ForceGeneratorViewUi.this, KeyEvent.VK_V));
+                    menu.add(UIUtil.menuItem(msg_viewbv, FGV_BV + eIds, true, ForceGeneratorViewUi.this, KeyEvent.VK_B));
+                    menu.add(UIUtil.menuItem(msg_viewcost, FGV_COST + eIds, true, ForceGeneratorViewUi.this, Integer.MIN_VALUE));
+
+                    UIUtil.scaleMenu(menu);
+                    menu.show(evt.getComponent(), evt.getX(), evt.getY());
                 }
             }
         }
-        
     };
-    
+
+    @Override
+    public void actionPerformed(ActionEvent ev) {
+        StringTokenizer st = new StringTokenizer(ev.getActionCommand(), "|");
+        String command = "";
+
+        if (st.hasMoreTokens()) {
+            command = st.nextToken();
+        }
+
+        if (command.equals(FGV_VIEW)) {
+            // The entities list may be empty
+            Set<Entity> entities = LobbyUtility.getEntities(st.nextToken(), modelChosen);
+            LobbyUtility.mechReadoutAction(entities, true, true, clientGui.getFrame());
+        } else if (command.equals(FGV_BV)) {
+            // The entities list may be empty
+            Set<Entity> entities = LobbyUtility.getEntities(st.nextToken(), modelChosen);
+            LobbyUtility.mechBVAction(entities, true, true, clientGui.getFrame());
+        } else if (command.equals(FGV_COST)) {
+            // The entities list may be empty
+            Set<Entity> entities = LobbyUtility.getEntities(st.nextToken(), modelChosen);
+            LobbyUtility.mechCostAction(entities, true, true, clientGui.getFrame());
+        }
+    }
+
     private KeyListener tableKeyListener = new KeyListener() {
-
         @Override
-        public void keyTyped(KeyEvent e) {
-            // TODO Auto-generated method stub
+        public void keyTyped(KeyEvent evt) {
 
         }
 
         @Override
-        public void keyPressed(KeyEvent e) {
-            // TODO Auto-generated method stub
-            
+        public void keyPressed(KeyEvent evt) {
+
         }
 
         @Override
-        public void keyReleased(KeyEvent e) {
-            if ((e.getKeyCode() == KeyEvent.VK_DELETE)
-                    && (tblChosen.getSelectedRowCount() > 0)) {
+        public void keyReleased(KeyEvent evt) {
+            if ((evt.getKeyCode() == KeyEvent.VK_DELETE) && (tblChosen.getSelectedRowCount() > 0)) {
                 modelChosen.removeEntities(tblChosen.getSelectedRows());
             }
         }
-        
     };
 
     static class ForceTreeModel implements TreeModel {
-
         private ForceDescriptor root;
         private ArrayList<TreeModelListener> listeners;
 
@@ -456,23 +506,19 @@ public class ForceGeneratorViewUi {
 
         @Override
         public void valueForPathChanged(TreePath arg0, Object arg1) {
-            // TODO Auto-generated method stub
 
         }
-
     }
-    
-    class UnitRenderer extends DefaultTreeCellRenderer {
-        private static final long serialVersionUID = -5915350078441133119L;
 
+    private class UnitRenderer extends DefaultTreeCellRenderer {
         public UnitRenderer() {
 
         }
 
         @Override
-        public Component getTreeCellRendererComponent(JTree tree, Object value,
-                boolean sel, boolean expanded, boolean leaf, int row, boolean hasFocus) {
-
+        public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel,
+                                                      boolean expanded, boolean leaf, int row,
+                                                      boolean hasFocus) {
             super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
             setBackground(UIManager.getColor("Tree.textBackground"));
             setForeground(UIManager.getColor("Tree.textForeground"));
@@ -522,23 +568,22 @@ public class ForceGeneratorViewUi {
             return this;
         }
     }
-    
-    private static class ChosenEntityModel extends AbstractTableModel {
-        
-        private static final long serialVersionUID = 779497693159590878L;
-        
+
+    public static class ChosenEntityModel extends AbstractTableModel {
         public static final int COL_ENTITY = 0;
         public static final int COL_BV     = 1;
         public static final int COL_MOVE   = 2;
-        public static final int NUM_COLS   = 3;
-        
+        private static final int COL_TECH_BASE = 3;
+        private static final int COL_UNIT_ROLE = 4;
+        public static final int NUM_COLS   = 5;
+
         private List<Entity> entities = new ArrayList<>();
         private Set<String> entityIds = new HashSet<>();
-        
-        public boolean hasEntity(Entity en) {
-            return (null != en) && entityIds.contains(en.getExternalIdAsString());
+
+        public boolean hasEntity(final @Nullable Entity en) {
+            return (en != null) && entityIds.contains(en.getExternalIdAsString());
         }
-        
+
         public void addEntity(Entity en) {
             if (!entityIds.contains(en.getExternalIdAsString())) {
                 entities.add(en);
@@ -546,7 +591,7 @@ public class ForceGeneratorViewUi {
             }
             fireTableDataChanged();
         }
-        
+
         public void clearData() {
             entityIds.clear();
             entities.clear();
@@ -573,7 +618,7 @@ public class ForceGeneratorViewUi {
             fd.getSubforces().forEach(this::addEntities);
             fd.getAttached().forEach(this::addEntities);
         }
-        
+
         public List<Entity> allEntities() {
             return entities;
         }
@@ -598,22 +643,45 @@ public class ForceGeneratorViewUi {
                     return en.calculateBattleValue();
                 case COL_MOVE:
                     return en.getWalkMP() + "/" + en.getRunMPasString() + "/" + en.getJumpMP();
+                case COL_TECH_BASE:
+                    return en.getTechBaseDescription();
+                case COL_UNIT_ROLE:
+                    FlexibleCalculationReport report = new FlexibleCalculationReport();
+                    AlphaStrikeElement element = ASConverter.convert(en, false, report);
+                    return element.getRole();
+                default:
+                    return "";
             }
-            return "";
         }
 
         @Override
         public String getColumnName(int column) {
             switch (column) {
-                case (COL_ENTITY):
+                case COL_ENTITY:
                     return Messages.getString("RandomArmyDialog.colUnit");
-                case (COL_MOVE):
+                case COL_MOVE:
                     return Messages.getString("RandomArmyDialog.colMove");
-                case (COL_BV):
+                case COL_BV:
                     return Messages.getString("RandomArmyDialog.colBV");
+                case COL_TECH_BASE:
+                    return Messages.getString("RandomArmyDialog.colTechBase");
+                case COL_UNIT_ROLE:
+                    return Messages.getString("RandomArmyDialog.colUnitRole");
+                default:
+                    return "??";
             }
-            return "??";
         }
 
+        public MechSummary getUnitAt(int row) {
+            Entity e = entities.get(row);
+            MechSummary ms = mscInstance.getMech(e.getShortNameRaw());
+
+            return ms;
+        }
+    }
+
+    private void adaptToGUIScale() {
+        UIUtil.adjustContainer(leftPanel, UIUtil.FONT_SCALE1);
+        UIUtil.adjustContainer(rightPanel, UIUtil.FONT_SCALE1);
     }
 }

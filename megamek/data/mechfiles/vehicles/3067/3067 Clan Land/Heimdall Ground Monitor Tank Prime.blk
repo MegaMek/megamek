@@ -20,6 +20,10 @@ Heimdall Ground Monitor Tank
 Prime
 </Model>
 
+<mul id:>
+4293
+</mul id:>
+
 <year>
 3063
 </year>
@@ -27,6 +31,10 @@ Prime
 <type>
 Clan Level 2
 </type>
+
+<role>
+Juggernaut
+</role>
 
 <motion_type>
 Tracked
@@ -94,3 +102,7 @@ CLStreakSRM4:OMNI
 <baseChassisTurretWeight>
 1.5
 </baseChassisTurretWeight>
+
+<source>
+TRO: 3067
+</source>

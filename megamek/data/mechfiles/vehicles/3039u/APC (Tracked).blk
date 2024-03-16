@@ -20,6 +20,10 @@ Armored Personnel Carrier
 (Tracked)
 </Model>
 
+<mul id:>
+120
+</mul id:>
+
 <year>
 2500
 </year>
@@ -27,6 +31,10 @@ Armored Personnel Carrier
 <type>
 IS Level 1
 </type>
+
+<role>
+Scout
+</role>
 
 <motion_type>
 Tracked
@@ -73,7 +81,7 @@ Machine Gun
 </Turret Equipment>
 
 <source>
-TRO 3039 - Age of War
+TRO: 3039
 </source>
 
 <tonnage>

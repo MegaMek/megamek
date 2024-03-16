@@ -1,12 +1,19 @@
-Version:1.0
-Katana (Crockett)
-CRK-5003-C
+chassis:Katana (Crockett)
+model:CRK-5003-C
+mul id:1761
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3057
-Source:TRO 3050 - Clan Invasion
+Source:TRO: 3050
 Rules Level:2
+role:Juggernaut
+
+
+
+quirk:easy_pilot
+quirk:poor_life_support
+
 
 Mass:85
 Engine:255 Fusion Engine

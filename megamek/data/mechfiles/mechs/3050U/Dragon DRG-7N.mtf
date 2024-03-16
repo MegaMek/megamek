@@ -1,12 +1,19 @@
-Version:1.0
-Dragon
-DRG-7N
+chassis:Dragon
+model:DRG-7N
+mul id:5450
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3063
-Source:TRO 3050 - Civil War
+Source:TRO: 3050
 Rules Level:2
+role:Skirmisher
+
+
+
+quirk:low_profile
+quirk:stable
+
 
 Mass:60
 Engine:300 XL Engine(IS)

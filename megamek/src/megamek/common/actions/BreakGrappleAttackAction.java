@@ -39,8 +39,7 @@ public class BreakGrappleAttackAction extends PhysicalAttackAction {
     /**
      * Generates the to hit data for this action.
      *
-     * @param game
-     *            the game.
+     * @param game The current {@link Game}
      * @return the to hit data object for this action.
      * @see #toHit(Game, int, Targetable)
      */
@@ -50,6 +49,7 @@ public class BreakGrappleAttackAction extends PhysicalAttackAction {
 
     /**
      * To-hit number
+     * @param game The current {@link Game}
      */
     public static ToHitData toHit(Game game, int attackerId, Targetable target) {
         final Entity ae = game.getEntity(attackerId);
@@ -83,7 +83,7 @@ public class BreakGrappleAttackAction extends PhysicalAttackAction {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Only mechs and protomechs can be grappled");
         }
 
-        if (ae.getGrappled() != target.getTargetId()) {
+        if (ae.getGrappled() != target.getId()) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Not grappled");
         }
 

@@ -1,12 +1,23 @@
-Version:1.0
-Behemoth (Stone Rhino)
-(Standard)
+chassis:Behemoth
+clanname:Stone Rhino
+model:
+mul id:318
 
 Config:Biped
 techbase:Clan
 era:2847
-source:TRO 3055 - Succession Wars
+source:TRO: 3055
 rules level:2
+role:Sniper
+
+
+quirk:barrel_fists_la
+quirk:barrel_fists_ra
+quirk:pro_actuator
+quirk:oversized
+quirk:poor_performance
+quirk:weak_head_1
+
 
 mass:100
 engine:300 Fusion (Clan) Engine(IS)

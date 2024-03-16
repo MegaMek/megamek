@@ -20,6 +20,10 @@ Rogue
 RGU-133Eb
 </Model>
 
+<mul id:>
+4929
+</mul id:>
+
 <year>
 2710
 </year>
@@ -31,6 +35,10 @@ RGU-133Eb
 <type>
 IS Level 2
 </type>
+
+<role>
+Fast Dogfighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -105,7 +113,7 @@ IS Ammo LRM-15 Artemis-capable
 </Fuselage Equipment>
 
 <source>
-TRO 3075 - Star League
+TRO: 3075
 </source>
 
 <tonnage>

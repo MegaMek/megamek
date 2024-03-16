@@ -20,6 +20,10 @@ Vulcan
 VLC-3N
 </Model>
 
+<mul id:>
+3460
+</mul id:>
+
 <year>
 2525
 </year>
@@ -31,6 +35,10 @@ VLC-3N
 <type>
 IS Level 4
 </type>
+
+<role>
+Attack Fighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -105,7 +113,7 @@ IS Ammo AC/10
 </Fuselage Equipment>
 
 <source>
-XTRO Primitives I - Age of War
+XTR: Primitives I
 </source>
 
 <tonnage>

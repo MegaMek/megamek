@@ -20,6 +20,10 @@ Assault Triumph
 (3062)
 </Model>
 
+<mul id:>
+5297
+</mul id:>
+
 <year>
 3062
 </year>
@@ -31,6 +35,10 @@ Assault Triumph
 <type>
 IS Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Aerodyne
@@ -147,7 +155,7 @@ ISMediumPulseLaser
 </structural_integrity>
 
 <source>
-TRO 3067 - Civil War
+TRO: 3067
 </source>
 
 <tonnage>

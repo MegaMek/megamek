@@ -1,7 +1,7 @@
 Heavy Vehicle (2766) RWR
 Demon Tank (Standard),2
 Von Luckner Heavy Tank VNL-K65N,3
-Marsden II MBT (Standard),4
+Marsden MBT II,4
 Manticore Heavy Tank (Standard),5
 Merkava Heavy Tank Mk VIII,6
 Von Luckner Heavy Tank VNL-K65N,7

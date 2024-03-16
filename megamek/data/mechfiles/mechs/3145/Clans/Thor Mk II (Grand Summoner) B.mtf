@@ -1,12 +1,19 @@
-Version:1.0
-Thor II (Grand Summoner)
-B
+chassis:Thor II
+clanname:Grand Summoner
+model:B
+mul id:6283
 
 Config:Biped Omnimech
 TechBase:Clan
 Era:3093
-Source:TRO 3145 The Clans - Early Republic
+Source:TRO: 3145 The Clans
 Rules Level:2
+role:Missile Boat
+
+
+
+quirk:imp_com
+
 
 Mass:70
 Engine:350 XL (Clan) Engine(IS)

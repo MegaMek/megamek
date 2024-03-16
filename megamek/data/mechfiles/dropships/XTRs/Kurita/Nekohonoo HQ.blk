@@ -20,6 +20,10 @@ Nekohono'o
 (HQ)
 </Model>
 
+<mul id:>
+4698
+</mul id:>
+
 <year>
 3077
 </year>
@@ -31,6 +35,10 @@ Nekohono'o
 <type>
 IS Level 4
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Spheroid
@@ -198,7 +206,7 @@ ISLargeNavalCommScannerSuite
 </structural_integrity>
 
 <source>
-XTRO Kurita - Jihad
+XTR: Kurita
 </source>
 
 <tonnage>

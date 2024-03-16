@@ -1,12 +1,17 @@
-Version:1.0
-Masakari (Warhawk)
-Prime
-
+chassis:Masakari
+clanname:Warhawk
+model:Prime
+mul id:2097
 Config:Biped Omnimech
 techbase:Clan
 era:2999
-source:TRO 3050 - Succession Wars
-rules level:3
+source:TRO: 3050
+rules level:2
+role:Sniper
+
+
+quirk:imp_target_long
+
 
 mass:85
 engine:340 XL (Clan) Engine(IS)
@@ -34,9 +39,9 @@ RTC armor:10
 Weapons:5
 ER PPC, Left Arm
 ER PPC, Left Arm
-ER PPC, Right Arm
-ER PPC, Right Arm
 LRM 10, Left Arm
+ER PPC, Right Arm
+ER PPC, Right Arm
 
 Left Arm:
 Shoulder
@@ -46,8 +51,8 @@ CLERPPC (OMNIPOD)
 CLERPPC (OMNIPOD)
 CLERPPC (OMNIPOD)
 CLLRM10 (OMNIPOD)
+Clan Ammo LRM-10 (OMNIPOD)
 Clan Ferro-Fibrous
--Empty-
 -Empty-
 -Empty-
 -Empty-

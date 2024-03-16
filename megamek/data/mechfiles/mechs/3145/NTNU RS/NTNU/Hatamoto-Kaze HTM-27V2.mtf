@@ -1,0 +1,164 @@
+generator:MegaMek Suite 0.49.18-SNAPSHOT on 2024-01-06
+chassis:Hatamoto-Kaze
+model:HTM-27V2
+mul id:7926
+Config:Biped
+techbase:Inner Sphere
+era:3115
+source:Record Sheets: 3150
+rules level:2
+
+quirk:easy_maintain
+
+mass:80
+engine:320 Fusion Engine(IS)
+structure:IS Endo Steel
+myomer:Standard
+
+heat sinks:17 IS Double
+walk mp:4
+jump mp:0
+
+armor:Standard(Inner Sphere)
+LA armor:26
+RA armor:26
+LT armor:25
+RT armor:25
+CT armor:34
+HD armor:9
+LL armor:34
+RL armor:34
+RTL armor:9
+RTR armor:9
+RTC armor:16
+
+Weapons:4
+ER PPC, Left Arm
+ER PPC, Right Arm
+MML 5, Left Torso
+MML 5, Right Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISERPPC
+ISERPPC
+ISERPPC
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISERPPC
+ISERPPC
+ISERPPC
+
+Left Torso:
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISMML5
+ISMML5
+ISMML5
+IS Ammo MML-5 LRM
+ISCASE
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+
+Right Torso:
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISMML5
+ISMML5
+ISMML5
+IS Ammo MML-5 SRM
+ISCASE
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+IS Endo Steel
+IS Endo Steel
+
+Head:
+Life Support
+Sensors
+Cockpit
+ISC3SlaveUnit
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+overview:The Hatamoto-Series BattleMechs represent a pinnacle of strategic innovation within the Draconis Combine, marking a fusion of advanced Star League technology with existing Combine frameworks. The development of this series was initiated to leverage the influx of SLDF BattleMechs gifted by ComStar, focusing on reverse-engineering efforts that combined the strengths of the Thug with the Charger chassis. Spearheaded by the foresight of the future Coordinator of the Draconis Combine, this endeavor aimed to create a long-term technological advantage. Integrating advanced weaponry onto a robust and readily available chassis, the Hatamoto-Series stands as a significant achievement in military engineering, reflecting a progressive approach to Mech warfare.
+capabilities:The Hatamoto-Series is characterized by its formidable balance of firepower and defensive capabilities. These Mechs are equipped with a diverse array of energy and missile weapons, enabling effective engagement at multiple ranges. Their considerable armor plating allows them to endure severe combat scenarios, solidifying their role as primary combat units. A key design focus of the Hatamoto-Series is the prioritization of armament strength and survivability, though this comes at the cost of limited heat management and reduced mobility. The series faces challenges in heat dissipation during high-intensity battles, necessitating strategic weapon use by pilots. Despite these constraints, the Hatamoto-Series remains a testament to the Draconis Combine's engineering acumen, blending lethal offensive power with robustness to fulfill various combat requirements effectively.
+deployment:The HTM-27V2 variant, a modernized adaptation of the Hatamoto-Kaze, features Multi-Missile Launchers (MMLs) instead of the standard LRM-5 launchers, enhancing its flexibility in missile combat. Equipped with a C3 slave unit, it excels in coordinated battlefield operations, sharing targeting data and optimizing firing solutions with allied units. This model retains the characteristic resilience of the Hatamoto series, making it a versatile asset for long-range engagements and integrated mech tactics.
+history:The Hatamoto-Chi's development and subsequent variants have played a pivotal role in the evolution of the Draconis Combine's military might. After the introduction of the HTM-26T and 27T models, the Hatamoto-Chi underwent a series of modifications, each tailored to specific tactical needs and technological advancements within the Combine. The HTM-27U, known as the Hatamoto-Hi, emerged as a response to the need for a more heat-efficient and close-combat capable Mech. The integration of Medium Pulse Lasers and an additional heat sink in the 27U variant made it a popular choice for MechWarriors engaging in more aggressive combat scenarios.<p>Similarly, the HTM-27V (Hatamoto-Kaze) and HTM-27W (Hatamoto-Ku) variants represented strategic shifts towards long-range and direct fire combat, respectively. The 27V's focus on missile weaponry and the 27W's implementation of an Autocannon/5 provided MechWarriors with greater versatility in battlefield engagements, enhancing the Hatamoto-Chi's adaptability across different combat situations.</p>
+manufacturer:Maltex Corporation
+primaryfactory:Unity
+systemmanufacturer:CHASSIS:Earthwerks VOL
+systemmanufacturer:ENGINE:Pitban 320
+systemmanufacturer:ARMOR:Mitchell Argon
+systemmanufacturer:COMMUNICATIONS:Colmax 90
+systemmanufacturer:TARGETING:Garret D2j
+

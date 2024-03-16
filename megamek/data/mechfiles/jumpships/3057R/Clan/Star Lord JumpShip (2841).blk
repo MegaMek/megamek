@@ -20,6 +20,10 @@ Star Lord JumpShip
 (2841)
 </Model>
 
+<mul id:>
+5124
+</mul id:>
+
 <year>
 2841
 </year>
@@ -31,6 +35,10 @@ Star Lord JumpShip
 <type>
 Clan Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Aerodyne
@@ -114,7 +122,7 @@ ISMobileHPG
 </structural_integrity>
 
 <source>
-TRO 3057R - Early Succession War
+TRO: 3057 Revised
 </source>
 
 <tonnage>

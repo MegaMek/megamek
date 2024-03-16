@@ -1,65 +1,115 @@
-#building block data file
+#Saved from version 0.49.18-SNAPSHOT on 2024-01-07
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
-<Version>
-MAM0
-</Version>
+
 <UnitType>
 Tank
 </UnitType>
+
 <Name>
 Demon Medium Tank
 </Name>
-<model>
-(Standard)
-</model>
-<Tonnage>
-45
-</Tonnage>
+
+<Model>
+
+</Model>
+
+<mul id:>
+871
+</mul id:>
+
+<year>
+3077
+</year>
+
+<originalBuildYear>
+3077
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<role>
+Striker
+</role>
+
+<motion_type>
+Wheeled
+</motion_type>
+
 <cruiseMP>
 7
 </cruiseMP>
-<Armor>
+
+<engine_type>
+0
+</engine_type>
+
+<armor_type>
+6
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
 18
 12
 12
 7
 10
-</Armor>
+</armor>
+
+<Body Equipment>
+IS Vehicle Flamer Ammo
+IS Light Machine Gun Ammo - Half
+</Body Equipment>
+
+<Front Equipment>
+Light Machine Gun
+Light Machine Gun
+Flamer (Vehicle)
+Flamer (Vehicle)
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
 <Turret Equipment>
-ISMediumPulseLaser 
+ISMediumPulseLaser
 ISMediumPulseLaser
 </Turret Equipment>
-<Front Equipment>
-ISLightMG 
-ISLightMG 
-ISVehicleFlamer
-ISVehicleFlamer
-</Front Equipment>
-<Body Equipment>
-ISVehicleFlamer Ammo
-ISLightMG Ammo (100)
-</Body Equipment>
-<type>
-IS Level 2
-</type>
-<year>
-3077
-</year>
-<internal_type>
-0
-</internal_type>
-<armor_type>
-6
-</armor_type>
-<engine_type>
-0
-</engine_type>
-<motion_type>
-Wheeled
-</motion_type>
+
+<manufacturer>
+Brigadier Corporation
+</manufacturer>
+
+<primaryFactory>
+Oliver
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:295 GM Fusion
+ARMOR:Leopard II Heavy Ferro-Fibrous
+COMMUNICATIONS:Exeter LongScan
+TARGETING:Standard TargetTrack
+</systemManufacturers>
+
 <source>
-TRO3085
+TRO: 3085
 </source>
+
+<tonnage>
+45.0
+</tonnage>
+

@@ -2,7 +2,7 @@ Outworlds Alliance Dropships B-C
 Leopard CV (2581),1
 Vulture (2312),2
 Gazelle (2531),3
-Dictator (Standard),4
+Dictator,4
 Leopard CV (2581),5
 Trojan (Blockade Runner),6
 Triumph (2593),5

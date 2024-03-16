@@ -20,6 +20,10 @@ Demon Tank
 CX-2
 </Model>
 
+<mul id:>
+5555
+</mul id:>
+
 <year>
 3070
 </year>
@@ -27,6 +31,10 @@ CX-2
 <type>
 IS Level 4
 </type>
+
+<role>
+Sniper
+</role>
 
 <motion_type>
 Wheeled
@@ -79,9 +87,16 @@ Medium Laser(ST)
 </Turret Equipment>
 
 <source>
-XTRO ComStar - Jihad
+XTR: ComStar
 </source>
 
 <tonnage>
 60.0
 </tonnage>
+
+<quirks>
+prototype
+poor_work
+trailer_hitch
+</quirks>
+

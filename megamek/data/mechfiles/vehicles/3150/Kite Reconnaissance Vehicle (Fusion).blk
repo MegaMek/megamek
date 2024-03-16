@@ -1,0 +1,108 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+Kite Reconnaissance Vehicle
+</Name>
+
+<Model>
+(Fusion)
+</Model>
+
+<mul id:>
+8052
+</mul id:>
+
+<year>
+3147
+</year>
+
+<originalBuildYear>
+3147
+</originalBuildYear>
+
+<type>
+Clan Level 3
+</type>
+
+<motion_type>
+Hover
+</motion_type>
+
+<transporters>
+</transporters>
+
+<cruiseMP>
+9
+</cruiseMP>
+
+<engine_type>
+0
+</engine_type>
+
+<clan_engine>
+false
+</clan_engine>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+8
+</armor_tech>
+
+<armor>
+25
+20
+20
+20
+20
+</armor>
+
+<Body Equipment>
+CLArmoredMotiveSystem
+ISAngelECMSuite
+</Body Equipment>
+
+<Front Equipment>
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+CLMediumPulseLaser
+CLMediumPulseLaser
+</Turret Equipment>
+
+<source>
+Record Sheets: 3150
+</source>
+
+<tonnage>
+30.0
+</tonnage>
+
+
+<quirks>
+imp_sensors
+</quirks>
+

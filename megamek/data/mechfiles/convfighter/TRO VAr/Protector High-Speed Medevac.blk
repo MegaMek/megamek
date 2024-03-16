@@ -20,6 +20,10 @@ Protector High-Speed Medevac
 C-790
 </Model>
 
+<mul id:>
+4874
+</mul id:>
+
 <year>
 2997
 </year>
@@ -31,6 +35,10 @@ C-790
 <type>
 IS Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Aerodyne
@@ -109,7 +117,7 @@ Paramedic Equipment
 </structural_tech_rating>
 
 <source>
-TRO Vehicle Annex (r) - Succession Wars
+TRO: Vehicle Annex Revised
 </source>
 
 <tonnage>

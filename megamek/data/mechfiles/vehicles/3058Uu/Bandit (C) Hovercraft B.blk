@@ -20,6 +20,10 @@ Bandit (C) Hovercraft
 B
 </Model>
 
+<mul id:>
+221
+</mul id:>
+
 <year>
 2875
 </year>
@@ -28,15 +32,16 @@ B
 Clan Level 2
 </type>
 
+<role>
+Missile Boat
+</role>
+
 <motion_type>
 Hover
 </motion_type>
 
 <transporters>
 troopspace:5.0
-</transporters>
-
-<transporters>
 BattleArmorHandles - troopers:-1
 </transporters>
 
@@ -92,7 +97,7 @@ CLLRM20:OMNI
 </Turret Equipment>
 
 <source>
-TRO 3058 - Early Succession War
+TRO: 3058
 </source>
 
 <tonnage>

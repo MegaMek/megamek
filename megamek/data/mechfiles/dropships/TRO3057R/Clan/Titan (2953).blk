@@ -20,6 +20,10 @@ Titan
 (2953)
 </Model>
 
+<mul id:>
+5249
+</mul id:>
+
 <year>
 2953
 </year>
@@ -31,6 +35,10 @@ Titan
 <type>
 Clan Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Aerodyne
@@ -158,7 +166,7 @@ ISSmallNavalCommScannerSuite
 </structural_integrity>
 
 <source>
-TRO 3057R - Late Succession War - Lostech
+TRO: 3057 Revised
 </source>
 
 <tonnage>

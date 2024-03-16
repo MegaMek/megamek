@@ -1,49 +1,58 @@
-Version:1.1
-Mackie
-MSK-6S
-
+chassis:Mackie
+model:MSK-6S
+mul id:1973
 Config:Biped
-TechBase:Inner Sphere
-Era:2439
-Source:TRO 3075
-Rules Level:4
+techbase:Inner Sphere
+era:2439
+source:TRO: 3075
+rules level:4
+role:Juggernaut
 
-Mass:100
-Engine:360 Fusion Engine
-Structure:Standard
-Myomer:Standard
-Cockpit:Primitive Cockpit
-Gyro:Standard Gyro
 
-Heat Sinks:15 Single
-Walk MP:3
-Jump MP:0
 
-Armor:Primitive(Inner Sphere)
-LA Armor:24
-RA Armor:24
-LT Armor:20
-RT Armor:20
-CT Armor:31
-HD Armor:9
-LL Armor:28
-RL Armor:28
-RTL Armor:10
-RTR Armor:10
-RTC Armor:10
+
+quirk:easy_maintain
+quirk:pro_actuator
+quirk:rugged_1
+quirk:oversized
+
+
+mass:100
+engine:360 Fusion Engine(IS)
+structure:IS Standard
+myomer:Standard
+cockpit:Primitive Cockpit
+gyro:Standard Gyro
+
+heat sinks:15 Single
+walk mp:3
+jump mp:0
+
+armor:Primitive(Inner Sphere)
+LA armor:24
+RA armor:24
+LT armor:20
+RT armor:20
+CT armor:31
+HD armor:9
+LL armor:28
+RL armor:28
+RTL armor:10
+RTR armor:10
+RTC armor:10
 
 Weapons:4
-Particle Cannon, Left Arm
-Autocannon/10, Right Arm
+AC/10, Right Arm
 Medium Laser, Center Torso
 Medium Laser, Center Torso
+Primitive Prototype PPC, Left Arm
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-Particle Cannon
-Particle Cannon
-Particle Cannon
+Primitive Prototype PPC
+Primitive Prototype PPC
+Primitive Prototype PPC
 -Empty-
 -Empty-
 -Empty-

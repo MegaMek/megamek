@@ -20,6 +20,10 @@ Vengeance
 (Danai Centrella)
 </Model>
 
+<mul id:>
+5578
+</mul id:>
+
 <year>
 3080
 </year>
@@ -31,6 +35,10 @@ Vengeance
 <type>
 IS Level 4
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Aerodyne
@@ -179,7 +187,7 @@ ISSmallNavalCommScannerSuite
 </structural_integrity>
 
 <source>
-XTRO Periphery - Jihad
+XTR: Periphery
 </source>
 
 <tonnage>

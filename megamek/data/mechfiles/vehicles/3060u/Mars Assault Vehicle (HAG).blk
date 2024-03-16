@@ -20,6 +20,10 @@ Mars Assault Vehicle
 (HAG)
 </Model>
 
+<mul id:>
+2081
+</mul id:>
+
 <year>
 3075
 </year>
@@ -27,6 +31,10 @@ Mars Assault Vehicle
 <type>
 Clan Level 3
 </type>
+
+<role>
+Missile Boat
+</role>
 
 <motion_type>
 Tracked
@@ -99,7 +107,7 @@ CLAPGaussRifle
 </Turret Equipment>
 
 <source>
-TRO 3060 - Jihad
+TRO: 3060
 </source>
 
 <tonnage>

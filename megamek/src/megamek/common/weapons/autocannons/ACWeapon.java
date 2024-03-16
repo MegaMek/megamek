@@ -14,7 +14,7 @@
 package megamek.common.weapons.autocannons;
 
 import megamek.common.AmmoType;
-import megamek.common.BattleForceElement;
+import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.Game;
 import megamek.common.Mounted;
 import megamek.common.ToHitData;
@@ -32,6 +32,7 @@ import megamek.common.weapons.AmmoWeapon;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.RapidfireACWeaponHandler;
 import megamek.common.weapons.Weapon;
+import megamek.server.GameManager;
 import megamek.server.Server;
 
 /**
@@ -56,47 +57,47 @@ public abstract class ACWeapon extends AmmoWeapon {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
      * megamek.common.actions.WeaponAttackAction, megamek.common.Game,
      * megamek.server.Server)
      */
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game, Server server) {
+    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game, GameManager gameManager) {
         AmmoType atype = (AmmoType) game.getEntity(waa.getEntityId()).getEquipment(waa.getWeaponId()).getLinked().getType();
 
         Mounted weapon = game.getEntity(waa.getEntityId()).getEquipment(waa.getWeaponId());
 
         if (weapon.curMode().equals("Rapid")) {
-            RapidfireACWeaponHandler ah = new RapidfireACWeaponHandler(toHit, waa, game, server);
+            RapidfireACWeaponHandler ah = new RapidfireACWeaponHandler(toHit, waa, game, gameManager);
             return ah;
         }
-        if (atype.getMunitionType() == AmmoType.M_ARMOR_PIERCING) {
-            return new ACAPHandler(toHit, waa, game, server);
+        if (atype.getMunitionType().contains(AmmoType.Munitions.M_ARMOR_PIERCING)) {
+            return new ACAPHandler(toHit, waa, game, gameManager);
         }
 
-        if (atype.getMunitionType() == AmmoType.M_FLECHETTE) {
-            return new ACFlechetteHandler(toHit, waa, game, server);
+        if (atype.getMunitionType().contains(AmmoType.Munitions.M_FLECHETTE)) {
+            return new ACFlechetteHandler(toHit, waa, game, gameManager);
         }
 
-        if (atype.getMunitionType() == AmmoType.M_INCENDIARY_AC) {
-            return new ACIncendiaryHandler(toHit, waa, game, server);
+        if (atype.getMunitionType().contains(AmmoType.Munitions.M_INCENDIARY_AC)) {
+            return new ACIncendiaryHandler(toHit, waa, game, gameManager);
         }
 
-        if (atype.getMunitionType() == AmmoType.M_TRACER) {
-            return new ACTracerHandler(toHit, waa, game, server);
+        if (atype.getMunitionType().contains(AmmoType.Munitions.M_TRACER)) {
+            return new ACTracerHandler(toHit, waa, game, gameManager);
         }
 
-        if (atype.getMunitionType() == AmmoType.M_FLAK) {
-            return new ACFlakHandler(toHit, waa, game, server);
-        }
-        
-        if (atype.getMunitionType() == AmmoType.M_CASELESS) {
-            return new ACCaselessHandler (toHit, waa, game, server);
+        if (atype.getMunitionType().contains(AmmoType.Munitions.M_FLAK)) {
+            return new ACFlakHandler(toHit, waa, game, gameManager);
         }
 
-        return new ACWeaponHandler(toHit, waa, game, server);
+        if (atype.getMunitionType().contains(AmmoType.Munitions.M_CASELESS)) {
+            return new ACCaselessHandler (toHit, waa, game, gameManager);
+        }
+
+        return new ACWeaponHandler(toHit, waa, game, gameManager);
 
     }
 
@@ -106,13 +107,13 @@ public abstract class ACWeapon extends AmmoWeapon {
         if ((dmg != 5) && (dmg != 2)) {
             return dmg;
         }
-        GameOptions options = getGameOptions();
-        if (options == null) {
-            return dmg;
-        }
-        if (options.getOption(OptionsConstants.ADVCOMBAT_INCREASED_AC_DMG).booleanValue()) {
+
+        if ((Server.getServerInstance() != null)
+                && Server.getServerInstance().getGame().getOptions()
+                        .getOption(OptionsConstants.ADVCOMBAT_INCREASED_AC_DMG).booleanValue()) {
             dmg++;
         }
+
         return dmg;
     }
 
@@ -121,7 +122,7 @@ public abstract class ACWeapon extends AmmoWeapon {
         double damage = 0;
         if (range <= getLongRange()) {
             damage = getRackSize();
-            if (range == BattleForceElement.SHORT_RANGE && getMinimumRange() > 0) {
+            if ((range == AlphaStrikeElement.SHORT_RANGE) && (getMinimumRange() > 0)) {
                 damage = adjustBattleForceDamageForMinRange(damage);
             }
         }

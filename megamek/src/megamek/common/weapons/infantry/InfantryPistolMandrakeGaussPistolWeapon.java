@@ -45,7 +45,7 @@ public class InfantryPistolMandrakeGaussPistolWeapon extends InfantryWeapon {
 		infantryRange = 0;
 		ammoWeight = 0.00001;
 		shots = 1;
-		rulesRefs = "273,TM";
+		rulesRefs = "273, TM";
 		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3050, 3052, 3085, DATE_NONE, DATE_NONE)
 				.setISApproximate(true, false, false, false, false)
 				.setPrototypeFactions(F_CC)

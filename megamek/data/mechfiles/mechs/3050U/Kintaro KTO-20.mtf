@@ -1,12 +1,18 @@
-Version:1.0
-Kintaro
-KTO-20
+chassis:Kintaro
+model:KTO-20
+mul id:1793
 
 Config:Biped
 techbase:Inner Sphere
 era:3035
-source:TRO 3050 - Succession War
+source:TRO: 3050
 rules level:2
+role:Skirmisher
+
+
+
+quirk:rugged_1
+
 
 mass:55
 engine:275 Fusion Engine(IS)

@@ -1,42 +1,46 @@
-Version:1.0
-Caesar
-CES-3S
-
+chassis:Caesar
+model:CES-3S
+mul id:456
 Config:Biped
-TechBase:Inner Sphere
-Era:3067
-Source:TRO 3050 - Civil War
-Rules Level:2
+techbase:Inner Sphere
+era:3067
+source:TRO: 3050
+rules level:2
+role:Brawler
 
-Mass:70
-Engine:280 Light Engine
-Structure:Endo Steel
-Myomer:Standard
 
-Heat Sinks:12 Double
-Walk MP:4
-Jump MP:0
 
-Armor:Light Ferro-Fibrous
-LA Armor:22
-RA Armor:22
-LT Armor:22
-RT Armor:22
-CT Armor:33
-HD Armor:9
-LL Armor:30
-RL Armor:30
-RTL Armor:8
-RTR Armor:8
-RTC Armor:11
+quirk:hyper_actuator
 
-Weapons:6
-1 ISHeavyPPC, Right Arm
-1 ISMediumPulseLaser, Right Arm
-1 ISMediumPulseLaser, Left Arm
-1 ISGaussRifle, Right Torso, Ammo:16
-1 ISGuardianECM, Right Torso
-1 ISERSmallLaser, Center Torso (R)
+
+mass:70
+engine:280 Light Engine(IS)
+structure:IS Endo Steel
+myomer:Standard
+
+heat sinks:12 IS Double
+walk mp:4
+jump mp:0
+
+armor:Light Ferro-Fibrous(Inner Sphere)
+LA armor:22
+RA armor:22
+LT armor:22
+RT armor:22
+CT armor:33
+HD armor:9
+LL armor:30
+RL armor:30
+RTL armor:8
+RTR armor:8
+RTC armor:11
+
+Weapons:5
+Medium Pulse Laser, Left Arm
+Heavy PPC, Right Arm
+Medium Pulse Laser, Right Arm
+Gauss Rifle, Right Torso
+ER Small Laser, Center Torso
 
 Left Arm:
 Shoulder
@@ -44,41 +48,41 @@ Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
 ISMediumPulseLaser
-Endo Steel
-Endo Steel
-Endo Steel
-Light Ferro-Fibrous
-Light Ferro-Fibrous
-Light Ferro-Fibrous
--Empty-
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Light Ferro-Fibrous
+IS Light Ferro-Fibrous
+IS Light Ferro-Fibrous
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-ISHeavyPPC
-ISHeavyPPC
-ISHeavyPPC
-ISHeavyPPC
+Heavy PPC
+Heavy PPC
+Heavy PPC
+Heavy PPC
 ISMediumPulseLaser
-Endo Steel
-Endo Steel
-Light Ferro-Fibrous
+IS Endo Steel
+IS Endo Steel
+IS Light Ferro-Fibrous
 
 Left Torso:
 Fusion Engine
 Fusion Engine
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISGauss Ammo
-ISGauss Ammo
-Endo Steel
-Endo Steel
-Light Ferro-Fibrous
-Light Ferro-Fibrous
-Light Ferro-Fibrous
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+IS Gauss Ammo
+IS Gauss Ammo
+IS Endo Steel
+IS Endo Steel
+IS Light Ferro-Fibrous
+IS Light Ferro-Fibrous
+IS Light Ferro-Fibrous
 
 Right Torso:
 Fusion Engine
@@ -90,9 +94,9 @@ ISGaussRifle
 ISGaussRifle
 ISGaussRifle
 ISGaussRifle
-ISGuardianECM
-ISGuardianECM
-Endo Steel
+ISGuardianECMSuite
+ISGuardianECMSuite
+ISCASE
 
 Center Torso:
 Fusion Engine
@@ -106,13 +110,13 @@ Fusion Engine
 Fusion Engine
 Fusion Engine
 ISERSmallLaser (R)
-Endo Steel
+IS Endo Steel
 
 Head:
 Life Support
 Sensors
 Cockpit
-Endo Steel
+IS Endo Steel
 Sensors
 Life Support
 -Empty-
@@ -127,8 +131,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -141,11 +145,27 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
+
+overview:Originally a reverse engineered version of the Capellan Confederation's Cataphract intended to mask development of the Federated Commonwealth's fearsome Axman, the Caesar would turn out to be a good but not great BattleMech in its own right.
+
+capabilities:The Caesar was built to do as much damage to an enemy at as great a stand-off range as possible. The 'Mech therefore carries primarily long-ranged armament. The 'Mech also uses an 280-rated XL engine and sixteen double heat sinks, both of which save significant amounts of weight, in order to carry as many weapons and as much armor as possible. The 'Mech utilizes CASE to protect against ammunition explosions should an enemy be able to breach the ten and a half tons of armor that protect it.
+
+deployment:This variant is produced by Johnston Industries for the Lyran Alliance. It is built on an endo steel chassis, and with light ferro-fibrous armor. The rear-facing lasers and four double heat sinks are removed, making enough tonnage available to swap out the engine for a light engine of the same rating. The remaining mass goes toward upgrading the ER PPC to a heavy PPC and the inclusion of a rear-firing ER small laser and Guardian ECM suite. The Gauss rifle is protected by CASE.
+
+history:Supposedly the sole design intended to come out of Johnston Industries' then-new 'Mech lines on New Syrtis, the Caesar received notable public attention in an attempt to distract from development of the Axman. The finished 'Mech surprisingly enough proved to be a high-quality design itself. Though never attracting great sales, the Caesar would prove to be relatively popular in the Capellan March, among Lyran units on the Clan front, and with both FedCom-employed mercenaries and the Com Guards. Johnston attempted to redress its mediocre sales in the wake of the FedCom Civil War, developing two new variants intended to focus specifically on the qualities desired by the Lyran Alliance and Federated Suns. The resulting upswing in sales saw the Caesar in increasing use among those opposing the Word of Blake during the Jihad, with the LAAF in particular adopting the design almost as a means of honoring the assassinated Caesar Steiner.
+
+manufacturer:Johnston Industries
+primaryfactory:New Syrtis
+systemmanufacturer:CHASSIS:Dorwinion CES Endo-Steel
+systemmanufacturer:ENGINE:GM 280 Extralight
+systemmanufacturer:ARMOR:Kallon Light Ferro-Fibrous with CASE
+systemmanufacturer:COMMUNICATIONS:Johnston Wide Band
+systemmanufacturer:TARGETING:Randar Pinpoint-HY

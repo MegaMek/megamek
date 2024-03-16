@@ -16,9 +16,13 @@ Tank
 Heavy NLRM Carrier
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+4276
+</mul id:>
 
 <year>
 3083
@@ -27,6 +31,10 @@ Heavy NLRM Carrier
 <type>
 IS Level 4
 </type>
+
+<role>
+Missile Boat
+</role>
 
 <motion_type>
 Tracked
@@ -83,9 +91,15 @@ Enhanced LRM 15
 </Turret Equipment>
 
 <source>
-TRO:Prototypes
+TRO: Prototypes
 </source>
 
 <tonnage>
 80.0
 </tonnage>
+
+<quirks>
+difficult_maintain
+trailer_hitch
+</quirks>
+

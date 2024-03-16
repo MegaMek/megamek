@@ -20,6 +20,10 @@ Bandit (C) Hovercraft
 E
 </Model>
 
+<mul id:>
+224
+</mul id:>
+
 <year>
 3062
 </year>
@@ -28,15 +32,16 @@ E
 Clan Level 2
 </type>
 
+<role>
+Striker
+</role>
+
 <motion_type>
 Hover
 </motion_type>
 
 <transporters>
 troopspace:5.0
-</transporters>
-
-<transporters>
 BattleArmorHandles - troopers:-1
 </transporters>
 
@@ -92,7 +97,7 @@ CLATM9:OMNI
 </Turret Equipment>
 
 <source>
-TRO 3058 - Civil War
+TRO: 3058
 </source>
 
 <tonnage>

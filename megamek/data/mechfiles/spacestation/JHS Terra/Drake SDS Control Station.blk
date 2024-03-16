@@ -16,9 +16,13 @@ SpaceStation
 Drake SDS Control Station
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+4097
+</mul id:>
 
 <year>
 3071
@@ -31,6 +35,10 @@ Drake SDS Control Station
 <type>
 IS Level 4
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Aerodyne
@@ -207,7 +215,7 @@ DirectTacticalAnalysisSystem:SIZE:18.0
 </structural_integrity>
 
 <source>
-JHS:Terra - Jihad
+Jihad Hot Spots: Terra
 </source>
 
 <tonnage>

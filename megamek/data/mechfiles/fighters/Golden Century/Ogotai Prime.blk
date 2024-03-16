@@ -20,6 +20,10 @@ Ogotai
 Prime
 </Model>
 
+<mul id:>
+7656
+</mul id:>
+
 <year>
 2874
 </year>
@@ -31,6 +35,10 @@ Prime
 <type>
 Clan Level 2
 </type>
+
+<role>
+Fast Dogfighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -98,9 +106,14 @@ Clan Ammo LRM-10:OMNI
 </Fuselage Equipment>
 
 <source>
-TRO Golden Century
+TRO: Golden Century
 </source>
 
 <tonnage>
 45.0
 </tonnage>
+
+<quirks>
+atmo_instability
+</quirks>
+

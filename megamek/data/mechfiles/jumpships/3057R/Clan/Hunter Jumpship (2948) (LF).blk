@@ -20,6 +20,10 @@ Hunter Jumpship
 (2948) (LF)
 </Model>
 
+<mul id:>
+4339
+</mul id:>
+
 <year>
 2948
 </year>
@@ -31,6 +35,10 @@ Hunter Jumpship
 <type>
 Clan Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Aerodyne
@@ -125,7 +133,7 @@ ISMobileHPG
 </structural_integrity>
 
 <source>
-TRO 3057U - Late Succession War - Lostech
+TRO: 3057 Revised
 </source>
 
 <tonnage>

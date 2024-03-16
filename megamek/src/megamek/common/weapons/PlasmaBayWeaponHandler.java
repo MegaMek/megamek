@@ -30,9 +30,10 @@ import megamek.common.TargetRoll;
 import megamek.common.ToHitData;
 import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.equipment.ArmorType;
 import megamek.common.weapons.ppc.CLPlasmaCannon;
 import megamek.common.weapons.ppc.ISPlasmaRifle;
-import megamek.server.Server;
+import megamek.server.GameManager;
 
 public class PlasmaBayWeaponHandler extends AmmoBayWeaponHandler {
     private static final long serialVersionUID = -4718048077136686433L;
@@ -42,8 +43,8 @@ public class PlasmaBayWeaponHandler extends AmmoBayWeaponHandler {
      * @param waa
      * @param g
      */
-    public PlasmaBayWeaponHandler(ToHitData toHit, WeaponAttackAction waa, Game g, Server s) {
-        super(toHit, waa, g, s);
+    public PlasmaBayWeaponHandler(ToHitData toHit, WeaponAttackAction waa, Game g, GameManager m) {
+        super(toHit, waa, g, m);
         generalDamageType = HitData.DAMAGE_ENERGY;
     }
 
@@ -87,9 +88,8 @@ public class PlasmaBayWeaponHandler extends AmmoBayWeaponHandler {
                    r.add(Math.max(1, extraHeat / 2));
                    r.choose(true);
                    r.add(extraHeat);
-                   r.add(EquipmentType.armorNames
-                           [entityTarget.getArmorType(hit.getLocation())]);
-                } else if (entityTarget.getArmor(hit) > 0 &&  
+                   r.add(ArmorType.forEntity(entityTarget, hit.getLocation()).getName());
+                } else if (entityTarget.getArmor(hit) > 0 &&
                        (entityTarget.getArmorType(hit.getLocation()) == 
                            EquipmentType.T_ARMOR_HEAT_DISSIPATING)) {
                     entityTarget.heatFromExternal += extraHeat / 2;
@@ -97,8 +97,7 @@ public class PlasmaBayWeaponHandler extends AmmoBayWeaponHandler {
                     r.add(extraHeat / 2);
                     r.choose(true);
                     r.add(extraHeat);
-                    r.add(EquipmentType.armorNames
-                            [entityTarget.getArmorType(hit.getLocation())]);
+                    r.add(ArmorType.forEntity(entityTarget, hit.getLocation()).getName());
                 } else {
                     entityTarget.heatFromExternal += extraHeat;
                     r.add(extraHeat);
@@ -122,7 +121,7 @@ public class PlasmaBayWeaponHandler extends AmmoBayWeaponHandler {
         TargetRoll tn = new TargetRoll(wtype.getFireTN(), wtype.getName());
         if (tn.getValue() != TargetRoll.IMPOSSIBLE) {
             Report.addNewline(vPhaseReport);
-            server.tryIgniteHex(target.getPosition(), subjectId, true, false,
+            gameManager.tryIgniteHex(target.getPosition(), subjectId, true, false,
                     tn, true, -1, vPhaseReport);
         }
     }
@@ -153,13 +152,13 @@ public class PlasmaBayWeaponHandler extends AmmoBayWeaponHandler {
         // a 5 or less
         // you do a normal ignition as though for intentional fires
         if ((bldg != null)
-                && server.tryIgniteHex(target.getPosition(), subjectId, true,
+                && gameManager.tryIgniteHex(target.getPosition(), subjectId, true,
                         false,
                         new TargetRoll(wtype.getFireTN(), wtype.getName()), 5,
                         vPhaseReport)) {
             return;
         }
-        Vector<Report> clearReports = server.tryClearHex(target.getPosition(),
+        Vector<Report> clearReports = gameManager.tryClearHex(target.getPosition(),
                 nDamage, subjectId);
         if (!clearReports.isEmpty()) {
             vPhaseReport.lastElement().newlines = 0;

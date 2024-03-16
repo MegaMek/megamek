@@ -15,6 +15,10 @@ Heavy Jump Infantry
 <Model>
 Royal Gurkha Battalion
 </Model>
+
+<mul id:>
+1438
+</mul id:>
 <squad_size>
 7
 </squad_size>
@@ -36,6 +40,10 @@ MarikKit3035
 <type>
 IS Level 3
 </type>
+
+<role>
+Ambusher
+</role>
 <year>
 3063
 </year>

@@ -20,6 +20,10 @@ Hammerhead
 HMR-HE
 </Model>
 
+<mul id:>
+1375
+</mul id:>
+
 <year>
 2672
 </year>
@@ -31,6 +35,10 @@ HMR-HE
 <type>
 IS Level 2
 </type>
+
+<role>
+Fire Support
+</role>
 
 <motion_type>
 Aerodyne
@@ -99,7 +107,7 @@ PPC
 </Fuselage Equipment>
 
 <source>
-TRO 3050u - Star League
+TRO: 3050
 </source>
 
 <tonnage>

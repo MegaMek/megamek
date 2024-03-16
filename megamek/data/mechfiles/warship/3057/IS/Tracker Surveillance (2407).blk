@@ -1,0 +1,227 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Warship
+</UnitType>
+
+<Name>
+Tracker Surveillance
+</Name>
+
+<Model>
+(2407)
+</Model>
+
+<mul id:>
+5270
+</mul id:>
+
+<year>
+2440
+</year>
+
+<originalBuildYear>
+2440
+</originalBuildYear>
+
+<type>
+IS Level 4
+</type>
+
+<role>
+None
+</role>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+smallcraftbay:4.0:1:1
+cargobay:23586.0:1:2
+dockingcollar
+dockingcollar
+steeragequarters:280.0:0
+1stclassquarters:150.0:0
+crewquarters:406.0:0
+2ndclassquarters:42.0:0
+</transporters>
+
+<SafeThrust>
+4
+</SafeThrust>
+
+<heatsinks>
+285
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+14000
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+41
+</armor_type>
+
+<armor_tech>
+5
+</armor_tech>
+
+<armor>
+17
+15
+15
+15
+15
+15
+</armor>
+
+<Nose Equipment>
+(B) Naval Laser 45
+</Nose Equipment>
+
+<Left Front Side Equipment>
+(B) PPC
+</Left Front Side Equipment>
+
+<Right Front Side Equipment>
+(B) PPC
+</Right Front Side Equipment>
+
+<Aft Equipment>
+(B) Capital Missile Launcher (Barracuda)
+Capital Missile Launcher (Barracuda)
+Ammo Barracuda:24
+</Aft Equipment>
+
+<Aft Left Side Equipment>
+</Aft Left Side Equipment>
+
+<Aft Right Side Equipment>
+</Aft Right Side Equipment>
+
+<Hull Equipment>
+</Hull Equipment>
+
+<Left Broadsides Equipment>
+</Left Broadsides Equipment>
+
+<Right Broadsides Equipment>
+</Right Broadsides Equipment>
+
+<structural_integrity>
+36
+</structural_integrity>
+
+<capabilities>
+The Tracker surveillance vessel was designed to mimic a commercial JumpShip's sensor readings. It had the capability to rapidly change its silhouette by attaching special panels to hard points on the hull. The vessel could also modify its transponder, using various aliases to operate covertly. This allowed the Tracker to navigate space lanes without arousing suspicion. With sufficient speed and firepower, including the ability to engage anything short of a capital ship, the Trackers were capable of defending themselves in case their cover was exposed. Additionally, these spy ships often carried innocent DropShips on their docking collars to maintain their cover.
+</capabilities>
+
+<overview>
+Director-General Judith Cameron, concerned about the escalating conflicts with neighboring states, ordered an increase in covert monitoring operations by the Hegemony Intelligence. To fulfill this need, the Tracker surveillance vessel was developed. The Tracker was designed to provide sensor readings similar to a commercial JumpShip and had the ability to quickly alter its silhouette using special panels. It could also change its transponder, operating under different aliases for covert operations. Equipped with speed and firepower, the Trackers could gather intelligence, monitor fleet movements, and defend themselves if their cover was compromised. Despite becoming obsolete over time, some Trackers remained in service until the end of the Reunification War, primarily engaging pirates and Taurian Concordat raiders as Q-Ships.
+</overview>
+
+<history>
+Director-General Judith Cameron directed Hegemony Intelligence to intensify covert monitoring operations due to concerns over the belligerence of the Terran Hegemony's neighbors. The Tracker surveillance vessel was developed as a result, specifically to keep a close watch on the neighboring states. The success of the Tracker's design, with its ability to alter its silhouette and transponder, led to the creation of the Nightwing vessel. During the capture of Terra Firma by the Capellan Confederation in 2409, the THS Marlow, a Tracker, played a crucial role by gathering data on Capellan troop movements. This information enabled the Hegemony Armed Forces to liberate Terra Firma later that year. While the Tracker became obsolete by the beginning of the 26th century, several vessels remained in service until the end of the Reunification War, serving as Q-Ships to combat pirates and Taurian Concordat raiders.
+</history>
+
+<manufacturer>
+Bowie Industries
+</manufacturer>
+
+<primaryFactory>
+Wasat
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<use>
+Surveillance
+</use>
+
+<length>
+318 m
+</length>
+
+<height>
+1150 m Sail
+</height>
+
+<source>
+TRO: 3057 Revised
+</source>
+
+<tonnage>
+120000.0
+</tonnage>
+
+<kf_core>
+1
+</kf_core>
+
+<sail>
+1
+</sail>
+
+<grav_decks>
+75
+</grav_decks>
+
+<designtype>
+1
+</designtype>
+
+<crew>
+93
+</crew>
+
+<officers>
+15
+</officers>
+
+<gunners>
+4
+</gunners>
+
+<passengers>
+0
+</passengers>
+
+<marines>
+56
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<life_boat>
+10
+</life_boat>
+
+<escape_pod>
+15
+</escape_pod>
+

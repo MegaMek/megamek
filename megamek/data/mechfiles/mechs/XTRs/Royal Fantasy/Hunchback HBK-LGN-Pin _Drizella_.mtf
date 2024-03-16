@@ -1,12 +1,19 @@
-Version:1.0
-Hunchback
-HBK-LGN-Pin 'Drizella'
+chassis:Hunchback
+model:HBK-LGN-Pin 'Drizella'
+mul id:8375
 
 Config:Biped
 techbase:Mixed (IS Chassis)
 era:3100
-source:XTRO Royal Fantasy
-rules level:5
+source:XTR: Royal Fantasy
+rules level:2
+role:Striker
+
+
+
+quirk:battle_fists_la
+quirk:battle_fists_ra
+
 
 mass:50
 engine:350 XL Engine(IS)

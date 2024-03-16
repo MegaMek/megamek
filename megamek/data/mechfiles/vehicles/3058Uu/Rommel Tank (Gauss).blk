@@ -15,6 +15,10 @@ Rommel Tank
 <Model>
 (Gauss)
 </Model>
+
+<mul id:>
+2735
+</mul id:>
 <Tonnage>
 65
 </Tonnage>
@@ -50,6 +54,10 @@ ISMG Ammo (100)
 <type>
 IS Level 2
 </type>
+
+<role>
+Brawler
+</role>
 <year>
 3054
 </year>
@@ -65,6 +73,48 @@ IS Level 2
 <motion_type>
 Tracked
 </motion_type>
+
+<capabilities>
+With its default main weapon being the massive and immensely powerful but short-ranged AC/20, the Rommel is best suited to close range and urban fighting, where its heavy gun can be put to excellent use. A Rommel may lie in wait around a corner or down an alley, and then use its devastating armament to cripple or destroy a BattleMech when it comes into view. The main advantage the Rommel has over other, older designs is a combination of higher speed and more armor. With even more armor than a Demolisher tank, the Rommel can sustain more punishment, yet slip away faster to fight again from another position.
+</capabilities>
+
+<overview>
+The Rommel tank is a 65-ton armored combat vehicle, specializing in close range fighting and urban combat. Identical to its twin, the Patton, in every way but armament and armor configuration, the Rommel has primarily served with the Lyran Commonwealth and the Lyran Alliance.
+</overview>
+
+<deployment>
+This 3054 version of the Rommel replaces the standard weaponry with a Gauss rifle, a pair of medium lasers, and a pair of Machine Guns in the turret. For additional anti-infantry capabilities, this version also mounts a pair of Machine Guns on the front of the tank and a single Machine Gun covers the rear. The only real weakness is that the design only provides a half ton of ammunition for all five Machine Guns.
+</deployment>
+
+<history>
+The Rommel was designed concurrently with the Patton in the early 3000s, when Defiance Industries decided that an armored combat vehicle capable of replacing 'Mechs was needed. Since 'Mech production was nearly at a standstill, the ability to produce and field armored vehicles became a necessity for every Successor State.
+</history>
+
+<manufacturer>
+Defiance Industries, General Motors
+</manufacturer>
+
+<primaryFactory>
+Hesperus II,Salem
+</primaryFactory>
+
+<systemManufacturers>
+ENGINE:Magna 260
+ARMOR:Durallex Heavy
+COMMUNICATIONS:TharHes Muse 54-58K
+TARGETING:TharHes Mars5
+</systemManufacturers>
+
 <source>
-Clan Invasion
+TRO: 3039
 </source>
+
+<tonnage>
+65.0
+</tonnage>
+
+<quirks>
+low_profile
+poor_target_short
+</quirks>
+

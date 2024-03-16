@@ -1,0 +1,145 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+Kobold Battle Armor
+</Name>
+
+<Model>
+[MicroGL/SPL](Sqd6)
+</Model>
+
+<mul id:>
+9004
+</mul id:>
+
+<year>
+3069
+</year>
+
+<type>
+IS Level 2
+</type>
+
+<role>
+Ambusher
+</role>
+
+<motion_type>
+Jump
+</motion_type>
+
+<cruiseMP>
+1
+</cruiseMP>
+
+<armor_type>
+32
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<Squad Equipment>
+ISBAMicroGrenadeLauncher:RA
+BAArmoredGlove:LA
+BAArmoredGlove:RA
+Infantry Auto Rifle:APM:RA
+SwarmMek
+SwarmWeaponMek
+StopSwarm
+LegAttack
+IS BA Stealth:Body
+IS BA Stealth:Body
+IS BA Stealth:Body
+IS BA Stealth:Body
+ISBASmallPulseLaser:SSWM:LA
+</Squad Equipment>
+
+<Trooper 1 Equipment>
+</Trooper 1 Equipment>
+
+<Trooper 2 Equipment>
+</Trooper 2 Equipment>
+
+<Trooper 3 Equipment>
+</Trooper 3 Equipment>
+
+<Trooper 4 Equipment>
+</Trooper 4 Equipment>
+
+<Trooper 5 Equipment>
+</Trooper 5 Equipment>
+
+<Trooper 6 Equipment>
+</Trooper 6 Equipment>
+
+
+<source>
+TRO: 3075
+</source>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+3
+</jumpingMP>
+
+<armor>
+5
+</armor>
+
+<Trooper Count>
+6
+</Trooper Count>
+
+<weightclass>
+1
+</weightclass>
+
+<overview>
+The Kobold is a battle armor design that was collaborated on by the Free Rasalhague Republic, ComStar, and the second Star League. 
+</overview>
+
+<capabilities>
+The Kobold can only jump up to ninety meters at a time, but it does boast enough armor to stop a medium laser. This armor is of the basic stealth variety, making it more difficult to target far away. The Kobold has the distinction of being a battle armor suit used by the Inner Sphere, ComStar, and the Clans.
+</capabilities>
+
+<deployment>
+The sacrifice in mobility resulted in the ability to add a modular weapon mount to the squad support weapon mount. The modular mount so far has two weapons: a Small Laser or a Micro Grenade Launcher. The support weapon carried by the squad leader can be a Light TAG, Flamer, or Small Pulse Laser. As a light-class battle armor, the Kobold can make anti-'Mech attacks and ride mounted on OmniMechs. This squad uses a Small Pulse Laser as a support weapon. Other troops in the squad retain the Micro Grenade Launcher. 
+</deployment>
+
+<history>
+The idea for such a joint project was developed after the Republic's attempts to procure Kage suits from the Draconis Combine came to naught. So, in 3062, the three powers came together and began to design a battlesuit that could mimic the capabilities of the Kage. After this process began, the concept of the design shifted somewhat to a light armor that can still hold its own in battle. By the mid-3070s the Kobold was firmly a Rasalhague design since the Star League disbanded and the Republic severed ties with ComStar in favor of Clan Ghost Bear.
+</history>
+
+<manufacturer>
+Grumium Creations
+</manufacturer>
+
+<primaryFactory>
+Grumium
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+JUMPJET:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>

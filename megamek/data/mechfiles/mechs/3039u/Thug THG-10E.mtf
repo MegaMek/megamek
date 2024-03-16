@@ -1,12 +1,18 @@
-Version:1.0
-Thug
-THG-10E
+chassis:Thug
+model:THG-10E
+mul id:3204
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2835
-Source:TRO 3039 - Succession Wars
+Source:TRO: 3039
 Rules Level:1
+role:Brawler
+
+
+
+quirk:rugged_1
+
 
 Mass:80
 Engine:320 Fusion Engine

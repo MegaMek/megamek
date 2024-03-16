@@ -16,9 +16,13 @@ FixedWingSupport
 S 2772 Airplane
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+4957
+</mul id:>
 
 <year>
 2463
@@ -31,6 +35,10 @@ S 2772 Airplane
 <type>
 IS Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Aerodyne
@@ -100,7 +108,7 @@ troopspace:1.5
 </structural_tech_rating>
 
 <source>
-TRO Vehicle Annex (r) - Age of War
+TRO: Vehicle Annex Revised
 </source>
 
 <tonnage>

@@ -20,6 +20,10 @@ Lyonesse Escort
 M1
 </Model>
 
+<mul id:>
+4552
+</mul id:>
+
 <year>
 3073
 </year>
@@ -31,6 +35,10 @@ M1
 <type>
 IS Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Aerodyne
@@ -116,7 +124,7 @@ ISERSmallLaser
 </structural_integrity>
 
 <source>
-TRO 3075 - Jihad
+TRO: 3075
 </source>
 
 <tonnage>

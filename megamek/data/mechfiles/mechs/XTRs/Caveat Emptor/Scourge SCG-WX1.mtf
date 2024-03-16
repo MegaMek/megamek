@@ -1,12 +1,20 @@
-Version:1.1
-Scourge
-SCG-WX1
+chassis:Scourge
+model:SCG-WX1
+mul id:8109
 
 Config:Biped
 techbase:Mixed (IS Chassis)
 era:3132
-source:Dark Age
+source:XTR: Caveat Emptor
 rules level:4
+role:Skirmisher
+
+
+
+quirk:reinforced_legs
+quirk:difficult_maintain
+quirk:exp_actuator
+
 
 mass:65
 engine:325 XL Engine(IS)

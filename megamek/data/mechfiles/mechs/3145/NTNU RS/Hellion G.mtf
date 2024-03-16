@@ -1,12 +1,16 @@
-Version:1.0
-Hellion
-G
+chassis:Hellion
+model:G
+mul id:6939
 
 Config:Biped Omnimech
 TechBase:Mixed (Clan Chassis)
 Era:3119
-Source:RS 3145 NTNU - Late Republic
+Source:Record Sheets: 3145 New Tech New Upgrades
 Rules Level:3
+role:Striker
+
+quirk:weak_head_1
+
 
 Mass:30
 Engine:210 XL (Clan) Engine

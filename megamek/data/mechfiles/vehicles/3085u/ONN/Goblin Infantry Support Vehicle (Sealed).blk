@@ -15,6 +15,10 @@ Goblin Infantry Support Vehicle
 <Model>
 (Sealed)
 </Model>
+
+<mul id:>
+1221
+</mul id:>
 <Tonnage>
 45
 </Tonnage>
@@ -45,6 +49,10 @@ Environmental Sealing
 <type>
 IS Level 2
 </type>
+
+<role>
+Brawler
+</role>
 <year>
 3076
 </year>
@@ -61,5 +69,37 @@ IS Level 2
 Tracked
 </motion_type>
 <source>
-Jihad
+TRO: 3085
 </source>
+
+<capabilities>
+Goblin Infantry Support Vehicle is designed to provide close-range infantry support. Its primary weapon is a turret-mounted large Sutel pulse laser, which offers accuracy and firepower, making it effective against hostile power-armored troops. The Harpoon-6 missile system and two Johnston Miniguns further enhance its ability to combat conventional infantry. The tank boasts nearly ten tons of Durallex Light ferro-fibrous armor, making it highly durable for its weight class, and it features the MainFire anti-missile system to increase survivability. However, its major weakness lies in the lack of long-range weaponry, limiting its engagement range. Additionally, the Goblin's relatively low speed necessitates coordination with other units to provide the long-range firepower it lacks, making it vulnerable to fast-moving threats in open terrain.
+</capabilities>
+
+<overview>
+The Goblin tank series, originating from an obscure 20th-century concept, features a unique design among Inner Sphere battle tanks, characterized by an onboard infantry support compartment. These versatile vehicles, manufactured by Johnston Industries, found their niche as infantry support platforms. The original Goblin, dating back to the Age of War or early Star League era, laid the foundation for subsequent iterations. Designed to transport and support infantry units, it featured a BlazeFire Systems Large Laser as its primary weapon, delivering close-range firepower without the need for ammunition.
+</overview>
+
+<deployment>
+The Sealed variant can operate effectively in various environmental conditions and offers improved durability with a fusion engine. However, it loses its infantry transport capacity, reduces anti-armor capabilities, and has limited ammunition for its SRM-6.
+</deployment>
+
+<history>
+The Goblin Infantry Support Vehicle's history traces its origin to a unique concept from the Succession Wars era. Originally, this vehicle featured an infantry support unit, setting it apart from typical Inner Sphere battle tanks. Johnston Industries took over its production toward the end of the First Succession War.<p>However, the Goblin had limitations, mainly its lack of long-range weaponry and relatively low speed. This made it dependent on coordination with other units for covering fire during advances and vulnerable in open terrain.</p><p>The vehicle's combat debut in 3057 on Hsien showcased its suitability for urban warfare, as it excelled in close-quarters engagements. Throughout the FedCom Civil War, Goblins were commonly deployed, particularly in urban scenarios, highlighting their value.</p><p>In the post-Jihad era, the Goblin evolved to become a true infantry fighting vehicle (IFV). Johnston Industries introduced the Goblin III, featuring a large re-engineered laser and improved mobility. This variant marked a significant advancement in the Goblin's design and production.</p><p>The Goblin's enduring legacy in the Inner Sphere's military history lies in its role as an infantry support vehicle tailored for close-range combat, making it a valuable asset in urban warfare.</p>
+</history>
+
+<manufacturer>
+Johnston Industries, Field Refit
+</manufacturer>
+
+<primaryFactory>
+New Syrtis,Various
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Fireheart 180 Fusion
+ARMOR:Durallex Light Ferro-Fibrous
+COMMUNICATIONS:CommuTech XL
+TARGETING:BlazeFire Tracker with Range Check
+</systemManufacturers>

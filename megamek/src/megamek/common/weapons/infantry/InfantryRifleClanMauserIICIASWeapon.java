@@ -24,40 +24,33 @@ import megamek.common.AmmoType;
  */
 public class InfantryRifleClanMauserIICIASWeapon extends InfantryWeapon {
 
-	/**
-	 *
-	 */
-	private static final long serialVersionUID = -3164871600230559641L;
+    /**
+     *
+     */
+    private static final long serialVersionUID = -3164871600230559641L;
 
-	public InfantryRifleClanMauserIICIASWeapon() {
-		super();
+    public InfantryRifleClanMauserIICIASWeapon() {
+        super();
 
-		name = "Laser Rifle (Mauser IIC IAS)";
-		setInternalName(name);
-		addLookupName("InfantryClanMauserIICIAS");
-		addLookupName("Infantry Clan Mauser IIC");
-		ammoType = AmmoType.T_INFANTRY;
-		tonnage = 0.0012;
-		cost = 18000;
-		bv = 9.82;
-		tonnage = .012;
-		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY).or(F_INF_ENCUMBER).or(F_INF_BURST);
-		/*Errata
-		 * https://bg.battletech.com/forums/index.php?topic=60038.msg1377699#msg1377699
-		 * No Primary Infantry Weapon may have a Damage Value greater than 0.60. 
-		 * If the weapon selected has a Damage Value greater than 0.60, then reduce it's Damage Value to 0.60 
-		 * when determining final damage values (pg.152). Platoons that have their primary weapon damage reduced 
-		 * in this way automatically gain the Heavy Burst Weapon special feature
-		*/
-		infantryDamage = .6; //was 1.37
-		infantryRange = 3;
-		ammoWeight = 0.0003;
-		shots = 6;
-		rulesRefs = "273,TM";
-		techAdvancement.setTechBase(TECH_BASE_CLAN).setClanAdvancement(3013, 3015, DATE_NONE, DATE_NONE, DATE_NONE)
-		        .setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_CHH)
-		        .setProductionFactions(F_CHH).setTechRating(RATING_F)
-		        .setAvailability(RATING_X, RATING_F, RATING_E, RATING_D);
+        name = "Laser Rifle (Mauser IIC IAS)";
+        setInternalName(name);
+        addLookupName("InfantryClanMauserIICIAS");
+        addLookupName("Infantry Clan Mauser IIC");
+        ammoType = AmmoType.T_INFANTRY;
+        tonnage = 0.0012;
+        cost = 18000;
+        bv = 9.82;
+        tonnage = .012;
+        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY).or(F_INF_ENCUMBER).or(F_INF_BURST);
+        infantryDamage = 1.37;
+        infantryRange = 3;
+        ammoWeight = 0.0003;
+        shots = 6;
+        rulesRefs = "273, TM";
+        techAdvancement.setTechBase(TECH_BASE_CLAN).setClanAdvancement(3013, 3015, DATE_NONE, DATE_NONE, DATE_NONE)
+                .setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_CHH)
+                .setProductionFactions(F_CHH).setTechRating(RATING_F)
+                .setAvailability(RATING_X, RATING_F, RATING_E, RATING_D);
 
-	}
+    }
 }

@@ -20,6 +20,10 @@ Deathstalker
 F-77
 </Model>
 
+<mul id:>
+4055
+</mul id:>
+
 <year>
 2744
 </year>
@@ -31,6 +35,10 @@ F-77
 <type>
 IS Level 2
 </type>
+
+<role>
+Attack Fighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -97,7 +105,7 @@ IS Ammo AC/10
 </Fuselage Equipment>
 
 <source>
-TRO 3075 - Star League
+TRO: 3075
 </source>
 
 <tonnage>

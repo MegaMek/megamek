@@ -57,4 +57,9 @@ public class CLERLaserSmallPrototype extends LaserWeapon {
                 .setPrototypeFactions(F_CSJ)
                 .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }
+    
+    @Override
+    public boolean isAlphaStrikePointDefense() {
+        return true;
+    }
 }

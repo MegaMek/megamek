@@ -1,12 +1,16 @@
-Version:1.0
-Deimos
-A
+chassis:Deimos
+model:A
+mul id:853
 
 Config:Biped Omnimech
 TechBase:Clan
 Era:3085
-Source:Civil War
+source:TRO: 3085u 
 Rules Level:2
+role:Brawler
+
+quirk:anti_air
+
 
 Mass:85
 Engine:255 XL (Clan) Engine(IS)

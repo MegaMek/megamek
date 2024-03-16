@@ -1,11 +1,20 @@
-Version:1.1
-Daimyo
-DMO-1K2 (Al-Shahab)
+chassis:Daimyo
+model:DMO-1K2 (Al-Shahab)
+mul id:803
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3066
 Rules Level:4
+role:Brawler
+Source:XTR: Pirates
+
+
+
+quirk:ext_twist
+quirk:low_profile
+quirk:difficult_maintain
+
 
 Mass:40
 Engine:200 Light Fusion Engine

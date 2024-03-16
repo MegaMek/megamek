@@ -1,12 +1,18 @@
-Version:1.0
-Striker
-STC-2D
+chassis:Striker
+model:STC-2D
+mul id:3095
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3056
-Source:TRO 3058 - Clan Invasion
+Source:TRO: 3058
 Rules Level:2
+role:Brawler
+
+
+
+quirk:easy_maintain
+
 
 Mass:80
 Engine:320 Fusion Engine

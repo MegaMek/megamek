@@ -20,17 +20,25 @@ Korvin Tank
 KRV-3
 </Model>
 
+<mul id:>
+1817
+</mul id:>
+
 <year>
 2544
 </year>
 
 <source>
-Star League
+TRO: 3075
 </source>
 
 <type>
 IS Level 1
 </type>
+
+<role>
+Missile Boat
+</role>
 
 <tonnage>
 50.0

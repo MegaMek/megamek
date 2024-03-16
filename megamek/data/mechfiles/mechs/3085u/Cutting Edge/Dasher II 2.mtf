@@ -1,12 +1,16 @@
-Version:1.0
-Dasher II
-2
+chassis:Dasher II
+model:2
+mul id:847
 
 Config:Biped
 TechBase:Clan
 Era:3084
-Source:Dark Age
+source:TRO: 3085
 Rules Level:4
+role:Striker
+
+quirk:poor_performance
+
 
 Mass:40
 Engine:400 XXL (Clan) Engine

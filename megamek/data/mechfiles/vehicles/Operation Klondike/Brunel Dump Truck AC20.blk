@@ -20,6 +20,10 @@ Brunel Dump Truck
 (AC)
 </Model>
 
+<mul id:>
+3864
+</mul id:>
+
 <year>
 2801
 </year>
@@ -31,6 +35,10 @@ Brunel Dump Truck
 <type>
 IS Level 3
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Wheeled
@@ -109,7 +117,7 @@ Not enough item slots available! Using 14 slot(s) too many. Armor is based on fl
 </notes>
 
 <source>
-H:Operation Klondike - Succession Wars
+Historical: Operation Klondike
 </source>
 
 <tonnage>

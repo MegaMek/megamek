@@ -1,12 +1,18 @@
-Version:1.0
-Guillotine
-GLT-6WB2
+chassis:Guillotine
+model:GLT-6WB2
+mul id:1343
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3070
-Source:TRO 3050 - Jihad
+Source:TRO: 3050
 Rules Level:2
+role:Sniper
+
+
+
+quirk:searchlight
+
 
 Mass:70
 Engine:280 XL Engine

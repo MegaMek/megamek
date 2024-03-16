@@ -1,0 +1,12 @@
+3145 DCMS Medium Vehicles A
+Kamakiri Attack VTOL (Standard), 1
+Maxim (I) Heavy Hover Transport (Standard), 2
+Hiryo Armored Infantry Transport (MRM), 3
+SM1A Tank Destroyer SM1A, 4
+Maxim Mk II Transport (Standard), 5
+Joust Medium Tank BE701, 6
+SM1 Tank Destroyer SM1, 5
+Cizin Hover Tank (Standard), 4
+Joust Medium Tank BE700, 3
+Kamakiri Attack VTOL (Gauss) 'Shi Kamakiri', 2
+Hachiman Fire Support Tank (Standard), 1

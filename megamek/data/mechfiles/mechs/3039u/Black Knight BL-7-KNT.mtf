@@ -1,12 +1,18 @@
-Version:1.0
-Black Knight
-BL-7-KNT
+chassis:Black Knight
+model:BL-7-KNT
+mul id:360
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2809
-Source:TRO 3039 - Succession Wars
+Source:TRO: 3039
 Rules Level:1
+role:Brawler
+
+
+
+quirk:command_mech
+
 
 Mass:75
 Engine:300 Fusion Engine
@@ -152,4 +158,19 @@ Heat Sink
 -Empty-
 -Empty-
 
+overview:The Black Knight was introduced in 2578 both as a front-line combatant and as a command BattleMech at the company and battalion level for the Star League Defense Force. 
+
+capabilities:Thirteen tons of armor protection on an Endo Steel frame allows the Black Knight to withstand significant punishment. The biggest disadvantage of the design is its challenging heat curve, though the fact that it mounts twenty of them ensures that the Black Knight can still disperse a significant amount of heat produced by its weapons. However, if the 'Mech is involved in a prolonged combat situation, a less experienced MechWarrior who is not competent at heat management may be in trouble. The Black Knight's superior communications equipment allowed it to readily coordinate a whole company of 'Mechs at the same time, as well as link together the command frequencies of an entire parent regiment and connect with orbital support satellites. Improved construction materials provided the Black Knight with a light but sturdy chassis capable of carrying more weaponry and armor for less weight. With the type and amount of weapons carried by the 'Mech, the only challenge the Black Knight faces is heat management.
+
+deployment:The BL-7 Black Knight is the downgraded version of the 'Mech produced during the Succession Wars following the destruction of Kong Interstellar Corporation's factories on Connaught in 2802. Production of the BL-7-KNT began in 2809 and continued until the CCAF destroyed the plant in 2820; thereafter many of the repairs made by the Great Houses to their own Black Knights in many ways mimicked Kong's version. The Endo Steel chassis was replaced with a Technicron Standard chassis which, while keeping the weapons payload and engine the same, required a reduction in overall armor protection by two tons. While the same weapon types was retained, the McCorkel, Maxell and Magna lasers were replaced with their respective Tronel III, II and I models. Kong Interstellar also replaced the communications system with the Tek BattleCom system and the targeting and tracking systems with a Tek Tru-Trak system.
+
+history:The Black Knight first debuted in the Reunification War when they were fielded by the 3rd Heavy Assault Regiment in combat with the Taurian Concordat; following its success it was soon adopted by I Corps and the rest of the SLDF. When the Star League collapsed, Kong Interstellar continued producing Black Knights until their Connaught orbital factory was destroyed in 2802. In 2809, Kong was able to restart their production line, but was no longer capable of producing many of the more advanced components found in the Black Knight. As a result, Kong was forced to design a downgraded version, the BL-7-KNT. Finally the Black Knight production line was permanently destroyed in a raid by the Capellan Confederation in 2820, reducing the company to producing low-grade spare parts and performing maintenance. During the Succession Wars many Black Knights fell into the hands of the Great Houses, although as the years progressed they were increasingly forced to repair them with inferior components and their numbers slowly decreased. Some were modified with a number of nonstandard components such as jump jets but few if any survived into the thirty-first century. ComStar's stockpiles of Star League 'Mechs included the Black Knight, which they found to be an excellent command unit for Level II and Level III units when the Com Guards were formed, but the very few Black Knights gifted to the Draconis Combine during Operation ROSEBUD was apparently the result of a clerical error. For their part the Clans maintained the Black Knight, although by the time of the Clan Invasion it was reserved for solahma units. The Black Knight was one of several Clanbusters put together by ComStar leading up to the Battle of Tukayyid, and in 3063 Robinson Standard BattleWorks secured a license from Kong Interstellar to build a new variant, the BL-12-KNT. Two years later KIC finished rebuilding their plant and began producing Black Knights of their own.
+
+manufacturer:Kong Interstellar Corporation
+primaryfactory:Connaught
+systemmanufacturer:CHASSIS:Technicron Standard
+systemmanufacturer:ENGINE:Vlar 300
+systemmanufacturer:ARMOR:Valiant Lamellor
+systemmanufacturer:COMMUNICATIONS:Tek BattleCom
+systemmanufacturer:TARGETING:Tek Tru-Trak
 

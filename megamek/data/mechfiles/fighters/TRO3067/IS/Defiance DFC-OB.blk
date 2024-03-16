@@ -20,6 +20,10 @@ Defiance
 DFC-OB
 </Model>
 
+<mul id:>
+4062
+</mul id:>
+
 <year>
 3067
 </year>
@@ -31,6 +35,10 @@ DFC-OB
 <type>
 IS Level 2
 </type>
+
+<role>
+Fire Support
+</role>
 
 <motion_type>
 Aerodyne
@@ -99,7 +107,7 @@ IS LB 10-X Cluster Ammo:OMNI
 </Fuselage Equipment>
 
 <source>
-TRO 3067 - Civil War
+TRO: 3067
 </source>
 
 <tonnage>

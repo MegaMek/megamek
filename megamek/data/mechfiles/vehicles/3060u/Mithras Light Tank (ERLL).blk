@@ -20,6 +20,10 @@ Mithras Light Tank
 (ERLL)
 </Model>
 
+<mul id:>
+2192
+</mul id:>
+
 <year>
 3075
 </year>
@@ -27,6 +31,10 @@ Mithras Light Tank
 <type>
 Clan Level 3
 </type>
+
+<role>
+Sniper
+</role>
 
 <motion_type>
 Tracked
@@ -81,7 +89,7 @@ CLERLargeLaser
 </Turret Equipment>
 
 <source>
-Jihad
+TRO: 3060
 </source>
 
 <tonnage>

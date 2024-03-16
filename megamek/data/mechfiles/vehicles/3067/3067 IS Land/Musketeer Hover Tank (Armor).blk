@@ -15,6 +15,10 @@ Musketeer Hover Tank
 <Model>
 (Armor)
 </Model>
+
+<mul id:>
+4687
+</mul id:>
 <Tonnage>
 50
 </Tonnage>
@@ -46,6 +50,10 @@ ISCASE
 <type>
 IS
 </type>
+
+<role>
+Striker
+</role>
 <year>
 3068
 </year>
@@ -61,3 +69,7 @@ IS
 <motion_type>
 Hover
 </motion_type>
+
+<source>
+TRO: 3067
+</source>

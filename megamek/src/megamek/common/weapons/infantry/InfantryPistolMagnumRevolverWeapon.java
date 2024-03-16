@@ -46,7 +46,7 @@ public class InfantryPistolMagnumRevolverWeapon extends InfantryWeapon {
 		ammoWeight = 0.00006;
 		ammoCost = 3;
 		shots = 5;
-		rulesRefs = " 273,TM";
+		rulesRefs = " 273, TM";
 		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
 				.setISApproximate(false, false, false, false, false)
 				.setClanAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)

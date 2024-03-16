@@ -20,6 +20,10 @@ Mechanized Hover Platoon
 (Rifle)
 </Model>
 
+<mul id:>
+2136
+</mul id:>
+
 <year>
 1950
 </year>
@@ -27,6 +31,10 @@ Mechanized Hover Platoon
 <type>
 IS Level 2
 </type>
+
+<role>
+Scout
+</role>
 
 <motion_type>
 Hover
@@ -36,7 +44,7 @@ Hover
 </Field Guns Equipment>
 
 <source>
-Total Warfare - Succession Wars
+Total Warfare
 </source>
 
 <squad_size>

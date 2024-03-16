@@ -1,12 +1,19 @@
-Version:1.0
-Firestarter
-FS9-OH
+chassis:Firestarter
+model:FS9-OH
+mul id:1107
 
 Config:Biped Omnimech
 TechBase:Inner Sphere
 Era:3069
-Source:TRO 3058 - Jihad
+Source:TRO: 3058
 Rules Level:2
+role:Striker
+
+
+
+quirk:cowl
+quirk:difficult_maintain
+
 
 Mass:45
 Engine:270 XL Engine(IS)

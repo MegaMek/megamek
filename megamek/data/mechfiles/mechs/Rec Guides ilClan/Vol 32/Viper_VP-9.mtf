@@ -1,0 +1,160 @@
+chassis:Viper
+model:VP-9
+
+Config:Biped
+techbase:Mixed (IS Chassis)
+era:3147
+rules level:3
+role:Brawler
+mul id:9491
+Source:Rec Guide:ilClan #32 
+
+
+
+quirk:imp_com
+quirk:rugged_1
+quirk:searchlight
+quirk:difficult_eject
+
+
+mass:70
+engine:280 Light Engine(IS)
+structure:IS Composite
+myomer:Standard
+
+heat sinks:13 IS Double
+walk mp:4
+jump mp:4
+
+armor:Standard(Inner Sphere)
+LA armor:22
+RA armor:22
+LT armor:23
+RT armor:23
+CT armor:37
+HD armor:9
+LL armor:30
+RL armor:30
+RTL armor:7
+RTR armor:7
+RTC armor:6
+
+Weapons:4
+Plasma Cannon, Left Arm
+Plasma Cannon, Left Arm
+Plasma Cannon, Left Arm
+Plasma Cannon, Left Arm
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+CLPlasmaCannon
+CLPlasmaCannon
+CLPlasmaCannon
+CLPlasmaCannon
+ISAES
+ISAES
+ISAES
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+Mace
+Mace
+Mace
+Mace
+Mace
+Mace
+Mace
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+CLPlasmaCannonAmmo
+CLPlasmaCannonAmmo
+CLPlasmaCannonAmmo
+CLPlasmaCannonAmmo
+CLPlasmaCannonAmmo
+CLPlasmaCannonAmmo
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+-Empty-
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+CLActiveProbe
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

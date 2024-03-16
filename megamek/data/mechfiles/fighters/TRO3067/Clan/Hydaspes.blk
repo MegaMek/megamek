@@ -16,9 +16,13 @@ Aero
 Hydaspes
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+4352
+</mul id:>
 
 <year>
 2840
@@ -31,6 +35,10 @@ Hydaspes
 <type>
 Clan Level 2
 </type>
+
+<role>
+Attack Fighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -118,7 +126,7 @@ CLCASE
 </Fuselage Equipment>
 
 <source>
-TRO 3067 - Succession Wars
+TRO: 3067
 </source>
 
 <tonnage>

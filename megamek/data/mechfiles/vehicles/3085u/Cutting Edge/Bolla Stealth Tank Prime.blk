@@ -1,12 +1,7 @@
-#building block data file
+#Saved from version 0.49.18-SNAPSHOT on 2024-01-07
 <BlockVersion>
 1
 </BlockVersion>
-
-# Write the version number just in case...
-<Version>
-MAM0
-</Version>
 
 <UnitType>
 Tank
@@ -20,13 +15,25 @@ Bolla Stealth Tank (RotS)
 Prime
 </Model>
 
+<mul id:>
+413
+</mul id:>
+
 <year>
 3084
 </year>
 
+<originalBuildYear>
+3084
+</originalBuildYear>
+
 <type>
 IS Level 4
 </type>
+
+<role>
+Skirmisher
+</role>
 
 <motion_type>
 Wheeled
@@ -34,9 +41,6 @@ Wheeled
 
 <transporters>
 troopspace:4.0
-</transporters>
-
-<transporters>
 BattleArmorHandles - troopers:-1
 </transporters>
 
@@ -53,7 +57,7 @@ BattleArmorHandles - troopers:-1
 </armor_type>
 
 <armor_tech>
--1
+7
 </armor_tech>
 
 <omni>
@@ -69,7 +73,6 @@ BattleArmorHandles - troopers:-1
 </armor>
 
 <Body Equipment>
-IS Vehicular Stealth
 IS Vehicular Stealth
 ISRotaryAC5 Ammo:OMNI
 ISRotaryAC5 Ammo:OMNI
@@ -102,8 +105,24 @@ ISMML3:OMNI
 ISTAG:OMNI
 </Turret Equipment>
 
+<manufacturer>
+Maxwell-Pulaski Motors Krupp Armaments Works
+</manufacturer>
+
+<primaryFactory>
+Terra Terra
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:280 VOX XL Fusion
+ARMOR:Krupp Stealth
+COMMUNICATIONS:GPT Multi-Track Enhanced
+TARGETING:Baltex K590
+</systemManufacturers>
+
 <source>
-Dark Age
+TRO: 3085
 </source>
 
 <tonnage>
@@ -113,3 +132,4 @@ Dark Age
 <baseChassisTurretWeight>
 1.5
 </baseChassisTurretWeight>
+

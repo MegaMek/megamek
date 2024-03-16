@@ -1,12 +1,20 @@
-Version:1.0
-Defiance
-DFN-3T
+chassis:Defiance
+model:DFN-3T
+mul id:851
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3074
-Source:TRO 3075
+Source:TRO: 3075
 Rules Level:2
+role:Brawler
+
+quirk:barrel_fists_la
+quirk:barrel_fists_ra
+quirk:hyper_actuator
+quirk:searchlight
+quirk:stable
+
 
 Mass:75
 Engine:300 Light Engine

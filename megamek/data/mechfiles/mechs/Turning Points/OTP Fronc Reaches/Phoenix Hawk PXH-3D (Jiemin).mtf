@@ -1,12 +1,20 @@
-Version:1.2
-Phoenix Hawk
-PXH-3D (Jiemin)
+chassis:Phoenix Hawk
+model:PXH-3D (Jiemin)
+mul id:7699
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3065
-Source:Fronc Reaches
+Source:Operational Turning Points: Fronc Reaches
 Rules Level:4
+role:Striker
+
+
+
+quirk:command_mech
+quirk:imp_com
+weaponquirk:jettison_capable:RA:4:ISLargeXPulseLaser
+
 
 Mass:45
 Engine:315 XL Engine(IS)

@@ -20,6 +20,10 @@ Tomahawk
 CX-11
 </Model>
 
+<mul id:>
+5558
+</mul id:>
+
 <year>
 3074
 </year>
@@ -31,6 +35,10 @@ CX-11
 <type>
 IS Level 4
 </type>
+
+<role>
+Fire Support
+</role>
 
 <motion_type>
 Aerodyne
@@ -102,9 +110,16 @@ ISLaserInsulator
 </Fuselage Equipment>
 
 <source>
-XTRO ComStar - Jihad
+XTR: ComStar
 </source>
 
 <tonnage>
 45.0
 </tonnage>
+
+<quirks>
+prototype
+bad_rep_is
+easy_pilot
+</quirks>
+

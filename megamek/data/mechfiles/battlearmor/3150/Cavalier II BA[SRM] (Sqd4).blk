@@ -1,0 +1,137 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+Cavalier II Battle Armor
+</Name>
+
+<Model>
+[SRM](Sqd4)
+</Model>
+
+<mul id:>
+8020
+</mul id:>
+
+<year>
+3142
+</year>
+
+<originalBuildYear>
+3142
+</originalBuildYear>
+
+<type>
+Mixed (IS Chassis)
+</type>
+
+<role>
+Ambusher
+</role>
+
+<motion_type>
+Jump
+</motion_type>
+
+<transporters>
+</transporters>
+
+<cruiseMP>
+1
+</cruiseMP>
+
+<armor_type>
+31
+</armor_type>
+
+<armor_tech>
+2
+</armor_tech>
+
+<Squad Equipment>
+ISBASRM1:RA
+InfantryAssaultRifle:APM
+SwarmMek
+SwarmWeaponMek
+StopSwarm
+LegAttack
+BABattleClaw:LA
+Clan BA Stealth (Basic):Body
+Clan BA Stealth (Basic):Body
+Clan BA Stealth (Basic):LA
+BAJumpBooster:Body
+BAAPMount:LA
+BA-SRM1 Ammo:RA:Shots4#
+</Squad Equipment>
+
+<Trooper 1 Equipment>
+</Trooper 1 Equipment>
+
+<Trooper 2 Equipment>
+</Trooper 2 Equipment>
+
+<Trooper 3 Equipment>
+</Trooper 3 Equipment>
+
+<Trooper 4 Equipment>
+</Trooper 4 Equipment>
+
+<capabilities>
+Like the Inner Sphere Standard, the Cavalier has a Modular Weapon Mount in its right arm and a Battle Claw in the left. This mount can carry one standard battle armor weapon such as a Flamer, a Small Laser, a Machine Gun, or an SRM-1 with four missiles. Also like the Inner Sphere Standard, this weapon mount can instead accept two "secondary" weapons, such as Laser Rifles or Needler Rifles, for use against infantry. The Cavalier can run as fast as the Inner Sphere Standard, use jump jets to leap the same 90 meter distance, and is just as strong as the Standard. It's also protected by the same 450kg of armoring, although the shifting of armor plating between the two has increased protection around the thighs and calves while leaving the hand and arm joints more exposed to shrapnel. This armor configuration does give the Cavalier superior manual dexterity however.
+</capabilities>
+
+<overview>
+The Cavalier was a battle armor suit built in response to sagging morale in the Armed Forces of the Federated Commonwealth, due in large part to the secession of the Lyran state from the Federated Commonwealth.
+</overview>
+
+<deployment>
+Introduced in the Dark Age this suit carries Clan Stealth Armor derived from the Grenadier II. It also has improved jump capability and adds an Anti-Personnel Weapon Mount.
+</deployment>
+
+<history>
+Prince Victor Steiner-Davion took the initiative in starting the "redesign for Davion pride" project as a means to rebuild camaraderie and loyalty within the sundered AFFC. Besides creating new versions of traditional Davion 'Mechs like the Enforcer and JagerMech, the project also made a priority of redesigning the Inner Sphere Standard with a new visual aesthetic meant to appeal to AFFC troops. Creating a new suit began in January 3058 as military engineers ran hundreds of designs through computer simulations and created dozens of prototypes, seeking a balance between cosmetic appeal and battlefield effectiveness. After months of work a final design was agreed upon, although the differences between the new suit and the original Standard turned out to be more than cosmetic: the redistribution of armor plating had increased leg protection at the expense of upper body protection. While there were some misgivings, in the final analysis it was discovered these alterations also gave superior dexterity to the trooper compared to that of the Standard. Reluctantly the officers in charge agreed that the benefits outweighed the drawbacks and approved mass production of the suit, which started in June of that same year.
+</history>
+
+<manufacturer>
+Albion Advanced Technologies and Products,General Motors
+</manufacturer>
+
+<primaryFactory>
+New Avalon,Talcott
+</primaryFactory>
+
+<source>
+TRO: 3150
+</source>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+3
+</jumpingMP>
+
+<armor>
+9
+</armor>
+
+<Trooper Count>
+4
+</Trooper Count>
+
+<weightclass>
+2
+</weightclass>
+

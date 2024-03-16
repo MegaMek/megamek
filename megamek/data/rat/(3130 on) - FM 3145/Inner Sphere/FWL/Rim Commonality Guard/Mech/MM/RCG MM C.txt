@@ -1,0 +1,12 @@
+Rim Commonality Guard Medium Mechs 3130 C
+Centurion CN9-D3D,1
+Griffin GRF-2N,2
+Hunchback HBK-6N,3
+Shadow Hawk SHD-7M,4
+Shockwave SKW-4G,5
+Wolverine WVR-9M,6
+Vulcan VT-6M,5
+Strider SR1-O,4
+Phoenix Hawk PXH-1c (Special),3
+Scorpion SCP-10M,2
+Griffin GRF-4R,1

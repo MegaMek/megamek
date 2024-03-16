@@ -1,0 +1,140 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+Pike Support Vehicle
+</Name>
+
+<Model>
+(LB-X)
+</Model>
+
+<mul id:>
+9423
+</mul id:>
+
+<year>
+3134
+</year>
+
+<originalBuildYear>
+3134
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<role>
+Sniper
+</role>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<transporters>
+</transporters>
+
+<cruiseMP>
+3
+</cruiseMP>
+
+<engine_type>
+6
+</engine_type>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
+42
+30
+30
+28
+40
+</armor>
+
+<Body Equipment>
+IS LB 5-X AC Ammo
+IS LB 5-X AC Ammo
+IS LB 5-X Cluster Ammo
+IS Ammo SRM-2
+ISCASE
+</Body Equipment>
+
+<Front Equipment>
+SRM 2
+SRM 2
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+ISLBXAC5
+ISLBXAC5
+ISLBXAC5
+</Turret Equipment>
+
+<capabilities>
+The principal weaponry of the vehicle is its long-range Autocannons. The vehicle was outfitted with a variety of short-range missile packs for close-in defense. StarSlab Armor was applied to the vehicle's hull to defend it from damage. Its engine can propel the Pike to speeds of up to 54 km/h.
+</capabilities>
+
+<overview>
+The Pike is a direct-fire alternative to artillery.
+</overview>
+
+<deployment>
+No information on this variant
+</deployment>
+
+<history>
+The Pike was created at the direction of Magestrix Kyalla Centrella of the Magistracy of Canopus during the later part of the Third Succession War. Her plan was to produce an inexpensive combat vehicle so the Great Houses would wear down their BattleMech armies through attrition, and the Pike would be the tool she envisioned for the task. However, sending vehicles to market in the Inner Sphere was to be more costly than anticipated. With the Great Houses' shrinking numbers of ships in their JumpShip fleets, the vehicle did not make the impact she had hoped it would. It became a favorite of ComStar's growing garrison forces for their HPG complexes.
+</history>
+
+<manufacturer>
+Canopus Industries Alpha
+</manufacturer>
+
+<primaryFactory>
+Canopus
+</primaryFactory>
+
+<systemManufacturers>
+ENGINE:Magna 180 Fuel Cell
+ARMOR:StarSlab/9.5 Mk II Ferro-Fibrous with CASE
+COMMUNICATIONS:Magestrix Alpha
+TARGETING:Magestrix Gamma Mk II
+</systemManufacturers>
+
+<source>
+Rec Guide:ilClan #30
+</source>
+
+<tonnage>
+60.0
+</tonnage>
+

@@ -20,6 +20,10 @@ Persepolis
 2
 </Model>
 
+<mul id:>
+7358
+</mul id:>
+
 <year>
 3134
 </year>
@@ -31,6 +35,10 @@ Persepolis
 <type>
 Clan Level 3
 </type>
+
+<role>
+Dogfighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -115,7 +123,7 @@ CLCASE
 </Fuselage Equipment>
 
 <source>
-XTRO Republic II - Dark Ages
+XTR: Republic II
 </source>
 
 <tonnage>

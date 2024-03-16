@@ -1,12 +1,21 @@
-Version:1.0
-Eisenfaust
-EFT-7X
+chassis:Eisenfaust
+model:EFT-7X
+mul id:945
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3076
-Source:Jihad
+source:TRO: 3085
 Rules Level:2
+role:Brawler
+
+
+
+quirk:battle_fists_la
+quirk:battle_fists_ra
+quirk:easy_maintain
+quirk:pro_actuator
+
 
 Mass:45
 Engine:180 XL Engine

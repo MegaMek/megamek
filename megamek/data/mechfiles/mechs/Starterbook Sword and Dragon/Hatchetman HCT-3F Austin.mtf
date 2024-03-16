@@ -1,12 +1,19 @@
-Version:1.2
-Hatchetman
-HCT-3F (Austin)
+chassis:Hatchetman
+model:HCT-3F (Austin)
+mul id:1411
 
 Config:Biped
 techbase:Inner Sphere
 era:3039
-source:Starterbook: Sword and Dragon - Succession Wars
+source:Starterbook: Sword and Dragon
 rules level:4
+role:Brawler
+
+
+
+quirk:anti_air
+weaponquirk:fast_reload:RT:2:ISLBXAC10Prototype
+
 
 mass:45
 engine:180 Fusion Engine(IS)

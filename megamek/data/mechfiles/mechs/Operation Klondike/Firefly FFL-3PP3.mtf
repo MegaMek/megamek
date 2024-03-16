@@ -1,11 +1,18 @@
-Version:1.0
-Firefly
-FFL-3PP3
+chassis:Firefly
+model:FFL-3PP3
+mul id:1085
 
 Config:Biped
 techbase:Inner Sphere
 era:2801
 rules level:2
+role:Striker
+Source:Historical: Operation Klondike 
+
+
+
+quirk:no_arms
+
 
 mass:30
 engine:150 XL Engine(IS)
@@ -151,4 +158,19 @@ Jump Jet
 -Empty-
 -Empty-
 
+overview:The Firefly is a well-armed recon 'Mech that tips the scales at thirty tons, with a maximum ground speed of 86.4 km/h, the and ability to jump up to 120 meters. As a scout 'Mech, the Firefly gives average performance with its energy weapon-heavy arsenal and is useful in both a recon and guerrilla fighter role.
 
+capabilities: Although it was slow in comparison to other 'Mechs of its weight class, it was powerfully armed and armored, and it frequently served as an anvil against which opposing forces' recon units were smashed. 
+
+deployment:Again lacking in ferro-fibrous armor, this variation on the -3SLE also removes the Guardian ECM suite, instead upgrading the LRM-10 rack with an Artemis IV fire-control system. 
+
+history:The Firefly, which entered service in the late 27th century, was one of the SLDF's primary light 'Mechs in its later years.Cases occurred in all House forces, but not in the numbers deployed by the SLDF, and all were presumed destroyed by the end of the Second Succession War, save for tales of anomalous examples in the Periphery. The design reappeared with Wolf's Dragoons in the early 31st century, raising eyebrows, yet the secret of the Firefly's origin was revealed when the Dragoons' Clan origins were revealed. In the 3040s, the advent of a small number of Fireflys with the Com Guard forces elicited a similar reaction.
+
+manufacturer:Field Refit
+primaryfactory:Various
+systemmanufacturer:CHASSIS:Earthwerks Firefly
+systemmanufacturer:ENGINE:GM 150 XL
+systemmanufacturer:ARMOR:StarSlab/1x
+systemmanufacturer:JUMPJET:Lexington Lifters
+systemmanufacturer:COMMUNICATIONS:Datcom 18
+systemmanufacturer:TARGETING:Radcom TXX

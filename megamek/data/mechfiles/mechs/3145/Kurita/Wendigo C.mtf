@@ -1,37 +1,43 @@
-Version:1.1
-Wendigo
-C
+chassis:Wendigo
+model:C
+mul id:6406
 
 Config:Biped Omnimech
-TechBase:Clan
-Era:3135
-Source:TRO 3145 Draconis Combine - Dark Ages
-Rules Level:4
+techbase:Clan
+era:3150
+source:TRO: 3145 Draconis Combine
+rules level:4
+role:Skirmisher
 
-Mass:50
-Engine:300 XL (Clan) Engine(IS)
-Structure:Clan Endo Steel
-Myomer:Standard
-Cockpit:Torso-Mounted Cockpit
-Gyro:Standard Gyro
 
-Heat Sinks:15 Double
-Base Chassis Heat Sinks:12
-Walk MP:6
-Jump MP:0
 
-Armor:Reflective(Clan)
-LA Armor:16
-RA Armor:16
-LT Armor:16
-RT Armor:16
-CT Armor:22
-HD Armor:8
-LL Armor:20
-RL Armor:20
-RTL Armor:5
-RTR Armor:5
-RTC Armor:8
+quirk:distracting
+
+
+mass:50
+engine:300 XL (Clan) Engine(IS)
+structure:Clan Endo Steel
+myomer:Standard
+cockpit:Torso-Mounted Cockpit
+gyro:Standard Gyro
+
+heat sinks:15 Clan Double
+base chassis heat sinks:12
+walk mp:6
+jump mp:0
+
+armor:Reflective(Clan)
+LA armor:16
+RA armor:16
+LT armor:16
+RT armor:16
+CT armor:22
+HD armor:8
+LL armor:20
+RL armor:20
+RTL armor:5
+RTR armor:5
+RTC armor:8
 
 Weapons:5
 Streak LRM 15, Left Arm
@@ -43,12 +49,12 @@ Improved Heavy Medium Laser, Head
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLStreakLRM15 (omnipod)
-CLStreakLRM15 (omnipod)
-CLStreakLRM15 (omnipod)
-Clan Reflective
-Clan Reflective
-Clan Reflective
+CLStreakLRM15 (OMNIPOD)
+CLStreakLRM15 (OMNIPOD)
+CLStreakLRM15 (OMNIPOD)
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -57,12 +63,12 @@ Clan Reflective
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLImprovedHeavyLargeLaser (omnipod)
-CLImprovedHeavyLargeLaser (omnipod)
-CLImprovedHeavyLargeLaser (omnipod)
-Clan Endo Steel
-Clan Endo Steel
-Clan Endo Steel
+CLImprovedHeavyLargeLaser (OMNIPOD)
+CLImprovedHeavyLargeLaser (OMNIPOD)
+CLImprovedHeavyLargeLaser (OMNIPOD)
+Clan Reflective
+Clan Reflective
+Clan Reflective
 -Empty-
 -Empty-
 -Empty-
@@ -72,9 +78,9 @@ Left Torso:
 Fusion Engine
 Fusion Engine
 Life Support
-CLERSmallLaser (omnipod)
-Clan Streak LRM 15 Ammo (omnipod)
-Clan Streak LRM 15 Ammo (omnipod)
+CLERSmallLaser (OMNIPOD)
+Clan Streak LRM 15 Ammo (OMNIPOD)
+Clan Streak LRM 15 Ammo (OMNIPOD)
 Clan Endo Steel
 Clan Endo Steel
 Clan Reflective
@@ -86,9 +92,9 @@ Right Torso:
 Fusion Engine
 Fusion Engine
 Life Support
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
-CL Super Charger (omnipod)
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+Supercharger (OMNIPOD)
 Clan Endo Steel
 Clan Endo Steel
 Clan Reflective
@@ -113,10 +119,10 @@ Sensors
 Head:
 Sensors
 Sensors
-CLImprovedMediumHeavyLaser (omnipod)
-CLImprovedMediumHeavyLaser (omnipod)
-CLImprovedMediumHeavyLaser (omnipod)
-CLImprovedMediumHeavyLaser (omnipod)
+CLImprovedMediumHeavyLaser (OMNIPOD)
+CLImprovedMediumHeavyLaser (OMNIPOD)
+CLImprovedMediumHeavyLaser (OMNIPOD)
+CLImprovedMediumHeavyLaser (OMNIPOD)
 -Empty-
 -Empty-
 -Empty-
@@ -129,8 +135,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
 -Empty-
 -Empty-
 -Empty-
@@ -143,8 +149,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
 -Empty-
 -Empty-
 -Empty-

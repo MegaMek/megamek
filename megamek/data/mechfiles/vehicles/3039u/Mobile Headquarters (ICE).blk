@@ -20,6 +20,10 @@ Mobile Headquarters
 (ICE)
 </Model>
 
+<mul id:>
+2198
+</mul id:>
+
 <year>
 2850
 </year>
@@ -31,6 +35,10 @@ Mobile Headquarters
 <type>
 IS Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Wheeled
@@ -76,7 +84,7 @@ Medium Laser
 </Turret Equipment>
 
 <source>
-TRO 3039 - Succession Wars
+TRO: 3039
 </source>
 
 <tonnage>

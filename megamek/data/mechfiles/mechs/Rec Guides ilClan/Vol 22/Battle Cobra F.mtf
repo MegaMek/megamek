@@ -1,0 +1,171 @@
+chassis:Battle Cobra
+model:F
+mul id:271
+
+Config:Biped Omnimech
+TechBase:Clan
+Era:3057
+source:Rec Guide:ilClan #22
+Rules Level:2
+role:Striker
+
+quirk:ext_twist
+
+
+Mass:40
+Engine:240 Fusion (Clan) Engine(IS)
+Structure:Clan Endo Steel
+Myomer:Standard
+
+Heat Sinks:10 Double
+Base Chassis Heat Sinks:9
+Walk MP:6
+Jump MP:6
+
+Armor:Ferro-Fibrous(Clan)
+LA Armor:11
+RA Armor:11
+LT Armor:14
+RT Armor:14
+CT Armor:16
+HD Armor:9
+LL Armor:17
+RL Armor:17
+RTL Armor:5
+RTR Armor:5
+RTC Armor:5
+
+Weapons:4
+ER Medium Laser, Left Arm
+ER Medium Laser, Left Arm
+ER Medium Laser, Left Arm
+Ultra AC/5, Right Arm
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+CLERMediumLaser (omnipod)
+CLERMediumLaser (omnipod)
+CLERMediumLaser (omnipod)
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+CLUltraAC5 (omnipod)
+CLUltraAC5 (omnipod)
+CLUltraAC5 (omnipod)
+Clan Ultra AC/5 Ammo (omnipod)
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Jump Jet (omnipod)
+Jump Jet (omnipod)
+Jump Jet (omnipod)
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+Jump Jet (omnipod)
+Jump Jet (omnipod)
+Jump Jet (omnipod)
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Clan Endo Steel
+Clan Ferro-Fibrous
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLDoubleHeatSink
+CLDoubleHeatSink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+overview:The Battle Cobra was already in the prototype stages when Clan Steel Viper introduced their first OmniMech, the Crossbow.
+
+capabilities:The Battle Cobra makes use of Endo Steel and Ferro-Fibrous technologies, but uses a standard Fusion Engine for increased durability. 
+
+deployment:A mid-range Jump Jet equipped brawler, the F config mounts an Ultra AC/5 and single ton of reloads in its right arm supported by a trio of ER Medium Lasers in its left.
+
+history:The Battle Cobra prototypes were quickly redesigned to allow similar arm-mounted Omni-Pods, debuting only a few years later. Like the Crossbow, the Battle Cobra does not mount fixed jump jets and cannot mount them in their arms - therefore, early Battle Cobras would not be jump-capable. The first of the design saw deployment in 2873, and even though all of its weapon mounts are in the arms, this 'Mech has been in production ever since.  However, the 'Mech's production facilities in Clan Space would end up being destroyed during the Annihilation of of Clan Steel Viper in 3075 on New Kent.
+
+manufacturer:Novy Minsky Armaments Plant
+primaryfactory:New Kent
+systemmanufacturer:CHASSIS:Cobra Endo Steel
+systemmanufacturer:ENGINE:New Kent Type 240
+systemmanufacturer:ARMOR:Ferro-Fibrous V3
+systemmanufacturer:COMMUNICATIONS:Bishop 400 Holly-Meridian CTC
+systemmanufacturer:TARGETING:Spanke 112-A
+

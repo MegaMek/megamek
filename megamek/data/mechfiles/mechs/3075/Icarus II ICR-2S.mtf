@@ -1,12 +1,18 @@
-Version:1.0
-Icarus II
-ICR-2S
+chassis:Icarus II
+model:ICR-2S
+mul id:1601
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3073
-Source:TRO 3075
+Source:TRO: 3075
 Rules Level:2
+role:Brawler
+
+
+
+quirk:imp_target_short
+
 
 Mass:40
 Engine:200 XL Engine

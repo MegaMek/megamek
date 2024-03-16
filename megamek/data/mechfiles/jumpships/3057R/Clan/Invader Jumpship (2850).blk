@@ -20,6 +20,10 @@ Invader Jumpship
 (2850)
 </Model>
 
+<mul id:>
+4371
+</mul id:>
+
 <year>
 2850
 </year>
@@ -31,6 +35,10 @@ Invader Jumpship
 <type>
 Clan Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Aerodyne
@@ -113,7 +121,7 @@ ISMobileHPG
 </structural_integrity>
 
 <source>
-TRO 3057R - Early Succession War
+TRO: 3057 Revised
 </source>
 
 <tonnage>

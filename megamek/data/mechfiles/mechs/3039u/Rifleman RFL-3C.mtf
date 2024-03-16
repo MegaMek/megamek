@@ -1,12 +1,22 @@
-Version:1.0
-Rifleman
-RFL-3C
+chassis:Rifleman
+model:RFL-3C
+mul id:2695
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3026
-Source:TRO 3039 - Succession Wars
+Source:TRO: 3039
 Rules Level:1
+role:Brawler
+
+
+
+quirk:anti_air
+quirk:imp_com
+quirk:searchlight
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+
 
 Mass:60
 Engine:240 Fusion Engine

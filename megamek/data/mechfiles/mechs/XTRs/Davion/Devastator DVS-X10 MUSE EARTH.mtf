@@ -1,12 +1,19 @@
-Version:1.1
-Devastator
-DVS-X10 MUSE EARTH
+chassis:Devastator
+model:DVS-X10 MUSE EARTH
+mul id:896
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3075
-Source:Jihad
+source:XTR: Davion
 Rules Level:4
+role:Skirmisher
+
+
+
+quirk:hyper_actuator
+quirk:searchlight
+
 
 Mass:100
 Engine:400 XXL Engine(IS)
@@ -150,4 +157,18 @@ Reactive
 -Empty-
 -Empty-
 
+overview:Designed by General Kerensky himself right before the start of the Amaris Civil War, development of the Devastator ended abruptly when Stefan the Usurper took control of the Terran Hegemony.
 
+capabilities:In order to overcome its poor speed, long-range power was designed. Although the Devastator is capable of holding its own in close quarters battle, its capacity to control heat is its most striking trait. Pilots are able to move with the utmost speed and fire all of the heavy weaponry without fear thanks to fourteen double heat sinks. A Devastator pilot just needs to slightly scale back his movements to prevent the design from overheating, even when doused in inferno gel or subjected to several engine strikes.
+
+deployment:The Devastator MUSE EARTH project created to push the limitations of existing Assault 'Mechs to new heights during the Jihad. Their first step was to install a 400-rated XXL engine to increase the Devastator's maximum ground speed to 64 km/h. By combining a Supercharger with a MASC system, Dr. Ned Morgan, John Heidl and the other engineers assigned to this project created a design that that can move at a top speed of over 100 km/h for short bursts. Not content with nearly twenty tons of Reactive Armor, the engineers also armored the 'Mech's cockpit, Compact Gyro, Supercharger, and the shoulder and hip actuators. The MUSE EARTH Devastator carries a Heavy PPC and PPC Capacitor in each arm and a pair of Medium Variable Speed Pulse Lasers in the center torso. To make room for all the armor, large engine, and supercharger, the MUSE EARTH uses a Compact Gyro and an Endo Composite skeleton. 
+
+history:Although funds were diverted to the war effort, the design team remained so committed to the project that, just before General Kerensky launched the invasion of Terra, they submitted six prototypes for testing, with team expenses covered out of pocket. As no battle logs for the Devastator have ever been discovered, historians are unable to assess how one of the final original Star League Defense Force designs performed or even if any of the prototypes survived. The blueprints were recovered in 3023 on Hoff by a team looking into a recently found Star League facility, but the first engineers to look at the blueprints were unable to replicate any of the new technology that went into the original. The NAIS didn't build a Devastator prototype utilizing available technologies until 3033. A few years later, moderate production started, and until early 3048, when the Federated Commonwealth was able to start producing a fully equipped version, the low tech DVS-1D was given to elite units.
+
+manufacturer:Corean Enterprises Test Annex (Refit)
+primaryfactory:Novaya Zemlya
+systemmanufacturer:CHASSIS:Star League XT Endo-Composite
+systemmanufacturer:ENGINE:Unknown 400 XXL
+systemmanufacturer:ARMOR:Unknown Reactive Armor
+systemmanufacturer:COMMUNICATIONS:Johnston Wide Band
+systemmanufacturer:TARGETING:Randar Pinpoint-HY

@@ -1,12 +1,18 @@
-Version:1.0
-Jenner
-JR7-C3
+chassis:Jenner
+model:JR7-C3
+mul id:1690
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3068
-Source:TRO 3050 - Jihad
+Source:TRO: 3050
 Rules Level:2
+role:Striker
+
+
+
+quirk:no_arms
+
 
 Mass:35
 Engine:245 Fusion Engine

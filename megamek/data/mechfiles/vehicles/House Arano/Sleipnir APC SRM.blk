@@ -20,6 +20,10 @@ Sleipnir APC Tank
 (SRM)
 </Model>
 
+<mul id:>
+7614
+</mul id:>
+
 <year>
 3004
 </year>
@@ -31,6 +35,10 @@ Sleipnir APC Tank
 <type>
 IS Level 1
 </type>
+
+<role>
+Brawler
+</role>
 
 <motion_type>
 Wheeled

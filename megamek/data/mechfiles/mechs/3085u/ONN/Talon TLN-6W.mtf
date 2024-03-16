@@ -1,12 +1,19 @@
-Version:1.0
-Talon
-TLN-6W
+chassis:Talon
+model:TLN-6W
+mul id:3155
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3076
-Source:Jihad
+source:TRO: 3085
 Rules Level:2
+role:Striker
+
+
+
+quirk:rugged_1
+quirk:no_arms
+
 
 Mass:35
 Engine:280 XL Engine

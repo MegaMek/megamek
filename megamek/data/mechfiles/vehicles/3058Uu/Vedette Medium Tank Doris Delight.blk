@@ -2,60 +2,133 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 Tank
 </UnitType>
+
 <Name>
 Vedette Medium Tank
 </Name>
+
 <Model>
 'Doris' Delight'
 </Model>
-<Tonnage>
-50
-</Tonnage>
+
+<mul id:>
+3387
+</mul id:>
+
+<year>
+3065
+</year>
+
+<originalBuildYear>
+3065
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<role>
+Sniper
+</role>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<transporters>
+</transporters>
+
 <cruiseMP>
 6
 </cruiseMP>
-<Armor>
+
+<engine_type>
+2
+</engine_type>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
 40
 30
 30
 24
 28
-</Armor>
-<Turret Equipment>
-ISGaussRifle
-</Turret Equipment>
+</armor>
+
+<Body Equipment>
+IS Gauss Ammo
+IS Gauss Ammo
+</Body Equipment>
+
 <Front Equipment>
 ISERMediumLaser
 </Front Equipment>
-<Body Equipment>
-ISGauss Ammo
-ISGauss Ammo
-</Body Equipment>
-<type>
-IS Level 2
-</type>
-<year>
-3065
-</year>
-<internal_type>
-0
-</internal_type>
-<armor_type>
-1
-</armor_type>
-<engine_type>
-2
-</engine_type>
-<motion_type>
-Tracked
-</motion_type>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+ISGaussRifle
+</Turret Equipment>
+
+<capabilities>
+Carrying only one anti-vehicle weapon does not make it a less effective vehicle than a newer tank, but does reduce its ability to deal with a wide variety of targets. The Vedette uses its speed to great effect by moving into optimum autocannon range, opening fire, and then retreating as fast as possible to another fire position.
+</capabilities>
+
+<overview>
+The yardstick against which all other tanks are judged, the Vedette medium tank is one of the most popular and common combat vehicles in the Inner Sphere.
+</overview>
+
+<deployment>
+An XL engine allows Doris' Delight to travel at a maximum speed of 96 km/h while freeing up enough weight to mount a Gauss rifle and nine and a half tons of armor. It was destroyed during the Word of Blake's assault on New Avalon.
+</deployment>
+
+<history>
+There will be at least one Vedette wherever there are armored vehicles. It is not unrealistic to believe that this tank exists on every globe in the Inner Sphere.
+</history>
+
+<manufacturer>
+Field Refit.
+</manufacturer>
+
+<primaryFactory>
+various
+</primaryFactory>
+
+<systemManufacturers>
+ENGINE:Rawlings 300 XL
+ARMOR:Hellespont Lite Ferro-Fibrous
+COMMUNICATIONS:ComStar Rover
+TARGETING:ComStar Test-2
+</systemManufacturers>
+
 <source>
-Civil War
+TRO: 3058
 </source>
+
+<tonnage>
+50.0
+</tonnage>
+

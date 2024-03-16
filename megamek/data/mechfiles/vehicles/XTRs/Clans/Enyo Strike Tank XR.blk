@@ -20,6 +20,10 @@ Enyo Strike Tank
 XR
 </Model>
 
+<mul id:>
+4128
+</mul id:>
+
 <year>
 3075
 </year>
@@ -27,6 +31,10 @@ XR
 <type>
 Clan Level 4
 </type>
+
+<role>
+Striker
+</role>
 
 <motion_type>
 Tracked
@@ -78,9 +86,16 @@ CLERLargePulseLaser
 </Turret Equipment>
 
 <source>
-XTRO Clans - Jihad
+XTR: Clans
 </source>
 
 <tonnage>
 55.0
 </tonnage>
+
+<quirks>
+difficult_maintain
+prototype
+trailer_hitch
+</quirks>
+

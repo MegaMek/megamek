@@ -20,6 +20,10 @@ Packrat LRPV
 'Gespenst'
 </Model>
 
+<mul id:>
+5606
+</mul id:>
+
 <year>
 3073
 </year>
@@ -27,6 +31,10 @@ Packrat LRPV
 <type>
 IS Level 4
 </type>
+
+<role>
+Scout
+</role>
 
 <motion_type>
 Wheeled
@@ -79,9 +87,15 @@ ISLimitedAmphibiousChassis
 </Rear Equipment>
 
 <source>
-XTRO Phantoms - Jihad
+XTR: Phantoms
 </source>
 
 <tonnage>
 20.0
 </tonnage>
+
+<quirks>
+difficult_maintain
+imp_com
+</quirks>
+

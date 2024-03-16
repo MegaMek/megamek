@@ -1,12 +1,17 @@
-Version:1.1
-Fenris (Ice Ferret)
-C
+chassis:Fenris
+clanname:Ice Ferret
+model:C
+mul id:1048
 
 Config:Biped Omnimech
 TechBase:Clan
 Era:2948
-source:TRO Clan Invasion - Succession Wars
+source:TRO: Clan Invasion
 Rules Level:2
+role:Missile Boat
+
+quirk:imp_sensors
+
 
 Mass:45
 Engine:360 XL (Clan) Engine(IS)

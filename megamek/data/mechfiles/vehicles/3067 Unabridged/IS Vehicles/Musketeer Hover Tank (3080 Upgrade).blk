@@ -20,6 +20,10 @@ Musketeer Hover Tank
 (3080 Upgrade)
 </Model>
 
+<mul id:>
+5731
+</mul id:>
+
 <year>
 3080
 </year>
@@ -27,6 +31,10 @@ Musketeer Hover Tank
 <type>
 IS Level 2
 </type>
+
+<role>
+Striker
+</role>
 
 <motion_type>
 Hover
@@ -85,7 +93,7 @@ ISRotaryAC5
 </Turret Equipment>
 
 <source>
-TRO 3067 U
+TRO: 3067
 </source>
 
 <tonnage>

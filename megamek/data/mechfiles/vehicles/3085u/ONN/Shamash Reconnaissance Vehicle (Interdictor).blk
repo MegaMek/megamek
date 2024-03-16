@@ -20,6 +20,10 @@ Shamash Reconnaissance Vehicle
 (Interdictor)
 </Model>
 
+<mul id:>
+2920
+</mul id:>
+
 <year>
 3077
 </year>
@@ -27,6 +31,10 @@ Shamash Reconnaissance Vehicle
 <type>
 Clan Level 2
 </type>
+
+<role>
+Scout
+</role>
 
 <motion_type>
 Hover
@@ -77,7 +85,7 @@ CLERMediumLaser
 </Turret Equipment>
 
 <source>
-Jihad
+TRO: 3085
 </source>
 
 <tonnage>

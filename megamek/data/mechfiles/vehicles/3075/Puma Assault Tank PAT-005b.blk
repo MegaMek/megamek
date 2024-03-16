@@ -20,6 +20,10 @@ Puma Assault Tank
 PAT-005b
 </Model>
 
+<mul id:>
+2600
+</mul id:>
+
 <year>
 2751
 </year>
@@ -31,6 +35,10 @@ PAT-005b
 <type>
 IS Level 2
 </type>
+
+<role>
+Missile Boat
+</role>
 
 <motion_type>
 Tracked
@@ -96,7 +104,7 @@ ISERPPC
 </Turret Equipment>
 
 <source>
-TRO 3075 - Star League
+TRO: 3075
 </source>
 
 <tonnage>

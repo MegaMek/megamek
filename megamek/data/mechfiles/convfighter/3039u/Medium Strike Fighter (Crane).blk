@@ -13,12 +13,16 @@ ConvFighter
 </UnitType>
 
 <Name>
-Medium Strike Fighter Crane
+Medium Strike Fighter
 </Name>
 
 <Model>
-
+Crane
 </Model>
+
+<mul id:>
+2155
+</mul id:>
 
 <year>
 2853
@@ -31,6 +35,10 @@ Medium Strike Fighter Crane
 <type>
 IS Level 1
 </type>
+
+<role>
+Fire Support
+</role>
 
 <motion_type>
 Aerodyne
@@ -93,7 +101,7 @@ IS Ammo LRM-5
 </Fuselage Equipment>
 
 <source>
-TRO 3039 - Succession Wars
+TRO: 3039
 </source>
 
 <tonnage>

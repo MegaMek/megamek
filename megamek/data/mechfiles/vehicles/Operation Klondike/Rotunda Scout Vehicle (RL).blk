@@ -15,6 +15,10 @@ Rotunda Scout Vehicle
 <Model>
 RND-J-1-11 (RL)
 </Model>
+
+<mul id:>
+2747
+</mul id:>
 <Tonnage>
 20
 </Tonnage>
@@ -37,6 +41,10 @@ CLRocketLauncher15Prototype
 <type>
 IS Level 4
 </type>
+
+<role>
+Scout
+</role>
 <year>
 2801
 </year>
@@ -52,3 +60,7 @@ IS Level 4
 <motion_type>
 Wheeled
 </motion_type>
+
+<source>
+Historical: Operation Klondike
+</source>

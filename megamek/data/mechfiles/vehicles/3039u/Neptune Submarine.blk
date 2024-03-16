@@ -16,21 +16,29 @@ Tank
 Neptune Submarine
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+4711
+</mul id:>
 
 <year>
 2950
 </year>
 
 <source>
-TRO 3039 - Succession Wars
+TRO: 3039
 </source>
 
 <type>
 IS Level 2
 </type>
+
+<role>
+None
+</role>
 
 <tonnage>
 100.0

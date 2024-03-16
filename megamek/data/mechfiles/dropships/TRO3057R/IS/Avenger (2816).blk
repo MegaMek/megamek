@@ -20,6 +20,10 @@ Avenger
 (2816)
 </Model>
 
+<mul id:>
+3765
+</mul id:>
+
 <year>
 2816
 </year>
@@ -31,6 +35,10 @@ Avenger
 <type>
 IS Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Aerodyne
@@ -131,7 +139,7 @@ Medium Laser
 </structural_integrity>
 
 <source>
-TRO 3057R - Early Succession War
+TRO: 3057 Revised
 </source>
 
 <tonnage>

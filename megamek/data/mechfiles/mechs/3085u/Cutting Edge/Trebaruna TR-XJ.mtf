@@ -1,12 +1,18 @@
-Version:1.1
-Trebaruna
-TR-XJ
+chassis:Trebaruna
+model:TR-XJ
+mul id:3293
 
 Config:Quad
 TechBase:Inner Sphere
 Era:3081
-Source:Dark Age
+source:TRO: 3085
 Rules Level:2
+role:Juggernaut
+
+
+
+quirk:command_mech
+
 
 Mass:95
 Engine:285 Fusion Engine

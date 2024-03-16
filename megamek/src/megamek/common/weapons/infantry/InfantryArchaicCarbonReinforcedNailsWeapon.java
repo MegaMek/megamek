@@ -20,27 +20,27 @@ import megamek.common.AmmoType;
  * @since Sep 7, 2005
  */
 public class InfantryArchaicCarbonReinforcedNailsWeapon extends InfantryWeapon {
-	private static final long serialVersionUID = -3164871600230559641L;
+    private static final long serialVersionUID = -3164871600230559641L;
 
-	public InfantryArchaicCarbonReinforcedNailsWeapon() {
-		super();
+    public InfantryArchaicCarbonReinforcedNailsWeapon() {
+        super();
 
-		name = "Blade (Carbon-Reinforced Nails)";
-		setInternalName(name);
-		addLookupName("InfantryCarbonFingernails");
-		addLookupName("Carbon Reinforced Fingernails");
-		ammoType = AmmoType.T_NA;
-		cost = 1000;
-		bv = 0.02;
+        name = "Blade (Carbon-Reinforced Nails)";
+        setInternalName(name);
+        addLookupName("InfantryCarbonFingernails");
+        addLookupName("Carbon Reinforced Fingernails");
+        ammoType = AmmoType.T_NA;
+        cost = 1000;
+        bv = 0.02;
         tonnage = 0; 
-		flags = flags.or(F_NO_FIRES).or(F_INF_POINT_BLANK).or(F_INF_ARCHAIC);
-		infantryDamage = 0.02;
-		infantryRange = 0;
-		rulesRefs = "272, TM";
-		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(2980, 2990, DATE_NONE, DATE_NONE, DATE_NONE)
-				.setISApproximate(true, false, false, false, false).setPrototypeFactions(F_CC)
-				.setProductionFactions(F_CC).setTechRating(RATING_D)
-				.setAvailability(RATING_X, RATING_D, RATING_D, RATING_E);
+        flags = flags.or(F_NO_FIRES).or(F_INF_POINT_BLANK).or(F_INF_ARCHAIC);
+        infantryDamage = 0.02;
+        infantryRange = 0;
+        rulesRefs = "272, TM";
+        techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(2980, 2990, DATE_NONE, DATE_NONE, DATE_NONE)
+                .setISApproximate(true, false, false, false, false).setPrototypeFactions(F_CC)
+                .setProductionFactions(F_CC).setTechRating(RATING_D)
+                .setAvailability(RATING_X, RATING_D, RATING_D, RATING_E);
 
-	}
+    }
 }

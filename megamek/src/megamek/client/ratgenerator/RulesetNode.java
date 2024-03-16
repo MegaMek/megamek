@@ -54,7 +54,7 @@ public class RulesetNode {
             } else {
                 assertions.put(wn.getNodeName(), Ruleset.substituteConstants(wn.getTextContent()));
             }
-        }		
+        }
     }
 
     /* Allow augmented to be passed separately so the eschelon entry in the ruleset TOC
@@ -150,14 +150,14 @@ public class RulesetNode {
     }
 
     public boolean matches(String val, String property) {
-        if (property.length() == 0) {
+        if (property.isBlank()) {
             if (val == null) {
                 return true;
-            }
-            if (val.length() != 0) {
+            } else if (!val.isBlank()) {
                 return false;
             }
         }
+
         if (property.startsWith("!")) {
             return !matches(val, property.replaceFirst("!", ""));
         }
@@ -171,6 +171,7 @@ public class RulesetNode {
                     break;
                 }
             }
+
             if (!result) {
                 return false;
             }
@@ -186,8 +187,8 @@ public class RulesetNode {
             for (String or : ors) {
                 if (or.contains(",")) {
                     String[] dates = or.split(",", 2);
-                    if ((dates[0].length() == 0 || year >= Integer.parseInt(dates[0]))
-                            && (dates[1].length() == 0 || year <= Integer.parseInt(dates[1]))) {
+                    if ((dates[0].isBlank() || year >= Integer.parseInt(dates[0]))
+                            && (dates[1].isBlank() || year <= Integer.parseInt(dates[1]))) {
                         result = true;
                         break;
                     }
@@ -208,10 +209,9 @@ public class RulesetNode {
      * @return
      */
     public boolean collectionMatchesProperty(Collection<String> list, String property) {
-        if (property.length() == 0) {
-            return list.size() == 0;
-        }
-        if (property.startsWith("!")) {
+        if (property.isBlank()) {
+            return list.isEmpty();
+        } else if (property.startsWith("!")) {
             return !collectionMatchesProperty(list, property.replaceFirst("!", ""));
         }
         String[] ands = property.split(",");
@@ -229,6 +229,7 @@ public class RulesetNode {
                     }
                 }
             }
+
             if (!result) {
                 return false;
             }
@@ -259,7 +260,7 @@ public class RulesetNode {
                     if (property.contains(",")) {
                         String[] weights = property.split(",");
                         fd.setWeightClass(ForceDescriptor.decodeWeightClass(weights[i]));
-                    } else if (property.length() > 0) {
+                    } else if (!property.isBlank()) {
                         fd.setWeightClass(ForceDescriptor.decodeWeightClass(property));
                     }
                     break;

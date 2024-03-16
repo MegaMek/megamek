@@ -20,6 +20,10 @@ Sabutai
 C
 </Model>
 
+<mul id:>
+2766
+</mul id:>
+
 <year>
 3048
 </year>
@@ -31,6 +35,10 @@ C
 <type>
 Clan Level 2
 </type>
+
+<role>
+Dogfighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -116,7 +124,7 @@ CLERMediumLaser:OMNI
 </Fuselage Equipment>
 
 <source>
-TRO 3055u - Succession Wars
+TRO: 3055 Update
 </source>
 
 <tonnage>

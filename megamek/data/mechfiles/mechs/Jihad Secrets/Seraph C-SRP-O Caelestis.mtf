@@ -1,11 +1,22 @@
-Version:1.1
-Seraph
-C-SRP-OS Caelestis
+chassis:Seraph
+model:C-SRP-OS Caelestis
+mul id:2876
+source:Jihad Secrets: The Blake Documents
 
 Config:Biped Omnimech
 TechBase:Mixed (IS Chassis)
 Era:3075
 Rules Level:4
+role:Sniper
+
+
+
+quirk:imp_com
+quirk:imp_sensors
+quirk:low_profile
+quirk:bad_rep_clan
+quirk:bad_rep_is
+
 
 Mass:85
 Engine:255 Light Engine(IS)

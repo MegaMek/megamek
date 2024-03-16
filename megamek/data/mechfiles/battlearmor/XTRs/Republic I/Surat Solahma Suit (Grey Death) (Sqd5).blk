@@ -1,0 +1,151 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+Surat (Gray Death) Solahma Suit
+</Name>
+
+<model>
+(Sqd5)
+</Model>
+
+<mul id:>
+8822
+</mul id:>
+
+<year>
+3090
+</year>
+
+<originalBuildYear>
+3090
+</originalBuildYear>
+
+<type>
+Mixed (IS Chassis)
+</type>
+
+<role>
+Ambusher
+</role>
+
+<motion_type>
+Leg
+</motion_type>
+
+<transporters>
+</transporters>
+
+<cruiseMP>
+3
+</cruiseMP>
+
+<armor_type>
+28
+</armor_type>
+
+<armor_tech>
+2
+</armor_tech>
+
+<Squad Equipment>
+BABattleClaw:LA
+CLBAHeavySmallLaser:RA
+BAAPMount:LA
+InfantryAssaultRifle:APM
+SwarmMek
+SwarmWeaponMek
+StopSwarm
+LegAttack
+</Squad Equipment>
+
+<Trooper 1 Equipment>
+</Trooper 1 Equipment>
+
+<Trooper 2 Equipment>
+</Trooper 2 Equipment>
+
+<Trooper 3 Equipment>
+</Trooper 3 Equipment>
+
+<Trooper 4 Equipment>
+</Trooper 4 Equipment>
+
+<Trooper 5 Equipment>
+</Trooper 5 Equipment>
+
+<capabilities>
+The Legion decided to remove the suits' jump jets to make room for dedicated anti-infantry firepower, superior sensor systems, and reinforced myomer bundles to improve ground speed. While losing the ability to leap over obstacles, these changes made the suit easier to maintain and cheaper to build than the Inner Sphere Standard.
+</capabilities>
+
+<overview>
+The Gray Death Standard battle armor was developed by the technicians of the Gray Death Legion after the New Avalon Institute of Science sent them prototype battle armor suits, the progenitors of what eventually became the Inner Sphere Standard, for field testing.
+</overview>
+
+<deployment>
+This suit replaces the standard armor with lighter Clan-built armor. This in turn frees up space for heavier weapons. Most frequently a Heavy Small Laser is fitted to the suit. The suit itself is frequently used by solahma infantry formations in Clan toumans. Though it has a bad reputation among Clan Elementals, it is nevertheless an effective weapon.
+</deployment>
+
+<history>
+The new armor, as well as the Gray Death Scout suit, debuted during the Clan Invasion in battle against Clan Jade Falcon for control of Pandora. The Gray Death Standard played a decisive role in the Gray Death Legion's victory over the Falcons. Afterwards the Legion continued to build limited numbers of Standard suits, largely to replenish their own losses but also to sell small numbers to other mercenary commands. Following its creation, the Legion also sold limited numbers of Gray Death Standard suits to the Lyran Alliance. The Gray Death Legion was effectively destroyed in battle on Hesperus II in 3065, one of the many casualties of the FedCom Civil War, but the suits they created would live on. Surviving members of the Legion's support staff created Gray Death Technologies and, with financial aid from Defiance Industries, established a dedicated factory on Glengarry to continued production. As the only dedicated battle armor manufacturer within the realm, Gray Death Technologies continued to sell its Standard suits to the Lyran Alliance Armed Forces and various mercenaries. Disaster struck again during the Jihad when the Word of Blake attacked Glengarry in 3073 and sacked the factory. The destruction was not complete however and the survivors were able to restart production on a new variant of the Gray Death Standard. When Precentor Berith attacked again a year later he was more thorough in destroying the factory and rendered GDT incapable of building any battle suits. By that point Gray Death Technologies was bought up by Defiance Industries, which decided to move manufacturing of the Gray Death Standard to Furillo and put a hold on new suits. Production of the Gray Death Strike suit resumed in late 3080, although sale of the latter was restricted to the Lyran Alliance (and Defiance Industries' own security forces).
+</history>
+
+<manufacturer>
+Defiance Industries,Gray Death Technologies
+</manufacturer>
+
+<primaryFactory>
+Furillo,Glengary
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+JUMPJET:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<source>
+XTR: Republic I
+</source>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+0
+</jumpingMP>
+
+<armor>
+9
+</armor>
+
+<Trooper Count>
+5
+</Trooper Count>
+
+<weightclass>
+2
+</weightclass>
+
+
+<quirks>
+easy_maintain
+bad_rep_is
+poor_work
+</quirks>
+

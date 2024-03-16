@@ -13,6 +13,8 @@
  */
 package megamek.common.weapons.capitalweapons;
 
+import megamek.common.Mounted;
+import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.weapons.lasers.EnergyWeapon;
 
 /**
@@ -33,5 +35,11 @@ public abstract class SubCapLaserWeapon extends EnergyWeapon {
     @Override
     public int getBattleForceClass() {
         return BFCLASS_SUBCAPITAL;
+    }
+
+    @Override
+    public double getBattleForceDamage(int range, Mounted linked) {
+        int maxRange = shortAV <= 1 ? AlphaStrikeElement.LONG_RANGE : AlphaStrikeElement.MEDIUM_RANGE;
+        return (range <= maxRange) ? shortAV : 0;
     }
 }

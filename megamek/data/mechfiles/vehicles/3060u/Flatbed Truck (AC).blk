@@ -20,6 +20,10 @@ Flatbed Truck
 (AC)
 </Model>
 
+<mul id:>
+1134
+</mul id:>
+
 <year>
 2580
 </year>
@@ -31,6 +35,10 @@ Flatbed Truck
 <type>
 IS Level 4
 </type>
+
+<role>
+Scout
+</role>
 
 <motion_type>
 Wheeled
@@ -76,7 +84,7 @@ Unit is based on fluff write up only hence Level 5 tech Level
 </history>
 
 <source>
-Star League
+TRO: 3060
 </source>
 
 <tonnage>

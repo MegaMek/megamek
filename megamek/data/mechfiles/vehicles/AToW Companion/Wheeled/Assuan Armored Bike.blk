@@ -16,9 +16,13 @@ SupportTank
 Assuan Armored Bike
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+9223
+</mul id:>
 
 <year>
 2610
@@ -31,6 +35,10 @@ Assuan Armored Bike
 <type>
 IS Level 4
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Wheeled

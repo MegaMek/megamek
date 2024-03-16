@@ -20,6 +20,10 @@ Lightning
 LTN-G16L
 </Model>
 
+<mul id:>
+4515
+</mul id:>
+
 <year>
 3067
 </year>
@@ -31,6 +35,10 @@ LTN-G16L
 <type>
 IS Level 2
 </type>
+
+<role>
+Dogfighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -104,7 +112,7 @@ IS Ultra AC/20 Ammo
 </Fuselage Equipment>
 
 <source>
-TRO 3075 - Civil War
+TRO: 3075
 </source>
 
 <tonnage>

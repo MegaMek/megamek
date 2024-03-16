@@ -20,6 +20,10 @@ Donar Assault Helicopter
 (Recon)
 </Model>
 
+<mul id:>
+905
+</mul id:>
+
 <year>
 3019
 </year>
@@ -27,6 +31,10 @@ Donar Assault Helicopter
 <type>
 Clan Level 2
 </type>
+
+<role>
+Scout
+</role>
 
 <motion_type>
 VTOL
@@ -79,7 +87,7 @@ CLTAG
 </Rotor Equipment>
 
 <source>
-Succession Wars
+TRO: 3060
 </source>
 
 <tonnage>

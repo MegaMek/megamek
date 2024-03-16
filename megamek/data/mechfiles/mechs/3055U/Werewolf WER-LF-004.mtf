@@ -1,12 +1,19 @@
-Version:1.0
-Werewolf
-WER-LF-004
+chassis:Werewolf
+model:WER-LF-004
+mul id:3535
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3056
-Source:TRO 3055 - Clan Invasion
+Source:TRO: 3055
 Rules Level:2
+role:Striker
+
+
+
+
+quirk:non_standard
+
 
 Mass:40
 Engine:200 XL Engine

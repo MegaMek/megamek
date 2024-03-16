@@ -20,6 +20,10 @@ Princess Luxury Liner
 (Cargo)
 </Model>
 
+<mul id:>
+4863
+</mul id:>
+
 <year>
 2823
 </year>
@@ -31,6 +35,10 @@ Princess Luxury Liner
 <type>
 IS Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Spheroid
@@ -126,7 +134,7 @@ IS Machine Gun Ammo - Half:100
 </structural_integrity>
 
 <source>
-HB:Major Periphery States - Succession Wars
+Handbook: Major Periphery States
 </source>
 
 <tonnage>

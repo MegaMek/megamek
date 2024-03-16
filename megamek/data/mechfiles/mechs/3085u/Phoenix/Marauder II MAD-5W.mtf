@@ -1,12 +1,20 @@
-Version:1.0
-Marauder II
-MAD-5W
+chassis:Marauder II
+model:MAD-5W
+mul id:2062
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3070
-Source:Jihad
+source:TRO: 3085
 Rules Level:2
+role:Sniper
+
+
+
+quirk:command_mech
+quirk:hyper_actuator
+quirk:low_profile
+
 
 Mass:100
 Engine:300 Fusion Engine(IS)
@@ -147,4 +155,20 @@ Endo Steel
 -Empty-
 -Empty-
 
-imagefile:.\data\images\fluff\Mech\3085 Marauder II .jpg
+overview:First built in 3012, the Marauder II is a successful attempt to take the firepower of the Marauder and combine it with the reliability and ruggedness of an assault chassis.
+
+capabilities:With the Marauder already a powerful and popular 'Mech, the Dragoons' goals with the Marauder II were to enhance its abilities by strengthening its chassis to carry a much heavier armor and weapons load. The 'Mech was then armored with nineteen tons of Valiant Lamellor armor, giving it protection that rivals that of the Atlas and fitted with thirteen additional heat sinks, a total of twenty-nine, to allow a more ferocious rate of fire. Retaining its progenitor's Vlar 300-rated engine, with the MAD-5A built around an extralight fusion engine to save more weight for weapons. To make up for the reduced mobility, the Marauder II was outfitted with three Chilton 600 jump jets that give it a jumping capability of up to ninety meters.
+
+deployment:Developed by the Word of Blake but also used by ComStar, this 3070 variant uses a standard fusion engine. Each arm contains a Snub-Nose PPC that does its best work up close, while a heavy PPC is mounted in the body. A C3i computer helps makes this Marauder II's weapons more accurate. Perhaps the most startling feature is enough improved jump jets to move up to one hundred fifty meters in a single leap.
+
+history:In 3010 officers of the famous Wolf's Dragoons mercenary unit contracted with Blackwell Industries of New Valencia on the project of modifying the highly successful 75-ton Marauder into a 100-ton assault 'Mech. Working from existing plans the design phase proved to be very short, the process of reinforcing the Marauder chassis turned out to be easier than expected, enhanced by the removal of the finicky and temperamental General Motors Whirlwind Autocannon for a much simpler Large Laser. First appearing with the famous Zeta Battalion before spreading to Alpha Regiment, the Dragoons' enemies soon learned to fear the appearance of Marauder IIs as foreshadowing a major advance, as for the remainder of the Third Succession War it remained the exclusive property of the mysterious Dragoons. This changed after the Fourth Succession War when Colonel Jaime Wolf authorized Blackwell to increase production and allow outside buyers access, on the provision that each sale had to be approved by the Dragoons. Now spreading in limited numbers, the largest buyer outside the Dragoons would be the Miller's Marauders mercenary unit, famed for its almost exclusive use of the Marauder chassis and the secret loan of its DropShips to Zeta Battalion for their climactic rescue of the rest of the Dragoons on Crossing. When new unit commander Major Susan Barber expressed interest in the Marauder II, Colonel Wolf gave Blackwell the go-ahead to supply her with all she needed, by the Clan Invasion the now renamed Barber's Marauder II would boast almost a regiment's worth of the fearsome assault 'Mech. Though Barber's Marauder II would help drive the considerable interest and demand for the powerful assault 'Mech, they would also damage its seeming aura of invincibility following their ignoble destruction by Clan Jade Falcon on Koniz in June 3064. Seeking to rekindle interest in their flagship 'Mech following its disastrous showing on Koniz, GM/Blackwell noted the Vicore Industries triggered refresh of "classic" designs to develop a more powerful and visually refreshed model. The resulting MAD-4S variant was the first widely available Marauder II, Wolf's Dragoons' easing of sale restrictions partly motivated by profit but also as a means to punish the Lyran Alliance for the theft of the Blackwell developed light fusion engine, as of 3067 selling the 'Mech to all interested parties save those the Dragoons were fighting against in the Chaos March; the Word of Blake and the members of Trinity Alliance. The demand for the Marauder II would only increase in the Jihad following the Blakist destruction of GM and Blackwell's production facilities for the 'Mech as part of their vendetta against the Wolf's Dragoons, with many salvaged examples in use among the nations of the Inner Sphere in a large number of variations following the Blakists' fall, the most notable being the MAD-6D developed by the Federated Suns and shared with the Republic of the Sphere.
+
+manufacturer:Field Refit
+primaryfactory:Various
+systemmanufacturer:CHASSIS:GM Marauder
+systemmanufacturer:ENGINE:Vlar 300
+systemmanufacturer:ARMOR:Valiant Lamellor
+systemmanufacturer:JUMPJET:Chilton 6000i
+systemmanufacturer:COMMUNICATIONS:Dalban Micronics
+systemmanufacturer:TARGETING:Dalban Hi-Rez II
+

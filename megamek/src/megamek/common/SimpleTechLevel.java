@@ -5,6 +5,9 @@ package megamek.common;
 
 import megamek.common.options.OptionsConstants;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * An enum for the various rules levels
  * 
@@ -111,5 +114,15 @@ public enum SimpleTechLevel {
     
     public static SimpleTechLevel getGameTechLevel(Game game) {
         return SimpleTechLevel.parse(game.getOptions().stringOption(OptionsConstants.ALLOWED_TECHLEVEL));
+    }
+
+    public static Map<Integer, String> getAllSimpleTechLevelCodeName() {
+        Map<Integer, String> result = new HashMap();
+
+        for (SimpleTechLevel simpleTechLevel : SimpleTechLevel.values()) {
+            result.put(simpleTechLevel.ordinal(), simpleTechLevel.strVal);
+        }
+
+        return result;
     }
 }

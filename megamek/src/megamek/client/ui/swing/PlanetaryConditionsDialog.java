@@ -17,7 +17,6 @@
 /*
  * PlanetaryConditionsDialog.java
  */
-
 package megamek.client.ui.swing;
 
 import java.awt.BorderLayout;
@@ -60,7 +59,6 @@ import static megamek.common.PlanetaryConditions.*;
  *
  * @author Jay Lawson
  * @author Simon
- * @version
  */
 public class PlanetaryConditionsDialog extends ClientDialog {
 

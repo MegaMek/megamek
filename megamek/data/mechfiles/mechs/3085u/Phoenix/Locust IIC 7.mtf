@@ -1,12 +1,19 @@
-Version:1.0
-Locust IIC
-7
+chassis:Locust IIC
+model:7
+mul id:1920
 
 Config:Biped
 TechBase:Clan
 Era:3076
-Source:Jihad
+source:TRO: 3085
 Rules Level:2
+role:Striker
+
+quirk:easy_maintain
+quirk:low_profile
+quirk:no_arms
+quirk:weak_legs
+
 
 Mass:25
 Engine:200 Fusion (Clan) Engine(IS)

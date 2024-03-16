@@ -1,21 +1,24 @@
-Version:1.0
-Caesar
-CES-3R 'Archangel'
-
+chassis:Caesar
+model:CES-3R 'Archangel'
+mul id:3883
 Config:Biped
 techbase:Mixed (IS Chassis)
 era:3057
-source:TRO 3050 - Clan Invasion
-rules level:4
+source:TRO: 3050
+rules level:3
+role:Brawler
+
+
+
+quirk:hyper_actuator
+
 
 mass:70
 engine:280 XL Engine(IS)
 structure:IS Standard
 myomer:Standard
 
-heat sinks:17 Double
-nocrit:Standard:None
-nocrit:Standard:None
+heat sinks:17 IS Double
 walk mp:4
 jump mp:0
 
@@ -153,4 +156,18 @@ Foot Actuator
 -Empty-
 -Empty-
 
+overview:Originally a reverse engineered version of the Capellan Confederation's Cataphract intended to mask development of the Federated Commonwealth's fearsome Axman, the Caesar would turn out to be a good but not great BattleMech in its own right.
 
+capabilities:The Caesar was built to do as much damage to an enemy at as great a stand-off range as possible. The 'Mech therefore carries primarily long-ranged armament. The 'Mech also uses an 280-rated XL engine and sixteen double heat sinks, both of which save significant amounts of weight, in order to carry as many weapons and as much armor as possible. The 'Mech utilizes CASE to protect against ammunition explosions should an enemy be able to breach the ten and a half tons of armor that protect it.
+
+deployment:The personal 'Mech of Marcus GioAvanti, commander of Avanti's Angels, all of Archangel's weapons are upgraded to Clantech equivalents except the rear pulse lasers, the right arm medium pulse laser is moved to the left arm and an extra Clan medium pulse laser added to the center torso. The resulting weight and space saved allowed the mounting of an extra double heat sink as well as additional ton of armor.
+
+history:Supposedly the sole design intended to come out of Johnston Industries' then-new 'Mech lines on New Syrtis, the Caesar received notable public attention in an attempt to distract from development of the Axman. The finished 'Mech surprisingly enough proved to be a high-quality design itself. Though never attracting great sales, the Caesar would prove to be relatively popular in the Capellan March, among Lyran units on the Clan front, and with both FedCom-employed mercenaries and the Com Guards. Johnston attempted to redress its mediocre sales in the wake of the FedCom Civil War, developing two new variants intended to focus specifically on the qualities desired by the Lyran Alliance and Federated Suns. The resulting upswing in sales saw the Caesar in increasing use among those opposing the Word of Blake during the Jihad, with the LAAF in particular adopting the design almost as a means of honoring the assassinated Caesar Steiner.
+
+manufacturer:Johnston Industries
+primaryfactory:New Syrtis
+systemmanufacturer:CHASSIS:Dorwinion CES Standard
+systemmanufacturer:ENGINE:GM 280 Extralight
+systemmanufacturer:ARMOR:Kallon Royalstar with CASE
+systemmanufacturer:COMMUNICATIONS:Johnston Wide Band
+systemmanufacturer:TARGETING:Randar Pinpoint-HY

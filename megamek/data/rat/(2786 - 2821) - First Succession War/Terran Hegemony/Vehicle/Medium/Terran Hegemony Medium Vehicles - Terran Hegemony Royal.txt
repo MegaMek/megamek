@@ -1,12 +1,12 @@
 Terran Hegemony Medium Vehicles - Terran Hegemony Royal
-Kanga Medium Hovertank (Standard),2
+Kanga Medium Hovertank,2
 Zephyr Hovertank (Royal),3
-Thor Artillery Vehicle (Standard),4
-Chaparral Missile Artillery Tank (Standard),5
-Turhan Urban Combat Vehicle (Standard),6
+Thor Artillery Vehicle,4
+Chaparral Missile Artillery Tank,5
+Turhan Urban Combat Vehicle,6
 Tiger Medium Tank T-12,7
-Kanga Medium Hovertank (Standard),6
-Maxim Heavy Hover Transport (Standard),5
-Chaparral Missile Artillery Tank (Standard),4
-Goblin Medium Tank (Standard),3
-LTV-4 Hover Tank (Standard),2
+Kanga Medium Hovertank,6
+Maxim Heavy Hover Transport,5
+Chaparral Missile Artillery Tank,4
+Goblin Medium Tank,3
+LTV-4 Hover Tank,2

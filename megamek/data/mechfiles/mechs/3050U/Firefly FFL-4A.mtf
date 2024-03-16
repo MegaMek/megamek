@@ -1,12 +1,18 @@
-Version:1.1
-Firefly
-FFL-4A
+chassis:Firefly
+model:FFL-4A
+mul id:1087
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2801
-Source:TRO 3050 - Succession Wars
+Source:TRO: 3050
 Rules Level:1
+role:Striker
+
+
+
+quirk:no_arms
+
 
 Mass:30
 Engine:150 Fusion Engine
@@ -133,3 +139,20 @@ Lower Leg Actuator
 Foot Actuator
 Jump Jet
 Jump Jet
+
+overview:The Firefly is a well-armed recon 'Mech that tips the scales at thirty tons, with a maximum ground speed of 86.4 km/h, the and ability to jump up to 120 meters. As a scout 'Mech, the Firefly gives average performance with its energy weapon-heavy arsenal and is useful in both a recon and guerrilla fighter role.
+
+capabilities: Although it was slow in comparison to other 'Mechs of its weight class, it was powerfully armed and armored, and it frequently served as an anvil against which opposing forces' recon units were smashed. 
+
+deployment:An early variant of the Firefly, and one that accompanied the Dragoons to the Inner Sphere, the -4A carries a similar weapons payload to the -4B model, although it keeps the small laser battery of the -3A instead of the anti-missile system.
+
+history:The Firefly, which entered service in the late 27th century, was one of the SLDF's primary light 'Mechs in its later years.Cases occurred in all House forces, but not in the numbers deployed by the SLDF, and all were presumed destroyed by the end of the Second Succession War, save for tales of anomalous examples in the Periphery. The design reappeared with Wolf's Dragoons in the early 31st century, raising eyebrows, yet the secret of the Firefly's origin was revealed when the Dragoons' Clan origins were revealed. In the 3040s, the advent of a small number of Fireflys with the Com Guard forces elicited a similar reaction.
+
+manufacturer:Refit
+primaryfactory:Various
+systemmanufacturer:CHASSIS:Earthwerks Firefly
+systemmanufacturer:ENGINE:GM 150
+systemmanufacturer:ARMOR:StarSlab/1
+systemmanufacturer:JUMPJET:Lexington Lifters
+systemmanufacturer:COMMUNICATIONS:Datcom 18
+systemmanufacturer:TARGETING:Radcom TXX

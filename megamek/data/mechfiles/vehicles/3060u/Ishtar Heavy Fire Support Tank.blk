@@ -16,9 +16,13 @@ Tank
 Ishtar Heavy Fire Support Tank
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+1635
+</mul id:>
 
 <year>
 2976
@@ -27,6 +31,10 @@ Ishtar Heavy Fire Support Tank
 <type>
 Clan Level 3
 </type>
+
+<role>
+Sniper
+</role>
 
 <motion_type>
 Wheeled
@@ -91,7 +99,7 @@ CLUltraAC10
 </Turret Equipment>
 
 <source>
-Succession Wars
+Record Sheets: 3067 Unabridged
 </source>
 
 <tonnage>

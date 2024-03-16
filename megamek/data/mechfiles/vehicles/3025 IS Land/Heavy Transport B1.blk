@@ -12,9 +12,13 @@ Tank
 <Name>
 Heavy Transport B1
 </Name>
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+4277
+</mul id:>
 <Tonnage>
 20
 </Tonnage>
@@ -39,6 +43,10 @@ ISSRM2 Ammo
 <type>
 IS Level 1
 </type>
+
+<role>
+None
+</role>
 <year>
 2370	
 </year>
@@ -54,3 +62,7 @@ IS Level 1
 <motion_type>
 Wheeled
 </motion_type>
+
+<source>
+TRO: 3025
+</source>

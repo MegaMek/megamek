@@ -20,6 +20,10 @@ Merlin
 Ngake
 </Model>
 
+<mul id:>
+2182
+</mul id:>
+
 <year>
 3078
 </year>
@@ -31,6 +35,10 @@ Ngake
 <type>
 IS Level 4
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Spheroid
@@ -131,7 +139,7 @@ ISLaserAntiMissileSystem
 </structural_integrity>
 
 <source>
-XTRO Marik - Jihad
+XTR: Marik
 </source>
 
 <tonnage>

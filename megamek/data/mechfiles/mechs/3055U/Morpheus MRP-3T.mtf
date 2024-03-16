@@ -1,12 +1,19 @@
-Version:1.0
-Morpheus
-MRP-3T
+chassis:Morpheus
+model:MRP-3T
+mul id:2227
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3064
-Source:TRO 3055 - Civil War
+Source:TRO: 3055
 Rules Level:4
+role:Skirmisher
+
+
+
+quirk:pro_actuator
+quirk:difficult_maintain
+
 
 Mass:65
 Engine:390 XL Engine

@@ -1,12 +1,16 @@
-Version:1.0
-Deimos
-2
+chassis:Deimos
+model:2
+mul id:852
 
 Config:Biped
 TechBase:Clan
 Era:3084
-Source:Dark Age
+source:TRO: 3085
 Rules Level:4
+role:Sniper
+
+quirk:anti_air
+
 
 Mass:85
 Engine:340 XL (Clan) Engine(IS)

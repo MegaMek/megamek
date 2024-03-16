@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -17,8 +17,12 @@ Stefan Amaris Battleship
 </Name>
 
 <Model>
-(Standard)
+
 </Model>
+
+<mul id:>
+6786
+</mul id:>
 
 <year>
 2764
@@ -32,23 +36,27 @@ Stefan Amaris Battleship
 IS Level 3
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>
 
 <transporters>
-asfbay:18.0:4:1
-asfbay:18.0:4:2
-smallcraftbay:6.0:2:3
-cargobay:97600.0:4:4
+asfbay:18.0:2:1::-1:0
+asfbay:18.0:2:2::-1:0
+smallcraftbay:6.0:2:3::-1:0
+crewquarters:3458.0:0:-1::-1:0
+1stclassquarters:1430.0:0:-1::-1:0
+2ndclassquarters:350.0:0:-1::-1:0
+steeragequarters:800.0:0:-1::-1:0
+cargobay:111960.0:4:8::-1:0
 dockingcollar
 dockingcollar
 dockingcollar
 dockingcollar
-crewquarters:3458.0:0
-1stclassquarters:1430.0:0
-2ndclassquarters:350.0:0
-steeragequarters:800.0:0
 </transporters>
 
 <SafeThrust>
@@ -64,7 +72,7 @@ steeragequarters:800.0:0
 </sink_type>
 
 <fuel>
-15000
+37500
 </fuel>
 
 <engine_type>
@@ -316,8 +324,36 @@ ISSmallPulseLaser
 100
 </structural_integrity>
 
+<capabilities>
+The main capital equipment consists of three Heavy Naval PPCs on its front arc. Three Class 25 & 30 NACs are mounted on its front flanks, and they are supported by two Killer Whale capital missile launchers. Heavy Naval PPCs, Class 20 & 35 Naval Autocannons, and two Killer Whale Launchers are all part of the major weapons bays on the ship's broadsides. Two Killer Whale Launchers are also added to the ship's aft sides. The ship's sole Class 40 Naval Autocannon and two Class 45 Naval Lasers are used to defend its after section. The Stefan Amaris class was more than competent of combating the lighter and older ships that made up the majority of the navies of the Inner Sphere, but lacking the McKenna's long-vaunted armament. Four Gauss Rifles, four LRM-20 launchers, a cluster of four medium lasers, and four small lasers were all part of the ship's conventional armamentarium. The ship's point defence system, which can engage both fighters and missiles, is comprised of Small Pulse Lasers. In comparison to the McKenna Class Battleships of the Star League, the ship's hull was armoured with 1,889 tonnes of ferro carbide.
+</capabilities>
+
+<overview>
+The Stefan Amaris-class was the first and only Battleship-type WarShip created for the Navy of the Rim Worlds Republic.
+</overview>
+
+<history>
+Built prior to the Amaris Coup, President Stefan Amaris was the driving force that led to construction of the class as a part of his efforts to conquer the Star League. The first three vessels of the class played pivotal roles during the Coup. These ships were sent on "shakedown" cruises to the Terran Hegemony, where they were to be refitted with lithium-fusion battery systems; they were used along with bulk of the Republic's garrison force fleet to secure the Hegemony for now-Emperor Stefan Amaris. Two incomplete ships were still under construction at the time of the Coup and were soon captured by General Aleksandr Kerensky's SLDF forces during the SLDF invasion of the Republic. General Kerensky ordered that the two incomplete vessels should be completed and play leading roles in recapturing the Hegemony from Amaris's forces. Although both former Republican vessels fought until the end of the SLDF campaign to recapture the Hegemony, none of the five Stefan Amaris-class Battleships would ultimately survive the war.
+</history>
+
+<manufacturer>
+Rockwell-Vasquez Starcraft Inc.
+</manufacturer>
+
+<primaryFactory>
+Zertarum
+</primaryFactory>
+
+<use>
+BattleShip
+</use>
+
+<length>
+1,605 meters
+</length>
+
 <source>
-LofT Vol II - Star League
+Historical: Liberation of Terra II
 </source>
 
 <tonnage>
@@ -337,6 +373,10 @@ LofT Vol II - Star League
 150
 </grav_decks>
 
+<designtype>
+1
+</designtype>
+
 <crew>
 714
 </crew>
@@ -346,7 +386,7 @@ LofT Vol II - Star League
 </officers>
 
 <gunners>
-64
+98
 </gunners>
 
 <passengers>
@@ -368,3 +408,10 @@ LofT Vol II - Star League
 <escape_pod>
 100
 </escape_pod>
+
+
+<quirks>
+bad_rep_is
+obsolete
+</quirks>
+

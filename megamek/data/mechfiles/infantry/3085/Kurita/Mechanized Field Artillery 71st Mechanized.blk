@@ -15,6 +15,10 @@ Mechanized Field Artillery
 <Model>
 71st Mechanized
 </Model>
+
+<mul id:>
+2131
+</mul id:>
 <squad_size>
 6
 </squad_size>
@@ -40,11 +44,15 @@ KuritaKit
 <type>
 IS Level 3
 </type>
+
+<role>
+Missile Boat
+</role>
 <year>
 2500
 </year>
 <source>
-TRO 3085 - Age of War
+TRO: 3085
 </source>
 <motion_type>
 Wheeled

@@ -1,0 +1,122 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+PAB-28 Sniper Suit
+</Name>
+
+<model>
+(Sqd6)
+</Model>
+
+<mul id:>
+9095
+</mul id:>
+
+<year>
+3090
+</year>
+
+<type>
+IS Level 2
+</type>
+
+<role>
+Ambusher
+</role>
+
+<motion_type>
+Leg
+</motion_type>
+
+<cruiseMP>
+1
+</cruiseMP>
+
+<Squad Equipment>
+BAArmoredGlove:LA
+BAArmoredGlove:RA
+ISBADavidLightGaussRifle:LA
+ISBADavidLightGaussRifle:RA
+InfantryAssaultRifle:RA:APM
+</Squad Equipment>
+
+<source>
+TRO: 3145 Federated Suns
+</source>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+0
+</jumpingMP>
+
+<armor>
+2
+</armor>
+
+<Trooper Count>
+6
+</Trooper Count>
+
+<weightclass>
+0
+</weightclass>
+
+<armor_type>
+32
+</armor_type>
+<armor_tech>
+3
+</armor_tech>
+
+<overview>
+The PAB-28 Sniper Suit wasn't designed for frontline combat, and the designation given to the suit by Federated Industries was intended to be a clear reminder of that fact. 
+</overview>
+
+<capabilities>
+Lightly armored and slow, the PAB-28 is intended to move into position and wait for targets to present themselves, not to engage enemy units directly or fight in the open; when used within its mission parameters, the PAB-28 proves itself an effective suit, even if it lacks the reputation or appeal of heavier battle armor.
+</capabilities>
+
+<deployment>
+The PAB-28 mounts two "David" Light Gauss Rifles with twenty rounds of ammunition for each and a pair of Armored Gloves.
+</deployment>
+
+<history>
+Manufactured in the Federated Industries plant on Novaya Zemlya, the PAB-28 excels in areas where a conventional unarmored sniper would be unable to operate.
+</history>
+
+<manufacturer>
+Federated Industries
+</manufacturer>
+
+<primaryFactory>
+Novaya Zemlya
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+JUMPJET:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<quirks>
+difficult_maintain
+</quirks>
+

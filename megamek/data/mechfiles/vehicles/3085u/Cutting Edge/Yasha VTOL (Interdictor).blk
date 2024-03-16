@@ -20,6 +20,10 @@ Yasha VTOL
 (Interdictor)
 </Model>
 
+<mul id:>
+3611
+</mul id:>
+
 <year>
 3085
 </year>
@@ -31,6 +35,10 @@ Yasha VTOL
 <type>
 IS Level 2
 </type>
+
+<role>
+Missile Boat
+</role>
 
 <motion_type>
 VTOL
@@ -92,7 +100,7 @@ ISArtemisIV
 </Rotor Equipment>
 
 <source>
-Dark Age
+TRO: 3085
 </source>
 
 <tonnage>

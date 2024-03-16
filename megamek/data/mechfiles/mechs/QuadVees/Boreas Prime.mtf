@@ -1,41 +1,43 @@
-Version:1.0
-Boreas
-Prime
-
+chassis:Boreas
+model:Prime
+mul id:7351
 Config:QuadVee Omnimech
-TechBase:Clan
-Era:3132
-Source:XTRO Republic II - Late Republic
-Rules Level:3
+techbase:Clan
+era:3132
+source:XTR: Republic II
+rules level:3
+role:Skirmisher
 
-Mass:60
-Engine:240 Fusion (Clan) Engine(IS)
-Structure:IS Standard
-Myomer:Standard
-Motive:Track
+mass:60
+engine:240 Fusion (Clan) Engine(IS)
+structure:IS Standard
+myomer:Standard
+motive:Track
+cockpit:QuadVee Cockpit
+gyro:Standard Gyro
 
-Heat Sinks:10 Laser
-Base Chassis Heat Sinks:9
-Walk MP:4
-Jump MP:0
+heat sinks:10 Laser
+base chassis heat sinks:9
+walk mp:4
+jump mp:0
 
-Armor:Standard(Inner Sphere)
-FLL Armor:21
-FRL Armor:21
-LT Armor:21
-RT Armor:21
-CT Armor:26
-HD Armor:8
-RLL Armor:21
-RRL Armor:21
-RTL Armor:7
-RTR Armor:7
-RTC Armor:10
+armor:Standard(Inner Sphere)
+FLL armor:21
+FRL armor:21
+LT armor:21
+RT armor:21
+CT armor:26
+HD armor:8
+RLL armor:21
+RRL armor:21
+RTL armor:7
+RTR armor:7
+RTC armor:10
 
 Weapons:3
+Streak SRM 6, Left Torso
 ER PPC, Right Torso
 Medium Pulse Laser, Center Torso
-Streak SRM 6, Left Torso
 
 Front Left Leg:
 Hip
@@ -44,6 +46,12 @@ Lower Leg Actuator
 Foot Actuator
 Conversion Gear
 Tracks
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Front Right Leg:
 Hip
@@ -52,13 +60,19 @@ Lower Leg Actuator
 Foot Actuator
 Conversion Gear
 Tracks
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Left Torso:
 Laser Heat Sink
 Laser Heat Sink
-CLStreakSRM6 (omnipod)
-CLStreakSRM6 (omnipod)
-Clan Streak SRM 6 Ammo (omnipod)
+CLStreakSRM6 (OMNIPOD)
+CLStreakSRM6 (OMNIPOD)
+Clan Streak SRM 6 Ammo (OMNIPOD)
 -Empty-
 -Empty-
 -Empty-
@@ -68,8 +82,8 @@ Clan Streak SRM 6 Ammo (omnipod)
 -Empty-
 
 Right Torso:
-CLERPPC (omnipod)
-CLERPPC (omnipod)
+CLERPPC (OMNIPOD)
+CLERPPC (OMNIPOD)
 -Empty-
 -Empty-
 -Empty-
@@ -92,7 +106,7 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLMediumPulseLaser (omnipod)
+CLMediumPulseLaser (OMNIPOD)
 -Empty-
 
 Head:
@@ -102,6 +116,12 @@ Cockpit
 Cockpit
 Sensors
 Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Rear Left Leg:
 Hip
@@ -110,6 +130,12 @@ Lower Leg Actuator
 Foot Actuator
 Conversion Gear
 Tracks
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Rear Right Leg:
 Hip
@@ -118,5 +144,27 @@ Lower Leg Actuator
 Foot Actuator
 Conversion Gear
 Tracks
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
+overview:Developed by Clan Hell's Horses in 3132, the Boreas is an experimental Heavy Class hybrid Quad BattleMech / Combat Vehicle known as a QuadVee. 
+
+capabilities:The Boreas utilizes a Standard 240-rated Fusion Engine to move up to 64 km/h while in either Vehicle or BattleMech form. The vehicle is protected by 11.5 tons of armor, giving it less than stellar armor for a typical Clan BattleMech. Aside from its revolutionary conversion abilities, scientists also created a two-man cockpit. The cockpit is set up for pilot and gunner positions. This arrangement allows for the gunner to target multiple enemies with little trouble while the pilot handles the 'Mech's movement. Unlike other quadruped 'Mechs, the Boreas has a turret-like structure mounted on the main body. This allows all weapons mounted in this section to be aimed with any facing the gunner chooses. Should the vehicle's gyro be destroyed during combat, the vehicle can simply convert itself into vehicular form. It would also be able to be change into a 'Mech should one of its four tracks be rendered useless. Built with the modularity of an OmniMech, this OmniQuadVee has twelve tons of Pod Space, which gives some flexibility over later fixed-configuration QuadVees. 
+
+deployment:In its Prime Configuration the Boreas mounts a single Extended Range Particle Projector Cannon, Medium Pulse Laser, and 6-tubed Streak Short-Range Missile launcher with a single ton of ammunition.
+
+history:Created by Hell's Horses scientists, the Mech has the ability to transform itself from a tracked combat vehicle into a quadruped BattleMech, benefiting from some of the best qualities of both. Developed at the Csesztreg Industriplex Alpha Annex on Csesztreg. The Boreas was the first of its kind to be developed, it would be later in 3136 when production versions of the QuadVee would be fielded in combat with OmniPod technology.
+
+manufacturer:Csesztreg Industriplex Alpha Annex
+primaryfactory:Csesztreg
+systemmanufacturer:CHASSIS:Unknown
+systemmanufacturer:ENGINE:240 Standard Fusion
+systemmanufacturer:ARMOR:Unknown
+systemmanufacturer:JUMPJET:Unknown
+systemmanufacturer:COMMUNICATIONS:Unknown
+systemmanufacturer:TARGETING:Unknown
 

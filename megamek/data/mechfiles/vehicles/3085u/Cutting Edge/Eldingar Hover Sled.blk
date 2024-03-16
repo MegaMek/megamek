@@ -16,9 +16,13 @@ Tank
 Eldingar Hover Sled
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+947
+</mul id:>
 
 <year>
 3081
@@ -27,6 +31,10 @@ Eldingar Hover Sled
 <type>
 Clan Level 2
 </type>
+
+<role>
+Skirmisher
+</role>
 
 <motion_type>
 Hover
@@ -90,7 +98,7 @@ CLStreakSRM2
 </Turret Equipment>
 
 <source>
-Dark Age
+TRO: 3085
 </source>
 
 <tonnage>

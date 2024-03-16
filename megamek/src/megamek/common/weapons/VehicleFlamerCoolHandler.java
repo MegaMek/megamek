@@ -15,18 +15,9 @@ package megamek.common.weapons;
 
 import java.util.Vector;
 
-import megamek.common.Building;
-import megamek.common.Compute;
-import megamek.common.Entity;
-import megamek.common.Game;
-import megamek.common.Infantry;
-import megamek.common.Mech;
-import megamek.common.Report;
-import megamek.common.Tank;
-import megamek.common.ToHitData;
-import megamek.common.WeaponType;
+import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.server.Server;
+import megamek.server.GameManager;
 
 /**
  * @author Sebastian Brocks
@@ -40,8 +31,8 @@ public class VehicleFlamerCoolHandler extends AmmoWeaponHandler {
      * @param waa
      * @param g
      */
-    public VehicleFlamerCoolHandler(ToHitData toHit, WeaponAttackAction waa, Game g, Server s) {
-        super(toHit, waa, g, s);
+    public VehicleFlamerCoolHandler(ToHitData toHit, WeaponAttackAction waa, Game g, GameManager m) {
+        super(toHit, waa, g, m);
     }
 
     @Override
@@ -67,9 +58,10 @@ public class VehicleFlamerCoolHandler extends AmmoWeaponHandler {
             r.subject = subjectId;
             r.addDesc(entityTarget);
             r.indent(3);
-            int roll = Compute.d6(2);
-            r.add(roll);
-            if (roll == 12) {
+            Roll diceRoll = Compute.rollD6(2);
+            r.add(diceRoll);
+
+            if (diceRoll.getIntValue() == 12) {
                 r.choose(true);
                 entityTarget.infernos.clear();
             } else {
@@ -81,9 +73,10 @@ public class VehicleFlamerCoolHandler extends AmmoWeaponHandler {
             r.subject = subjectId;
             r.addDesc(entityTarget);
             r.indent(3);
-            int roll = Compute.d6(2);
-            r.add(roll);
-            if (roll >= 4) {
+            Roll diceRoll = Compute.rollD6(2);
+            r.add(diceRoll);
+
+            if (diceRoll.getIntValue() >= 4) {
                 r.choose(true);
                 for (int i = 0; i < entityTarget.locations(); i++) {
                     ((Tank) target).extinguishAll();

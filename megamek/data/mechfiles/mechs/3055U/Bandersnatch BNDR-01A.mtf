@@ -1,12 +1,20 @@
-Version:1.0
-Bandersnatch
-BNDR-01A
+chassis:Bandersnatch
+model:BNDR-01A
+mul id:217
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3052
-Source:TRO 3055 - Clan Invasion
+Source:TRO: 3055
 Rules Level:2
+role:Brawler
+
+
+
+
+quirk:stable
+quirk:ubiquitous_is
+
 
 Mass:75
 Engine:300 XL Engine

@@ -1,54 +1,61 @@
-Version:1.0
-Firestarter
-FS9-S1
-
+chassis:Firestarter
+model:FS9-S1
+mul id:1113
 Config:Biped
-TechBase:Inner Sphere
-Era:3049
-Source:TRO 3050 - Clan Invasion
-Rules Level:2
+techbase:Inner Sphere
+era:3049
+source:TRO: 3050
+rules level:2
+role:Scout
 
-Mass:35
-Engine:210 Fusion Engine
-Structure:Endo Steel
-Myomer:Standard
 
-Heat Sinks:10 Single
-Walk MP:6
-Jump MP:6
 
-Armor:Standard Armor
-LA Armor:7
-RA Armor:7
-LT Armor:10
-RT Armor:10
-CT Armor:13
-HD Armor:9
-LL Armor:7
-RL Armor:7
-RTL Armor:6
-RTR Armor:6
-RTC Armor:6
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+weaponquirk:exposed_linkage:RA:4:Flamer
+weaponquirk:exposed_linkage:LA:4:Flamer
 
-Weapons:9
-1 ISFlamer, Center Torso (R)
-1 ISFlamer, Center Torso
-1 ISFlamer, Right Arm
-1 ISFlamer, Left Arm
-1 ISMediumLaser, Left Arm
-1 ISMediumLaser, Right Arm
-1 ISSmallLaser, Right Torso
-1 ISAntiMissileSystem, Left Torso, Ammo:12
-1 ISGuardianECM, Left Torso
+
+mass:35
+engine:210 Fusion Engine(IS)
+structure:IS Endo Steel
+myomer:Standard
+
+heat sinks:10 Single
+walk mp:6
+jump mp:6
+
+armor:Standard(Inner Sphere)
+LA armor:7
+RA armor:7
+LT armor:10
+RT armor:10
+CT armor:13
+HD armor:9
+LL armor:7
+RL armor:7
+RTL armor:6
+RTR armor:6
+RTC armor:6
+
+Weapons:8
+Flamer, Left Arm
+Medium Laser, Left Arm
+Flamer, Right Arm
+Medium Laser, Right Arm
+Anti-Missile System, Left Torso
+Small Laser, Right Torso
+Flamer, Center Torso
+Flamer, Center Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-ISFlamer
-ISMediumLaser
-Endo-Steel
-Endo-Steel
+Medium Laser
+Flamer
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -59,8 +66,8 @@ Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-ISFlamer
-ISMediumLaser
+Medium Laser
+Flamer
 -Empty-
 -Empty-
 -Empty-
@@ -73,28 +80,28 @@ Left Torso:
 Jump Jet
 Jump Jet
 Jump Jet
-ISAntiMissileSystem
-ISGuardianECM
-ISGuardianECM
 ISAMS Ammo
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
+ISAntiMissileSystem
+ISGuardianECMSuite
+ISGuardianECMSuite
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Right Torso:
 Jump Jet
 Jump Jet
 Jump Jet
-ISSmallLaser
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
+Small Laser
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 
 Center Torso:
@@ -108,8 +115,8 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISFlamer (R)
-ISFlamer
+Flamer (R)
+Flamer
 
 Head:
 Life Support
@@ -152,4 +159,17 @@ Heat Sink
 -Empty-
 -Empty-
 -Empty-
+
+overview:Originally intended as a mobile incendiary ’Mech, the Firestarter evolved into a decent scouting and reconnaissance platform.
+capabilities:Despite being shielded by five and a half tons of armor and capable of jumping 180 meters, the Firestarter was powerless against medium or heavyweight opponents. Instead, an entire strategy was built around its ability to cause wildfires, with strategically positioned blazes routing an opponent or covering a withdrawal and impeding any pursuit. Firestarter MechWarriors enjoyed setting fire to densely forested areas when enemy 'Mechs marched through them, as well as any buildings where the enemy was hiding. 
+deployment:The FS9-S1 is identical to the FS9-S, except that it carries a Guardian ECM suite instead of the Beagle active probe.
+history:Firestarters, both ancient and contemporary, can still be found in abundance among planetary militias and House troops. Even though Blakist forces have taken over CMW's principal plant on Coventry, spare parts are still accessible from other Firestarter producers (including LAW, Ceres Metals, Defiance, and Independence Weaponry). Loki field offices near the Circinus Federation frontier are concerned about reports of a new variety using endo steel technology on Federation- occupied worlds. With its particular load-out, this new variation appears to be designed to spread chaos and destruction. Firestarters have also been seen in Level II formations with Blakist soldiers in their Protectorate, most frequently at "police demonstrations" and guarding suspected prison sites. These versions are thought to be Coventry goods.
+manufacturer:Coventry Metal Works
+primaryfactory:Coventry
+systemmanufacturer:CHASSIS:Foundation Ultralight Endo Steel
+systemmanufacturer:ENGINE:Omni 210
+systemmanufacturer:ARMOR:Livingston Ceramics
+systemmanufacturer:JUMPJET:Luxor Load Lifters
+systemmanufacturer:COMMUNICATIONS:Cyclops 14 with ECM
+systemmanufacturer:TARGETING:Cyclops 9
 

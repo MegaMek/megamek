@@ -1,12 +1,19 @@
-Version:1.2
-Valkyrie
-VLK-QS5
+chassis:Valkyrie
+model:VLK-QS5
+mul id:3379
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3070
-Source:Jihad
+source:TRO: 3085
 Rules Level:2
+role:Missile Boat
+
+
+
+quirk:easy_maintain
+quirk:imp_com
+
 
 Mass:30
 Engine:150 Fusion Engine(IS)

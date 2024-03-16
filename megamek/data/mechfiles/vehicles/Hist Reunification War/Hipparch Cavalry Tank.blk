@@ -16,9 +16,13 @@ Tank
 Hipparch Cavalry Tank
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+4324
+</mul id:>
 
 <year>
 2562
@@ -27,6 +31,10 @@ Hipparch Cavalry Tank
 <type>
 IS Level 1
 </type>
+
+<role>
+Scout
+</role>
 
 <motion_type>
 Hover
@@ -71,7 +79,7 @@ SRM 2
 </Turret Equipment>
 
 <source>
-Hist:Reunification War
+Historical: Reunification War
 </source>
 
 <tonnage>

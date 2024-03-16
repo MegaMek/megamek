@@ -1,12 +1,18 @@
-Version:1.0
-Bombardier
-BMB-14C
+chassis:Bombardier
+model:BMB-14C
+mul id:424
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3062
-Source:TRO 3050 - Civil War
+Source:TRO: 3050
 Rules Level:2
+role:Missile Boat
+
+
+
+quirk:bad_rep_is
+
 
 Mass:65
 Engine:325 XL Engine

@@ -39,12 +39,13 @@ public class LAMPilot extends Crew {
 
     public LAMPilot(LandAirMech lam) {
         this(lam, RandomNameGenerator.UNNAMED_FULL_NAME, 4, 5,
-                4, 5, Gender.RANDOMIZE, null);
+                4, 5, Gender.RANDOMIZE, false, null);
     }
 
-    public LAMPilot(LandAirMech lam, String name, int gunneryMech, int pilotingMech, int gunneryAero,
-            int pilotingAero, Gender gender, Map<Integer, Map<String, String>> extraData) {
-        super(CrewType.SINGLE, name, 1, gunneryMech, pilotingMech, gender, extraData);
+    public LAMPilot(LandAirMech lam, String name, int gunneryMech, int pilotingMech,
+                    int gunneryAero, int pilotingAero, Gender gender, boolean clanPilot,
+                    Map<Integer, Map<String, String>> extraData) {
+        super(CrewType.SINGLE, name, 1, gunneryMech, pilotingMech, gender, clanPilot, extraData);
         this.lam = lam;
         this.gunneryAero = gunneryAero;
         this.pilotingAero = pilotingAero;
@@ -68,7 +69,7 @@ public class LAMPilot extends Crew {
         Map<Integer, Map<String, String>> extraData = new HashMap<>();
         extraData.put(0, crew.getExtraDataForCrewMember(0));
         LAMPilot pilot = new LAMPilot(lam, crew.getName(), crew.getGunnery(), crew.getPiloting(),
-                crew.getGunnery(), crew.getPiloting(), crew.getGender(), extraData);
+                crew.getGunnery(), crew.getPiloting(), crew.getGender(), crew.isClanPilot(), extraData);
         pilot.setNickname(crew.getNickname(), 0);
         pilot.setPortrait(crew.getPortrait(0).clone(), 0);
         pilot.setGunneryL(crew.getGunneryL(), 0);
@@ -270,9 +271,8 @@ public class LAMPilot extends Crew {
     @Override
     public Vector<Report> getDescVector(boolean gunneryOnly) {
         Vector<Report> vDesc = new Vector<>();
-        Report r;
 
-        r = new Report();
+        Report r = new Report();
         r.type = Report.PUBLIC;
         r.add(getName(0));
         if (getSlotCount() > 1) {
@@ -319,23 +319,4 @@ public class LAMPilot extends Crew {
     public boolean isCustom() {
         return getGunneryMech() != 4 || getGunneryAero() != 4 || getPilotingMech() != 5 || getPilotingAero() != 5;
     }
-
-    /**
-     * Returns the BV multiplier for this pilot's gunnery/piloting
-     *
-     * @param usePiloting
-     *            whether or not to use the default value non-anti-mech
-     *            infantry/BA should not use the anti-mech skill
-     * @param game
-     */
-    @Override
-    public double getBVSkillMultiplier(boolean usePiloting, Game game) {
-        int pilotVal = (getPilotingMech() + getPilotingAero()) / 2;
-        if (!usePiloting) {
-            pilotVal = 5;
-        }
-        return getBVImplantMultiplier()
-                * getBVSkillMultiplier((getGunneryMech() + getGunneryAero()) / 2, pilotVal, game);
-    }
-
 }

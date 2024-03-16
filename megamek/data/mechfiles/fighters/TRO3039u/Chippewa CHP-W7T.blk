@@ -1,0 +1,163 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Aero
+</UnitType>
+
+<Name>
+Chippewa
+</Name>
+
+<Model>
+CHP-W7T
+</Model>
+
+<mul id:>
+587
+</mul id:>
+
+<year>
+3069
+</year>
+
+<originalBuildYear>
+3069
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<role>
+Attack Fighter
+</role>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+</transporters>
+
+<SafeThrust>
+5
+</SafeThrust>
+
+<cockpit_type>
+0
+</cockpit_type>
+
+<heatsinks>
+23
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+400
+</fuel>
+
+<engine_type>
+2
+</engine_type>
+
+<armor_type>
+19
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
+42
+23
+23
+28
+</armor>
+
+<Nose Equipment>
+LRM 15
+ISArtemisIV
+LRM 15
+ISArtemisIV
+SRM 6
+ISArtemisIV
+Medium Laser
+Medium Laser
+</Nose Equipment>
+
+<Left Wing Equipment>
+ISSNPPC
+ISPlasmaRifle
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+ISSNPPC
+ISPlasmaRifle
+</Right Wing Equipment>
+
+<Aft Equipment>
+ISSmallPulseLaser
+ISSmallPulseLaser
+</Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+IS Ammo LRM-15 Artemis-capable
+IS Ammo LRM-15 Artemis-capable
+ISPlasmaRifleAmmo
+ISPlasmaRifleAmmo
+IS Ammo SRM-6 Artemis-capable
+IS Ammo LRM-15 Artemis-capable
+IS Ammo LRM-15 Artemis-capable
+</Fuselage Equipment>
+
+<overview>
+Designed by the Star League, the heavy Chippewa isn't extremely fast, but it has an impressive array of armament.
+</overview>
+
+<deployment>
+Based on the W7 this variant change the large pulse lasers to a pair of Snub-Nose PPCs and a pair of Plasma Rifles in the wings. The LRM launchers are upgraded with Artemis IV systems.
+</deployment>
+
+<history>
+Mostly used in the Lyran Commonwealth, the Chippewa has become House Steiner's main heavy fighter. Prior to the start of the First Succession War Steiner captured the Bowie Industries plant on Dell, where W5 models were produced until House Kurita successfully destroyed the plant in a raid. Another major production site was the Bowie Industries in the planet Wyatt, untill 3068, when the Word of Blake nuked it during the Jihad. A heavy fighter, the Chippewa utilizes its large wings to provide added maneuverability when fighting in an atmosphere. The outer portions of each wing can retract inward, allowing for the fighter to be stored aboard transports more easily.
+</history>
+
+<manufacturer>
+Vandenberg Mechanized Industries
+</manufacturer>
+
+<primaryFactory>
+New Vandenberg
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Bowie 50
+ENGINE:PlasmaStar 270
+ARMOR:Wyatt Coresteel Standard
+COMMUNICATIONS:Rander 200
+TARGETING:Rander TAS
+</systemManufacturers>
+
+<source>
+TRO: 3039
+</source>
+
+<tonnage>
+90.0
+</tonnage>
+

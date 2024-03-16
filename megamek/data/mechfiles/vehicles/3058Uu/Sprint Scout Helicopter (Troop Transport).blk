@@ -15,6 +15,10 @@ Sprint Scout Helicopter
 <Model>
 (Troop Transport)
 </Model>
+
+<mul id:>
+3027
+</mul id:>
 <Tonnage>
 10
 </Tonnage>
@@ -36,6 +40,10 @@ TroopSpace:2.5
 <type>
 IS Level 2
 </type>
+
+<role>
+Scout
+</role>
 <year>
 3056
 </year>
@@ -52,5 +60,5 @@ IS Level 2
 VTOL
 </motion_type>
 <source>
-Clan Invasion
+TRO: 3058
 </source>

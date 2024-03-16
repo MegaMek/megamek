@@ -1,12 +1,17 @@
-Version:1.0
-Centurion
-CN9-AL
+chassis:Centurion
+model:CN9-AL
+mul id:518
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2915
-Source:TRO 3039 - Succession Wars
+Source:TRO: 3039
 Rules Level:1
+role:Brawler
+
+quirk:imp_target_short
+quirk:non_standard
+
 
 Mass:50
 Engine:200 Fusion Engine

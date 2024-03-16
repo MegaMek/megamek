@@ -1,12 +1,22 @@
-Version:1.0
-Rifleman
-RFL-6D
+chassis:Rifleman
+model:RFL-6D
+mul id:2701
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3069
-Source:Jihad
+source:TRO: 3085
 Rules Level:2
+role:Skirmisher
+
+
+
+quirk:anti_air
+quirk:imp_com
+quirk:searchlight
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+
 
 Mass:60
 Engine:300 XL Engine(IS)

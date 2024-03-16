@@ -20,29 +20,29 @@ import megamek.common.AmmoType;
  * @since Sep 7, 2005
  */
 public class InfantryArchaicBlackjackWeapon extends InfantryWeapon {
-	private static final long serialVersionUID = -3164871600230559641L;
+    private static final long serialVersionUID = -3164871600230559641L;
 
-	public InfantryArchaicBlackjackWeapon() {
-		super();
+    public InfantryArchaicBlackjackWeapon() {
+        super();
 
-		name = "Club (Blackjack/Sap)";
-		setInternalName(name);
-		addLookupName("InfantryBlackjack");
-		addLookupName("InfantrySap");
-		addLookupName("Blackjack");
-		ammoType = AmmoType.T_NA;
-		cost = 5;
-		bv = 0.05;
+        name = "Club (Blackjack/Sap)";
+        setInternalName(name);
+        addLookupName("InfantryBlackjack");
+        addLookupName("InfantrySap");
+        addLookupName("Blackjack");
+        ammoType = AmmoType.T_NA;
+        cost = 5;
+        bv = 0.05;
         tonnage = .001; 
-		flags = flags.or(F_NO_FIRES).or(F_INF_POINT_BLANK).or(F_INF_NONPENETRATING).or(F_INF_ARCHAIC);
-		infantryDamage = 0.05;
-		infantryRange = 0;
-		rulesRefs = "272, TM";
-		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
-				.setISApproximate(false, false, false, false, false)
-				.setClanAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
-				.setClanApproximate(false, false, false, false, false).setTechRating(RATING_A)
-				.setAvailability(RATING_A, RATING_A, RATING_A, RATING_A);
+        flags = flags.or(F_NO_FIRES).or(F_INF_POINT_BLANK).or(F_INF_NONPENETRATING).or(F_INF_ARCHAIC);
+        infantryDamage = 0.05;
+        infantryRange = 0;
+        rulesRefs = "272, TM";
+        techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
+                .setISApproximate(false, false, false, false, false)
+                .setClanAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
+                .setClanApproximate(false, false, false, false, false).setTechRating(RATING_A)
+                .setAvailability(RATING_A, RATING_A, RATING_A, RATING_A);
 
-	}
+    }
 }

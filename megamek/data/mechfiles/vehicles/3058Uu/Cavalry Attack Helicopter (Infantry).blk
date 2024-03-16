@@ -20,6 +20,10 @@ Cavalry Attack Helicopter
 (Infantry)
 </Model>
 
+<mul id:>
+503
+</mul id:>
+
 <year>
 3063
 </year>
@@ -27,6 +31,10 @@ Cavalry Attack Helicopter
 <type>
 IS Level 2
 </type>
+
+<role>
+Striker
+</role>
 
 <motion_type>
 VTOL
@@ -86,7 +94,7 @@ Machine Gun
 </Rotor Equipment>
 
 <source>
-Civil War
+TRO: 3058
 </source>
 
 <tonnage>

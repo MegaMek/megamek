@@ -20,6 +20,10 @@ Avenger
 (3048)
 </Model>
 
+<mul id:>
+3766
+</mul id:>
+
 <year>
 3048
 </year>
@@ -31,6 +35,10 @@ Avenger
 <type>
 IS Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Aerodyne
@@ -131,7 +139,7 @@ ISMediumPulseLaser
 </structural_integrity>
 
 <source>
-TRO 3057R - Late Succession War - Renaissance
+TRO: 3057 Revised
 </source>
 
 <tonnage>

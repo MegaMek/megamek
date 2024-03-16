@@ -1,0 +1,180 @@
+chassis:BattleMaster
+model:BLR-6C
+mul id:7476
+
+Config:Biped
+techbase:Inner Sphere
+era:3081
+source:Rec Guide:ilClan #3
+rules level:3
+role:Juggernaut
+
+
+
+quirk:command_mech
+quirk:weak_head_1
+
+
+mass:85
+engine:340 Light Engine(IS)
+structure:IS Endo Steel
+myomer:Standard
+cockpit:Command Console
+gyro:Standard Gyro
+
+heat sinks:10 Double
+walk mp:4
+jump mp:0
+
+armor:Standard(Inner Sphere)
+LA armor:27
+RA armor:27
+LT armor:28
+RT armor:28
+CT armor:40
+HD armor:9
+LL armor:31
+RL armor:31
+RTL armor:8
+RTR armor:8
+RTC armor:11
+
+Weapons:9
+Small X-Pulse Laser, Left Arm
+Small X-Pulse Laser, Left Arm
+Streak SRM 6, Left Torso
+Light AC/5, Left Torso
+Light AC/5, Right Torso
+Light AC/5, Right Torso
+Light AC/5, Left Torso
+ER Small Laser, Left Torso
+ER Small Laser, Right Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISSmallXPulseLaser
+ISSmallXPulseLaser
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+ISStreakSRM6
+ISStreakSRM6
+Light Auto Cannon/5
+Light Auto Cannon/5
+Light Auto Cannon/5
+Light Auto Cannon/5
+ISERSmallLaser (R)
+IS Streak SRM 6 Ammo
+IS Ammo LAC/5
+ISCASEII
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Light Auto Cannon/5
+Light Auto Cannon/5
+Light Auto Cannon/5
+Light Auto Cannon/5
+ISERSmallLaser (R)
+IS Ammo LAC/5
+IS Ammo LAC/5
+IS Ammo LAC/5
+ISCASEII
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+IS Endo Steel
+IS Endo Steel
+
+Head:
+Life Support
+Sensors
+Cockpit
+Cockpit
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+overview:Versatile and powerful, the BattleMaster was one of the best known BattleMechs in existence. Hollis Industries began production in 2633, originally designing it to be the largest and most powerful 'Mech for the Star League armies at that time.
+
+capabilities:Indeed the sheer size of the BattleMaster, combined with the costs and resources needed to build one, meant the 'Mech could only be manufactured on a few planets. Still, those lucky enough to pilot a BattleMaster can attest to some of the stories surrounding the 'Mech. With good reliability, firepower and armoring, the BattleMaster is equally adept anchoring an assault lance or serving as a command vehicle.
+
+deployment:A specialist design from the Regulan Hussars, this variant replaces the traditional torso- and arm-mounted energy weapons with four Light AC/5s, two in each torso. It retains Small X-Pulse Lasers in the left arm, and a Streak SRM-6 is in the left torso. There is one ton of Streak ammo, but four tons of autocannon ammunition allows the 6C to carry special munitions for particular foes. The most important feature however is the Command Console in the BattleMasters head.
+
+history:Although only produced in modest numbers, examples of the BattleMaster could be found in the arsenals of all the Great Houses and technicians have gone to great lengths in order to repair one. During the First Succession War Hollis' BattleMaster factories on Corey were attacked, their production lines destroyed and any finished BattleMasters purloined by the various House forces. While production of new BattleMasters was taken up by Earthwerks Incorporated on Keystone, Trellshire Heavy Industries on Twycross, and Red Devil Industries on Pandora, they could build only a handful of new 'Mechs every year. This was enough though to make House Steiner and House Marik the largest users of BattleMasters during the Succession Wars. House Liao also fielded a large number of BattleMasters, at least until the devastation of the Fourth Succession War when many fell into the hands of the Federated Suns, themselves lacking any BattleMaster factories. By fortuitous accident the Draconis Combine also came into possession of a large number of BattleMasters when a hapless ComStar Precentor, intending to ship unmodified versions of advanced BattleMasters to Com Guard units, sent them to the Combine instead. These BattleMasters served as excellent command vehicles during the War of 3039. New models of the BattleMaster would be introduced in time to take part in the Clan Invasion. Although the manufacture of new BattleMasters was disrupted when Twycross fell to Clan Jade Falcon, the recapture of that world allowed for a brief resumption of production. While Pandora did not fall during the Invasion an effort was made to relocate its BattleMaster factory, but the haphazard nature of the factory and feet-dragging by the planet's corrupt nobility delayed this effort. It wasn't until 3061 that the Red Devil factory was finally ready to be closed when the nobility's lobbying paid off and instead funds were allocated by Archon Katherine Steiner-Davion to refurbish the factory. As part of the arrangement a deal was struck with J.B. BattleMechs Incorporated to produce a new variant, the BLR-4S. Initial units were built starting in 3062 but the FedCom Civil War would delay full-scale production until 3064, by which time the second Jade Falcon Incursion captured the planet and put these new BattleMasters to work in their second-line units. This left the hard-pressed J.B. BattleMechs' factory on Storfors to build the BLR-4S for the Lyran Alliance, while the Free Worlds League and Combine would come out with their own variants.
+
+manufacturer:Refit
+primaryfactory:Various
+systemmanufacturer:CHASSIS:Hollis Mark X
+systemmanufacturer:ENGINE:340 VOX Light Fusion
+systemmanufacturer:ARMOR:StarGuard IV
+systemmanufacturer:COMMUNICATIONS:HarfordCo COM 4000
+systemmanufacturer:TARGETING:HarfordCo XKZ 1
+

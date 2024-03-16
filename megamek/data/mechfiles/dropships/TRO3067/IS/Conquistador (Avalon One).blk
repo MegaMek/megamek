@@ -20,6 +20,10 @@ Conquistador
 (Avalon One)
 </Model>
 
+<mul id:>
+5767
+</mul id:>
+
 <year>
 3064
 </year>
@@ -31,6 +35,10 @@ Conquistador
 <type>
 IS Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Aerodyne
@@ -262,7 +270,7 @@ ISSmallNavalCommScannerSuite
 </structural_integrity>
 
 <source>
-TRO 3067 - Civil War
+TRO: 3067
 </source>
 
 <tonnage>

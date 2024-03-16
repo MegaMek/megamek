@@ -16,9 +16,9 @@ package megamek.common.weapons.infantry;
 import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
+import megamek.common.weapons.DamageType;
 import megamek.common.weapons.WeaponHandler;
-import megamek.server.Server;
-import megamek.server.Server.DamageType;
+import megamek.server.GameManager;
 import org.apache.logging.log4j.LogManager;
 
 import java.util.Vector;
@@ -36,8 +36,8 @@ public class InfantryWeaponHandler extends WeaponHandler {
      * @param g
      */
     public InfantryWeaponHandler(ToHitData t, WeaponAttackAction w, Game g,
-            Server s) {
-        super(t, w, g, s);
+            GameManager m) {
+        super(t, w, g, m);
         bSalvo = true;
     }
 
@@ -69,18 +69,18 @@ public class InfantryWeaponHandler extends WeaponHandler {
     @Override
     protected int calcHits(Vector<Report> vPhaseReport) {
         int nHitMod = 0;
-        
+
         if (bGlancing) {
             nHitMod -= 4;
         }
-        
+
         if (this.bLowProfileGlancing) {
             nHitMod -= 4;
         }
-        
+
         int troopersHit = 0;
         //when swarming all troopers hit
-        if (ae.getSwarmTargetId() == target.getTargetId()) {
+        if (ae.getSwarmTargetId() == target.getId()) {
             troopersHit = ((Infantry) ae).getShootingStrength();
         } else if (!(ae instanceof Infantry)) {
             troopersHit = 1;
@@ -88,31 +88,25 @@ public class InfantryWeaponHandler extends WeaponHandler {
             troopersHit = Compute.missilesHit(((Infantry) ae)
                 .getShootingStrength(), nHitMod);
         }
-        double damage;
-        if (ae.isConventionalInfantry()) {
-            //for conventional infantry, we have to calculate primary and secondary weapons
-            //to get damage per trooper
-            damage = ((Infantry) ae).getDamagePerTrooper();
-        } else if (ae.isSupportVehicle()) {
-            // Damage for some weapons depends on what type of ammo is being used
-            if (((AmmoType) weapon.getLinked().getType()).getMunitionType() == AmmoType.M_INFERNO) {
-                damage = ((InfantryWeapon) wtype).getInfernoVariant().getInfantryDamage();
-            } else {
-                damage = ((InfantryWeapon) wtype).getNonInfernoVariant().getInfantryDamage();
-            }
-        } else {
-            damage = ((InfantryWeapon) wtype).getInfantryDamage();
-        }
+        double damage = calculateBaseDamage(ae, weapon, wtype);
+
         if ((ae instanceof Infantry)
-                && nRange == 0
-                && ae.hasAbility(OptionsConstants.MD_TSM_IMPLANT)) {
-            damage += 0.14;
+                && (nRange == 0)) {
+            if (ae.hasAbility(OptionsConstants.MD_TSM_IMPLANT)) {
+                damage += 0.14;
+            }
+            InfantryMount mount = ((Infantry) ae).getMount();
+            if ((mount != null) && target.isConventionalInfantry() && (mount.getBurstDamageDice() > 0)) {
+                damage += Compute.d6(mount.getBurstDamageDice());
+            } else if ((mount != null) && !target.isConventionalInfantry()) {
+                damage += mount.getVehicleDamage();
+            }
         }
         int damageDealt = (int) Math.round(damage * troopersHit);
-        
+
         // conventional infantry weapons with high damage get treated as if they have the infantry burst mod
-        if (target.isConventionalInfantry() && 
-                (wtype.hasFlag(WeaponType.F_INF_BURST) || 
+        if (target.isConventionalInfantry() &&
+                (wtype.hasFlag(WeaponType.F_INF_BURST) ||
                 (ae.isConventionalInfantry() && ((Infantry) ae).primaryWeaponDamageCapped()))) {
             damageDealt += Compute.d6();
         }
@@ -197,6 +191,46 @@ public class InfantryWeaponHandler extends WeaponHandler {
                 weapon.getLinked().setLinked(ammo);
             }
             super.useAmmo();
+        }
+    }
+
+    /**
+     * Utility function to calculate variable damage based only on the firing entity.
+     */
+    public static double calculateBaseDamage(Entity ae, Mounted weapon, WeaponType wtype) {
+        if (ae.isConventionalInfantry()) {
+            //for conventional infantry, we have to calculate primary and secondary weapons
+            //to get damage per trooper
+            return ((Infantry) ae).getDamagePerTrooper();
+        } else if (ae.isSupportVehicle()) {
+            // Damage for some weapons depends on what type of ammo is being used
+            if (((AmmoType) weapon.getLinked().getType()).getMunitionType().contains(AmmoType.Munitions.M_INFERNO)) {
+                return ((InfantryWeapon) wtype).getInfernoVariant().getInfantryDamage();
+            } else {
+                return ((InfantryWeapon) wtype).getNonInfernoVariant().getInfantryDamage();
+            }
+        } else {
+            return ((InfantryWeapon) wtype).getInfantryDamage();
+        }
+    }
+
+    @Override
+    protected void initHit(Entity entityTarget) {
+        if ((entityTarget instanceof BattleArmor) && ae.isConventionalInfantry()) {
+            // TacOps crits against BA do not happen for infantry weapon attacks
+            hit = ((BattleArmor) entityTarget).rollHitLocation(toHit.getSideTable(),
+                    waa.getAimedLocation(), waa.getAimingMode(), true);
+            hit.setGeneralDamageType(generalDamageType);
+            hit.setCapital(wtype.isCapital());
+            hit.setBoxCars(roll.getIntValue() == 12);
+            hit.setCapMisCritMod(getCapMisMod());
+            hit.setFirstHit(firstHit);
+            hit.setAttackerId(getAttackerId());
+            if (weapon.isWeaponGroup()) {
+                hit.setSingleAV(attackValue);
+            }
+        } else {
+            super.initHit(entityTarget);
         }
     }
 }

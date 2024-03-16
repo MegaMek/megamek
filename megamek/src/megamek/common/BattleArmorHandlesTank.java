@@ -1,73 +1,28 @@
 /*
- * MegaMek -
- * Copyright (C) 2010 Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2010 - Ben Mazur (bmazur@sev.org).
+ * Copyright (c) 2022-2023 - The MegaMek Team. All Rights Reserved.
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.common;
 
 public class BattleArmorHandlesTank extends BattleArmorHandles {
-
-    // Private attributes, constants and helper functions.
-
-    /**
-     *
-     */
     private static final long serialVersionUID = 1031947858009941399L;
-    /**
-     * The set of front locations that load troopers externally.
-     */
-    private static final int[] EXTERIOR_LOCATIONS = { Tank.LOC_RIGHT,
-            Tank.LOC_LEFT, Tank.LOC_REAR };
 
-    // Protected constructors and methods.
-
-    /**
-     * Get the exterior locations that a loaded squad covers. <p/> Sub-classes
-     * are encouraged to override this method.
-     *
-     * @param isRear - a <code>boolean</code> value stating if the given
-     *            location is rear facing; if <code>false</code>, the
-     *            location is front facing.
-     * @return an array of <code>int</code> listing the exterior locations.
-     */
-    @Override
-    protected int[] getExteriorLocs(boolean isRear) {
-        return BattleArmorHandlesTank.EXTERIOR_LOCATIONS;
-    }
-
-    /**
-     * Determine if transported units prevent a weapon in the given location
-     * from firing.
-     * <p>
-     * Sub-classes should override the <code>getBlockedLocs</code> method.
-     *
-     * @param loc - the <code>int</code> location attempting to fire.
-     * @param isRear - a <code>boolean</code> value stating if the given
-     *            location is rear facing; if <code>false</code>, the
-     *            location is front facing.
-     * @return <code>true</code> if a transported unit is in the way,
-     *         <code>false</code> if the weapon can fire.
-     * @see megamek.common.BattleArmorHandles#getBlockedLocs(boolean)
-     */
     @Override
     public final boolean isWeaponBlockedAt(int loc, boolean isRear) {
-        // Assume that the weapon is not blocked.
-        boolean result = false;
-
-        // The weapon can only be blocked if we are carrying troopers.
-        Entity trooper = game.getEntity(troopers);
-        if (null != trooper) {
-
-            // Is the relevant trooper alive?
+        Entity carriedBA = game.getEntity(carriedUnit);
+        if (carriedBA == null) {
+            return false;
+        } else {
             int tloc = BattleArmor.LOC_SQUAD;
             int tloc2 = BattleArmor.LOC_SQUAD;
             switch (loc) {
@@ -84,14 +39,8 @@ public class BattleArmorHandlesTank extends BattleArmorHandles {
                     tloc2 = BattleArmor.LOC_TROOPER_2;
                     break;
             }
-            if (((trooper.locations() > tloc) && (trooper.getInternal(tloc) > 0))
-                    || ((trooper.locations() > tloc2) && (trooper
-                            .getInternal(tloc2) > 0))) {
-                result = true;
-            }
-        } // End carrying-troopers
-
-        // Return our result.
-        return result;
+            return ((carriedBA.locations() > tloc) && (carriedBA.getInternal(tloc) > 0))
+                    || ((carriedBA.locations() > tloc2) && (carriedBA.getInternal(tloc2) > 0));
+        }
     }
 }

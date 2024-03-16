@@ -14,6 +14,7 @@
 package megamek.common.weapons.flamers;
 
 import megamek.common.WeaponType;
+import megamek.common.alphaStrike.AlphaStrikeElement;
 
 /**
  * @author Sebastian Brocks
@@ -32,6 +33,7 @@ public class ISVehicleFlamer extends VehicleFlamerWeapon {
         this.addLookupName("CLVehicleFlamer");
         this.addLookupName("Clan Vehicle Flamer");
         this.addLookupName("Vehicle Flamer");
+        sortingName = "Flamer V";
         this.heat = 3;
         this.damage = 2;
         this.infDamageClass = WeaponType.WEAPON_BURST_4D6;
@@ -56,5 +58,15 @@ public class ISVehicleFlamer extends VehicleFlamerWeapon {
                 .setISApproximate(false, false, false, false, false)
                 .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, false, false, false, false);
+    }
+
+    @Override
+    public int getAlphaStrikeHeatDamage(int rangeband) {
+        return (rangeband == AlphaStrikeElement.RANGE_BAND_SHORT) ? 2 : 0;
+    }
+
+    @Override
+    public boolean isAlphaStrikePointDefense() {
+        return true;
     }
 }

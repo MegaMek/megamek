@@ -20,6 +20,10 @@ Turhan Urban Combat Vehicle
 (C3)
 </Model>
 
+<mul id:>
+3319
+</mul id:>
+
 <year>
 3072
 </year>
@@ -27,6 +31,10 @@ Turhan Urban Combat Vehicle
 <type>
 IS Level 2
 </type>
+
+<role>
+Brawler
+</role>
 
 <motion_type>
 Wheeled
@@ -90,7 +98,7 @@ Large Laser
 </Turret Equipment>
 
 <source>
-TRO 3075 - Jihad
+TRO: 3075
 </source>
 
 <tonnage>

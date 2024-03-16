@@ -1,12 +1,19 @@
-Version:1.0
-Storm Raider
-STM-R4
+chassis:Storm Raider
+model:STM-R4
+mul id:6617
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3108
-Source:TRO 3145 Lyran Commonwealth - Late Republic
+Source:TRO: 3145 Lyran Commonwealth
 Rules Level:3
+role:Scout
+
+
+
+weaponquirk:jettison_capable:RA:4:Mace
+weaponquirk:jettison_capable:LA:4:ISRotaryAC2
+
 
 Mass:35
 Engine:210 XL Engine(IS)

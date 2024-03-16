@@ -20,6 +20,10 @@ Lexan Oceanic Personal VTOL
 Series II
 </Model>
 
+<mul id:>
+4505
+</mul id:>
+
 <year>
 2621
 </year>
@@ -31,6 +35,10 @@ Series II
 <type>
 IS Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 VTOL
@@ -86,7 +94,7 @@ ISGuardianECMSuite
 </structural_tech_rating>
 
 <source>
-TRO VAr - Star League
+TRO: Vehicle Annex (Revised)
 </source>
 
 <tonnage>

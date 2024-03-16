@@ -16,9 +16,13 @@ Tank
 Laser Carrier
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+1861
+</mul id:>
 
 <year>
 2874
@@ -27,6 +31,10 @@ Laser Carrier
 <type>
 IS Level 1
 </type>
+
+<role>
+Ambusher
+</role>
 
 <motion_type>
 Tracked
@@ -71,7 +79,7 @@ Medium Laser
 </Rear Equipment>
 
 <source>
-TRO 3039 - Succession Wars
+TRO: 3039
 </source>
 
 <tonnage>

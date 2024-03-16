@@ -1,0 +1,180 @@
+chassis:Sagittaire
+model:SGT-14R
+mul id:9398
+Config:Biped
+techbase:Mixed (IS Chassis)
+era:3149
+source:Rec Guide:ilClan #29
+rules level:3
+role:Juggernaut
+
+
+
+quirk:imp_target_short
+quirk:difficult_maintain
+quirk:weak_head_1
+
+
+mass:95
+engine:285 Light Engine(IS)
+structure:IS Endo-Composite
+myomer:Standard
+
+heat sinks:17 Clan Double
+walk mp:3
+jump mp:3
+
+armor:Standard(Inner Sphere)
+LA armor:31
+RA armor:31
+LT armor:30
+RT armor:30
+CT armor:44
+HD armor:9
+LL armor:39
+RL armor:39
+RTL armor:10
+RTR armor:10
+RTC armor:15
+
+Weapons:9
+Large VSP Laser, Left Arm
+Large VSP Laser, Right Arm
+ER Medium Laser, Right Torso
+ER Medium Laser, Left Arm
+ER Medium Laser, Right Arm
+Small Pulse Laser, Head
+Small Pulse Laser, Right Arm
+Small Pulse Laser, Center Torso
+ER PPC, Left Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+ISLargeVSPLaser
+ISLargeVSPLaser
+ISLargeVSPLaser
+ISLargeVSPLaser
+CLERMediumLaser
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+ISLargeVSPLaser
+ISLargeVSPLaser
+ISLargeVSPLaser
+ISLargeVSPLaser
+CLERMediumLaser
+CLSmallPulseLaser
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLERPPC
+CLERPPC
+IS Endo-Composite
+IS Endo-Composite
+IS Endo-Composite
+IS Endo-Composite
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+CLERMediumLaser
+ISTargeting Computer
+ISTargeting Computer
+ISTargeting Computer
+ISTargeting Computer
+ISTargeting Computer
+ISTargeting Computer
+ISTargeting Computer
+ISTargeting Computer
+IS Endo-Composite
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+CLSmallPulseLaser (R)
+
+Head:
+Life Support
+Sensors
+Cockpit
+CLSmallPulseLaser (R)
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+IS Endo-Composite
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+IS Endo-Composite
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+overview:The Sagittaire is built to fight in the confines of an urban battlefield.
+
+capabilities:The laser-heavy Sagittaire is powered by a Pitban extralight engine and has a top speed of 54 kph, which is comparable to 'Mechs of similar weight. The HildCo lifters fitted in the legs and midline, however, make the Sagittaire one of the few assault 'Mechs with jumping capacity, offering it a great deal of tactical versatility. That, of course, does not account for the psychological impact of witnessing a 95-ton BattleMech fly through the air on inexperienced troops. As if that weren't enough, the Sagittaire's pulse-technology lasers combined with the targeting computer enable a MechWarrior to retain a high rate of movement while still outperforming most other BattleMechs. With eighteen tons of armor, the need for such a strategy is questionable. The design is truly deadly when the Sagittaire's feet are firmly planted on the earth.
+
+deployment:No information on this variant.
+
+history:When it was originally deployed from Robinson BattleWorks in 3063, the machine saw considerable battle against House Kurita as Duke James Sandoval dedicated heavy resources to taking and retaining a half-dozen Combine worlds. The Sagittaire was crucial in the attack on Proserpina, where one of these robots slaughtered a company of Ninth Benjamin Regulars samurai in a series of ill-fated one-on-one duels. Later, following House Kurita's successful counter-assault, the Dragon made a deliberate effort to acquire or salvage multiple Sagittaire-designed 'Mechs for its own usage. Duke Sandoval later permitted additional of these vehicles to be sold into her loyalist army as Katherine Steiner-Davion tightened her grip on the Draconis March. This was short-lived, since Tancred Sandoval removed his father as March Lord not long after. He then directed the entire Sagittaire line to reinforce his own soldiers as well as the regiments supporting Victor Steiner-Davion. As an illustration of the Sagittaire's broad appeal, an allied company and a loyalist company were stationed on New Avalon, each with a lance of Sagittaires. During the battle for the continental capital of Flensburg, only three allied robots escaped under their own power. They were all Sagittarius. They were responsible for eight "kills" out of twelve enemy 'Mechs.
+
+manufacturer:Robinson Standard BattleWorks
+primaryfactory:Robinson
+
+systemmanufacturer:CHASSIS:Skuel Heavy TRQ
+systemmanufacturer:ENGINE:Pitban 285 XL
+systemmanufacturer:ARMOR:Starshield Special Heavy
+systemmanufacturer:JUMPJET:HildCo LFT 9-X
+systemmanufacturer:COMMUNICATIONS:Sony MSF-31
+systemmanufacturer:TARGETING:Federated Stalker with Targeting Module
+

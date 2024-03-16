@@ -1,0 +1,181 @@
+chassis:Naga II
+model:H
+mul id:9326
+Config:Biped Omnimech
+techbase:Clan
+era:3059
+source:Rec Guide:ilClan #26
+rules level:2
+role:Brawler
+
+quirk:ext_twist
+quirk:bad_rep_clan
+weaponquirk:stable_weapon:CT:10:CLHeavySmallLaser
+weaponquirk:stable_weapon:LT:2:CLLRM20
+weaponquirk:stable_weapon:RA:4:CLHeavyLargeLaser
+weaponquirk:stable_weapon:RA:7:CLHeavyMediumLaser
+weaponquirk:stable_weapon:RA:9:CLHeavyMediumLaser
+weaponquirk:stable_weapon:LA:2:CLGaussRifle
+
+
+mass:80
+engine:400 XL (Clan) Engine(IS)
+structure:Clan Endo Steel
+myomer:Standard
+
+heat sinks:16 Clan Double
+base chassis heat sinks:12
+walk mp:5
+jump mp:0
+
+armor:Standard(Inner Sphere)
+LA armor:14
+RA armor:14
+LT armor:15
+RT armor:15
+CT armor:17
+HD armor:9
+LL armor:16
+RL armor:16
+RTL armor:9
+RTR armor:9
+RTC armor:10
+
+Weapons:6
+Gauss Rifle, Left Arm
+Heavy Large Laser, Right Arm
+Heavy Medium Laser, Right Arm
+Heavy Medium Laser, Right Arm
+Heavy Small Laser, Center Torso
+LRM 20, Left Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+CLGaussRifle (OMNIPOD)
+CLGaussRifle (OMNIPOD)
+CLGaussRifle (OMNIPOD)
+CLGaussRifle (OMNIPOD)
+CLGaussRifle (OMNIPOD)
+CLGaussRifle (OMNIPOD)
+Clan Gauss Ammo (OMNIPOD)
+Clan Gauss Ammo (OMNIPOD)
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+CLHeavyLargeLaser (OMNIPOD)
+CLHeavyLargeLaser (OMNIPOD)
+CLHeavyLargeLaser (OMNIPOD)
+CLHeavyMediumLaser (OMNIPOD)
+CLHeavyMediumLaser (OMNIPOD)
+CLHeavyMediumLaser (OMNIPOD)
+CLHeavyMediumLaser (OMNIPOD)
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+CLLRM20 (OMNIPOD)
+CLLRM20 (OMNIPOD)
+CLLRM20 (OMNIPOD)
+CLLRM20 (OMNIPOD)
+Clan Ammo LRM-20 (OMNIPOD)
+Clan Ammo LRM-20 (OMNIPOD)
+Clan Endo Steel
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+Clan Endo Steel
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLHeavySmallLaser (OMNIPOD)
+Clan Endo Steel
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Clan Endo Steel
+Clan Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Clan Endo Steel
+Clan Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+
+overview:The Naga II is a refashioned version of the early Clan Woodsman OmniMech, developed by Clan Wolf. This model diverged from the initial Woodsman design due to technical challenges with its XL engine and endo-steel structure, which led to the creation of the Naga and eventually the Naga II. The Naga II's existence is primarily attributed to necessity, utilized when more advanced OmniMechs are not available.
+
+capabilities:Engineered with a focus on heavy firepower, the Naga II serves as a formidable artillery platform. Its design allows for significant weapon customization due to its ample pod space. Despite its notable firepower, the Naga II is encumbered by lighter armor compared to contemporary OmniMechs. This makes it a suitable choice for specific combat roles, particularly in scenarios requiring heavy bombardment from a distance.
+
+deployment:The Naga II Model H is a formidable 80-ton Clan OmniMech, designed as a brawler with a focus on heavy-hitting weaponry. It operates with a 400 XL Clan Engine, encased in Clan Endo Steel for durability, and moves at a speed of 54 km/h.</p><p>Its armament is a blend of high-powered ballistic and energy weapons. The left arm is equipped with a Clan Gauss Rifle, offering devastating long-range firepower. For close to mid-range combat, the right arm mounts a Clan Heavy Large Laser, augmented by two Clan Heavy Medium Lasers, delivering intense energy bursts. A Clan Heavy Small Laser in the center torso provides additional firepower and flexibility in various combat situations.</p><p>An LRM 20 launcher in the left torso extends the Naga II H's reach, enabling it to engage targets at longer distances effectively. The Mech’s 16 Clan Double Heat Sinks efficiently manage the substantial heat generated, allowing for sustained fire in battle. The extended twisting capability and stable weapons platform of the Naga II H make it a formidable adversary in any combat scenario, capable of delivering a potent mix of precision and power.</p>
+
+history:The Naga II saw initial use within Clan Wolf’s garrison clusters after Operation Revival. Its combat effectiveness, however, was questioned following a notable engagement in 3055, where its vulnerabilities were exposed during a raid on Icar. Despite this, conversions from Naga to Naga II continued as situational demands arose. The Exiled Wolves also utilized the Naga II, notably during conflicts like the fall of Arc-Royal, further indicating the continued, albeit limited, relevance of the Naga II in modern Clan warfare. Its deployment, while effective in certain contexts, often highlights the trade-off between its powerful offensive capabilities and its defensive shortcomings.
+
+manufacturer:Refit
+primaryfactory:Various
+systemmanufacturer:CHASSIS:Type BMH-7 Endo Steel
+systemmanufacturer:ENGINE:Fusion 400 XL
+systemmanufacturer:ARMOR:Forged Type 34 Standard
+systemmanufacturer:COMMUNICATIONS:Type G3, Mk. XII
+systemmanufacturer:TARGETING:Version Kappa-III TTS
+
+

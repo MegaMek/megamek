@@ -1,36 +1,46 @@
-Version:1.1
-Enforcer III
-ENF-7D
-
+chassis:Enforcer III
+model:ENF-7D
+mul id:7296
 Config:Biped
-TechBase:Inner Sphere
-Era:3104
-Source:XTRO Republic I - Late Republic
-Rules Level:4
+techbase:Inner Sphere
+era:3104
+source:XTR: Republic I
+rules level:2
+role:Sniper
 
-Mass:50
-Engine:250 XL Engine(IS)
-Structure:IS Endo Steel
-Myomer:Standard
-Cockpit:Torso-Mounted Cockpit
-Gyro:Standard Gyro
 
-Heat Sinks:10 Double
-Walk MP:5
-Jump MP:5
 
-Armor:Light Ferro-Fibrous(Inner Sphere)
-LA Armor:15
-RA Armor:15
-LT Armor:19
-RT Armor:19
-CT Armor:23
-HD Armor:9
-LL Armor:22
-RL Armor:22
-RTL Armor:5
-RTR Armor:5
-RTC Armor:7
+quirk:barrel_fists_ra
+quirk:battle_fists_la
+quirk:command_mech
+quirk:hyper_actuator
+quirk:non_standard
+weaponquirk:fast_reload:RA:3:ISLBXAC10
+
+
+mass:50
+engine:250 XL Engine(IS)
+structure:IS Endo Steel
+myomer:Standard
+cockpit:Torso-Mounted Cockpit
+gyro:Standard Gyro
+
+heat sinks:10 IS Double
+walk mp:5
+jump mp:5
+
+armor:Light Ferro-Fibrous(Inner Sphere)
+LA armor:15
+RA armor:15
+LT armor:19
+RT armor:19
+CT armor:23
+HD armor:9
+LL armor:22
+RL armor:22
+RTL armor:5
+RTR armor:5
+RTC armor:7
 
 Weapons:3
 ER PPC, Left Arm

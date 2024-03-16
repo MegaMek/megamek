@@ -20,6 +20,10 @@ Rapier
 RPR-102
 </Model>
 
+<mul id:>
+2644
+</mul id:>
+
 <year>
 2842
 </year>
@@ -31,6 +35,10 @@ RPR-102
 <type>
 IS Level 2
 </type>
+
+<role>
+Dogfighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -96,7 +104,7 @@ IS Ammo LRM-10
 </Fuselage Equipment>
 
 <source>
-TRO 3050u - Succession Wars
+TRO: 3050
 </source>
 
 <tonnage>

@@ -20,6 +20,10 @@ Umbra
 RF-1
 </Model>
 
+<mul id:>
+5320
+</mul id:>
+
 <year>
 3082
 </year>
@@ -31,6 +35,10 @@ RF-1
 <type>
 IS Level 3
 </type>
+
+<role>
+Interceptor
+</role>
 
 <motion_type>
 Aerodyne
@@ -101,9 +109,19 @@ ISERMediumLaser
 </Fuselage Equipment>
 
 <source>
-TRO Prototypes - Jihad
+TRO: Prototypes
 </source>
 
 <tonnage>
 30.0
 </tonnage>
+
+<quirks>
+easy_maintain
+</quirks>
+
+<weaponQuirks>
+mod_weapons:NOS:0:ISSNPPC
+mod_weapons:NOS:2:ISERMediumLaser
+mod_weapons:NOS:3:ISERMediumLaser
+</weaponQuirks>

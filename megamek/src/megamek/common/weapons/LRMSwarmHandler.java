@@ -31,7 +31,7 @@ import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
-import megamek.server.Server;
+import megamek.server.GameManager;
 
 /**
  * @author Sebastian Brocks
@@ -45,16 +45,16 @@ public class LRMSwarmHandler extends LRMHandler {
      * @param t
      * @param w
      * @param g
-     * @param s
+     * @param m
      */
-    public LRMSwarmHandler(ToHitData t, WeaponAttackAction w, Game g, Server s) {
-        super(t, w, g, s);
+    public LRMSwarmHandler(ToHitData t, WeaponAttackAction w, Game g, GameManager m) {
+        super(t, w, g, m);
         sSalvoType = " swarm missile(s) ";
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.AttackHandler#handle(int, java.util.Vector)
      */
     @Override
@@ -83,7 +83,7 @@ public class LRMSwarmHandler extends LRMHandler {
         r.indent();
         r.newlines = 0;
         r.subject = subjectId;
-        r.add(wtype.getName());
+        r.add(wtype.getName() + " (" + atype.getShortName() + ")");
         if (entityTarget != null) {
             r.addDesc(entityTarget);
             // record which launcher targeted the target
@@ -128,14 +128,14 @@ public class LRMSwarmHandler extends LRMHandler {
         vPhaseReport.addElement(r);
 
         // do we hit?
-        bMissed = roll < toHit.getValue();
+        bMissed = roll.getIntValue() < toHit.getValue();
 
         // are we a glancing hit?
         setGlancingBlowFlags(entityTarget);
         addGlancingBlowReports(vPhaseReport);
 
         // Set Margin of Success/Failure.
-        toHit.setMoS(roll - Math.max(2, toHit.getValue()));
+        toHit.setMoS(roll.getIntValue() - Math.max(2, toHit.getValue()));
         bDirect = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_DIRECT_BLOW)
                 && ((toHit.getMoS() / 3) >= 1) && (entityTarget != null);
         if (bDirect) {
@@ -192,7 +192,7 @@ public class LRMSwarmHandler extends LRMHandler {
                 && (toHit.getThruBldg() == null)) {
             bldgAbsorbs = bldg.getAbsorbtion(target.getPosition());
         }
-        
+
         // Attacking infantry in buildings from same building
         if (targetInBuilding && (bldg != null)
                 && (toHit.getThruBldg() != null)
@@ -252,7 +252,7 @@ public class LRMSwarmHandler extends LRMHandler {
             if (entityTarget != null) {
                 handleEntityDamage(entityTarget, vPhaseReport, bldg, hits,
                         nCluster, bldgAbsorbs);
-                server.creditKill(entityTarget, ae);
+                gameManager.creditKill(entityTarget, ae);
                 hits -= nCluster;
                 firstHit = false;
             }
@@ -272,14 +272,15 @@ public class LRMSwarmHandler extends LRMHandler {
                 vPhaseReport.addElement(r);
                 weapon.setUsedThisRound(false);
                 WeaponAttackAction newWaa = new WeaponAttackAction(ae.getId(),
-                        swarmTarget.getTargetId(), waa.getWeaponId());
+                        swarmTarget.getId(), waa.getWeaponId());
                 newWaa.setSwarmingMissiles(true);
                 newWaa.setSwarmMissiles(swarmMissilesNowLeft);
-                newWaa.setOldTargetId(target.getTargetId());
+                newWaa.setOldTargetId(target.getId());
                 newWaa.setOldTargetType(target.getTargetType());
                 newWaa.setOriginalTargetId(waa.getOriginalTargetId());
                 newWaa.setOriginalTargetType(waa.getOriginalTargetType());
                 newWaa.setAmmoId(waa.getAmmoId());
+                newWaa.setAmmoMunitionType(waa.getAmmoMunitionType());
                 newWaa.setAmmoCarrier(waa.getAmmoCarrier());
                 Mounted m = ae.getEquipment(waa.getWeaponId());
                 Weapon w = (Weapon) m.getType();
@@ -287,7 +288,7 @@ public class LRMSwarmHandler extends LRMHandler {
                 // in the next line
                 weapon.getLinked().setShotsLeft(
                         weapon.getLinked().getBaseShotsLeft() + 1);
-                AttackHandler ah = w.fire(newWaa, game, server);
+                AttackHandler ah = w.fire(newWaa, game, gameManager);
                 LRMSwarmHandler wh = (LRMSwarmHandler) ah;
                 // attack the new target
                 wh.handledHeat = true;
@@ -335,7 +336,7 @@ public class LRMSwarmHandler extends LRMHandler {
                     wtype.getInfantryDamageClass(),
                     ((Infantry) target).isMechanized(),
                     toHit.getThruBldg() != null, ae.getId(), calcDmgPerHitReport);
-            
+
             toReturn = applyGlancingBlowModifier(toReturn, true);
             return (int) toReturn;
         }
@@ -344,7 +345,7 @@ public class LRMSwarmHandler extends LRMHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * megamek.common.weapons.WeaponHandler#handleSpecialMiss(megamek.common
      * .Entity, boolean, megamek.common.Building, java.util.Vector)
@@ -376,14 +377,15 @@ public class LRMSwarmHandler extends LRMHandler {
             vPhaseReport.addElement(r);
             weapon.setUsedThisRound(false);
             WeaponAttackAction newWaa = new WeaponAttackAction(ae.getId(),
-                    swarmTarget.getTargetId(), waa.getWeaponId());
+                    swarmTarget.getId(), waa.getWeaponId());
             newWaa.setSwarmingMissiles(true);
             newWaa.setSwarmMissiles(swarmMissilesNowLeft);
-            newWaa.setOldTargetId(target.getTargetId());
+            newWaa.setOldTargetId(target.getId());
             newWaa.setOldTargetType(target.getTargetType());
             newWaa.setOriginalTargetId(waa.getOriginalTargetId());
             newWaa.setOriginalTargetType(waa.getOriginalTargetType());
             newWaa.setAmmoId(waa.getAmmoId());
+            newWaa.setAmmoMunitionType(waa.getAmmoMunitionType());
             newWaa.setAmmoCarrier(waa.getAmmoCarrier());
             Mounted m = ae.getEquipment(waa.getWeaponId());
             Weapon w = (Weapon) m.getType();
@@ -391,7 +393,7 @@ public class LRMSwarmHandler extends LRMHandler {
             // in the next line
             weapon.getLinked().setShotsLeft(
                     weapon.getLinked().getBaseShotsLeft() + 1);
-            AttackHandler ah = w.fire(newWaa, game, server);
+            AttackHandler ah = w.fire(newWaa, game, gameManager);
             LRMSwarmHandler wh = (LRMSwarmHandler) ah;
             // attack the new target
             wh.handledHeat = true;
@@ -416,7 +418,7 @@ public class LRMSwarmHandler extends LRMHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#calcHits(java.util.Vector)
      */
     @Override
@@ -444,8 +446,8 @@ public class LRMSwarmHandler extends LRMHandler {
             }
         }
         nMissilesModifier += amsMod;
-        
-        
+
+
 
         int swarmMissilesLeft = waa.getSwarmMissiles();
         // swarm or swarm-I shots may just hit with the remaining missiles

@@ -15,6 +15,10 @@ Darter Scout Car
 <Model>
 (BAP)
 </Model>
+
+<mul id:>
+832
+</mul id:>
 <Tonnage>
 13
 </Tonnage>
@@ -40,11 +44,15 @@ BeagleActiveProbe
 <type>
 IS
 </type>
+
+<role>
+Scout
+</role>
 <year>
 3053
 </year>
 <source>
-Clan Invasion
+TRO: 3075
 </source>
 <internal_type>
 0

@@ -1,0 +1,254 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Warship
+</UnitType>
+
+<Name>
+Lola III Destroyer
+</Name>
+
+<Model>
+(2662)
+</Model>
+
+<mul id:>
+4533
+</mul id:>
+
+<year>
+2662
+</year>
+
+<originalBuildYear>
+2662
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<role>
+None
+</role>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+asfbay:6.0:1:1
+smallcraftbay:4.0:1:2
+cargobay:116383.5:1:3
+1stclassquarters:380.0:0
+crewquarters:1274.0:0
+</transporters>
+
+<SafeThrust>
+4
+</SafeThrust>
+
+<heatsinks>
+742
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+3000
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+11
+</armor_type>
+
+<armor_tech>
+5
+</armor_tech>
+
+<armor>
+48
+48
+48
+48
+48
+48
+</armor>
+
+<Nose Equipment>
+(B) Naval Laser 55
+Naval Laser 55
+</Nose Equipment>
+
+<Left Front Side Equipment>
+(B) Naval Laser 55
+Naval Laser 55
+Naval Laser 55
+(B) Capital Missile Launcher (White Shark)
+Ammo White Shark:10
+</Left Front Side Equipment>
+
+<Right Front Side Equipment>
+(B) Naval Laser 55
+Naval Laser 55
+Naval Laser 55
+(B) Capital Missile Launcher (White Shark)
+Ammo White Shark:10
+</Right Front Side Equipment>
+
+<Aft Equipment>
+(B) Naval Laser 55
+Naval Laser 55
+Naval Laser 55
+Naval Laser 55
+(B) Capital Missile Launcher (Barracuda)
+Ammo Barracuda:10
+</Aft Equipment>
+
+<Aft Left Side Equipment>
+(B) Naval Autocannon (NAC/10)
+Naval Autocannon (NAC/10)
+Naval Autocannon (NAC/10)
+Naval Autocannon (NAC/10)
+Ammo NAC/10:100
+(B) Naval Laser 45
+</Aft Left Side Equipment>
+
+<Aft Right Side Equipment>
+(B) Naval Autocannon (NAC/10)
+Naval Autocannon (NAC/10)
+Naval Autocannon (NAC/10)
+Naval Autocannon (NAC/10)
+Ammo NAC/10:100
+(B) Naval Laser 45
+</Aft Right Side Equipment>
+
+<Hull Equipment>
+</Hull Equipment>
+
+<Left Broadsides Equipment>
+(B) Naval Autocannon (NAC/10)
+Naval Autocannon (NAC/10)
+Naval Autocannon (NAC/10)
+Naval Autocannon (NAC/10)
+Ammo NAC/10:100
+(B) Naval Laser 45
+(B) Capital Missile Launcher (Barracuda)
+Capital Missile Launcher (Barracuda)
+Ammo Barracuda:20
+</Left Broadsides Equipment>
+
+<Right Broadsides Equipment>
+(B) Naval Autocannon (NAC/10)
+Naval Autocannon (NAC/10)
+Naval Autocannon (NAC/10)
+Naval Autocannon (NAC/10)
+Ammo NAC/10:100
+(B) Naval Laser 45
+(B) Capital Missile Launcher (Barracuda)
+Capital Missile Launcher (Barracuda)
+Ammo Barracuda:20
+</Right Broadsides Equipment>
+
+<structural_integrity>
+50
+</structural_integrity>
+
+<capabilities>
+The Lola-class destroyers are known for their exceptional firepower and durability. Equipped with powerful naval lasers, they have extensive range and are capable of inflicting significant damage. Small-caliber autocannons provide additional firepower within the broadside arcs, while missile systems like the Barracuda and White Shark offer engagement capabilities at various ranges. These destroyers also carry a squadron of heavy aerospace fighters for defense against enemy fighters. With their remarkable armament, Lola-class vessels excel as escort ships and act as effective deterrents against pirate threats. The Lola-class destroyers incorporate advanced technology, including the innovative baffled-deadspace system. Although later replaced by more sophisticated armor compounds, this system initially boosted armor protection at a lower cost. The ship's larger-than-normal engines compensate for the increased weight but result in cramped crew quarters. However, the Clan Lola variant utilizes advanced computers to reduce the required crew size and alleviate some of the space constraints.
+</capabilities>
+
+<overview>
+The Lola-class WarShip is a heavily armed and armored destroyer designed for escort duty in the Periphery and picket duty in the Terran Hegemony. Named after Rear Admiral Adelaide Lola, the first Lola III entered service in 2662. It features an innovative baffled-deadspace system that enhances armor protection at a relatively low cost.
+</overview>
+
+<history>
+Introduced in 2662, the Lola-class destroyers quickly gained a reputation for reliability and cost-effectiveness. Serving as escort and picket ships for over seven centuries in the Terran Hegemony, these vessels became a mainstay of the Hegemony Navy. However, as technology advanced, the Lola-class ships faced obsolescence and were eventually relegated to reserve fleets or converted for training purposes. During the Amaris Crisis, several Lola-class destroyers were seized by Stephan Amaris loyalists, including three undergoing refitting at the time of Terra's occupation. Surviving the conflict, a significant number of Lola-class destroyers joined Aleksandr Kerensky's Exodus fleet, serving as vital cargo and DropShip carriers. After the fleet settled in the Pentagon Cluster, the Lola-class destroyers, along with other Avatars, were mothballed and placed in long-term storage. In the early 31st century, as the Clans prepared for their invasion of the Inner Sphere, the Lola-class destroyers were reactivated and underwent extensive upgrades by Clan technicians. These upgrades focused on enhancing offensive capabilities, defensive systems, and overall combat performance. The Lola-class destroyers continued to serve as formidable escort and patrol vessels, playing crucial roles in Clan military operations. Today, Lola-class destroyers remain prominently featured in most Clan fleets, reflecting their enduring role and adaptability in various combat scenarios. Their history of reliable service, innovative design, and potent firepower continues to make them a valued asset in the ongoing conflicts of the Inner Sphere and the Periphery.
+</history>
+
+<manufacturer>
+Boeing Interstellar
+</manufacturer>
+
+<primaryFactory>
+Terra
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<use>
+Destroyer
+</use>
+
+<source>
+TRO: 3057 Revised
+</source>
+
+<tonnage>
+680000.0
+</tonnage>
+
+<kf_core>
+1
+</kf_core>
+
+<sail>
+1
+</sail>
+
+<designtype>
+1
+</designtype>
+
+<crew>
+252
+</crew>
+
+<officers>
+38
+</officers>
+
+<gunners>
+39
+</gunners>
+
+<passengers>
+0
+</passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<life_boat>
+0
+</life_boat>
+
+<escape_pod>
+8
+</escape_pod>
+

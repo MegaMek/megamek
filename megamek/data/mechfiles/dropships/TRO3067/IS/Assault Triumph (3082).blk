@@ -20,6 +20,10 @@ Assault Triumph
 (3082)
 </Model>
 
+<mul id:>
+5765
+</mul id:>
+
 <year>
 3082
 </year>
@@ -31,6 +35,10 @@ Assault Triumph
 <type>
 IS Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Aerodyne
@@ -154,7 +162,7 @@ ISLaserAntiMissileSystem
 </structural_integrity>
 
 <source>
-TRO 3067 - Jihad
+TRO: 3067
 </source>
 
 <tonnage>

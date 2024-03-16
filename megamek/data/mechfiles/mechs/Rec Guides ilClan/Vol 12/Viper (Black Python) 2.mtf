@@ -1,0 +1,162 @@
+chassis:Viper
+clanname:Black Python
+model:2
+mul id:3433
+
+Config:Biped
+techbase:Clan
+era:3052
+source:Rec Guide:ilClan #12
+rules level:2
+role:Skirmisher
+
+quirk:imp_target_short
+
+
+mass:75
+engine:375 XL (Clan) Engine(IS)
+structure:Clan Endo Steel
+myomer:Standard
+
+heat sinks:12 Double
+walk mp:5
+jump mp:5
+
+armor:Ferro-Fibrous(Clan)
+LA armor:22
+RA armor:22
+LT armor:22
+RT armor:22
+CT armor:30
+HD armor:9
+LL armor:26
+RL armor:26
+RTL armor:10
+RTR armor:10
+RTC armor:12
+
+Weapons:10
+Machine Gun, Left Arm
+Machine Gun, Left Arm
+Ultra AC/2, Left Torso
+Small Pulse Laser, Left Torso
+Small Pulse Laser, Left Torso
+ER Large Laser, Right Torso
+ER Large Laser, Right Torso
+Small Pulse Laser, Right Torso
+Small Pulse Laser, Right Torso
+Small Pulse Laser, Right Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+CLMG
+CLMG
+Clan Machine Gun Ammo - Full
+Clan Ultra AC/2 Ammo
+Clan Ultra AC/2 Ammo
+CLECMSuite
+Clan Ferro-Fibrous
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+CLTargeting Computer
+CLTargeting Computer
+CLTargeting Computer
+CLTargeting Computer
+Clan Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Jump Jet
+Jump Jet
+CLUltraAC2
+CLUltraAC2
+CLSmallPulseLaser
+CLSmallPulseLaser
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Jump Jet
+Jump Jet
+CLERLargeLaser
+CLERLargeLaser
+CLSmallPulseLaser
+CLSmallPulseLaser
+CLSmallPulseLaser
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+Clan Endo Steel
+
+Head:
+Life Support
+Sensors
+Cockpit
+Clan Ferro-Fibrous
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Clan Endo Steel
+Clan Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Clan Endo Steel
+Clan Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

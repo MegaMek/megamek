@@ -16,9 +16,13 @@ FixedWingSupport
 Mosquito Light Fighter
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+5591
+</mul id:>
 
 <year>
 2302
@@ -31,6 +35,10 @@ Mosquito Light Fighter
 <type>
 IS Level 2
 </type>
+
+<role>
+Fire Support
+</role>
 
 <motion_type>
 Aerodyne
@@ -117,9 +125,16 @@ External Stores Hardpoint
 </armor_tech_rating>
 
 <source>
-XTRO Primitives II - Age of War
+XTR: Primitives II
 </source>
 
 <tonnage>
 20.0
 </tonnage>
+
+<quirks>
+atmo_flyer
+easy_maintain
+obsolete
+</quirks>
+

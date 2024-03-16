@@ -1,12 +1,18 @@
-Version:1.0
-Gallowglas
-GAL-2GLS
+chassis:Gallowglas
+model:GAL-2GLS
+mul id:1183
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3055
-Source:TRO 3055 - Clan Invasion
+Source:TRO: 3055
 Rules Level:2
+role:Brawler
+
+
+
+quirk:good_rep_1
+
 
 Mass:70
 Engine:280 Fusion Engine

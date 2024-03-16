@@ -15,6 +15,10 @@ Patton Tank
 <Model>
 (Ultra)
 </Model>
+
+<mul id:>
+2451
+</mul id:>
 <Tonnage>
 65
 </Tonnage>
@@ -49,6 +53,10 @@ ISMG Ammo (100)
 <type>
 IS Level 2
 </type>
+
+<role>
+Brawler
+</role>
 <year>
 3062
 </year>
@@ -65,5 +73,50 @@ IS Level 2
 Tracked
 </motion_type>
 <source>
-Civil War
+TRO: 3058
 </source>
+
+<capabilities>
+The Patton mounts an AC/10, giving it twice the ammunition capacity and superior firing range while also enabling it to be fitted with more armor. The Patton is capable of fighting in short-ranged and urban environments, but is far more suited than the Rommel to engaging targets at medium to long range.
+</capabilities>
+
+<overview>
+The Patton tank is a 65-ton armored combat vehicle, specializing in conventional armored warfare. Identical to its twin, the Rommel, in every way but armament and armor configuration, the Patton has primarily served with the Lyran Commonwealth and the Lyran Alliance.
+</overview>
+
+<deployment>
+This variant of the Patton replaces the standard weaponry with a turret-mounted Ultra AC/10 and a pair of medium lasers to support it. For anti-infantry work, the Patton Ultra has three Machine Guns: One covers the rear while the other two cover the front of the tank.
+</deployment>
+
+<history>
+Designed concurrently with the Rommel, Defiance Industries decided that a vehicle to replace 'Mechs was needed in the early 3000s. Since 'Mech production was nearly at a standstill, the ability to produce and field armored vehicles became a necessity no Successor State could ignore.
+</history>
+
+<manufacturer>
+Defiance Industries, General Motors
+</manufacturer>
+
+<primaryFactory>
+Hesperus II,Salem
+</primaryFactory>
+
+<systemManufacturers>
+ENGINE:Magna 260
+ARMOR:Durallex Heavy
+COMMUNICATIONS:TharHes Muse 54-58K
+TARGETING:TharHes Mars5
+</systemManufacturers>
+
+<source>
+TRO: 3039
+</source>
+
+<tonnage>
+65.0
+</tonnage>
+
+<quirks>
+low_profile
+poor_target_short
+</quirks>
+

@@ -20,6 +20,10 @@ Interdictor Pocket Warship
 (3115)
 </Model>
 
+<mul id:>
+6821
+</mul id:>
+
 <year>
 3115
 </year>
@@ -31,6 +35,10 @@ Interdictor Pocket Warship
 <type>
 IS Level 4
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Aerodyne
@@ -187,7 +195,7 @@ ISNC3
 </structural_integrity>
 
 <source>
-RS 3145 NTNU - Late Republic
+Record Sheets: 3145 New Tech New Upgrades
 </source>
 
 <tonnage>

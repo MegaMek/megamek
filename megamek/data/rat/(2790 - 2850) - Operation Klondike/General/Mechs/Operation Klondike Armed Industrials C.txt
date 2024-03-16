@@ -4,4 +4,4 @@ Powerman SC XI-M-B LoaderMech MOD,1
 Carbine CON-1 ConstructionMech (RL),1
 Daedalus GTX2 (Militarized),1
 Harvester Ant KIC-3M AgroMech MOD,1
-Crosscut ED-X2 (RL),1
+Crosscut ED-X2 LoggerMech (RL),1

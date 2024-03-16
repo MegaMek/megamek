@@ -20,6 +20,10 @@ Hammerhead
 HMR-HD
 </Model>
 
+<mul id:>
+1374
+</mul id:>
+
 <year>
 2571
 </year>
@@ -31,6 +35,10 @@ HMR-HD
 <type>
 IS Level 2
 </type>
+
+<role>
+Fast Dogfighter
+</role>
 
 <motion_type>
 Aerodyne
@@ -101,7 +109,7 @@ IS Ammo AC/20
 </Fuselage Equipment>
 
 <source>
-TRO 3050u - Age of War
+TRO: 3050
 </source>
 
 <tonnage>

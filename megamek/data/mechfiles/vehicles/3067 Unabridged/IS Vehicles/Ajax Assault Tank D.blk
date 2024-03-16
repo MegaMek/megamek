@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,28 +20,34 @@ Ajax Assault Tank
 D
 </Model>
 
+<mul id:>
+5741
+</mul id:>
+
 <year>
 3075
 </year>
 
+<originalBuildYear>
+3075
+</originalBuildYear>
+
 <type>
 IS Level 3
 </type>
+
+<role>
+Missile Boat
+</role>
 
 <motion_type>
 Tracked
 </motion_type>
 
 <transporters>
-troopspace:4.0
-</transporters>
-
-<transporters>
 BattleArmorHandles - troopers:-1
-</transporters>
-
-<transporters>
-troopspace:4.0
+troopspace:4.0:omni
+cargobay:8.0:1:1::-1:0:omni
 </transporters>
 
 <cruiseMP>
@@ -65,7 +71,7 @@ troopspace:4.0
 </armor>
 
 <Body Equipment>
-ISDroneCarrierControlSystem:OMNI
+ISDroneCarrierControlSystem:OMNI:SIZE:6.0
 ISGuardianECMSuite:OMNI
 ISArrowIVHomingAmmo:OMNI
 ISArrowIVHomingAmmo:OMNI
@@ -76,6 +82,7 @@ ISCASE
 </Body Equipment>
 
 <Front Equipment>
+Light Machine Gun:OMNI
 </Front Equipment>
 
 <Right Equipment>
@@ -96,6 +103,42 @@ ISERMediumLaser:OMNI
 ISERMediumLaser:OMNI
 </Turret Equipment>
 
+<capabilities>
+The Ajax follows on the heels of the successful Manteuffel OmniVehicle. The Ajax is slow, only capable of attaining speeds up to 54 km/h. Since speed is not its defense, the designers gave the Ajax nineteen tons of armor. The room for all of this armor comes from the XL engine the Ajax uses for power.
+</capabilities>
+
+<overview>
+The Ajax Assault Tank is an Omni-capable combat vehicle that is the followup to GM's Challenger X MBT.
+</overview>
+
+<deployment>
+This configuration is apparently intended for artillery and command support developed in 3075. The turret houses a single Arrow IV missile launcher and a pair of ER Medium Lasers. Each side is protected from infantry and battle armor by a Light Machine Gun. There is a Guardian ECM Suite in the hull, but the Ajax-D also has a Drone Carrier Control System that can control six drone systems. In addition it has eight tons of cargo space and a four ton infantry compartment, probably for organic defense or artillery spotting capability.
+</deployment>
+
+<history>
+Following the success of a series of new vehicle designs, particularly the Challenger X, General Motors sought a way to create a follow-up, a product that would capitalise on the AFFC's sudden interest in conventional military vehicles. With the phenomenal success of Star Corps' Manteuffel Attack Tank, creating an OmniVehicle was the obvious solution. The Fifth Davion Guards and Sixth Syrtis Fusiliers RCTs were among the first to receive Kathil models, which they put to good use in their fight against the Eighth FedCom RCT and the Eighth Donegal Guards on New Syrtis. Though the Fifth Davion Guards were officially deactivated after their victory, Leftenant General Seth Varnay led a ragtag force of armoured forces, including a sizable number of Ajaxes, to New Avalon, where their firepower was once again demonstrated. Ajaxes can now be found in almost every surviving armoured unit that fought alongside an RCT during the war.
+</history>
+
+<manufacturer>
+General Motors Annex,General Motors/Blackwell Corporation,General Motors
+</manufacturer>
+
+<primaryFactory>
+Kathil,New Valencia,Salem
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:GM 270 XL
+ARMOR:ArcShield Maxi II
+COMMUNICATIONS:Neil 6000
+TARGETING:Sync Tracker (39-42071)
+</systemManufacturers>
+
+<source>
+TRO: 3067
+</source>
+
 <tonnage>
 90.0
 </tonnage>
@@ -103,3 +146,4 @@ ISERMediumLaser:OMNI
 <baseChassisTurretWeight>
 3.5
 </baseChassisTurretWeight>
+

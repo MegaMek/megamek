@@ -20,6 +20,10 @@ Gaajian System Patrol Boat
 (2485)
 </Model>
 
+<mul id:>
+7769
+</mul id:>
+
 <year>
 2485
 </year>
@@ -31,6 +35,10 @@ Gaajian System Patrol Boat
 <type>
 IS Level 2
 </type>
+
+<role>
+None
+</role>
 
 <motion_type>
 Spheroid
@@ -132,7 +140,7 @@ ISHighResImager
 </structural_integrity>
 
 <source>
-HB:HK - Age of War
+Handbook: House Kurita
 </source>
 
 <tonnage>

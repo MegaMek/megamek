@@ -1480,171 +1480,188 @@ public class MovementDisplay extends ActionPhaseDisplay {
     }
 
     private boolean checkNags() {
-        if (needNagForNoUnJamRAC()
-                && ce().canUnjamRAC()
-                && !isUnJammingRAC) {
-            // confirm this action
-            String title = Messages.getString("MovementDisplay.ConfirmUnJamRACDlg.title");
-            String body = Messages.getString("MovementDisplay.ConfirmUnJamRACDlg.message");
-            ConfirmDialog response = clientgui.doYesNoBotherDialog(title, body);
-            if (!response.getShowAgain()) {
-                GUIP.setNagForNoUnJamRAC(false);
-            }
-            if (!response.getAnswer()) {
-                return true;
-            }
-        }
-
-        if (needNagForNoAction()
-                && (cmd.length() == 0)
-                && !ce().isAirborne()) {
-            // Hmm... no movement steps, confirm this action
-            String title = Messages.getString("MovementDisplay.ConfirmNoMoveDlg.title");
-            String body = Messages.getString("MovementDisplay.ConfirmNoMoveDlg.message");
-            ConfirmDialog response = clientgui.doYesNoBotherDialog(title, body);
-            if (!response.getShowAgain()) {
-                GUIP.setNagForNoAction(false);
-            }
-            if (!response.getAnswer()) {
-                return true;
-            }
-        }
-
-        if (needNagForMASC()
-                && cmd.hasActiveMASC()
-                && !(ce() instanceof VTOL)) {
-            // pop up are you sure dialog
-            ConfirmDialog nag = new ConfirmDialog(clientgui.frame,
-                    Messages.getString("MovementDisplay.areYouSure"),
-                    Messages.getString("MovementDisplay.ConfirmMASCRoll", ce().getMASCTarget()),
-                    true);
-            nag.setVisible(true);
-            if (nag.getAnswer()) {
-                // do they want to be bothered again?
-                if (!nag.getShowAgain()) {
-                    GUIP.setNagForMASC(false);
-                }
-            } else {
-                return true;
-            }
-        }
-
-        if (needNagForMASC()
-                && !(ce() instanceof VTOL)
-                && cmd.hasActiveSupercharger()) {
-            ConfirmDialog nag = new ConfirmDialog(clientgui.frame,
-                    Messages.getString("MovementDisplay.areYouSure"),
-                    Messages.getString("MovementDisplay.ConfirmSuperchargerRoll", ce().getSuperchargerTarget()),
-                    true);
-            nag.setVisible(true);
-            if (nag.getAnswer()) {
-                // do they want to be bothered again?
-                if (!nag.getShowAgain()) {
-                    GUIP.setNagForMASC(false);
-                }
-            } else {
-                return true;
-            }
-        }
-
-        boolean sprintOrVtolSprint = cmd.getLastStepMovementType() == EntityMovementType.MOVE_SPRINT
-                || cmd.getLastStepMovementType() == EntityMovementType.MOVE_VTOL_SPRINT;
-        boolean quadVeeVehicle = cmd.getEntity() instanceof QuadVee
-                && cmd.getEntity().getConversionMode() == QuadVee.CONV_MODE_VEHICLE;
-        boolean tankOrQuadVee = cmd.getEntity() instanceof Tank
-                || quadVeeVehicle;
-        // no need to nag for vehicles using overdrive if they already get a PSR nag
-        boolean psrNag = tankOrQuadVee
-                && needNagForPSR();
-        if (needNagForSprint()
-                && sprintOrVtolSprint
-                && !psrNag) {
-            ConfirmDialog nag = new ConfirmDialog(clientgui.frame,
-                    Messages.getString("MovementDisplay.areYouSure"),
-                    Messages.getString("MovementDisplay.ConfirmSprint"), true);
-            nag.setVisible(true);
-            if (nag.getAnswer()) {
-                // do they want to be bothered again?
-                if (!nag.getShowAgain()) {
-                    GUIP.setNagForSprint(false);
-                }
-            } else {
-                return true;
-            }
-        }
         String check = SharedUtility.doPSRCheck(cmd);
-        if (needNagForPSR()
-                && !check.isBlank()) {
-            ConfirmDialog nag = new ConfirmDialog(clientgui.frame,
-                    Messages.getString("MovementDisplay.areYouSure"),
-                    Messages.getString("MovementDisplay.ConfirmPilotingRoll") +
-                            check, true);
-            nag.setVisible(true);
-            if (nag.getAnswer()) {
-                // do they want to be bothered again?
-                if (!nag.getShowAgain()) {
-                    GUIP.setNagForPSR(false);
+        String thrustCheck = SharedUtility.doThrustCheck(cmd, clientgui.getClient());
+
+        if (needNagForNoAction()) {
+            if ((ce() != null)
+                    && (cmd.length() == 0)
+                    && !ce().isAirborne()) {
+                // Hmm... no movement steps, confirm this action
+                String title = Messages.getString("MovementDisplay.ConfirmNoMoveDlg.title");
+                String body = Messages.getString("MovementDisplay.ConfirmNoMoveDlg.message");
+                ConfirmDialog response = clientgui.doYesNoBotherDialog(title, body);
+                if (!response.getShowAgain()) {
+                    GUIP.setNagForNoAction(false);
                 }
-            } else {
-                return true;
+                if (!response.getAnswer()) {
+                    return true;
+                }
+            }
+        }
+
+        if (needNagForNoUnJamRAC()) {
+            if ((ce() != null)
+                    && ce().canUnjamRAC()
+                    && !isUnJammingRAC) {
+                // confirm this action
+                String title = Messages.getString("MovementDisplay.ConfirmUnJamRACDlg.title");
+                String body = Messages.getString("MovementDisplay.ConfirmUnJamRACDlg.message");
+                ConfirmDialog response = clientgui.doYesNoBotherDialog(title, body);
+                if (!response.getShowAgain()) {
+                    GUIP.setNagForNoUnJamRAC(false);
+                }
+                if (!response.getAnswer()) {
+                    return true;
+                }
+            }
+        }
+
+        if (needNagForMASC()) {
+            if ((ce() != null)
+                    && cmd.hasActiveMASC()
+                    && !(ce() instanceof VTOL)) {
+                // pop up are you sure dialog
+                ConfirmDialog nag = new ConfirmDialog(clientgui.frame,
+                        Messages.getString("MovementDisplay.areYouSure"),
+                        Messages.getString("MovementDisplay.ConfirmMASCRoll", ce().getMASCTarget()),
+                        true);
+                nag.setVisible(true);
+                if (nag.getAnswer()) {
+                    // do they want to be bothered again?
+                    if (!nag.getShowAgain()) {
+                        GUIP.setNagForMASC(false);
+                    }
+                } else {
+                    return true;
+                }
+            }
+        }
+
+        if (needNagForMASC()) {
+            if ((ce() != null)
+                    && !(ce() instanceof VTOL)
+                    && cmd.hasActiveSupercharger()) {
+                ConfirmDialog nag = new ConfirmDialog(clientgui.frame,
+                        Messages.getString("MovementDisplay.areYouSure"),
+                        Messages.getString("MovementDisplay.ConfirmSuperchargerRoll", ce().getSuperchargerTarget()),
+                        true);
+                nag.setVisible(true);
+                if (nag.getAnswer()) {
+                    // do they want to be bothered again?
+                    if (!nag.getShowAgain()) {
+                        GUIP.setNagForMASC(false);
+                    }
+                } else {
+                    return true;
+                }
+            }
+        }
+
+        if (needNagForSprint()) {
+            boolean sprintOrVtolSprint = cmd.getLastStepMovementType() == EntityMovementType.MOVE_SPRINT
+                    || cmd.getLastStepMovementType() == EntityMovementType.MOVE_VTOL_SPRINT;
+            boolean quadVeeVehicle = cmd.getEntity() instanceof QuadVee
+                    && cmd.getEntity().getConversionMode() == QuadVee.CONV_MODE_VEHICLE;
+            boolean tankOrQuadVee = cmd.getEntity() instanceof Tank
+                    || quadVeeVehicle;
+            // no need to nag for vehicles using overdrive if they already get a PSR nag
+            boolean psrNag = tankOrQuadVee
+                    && needNagForPSR();
+            if (sprintOrVtolSprint
+                    && !psrNag) {
+                ConfirmDialog nag = new ConfirmDialog(clientgui.frame,
+                        Messages.getString("MovementDisplay.areYouSure"),
+                        Messages.getString("MovementDisplay.ConfirmSprint"), true);
+                nag.setVisible(true);
+                if (nag.getAnswer()) {
+                    // do they want to be bothered again?
+                    if (!nag.getShowAgain()) {
+                        GUIP.setNagForSprint(false);
+                    }
+                } else {
+                    return true;
+                }
+            }
+        }
+
+        if (needNagForPSR()) {
+            if (!check.isBlank()) {
+                ConfirmDialog nag = new ConfirmDialog(clientgui.frame,
+                        Messages.getString("MovementDisplay.areYouSure"),
+                        Messages.getString("MovementDisplay.ConfirmPilotingRoll") +
+                                check, true);
+                nag.setVisible(true);
+                if (nag.getAnswer()) {
+                    // do they want to be bothered again?
+                    if (!nag.getShowAgain()) {
+                        GUIP.setNagForPSR(false);
+                    }
+                } else {
+                    return true;
+                }
             }
         }
 
         // Should we nag about taking fall damage with mechanical jump boosters?
-        if (needNagForMechanicalJumpFallDamage()
-                && cmd.shouldMechanicalJumpCauseFallDamage()) {
-            ConfirmDialog nag = new ConfirmDialog(clientgui.frame,
-                    Messages.getString("MovementDisplay.areYouSure"),
-                    Messages.getString("MovementDisplay.ConfirmMechanicalJumpFallDamage",
-                            cmd.getJumpMaxElevationChange(), ce().getJumpMP(),
-                            cmd.getJumpMaxElevationChange() - ce().getJumpMP()), true);
-            nag.setVisible(true);
-            if (nag.getAnswer()) {
-                // do they want to be bothered again?
-                if (!nag.getShowAgain()) {
-                    GUIP.setNagForMechanicalJumpFallDamage(false);
+        if (needNagForMechanicalJumpFallDamage()) {
+            if ((ce() != null)
+                    && cmd.shouldMechanicalJumpCauseFallDamage()) {
+                ConfirmDialog nag = new ConfirmDialog(clientgui.frame,
+                        Messages.getString("MovementDisplay.areYouSure"),
+                        Messages.getString("MovementDisplay.ConfirmMechanicalJumpFallDamage",
+                                cmd.getJumpMaxElevationChange(), ce().getJumpMP(),
+                                cmd.getJumpMaxElevationChange() - ce().getJumpMP()), true);
+                nag.setVisible(true);
+                if (nag.getAnswer()) {
+                    // do they want to be bothered again?
+                    if (!nag.getShowAgain()) {
+                        GUIP.setNagForMechanicalJumpFallDamage(false);
+                    }
+                } else {
+                    return true;
                 }
-            } else {
-                return true;
-            }
-        }
-
-        // check for G-forces
-        check = SharedUtility.doThrustCheck(cmd, clientgui.getClient());
-        if (needNagForPSR()
-                && !check.isBlank()) {
-            ConfirmDialog nag = new ConfirmDialog(clientgui.frame,
-                    Messages.getString("MovementDisplay.areYouSure"),
-                    Messages.getString("MovementDisplay.ConfirmPilotingRoll") + check,
-                    true);
-            nag.setVisible(true);
-            if (nag.getAnswer()) {
-                // do they want to be bothered again?
-                if (!nag.getShowAgain()) {
-                    GUIP.setNagForPSR(false);
-                }
-            } else {
-                return true;
             }
         }
 
         // check for unsafe takeoffs
-        boolean takeoff = cmd.contains(MoveStepType.VTAKEOFF)
-                || cmd.contains(MoveStepType.TAKEOFF);
-        if (needNagForPSR()
-                && takeoff) {
-            boolean unsecure = false;
-            for (Entity loaded : ce().getLoadedUnits()) {
-                if (loaded.wasLoadedThisTurn()
-                        && !(loaded instanceof Infantry)) {
-                    unsecure = true;
-                    break;
+        if (needNagForPSR()) {
+            boolean vtakeoffOrTakeoff = cmd.contains(MoveStepType.VTAKEOFF)
+                    || cmd.contains(MoveStepType.TAKEOFF);
+            if ((ce() != null)
+                    && vtakeoffOrTakeoff) {
+                boolean unsecure = false;
+                for (Entity loaded : ce().getLoadedUnits()) {
+                    if (loaded.wasLoadedThisTurn()
+                            && !(loaded instanceof Infantry)) {
+                        unsecure = true;
+                        break;
+                    }
+                }
+                if (unsecure) {
+                    ConfirmDialog nag = new ConfirmDialog(clientgui.frame,
+                            Messages.getString("MovementDisplay.areYouSure"),
+                            Messages.getString("MovementDisplay.UnsecuredTakeoff"), true);
+                    nag.setVisible(true);
+                    if (nag.getAnswer()) {
+                        // do they want to be bothered again?
+                        if (!nag.getShowAgain()) {
+                            GUIP.setNagForPSR(false);
+                        }
+                    } else {
+                        return true;
+                    }
                 }
             }
-            if (unsecure) {
+        }
+
+        // check for G-forces
+        if (needNagForPSR()) {
+            if (!thrustCheck.isBlank()) {
                 ConfirmDialog nag = new ConfirmDialog(clientgui.frame,
                         Messages.getString("MovementDisplay.areYouSure"),
-                        Messages.getString("MovementDisplay.UnsecuredTakeoff"), true);
+                        Messages.getString("MovementDisplay.ConfirmPilotingRoll") + thrustCheck,
+                        true);
                 nag.setVisible(true);
                 if (nag.getAnswer()) {
                     // do they want to be bothered again?
@@ -1659,178 +1676,202 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
         // check to see if spheroids will drop elevation
         // they will do so if they're not hovering, landing, or changing altitude voluntarily.
-        if (needNagForPSR()
-                && Compute.useSpheroidAtmosphere(clientgui.getClient().getGame(), ce())
-                && !cmd.contains(MoveStepType.HOVER)
-                && !cmd.contains(MoveStepType.VLAND)
-                && !cmd.contains(MoveStepType.UP)
-                && !cmd.contains(MoveStepType.DOWN)) {
-            ConfirmDialog nag = new ConfirmDialog(clientgui.frame,
-                    Messages.getString("MovementDisplay.areYouSure"),
-                    Messages.getString("MovementDisplay.SpheroidAltitudeLoss") +
+        if (needNagForPSR()) {
+            if ((ce() != null)
+                    && Compute.useSpheroidAtmosphere(clientgui.getClient().getGame(), ce())
+                    && !cmd.contains(MoveStepType.HOVER)
+                    && !cmd.contains(MoveStepType.VLAND)
+                    && !cmd.contains(MoveStepType.UP)
+                    && !cmd.contains(MoveStepType.DOWN)) {
+                ConfirmDialog nag = new ConfirmDialog(clientgui.frame,
+                        Messages.getString("MovementDisplay.areYouSure"),
+                        Messages.getString("MovementDisplay.SpheroidAltitudeLoss") +
 
-                            check, true);
-            nag.setVisible(true);
-            if (nag.getAnswer()) {
-                // do they want to be bothered again?
-                if (!nag.getShowAgain()) {
-                    GUIP.setNagForPSR(false);
+                                thrustCheck, true);
+                nag.setVisible(true);
+                if (nag.getAnswer()) {
+                    // do they want to be bothered again?
+                    if (!nag.getShowAgain()) {
+                        GUIP.setNagForPSR(false);
+                    }
+                } else {
+                    return true;
                 }
-            } else {
+            }
+        }
+
+        if (needNagForOther()) {
+            boolean airborne = (ce() != null)
+                    && ce().isAirborne();
+            boolean spaceborne = (ce() != null)
+                    && ce().isSpaceborne();
+            boolean airborneOrSpaceborne = airborne
+                    || spaceborne;
+            if ((ce() != null)
+                    && airborneOrSpaceborne
+                    && !clientgui.getClient().getGame().useVectorMove()
+                    && ce().isAero()
+                    && !((IAero) ce()).isOutControlTotal()) {
+                // check for underuse of velocity
+                boolean unusedVelocity = false;
+                if (null != cmd.getLastStep()) {
+                    unusedVelocity = cmd.getLastStep().getVelocityLeft() > 0;
+                } else {
+                    unusedVelocity = (((IAero) ce()).getCurrentVelocity() > 0)
+                            && (ce().delta_distance == 0);
+                }
+                boolean flyoff = false;
+                boolean offOrReturn = cmd.contains(MoveStepType.OFF)
+                        || cmd.contains(MoveStepType.RETURN);
+                if ((null != cmd)
+                        && offOrReturn) {
+                    flyoff = true;
+                }
+                boolean landing = false;
+                if ((null != cmd)
+                        && cmd.contains(MoveStepType.LAND)) {
+                    landing = true;
+                }
+                boolean ejecting = false;
+                if ((null != cmd)
+                        && cmd.contains(MoveStepType.EJECT)) {
+                    ejecting = true;
+                }
+                if (unusedVelocity
+                        && !flyoff
+                        && !landing
+                        && !ejecting) {
+                    String title = Messages
+                            .getString("MovementDisplay.VelocityLeft.title");
+                    String body = Messages
+                            .getString("MovementDisplay.VelocityLeft.message");
+                    clientgui.doAlertDialog(title, body);
+                    return true;
+                }
+            }
+        }
+
+        if (needNagForCrushingBuildings()) {
+            if (cmd.willCrushBuildings()) {
+                ConfirmDialog nag = new ConfirmDialog(
+                        clientgui.frame,
+                        Messages.getString("MovementDisplay.areYouSure"),
+                        Messages.getString("MovementDisplay.ConfirmCrushingBuildings"),
+                        true);
+                nag.setVisible(true);
+                if (nag.getAnswer()) {
+                    // do they want to be bothered again?
+                    if (!nag.getShowAgain()) {
+                        GUIP.setNagForCrushingBuildings(false);
+                    }
+                } else {
+                    return true;
+                }
+            }
+        }
+
+        // check to see if spheroids will drop an elevation
+        if (needNagForOther()) {
+            if ((ce() != null)
+                    && ce() instanceof LandAirMech
+                    && ce().isAssaultDropInProgress()
+                    && cmd.getFinalConversionMode() == EntityMovementMode.AERODYNE) {
+                ConfirmDialog nag = new ConfirmDialog(clientgui.frame,
+                        Messages.getString("MovementDisplay.areYouSure"),
+                        Messages.getString("MovementDisplay.insufficientAltitudeForConversion") + thrustCheck,
+                        false);
+                nag.setVisible(true);
+                if (!nag.getAnswer()) {
+                    return true;
+                }
+            }
+        }
+
+        if (needNagForOther()) {
+            boolean airborneVTOLOrWIGE = (ce() != null)
+                    && ce().isAirborneVTOLorWIGE();
+            boolean finalElevation = (ce() != null)
+                    && (ce().getElevation() != cmd.getFinalElevation());
+            boolean airborneVTOLOrWIGEOrFinalElevation = airborneVTOLOrWIGE
+                    || finalElevation;
+            if ((ce() != null)
+                    && (ce() instanceof Infantry)
+                    && ((Infantry) ce()).hasMicrolite()
+                    && airborneVTOLOrWIGEOrFinalElevation
+                    && !cmd.contains(MoveStepType.FORWARDS)
+                    && !cmd.contains(MoveStepType.FLEE)
+                    && cmd.getFinalElevation() > 0
+                    && ce().getGame().getBoard().getHex(cmd.getFinalCoords()).terrainLevel(Terrains.BLDG_ELEV) < cmd.getFinalElevation()
+                    && ce().getGame().getBoard().getHex(cmd.getFinalCoords()).terrainLevel(Terrains.BRIDGE_ELEV) < cmd.getFinalElevation()) {
+                String title = Messages.getString("MovementDisplay.MicroliteMove.title");
+                String body = Messages.getString("MovementDisplay.MicroliteMove.message");
+                clientgui.doAlertDialog(title, body);
                 return true;
             }
         }
 
-        boolean airborneOrSpace = ce().isAirborne()
-                || ce().isSpaceborne();
-        if (needNagForOther()
-                && airborneOrSpace) {
-            if (!clientgui.getClient().getGame().useVectorMove()) {
-                if (ce().isAero()
-                        && !((IAero) ce()).isOutControlTotal()) {
-                    // check for underuse of velocity
-                    boolean unusedVelocity = false;
-                    if (null != cmd.getLastStep()) {
-                        unusedVelocity = cmd.getLastStep().getVelocityLeft() > 0;
-                    } else {
-                        unusedVelocity = (((IAero) ce()).getCurrentVelocity() > 0)
-                                && (ce().delta_distance == 0);
+        if (needNagForWiGELanding()) {
+            if (cmd.automaticWiGELanding(true)) {
+                ConfirmDialog nag = new ConfirmDialog(
+                        clientgui.frame,
+                        Messages.getString("MovementDisplay.areYouSure"),
+                        Messages.getString("MovementDisplay.ConfirmWiGELanding"),
+                        true);
+                nag.setVisible(true);
+                if (nag.getAnswer()) {
+                    // do they want to be bothered again?
+                    if (!nag.getShowAgain()) {
+                        GUIP.setNagForWiGELanding(false);
                     }
-                    boolean flyoff = false;
-                    boolean offOrReturn = cmd.contains(MoveStepType.OFF)
-                            || cmd.contains(MoveStepType.RETURN);
-                    if ((null != cmd)
-                            && offOrReturn) {
-                        flyoff = true;
-                    }
-                    boolean landing = false;
-                    if ((null != cmd)
-                            && cmd.contains(MoveStepType.LAND)) {
-                        landing = true;
-                    }
-                    boolean ejecting = false;
-                    if ((null != cmd)
-                            && cmd.contains(MoveStepType.EJECT)) {
-                        ejecting = true;
-                    }
-                    if (unusedVelocity
-                            && !flyoff
-                            && !landing
-                            && !ejecting) {
-                        String title = Messages
-                                .getString("MovementDisplay.VelocityLeft.title");
-                        String body = Messages
-                                .getString("MovementDisplay.VelocityLeft.message");
-                        clientgui.doAlertDialog(title, body);
+                } else {
+                    return true;
+                }
+            }
+        }
+
+        if (needNagForOther()) {
+            boolean landOrVland = cmd.contains(MoveStepType.LAND)
+                    || cmd.contains(MoveStepType.VLAND);
+            if ((ce() != null)
+                    && landOrVland) {
+                Set<Coords> landingPath = ((IAero) ce()).getLandingCoords(cmd.contains(MoveStepType.VLAND),
+                        cmd.getFinalCoords(), cmd.getFinalFacing());
+                if (landingPath.stream().map(c -> game().getBoard().getHex(c)).filter(Objects::nonNull)
+                        .anyMatch(h -> h.containsTerrain(Terrains.ROUGH) || h.containsTerrain(Terrains.RUBBLE))) {
+                    ConfirmDialog nag = new ConfirmDialog(clientgui.frame,
+                            Messages.getString("MovementDisplay.areYouSure"),
+                            Messages.getString("MovementDisplay.ConfirmLandingGearDamage"),
+                            false);
+                    nag.setVisible(true);
+                    if (!nag.getAnswer()) {
                         return true;
                     }
                 }
             }
         }
 
-        if (needNagForCrushingBuildings()
-                && cmd.willCrushBuildings()) {
-            ConfirmDialog nag = new ConfirmDialog(
-                    clientgui.frame,
-                    Messages.getString("MovementDisplay.areYouSure"),
-                    Messages.getString("MovementDisplay.ConfirmCrushingBuildings"),
-                    true);
-            nag.setVisible(true);
-            if (nag.getAnswer()) {
-                // do they want to be bothered again?
-                if (!nag.getShowAgain()) {
-                    GUIP.setNagForCrushingBuildings(false);
+        if (needNagForOther()) {
+            if ((ce() != null)
+                    && ce() instanceof Infantry) {
+                InfantryMount mount = ((Infantry) ce()).getMount();
+                if ((mount != null)
+                        && ce().getMovementMode().isSubmarine()
+                        && (ce().underwaterRounds >= mount.getUWEndurance())
+                        && cmd.isAllUnderwater(game())) {
+                    ConfirmDialog nag = new ConfirmDialog(clientgui.frame,
+                            Messages.getString("MovementDisplay.areYouSure"),
+                            Messages.getString("MovementDisplay.ConfirmMountSuffocation"),
+                            false);
+                    nag.setVisible(true);
+                    if (!nag.getAnswer()) {
+                        return true;
+                    }
                 }
-            } else {
-                return true;
             }
         }
 
-        // check to see if spheroids will drop an elevation
-        if (needNagForOther()
-                && ce() instanceof LandAirMech
-                && ce().isAssaultDropInProgress()
-                && cmd.getFinalConversionMode() == EntityMovementMode.AERODYNE) {
-            ConfirmDialog nag = new ConfirmDialog(clientgui.frame,
-                    Messages.getString("MovementDisplay.areYouSure"),
-                    Messages.getString("MovementDisplay.insufficientAltitudeForConversion") + check,
-                    false);
-            nag.setVisible(true);
-            if (!nag.getAnswer()) {
-                return true;
-            }
-        }
-
-        boolean airborneVTOLOrWIGEOrFinalElevation = ce().isAirborneVTOLorWIGE()
-                || (ce().getElevation() != cmd.getFinalElevation());
-        if (needNagForOther()
-                && (ce() instanceof Infantry)
-                && ((Infantry) ce()).hasMicrolite()
-                && airborneVTOLOrWIGEOrFinalElevation
-                && !cmd.contains(MoveStepType.FORWARDS)
-                && !cmd.contains(MoveStepType.FLEE)
-                && cmd.getFinalElevation() > 0
-                && ce().getGame().getBoard().getHex(cmd.getFinalCoords()).terrainLevel(Terrains.BLDG_ELEV) < cmd.getFinalElevation()
-                && ce().getGame().getBoard().getHex(cmd.getFinalCoords()).terrainLevel(Terrains.BRIDGE_ELEV) < cmd.getFinalElevation()) {
-            String title = Messages.getString("MovementDisplay.MicroliteMove.title");
-            String body = Messages.getString("MovementDisplay.MicroliteMove.message");
-            clientgui.doAlertDialog(title, body);
+        if (ce() == null) {
             return true;
-        }
-
-        if (needNagForWiGELanding()
-                && cmd.automaticWiGELanding(true)) {
-            ConfirmDialog nag = new ConfirmDialog(
-                    clientgui.frame,
-                    Messages.getString("MovementDisplay.areYouSure"),
-                    Messages.getString("MovementDisplay.ConfirmWiGELanding"),
-                    true);
-            nag.setVisible(true);
-            if (nag.getAnswer()) {
-                // do they want to be bothered again?
-                if (!nag.getShowAgain()) {
-                    GUIP.setNagForWiGELanding(false);
-                }
-            } else {
-                return true;
-            }
-        }
-
-        boolean landOrVland = cmd.contains(MoveStepType.LAND)
-                || cmd.contains(MoveStepType.VLAND);
-        if (needNagForOther()
-                && landOrVland) {
-            Set<Coords> landingPath = ((IAero) ce()).getLandingCoords(cmd.contains(MoveStepType.VLAND),
-                    cmd.getFinalCoords(), cmd.getFinalFacing());
-            if (landingPath.stream().map(c -> game().getBoard().getHex(c)).filter(Objects::nonNull)
-                    .anyMatch(h -> h.containsTerrain(Terrains.ROUGH) || h.containsTerrain(Terrains.RUBBLE))) {
-                ConfirmDialog nag = new ConfirmDialog(clientgui.frame,
-                        Messages.getString("MovementDisplay.areYouSure"),
-                        Messages.getString("MovementDisplay.ConfirmLandingGearDamage"),
-                        false);
-                nag.setVisible(true);
-                if (!nag.getAnswer()) {
-                    return true;
-                }
-            }
-        }
-
-        if (needNagForOther()
-                && ce() instanceof Infantry) {
-            InfantryMount mount = ((Infantry) ce()).getMount();
-            if ((mount != null)
-                    && ce().getMovementMode().isSubmarine()
-                    && (ce().underwaterRounds >= mount.getUWEndurance())
-                    && cmd.isAllUnderwater(game())) {
-                ConfirmDialog nag = new ConfirmDialog(clientgui.frame,
-                        Messages.getString("MovementDisplay.areYouSure"),
-                        Messages.getString("MovementDisplay.ConfirmMountSuffocation"),
-                        false);
-                nag.setVisible(true);
-                if (!nag.getAnswer()) {
-                    return true;
-                }
-            }
         }
 
         return false;

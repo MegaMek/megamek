@@ -332,18 +332,23 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
     }
 
     private boolean checkNags() {
-        if (needNagForNoAction()
-                && attacks.isEmpty()) {
-            // confirm this action
-            ConfirmDialog response = clientgui.doYesNoBotherDialog(
-                    Messages.getString("PhysicalDisplay.DontPhysicalAttackDialog.title"),
-                    Messages.getString("PhysicalDisplay.DontPhysicalAttackDialog.message"));
-            if (!response.getShowAgain()) {
-                GUIP.setNagForNoAction(false);
+        if (needNagForNoAction()) {
+            if (attacks.isEmpty()) {
+                // confirm this action
+                ConfirmDialog response = clientgui.doYesNoBotherDialog(
+                        Messages.getString("PhysicalDisplay.DontPhysicalAttackDialog.title"),
+                        Messages.getString("PhysicalDisplay.DontPhysicalAttackDialog.message"));
+                if (!response.getShowAgain()) {
+                    GUIP.setNagForNoAction(false);
+                }
+                if (!response.getAnswer()) {
+                    return true;
+                }
             }
-            if (!response.getAnswer()) {
-                return true;
-            }
+        }
+
+        if (ce() == null) {
+            return true;
         }
 
         return false;

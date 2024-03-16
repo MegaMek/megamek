@@ -1145,24 +1145,25 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
     }
 
     private boolean checkNags() {
-        if (needNagForNoAction()
-                && attacks.isEmpty()) {
-            // confirm this action
-            String title = Messages.getString("FiringDisplay.DontFireDialog.title");
-            String body = Messages.getString("FiringDisplay.DontFireDialog.message");
-            ConfirmDialog response = clientgui.doYesNoBotherDialog(title, body);
-            if (!response.getShowAgain()) {
-                GUIP.setNagForNoAction(false);
-            }
-            if (!response.getAnswer()) {
-                return true;
+        if (needNagForNoAction()) {
+            if (attacks.isEmpty()) {
+                // confirm this action
+                String title = Messages.getString("FiringDisplay.DontFireDialog.title");
+                String body = Messages.getString("FiringDisplay.DontFireDialog.message");
+                ConfirmDialog response = clientgui.doYesNoBotherDialog(title, body);
+                if (!response.getShowAgain()) {
+                    GUIP.setNagForNoAction(false);
+                }
+                if (!response.getAnswer()) {
+                    return true;
+                }
             }
         }
 
-        if (ce() != null) {
+        if (needNagForOverheat()) {
             // We need to nag for overheat on capital fighters
-            if (needNagForOverheat() &&
-                    ce().isCapitalFighter()) {
+            if ((ce() != null)
+                    && ce().isCapitalFighter()) {
                 int totalheat = 0;
                 for (EntityAction action : attacks) {
                     if (action instanceof WeaponAttackAction) {
@@ -1184,6 +1185,10 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
                     }
                 }
             }
+        }
+
+        if (ce() == null) {
+            return true;
         }
 
         return false;

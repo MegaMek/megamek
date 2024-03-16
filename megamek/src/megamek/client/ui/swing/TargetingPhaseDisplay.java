@@ -767,18 +767,23 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements
     }
 
     private boolean checkNags() {
-        if (needNagForNoAction()
-                && attacks.isEmpty()) {
-            // confirm this action
-            String title = Messages.getString("TargetingPhaseDisplay.DontFireDialog.title");
-            String body = Messages.getString("TargetingPhaseDisplay.DontFireDialog.message");
-            ConfirmDialog response = clientgui.doYesNoBotherDialog(title, body);
-            if (!response.getShowAgain()) {
-                GUIP.setNagForNoAction(false);
+        if (needNagForNoAction()) {
+            if (attacks.isEmpty()) {
+                // confirm this action
+                String title = Messages.getString("TargetingPhaseDisplay.DontFireDialog.title");
+                String body = Messages.getString("TargetingPhaseDisplay.DontFireDialog.message");
+                ConfirmDialog response = clientgui.doYesNoBotherDialog(title, body);
+                if (!response.getShowAgain()) {
+                    GUIP.setNagForNoAction(false);
+                }
+                if (!response.getAnswer()) {
+                    return true;
+                }
             }
-            if (!response.getAnswer()) {
-                return true;
-            }
+        }
+
+        if (ce() == null) {
+            return true;
         }
 
         return false;

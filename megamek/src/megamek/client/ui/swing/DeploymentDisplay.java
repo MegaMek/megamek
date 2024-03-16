@@ -298,15 +298,15 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
 
     private boolean checkNags() {
         final Game game = clientgui.getClient().getGame();
-        final Entity en = ce();
 
-        if ((en instanceof Dropship)
-                && !en.isAirborne()) {
+        if ((ce() != null)
+                && (ce() instanceof Dropship)
+                && !ce().isAirborne()) {
             ArrayList<Coords> crushedBuildingLocs = new ArrayList<>();
             ArrayList<Coords> secondaryPositions = new ArrayList<>();
-            secondaryPositions.add(en.getPosition());
+            secondaryPositions.add(ce().getPosition());
             for (int dir = 0; dir < 6; dir++) {
-                secondaryPositions.add(en.getPosition().translated(dir));
+                secondaryPositions.add(ce().getPosition().translated(dir));
             }
             for (Coords pos : secondaryPositions) {
                 Building bld = game.getBoard().getBuildingAt(pos);
@@ -324,18 +324,24 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         }
 
         // Check nag for doomed planetary conditions
-        String reason = game.getPlanetaryConditions().whyDoomed(en, game);
-        if ((reason != null)
-                && GUIP.getNagForDoomed()) {
-            String title = Messages.getString("DeploymentDisplay.ConfirmDoomed.title");
-            String body = Messages.getString("DeploymentDisplay.ConfirmDoomed.message", new Object[] {reason});
-            ConfirmDialog response = clientgui.doYesNoBotherDialog(title, body);
-            if (!response.getShowAgain()) {
-                GUIP.setNagForDoomed(false);
+        if (ce() != null) {
+            String reason = game.getPlanetaryConditions().whyDoomed(ce(), game);
+            if ((reason != null)
+                    && GUIP.getNagForDoomed()) {
+                String title = Messages.getString("DeploymentDisplay.ConfirmDoomed.title");
+                String body = Messages.getString("DeploymentDisplay.ConfirmDoomed.message", new Object[]{reason});
+                ConfirmDialog response = clientgui.doYesNoBotherDialog(title, body);
+                if (!response.getShowAgain()) {
+                    GUIP.setNagForDoomed(false);
+                }
+                if (!response.getAnswer()) {
+                    return true;
+                }
             }
-            if (!response.getAnswer()) {
-                return true;
-            }
+        }
+
+        if (ce() == null) {
+            return true;
         }
 
         return false;

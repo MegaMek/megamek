@@ -559,44 +559,50 @@ public class PointblankShotDisplay extends FiringDisplay implements ItemListener
     }
 
     private boolean checkNags() {
-        if (needNagForNoAction()
-                && attacks.isEmpty()) {
-            // confirm this action
-            String title = Messages.getString("FiringDisplay.DontFireDialog.title");
-            String body = Messages.getString("FiringDisplay.DontFireDialog.message");
-            ConfirmDialog response = clientgui.doYesNoBotherDialog(title, body);
-            if (!response.getShowAgain()) {
-                GUIP.setNagForNoAction(false);
-            }
-            if (!response.getAnswer()) {
-                return true;
-            }
-        }
-
-        // We need to nag for overheat on capital fighters
-        if (needNagForOverheat()
-                && (ce() != null)
-                && ce().isCapitalFighter()) {
-            int totalheat = 0;
-            for (EntityAction action : attacks) {
-                if (action instanceof WeaponAttackAction) {
-                    Mounted weapon = ce().getEquipment(((WeaponAttackAction) action).getWeaponId());
-                    totalheat += weapon.getCurrentHeat();
-                }
-            }
-
-            if (totalheat > ce().getHeatCapacity()) {
+        if (needNagForNoAction()) {
+            if (attacks.isEmpty()) {
                 // confirm this action
-                String title = Messages.getString("FiringDisplay.OverheatNag.title");
-                String body = Messages.getString("FiringDisplay.OverheatNag.message");
+                String title = Messages.getString("FiringDisplay.DontFireDialog.title");
+                String body = Messages.getString("FiringDisplay.DontFireDialog.message");
                 ConfirmDialog response = clientgui.doYesNoBotherDialog(title, body);
                 if (!response.getShowAgain()) {
-                    GUIP.setNagForOverheat(false);
+                    GUIP.setNagForNoAction(false);
                 }
                 if (!response.getAnswer()) {
                     return true;
                 }
             }
+        }
+
+        // We need to nag for overheat on capital fighters
+        if (needNagForOverheat()) {
+            if ((ce() != null)
+                    && ce().isCapitalFighter()) {
+                int totalheat = 0;
+                for (EntityAction action : attacks) {
+                    if (action instanceof WeaponAttackAction) {
+                        Mounted weapon = ce().getEquipment(((WeaponAttackAction) action).getWeaponId());
+                        totalheat += weapon.getCurrentHeat();
+                    }
+                }
+
+                if (totalheat > ce().getHeatCapacity()) {
+                    // confirm this action
+                    String title = Messages.getString("FiringDisplay.OverheatNag.title");
+                    String body = Messages.getString("FiringDisplay.OverheatNag.message");
+                    ConfirmDialog response = clientgui.doYesNoBotherDialog(title, body);
+                    if (!response.getShowAgain()) {
+                        GUIP.setNagForOverheat(false);
+                    }
+                    if (!response.getAnswer()) {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        if (ce() == null) {
+            return true;
         }
 
         return false;

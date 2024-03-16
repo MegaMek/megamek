@@ -550,9 +550,12 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
 
     /** Asks for a name and adds the current Behavior as a new Behavior Preset. */
     private void saveAsNewPreset() {
+        getFrame().setAlwaysOnTop(true);
         while (true) {
+
             String name = JOptionPane.showInputDialog(getFrame(), Messages.getString("BotConfigDialog.saveNewPrompt"));
             if (name == null || name.isBlank()) {
+                getFrame().setAlwaysOnTop(false);
                 return;
             }
             if (!behaviorSettingsFactory.getBehaviorNameList().contains(name)) {
@@ -560,6 +563,7 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
                 writePreset(name);
                 updatePresets();
                 presetsList.setSelectedValue(name, true);
+                getFrame().setAlwaysOnTop(false);
                 return;
             }
             // Incorrect name: notify the player and ask again

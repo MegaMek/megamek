@@ -777,6 +777,12 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             boardPreviewW.add(bpPanel);
             boardPreviewW.setSize(clientgui.frame.getWidth() / 2, clientgui.frame.getHeight() / 2);
 
+            String closeAction = "closeAction";
+            final KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
+            boardPreviewW.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escape, closeAction);
+            boardPreviewW.getRootPane().getInputMap(JComponent.WHEN_FOCUSED).put(escape, closeAction);
+            boardPreviewW.getRootPane().getActionMap().put(closeAction, new CloseAction(boardPreviewW));
+
             Ruler.color1 = GUIP.getRulerColor1();
             Ruler.color2 = GUIP.getRulerColor2();
             Ruler ruler = new Ruler(clientgui.frame, client(), previewBV, boardPreviewGame);

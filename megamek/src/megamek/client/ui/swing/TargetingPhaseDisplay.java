@@ -766,13 +766,9 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements
         clientgui.getUnitDisplay().wPan.selectWeapon(wn);
     }
 
-    /**
-     * Called when the current entity is done firing. Send out our attack queue
-     * to the server.
-     */
-    @Override
-    public void ready() {
-        if (attacks.isEmpty() && needNagForNoAction()) {
+    private boolean checkNags() {
+        if (needNagForNoAction()
+                && attacks.isEmpty()) {
             // confirm this action
             String title = Messages.getString("TargetingPhaseDisplay.DontFireDialog.title");
             String body = Messages.getString("TargetingPhaseDisplay.DontFireDialog.message");
@@ -780,10 +776,22 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements
             if (!response.getShowAgain()) {
                 GUIP.setNagForNoAction(false);
             }
-
             if (!response.getAnswer()) {
-                return;
+                return true;
             }
+        }
+
+        return false;
+    }
+
+    /**
+     * Called when the current entity is done firing. Send out our attack queue
+     * to the server.
+     */
+    @Override
+    public void ready() {
+        if (checkNags()) {
+          return;
         }
 
         // stop further input (hopefully)
@@ -796,7 +804,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements
         clientgui.getClient().sendAttackData(cen, attacks.toVector());
 
         // clear queue
-       removeAllAttacks();
+        removeAllAttacks();
 
         if ((ce() != null) && ce().isWeapOrderChanged()) {
             clientgui.getClient().sendEntityWeaponOrderUpdate(ce());

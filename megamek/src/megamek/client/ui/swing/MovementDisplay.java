@@ -1479,16 +1479,10 @@ public class MovementDisplay extends ActionPhaseDisplay {
         return removed;
     }
 
-    /**
-     * Sends a data packet indicating the chosen movement.
-     */
-    @Override
-    public synchronized void ready() {
-        if (ce() == null) {
-            return;
-        }
-
-        if ((ce().canUnjamRAC()) && (GUIP.getNagForNoUnJamRAC()) && (!isUnJammingRAC)) {
+    private boolean checkNags() {
+        if (needNagForNoUnJamRAC()
+                && ce().canUnjamRAC()
+                && !isUnJammingRAC) {
             // confirm this action
             String title = Messages.getString("MovementDisplay.ConfirmUnJamRACDlg.title");
             String body = Messages.getString("MovementDisplay.ConfirmUnJamRACDlg.message");
@@ -1496,14 +1490,14 @@ public class MovementDisplay extends ActionPhaseDisplay {
             if (!response.getShowAgain()) {
                 GUIP.setNagForNoUnJamRAC(false);
             }
-
             if (!response.getAnswer()) {
-                return;
+                return true;
             }
         }
 
-        cmd.clipToPossible();
-        if ((cmd.length() == 0) && (!ce().isAirborne()) && needNagForNoAction()) {
+        if (needNagForNoAction()
+                && (cmd.length() == 0)
+                && !ce().isAirborne()) {
             // Hmm... no movement steps, confirm this action
             String title = Messages.getString("MovementDisplay.ConfirmNoMoveDlg.title");
             String body = Messages.getString("MovementDisplay.ConfirmNoMoveDlg.message");
@@ -1512,11 +1506,13 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 GUIP.setNagForNoAction(false);
             }
             if (!response.getAnswer()) {
-                return;
+                return true;
             }
         }
 
-        if (GUIP.getNagForMASC() && cmd.hasActiveMASC() && !(ce() instanceof VTOL)) {
+        if (needNagForMASC()
+                && cmd.hasActiveMASC()
+                && !(ce() instanceof VTOL)) {
             // pop up are you sure dialog
             ConfirmDialog nag = new ConfirmDialog(clientgui.frame,
                     Messages.getString("MovementDisplay.areYouSure"),
@@ -1529,11 +1525,13 @@ public class MovementDisplay extends ActionPhaseDisplay {
                     GUIP.setNagForMASC(false);
                 }
             } else {
-                return;
+                return true;
             }
         }
 
-        if (GUIP.getNagForMASC() && !(ce() instanceof VTOL) && cmd.hasActiveSupercharger()) {
+        if (needNagForMASC()
+                && !(ce() instanceof VTOL)
+                && cmd.hasActiveSupercharger()) {
             ConfirmDialog nag = new ConfirmDialog(clientgui.frame,
                     Messages.getString("MovementDisplay.areYouSure"),
                     Messages.getString("MovementDisplay.ConfirmSuperchargerRoll", ce().getSuperchargerTarget()),
@@ -1545,18 +1543,22 @@ public class MovementDisplay extends ActionPhaseDisplay {
                     GUIP.setNagForMASC(false);
                 }
             } else {
-                return;
+                return true;
             }
         }
 
-        if ((cmd.getLastStepMovementType() == EntityMovementType.MOVE_SPRINT
-                || cmd.getLastStepMovementType() == EntityMovementType.MOVE_VTOL_SPRINT)
-                && GUIP.getNagForSprint()
-                // no need to nag for vehicles using overdrive if they already get a PSR nag
-                && !((cmd.getEntity() instanceof Tank
-                || (cmd.getEntity() instanceof QuadVee
-                && cmd.getEntity().getConversionMode() == QuadVee.CONV_MODE_VEHICLE)
-                && GUIP.getNagForPSR()))) {
+        boolean sprintOrVtolSprint = cmd.getLastStepMovementType() == EntityMovementType.MOVE_SPRINT
+                || cmd.getLastStepMovementType() == EntityMovementType.MOVE_VTOL_SPRINT;
+        boolean quadVeeVehicle = cmd.getEntity() instanceof QuadVee
+                && cmd.getEntity().getConversionMode() == QuadVee.CONV_MODE_VEHICLE;
+        boolean tankOrQuadVee = cmd.getEntity() instanceof Tank
+                || quadVeeVehicle;
+        // no need to nag for vehicles using overdrive if they already get a PSR nag
+        boolean psrNag = tankOrQuadVee
+                && needNagForPSR();
+        if (needNagForSprint()
+                && sprintOrVtolSprint
+                && !psrNag) {
             ConfirmDialog nag = new ConfirmDialog(clientgui.frame,
                     Messages.getString("MovementDisplay.areYouSure"),
                     Messages.getString("MovementDisplay.ConfirmSprint"), true);
@@ -1567,11 +1569,12 @@ public class MovementDisplay extends ActionPhaseDisplay {
                     GUIP.setNagForSprint(false);
                 }
             } else {
-                return;
+                return true;
             }
         }
         String check = SharedUtility.doPSRCheck(cmd);
-        if (!check.isBlank() && GUIP.getNagForPSR()) {
+        if (needNagForPSR()
+                && !check.isBlank()) {
             ConfirmDialog nag = new ConfirmDialog(clientgui.frame,
                     Messages.getString("MovementDisplay.areYouSure"),
                     Messages.getString("MovementDisplay.ConfirmPilotingRoll") +
@@ -1583,12 +1586,13 @@ public class MovementDisplay extends ActionPhaseDisplay {
                     GUIP.setNagForPSR(false);
                 }
             } else {
-                return;
+                return true;
             }
         }
 
         // Should we nag about taking fall damage with mechanical jump boosters?
-        if (cmd.shouldMechanicalJumpCauseFallDamage() && GUIP.getNagForMechanicalJumpFallDamage()) {
+        if (needNagForMechanicalJumpFallDamage()
+                && cmd.shouldMechanicalJumpCauseFallDamage()) {
             ConfirmDialog nag = new ConfirmDialog(clientgui.frame,
                     Messages.getString("MovementDisplay.areYouSure"),
                     Messages.getString("MovementDisplay.ConfirmMechanicalJumpFallDamage",
@@ -1601,13 +1605,14 @@ public class MovementDisplay extends ActionPhaseDisplay {
                     GUIP.setNagForMechanicalJumpFallDamage(false);
                 }
             } else {
-                return;
+                return true;
             }
         }
 
         // check for G-forces
         check = SharedUtility.doThrustCheck(cmd, clientgui.getClient());
-        if (!check.isBlank() && GUIP.getNagForPSR()) {
+        if (needNagForPSR()
+                && !check.isBlank()) {
             ConfirmDialog nag = new ConfirmDialog(clientgui.frame,
                     Messages.getString("MovementDisplay.areYouSure"),
                     Messages.getString("MovementDisplay.ConfirmPilotingRoll") + check,
@@ -1619,16 +1624,19 @@ public class MovementDisplay extends ActionPhaseDisplay {
                     GUIP.setNagForPSR(false);
                 }
             } else {
-                return;
+                return true;
             }
         }
 
         // check for unsafe takeoffs
-        if (cmd.contains(MoveStepType.VTAKEOFF)
-                || cmd.contains(MoveStepType.TAKEOFF)) {
+        boolean takeoff = cmd.contains(MoveStepType.VTAKEOFF)
+                || cmd.contains(MoveStepType.TAKEOFF);
+        if (needNagForPSR()
+                && takeoff) {
             boolean unsecure = false;
             for (Entity loaded : ce().getLoadedUnits()) {
-                if (loaded.wasLoadedThisTurn() && !(loaded instanceof Infantry)) {
+                if (loaded.wasLoadedThisTurn()
+                        && !(loaded instanceof Infantry)) {
                     unsecure = true;
                     break;
                 }
@@ -1644,14 +1652,15 @@ public class MovementDisplay extends ActionPhaseDisplay {
                         GUIP.setNagForPSR(false);
                     }
                 } else {
-                    return;
+                    return true;
                 }
             }
         }
 
         // check to see if spheroids will drop elevation
         // they will do so if they're not hovering, landing, or changing altitude voluntarily.
-        if (Compute.useSpheroidAtmosphere(clientgui.getClient().getGame(), ce())
+        if (needNagForPSR()
+                && Compute.useSpheroidAtmosphere(clientgui.getClient().getGame(), ce())
                 && !cmd.contains(MoveStepType.HOVER)
                 && !cmd.contains(MoveStepType.VLAND)
                 && !cmd.contains(MoveStepType.UP)
@@ -1668,53 +1677,59 @@ public class MovementDisplay extends ActionPhaseDisplay {
                     GUIP.setNagForPSR(false);
                 }
             } else {
-                return;
+                return true;
             }
         }
 
-        if (ce().isAirborne() || ce().isSpaceborne()) {
+        boolean airborneOrSpace = ce().isAirborne()
+                || ce().isSpaceborne();
+        if (needNagForOther()
+                && airborneOrSpace) {
             if (!clientgui.getClient().getGame().useVectorMove()) {
-                if (ce().isAero() && !((IAero) ce()).isOutControlTotal()) {
+                if (ce().isAero()
+                        && !((IAero) ce()).isOutControlTotal()) {
                     // check for underuse of velocity
                     boolean unusedVelocity = false;
                     if (null != cmd.getLastStep()) {
                         unusedVelocity = cmd.getLastStep().getVelocityLeft() > 0;
                     } else {
-                        unusedVelocity = (((IAero) ce()).getCurrentVelocity() > 0) &&
-                                (ce().delta_distance == 0);
+                        unusedVelocity = (((IAero) ce()).getCurrentVelocity() > 0)
+                                && (ce().delta_distance == 0);
                     }
                     boolean flyoff = false;
+                    boolean offOrReturn = cmd.contains(MoveStepType.OFF)
+                            || cmd.contains(MoveStepType.RETURN);
                     if ((null != cmd)
-                            && (cmd.contains(MoveStepType.OFF) || cmd
-                            .contains(MoveStepType.RETURN))) {
+                            && offOrReturn) {
                         flyoff = true;
                     }
                     boolean landing = false;
-                    if ((null != cmd) && cmd.contains(MoveStepType.LAND)) {
+                    if ((null != cmd)
+                            && cmd.contains(MoveStepType.LAND)) {
                         landing = true;
                     }
                     boolean ejecting = false;
-                    if ((null != cmd) && cmd.contains(MoveStepType.EJECT)) {
+                    if ((null != cmd)
+                            && cmd.contains(MoveStepType.EJECT)) {
                         ejecting = true;
                     }
-                    if (unusedVelocity && !flyoff && !landing && !ejecting) {
+                    if (unusedVelocity
+                            && !flyoff
+                            && !landing
+                            && !ejecting) {
                         String title = Messages
                                 .getString("MovementDisplay.VelocityLeft.title");
                         String body = Messages
                                 .getString("MovementDisplay.VelocityLeft.message");
                         clientgui.doAlertDialog(title, body);
-                        return;
+                        return true;
                     }
                 }
             }
-            // depending on the rules and location (i.e. space v. atmosphere),
-            // Aeros might need to have additional move steps tacked on
-            // This must be done after all prompts, otherwise a user who cancels
-            // will still have steps added to the movepath.
-            cmd = SharedUtility.moveAero(cmd, clientgui.getClient());
         }
 
-        if (cmd.willCrushBuildings() && GUIP.getNagForCrushingBuildings()) {
+        if (needNagForCrushingBuildings()
+                && cmd.willCrushBuildings()) {
             ConfirmDialog nag = new ConfirmDialog(
                     clientgui.frame,
                     Messages.getString("MovementDisplay.areYouSure"),
@@ -1727,12 +1742,14 @@ public class MovementDisplay extends ActionPhaseDisplay {
                     GUIP.setNagForCrushingBuildings(false);
                 }
             } else {
-                return;
+                return true;
             }
         }
 
         // check to see if spheroids will drop an elevation
-        if (ce() instanceof LandAirMech && ce().isAssaultDropInProgress()
+        if (needNagForOther()
+                && ce() instanceof LandAirMech
+                && ce().isAssaultDropInProgress()
                 && cmd.getFinalConversionMode() == EntityMovementMode.AERODYNE) {
             ConfirmDialog nag = new ConfirmDialog(clientgui.frame,
                     Messages.getString("MovementDisplay.areYouSure"),
@@ -1740,25 +1757,29 @@ public class MovementDisplay extends ActionPhaseDisplay {
                     false);
             nag.setVisible(true);
             if (!nag.getAnswer()) {
-                return;
+                return true;
             }
         }
 
-        if ((ce() instanceof Infantry) && ((Infantry) ce()).hasMicrolite()
-                && (ce().isAirborneVTOLorWIGE() || (ce().getElevation() != cmd.getFinalElevation()))
-                && !cmd.contains(MoveStepType.FORWARDS) && !cmd.contains(MoveStepType.FLEE)
+        boolean airborneVTOLOrWIGEOrFinalElevation = ce().isAirborneVTOLorWIGE()
+                || (ce().getElevation() != cmd.getFinalElevation());
+        if (needNagForOther()
+                && (ce() instanceof Infantry)
+                && ((Infantry) ce()).hasMicrolite()
+                && airborneVTOLOrWIGEOrFinalElevation
+                && !cmd.contains(MoveStepType.FORWARDS)
+                && !cmd.contains(MoveStepType.FLEE)
                 && cmd.getFinalElevation() > 0
-                && ce().getGame().getBoard().getHex(cmd.getFinalCoords())
-                .terrainLevel(Terrains.BLDG_ELEV) < cmd.getFinalElevation()
-                && ce().getGame().getBoard().getHex(cmd.getFinalCoords())
-                .terrainLevel(Terrains.BRIDGE_ELEV) < cmd.getFinalElevation()) {
+                && ce().getGame().getBoard().getHex(cmd.getFinalCoords()).terrainLevel(Terrains.BLDG_ELEV) < cmd.getFinalElevation()
+                && ce().getGame().getBoard().getHex(cmd.getFinalCoords()).terrainLevel(Terrains.BRIDGE_ELEV) < cmd.getFinalElevation()) {
             String title = Messages.getString("MovementDisplay.MicroliteMove.title");
             String body = Messages.getString("MovementDisplay.MicroliteMove.message");
             clientgui.doAlertDialog(title, body);
-            return;
+            return true;
         }
 
-        if (cmd.automaticWiGELanding(true) && GUIP.getNagForWiGELanding()) {
+        if (needNagForWiGELanding()
+                && cmd.automaticWiGELanding(true)) {
             ConfirmDialog nag = new ConfirmDialog(
                     clientgui.frame,
                     Messages.getString("MovementDisplay.areYouSure"),
@@ -1771,11 +1792,14 @@ public class MovementDisplay extends ActionPhaseDisplay {
                     GUIP.setNagForWiGELanding(false);
                 }
             } else {
-                return;
+                return true;
             }
         }
 
-        if (cmd.contains(MoveStepType.LAND) || cmd.contains(MoveStepType.VLAND)) {
+        boolean landOrVland = cmd.contains(MoveStepType.LAND)
+                || cmd.contains(MoveStepType.VLAND);
+        if (needNagForOther()
+                && landOrVland) {
             Set<Coords> landingPath = ((IAero) ce()).getLandingCoords(cmd.contains(MoveStepType.VLAND),
                     cmd.getFinalCoords(), cmd.getFinalFacing());
             if (landingPath.stream().map(c -> game().getBoard().getHex(c)).filter(Objects::nonNull)
@@ -1786,19 +1810,17 @@ public class MovementDisplay extends ActionPhaseDisplay {
                         false);
                 nag.setVisible(true);
                 if (!nag.getAnswer()) {
-                    return;
+                    return true;
                 }
             }
         }
 
-        if (isUsingChaff) {
-            addStepToMovePath(MoveStepType.CHAFF);
-            isUsingChaff = false;
-        }
-
-        if (ce() instanceof Infantry) {
+        if (needNagForOther()
+                && ce() instanceof Infantry) {
             InfantryMount mount = ((Infantry) ce()).getMount();
-            if ((mount != null) && ce().getMovementMode().isSubmarine() && (ce().underwaterRounds >= mount.getUWEndurance())
+            if ((mount != null)
+                    && ce().getMovementMode().isSubmarine()
+                    && (ce().underwaterRounds >= mount.getUWEndurance())
                     && cmd.isAllUnderwater(game())) {
                 ConfirmDialog nag = new ConfirmDialog(clientgui.frame,
                         Messages.getString("MovementDisplay.areYouSure"),
@@ -1806,12 +1828,45 @@ public class MovementDisplay extends ActionPhaseDisplay {
                         false);
                 nag.setVisible(true);
                 if (!nag.getAnswer()) {
-                    return;
+                    return true;
                 }
             }
         }
 
+        return false;
+    }
+
+    /**
+     * Sends a data packet indicating the chosen movement.
+     */
+    @Override
+    public synchronized void ready() {
+        if (ce() == null) {
+            return;
+        }
+
+        cmd.clipToPossible();
+
+        if (checkNags()) {
+            return;
+        }
+
         disableButtons();
+
+        if (ce().isAirborne()
+                || ce().isSpaceborne()) {
+            // depending on the rules and location (i.e. space v. atmosphere),
+            // Aeros might need to have additional move steps tacked on
+            // This must be done after all prompts, otherwise a user who cancels
+            // will still have steps added to the movepath.
+            cmd = SharedUtility.moveAero(cmd, clientgui.getClient());
+        }
+
+        if (isUsingChaff) {
+            addStepToMovePath(MoveStepType.CHAFF);
+            isUsingChaff = false;
+        }
+
         clientgui.getBoardView().clearMovementData();
         clientgui.getBoardView().clearMovementEnvelope();
         if (ce().hasUMU()) {
@@ -3779,7 +3834,8 @@ public class MovementDisplay extends ActionPhaseDisplay {
                     continue;
                 }
                 int numChoices = choiceDialog.getChoices().length;
-                if ((numChoices > currentBay.getSafeLaunchRate()) && GUIP.getNagForLaunchDoors()) {
+                if (needNagForLaunchDoors()
+                        && (numChoices > currentBay.getSafeLaunchRate())) {
                     int aerosPerDoor = numChoices / doors;
                     int remainder = numChoices % doors;
                     // Determine PSRs

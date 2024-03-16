@@ -145,6 +145,11 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
     private final JCheckBox nagForWiGELanding = new JCheckBox(Messages.getString("CommonSettingsDialog.nagForWiGELanding"));
     private final JCheckBox nagForNoAction = new JCheckBox(Messages.getString("CommonSettingsDialog.nagForNoAction"));
     private final JCheckBox nagForNoUnJamRAC = new JCheckBox(Messages.getString("CommonSettingsDialog.nagForUnJamRAC"));
+    private final JCheckBox nagForOverheat = new JCheckBox(Messages.getString("CommonSettingsDialog.nagForOverheat"));
+    private final JCheckBox nagForMechanicalJumpFallDamage = new JCheckBox(Messages.getString("CommonSettingsDialog.nagForMechanicalJumpFallDamage"));
+    private final JCheckBox nagForCrushingBuildings = new JCheckBox(Messages.getString("CommonSettingsDialog.nagForCrushingBuildings"));
+    private final JCheckBox nagForLaunchDoors = new JCheckBox(Messages.getString("CommonSettingsDialog.nagForLaunchDoors"));
+    private final JCheckBox nagForSprint = new JCheckBox(Messages.getString("CommonSettingsDialog.nagForSprint"));
     private final JCheckBox animateMove = new JCheckBox(Messages.getString("CommonSettingsDialog.animateMove"));
     private final JCheckBox showWrecks = new JCheckBox(Messages.getString("CommonSettingsDialog.showWrecks"));
     private final JCheckBox chkHighQualityGraphics = new JCheckBox(Messages.getString("CommonSettingsDialog.highQualityGraphics"));
@@ -569,6 +574,14 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         comps.add(checkboxEntry(nagForWiGELanding, null));
         comps.add(checkboxEntry(nagForNoAction, null));
         comps.add(checkboxEntry(nagForNoUnJamRAC, null));
+        comps.add(checkboxEntry(nagForOverheat, null));
+        comps.add(checkboxEntry(nagForMechanicalJumpFallDamage, null));
+        comps.add(checkboxEntry(nagForCrushingBuildings, null));
+        comps.add(checkboxEntry(nagForLaunchDoors, null));
+        comps.add(checkboxEntry(nagForSprint, null));
+
+        addLineSpacer(comps);
+
         comps.add(checkboxEntry(getFocus, null));
         comps.add(checkboxEntry(autoEndFiring, null));
         comps.add(checkboxEntry(autoDeclareSearchlight, null));
@@ -1674,6 +1687,11 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
             nagForWiGELanding.setSelected(GUIP.getNagForWiGELanding());
             nagForNoAction.setSelected(GUIP.getNagForNoAction());
             nagForNoUnJamRAC.setSelected(GUIP.getNagForNoUnJamRAC());
+            nagForOverheat.setSelected(GUIP.getNagForOverheat());
+            nagForMechanicalJumpFallDamage.setSelected(GUIP.getNagForMechanicalJumpFallDamage());
+            nagForCrushingBuildings.setSelected(GUIP.getNagForCrushingBuildings());
+            nagForLaunchDoors.setSelected(GUIP.getNagForLaunchDoors());
+            nagForSprint.setSelected(GUIP.getNagForSprint());
             animateMove.setSelected(GUIP.getShowMoveStep());
             showWrecks.setSelected(GUIP.getShowWrecks());
             tooltipDelay.setText(Integer.toString(GUIP.getTooltipDelay()));
@@ -2051,6 +2069,11 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         GUIP.setNagForWiGELanding(nagForWiGELanding.isSelected());
         GUIP.setNagForNoAction(nagForNoAction.isSelected());
         GUIP.setNagForNoUnJamRAC(nagForNoUnJamRAC.isSelected());
+        GUIP.setNagForOverheat(nagForOverheat.isSelected());
+        GUIP.setNagForMechanicalJumpFallDamage(nagForMechanicalJumpFallDamage.isSelected());
+        GUIP.setNagForCrushingBuildings(nagForCrushingBuildings.isSelected());
+        GUIP.setNagForLaunchDoors(nagForLaunchDoors.isSelected());
+        GUIP.setNagForSprint(nagForSprint.isSelected());
         GUIP.setShowMoveStep(animateMove.isSelected());
         GUIP.setShowWrecks(showWrecks.isSelected());
         GUIP.setShowWpsinTT(showWpsinTT.isSelected());

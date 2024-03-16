@@ -296,13 +296,12 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         }
     }
 
-    /** Sends a deployment to the server. */
-    @Override
-    public void ready() {
+    private boolean checkNags() {
         final Game game = clientgui.getClient().getGame();
         final Entity en = ce();
 
-        if ((en instanceof Dropship) && !en.isAirborne()) {
+        if ((en instanceof Dropship)
+                && !en.isAirborne()) {
             ArrayList<Coords> crushedBuildingLocs = new ArrayList<>();
             ArrayList<Coords> secondaryPositions = new ArrayList<>();
             secondaryPositions.add(en.getPosition());
@@ -317,16 +316,17 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             }
             if (!crushedBuildingLocs.isEmpty()) {
                 JOptionPane.showMessageDialog(clientgui,
-                                Messages.getString("DeploymentDisplay.dropshipBuildingDeploy"),
-                                Messages.getString("DeploymentDisplay.alertDialog.title"),
-                                JOptionPane.ERROR_MESSAGE);
-                return;
+                        Messages.getString("DeploymentDisplay.dropshipBuildingDeploy"),
+                        Messages.getString("DeploymentDisplay.alertDialog.title"),
+                        JOptionPane.ERROR_MESSAGE);
+                return true;
             }
         }
 
         // Check nag for doomed planetary conditions
         String reason = game.getPlanetaryConditions().whyDoomed(en, game);
-        if ((reason != null) && GUIP.getNagForDoomed()) {
+        if ((reason != null)
+                && GUIP.getNagForDoomed()) {
             String title = Messages.getString("DeploymentDisplay.ConfirmDoomed.title");
             String body = Messages.getString("DeploymentDisplay.ConfirmDoomed.message", new Object[] {reason});
             ConfirmDialog response = clientgui.doYesNoBotherDialog(title, body);
@@ -334,8 +334,21 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                 GUIP.setNagForDoomed(false);
             }
             if (!response.getAnswer()) {
-                return;
+                return true;
             }
+        }
+
+        return false;
+    }
+
+    /** Sends a deployment to the server. */
+    @Override
+    public void ready() {
+        final Game game = clientgui.getClient().getGame();
+        final Entity en = ce();
+
+        if (checkNags()) {
+            return;
         }
 
         disableButtons();

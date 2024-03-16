@@ -156,23 +156,23 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
     protected abstract void setButtonsTooltips();
 
     protected String createToolTip(String cmd, String keyPrefix, String hotKeyDesc) {
-        String h  = "";
+        String reuslt  = "";
         String ttKey = keyPrefix + cmd + ".tooltip";
-        String tt = hotKeyDesc;
-        if (!tt.isEmpty()) {
+        String toolTip = hotKeyDesc;
+        if (!toolTip.isEmpty()) {
             String title = Messages.getString(keyPrefix + cmd);
-            tt = guiScaledFontHTML(uiLightViolet()) + title + ": " + tt + "</FONT>";
-            tt += "<BR>";
+            toolTip = guiScaledFontHTML(uiLightViolet()) + title + ": " + toolTip + "</FONT>";
+            toolTip += "<BR>";
         }
         if (Messages.keyExists(ttKey)) {
             String msg_key = Messages.getString(ttKey);
-            tt += guiScaledFontHTML() + msg_key + "</FONT>";
+            toolTip += guiScaledFontHTML() + msg_key + "</FONT>";
         }
-        if (!tt.isEmpty()) {
-            String b = "<BODY>" + tt + "</BODY>";
-            h = "<HTML>" + b + "</HTML>";
+        if (!toolTip.isEmpty()) {
+            String b = "<BODY>" + toolTip + "</BODY>";
+            reuslt = "<HTML>" + b + "</HTML>";
         }
-        return h;
+        return reuslt;
     }
 
     /**
@@ -355,6 +355,10 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
         if (tt != null) {
             tt.setExtendTimer();
         }
+    }
+
+    public boolean isTimerExpired() {
+        return tt != null && tt.isTimerExpired();
     }
 
     public String getRemainingPlayerWithTurns() {

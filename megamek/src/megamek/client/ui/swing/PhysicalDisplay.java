@@ -331,12 +331,9 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
         setNextEnabled(false);
     }
 
-    /**
-     * Called when the current entity is done with physical attacks.
-     */
-    @Override
-    public void ready() {
-        if (attacks.isEmpty() && needNagForNoAction()) {
+    private boolean checkNags() {
+        if (needNagForNoAction()
+                && attacks.isEmpty()) {
             // confirm this action
             ConfirmDialog response = clientgui.doYesNoBotherDialog(
                     Messages.getString("PhysicalDisplay.DontPhysicalAttackDialog.title"),
@@ -345,10 +342,24 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
                 GUIP.setNagForNoAction(false);
             }
             if (!response.getAnswer()) {
-                return;
+                return true;
             }
         }
+
+        return false;
+    }
+
+    /**
+     * Called when the current entity is done with physical attacks.
+     */
+    @Override
+    public void ready() {
+        if (checkNags()) {
+            return;
+        }
+
         disableButtons();
+
         clientgui.getClient().sendAttackData(cen, attacks.toVector());
         removeAllAttacks();
         // close aimed shot display, if any

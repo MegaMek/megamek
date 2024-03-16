@@ -28,6 +28,8 @@ MEGAMEK VERSION HISTORY:
 + PR #5244: Fixing MML #1452 Allows you to pod mount null signature system. 
 + Fix #5228: The TAG phase will no longer inadvertently reveal hidden units
 + Fix #5206: Prevent an error with the map preview in the lobby
++ PR #5240: Fix MML 1365: Sponson Turrets not being included in TechLevel calcs 
++ PR #5218: add additional zoom levels and font adjustment levels 
 
 
 

@@ -555,7 +555,7 @@ http://bg.battletech.com/
 To submit a bug report, suggestion, or feature request please visit
 https://github.com/MegaMek/megamek/issues
 
-To discuss all things MegaMek, please visit our Discord https://discord.gg/u2vJ5U2QpD
+To discuss all things MegaMek, please visit our Discord https://discord.gg/megamek
 
 
 

@@ -771,13 +771,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements
                 // confirm this action
                 String title = Messages.getString("TargetingPhaseDisplay.DontFireDialog.title");
                 String body = Messages.getString("TargetingPhaseDisplay.DontFireDialog.message");
-                ConfirmDialog nag = clientgui.doYesNoBotherDialog(title, body);
-                if (nag.getAnswer()) {
-                    // do they want to be bothered again?
-                    if (!nag.getShowAgain()) {
-                        GUIP.setNagForNoAction(false);
-                    }
-                } else {
+                if (checkNagForNoAction(title, body)) {
                     return true;
                 }
             }

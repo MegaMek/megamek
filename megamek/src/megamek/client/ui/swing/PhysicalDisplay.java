@@ -334,13 +334,7 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
                 // confirm this action
                 String title = Messages.getString("PhysicalDisplay.DontPhysicalAttackDialog.title");
                 String body = Messages.getString("PhysicalDisplay.DontPhysicalAttackDialog.message");
-                ConfirmDialog nag = clientgui.doYesNoBotherDialog(title, body);
-                if (nag.getAnswer()) {
-                    // do they want to be bothered again?
-                    if (!nag.getShowAgain()) {
-                        GUIP.setNagForNoAction(false);
-                    }
-                } else {
+                if (checkNagForNoAction(title, body)) {
                     return true;
                 }
             }

@@ -175,6 +175,145 @@ public abstract class ActionPhaseDisplay extends StatusBarPhaseDisplay {
         return !isTimerExpired();
     }
 
+    protected boolean checkNagForNoAction(String title, String body) {
+        ConfirmDialog nag = clientgui.doYesNoBotherDialog(title, body);
+        if (nag.getAnswer()) {
+            // do they want to be bothered again?
+            if (!nag.getShowAgain()) {
+                GUIP.setNagForNoAction(false);
+            }
+        } else {
+            return true;
+        }
+
+        return false;
+    }
+
+    protected boolean checkNagForNoUnJamRAC(String title, String body) {
+        ConfirmDialog nag = clientgui.doYesNoBotherDialog(title, body);
+        if (nag.getAnswer()) {
+            // do they want to be bothered again?
+            if (!nag.getShowAgain()) {
+                GUIP.setNagForNoUnJamRAC(false);
+            }
+        } else {
+            return true;
+        }
+
+        return false;
+    }
+
+    protected boolean checkNagForMASC(String title, String body) {
+        ConfirmDialog nag = clientgui.doYesNoBotherDialog(title, body);
+        if (nag.getAnswer()) {
+            // do they want to be bothered again?
+            if (!nag.getShowAgain()) {
+                GUIP.setNagForMASC(false);
+            }
+        } else {
+            return true;
+        }
+
+        return false;
+    }
+
+    protected boolean checkNagForSprint(String title, String body) {
+        ConfirmDialog nag = clientgui.doYesNoBotherDialog(title, body);
+        if (nag.getAnswer()) {
+            // do they want to be bothered again?
+            if (!nag.getShowAgain()) {
+                GUIP.setNagForSprint(false);
+            }
+        } else {
+            return true;
+        }
+
+        return false;
+    }
+
+    protected boolean checkNagForPSR(String title, String body) {
+        ConfirmDialog nag = clientgui.doYesNoBotherDialog(title, body);
+        if (nag.getAnswer()) {
+            // do they want to be bothered again?
+            if (!nag.getShowAgain()) {
+                GUIP.setNagForPSR(false);
+            }
+        } else {
+            return true;
+        }
+
+        return false;
+    }
+
+    protected boolean checkNagForMechanicalJumpFallDamage(String title, String body) {
+        ConfirmDialog nag = clientgui.doYesNoBotherDialog(title, body);
+        if (nag.getAnswer()) {
+            // do they want to be bothered again?
+            if (!nag.getShowAgain()) {
+                GUIP.setNagForMechanicalJumpFallDamage(false);
+            }
+        } else {
+            return true;
+        }
+
+        return false;
+    }
+
+    protected boolean checkNagForCrushingBuildings(String title, String body) {
+        ConfirmDialog nag = clientgui.doYesNoBotherDialog(title, body);
+        if (nag.getAnswer()) {
+            // do they want to be bothered again?
+            if (!nag.getShowAgain()) {
+                GUIP.setNagForCrushingBuildings(false);
+            }
+        } else {
+            return true;
+        }
+
+        return false;
+    }
+
+    protected boolean checkNagForWiGELanding(String title, String body) {
+        ConfirmDialog nag = clientgui.doYesNoBotherDialog(title, body);
+        if (nag.getAnswer()) {
+            // do they want to be bothered again?
+            if (!nag.getShowAgain()) {
+                GUIP.setNagForWiGELanding(false);
+            }
+        } else {
+            return true;
+        }
+
+        return false;
+    }
+
+    protected boolean checkNagForOverheat(String title, String body) {
+        ConfirmDialog nag = clientgui.doYesNoBotherDialog(title, body);
+        if (nag.getAnswer()) {
+            // do they want to be bothered again?
+            if (!nag.getShowAgain()) {
+                GUIP.setNagForOverheat(false);
+            }
+        } else {
+            return true;
+        }
+
+        return false;
+    }
+
+    protected boolean checkNagLaunchDoors(String title, String body) {
+        ConfirmDialog nag = clientgui.doYesNoBotherDialog(title, body);
+        if (nag.getAnswer()) {
+            // do they want to be bothered again?
+            if (!nag.getShowAgain()) {
+                GUIP.setNagForLaunchDoors(false);
+            }
+        } else {
+            return true;
+        }
+
+        return false;
+    }
 
     /** set labels and enables on the done and skip buttons depending on the GUIP getNagForNoAction option
      *

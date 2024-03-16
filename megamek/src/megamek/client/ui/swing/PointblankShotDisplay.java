@@ -16,7 +16,6 @@ package megamek.client.ui.swing;
 
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
-import megamek.client.ui.swing.unitDisplay.WeaponPanel;
 import megamek.client.ui.swing.util.CommandAction;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.MegaMekController;
@@ -564,11 +563,13 @@ public class PointblankShotDisplay extends FiringDisplay implements ItemListener
                 // confirm this action
                 String title = Messages.getString("FiringDisplay.DontFireDialog.title");
                 String body = Messages.getString("FiringDisplay.DontFireDialog.message");
-                ConfirmDialog response = clientgui.doYesNoBotherDialog(title, body);
-                if (!response.getShowAgain()) {
-                    GUIP.setNagForNoAction(false);
-                }
-                if (!response.getAnswer()) {
+                ConfirmDialog nag = clientgui.doYesNoBotherDialog(title, body);
+                if (nag.getAnswer()) {
+                    // do they want to be bothered again?
+                    if (!nag.getShowAgain()) {
+                        GUIP.setNagForNoAction(false);
+                    }
+                } else {
                     return true;
                 }
             }
@@ -590,11 +591,13 @@ public class PointblankShotDisplay extends FiringDisplay implements ItemListener
                     // confirm this action
                     String title = Messages.getString("FiringDisplay.OverheatNag.title");
                     String body = Messages.getString("FiringDisplay.OverheatNag.message");
-                    ConfirmDialog response = clientgui.doYesNoBotherDialog(title, body);
-                    if (!response.getShowAgain()) {
-                        GUIP.setNagForOverheat(false);
-                    }
-                    if (!response.getAnswer()) {
+                    ConfirmDialog nag = clientgui.doYesNoBotherDialog(title, body);
+                    if (nag.getAnswer()) {
+                        // do they want to be bothered again?
+                        if (!nag.getShowAgain()) {
+                            GUIP.setNagForOverheat(false);
+                        }
+                    } else {
                         return true;
                     }
                 }

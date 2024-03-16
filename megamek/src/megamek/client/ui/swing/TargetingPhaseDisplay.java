@@ -28,7 +28,6 @@ import megamek.common.enums.GamePhase;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.options.OptionsConstants;
-import megamek.common.util.FiringSolution;
 import megamek.common.weapons.Weapon;
 import megamek.common.weapons.artillery.ArtilleryWeapon;
 import megamek.common.weapons.bayweapons.TeleOperatedMissileBayWeapon;
@@ -772,11 +771,13 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements
                 // confirm this action
                 String title = Messages.getString("TargetingPhaseDisplay.DontFireDialog.title");
                 String body = Messages.getString("TargetingPhaseDisplay.DontFireDialog.message");
-                ConfirmDialog response = clientgui.doYesNoBotherDialog(title, body);
-                if (!response.getShowAgain()) {
-                    GUIP.setNagForNoAction(false);
-                }
-                if (!response.getAnswer()) {
+                ConfirmDialog nag = clientgui.doYesNoBotherDialog(title, body);
+                if (nag.getAnswer()) {
+                    // do they want to be bothered again?
+                    if (!nag.getShowAgain()) {
+                        GUIP.setNagForNoAction(false);
+                    }
+                } else {
                     return true;
                 }
             }

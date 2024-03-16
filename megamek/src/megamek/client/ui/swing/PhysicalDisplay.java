@@ -30,9 +30,6 @@ import javax.swing.*;
 import java.awt.event.*;
 import java.util.*;
 
-import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
-import static megamek.client.ui.swing.util.UIUtil.uiLightViolet;
-
 public class PhysicalDisplay extends AttackPhaseDisplay {
     private static final long serialVersionUID = -3274750006768636001L;
 
@@ -335,13 +332,15 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
         if (needNagForNoAction()) {
             if (attacks.isEmpty()) {
                 // confirm this action
-                ConfirmDialog response = clientgui.doYesNoBotherDialog(
-                        Messages.getString("PhysicalDisplay.DontPhysicalAttackDialog.title"),
-                        Messages.getString("PhysicalDisplay.DontPhysicalAttackDialog.message"));
-                if (!response.getShowAgain()) {
-                    GUIP.setNagForNoAction(false);
-                }
-                if (!response.getAnswer()) {
+                String title = Messages.getString("PhysicalDisplay.DontPhysicalAttackDialog.title");
+                String body = Messages.getString("PhysicalDisplay.DontPhysicalAttackDialog.message");
+                ConfirmDialog nag = clientgui.doYesNoBotherDialog(title, body);
+                if (nag.getAnswer()) {
+                    // do they want to be bothered again?
+                    if (!nag.getShowAgain()) {
+                        GUIP.setNagForNoAction(false);
+                    }
+                } else {
                     return true;
                 }
             }

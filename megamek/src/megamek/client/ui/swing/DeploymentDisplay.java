@@ -36,9 +36,6 @@ import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
 import java.util.*;
 
-import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
-import static megamek.client.ui.swing.util.UIUtil.uiLightViolet;
-
 public class DeploymentDisplay extends StatusBarPhaseDisplay {
 
     /**
@@ -315,27 +312,29 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                 }
             }
             if (!crushedBuildingLocs.isEmpty()) {
-                JOptionPane.showMessageDialog(clientgui,
-                        Messages.getString("DeploymentDisplay.dropshipBuildingDeploy"),
-                        Messages.getString("DeploymentDisplay.alertDialog.title"),
-                        JOptionPane.ERROR_MESSAGE);
+                String title = Messages.getString("DeploymentDisplay.alertDialog.title");
+                String body = Messages.getString("DeploymentDisplay.dropshipBuildingDeploy");
+                clientgui.doAlertDialog(title, body);
                 return true;
             }
         }
 
         // Check nag for doomed planetary conditions
-        if (ce() != null) {
-            String reason = game.getPlanetaryConditions().whyDoomed(ce(), game);
-            if ((reason != null)
-                    && GUIP.getNagForDoomed()) {
-                String title = Messages.getString("DeploymentDisplay.ConfirmDoomed.title");
-                String body = Messages.getString("DeploymentDisplay.ConfirmDoomed.message", new Object[]{reason});
-                ConfirmDialog response = clientgui.doYesNoBotherDialog(title, body);
-                if (!response.getShowAgain()) {
-                    GUIP.setNagForDoomed(false);
-                }
-                if (!response.getAnswer()) {
-                    return true;
+        if (GUIP.getNagForDoomed()) {
+            if (ce() != null) {
+                String reason = game.getPlanetaryConditions().whyDoomed(ce(), game);
+                if (reason != null) {
+                    String title = Messages.getString("DeploymentDisplay.ConfirmDoomed.title");
+                    String body = Messages.getString("DeploymentDisplay.ConfirmDoomed.message", reason);
+                    ConfirmDialog nag = clientgui.doYesNoBotherDialog(title, body);
+                    if (nag.getAnswer()) {
+                        // do they want to be bothered again?
+                        if (!nag.getShowAgain()) {
+                            GUIP.setNagForDoomed(false);
+                        }
+                    } else {
+                        return true;
+                    }
                 }
             }
         }

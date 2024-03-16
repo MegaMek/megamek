@@ -1150,11 +1150,13 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
                 // confirm this action
                 String title = Messages.getString("FiringDisplay.DontFireDialog.title");
                 String body = Messages.getString("FiringDisplay.DontFireDialog.message");
-                ConfirmDialog response = clientgui.doYesNoBotherDialog(title, body);
-                if (!response.getShowAgain()) {
-                    GUIP.setNagForNoAction(false);
-                }
-                if (!response.getAnswer()) {
+                ConfirmDialog nag = clientgui.doYesNoBotherDialog(title, body);
+                if (nag.getAnswer()) {
+                    // do they want to be bothered again?
+                    if (!nag.getShowAgain()) {
+                        GUIP.setNagForNoAction(false);
+                    }
+                } else {
                     return true;
                 }
             }
@@ -1176,11 +1178,13 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
                     // confirm this action
                     String title = Messages.getString("FiringDisplay.OverheatNag.title");
                     String body = Messages.getString("FiringDisplay.OverheatNag.message");
-                    ConfirmDialog response = clientgui.doYesNoBotherDialog(title, body);
-                    if (!response.getShowAgain()) {
-                        GUIP.setNagForOverheat(false);
-                    }
-                    if (!response.getAnswer()) {
+                    ConfirmDialog nag = clientgui.doYesNoBotherDialog(title, body);
+                    if (nag.getAnswer()) {
+                        // do they want to be bothered again?
+                        if (!nag.getShowAgain()) {
+                            GUIP.setNagForOverheat(false);
+                        }
+                    } else {
                         return true;
                     }
                 }

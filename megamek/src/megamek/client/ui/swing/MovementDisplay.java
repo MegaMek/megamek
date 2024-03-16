@@ -1490,11 +1490,13 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 // Hmm... no movement steps, confirm this action
                 String title = Messages.getString("MovementDisplay.ConfirmNoMoveDlg.title");
                 String body = Messages.getString("MovementDisplay.ConfirmNoMoveDlg.message");
-                ConfirmDialog response = clientgui.doYesNoBotherDialog(title, body);
-                if (!response.getShowAgain()) {
-                    GUIP.setNagForNoAction(false);
-                }
-                if (!response.getAnswer()) {
+                ConfirmDialog nag = clientgui.doYesNoBotherDialog(title, body);
+                if (nag.getAnswer()) {
+                    // do they want to be bothered again?
+                    if (!nag.getShowAgain()) {
+                        GUIP.setNagForNoAction(false);
+                    }
+                } else {
                     return true;
                 }
             }
@@ -1507,11 +1509,13 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 // confirm this action
                 String title = Messages.getString("MovementDisplay.ConfirmUnJamRACDlg.title");
                 String body = Messages.getString("MovementDisplay.ConfirmUnJamRACDlg.message");
-                ConfirmDialog response = clientgui.doYesNoBotherDialog(title, body);
-                if (!response.getShowAgain()) {
-                    GUIP.setNagForNoUnJamRAC(false);
-                }
-                if (!response.getAnswer()) {
+                ConfirmDialog nag = clientgui.doYesNoBotherDialog(title, body);
+                if (nag.getAnswer()) {
+                    // do they want to be bothered again?
+                    if (!nag.getShowAgain()) {
+                        GUIP.setNagForNoUnJamRAC(false);
+                    }
+                } else {
                     return true;
                 }
             }
@@ -1522,11 +1526,9 @@ public class MovementDisplay extends ActionPhaseDisplay {
                     && cmd.hasActiveMASC()
                     && !(ce() instanceof VTOL)) {
                 // pop up are you sure dialog
-                ConfirmDialog nag = new ConfirmDialog(clientgui.frame,
-                        Messages.getString("MovementDisplay.areYouSure"),
-                        Messages.getString("MovementDisplay.ConfirmMASCRoll", ce().getMASCTarget()),
-                        true);
-                nag.setVisible(true);
+                String title = Messages.getString("MovementDisplay.areYouSure");
+                String body = Messages.getString("MovementDisplay.ConfirmMASCRoll", ce().getMASCTarget());
+                ConfirmDialog nag = clientgui.doYesNoBotherDialog(title, body);
                 if (nag.getAnswer()) {
                     // do they want to be bothered again?
                     if (!nag.getShowAgain()) {
@@ -1542,11 +1544,9 @@ public class MovementDisplay extends ActionPhaseDisplay {
             if ((ce() != null)
                     && !(ce() instanceof VTOL)
                     && cmd.hasActiveSupercharger()) {
-                ConfirmDialog nag = new ConfirmDialog(clientgui.frame,
-                        Messages.getString("MovementDisplay.areYouSure"),
-                        Messages.getString("MovementDisplay.ConfirmSuperchargerRoll", ce().getSuperchargerTarget()),
-                        true);
-                nag.setVisible(true);
+                String title = Messages.getString("MovementDisplay.areYouSure");
+                String body = Messages.getString("MovementDisplay.ConfirmSuperchargerRoll", ce().getSuperchargerTarget());
+                ConfirmDialog nag = clientgui.doYesNoBotherDialog(title, body);
                 if (nag.getAnswer()) {
                     // do they want to be bothered again?
                     if (!nag.getShowAgain()) {
@@ -1570,10 +1570,9 @@ public class MovementDisplay extends ActionPhaseDisplay {
                     && needNagForPSR();
             if (sprintOrVtolSprint
                     && !psrNag) {
-                ConfirmDialog nag = new ConfirmDialog(clientgui.frame,
-                        Messages.getString("MovementDisplay.areYouSure"),
-                        Messages.getString("MovementDisplay.ConfirmSprint"), true);
-                nag.setVisible(true);
+                String title = Messages.getString("MovementDisplay.areYouSure");
+                String body = Messages.getString("MovementDisplay.ConfirmSprint");
+                ConfirmDialog nag = clientgui.doYesNoBotherDialog(title, body);
                 if (nag.getAnswer()) {
                     // do they want to be bothered again?
                     if (!nag.getShowAgain()) {
@@ -1587,36 +1586,13 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
         if (needNagForPSR()) {
             if (!check.isBlank()) {
-                ConfirmDialog nag = new ConfirmDialog(clientgui.frame,
-                        Messages.getString("MovementDisplay.areYouSure"),
-                        Messages.getString("MovementDisplay.ConfirmPilotingRoll") +
-                                check, true);
-                nag.setVisible(true);
+                String title = Messages.getString("MovementDisplay.areYouSure");
+                String body = Messages.getString("MovementDisplay.ConfirmPilotingRoll")  + check;
+                ConfirmDialog nag = clientgui.doYesNoBotherDialog(title, body);
                 if (nag.getAnswer()) {
                     // do they want to be bothered again?
                     if (!nag.getShowAgain()) {
                         GUIP.setNagForPSR(false);
-                    }
-                } else {
-                    return true;
-                }
-            }
-        }
-
-        // Should we nag about taking fall damage with mechanical jump boosters?
-        if (needNagForMechanicalJumpFallDamage()) {
-            if ((ce() != null)
-                    && cmd.shouldMechanicalJumpCauseFallDamage()) {
-                ConfirmDialog nag = new ConfirmDialog(clientgui.frame,
-                        Messages.getString("MovementDisplay.areYouSure"),
-                        Messages.getString("MovementDisplay.ConfirmMechanicalJumpFallDamage",
-                                cmd.getJumpMaxElevationChange(), ce().getJumpMP(),
-                                cmd.getJumpMaxElevationChange() - ce().getJumpMP()), true);
-                nag.setVisible(true);
-                if (nag.getAnswer()) {
-                    // do they want to be bothered again?
-                    if (!nag.getShowAgain()) {
-                        GUIP.setNagForMechanicalJumpFallDamage(false);
                     }
                 } else {
                     return true;
@@ -1639,10 +1615,9 @@ public class MovementDisplay extends ActionPhaseDisplay {
                     }
                 }
                 if (unsecure) {
-                    ConfirmDialog nag = new ConfirmDialog(clientgui.frame,
-                            Messages.getString("MovementDisplay.areYouSure"),
-                            Messages.getString("MovementDisplay.UnsecuredTakeoff"), true);
-                    nag.setVisible(true);
+                    String title = Messages.getString("MovementDisplay.areYouSure");
+                    String body = Messages.getString("MovementDisplay.UnsecuredTakeoff");
+                    ConfirmDialog nag = clientgui.doYesNoBotherDialog(title, body);
                     if (nag.getAnswer()) {
                         // do they want to be bothered again?
                         if (!nag.getShowAgain()) {
@@ -1658,10 +1633,9 @@ public class MovementDisplay extends ActionPhaseDisplay {
         // check for G-forces
         if (needNagForPSR()) {
             if (!thrustCheck.isBlank()) {
-                ConfirmDialog nag = new ConfirmDialog(clientgui.frame,
-                        Messages.getString("MovementDisplay.areYouSure"),
-                        Messages.getString("MovementDisplay.ConfirmPilotingRoll") + thrustCheck,
-                        true);
+                String title = Messages.getString("MovementDisplay.areYouSure");
+                String body = Messages.getString("MovementDisplay.ConfirmPilotingRoll") + thrustCheck;
+                ConfirmDialog nag = clientgui.doYesNoBotherDialog(title, body);
                 nag.setVisible(true);
                 if (nag.getAnswer()) {
                     // do they want to be bothered again?
@@ -1683,12 +1657,9 @@ public class MovementDisplay extends ActionPhaseDisplay {
                     && !cmd.contains(MoveStepType.VLAND)
                     && !cmd.contains(MoveStepType.UP)
                     && !cmd.contains(MoveStepType.DOWN)) {
-                ConfirmDialog nag = new ConfirmDialog(clientgui.frame,
-                        Messages.getString("MovementDisplay.areYouSure"),
-                        Messages.getString("MovementDisplay.SpheroidAltitudeLoss") +
-
-                                thrustCheck, true);
-                nag.setVisible(true);
+                String title = Messages.getString("MovementDisplay.areYouSure");
+                String body = Messages.getString("MovementDisplay.SpheroidAltitudeLoss") + thrustCheck;
+                ConfirmDialog nag = clientgui.doYesNoBotherDialog(title, body);
                 if (nag.getAnswer()) {
                     // do they want to be bothered again?
                     if (!nag.getShowAgain()) {
@@ -1700,52 +1671,22 @@ public class MovementDisplay extends ActionPhaseDisplay {
             }
         }
 
-        if (needNagForOther()) {
-            boolean airborne = (ce() != null)
-                    && ce().isAirborne();
-            boolean spaceborne = (ce() != null)
-                    && ce().isSpaceborne();
-            boolean airborneOrSpaceborne = airborne
-                    || spaceborne;
+        // Should we nag about taking fall damage with mechanical jump boosters?
+        if (needNagForMechanicalJumpFallDamage()) {
             if ((ce() != null)
-                    && airborneOrSpaceborne
-                    && !clientgui.getClient().getGame().useVectorMove()
-                    && ce().isAero()
-                    && !((IAero) ce()).isOutControlTotal()) {
-                // check for underuse of velocity
-                boolean unusedVelocity = false;
-                if (null != cmd.getLastStep()) {
-                    unusedVelocity = cmd.getLastStep().getVelocityLeft() > 0;
+                    && cmd.shouldMechanicalJumpCauseFallDamage()) {
+                String title = Messages.getString("MovementDisplay.areYouSure");
+                String body = Messages.getString("MovementDisplay.ConfirmMechanicalJumpFallDamage",
+                        cmd.getJumpMaxElevationChange(),
+                        ce().getJumpMP(),
+                        cmd.getJumpMaxElevationChange() - ce().getJumpMP());
+                ConfirmDialog nag = clientgui.doYesNoBotherDialog(title, body);
+                if (nag.getAnswer()) {
+                    // do they want to be bothered again?
+                    if (!nag.getShowAgain()) {
+                        GUIP.setNagForMechanicalJumpFallDamage(false);
+                    }
                 } else {
-                    unusedVelocity = (((IAero) ce()).getCurrentVelocity() > 0)
-                            && (ce().delta_distance == 0);
-                }
-                boolean flyoff = false;
-                boolean offOrReturn = cmd.contains(MoveStepType.OFF)
-                        || cmd.contains(MoveStepType.RETURN);
-                if ((null != cmd)
-                        && offOrReturn) {
-                    flyoff = true;
-                }
-                boolean landing = false;
-                if ((null != cmd)
-                        && cmd.contains(MoveStepType.LAND)) {
-                    landing = true;
-                }
-                boolean ejecting = false;
-                if ((null != cmd)
-                        && cmd.contains(MoveStepType.EJECT)) {
-                    ejecting = true;
-                }
-                if (unusedVelocity
-                        && !flyoff
-                        && !landing
-                        && !ejecting) {
-                    String title = Messages
-                            .getString("MovementDisplay.VelocityLeft.title");
-                    String body = Messages
-                            .getString("MovementDisplay.VelocityLeft.message");
-                    clientgui.doAlertDialog(title, body);
                     return true;
                 }
             }
@@ -1753,12 +1694,9 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
         if (needNagForCrushingBuildings()) {
             if (cmd.willCrushBuildings()) {
-                ConfirmDialog nag = new ConfirmDialog(
-                        clientgui.frame,
-                        Messages.getString("MovementDisplay.areYouSure"),
-                        Messages.getString("MovementDisplay.ConfirmCrushingBuildings"),
-                        true);
-                nag.setVisible(true);
+                String title = Messages.getString("MovementDisplay.areYouSure");
+                String body = Messages.getString("MovementDisplay.ConfirmCrushingBuildings");
+                ConfirmDialog nag = clientgui.doYesNoBotherDialog(title, body);
                 if (nag.getAnswer()) {
                     // do they want to be bothered again?
                     if (!nag.getShowAgain()) {
@@ -1770,54 +1708,11 @@ public class MovementDisplay extends ActionPhaseDisplay {
             }
         }
 
-        // check to see if spheroids will drop an elevation
-        if (needNagForOther()) {
-            if ((ce() != null)
-                    && ce() instanceof LandAirMech
-                    && ce().isAssaultDropInProgress()
-                    && cmd.getFinalConversionMode() == EntityMovementMode.AERODYNE) {
-                ConfirmDialog nag = new ConfirmDialog(clientgui.frame,
-                        Messages.getString("MovementDisplay.areYouSure"),
-                        Messages.getString("MovementDisplay.insufficientAltitudeForConversion") + thrustCheck,
-                        false);
-                nag.setVisible(true);
-                if (!nag.getAnswer()) {
-                    return true;
-                }
-            }
-        }
-
-        if (needNagForOther()) {
-            boolean airborneVTOLOrWIGE = (ce() != null)
-                    && ce().isAirborneVTOLorWIGE();
-            boolean finalElevation = (ce() != null)
-                    && (ce().getElevation() != cmd.getFinalElevation());
-            boolean airborneVTOLOrWIGEOrFinalElevation = airborneVTOLOrWIGE
-                    || finalElevation;
-            if ((ce() != null)
-                    && (ce() instanceof Infantry)
-                    && ((Infantry) ce()).hasMicrolite()
-                    && airborneVTOLOrWIGEOrFinalElevation
-                    && !cmd.contains(MoveStepType.FORWARDS)
-                    && !cmd.contains(MoveStepType.FLEE)
-                    && cmd.getFinalElevation() > 0
-                    && ce().getGame().getBoard().getHex(cmd.getFinalCoords()).terrainLevel(Terrains.BLDG_ELEV) < cmd.getFinalElevation()
-                    && ce().getGame().getBoard().getHex(cmd.getFinalCoords()).terrainLevel(Terrains.BRIDGE_ELEV) < cmd.getFinalElevation()) {
-                String title = Messages.getString("MovementDisplay.MicroliteMove.title");
-                String body = Messages.getString("MovementDisplay.MicroliteMove.message");
-                clientgui.doAlertDialog(title, body);
-                return true;
-            }
-        }
-
         if (needNagForWiGELanding()) {
             if (cmd.automaticWiGELanding(true)) {
-                ConfirmDialog nag = new ConfirmDialog(
-                        clientgui.frame,
-                        Messages.getString("MovementDisplay.areYouSure"),
-                        Messages.getString("MovementDisplay.ConfirmWiGELanding"),
-                        true);
-                nag.setVisible(true);
+                String title = Messages.getString("MovementDisplay.areYouSure");
+                String body = Messages.getString("MovementDisplay.ConfirmWiGELanding");
+                ConfirmDialog nag = clientgui.doYesNoBotherDialog(title, body);
                 if (nag.getAnswer()) {
                     // do they want to be bothered again?
                     if (!nag.getShowAgain()) {
@@ -1825,6 +1720,79 @@ public class MovementDisplay extends ActionPhaseDisplay {
                     }
                 } else {
                     return true;
+                }
+            }
+        }
+
+        if (needNagForOther()) {
+            if ((ce() != null)
+                    && (null != cmd)) {
+                boolean airborneOrSpaceborne = ce().isAirborne()
+                        || ce().isSpaceborne();
+                boolean unusedVelocity = false;
+                if (null != cmd.getLastStep()) {
+                    unusedVelocity = cmd.getLastStep().getVelocityLeft() > 0;
+                } else {
+                    unusedVelocity = (((IAero) ce()).getCurrentVelocity() > 0)
+                            && (ce().delta_distance == 0);
+                }
+                boolean offOrReturn = cmd.contains(MoveStepType.OFF)
+                        || cmd.contains(MoveStepType.RETURN);
+                if (airborneOrSpaceborne
+                        && !clientgui.getClient().getGame().useVectorMove()
+                        && ce().isAero()
+                        && !((IAero) ce()).isOutControlTotal()
+                        && unusedVelocity
+                        && !offOrReturn
+                        && !cmd.contains(MoveStepType.LAND)
+                        && !cmd.contains(MoveStepType.EJECT)) {
+                    String title = Messages.getString("MovementDisplay.VelocityLeft.title");
+                    String body = Messages.getString("MovementDisplay.VelocityLeft.message");
+                    boolean nag = clientgui.doYesNoDialog(title, body);
+                    if (!nag) {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        // check to see if spheroids will drop an elevation
+        if (needNagForOther()) {
+            if ((ce() != null)
+                    && ce() instanceof LandAirMech
+                    && ce().isAssaultDropInProgress()
+                    && cmd.getFinalConversionMode() == EntityMovementMode.AERODYNE) {
+                String title = Messages.getString("MovementDisplay.areYouSure");
+                String body = Messages.getString("MovementDisplay.insufficientAltitudeForConversion") + thrustCheck;
+                boolean nag = clientgui.doYesNoDialog(title, body);
+                if (!nag) {
+                    return true;
+                }
+            }
+        }
+
+        if (needNagForOther()) {
+            if (ce() != null) {
+                boolean finalElevation = (ce().getElevation() != cmd.getFinalElevation());
+                boolean airborneVTOLOrWIGEOrFinalElevation = ce().isAirborneVTOLorWIGE()
+                        || finalElevation;
+                int terrainLevelBuilding = ce().getGame().getBoard().getHex(cmd.getFinalCoords()).terrainLevel(Terrains.BLDG_ELEV);
+                int terrainLevelBridge = ce().getGame().getBoard().getHex(cmd.getFinalCoords()).terrainLevel(Terrains.BRIDGE_ELEV);
+                if ((ce() != null)
+                        && (ce() instanceof Infantry)
+                        && ((Infantry) ce()).hasMicrolite()
+                        && airborneVTOLOrWIGEOrFinalElevation
+                        && !cmd.contains(MoveStepType.FORWARDS)
+                        && !cmd.contains(MoveStepType.FLEE)
+                        && cmd.getFinalElevation() > 0
+                        && terrainLevelBuilding < cmd.getFinalElevation()
+                        && terrainLevelBridge < cmd.getFinalElevation()) {
+                    String title = Messages.getString("MovementDisplay.MicroliteMove.title");
+                    String body = Messages.getString("MovementDisplay.MicroliteMove.message");
+                    boolean nag = clientgui.doYesNoDialog(title, body);
+                    if (!nag) {
+                        return true;
+                    }
                 }
             }
         }
@@ -1838,12 +1806,10 @@ public class MovementDisplay extends ActionPhaseDisplay {
                         cmd.getFinalCoords(), cmd.getFinalFacing());
                 if (landingPath.stream().map(c -> game().getBoard().getHex(c)).filter(Objects::nonNull)
                         .anyMatch(h -> h.containsTerrain(Terrains.ROUGH) || h.containsTerrain(Terrains.RUBBLE))) {
-                    ConfirmDialog nag = new ConfirmDialog(clientgui.frame,
-                            Messages.getString("MovementDisplay.areYouSure"),
-                            Messages.getString("MovementDisplay.ConfirmLandingGearDamage"),
-                            false);
-                    nag.setVisible(true);
-                    if (!nag.getAnswer()) {
+                    String title = Messages.getString("MovementDisplay.areYouSure");
+                    String body = Messages.getString("MovementDisplay.ConfirmLandingGearDamage");
+                    boolean nag = clientgui.doYesNoDialog(title, body);
+                    if (!nag) {
                         return true;
                     }
                 }
@@ -1858,12 +1824,10 @@ public class MovementDisplay extends ActionPhaseDisplay {
                         && ce().getMovementMode().isSubmarine()
                         && (ce().underwaterRounds >= mount.getUWEndurance())
                         && cmd.isAllUnderwater(game())) {
-                    ConfirmDialog nag = new ConfirmDialog(clientgui.frame,
-                            Messages.getString("MovementDisplay.areYouSure"),
-                            Messages.getString("MovementDisplay.ConfirmMountSuffocation"),
-                            false);
-                    nag.setVisible(true);
-                    if (!nag.getAnswer()) {
+                    String title = Messages.getString("MovementDisplay.areYouSure");
+                    String body = Messages.getString("MovementDisplay.ConfirmMountSuffocation");
+                    boolean nag = clientgui.doYesNoDialog(title, body);
+                    if (!nag) {
                         return true;
                     }
                 }
@@ -4893,9 +4857,9 @@ public class MovementDisplay extends ActionPhaseDisplay {
             clear();
             if (!clientgui.getClient().getGame()
                     .containsMinefield(ce.getPosition())) {
-                clientgui.doAlertDialog(Messages
-                                .getString("MovementDisplay.CantClearMinefield"),
-                        Messages.getString("MovementDisplay.NoMinefield"));
+                String title = Messages.getString("MovementDisplay.CantClearMinefield");
+                String body = Messages.getString("MovementDisplay.NoMinefield");
+                clientgui.doAlertDialog(title, body);
                 return;
             }
 
@@ -4927,10 +4891,10 @@ public class MovementDisplay extends ActionPhaseDisplay {
             for (int loop = 0; loop < choices.length; loop++) {
                 choices[loop] = Minefield.getDisplayableName(mfs.get(loop).getType());
             }
-            String input = (String) JOptionPane.showInputDialog(clientgui,
-                    Messages.getString("MovementDisplay.ChooseMinefieldDialog.message"),
-                    Messages.getString("MovementDisplay.ChooseMinefieldDialog.title"),
-                    JOptionPane.QUESTION_MESSAGE, null, choices, null);
+
+            String title = Messages.getString("MovementDisplay.ChooseMinefieldDialog.title");
+            String body = Messages.getString("MovementDisplay.ChooseMinefieldDialog.message");
+            String input = (String) JOptionPane.showInputDialog(clientgui, body, title, JOptionPane.QUESTION_MESSAGE, null, choices, null);
             Minefield mf = null;
             if (input != null) {
                 for (int loop = 0; loop < choices.length; loop++) {
@@ -4940,9 +4904,9 @@ public class MovementDisplay extends ActionPhaseDisplay {
                     }
                 }
             }
-            String title = Messages.getString("MovementDisplay.ClearMinefieldDialog.title");
-            String msg = Messages.getString("MovementDisplay.ClearMinefieldDialog.message", clear, boom);
-            if ((null != mf) && clientgui.doYesNoDialog(title, msg)) {
+            title = Messages.getString("MovementDisplay.ClearMinefieldDialog.title");
+            body = Messages.getString("MovementDisplay.ClearMinefieldDialog.message", clear, boom);
+            if ((null != mf) && clientgui.doYesNoDialog(title, body)) {
                 addStepToMovePath(MoveStepType.CLEAR_MINEFIELD, mf);
                 ready();
             }
@@ -4980,10 +4944,10 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
             if (opts.booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_CAREFUL_STAND)
                     && (ce.getWalkMP() > 2)) {
-                ConfirmDialog response = clientgui.doYesNoBotherDialog(
-                        Messages.getString("MovementDisplay.CarefulStand.title"),
-                        Messages.getString("MovementDisplay.CarefulStand.message"));
-                if (response.getAnswer()) {
+                String title = Messages.getString("MovementDisplay.CarefulStand.title");
+                String body = Messages.getString("MovementDisplay.CarefulStand.message");
+                boolean response = clientgui.doYesNoDialog(title, body);
+                if (response) {
                     ce.setCarefulStand(true);
                     if (cmd.getFinalProne() || cmd.getFinalHullDown()) {
                         addStepToMovePath(MoveStepType.CAREFUL_STAND);
@@ -5021,9 +4985,10 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 }
 
                 // Dialog for choosing which location to brace
+                String title = "Choose Brace Location";
+                String body = "Choose the location to brace:";
                 String option = (String) JOptionPane.showInputDialog(clientgui.getFrame(),
-                        "Choose the location to brace:",
-                        "Choose Brace Location", JOptionPane.QUESTION_MESSAGE, null,
+                        body, title, JOptionPane.QUESTION_MESSAGE, null,
                         locationNames, locationNames[0]);
 
                 // Verify that we have a valid option...
@@ -5077,8 +5042,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                     }
                     ready();
                 }
-            } else if (clientgui
-                    .doYesNoDialog(
+            } else if (clientgui.doYesNoDialog(
                             Messages.getString("MovementDisplay.AbandonDialog1.title"),
                             Messages.getString("MovementDisplay.AbandonDialog1.message"))) {
                 clear();
@@ -5340,10 +5304,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             if (ce().isAero()
                     && (null != ((IAero) ce()).hasRoomForHorizontalTakeOff())) {
                 String title = Messages.getString("MovementDisplay.NoTakeOffDialog.title");
-                String body = Messages.getString(
-                        "MovementDisplay.NoTakeOffDialog.message",
-                        new Object[]{((IAero) ce())
-                                .hasRoomForHorizontalTakeOff()});
+                String body = Messages.getString("MovementDisplay.NoTakeOffDialog.message", ((IAero) ce()).hasRoomForHorizontalTakeOff());
                 clientgui.doAlertDialog(title, body);
             } else {
                 if (clientgui.doYesNoDialog(

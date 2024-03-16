@@ -19,6 +19,7 @@
 package megamek.common.scenario;
 
 import megamek.client.generator.RandomGenderGenerator;
+import megamek.codeUtilities.StringUtility;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.GamePhase;
@@ -350,6 +351,32 @@ public class ScenarioLoader {
                 }
             }
         }
+    }
+
+    public IGame createGame2() throws Exception {
+        LogManager.getLogger().info("Loading scenario from " + scenarioFile);
+        if (findMmsVersion() == 1) {
+            return createGame();
+        } else {
+            return createGame2();
+        }
+    }
+
+    private int findMmsVersion() throws FileNotFoundException, ScenarioLoaderException {
+        Scanner scanner = new Scanner(scenarioFile);
+        Pattern versionPattern = Pattern.compile(PARAM_MMSVERSION + "\\s*[=:]\\s*(\\d)\\s*[#.*]?");
+        while (scanner.hasNextLine()) {
+            String line = scanner.nextLine().trim();
+            Matcher versionMatcher = versionPattern.matcher(line);
+            if (!isCommentLine(line) && versionMatcher.matches()) {
+                return Integer.parseInt(versionMatcher.group(1));
+            }
+        }
+        return -1;
+    }
+
+    private boolean isCommentLine(String line) {
+        return line.trim().startsWith("#");
     }
 
     public Game createGame() throws Exception {
@@ -898,6 +925,12 @@ public class ScenarioLoader {
     }
 
     public ScenarioInfo load() throws ScenarioLoaderException {
+        try {
+            int mmsVersion = findMmsVersion();
+            System.out.println(mmsVersion);
+        } catch (FileNotFoundException e) {
+            return null;
+        }
         ScenarioInfo props = new ScenarioInfo();
         props.put(FILENAME, List.of(scenarioFile.toString()));
         try (FileInputStream fis = new FileInputStream(scenarioFile);
@@ -971,14 +1004,6 @@ public class ScenarioLoader {
             }
         }
         return result;
-    }
-
-    public static void main(String[] saArgs) throws Exception {
-        ScenarioLoader sl = new ScenarioLoader(new File(saArgs[0]));
-        Game g = sl.createGame();
-        if (g != null) {
-            LogManager.getLogger().info("Successfully loaded.");
-        }
     }
 
     /**

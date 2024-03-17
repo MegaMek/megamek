@@ -30,7 +30,7 @@ MEGAMEK VERSION HISTORY:
 + Fix #5206: Prevent an error with the map preview in the lobby
 + PR #5240: Fix MML 1365: Sponson Turrets not being included in TechLevel calcs 
 + PR #5218: add additional zoom levels and font adjustment levels 
-+ Data: Fixing #5194, #4979, #4525, #4906, #5141, #5253, #4258, #4555, #5017
++ Data: Fixing #5194, #4979, #4525, #4906, #5141, #5253, #4258, #4555, #5017, #4837
 
 
 

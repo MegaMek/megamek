@@ -16,35 +16,26 @@
  * You should have received a copy of the GNU General Public License
  * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
-package megamek.common.scenario;
+package megamek.client.ui.swing.scenario;
 
-public class ScenarioShortInfo {
+import megamek.MegaMek;
+import org.apache.logging.log4j.LogManager;
 
-    private final String name;
-    private final String description;
-    private final String filename;
-    private final String planet;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
 
-    ScenarioShortInfo(String name, String description, String filename, String planet) {
-        this.name = name;
-        this.description = description;
-        this.filename = filename;
-        this.planet = planet;
-    }
+public class Messages {
+    private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(
+            "megamek.client.scenario.messages", MegaMek.getMMOptions().getLocale());
 
-    public String getName() {
-        return name;
-    }
+    private Messages() { }
 
-    public String getDescription() {
-        return description;
-    }
-
-    public String getFileName() {
-        return filename;
-    }
-
-    public String getPlanet() {
-        return planet;
+    public static String getString(String key) {
+        try {
+            return RESOURCE_BUNDLE.getString(key);
+        } catch (MissingResourceException e) {
+            LogManager.getLogger().error("Missing megamek.client.scenario.messages i18n entry with key " + key);
+            return '!' + key + '!';
+        }
     }
 }

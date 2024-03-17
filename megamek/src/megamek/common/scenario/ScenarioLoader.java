@@ -19,7 +19,6 @@
 package megamek.common.scenario;
 
 import megamek.client.generator.RandomGenderGenerator;
-import megamek.codeUtilities.StringUtility;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.GamePhase;
@@ -31,11 +30,11 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.util.BoardUtilities;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.server.GameManager;
-import megamek.server.Messages;
 import org.apache.logging.log4j.LogManager;
 
-import java.io.*;
-import java.nio.charset.StandardCharsets;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -55,7 +54,7 @@ public class ScenarioLoader {
 
     private static final String FILE_SUFFIX_BOARD = ".board";
 
-    private static final String PARAM_MMSVERSION = "MMSVersion";
+    private static final String MMSVERSION = "MMSVersion";
     private static final String PARAM_GAME_OPTIONS_FILE = "GameOptionsFile";
     private static final String PARAM_GAME_OPTIONS_FIXED = "FixedGameOptions";
     private static final String PARAM_GAME_EXTERNAL_ID = "ExternalId";
@@ -129,6 +128,21 @@ public class ScenarioLoader {
 
     public ScenarioLoader(File f) {
         scenarioFile = f;
+    }
+
+    public Scenario load() throws ScenarioLoaderException {
+        try {
+            int mmsVersion = findMmsVersion();
+            if (mmsVersion == 1) {
+                return new ScenarioV1(scenarioFile);
+            } else if (mmsVersion == 2) {
+                return new ScenarioV2(scenarioFile);
+            } else {
+                throw new ScenarioLoaderException("ScenarioLoaderException.missingMMSVersion", scenarioFile.toString());
+            }
+        } catch (IOException e) {
+            return null;
+        }
     }
 
     // TODO : legal/valid ammo type handling and game options, since they are set at this point
@@ -364,11 +378,11 @@ public class ScenarioLoader {
 
     private int findMmsVersion() throws FileNotFoundException, ScenarioLoaderException {
         Scanner scanner = new Scanner(scenarioFile);
-        Pattern versionPattern = Pattern.compile(PARAM_MMSVERSION + "\\s*[=:]\\s*(\\d)\\s*[#.*]?");
+        Pattern versionPattern = Pattern.compile("^\\s*"+ MMSVERSION +"\\s*[:=]\\s*(\\d)");
         while (scanner.hasNextLine()) {
-            String line = scanner.nextLine().trim();
+            String line = scanner.nextLine();
             Matcher versionMatcher = versionPattern.matcher(line);
-            if (!isCommentLine(line) && versionMatcher.matches()) {
+            if (!isCommentLine(line) && versionMatcher.find()) {
                 return Integer.parseInt(versionMatcher.group(1));
             }
         }
@@ -381,13 +395,13 @@ public class ScenarioLoader {
 
     public Game createGame() throws Exception {
         LogManager.getLogger().info("Loading scenario from " + scenarioFile);
-        ScenarioShortInfo2 pshort = load();
+        Scenario pshort = load();
         //TODO Check for v2
-        ScenarioInfo p = (ScenarioInfo) pshort;
+        ScenarioV1 p = (ScenarioV1) pshort;
 
-        String sCheck = p.getString(PARAM_MMSVERSION);
+        String sCheck = p.getString(MMSVERSION);
         if (sCheck == null) {
-            throw new ScenarioLoaderException("missingMMSVersion");
+            throw new ScenarioLoaderException("ScenarioLoaderException.missingMMSVersion");
         }
 
         Game g = new Game();
@@ -450,7 +464,7 @@ public class ScenarioLoader {
         return g;
     }
 
-    private void parsePlanetaryConditions(Game g, ScenarioInfo p) {
+    private void parsePlanetaryConditions(Game g, ScenarioV1 p) {
         if (p.containsKey(PARAM_PLANETCOND_TEMP)) {
             g.getPlanetaryConditions().setTemperature(Integer.parseInt(p.getString(PARAM_PLANETCOND_TEMP)));
         }
@@ -512,7 +526,7 @@ public class ScenarioLoader {
         }
     }
 
-    private Collection<Entity> buildFactionEntities(ScenarioInfo p, Player player) throws ScenarioLoaderException {
+    private Collection<Entity> buildFactionEntities(ScenarioV1 p, Player player) throws ScenarioLoaderException {
         String faction = player.getName();
         Pattern unitPattern = Pattern.compile(String.format("^Unit_\\Q%s\\E_[^_]+$", faction));
         Pattern unitDataPattern = Pattern.compile(String.format("^(Unit_\\Q%s\\E_[^_]+)_([A-Z][^_]+)$", faction));
@@ -525,7 +539,7 @@ public class ScenarioLoader {
                 if (p.getNumValues(key) > 1) {
                     LogManager.getLogger().error(String.format("Scenario loading: Unit declaration %s found %d times",
                             key, p.getNumValues(key)));
-                    throw new ScenarioLoaderException("multipleUnitDeclarations", key);
+                    throw new ScenarioLoaderException("ScenarioLoaderException.multipleUnitDeclarations", key);
                 }
                 entities.put(key, parseEntityLine(p.getString(key)));
             }
@@ -635,7 +649,7 @@ public class ScenarioLoader {
             int i;
             MechSummary ms = MechSummaryCache.getInstance().getMech(parts[0]);
             if (ms == null) {
-                throw new ScenarioLoaderException("missingRequiredEntity", parts[0]);
+                throw new ScenarioLoaderException("ScenarioLoaderException.missingRequiredEntity", parts[0]);
             }
             LogManager.getLogger().debug(String.format("Loading %s", ms.getName()));
             Entity e = new MechFileParser(ms.getSourceFile(), ms.getEntryName()).getEntity();
@@ -690,7 +704,7 @@ public class ScenarioLoader {
             return e;
         } catch (NumberFormatException | IndexOutOfBoundsException | EntityLoadingException ex) {
             LogManager.getLogger().error("", ex);
-            throw new ScenarioLoaderException("unparsableEntityLine", s);
+            throw new ScenarioLoaderException("ScenarioLoaderException.unparsableEntityLine", s);
         }
     }
 
@@ -751,10 +765,10 @@ public class ScenarioLoader {
         return param + SEPARATOR_UNDERSCORE + faction;
     }
 
-    private Collection<Player> createPlayers(ScenarioInfo p) throws ScenarioLoaderException {
+    private Collection<Player> createPlayers(ScenarioV1 p) throws ScenarioLoaderException {
         String sFactions = p.getString(PARAM_FACTIONS);
         if ((sFactions == null) || sFactions.isEmpty()) {
-            throw new ScenarioLoaderException("missingFactions");
+            throw new ScenarioLoaderException("ScenarioLoaderException.missingFactions");
         }
         String[] factions = sFactions.split(SEPARATOR_COMMA, -1);
         List<Player> result = new ArrayList<>(factions.length);
@@ -818,7 +832,7 @@ public class ScenarioLoader {
     /**
      * Load board files and create the megaboard.
      */
-    private Board createBoard(ScenarioInfo p) throws ScenarioLoaderException {
+    private Board createBoard(ScenarioV1 p) throws ScenarioLoaderException {
         int mapWidth = 16, mapHeight = 17;
         if (p.getString(PARAM_MAP_WIDTH) == null) {
             LogManager.getLogger().info("No map width specified; using " + mapWidth);
@@ -906,7 +920,7 @@ public class ScenarioLoader {
                 }
                 File fBoard = new MegaMekFile(Configuration.boardsDir(), sBoardFile).getFile();
                 if (!fBoard.exists()) {
-                    throw new ScenarioLoaderException("nonexistantBoard", board);
+                    throw new ScenarioLoaderException("ScenarioLoaderException.nonexistantBoard", board);
                 }
                 ba[n] = new Board();
                 ba[n].load(new MegaMekFile(Configuration.boardsDir(), sBoardFile).getFile());
@@ -926,49 +940,10 @@ public class ScenarioLoader {
         return BoardUtilities.combine(mapWidth, mapHeight, nWidth, nHeight, ba, rotateBoard, MapSettings.MEDIUM_GROUND);
     }
 
-    public ScenarioShortInfo2 load() throws ScenarioLoaderException {
-        try {
-            int mmsVersion = findMmsVersion();
-            System.out.println(mmsVersion);
-        } catch (FileNotFoundException e) {
-            return null;
-        }
-        ScenarioInfo props = new ScenarioInfo();
-        props.put(FILENAME, List.of(scenarioFile.toString()));
-        try (FileInputStream fis = new FileInputStream(scenarioFile);
-             InputStreamReader isr = new InputStreamReader(fis, StandardCharsets.UTF_8);
-             BufferedReader br = new BufferedReader(isr)) {
-            String line;
-            int lineNum = 0;
-            while ((line = br.readLine()) != null) {
-                lineNum++;
-                line = line.trim();
-                if (line.startsWith(COMMENT_MARK) || line.isBlank()) {
-                    continue;
-                } else if (!line.contains(SEPARATOR_PROPERTY)) {
-                    LogManager.getLogger().error(String.format("Equality sign in scenario file %s on line %d missing; ignoring",
-                            scenarioFile, lineNum));
-                    continue;
-                }
-                String[] elements = line.split(SEPARATOR_PROPERTY, -1);
-                if (elements.length > 2) {
-                    LogManager.getLogger().error(String.format("Multiple equality signs in scenario file %s on line %d; ignoring",
-                            scenarioFile, lineNum));
-                    continue;
-                }
-                props.put(elements[0].trim(), elements[1].trim());
-            }
-        } catch (IOException e) {
-            LogManager.getLogger().error("", e);
-            throw new ScenarioLoaderException("exceptionReadingFile", scenarioFile);
-        }
-        return props;
-    }
-
     /**
      * Parses out the external game id from the scenario file
      */
-    private int parseExternalGameId(ScenarioInfo p) {
+    private int parseExternalGameId(ScenarioV1 p) {
         String sExternalId = p.getString(PARAM_GAME_EXTERNAL_ID);
         int ExternalGameId = 0;
         if (sExternalId != null) {
@@ -994,7 +969,7 @@ public class ScenarioLoader {
      * defaultValue. When the key is present, interprets "true" and "on"  and "1"
      * as true and everything else as false.
      */
-    private boolean parseBoolean(ScenarioInfo p, String key, boolean defaultValue) {
+    private boolean parseBoolean(ScenarioV1 p, String key, boolean defaultValue) {
         boolean result = defaultValue;
         if (p.containsKey(key)) {
             if (p.getString(key).equalsIgnoreCase("true")
@@ -1161,35 +1136,6 @@ public class ScenarioLoader {
             boolean internal = (s.charAt(0) == 'I');
 
             specificDammage.add(new SpecDam(loc, setTo, rear, internal));
-        }
-    }
-
-    public static class ScenarioLoaderException extends Exception {
-        private static final long serialVersionUID = 8622648319531348199L;
-
-        private final Object[] params;
-
-        public ScenarioLoaderException(String errorKey) {
-            super(errorKey);
-            this.params = null;
-        }
-
-        public ScenarioLoaderException(String errorKey, Object... params) {
-            super(errorKey);
-            this.params = params;
-        }
-
-        @Override
-        public String getMessage() {
-            String result = Messages.getString("ScenarioLoaderException." + super.getMessage());
-            if (params != null) {
-                try {
-                    return String.format(result, params);
-                } catch (IllegalFormatException ignored) {
-                    // Ignore, return the base translation instead
-                }
-            }
-            return result;
         }
     }
 

@@ -3,16 +3,17 @@
 #
 
 MMSVersion: 2                               # Required to be recognized as a Scenario file of this format
-name: Example Scenario                      # Required title of the scenario; displayed in the scenario chooser
+name: Example Scenario V2                   # Required title of the scenario; displayed in the scenario chooser
 gametype: SBF                               # default: TW; other values: AS, BF, SBF
 planet: Bellatrix                           # default: show no planet info
+
+                                            # Required longer description; maximum length 350 characters
+                                            # Use YAML formatting > to ignore linebreaks in the text (indentation!)
+                                            # or write the text in one line "description: This scenario visits..."
 description: >
   This scenario visits a fight of McCormack's Fusiliers in the campaign on Bellatrix against Ajax's
   Avengers. The retreating Avengers tried deperately to shake the Highlanders as they fled east across the southern continent of
   Bellatrix, but to no avail. Exhausted and bogged down by bad weather, the Avengers had no choice but to stand and fight.
-                                            # Required longer description; maximum length 350 characters
-                                            # Use YAML formatting > to ignore linebreaks in the text (indentation!)
-                                            # or write the text in one line "description: This scenario visits..."
 
 singleplayer: yes                           # default: yes; the first player is the human player and all other players
                                             # are Princess bots. This will skip the Player/Camo assignment dialog

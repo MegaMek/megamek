@@ -22,7 +22,7 @@
 		  <plain/>
   </UI_Element>
 
-		<!-- Defines default buttons -->
+	<!-- Defines default buttons -->
   <UI_Element>
 		  <name>defaultButton</name>
 		  <plain/>
@@ -31,10 +31,10 @@
 	<UI_Element>
 		<name>MainMenuBorder</name>
 		<no_border>true</no_border>
-				<background_image>../misc/megamek_splash_spooky_fhd.png</background_image>
-				<background_image>Bloodwolf/Parts/title/background.png</background_image>
-				<background_image>../misc/megamek_splash_spooky_uhd.png</background_image>
-				<background_image>../misc/megamek_splash_spooky_hd.png</background_image>
+    <background_image>../misc/megamek_splash_spooky_fhd.png</background_image>
+    <background_image>Bloodwolf/Parts/title/background.png</background_image>
+    <background_image>../misc/megamek_splash_spooky_uhd.png</background_image>
+    <background_image>../misc/megamek_splash_spooky_hd.png</background_image>
 		<tile_background>true</tile_background>
 		<font_color>#ffffff</font_color>
 		<show_scroll_bars>false</show_scroll_bars>

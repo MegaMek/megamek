@@ -1,54 +1,61 @@
+generator:MegaMek Suite 0.49.19-SNAPSHOT on 2024-03-16
 chassis:Marauder
 model:MAD-1R
 mul id:2033
 
 Config:Biped
-TechBase:Inner Sphere
-Era:2612
+techbase:Inner Sphere
+era:2612
 source:TRO: 3075
-Rules Level:2
+rules level:2
 role:Sniper
 
-Mass:75
-Engine:300 Fusion Engine
-Structure:Standard
-Myomer:Standard
+quirk:low_profile
+quirk:command_mech
+quirk:directional_torso_mount
+quirk:hyper_actuator
+weaponquirk:exposed_linkage:RT:0:Autocannon/5
 
-Heat Sinks:16 Single
-Walk MP:4
-Jump MP:0
+mass:75
+engine:300 Fusion Engine(IS)
+structure:IS Standard
+myomer:Standard
 
-Armor:Ferro-Fibrous(Inner Sphere)
-LA Armor:22
-RA Armor:22
-LT Armor:21
-RT Armor:21
-CT Armor:36
-HD Armor:9
-LL Armor:20
-RL Armor:20
-RTL Armor:8
-RTR Armor:8
-RTC Armor:10
+heat sinks:16 Single
+walk mp:4
+jump mp:0
+
+armor:Ferro-Fibrous(Inner Sphere)
+LA armor:22
+RA armor:22
+LT armor:21
+RT armor:21
+CT armor:36
+HD armor:9
+LL armor:20
+RL armor:20
+RTL armor:8
+RTR armor:8
+RTC armor:10
 
 Weapons:5
-Particle Cannon, Right Arm
-Particle Cannon, Left Arm
+PPC, Left Arm
 Medium Laser, Left Arm
+PPC, Right Arm
 Medium Laser, Right Arm
-Autocannon/5, Right Torso
+AC/5, Right Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-Particle Cannon
-Particle Cannon
-Particle Cannon
+PPC
+PPC
+PPC
 Medium Laser
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 -Empty-
 -Empty-
 
@@ -56,21 +63,21 @@ Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-Particle Cannon
-Particle Cannon
-Particle Cannon
+PPC
+PPC
+PPC
 Medium Laser
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 -Empty-
 -Empty-
 
 Left Torso:
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -87,10 +94,10 @@ Autocannon/5
 Autocannon/5
 IS Ammo AC/5
 ISCASE
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 -Empty-
 -Empty-
 

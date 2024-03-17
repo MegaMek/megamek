@@ -1,12 +1,16 @@
+generator:MegaMek Suite 0.49.19-SNAPSHOT on 2024-03-16
 chassis:Nightsky
 model:NGS-7S
 mul id:9352
+
 Config:Biped
 techbase:Mixed (IS Chassis)
 era:3142
 source:Rec Guide:ilClan #27
 rules level:3
 role:Striker
+
+weaponquirk:mod_weapons:RA:4:Hatchet
 
 mass:50
 engine:300 XL (Clan) Engine
@@ -150,7 +154,7 @@ Jump Jet
 
 overview:The Nightsky was a mid-range continuation of the Federated Commonwealth's successful Hatchetman-Axman series, which established melee combat weapons as a powerful and heat-efficient close-combat option for the experienced MechWarrior. Intended to provide both speed and firepower.
 capabilities:The Nightsky is built around a massive Vlar 300 XL extralight engine that propels the 'Mech up to speeds of 97.2 km/h. Superb ground speed and the added maneuverability provided by six HildCo Model 13 jump jets that allow the Nightsky to jump up to 180 meters make the Nightsky a capable heavy recon 'Mech. It is also protected with nine and a half tons of armor, providing the Nightsky with good armor protection for its size.
-deployment:No information on this variant	
+deployment:No information on this variant
 history:After their introduction in 3053, Nightskys quickly proliferated throughout the Federated Commonwealth, with many replacing Hatchetmen or Axmen lost in the early years of the Clan invasion. The distribution of this design had become fairly even between the two once-allied states by the time of the Lyran secession from the Commonwealth, resulting in Nightskys appearing among as many pro-Victor Davion troops as pro-Katherine Steiner forces during the FedCom Civil War.
 manufacturer:Defiance Industries
 primaryfactory:Hesperus II

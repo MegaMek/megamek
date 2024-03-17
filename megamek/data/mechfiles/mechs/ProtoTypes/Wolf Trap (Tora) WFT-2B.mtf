@@ -1,41 +1,40 @@
+generator:MegaMek Suite 0.49.19-SNAPSHOT on 2024-03-16
 chassis:Wolf Trap (Tora)
 model:WFT-2B
 mul id:5415
 
 Config:Biped
-TechBase:Inner Sphere
-Era:3080
-Source:TRO: Prototypes
-Rules Level:4
+techbase:Inner Sphere
+era:3080
+source:TRO: Prototypes
+rules level:4
 role:Striker
 
-
-
 quirk:bad_rep_is
+quirk:easy_maintain
 quirk:bad_rep_clan
 
+mass:45
+engine:270 XL Engine(IS)
+structure:IS Endo Steel
+myomer:Standard
 
-Mass:45
-Engine:270 XL Engine(IS)
-Structure:Endo Steel
-Myomer:Standard
+heat sinks:10 IS Double
+walk mp:6
+jump mp:0
 
-Heat Sinks:10 Double
-Walk MP:6
-Jump MP:0
-
-Armor:Ferro-Fibrous(Inner Sphere)
-LA Armor:14
-RA Armor:14
-LT Armor:17
-RT Armor:17
-CT Armor:17
-HD Armor:9
-LL Armor:20
-RL Armor:20
-RTL Armor:5
-RTR Armor:5
-RTC Armor:5
+armor:Ferro-Fibrous(Inner Sphere)
+LA armor:14
+RA armor:14
+LT armor:17
+RT armor:17
+CT armor:17
+HD armor:9
+LL armor:20
+RL armor:20
+RTL armor:5
+RTR armor:5
+RTC armor:5
 
 Weapons:3
 Gauss Rifle, Right Arm
@@ -47,13 +46,13 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 -Empty-
 
 Right Arm:
@@ -68,7 +67,7 @@ ISGaussRifle
 ISGaussRifle
 IS Gauss Ammo
 IS Gauss Ammo
-Endo Steel
+IS Endo Steel
 
 Left Torso:
 Fusion Engine
@@ -76,27 +75,27 @@ Fusion Engine
 Fusion Engine
 ISMediumXPulseLaser
 ISMediumXPulseLaser
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 
 Right Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Center Torso:
 Fusion Engine
@@ -131,8 +130,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -145,8 +144,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-

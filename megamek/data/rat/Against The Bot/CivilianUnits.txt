@@ -67,10 +67,9 @@ J-27 Ordnance Transport (Armor),18
 J-27 Ordnance Transport (Fusion),9
 J-27 Ordnance Transport K-27 'Killjoy',3
 J-37 Ordnance Transport (Original),27
-Jifty Transportable Field Repair Unit JI-50 (ML),18
+Jifty Transportable Field Repair Unit JI-50 (ML),21
 Jifty Transportable Field Repair Unit JI-50 (Hoist),18
 Jifty Transportable Field Repair Unit JI-50 (MG),3
-Jifty Transportable Field Repair Unit JI-50 (ML),3
 Jifty Transportable Field Repair Unit JI-50 (Q-Vehicle),3
 Korvin Tank KRV-2,3
 MASH Truck (Standard),18

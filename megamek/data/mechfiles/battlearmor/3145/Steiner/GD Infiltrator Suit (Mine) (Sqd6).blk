@@ -56,7 +56,6 @@ Jump
 BABasicManipulator:LA
 BABasicManipulator:RA
 ISBADavidLightGaussRifle:RA
-ISBAMineDispenser:LA
 BAParafoil:Body
 IS BA Stealth (Basic):Body
 IS BA Stealth (Basic):Body
@@ -64,33 +63,27 @@ IS BA Stealth (Basic):Body
 </Squad Equipment>
 
 <Trooper 1 Equipment>
-Mine
-Mine
+ISBAMineDispenser:LA
 </Trooper 1 Equipment>
 
 <Trooper 2 Equipment>
-Mine
-Mine
+ISBAMineDispenser:LA
 </Trooper 2 Equipment>
 
 <Trooper 3 Equipment>
-Mine
-Mine
+ISBAMineDispenser:LA
 </Trooper 3 Equipment>
 
 <Trooper 4 Equipment>
-Mine
-Mine
+ISBAMineDispenser:LA
 </Trooper 4 Equipment>
 
 <Trooper 5 Equipment>
-Mine
-Mine
+ISBAMineDispenser:LA
 </Trooper 5 Equipment>
 
 <Trooper 6 Equipment>
-Mine
-Mine
+ISBAMineDispenser:LA
 </Trooper 6 Equipment>
 
 <source>

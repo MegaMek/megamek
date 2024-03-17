@@ -3199,7 +3199,7 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.name = "Anti-Missile System Ammo [IS]";
-        ammo.shortName = "AMS";
+        ammo.shortName = "AMS Ammo";
         ammo.setInternalName("ISAMS Ammo");
         ammo.addLookupName("IS Ammo AMS");
         ammo.addLookupName("IS AMS Ammo");
@@ -3222,7 +3222,7 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.name = "Anti-Missile System Ammo [Clan]";
-        ammo.shortName = "AMS";
+        ammo.shortName = "AMS Ammo";
         ammo.setInternalName("CLAMS Ammo");
         ammo.addLookupName("Clan Ammo AMS");
         ammo.addLookupName("Clan AMS Ammo");
@@ -4965,7 +4965,7 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.name = "Gauss Rifle Ammo [IS]";
-        ammo.shortName = "Gauss";
+        ammo.shortName = "Gauss Ammo";
         ammo.setInternalName("IS Gauss Ammo");
         ammo.addLookupName("IS Ammo Gauss");
         ammo.addLookupName("ISGauss Ammo");
@@ -4999,7 +4999,7 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.name = "Gauss Rifle Ammo [Clan]";
-        ammo.shortName = "Gauss";
+        ammo.shortName = "Gauss Ammo";
         ammo.setInternalName("Clan Gauss Ammo");
         ammo.addLookupName("Clan Ammo Gauss");
         ammo.addLookupName("CLGauss Ammo");
@@ -5073,7 +5073,7 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.name = "Anti-Personnel Gauss Rifle Ammo";
-        ammo.shortName = "AP Gauss";
+        ammo.shortName = "AP Gauss Ammo";
         ammo.setInternalName("CLAPGaussRifle Ammo");
         ammo.addLookupName("Clan AP Gauss Rifle Ammo");
         ammo.addLookupName("Clan Anti-Personnel Gauss Rifle Ammo");
@@ -5097,7 +5097,7 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.name = "Hyper-Assault Gauss Rifle/20 Ammo";
-        ammo.shortName = "HAG/20";
+        ammo.shortName = "HAG/20 Ammo";
         ammo.setInternalName(ammo.name);
         ammo.addLookupName("CLHAG20 Ammo");
         ammo.addLookupName("Clan HAG 20 Ammo");
@@ -5123,7 +5123,7 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.name = "Hyper-Assault Gauss Rifle/30 Ammo";
-        ammo.shortName = "HAG/30";
+        ammo.shortName = "HAG/30 Ammo";
         ammo.setInternalName(ammo.name);
         ammo.addLookupName("CLHAG30 Ammo");
         ammo.addLookupName("Clan HAG 30 Ammo");
@@ -5148,7 +5148,7 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.name = "Hyper-Assault Gauss Rifle/40 Ammo";
-        ammo.shortName = "HAG/40";
+        ammo.shortName = "HAG/40 Ammo";
         ammo.setInternalName(ammo.name);
         ammo.addLookupName("CLHAG40 Ammo");
         ammo.addLookupName("Clan HAG 40 Ammo");
@@ -5173,7 +5173,7 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.name = "Improved Heavy Gauss Rifle Ammo";
-        ammo.shortName = "iHeavy Gauss";
+        ammo.shortName = "iHeavy Gauss Ammo";
         ammo.setInternalName("ISImprovedHeavyGauss Ammo");
         ammo.addLookupName("IS Improved Heavy Gauss Rifle Ammo");
         ammo.addLookupName("ISImprovedHeavyGaussRifle Ammo");
@@ -5196,7 +5196,7 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.name = "Magshot Gauss Rifle Ammo";
-        ammo.shortName = "Magshot";
+        ammo.shortName = "Magshot Ammo";
         ammo.setInternalName("ISMagshotGR Ammo");
         ammo.addLookupName("IS Magshot GR Ammo");
         ammo.damagePerShot = 2;
@@ -5221,7 +5221,7 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.name = "Silver Bullet Gauss Rifle Ammo";
-        ammo.shortName = "Silver Bullet";
+        ammo.shortName = "Silver Bullet Ammo";
         ammo.setInternalName("Silver Bullet Gauss Ammo");
         ammo.addLookupName("IS SBGauss Rifle Ammo");
         ammo.addLookupName("ISSBGauss Ammo");
@@ -5332,7 +5332,7 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createCLMGAmmo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.name = "Machine Gun Ammo [Half]";
+        ammo.name = "Machine Gun Ammo [Full]";
         ammo.shortName = "MG Ammo";
         ammo.setInternalName("Clan Machine Gun Ammo - Full");
         ammo.addLookupName("Clan Ammo MG - Full");

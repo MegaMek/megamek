@@ -36,12 +36,12 @@ import java.util.zip.ZipFile;
  * @author arlith
  */
 public class MechSummaryCache {
-    
+
     public interface Listener {
         void doneLoading();
     }
 
-    private static final String FILENAME_UNITS_CACHE = "units.cache";
+    public static final String FILENAME_UNITS_CACHE = "units.cache";
     public static final String FILENAME_LOOKUP = "name_changes.txt";
 
     private static final List<String> SUPPORTED_FILE_EXTENSIONS =

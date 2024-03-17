@@ -7102,6 +7102,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 7;
         misc.spreadable = true;
         misc.flags = misc.flags.or(F_NULLSIG).or(F_MECH_EQUIPMENT);
+        misc.omniFixedOnly = true;
         String[] saModes = { "Off", "On" };
         misc.setModes(saModes);
         misc.setInstantModeSwitch(false);

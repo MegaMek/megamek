@@ -1,17 +1,4 @@
-
-<mul id:>
-4325
-</mul id:>
-#building block data file
-<BlockVersion>
-1
-</BlockVersion>
-
-#Write the version number just in case...
-<Version>
-MAM0
-</Version>
-
+#Saved from version 0.49.19-SNAPSHOT on 2024-03-16
 <UnitType>
 Tank
 </UnitType>
@@ -20,33 +7,21 @@ Tank
 Hiryo Armored Infantry Transport
 </Name>
 
-<model>
+<Model>
 'BloodHound'
-</model>
+</Model>
 
-<Tonnage>
-40
-</Tonnage>
+<mul id:>
+4325
+</mul id:>
 
-<cruiseMP>
-8
-</cruiseMP>
+<year>
+3083
+</year>
 
-<Armor>
-25
-25
-25
-24
-</Armor>
-
-<Front Equipment>
-ISMediumXPulseLaser
-ISBloodhoundActiveProbe
-</Front Equipment>
-
-<Body Equipment>
-Environmental Sealing
-</Body Equipment>
+<originalBuildYear>
+3083
+</originalBuildYear>
 
 <type>
 IS Level 3
@@ -56,37 +31,66 @@ IS Level 3
 Scout
 </role>
 
-<year>
-3083
-</year>
+<quirks>
+easy_pilot
+difficult_maintain
+non_standard
+</quirks>
 
-<source>
-TRO: Prototypes
-</source>
+<motion_type>
+WiGE
+</motion_type>
 
-<internal_type>
-0
-</internal_type>
+<transporters>
+troopspace:4.0
+</transporters>
 
-<armor_type>
-6
-</armor_type>
+<cruiseMP>
+8
+</cruiseMP>
 
 <engine_type>
 0
 </engine_type>
 
-<motion_type>
-WIGE
-</motion_type>
+<armor_type>
+6
+</armor_type>
 
-<transporters>
-TroopSpace:4
-</transporters>
+<armor_tech>
+5
+</armor_tech>
 
-<quirks>
-difficult_maintain
-non_standard
-easy_pilot
-</quirks>
+<armor>
+25
+25
+25
+24
+</armor>
+
+<Body Equipment>
+Environmental Sealing
+</Body Equipment>
+
+<Front Equipment>
+ISMediumXPulseLaser
+BloodhoundActiveProbe
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<source>
+TRO: Prototypes
+</source>
+
+<tonnage>
+40.0
+</tonnage>
 

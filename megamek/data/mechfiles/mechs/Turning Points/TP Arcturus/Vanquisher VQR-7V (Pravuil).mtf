@@ -1,6 +1,8 @@
+generator:MegaMek Suite 0.49.19-SNAPSHOT on 2024-03-16
 chassis:Vanquisher
 model:VQR-7V (Pravuil)
 mul id:7342
+
 Config:Biped
 techbase:Inner Sphere
 era:3073
@@ -8,13 +10,10 @@ source:Turning Points: Arcturus
 rules level:3
 role:Juggernaut
 
-
-
-quirk:stable
-quirk:bad_rep_clan
 quirk:bad_rep_is
+quirk:stable
 quirk:no_arms
-
+quirk:bad_rep_clan
 
 mass:100
 engine:300 Fusion Engine(IS)
@@ -85,8 +84,8 @@ ISMML3
 ISMML3
 ISMML3
 ISMML3
-IS Ammo MML-3 LRM
 IS Ammo MML-3 SRM
+IS Ammo MML-3 LRM
 ISCASE
 IS Endo Steel
 IS Endo Steel

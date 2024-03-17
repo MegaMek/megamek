@@ -79,10 +79,6 @@ public class MultiTargetFireControl extends FireControl {
 
             if (currentPlan.getUtility() > bestPlan.getUtility()) {
                 bestPlan = currentPlan;
-
-                // Debug logging; Princess does her own info-level logging
-                LogManager.getLogger().debug(shooter.getDisplayName() + " - Best Firing Plan: " +
-                        bestPlan.getDebugDescription(true));
             }
 
             // check the plan where the shooter flips its arms

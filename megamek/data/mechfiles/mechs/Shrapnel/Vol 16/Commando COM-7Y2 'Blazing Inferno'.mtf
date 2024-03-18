@@ -1,10 +1,11 @@
 generator:MegaMek Suite 0.49.19-SNAPSHOT on 2024-03-09
 chassis:Commando
 model:COM-7Y2 'Blazing Inferno'
+mul id:9627
 
 Config:Biped
 techbase:Inner Sphere
-era:2830
+era:3025
 source:Shrapnel #16
 rules level:1
 role:Striker

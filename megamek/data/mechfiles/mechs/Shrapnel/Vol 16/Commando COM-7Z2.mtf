@@ -1,10 +1,11 @@
 generator:MegaMek Suite 0.49.19-SNAPSHOT on 2024-03-05
 chassis:Commando
 model:COM-7Z2
+mul id:9629
 
 Config:Biped
 techbase:Inner Sphere
-era:3057
+era:3051
 source:Shrapnel #16
 rules level:2
 role:Scout

@@ -27,7 +27,6 @@ import megamek.common.enums.BasementType;
 import megamek.common.enums.GamePhase;
 import megamek.common.enums.WeaponSortOrder;
 import megamek.common.equipment.ArmorType;
-import megamek.common.event.GameListener;
 import megamek.common.event.GameVictoryEvent;
 import megamek.common.force.Force;
 import megamek.common.force.Forces;
@@ -38,10 +37,7 @@ import megamek.common.options.IBasicOption;
 import megamek.common.options.IOption;
 import megamek.common.options.OptionsConstants;
 import megamek.common.preference.PreferenceManager;
-import megamek.common.util.BoardUtilities;
-import megamek.common.util.EmailService;
-import megamek.common.util.SerializationHelper;
-import megamek.common.util.StringUtil;
+import megamek.common.util.*;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.verifier.*;
 import megamek.common.weapons.*;
@@ -29580,75 +29576,18 @@ public class GameManager implements IGameManager {
 
             // Now we relink C3/NC3/C3i to our guys! Yes, this is hackish... but, we
             // do what we must. Its just too bad we have to loop over the entire entities array..
-            if (entity.hasC3() || entity.hasC3i() || entity.hasNavalC3()) {
-                boolean C3iSet = false;
 
-                for (Entity e : game.getEntitiesVector()) {
-
-                    // C3 Checks
-                    if (entity.hasC3()) {
-                        if ((entity.getC3MasterIsUUIDAsString() != null)
-                                && entity.getC3MasterIsUUIDAsString().equals(e.getC3UUIDAsString())) {
-                            entity.setC3Master(e, false);
-                            entity.setC3MasterIsUUIDAsString(null);
-                        } else if ((e.getC3MasterIsUUIDAsString() != null)
-                                && e.getC3MasterIsUUIDAsString().equals(entity.getC3UUIDAsString())) {
-                            e.setC3Master(entity, false);
-                            e.setC3MasterIsUUIDAsString(null);
-                            // Taharqa: we need to update the other entity for
-                            // the
-                            // client
-                            // or it won't show up right. I am not sure if I
-                            // like
-                            // the idea of updating other entities in this
-                            // method,
-                            // but it
-                            // will work for now.
-                            if (!entities.contains(e)) {
-                                entityUpdate(e.getId());
-                            }
-                        }
-                    }
-
-                    // C3i Checks
-                    if (entity.hasC3i() && !C3iSet) {
-                        entity.setC3NetIdSelf();
-                        int pos = 0;
-                        while (pos < Entity.MAX_C3i_NODES) {
-                            // We've found a network, join it.
-                            if ((entity.getC3iNextUUIDAsString(pos) != null)
-                                    && (e.getC3UUIDAsString() != null)
-                                    && entity.getC3iNextUUIDAsString(pos)
-                                    .equals(e.getC3UUIDAsString())) {
-                                entity.setC3NetId(e);
-                                C3iSet = true;
-                                break;
-                            }
-
-                            pos++;
-                        }
-                    }
-
-                    // NC3 Checks
-                    if (entity.hasNavalC3() && !C3iSet) {
-                        entity.setC3NetIdSelf();
-                        int pos = 0;
-                        while (pos < Entity.MAX_C3i_NODES) {
-                            // We've found a network, join it.
-                            if ((entity.getNC3NextUUIDAsString(pos) != null)
-                                    && (e.getC3UUIDAsString() != null)
-                                    && entity.getNC3NextUUIDAsString(pos)
-                                    .equals(e.getC3UUIDAsString())) {
-                                entity.setC3NetId(e);
-                                C3iSet = true;
-                                break;
-                            }
-
-                            pos++;
-                        }
-                    }
+            var c3affected = C3Util.wireC3(game, entity);
+            for (Entity e : c3affected) {
+                // Taharqa: we need to update the other entities for
+                // the client or it won't show up right. I am not sure if I
+                // like the idea of updating other entities in this
+                // method, but it will work for now.
+                if (!entities.contains(e)) {
+                    entityUpdate(e.getId());
                 }
             }
+
             // Give the unit a spotlight, if it has the spotlight quirk
             entity.setExternalSearchlight(entity.hasExternalSearchlight()
                     || entity.hasQuirk(OptionsConstants.QUIRK_POS_SEARCHLIGHT));

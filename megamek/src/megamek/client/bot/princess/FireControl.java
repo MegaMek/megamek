@@ -2598,8 +2598,6 @@ public class FireControl {
                                                                              ammoConservation);
             final FiringPlan plan = determineBestFiringPlan(parameters);
 
-            LogManager.getLogger().info(shooter.getDisplayName() + " at " + enemy
-                    .getDisplayName() + " - Best Firing Plan: " + plan.getDebugDescription(true));
             if ((null == bestPlan) || (plan.getUtility() > bestPlan.getUtility())) {
                 bestPlan = plan;
             }
@@ -3611,7 +3609,7 @@ public class FireControl {
      * @param wtype that uses ammo that is not tracked, or not actually ammo
      * @return true if wtype doesn't actually track ammo
      */
-    private static boolean effectivelyAmmoless(WeaponType wtype) {
+    protected static boolean effectivelyAmmoless(WeaponType wtype) {
         List<Integer> atypes = Arrays.asList(
                 AmmoType.T_NA,
                 AmmoType.T_INFANTRY

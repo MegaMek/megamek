@@ -5558,6 +5558,13 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
+     * Returns whether this entity has a Drone Operating System
+     */
+    public boolean hasDroneOs() {
+        return getMisc().stream().anyMatch(m -> (m.getType() instanceof MiscType) && m.getType().hasFlag(MiscType.F_DRONE_OPERATING_SYSTEM));
+    }
+
+    /**
      * Returns wether or not this entity has a Targeting Computer.
      */
     public boolean hasTargComp() {

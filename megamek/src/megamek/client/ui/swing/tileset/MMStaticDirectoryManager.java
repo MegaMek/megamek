@@ -81,6 +81,20 @@ public class MMStaticDirectoryManager {
                     DirectoryItems userDirPortraits = new DirectoryItems(portraitUserDir, new ImageFileFactory());
                     portraitDirectory.merge(userDirPortraits);
                 }
+
+                // check for portraits in story arcs subdirectories
+                File storyarcsDir = Configuration.storyarcsDir();
+                if(null != storyarcsDir && storyarcsDir.isDirectory()) {
+                    for (File file : storyarcsDir.listFiles()) {
+                        if (file.isDirectory()) {
+                            File storyArcPortraitDir = new File(file.getPath() + "/data/images/portraits");
+                            if (null != storyArcPortraitDir && storyArcPortraitDir.isDirectory()) {
+                                DirectoryItems storyArcPortraits = new DirectoryItems(storyArcPortraitDir, new ImageFileFactory());
+                                portraitDirectory.merge(storyArcPortraits);
+                            }
+                        }
+                    }
+                }
             } catch (Exception e) {
                 LogManager.getLogger().error("Could not parse the portraits directory!", e);
             }

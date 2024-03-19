@@ -31,6 +31,10 @@ MEGAMEK VERSION HISTORY:
 + PR #5240: Fix MML 1365: Sponson Turrets not being included in TechLevel calcs 
 + PR #5218: add additional zoom levels and font adjustment levels 
 + Data: Fixing #5194, #4979, #4525, #4906, #5141, #5253, #4258, #4555, #5017, #4837
++ PR #5259: Refactor code to add new units to a C3 network
++ PR #5257: Flat Darcula skin 
++ PR #5256: Bind escape to the close action on various dialogs
++ Fix #5219: Show CF Warning over isometric bridges and turrets. 
 
 
 

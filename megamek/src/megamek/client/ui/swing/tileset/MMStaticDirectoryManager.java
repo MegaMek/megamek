@@ -84,11 +84,11 @@ public class MMStaticDirectoryManager {
 
                 // check for portraits in story arcs subdirectories
                 File storyarcsDir = Configuration.storyarcsDir();
-                if(null != storyarcsDir && storyarcsDir.isDirectory()) {
+                if(storyarcsDir.exists() && storyarcsDir.isDirectory()) {
                     for (File file : storyarcsDir.listFiles()) {
                         if (file.isDirectory()) {
                             File storyArcPortraitDir = new File(file.getPath() + "/data/images/portraits");
-                            if (null != storyArcPortraitDir && storyArcPortraitDir.isDirectory()) {
+                            if (storyArcPortraitDir.exists() && storyArcPortraitDir.isDirectory()) {
                                 DirectoryItems storyArcPortraits = new DirectoryItems(storyArcPortraitDir, new ImageFileFactory());
                                 portraitDirectory.merge(storyArcPortraits);
                             }

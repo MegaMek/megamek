@@ -121,6 +121,21 @@ public class MMStaticDirectoryManager {
                     DirectoryItems userDirCamo = new DirectoryItems(camoUserDir, new ScaledImageFileFactory());
                     camouflageDirectory.merge(userDirCamo);
                 }
+
+                // check for camouflage in story arcs subdirectories
+                //FIXME: This only works if camo is in subdirectory
+                File storyarcsDir = Configuration.storyarcsDir();
+                if(storyarcsDir.exists() && storyarcsDir.isDirectory()) {
+                    for (File file : storyarcsDir.listFiles()) {
+                        if (file.isDirectory()) {
+                            File storyArcCamoDir = new File(file.getPath() + "/data/images/camo");
+                            if (storyArcCamoDir.exists() && storyArcCamoDir.isDirectory()) {
+                                DirectoryItems storyArcCamo = new DirectoryItems(storyArcCamoDir, new ScaledImageFileFactory());
+                                camouflageDirectory.merge(storyArcCamo);
+                            }
+                        }
+                    }
+                }
             } catch (Exception e) {
                 LogManager.getLogger().error("Could not parse the camo directory!", e);
             }

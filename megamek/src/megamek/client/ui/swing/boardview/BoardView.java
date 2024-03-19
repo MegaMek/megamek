@@ -2347,9 +2347,6 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
                             }
                             drawHexSpritesForHex(c, g, moveEnvSprites);
                             drawHexSpritesForHex(c, g, moveModEnvSprites);
-                            if (shouldShowCFWarning()) {
-                                drawHexSpritesForHex(c, g, cfWarningSprites);
-                            }
                             if ((en_Deployer != null)
                                     && board.isLegalDeployment(c, en_Deployer)) {
                                 drawHexBorder(g, getHexLocation(c), Color.YELLOW);
@@ -2368,6 +2365,11 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
                                 drawIsometricWreckSpritesForHex(c, g, isometricWreckSprites);
                             }
                             drawIsometricSpritesForHex(c, g, isometricSprites);
+
+                            // Draw CF warning here to prevent it from being rendered under bridges and turrets #5219
+                            if (shouldShowCFWarning()) {
+                                drawHexSpritesForHex(c, g, cfWarningSprites);
+                            }
                         }
                     }
                 }

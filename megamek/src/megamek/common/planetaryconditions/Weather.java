@@ -22,20 +22,20 @@ import megamek.common.Messages;
 
 public enum Weather {
     CLEAR("WEATHER_CLEAR", "PlanetaryConditions.DisplayableName.Weather.Clear", "\u239A"),
-    LIGHT_RAIN("WEATHER_LIGHT_RAIN", "PlanetaryConditions.DisplayableName.Weather.Light Rain", "\u2601 \u2022 \u2022 \u2022 \u2022"),
-    MOD_RAIN("WEATHER_MOD_RAIN", "PlanetaryConditions.DisplayableName.Weather.Moderate Rain", "\u2601 \u2601 \u2022 \u2022 \u2022"),
-    HEAVY_RAIN("WEATHER_HEAVY_RAIN", "PlanetaryConditions.DisplayableName.Weather.Heavy Rain", "\u2601 \u2601 \u2601 \u2022 \u2022"),
-    GUSTING_RAIN("WEATHER_GUSTING_RAIN", "PlanetaryConditions.DisplayableName.Weather.Gusting Rain", "\u2601 \u2601 \u2601 \u2601 \u2022"),
-    DOWNPOUR("WEATHER_DOWNPOUR", "PlanetaryConditions.DisplayableName.Weather.Torrential Downpour", "\u2601 \u2601 \u2601 \u2601 \u2601"),
-    LIGHT_SNOW("WEATHER_LIGHT_SNOW", "PlanetaryConditions.DisplayableName.Weather.Light Snowfall", "\u2744 \u2022 \u2022 \u2022"),
-    MOD_SNOW("WEATHER_MOD_SNOW", "PlanetaryConditions.DisplayableName.Weather.Moderate Snowfall", "\u2744 \u2744 \u2022 \u2022"),
-    SNOW_FLURRIES("WEATHER_SNOW_FLURRIES", "PlanetaryConditions.DisplayableName.Weather.Snow Flurries", "\u2744 \u2744 \u2744 \u2022"),
-    HEAVY_SNOW("WEATHER_HEAVY_SNOW", "PlanetaryConditions.DisplayableName.Weather.Heavy Snowfall", "\u2744 \u2744 \u2744 \u2744"),
+    LIGHT_RAIN("WEATHER_LIGHT_RAIN", "PlanetaryConditions.DisplayableName.Weather.LightRain", "\u2601 \u2022 \u2022 \u2022 \u2022"),
+    MOD_RAIN("WEATHER_MOD_RAIN", "PlanetaryConditions.DisplayableName.Weather.ModerateRain", "\u2601 \u2601 \u2022 \u2022 \u2022"),
+    HEAVY_RAIN("WEATHER_HEAVY_RAIN", "PlanetaryConditions.DisplayableName.Weather.HeavyRain", "\u2601 \u2601 \u2601 \u2022 \u2022"),
+    GUSTING_RAIN("WEATHER_GUSTING_RAIN", "PlanetaryConditions.DisplayableName.Weather.GustingRain", "\u2601 \u2601 \u2601 \u2601 \u2022"),
+    DOWNPOUR("WEATHER_DOWNPOUR", "PlanetaryConditions.DisplayableName.Weather.TorrentialDownpour", "\u2601 \u2601 \u2601 \u2601 \u2601"),
+    LIGHT_SNOW("WEATHER_LIGHT_SNOW", "PlanetaryConditions.DisplayableName.Weather.LightSnowfall", "\u2744 \u2022 \u2022 \u2022"),
+    MOD_SNOW("WEATHER_MOD_SNOW", "PlanetaryConditions.DisplayableName.Weather.ModerateSnowfall", "\u2744 \u2744 \u2022 \u2022"),
+    SNOW_FLURRIES("WEATHER_SNOW_FLURRIES", "PlanetaryConditions.DisplayableName.Weather.SnowFlurries", "\u2744 \u2744 \u2744 \u2022"),
+    HEAVY_SNOW("WEATHER_HEAVY_SNOW", "PlanetaryConditions.DisplayableName.Weather.HeavySnowfall", "\u2744 \u2744 \u2744 \u2744"),
     SLEET("WEATHER_SLEET", "PlanetaryConditions.DisplayableName.Weather.Sleet", "\u26C6 \u2022"),
-    ICE_STORM("WEATHER_ICE_STORM", "PlanetaryConditions.DisplayableName.Weather.Ice Storm", "\u26C6 \u26C6"),
-    LIGHT_HAIL("WEATHER_LIGHT_HAIL", "PlanetaryConditions.DisplayableName.Weather.Light Hail", "\u2591 \u2022"),
-    HEAVY_HAIL("WEATHER_HEAVY_HAIL", "PlanetaryConditions.DisplayableName.Weather.Heavy Hail", "\u2591 \u2591"),
-    LIGHTNING_STORM("WEATHER_LIGHTNING_STORM", "PlanetaryConditions.DisplayableName.Weather.Lightning Storm", "\u2608");
+    ICE_STORM("WEATHER_ICE_STORM", "PlanetaryConditions.DisplayableName.Weather.IceStorm", "\u26C6 \u26C6"),
+    LIGHT_HAIL("WEATHER_LIGHT_HAIL", "PlanetaryConditions.DisplayableName.Weather.LightHail", "\u2591 \u2022"),
+    HEAVY_HAIL("WEATHER_HEAVY_HAIL", "PlanetaryConditions.DisplayableName.Weather.HeavyHail", "\u2591 \u2591"),
+    LIGHTNING_STORM("WEATHER_LIGHTNING_STORM", "PlanetaryConditions.DisplayableName.Weather.LightningStorm", "\u2608");
 
     private final String externalId;
     private final String name;

@@ -23,9 +23,9 @@ import megamek.common.Messages;
 public enum Light {
     DAY("LIGHT_DAY", "PlanetaryConditions.DisplayableName.Light.Daylight", "\u2600"),
     DUSK("LIGHT_DUSK", "PlanetaryConditions.DisplayableName.Light.Dusk", "\u263D \u263C"),
-    FULL_MOON("LIGHT_FULL_MOON", "PlanetaryConditions.DisplayableName.Light.Full Moon Night", "\u26AB"),
-    MOONLESS("LIGHT_MOONLESS", "PlanetaryConditions.DisplayableName.Light.Moonless Night", "\u26AA"),
-    PITCH_BLACK("LIGHT_PITCH_BLACK", "PlanetaryConditions.DisplayableName.Light.Pitch Black", "\u2588");
+    FULL_MOON("LIGHT_FULL_MOON", "PlanetaryConditions.DisplayableName.Light.FullMoonNight", "\u26AB"),
+    MOONLESS("LIGHT_MOONLESS", "PlanetaryConditions.DisplayableName.Light.MoonlessNight", "\u26AA"),
+    PITCH_BLACK("LIGHT_PITCH_BLACK", "PlanetaryConditions.DisplayableName.Light.PitchBlack", "\u2588");
 
     private final String externalId;
     private final String name;

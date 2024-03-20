@@ -22,8 +22,8 @@ import megamek.common.Messages;
 
 public enum Fog {
     FOG_NONE("FOG_NONE", "PlanetaryConditions.DisplayableName.Fog.None", "\uD83D\uDC41"),
-    FOG_LIGHT("FOG_LIGHT", "PlanetaryConditions.DisplayableName.Fog.Light Fog", "\u2588 \u2022"),
-    FOG_HEAVY("FOG_HEAVY", "PlanetaryConditions.DisplayableName.Fog.Heavy Fog", "\u2588 \u2588");
+    FOG_LIGHT("FOG_LIGHT", "PlanetaryConditions.DisplayableName.Fog.LightFog", "\u2588 \u2022"),
+    FOG_HEAVY("FOG_HEAVY", "PlanetaryConditions.DisplayableName.Fog.HeavyFog", "\u2588 \u2588");
     private final String externalId;
     private final String name;
     private final String indicator;

@@ -27,7 +27,7 @@ public enum Atmosphere {
     THIN("THIN", "PlanetaryConditions.DisplayableName.Atmosphere.Thin", "\u2726 \u2726 \u2726 \u25AF \u2727 \u2727"),
     STANDARD("STANDARD", "PlanetaryConditions.DisplayableName.Atmosphere.Standard", "\u2726 \u2726 \u2726 \u25AE \u2727 \u2727"),
     HIGH("HIGH", "PlanetaryConditions.DisplayableName.Atmosphere.High", "\u2726 \u2726 \u2726 \u25AE \u2726 \u2727"),
-    VERY_HIGH("VERY_HIGH", "PlanetaryConditions.DisplayableName.Atmosphere.Very High", "\u2726 \u2726 \u2726 \u25AE \u2726 \u2726");
+    VERY_HIGH("VERY_HIGH", "PlanetaryConditions.DisplayableName.Atmosphere.VeryHigh", "\u2726 \u2726 \u2726 \u25AE \u2726 \u2726");
     private final String externalId;
     private final String name;
     private final String indicator;

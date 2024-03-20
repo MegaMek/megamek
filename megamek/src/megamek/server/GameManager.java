@@ -25133,12 +25133,13 @@ public class GameManager implements IGameManager {
                     }
                 }
             case Aero.CRIT_WEAPON:
-                if (aero.isCapitalFighter()) {
-                    FighterSquadron cf = (FighterSquadron) aero;
+                FighterSquadron cf = (FighterSquadron) game.getEntity(aero.getTransportId());
+                if (aero.isCapitalFighter() && cf != null) {
+                    // The Squadron should be set as the "transport" of the Squadron members, but may be null
                     boolean destroyAll = false;
                     // CRIT_WEAPON damages the capital fighter/squadron's weapon groups
-                    // Go ahead and map damage for the fighter's weapon criticals for MHQ
-                    // resolution.
+                    // TODO: Go ahead and map damage for the fighters' weapon criticals for MHQ resolution.
+                    // (Currently this is not working as the Capital Fighter has no weapons of its own, only groups.
                     cf.damageCapFighterWeapons(loc);
                     if ((loc == Aero.LOC_NOSE) || (loc == Aero.LOC_AFT)) {
                         destroyAll = true;

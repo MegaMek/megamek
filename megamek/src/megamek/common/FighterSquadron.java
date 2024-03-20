@@ -625,6 +625,8 @@ public class FighterSquadron extends AeroSpaceFighter {
             // Add the unit to our squadron.
             fighters.add(unit.getId());
         }
+        // FighterSquadrons should handle this collectively
+        unit.setTransportId(id);
 
         if (!getGame().getPhase().isLounge()) {
             computeSquadronBombLoadout(); // this calls updateWeaponGroups() and loadAllWeapons()
@@ -646,6 +648,7 @@ public class FighterSquadron extends AeroSpaceFighter {
             loadAllWeapons();
         }
         updateSkills();
+        unit.setTransportId(Entity.NONE);
         return success;
     }
 
@@ -750,4 +753,31 @@ public class FighterSquadron extends AeroSpaceFighter {
     public boolean isCapitalScale() {
         return true;
     }
+
+    /** Override of Entity method.
+     *  This needs to be set or we can't do a reverse lookup from a Capital Fighter to its Squadron.
+     * @param transportId - the <code>int</code> ID of our transport. The ID is
+     *                    <b>not</b> validated. This value should be
+     *                    <code>Entity.NONE</code> if this unit has been unloaded.
+     */
+    @Override
+    public void setTransportId(int transportId) {
+       fighters.stream().map(fid -> game.getEntity(fid))
+               .forEach(f -> f.setTransportId(transportId));
+    }
+
+    /**
+     * Damage a capital fighter's weapons. WeaponGroups are damaged by critical hits.
+     * This matches up the individual fighter's weapons and critical slots and damages those
+     * for MHQ resolution
+     * @param loc - Int corresponding to the location struck
+     */
+    public void damageCapFighterWeapons(int loc) {
+        for (int fid: fighters) {
+            AeroSpaceFighter fighter = (AeroSpaceFighter) game.getEntity(fid);
+            fighter.damageLocation(loc);
+
+        }
+    }
+
 }

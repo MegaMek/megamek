@@ -18,12 +18,14 @@ package megamek.common;
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import org.apache.logging.log4j.LogManager;
 
 /**
  * This class will hold all the information on planetary conditions and a variety of helper functions
  * for those conditions
  */
+@JsonDeserialize(using = PlanetaryConditionsDeserializer.class)
 public class PlanetaryConditions implements Serializable {
 
     private static final long serialVersionUID = 6838624193286089781L;
@@ -1320,4 +1322,22 @@ public class PlanetaryConditions implements Serializable {
         return b ? MSG_NAME_BLOWINGSAND_TRUE : MSG_NAME_BLOWINGSAND_FALSE;
     }
 
+    @Override
+    public String toString() {
+        return "[PlanetaryConditions]"
+                + ((temperature != 25) ? "; Temperature: " + temperature : "")
+                + ((gravity != 1) ? "; Gravity: " + gravity : "")
+                + ((atmosphere != ATMO_STANDARD) ? "; Pressure:" + atmosphere : "")
+                + ((fog != FOG_NONE) ? "; Fog:" + fog : "")
+                + (blowingSand ? "; Blowing Sand" : "")
+                + (emi ? "; EMI" : "")
+                + (terrainAffected ? "; Affects Terrain" : "")
+                + ((lightConditions != L_DAY) ? "; Light:" + lightConditions : "")
+                + ((weatherConditions != WE_NONE) ? "; Weather:" + weatherConditions : "")
+                + ((windStrength != WI_NONE) ? "; Wind:" + windStrength : "")
+                + ((minWindStrength != WI_NONE) ? "; Wind Min:" + minWindStrength : "")
+                + ((maxWindStrength != WI_TORNADO_F4) ? "; Wind Max:" + maxWindStrength : "")
+                + ((windStrength != WI_NONE) || (minWindStrength != WI_NONE) || (maxWindStrength != WI_NONE) ?
+                "; Wind Dir:" + windDirection + (shiftWindDirection ? " (Shifting)" : "") : "");
+    }
 }

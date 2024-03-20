@@ -149,8 +149,7 @@ public class ScenarioChooser extends AbstractButtonDialog {
         List<Scenario> scenarios = new ArrayList<>();
         for (String scenarioFile : CommonSettingsDialog.filteredFilesWithSubDirs(directory, MMConstants.SCENARIO_EXT)) {
             try {
-                Scenario scenario = new ScenarioLoader(new File(scenarioFile)).load();
-                scenarios.add(scenario);
+                scenarios.add(new ScenarioLoader(scenarioFile).load());
             } catch (Exception ex) {
                 LogManager.getLogger().warn(ex.getMessage());
             }

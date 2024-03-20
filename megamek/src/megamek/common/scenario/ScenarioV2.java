@@ -18,34 +18,37 @@
  */
 package megamek.common.scenario;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import megamek.common.*;
+import megamek.common.enums.GamePhase;
+import megamek.common.icons.Camouflage;
+import megamek.common.util.fileUtils.MegaMekFile;
+import megamek.server.IGameManager;
+import org.apache.logging.log4j.LogManager;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.*;
 
 public class ScenarioV2 implements Scenario {
 
-    private static final String NAME = "name";
-    private static final String DESCRIPTION = "description";
-    private static final String PLANET = "planet";
-    private static final String GAMETYPE = "gametype";
+    private static final String DEPLOY = "deploy";
+    private static final String MAP = "map";
+    private static final String COLUMNS = "columns";
+    private static final String ROWS = "rows";
 
-    private JsonNode node;
-
-    private final File file;
+    private final JsonNode node;
+    private final File scenariofile;
 
     private static final ObjectMapper yamlMapper =
             new ObjectMapper(new YAMLFactory());
 
-    ScenarioV2(File file) throws IOException {
-        this.file = file;
-        load();
-    }
-
-    public void load() throws IOException {
-        node = yamlMapper.readTree(file);
+    ScenarioV2(File scenariofile) throws IOException {
+        this.scenariofile = scenariofile;
+        node = yamlMapper.readTree(scenariofile);
     }
 
     public String getName() {
@@ -57,7 +60,7 @@ public class ScenarioV2 implements Scenario {
     }
 
     public String getFileName() {
-        return file.toString();
+        return scenariofile.toString();
     }
 
     public String getPlanet() {
@@ -65,7 +68,260 @@ public class ScenarioV2 implements Scenario {
     }
 
     @Override
+    public IGame createGame() throws JsonProcessingException, ScenarioLoaderException {
+        LogManager.getLogger().info("Loading scenario from " + scenariofile);
+        Game game = new Game();
+        game.setBoardDirect(createBoard());
+
+        // build the faction players
+        List<Player> players = createPlayers();
+        for (Player player : players) {
+            game.addPlayer(player.getId(), player);
+        }
+
+//        // build the entities
+//        int entityId = 0;
+//        for (Player player : players) {
+//            Collection<Entity> entities = buildFactionEntities(this, player);
+//            for (Entity entity : entities) {
+//                entity.setOwner(player);
+//                entity.setId(entityId);
+//                ++ entityId;
+//                game.addEntity(entity);
+//                // Grounded DropShips don't set secondary positions unless they're part of a game and can verify
+//                // they're not on a space map.
+//                if (entity.isLargeCraft() && !entity.isAirborne()) {
+//                    entity.setAltitude(0);
+//                }
+//            }
+//        }
+//
+        game.getOptions().initialize();
+        if (node.has(PARAM_GAME_OPTIONS_FILE)) {
+            game.getOptions().loadOptions(
+                    new MegaMekFile(scenariofile.getParentFile(), node.get(PARAM_GAME_OPTIONS_FILE).textValue()).getFile(), true);
+        } else {
+            game.getOptions().loadOptions();
+        }
+
+        if (node.has(MMS_PLANETCOND)) {
+            game.setPlanetaryConditions(yamlMapper.treeToValue(node.get(MMS_PLANETCOND), PlanetaryConditions.class));
+        }
+        game.getPlanetaryConditions().determineWind();
+
+        game.setupTeams();
+        game.setPhase(GamePhase.STARTING_SCENARIO);
+        game.setupRoundDeployment();
+        if (node.has(PARAM_GAME_EXTERNAL_ID)) {
+            game.setExternalGameId(node.get(PARAM_GAME_EXTERNAL_ID).intValue());
+        }
+        game.setVictoryContext(new HashMap<>());
+        game.createVictoryConditions();
+        return game;
+    }
+
+    @Override
     public String getGameType() {
         return node.has(GAMETYPE) ? node.get(GAMETYPE).textValue() : "TW";
+    }
+
+    @Override
+    public boolean isSinglePlayer() {
+        return !node.has(PARAM_SINGLEPLAYER) || node.get(PARAM_SINGLEPLAYER).booleanValue();
+    }
+
+    @Override
+    public boolean hasFixedGameOptions() {
+        return !node.has(PARAM_GAME_OPTIONS_FIXED) || node.get(PARAM_GAME_OPTIONS_FIXED).booleanValue();
+    }
+
+    @Override
+    public boolean hasFixedPlanetaryConditions() {
+        return !node.has(PARAM_PLANETCOND_FIXED) || node.get(PARAM_PLANETCOND_FIXED).booleanValue();
+    }
+
+    @Override
+    public void applyDamage(IGameManager gameManager) {
+        //TODO
+    }
+
+    private List<Player> createPlayers() throws ScenarioLoaderException {
+        if (!node.has(PARAM_FACTIONS) || !node.get(PARAM_FACTIONS).isArray()) {
+            throw new ScenarioLoaderException("ScenarioLoaderException.missingFactions");
+        }
+        List<Player> result = new ArrayList<>();
+        int playerId = 0;
+        int teamId = 0;
+        for (Iterator<JsonNode> it = node.get(PARAM_FACTIONS).elements(); it.hasNext(); ) {
+            JsonNode playerNode = it.next();
+            Player player = new Player(playerId, playerNode.get(NAME).textValue());
+            result.add(player);
+            playerId++;
+
+            // scenario players start out as ghosts to be logged into
+            player.setGhost(true);
+
+            String loc = playerNode.has(DEPLOY) ? playerNode.get(DEPLOY).textValue() : "Any";
+            int dir = Math.max(findIndex(IStartingPositions.START_LOCATION_NAMES, loc), 0);
+            player.setStartingPos(dir);
+
+            if (playerNode.has(PARAM_CAMO)) {
+                File file = new File(playerNode.get(PARAM_CAMO).textValue());
+                final Camouflage camouflage = new Camouflage(file.getParent(), file.getName());
+                if (!camouflage.isDefault()) {
+                    player.setCamouflage(camouflage);
+                }
+            }
+
+            teamId = playerNode.has(PARAM_TEAM) ? playerNode.get(PARAM_TEAM).intValue() : teamId + 1;
+            player.setTeam(Math.min(teamId, Player.TEAM_NAMES.length - 1));
+
+//            String minefields = p.getString(getFactionParam(faction, PARAM_MINEFIELDS));
+//            if ((minefields != null) && !minefields.isEmpty()) {
+//                String[] mines = minefields.split(SEPARATOR_COMMA, -1);
+//                if (mines.length >= 3) {
+//                    try {
+//                        int minesConventional = Integer.parseInt(mines[0]);
+//                        int minesCommand = Integer.parseInt(mines[1]);
+//                        int minesVibra = Integer.parseInt(mines[2]);
+//                        player.setNbrMFConventional(minesConventional);
+//                        player.setNbrMFCommand(minesCommand);
+//                        player.setNbrMFVibra(minesVibra);
+//                    } catch (NumberFormatException nfex) {
+//                        LogManager.getLogger().error(String.format("Format error with minefields string '%s' for %s",
+//                                minefields, faction));
+//                    }
+//                }
+//            }
+        }
+
+        return result;
+    }
+
+    private Board createBoard() throws ScenarioLoaderException {
+        if (!node.has(MAP)) {
+            throw new ScenarioLoaderException("ScenarioLoaderException.missingMap");
+        }
+        JsonNode mapNode = node.get(MAP);
+        // "map: Xyz.board" will directly load that board with no modifiers
+        if (!mapNode.textValue().isBlank()) {
+            return loadBoard(mapNode.textValue());
+        }
+
+        // more complex map setup
+        int mapWidth = 16;
+        int mapHeight = 17;
+        int columns = mapNode.has(COLUMNS) ? mapNode.get(COLUMNS).intValue() : 1;
+        int rows = mapNode.has(ROWS) ? mapNode.get(ROWS).intValue() : 1;
+
+//
+//            LogManager.getLogger().info("No map width specified; using " + mapWidth);
+//        } else {
+//            mapWidth = Integer.parseInt(p.getString(PARAM_MAP_WIDTH));
+//        }
+//
+//        if (p.getString(PARAM_MAP_HEIGHT) == null) {
+//            LogManager.getLogger().info("No map height specified; using " + mapHeight);
+//        } else {
+//            mapHeight = Integer.parseInt(p.getString(PARAM_MAP_HEIGHT));
+//        }
+
+//        LogManager.getLogger().debug(String.format("Mapsheets are %d by %d hexes.", mapWidth, mapHeight));
+//        LogManager.getLogger().debug(String.format("Constructing %d by %d board.", nWidth, nHeight));
+//        int cf = 0;
+//        if (p.getString(PARAM_BRIDGE_CF) == null) {
+//            LogManager.getLogger().debug("No CF for bridges defined. Using map file defaults.");
+//        } else {
+//            cf = Integer.parseInt(p.getString(PARAM_BRIDGE_CF));
+//            LogManager.getLogger().debug("Overriding map-defined bridge CFs with " + cf);
+//        }
+        // load available boards
+        // basically copied from Server.java. Should get moved somewhere neutral
+        List<String> boards = new ArrayList<>();
+
+        // Find subdirectories given in the scenario file
+        List<String> allDirs = new LinkedList<>();
+        // "" entry stands for the boards base directory
+        allDirs.add("");
+
+//        if (p.getString(PARAM_MAP_DIRECTORIES) != null) {
+//            allDirs = Arrays.asList(p.getString(PARAM_MAP_DIRECTORIES)
+//                    .split(SEPARATOR_COMMA, -1));
+//        }
+//
+//        for (String dir: allDirs) {
+//            File curDir = new File(Configuration.boardsDir(), dir);
+//            if (curDir.exists()) {
+//                for (String file : curDir.list()) {
+//                    if (file.toLowerCase(Locale.ROOT).endsWith(FILE_SUFFIX_BOARD)) {
+//                        boards.add(dir+"/"+file.substring(0, file.length() - FILE_SUFFIX_BOARD.length()));
+//                    }
+//                }
+//            }
+//        }
+//
+//        Board[] ba = new Board[nWidth * nHeight];
+//        Queue<String> maps = new LinkedList<>(
+//                Arrays.asList(p.getString(PARAM_MAPS).split(SEPARATOR_COMMA, -1)));
+//        List<Boolean> rotateBoard = new ArrayList<>();
+//        for (int x = 0; x < nWidth; x++) {
+//            for (int y = 0; y < nHeight; y++) {
+//                int n = (y * nWidth) + x;
+//                String board = MAP_RANDOM;
+//                if (!maps.isEmpty()) {
+//                    board = maps.poll();
+//                }
+//                LogManager.getLogger().debug(String.format("(%d,%d) %s", x, y, board));
+//
+//                boolean isRotated = false;
+//                if (board.startsWith(Board.BOARD_REQUEST_ROTATION)) {
+//                    isRotated = true;
+//                    board = board.substring(Board.BOARD_REQUEST_ROTATION.length());
+//                }
+//
+//                String sBoardFile;
+//                if (board.equals(MAP_RANDOM)) {
+//                    sBoardFile = (boards.get(Compute.randomInt(boards.size()))) + FILE_SUFFIX_BOARD;
+//                } else {
+//                    sBoardFile = board + FILE_SUFFIX_BOARD;
+//                }
+//                File fBoard = new MegaMekFile(Configuration.boardsDir(), sBoardFile).getFile();
+//                if (!fBoard.exists()) {
+//                    throw new ScenarioLoaderException("ScenarioLoaderException.nonexistantBoard", board);
+//                }
+//                ba[n] = new Board();
+//                ba[n].load(new MegaMekFile(Configuration.boardsDir(), sBoardFile).getFile());
+//                if (cf > 0) {
+//                    ba[n].setBridgeCF(cf);
+//                }
+//                BoardUtilities.flip(ba[n], isRotated, isRotated);
+//                rotateBoard.add(isRotated);
+//            }
+//        }
+//
+//        // if only one board just return it.
+//        if (ba.length == 1) {
+//            return ba[0];
+//        }
+        // construct the big board
+//        return BoardUtilities.combine(mapWidth, mapHeight, nWidth, nHeight, ba, rotateBoard, MapSettings.MEDIUM_GROUND);
+        return null;
+    }
+
+    private Board loadBoard(String fileName) throws ScenarioLoaderException {
+        File boardFile = new File(scenarioDirectory(), fileName);
+        if (!boardFile.exists()) {
+            boardFile = new File(Configuration.boardsDir(), fileName);
+            if (!boardFile.exists()) {
+                throw new ScenarioLoaderException("ScenarioLoaderException.nonexistentBoard", fileName);
+            }
+        }
+        Board result = new Board();
+        result.load(boardFile);
+        return result;
+    }
+
+    private File scenarioDirectory() {
+        return scenariofile.getParentFile();
     }
 }

@@ -18,7 +18,57 @@
  */
 package megamek.common.scenario;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import megamek.common.IGame;
+import megamek.server.IGameManager;
+
 public interface Scenario {
+
+    String COMMENT_MARK = "#";
+    String FILE_SUFFIX_BOARD = ".board";
+    String MMSVERSION = "MMSVersion";
+
+    String NAME = "name";
+    String DESCRIPTION = "description";
+    String PLANET = "planet";
+    String GAMETYPE = "gametype";
+
+    String PARAM_GAME_OPTIONS_FILE = "GameOptionsFile";
+    String PARAM_GAME_OPTIONS_FIXED = "FixedGameOptions";
+    String PARAM_GAME_EXTERNAL_ID = "ExternalId";
+    String PARAM_FACTIONS = "factions";
+    String PARAM_SINGLEPLAYER = "singleplayer";
+
+
+    String MMS_PLANETCOND = "planetaryconditions";
+    String PARAM_PLANETCOND_FIXED = "fixedplanetaryconditions";
+
+    String PARAM_MAP_WIDTH = "MapWidth";
+    String PARAM_MAP_HEIGHT = "MapHeight";
+    String MAP_RANDOM = "RANDOM";
+    String PARAM_BOARD_WIDTH = "BoardWidth";
+    String PARAM_BOARD_HEIGHT = "BoardHeight";
+    String PARAM_BRIDGE_CF = "BridgeCF";
+    String PARAM_MAPS = "Maps";
+    String PARAM_MAP_DIRECTORIES = "RandomDirs";
+
+    String PARAM_TEAM = "team";
+    String PARAM_LOCATION = "Location";
+    String PARAM_MINEFIELDS = "Minefields";
+    String PARAM_DAMAGE = "Damage";
+    String PARAM_SPECIFIC_DAMAGE = "DamageSpecific";
+    String PARAM_CRITICAL_HIT = "CritHit";
+    String PARAM_AMMO_AMOUNT = "SetAmmoTo";
+    String PARAM_AMMO_TYPE = "SetAmmoType";
+    String PARAM_PILOT_HITS = "PilotHits";
+    String PARAM_EXTERNAL_ID = "ExternalID";
+    String PARAM_ADVANTAGES = "Advantages";
+    String PARAM_AUTO_EJECT = "AutoEject";
+    String PARAM_COMMANDER = "Commander";
+    String PARAM_DEPLOYMENT_ROUND = "DeploymentRound";
+    String PARAM_CAMO = "camo";
+    String PARAM_ALTITUDE = "altitude";
+
 
     String getName();
 
@@ -32,5 +82,25 @@ public interface Scenario {
 
     default String getPlanet() {
         return "";
-    };
+    }
+
+    IGame createGame() throws ScenarioLoaderException, JsonProcessingException;
+
+    boolean isSinglePlayer();
+
+    boolean hasFixedGameOptions();
+
+    boolean hasFixedPlanetaryConditions();
+
+    void applyDamage(IGameManager gameManager);
+
+
+    default int findIndex(String[] sa, String s) {
+        for (int x = 0; x < sa.length; x++) {
+            if (sa[x].equalsIgnoreCase(s)) {
+                return x;
+            }
+        }
+        return -1;
+    }
 }

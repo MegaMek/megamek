@@ -49,11 +49,12 @@ import megamek.common.options.IOption;
 import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.preference.PreferenceManager;
+import megamek.common.scenario.Scenario;
+import megamek.common.scenario.ScenarioLoader;
 import megamek.common.util.EmailService;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.server.GameManager;
-import megamek.common.scenario.ScenarioLoader;
 import megamek.server.Server;
 import megamek.utilities.xml.MMXMLUtility;
 import org.apache.logging.log4j.LogManager;
@@ -694,10 +695,12 @@ public class MegaMekGUI implements IPreferenceChangeListener {
             return;
         }
 
-        ScenarioLoader sl = new ScenarioLoader(new File(scenarioChooser.getSelectedScenarioFilename()));
-        Game g;
+        Scenario scenario;
+        Game game;
         try {
-            g = sl.createGame();
+            ScenarioLoader sl = new ScenarioLoader(new File(scenarioChooser.getSelectedScenarioFilename()));
+            scenario = sl.load();
+            game = (Game) scenario.createGame();
         } catch (Exception e) {
             LogManager.getLogger().error("", e);
             JOptionPane.showMessageDialog(frame,
@@ -708,36 +711,35 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         }
 
         // popup options dialog
-        if (!sl.hasFixedGameOptions()) {
-            GameOptionsDialog god = new GameOptionsDialog(frame, g.getOptions(), false);
-            god.update(g.getOptions());
+        if (!scenario.hasFixedGameOptions()) {
+            GameOptionsDialog god = new GameOptionsDialog(frame, game.getOptions(), false);
+            god.update(game.getOptions());
             god.setEditable(true);
             god.setVisible(true);
             for (IBasicOption opt : god.getOptions()) {
-                IOption orig = g.getOptions().getOption(opt.getName());
+                IOption orig = game.getOptions().getOption(opt.getName());
                 orig.setValue(opt.getValue());
             }
         }
 
         // popup planetary conditions dialog
-        if (!sl.hasFixedPlanetCond()) {
-            PlanetaryConditionsDialog pcd = new PlanetaryConditionsDialog(frame, g.getPlanetaryConditions());
-            pcd.update(g.getPlanetaryConditions());
+        if (!scenario.hasFixedPlanetaryConditions()) {
+            PlanetaryConditionsDialog pcd = new PlanetaryConditionsDialog(frame, game.getPlanetaryConditions());
+            pcd.update(game.getPlanetaryConditions());
             pcd.setVisible(true);
-            g.setPlanetaryConditions(pcd.getConditions());
+            game.setPlanetaryConditions(pcd.getConditions());
         }
 
         String playerName;
         int port;
         String serverPW;
         String localName;
-        Player[] pa = new Player[g.getPlayersVector().size()];
+        Player[] pa = game.getPlayersList().toArray(new Player[0]);
         int[] playerTypes = new int[pa.length];
-        g.getPlayersVector().copyInto(pa);
         boolean hasSlot = false;
 
         // get player types and colors set
-        if (!sl.isSinglePlayer()) {
+        if (!scenario.isSinglePlayer()) {
             ScenarioDialog sd = new ScenarioDialog(frame, pa);
             sd.setVisible(true);
             if (!sd.bSet) {
@@ -781,10 +783,9 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         if (!startServer(serverPW, port, false, null, null, null)) {
             return;
         }
-        server.setGame(g);
+        server.setGame(game);
 
-        // apply any scenario damage
-        sl.applyDamage(gameManager);
+        scenario.applyDamage(gameManager);
 
         if (!localName.isBlank()) {
             startClient(playerName, MMConstants.LOCALHOST, port);
@@ -806,11 +807,9 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         // If he didn't have a name when hasSlot was set, then the host should
         // be an observer.
         if (!hasSlot) {
-            Enumeration<Player> pE = server.getGame().getPlayers();
-            while (pE.hasMoreElements()) {
-                Player tmpP = pE.nextElement();
-                if (tmpP.getName().equals(localName)) {
-                    tmpP.setObserver(true);
+            for (Player player : server.getGame().getPlayersList()) {
+                if (player.getName().equals(localName)) {
+                    player.setObserver(true);
                 }
             }
         }

@@ -34,7 +34,11 @@ MEGAMEK VERSION HISTORY:
 + PR #5259: Refactor code to add new units to a C3 network
 + PR #5257: Flat Darcula skin 
 + PR #5256: Bind escape to the close action on various dialogs
-+ Fix #5219: Show CF Warning over isometric bridges and turrets. 
++ Fix #5219: Show CF Warning over isometric bridges and turrets.
++ PR #5266: Added a story arcs directory with support for loading units, camo and portraits
++ Fix #5242: Fixes some turn timer issues (skips all nags when the turn times expires; allow ESC on nags and others)
++ PR #5249: YAML serialization support for AS/SBF units
++ Fix #5204: Fixes Fighter Squadron weapon crits and group damage application
 
 
 

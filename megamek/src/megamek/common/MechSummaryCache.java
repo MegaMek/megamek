@@ -270,6 +270,19 @@ public class MechSummaryCache {
             bNeedsUpdate |= loadMechsFromDirectory(vMechs, sKnownFiles, lLastCheck, userDataUnits2, ignoreUnofficial);
         }
 
+        // load units from story arcs
+        File storyarcsDir = Configuration.storyarcsDir();
+        if(storyarcsDir.exists() && storyarcsDir.isDirectory()) {
+            for (File file : storyarcsDir.listFiles()) {
+                if (file.isDirectory()) {
+                    File storyArcUnitsDir = new File(file.getPath() + "/data/mechfiles");
+                    if(storyArcUnitsDir.exists() && storyArcUnitsDir.isDirectory()) {
+                        bNeedsUpdate |= loadMechsFromDirectory(vMechs, sKnownFiles, lLastCheck, storyArcUnitsDir, ignoreUnofficial);
+                    }
+                }
+            }
+        }
+
         // save updated cache back to disk
         if (bNeedsUpdate) {
             saveCache(vMechs);

@@ -1,42 +1,40 @@
+generator:MegaMek Suite 0.49.19-SNAPSHOT on 2024-03-17
 chassis:Thunderbolt
 model:TDR-9SE
 mul id:3250
 
 Config:Biped
-TechBase:Inner Sphere
-Era:3049
+techbase:Inner Sphere
+era:3049
 source:Rec Guide:ilClan #15
-Rules Level:2
+rules level:2
 role:Skirmisher
 
-
-
-quirk:multi_trac
 quirk:rugged_2
+quirk:multi_trac
 quirk:ubiquitous_is
 
+mass:65
+engine:260 Fusion Engine(IS)
+structure:IS Standard
+myomer:Standard
 
-Mass:65
-Engine:260 Fusion Engine(IS)
-Structure:Standard
-Myomer:Standard
+heat sinks:15 IS Double
+walk mp:4
+jump mp:4
 
-Heat Sinks:15 Double
-Walk MP:4
-Jump MP:4
-
-Armor:Standard(Inner Sphere)
-LA Armor:20
-RA Armor:20
-LT Armor:24
-RT Armor:24
-CT Armor:30
-HD Armor:9
-LL Armor:30
-RL Armor:30
-RTL Armor:6
-RTR Armor:6
-RTC Armor:12
+armor:Standard(Inner Sphere)
+LA armor:20
+RA armor:20
+LT armor:24
+RT armor:24
+CT armor:30
+HD armor:9
+LL armor:30
+RL armor:30
+RTL armor:6
+RTR armor:6
+RTC armor:12
 
 Weapons:5
 Large Pulse Laser, Right Arm
@@ -157,4 +155,20 @@ Foot Actuator
 -Empty-
 -Empty-
 
-imagefile:.\data\images\fluff\Mech\Thunderbolt3050.jpg
+overview:The Thunderbolt commonly known as the T-Bolt, is a venerable BattleMech with a lineage dating back to 2491. As one of the pioneering designs for planetary assault, it is distinguished by its robust firepower and has become a staple across the Successor States. Despite being eclipsed by newer, larger 'Mechs, the Thunderbolt's exceptional design and formidable reputation have ensured its continuous production and operational use.
+
+capabilities:The Thunderbolt, with its inception dating back to 2491, has firmly established itself as a paragon of battlefield endurance and versatility. Renowned for its multi-faceted armament, the 'Mech is equipped with a robust array of weaponry tailored for engagements at various ranges. Its arsenal, typically comprising a balanced mix of energy weapons and missile launchers, enables the Thunderbolt to deliver substantial firepower in combat scenarios ranging from long-distance bombardment to close-quarters engagements.<p>Armor-wise, the Thunderbolt stands out for its exceptional resilience. Its thick plating, often surpassing that of 'Mechs well above its weight class, ensures it can endure severe punishment on the front lines. This durability, combined with its moderate speed, makes the Thunderbolt a formidable opponent capable of holding its ground under heavy fire.</p><p>However, the Thunderbolt's impressive offensive capability comes with the challenge of heat management. Pilots must skillfully balance the 'Mech's weapon output to prevent overheating, which could lead to shutdowns or ammunition explosions. Tactical deployment near natural cooling sources has become a standard practice to mitigate this risk, allowing the Thunderbolt to sustain its barrage of firepower effectively.</p><p>Throughout its service history, the Thunderbolt has undergone numerous iterations and upgrades, reflecting the changing dynamics of warfare. Modern variants have seen enhancements like CASE II technology integration, which secures its ammunition storage, and the introduction of advanced sensor and communication systems to improve battlefield coordination.</p><p>From the original TDR-5S to the advanced TDR-10M and TDR-12R models, the Thunderbolt's evolution continues to be driven by the need for a 'Mech that balances offensive power, defensive capability, and strategic flexibility. Its enduring presence in the arsenals of Inner Sphere and Periphery forces underscores the Thunderbolt's iconic status and persistent efficacy in combat operations.</p>
+
+deployment:The TDR-9SE, modernized for the Eridani Light Horse's agile combat needs, features enhanced firepower and mobility. Introduced in 3050, it includes a Magna Longbow-10 LRM-10 launcher for ranged engagements and a Thunderbolt-12 Large Pulse Laser paired with three Diverse Optics Type 18 medium lasers for potent medium-range combat. Its mobility is significantly increased with four HildCo Model 12 jump jets, facilitating advanced tactical maneuvers and hit-and-run attacks. This variant’s design philosophy emphasizes rapid deployment and flexible response, making it a versatile unit in fast-paced battlefield conditions.
+
+history:The Thunderbolt, a BattleMech with a service record spanning over seven centuries, has been a mainstay in the arsenals of Inner Sphere and Periphery forces. Since its introduction in 2491, the Thunderbolt has seen extensive use in various military campaigns, with Houses Steiner and Marik as its primary operators. These mercantile states have also facilitated its distribution, making it a common fixture in many other military forces.<p>The Fourth Succession War and the Andurien War significantly impacted the distribution and deployment of the Thunderbolt, particularly affecting House Liao's previously substantial numbers. However, the Taurian Concordat, hosting two Thunderbolt manufacturing facilities, has leveraged this 'Mech as the backbone of its military might.</p><p>Notably, during 3083 in Operation Golden Fortress, Capellan forces utilized Thunderbolts extensively in the defense of Tikonov, demonstrating their strategic value in urban warfare by employing LRM minefields to ensnare Republic combat vehicles, showcasing the 'Mech's adaptability to various combat situations.</p><p>In 3145, the Earthwerks Thunderbolts, specifically the TDR-12R models, played pivotal roles in the defense of Kogan Gate. Their indirect fire capabilities and subsequent melee engagements highlighted the Thunderbolt's enduring presence on the battlefield and its ability to adapt to evolving warfare dynamics.</p><p>Historical engagements like the battle of Chesterton in 2828 and the bizarre "La Guerra de Queso" on Illiushin in 2847 underline the Thunderbolt's versatile service record. In Chesterton, the Thunderbolt's durability was tested in harsh chemical warfare conditions, while on Illiushin, the 'Mech's involvement in a pirate raid gone comically awry shows its ubiquitous presence across the galaxy, even in less conventional military operations.</p>
+
+manufacturer:Earthwerks Ltd.
+primaryfactory:Tikonov
+systemmanufacturer:CHASSIS:Earthwerks TDR
+systemmanufacturer:ENGINE:Magna 260
+systemmanufacturer:ARMOR:Ryerson 150 with CASE
+systemmanufacturer:JUMPJET:HildCo Model 12
+systemmanufacturer:COMMUNICATIONS:Neil 8000
+systemmanufacturer:TARGETING:RCA Instatrac Mark X
+

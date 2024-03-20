@@ -20,6 +20,8 @@ package megamek.common.alphaStrike;
 
 import megamek.common.strategicBattleSystems.BattleForceSUAFormatter;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import static megamek.common.alphaStrike.BattleForceSUA.*;
@@ -46,5 +48,32 @@ public class ASArcSummary extends ASSpecialAbilityCollection {
                 .sorted(String.CASE_INSENSITIVE_ORDER)
                 .collect(Collectors.joining(delimiter));
         return damage + (!specials.isBlank() ? delimiter + specials : "");
+    }
+
+    /** @return A string formatted for export (listing the damage values of STD, SCAP, MSL and CAP for arcs). */
+    public String getSpecialsShortExportString(String delimiter, BattleForceSUAFormatter element) {
+        List<String> entries = new ArrayList<>();
+        if (getStdDamage().hasDamage()) {
+            entries.add(getStdDamage().toString());
+        }
+        if (getCAP().hasDamage()) {
+            entries.add(CAP + getCAP().toString());
+        }
+        if (getSCAP().hasDamage()) {
+            entries.add(SCAP + getSCAP().toString());
+        }
+        if (getMSL().hasDamage()) {
+            entries.add(MSL + getMSL().toString());
+        }
+        String specials = specialAbilities.keySet().stream()
+                .filter(element::showSUA)
+                .filter(sua -> !sua.isAnyOf(STD, CAP, SCAP, MSL))
+                .map(sua -> element.formatSUA(sua, delimiter, this))
+                .sorted(String.CASE_INSENSITIVE_ORDER)
+                .collect(Collectors.joining(delimiter));
+        if (!specials.isBlank()) {
+            entries.add(specials);
+        }
+        return String.join(delimiter, entries);
     }
 }

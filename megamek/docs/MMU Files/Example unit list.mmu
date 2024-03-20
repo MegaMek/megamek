@@ -1,0 +1,35 @@
+# Example MMU unit list; when listing multiple units of any type side-by-side, each list element
+# must be preceded by a hyphen as shown here; also the indentation is important.
+# Any number of spaces (no TABs) can be used but it must be consistent.
+# Blank lines are optional and have no effect
+- type: ASElement
+  fullname: Atlas AS7-D             # This is a canon unit; no stats need be given
+                                    # The fullname must be chassis <space> model
+
+- type: ASElement
+  fullname: Ontos Heavy Tank        # This is also a canon unit; the stats are converted from the unit cache
+  skill: 5                          # This element will get a skill of 5 instead of the default 4
+
+- type: ASElement
+  chassis: Manticore Heavy Tank     # This is not a canon unit; therefore its stats must be given
+  model: C-Ph Mk II
+  astype: CV
+  size: 3
+  move: 8t
+  damage: 5/5/2
+  armor: 7
+  structure: 3
+  specials: "ARS, CASE, CR, IF1, SRCH, SRM1/1, TUR(4/4/2, IF1)"
+
+- type: "SBFUnit"                   # Different types of unit or object can be mixed in a file
+  generalname: "Heavy Mek Unit"
+  sbftype: "BM"
+  size: 3
+  tmm: 1
+  move: 4
+  movemode: "MEK_WALK"
+  jump: 1
+  armor: 19
+  damage: "5/7/5"
+  specials: "IF4"
+  pv: 69

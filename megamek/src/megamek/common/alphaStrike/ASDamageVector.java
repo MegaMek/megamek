@@ -18,6 +18,7 @@
  */
 package megamek.common.alphaStrike;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import megamek.codeUtilities.MathUtility;
 import megamek.common.annotations.Nullable;
 
@@ -26,7 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
-/** 
+/**
  * Represents an AlphaStrike damage value combination of between 1 and 4 damage values which
  * typically correspond to S/M/L/E ranges. Each damage value is an ASDamage field and they can be 
  * directly accessed as S, M, L and E. The ASDamage fields store integer damage values
@@ -47,8 +48,9 @@ public class ASDamageVector implements Serializable {
     public static final ASDamageVector ZERO = new ASDamageVector(ASDamage.ZERO, ASDamage.ZERO,
             ASDamage.ZERO, ASDamage.ZERO, 4, true);
 
-    /** A constant that represents zero damage as special damage, written as -/-/-/- in toString().
-     *  May be used as a return value instead of null.
+    /**
+     * A constant that represents zero damage as special damage, written as -/-/-/- in toString().
+     * May be used as a return value instead of null.
      */
     public static final ASDamageVector ZEROSPECIAL = new ASDamageVector(ASDamage.ZERO, ASDamage.ZERO,
             ASDamage.ZERO, ASDamage.ZERO, 4, false);
@@ -126,8 +128,8 @@ public class ASDamageVector implements Serializable {
     public static ASDamageVector createNormRndDmg(double s) {
         return create(s, 0, 0, 0, ASDamage::createDualRoundedNormal, 1, false);
     }
-    
-    /** 
+
+    /**
      * Creates an ASDamageVector for special damage from the given double values. 
      * The values are rounded first up to the nearest tenth, then normally to the nearest integer
      * and values between 0 and 0.5 excl. end up as minimal damage. 0 values are printed as - (dash)
@@ -135,8 +137,8 @@ public class ASDamageVector implements Serializable {
     public static ASDamageVector createNormRndDmg(double s, double m) {
         return create(s, m, 0, 0, ASDamage::createDualRoundedNormal, 2, false);
     }
-    
-    /** 
+
+    /**
      * Creates an ASDamageVector for special damage (e.g. LRM1/1/2) from the given double values. 
      * The values are rounded first up to the nearest tenth, then normally to the nearest integer
      * and values between 0 and 0.5 excl. end up as minimal damage. 0 values are printed as - (dash)
@@ -144,8 +146,8 @@ public class ASDamageVector implements Serializable {
     public static ASDamageVector createNormRndDmg(double s, double m, double l) {
         return create(s, m, l, 0, ASDamage::createDualRoundedNormal, 3, false);
     }
-    
-    /** 
+
+    /**
      * Creates an ASDamageVector for special damage (e.g. REAR1/1/-/-) from the given double values. 
      * The values are rounded first up to the nearest tenth, then normally to the nearest integer
      * and values between 0 and 0.5 excl. end up as minimal damage. 0 values are printed as - (dash)
@@ -153,8 +155,8 @@ public class ASDamageVector implements Serializable {
     public static ASDamageVector createNormRndDmg(double s, double m, double l, double e) {
         return create(s, m, l, e, ASDamage::createDualRoundedNormal, 4, false);
     }
-    
-    /** 
+
+    /**
      * Creates an ASDamageVector for special damage from the given double value. 
      * The value is rounded first up to the nearest tenth, then normally to the nearest integer.
      * Minimal damage is not used. 0 values are printed as - (dash)
@@ -162,8 +164,8 @@ public class ASDamageVector implements Serializable {
     public static ASDamageVector createNormRndDmgNoMin(double s) {
         return create(s, 0, 0, 0, ASDamage::createDualRoundedNormalNoMinimal, 1, false);
     }
-    
-    /** 
+
+    /**
      * Creates an ASDamageVector for special damage from the given double values. 
      * The values are rounded first up to the nearest tenth, then normally to the nearest integer.
      * Minimal damage is not used. 0 values are printed as - (dash)
@@ -171,8 +173,8 @@ public class ASDamageVector implements Serializable {
     public static ASDamageVector createNormRndDmgNoMin(double s, double m) {
         return create(s, m, 0, 0, ASDamage::createDualRoundedNormalNoMinimal, 2, false);
     }
-    
-    /** 
+
+    /**
      * Creates an ASDamageVector for special damage from the given double values. 
      * The values are rounded first up to the nearest tenth, then normally to the nearest integer.
      * Minimal damage is not used. 0 values are printed as - (dash)
@@ -180,8 +182,8 @@ public class ASDamageVector implements Serializable {
     public static ASDamageVector createNormRndDmgNoMin(double s, double m, double l) {
         return create(s, m, l, 0, ASDamage::createDualRoundedNormalNoMinimal, 3, false);
     }
-    
-    /** 
+
+    /**
      * Creates an ASDamageVector for special damage from the given double values. 
      * The values are rounded first up to the nearest tenth, then normally to the nearest integer.
      * Minimal damage is not used. 0 values are printed as - (dash)
@@ -189,8 +191,8 @@ public class ASDamageVector implements Serializable {
     public static ASDamageVector createNormRndDmgNoMin(double s, double m, double l, double e) {
         return create(s, m, l, e, ASDamage::createDualRoundedNormalNoMinimal, 4, false);
     }
-    
-    /** 
+
+    /**
      * Creates an ASDamageVector for special damage from the given double values and 
      * the number of ranges to be used. The values are rounded first up to the nearest tenth, then normally 
      * (i.e. up or down depending on the tenth) the nearest integer. Minimal damage will be used.
@@ -204,7 +206,7 @@ public class ASDamageVector implements Serializable {
         while (copy.size() < 4) {
             copy.add(0.0);
         }
-        return create(copy.get(0), copy.get(1), copy.get(2), copy.get(3), 
+        return create(copy.get(0), copy.get(1), copy.get(2), copy.get(3),
                 ASDamage::createDualRoundedNormal, ranges, false);
     }
 
@@ -225,8 +227,8 @@ public class ASDamageVector implements Serializable {
         return create(copy.get(0), copy.get(1), copy.get(2), copy.get(3),
                 ASDamage::createDualRoundedNormalNoMinimal, ranges, false);
     }
-    
-    /** 
+
+    /**
      * Creates an ASDamageVector for standard damage from the given double values and 
      * the number of ranges to be used (usually 3 or 4). The values are rounded first up to the 
      * nearest tenth, then up to the nearest integer and values between 0 and 0.5 excl. 
@@ -241,7 +243,7 @@ public class ASDamageVector implements Serializable {
         while (copy.size() < 4) {
             copy.add(0.0);
         }
-        return create(copy.get(0), copy.get(1), copy.get(2), copy.get(3), 
+        return create(copy.get(0), copy.get(1), copy.get(2), copy.get(3),
                 ASDamage::createDualRoundedUp, ranges, true);
     }
 
@@ -263,8 +265,8 @@ public class ASDamageVector implements Serializable {
         return create(copy.get(0), copy.get(1), copy.get(2), copy.get(3),
                 ASDamage::createDualRoundedUp, ranges, false);
     }
-    
-    /** 
+
+    /**
      * Creates an ASDamageVector for S/M/L standard damage from the given 
      * double values. The values are rounded first up to the nearest tenth, then up  
      * to the nearest integer and values between 0 and 0.5 excl. end up as minimal damage.
@@ -273,8 +275,8 @@ public class ASDamageVector implements Serializable {
     public static ASDamageVector createUpRndDmg(double s, double m, double l) {
         return create(s, m, l, 0, ASDamage::createDualRoundedUp, 3, true);
     }
-    
-    /** 
+
+    /**
      * Creates an ASDamageVector for S/M/L/E standard damage from the given 
      * double values. The values are rounded first up to the nearest tenth, then up  
      * to the nearest integer and values between 0 and 0.5 excl. end up as minimal damage.
@@ -283,7 +285,7 @@ public class ASDamageVector implements Serializable {
     public static ASDamageVector createUpRndDmg(double s, double m, double l, double e) {
         return create(s, m, l, e, ASDamage::createDualRoundedUp, 4, true);
     }
-    
+
     /** Only for internal use. Finally creates the object from the gathered data. */
     private static ASDamageVector create(double s, double m, double l, double e,
             Function<Double, ASDamage> func, int ranges, boolean std) {
@@ -333,4 +335,49 @@ public class ASDamageVector implements Serializable {
         return result.toString();
     }
 
+    /**
+     * @return A string representation of this ASDamageVector for serialization. This should not be used for
+     * display or other purposes and not be changed unless the rules change.
+     */
+    @JsonValue
+    public String toStringForSerialization() {
+        String result = S.toStringWithZero();
+        result += (rangeBands >= 2) ? "/" + M.toStringWithZero() : "";
+        result += (rangeBands >= 3) ? "/" + L.toStringWithZero() : "";
+        result += (rangeBands == 4) ? "/" + E.toStringWithZero() : "";
+        return result;
+    }
+
+    /**
+     * Tries to parse the given text to the appropriate ASDamageVector. Acceptable values are combinations of
+     * four or fewer "0", "0*", "-" (equal to "0") and positive Integers separated by slashes, e.g. "2/0* /0/0"
+     * (without the space) or "11/-". Other values will result in an IllegalArgumentException.
+     *
+     * @param asText The text to translate to an ASDamageVector value
+     * @return The ASDamageVector represented by the given text
+     * @throws IllegalArgumentException When the text cannot be parsed
+     */
+    public static ASDamageVector parse(String asText) {
+        if (asText == null) {
+            throw new IllegalArgumentException("Cannot parse null text.");
+        }
+        String[] values = asText.split("/");
+        if ((values.length < 1) || (values.length > 4)) {
+            throw new IllegalArgumentException("Malformed AS damage vector text.");
+        }
+        ASDamage s = ASDamage.parse(values[0]);
+        ASDamage m = values.length >= 2 ? ASDamage.parse(values[1]) : ASDamage.ZERO;
+        ASDamage l = values.length >= 3 ? ASDamage.parse(values[2]) : ASDamage.ZERO;
+        ASDamage e = values.length == 4 ? ASDamage.parse(values[3]) : ASDamage.ZERO;
+        return new ASDamageVector(s, m, l, e, values.length, true);
+    }
+
+    public static boolean canParse(String asText) {
+        try {
+            parse(asText);
+            return true;
+        } catch (IllegalArgumentException exception) {
+            return false;
+        }
+    }
 }

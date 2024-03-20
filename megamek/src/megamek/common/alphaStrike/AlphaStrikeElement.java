@@ -18,13 +18,16 @@
  */
 package megamek.common.alphaStrike;
 
+import com.fasterxml.jackson.annotation.JsonRootName;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.client.ui.swing.calculationReport.DummyCalculationReport;
-import megamek.common.EntityFluff;
-import megamek.common.ForceAssignable;
-import megamek.common.UnitRole;
+import megamek.common.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.force.Force;
+import megamek.common.jacksonadapters.ASElementDeserializer;
+import megamek.common.jacksonadapters.ASElementSerializer;
 import megamek.common.options.Quirks;
 import megamek.common.strategicBattleSystems.BattleForceSUAFormatter;
 
@@ -42,6 +45,9 @@ import java.util.Set;
  * @author Neoancient
  * @author Simon (Juliez)
  */
+@JsonRootName(value = "ASElement")
+@JsonSerialize(using = ASElementSerializer.class)
+@JsonDeserialize(using = ASElementDeserializer.class)
 public class AlphaStrikeElement implements Serializable, ASCardDisplayable, ASSpecialAbilityCollector,
         BattleForceSUAFormatter, ForceAssignable {
 
@@ -60,26 +66,28 @@ public class AlphaStrikeElement implements Serializable, ASCardDisplayable, ASSp
     public static final int LONG_RANGE = STANDARD_RANGES[RANGE_BAND_LONG];
     public static final int EXTREME_RANGE = STANDARD_RANGES[RANGE_BAND_EXTREME];
 
-    /** The unit's display name; may include a duplicate unit marker such as "#2". */
+    /**
+     * The unit's display name; may include a duplicate unit marker such as "#2".
+     */
     private String name;
 
     private String chassis;
-    private String model;
+    private String model = "";
     private int mulId = -1;
     private int pointValue;
     private transient CalculationReport conversionReport = new DummyCalculationReport();
 
     private String forceString = "";
     private int forceId = Force.NO_FORCE;
-    private int id;
-    private int ownerId;
+    private int id = Entity.NONE;
+    private int ownerId = Player.PLAYER_NONE;
 
     private EntityFluff fluff = new EntityFluff();
 
     private ASUnitType asUnitType;
     private int size;
     private int tmm;
-    private Map<String,Integer> movement = new LinkedHashMap<>();
+    private Map<String, Integer> movement = new LinkedHashMap<>();
     private String primaryMovementMode = "";
     private UnitRole role = UnitRole.UNDETERMINED;
     private int skill = 4;
@@ -89,7 +97,7 @@ public class AlphaStrikeElement implements Serializable, ASCardDisplayable, ASSp
      * Large Aerospace and large SV use the arcs field instead.
      */
     private ASDamageVector standardDamage = ASDamageVector.ZERO;
-    private int overheat;
+    private int overheat = 0;
 
     // The arcs of Large Aerospace units. Other units use standardDamage instead
     private ASArcSummary frontArc = new ASArcSummary();
@@ -97,29 +105,18 @@ public class AlphaStrikeElement implements Serializable, ASCardDisplayable, ASSp
     private ASArcSummary rightArc = new ASArcSummary();
     private ASArcSummary rearArc = new ASArcSummary();
 
-    private int currentArmor;
-    private int currentStructure;
+    private int currentArmor = 0;
+    private int currentStructure = 1;
     private int threshold = 0;
 
-    private int fullArmor;
-    private int fullStructure;
-
-    /** Battle Armor squad size. */
-    private int squadSize = 0;
+    private int fullArmor = 0;
+    private int fullStructure = 1;
 
     /**
-     * This covers all SpAs, including the damage values such as SRM2/2.
-     * SpAs not associated with a number, e.g. RCN, have null assigned as Object.
-     * SpAs associated with a number, such as MHQ5 (but not IF2), have an Integer or Double as Object.
-     * SpAs assoicated with one or more damage numbers, such as IF2 or AC2/2/-,
-     * have an ASDamageVector or ASDamage as Object.
-     * TUR has a List<List<Object>> wherein each List<Object> contains a
-     * ASDamageVector as the first item and a Map<BattleForceSPA, ASDamageVector> as the second item.
-     * This represents multiple turrets, each with a standard damage value and SpA damage values.
-     * If TUR is present, none of the objects is null and the outer List must contain one item (one turret)
-     * with standard damage at least.
-     * BIM and LAM have a Map<String, Integer> as Object similar to the element's movement field.
+     * Battle Armor squad size.
      */
+    private int squadSize = 0;
+
     private ASSpecialAbilityCollection specialAbilities = new ASSpecialAbilityCollection();
 
     /**
@@ -149,7 +146,9 @@ public class AlphaStrikeElement implements Serializable, ASCardDisplayable, ASSp
         return (role == null) ? UnitRole.UNDETERMINED : role;
     }
 
-    /** @return The AS element's display name, including duplicate markers such as "#2". */
+    /**
+     * @return The AS element's display name, including duplicate markers such as "#2".
+     */
     public String getName() {
         return name;
     }
@@ -164,7 +163,9 @@ public class AlphaStrikeElement implements Serializable, ASCardDisplayable, ASSp
         return tmm;
     }
 
-    /** @return The TW quirks of this AS element (currently not converted to AS quirks). */
+    /**
+     * @return The TW quirks of this AS element (currently not converted to AS quirks).
+     */
     public Quirks getQuirks() {
         return quirks;
     }
@@ -227,7 +228,9 @@ public class AlphaStrikeElement implements Serializable, ASCardDisplayable, ASSp
         return movement.getOrDefault(mode, 0);
     }
 
-    /** @return The number of damage range bands this element uses, 3 (SML) for ground units, 4 (SMLE) for aero. */
+    /**
+     * @return The number of damage range bands this element uses, 3 (SML) for ground units, 4 (SMLE) for aero.
+     */
     public int getRangeBands() {
         return usesSML() ? RANGEBANDS_SML : RANGEBANDS_SMLE;
     }
@@ -267,12 +270,16 @@ public class AlphaStrikeElement implements Serializable, ASCardDisplayable, ASSp
         return mulId;
     }
 
-    /** @return The conversion report for this unit. May be a DummyCalculationReport without information. */
+    /**
+     * @return The conversion report for this unit. May be a DummyCalculationReport without information.
+     */
     public CalculationReport getConversionReport() {
         return conversionReport;
     }
 
-    /** @return False when this element has no meaningful conversion report, true when it has. */
+    /**
+     * @return False when this element has no meaningful conversion report, true when it has.
+     */
     public boolean hasConversionReport() {
         return !(conversionReport == null) && !(conversionReport instanceof DummyCalculationReport);
     }
@@ -282,7 +289,9 @@ public class AlphaStrikeElement implements Serializable, ASCardDisplayable, ASSp
         return specialAbilities;
     }
 
-    /** @return The ASSpecialAbilityCollection object holding the damage and specials info for the given arc. */
+    /**
+     * @return The ASSpecialAbilityCollection object holding the damage and specials info for the given arc.
+     */
     public ASSpecialAbilityCollection getArc(ASArcs arc) {
         switch (arc) {
             case FRONT:
@@ -300,121 +309,167 @@ public class AlphaStrikeElement implements Serializable, ASCardDisplayable, ASSp
         this.quirks = quirks;
     }
 
-    /** @return True if this element has the given quirk. */
+    /**
+     * @return True if this element has the given quirk.
+     */
     public boolean hasQuirk(String name) {
         return quirks.booleanOption(name);
     }
 
-    /** Sets the AS element's chassis to the given value, such as "Atlas". */
+    /**
+     * Sets the AS element's chassis to the given value, such as "Atlas".
+     */
     public void setChassis(String newChassis) {
         chassis = newChassis;
     }
 
-    /** Sets the AS element's model to the given value, such as "AS7-D". */
+    /**
+     * Sets the AS element's model to the given value, such as "AS7-D".
+     */
     public void setModel(String newModel) {
         model = newModel;
     }
 
-    /** Sets the AS element's battlefield role (ROLE). */
+    /**
+     * Sets the AS element's battlefield role (ROLE).
+     */
     public void setRole(UnitRole newRole) {
         role = newRole;
     }
 
-    /** Sets the AS element's display name. */
+    /**
+     * Sets the AS element's display name.
+     */
     public void setName(String newName) {
         name = newName;
     }
 
-    /** Sets the AS element's size (SZ). */
+    /**
+     * Sets the AS element's size (SZ).
+     */
     public void setSize(int newSize) {
         size = newSize;
     }
 
-    /** Sets the AS element's Target Movement Modifier (TMM). */
+    /**
+     * Sets the AS element's Target Movement Modifier (TMM).
+     */
     public void setTMM(int newTMM) {
         tmm = newTMM;
     }
 
-    /** Sets the AS element's Pilot Skill (SKILL). */
+    /**
+     * Sets the AS element's Pilot Skill (SKILL).
+     */
     public void setSkill(int newSkill) {
         skill = newSkill;
     }
 
-    /** Sets the AS element's type (TP), e.g. BM or CV. */
+    /**
+     * Sets the AS element's type (TP), e.g. BM or CV.
+     */
     public void setType(ASUnitType newType) {
         asUnitType = newType;
     }
 
-    /** Sets the AS element's extra Overheat Damage capability (OV) (not the current heat buildup). */
+    /**
+     * Sets the AS element's extra Overheat Damage capability (OV) (not the current heat buildup).
+     */
     public void setOverheat(int newOV) {
         overheat = newOV;
     }
 
-    /** Sets the AS element's Point Value (PV). */
+    /**
+     * Sets the AS element's Point Value (PV).
+     */
     public void setPointValue(int newPointValue) {
         pointValue = newPointValue;
     }
 
-    /** Sets the AS element's current Armor (A).*/
+    /**
+     * Sets the AS element's current Armor (A).
+     */
     public void setCurrentArmor(int newArmor) {
         currentArmor = newArmor;
     }
 
-    /** Sets the AS element's full (=undamaged) Armor (A). Also sets the current armor to the same value. */
+    /**
+     * Sets the AS element's full (=undamaged) Armor (A). Also sets the current armor to the same value.
+     */
     public void setFullArmor(int newArmor) {
         currentArmor = newArmor;
         fullArmor = newArmor;
     }
 
-    /** Sets the AS element's Threshold (TH). */
+    /**
+     * Sets the AS element's Threshold (TH).
+     */
     public void setThreshold(int newThreshold) {
         threshold = newThreshold;
     }
 
-    /** Sets the AS element's current Structure (S). */
+    /**
+     * Sets the AS element's current Structure (S).
+     */
     public void setCurrentStructure(int newStructure) {
         currentStructure = newStructure;
     }
 
-    /** Sets the AS element's full (=undamaged) Structure (S). Also sets the current structure to the same value. */
+    /**
+     * Sets the AS element's full (=undamaged) Structure (S). Also sets the current structure to the same value.
+     */
     public void setFullStructure(int newStructure) {
         currentStructure = newStructure;
         fullStructure = newStructure;
     }
 
-    /** Sets the AS element's movement (MV). */
+    /**
+     * Sets the AS element's movement (MV).
+     */
     public void setMovement(Map<String, Integer> newMovement) {
         movement = newMovement;
     }
 
-    /** Sets the AS element's standard damage (SML or SMLE, but not arc damage). */
+    /**
+     * Sets the AS element's standard damage (SML or SMLE, but not arc damage).
+     */
     public void setStandardDamage(ASDamageVector newDamage) {
         standardDamage = newDamage;
     }
 
-    /** Sets the AS element's Battle Armor Squad Size. Does not check if this actually is a BA. */
+    /**
+     * Sets the AS element's Battle Armor Squad Size. Does not check if this actually is a BA.
+     */
     public void setSquadSize(int newSquadSize) {
         squadSize = newSquadSize;
     }
 
-    /** Sets the AS element's Battle Armor Squad Size. Does not check if this actually is a BA. */
+    /**
+     * Sets the AS element's Battle Armor Squad Size. Does not check if this actually is a BA.
+     */
     public void setPrimaryMovementMode(String movementMode) {
         primaryMovementMode = movementMode;
     }
 
-    /** Sets the AS element's conversion report to the given report, if it is not null. */
+    /**
+     * Sets the AS element's conversion report to the given report, if it is not null.
+     */
     public void setConversionReport(CalculationReport newReport) {
         if (newReport != null) {
             conversionReport = newReport;
         }
     }
 
-    /** Sets the AS element's special ability collection to the given one, if it is not null. */
+    /**
+     * Sets the AS element's special ability collection to the given one, if it is not null.
+     */
     public void setSpecialAbilities(ASSpecialAbilityCollection newAbilities) {
         specialAbilities = Objects.requireNonNull(newAbilities);
     }
 
-    /** Sets the AS element's special ability collection to the given one, if it is not null. */
+    /**
+     * Sets the AS element's special ability collection to the given one, if it is not null.
+     */
     public void setArc(ASArcs arc, ASArcSummary arcSummary) {
         Objects.requireNonNull(arc);
         Objects.requireNonNull(arcSummary);
@@ -429,7 +484,9 @@ public class AlphaStrikeElement implements Serializable, ASCardDisplayable, ASSp
         }
     }
 
-    /** Resets the AS element's conversion report to an empty DummyCalculationReport. */
+    /**
+     * Resets the AS element's conversion report to an empty DummyCalculationReport.
+     */
     public void clearConversionReport() {
         conversionReport = new DummyCalculationReport();
     }
@@ -465,12 +522,16 @@ public class AlphaStrikeElement implements Serializable, ASCardDisplayable, ASSp
         return specialAbilities.getSpecialsDisplayString(delimiter, this);
     }
 
-    /** @return This AS element's jump movement (in inches) or 0 if it has no jump movement. */
+    /**
+     * @return This AS element's jump movement (in inches) or 0 if it has no jump movement.
+     */
     public int getJumpMove() {
         return getMovement("j");
     }
 
-    /** @return True if this AS element has a valid MUL ID. */
+    /**
+     * @return True if this AS element has a valid MUL ID.
+     */
     public boolean hasMulId() {
         return mulId > 0;
     }
@@ -483,7 +544,9 @@ public class AlphaStrikeElement implements Serializable, ASCardDisplayable, ASSp
         this.mulId = mulId;
     }
 
-    /** @return The primary movement value in inches, i.e. the type "" for ground units or "s" for submarines. */
+    /**
+     * @return The primary movement value in inches, i.e. the type "" for ground units or "s" for submarines.
+     */
     public int getPrimaryMovementValue() {
         return getMovement(primaryMovementMode);
     }
@@ -555,5 +618,20 @@ public class AlphaStrikeElement implements Serializable, ASCardDisplayable, ASSp
 
     public void setFluff(EntityFluff newFluff) {
         fluff = newFluff;
+    }
+
+    @Override
+    public String toString() {
+        if (!usesArcs()) {
+            return (chassis + " " + model).trim() + ": " + asUnitType + "; SZ" + size + "; MV" + getMovementAsString()
+                    + (isGround() ? "; TMM" + tmm : "; Th" + threshold) + "; "
+                    + getStandardDamage() + ((overheat > 0) ? "+" + overheat : "")
+                    + "; A" + fullArmor + "S" + fullStructure + "; PV" + pointValue + "@" + skill
+                    + "; " + specialAbilities.getSpecialsDisplayString(this);
+        } else {
+            return (chassis + " " + model).trim() + ": " + asUnitType + "; SZ" + size + "; THR" + getMovementAsString()
+                    + "; A" + fullArmor + "S" + fullStructure + "; PV" + pointValue + "@" + skill
+                    + "; " + AlphaStrikeHelper.getSpecialsExportString(", ", this);
+        }
     }
 }

@@ -13,9 +13,10 @@
  */
 package megamek.common;
 
-import megamek.common.enums.Light;
 import megamek.common.enums.MPBoosters;
 import megamek.common.options.OptionsConstants;
+import megamek.common.planetaryconditions.Light;
+import megamek.common.planetaryconditions.PlanetaryConditions;
 import org.apache.logging.log4j.LogManager;
 
 import java.util.*;

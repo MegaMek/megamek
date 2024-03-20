@@ -14,11 +14,12 @@
 * details.
 */
 
-package megamek.common;
+package megamek.common.planetaryconditions;
+
+import megamek.common.*;
 
 import java.io.Serializable;
 
-import megamek.common.enums.*;
 
 /**
  * This class will hold all the information on planetary conditions and a variety of helper functions

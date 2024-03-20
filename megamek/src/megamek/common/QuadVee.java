@@ -20,6 +20,7 @@ package megamek.common;
 
 import megamek.common.enums.MPBoosters;
 import megamek.common.options.OptionsConstants;
+import megamek.common.planetaryconditions.PlanetaryConditions;
 
 /**
  * Quad Mek that can convert into either tracked or wheeled vehicle mode.

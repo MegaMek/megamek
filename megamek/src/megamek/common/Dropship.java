@@ -13,8 +13,9 @@ package megamek.common;
 
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.common.cost.DropShipCostCalculator;
-import megamek.common.enums.Atmosphere;
 import megamek.common.options.OptionsConstants;
+import megamek.common.planetaryconditions.Atmosphere;
+import megamek.common.planetaryconditions.PlanetaryConditions;
 
 import java.util.HashMap;
 import java.util.HashSet;

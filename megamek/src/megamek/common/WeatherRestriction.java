@@ -15,10 +15,7 @@
 
 package megamek.common;
 
-import megamek.common.enums.Atmosphere;
-import megamek.common.enums.Fog;
-import megamek.common.enums.Weather;
-import megamek.common.enums.Wind;
+import megamek.common.planetaryconditions.*;
 
 import java.util.HashMap;
 

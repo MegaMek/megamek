@@ -17,9 +17,10 @@ package megamek.server;
 
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
-import megamek.common.enums.Wind;
-import megamek.common.enums.WindDirection;
 import megamek.common.options.OptionsConstants;
+import megamek.common.planetaryconditions.PlanetaryConditions;
+import megamek.common.planetaryconditions.Wind;
+import megamek.common.planetaryconditions.WindDirection;
 import org.apache.logging.log4j.LogManager;
 
 import java.util.*;

@@ -17,6 +17,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import megamek.common.options.OptionsConstants;
+import megamek.common.planetaryconditions.PlanetaryConditions;
 
 /**
  * This class will hold all the information about a particular active sensor,

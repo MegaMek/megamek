@@ -47,8 +47,7 @@ import javax.swing.border.EmptyBorder;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.dialog.DialogButton;
 import megamek.common.Configuration;
-import megamek.common.PlanetaryConditions;
-import megamek.common.enums.*;
+import megamek.common.planetaryconditions.*;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
 

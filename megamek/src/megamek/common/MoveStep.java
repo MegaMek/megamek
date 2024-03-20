@@ -19,11 +19,12 @@
 package megamek.common;
 
 import megamek.common.MovePath.MoveStepType;
-import megamek.common.enums.Atmosphere;
-import megamek.common.enums.Light;
 import megamek.common.enums.MPBoosters;
 import megamek.common.options.OptionsConstants;
 import megamek.common.pathfinder.CachedEntityState;
+import megamek.common.planetaryconditions.Atmosphere;
+import megamek.common.planetaryconditions.Light;
+import megamek.common.planetaryconditions.PlanetaryConditions;
 import org.apache.logging.log4j.LogManager;
 
 import java.io.Serializable;

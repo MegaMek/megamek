@@ -17,6 +17,7 @@ import java.util.Vector;
 
 import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.server.GameManager;
 
 /**

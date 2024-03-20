@@ -16,9 +16,9 @@ package megamek.common;
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.common.cost.AeroCostCalculator;
 import megamek.common.enums.AimingMode;
-import megamek.common.enums.Atmosphere;
-import megamek.common.enums.Light;
 import megamek.common.options.OptionsConstants;
+import megamek.common.planetaryconditions.Light;
+import megamek.common.planetaryconditions.PlanetaryConditions;
 import org.apache.logging.log4j.LogManager;
 
 import java.text.NumberFormat;

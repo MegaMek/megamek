@@ -18,8 +18,8 @@ package megamek.common.util;
 import megamek.client.bot.princess.CardinalEdge;
 import megamek.codeUtilities.MathUtility;
 import megamek.common.*;
-import megamek.common.enums.Weather;
-import megamek.common.enums.Wind;
+import megamek.common.planetaryconditions.Weather;
+import megamek.common.planetaryconditions.Wind;
 import megamek.common.util.generator.ElevationGenerator;
 import megamek.common.util.generator.SimplexGenerator;
 

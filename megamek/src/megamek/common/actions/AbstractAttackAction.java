@@ -17,9 +17,10 @@ package megamek.common.actions;
 import megamek.client.Client;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
-import megamek.common.enums.IlluminationLevel;
-import megamek.common.enums.Light;
 import megamek.common.options.OptionsConstants;
+import megamek.common.planetaryconditions.IlluminationLevel;
+import megamek.common.planetaryconditions.Light;
+import megamek.common.planetaryconditions.PlanetaryConditions;
 
 import java.util.Enumeration;
 

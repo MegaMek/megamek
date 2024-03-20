@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import megamek.common.options.OptionsConstants;
+import megamek.common.planetaryconditions.PlanetaryConditions;
 
 public class BipedMech extends Mech {
     private static final long serialVersionUID = 4166375446709772785L;

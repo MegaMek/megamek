@@ -26,6 +26,7 @@ import megamek.common.icons.Camouflage;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.IOption;
 import megamek.common.options.OptionsConstants;
+import megamek.common.planetaryconditions.*;
 import megamek.common.util.BoardUtilities;
 import megamek.common.util.StringUtil;
 import megamek.common.util.fileUtils.MegaMekFile;

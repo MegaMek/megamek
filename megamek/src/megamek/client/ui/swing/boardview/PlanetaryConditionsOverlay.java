@@ -16,7 +16,7 @@ package megamek.client.ui.swing.boardview;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.KeyCommandBind;
-import megamek.common.PlanetaryConditions;
+import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.common.preference.PreferenceChangeEvent;
 
 import java.awt.*;

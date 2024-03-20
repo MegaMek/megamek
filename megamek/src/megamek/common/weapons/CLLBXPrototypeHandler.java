@@ -19,6 +19,7 @@ import megamek.common.*;
 import megamek.common.actions.PhysicalAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
+import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.server.GameManager;
 
 /**

@@ -19,6 +19,7 @@ import megamek.common.enums.AimingMode;
 import megamek.common.enums.GamePhase;
 import megamek.common.enums.MPBoosters;
 import megamek.common.options.OptionsConstants;
+import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.common.weapons.flamers.VehicleFlamerWeapon;
 import megamek.common.weapons.lasers.CLChemicalLaserWeapon;
 import org.apache.logging.log4j.LogManager;

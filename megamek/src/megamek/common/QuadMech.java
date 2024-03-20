@@ -18,6 +18,7 @@ package megamek.common;
 
 import megamek.common.enums.AimingMode;
 import megamek.common.options.OptionsConstants;
+import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.common.preference.PreferenceManager;
 import org.apache.logging.log4j.LogManager;
 

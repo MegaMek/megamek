@@ -14,7 +14,8 @@
 package megamek.common.weapons;
 
 import megamek.common.*;
-import megamek.common.enums.Atmosphere;
+import megamek.common.planetaryconditions.Atmosphere;
+import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.server.GameManager;
 import org.apache.logging.log4j.LogManager;
 
@@ -124,7 +125,7 @@ public class AreaEffectHelper {
         Game game = attacker.getGame();
         PlanetaryConditions conditions = game.getPlanetaryConditions();
         // sanity check: if this attack is happening in vacuum through very thin atmo, add that to the phase report and terminate early
-
+        
         if (game.getBoard().inSpace()
                 || conditions.getAtmosphere().isLighterThan(Atmosphere.THIN)) {
             Report r = new Report(9986);

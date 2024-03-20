@@ -35,8 +35,6 @@ import megamek.common.actions.ChargeAttackAction;
 import megamek.common.actions.DfaAttackAction;
 import megamek.common.actions.RamAttackAction;
 import megamek.common.annotations.Nullable;
-import megamek.common.enums.Atmosphere;
-import megamek.common.enums.Light;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.options.AbstractOptions;
@@ -45,6 +43,9 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.pathfinder.AbstractPathFinder;
 import megamek.common.pathfinder.LongestPathFinder;
 import megamek.common.pathfinder.ShortestPathFinder;
+import megamek.common.planetaryconditions.Atmosphere;
+import megamek.common.planetaryconditions.Light;
+import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.common.preference.PreferenceManager;
 import org.apache.logging.log4j.LogManager;
 

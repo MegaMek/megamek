@@ -16,8 +16,8 @@ package megamek.common;
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.common.cost.ProtoMekCostCalculator;
 import megamek.common.enums.AimingMode;
-import megamek.common.enums.Atmosphere;
 import megamek.common.equipment.ArmorType;
+import megamek.common.planetaryconditions.Atmosphere;
 import megamek.common.preference.PreferenceManager;
 import org.apache.logging.log4j.LogManager;
 

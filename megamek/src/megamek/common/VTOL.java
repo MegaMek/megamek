@@ -16,6 +16,7 @@ package megamek.common;
 import megamek.common.enums.AimingMode;
 import megamek.common.enums.MPBoosters;
 import megamek.common.options.OptionsConstants;
+import megamek.common.planetaryconditions.PlanetaryConditions;
 
 import java.util.ArrayList;
 import java.util.Arrays;

@@ -23,6 +23,7 @@ import megamek.common.event.*;
 import megamek.common.net.packets.Packet;
 import megamek.common.net.enums.PacketCommand;
 import megamek.common.options.GameOptions;
+import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.server.SmokeCloud;
 import org.apache.logging.log4j.LogManager;
 

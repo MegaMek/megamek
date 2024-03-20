@@ -20,7 +20,7 @@ import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.BasementType;
-import megamek.common.enums.IlluminationLevel;
+import megamek.common.planetaryconditions.IlluminationLevel;
 
 import java.util.Vector;
 

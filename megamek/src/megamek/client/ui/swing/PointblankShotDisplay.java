@@ -16,7 +16,6 @@ package megamek.client.ui.swing;
 
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
-import megamek.client.ui.swing.unitDisplay.WeaponPanel;
 import megamek.client.ui.swing.util.CommandAction;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.MegaMekController;
@@ -558,50 +557,56 @@ public class PointblankShotDisplay extends FiringDisplay implements ItemListener
         setFireCalledEnabled(false);
     }
 
+    private boolean checkNags() {
+        if (needNagForNoAction()) {
+            if (attacks.isEmpty()) {
+                // confirm this action
+                String title = Messages.getString("FiringDisplay.DontFireDialog.title");
+                String body = Messages.getString("FiringDisplay.DontFireDialog.message");
+                if (checkNagForNoAction(title, body)) {
+                    return true;
+                }
+            }
+        }
+
+        // We need to nag for overheat on capital fighters
+        if (needNagForOverheat()) {
+            if ((ce() != null)
+                    && ce().isCapitalFighter()) {
+                int totalheat = 0;
+                for (EntityAction action : attacks) {
+                    if (action instanceof WeaponAttackAction) {
+                        Mounted weapon = ce().getEquipment(((WeaponAttackAction) action).getWeaponId());
+                        totalheat += weapon.getCurrentHeat();
+                    }
+                }
+
+                if (totalheat > ce().getHeatCapacity()) {
+                    // confirm this action
+                    String title = Messages.getString("FiringDisplay.OverheatNag.title");
+                    String body = Messages.getString("FiringDisplay.OverheatNag.message");
+                    if (checkNagForOverheat(title, body)) {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        if (ce() == null) {
+            return true;
+        }
+
+        return false;
+    }
+
     /**
      * Called when the current entity is done firing. Send out our attack queue
      * to the server.
      */
     @Override
     public void ready() {
-        if (attacks.isEmpty() && needNagForNoAction()) {
-            // confirm this action
-            String title = Messages.getString("FiringDisplay.DontFireDialog.title");
-            String body = Messages.getString("FiringDisplay.DontFireDialog.message");
-            ConfirmDialog response = clientgui.doYesNoBotherDialog(title, body);
-            if (!response.getShowAgain()) {
-                GUIPreferences.getInstance().setNagForNoAction(false);
-            }
-
-            if (!response.getAnswer()) {
-                return;
-            }
-        }
-
-        // We need to nag for overheat on capital fighters
-        if ((ce() != null) && ce().isCapitalFighter()
-            && GUIPreferences.getInstance().getNagForOverheat()) {
-            int totalheat = 0;
-            for (EntityAction action : attacks) {
-                if (action instanceof WeaponAttackAction) {
-                    Mounted weapon = ce().getEquipment(((WeaponAttackAction) action).getWeaponId());
-                    totalheat += weapon.getCurrentHeat();
-                }
-            }
-
-            if (totalheat > ce().getHeatCapacity()) {
-                // confirm this action
-                String title = Messages.getString("FiringDisplay.OverheatNag.title");
-                String body = Messages.getString("FiringDisplay.OverheatNag.message");
-                ConfirmDialog response = clientgui.doYesNoBotherDialog(title, body);
-                if (!response.getShowAgain()) {
-                    GUIPreferences.getInstance().setNagForOverheat(false);
-                }
-
-                if (!response.getAnswer()) {
-                    return;
-                }
-            }
+        if (checkNags()) {
+            return;
         }
 
         // stop further input (hopefully)
@@ -722,7 +727,7 @@ public class PointblankShotDisplay extends FiringDisplay implements ItemListener
         }
 
         // declare searchlight, if possible
-        if (GUIPreferences.getInstance().getAutoDeclareSearchlight()
+        if (GUIP.getAutoDeclareSearchlight()
             && ce().isUsingSearchlight()) {
             doSearchlight();
         }
@@ -782,7 +787,7 @@ public class PointblankShotDisplay extends FiringDisplay implements ItemListener
 
         // check; if there are no ready weapons, you're done.
         if ((nextWeapon == -1)
-            && GUIPreferences.getInstance().getAutoEndFiring()) {
+            && GUIP.getAutoEndFiring()) {
             ready();
             return;
         }

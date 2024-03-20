@@ -28,7 +28,6 @@ import megamek.common.enums.GamePhase;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.options.OptionsConstants;
-import megamek.common.util.FiringSolution;
 import megamek.common.weapons.Weapon;
 import megamek.common.weapons.artillery.ArtilleryWeapon;
 import megamek.common.weapons.bayweapons.TeleOperatedMissileBayWeapon;
@@ -766,24 +765,33 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements
         clientgui.getUnitDisplay().wPan.selectWeapon(wn);
     }
 
+    private boolean checkNags() {
+        if (needNagForNoAction()) {
+            if (attacks.isEmpty()) {
+                // confirm this action
+                String title = Messages.getString("TargetingPhaseDisplay.DontFireDialog.title");
+                String body = Messages.getString("TargetingPhaseDisplay.DontFireDialog.message");
+                if (checkNagForNoAction(title, body)) {
+                    return true;
+                }
+            }
+        }
+
+        if (ce() == null) {
+            return true;
+        }
+
+        return false;
+    }
+
     /**
      * Called when the current entity is done firing. Send out our attack queue
      * to the server.
      */
     @Override
     public void ready() {
-        if (attacks.isEmpty() && needNagForNoAction()) {
-            // confirm this action
-            String title = Messages.getString("TargetingPhaseDisplay.DontFireDialog.title");
-            String body = Messages.getString("TargetingPhaseDisplay.DontFireDialog.message");
-            ConfirmDialog response = clientgui.doYesNoBotherDialog(title, body);
-            if (!response.getShowAgain()) {
-                GUIP.setNagForNoAction(false);
-            }
-
-            if (!response.getAnswer()) {
-                return;
-            }
+        if (checkNags()) {
+          return;
         }
 
         // stop further input (hopefully)
@@ -796,7 +804,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements
         clientgui.getClient().sendAttackData(cen, attacks.toVector());
 
         // clear queue
-       removeAllAttacks();
+        removeAllAttacks();
 
         if ((ce() != null) && ce().isWeapOrderChanged()) {
             clientgui.getClient().sendEntityWeaponOrderUpdate(ce());

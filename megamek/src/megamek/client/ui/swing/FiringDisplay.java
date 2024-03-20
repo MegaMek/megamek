@@ -26,7 +26,6 @@ import megamek.common.enums.AimingMode;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.options.OptionsConstants;
-import megamek.common.util.FiringSolution;
 import megamek.common.weapons.Weapon;
 import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
 import megamek.common.weapons.mortars.VehicularGrenadeLauncherWeapon;
@@ -1145,37 +1144,22 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
         target(targ);
     }
 
-    /**
-     * Called when the current entity is done firing. Send out our attack queue
-     * to the server.
-     */
-    @Override
-    public void ready() {
-        if (attacks.isEmpty() && needNagForNoAction()) {
-            // confirm this action
-            String title = Messages.getString("FiringDisplay.DontFireDialog.title");
-            String body = Messages.getString("FiringDisplay.DontFireDialog.message");
-            ConfirmDialog response = clientgui.doYesNoBotherDialog(title, body);
-            if (!response.getShowAgain()) {
-                GUIP.setNagForNoAction(false);
-            }
-
-            if (!response.getAnswer()) {
-                return;
+    private boolean checkNags() {
+        if (needNagForNoAction()) {
+            if (attacks.isEmpty()) {
+                // confirm this action
+                String title = Messages.getString("FiringDisplay.DontFireDialog.title");
+                String body = Messages.getString("FiringDisplay.DontFireDialog.message");
+                if (checkNagForNoAction(title, body)) {
+                    return true;
+                }
             }
         }
 
-        // Handle some entity bookkeeping
-        if (ce() != null) {
-            // Add internal bombs used this phase to all internal bombs used this round
-            if (ce().isBomber()) {
-                if (phaseInternalBombs > 0) {
-                    ((IBomber) ce()).increaseUsedInternalBombs(phaseInternalBombs);
-                }
-
-            }
+        if (needNagForOverheat()) {
             // We need to nag for overheat on capital fighters
-            if (ce().isCapitalFighter() && GUIP.getNagForOverheat()) {
+            if ((ce() != null)
+                    && ce().isCapitalFighter()) {
                 int totalheat = 0;
                 for (EntityAction action : attacks) {
                     if (action instanceof WeaponAttackAction) {
@@ -1188,20 +1172,43 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
                     // confirm this action
                     String title = Messages.getString("FiringDisplay.OverheatNag.title");
                     String body = Messages.getString("FiringDisplay.OverheatNag.message");
-                    ConfirmDialog response = clientgui.doYesNoBotherDialog(title, body);
-                    if (!response.getShowAgain()) {
-                        GUIP.setNagForOverheat(false);
-                    }
-
-                    if (!response.getAnswer()) {
-                        return;
+                    if (checkNagForOverheat(title, body)) {
+                        return true;
                     }
                 }
             }
         }
 
+        if (ce() == null) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Called when the current entity is done firing. Send out our attack queue
+     * to the server.
+     */
+    @Override
+    public void ready() {
+        if (checkNags()) {
+            return;
+        }
+
         // stop further input (hopefully)
         disableButtons();
+
+        // Handle some entity bookkeeping
+        if (ce() != null) {
+            // Add internal bombs used this phase to all internal bombs used this round
+            if (ce().isBomber()) {
+                if (phaseInternalBombs > 0) {
+                    ((IBomber) ce()).increaseUsedInternalBombs(phaseInternalBombs);
+                }
+
+            }
+        }
 
         // remove temporary attacks from game & board
         removeTempAttacks();

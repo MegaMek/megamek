@@ -1653,7 +1653,8 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
         if (needNagForOther()) {
             if ((ce() != null)
-                    && (null != cmd)) {
+                    && (null != cmd)
+                    && ce().isAero()) {
                 boolean airborneOrSpaceborne = ce().isAirborne()
                         || ce().isSpaceborne();
                 boolean unusedVelocity = false;
@@ -1667,7 +1668,6 @@ public class MovementDisplay extends ActionPhaseDisplay {
                         || cmd.contains(MoveStepType.RETURN);
                 if (airborneOrSpaceborne
                         && !clientgui.getClient().getGame().useVectorMove()
-                        && ce().isAero()
                         && !((IAero) ce()).isOutControlTotal()
                         && unusedVelocity
                         && !offOrReturn
@@ -1697,16 +1697,16 @@ public class MovementDisplay extends ActionPhaseDisplay {
         }
 
         if (needNagForOther()) {
-            if (ce() != null) {
+            if (ce() != null
+                    && (ce() instanceof Infantry)
+                    && ((Infantry) ce()).hasMicrolite()
+            ) {
                 boolean finalElevation = (ce().getElevation() != cmd.getFinalElevation());
                 boolean airborneVTOLOrWIGEOrFinalElevation = ce().isAirborneVTOLorWIGE()
                         || finalElevation;
                 int terrainLevelBuilding = ce().getGame().getBoard().getHex(cmd.getFinalCoords()).terrainLevel(Terrains.BLDG_ELEV);
                 int terrainLevelBridge = ce().getGame().getBoard().getHex(cmd.getFinalCoords()).terrainLevel(Terrains.BRIDGE_ELEV);
-                if ((ce() != null)
-                        && (ce() instanceof Infantry)
-                        && ((Infantry) ce()).hasMicrolite()
-                        && airborneVTOLOrWIGEOrFinalElevation
+                if (airborneVTOLOrWIGEOrFinalElevation
                         && !cmd.contains(MoveStepType.FORWARDS)
                         && !cmd.contains(MoveStepType.FLEE)
                         && cmd.getFinalElevation() > 0

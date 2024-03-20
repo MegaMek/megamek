@@ -103,14 +103,14 @@ public class PlanetaryConditionsOverlay extends AbstractBoardViewOverlay {
                 result.add(tmpStr);
             }
 
-            if (showDefaultConditions || conditions.getAtmosphere().isStandard()) {
+            if (showDefaultConditions || !conditions.getAtmosphere().isStandard()) {
                 tmpStr = (showLabel ? MSG_ATMOSPHERICPREASSURE + "  " : "");
                 tmpStr = tmpStr + (showValue ? conditions.getAtmosphere().toString() + "  " : "");
                 tmpStr = tmpStr + (showIndicator ? conditions.getAtmosphere().getIndicator() : "");
                 result.add(tmpStr);
             }
 
-            if (showDefaultConditions || conditions.getEMI().isEMINone()) {
+            if (showDefaultConditions || conditions.isEMI()) {
                 tmpStr = (showLabel ? MSG_EMI + "  " : "");
                 tmpStr = tmpStr + (showValue ? conditions.getEMI().toString() + "  " : "");
                 tmpStr = tmpStr + (showIndicator ? conditions.getEMI().getIndicator() : "");
@@ -135,14 +135,14 @@ public class PlanetaryConditionsOverlay extends AbstractBoardViewOverlay {
                 result.add(tmpStr);
             }
 
-            if (showDefaultConditions || conditions.getFog().isFogNone()) {
+            if (showDefaultConditions || conditions.isFog()) {
                 tmpStr = (showLabel ? MSG_FOG + "  " : "");
                 tmpStr = tmpStr + (showValue ? conditions.getFog().toString() + "  " : "");
                 tmpStr = tmpStr + (showIndicator ? conditions.getFog().getIndicator() : "");
                 result.add(tmpStr);
             }
 
-            if (showDefaultConditions || conditions.getBlowingSand().isBlowingSandNone()) {
+            if (showDefaultConditions || conditions.isBlowingSand()) {
                 tmpStr = (showLabel ? MSG_BLOWINGSAND + "  " : "");
                 tmpStr = tmpStr + (showValue ? conditions.getBlowingSand().toString() + "  " : "");
                 tmpStr = tmpStr + (showIndicator ? conditions.getBlowingSand().getIndicator() : "");

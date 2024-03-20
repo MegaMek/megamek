@@ -294,7 +294,7 @@ public class PlanetaryConditionsDialog extends ClientDialog {
         comWindDirection.setSelectedItem(conditions.getWindDirection());
         comAtmosphere.setSelectedItem(conditions.getAtmosphere());
         comFog.setSelectedItem(conditions.getFog());
-        chkBlowingSands.setSelected(conditions.getBlowingSand().isBlowingSand());
+        chkBlowingSands.setSelected(conditions.isBlowingSand());
         chkShiftWindDir.setSelected(conditions.shiftingWindDirection());
         chkShiftWindStr.setSelected(conditions.shiftingWindStrength());
         fldTemp.setText(Integer.toString(conditions.getTemperature()));

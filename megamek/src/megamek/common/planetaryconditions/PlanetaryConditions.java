@@ -185,6 +185,10 @@ public class PlanetaryConditions implements Serializable {
         this.fog = fog;
     }
 
+    public boolean isFog() {
+        return !fog.isFogNone();
+    }
+
     public BlowingSand getBlowingSand() {
         return blowingSand;
     }
@@ -193,12 +197,20 @@ public class PlanetaryConditions implements Serializable {
        this.blowingSand = blowingSand;
     }
 
+    public boolean isBlowingSand() {
+        return blowingSand.isBlowingSand();
+    }
+
     public void setEMI(EMI emi) {
         this.emi = emi;
     }
 
     public EMI getEMI() {
         return emi;
+    }
+
+    public boolean isEMI() {
+        return emi.isEMI();
     }
 
     public static String getTemperatureDisplayableName(int temp) {
@@ -937,7 +949,7 @@ public class PlanetaryConditions implements Serializable {
     }
 
     private void doSandStormCheck() {
-        if (getBlowingSand().isBlowingSand()
+        if (isBlowingSand()
                 && getWind().isWeakerThan(Wind.MOD_GALE)) {
             sandStorm = blowingSand;
             blowingSand = BlowingSand.BLOWING_SAND_NONE;

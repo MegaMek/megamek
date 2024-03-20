@@ -18,6 +18,7 @@
  */
 package megamek.common.alphaStrike;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import megamek.common.alphaStrike.conversion.ASConverter;
 import megamek.common.alphaStrike.conversion.ASDamageConverter;
 
@@ -130,12 +131,59 @@ public class ASDamage implements Serializable {
             return damage + "";
         }
     }
-    
+
+    @JsonValue
     public String toStringWithZero() {
         return minimal ? "0*" : damage + "";
     }
 
     public double asDoubleValue() {
         return minimal ? 0.5 : damage;
+    }
+
+    /**
+     * Tries to parse the given text to the appropriate ASDamage. Acceptable values are "0", "0*", "-" (equal to
+     * "0") and all positive Integers. Other values will result in an IllegalArgumentException.
+     *
+     * @param asText The text to translate to an ASDamage value
+     * @return The ASDamage value represented by the given text
+     * @throws IllegalArgumentException When the value cannot be parsed or is less than zero
+     */
+    public static ASDamage parse(String asText) {
+        if (asText == null) {
+            throw new IllegalArgumentException("Cannot parse null text.");
+        }
+        if (asText.equals("0*")) {
+            return ASDamage.MINIMAL;
+        } else if (asText.equals("-")) {
+            return ASDamage.ZERO;
+        } else {
+            try {
+                int value = Integer.parseInt(asText);
+                if (value < 0) {
+                    throw new IllegalArgumentException("Damage value cannot be less than zero.");
+                }
+                return new ASDamage(Integer.parseInt(asText), false);
+            } catch (NumberFormatException exception) {
+                throw new IllegalArgumentException(exception);
+            }
+        }
+    }
+
+    /**
+     * Tries to parse the given text to the appropriate ASDamage. Acceptable values are "0", "0*", "-" (equal to
+     * "0") and all positive Integers. When the given text cannot be parsed or represents an illegal value
+     * (e.g. a negative number), the given default is returned instead.
+     *
+     * @param asText The text to translate to an ASDamage value
+     * @param defaultValue A value to return if the given text cannot be converted
+     * @return The ASDamage value represented by the given text if it can be converted, the given defaultValue otherwise
+     */
+    public static ASDamage parse(String asText, ASDamage defaultValue) {
+        try {
+            return parse(asText);
+        } catch (IllegalArgumentException exception) {
+            return defaultValue;
+        }
     }
 }

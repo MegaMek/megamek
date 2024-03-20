@@ -263,7 +263,7 @@ public class EntityImage {
 
             // Generate rotated images for the unit and for a wreck
             fImage = rotateImage(fImage, i);
-            if (GUIP.getShadowMap()) {
+            if (GUIP.getShadowMap() && isSingleHex) {
                 facings[i] = applyDropShadow(fImage);
             } else {
                 facings[i] = fImage;

@@ -36,12 +36,12 @@ import java.util.zip.ZipFile;
  * @author arlith
  */
 public class MechSummaryCache {
-    
+
     public interface Listener {
         void doneLoading();
     }
 
-    private static final String FILENAME_UNITS_CACHE = "units.cache";
+    public static final String FILENAME_UNITS_CACHE = "units.cache";
     public static final String FILENAME_LOOKUP = "name_changes.txt";
 
     private static final List<String> SUPPORTED_FILE_EXTENSIONS =
@@ -268,6 +268,19 @@ public class MechSummaryCache {
         File userDataUnits2 = new File(userDir, "");
         if (!userDir.isBlank() && userDataUnits2.isDirectory()) {
             bNeedsUpdate |= loadMechsFromDirectory(vMechs, sKnownFiles, lLastCheck, userDataUnits2, ignoreUnofficial);
+        }
+
+        // load units from story arcs
+        File storyarcsDir = Configuration.storyarcsDir();
+        if(storyarcsDir.exists() && storyarcsDir.isDirectory()) {
+            for (File file : storyarcsDir.listFiles()) {
+                if (file.isDirectory()) {
+                    File storyArcUnitsDir = new File(file.getPath() + "/data/mechfiles");
+                    if(storyArcUnitsDir.exists() && storyArcUnitsDir.isDirectory()) {
+                        bNeedsUpdate |= loadMechsFromDirectory(vMechs, sKnownFiles, lLastCheck, storyArcUnitsDir, ignoreUnofficial);
+                    }
+                }
+            }
         }
 
         // save updated cache back to disk

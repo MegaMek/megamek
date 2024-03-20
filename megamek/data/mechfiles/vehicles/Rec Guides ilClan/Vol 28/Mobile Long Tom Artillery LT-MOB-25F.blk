@@ -1,13 +1,4 @@
-#building block data file
-<BlockVersion>
-1
-</BlockVersion>
-
-##Write the version number just in case...
-<Version>
-MAM0
-</Version>
-
+#Saved from version 0.49.19-SNAPSHOT on 2024-03-17
 <UnitType>
 Tank
 </UnitType>
@@ -43,9 +34,6 @@ Missile Boat
 <motion_type>
 Tracked
 </motion_type>
-
-<transporters>
-</transporters>
 
 <cruiseMP>
 3

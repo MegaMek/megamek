@@ -23,9 +23,9 @@ import org.apache.logging.log4j.LogManager;
  * @since April 6, 2002, 2:06 AM
  */
 public class BLKTankFile extends BLKFile implements IMechLoader {
-    
+
     private boolean superheavy = false;
-    
+
     public BLKTankFile(BuildingBlock bb) {
         dataFile = bb;
     }
@@ -203,9 +203,8 @@ public class BLKTankFile extends BLKFile implements IMechLoader {
                 t.setArmorTechLevel(dataFile.getDataAsInt(t.getLocationName(i) + "_armor_type")[0], i);
             }
         }
-        
+
         t.autoSetInternal();
-        t.recalculateTechAdvancement();
 
         if (superheavy) {
             loadEquipment(t, "Front", Tank.LOC_FRONT);
@@ -277,6 +276,7 @@ public class BLKTankFile extends BLKFile implements IMechLoader {
         if (dataFile.exists("trailer")) {
             t.setTrailer(true);
         }
+        t.recalculateTechAdvancement();
         loadQuirks(t);
         return t;
     }

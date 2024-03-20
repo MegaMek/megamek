@@ -1202,7 +1202,7 @@ public class FireControl {
                 String shootingCheck;
 
                 // Energy / ammo-independent weapons
-                if (AmmoType.T_NA == wtype.getAmmoType()) {
+                if (effectivelyAmmoless(wtype)) {
                     shootingCheck = checkGuess(shooter, enemy, weapon, null, game);
                     if (null != shootingCheck) {
                         ret.append(shootingCheck);
@@ -1653,7 +1653,7 @@ public class FireControl {
             WeaponFireInfo bestShoot = null;
 
             // Energy / ammo-independent weapons
-            if (AmmoType.T_NA == wtype.getAmmoType()) {
+            if (effectivelyAmmoless(wtype)) {
                 bestShoot = buildWeaponFireInfo(shooter, target, weapon, null, game, true);
             } else {
                 // For certain weapon types, look over all their loaded ammos
@@ -1802,7 +1802,7 @@ public class FireControl {
             WeaponFireInfo bestShoot = null;
 
             // Energy / ammo-independent weapons
-            if (AmmoType.T_NA == wtype.getAmmoType()) {
+            if (effectivelyAmmoless(wtype)) {
                 bestShoot = buildWeaponFireInfo(shooter, target, weapon, null, game, false);
             } else {
                 // For certain weapon types, look over all their loaded ammos
@@ -1977,7 +1977,7 @@ public class FireControl {
             WeaponFireInfo bestShoot = null;
 
             // Energy / ammo-independent weapons
-            if (AmmoType.T_NA == wtype.getAmmoType()) {
+            if (effectivelyAmmoless(wtype)) {
                 bestShoot = buildWeaponFireInfo(shooter, target, weapon, null, game, false);
             } else {
                 // Check _all_ ammunition for _all_ weapons here.
@@ -2598,8 +2598,6 @@ public class FireControl {
                                                                              ammoConservation);
             final FiringPlan plan = determineBestFiringPlan(parameters);
 
-            LogManager.getLogger().info(shooter.getDisplayName() + " at " + enemy
-                    .getDisplayName() + " - Best Firing Plan: " + plan.getDebugDescription(true));
             if ((null == bestPlan) || (plan.getUtility() > bestPlan.getUtility())) {
                 bestPlan = plan;
             }
@@ -2637,7 +2635,7 @@ public class FireControl {
             int bestBracket = RangeType.RANGE_OUT;
 
             // For energy weapons / ammo-independent weapons
-            if (AmmoType.T_NA == weaponType.getAmmoType()) {
+            if (effectivelyAmmoless(weaponType)) {
                 bestBracket = RangeType.rangeBracket(range,
                         weaponType.getRanges(weapon),
                         useExtremeRange,
@@ -2722,7 +2720,7 @@ public class FireControl {
             final WeaponType weaponType = (WeaponType) currentWeapon.getType();
 
             // Skip weapons that don't use ammo.
-            if (AmmoType.T_NA == weaponType.getAmmoType()) {
+            if (effectivelyAmmoless(weaponType)) {
                 continue;
             }
 
@@ -3604,5 +3602,18 @@ public class FireControl {
         }
 
         return -1;
+    }
+
+    /**
+     *
+     * @param wtype that uses ammo that is not tracked, or not actually ammo
+     * @return true if wtype doesn't actually track ammo
+     */
+    protected static boolean effectivelyAmmoless(WeaponType wtype) {
+        List<Integer> atypes = Arrays.asList(
+                AmmoType.T_NA,
+                AmmoType.T_INFANTRY
+        );
+        return atypes.contains(wtype.getAmmoType());
     }
 }

@@ -1,3 +1,13 @@
+Who or What is Princess.
+Introducing Princess, the crown jewel of MegaMek's AI warriors, notorious for her rapid-fire decision-making and royal impatience. She's not your average bot; think of her as the offspring of 'Clever Girl' and 'Fire Girl'—brilliantly tactical in the heat of the moment yet as predictably unpredictable as fire itself. Named for her blazing speed—outpacing the old testbot by a factor of fifty—she rules the battlefield with the impetuousness of a true princess.
+
+Within the digital confines of MegaMek, Princess reigns supreme in her own chaotic domain, executing each turn with a precision that’s dazzlingly effective yet bewilderingly short-sighted. She's a master of the immediate, squeezing every ounce of potential from the present turn with a tactical acumen that leaves her human adversaries in awe. Yet, don't ask her about the 'next move' in the grand scheme—our beloved Princess has a knack for living (and battling) in the moment, often forgetting her grand strategy as soon as the next round begins.
+
+So here's the inside scoop, dear players: While Princess might outmaneuver you in the short run, her inability to think turn over turn is her Achilles' heel. But underestimate her at your own peril; her next move is as much a surprise to her as it is to you, making every game an adventurous foray into the unpredictable mind of MegaMek's most enigmatic AI.
+
+In a wink to you, the savvy gamer, remember this: Princess is more than code and strategy; she's a narrative woven into the very fabric of the MegaMek universe, challenging you to adapt, anticipate, and enjoy the tumultuous ride. Prepare to engage with an opponent who is part tactical genius, part whimsical sovereign, and entirely in a league of her own.
+
+
 MegaMek contains a single bot client, Princess. First, we'll go through the basic settings for princess and what they mean. Second, we'll go through the basic commands for Princess. Third, we'll discuss how to run separate instances of Princess to keep different types of units using different tactics. Finally, we'll go through the Optional Rules Princess can use.
 
 1)

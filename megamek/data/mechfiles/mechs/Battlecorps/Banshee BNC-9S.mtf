@@ -1,51 +1,51 @@
+generator:MegaMek Suite 0.49.19-SNAPSHOT on 2024-03-10
 chassis:Banshee
 model:BNC-9S
 mul id:3788
 
 Config:Biped
-TechBase:Inner Sphere
-Era:3071
-Rules Level:2
+techbase:Inner Sphere
+era:3071
+source:BattleCorps
+rules level:2
 role:Juggernaut
-Source:BattleCorps
 
-quirk:rugged_1
 quirk:bad_rep_is
+quirk:rugged_1
 
+mass:95
+engine:285 Light Engine(IS)
+structure:IS Standard
+myomer:Standard
+cockpit:Standard Cockpit
+gyro:XL Gyro
 
-Mass:95
-Engine:285 Light Engine(IS)
-Structure:IS Standard
-Myomer:Standard
-Cockpit:Standard Cockpit
-Gyro:XL Gyro
+heat sinks:14 IS Double
+walk mp:3
+jump mp:0
 
-Heat Sinks:14 Double
-Walk MP:3
-Jump MP:0
-
-Armor:Standard(Inner Sphere)
-LA Armor:32
-RA Armor:32
-LT Armor:30
-RT Armor:30
-CT Armor:44
-HD Armor:9
-LL Armor:38
-RL Armor:38
-RTL Armor:10
-RTR Armor:10
-RTC Armor:15
+armor:Standard(Inner Sphere)
+LA armor:32
+RA armor:32
+LT armor:30
+RT armor:30
+CT armor:44
+HD armor:9
+LL armor:38
+RL armor:38
+RTL armor:10
+RTR armor:10
+RTC armor:15
 
 Weapons:8
 Heavy PPC, Left Arm
 Light PPC, Left Arm
-SRM 6, Right Torso
-ER Medium Laser, Head
 ER Medium Laser, Right Arm
 ER Medium Laser, Right Arm
 Gauss Rifle, Left Torso
 Medium Laser, Left Torso
+SRM 6, Right Torso
+ER Medium Laser, Head
 
 Left Arm:
 Shoulder
@@ -160,16 +160,11 @@ Foot Actuator
 -Empty-
 
 overview:The Banshee, introduced in 2445 by the Terran Hegemony, is a 'Mech that was designed specifically for close-assault operations during the early years of BattleMech warfare.
-
 capabilities:A contemporary of the Mackie and Emperor, the Banshee is undeniably fast for one of the heaviest 'Mechs ever produced, and with fifteen tons of armor it is better protected than most other assault 'Mechs. However the use of a massive GM 380 fusion engine left little room for weaponry, and even at the time of its introduction the Banshee was considered undergunned compared to its privately-built competition. As critics noted, what use was impressive armor and mobility if a better-armed enemy could overwhelm and destroy it? The result was a mediocre 'Mech which even the lowly Rifleman could beat as long as it prevented the Banshee's mass from coming into play.
-
 deployment:This upgrade of the 8S was produced by Defiance Industries at their Kwangjong-ni annex while Word of Blake held Hesperus II. It retains the light engine of earlier models, but returns to the speed of the earliest versions. It carries a Defiance 753 Heavy PPC, Defiance 250 Light PPC, and Poland Main Model A Gauss Rifle for long range combat. Should an enemy survive long enough to close with the 9S, it can utilize three Defiance E3M ER medium lasers and a single Defiance B3M medium laser. A TharHes Maxi SRM-6 can exploit weaknesses in an opposing unit's armor, while CASE keeps the ammunition from doing too much damage in the event of an explosion. In order to make room for all of these things, the XL Gyro of the 8S is also retained. Finally, a Targeting Computer improves the accuracy of all the weapons except for the missile launcher
-
 history: The Hegemony soldiered on though, producing five thousand Banshees in a decade before its poor combat performance finally forced them to stop production in 2455 and the 'Mech was relegated to training and militia units for the next few centuries. Even during the Succession Wars the 'Mech's poor reputation meant many commanders saw it as a liability rather than an asset; unless they were fighting on a backwater Periphery world or as part of a poorly-equipped outfit, most Banshees were placed in second-line reserves to provide fire support or fulfill the role of brawlers so that better-armed 'Mechs need not engage in hand-to-hand combat. In this way fully a third of the original Banshee production run remained operational by the dawn of the thirty-first century and could be found throughout the Inner Sphere and Periphery, with the lion's share residing within the Lyran Commonwealth. Though a few attempts had been made over the years to improve the Banshee, Defiance Industries was the first to produce a variant which markedly improved on the original and was suggested by many of its original critics. With help from the Federated Suns and access to blueprints from the original Hesperus II factories, the BNC-3S proved to be such a success the Lyrans began fielding them in front line units, surprising their enemies who ignored them to focus on "real" threats with thoroughly unexpected firepower. Under the Federated Commonwealth improvements would continue to be made, though not at the same priority level as other projects, and the much-improved BNC-5S was active in time to meet the Clan Invasion.
-
-manufacturer:Defiance Manufacturing Annex 
+manufacturer:Defiance Manufacturing Annex
 primaryfactory:Kwangjong-ni
-
 systemmanufacturer:CHASSIS:Foundation
 systemmode:CHASSIS:210
 systemmanufacturer:ENGINE:Edasich Motors
@@ -180,3 +175,4 @@ systemmanufacturer:COMMUNICATIONS:Angst
 systemmode:COMMUNICATIONS:Clear Channel 3
 systemmanufacturer:TARGETING:Angst
 systemmode:TARGETING:Clear View 2A
+

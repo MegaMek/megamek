@@ -11677,6 +11677,55 @@
 	<chassis name='Mobile Long Tom Artillery (Unofficial)' unitType='Tank'>
 		<availability>CLAN:3,IS:2</availability>
 	</chassis>
+	<chassis name='Mobile Long Tom Artillery' unitType='Tank'>
+		<availability>CLAN:2-,IS:2,CLAN.IS:2-,MERC:1,Periphery:1</availability>
+		<model name='(+Carriages)(Unofficial)'>
+			<roles>artillery</roles>
+			<availability>General:8</availability>
+		</model>
+		<model name='LT-MOB-25'>
+			<roles>artillery</roles>
+			<availability>General:7</availability>
+		</model>
+		<model name='LT-MOB-25 (Ammunition Carriage)'>
+			<roles>cargo,support</roles>
+			<deployedWith>Mobile Long Tom Artillery LT-MOB-25</deployedWith>
+			<availability>General:8</availability>
+		</model>
+		<model name='LT-MOB-25 (Support Carriage)'>
+			<roles>cargo,support</roles>
+			<deployedWith>Mobile Long Tom Artillery LT-MOB-25</deployedWith>
+			<availability>General:8</availability>
+		</model>
+		<model name='LT-MOB-25F'>
+			<roles>artillery</roles>
+			<availability>General:2+</availability>
+		</model>
+		<model name='LT-MOB-25F (Ammunition Carriage)'>
+			<roles>cargo,support</roles>
+			<deployedWith>Mobile Long Tom Artillery LT-MOB-25F</deployedWith>
+			<availability>General:8</availability>
+		</model>
+		<model name='LT-MOB-25F (Ammunition Loader Carriage)'>
+			<roles>cargo,support</roles>
+			<deployedWith>Mobile Long Tom Artillery LT-MOB-25F</deployedWith>
+			<availability>General:8</availability>
+		</model>
+		<model name='LT-MOB-25F (Drone Command Carriage)'>
+			<roles>cargo,support</roles>
+			<deployedWith>Mobile Long Tom Artillery LT-MOB-25F</deployedWith>
+			<availability>General:8</availability>
+		</model>
+		<model name='LT-MOB-25F (Support Carriage)'>
+			<roles>cargo,support</roles>
+			<deployedWith>Mobile Long Tom Artillery LT-MOB-25F</deployedWith>
+			<availability>General:8</availability>
+		</model>
+		<model name='LT-MOB-95'>
+			<roles>artillery</roles>
+			<availability>IS:2,MERC:1,Periphery:1</availability>
+		</model>
+	</chassis>
 	<chassis name='Model 97 &apos;Octopus&apos;' unitType='Dropship'>
 		<availability>FWL:3,IS:2</availability>
 		<model name='(3051)'>

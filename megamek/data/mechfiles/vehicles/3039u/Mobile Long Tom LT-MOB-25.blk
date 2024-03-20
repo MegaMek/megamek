@@ -1,13 +1,4 @@
-#building block data file
-<BlockVersion>
-1
-</BlockVersion>
-
-# Write the version number just in case...
-<Version>
-MAM0
-</Version>
-
+#Saved from version 0.49.19-SNAPSHOT on 2024-03-17
 <UnitType>
 Tank
 </UnitType>
@@ -28,9 +19,17 @@ LT-MOB-25
 2602
 </year>
 
+<originalBuildYear>
+2602
+</originalBuildYear>
+
 <type>
 IS Level 3
 </type>
+
+<role>
+Missile Boat
+</role>
 
 <motion_type>
 Tracked
@@ -57,7 +56,7 @@ ISLongTomAmmo
 ISLongTomAmmo
 ISLongTomAmmo
 ISLongTomAmmo
-Communications Equipment (3 ton)
+Communications Equipment:SIZE:3.0
 </Body Equipment>
 
 <Front Equipment>
@@ -78,6 +77,37 @@ Machine Gun
 Hitch
 </Rear Equipment>
 
+<capabilities>
+The main unit was a 65-ton tracked vehicle and the only one in the convoy that possessed an, admittedly meager, engine capable of only 25.6 km/h and requiring constant refueling. This piloting cab also served as the targeting center, featuring an additional ton of communication equipment and the mounted weaponry. However the vehicle was protected by a scant four tons of armor, though it was not supposed to be anywhere near combat. For this reason the Long Tom relied on defensive units for anti-air support. Included in the artillery system was a variety support carriages. The purpose of these was to carry support personnel who directed the fire of the Long Tom.
+</capabilities>
+
+<overview>
+The Mobile Long Tom was essentially an artillery piece on wheels. Known in official Star League records as the LT-MOB-25, it is actually six vehicles all hooked together as part of a massive convoy.
+</overview>
+
+<deployment>
+An Armstrong Industries Long Tom Rifle Mobile Chassis System. The artillery piece was capable of extremely long range fire more suited to demolishing defensive fortifications than firing into a firefight. The only short-range weapons were four, side-mounted Sperry Browning Machine Guns that were more suited to anti-infantry than anti-'Mech duty. It's armor has been downgraded from the original Ferro-Fibrous
+</deployment>
+
+<history>
+This combat vehicle was first produced for the Star League Defense Force and the design soon became common in the every military throughout the Inner Sphere and Periphery.
+</history>
+
+<manufacturer>
+Bithinian Ballistics, Lycomb IntroTech, Austen-Armstrong Industries, Taurus Territorial Industries
+</manufacturer>
+
+<primaryFactory>
+Bithinia, New Avalon, Bainsville, Sterope
+</primaryFactory>
+
+<systemManufacturers>
+ENGINE:Robel 195 ICE
+ARMOR:StarSlab/1 Ferro-Fibrous
+COMMUNICATIONS:ROMTECH 100
+TARGETING:O/P 10-40 LTR
+</systemManufacturers>
+
 <source>
 TRO: 3039
 </source>
@@ -86,126 +116,7 @@ TRO: 3039
 75.0
 </tonnage>
 
-<capabilities>
-The main unit was a 65-ton tracked vehicle and the only one in the convoy that possessed an, admittedly meager, engine capable of only 25.6 km/h and requiring constant refueling. This piloting cab also served as the targeting center, featuring an additional ton of communication equipment and the mounted weaponry. However the vehicle was protected by a scant four tons of armor, though it was not supposed to be anywhere near combat. For this reason the Long Tom relied on defensive units for anti-air support. Included in the artillery system was a variety support carriages. The purpose of these was to carry support personnel who directed the fire of the Long Tom.
-</capabilities>
+<fuelType>
+PETROCHEMICALS
+</fuelType>
 
-<overview>
-The Mobile Long Tom was essentially an artillery piece on wheels. Known in official Star League records as the LT-MOB-25, it is actually six vehicles all hooked together as part of a massive convoy.
-</overview>
-
-<deployment>
-An Armstrong Industries Long Tom Rifle Mobile Chassis System. The artillery piece was capable of extremely long range fire more suited to demolishing defensive fortifications than firing into a firefight. The only short-range weapons were four, side-mounted Sperry Browning Machine Guns that were more suited to anti-infantry than anti-'Mech duty. It's armor has been downgraded from the original Ferro-Fibrous
-</deployment>
-
-<history>
-This combat vehicle was first produced for the Star League Defense Force and the design soon became common in the every military throughout the Inner Sphere and Periphery.
-</history>
-
-<manufacturer>
-Bithinian Ballistics, Lycomb IntroTech, Austen-Armstrong Industries, Taurus Territorial Industries
-</manufacturer>
-
-<primaryFactory>
-Bithinia, New Avalon, Bainsville, Sterope
-</primaryFactory>
-
-<systemManufacturers>
-ENGINE:Robel 195 ICE
-ARMOR:StarSlab/1 Ferro-Fibrous
-COMMUNICATIONS:ROMTECH 100
-TARGETING:O/P 10-40 LTR
-</systemManufacturers>
-
-<capabilities>
-The main unit was a 65-ton tracked vehicle and the only one in the convoy that possessed an, admittedly meager, engine capable of only 25.6 km/h and requiring constant refueling. This piloting cab also served as the targeting center, featuring an additional ton of communication equipment and the mounted weaponry. However the vehicle was protected by a scant four tons of armor, though it was not supposed to be anywhere near combat. For this reason the Long Tom relied on defensive units for anti-air support. Included in the artillery system was a variety support carriages. The purpose of these was to carry support personnel who directed the fire of the Long Tom.
-</capabilities>
-
-<overview>
-The Mobile Long Tom was essentially an artillery piece on wheels. Known in official Star League records as the LT-MOB-25, it is actually six vehicles all hooked together as part of a massive convoy.
-</overview>
-
-<deployment>
-An Armstrong Industries Long Tom Rifle Mobile Chassis System. The artillery piece was capable of extremely long range fire more suited to demolishing defensive fortifications than firing into a firefight. The only short-range weapons were four, side-mounted Sperry Browning Machine Guns that were more suited to anti-infantry than anti-'Mech duty. It's armor has been downgraded from the original Ferro-Fibrous
-</deployment>
-
-<history>
-This combat vehicle was first produced for the Star League Defense Force and the design soon became common in the every military throughout the Inner Sphere and Periphery.
-</history>
-
-<manufacturer>
-Bithinian Ballistics, Lycomb IntroTech, Austen-Armstrong Industries, Taurus Territorial Industries
-</manufacturer>
-
-<primaryFactory>
-Bithinia, New Avalon, Bainsville, Sterope
-</primaryFactory>
-
-<systemManufacturers>
-ENGINE:Robel 195 ICE
-ARMOR:StarSlab/1 Ferro-Fibrous
-COMMUNICATIONS:ROMTECH 100
-TARGETING:O/P 10-40 LTR
-</systemManufacturers>
-
-<capabilities>
-The main unit was a 65-ton tracked vehicle and the only one in the convoy that possessed an, admittedly meager, engine capable of only 25.6 km/h and requiring constant refueling. This piloting cab also served as the targeting center, featuring an additional ton of communication equipment and the mounted weaponry. However the vehicle was protected by a scant four tons of armor, though it was not supposed to be anywhere near combat. For this reason the Long Tom relied on defensive units for anti-air support. Included in the artillery system was a variety support carriages. The purpose of these was to carry support personnel who directed the fire of the Long Tom.
-</capabilities>
-
-<overview>
-The Mobile Long Tom was essentially an artillery piece on wheels. Known in official Star League records as the LT-MOB-25, it is actually six vehicles all hooked together as part of a massive convoy.
-</overview>
-
-<deployment>
-An Armstrong Industries Long Tom Rifle Mobile Chassis System. The artillery piece was capable of extremely long range fire more suited to demolishing defensive fortifications than firing into a firefight. The only short-range weapons were four, side-mounted Sperry Browning Machine Guns that were more suited to anti-infantry than anti-'Mech duty. It's armor has been downgraded from the original Ferro-Fibrous
-</deployment>
-
-<history>
-This combat vehicle was first produced for the Star League Defense Force and the design soon became common in the every military throughout the Inner Sphere and Periphery.
-</history>
-
-<manufacturer>
-Bithinian Ballistics, Lycomb IntroTech, Austen-Armstrong Industries, Taurus Territorial Industries
-</manufacturer>
-
-<primaryFactory>
-Bithinia, New Avalon, Bainsville, Sterope
-</primaryFactory>
-
-<systemManufacturers>
-ENGINE:Robel 195 ICE
-ARMOR:StarSlab/1 Ferro-Fibrous
-COMMUNICATIONS:ROMTECH 100
-TARGETING:O/P 10-40 LTR
-</systemManufacturers>
-
-<capabilities>
-The main unit was a 65-ton tracked vehicle and the only one in the convoy that possessed an, admittedly meager, engine capable of only 25.6 km/h and requiring constant refueling. This piloting cab also served as the targeting center, featuring an additional ton of communication equipment and the mounted weaponry. However the vehicle was protected by a scant four tons of armor, though it was not supposed to be anywhere near combat. For this reason the Long Tom relied on defensive units for anti-air support. Included in the artillery system was a variety support carriages. The purpose of these was to carry support personnel who directed the fire of the Long Tom.
-</capabilities>
-
-<overview>
-The Mobile Long Tom was essentially an artillery piece on wheels. Known in official Star League records as the LT-MOB-25, it is actually six vehicles all hooked together as part of a massive convoy.
-</overview>
-
-<deployment>
-An Armstrong Industries Long Tom Rifle Mobile Chassis System. The artillery piece was capable of extremely long range fire more suited to demolishing defensive fortifications than firing into a firefight. The only short-range weapons were four, side-mounted Sperry Browning Machine Guns that were more suited to anti-infantry than anti-'Mech duty. It's armor has been downgraded from the original Ferro-Fibrous
-</deployment>
-
-<history>
-This combat vehicle was first produced for the Star League Defense Force and the design soon became common in the every military throughout the Inner Sphere and Periphery.
-</history>
-
-<manufacturer>
-Bithinian Ballistics, Lycomb IntroTech, Austen-Armstrong Industries, Taurus Territorial Industries
-</manufacturer>
-
-<primaryFactory>
-Bithinia, New Avalon, Bainsville, Sterope
-</primaryFactory>
-
-<systemManufacturers>
-ENGINE:Robel 195 ICE
-ARMOR:StarSlab/1 Ferro-Fibrous
-COMMUNICATIONS:ROMTECH 100
-TARGETING:O/P 10-40 LTR
-</systemManufacturers>

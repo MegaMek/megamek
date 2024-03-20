@@ -17,7 +17,6 @@ import megamek.client.Client;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.FiringDisplay.FiringCommand;
-import megamek.client.ui.swing.unitDisplay.WeaponPanel;
 import megamek.client.ui.swing.util.CommandAction;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.MegaMekController;
@@ -29,7 +28,6 @@ import megamek.common.enums.GamePhase;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.options.OptionsConstants;
-import megamek.common.util.FiringSolution;
 import megamek.common.weapons.Weapon;
 import megamek.common.weapons.artillery.ArtilleryWeapon;
 import megamek.common.weapons.bayweapons.TeleOperatedMissileBayWeapon;
@@ -40,9 +38,6 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.awt.event.*;
 import java.util.*;
-
-import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
-import static megamek.client.ui.swing.util.UIUtil.uiLightViolet;
 
 /**
  * Targeting Phase Display. Breaks naming convention because TargetingDisplay is too easy to confuse
@@ -627,52 +622,13 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements
             setFireModeEnabled(true);
 
             if (GUIP.getFiringSolutions() && !ce().isOffBoard()) {
-                setFiringSolutions();
+                setFiringSolutions(ce());
             } else {
                 clientgui.getBoardView().clearFiringSolutionData();
             }
         } else {
             LogManager.getLogger().error("Tried to select non-existent entity: " + en);
         }
-    }
-
-    public void setFiringSolutions() {
-        // If no Entity is selected, exit
-        if (cen == Entity.NONE) {
-            return;
-        }
-
-        Game game = clientgui.getClient().getGame();
-        Player localPlayer = clientgui.getClient().getLocalPlayer();
-        if (!GUIP.getFiringSolutions()) {
-            return;
-        }
-
-        // Determine which entities are spotted
-        Set<Integer> spottedEntities = new HashSet<>();
-        for (Entity target : game.getEntitiesVector()) {
-            if (!target.isEnemyOf(ce()) && target.isSpotting()) {
-                spottedEntities.add(target.getSpotTargetId());
-            }
-        }
-
-        // Calculate firing solutions
-        Map<Integer, FiringSolution> fs = new HashMap<>();
-        for (Entity target : game.getEntitiesVector()) {
-            boolean friendlyFire = game.getOptions().booleanOption(OptionsConstants.BASE_FRIENDLY_FIRE);
-            boolean enemyTarget = target.getOwner().isEnemyOf(ce().getOwner());
-            if ((target.getId() != cen)
-                && (friendlyFire || enemyTarget)
-                && (!enemyTarget || target.hasSeenEntity(localPlayer)
-                    || target.hasDetectedEntity(localPlayer))
-                && target.isTargetable()) {
-                ToHitData thd = WeaponAttackAction.toHit(game, cen, target);
-                thd.setLocation(target.getPosition());
-                thd.setRange(ce().getPosition().distance(target.getPosition()));
-                fs.put(target.getId(), new FiringSolution(thd, spottedEntities.contains(target.getId())));
-            }
-        }
-        clientgui.getBoardView().setFiringSolutions(ce(), fs);
     }
 
     /**
@@ -809,24 +765,33 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements
         clientgui.getUnitDisplay().wPan.selectWeapon(wn);
     }
 
+    private boolean checkNags() {
+        if (needNagForNoAction()) {
+            if (attacks.isEmpty()) {
+                // confirm this action
+                String title = Messages.getString("TargetingPhaseDisplay.DontFireDialog.title");
+                String body = Messages.getString("TargetingPhaseDisplay.DontFireDialog.message");
+                if (checkNagForNoAction(title, body)) {
+                    return true;
+                }
+            }
+        }
+
+        if (ce() == null) {
+            return true;
+        }
+
+        return false;
+    }
+
     /**
      * Called when the current entity is done firing. Send out our attack queue
      * to the server.
      */
     @Override
     public void ready() {
-        if (attacks.isEmpty() && needNagForNoAction()) {
-            // confirm this action
-            String title = Messages.getString("TargetingPhaseDisplay.DontFireDialog.title");
-            String body = Messages.getString("TargetingPhaseDisplay.DontFireDialog.message");
-            ConfirmDialog response = clientgui.doYesNoBotherDialog(title, body);
-            if (!response.getShowAgain()) {
-                GUIP.setNagForNoAction(false);
-            }
-
-            if (!response.getAnswer()) {
-                return;
-            }
+        if (checkNags()) {
+          return;
         }
 
         // stop further input (hopefully)
@@ -839,7 +804,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements
         clientgui.getClient().sendAttackData(cen, attacks.toVector());
 
         // clear queue
-       removeAllAttacks();
+        removeAllAttacks();
 
         if ((ce() != null) && ce().isWeapOrderChanged()) {
             clientgui.getClient().sendEntityWeaponOrderUpdate(ce());

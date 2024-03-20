@@ -2148,11 +2148,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             return game.getEntity(getTransportId()).getElevation();
         }
 
-        if ((null == getPosition()) && (isDeployed())) {
-            throw new IllegalStateException("Entity #" + getId()
-                                            + " does not know its position.");
-        }
-
         if (isOffBoard()) {
             return 0;
         }

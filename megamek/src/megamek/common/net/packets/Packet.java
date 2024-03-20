@@ -16,6 +16,10 @@ package megamek.common.net.packets;
 import megamek.common.annotations.Nullable;
 import megamek.common.net.enums.PacketCommand;
 
+import java.util.Arrays;
+
+import static org.apache.commons.text.WordUtils.abbreviate;
+
 /**
  * Application layer data packet used to exchange information between client and server.
  */
@@ -77,5 +81,10 @@ public class Packet {
      */
     public boolean getBooleanValue(int index) {
         return (Boolean) getObject(index);
+    }
+
+    @Override
+    public String toString() {
+        return "Packet [" + command + "] - " + abbreviate(Arrays.toString(data), 0, 200, "");
     }
 }

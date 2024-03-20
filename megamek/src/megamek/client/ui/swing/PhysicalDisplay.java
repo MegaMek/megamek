@@ -30,9 +30,6 @@ import javax.swing.*;
 import java.awt.event.*;
 import java.util.*;
 
-import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
-import static megamek.client.ui.swing.util.UIUtil.uiLightViolet;
-
 public class PhysicalDisplay extends AttackPhaseDisplay {
     private static final long serialVersionUID = -3274750006768636001L;
 
@@ -331,24 +328,36 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
         setNextEnabled(false);
     }
 
+    private boolean checkNags() {
+        if (needNagForNoAction()) {
+            if (attacks.isEmpty()) {
+                // confirm this action
+                String title = Messages.getString("PhysicalDisplay.DontPhysicalAttackDialog.title");
+                String body = Messages.getString("PhysicalDisplay.DontPhysicalAttackDialog.message");
+                if (checkNagForNoAction(title, body)) {
+                    return true;
+                }
+            }
+        }
+
+        if (ce() == null) {
+            return true;
+        }
+
+        return false;
+    }
+
     /**
      * Called when the current entity is done with physical attacks.
      */
     @Override
     public void ready() {
-        if (attacks.isEmpty() && needNagForNoAction()) {
-            // confirm this action
-            ConfirmDialog response = clientgui.doYesNoBotherDialog(
-                    Messages.getString("PhysicalDisplay.DontPhysicalAttackDialog.title"),
-                    Messages.getString("PhysicalDisplay.DontPhysicalAttackDialog.message"));
-            if (!response.getShowAgain()) {
-                GUIP.setNagForNoAction(false);
-            }
-            if (!response.getAnswer()) {
-                return;
-            }
+        if (checkNags()) {
+            return;
         }
+
         disableButtons();
+
         clientgui.getClient().sendAttackData(cen, attacks.toVector());
         removeAllAttacks();
         // close aimed shot display, if any

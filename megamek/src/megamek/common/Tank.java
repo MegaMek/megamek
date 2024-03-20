@@ -110,6 +110,8 @@ public class Tank extends Entity {
                 ToHitData.SIDE_LEFT, LOC_LEFT,
                 ToHitData.SIDE_RIGHT, LOC_RIGHT,
                 ToHitData.SIDE_REAR, LOC_REAR);
+    protected boolean hasSponsons = false;
+    protected boolean hasPintle = false;
 
     @Override
     public int getUnitType() {
@@ -273,6 +275,9 @@ public class Tank extends Entity {
         super.addSystemTechAdvancement(ctl);
         if (!hasNoDualTurret()) {
             ctl.addComponent(getDualTurretTA());
+        }
+        if (hasSponsons) {
+            ctl.addComponent(EquipmentType.get(EquipmentTypeLookup.SPONSON_TURRET).getTechAdvancement());
         }
     }
 
@@ -1833,6 +1838,9 @@ public class Tank extends Entity {
                 && mounted.getType().hasFlag(MiscType.F_JUMP_JET)) {
             setOriginalJumpMP(getOriginalJumpMP() + 1);
         }
+        // Track unusual turrets for tech calculations
+        hasSponsons |= mounted.isSponsonTurretMounted();
+        hasPintle |= mounted.isPintleTurretMounted();
     }
 
     /**

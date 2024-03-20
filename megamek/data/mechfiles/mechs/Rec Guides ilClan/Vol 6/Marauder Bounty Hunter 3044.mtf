@@ -1,3 +1,4 @@
+generator:MegaMek Suite 0.49.19-SNAPSHOT on 2024-03-16
 chassis:Marauder
 model:(Bounty Hunter-3044)
 mul id:2031
@@ -9,12 +10,18 @@ source:Rec Guide:ilClan #6
 rules level:4
 role:Sniper
 
+quirk:low_profile
+quirk:command_mech
+quirk:directional_torso_mount
+quirk:hyper_actuator
+weaponquirk:exposed_linkage:RT:3:ISGaussRifle
+
 mass:75
 engine:225 XL Engine(IS)
 structure:IS Standard
 myomer:Standard
 
-heat sinks:15 Double
+heat sinks:15 IS Double
 walk mp:3
 jump mp:3
 

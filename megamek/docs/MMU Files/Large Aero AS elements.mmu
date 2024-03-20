@@ -1,0 +1,75 @@
+# Example large aerospace Alpha Strike elements
+# These are canon units and would not normally require stats to be given at all; this is only to show how to define them
+
+# These use the keywords nose, aft and side instead of damage
+# The arcs use CAP, SCAP and MSL and also list the arc specials
+# Station-keeping movement is represented without "0.", e.g. "2k"
+
+# Quotes can be omitted in most cases (YAML formatting)
+- type: "ASElement"
+  chassis: "DropShuttle"
+  model: "K-1"
+  astype: "SC"
+  size: 1
+  role: "None"
+  move: "4p"
+  nose: "2/2/0*/-"
+  aft: "1/1/-/-, ENE, PNT1"
+  side: "0*/0*/-/-, ENE"
+  armor: 12
+  structure: 3
+  specials: "CT52-D2, LECM, LG, SPC, VSTOL"
+
+- type: "ASElement"
+  chassis: "Aurora"
+  model: "(Gunship)"
+  astype: "DA"
+  size: 1
+  role: "None"
+  move: "4a"
+  nose: "2/3/2/-"
+  aft: "3/3/2/-"
+  side: "5/7/6/-, PNT1"
+  armor: 20
+  structure: 4
+  specials: "AT2-D2, CT188-D3, LG, SPC, VSTOL"
+
+- type: "ASElement"
+  chassis: "Merchant Jumpship"
+  model: "(2602)"
+  astype: "JS"
+  size: 2
+  move: "2k"
+  nose: "ENE"
+  aft: "ENE"
+  side: "ENE"
+  armor: 9
+  structure: 1
+  specials: "CT657-D2, DT2, KF, SPC, ST2-D2"
+
+- type: "ASElement"
+  chassis: "Corone Destroyer"
+  model: "(2915)"
+  astype: "WS"
+  size: 1
+  role: "None"
+  move: "3"
+  nose: "5/5/5/-, CAP26/26/26/5"
+  aft: "1/1/1/-, CAP10/10/10/-"
+  side: "3/3/3/-, CAP21/21/21/3"
+  armor: 109
+  structure: 47
+  specials: "AT20-D3, CK36-D1, CRW2, DT4, HPG, KF, LF, MT45-D2, SPC"
+
+- type: "ASElement"
+  chassis: "Olympus Recharge Station"
+  model: "(2942)"
+  astype: "SS"
+  size: 3
+  move: "2k"
+  nose: "22/22/10/3, PNT4"
+  aft: "22/22/10/3, PNT4"
+  side: "11/11/5/2, PNT2"
+  armor: 28
+  structure: 1
+  specials: "AT10-D2, CK943-D1, CRW3, DT4, SPC, ST10-D2"

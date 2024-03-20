@@ -5767,18 +5767,6 @@
 			<availability>General:2</availability>
 		</model>
 	</chassis>
-	<chassis name='Elemental III Battle Armor' unitType='BattleArmor'>
-		<availability>CHH:2</availability>
-		<model name='[AP Gauss](Sqd5)' mechanized='false'>
-			<availability>CHH:2</availability>
-		</model>
-		<model name='[Flamer](Sqd5)' mechanized='false'>
-			<availability>CHH:2</availability>
-		</model>
-		<model name='[MicroPL](Sqd5)' mechanized='false'>
-			<availability>CHH:2</availability>
-		</model>
-	</chassis>
 	<chassis name='Emperor' unitType='Mek'>
 		<availability>CC:5,MOC:4,CLAN:2,IS:4,WOB:7,FS:5,MERC:4,TC:4,CS:7,LA:4,CNC:5,FWL:4,NIOPS:7,DC:4</availability>
 		<model name='EMP-6A'>
@@ -11610,6 +11598,51 @@
 	</chassis>
 	<chassis name='Mobile Long Tom Artillery (Unofficial)' unitType='Tank'>
 		<availability>CLAN:3,IS:3</availability>
+	</chassis>
+	<chassis name='Mobile Long Tom Artillery' unitType='Tank'>
+		<availability>CS:4,CLAN:2-,IS:5,CLAN.IS:2-,MERC:4,CLAN.HW:2-,Periphery:4</availability>
+		<model name='(+Carriages)(Unofficial)'>
+			<roles>artillery</roles>
+			<availability>General:8</availability>
+		</model>
+		<model name='LT-MOB-25'>
+			<roles>artillery</roles>
+			<availability>General:8</availability>
+		</model>
+		<model name='LT-MOB-25 (Ammunition Carriage)'>
+			<roles>cargo,support</roles>
+			<deployedWith>Mobile Long Tom Artillery LT-MOB-25</deployedWith>
+			<availability>General:8</availability>
+		</model>
+		<model name='LT-MOB-25 (Support Carriage)'>
+			<roles>cargo,support</roles>
+			<deployedWith>Mobile Long Tom Artillery LT-MOB-25</deployedWith>
+			<availability>General:8</availability>
+		</model>
+		<model name='LT-MOB-25F'>
+			<roles>artillery</roles>
+			<availability>General:2+</availability>
+		</model>
+		<model name='LT-MOB-25F (Ammunition Carriage)'>
+			<roles>cargo,support</roles>
+			<deployedWith>Mobile Long Tom Artillery LT-MOB-25F</deployedWith>
+			<availability>General:8</availability>
+		</model>
+		<model name='LT-MOB-25F (Ammunition Loader Carriage)'>
+			<roles>cargo,support</roles>
+			<deployedWith>Mobile Long Tom Artillery LT-MOB-25F</deployedWith>
+			<availability>General:8</availability>
+		</model>
+		<model name='LT-MOB-25F (Drone Command Carriage)'>
+			<roles>cargo,support</roles>
+			<deployedWith>Mobile Long Tom Artillery LT-MOB-25F</deployedWith>
+			<availability>General:8</availability>
+		</model>
+		<model name='LT-MOB-25F (Support Carriage)'>
+			<roles>cargo,support</roles>
+			<deployedWith>Mobile Long Tom Artillery LT-MOB-25F</deployedWith>
+			<availability>General:8</availability>
+		</model>
 	</chassis>
 	<chassis name='Model 96 &apos;Elephant&apos;' unitType='Dropship'>
 		<availability>CS:4,NIOPS:2,WOB:5</availability>

@@ -1,46 +1,48 @@
-chassis:Crosscut 
+generator:MegaMek Suite 0.49.19-SNAPSHOT on 2024-03-17
+chassis:Crosscut
 model:ED-X2M LoggerMech MOD
 mul id:7167
 
 Config:Biped
-TechBase:Inner Sphere
-Era:2801
-Source:Record Sheets: Vehicle Annex - IndustrialMechs & Exoskeletons
-Rules Level:2
+techbase:Inner Sphere
+era:2801
+source:Record Sheets: Vehicle Annex - IndustrialMechs & Exoskeletons
+rules level:2
 
-Mass:30
-Engine:90 ICE Engine(IS)
-Structure:IS Industrial
-Myomer:Standard
-Cockpit:Industrial Cockpit
-Gyro:Standard Gyro
 
-Heat Sinks:1 Single
-Walk MP:3
-Jump MP:0
+mass:30
+engine:90 ICE Engine(IS)
+structure:IS Industrial
+myomer:Standard
+cockpit:Industrial Cockpit
+gyro:Standard Gyro
 
-Armor:Industrial (Inner Sphere)
-LA Armor:5
-RA Armor:5
-LT Armor:5
-RT Armor:5
-CT Armor:8
-HD Armor:6
-LL Armor:5
-RL Armor:5
-RTL Armor:3
-RTR Armor:3
-RTC Armor:3
+heat sinks:1 Single
+walk mp:3
+jump mp:0
+
+armor:Industrial (Inner Sphere)
+LA armor:5
+RA armor:5
+LT armor:5
+RT armor:5
+CT armor:8
+HD armor:6
+LL armor:5
+RL armor:5
+RTL armor:3
+RTR armor:3
+RTC armor:3
 
 Weapons:1
-Vehicle Flamer, Left Arm
+Flamer (Vehicle), Left Arm
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-Vehicle Flamer
+Flamer (Vehicle)
 IS Vehicle Flamer Ammo
 -Empty-
 -Empty-
@@ -102,8 +104,8 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Cargo (1 ton)
-Cargo (0.5 tons)
+Cargo:SIZE:1.0
+Cargo:SIZE:0.5
 
 Head:
 Life Support
@@ -146,4 +148,6 @@ Foot Actuator
 -Empty-
 -Empty-
 -Empty-
+
+notes:Crosscut ED-X2M LoggerMech MOD / ED-X2 (Flamer)-Variant has two different designations in two separate products (TR:VA and H:OK)  
 

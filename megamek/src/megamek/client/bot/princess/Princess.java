@@ -40,8 +40,10 @@ import megamek.common.util.BoardUtilities;
 import megamek.common.util.StringUtil;
 import megamek.common.weapons.AmmoWeapon;
 import megamek.common.weapons.StopSwarmAttack;
+import org.apache.commons.logging.impl.Log4JLogger;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.text.DecimalFormat;
@@ -552,13 +554,14 @@ public class Princess extends BotClient {
     @Override
     protected void calculateFiringTurn() {
         final Entity shooter;
+        final Logger logger = LogManager.getLogger();
         try {
             // get the first entity that can act this turn make sure weapons
             // are loaded
             shooter = getEntityToFire(fireControlState);
         } catch (Exception e) {
             // If we fail to get the shooter, literally nothing can be done.
-            LogManager.getLogger().error(e.getMessage(), e);
+            logger.error(e.getMessage(), e);
             return;
         }
 
@@ -587,13 +590,13 @@ public class Princess extends BotClient {
                         skipFiring = true;
                     }
                 } finally {
-                    LogManager.getLogger().info(msg.toString());
+                    logger.info(msg.toString());
                 }
             }
 
             if (shooter.isHidden()) {
                 skipFiring = true;
-                LogManager.getLogger().info("Hidden unit skips firing.");
+                logger.info("Hidden unit skips firing.");
             }
 
             // calculating a firing plan is somewhat expensive, so
@@ -609,8 +612,11 @@ public class Princess extends BotClient {
                     getFireControl(shooter).loadAmmo(shooter, plan);
                     plan.sortPlan();
 
-                    LogManager.getLogger().info(shooter.getDisplayName() + " - Best Firing Plan: " +
-                            plan.getDebugDescription(LogManager.getLogger().getLevel().isLessSpecificThan(Level.DEBUG)));
+                    // Log info and debug at different levels
+                    logger.info(shooter.getDisplayName() + " - Best Firing Plan: " +
+                            plan.getDebugDescription(false));
+                    logger.debug(shooter.getDisplayName() + " - Detailed Best Firing Plan: " +
+                            plan.getDebugDescription(true));
 
                     // Add expected damage from the chosen FiringPlan to the
                     // damageMap for the target enemy.
@@ -645,7 +651,7 @@ public class Princess extends BotClient {
                     sendAttackData(shooter.getId(), actions);
                     return;
                 } else {
-                    LogManager.getLogger().info("No best firing plan for " + shooter.getDisplayName());
+                    logger.info("No best firing plan for " + shooter.getDisplayName());
                 }
             }
 
@@ -661,7 +667,7 @@ public class Princess extends BotClient {
                         .findFirst()
                         .orElse(null);
                 if (stopSwarmWeapon == null) {
-                    LogManager.getLogger().error("Failed to find a Stop Swarm Weapon while Swarming a unit, which should not be possible.");
+                    logger.error("Failed to find a Stop Swarm Weapon while Swarming a unit, which should not be possible.");
                 } else {
                     miscPlan = new Vector<>();
                     miscPlan.add(new WeaponAttackAction(shooter.getId(), shooter.getSwarmTargetId(),
@@ -698,7 +704,7 @@ public class Princess extends BotClient {
 
             sendAttackData(shooter.getId(), miscPlan);
         } catch (Exception e) {
-            LogManager.getLogger().error(e.getMessage(), e);
+            logger.error(e.getMessage(), e);
             // Don't lock up, just skip this entity.
             Vector<EntityAction> fallback = new Vector<>();
             sendAttackData(shooter.getId(), fallback);

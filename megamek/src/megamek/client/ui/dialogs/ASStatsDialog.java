@@ -29,13 +29,19 @@ import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.alphaStrike.AlphaStrikeHelper;
 import megamek.common.alphaStrike.cardDrawer.ASCardPrinter;
 import megamek.common.alphaStrike.conversion.ASConverter;
+import megamek.common.jacksonadapters.MMUWriter;
 
+import java.util.List;
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.stream.Collectors;
 
 /**
  * This non-modal dialog shows stats of one or more AlphaStrike elements in the form of a table.
@@ -47,6 +53,7 @@ public class ASStatsDialog extends AbstractDialog {
     private final JButton clipBoardButton = new JButton(Messages.getString("CASCardPanel.copyCard"));
     private final JButton copyStatsButton = new JButton(Messages.getString("CASCardPanel.copyStats"));
     private final JButton printButton = new JButton(Messages.getString("CASCardPanel.printCard"));
+    private final JButton saveButton = new JButton(Messages.getString("Save.text"));
     private final JScrollPane scrollPane = new JScrollPane();
     private final JPanel centerPanel = new JPanel();
     private ASStatsTablePanel tablePanel;
@@ -77,6 +84,9 @@ public class ASStatsDialog extends AbstractDialog {
         optionsPanel.add(clipBoardButton);
         optionsPanel.add(copyStatsButton);
         optionsPanel.add(printButton);
+        optionsPanel.add(saveButton);
+        saveButton.addActionListener(e -> save());
+        saveButton.setFont(UIUtil.getScaledFont());
         clipBoardButton.addActionListener(e -> copyToClipboard());
         copyStatsButton.addActionListener(e -> copyStats());
         printButton.addActionListener(ev -> printCards());
@@ -159,6 +169,32 @@ public class ASStatsDialog extends AbstractDialog {
         dataLine.append(AlphaStrikeHelper.getSpecialsExportString(INTERNAL_DELIMITER, element));
         dataLine.append("\n");
         return dataLine;
+    }
+
+    private void save() {
+        List<AlphaStrikeElement> elements = entities.stream().filter(ASConverter::canConvert)
+                .map(e -> ASConverter.convert(e, true))
+                .collect(Collectors.toList());
+        if (elements.isEmpty()) {
+            return;
+        }
+        var fileChooser = new JFileChooser(".");
+        fileChooser.setDialogTitle(Messages.getString("Save.text"));
+        fileChooser.setFileFilter(new FileNameExtensionFilter("MUL files", "mmu"));
+        fileChooser.setSelectedFile(new File(elements.get(0).generalName() + ".mmu"));
+        int returnVal = fileChooser.showSaveDialog(getParent());
+        if ((returnVal != JFileChooser.APPROVE_OPTION) || (fileChooser.getSelectedFile() == null)) {
+            return;
+        }
+
+        File unitFile = fileChooser.getSelectedFile();
+
+        try {
+            new MMUWriter().writeMMUFileFullStats(unitFile, elements);
+        } catch (IOException | IllegalArgumentException e) {
+            JOptionPane.showMessageDialog(getParent(), "The MMU file could not be written. "
+                    + e.getMessage());
+        }
     }
 
     private void adaptToGUIScale() {

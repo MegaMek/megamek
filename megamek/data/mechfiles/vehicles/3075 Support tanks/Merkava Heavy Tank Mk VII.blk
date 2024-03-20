@@ -1,4 +1,4 @@
-#Saved from version 0.49.19-SNAPSHOT on 2024-03-16
+#Saved from version 0.49.19-SNAPSHOT on 2024-03-17
 <UnitType>
 SupportTank
 </UnitType>
@@ -44,7 +44,7 @@ Tracked
 </engine_type>
 
 <armor_type>
-50
+48
 </armor_type>
 
 <armor_tech>
@@ -89,7 +89,7 @@ Machine Gun
 </Turret Equipment>
 
 <barrating>
-9
+7
 </barrating>
 
 <structural_tech_rating>

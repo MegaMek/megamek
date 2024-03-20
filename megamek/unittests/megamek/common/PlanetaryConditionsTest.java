@@ -1,7 +1,8 @@
 package megamek.common;
 
-import megamek.common.enums.Atmosphere;
-import megamek.common.enums.Wind;
+import megamek.common.planetaryconditions.Atmosphere;
+import megamek.common.planetaryconditions.PlanetaryConditions;
+import megamek.common.planetaryconditions.Wind;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 

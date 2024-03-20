@@ -123,7 +123,6 @@ public class MMStaticDirectoryManager {
                 }
 
                 // check for camouflage in story arcs subdirectories
-                //FIXME: This only works if camo is in subdirectory
                 File storyarcsDir = Configuration.storyarcsDir();
                 if(storyarcsDir.exists() && storyarcsDir.isDirectory()) {
                     for (File file : storyarcsDir.listFiles()) {

@@ -168,4 +168,19 @@ public class StringUtil {
             return i;
         }
     }
+
+    /**
+     * Returns float value from the passed string or default value if conversion fails.
+     */
+    public static float toFloat(String s, float i) {
+        if (s.isEmpty()) {
+            return i;
+        }
+
+        try {
+            return Float.parseFloat(s);
+        } catch (Exception ignored) {
+            return i;
+        }
+    }
 }

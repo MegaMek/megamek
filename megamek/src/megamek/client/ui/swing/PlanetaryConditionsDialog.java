@@ -49,6 +49,7 @@ import megamek.client.ui.swing.dialog.DialogButton;
 import megamek.common.Configuration;
 import megamek.common.planetaryconditions.*;
 import megamek.common.util.ImageUtil;
+import megamek.common.util.StringUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
 
 import static megamek.client.ui.swing.util.UIUtil.*;
@@ -321,8 +322,8 @@ public class PlanetaryConditionsDialog extends ClientDialog {
         conditions.setBlowingSand(blowingSand);
         conditions.setShiftingWindDirection(chkShiftWindDir.isSelected());
         conditions.setShiftingWindStrength(chkShiftWindStr.isSelected());
-        conditions.setTemperature(Integer.parseInt(fldTemp.getText()));
-        conditions.setGravity(Float.parseFloat(fldGrav.getText()));
+        conditions.setTemperature(StringUtil.toInt(fldTemp.getText(), 25));
+        conditions.setGravity(StringUtil.toFloat(fldGrav.getText(), 1.0f));
         EMI emi = chkEMI.isSelected() ? EMI.EMI : EMI.EMI_NONE;
         conditions.setEMI(emi);
         conditions.setTerrainAffected(chkTerrainAffected.isSelected());

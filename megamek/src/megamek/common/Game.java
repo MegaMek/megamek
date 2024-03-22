@@ -45,7 +45,7 @@ import static java.util.stream.Collectors.toList;
  * Client and the Server should have one of these objects, and it is their job to
  * keep it synched.
  */
-public class Game extends AbstractGame implements Serializable {
+public class Game extends AbstractGame implements Serializable, PlanetaryConditionsUsing {
     private static final long serialVersionUID = 8376320092671792532L;
 
     /**
@@ -185,6 +185,11 @@ public class Game extends AbstractGame implements Serializable {
 
     public void setBoardDirect(final Board board) {
         this.board = board;
+    }
+
+    @Override
+    public void setBoard(Board board, int boardId) {
+        setBoardDirect(board);
     }
 
     public boolean containsMinefield(Coords coords) {

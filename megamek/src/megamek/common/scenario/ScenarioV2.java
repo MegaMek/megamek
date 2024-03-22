@@ -23,15 +23,19 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import megamek.common.*;
+import megamek.common.alphaStrike.ASGame;
 import megamek.common.enums.GamePhase;
 import megamek.common.icons.Camouflage;
-import megamek.common.util.fileUtils.MegaMekFile;
+import megamek.common.icons.FileCamouflage;
+import megamek.common.jacksonadapters.MMUReader;
+import megamek.common.strategicBattleSystems.SBFGame;
 import megamek.server.IGameManager;
 import org.apache.logging.log4j.LogManager;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class ScenarioV2 implements Scenario {
 
@@ -39,6 +43,8 @@ public class ScenarioV2 implements Scenario {
     private static final String MAP = "map";
     private static final String COLUMNS = "columns";
     private static final String ROWS = "rows";
+    private static final String UNITS = "units";
+
 
     private final JsonNode node;
     private final File scenariofile;
@@ -51,78 +57,29 @@ public class ScenarioV2 implements Scenario {
         node = yamlMapper.readTree(scenariofile);
     }
 
+    @Override
     public String getName() {
         return node.get(NAME).textValue();
     }
 
+    @Override
     public String getDescription() {
         return node.get(DESCRIPTION).textValue();
     }
 
+    @Override
     public String getFileName() {
         return scenariofile.toString();
     }
 
+    @Override
     public String getPlanet() {
         return node.has(PLANET) ? node.get(PLANET).textValue() : "";
     }
 
     @Override
-    public IGame createGame() throws JsonProcessingException, ScenarioLoaderException {
-        LogManager.getLogger().info("Loading scenario from " + scenariofile);
-        Game game = new Game();
-        game.setBoardDirect(createBoard());
-
-        // build the faction players
-        List<Player> players = createPlayers();
-        for (Player player : players) {
-            game.addPlayer(player.getId(), player);
-        }
-
-//        // build the entities
-//        int entityId = 0;
-//        for (Player player : players) {
-//            Collection<Entity> entities = buildFactionEntities(this, player);
-//            for (Entity entity : entities) {
-//                entity.setOwner(player);
-//                entity.setId(entityId);
-//                ++ entityId;
-//                game.addEntity(entity);
-//                // Grounded DropShips don't set secondary positions unless they're part of a game and can verify
-//                // they're not on a space map.
-//                if (entity.isLargeCraft() && !entity.isAirborne()) {
-//                    entity.setAltitude(0);
-//                }
-//            }
-//        }
-//
-        game.getOptions().initialize();
-        if (node.has(PARAM_GAME_OPTIONS_FILE)) {
-            game.getOptions().loadOptions(
-                    new MegaMekFile(scenariofile.getParentFile(), node.get(PARAM_GAME_OPTIONS_FILE).textValue()).getFile(), true);
-        } else {
-            game.getOptions().loadOptions();
-        }
-
-        if (node.has(MMS_PLANETCOND)) {
-            game.setPlanetaryConditions(yamlMapper.treeToValue(node.get(MMS_PLANETCOND), PlanetaryConditions.class));
-        }
-        game.getPlanetaryConditions().determineWind();
-
-        game.setupTeams();
-        game.setPhase(GamePhase.STARTING_SCENARIO);
-        game.setupRoundDeployment();
-        if (node.has(PARAM_GAME_EXTERNAL_ID)) {
-            game.setExternalGameId(node.get(PARAM_GAME_EXTERNAL_ID).intValue());
-        }
-        game.setVictoryContext(new HashMap<>());
-        game.createVictoryConditions();
-        return game;
-    }
-
-    @Override
     public String getGameType() {
-        return node.has(GAMETYPE) ? node.get(GAMETYPE).textValue() : "TW";
+        return node.has(GAMETYPE) ? node.get(GAMETYPE).textValue() : GAMETYPE_TW;
     }
 
     @Override
@@ -141,19 +98,87 @@ public class ScenarioV2 implements Scenario {
     }
 
     @Override
+    public IGame createGame() throws IOException, ScenarioLoaderException {
+        LogManager.getLogger().info("Loading scenario from " + scenariofile);
+        IGame game = selectGameType();
+        game.setPhase(GamePhase.STARTING_SCENARIO);
+        parseOptions(game);
+        parsePlayers(game);
+        game.setupTeams();
+        game.setBoard(createBoard(), 0);
+        if ((game instanceof PlanetaryConditionsUsing)) {
+            parsePlanetaryConditions((PlanetaryConditionsUsing) game);
+        }
+
+        if (game instanceof Game) {
+            Game twGame = (Game) game;
+            twGame.setupRoundDeployment();
+            if (node.has(PARAM_GAME_EXTERNAL_ID)) {
+                twGame.setExternalGameId(node.get(PARAM_GAME_EXTERNAL_ID).intValue());
+            }
+            twGame.setVictoryContext(new HashMap<>());
+            twGame.createVictoryConditions();
+        }
+        return game;
+    }
+
+    private void parsePlanetaryConditions(PlanetaryConditionsUsing plGame) throws JsonProcessingException {
+        if (node.has(MMS_PLANETCOND)) {
+            PlanetaryConditions conditions = yamlMapper.treeToValue(node.get(MMS_PLANETCOND), PlanetaryConditions.class);
+            conditions.determineWind();
+            plGame.setPlanetaryConditions(conditions);
+        }
+    }
+
+    private void parsePlayers(IGame game) throws ScenarioLoaderException, IOException {
+        List<Player> players = readPlayers(game);
+        for (Player player : players) {
+            game.addPlayer(player.getId(), player);
+        }
+    }
+
+    private void parseOptions(IGame game) {
+        game.getOptions().initialize();
+        if (node.has(PARAM_GAME_OPTIONS_FILE)) {
+            File optionsFile = new File(scenariofile.getParentFile(), node.get(PARAM_GAME_OPTIONS_FILE).textValue());
+            game.getOptions().loadOptions(optionsFile, true);
+        } else {
+            game.getOptions().loadOptions();
+        }
+    }
+
+    private IGame selectGameType() {
+        switch (getGameType()) {
+            case GAMETYPE_AS:
+                return new ASGame();
+            case GAMETYPE_SBF:
+                return new SBFGame();
+//            case GAMETYPE_BF:
+//                return new BFGame();
+            default:
+                return new Game();
+        }
+    }
+
+
+
+    @Override
     public void applyDamage(IGameManager gameManager) {
         //TODO
     }
 
-    private List<Player> createPlayers() throws ScenarioLoaderException {
+    private List<Player> readPlayers(IGame game) throws ScenarioLoaderException, IOException {
         if (!node.has(PARAM_FACTIONS) || !node.get(PARAM_FACTIONS).isArray()) {
             throw new ScenarioLoaderException("ScenarioLoaderException.missingFactions");
         }
         List<Player> result = new ArrayList<>();
         int playerId = 0;
         int teamId = 0;
+//        int entityId = 0;
         for (Iterator<JsonNode> it = node.get(PARAM_FACTIONS).elements(); it.hasNext(); ) {
             JsonNode playerNode = it.next();
+            MMUReader.requireFields("Player", playerNode, NAME, UNITS);
+
             Player player = new Player(playerId, playerNode.get(NAME).textValue());
             result.add(player);
             playerId++;
@@ -166,10 +191,12 @@ public class ScenarioV2 implements Scenario {
             player.setStartingPos(dir);
 
             if (playerNode.has(PARAM_CAMO)) {
-                File file = new File(playerNode.get(PARAM_CAMO).textValue());
-                final Camouflage camouflage = new Camouflage(file.getParent(), file.getName());
-                if (!camouflage.isDefault()) {
-                    player.setCamouflage(camouflage);
+                String camoPath = playerNode.get(PARAM_CAMO).textValue();
+                File file = new File(scenarioDirectory(), camoPath);
+                if (file.exists()) {
+                    player.setCamouflage(new FileCamouflage(file));
+                } else {
+                    player.setCamouflage(new Camouflage(new File(camoPath)));
                 }
             }
 
@@ -193,6 +220,34 @@ public class ScenarioV2 implements Scenario {
 //                    }
 //                }
 //            }
+
+            JsonNode unitsNode = playerNode.get(UNITS);
+            if (game instanceof Game) {
+                List<Entity> entities = new MMUReader(scenariofile).read(unitsNode, Entity.class).stream()
+                        .filter(o -> o instanceof Entity)
+                        .map(o -> (Entity) o)
+                        .collect(Collectors.toList());
+                for (Entity entity : entities) {
+                    entity.setOwner(player);
+//                    entity.setId(entityId);
+//                    ++ entityId;
+                    ((Game) game).addEntity(entity);
+                    // Grounded DropShips don't set secondary positions unless they're part of a game and can verify
+                    // they're not on a space map.
+                    if (entity.isLargeCraft() && !entity.isAirborne()) {
+                        entity.setAltitude(0);
+                    }
+                }
+            } else if (game instanceof SBFGame) {
+                List<InGameObject> units = new MMUReader(scenariofile).read(unitsNode).stream()
+                        .filter(o -> o instanceof InGameObject)
+                        .map(o -> (InGameObject) o)
+                        .collect(Collectors.toList());
+                for (InGameObject unit : units) {
+                    unit.setOwnerId(player.getId());
+                    ((SBFGame) game).addUnit(unit);
+                }
+            }
         }
 
         return result;

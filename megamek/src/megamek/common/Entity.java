@@ -14,6 +14,7 @@
 */
 package megamek.common;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import megamek.MMConstants;
 import megamek.client.bot.princess.FireControl;
 import megamek.client.ui.Base64Image;
@@ -30,6 +31,8 @@ import megamek.common.equipment.ArmorType;
 import megamek.common.event.GameEntityChangeEvent;
 import megamek.common.force.Force;
 import megamek.common.icons.Camouflage;
+import megamek.common.jacksonadapters.EntityDeserializer;
+import megamek.common.jacksonadapters.SBFUnitDeserializer;
 import megamek.common.options.*;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.weapons.*;
@@ -53,6 +56,7 @@ import java.util.stream.IntStream;
 /**
  * Entity is a master class for basically anything on the board except terrain.
  */
+@JsonDeserialize(using = EntityDeserializer.class)
 public abstract class Entity extends TurnOrdered implements Transporter, Targetable, RoundUpdated,
         PhaseUpdated, ITechnology, ForceAssignable, CombatRole {
     private static final long serialVersionUID = 1430806396279853295L;
@@ -933,6 +937,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      *
      * @param id the new ID.
      */
+    @Override
     public void setId(int id) {
         this.id = id;
         displayName = null;
@@ -1515,6 +1520,11 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         ownerId = player.getId();
 
         generateDisplayName();
+    }
+
+    @Override
+    public void setOwnerId(int ownerId) {
+        setOwner(game.getPlayer(ownerId));
     }
 
     @Override

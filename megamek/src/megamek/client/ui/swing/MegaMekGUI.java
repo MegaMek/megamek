@@ -696,11 +696,11 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         }
 
         Scenario scenario;
-        Game game;
+        IGame game;
         try {
             ScenarioLoader sl = new ScenarioLoader(new File(scenarioChooser.getSelectedScenarioFilename()));
             scenario = sl.load();
-            game = (Game) scenario.createGame();
+            game = scenario.createGame();
         } catch (Exception e) {
             LogManager.getLogger().error("", e);
             JOptionPane.showMessageDialog(frame,
@@ -723,11 +723,12 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         }
 
         // popup planetary conditions dialog
-        if (!scenario.hasFixedPlanetaryConditions()) {
-            PlanetaryConditionsDialog pcd = new PlanetaryConditionsDialog(frame, game.getPlanetaryConditions());
-            pcd.update(game.getPlanetaryConditions());
+        if ((game instanceof PlanetaryConditionsUsing) && !scenario.hasFixedPlanetaryConditions()) {
+            PlanetaryConditionsUsing plGame = (PlanetaryConditionsUsing) game;
+            PlanetaryConditionsDialog pcd = new PlanetaryConditionsDialog(frame, plGame.getPlanetaryConditions());
+            pcd.update(plGame.getPlanetaryConditions());
             pcd.setVisible(true);
-            game.setPlanetaryConditions(pcd.getConditions());
+            plGame.setPlanetaryConditions(pcd.getConditions());
         }
 
         String playerName;

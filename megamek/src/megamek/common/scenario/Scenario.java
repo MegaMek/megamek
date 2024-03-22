@@ -18,9 +18,10 @@
  */
 package megamek.common.scenario;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import megamek.common.IGame;
 import megamek.server.IGameManager;
+
+import java.io.IOException;
 
 public interface Scenario {
 
@@ -69,6 +70,11 @@ public interface Scenario {
     String PARAM_CAMO = "camo";
     String PARAM_ALTITUDE = "altitude";
 
+    String GAMETYPE_TW = "TW";
+    String GAMETYPE_SBF = "SBF";
+    String GAMETYPE_AS = "AS";
+    String GAMETYPE_BF = "BF";
+
 
     String getName();
 
@@ -77,14 +83,14 @@ public interface Scenario {
     String getFileName();
 
     default String getGameType() {
-        return "TW";
+        return GAMETYPE_TW;
     }
 
     default String getPlanet() {
         return "";
     }
 
-    IGame createGame() throws ScenarioLoaderException, JsonProcessingException;
+    IGame createGame() throws ScenarioLoaderException, IOException;
 
     boolean isSinglePlayer();
 

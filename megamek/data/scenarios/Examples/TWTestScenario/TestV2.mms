@@ -11,9 +11,9 @@ planetaryconditions:
   light: dusk
 
 factions:
-- name: Player A
+- name: Legion of Vega
   deploy: N
-  camo: clans/wolf/Alpha Galaxy.jpg
+  camo: Clans/Wolf/Alpha Galaxy/Alpha Galaxy.jpg
 
   units:
   - fullname: Archer ARC-2R
@@ -26,8 +26,9 @@ factions:
       name: Cpt. Rhonda Snord
       skill: 4/4
 
-- name: "Player B"
+- name: 1st Air Cavalry, Federated Suns
   deploy: "E"
+  camo: TestCamo.jpg
   units:
   - fullname: Atlas AS7-D
     crew:

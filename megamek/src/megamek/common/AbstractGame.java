@@ -56,6 +56,11 @@ public abstract class AbstractGame implements IGame {
     }
 
     @Override
+    public void addPlayer(int id, Player player) {
+        players.put(id, player);
+    }
+
+    @Override
     @Deprecated
     public Vector<Player> getPlayersVector() {
         return new Vector<>(players.values());

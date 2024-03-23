@@ -71,12 +71,6 @@ public interface Scenario {
     String PARAM_CAMO = "camo";
     String PARAM_ALTITUDE = "altitude";
 
-    String GAMETYPE_TW = "TW";
-    String GAMETYPE_SBF = "SBF";
-    String GAMETYPE_AS = "AS";
-    String GAMETYPE_BF = "BF";
-
-
     String getName();
 
     String getDescription();

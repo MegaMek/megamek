@@ -174,7 +174,7 @@ public class ScenarioV2 implements Scenario {
         List<Player> result = new ArrayList<>();
         int playerId = 0;
         int teamId = 0;
-//        int entityId = 0;
+        int entityId = 0;
         for (Iterator<JsonNode> it = node.get(PARAM_FACTIONS).elements(); it.hasNext(); ) {
             JsonNode playerNode = it.next();
             MMUReader.requireFields("Player", playerNode, NAME, UNITS);
@@ -229,8 +229,8 @@ public class ScenarioV2 implements Scenario {
                         .collect(Collectors.toList());
                 for (Entity entity : entities) {
                     entity.setOwner(player);
-//                    entity.setId(entityId);
-//                    ++ entityId;
+                    entity.setId(entityId);
+                    ++ entityId;
                     ((Game) game).addEntity(entity);
                     // Grounded DropShips don't set secondary positions unless they're part of a game and can verify
                     // they're not on a space map.

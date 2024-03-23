@@ -33,8 +33,8 @@ import megamek.server.GameManager;
 import megamek.server.IGameManager;
 import org.apache.logging.log4j.LogManager;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.*;
 import java.util.function.Predicate;
@@ -52,6 +52,43 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
     private static final String SEPARATOR_SPACE = " ";
     private static final String SEPARATOR_COLON = ":";
     private static final String SEPARATOR_UNDERSCORE = "_";
+
+    private static final String NAME = "Name";
+    private static final String DESCRIPTION = "Description";
+
+    private static final String PARAM_GAME_OPTIONS_FILE = "GameOptionsFile";
+    private static final String PARAM_GAME_OPTIONS_FIXED = "FixedGameOptions";
+    private static final String PARAM_GAME_EXTERNAL_ID = "ExternalId";
+    private static final String PARAM_FACTIONS = "Factions";
+    private static final String PARAM_SINGLEPLAYER = "SinglePlayer";
+
+    private static final String PARAM_PLANETCOND_FIXED = "FixedPlanetaryConditions";
+
+    private static final String PARAM_MAP_WIDTH = "MapWidth";
+    private static final String PARAM_MAP_HEIGHT = "MapHeight";
+    private static final String MAP_RANDOM = "RANDOM";
+    private static final String PARAM_BOARD_WIDTH = "BoardWidth";
+    private static final String PARAM_BOARD_HEIGHT = "BoardHeight";
+    private static final String PARAM_BRIDGE_CF = "BridgeCF";
+    private static final String PARAM_MAPS = "Maps";
+    private static final String PARAM_MAP_DIRECTORIES = "RandomDirs";
+
+    private static final String PARAM_TEAM = "team";
+    private static final String PARAM_LOCATION = "Location";
+    private static final String PARAM_MINEFIELDS = "Minefields";
+    private static final String PARAM_DAMAGE = "Damage";
+    private static final String PARAM_SPECIFIC_DAMAGE = "DamageSpecific";
+    private static final String PARAM_CRITICAL_HIT = "CritHit";
+    private static final String PARAM_AMMO_AMOUNT = "SetAmmoTo";
+    private static final String PARAM_AMMO_TYPE = "SetAmmoType";
+    private static final String PARAM_PILOT_HITS = "PilotHits";
+    private static final String PARAM_EXTERNAL_ID = "ExternalID";
+    private static final String PARAM_ADVANTAGES = "Advantages";
+    private static final String PARAM_AUTO_EJECT = "AutoEject";
+    private static final String PARAM_COMMANDER = "Commander";
+    private static final String PARAM_DEPLOYMENT_ROUND = "DeploymentRound";
+    private static final String PARAM_CAMO = "camo";
+    private static final String PARAM_ALTITUDE = "altitude";
 
     private static final String PARAM_PLANETCOND_TEMP = "PlanetaryConditionsTemperature";
     private static final String PARAM_PLANETCOND_GRAV = "PlanetaryConditionsGravity";
@@ -126,6 +163,36 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
                 put(keyword, elements[1].trim());
             }
         }
+//        ScenarioV1 props = new ScenarioV1();
+//        put("filename", List.of(file.toString()));
+//        try (FileInputStream fis = new FileInputStream(file);
+//             InputStreamReader isr = new InputStreamReader(fis, StandardCharsets.UTF_8);
+//             BufferedReader br = new BufferedReader(isr)) {
+//            String line;
+//            int lineNum = 0;
+//            while ((line = br.readLine()) != null) {
+//                lineNum++;
+//                line = line.trim();
+//                if (line.startsWith(COMMENT_MARK) || line.isBlank()) {
+//                    continue;
+//                } else if (!line.contains(SEPARATOR_PROPERTY)) {
+//                    LogManager.getLogger().error(String.format("Equality sign in scenario file %s on line %d missing; ignoring",
+//                            file, lineNum));
+//                    continue;
+//                }
+//                String[] elements = line.split(SEPARATOR_PROPERTY, -1);
+//                if (elements.length > 2) {
+//                    LogManager.getLogger().error(String.format("Multiple equality signs in scenario file %s on line %d; ignoring",
+//                            file, lineNum));
+//                    continue;
+//                }
+//                put(elements[0].trim(), elements[1].trim());
+//            }
+//        } catch (IOException e) {
+//            LogManager.getLogger().error("", e);
+////            throw new ScenarioLoaderException("exceptionReadingFile", file.toString());
+//        }
+////        return props;
     }
 
     public static List<String> readLines(File file, Predicate<String> isCommentLine) throws IOException {
@@ -136,7 +203,6 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
     }
 
     public void put(String key, String value) {
-        key = key.toLowerCase();
         Collection<String> values = get(key);
         if (values == null) {
             values = new ArrayList<>();
@@ -146,11 +212,11 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
     }
 
     public String getString(String key) {
-        return getString(key.toLowerCase(), SEPARATOR_COMMA);
+        return getString(key, SEPARATOR_COMMA);
     }
 
     public String getString(String key, String separator) {
-        Collection<String> values = get(key.toLowerCase());
+        Collection<String> values = get(key);
         if ((values == null) || values.isEmpty()) {
             return null;
         }
@@ -178,9 +244,6 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
 
     @Override
     public Collection<String> get(Object key) {
-        if (key instanceof String) {
-            return super.get(((String) key).toLowerCase());
-        }
         return super.get(key);
     }
 

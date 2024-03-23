@@ -82,6 +82,7 @@ import java.util.*;
 import java.util.zip.GZIPInputStream;
 
 import static megamek.common.Compute.d6;
+import static megamek.common.Compute.getAdjacentEntitiesAlongAttack;
 
 public class MegaMekGUI implements IPreferenceChangeListener {
     private static final String FILENAME_MEGAMEK_SPLASH = "../misc/megamek_splash_spooky_hd.png";
@@ -465,10 +466,13 @@ public class MegaMekGUI implements IPreferenceChangeListener {
 
     private IGameManager getGameManager(GameType gameType) {
         switch (gameType) {
-//            case AS:
-//                return new ASGameManager();
-//            case BF:
-//                return new BFGameManager();
+            /*
+            Not implemented:
+            case AS:
+                return new ASGameManager();
+            case BF:
+                return new BFGameManager();
+             */
             case SBF:
                 return new SBFGameManager();
             default:
@@ -476,7 +480,27 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         }
     }
 
+    private IClientGUI getClientGUI(GameType gameType, Client client, MegaMekController controller) {
+        switch (gameType) {
+            /*
+            Not implemented:
+            case AS:
+                return new ASGameManager();
+            case BF:
+                return new BFGameManager();
+             */
+            case SBF:
+                return new SBFClientGUI(client, controller);
+            default:
+                return new ClientGUI(client, controller);
+        }
+    }
+
     public void startClient(String playerName, String serverAddress, int port) {
+        startClient(playerName, serverAddress, port, GameType.TW);
+    }
+
+    public void startClient(String playerName, String serverAddress, int port, GameType gameType) {
         try {
             playerName = Server.validatePlayerName(playerName);
             serverAddress = Server.validateServerAddress(serverAddress);
@@ -494,7 +518,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         PilotToolTip.deleteImageCache();
 
         client = new Client(playerName, serverAddress, port);
-        ClientGUI gui = new ClientGUI(client, controller);
+        IClientGUI gui = getClientGUI(gameType, client, controller);
         controller.clientgui = gui;
         frame.setCursor(new Cursor(Cursor.WAIT_CURSOR));
         gui.initialize();
@@ -752,13 +776,13 @@ public class MegaMekGUI implements IPreferenceChangeListener {
             plGame.setPlanetaryConditions(pcd.getConditions());
         }
 
-        String playerName;
-        int port;
-        String serverPW;
-        String localName;
+        int port = MMConstants.DEFAULT_PORT;
+        String serverPW = "";
         Player[] pa = game.getPlayersList().toArray(new Player[0]);
         int[] playerTypes = new int[pa.length];
-        boolean hasSlot = false;
+        String playerName = pa[0].getName();
+        String localName = playerName;
+        boolean hasSlot = scenario.isSinglePlayer();
 
         // get player types and colors set
         if (!scenario.isSinglePlayer()) {
@@ -787,11 +811,6 @@ public class MegaMekGUI implements IPreferenceChangeListener {
             playerTypes = Arrays.copyOf(sd.playerTypes, playerTypes.length);
 
         } else {
-            hasSlot = true;
-            playerName = pa[0].getName();
-            localName = playerName;
-            port = MMConstants.DEFAULT_PORT;
-            serverPW = "";
             playerTypes[0] = 0;
             for (int i = 1; i < playerTypes.length; i++) {
                 playerTypes[i] = ScenarioDialog.T_BOT;
@@ -810,7 +829,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         scenario.applyDamage(gameManager);
 
         if (!localName.isBlank()) {
-            startClient(playerName, MMConstants.LOCALHOST, port);
+            startClient(playerName, MMConstants.LOCALHOST, port, scenario.getGameType());
         }
 
         gameManager.calculatePlayerInitialCounts();

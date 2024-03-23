@@ -9,6 +9,7 @@ import megamek.server.Server;
 import megamek.server.commands.ServerCommand;
 import org.apache.logging.log4j.LogManager;
 
+import java.util.Collections;
 import java.util.List;
 
 public class SBFGameManager implements IGameManager {
@@ -81,7 +82,7 @@ public class SBFGameManager implements IGameManager {
 
     @Override
     public List<ServerCommand> getCommandList(Server server) {
-        return null;
+        return Collections.emptyList();
     }
 
     @Override

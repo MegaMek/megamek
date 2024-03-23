@@ -372,30 +372,48 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
     WeaponPanel(UnitDisplay unitDisplay, Client client) {
         this.unitDisplay = unitDisplay;
         this.client = client;
+
+        JPanel panelTop = new JPanel();
+        panelTop.setOpaque(false);
+        panelTop.setLayout(new GridBagLayout());
+        gridy = 0;
+        panelTop.setAlignmentX(Component.LEFT_ALIGNMENT);
+        panelTop.setAlignmentY(Component.TOP_ALIGNMENT);
+        panelTop.setPreferredSize(new Dimension(INTERNAL_PANE_WIDTH, 20));
+        // having a max size set causes odd draw issues
+        panelTop.setMaximumSize(null);
+        createWeaponList(panelTop);
+        createWeaponDisplay(panelTop);
+        createRangeDisplay(panelTop);
+        createToHitDisplay(panelTop);
+
+        JPanel panelText = new JPanel();
+        panelText.setOpaque(false);
+        panelText.setLayout(new GridBagLayout());
+        gridy = 0;
+        panelText.setAlignmentX(Component.LEFT_ALIGNMENT);
+        panelText.setAlignmentY(Component.TOP_ALIGNMENT);
+        panelText.setPreferredSize(new Dimension(INTERNAL_PANE_WIDTH, 20));
+        panelText.setMaximumSize(null);
+        createToHitText(panelText);
+
+        JSplitPane splitPaneMain = new JSplitPane( JSplitPane.VERTICAL_SPLIT, panelTop, panelText);
+        splitPaneMain.setOpaque(false);
+
         panelMain = new JPanel();
         panelMain.setOpaque(false);
-        panelMain.setLayout(new GridBagLayout());
-        panelMain.setAlignmentX(Component.LEFT_ALIGNMENT);
-        panelMain.setAlignmentY(Component.TOP_ALIGNMENT);
-        panelMain.setPreferredSize(new Dimension(INTERNAL_PANE_WIDTH, 20));
-        // having a max size set causes odd draw issues
-        panelMain.setMaximumSize(null);
-
-        gridy = 0;
-        createWeaponList(panelMain);
-        createWeaponDisplay(panelMain);
-        createRangeDisplay(panelMain);
-        createToHitDisplay(panelMain);
+        panelMain.setLayout(new BoxLayout(panelMain, BoxLayout.Y_AXIS));
+        panelMain.add(splitPaneMain);
 
         panelLower = new JPanel();
         panelLower.setOpaque(false);
         panelLower.setLayout(new GridBagLayout());
+        gridy = 0;
         panelLower.setAlignmentX(Component.LEFT_ALIGNMENT);
         panelLower.setAlignmentY(Component.TOP_ALIGNMENT);
         panelLower.setPreferredSize(new Dimension(INTERNAL_PANE_WIDTH, 20));
         panelLower.setMaximumSize(null);
 
-        gridy = 0;
         createTargetDisplay(panelLower);
 
         JSplitPane splitPane = new JSplitPane( JSplitPane.VERTICAL_SPLIT, panelMain, panelLower);
@@ -844,12 +862,14 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                         .anchor(GridBagConstraints.WEST)
                         .insets(5, 1, 5, 1).gridy(pgridy).gridx(3));
 
+        addSubdisplay(parent, pTargetInfo, LINE_HEIGHT * 2, GridBagConstraints.HORIZONTAL);
+    }
+
+    private void createToHitText(JPanel parent) {
         toHitText = new JTextPane();
         setupTextPane(toHitText);
 
         JScrollPane toHitScroll = new JScrollPane(toHitText);
-
-        addSubdisplay(parent, pTargetInfo, LINE_HEIGHT*2, GridBagConstraints.HORIZONTAL);
         addSubdisplay(parent, toHitScroll, LINE_HEIGHT * 3, GridBagConstraints.BOTH);
     }
 

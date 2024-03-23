@@ -78,8 +78,8 @@ public class ScenarioV2 implements Scenario {
     }
 
     @Override
-    public String getGameType() {
-        return node.has(GAMETYPE) ? node.get(GAMETYPE).textValue() : GAMETYPE_TW;
+    public GameType getGameType() {
+        return node.has(GAMETYPE) ? GameType.valueOf(node.get(GAMETYPE).textValue()) : GameType.TW;
     }
 
     @Override
@@ -149,9 +149,9 @@ public class ScenarioV2 implements Scenario {
 
     private IGame selectGameType() {
         switch (getGameType()) {
-            case GAMETYPE_AS:
+            case AS:
                 return new ASGame();
-            case GAMETYPE_SBF:
+            case SBF:
                 return new SBFGame();
 //            case GAMETYPE_BF:
 //                return new BFGame();

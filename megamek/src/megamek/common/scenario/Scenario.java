@@ -18,6 +18,7 @@
  */
 package megamek.common.scenario;
 
+import megamek.common.GameType;
 import megamek.common.IGame;
 import megamek.server.IGameManager;
 
@@ -82,8 +83,8 @@ public interface Scenario {
 
     String getFileName();
 
-    default String getGameType() {
-        return GAMETYPE_TW;
+    default GameType getGameType() {
+        return GameType.TW;
     }
 
     default String getPlanet() {
@@ -99,7 +100,6 @@ public interface Scenario {
     boolean hasFixedPlanetaryConditions();
 
     void applyDamage(IGameManager gameManager);
-
 
     default int findIndex(String[] sa, String s) {
         for (int x = 0; x < sa.length; x++) {

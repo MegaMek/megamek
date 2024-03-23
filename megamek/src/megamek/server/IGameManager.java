@@ -74,4 +74,11 @@ public interface IGameManager {
     List<ServerCommand> getCommandList(Server server);
 
     void addReport(Report r);
+
+    /**
+     * Calculates and sets any initial unit counts and BV/PV for all players, and thus should only be called at the
+     * start of a game. The initital values are supposed to be stored for later comparison so that BV or unit
+     * losses over the course of the game can be calculated.
+     */
+    void calculatePlayerInitialCounts();
 }

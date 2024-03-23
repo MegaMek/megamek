@@ -51,10 +51,12 @@ import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.scenario.Scenario;
 import megamek.common.scenario.ScenarioLoader;
+import megamek.common.strategicBattleSystems.SBFGameManager;
 import megamek.common.util.EmailService;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.server.GameManager;
+import megamek.server.IGameManager;
 import megamek.server.Server;
 import megamek.utilities.xml.MMXMLUtility;
 import org.apache.logging.log4j.LogManager;
@@ -91,7 +93,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
     private JFrame frame;
     private Client client;
     private Server server;
-    private GameManager gameManager;
+    private IGameManager gameManager;
     private CommonSettingsDialog settingsDialog;
 
     private MegaMekController controller;
@@ -386,8 +388,14 @@ public class MegaMekGUI implements IPreferenceChangeListener {
     }
 
     public boolean startServer(@Nullable String serverPassword, int port, boolean isRegister,
+                               @Nullable String metaServer, @Nullable String mailPropertiesFileName,
+                               @Nullable File saveGameFile) {
+        return startServer(serverPassword, port, isRegister, metaServer, mailPropertiesFileName, saveGameFile, GameType.TW);
+    }
+
+    public boolean startServer(@Nullable String serverPassword, int port, boolean isRegister,
             @Nullable String metaServer, @Nullable String mailPropertiesFileName,
-            @Nullable File saveGameFile) {
+            @Nullable File saveGameFile, GameType gameType) {
         try {
             serverPassword = Server.validatePassword(serverPassword);
             port = Server.validatePort(port);
@@ -422,7 +430,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
 
         // start server
         try {
-            gameManager = new GameManager();
+            gameManager = getGameManager(gameType);
             server = new Server(serverPassword, port, gameManager, isRegister, metaServer, mailer, false);
         } catch (IOException ex) {
             LogManager.getLogger().error("Could not create server socket on port " + port, ex);
@@ -453,6 +461,19 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         }
 
         return true;
+    }
+
+    private IGameManager getGameManager(GameType gameType) {
+        switch (gameType) {
+//            case AS:
+//                return new ASGameManager();
+//            case BF:
+//                return new BFGameManager();
+            case SBF:
+                return new SBFGameManager();
+            default:
+                return new GameManager();
+        }
     }
 
     public void startClient(String playerName, String serverAddress, int port) {
@@ -781,32 +802,32 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         Compute.d6();
 
         // start server
-        if (!startServer(serverPW, port, false, null, null, null)) {
+        if (!startServer(serverPW, port, false, null,
+                null, null, scenario.getGameType())) {
             return;
         }
         server.setGame(game);
-
         scenario.applyDamage(gameManager);
 
         if (!localName.isBlank()) {
             startClient(playerName, MMConstants.LOCALHOST, port);
         }
 
-        // calculate initial BV
         gameManager.calculatePlayerInitialCounts();
 
-        // setup any bots
-        for (int x = 0; x < pa.length; x++) {
-            if (playerTypes[x] == ScenarioDialog.T_BOT) {
-                LogManager.getLogger().info("Adding bot " + pa[x].getName() + " as Princess");
-                BotClient c = new Princess(pa[x].getName(), MMConstants.LOCALHOST, port);
-                c.getGame().addGameListener(new BotGUI(frame, c));
-                c.connect();
+        // Setup bots; currently, we have no bot that supports anything other than TW
+        if (scenario.getGameType() == GameType.TW) {
+            for (int x = 0; x < pa.length; x++) {
+                if (playerTypes[x] == ScenarioDialog.T_BOT) {
+                    LogManager.getLogger().info("Adding bot " + pa[x].getName() + " as Princess");
+                    BotClient c = new Princess(pa[x].getName(), MMConstants.LOCALHOST, port);
+                    c.getGame().addGameListener(new BotGUI(frame, c));
+                    c.connect();
+                }
             }
         }
 
-        // If he didn't have a name when hasSlot was set, then the host should
-        // be an observer.
+        // If he didn't have a name when hasSlot was set, then the host should be an observer.
         if (!hasSlot) {
             for (Player player : server.getGame().getPlayersList()) {
                 if (player.getName().equals(localName)) {

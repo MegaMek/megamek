@@ -42,7 +42,7 @@ MEGAMEK VERSION HISTORY:
 + Fix #5268: NPE on skip movement
 + Fix MML #1446: Set crew requirements for units with Drone OS to 0
 + PR #5203: Improvements for the internal representation of planetary conditions
-
++ PR #5270: The weapon panel is now split to prevent info being obscured depending on screen resolution and other factors
 
 
 0.49.18 (2024-02-17 1800 UTC)

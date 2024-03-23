@@ -56,9 +56,10 @@ public class DestructionAwareDestinationPathfinder extends BoardEdgePathFinder {
         
         // if we're calculating a jump path and the entity has jump mp and can jump, start off with a jump
         // if we're trying to calc a jump path and the entity does not have jump mp, we're done
-        if (jump && (startPath.getCachedEntityState().getJumpMPWithTerrain() > 0) &&
-                !entity.isProne() && !entity.isHullDown() && 
-                (entity.getGame().getPlanetaryConditions().getWindStrength() != PlanetaryConditions.WI_TORNADO_F4)) {
+        if (jump
+                && (startPath.getCachedEntityState().getJumpMPWithTerrain() > 0)
+                && !entity.isProne() && !entity.isHullDown()
+                && !entity.getGame().getPlanetaryConditions().getWind().isTornadoF4()) {
             startPath.addStep(MoveStepType.START_JUMP);
         // if we specified a jump path, but can't actually jump
         } else if (jump) {

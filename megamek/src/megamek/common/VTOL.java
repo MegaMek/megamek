@@ -16,6 +16,7 @@ package megamek.common;
 import megamek.common.enums.AimingMode;
 import megamek.common.enums.MPBoosters;
 import megamek.common.options.OptionsConstants;
+import megamek.common.planetaryconditions.PlanetaryConditions;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -606,19 +607,16 @@ public class VTOL extends Tank implements IBomber {
         }
 
         if (!mpCalculationSetting.ignoreWeather && (null != game)) {
-            int weatherMod = game.getPlanetaryConditions().getMovementMods(this);
+            PlanetaryConditions conditions = game.getPlanetaryConditions();
+            int weatherMod = conditions.getMovementMods(this);
             mp = Math.max(mp + weatherMod, 0);
 
             if (getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_SNOW)) {
-                if (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_ICE_STORM) {
+                if (conditions.getWeather().isIceStorm()) {
                     mp += 2;
                 }
 
-                if ((game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_SLEET)
-                        || (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_LIGHT_SNOW)
-                        || (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_MOD_SNOW)
-                        || (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_HEAVY_SNOW)
-                        || (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_SNOW_FLURRIES)) {
+                if (conditions.getWeather().isLightSnowOrModerateSnowOrSnowFlurriesOrHeavySnowOrSleet()) {
                     mp += 1;
                 }
             }

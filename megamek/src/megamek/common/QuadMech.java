@@ -17,8 +17,8 @@
 package megamek.common;
 
 import megamek.common.enums.AimingMode;
-import megamek.common.enums.MPBoosters;
 import megamek.common.options.OptionsConstants;
+import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.common.preference.PreferenceManager;
 import org.apache.logging.log4j.LogManager;
 
@@ -176,12 +176,13 @@ public class QuadMech extends Mech {
         }
 
         if (!mpCalculationSetting.ignoreWeather && (null != game)) {
-            int weatherMod = game.getPlanetaryConditions().getMovementMods(this);
+            PlanetaryConditions conditions = game.getPlanetaryConditions();
+            int weatherMod = conditions.getMovementMods(this);
             mp = Math.max(mp + weatherMod, 0);
 
             if(getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_WIND)
-                    && (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_NONE)
-                    && (game.getPlanetaryConditions().getWindStrength() == PlanetaryConditions.WI_TORNADO_F13)) {
+                    && conditions.getWeather().isClear()
+                    && conditions.getWind().isTornadoF1ToF3()) {
                 mp += 1;
             }
         }

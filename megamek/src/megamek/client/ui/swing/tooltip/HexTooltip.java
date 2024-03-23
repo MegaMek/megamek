@@ -20,7 +20,7 @@ import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.BasementType;
-import megamek.common.enums.IlluminationLevel;
+import megamek.common.planetaryconditions.IlluminationLevel;
 
 import java.util.Vector;
 
@@ -188,10 +188,10 @@ public final class HexTooltip {
         return result;
     }
 
-    public static String getTerrainTip(Hex mhex, GUIPreferences GUIP, Game game)
-    {
+    public static String getTerrainTip(Hex mhex, GUIPreferences GUIP, Game game) {
         Coords mcoords = mhex.getCoords();
-        String illuminated = IlluminationLevel.getIlluminationLevelIndicator(game, mcoords, GUIP);
+        String indicator = IlluminationLevel.determineIlluminationLevel(game, mcoords).getIndicator();
+        String illuminated = DOT_SPACER + guiScaledFontHTML(GUIP.getCautionColor()) + " " + indicator + "</FONT>";
         String result = "";
         StringBuilder sTerrain = new StringBuilder(Messages.getString("BoardView1.Tooltip.Hex", mcoords.getBoardNum(), mhex.getLevel()) + illuminated + "<BR>");
 

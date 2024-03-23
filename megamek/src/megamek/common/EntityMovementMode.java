@@ -208,6 +208,10 @@ public enum EntityMovementMode {
         return isRail() || isMaglev();
     }
 
+    public boolean isJumpOrLegInfantry() {
+        return isLegInfantry() || isJumpInfantry();
+    }
+
     /**
      * Whether this movement mode is capable of detonating minefields.
      */

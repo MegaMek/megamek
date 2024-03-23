@@ -18,10 +18,12 @@ package megamek.common;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.actions.*;
 import megamek.common.annotations.Nullable;
-import megamek.common.enums.AimingMode;
-import megamek.common.enums.BasementType;
-import megamek.common.enums.IlluminationLevel;
+import megamek.common.enums.*;
 import megamek.common.options.OptionsConstants;
+import megamek.common.planetaryconditions.Atmosphere;
+import megamek.common.planetaryconditions.IlluminationLevel;
+import megamek.common.planetaryconditions.Light;
+import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.common.weapons.DiveBombAttack;
 import megamek.common.weapons.InfantryAttack;
 import megamek.common.weapons.Weapon;
@@ -2586,8 +2588,7 @@ public class Compute {
 
         if (attacker.getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_LIGHT)
                 && !target.isIlluminated()
-                && ((game.getPlanetaryConditions().getLight() == PlanetaryConditions.L_MOONLESS)
-                || (game.getPlanetaryConditions().getLight() == PlanetaryConditions.L_PITCH_BLACK))) {
+                && game.getPlanetaryConditions().getLight().isDarkerThan(Light.FULL_MOON)) {
             toHit.addModifier(-1, "light specialist");
         }
 
@@ -7416,8 +7417,9 @@ public class Compute {
             return false;
         }
         // aerodyne's will operate like spheroids in vacuum
+        PlanetaryConditions conditions = game.getPlanetaryConditions();
         if (!((IAero) en).isSpheroid()
-                && !game.getPlanetaryConditions().isVacuum()) {
+                && !conditions.getAtmosphere().isLighterThan(Atmosphere.THIN)) {
             return false;
         }
         // are we in atmosphere?

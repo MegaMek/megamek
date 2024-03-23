@@ -22,6 +22,8 @@ import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.annotations.Nullable;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
+import megamek.common.planetaryconditions.Light;
+import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.templates.TROView;
 import megamek.common.weapons.LegAttack;
@@ -1242,6 +1244,7 @@ public final class UnitToolTip {
                                               boolean showBV, boolean showSensors, boolean showSeenBy) {
         Game game = entity.getGame();
         GameOptions gameOptions = game.getOptions();
+        PlanetaryConditions conditions = game.getPlanetaryConditions();
         boolean isGunEmplacement = entity instanceof GunEmplacement;
         String result = "";
 
@@ -1501,13 +1504,13 @@ public final class UnitToolTip {
             if (gameOptions.booleanOption(OptionsConstants.ADVANCED_TACOPS_SENSORS)
                     || (gameOptions.booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS)) && entity.isSpaceborne()) {
                 String visualRange = Compute.getMaxVisualRange(entity, false) + "";
-                if (game.getPlanetaryConditions().isIlluminationEffective()) {
+                if (conditions.getLight().isDarkerThan(Light.DAY)) {
                     visualRange += " (" + Compute.getMaxVisualRange(entity, true) + ")";
                 }
                 result += addToTT("Sensors", BR, getSensorDesc(entity), visualRange);
             } else {
                 String visualRange = Compute.getMaxVisualRange(entity, false) + "";
-                if (game.getPlanetaryConditions().isIlluminationEffective()) {
+                if (conditions.getLight().isDarkerThan(Light.DAY)) {
                     visualRange += " (" + Compute.getMaxVisualRange(entity, true) + ")";
                 }
                 result += addToTT("Visual", BR, visualRange);

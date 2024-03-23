@@ -31,6 +31,9 @@ import megamek.common.event.GameEntityChangeEvent;
 import megamek.common.force.Force;
 import megamek.common.icons.Camouflage;
 import megamek.common.options.*;
+import megamek.common.planetaryconditions.Atmosphere;
+import megamek.common.planetaryconditions.PlanetaryConditions;
+import megamek.common.planetaryconditions.Wind;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.weapons.*;
 import megamek.common.weapons.bayweapons.AR10BayWeapon;
@@ -2436,13 +2439,13 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * Convenience method to determine whether this entity is on a ground map with an atmosphere
      */
     public boolean isOnAtmosphericGroundMap() {
-        return  ((getGame().getPlanetaryConditions().getAtmosphere() != PlanetaryConditions.ATMO_VACUUM) ||
-                (getGame().getPlanetaryConditions().getAtmosphere() != PlanetaryConditions.ATMO_TRACE)) &&
-
-                (getGame().getBoard().onGround() ||
+        boolean onGroundOrinAtmosphere = getGame().getBoard().onGround() ||
                 // doesn't make sense in english, but "atmospheric" map actually
                 // covers maps that are within a planet's gravity well
-                getGame().getBoard().inAtmosphere());
+                getGame().getBoard().inAtmosphere();
+        PlanetaryConditions conditions = getGame().getPlanetaryConditions();
+        return  conditions.getAtmosphere().isDenserThan(Atmosphere.TRACE)
+                && onGroundOrinAtmosphere;
     }
 
     /**
@@ -5419,7 +5422,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                     if (type.hasFlag(MiscType.F_EW_EQUIPMENT)) {
                         toReturn = 3;
                     }
-                    if (game.getPlanetaryConditions().hasEMI()) {
+                    PlanetaryConditions conditions = game.getPlanetaryConditions();
+                    if (conditions.getEMI().isEMI()) {
                         return toReturn * 2;
                     }
                     return toReturn;
@@ -5438,10 +5442,16 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     public boolean hasBAP(boolean checkECM) {
-        if (((game != null) && game.getPlanetaryConditions().hasEMI())
-            || isShutDown()) {
+        if (game != null) {
+            PlanetaryConditions conditions = game.getPlanetaryConditions();
+            if (conditions.getEMI().isEMI()) {
+                return false;
+            }
+        }
+        if (isShutDown()) {
             return false;
         }
+
         for (Mounted m : getMisc()) {
             EquipmentType type = m.getType();
             if ((type instanceof MiscType) && type.hasFlag(MiscType.F_BAP)) {
@@ -5453,7 +5463,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                                 || !checkECM
                                 || !ComputeECM.isAffectedByAngelECM(this, getPosition(), getPosition());
                     }
-                    return !checkECM || (game == null)
+                    return !checkECM
+                            || (game == null)
                             || !ComputeECM.isAffectedByECM(this, getPosition(), getPosition());
                 }
             }
@@ -5488,7 +5499,9 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * <code>Entity.NONE</code> if no BAP is active.
      */
     public int getBAPRange() {
-        if (game.getPlanetaryConditions().hasEMI() || isShutDown()) {
+        PlanetaryConditions conditions = game.getPlanetaryConditions();
+        if (conditions.getEMI().isEMI()
+                || isShutDown()) {
             return Entity.NONE;
         }
         // check for Manei Domini implants
@@ -7112,77 +7125,82 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      */
     public PilotingRollData addConditionBonuses(PilotingRollData roll,
             EntityMovementType moveType) {
+        PlanetaryConditions conditions = game.getPlanetaryConditions();
 
         if (moveType == EntityMovementType.MOVE_SPRINT
                 || moveType == EntityMovementType.MOVE_VTOL_SPRINT) {
             roll.addModifier(2, "Sprinting");
         }
-
-        PlanetaryConditions conditions = game.getPlanetaryConditions();
         // check weather conditions for all entities
         int weatherMod = conditions.getWeatherPilotPenalty();
-        if ((weatherMod != 0) && !game.getBoard().inSpace()
-                && ((null == crew) || !hasAbility(OptionsConstants.UNOFF_ALLWEATHER))) {
-            roll.addModifier(weatherMod, conditions.getWeatherDisplayableName());
+        boolean hasAllWeather = (null == crew) || !hasAbility(OptionsConstants.UNOFF_ALLWEATHER);
+        if ((weatherMod != 0)
+                && !game.getBoard().inSpace()
+                && hasAllWeather) {
+            roll.addModifier(weatherMod, conditions.getWeather().toString());
         }
 
         // check wind conditions for all entities
         int windMod = conditions.getWindPilotPenalty(this);
-        if ((windMod != 0) && !game.getBoard().inSpace()
-                && ((null == crew) || !hasAbility(OptionsConstants.UNOFF_ALLWEATHER))) {
-            roll.addModifier(windMod, conditions.getWindDisplayableName());
+        if ((windMod != 0)
+                && !game.getBoard().inSpace()
+                && hasAllWeather) {
+            roll.addModifier(windMod, conditions.getWind().toString());
         }
 
         if (!hasAbility(OptionsConstants.UNOFF_ALLWEATHER)
                 && getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_RAIN)) {
-            if (conditions.getWeather() == PlanetaryConditions.WE_GUSTING_RAIN) {
-                if ((this instanceof Mech) || isAirborne()
-                        || (getMovementMode() == EntityMovementMode.WHEELED)
-                        || (getMovementMode() == EntityMovementMode.TRACKED)) {
+            if (conditions.getWeather().isGustingRain()) {
+                if ((this instanceof Mech)
+                        || isAirborne()
+                        || getMovementMode().isTrackedOrWheeled()) {
                     roll.addModifier(-1, Messages.getString("PilotingSPA.EnvSpec.RainSpec"));
                 }
 
-                if (isAirborneVTOLorWIGE() || (getMovementMode() == EntityMovementMode.HOVER)) {
+                if (isAirborneVTOLorWIGE() || getMovementMode().isHover()) {
                     roll.addModifier(-2, Messages.getString("PilotingSPA.EnvSpec.RainSpec"));
                 }
             }
 
-            if ((conditions.getWeather() == PlanetaryConditions.WE_DOWNPOUR)
-                    ||(conditions.getWeather() == PlanetaryConditions.WE_HEAVY_RAIN)) {
+            if (conditions.getWeather().isHeavyRainOrDownpour()) {
                 roll.addModifier(-1, Messages.getString("PilotingSPA.EnvSpec.RainSpec"));
             }
         }
 
         if (!hasAbility(OptionsConstants.UNOFF_ALLWEATHER)
                 && getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_SNOW)) {
-            if (conditions.getWeather() == PlanetaryConditions.WE_HEAVY_SNOW) {
+            if (conditions.getWeather().isHeavySnow()) {
                 roll.addModifier(-1, Messages.getString("PilotingSPA.EnvSpec.SnowSpec"));
             }
 
-            if (((conditions.getWeather() == PlanetaryConditions.WE_SNOW_FLURRIES)
-                    || (conditions.getWeather() == PlanetaryConditions.WE_SLEET)
-                    || (conditions.getWeather() == PlanetaryConditions.WE_ICE_STORM))
-                    && (isAirborneVTOLorWIGE() || isAirborne())) {
+            boolean airborne = isAirborneVTOLorWIGE()
+                    || isAirborne();
+            if (conditions.getWeather().isSnowFlurriesOrSleetOrIceStorm()
+                    && airborne) {
                 roll.addModifier(-1, Messages.getString("PilotingSPA.EnvSpec.SnowSpec"));
             }
         }
 
-        if (!hasAbility(OptionsConstants.UNOFF_ALLWEATHER) && (conditions.getWeather() == PlanetaryConditions.WE_NONE)
+        if (!hasAbility(OptionsConstants.UNOFF_ALLWEATHER)
+                && conditions.getWeather().isClear()
                 && getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_WIND)) {
-            if ((conditions.getWindStrength() == PlanetaryConditions.WI_MOD_GALE) && isAirborneVTOLorWIGE()) {
+            if ((conditions.getWind().isModerateGale()) && isAirborneVTOLorWIGE()) {
                 roll.addModifier(-1, Messages.getString("PilotingSPA.EnvSpec.WindSpec"));
             }
 
-            if (conditions.getWindStrength() == PlanetaryConditions.WI_STRONG_GALE) {
-                if ((this instanceof Mech) || isAirborne()
-                        || isAirborneVTOLorWIGE() || (getMovementMode() == EntityMovementMode.HOVER)) {
+            if (conditions.getWind().isStrongGale()) {
+                if ((this instanceof Mech)
+                        || isAirborne()
+                        || isAirborneVTOLorWIGE()
+                        || getMovementMode().isHover()) {
                     roll.addModifier(-1, Messages.getString("PilotingSPA.EnvSpec.WindSpec"));
                 }
             }
 
-            if (conditions.getWindStrength() == PlanetaryConditions.WI_STORM) {
-                if ((this instanceof Mech) || isAirborneVTOLorWIGE()
-                        || (getMovementMode() == EntityMovementMode.HOVER)) {
+            if (conditions.getWind().isStorm()) {
+                if ((this instanceof Mech)
+                        || isAirborneVTOLorWIGE()
+                        || getMovementMode().isHover()) {
                     roll.addModifier(-2, Messages.getString("PilotingSPA.EnvSpec.WindSpec"));
                 }
 
@@ -7191,11 +7209,11 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                 }
             }
 
-            if (conditions.getWindStrength() == PlanetaryConditions.WI_TORNADO_F13) {
+            if (conditions.getWind().isTornadoF1ToF3()) {
                 roll.addModifier(-2, Messages.getString("PilotingSPA.EnvSpec.WindSpec"));
             }
 
-            if (conditions.getWindStrength() == PlanetaryConditions.WI_TORNADO_F4) {
+            if (conditions.getWind().isTornadoF4()) {
                 roll.addModifier(-3, Messages.getString("PilotingSPA.EnvSpec.WindSpec"));
             }
         }
@@ -7373,6 +7391,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     public PilotingRollData checkRecklessMove(MoveStep step,
             EntityMovementType moveType, Hex curHex, Coords lastPos,
             Coords curPos, Hex prevHex) {
+        PlanetaryConditions conditions = game.getPlanetaryConditions();
         PilotingRollData roll = getBasePilotingRoll(moveType);
         // no need to go further if movement is careful
         if (step.isCareful()) {
@@ -7382,13 +7401,12 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
         // this only applies in fog, night conditions, or if a hex along the
         // move path has ice
-        boolean isFoggy = game.getPlanetaryConditions().getFog() != PlanetaryConditions.FOG_NONE;
-        boolean isDark = game.getPlanetaryConditions().getLight() > PlanetaryConditions.L_DUSK;
         boolean isBlackIce;
 
-        if ((game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_ICE_STORM)
-                || (game.getOptions().booleanOption(OptionsConstants.ADVANCED_BLACK_ICE)
-                && game.getPlanetaryConditions().getTemperature() <= PlanetaryConditions.BLACK_ICE_TEMP)) {
+        boolean blackIceCheck = game.getOptions().booleanOption(OptionsConstants.ADVANCED_BLACK_ICE)
+                && conditions.getTemperature() <= PlanetaryConditions.BLACK_ICE_TEMP;
+        if (conditions.getWeather().isIceStorm()
+                || blackIceCheck) {
             isBlackIce = true;
         } else {
             isBlackIce = false;
@@ -7402,17 +7420,20 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
         // we need to make this check on the first move forward and anytime the
         // hex is not clear or is a level change
-        if ((isFoggy || isDark) && !lastPos.equals(curPos)
-            && lastPos.equals(step.getEntity().getPosition())) {
+        boolean levelChange = (null != prevHex)
+                && (prevHex.getLevel() != curHex.getLevel());
+        boolean moved = (curHex.movementCost(this) > 0)
+                || levelChange;
+        if (conditions.isRecklessConditions()
+                && !lastPos.equals(curPos)
+                && lastPos.equals(step.getEntity().getPosition())) {
             roll.append(new PilotingRollData(getId(), 0, "moving recklessly"));
         }
         // FIXME: no perfect solution in the current code to determine if hex is
         // clear. I will use movement costs
-        else if ((isFoggy || isDark)
-                 && !lastPos.equals(curPos)
-                 && ((curHex.movementCost(this) > 0) || ((null != prevHex) && (prevHex
-                                                                                       .getLevel() != curHex
-                                                                                       .getLevel())))) {
+        else if (conditions.isRecklessConditions()
+                && !lastPos.equals(curPos)
+                && moved) {
             roll.append(new PilotingRollData(getId(), 0, "moving recklessly"));
             // ice conditions
         } else if (curHex.containsTerrain(Terrains.ICE)) {
@@ -7591,6 +7612,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             EntityMovementType overallMoveType, MoveStep prevStep, MoveStep currStep,
             int prevFacing, int curFacing, Coords lastPos, Coords curPos,
             boolean isInfantry, int distance) {
+        PlanetaryConditions conditions = game.getPlanetaryConditions();
 
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
         // If we aren't traveling along a road, apply terrain modifiers
@@ -7637,35 +7659,31 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
         // TODO: add check for elevation of pavement, road,
         // or bridge matches entity elevation.
-        if ((prevHex != null) && prevHex.containsTerrain(Terrains.ICE)
-                && (((movementMode != EntityMovementMode.HOVER)
-                        && (movementMode != EntityMovementMode.WIGE))
-                        || (((movementMode == EntityMovementMode.HOVER)
-                                || (movementMode == EntityMovementMode.WIGE))
-                                && ((game.getPlanetaryConditions()
-                                        .getWeather() == PlanetaryConditions.WE_HEAVY_SNOW)
-                                        || (game.getPlanetaryConditions()
-                                                .getWindStrength() >= PlanetaryConditions.WI_STORM))))
-                && (prevFacing != curFacing) && !lastPos.equals(curPos)) {
+        boolean hoverOrWigeStrongGale = movementMode.isHoverOrWiGE() && conditions.getWind().isStrongerThan(Wind.STRONG_GALE);
+        boolean iceCheck = !movementMode.isHoverOrWiGE() || hoverOrWigeStrongGale;
+        boolean runOrSprint = (overallMoveType == EntityMovementType.MOVE_RUN) || (overallMoveType == EntityMovementType.MOVE_SPRINT);
+        if ((prevHex != null)
+                && prevHex.containsTerrain(Terrains.ICE)
+                && iceCheck
+                && (prevFacing != curFacing)
+                && !lastPos.equals(curPos)) {
             roll.append(new PilotingRollData(getId(), getMovementBeforeSkidPSRModifier(distance), "turning on ice"));
             adjustDifficultTerrainPSRModifier(roll);
             return roll;
-        } else if ((prevHex != null) && prevHex.containsTerrain(Terrains.BLACK_ICE)
-                && (((movementMode != EntityMovementMode.HOVER) && (movementMode != EntityMovementMode.WIGE))
-                || (((movementMode == EntityMovementMode.HOVER) || (movementMode == EntityMovementMode.WIGE))
-                    && ((game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_HEAVY_SNOW)
-                    || (game.getPlanetaryConditions().getWindStrength() >= PlanetaryConditions.WI_STORM))))
-                && (prevFacing != curFacing) && !lastPos.equals(curPos)) {
+        } else if ((prevHex != null)
+                && prevHex.containsTerrain(Terrains.BLACK_ICE)
+                && iceCheck
+                && (prevFacing != curFacing)
+                && !lastPos.equals(curPos)) {
             addPilotingModifierForTerrain(roll, lastPos);
             roll.append(new PilotingRollData(getId(), getMovementBeforeSkidPSRModifier(distance), "turning on black ice"));
             adjustDifficultTerrainPSRModifier(roll);
             return roll;
-        } else if ((prevStepPavement
-                && ((overallMoveType == EntityMovementType.MOVE_RUN)
-                        || (overallMoveType == EntityMovementType.MOVE_SPRINT))
-                && (movementMode != EntityMovementMode.HOVER)
-                && (movementMode != EntityMovementMode.WIGE))
-                && (prevFacing != curFacing) && !lastPos.equals(curPos)) {
+        } else if (prevStepPavement
+                && runOrSprint
+                && !movementMode.isHoverOrWiGE()
+                && (prevFacing != curFacing)
+                && !lastPos.equals(curPos)) {
             if (this instanceof Mech) {
                 roll.append(new PilotingRollData(getId(),
                         getMovementBeforeSkidPSRModifier(distance),
@@ -8039,6 +8057,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      */
     public PilotingRollData checkTurnModeFailure(EntityMovementType overallMoveType,
             int straightLineHexes, int mpUsed, Coords currPos) {
+        PlanetaryConditions conditions = game.getPlanetaryConditions();
 
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
         //Turn mode
@@ -8073,14 +8092,12 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             if (currHex.containsTerrain(Terrains.ICE)) {
                 roll.addModifier(movementMode == EntityMovementMode.TRACKED? 1 : 2, "ice");
             }
-            if (game.getPlanetaryConditions().isSleeting()
-                    || game.getPlanetaryConditions().getFog() == PlanetaryConditions.FOG_HEAVY
-                    || game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_HEAVY_RAIN
-                    || game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_GUSTING_RAIN
-                    || game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_DOWNPOUR) {
+            if (conditions.isSleeting()
+                    || conditions.getFog().isFogHeavy()
+                    || conditions.getWeather().isHeavyRainOrGustingRainOrDownpour()) {
                 roll.addModifier(+1, "fog/rain");
             }
-            if (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_HEAVY_SNOW) {
+            if (conditions.getWeather().isHeavySnow()) {
                 roll.addModifier(movementMode == EntityMovementMode.TRACKED? 1 : 2, "snow");
             }
         }

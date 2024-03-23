@@ -28,6 +28,9 @@ import megamek.common.event.*;
 import megamek.common.force.Forces;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
+import megamek.common.planetaryconditions.PlanetaryConditions;
+import megamek.common.planetaryconditions.Wind;
+import megamek.common.planetaryconditions.WindDirection;
 import megamek.common.weapons.AttackHandler;
 import megamek.server.SmokeCloud;
 import megamek.server.victory.Victory;
@@ -3103,10 +3106,10 @@ public class Game extends AbstractGame implements Serializable {
             if (flare.isIgnited()) {
                 flare.turnsToBurn--;
                 if (flare.isDrifting()) {
-                    int str = planetaryConditions.getWindStrength();
-                    if (str > 0) {
-                        int dir = planetaryConditions.getWindDirection();
-                        flare.position = flare.position.translated(dir, (str > 1) ? (str - 1) : str);
+                    Wind wind = planetaryConditions.getWind();
+                    if (!planetaryConditions.getWind().isCalm()) {
+                        WindDirection dir = planetaryConditions.getWindDirection();
+                        flare.position = flare.position.translated(dir.ordinal(), (wind.ordinal() > 1) ? (wind.ordinal() - 1) : wind.ordinal());
                         if (getBoard().contains(flare.position)) {
                             r = new Report(5236);
                             r.add(flare.position.getBoardNum());

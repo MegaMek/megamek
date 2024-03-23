@@ -21,6 +21,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.AimingMode;
 import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
+import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.server.GameManager;
 import megamek.server.Server;
 import megamek.server.SmokeCloud;
@@ -2072,7 +2073,8 @@ public class WeaponHandler implements AttackHandler, Serializable {
             nMissilesModifier += (toHit.getMoS() / 3) * 2;
         }
 
-        if (game.getPlanetaryConditions().hasEMI()) {
+        PlanetaryConditions conditions = game.getPlanetaryConditions();
+        if (conditions.getEMI().isEMI()) {
             nMissilesModifier -= 2;
         }
 

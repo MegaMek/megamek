@@ -41,7 +41,7 @@ MEGAMEK VERSION HISTORY:
 + Fix #5204: Fixes Fighter Squadron weapon crits and group damage application
 + Fix #5268: NPE on skip movement
 + Fix MML #1446: Set crew requirements for units with Drone OS to 0
-
++ PR #5203: Improvements for the internal representation of planetary conditions
 
 
 

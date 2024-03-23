@@ -1,3 +1,21 @@
+/*
+ * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ */
 package megamek.client.ui.swing;
 
 import megamek.client.ui.Messages;
@@ -33,7 +51,6 @@ public abstract class AbstractClientGUI implements IClientGUI {
     @Override
     public JFrame getFrame() {
         return frame;
-
     }
 
     @Override
@@ -43,12 +60,32 @@ public abstract class AbstractClientGUI implements IClientGUI {
 
     @Override
     public void initialize() {
-
+        frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+        frame.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                if (!GUIP.getNoSaveNag()) {
+                    int savePrompt = JOptionPane.showConfirmDialog(null,
+                            Messages.getString("ClientGUI.gameSaveDialogMessage"),
+                            Messages.getString("ClientGUI.gameSaveFirst"),
+                            JOptionPane.YES_NO_CANCEL_OPTION,
+                            JOptionPane.WARNING_MESSAGE);
+                    if ((savePrompt == JOptionPane.CANCEL_OPTION)
+                            || ((savePrompt == JOptionPane.YES_OPTION) && !saveGame())) {
+                        // When the user clicked YES but did not actually save the game, don't close the game
+                        return;
+                    }
+                }
+                frame.setVisible(false);
+                saveSettings();
+                die();
+            }
+        });
     }
 
     @Override
     public void die() {
-
+        frame.dispose();
     }
 
     private void initializeFrame() {
@@ -68,28 +105,6 @@ public abstract class AbstractClientGUI implements IClientGUI {
         iconList.add(frame.getToolkit().getImage(new File(Configuration.miscImagesDir(), FILENAME_ICON_48X48).toString()));
         iconList.add(frame.getToolkit().getImage(new File(Configuration.miscImagesDir(), FILENAME_ICON_256X256).toString()));
         frame.setIconImages(iconList);
-
-        frame.addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent e) {
-                if (!GUIP.getNoSaveNag()) {
-                    int savePrompt = JOptionPane.showConfirmDialog(null,
-                            Messages.getString("ClientGUI.gameSaveDialogMessage"),
-                            Messages.getString("ClientGUI.gameSaveFirst"),
-                            JOptionPane.YES_NO_CANCEL_OPTION,
-                            JOptionPane.WARNING_MESSAGE);
-                    if ((savePrompt == JOptionPane.CANCEL_OPTION)
-                            || ((savePrompt == JOptionPane.YES_OPTION) && !saveGame())) {
-                        // When the user clicked YES but did not actually save the game, don't close the game
-                        return;
-                    }
-                }
-                frame.setVisible(false);
-                saveSettings();
-                die();
-
-            }
-        });
     }
 
     /**

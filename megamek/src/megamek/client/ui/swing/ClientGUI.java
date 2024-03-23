@@ -286,6 +286,9 @@ public class ClientGUI extends JPanel implements BoardViewListener,
     private MiniReportDisplay miniReportDisplay;
     private MiniReportDisplayDialog miniReportDisplayDialog;
 
+    /** Boolean indicating whether client should be disconnected without a pop-up warning **/
+    private boolean disconnectQuietly = false;
+
     /**
      * The <code>JPanel</code> containing the main display area.
      */
@@ -431,6 +434,10 @@ public class ClientGUI extends JPanel implements BoardViewListener,
 
     public void setPlayerListDialog(final PlayerListDialog playerListDialog) {
         this.playerListDialog = playerListDialog;
+    }
+
+    public void setDisconnectQuietly(boolean quietly) {
+        disconnectQuietly = quietly;
     }
 
     /**
@@ -2259,8 +2266,10 @@ public class ClientGUI extends JPanel implements BoardViewListener,
 
         @Override
         public void gamePlayerDisconnected(GamePlayerDisconnectedEvent evt) {
-            doAlertDialog(Messages.getString("ClientGUI.Disconnected.message"),
-                    Messages.getString("ClientGUI.Disconnected.title"), JOptionPane.ERROR_MESSAGE);
+            if(!disconnectQuietly) {
+                doAlertDialog(Messages.getString("ClientGUI.Disconnected.message"),
+                        Messages.getString("ClientGUI.Disconnected.title"), JOptionPane.ERROR_MESSAGE);
+            }
             frame.setVisible(false);
             die();
         }

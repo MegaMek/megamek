@@ -43,6 +43,9 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.pathfinder.AbstractPathFinder;
 import megamek.common.pathfinder.LongestPathFinder;
 import megamek.common.pathfinder.ShortestPathFinder;
+import megamek.common.planetaryconditions.Atmosphere;
+import megamek.common.planetaryconditions.Light;
+import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.common.preference.PreferenceManager;
 import org.apache.logging.log4j.LogManager;
 
@@ -1096,8 +1099,10 @@ public class MovementDisplay extends ActionPhaseDisplay {
             setEvadeAeroEnabled(cmd != null && !cmd.contains(MoveStepType.EVADE));
             setEjectEnabled(true);
             // no turning for spheroids in atmosphere
-            if ((((IAero) ce()).isSpheroid() || clientgui.getClient().getGame()
-                    .getPlanetaryConditions().isVacuum())
+            PlanetaryConditions conditions = clientgui.getClient().getGame().getPlanetaryConditions();
+            boolean spheroidOrLessThanThin = ((IAero) ce()).isSpheroid()
+                    || conditions.getAtmosphere().isLighterThan(Atmosphere.THIN);
+            if (spheroidOrLessThanThin
                     && !clientgui.getClient().getGame().getBoard().inSpace()) {
                 setTurnEnabled(false);
             }
@@ -1653,7 +1658,8 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
         if (needNagForOther()) {
             if ((ce() != null)
-                    && (null != cmd)) {
+                    && (null != cmd)
+                    && ce().isAero()) {
                 boolean airborneOrSpaceborne = ce().isAirborne()
                         || ce().isSpaceborne();
                 boolean unusedVelocity = false;
@@ -1667,7 +1673,6 @@ public class MovementDisplay extends ActionPhaseDisplay {
                         || cmd.contains(MoveStepType.RETURN);
                 if (airborneOrSpaceborne
                         && !clientgui.getClient().getGame().useVectorMove()
-                        && ce().isAero()
                         && !((IAero) ce()).isOutControlTotal()
                         && unusedVelocity
                         && !offOrReturn
@@ -1697,16 +1702,16 @@ public class MovementDisplay extends ActionPhaseDisplay {
         }
 
         if (needNagForOther()) {
-            if (ce() != null) {
+            if (ce() != null
+                    && (ce() instanceof Infantry)
+                    && ((Infantry) ce()).hasMicrolite()
+            ) {
                 boolean finalElevation = (ce().getElevation() != cmd.getFinalElevation());
                 boolean airborneVTOLOrWIGEOrFinalElevation = ce().isAirborneVTOLorWIGE()
                         || finalElevation;
                 int terrainLevelBuilding = ce().getGame().getBoard().getHex(cmd.getFinalCoords()).terrainLevel(Terrains.BLDG_ELEV);
                 int terrainLevelBridge = ce().getGame().getBoard().getHex(cmd.getFinalCoords()).terrainLevel(Terrains.BRIDGE_ELEV);
-                if ((ce() != null)
-                        && (ce() instanceof Infantry)
-                        && ((Infantry) ce()).hasMicrolite()
-                        && airborneVTOLOrWIGEOrFinalElevation
+                if (airborneVTOLOrWIGEOrFinalElevation
                         && !cmd.contains(MoveStepType.FORWARDS)
                         && !cmd.contains(MoveStepType.FLEE)
                         && cmd.getFinalElevation() > 0
@@ -2342,7 +2347,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         if (ce == null) {
             return;
         }
-        boolean isNight = clientgui.getClient().getGame().getPlanetaryConditions().isIlluminationEffective();
+        boolean isNight = clientgui.getClient().getGame().getPlanetaryConditions().getLight().isDarkerThan(Light.DAY);
         setSearchlightEnabled(isNight && ce.hasSearchlight() && !cmd.contains(MoveStepType.SEARCHLIGHT),
                 ce.isUsingSearchlight());
     }
@@ -4200,8 +4205,9 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
         IAero a = (IAero) ce;
         if (!clientgui.getClient().getGame().getBoard().inSpace()) {
+            PlanetaryConditions conditions = clientgui.getClient().getGame().getPlanetaryConditions();
             if (a.isSpheroid()
-                    || clientgui.getClient().getGame().getPlanetaryConditions().isVacuum()) {
+                    || conditions.getAtmosphere().isLighterThan(Atmosphere.THIN)) {
                 getBtn(MoveCommand.MOVE_ACC).setEnabled(false);
                 getBtn(MoveCommand.MOVE_DEC).setEnabled(false);
                 getBtn(MoveCommand.MOVE_ACCN).setEnabled(false);
@@ -5016,12 +5022,14 @@ public class MovementDisplay extends ActionPhaseDisplay {
         } else if (actionCmd.equals(MoveCommand.MOVE_RAISE_ELEVATION.getCmd())) {
             addStepToMovePath(MoveStepType.UP);
         } else if (actionCmd.equals(MoveCommand.MOVE_LOWER_ELEVATION.getCmd())) {
+            PlanetaryConditions conditions = clientgui.getClient().getGame().getPlanetaryConditions();
+            boolean spheroidOrLessThanThin = ((IAero) ce).isSpheroid()
+                    || conditions.getAtmosphere().isLighterThan(Atmosphere.THIN);
             if (ce.isAero()
                     && (null != cmd.getLastStep())
                     && (cmd.getLastStep().getNDown() == 1)
                     && (cmd.getLastStep().getVelocity() < 12)
-                    && !(((IAero) ce).isSpheroid() || clientgui.getClient()
-                    .getGame().getPlanetaryConditions().isVacuum())) {
+                    && !spheroidOrLessThanThin) {
                 addStepToMovePath(MoveStepType.ACC, true);
                 computeAeroMovementEnvelope(ce);
             }

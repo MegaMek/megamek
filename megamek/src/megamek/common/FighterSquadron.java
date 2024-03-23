@@ -23,6 +23,7 @@ import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.common.cost.CostCalculator;
 import megamek.common.enums.AimingMode;
 import megamek.common.options.OptionsConstants;
+import megamek.common.planetaryconditions.PlanetaryConditions;
 import org.apache.logging.log4j.LogManager;
 
 import java.util.*;
@@ -199,8 +200,9 @@ public class FighterSquadron extends AeroSpaceFighter {
         }
 
         // add in atmospheric effects later
-        int atmoCond = game.getPlanetaryConditions().getAtmosphere();
-        if (!(game.getBoard().inSpace() || atmoCond == PlanetaryConditions.ATMO_VACUUM)) {
+        PlanetaryConditions conditions = game.getPlanetaryConditions();
+        if (!(game.getBoard().inSpace()
+                || conditions.getAtmosphere().isVacuum())) {
             prd.addModifier(+2, "Atmospheric operations");
             prd.addModifier(-1, "fighter/ small craft");
         }

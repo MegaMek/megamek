@@ -15,6 +15,8 @@ package megamek.common;
 
 import megamek.common.enums.MPBoosters;
 import megamek.common.options.OptionsConstants;
+import megamek.common.planetaryconditions.Light;
+import megamek.common.planetaryconditions.PlanetaryConditions;
 import org.apache.logging.log4j.LogManager;
 
 import java.util.*;
@@ -349,14 +351,15 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
         }
         int j = getJumpMP();
         if (null != game) {
-            int weatherMod = game.getPlanetaryConditions().getMovementMods(this);
+            PlanetaryConditions conditions = game.getPlanetaryConditions();
+            int weatherMod = conditions.getMovementMods(this);
             if (weatherMod != 0) {
                 j = Math.max(j + weatherMod, 0);
             }
 
             if(getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_WIND)
-                    && (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_NONE)
-                    && (game.getPlanetaryConditions().getWindStrength() == PlanetaryConditions.WI_TORNADO_F13)) {
+                    && conditions.getWeather().isClear()
+                    && conditions.getWind().isTornadoF1ToF3()) {
                 j += 1;
             }
         }
@@ -370,12 +373,13 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
         }
         int j = getJumpMP();
         if (!mpCalculationSetting.ignoreWeather && (null != game)) {
-            int weatherMod = game.getPlanetaryConditions().getMovementMods(this);
+            PlanetaryConditions conditions = game.getPlanetaryConditions();
+            int weatherMod = conditions.getMovementMods(this);
             j = Math.max(j + weatherMod, 0);
 
             if(getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_WIND)
-                    && (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_NONE)
-                    && (game.getPlanetaryConditions().getWindStrength() == PlanetaryConditions.WI_TORNADO_F13)) {
+                    && conditions.getWeather().isClear()
+                    && conditions.getWind().isTornadoF1ToF3()) {
                 j += 1;
             }
         }
@@ -726,9 +730,12 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
                 roll.addModifier(vmod, "Velocity greater than 2x safe thrust");
             }
 
-            int atmoCond = game.getPlanetaryConditions().getAtmosphere();
+            PlanetaryConditions conditions = game.getPlanetaryConditions();
             // add in atmospheric effects later
-            if (!(game.getBoard().inSpace() || (atmoCond == PlanetaryConditions.ATMO_VACUUM)) && isAirborne()) {
+            boolean spaceOrVacuum = game.getBoard().inSpace()
+                    || conditions.getAtmosphere().isVacuum();
+            if (!spaceOrVacuum
+                    && isAirborne()) {
                 roll.addModifier(+1, "Atmospheric operations");
             }
 
@@ -2084,11 +2091,13 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
     @Override
     public boolean canSpot() {
         if (getConversionMode() == CONV_MODE_FIGHTER) {
-            return !isAirborne() || hasWorkingMisc(MiscType.F_RECON_CAMERA)
-                    || hasWorkingMisc(MiscType.F_INFRARED_IMAGER) || hasWorkingMisc(MiscType.F_HYPERSPECTRAL_IMAGER)
-                    || (hasWorkingMisc(MiscType.F_HIRES_IMAGER)
-                            && ((game.getPlanetaryConditions().getLight() == PlanetaryConditions.L_DAY)
-                                    || (game.getPlanetaryConditions().getLight() == PlanetaryConditions.L_DUSK)));
+            boolean hiresLighted = hasWorkingMisc(MiscType.F_HIRES_IMAGER)
+                    && game.getPlanetaryConditions().getLight().isLighterThan(Light.FULL_MOON);
+            return !isAirborne()
+                    || hasWorkingMisc(MiscType.F_RECON_CAMERA)
+                    || hasWorkingMisc(MiscType.F_INFRARED_IMAGER)
+                    || hasWorkingMisc(MiscType.F_HYPERSPECTRAL_IMAGER)
+                    || hiresLighted;
         } else {
             return super.canSpot();
         }

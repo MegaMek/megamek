@@ -42,6 +42,8 @@ public final class MechCacheCSVTool {
     // Excel import works better with the .txt extension instead of .csv
     private static final String FILE_NAME = "Units.txt";
     private static final String DELIM = "|";
+    private static boolean includeGunEmplacement = false; // Variable to control inclusion of Gun Emplacement units
+
 
     private static final List<String> HEADERS = List.of("Chassis", "Model", "MUL ID", "Combined", "Clan",
             "Source", "File Location", "Weight", "Intro Date", "Experimental year", "Advanced year",
@@ -51,6 +53,10 @@ public final class MechCacheCSVTool {
             "Chassis", "Capabilities", "Overview", "History", "Deployment", "Notes");
 
     public static void main(String... args) {
+        if (args.length > 0) {
+            includeGunEmplacement = Boolean.parseBoolean(args[0]);
+        }
+        
         try (PrintWriter pw = new PrintWriter(FILE_NAME);
              BufferedWriter bw = new BufferedWriter(pw)) {
             MechSummaryCache cache = MechSummaryCache.getInstance(true);
@@ -61,7 +67,7 @@ public final class MechCacheCSVTool {
             bw.write(csvLine.toString());
 
             for (MechSummary unit : units) {
-                if (unit.getUnitType().equals("Gun Emplacement")) {
+                if (!includeGunEmplacement && unit.getUnitType().equals("Gun Emplacement")) {
                     continue;
                 }
 

@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
-package megamek.common.enums;
+package megamek.common.planetaryconditions;
 
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.common.Coords;
@@ -30,11 +30,17 @@ import static megamek.client.ui.swing.util.UIUtil.*;
 
 public enum IlluminationLevel {
     //region Enum Declarations
-    NONE,
-    FIRE,
-    FLARE,
-    SEARCHLIGHT;
+    NONE(""),
+    FIRE("\uD83D\uDD25"),
+    FLARE("\uD83C\uDF86"),
+    SEARCHLIGHT("\uD83D\uDD26");
     //endregion Enum Declarations
+
+    private final String indicator;
+
+    IlluminationLevel(final String indicator) {
+        this.indicator = indicator;
+    }
 
     //region Boolean Comparison Methods
     public boolean isNone() {
@@ -53,6 +59,10 @@ public enum IlluminationLevel {
         return this == SEARCHLIGHT;
     }
     //endregion Boolean Comparison Methods
+
+    public String getIndicator() {
+        return indicator;
+    }
 
     /**
      * @return the level of illumination for a given coords. Different light sources affect how much
@@ -90,18 +100,5 @@ public enum IlluminationLevel {
                 .anyMatch(adjacent -> adjacent.containsTerrain(Terrains.FIRE));
 
         return neighbouringFire ? IlluminationLevel.FIRE : IlluminationLevel.NONE;
-    }
-
-    public static  String getIlluminationLevelIndicator(final Game game, final Coords coords, final GUIPreferences GUIP) {
-        switch (IlluminationLevel.determineIlluminationLevel(game, coords)) {
-            case FIRE:
-                return DOT_SPACER + guiScaledFontHTML(GUIP.getCautionColor()) + " \uD83D\uDD25" + "</FONT>";
-            case FLARE:
-                return DOT_SPACER + guiScaledFontHTML(GUIP.getCautionColor()) + " \uD83C\uDF86" + "</FONT>";
-            case SEARCHLIGHT:
-                return DOT_SPACER + guiScaledFontHTML(GUIP.getCautionColor()) + " \uD83D\uDD26" + "</FONT>";
-            default:
-                return "";
-        }
     }
 }

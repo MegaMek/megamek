@@ -26,6 +26,8 @@ import megamek.common.cost.InfantryCostCalculator;
 import megamek.common.enums.AimingMode;
 import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
+import megamek.common.planetaryconditions.PlanetaryConditions;
+import megamek.common.planetaryconditions.Wind;
 import megamek.common.verifier.TestInfantry;
 import megamek.common.weapons.infantry.InfantryWeapon;
 import org.apache.logging.log4j.LogManager;
@@ -375,7 +377,7 @@ public class Infantry extends Entity {
             }
 
             if ((null != getCrew()) && hasAbility(OptionsConstants.INFANTRY_FOOT_CAV)
-                    && ((getMovementMode().isLegInfantry()) || (getMovementMode().isJumpInfantry()))) {
+                    && getMovementMode().isJumpOrLegInfantry()) {
                 mp += 1;
             }
 
@@ -385,10 +387,11 @@ public class Infantry extends Entity {
         }
 
         if (!mpCalculationSetting.ignoreWeather && (null != game)) {
-            int weatherMod = game.getPlanetaryConditions().getMovementMods(this);
+            PlanetaryConditions conditions = game.getPlanetaryConditions();
+            int weatherMod = conditions.getMovementMods(this);
             mp = Math.max(mp + weatherMod, 0);
 
-            if ((game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_GUSTING_RAIN)
+            if (conditions.getWeather().isGustingRain()
                     && getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_RAIN)) {
                 if ((mp !=0) || getMovementMode().isMotorizedInfantry()) {
                     mp += 1;
@@ -396,20 +399,19 @@ public class Infantry extends Entity {
             }
 
             if (getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_SNOW)) {
-                if (((game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_SNOW_FLURRIES)
-                        || (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_ICE_STORM))
+                if (conditions.getWeather().isSnowFlurriesOrIceStorm()
                         && (getOriginalWalkMP() != 0)) {
                     mp += 1;
                 }
             }
 
             if (getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_WIND)
-                    && (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_NONE)) {
-                if (game.getPlanetaryConditions().getWindStrength() == PlanetaryConditions.WI_MOD_GALE) {
+                    && conditions.getWeather().isClear()) {
+                if (conditions.getWind().isModerateGale()) {
                     mp += 1;
                 }
 
-                if ((game.getPlanetaryConditions().getWindStrength() == PlanetaryConditions.WI_STRONG_GALE)
+                if (conditions.getWind().isStrongGale()
                         && ((mp != 0) || getMovementMode().isMotorizedInfantry())) {
                     mp += 1;
                 }
@@ -454,17 +456,17 @@ public class Infantry extends Entity {
         }
 
         if (!mpCalculationSetting.ignoreWeather && (null != game)) {
-            int windCond = game.getPlanetaryConditions().getWindStrength();
-            if (windCond >= PlanetaryConditions.WI_STRONG_GALE) {
+            PlanetaryConditions conditions = game.getPlanetaryConditions();
+            if (conditions.getWind().isStrongerThan(Wind.MOD_GALE)) {
                 return 0;
-            } else if ((windCond == PlanetaryConditions.WI_MOD_GALE)
+            } else if (conditions.getWind().isModerateGale()
                     && !getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_WIND)) {
                 mp--;
             }
 
             if (getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_SNOW)) {
-                if ((game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_SNOW_FLURRIES)
-                        && (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_ICE_STORM)) {
+                if (conditions.getWeather().isSnowFlurries()
+                        && conditions.getWeather().isIceStorm()) {
                     mp += 1;
                 }
             }

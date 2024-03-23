@@ -36,6 +36,7 @@ import megamek.common.net.packets.Packet;
 import megamek.common.options.OptionsConstants;
 import megamek.common.pathfinder.BoardClusterTracker;
 import megamek.common.pathfinder.PathDecorator;
+import megamek.common.planetaryconditions.Light;
 import megamek.common.util.BoardUtilities;
 import megamek.common.util.StringUtil;
 import megamek.common.weapons.AmmoWeapon;
@@ -2031,10 +2032,10 @@ public class Princess extends BotClient {
      */
     private void turnOnSearchLight(MovePath path, boolean possibleToInflictDamage) {
         Entity pathEntity = path.getEntity();
-        if (possibleToInflictDamage &&
-                pathEntity.hasSearchlight() &&
-                !pathEntity.isUsingSearchlight() &&
-                (path.getGame().getPlanetaryConditions().getLight() >= PlanetaryConditions.L_FULL_MOON)) {
+        if (possibleToInflictDamage
+                && pathEntity.hasSearchlight()
+                && !pathEntity.isUsingSearchlight()
+                && path.getGame().getPlanetaryConditions().getLight().isDarkerThan(Light.DUSK)) {
             path.addStep(MoveStepType.SEARCHLIGHT);
         }
     }

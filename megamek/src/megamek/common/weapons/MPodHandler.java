@@ -15,11 +15,9 @@ package megamek.common.weapons;
 
 import java.util.Vector;
 
-import megamek.common.Compute;
-import megamek.common.Game;
-import megamek.common.Report;
-import megamek.common.ToHitData;
+import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.server.GameManager;
 
 /**
@@ -70,9 +68,9 @@ public class MPodHandler extends LBXHandler {
         if (bLowProfileGlancing) {
             hitMod -= 4;
         }
-        
-        
-        if (game.getPlanetaryConditions().hasEMI()) {
+
+        PlanetaryConditions conditions = game.getPlanetaryConditions();
+        if (conditions.getEMI().isEMI()) {
             hitMod -= 2;
         }
 

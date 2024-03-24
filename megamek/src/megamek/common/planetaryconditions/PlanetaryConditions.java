@@ -16,6 +16,7 @@
 
 package megamek.common.planetaryconditions;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import megamek.common.*;
 
 import java.io.Serializable;
@@ -25,6 +26,7 @@ import java.io.Serializable;
  * This class will hold all the information on planetary conditions and a variety of helper functions
  * for those conditions
  */
+@JsonDeserialize(using = PlanetaryConditionsDeserializer.class)
 public class PlanetaryConditions implements Serializable {
 
     private static final long serialVersionUID = 6838624193286089781L;
@@ -987,5 +989,24 @@ public class PlanetaryConditions implements Serializable {
         }
 
         return MSG_INDICATOR_TEMPERATURE_NORMAL;
+    }
+
+    @Override
+    public String toString() {
+        return "[PlanetaryConditions]"
+                + ((temperature != 25) ? "; Temperature: " + temperature : "")
+                + ((gravity != 1) ? "; Gravity: " + gravity : "")
+                + (!atmosphere.isStandard() ? "; Pressure:" + atmosphere : "")
+                + (!fog.isFogNone() ? "; Fog:" + fog : "")
+                + (isBlowingSand() ? "; Blowing Sand" : "")
+                + (isEMI() ? "; EMI" : "")
+                + (terrainAffected ? "; Affects Terrain" : "")
+                + (!light.isDay() ? "; Light:" + light : "")
+                + (!weather.isClear() ? "; Weather:" + weather : "")
+                + (!wind.isCalm() ? "; Wind:" + wind : "")
+                + (!windMin.isCalm() ? "; Wind Min:" + windMin : "")
+                + (!windMax.isCalm() ? "; Wind Max:" + windMax : "")
+                + ((!wind.isCalm() || !windMin.isCalm() || !windMax.isCalm()) ?
+                "; Wind Dir:" + windDirection + (shiftWindDirection ? " (Shifting)" : "") : "");
     }
 }

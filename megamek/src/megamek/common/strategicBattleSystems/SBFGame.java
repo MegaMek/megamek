@@ -6,6 +6,7 @@ import megamek.common.annotations.Nullable;
 import megamek.common.enums.GamePhase;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
+import megamek.common.planetaryconditions.PlanetaryConditions;
 import org.apache.logging.log4j.LogManager;
 
 import java.util.Collections;

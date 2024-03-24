@@ -22,6 +22,7 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
+import megamek.common.planetaryconditions.*;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -32,7 +33,7 @@ public class PlanetaryConditionsDeserializer extends StdDeserializer<PlanetaryCo
     static final String TEMPERATURE = "temperature";
     static final String PRESSURE = "pressure";
     static final String GRAVITY = "gravity";
-    static final String EMI = "emi";
+    static final String EMI_TEXT = "emi";
     static final String BLOWING_SAND = "blowingsand";
     static final String ALLOW_TERRAIN_CHANGES = "terrainchanges";
     static final String WEATHER = "weather";
@@ -45,43 +46,44 @@ public class PlanetaryConditionsDeserializer extends StdDeserializer<PlanetaryCo
     static final String WIND_MIN = "minimum";
     static final String WIND_MAX = "maximum";
 
-    static final Map<String, Integer> PRESSURE_VALUES = Map.of("vacuum", PlanetaryConditions.ATMO_VACUUM,
-            "trace", PlanetaryConditions.ATMO_TRACE, "thin", PlanetaryConditions.ATMO_THIN,
-            "standard", PlanetaryConditions.ATMO_STANDARD, "high", PlanetaryConditions.ATMO_HIGH,
-            "very high", PlanetaryConditions.ATMO_VHIGH);
+    static final Map<String, Atmosphere> PRESSURE_VALUES = Map.of("vacuum", Atmosphere.VACUUM,
+            "trace", Atmosphere.TRACE, "thin", Atmosphere.THIN,
+            "standard", Atmosphere.STANDARD, "high", Atmosphere.HIGH,
+            "very high", Atmosphere.VERY_HIGH);
 
-    static final Map<String, Integer> FOG_VALUES = Map.of("none", PlanetaryConditions.FOG_NONE,
-            "light", PlanetaryConditions.FOG_LIGHT, "heavy", PlanetaryConditions.FOG_HEAVY);
+    static final Map<String, Fog> FOG_VALUES = Map.of("none", Fog.FOG_NONE,
+            "light", Fog.FOG_LIGHT, "heavy", Fog.FOG_HEAVY);
 
-    static final Map<String, Integer> LIGHT_VALUES = Map.of("none", PlanetaryConditions.L_DAY,
-            "dusk", PlanetaryConditions.L_DUSK, "full moon", PlanetaryConditions.L_FULL_MOON,
-            "moonless", PlanetaryConditions.L_MOONLESS, "pitchblack", PlanetaryConditions.L_PITCH_BLACK);
+    static final Map<String, Light> LIGHT_VALUES = Map.of("none", Light.DAY,
+            "dusk", Light.DUSK, "full moon", Light.FULL_MOON,
+            "moonless", Light.MOONLESS, "pitchblack", Light.PITCH_BLACK);
 
-    static final Map<String, Integer> WIND_VALUES = Map.of("none", PlanetaryConditions.WI_NONE,
-            "light gale", PlanetaryConditions.WI_LIGHT_GALE, "moderate gale", PlanetaryConditions.WI_MOD_GALE,
-            "strong gale", PlanetaryConditions.WI_STRONG_GALE, "storm", PlanetaryConditions.WI_STORM,
-            "tornado", PlanetaryConditions.WI_TORNADO_F13, "tornado f4", PlanetaryConditions.WI_TORNADO_F4);
+    static final Map<String, Wind> WIND_VALUES = Map.of("none", Wind.CALM,
+            "light gale", Wind.LIGHT_GALE, "moderate gale", Wind.MOD_GALE,
+            "strong gale", Wind.STRONG_GALE, "storm", Wind.STORM,
+            "tornado", Wind.TORNADO_F1_TO_F3, "tornado f4", Wind.TORNADO_F4);
 
-    static final Map<String, Integer> DIR_VALUES = Map.of("random", PlanetaryConditions.DIR_RANDOM,
-            "N", 0, "NE", 1, "SE", 2, "S", 3, "SW", 4, "NW", 5);
+    static final Map<String, WindDirection> DIR_VALUES = Map.of("random", WindDirection.RANDOM,
+            "N", WindDirection.NORTH, "NE", WindDirection.NORTHEAST, "SE", WindDirection.SOUTHEAST,
+            "S", WindDirection.SOUTH, "SW", WindDirection.SOUTHWEST, "NW", WindDirection.NORTHWEST);
 
-    static final Map<String, Integer> WEATHER_VALUES = new HashMap<>();
+    static final Map<String, Weather> WEATHER_VALUES = new HashMap<>();
 
     static {
-        WEATHER_VALUES.put("none", PlanetaryConditions.WE_NONE);
-        WEATHER_VALUES.put("light rain", PlanetaryConditions.WE_LIGHT_RAIN);
-        WEATHER_VALUES.put("moderate rain", PlanetaryConditions.WE_MOD_RAIN);
-        WEATHER_VALUES.put("heavy rain", PlanetaryConditions.WE_HEAVY_RAIN);
-        WEATHER_VALUES.put("gusting rain", PlanetaryConditions.WE_GUSTING_RAIN);
-        WEATHER_VALUES.put("downpour", PlanetaryConditions.WE_DOWNPOUR);
-        WEATHER_VALUES.put("light snow", PlanetaryConditions.WE_LIGHT_SNOW);
-        WEATHER_VALUES.put("moderate snow", PlanetaryConditions.WE_MOD_SNOW);
-        WEATHER_VALUES.put("snow flurries", PlanetaryConditions.WE_SNOW_FLURRIES);
-        WEATHER_VALUES.put("heavy snow", PlanetaryConditions.WE_HEAVY_SNOW);
-        WEATHER_VALUES.put("sleet", PlanetaryConditions.WE_SLEET);
-        WEATHER_VALUES.put("ice storm", PlanetaryConditions.WE_ICE_STORM);
-        WEATHER_VALUES.put("light hail", PlanetaryConditions.WE_LIGHT_HAIL);
-        WEATHER_VALUES.put("heavy hail", PlanetaryConditions.WE_HEAVY_HAIL);
+        WEATHER_VALUES.put("none", Weather.CLEAR);
+        WEATHER_VALUES.put("light rain", Weather.LIGHT_RAIN);
+        WEATHER_VALUES.put("moderate rain", Weather.MOD_RAIN);
+        WEATHER_VALUES.put("heavy rain", Weather.HEAVY_RAIN);
+        WEATHER_VALUES.put("gusting rain", Weather.GUSTING_RAIN);
+        WEATHER_VALUES.put("downpour", Weather.DOWNPOUR);
+        WEATHER_VALUES.put("light snow", Weather.LIGHT_SNOW);
+        WEATHER_VALUES.put("moderate snow", Weather.MOD_SNOW);
+        WEATHER_VALUES.put("snow flurries", Weather.SNOW_FLURRIES);
+        WEATHER_VALUES.put("heavy snow", Weather.HEAVY_SNOW);
+        WEATHER_VALUES.put("sleet", Weather.SLEET);
+        WEATHER_VALUES.put("ice storm", Weather.ICE_STORM);
+        WEATHER_VALUES.put("light hail", Weather.LIGHT_HAIL);
+        WEATHER_VALUES.put("heavy hail", Weather.HEAVY_HAIL);
     }
 
     public PlanetaryConditionsDeserializer() {
@@ -103,14 +105,12 @@ public class PlanetaryConditionsDeserializer extends StdDeserializer<PlanetaryCo
         if (node.has(GRAVITY)) {
             result.setGravity(node.get(GRAVITY).floatValue());
         }
-        if (node.has(PRESSURE)) {
-            result.setAtmosphere(0);
-        }
-        if (node.has(EMI)) {
-            result.setEMI(node.get(EMI).booleanValue());
+        if (node.has(EMI_TEXT)) {
+            result.setEMI(node.get(EMI_TEXT).booleanValue() ? EMI.EMI : EMI.EMI_NONE);
         }
         if (node.has(BLOWING_SAND)) {
-            result.setBlowingSand(node.get(BLOWING_SAND).booleanValue());
+            result.setBlowingSand(node.get(BLOWING_SAND).booleanValue() ?
+                    BlowingSand.BLOWING_SAND : BlowingSand.BLOWING_SAND_NONE);
         }
         if (node.has(ALLOW_TERRAIN_CHANGES)) {
             result.setTerrainAffected(node.get(ALLOW_TERRAIN_CHANGES).booleanValue());
@@ -127,13 +127,13 @@ public class PlanetaryConditionsDeserializer extends StdDeserializer<PlanetaryCo
         if (node.has(WIND)) {
             JsonNode windNode = node.get(WIND);
             if (windNode.has(WIND_STRENGTH)) {
-                result.setWindStrength(WIND_VALUES.get(windNode.get(WIND_STRENGTH).textValue()));
+                result.setWind(WIND_VALUES.get(windNode.get(WIND_STRENGTH).textValue()));
             }
             if (windNode.has(WIND_MIN)) {
-                result.setMinWindStrength(WIND_VALUES.get(windNode.get(WIND_MIN).textValue()));
+                result.setWindMin(WIND_VALUES.get(windNode.get(WIND_MIN).textValue()));
             }
             if (windNode.has(WIND_MAX)) {
-                result.setMaxWindStrength(WIND_VALUES.get(windNode.get(WIND_MAX).textValue()));
+                result.setWindMax(WIND_VALUES.get(windNode.get(WIND_MAX).textValue()));
             }
             if (windNode.has(WIND_SHIFTING)) {
                 result.setShiftingWindDirection(windNode.get(WIND_SHIFTING).booleanValue());

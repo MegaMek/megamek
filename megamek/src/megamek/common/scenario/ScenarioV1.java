@@ -27,14 +27,16 @@ import megamek.common.icons.Camouflage;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.IOption;
 import megamek.common.options.OptionsConstants;
+import megamek.common.planetaryconditions.*;
 import megamek.common.util.BoardUtilities;
+import megamek.common.util.StringUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.server.GameManager;
 import megamek.server.IGameManager;
 import org.apache.logging.log4j.LogManager;
 
-import java.io.*;
-import java.nio.charset.StandardCharsets;
+import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.util.*;
 import java.util.function.Predicate;
@@ -549,27 +551,27 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
         }
 
         if (p.containsKey(PARAM_PLANETCOND_FOG)) {
-            g.getPlanetaryConditions().setFog(Integer.parseInt(p.getString(PARAM_PLANETCOND_FOG)));
+            g.getPlanetaryConditions().setFog(Fog.getFog(StringUtil.toInt(p.getString(PARAM_PLANETCOND_FOG), 0)));
         }
 
         if (p.containsKey(PARAM_PLANETCOND_ATMOS)) {
-            g.getPlanetaryConditions().setAtmosphere(Integer.parseInt(p.getString(PARAM_PLANETCOND_ATMOS)));
+            g.getPlanetaryConditions().setAtmosphere(Atmosphere.getAtmosphere(StringUtil.toInt(p.getString(PARAM_PLANETCOND_ATMOS),0)));
         }
 
         if (p.containsKey(PARAM_PLANETCOND_LIGHT)) {
-            g.getPlanetaryConditions().setLight(Integer.parseInt(p.getString(PARAM_PLANETCOND_LIGHT)));
+            g.getPlanetaryConditions().setLight(Light.getLight(StringUtil.toInt(p.getString(PARAM_PLANETCOND_LIGHT), 0)));
         }
 
         if (p.containsKey(PARAM_PLANETCOND_WEATHER)) {
-            g.getPlanetaryConditions().setWeather(Integer.parseInt(p.getString(PARAM_PLANETCOND_WEATHER)));
+            g.getPlanetaryConditions().setWeather(Weather.getWeather(StringUtil.toInt(p.getString(PARAM_PLANETCOND_WEATHER), 0)));
         }
 
         if (p.containsKey(PARAM_PLANETCOND_WIND)) {
-            g.getPlanetaryConditions().setWindStrength(Integer.parseInt(p.getString(PARAM_PLANETCOND_WIND)));
+            g.getPlanetaryConditions().setWind(Wind.getWind(StringUtil.toInt(p.getString(PARAM_PLANETCOND_WIND),0)));
         }
 
         if (p.containsKey(PARAM_PLANETCOND_WINDDIR)) {
-            g.getPlanetaryConditions().setWindDirection(Integer.parseInt(p.getString(PARAM_PLANETCOND_WINDDIR)));
+            g.getPlanetaryConditions().setWindDirection(WindDirection.getWindDirection(StringUtil.toInt(p.getString(PARAM_PLANETCOND_WINDDIR),0)));
         }
 
         if (p.containsKey(PARAM_PLANETCOND_WINDSHIFTINGDIR)) {
@@ -581,15 +583,16 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
         }
 
         if (p.containsKey(PARAM_PLANETCOND_WINDMIN)) {
-            g.getPlanetaryConditions().setMinWindStrength(Integer.parseInt(p.getString(PARAM_PLANETCOND_WINDMIN)));
+            g.getPlanetaryConditions().setWindMin(Wind.getWind(StringUtil.toInt(p.getString(PARAM_PLANETCOND_WINDMIN), 0)));
         }
 
         if (p.containsKey(PARAM_PLANETCOND_WINDMAX)) {
-            g.getPlanetaryConditions().setMaxWindStrength(Integer.parseInt(p.getString(PARAM_PLANETCOND_WINDMAX)));
+            g.getPlanetaryConditions().setWindMax(Wind.getWind(StringUtil.toInt(p.getString(PARAM_PLANETCOND_WINDMAX), 0)));
         }
 
         if (p.containsKey(PARAM_PLANETCOND_EMI)) {
-            g.getPlanetaryConditions().setEMI(parseBoolean(p, PARAM_PLANETCOND_EMI, false));
+            EMI emi = parseBoolean(p, PARAM_PLANETCOND_EMI, false) ? EMI.EMI : EMI.EMI_NONE;
+            g.getPlanetaryConditions().setEMI(emi);
         }
 
         if (p.containsKey(PARAM_PLANETCOND_TERRAINCHANGES)) {
@@ -597,7 +600,8 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
         }
 
         if (p.containsKey(PARAM_PLANETCOND_BLOWINGSAND)) {
-            g.getPlanetaryConditions().setBlowingSand(parseBoolean(p, PARAM_PLANETCOND_BLOWINGSAND, false));
+            BlowingSand blowingSand = parseBoolean(p, PARAM_PLANETCOND_BLOWINGSAND, false) ? BlowingSand.BLOWING_SAND : BlowingSand.BLOWING_SAND_NONE;
+            g.getPlanetaryConditions().setBlowingSand(blowingSand);
         }
     }
 

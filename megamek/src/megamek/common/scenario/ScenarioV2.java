@@ -28,6 +28,7 @@ import megamek.common.enums.GamePhase;
 import megamek.common.icons.Camouflage;
 import megamek.common.icons.FileCamouflage;
 import megamek.common.jacksonadapters.MMUReader;
+import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.common.strategicBattleSystems.SBFGame;
 import megamek.server.IGameManager;
 import org.apache.logging.log4j.LogManager;

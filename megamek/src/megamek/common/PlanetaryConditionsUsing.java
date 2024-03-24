@@ -20,9 +20,20 @@ package megamek.common;
 
 import megamek.common.planetaryconditions.PlanetaryConditions;
 
+/**
+ * This interface is meant to be implemented by IGame subclasses (game types) that use planetary conditions.
+ */
 public interface PlanetaryConditionsUsing {
 
+    /**
+     * @return This game's planetary conditions
+     */
     PlanetaryConditions getPlanetaryConditions();
 
+    /**
+     * Sets this game's planetary conditions.
+     *
+     * @param conditions The new conditions
+     */
     void setPlanetaryConditions(PlanetaryConditions conditions);
 }

@@ -46,7 +46,6 @@ public class ScenarioV2 implements Scenario {
     private static final String ROWS = "rows";
     private static final String UNITS = "units";
 
-
     private final JsonNode node;
     private final File scenariofile;
 
@@ -161,8 +160,6 @@ public class ScenarioV2 implements Scenario {
         }
     }
 
-
-
     @Override
     public void applyDamage(IGameManager gameManager) {
         //TODO
@@ -204,23 +201,7 @@ public class ScenarioV2 implements Scenario {
             teamId = playerNode.has(PARAM_TEAM) ? playerNode.get(PARAM_TEAM).intValue() : teamId + 1;
             player.setTeam(Math.min(teamId, Player.TEAM_NAMES.length - 1));
 
-//            String minefields = p.getString(getFactionParam(faction, PARAM_MINEFIELDS));
-//            if ((minefields != null) && !minefields.isEmpty()) {
-//                String[] mines = minefields.split(SEPARATOR_COMMA, -1);
-//                if (mines.length >= 3) {
-//                    try {
-//                        int minesConventional = Integer.parseInt(mines[0]);
-//                        int minesCommand = Integer.parseInt(mines[1]);
-//                        int minesVibra = Integer.parseInt(mines[2]);
-//                        player.setNbrMFConventional(minesConventional);
-//                        player.setNbrMFCommand(minesCommand);
-//                        player.setNbrMFVibra(minesVibra);
-//                    } catch (NumberFormatException nfex) {
-//                        LogManager.getLogger().error(String.format("Format error with minefields string '%s' for %s",
-//                                minefields, faction));
-//                    }
-//                }
-//            }
+            //TODO minefields
 
             JsonNode unitsNode = playerNode.get(UNITS);
             if (game instanceof Game) {
@@ -264,33 +245,14 @@ public class ScenarioV2 implements Scenario {
             return loadBoard(mapNode.textValue());
         }
 
+        //TODO: Board handling - this is incomplete, compare ScenarioV1
+
         // more complex map setup
         int mapWidth = 16;
         int mapHeight = 17;
         int columns = mapNode.has(COLUMNS) ? mapNode.get(COLUMNS).intValue() : 1;
         int rows = mapNode.has(ROWS) ? mapNode.get(ROWS).intValue() : 1;
 
-//
-//            LogManager.getLogger().info("No map width specified; using " + mapWidth);
-//        } else {
-//            mapWidth = Integer.parseInt(p.getString(PARAM_MAP_WIDTH));
-//        }
-//
-//        if (p.getString(PARAM_MAP_HEIGHT) == null) {
-//            LogManager.getLogger().info("No map height specified; using " + mapHeight);
-//        } else {
-//            mapHeight = Integer.parseInt(p.getString(PARAM_MAP_HEIGHT));
-//        }
-
-//        LogManager.getLogger().debug(String.format("Mapsheets are %d by %d hexes.", mapWidth, mapHeight));
-//        LogManager.getLogger().debug(String.format("Constructing %d by %d board.", nWidth, nHeight));
-//        int cf = 0;
-//        if (p.getString(PARAM_BRIDGE_CF) == null) {
-//            LogManager.getLogger().debug("No CF for bridges defined. Using map file defaults.");
-//        } else {
-//            cf = Integer.parseInt(p.getString(PARAM_BRIDGE_CF));
-//            LogManager.getLogger().debug("Overriding map-defined bridge CFs with " + cf);
-//        }
         // load available boards
         // basically copied from Server.java. Should get moved somewhere neutral
         List<String> boards = new ArrayList<>();
@@ -300,67 +262,6 @@ public class ScenarioV2 implements Scenario {
         // "" entry stands for the boards base directory
         allDirs.add("");
 
-//        if (p.getString(PARAM_MAP_DIRECTORIES) != null) {
-//            allDirs = Arrays.asList(p.getString(PARAM_MAP_DIRECTORIES)
-//                    .split(SEPARATOR_COMMA, -1));
-//        }
-//
-//        for (String dir: allDirs) {
-//            File curDir = new File(Configuration.boardsDir(), dir);
-//            if (curDir.exists()) {
-//                for (String file : curDir.list()) {
-//                    if (file.toLowerCase(Locale.ROOT).endsWith(FILE_SUFFIX_BOARD)) {
-//                        boards.add(dir+"/"+file.substring(0, file.length() - FILE_SUFFIX_BOARD.length()));
-//                    }
-//                }
-//            }
-//        }
-//
-//        Board[] ba = new Board[nWidth * nHeight];
-//        Queue<String> maps = new LinkedList<>(
-//                Arrays.asList(p.getString(PARAM_MAPS).split(SEPARATOR_COMMA, -1)));
-//        List<Boolean> rotateBoard = new ArrayList<>();
-//        for (int x = 0; x < nWidth; x++) {
-//            for (int y = 0; y < nHeight; y++) {
-//                int n = (y * nWidth) + x;
-//                String board = MAP_RANDOM;
-//                if (!maps.isEmpty()) {
-//                    board = maps.poll();
-//                }
-//                LogManager.getLogger().debug(String.format("(%d,%d) %s", x, y, board));
-//
-//                boolean isRotated = false;
-//                if (board.startsWith(Board.BOARD_REQUEST_ROTATION)) {
-//                    isRotated = true;
-//                    board = board.substring(Board.BOARD_REQUEST_ROTATION.length());
-//                }
-//
-//                String sBoardFile;
-//                if (board.equals(MAP_RANDOM)) {
-//                    sBoardFile = (boards.get(Compute.randomInt(boards.size()))) + FILE_SUFFIX_BOARD;
-//                } else {
-//                    sBoardFile = board + FILE_SUFFIX_BOARD;
-//                }
-//                File fBoard = new MegaMekFile(Configuration.boardsDir(), sBoardFile).getFile();
-//                if (!fBoard.exists()) {
-//                    throw new ScenarioLoaderException("ScenarioLoaderException.nonexistantBoard", board);
-//                }
-//                ba[n] = new Board();
-//                ba[n].load(new MegaMekFile(Configuration.boardsDir(), sBoardFile).getFile());
-//                if (cf > 0) {
-//                    ba[n].setBridgeCF(cf);
-//                }
-//                BoardUtilities.flip(ba[n], isRotated, isRotated);
-//                rotateBoard.add(isRotated);
-//            }
-//        }
-//
-//        // if only one board just return it.
-//        if (ba.length == 1) {
-//            return ba[0];
-//        }
-        // construct the big board
-//        return BoardUtilities.combine(mapWidth, mapHeight, nWidth, nHeight, ba, rotateBoard, MapSettings.MEDIUM_GROUND);
         return null;
     }
 

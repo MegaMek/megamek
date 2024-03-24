@@ -23,7 +23,6 @@ import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.GamePhase;
 import megamek.common.event.GameEvent;
-import megamek.common.event.GameListener;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryconditions.PlanetaryConditions;
@@ -32,6 +31,9 @@ import org.apache.logging.log4j.LogManager;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * This is an SBF game's game object that holds all game information. As of 2024, this is under construction.
+ */
 public class SBFGame extends AbstractGame implements PlanetaryConditionsUsing {
 
     private GameOptions options = new GameOptions(); //TODO: SBFGameOptions()
@@ -61,11 +63,6 @@ public class SBFGame extends AbstractGame implements PlanetaryConditionsUsing {
 
     @Override
     public void fireGameEvent(GameEvent event) {
-
-    }
-
-    @Override
-    public void addGameListener(GameListener listener) {
 
     }
 

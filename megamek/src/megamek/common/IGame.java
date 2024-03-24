@@ -162,7 +162,7 @@ public interface IGame {
      * Sets the given board as the game's board with the given boardId, possibly replacing the former board
      * of the same id. -- This method is written with the idea that a game might have more than one board.
      * Currently, the boardId will be ignored and the given board will be the game's single board. --
-     * This method is meant as a server-side method and will not
+     * This method is meant as a server-side method.
      *
      * @param board The board to use
      * @param boardId (currently ignored) The boardId to assing to that board

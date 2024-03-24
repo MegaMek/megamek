@@ -30,6 +30,9 @@ import org.apache.logging.log4j.LogManager;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * This class manages an SBF game on the server side. As of 2024, this is under construction.
+ */
 public class SBFGameManager implements IGameManager {
 
     private IGame game;

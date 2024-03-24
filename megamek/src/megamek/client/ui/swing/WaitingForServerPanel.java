@@ -25,7 +25,7 @@ import javax.swing.*;
 import java.awt.*;
 
 /**
- * This panel shows the centered notice saying "Under Construction" with a warning sign above.
+ * This panel shows the centered notice saying "Waiting for Server".
  */
 public class WaitingForServerPanel extends JPanel {
 

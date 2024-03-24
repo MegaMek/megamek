@@ -1447,7 +1447,7 @@ public class ClientGUI extends JPanel implements BoardViewListener, IClientGUI,
                 }
                 break;
             default:
-                component = new JLabel(Messages.getString("ClientGUI.waitingOnTheServer"));
+                component = new WaitingForServerPanel();
                 main = CG_DEFAULT;
                 secondary = main;
                 component.setName(main);

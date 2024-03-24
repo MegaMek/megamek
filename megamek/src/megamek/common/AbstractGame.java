@@ -18,6 +18,7 @@
  */
 package megamek.common;
 
+import megamek.common.event.GameListener;
 import megamek.common.force.Forces;
 
 import java.util.*;
@@ -38,6 +39,8 @@ public abstract class AbstractGame implements IGame {
 
     /** The teams present in the game. */
     protected final CopyOnWriteArrayList<Team> teams = new CopyOnWriteArrayList<>();
+
+    private transient List<GameListener> gameListeners = new ArrayList<>();
 
     /**
      * The forces present in the game. The top level force holds all forces and force-less entities
@@ -95,5 +98,44 @@ public abstract class AbstractGame implements IGame {
     @Override
     public List<InGameObject> getInGameObjects() {
         return new ArrayList<>(inGameObjects.values());
+    }
+
+    /**
+     * Adds the specified game listener to receive board events from this board.
+     *
+     * @param listener the game listener.
+     */
+    public void addGameListener(GameListener listener) {
+        // Since gameListeners is transient, it could be null
+        if (gameListeners == null) {
+            gameListeners = new Vector<>();
+        }
+        gameListeners.add(listener);
+    }
+
+    /**
+     * Removes the specified game listener.
+     *
+     * @param listener the game listener.
+     */
+    public void removeGameListener(GameListener listener) {
+        // Since gameListeners is transient, it could be null
+        if (gameListeners == null) {
+            gameListeners = new Vector<>();
+        }
+        gameListeners.remove(listener);
+    }
+
+    /**
+     * Returns all the GameListeners.
+     *
+     * @return
+     */
+    public List<GameListener> getGameListeners() {
+        // Since gameListeners is transient, it could be null
+        if (gameListeners == null) {
+            gameListeners = new Vector<>();
+        }
+        return Collections.unmodifiableList(gameListeners);
     }
 }

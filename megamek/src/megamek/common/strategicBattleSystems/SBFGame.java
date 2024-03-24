@@ -1,15 +1,36 @@
+/*
+ * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ */
 package megamek.common.strategicBattleSystems;
 
 import megamek.common.*;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.GamePhase;
+import megamek.common.event.GameEvent;
+import megamek.common.event.GameListener;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryconditions.PlanetaryConditions;
 import org.apache.logging.log4j.LogManager;
 
 import java.util.Collections;
+import java.util.List;
 
 public class SBFGame extends AbstractGame implements PlanetaryConditionsUsing {
 
@@ -39,6 +60,16 @@ public class SBFGame extends AbstractGame implements PlanetaryConditionsUsing {
     }
 
     @Override
+    public void fireGameEvent(GameEvent event) {
+
+    }
+
+    @Override
+    public void addGameListener(GameListener listener) {
+
+    }
+
+    @Override
     public boolean isForceVictory() { //TODO This should not be part of IGame! too specific
         return false;
     }
@@ -57,6 +88,11 @@ public class SBFGame extends AbstractGame implements PlanetaryConditionsUsing {
     }
 
     @Override
+    public void setPlayer(int id, Player player) {
+
+    }
+
+    @Override
     public void removePlayer(int id) {
 
     }
@@ -69,6 +105,11 @@ public class SBFGame extends AbstractGame implements PlanetaryConditionsUsing {
     @Override
     public int getNextEntityId() {
         return Collections.max(inGameObjects.keySet()) + 1;
+    }
+
+    @Override
+    public void replaceUnits(List<InGameObject> units) {
+
     }
 
     @Override

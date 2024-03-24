@@ -15,7 +15,9 @@
 package megamek.client.ui.swing;
 
 import megamek.MMConstants;
+import megamek.client.AbstractClient;
 import megamek.client.Client;
+import megamek.client.IClient;
 import megamek.client.TimerSingleton;
 import megamek.client.bot.BotClient;
 import megamek.client.bot.princess.BehaviorSettings;
@@ -348,10 +350,13 @@ public class ClientGUI extends JPanel implements BoardViewListener, IClientGUI,
      * clean up after itself as much as possible, but will not call
      * System.exit().
      */
-    public ClientGUI(Client client, MegaMekController c) {
+    public ClientGUI(IClient client, MegaMekController c) {
         super(new BorderLayout());
         this.addComponentListener(this);
-        this.client = client;
+        if (!(client instanceof Client)) {
+            throw new IllegalArgumentException("TW ClientGUI must use TW Client!");
+        }
+        this.client = (Client) client;
         controller = c;
         panMain.setLayout(cardsMain);
         panSecondary.setLayout(cardsSecondary);
@@ -2336,9 +2341,7 @@ public class ClientGUI extends JPanel implements BoardViewListener, IClientGUI,
             bv.clearMovementData();
             bv.clearFieldOfFire();
             bv.clearSensorsRanges();
-            for (Client client2 : getLocalBots().values()) {
-                client2.die();
-            }
+            getLocalBots().values().forEach(AbstractClient::die);
             getLocalBots().clear();
 
             // Make a list of the player's living units.
@@ -2644,8 +2647,8 @@ public class ClientGUI extends JPanel implements BoardViewListener, IClientGUI,
         return client;
     }
 
-    public Map<String, Client> getLocalBots() {
-        return client.localBots;
+    public Map<String, AbstractClient> getLocalBots() {
+        return client.getBots();
     }
 
     /**

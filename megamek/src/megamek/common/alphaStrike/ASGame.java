@@ -2,7 +2,10 @@ package megamek.common.alphaStrike;
 
 import megamek.common.*;
 import megamek.common.enums.GamePhase;
+import megamek.common.event.GameEvent;
 import megamek.common.options.GameOptions;
+
+import java.util.List;
 
 public class ASGame extends AbstractGame {
 
@@ -31,12 +34,22 @@ public class ASGame extends AbstractGame {
     }
 
     @Override
+    public void fireGameEvent(GameEvent event) {
+
+    }
+
+    @Override
     public boolean isForceVictory() {
         return false;
     }
 
     @Override
     public void addPlayer(int id, Player player) {
+
+    }
+
+    @Override
+    public void setPlayer(int id, Player player) {
 
     }
 
@@ -53,6 +66,11 @@ public class ASGame extends AbstractGame {
     @Override
     public int getNextEntityId() {
         return 0;
+    }
+
+    @Override
+    public void replaceUnits(List<InGameObject> units) {
+
     }
 
     @Override

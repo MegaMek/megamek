@@ -19,13 +19,21 @@
 package megamek.client.ui.swing;
 
 import megamek.client.Client;
+import megamek.client.IClient;
+import megamek.client.SBFClient;
 import megamek.client.ui.swing.util.MegaMekController;
 
 import java.awt.*;
 
 public class SBFClientGUI extends AbstractClientGUI {
 
-    public SBFClientGUI(Client client, MegaMekController c) {
+    private final SBFClient client;
+
+    public SBFClientGUI(IClient client, MegaMekController c) {
+        if (!(client instanceof SBFClient)) {
+            throw new IllegalArgumentException("SBF ClientGUI must use SBF Client!");
+        }
+        this.client = (SBFClient) client;
         frame.getContentPane().setLayout(new BorderLayout());
         frame.getContentPane().add(new UnderConstructionPanel(), BorderLayout.CENTER);
         frame.setVisible(true);

@@ -3,6 +3,7 @@
  * Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
  * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
  * Copyright (c) 2020 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -20,6 +21,8 @@ import megamek.MMConstants;
 import megamek.MegaMek;
 import megamek.Version;
 import megamek.client.Client;
+import megamek.client.IClient;
+import megamek.client.SBFClient;
 import megamek.client.bot.BotClient;
 import megamek.client.bot.princess.Princess;
 import megamek.client.bot.ui.swing.BotGUI;
@@ -82,7 +85,6 @@ import java.util.*;
 import java.util.zip.GZIPInputStream;
 
 import static megamek.common.Compute.d6;
-import static megamek.common.Compute.getAdjacentEntitiesAlongAttack;
 
 public class MegaMekGUI implements IPreferenceChangeListener {
     private static final String FILENAME_MEGAMEK_SPLASH = "../misc/megamek_splash_spooky_hd.png";
@@ -92,7 +94,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
     private static final String FILENAME_ICON_256X256 = "megamek-icon-256x256.png";
 
     private JFrame frame;
-    private Client client;
+    private IClient client;
     private Server server;
     private IGameManager gameManager;
     private CommonSettingsDialog settingsDialog;
@@ -480,7 +482,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         }
     }
 
-    private IClientGUI getClientGUI(GameType gameType, Client client, MegaMekController controller) {
+    private IClientGUI getClientGUI(GameType gameType, IClient client, MegaMekController controller) {
         switch (gameType) {
             /*
             Not implemented:
@@ -493,6 +495,22 @@ public class MegaMekGUI implements IPreferenceChangeListener {
                 return new SBFClientGUI(client, controller);
             default:
                 return new ClientGUI(client, controller);
+        }
+    }
+
+    private IClient getClient(GameType gameType, String playerName, String host, int port) {
+        switch (gameType) {
+            /*
+            Not implemented:
+            case AS:
+                return new ASGameManager();
+            case BF:
+                return new BFGameManager();
+             */
+            case SBF:
+                return new SBFClient(playerName, host, port);
+            default:
+                return new Client(playerName, host, port);
         }
     }
 
@@ -516,8 +534,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
 
         // delete PilotToolTip cache
         PilotToolTip.deleteImageCache();
-
-        client = new Client(playerName, serverAddress, port);
+        client = getClient(gameType, playerName, serverAddress, port);
         IClientGUI gui = getClientGUI(gameType, client, controller);
         controller.clientgui = gui;
         frame.setCursor(new Cursor(Cursor.WAIT_CURSOR));
@@ -885,7 +902,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         }
         client = Princess.createPrincess(bcd.getBotName(), cd.getServerAddress(), cd.getPort(),
                 bcd.getBehaviorSettings());
-        client.getGame().addGameListener(new BotGUI(frame, (BotClient) client));
+        client.getIGame().addGameListener(new BotGUI(frame, (BotClient) client));
         ClientGUI gui = new ClientGUI(client, controller);
         controller.clientgui = gui;
         gui.initialize();

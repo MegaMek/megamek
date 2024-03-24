@@ -40,6 +40,7 @@ import org.apache.logging.log4j.LogManager;
 import java.io.Serializable;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
@@ -711,6 +712,11 @@ public class Game extends AbstractGame implements Serializable, PlanetaryConditi
         processGameEvent(new GamePhaseChangeEvent(this, oldPhase, phase));
     }
 
+    @Override
+    public void fireGameEvent(GameEvent event) {
+        processGameEvent(event);
+    }
+
     public GamePhase getLastPhase() {
         return lastPhase;
     }
@@ -1284,6 +1290,11 @@ public class Game extends AbstractGame implements Serializable, PlanetaryConditi
     @Override
     public int getNextEntityId() {
         return lastEntityId + 1;
+    }
+
+    @Override
+    public void replaceUnits(List<InGameObject> units) {
+        addEntities(filterToEntity(units));
     }
 
     /**
@@ -3464,6 +3475,10 @@ public class Game extends AbstractGame implements Serializable, PlanetaryConditi
 
     /** @return The TW Units (Entity) currently in the game. */
     public List<Entity> inGameTWEntities() {
-        return inGameObjects.values().stream().filter(o -> o instanceof Entity).map(o -> (Entity) o).collect(toList());
+        return filterToEntity(inGameObjects.values());
+    }
+
+    private List<Entity> filterToEntity(Collection<? extends BTObject> objects) {
+        return objects.stream().filter(o -> o instanceof Entity).map(o -> (Entity) o).collect(toList());
     }
 }

@@ -51,8 +51,7 @@ public abstract class AbstractClient implements IClient {
     protected final String host;
     protected final int port;
     private ConnectionHandler packetUpdate;
-    private Vector<CloseClientListener> closeClientListeners = new Vector<>();
-
+    private final Vector<CloseClientListener> closeClientListeners = new Vector<>();
 
     /** The ID of the local player (the player connected through this client) */
     protected int localPlayerNumber = -1;
@@ -128,6 +127,10 @@ public abstract class AbstractClient implements IClient {
 
         if (connection != null) {
             connection.close();
+        }
+
+        for (int i = 0; i < closeClientListeners.size(); i++) {
+            closeClientListeners.elementAt(i).clientClosed();
         }
 
         if (log != null) {

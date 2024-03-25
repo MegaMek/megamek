@@ -680,7 +680,7 @@ public class EntityListFile {
         }
     }
 
-    private static void writeEntityList(Writer output, ArrayList<Entity> list) throws IOException {
+    public static void writeEntityList(Writer output, ArrayList<Entity> list) throws IOException {
         // Walk through the list of entities.
         Iterator<Entity> items = list.iterator();
         while (items.hasNext()) {

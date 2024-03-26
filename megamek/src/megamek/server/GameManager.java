@@ -22641,14 +22641,10 @@ public class GameManager implements IGameManager {
 
                     // divide damage in half
                     // do not divide by half if it is an ammo explosion
+                    // Minimum SI damage is now 1 (per errata: https://bg.battletech.com/forums/index.php?topic=81913.0 )
                     if (!ammoExplosion && !nukeS2S
                             && !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
-                        damage /= 2;
-                    }
-
-                    // this should result in a crit
-                    // but only if it really did damage after rounding down
-                    if (damage > 0) {
+                        damage = (int) Math.round(damage / 2.0);
                         critSI = true;
                     }
 

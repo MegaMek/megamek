@@ -134,25 +134,16 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
         load();
     }
 
-    /**
-     * @return The name of the scenario; keyword {@link ScenarioLoader#NAME}
-     */
     @Override
     public String getName() {
         return getString(NAME);
     }
 
-    /**
-     * @return The description of the scenario; keyword {@link ScenarioLoader#DESCRIPTION}
-     */
     @Override
     public String getDescription() {
         return getString(DESCRIPTION);
     }
 
-    /**
-     * @return The filename including directories of the scenario
-     */
     @Override
     public String getFileName() {
         return file.toString();
@@ -168,36 +159,6 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
                 put(keyword, elements[1].trim());
             }
         }
-//        ScenarioV1 props = new ScenarioV1();
-//        put("filename", List.of(file.toString()));
-//        try (FileInputStream fis = new FileInputStream(file);
-//             InputStreamReader isr = new InputStreamReader(fis, StandardCharsets.UTF_8);
-//             BufferedReader br = new BufferedReader(isr)) {
-//            String line;
-//            int lineNum = 0;
-//            while ((line = br.readLine()) != null) {
-//                lineNum++;
-//                line = line.trim();
-//                if (line.startsWith(COMMENT_MARK) || line.isBlank()) {
-//                    continue;
-//                } else if (!line.contains(SEPARATOR_PROPERTY)) {
-//                    LogManager.getLogger().error(String.format("Equality sign in scenario file %s on line %d missing; ignoring",
-//                            file, lineNum));
-//                    continue;
-//                }
-//                String[] elements = line.split(SEPARATOR_PROPERTY, -1);
-//                if (elements.length > 2) {
-//                    LogManager.getLogger().error(String.format("Multiple equality signs in scenario file %s on line %d; ignoring",
-//                            file, lineNum));
-//                    continue;
-//                }
-//                put(elements[0].trim(), elements[1].trim());
-//            }
-//        } catch (IOException e) {
-//            LogManager.getLogger().error("", e);
-////            throw new ScenarioLoaderException("exceptionReadingFile", file.toString());
-//        }
-////        return props;
     }
 
     public static List<String> readLines(File file, Predicate<String> isCommentLine) throws IOException {
@@ -1049,13 +1010,9 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
     private boolean parseBoolean(ScenarioV1 p, String key, boolean defaultValue) {
         boolean result = defaultValue;
         if (p.containsKey(key)) {
-            if (p.getString(key).equalsIgnoreCase("true")
+            result = p.getString(key).equalsIgnoreCase("true")
                     || p.getString(key).equalsIgnoreCase("on")
-                    || p.getString(key).equalsIgnoreCase("1")) {
-                result = true;
-            } else {
-                result = false;
-            }
+                    || p.getString(key).equalsIgnoreCase("1");
         }
         return result;
     }
@@ -1077,7 +1034,7 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
      * This class is used to store the critical hit plan for a entity it is
      * loaded from the scenario file. It contains a vector of CritHit.
      */
-    private class CritHitPlan {
+    private static class CritHitPlan {
         public Entity entity;
         List<CritHit> critHits = new ArrayList<>();
 
@@ -1125,7 +1082,7 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
      * This class is used to store the ammo Adjustments it is loaded from the
      * scenario file. It contains a vector of SetAmmoTo.
      */
-    private class SetAmmoPlan {
+    private static class SetAmmoPlan {
         public final Entity entity;
         public final List<SetAmmoTo> ammoSetTo = new ArrayList<>();
         public final List<SetAmmoType> ammoSetType = new ArrayList<>();
@@ -1184,7 +1141,7 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
      * This class is used to store the damage plan for a entity it is loaded
      * from the scenario file. It contains a vector of SpecDam.
      */
-    private class DamagePlan {
+    private static class DamagePlan {
         public final Entity entity;
         public final int nBlocks;
         public final List<SpecDam> specificDammage = new ArrayList<>();

@@ -71,8 +71,14 @@ public interface Scenario {
     String PARAM_CAMO = "camo";
     String PARAM_ALTITUDE = "altitude";
 
+    /**
+     * @return The name (title) of the scenario.
+     */
     String getName();
 
+    /**
+     * @return The description for the scenario.
+     */
     String getDescription();
 
     String getFileName();

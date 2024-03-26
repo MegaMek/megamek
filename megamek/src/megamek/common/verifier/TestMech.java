@@ -1018,8 +1018,7 @@ public class TestMech extends TestEntity {
                     buff.append("industrial mech can't mount ").append(misc.getName()).append("\n");
                     illegal = true;                    
                 }
-                if ((mech.getCockpitType() == Mech.COCKPIT_INDUSTRIAL
-                        || mech.getCockpitType() == Mech.COCKPIT_PRIMITIVE_INDUSTRIAL)
+                if (!mech.hasAdvancedFireControl()
                     && (misc.hasFlag(MiscType.F_TARGCOMP)
                         || misc.hasFlag(MiscType.F_ARTEMIS)
                         || misc.hasFlag(MiscType.F_ARTEMIS_PROTO)

@@ -3438,13 +3438,11 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             toHit.addModifier(1, Messages.getString("WeaponAttackAction.HeavyArmor"));
         }
 
-        // industrial cockpit: +1 to hit
-        if ((ae instanceof Mech) && (((Mech) ae).getCockpitType() == Mech.COCKPIT_INDUSTRIAL)) {
-            toHit.addModifier(1, Messages.getString("WeaponAttackAction.IndustrialNoAfc"));
-        }
-        // primitive industrial cockpit: +2 to hit
+        // industrial cockpit: +1 to hit, +2 for primitive
         if ((ae instanceof Mech) && (((Mech) ae).getCockpitType() == Mech.COCKPIT_PRIMITIVE_INDUSTRIAL)) {
             toHit.addModifier(2, Messages.getString("WeaponAttackAction.PrimIndustrialNoAfc"));
+        } else if ((ae instanceof Mech) && !((Mech) ae).hasAdvancedFireControl()) {
+            toHit.addModifier(1, Messages.getString("WeaponAttackAction.IndustrialNoAfc"));
         }
 
         // primitive industrial cockpit with advanced firing control: +1 to hit

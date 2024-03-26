@@ -334,10 +334,10 @@ public class FireControl {
 
         if (shooter instanceof Mech) {
             final Mech shooterMech = (Mech) shooter;
-            if (Mech.COCKPIT_INDUSTRIAL == shooterMech.getCockpitType()) {
-                toHitData.addModifier(TH_INDUSTRIAL);
-            } else if (Mech.COCKPIT_PRIMITIVE_INDUSTRIAL == shooterMech.getCockpitType()) {
+            if (Mech.COCKPIT_PRIMITIVE_INDUSTRIAL == shooterMech.getCockpitType()) {
                 toHitData.addModifier(TH_PRIMATIVE_INDUSTRIAL);
+            } else if (!shooterMech.hasAdvancedFireControl()) {
+                toHitData.addModifier(TH_INDUSTRIAL);
             }
         }
 

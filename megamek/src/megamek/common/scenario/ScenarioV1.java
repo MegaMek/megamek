@@ -137,6 +137,7 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
     /**
      * @return The name of the scenario; keyword {@link ScenarioLoader#NAME}
      */
+    @Override
     public String getName() {
         return getString(NAME);
     }
@@ -144,6 +145,7 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
     /**
      * @return The description of the scenario; keyword {@link ScenarioLoader#DESCRIPTION}
      */
+    @Override
     public String getDescription() {
         return getString(DESCRIPTION);
     }
@@ -151,6 +153,7 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
     /**
      * @return The filename including directories of the scenario
      */
+    @Override
     public String getFileName() {
         return file.toString();
     }
@@ -249,6 +252,7 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
         return super.get(key);
     }
 
+    @Override
     public IGame createGame() throws ScenarioLoaderException {
         LogManager.getLogger().info("Loading scenario from " + file);
         Game game = new Game();
@@ -1022,10 +1026,10 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
         return ExternalGameId;
     }
 
+    @Override
     public boolean hasFixedGameOptions() {
         return fixedGameOptions;
     }
-
 
     @Override
     public boolean hasFixedPlanetaryConditions() {

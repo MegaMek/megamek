@@ -18,6 +18,7 @@
  */
 package megamek.common;
 
+import megamek.common.event.GameEvent;
 import megamek.common.event.GameListener;
 import megamek.common.force.Forces;
 
@@ -40,7 +41,7 @@ public abstract class AbstractGame implements IGame {
     /** The teams present in the game. */
     protected final CopyOnWriteArrayList<Team> teams = new CopyOnWriteArrayList<>();
 
-    private transient List<GameListener> gameListeners = new ArrayList<>();
+    protected transient CopyOnWriteArrayList<GameListener> gameListeners = new CopyOnWriteArrayList<>();
 
     /**
      * The forces present in the game. The top level force holds all forces and force-less entities
@@ -105,10 +106,11 @@ public abstract class AbstractGame implements IGame {
      *
      * @param listener the game listener.
      */
+    @Override
     public void addGameListener(GameListener listener) {
         // Since gameListeners is transient, it could be null
         if (gameListeners == null) {
-            gameListeners = new Vector<>();
+            gameListeners = new CopyOnWriteArrayList<>();
         }
         gameListeners.add(listener);
     }
@@ -121,21 +123,34 @@ public abstract class AbstractGame implements IGame {
     public void removeGameListener(GameListener listener) {
         // Since gameListeners is transient, it could be null
         if (gameListeners == null) {
-            gameListeners = new Vector<>();
+            gameListeners = new CopyOnWriteArrayList<>();
         }
         gameListeners.remove(listener);
     }
 
     /**
-     * Returns all the GameListeners.
-     *
-     * @return
+     * @return All registered GameListeners.
      */
     public List<GameListener> getGameListeners() {
         // Since gameListeners is transient, it could be null
         if (gameListeners == null) {
-            gameListeners = new Vector<>();
+            gameListeners = new CopyOnWriteArrayList<>();
         }
         return Collections.unmodifiableList(gameListeners);
+    }
+
+
+    /**
+     * Processes game events occurring on this connection by dispatching them to
+     * any registered GameListener objects.
+     *
+     * @param event the game event.
+     */
+    public void processGameEvent(GameEvent event) {
+        // Since gameListeners is transient, it could be null
+        if (gameListeners == null) {
+            gameListeners = new CopyOnWriteArrayList<>();
+        }
+        gameListeners.forEach(event::fireEvent);
     }
 }

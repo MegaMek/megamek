@@ -908,6 +908,7 @@ public class Client extends AbstractClient implements IClientCommandHandler {
     }
 
     @SuppressWarnings("unchecked")
+    @Override
     protected boolean handleGameSpecificPacket(Packet packet) throws Exception {
         if (packet == null) {
             LogManager.getLogger().error("Client: got null packet");

@@ -40,7 +40,6 @@ import org.apache.logging.log4j.LogManager;
 import java.io.Serializable;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
@@ -147,8 +146,6 @@ public class Game extends AbstractGame implements Serializable, PlanetaryConditi
 
     // smoke clouds
     private List<SmokeCloud> smokeCloudList = new CopyOnWriteArrayList<>();
-
-    private transient Vector<GameListener> gameListeners = new Vector<>();
 
     /**
      * Stores princess behaviors for game factions. It does not indicate that a faction is currently
@@ -410,6 +407,7 @@ public class Game extends AbstractGame implements Serializable, PlanetaryConditi
         updatePlayer(player);
     }
 
+    @Override
     public void setPlayer(int id, Player player) {
         player.setGame(this);
         players.put(id, player);
@@ -678,6 +676,7 @@ public class Game extends AbstractGame implements Serializable, PlanetaryConditi
         return phase;
     }
 
+    @Override
     public void setPhase(GamePhase phase) {
         final GamePhase oldPhase = this.phase;
         this.phase = phase;
@@ -2953,72 +2952,6 @@ public class Game extends AbstractGame implements Serializable, PlanetaryConditi
     }
 
     /**
-     * Adds the specified game listener to receive board events from this board.
-     *
-     * @param listener the game listener.
-     */
-    public void addGameListener(GameListener listener) {
-        // Since gameListeners is transient, it could be null
-        if (gameListeners == null) {
-            gameListeners = new Vector<>();
-        }
-        gameListeners.addElement(listener);
-    }
-
-    /**
-     * Removes the specified game listener.
-     *
-     * @param listener the game listener.
-     */
-    public void removeGameListener(GameListener listener) {
-        // Since gameListeners is transient, it could be null
-        if (gameListeners == null) {
-            gameListeners = new Vector<>();
-        }
-        gameListeners.removeElement(listener);
-    }
-
-    /**
-     * Returns all the GameListeners.
-     *
-     * @return
-     */
-    public List<GameListener> getGameListeners() {
-        // Since gameListeners is transient, it could be null
-        if (gameListeners == null) {
-            gameListeners = new Vector<>();
-        }
-        return Collections.unmodifiableList(gameListeners);
-    }
-
-    /**
-     * purges all Game Listener objects.
-     */
-    public void purgeGameListeners() {
-        // Since gameListeners is transient, it could be null
-        if (gameListeners == null) {
-            gameListeners = new Vector<>();
-        }
-        gameListeners.clear();
-    }
-
-    /**
-     * Processes game events occurring on this connection by dispatching them to
-     * any registered GameListener objects.
-     *
-     * @param event the game event.
-     */
-    public void processGameEvent(GameEvent event) {
-        // Since gameListeners is transient, it could be null
-        if (gameListeners == null) {
-            gameListeners = new Vector<>();
-        }
-        for (Enumeration<GameListener> e = gameListeners.elements(); e.hasMoreElements(); ) {
-            event.fireEvent(e.nextElement());
-        }
-    }
-
-    /**
      * @return this turn's TAG information
      */
     public Vector<TagInfo> getTagInfo() {
@@ -3267,10 +3200,12 @@ public class Game extends AbstractGame implements Serializable, PlanetaryConditi
                 (e instanceof SmallCraft) && getTurn().isValidEntity(e, this));
     }
 
+    @Override
     public PlanetaryConditions getPlanetaryConditions() {
         return planetaryConditions;
     }
 
+    @Override
     public void setPlanetaryConditions(final @Nullable PlanetaryConditions conditions) {
         if (conditions == null) {
             LogManager.getLogger().error("Can't set the planetary conditions to null!");

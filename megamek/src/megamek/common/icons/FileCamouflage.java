@@ -46,6 +46,7 @@ public class FileCamouflage extends Camouflage {
         this.file = file;
     }
 
+    @Override
     public boolean isColourCamouflage() {
         return false;
     }

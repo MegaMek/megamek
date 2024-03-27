@@ -41,7 +41,7 @@ public abstract class AbstractGame implements IGame {
     /** The teams present in the game. */
     protected final CopyOnWriteArrayList<Team> teams = new CopyOnWriteArrayList<>();
 
-    protected transient CopyOnWriteArrayList<GameListener> gameListeners = new CopyOnWriteArrayList<>();
+    protected transient Vector<GameListener> gameListeners = new Vector<>();
 
     /**
      * The forces present in the game. The top level force holds all forces and force-less entities
@@ -110,7 +110,7 @@ public abstract class AbstractGame implements IGame {
     public void addGameListener(GameListener listener) {
         // Since gameListeners is transient, it could be null
         if (gameListeners == null) {
-            gameListeners = new CopyOnWriteArrayList<>();
+            gameListeners = new Vector<>();
         }
         gameListeners.add(listener);
     }
@@ -123,7 +123,7 @@ public abstract class AbstractGame implements IGame {
     public void removeGameListener(GameListener listener) {
         // Since gameListeners is transient, it could be null
         if (gameListeners == null) {
-            gameListeners = new CopyOnWriteArrayList<>();
+            gameListeners = new Vector<>();
         }
         gameListeners.remove(listener);
     }
@@ -134,7 +134,7 @@ public abstract class AbstractGame implements IGame {
     public List<GameListener> getGameListeners() {
         // Since gameListeners is transient, it could be null
         if (gameListeners == null) {
-            gameListeners = new CopyOnWriteArrayList<>();
+            gameListeners = new Vector<>();
         }
         return Collections.unmodifiableList(gameListeners);
     }
@@ -149,8 +149,11 @@ public abstract class AbstractGame implements IGame {
     public void processGameEvent(GameEvent event) {
         // Since gameListeners is transient, it could be null
         if (gameListeners == null) {
-            gameListeners = new CopyOnWriteArrayList<>();
+            gameListeners = new Vector<>();
         }
-        gameListeners.forEach(event::fireEvent);
+        for (Enumeration<GameListener> e = gameListeners.elements(); e.hasMoreElements(); ) {
+            event.fireEvent(e.nextElement());
+        }
+//        gameListeners.forEach(event::fireEvent);
     }
 }

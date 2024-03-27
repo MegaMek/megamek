@@ -38,14 +38,14 @@ public class UnderConstructionPanel extends JPanel {
         JPanel textPanel = new UIUtil.FixedYPanel(new FlowLayout(FlowLayout.CENTER));
         textPanel.add(new JLabel(text));
 
-        JPanel warningSignPanel = new UIUtil.FixedYPanel(new FlowLayout(FlowLayout.CENTER));
-        JLabel warningSignLabel = new JLabel(sign);
-        warningSignLabel.setForeground(GUIPreferences.getInstance().getCautionColor());
-        warningSignPanel.add(warningSignLabel);
+        JPanel symbolPanel = new UIUtil.FixedYPanel(new FlowLayout(FlowLayout.CENTER));
+        JLabel symbolLabel = new JLabel(sign);
+        symbolLabel.setForeground(GUIPreferences.getInstance().getCautionColor());
+        symbolPanel.add(symbolLabel);
 
         setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
         add(Box.createVerticalGlue());
-        add(warningSignPanel);
+        add(symbolPanel);
         add(textPanel);
         add(Box.createVerticalGlue());
     }

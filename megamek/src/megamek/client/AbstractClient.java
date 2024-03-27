@@ -23,6 +23,7 @@ import megamek.MegaMek;
 import megamek.Version;
 import megamek.client.commands.ClientCommand;
 import megamek.common.*;
+import megamek.common.event.GamePlayerChangeEvent;
 import megamek.common.event.GamePlayerChatEvent;
 import megamek.common.event.GamePlayerDisconnectedEvent;
 import megamek.common.force.Force;
@@ -427,6 +428,7 @@ public abstract class AbstractClient implements IClient {
                 Player player = getPlayer(packet.getIntValue(0));
                 if (player != null) {
                     player.setDone(packet.getBooleanValue(1));
+                    getIGame().fireGameEvent(new GamePlayerChangeEvent(player, player));
                 }
                 break;
             case PLAYER_REMOVE:

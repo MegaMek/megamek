@@ -151,9 +151,9 @@ public abstract class AbstractGame implements IGame {
         if (gameListeners == null) {
             gameListeners = new Vector<>();
         }
+        // This iteration must allow concurrent modification of the list!
         for (Enumeration<GameListener> e = gameListeners.elements(); e.hasMoreElements(); ) {
             event.fireEvent(e.nextElement());
         }
-//        gameListeners.forEach(event::fireEvent);
     }
 }

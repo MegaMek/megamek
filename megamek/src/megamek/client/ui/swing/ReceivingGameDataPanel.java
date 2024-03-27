@@ -24,24 +24,22 @@ import megamek.client.ui.swing.util.UIUtil;
 import javax.swing.*;
 import java.awt.*;
 
-/**
- * This panel shows the centered notice saying "Waiting for Server".
- */
-public class WaitingForServerPanel extends JPanel {
+public class ReceivingGameDataPanel extends JPanel {
 
     private static final String text = "<HTML><FONT FACE=Anta SIZE=+3>"
-            + Messages.getString("ClientGUI.waitingOnTheServer");
-    private static final String sign = "<HTML><FONT FACE=Anta SIZE=+5>\u231A";
+            + Messages.getString("ClientGUI.TransmittingData");
+    private static final String sign = "<HTML><FONT FACE=Anta SIZE=+5>\u279F";
 
     /**
      * Returns a panel that shows the centered notice saying "Under Construction" with a warning sign above.
      */
-    public WaitingForServerPanel() {
+    public ReceivingGameDataPanel() {
         JPanel textPanel = new UIUtil.FixedYPanel(new FlowLayout(FlowLayout.CENTER));
         textPanel.add(new JLabel(text));
 
         JPanel symbolPanel = new UIUtil.FixedYPanel(new FlowLayout(FlowLayout.CENTER));
         JLabel symbolLabel = new JLabel(sign);
+        symbolLabel.setForeground(UIUtil.uiGreen());
         symbolPanel.add(symbolLabel);
 
         setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));

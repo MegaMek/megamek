@@ -1291,7 +1291,8 @@ public class ClientGUI extends JPanel implements BoardViewListener, IClientGUI,
                 break;
             case EXCHANGE:
                 chatlounge.killPreviewBV();
-                component = new JLabel(Messages.getString("ClientGUI.TransmittingData"));
+                component = new ReceivingGameDataPanel();
+//                component = new JLabel(Messages.getString("ClientGUI.TransmittingData"));
                 UIUtil.scaleComp(component, UIUtil.FONT_SCALE1);
                 main = CG_EXCHANGE;
                 component.setName(main);

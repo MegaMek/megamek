@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 
 /**
  * Controls to set options for force generator.
- * 
+ *
  * @author Neoancient
  */
 public class ForceGeneratorOptionsView extends JPanel implements FocusListener, ActionListener {
@@ -61,7 +61,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
     private JCheckBox chkRoleInfantrySupport;
     private JCheckBox chkRoleCavalry;
     private JCheckBox chkRoleRaider;
-    private JCheckBox chkRoleIncindiary;
+    private JCheckBox chkRoleIncendiary;
     private JCheckBox chkRoleAntiAircraft;
     private JCheckBox chkRoleAntiInfantry;
     private JCheckBox chkRoleArtillery;
@@ -328,10 +328,10 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         gbc.gridy = 1;
         panGroundRole.add(chkRoleRaider, gbc);
 
-        chkRoleIncindiary = createMissionRoleCheck(MissionRole.INCENDIARY);
+        chkRoleIncendiary = createMissionRoleCheck(MissionRole.INCENDIARY);
         gbc.gridx = 1;
         gbc.gridy = 1;
-        panGroundRole.add(chkRoleIncindiary, gbc);
+        panGroundRole.add(chkRoleIncendiary, gbc);
 
         chkRoleAntiAircraft = createMissionRoleCheck(MissionRole.ANTI_AIRCRAFT);
         gbc.gridx = 2;
@@ -474,7 +474,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
                     if (chkRoleRaider.isSelected()) {
                         fd.getRoles().add(MissionRole.RAIDER);
                     }
-                    if (chkRoleIncindiary.isSelected()) {
+                    if (chkRoleIncendiary.isSelected()) {
                         fd.getRoles().add(MissionRole.INCENDIARY);
                     }
                     if (chkRoleAntiAircraft.isSelected()) {
@@ -904,7 +904,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
 
     /**
      * Searches recursively for nodes that are flagged with C3 networks and configures them.
-     * 
+     *
      * @param fd
      */
     private void configureNetworks(ForceDescriptor fd) {

@@ -54,7 +54,7 @@ public class ModelRecord extends AbstractUnitRecord {
     private double longRange; //proportion of weapon BV with range >= 20 hexes
     private int speed;
     private double ammoRequirement; //used to determine suitability for raider role
-    private boolean incendiary; //used to determine suitability for incindiary role
+    private boolean incendiary; //used to determine suitability for incendiary role
     private boolean apWeapons; //used to determine suitability for anti-infantry role
 
     private boolean mechanizedBA;

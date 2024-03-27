@@ -20,7 +20,7 @@ import megamek.common.UnitType;
 
 /**
  * Used to adjust availability to conform to a particular mission role.
- * 
+ *
  * @author Neoancient
  */
 public enum MissionRole {
@@ -44,8 +44,8 @@ public enum MissionRole {
     /* Infantry roles */
     MARINE, MOUNTAINEER, XCT, PARATROOPER, ANTI_MEK, FIELD_GUN,
     /* allows artillery but does not filter out all other roles */
-    MIXED_ARTILLERY; 
-    
+    MIXED_ARTILLERY;
+
     public boolean fitsUnitType(int unitType) {
         switch (this) {
             case RECON:
@@ -151,7 +151,7 @@ public enum MissionRole {
                 return false;
         }
     }
-    
+
     public static Double adjustAvailabilityByRole(double avRating,
                                                   Collection<MissionRole> desiredRoles,
                                                   ModelRecord mRec, int year, int strictness) {
@@ -604,7 +604,7 @@ public enum MissionRole {
                 (mRec.getRoles().contains(ARTILLERY) && !desiredRoles.contains(ARTILLERY)
                         && !desiredRoles.contains(MIXED_ARTILLERY));
     }
-    
+
     public static MissionRole parseRole(String role) {
         switch (role.toLowerCase().replace("_", " ")) {
             case "recon":
@@ -627,7 +627,6 @@ public enum MissionRole {
             case "raider":
                 return RAIDER;
             case "incendiary":
-            case "incindiary":
                 return INCENDIARY;
             case "ew support":
                 return EW_SUPPORT;
@@ -724,7 +723,7 @@ public enum MissionRole {
                 return null;
         }
     }
-    
+
     @Override
     public String toString() {
         return name().toLowerCase();

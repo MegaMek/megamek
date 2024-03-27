@@ -48,7 +48,7 @@ import static java.util.stream.Collectors.toList;
  * Client and the Server should have one of these objects, and it is their job to
  * keep it synched.
  */
-public class Game extends AbstractGame implements Serializable {
+public class Game extends AbstractGame implements Serializable, PlanetaryConditionsUsing {
     private static final long serialVersionUID = 8376320092671792532L;
 
     /**
@@ -147,8 +147,6 @@ public class Game extends AbstractGame implements Serializable {
     // smoke clouds
     private List<SmokeCloud> smokeCloudList = new CopyOnWriteArrayList<>();
 
-    private transient Vector<GameListener> gameListeners = new Vector<>();
-
     /**
      * Stores princess behaviors for game factions. It does not indicate that a faction is currently
      * played by a bot, only that the most recent bot connected as that faction used these settings.
@@ -188,6 +186,11 @@ public class Game extends AbstractGame implements Serializable {
 
     public void setBoardDirect(final Board board) {
         this.board = board;
+    }
+
+    @Override
+    public void setBoard(Board board, int boardId) {
+        setBoardDirect(board);
     }
 
     public boolean containsMinefield(Coords coords) {
@@ -404,6 +407,7 @@ public class Game extends AbstractGame implements Serializable {
         updatePlayer(player);
     }
 
+    @Override
     public void setPlayer(int id, Player player) {
         player.setGame(this);
         players.put(id, player);
@@ -672,6 +676,7 @@ public class Game extends AbstractGame implements Serializable {
         return phase;
     }
 
+    @Override
     public void setPhase(GamePhase phase) {
         final GamePhase oldPhase = this.phase;
         this.phase = phase;
@@ -704,6 +709,11 @@ public class Game extends AbstractGame implements Serializable {
         }
 
         processGameEvent(new GamePhaseChangeEvent(this, oldPhase, phase));
+    }
+
+    @Override
+    public void fireGameEvent(GameEvent event) {
+        processGameEvent(event);
     }
 
     public GamePhase getLastPhase() {
@@ -1279,6 +1289,11 @@ public class Game extends AbstractGame implements Serializable {
     @Override
     public int getNextEntityId() {
         return lastEntityId + 1;
+    }
+
+    @Override
+    public void replaceUnits(List<InGameObject> units) {
+        addEntities(filterToEntity(units));
     }
 
     /**
@@ -2937,72 +2952,6 @@ public class Game extends AbstractGame implements Serializable {
     }
 
     /**
-     * Adds the specified game listener to receive board events from this board.
-     *
-     * @param listener the game listener.
-     */
-    public void addGameListener(GameListener listener) {
-        // Since gameListeners is transient, it could be null
-        if (gameListeners == null) {
-            gameListeners = new Vector<>();
-        }
-        gameListeners.addElement(listener);
-    }
-
-    /**
-     * Removes the specified game listener.
-     *
-     * @param listener the game listener.
-     */
-    public void removeGameListener(GameListener listener) {
-        // Since gameListeners is transient, it could be null
-        if (gameListeners == null) {
-            gameListeners = new Vector<>();
-        }
-        gameListeners.removeElement(listener);
-    }
-
-    /**
-     * Returns all the GameListeners.
-     *
-     * @return
-     */
-    public List<GameListener> getGameListeners() {
-        // Since gameListeners is transient, it could be null
-        if (gameListeners == null) {
-            gameListeners = new Vector<>();
-        }
-        return Collections.unmodifiableList(gameListeners);
-    }
-
-    /**
-     * purges all Game Listener objects.
-     */
-    public void purgeGameListeners() {
-        // Since gameListeners is transient, it could be null
-        if (gameListeners == null) {
-            gameListeners = new Vector<>();
-        }
-        gameListeners.clear();
-    }
-
-    /**
-     * Processes game events occurring on this connection by dispatching them to
-     * any registered GameListener objects.
-     *
-     * @param event the game event.
-     */
-    public void processGameEvent(GameEvent event) {
-        // Since gameListeners is transient, it could be null
-        if (gameListeners == null) {
-            gameListeners = new Vector<>();
-        }
-        for (Enumeration<GameListener> e = gameListeners.elements(); e.hasMoreElements(); ) {
-            event.fireEvent(e.nextElement());
-        }
-    }
-
-    /**
      * @return this turn's TAG information
      */
     public Vector<TagInfo> getTagInfo() {
@@ -3251,10 +3200,12 @@ public class Game extends AbstractGame implements Serializable {
                 (e instanceof SmallCraft) && getTurn().isValidEntity(e, this));
     }
 
+    @Override
     public PlanetaryConditions getPlanetaryConditions() {
         return planetaryConditions;
     }
 
+    @Override
     public void setPlanetaryConditions(final @Nullable PlanetaryConditions conditions) {
         if (conditions == null) {
             LogManager.getLogger().error("Can't set the planetary conditions to null!");
@@ -3459,6 +3410,10 @@ public class Game extends AbstractGame implements Serializable {
 
     /** @return The TW Units (Entity) currently in the game. */
     public List<Entity> inGameTWEntities() {
-        return inGameObjects.values().stream().filter(o -> o instanceof Entity).map(o -> (Entity) o).collect(toList());
+        return filterToEntity(inGameObjects.values());
+    }
+
+    private List<Entity> filterToEntity(Collection<? extends BTObject> objects) {
+        return objects.stream().filter(o -> o instanceof Entity).map(o -> (Entity) o).collect(toList());
     }
 }

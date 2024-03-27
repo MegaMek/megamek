@@ -231,8 +231,7 @@ public abstract class AbstractIcon implements Serializable {
 
     @Override
     public String toString() {
-        return hasDefaultCategory() ? getFilename()
-                : (getCategory().endsWith("/") ? getCategory() : getCategory() + "/") + getFilename();
+        return "[Camouflage] Category: " + category + "; Filename: " + filename;
     }
 
     @Override

@@ -53,7 +53,7 @@ public class MegaMekController implements KeyEventDispatcher {
     private static final int MAX_REPEAT_RATE = 100;
 
     public BoardEditor boardEditor = null;
-    public ClientGUI clientgui = null;
+    public IClientGUI clientgui = null;
 
     /** Maps a key code to a command string. */
     protected Set<KeyCommandBind> keyCmdSet;

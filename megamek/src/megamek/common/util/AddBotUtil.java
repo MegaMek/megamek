@@ -13,6 +13,7 @@
  */
 package megamek.common.util;
 
+import megamek.client.AbstractClient;
 import megamek.client.Client;
 import megamek.client.bot.BotClient;
 import megamek.client.bot.princess.BehaviorSettings;
@@ -253,7 +254,7 @@ public class AddBotUtil {
             message.append("Princess has replaced " + playerName + ".");
             return princess;
         } else {
-            Client bot = client.localBots.get(target.getName());
+            AbstractClient bot = client.getBots().get(target.getName());
             if (bot == null) {
                 message.append("Player '" + playerName + "' is not a local bot.");
                 return null;

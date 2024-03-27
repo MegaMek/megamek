@@ -81,7 +81,7 @@ class PlayerTable extends JTable {
         if ((lobby.client() instanceof BotClient) && player.equals(lobby.localPlayer())) {
             String msg_thisbot = Messages.getString("ChatLounge.ThisBot");
             result.append(" (" + UIUtil.BOT_MARKER + " " + msg_thisbot + ")");
-        } else if (lobby.client().localBots.containsKey(player.getName())) {
+        } else if (lobby.client().getBots().containsKey(player.getName())) {
             String msg_yourbot = Messages.getString("ChatLounge.YourBot");
             result.append(" (" + UIUtil.BOT_MARKER + " " + msg_yourbot + ")");
         } else if (lobby.localPlayer().equals(player)) {
@@ -178,7 +178,7 @@ class PlayerTable extends JTable {
             StringBuilder result = new StringBuilder("<HTML><NOBR>" + UIUtil.guiScaledFontHTML());
             // First Line - Player Name
             if ((lobby.client() instanceof BotClient) && player.equals(lobby.localPlayer())
-                    || lobby.client().localBots.containsKey(player.getName())) {
+                    || lobby.client().getBots().containsKey(player.getName())) {
                 result.append(UIUtil.BOT_MARKER);
             }
             result.append(player.getName());

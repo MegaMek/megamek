@@ -15,6 +15,7 @@
 package megamek.client.ui;
 
 import java.util.Enumeration;
+import java.util.Set;
 
 import megamek.client.commands.ClientCommand;
 
@@ -24,7 +25,7 @@ import megamek.client.commands.ClientCommand;
 public interface IClientCommandHandler {
     ClientCommand getCommand(String name);
 
-    Enumeration<String> getAllCommandNames();
+    Set<String> getAllCommandNames();
 
     void registerCommand(ClientCommand command);
 }

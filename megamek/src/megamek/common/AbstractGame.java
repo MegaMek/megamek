@@ -18,6 +18,8 @@
  */
 package megamek.common;
 
+import megamek.common.event.GameEvent;
+import megamek.common.event.GameListener;
 import megamek.common.force.Forces;
 
 import java.util.*;
@@ -39,6 +41,8 @@ public abstract class AbstractGame implements IGame {
     /** The teams present in the game. */
     protected final CopyOnWriteArrayList<Team> teams = new CopyOnWriteArrayList<>();
 
+    protected transient Vector<GameListener> gameListeners = new Vector<>();
+
     /**
      * The forces present in the game. The top level force holds all forces and force-less entities
      * and should therefore not be shown.
@@ -53,6 +57,11 @@ public abstract class AbstractGame implements IGame {
     @Override
     public Player getPlayer(int id) {
         return players.get(id);
+    }
+
+    @Override
+    public void addPlayer(int id, Player player) {
+        players.put(id, player);
     }
 
     @Override
@@ -90,5 +99,61 @@ public abstract class AbstractGame implements IGame {
     @Override
     public List<InGameObject> getInGameObjects() {
         return new ArrayList<>(inGameObjects.values());
+    }
+
+    /**
+     * Adds the specified game listener to receive board events from this board.
+     *
+     * @param listener the game listener.
+     */
+    @Override
+    public void addGameListener(GameListener listener) {
+        // Since gameListeners is transient, it could be null
+        if (gameListeners == null) {
+            gameListeners = new Vector<>();
+        }
+        gameListeners.add(listener);
+    }
+
+    /**
+     * Removes the specified game listener.
+     *
+     * @param listener the game listener.
+     */
+    public void removeGameListener(GameListener listener) {
+        // Since gameListeners is transient, it could be null
+        if (gameListeners == null) {
+            gameListeners = new Vector<>();
+        }
+        gameListeners.remove(listener);
+    }
+
+    /**
+     * @return All registered GameListeners.
+     */
+    public List<GameListener> getGameListeners() {
+        // Since gameListeners is transient, it could be null
+        if (gameListeners == null) {
+            gameListeners = new Vector<>();
+        }
+        return Collections.unmodifiableList(gameListeners);
+    }
+
+
+    /**
+     * Processes game events occurring on this connection by dispatching them to
+     * any registered GameListener objects.
+     *
+     * @param event the game event.
+     */
+    public void processGameEvent(GameEvent event) {
+        // Since gameListeners is transient, it could be null
+        if (gameListeners == null) {
+            gameListeners = new Vector<>();
+        }
+        // This iteration must allow concurrent modification of the list!
+        for (Enumeration<GameListener> e = gameListeners.elements(); e.hasMoreElements(); ) {
+            event.fireEvent(e.nextElement());
+        }
     }
 }

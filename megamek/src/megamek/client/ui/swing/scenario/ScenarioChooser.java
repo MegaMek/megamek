@@ -30,8 +30,8 @@ import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.Configuration;
 import megamek.common.annotations.Nullable;
 import megamek.common.preference.PreferenceManager;
-import megamek.common.scenario.ScenarioInfo;
 import megamek.common.scenario.ScenarioLoader;
+import megamek.common.scenario.Scenario;
 import org.apache.logging.log4j.LogManager;
 
 import javax.swing.*;
@@ -57,7 +57,7 @@ import java.util.stream.Collectors;
 public class ScenarioChooser extends AbstractButtonDialog {
 
     private final JTabbedPane tabbedPane = new JTabbedPane();
-    private final Map<String, List<ScenarioInfo>> sortedScenarios = sortScenarios(getScenarioInfos());
+    private final Map<String, List<Scenario>> sortedScenarios = sortScenarios(getScenarioInfos());
     private String scenarioFileName;
 
     public ScenarioChooser(final JFrame parentFrame) {
@@ -126,8 +126,8 @@ public class ScenarioChooser extends AbstractButtonDialog {
         return buttonPanel;
     }
 
-    private static List<ScenarioInfo> getScenarioInfos() {
-        List<ScenarioInfo> scenarios = new ArrayList<>(parseScenariosInDirectory(Configuration.scenariosDir()));
+    private static List<Scenario> getScenarioInfos() {
+        List<Scenario> scenarios = new ArrayList<>(parseScenariosInDirectory(Configuration.scenariosDir()));
 
         String userDir = PreferenceManager.getClientPreferences().getUserDir();
         if (!userDir.isBlank()) {
@@ -144,22 +144,21 @@ public class ScenarioChooser extends AbstractButtonDialog {
      * @param directory the directory to parse
      * @return a List of scenarios
      */
-    private static List<ScenarioInfo> parseScenariosInDirectory(final File directory) {
+    private static List<Scenario> parseScenariosInDirectory(final File directory) {
         LogManager.getLogger().info("Parsing scenarios from " + directory);
-        List<ScenarioInfo> scenarios = new ArrayList<>();
+        List<Scenario> scenarios = new ArrayList<>();
         for (String scenarioFile : CommonSettingsDialog.filteredFilesWithSubDirs(directory, MMConstants.SCENARIO_EXT)) {
             try {
-                ScenarioInfo scenario = new ScenarioLoader(new File(scenarioFile)).load();
-                scenarios.add(scenario);
+                scenarios.add(new ScenarioLoader(scenarioFile).load());
             } catch (Exception ex) {
-                LogManager.getLogger().error("Failed to parse scenario " + scenarioFile, ex);
+                LogManager.getLogger().warn(ex.getMessage());
             }
         }
         return scenarios;
     }
 
     /** Groups the given scenarios by the first subdirectory under scenarios they're in (disregards any deeper dirs) */
-    private Map<String, List<ScenarioInfo>> sortScenarios(List<ScenarioInfo> scenarioInfos) {
+    private Map<String, List<Scenario>> sortScenarios(List<Scenario> scenarioInfos) {
         return scenarioInfos.stream().collect(Collectors.groupingBy(this::getSubDirectory, Collectors.toList()));
     }
 
@@ -186,7 +185,7 @@ public class ScenarioChooser extends AbstractButtonDialog {
      * @return The first subdirectory under the scenarios directory that the scenario is in; a scenario
      * in scenarios/tukkayid/secondencounter/ would return "tukkayid". This is used for grouping
      */
-    private String getSubDirectory(ScenarioInfo scenarioInfo) {
+    private String getSubDirectory(Scenario scenarioInfo) {
         String scenariosDir = Configuration.scenariosDir().toString();
         if (!scenarioInfo.getFileName().contains(scenariosDir)) {
             return "";

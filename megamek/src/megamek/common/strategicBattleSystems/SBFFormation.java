@@ -346,8 +346,18 @@ public class SBFFormation implements ASSpecialAbilityCollector, BattleForceSUAFo
     }
 
     @Override
+    public void setId(int newId) {
+        id = newId;
+    }
+
+    @Override
     public int getOwnerId() {
         return ownerId;
+    }
+
+    @Override
+    public void setOwnerId(int newOwnerId) {
+        ownerId = newOwnerId;
     }
 
     @Override

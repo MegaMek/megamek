@@ -85,6 +85,6 @@ public class Packet {
 
     @Override
     public String toString() {
-        return "Packet [" + command + "] - " + abbreviate(Arrays.toString(data), 0, 200, "");
+        return "Packet [" + command + "] - " + Arrays.toString(data);
     }
 }

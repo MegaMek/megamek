@@ -216,7 +216,7 @@ Warship
         ba_carrier - has battle armor bays
         mechanized_ba - eligible to be carried by Omni units as mechanized BA
         tug - has tug adaptor
-        pocket warship - pocket warship DropShip
+        pocket_warship - pocket warship DropShip
         corvette - WarShip class
         destroyer - WarShip class
         frigate - WarShip class

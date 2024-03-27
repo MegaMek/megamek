@@ -183,7 +183,7 @@ Warship
         infantry_support or inf_support - commonly found supporting infantry formations
         ew_support - carries additional electronics for ECM, scanning, or command functions
         spotter - carries TAG or equivalent, such as C3 master
-        incindiary - can easily set fires
+        incendiary - can easily set fires
         mag_clamp - battle armor or ProtoMek with magnetic clamps
         artillery - carries tube artillery or artillery cannon
         missile_artillery - carries missile artillery, typically Arrow IV

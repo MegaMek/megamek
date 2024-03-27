@@ -214,6 +214,7 @@ Warship
         infantry_carrier - has infantry bays
         troop_carrier - has both infantry and vehicle bays
         ba_carrier - has battle armor bays
+        mechanized_ba - eligible to be carried by Omni units as mechanized BA
         tug - has tug adaptor
         pocket ws - pocket warship DropShip
         corvette - WarShip class

@@ -4631,7 +4631,7 @@ public abstract class Mech extends Entity {
         } else if (this instanceof TripodMech) {
             setCockpitType(isIndustrial() ? COCKPIT_TRIPOD_INDUSTRIAL : COCKPIT_TRIPOD);
         } else {
-            setCockpitType(COCKPIT_STANDARD);
+            setCockpitType(isIndustrial() ? COCKPIT_INDUSTRIAL : COCKPIT_STANDARD);
         }
 
         return true;

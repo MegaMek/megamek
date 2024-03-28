@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 
 /**
  * Controls to set options for force generator.
- * 
+ *
  * @author Neoancient
  */
 public class ForceGeneratorOptionsView extends JPanel implements FocusListener, ActionListener {
@@ -509,6 +509,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
                     }
                     break;
                 case UnitType.AERO:
+                case UnitType.AEROSPACEFIGHTER:
                     if (chkRoleAirRecon.isSelected()) {
                         fd.getRoles().add(MissionRole.RECON);
                     }
@@ -661,7 +662,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
                 panGroundRole.setVisible(unitType == UnitType.MEK || unitType == UnitType.TANK);
                 panInfRole.setVisible(unitType == UnitType.INFANTRY
                         || unitType == UnitType.BATTLE_ARMOR);
-                panAirRole.setVisible(unitType == UnitType.AERO
+                panAirRole.setVisible(unitType == UnitType.AEROSPACEFIGHTER
                         || unitType == UnitType.CONV_FIGHTER);
             }
         }
@@ -904,7 +905,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
 
     /**
      * Searches recursively for nodes that are flagged with C3 networks and configures them.
-     * 
+     *
      * @param fd
      */
     private void configureNetworks(ForceDescriptor fd) {

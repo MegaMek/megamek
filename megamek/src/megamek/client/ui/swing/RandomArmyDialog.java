@@ -809,7 +809,7 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
                                 }
                                 unitList.addAll(ba);
                             } else if (m_pFormationOptions.getBooleanOption("airLance")) {
-                                UnitTable t = UnitTable.findTable(fRec, UnitType.AERO,
+                                UnitTable t = UnitTable.findTable(fRec, UnitType.AEROSPACEFIGHTER,
                                         m_pFormationOptions.getYear(), m_pFormationOptions.getRating(), null,
                                         ModelRecord.NETWORK_NONE,
                                         EnumSet.noneOf(EntityMovementMode.class),

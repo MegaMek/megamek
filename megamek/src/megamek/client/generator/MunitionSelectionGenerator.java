@@ -9,7 +9,6 @@ import megamek.common.options.OptionsConstants;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 public class MunitionSelectionGenerator {
 
@@ -37,10 +36,14 @@ public class MunitionSelectionGenerator {
     }
 
     public static ArrayList<WeaponType> collateEntityWeaponTypes(Entity entity) {
-        // We only want weapons that utilize ammo
+        // We only want 1. weapons 2. that utilize ammo bins
         // Ignore bay weapons as Aerospace units can't take "alt" ammo.
         ArrayList<WeaponType> types = new ArrayList<>();
         for (Mounted m : entity.getWeaponList()) {
+            if (!(m.getType() instanceof WeaponType)) {
+                continue;
+            }
+
             WeaponType wt = (WeaponType) m.getType();
             int at = wt.getAmmoType();
             if (at != WeaponType.WEAPON_NA) {
@@ -65,6 +68,8 @@ public class MunitionSelectionGenerator {
 
     /** Determine which munitions are allowed for the given faction in the
      *  selected year, depending on several settings.
+     *  (See EquipChoicePanel.java:WeaponAmmoChoicePanel for hints)
+     *  (See EquipChoicePanel.java:setupMunitions for hints)
      *
      * @param wTypes
      * @param yearLimits
@@ -84,7 +89,6 @@ public class MunitionSelectionGenerator {
         Set<AmmoType.Munitions> munitions = new HashSet<AmmoType.Munitions>();
 
         for (WeaponType wt: wTypes) {
-
 
         }
 

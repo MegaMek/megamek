@@ -180,10 +180,10 @@ Warship
         comma-separated list of roles the variant was designed for. Supported values are:
         fire_support - focus on long range firepower
         sr_fire_support - focus on short range firepower
-        infantry_support - commonly found supporting infantry formations
+        infantry_support or inf_support - commonly found supporting infantry formations
         ew_support - carries additional electronics for ECM, scanning, or command functions
         spotter - carries TAG or equivalent, such as C3 master
-        incindiary - can easily set fires
+        incendiary - can easily set fires
         mag_clamp - battle armor or ProtoMek with magnetic clamps
         artillery - carries tube artillery or artillery cannon
         missile_artillery - carries missile artillery, typically Arrow IV
@@ -214,8 +214,9 @@ Warship
         infantry_carrier - has infantry bays
         troop_carrier - has both infantry and vehicle bays
         ba_carrier - has battle armor bays
+        mechanized_ba - eligible to be carried by Omni units as mechanized BA
         tug - has tug adaptor
-        pocket ws - pocket warship DropShip
+        pocket_warship - pocket warship DropShip
         corvette - WarShip class
         destroyer - WarShip class
         frigate - WarShip class

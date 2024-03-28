@@ -20,7 +20,7 @@ import megamek.common.UnitType;
 
 /**
  * Used to adjust availability to conform to a particular mission role.
- * 
+ *
  * @author Neoancient
  */
 public enum MissionRole {
@@ -44,8 +44,8 @@ public enum MissionRole {
     /* Infantry roles */
     MARINE, MOUNTAINEER, XCT, PARATROOPER, ANTI_MEK, FIELD_GUN,
     /* allows artillery but does not filter out all other roles */
-    MIXED_ARTILLERY; 
-    
+    MIXED_ARTILLERY;
+
     public boolean fitsUnitType(int unitType) {
         switch (this) {
             case RECON:
@@ -151,7 +151,7 @@ public enum MissionRole {
                 return false;
         }
     }
-    
+
     public static Double adjustAvailabilityByRole(double avRating,
                                                   Collection<MissionRole> desiredRoles,
                                                   ModelRecord mRec, int year, int strictness) {
@@ -604,7 +604,7 @@ public enum MissionRole {
                 (mRec.getRoles().contains(ARTILLERY) && !desiredRoles.contains(ARTILLERY)
                         && !desiredRoles.contains(MIXED_ARTILLERY));
     }
-    
+
     public static MissionRole parseRole(String role) {
         switch (role.toLowerCase().replace("_", " ")) {
             case "recon":
@@ -635,15 +635,12 @@ public enum MissionRole {
                 return ARTILLERY;
             case "missile artillery":
                 return MISSILE_ARTILLERY;
-            case "anti-aircraft":
             case "anti aircraft":
                 return ANTI_AIRCRAFT;
-            case "anti-infantry":
             case "anti infantry":
                 return ANTI_INFANTRY;
             case "apc":
                 return APC;
-            case "spec ops":
             case "specops":
                 return SPECOPS;
             case "cargo":
@@ -680,7 +677,6 @@ public enum MissionRole {
                 return TUG;
             case "troop carrier":
                 return TROOP_CARRIER;
-            case "pocket ws":
             case "pocket warship":
                 return POCKET_WARSHIP;
             case "corvette":
@@ -703,7 +699,6 @@ public enum MissionRole {
                 return XCT;
             case "paratrooper":
                 return PARATROOPER;
-            case "anti-mek":
             case "anti mek":
                 return ANTI_MEK;
             case "omni":
@@ -724,7 +719,7 @@ public enum MissionRole {
                 return null;
         }
     }
-    
+
     @Override
     public String toString() {
         return name().toLowerCase();

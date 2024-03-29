@@ -670,7 +670,7 @@ public class PlanetaryConditions implements Serializable {
             } else {
                 lightRange = 1;
             }
-        } else if (getLight().isMoonlessOrSolarFlare()) {
+        } else if (getLight().isMoonless()) {
             if (isMechOrVee || isLowAltitudeAero) {
                 lightRange = 5;
             } else if (isAero) {
@@ -680,7 +680,7 @@ public class PlanetaryConditions implements Serializable {
             } else {
                 lightRange = 2;
             }
-        } else if (getLight().isFullMoonOrGlare()) {
+        } else if (getLight().isFullMoon()) {
             if (isMechOrVee || isLowAltitudeAero) {
                 lightRange = 10;
             } else if (isAero) {

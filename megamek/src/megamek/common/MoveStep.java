@@ -3007,7 +3007,7 @@ public class MoveStep implements Serializable {
                 default:
             }
 
-            // Light
+            // Light TO:AR 6th ed. p. 34
             if (!entity.isNightwalker()) {
                 switch (conditions.getLight()) {
                     case FULL_MOON:

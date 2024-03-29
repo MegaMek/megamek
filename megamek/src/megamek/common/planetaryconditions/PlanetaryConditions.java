@@ -227,6 +227,7 @@ public class PlanetaryConditions implements Serializable {
 
     /**
      * to-hit penalty for light
+     * TO:AR 6th ed. p. 56
      */
     public int getLightHitPenalty(boolean isWeapon) {
         int penalty = 0;
@@ -253,6 +254,7 @@ public class PlanetaryConditions implements Serializable {
 
     /**
      * heat bonus to hit for being overheated in darkness
+     * TO:AR 6th ed. p. 56
      */
     public int getLightHeatBonus(int heat) {
         double divisor = 10000.0;
@@ -613,6 +615,7 @@ public class PlanetaryConditions implements Serializable {
 
     /**
      * visual range based on conditions
+     * TO:AR 6th ed. p. 189
      *
      */
     public int getVisualRange(Entity en, boolean targetIlluminated) {

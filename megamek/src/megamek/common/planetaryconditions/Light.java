@@ -80,28 +80,36 @@ public enum Light {
         return this == PITCH_BLACK;
     }
 
+    public boolean isDayOrDusk() {
+        return isDay() || isDusk();
+    }
+
     public boolean isFullMoonOrGlare() {
-        return this == FULL_MOON || this == GLARE;
+        return isFullMoon() || isGlare();
     }
 
     public boolean isMoonlessOrSolarFlare() {
-        return this == MOONLESS || this == SOLAR_FLARE;
+        return isMoonless() || isSolarFlare();
+    }
+
+    public boolean isMoonlessOrPitchBack() {
+        return isMoonless() || isPitchBack();
     }
 
     public boolean isFullMoonOrMoonlessOrPitchBack() {
-        return this == FULL_MOON || this == MOONLESS|| this == PITCH_BLACK;
+        return isFullMoon() || isMoonless() || isPitchBack();
     }
 
     public boolean isDuskOrFullMoonOrMoonlessOrPitchBack() {
-        return this == DUSK || this == FULL_MOON || this == MOONLESS|| this == PITCH_BLACK;
+        return isDusk() || isFullMoon() || isMoonless() || isPitchBack();
     }
 
-    public boolean isLighterThan(final Light light) {
-        return compareTo(light) < 0;
+    public boolean isFullMoonOrGlareOrMoonlessOrSolarFlareOrPitchBack() {
+        return isFullMoon() || isGlare() || isMoonless() || isSolarFlare() || isPitchBack();
     }
 
-    public boolean isDarkerThan(final Light light) {
-        return compareTo(light) > 0;
+    public boolean isDuskOrFullMoonOrGlareOrMoonlessOrSolarFlareOrPitchBack() {
+        return isDusk() || isFullMoon() || isGlare() || isMoonless() || isSolarFlare() || isPitchBack();
     }
 
     public static Light getLight(int i) {

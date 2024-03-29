@@ -2588,7 +2588,7 @@ public class Compute {
 
         if (attacker.getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_LIGHT)
                 && !target.isIlluminated()
-                && game.getPlanetaryConditions().getLight().isDarkerThan(Light.FULL_MOON)) {
+                && game.getPlanetaryConditions().getLight().isMoonlessOrPitchBack()) {
             toHit.addModifier(-1, "light specialist");
         }
 

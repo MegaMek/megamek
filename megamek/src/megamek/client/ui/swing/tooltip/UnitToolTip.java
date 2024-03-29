@@ -1504,13 +1504,13 @@ public final class UnitToolTip {
             if (gameOptions.booleanOption(OptionsConstants.ADVANCED_TACOPS_SENSORS)
                     || (gameOptions.booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS)) && entity.isSpaceborne()) {
                 String visualRange = Compute.getMaxVisualRange(entity, false) + "";
-                if (conditions.getLight().isDarkerThan(Light.DAY)) {
+                if (conditions.getLight().isDuskOrFullMoonOrMoonlessOrPitchBack()) {
                     visualRange += " (" + Compute.getMaxVisualRange(entity, true) + ")";
                 }
                 result += addToTT("Sensors", BR, getSensorDesc(entity), visualRange);
             } else {
                 String visualRange = Compute.getMaxVisualRange(entity, false) + "";
-                if (conditions.getLight().isDarkerThan(Light.DAY)) {
+                if (conditions.getLight().isDuskOrFullMoonOrMoonlessOrPitchBack()) {
                     visualRange += " (" + Compute.getMaxVisualRange(entity, true) + ")";
                 }
                 result += addToTT("Visual", BR, visualRange);

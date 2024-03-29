@@ -3048,7 +3048,7 @@ public class MoveStep implements Serializable {
                         break;
                     default:
                 }
-            } else if (conditions.getLight().isDarkerThan(Light.DUSK)) {
+            } else if (conditions.getLight().isFullMoonOrGlareOrMoonlessOrSolarFlareOrPitchBack()) {
                 setRunProhibited(true);
             }
         }

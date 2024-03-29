@@ -649,7 +649,7 @@ public class PlanetaryConditions implements Serializable {
         boolean isLowAltitudeAero = (isAero
                 && (en.getAltitude() < 2));
         if (targetIlluminated
-                && (getLight().isDarkerThan(Light.DAY))) {
+                && (getLight().isDuskOrFullMoonOrMoonlessOrPitchBack())) {
             lightRange = 45;
         } else if (Spotlight
                 && (getLight().isDuskOrFullMoonOrMoonlessOrPitchBack())) {
@@ -850,7 +850,7 @@ public class PlanetaryConditions implements Serializable {
 
     public boolean isRecklessConditions() {
         return !getFog().isFogNone()
-                || getLight().isDarkerThan(Light.DUSK);
+                || getLight().isFullMoonOrGlareOrMoonlessOrSolarFlareOrPitchBack();
     }
 
     public static int setTempFromWeather(Weather weather, int temperature) {

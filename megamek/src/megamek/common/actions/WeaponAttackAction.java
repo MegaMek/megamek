@@ -5257,7 +5257,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 // Light Specialist
                 if (ae.getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_LIGHT)) {
                     if (!te.isIlluminated()
-                            && conditions.getLight().isDarkerThan(Light.DAY)) {
+                            && conditions.getLight().isDuskOrFullMoonOrGlareOrMoonlessOrSolarFlareOrPitchBack()) {
                         toHit.addModifier(-1, Messages.getString("WeaponAttackAction.LightSpec"));
                     } else if (te.isIlluminated()
                             && conditions.getLight().isPitchBack()) {

@@ -133,7 +133,7 @@ public abstract class AbstractAttackAction extends AbstractEntityAction implemen
         int searchlightMod = Math.min(3, night_modifier);
         boolean isUsingSearchlight = (te != null) && te.isUsingSearchlight();
         boolean lighted = isUsingSearchlight || illuminated;
-        if (conditions.getLight().isDarkerThan(Light.DUSK)
+        if (conditions.getLight().isFullMoonOrMoonlessOrPitchBack()
                 && lighted) {
             if (isUsingSearchlight) {
                 toHit.addModifier(-searchlightMod, "target using searchlight");
@@ -150,7 +150,7 @@ public abstract class AbstractAttackAction extends AbstractEntityAction implemen
             int fireMod = Math.min(2, night_modifier);
             toHit.addModifier(-fireMod, "target illuminated by fire");
             night_modifier -= fireMod;
-        } else if ((conditions.getLight().isDarkerThan(Light.DUSK)) && (hexIllumLvl.isSearchlight())) {
+        } else if ((conditions.getLight().isFullMoonOrMoonlessOrPitchBack()) && (hexIllumLvl.isSearchlight())) {
             toHit.addModifier(-searchlightMod, "target illuminated by searchlight");
             night_modifier -= searchlightMod;
         } else if (atype != null) {

@@ -3016,11 +3016,23 @@ public class MoveStep implements Serializable {
                             mp += 1;
                         }
                         break;
+                    case GLARE:
+                        if (!isLightSpecialist) {
+                            mp += 1;
+                        }
+                        break;
                     case MOONLESS:
                         if (en.isUsingSearchlight()) {
                             break;
                         }
 
+                        if (!isLightSpecialist) {
+                            mp += 2;
+                        } else {
+                            mp += 1;
+                        }
+                        break;
+                    case SOLAR_FLARE:
                         if (!isLightSpecialist) {
                             mp += 2;
                         } else {

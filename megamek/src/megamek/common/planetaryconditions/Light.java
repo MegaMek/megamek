@@ -24,7 +24,9 @@ public enum Light {
     DAY("LIGHT_DAY", "PlanetaryConditions.DisplayableName.Light.Daylight", "\u2600"),
     DUSK("LIGHT_DUSK", "PlanetaryConditions.DisplayableName.Light.Dusk", "\u263D \u263C"),
     FULL_MOON("LIGHT_FULL_MOON", "PlanetaryConditions.DisplayableName.Light.FullMoonNight", "\u26AB"),
+    GLARE("LIGHT_GLARE", "PlanetaryConditions.DisplayableName.Light.Glare", "\u27E1"),
     MOONLESS("LIGHT_MOONLESS", "PlanetaryConditions.DisplayableName.Light.MoonlessNight", "\u26AA"),
+    SOLAR_FLARE("LIGHT_SOLAR_FLARE", "PlanetaryConditions.DisplayableName.Light.SolarFlare", "\u2604"),
     PITCH_BLACK("LIGHT_PITCH_BLACK", "PlanetaryConditions.DisplayableName.Light.PitchBlack", "\u2588");
 
     private final String externalId;
@@ -62,12 +64,36 @@ public enum Light {
         return this == FULL_MOON;
     }
 
+    public boolean isGlare() {
+        return this == GLARE;
+    }
+
     public boolean isMoonless() {
         return this == MOONLESS;
     }
 
+    public boolean isSolarFlare() {
+        return this == SOLAR_FLARE;
+    }
+
     public boolean isPitchBack() {
         return this == PITCH_BLACK;
+    }
+
+    public boolean isFullMoonOrGlare() {
+        return this == FULL_MOON || this == GLARE;
+    }
+
+    public boolean isMoonlessOrSolarFlare() {
+        return this == MOONLESS || this == SOLAR_FLARE;
+    }
+
+    public boolean isFullMoonOrMoonlessOrPitchBack() {
+        return this == FULL_MOON || this == MOONLESS|| this == PITCH_BLACK;
+    }
+
+    public boolean isDuskOrFullMoonOrMoonlessOrPitchBack() {
+        return this == DUSK || this == FULL_MOON || this == MOONLESS|| this == PITCH_BLACK;
     }
 
     public boolean isLighterThan(final Light light) {

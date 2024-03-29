@@ -3042,7 +3042,9 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
 
         switch (game.getPlanetaryConditions().getLight()) {
             case FULL_MOON:
+            case GLARE:
             case MOONLESS:
+            case SOLAR_FLARE:
                 rd = rd / 4; // 1/4 red
                 gr = gr / 4; // 1/4 green
                 bl = bl / 2; // half blue

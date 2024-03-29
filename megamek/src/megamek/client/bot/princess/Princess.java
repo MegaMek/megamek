@@ -2035,7 +2035,7 @@ public class Princess extends BotClient {
         if (possibleToInflictDamage
                 && pathEntity.hasSearchlight()
                 && !pathEntity.isUsingSearchlight()
-                && path.getGame().getPlanetaryConditions().getLight().isDarkerThan(Light.DUSK)) {
+                && path.getGame().getPlanetaryConditions().getLight().isDuskOrFullMoonOrMoonlessOrPitchBack()) {
             path.addStep(MoveStepType.SEARCHLIGHT);
         }
     }

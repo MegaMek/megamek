@@ -233,15 +233,15 @@ public class PlanetaryConditions implements Serializable {
         if (isWeapon) {
             if (getLight().isDusk()) {
                 penalty = 1;
-            } else if (getLight().isFullMoon()) {
+            } else if (getLight().isFullMoonOrGlare()) {
                 penalty = 2;
-            } else if (getLight().isMoonless()) {
+            } else if (getLight().isMoonlessOrSolarFlare()) {
                 penalty = 3;
             } else if (getLight().isPitchBack()) {
                 penalty = 4;
             }
         } else {
-            if (getLight().isMoonless()) {
+            if (getLight().isMoonlessOrSolarFlare()) {
                 penalty = 1;
             } else if (getLight().isPitchBack()) {
                 penalty = 2;
@@ -258,9 +258,9 @@ public class PlanetaryConditions implements Serializable {
         double divisor = 10000.0;
         if (getLight().isDusk()) {
             divisor = 25.0;
-        } else if (getLight().isFullMoon()) {
+        } else if (getLight().isFullMoonOrGlare()) {
             divisor = 20.0;
-        } else if (getLight().isMoonless()) {
+        } else if (getLight().isMoonlessOrSolarFlare()) {
             divisor = 15.0;
         } else if (getLight().isPitchBack()) {
             divisor = 10.0;
@@ -652,7 +652,7 @@ public class PlanetaryConditions implements Serializable {
                 && (getLight().isDarkerThan(Light.DAY))) {
             lightRange = 45;
         } else if (Spotlight
-                && (getLight().isDarkerThan(Light.DAY))) {
+                && (getLight().isDuskOrFullMoonOrMoonlessOrPitchBack())) {
             // Using a searchlight?  Flat 30 hex range
             if (isMechOrVee || isAero || isLargeCraft) {
                 lightRange = 30;
@@ -670,7 +670,7 @@ public class PlanetaryConditions implements Serializable {
             } else {
                 lightRange = 1;
             }
-        } else if (getLight().isMoonless()) {
+        } else if (getLight().isMoonlessOrSolarFlare()) {
             if (isMechOrVee || isLowAltitudeAero) {
                 lightRange = 5;
             } else if (isAero) {
@@ -680,7 +680,7 @@ public class PlanetaryConditions implements Serializable {
             } else {
                 lightRange = 2;
             }
-        } else if (getLight().isFullMoon()) {
+        } else if (getLight().isFullMoonOrGlare()) {
             if (isMechOrVee || isLowAltitudeAero) {
                 lightRange = 10;
             } else if (isAero) {

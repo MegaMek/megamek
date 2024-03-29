@@ -96,7 +96,7 @@ public enum Light {
         return isMoonless() || isPitchBack();
     }
 
-    public boolean isMoonlessOrolarFlareOrPitchBack() {
+    public boolean isMoonlessOrSolarFlareOrPitchBack() {
         return isMoonless() || isSolarFlare()  || isPitchBack();
     }
 

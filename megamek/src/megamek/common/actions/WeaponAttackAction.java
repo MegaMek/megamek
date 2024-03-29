@@ -19,7 +19,6 @@ import megamek.client.ui.Messages;
 import megamek.common.*;
 import megamek.common.enums.AimingMode;
 import megamek.common.options.OptionsConstants;
-import megamek.common.planetaryconditions.Light;
 import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.common.planetaryconditions.Wind;
 import megamek.common.weapons.DiveBombAttack;

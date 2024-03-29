@@ -19,7 +19,6 @@ import megamek.client.ui.Messages;
 import megamek.common.*;
 import megamek.common.options.AbstractOptions;
 import megamek.common.options.OptionsConstants;
-import megamek.common.planetaryconditions.Light;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.verifier.EntityVerifier;
 import megamek.common.verifier.TestBattleArmor;

@@ -22,7 +22,6 @@ import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.annotations.Nullable;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
-import megamek.common.planetaryconditions.Light;
 import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.templates.TROView;

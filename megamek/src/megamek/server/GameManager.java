@@ -61,7 +61,7 @@ import java.util.zip.GZIPOutputStream;
 /**
  * Manages the Game and processes player actions.
  */
-public class GameManager implements IGameManager {
+public class GameManager extends AbstractGameManager {
     private static class EntityTargetPair {
         Entity ent;
 
@@ -592,14 +592,14 @@ public class GameManager implements IGameManager {
             entity.newRound(game.getRoundCount());
         }
     }
-
-    public void send(Packet p) {
-        Server.getServerInstance().send(p);
-    }
-
-    public void send(int connId, Packet p) {
-        Server.getServerInstance().send(connId, p);
-    }
+//
+//    public void send(Packet p) {
+//        Server.getServerInstance().send(p);
+//    }
+//
+//    public void send(int connId, Packet p) {
+//        Server.getServerInstance().send(connId, p);
+//    }
 
     public void transmitPlayerUpdate(Player p) {
         Server.getServerInstance().transmitPlayerUpdate(p);
@@ -655,7 +655,7 @@ public class GameManager implements IGameManager {
                 }
             } else {
                 send(connId, new Packet(PacketCommand.ROUND_UPDATE, getGame().getRoundCount()));
-                send(connId, createBoardPacket());
+                send(connId, getGame().createBoardsPacket());
                 send(connId, createAllReportsPacket(player));
 
                 // Send entities *before* other phase changes.
@@ -2160,7 +2160,7 @@ public class GameManager implements IGameManager {
                 game.getPlanetaryConditions().determineWind();
                 send(createPlanetaryConditionsPacket());
                 // transmit the board to everybody
-                send(createBoardPacket());
+                send(getGame().createBoardsPacket());
                 game.setupRoundDeployment();
                 game.setVictoryContext(new HashMap<>());
                 game.createVictoryConditions();
@@ -30427,13 +30427,6 @@ public class GameManager implements IGameManager {
      */
     private Packet createGameSettingsPacket() {
         return new Packet(PacketCommand.SENDING_GAME_SETTINGS, getGame().getOptions());
-    }
-
-    /**
-     * Creates a packet containing the game board
-     */
-    private Packet createBoardPacket() {
-        return new Packet(PacketCommand.SENDING_BOARD, getGame().getBoard());
     }
 
     /**

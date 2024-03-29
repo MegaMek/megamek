@@ -21,8 +21,9 @@ package megamek.common.strategicBattleSystems;
 import megamek.common.IGame;
 import megamek.common.Player;
 import megamek.common.Report;
+import megamek.common.net.enums.PacketCommand;
 import megamek.common.net.packets.Packet;
-import megamek.server.IGameManager;
+import megamek.server.AbstractGameManager;
 import megamek.server.Server;
 import megamek.server.commands.ServerCommand;
 import org.apache.logging.log4j.LogManager;
@@ -33,9 +34,9 @@ import java.util.List;
 /**
  * This class manages an SBF game on the server side. As of 2024, this is under construction.
  */
-public class SBFGameManager implements IGameManager {
+public class SBFGameManager extends AbstractGameManager {
 
-    private IGame game;
+    private SBFGame game;
 
     @Override
     public IGame getGame() {
@@ -48,7 +49,7 @@ public class SBFGameManager implements IGameManager {
             LogManager.getLogger().error("Attempted to set game to incorrect class.");
             return;
         }
-        game = g;
+        game = (SBFGame) g;
     }
 
     @Override
@@ -58,11 +59,6 @@ public class SBFGameManager implements IGameManager {
 
     @Override
     public void disconnect(Player player) {
-
-    }
-
-    @Override
-    public void sendCurrentInfo(int connId) {
 
     }
 
@@ -114,5 +110,73 @@ public class SBFGameManager implements IGameManager {
     @Override
     public void calculatePlayerInitialCounts() {
 
+    }
+
+    /**
+     * Sends a player the info they need to look at the current phase. This is
+     * triggered when a player first connects to the server.
+     */
+    @Override
+    public void sendCurrentInfo(int connId) {
+//        send(connId, createGameSettingsPacket());
+//        send(connId, createPlanetaryConditionsPacket());
+
+        Player player = getGame().getPlayer(connId);
+        if (null != player) {
+            send(connId, new Packet(PacketCommand.SENDING_MINEFIELDS, player.getMinefields()));
+//
+//            if (getGame().getPhase().isLounge()) {
+//                send(connId, createMapSettingsPacket());
+//                send(createMapSizesPacket());
+//                // Send Entities *after* the Lounge Phase Change
+//                send(connId, new Packet(PacketCommand.PHASE_CHANGE, GamePhase.LOUNGE));
+//                if (doBlind()) {
+//                    send(connId, createFilteredFullEntitiesPacket(player, null));
+//                } else {
+//                    send(connId, createFullEntitiesPacket());
+//                }
+//            } else {
+//                send(connId, new Packet(PacketCommand.ROUND_UPDATE, getGame().getRoundCount()));
+                send(connId, getGame().createBoardsPacket());
+//                send(connId, createAllReportsPacket(player));
+//
+//                // Send entities *before* other phase changes.
+//                if (doBlind()) {
+//                    send(connId, createFilteredFullEntitiesPacket(player, null));
+//                } else {
+//                    send(connId, createFullEntitiesPacket());
+//                }
+//
+//                setPlayerDone(player, getGame().getEntitiesOwnedBy(player) <= 0);
+//                send(connId, new Packet(PacketCommand.PHASE_CHANGE, getGame().getPhase()));
+//            }
+//
+//            // LOUNGE triggers a Game.reset() on the client, which wipes out
+//            // the PlanetaryCondition, so resend
+//            if (game.getPhase().isLounge()) {
+//                send(connId, createPlanetaryConditionsPacket());
+//            }
+//
+//            if (game.getPhase().isFiring() || game.getPhase().isTargeting()
+//                    || game.getPhase().isOffboard() || game.getPhase().isPhysical()) {
+//                // can't go above, need board to have been sent
+//                send(connId, createAttackPacket(getGame().getActionsVector(), 0));
+//                send(connId, createAttackPacket(getGame().getChargesVector(), 1));
+//                send(connId, createAttackPacket(getGame().getRamsVector(), 1));
+//                send(connId, createAttackPacket(getGame().getTeleMissileAttacksVector(), 1));
+//            }
+//
+//            if (getGame().getPhase().hasTurns() && getGame().hasMoreTurns()) {
+//                send(connId, createTurnVectorPacket());
+//                send(connId, createTurnIndexPacket(connId));
+//            } else if (!getGame().getPhase().isLounge() && !getGame().getPhase().isStartingScenario()) {
+//                endCurrentPhase();
+//            }
+//
+//            send(connId, createArtilleryPacket(player));
+//            send(connId, createFlarePacket());
+//            send(connId, createSpecialHexDisplayPacket(connId));
+//            send(connId, new Packet(PacketCommand.PRINCESS_SETTINGS, getGame().getBotSettings()));
+        }
     }
 }

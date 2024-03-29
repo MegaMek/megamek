@@ -36,10 +36,9 @@ import java.util.List;
  */
 public class SBFGame extends AbstractGame implements PlanetaryConditionsUsing {
 
-    private GameOptions options = new GameOptions(); //TODO: SBFGameOptions()
+    private final GameOptions options = new GameOptions(); //TODO: SBFGameOptions()
     private GamePhase phase = GamePhase.UNKNOWN; //TODO: SBFGamePhase - or possibly reuse Phase? very similar
-    private Board board = new Board();
-    private PlanetaryConditions planetaryConditions = new PlanetaryConditions();
+    private final PlanetaryConditions planetaryConditions = new PlanetaryConditions();
 
     @Override
     public GameTurn getTurn() {
@@ -59,11 +58,6 @@ public class SBFGame extends AbstractGame implements PlanetaryConditionsUsing {
     @Override
     public void setPhase(GamePhase phase) {
         this.phase = phase;
-    }
-
-    @Override
-    public void fireGameEvent(GameEvent event) {
-
     }
 
     @Override
@@ -107,11 +101,6 @@ public class SBFGame extends AbstractGame implements PlanetaryConditionsUsing {
     @Override
     public void replaceUnits(List<InGameObject> units) {
 
-    }
-
-    @Override
-    public void setBoard(Board board, int boardId) {
-        this.board = board;
     }
 
     @Override

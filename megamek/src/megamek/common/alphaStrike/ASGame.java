@@ -57,11 +57,6 @@ public class ASGame extends AbstractGame {
     }
 
     @Override
-    public void fireGameEvent(GameEvent event) {
-
-    }
-
-    @Override
     public boolean isForceVictory() {
         return false;
     }
@@ -96,8 +91,4 @@ public class ASGame extends AbstractGame {
 
     }
 
-    @Override
-    public void setBoard(Board board, int boardId) {
-
-    }
 }

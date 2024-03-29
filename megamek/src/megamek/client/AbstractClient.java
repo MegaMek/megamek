@@ -398,6 +398,7 @@ public abstract class AbstractClient implements IClient {
      * @param packet The packet to handle
      * @return True when the packet has been handled
      */
+    @SuppressWarnings("unchecked")
     protected boolean handleGameIndependentPacket(Packet packet) {
         switch (packet.getCommand()) {
             case CLOSE_CONNECTION:
@@ -441,6 +442,9 @@ public abstract class AbstractClient implements IClient {
                 break;
             case ENTITY_ADD:
                 receiveUnitReplace(packet);
+                break;
+            case SENDING_BOARD:
+                getIGame().receiveBoards((Map<Integer, Board>) packet.getObject(0));
                 break;
             default:
                 return false;

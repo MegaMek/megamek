@@ -70,6 +70,7 @@ public enum PacketCommand {
     PHASE_CHANGE,
     TURN,
     ROUND_UPDATE,
+    /** A Server to Client packet of the complete set of boards */
     SENDING_BOARD,
     SENDING_ILLUM_HEXES,
     CLEAR_ILLUM_HEXES,

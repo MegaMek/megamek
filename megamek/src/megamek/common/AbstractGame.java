@@ -18,9 +18,12 @@
  */
 package megamek.common;
 
+import megamek.common.event.GameBoardNewEvent;
 import megamek.common.event.GameEvent;
 import megamek.common.event.GameListener;
 import megamek.common.force.Forces;
+import megamek.common.net.enums.PacketCommand;
+import megamek.common.net.packets.Packet;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -42,6 +45,14 @@ public abstract class AbstractGame implements IGame {
     protected final CopyOnWriteArrayList<Team> teams = new CopyOnWriteArrayList<>();
 
     protected transient Vector<GameListener> gameListeners = new Vector<>();
+
+    /**
+     * This Map holds all game boards together with a unique ID for each.
+     * For the "legacy" Game that currently only allows a single board, that board always uses ID 0.
+     * To support game types that use board types other than hex boards, a superclass or interface should
+     * be used instead of Board in the future.
+     */
+    private final Map<Integer, Board> gameBoards = new HashMap<>();
 
     /**
      * The forces present in the game. The top level force holds all forces and force-less entities
@@ -101,11 +112,6 @@ public abstract class AbstractGame implements IGame {
         return new ArrayList<>(inGameObjects.values());
     }
 
-    /**
-     * Adds the specified game listener to receive board events from this board.
-     *
-     * @param listener the game listener.
-     */
     @Override
     public void addGameListener(GameListener listener) {
         // Since gameListeners is transient, it could be null
@@ -139,21 +145,47 @@ public abstract class AbstractGame implements IGame {
         return Collections.unmodifiableList(gameListeners);
     }
 
-
-    /**
-     * Processes game events occurring on this connection by dispatching them to
-     * any registered GameListener objects.
-     *
-     * @param event the game event.
-     */
-    public void processGameEvent(GameEvent event) {
+    @Override
+    public void fireGameEvent(GameEvent event) {
         // Since gameListeners is transient, it could be null
         if (gameListeners == null) {
             gameListeners = new Vector<>();
         }
-        // This iteration must allow concurrent modification of the list!
+        // The iteration must allow and support concurrent modification of the list!
+        // Testing shows that a CopyOnWriteArrayList does not work
         for (Enumeration<GameListener> e = gameListeners.elements(); e.hasMoreElements(); ) {
             event.fireEvent(e.nextElement());
         }
+    }
+
+    @Override
+    public void receiveBoard(int boardId, Board board) {
+        Board oldBoard = getBoard(boardId);
+        setBoard(boardId, board);
+        fireGameEvent(new GameBoardNewEvent(this, oldBoard, board));
+    }
+
+    @Override
+    public void receiveBoards(Map<Integer, Board> boards) {
+        // cycle the entries so an event can be fired for each to allow listeners to register and unregister
+        boards.forEach(this::receiveBoard);
+        // some old boards might not have been replaced by new ones, so clear the map and refill
+        gameBoards.clear();
+        gameBoards.putAll(boards);
+    }
+
+    @Override
+    public void setBoard(int boardId, Board board) {
+        gameBoards.put(boardId, board);
+    }
+
+    @Override
+    public Map<Integer, Board> getBoards() {
+        return Collections.unmodifiableMap(gameBoards);
+    }
+
+    @Override
+    public Packet createBoardsPacket() {
+        return new Packet(PacketCommand.SENDING_BOARD, gameBoards);
     }
 }

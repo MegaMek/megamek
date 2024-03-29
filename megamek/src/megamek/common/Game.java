@@ -63,8 +63,6 @@ public class Game extends AbstractGame implements Serializable, PlanetaryConditi
 
     private GameOptions options = new GameOptions();
 
-    private Board board = new Board();
-
     private MapSettings mapSettings = MapSettings.getInstance();
 
     /**
@@ -158,6 +156,7 @@ public class Game extends AbstractGame implements Serializable, PlanetaryConditi
      * Constructor
      */
     public Game() {
+        setBoard(0, new Board());
         // empty
     }
 
@@ -174,23 +173,12 @@ public class Game extends AbstractGame implements Serializable, PlanetaryConditi
         return version;
     }
 
-    public Board getBoard() {
-        return board;
-    }
-
     public void setBoard(Board board) {
-        Board oldBoard = this.board;
-        setBoardDirect(board);
-        processGameEvent(new GameBoardNewEvent(this, oldBoard, board));
+        receiveBoard(0, board);
     }
 
     public void setBoardDirect(final Board board) {
-        this.board = board;
-    }
-
-    @Override
-    public void setBoard(Board board, int boardId) {
-        setBoardDirect(board);
+        setBoard(0, board);
     }
 
     public boolean containsMinefield(Coords coords) {
@@ -711,9 +699,8 @@ public class Game extends AbstractGame implements Serializable, PlanetaryConditi
         processGameEvent(new GamePhaseChangeEvent(this, oldPhase, phase));
     }
 
-    @Override
-    public void fireGameEvent(GameEvent event) {
-        processGameEvent(event);
+    public void processGameEvent(GameEvent event) {
+        fireGameEvent(event);
     }
 
     public GamePhase getLastPhase() {
@@ -1126,7 +1113,7 @@ public class Game extends AbstractGame implements Serializable, PlanetaryConditi
                 case Targetable.TYPE_BLDG_IGNITE:
                 case Targetable.TYPE_BLDG_TAG:
                     if (getBoard().getBuildingAt(BuildingTarget.idToCoords(nID)) != null) {
-                        return new BuildingTarget(BuildingTarget.idToCoords(nID), board, nType);
+                        return new BuildingTarget(BuildingTarget.idToCoords(nID), getBoard(), nType);
                     } else {
                         return null;
                     }
@@ -1545,7 +1532,7 @@ public class Game extends AbstractGame implements Serializable, PlanetaryConditi
         Vector<GunEmplacement> vector = new Vector<>();
 
         // Only build the list if the coords are on the board.
-        if (board.contains(c)) {
+        if (getBoard().contains(c)) {
             for (Entity entity : getEntitiesVector(c, true)) {
                 if (entity.hasETypeFlag(Entity.ETYPE_GUN_EMPLACEMENT)) {
                     vector.addElement((GunEmplacement) entity);
@@ -1587,8 +1574,8 @@ public class Game extends AbstractGame implements Serializable, PlanetaryConditi
      */
     public @Nullable Entity getAffaTarget(Coords c, Entity ignore) {
         Vector<Entity> vector = new Vector<>();
-        if (board.contains(c)) {
-            Hex hex = board.getHex(c);
+        if (getBoard().contains(c)) {
+            Hex hex = getBoard().getHex(c);
             for (Entity entity : getEntitiesVector(c)) {
                 if (entity.isTargetable()
                         && ((entity.getElevation() == 0) // Standing on hex surface
@@ -3120,7 +3107,7 @@ public class Game extends AbstractGame implements Serializable, PlanetaryConditi
     // applicable
     public boolean useVectorMove() {
         return getOptions().booleanOption(OptionsConstants.ADVAERORULES_ADVANCED_MOVEMENT)
-               && board.inSpace();
+               && getBoard().inSpace();
     }
 
     /**

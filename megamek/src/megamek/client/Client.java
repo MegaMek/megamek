@@ -995,9 +995,9 @@ public class Client extends AbstractClient implements IClientCommandHandler {
             case SENDING_TURNS:
                 receiveTurns(packet);
                 break;
-            case SENDING_BOARD:
-                receiveBoard(packet);
-                break;
+//            case SENDING_BOARD:
+//                receiveBoard(packet);
+//                break;
             case SENDING_ENTITIES:
                 receiveEntities(packet);
                 break;

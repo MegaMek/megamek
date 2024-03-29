@@ -480,7 +480,7 @@ public class RATGenerator {
             }
 
             AvailabilityRating ar = findChassisAvailabilityRecord(early,
-                        cRec.getChassisKey(), fRec, year);
+                        chassisKey, fRec, year);
             if (ar == null) {
                 continue;
             }

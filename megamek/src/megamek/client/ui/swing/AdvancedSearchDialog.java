@@ -266,7 +266,6 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
         unitTypeModel.addElement(UnitType.getTypeDisplayableName(UnitType.INFANTRY));
         unitTypeModel.addElement(UnitType.getTypeDisplayableName(UnitType.PROTOMEK));
         unitTypeModel.addElement(UnitType.getTypeDisplayableName(UnitType.AEROSPACEFIGHTER));
-        unitTypeModel.addElement(UnitType.getTypeDisplayableName(UnitType.AERO));
         unitTypeModel.setSelectedItem(Messages.getString("MechSelectorDialog.All"));
 
         cboUnitType.setModel(unitTypeModel);

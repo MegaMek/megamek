@@ -1123,6 +1123,7 @@ public class EntityListFile {
         output.write("\" " + MULParser.ATTR_NICK + "=\"");
         output.write(crew.getNickname(pos).replaceAll("\"", "&quot;"));
         output.write("\" " + MULParser.ATTR_GENDER + "=\"" + crew.getGender(pos).name());
+        output.write("\" " + MULParser.ATTR_CLANPILOT + "=\"" + crew.isClanPilot(pos));
 
         if ((null != entity.getGame())
                 && entity.getGame().getOptions().booleanOption(OptionsConstants.RPG_RPG_GUNNERY)) {

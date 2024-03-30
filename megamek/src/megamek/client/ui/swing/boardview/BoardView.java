@@ -195,6 +195,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
 
     // sprite for current movement
     ArrayList<StepSprite> pathSprites = new ArrayList<>();
+    ArrayList<FlightPathIndicatorSprite> fpiSprites = new ArrayList<FlightPathIndicatorSprite>();
 
     private ArrayList<Coords> strafingCoords = new ArrayList<>(5);
 
@@ -1195,6 +1196,9 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
 
         // draw movement, if valid
         drawSprites(g, pathSprites);
+
+        // draw flight path indicators
+        drawSprites(g, fpiSprites);
 
         // draw firing solution sprites, but only during the firing phase
         if (game.getPhase().isFiring() || game.getPhase().isOffboard()) {
@@ -2288,6 +2292,9 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
 
             // draw movement, if valid
             drawSprites(boardGraph, pathSprites);
+
+            // draw flight path indicators
+            drawSprites(boardGraph, fpiSprites);
 
             // draw firing solution sprites, but only during the firing phase
             if (game.getPhase().isFiring() || game.getPhase().isOffboard()) {
@@ -3913,7 +3920,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
 
             // As a test, lets add some sprites for the rest of the path just to see what this looks like.
             for (MoveStep ms : fpiSteps) {
-                pathSprites.add(new StepSprite(this, ms, fpiPath.isEndStep(ms)));
+                fpiSprites.add(new FlightPathIndicatorSprite(this, ms.getPosition(), ms, fpiPath.isEndStep(ms)));
             }
         }
     }
@@ -3923,6 +3930,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
      */
     public void clearMovementData() {
         pathSprites = new ArrayList<>();
+        fpiSprites = new ArrayList<>();
         movementTarget = null;
         checkFoVHexImageCacheClear();
         repaint();
@@ -5211,6 +5219,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
 
     void clearSprites() {
         pathSprites.clear();
+        fpiSprites.clear();
         firingSprites.clear();
         attackSprites.clear();
         c3Sprites.clear();
@@ -6129,8 +6138,13 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
 
         updateFontSizes();
         updateBoard();
+
         for (StepSprite sprite : pathSprites) {
             sprite.refreshZoomLevel();
+        }
+
+        for (FlightPathIndicatorSprite sprite : fpiSprites) {
+            sprite.prepare();
         }
 
         for (FiringSolutionSprite sprite : firingSprites) {

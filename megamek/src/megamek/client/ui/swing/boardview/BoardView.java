@@ -3873,9 +3873,49 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
             }
 
             pathSprites.add(new StepSprite(this, step, md.isEndStep(step)));
+
+            // On the last step - process possible aerospace flight path indicators.
+            if (md.isEndStep(step)) {
+                displayFlightPathIndicator(md);
+            }
+
             previousStep = step;
         }
+
         repaint(100);
+    }
+
+    /**
+     * Add Aerospace ground map flight path indicators on the last step based on how much
+     * aerodyne movement is left.  This will add sprites along the forward path for the
+     * remaining velocity and indicate what point along it's forward path the unit can turn.
+     *
+     * @param md - Current MovePath that represents the current units movement state
+     */
+    private void displayFlightPathIndicator(MovePath md) {
+        // If the unit has remaining aerodyne velocity display the flight path indicators for remaining velocity.
+        if ((md.getFinalVelocityLeft() > 0) && !md.nextForwardStepOffBoard()) {
+            List<MoveStep> fpiSteps = new Vector<MoveStep>();
+
+            // Cloning the current movement path because we don't want to change it's state.
+            MovePath fpiPath = md.clone();
+
+            // While velocity remains, add a forward step to the cloned movement path.
+            while (fpiPath.getFinalVelocityLeft() > 0) {
+                fpiPath.addStep(MoveStepType.FORWARDS);
+                fpiSteps.add(fpiPath.getLastStep());
+
+                // short circuit the flight path indicator if we are off the board.
+                if (fpiPath.nextForwardStepOffBoard()) {
+                    break;
+                }
+            }
+
+            // As a test, lets add some sprites for the rest of the path just to see what this looks like.
+            for (MoveStep ms : fpiSteps) {
+                pathSprites.add(new StepSprite(this, ms, fpiPath.isEndStep(ms)));
+            }
+        }
     }
 
     /**

@@ -10,15 +10,15 @@
 	
 	<toc>
 		<unitType>
-			<option ifDateBetween="3060,">null,Mek,ProtoMek,Tank,VTOL,Infantry,BattleArmor,Aero,Conventional Fighter</option>
-			<option ifDateBetween="2870,3059">null,Mek,Tank,VTOL,Infantry,BattleArmor,Aero,Conventional Fighter</option>
-			<option ifDateBetween=",2869">null,Mek,Tank,VTOL,Infantry,Aero,Conventional Fighter</option>
+			<option ifDateBetween="3060,">null,Mek,ProtoMek,Tank,VTOL,Infantry,BattleArmor,AeroSpaceFighter,Conventional Fighter</option>
+			<option ifDateBetween="2870,3059">null,Mek,Tank,VTOL,Infantry,BattleArmor,AeroSpaceFighter,Conventional Fighter</option>
+			<option ifDateBetween=",2869">null,Mek,Tank,VTOL,Infantry,AeroSpaceFighter,Conventional Fighter</option>
 		</unitType>
 		
 		<eschelon>
 			<option ifUnitType="">%GALAXY%,%CLUSTER%</option>
 			<option ifUnitType="BattleArmor">%CLUSTER%,%TRINARY%^,%TRINARY%,%BINARY%^,%BINARY%,%STAR%^,%STAR%</option>
-			<option ifUnitType="Mek|Aero" ifDateBetween="2870,">%TRINARY%^,%TRINARY%,%BINARY%^,%BINARY%,%STAR%^,%STAR%</option>
+			<option ifUnitType="Mek|AeroSpaceFighter" ifDateBetween="2870,">%TRINARY%^,%TRINARY%,%BINARY%^,%BINARY%,%STAR%^,%STAR%</option>
 			<option>%TRINARY%,%BINARY%,%STAR%</option>
 		</eschelon>
 		
@@ -32,7 +32,7 @@
 		
 		<flags>
 			<option ifUnitType="null|Mek|BattleArmor" ifEschelon="%TRINARY%|%BINARY%">mixedMekBA:Combined Mek/BA unit</option>
-			<option ifUnitType="null|Mek|Aero" ifEschelon="%TRINARY%|%BINARY%">mixedMekAero:Combined Mek/Aero unit</option>
+			<option ifUnitType="null|Mek|AeroSpaceFighter" ifEschelon="%TRINARY%|%BINARY%">mixedMekAero:Combined Mek/Aero unit</option>
 		</flags>
 	</toc>
 	
@@ -40,7 +40,7 @@
 		<co>%GALAXY_CMDR%</co>
 		
 		<subforces>
-			<subforce role="command" rating="Keshik" unitType="Aero"
+			<subforce role="command" rating="Keshik" unitType="AeroSpaceFighter"
 				name="Kindraa Command Binary">%BINARY%</subforce>
 			<subforceOption>
 				<option weight="3" rating="FL">%CLUSTER%</option>
@@ -53,7 +53,7 @@
 			</subforceOption>
 			<subforceOption>
 				<option weight="3" rating="FL"
-					unitType="Aero">%CLUSTER%</option>
+					unitType="AeroSpaceFighter">%CLUSTER%</option>
 				<option />
 			</subforceOption>
 			<subforceOption>
@@ -85,29 +85,29 @@
 
 		<subforces>
 			<subforceOption ifWeightClass="H|A">
-				<option unitType="Aero" augmented="1" weightClass="A"
+				<option unitType="AeroSpaceFighter" augmented="1" weightClass="A"
 					role="command" weight="2">%BINARY%</option>
-				<option unitType="Aero" augmented="1" weightClass="H"
+				<option unitType="AeroSpaceFighter" augmented="1" weightClass="H"
 					role="command" weight="3">%BINARY%</option>
-				<option unitType="Aero" augmented="1" weightClass="M"
+				<option unitType="AeroSpaceFighter" augmented="1" weightClass="M"
 					role="command" weight="1">%BINARY%</option>
 			</subforceOption>
 			<subforceOption ifWeightClass="M">
-				<option unitType="Aero" augmented="1" weightClass="A"
+				<option unitType="AeroSpaceFighter" augmented="1" weightClass="A"
 					role="command" weight="1">%BINARY%</option>
-				<option unitType="Aero" augmented="1" weightClass="H"
+				<option unitType="AeroSpaceFighter" augmented="1" weightClass="H"
 					role="command" weight="3">%BINARY%</option>
-				<option unitType="Aero" augmented="1" weightClass="M"
+				<option unitType="AeroSpaceFighter" augmented="1" weightClass="M"
 					role="command" weight="3">%BINARY%</option>
-				<option unitType="Aero" augmented="1" weightClass="L"
+				<option unitType="AeroSpaceFighter" augmented="1" weightClass="L"
 					role="command" weight="1">%BINARY%</option>
 			</subforceOption>
 			<subforceOption ifWeightClass="L">
-				<option unitType="Aero" augmented="1" weightClass="H"
+				<option unitType="AeroSpaceFighter" augmented="1" weightClass="H"
 					role="command" weight="4">%BINARY%</option>
-				<option unitType="Aero" augmented="1" weightClass="M"
+				<option unitType="AeroSpaceFighter" augmented="1" weightClass="M"
 					role="command" weight="3">%BINARY%</option>
-				<option unitType="Aero" augmented="1" weightClass="L"
+				<option unitType="AeroSpaceFighter" augmented="1" weightClass="L"
 					role="command" weight="2">%BINARY%</option>
 			</subforceOption>
 			
@@ -161,7 +161,7 @@
 	
 	<!--Aerospace cluster includes two ASF trinaries and one Mek/BA
 	 trinary.-->
-	<force eschelon="%CLUSTER%" eschName="Cluster" ifUnitType="Aero">
+	<force eschelon="%CLUSTER%" eschName="Cluster" ifUnitType="AeroSpaceFighter">
 		<name ifWeightClass="H|A">Air Assault Cluster</name>
 		<name ifWeightClass="M">Air Battle Cluster</name>
 		<name ifWeightClass="L">Air Striker Cluster</name>
@@ -340,18 +340,18 @@
 			</subforceOption>			
 						
 			<subforceOption ifWeightClass="H">
-				<option unitType="Aero" weightClass="H,H"
+				<option unitType="AeroSpaceFighter" weightClass="H,H"
 					weight="2">%BINARY%</option>
-				<option unitType="Aero" weightClass="H,M">%BINARY%</option>
+				<option unitType="AeroSpaceFighter" weightClass="H,M">%BINARY%</option>
 			</subforceOption>
 			<subforceOption ifWeightClass="M">
-				<option unitType="Aero" weightClass="H,M">%BINARY%</option>
-				<option unitType="Aero" weightClass="M,M">%BINARY%</option>
-				<option unitType="Aero" weightClass="M,L">%BINARY%</option>
+				<option unitType="AeroSpaceFighter" weightClass="H,M">%BINARY%</option>
+				<option unitType="AeroSpaceFighter" weightClass="M,M">%BINARY%</option>
+				<option unitType="AeroSpaceFighter" weightClass="M,L">%BINARY%</option>
 			</subforceOption>
 			<subforceOption ifWeightClass="L">
-				<option unitType="Aero" weightClass="M,L">%BINARY%</option>
-				<option unitType="Aero" weightClass="L,L"
+				<option unitType="AeroSpaceFighter" weightClass="M,L">%BINARY%</option>
+				<option unitType="AeroSpaceFighter" weightClass="L,L"
 					weight="2">%BINARY%</option>
 			</subforceOption>
 		</subforces>
@@ -382,29 +382,29 @@
 
 		<subforces>
 			<subforceOption ifWeightClass="H|A">
-				<option unitType="Mek" weightClass="A" flags="+mixedMekAero"
+				<option unitType="Mek" weightClass="A" flags="+mixedMekAeroSpaceFighter"
 					role="command" weight="2">%TRINARY%</option>
-				<option unitType="Mek" weightClass="H" flags="+mixedMekAero"
+				<option unitType="Mek" weightClass="H" flags="+mixedMekAeroSpaceFighter"
 					role="command" weight="3">%TRINARY%</option>
-				<option unitType="Mek" weightClass="M" flags="+mixedMekAero"
+				<option unitType="Mek" weightClass="M" flags="+mixedMekAeroSpaceFighter"
 					role="command" weight="1">%TRINARY%</option>
 			</subforceOption>
 			<subforceOption ifWeightClass="M">
-				<option unitType="Mek" weightClass="A" flags="+mixedMekAero"
+				<option unitType="Mek" weightClass="A" flags="+mixedMekAeroSpaceFighter"
 					role="command" weight="1">%TRINARY%</option>
-				<option unitType="Mek" weightClass="H" flags="+mixedMekAero"
+				<option unitType="Mek" weightClass="H" flags="+mixedMekAeroSpaceFighter"
 					role="command" weight="3">%TRINARY%</option>
-				<option unitType="Mek" weightClass="M" flags="+mixedMekAero"
+				<option unitType="Mek" weightClass="M" flags="+mixedMekAeroSpaceFighter"
 					role="command" weight="3">%TRINARY%</option>
-				<option unitType="Mek" weightClass="L" flags="+mixedMekAero"
+				<option unitType="Mek" weightClass="L" flags="+mixedMekAeroSpaceFighter"
 					role="command" weight="1">%TRINARY%</option>
 			</subforceOption>
 			<subforceOption ifWeightClass="L">
-				<option unitType="Mek" weightClass="H" flags="+mixedMekAero"
+				<option unitType="Mek" weightClass="H" flags="+mixedMekAeroSpaceFighter"
 					role="command" weight="4">%TRINARY%</option>
-				<option unitType="Mek" weightClass="M" flags="+mixedMekAero"
+				<option unitType="Mek" weightClass="M" flags="+mixedMekAeroSpaceFighter"
 					role="command" weight="3">%TRINARY%</option>
-				<option unitType="Mek" weightClass="L" flags="+mixedMekAero"
+				<option unitType="Mek" weightClass="L" flags="+mixedMekAeroSpaceFighter"
 					role="command" weight="2">%TRINARY%</option>
 			</subforceOption>
 
@@ -501,7 +501,7 @@
 	<!--Command trinary used for SL clusters, consisting of two
 	Mek stars and one ASF star.-->
 	
-	<force eschelon="%TRINARY%" eschName="Trinary" ifFlags="mixedMekAero">
+	<force eschelon="%TRINARY%" eschName="Trinary" ifFlags="mixedMekAeroSpaceFighter">
 		<name>Trinary Command</name>
 		<co>%STAR_COL%</co>
 		
@@ -545,27 +545,27 @@
 			</subforceOption>
 
 			<subforceOption ifWeightClass="H|A">
-				<option unitType="Aero" weightClass="H"
+				<option unitType="AeroSpaceFighter" weightClass="H"
 					weight="3">%STAR%</option>
-				<option unitType="Aero" weightClass="H"
+				<option unitType="AeroSpaceFighter" weightClass="H"
 					weight="2">%STAR%</option>
-				<option unitType="Aero" weightClass="L"
+				<option unitType="AeroSpaceFighter" weightClass="L"
 					weight="1">%STAR%</option>
 			</subforceOption>
 			<subforceOption ifWeightClass="M">
-				<option unitType="Aero" weightClass="H"
+				<option unitType="AeroSpaceFighter" weightClass="H"
 					weight="2">%STAR%</option>
-				<option unitType="Aero" weightClass="M"
+				<option unitType="AeroSpaceFighter" weightClass="M"
 					weight="3">%STAR%</option>
-				<option unitType="Aero" weightClass="L"
+				<option unitType="AeroSpaceFighter" weightClass="L"
 					weight="2">%STAR%</option>
 			</subforceOption>
 			<subforceOption ifWeightClass="L">
-				<option unitType="Aero" weightClass="H"
+				<option unitType="AeroSpaceFighter" weightClass="H"
 					weight="1">%STAR%</option>
-				<option unitType="Aero" weightClass="M"
+				<option unitType="AeroSpaceFighter" weightClass="M"
 					weight="3">%STAR%</option>
-				<option unitType="Aero" weightClass="L"
+				<option unitType="AeroSpaceFighter" weightClass="L"
 					weight="3">%STAR%</option>
 			</subforceOption>
 		</subforces>

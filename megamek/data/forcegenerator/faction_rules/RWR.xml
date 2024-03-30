@@ -32,9 +32,9 @@ nations this ruleset sets IS as the parent rather than Periphery. -->
 	
 	<toc>
 		<unitType>
-			<option ifDateBetween="2760,">null,Mek,Tank,VTOL,Infantry,Aero,Conventional Fighter</option>
-			<option ifDateBetween="2600,2759">Mek,Tank,VTOL,Infantry,Aero,Conventional Fighter</option>
-			<option ifDateBetween="2474,2599">null,Infantry,Aero,Conventional Fighter</option>
+			<option ifDateBetween="2760,">null,Mek,Tank,VTOL,Infantry,AeroSpaceFighter,Conventional Fighter</option>
+			<option ifDateBetween="2600,2759">Mek,Tank,VTOL,Infantry,AeroSpaceFighter,Conventional Fighter</option>
+			<option ifDateBetween="2474,2599">null,Infantry,AeroSpaceFighter,Conventional Fighter</option>
 		</unitType>
 		
 		<eschelon>
@@ -45,7 +45,7 @@ nations this ruleset sets IS as the parent rather than Periphery. -->
 			<option ifUnitType="Mek|Tank|VTOL">%BATTALION%,%COMPANY%,%LANCE%</option>
 			<option ifUnitType="Infantry">%REGIMENT%,%BATTALION%,%COMPANY%</option>
 			<option ifUnitType="BattleArmor">%BATTALION%,%COMPANY%,%PLATOON%</option>
-			<option ifUnitType="Aero|Conventional Fighter">%WING%,%SQUADRON%,%FLIGHT%</option>
+			<option ifUnitType="AeroSpaceFighter|Conventional Fighter">%WING%,%SQUADRON%,%FLIGHT%</option>
 		</eschelon>
 		
 		<rating>
@@ -156,7 +156,7 @@ nations this ruleset sets IS as the parent rather than Periphery. -->
 		</subforces>
 
 		<attachedForces>
-			<subforce unitType="Aero"
+			<subforce unitType="AeroSpaceFighter"
 				name="Aerospace Support">%WING%</subforce>
 			<subforce unitType="Infantry"
 				name="Infantry Support">%REGIMENT%</subforce>			
@@ -211,7 +211,7 @@ nations this ruleset sets IS as the parent rather than Periphery. -->
 		</subforces>
 
 		<attachedForces>
-			<subforce unitType="Aero"
+			<subforce unitType="AeroSpaceFighter"
 				name="Aerospace Support">%WING%</subforce>
 			<subforce unitType="Tank"
 				name="Armor Support">%REGIMENT%</subforce>

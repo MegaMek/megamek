@@ -16,9 +16,9 @@ types of support units attached to Mek regiments can vary widely. -->
 
 	<toc>
 		<unitType>
-			<option ifDateBetween="3051,">Mek,Tank,VTOL,Infantry,BattleArmor,Aero,Conventional Fighter</option>
-			<option ifDateBetween="2481,3050">Mek,Tank,VTOL,Infantry,Aero,Conventional Fighter</option>
-			<option ifDateBetween=",2480">Tank,VTOL,Infantry,Aero,Conventional Fighter</option>
+			<option ifDateBetween="3051,">Mek,Tank,VTOL,Infantry,BattleArmor,AeroSpaceFighter,Conventional Fighter</option>
+			<option ifDateBetween="2481,3050">Mek,Tank,VTOL,Infantry,AeroSpaceFighter,Conventional Fighter</option>
+			<option ifDateBetween=",2480">Tank,VTOL,Infantry,AeroSpaceFighter,Conventional Fighter</option>
 		</unitType>
 		
 		<eschelon>
@@ -26,7 +26,7 @@ types of support units attached to Mek regiments can vary widely. -->
 			<option ifUnitType="Tank|VTOL">%REGIMENT%,%BATTALION%,%COMPANY%,%LANCE%,%POINT%</option>
 			<option ifUnitType="Infantry">%REGIMENT%,%BATTALION%,%COMPANY%</option>
 			<option ifUnitType="BattleArmor">%BATTALION%,%COMPANY%,%PLATOON%</option>
-			<option ifUnitType="Aero|Conventional Fighter">%GROUP%,%WING%,%SQUADRON%,%FLIGHT%</option>
+			<option ifUnitType="AeroSpaceFighter|Conventional Fighter">%GROUP%,%WING%,%SQUADRON%,%FLIGHT%</option>
 		</eschelon>
 		
 		<rating>
@@ -49,11 +49,11 @@ types of support units attached to Mek regiments can vary widely. -->
 
 		<attachedForces>
 			<subforceOption>
-				<option unitType="Aero" weight="7"
+				<option unitType="AeroSpaceFighter" weight="7"
 					name="Aerospace Support">%WING%</option>
-				<option unitType="Aero"
+				<option unitType="AeroSpaceFighter"
 					name="Aerospace Support">%SQUADRON%</option>
-				<option unitType="Aero"
+				<option unitType="AeroSpaceFighter"
 					name="Aerospace Support">%GROUP%</option>
 				<option weight="3"/>
 			</subforceOption>
@@ -262,7 +262,7 @@ types of support units attached to Mek regiments can vary widely. -->
 		</subforces>
 
 		<attachedForces ifUnitType="Tank" ifDateBetween=",2550">
-			<subforce unitType="Aero"
+			<subforce unitType="AeroSpaceFighter"
 				name="Aerospace Support">%WING%</subforce>
 			<subforceOption ifDateBetween="2481,">
 				<option ifRating="D|F"/>
@@ -305,7 +305,7 @@ types of support units attached to Mek regiments can vary widely. -->
 	of bringing in trainers from the Outworlds Alliance, Taurian air forces are largely
 	heavy fighters in order to protect the investment in the pilot. -->
 	
-	<force eschelon="%GROUP%" eschName="Air Division" ifUnitType="Aero|Conventional Fighter">
+	<force eschelon="%GROUP%" eschName="Air Division" ifUnitType="AeroSpaceFighter|Conventional Fighter">
 		<co>%COLONEL%</co>
 		
 		<weightClass>
@@ -348,7 +348,7 @@ types of support units attached to Mek regiments can vary widely. -->
 		</subforces>
 	</force>
 	
-	<force eschelon="%WING%" eschName="Wing" ifUnitType="Aero|Conventional Fighter">
+	<force eschelon="%WING%" eschName="Wing" ifUnitType="AeroSpaceFighter|Conventional Fighter">
 		<name>{ordinal} Wing</name>
 		<co>%MAJOR%</co>
 		
@@ -359,13 +359,13 @@ types of support units attached to Mek regiments can vary widely. -->
 		</weightClass>
 		
 		<subforces>
-			<subforceOption ifWeightClass="H" ifUnitType="Aero">
+			<subforceOption ifWeightClass="H" ifUnitType="AeroSpaceFighter">
 				<option weightClass="H,H" weight="2">%SQUADRON%
 					</option>
 				<option weightClass="H,M">%SQUADRON%
 					</option>
 			</subforceOption>
-			<subforceOption ifWeightClass="M" ifUnitType="Aero">
+			<subforceOption ifWeightClass="M" ifUnitType="AeroSpaceFighter">
 				<option weightClass="H,M" weight="3">%SQUADRON%
 					</option>
 				<option weightClass="M,M" weight="2">%SQUADRON%
@@ -373,7 +373,7 @@ types of support units attached to Mek regiments can vary widely. -->
 				<option weightClass="H,L">%SQUADRON%
 					</option>
 			</subforceOption>
-			<subforceOption ifWeightClass="L" ifUnitType="Aero">
+			<subforceOption ifWeightClass="L" ifUnitType="AeroSpaceFighter">
 				<option weightClass="M,L" weight="2">%SQUADRON%
 					</option>
 				<option weightClass="L,L">%SQUADRON%
@@ -392,7 +392,7 @@ types of support units attached to Mek regiments can vary widely. -->
 		</attachedForces>
 	</force>
 	
-	<force eschelon="%SQUADRON%" eschName="Flight" ifUnitType="Aero|Conventional Fighter">
+	<force eschelon="%SQUADRON%" eschName="Flight" ifUnitType="AeroSpaceFighter|Conventional Fighter">
 		<name>{phonetic} Company</name>
 		<co>%CAPTAIN%</co>
 		
@@ -403,13 +403,13 @@ types of support units attached to Mek regiments can vary widely. -->
 		</weightClass>
 
 		<subforces>
-			<subforceOption ifWeightClass="H" ifUnitType="Aero">
+			<subforceOption ifWeightClass="H" ifUnitType="AeroSpaceFighter">
 				<option weightClass="H,H" weight="2">%FLIGHT%
 					</option>
 				<option weightClass="H,M">%FLIGHT%
 					</option>
 			</subforceOption>
-			<subforceOption ifWeightClass="M" ifUnitType="Aero">
+			<subforceOption ifWeightClass="M" ifUnitType="AeroSpaceFighter">
 				<option weightClass="H,M" weight="3">%FLIGHT%
 					</option>
 				<option weightClass="M,M" weight="2">%FLIGHT%
@@ -417,7 +417,7 @@ types of support units attached to Mek regiments can vary widely. -->
 				<option weightClass="H,L">%FLIGHT%
 					</option>
 			</subforceOption>
-			<subforceOption ifWeightClass="L" ifUnitType="Aero">
+			<subforceOption ifWeightClass="L" ifUnitType="AeroSpaceFighter">
 				<option weightClass="M,L" weight="2">%FLIGHT%
 					</option>
 				<option weightClass="L,L">%FLIGHT%
@@ -428,7 +428,7 @@ types of support units attached to Mek regiments can vary widely. -->
 		</subforces>
 	</force>
 	
-	<force eschelon="%FLIGHT%" eschName="Air Lance" ifUnitType="Aero|Conventional Fighter">
+	<force eschelon="%FLIGHT%" eschName="Air Lance" ifUnitType="AeroSpaceFighter|Conventional Fighter">
 		<co>%LT%</co>
 		
 		<weightClass>

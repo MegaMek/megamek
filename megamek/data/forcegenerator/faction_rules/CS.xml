@@ -1613,66 +1613,66 @@
 		<subforces generate="group" ifFlags="4002|0402|0042|2202|2022|0222">
 		    <subforceOption ifWeightClass="A">
 		        <option weightClass="H,H" weight="2"
-				    unitType="Aero">%ELEMENT%</option>
+				    unitType="AeroSpaceFighter">%ELEMENT%</option>
 		        <option weightClass="M,M"
-				    unitType="Aero">%ELEMENT%</option>
+				    unitType="AeroSpaceFighter">%ELEMENT%</option>
 		    </subforceOption>
 		    <subforceOption ifWeightClass="H">
 		        <option weightClass="H,H" weight="3"
-				    unitType="Aero">%ELEMENT%</option>
+				    unitType="AeroSpaceFighter">%ELEMENT%</option>
 		        <option weightClass="M,M" weight="2"
-				    unitType="Aero">%ELEMENT%</option>
+				    unitType="AeroSpaceFighter">%ELEMENT%</option>
 		        <option weightClass="L,L" weight="1"
-				    unitType="Aero">%ELEMENT%</option>
+				    unitType="AeroSpaceFighter">%ELEMENT%</option>
 		    </subforceOption>
 		    <subforceOption ifWeightClass="M">
 		        <option weightClass="H,H" weight="2"
-				    unitType="Aero">%ELEMENT%</option>
+				    unitType="AeroSpaceFighter">%ELEMENT%</option>
 		        <option weightClass="M,M" weight="3"
-				    unitType="Aero">%ELEMENT%</option>
+				    unitType="AeroSpaceFighter">%ELEMENT%</option>
 		        <option weightClass="L,L" weight="2"
-				    unitType="Aero">%ELEMENT%</option>
+				    unitType="AeroSpaceFighter">%ELEMENT%</option>
 		    </subforceOption>
 		    <subforceOption ifWeightClass="L">
 		        <option weightClass="H,H" weight="1"
-				    unitType="Aero">%ELEMENT%</option>
+				    unitType="AeroSpaceFighter">%ELEMENT%</option>
 		        <option weightClass="M,M" weight="2"
-				    unitType="Aero">%ELEMENT%</option>
+				    unitType="AeroSpaceFighter">%ELEMENT%</option>
 		        <option weightClass="L,L" weight="3"
-				    unitType="Aero">%ELEMENT%</option>
+				    unitType="AeroSpaceFighter">%ELEMENT%</option>
 		    </subforceOption>
 		</subforces>
 
 		<subforces generate="group" ifFlags="3003">
 		    <subforceOption ifWeightClass="A">
 		        <option weightClass="H,H,H" weight="2"
-				    unitType="Aero">%ELEMENT%</option>
+				    unitType="AeroSpaceFighter">%ELEMENT%</option>
 		        <option weightClass="M,M,M"
-				    unitType="Aero">%ELEMENT%</option>
+				    unitType="AeroSpaceFighter">%ELEMENT%</option>
 		    </subforceOption>
 		    <subforceOption ifWeightClass="H">
 		        <option weightClass="H,H,H" weight="3"
-				    unitType="Aero">%ELEMENT%</option>
+				    unitType="AeroSpaceFighter">%ELEMENT%</option>
 		        <option weightClass="M,M,M" weight="2"
-				    unitType="Aero">%ELEMENT%</option>
+				    unitType="AeroSpaceFighter">%ELEMENT%</option>
 		        <option weightClass="L,L,L" weight="1"
-				    unitType="Aero">%ELEMENT%</option>
+				    unitType="AeroSpaceFighter">%ELEMENT%</option>
 		    </subforceOption>
 		    <subforceOption ifWeightClass="M">
 		        <option weightClass="H,H,H" weight="2"
-				    unitType="Aero">%ELEMENT%</option>
+				    unitType="AeroSpaceFighter">%ELEMENT%</option>
 		        <option weightClass="M,M,M" weight="3"
-				    unitType="Aero">%ELEMENT%</option>
+				    unitType="AeroSpaceFighter">%ELEMENT%</option>
 		        <option weightClass="L,L,L" weight="2"
-				    unitType="Aero">%ELEMENT%</option>
+				    unitType="AeroSpaceFighter">%ELEMENT%</option>
 		    </subforceOption>
 		    <subforceOption ifWeightClass="L">
 		        <option weightClass="H,H,H" weight="1"
-				    unitType="Aero">%ELEMENT%</option>
+				    unitType="AeroSpaceFighter">%ELEMENT%</option>
 		        <option weightClass="M,M,M" weight="2"
-				    unitType="Aero">%ELEMENT%</option>
+				    unitType="AeroSpaceFighter">%ELEMENT%</option>
 		        <option weightClass="L,L,L" weight="3"
-				    unitType="Aero">%ELEMENT%</option>
+				    unitType="AeroSpaceFighter">%ELEMENT%</option>
 		    </subforceOption>
 		</subforces>
 	</force>

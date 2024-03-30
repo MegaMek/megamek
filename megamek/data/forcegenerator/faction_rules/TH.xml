@@ -12,15 +12,15 @@
 	
 	<toc>
 		<unitType>
-			<option ifDateBetween="2442,">Mek,Tank,VTOL,Infantry,Aero,Conventional Fighter</option>
-			<option>Tank,VTOL,Infantry,Aero,Conventional Fighter</option>
+			<option ifDateBetween="2442,">Mek,Tank,VTOL,Infantry,AeroSpaceFighter,Conventional Fighter</option>
+			<option>Tank,VTOL,Infantry,AeroSpaceFighter,Conventional Fighter</option>
 		</unitType>
 		
 		<eschelon>
 			<option ifUnitType="Mek|Tank|VTOL">%REGIMENT%,%BATTALION%,%COMPANY%,%LANCE%</option>
 			<option ifUnitType="Infantry">%REGIMENT%,%BATTALION%,%COMPANY%</option>
 			<option ifUnitType="BattleArmor">%BATTALION%,%COMPANY%,%PLATOON%</option>
-			<option ifUnitType="Aero|Conventional Fighter">%WING%,%SQUADRON%,%FLIGHT%</option>
+			<option ifUnitType="AeroSpaceFighter|Conventional Fighter">%WING%,%SQUADRON%,%FLIGHT%</option>
 		</eschelon>
 		
 		<rating>
@@ -65,7 +65,7 @@
 		</subforces>
 		
 		<attachedForces ifUnitType="Mek">
-			<subforce unitType="Aero"
+			<subforce unitType="AeroSpaceFighter"
 				name="Aerospace Support">%WING%</subforce>
 			<subforce unitType="Tank"
 				name="Armor Support">%BATTALION%</subforce>
@@ -74,7 +74,7 @@
 		</attachedForces>
 
 		<attachedForces ifUnitType="Tank" ifDateBetween=",2500">
-			<subforce unitType="Aero"
+			<subforce unitType="AeroSpaceFighter"
 				name="Aerospace Support">%WING%</subforce>
 			<subforceOption ifDateBetween="2442,">
 				<option ifRating="D|F"/>

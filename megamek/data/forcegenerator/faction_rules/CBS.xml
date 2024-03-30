@@ -10,16 +10,16 @@
 	
 	<toc>
 		<unitType>
-			<option ifDateBetween="3060,">null,Mek,ProtoMek,Tank,VTOL,Infantry,BattleArmor,Aero,Conventional Fighter,Warship,Dropship,Jumpship</option>
-			<option ifDateBetween="2870,3059">null,Mek,Tank,VTOL,Infantry,BattleArmor,Aero,Conventional Fighter,Warship,Dropship,Jumpship</option>
-			<option ifDateBetween=",2869">null,Mek,Tank,VTOL,Infantry,Aero,Conventional Fighter,Warship,Dropship,Jumpship</option>
+			<option ifDateBetween="3060,">null,Mek,ProtoMek,Tank,VTOL,Infantry,BattleArmor,AeroSpaceFighter,Conventional Fighter,Warship,Dropship,Jumpship</option>
+			<option ifDateBetween="2870,3059">null,Mek,Tank,VTOL,Infantry,BattleArmor,AeroSpaceFighter,Conventional Fighter,Warship,Dropship,Jumpship</option>
+			<option ifDateBetween=",2869">null,Mek,Tank,VTOL,Infantry,AeroSpaceFighter,Conventional Fighter,Warship,Dropship,Jumpship</option>
 		</unitType>
 		
 		<eschelon>
 			<option ifUnitType="">%TOUMAN%,%GALAXY%,%CLUSTER%</option>
 			<option ifUnitType="Warship">%GALAXY%</option>
 			<option ifUnitType="Dropship|Jumpship">%STAR%</option>
-			<option ifUnitType="Aero">%CLUSTER%,%TRINARY%,%BINARY%,%STAR%</option>
+			<option ifUnitType="AeroSpaceFighter">%CLUSTER%,%TRINARY%,%BINARY%,%STAR%</option>
 			<option>%TRINARY%,%BINARY%,%STAR%</option>
 		</eschelon>
 		
@@ -96,19 +96,19 @@
 		<attachedForces>
 			<subforceOption>
 				<option num="3" ifDateBetween="3061,"
-					rating="FL" unitType="Aero">%CLUSTER%</option>
+					rating="FL" unitType="AeroSpaceFighter">%CLUSTER%</option>
 				<option num="4" rating="FL"
-					unitType="Aero">%CLUSTER%</option>
+					unitType="AeroSpaceFighter">%CLUSTER%</option>
 				<option num="5" ifDateBetween=",3060"
-					rating="FL" unitType="Aero">%CLUSTER%</option>
+					rating="FL" unitType="AeroSpaceFighter">%CLUSTER%</option>
 			</subforceOption>
 			<subforceOption>
 				<option num="2" ifDateBetween="3061,"
-					rating="SL" unitType="Aero">%CLUSTER%</option>
+					rating="SL" unitType="AeroSpaceFighter">%CLUSTER%</option>
 				<option num="3" rating="SL"
-					unitType="Aero">%CLUSTER%</option>
+					unitType="AeroSpaceFighter">%CLUSTER%</option>
 				<option num="4" ifDateBetween=",3060"
-					rating="SL" unitType="Aero">%CLUSTER%</option>
+					rating="SL" unitType="AeroSpaceFighter">%CLUSTER%</option>
 			</subforceOption>
 		</attachedForces>
 	</force>
@@ -136,7 +136,7 @@
 	one BA/infantry, and one vehicle. ASFs are attached to the naval
 	reserve.-->
 	
-	<force eschelon="%CLUSTER%" eschName="Cluster" ifUnitType="Aero">
+	<force eschelon="%CLUSTER%" eschName="Cluster" ifUnitType="AeroSpaceFighter">
 		<name>Aerospace Cluster</name>
 		<co>%STAR_COL%</co>
 		

@@ -12,9 +12,9 @@
 
 	<toc>
 		<unitType>
-			<option ifDateBetween="3051,">Mek,Tank,VTOL,Infantry,BattleArmor,Aero,Conventional Fighter</option>
-			<option ifDateBetween="2468,">Mek,Tank,VTOL,Infantry,Aero,Conventional Fighter</option>
-			<option>Tank,VTOL,Infantry,Aero,Conventional Fighter</option>
+			<option ifDateBetween="3051,">Mek,Tank,VTOL,Infantry,BattleArmor,AeroSpaceFighter,Conventional Fighter</option>
+			<option ifDateBetween="2468,">Mek,Tank,VTOL,Infantry,AeroSpaceFighter,Conventional Fighter</option>
+			<option>Tank,VTOL,Infantry,AeroSpaceFighter,Conventional Fighter</option>
 		</unitType>
 		
 		<eschelon>
@@ -22,7 +22,7 @@
 			<option ifUnitType="Mek|Tank|VTOL">%REGIMENT%,%BATTALION%,%COMPANY%,%LANCE%</option>
 			<option ifUnitType="Infantry">%REGIMENT%,%BATTALION%,%COMPANY%</option>
 			<option ifUnitType="BattleArmor">%BATTALION%,%COMPANY%,%PLATOON%</option>
-			<option ifUnitType="Aero|Conventional Fighter">%WING%,%SQUADRON%^,%SQUADRON%,%FLIGHT%</option>
+			<option ifUnitType="AeroSpaceFighter|Conventional Fighter">%WING%,%SQUADRON%^,%SQUADRON%,%FLIGHT%</option>
 		</eschelon>
 		
 		<rating>
@@ -69,7 +69,7 @@
 		</subforces>
 		
 		<attachedForces>
-			<subforce unitType="Aero"
+			<subforce unitType="AeroSpaceFighter"
 				name="Aerospace Support">%WING%</subforce>
 			<subforce unitType="Tank"
 				name="Armor Support">%BATTALION%</subforce>
@@ -78,7 +78,7 @@
 		</attachedForces>
 
 		<attachedForces ifUnitType="Tank" ifDateBetween=",2515">
-			<subforce unitType="Aero"
+			<subforce unitType="AeroSpaceFighter"
 				name="Aerospace Support">%WING%</subforce>
 			<subforceOption ifDateBetween="2468,">
 				<option ifRating="D|F"/>
@@ -436,7 +436,7 @@
 		<co>%SGT%</co>
 	</force>
 	
-	<force eschelon="%WING%" eschName="Wing" ifUnitType="Aero|Conventional Fighter">
+	<force eschelon="%WING%" eschName="Wing" ifUnitType="AeroSpaceFighter|Conventional Fighter">
 		<co>%LT_COLONEL%</co>
 		
 		<weightClass>
@@ -446,7 +446,7 @@
 		</weightClass>
 		
 		<subforces>
-			<subforceOption ifWeightClass="H" ifUnitType="Aero">
+			<subforceOption ifWeightClass="H" ifUnitType="AeroSpaceFighter">
 				<option augmented="1"
 					weightClass="H,H,H">%SQUADRON%</option>
 				<option augmented="1"
@@ -454,7 +454,7 @@
 				<option augmented="1"
 					weightClass="H,H,L">%SQUADRON%</option>
 			</subforceOption>
-			<subforceOption ifWeightClass="M" ifUnitType="Aero">
+			<subforceOption ifWeightClass="M" ifUnitType="AeroSpaceFighter">
 				<option augmented="1"
 					weightClass="H,M,M">%SQUADRON%</option>
 				<option augmented="1"
@@ -464,7 +464,7 @@
 				<option augmented="1"
 					weightClass="M,M,L">%SQUADRON%</option>
 			</subforceOption>
-			<subforceOption ifWeightClass="L" ifUnitType="Aero">
+			<subforceOption ifWeightClass="L" ifUnitType="AeroSpaceFighter">
 				<option augmented="1"
 					weightClass="H,L,L">%SQUADRON%</option>
 				<option augmented="1"
@@ -485,7 +485,7 @@
 	</force>
 	
 	<force eschelon="%SQUADRON%" eschName="Company" ifAugmented="1"
-			ifUnitType="Aero|Conventional Fighter">
+			ifUnitType="AeroSpaceFighter|Conventional Fighter">
 		<name>{phonetic} Company</name>
 		<co>%MAJOR%</co>
 		
@@ -496,13 +496,13 @@
 		</weightClass>
 		
 		<subforces>
-			<subforceOption ifWeightClass="H" ifUnitType="Aero">
+			<subforceOption ifWeightClass="H" ifUnitType="AeroSpaceFighter">
 				<option augmented="0"
 					weightClass="H,H" weight="2">%SQUADRON%</option>
 				<option augmented="0"
 					weightClass="H,M">%SQUADRON%</option>
 			</subforceOption>
-			<subforceOption ifWeightClass="M" ifUnitType="Aero">
+			<subforceOption ifWeightClass="M" ifUnitType="AeroSpaceFighter">
 				<option augmented="0"
 					weightClass="H,M">%SQUADRON%</option>
 				<option augmented="0"
@@ -512,7 +512,7 @@
 				<option augmented="0"
 					weightClass="M,L">%SQUADRON%</option>
 			</subforceOption>
-			<subforceOption ifWeightClass="L" ifUnitType="Aero">
+			<subforceOption ifWeightClass="L" ifUnitType="AeroSpaceFighter">
 				<option augmented="0"
 					weightClass="M,L">%SQUADRON%</option>
 				<option augmented="0"
@@ -524,7 +524,7 @@
 	</force>
 	
 	<force eschelon="%SQUADRON%" eschName="Flight" ifAugmented="0"
-			ifUnitType="Aero|Conventional Fighter">
+			ifUnitType="AeroSpaceFighter|Conventional Fighter">
 		<name>{formation} Squadron</name>
 		<co>%CAPTAIN%</co>
 		
@@ -544,7 +544,7 @@
 		</ruleGroup>
 
 		<subforces>
-			<subforceOption ifWeightClass="H" ifUnitType="Aero">
+			<subforceOption ifWeightClass="H" ifUnitType="AeroSpaceFighter">
 				<option weightClass="H,H,H">%FLIGHT%
 					</option>
 				<option weightClass="H,H,M">%FLIGHT%
@@ -552,7 +552,7 @@
 				<option weightClass="H,H,L">%FLIGHT%
 					</option>
 			</subforceOption>
-			<subforceOption ifWeightClass="M" ifUnitType="Aero">
+			<subforceOption ifWeightClass="M" ifUnitType="AeroSpaceFighter">
 				<option weightClass="H,M,M">%FLIGHT%
 					</option>
 				<option weightClass="M,M,M">%FLIGHT%
@@ -562,7 +562,7 @@
 				<option weightClass="M,M,L">%FLIGHT%
 					</option>
 			</subforceOption>
-			<subforceOption ifWeightClass="L" ifUnitType="Aero">
+			<subforceOption ifWeightClass="L" ifUnitType="AeroSpaceFighter">
 				<option weightClass="H,L,L">%FLIGHT%
 					</option>
 				<option weightClass="M,L,L">%FLIGHT%
@@ -575,7 +575,7 @@
 		</subforces>
 	</force>
 	
-	<force eschelon="%FLIGHT%" eschName="Lance" ifUnitType="Aero|Conventional Fighter">
+	<force eschelon="%FLIGHT%" eschName="Lance" ifUnitType="AeroSpaceFighter|Conventional Fighter">
 		<co>%LT%</co>
 		
 		<weightClass>

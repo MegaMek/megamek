@@ -806,6 +806,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         }
         clientgui.getBoardView().clearFieldOfFire();
         computeMovementEnvelope(ce);
+        updateMove();
         computeCFWarningHexes(ce);
     }
 
@@ -4572,6 +4573,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         // Refresh the new velocity envelope on the map.
         try {
             computeMovementEnvelope(ae);
+            updateMove();
         } catch (Exception e) {
             LogManager.getLogger().error("An error occured trying to compute the move envelope for an Aero.");
         } finally {

@@ -3881,14 +3881,10 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
 
             pathSprites.add(new StepSprite(this, step, md.isEndStep(step)));
 
-            // On the last step - process possible aerospace flight path indicators.
-            if (md.isEndStep(step)) {
-                displayFlightPathIndicator(md);
-            }
-
             previousStep = step;
         }
 
+        displayFlightPathIndicator(md);
         repaint(100);
     }
 

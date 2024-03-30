@@ -24,9 +24,10 @@ public class FlightPathIndicatorSprite extends HexSprite {
 
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
     private static final int TEXT_SIZE = 30;
-    //private static final Color TEXT_COLOR = new Color(255, 255, 40, 128);
-    private static final Color TEXT_COLOR = Color.GREEN;
-    private static final Color OUTLINE_COLOR = new Color(40, 40,40,200);
+    private static final Color COLOR_YELLOW = new Color(255, 255, 0, 128);
+    private static final Color COLOR_GREEN = new Color(0, 255, 0, 128);
+    private static final Color COLOR_RED = new Color(255, 0, 0, 128);
+    private static final Color COLOR_OUTLINE = new Color(40, 40,40,200);
 
     private static final int HEX_CENTER_X = BoardView.HEX_W / 2;
     private static final int HEX_CENTER_Y = BoardView.HEX_H / 2;
@@ -36,13 +37,42 @@ public class FlightPathIndicatorSprite extends HexSprite {
 
     //U+26AA  MEDIUM WHITE CIRCLE
     //U+26AB  MEDIUM BLACK CIRCLE
+    //U+2690  WHITE FLAG
+    //U+2691  BLACK FLAG
+    //U+26E2  ASTRONOMICAL SYMBOL FOR URANUS
+    //U+26D6  BLACK TWO-WAY LEFT WAY TRAFFIC
+    //U+26D7  WHITE TWO-WAY LEFT WAY TRAFFIC
 
     //Draw a special character 'circle'.
-    private final StringDrawer xWriter = new StringDrawer("\u26AB")
+    private final StringDrawer mustFlyIcon = new StringDrawer("\u26AA")
             .at(HEX_CENTER_X, HEX_CENTER_Y)
-            .color(TEXT_COLOR)
+            .color(COLOR_RED)
             .fontSize(TEXT_SIZE)
-            .center().outline(OUTLINE_COLOR, 1.5f);
+            .center().outline(COLOR_OUTLINE, 1.5f);
+
+    private final StringDrawer finalIcon = new StringDrawer("\u2691")
+            .at(HEX_CENTER_X, HEX_CENTER_Y)
+            .color(COLOR_GREEN)
+            .fontSize(TEXT_SIZE)
+            .center().outline(COLOR_OUTLINE, 1.5f);
+
+    private final StringDrawer flyOffIcon = new StringDrawer("\u26D6")
+            .at(HEX_CENTER_X, HEX_CENTER_Y)
+            .color(COLOR_YELLOW)
+            .fontSize(TEXT_SIZE)
+            .center().outline(COLOR_OUTLINE, 2.0f);
+
+    private final StringDrawer freeTurnIcon = new StringDrawer("\u26AB")
+            .at(HEX_CENTER_X, HEX_CENTER_Y)
+            .color(COLOR_GREEN)
+            .fontSize(TEXT_SIZE)
+            .center().outline(COLOR_OUTLINE, 1.5f);
+
+    private final StringDrawer costTurnIcon = new StringDrawer("\u26AB")
+            .at(HEX_CENTER_X, HEX_CENTER_Y)
+            .color(COLOR_YELLOW)
+            .fontSize(TEXT_SIZE)
+            .center().outline(COLOR_OUTLINE, 1.5f);
 
     /**
      * @param boardView - BoardView associated with the sprite.
@@ -59,8 +89,28 @@ public class FlightPathIndicatorSprite extends HexSprite {
     @Override
     public void prepare() {
         Graphics2D graph = spriteSetup();
-        xWriter.draw(graph);
+        drawSprite(graph);
         graph.dispose();
+    }
+
+    private void drawSprite(Graphics2D graph) {
+        if (this.isLastIndicator()) {
+            if (this.step.getVelocityLeft() > 0) {
+                flyOffIcon.draw(graph);
+            } else {
+                finalIcon.draw(graph);
+            }
+        } else {
+            if (this.step.dueFreeTurn()) {
+                freeTurnIcon.draw(graph);
+            } else if (this.step.canAeroTurn(bv.game)) {
+                costTurnIcon.draw(graph);
+            } else {
+                mustFlyIcon.draw(graph);
+            }
+        }
+
+        return;
     }
 
     /*

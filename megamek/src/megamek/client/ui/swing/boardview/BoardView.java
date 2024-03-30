@@ -3900,6 +3900,11 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
      * @param md - Current MovePath that represents the current units movement state
      */
     private void displayFlightPathIndicator(MovePath md) {
+        // Don't calculate any kind of flight path indicators if the move is not legal.
+        if (md.getLastStepMovementType() == EntityMovementType.MOVE_ILLEGAL) {
+            return;
+        }
+
         // If the unit has remaining aerodyne velocity display the flight path indicators for remaining velocity.
         if ((md.getFinalVelocityLeft() > 0) && !md.nextForwardStepOffBoard()) {
             List<MoveStep> fpiSteps = new Vector<MoveStep>();

@@ -5029,7 +5029,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 if ((null != cmd.getLastStep())
                         && (cmd.getLastStep().getNDown() == 1)
                         && (cmd.getLastStep().getVelocity() < 12)
-                        && !spheroidOrLessThanThin){
+                        && !spheroidOrLessThanThin) {
                     addStepToMovePath(MoveStepType.ACC, true);
                     computeAeroMovementEnvelope(ce);
                 }

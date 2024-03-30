@@ -1,5 +1,20 @@
-/**
+/*
+ * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
  *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
 package megamek.client.ui.swing.boardview;
 
@@ -14,11 +29,15 @@ import megamek.common.Coords;
 import megamek.common.MoveStep;
 
 /**
- * The Flight Path Indicator Sprite represents the status of a hex in the trajectory of an
- * aerospace unit going in a straight line until it expends its velocity.
+ * The Flight Path Indicator Sprite paints a path in front of an aerospace movement path
+ * and indicates the turn status and remaining velocity by showing the length of path
+ * the flight must follow and when the unit can turn.
  *
- * A green solid circle represents required trajectory.
- * A green non-filled circle represents a point on the path where a turn is allowed.
+ * A green solid circle indicates the craft can make a free turn on that hex.
+ * A yellow solid circle indicates the craft can make a turn with cost to thrust.
+ * A red empty circle indicates the craft cannot turn on that hex.
+ * A green flag indicates the craft has used all its remaining velocity on that hex.
+ * A yellow two-way diamond indicates the craft will fly off the map with remaining velocity.
  */
 public class FlightPathIndicatorSprite extends HexSprite {
 
@@ -93,6 +112,12 @@ public class FlightPathIndicatorSprite extends HexSprite {
         graph.dispose();
     }
 
+    /*
+     * Based on the condition of the MoveStep associated with this sprite, draw a
+     * green, yellow, or red flight path indicator to indicate turn status on that
+     * hex.  Draw a flag for final hex and a yellow diamond to indicate flying
+     * off the map.
+     */
     private void drawSprite(Graphics2D graph) {
         if (this.isLastIndicator()) {
             if (this.step.getVelocityLeft() > 0) {

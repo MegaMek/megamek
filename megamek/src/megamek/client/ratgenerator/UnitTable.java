@@ -197,18 +197,15 @@ public class UnitTable {
      * @return - a string representing the entry at the indicated index for use in the table
      */
     public String getEntryText(int index) {
-        if (unitTable.size() > 0 && salvageTable.size() >= 0) {
-            if ( index >= salvageTable.size()){
-                return unitTable.get(index - salvageTable.size()).getUnitEntry().getName();
+        if (!unitTable.isEmpty() && index >= salvageTable.size()){
+            return unitTable.get(index - salvageTable.size()).getUnitEntry().getName();
+        } else {
+            if (key.getFaction().isClan()) {
+                return "Isorla: " + salvageTable.get(index).getSalvageFaction().getName(key.getYear() - 5);
             } else {
-                if (key.getFaction().isClan()) {
-                    return "Isorla: " + salvageTable.get(index).getSalvageFaction().getName(key.getYear() - 5);
-                } else {
-                    return "Salvage: " + salvageTable.get(index).getSalvageFaction().getName(key.getYear() - 5);
-                }
+                return "Salvage: " + salvageTable.get(index).getSalvageFaction().getName(key.getYear() - 5);
             }
         }
-        return "";
     }
 
     /**
@@ -216,7 +213,7 @@ public class UnitTable {
      * @return - a string representing the entry at the indicated index for use in the table
      */
     public String getTechBase(int index) {
-        if ((unitTable.size() > 0 && salvageTable.size() >= 0) && index >= salvageTable.size()) {
+        if (!unitTable.isEmpty() && index >= salvageTable.size()) {
             return unitTable.get(index - salvageTable.size()).getUnitEntry().isClan() ? "Clan" : "IS";
         } else {
             return key.getFaction().isClan() ? "Clan" : "IS";
@@ -228,7 +225,7 @@ public class UnitTable {
      * @return - a string representing the entry at the indicated index for use in the table
      */
     public String getUnitRole(int index) {
-        if ((unitTable.size() > 0 && salvageTable.size() >= 0) && index >= salvageTable.size()) {
+        if (!unitTable.isEmpty() && index >= salvageTable.size()) {
             return unitTable.get(index - salvageTable.size()).getUnitEntry().getRole().toString();
         } else {
             return "";
@@ -240,7 +237,7 @@ public class UnitTable {
      * @return - the MechSummary entry for the indicated index, or null if this is a salvage entry
      */
     public MechSummary getMechSummary(int index) {
-        if ((unitTable.size() > 0 && salvageTable.size() >= 0) && index >= salvageTable.size()) {
+        if (!unitTable.isEmpty() && index >= salvageTable.size()) {
             return unitTable.get(index - salvageTable.size()).getUnitEntry();
         }
         return null;
@@ -251,7 +248,7 @@ public class UnitTable {
      * @return - the BV of the unit at the indicated index, or 0 if this is a salvage entry
      */
     public int getBV(int index) {
-        if ((unitTable.size() > 0 && salvageTable.size() >= 0) && index >= salvageTable.size()) {
+        if (!unitTable.isEmpty() && index >= salvageTable.size()) {
             return unitTable.get(index - salvageTable.size()).getUnitEntry().getBV();
         } else {
             return 0;

@@ -703,7 +703,6 @@ public class Report implements Serializable {
         styleSheet.addRule(
                 "pre { font-family: " + font.getFamily() + "; font-size: " + size + "pt; font-style:normal;}");
         styleSheet.addRule("a { color: " + hexColor(guip.getReportLinkColor()) + " }");
-        styleSheet.addRule("span.tooltip { color: " + hexColor(guip.getReportLinkColor()) + " }");
         styleSheet.addRule("span.warning { color: " + hexColor(guip.getWarningColor()) + " }");
         styleSheet.addRule("span.success { color: " + hexColor(guip.getReportSuccessColor()) + " }");
         styleSheet.addRule("span.miss { color: " + hexColor(guip.getReportMissColor()) + " }");

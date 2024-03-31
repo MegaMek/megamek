@@ -5358,7 +5358,12 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
 
     @Override
     public String toDisplayableString(Client client) {
-        return "attacking " + getTarget(client.getGame()).getDisplayName() + " with " + getEntity(client.getGame()).getEquipment(weaponId).getName();
+        try {
+            return "attacking " + getTarget(client.getGame()).getDisplayName() + " with " + getEntity(client.getGame()).getEquipment(weaponId).getName();
+        } catch (NullPointerException e) {
+            LogManager.getLogger().error("Unable to construct WAA displayable string due to null reference", e);
+        }
+        return "attacking target with weapon";
     }
 
     @Override

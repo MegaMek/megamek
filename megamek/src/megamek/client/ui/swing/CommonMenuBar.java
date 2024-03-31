@@ -29,15 +29,13 @@ import megamek.common.KeyBindParser;
 import megamek.common.enums.GamePhase;
 import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
+import org.apache.logging.log4j.LogManager;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static java.awt.event.KeyEvent.*;
 import static megamek.client.ui.Messages.getString;
@@ -399,7 +397,13 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         }
 
         // Pass the action on to each of our listeners.
-        actionListeners.forEach(l -> l.actionPerformed(event));
+        // This is a source of ConcurrentModificationException errors if dialogs are open during events
+        // but closed after handling them;
+        try {
+            actionListeners.forEach(l -> l.actionPerformed(event));
+        } catch (ConcurrentModificationException e) {
+            LogManager.getLogger().error("Probable dialog open during Round Report handling", e);
+        }
     }
 
     /**

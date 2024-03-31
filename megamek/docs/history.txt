@@ -47,7 +47,8 @@ MEGAMEK VERSION HISTORY:
 + PR #5274: Update Aerospace SI damage calculation to round naturally with a minimum of 1
 + Fix #5285: MML #1461 Consider pintle weapons in the same location as in the same pintle 
 + PR# #5278: correct issue when using multiple boards and restricting deployment
-+ Data: Sprite Swap Project. All shaded sprites that can be (Deadborder mostly) replaced have been. 
++ Data: Sprite Swap Project. All shaded sprites that can be (Deadborder mostly) replaced have been.
++ Fix #5298 Illegal Cast Exception when lowering elevation with a VTOL
 
 
 

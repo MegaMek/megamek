@@ -1,6 +1,7 @@
 package megamek.client.generator;
 
 import megamek.client.ui.swing.ClientGUI;
+import megamek.client.ui.swing.EquipChoicePanel;
 import megamek.client.ui.swing.dialog.AbstractUnitSelectorDialog;
 import megamek.common.*;
 import megamek.common.options.GameOptions;
@@ -68,8 +69,8 @@ public class MunitionSelectionGenerator {
 
     /** Determine which munitions are allowed for the given faction in the
      *  selected year, depending on several settings.
-     *  (See EquipChoicePanel.java:WeaponAmmoChoicePanel for hints)
-     *  (See EquipChoicePanel.java:setupMunitions for hints)
+     *  (See {@link EquipChoicePanel.WeaponAmmoChoicePanel} for hints)
+     *  (See {@link EquipChoicePanel#setupMunitions()} for hints)
      *
      * @param wTypes
      * @param yearLimits

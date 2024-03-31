@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2022, 2024 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -32,14 +32,20 @@ public enum PacketCommand {
     PLAYER_UPDATE,
     PLAYER_TEAM_CHANGE,
     PRINCESS_SETTINGS,
+
+    /** A packet setting a Client's ready status (S -> C) or updating the Server on the Client's status (C -> S). */
     PLAYER_READY,
+
     CHAT,
     ENTITY_ADD,
     ENTITY_REMOVE,
     ENTITY_MOVE,
     ENTITY_DEPLOY,
     ENTITY_DEPLOY_UNLOAD,
+
+    /** A packet informing the receiver of one or more actions of units (both directions; using different packet builds). */
     ENTITY_ATTACK,
+
     ENTITY_PREPHASE,
     ENTITY_GTA_HEX_SELECT,
     ENTITY_UPDATE,
@@ -67,11 +73,18 @@ public enum PacketCommand {
     BLDG_UPDATE,
     BLDG_COLLAPSE,
     BLDG_EXPLODE,
+
+    /** A Server to Client packet instructing the Client to change the game's phase. */
     PHASE_CHANGE,
+
     TURN,
+
+    /** A Server to Client packet instructing the Client to change the game's current round. */
     ROUND_UPDATE,
-    /** A Server to Client packet of the complete set of boards */
+
+    /** A Server to Client packet instructing the Client to replace all boards with the newly sent ones. */
     SENDING_BOARD,
+
     SENDING_ILLUM_HEXES,
     CLEAR_ILLUM_HEXES,
     SENDING_ENTITIES,
@@ -81,7 +94,10 @@ public enum PacketCommand {
     SENDING_REPORTS_SPECIAL,
     SENDING_REPORTS_TACTICAL_GENIUS,
     SENDING_REPORTS_ALL,
+
+    /** A packet having a options to share with other Clients (C -> S) or implement on the receiving Client (S -> C). */
     SENDING_GAME_SETTINGS,
+
     SENDING_MAP_DIMENSIONS,
     SENDING_MAP_SETTINGS,
     END_OF_GAME,
@@ -125,9 +141,6 @@ public enum PacketCommand {
     //endregion Enum Declarations
 
     //region Boolean Comparison Methods
-    public boolean isSendingBoard() {
-        return this == SENDING_BOARD;
-    }
 
     public boolean isSendingReportsTacticalGenius() {
         return this == SENDING_REPORTS_TACTICAL_GENIUS;

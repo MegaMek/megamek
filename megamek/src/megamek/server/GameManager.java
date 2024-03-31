@@ -636,8 +636,8 @@ public class GameManager extends AbstractGameManager {
      */
     @Override
     public void sendCurrentInfo(int connId) {
-        send(connId, createGameSettingsPacket());
-        send(connId, createPlanetaryConditionsPacket());
+        send(connId, packetHelper.createGameSettingsPacket());
+        send(connId, packetHelper.createPlanetaryConditionsPacket());
 
         Player player = getGame().getPlayer(connId);
         if (null != player) {
@@ -647,15 +647,15 @@ public class GameManager extends AbstractGameManager {
                 send(connId, createMapSettingsPacket());
                 send(createMapSizesPacket());
                 // Send Entities *after* the Lounge Phase Change
-                send(connId, new Packet(PacketCommand.PHASE_CHANGE, getGame().getPhase()));
+                send(connId, packetHelper.createPhaseChangePacket());
                 if (doBlind()) {
                     send(connId, createFilteredFullEntitiesPacket(player, null));
                 } else {
                     send(connId, createFullEntitiesPacket());
                 }
             } else {
-                send(connId, new Packet(PacketCommand.ROUND_UPDATE, getGame().getRoundCount()));
-                send(connId, getGame().createBoardsPacket());
+                send(connId, packetHelper.createCurrentRoundNumberPacket());
+                send(connId, packetHelper.createBoardsPacket());
                 send(connId, createAllReportsPacket(player));
 
                 // Send entities *before* other phase changes.
@@ -666,22 +666,22 @@ public class GameManager extends AbstractGameManager {
                 }
 
                 setPlayerDone(player, getGame().getEntitiesOwnedBy(player) <= 0);
-                send(connId, new Packet(PacketCommand.PHASE_CHANGE, getGame().getPhase()));
+                send(connId, packetHelper.createPhaseChangePacket());
             }
 
             // LOUNGE triggers a Game.reset() on the client, which wipes out
             // the PlanetaryCondition, so resend
             if (game.getPhase().isLounge()) {
-                send(connId, createPlanetaryConditionsPacket());
+                send(connId, packetHelper.createPlanetaryConditionsPacket());
             }
 
             if (game.getPhase().isFiring() || game.getPhase().isTargeting()
                     || game.getPhase().isOffboard() || game.getPhase().isPhysical()) {
                 // can't go above, need board to have been sent
-                send(connId, createAttackPacket(getGame().getActionsVector(), 0));
-                send(connId, createAttackPacket(getGame().getChargesVector(), 1));
-                send(connId, createAttackPacket(getGame().getRamsVector(), 1));
-                send(connId, createAttackPacket(getGame().getTeleMissileAttacksVector(), 1));
+                send(connId, packetHelper.createAttackPacket(getGame().getActionsVector(), false));
+                send(connId, packetHelper.createAttackPacket(getGame().getChargesVector(), true));
+                send(connId, packetHelper.createAttackPacket(getGame().getRamsVector(), true));
+                send(connId, packetHelper.createAttackPacket(getGame().getTeleMissileAttacksVector(), true));
             }
 
             if (getGame().getPhase().hasTurns() && getGame().hasMoreTurns()) {
@@ -723,7 +723,7 @@ public class GameManager extends AbstractGameManager {
         switch (packet.getCommand()) {
             case PLAYER_READY:
                 receivePlayerDone(packet, connId);
-                send(createPlayerDonePacket(connId));
+                send(packetHelper.createPlayerDonePacket(connId));
                 checkReady();
                 break;
             case PRINCESS_SETTINGS:
@@ -867,7 +867,7 @@ public class GameManager extends AbstractGameManager {
             case SENDING_GAME_SETTINGS:
                 if (receiveGameOptions(packet, connId)) {
                     resetPlayersDone();
-                    send(createGameSettingsPacket());
+                    send(packetHelper.createGameSettingsPacket());
                     receiveGameOptionsAux(packet, connId);
                 }
                 break;
@@ -907,7 +907,7 @@ public class GameManager extends AbstractGameManager {
                     sendServerChat(player + " changed planetary conditions");
                     game.setPlanetaryConditions(conditions);
                     resetPlayersDone();
-                    send(createPlanetaryConditionsPacket());
+                    send(packetHelper.createPlanetaryConditionsPacket());
                 }
                 break;
             case UNLOAD_STRANDED:
@@ -1591,7 +1591,8 @@ public class GameManager extends AbstractGameManager {
      *
      * @param phase the <code>int</code> id of the phase to change to
      */
-    private void changePhase(GamePhase phase) {
+    @Override
+    protected void changePhase(GamePhase phase) {
         game.setLastPhase(game.getPhase());
         game.setPhase(phase);
 
@@ -1600,7 +1601,7 @@ public class GameManager extends AbstractGameManager {
 
         if (phase.isPlayable(getGame())) {
             // tell the players about the new phase
-            send(new Packet(PacketCommand.PHASE_CHANGE, phase));
+            send(packetHelper.createPhaseChangePacket());
 
             // post phase change stuff
             executePhase(phase);
@@ -2023,7 +2024,7 @@ public class GameManager extends AbstractGameManager {
                 resolveEmergencyCoolantSystem();
                 checkForSuffocation();
                 game.getPlanetaryConditions().determineWind();
-                send(createPlanetaryConditionsPacket());
+                send(packetHelper.createPlanetaryConditionsPacket());
 
                 applyBuildingDamage();
                 addReport(game.ageFlares());
@@ -2158,9 +2159,9 @@ public class GameManager extends AbstractGameManager {
                 game.setupTeams();
                 applyBoardSettings();
                 game.getPlanetaryConditions().determineWind();
-                send(createPlanetaryConditionsPacket());
+                send(packetHelper.createPlanetaryConditionsPacket());
                 // transmit the board to everybody
-                send(getGame().createBoardsPacket());
+                send(packetHelper.createBoardsPacket());
                 game.setupRoundDeployment();
                 game.setVictoryContext(new HashMap<>());
                 game.createVictoryConditions();
@@ -2303,7 +2304,8 @@ public class GameManager extends AbstractGameManager {
     /**
      * Ends this phase and moves on to the next.
      */
-    private void endCurrentPhase() {
+    @Override
+    protected void endCurrentPhase() {
         switch (game.getPhase()) {
             case LOUNGE:
                 game.addReports(vPhaseReport);
@@ -2607,7 +2609,7 @@ public class GameManager extends AbstractGameManager {
      */
     private void incrementAndSendGameRound() {
         game.incrementRoundCount();
-        send(new Packet(PacketCommand.ROUND_UPDATE, getGame().getRoundCount()));
+        send(packetHelper.createCurrentRoundNumberPacket());
     }
 
     /**
@@ -9273,12 +9275,12 @@ public class GameManager extends AbstractGameManager {
 
         // if we generated a charge attack, report it now
         if (charge != null) {
-            send(createAttackPacket(charge, 1));
+            send(packetHelper.createChargeAttackPacket(charge));
         }
 
         // if we generated a ram attack, report it now
         if (ram != null) {
-            send(createAttackPacket(ram, 1));
+            send(packetHelper.createChargeAttackPacket(ram));
         }
         if ((entity instanceof Mech) && entity.hasEngine() && ((Mech) entity).isIndustrial()
                 && !entity.hasEnvironmentalSealing()
@@ -13438,7 +13440,7 @@ public class GameManager extends AbstractGameManager {
         }
         entityUpdate(entity.getId());
 
-        Packet p = createAttackPacket(vector, 0);
+        Packet p = packetHelper.createAttackPacket(vector, false);
         if (getGame().getPhase().isSimultaneous(getGame())) {
             // Update attack only to player who declared it & observers
             for (Player player : game.getPlayersVector()) {
@@ -30153,9 +30155,6 @@ public class GameManager extends AbstractGameManager {
             r.add(mAmmo.getShortName());
             r.add(ReportMessages.getString(String.valueOf(reason)));
             addReport(r);
-            if (LogManager.getLogger().isDebugEnabled()) {
-
-            }
         }
     }
 
@@ -30383,13 +30382,6 @@ public class GameManager extends AbstractGameManager {
     }
 
     /**
-     * Creates a packet containing the player ready status
-     */
-    private Packet createPlayerDonePacket(int playerId) {
-        return new Packet(PacketCommand.PLAYER_READY, playerId, game.getPlayer(playerId).isDone());
-    }
-
-    /**
      * Creates a packet containing the current turn vector
      */
     private Packet createTurnVectorPacket() {
@@ -30413,20 +30405,6 @@ public class GameManager extends AbstractGameManager {
 
     private Packet createMapSizesPacket() {
         return new Packet(PacketCommand.SENDING_AVAILABLE_MAP_SIZES, getBoardSizes());
-    }
-
-    /**
-     * Creates a packet containing the planetary conditions
-     */
-    private Packet createPlanetaryConditionsPacket() {
-        return new Packet(PacketCommand.SENDING_PLANETARY_CONDITIONS, getGame().getPlanetaryConditions());
-    }
-
-    /**
-     * Creates a packet containing the game settings
-     */
-    private Packet createGameSettingsPacket() {
-        return new Packet(PacketCommand.SENDING_GAME_SETTINGS, getGame().getOptions());
     }
 
     /**
@@ -30599,9 +30577,7 @@ public class GameManager extends AbstractGameManager {
      * Sends out the player ready stats for all players to all connections
      */
     private void transmitAllPlayerDones() {
-        for (Player player : getGame().getPlayersList()) {
-            send(createPlayerDonePacket(player.getId()));
-        }
+        getGame().getPlayersList().forEach(player -> send(packetHelper.createPlayerDonePacket(player.getId())));
     }
 
     /**
@@ -30655,22 +30631,6 @@ public class GameManager extends AbstractGameManager {
     public void sendVisibilityIndicator(Entity e) {
         send(new Packet(PacketCommand.ENTITY_VISIBILITY_INDICATOR, e.getId(), e.isEverSeenByEnemy(),
                 e.isVisibleToEnemy(), e.isDetectedByEnemy(), e.getWhoCanSee(), e.getWhoCanDetect()));
-    }
-
-    /**
-     * Creates a packet for an attack
-     */
-    private Packet createAttackPacket(List<?> vector, int charges) {
-        return new Packet(PacketCommand.ENTITY_ATTACK, vector, charges);
-    }
-
-    /**
-     * Creates a packet for an attack
-     */
-    private Packet createAttackPacket(EntityAction ea, int charge) {
-        Vector<EntityAction> vector = new Vector<>(1);
-        vector.addElement(ea);
-        return new Packet(PacketCommand.ENTITY_ATTACK, vector, charge);
     }
 
     private Packet createSpecialHexDisplayPacket(int toPlayer) {

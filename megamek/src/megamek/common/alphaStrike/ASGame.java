@@ -22,6 +22,9 @@ import megamek.common.*;
 import megamek.common.enums.GamePhase;
 import megamek.common.event.GameEvent;
 import megamek.common.options.GameOptions;
+import megamek.common.options.OptionsConstants;
+import megamek.common.strategicBattleSystems.SBFFormation;
+import megamek.common.strategicBattleSystems.SBFUnit;
 
 import java.util.List;
 
@@ -39,6 +42,11 @@ public class ASGame extends AbstractGame {
     @Override
     public GameTurn getTurn() {
         return null;
+    }
+
+    @Override
+    public boolean hasMoreTurns() {
+        return false;
     }
 
     @Override
@@ -63,7 +71,15 @@ public class ASGame extends AbstractGame {
 
     @Override
     public void addPlayer(int id, Player player) {
+        super.addPlayer(id, player);
+        player.setGame(this);
+        setupTeams();
 
+        if ((player.isBot()) && (!player.getSingleBlind())) {
+            boolean sbb = getOptions().booleanOption(OptionsConstants.ADVANCED_SINGLE_BLIND_BOTS);
+            boolean db = getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND);
+            player.setSingleBlind(sbb && db);
+        }
     }
 
     @Override
@@ -89,6 +105,10 @@ public class ASGame extends AbstractGame {
     @Override
     public void replaceUnits(List<InGameObject> units) {
 
+    }
+
+    private boolean isSupportedUnitType(InGameObject object) {
+        return object instanceof AlphaStrikeElement;
     }
 
 }

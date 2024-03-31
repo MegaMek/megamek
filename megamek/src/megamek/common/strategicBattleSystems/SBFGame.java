@@ -22,7 +22,6 @@ import megamek.common.*;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.GamePhase;
-import megamek.common.event.GameEvent;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryconditions.PlanetaryConditions;
@@ -43,6 +42,12 @@ public class SBFGame extends AbstractGame implements PlanetaryConditionsUsing {
     @Override
     public GameTurn getTurn() {
         return null;
+    }
+
+    @Override
+    public boolean hasMoreTurns() {
+        // stub
+        return false;
     }
 
     @Override

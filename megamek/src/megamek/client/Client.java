@@ -699,7 +699,7 @@ public class Client extends AbstractClient implements IClientCommandHandler {
     @SuppressWarnings("unchecked")
     protected void receiveAttack(Packet c) {
         List<EntityAction> vector = (List<EntityAction>) c.getObject(0);
-        int charge = c.getIntValue(1);
+        boolean isCharge = c.getBooleanValue(1);
         boolean addAction = true;
         for (EntityAction ea : vector) {
             int entityId = ea.getEntityId();
@@ -726,9 +726,9 @@ public class Client extends AbstractClient implements IClientCommandHandler {
 
             if (addAction) {
                 // track in the appropriate list
-                if (charge == 0) {
+                if (!isCharge) {
                     game.addAction(ea);
-                } else if (charge == 1) {
+                } else {
                     game.addCharge((AttackAction) ea);
                 }
             }
@@ -910,21 +910,11 @@ public class Client extends AbstractClient implements IClientCommandHandler {
     @SuppressWarnings("unchecked")
     @Override
     protected boolean handleGameSpecificPacket(Packet packet) throws Exception {
-        if (packet == null) {
-            LogManager.getLogger().error("Client: got null packet");
-            return false;
-        }
-
         switch (packet.getCommand()) {
             case SERVER_GREETING:
-                connected = true;
-                send(new Packet(PacketCommand.CLIENT_NAME, name, isBot()));
                 if (this instanceof Princess) {
                     ((Princess) this).sendPrincessSettings();
                 }
-                break;
-            case SERVER_CORRECT_NAME:
-                correctName(packet);
                 break;
             case PRINCESS_SETTINGS:
                 game.setBotSettings((Map<String, BehaviorSettings>) packet.getObject(0));
@@ -989,15 +979,9 @@ public class Client extends AbstractClient implements IClientCommandHandler {
             case PHASE_CHANGE:
                 changePhase((GamePhase) packet.getObject(0));
                 break;
-            case ROUND_UPDATE:
-                game.setRoundCount(packet.getIntValue(0));
-                break;
             case SENDING_TURNS:
                 receiveTurns(packet);
                 break;
-//            case SENDING_BOARD:
-//                receiveBoard(packet);
-//                break;
             case SENDING_ENTITIES:
                 receiveEntities(packet);
                 break;

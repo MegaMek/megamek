@@ -22,8 +22,6 @@ import megamek.common.event.GameBoardNewEvent;
 import megamek.common.event.GameEvent;
 import megamek.common.event.GameListener;
 import megamek.common.force.Forces;
-import megamek.common.net.enums.PacketCommand;
-import megamek.common.net.packets.Packet;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -35,13 +33,19 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 public abstract class AbstractGame implements IGame {
 
-    /** The players present in the game mapped to their id as key. */
+    /**
+     * The players present in the game mapped to their id as key.
+     */
     protected final ConcurrentHashMap<Integer, Player> players = new ConcurrentHashMap<>();
 
-    /** The InGameObjects (units such as Entity and others) present in the game mapped to their id as key. */
+    /**
+     * The InGameObjects (units such as Entity and others) present in the game mapped to their id as key.
+     */
     protected final ConcurrentHashMap<Integer, InGameObject> inGameObjects = new ConcurrentHashMap<>();
 
-    /** The teams present in the game. */
+    /**
+     * The teams present in the game.
+     */
     protected final CopyOnWriteArrayList<Team> teams = new CopyOnWriteArrayList<>();
 
     protected transient Vector<GameListener> gameListeners = new Vector<>();
@@ -59,6 +63,8 @@ public abstract class AbstractGame implements IGame {
      * and should therefore not be shown.
      */
     protected Forces forces = new Forces(this);
+
+    protected int currentRound = 0;
 
     @Override
     public Forces getForces() {
@@ -185,7 +191,12 @@ public abstract class AbstractGame implements IGame {
     }
 
     @Override
-    public Packet createBoardsPacket() {
-        return new Packet(PacketCommand.SENDING_BOARD, gameBoards);
+    public int getCurrentRound() {
+        return currentRound;
+    }
+
+    @Override
+    public void setCurrentRound(int currentRound) {
+        this.currentRound = currentRound;
     }
 }

@@ -38,9 +38,25 @@ public interface IGame {
     @Nullable
     GameTurn getTurn();
 
+    boolean hasMoreTurns();
+
     GameOptions getOptions();
 
     GamePhase getPhase();
+
+    /**
+     * @return The current game round, with 0 typically indicating deployment and 1 the first
+     * actual game round.
+     */
+    int getCurrentRound();
+
+    /**
+     * Sets the current game round to the given round number. See {@link #getCurrentRound()}. This
+     * method can be used in both GameManager and Client.
+     *
+     * @param currentRound The new round number
+     */
+    void setCurrentRound(int currentRound);
 
     void setPhase(GamePhase phase);
 
@@ -230,11 +246,6 @@ public interface IGame {
      * @param board   The board to use
      */
     void receiveBoards(Map<Integer, Board> boards);
-
-    /**
-     * @return A Packet containing the complete Map of boards and IDs to send from Server to Client.
-     */
-    Packet createBoardsPacket();
 
     //endregion
 }

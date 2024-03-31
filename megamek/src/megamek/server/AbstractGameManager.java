@@ -1,9 +1,11 @@
 package megamek.server;
 
+import megamek.common.enums.GamePhase;
 import megamek.common.net.packets.Packet;
 
-public abstract class AbstractGameManager implements IGameManager {
+abstract class AbstractGameManager implements IGameManager {
 
+    protected final GameManagerPacketHelper packetHelper = new GameManagerPacketHelper(this);
 
     protected final void send(Packet p) {
         Server.getServerInstance().send(p);
@@ -12,4 +14,8 @@ public abstract class AbstractGameManager implements IGameManager {
     protected final void send(int connId, Packet p) {
         Server.getServerInstance().send(connId, p);
     }
+
+    protected abstract void endCurrentPhase();
+
+    protected abstract void changePhase(GamePhase newPhase);
 }

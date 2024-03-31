@@ -277,7 +277,7 @@ public abstract class AbstractClient implements IClient {
         return host;
     }
 
-    protected void correctName(Packet inP) throws Exception {
+    protected void correctName(Packet inP) {
         setName((String) (inP.getObject(0)));
     }
 
@@ -384,8 +384,11 @@ public abstract class AbstractClient implements IClient {
 
     /**
      * Handles any Packets that are specific to the game type (TW, AS...). When implementing this,
-     * make sure that this doesn't handle packets again that are already handled in
-     * {@link #handleGameIndependentPacket(Packet)} except where necessary (e.g. Precognition).
+     * make sure that this doesn't do duplicate actions with {@link #handleGameIndependentPacket(Packet)}
+     * - but packets may be handled in both methods (all packets traverse both methods).
+     *
+     * When making changes, do not forget to update Precognition which is a Client clone but unfortunately
+     * not a subclass.
      *
      * @param packet The packet to handle
      * @return True when the packet has been handled
@@ -401,6 +404,12 @@ public abstract class AbstractClient implements IClient {
     @SuppressWarnings("unchecked")
     protected boolean handleGameIndependentPacket(Packet packet) {
         switch (packet.getCommand()) {
+            case SERVER_GREETING:
+                connected = true;
+                send(new Packet(PacketCommand.CLIENT_NAME, name, isBot()));
+            case SERVER_CORRECT_NAME:
+                correctName(packet);
+                break;
             case CLOSE_CONNECTION:
                 disconnected();
                 break;
@@ -445,6 +454,9 @@ public abstract class AbstractClient implements IClient {
                 break;
             case SENDING_BOARD:
                 getIGame().receiveBoards((Map<Integer, Board>) packet.getObject(0));
+                break;
+            case ROUND_UPDATE:
+                getIGame().setCurrentRound(packet.getIntValue(0));
                 break;
             default:
                 return false;

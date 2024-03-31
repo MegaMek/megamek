@@ -83,11 +83,6 @@ public class Game extends AbstractGame implements Serializable, PlanetaryConditi
     private PlanetaryConditions planetaryConditions = new PlanetaryConditions();
 
     /**
-     * what round is it?
-     */
-    private int roundCount = 0;
-
-    /**
      * The current turn list
      */
     private final Vector<GameTurn> turnVector = new Vector<>();
@@ -579,6 +574,7 @@ public class Game extends AbstractGame implements Serializable, PlanetaryConditi
     /**
      * Returns true if there is a turn after the current one
      */
+    @Override
     public boolean hasMoreTurns() {
         return turnVector.size() > turnIndex;
     }
@@ -1344,7 +1340,7 @@ public class Game extends AbstractGame implements Serializable, PlanetaryConditi
     public synchronized void reset() {
         uuid = UUID.randomUUID();
 
-        roundCount = 0;
+        currentRound = 0;
 
         inGameObjects.clear();
         entityPosLookup.clear();
@@ -2536,18 +2532,18 @@ public class Game extends AbstractGame implements Serializable, PlanetaryConditi
      * @return Value of property roundCount.
      */
     public int getRoundCount() {
-        return roundCount;
+        return getCurrentRound();
     }
 
     public void setRoundCount(int roundCount) {
-        this.roundCount = roundCount;
+        setCurrentRound(roundCount);
     }
 
     /**
      * Increments the round counter
      */
     public void incrementRoundCount() {
-        roundCount++;
+        currentRound++;
     }
 
     /**
@@ -2577,7 +2573,7 @@ public class Game extends AbstractGame implements Serializable, PlanetaryConditi
         if (v.isEmpty()) {
             return;
         }
-        gameReports.add(roundCount, v);
+        gameReports.add(getCurrentRound(), v);
     }
 
     /**

@@ -1147,7 +1147,7 @@ public abstract class BotClient extends Client {
     }
 
     @Override
-    protected void correctName(Packet inP) throws Exception {
+    protected void correctName(Packet inP) {
         // If we have a clientgui, it keeps track of a Name -> Client map, and
         //  we need to update that map with this name change.
         if (getClientGUI() != null) {
@@ -1155,7 +1155,8 @@ public abstract class BotClient extends Client {
             String oldName = getName();
             String newName = (String) (inP.getObject(0));
             if (!this.equals(bots.get(oldName))) {
-                throw new Exception();
+                LogManager.getLogger().error("Name correction arrived at incorrect BotClient!");
+                return;
             }
             bots.remove(oldName);
             bots.put(newName, this);

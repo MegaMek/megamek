@@ -67,7 +67,7 @@
 	<faction key='CIR' name='Circinus Federation' minor='false' clan='false' periphery='true'>
 		<years>2785-3081</years>
 		<ratingLevels>F,D,C,B,A</ratingLevels>
-		<parentFaction>Periphery.MW,WOB.pm</parentFaction>
+		<parentFaction>Periphery.MW,WOB.PM</parentFaction>
 	</faction>
 	<faction key='CLAN' name='Clan - General' minor='false' clan='true' periphery='false'>
 		<years>2807-</years>

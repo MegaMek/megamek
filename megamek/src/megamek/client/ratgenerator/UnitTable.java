@@ -81,7 +81,7 @@ public class UnitTable {
                 movementModes, roles, roleStrictness, deployingFaction);
         return findTable(params);
     }
-    
+
     /**
      * deployingFaction not specified, uses main faction.
      *
@@ -98,7 +98,7 @@ public class UnitTable {
     /**
      * Checks cache for a unit table with the given parameters. If none is found, generates
      * one and adds to the cache using a copy of the Parameters object as a key.
-     * 
+     *
      * @param params - the parameters to use in generating the table.
      * @return a generated table matching the parameters
      */
@@ -136,25 +136,29 @@ public class UnitTable {
          * Generate the RAT, then go through it to build the NavigableMaps that
          * will be used for random selection.
          */
-        if (key.getFaction().isActiveInYear(key.getYear())) {
-            List<TableEntry> table = RATGenerator.getInstance().generateTable(key.getFaction(),
-                    key.getUnitType(), key.getYear(), key.getRating(), key.getWeightClasses(),
-                    key.getNetworkMask(), key.getMovementModes(),
-                    key.getRoles(), key.getRoleStrictness(), key.getDeployingFaction());
-            Collections.sort(table);
+        if (key.getFaction() != null ) {
+            if (key.getFaction().isActiveInYear(key.getYear())) {
+                List<TableEntry> table = RATGenerator.getInstance().generateTable(key.getFaction(),
+                        key.getUnitType(), key.getYear(), key.getRating(), key.getWeightClasses(),
+                        key.getNetworkMask(), key.getMovementModes(),
+                        key.getRoles(), key.getRoleStrictness(), key.getDeployingFaction());
+                Collections.sort(table);
 
-            table.forEach(te -> {
-                if (te.isUnit()) {
-                    unitTotal += te.weight;
-                    unitTable.add(te);
-                } else {
-                    salvageTotal += te.weight;
-                    salvageTable.add(te);
+                table.forEach(te -> {
+                    if (te.isUnit()) {
+                        unitTotal += te.weight;
+                        unitTable.add(te);
+                    } else {
+                        salvageTotal += te.weight;
+                        salvageTable.add(te);
+                    }
+                });
+                if (salvageTotal + unitTotal > 0) {
+                    salvagePct = salvageTotal * 100 / (salvageTotal + unitTotal);
                 }
-            });
-            if (salvageTotal + unitTotal > 0) {
-                salvagePct = salvageTotal * 100 / (salvageTotal + unitTotal);
             }
+        } else {
+
         }
     }
 
@@ -620,6 +624,6 @@ public class UnitTable {
                 rating, weightClasses, networkMask, movementModes,
                 roles, roleStrictness, deployingFaction);
         }
-        
+
     }
 }

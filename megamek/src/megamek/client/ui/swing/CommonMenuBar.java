@@ -30,6 +30,7 @@ import megamek.common.enums.GamePhase;
 import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -398,11 +399,13 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
 
         // Pass the action on to each of our listeners.
         // This is a source of ConcurrentModificationException errors if dialogs are open during events
-        // but closed after handling them;
+        // but closed after handling them; catching the CME does not lead to later issues.
         try {
             actionListeners.forEach(l -> l.actionPerformed(event));
         } catch (ConcurrentModificationException e) {
-            LogManager.getLogger().error("Probable dialog open during Round Report handling", e);
+            Logger l = LogManager.getLogger();
+            l.warn("Probable dialog open during Round Report handling", e);
+            l.info("Event causing this issue: " + event.getActionCommand());
         }
     }
 

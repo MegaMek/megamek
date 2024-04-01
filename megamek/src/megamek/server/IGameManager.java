@@ -69,6 +69,13 @@ public interface IGameManager {
 
     void removeAllEntitiesOwnedBy(Player player);
 
+    /**
+     * Handles all incoming packets. When overriding this, super() should normally be called to have the
+     * base implementation of AbstractGameManager handle packets.
+     *
+     * @param connId The connection ID = player ID the packet came from
+     * @param packet The packet to process
+     */
     void handlePacket(int connId, Packet packet);
 
     void handleCfrPacket(Server.ReceivedPacket rp);
@@ -87,4 +94,5 @@ public interface IGameManager {
      * losses over the course of the game can be calculated.
      */
     void calculatePlayerInitialCounts();
+
 }

@@ -719,13 +719,9 @@ public class GameManager extends AbstractGameManager {
 
     @Override
     public void handlePacket(int connId, Packet packet) {
+        super.handlePacket(connId, packet);
         final Player player = game.getPlayer(connId);
         switch (packet.getCommand()) {
-            case PLAYER_READY:
-                receivePlayerDone(packet, connId);
-                send(packetHelper.createPlayerDonePacket(connId));
-                checkReady();
-                break;
             case PRINCESS_SETTINGS:
                 if (player != null) {
                     if (game.getBotSettings() == null) {
@@ -1359,11 +1355,8 @@ public class GameManager extends AbstractGameManager {
         }
     }
 
-    /**
-     * Called when a player declares that he is "done." Checks to see if all
-     * players are done, and if so, moves on to the next phase.
-     */
-    private void checkReady() {
+    @Override
+    protected void checkReady() {
         // check if all active players are done
         for (Player player : game.getPlayersList()) {
             if (!player.isGhost() && !player.isObserver() && !player.isDone()) {
@@ -1383,9 +1376,7 @@ public class GameManager extends AbstractGameManager {
             return; // don't end the phase yet, players need to see new report
         }
 
-        // need at least one entity in the game for the lounge phase to end
-        if (!getGame().getPhase().hasTurns()
-                && (!getGame().getPhase().isLounge() || (getGame().getNoOfEntities() > 0))) {
+        if (!getGame().getPhase().hasTurns() && !isEmptyLobby()) {
             endCurrentPhase();
         }
     }

@@ -79,7 +79,7 @@ public class SBFGameManager extends AbstractGameManager {
 
     @Override
     public void handlePacket(int connId, Packet packet) {
-
+        super.handlePacket(connId, packet);
     }
 
     @Override

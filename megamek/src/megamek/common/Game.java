@@ -661,8 +661,14 @@ public class Game extends AbstractGame implements Serializable, PlanetaryConditi
     }
 
     @Override
-    public void setPhase(GamePhase phase) {
+    public void receivePhase(GamePhase phase) {
         final GamePhase oldPhase = this.phase;
+        setPhase(phase);
+        processGameEvent(new GamePhaseChangeEvent(this, oldPhase, phase));
+    }
+
+    @Override
+    public void setPhase(GamePhase phase) {
         this.phase = phase;
         // Handle phase-specific items.
         switch (phase) {
@@ -691,8 +697,6 @@ public class Game extends AbstractGame implements Serializable, PlanetaryConditi
                 break;
             default:
         }
-
-        processGameEvent(new GamePhaseChangeEvent(this, oldPhase, phase));
     }
 
     public void processGameEvent(GameEvent event) {

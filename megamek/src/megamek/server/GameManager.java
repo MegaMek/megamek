@@ -592,14 +592,6 @@ public class GameManager extends AbstractGameManager {
             entity.newRound(game.getRoundCount());
         }
     }
-//
-//    public void send(Packet p) {
-//        Server.getServerInstance().send(p);
-//    }
-//
-//    public void send(int connId, Packet p) {
-//        Server.getServerInstance().send(connId, p);
-//    }
 
     public void transmitPlayerUpdate(Player p) {
         Server.getServerInstance().transmitPlayerUpdate(p);

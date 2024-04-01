@@ -158,7 +158,7 @@ public class UnitTable {
                 }
             }
         } else {
-
+            LogManager.getLogger().warn("key.getFaction() returned null; likely faction lookup error");
         }
     }
 

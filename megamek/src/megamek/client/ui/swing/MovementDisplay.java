@@ -5022,16 +5022,17 @@ public class MovementDisplay extends ActionPhaseDisplay {
         } else if (actionCmd.equals(MoveCommand.MOVE_RAISE_ELEVATION.getCmd())) {
             addStepToMovePath(MoveStepType.UP);
         } else if (actionCmd.equals(MoveCommand.MOVE_LOWER_ELEVATION.getCmd())) {
-            PlanetaryConditions conditions = clientgui.getClient().getGame().getPlanetaryConditions();
-            boolean spheroidOrLessThanThin = ((IAero) ce).isSpheroid()
-                    || conditions.getAtmosphere().isLighterThan(Atmosphere.THIN);
-            if (ce.isAero()
-                    && (null != cmd.getLastStep())
-                    && (cmd.getLastStep().getNDown() == 1)
-                    && (cmd.getLastStep().getVelocity() < 12)
-                    && !spheroidOrLessThanThin) {
-                addStepToMovePath(MoveStepType.ACC, true);
-                computeAeroMovementEnvelope(ce);
+            if (ce.isAero()) {
+                PlanetaryConditions conditions = clientgui.getClient().getGame().getPlanetaryConditions();
+                boolean spheroidOrLessThanThin = ((IAero) ce).isSpheroid()
+                        || conditions.getAtmosphere().isLighterThan(Atmosphere.THIN);
+                if ((null != cmd.getLastStep())
+                        && (cmd.getLastStep().getNDown() == 1)
+                        && (cmd.getLastStep().getVelocity() < 12)
+                        && !spheroidOrLessThanThin) {
+                    addStepToMovePath(MoveStepType.ACC, true);
+                    computeAeroMovementEnvelope(ce);
+                }
             }
             addStepToMovePath(MoveStepType.DOWN);
         } else if (actionCmd.equals(MoveCommand.MOVE_CLIMB_MODE.getCmd())) {

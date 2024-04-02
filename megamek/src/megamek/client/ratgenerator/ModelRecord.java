@@ -72,7 +72,7 @@ public class ModelRecord extends AbstractUnitRecord {
     }
 
     public ModelRecord(MechSummary ms) {
-        this(ms.getChassis(), ms.getModel());
+        this(ms.getFullChassis(), ms.getModel());
         mechSummary = ms;
         unitType = parseUnitType(ms.getUnitType());
         introYear = ms.getYear();

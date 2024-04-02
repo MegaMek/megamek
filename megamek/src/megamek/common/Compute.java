@@ -7257,19 +7257,20 @@ public class Compute {
                 // Otherwise we require one gunner per facing, with turrets and pintle mounts counting
                 // as separate facings
                 Set<Integer> facings = new HashSet<>();
-                int pintles = 0;
+                Set<Integer> pintleLocations = new HashSet<>();
                 for (Mounted m : entity.getWeaponList()) {
                     if (m.isPintleTurretMounted()) {
-                        pintles++;
+                        // We consider pintle-mounted weapons in the same location to be in the same pintle
+                        pintleLocations.add(m.getLocation());
                     } else {
                         facings.add(m.getLocation());
                     }
                 }
                 if (advFireCon) {
                     // Advanced fire control lets the driver count as a gunner, so one fewer dedicated gunners is needed.
-                    return Math.max(0, pintles + facings.size() - 1);
+                    return Math.max(0, pintleLocations.size() + facings.size() - 1);
                 } else {
-                    return pintles + facings.size();
+                    return pintleLocations.size() + facings.size();
                 }
             }
         } else {

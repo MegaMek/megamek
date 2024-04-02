@@ -117,7 +117,7 @@ public class MULParser {
     private static final String ATTR_CURRENTSIZE = "currentsize";
     public static final String ATTR_EXT_ID = "externalId";
     public static final String ATTR_PICKUP_ID = "pickUpId";
-    private static final String ATTR_CLANPILOT = "clanperson";
+    public static final String ATTR_CLANPILOT = "clanperson";
     public static final String ATTR_NICK = "nick";
     public static final String ATTR_GENDER = "gender";
     public static final String ATTR_CAT_PORTRAIT = "portraitCat";

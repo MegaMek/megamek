@@ -33,10 +33,7 @@ import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.boardview.BoardView;
 import megamek.client.ui.swing.util.UIUtil;
-import megamek.common.Entity;
-import megamek.common.IStartingPositions;
-import megamek.common.OffBoardDirection;
-import megamek.common.Player;
+import megamek.common.*;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 
@@ -407,8 +404,9 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
         txtWidth.setText(Integer.toString(player.getStartWidth()));
         txtOffset.setText(Integer.toString(player.getStartOffset()));
 
-        int bh = clientgui.getClient().getMapSettings().getBoardHeight();
-        int bw = clientgui.getClient().getMapSettings().getBoardWidth();
+        MapSettings ms = clientgui.getClient().getMapSettings();
+        int bh = ms.getBoardHeight() * ms.getMapHeight();
+        int bw = ms.getBoardWidth() * ms.getMapWidth();
 
         SpinnerNumberModel mStartingAnyNWx = new SpinnerNumberModel(0, 0,bw, 1);
         spinStartingAnyNWx = new JSpinner(mStartingAnyNWx);

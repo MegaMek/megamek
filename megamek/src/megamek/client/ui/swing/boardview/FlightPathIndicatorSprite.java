@@ -26,6 +26,8 @@ import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.StringDrawer;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.Coords;
+import megamek.common.Entity;
+import megamek.common.MovePath.MoveStepType;
 import megamek.common.MoveStep;
 
 /**
@@ -93,6 +95,12 @@ public class FlightPathIndicatorSprite extends HexSprite {
             .fontSize(TEXT_SIZE)
             .center().outline(COLOR_OUTLINE, 1.5f);
 
+    private final StringDrawer noThrustIcon = new StringDrawer("\u26AA")
+            .at(HEX_CENTER_X, HEX_CENTER_Y)
+            .color(COLOR_YELLOW)
+            .fontSize(TEXT_SIZE)
+            .center().outline(COLOR_OUTLINE, 1.5f);
+
     /**
      * @param boardView - BoardView associated with the sprite.
      * @param loc - hex coordinate to place the sprite.
@@ -119,6 +127,15 @@ public class FlightPathIndicatorSprite extends HexSprite {
      * off the map.
      */
     private void drawSprite(Graphics2D graph) {
+        Entity entity = step.getEntity();
+        int safeThrust = Integer.MAX_VALUE;
+        int turnCost = Integer.MIN_VALUE;
+
+        if (null != entity) {
+            safeThrust = entity.getRunMP();
+            turnCost = step.asfTurnCost(step.getGame(), MoveStepType.TURN_LEFT, entity);
+        }
+
         if (this.isLastIndicator()) {
             if (this.step.getVelocityLeft() > 0) {
                 flyOffIcon.draw(graph);
@@ -129,7 +146,12 @@ public class FlightPathIndicatorSprite extends HexSprite {
             if (this.step.dueFreeTurn()) {
                 freeTurnIcon.draw(graph);
             } else if (this.step.canAeroTurn(bv.game)) {
-                costTurnIcon.draw(graph);
+                // instead of blindly trusting theoretical canTurn(), see if bird can actually turn.
+                if ((this.step.getMpUsed() + turnCost) > safeThrust) {
+                    noThrustIcon.draw(graph);
+                } else {
+                    costTurnIcon.draw(graph);
+                }
             } else {
                 mustFlyIcon.draw(graph);
             }

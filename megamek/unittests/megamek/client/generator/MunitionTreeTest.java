@@ -48,10 +48,13 @@ class MunitionTreeTest {
     @Test
     void testGetCountsOfAmmosForKey() {
         MunitionTree mt = new MunitionTree();
-        lrmHash.put("LRM", "Standard:Smoke:Thunder");
+        lrmHash.put("LRM", "Standard:Smoke:Thunder:");
         acHash.put("AC", "Standard:Precision:Caseless");
         mt.insertImperatives("Mauler", "any", "any", lrmHash);
         mt.insertImperatives("Mauler", "any", "any", acHash);
+
+        // Expect 0
+        assertEquals(0, mt.getCountOfAmmoForKey("Mauler", "any", "any", "ATM", "LR"));
 
         // Expect 1
         assertEquals(1, mt.getCountOfAmmoForKey("Mauler", "any", "any", "AC20", "Precision"));
@@ -61,6 +64,12 @@ class MunitionTreeTest {
         HashMap<String, Integer> binCounts = mt.getCountsofAmmosForKey("Mauler", "any", "any", "AC20");
         assertEquals(3, binCounts.values().size());
         assertEquals(1, binCounts.get("Precision"));
+
+        // Should be zero ATM
+        binCounts = mt.getCountsofAmmosForKey("Mauler", "any", "any", "ATM");
+        assertEquals(0, binCounts.values().size());
+        assertEquals(0, binCounts.getOrDefault("Precision", 0));
+
 
     }
 }

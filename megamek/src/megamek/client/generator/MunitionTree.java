@@ -1,11 +1,32 @@
 package megamek.client.generator;
 
+import java.io.File;
 import java.util.*;
 
 public class MunitionTree {
     private LoadNode root = new LoadNode();
 
     public MunitionTree() {
+    }
+
+    /**
+     * Constructor for reading in files containing loadout imperatives.
+     * @param fd
+     */
+    public MunitionTree(File fd) {
+
+    }
+
+    public void readFromXML() {
+
+    }
+
+    public void readFromADF() {
+
+    }
+
+    public void insertImperative(
+            String chassis, String variant, String pilot, String binType, String... ammoTypes){
 
     }
 

@@ -20,6 +20,21 @@ public class MunitionTree {
         root.insert(lcImp, chassis, variant, pilot);
     }
 
+    public HashMap<String, Integer> getCountsofAmmosForKey(
+        String chassis, String variant, String pilot, String binType) {
+        LoadNode node = root.retrieve(chassis, variant, pilot);
+        return node.getCounts(binType);
+    }
+
+    /**
+     * Return the actual, or effective, desired count of ammo bins for the given binType and ammoType
+     * @param chassis
+     * @param variant
+     * @param pilot
+     * @param binType
+     * @param ammoType
+     * @return int count of bins requested for this binType:ammoType set.
+     */
     public int getCountOfAmmoForKey(
             String chassis, String variant, String pilot, String binType, String ammoType) {
         LoadNode node = root.retrieve(chassis, variant, pilot);
@@ -64,7 +79,7 @@ class LoadNode {
         if (keys.length > 0){
             children.put(keys[0], new LoadNode(imperatives, Arrays.copyOfRange(keys, 1, keys.length)));
         } else {
-            this.imperatives = imperatives;
+            this.imperatives.putAll(imperatives);
         }
     }
 
@@ -75,10 +90,14 @@ class LoadNode {
      */
     public void insert(HashMap<String, String> imperatives, String... keys) {
         if (keys.length > 0) {
-            LoadNode child = new LoadNode(imperatives, Arrays.copyOfRange(keys, 1, keys.length));
-            children.put(keys[0], child);
+            if (children.containsKey(keys[0])) {
+                children.get(keys[0]).insert(imperatives, Arrays.copyOfRange(keys, 1, keys.length));
+            } else {
+                LoadNode child = new LoadNode(imperatives, Arrays.copyOfRange(keys, 1, keys.length));
+                children.put(keys[0], child);
+            }
         } else {
-            this.imperatives = imperatives;
+            this.imperatives.putAll(imperatives);
         }
     }
 

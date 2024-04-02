@@ -7,6 +7,10 @@ import megamek.common.TechConstants;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Notes: checkout
  * - RATGenerator.java

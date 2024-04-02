@@ -32,6 +32,7 @@ public class MunitionTree {
     }
 }
 
+
 // Node used to construct munition loading tree
 class LoadNode {
     private HashMap<String, LoadNode> children = new HashMap<String, LoadNode>();
@@ -46,10 +47,19 @@ class LoadNode {
     LoadNode() {
     }
 
+    /**
+     * Testing version of LoadNode, for imperative lookups
+     * @param imperatives
+     */
     LoadNode(HashMap<String, String> imperatives) {
         this.imperatives = imperatives;
     }
 
+    /**
+     * LoadNode that recursively populates a leaf of the lookup tree.
+     * @param imperatives
+     * @param keys
+     */
     LoadNode(HashMap<String, String> imperatives, String... keys) {
         if (keys.length > 0){
             children.put(keys[0], new LoadNode(imperatives, Arrays.copyOfRange(keys, 1, keys.length)));
@@ -58,6 +68,11 @@ class LoadNode {
         }
     }
 
+    /**
+     * Utilizes recursion and variable length argument list to insert a set of imperatives at arbitrary depth
+     * @param imperatives
+     * @param keys
+     */
     public void insert(HashMap<String, String> imperatives, String... keys) {
         if (keys.length > 0) {
             LoadNode child = new LoadNode(imperatives, Arrays.copyOfRange(keys, 1, keys.length));
@@ -88,6 +103,12 @@ class LoadNode {
         return getCounts(binType).getOrDefault(ammoType, 0);
     }
 
+    /**
+     * Method for retrieving counts of all imperatives defined for a given binType.
+     * Does the string conversions necessary to look up "parent" types, e.g AC for AC-20 (or LAC-5)
+     * @param binType
+     * @return HashMap <String AmmoType, count of bins requested>
+     */
     public HashMap<String, Integer> getCounts(String binType) {
         String actualLookup = binType;
         // all keys should be in lower-case; also check higher-level imperatives like "AC" for "AC20", etc.
@@ -112,6 +133,12 @@ class LoadNode {
         return counts.get(actualLookup);
     }
 
+    /**
+     * Given a set of desired ammo types from an imperative, breaks the string up and
+     * constructs a HashMap of <String AmmoType name, count of bins requested> Entries.
+     * @param iString
+     * @return HashMap c
+     */
     private HashMap<String, Integer> decodeImperatives(String iString) {
         HashMap<String, Integer> c = new HashMap<String, Integer>();
         if (null != iString) {

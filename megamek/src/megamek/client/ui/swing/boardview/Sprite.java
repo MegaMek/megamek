@@ -41,7 +41,7 @@ abstract class Sprite implements ImageObserver, Comparable<Sprite> {
                                int width, int height) {
         if (infoflags == ImageObserver.ALLBITS) {
             prepare();
-            bv.repaint();
+            bv.getPanel().repaint();
             return false;
         }
         return true;

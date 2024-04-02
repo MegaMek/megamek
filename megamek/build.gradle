@@ -5,6 +5,7 @@ plugins {
     id 'maven-publish'
     id 'edu.sc.seis.launch4j' version '2.5.4'
     id 'jacoco'
+    id "org.sonarqube" version "3.5.0.2730"
 }
 
 sourceSets {

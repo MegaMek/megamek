@@ -23,13 +23,13 @@ import megamek.common.preference.PreferenceManager;
 import java.util.Locale;
 
 public class MMOptions extends SuiteOptions {
-    //region Constructors
+    // region Constructors
     public MMOptions() {
         super();
     }
-    //endregion Constructors
+    // endregion Constructors
 
-    //region Nag Tab
+    // region Nag Tab
     public boolean getNagDialogIgnore(final String key) {
         return userPreferences.node(MMConstants.NAG_NODE).getBoolean(key, false);
     }
@@ -37,11 +37,12 @@ public class MMOptions extends SuiteOptions {
     public void setNagDialogIgnore(final String key, final boolean value) {
         userPreferences.node(MMConstants.NAG_NODE).putBoolean(key, value);
     }
-    //endregion Nag Tab
+    // endregion Nag Tab
 
-    //region Temporary
+    // region Temporary
     /**
-     * This is a temporary Locale getter, which sets the stage for suite-wide localization.
+     * This is a temporary Locale getter, which sets the stage for suite-wide
+     * localization.
      */
     @Override
     public Locale getLocale() {
@@ -49,11 +50,12 @@ public class MMOptions extends SuiteOptions {
     }
 
     /**
-     * This is a temporary Locale getter for dates, which sets the stage for suite-wide localization.
+     * This is a temporary Locale getter for dates, which sets the stage for
+     * suite-wide localization.
      */
     @Override
     public Locale getDateLocale() {
         return PreferenceManager.getClientPreferences().getLocale();
     }
-    //endregion Temporary
+    // endregion Temporary
 }

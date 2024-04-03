@@ -62,4 +62,9 @@ public class ISAPDS extends AmmoWeapon {
     public boolean isAlphaStrikePointDefense() {
         return true;
     }
+
+    @Override
+    public double getBattleForceDamage(int range) {
+        return 0;
+    }
 }

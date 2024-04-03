@@ -53,7 +53,8 @@ MEGAMEK VERSION HISTORY:
 + PR #5305: Princess Behaviour Update
 + Fix #3882 (MM part): ASFs not tracked correctly in MHQ
 + Fix #5205: Handle ConcurrentModification and NPE from opening dialogs
-+ PR ##5306: MM portion of fix for MHQ #3803: WOB.pm/.PM mismatch and missing parent faction check 
++ PR #5306: MM portion of fix for MHQ #3803: WOB.pm/.PM mismatch and missing parent faction check 
++ PR #5311: Unblock build by removing extraneous Java logging import in UnitTable.java
 
 
 0.49.18 (2024-02-17 1800 UTC)

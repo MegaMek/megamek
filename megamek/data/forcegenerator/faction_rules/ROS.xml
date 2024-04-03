@@ -15,14 +15,14 @@
 
 	<toc>
 		<unitType>
-			<option>Mek,Tank,VTOL,Infantry,BattleArmor,Aero,Conventional Fighter</option>
+			<option>Mek,Tank,VTOL,Infantry,BattleArmor,AeroSpaceFighter,Conventional Fighter</option>
 		</unitType>
 		
 		<eschelon>
 			<option ifUnitType="Mek|Tank|VTOL">%REGIMENT%,%BATTALION%,%COMPANY%,%LANCE%</option>
 			<option ifUnitType="Infantry">%REGIMENT%,%BATTALION%,%COMPANY%</option>
 			<option ifUnitType="BattleArmor">%BATTALION%,%COMPANY%,%PLATOON%</option>
-			<option ifUnitType="Aero|Conventional Fighter">%REGIMENT%,%WING%,%SQUADRON%,%FLIGHT%</option>
+			<option ifUnitType="AeroSpaceFighter|Conventional Fighter">%REGIMENT%,%WING%,%SQUADRON%,%FLIGHT%</option>
 		</eschelon>
 		
 		<rating>
@@ -71,13 +71,13 @@
 		<attachedForces ifUnitType="Mek" ifRating="!SB">
 			<subforce unitType="Tank">%BRIGADE%</subforce>
 			<subforce unitType="Infantry">%BRIGADE%</subforce>
-			<subforce unitType="Aero">%WING%</subforce>
+			<subforce unitType="AeroSpaceFighter">%WING%</subforce>
 		</attachedForces>
 		
 		<attachedForces ifUnitType="Mek" ifRating="SB">
 			<subforce unitType="Tank">%REGIMENT%</subforce>
 			<subforce unitType="BattleArmor">%BATTALION%</subforce>
-			<subforce unitType="Aero">%WING%</subforce>
+			<subforce unitType="AeroSpaceFighter">%WING%</subforce>
 		</attachedForces>
 	</force>
 	
@@ -131,7 +131,7 @@
 		<attachedForces>
 			<subforce unitType="Tank">%BRIGADE%</subforce>
 			<subforce unitType="Infantry">%BRIGADE%</subforce>
-			<subforce unitType="Aero">%WING%</subforce>
+			<subforce unitType="AeroSpaceFighter">%WING%</subforce>
 		</attachedForces>
 	</force>
 </ruleset>

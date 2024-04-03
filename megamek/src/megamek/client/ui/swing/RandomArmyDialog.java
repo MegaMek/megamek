@@ -809,7 +809,7 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
                                 }
                                 unitList.addAll(ba);
                             } else if (m_pFormationOptions.getBooleanOption("airLance")) {
-                                UnitTable t = UnitTable.findTable(fRec, UnitType.AERO,
+                                UnitTable t = UnitTable.findTable(fRec, UnitType.AEROSPACEFIGHTER,
                                         m_pFormationOptions.getYear(), m_pFormationOptions.getRating(), null,
                                         ModelRecord.NETWORK_NONE,
                                         EnumSet.noneOf(EntityMovementMode.class),
@@ -1359,7 +1359,7 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
 
         @Override
         public Object getValueAt(int row, int col) {
-            if (generatedRAT != null) {
+            if (generatedRAT != null && generatedRAT.getNumEntries() > 0) {
                 switch (col) {
                     case COL_WEIGHT:
                         return generatedRAT.getEntryWeight(row);
@@ -1380,7 +1380,10 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
         }
 
         public MechSummary getUnitAt(int row) {
-            return generatedRAT.getMechSummary(row);
+            if (generatedRAT != null && generatedRAT.getNumEntries() > 0) {
+                return generatedRAT.getMechSummary(row);
+            }
+            return null;
         }
     }
 

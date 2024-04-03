@@ -18,9 +18,9 @@
 	
 	<toc>
 		<unitType>
-			<option ifDateBetween="3060,">null,Mek,ProtoMek,Tank,VTOL,Infantry,BattleArmor,Aero,Conventional Fighter,Warship,Dropship,Jumpship</option>
-			<option ifDateBetween="2870,3059">null,Mek,Tank,VTOL,Infantry,BattleArmor,Aero,Conventional Fighter,Warship,Dropship,Jumpship</option>
-			<option ifDateBetween=",2869">null,Mek,Tank,VTOL,Infantry,Aero,Conventional Fighter,Warship,Dropship,Jumpship</option>
+			<option ifDateBetween="3060,">null,Mek,ProtoMek,Tank,VTOL,Infantry,BattleArmor,AeroSpaceFighter,Conventional Fighter,Warship,Dropship,Jumpship</option>
+			<option ifDateBetween="2870,3059">null,Mek,Tank,VTOL,Infantry,BattleArmor,AeroSpaceFighter,Conventional Fighter,Warship,Dropship,Jumpship</option>
+			<option ifDateBetween=",2869">null,Mek,Tank,VTOL,Infantry,AeroSpaceFighter,Conventional Fighter,Warship,Dropship,Jumpship</option>
 		</unitType>
 		
 		<eschelon>
@@ -239,7 +239,7 @@
 		
 		<!-- Assume each cluster contains two Mek trinaries, and
 		optionally up to three additional trinaries which could be
-		Mek, Tank (SL/Sol only), Aero, or infantry.-->
+		Mek, Tank (SL/Sol only), AeroSpaceFighter, or infantry.-->
 
 		<subforces>
 			<subforceOption ifWeightClass="A">
@@ -350,40 +350,40 @@
 
 		<subforces>
 			<subforceOption ifWeightClass="H|A">
-				<option weightClass="H" unitType="Aero"
+				<option weightClass="H" unitType="AeroSpaceFighter"
 					flags="+testTrinary">%TRINARY%</option>
-				<option weightClass="H" unitType="Aero"
+				<option weightClass="H" unitType="AeroSpaceFighter"
 					flags="+testTrinary"
 					ifDateBetween="2850,">%TRINARY%</option>
-				<option weightClass="H" unitType="Aero"
+				<option weightClass="H" unitType="AeroSpaceFighter"
 					flags="+testTrinary"
 					ifDateBetween="2950,">%TRINARY%</option>
-				<option weightClass="M" unitType="Aero"
+				<option weightClass="M" unitType="AeroSpaceFighter"
 					flags="+testTrinary" weight="2">%TRINARY%</option>
-				<option weightClass="L" unitType="Aero"
+				<option weightClass="L" unitType="AeroSpaceFighter"
 					flags="+testTrinary" weight="1">%TRINARY%</option>
 				<option ifRating="FL" weight="1" />
 				<option weight="6" />
 			</subforceOption>
 			<subforceOption ifWeightClass="M">
-				<option weightClass="H" unitType="Aero"
+				<option weightClass="H" unitType="AeroSpaceFighter"
 					flags="+testTrinary">%TRINARY%</option>
-				<option weightClass="H" unitType="Aero"
+				<option weightClass="H" unitType="AeroSpaceFighter"
 					flags="+testTrinary"
 					ifDateBetween="2950,">%TRINARY%</option>
-				<option weightClass="M" unitType="Aero"
+				<option weightClass="M" unitType="AeroSpaceFighter"
 					flags="+testTrinary" weight="3">%TRINARY%</option>
-				<option weightClass="L" unitType="Aero"
+				<option weightClass="L" unitType="AeroSpaceFighter"
 					flags="+testTrinary" weight="2">%TRINARY%</option>
 				<option weight="7" />
 			</subforceOption>
 			<subforceOption ifWeightClass="L">
-				<option weightClass="H" unitType="Aero"
+				<option weightClass="H" unitType="AeroSpaceFighter"
 					flags="+testTrinary"
 					ifDateBetween="2950,">%TRINARY%</option>
-				<option weightClass="M" unitType="Aero"
+				<option weightClass="M" unitType="AeroSpaceFighter"
 					flags="+testTrinary" weight="2">%TRINARY%</option>
-				<option weightClass="L" unitType="Aero"
+				<option weightClass="L" unitType="AeroSpaceFighter"
 					flags="+testTrinary" weight="3">%TRINARY%</option>
 				<option weight="6" />
 			</subforceOption>
@@ -758,7 +758,7 @@
 		</subforces>
 	</force>
 
-	<force eschelon="%TRINARY%" eschName="Trinary" ifUnitType="Aero">
+	<force eschelon="%TRINARY%" eschName="Trinary" ifUnitType="AeroSpaceFighter">
 		<name ifRole="command" ifRating="!Keshik">Trinary [Command]</name>
 		<name>{ordinal:distinct} Trinary [Fighter]</name>
 		<co>%STAR_CAPTAIN%</co>
@@ -1036,7 +1036,7 @@
 		</subforces>
 	</force>
 
-	<force eschelon="%BINARY%" eschName="Binary" ifUnitType="Aero">
+	<force eschelon="%BINARY%" eschName="Binary" ifUnitType="AeroSpaceFighter">
 		<name ifRole="command">Binary [Command]</name>
 		<name>{ordinal:distinct} Binary [Fighter]</name>
 		<co>%STAR_CAPTAIN%</co>
@@ -1409,7 +1409,7 @@
 		</subforces>
 	</force>
 	
-	<force eschelon="%STAR%" eschName="Star" ifUnitType="Aero">
+	<force eschelon="%STAR%" eschName="Star" ifUnitType="AeroSpaceFighter">
 		<name>{phonetic} Fighter Star</name>
 		<co>%STAR_CMDR%</co>
 		

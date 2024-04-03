@@ -13,7 +13,7 @@ division where most factions organize around a regiment. -->
 	
 	<toc>
 		<unitType>
-			<option>null,Mek,Tank,VTOL,Infantry,Aero,Conventional Fighter,Warship</option>
+			<option>null,Mek,Tank,VTOL,Infantry,AeroSpaceFighter,Conventional Fighter,Warship</option>
 		</unitType>
 		
 		<eschelon>
@@ -22,7 +22,7 @@ division where most factions organize around a regiment. -->
 			<option ifUnitType="Mek">%DIVISION%,%BRIGADE%,%REGIMENT%,%BATTALION%,%COMPANY%,%LANCE%</option>
 			<option ifUnitType="Infantry">%DIVISION%,%BRIGADE%,%REGIMENT%,%BATTALION%,%COMPANY%</option>
 			<option ifUnitType="Tank|VTOL">%REGIMENT%,%BATTALION%,%COMPANY%,%LANCE%</option>
-			<option ifUnitType="Aero|Conventional Fighter">%AIR_REGIMENT%,%WING%,%SQUADRON%,%FLIGHT%</option>
+			<option ifUnitType="AeroSpaceFighter|Conventional Fighter">%AIR_REGIMENT%,%WING%,%SQUADRON%,%FLIGHT%</option>
 		</eschelon>
 		
 		<rating>
@@ -163,7 +163,7 @@ division where most factions organize around a regiment. -->
 		</subforces>
 		
 		<attachedForces>
-			<subforce unitType="Aero">%AIR_REGIMENT%</subforce>
+			<subforce unitType="AeroSpaceFighter">%AIR_REGIMENT%</subforce>
 			<subforceOption>
 				<option unitType="Tank" role="artillery" name="Artillery Regiment"
 					weight="2">%REGIMENT%</option>
@@ -425,7 +425,7 @@ division where most factions organize around a regiment. -->
 		</subforces>
 		
 		<attachedForces>
-			<subforce unitType="Aero" generate="group">%FLIGHT%</subforce>
+			<subforce unitType="AeroSpaceFighter" generate="group">%FLIGHT%</subforce>
 		</attachedForces>		
 	</force>
 	
@@ -775,8 +775,8 @@ division where most factions organize around a regiment. -->
 		</subforces>
 	</force>
 
-	<force eschelon="%AIR_REGIMENT%" eschName="Wing" ifUnitType="Aero|Conventional Fighter">
-		<name ifUnitType="Aero">Ground Aero Wing</name>
+	<force eschelon="%AIR_REGIMENT%" eschName="Wing" ifUnitType="AeroSpaceFighter|Conventional Fighter">
+		<name ifUnitType="AeroSpaceFighter">Ground Aero Wing</name>
 		<co>%COLONEL%</co>
 		
 		<weightClass>
@@ -786,18 +786,18 @@ division where most factions organize around a regiment. -->
 		</weightClass>
 		
 		<subforces>
-			<subforceOption ifWeightClass="H" ifUnitType="Aero">
+			<subforceOption ifWeightClass="H" ifUnitType="AeroSpaceFighter">
 				<option weightClass="H,H,H">%WING%</option>
 				<option weightClass="H,H,M">%WING%</option>
 				<option weightClass="H,H,L">%WING%</option>
 			</subforceOption>
-			<subforceOption ifWeightClass="M" ifUnitType="Aero">
+			<subforceOption ifWeightClass="M" ifUnitType="AeroSpaceFighter">
 				<option weightClass="H,M,M">%WING%</option>
 				<option weightClass="M,M,M">%WING%</option>
 				<option weightClass="H,M,L">%WING%</option>
 				<option weightClass="M,M,L">%WING%</option>
 			</subforceOption>
-			<subforceOption ifWeightClass="L" ifUnitType="Aero">
+			<subforceOption ifWeightClass="L" ifUnitType="AeroSpaceFighter">
 				<option weightClass="H,L,L">%WING%</option>
 				<option weightClass="M,L,L">%WING%</option>
 				<option weightClass="L,L,L">%WING%</option>
@@ -805,14 +805,14 @@ division where most factions organize around a regiment. -->
 			<subforce ifUnitType="Conventional Fighter" num="3">%WING%</subforce>
 		</subforces>
 		
-		<attachedForces ifUnitType="Aero">
+		<attachedForces ifUnitType="AeroSpaceFighter">
 			<subforce unitType="Conventional Fighter">%AIR_REGIMENT%</subforce>
 			<subforce unitType="Infantry" name="Engineers"
 					role="engineer">%BATTALION%</subforce>
 		</attachedForces>
 	</force>
 	
-	<force eschelon="%WING%" eschName="Group" ifUnitType="Aero|Conventional Fighter">
+	<force eschelon="%WING%" eschName="Group" ifUnitType="AeroSpaceFighter|Conventional Fighter">
 		<co>%MAJOR%</co>
 		
 		<weightClass>
@@ -822,18 +822,18 @@ division where most factions organize around a regiment. -->
 		</weightClass>
 		
 		<subforces>
-			<subforceOption ifWeightClass="H" ifUnitType="Aero">
+			<subforceOption ifWeightClass="H" ifUnitType="AeroSpaceFighter">
 				<option weightClass="H,H,H">%SQUADRON%</option>
 				<option weightClass="H,H,M">%SQUADRON%</option>
 				<option weightClass="H,H,L">%SQUADRON%</option>
 			</subforceOption>
-			<subforceOption ifWeightClass="M" ifUnitType="Aero">
+			<subforceOption ifWeightClass="M" ifUnitType="AeroSpaceFighter">
 				<option weightClass="H,M,M">%SQUADRON%</option>
 				<option weightClass="M,M,M">%SQUADRON%</option>
 				<option weightClass="H,M,L">%SQUADRON%</option>
 				<option weightClass="M,M,L">%SQUADRON%</option>
 			</subforceOption>
-			<subforceOption ifWeightClass="L" ifUnitType="Aero">
+			<subforceOption ifWeightClass="L" ifUnitType="AeroSpaceFighter">
 				<option weightClass="H,L,L">%SQUADRON%</option>
 				<option weightClass="M,L,L">%SQUADRON%</option>
 				<option weightClass="L,L,L">%SQUADRON%</option>
@@ -842,7 +842,7 @@ division where most factions organize around a regiment. -->
 		</subforces>
 	</force>
 	
-	<force eschelon="%SQUADRON%" eschName="Squadron" ifUnitType="Aero|Conventional Fighter">
+	<force eschelon="%SQUADRON%" eschName="Squadron" ifUnitType="AeroSpaceFighter|Conventional Fighter">
 		<co>%CAPTAIN%</co>
 		
 		<weightClass>
@@ -865,7 +865,7 @@ division where most factions organize around a regiment. -->
 		</subforces>
 	</force>
 	
-	<force eschelon="%FLIGHT%" eschName="Flight" ifUnitType="Aero|Conventional Fighter">
+	<force eschelon="%FLIGHT%" eschName="Flight" ifUnitType="AeroSpaceFighter|Conventional Fighter">
 		<co>%LT%</co>
 		
 		<weightClass>

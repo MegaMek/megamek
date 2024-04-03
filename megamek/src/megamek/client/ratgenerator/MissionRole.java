@@ -20,7 +20,7 @@ import megamek.common.UnitType;
 
 /**
  * Used to adjust availability to conform to a particular mission role.
- * 
+ *
  * @author Neoancient
  */
 public enum MissionRole {
@@ -44,8 +44,8 @@ public enum MissionRole {
     /* Infantry roles */
     MARINE, MOUNTAINEER, XCT, PARATROOPER, ANTI_MEK, FIELD_GUN,
     /* allows artillery but does not filter out all other roles */
-    MIXED_ARTILLERY; 
-    
+    MIXED_ARTILLERY;
+
     public boolean fitsUnitType(int unitType) {
         switch (this) {
             case RECON:
@@ -89,20 +89,20 @@ public enum MissionRole {
                 return unitType < UnitType.BATTLE_ARMOR || unitType > UnitType.PROTOMEK;
 
             case EW_SUPPORT:
-                return unitType <= UnitType.TANK || unitType == UnitType.AERO;
+                return unitType <= UnitType.TANK || unitType == UnitType.AEROSPACEFIGHTER;
 
             case TRAINING:
                 return unitType < UnitType.SMALL_CRAFT;
 
             case SPOTTER:
-                return unitType <= UnitType.AERO;
+                return unitType <= UnitType.AEROSPACEFIGHTER;
 
             case BOMBER:
             case ESCORT:
             case INTERCEPTOR:
             case GROUND_SUPPORT:
             // case STRIKE:
-                return unitType == UnitType.AERO || unitType == UnitType.CONV_FIGHTER;
+                return unitType == UnitType.AEROSPACEFIGHTER || unitType == UnitType.CONV_FIGHTER;
 
             case ASSAULT:
             case VEE_CARRIER:
@@ -127,7 +127,7 @@ public enum MissionRole {
 
             case OMNI:
                 return (unitType == UnitType.MEK)
-                        || (unitType == UnitType.AERO)
+                        || (unitType == UnitType.AEROSPACEFIGHTER)
                         || (unitType == UnitType.TANK);
                 // This should apply to fixed-wing support also, but that cannot be distinguished from conventional fighters here.
 
@@ -151,7 +151,7 @@ public enum MissionRole {
                 return false;
         }
     }
-    
+
     public static Double adjustAvailabilityByRole(double avRating,
                                                   Collection<MissionRole> desiredRoles,
                                                   ModelRecord mRec, int year, int strictness) {
@@ -604,7 +604,7 @@ public enum MissionRole {
                 (mRec.getRoles().contains(ARTILLERY) && !desiredRoles.contains(ARTILLERY)
                         && !desiredRoles.contains(MIXED_ARTILLERY));
     }
-    
+
     public static MissionRole parseRole(String role) {
         switch (role.toLowerCase().replace("_", " ")) {
             case "recon":
@@ -724,7 +724,7 @@ public enum MissionRole {
                 return null;
         }
     }
-    
+
     @Override
     public String toString() {
         return name().toLowerCase();

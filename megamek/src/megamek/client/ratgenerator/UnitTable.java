@@ -21,6 +21,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.logging.LogManager;
 import java.util.stream.Collectors;
 
 import megamek.common.Compute;
@@ -81,7 +82,7 @@ public class UnitTable {
                 movementModes, roles, roleStrictness, deployingFaction);
         return findTable(params);
     }
-    
+
     /**
      * deployingFaction not specified, uses main faction.
      *
@@ -98,7 +99,7 @@ public class UnitTable {
     /**
      * Checks cache for a unit table with the given parameters. If none is found, generates
      * one and adds to the cache using a copy of the Parameters object as a key.
-     * 
+     *
      * @param params - the parameters to use in generating the table.
      * @return a generated table matching the parameters
      */
@@ -171,10 +172,15 @@ public class UnitTable {
      * @return - the entry at the indicated index
      */
     private TableEntry getEntry(int index) {
-        if (index < salvageTable.size()) {
-            return salvageTable.get(index);
+        try {
+            if (index < salvageTable.size()) {
+                return salvageTable.get(index);
+            }
+            return unitTable.get(index - salvageTable.size());
+        } catch (IndexOutOfBoundsException e) {
+            // Can't log from a static context
         }
-        return unitTable.get(index - salvageTable.size());
+        return null;
     }
 
     /**
@@ -182,7 +188,8 @@ public class UnitTable {
      * @return - the weight value for the entry at the indicated index
      */
     public int getEntryWeight(int index) {
-        return getEntry(index).weight;
+        TableEntry te = getEntry(index);
+        return  (te != null) ? te.weight : 0;
     }
 
     /**
@@ -190,7 +197,7 @@ public class UnitTable {
      * @return - a string representing the entry at the indicated index for use in the table
      */
     public String getEntryText(int index) {
-        if (index >= salvageTable.size()) {
+        if (!unitTable.isEmpty() && index >= salvageTable.size()){
             return unitTable.get(index - salvageTable.size()).getUnitEntry().getName();
         } else {
             if (key.getFaction().isClan()) {
@@ -206,7 +213,7 @@ public class UnitTable {
      * @return - a string representing the entry at the indicated index for use in the table
      */
     public String getTechBase(int index) {
-        if (index >= salvageTable.size()) {
+        if (!unitTable.isEmpty() && index >= salvageTable.size()) {
             return unitTable.get(index - salvageTable.size()).getUnitEntry().isClan() ? "Clan" : "IS";
         } else {
             return key.getFaction().isClan() ? "Clan" : "IS";
@@ -218,7 +225,7 @@ public class UnitTable {
      * @return - a string representing the entry at the indicated index for use in the table
      */
     public String getUnitRole(int index) {
-        if (index >= salvageTable.size()) {
+        if (!unitTable.isEmpty() && index >= salvageTable.size()) {
             return unitTable.get(index - salvageTable.size()).getUnitEntry().getRole().toString();
         } else {
             return "";
@@ -230,7 +237,7 @@ public class UnitTable {
      * @return - the MechSummary entry for the indicated index, or null if this is a salvage entry
      */
     public MechSummary getMechSummary(int index) {
-        if (index >= salvageTable.size()) {
+        if (!unitTable.isEmpty() && index >= salvageTable.size()) {
             return unitTable.get(index - salvageTable.size()).getUnitEntry();
         }
         return null;
@@ -241,7 +248,7 @@ public class UnitTable {
      * @return - the BV of the unit at the indicated index, or 0 if this is a salvage entry
      */
     public int getBV(int index) {
-        if (index >= salvageTable.size()) {
+        if (!unitTable.isEmpty() && index >= salvageTable.size()) {
             return unitTable.get(index - salvageTable.size()).getUnitEntry().getBV();
         } else {
             return 0;
@@ -620,6 +627,6 @@ public class UnitTable {
                 rating, weightClasses, networkMask, movementModes,
                 roles, roleStrictness, deployingFaction);
         }
-        
+
     }
 }

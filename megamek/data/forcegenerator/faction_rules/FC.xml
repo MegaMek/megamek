@@ -11,8 +11,8 @@
 
 	<toc>
 		<unitType>
-			<option ifDateBetween="3051,">Mek,Tank,VTOL,Infantry,BattleArmor,Aero,Conventional Fighter</option>
-			<option>Mek,Tank,VTOL,Infantry,Aero,Conventional Fighter</option>
+			<option ifDateBetween="3051,">Mek,Tank,VTOL,Infantry,BattleArmor,AeroSpaceFighter,Conventional Fighter</option>
+			<option>Mek,Tank,VTOL,Infantry,AeroSpaceFighter,Conventional Fighter</option>
 		</unitType>
 		
 		<eschelon>
@@ -21,7 +21,7 @@
 			<option ifUnitType="Tank">%BRIGADE%,%REGIMENT%,%BATTALION%,%COMPANY%,%LANCE%</option>
 			<option ifUnitType="Infantry">%BRIGADE%,%REGIMENT%,%BATTALION%,%COMPANY%</option>
 			<option ifUnitType="BattleArmor">%BATTALION%,%COMPANY%,%PLATOON%</option>
-			<option ifUnitType="Aero">%GROUP%,%WING%,%SQUADRON%,%FLIGHT%</option>
+			<option ifUnitType="AeroSpaceFighter">%GROUP%,%WING%,%SQUADRON%,%FLIGHT%</option>
 			<option ifUnitType="Conventional Fighter">%WING%,%SQUADRON%,%FLIGHT%</option>
 		</eschelon>
 		

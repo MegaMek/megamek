@@ -28,7 +28,7 @@
 		<salvage pct='0'></salvage>
 		<weightDistribution era='2398' unitType='Mek'>3,4,2,1</weightDistribution>
 		<weightDistribution era='2398' unitType='Tank'>3,4,3,1</weightDistribution>
-		<weightDistribution era='2398' unitType='Aero'>1,1,1</weightDistribution>
+		<weightDistribution era='2398' unitType='AeroSpaceFighter'>1,1,1</weightDistribution>
 	</faction>
 	<faction key='LA'>
 		<salvage pct='6'>TH:6,FWL:2</salvage>
@@ -46,7 +46,7 @@
 	<faction key='Periphery'>
 		<weightDistribution era='2398' unitType='Mek'>6,5,3,1</weightDistribution>
 		<weightDistribution era='2398' unitType='Tank'>3,4,2,1</weightDistribution>
-		<weightDistribution era='2398' unitType='Aero'>1,1,1</weightDistribution>
+		<weightDistribution era='2398' unitType='AeroSpaceFighter'>1,1,1</weightDistribution>
 	</faction>
 	<faction key='PIR'>
 		<salvage pct='15'>CC:2,TH:2,LA:2,FWL:2,FS:2,DC:2</salvage>
@@ -59,7 +59,7 @@
 	</faction>
 	<faction key='TC'>
 		<salvage pct='6'>FS:7</salvage>
-		<weightDistribution era='2398' unitType='Aero'>1,2,3</weightDistribution>
+		<weightDistribution era='2398' unitType='AeroSpaceFighter'>1,2,3</weightDistribution>
 	</faction>
 	<faction key='TH'>
 		<salvage pct='5'>CC:6,LA:10,FWL:9,FS:3,DC:2</salvage>
@@ -229,7 +229,7 @@
 			<availability>General:8</availability>
 		</model>
 	</chassis>
-	<chassis name='Centurion' unitType='Aero'>
+	<chassis name='Centurion' unitType='AeroSpaceFighter'>
 		<availability>FS:8</availability>
 		<model name='CNT-1A'>
 			<availability>General:8</availability>
@@ -301,7 +301,7 @@
 			<availability>General:8</availability>
 		</model>
 	</chassis>
-	<chassis name='Eagle' unitType='Aero'>
+	<chassis name='Eagle' unitType='AeroSpaceFighter'>
 		<availability>CC:2,OA:1,LA:2,FWL:8,IS:1,FS:1,DC:1,TC:1</availability>
 		<model name='EGL-R1'>
 			<availability>General:8</availability>
@@ -360,7 +360,7 @@
 			<availability>General:8</availability>
 		</model>
 	</chassis>
-	<chassis name='Firebird' unitType='Aero'>
+	<chassis name='Firebird' unitType='AeroSpaceFighter'>
 		<availability>CC:4,TC:2</availability>
 		<model name='FR-1'>
 			<availability>General:8</availability>
@@ -417,7 +417,7 @@
 			<availability>General:7</availability>
 		</model>
 	</chassis>
-	<chassis name='Hammerhead' unitType='Aero'>
+	<chassis name='Hammerhead' unitType='AeroSpaceFighter'>
 		<availability>TH:4</availability>
 		<model name='HMR-HA'>
 			<availability>TH:8</availability>
@@ -662,7 +662,7 @@
 			<availability>General:8</availability>
 		</model>
 	</chassis>
-	<chassis name='Sabre' unitType='Aero'>
+	<chassis name='Sabre' unitType='AeroSpaceFighter'>
 		<availability>DC:6</availability>
 		<model name='SB-26'>
 			<availability>DC:8</availability>

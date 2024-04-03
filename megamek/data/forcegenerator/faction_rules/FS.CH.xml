@@ -15,7 +15,7 @@ are often combined down to the company level. -->
 
 	<toc>
 		<unitType>
-			<option>null,Mek,Tank,VTOL,BattleArmor,Aero,Conventional Fighter</option>
+			<option>null,Mek,Tank,VTOL,BattleArmor,AeroSpaceFighter,Conventional Fighter</option>
 		</unitType>
 		
 		<eschelon>
@@ -23,7 +23,7 @@ are often combined down to the company level. -->
 			<option ifUnitType="Mek|Tank|VTOL">%COMPANY%,%LANCE%</option>
 			<option ifUnitType="Infantry">%BATTALION%,%COMPANY%</option>
 			<option ifUnitType="BattleArmor">%BATTALION%,%COMPANY%,%PLATOON%</option>
-			<option ifUnitType="Aero|Conventional Fighter">%WING%,%SQUADRON%,%FLIGHT%</option>
+			<option ifUnitType="AeroSpaceFighter|Conventional Fighter">%WING%,%SQUADRON%,%FLIGHT%</option>
 		</eschelon>
 		
 		<rating>
@@ -43,7 +43,7 @@ are often combined down to the company level. -->
 				<option num="2" unitType="Tank" role="artillery" name="Artillery Support">%BATTALION%</option>
 				<option num="3" unitType="Tank" role="artillery" name="Artillery Support">%BATTALION%</option>
 			</subforceOption>
-			<subforce num="2" unitType="Aero">%WING%</subforce>
+			<subforce num="2" unitType="AeroSpaceFighter">%WING%</subforce>
 		</subforces>
 	</force>
 	

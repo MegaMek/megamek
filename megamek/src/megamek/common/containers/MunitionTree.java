@@ -1,6 +1,6 @@
-package megamek.client.generator;
+package megamek.common.containers;
 
-import java.io.File;
+import java.io.*;
 import java.util.*;
 
 public class MunitionTree {
@@ -14,20 +14,62 @@ public class MunitionTree {
      * @param fd
      */
     public MunitionTree(File fd) {
+        if (fd.canRead() && fd.exists()) {
+            String fname = fd.getName();
+            try (FileReader fr = new FileReader(fname)) {
+                if (fd.getAbsoluteFile().toString().toLowerCase().endsWith("adf")) {
+                    readFromADF(new BufferedReader(fr));
+                } else if (fd.getAbsoluteFile().toString().toLowerCase().endsWith("xml")) {
+                    readFromXML(new BufferedReader(fr));
+                }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
 
     }
 
-    public void readFromXML() {
+    public void readFromXML(BufferedReader br) {
 
     }
 
-    public void readFromADF() {
+    public void readFromADF(BufferedReader br) {
+        try {
+            for (String line = br.readLine(); line != null; line = br.readLine()) {
+                // Ignore comments
+                if (line.startsWith("#")) {
+                    continue;
+                }
 
+                try {
+                    String[] parts = line.split("::");
+                    String[] keys = parts[0].split(":");
+                    HashMap<String, String> imperatives = new HashMap<>();
+                    String imperative;
+
+                    for (int idx = 1; idx < parts.length; idx++) {
+                        // Populate imperatives by splitting at first ":" instance
+                        imperative = parts[idx];
+                        imperatives.put(
+                                imperative.substring(0, imperative.indexOf(':')),
+                                imperative.substring(imperative.indexOf(':') + 1)
+                        );
+                    }
+                    insertImperatives(keys[0], keys[1], keys[2], imperatives);
+                } catch (IndexOutOfBoundsException e) {
+                    continue;
+                }
+            }
+        } catch (IOException e) {
+            // do something cool
+        }
     }
 
     public void insertImperative(
             String chassis, String variant, String pilot, String binType, String... ammoTypes){
-
+        HashMap<String, String> imperatives = new HashMap<>();
+        imperatives.put(binType.toLowerCase(), String.join(":",ammoTypes));
+        insertImperatives(chassis, variant, pilot, imperatives);
     }
 
     public void insertImperatives(
@@ -38,13 +80,26 @@ public class MunitionTree {
             lcImp.put(e.getKey().toLowerCase(), e.getValue());
         }
 
+        // Start insertions from root
         root.insert(lcImp, chassis, variant, pilot);
     }
 
-    public HashMap<String, Integer> getCountsofAmmosForKey(
+    public HashMap<String, Integer> getCountsOfAmmosForKey(
         String chassis, String variant, String pilot, String binType) {
         LoadNode node = root.retrieve(chassis, variant, pilot);
-        return node.getCounts(binType);
+        if (null != node) {
+            return node.getCounts(binType);
+        }
+        return new HashMap<>();
+    }
+
+    public List<String> getPriorityList(
+            String chassis, String variant, String pilot, String binType) {
+        LoadNode node = root.retrieve(chassis, variant, pilot);
+        if (null != node) {
+            return node.getImperativeOrder(binType);
+        }
+        return new ArrayList<>();
     }
 
     /**
@@ -75,6 +130,7 @@ class LoadNode {
     // Imperatives in the form of: "<binType/weaponType>:<desiredAmmo1>[:desiredAmmo2[:...]]"
     private HashMap<String, String> imperatives = new HashMap<String, String>();
     private HashMap<String, HashMap<String, Integer>> counts = new HashMap<String, HashMap<String, Integer>>();
+    private boolean dirty = false;
 
     private String SIZE_REGEX = "[-\\\\]?(\\d{1,3})";
     private String LAC_REGEX = "l[-/\\\\]?ac";
@@ -100,8 +156,17 @@ class LoadNode {
         if (keys.length > 0){
             children.put(keys[0], new LoadNode(imperatives, Arrays.copyOfRange(keys, 1, keys.length)));
         } else {
-            this.imperatives.putAll(imperatives);
+            updateImperatives(imperatives);
         }
+    }
+
+    private void updateImperatives(HashMap<String, String> imperatives) {
+        for (String key: imperatives.keySet()) {
+            if (this.imperatives.containsKey(key)) {
+                dirty = true;
+            }
+        }
+        this.imperatives.putAll(imperatives);
     }
 
     /**
@@ -118,7 +183,7 @@ class LoadNode {
                 children.put(keys[0], child);
             }
         } else {
-            this.imperatives.putAll(imperatives);
+            updateImperatives(imperatives);
         }
     }
 
@@ -139,18 +204,12 @@ class LoadNode {
         }
     }
 
-    public int getCount(String binType, String ammoType) {
-        return getCounts(binType).getOrDefault(ammoType, 0);
-    }
-
     /**
-     * Method for retrieving counts of all imperatives defined for a given binType.
      * Does the string conversions necessary to look up "parent" types, e.g AC for AC-20 (or LAC-5)
      * @param binType
-     * @return HashMap <String AmmoType, count of bins requested>
+     * @return
      */
-    public HashMap<String, Integer> getCounts(String binType) {
-        String actualLookup = binType;
+    public List<String> getImperative(String binType) {
         // all keys should be in lower-case; also check higher-level imperatives like "AC" for "AC20", etc.
         final String lbt = binType.toLowerCase();
         final String parentLBT = lbt.replaceAll(SIZE_REGEX, "");
@@ -161,16 +220,41 @@ class LoadNode {
 
         List<String> candidates = Arrays.asList(lbt, parentLBT, lacLBT, lacPLBT);
 
-        for (String candidate: candidates) {
-            if (counts.containsKey(candidate)) {
-                return counts.get(candidate);
-            } else if (imperatives.containsKey(candidate)) {
-                actualLookup = candidate;
-                break;
-            }
+        String actualLookup = candidates.stream().filter(candidate -> imperatives.containsKey(candidate)).findFirst().orElse(null);
+        String actualImperative = imperatives.getOrDefault(actualLookup, null);
+        return (actualImperative == null) ? new ArrayList<>() : Arrays.asList(actualLookup, actualImperative);
+    }
+
+    public List<String> getImperativeOrder(String binType) {
+        List<String> ordering = getImperative(binType);
+        return (ordering.isEmpty()) ? new ArrayList<>() : List.of(ordering.get(1).split(":"));
+    }
+
+    public int getCount(String binType, String ammoType) {
+        return getCounts(binType).getOrDefault(ammoType, 0);
+    }
+
+    /**
+     * Method for retrieving counts of all imperatives defined for a given binType.
+     * @param binType
+     * @return HashMap <String AmmoType, count of bins requested>
+     */
+    public HashMap<String, Integer> getCounts(String binType) {
+
+        List<String> mapping = getImperative(binType);
+
+        if (mapping.isEmpty()) {
+            return new HashMap<>();
         }
-        counts.put(actualLookup, decodeImperatives(imperatives.get(actualLookup)));
-        return counts.get(actualLookup);
+        String realImp = mapping.get(0);
+        if (!dirty && counts.containsKey(realImp)) {
+            // Return pre-calculated value
+            return counts.get(realImp);
+        }
+        // Update stored counts and reset dirty state
+        counts.put(realImp, decodeImperatives(mapping.get(1)));
+        dirty = false;
+        return counts.get(realImp);
     }
 
     /**

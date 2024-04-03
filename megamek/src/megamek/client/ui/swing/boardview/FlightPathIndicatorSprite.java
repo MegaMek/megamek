@@ -71,7 +71,7 @@ public class FlightPathIndicatorSprite extends HexSprite {
             .fontSize(TEXT_SIZE)
             .center().outline(COLOR_OUTLINE, 1.5f);
 
-    private final StringDrawer finalIcon = new StringDrawer("\u2691")
+    private final StringDrawer greenFlagIcon = new StringDrawer("\u2691")
             .at(HEX_CENTER_X, HEX_CENTER_Y)
             .color(COLOR_GREEN)
             .fontSize(TEXT_SIZE)
@@ -128,26 +128,26 @@ public class FlightPathIndicatorSprite extends HexSprite {
      */
     private void drawSprite(Graphics2D graph) {
         Entity entity = step.getEntity();
-        int safeThrust = Integer.MAX_VALUE;
+        int maxMP = Integer.MAX_VALUE;
         int turnCost = Integer.MIN_VALUE;
 
         if (null != entity) {
-            safeThrust = entity.getRunMP();
+            maxMP = entity.getRunMP();
             turnCost = step.asfTurnCost(step.getGame(), MoveStepType.TURN_LEFT, entity);
         }
 
-        if (this.isLastIndicator()) {
-            if (this.step.getVelocityLeft() > 0) {
+        if (isLastIndicator()) {
+            if (step.getVelocityLeft() > 0) {
                 flyOffIcon.draw(graph);
             } else {
-                finalIcon.draw(graph);
+                greenFlagIcon.draw(graph);
             }
         } else {
-            if (this.step.dueFreeTurn()) {
+            if (step.dueFreeTurn()) {
                 freeTurnIcon.draw(graph);
-            } else if (this.step.canAeroTurn(bv.game)) {
+            } else if (step.canAeroTurn(bv.game)) {
                 // instead of blindly trusting theoretical canTurn(), see if bird can actually turn.
-                if ((this.step.getMpUsed() + turnCost) > safeThrust) {
+                if ((step.getMpUsed() + turnCost) > maxMP) {
                     noThrustIcon.draw(graph);
                 } else {
                     costTurnIcon.draw(graph);

@@ -199,8 +199,9 @@ class LoadNode {
         // Recursive retrieval method.  Either:
         // 1. we are the end of the chain (keys.length == 0), or
         // 2. we contain the first key, or
+        // 2.5 we contain the first key but it returns no results, so
         // 3. we contain an "any" entry, or
-        // 3. we return null (no matches)
+        // 4. we return null (no matches)
         LoadNode ln;
         if (keys.length == 0){
             ln = this;

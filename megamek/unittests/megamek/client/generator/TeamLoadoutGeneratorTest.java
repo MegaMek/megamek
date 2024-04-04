@@ -4,14 +4,14 @@ import megamek.client.Client;
 import megamek.client.ui.swing.ClientGUI;
 import megamek.common.*;
 import megamek.common.containers.MunitionTree;
-import megamek.common.options.GameOptions;
-import megamek.common.options.OptionsConstants;
+import megamek.common.options.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -25,11 +25,12 @@ class TeamLoadoutGeneratorTest {
     static ClientGUI cg = mock(ClientGUI.class);
     static Client client = mock(Client.class);
     static Game game = new Game();
-    static Mounted mockAmmoSrm6 = mock(Mounted.class);
-    static AmmoType mockSRM6AmmoType = mock(AmmoType.class);
-    static Mounted mockAmmoLrm15no1 = mock(Mounted.class);
-    static Mounted mockAmmoLrm15no2 = mock(Mounted.class);
+
+    static Team team = new Team(0);
+    static Player player = new Player(0, "Test");
     static AmmoType mockLRM15AmmoType = (AmmoType) EquipmentType.get("IS LRM 15 Ammo");
+    static AmmoType mockAC20AmmoType = (AmmoType) EquipmentType.get("ISAC20 Ammo");
+    static AmmoType mockSRM6AmmoType = (AmmoType) EquipmentType.get("IS SRM 6 Ammo");
 
     @BeforeAll
     static void setUpAll() {
@@ -39,15 +40,13 @@ class TeamLoadoutGeneratorTest {
         when(cg.getClient()).thenReturn(client);
         when(cg.getClient().getGame()).thenReturn(game);
         when(mockGameOptions.booleanOption(eq(OptionsConstants.ALLOWED_NO_CLAN_PHYSICAL))).thenReturn(false);
+        Option mockBoolOpt = mock(Option.class);
+        when(mockBoolOpt.booleanValue()).thenReturn(true);
+        when(mockGameOptions.getOption(anyString())).thenReturn(mockBoolOpt);
         game.setOptions(mockGameOptions);
 
-        when(mockAmmoSrm6.getType()).thenReturn(mockSRM6AmmoType);
-        when(mockAmmoSrm6.isAmmoUsable()).thenReturn(true);
-
-        when(mockAmmoLrm15no1.getType()).thenReturn(mockLRM15AmmoType);
-        when(mockAmmoLrm15no2.getType()).thenReturn(mockLRM15AmmoType);
-        when(mockAmmoLrm15no1.isAmmoUsable()).thenReturn(true);
-        when(mockAmmoLrm15no2.isAmmoUsable()).thenReturn(true);
+        team.addPlayer(player);
+        game.addPlayer(0, player);
     }
 
     @BeforeEach
@@ -84,8 +83,10 @@ class TeamLoadoutGeneratorTest {
         mockMech.setModel(model);
 
         Crew mockCrew = mock(Crew.class);
+        PilotOptions pOpt = new PilotOptions();
         when(mockCrew.getName(anyInt())).thenCallRealMethod();
         when(mockCrew.getNames()).thenReturn(new String[] {crewName});
+        when(mockCrew.getOptions()).thenReturn(pOpt);
         mockMech.setCrew(mockCrew);
 
         return mockMech;
@@ -105,7 +106,7 @@ class TeamLoadoutGeneratorTest {
         assertTrue(((AmmoType) bin1.getType()).getMunitionType().contains(AmmoType.Munitions.M_STANDARD));
     }
 
-        @Test
+    @Test
     void testReconfigureEntityMechOneAmmoType() throws LocationFullException {
         TeamLoadoutGenerator tlg = new TeamLoadoutGenerator(cg);
 
@@ -189,11 +190,53 @@ class TeamLoadoutGeneratorTest {
         assertTrue(((AmmoType) bin3.getType()).getMunitionType().contains(AmmoType.Munitions.M_HEAT_SEEKING));
         assertTrue(((AmmoType) bin4.getType()).getMunitionType().contains(AmmoType.Munitions.M_SMOKE_WARHEAD));
 
-        // John Q. should get the generalized loadout
+        // John Q. should get the generalized loadout; last bin should be set to Standard
         tlg.reconfigureEntity(mockMech2, mt);
         assertTrue(((AmmoType) bin5.getType()).getMunitionType().contains(AmmoType.Munitions.M_STANDARD));
         assertTrue(((AmmoType) bin6.getType()).getMunitionType().contains(AmmoType.Munitions.M_SWARM));
         assertTrue(((AmmoType) bin7.getType()).getMunitionType().contains(AmmoType.Munitions.M_SEMIGUIDED));
         assertTrue(((AmmoType) bin8.getType()).getMunitionType().contains(AmmoType.Munitions.M_STANDARD));
+    }
+
+    @Test
+    void testReconfigureTeamOfMechs()  throws LocationFullException {
+        TeamLoadoutGenerator tlg = new TeamLoadoutGenerator(cg);
+        Mech mockMech = createMech("Hunchback", "HBK-4G", "Boomstick");
+        Mech mockMech2 = createMech("Hunchback", "HBK-4J", "The Shade");
+        Mech mockMech3 = createMech("Kintaro", "KTO-18", "Dragonpunch");
+        mockMech.setOwner(player);
+        mockMech2.setOwner(player);
+        mockMech3.setOwner(player);
+        game.setEntity(0, mockMech);
+        game.setEntity(1, mockMech2);
+        game.setEntity(2, mockMech3);
+
+
+        // Load ammo in 'mechs; locations are for fun
+        Mounted bin1 = mockMech.addEquipment(mockAC20AmmoType, Mech.LOC_CT);
+        Mounted bin2 = mockMech.addEquipment(mockAC20AmmoType, Mech.LOC_CT);
+        Mounted bin3 = mockMech2.addEquipment(mockLRM15AmmoType, Mech.LOC_LT);
+        Mounted bin4 = mockMech2.addEquipment(mockLRM15AmmoType, Mech.LOC_RT);
+        Mounted bin5 = mockMech3.addEquipment(mockSRM6AmmoType, Mech.LOC_LT);
+        Mounted bin6 = mockMech3.addEquipment(mockSRM6AmmoType, Mech.LOC_RT);
+        Mounted bin7 = mockMech3.addEquipment(mockSRM6AmmoType, Mech.LOC_RT);
+
+        MunitionTree mt = new MunitionTree();
+        HashMap<String, String> imperatives = new HashMap<>();
+
+        // HBK imperatives; both can be inserted at once
+        imperatives.put("AC 20", "Caseless");
+        imperatives.put("LRM", "Dead-Fire:Standard");
+        mt.insertImperatives("Hunchback", "any", "any", imperatives);
+
+        // Kintaro's go under different keys
+        mt.insertImperative("Kintaro", "KTO-18", "any", "SRM", "Inferno:Inferno");
+
+        tlg.reconfigureTeam(game, team, mt);
+
+        // Check loadouts
+        // 1. AC20 HBK should have two tons of Caseless
+        assertTrue(((AmmoType) bin1.getType()).getMunitionType().contains(AmmoType.Munitions.M_CASELESS));
+        assertTrue(((AmmoType) bin2.getType()).getMunitionType().contains(AmmoType.Munitions.M_CASELESS));
     }
 }

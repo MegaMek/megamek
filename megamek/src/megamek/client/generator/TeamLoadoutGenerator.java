@@ -10,7 +10,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.File;
-import java.io.Serializable;
 import java.util.*;
 
 /**
@@ -138,8 +137,15 @@ public class TeamLoadoutGenerator {
 
         // Iterate over each type and fill it with the requested ammos (as much as possible)
         for (String binName: binLists.keySet()) {
-            iterativelyLoadAmmo(e, mt, binLists, binName);
+            iterativelyLoadAmmo(e, mt, binLists.get(binName), binName);
         }
+    }
+
+    private static void iterativelyLoadAmmo(
+        Entity e, MunitionTree mt, ArrayList<Mounted> binList, String binName
+    ){
+        String techBase = (e.isClan()) ? "CL" : "IS";
+        iterativelyLoadAmmo(e, mt, binList, binName, techBase);
     }
 
     /**
@@ -157,22 +163,25 @@ public class TeamLoadoutGenerator {
      * @param binName String bin type we are loading now
      */
     private static void iterativelyLoadAmmo(
-            Entity e, MunitionTree mt, HashMap<String, ArrayList<Mounted>> binLists,  String binName
+            Entity e, MunitionTree mt, ArrayList<Mounted> binList, String binName, String techBase
     ) {
         Logger logger = LogManager.getLogger();
         HashMap<String, Integer> counts = mt.getCountsOfAmmosForKey(e.getFullChassis(), e.getModel(), e.getCrew().getName(0), binName);
         List<String> priorities = mt.getPriorityList(e.getFullChassis(), e.getModel(), e.getCrew().getName(0), binName);
-        String techBase = (e.isClan()) ? "CL" : "IS";
-        AmmoType desired = null;
-        boolean done = false;
+        // Count of total required bins
+        int required = counts.values().stream().reduce(0, Integer::sum);
+        int filled = 0;
+        AmmoType defaultType = null;
 
         for (int i = 0; i < priorities.size(); i++) {
             // binName is the weapon to which the bin connects: LRM-15, AC20, SRM, etc.
-            // binType is the munition type loaded in
-            done = false;
+            // binType is the munition type loaded in currently
+            // If all required bins are filled, revert to defaultType
             String binType = priorities.get(i);
-            Mounted bin = binLists.get(binName).get(0);
+            Mounted bin = binList.get(0);
+            AmmoType desired = null;
 
+            // Load matching AmmoType
             if (binType.toLowerCase().contains("standard")) {
                 desired = (AmmoType) EquipmentType.get(techBase + " " + binName + " " + "Ammo");
             } else {
@@ -189,41 +198,41 @@ public class TeamLoadoutGenerator {
                 }
             }
 
-            // Continue until count is fulfilled or there are no more bins
+            // Store default AmmoType
+            if (i == 0) {
+                defaultType = desired;
+            }
+
+            // Continue filling with this munition type until count is fulfilled or there are no more bins
             while (
                     counts.getOrDefault(binType, 0) > 0
-                    && !binLists.getOrDefault(binName, new ArrayList<>()).isEmpty()
+                    && !binList.isEmpty()
             ) {
-                // fill one ammo bin with the requested ammo type
                 try {
+                    // fill one ammo bin with the requested ammo type
                     // Check if the bin can even load the desired munition
                     if (!((AmmoType)bin.getType()).equalsAmmoTypeOnly(desired)){
                         // can't use this ammo
                         logger.debug("Unable to load bin " + bin.getName() + " with " + desired.getName());
-                        done = true;
                         break;
                     }
-                    binLists.get(binName).get(0).changeAmmoType(desired);
+                    // Apply ammo change
+                    binList.get(0).changeAmmoType(desired);
 
                     // Decrement count and remove bin from list
                     counts.put(binType, counts.get(binType) - 1);
-                    binLists.get(binName).remove(0);
-
-                    // If we exactly matched the bin count with requested ammo, no more to do!
-                    done = counts.get(binType) <= 0;
+                    binList.remove(0);
+                    filled += 1;
 
                 } catch (Exception ex) {
                     logger.debug("Error loading ammo bin!", ex);
                 }
             }
-
         }
 
-        // If we still have ammo bins left to load, go with the default in the imperative
-        if (!done && !binLists.get(binName).isEmpty() && desired != null) {
-            // Fill in remaining bins with top-priority ammo type
-            for (Mounted remaining: binLists.get(binName) ){
-                remaining.changeAmmoType(desired);
+        if (!(defaultType == null || binList.isEmpty())) {
+            for (Mounted bin : binList) {
+                bin.changeAmmoType(defaultType);
             }
         }
     }

@@ -66,8 +66,15 @@ public class MunitionTree {
     }
 
     public void insertImperative(
-            String chassis, String variant, String pilot, String binType, String... ammoTypes){
+            String chassis, String variant, String pilot, String binType, String... ammoTypes) throws IllegalArgumentException {
+
+        // Need ammoTypes populated
+        if (ammoTypes.length == 0) {
+            throw new IllegalArgumentException("Must include at least one munition type (e.g. 'Standard'");
+        }
+
         HashMap<String, String> imperatives = new HashMap<>();
+
         imperatives.put(binType.toLowerCase(), String.join(":",ammoTypes));
         insertImperatives(chassis, variant, pilot, imperatives);
     }
@@ -75,9 +82,10 @@ public class MunitionTree {
     public void insertImperatives(
             String chassis, String variant, String pilot, HashMap<String, String> imperatives){
         // switch imperative keys to lowercase to avoid case-based matching issues
+        // strip out extraneous characters for ammo with sizes, e.g. LRM[ -/]15 -> LRM15
         HashMap<String, String> lcImp = new HashMap<String, String>(imperatives.size());
         for (Map.Entry<String, String> e: imperatives.entrySet()) {
-            lcImp.put(e.getKey().toLowerCase(), e.getValue());
+            lcImp.put(e.getKey().toLowerCase().replaceAll(LoadNode.SIZE_REGEX, ""), e.getValue());
         }
 
         // Start insertions from root
@@ -132,9 +140,9 @@ class LoadNode {
     private HashMap<String, HashMap<String, Integer>> counts = new HashMap<String, HashMap<String, Integer>>();
     private boolean dirty = false;
 
-    private String SIZE_REGEX = "[-\\\\]?(\\d{1,3})";
-    private String LAC_REGEX = "l[-/\\\\]?ac";
-    private String ANY_KEY = "any";
+    public static String SIZE_REGEX = "[ -\\\\]?(\\d{1,3})";
+    public static String LAC_REGEX = "l[-/\\\\]?ac";
+    public static String ANY_KEY = "any";
 
     LoadNode() {
     }
@@ -193,15 +201,22 @@ class LoadNode {
         // 2. we contain the first key, or
         // 3. we contain an "any" entry, or
         // 3. we return null (no matches)
+        LoadNode ln;
         if (keys.length == 0){
-            return this;
+            ln = this;
         } else if (children.containsKey(keys[0])){
-            return children.get(keys[0]).retrieve(Arrays.copyOfRange(keys, 1, keys.length));
+            ln = children.get(keys[0]).retrieve(Arrays.copyOfRange(keys, 1, keys.length));
+
+            // Found a defined branch without a match or an "any" so try our own "any" branch
+            if (ln == null && children.containsKey(ANY_KEY)) {
+                ln = children.get(ANY_KEY).retrieve(Arrays.copyOfRange(keys, 1, keys.length));
+            }
         } else if (children.containsKey(ANY_KEY)){
-            return children.get(ANY_KEY).retrieve(Arrays.copyOfRange(keys, 1, keys.length));
+            ln = children.get(ANY_KEY).retrieve(Arrays.copyOfRange(keys, 1, keys.length));
         } else {
-            return null;
+            ln = null;
         }
+        return ln;
     }
 
     /**

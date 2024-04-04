@@ -147,7 +147,7 @@ class MunitionTreeTest {
         MunitionTree mt = new MunitionTree();
         mt.readFromADF(br);
         // 3 ammo types set for Catapult C1
-        assertEquals(3, mt.getCountsOfAmmosForKey("Catapult", "CPLT-C1", "any", "LRM-15").size());
+        assertEquals(3, mt.getCountsOfAmmosForKey("Catapult", "CPLT-C1", "any", "LRM 15").size());
 
         // 1 ammo type each for each of three Shadow Hawk weapons
         assertEquals(1, mt.getCountsOfAmmosForKey("Shadow Hawk", "SHD-2D", "any", "LRM-5").size());

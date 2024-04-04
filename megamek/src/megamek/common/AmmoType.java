@@ -360,6 +360,9 @@ public class AmmoType extends EquipmentType {
     // Short name of Ammo or RS Printing
     protected String shortName = "";
 
+    // short name of base ammo type shared by all munitions
+    protected String baseName = "";
+
     // Collate artillery / artillery cannon types for flak check
     // Add ADA here when implemented
     private int[] ARTILLERY_TYPES = {
@@ -13783,6 +13786,7 @@ public class AmmoType extends EquipmentType {
             AmmoType munition = new AmmoType();
             munition.setTonnage(base.getTonnage(null));
             munition.subMunitionName = name;
+            munition.baseName = base.shortName;
 
             // Manipulate the base round's names, depending on ammoType.
             switch (base.ammoType) {
@@ -14307,6 +14311,10 @@ public class AmmoType extends EquipmentType {
     @Override
     public String getShortName() {
         return shortName.isBlank() ? getName() : shortName;
+    }
+
+    public String getBaseName() {
+        return baseName;
     }
 
     public String getSubMunitionName() {

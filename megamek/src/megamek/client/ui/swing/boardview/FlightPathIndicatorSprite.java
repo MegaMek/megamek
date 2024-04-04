@@ -77,6 +77,24 @@ public class FlightPathIndicatorSprite extends HexSprite {
             .fontSize(TEXT_SIZE)
             .center().outline(COLOR_OUTLINE, 1.5f);
 
+    private final StringDrawer redFlagIcon = new StringDrawer("\u2690")
+            .at(HEX_CENTER_X, HEX_CENTER_Y)
+            .color(COLOR_RED)
+            .fontSize(TEXT_SIZE)
+            .center().outline(COLOR_OUTLINE, 1.5f);
+
+    private final StringDrawer yellowFlagIcon = new StringDrawer("\u2691")
+            .at(HEX_CENTER_X, HEX_CENTER_Y)
+            .color(COLOR_YELLOW)
+            .fontSize(TEXT_SIZE)
+            .center().outline(COLOR_OUTLINE, 1.5f);
+
+    private final StringDrawer yellowEmptyFlagIcon = new StringDrawer("\u2690")
+            .at(HEX_CENTER_X, HEX_CENTER_Y)
+            .color(COLOR_YELLOW)
+            .fontSize(TEXT_SIZE)
+            .center().outline(COLOR_OUTLINE, 1.5f);
+
     private final StringDrawer flyOffIcon = new StringDrawer("\u26D6")
             .at(HEX_CENTER_X, HEX_CENTER_Y)
             .color(COLOR_YELLOW)
@@ -140,7 +158,23 @@ public class FlightPathIndicatorSprite extends HexSprite {
             if (step.getVelocityLeft() > 0) {
                 flyOffIcon.draw(graph);
             } else {
-                greenFlagIcon.draw(graph);
+                // Its the last hex the bird can fly on the map - draw a flag - but what kind?
+                if (step.dueFreeTurn()) {
+                    // use a green flag to indicate ability to free turn on last hex.
+                    greenFlagIcon.draw(graph);
+                } else if (step.canAeroTurn(bv.game)) {
+                    // use a yellow flag to indicate ability to turn with a cost.
+                    if ((step.getMpUsed() + turnCost) > maxMP) {
+                        // use an empty yellow flag to indicate turn with cost, but no remaining thrust
+                        yellowEmptyFlagIcon.draw(graph);
+                    } else {
+                        // use a solid yellow flag to indicate player can turn on the last hex for a cost.
+                        yellowFlagIcon.draw(graph);
+                    }
+                } else {
+                    // use an empty red flag to indicate no turn on the last hex.
+                    redFlagIcon.draw(graph);
+                }
             }
         } else {
             if (step.dueFreeTurn()) {

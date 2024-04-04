@@ -26,6 +26,9 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.dialogs.helpDialogs.AbstractHelpDialog;
 import megamek.client.ui.dialogs.helpDialogs.BoardEditorHelpDialog;
 import megamek.client.ui.swing.boardview.BoardView;
+import megamek.client.ui.swing.boardview.KeyBindingsOverlay;
+import megamek.client.ui.swing.boardview.PlanetaryConditionsOverlay;
+import megamek.client.ui.swing.boardview.TurnDetailsOverlay;
 import megamek.client.ui.swing.dialog.FloodDialog;
 import megamek.client.ui.swing.dialog.LevelChangeDialog;
 import megamek.client.ui.swing.dialog.MMConfirmDialog;
@@ -337,9 +340,9 @@ public class BoardEditor extends JPanel
         controller = c;
         try {
             bv = new BoardView(game, controller, null);
-            bv.planetaryConditionsOverlay.setVisible(false);
+            bv.addOverlay(new KeyBindingsOverlay(bv));
             bvc = bv.getComponent(true);
-            bv.setDisplayInvalidHexInfo(true);
+            bv.setDisplayInvalidFields(true);
         } catch (IOException e) {
             JOptionPane.showMessageDialog(frame,
                     Messages.getString("BoardEditor.CouldntInitialize") + e,
@@ -455,7 +458,7 @@ public class BoardEditor extends JPanel
             }
         });
 
-        bv.setUseLOSTool(false);
+        bv.setUseLosTool(false);
         setupEditorPanel();
         setupFrame();
         frame.setVisible(true);

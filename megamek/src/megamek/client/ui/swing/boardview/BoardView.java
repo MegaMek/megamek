@@ -80,7 +80,7 @@ import static megamek.client.ui.swing.util.UIUtil.uiWhite;
 /**
  * Displays the board; lets the user scroll around and select points on it.
  */
-public class BoardView implements Scrollable, BoardListener, MouseListener,
+public class BoardView extends AbstractBoardView implements Scrollable, BoardListener, MouseListener,
         MechDisplayListener, IPreferenceChangeListener {
 
     private static final int BOARD_HEX_CLICK = 1;
@@ -285,9 +285,6 @@ public class BoardView implements Scrollable, BoardListener, MouseListener,
 
     private Set<Integer> animatedImages = new HashSet<>();
 
-    // Displayables (Chat box, etc.)
-    ArrayList<IDisplayable> displayables = new ArrayList<>();
-
     // Move units step by step
     private ArrayList<MovingUnit> movingUnits = new ArrayList<>();
 
@@ -297,8 +294,6 @@ public class BoardView implements Scrollable, BoardListener, MouseListener,
     private List<MovingEntitySprite> movingEntitySprites = new ArrayList<>();
     private HashMap<Integer, MovingEntitySprite> movingEntitySpriteIds = new HashMap<>();
     private ArrayList<GhostEntitySprite> ghostEntitySprites = new ArrayList<>();
-
-    protected transient ArrayList<BoardViewListener> boardListeners = new ArrayList<>();
 
     // wreck sprites
     private ArrayList<WreckSprite> wreckSprites = new ArrayList<>();
@@ -412,11 +407,6 @@ public class BoardView implements Scrollable, BoardListener, MouseListener,
     /** Stores the correct tooltip dismiss delay so it can be restored when exiting the boardview */
     private int dismissDelay = ToolTipManager.sharedInstance().getDismissDelay();
 
-    /** map overlays */
-    KeyBindingsOverlay keybindOverlay;
-    public PlanetaryConditionsOverlay planetaryConditionsOverlay;
-    public TurnDetailsOverlay turnDetailsOverlay;
-
     /** The coords where the mouse was last. */
     Coords lastCoords;
 
@@ -442,24 +432,6 @@ public class BoardView implements Scrollable, BoardListener, MouseListener,
         game.addGameListener(gameListener);
         game.getBoard().addBoardListener(this);
 
-        // Avoid showing the key binds when they can't be used (in the lobby map preview)
-        if (controller != null) {
-            keybindOverlay = new KeyBindingsOverlay(this);
-            addDisplayable(keybindOverlay);
-        }
-
-        // Avoid showing the planetary Conditions when they can't be used (in the lobby map preview or board editor)
-        if (controller != null) {
-            planetaryConditionsOverlay = new PlanetaryConditionsOverlay(this);
-            addDisplayable(planetaryConditionsOverlay);
-        }
-
-        // Avoid showing the planetary Conditions when they can't be used (in the lobby map preview)
-        if (controller != null) {
-            turnDetailsOverlay = new TurnDetailsOverlay(this);
-            addDisplayable(turnDetailsOverlay);
-        }
-
         ourTask = scheduleRedrawTimer(); // call only once
         clearSprites();
         boardPanel.addMouseListener(this);
@@ -469,7 +441,7 @@ public class BoardView implements Scrollable, BoardListener, MouseListener,
 
             // If the mouse is over an IDisplayable, have it react instead of the board
             // Currently only implemented for the ChatterBox
-            for (IDisplayable disp : displayables) {
+            for (IDisplayable disp : overlays) {
                 if (!(disp instanceof ChatterBox2)) {
                     continue;
                 }
@@ -534,7 +506,7 @@ public class BoardView implements Scrollable, BoardListener, MouseListener,
             @Override
             public void mouseMoved(MouseEvent e) {
                 Point point = e.getPoint();
-                for (IDisplayable disp : displayables) {
+                for (IDisplayable disp : overlays) {
                     if (disp.isBeingDragged()) {
                         return;
                     }
@@ -573,7 +545,7 @@ public class BoardView implements Scrollable, BoardListener, MouseListener,
             @Override
             public void mouseDragged(MouseEvent e) {
                 Point point = e.getPoint();
-                for (IDisplayable disp : displayables) {
+                for (IDisplayable disp : overlays) {
                     Point adjustPoint = new Point((int) Math.min(boardSize.getWidth(), -boardPanel.getBounds().getX()),
                             (int) Math.min(boardSize.getHeight(), -boardPanel.getBounds().getY()));
                     Point dispPoint = new Point();
@@ -678,7 +650,7 @@ public class BoardView implements Scrollable, BoardListener, MouseListener,
                     public void performAction() {
                         if (!getChatterBoxActive()) {
                             setChatterBoxActive(true);
-                            for (IDisplayable disp : displayables) {
+                            for (IDisplayable disp : overlays) {
                                 if (disp instanceof ChatterBox2) {
                                     ((ChatterBox2) disp).slideUp();
                                 }
@@ -702,7 +674,7 @@ public class BoardView implements Scrollable, BoardListener, MouseListener,
                     public void performAction() {
                         if (!getChatterBoxActive()) {
                             setChatterBoxActive(true);
-                            for (IDisplayable disp : displayables) {
+                            for (IDisplayable disp : overlays) {
                                 if (disp instanceof ChatterBox2) {
                                     ((ChatterBox2) disp).slideUp();
                                     ((ChatterBox2) disp).setMessage("/");
@@ -936,69 +908,6 @@ public class BoardView implements Scrollable, BoardListener, MouseListener,
         }
     }
 
-    /**
-     * Adds the specified board listener to receive board events from this
-     * board.
-     *
-     * @param listener the board listener.
-     */
-    public void addBoardViewListener(BoardViewListener listener) {
-        if (!boardListeners.contains(listener)) {
-            boardListeners.add(listener);
-        }
-    }
-
-    /**
-     * Removes the specified board listener.
-     *
-     * @param listener the board listener.
-     */
-    public void removeBoardViewListener(BoardViewListener listener) {
-        boardListeners.remove(listener);
-    }
-
-    /**
-     * Notifies attached board listeners of the event.
-     *
-     * @param event the board event.
-     */
-    public void processBoardViewEvent(BoardViewEvent event) {
-        if (boardListeners == null) {
-            return;
-        }
-        for (BoardViewListener l : boardListeners) {
-            switch (event.getType()) {
-                case BoardViewEvent.BOARD_HEX_CLICKED:
-                case BoardViewEvent.BOARD_HEX_DOUBLECLICKED:
-                case BoardViewEvent.BOARD_HEX_DRAGGED:
-                case BoardViewEvent.BOARD_HEX_POPUP:
-                    l.hexMoused(event);
-                    break;
-                case BoardViewEvent.BOARD_HEX_CURSOR:
-                    l.hexCursor(event);
-                    break;
-                case BoardViewEvent.BOARD_HEX_HIGHLIGHTED:
-                    l.boardHexHighlighted(event);
-                    break;
-                case BoardViewEvent.BOARD_HEX_SELECTED:
-                    l.hexSelected(event);
-                    break;
-                case BoardViewEvent.BOARD_FIRST_LOS_HEX:
-                    l.firstLOSHex(event);
-                    break;
-                case BoardViewEvent.BOARD_SECOND_LOS_HEX:
-                    l.secondLOSHex(event, getFirstLOS());
-                    break;
-                case BoardViewEvent.FINISHED_MOVING_UNITS:
-                    l.finishedMovingUnits(event);
-                    break;
-                case BoardViewEvent.SELECT_UNIT:
-                    l.unitSelected(event);
-                    break;
-            }
-        }
-    }
-
     void addMovingUnit(Entity entity, Vector<UnitLocation> movePath) {
         if (!movePath.isEmpty()) {
             MovingUnit m = new MovingUnit(entity, movePath);
@@ -1016,14 +925,7 @@ public class BoardView implements Scrollable, BoardListener, MouseListener,
         }
     }
 
-    public void addDisplayable(IDisplayable disp) {
-        displayables.add(disp);
-    }
-
-    public void removeDisplayable(IDisplayable disp) {
-        displayables.remove(disp);
-    }
-
+    @Override
     public void draw(Graphics g) {
         if (GUIP.getShowFPS()) {
             paintCompsStartTime = System.nanoTime();
@@ -1230,7 +1132,7 @@ public class BoardView implements Scrollable, BoardListener, MouseListener,
         displayablesRect.y = -boardPanel.getY();
         displayablesRect.width = scrollpane.getViewport().getViewRect().width;
         displayablesRect.height = scrollpane.getViewport().getViewRect().height;
-        for (IDisplayable disp : displayables) {
+        for (IDisplayable disp : overlays) {
             disp.draw(g, displayablesRect);
         }
 
@@ -2171,15 +2073,7 @@ public class BoardView implements Scrollable, BoardListener, MouseListener,
         graph.drawString(string, x, y);
     }
 
-    /**
-     * This method creates an image the size of the entire board (all mapsheets), draws the hexes
-     * onto it, and returns that image.
-     *
-     * @param ignoreUnits If true, no units are drawn, only the board
-     * @param useBaseZoom If true, save the image at zoom = 1, otherwise at the
-     * current board zoom.
-     * @return the image of the whole board
-     */
+    @Override
     public BufferedImage getEntireBoardImage(boolean ignoreUnits, boolean useBaseZoom) {
         // Set zoom to base, so we get a consist board image
         int oldZoom = zoomIndex;
@@ -2302,6 +2196,11 @@ public class BoardView implements Scrollable, BoardListener, MouseListener,
         zoom();
 
         return (BufferedImage) entireBoard;
+    }
+
+    @Override
+    public void centerOn(Coords coords) {
+        centerOnHex(coords);
     }
 
     private void drawHexes(Graphics g, Rectangle view) {
@@ -4616,7 +4515,7 @@ public class BoardView implements Scrollable, BoardListener, MouseListener,
             return;
         }
 
-        for (IDisplayable disp : displayables) {
+        for (IDisplayable disp : overlays) {
             double width = scrollpane.getViewport().getSize().getWidth();
             double height = scrollpane.getViewport().getSize().getHeight();
             Dimension dispDimension = new Dimension();
@@ -4653,7 +4552,7 @@ public class BoardView implements Scrollable, BoardListener, MouseListener,
             boardPanel.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
         }
 
-        for (IDisplayable disp : displayables) {
+        for (IDisplayable disp : overlays) {
             if (disp.isReleased()) {
                 return;
             }
@@ -4711,7 +4610,8 @@ public class BoardView implements Scrollable, BoardListener, MouseListener,
         return tileManager.isLoaded();
     }
 
-    public void setUseLOSTool(boolean use) {
+    @Override
+    public void setUseLosTool(boolean use) {
         useLOSTool = use;
     }
 
@@ -4738,13 +4638,6 @@ public class BoardView implements Scrollable, BoardListener, MouseListener,
      */
     public void setHighlighted(Coords highlighted) {
         this.highlighted = highlighted;
-    }
-
-    /**
-     * @return Returns the highlighted.
-     */
-    public Coords getHighlighted() {
-        return highlighted;
     }
 
     /**
@@ -4941,12 +4834,6 @@ public class BoardView implements Scrollable, BoardListener, MouseListener,
         mouseAction(coords.getX(), coords.getY(), mtype, modifiers, mouseButton);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * megamek.common.BoardListener#boardNewBoard(megamek.common.BoardEvent)
-     */
     @Override
     public void boardNewBoard(BoardEvent b) {
         updateBoard();
@@ -4956,12 +4843,6 @@ public class BoardView implements Scrollable, BoardListener, MouseListener,
         boardPanel.repaint();
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * megamek.common.BoardListener#boardChangedHex(megamek.common.BoardEvent)
-     */
     @Override
     public void boardChangedHex(BoardEvent b) {
         hexImageCache.remove(b.getCoords());
@@ -4973,12 +4854,6 @@ public class BoardView implements Scrollable, BoardListener, MouseListener,
         boardPanel.repaint();
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * megamek.common.BoardListener#boardChangedHex(megamek.common.BoardEvent)
-     */
     @Override
     public synchronized void boardChangedAllHexes(BoardEvent b) {
         clearHexImageCache();
@@ -5197,7 +5072,7 @@ public class BoardView implements Scrollable, BoardListener, MouseListener,
             currentTime = System.currentTimeMillis();
             if (boardPanel.isShowing()) {
                 boolean redraw = false;
-                for (IDisplayable disp : displayables) {
+                for (IDisplayable disp : overlays) {
                     if (!disp.isSliding()) {
                         disp.setIdleTime(currentTime - lastTime, true);
                     } else {
@@ -5864,8 +5739,19 @@ public class BoardView implements Scrollable, BoardListener, MouseListener,
         return v;
     }
 
+    @Override
     public Component getComponent() {
         return getComponent(false);
+    }
+
+    @Override
+    public void setDisplayInvalidFields(boolean displayInvalidFields) {
+        displayInvalidHexInfo = displayInvalidFields;
+    }
+
+    @Override
+    public void setLocalPlayer(int playerId) {
+        setLocalPlayer(game.getPlayer(playerId));
     }
 
     public Component getComponent(boolean scrollBars) {
@@ -5974,10 +5860,8 @@ public class BoardView implements Scrollable, BoardListener, MouseListener,
         // send the minimap a hex moused event to make it
         // update the visible area rectangle
         BoardViewEvent bve = new BoardViewEvent(this, BoardViewEvent.BOARD_HEX_DRAGGED);
-        if (boardListeners != null) {
-            for (BoardViewListener l : boardListeners) {
-                l.hexMoused(bve);
-            }
+        for (BoardViewListener l : boardViewListeners) {
+            l.hexMoused(bve);
         }
     }
 
@@ -5991,13 +5875,7 @@ public class BoardView implements Scrollable, BoardListener, MouseListener,
         ((JPopupMenu) popup).show(boardPanel, p.x, p.y);
     }
 
-    public void refreshMinefields() {
-        boardPanel.repaint();
-    }
-
-    /**
-     * Increases zoomIndex and refreshes the map.
-     */
+    @Override
     public void zoomIn() {
         if (zoomIndex == (ZOOM_FACTORS.length - 1)) {
             return;
@@ -6006,19 +5884,13 @@ public class BoardView implements Scrollable, BoardListener, MouseListener,
         zoom();
     }
 
-    /**
-     * Decreases zoomIndex and refreshes the map.
-     */
+    @Override
     public void zoomOut() {
         if (zoomIndex == 0) {
             return;
         }
         zoomIndex--;
         zoom();
-    }
-
-    public void hideTooltip() {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     private void checkZoomIndex() {
@@ -6107,11 +5979,11 @@ public class BoardView implements Scrollable, BoardListener, MouseListener,
         } else if (zoomIndex < 13) {
             font_elev = FONT_18;
             font_hexnum = FONT_18;
-            font_minefield = FONT_18;;
+            font_minefield = FONT_18;
         } else {
             font_elev = FONT_24;
             font_hexnum = FONT_24;
-            font_minefield = FONT_24;;
+            font_minefield = FONT_24;
         }
     }
 
@@ -6711,10 +6583,6 @@ public class BoardView implements Scrollable, BoardListener, MouseListener,
         return hexImage;
     }
 
-    public void setDisplayInvalidHexInfo(boolean v) {
-        displayInvalidHexInfo = v;
-    }
-
     public boolean getDisplayInvalidHexInfo() {
         return displayInvalidHexInfo;
     }
@@ -6753,6 +6621,7 @@ public class BoardView implements Scrollable, BoardListener, MouseListener,
         showLobbyPlayerDeployment = b;
     }
 
+    @Override
     public JPanel getPanel() {
         return boardPanel;
     }
@@ -6763,5 +6632,18 @@ public class BoardView implements Scrollable, BoardListener, MouseListener,
 
     Set<Integer> getAnimatedImages() {
         return animatedImages;
+    }
+
+    @Override
+    public void dispose() {
+        super.dispose();
+        die();
+    }
+
+    /** @return The TurnDetailsOverlay if this boardview has one. */
+    public TurnDetailsOverlay getTurnDetailsOverlay() {
+        return (TurnDetailsOverlay) overlays.stream()
+                .filter(o -> o instanceof TurnDetailsOverlay)
+                .findFirst().orElse(null);
     }
 }

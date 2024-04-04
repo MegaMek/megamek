@@ -18,6 +18,7 @@
  */
 package megamek.client.ui.swing;
 
+import megamek.client.ui.swing.boardview.TurnDetailsOverlay;
 import megamek.client.ui.swing.util.CommandAction;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.UIUtil;
@@ -354,8 +355,9 @@ public abstract class ActionPhaseDisplay extends StatusBarPhaseDisplay {
             butSkipTurn.setEnabled(true);
         }
 
-        if (clientgui.getBoardView().turnDetailsOverlay != null) {
-            clientgui.getBoardView().turnDetailsOverlay.setLines(turnDetails);
+        TurnDetailsOverlay turnDetailsOverlay = clientgui.getBoardView().getTurnDetailsOverlay();
+        if (turnDetailsOverlay != null) {
+            turnDetailsOverlay.setLines(turnDetails);
         }
     }
 

@@ -801,7 +801,7 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
     }
 
     @Override
-    public void secondLOSHex(BoardViewEvent evt, Coords c) {
+    public void secondLOSHex(BoardViewEvent evt) {
 
     }
 

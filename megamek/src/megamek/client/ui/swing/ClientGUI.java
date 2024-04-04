@@ -14,10 +14,6 @@
  */
 package megamek.client.ui.swing;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
 import megamek.MMConstants;
 import megamek.client.Client;
 import megamek.client.TimerSingleton;
@@ -36,6 +32,9 @@ import megamek.client.ui.swing.audio.AudioService;
 import megamek.client.ui.swing.audio.SoundManager;
 import megamek.client.ui.swing.audio.SoundType;
 import megamek.client.ui.swing.boardview.BoardView;
+import megamek.client.ui.swing.boardview.KeyBindingsOverlay;
+import megamek.client.ui.swing.boardview.PlanetaryConditionsOverlay;
+import megamek.client.ui.swing.boardview.TurnDetailsOverlay;
 import megamek.client.ui.swing.dialog.AbstractUnitSelectorDialog;
 import megamek.client.ui.swing.dialog.MegaMekUnitSelectorDialog;
 import megamek.client.ui.swing.forceDisplay.ForceDisplayDialog;
@@ -54,7 +53,6 @@ import megamek.common.annotations.Nullable;
 import megamek.common.enums.GamePhase;
 import megamek.common.event.*;
 import megamek.common.icons.Camouflage;
-import megamek.common.jacksonadapters.MMUReader;
 import megamek.common.preference.ClientPreferences;
 import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
@@ -530,8 +528,11 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         initializeFrame();
         try {
             client.getGame().addGameListener(gameListener);
-            // Create the board viewer.
+
             bv = new BoardView(client.getGame(), controller, this);
+            bv.addOverlay(new KeyBindingsOverlay(bv));
+            bv.addOverlay(new PlanetaryConditionsOverlay(bv));
+            bv.addOverlay(new TurnDetailsOverlay(bv));
             bv.getPanel().setPreferredSize(getSize());
             bvc = bv.getComponent();
             bvc.setName(CG_BOARDVIEW);
@@ -596,7 +597,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
             }
         });
         cb2 = new ChatterBox2(this, bv, controller);
-        bv.addDisplayable(cb2);
+        bv.addOverlay(cb2);
         bv.getPanel().addKeyListener(cb2);
         uo = new UnitOverview(this);
         offBoardOverlay = new OffBoardTargetOverlay(this);
@@ -605,8 +606,8 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         aw.setLocation(0, 0);
         aw.setSize(300, 300);
 
-        bv.addDisplayable(uo);
-        bv.addDisplayable(offBoardOverlay);
+        bv.addOverlay(uo);
+        bv.addOverlay(offBoardOverlay);
 
         setUnitDisplay(new UnitDisplay(this, controller));
         getUnitDisplay().addMechDisplayListener(bv);
@@ -2829,7 +2830,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
     }
 
     @Override
-    public void secondLOSHex(BoardViewEvent b, Coords c) {
+    public void secondLOSHex(BoardViewEvent b) {
         // ignored
     }
 

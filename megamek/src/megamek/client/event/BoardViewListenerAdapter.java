@@ -14,8 +14,6 @@
 
 package megamek.client.event;
 
-import megamek.common.Coords;
-
 /**
  * This adapter class provides default implementations for the methods described
  * by the <code>BoardViewListener</code> interface.
@@ -79,11 +77,11 @@ public class BoardViewListenerAdapter implements BoardViewListener {
 
     /**
      * Sent when secondLOS is set. The default behavior is to do nothing.
-     * 
+     *
      * @param b an event
      */
     @Override
-    public void secondLOSHex(BoardViewEvent b, Coords c) {
+    public void secondLOSHex(BoardViewEvent b) {
     }
 
     /**

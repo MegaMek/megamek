@@ -177,7 +177,7 @@ public abstract class Mech extends Entity {
     public static final String[] COCKPIT_SHORT_STRING = { "Standard", "Small",
             "Command Console", "Torso Mounted", "Dual", "Industrial",
             "Primitive", "Primitive Industrial", "Superheavy",
-            "Superheavy Tripod", "Tripod", "Interface", "VRRP", "Quadvee",
+            "Superheavy Tripod", "Tripod", "Interface", "VRPP", "Quadvee",
             "Superheavy Industrial", "Superheavy Command",
             "Small Command", "Tripod Industrial", "Superheavy Tripod Industrial" };
 

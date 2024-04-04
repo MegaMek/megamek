@@ -991,6 +991,7 @@ public class FireControlTest {
         // Test the most vanilla case we can.
         when(mockShooterState.isProne()).thenReturn(false);
         when(mockShooter.hasQuirk(eq(OptionsConstants.QUIRK_POS_ANTI_AIR))).thenReturn(false);
+        when(((Mech) mockShooter).hasAdvancedFireControl()).thenReturn(true);
         when(mockTargetState.isImmobile()).thenReturn(false);
         when(mockTargetState.getMovementType()).thenReturn(EntityMovementType.MOVE_NONE);
         when(mockTargetState.getPosition()).thenReturn(new Coords(10, 0));
@@ -1028,7 +1029,7 @@ public class FireControlTest {
                 mockShooter, mockShooterState, mockFighter, mockFighterState, 10, mockGame));
 
         // Test industrial mechs.
-        when(((Mech) mockShooter).getCockpitType()).thenReturn(Mech.COCKPIT_INDUSTRIAL);
+        when(((Mech) mockShooter).hasAdvancedFireControl()).thenReturn(false);
         expected = new ToHitData();
         expected.addModifier(FireControl.TH_INDUSTRIAL);
         assertToHitDataEquals(expected, testFireControl.guessToHitModifierHelperForAnyAttack(
@@ -1039,6 +1040,7 @@ public class FireControlTest {
         assertToHitDataEquals(expected, testFireControl.guessToHitModifierHelperForAnyAttack(
                 mockShooter, mockShooterState, mockTarget, mockTargetState, 10, mockGame));
         when(((Mech) mockShooter).getCockpitType()).thenReturn(Mech.COCKPIT_STANDARD);
+        when(((Mech) mockShooter).hasAdvancedFireControl()).thenReturn(true);
 
         // Test attacking a superheavy mech.
         when(((Mech) mockTarget).getCockpitType()).thenReturn(Mech.COCKPIT_SUPERHEAVY);

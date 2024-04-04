@@ -1121,7 +1121,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         boolean reportHandled = false;
         if (bv != null) {
             // cleanup our timers first
-            bv.die();
+            bv.dispose();
         }
 
         for (String s : phaseComponents.keySet()) {

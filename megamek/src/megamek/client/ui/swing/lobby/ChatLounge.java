@@ -3589,7 +3589,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
 
     public void killPreviewBV() {
         if (previewBV != null) {
-            previewBV.die();
+            previewBV.dispose();
         }
     }
 }

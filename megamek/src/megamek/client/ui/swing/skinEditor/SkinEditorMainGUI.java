@@ -356,7 +356,7 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
         boolean reportHandled = false;
         if (bv != null) {
             // cleanup our timers first
-            bv.die();
+            bv.dispose();
         }
         Iterator<String> names = phaseComponents.keySet().iterator();
         while (names.hasNext()) {

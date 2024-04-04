@@ -80,7 +80,7 @@ import static megamek.client.ui.swing.util.UIUtil.uiWhite;
 /**
  * Displays the board; lets the user scroll around and select points on it.
  */
-public class BoardView extends AbstractBoardView implements Scrollable, BoardListener, MouseListener,
+public class BoardView extends AbstractBoardView implements BoardListener, MouseListener,
         MechDisplayListener, IPreferenceChangeListener {
 
     private static final int BOARD_HEX_CLICK = 1;
@@ -326,7 +326,7 @@ public class BoardView extends AbstractBoardView implements Scrollable, BoardLis
     private Map<Coords, Color> eccmCenters = null;
 
     // reference to our timertask for redraw
-    private TimerTask ourTask = null;
+    private TimerTask redrawTimerTask;
 
     BufferedImage bvBgImage = null;
     boolean bvBgShouldTile = false;
@@ -355,18 +355,14 @@ public class BoardView extends AbstractBoardView implements Scrollable, BoardLis
     FovHighlightingAndDarkening fovHighlightingAndDarkening;
 
     private String FILENAME_FLARE_IMAGE = "flare.png";
-
     private String FILENAME_RADAR_BLIP_IMAGE = "radarBlip.png";
-
     private Image flareImage;
-
     private Image radarBlipImage;
 
     /**
      * Cache that stores hex images for different coords
      */
     ImageCache<Coords, HexImageCacheEntry> hexImageCache;
-
 
     /**
      * Keeps track of whether all deployment zones should
@@ -432,7 +428,7 @@ public class BoardView extends AbstractBoardView implements Scrollable, BoardLis
         game.addGameListener(gameListener);
         game.getBoard().addBoardListener(this);
 
-        ourTask = scheduleRedrawTimer(); // call only once
+        redrawTimerTask = scheduleRedrawTimer(); // call only once
         clearSprites();
         boardPanel.addMouseListener(this);
         boardPanel.addMouseWheelListener(we -> {
@@ -1988,13 +1984,6 @@ public class BoardView extends AbstractBoardView implements Scrollable, BoardLis
             }
         }
     }
-
-    /*
-     * NOTENOTENOTE: (itmo) wouldnt this be simpler with two arrays. One with
-     * the strings {"BoardView1.thunderblaablaa","BoardView1.Conventi.."} one
-     * with the offsets {51, 51, 42} etc Preferably indexed by an enum: enum{
-     * Conventional, Thunder; } or something?
-     */
 
     /**
      * Writes "MINEFIELD" in minefield hexes...
@@ -4196,7 +4185,6 @@ public class BoardView extends AbstractBoardView implements Scrollable, BoardLis
 
     }
 
-
     /**
      * Removes all attack sprites from a certain entity
      */
@@ -5294,38 +5282,6 @@ public class BoardView extends AbstractBoardView implements Scrollable, BoardLis
         }
     }
 
-    @Override
-    public Dimension getPreferredScrollableViewportSize() {
-        return boardPanel.getPreferredSize();
-    }
-
-    @Override
-    public int getScrollableBlockIncrement(Rectangle arg0, int arg1, int arg2) {
-        final Dimension size = scrollpane.getViewport().getSize();
-        if (arg1 == SwingConstants.VERTICAL) {
-            return size.height;
-        }
-        return size.width;
-    }
-
-    @Override
-    public boolean getScrollableTracksViewportHeight() {
-        return false;
-    }
-
-    @Override
-    public boolean getScrollableTracksViewportWidth() {
-        return false;
-    }
-
-    @Override
-    public int getScrollableUnitIncrement(Rectangle arg0, int arg1, int arg2) {
-        if (arg1 == SwingConstants.VERTICAL) {
-            return (int) ((scale * HEX_H) / 2.0);
-        }
-        return (int) ((scale * HEX_W) / 2.0);
-    }
-
     /**
      * Have the player select an Entity from the entities at the given coords.
      *
@@ -6127,14 +6083,6 @@ public class BoardView extends AbstractBoardView implements Scrollable, BoardLis
         return mask;
     }
 
-    public void die() {
-        ourTask.cancel();
-        fovHighlightingAndDarkening.die();
-        KeyBindParser.removePreferenceChangeListener(this);
-        GUIP.removePreferenceChangeListener(this);
-        PreferenceManager.getClientPreferences().removePreferenceChangeListener(this);
-    }
-
     /**
      * Returns true if the BoardView has an active chatter box else false.
      *
@@ -6637,10 +6585,15 @@ public class BoardView extends AbstractBoardView implements Scrollable, BoardLis
     @Override
     public void dispose() {
         super.dispose();
-        die();
+        redrawTimerTask.cancel();
+        fovHighlightingAndDarkening.die();
+        KeyBindParser.removePreferenceChangeListener(this);
+        GUIP.removePreferenceChangeListener(this);
+        PreferenceManager.getClientPreferences().removePreferenceChangeListener(this);
     }
 
     /** @return The TurnDetailsOverlay if this boardview has one. */
+    @Nullable
     public TurnDetailsOverlay getTurnDetailsOverlay() {
         return (TurnDetailsOverlay) overlays.stream()
                 .filter(o -> o instanceof TurnDetailsOverlay)

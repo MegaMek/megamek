@@ -3880,7 +3880,6 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
             }
 
             pathSprites.add(new StepSprite(this, step, md.isEndStep(step)));
-
             previousStep = step;
         }
 
@@ -3896,6 +3895,11 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
      * @param md - Current MovePath that represents the current units movement state
      */
     private void displayFlightPathIndicator(MovePath md) {
+        // Don't attempt displaying Flight Path Indicators if using advanced aero movement.
+        if (this.game.useVectorMove()) {
+            return;
+        }
+
         // Don't calculate any kind of flight path indicators if the move is not legal.
         if (md.getLastStepMovementType() == EntityMovementType.MOVE_ILLEGAL) {
             return;
@@ -3919,7 +3923,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
                 }
             }
 
-            // As a test, lets add some sprites for the rest of the path just to see what this looks like.
+            // For each hex in the entities forward trajectory, add a flight turn indicator sprite.
             for (MoveStep ms : fpiSteps) {
                 fpiSprites.add(new FlightPathIndicatorSprite(this, ms.getPosition(), ms, fpiPath.isEndStep(ms)));
             }

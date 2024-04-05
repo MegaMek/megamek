@@ -14314,7 +14314,7 @@ public class AmmoType extends EquipmentType {
     }
 
     public String getBaseName() {
-        return baseName;
+        return baseName.isBlank() ? getShortName() : baseName;
     }
 
     public String getSubMunitionName() {

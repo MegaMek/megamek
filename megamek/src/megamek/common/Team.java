@@ -252,4 +252,23 @@ public final class Team extends TurnOrdered {
     public String getFaction() {
         return faction;
     }
+
+    /**
+     * Determine if another team is an enemy of this team
+     * @param t
+     * @return
+     */
+    public boolean isEnemyOf(Team t) {
+        boolean enemy = true;
+        if (t.equals(this)) {
+            enemy = false;
+        } else if (t.isObserverTeam()) {
+            enemy = false;
+        } else if (players.isEmpty()) {
+            enemy = false;
+        } else if (t.players().stream().noneMatch(p -> p.isEnemyOf(players.get(0)))) {
+            enemy = false;
+        }
+        return enemy;
+    }
 }

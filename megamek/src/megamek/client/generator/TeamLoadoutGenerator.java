@@ -4,8 +4,11 @@ import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.dialog.AbstractUnitSelectorDialog;
 import megamek.common.*;
 import megamek.common.containers.MunitionTree;
+import megamek.common.equipment.ArmorType;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
+import megamek.common.planetaryconditions.Light;
+import org.apache.commons.collections.IteratorUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -50,31 +53,176 @@ public class TeamLoadoutGenerator {
         eraBasedTechLevel = gameOptions.booleanOption(OptionsConstants.ALLOWED_ERA_BASED);
     }
 
+    private static long checkForBombers(ArrayList<Entity> el) {
+        return el.stream().filter(Targetable::isBomber).count();
+    }
+
+    private static long checkForFliers(ArrayList<Entity> el) {
+        return el.stream().filter(e -> e.isAero() || e.hasETypeFlag(Entity.ETYPE_VTOL)).count();
+    }
+
+    private static long checkForInfantry(ArrayList<Entity> el) {
+        return el.stream().filter(e -> e.isInfantry() || e.isBattleArmor()).count();
+    }
+
+    private static long checkForVehicles(ArrayList<Entity> el) {
+        return el.stream().filter(BTObject::isVehicle).count();
+    }
+
+    private static long checkForMeks(ArrayList<Entity> el) {
+        return el.stream().filter(BTObject::isMek).count();
+    }
+
+    /**
+     * Quick and dirty energy boat calc; useful for selecting Laser-Inhibiting Arrow and heat-based weapons
+     * @param el
+     * @return
+     */
+    private static long checkForEnergyBoats(ArrayList<Entity> el) {
+        return el.stream().filter(e -> e.getAmmo().size() == 0).count();
+    }
+
+    /**
+     * "Missile Boat" defined here as any unit with half or more weapons dedicated to missiles
+     * (This could probably be traded for a weight- or role-based check)
+     * @param el
+     * @return
+     */
+    private static long checkForMissileBoats(ArrayList<Entity> el) {
+        return el.stream().filter(
+                e -> e.getWeaponList().stream().filter(
+                        w -> w.getName().toLowerCase().contains("lrm") ||
+                        w.getName().toLowerCase().contains("srm") ||
+                        w.getName().toLowerCase().contains("atm") ||
+                        w.getName().toLowerCase().contains("mml") ||
+                        w.getName().toLowerCase().contains("arrow")
+                ).count() >= e.getWeaponList().size()
+        ).count();
+    }
+
+    private static long checkForTAG(ArrayList<Entity> el) {
+        return el.stream().filter(e -> e.hasTAG()).count();
+    }
+
+    private static long checkForNARC(ArrayList<Entity> el) {
+        return el.stream().filter(
+                e -> e.getAmmo().stream().anyMatch(
+                        a -> ((AmmoType) a.getType()).getAmmoType() == AmmoType.T_NARC)
+        ).count();
+    }
+
+    private static long checkForAdvancedArmor(ArrayList<Entity> el) {
+        // Most units have a location 0
+        return el.stream().filter(
+                e -> e.getArmorType(0) == ArmorType.T_ARMOR_HARDENED ||
+                e.getArmorType(0) == ArmorType.T_ARMOR_BALLISTIC_REINFORCED ||
+                e.getArmorType(0) == ArmorType.T_ARMOR_REACTIVE ||
+                e.getArmorType(0) == ArmorType.T_ARMOR_BA_REACTIVE ||
+                e.getArmorType(0) == ArmorType.T_ARMOR_FERRO_LAMELLOR
+        ).count();
+    }
+
+    private static long checkForReflectiveArmor(ArrayList<Entity> el) {
+        return el.stream().filter(
+                e -> e.getArmorType(0) == ArmorType.T_ARMOR_REFLECTIVE ||
+                e.getArmorType(0) == ArmorType.T_ARMOR_BA_REFLECTIVE
+        ).count();
+    }
+
+    private static long checkForFireproofArmor(ArrayList<Entity> el) {
+        return el.stream().filter(
+                e -> e.getArmorType(0) == ArmorType.T_ARMOR_BA_FIRE_RESIST
+        ).count();
+    }
+
+    /**
+     * Create the parameters that will determine how to configure ammo loadouts for this team
+     * @param g
+     * @param gOpts
+     * @param t
+     * @return ReconfigurationParameters with information about enemy and friendly forces
+     */
     public static ReconfigurationParameters generateParameters(Game g, GameOptions gOpts, Team t) {
         ReconfigurationParameters rc = new ReconfigurationParameters();
-        if (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)) {
+
+        // Get our own side's numbers for comparison
+        ArrayList<Entity> ownTeamEntities = (ArrayList<Entity>) IteratorUtils.toList(g.getTeamEntities(t));
+        rc.friendlyCount = ownTeamEntities.size();
+
+        // If our team can see other teams...
+        if (!gOpts.booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)) {
             // This team can see the opponent teams; set appropriate options
-            rc.enemiesVisible = true;
+            for (Team et: g.getTeams()) {
+                if (!et.isEnemyOf(t)) {
+                    continue;
+                }
+                ArrayList<Entity> etEntities = (ArrayList<Entity>) IteratorUtils.toList(g.getTeamEntities(et));
+                rc.enemyCount += etEntities.size();
+                rc.enemyFliers += checkForFliers(etEntities);
+                rc.enemyBombers += checkForBombers(etEntities);
+                rc.enemyInfantry += checkForInfantry(etEntities);
+                rc.enemyVehicles += checkForVehicles(etEntities);
+                rc.enemyMeks += checkForMeks(etEntities);
+                rc.enemyEnergyBoats += checkForEnergyBoats(etEntities);
+                rc.enemyAdvancedArmorCount += checkForAdvancedArmor(etEntities);
+                rc.enemyReflectiveArmorCount += checkForReflectiveArmor(etEntities);
+                rc.enemyFireproofArmorCount += checkForFireproofArmor(etEntities);
+            }
+        } else {
+            rc.enemiesVisible = false;
+            // Estimate enemy count for ammo count purposes; may include observers.  The fog of war!
+            rc.enemyCount = g.getEntitiesVector().size() - ownTeamEntities.size();
         }
+
+        // Friendly force info
+        rc.friendlyEnergyBoats = checkForEnergyBoats(ownTeamEntities);
+        rc.friendlyMissileBoats = checkForMissileBoats(ownTeamEntities);
+        rc.friendlyTAGs = checkForTAG(ownTeamEntities);
+        rc.friendlyNARCs = checkForNARC(ownTeamEntities);
+
         // General parameters
+        rc.darkEnvironment = g.getPlanetaryConditions().getLight().isDarkerThan(Light.DAY);
+
 
         return rc;
     }
 
+    // Section: initializing weights
+    private static HashMap<String, Double> initializeLRMWeights() {
+        HashMap<String, Double> weights = new HashMap<String, Double>();
+        weights.put("Standard", 1.0);
+        for (AmmoType aType: AmmoType.getMunitionsFor(AmmoType.T_LRM)) {
+            weights.put(aType.getMunitionType().toString(), 0.0);
+        }
+        return weights;
+    }
+
     /**
      * Generate the list of desired ammo load-outs for this team.
+     * TODO: implement generateDetailedMunitionTree with more complex breakdowns per unit type
      * @param rc
      * @param t
      * @param defaultSettingsFile
-     * @return
+     * @return generated MunitionTree with imperatives for each weapon type
      */
     public static MunitionTree generateMunitionTree(ReconfigurationParameters rp, Team t, String defaultSettingsFile) {
+
         MunitionTree mt = (defaultSettingsFile == null) ?
                 new MunitionTree() : new MunitionTree(new File(defaultSettingsFile));
 
-        // Decide which weapons need alternate munitions loaded
+        HashMap<String, Double> lrmWeights = initializeLRMWeights();
+        HashMap<String, Double> srmWeights = new HashMap<String, Double>();
+        HashMap<String, Double> acWeights = new HashMap<String, Double>();
+        HashMap<String, Double> atmWeights = new HashMap<String, Double>();
+        HashMap<String, Double> arrowWeights = new HashMap<String, Double>();
+        HashMap<String, Double> artyWeights = new HashMap<String, Double>();
+        HashMap<String, Double> artyCannonWeights = new HashMap<String, Double>();
+        HashMap<String, Double> mekMortarWeights = new HashMap<String, Double>();
 
         // Based on various requirements from rp, set weights for some ammo types over others
+
+
+        // Generate general loadouts
 
         return mt;
     }
@@ -159,7 +307,7 @@ public class TeamLoadoutGenerator {
      *
      * @param e Entity to load
      * @param mt MunitionTree, stores required munitions in desired loading order
-     * @param binLists Map of actual mounted ammo bins, listed by type
+     * @param binList List of actual mounted ammo bins matching this type
      * @param binName String bin type we are loading now
      */
     private static void iterativelyLoadAmmo(
@@ -169,9 +317,8 @@ public class TeamLoadoutGenerator {
         HashMap<String, Integer> counts = mt.getCountsOfAmmosForKey(e.getFullChassis(), e.getModel(), e.getCrew().getName(0), binName);
         List<String> priorities = mt.getPriorityList(e.getFullChassis(), e.getModel(), e.getCrew().getName(0), binName);
         // Count of total required bins
-        int required = counts.values().stream().reduce(0, Integer::sum);
-        int filled = 0;
         AmmoType defaultType = null;
+        int defaultIdx = 0;
 
         for (int i = 0; i < priorities.size(); i++) {
             // binName is the weapon to which the bin connects: LRM-15, AC20, SRM, etc.
@@ -184,6 +331,10 @@ public class TeamLoadoutGenerator {
             // Load matching AmmoType
             if (binType.toLowerCase().contains("standard")) {
                 desired = (AmmoType) EquipmentType.get(techBase + " " + binName + " " + "Ammo");
+                if (desired == null) {
+                    // Some ammo, like AC/XX ammo, is named funny
+                    desired = (AmmoType) EquipmentType.get(techBase + " Ammo " + binName);
+                }
             } else {
                 // Get available munitions
                 Vector<AmmoType> vAllTypes = AmmoType.getMunitionsFor(((AmmoType) bin.getType()).getAmmoType());
@@ -193,13 +344,17 @@ public class TeamLoadoutGenerator {
 
                 // Make sure the desired munition type is available
                 desired = vAllTypes.stream().filter(m -> m.getInternalName().startsWith(techBase) && m.getBaseName().contains(binName) && m.getName().contains(binType)).findFirst().orElse(null);
-                if (desired == null) {
-                    continue;
-                }
+            }
+
+            if (desired == null) {
+                // Couldn't find a bin, move on to the next priority.
+                // Update default idx if we're currently setting the default
+                defaultIdx = (i==defaultIdx) ? defaultIdx + 1 : defaultIdx;
+                continue;
             }
 
             // Store default AmmoType
-            if (i == 0) {
+            if (i == defaultIdx) {
                 defaultType = desired;
             }
 
@@ -214,6 +369,11 @@ public class TeamLoadoutGenerator {
                     if (!((AmmoType)bin.getType()).equalsAmmoTypeOnly(desired)){
                         // can't use this ammo
                         logger.debug("Unable to load bin " + bin.getName() + " with " + desired.getName());
+                        // Unset default bin if it was unloadable
+                        if (i == defaultIdx) {
+                            defaultType = null;
+                            defaultIdx += 1;
+                        }
                         break;
                     }
                     // Apply ammo change
@@ -222,10 +382,10 @@ public class TeamLoadoutGenerator {
                     // Decrement count and remove bin from list
                     counts.put(binType, counts.get(binType) - 1);
                     binList.remove(0);
-                    filled += 1;
 
                 } catch (Exception ex) {
                     logger.debug("Error loading ammo bin!", ex);
+                    break;
                 }
             }
         }
@@ -243,7 +403,35 @@ public class TeamLoadoutGenerator {
  */
 class ReconfigurationParameters {
 
-    public boolean enemiesVisible = false;
+    // Game settings
+    public boolean enemiesVisible = true;
+
+    // Map settings
+    public boolean darkEnvironment = false;
+
+    // Enemy stats
+    public long enemyCount = 0;
+    public long enemyFliers = 0;
+    public long enemyBombers = 0;
+    public long enemyInfantry = 0;
+    public long enemyVehicles = 0;
+    public long enemyMeks = 0;
+    public long enemyEnergyBoats = 0;
+    public long enemyMissileBoats = 0;
+    public long enemyAdvancedArmorCount = 0;
+    public long enemyReflectiveArmorCount = 0;
+    public long enemyFireproofArmorCount = 0;
+
+
+    // Friendly stats
+    public long friendlyCount = 0;
+    public long friendlyTAGs = 0;
+    public long friendlyNARCs = 0;
+    public long friendlyEnergyBoats = 0;
+    public long friendlyMissileBoats = 0;
+
+
+
 
     ReconfigurationParameters() {
     }

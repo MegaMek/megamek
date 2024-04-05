@@ -4,6 +4,42 @@ import java.io.*;
 import java.util.*;
 
 public class MunitionTree {
+    // Validated munition names that will work in ADF files.
+    // TODO: validate all these strings!
+    public static final ArrayList<String> LRM_MUNITION_NAMES = new ArrayList<>(List.of(
+            "Follow The Leader", "Heat-Seeking", "Semi-guided", "Smoke", "Swarm", "Swarm-I", "Thunder",
+            "Thunder-Active", "Thunder-Augmented", "Thunder-Vibrabomb", "Thunder-Inferno", "Anti-TSM",
+            "Artemis-capable", "Dead-Fire", "Fragmentation", "Listen-Kill", "Mine Clearance", "Narc-capable",
+            "Standard"
+    ));
+
+    public static final ArrayList<String> SRM_MUNITION_NAMES = new ArrayList<>(List.of(
+            "Acid", "Heat-Seeking", "Inferno", "Smoke", "Tandem-Charge", "Anti-TSM", "Artemis-capable",
+            "Dead-Fire", "Fragmentation", "Listen-Kill", "Mine Clearance", "Narc-capable", "Standard"
+    ));
+
+    public static final ArrayList<String> AC_MUNITION_NAMES = new ArrayList<>(List.of(
+            "Armor-Piercing", "Caseless", "Flak", "Flechette", "Precision", "Tracer", "Standard"
+    ));
+
+    public static final ArrayList<String> ARROW_MUNITION_NAMES = new ArrayList<>(List.of(
+            "ADA", "Cluster", "Homing", "Illumination", "Inferno-IV", "Laser Inhibiting", "Smoke", "Thunder",
+            "Thunder Vibrabomb-IV", "Davy Crocket-M", "Fuel-Air", "Standard"
+    ));
+
+    public static final ArrayList<String> ARTILLERY_MUNITION_NAMES = new ArrayList<>(List.of(
+            "Cluster", "Copperhead", "FASCAM", "Flechette", "Illumination", "Smoke", "Fuel-Air", "Davy Crocket-M",
+            "Standard"
+    ));
+
+    public static final ArrayList<String> ARTILLERY_CANNON_MUNITION_NAMES = new ArrayList<>(List.of(
+            "Fuel-Air", "Standard"
+    ));
+
+    public static final ArrayList<String> MEK_MORTAR_MUNITION_NAMES = new ArrayList<>(List.of(
+            "Airburst", "Anti-personnel", "Flare", "Semi-Guided", "Smoke", "Standard"
+    ));
+
     private LoadNode root = new LoadNode();
 
     public MunitionTree() {
@@ -140,7 +176,7 @@ class LoadNode {
     private HashMap<String, HashMap<String, Integer>> counts = new HashMap<String, HashMap<String, Integer>>();
     private boolean dirty = false;
 
-    public static String SIZE_REGEX = "[ -\\\\]?(\\d{1,3})";
+    public static String SIZE_REGEX = "[ -/\\\\]?(\\d{1,3})";
     public static String LAC_REGEX = "l[-/\\\\]?ac";
     public static String ANY_KEY = "any";
 

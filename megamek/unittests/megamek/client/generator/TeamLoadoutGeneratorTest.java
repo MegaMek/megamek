@@ -30,6 +30,7 @@ class TeamLoadoutGeneratorTest {
     static Player player = new Player(0, "Test");
     static AmmoType mockLRM15AmmoType = (AmmoType) EquipmentType.get("IS LRM 15 Ammo");
     static AmmoType mockAC20AmmoType = (AmmoType) EquipmentType.get("ISAC20 Ammo");
+    static AmmoType mockAC5AmmoType = (AmmoType) EquipmentType.get("ISAC5 Ammo");
     static AmmoType mockSRM6AmmoType = (AmmoType) EquipmentType.get("IS SRM 6 Ammo");
 
     @BeforeAll
@@ -69,14 +70,6 @@ class TeamLoadoutGeneratorTest {
     void reconfigureBotTeam() {
     }
 
-    @Test
-    void reconfigureTeam() {
-    }
-
-    @Test
-    void testReconfigureTeam() {
-    }
-
     Mech createMech(String chassis, String model, String crewName) {
         Mech mockMech = new BipedMech();
         mockMech.setChassis(chassis);
@@ -90,6 +83,29 @@ class TeamLoadoutGeneratorTest {
         mockMech.setCrew(mockCrew);
 
         return mockMech;
+    }
+
+    @Test
+    void testReconfigureEntityFallbackAmmoType() throws LocationFullException {
+        TeamLoadoutGenerator tlg = new TeamLoadoutGenerator(cg);
+        Mech mockMech = createMech("Mauler", "MAL-1K", "Tyson");
+        Mounted bin1 = mockMech.addEquipment(mockAC5AmmoType, Mech.LOC_LT);
+        Mounted bin2 = mockMech.addEquipment(mockAC5AmmoType, Mech.LOC_LT);
+        Mounted bin3 = mockMech.addEquipment(mockAC5AmmoType, Mech.LOC_LT);
+        Mounted bin4 = mockMech.addEquipment(mockAC5AmmoType, Mech.LOC_LT);
+
+        // Create a set of imperatives, some of which won't work
+        MunitionTree mt = new MunitionTree();
+        mt.insertImperative("Mauler", "MAL-1K", "any", "AC/5", "Inferno:Standard:Smoke:Flak");
+        tlg.reconfigureEntity(mockMech, mt);
+
+        // First imperative entry is invalid, so bin1 should get second choice (Standard)
+        assertTrue(((AmmoType) bin1.getType()).getMunitionType().contains(AmmoType.Munitions.M_STANDARD));
+        // Third choice is invalid, so 2nd bin gets 4th choice, Flak
+        assertTrue(((AmmoType) bin2.getType()).getMunitionType().contains(AmmoType.Munitions.M_FLAK));
+        // Now two bins are left over, so they're filled with the _new_ default, Standard (choice #2)
+        assertTrue(((AmmoType) bin3.getType()).getMunitionType().contains(AmmoType.Munitions.M_STANDARD));
+        assertTrue(((AmmoType) bin4.getType()).getMunitionType().contains(AmmoType.Munitions.M_STANDARD));
     }
 
     @Test
@@ -219,7 +235,7 @@ class TeamLoadoutGeneratorTest {
         Mounted bin4 = mockMech2.addEquipment(mockLRM15AmmoType, Mech.LOC_RT);
         Mounted bin5 = mockMech3.addEquipment(mockSRM6AmmoType, Mech.LOC_LT);
         Mounted bin6 = mockMech3.addEquipment(mockSRM6AmmoType, Mech.LOC_RT);
-        Mounted bin7 = mockMech3.addEquipment(mockSRM6AmmoType, Mech.LOC_RT);
+        Mounted bin7 = mockMech3.addEquipment(mockSRM6AmmoType, Mech.LOC_CT);
 
         MunitionTree mt = new MunitionTree();
         HashMap<String, String> imperatives = new HashMap<>();
@@ -230,7 +246,7 @@ class TeamLoadoutGeneratorTest {
         mt.insertImperatives("Hunchback", "any", "any", imperatives);
 
         // Kintaro's go under different keys
-        mt.insertImperative("Kintaro", "KTO-18", "any", "SRM", "Inferno:Inferno");
+        mt.insertImperative("Kintaro", "KTO-18", "any", "SRM", "Inferno:Standard");
 
         tlg.reconfigureTeam(game, team, mt);
 
@@ -238,5 +254,14 @@ class TeamLoadoutGeneratorTest {
         // 1. AC20 HBK should have two tons of Caseless
         assertTrue(((AmmoType) bin1.getType()).getMunitionType().contains(AmmoType.Munitions.M_CASELESS));
         assertTrue(((AmmoType) bin2.getType()).getMunitionType().contains(AmmoType.Munitions.M_CASELESS));
+
+        // 2. LRM HBK should have one each of Dead-Fire and Standard
+        assertTrue(((AmmoType) bin3.getType()).getMunitionType().contains(AmmoType.Munitions.M_DEAD_FIRE));
+        assertTrue(((AmmoType) bin4.getType()).getMunitionType().contains(AmmoType.Munitions.M_STANDARD));
+
+        // 3. LRM HBK should have two Infernos and one Standard
+        assertTrue(((AmmoType) bin5.getType()).getMunitionType().contains(AmmoType.Munitions.M_INFERNO));
+        assertTrue(((AmmoType) bin6.getType()).getMunitionType().contains(AmmoType.Munitions.M_STANDARD));
+        assertTrue(((AmmoType) bin7.getType()).getMunitionType().contains(AmmoType.Munitions.M_INFERNO));
     }
 }

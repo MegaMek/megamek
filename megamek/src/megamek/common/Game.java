@@ -1632,6 +1632,10 @@ public class Game extends AbstractGame implements Serializable, PlanetaryConditi
         return getSelectedEntities(entity -> entity.isTargetable() && entity.isEnemyOf(currentEntity));
     }
 
+    public Iterator<Entity> getTeamEntities(final Team team) {
+        return getSelectedEntities(entity -> team.players().contains(entity.getOwner()));
+    }
+
     /**
      * Returns an <code>Iterator</code> of friendly active entities at the given coordinates.
      *

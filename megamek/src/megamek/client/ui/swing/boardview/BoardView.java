@@ -2582,7 +2582,7 @@ public class BoardView extends AbstractBoardView implements BoardListener, Mouse
             drawCenteredString(c.getBoardNum(), 0, (int) (12 * scale), font_hexnum, g);
         }
 
-        if (getDisplayInvalidHexInfo() && !hex.isValid(null)) {
+        if (displayInvalidHexInfo && !hex.isValid(null)) {
             Point hexCenter = new Point((int) (HEX_W / 2 * scale), (int) (HEX_H / 2 * scale));
             drawCenteredText(g, Messages.getString("BoardEditor.INVALID"), hexCenter, Color.RED,
                     false, new Font(MMConstants.FONT_SANS_SERIF, Font.BOLD, 14));
@@ -5805,9 +5805,6 @@ public class BoardView extends AbstractBoardView implements BoardListener, Mouse
         }
     };
 
-    /**
-     * refresh the IDisplayables
-     */
     public void refreshDisplayables() {
         boardPanel.repaint();
     }
@@ -6529,10 +6526,6 @@ public class BoardView extends AbstractBoardView implements BoardListener, Mouse
         }
         g.setComposite(svComp);
         return hexImage;
-    }
-
-    public boolean getDisplayInvalidHexInfo() {
-        return displayInvalidHexInfo;
     }
 
     public Rectangle getDisplayablesRect() {

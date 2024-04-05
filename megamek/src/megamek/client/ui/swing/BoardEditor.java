@@ -341,8 +341,9 @@ public class BoardEditor extends JPanel
         try {
             bv = new BoardView(game, controller, null);
             bv.addOverlay(new KeyBindingsOverlay(bv));
-            bvc = bv.getComponent(true);
+            bv.setUseLosTool(false);
             bv.setDisplayInvalidFields(true);
+            bvc = bv.getComponent(true);
         } catch (IOException e) {
             JOptionPane.showMessageDialog(frame,
                     Messages.getString("BoardEditor.CouldntInitialize") + e,
@@ -458,7 +459,6 @@ public class BoardEditor extends JPanel
             }
         });
 
-        bv.setUseLosTool(false);
         setupEditorPanel();
         setupFrame();
         frame.setVisible(true);

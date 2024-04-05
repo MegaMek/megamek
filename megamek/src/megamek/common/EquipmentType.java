@@ -262,6 +262,7 @@ public class EquipmentType implements ITechnology {
      */
     // @Deprecated This is using the new TechAdvancement class under the hood.
     // Should it really be deprecated now?
+    @Deprecated
     public Map<Integer, Integer> getTechLevels() {
         Map<Integer, Integer> techLevel = new HashMap<Integer, Integer>();
         if (isUnofficial()) {

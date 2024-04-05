@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU General Public License
  * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
-
 package megamek.client.ui.swing.boardview;
 
 import megamek.client.ui.swing.GUIPreferences;
@@ -29,6 +28,7 @@ import megamek.common.Terrains;
 import megamek.common.annotations.Nullable;
 import megamek.common.planetaryconditions.Light;
 import megamek.common.planetaryconditions.PlanetaryConditions;
+import megamek.common.util.ImageUtil;
 import org.apache.logging.log4j.LogManager;
 
 import java.awt.*;
@@ -47,7 +47,7 @@ import java.util.*;
 class TerrainShadowHelper {
 
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
-    private static final BufferedImageOp BLUR_OP = new ConvolveOp(EntityImage.getGaussKernel(5, 2),
+    private static final BufferedImageOp BLUR_OP = new ConvolveOp(ImageUtil.getGaussKernel(5, 2),
             ConvolveOp.EDGE_NO_OP, null);
 
     private final BoardView boardView;
@@ -182,9 +182,9 @@ class TerrainShadowHelper {
             Path2D path = new Path2D.Float();
             for (Coords c : sortedHexes.get(h)) {
                 Point p = BoardView.getHexLocationLargeTile(c.getX(), c.getY(), 1);
-                AffineTransform t = AffineTransform.getTranslateInstance(p.x + BoardView.HEX_W / 2, p.y + BoardView.HEX_H / 2);
+                AffineTransform t = AffineTransform.getTranslateInstance(p.x + BoardView.HEX_W / 2.0, p.y + BoardView.HEX_H / 2.0);
                 t.scale(1.02, 1.02);
-                t.translate(-BoardView.HEX_W / 2, -BoardView.HEX_H / 2);
+                t.translate(-BoardView.HEX_W / 2.0, -BoardView.HEX_H / 2.0);
                 path.append(t.createTransformedShape(BoardView.hexPoly), false);
             }
             levelClips.put(h, path);
@@ -221,7 +221,7 @@ class TerrainShadowHelper {
             BufferedImage elevShadow = config.createCompatibleImage(eSize.width, eSize.height,
                     Transparency.TRANSLUCENT);
             Graphics gS = elevShadow.getGraphics();
-            Point2D p1 = new Point2D.Double(eSize.width / 2, eSize.height / 2);
+            Point2D p1 = new Point2D.Double(eSize.width / 2.0, eSize.height / 2.0);
             if (GUIP.getHexInclines()) {
                 // With inclines, the level 1 shadows are only very slight
                 int beg = 4;

@@ -96,7 +96,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
     public static final int HEX_H = HexTileset.HEX_H;
     public static final int HEX_DIAG = (int) Math.round(Math.sqrt(HEX_W * HEX_W + HEX_H * HEX_H));
 
-    private static final int HEX_WC = HEX_W - (HEX_W / 4);
+    static final int HEX_WC = HEX_W - (HEX_W / 4);
     static final int HEX_ELEV = 12;
 
     private static final float[] ZOOM_FACTORS = {0.30f, 0.41f, 0.50f, 0.60f,
@@ -1358,7 +1358,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
     /**
      * Updates the boardSize variable with the proper values for this board.
      */
-    private void updateBoardSize() {
+    void updateBoardSize() {
         int width = (game.getBoard().getWidth() * (int) (HEX_WC * scale))
                 + (int) ((HEX_W / 4) * scale);
         int height = (game.getBoard().getHeight() * (int) (HEX_H * scale))
@@ -2812,7 +2812,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
      * be used for small tiles as it will make gaps appear between hexes This
      * will not factor in Isometric as this would be incorrect for large tiles
      */
-    private Point getHexLocationLargeTile(int x, int y, float tscale) {
+    static Point getHexLocationLargeTile(int x, int y, float tscale) {
         int ypos = (int) (y * HEX_H * tscale)
                 + ((x & 1) == 1 ? (int) ((HEX_H / 2) * tscale) : 0);
         return new Point((int) (x * HEX_WC * tscale), ypos);
@@ -4354,6 +4354,10 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
     @Override
     public void mouseClicked(MouseEvent me) {
 
+    }
+
+    public Dimension getBoardSize() {
+        return boardSize;
     }
 
     private static class MovingUnit {

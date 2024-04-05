@@ -109,7 +109,7 @@ class TerrainShadowHelper {
         // 1) create or get the hex shadow
         Image hexShadow = createBlurredShadow(boardView.getTilesetManager().getHexMask());
         if (hexShadow == null) {
-            boardView.getPanel().repaint(1000);
+            boardView.repaint(1000);
             return null;
         }
 

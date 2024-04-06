@@ -50,8 +50,8 @@ public class TeamLoadoutGenerator {
     ));
 
     public static final ArrayList<String> TYPE_LIST = new ArrayList<String>(List.of(
-            "lrm", "srm", "ac", "atm", "arrow iv", "artillery", "artillery cannon",
-            "mek mortar", "narc", "bomb"
+            "LRM", "SRM", "AC", "ATM", "Arrow IV", "Artillery", "Artillery Cannon",
+            "Mek Mortar", "Narc", "Bomb"
     ));
 
     public static final Map<String, ArrayList<String>> TYPE_MAP =
@@ -80,6 +80,7 @@ public class TeamLoadoutGenerator {
     protected boolean eraBasedTechLevel = false;
     protected boolean advAeroRules = false;
     protected boolean showExtinct = false;
+    protected boolean trueRandom = false;
     protected String defaultBotMunitionsFile = null;
 
     TeamLoadoutGenerator(ClientGUI gui){
@@ -119,6 +120,14 @@ public class TeamLoadoutGenerator {
         // TODO: further filter by availability to Team's faction
 
         return legal;
+    }
+
+    public void setTrueRandom(boolean value) {
+        trueRandom = value;
+    }
+
+    public boolean getTrueRandom() {
+        return trueRandom;
     }
 
     // Section: Check for various unit types, armor types, etc.
@@ -423,8 +432,9 @@ public class TeamLoadoutGenerator {
             // binType is the munition type loaded in currently
             // If all required bins are filled, revert to defaultType
             // If "Random", choose a random ammo type.  Availability will be checked later.
+            // If not trueRandom, only select from munitions that deal damage
             String binType = (priorities.get(i).toLowerCase().contains("random")) ?
-                    getRandomBin(techBase, binName) : priorities.get(i);
+                    getRandomBin(binName, trueRandom) : priorities.get(i);
             Mounted bin = binList.get(0);
             AmmoType desired = null;
 
@@ -500,12 +510,13 @@ public class TeamLoadoutGenerator {
         }
     }
 
-    private static String getRandomBin(String techBase, String binName) {
+    private static String getRandomBin(String binName, boolean trueRandom) {
         String result = "";
         for (String typeName: TYPE_LIST) {
-            if (binName.toLowerCase().contains(typeName)
-            || typeName.toLowerCase().contains(binName)) {
-                ArrayList<String> tList = TYPE_MAP.get(typeName);
+            if ((trueRandom || !UTILITY_MUNITIONS.contains(typeName)) &&
+                    (binName.toLowerCase().contains(typeName)
+                    || typeName.toLowerCase().contains(binName))) {
+                ArrayList<String> tList = TYPE_MAP.get(typeName.toLowerCase());
                 result = tList.get(new Random().nextInt(tList.size()));
                 break;
             }

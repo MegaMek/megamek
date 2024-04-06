@@ -425,8 +425,8 @@ public class Report implements Serializable {
      * @return This Report to allow chaining
      */
     public Report addDataWithTooltip(String data, String tooltip) {
-        tagData.addElement(String.format("<font color='0xffffff'><a href='%s%s'>%s</a></font>",
-                TOOLTIP_LINK, tooltip, data));
+        String tipFormat = "<a href='%s%s'>%s</a>";
+        tagData.addElement(String.format(tipFormat, TOOLTIP_LINK, tooltip, data));
         return this;
     }
 
@@ -700,10 +700,12 @@ public class Report implements Serializable {
         int size = UIUtil.scaleForGUI(UIUtil.FONT_SCALE1);
 
         GUIPreferences guip = GUIPreferences.getInstance();
-        styleSheet.addRule(
-                "pre { font-family: " + font.getFamily() + "; font-size: " + size + "pt; font-style:normal;}");
+        styleSheet.addRule("pre { font-family: " + font.getFamily() + "; font-size: " + size + "pt; font-style:normal;}");
         styleSheet.addRule("a { color: " + hexColor(guip.getReportLinkColor()) + " }");
         styleSheet.addRule("span.warning { color: " + hexColor(guip.getWarningColor()) + " }");
+        styleSheet.addRule("span.success { color: " + hexColor(guip.getReportSuccessColor()) + " }");
+        styleSheet.addRule("span.miss { color: " + hexColor(guip.getReportMissColor()) + " }");
+        styleSheet.addRule("span.info { color: " + hexColor(guip.getReportInfoColor()) + " }");
     }
 
     public String span(String name, String text) {

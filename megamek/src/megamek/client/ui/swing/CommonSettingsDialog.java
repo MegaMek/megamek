@@ -367,6 +367,9 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
     // Report
     private JTextPane reportKeywordsTextPane;
     private ColourSelectorButton csbReportLinkColor;
+    private ColourSelectorButton csbReportSuccessColor;
+    private ColourSelectorButton csbReportMissColor;
+    private ColourSelectorButton csbReportInfoColor;
     private final JCheckBox showReportSprites = new JCheckBox(Messages.getString("CommonSettingsDialog.showReportSprites"));
 
     private ColourSelectorButton csbUnitOverviewTextShadowColor;
@@ -1322,6 +1325,19 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         csbReportLinkColor = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.ReportLinkColor"));
         csbReportLinkColor.setColour(GUIP.getReportLinkColor());
         row.add(csbReportLinkColor);
+
+        csbReportSuccessColor = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.ReportSuccessColor"));
+        csbReportSuccessColor.setColour(GUIP.getReportSuccessColor());
+        row.add(csbReportSuccessColor);
+
+        csbReportMissColor = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.ReportMissColor"));
+        csbReportMissColor.setColour(GUIP.getReportMissColor());
+        row.add(csbReportMissColor);
+        comps.add(row);
+
+        csbReportInfoColor = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.ReportInfoColor"));
+        csbReportInfoColor.setColour(GUIP.getReportInfoColor());
+        row.add(csbReportInfoColor);
         comps.add(row);
 
         comps.add(checkboxEntry(showReportSprites, null));
@@ -2029,6 +2045,9 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         unitTooltipArmorMiniFontSizeModText.setText(String.format("%d", GUIP.getUnitToolTipArmorMiniFontSizeMod()));
 
         csbReportLinkColor.setColour(GUIP.getReportLinkColor());
+        csbReportSuccessColor.setColour(GUIP.getReportSuccessColor());
+        csbReportMissColor.setColour(GUIP.getReportMissColor());
+        csbReportInfoColor.setColour(GUIP.getReportInfoColor());
         showReportSprites.setSelected(GUIP.getMiniReportShowSprites());
 
         csbUnitOverviewTextShadowColor.setColour(GUIP.getUnitOverviewTextShadowColor());
@@ -2502,6 +2521,9 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         }
 
         GUIP.setReportLinkColor(csbReportLinkColor.getColour());
+        GUIP.setReportSuccessColor(csbReportSuccessColor.getColour());
+        GUIP.setReportMissColor(csbReportMissColor.getColour());
+        GUIP.setReportrInfoColo(csbReportInfoColor.getColour());
         GUIP.setMiniReportShowSprites(showReportSprites.isSelected());
 
         GUIP.setUnitOverviewTextShadowColor(csbUnitOverviewTextShadowColor.getColour());

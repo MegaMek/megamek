@@ -3165,7 +3165,7 @@ public class GameManager implements IGameManager {
                             player.incrementOtherTurns();
                         }
                     }
-                } else if ((entity instanceof Tank) && tankMoveByLance) {
+                } else if ((entity instanceof Tank) && !(entity instanceof GunEmplacement) && tankMoveByLance) {
                     player.incrementMultiTurns(GameTurn.CLASS_TANK);
                 } else if ((entity instanceof Mech) && mekMoveByLance) {
                     player.incrementMultiTurns(GameTurn.CLASS_MECH);

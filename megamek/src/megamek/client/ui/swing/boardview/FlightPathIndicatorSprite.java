@@ -144,43 +144,27 @@ public class FlightPathIndicatorSprite extends HexSprite {
      * off the map.
      */
     private void drawSprite(Graphics2D graph) {
-        Entity entity = step.getEntity();
-        int maxMP = Integer.MAX_VALUE;
-        int turnCost = Integer.MIN_VALUE;
-
-        if (null != entity) {
-            maxMP = entity.getRunMP();
-            turnCost = step.asfTurnCost(step.getGame(), MoveStepType.TURN_LEFT, entity);
-        }
-
         if (isLastIndicator()) {
             if (step.getVelocityLeft() > 0) {
                 flyOffIcon.draw(graph);
             } else {
-                // Its the last hex the bird can fly on the map - draw a flag - but what kind?
-                if (step.dueFreeTurn()) {
-                    // use a green flag to indicate ability to free turn on last hex.
+                if (canTurnForFree()) {
                     greenFlagIcon.draw(graph);
-                } else if (step.canAeroTurn(bv.game)) {
-                    // use a yellow flag to indicate ability to turn with a cost.
-                    if ((step.getMpUsed() + turnCost) > maxMP) {
-                        // use an empty yellow flag to indicate turn with cost, but no remaining thrust
+                } else if (canTurnWithThrustCost()) {
+                    if (costsTooMuchToTurn()) {
                         yellowEmptyFlagIcon.draw(graph);
                     } else {
-                        // use a solid yellow flag to indicate player can turn on the last hex for a cost.
                         yellowFlagIcon.draw(graph);
                     }
                 } else {
-                    // use an empty red flag to indicate no turn on the last hex.
                     redFlagIcon.draw(graph);
                 }
             }
         } else {
-            if (step.dueFreeTurn()) {
+            if (canTurnForFree()) {
                 freeTurnIcon.draw(graph);
-            } else if (step.canAeroTurn(bv.game)) {
-                // instead of blindly trusting theoretical canTurn(), see if bird can actually turn.
-                if ((step.getMpUsed() + turnCost) > maxMP) {
+            } else if (canTurnWithThrustCost()) {
+                if (costsTooMuchToTurn()) {
                     noThrustIcon.draw(graph);
                 } else {
                     costTurnIcon.draw(graph);
@@ -191,6 +175,39 @@ public class FlightPathIndicatorSprite extends HexSprite {
         }
 
         return;
+    }
+
+    /*
+     * Return true if the fighter would be able to turn at this step but doesn't have enough
+     * movement points left to actually make the turn.
+     */
+    private boolean costsTooMuchToTurn() {
+        Entity entity = step.getEntity();
+        int maxMP = Integer.MAX_VALUE;
+        int turnCost = Integer.MIN_VALUE;
+
+
+        if (null != entity) {
+            maxMP = entity.getRunMP();
+            turnCost = step.asfTurnCost(step.getGame(), MoveStepType.TURN_LEFT, entity);
+        }
+
+        return ((step.getMpUsed() + turnCost) > maxMP);
+    }
+
+    /*
+     * Returns true if the fighter can make a turn at this step given it's current velocity
+     * and turn restrictions.
+     */
+    private boolean canTurnWithThrustCost() {
+        return (step.canAeroTurn(bv.game));
+    }
+
+    /*
+     * Returns true if the fighter can make a free turn at this given step.
+     */
+    private boolean canTurnForFree() {
+        return (step.dueFreeTurn());
     }
 
     /*

@@ -258,6 +258,9 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String MINI_REPORT_AUTO_DISPLAY_NONREPORT_PHASE = "MiniReportAutoDisplayNonReportPhase";
     public static final String MINI_REPORT_LOCATION = "MiniReportLocation";
     public static final String MINI_REPORT_COLOR_LINK = "MiniReportColorLink";
+    public static final String MINI_REPORT_COLOR_SUCCESS = "MiniReportColorSuccess";
+    public static final String MINI_REPORT_COLOR_MISS = "MiniReportColorMiss";
+    public static final String MINI_REPORT_COLOR_INFO = "MiniReportColorInfo";
     public static final String MINI_REPORT_FONT_TYPE = "MiniReportFontType";
     public static final String MINI_ROUND_REPORT_SPRITES = "MiniRoundReportSprites";
 
@@ -664,6 +667,9 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(MINI_REPORT_AUTO_DISPLAY_NONREPORT_PHASE, 0);
         store.setDefault(MINI_REPORT_LOCATION, 0);
         setDefault(MINI_REPORT_COLOR_LINK, DEFAULT_REPORT_LINK_COLOR);
+        setDefault(MINI_REPORT_COLOR_SUCCESS, new Color(0x008000));
+        setDefault(MINI_REPORT_COLOR_MISS, new Color(0x808080));
+        setDefault(MINI_REPORT_COLOR_INFO, new Color(0x0000FF));
         setDefault(MINI_REPORT_FONT_TYPE, "Segoe UI");
         store.setDefault(MINI_ROUND_REPORT_SPRITES, true);
 
@@ -2793,6 +2799,18 @@ public class GUIPreferences extends PreferenceStoreProxy {
         return getColor(MINI_REPORT_COLOR_LINK);
     }
 
+    public Color getReportSuccessColor() {
+        return getColor(MINI_REPORT_COLOR_SUCCESS);
+    }
+
+    public Color getReportMissColor() {
+        return getColor(MINI_REPORT_COLOR_MISS);
+    }
+
+    public Color getReportInfoColor() {
+        return getColor(MINI_REPORT_COLOR_INFO);
+    }
+  
     public String getReportFontType() {
         return getString(MINI_REPORT_FONT_TYPE);
     }
@@ -2906,6 +2924,18 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setValue(MINI_REPORT_COLOR_LINK, getColorString(color));
     }
 
+    public void setReportSuccessColor(Color color) {
+        store.setValue(MINI_REPORT_COLOR_SUCCESS, getColorString(color));
+    }
+
+    public void setReportMissColor(Color color) {
+        store.setValue(MINI_REPORT_COLOR_MISS, getColorString(color));
+    }
+
+    public void setReportrInfoColo(Color color) {
+        store.setValue(MINI_REPORT_COLOR_INFO, getColorString(color));
+    }
+      
     public void setReportFontType(String font) {
         store.setValue(MINI_REPORT_FONT_TYPE, font);
     }

@@ -31,11 +31,11 @@ public class TeamLoadoutGenerator {
     ));
 
     public static final ArrayList<String> ANTI_INF_MUNITIONS = new ArrayList<>(List.of(
-            "Inferno", "Fragmentation", "Flechette", "Fuel-Air"
+            "Inferno", "Fragmentation", "Flechette", "Fuel-Air", "Anti-personnel"
     ));
 
     public static final ArrayList<String> HEAT_MUNITIONS = new ArrayList<>(List.of(
-            "Inferno", "Incendiary"
+            "Inferno", "Incendiary", "Heat-Seeking"
     ));
 
     public static final ArrayList<String> ILLUM_MUNITIONS = new ArrayList<>(List.of(
@@ -46,7 +46,10 @@ public class TeamLoadoutGenerator {
             "Illumination", "Smoke", "Mine Clearance", "Anti-TSM", "Laser Inhibiting",
             "Thunder", "FASCAM", "Thunder-Active", "Thunder-Augmented", "Thunder-Vibrabomb",
             "Thunder-Inferno", "Flare"
+    ));
 
+    public static final ArrayList<String> GUIDED_MUNITIONS = new ArrayList<>(List.of(
+            "Semi-Guided", "Narc-capable", "Homing", "Copperhead"
     ));
 
     public static final ArrayList<String> TYPE_LIST = new ArrayList<String>(List.of(
@@ -243,6 +246,8 @@ public class TeamLoadoutGenerator {
                 if (!et.isEnemyOf(t)) {
                     continue;
                 }
+
+                rc.enemyFactions.add(et.getFaction());
                 ArrayList<Entity> etEntities = (ArrayList<Entity>) IteratorUtils.toList(g.getTeamEntities(et));
                 rc.enemyCount += etEntities.size();
                 rc.enemyFliers += checkForFliers(etEntities);
@@ -259,7 +264,9 @@ public class TeamLoadoutGenerator {
                 rc.enemyFastMovers += checkForFastMovers(etEntities);
             }
         } else {
+            // Assume we know _nothing_ about enemies if Double Blind is on.
             rc.enemiesVisible = false;
+
             // Estimate enemy count for ammo count purposes; may include observers.  The fog of war!
             rc.enemyCount = g.getEntitiesVector().size() - ownTeamEntities.size();
         }
@@ -280,10 +287,10 @@ public class TeamLoadoutGenerator {
     private static HashMap<String, Double> initializeWeaponWeights(ArrayList<String> wepAL) {
         HashMap<String, Double> weights = new HashMap<String, Double>();
         for (String name: wepAL) {
-            weights.put(name, 0.0);
+            weights.put(name, 1.0);
         }
-        // Every weight list should have a Standard set as weight 1.0
-        weights.put("Standard", 1.0);
+        // Every weight list should have a Standard set as weight 2.0
+        weights.put("Standard", 2.0);
         return weights;
     }
 
@@ -311,6 +318,7 @@ public class TeamLoadoutGenerator {
         HashMap<String, Double> mekMortarWeights = initializeWeaponWeights(MunitionTree.MEK_MORTAR_MUNITION_NAMES);
 
         // Based on various requirements from rp, set weights for some ammo types over others
+
 
 
         // Generate general loadouts
@@ -553,7 +561,7 @@ class ReconfigurationParameters {
     public long enemyReflectiveArmorCount = 0;
     public long enemyFireproofArmorCount = 0;
     public long enemyFastMovers = 0;
-
+    public HashSet<String> enemyFactions = new HashSet<String>();
 
     // Friendly stats
     public long friendlyCount = 0;

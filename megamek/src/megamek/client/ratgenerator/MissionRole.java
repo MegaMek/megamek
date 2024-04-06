@@ -635,15 +635,12 @@ public enum MissionRole {
                 return ARTILLERY;
             case "missile artillery":
                 return MISSILE_ARTILLERY;
-            case "anti-aircraft":
             case "anti aircraft":
                 return ANTI_AIRCRAFT;
-            case "anti-infantry":
             case "anti infantry":
                 return ANTI_INFANTRY;
             case "apc":
                 return APC;
-            case "spec ops":
             case "specops":
                 return SPECOPS;
             case "cargo":
@@ -680,7 +677,6 @@ public enum MissionRole {
                 return TUG;
             case "troop carrier":
                 return TROOP_CARRIER;
-            case "pocket ws":
             case "pocket warship":
                 return POCKET_WARSHIP;
             case "corvette":
@@ -703,7 +699,6 @@ public enum MissionRole {
                 return XCT;
             case "paratrooper":
                 return PARATROOPER;
-            case "anti-mek":
             case "anti mek":
                 return ANTI_MEK;
             case "omni":

@@ -41,9 +41,15 @@ class TeamLoadoutGeneratorTest {
         when(cg.getClient()).thenReturn(client);
         when(cg.getClient().getGame()).thenReturn(game);
         when(mockGameOptions.booleanOption(eq(OptionsConstants.ALLOWED_NO_CLAN_PHYSICAL))).thenReturn(false);
-        Option mockBoolOpt = mock(Option.class);
-        when(mockBoolOpt.booleanValue()).thenReturn(true);
-        when(mockGameOptions.getOption(anyString())).thenReturn(mockBoolOpt);
+        when(mockGameOptions.stringOption(OptionsConstants.ALLOWED_TECHLEVEL)).thenReturn("Experimental");
+        when(mockGameOptions.booleanOption(OptionsConstants.ALLOWED_ERA_BASED)).thenReturn(true);
+        when(mockGameOptions.booleanOption(OptionsConstants.ALLOWED_SHOW_EXTINCT)).thenReturn(false);
+        Option mockTrueBoolOpt = mock(Option.class);
+        Option mockFalseBoolOpt = mock(Option.class);
+        when(mockTrueBoolOpt.booleanValue()).thenReturn(true);
+        when(mockFalseBoolOpt.booleanValue()).thenReturn(false);
+        when(mockGameOptions.getOption(anyString())).thenReturn(mockTrueBoolOpt);
+        when(mockGameOptions.intOption(OptionsConstants.ALLOWED_YEAR)).thenReturn(3151);
         game.setOptions(mockGameOptions);
 
         team.addPlayer(player);
@@ -97,7 +103,7 @@ class TeamLoadoutGeneratorTest {
         // Create a set of imperatives, some of which won't work
         MunitionTree mt = new MunitionTree();
         mt.insertImperative("Mauler", "MAL-1K", "any", "AC/5", "Inferno:Standard:Smoke:Flak");
-        tlg.reconfigureEntity(mockMech, mt);
+        tlg.reconfigureEntity(mockMech, mt, "IS");
 
         // First imperative entry is invalid, so bin1 should get second choice (Standard)
         assertTrue(((AmmoType) bin1.getType()).getMunitionType().contains(AmmoType.Munitions.M_STANDARD));
@@ -118,7 +124,7 @@ class TeamLoadoutGeneratorTest {
         MunitionTree mt = new MunitionTree();
 
         // We expect to see no change in loadouts
-        tlg.reconfigureEntity(mockMech, mt);
+        tlg.reconfigureEntity(mockMech, mt, "IS");
         assertTrue(((AmmoType) bin1.getType()).getMunitionType().contains(AmmoType.Munitions.M_STANDARD));
     }
 
@@ -134,7 +140,7 @@ class TeamLoadoutGeneratorTest {
         mt.insertImperative("Catapult", "CPLT-C1", "any", "LRM-15", "Dead-Fire");
 
         // We expect that all bins are set to the desired munition type as only one type is provided
-        tlg.reconfigureEntity(mockMech, mt);
+        tlg.reconfigureEntity(mockMech, mt, "IS");
         assertFalse(((AmmoType) bin1.getType()).getMunitionType().contains(AmmoType.Munitions.M_STANDARD));
         assertTrue(((AmmoType) bin1.getType()).getMunitionType().contains(AmmoType.Munitions.M_DEAD_FIRE));
         assertFalse(((AmmoType) bin2.getType()).getMunitionType().contains(AmmoType.Munitions.M_STANDARD));
@@ -142,7 +148,7 @@ class TeamLoadoutGeneratorTest {
 
         // Now reset the ammo
         mt.insertImperative("Catapult", "CPLT-C1", "any", "LRM-15", "Standard");
-        tlg.reconfigureEntity(mockMech, mt);
+        tlg.reconfigureEntity(mockMech, mt, "IS");
         assertTrue(((AmmoType) bin1.getType()).getMunitionType().contains(AmmoType.Munitions.M_STANDARD));
         assertFalse(((AmmoType) bin1.getType()).getMunitionType().contains(AmmoType.Munitions.M_DEAD_FIRE));
         assertTrue(((AmmoType) bin2.getType()).getMunitionType().contains(AmmoType.Munitions.M_STANDARD));
@@ -162,14 +168,14 @@ class TeamLoadoutGeneratorTest {
         MunitionTree mt = new MunitionTree();
         // First, set all bins to Smoke
         mt.insertImperative("Catapult", "CPLT-C1", "any", "LRM-15", "Smoke");
-        tlg.reconfigureEntity(mockMech, mt);
+        tlg.reconfigureEntity(mockMech, mt, "IS");
         assertTrue(((AmmoType) bin1.getType()).getMunitionType().contains(AmmoType.Munitions.M_SMOKE_WARHEAD));
 
         // Then reset bins with useful ammo
         mt.insertImperative("Catapult", "CPLT-C1", "any", "LRM-15", "Standard", "Dead-Fire", "Heat-Seeking");
 
         // We expect that all bins are set to the desired munition type as only one type is provided
-        tlg.reconfigureEntity(mockMech, mt);
+        tlg.reconfigureEntity(mockMech, mt, "IS");
         assertTrue(((AmmoType) bin1.getType()).getMunitionType().contains(AmmoType.Munitions.M_STANDARD));
         assertFalse(((AmmoType) bin2.getType()).getMunitionType().contains(AmmoType.Munitions.M_STANDARD));
         assertTrue(((AmmoType) bin2.getType()).getMunitionType().contains(AmmoType.Munitions.M_DEAD_FIRE));
@@ -200,14 +206,14 @@ class TeamLoadoutGeneratorTest {
         mt.insertImperative("Catapult", "any", "any", "LRM", "Standard", "Swarm", "Semi-guided");
 
         // J. Robert H. should get the first loadout
-        tlg.reconfigureEntity(mockMech, mt);
+        tlg.reconfigureEntity(mockMech, mt, "IS");
         assertTrue(((AmmoType) bin1.getType()).getMunitionType().contains(AmmoType.Munitions.M_STANDARD));
         assertTrue(((AmmoType) bin2.getType()).getMunitionType().contains(AmmoType.Munitions.M_DEAD_FIRE));
         assertTrue(((AmmoType) bin3.getType()).getMunitionType().contains(AmmoType.Munitions.M_HEAT_SEEKING));
         assertTrue(((AmmoType) bin4.getType()).getMunitionType().contains(AmmoType.Munitions.M_SMOKE_WARHEAD));
 
         // John Q. should get the generalized loadout; last bin should be set to Standard
-        tlg.reconfigureEntity(mockMech2, mt);
+        tlg.reconfigureEntity(mockMech2, mt, "IS");
         assertTrue(((AmmoType) bin5.getType()).getMunitionType().contains(AmmoType.Munitions.M_STANDARD));
         assertTrue(((AmmoType) bin6.getType()).getMunitionType().contains(AmmoType.Munitions.M_SWARM));
         assertTrue(((AmmoType) bin7.getType()).getMunitionType().contains(AmmoType.Munitions.M_SEMIGUIDED));
@@ -263,5 +269,51 @@ class TeamLoadoutGeneratorTest {
         assertTrue(((AmmoType) bin5.getType()).getMunitionType().contains(AmmoType.Munitions.M_INFERNO));
         assertTrue(((AmmoType) bin6.getType()).getMunitionType().contains(AmmoType.Munitions.M_STANDARD));
         assertTrue(((AmmoType) bin7.getType()).getMunitionType().contains(AmmoType.Munitions.M_INFERNO));
+    }
+
+    @Test
+    void testRandomReconfigureBotTeam()  throws LocationFullException {
+        TeamLoadoutGenerator tlg = new TeamLoadoutGenerator(cg);
+        Mech mockMech = createMech("Hunchback", "HBK-4G", "Boomstick");
+        Mech mockMech2 = createMech("Hunchback", "HBK-4J", "The Shade");
+        Mech mockMech3 = createMech("Kintaro", "KTO-18", "Dragonpunch");
+        mockMech.setOwner(player);
+        mockMech2.setOwner(player);
+        mockMech3.setOwner(player);
+        game.setEntity(0, mockMech);
+        game.setEntity(1, mockMech2);
+        game.setEntity(2, mockMech3);
+
+
+        // Load ammo in 'mechs; locations are for fun
+        Mounted bin1 = mockMech.addEquipment(mockAC20AmmoType, Mech.LOC_CT);
+        Mounted bin2 = mockMech.addEquipment(mockAC20AmmoType, Mech.LOC_CT);
+        Mounted bin3 = mockMech2.addEquipment(mockLRM15AmmoType, Mech.LOC_LT);
+        Mounted bin4 = mockMech2.addEquipment(mockLRM15AmmoType, Mech.LOC_RT);
+        Mounted bin5 = mockMech3.addEquipment(mockSRM6AmmoType, Mech.LOC_LT);
+        Mounted bin6 = mockMech3.addEquipment(mockSRM6AmmoType, Mech.LOC_RT);
+        Mounted bin7 = mockMech3.addEquipment(mockSRM6AmmoType, Mech.LOC_CT);
+
+        // Just check that the bins are populated still
+        tlg.randomizeBotTeamConfiguration(game, team);
+
+        for (Mounted bin: List.of(bin1, bin2, bin3, bin4, bin5, bin6, bin7)) {
+            assertNotEquals("", ((AmmoType) bin.getType()).getSubMunitionName());
+        }
+
+    }
+
+    @Test
+    void testAmmoTypeIllegalBeforeCreation() {
+        TeamLoadoutGenerator tlg = new TeamLoadoutGenerator(cg);
+        AmmoType aType = (AmmoType) EquipmentType.get("IS Arrow IV Ammo");
+        AmmoType mType = AmmoType.getMunitionsFor(aType.getAmmoType()).stream().filter(m -> m.getSubMunitionName().contains("ADA")).findFirst().orElse(null);
+        // Should be available by default in 3151
+        assertTrue(tlg.checkLegality(mType, "IS", "IS", false));
+
+        // Set year back to 3025
+        when(mockGameOptions.intOption(OptionsConstants.ALLOWED_YEAR)).thenReturn(3025);
+        tlg.updateOptionValues();
+        assertFalse(tlg.checkLegality(mType, "IS", "IS", false));
     }
 }

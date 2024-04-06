@@ -1,5 +1,7 @@
 package megamek.common.containers;
 
+import megamek.common.BombType;
+
 import java.io.*;
 import java.util.*;
 
@@ -22,9 +24,13 @@ public class MunitionTree {
             "Armor-Piercing", "Caseless", "Flak", "Flechette", "Precision", "Tracer", "Standard"
     ));
 
+    public static final ArrayList<String> ATM_MUNITION_NAMES = new ArrayList<>(List.of(
+            "HE", "ER", "Standard"
+    ));
+
     public static final ArrayList<String> ARROW_MUNITION_NAMES = new ArrayList<>(List.of(
-            "ADA", "Cluster", "Homing", "Illumination", "Inferno-IV", "Laser Inhibiting", "Smoke", "Thunder",
-            "Thunder Vibrabomb-IV", "Davy Crocket-M", "Fuel-Air", "Standard"
+            "ADA", "Cluster", "Homing", "Illumination", "Inferno-IV", "Laser Inhibiting", "Smoke",
+            "Thunder", "Thunder Vibrabomb-IV", "Davy Crocket-M", "Fuel-Air", "Standard"
     ));
 
     public static final ArrayList<String> ARTILLERY_MUNITION_NAMES = new ArrayList<>(List.of(
@@ -39,6 +45,15 @@ public class MunitionTree {
     public static final ArrayList<String> MEK_MORTAR_MUNITION_NAMES = new ArrayList<>(List.of(
             "Airburst", "Anti-personnel", "Flare", "Semi-Guided", "Smoke", "Standard"
     ));
+
+    public static final ArrayList<String> NARC_MUNITION_NAMES = new ArrayList<>(List.of(
+            "Narc Explosive", "Standard"
+    ));
+
+    // Shorter, guaranteed to work in lookups
+    public static final ArrayList<String> BOMB_MUNITION_NAMES = new ArrayList<>(
+            Arrays.asList(BombType.bombInternalNames)
+    );
 
     private LoadNode root = new LoadNode();
 
@@ -65,6 +80,10 @@ public class MunitionTree {
 
     }
 
+    /**
+     * TODO: Implement
+     * @param br
+     */
     public void readFromXML(BufferedReader br) {
 
     }

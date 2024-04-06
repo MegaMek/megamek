@@ -13840,6 +13840,7 @@ public class AmmoType extends EquipmentType {
                     // ADA full name is embarrassingly long.
                     if (base.name.contains("ADA")) {
                         munition.shortName = "ADA Missile";
+                        munition.addLookupName("ADA");
                     } else {
                         munition.shortName = munition.name.replace("Prototype ", "p");
                     }

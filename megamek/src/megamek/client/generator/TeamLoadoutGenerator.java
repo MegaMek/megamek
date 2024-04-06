@@ -15,6 +15,8 @@ import org.apache.logging.log4j.Logger;
 import java.io.File;
 import java.util.*;
 
+import static java.util.Map.entry;
+
 /**
  * Notes: checkout
  * - RATGenerator.java
@@ -24,6 +26,49 @@ import java.util.*;
 
 public class TeamLoadoutGenerator {
 
+    public static final ArrayList<String> AP_MUNITIONS = new ArrayList<>(List.of(
+            "Armor-Piercing", "Tandem-Charge"
+    ));
+
+    public static final ArrayList<String> ANTI_INF_MUNITIONS = new ArrayList<>(List.of(
+            "Inferno", "Fragmentation", "Flechette", "Fuel-Air"
+    ));
+
+    public static final ArrayList<String> HEAT_MUNITIONS = new ArrayList<>(List.of(
+            "Inferno", "Incendiary"
+    ));
+
+    public static final ArrayList<String> ILLUM_MUNITIONS = new ArrayList<>(List.of(
+            "Illumination", "Tracer", "Inferno", "Incendiary", "Flare"
+    ));
+
+    public static final ArrayList<String> UTILITY_MUNITIONS = new ArrayList<>(List.of(
+            "Illumination", "Smoke", "Mine Clearance", "Anti-TSM", "Laser Inhibiting",
+            "Thunder", "FASCAM", "Thunder-Active", "Thunder-Augmented", "Thunder-Vibrabomb",
+            "Thunder-Inferno", "Flare"
+
+    ));
+
+    public static final ArrayList<String> TYPE_LIST = new ArrayList<String>(List.of(
+            "lrm", "srm", "ac", "atm", "arrow iv", "artillery", "artillery cannon",
+            "mek mortar", "narc", "bomb"
+    ));
+
+    public static final Map<String, ArrayList<String>> TYPE_MAP =
+         Map.ofEntries(
+            entry("lrm", MunitionTree.LRM_MUNITION_NAMES),
+            entry("srm", MunitionTree.SRM_MUNITION_NAMES),
+            entry("ac", MunitionTree.AC_MUNITION_NAMES),
+            entry("atm", MunitionTree.ATM_MUNITION_NAMES),
+            entry("arrow iv", MunitionTree.ARROW_MUNITION_NAMES),
+            entry("artillery", MunitionTree.ARTILLERY_MUNITION_NAMES),
+            entry("artillery cannon", MunitionTree.MEK_MORTAR_MUNITION_NAMES),
+            entry("mek mortar", MunitionTree.MEK_MORTAR_MUNITION_NAMES),
+            entry("narc", MunitionTree.NARC_MUNITION_NAMES),
+            entry("bomb", MunitionTree.BOMB_MUNITION_NAMES
+        )
+    );
+
     private static ClientGUI cg;
     private static Game game;
 
@@ -31,13 +76,17 @@ public class TeamLoadoutGenerator {
     protected boolean enableYearLimits = false;
     protected int allowedYear = AbstractUnitSelectorDialog.ALLOWED_YEAR_ANY;
     protected int gameTechLevel = TechConstants.T_SIMPLE_INTRO;
+    protected SimpleTechLevel legalLevel;
     protected boolean eraBasedTechLevel = false;
+    protected boolean advAeroRules = false;
+    protected boolean showExtinct = false;
     protected String defaultBotMunitionsFile = null;
 
     TeamLoadoutGenerator(ClientGUI gui){
         cg = gui;
         game = cg.getClient().getGame();
         gameOptions = game.getOptions();
+        updateOptionValues();
     }
 
     TeamLoadoutGenerator(ClientGUI gui, String defaultSettings){
@@ -49,10 +98,30 @@ public class TeamLoadoutGenerator {
         gameOptions = cg.getClient().getGame().getOptions();
         enableYearLimits = true;
         allowedYear = gameOptions.intOption(OptionsConstants.ALLOWED_YEAR);
-        gameTechLevel = TechConstants.getSimpleLevel(gameOptions.stringOption("techlevel"));
+        gameTechLevel = TechConstants.getSimpleLevel(gameOptions.stringOption(OptionsConstants.ALLOWED_TECHLEVEL));
+        legalLevel = SimpleTechLevel.getGameTechLevel(game);
         eraBasedTechLevel = gameOptions.booleanOption(OptionsConstants.ALLOWED_ERA_BASED);
+        advAeroRules = gameOptions.booleanOption(OptionsConstants.ADVAERORULES_AERO_ARTILLERY_MUNITIONS);
+        showExtinct = gameOptions.booleanOption((OptionsConstants.ALLOWED_SHOW_EXTINCT));
     }
 
+    // See if
+    public boolean checkLegality(AmmoType aType, String faction, String techBase, boolean mixedTech) {
+        boolean legal = false;
+        boolean clan = techBase.equals("CL");
+
+        if (eraBasedTechLevel) {
+            legal = aType.isLegal(allowedYear, legalLevel, clan,
+                    mixedTech, showExtinct);
+        } else {
+            legal = aType.getStaticTechLevel().ordinal() <= legalLevel.ordinal();
+        }
+        // TODO: further filter by availability to Team's faction
+
+        return legal;
+    }
+
+    // Section: Check for various unit types, armor types, etc.
     private static long checkForBombers(ArrayList<Entity> el) {
         return el.stream().filter(Targetable::isBomber).count();
     }
@@ -135,6 +204,12 @@ public class TeamLoadoutGenerator {
         ).count();
     }
 
+    private static long checkForFastMovers(ArrayList<Entity> el) {
+        return el.stream().filter(
+                e -> e.getOriginalWalkMP() > 5
+        ).count();
+    }
+
     /**
      * Create the parameters that will determine how to configure ammo loadouts for this team
      * @param g
@@ -164,9 +239,12 @@ public class TeamLoadoutGenerator {
                 rc.enemyVehicles += checkForVehicles(etEntities);
                 rc.enemyMeks += checkForMeks(etEntities);
                 rc.enemyEnergyBoats += checkForEnergyBoats(etEntities);
+                // Enemy Missile Boats might be good to know for Retro Streak weighting
+                rc.enemyMissileBoats += checkForMissileBoats(etEntities);
                 rc.enemyAdvancedArmorCount += checkForAdvancedArmor(etEntities);
                 rc.enemyReflectiveArmorCount += checkForReflectiveArmor(etEntities);
                 rc.enemyFireproofArmorCount += checkForFireproofArmor(etEntities);
+                rc.enemyFastMovers += checkForFastMovers(etEntities);
             }
         } else {
             rc.enemiesVisible = false;
@@ -183,17 +261,17 @@ public class TeamLoadoutGenerator {
         // General parameters
         rc.darkEnvironment = g.getPlanetaryConditions().getLight().isDarkerThan(Light.DAY);
 
-
         return rc;
     }
 
     // Section: initializing weights
-    private static HashMap<String, Double> initializeLRMWeights() {
+    private static HashMap<String, Double> initializeWeaponWeights(ArrayList<String> wepAL) {
         HashMap<String, Double> weights = new HashMap<String, Double>();
-        weights.put("Standard", 1.0);
-        for (AmmoType aType: AmmoType.getMunitionsFor(AmmoType.T_LRM)) {
-            weights.put(aType.getMunitionType().toString(), 0.0);
+        for (String name: wepAL) {
+            weights.put(name, 0.0);
         }
+        // Every weight list should have a Standard set as weight 1.0
+        weights.put("Standard", 1.0);
         return weights;
     }
 
@@ -210,14 +288,15 @@ public class TeamLoadoutGenerator {
         MunitionTree mt = (defaultSettingsFile == null) ?
                 new MunitionTree() : new MunitionTree(new File(defaultSettingsFile));
 
-        HashMap<String, Double> lrmWeights = initializeLRMWeights();
-        HashMap<String, Double> srmWeights = new HashMap<String, Double>();
-        HashMap<String, Double> acWeights = new HashMap<String, Double>();
-        HashMap<String, Double> atmWeights = new HashMap<String, Double>();
-        HashMap<String, Double> arrowWeights = new HashMap<String, Double>();
-        HashMap<String, Double> artyWeights = new HashMap<String, Double>();
-        HashMap<String, Double> artyCannonWeights = new HashMap<String, Double>();
-        HashMap<String, Double> mekMortarWeights = new HashMap<String, Double>();
+        // Initialize weights for all the weapon types using known munition names
+        HashMap<String, Double> lrmWeights = initializeWeaponWeights(MunitionTree.LRM_MUNITION_NAMES);
+        HashMap<String, Double> srmWeights = initializeWeaponWeights(MunitionTree.SRM_MUNITION_NAMES);
+        HashMap<String, Double> acWeights = initializeWeaponWeights(MunitionTree.AC_MUNITION_NAMES);
+        HashMap<String, Double> atmWeights = initializeWeaponWeights(MunitionTree.ATM_MUNITION_NAMES);
+        HashMap<String, Double> arrowWeights = initializeWeaponWeights(MunitionTree.ARROW_MUNITION_NAMES);
+        HashMap<String, Double> artyWeights = initializeWeaponWeights(MunitionTree.ARTILLERY_MUNITION_NAMES);
+        HashMap<String, Double> artyCannonWeights = initializeWeaponWeights(MunitionTree.ARTILLERY_CANNON_MUNITION_NAMES);
+        HashMap<String, Double> mekMortarWeights = initializeWeaponWeights(MunitionTree.MEK_MORTAR_MUNITION_NAMES);
 
         // Based on various requirements from rp, set weights for some ammo types over others
 
@@ -228,17 +307,22 @@ public class TeamLoadoutGenerator {
     }
 
     /**
-     * Wrapper to streamline bot team configuration
+     * Wrapper to streamline bot team configuration using standardized defaults
      * @param team
      */
-    public void reconfigureBotTeam(Team team) {
+    public void reconfigureBotTeamWithDefaults(Team team) {
         // Load in some hard-coded defaults so we don't have to do all the work now.
         reconfigureTeam(team, defaultBotMunitionsFile);
     }
 
-    public void reconfigureTeam(Team team, String defaultFile) {
+    /**
+     * Wrapper to load a file of preset munition imperatives
+     * @param team
+     * @param defaultFile
+     */
+    public void reconfigureTeam(Team team, String adfFile) {
         ReconfigurationParameters rp = generateParameters(game, gameOptions, team);
-        MunitionTree mt = generateMunitionTree(rp, team, defaultFile);
+        MunitionTree mt = generateMunitionTree(rp, team, adfFile);
         reconfigureTeam(game, team, mt);
     }
 
@@ -252,9 +336,17 @@ public class TeamLoadoutGenerator {
         // configure team according to MunitionTree
         for (Player p: team.players()) {
             for (Entity e : g.getPlayerEntities(p, false)){
-                reconfigureEntity(e, mt);
+                reconfigureEntity(e, mt, team.getFaction());
             }
         }
+    }
+
+    public void randomizeBotTeamConfiguration(Game g, Team team) {
+        MunitionTree mt = new MunitionTree();
+        for (String typeName: TYPE_LIST) {
+            mt.insertImperative("any", "any", "any", typeName, "Random");
+        }
+        reconfigureTeam(g, team, mt);
     }
 
     /**
@@ -263,7 +355,7 @@ public class TeamLoadoutGenerator {
      * @param e
      * @param mt
      */
-    public void reconfigureEntity(Entity e, MunitionTree mt) {
+    public void reconfigureEntity(Entity e, MunitionTree mt, String faction) {
         String chassis = e.getFullChassis();
         String model = e.getModel();
         String pilot = e.getCrew().getName(0);
@@ -285,33 +377,34 @@ public class TeamLoadoutGenerator {
 
         // Iterate over each type and fill it with the requested ammos (as much as possible)
         for (String binName: binLists.keySet()) {
-            iterativelyLoadAmmo(e, mt, binLists.get(binName), binName);
+            iterativelyLoadAmmo(e, mt, binLists.get(binName), binName, faction);
         }
     }
 
-    private static void iterativelyLoadAmmo(
-        Entity e, MunitionTree mt, ArrayList<Mounted> binList, String binName
+    private void iterativelyLoadAmmo(
+        Entity e, MunitionTree mt, ArrayList<Mounted> binList, String binName, String faction
     ){
         String techBase = (e.isClan()) ? "CL" : "IS";
-        iterativelyLoadAmmo(e, mt, binList, binName, techBase);
+        iterativelyLoadAmmo(e, mt, binList, binName, techBase, faction);
     }
 
     /**
      * Manage loading ammo bins for a given type.
      * Type can be designated by size (LRM-5) or generic (AC)
      * Logic:
-     *  Iterate over list of priorities and fill the first as many times as desired.
+     *  Iterate over list of priorities and fill the first as many times as requested.
      *  Repeat for 2nd..Nth ammo types
      *  If more bins remain than desired types are specified, fill the remainder with the top priority type
      *  If more desired types remain than there are bins, oh well.
+     *  If a requested ammo type is not available in the specified timeframe or faction, skip it.
      *
      * @param e Entity to load
      * @param mt MunitionTree, stores required munitions in desired loading order
      * @param binList List of actual mounted ammo bins matching this type
      * @param binName String bin type we are loading now
      */
-    private static void iterativelyLoadAmmo(
-            Entity e, MunitionTree mt, ArrayList<Mounted> binList, String binName, String techBase
+    private void iterativelyLoadAmmo(
+            Entity e, MunitionTree mt, ArrayList<Mounted> binList, String binName, String techBase, String faction
     ) {
         Logger logger = LogManager.getLogger();
         HashMap<String, Integer> counts = mt.getCountsOfAmmosForKey(e.getFullChassis(), e.getModel(), e.getCrew().getName(0), binName);
@@ -320,11 +413,18 @@ public class TeamLoadoutGenerator {
         AmmoType defaultType = null;
         int defaultIdx = 0;
 
+        // If the imperative is to use Random for every bin, we need a different Random for each bin
+        if (priorities.size() == 1 && priorities.get(0).toLowerCase().contains("random")) {
+            priorities = new ArrayList<>(Collections.nCopies(binList.size(), "random"));
+        }
+
         for (int i = 0; i < priorities.size(); i++) {
             // binName is the weapon to which the bin connects: LRM-15, AC20, SRM, etc.
             // binType is the munition type loaded in currently
             // If all required bins are filled, revert to defaultType
-            String binType = priorities.get(i);
+            // If "Random", choose a random ammo type.  Availability will be checked later.
+            String binType = (priorities.get(i).toLowerCase().contains("random")) ?
+                    getRandomBin(techBase, binName) : priorities.get(i);
             Mounted bin = binList.get(0);
             AmmoType desired = null;
 
@@ -342,8 +442,11 @@ public class TeamLoadoutGenerator {
                     continue;
                 }
 
-                // Make sure the desired munition type is available
-                desired = vAllTypes.stream().filter(m -> m.getInternalName().startsWith(techBase) && m.getBaseName().contains(binName) && m.getName().contains(binType)).findFirst().orElse(null);
+                // Make sure the desired munition type is available and valid
+                desired = vAllTypes.stream()
+                        .filter(m -> m.getInternalName().startsWith(techBase) && m.getBaseName().contains(binName) && m.getName().contains(binType))
+                        .filter(d -> checkLegality(d, faction, techBase, e.isMixedTech()))
+                        .findFirst().orElse(null);
             }
 
             if (desired == null) {
@@ -396,6 +499,20 @@ public class TeamLoadoutGenerator {
             }
         }
     }
+
+    private static String getRandomBin(String techBase, String binName) {
+        String result = "";
+        for (String typeName: TYPE_LIST) {
+            if (binName.toLowerCase().contains(typeName)
+            || typeName.toLowerCase().contains(binName)) {
+                ArrayList<String> tList = TYPE_MAP.get(typeName);
+                result = tList.get(new Random().nextInt(tList.size()));
+                break;
+            }
+        }
+        return result;
+    }
+
 }
 
 /**
@@ -421,6 +538,7 @@ class ReconfigurationParameters {
     public long enemyAdvancedArmorCount = 0;
     public long enemyReflectiveArmorCount = 0;
     public long enemyFireproofArmorCount = 0;
+    public long enemyFastMovers = 0;
 
 
     // Friendly stats
@@ -430,9 +548,7 @@ class ReconfigurationParameters {
     public long friendlyEnergyBoats = 0;
     public long friendlyMissileBoats = 0;
 
-
-
-
+    // Datatype for passing around game parameters the Loadout Generator cares about
     ReconfigurationParameters() {
     }
 }

@@ -30,38 +30,54 @@ public class MekCostCalculator {
         int i = 0;
 
         double cockpitCost;
-        if (mek.getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED) {
-            cockpitCost = 750000;
-        } else if (mek.getCockpitType() == Mech.COCKPIT_DUAL) {
-            // Solaris VII - The Game World (German) This is not actually canonical as it
-            // has never been repeated in any English language source including Tech Manual
-            cockpitCost = 40000;
-        } else if (mek.getCockpitType() == Mech.COCKPIT_COMMAND_CONSOLE) {
-            // Command Consoles are listed as a cost of 500,000.
-            // That appears to be in addition to the primary cockpit.
-            cockpitCost = 700000;
-        } else if (mek.getCockpitType() == Mech.COCKPIT_SMALL) {
-            cockpitCost = 175000;
-        } else if (mek.getCockpitType() == Mech.COCKPIT_VRRP) {
-            cockpitCost = 1250000;
-        } else if (mek.getCockpitType() == Mech.COCKPIT_INDUSTRIAL) {
-            cockpitCost = 100000;
-        } else if (mek.getCockpitType() == Mech.COCKPIT_TRIPOD) {
-            cockpitCost = 400000;
-        } else if (mek.getCockpitType() == Mech.COCKPIT_QUADVEE) {
-            cockpitCost = 375000;
-        } else if (mek.getCockpitType() == Mech.COCKPIT_SUPERHEAVY) {
-            cockpitCost = 300000;
-        } else if (mek.getCockpitType() == Mech.COCKPIT_SUPERHEAVY_COMMAND_CONSOLE) {
-            // The cost is the sum of both superheavy cockpit and command console
-            cockpitCost = 800000;
-        } else if (mek.getCockpitType() == Mech.COCKPIT_SUPERHEAVY_TRIPOD) {
-            cockpitCost = 500000;
-        } else if (mek.getCockpitType() == Mech.COCKPIT_SMALL_COMMAND_CONSOLE) {
-            // The cost is the sum of both small and command console
-            cockpitCost = 675000;
-        } else {
-            cockpitCost = 200000;
+        switch (mek.getCockpitType()) {
+            case Mech.COCKPIT_TORSO_MOUNTED:
+                cockpitCost = 750000;
+                break;
+            case Mech.COCKPIT_DUAL:
+                // Solaris VII - The Game World (German) This is not actually canonical as it
+                // has never been repeated in any English language source including Tech Manual
+                cockpitCost = 40000;
+                break;
+            case Mech.COCKPIT_COMMAND_CONSOLE:
+                // Command Consoles are listed as a cost of 500,000.
+                // That appears to be in addition to the primary cockpit.
+                cockpitCost = 700000;
+                break;
+            case Mech.COCKPIT_SMALL:
+                cockpitCost = 175000;
+                break;
+            case Mech.COCKPIT_VRRP:
+                cockpitCost = 1250000;
+                break;
+            case Mech.COCKPIT_INDUSTRIAL:
+            case Mech.COCKPIT_PRIMITIVE_INDUSTRIAL:
+                cockpitCost = 100000;
+                break;
+            case Mech.COCKPIT_TRIPOD:
+            case Mech.COCKPIT_SUPERHEAVY_TRIPOD_INDUSTRIAL:
+                cockpitCost = 400000;
+                break;
+            case Mech.COCKPIT_TRIPOD_INDUSTRIAL:
+            case Mech.COCKPIT_SUPERHEAVY:
+                cockpitCost = 300000;
+                break;
+            case Mech.COCKPIT_QUADVEE:
+                cockpitCost = 375000;
+                break;
+            case Mech.COCKPIT_SUPERHEAVY_COMMAND_CONSOLE:
+                // The cost is the sum of both superheavy cockpit and command console
+                cockpitCost = 800000;
+                break;
+            case Mech.COCKPIT_SUPERHEAVY_TRIPOD:
+                cockpitCost = 500000;
+                break;
+            case Mech.COCKPIT_SMALL_COMMAND_CONSOLE:
+                // The cost is the sum of both small and command console
+                cockpitCost = 675000;
+                break;
+            default:
+                cockpitCost = 200000;
         }
         if (mek.hasEiCockpit()
                 && ((null != mek.getCrew()) && mek.hasAbility(OptionsConstants.UNOFF_EI_IMPLANT))) {

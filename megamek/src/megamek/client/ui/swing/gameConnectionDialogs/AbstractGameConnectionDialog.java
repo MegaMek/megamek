@@ -18,6 +18,30 @@
  */
 package megamek.client.ui.swing.gameConnectionDialogs;
 
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.util.Vector;
+
+import javax.swing.AbstractAction;
+import javax.swing.ActionMap;
+import javax.swing.ComboBoxEditor;
+import javax.swing.InputMap;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.KeyStroke;
+
+import org.apache.logging.log4j.LogManager;
+
 import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.ButtonEsc;
@@ -29,15 +53,7 @@ import megamek.client.ui.swing.util.UIUtil;
 import megamek.codeUtilities.StringUtility;
 import megamek.common.preference.ClientPreferences;
 import megamek.common.preference.PreferenceManager;
-import megamek.server.Server;
-import org.apache.logging.log4j.LogManager;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.util.Vector;
+import megamek.services.Validation;
 
 public abstract class AbstractGameConnectionDialog extends ClientDialog implements ActionListener {
 
@@ -232,7 +248,7 @@ public abstract class AbstractGameConnectionDialog extends ClientDialog implemen
         }
 
         try {
-            setPlayerName(Server.validatePlayerName(playerName));
+            setPlayerName(Validation.validatePlayerName(playerName));
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(getOwner(), Messages.getString("MegaMek.PlayerNameError"),
                     Messages.getString(errorTitleKey), JOptionPane.ERROR_MESSAGE);
@@ -240,7 +256,7 @@ public abstract class AbstractGameConnectionDialog extends ClientDialog implemen
         }
 
         try {
-            setPort(Server.validatePort(port));
+            setPort(Validation.validatePort(port));
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(getOwner(), Messages.getString("MegaMek.PortError"),
                     Messages.getString(errorTitleKey), JOptionPane.ERROR_MESSAGE);

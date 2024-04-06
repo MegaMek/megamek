@@ -15,15 +15,53 @@
  */
 package megamek.server;
 
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.InetAddress;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Consumer;
+import java.util.zip.GZIPInputStream;
+
+import org.apache.logging.log4j.LogManager;
+
 import com.thoughtworks.xstream.XStream;
+
 import megamek.MMConstants;
 import megamek.MegaMek;
 import megamek.Version;
 import megamek.client.ui.swing.util.PlayerColour;
 import megamek.codeUtilities.StringUtility;
-import megamek.common.*;
+import megamek.common.Game;
+import megamek.common.IGame;
+import megamek.common.Player;
+import megamek.common.Report;
+import megamek.common.Roll;
 import megamek.common.annotations.Nullable;
-import megamek.common.commandline.AbstractCommandLineParser.ParseException;
 import megamek.common.icons.Camouflage;
 import megamek.common.net.connections.AbstractConnection;
 import megamek.common.net.enums.PacketCommand;
@@ -38,17 +76,6 @@ import megamek.common.preference.PreferenceManager;
 import megamek.common.util.EmailService;
 import megamek.common.util.SerializationHelper;
 import megamek.server.commands.ServerCommand;
-import org.apache.logging.log4j.LogManager;
-
-import java.io.*;
-import java.net.*;
-import java.nio.charset.StandardCharsets;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.function.Consumer;
-import java.util.zip.GZIPInputStream;
 
 /**
  * @author Ben Mazur
@@ -236,46 +263,6 @@ public class Server implements Runnable {
         }
     };
 
-    /**
-     * @param serverAddress
-     * @return valid hostName
-     * @throws ParseException for null or empty serverAddress
-     */
-    public static String validateServerAddress(String serverAddress) throws ParseException {
-        if ((serverAddress == null) || serverAddress.isBlank()) {
-            String msg = "serverAddress must not be null or empty";
-            LogManager.getLogger().error(msg);
-            throw new ParseException(msg);
-        } else {
-            return serverAddress.trim();
-        }
-    }
-
-    /**
-     * @param playerName throw ParseException if null or empty
-     * @return valid playerName
-     */
-    public static String validatePlayerName(String playerName) throws ParseException {
-        if (playerName == null) {
-            String msg = "playerName must not be null";
-            LogManager.getLogger().error(msg);
-            throw new ParseException(msg);
-        } else if (playerName.isBlank()) {
-            String msg = "playerName must not be empty string";
-            LogManager.getLogger().error(msg);
-            throw new ParseException(msg);
-        } else {
-            return playerName.trim();
-        }
-    }
-
-    /**
-     * @param password
-     * @return valid password or null if no password or password is blank string
-     */
-    public static @Nullable String validatePassword(@Nullable String password) {
-        return StringUtility.isNullOrBlank(password) ? null : password.trim();
-    }
 
     /**
      * Checks a String against the server password
@@ -287,21 +274,7 @@ public class Server implements Runnable {
         return StringUtility.isNullOrBlank(this.password) || this.password.equals(password);
     }
 
-    /**
-     * @param port if 0 or less, will return default, if illegal number, throws ParseException
-     * @return valid port number
-     */
-    public static int validatePort(int port) throws ParseException {
-        if (port <= 0) {
-            return MMConstants.DEFAULT_PORT;
-        } else if ((port < MMConstants.MIN_PORT) || (port > MMConstants.MAX_PORT)) {
-            String msg = String.format("Port number %d outside allowed range %d-%d", port, MMConstants.MIN_PORT, MMConstants.MAX_PORT);
-            LogManager.getLogger().error(msg);
-            throw new ParseException(msg);
-        } else {
-            return port;
-        }
-    }
+    
 
     public Server(@Nullable String password, int port, IGameManager gameManager) throws IOException {
         this(password, port, gameManager, false, "", null, false);

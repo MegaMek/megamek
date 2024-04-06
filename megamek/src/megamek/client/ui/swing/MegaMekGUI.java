@@ -16,6 +16,57 @@
  */
 package megamek.client.ui.swing;
 
+import static megamek.common.Compute.*;
+
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.FontMetrics;
+import java.awt.Frame;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Image;
+import java.awt.Insets;
+import java.awt.KeyboardFocusManager;
+import java.awt.MediaTracker;
+import java.awt.SystemColor;
+import java.awt.Window;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.image.BaseMultiResolutionImage;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.Properties;
+import java.util.Vector;
+import java.util.zip.GZIPInputStream;
+
+import javax.swing.JComponent;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
+import javax.swing.ToolTipManager;
+import javax.swing.UIManager;
+import javax.swing.filechooser.FileFilter;
+import javax.xml.parsers.DocumentBuilder;
+
+import org.apache.logging.log4j.LogManager;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
 import megamek.MMConstants;
 import megamek.MegaMek;
 import megamek.Version;
@@ -41,7 +92,14 @@ import megamek.client.ui.swing.widget.SkinSpecification.UIComponents;
 import megamek.client.ui.swing.widget.SkinXMLHandler;
 import megamek.client.ui.swing.widget.SkinnedJPanel;
 import megamek.codeUtilities.StringUtility;
-import megamek.common.*;
+import megamek.common.Compute;
+import megamek.common.Configuration;
+import megamek.common.Game;
+import megamek.common.KeyBindParser;
+import megamek.common.MechFileParser;
+import megamek.common.MechSummaryCache;
+import megamek.common.Player;
+import megamek.common.WeaponOrderHandler;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.GamePhase;
 import megamek.common.options.IBasicOption;
@@ -49,36 +107,14 @@ import megamek.common.options.IOption;
 import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.preference.PreferenceManager;
+import megamek.common.scenario.ScenarioLoader;
 import megamek.common.util.EmailService;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.server.GameManager;
-import megamek.common.scenario.ScenarioLoader;
 import megamek.server.Server;
+import megamek.services.Validation;
 import megamek.utilities.xml.MMXMLUtility;
-import org.apache.logging.log4j.LogManager;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
-import javax.swing.*;
-import javax.swing.filechooser.FileFilter;
-import javax.xml.parsers.DocumentBuilder;
-import java.awt.*;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.awt.image.BaseMultiResolutionImage;
-import java.awt.image.BufferedImage;
-import java.io.*;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.List;
-import java.util.*;
-import java.util.zip.GZIPInputStream;
-
-import static megamek.common.Compute.d6;
 
 public class MegaMekGUI implements IPreferenceChangeListener {
     private static final String FILENAME_MEGAMEK_SPLASH = "../misc/megamek_splash_spooky_hd.png";
@@ -388,8 +424,8 @@ public class MegaMekGUI implements IPreferenceChangeListener {
             @Nullable String metaServer, @Nullable String mailPropertiesFileName,
             @Nullable File saveGameFile) {
         try {
-            serverPassword = Server.validatePassword(serverPassword);
-            port = Server.validatePort(port);
+            serverPassword = Validation.validatePassword(serverPassword);
+            port = Validation.validatePort(port);
         } catch (Exception ex) {
             LogManager.getLogger().error("Failed to start Server", ex);
             frame.setVisible(true);
@@ -456,9 +492,9 @@ public class MegaMekGUI implements IPreferenceChangeListener {
 
     public void startClient(String playerName, String serverAddress, int port) {
         try {
-            playerName = Server.validatePlayerName(playerName);
-            serverAddress = Server.validateServerAddress(serverAddress);
-            port = Server.validatePort(port);
+            playerName = Validation.validatePlayerName(playerName);
+            serverAddress = Validation.validateServerAddress(serverAddress);
+            port = Validation.validatePort(port);
         } catch (Exception ex) {
             LogManager.getLogger().error("Failed to start client", ex);
             JOptionPane.showMessageDialog(frame,

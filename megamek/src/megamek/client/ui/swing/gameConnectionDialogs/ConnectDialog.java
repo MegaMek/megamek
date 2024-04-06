@@ -23,11 +23,16 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 
-import javax.swing.*;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.UIUtil;
-import megamek.server.Server;
+import megamek.services.Validation;
 
 /** The Connect to game (as Bot or Player) dialog */
 public class ConnectDialog extends AbstractGameConnectionDialog {
@@ -87,7 +92,7 @@ public class ConnectDialog extends AbstractGameConnectionDialog {
     @Override
     public boolean dataValidation(String errorTitleKey) {
         try {
-            setServerAddress(Server.validateServerAddress(getServerAddress()));
+            setServerAddress(Validation.validateServerAddress(getServerAddress()));
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(getOwner(), Messages.getString("MegaMek.ServerAddressError"),
                     Messages.getString(errorTitleKey), JOptionPane.ERROR_MESSAGE);

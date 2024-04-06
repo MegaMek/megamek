@@ -14,17 +14,40 @@
  */
 package megamek.client.ui;
 
-import megamek.client.Client;
-import megamek.common.*;
-import megamek.common.MovePath.MoveStepType;
-import megamek.common.annotations.Nullable;
-import megamek.common.options.OptionsConstants;
-import megamek.server.GameManager;
-import megamek.server.Server;
-
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
+
+import megamek.client.Client;
+import megamek.common.Building;
+import megamek.common.Compute;
+import megamek.common.Coords;
+import megamek.common.EjectedCrew;
+import megamek.common.Entity;
+import megamek.common.EntityMovementMode;
+import megamek.common.EntityMovementType;
+import megamek.common.EscapePods;
+import megamek.common.Game;
+import megamek.common.Hex;
+import megamek.common.IAero;
+import megamek.common.Infantry;
+import megamek.common.MPCalculationSetting;
+import megamek.common.Mech;
+import megamek.common.MovePath;
+import megamek.common.MovePath.MoveStepType;
+import megamek.common.MoveStep;
+import megamek.common.PilotingRollData;
+import megamek.common.Protomech;
+import megamek.common.QuadVee;
+import megamek.common.Tank;
+import megamek.common.TargetRoll;
+import megamek.common.Targetable;
+import megamek.common.TeleMissile;
+import megamek.common.Terrains;
+import megamek.common.VTOL;
+import megamek.common.annotations.Nullable;
+import megamek.common.options.OptionsConstants;
+import megamek.server.GameManager;
 
 public class SharedUtility {
 

@@ -24,11 +24,17 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.util.Vector;
 
-import javax.swing.*;
+import javax.swing.JCheckBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.UIUtil;
-import megamek.server.Server;
+import megamek.services.Validation;
 
 /**
  * The host game dialog shown when hosting a new game and when loading a game
@@ -150,7 +156,7 @@ public class HostDialog extends AbstractGameConnectionDialog {
     @Override
     public boolean dataValidation(String errorTitleKey) {
         try {
-            setServerPass(Server.validatePassword(getServerPass()));
+            setServerPass(Validation.validatePassword(getServerPass()));
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(getOwner(), Messages.getString("MegaMek.ServerPasswordError"),
                     Messages.getString(errorTitleKey), JOptionPane.ERROR_MESSAGE);

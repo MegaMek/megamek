@@ -19,7 +19,6 @@
 package megamek.client.ui.swing.boardview;
 
 import megamek.client.ui.swing.GUIPreferences;
-import megamek.client.ui.swing.tileset.EntityImage;
 import megamek.client.ui.swing.util.ImageCache;
 import megamek.common.Board;
 import megamek.common.Coords;

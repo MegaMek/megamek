@@ -57,6 +57,7 @@ MEGAMEK VERSION HISTORY:
 + PR #5311: Unblock build by removing extraneous Java logging import in UnitTable.java
 + PR #5289: Improved MissionRole Switch Cases & Role List
 + Fix #5291: Fix for MML #135  Industrial tripod cockpit 
++ Fix #3306: Vehicle Lance Movement prevents full deployment of turrets
 
 
 0.49.18 (2024-02-17 1800 UTC)

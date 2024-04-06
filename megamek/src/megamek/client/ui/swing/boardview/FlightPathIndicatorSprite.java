@@ -56,64 +56,63 @@ public class FlightPathIndicatorSprite extends HexSprite {
     private MoveStep step = null;
     private boolean isLast = false;
 
-    //U+26AA  MEDIUM WHITE CIRCLE
-    //U+26AB  MEDIUM BLACK CIRCLE
-    //U+2690  WHITE FLAG
-    //U+2691  BLACK FLAG
-    //U+26E2  ASTRONOMICAL SYMBOL FOR URANUS
-    //U+26D6  BLACK TWO-WAY LEFT WAY TRAFFIC
-    //U+26D7  WHITE TWO-WAY LEFT WAY TRAFFIC
+    private static final String EMPTY_CIRCLE = "\u26AA";
+    private static final String SOLID_CIRCLE = "\u26AB";
+    private static final String EMPTY_FLAG = "\u2690";
+    private static final String SOLID_FLAG = "\u2691";
+    //private static final String EMPTY_TWO_WAY = "\u26D7";
+    private static final String SOLID_TWO_WAY = "\u26D6";
 
-    //Draw a special character 'circle'.
-    private final StringDrawer mustFlyIcon = new StringDrawer("\u26AA")
+    // Setup 'StringDrawers' to write special characters as icons.
+    private final StringDrawer mustFlyIcon = new StringDrawer(EMPTY_CIRCLE)
             .at(HEX_CENTER_X, HEX_CENTER_Y)
             .color(COLOR_RED)
             .fontSize(TEXT_SIZE)
             .center().outline(COLOR_OUTLINE, 1.5f);
 
-    private final StringDrawer greenFlagIcon = new StringDrawer("\u2691")
+    private final StringDrawer greenFlagIcon = new StringDrawer(SOLID_FLAG)
             .at(HEX_CENTER_X, HEX_CENTER_Y)
             .color(COLOR_GREEN)
             .fontSize(TEXT_SIZE)
             .center().outline(COLOR_OUTLINE, 1.5f);
 
-    private final StringDrawer redFlagIcon = new StringDrawer("\u2690")
+    private final StringDrawer redFlagIcon = new StringDrawer(EMPTY_FLAG)
             .at(HEX_CENTER_X, HEX_CENTER_Y)
             .color(COLOR_RED)
             .fontSize(TEXT_SIZE)
             .center().outline(COLOR_OUTLINE, 1.5f);
 
-    private final StringDrawer yellowFlagIcon = new StringDrawer("\u2691")
+    private final StringDrawer yellowFlagIcon = new StringDrawer(SOLID_FLAG)
             .at(HEX_CENTER_X, HEX_CENTER_Y)
             .color(COLOR_YELLOW)
             .fontSize(TEXT_SIZE)
             .center().outline(COLOR_OUTLINE, 1.5f);
 
-    private final StringDrawer yellowEmptyFlagIcon = new StringDrawer("\u2690")
+    private final StringDrawer yellowEmptyFlagIcon = new StringDrawer(EMPTY_FLAG)
             .at(HEX_CENTER_X, HEX_CENTER_Y)
             .color(COLOR_YELLOW)
             .fontSize(TEXT_SIZE)
             .center().outline(COLOR_OUTLINE, 1.5f);
 
-    private final StringDrawer flyOffIcon = new StringDrawer("\u26D6")
+    private final StringDrawer flyOffIcon = new StringDrawer(SOLID_TWO_WAY)
             .at(HEX_CENTER_X, HEX_CENTER_Y)
             .color(COLOR_YELLOW)
             .fontSize(TEXT_SIZE)
             .center().outline(COLOR_OUTLINE, 2.0f);
 
-    private final StringDrawer freeTurnIcon = new StringDrawer("\u26AB")
+    private final StringDrawer freeTurnIcon = new StringDrawer(SOLID_CIRCLE)
             .at(HEX_CENTER_X, HEX_CENTER_Y)
             .color(COLOR_GREEN)
             .fontSize(TEXT_SIZE)
             .center().outline(COLOR_OUTLINE, 1.5f);
 
-    private final StringDrawer costTurnIcon = new StringDrawer("\u26AB")
+    private final StringDrawer costTurnIcon = new StringDrawer(SOLID_CIRCLE)
             .at(HEX_CENTER_X, HEX_CENTER_Y)
             .color(COLOR_YELLOW)
             .fontSize(TEXT_SIZE)
             .center().outline(COLOR_OUTLINE, 1.5f);
 
-    private final StringDrawer noThrustIcon = new StringDrawer("\u26AA")
+    private final StringDrawer noThrustIcon = new StringDrawer(EMPTY_CIRCLE)
             .at(HEX_CENTER_X, HEX_CENTER_Y)
             .color(COLOR_YELLOW)
             .fontSize(TEXT_SIZE)

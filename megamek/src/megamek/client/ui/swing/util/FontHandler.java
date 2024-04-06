@@ -79,6 +79,18 @@ public final class FontHandler {
         }
     }
 
+    /**
+     * @return A standardized symbols font ("Material Symbols"). This font has a load of useful
+     * icons. They are centered in a way that makes them less aesthetic to use within normal text, so
+     * their primary use is for standalone symbols like marking hexes. Look for the symbol unicodes on
+     * the linked website.
+     *
+     * @see <a href="https://fonts.google.com/icons">(Google) Material Symbols</a>
+     */
+    public static Font symbolFont() {
+        return new Font("Material Symbols Rounded", Font.PLAIN, 12);
+    }
+
     private void initializeFonts() {
         LogManager.getLogger().info("Loading fonts from " + MMConstants.FONT_DIRECTORY);
         parseFontsInDirectory(new File(MMConstants.FONT_DIRECTORY));
@@ -119,9 +131,12 @@ public final class FontHandler {
     public static void parseFontsInDirectory(final File directory) {
         for (String fontFile : CommonSettingsDialog.filteredFilesWithSubDirs(directory, MMConstants.TRUETYPE_FONT)) {
             try (InputStream fis = new FileInputStream(fontFile)) {
-                GraphicsEnvironment.getLocalGraphicsEnvironment().registerFont(Font.createFont(Font.TRUETYPE_FONT, fis));
+                Font font = Font.createFont(Font.TRUETYPE_FONT, fis);
+                if (!GraphicsEnvironment.getLocalGraphicsEnvironment().registerFont(font)) {
+                    LogManager.getLogger().error("Failed to register font " + fontFile);
+                }
             } catch (Exception ex) {
-                LogManager.getLogger().error("Failed to parse font", ex);
+                LogManager.getLogger().error("Failed to read font ", ex);
             }
         }
     }

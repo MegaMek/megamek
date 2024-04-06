@@ -696,14 +696,13 @@ public class Report implements Serializable {
     }
 
     public static void setupStylesheet(StyleSheet styleSheet) {
-        Font font = UIManager.getFont("Label.font");
+        GUIPreferences GUIP = GUIPreferences.getInstance();
+        Font font = new Font(GUIP.getReportFontType(), Font.PLAIN, UIUtil.FONT_SCALE1);
         int size = UIUtil.scaleForGUI(UIUtil.FONT_SCALE1);
-
-        GUIPreferences guip = GUIPreferences.getInstance();
         styleSheet.addRule(
                 "pre { font-family: " + font.getFamily() + "; font-size: " + size + "pt; font-style:normal;}");
-        styleSheet.addRule("a { color: " + hexColor(guip.getReportLinkColor()) + " }");
-        styleSheet.addRule("span.warning { color: " + hexColor(guip.getWarningColor()) + " }");
+        styleSheet.addRule("a { color: " + hexColor(GUIP.getReportLinkColor()) + " }");
+        styleSheet.addRule("span.warning { color: " + hexColor(GUIP.getWarningColor()) + " }");
     }
 
     public String span(String name, String text) {

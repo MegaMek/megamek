@@ -258,6 +258,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String MINI_REPORT_AUTO_DISPLAY_NONREPORT_PHASE = "MiniReportAutoDisplayNonReportPhase";
     public static final String MINI_REPORT_LOCATION = "MiniReportLocation";
     public static final String MINI_REPORT_COLOR_LINK = "MiniReportColorLink";
+    public static final String MINI_REPORT_FONT_TYPE = "MiniReportFontType";
     public static final String MINI_ROUND_REPORT_SPRITES = "MiniRoundReportSprites";
 
     public static final String PLAYER_LIST_POS_X = "PlayerListPosX";
@@ -663,6 +664,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(MINI_REPORT_AUTO_DISPLAY_NONREPORT_PHASE, 0);
         store.setDefault(MINI_REPORT_LOCATION, 0);
         setDefault(MINI_REPORT_COLOR_LINK, DEFAULT_REPORT_LINK_COLOR);
+        setDefault(MINI_REPORT_FONT_TYPE, "Segoe UI");
         store.setDefault(MINI_ROUND_REPORT_SPRITES, true);
 
         store.setDefault(PLAYER_LIST_ENABLED, true);
@@ -2791,6 +2793,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
         return getColor(MINI_REPORT_COLOR_LINK);
     }
 
+    public String getReportFontType() {
+        return getString(MINI_REPORT_FONT_TYPE);
+    }
+
     public int getUnitToolTipSeenByResolution() {
         return getInt(UNIT_TOOLTIP_SEENBYRESOLUTION);
     }
@@ -2898,6 +2904,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setReportLinkColor(Color color) {
         store.setValue(MINI_REPORT_COLOR_LINK, getColorString(color));
+    }
+
+    public void setReportFontType(String font) {
+        store.setValue(MINI_REPORT_FONT_TYPE, font);
     }
 
     public Color getPlanetaryConditionsColorTitle() {

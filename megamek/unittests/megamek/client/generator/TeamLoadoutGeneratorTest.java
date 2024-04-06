@@ -37,9 +37,14 @@ class TeamLoadoutGeneratorTest {
     static void setUpAll() {
         // Need equipment initialized
         EquipmentType.initializeTypes();
+    }
 
+    @BeforeEach
+    void setUp() {
         when(cg.getClient()).thenReturn(client);
         when(cg.getClient().getGame()).thenReturn(game);
+        game.setOptions(mockGameOptions);
+
         when(mockGameOptions.booleanOption(eq(OptionsConstants.ALLOWED_NO_CLAN_PHYSICAL))).thenReturn(false);
         when(mockGameOptions.stringOption(OptionsConstants.ALLOWED_TECHLEVEL)).thenReturn("Experimental");
         when(mockGameOptions.booleanOption(OptionsConstants.ALLOWED_ERA_BASED)).thenReturn(true);
@@ -50,14 +55,9 @@ class TeamLoadoutGeneratorTest {
         when(mockFalseBoolOpt.booleanValue()).thenReturn(false);
         when(mockGameOptions.getOption(anyString())).thenReturn(mockTrueBoolOpt);
         when(mockGameOptions.intOption(OptionsConstants.ALLOWED_YEAR)).thenReturn(3151);
-        game.setOptions(mockGameOptions);
 
         team.addPlayer(player);
         game.addPlayer(0, player);
-    }
-
-    @BeforeEach
-    void setUp() {
     }
 
     @AfterEach
@@ -303,17 +303,59 @@ class TeamLoadoutGeneratorTest {
 
     }
 
+    // Section: legalityCheck tests
+    @Test
+    void testAmmoTypeIllegalByTechLevel() {
+        TeamLoadoutGenerator tlg = new TeamLoadoutGenerator(cg);
+        AmmoType aType = (AmmoType) EquipmentType.get("IS Arrow IV Ammo");
+        AmmoType mType = AmmoType.getMunitionsFor(aType.getAmmoType()).stream().filter(m -> m.getSubMunitionName().contains("ADA")).findFirst().orElse(null);
+        // Set game tech level to Standard and update generator
+        when(mockGameOptions.stringOption(OptionsConstants.ALLOWED_TECHLEVEL)).thenReturn("Standard");
+        tlg.updateOptionValues();
+
+        // Should not be available to anyone
+        assertFalse(tlg.checkLegality(mType, "CC", "IS", false));
+        assertFalse(tlg.checkLegality(mType, "FS", "IS", false));
+        assertFalse(tlg.checkLegality(mType, "IS", "IS", false));
+        assertFalse(tlg.checkLegality(mType, "CL", "CL", false));
+        assertFalse(tlg.checkLegality(mType, "CL", "CL", true));
+
+        // Should be available to everyone, although only as Mixed Tech for Clans
+        when(mockGameOptions.stringOption(OptionsConstants.ALLOWED_TECHLEVEL)).thenReturn("Advanced");
+        tlg.updateOptionValues();
+        assertTrue(tlg.checkLegality(mType, "CC", "IS", false));
+        assertTrue(tlg.checkLegality(mType, "FS", "IS", false));
+        assertTrue(tlg.checkLegality(mType, "IS", "IS", false));
+        assertTrue(tlg.checkLegality(mType, "CL", "CL", true));
+        assertFalse(tlg.checkLegality(mType, "CL", "CL", false));
+    }
+
     @Test
     void testAmmoTypeIllegalBeforeCreation() {
         TeamLoadoutGenerator tlg = new TeamLoadoutGenerator(cg);
         AmmoType aType = (AmmoType) EquipmentType.get("IS Arrow IV Ammo");
         AmmoType mType = AmmoType.getMunitionsFor(aType.getAmmoType()).stream().filter(m -> m.getSubMunitionName().contains("ADA")).findFirst().orElse(null);
-        // Should be available by default in 3151
+        // Should be available by default in 3151, including to Clans (using MixTech)
+        assertTrue(tlg.checkLegality(mType, "CC", "IS", false));
+        assertTrue(tlg.checkLegality(mType, "FS", "IS", false));
         assertTrue(tlg.checkLegality(mType, "IS", "IS", false));
+        assertTrue(tlg.checkLegality(mType, "CL", "CL", true));
 
         // Set year back to 3025
         when(mockGameOptions.intOption(OptionsConstants.ALLOWED_YEAR)).thenReturn(3025);
         tlg.updateOptionValues();
+        assertFalse(tlg.checkLegality(mType, "CC", "IS", false));
+        assertFalse(tlg.checkLegality(mType, "FS", "IS", false));
         assertFalse(tlg.checkLegality(mType, "IS", "IS", false));
+        assertFalse(tlg.checkLegality(mType, "CL", "CL", true));
+
+        // Move up to 3070.  Because of game settings and lack of "Common" year, ADA becomes available
+        // everywhere (at least in the IS) immediately after its inception.
+        when(mockGameOptions.intOption(OptionsConstants.ALLOWED_YEAR)).thenReturn(3070);
+        tlg.updateOptionValues();
+        assertTrue(tlg.checkLegality(mType, "CC", "IS", false));
+        assertTrue(tlg.checkLegality(mType, "FS", "IS", false));
+        assertTrue(tlg.checkLegality(mType, "IS", "IS", false));
+        assertFalse(tlg.checkLegality(mType, "CL", "CL", false));
     }
 }

@@ -112,12 +112,15 @@ public class TeamLoadoutGenerator {
         boolean clan = techBase.equals("CL");
 
         if (eraBasedTechLevel) {
+            // Check if tech is legal to use in this game based on year, tech level, etc.
             legal = aType.isLegal(allowedYear, legalLevel, clan,
                     mixedTech, showExtinct);
+            // Check if tech is widely available, or if the specific faction has access to it
+            legal &= aType.isAvailableIn(allowedYear, showExtinct) || aType.isAvailableIn(allowedYear, clan, aType.getCodeFromIOAbbr(faction));
         } else {
+            // Basic year check only
             legal = aType.getStaticTechLevel().ordinal() <= legalLevel.ordinal();
         }
-        // TODO: further filter by availability to Team's faction
 
         return legal;
     }

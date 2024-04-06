@@ -19,13 +19,13 @@
  */
 package megamek.common;
 
-import static java.util.stream.Collectors.*;
+import megamek.common.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import megamek.common.annotations.Nullable;
+import static java.util.stream.Collectors.toList;
 
 /**
  * The Team class holds information about a team. It holds the initiative for the team, and contains a
@@ -82,76 +82,24 @@ public final class Team extends TurnOrdered {
         return getNonObserverSize() == 0;
     }
 
-/** 
-     * @return The next player on this team, starting from Player p.
-     */
+    /** @return The next player on this team, starting from Player p. */
     public Player getNextValidPlayer(Player p, Game game) {
-        // Find the next valid player starting from the given player 'p'
-        Player nextPlayer = findNextValidPlayerFrom(p, game);
-        // If a valid player is found, return it. Otherwise, return the current player 'p'.
-        if (nextPlayer != null) {
-            return nextPlayer;
-        } else {
-            // This should not happen, but if we don't find any valid player, return ourselves again.
-            return p;
-        }
-    }
-
-    /**
-     * Find the next valid player starting from the given player 'p'.
-     * @param p The starting player.
-     * @param game The current game.
-     * @return The next valid player or null if none is found.
-     */
-    private Player findNextValidPlayerFrom(Player p, Game game) {
-        // Get the index of the starting player 'p' in the players list.
-        int startingIndex = players.indexOf(p);
-        // Search for the next valid player starting from the current player's index.
-        Player nextPlayer = searchNextValidPlayer(startingIndex, game);
-        // If no valid player is found, search from the beginning of the players list.
-        if (nextPlayer == null) {
-            nextPlayer = searchNextValidPlayerFromBeginning(p, game);
-        }
-        // Return the next valid player or null if none is found.
-        return nextPlayer;
-    }
-
-    /**
-     * Search for the next valid player starting from the specified index.
-     * @param startingIndex The index to start the search from.
-     * @param game The current game.
-     * @return The next valid player or null if none is found.
-     */
-    private Player searchNextValidPlayer(int startingIndex, Game game) {
-        // Iterate over the players list starting from the specified index.
-        for (int i = startingIndex + 1; i < players.size(); ++i) {
-            // Check if the player at the current index has a turn in the game.
+        // start from the next player
+        for (int i = players.indexOf(p) + 1; i < players.size(); ++i) {
             if (game.getTurnForPlayer(players.get(i).getId()) != null) {
-                // If a turn is found, return the player.
                 return players.get(i);
             }
         }
-        // Return null if no valid player is found.
-        return null;
-    }
-
-    /**
-     * Search for the next valid player starting from the beginning of the players list.
-     * @param p The current player.
-     * @param game The current game.
-     * @return The next valid player or null if none is found.
-     */
-    private Player searchNextValidPlayerFromBeginning(Player p, Game game) {
-        // Iterate over the players list starting from the beginning.
+        // if we haven't found one yet, start again from the beginning
+        // worst case we reach exactly our current player again.
         for (int i = 0; i < (players.indexOf(p) + 1); ++i) {
-            // Check if the player at the current index has a turn in the game.
             if (game.getTurnForPlayer(players.get(i).getId()) != null) {
-                // If a turn is found, return the player.
                 return players.get(i);
             }
         }
-        // Return null if no valid player is found.
-        return null;
+        // this should not happen, but if we don't find anything return ourselves again.
+        return p;
+
     }
 
     @Override

@@ -55,6 +55,8 @@ MEGAMEK VERSION HISTORY:
 + Fix #5205: Handle ConcurrentModification and NPE from opening dialogs
 + PR #5306: MM portion of fix for MHQ #3803: WOB.pm/.PM mismatch and missing parent faction check 
 + PR #5311: Unblock build by removing extraneous Java logging import in UnitTable.java
++ PR #5289: Improved MissionRole Switch Cases & Role List
++ Fix #5291: Fix for MML #135  Industrial tripod cockpit 
 
 
 0.49.18 (2024-02-17 1800 UTC)

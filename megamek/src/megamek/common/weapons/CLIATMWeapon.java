@@ -29,7 +29,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.missiles.MissileWeapon;
-import megamek.server.GameManager;
+import megamek.server.gameManager.*;
 
 /**
  * @author Sebastian Brocks, Modified by Greg

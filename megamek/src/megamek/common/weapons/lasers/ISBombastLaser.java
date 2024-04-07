@@ -21,7 +21,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.BombastLaserWeaponHandler;
-import megamek.server.GameManager;
+import megamek.server.gameManager.*;
 
 /**
  * @author Jason Tighe

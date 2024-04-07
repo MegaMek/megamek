@@ -11,7 +11,7 @@
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
  */
-package megamek.server;
+package megamek.server.gameManager;
 
 import megamek.MMConstants;
 import megamek.MegaMek;
@@ -47,6 +47,11 @@ import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.server.commands.*;
 import megamek.server.victory.VictoryResult;
 import org.apache.logging.log4j.LogManager;
+import megamek.server.IGameManager;
+import megamek.server.Server;
+import megamek.server.Server.ReceivedPacket;
+import megamek.server.*;
+import megamek.*;
 
 import java.awt.*;
 import java.io.*;
@@ -34880,5 +34885,17 @@ public class GameManager implements IGameManager {
     public Set<Coords> getHexUpdateSet() {
         return hexUpdateSet;
 
+    }
+
+    @Override
+    public void handleCfrPacket(ReceivedPacket rp) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'handleCfrPacket'");
+    }
+
+    @Override
+    public List<ServerCommand> getCommandList(Server server) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getCommandList'");
     }
 }

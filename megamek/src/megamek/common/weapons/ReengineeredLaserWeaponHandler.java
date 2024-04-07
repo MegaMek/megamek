@@ -18,7 +18,7 @@ import megamek.common.Game;
 import megamek.common.HitData;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.server.GameManager;
+import megamek.server.gameManager.GameManager;
 
 public class ReengineeredLaserWeaponHandler extends EnergyWeaponHandler {
     private static final long serialVersionUID = -7390162086880372388L;

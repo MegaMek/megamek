@@ -25,7 +25,7 @@ import megamek.common.weapons.AmmoWeapon;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.VehicleFlamerCoolHandler;
 import megamek.common.weapons.VehicleFlamerHandler;
-import megamek.server.GameManager;
+import megamek.server.gameManager.*;
 
 /**
  * @author Andrew Hunter

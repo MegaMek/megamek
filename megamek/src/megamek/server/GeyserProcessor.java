@@ -18,6 +18,7 @@ import java.util.Iterator;
 import java.util.Vector;
 
 import megamek.common.*;
+import megamek.server.*;
 
 /**
  * This class allows for dynamic Geysers to be added to maps which will go off

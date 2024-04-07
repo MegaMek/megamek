@@ -25,7 +25,7 @@ import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.ATMHandler;
 import megamek.common.weapons.AttackHandler;
-import megamek.server.GameManager;
+import megamek.server.gameManager.*;
 
 /**
  * @author Sebastian Brocks

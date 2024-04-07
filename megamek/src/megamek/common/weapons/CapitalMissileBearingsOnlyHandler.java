@@ -19,7 +19,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.bayweapons.TeleOperatedMissileBayWeapon;
-import megamek.server.GameManager;
+import megamek.server.gameManager.*;
 import org.apache.logging.log4j.LogManager;
 
 import java.util.ArrayList;

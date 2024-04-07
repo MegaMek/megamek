@@ -22,7 +22,7 @@ import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.server.GameManager;
+import megamek.server.gameManager.GameManager;
 
 /**
  * @author Jay Lawson

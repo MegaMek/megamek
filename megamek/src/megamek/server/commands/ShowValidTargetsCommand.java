@@ -6,7 +6,7 @@ import megamek.common.Entity;
 import megamek.common.LosEffects;
 import megamek.common.TargetRoll;
 import megamek.common.ToHitData;
-import megamek.server.GameManager;
+import megamek.server.gameManager.GameManager;
 import megamek.server.Server;
 
 public class ShowValidTargetsCommand extends ServerCommand {

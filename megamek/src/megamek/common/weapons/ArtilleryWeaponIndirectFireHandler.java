@@ -20,7 +20,7 @@ import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.AreaEffectHelper.DamageFalloff;
 import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
-import megamek.server.GameManager;
+import megamek.server.gameManager.GameManager;
 import org.apache.logging.log4j.LogManager;
 
 import java.util.Iterator;

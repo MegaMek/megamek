@@ -5,7 +5,7 @@ import megamek.common.LosEffects;
 import megamek.common.LosEffects.AttackInfo;
 import megamek.common.TargetRoll;
 import megamek.common.ToHitData;
-import megamek.server.GameManager;
+import megamek.server.gameManager.GameManager;
 import megamek.server.Server;
 
 /**

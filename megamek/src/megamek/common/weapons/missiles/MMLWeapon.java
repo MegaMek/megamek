@@ -37,7 +37,7 @@ import megamek.common.weapons.SRMHandler;
 import megamek.common.weapons.SRMInfernoHandler;
 import megamek.common.weapons.SRMSmokeWarheadHandler;
 import megamek.common.weapons.SRMTandemChargeHandler;
-import megamek.server.GameManager;
+import megamek.server.gameManager.*;
 
 /**
  * @author Sebastian Brocks

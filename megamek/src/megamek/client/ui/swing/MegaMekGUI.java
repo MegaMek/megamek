@@ -111,7 +111,7 @@ import megamek.common.scenario.ScenarioLoader;
 import megamek.common.util.EmailService;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
-import megamek.server.GameManager;
+import megamek.server.gameManager.GameManager;
 import megamek.server.Server;
 import megamek.services.Validation;
 import megamek.utilities.xml.MMXMLUtility;
@@ -458,7 +458,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         // start server
         try {
             gameManager = new GameManager();
-            server = new Server(serverPassword, port, gameManager, isRegister, metaServer, mailer, false);
+            server = new Server(serverPassword, port, gameManager, isRegister, metaServer, mailer);
         } catch (IOException ex) {
             LogManager.getLogger().error("Could not create server socket on port " + port, ex);
             JOptionPane.showMessageDialog(frame,

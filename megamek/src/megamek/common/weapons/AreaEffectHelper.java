@@ -16,7 +16,7 @@ package megamek.common.weapons;
 import megamek.common.*;
 import megamek.common.planetaryconditions.Atmosphere;
 import megamek.common.planetaryconditions.PlanetaryConditions;
-import megamek.server.GameManager;
+import megamek.server.gameManager.*;
 import org.apache.logging.log4j.LogManager;
 
 import java.util.*;

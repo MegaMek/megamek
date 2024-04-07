@@ -23,7 +23,7 @@ import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.StreakLRMHandler;
-import megamek.server.GameManager;
+import megamek.server.gameManager.*;
 
 /**
  * @author Sebastian Brocks

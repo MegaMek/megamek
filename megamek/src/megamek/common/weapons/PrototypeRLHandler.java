@@ -16,7 +16,7 @@ package megamek.common.weapons;
 import megamek.common.Game;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.server.GameManager;
+import megamek.server.gameManager.GameManager;
 
 public class PrototypeRLHandler extends RLHandler {
     private static final long serialVersionUID = 7072803119488613781L;

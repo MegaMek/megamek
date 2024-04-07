@@ -15,6 +15,7 @@
 package megamek.server;
 
 import java.util.Vector;
+import megamek.server.gameManager.GameManager;
 
 import megamek.common.Report;
 

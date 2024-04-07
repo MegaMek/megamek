@@ -26,7 +26,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.PrototypeRLHandler;
 import megamek.common.weapons.missiles.MissileWeapon;
-import megamek.server.GameManager;
+import megamek.server.gameManager.GameManager;
 import megamek.server.Server;
 
 /**

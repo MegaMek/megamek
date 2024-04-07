@@ -19,7 +19,7 @@ import megamek.common.weapons.CapitalMissileBayHandler;
 import megamek.common.weapons.CapitalMissileBearingsOnlyHandler;
 import megamek.common.weapons.TeleMissileHandler;
 import megamek.common.weapons.Weapon;
-import megamek.server.GameManager;
+import megamek.server.gameManager.*;
 
 /**
  * @author Jay Lawson

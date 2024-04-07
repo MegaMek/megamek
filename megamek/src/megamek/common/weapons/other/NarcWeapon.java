@@ -26,7 +26,7 @@ import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.NarcExplosiveHandler;
 import megamek.common.weapons.NarcHandler;
 import megamek.common.weapons.missiles.MissileWeapon;
-import megamek.server.GameManager;
+import megamek.server.gameManager.*;
 
 /**
  * @author Sebastian Brocks

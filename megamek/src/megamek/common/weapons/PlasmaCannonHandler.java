@@ -18,7 +18,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.AimingMode;
 import megamek.common.equipment.ArmorType;
 import megamek.common.options.OptionsConstants;
-import megamek.server.GameManager;
+import megamek.server.gameManager.*;
 
 import java.util.Vector;
 

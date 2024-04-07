@@ -20,7 +20,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AmmoWeapon;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.NailRivetGunHandler;
-import megamek.server.GameManager;
+import megamek.server.gameManager.GameManager;
 
 /**
  * @author Sebastian Brocks

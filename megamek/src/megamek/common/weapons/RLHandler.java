@@ -25,7 +25,7 @@ import megamek.common.Report;
 import megamek.common.Targetable;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.server.GameManager;
+import megamek.server.gameManager.GameManager;
 
 public class RLHandler extends MissileWeaponHandler {
 

@@ -10,6 +10,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -300,7 +301,37 @@ class TeamLoadoutGeneratorTest {
         for (Mounted bin: List.of(bin1, bin2, bin3, bin4, bin5, bin6, bin7)) {
             assertNotEquals("", ((AmmoType) bin.getType()).getSubMunitionName());
         }
+    }
 
+    @Test
+    void testReconfigureBotTeamNoEnemyInfo()  throws LocationFullException {
+        TeamLoadoutGenerator tlg = new TeamLoadoutGenerator(cg);
+        Mech mockMech = createMech("Hunchback", "HBK-4G", "Boomstick");
+        Mech mockMech2 = createMech("Hunchback", "HBK-4J", "The Shade");
+        Mech mockMech3 = createMech("Kintaro", "KTO-18", "Dragonpunch");
+        mockMech.setOwner(player);
+        mockMech2.setOwner(player);
+        mockMech3.setOwner(player);
+        game.setEntity(0, mockMech);
+        game.setEntity(1, mockMech2);
+        game.setEntity(2, mockMech3);
+
+
+        // Load ammo in 'mechs; locations are for fun
+        Mounted bin1 = mockMech.addEquipment(mockAC20AmmoType, Mech.LOC_CT);
+        Mounted bin2 = mockMech.addEquipment(mockAC20AmmoType, Mech.LOC_CT);
+        Mounted bin3 = mockMech2.addEquipment(mockLRM15AmmoType, Mech.LOC_LT);
+        Mounted bin4 = mockMech2.addEquipment(mockLRM15AmmoType, Mech.LOC_RT);
+        Mounted bin5 = mockMech3.addEquipment(mockSRM6AmmoType, Mech.LOC_LT);
+        Mounted bin6 = mockMech3.addEquipment(mockSRM6AmmoType, Mech.LOC_RT);
+        Mounted bin7 = mockMech3.addEquipment(mockSRM6AmmoType, Mech.LOC_CT);
+
+        // Just check that the bins are populated still
+        tlg.reconfigureTeam(team, "");
+
+        for (Mounted bin: List.of(bin1, bin2, bin3, bin4, bin5, bin6, bin7)) {
+            assertNotEquals("", ((AmmoType) bin.getType()).getSubMunitionName());
+        }
     }
 
     // Section: legalityCheck tests
@@ -357,5 +388,41 @@ class TeamLoadoutGeneratorTest {
         assertTrue(tlg.checkLegality(mType, "FS", "IS", false));
         assertTrue(tlg.checkLegality(mType, "IS", "IS", false));
         assertFalse(tlg.checkLegality(mType, "CL", "CL", false));
+    }
+
+    @Test
+    void testMunitionWeightCollectionTopN() {
+        MunitionWeightCollection mwc = new MunitionWeightCollection();
+        // Default weighting for all munition types; "Standard" should be first.
+        HashMap<String, List<String>> topN = mwc.getTopN(3);
+        assertTrue(topN.get("lrm").get(0).contains("Standard"));
+    }
+
+    @Test
+    void testAPMunitionWeightCollectionTopN() {
+        MunitionWeightCollection mwc = new MunitionWeightCollection();
+        // Assume we're up against reflective and heavy targets, not fliers
+        mwc.increaseAPMunitions();
+        mwc.decreaseFlakMunitions();
+
+        HashMap<String, List<String>> topN = mwc.getTopN(3);
+        assertEquals("Armor-Piercing=3.0", topN.get("ac").get(0));
+        assertEquals("Standard=2.0", topN.get("ac").get(1));
+        assertEquals("Caseless=1.0", topN.get("ac").get(2));
+
+        assertEquals("Tandem-Charge=3.0", topN.get("srm").get(0));
+        assertEquals("Standard=2.0", topN.get("srm").get(1));
+        assertEquals("Acid=1.0", topN.get("srm").get(2));
+    }
+
+    @Test
+    void testIncreaseAntiTSMWeightOnly() {
+        MunitionWeightCollection mwc = new MunitionWeightCollection();
+        ArrayList<String> tsmOnly = new ArrayList(List.of("Anti-TSM"));
+        mwc.increaseMunitions(tsmOnly);
+        mwc.increaseMunitions(tsmOnly);
+        mwc.increaseMunitions(tsmOnly);
+        assertEquals(15.0, mwc.getSrmWeights().get("Anti-TSM"));
+        assertEquals("Anti-TSM=15.0", mwc.getTopN(1).get("srm").get(0));
     }
 }

@@ -13,12 +13,13 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.File;
+import java.lang.reflect.Array;
 import java.util.*;
 
 import static java.util.Map.entry;
 
 /**
- * Notes: checkout
+ * Notes: check out
  * - RATGenerator.java
  * - ForceDescriptor.java
  * for era-based search examples
@@ -30,8 +31,12 @@ public class TeamLoadoutGenerator {
             "Armor-Piercing", "Tandem-Charge"
     ));
 
+    public static final ArrayList<String> FLAK_MUNITIONS = new ArrayList<>(List.of(
+            "ADA", "Cluster", "Flak", "Precision"
+    ));
+
     public static final ArrayList<String> ANTI_INF_MUNITIONS = new ArrayList<>(List.of(
-            "Inferno", "Fragmentation", "Flechette", "Fuel-Air", "Anti-personnel"
+            "Inferno", "Fragmentation", "Flechette", "Fuel-Air", "Anti-personnel", "Acid"
     ));
 
     public static final ArrayList<String> HEAT_MUNITIONS = new ArrayList<>(List.of(
@@ -50,6 +55,11 @@ public class TeamLoadoutGenerator {
 
     public static final ArrayList<String> GUIDED_MUNITIONS = new ArrayList<>(List.of(
             "Semi-Guided", "Narc-capable", "Homing", "Copperhead"
+    ));
+
+    public static final ArrayList<String> AMMO_REDUCING_MUNITIONS = new ArrayList<>(List.of(
+            "Acid", "Laser Inhibiting", "Follow The Leader", "Heat-Seeking", "Tandem-Charge",
+            "Thunder-Active", "Thunder-Augmented", "Thunder-Vibrabomb", "Thunder-Inferno"
     ));
 
     public static final ArrayList<String> TYPE_LIST = new ArrayList<String>(List.of(
@@ -163,7 +173,7 @@ public class TeamLoadoutGenerator {
      * @return
      */
     private static long checkForEnergyBoats(ArrayList<Entity> el) {
-        return el.stream().filter(e -> e.getAmmo().size() == 0).count();
+        return el.stream().filter(e -> e.getAmmo().isEmpty()).count();
     }
 
     /**
@@ -233,11 +243,11 @@ public class TeamLoadoutGenerator {
      * @return ReconfigurationParameters with information about enemy and friendly forces
      */
     public static ReconfigurationParameters generateParameters(Game g, GameOptions gOpts, Team t) {
-        ReconfigurationParameters rc = new ReconfigurationParameters();
+        ReconfigurationParameters rp = new ReconfigurationParameters();
 
         // Get our own side's numbers for comparison
         ArrayList<Entity> ownTeamEntities = (ArrayList<Entity>) IteratorUtils.toList(g.getTeamEntities(t));
-        rc.friendlyCount = ownTeamEntities.size();
+        rp.friendlyCount = ownTeamEntities.size();
 
         // If our team can see other teams...
         if (!gOpts.booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)) {
@@ -247,82 +257,162 @@ public class TeamLoadoutGenerator {
                     continue;
                 }
 
-                rc.enemyFactions.add(et.getFaction());
+                rp.enemyFactions.add(et.getFaction());
                 ArrayList<Entity> etEntities = (ArrayList<Entity>) IteratorUtils.toList(g.getTeamEntities(et));
-                rc.enemyCount += etEntities.size();
-                rc.enemyFliers += checkForFliers(etEntities);
-                rc.enemyBombers += checkForBombers(etEntities);
-                rc.enemyInfantry += checkForInfantry(etEntities);
-                rc.enemyVehicles += checkForVehicles(etEntities);
-                rc.enemyMeks += checkForMeks(etEntities);
-                rc.enemyEnergyBoats += checkForEnergyBoats(etEntities);
+                rp.enemyCount += etEntities.size();
+                rp.enemyFliers += checkForFliers(etEntities);
+                rp.enemyBombers += checkForBombers(etEntities);
+                rp.enemyInfantry += checkForInfantry(etEntities);
+                rp.enemyVehicles += checkForVehicles(etEntities);
+                rp.enemyMeks += checkForMeks(etEntities);
+                rp.enemyEnergyBoats += checkForEnergyBoats(etEntities);
                 // Enemy Missile Boats might be good to know for Retro Streak weighting
-                rc.enemyMissileBoats += checkForMissileBoats(etEntities);
-                rc.enemyAdvancedArmorCount += checkForAdvancedArmor(etEntities);
-                rc.enemyReflectiveArmorCount += checkForReflectiveArmor(etEntities);
-                rc.enemyFireproofArmorCount += checkForFireproofArmor(etEntities);
-                rc.enemyFastMovers += checkForFastMovers(etEntities);
+                rp.enemyMissileBoats += checkForMissileBoats(etEntities);
+                rp.enemyAdvancedArmorCount += checkForAdvancedArmor(etEntities);
+                rp.enemyReflectiveArmorCount += checkForReflectiveArmor(etEntities);
+                rp.enemyFireproofArmorCount += checkForFireproofArmor(etEntities);
+                rp.enemyFastMovers += checkForFastMovers(etEntities);
             }
         } else {
             // Assume we know _nothing_ about enemies if Double Blind is on.
-            rc.enemiesVisible = false;
+            rp.enemiesVisible = false;
 
             // Estimate enemy count for ammo count purposes; may include observers.  The fog of war!
-            rc.enemyCount = g.getEntitiesVector().size() - ownTeamEntities.size();
+            rp.enemyCount = g.getEntitiesVector().size() - ownTeamEntities.size();
         }
 
         // Friendly force info
-        rc.friendlyEnergyBoats = checkForEnergyBoats(ownTeamEntities);
-        rc.friendlyMissileBoats = checkForMissileBoats(ownTeamEntities);
-        rc.friendlyTAGs = checkForTAG(ownTeamEntities);
-        rc.friendlyNARCs = checkForNARC(ownTeamEntities);
+        rp.friendlyEnergyBoats = checkForEnergyBoats(ownTeamEntities);
+        rp.friendlyMissileBoats = checkForMissileBoats(ownTeamEntities);
+        rp.friendlyTAGs = checkForTAG(ownTeamEntities);
+        rp.friendlyNARCs = checkForNARC(ownTeamEntities);
 
         // General parameters
-        rc.darkEnvironment = g.getPlanetaryConditions().getLight().isDarkerThan(Light.DAY);
+        rp.darkEnvironment = g.getPlanetaryConditions().getLight().isDarkerThan(Light.DAY);
 
-        return rc;
-    }
-
-    // Section: initializing weights
-    private static HashMap<String, Double> initializeWeaponWeights(ArrayList<String> wepAL) {
-        HashMap<String, Double> weights = new HashMap<String, Double>();
-        for (String name: wepAL) {
-            weights.put(name, 1.0);
-        }
-        // Every weight list should have a Standard set as weight 2.0
-        weights.put("Standard", 2.0);
-        return weights;
+        return rp;
     }
 
     /**
      * Generate the list of desired ammo load-outs for this team.
      * TODO: implement generateDetailedMunitionTree with more complex breakdowns per unit type
+     * NOTE: if subclassing this generator, should only need to override this method.
      * @param rc
      * @param t
      * @param defaultSettingsFile
      * @return generated MunitionTree with imperatives for each weapon type
      */
-    public static MunitionTree generateMunitionTree(ReconfigurationParameters rp, Team t, String defaultSettingsFile) {
+    public MunitionTree generateMunitionTree(ReconfigurationParameters rp, Team t, String defaultSettingsFile) {
 
         MunitionTree mt = (defaultSettingsFile == null) ?
                 new MunitionTree() : new MunitionTree(new File(defaultSettingsFile));
 
-        // Initialize weights for all the weapon types using known munition names
-        HashMap<String, Double> lrmWeights = initializeWeaponWeights(MunitionTree.LRM_MUNITION_NAMES);
-        HashMap<String, Double> srmWeights = initializeWeaponWeights(MunitionTree.SRM_MUNITION_NAMES);
-        HashMap<String, Double> acWeights = initializeWeaponWeights(MunitionTree.AC_MUNITION_NAMES);
-        HashMap<String, Double> atmWeights = initializeWeaponWeights(MunitionTree.ATM_MUNITION_NAMES);
-        HashMap<String, Double> arrowWeights = initializeWeaponWeights(MunitionTree.ARROW_MUNITION_NAMES);
-        HashMap<String, Double> artyWeights = initializeWeaponWeights(MunitionTree.ARTILLERY_MUNITION_NAMES);
-        HashMap<String, Double> artyCannonWeights = initializeWeaponWeights(MunitionTree.ARTILLERY_CANNON_MUNITION_NAMES);
-        HashMap<String, Double> mekMortarWeights = initializeWeaponWeights(MunitionTree.MEK_MORTAR_MUNITION_NAMES);
-
         // Based on various requirements from rp, set weights for some ammo types over others
+        MunitionWeightCollection mwc = new MunitionWeightCollection();
 
+        // Modify weights for parameters
+        if (rp.darkEnvironment) {
+            // Bump munitions that light stuff up
+            mwc.increaseIllumMunitions();
+        }
 
+        // Adjust weights for enemy force composition
+        if (rp.enemiesVisible) {
+            // Flak: bump for any bombers, or fliers > 1/4th of enemy force
+            if (rp.enemyBombers > 0.0) {
+                mwc.increaseFlakMunitions();
+            }
+            if (rp.enemyFliers >= rp.enemyCount / 4.0) {
+                mwc.increaseFlakMunitions();
+            }
 
-        // Generate general loadouts
+            // AP munitions are hard-countered by hardened, reactive, etc. armor
+            if (rp.enemyAdvancedArmorCount > 0.0 && rp.enemyAdvancedArmorCount > rp.enemyReflectiveArmorCount) {
+                mwc.decreaseAPMunitions();
+            } else if (rp.enemyReflectiveArmorCount > rp.enemyAdvancedArmorCount) {
+                // But AP munitions really hurt Reflective!
+                mwc.increaseAPMunitions();
+            }
 
+            // Heat-based weapons kill infantry dead, also vehicles
+            if (rp.enemyFireproofArmorCount == 0.0) {
+                if (rp.enemyInfantry >= rp.enemyCount / 4.0) {
+                    mwc.increaseHeatMunitions();
+                }
+                if (rp.enemyVehicles >= rp.enemyCount / 4.0) {
+                    mwc.increaseHeatMunitions();
+                }
+            } else if (rp.enemyFireproofArmorCount >= rp.enemyCount / 4.0) {
+                mwc.decreaseHeatMunitions();
+                if (rp.enemyInfantry >= rp.enemyCount / 4.0) {
+                    mwc.increaseAntiInfMunitions();
+                }
+            }
+        }
+
+        // Section: Friendly capabilities
+        if (rp.enemyCount >= rp.friendlyCount * 2.0) {
+            // Skip munitions that reduce the number of rounds because we need to shoot a lot!
+            mwc.decreaseAmmoReducingMunitions();
+        }
+
+        if (rp.friendlyTAGs > 2.0 || rp.friendlyNARCs > 2.0) {
+            mwc.increaseGuidedMunitions();
+
+            if (rp.friendlyMissileBoats >= rp.friendlyCount / 2.0) {
+                mwc.increaseGuidedMunitions();
+            }
+        }
+
+        // TODO: add per-unit, per-weapon-type, per-munition-type customization here
+
+        // Just for LOLs: when FS fights CC in 3028 ~ 3050, set Anti-TSM weight to 15.0
+        if (t.getFaction().equals("FS") && rp.enemyFactions.contains("CC")
+                && (3028 <= allowedYear && allowedYear <= 3050)) {
+            ArrayList<String> tsmOnly = new ArrayList(List.of("Anti-TSM"));
+            mwc.increaseMunitions(tsmOnly);
+            mwc.increaseMunitions(tsmOnly);
+            mwc.increaseMunitions(tsmOnly);
+        }
+
+        // Convert MWC to MunitionsTree for loading
+        mt = applyWeightsToMunitionTree(mt, mwc);
+        return mt;
+    }
+
+    /**
+     * Turn a selection of the computed munition weights into imperatives to load in the MunitionTree
+     * @param mt
+     * @param rp
+     * @return
+     */
+    public static MunitionTree applyWeightsToMunitionTree(MunitionTree mt, MunitionWeightCollection mwc) {
+        // Iterate over every entry in the set of top-weighted munitions for each category
+        HashMap<String, List<String>> topWeights = mwc.getTopN(3);
+
+        for (Map.Entry<String, List<String>> e: topWeights.entrySet()) {
+            StringBuilder sb = new StringBuilder();
+            String lastMunition = "";
+            double lastWeight = 0.0;
+            int size = e.getValue().size();
+            for (int i = 0; i < size; i++) {
+                String[] fields = e.getValue().get(i).split("=");
+                if (lastWeight > Double.valueOf(fields[1])) {
+                    // If the difference between current and prior weight is double or more, add another
+                    // copy of it
+                    sb.append(lastMunition).append(":");
+                }
+                lastMunition = fields[0];
+                lastWeight = Double.valueOf(fields[1]);
+                // Add the current munition
+                sb.append(fields[0]);
+                if (i < size) {
+                    sb.append(":");
+                }
+            }
+
+            mt.insertImperative("any", "any", "any", e.getKey(), sb.toString());
+        }
         return mt;
     }
 
@@ -331,7 +421,7 @@ public class TeamLoadoutGenerator {
      * @param team
      */
     public void reconfigureBotTeamWithDefaults(Team team) {
-        // Load in some hard-coded defaults so we don't have to do all the work now.
+        // Load in some hard-coded defaults now before calculating more.
         reconfigureTeam(team, defaultBotMunitionsFile);
     }
 
@@ -361,6 +451,11 @@ public class TeamLoadoutGenerator {
         }
     }
 
+    /**
+     * Configure Bot Team with all munitions randomized
+     * @param g
+     * @param team
+     */
     public void randomizeBotTeamConfiguration(Game g, Team team) {
         MunitionTree mt = new MunitionTree();
         for (String typeName: TYPE_LIST) {
@@ -438,7 +533,7 @@ public class TeamLoadoutGenerator {
             priorities = new ArrayList<>(Collections.nCopies(binList.size(), "random"));
         }
 
-        for (int i = 0; i < priorities.size(); i++) {
+        for (int i = 0; i < priorities.size() && !binList.isEmpty(); i++) {
             // binName is the weapon to which the bin connects: LRM-15, AC20, SRM, etc.
             // binType is the munition type loaded in currently
             // If all required bins are filled, revert to defaultType
@@ -572,5 +667,211 @@ class ReconfigurationParameters {
 
     // Datatype for passing around game parameters the Loadout Generator cares about
     ReconfigurationParameters() {
+    }
+}
+
+class MunitionWeightCollection {
+    private HashMap<String, Double> lrmWeights;
+    private HashMap<String, Double> srmWeights;
+    private HashMap<String, Double> acWeights;
+    private HashMap<String, Double> atmWeights;
+    private HashMap<String, Double> arrowWeights;
+    private HashMap<String, Double> artyWeights;
+    private HashMap<String, Double> artyCannonWeights;
+    private HashMap<String, Double> mekMortarWeights;
+    private HashMap<String, Double> narcWeights;
+    private HashMap<String, Double> bombWeights;
+    private Map<String, HashMap<String, Double>> mapTypeToWeights;
+
+    MunitionWeightCollection() {
+        resetWeights();
+    }
+
+    public void resetWeights() {
+        // Initialize weights for all the weapon types using known munition names
+        lrmWeights = initializeWeaponWeights(MunitionTree.LRM_MUNITION_NAMES);
+        srmWeights = initializeWeaponWeights(MunitionTree.SRM_MUNITION_NAMES);
+        acWeights = initializeWeaponWeights(MunitionTree.AC_MUNITION_NAMES);
+        atmWeights = initializeWeaponWeights(MunitionTree.ATM_MUNITION_NAMES);
+        arrowWeights = initializeWeaponWeights(MunitionTree.ARROW_MUNITION_NAMES);
+        artyWeights = initializeWeaponWeights(MunitionTree.ARTILLERY_MUNITION_NAMES);
+        artyCannonWeights = initializeWeaponWeights(MunitionTree.ARTILLERY_CANNON_MUNITION_NAMES);
+        mekMortarWeights = initializeWeaponWeights(MunitionTree.MEK_MORTAR_MUNITION_NAMES);
+        narcWeights = initializeWeaponWeights(MunitionTree.NARC_MUNITION_NAMES);
+        bombWeights = initializeWeaponWeights(MunitionTree.BOMB_MUNITION_NAMES);
+
+        mapTypeToWeights = new HashMap<>(Map.ofEntries(
+                entry("lrm", lrmWeights),
+                entry("srm", srmWeights),
+                entry("ac", acWeights),
+                entry("atm", atmWeights),
+                entry("arrow iv", arrowWeights),
+                entry("artillery", artyWeights),
+                entry("artillery cannon", artyCannonWeights),
+                entry("mek mortar", mekMortarWeights),
+                entry("narc", narcWeights),
+                entry("bomb", bombWeights)
+        ));
+    }
+
+    // Section: initializing weights
+    private static HashMap<String, Double> initializeWeaponWeights(ArrayList<String> wepAL) {
+        HashMap<String, Double> weights = new HashMap<String, Double>();
+        for (String name: wepAL) {
+            weights.put(name, 1.0);
+        }
+        // Every weight list should have a Standard set as weight 2.0
+        weights.put("Standard", 2.0);
+        return weights;
+    }
+
+    // Increase/Decrease functions.  Increase is 2x + 1, decrease is 0.5x, so items
+    // voted up and down multiple times should still exceed items never voted up _or_ down.
+
+    public void increaseMunitions(ArrayList<String> munitions) {
+        mapTypeToWeights.entrySet().forEach(
+                e -> modifyMatchingWeights(
+                        e.getValue(), munitions, 2.0, 1.0
+                )
+        );
+    }
+
+    public void decreaseMunitions(ArrayList<String> munitions) {
+        mapTypeToWeights.entrySet().forEach(
+                e -> modifyMatchingWeights(
+                        e.getValue(), munitions, 0.5, 0.0
+                )
+        );
+    }
+
+    public void increaseAPMunitions() {
+        increaseMunitions(TeamLoadoutGenerator.AP_MUNITIONS);
+    }
+
+    public void decreaseAPMunitions() {
+        decreaseMunitions(TeamLoadoutGenerator.AP_MUNITIONS);
+    }
+
+    public void increaseFlakMunitions() {
+        increaseMunitions(TeamLoadoutGenerator.FLAK_MUNITIONS);
+    }
+
+    public void decreaseFlakMunitions() {
+        decreaseMunitions(TeamLoadoutGenerator.FLAK_MUNITIONS);
+    }
+
+    public void increaseAntiInfMunitions() {
+        increaseMunitions(TeamLoadoutGenerator.ANTI_INF_MUNITIONS);
+    }
+
+    public void decreaseAntiInfMunitions() {
+        decreaseMunitions(TeamLoadoutGenerator.ANTI_INF_MUNITIONS);
+    }
+
+    public void increaseHeatMunitions() {
+        increaseMunitions(TeamLoadoutGenerator.HEAT_MUNITIONS);
+    }
+
+    public void decreaseHeatMunitions() {
+        decreaseMunitions(TeamLoadoutGenerator.HEAT_MUNITIONS);
+    }
+
+    public void increaseIllumMunitions() {
+        increaseMunitions(TeamLoadoutGenerator.ILLUM_MUNITIONS);
+    }
+
+    public void decreaseIllumMunitions() {
+        decreaseMunitions(TeamLoadoutGenerator.ILLUM_MUNITIONS);
+    }
+
+    public void increaseUtilityMunitions() {
+        increaseMunitions(TeamLoadoutGenerator.UTILITY_MUNITIONS);
+    }
+
+    public void decreaseUtilityMunitions() {
+        decreaseMunitions(TeamLoadoutGenerator.UTILITY_MUNITIONS);
+    }
+
+    public void increaseGuidedMunitions() {
+        increaseMunitions(TeamLoadoutGenerator.GUIDED_MUNITIONS);
+    }
+
+    public void decreaseGuidedMunitions() {
+        decreaseMunitions(TeamLoadoutGenerator.GUIDED_MUNITIONS);
+    }
+
+    public void increaseAmmoReducingMunitions() {
+        increaseMunitions(TeamLoadoutGenerator.AMMO_REDUCING_MUNITIONS);
+    }
+
+    public void decreaseAmmoReducingMunitions() {
+        increaseMunitions(TeamLoadoutGenerator.AMMO_REDUCING_MUNITIONS);
+    }
+
+
+    /**
+     * Update all matching types in a category by multiplying by a factor and adding an increment
+     * (1.0, 0.0) = no change; (2.0, 0.0) = double, (0.5, 0.0) = halve,
+     * (1.0, 1.0) = increment by 1, (1.0, -1.0) = decrement by 1, etc.
+     * @param current
+     * @param types
+     * @param factor
+     * @param increment
+     */
+    private static void modifyMatchingWeights(HashMap<String, Double> current, ArrayList<String> types, double factor, double increment) {
+        for (String key: types) {
+            if (current.containsKey(key)) {
+                current.put(key, current.get(key) * factor + increment);
+            }
+        }
+    }
+
+    public ArrayList<String> getMunitionTypesInWeightOrder(Map<String, Double> weightMap) {
+        ArrayList<String> orderedTypes = new ArrayList<>();
+        weightMap.entrySet().stream()
+                .sorted((E1, E2) -> E2.getValue().compareTo(E1.getValue()))
+                .forEach(k -> orderedTypes.add(String.valueOf(k)));
+        return orderedTypes;
+    }
+
+    public HashMap<String, List<String>> getTopN(int count) {
+        HashMap<String, List<String>> topMunitionsMap = new HashMap<>();
+        for (String key: TeamLoadoutGenerator.TYPE_MAP.keySet()) {
+            List<String> orderedList = getMunitionTypesInWeightOrder(mapTypeToWeights.get(key));
+            topMunitionsMap.put(key, (orderedList.size() >= count) ? orderedList.subList(0, count) : orderedList);
+        }
+        return topMunitionsMap;
+    }
+
+    public HashMap<String, Double> getLrmWeights() {
+        return lrmWeights;
+    }
+
+    public HashMap<String, Double> getSrmWeights() {
+        return srmWeights;
+    }
+
+    public HashMap<String, Double> getAcWeights() {
+        return acWeights;
+    }
+
+    public HashMap<String, Double> getAtmWeights() {
+        return atmWeights;
+    }
+
+    public HashMap<String, Double> getArrowWeights() {
+        return arrowWeights;
+    }
+
+    public HashMap<String, Double> getArtyWeights() {
+        return artyWeights;
+    }
+
+    public HashMap<String, Double> getArtyCannonWeights() {
+        return artyCannonWeights;
+    }
+
+    public HashMap<String, Double> getMekMortarWeights() {
+        return mekMortarWeights;
     }
 }

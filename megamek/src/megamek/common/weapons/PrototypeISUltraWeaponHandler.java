@@ -19,6 +19,8 @@ import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.gameManager.GameManager;
+import megamek.server.Server;
+
 import java.util.Vector;
 
 /**

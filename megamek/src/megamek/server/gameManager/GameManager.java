@@ -19640,7 +19640,7 @@ public class GameManager implements IGameManager {
         }
     }
 
-    public void checkRandomAeroMovement(Entity entity, int hotDogMod) {
+    void checkRandomAeroMovement(Entity entity, int hotDogMod) {
         if (!entity.isAero()) {
             return;
         }
@@ -34339,7 +34339,7 @@ public class GameManager implements IGameManager {
      * @param eruption <code>boolean</code> indicating whether or not this is because
      *                 of an eruption
      */
-    public void doMagmaDamage(Entity en, boolean eruption) {
+    void doMagmaDamage(Entity en, boolean eruption) {
         if ((((en.getMovementMode() == EntityMovementMode.VTOL) && (en.getElevation() > 0))
                 || (en.getMovementMode() == EntityMovementMode.HOVER)
                 || ((en.getMovementMode() == EntityMovementMode.WIGE)

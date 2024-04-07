@@ -441,7 +441,7 @@ public interface ITechnology {
         return sb.toString();
     }
 
-    default int getCodeFromIOAbbr(String abbr) {
+    static int getCodeFromIOAbbr(String abbr) {
         // Returns the F_* code used at the top of this file,
         // as they are the indices of the IO Faction Codes
         return List.of(IO_FACTION_CODES).indexOf(abbr);

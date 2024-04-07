@@ -26,6 +26,7 @@ import megamek.client.bot.princess.Princess;
 import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
 import megamek.client.ui.baseComponents.AbstractButtonDialog;
+import megamek.client.ui.baseComponents.MMComboBox;
 import megamek.client.ui.dialogs.BotConfigDialog;
 import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.panels.SkillGenerationOptionsPanel;
@@ -46,6 +47,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.NumberFormat;
+import java.util.List;
 
 import static megamek.client.ui.Messages.getString;
 import static megamek.client.ui.swing.lobby.LobbyUtility.isValidStartPos;
@@ -54,7 +56,7 @@ import static megamek.client.ui.swing.util.UIUtil.*;
 /**
  * A dialog that can be used to adjust advanced player settings like initiative,
  * minefields, and maybe other things in the future like force abilities.
- * 
+ *
  * @author Jay Lawson
  * @author Simon (Juliez)
  */
@@ -69,7 +71,7 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
         if (currentPlayerStartPos > 10) {
             currentPlayerStartPos -= 10;
         }
-        
+
         numFormatter.setMinimum(0);
         numFormatter.setCommitsOnValidEdit(true);
 
@@ -96,32 +98,32 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
     public int getCnvMines() {
         return parseField(fldConventional);
     }
-    
+
     /** Returns the chosen inferno mines. */
     public int getInfMines() {
         return parseField(fldInferno);
     }
-    
+
     /** Returns the chosen active mines. */
     public int getActMines() {
         return parseField(fldActive);
     }
-    
+
     /** Returns the chosen vibrabombs. */
     public int getVibMines() {
         return parseField(fldVibrabomb);
     }
-    
+
     /** Returns the start location offset */
     public int getStartOffset() {
         return parseField(txtOffset);
     }
-    
+
     /** Returns the player start location width */
     public int getStartWidth() {
         return parseField(txtWidth);
     }
-    
+
     /** Returns the chosen deployment position. */
     public int getStartPos() {
         return currentPlayerStartPos;
@@ -160,7 +162,7 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
     private final Client client;
     private final ClientGUI clientgui;
     private final BoardView bv;
-    
+
     // Initiative Section
     private final JLabel labInit = new TipLabel(Messages.getString("PlayerSettingsDialog.initMod"), SwingConstants.RIGHT);
     private final TipTextField fldInit = new TipTextField(3);
@@ -198,16 +200,23 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
 
     // Bot Settings Section
     private final JButton butBotSettings = new JButton(Messages.getString("PlayerSettingsDialog.botSettings"));
-    
+
+    // Team Configuration Section
+    private JSpinner spinTeamFaction;
+    private final JButton butAutoconfigure = new JButton(Messages.getString("PlayerSettingsDialog.autoConfig"));
+    private final JButton butRandomize = new JButton(Messages.getString("PlayerSettingsDialog.randomize"));
+    private Checkbox chkTrulyRandom = new Checkbox("Truly Random", false);
+
     private int currentPlayerStartPos;
 
     @Override
     protected Container createCenterPane() {
         setupValues();
-        
+
         JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
         mainPanel.add(headerSection());
+        mainPanel.add(teamConfigSection());
         if (client instanceof BotClient) {
             mainPanel.add(botSection());
         }
@@ -229,7 +238,7 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
         scrMain.setBorder(null);
         return scrMain;
     }
-    
+
     private JPanel headerSection() {
         JPanel result = new FixedYPanel();
         result.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -241,6 +250,18 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
         return result;
     }
 
+    private JPanel teamConfigSection() {
+        JPanel result = new OptionPanel("PlayerSettingsDialog.header.teamConfig");
+        Content panContent = new Content(new GridBagLayout());
+        result.add(panContent);
+
+        panContent.add(spinTeamFaction, GBC.eol());
+        panContent.add(butAutoconfigure, GBC.eol());
+        panContent.add(butRandomize, GBC.eol());
+        panContent.add(chkTrulyRandom, GBC.eol());
+        return result;
+    }
+
     private JPanel botSection() {
         JPanel result = new OptionPanel("PlayerSettingsDialog.header.botPlayer");
         Content panContent = new Content(new FlowLayout());
@@ -249,7 +270,7 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
         butBotSettings.addActionListener(listener);
         return result;
     }
-    
+
     private JPanel startSection() {
         JPanel result = new OptionPanel("PlayerSettingsDialog.header.startPos");
         Content panContent = new Content(new GridBagLayout());
@@ -259,19 +280,19 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
         panContent.add(deploymentParametersPanel(), GBC.eol());
         return result;
     }
-    
+
     private JPanel deploymentParametersPanel() {
         GridBagLayout gbl = new GridBagLayout();
         JPanel result = new JPanel(gbl);
-       
+
         JLabel lblOffset = new JLabel(Messages.getString("CustomMechDialog.labDeploymentOffset"));
         lblOffset.setToolTipText(Messages.getString("CustomMechDialog.labDeploymentOffsetTip"));
         JLabel lblWidth = new JLabel(Messages.getString("CustomMechDialog.labDeploymentWidth"));
         lblWidth.setToolTipText(Messages.getString("CustomMechDialog.labDeploymentWidthTip"));
-        
+
         txtOffset.setColumns(4);
         txtWidth.setColumns(4);
-        
+
         result.add(lblOffset, GBC.std());
         result.add(txtOffset, GBC.eol());
         result.add(lblWidth, GBC.std());
@@ -395,6 +416,10 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
 
     private void setupValues() {
         Player player = client.getLocalPlayer();
+        // For new auto-loadout-configuration
+        Team team = client.getGame().getTeamForPlayer(player);
+        String faction = team.getFaction();
+
         fldInit.setText(Integer.toString(player.getConstantInitBonus()));
         fldConventional.setText(Integer.toString(player.getNbrMFConventional()));
         fldVibrabomb.setText(Integer.toString(player.getNbrMFVibra()));
@@ -416,6 +441,10 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
         spinStartingAnySEx = new JSpinner(mStartingAnySEx);
         SpinnerNumberModel mStartingAnySEy = new SpinnerNumberModel(0, -0, bh, 1);
         spinStartingAnySEy = new JSpinner(mStartingAnySEy);
+
+        SpinnerListModel mTeamFaction = new SpinnerListModel(List.of(ITechnology.IO_FACTION_CODES));
+        spinTeamFaction = new JSpinner(mTeamFaction);
+        spinTeamFaction.setValue(faction);
 
         int x = Math.min(player.getStartingAnyNWx() + 1, bw);
         spinStartingAnyNWx.setValue(x);
@@ -447,7 +476,7 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
         panStartButtons.add(butStartPos[9]);
         updateStartGrid();
     }
-    
+
     /** Assigns texts and tooltips to the starting positions grid. */
     private void updateStartGrid() {
         StringBuilder[] butText = new StringBuilder[11];
@@ -471,8 +500,8 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
         }
 
         for (Player player : client.getGame().getPlayersVector()) {
-            int pos = player.getStartingPos(); 
-            if (!player.equals(client.getLocalPlayer()) && (pos >= 0) && (pos <= 19)) { 
+            int pos = player.getStartingPos();
+            if (!player.equals(client.getLocalPlayer()) && (pos >= 0) && (pos <= 19)) {
                 int index = pos > 10 ? pos - 10 : pos;
                 butText[index].append(guiScaledFontHTML(teamColor(player, client.getLocalPlayer())));
                 butText[index].append("\u25A0</FONT>");
@@ -486,7 +515,7 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
                 butTT[index].append("<BR>").append(player.getName());
             }
         }
-        
+
         butText[currentPlayerStartPos].append(guiScaledFontHTML(GUIPreferences.getInstance().getMyUnitColor()));
         butText[currentPlayerStartPos].append("\u2B24</FONT>");
 
@@ -520,8 +549,8 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
             }
         }
     };
-    
-    /** 
+
+    /**
      * Parse the given field and return the integer it contains or 0, if
      * the field cannot be parsed.
      */

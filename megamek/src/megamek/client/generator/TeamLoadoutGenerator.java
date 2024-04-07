@@ -129,7 +129,7 @@ public class TeamLoadoutGenerator {
             legal = aType.isLegal(allowedYear, legalLevel, clan,
                     mixedTech, showExtinct);
             // Check if tech is widely available, or if the specific faction has access to it
-            legal &= aType.isAvailableIn(allowedYear, showExtinct) || aType.isAvailableIn(allowedYear, clan, aType.getCodeFromIOAbbr(faction));
+            legal &= aType.isAvailableIn(allowedYear, showExtinct) || aType.isAvailableIn(allowedYear, clan, ITechnology.getCodeFromIOAbbr(faction));
         } else {
             // Basic year check only
             legal = aType.getStaticTechLevel().ordinal() <= legalLevel.ordinal();

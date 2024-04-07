@@ -26,7 +26,6 @@ import megamek.client.bot.princess.Princess;
 import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
 import megamek.client.ui.baseComponents.AbstractButtonDialog;
-import megamek.client.ui.baseComponents.MMComboBox;
 import megamek.client.ui.dialogs.BotConfigDialog;
 import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.panels.SkillGenerationOptionsPanel;
@@ -202,7 +201,7 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
     private final JButton butBotSettings = new JButton(Messages.getString("PlayerSettingsDialog.botSettings"));
 
     // Team Configuration Section
-    private JSpinner spinTeamFaction;
+    private JComboBox<String> cmbTeamFaction;
     private final JButton butAutoconfigure = new JButton(Messages.getString("PlayerSettingsDialog.autoConfig"));
     private final JButton butRandomize = new JButton(Messages.getString("PlayerSettingsDialog.randomize"));
     private Checkbox chkTrulyRandom = new Checkbox("Truly Random", false);
@@ -255,7 +254,7 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
         Content panContent = new Content(new GridBagLayout());
         result.add(panContent);
 
-        panContent.add(spinTeamFaction, GBC.eol());
+        panContent.add(cmbTeamFaction, GBC.eol());
         panContent.add(butAutoconfigure, GBC.eol());
         panContent.add(butRandomize, GBC.eol());
         panContent.add(chkTrulyRandom, GBC.eol());
@@ -442,9 +441,8 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
         SpinnerNumberModel mStartingAnySEy = new SpinnerNumberModel(0, -0, bh, 1);
         spinStartingAnySEy = new JSpinner(mStartingAnySEy);
 
-        SpinnerListModel mTeamFaction = new SpinnerListModel(List.of(ITechnology.IO_FACTION_CODES));
-        spinTeamFaction = new JSpinner(mTeamFaction);
-        spinTeamFaction.setValue(faction);
+        cmbTeamFaction = new JComboBox<String>(ITechnology.IO_FACTION_CODES);
+        cmbTeamFaction.setSelectedItem(faction);
 
         int x = Math.min(player.getStartingAnyNWx() + 1, bw);
         spinStartingAnyNWx.setValue(x);

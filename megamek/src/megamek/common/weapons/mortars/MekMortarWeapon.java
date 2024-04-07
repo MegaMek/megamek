@@ -34,7 +34,7 @@ import megamek.common.weapons.MekMortarAntiPersonnelHandler;
 import megamek.common.weapons.MekMortarFlareHandler;
 import megamek.common.weapons.MekMortarHandler;
 import megamek.common.weapons.MekMortarSmokeHandler;
-import megamek.server.gameManager.*;
+import megamek.server.GameManager;
 
 /**
  * @author Jason Tighe

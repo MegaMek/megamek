@@ -21,7 +21,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AmmoWeapon;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.BPodHandler;
-import megamek.server.gameManager.*;
+import megamek.server.GameManager;
 
 /**
  * @author Jason Tighe

@@ -23,7 +23,7 @@ import megamek.common.weapons.ACWeaponHandler;
 import megamek.common.weapons.AmmoWeapon;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.LBXHandler;
-import megamek.server.gameManager.GameManager;
+import megamek.server.GameManager;
 
 /**
  * @author Andrew Hunter

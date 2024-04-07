@@ -22,7 +22,6 @@ import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.common.planetaryconditions.Wind;
 import megamek.common.planetaryconditions.WindDirection;
 import org.apache.logging.log4j.LogManager;
-import megamek.server.gameManager.GameManager;
 
 import java.util.*;
 

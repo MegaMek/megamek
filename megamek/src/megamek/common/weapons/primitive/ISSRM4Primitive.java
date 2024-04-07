@@ -22,7 +22,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.SRMHandler;
 import megamek.common.weapons.srms.SRMWeapon;
-import megamek.server.gameManager.GameManager;
+import megamek.server.GameManager;
 
 /**
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)

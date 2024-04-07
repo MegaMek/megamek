@@ -22,7 +22,7 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.EnergyWeaponHandler;
 import megamek.common.weapons.Weapon;
-import megamek.server.gameManager.*;
+import megamek.server.GameManager;
 
 /**
  * @author Andrew Hunter

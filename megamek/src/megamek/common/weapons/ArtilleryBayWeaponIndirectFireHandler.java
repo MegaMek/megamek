@@ -18,7 +18,7 @@ import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
-import megamek.server.gameManager.*;
+import megamek.server.GameManager;
 import org.apache.logging.log4j.LogManager;
 
 import java.util.*;

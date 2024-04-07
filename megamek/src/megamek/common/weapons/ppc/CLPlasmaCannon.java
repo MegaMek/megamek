@@ -22,7 +22,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AmmoWeapon;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.PlasmaCannonHandler;
-import megamek.server.gameManager.*;
+import megamek.server.GameManager;
 
 /**
  * @author Sebastian Brocks

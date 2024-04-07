@@ -37,7 +37,7 @@ import megamek.common.ToHitData;
 import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
-import megamek.server.gameManager.GameManager;
+import megamek.server.GameManager;
 
 /**
  * @author Sebastian Brocks

@@ -10,7 +10,7 @@ import java.util.Locale;
 
 import megamek.common.Game;
 import megamek.common.MechSummaryCache;
-import megamek.server.gameManager.GameManager;
+import megamek.server.GameManager;
 import megamek.common.scenario.ScenarioLoader;
 import megamek.server.Server;
 

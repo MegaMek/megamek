@@ -32,7 +32,7 @@ import megamek.common.weapons.AmmoWeapon;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.RapidfireACWeaponHandler;
 import megamek.common.weapons.Weapon;
-import megamek.server.gameManager.GameManager;
+import megamek.server.GameManager;
 import megamek.server.Server;
 
 /**

@@ -24,7 +24,7 @@ import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.PrimitiveACWeaponHandler;
 import megamek.common.weapons.autocannons.ACWeapon;
-import megamek.server.gameManager.GameManager;
+import megamek.server.GameManager;
 
 /**
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)

@@ -19,7 +19,6 @@ import java.util.Vector;
 import megamek.common.*;
 import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.common.planetaryconditions.Wind;
-import megamek.server.gameManager.GameManager;
 
 /**
  * Cycle through hexes on a map and make any necessary adjustments based on weather

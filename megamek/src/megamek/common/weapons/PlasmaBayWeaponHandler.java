@@ -33,7 +33,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.equipment.ArmorType;
 import megamek.common.weapons.ppc.CLPlasmaCannon;
 import megamek.common.weapons.ppc.ISPlasmaRifle;
-import megamek.server.gameManager.*;
+import megamek.server.GameManager;
 
 public class PlasmaBayWeaponHandler extends AmmoBayWeaponHandler {
     private static final long serialVersionUID = -4718048077136686433L;

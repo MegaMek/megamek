@@ -21,7 +21,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.ASEWMissileWeaponHandler;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.missiles.ThunderBoltWeapon;
-import megamek.server.gameManager.*;
+import megamek.server.GameManager;
 
 /**
  * @author Jay Lawson

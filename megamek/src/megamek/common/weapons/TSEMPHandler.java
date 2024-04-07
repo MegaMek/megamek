@@ -17,7 +17,7 @@ import megamek.MMConstants;
 import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
-import megamek.server.gameManager.GameManager;
+import megamek.server.GameManager;
 import megamek.server.Server;
 
 import java.util.Vector;

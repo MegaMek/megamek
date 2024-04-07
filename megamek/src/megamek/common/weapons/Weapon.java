@@ -20,7 +20,7 @@ import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.bayweapons.CapitalLaserBayWeapon;
 import megamek.common.weapons.bayweapons.SubCapLaserBayWeapon;
-import megamek.server.gameManager.GameManager;
+import megamek.server.GameManager;
 
 import java.io.Serializable;
 

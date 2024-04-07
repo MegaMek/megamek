@@ -24,7 +24,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.Weapon;
-import megamek.server.gameManager.*;
+import megamek.server.GameManager;
 
 public class CLBALBX extends Weapon {
     private static final long serialVersionUID = 2978911783244524588L;

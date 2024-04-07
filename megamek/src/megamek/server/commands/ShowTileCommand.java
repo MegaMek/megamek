@@ -6,7 +6,7 @@ import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.Hex;
 import megamek.common.options.OptionsConstants;
-import megamek.server.gameManager.GameManager;
+import megamek.server.GameManager;
 import megamek.server.Server;
 
 /**

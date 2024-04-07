@@ -23,7 +23,7 @@ import megamek.common.Game;
 import megamek.common.HitData;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.server.gameManager.*;
+import megamek.server.GameManager;
 
 public class BombastLaserWeaponHandler extends EnergyWeaponHandler {
     private static final long serialVersionUID = 2452514543790235562L;

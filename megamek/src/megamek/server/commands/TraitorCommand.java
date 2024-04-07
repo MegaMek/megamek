@@ -20,7 +20,7 @@ package megamek.server.commands;
 
 import megamek.common.Entity;
 import megamek.common.Player;
-import megamek.server.gameManager.GameManager;
+import megamek.server.GameManager;
 import megamek.server.Server;
 
 /**

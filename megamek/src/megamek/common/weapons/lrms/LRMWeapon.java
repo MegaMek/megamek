@@ -38,7 +38,7 @@ import megamek.common.weapons.LRMSwarmHandler;
 import megamek.common.weapons.LRMSwarmIHandler;
 import megamek.common.weapons.MissileMineClearanceHandler;
 import megamek.common.weapons.missiles.MissileWeapon;
-import megamek.server.gameManager.*;
+import megamek.server.GameManager;
 
 /**
  * @author Sebastian Brocks

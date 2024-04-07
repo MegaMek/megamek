@@ -5,7 +5,7 @@ import megamek.common.Game;
 import megamek.common.Player;
 import megamek.common.force.Forces;
 import megamek.common.options.GameOptions;
-import megamek.server.gameManager.GameManager;
+import megamek.server.GameManager;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;

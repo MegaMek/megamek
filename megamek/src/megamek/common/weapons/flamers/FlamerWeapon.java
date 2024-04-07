@@ -23,7 +23,7 @@ import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.FlamerHandler;
 import megamek.common.weapons.lasers.EnergyWeapon;
-import megamek.server.gameManager.*;
+import megamek.server.GameManager;
 
 /**
  * @author Andrew Hunter

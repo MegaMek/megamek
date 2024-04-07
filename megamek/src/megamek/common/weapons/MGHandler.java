@@ -25,7 +25,7 @@ import megamek.common.TargetRoll;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
-import megamek.server.gameManager.*;
+import megamek.server.GameManager;
 
 /**
  * @author Andrew Hunter

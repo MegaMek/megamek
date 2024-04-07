@@ -16,7 +16,7 @@ package megamek.common.weapons.bayweapons;
 import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.*;
-import megamek.server.gameManager.*;
+import megamek.server.GameManager;
 
 /**
  * @author Jay Lawson

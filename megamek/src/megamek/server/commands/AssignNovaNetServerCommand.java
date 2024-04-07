@@ -9,7 +9,7 @@ import java.util.List;
 
 import megamek.common.Compute;
 import megamek.common.Entity;
-import megamek.server.gameManager.GameManager;
+import megamek.server.GameManager;
 import megamek.server.Server;
 
 /**

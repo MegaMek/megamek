@@ -20,7 +20,7 @@ import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AmmoBayWeaponHandler;
 import megamek.common.weapons.AttackHandler;
-import megamek.server.gameManager.*;
+import megamek.server.GameManager;
 
 /**
  * This is my attempt to get weapon bays treated as normal weapons rather than the current hack in

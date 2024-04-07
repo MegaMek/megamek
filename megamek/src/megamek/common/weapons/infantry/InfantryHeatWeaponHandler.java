@@ -22,7 +22,7 @@ import megamek.common.equipment.ArmorType;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.DamageType;
 import megamek.common.weapons.Weapon;
-import megamek.server.gameManager.*;
+import megamek.server.GameManager;
 
 
 /**

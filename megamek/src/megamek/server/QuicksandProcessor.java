@@ -17,7 +17,6 @@ package megamek.server;
 import java.util.Vector;
 
 import megamek.common.*;
-import megamek.server.gameManager.GameManager;
 
 public class QuicksandProcessor extends DynamicTerrainProcessor {
 

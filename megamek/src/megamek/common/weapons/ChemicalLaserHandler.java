@@ -29,7 +29,7 @@ import megamek.common.RangeType;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
-import megamek.server.gameManager.*;
+import megamek.server.GameManager;
 
 public class ChemicalLaserHandler extends AmmoWeaponHandler {
     private static final long serialVersionUID = 2304364403526293671L;

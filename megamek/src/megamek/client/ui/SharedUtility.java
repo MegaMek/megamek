@@ -47,7 +47,7 @@ import megamek.common.Terrains;
 import megamek.common.VTOL;
 import megamek.common.annotations.Nullable;
 import megamek.common.options.OptionsConstants;
-import megamek.server.gameManager.GameManager;
+import megamek.server.GameManager;
 
 public class SharedUtility {
 

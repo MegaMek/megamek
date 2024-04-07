@@ -15,7 +15,7 @@ package megamek.common.weapons;
 
 import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.server.gameManager.*;
+import megamek.server.GameManager;
 
 import java.util.Vector;
 

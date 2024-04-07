@@ -46,7 +46,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Consumer;
 import java.util.zip.GZIPInputStream;
-import megamek.server.gameManager.GameManager;
+
 import org.apache.logging.log4j.LogManager;
 
 import com.thoughtworks.xstream.XStream;

@@ -20,7 +20,7 @@ import megamek.common.actions.PhysicalAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryconditions.PlanetaryConditions;
-import megamek.server.gameManager.*;
+import megamek.server.GameManager;
 
 /**
  * @author Andrew Hunter

@@ -30,7 +30,7 @@ import megamek.common.planetaryconditions.*;
 import megamek.common.util.BoardUtilities;
 import megamek.common.util.StringUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
-import megamek.server.gameManager.GameManager;
+import megamek.server.GameManager;
 import megamek.server.Messages;
 import org.apache.logging.log4j.LogManager;
 

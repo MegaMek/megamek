@@ -23,6 +23,8 @@ package megamek.client.ui.swing.util;
 import java.awt.KeyEventDispatcher;
 import java.awt.event.KeyEvent;
 import java.util.*;
+import java.util.function.Supplier;
+
 import megamek.client.ui.swing.*;
 
 /**
@@ -146,8 +148,14 @@ public class MegaMekController implements KeyEventDispatcher {
         keyCmdSet.clear();
     }
 
-    public synchronized void registerCommandAction(String cmd,
-            CommandAction action) {
+    /**
+     * Registers an action to a keybind given as the cmd parameter (e.g. KeyCommandBind.SCROLL_NORTH.cmd).
+     * For every press of the bound key, the action will be called.
+     *
+     * @param cmd The keycommand string, obtained through KeyCommandBind
+     * @param action The CommandAction
+     */
+    public synchronized void registerCommandAction(String cmd, CommandAction action) {
         ArrayList<CommandAction> actions = cmdActionMap.get(cmd);
         if (actions == null) {
             actions = new ArrayList<>();
@@ -156,6 +164,72 @@ public class MegaMekController implements KeyEventDispatcher {
         } else {
             actions.add(action);
         }
+    }
+
+    @FunctionalInterface
+    public interface KeyBindAction {
+        void execute();
+    }
+
+    /**
+     * Registers an action to a keybind, e.g. KeyCommandBind.SCROLL_NORTH. The necessary CommandAction is
+     * constructed from the given method references. The given performer will be called when the key is
+     * pressed if the given shouldPerform check returns true.
+     *
+     * @param commandBind The KeyCommandBind
+     * @param shouldPerform A method that should return true when the performer is allowed to take action
+     * @param performer A method that takes action upon the keypress
+     */
+    public void registerCommandAction(KeyCommandBind commandBind,
+                                      Supplier<Boolean> shouldPerform, KeyBindAction performer) {
+        registerCommandAction(commandBind.cmd, new CommandAction() {
+            @Override
+            public boolean shouldPerformAction() {
+                return shouldPerform.get();
+            }
+
+            @Override
+            public void performAction() {
+                performer.execute();
+            }
+        });
+    }
+
+    /**
+     * Registers an action to a keybind, e.g. KeyCommandBind.SCROLL_NORTH. The necessary CommandAction is
+     * constructed from the given method references. The given performer will be called when the key is
+     * pressed if the given shouldPerform check returns true.
+     * Additionally, the given releaseAction is called when the pressed key is released again (also, only
+     * when shouldPerform allows it).
+     *
+     * @param commandBind The KeyCommandBind
+     * @param shouldPerform A method that should return true when the performer is allowed to take action
+     * @param performer A method that takes action upon the keypress
+     * @param releaseAction A method that takes action when the key is released again
+     */
+    public void registerCommandAction(KeyCommandBind commandBind, Supplier<Boolean> shouldPerform,
+                                      KeyBindAction performer, KeyBindAction releaseAction) {
+        registerCommandAction(commandBind.cmd, new CommandAction() {
+            @Override
+            public boolean shouldPerformAction() {
+                return shouldPerform.get();
+            }
+
+            @Override
+            public void performAction() {
+                performer.execute();
+            }
+
+            @Override
+            public void releaseAction() {
+                releaseAction.execute();
+            }
+
+            @Override
+            public boolean hasReleaseAction() {
+                return true;
+            }
+        });
     }
 
     public synchronized void removeAllActions() {

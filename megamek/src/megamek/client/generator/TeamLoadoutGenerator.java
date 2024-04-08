@@ -540,15 +540,16 @@ public class TeamLoadoutGenerator {
             Entity e, MunitionTree mt, ArrayList<Mounted> binList, String binName, String techBase, String faction
     ) {
         Logger logger = LogManager.getLogger();
+        // Copy counts that we will update, otherwise mt entry gets edited permanently.
         HashMap<String, Integer> counts = new HashMap<String, Integer>(mt.getCountsOfAmmosForKey(e.getFullChassis(), e.getModel(), e.getCrew().getName(0), binName));
         List<String> priorities = mt.getPriorityList(e.getFullChassis(), e.getModel(), e.getCrew().getName(0), binName);
-        // Count of total required bins
+        // Track default type for filling in unfilled bins
         AmmoType defaultType = null;
         int defaultIdx = 0;
 
         // If the imperative is to use Random for every bin, we need a different Random for each bin
-        if (priorities.size() == 1 && priorities.get(0).toLowerCase().contains("random")) {
-            priorities = new ArrayList<>(Collections.nCopies(binList.size(), "random"));
+        if (priorities.size() == 1 && priorities.get(0).contains("Random")) {
+            priorities = new ArrayList<>(Collections.nCopies(binList.size(), "Random"));
         }
 
         for (int i = 0; i < priorities.size() && !binList.isEmpty(); i++) {
@@ -557,7 +558,9 @@ public class TeamLoadoutGenerator {
             // If all required bins are filled, revert to defaultType
             // If "Random", choose a random ammo type.  Availability will be checked later.
             // If not trueRandom, only select from munitions that deal damage
-            String binType = (priorities.get(i).toLowerCase().contains("random")) ?
+
+            boolean random = priorities.get(i).contains("Random");
+            String binType = (random) ?
                     getRandomBin(binName, trueRandom) : priorities.get(i);
             Mounted bin = binList.get(0);
             AmmoType desired = null;
@@ -588,6 +591,11 @@ public class TeamLoadoutGenerator {
                 // Update default idx if we're currently setting the default
                 defaultIdx = (i==defaultIdx) ? defaultIdx + 1 : defaultIdx;
                 continue;
+            }
+
+            // Add one of the current binType to counts so we get a new random type every bin
+            if (random) {
+                counts.put(binType, 1);
             }
 
             // Store default AmmoType
@@ -647,7 +655,6 @@ public class TeamLoadoutGenerator {
         }
         return result;
     }
-
 }
 
 /**

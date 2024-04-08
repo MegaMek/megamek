@@ -746,7 +746,7 @@ public class EntityListFile {
                 output.write("\" " + MULParser.ATTR_QUIRKS + "=\"");
                 output.write(String.valueOf(entity.getQuirkList("::")));
             }
-            if (entity.getC3Master() != null) {
+            if ((entity.getGame() != null) && (entity.getC3Master() != null)) {
                 output.write("\" " + MULParser.ATTR_C3MASTERIS + "=\"");
                 output.write(entity.getGame()
                         .getEntity(entity.getC3Master().getId())
@@ -1236,7 +1236,8 @@ public class EntityListFile {
             } else {
                 output.write("\" " + MULParser.ATTR_AUTOEJECT + "=\"false");
             }
-            if (entity.game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION)) {
+            if ((null != entity.getGame())
+                    && (entity.getGame().getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION))) {
                 if (((Mech) entity).isCondEjectAmmo()) {
                     output.write("\" " + MULParser.ATTR_CONDEJECTAMMO + "=\"true");
                 } else {

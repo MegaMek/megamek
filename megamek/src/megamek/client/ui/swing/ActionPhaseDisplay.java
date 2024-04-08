@@ -84,7 +84,8 @@ public abstract class ActionPhaseDisplay extends StatusBarPhaseDisplay {
         ready();
     }
 
-    private boolean shouldPerformKeyCommands() {
+    @Override
+    protected boolean shouldPerformKeyCommands() {
         return ((clientgui.getClient().isMyTurn()
                 || (clientgui.getClient().getGame().getTurn() == null)
                 || (clientgui.getClient().getGame().getPhase().isReport())))

@@ -15,7 +15,6 @@ package megamek.client.ui.swing;
 
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
-import megamek.client.ui.swing.util.CommandAction;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.widget.MegamekButton;
@@ -364,49 +363,13 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
         clientgui.getBoardView().removeBoardViewListener(this);
     }
 
-    /**
-     * Register all of the <code>CommandAction</code>s for this panel display.
-     */
+    private void toggleShowDeployment() {
+        clientgui.getBoardView().showAllDeployment = !clientgui.getBoardView().showAllDeployment;
+        clientgui.getBoardView().repaint();
+    }
+
     private void registerKeyCommands() {
-        MegaMekController controller = clientgui.controller;
-
-        final StatusBarPhaseDisplay display = this;
-        // Register the action for AUTO_ARTY_DEPLOYMENT_ZONE
-        controller.registerCommandAction(KeyCommandBind.AUTO_ARTY_DEPLOYMENT_ZONE.cmd,
-                new CommandAction() {
-
-            @Override
-            public boolean shouldPerformAction() {
-                if (!clientgui.getClient().isMyTurn()
-                        || clientgui.getBoardView().getChatterBoxActive()
-                        || display.isIgnoringEvents()
-                        || !display.isVisible()) {
-                    return false;
-                } else {
-                    return true;
-                }
-            }
-
-            private boolean thisKeyPressed = false;
-
-            @Override
-            public void performAction() {
-                if (!thisKeyPressed) {
-                    clientgui.getBoardView().showAllDeployment = !clientgui.getBoardView().showAllDeployment;
-                    clientgui.getBoardView().repaint();
-                }
-                thisKeyPressed = true;
-            }
-
-            @Override
-            public void releaseAction() {
-                thisKeyPressed = false;
-            }
-
-            @Override
-            public boolean hasReleaseAction() {
-                return true;
-            }
-        });
+        clientgui.controller.registerCommandAction(KeyCommandBind.AUTO_ARTY_DEPLOYMENT_ZONE,
+                this::shouldPerformKeyCommands, this::toggleShowDeployment);
     }
 }

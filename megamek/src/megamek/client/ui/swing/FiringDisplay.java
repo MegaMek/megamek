@@ -246,7 +246,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
         }
     }
 
-    private boolean shouldPerformKeyCommands() {
+    protected boolean shouldPerformKeyCommands() {
         return clientgui.getClient().isMyTurn()
                 && !clientgui.getBoardView().getChatterBoxActive()
                 && !isIgnoringEvents()
@@ -257,12 +257,12 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
         return shouldPerformKeyCommands() && buttons.get(FiringCommand.FIRE_FIRE).isEnabled();
     }
 
-    private void twistLeft() {
+    protected void twistLeft() {
         updateFlipArms(false);
         torsoTwist(0);
     }
 
-    private void twistRight() {
+    protected void twistRight() {
         updateFlipArms(false);
         torsoTwist(1);
     }
@@ -279,7 +279,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
         }
     }
 
-    private boolean shouldPerformClearKeyCommand() {
+    protected boolean shouldPerformClearKeyCommand() {
         return !clientgui.getBoardView().getChatterBoxActive()
                 && !isIgnoringEvents()
                 && isVisible();

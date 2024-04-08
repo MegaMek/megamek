@@ -22,7 +22,6 @@ import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.UnitDisplayOrderPreferences;
 import megamek.client.ui.swing.tooltip.UnitToolTip;
-import megamek.client.ui.swing.util.CommandAction;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.util.UIUtil;
@@ -411,149 +410,18 @@ public class UnitDisplay extends JPanel implements IPreferenceChangeListener {
      */
     private void registerKeyboardCommands(final UnitDisplay ud,
             final MegaMekController controller) {
-        // Display General Tab
-        controller.registerCommandAction(KeyCommandBind.UD_GENERAL.cmd,
-                new CommandAction() {
-
-                    @Override
-                    public boolean shouldPerformAction() {
-                        if (ud.isVisible()) {
-                            return true;
-                        } else {
-                            return false;
-                        }
-                    }
-
-                    @Override
-                    public void performAction() {
-                        if (GUIP.getUnitDisplayStartTabbed()) {
-                            ((CardLayout) displayP.getLayout()).show(displayP, MechPanelTabStrip.SUMMARY);
-                        }
-
-                        tabStrip.setTab(MechPanelTabStrip.SUMMARY_INDEX);
-                    }
-
-                });
-
-        // Display Pilot Tab
-        controller.registerCommandAction(KeyCommandBind.UD_PILOT.cmd,
-                new CommandAction() {
-
-                    @Override
-                    public boolean shouldPerformAction() {
-                        if (ud.isVisible()) {
-                            return true;
-                        } else {
-                            return false;
-                        }
-                    }
-
-                    @Override
-                    public void performAction() {
-                        if (GUIP.getUnitDisplayStartTabbed()) {
-                            ((CardLayout) displayP.getLayout()).show(displayP, MechPanelTabStrip.PILOT);
-                        }
-
-                        tabStrip.setTab(MechPanelTabStrip.PILOT_INDEX);
-                    }
-
-                });
-
-        // Display Armor Tab
-        controller.registerCommandAction(KeyCommandBind.UD_ARMOR.cmd,
-                new CommandAction() {
-
-                    @Override
-                    public boolean shouldPerformAction() {
-                        if (ud.isVisible()) {
-                            return true;
-                        } else {
-                            return false;
-                        }
-                    }
-
-                    @Override
-                    public void performAction() {
-                        if (GUIP.getUnitDisplayStartTabbed()) {
-                            ((CardLayout) displayP.getLayout()).show(displayP, MechPanelTabStrip.ARMOR);
-                        }
-
-                        tabStrip.setTab(MechPanelTabStrip.ARMOR_INDEX);
-                    }
-
-                });
-
-        // Display Systems Tab
-        controller.registerCommandAction(KeyCommandBind.UD_SYSTEMS.cmd,
-                new CommandAction() {
-
-                    @Override
-                    public boolean shouldPerformAction() {
-                        if (ud.isVisible()) {
-                            return true;
-                        } else {
-                            return false;
-                        }
-                    }
-
-                    @Override
-                    public void performAction() {
-                        if (GUIP.getUnitDisplayStartTabbed()) {
-                            ((CardLayout) displayP.getLayout()).show(displayP, MechPanelTabStrip.SYSTEMS);
-                        }
-
-                        tabStrip.setTab(MechPanelTabStrip.SYSTEMS_INDEX);
-                    }
-
-                });
-
-        // Display Weapons Tab
-        controller.registerCommandAction(KeyCommandBind.UD_WEAPONS.cmd,
-                new CommandAction() {
-
-                    @Override
-                    public boolean shouldPerformAction() {
-                        if (ud.isVisible()) {
-                            return true;
-                        } else {
-                            return false;
-                        }
-                    }
-
-                    @Override
-                    public void performAction() {
-                        if (GUIP.getUnitDisplayStartTabbed()) {
-                            ((CardLayout) displayP.getLayout()).show(displayP, MechPanelTabStrip.WEAPONS);
-                        }
-
-                        tabStrip.setTab(MechPanelTabStrip.WEAPONS_INDEX);
-                    }
-
-                });
-
-        // Display Extras Tab
-        controller.registerCommandAction(KeyCommandBind.UD_EXTRAS.cmd,
-                new CommandAction() {
-
-                    @Override
-                    public boolean shouldPerformAction() {
-                        if (ud.isVisible()) {
-                            return true;
-                        } else {
-                            return false;
-                        }
-                    }
-
-                    @Override
-                    public void performAction() {
-                        if (GUIP.getUnitDisplayStartTabbed()) {
-                            ((CardLayout) displayP.getLayout()).show(displayP, MechPanelTabStrip.EXTRAS);
-                        }
-
-                        tabStrip.setTab(MechPanelTabStrip.EXTRAS_INDEX);
-                    }
-
-                });
+        controller.registerCommandAction(KeyCommandBind.UD_GENERAL, ud::isVisible,
+                () -> showPanel(MechPanelTabStrip.SUMMARY));
+        controller.registerCommandAction(KeyCommandBind.UD_PILOT, ud::isVisible,
+                () -> showPanel(MechPanelTabStrip.PILOT));
+        controller.registerCommandAction(KeyCommandBind.UD_ARMOR, ud::isVisible,
+                () -> showPanel(MechPanelTabStrip.ARMOR));
+        controller.registerCommandAction(KeyCommandBind.UD_SYSTEMS, ud::isVisible,
+                () -> showPanel(MechPanelTabStrip.SYSTEMS));
+        controller.registerCommandAction(KeyCommandBind.UD_WEAPONS, ud::isVisible,
+                () -> showPanel(MechPanelTabStrip.WEAPONS));
+        controller.registerCommandAction(KeyCommandBind.UD_EXTRAS, ud::isVisible,
+                () -> showPanel(MechPanelTabStrip.EXTRAS));
     }
 
     @Override

@@ -13,7 +13,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.File;
-import java.lang.reflect.Array;
 import java.util.*;
 
 import static java.util.Map.entry;
@@ -40,7 +39,7 @@ public class TeamLoadoutGenerator {
     ));
 
     public static final ArrayList<String> HEAT_MUNITIONS = new ArrayList<>(List.of(
-            "Inferno", "Incendiary", "Heat-Seeking"
+            "Inferno", "Incendiary"
     ));
 
     public static final ArrayList<String> ILLUM_MUNITIONS = new ArrayList<>(List.of(
@@ -96,14 +95,14 @@ public class TeamLoadoutGenerator {
     protected boolean trueRandom = false;
     protected String defaultBotMunitionsFile = null;
 
-    TeamLoadoutGenerator(ClientGUI gui){
+    public TeamLoadoutGenerator(ClientGUI gui){
         cg = gui;
         game = cg.getClient().getGame();
         gameOptions = game.getOptions();
         updateOptionValues();
     }
 
-    TeamLoadoutGenerator(ClientGUI gui, String defaultSettings){
+    public TeamLoadoutGenerator(ClientGUI gui, String defaultSettings){
         this(gui);
         this.defaultBotMunitionsFile = defaultSettings;
     }
@@ -235,6 +234,10 @@ public class TeamLoadoutGenerator {
         ).count();
     }
 
+    public ReconfigurationParameters generateParameters(Team t) {
+        return generateParameters(game, gameOptions, t);
+    }
+
     /**
      * Create the parameters that will determine how to configure ammo loadouts for this team
      * @param g
@@ -293,6 +296,10 @@ public class TeamLoadoutGenerator {
         return rp;
     }
 
+    public MunitionTree generateMunitionTree(ReconfigurationParameters rp, Team t) {
+        return generateMunitionTree(rp, t, "");
+    }
+
     /**
      * Generate the list of desired ammo load-outs for this team.
      * TODO: implement generateDetailedMunitionTree with more complex breakdowns per unit type
@@ -302,9 +309,9 @@ public class TeamLoadoutGenerator {
      * @param defaultSettingsFile
      * @return generated MunitionTree with imperatives for each weapon type
      */
-    public MunitionTree generateMunitionTree(ReconfigurationParameters rp, Team t, String defaultSettingsFile) {
+    public static MunitionTree generateMunitionTree(ReconfigurationParameters rp, Team t, String defaultSettingsFile) {
 
-        MunitionTree mt = (defaultSettingsFile == null) ?
+        MunitionTree mt = (defaultSettingsFile == null | defaultSettingsFile.isBlank()) ?
                 new MunitionTree() : new MunitionTree(new File(defaultSettingsFile));
 
         // Based on various requirements from rp, set weights for some ammo types over others
@@ -368,7 +375,7 @@ public class TeamLoadoutGenerator {
 
         // Just for LOLs: when FS fights CC in 3028 ~ 3050, set Anti-TSM weight to 15.0
         if (t.getFaction().equals("FS") && rp.enemyFactions.contains("CC")
-                && (3028 <= allowedYear && allowedYear <= 3050)) {
+                && (3028 <= rp.allowedYear && rp.allowedYear <= 3050)) {
             ArrayList<String> tsmOnly = new ArrayList(List.of("Anti-TSM"));
             mwc.increaseMunitions(tsmOnly);
             mwc.increaseMunitions(tsmOnly);
@@ -376,7 +383,7 @@ public class TeamLoadoutGenerator {
         }
 
         // Convert MWC to MunitionsTree for loading
-        mt = applyWeightsToMunitionTree(mt, mwc);
+        applyWeightsToMunitionTree(mt, mwc);
         return mt;
     }
 
@@ -425,6 +432,10 @@ public class TeamLoadoutGenerator {
         reconfigureTeam(team, defaultBotMunitionsFile);
     }
 
+    public void reconfigureTeam(Team team, MunitionTree mt) {
+        reconfigureTeam(game, team, mt);
+    }
+
     /**
      * Wrapper to load a file of preset munition imperatives
      * @param team
@@ -432,6 +443,7 @@ public class TeamLoadoutGenerator {
      */
     public void reconfigureTeam(Team team, String adfFile) {
         ReconfigurationParameters rp = generateParameters(game, gameOptions, team);
+        rp.allowedYear = allowedYear;
         MunitionTree mt = generateMunitionTree(rp, team, adfFile);
         reconfigureTeam(game, team, mt);
     }
@@ -456,12 +468,16 @@ public class TeamLoadoutGenerator {
      * @param g
      * @param team
      */
-    public void randomizeBotTeamConfiguration(Game g, Team team) {
+    public void randomizeBotTeamConfiguration(Team team) {
+        reconfigureTeam(game, team, generateRandomizedMT());
+    }
+
+    public static MunitionTree generateRandomizedMT() {
         MunitionTree mt = new MunitionTree();
         for (String typeName: TYPE_LIST) {
             mt.insertImperative("any", "any", "any", typeName, "Random");
         }
-        reconfigureTeam(g, team, mt);
+        return mt;
     }
 
     /**
@@ -522,7 +538,7 @@ public class TeamLoadoutGenerator {
             Entity e, MunitionTree mt, ArrayList<Mounted> binList, String binName, String techBase, String faction
     ) {
         Logger logger = LogManager.getLogger();
-        HashMap<String, Integer> counts = mt.getCountsOfAmmosForKey(e.getFullChassis(), e.getModel(), e.getCrew().getName(0), binName);
+        HashMap<String, Integer> counts = new HashMap<String, Integer>(mt.getCountsOfAmmosForKey(e.getFullChassis(), e.getModel(), e.getCrew().getName(0), binName));
         List<String> priorities = mt.getPriorityList(e.getFullChassis(), e.getModel(), e.getCrew().getName(0), binName);
         // Count of total required bins
         AmmoType defaultType = null;
@@ -639,6 +655,7 @@ class ReconfigurationParameters {
 
     // Game settings
     public boolean enemiesVisible = true;
+    public int allowedYear = 3151;
 
     // Map settings
     public boolean darkEnvironment = false;

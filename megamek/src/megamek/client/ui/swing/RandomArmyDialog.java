@@ -646,6 +646,8 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
             if (m_pMain.getSelectedIndex() == TAB_FORCE_GENERATOR) {
                 m_pForceGen.addChosenUnits((String) m_chPlayer.getSelectedItem());
             } else {
+                // MM-style key, not IO-style
+                String faction = m_pFormationOptions.getFaction().getKey();
                 ArrayList<Entity> entities = new ArrayList<>(
                         armyModel.getAllUnits().size());
                 Client c = null;
@@ -656,6 +658,8 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
                 if (c == null) {
                     c = m_client;
                 }
+                // Set faction based on generated RAT faction
+                m_clientgui.getClient().getGame().getTeamForPlayer(c.getLocalPlayer()).setFaction(faction);
                 for (MechSummary ms : armyModel.getAllUnits()) {
                     try {
                         Entity e = new MechFileParser(ms.getSourceFile(),

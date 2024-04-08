@@ -447,6 +447,11 @@ public interface ITechnology {
         return List.of(IO_FACTION_CODES).indexOf(abbr);
     }
 
+    static int getCodeFromMMAbbr(String abbr) {
+        // These abbreviations may have sub-faction dot codes; strip them.
+        return List.of(MM_FACTION_CODES).indexOf((String) abbr.split("\\.")[0]);
+    }
+
     default String getExperimentalRange(boolean clan) {
         return getDateRange(getPrototypeDate(clan), getProductionDate(clan));
     }

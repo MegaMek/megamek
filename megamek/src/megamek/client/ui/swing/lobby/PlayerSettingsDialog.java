@@ -23,6 +23,7 @@ import megamek.client.Client;
 import megamek.client.bot.BotClient;
 import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.bot.princess.Princess;
+import megamek.client.generator.TeamLoadoutGenerator;
 import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
 import megamek.client.ui.baseComponents.AbstractButtonDialog;
@@ -34,6 +35,7 @@ import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.boardview.BoardView;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.*;
+import megamek.common.containers.MunitionTree;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 
@@ -201,10 +203,13 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
     private final JButton butBotSettings = new JButton(Messages.getString("PlayerSettingsDialog.botSettings"));
 
     // Team Configuration Section
+    private Team team;
     private JComboBox<String> cmbTeamFaction;
     private final JButton butAutoconfigure = new JButton(Messages.getString("PlayerSettingsDialog.autoConfig"));
     private final JButton butRandomize = new JButton(Messages.getString("PlayerSettingsDialog.randomize"));
     private Checkbox chkTrulyRandom = new Checkbox("Truly Random", false);
+    private TeamLoadoutGenerator tlg;
+    private MunitionTree munitionTree = null;
 
     private int currentPlayerStartPos;
 
@@ -252,12 +257,17 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
     private JPanel teamConfigSection() {
         JPanel result = new OptionPanel("PlayerSettingsDialog.header.teamConfig");
         Content panContent = new Content(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.fill = GridBagConstraints.HORIZONTAL;
         result.add(panContent);
 
-        panContent.add(cmbTeamFaction, GBC.eol());
-        panContent.add(butAutoconfigure, GBC.eol());
-        panContent.add(butRandomize, GBC.eol());
-        panContent.add(chkTrulyRandom, GBC.eol());
+        panContent.add(cmbTeamFaction, gbc);
+        cmbTeamFaction.addActionListener(listener);
+        panContent.add(butAutoconfigure, gbc);
+        butAutoconfigure.addActionListener(listener);
+        panContent.add(butRandomize, gbc);
+        butRandomize.addActionListener(listener);
+        panContent.add(chkTrulyRandom, gbc);
         return result;
     }
 
@@ -355,6 +365,15 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
             }
         }
 
+        // Team Configuration
+        team.setFaction((String) cmbTeamFaction.getSelectedItem());
+        if (null != munitionTree) {
+            // Use constructor that takes a default adf file path
+            // TODO: create and set up default adf file path for bots
+            tlg.reconfigureTeam(team, munitionTree);
+            //client.sendUpdateEntity(client.getGame().getPlayerEntities(player, false));
+        }
+
         // The deployment position
         player.setStartingPos(getStartPos());
         player.setStartOffset(getStartOffset());
@@ -416,8 +435,9 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
     private void setupValues() {
         Player player = client.getLocalPlayer();
         // For new auto-loadout-configuration
-        Team team = client.getGame().getTeamForPlayer(player);
+        team = client.getGame().getTeamForPlayer(player);
         String faction = team.getFaction();
+        tlg = new TeamLoadoutGenerator(clientgui);
 
         fldInit.setText(Integer.toString(player.getConstantInitBonus()));
         fldConventional.setText(Integer.toString(player.getNbrMFConventional()));
@@ -441,7 +461,7 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
         SpinnerNumberModel mStartingAnySEy = new SpinnerNumberModel(0, -0, bh, 1);
         spinStartingAnySEy = new JSpinner(mStartingAnySEy);
 
-        cmbTeamFaction = new JComboBox<String>(ITechnology.IO_FACTION_CODES);
+        cmbTeamFaction = new JComboBox<String>(ITechnology.MM_FACTION_CODES);
         cmbTeamFaction.setSelectedItem(faction);
 
         int x = Math.min(player.getStartingAnyNWx() + 1, bw);
@@ -534,6 +554,24 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
                     currentPlayerStartPos = i;
                     updateStartGrid();
                 }
+            }
+
+            // Team configuration
+            if (butAutoconfigure.equals(e.getSource())) {
+                // disable button until Faction changes; result won't change.
+                butAutoconfigure.setEnabled(false);
+                munitionTree = tlg.generateMunitionTree(tlg.generateParameters(team), team);
+            }
+
+            if (butRandomize.equals(e.getSource())) {
+                // Randomize team loadout
+                butAutoconfigure.setEnabled(true);
+                tlg.setTrueRandom(chkTrulyRandom.getState());
+                munitionTree = TeamLoadoutGenerator.generateRandomizedMT();
+            }
+
+            if (cmbTeamFaction.equals(e.getSource())) {
+                butAutoconfigure.setEnabled(true);
             }
 
             // Bot settings button

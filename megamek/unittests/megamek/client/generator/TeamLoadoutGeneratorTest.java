@@ -296,7 +296,7 @@ class TeamLoadoutGeneratorTest {
         Mounted bin7 = mockMech3.addEquipment(mockSRM6AmmoType, Mech.LOC_CT);
 
         // Just check that the bins are populated still
-        tlg.randomizeBotTeamConfiguration(game, team);
+        tlg.randomizeBotTeamConfiguration(team);
 
         for (Mounted bin: List.of(bin1, bin2, bin3, bin4, bin5, bin6, bin7)) {
             assertNotEquals("", ((AmmoType) bin.getType()).getSubMunitionName());

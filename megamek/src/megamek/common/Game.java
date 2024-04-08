@@ -388,6 +388,16 @@ public class Game extends AbstractGame implements Serializable, PlanetaryConditi
                 }
             }
         }
+
+        // Carry over faction settings
+        for (Team newTeam : initTeams) {
+            for (Team oldTeam : teams) {
+                if (newTeam.equals(oldTeam)) {
+                    newTeam.setFaction(oldTeam.getFaction());
+                }
+            }
+        }
+
         teams.clear();
         teams.addAll(initTeams);
     }

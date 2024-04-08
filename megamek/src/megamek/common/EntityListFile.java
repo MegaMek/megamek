@@ -746,7 +746,7 @@ public class EntityListFile {
                 output.write("\" " + MULParser.ATTR_QUIRKS + "=\"");
                 output.write(String.valueOf(entity.getQuirkList("::")));
             }
-            if ((entity.getC3Master() != null) && (entity.getGame() != null)) {
+            if ((entity.getGame() != null) && (entity.getC3Master() != null)) {
                 output.write("\" " + MULParser.ATTR_C3MASTERIS + "=\"");
                 output.write(entity.getGame()
                         .getEntity(entity.getC3Master().getId())

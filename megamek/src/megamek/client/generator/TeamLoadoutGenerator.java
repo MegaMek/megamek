@@ -427,13 +427,13 @@ public class TeamLoadoutGenerator {
      * Wrapper to streamline bot team configuration using standardized defaults
      * @param team
      */
-    public void reconfigureBotTeamWithDefaults(Team team) {
+    public void reconfigureBotTeamWithDefaults(Team team, String faction) {
         // Load in some hard-coded defaults now before calculating more.
-        reconfigureTeam(team, defaultBotMunitionsFile);
+        reconfigureTeam(team, faction, defaultBotMunitionsFile);
     }
 
-    public void reconfigureTeam(Team team, MunitionTree mt) {
-        reconfigureTeam(game, team, mt);
+    public void reconfigureTeam(Team team, String faction, MunitionTree mt) {
+        reconfigureTeam(game, team, faction, mt);
     }
 
     /**
@@ -441,24 +441,26 @@ public class TeamLoadoutGenerator {
      * @param team
      * @param defaultFile
      */
-    public void reconfigureTeam(Team team, String adfFile) {
+    public void reconfigureTeam(Team team, String faction, String adfFile) {
         ReconfigurationParameters rp = generateParameters(game, gameOptions, team);
         rp.allowedYear = allowedYear;
         MunitionTree mt = generateMunitionTree(rp, team, adfFile);
-        reconfigureTeam(game, team, mt);
+        reconfigureTeam(game, team, faction, mt);
     }
 
     /**
      * Main configuration function; mutates units of passed-in team
-     * @param g Game instance
-     * @param team containing units to configure
-     * @param mt MunitionTree with imperatives for desired/required ammo loads per Chassis, variant, pilot
+     *
+     * @param g       Game instance
+     * @param team    containing units to configure
+     * @param mt      MunitionTree with imperatives for desired/required ammo loads per Chassis, variant, pilot
+     * @param faction
      */
-    public void reconfigureTeam(Game g, Team team, MunitionTree mt) {
+    public void reconfigureTeam(Game g, Team team, String faction, MunitionTree mt) {
         // configure team according to MunitionTree
         for (Player p: team.players()) {
             for (Entity e : g.getPlayerEntities(p, false)){
-                reconfigureEntity(e, mt, team.getFaction());
+                reconfigureEntity(e, mt, faction);
             }
         }
     }
@@ -468,8 +470,8 @@ public class TeamLoadoutGenerator {
      * @param g
      * @param team
      */
-    public void randomizeBotTeamConfiguration(Team team) {
-        reconfigureTeam(game, team, generateRandomizedMT());
+    public void randomizeBotTeamConfiguration(Team team, String faction) {
+        reconfigureTeam(game, team, faction, generateRandomizedMT());
     }
 
     public static MunitionTree generateRandomizedMT() {
@@ -636,8 +638,8 @@ public class TeamLoadoutGenerator {
         String result = "";
         for (String typeName: TYPE_LIST) {
             if ((trueRandom || !UTILITY_MUNITIONS.contains(typeName)) &&
-                    (binName.toLowerCase().contains(typeName)
-                    || typeName.toLowerCase().contains(binName))) {
+                    (binName.toLowerCase().contains(typeName.toLowerCase())
+                    || typeName.toLowerCase().contains(binName.toLowerCase()))) {
                 ArrayList<String> tList = TYPE_MAP.get(typeName.toLowerCase());
                 result = tList.get(new Random().nextInt(tList.size()));
                 break;

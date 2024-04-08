@@ -366,12 +366,11 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
         }
 
         // Team Configuration
-        team.setFaction((String) cmbTeamFaction.getSelectedItem());
+        String faction = (String) cmbTeamFaction.getSelectedItem();
+        team.setFaction(faction);
         if (null != munitionTree) {
-            // Use constructor that takes a default adf file path
             // TODO: create and set up default adf file path for bots
-            tlg.reconfigureTeam(team, munitionTree);
-            //client.sendUpdateEntity(client.getGame().getPlayerEntities(player, false));
+            tlg.reconfigureTeam(team, faction, munitionTree);
         }
 
         // The deployment position
@@ -560,17 +559,20 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
             if (butAutoconfigure.equals(e.getSource())) {
                 // disable button until Faction changes; result won't change.
                 butAutoconfigure.setEnabled(false);
+                butRandomize.setEnabled(true);
                 munitionTree = tlg.generateMunitionTree(tlg.generateParameters(team), team);
             }
 
             if (butRandomize.equals(e.getSource())) {
                 // Randomize team loadout
                 butAutoconfigure.setEnabled(true);
+                butRandomize.setEnabled(false);
                 tlg.setTrueRandom(chkTrulyRandom.getState());
                 munitionTree = TeamLoadoutGenerator.generateRandomizedMT();
             }
 
             if (cmbTeamFaction.equals(e.getSource())) {
+                // Reset autoconfigure button if user changes faction
                 butAutoconfigure.setEnabled(true);
             }
 

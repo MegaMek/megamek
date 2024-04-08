@@ -10,7 +10,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -127,6 +126,7 @@ class TeamLoadoutGeneratorTest {
         // We expect to see no change in loadouts
         tlg.reconfigureEntity(mockMech, mt, "IS");
         assertTrue(((AmmoType) bin1.getType()).getMunitionType().contains(AmmoType.Munitions.M_STANDARD));
+        assertTrue(((AmmoType) bin2.getType()).getMunitionType().contains(AmmoType.Munitions.M_STANDARD));
     }
 
     @Test
@@ -255,7 +255,7 @@ class TeamLoadoutGeneratorTest {
         // Kintaro's go under different keys
         mt.insertImperative("Kintaro", "KTO-18", "any", "SRM", "Inferno:Standard");
 
-        tlg.reconfigureTeam(game, team, mt);
+        tlg.reconfigureTeam(game, team, "FS", mt);
 
         // Check loadouts
         // 1. AC20 HBK should have two tons of Caseless
@@ -296,7 +296,7 @@ class TeamLoadoutGeneratorTest {
         Mounted bin7 = mockMech3.addEquipment(mockSRM6AmmoType, Mech.LOC_CT);
 
         // Just check that the bins are populated still
-        tlg.randomizeBotTeamConfiguration(team);
+        tlg.randomizeBotTeamConfiguration(team, "FWL");
 
         for (Mounted bin: List.of(bin1, bin2, bin3, bin4, bin5, bin6, bin7)) {
             assertNotEquals("", ((AmmoType) bin.getType()).getSubMunitionName());
@@ -327,7 +327,7 @@ class TeamLoadoutGeneratorTest {
         Mounted bin7 = mockMech3.addEquipment(mockSRM6AmmoType, Mech.LOC_CT);
 
         // Just check that the bins are populated still
-        tlg.reconfigureTeam(team, "");
+        tlg.reconfigureTeam(team,"CL", "");
 
         for (Mounted bin: List.of(bin1, bin2, bin3, bin4, bin5, bin6, bin7)) {
             assertNotEquals("", ((AmmoType) bin.getType()).getSubMunitionName());

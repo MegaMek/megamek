@@ -19,6 +19,7 @@
  */
 package megamek.client.ui.swing.lobby;
 
+import megamek.MMConstants;
 import megamek.client.Client;
 import megamek.client.bot.BotClient;
 import megamek.client.bot.princess.BehaviorSettings;
@@ -587,6 +588,29 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
             }
         }
     };
+
+
+    private boolean saveLoadout() {
+        //ignoreHotKeys = true;
+        JFileChooser fc = new JFileChooser(MMConstants.USER_LOADOUTS_DIR);
+        fc.setLocation(this.getLocation().x + 150, this.getLocation().y + 100);
+        fc.setDialogTitle(Messages.getString("ClientGUI.FileSaveDialog.title"));
+
+        int returnVal = fc.showSaveDialog(this);
+        if ((returnVal != JFileChooser.APPROVE_OPTION) || (fc.getSelectedFile() == null)) {
+            // I want a file, y'know!
+            return false;
+        }
+        if (fc.getSelectedFile() != null) {
+            String file = fc.getSelectedFile().getName();
+            // stupid hack to allow for savegames in folders with spaces in
+            // the name
+            String path = fc.getSelectedFile().getParentFile().getPath();
+            path = path.replace(" ", "|");
+            return true;
+        }
+        return false;
+    }
 
     /**
      * Parse the given field and return the integer it contains or 0, if

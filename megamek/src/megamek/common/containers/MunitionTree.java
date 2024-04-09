@@ -1,6 +1,7 @@
 package megamek.common.containers;
 
 import megamek.common.BombType;
+import org.apache.logging.log4j.LogManager;
 
 import java.io.*;
 import java.util.*;
@@ -30,11 +31,11 @@ public class MunitionTree {
 
     public static final ArrayList<String> ARROW_MUNITION_NAMES = new ArrayList<>(List.of(
             "ADA", "Cluster", "Homing", "Illumination", "Inferno-IV", "Laser Inhibiting", "Smoke",
-            "Thunder", "Thunder Vibrabomb-IV", "Davy Crocket-M", "Fuel-Air", "Standard"
+            "Thunder", "Thunder Vibrabomb-IV", "Davy Crockett-M", "Fuel-Air", "Standard"
     ));
 
     public static final ArrayList<String> ARTILLERY_MUNITION_NAMES = new ArrayList<>(List.of(
-            "Cluster", "Copperhead", "FASCAM", "Flechette", "Illumination", "Smoke", "Fuel-Air", "Davy Crocket-M",
+            "Cluster", "Copperhead", "FASCAM", "Flechette", "Illumination", "Smoke", "Fuel-Air", "Davy Crockett-M",
             "Standard"
     ));
 
@@ -55,6 +56,23 @@ public class MunitionTree {
             Arrays.asList(BombType.bombInternalNames)
     );
 
+    private static String HEADER = String.join(
+            System.getProperty("line.separator"),
+            "# ADF (Autoconfiguration Data File) from MegaMek.",
+            "# Lines are formatted as",
+            "#      '<Chassis>:<Model>:<Pilot>::<Weapon type>:Muntion1[:Munition2[:...]]][::AmmoType2...]'",
+            "# values for <Chassis>, <Model>, <Pilot>, and <Weapon Type> may be 'any', or actual values.",
+            "# Values for <Weapon Type> may also be specific or general, e.g. 'AC/20' ~ 'AC', 'SRM6' ~ 'SRM'",
+            "# e.g. 'Shadow Hawk:any:Grayson Carlyle::LRM:Swarm::SRM:Inferno::AC:Precision:Flak'.",
+            "# Left-most Munition is highest priority; if any ammo slots are unaccounted for, they will be filled",
+            "# with this munition type (unless it is invalid for the time / faction, in which case the next valid",
+            "# Munition type will be used).  If no imperative matches, the current munitions will be left in place.",
+            "# An 'any:any:any::...' directive will be applied to any and all units, but is superseded by more",
+            "# particular entries.  If no match is found at the <Pilot> level, the 'any' entry at that level will",
+            "# be tried first, and onwards up until 'any:any:any' (if defined).",
+            "######################################################################################################"
+    );
+
     private LoadNode root = new LoadNode();
 
     public MunitionTree() {
@@ -64,20 +82,21 @@ public class MunitionTree {
      * Constructor for reading in files containing loadout imperatives.
      * @param fd
      */
-    public MunitionTree(File fd) {
+    public MunitionTree(String fName) throws IllegalArgumentException {
+        File fd = new File(fName);
         if (fd.canRead() && fd.exists()) {
-            String fname = fd.getName();
-            try (FileReader fr = new FileReader(fname)) {
+            try (FileReader fr = new FileReader(fName)) {
                 if (fd.getAbsoluteFile().toString().toLowerCase().endsWith("adf")) {
                     readFromADF(new BufferedReader(fr));
                 } else if (fd.getAbsoluteFile().toString().toLowerCase().endsWith("xml")) {
                     readFromXML(new BufferedReader(fr));
+                } else {
+                    throw new IllegalArgumentException("Invalid filename: " + fName);
                 }
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         }
-
     }
 
     /**
@@ -88,38 +107,72 @@ public class MunitionTree {
 
     }
 
-    public void readFromADF(BufferedReader br) {
-        try {
-            for (String line = br.readLine(); line != null; line = br.readLine()) {
-                // Ignore comments
-                if (line.startsWith("#")) {
-                    continue;
-                }
-
-                try {
-                    String[] parts = line.split("::");
-                    String[] keys = parts[0].split(":");
-                    HashMap<String, String> imperatives = new HashMap<>();
-                    String imperative;
-
-                    for (int idx = 1; idx < parts.length; idx++) {
-                        // Populate imperatives by splitting at first ":" instance
-                        imperative = parts[idx];
-                        imperatives.put(
-                                imperative.substring(0, imperative.indexOf(':')),
-                                imperative.substring(imperative.indexOf(':') + 1)
-                        );
-                    }
-                    insertImperatives(keys[0], keys[1], keys[2], imperatives);
-                } catch (IndexOutOfBoundsException e) {
-                    continue;
-                }
-            }
+    public void readFromADFFilename(String fName) {
+        try (BufferedReader br = new BufferedReader(new FileReader(fName))){
+            readFromADF(br);
+        } catch (FileNotFoundException e) {
+            LogManager.getLogger().error("File not found: " + fName, e);
         } catch (IOException e) {
-            // do something cool
+            LogManager.getLogger().error("Failed to read file: " + fName, e);
         }
     }
 
+    public void readFromADF(BufferedReader br) throws IOException {
+        for (String line = br.readLine(); line != null; line = br.readLine()) {
+            // Ignore comments
+            if (line.startsWith("#") || line.isBlank() || line.isEmpty()) {
+                continue;
+            }
+
+            try {
+                String[] parts = line.split("::");
+                String[] keys = parts[0].split(":");
+                HashMap<String, String> imperatives = new HashMap<>();
+                String imperative;
+
+                for (int idx = 1; idx < parts.length; idx++) {
+                    // Populate imperatives by splitting at first ":" instance
+                    imperative = parts[idx];
+                    imperatives.put(
+                            imperative.substring(0, imperative.indexOf(':')),
+                            imperative.substring(imperative.indexOf(':') + 1)
+                    );
+                }
+                insertImperatives(keys[0], keys[1], keys[2], imperatives);
+            } catch (IndexOutOfBoundsException e) {
+                LogManager.getLogger().error("Failed to read an imperative!", e);
+            }
+        }
+    }
+
+    public void writeToADFFilename(String fName) {
+        File fd = new File(fName);
+        if (!fd.exists()) {
+            try {
+                fd.createNewFile();
+            } catch (IOException e) {
+                LogManager.getLogger().error("Failed to create new file: " + fName, e);
+                return;
+            }
+        }
+
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(fName))) {
+            writeToADFFormat(bw);
+        } catch (FileNotFoundException e) {
+            LogManager.getLogger().error("File not found: " + fName, e);
+        } catch (IOException e) {
+            LogManager.getLogger().error("Failed to write file: " + fName, e);
+        }
+    }
+
+    public void writeToADFFormat(BufferedWriter bw) throws IOException {
+        bw.write(HEADER);
+        bw.write(root.dumpTextFormat().toString());
+        bw.flush();
+    }
+
+    // Can take multiple separate ammoType strings (e.g. "Standard", "HE", "ER") or one
+    // pre-defined imperative set in priority order ("Standard:HE:ER")
     public void insertImperative(
             String chassis, String variant, String pilot, String binType, String... ammoTypes) throws IllegalArgumentException {
 
@@ -149,20 +202,21 @@ public class MunitionTree {
 
     public HashMap<String, Integer> getCountsOfAmmosForKey(
         String chassis, String variant, String pilot, String binType) {
-        LoadNode node = root.retrieve(chassis, variant, pilot);
-        if (null != node) {
-            return node.getCounts(binType);
-        }
-        return new HashMap<>();
+        return root.retrieveAmmoCounts(chassis, variant, pilot, binType);
     }
 
     public List<String> getPriorityList(
             String chassis, String variant, String pilot, String binType) {
+        return root.retrievePriorityList(chassis, variant, pilot, binType);
+    }
+
+    public String getEffectiveImperative(
+        String chassis, String variant, String pilot, String binType) {
         LoadNode node = root.retrieve(chassis, variant, pilot);
         if (null != node) {
-            return node.getImperativeOrder(binType);
+            return node.getImperative(binType).get(1);
         }
-        return new ArrayList<>();
+        return "";
     }
 
     /**
@@ -176,13 +230,7 @@ public class MunitionTree {
      */
     public int getCountOfAmmoForKey(
             String chassis, String variant, String pilot, String binType, String ammoType) {
-        LoadNode node = root.retrieve(chassis, variant, pilot);
-        if (null != node) {
-            return node.getCount(binType, ammoType);
-        }
-        else {
-            return 0;
-        }
+        return root.retrieveAmmoCount(chassis, variant, pilot, binType, ammoType);
     }
 }
 
@@ -257,7 +305,7 @@ class LoadNode {
         // 2.5 we contain the first key but it returns no results, so
         // 3. we contain an "any" entry, or
         // 4. we return null (no matches)
-        LoadNode ln;
+        LoadNode ln = null;
         if (keys.length == 0){
             ln = this;
         } else if (children.containsKey(keys[0])){
@@ -269,10 +317,53 @@ class LoadNode {
             }
         } else if (children.containsKey(ANY_KEY)){
             ln = children.get(ANY_KEY).retrieve(Arrays.copyOfRange(keys, 1, keys.length));
-        } else {
-            ln = null;
         }
         return ln;
+    }
+
+    public HashMap<String, Integer> retrieveAmmoCounts(String... keys) {
+        HashMap<String, Integer> retval = new HashMap<>();
+        if (keys.length == 1) {
+            retval = getCounts(keys[0]);
+        } else if (children.containsKey(keys[0])) {
+            retval = children.get(keys[0]).retrieveAmmoCounts(Arrays.copyOfRange(keys, 1, keys.length));
+            if (retval.isEmpty() && children.containsKey(ANY_KEY)) {
+                retval = children.get(ANY_KEY).retrieveAmmoCounts(Arrays.copyOfRange(keys, 1, keys.length));
+            }
+        } else if (children.containsKey(ANY_KEY)) {
+            retval = children.get(ANY_KEY).retrieveAmmoCounts(Arrays.copyOfRange(keys, 1, keys.length));
+        }
+        return retval;
+    }
+
+    public List<String> retrievePriorityList(String... keys) {
+        List<String> retval = new ArrayList<>();
+        if (keys.length == 1) {
+            retval = getImperativeOrder(keys[0]);
+        } else if (children.containsKey(keys[0])) {
+            retval = children.get(keys[0]).retrievePriorityList(Arrays.copyOfRange(keys, 1, keys.length));
+            if (retval.isEmpty() && children.containsKey(ANY_KEY)) {
+                retval = children.get(ANY_KEY).retrievePriorityList(Arrays.copyOfRange(keys, 1, keys.length));
+            }
+        } else if (children.containsKey(ANY_KEY)) {
+            retval = children.get(ANY_KEY).retrievePriorityList(Arrays.copyOfRange(keys, 1, keys.length));
+        }
+        return retval;
+    }
+
+    public int retrieveAmmoCount(String... keys) {
+        int retval = 0;
+        if (keys.length == 2) {
+            retval = getCount(keys[0], keys[1]);
+        } else if (children.containsKey(keys[0])) {
+            retval = children.get(keys[0]).retrieveAmmoCount(Arrays.copyOfRange(keys, 1, keys.length));
+            if (retval == 0 && children.containsKey(ANY_KEY)) {
+                retval = children.get(ANY_KEY).retrieveAmmoCount(Arrays.copyOfRange(keys, 1, keys.length));
+            }
+        } else if (children.containsKey(ANY_KEY)) {
+            retval = children.get(ANY_KEY).retrieveAmmoCount(Arrays.copyOfRange(keys, 1, keys.length));
+        }
+        return retval;
     }
 
     /**
@@ -298,7 +389,15 @@ class LoadNode {
 
     public List<String> getImperativeOrder(String binType) {
         List<String> ordering = getImperative(binType);
-        return (ordering.isEmpty()) ? new ArrayList<>() : List.of(ordering.get(1).split(":"));
+        List<String> orderedSetList = new ArrayList<>();
+        if (!ordering.isEmpty()) {
+            for (String s : ordering.get(1).split(":")) {
+                if (!orderedSetList.contains(s)) {
+                    orderedSetList.add(s);
+                }
+            }
+        }
+        return orderedSetList;
     }
 
     public int getCount(String binType, String ammoType) {
@@ -342,5 +441,37 @@ class LoadNode {
             }
         }
         return c;
+    }
+
+    /**
+     * Recursive text format dumper.
+     * Cases:
+     * 1. This is a leaf.  Three keys have been passed in; these form the start of the line.
+     *    Print one line starting with the three keys in "chassis:model:pilot::" format.
+     *    Each line contains all imperatives in "ammoType:munition1[:munition2[...]]::ammoType2..."
+     *    format.
+     * 2. This is a node.  1~2 keys have been passed in; pass these to leaves.
+     * 3. This is the root.  Iterate over all child keys and pass them to the children.
+     * @param keys
+     * @return
+     */
+    public StringBuilder dumpTextFormat(String... keys) {
+        StringBuilder sb = new StringBuilder();
+        if (keys.length == 3) {
+            // Create prefix of 3 keys
+            sb.append(keys[0]).append(":").append(keys[1]).append(":").append(keys[2]);
+            // Combine all imperatives in one line.
+            for (Map.Entry<String, String> entry : imperatives.entrySet()) {
+                sb.append("::").append(entry.getKey()).append(":").append(entry.getValue());
+            }
+            sb.append('\n');
+        } else {
+            for (Map.Entry<String, LoadNode> entry : children.entrySet()) {
+                String[] keysPlusOne = java.util.Arrays.copyOf(keys, keys.length + 1);
+                keysPlusOne[keys.length] = entry.getKey();
+                sb.append(entry.getValue().dumpTextFormat(keysPlusOne));
+            }
+        }
+        return sb;
     }
 }

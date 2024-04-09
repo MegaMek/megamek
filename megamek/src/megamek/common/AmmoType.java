@@ -2756,7 +2756,7 @@ public class AmmoType extends EquipmentType {
                         .setStaticTechLevel(SimpleTechLevel.ADVANCED),
                 "357, TO"));
 
-        munitions.add(new MunitionMutator("Davy Crocket-M", 5, Munitions.M_DAVY_CROCKETT_M,
+        munitions.add(new MunitionMutator("Davy Crockett-M", 5, Munitions.M_DAVY_CROCKETT_M,
                 new TechAdvancement(TECH_BASE_IS).setTechRating(RATING_D)
                         .setAvailability(RATING_F, RATING_F, RATING_F, RATING_F)
                         .setISAdvancement(2412, DATE_NONE, DATE_NONE, 2830, 3044)
@@ -3026,7 +3026,7 @@ public class AmmoType extends EquipmentType {
         AmmoType.createMunitions(thumperAmmos, munitions);
 
         // Make Davy Crockett-Ms for Long Toms, but not Thumper or Sniper.
-        munitions.add(new MunitionMutator("Davy Crocket-M", 5, Munitions.M_DAVY_CROCKETT_M,
+        munitions.add(new MunitionMutator("Davy Crockett-M", 5, Munitions.M_DAVY_CROCKETT_M,
                 new TechAdvancement(TECH_BASE_IS).setTechRating(RATING_D)
                         .setAvailability(RATING_F, RATING_F, RATING_F, RATING_F)
                         .setISAdvancement(2412, DATE_NONE, DATE_NONE, 2830, 3044)

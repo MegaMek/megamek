@@ -393,9 +393,18 @@ class TeamLoadoutGeneratorTest {
     @Test
     void testMunitionWeightCollectionTopN() {
         MunitionWeightCollection mwc = new MunitionWeightCollection();
-        // Default weighting for all munition types; "Standard" should be first.
+        // Default weighting for all munition types.
+        // For missiles, "Dead-Fire" is first, followed by "Standard" by default.
+        // For other rounds, "Standard" should be first.
         HashMap<String, List<String>> topN = mwc.getTopN(3);
-        assertTrue(topN.get("lrm").get(0).contains("Standard"));
+
+        assertTrue(topN.get("lrm").get(0).contains("Dead-Fire"));
+        assertTrue(topN.get("lrm").get(1).contains("Standard"));
+        assertTrue(topN.get("srm").get(0).contains("Dead-Fire"));
+        assertTrue(topN.get("srm").get(1).contains("Standard"));
+
+        assertTrue(topN.get("ac").get(0).contains("Standard"));
+        assertTrue(topN.get("arrow iv").get(0).contains("Standard"));
     }
 
     @Test
@@ -411,8 +420,8 @@ class TeamLoadoutGeneratorTest {
         assertEquals("Caseless=1.0", topN.get("ac").get(2));
 
         assertEquals("Tandem-Charge=3.0", topN.get("srm").get(0));
-        assertEquals("Standard=2.0", topN.get("srm").get(1));
-        assertEquals("Acid=1.0", topN.get("srm").get(2));
+        assertEquals("Dead-Fire=3.0", topN.get("srm").get(1));
+        assertEquals("Standard=2.0", topN.get("srm").get(2));
     }
 
     @Test

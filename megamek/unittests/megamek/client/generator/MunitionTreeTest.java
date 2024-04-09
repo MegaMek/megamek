@@ -7,9 +7,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.StringReader;
+import java.io.*;
 import java.util.HashMap;
 import java.util.List;
 
@@ -48,10 +46,10 @@ class MunitionTreeTest {
         assertEquals(1, mt.getCountOfAmmoForKey("Catapult", "CPLT-C5", "any", "LRM", "Standard"));
 
         // Overwrite LRM imperative
-        lrmHash.put("LRM", "Deadfire");
+        lrmHash.put("LRM", "Dead-Fire");
         mt.insertImperatives("Catapult", "any", "any", lrmHash);
         assertEquals(0, mt.getCountOfAmmoForKey("Catapult", "any", "any", "LRM", "Inferno"));
-        assertEquals(1, mt.getCountOfAmmoForKey("Catapult", "any", "any", "LRM", "Deadfire"));
+        assertEquals(1, mt.getCountOfAmmoForKey("Catapult", "any", "any", "LRM", "Dead-Fire"));
     }
 
     @Test
@@ -66,6 +64,21 @@ class MunitionTreeTest {
         assertEquals(1, mt.getCountOfAmmoForKey("Mauler", "MAL-5X", "Bobbit Schwintz", "AC5", "Standard"));
         assertEquals(1, mt.getCountOfAmmoForKey("Mauler", "any", "any", "AC20", "Precision"));
         assertEquals(1, mt.getCountOfAmmoForKey("any", "any", "any", "L/AC5", "Standard"));
+    }
+
+    @Test
+    void testCompositeLevelImperatives() {
+        // We want to be able to composite more- and less-explicit imperatives, e.g.
+        // 1. A specific pilot in a specific model of a chassis has one set of imperatives
+        // 2. All units have a more broad set of imperatives
+        // We want anything not covered in the specific case to look for the higher-level imperatives
+        MunitionTree mt = new MunitionTree();
+        mt.insertImperative("any", "any", "any", "AC", "Standard:Precision");
+        mt.insertImperative("any", "any", "any", "LRM", "Standard:Heat-Seeking:Semi-Guided");
+        mt.insertImperative("Mauler", "MAL-5X", "Tsubaki Yonjuro", "AC", "Precision:Tracer:Armor-Piercing");
+        assertEquals(1, mt.getCountOfAmmoForKey("Mauler", "MAL-5X", "Tsubaki Yonjuro", "AC", "Precision"));
+        // Only defined for "any"
+        assertEquals(1, mt.getCountOfAmmoForKey("Mauler", "MAL-5X", "Tsubaki Yonjuro", "LRM", "Standard"));
     }
 
     @Test
@@ -134,12 +147,12 @@ class MunitionTreeTest {
     }
 
     @Test
-    void testADFFileFormatReading() {
+    void testADFFileFormatReading() throws IOException {
         StringReader sr = new StringReader(
             String.join("\\\n",
         "#Mauler:any:any::LRM:Smoke::AC5:AP",
-                "Catapult:CPLT-C1:any::LRM-15:Standard:Deadfire:inferno",
-                "Shadow Hawk:any:any::SRM:Inferno::LRM:Deadfire::AC:Precision"
+                "Catapult:CPLT-C1:any::LRM-15:Standard:Dead-Fire:inferno",
+                "Shadow Hawk:any:any::SRM:Inferno::LRM:Dead-Fire::AC:Precision"
             )
         );
 
@@ -153,5 +166,23 @@ class MunitionTreeTest {
         assertEquals(1, mt.getCountsOfAmmosForKey("Shadow Hawk", "SHD-2D", "any", "LRM-5").size());
         assertEquals(1, mt.getCountsOfAmmosForKey("Shadow Hawk", "SHD-2D", "any", "SRM-2").size());
         assertEquals(1, mt.getCountsOfAmmosForKey("Shadow Hawk", "SHD-2D", "any", "AC-5").size());
+    }
+
+    @Test
+    void testADFFormatTextOutput() throws IOException {
+        StringWriter sw = new StringWriter();
+        BufferedWriter bw = new BufferedWriter(sw);
+        MunitionTree mt = new MunitionTree();
+
+        mt.insertImperative("any", "any", "any", "AC", "Standard:Precision");
+        mt.insertImperative("any", "any", "any", "LRM", "Standard:Heat-Seeking:Semi-Guided");
+        mt.insertImperative("Mauler", "MAL-5X", "Tsubaki Yonjuro", "AC", "Precision:Tracer:Armor-Piercing");
+        mt.insertImperative("Shadow Hawk", "SHD-2D", "any", "LRM", "Dead-Fire");
+        mt.insertImperative("Shadow Hawk", "SHD-2D", "any", "SRM", "Inferno");
+        mt.insertImperative("Shadow Hawk", "SHD-2D", "any", "AC", "Precision");
+
+        mt.writeToADFFormat(bw);
+        String[] lines = sw.toString().split("\\n");
+        assertTrue(lines[0].contains("any:any:any::AC:Standard:Precision::LRM:Standard:Heat-Seeking:Semi-Guided"));
     }
 }

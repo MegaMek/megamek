@@ -59,6 +59,7 @@ MEGAMEK VERSION HISTORY:
 + Fix #5291: Fix for MML #135  Industrial tripod cockpit 
 + Fix #3306: Vehicle Lance Movement prevents full deployment of turrets
 + PR #5303: add client settings for report colors (Allows custom colors)
++ PR #5322: Fix reading player names from savegames 
 
 
 0.49.18 (2024-02-17 1800 UTC)

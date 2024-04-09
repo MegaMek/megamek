@@ -326,7 +326,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         panelFilterButtons.add(textFilter, gridBagConstraintsWest);
         gridBagConstraintsWest.fill = GridBagConstraints.NONE;
 
-
+        /** Add the Gunnery and Piloting entry boxes and labels to the filter panel in the UI **/
 
         JLabel lblGun = new JLabel("Gunnery");
         lblGun.setName("lblGun");
@@ -337,6 +337,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         textGunnery = new JTextField("4");
         textGunnery.setName("textGunnery");
         textGunnery.getDocument().addDocumentListener(new DocumentListener() {
+            /** Set the table to refresh when the gunnery is changed **/
             @Override
             public void changedUpdate (DocumentEvent e) { sorter.allRowsChanged(); }
 
@@ -360,6 +361,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         textPilot = new JTextField("5");
         textPilot.setName("textPilot");
         textPilot.getDocument().addDocumentListener(new DocumentListener() {
+            /** Set the table to refresh when the piloting is changed **/
             @Override
             public void changedUpdate (DocumentEvent e) { sorter.allRowsChanged(); }
 
@@ -953,20 +955,28 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
                 }
                 return ms.getTons();
             } else if (col == COL_BV) {
+                /** This code allows for Gunnery and BV to be read from the UI, and update the BV values in the table as a result  **/
                 int gunnery = 4;
                 int piloting = 5;
                 if (textGunnery.getText().matches("\\d+")) {
                     gunnery = Integer.parseInt(textGunnery.getText());
+                    if (gunnery > 8) {
+                        gunnery = 4;
+                    };
                 };
                 if (textPilot.getText().matches("\\d+")) {
                     piloting = Integer.parseInt(textPilot.getText());
-                    
+                    if (piloting > 8) {
+                        piloting = 5;
+                    };
                 };
                 
                 double gp_multiply = BVCalculator.bvSkillMultiplier(gunnery,piloting);
-                modified_bv = (int) Math.round(ms.getBV() * gp_multiply);
+                int modified_bv = (int) Math.round(ms.getBV() * gp_multiply);
                 return modified_bv;
             } else if (col == COL_PV) {
+                /** This code allows for Gunnery to be read from the UI, and update the PV values in the table as a result
+                 * It uses Gunnery as the skill **/
                 int gunnery = 4;
                 double modifier = 1;
                 if (textGunnery.getText().matches("\\d+")) {

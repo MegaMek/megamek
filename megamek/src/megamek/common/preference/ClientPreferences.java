@@ -47,6 +47,7 @@ public class ClientPreferences extends PreferenceStoreProxy {
     public static final String UNIT_START_CHAR = "UnitStartChar";
     public static final String DEFAULT_AUTOEJECT_DISABLED = "DefaultAutoejectDisabled";
     public static final String USE_AVERAGE_SKILLS = "UseAverageSkills";
+    public static final String USE_GP_IN_UNIT_SELECTION = "UseGPinUnitSelection";
     public static final String GENERATE_NAMES = "GenerateNames";
     public static final String METASERVER_NAME = "MetaServerName";
     public static final String GOAL_PLAYERS = "GoalPlayers";
@@ -84,6 +85,7 @@ public class ClientPreferences extends PreferenceStoreProxy {
         store.setDefault(UNIT_START_CHAR, 'A');
         store.setDefault(GUI_NAME, "swing");
         store.setDefault(USE_AVERAGE_SKILLS, true);
+        store.setDefault(USE_GP_IN_UNIT_SELECTION, false);
         store.setDefault(GENERATE_NAMES, true);
         store.setDefault(PRINT_ENTITY_CHANGE, false);
         store.setDefault(BOARD_WIDTH, 16);
@@ -118,6 +120,10 @@ public class ClientPreferences extends PreferenceStoreProxy {
         return store.getBoolean(USE_AVERAGE_SKILLS);
     }
 
+    public boolean useGPinUnitSelection() {
+        return store.getBoolean(USE_GP_IN_UNIT_SELECTION);
+    }
+    
     public boolean generateNames() {
         return store.getBoolean(GENERATE_NAMES);
     }
@@ -224,6 +230,10 @@ public class ClientPreferences extends PreferenceStoreProxy {
         store.setValue(USE_AVERAGE_SKILLS, state);
     }
 
+    public void setUseGpInUnitSelection(boolean state) {
+        store.setValue(USE_GP_IN_UNIT_SELECTION, state);
+    }
+    
     public void setGenerateNames(boolean state) {
         store.setValue(GENERATE_NAMES, state);
     }

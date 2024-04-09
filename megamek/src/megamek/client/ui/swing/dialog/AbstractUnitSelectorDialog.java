@@ -27,6 +27,8 @@ import megamek.common.annotations.Nullable;
 import megamek.common.battlevalue.BVCalculator;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
+import megamek.common.preference.ClientPreferences;
+import megamek.common.preference.PreferenceManager;
 import megamek.common.util.sorter.NaturalOrderComparator;
 import org.apache.logging.log4j.LogManager;
 
@@ -121,6 +123,8 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
     protected int techLevelDisplayType = TECH_LEVEL_DISPLAY_IS_CLAN;
     protected boolean eraBasedTechLevel = false;
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
+    //Create Client Preferences object to read values (for G/P BV #5333)
+    private static final ClientPreferences CP = PreferenceManager.getClientPreferences();
     //endregion Variable Declarations
 
     protected AbstractUnitSelectorDialog(JFrame frame, UnitLoadingDialog unitLoadingDialog) {
@@ -327,54 +331,71 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         gridBagConstraintsWest.fill = GridBagConstraints.NONE;
 
         /** Add the Gunnery and Piloting entry boxes and labels to the filter panel in the UI **/
-
+        
         JLabel lblGun = new JLabel("Gunnery");
         lblGun.setName("lblGun");
         gridBagConstraintsWest.gridx = 0;
         gridBagConstraintsWest.gridy = 4;
-        panelFilterButtons.add(lblGun,gridBagConstraintsWest);
-
+        if (CP.useGPinUnitSelection()) {
+            panelFilterButtons.add(lblGun, gridBagConstraintsWest);
+        };
         textGunnery = new JTextField("4");
         textGunnery.setName("textGunnery");
-        textGunnery.getDocument().addDocumentListener(new DocumentListener() {
-            /** Set the table to refresh when the gunnery is changed **/
-            @Override
-            public void changedUpdate (DocumentEvent e) { sorter.allRowsChanged(); }
+        if (CP.useGPinUnitSelection()) {
+            textGunnery.getDocument().addDocumentListener(new DocumentListener() {
+                // Set the table to refresh when the gunnery is changed
+                @Override
+                public void changedUpdate(DocumentEvent e) {
+                    sorter.allRowsChanged();
+                }
 
-            @Override
-            public void insertUpdate(DocumentEvent e) { sorter.allRowsChanged(); }
-            
-            @Override
-            public void removeUpdate(DocumentEvent e) { sorter.allRowsChanged(); }
-            
-        });
-        gridBagConstraintsWest.gridx = 1;
-        gridBagConstraintsWest.gridy = 4;
-        panelFilterButtons.add(textGunnery,gridBagConstraintsWest);
+                @Override
+                public void insertUpdate(DocumentEvent e) {
+                    sorter.allRowsChanged();
+                }
+
+                @Override
+                public void removeUpdate(DocumentEvent e) {
+                    sorter.allRowsChanged();
+                }
+
+            });
+            gridBagConstraintsWest.gridx = 1;
+            gridBagConstraintsWest.gridy = 4;
+            panelFilterButtons.add(textGunnery, gridBagConstraintsWest);
+        };    
 
         JLabel lblPilot = new JLabel("Piloting");
         lblGun.setName("lblPilot");
         gridBagConstraintsWest.gridx = 0;
         gridBagConstraintsWest.gridy = 5;
-        panelFilterButtons.add(lblPilot,gridBagConstraintsWest);
-
+        if (CP.useGPinUnitSelection()) {
+            panelFilterButtons.add(lblPilot, gridBagConstraintsWest);
+        };
         textPilot = new JTextField("5");
         textPilot.setName("textPilot");
-        textPilot.getDocument().addDocumentListener(new DocumentListener() {
-            /** Set the table to refresh when the piloting is changed **/
-            @Override
-            public void changedUpdate (DocumentEvent e) { sorter.allRowsChanged(); }
+        if (CP.useGPinUnitSelection()) {
+            textPilot.getDocument().addDocumentListener(new DocumentListener() {
+                // Set the table to refresh when the piloting is changed
+                @Override
+                public void changedUpdate(DocumentEvent e) {
+                    sorter.allRowsChanged();
+                }
 
-            @Override
-            public void insertUpdate(DocumentEvent e) { sorter.allRowsChanged(); }
+                @Override
+                public void insertUpdate(DocumentEvent e) {
+                    sorter.allRowsChanged();
+                }
 
-            @Override
-            public void removeUpdate(DocumentEvent e) { sorter.allRowsChanged(); }
-
-        });
-        gridBagConstraintsWest.gridx = 1;
-        gridBagConstraintsWest.gridy = 5;
-        panelFilterButtons.add(textPilot,gridBagConstraintsWest);
+                @Override
+                public void removeUpdate(DocumentEvent e) {
+                    sorter.allRowsChanged();
+                }
+            });
+            gridBagConstraintsWest.gridx = 1;
+            gridBagConstraintsWest.gridy = 5;
+            panelFilterButtons.add(textPilot, gridBagConstraintsWest);
+        }; 
         
         labelImage.setHorizontalAlignment(SwingConstants.CENTER);
         labelImage.setName("labelImage");

@@ -190,6 +190,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
     private JTextField stampFormat;
     private final JCheckBox defaultAutoejectDisabled = new JCheckBox(Messages.getString("CommonSettingsDialog.defaultAutoejectDisabled"));
     private final JCheckBox useAverageSkills = new JCheckBox(Messages.getString("CommonSettingsDialog.useAverageSkills"));
+    private final JCheckBox useGPinUnitSelection = new JCheckBox(Messages.getString("CommonSettingsDialog.useGPinUnitSelection"));
     private final JCheckBox generateNames = new JCheckBox(Messages.getString("CommonSettingsDialog.generateNames"));
     private final JCheckBox showUnitId = new JCheckBox(Messages.getString("CommonSettingsDialog.showUnitId"));
     private JComboBox<String> displayLocale;
@@ -1625,6 +1626,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
 
         comps.add(checkboxEntry(defaultAutoejectDisabled, null));
         comps.add(checkboxEntry(useAverageSkills, null));
+        comps.add(checkboxEntry(useGPinUnitSelection, "This changes the BV/PV displayed in the unit selection list. It does not change the pilot/gunnery of the mech once selected"));
         comps.add(checkboxEntry(generateNames, null));
         addLineSpacer(comps);
         comps.add(checkboxEntry(keepGameLog, null));
@@ -1754,6 +1756,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
 
             defaultAutoejectDisabled.setSelected(CP.defaultAutoejectDisabled());
             useAverageSkills.setSelected(CP.useAverageSkills());
+            useGPinUnitSelection.setSelected(CP.useGPinUnitSelection());
             generateNames.setSelected(CP.generateNames());
             showUnitId.setSelected(CP.getShowUnitId());
 
@@ -2217,6 +2220,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
 
         CP.setDefaultAutoejectDisabled(defaultAutoejectDisabled.isSelected());
         CP.setUseAverageSkills(useAverageSkills.isSelected());
+        CP.setUseGpInUnitSelection(useGPinUnitSelection.isSelected());
         CP.setGenerateNames(generateNames.isSelected());
         CP.setShowUnitId(showUnitId.isSelected());
         if ((clientgui != null) && (clientgui.getBoardView() != null)) {

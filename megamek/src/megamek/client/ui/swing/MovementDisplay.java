@@ -507,23 +507,19 @@ public class MovementDisplay extends ActionPhaseDisplay {
         }
 
         MegaMekController controller = clientgui.controller;
-        controller.registerCommandAction(KeyCommandBind.TURN_LEFT, this::shouldReceiveKeyCommands, this::turnLeft);
-        controller.registerCommandAction(KeyCommandBind.TURN_RIGHT, this::shouldReceiveKeyCommands, this::turnRight);
-        controller.registerCommandAction(KeyCommandBind.UNDO_LAST_STEP, this::shouldReceiveKeyCommands,
-                this::undoIllegalStep);
-        controller.registerCommandAction(KeyCommandBind.UNDO_SINGLE_STEP, this::shouldReceiveKeyCommands,
-                this::undoLastStep);
+        controller.registerCommandAction(KeyCommandBind.TURN_LEFT, this, this::turnLeft);
+        controller.registerCommandAction(KeyCommandBind.TURN_RIGHT, this, this::turnRight);
+        controller.registerCommandAction(KeyCommandBind.UNDO_LAST_STEP, this, this::undoIllegalStep);
+        controller.registerCommandAction(KeyCommandBind.UNDO_SINGLE_STEP, this, this::undoLastStep);
 
-        controller.registerCommandAction(KeyCommandBind.NEXT_UNIT, this::shouldReceiveKeyCommands,
+        controller.registerCommandAction(KeyCommandBind.NEXT_UNIT, this,
                 () -> selectEntity(clientgui.getClient().getNextEntityNum(cen)));
-        controller.registerCommandAction(KeyCommandBind.PREV_UNIT, this::shouldReceiveKeyCommands,
+        controller.registerCommandAction(KeyCommandBind.PREV_UNIT, this,
                 () -> selectEntity(clientgui.getClient().getPrevEntityNum(cen)));
 
-        controller.registerCommandAction(KeyCommandBind.CANCEL, this::shouldPerformClearKeyCommand,
-                this::cancel);
-        controller.registerCommandAction(KeyCommandBind.TOGGLE_MOVEMODE, this::shouldReceiveKeyCommands,
-                this::performToggleMovemode);
-        controller.registerCommandAction(KeyCommandBind.TOGGLE_CONVERSIONMODE, this::shouldReceiveKeyCommands,
+        controller.registerCommandAction(KeyCommandBind.CANCEL, this::shouldPerformClearKeyCommand, this::cancel);
+        controller.registerCommandAction(KeyCommandBind.TOGGLE_MOVEMODE, this, this::performToggleMovemode);
+        controller.registerCommandAction(KeyCommandBind.TOGGLE_CONVERSIONMODE, this,
                 this::performToggleConversionMode);
     }
 

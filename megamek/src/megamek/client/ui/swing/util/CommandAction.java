@@ -1,7 +1,8 @@
 /*
  * MegaMek -
  * Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
- * Copyright © 2013 Nicholas Walczak (walczak@cs.umn.edu)
+ * Copyright (C) 2013 Nicholas Walczak (walczak@cs.umn.edu)
+ * Copyright (C) 2024 - The MegaMek Team. All Rights Reserved.
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -27,7 +28,7 @@ public interface CommandAction {
 
     /**
      * Returns true when the registered receiver of the keybind is in a state to receive the keybind and may
-     * react to it. False otherwise. This should return true when the receiver is hidden, inactive, behind
+     * react to it, false otherwise. This should return false when the receiver is hidden, inactive or behind
      * a modal dialog. It should return true when it would be expected to act on a keybind, i.e. when it
      * has the appearance of being in focus.
      *

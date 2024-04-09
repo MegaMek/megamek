@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
  * Copyright (c) 2013 Nicholas Walczak (walczak@cs.umn.edu)
- * Copyright (c) 2021 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2021, 2024 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -62,10 +62,6 @@ public class MegaMekController implements KeyEventDispatcher {
     @FunctionalInterface
     public interface KeyBindAction {
         void execute();
-    }
-
-    public interface KeyBindReceiver {
-        boolean shouldReceiveKeyCommands();
     }
 
     private static final int MAX_REPEAT_RATE = 100;
@@ -181,13 +177,16 @@ public class MegaMekController implements KeyEventDispatcher {
     }
 
     /**
-     * Registers an action to a keybind, e.g. KeyCommandBind.SCROLL_NORTH. The necessary CommandAction is
-     * constructed from the given method references. The given performer will be called when the key is
-     * pressed if the given shouldReceive check returns true.
+     * Registers an action to a keybind, e.g. {@link KeyCommandBind#SCROLL_NORTH}. The necessary CommandAction is
+     * constructed from the given parameters. The given performer is called when the key is
+     * pressed if the given receiver's shouldReceiveKeyCommands() method check returns true.
      *
      * @param commandBind The KeyCommandBind
      * @param receiver The {@link KeyBindReceiver} that receives this keypress
      * @param performer A method that takes action upon the keypress
+     * @see KeyCommandBind
+     * @see KeyBindReceiver
+     * @see KeyBindAction
      */
     public void registerCommandAction(KeyCommandBind commandBind,
                                       KeyBindReceiver receiver, KeyBindAction performer) {
@@ -205,7 +204,7 @@ public class MegaMekController implements KeyEventDispatcher {
     }
 
     /**
-     * Registers an action to a keybind, e.g. KeyCommandBind.SCROLL_NORTH. The necessary CommandAction is
+     * Registers an action to a keybind, e.g. {@link KeyCommandBind#SCROLL_NORTH}. The necessary CommandAction is
      * constructed from the given method references. The given performer will be called when the key is
      * pressed if the given shouldReceive check returns true.
      *

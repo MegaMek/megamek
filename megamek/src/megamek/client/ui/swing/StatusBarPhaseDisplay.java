@@ -48,7 +48,7 @@ import static megamek.client.ui.swing.util.UIUtil.uiLightViolet;
  */
 public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
         implements ActionListener, MouseListener, KeyListener, IPreferenceChangeListener,
-        MegaMekController.KeyBindReceiver {
+        KeyBindReceiver {
 
     protected static final Dimension MIN_BUTTON_SIZE = new Dimension(32, 32);
     protected static final GUIPreferences GUIP = GUIPreferences.getInstance();

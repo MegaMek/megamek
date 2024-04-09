@@ -23,6 +23,7 @@ import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.UnitLoadingDialog;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.*;
+import megamek.common.alphaStrike.conversion.ASConverter;
 import megamek.common.annotations.Nullable;
 import megamek.common.battlevalue.BVCalculator;
 import megamek.common.options.GameOptions;
@@ -332,7 +333,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
 
         /** Add the Gunnery and Piloting entry boxes and labels to the filter panel in the UI **/
         
-        JLabel lblGun = new JLabel("Gunnery");
+        JLabel lblGun = new JLabel(Messages.getString("MechSelectorDialog.m_labelGunnery"));
         lblGun.setName("lblGun");
         gridBagConstraintsWest.gridx = 0;
         gridBagConstraintsWest.gridy = 4;
@@ -365,7 +366,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
             panelFilterButtons.add(textGunnery, gridBagConstraintsWest);
         };    
 
-        JLabel lblPilot = new JLabel("Piloting");
+        JLabel lblPilot = new JLabel(Messages.getString("MechSelectorDialog.m_labelPiloting"));
         lblGun.setName("lblPilot");
         gridBagConstraintsWest.gridx = 0;
         gridBagConstraintsWest.gridy = 5;

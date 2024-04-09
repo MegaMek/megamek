@@ -1626,7 +1626,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
 
         comps.add(checkboxEntry(defaultAutoejectDisabled, null));
         comps.add(checkboxEntry(useAverageSkills, null));
-        comps.add(checkboxEntry(useGPinUnitSelection, "This changes the BV/PV displayed in the unit selection list. It does not change the pilot/gunnery of the mech once selected"));
+        comps.add(checkboxEntry(useGPinUnitSelection, "This changes the BV/PV displayed in the unit selection list. It does not change the pilot/gunnery of the mech once selected. Request restart of Megamek."));
         comps.add(checkboxEntry(generateNames, null));
         addLineSpacer(comps);
         comps.add(checkboxEntry(keepGameLog, null));

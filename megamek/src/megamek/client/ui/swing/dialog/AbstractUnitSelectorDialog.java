@@ -24,6 +24,7 @@ import megamek.client.ui.swing.UnitLoadingDialog;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
+import megamek.common.battlevalue.BVCalculator;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.util.sorter.NaturalOrderComparator;
@@ -84,6 +85,8 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
     protected JLabel labelImage = new JLabel(""); //inline to avoid potential null pointer issues
     protected JTable tableUnits;
     protected JTextField textFilter;
+    protected JTextField textGunnery;
+    protected JTextField textPilot;
     protected EntityViewPane panePreview;
     private JPanel selectionPanel;
     private JSplitPane splitPane;
@@ -293,6 +296,12 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         gridBagConstraintsWest.gridy = 0;
         panelFilterButtons.add(comboUnitType, gridBagConstraintsWest);
 
+        JLabel labelFilter = new JLabel(Messages.getString("MechSelectorDialog.m_labelFilter"));
+        labelFilter.setName("labelFilter");
+        gridBagConstraintsWest.gridx = 0;
+        gridBagConstraintsWest.gridy = 3;
+        panelFilterButtons.add(labelFilter, gridBagConstraintsWest);
+        
         textFilter = new JTextField("");
         textFilter.setName("textFilter");
         textFilter.getDocument().addDocumentListener(new DocumentListener() {
@@ -317,12 +326,54 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         panelFilterButtons.add(textFilter, gridBagConstraintsWest);
         gridBagConstraintsWest.fill = GridBagConstraints.NONE;
 
-        JLabel labelFilter = new JLabel(Messages.getString("MechSelectorDialog.m_labelFilter"));
-        labelFilter.setName("labelFilter");
-        gridBagConstraintsWest.gridx = 0;
-        gridBagConstraintsWest.gridy = 3;
-        panelFilterButtons.add(labelFilter, gridBagConstraintsWest);
 
+
+        JLabel lblGun = new JLabel("Gunnery");
+        lblGun.setName("lblGun");
+        gridBagConstraintsWest.gridx = 0;
+        gridBagConstraintsWest.gridy = 4;
+        panelFilterButtons.add(lblGun,gridBagConstraintsWest);
+
+        textGunnery = new JTextField("4");
+        textGunnery.setName("textGunnery");
+        textGunnery.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void changedUpdate (DocumentEvent e) { sorter.allRowsChanged(); }
+
+            @Override
+            public void insertUpdate(DocumentEvent e) { sorter.allRowsChanged(); }
+            
+            @Override
+            public void removeUpdate(DocumentEvent e) { sorter.allRowsChanged(); }
+            
+        });
+        gridBagConstraintsWest.gridx = 1;
+        gridBagConstraintsWest.gridy = 4;
+        panelFilterButtons.add(textGunnery,gridBagConstraintsWest);
+
+        JLabel lblPilot = new JLabel("Piloting");
+        lblGun.setName("lblPilot");
+        gridBagConstraintsWest.gridx = 0;
+        gridBagConstraintsWest.gridy = 5;
+        panelFilterButtons.add(lblPilot,gridBagConstraintsWest);
+
+        textPilot = new JTextField("5");
+        textPilot.setName("textPilot");
+        textPilot.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void changedUpdate (DocumentEvent e) { sorter.allRowsChanged(); }
+
+            @Override
+            public void insertUpdate(DocumentEvent e) { sorter.allRowsChanged(); }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) { sorter.allRowsChanged(); }
+
+        });
+        gridBagConstraintsWest.gridx = 1;
+        gridBagConstraintsWest.gridy = 5;
+        panelFilterButtons.add(textPilot,gridBagConstraintsWest);
+        
         labelImage.setHorizontalAlignment(SwingConstants.CENTER);
         labelImage.setName("labelImage");
         gridBagConstraints = new GridBagConstraints();
@@ -333,7 +384,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
         panelFilterButtons.add(labelImage, gridBagConstraints);
-
+        
         gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
@@ -342,7 +393,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         gridBagConstraints.weightx = 0.0;
         gridBagConstraints.insets = new Insets(10, 10, 5, 0);
         selectionPanel.add(panelFilterButtons, gridBagConstraints);
-
+               
         JPanel panelSearchButtons = new JPanel(new GridBagLayout());
 
         buttonAdvancedSearch = new JButton(Messages.getString("MechSelectorDialog.AdvSearch"));
@@ -816,6 +867,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         private static final int COL_COST = 6;
         private static final int COL_LEVEL = 7;
         private static final int N_COL = 8;
+        private int modified_bv = 0;
 
         private MechSummary[] data = new MechSummary[0];
 
@@ -901,9 +953,45 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
                 }
                 return ms.getTons();
             } else if (col == COL_BV) {
-                return ms.getBV();
+                int gunnery = 4;
+                int piloting = 5;
+                if (textGunnery.getText().matches("\\d+")) {
+                    gunnery = Integer.parseInt(textGunnery.getText());
+                };
+                if (textPilot.getText().matches("\\d+")) {
+                    piloting = Integer.parseInt(textPilot.getText());
+                    
+                };
+                
+                double gp_multiply = BVCalculator.bvSkillMultiplier(gunnery,piloting);
+                modified_bv = (int) Math.round(ms.getBV() * gp_multiply);
+                return modified_bv;
             } else if (col == COL_PV) {
-                return ms.getPointValue();
+                int gunnery = 4;
+                double modifier = 1;
+                if (textGunnery.getText().matches("\\d+")) {
+                    gunnery = Integer.parseInt(textGunnery.getText());
+                };
+                if (gunnery == 4) {
+                    modifier = 1;
+                } else if (gunnery == 3) {
+                    modifier = 1.2;
+                } else if (gunnery == 2) {
+                    modifier = 1.4;
+                } else if (gunnery == 1) {
+                    modifier = 1.6;
+                } else if (gunnery == 0) {
+                    modifier = 1.8;
+                } else if (gunnery == 5) {
+                    modifier = 0.9;
+                } else if (gunnery == 6) {
+                    modifier = 0.8;
+                } else if (gunnery == 7) {
+                    modifier = 0.7;
+                } else {
+                    modifier = 1;
+                }
+                return (int) Math.round(ms.getPointValue() * modifier);
             } else if (col == COL_YEAR) {
                 return ms.getYear();
             } else if (col == COL_COST) {

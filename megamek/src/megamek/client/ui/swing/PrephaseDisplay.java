@@ -160,9 +160,9 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
      */
     protected void registerKeyCommands() {
         MegaMekController controller = clientgui.controller;
-        controller.registerCommandAction(KeyCommandBind.NEXT_UNIT, this::shouldPerformKeyCommands,
+        controller.registerCommandAction(KeyCommandBind.NEXT_UNIT, this,
                 () -> selectEntity(clientgui.getClient().getNextEntityNum(cen)));
-        controller.registerCommandAction(KeyCommandBind.PREV_UNIT, this::shouldPerformKeyCommands,
+        controller.registerCommandAction(KeyCommandBind.PREV_UNIT, this,
                 () -> selectEntity(clientgui.getClient().getPrevEntityNum(cen)));
     }
 

@@ -23,7 +23,6 @@ import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
 import megamek.client.ui.SharedUtility;
 import megamek.client.ui.swing.boardview.AbstractBoardViewOverlay;
-import megamek.client.ui.swing.util.CommandAction;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.widget.MegamekButton;
@@ -390,14 +389,6 @@ public class MovementDisplay extends ActionPhaseDisplay {
         }
     }
 
-    @Override
-    protected boolean shouldPerformKeyCommands() {
-        return clientgui.getClient().isMyTurn()
-                && !clientgui.getBoardView().getChatterBoxActive()
-                && !isIgnoringEvents()
-                && isVisible();
-    }
-
     protected boolean shouldPerformClearKeyCommand() {
         return !clientgui.getBoardView().getChatterBoxActive()
                 && !isIgnoringEvents()
@@ -516,23 +507,23 @@ public class MovementDisplay extends ActionPhaseDisplay {
         }
 
         MegaMekController controller = clientgui.controller;
-        controller.registerCommandAction(KeyCommandBind.TURN_LEFT, this::shouldPerformKeyCommands, this::turnLeft);
-        controller.registerCommandAction(KeyCommandBind.TURN_RIGHT, this::shouldPerformKeyCommands, this::turnRight);
-        controller.registerCommandAction(KeyCommandBind.UNDO_LAST_STEP, this::shouldPerformKeyCommands,
+        controller.registerCommandAction(KeyCommandBind.TURN_LEFT, this::shouldReceiveKeyCommands, this::turnLeft);
+        controller.registerCommandAction(KeyCommandBind.TURN_RIGHT, this::shouldReceiveKeyCommands, this::turnRight);
+        controller.registerCommandAction(KeyCommandBind.UNDO_LAST_STEP, this::shouldReceiveKeyCommands,
                 this::undoIllegalStep);
-        controller.registerCommandAction(KeyCommandBind.UNDO_SINGLE_STEP, this::shouldPerformKeyCommands,
+        controller.registerCommandAction(KeyCommandBind.UNDO_SINGLE_STEP, this::shouldReceiveKeyCommands,
                 this::undoLastStep);
 
-        controller.registerCommandAction(KeyCommandBind.NEXT_UNIT, this::shouldPerformKeyCommands,
+        controller.registerCommandAction(KeyCommandBind.NEXT_UNIT, this::shouldReceiveKeyCommands,
                 () -> selectEntity(clientgui.getClient().getNextEntityNum(cen)));
-        controller.registerCommandAction(KeyCommandBind.PREV_UNIT, this::shouldPerformKeyCommands,
+        controller.registerCommandAction(KeyCommandBind.PREV_UNIT, this::shouldReceiveKeyCommands,
                 () -> selectEntity(clientgui.getClient().getPrevEntityNum(cen)));
 
         controller.registerCommandAction(KeyCommandBind.CANCEL, this::shouldPerformClearKeyCommand,
                 this::cancel);
-        controller.registerCommandAction(KeyCommandBind.TOGGLE_MOVEMODE, this::shouldPerformKeyCommands,
+        controller.registerCommandAction(KeyCommandBind.TOGGLE_MOVEMODE, this::shouldReceiveKeyCommands,
                 this::performToggleMovemode);
-        controller.registerCommandAction(KeyCommandBind.TOGGLE_CONVERSIONMODE, this::shouldPerformKeyCommands,
+        controller.registerCommandAction(KeyCommandBind.TOGGLE_CONVERSIONMODE, this::shouldReceiveKeyCommands,
                 this::performToggleConversionMode);
     }
 

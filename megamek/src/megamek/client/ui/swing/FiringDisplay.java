@@ -246,15 +246,8 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
         }
     }
 
-    protected boolean shouldPerformKeyCommands() {
-        return clientgui.getClient().isMyTurn()
-                && !clientgui.getBoardView().getChatterBoxActive()
-                && !isIgnoringEvents()
-                && isVisible();
-    }
-
     private boolean shouldPerformFireKeyCommand() {
-        return shouldPerformKeyCommands() && buttons.get(FiringCommand.FIRE_FIRE).isEnabled();
+        return this.shouldReceiveKeyCommands() && buttons.get(FiringCommand.FIRE_FIRE).isEnabled();
     }
 
     protected void twistLeft() {
@@ -290,48 +283,41 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
      */
     protected void registerKeyCommands() {
         MegaMekController controller = clientgui.controller;
-        controller.registerCommandAction(KeyCommandBind.UNDO_LAST_STEP, this::shouldPerformKeyCommands,
-                this::removeLastFiring);
-        controller.registerCommandAction(KeyCommandBind.TWIST_LEFT, this::shouldPerformKeyCommands, this::twistLeft);
-        controller.registerCommandAction(KeyCommandBind.TWIST_RIGHT, this::shouldPerformKeyCommands, this::twistRight);
+        controller.registerCommandAction(KeyCommandBind.UNDO_LAST_STEP, this, this::removeLastFiring);
+        controller.registerCommandAction(KeyCommandBind.TWIST_LEFT, this, this::twistLeft);
+        controller.registerCommandAction(KeyCommandBind.TWIST_RIGHT, this, this::twistRight);
         controller.registerCommandAction(KeyCommandBind.FIRE, this::shouldPerformFireKeyCommand, this::fire);
+        controller.registerCommandAction(KeyCommandBind.NEXT_WEAPON, this, this::nextWeapon);
+        controller.registerCommandAction(KeyCommandBind.PREV_WEAPON, this, this::prevWeapon);
 
-        controller.registerCommandAction(KeyCommandBind.NEXT_WEAPON, this::shouldPerformKeyCommands,
-                this::nextWeapon);
-        controller.registerCommandAction(KeyCommandBind.PREV_WEAPON, this::shouldPerformKeyCommands,
-                this::prevWeapon);
-
-        controller.registerCommandAction(KeyCommandBind.NEXT_UNIT, this::shouldPerformKeyCommands,
+        controller.registerCommandAction(KeyCommandBind.NEXT_UNIT, this,
                 () -> selectEntity(clientgui.getClient().getNextEntityNum(cen)));
-        controller.registerCommandAction(KeyCommandBind.PREV_UNIT, this::shouldPerformKeyCommands,
+        controller.registerCommandAction(KeyCommandBind.PREV_UNIT, this,
                 () -> selectEntity(clientgui.getClient().getPrevEntityNum(cen)));
 
-        controller.registerCommandAction(KeyCommandBind.NEXT_TARGET, this::shouldPerformKeyCommands,
+        controller.registerCommandAction(KeyCommandBind.NEXT_TARGET, this,
                 () -> jumpToTarget(true, false, false));
-        controller.registerCommandAction(KeyCommandBind.PREV_TARGET, this::shouldPerformKeyCommands,
+        controller.registerCommandAction(KeyCommandBind.PREV_TARGET, this,
                 () -> jumpToTarget(false, false, false));
 
-        controller.registerCommandAction(KeyCommandBind.NEXT_TARGET_VALID, this::shouldPerformKeyCommands,
+        controller.registerCommandAction(KeyCommandBind.NEXT_TARGET_VALID, this,
                 () -> jumpToTarget(true, true, false));
-        controller.registerCommandAction(KeyCommandBind.PREV_TARGET_VALID, this::shouldPerformKeyCommands,
+        controller.registerCommandAction(KeyCommandBind.PREV_TARGET_VALID, this,
                 () -> jumpToTarget(false, true, false));
 
-        controller.registerCommandAction(KeyCommandBind.NEXT_TARGET_NOALLIES, this::shouldPerformKeyCommands,
+        controller.registerCommandAction(KeyCommandBind.NEXT_TARGET_NOALLIES, this,
                 () -> jumpToTarget(true, false, true));
-        controller.registerCommandAction(KeyCommandBind.PREV_TARGET_NOALLIES, this::shouldPerformKeyCommands,
+        controller.registerCommandAction(KeyCommandBind.PREV_TARGET_NOALLIES, this,
                 () -> jumpToTarget(false, false, true));
 
-        controller.registerCommandAction(KeyCommandBind.NEXT_TARGET_VALID_NO_ALLIES, this::shouldPerformKeyCommands,
+        controller.registerCommandAction(KeyCommandBind.NEXT_TARGET_VALID_NO_ALLIES, this,
                 () -> jumpToTarget(true, true, true));
-        controller.registerCommandAction(KeyCommandBind.PREV_TARGET_VALID_NO_ALLIES, this::shouldPerformKeyCommands,
+        controller.registerCommandAction(KeyCommandBind.PREV_TARGET_VALID_NO_ALLIES, this,
                 () -> jumpToTarget(false, true, true));
 
-        controller.registerCommandAction(KeyCommandBind.VIEW_ACTING_UNIT, this::shouldPerformKeyCommands,
-                this::viewActingUnit);
-        controller.registerCommandAction(KeyCommandBind.NEXT_MODE, this::shouldPerformKeyCommands,
-                () -> changeMode(true));
-        controller.registerCommandAction(KeyCommandBind.PREV_MODE, this::shouldPerformKeyCommands,
-                () -> changeMode(false));
+        controller.registerCommandAction(KeyCommandBind.VIEW_ACTING_UNIT, this, this::viewActingUnit);
+        controller.registerCommandAction(KeyCommandBind.NEXT_MODE, this, () -> changeMode(true));
+        controller.registerCommandAction(KeyCommandBind.PREV_MODE, this, () -> changeMode(false));
         controller.registerCommandAction(KeyCommandBind.CANCEL, this::shouldPerformClearKeyCommand, this::clear);
     }
 

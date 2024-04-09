@@ -52,6 +52,22 @@ import megamek.client.ui.swing.*;
  */
 public class MegaMekController implements KeyEventDispatcher {
 
+    /**
+     * This is an interface for a parameter-less method without a return value. It is used for the methods
+     * that are called as a result of a keybind being pressed or released.
+     *
+     * There is no predefined functional interface for this in the java libraries and using the
+     * equivalent Runnable is discouraged as it is suggestive of concurrency code which this is not about.
+     */
+    @FunctionalInterface
+    public interface KeyBindAction {
+        void execute();
+    }
+
+    public interface KeyBindReceiver {
+        boolean shouldReceiveKeyCommands();
+    }
+
     private static final int MAX_REPEAT_RATE = 100;
 
     public BoardEditor boardEditor = null;
@@ -107,7 +123,7 @@ public class MegaMekController implements KeyEventDispatcher {
 
             for (var action : cmdActionMap.get(kcb.cmd)) {
                 // If the action is null or shouldn't be performed, skip it
-                if ((action == null) || !action.shouldPerformAction()) {
+                if ((action == null) || !action.shouldReceiveAction()) {
                     continue;
                 }
                 // If we perform at least one action, this event is consumed
@@ -130,9 +146,7 @@ public class MegaMekController implements KeyEventDispatcher {
                     if (kcb.isRepeatable) {
                         stopRepeating(kcb);
                     }
-                    if (action.hasReleaseAction()) {
-                        action.releaseAction();
-                    }
+                    action.releaseAction();
                 }
             }
         }
@@ -166,26 +180,45 @@ public class MegaMekController implements KeyEventDispatcher {
         }
     }
 
-    @FunctionalInterface
-    public interface KeyBindAction {
-        void execute();
+    /**
+     * Registers an action to a keybind, e.g. KeyCommandBind.SCROLL_NORTH. The necessary CommandAction is
+     * constructed from the given method references. The given performer will be called when the key is
+     * pressed if the given shouldReceive check returns true.
+     *
+     * @param commandBind The KeyCommandBind
+     * @param receiver The {@link KeyBindReceiver} that receives this keypress
+     * @param performer A method that takes action upon the keypress
+     */
+    public void registerCommandAction(KeyCommandBind commandBind,
+                                      KeyBindReceiver receiver, KeyBindAction performer) {
+        registerCommandAction(commandBind.cmd, new CommandAction() {
+            @Override
+            public boolean shouldReceiveAction() {
+                return receiver.shouldReceiveKeyCommands();
+            }
+
+            @Override
+            public void performAction() {
+                performer.execute();
+            }
+        });
     }
 
     /**
      * Registers an action to a keybind, e.g. KeyCommandBind.SCROLL_NORTH. The necessary CommandAction is
      * constructed from the given method references. The given performer will be called when the key is
-     * pressed if the given shouldPerform check returns true.
+     * pressed if the given shouldReceive check returns true.
      *
      * @param commandBind The KeyCommandBind
-     * @param shouldPerform A method that should return true when the performer is allowed to take action
+     * @param shouldReceive A method that should return true when the performer is allowed to take action
      * @param performer A method that takes action upon the keypress
      */
     public void registerCommandAction(KeyCommandBind commandBind,
-                                      Supplier<Boolean> shouldPerform, KeyBindAction performer) {
+                                      Supplier<Boolean> shouldReceive, KeyBindAction performer) {
         registerCommandAction(commandBind.cmd, new CommandAction() {
             @Override
-            public boolean shouldPerformAction() {
-                return shouldPerform.get();
+            public boolean shouldReceiveAction() {
+                return shouldReceive.get();
             }
 
             @Override
@@ -211,7 +244,7 @@ public class MegaMekController implements KeyEventDispatcher {
                                       KeyBindAction performer, KeyBindAction releaseAction) {
         registerCommandAction(commandBind.cmd, new CommandAction() {
             @Override
-            public boolean shouldPerformAction() {
+            public boolean shouldReceiveAction() {
                 return shouldPerform.get();
             }
 
@@ -223,11 +256,6 @@ public class MegaMekController implements KeyEventDispatcher {
             @Override
             public void releaseAction() {
                 releaseAction.execute();
-            }
-
-            @Override
-            public boolean hasReleaseAction() {
-                return true;
             }
         });
     }

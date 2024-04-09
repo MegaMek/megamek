@@ -81,7 +81,7 @@ import static megamek.client.ui.swing.util.UIUtil.uiWhite;
  * Displays the board; lets the user scroll around and select points on it.
  */
 public class BoardView extends JPanel implements Scrollable, BoardListener, MouseListener,
-        MechDisplayListener, IPreferenceChangeListener {
+        MechDisplayListener, IPreferenceChangeListener, MegaMekController.KeyBindReceiver {
 
     private static final long serialVersionUID = -5582195884759007416L;
 
@@ -666,20 +666,17 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
     }
 
     private void registerKeyboardCommands(final MegaMekController controller) {
-        controller.registerCommandAction(KeyCommandBind.TOGGLE_CHAT, this::shouldPerformKeyCommands,
-                this::performChat);
-        controller.registerCommandAction(KeyCommandBind.TOGGLE_CHAT_CMD, this::shouldPerformKeyCommands,
-                this::performChatCmd);
-        controller.registerCommandAction(KeyCommandBind.CENTER_ON_SELECTED, this::shouldPerformKeyCommands,
-                this::centerOnSelected);
+        controller.registerCommandAction(KeyCommandBind.TOGGLE_CHAT, this, this::performChat);
+        controller.registerCommandAction(KeyCommandBind.TOGGLE_CHAT_CMD, this, this::performChatCmd);
+        controller.registerCommandAction(KeyCommandBind.CENTER_ON_SELECTED, this, this::centerOnSelected);
 
-        controller.registerCommandAction(KeyCommandBind.SCROLL_NORTH, this::shouldPerformKeyCommands,
+        controller.registerCommandAction(KeyCommandBind.SCROLL_NORTH, this::shouldReceiveKeyCommands,
                 this::scrollNorth, this::pingMinimap);
-        controller.registerCommandAction(KeyCommandBind.SCROLL_SOUTH, this::shouldPerformKeyCommands,
+        controller.registerCommandAction(KeyCommandBind.SCROLL_SOUTH, this::shouldReceiveKeyCommands,
                 this::scrollSouth, this::pingMinimap);
-        controller.registerCommandAction(KeyCommandBind.SCROLL_EAST, this::shouldPerformKeyCommands,
+        controller.registerCommandAction(KeyCommandBind.SCROLL_EAST, this::shouldReceiveKeyCommands,
                 this::scrollEast, this::pingMinimap);
-        controller.registerCommandAction(KeyCommandBind.SCROLL_WEST, this::shouldPerformKeyCommands,
+        controller.registerCommandAction(KeyCommandBind.SCROLL_WEST, this::shouldReceiveKeyCommands,
                 this::scrollWest, this::pingMinimap);
     }
 
@@ -727,10 +724,12 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         }
     }
 
-    private boolean shouldPerformKeyCommands() {
-        return !(getChatterBoxActive() || !isVisible()
-                || game.getPhase().isLounge()
-                || shouldIgnoreKeys);
+    @Override
+    public boolean shouldReceiveKeyCommands() {
+        return !getChatterBoxActive()
+                && isVisible()
+                & !game.getPhase().isLounge()
+                & !shouldIgnoreKeys;
     }
 
     protected final RedrawWorker redrawWorker = new RedrawWorker();

@@ -17,7 +17,6 @@ import megamek.client.Client;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.FiringDisplay.FiringCommand;
-import megamek.client.ui.swing.util.CommandAction;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.widget.MegamekButton;
@@ -224,13 +223,6 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements
         }
     }
 
-    @Override
-    protected boolean shouldPerformKeyCommands() {
-        return clientgui.getClient().isMyTurn()
-                && !clientgui.getBoardView().getChatterBoxActive()
-                && !isIgnoringEvents() && isVisible();
-    }
-
     protected void twistLeft() {
         updateFlipArms(false);
         torsoTwist(0);
@@ -242,7 +234,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements
     }
 
     private boolean shouldPerformFireKeyCommand() {
-        return shouldPerformKeyCommands() && buttons.get(TargetingCommand.FIRE_FIRE).isEnabled();
+        return this.shouldReceiveKeyCommands() && buttons.get(TargetingCommand.FIRE_FIRE).isEnabled();
     }
 
     protected boolean shouldPerformClearKeyCommand() {
@@ -256,32 +248,24 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements
      */
     protected void registerKeyCommands() {
         MegaMekController controller = clientgui.controller;
-        controller.registerCommandAction(KeyCommandBind.UNDO_LAST_STEP, this::shouldPerformKeyCommands,
-                this::removeLastFiring);
-        controller.registerCommandAction(KeyCommandBind.TWIST_LEFT, this::shouldPerformKeyCommands, this::twistLeft);
-        controller.registerCommandAction(KeyCommandBind.TWIST_RIGHT, this::shouldPerformKeyCommands, this::twistRight);
+        controller.registerCommandAction(KeyCommandBind.UNDO_LAST_STEP, this, this::removeLastFiring);
+        controller.registerCommandAction(KeyCommandBind.TWIST_LEFT, this, this::twistLeft);
+        controller.registerCommandAction(KeyCommandBind.TWIST_RIGHT, this, this::twistRight);
         controller.registerCommandAction(KeyCommandBind.FIRE, this::shouldPerformFireKeyCommand, this::fire);
         controller.registerCommandAction(KeyCommandBind.CANCEL, this::shouldPerformClearKeyCommand, this::clear);
+        controller.registerCommandAction(KeyCommandBind.NEXT_WEAPON, this, this::nextWeapon);
+        controller.registerCommandAction(KeyCommandBind.PREV_WEAPON, this, this::prevWeapon);
 
-        controller.registerCommandAction(KeyCommandBind.NEXT_WEAPON, this::shouldPerformKeyCommands,
-                this::nextWeapon);
-        controller.registerCommandAction(KeyCommandBind.PREV_WEAPON, this::shouldPerformKeyCommands,
-                this::prevWeapon);
-
-        controller.registerCommandAction(KeyCommandBind.NEXT_UNIT, this::shouldPerformKeyCommands,
+        controller.registerCommandAction(KeyCommandBind.NEXT_UNIT, this,
                 () -> selectEntity(clientgui.getClient().getNextEntityNum(cen)));
-        controller.registerCommandAction(KeyCommandBind.PREV_UNIT, this::shouldPerformKeyCommands,
+        controller.registerCommandAction(KeyCommandBind.PREV_UNIT, this,
                 () -> selectEntity(clientgui.getClient().getPrevEntityNum(cen)));
 
-        controller.registerCommandAction(KeyCommandBind.NEXT_TARGET, this::shouldPerformKeyCommands,
-                this::jumpToNextTarget);
-        controller.registerCommandAction(KeyCommandBind.PREV_TARGET, this::shouldPerformKeyCommands,
-                this::jumpToPrevTarget);
+        controller.registerCommandAction(KeyCommandBind.NEXT_TARGET, this, this::jumpToNextTarget);
+        controller.registerCommandAction(KeyCommandBind.PREV_TARGET, this, this::jumpToPrevTarget);
 
-        controller.registerCommandAction(KeyCommandBind.NEXT_MODE, this::shouldPerformKeyCommands,
-                () -> changeMode(true));
-        controller.registerCommandAction(KeyCommandBind.PREV_MODE, this::shouldPerformKeyCommands,
-                () -> changeMode(false));
+        controller.registerCommandAction(KeyCommandBind.NEXT_MODE, this, () -> changeMode(true));
+        controller.registerCommandAction(KeyCommandBind.PREV_MODE, this, () -> changeMode(false));
     }
 
     /**

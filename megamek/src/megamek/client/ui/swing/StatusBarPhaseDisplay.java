@@ -47,7 +47,8 @@ import static megamek.client.ui.swing.util.UIUtil.uiLightViolet;
  * Control buttons are grouped and the groups can be cycled through.
  */
 public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
-        implements ActionListener, MouseListener, KeyListener, IPreferenceChangeListener {
+        implements ActionListener, MouseListener, KeyListener, IPreferenceChangeListener,
+        MegaMekController.KeyBindReceiver {
 
     protected static final Dimension MIN_BUTTON_SIZE = new Dimension(32, 32);
     protected static final GUIPreferences GUIP = GUIPreferences.getInstance();
@@ -280,15 +281,14 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
         adaptToGUIScale();
     }
 
-    protected boolean shouldPerformKeyCommands() {
+    public boolean shouldReceiveKeyCommands() {
         return clientgui.getClient().isMyTurn()
                 && !clientgui.getBoardView().getChatterBoxActive()
                 && !isIgnoringEvents() && isVisible();
     }
 
     protected void regKeyCommands() {
-        clientgui.controller.registerCommandAction(KeyCommandBind.EXTEND_TURN_TIMER,
-                this::shouldPerformKeyCommands, this::extendTimer);
+        clientgui.controller.registerCommandAction(KeyCommandBind.EXTEND_TURN_TIMER, this, this::extendTimer);
     }
 
     @Override

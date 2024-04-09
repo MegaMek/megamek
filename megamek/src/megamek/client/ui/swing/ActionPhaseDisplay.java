@@ -71,7 +71,7 @@ public abstract class ActionPhaseDisplay extends StatusBarPhaseDisplay {
                 }
             });
 
-            clientgui.controller.registerCommandAction(KeyCommandBind.DONE_NO_ACTION, this::shouldPerformKeyCommands,
+            clientgui.controller.registerCommandAction(KeyCommandBind.DONE_NO_ACTION, this::shouldReceiveDoneKeyCommand,
                     this::performDoneNoAction);
         }
 
@@ -84,8 +84,7 @@ public abstract class ActionPhaseDisplay extends StatusBarPhaseDisplay {
         ready();
     }
 
-    @Override
-    protected boolean shouldPerformKeyCommands() {
+    public boolean shouldReceiveDoneKeyCommand() {
         return ((clientgui.getClient().isMyTurn()
                 || (clientgui.getClient().getGame().getTurn() == null)
                 || (clientgui.getClient().getGame().getPhase().isReport())))

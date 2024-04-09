@@ -222,10 +222,8 @@ public class PointblankShotDisplay extends FiringDisplay implements ItemListener
         controller.registerCommandAction(KeyCommandBind.PREV_WEAPON, this::shouldPerformPointBlankKeyCommands,
                 this::prevWeapon);
 
-        controller.registerCommandAction(KeyCommandBind.NEXT_MODE, this::shouldPerformKeyCommands,
-                () -> changeMode(true));
-        controller.registerCommandAction(KeyCommandBind.PREV_MODE, this::shouldPerformKeyCommands,
-                () -> changeMode(false));
+        controller.registerCommandAction(KeyCommandBind.NEXT_MODE, this, () -> changeMode(true));
+        controller.registerCommandAction(KeyCommandBind.PREV_MODE, this, () -> changeMode(false));
 
         controller.registerCommandAction(KeyCommandBind.FIRE, this::shouldPerformFireKeyCommand, this::fire);
         controller.registerCommandAction(KeyCommandBind.CANCEL, this::shouldPerformClearKeyCommand, this::clear);

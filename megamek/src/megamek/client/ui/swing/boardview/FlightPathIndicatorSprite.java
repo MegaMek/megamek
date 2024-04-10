@@ -22,6 +22,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 
+import megamek.MMConstants;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.StringDrawer;
 import megamek.client.ui.swing.util.UIUtil;
@@ -52,6 +53,7 @@ public class FlightPathIndicatorSprite extends HexSprite {
 
     private static final int HEX_CENTER_X = BoardView.HEX_W / 2;
     private static final int HEX_CENTER_Y = BoardView.HEX_H / 2;
+    private static final int TEXT_Y_OFFSET = 17;
 
     private MoveStep step = null;
     private boolean isLast = false;
@@ -147,6 +149,7 @@ public class FlightPathIndicatorSprite extends HexSprite {
         if (isLastIndicator()) {
             if (step.getVelocityLeft() > 0) {
                 flyOffIcon.draw(graph);
+                drawRemainingDistance(graph, this.step);
             } else {
                 if (canTurnForFree()) {
                     greenFlagIcon.draw(graph);
@@ -241,5 +244,35 @@ public class FlightPathIndicatorSprite extends HexSprite {
      */
     private boolean isLastIndicator() {
         return isLast;
+    }
+
+    /*
+     * Render a number on the lower center of the hex that represents the distance remaining to
+     * travel for the given step.
+     */
+    private void drawRemainingDistance(Graphics2D graph, MoveStep moveStep) {
+        int velocity = moveStep.getVelocity();
+        if (bv.game.getBoard().onGround()) {
+            velocity *= 16;
+        }
+
+        // calculate the remaining number of hexes off the end of the map.
+        int remainingDistance = velocity - moveStep.getDistance();
+
+        // string and font setup for text.
+        String remString = Integer.toString(remainingDistance);
+        graph.setFont(new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN, 12));
+
+        // center the remaining distance and put it just above the fly-off icon indicator.
+        int x_offset = HEX_CENTER_X - (graph.getFontMetrics(graph.getFont()).stringWidth(remString) / 2);
+        int y_offset = HEX_CENTER_Y - TEXT_Y_OFFSET;
+
+        // draw a dark gray shadow string and then a red string on top.
+        graph.setColor(Color.darkGray);
+        graph.drawString(remString, x_offset, y_offset);
+        graph.setColor(Color.red);
+        graph.drawString(remString, x_offset - 1, y_offset - 1);
+
+        return;
     }
 }

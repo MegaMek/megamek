@@ -753,7 +753,7 @@ public class EntityListFile {
                         .getC3UUIDAsString());
             }
             if (entity.hasC3() || entity.hasC3i() || entity.hasNavalC3()) {
-                if(entity.getC3UUIDAsString() != null) {
+                if (entity.getC3UUIDAsString() != null) {
                     output.write("\" " + MULParser.ATTR_C3UUID + "=\"");
                     output.write(entity.getC3UUIDAsString());
                 }

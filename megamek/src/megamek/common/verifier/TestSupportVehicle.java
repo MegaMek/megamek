@@ -970,6 +970,11 @@ public class TestSupportVehicle extends TestEntity {
             buff.append(".\n\n");
             correct = false;
         }
+        if (!getEntity().hasPatchworkArmor()
+                && getEntity().getTotalOArmor() < supportVee.getLabTotalArmorPoints()) {
+            buff.append("Not all armor points allocated\n");
+            correct = false;
+        }
         if (supportVee.hasBARArmor(supportVee.firstArmorIndex())) {
             int bar = supportVee.getBARRating(supportVee.firstArmorIndex());
             if ((bar < 2) || (bar > 10)) {

@@ -321,6 +321,12 @@ public class TestTank extends TestEntity {
             buff.append(".\n\n");
             correct = false;
         }
+        if (!getEntity().hasPatchworkArmor()
+                && getEntity().getTotalOArmor() < tank.getLabTotalArmorPoints()) {
+            buff.append("Not all armor points allocated\n");
+            correct = false;
+        }
+
         if (tank instanceof VTOL) {
             long mastMountCount = tank.countEquipment(EquipmentTypeLookup.MAST_MOUNT);
             if (mastMountCount > 1) {

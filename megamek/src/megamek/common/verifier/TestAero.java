@@ -519,6 +519,12 @@ public class TestAero extends TestEntity {
             correct = false;
         }
 
+        if (!getEntity().hasPatchworkArmor()
+                && getEntity().getTotalOArmor() < aero.getLabTotalArmorPoints()) {
+            buff.append("Not all armor points allocated\n");
+            correct = false;
+        }
+
         return correct ;
     }
 

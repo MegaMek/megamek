@@ -303,6 +303,35 @@ class TeamLoadoutGeneratorTest {
         }
     }
 
+
+    @Test
+    void testLoadEntityListTwoEntities() throws LocationFullException {
+        TeamLoadoutGenerator tlg = new TeamLoadoutGenerator(cg);
+        Mech mockMech = createMech("Hunchback", "HBK-4G", "Boomstick");
+        Mech mockMech2 = createMech("Hunchback", "HBK-4J", "The Shade");
+        Mech mockMech3 = createMech("Kintaro", "KTO-18", "Dragonpunch");
+        mockMech.setOwner(player);
+        mockMech2.setOwner(player);
+        mockMech3.setOwner(player);
+        game.setEntity(0, mockMech);
+        game.setEntity(1, mockMech2);
+        game.setEntity(2, mockMech3);
+
+
+        // Load ammo in 'mechs; locations are for fun
+        Mounted bin1 = mockMech.addEquipment(mockAC20AmmoType, Mech.LOC_CT);
+        Mounted bin2 = mockMech.addEquipment(mockAC20AmmoType, Mech.LOC_CT);
+        Mounted bin3 = mockMech2.addEquipment(mockLRM15AmmoType, Mech.LOC_LT);
+        Mounted bin4 = mockMech2.addEquipment(mockLRM15AmmoType, Mech.LOC_RT);
+        Mounted bin5 = mockMech3.addEquipment(mockSRM6AmmoType, Mech.LOC_LT);
+        Mounted bin6 = mockMech3.addEquipment(mockSRM6AmmoType, Mech.LOC_RT);
+        Mounted bin7 = mockMech3.addEquipment(mockSRM6AmmoType, Mech.LOC_CT);
+
+        MunitionTree original = new MunitionTree();
+        original.loadEntityList(game.getPlayerEntities(player, false));
+        tlg.randomizeBotTeamConfiguration(team, "CCY");
+    }
+
     @Test
     void testReconfigureBotTeamNoEnemyInfo()  throws LocationFullException {
         TeamLoadoutGenerator tlg = new TeamLoadoutGenerator(cg);
@@ -398,13 +427,13 @@ class TeamLoadoutGeneratorTest {
         // For other rounds, "Standard" should be first.
         HashMap<String, List<String>> topN = mwc.getTopN(3);
 
-        assertTrue(topN.get("lrm").get(0).contains("Dead-Fire"));
-        assertTrue(topN.get("lrm").get(1).contains("Standard"));
-        assertTrue(topN.get("srm").get(0).contains("Dead-Fire"));
-        assertTrue(topN.get("srm").get(1).contains("Standard"));
+        assertTrue(topN.get("LRM").get(0).contains("Dead-Fire"));
+        assertTrue(topN.get("LRM").get(1).contains("Standard"));
+        assertTrue(topN.get("SRM").get(0).contains("Dead-Fire"));
+        assertTrue(topN.get("SRM").get(1).contains("Standard"));
 
-        assertTrue(topN.get("ac").get(0).contains("Standard"));
-        assertTrue(topN.get("arrow iv").get(0).contains("Standard"));
+        assertTrue(topN.get("AC").get(0).contains("Standard"));
+        assertTrue(topN.get("Arrow IV").get(0).contains("Standard"));
     }
 
     @Test
@@ -415,13 +444,13 @@ class TeamLoadoutGeneratorTest {
         mwc.decreaseFlakMunitions();
 
         HashMap<String, List<String>> topN = mwc.getTopN(3);
-        assertEquals("Armor-Piercing=3.0", topN.get("ac").get(0));
-        assertEquals("Standard=2.0", topN.get("ac").get(1));
-        assertEquals("Caseless=1.0", topN.get("ac").get(2));
+        assertEquals("Armor-Piercing=3.0", topN.get("AC").get(0));
+        assertEquals("Standard=2.0", topN.get("AC").get(1));
+        assertEquals("Caseless=1.0", topN.get("AC").get(2));
 
-        assertEquals("Tandem-Charge=3.0", topN.get("srm").get(0));
-        assertEquals("Dead-Fire=3.0", topN.get("srm").get(1));
-        assertEquals("Standard=2.0", topN.get("srm").get(2));
+        assertEquals("Tandem-Charge=3.0", topN.get("SRM").get(0));
+        assertEquals("Dead-Fire=3.0", topN.get("SRM").get(1));
+        assertEquals("Standard=2.0", topN.get("SRM").get(2));
     }
 
     @Test
@@ -432,6 +461,6 @@ class TeamLoadoutGeneratorTest {
         mwc.increaseMunitions(tsmOnly);
         mwc.increaseMunitions(tsmOnly);
         assertEquals(15.0, mwc.getSrmWeights().get("Anti-TSM"));
-        assertEquals("Anti-TSM=15.0", mwc.getTopN(1).get("srm").get(0));
+        assertEquals("Anti-TSM=15.0", mwc.getTopN(1).get("SRM").get(0));
     }
 }

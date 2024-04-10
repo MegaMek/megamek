@@ -5301,6 +5301,17 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         return false;
     }
 
+    // MiscType.F_ECM should be part of all ECM systems
+    public boolean hasECM() {
+        for (Mounted m : getMisc()) {
+            EquipmentType type = m.getType();
+            if ((type instanceof MiscType) && type.hasFlag(MiscType.F_ECM)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     /**
      * Does the mech have a functioning ECM unit, tuned to ghost target generation?
      */

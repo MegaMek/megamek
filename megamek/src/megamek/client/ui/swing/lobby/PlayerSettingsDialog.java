@@ -39,6 +39,7 @@ import megamek.common.*;
 import megamek.common.containers.MunitionTree;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
+import org.apache.commons.collections.IteratorUtils;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -49,6 +50,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.NumberFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 import static megamek.client.ui.Messages.getString;
@@ -205,12 +207,18 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
 
     // Team Configuration Section
     private Team team;
+    private final JLabel labelAutoconfig = new TipLabel(
+            Messages.getString("PlayerSettingsDialog.autoConfigFaction"), SwingConstants.LEFT);
     private JComboBox<String> cmbTeamFaction;
     private final JButton butAutoconfigure = new JButton(Messages.getString("PlayerSettingsDialog.autoConfig"));
     private final JButton butRandomize = new JButton(Messages.getString("PlayerSettingsDialog.randomize"));
     private Checkbox chkTrulyRandom = new Checkbox("Truly Random", false);
+    private final JButton butSaveADF = new JButton(Messages.getString("PlayerSettingsDialog.saveADF"));
+    private final JButton butLoadADF = new JButton(Messages.getString("PlayerSettingsDialog.loadADF"));
+    private final JButton butRestoreMT = new JButton(Messages.getString("PlayerSettingsDialog.restore"));
     private TeamLoadoutGenerator tlg;
     private MunitionTree munitionTree = null;
+    private MunitionTree originalMT = null;
 
     private int currentPlayerStartPos;
 
@@ -262,6 +270,7 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
         gbc.fill = GridBagConstraints.HORIZONTAL;
         result.add(panContent);
 
+        panContent.add(labelAutoconfig, gbc);
         panContent.add(cmbTeamFaction, gbc);
         cmbTeamFaction.addActionListener(listener);
         panContent.add(butAutoconfigure, gbc);
@@ -269,6 +278,13 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
         panContent.add(butRandomize, gbc);
         butRandomize.addActionListener(listener);
         panContent.add(chkTrulyRandom, gbc);
+        panContent.add(butSaveADF, gbc);
+        butSaveADF.addActionListener(listener);
+        panContent.add(butLoadADF, gbc);
+        butLoadADF.addActionListener(listener);
+        panContent.add(butRestoreMT, gbc);
+        butRestoreMT.addActionListener(listener);
+        butRestoreMT.setEnabled(false);
         return result;
     }
 
@@ -372,6 +388,7 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
         if (null != munitionTree) {
             // TODO: create and set up default adf file path for bots
             tlg.reconfigureTeam(team, faction, munitionTree);
+
         }
 
         // The deployment position
@@ -434,10 +451,15 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
 
     private void setupValues() {
         Player player = client.getLocalPlayer();
+
         // For new auto-loadout-configuration
         team = client.getGame().getTeamForPlayer(player);
         String faction = team.getFaction();
         tlg = new TeamLoadoutGenerator(clientgui);
+        originalMT = new MunitionTree();
+        originalMT.loadEntityList(
+                (ArrayList<Entity>) IteratorUtils.toList(client.getGame().getTeamEntities(team)
+                ));
 
         fldInit.setText(Integer.toString(player.getConstantInitBonus()));
         fldConventional.setText(Integer.toString(player.getNbrMFConventional()));
@@ -559,6 +581,7 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
             // Team configuration
             if (butAutoconfigure.equals(e.getSource())) {
                 // disable button until Faction changes; result won't change.
+                butRestoreMT.setEnabled(true);
                 butAutoconfigure.setEnabled(false);
                 butRandomize.setEnabled(true);
                 munitionTree = tlg.generateMunitionTree(tlg.generateParameters(team), team);
@@ -566,6 +589,7 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
 
             if (butRandomize.equals(e.getSource())) {
                 // Randomize team loadout
+                butRestoreMT.setEnabled(true);
                 butAutoconfigure.setEnabled(true);
                 butRandomize.setEnabled(false);
                 tlg.setTrueRandom(chkTrulyRandom.getState());
@@ -575,6 +599,31 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
             if (cmbTeamFaction.equals(e.getSource())) {
                 // Reset autoconfigure button if user changes faction
                 butAutoconfigure.setEnabled(true);
+            }
+
+            if (butSaveADF.equals(e.getSource())) {
+                // Save current MunitionTree off as an ADF file
+                if (null != munitionTree) {
+                    saveLoadout(munitionTree);
+                } else if (null != originalMT) {
+                    saveLoadout(originalMT);
+                }
+            }
+
+            if (butLoadADF.equals(e.getSource())) {
+                // Load a MunitionTree into munitionTree variable.
+                MunitionTree mt = loadLoadout();
+                if (null != mt) {
+                    munitionTree = mt;
+                    butRestoreMT.setEnabled(true);
+                }
+            }
+
+            if (butRestoreMT.equals(e.getSource())) {
+                if (null != originalMT) {
+                    munitionTree = originalMT;
+                }
+
             }
 
             // Bot settings button
@@ -589,27 +638,44 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
         }
     };
 
+    private MunitionTree loadLoadout() {
+        MunitionTree mt = null;
+        JFileChooser fc = new JFileChooser(MMConstants.USER_LOADOUTS_DIR);
+        fc.setLocation(this.getLocation().x + 150, this.getLocation().y + 100);
+        fc.setDialogTitle(Messages.getString("ClientGui.LoadoutLoadDialog.title"));
 
-    private boolean saveLoadout() {
+        int returnVal = fc.showOpenDialog(this);
+        if ((returnVal != JFileChooser.APPROVE_OPTION) || (fc.getSelectedFile() == null)) {
+            // No file selected?  No loadout!
+            return null;
+        }
+
+        if (fc.getSelectedFile() != null) {
+            String file = fc.getSelectedFile().getAbsolutePath();
+            if (null == munitionTree) {
+                munitionTree = new MunitionTree(file);
+            } else {
+                munitionTree.readFromADFFilename(file);
+            }
+        }
+        return mt;
+    }
+
+    private void saveLoadout(MunitionTree source) {
         //ignoreHotKeys = true;
         JFileChooser fc = new JFileChooser(MMConstants.USER_LOADOUTS_DIR);
         fc.setLocation(this.getLocation().x + 150, this.getLocation().y + 100);
-        fc.setDialogTitle(Messages.getString("ClientGUI.FileSaveDialog.title"));
+        fc.setDialogTitle(Messages.getString("ClientGui.LoadoutSaveDialog.title"));
 
         int returnVal = fc.showSaveDialog(this);
         if ((returnVal != JFileChooser.APPROVE_OPTION) || (fc.getSelectedFile() == null)) {
-            // I want a file, y'know!
-            return false;
+            // No file selected?  No loadout!
+            return;
         }
         if (fc.getSelectedFile() != null) {
-            String file = fc.getSelectedFile().getName();
-            // stupid hack to allow for savegames in folders with spaces in
-            // the name
-            String path = fc.getSelectedFile().getParentFile().getPath();
-            path = path.replace(" ", "|");
-            return true;
+            String file = fc.getSelectedFile().getAbsolutePath();
+            source.writeToADFFilename(file);
         }
-        return false;
     }
 
     /**

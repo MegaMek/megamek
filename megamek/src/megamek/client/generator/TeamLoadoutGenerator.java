@@ -12,7 +12,6 @@ import org.apache.commons.collections.IteratorUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.File;
 import java.util.*;
 
 import static java.util.Map.entry;
@@ -31,7 +30,7 @@ public class TeamLoadoutGenerator {
     ));
 
     public static final ArrayList<String> FLAK_MUNITIONS = new ArrayList<>(List.of(
-            "ADA", "Cluster", "Flak"
+            "ADA", "Cluster", "Flak", "AAAMissile Ammo", "LAAMissile Ammo"
     ));
 
     public static final ArrayList<String> ACCURATE_MUNITIONS = new ArrayList<>(List.of(
@@ -39,35 +38,45 @@ public class TeamLoadoutGenerator {
     ));
 
     public static final ArrayList<String> HIGH_POWER_MUNITIONS = new ArrayList<>(List.of(
-            "Tandem-Charge", "Fuel-Air", "HE", "Dead-Fire", "Davy Crockett-M"
+            "Tandem-Charge", "Fuel-Air", "HE", "Dead-Fire", "Davy Crockett-M",
+            "ASMissile Ammo", "FABombLarge Ammo", "FABombSmall Ammo", "AlamoMissile Ammo"
+
 
     ));
 
     public static final ArrayList<String> ANTI_INF_MUNITIONS = new ArrayList<>(List.of(
-            "Inferno", "Fragmentation", "Flechette", "Fuel-Air", "Anti-personnel", "Acid"
+            "Inferno", "Fragmentation", "Flechette", "Fuel-Air", "Anti-personnel", "Acid",
+            "FABombSmall Ammo", "ClusterBomb", "HEBomb"
     ));
 
     public static final ArrayList<String> HEAT_MUNITIONS = new ArrayList<>(List.of(
-            "Inferno", "Incendiary"
+            "Inferno", "Incendiary", "InfernoBomb"
     ));
 
     public static final ArrayList<String> ILLUM_MUNITIONS = new ArrayList<>(List.of(
-            "Illumination", "Tracer", "Inferno", "Incendiary", "Flare"
+            "Illumination", "Tracer", "Inferno", "Incendiary", "Flare", "InfernoBomb"
     ));
 
     public static final ArrayList<String> UTILITY_MUNITIONS = new ArrayList<>(List.of(
             "Illumination", "Smoke", "Mine Clearance", "Anti-TSM", "Laser Inhibiting",
             "Thunder", "FASCAM", "Thunder-Active", "Thunder-Augmented", "Thunder-Vibrabomb",
-            "Thunder-Inferno", "Flare"
+            "Thunder-Inferno", "Flare", "ThunderBomb", "TAGBomb", "TorpedoBomb", "ASEWMissile Ammo"
     ));
 
     public static final ArrayList<String> GUIDED_MUNITIONS = new ArrayList<>(List.of(
-            "Semi-Guided", "Narc-capable", "Homing", "Copperhead"
+            "Semi-Guided", "Narc-capable", "Homing", "Copperhead", "LGBomb", "ArrowIVHomingMissile Ammo"
+    ));
+
+    // TODO Anti-Radiation Missiles See IO pg 62 (TO 368)
+    public static final ArrayList<String> SEEKING_MUNITIONS = new ArrayList<>(List.of(
+            "Heat-Seeking", "Listen-Kill", "Swarm", "Swarm-I"
     ));
 
     public static final ArrayList<String> AMMO_REDUCING_MUNITIONS = new ArrayList<>(List.of(
             "Acid", "Laser Inhibiting", "Follow The Leader", "Heat-Seeking", "Tandem-Charge",
-            "Thunder-Active", "Thunder-Augmented", "Thunder-Vibrabomb", "Thunder-Inferno"
+            "Thunder-Active", "Thunder-Augmented", "Thunder-Vibrabomb", "Thunder-Inferno",
+            "AAAMissile Ammo", "ASMissile Ammo", "ASWEMissile Ammo", "ArrowIVMissile Ammo",
+            "AlamoMissile Ammo"
     ));
 
     public static final ArrayList<String> TYPE_LIST = new ArrayList<String>(List.of(
@@ -77,16 +86,16 @@ public class TeamLoadoutGenerator {
 
     public static final Map<String, ArrayList<String>> TYPE_MAP =
          Map.ofEntries(
-            entry("lrm", MunitionTree.LRM_MUNITION_NAMES),
-            entry("srm", MunitionTree.SRM_MUNITION_NAMES),
-            entry("ac", MunitionTree.AC_MUNITION_NAMES),
-            entry("atm", MunitionTree.ATM_MUNITION_NAMES),
-            entry("arrow iv", MunitionTree.ARROW_MUNITION_NAMES),
-            entry("artillery", MunitionTree.ARTILLERY_MUNITION_NAMES),
-            entry("artillery cannon", MunitionTree.MEK_MORTAR_MUNITION_NAMES),
-            entry("mek mortar", MunitionTree.MEK_MORTAR_MUNITION_NAMES),
-            entry("narc", MunitionTree.NARC_MUNITION_NAMES),
-            entry("bomb", MunitionTree.BOMB_MUNITION_NAMES
+            entry("LRM", MunitionTree.LRM_MUNITION_NAMES),
+            entry("SRM", MunitionTree.SRM_MUNITION_NAMES),
+            entry("AC", MunitionTree.AC_MUNITION_NAMES),
+            entry("ATM", MunitionTree.ATM_MUNITION_NAMES),
+            entry("Arrow IV", MunitionTree.ARROW_MUNITION_NAMES),
+            entry("Artillery", MunitionTree.ARTILLERY_MUNITION_NAMES),
+            entry("Artillery Cannon", MunitionTree.MEK_MORTAR_MUNITION_NAMES),
+            entry("Mek Mortar", MunitionTree.MEK_MORTAR_MUNITION_NAMES),
+            entry("Narc", MunitionTree.NARC_MUNITION_NAMES),
+            entry("Bomb", MunitionTree.BOMB_MUNITION_NAMES
         )
     );
 
@@ -192,7 +201,7 @@ public class TeamLoadoutGenerator {
      */
     private static long checkForMissileBoats(ArrayList<Entity> el) {
         return el.stream().filter(
-                e -> e.getWeaponList().stream().filter(
+                e -> e.getRole().isAnyOf(UnitRole.MISSILE_BOAT) || e.getWeaponList().stream().filter(
                         w -> w.getName().toLowerCase().contains("lrm") ||
                         w.getName().toLowerCase().contains("srm") ||
                         w.getName().toLowerCase().contains("atm") ||
@@ -249,6 +258,12 @@ public class TeamLoadoutGenerator {
         ).count();
     }
 
+    private static long checkForECM(ArrayList<Entity> el) {
+        return el.stream().filter(
+                Entity::hasECM
+        ).count();
+    }
+
     public ReconfigurationParameters generateParameters(Team t) {
         return generateParameters(game, gameOptions, t);
     }
@@ -291,6 +306,7 @@ public class TeamLoadoutGenerator {
                 rp.enemyFireproofArmorCount += checkForFireproofArmor(etEntities);
                 rp.enemyFastMovers += checkForFastMovers(etEntities);
                 rp.enemyOffBoard = checkForOffboard(etEntities);
+                rp.enemyECMCount = checkForECM(etEntities);
             }
         } else {
             // Assume we know _nothing_ about enemies if Double Blind is on.
@@ -306,6 +322,7 @@ public class TeamLoadoutGenerator {
         rp.friendlyTAGs = checkForTAG(ownTeamEntities);
         rp.friendlyNARCs = checkForNARC(ownTeamEntities);
         rp.friendlyOffBoard = checkForOffboard(ownTeamEntities);
+        rp.friendlyECMCount = checkForECM(ownTeamEntities);
 
         // General parameters
         rp.darkEnvironment = g.getPlanetaryConditions().getLight().isDarkerThan(Light.DAY);
@@ -333,13 +350,13 @@ public class TeamLoadoutGenerator {
         ac20Ammo = (int) e.getAmmo().stream()
                 .filter(w -> w.getName().toLowerCase().contains("ac") && w.getName().contains("20")).count();
         if (ac20Ammo <= ac20Count) {
-            mt.insertImperative(e.getFullChassis(), e.getModel(), "any", "ac20", "Caseless");
+            mt.insertImperative(e.getFullChassis(), e.getModel(), "any", "AC/20", "Caseless");
             return true;
         }
 
         // Add one "Standard" to the start of the existing imperatives operating on this unit.
-        String[] imperatives = mt.getEffectiveImperative(e.getFullChassis(), e.getModel(), "any", "ac20").split(":");
-        mt.insertImperative(e.getFullChassis(), e.getModel(), "any", "ac20", "Standard:" + String.join(":", imperatives));
+        String[] imperatives = mt.getEffectiveImperative(e.getFullChassis(), e.getModel(), "any", "AC/20").split(":");
+        mt.insertImperative(e.getFullChassis(), e.getModel(), "any", "AC/20", "Standard:" + String.join(":", imperatives));
 
         return false;
     }
@@ -409,15 +426,20 @@ public class TeamLoadoutGenerator {
             // AP munitions are hard-countered by hardened, reactive, etc. armor
             if (rp.enemyAdvancedArmorCount > 0.0 && rp.enemyAdvancedArmorCount > rp.enemyReflectiveArmorCount) {
                 mwc.decreaseAPMunitions();
+                mwc.increaseHighPowerMunitions();
             } else if (rp.enemyReflectiveArmorCount > rp.enemyAdvancedArmorCount) {
                 // But AP munitions really hurt Reflective!
                 mwc.increaseAPMunitions();
             }
 
             // Heat-based weapons kill infantry dead, also vehicles
+            // But anti-infantry weapons are generally inferior without infantry targets
             if (rp.enemyFireproofArmorCount <= rp.enemyCount / 4.0) {
                 if (rp.enemyInfantry >= rp.enemyCount / 4.0) {
                     mwc.increaseHeatMunitions();
+                    mwc.increaseAntiInfMunitions();
+                } else {
+                    mwc.decreaseAntiInfMunitions();
                 }
                 if (rp.enemyVehicles >= rp.enemyCount / 4.0) {
                     mwc.increaseHeatMunitions();
@@ -427,6 +449,15 @@ public class TeamLoadoutGenerator {
                 if (rp.enemyInfantry >= rp.enemyCount / 4.0) {
                     mwc.increaseAntiInfMunitions();
                 }
+            }
+
+            // Counter EMC by swapping Seeking for Guided
+            if (rp.enemyECMCount > 1.0) {
+                mwc.decreaseGuidedMunitions();
+                mwc.increaseSeekingMunitions();
+            } else {
+                // Seeking munitions are generally situational
+                mwc.decreaseSeekingMunitions();
             }
         }
 
@@ -497,7 +528,7 @@ public class TeamLoadoutGenerator {
                 String[] fields = e.getValue().get(i).split("=");
                 // Add the current munition
                 sb.append(fields[0]);
-                if (i < size) {
+                if (i < size - 1) {
                     sb.append(":");
                 }
             }
@@ -735,7 +766,7 @@ public class TeamLoadoutGenerator {
             if ((trueRandom || !UTILITY_MUNITIONS.contains(typeName)) &&
                     (binName.toLowerCase().contains(typeName.toLowerCase())
                     || typeName.toLowerCase().contains(binName.toLowerCase()))) {
-                ArrayList<String> tList = TYPE_MAP.get(typeName.toLowerCase());
+                ArrayList<String> tList = TYPE_MAP.get(typeName);
                 result = tList.get(new Random().nextInt(tList.size()));
                 break;
             }
@@ -770,6 +801,7 @@ class ReconfigurationParameters {
     public long enemyFireproofArmorCount = 0;
     public long enemyFastMovers = 0;
     public long enemyOffBoard = 0;
+    public long enemyECMCount = 0;
     public HashSet<String> enemyFactions = new HashSet<String>();
 
     // Friendly stats
@@ -779,6 +811,7 @@ class ReconfigurationParameters {
     public long friendlyEnergyBoats = 0;
     public long friendlyMissileBoats = 0;
     public long friendlyOffBoard = 0;
+    public long friendlyECMCount = 0;
 
     // Datatype for passing around game parameters the Loadout Generator cares about
     ReconfigurationParameters() {
@@ -817,16 +850,16 @@ class MunitionWeightCollection {
         bombWeights = initializeWeaponWeights(MunitionTree.BOMB_MUNITION_NAMES);
 
         mapTypeToWeights = new HashMap<>(Map.ofEntries(
-                entry("lrm", lrmWeights),
-                entry("srm", srmWeights),
-                entry("ac", acWeights),
-                entry("atm", atmWeights),
-                entry("arrow iv", arrowWeights),
-                entry("artillery", artyWeights),
-                entry("artillery cannon", artyCannonWeights),
-                entry("mek mortar", mekMortarWeights),
-                entry("narc", narcWeights),
-                entry("bomb", bombWeights)
+                entry("LRM", lrmWeights),
+                entry("SRM", srmWeights),
+                entry("AC", acWeights),
+                entry("ATM", atmWeights),
+                entry("Arrow IV", arrowWeights),
+                entry("Artillery", artyWeights),
+                entry("Artillery Cannon", artyCannonWeights),
+                entry("Mek Mortar", mekMortarWeights),
+                entry("Narc", narcWeights),
+                entry("Bomb", bombWeights)
         ));
     }
 
@@ -952,6 +985,22 @@ class MunitionWeightCollection {
 
     public void decreaseAmmoReducingMunitions() {
         decreaseMunitions(TeamLoadoutGenerator.AMMO_REDUCING_MUNITIONS);
+    }
+
+    public void increaseSeekingMunitions() {
+        increaseMunitions(TeamLoadoutGenerator.SEEKING_MUNITIONS);
+    }
+
+    public void decreaseSeekingMunitions() {
+        decreaseMunitions(TeamLoadoutGenerator.SEEKING_MUNITIONS);
+    }
+
+    public void increaseHighPowerMunitions() {
+        increaseMunitions(TeamLoadoutGenerator.HIGH_POWER_MUNITIONS);
+    }
+
+    public void decreaseHighPowerMunitions() {
+        decreaseMunitions(TeamLoadoutGenerator.HIGH_POWER_MUNITIONS);
     }
 
 

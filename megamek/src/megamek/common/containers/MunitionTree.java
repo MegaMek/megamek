@@ -1,10 +1,15 @@
 package megamek.common.containers;
 
+import megamek.common.AmmoType;
 import megamek.common.BombType;
+import megamek.common.Entity;
+import megamek.common.Mounted;
 import org.apache.logging.log4j.LogManager;
 
 import java.io.*;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class MunitionTree {
     // Validated munition names that will work in ADF files.
@@ -61,9 +66,10 @@ public class MunitionTree {
             "# ADF (Autoconfiguration Data File) from MegaMek.",
             "# Lines are formatted as",
             "#      '<Chassis>:<Model>:<Pilot>::<Weapon type>:Muntion1[:Munition2[:...]]][::AmmoType2...]'",
-            "# values for <Chassis>, <Model>, <Pilot>, and <Weapon Type> may be 'any', or actual values.",
+            "# Values for <Chassis>, <Model>, <Pilot>, and <Weapon Type> may be 'any', or actual values.",
             "# Values for <Weapon Type> may also be specific or general, e.g. 'AC/20' ~ 'AC', 'SRM6' ~ 'SRM'",
             "# e.g. 'Shadow Hawk:any:Grayson Carlyle::LRM:Swarm::SRM:Inferno::AC:Precision:Flak'.",
+            "# ",
             "# Left-most Munition is highest priority; if any ammo slots are unaccounted for, they will be filled",
             "# with this munition type (unless it is invalid for the time / faction, in which case the next valid",
             "# Munition type will be used).  If no imperative matches, the current munitions will be left in place.",
@@ -76,6 +82,10 @@ public class MunitionTree {
     private LoadNode root = new LoadNode();
 
     public MunitionTree() {
+    }
+
+    public MunitionTree(MunitionTree mt) {
+        this.root = new LoadNode(mt.root);
     }
 
     /**
@@ -167,8 +177,33 @@ public class MunitionTree {
 
     public void writeToADFFormat(BufferedWriter bw) throws IOException {
         bw.write(HEADER);
+        bw.write(System.getProperty("line.separator"));
+        bw.write(System.getProperty("line.separator"));
+        bw.flush();
         bw.write(root.dumpTextFormat().toString());
         bw.flush();
+    }
+
+    /**
+     * Convert List of Entities into a set of specific imperatives for each unit.
+     * Used for backing up original loadout.
+     * @param el
+     */
+    public void loadEntityList(ArrayList<Entity> el) {
+        for (Entity e: el) {
+            HashMap<String, String> imperatives = new HashMap<>();
+            for (Mounted m : e.getAmmo()) {
+                AmmoType aType = (AmmoType) m.getType();
+                String sName = aType.getShortName();
+                String munition = (aType.getSubMunitionName() == aType.getBaseName()) ? "Standard" : aType.getSubMunitionName();
+                if (!(imperatives.containsKey(sName))) {
+                    imperatives.put(sName, munition);
+                } else {
+                    imperatives.put(sName, imperatives.get(sName) + ':' + munition);
+                }
+            }
+            root.insert(imperatives, e.getFullChassis(), e.getModel(), e.getCrew().getName(0));
+        }
     }
 
     // Can take multiple separate ammoType strings (e.g. "Standard", "HE", "ER") or one
@@ -183,11 +218,18 @@ public class MunitionTree {
 
         HashMap<String, String> imperatives = new HashMap<>();
 
-        imperatives.put(binType.toLowerCase(), String.join(":",ammoTypes));
+        imperatives.put(binType, String.join(":",ammoTypes));
         insertImperatives(chassis, variant, pilot, imperatives);
     }
 
     public void insertImperatives(
+            String chassis, String variant, String pilot, HashMap<String, String> imperatives){
+
+        // Start insertions from root
+        root.insert(imperatives, chassis, variant, pilot);
+    }
+
+    public void insertMangledImperatives(
             String chassis, String variant, String pilot, HashMap<String, String> imperatives){
         // switch imperative keys to lowercase to avoid case-based matching issues
         // strip out extraneous characters for ammo with sizes, e.g. LRM[ -/]15 -> LRM15
@@ -210,6 +252,14 @@ public class MunitionTree {
         return root.retrievePriorityList(chassis, variant, pilot, binType);
     }
 
+    /**
+     * Return the entire imperative string that would act on the provided key set
+     * @param chassis
+     * @param variant
+     * @param pilot
+     * @param binType
+     * @return
+     */
     public String getEffectiveImperative(
         String chassis, String variant, String pilot, String binType) {
         LoadNode node = root.retrieve(chassis, variant, pilot);
@@ -244,10 +294,25 @@ class LoadNode {
     private boolean dirty = false;
 
     public static String SIZE_REGEX = "[ -/\\\\]?(\\d{1,3})";
-    public static String LAC_REGEX = "l[-/\\\\]?ac";
+    public static Pattern SIZE_PATTERN = Pattern.compile(SIZE_REGEX);
+    public static String LAC_REGEX = "([Ll][-/\\\\]?)(ac|AC)";
+    public static Pattern LAC_PATTERN = Pattern.compile(LAC_REGEX);
     public static String ANY_KEY = "any";
 
     LoadNode() {
+    }
+
+    LoadNode(LoadNode ln) {
+        // Copy all children in ln
+        for (Map.Entry<String, LoadNode> e : ln.children.entrySet()) {
+            children.put(e.getKey(), new LoadNode(e.getValue()));
+        }
+
+        // Copy all Imperatives in ln
+        imperatives.putAll(ln.imperatives);
+
+        // Set dirty
+        dirty = true;
     }
 
     /**
@@ -372,15 +437,33 @@ class LoadNode {
      * @return
      */
     public List<String> getImperative(String binType) {
-        // all keys should be in lower-case; also check higher-level imperatives like "AC" for "AC20", etc.
-        final String lbt = binType.toLowerCase();
-        final String parentLBT = lbt.replaceAll(SIZE_REGEX, "");
+        // Found the raw string provided
+        if (imperatives.containsKey(binType)) {
+            return Arrays.asList(binType, imperatives.get(binType));
+        }
 
-        // Light AC imperatives need special handling
-        final String lacLBT = lbt.replaceAll(LAC_REGEX, "ac");
-        final String lacPLBT = lacLBT.replaceAll(SIZE_REGEX, "");
+        // Otherwise, try various combinations
+        // Separate out size
+        Matcher sizeM = SIZE_PATTERN.matcher(binType);
+        final String size = (sizeM.find()) ? sizeM.group(1) : "";
+        Matcher lacM = LAC_PATTERN.matcher(binType);
+        final String lac = (lacM.find()) ? lacM.group(1) : "";
+        final String base = (lac.isBlank()) ? binType.replaceAll(SIZE_REGEX, "") : lacM.group(2);
 
-        List<String> candidates = Arrays.asList(lbt, parentLBT, lacLBT, lacPLBT);
+        List<String> candidates = new ArrayList<>();
+        candidates.addAll(List.of(base, binType.toLowerCase(), base.toLowerCase()));
+        if (!size.isBlank()) {
+            for (Character c : " -/\\".toCharArray()) {
+                candidates.add(base + c + size);
+                candidates.add(base.toLowerCase() + c + size);
+            }
+        }
+        if (!lac.isBlank()) {
+            for (String l : List.of("L", "l", "L/", "l/", "L-", "l-")) {
+                candidates.add(l + base);
+                candidates.add(l + base.toLowerCase());
+            }
+        }
 
         String actualLookup = candidates.stream().filter(candidate -> imperatives.containsKey(candidate)).findFirst().orElse(null);
         String actualImperative = imperatives.getOrDefault(actualLookup, null);
@@ -464,7 +547,7 @@ class LoadNode {
             for (Map.Entry<String, String> entry : imperatives.entrySet()) {
                 sb.append("::").append(entry.getKey()).append(":").append(entry.getValue());
             }
-            sb.append('\n');
+            sb.append(System.getProperty("line.separator"));
         } else {
             for (Map.Entry<String, LoadNode> entry : children.entrySet()) {
                 String[] keysPlusOne = java.util.Arrays.copyOf(keys, keys.length + 1);

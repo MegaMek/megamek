@@ -1,5 +1,7 @@
 package megamek.client.generator;
 
+import megamek.common.BipedMech;
+import megamek.common.Entity;
 import megamek.common.MechSummary;
 import megamek.common.MechSummaryCache;
 import megamek.common.containers.MunitionTree;
@@ -10,6 +12,8 @@ import org.junit.jupiter.api.Test;
 import java.io.*;
 import java.util.HashMap;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -150,7 +154,7 @@ class MunitionTreeTest {
     void testADFFileFormatReading() throws IOException {
         StringReader sr = new StringReader(
             String.join("\\\n",
-        "#Mauler:any:any::LRM:Smoke::AC5:AP",
+        "Mauler:any:any::LRM:Smoke::AC/5:AP",
                 "Catapult:CPLT-C1:any::LRM-15:Standard:Dead-Fire:inferno",
                 "Shadow Hawk:any:any::SRM:Inferno::LRM:Dead-Fire::AC:Precision"
             )
@@ -160,7 +164,7 @@ class MunitionTreeTest {
         MunitionTree mt = new MunitionTree();
         mt.readFromADF(br);
         // 3 ammo types set for Catapult C1
-        assertEquals(3, mt.getCountsOfAmmosForKey("Catapult", "CPLT-C1", "any", "LRM 15").size());
+        assertEquals(3, mt.getCountsOfAmmosForKey("Catapult", "CPLT-C1", "any", "LRM-15").size());
 
         // 1 ammo type each for each of three Shadow Hawk weapons
         assertEquals(1, mt.getCountsOfAmmosForKey("Shadow Hawk", "SHD-2D", "any", "LRM-5").size());
@@ -176,13 +180,48 @@ class MunitionTreeTest {
 
         mt.insertImperative("any", "any", "any", "AC", "Standard:Precision");
         mt.insertImperative("any", "any", "any", "LRM", "Standard:Heat-Seeking:Semi-Guided");
-        mt.insertImperative("Mauler", "MAL-5X", "Tsubaki Yonjuro", "AC", "Precision:Tracer:Armor-Piercing");
-        mt.insertImperative("Shadow Hawk", "SHD-2D", "any", "LRM", "Dead-Fire");
+        mt.insertImperative("Mauler", "MAL-5X", "Tsubaki Yonjuro", "AC/5", "Precision:Tracer:Armor-Piercing");
+        mt.insertImperative("Shadow Hawk", "SHD-2D", "any", "LRM-5", "Dead-Fire");
         mt.insertImperative("Shadow Hawk", "SHD-2D", "any", "SRM", "Inferno");
         mt.insertImperative("Shadow Hawk", "SHD-2D", "any", "AC", "Precision");
 
         mt.writeToADFFormat(bw);
         String[] lines = sw.toString().split("\\n");
-        assertTrue(lines[0].contains("any:any:any::AC:Standard:Precision::LRM:Standard:Heat-Seeking:Semi-Guided"));
+        // Lines are generated in map key order, so basically random.
+        for (String line: lines) {
+            if (line.startsWith("any:any:any::")) {
+                assertTrue(line.toLowerCase().contains("any:any:any::AC:Standard:Precision::LRM:Standard:Heat-Seeking:Semi-Guided".toLowerCase()));
+            } else if (line.startsWith("Mauler:")) {
+                assertTrue(line.toLowerCase().contains("Mauler:MAL-5X:Tsubaki Yonjuro::AC/5:Precision:Tracer:".toLowerCase()));
+            } else if (line.startsWith("Shadow Hawk:")) {
+                assertTrue(line.toLowerCase().contains("Shadow Hawk:SHD-2D:any::".toLowerCase()));
+            }
+        }
+    }
+
+    @Test
+    void testLoadNodeCopyConstructor() {
+        MunitionTree mt = new MunitionTree();
+        mt.insertImperative("Shadow Hawk", "SHD-2D", "any", "LRM-5", "Dead-Fire");
+        MunitionTree copy = new MunitionTree(mt);
+        assertNotEquals(mt, copy);
+        assertEquals(copy.getCountOfAmmoForKey("Shadow Hawk", "SHD-2D", "any", "LRM-5", "Dead-Fire"), 1);
+
+        // Add another imperative to mt; copy shouldn't see it.
+        mt.insertImperative("any", "any", "any", "LRM", "Standard:Heat-Seeking:Semi-Guided");
+        assertEquals(copy.getCountOfAmmoForKey("Catapult", "CPLT-C1", "Werner Herzgod", "LRM-15", "Standard"), 0);
+        assertEquals(mt.getCountOfAmmoForKey("Catapult", "CPLT-C1", "Werner Herzgod", "LRM-15", "Standard"), 1);
+
+    }
+
+    @Test
+    void testRegex() {
+        // I despise Java regexes now.
+        String regex = "\\w*[ -/\\\\](\\d{1,3})";
+        Pattern p = Pattern.compile(regex);
+        Matcher m = p.matcher("LRM-15");
+        // Have to find before can get group ;_;
+        assertTrue(m.find());
+        assertNotNull(m.group(1));
     }
 }

@@ -388,7 +388,13 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
         if (null != munitionTree) {
             // TODO: create and set up default adf file path for bots
             tlg.reconfigureTeam(team, faction, munitionTree);
-
+            if ((clientgui != null) && (clientgui.chatlounge != null)) {
+                ArrayList<Entity> updateEntities = (ArrayList<Entity>) IteratorUtils.toList(
+                        clientgui.getClient().getGame().getTeamEntities(team)
+                );
+                // Use sendUpdate because we want the Game to allow us to change on Bot's behalf.
+                clientgui.chatlounge.sendUpdate(updateEntities);
+            }
         }
 
         // The deployment position

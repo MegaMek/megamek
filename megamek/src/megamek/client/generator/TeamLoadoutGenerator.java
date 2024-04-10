@@ -356,7 +356,9 @@ public class TeamLoadoutGenerator {
 
         // Add one "Standard" to the start of the existing imperatives operating on this unit.
         String[] imperatives = mt.getEffectiveImperative(e.getFullChassis(), e.getModel(), "any", "AC/20").split(":");
-        mt.insertImperative(e.getFullChassis(), e.getModel(), "any", "AC/20", "Standard:" + String.join(":", imperatives));
+        if (!imperatives[0].contains("Standard")) {
+            mt.insertImperative(e.getFullChassis(), e.getModel(), "any", "AC/20", "Standard:" + String.join(":", imperatives));
+        }
 
         return false;
     }

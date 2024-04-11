@@ -136,7 +136,7 @@ public class TeamLoadoutGenerator {
         showExtinct = gameOptions.booleanOption((OptionsConstants.ALLOWED_SHOW_EXTINCT));
     }
 
-    // See if
+    // See if selected ammoType is legal under current game rules, availability, TL, tech base, etc.
     public boolean checkLegality(AmmoType aType, String faction, String techBase, boolean mixedTech) {
         boolean legal = false;
         boolean clan = techBase.equals("CL");
@@ -151,6 +151,10 @@ public class TeamLoadoutGenerator {
             // Basic year check only
             legal = aType.getStaticTechLevel().ordinal() <= legalLevel.ordinal();
         }
+
+        // Nukes are not allowed... unless they are!
+        legal &= (!aType.hasFlag(AmmoType.F_NUCLEAR)
+                || cg.getClient().getGame().getOptions().booleanOption(OptionsConstants.ADVAERORULES_AT2_NUKES));
 
         return legal;
     }
@@ -478,14 +482,15 @@ public class TeamLoadoutGenerator {
             mwc.decreaseGuidedMunitions();
         }
 
-        // Downgrade utility munitions unless there are units that could use them; off-board arty
+        // Downgrade utility munitions unless there are many units that could use them; off-board arty
         // in particular
-        if (rp.friendlyOffBoard > 0.0 ) {
-            if (rp.enemyOffBoard <= rp.friendlyOffBoard) {
+        if (rp.friendlyOffBoard > 4.0 ) {
+            // Only increase utility rounds if we have more off-board units that the other guys
+            if (rp.enemyOffBoard < rp.friendlyOffBoard) {
                 mwc.increaseUtilityMunitions();
             }
         } else {
-            // Reduce utility munition chances
+            // Reduce utility munition chances if we've only got a lance or so of arty
             mwc.decreaseUtilityMunitions();
         }
 
@@ -498,6 +503,7 @@ public class TeamLoadoutGenerator {
             mwc.increaseMunitions(tsmOnly);
         }
 
+        // The main event!
         // Convert MWC to MunitionsTree for loading
         applyWeightsToMunitionTree(mt, mwc);
 

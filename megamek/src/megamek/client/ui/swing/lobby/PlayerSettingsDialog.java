@@ -393,7 +393,8 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
                         clientgui.getClient().getGame().getTeamEntities(team)
                 );
                 // Use sendUpdate because we want the Game to allow us to change on Bot's behalf.
-                clientgui.chatlounge.sendUpdate(updateEntities);
+                clientgui.chatlounge.sendProxyUpdates(updateEntities, client.getLocalPlayer());
+                // clientgui.chatlounge.sendUpdate(updateEntities);
             }
         }
 

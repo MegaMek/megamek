@@ -1496,6 +1496,10 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         }
     }
 
+    void sendProxyUpdates(Collection<Entity> updateCandidates, Player player) {
+        getLocalClient(player).sendUpdateEntity(updateCandidates);
+    }
+
     /**
      * Sends the entities in the given Collection to the Server.
      * Sends only those that can be edited, i.e. the player's own
@@ -1564,6 +1568,14 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     Client getLocalClient(Entity entity) {
         if (clientgui.getLocalBots().containsKey(entity.getOwner().getName())) {
             return (Client) clientgui.getLocalBots().get(entity.getOwner().getName());
+        } else {
+            return clientgui.getClient();
+        }
+    }
+
+    Client getLocalClient(Player player) {
+        if (clientgui.getLocalBots().containsKey(player.getName())) {
+            return clientgui.getLocalBots().get(player.getName());
         } else {
             return clientgui.getClient();
         }

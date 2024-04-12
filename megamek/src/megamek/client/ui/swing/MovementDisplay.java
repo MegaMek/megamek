@@ -1360,13 +1360,9 @@ public class MovementDisplay extends ActionPhaseDisplay {
         clientgui.getBoardView().setSensorRange(ce, cmd.getFinalCoords());
 
         // set to "walk," or the equivalent
-        if (gear != MovementDisplay.GEAR_JUMP) {
-            gear = MovementDisplay.GEAR_LAND;
-            Color walkColor = GUIP.getMoveDefaultColor();
-            clientgui.getBoardView().setHighlightColor(walkColor);
-        } else if (!cmd.isJumping()) {
-            addStepToMovePath(MoveStepType.START_JUMP);
-        }
+        gear = MovementDisplay.GEAR_LAND;
+        Color walkColor = GUIP.getMoveDefaultColor();
+        clientgui.getBoardView().setHighlightColor(walkColor);
 
         // update some GUI elements
         clientgui.getBoardView().clearMovementData();

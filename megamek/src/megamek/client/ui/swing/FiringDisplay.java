@@ -281,11 +281,13 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
 
                     @Override
                     public boolean shouldPerformAction() {
+                        // can get called outside of the firing phase, need to check 'isVisible' first in expression.
                         if (!clientgui.getClient().isMyTurn()
-                                || ce().getAlreadyTwisted()
-                                || clientgui.getBoardView().getChatterBoxActive()
                                 || !display.isVisible()
-                                || display.isIgnoringEvents()) {
+                                || display.isIgnoringEvents()
+                                || ce() == null
+                                || ce().getAlreadyTwisted()
+                                || clientgui.getBoardView().getChatterBoxActive()) {
                             return false;
                         } else {
                             return true;
@@ -305,11 +307,13 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
 
                     @Override
                     public boolean shouldPerformAction() {
+                        // can get called outside of the firing phase, need to check 'isVisible' first in expression.
                         if (!clientgui.getClient().isMyTurn()
-                                || ce().getAlreadyTwisted()
-                                || clientgui.getBoardView().getChatterBoxActive()
                                 || !display.isVisible()
-                                || display.isIgnoringEvents()) {
+                                || display.isIgnoringEvents()
+                                || ce() == null
+                                || ce().getAlreadyTwisted()
+                                || clientgui.getBoardView().getChatterBoxActive()) {
                             return false;
                         } else {
                             return true;

@@ -1430,6 +1430,10 @@ public class MovementDisplay extends ActionPhaseDisplay {
     }
 
     private void removeLastStep() {
+       if(cmd.getLastStep() != null && cmd.getLastStep().getType() == MoveStepType.START_JUMP) {
+            gear = MovementDisplay.GEAR_LAND;
+        }
+
         cmd.removeLastStep();
         final Entity entity = ce();
         if (entity == null) {

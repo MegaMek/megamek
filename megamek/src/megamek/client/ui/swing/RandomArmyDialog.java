@@ -660,6 +660,8 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
                 }
                 // Set faction based on generated RAT faction
                 m_clientgui.getClient().getGame().getTeamForPlayer(c.getLocalPlayer()).setFaction(faction);
+                String msg = m_clientgui.getClient().getLocalPlayer() + " set team Faction to: " + faction;
+                m_clientgui.getClient().sendServerChat(Player.PLAYER_NONE, msg);
                 for (MechSummary ms : armyModel.getAllUnits()) {
                     try {
                         Entity e = new MechFileParser(ms.getSourceFile(),
@@ -683,7 +685,7 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
                     }
                 }
                 c.sendAddEntity(entities);
-                String msg = m_clientgui.getClient().getLocalPlayer() + " loaded Units from Random Army for player: " + m_chPlayer.getSelectedItem() + " [" + entities.size() + " units]";
+                msg = m_clientgui.getClient().getLocalPlayer() + " loaded Units from Random Army for player: " + m_chPlayer.getSelectedItem() + " [" + entities.size() + " units]";
                 m_clientgui.getClient().sendServerChat(Player.PLAYER_NONE, msg);
                 armyModel.clearData();
                 unitsModel.clearData();

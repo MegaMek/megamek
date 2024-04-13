@@ -56,6 +56,7 @@ public class GameOptions extends AbstractOptions {
         addOption(base, OptionsConstants.BASE_TEAM_INITIATIVE, true);
         addOption(base, OptionsConstants.BASE_AUTOSAVE_MSG, true);
         addOption(base, OptionsConstants.BASE_PARANOID_AUTOSAVE, false);
+        addOption(base, OptionsConstants.BASE_MAX_NUMBER_ROUND_SAVES, 3);
         addOption(base, OptionsConstants.BASE_EXCLUSIVE_DB_DEPLOYMENT, true);
         addOption(base, OptionsConstants.BASE_BLIND_DROP, false);
         addOption(base, OptionsConstants.BASE_REAL_BLIND_DROP, false);
@@ -72,9 +73,9 @@ public class GameOptions extends AbstractOptions {
         addOption(base, OptionsConstants.BASE_RNG_LOG, false);
         addOption(base, OptionsConstants.BASE_FLAMER_HEAT, false);
         addOption(base, OptionsConstants.BASE_INFANTRY_DAMAGE_HEAT, false);
-        addOption(base, OptionsConstants.BASE_INDIRECT_FIRE, true); 
-        addOption(base, OptionsConstants.BASE_BREEZE, false); 
-        addOption(base, OptionsConstants.BASE_RANDOM_BASEMENTS, true); 
+        addOption(base, OptionsConstants.BASE_INDIRECT_FIRE, true);
+        addOption(base, OptionsConstants.BASE_BREEZE, false);
+        addOption(base, OptionsConstants.BASE_RANDOM_BASEMENTS, true);
         addOption(base, OptionsConstants.BASE_AUTO_AMS, true);
         addOption(base, OptionsConstants.BASE_TURN_TIMER_TARGETING, 0);
         addOption(base, OptionsConstants.BASE_TURN_TIMER_MOVEMENT, 0);
@@ -108,14 +109,14 @@ public class GameOptions extends AbstractOptions {
         addOption(allowed, OptionsConstants.ALLOWED_ERA_BASED, false);
         addOption(allowed, OptionsConstants.ALLOWED_ALLOW_ILLEGAL_UNITS, false);
         addOption(allowed, OptionsConstants.ALLOWED_SHOW_EXTINCT, true);
-        addOption(allowed, OptionsConstants.ALLOWED_CLAN_IGNORE_EQ_LIMITS, false); 
-        addOption(allowed, OptionsConstants.ALLOWED_NO_CLAN_PHYSICAL, false); 
-        addOption(allowed, OptionsConstants.ALLOWED_ALLOW_NUKES, false); 
-        addOption(allowed, OptionsConstants.ALLOWED_REALLY_ALLOW_NUKES, false); 
-           
-        IBasicOptionGroup advancedRules = addGroup("advancedRules"); 
-        addOption(advancedRules, OptionsConstants.ADVANCED_MINEFIELDS, false); 
-        addOption(advancedRules, OptionsConstants.ADVANCED_HIDDEN_UNITS, true); 
+        addOption(allowed, OptionsConstants.ALLOWED_CLAN_IGNORE_EQ_LIMITS, false);
+        addOption(allowed, OptionsConstants.ALLOWED_NO_CLAN_PHYSICAL, false);
+        addOption(allowed, OptionsConstants.ALLOWED_ALLOW_NUKES, false);
+        addOption(allowed, OptionsConstants.ALLOWED_REALLY_ALLOW_NUKES, false);
+
+        IBasicOptionGroup advancedRules = addGroup("advancedRules");
+        addOption(advancedRules, OptionsConstants.ADVANCED_MINEFIELDS, false);
+        addOption(advancedRules, OptionsConstants.ADVANCED_HIDDEN_UNITS, true);
         addOption(advancedRules, OptionsConstants.ADVANCED_BLACK_ICE, false);
         addOption(advancedRules, OptionsConstants.ADVANCED_DOUBLE_BLIND, false);
         addOption(advancedRules, OptionsConstants.ADVANCED_TACOPS_SENSORS, false);

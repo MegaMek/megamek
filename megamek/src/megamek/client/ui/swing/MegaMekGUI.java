@@ -522,8 +522,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
 
         final Vector<String> playerNames = new Vector<>();
 
-        // Handrolled extraction, as we require Server initialization to use XStream and
-        // don't need
+        // Handrolled extraction, as we require Server initialization to use XStream and don't need
         // the additional overhead of initializing everything twice
         try (InputStream is = new FileInputStream(fc.getSelectedFile())) {
             InputStream gzi;
@@ -639,28 +638,37 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         }
     }
 
-    private void parsePlayerNames(final Node n, final Vector<String> playerNames) {
-        if (!n.hasChildNodes()) {
+    private void parsePlayerNames(final Node nodePlayers, final Vector<String> playerNames) {
+        if (!nodePlayers.hasChildNodes()) {
             return;
         }
 
-        final NodeList nl = n.getChildNodes();
-        for (int i = 0; i < nl.getLength(); i++) {
-            final Node n2 = nl.item(i);
-            if ((n2.getNodeType() != Node.ELEMENT_NODE) || !n2.hasChildNodes()
-                    || !Player.class.getName().equals(n2.getNodeName())) {
+        final NodeList nodePlayersChildren = nodePlayers.getChildNodes();
+        for (int i = 0; i < nodePlayersChildren.getLength(); i++) {
+            final Node nodeEntry = nodePlayersChildren.item(i);
+            if ((nodeEntry.getNodeType() != Node.ELEMENT_NODE) || !nodeEntry.hasChildNodes()
+                    || !"entry".equals(nodeEntry.getNodeName())) {
                 continue;
             }
 
-            final NodeList nl2 = n2.getChildNodes();
-            for (int j = 0; j < nl2.getLength(); j++) {
-                final Node n3 = nl2.item(j);
-                if (n3.getNodeType() != Node.ELEMENT_NODE) {
+            final NodeList nodeEntryChildren = nodeEntry.getChildNodes();
+            for (int k = 0; k < nodeEntryChildren.getLength(); k++) {
+                final Node nodePlayerClass = nodeEntryChildren.item(k);
+                if ((nodePlayerClass.getNodeType() != Node.ELEMENT_NODE) || !nodePlayerClass.hasChildNodes()
+                        || !Player.class.getName().equals(nodePlayerClass.getNodeName())) {
                     continue;
                 }
 
-                if ("name".equals(n3.getNodeName())) {
-                    playerNames.add(n3.getTextContent());
+                final NodeList nodePlayerClassChildren = nodePlayerClass.getChildNodes();
+                for (int j = 0; j < nodePlayerClassChildren.getLength(); j++) {
+                    final Node n3 = nodePlayerClassChildren.item(j);
+                    if (n3.getNodeType() != Node.ELEMENT_NODE) {
+                        continue;
+                    }
+
+                    if ("name".equals(n3.getNodeName())) {
+                        playerNames.add(n3.getTextContent());
+                    }
                 }
             }
         }

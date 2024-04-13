@@ -1,6 +1,7 @@
 /*
- * MegaMek - Copyright (C) 2003, 2004 Ben Mazur (bmazur@sev.org)
- * Copyright © 2016 Nicholas Walczak (walczak@cs.umn.edu)
+ * MegaMek - Copyright (c) 2003, 2004 Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2016 Nicholas Walczak (walczak@cs.umn.edu)
+ * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -14,7 +15,6 @@
  */
 package megamek.utilities;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -22,120 +22,72 @@ import java.util.Map;
 
 import megamek.client.ui.swing.tileset.MMStaticDirectoryManager;
 import megamek.client.ui.swing.tileset.MechTileset.MechEntry;
-import megamek.common.Aero;
-import megamek.common.BattleArmor;
 import megamek.common.Entity;
-import megamek.common.Infantry;
-import megamek.common.Jumpship;
-import megamek.common.Mech;
-import megamek.common.MechFileParser;
 import megamek.common.MechSummary;
 import megamek.common.MechSummaryCache;
-import megamek.common.Protomech;
-import megamek.common.SmallCraft;
-import megamek.common.SpaceStation;
-import megamek.common.Tank;
-import megamek.common.VTOL;
-import megamek.common.Warship;
-import org.apache.logging.log4j.LogManager;
 
 /**
  * This program will generate a list of all the units that use the default
- * (generic) icons.
+ * (generic) icons. It ignores non-canon units.
  * 
  * @author arlith
- * @since January 2016
  */
 public class GenerateGenericIconList implements MechSummaryCache.Listener {
 
     private static MechSummaryCache mechSummaryCache = null;
     
     public static void main(String[] args) {
-        boolean ignoreUnofficial = true;
-        for (int i = 0; i < args.length; i++) {
-            if (args[i].equals("-unofficial")) {
-                ignoreUnofficial = false;
-            } else {
-                LogManager.getLogger().error("Invalid argument of " + args[i]);
-                return;
-            }
-        }
-        
         GenerateGenericIconList gen = new GenerateGenericIconList();
-        mechSummaryCache = MechSummaryCache.getInstance(ignoreUnofficial);
+        System.out.println("Loading Cache...");
+        mechSummaryCache = MechSummaryCache.getInstance(true);
         mechSummaryCache.addListener(gen);
     }
 
     @Override
     public void doneLoading() {
-        MechSummary[] ms = mechSummaryCache.getAllMechs();
-        int genericCount = 0;
         Map<String, List<String>> typeNameMap = new HashMap<>();
-        
-        System.out.println("\n");
-        System.out.println("Units using Generic Icons:");
-        
-        for (int i = 0; i < ms.length; i++) {
-            Entity entity = loadEntity(ms[i].getSourceFile(), ms[i].getEntryName());
+        for (MechSummary mechSummary : mechSummaryCache.getAllMechs()) {
+            if (!mechSummary.isCanon()) {
+                continue;
+            }
+            Entity entity = mechSummary.loadEntity();
+            if (entity == null) {
+                System.out.println("Couldn't load entity for: " + mechSummary);
+                continue;
+            }
             MechEntry entry = MMStaticDirectoryManager.getMechTileset().entryFor(entity, -1);
             MechEntry defaultEntry = MMStaticDirectoryManager.getMechTileset().genericFor(entity, -1);
-            if (entry.equals(defaultEntry)) {
+            if (entry == null) {
+                System.out.println("Found no entry for: " + entity);
+            } else if (defaultEntry == null) {
+                System.out.println("Found no default entry for: " + entity);
+            } else if (entry.equals(defaultEntry)) {
                 String name = entity.getChassis() + " " + entity.getModel();
-                String type = "Unknown:";
-                if (entity instanceof Mech) {
-                    type = "Mechs:";
-                } else if (entity instanceof VTOL) {
-                    type = "VTOLs:";
-                } else if (entity instanceof Tank) {
-                    type = "Tanks:";
-                } else if (entity instanceof BattleArmor) {
-                    type = "BattleArmor:";
-                } else if (entity instanceof Infantry) {
-                    type = "Infantry:";
-                } else if (entity instanceof SpaceStation) {
-                    type = "SpaceStations:";
-                } else if (entity instanceof Warship) {
-                    type = "Warships:";
-                } else if (entity instanceof Jumpship) {
-                    type = "Jumpships:";
-                } else if (entity instanceof SmallCraft) {
-                    type = "Dropships:";
-                } else if (entity instanceof Aero) {
-                    type = "Aeros:";
-                } else if (entity instanceof Protomech) {
-                    type = "Protomechs:";
-                }
+                String type = getTypeName(entity);
                 List<String> names = typeNameMap.computeIfAbsent(type, k -> new ArrayList<>());
                 names.add(name);
-                genericCount++;        
             }
         }
-        
+
+        System.out.println("Units using Generic Icons:");
         for (String type : typeNameMap.keySet()) {
+            System.out.println();
             System.out.println(type);
             List<String> names = typeNameMap.get(type);
             for (String name : names) {
-                System.out.println("\t" + name);
+                System.out.println("    " + name);
             }
-            System.out.println("\n");
         }
-        
-        System.out.println("\n");
+
+        System.out.println();
+        int genericCount = typeNameMap.values().stream().mapToInt(List::size).sum();
         System.out.println("Total units with generic icons: " + genericCount);
         for (String type : typeNameMap.keySet()) {
-            System.out.println("\t" + type + " "
-                    + typeNameMap.get(type).size());
+            System.out.println("    " + type + typeNameMap.get(type).size());
         }
     }
-    
-    public Entity loadEntity(File f, String entityName) {
-        Entity entity = null;
-        try {
-            entity = new MechFileParser(f, entityName).getEntity();
-        } catch (megamek.common.loaders.EntityLoadingException e) {
-            LogManager.getLogger().error("", e);
-        }
-        return entity;
+
+    private static String getTypeName(Entity entity) {
+        return entity.getClass().getSimpleName() + ": ";
     }
-    
 }

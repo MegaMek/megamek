@@ -64,8 +64,8 @@ MEGAMEK VERSION HISTORY:
 + Fix MekHQ #3986: MHQ wont save, sometimes 
 + Fix #5348: Stop adding jump start step when deleting movement 
 + PR #5353: Utility update and small icon error correction 
-+ Fix #5351: Null pointer when turning with shortcut keys in movement phase. 
-
++ Fix #5351: Null pointer when turning with shortcut keys in movement phase.
++ Fix #5275: Null pointer when attacking targets on building with Blood Stalker SPA
 
 0.49.18 (2024-02-17 1800 UTC)
 + Fix #5004: Prevents an error when configuring LAMs or quadvees in the lobby

@@ -66,6 +66,8 @@ MEGAMEK VERSION HISTORY:
 + PR #5353: Utility update and small icon error correction 
 + Fix #5351: Null pointer when turning with shortcut keys in movement phase. 
 + Fix #5367: correct issue when using multiple boards and restricting deployment
++ PR #5366: Added Faction Logos from UCC (With Permission)
++ Fix #5215 - Secondary turret firing arc display to reflect tanks turret rotation.
 
 
 0.49.18 (2024-02-17 1800 UTC)

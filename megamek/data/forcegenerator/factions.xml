@@ -216,7 +216,7 @@
 		<parentFaction>CLAN</parentFaction>
 	</faction>
 	<faction key='CS' name='ComStar' minor='false' clan='false' periphery='false'
-		image='logo_clan_comstar.png'>
+		image='logo_comstar.png'>
 		<years>2788-3081</years>
 		<ratingLevels>B,A</ratingLevels>
 		<parentFaction>IS</parentFaction>
@@ -226,7 +226,7 @@
 		<parentFaction>FWL</parentFaction>
 	</faction>
 	<faction key='DC' name='Draconis Combine' minor='false' clan='false' periphery='false'
-		image='logo_clan_draconis_combine.png'>
+		image='logo_draconis_combine.png'>
 		<years>2319-</years>
 		<ratingLevels>F,D,C,B,A</ratingLevels>
 		<parentFaction>IS</parentFaction>
@@ -395,7 +395,7 @@
 		<parentFaction>IS</parentFaction>
 	</faction>
 	<faction key='MERC' name='Mercenary' minor='false' clan='false' periphery='false'
-		image='logo_merfenaries.png'>
+		image='logo_mercenaries.png'>
 		<years>-</years>
 		<ratingLevels>F,D,C,B,A</ratingLevels>
 		<parentFaction>IS</parentFaction>
@@ -507,7 +507,7 @@
 		<parentFaction>ROS</parentFaction>
 	</faction>
 	<faction key='ROS' name='Republic of the Sphere' minor='false' clan='false' periphery='false'
-		image='logo_replubic_of_the_sphere.png'>
+		image='logo_republic_of_the_sphere.png'>
 		<years>3081-3151</years>
 		<ratingLevels>Triarii Protectors,Principes Guards,Hastati Sentinels,Stone&apos;s Brigade</ratingLevels>
 		<parentFaction>IS</parentFaction>

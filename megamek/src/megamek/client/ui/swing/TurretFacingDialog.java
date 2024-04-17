@@ -235,6 +235,19 @@ public class TurretFacingDialog extends JDialog implements ActionListener {
             } else if (tank != null) {
                 tank.setDualTurretOffset(((6 - tank.getFacing()) + facing) % 6);
                 clientgui.getClient().sendUpdateEntity(tank);
+
+                // `turret` is null here - need to find the first weapon ID of the 2nd turret.
+                for (Mounted weapon : tank.getWeaponList()) {
+                    if (weapon.getLocation() == tank.getLocTurret2()) {
+                        turret = weapon;
+                        break;
+                    }
+                }
+
+                // Select the turret in the unit display.
+                if (clientgui.getUnitDisplay() != null) {
+                    clientgui.getUnitDisplay().wPan.selectWeapon(tank.getEquipmentNum(turret));
+                }
             }
 
             dispose();

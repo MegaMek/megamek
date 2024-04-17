@@ -373,11 +373,10 @@ public class SuperHeavyTank extends Tank {
                     return Compute.ARC_NOSE;
                 }
             case LOC_TURRET:
+            case LOC_TURRET_2:
                 if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_VEHICLE_ARCS)) {
                     return Compute.ARC_TURRET;
                 }
-                return Compute.ARC_FORWARD;
-            case LOC_TURRET_2:
                 return Compute.ARC_FORWARD;
             case LOC_FRONTRIGHT:
             case LOC_REARRIGHT:

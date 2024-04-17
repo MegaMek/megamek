@@ -29,7 +29,7 @@ import megamek.client.ui.swing.util.UIUtil.FixedYPanel;
 import megamek.common.options.*;
 
 /** @author Cord Awtry */
-public class DialogOptionComponent extends FixedYPanel implements ItemListener, Comparable<DialogOptionComponent> {
+public class DialogOptionComponent extends FixedYPanel implements ItemListener, ActionListener, Comparable<DialogOptionComponent> {
 
     private static final long serialVersionUID = -4190538980884459746L;
 
@@ -85,6 +85,7 @@ public class DialogOptionComponent extends FixedYPanel implements ItemListener, 
                 label.setLabelFor(choice);
                 label.setToolTipText(convertToHtml(option.getDescription()));
                 choice.setEnabled(editable);
+                choice.addActionListener(this);
                 if (choiceLabelFirst) {
                     add(choice);
                     add(label);
@@ -92,6 +93,7 @@ public class DialogOptionComponent extends FixedYPanel implements ItemListener, 
                     add(label);
                     add(choice);
                 }
+
                 break;
             default:
                 textField = new JTextField(option.stringValue(), option.getTextFieldLength());
@@ -217,7 +219,10 @@ public class DialogOptionComponent extends FixedYPanel implements ItemListener, 
     }
 
     public void addValue(String value) {
+        //turn off listener when adding the item
+        choice.removeActionListener(this);
         choice.addItem(value);
+        choice.addActionListener(this);
     }
 
     public boolean isDefaultValue() {
@@ -257,6 +262,11 @@ public class DialogOptionComponent extends FixedYPanel implements ItemListener, 
     }
 
     @Override
+    public void actionPerformed(ActionEvent actionEvent) {
+        dialogOptionListener.optionSwitched(this, option, choice.getSelectedIndex());
+    }
+
+    @Override
     public int compareTo(DialogOptionComponent doc) {
         return option.getDisplayableName().compareTo(doc.option.getDisplayableName());
     }
@@ -265,4 +275,5 @@ public class DialogOptionComponent extends FixedYPanel implements ItemListener, 
     public String toString() {
         return option.getDisplayableName();
     }
+
 }

@@ -216,7 +216,7 @@
 		<parentFaction>CLAN</parentFaction>
 	</faction>
 	<faction key='CS' name='ComStar' minor='false' clan='false' periphery='false'
-		image='logo_clan_comstar.png'>
+		image='logo_comstar.png'>
 		<years>2788-3081</years>
 		<ratingLevels>B,A</ratingLevels>
 		<parentFaction>IS</parentFaction>
@@ -226,7 +226,7 @@
 		<parentFaction>FWL</parentFaction>
 	</faction>
 	<faction key='DC' name='Draconis Combine' minor='false' clan='false' periphery='false'
-		image='logo_clan_draconis_combine.png'>
+		image='logo_draconis_combine.png'>
 		<years>2319-</years>
 		<ratingLevels>F,D,C,B,A</ratingLevels>
 		<parentFaction>IS</parentFaction>
@@ -280,7 +280,7 @@
 		<parentFaction>FS,LA</parentFaction>
 	</faction>
 	<faction key='FS' name='Federated Suns' minor='false' clan='false' periphery='false'
-		image='logo_federated_sun.png'>
+		image='logo_federated_suns.png'>
 		<nameChange year='3042' image='logo_federated_commonwealth.png'>Federated Commonwealth (Davion)</nameChange>
 		<nameChange year='3067' image='logo_federated_sun.png'>Federated Suns</nameChange>
 		<years>2317-</years>
@@ -349,7 +349,7 @@
 		<parentFaction>CM</parentFaction>
 	</faction>
 	<faction key='LL' name='Lothian League' minor='true' clan='false' periphery='true'
-		image='logo_lothian_league.png'>
+		image='logo_loathian_league.png'>
 		<years>2815-3055,3087-</years>
 		<ratingLevels>F,D,C,B,A</ratingLevels>
 		<parentFaction>Periphery.MW</parentFaction>
@@ -379,7 +379,7 @@
 		<parentFaction>MERC</parentFaction>
 	</faction>
 	<faction key='MH' name='Marian Hegemony' minor='false' clan='false' periphery='true'
-		image='logo_marian_hegemoney.png'>
+		image='logo_marian_hegemony.png'>
 		<years>2920-</years>
 		<ratingLevels>F,D,C,B,A</ratingLevels>
 		<parentFaction>Periphery.ME</parentFaction>
@@ -395,7 +395,7 @@
 		<parentFaction>IS</parentFaction>
 	</faction>
 	<faction key='MERC' name='Mercenary' minor='false' clan='false' periphery='false'
-		image='logo_merfenaries.png'>
+		image='logo_mercenaries.png'>
 		<years>-</years>
 		<ratingLevels>F,D,C,B,A</ratingLevels>
 		<parentFaction>IS</parentFaction>
@@ -441,7 +441,7 @@
 		<parentFaction>IS,FWL</parentFaction>
 	</faction>
 	<faction key='OA' name='Outworlds Alliance' minor='false' clan='false' periphery='true'
-		image='logo_outworlds_alliance.png'>
+		image='logo_outworld_alliance.png'>
 		<years>2413-3082</years>
 		<ratingLevels>F,D,C,B,A</ratingLevels>
 		<parentFaction>Periphery.OS</parentFaction>
@@ -507,7 +507,7 @@
 		<parentFaction>ROS</parentFaction>
 	</faction>
 	<faction key='ROS' name='Republic of the Sphere' minor='false' clan='false' periphery='false'
-		image='logo_replubic_of_the_sphere.png'>
+		image='logo_republic_of_the_sphere.png'>
 		<years>3081-3151</years>
 		<ratingLevels>Triarii Protectors,Principes Guards,Hastati Sentinels,Stone&apos;s Brigade</ratingLevels>
 		<parentFaction>IS</parentFaction>
@@ -645,7 +645,7 @@
 		<parentFaction>Periphery.HR,PIR</parentFaction>
 	</faction>
 	<faction key='UC' name='Umayyad Caliphate' minor='true' clan='false' periphery='true'
-		image='logo_unmayyad_caliphate.png'>
+		image='logo_umayyad_caliphate.png'>
 		<years>2830-3080</years>
 		<ratingLevels>F,D,C,B,A</ratingLevels>
 		<parentFaction>NC,Periphery.Deep</parentFaction>

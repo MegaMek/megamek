@@ -68,6 +68,8 @@ MEGAMEK VERSION HISTORY:
 + Fix #5367: correct issue when using multiple boards and restricting deployment
 + PR #5366: Added Faction Logos from UCC (With Permission)
 + Fix #5215 - Secondary turret firing arc display to reflect tanks turret rotation.
++ PR #5372: Image name fixes
++ Fix #5343: Damage display in unit tooltip used intact color for damaged blocks in some cases
 
 
 0.49.18 (2024-02-17 1800 UTC)

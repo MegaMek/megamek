@@ -2191,6 +2191,10 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
             if (entity.isSecondaryArcWeapon(entity.getEquipmentNum(mounted))) {
                 facing = entity.getSecondaryFacing();
             }
+            // If this is mech with turrets, check to see if the weapon is on a turret.
+            if ((entity instanceof Mech) && (entity.getEquipment(weaponId).isMechTurretMounted())) {
+                facing = mounted.getFacing();
+            }
             // If this is a tank with dual turrets, check to see if the weapon is a second turret.
             if ((entity instanceof Tank) &&
                     (entity.getEquipment(weaponId).getLocation() == ((Tank) entity).getLocTurret2())) {

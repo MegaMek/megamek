@@ -70,6 +70,7 @@ MEGAMEK VERSION HISTORY:
 + Fix #5215 - Secondary turret firing arc display to reflect tanks turret rotation.
 + PR #5372: Image name fixes
 + Fix #5343: Damage display in unit tooltip used intact color for damaged blocks in some cases
++ Fix #2659: Mek Quad turret firing arc reflects turret rotation changes.
 
 
 0.49.18 (2024-02-17 1800 UTC)

@@ -2193,7 +2193,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
             }
             // If this is mech with turrets, check to see if the weapon is on a turret.
             if ((entity instanceof Mech) && (entity.getEquipment(weaponId).isMechTurretMounted())) {
-                facing = mounted.getFacing();
+                facing = (mounted.getFacing() + entity.getFacing()) % 6;
             }
             // If this is a tank with dual turrets, check to see if the weapon is a second turret.
             if ((entity instanceof Tank) &&

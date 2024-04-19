@@ -71,6 +71,7 @@ MEGAMEK VERSION HISTORY:
 + PR #5372: Image name fixes
 + Fix #5343: Damage display in unit tooltip used intact color for damaged blocks in some cases
 + Fix #2659: Mek Quad turret firing arc reflects turret rotation changes.
++ PR #5377: Correct mek arc facing when mek is turned.
 
 
 0.49.18 (2024-02-17 1800 UTC)

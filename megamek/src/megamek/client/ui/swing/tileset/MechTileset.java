@@ -23,8 +23,10 @@ package megamek.client.ui.swing.tileset;
 import megamek.common.*;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
+import megamek.common.util.fileUtils.StandardTextfileStreamTokenizer;
 import org.apache.logging.log4j.LogManager;
 
+import java.util.List;
 import java.awt.*;
 import java.io.*;
 import java.util.HashMap;
@@ -38,6 +40,10 @@ import java.util.Objects;
  * @author Ben
  */
 public class MechTileset {
+
+    public static final String CHASSIS_KEY = "chassis";
+    public static final String MODEL_KEY = "exact";
+
     private static final String ULTRA_LIGHT_STRING = "default_ultra_light";
     private static final String LIGHT_STRING = "default_light";
     private static final String MEDIUM_STRING = "default_medium";
@@ -353,46 +359,32 @@ public class MechTileset {
     }
 
     public void loadFromFile(String filename) throws IOException {
-        Reader r = new BufferedReader(new FileReader(new MegaMekFile(dir, filename).getFile()));
-        // read board, looking for "size"
-        StreamTokenizer st = new StreamTokenizer(r);
-        st.eolIsSignificant(true);
-        st.commentChar('#');
-        st.quoteChar('"');
-        st.wordChars('_', '_');
-        while (st.nextToken() != StreamTokenizer.TT_EOF) {
-            String name;
-            String imageName;
-            if ((st.ttype == StreamTokenizer.TT_WORD)
-                    && st.sval.equalsIgnoreCase("include")) {
-                st.nextToken();
-                name = st.sval;
-                LogManager.getLogger().debug("Loading more unit images from " + name + "...");
-                try {
-                    loadFromFile(name);
-                    LogManager.getLogger().debug("... finished " + name + ".");
-                } catch (IOException e) {
-                    LogManager.getLogger().debug("... failed: " + e.getMessage() + ".", e);
+        LogManager.getLogger().info("Loading unit icons from {}", filename);
+        try (Reader r = new BufferedReader(new FileReader(new MegaMekFile(dir, filename).getFile()))) {
+            StandardTextfileStreamTokenizer tokenizer = new StandardTextfileStreamTokenizer(r);
+            while (true) {
+                List<String> tokens = tokenizer.getLineTokens();
+                if (tokenizer.isFinished()) {
+                    break;
+                } else {
+                    if (MechSetTest.isValidLine(tokens)) {
+                        if (tokens.get(0).equals(StandardTextfileStreamTokenizer.INCLUDE_KEY)) {
+                            try {
+                                loadFromFile(tokens.get(1));
+                            } catch (IOException e) {
+                                LogManager.getLogger().error("... failed: {}.", e.getMessage(), e);
+                            }
+                        } else if (tokens.get(0).equals(CHASSIS_KEY)) {
+                            chassis.put(tokens.get(1).toUpperCase(), new MechEntry(tokens.get(2)));
+                        } else {
+                            exact.put(tokens.get(1).toUpperCase(), new MechEntry(tokens.get(2)));
+                        }
+                    } else {
+                        LogManager.getLogger().warn("Malformed line in {}: {}", filename, tokens.toString());
+                    }
                 }
-            } else if ((st.ttype == StreamTokenizer.TT_WORD)
-                    && st.sval.equalsIgnoreCase("chassis")) {
-                st.nextToken();
-                name = st.sval;
-                st.nextToken();
-                imageName = st.sval;
-                // add to list
-                chassis.put(name.toUpperCase(), new MechEntry(imageName));
-            } else if ((st.ttype == StreamTokenizer.TT_WORD)
-                    && st.sval.equalsIgnoreCase("exact")) {
-                st.nextToken();
-                name = st.sval;
-                st.nextToken();
-                imageName = st.sval;
-                // add to list
-                exact.put(name.toUpperCase(), new MechEntry(imageName));
             }
         }
-        r.close();
 
         default_ultra_light = exact.get(ULTRA_LIGHT_STRING.toUpperCase());
         default_light = exact.get(LIGHT_STRING.toUpperCase());
@@ -447,6 +439,11 @@ public class MechTileset {
         default_fighter_squadron = exact.get(FIGHTER_SQUADRON_STRING.toUpperCase());
         default_tele_missile = exact.get(TELE_MISSILE_STRING.toUpperCase());
         default_unknown = exact.get(UNKNOWN_STRING.toUpperCase());
+    }
+
+    boolean hasOnlyChassisMatch(Entity entity) {
+        return !exact.containsKey(entity.getShortNameRaw().toUpperCase())
+                && chassis.containsKey(entity.getShortNameRaw().toUpperCase());
     }
 
     /**

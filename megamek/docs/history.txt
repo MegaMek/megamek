@@ -1,5 +1,7 @@
 MEGAMEK VERSION HISTORY:
 ----------------
+0.49.20-SNAPSHOT
+ 
 0.49.19 (2024-04-19 2030 UTC)
 + Fix #5182: Fixes aerospace fighters getting a zero engine rating in TestAero
 + Fix #5168: Indirect Arty Fire under 17 hexes now correctly uses a +4 instead of +7 modifier

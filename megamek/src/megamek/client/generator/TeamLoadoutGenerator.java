@@ -329,7 +329,7 @@ public class TeamLoadoutGenerator {
         rp.friendlyECMCount = checkForECM(ownTeamEntities);
 
         // General parameters
-        rp.darkEnvironment = g.getPlanetaryConditions().getLight().isDarkerThan(Light.DAY);
+        rp.darkEnvironment = g.getPlanetaryConditions().getLight().isDuskOrFullMoonOrMoonlessOrPitchBack();
 
         return rp;
     }

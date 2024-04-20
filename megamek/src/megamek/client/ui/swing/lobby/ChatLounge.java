@@ -1575,7 +1575,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
 
     Client getLocalClient(Player player) {
         if (clientgui.getLocalBots().containsKey(player.getName())) {
-            return clientgui.getLocalBots().get(player.getName());
+            return (Client) clientgui.getLocalBots().get(player.getName());
         } else {
             return clientgui.getClient();
         }

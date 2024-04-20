@@ -1,16 +1,21 @@
 /*
  * Copyright (c) 2000-2008 - Ben Mazur (bmazur@sev.org).
- * Copyright (c) 2018-2022- The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2018-2024 - The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
 package megamek.client.ui.swing.boardview;
 
@@ -65,7 +70,6 @@ import java.awt.event.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
-import java.awt.image.ImageObserver;
 import java.awt.image.ImageProducer;
 import java.io.File;
 import java.util.List;
@@ -79,7 +83,7 @@ import static megamek.client.ui.swing.util.UIUtil.uiWhite;
 /**
  * Displays the board; lets the user scroll around and select points on it.
  */
-public class BoardView extends AbstractBoardView implements Scrollable, BoardListener, MouseListener,
+public class BoardView extends AbstractBoardView implements BoardListener, MouseListener,
         MechDisplayListener, IPreferenceChangeListener, KeyBindReceiver {
 
     private static final int BOARD_HEX_CLICK = 1;
@@ -666,7 +670,7 @@ public class BoardView extends AbstractBoardView implements Scrollable, BoardLis
     private void performChatCmd() {
         if (!getChatterBoxActive()) {
             setChatterBoxActive(true);
-            for (IDisplayable disp : displayables) {
+            for (IDisplayable disp : overlays) {
                 if (disp instanceof ChatterBox2) {
                     ((ChatterBox2) disp).slideUp();
                     ((ChatterBox2) disp).setMessage("/");
@@ -679,7 +683,7 @@ public class BoardView extends AbstractBoardView implements Scrollable, BoardLis
     private void performChat() {
         if (!getChatterBoxActive()) {
             setChatterBoxActive(true);
-            for (IDisplayable disp : displayables) {
+            for (IDisplayable disp : overlays) {
                 if (disp instanceof ChatterBox2) {
                     ((ChatterBox2) disp).slideUp();
                 }

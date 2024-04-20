@@ -229,21 +229,22 @@ public class PlanetaryConditions implements Serializable {
 
     /**
      * to-hit penalty for light
+     * TO:AR 6th ed. p. 56
      */
     public int getLightHitPenalty(boolean isWeapon) {
         int penalty = 0;
         if (isWeapon) {
             if (getLight().isDusk()) {
                 penalty = 1;
-            } else if (getLight().isFullMoon()) {
+            } else if (getLight().isFullMoonOrGlare()) {
                 penalty = 2;
-            } else if (getLight().isMoonless()) {
+            } else if (getLight().isMoonlessOrSolarFlare()) {
                 penalty = 3;
             } else if (getLight().isPitchBack()) {
                 penalty = 4;
             }
         } else {
-            if (getLight().isMoonless()) {
+            if (getLight().isMoonlessOrSolarFlare()) {
                 penalty = 1;
             } else if (getLight().isPitchBack()) {
                 penalty = 2;
@@ -255,14 +256,15 @@ public class PlanetaryConditions implements Serializable {
 
     /**
      * heat bonus to hit for being overheated in darkness
+     * TO:AR 6th ed. p. 56
      */
     public int getLightHeatBonus(int heat) {
         double divisor = 10000.0;
         if (getLight().isDusk()) {
             divisor = 25.0;
-        } else if (getLight().isFullMoon()) {
+        } else if (getLight().isFullMoonOrGlare()) {
             divisor = 20.0;
-        } else if (getLight().isMoonless()) {
+        } else if (getLight().isMoonlessOrSolarFlare()) {
             divisor = 15.0;
         } else if (getLight().isPitchBack()) {
             divisor = 10.0;
@@ -615,6 +617,7 @@ public class PlanetaryConditions implements Serializable {
 
     /**
      * visual range based on conditions
+     * TO:AR 6th ed. p. 189
      *
      */
     public int getVisualRange(Entity en, boolean targetIlluminated) {
@@ -651,10 +654,10 @@ public class PlanetaryConditions implements Serializable {
         boolean isLowAltitudeAero = (isAero
                 && (en.getAltitude() < 2));
         if (targetIlluminated
-                && (getLight().isDarkerThan(Light.DAY))) {
+                && (getLight().isDuskOrFullMoonOrMoonlessOrPitchBack())) {
             lightRange = 45;
         } else if (Spotlight
-                && (getLight().isDarkerThan(Light.DAY))) {
+                && (getLight().isDuskOrFullMoonOrMoonlessOrPitchBack())) {
             // Using a searchlight?  Flat 30 hex range
             if (isMechOrVee || isAero || isLargeCraft) {
                 lightRange = 30;
@@ -852,7 +855,7 @@ public class PlanetaryConditions implements Serializable {
 
     public boolean isRecklessConditions() {
         return !getFog().isFogNone()
-                || getLight().isDarkerThan(Light.DUSK);
+                || getLight().isFullMoonOrGlareOrMoonlessOrSolarFlareOrPitchBack();
     }
 
     public static int setTempFromWeather(Weather weather, int temperature) {

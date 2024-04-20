@@ -36,12 +36,10 @@ import megamek.common.net.packets.Packet;
 import megamek.common.options.OptionsConstants;
 import megamek.common.pathfinder.BoardClusterTracker;
 import megamek.common.pathfinder.PathDecorator;
-import megamek.common.planetaryconditions.Light;
 import megamek.common.util.BoardUtilities;
 import megamek.common.util.StringUtil;
 import megamek.common.weapons.AmmoWeapon;
 import megamek.common.weapons.StopSwarmAttack;
-import org.apache.commons.logging.impl.Log4JLogger;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -2035,7 +2033,7 @@ public class Princess extends BotClient {
         if (possibleToInflictDamage
                 && pathEntity.hasSearchlight()
                 && !pathEntity.isUsingSearchlight()
-                && path.getGame().getPlanetaryConditions().getLight().isDarkerThan(Light.DUSK)) {
+                && path.getGame().getPlanetaryConditions().getLight().isDuskOrFullMoonOrMoonlessOrPitchBack()) {
             path.addStep(MoveStepType.SEARCHLIGHT);
         }
     }

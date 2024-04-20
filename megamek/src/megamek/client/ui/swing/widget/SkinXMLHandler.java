@@ -710,7 +710,7 @@ public class SkinXMLHandler {
         // Write font name
         if (skinSpec.fontName != null) {
             out.write("\t\t<" + FONT_SIZE + ">");
-            out.write(skinSpec.fontSize);
+            out.write(skinSpec.fontSize + "");
             out.write("</" + FONT_SIZE + ">\n");
         }
 

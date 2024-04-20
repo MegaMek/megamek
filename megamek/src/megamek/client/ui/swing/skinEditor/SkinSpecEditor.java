@@ -43,11 +43,6 @@ public class SkinSpecEditor extends JPanel implements ListSelectionListener, Act
     
     private JComboBox<String> currSkinCombo = new JComboBox<>();
     
-    /**
-     * Adds a new SkinSpecification
-     */
-    private JButton addButton = new JButton(Messages.getString("SkinEditor.AddButton"));
-
     private JButton addCompButton = new JButton(Messages.getString("SkinEditor.AddCompButton"));
 
     private JButton removeCompButton = new JButton(Messages.getString("SkinEditor.RemoveCompButton"));
@@ -119,7 +114,6 @@ public class SkinSpecEditor extends JPanel implements ListSelectionListener, Act
 
         tmpHolding = new JPanel();
         tmpHolding.add(currSkinCombo);
-        tmpHolding.add(addButton);
 
         add(tmpHolding, c);
 
@@ -169,7 +163,6 @@ public class SkinSpecEditor extends JPanel implements ListSelectionListener, Act
         
         enableBorders.addActionListener(this);
         currSkinCombo.addActionListener(this);
-        addButton.addActionListener(this);
         addCompButton.addActionListener(this);
         removeCompButton.addActionListener(this);
         saveSkinButton.addActionListener(this);
@@ -184,7 +177,6 @@ public class SkinSpecEditor extends JPanel implements ListSelectionListener, Act
         
         enableBorders.removeActionListener(this);
         currSkinCombo.removeActionListener(this);
-        addButton.removeActionListener(this);
         addCompButton.removeActionListener(this);
         removeCompButton.removeActionListener(this);
         saveSkinButton.removeActionListener(this);
@@ -197,7 +189,7 @@ public class SkinSpecEditor extends JPanel implements ListSelectionListener, Act
         currSkinCombo.removeAllItems();
         String[] xmlFiles = Configuration.skinsDir().list((directory, fileName) -> fileName.endsWith(".xml"));
         for (String file : xmlFiles) {
-            if (SkinXMLHandler.validSkinSpecFile(file)) {
+            if (SkinXMLHandler.validSkinSpecFile(Configuration.skinsDir() + "\\" + file)) {
                 currSkinCombo.addItem(file);
             }
         }

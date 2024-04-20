@@ -21,7 +21,6 @@ import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.*;
 import megamek.common.enums.Gender;
 import megamek.common.options.*;
-import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.verifier.*;
 import megamek.common.weapons.bayweapons.ArtilleryBayWeapon;
 import megamek.common.weapons.bayweapons.CapitalMissileBayWeapon;
@@ -478,8 +477,10 @@ public class CustomMechDialog extends AbstractButtonDialog implements ActionList
         txtDeploymentOffset.setText(Integer.toString(entity.getStartingOffset(false)));
         txtDeploymentWidth.setText(Integer.toString(entity.getStartingWidth(false)));
 
-        int bh = clientgui.getClient().getMapSettings().getBoardHeight();
-        int bw = clientgui.getClient().getMapSettings().getBoardWidth();
+        MapSettings ms = clientgui.getClient().getMapSettings();
+        int bh = ms.getBoardHeight() * ms.getMapHeight();
+        int bw = ms.getBoardWidth() * ms.getMapWidth();
+
         int x = Math.min(entity.getStartingAnyNWx(false) + 1, bw);
         spinStartingAnyNWx.setValue(x);
         int y = Math.min(entity.getStartingAnyNWy(false) + 1, bh);

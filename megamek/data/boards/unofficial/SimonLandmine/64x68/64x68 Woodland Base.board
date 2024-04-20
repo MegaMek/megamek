@@ -1,11 +1,11 @@
 size 64 68
 tag "Rough (Auto)"
 tag "Foliage (Auto)"
-tag "Water (Auto)"
 tag "GrassTheme (Auto)"
+tag "Water (Auto)"
 tag "Roads (Auto)"
-tag "Woods (Auto)"
 tag "LowHills (Auto)"
+tag "Woods (Auto)"
 tag "DenseForest (Auto)"
 hex 0101 3 "woods:1;foliage_elev:2" "grass"
 hex 0201 3 "woods:1;foliage_elev:2" "grass"

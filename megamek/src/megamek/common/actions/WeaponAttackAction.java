@@ -19,7 +19,6 @@ import megamek.client.ui.Messages;
 import megamek.common.*;
 import megamek.common.enums.AimingMode;
 import megamek.common.options.OptionsConstants;
-import megamek.common.planetaryconditions.Light;
 import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.common.planetaryconditions.Wind;
 import megamek.common.weapons.DiveBombAttack;
@@ -4937,10 +4936,19 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             // Return without SRT set so that regular to-hit mods get applied.
             return toHit;
         }
+
+        // ADA has its to-hit mods calculated separately; handle other direct artillery quirk and SPA mods here:
+        // Quirks
+        processAttackerQuirks(toHit, ae, te, weapon);
+
+        // SPAs
+        processAttackerSPAs(toHit, ae, te, weapon, game);
+        processDefenderSPAs(toHit, ae, te, weapon, game);
+
         //If an airborne unit occupies the target hex, standard artillery ammo makes a flak attack against it
         //TN is a flat 3 + the altitude mod + the attacker's weapon skill - 2 for Flak
         //Grounded/destroyed/landed/wrecked ASF/VTOL/WiGE should be treated as normal.
-        else if ((isArtilleryFLAK || (atype.countsAsFlak())) && te != null) {
+        if ((isArtilleryFLAK || (atype.countsAsFlak())) && te != null) {
             if (te.isAirborne() || te.isAirborneVTOLorWIGE()) {
                 toHit.addModifier(3, Messages.getString("WeaponAttackAction.ArtyFlak"));
                 toHit.addModifier(-2, Messages.getString("WeaponAttackAction.Flak"));
@@ -5077,18 +5085,6 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             te = (Entity) target;
         }
 
-        if (toHit == null) {
-            // Without valid toHit data, the rest of this will fail
-            toHit = new ToHitData();
-        }
-
-        // Quirks
-        processAttackerQuirks(toHit, ae, te, weapon);
-
-        // SPAs
-        processAttackerSPAs(toHit, ae, te, weapon, game);
-        processDefenderSPAs(toHit, ae, te, weapon, game);
-
         //Homing warheads just need a flat 4 to seek out a successful TAG, but Princess needs help
         //judging what a good homing target is.
         if (isHoming) {
@@ -5120,16 +5116,29 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS, Messages.getString("WeaponAttackAction.ArtyDesTarget"));
         }
 
+        // If we're not skipping To-Hit calculations, ensure that we have a toHit instance
+        if (toHit == null) {
+            // Without valid toHit data, the rest of this will fail
+            toHit = new ToHitData();
+        }
+
         // Handle direct artillery attacks.
         if (isArtilleryDirect) {
             return artilleryDirectToHit(game, ae, target, ttype, losMods, toHit, wtype,
                     weapon, atype, isArtilleryFLAK, usesAmmo, srt
             );
-        }
-        //And now for indirect artillery fire
-        if (isArtilleryIndirect) {
+        } else if (isArtilleryIndirect) {
+            //And now for indirect artillery fire; process quirks and SPAs here or they'll be missed
+            // Quirks
+            processAttackerQuirks(toHit, ae, te, weapon);
+
+            // SPAs
+            processAttackerSPAs(toHit, ae, te, weapon, game);
+            processDefenderSPAs(toHit, ae, te, weapon, game);
+
             return artilleryIndirectToHit(ae, target, toHit, wtype, weapon, srt);
         }
+
         //If we get here, this isn't an artillery attack
         return toHit;
     }
@@ -5180,7 +5189,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
 
         // blood stalker SPA
         if (ae.getBloodStalkerTarget() > Entity.NONE) {
-            if (ae.getBloodStalkerTarget() == target.getId()) {
+            // Issue #5275 - Attacker with bloodstalker SPA, `target` can be null if a building etc.
+            if ((target != null) && (ae.getBloodStalkerTarget() == target.getId())) {
                 toHit.addModifier(-1, Messages.getString("WeaponAttackAction.BloodStalkerTarget"));
             } else {
                 toHit.addModifier(+2, Messages.getString("WeaponAttackAction.BloodStalkerNonTarget"));
@@ -5255,7 +5265,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 // Light Specialist
                 if (ae.getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_LIGHT)) {
                     if (!te.isIlluminated()
-                            && conditions.getLight().isDarkerThan(Light.DAY)) {
+                            && conditions.getLight().isDuskOrFullMoonOrGlareOrMoonlessOrSolarFlareOrPitchBack()) {
                         toHit.addModifier(-1, Messages.getString("WeaponAttackAction.LightSpec"));
                     } else if (te.isIlluminated()
                             && conditions.getLight().isPitchBack()) {

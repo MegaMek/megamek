@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2000-2003 Ben Mazur (bmazur@sev.org)
- * Copyright (c) 2021-2022 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2021-2024 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -31,7 +31,9 @@ import megamek.client.ui.swing.dialog.LevelChangeDialog;
 import megamek.client.ui.swing.dialog.MMConfirmDialog;
 import megamek.client.ui.swing.minimap.Minimap;
 import megamek.client.ui.swing.tileset.TilesetManager;
+import megamek.client.ui.swing.util.FontHandler;
 import megamek.client.ui.swing.util.MegaMekController;
+import megamek.client.ui.swing.util.StringDrawer;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.client.ui.swing.util.UIUtil.FixedYPanel;
 import megamek.common.*;
@@ -349,7 +351,7 @@ public class BoardEditor extends JPanel
 
         // Add a mouse listener for mouse button release
         // to handle Undo
-        bv.addMouseListener(new MouseAdapter() {
+        bv.getPanel().addMouseListener(new MouseAdapter() {
             @Override
             public void mouseReleased(MouseEvent e) {
                 if (e.getButton() == MouseEvent.BUTTON1) {
@@ -2290,6 +2292,10 @@ public class BoardEditor extends JPanel
             return list == null ? Collections.emptyList() : list;
         }
 
+        StringDrawer invalidString = new StringDrawer(Messages.getString("BoardEditor.INVALID"))
+                .at(BoardView.HEX_W / 2, BoardView.HEX_H / 2).color(guip.getWarningColor())
+                .outline(Color.WHITE, 1).font(FontHandler.getNotoFont().deriveFont(Font.BOLD)).center();
+
         @Override
         public void paintComponent(Graphics g) {
             super.paintComponent(g);
@@ -2310,10 +2316,7 @@ public class BoardEditor extends JPanel
                 g.drawString(Messages.getString("BoardEditor.LEVEL") + curHex.getLevel(), 24, 70);
                 StringBuffer errBuf = new StringBuffer();
                 if (!curHex.isValid(errBuf)) {
-                    g.setFont(new Font(MMConstants.FONT_SANS_SERIF, Font.BOLD, 14));
-                    Point hexCenter = new Point(BoardView.HEX_W / 2, BoardView.HEX_H / 2);
-                    BoardView.drawCenteredText((Graphics2D) g, Messages.getString("BoardEditor.INVALID"),
-                            hexCenter, guip.getWarningColor(), false);
+                    invalidString.draw(g);
                     String tooltip = Messages.getString("BoardEditor.invalidHex") + errBuf;
                     tooltip = tooltip.replace("\n", "<br>");
                     setToolTipText(tooltip);

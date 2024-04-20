@@ -32,8 +32,8 @@ class IsometricSprite extends Sprite {
         this.secondaryPos = secondaryPos;
         String shortName = entity.getShortName();
         Font font = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN, 10);
-        modelRect = new Rectangle(47, 55, bv.getFontMetrics(font).stringWidth(
-                shortName) + 1, bv.getFontMetrics(font).getAscent());
+        modelRect = new Rectangle(47, 55, bv.getPanel().getFontMetrics(font).stringWidth(
+                shortName) + 1, bv.getPanel().getFontMetrics(font).getAscent());
 
         int altAdjust = 0;
         if (bv.useIsometric()

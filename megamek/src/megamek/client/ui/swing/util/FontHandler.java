@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2023-2024 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -89,6 +89,10 @@ public final class FontHandler {
      */
     public static Font symbolFont() {
         return new Font("Material Symbols Rounded", Font.PLAIN, 12);
+    }
+
+    public static Font getNotoFont() {
+        return new Font("Noto Sans", Font.PLAIN, 14);
     }
 
     private void initializeFonts() {

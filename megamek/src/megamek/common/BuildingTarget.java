@@ -157,9 +157,17 @@ public class BuildingTarget implements Targetable {
     }
 
     @Override
+    public void setId(int newId) {
+        id = newId;
+    }
+
+    @Override
     public int getOwnerId() {
         return Player.PLAYER_NONE;
     }
+
+    @Override
+    public void setOwnerId(int newOwnerId) { }
 
     @Override
     public int getStrength() {

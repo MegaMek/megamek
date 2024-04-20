@@ -293,6 +293,6 @@ public abstract class AbstractBoardViewOverlay implements IDisplayable, IPrefere
 
     /** Makes the BoardView redraw, updating the overlay in the process. */
     protected void scheduleBoardViewRepaint() {
-        boardView.repaint();
+        boardView.getPanel().repaint();
     }
 }

@@ -18,6 +18,7 @@
  */
 package megamek.client.ui.swing;
 
+import megamek.client.AbstractClient;
 import megamek.client.Client;
 import megamek.client.ui.baseComponents.AbstractButtonDialog;
 import megamek.client.ui.baseComponents.MMButton;
@@ -110,7 +111,7 @@ public class SkillGenerationDialog extends AbstractButtonDialog {
 
         final DefaultComboBoxModel<String> clientsModel = new DefaultComboBoxModel<>();
         clientsModel.addElement(getClientGUI().getClient().getName());
-        clientsModel.addAll(getClientGUI().getLocalBots().values().stream().map(Client::getName)
+        clientsModel.addAll(getClientGUI().getLocalBots().values().stream().map(AbstractClient::getName)
                 .collect(Collectors.toList()));
         final MMComboBox<String> comboClients = new MMComboBox<>("comboClients", clientsModel);
         comboClients.setToolTipText(resources.getString("comboClients.toolTipText"));
@@ -118,7 +119,7 @@ public class SkillGenerationDialog extends AbstractButtonDialog {
         comboClients.setEnabled(comboClients.getItemCount() > 1);
         comboClients.addActionListener(evt -> getSkillGenerationOptionsPanel().changeClient(
                 (comboClients.getSelectedIndex() > 0)
-                        ? getClientGUI().getLocalBots().get(comboClients.getSelectedItem())
+                        ? (Client) getClientGUI().getLocalBots().get(comboClients.getSelectedItem())
                         : getClientGUI().getClient()));
         panel.add(comboClients);
         return panel;

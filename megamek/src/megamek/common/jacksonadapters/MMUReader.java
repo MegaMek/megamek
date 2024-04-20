@@ -43,6 +43,7 @@ public final class MMUReader {
     static final String SBF_FORMATION = "SBFFormation";
     static final String SBF_UNIT = "SBFUnit";
     static final String AS_ELEMENT = "ASElement";
+    static final String TW_UNIT = "TWUnit";
     static final String SKILL = "skill";
     static final String SIZE = "size";
     static final String ROLE = "role";
@@ -66,6 +67,14 @@ public final class MMUReader {
     private static final ObjectMapper yamlMapper =
             new ObjectMapper(new YAMLFactory());
 
+    private String currentDirectory = "";
+
+    public MMUReader() { }
+
+    public MMUReader(File file) {
+        currentDirectory = file.getParent();
+    }
+
     /**
      * Read a list of objects from a given MMU file (YAML format, see {@link MMUWriter}. The list can be empty
      * or contain one or multiple results. If reading any part of the file fails, an exception is thrown.
@@ -75,6 +84,7 @@ public final class MMUReader {
      * @throws IOException When a read error occurs
      */
     public List<Object> read(File file) throws IOException {
+        currentDirectory = file.getParent();
         JsonNode node = yamlMapper.readTree(file);
         return read(node);
     }
@@ -86,49 +96,69 @@ public final class MMUReader {
      * @return A list of objects (AlphaStrikeElements, SBFUnits...) contained in the node
      * @throws IOException When a read error occurs
      */
-    List<Object> read(JsonNode node) throws IOException {
+    public List<Object> read(JsonNode node) throws IOException {
+        return read(node, null);
+    }
+
+    /**
+     * Read a list of objects from a Jackson JsonNode. Internally used to parse nested objects.
+     *
+     * @param node The node to parse
+     * @return A list of objects (AlphaStrikeElements, SBFUnits...) contained in the node
+     * @throws IOException When a read error occurs
+     */
+    public List<Object> read(JsonNode node, Class<?> objectType) throws IOException {
         List<Object> result = new ArrayList<>();
         if (node.isArray()) {
             for (Iterator<JsonNode> it = node.elements(); it.hasNext(); ) {
                 JsonNode arrayNode = it.next();
-                parseNode(arrayNode).ifPresent(result::add);
+                parseNode(arrayNode, objectType).ifPresent(result::add);
             }
         } else {
-            parseNode(node).ifPresent(result::add);
+            parseNode(node, objectType).ifPresent(result::add);
         }
         return result;
     }
 
-    private Optional<Object> parseNode(JsonNode node) throws IOException {
+    private Optional<Object> parseNode(JsonNode node, Class<?> objectType) throws IOException {
         if (node.has(INCLUDE)) {
-            node = yamlMapper.readTree(new File(node.get(INCLUDE).textValue()));
+            node = yamlMapper.readTree(new File(currentDirectory, node.get(INCLUDE).textValue()));
             if (node.isArray()) {
                 throw new IllegalArgumentException("An included MMU file may only contain a single object, not a list!");
             }
         }
-        if (!node.has(TYPE)) {
-            throw new IOException("Missing type info in MMU file!");
-        }
-        try {
-            switch (node.get(TYPE).textValue()) {
-                case SBF_FORMATION:
-                    return Optional.of(yamlMapper.treeToValue(node, SBFFormation.class));
-                case AS_ELEMENT:
-                    return Optional.of(yamlMapper.treeToValue(node, AlphaStrikeElement.class));
-                case SBF_UNIT:
-                    return Optional.of(yamlMapper.treeToValue(node, SBFUnit.class));
-                default:
-                    return Optional.empty();
+
+        if (objectType != null) {
+            // When the object type such as AlphaStrikeElement.class is given, read it directly as such an object
+            return Optional.of(yamlMapper.treeToValue(node, objectType));
+
+        } else {
+            // When no type is provided by the method call, the type must be given with the "type:" keyword
+            if (!node.has(TYPE)) {
+                throw new IOException("Missing type info in MMU file!");
             }
-        } catch (JsonProcessingException e) {
-            return Optional.empty();
+            try {
+                switch (node.get(TYPE).textValue()) {
+                    case SBF_FORMATION:
+                        return Optional.of(yamlMapper.treeToValue(node, SBFFormation.class));
+                    case AS_ELEMENT:
+                        return Optional.of(yamlMapper.treeToValue(node, AlphaStrikeElement.class));
+                    case SBF_UNIT:
+                        return Optional.of(yamlMapper.treeToValue(node, SBFUnit.class));
+                    default:
+                        return Optional.empty();
+                }
+            } catch (JsonProcessingException e) {
+                return Optional.empty();
+            }
         }
     }
 
     /**
      * Tests the given node (which should be an object node that holds a full AS element or SBF Unit) if
      * it has all of the given fields. If any of the given fields is missing, an IllegalArgumentException
-     * is thrown.
+     * is thrown. The given objectType can be any String, it is only used as part of the error
+     * message when a field is not found.
      *
      * @param objectType The object type such as "ASElement". Only used as part of the exception message
      * @param node the node containing an object to be deserialized

@@ -608,7 +608,7 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
 
     /** Copies the Configuration from another local bot player. */
     private void copyFromOtherBot(String botName) {
-        var bc = client.localBots.get(botName);
+        var bc = client.getBots().get(botName);
         if (bc instanceof Princess) {
             try {
                 princessBehavior = ((Princess) bc).getBehaviorSettings().getCopy();
@@ -731,7 +731,7 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
         // Other local bot Configurations
         if (client != null) {
             // Find if there actually are other bots
-            Set<String> otherBots = new HashSet<>(client.localBots.keySet());
+            Set<String> otherBots = new HashSet<>(client.getBots().keySet());
             if (fixedBotPlayerName != null) {
                 otherBots.remove(fixedBotPlayerName);
             }

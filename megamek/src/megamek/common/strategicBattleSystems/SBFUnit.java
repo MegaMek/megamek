@@ -298,6 +298,11 @@ public class SBFUnit implements ForceAssignable, ASSpecialAbilityCollector, Batt
     }
 
     @Override
+    public void setId(int newId) {
+        id = newId;
+    }
+
+    @Override
     public String getForceString() {
         return forceString;
     }
@@ -320,6 +325,11 @@ public class SBFUnit implements ForceAssignable, ASSpecialAbilityCollector, Batt
     @Override
     public int getOwnerId() {
         return ownerId;
+    }
+
+    @Override
+    public void setOwnerId(int newOwnerId) {
+        ownerId = newOwnerId;
     }
 
     @Override

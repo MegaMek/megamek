@@ -226,15 +226,50 @@ public class TurretFacingDialog extends JDialog implements ActionListener {
                 } else {
                     locToChange = turret.getLocation();
                 }
+
+                Mounted firstMountedWeapon = null;  // Take note of the first weapon mounted on this turret.
+                Mounted currentSelectedWeapon = null; // Take note of current selected weapon.
+                if (clientgui.getUnitDisplay() != null) {
+                    currentSelectedWeapon = clientgui.getUnitDisplay().wPan.getSelectedWeapon();
+                }
+
                 for (Mounted weapon : mech.getWeaponList()) {
                     if ((weapon.getLocation() == locToChange) && weapon.isMechTurretMounted()) {
                         weapon.setFacing(facing);
                         clientgui.getClient().sendMountFacingChange(mech.getId(), mech.getEquipmentNum(weapon), facing);
+
+                        // Tag the first mounted weapon as a backup option to refresh after the turret rotation.
+                        if (firstMountedWeapon == null) {
+                            firstMountedWeapon = weapon;
+                        }
+
+                        // If the currently selected weapon is in the turret, refresh it by default.
+                        if (mech.getEquipmentNum(currentSelectedWeapon) == mech.getEquipmentNum(weapon)) {
+                            firstMountedWeapon = currentSelectedWeapon;
+                        }
                     }
+                }
+
+                // Select the mounted weapon in the unit display to refresh the firing arch.
+                if (clientgui.getUnitDisplay() != null) {
+                    clientgui.getUnitDisplay().wPan.selectWeapon(mech.getEquipmentNum(firstMountedWeapon));
                 }
             } else if (tank != null) {
                 tank.setDualTurretOffset(((6 - tank.getFacing()) + facing) % 6);
                 clientgui.getClient().sendUpdateEntity(tank);
+
+                // `turret` is null here - need to find the first weapon ID of the 2nd turret.
+                for (Mounted weapon : tank.getWeaponList()) {
+                    if (weapon.getLocation() == tank.getLocTurret2()) {
+                        turret = weapon;
+                        break;
+                    }
+                }
+
+                // Select the turret in the unit display.
+                if (clientgui.getUnitDisplay() != null) {
+                    clientgui.getUnitDisplay().wPan.selectWeapon(tank.getEquipmentNum(turret));
+                }
             }
 
             dispose();

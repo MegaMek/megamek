@@ -79,6 +79,24 @@ public final class FontHandler {
         }
     }
 
+    /**
+     * @return A standardized symbols font ("Material Symbols"). This font has a load of useful
+     * icons. They are centered in a way that makes them less aesthetic to use within normal text, so
+     * their primary use is for standalone symbols like marking hexes. Look for the symbol unicodes on
+     * the linked website.
+     *
+     * @see <a href="https://fonts.google.com/icons">(Google) Material Symbols</a>
+     */
+    public static Font symbolFont() {
+        return new Font("Material Symbols Rounded", Font.PLAIN, 12);
+    }
+
+    /**
+     * @return The Noto Sans font which is included with the distribution and can be safely used everywhere.
+     * It is advertised to have a wide language support.
+     *
+     * @see <a href="https://fonts.google.com/icons">(Google) Material Symbols</a>
+     */
     public static Font getNotoFont() {
         return new Font("Noto Sans", Font.PLAIN, 14);
     }
@@ -123,9 +141,12 @@ public final class FontHandler {
     public static void parseFontsInDirectory(final File directory) {
         for (String fontFile : CommonSettingsDialog.filteredFilesWithSubDirs(directory, MMConstants.TRUETYPE_FONT)) {
             try (InputStream fis = new FileInputStream(fontFile)) {
-                GraphicsEnvironment.getLocalGraphicsEnvironment().registerFont(Font.createFont(Font.TRUETYPE_FONT, fis));
+                Font font = Font.createFont(Font.TRUETYPE_FONT, fis);
+                if (!GraphicsEnvironment.getLocalGraphicsEnvironment().registerFont(font)) {
+                    LogManager.getLogger().error("Failed to register font " + fontFile);
+                }
             } catch (Exception ex) {
-                LogManager.getLogger().error("Failed to parse font", ex);
+                LogManager.getLogger().error("Failed to read font ", ex);
             }
         }
     }

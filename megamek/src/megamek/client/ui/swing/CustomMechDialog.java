@@ -396,6 +396,11 @@ public class CustomMechDialog extends AbstractButtonDialog implements ActionList
     @Override
     public void optionClicked(DialogOptionComponent comp, IOption option, boolean state) { }
 
+    @Override
+    public void optionSwitched(DialogOptionComponent clickedComp, IOption option, int i) {
+        // nothing implemented yet
+    }
+
     public boolean isOkay() {
         return okay;
     }

@@ -25,4 +25,6 @@ import megamek.common.options.IOption;
 public interface DialogOptionListener {
 
     void optionClicked(DialogOptionComponent comp, IOption option, boolean state);
+
+    void optionSwitched(DialogOptionComponent comp, IOption option, int i);
 }

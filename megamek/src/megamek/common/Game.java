@@ -388,6 +388,16 @@ public class Game extends AbstractGame implements Serializable, PlanetaryConditi
                 }
             }
         }
+
+        // Carry over faction settings
+        for (Team newTeam : initTeams) {
+            for (Team oldTeam : teams) {
+                if (newTeam.equals(oldTeam)) {
+                    newTeam.setFaction(oldTeam.getFaction());
+                }
+            }
+        }
+
         teams.clear();
         teams.addAll(initTeams);
     }
@@ -1630,6 +1640,10 @@ public class Game extends AbstractGame implements Serializable, PlanetaryConditi
      */
     public Iterator<Entity> getAllEnemyEntities(final Entity currentEntity) {
         return getSelectedEntities(entity -> entity.isTargetable() && entity.isEnemyOf(currentEntity));
+    }
+
+    public Iterator<Entity> getTeamEntities(final Team team) {
+        return getSelectedEntities(entity -> team.players().contains(entity.getOwner()));
     }
 
     /**

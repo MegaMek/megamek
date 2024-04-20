@@ -2197,6 +2197,7 @@ public class GameManager implements IGameManager {
      * Calculates the initial count and BV for all players, and thus should only be called at the
      * start of a game
      */
+    @Override
     public void calculatePlayerInitialCounts() {
         for (final Enumeration<Player> players = game.getPlayers(); players.hasMoreElements(); ) {
             final Player player = players.nextElement();

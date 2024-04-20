@@ -14,6 +14,7 @@
  */
 package megamek.client.ui.swing;
 
+import megamek.client.AbstractClient;
 import megamek.client.Client;
 import megamek.client.generator.RandomGenderGenerator;
 import megamek.client.generator.RandomNameGenerator;
@@ -650,7 +651,7 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
                 Client c = null;
                 if (m_chPlayer.getSelectedIndex() > 0) {
                     String name = (String) m_chPlayer.getSelectedItem();
-                    c = m_clientgui.getLocalBots().get(name);
+                    c = (Client) m_clientgui.getLocalBots().get(name);
                 }
                 if (c == null) {
                     c = m_client;
@@ -939,7 +940,7 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
         m_chPlayer.removeAllItems();
         m_chPlayer.setEnabled(true);
         m_chPlayer.addItem(clientName);
-        for (Client client : m_clientgui.getLocalBots().values()) {
+        for (AbstractClient client : m_clientgui.getLocalBots().values()) {
             Player player = m_client.getGame().getPlayer(client.getLocalPlayerNumber());
 
             if (!player.isObserver()) {

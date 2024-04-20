@@ -79,7 +79,7 @@ import static megamek.client.ui.swing.util.UIUtil.uiWhite;
  * Displays the board; lets the user scroll around and select points on it.
  */
 public class BoardView implements Scrollable, BoardListener, MouseListener,
-        MechDisplayListener, IPreferenceChangeListener {
+        MechDisplayListener, IPreferenceChangeListener, KeyBindReceiver {
 
     private static final int BOARD_HEX_CLICK = 1;
     private static final int BOARD_HEX_DOUBLECLICK = 2;
@@ -632,7 +632,7 @@ public class BoardView implements Scrollable, BoardListener, MouseListener,
         boardPanel.addMouseMotionListener(mouseMotionListener);
 
         if (controller != null) {
-            registerKeyboardCommands(this, controller);
+            registerKeyboardCommands(controller);
         }
 
         updateBoardSize();
@@ -666,191 +666,71 @@ public class BoardView implements Scrollable, BoardListener, MouseListener,
                 new MegaMekFile(Configuration.miscImagesDir(), FILENAME_RADAR_BLIP_IMAGE).toString());
     }
 
-    private void registerKeyboardCommands(final BoardView bv, final MegaMekController controller) {
-        // Register the action for TOGGLE_CHAT
-        controller.registerCommandAction(KeyCommandBind.TOGGLE_CHAT.cmd,
-                new CommandAction() {
+    private void registerKeyboardCommands(final MegaMekController controller) {
+        controller.registerCommandAction(KeyCommandBind.TOGGLE_CHAT, this, this::performChat);
+        controller.registerCommandAction(KeyCommandBind.TOGGLE_CHAT_CMD, this, this::performChatCmd);
+        controller.registerCommandAction(KeyCommandBind.CENTER_ON_SELECTED, this, this::centerOnSelected);
 
-                    @Override
-                    public boolean shouldPerformAction() {
-                        return !shouldIgnoreKeyCommands();
-                    }
-
-                    @Override
-                    public void performAction() {
-                        if (!getChatterBoxActive()) {
-                            setChatterBoxActive(true);
-                            for (IDisplayable disp : displayables) {
-                                if (disp instanceof ChatterBox2) {
-                                    ((ChatterBox2) disp).slideUp();
-                                }
-                            }
-                            boardPanel.requestFocus();
-                        }
-                    }
-
-                });
-
-        // Register the action for TOGGLE_CHAT
-        controller.registerCommandAction(KeyCommandBind.TOGGLE_CHAT_CMD.cmd,
-                new CommandAction() {
-
-                    @Override
-                    public boolean shouldPerformAction() {
-                        return !shouldIgnoreKeyCommands();
-                    }
-
-                    @Override
-                    public void performAction() {
-                        if (!getChatterBoxActive()) {
-                            setChatterBoxActive(true);
-                            for (IDisplayable disp : displayables) {
-                                if (disp instanceof ChatterBox2) {
-                                    ((ChatterBox2) disp).slideUp();
-                                    ((ChatterBox2) disp).setMessage("/");
-                                }
-                            }
-                            boardPanel.requestFocus();
-                        }
-                    }
-
-                });
-
-        // Register the action for CENTER_ON_SELECTED
-        controller.registerCommandAction(KeyCommandBind.CENTER_ON_SELECTED.cmd,
-                new CommandAction() {
-
-                    @Override
-                    public boolean shouldPerformAction() {
-                        return !shouldIgnoreKeyCommands() && (selectedEntity != null);
-                    }
-
-                    @Override
-                    public void performAction() {
-                        if (selectedEntity != null) {
-                            centerOnHex(selectedEntity.getPosition());
-                        }
-                    }
-
-                });
-
-        // Register the action for SCROLL_NORTH
-        controller.registerCommandAction(KeyCommandBind.SCROLL_NORTH.cmd,
-                new CommandAction() {
-
-                    @Override
-                    public boolean shouldPerformAction() {
-                        return !shouldIgnoreKeyCommands();
-                    }
-
-                    @Override
-                    public void performAction() {
-                        controller.stopRepeating(KeyCommandBind.SCROLL_SOUTH);
-                        vbar.setValue((int) (vbar.getValue() - (HEX_H * scale)));
-                        stopSoftCentering();
-                    }
-
-                    @Override
-                    public void releaseAction() {
-                        pingMinimap();
-                    }
-
-                    @Override
-                    public boolean hasReleaseAction() {
-                        return true;
-                    }
-
-                });
-
-        // Register the action for SCROLL_SOUTH
-        controller.registerCommandAction(KeyCommandBind.SCROLL_SOUTH.cmd,
-                new CommandAction() {
-
-                    @Override
-                    public boolean shouldPerformAction() {
-                        return !shouldIgnoreKeyCommands();
-                    }
-
-                    @Override
-                    public void performAction() {
-                        controller.stopRepeating(KeyCommandBind.SCROLL_NORTH);
-                        vbar.setValue((int) (vbar.getValue() + (HEX_H * scale)));
-                        stopSoftCentering();
-                    }
-
-                    @Override
-                    public void releaseAction() {
-                        pingMinimap();
-                    }
-
-                    @Override
-                    public boolean hasReleaseAction() {
-                        return true;
-                    }
-
-                });
-
-        // Register the action for SCROLL_EAST
-        controller.registerCommandAction(KeyCommandBind.SCROLL_EAST.cmd,
-                new CommandAction() {
-
-                    @Override
-                    public boolean shouldPerformAction() {
-                        return !shouldIgnoreKeyCommands();
-                    }
-
-                    @Override
-                    public void performAction() {
-                        controller.stopRepeating(KeyCommandBind.SCROLL_WEST);
-                        hbar.setValue((int) (hbar.getValue() + (HEX_W * scale)));
-                        stopSoftCentering();
-                    }
-
-                    @Override
-                    public void releaseAction() {
-                        pingMinimap();
-                    }
-
-                    @Override
-                    public boolean hasReleaseAction() {
-                        return true;
-                    }
-
-                });
-
-        // Register the action for SCROLL_WEST
-        controller.registerCommandAction(KeyCommandBind.SCROLL_WEST.cmd,
-                new CommandAction() {
-
-                    @Override
-                    public boolean shouldPerformAction() {
-                        return !shouldIgnoreKeyCommands();
-                    }
-
-                    @Override
-                    public void performAction() {
-                        controller.stopRepeating(KeyCommandBind.SCROLL_EAST);
-                        hbar.setValue((int) (hbar.getValue() - (HEX_W * scale)));
-                        stopSoftCentering();
-                    }
-
-                    @Override
-                    public void releaseAction() {
-                        pingMinimap();
-                    }
-
-                    @Override
-                    public boolean hasReleaseAction() {
-                        return true;
-                    }
-
-                });
+        controller.registerCommandAction(KeyCommandBind.SCROLL_NORTH, this::shouldReceiveKeyCommands,
+                this::scrollNorth, this::pingMinimap);
+        controller.registerCommandAction(KeyCommandBind.SCROLL_SOUTH, this::shouldReceiveKeyCommands,
+                this::scrollSouth, this::pingMinimap);
+        controller.registerCommandAction(KeyCommandBind.SCROLL_EAST, this::shouldReceiveKeyCommands,
+                this::scrollEast, this::pingMinimap);
+        controller.registerCommandAction(KeyCommandBind.SCROLL_WEST, this::shouldReceiveKeyCommands,
+                this::scrollWest, this::pingMinimap);
     }
 
-    private boolean shouldIgnoreKeyCommands() {
-        return getChatterBoxActive() || !boardPanel.isVisible()
-                || game.getPhase().isLounge()
-                || shouldIgnoreKeys;
+    private void scrollNorth() {
+        vbar.setValue((int) (vbar.getValue() - (HEX_H * scale)));
+        stopSoftCentering();
+    }
+
+    private void scrollSouth() {
+        vbar.setValue((int) (vbar.getValue() + (HEX_H * scale)));
+        stopSoftCentering();
+    }
+
+    private void scrollEast() {
+        hbar.setValue((int) (hbar.getValue() + (HEX_W * scale)));
+        stopSoftCentering();
+    }
+
+    private void scrollWest() {
+        hbar.setValue((int) (hbar.getValue() - (HEX_W * scale)));
+        stopSoftCentering();
+    }
+    private void performChatCmd() {
+        if (!getChatterBoxActive()) {
+            setChatterBoxActive(true);
+            for (IDisplayable disp : displayables) {
+                if (disp instanceof ChatterBox2) {
+                    ((ChatterBox2) disp).slideUp();
+                    ((ChatterBox2) disp).setMessage("/");
+                }
+            }
+            boardPanel.requestFocus();
+        }
+    }
+
+    private void performChat() {
+        if (!getChatterBoxActive()) {
+            setChatterBoxActive(true);
+            for (IDisplayable disp : displayables) {
+                if (disp instanceof ChatterBox2) {
+                    ((ChatterBox2) disp).slideUp();
+                }
+            }
+            boardPanel.requestFocus();
+        }
+    }
+
+    @Override
+    public boolean shouldReceiveKeyCommands() {
+        return !getChatterBoxActive()
+                && boardPanel.isVisible()
+                && !game.getPhase().isLounge()
+                && !shouldIgnoreKeys;
     }
 
     protected final RedrawWorker redrawWorker = new RedrawWorker();
@@ -3641,6 +3521,26 @@ public class BoardView implements Scrollable, BoardListener, MouseListener,
         // repaint affected area
         boardPanel.repaint(oldBounds);
         boardPanel.repaint(cursor.getBounds());
+    }
+
+    /**
+     * Centers the board on the position of the selected unit, if any. Uses smooth centering if activated
+     * in the client settings.
+     */
+    public void centerOnSelected() {
+        centerOn(selectedEntity);
+    }
+
+    /**
+     * Centers the board on the position of the given unit. Uses smooth centering if activated
+     * in the client settings. The given entity may be null, in which case nothing happens.
+     *
+     * @param entity The unit to center on.
+     */
+    public void centerOn(@Nullable Entity entity) {
+        if (entity != null) {
+            centerOnHex(entity.getPosition());
+        }
     }
 
     /**

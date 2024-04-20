@@ -299,12 +299,15 @@ public class SkinSpecEditor extends JPanel implements ListSelectionListener, Act
             setupEditPanel();
         } else if (e.getSource().equals(saveSkinButton)) {
             saveSkinButton.setEnabled(false);
+            String currComp = skinSpecCompList.getSelectedValue().getComp();
             String file = saveDialog();
-            SkinXMLHandler.writeSkinToFile(file);
-            updateSkinCombo(file);
-            SkinSpecification skinSpec = SkinXMLHandler.getSkin(file);
-            skinEditPanel.updateSkinSpec(skinSpec, enableBorders.isSelected());
-            mainGUI.updateBorder();
+            if (!file.isBlank()) {
+                SkinXMLHandler.writeSkinToFile(file);
+                updateSkinCombo(file);
+                SkinSpecification skinSpec = SkinXMLHandler.getSkin(currComp);
+                skinEditPanel.updateSkinSpec(skinSpec, enableBorders.isSelected());
+                mainGUI.updateBorder();
+            }
         } else if (e.getSource().equals(addCompButton)) {
             ArrayList<UIComponents> newComps = new ArrayList<>();
             for (UIComponents c : UIComponents.values()) {

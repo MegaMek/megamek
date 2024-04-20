@@ -15,7 +15,6 @@ package megamek.client.ui.swing;
 
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
-import megamek.client.ui.swing.util.CommandAction;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.client.ui.swing.widget.*;
@@ -91,40 +90,26 @@ public abstract class AbstractPhaseDisplay extends SkinnedJPanel implements
                             || (clientgui.getClient().getGame().getTurn() == null)
                             || (clientgui.getClient().getGame().getPhase().isReport())) {
                         ready();
-                        // When the turn is ended, we could miss a key release
-                        // event
+                        // When the turn is ended, we could miss a key release event
                         // This will ensure no repeating keys are stuck down
                         clientgui.controller.stopAllRepeating();
                     }
                 }
             });
 
-            final AbstractPhaseDisplay display = this;
-            // Register the action for DONE
-            clientgui.controller.registerCommandAction(KeyCommandBind.DONE.cmd,
-                    new CommandAction() {
-
-                        @Override
-                        public boolean shouldPerformAction() {
-                            if (((!clientgui.getClient().isMyTurn()
-                                    && (clientgui.getClient().getGame().getTurn() != null)
-                                    && (!clientgui.getClient().getGame().getPhase().isReport())))
-                                    || clientgui.getBoardView().getChatterBoxActive()
-                                    || display.isIgnoringEvents()
-                                    || !display.isVisible()
-                                    || !butDone.isEnabled()) {
-                                return false;
-                            } else {
-                                return true;
-                            }
-                        }
-
-                        @Override
-                        public void performAction() {
-                            ready();
-                        }
-                    });
+            clientgui.controller.registerCommandAction(KeyCommandBind.DONE, this::shouldPerformKeyCommands,
+                    this::ready);
         }
+    }
+
+    private boolean shouldPerformKeyCommands() {
+        return ((clientgui.getClient().isMyTurn()
+                || (clientgui.getClient().getGame().getTurn() == null)
+                || (clientgui.getClient().getGame().getPhase().isReport())))
+                && !clientgui.getBoardView().getChatterBoxActive()
+                && !isIgnoringEvents()
+                && isVisible()
+                && butDone.isEnabled();
     }
 
     /**

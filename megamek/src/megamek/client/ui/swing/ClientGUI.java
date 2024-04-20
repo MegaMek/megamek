@@ -15,7 +15,9 @@
 package megamek.client.ui.swing;
 
 import megamek.MMConstants;
+import megamek.client.AbstractClient;
 import megamek.client.Client;
+import megamek.client.IClient;
 import megamek.client.TimerSingleton;
 import megamek.client.bot.BotClient;
 import megamek.client.bot.princess.BehaviorSettings;
@@ -81,7 +83,7 @@ import java.net.URL;
 import java.util.List;
 import java.util.*;
 
-public class ClientGUI extends JPanel implements BoardViewListener,
+public class ClientGUI extends JPanel implements BoardViewListener, IClientGUI,
         ActionListener, ComponentListener, IPreferenceChangeListener {
     // region Variable Declarations
     private static final long serialVersionUID = 3913466735610109147L;
@@ -351,10 +353,13 @@ public class ClientGUI extends JPanel implements BoardViewListener,
      * clean up after itself as much as possible, but will not call
      * System.exit().
      */
-    public ClientGUI(Client client, MegaMekController c) {
+    public ClientGUI(IClient client, MegaMekController c) {
         super(new BorderLayout());
         this.addComponentListener(this);
-        this.client = client;
+        if (!(client instanceof Client)) {
+            throw new IllegalArgumentException("TW ClientGUI must use TW Client!");
+        }
+        this.client = (Client) client;
         controller = c;
         panMain.setLayout(cardsMain);
         panSecondary.setLayout(cardsSecondary);
@@ -514,15 +519,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         frame.validate();
     }
 
-    /**
-     * Have the client register itself as a listener wherever it's needed.
-     * <p>
-     * According to
-     * http://www-106.ibm.com/developerworks/java/library/j-jtp0618.html it is a
-     * major bad no-no to perform these registrations before the constructor
-     * finishes, so this function has to be called after the <code>Client</code>
-     * is created.
-     */
+    @Override
     public void initialize() {
         menuBar = new CommonMenuBar(getClient());
         initializeFrame();
@@ -1113,10 +1110,8 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         }
     }
 
-    /**
-     * Shuts down threads and sockets
-     */
-    void die() {
+    @Override
+    public void die() {
         // Tell all the displays to remove themselves as listeners.
         boolean reportHandled = false;
         if (bv != null) {
@@ -1302,7 +1297,8 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                 break;
             case EXCHANGE:
                 chatlounge.killPreviewBV();
-                component = new JLabel(Messages.getString("ClientGUI.TransmittingData"));
+                component = new ReceivingGameDataPanel();
+//                component = new JLabel(Messages.getString("ClientGUI.TransmittingData"));
                 UIUtil.scaleComp(component, UIUtil.FONT_SCALE1);
                 main = CG_EXCHANGE;
                 component.setName(main);
@@ -1458,7 +1454,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                 }
                 break;
             default:
-                component = new JLabel(Messages.getString("ClientGUI.waitingOnTheServer"));
+                component = new WaitingForServerPanel();
                 main = CG_DEFAULT;
                 secondary = main;
                 component.setName(main);
@@ -2188,9 +2184,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         }
     }
 
-    /**
-     * @return the frame this client is displayed in
-     */
+    @Override
     public JFrame getFrame() {
         return frame;
     }
@@ -2354,9 +2348,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
             bv.clearMovementData();
             bv.clearFieldOfFire();
             bv.clearSensorsRanges();
-            for (Client client2 : getLocalBots().values()) {
-                client2.die();
-            }
+            getLocalBots().values().forEach(AbstractClient::die);
             getLocalBots().clear();
 
             // Make a list of the player's living units.
@@ -2662,8 +2654,8 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         return client;
     }
 
-    public Map<String, Client> getLocalBots() {
-        return client.localBots;
+    public Map<String, AbstractClient> getLocalBots() {
+        return client.getBots();
     }
 
     /**
@@ -2844,13 +2836,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         // ignored
     }
 
-    /**
-     * Returns true if a dialog is visible on top of the <code>ClientGUI</code>.
-     * For example, the <code>MegaMekController</code> should ignore hotkeys
-     * if there is a dialog, like the <code>CommonSettingsDialog</code>, open.
-     *
-     * @return
-     */
+    @Override
     public boolean shouldIgnoreHotKeys() {
         return ignoreHotKeys
                 || ((gameOptionsDialog != null) && gameOptionsDialog.isVisible())

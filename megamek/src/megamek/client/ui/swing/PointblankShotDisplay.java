@@ -16,7 +16,6 @@ package megamek.client.ui.swing;
 
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
-import megamek.client.ui.swing.util.CommandAction;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.widget.MegamekButton;
@@ -56,7 +55,7 @@ public class PointblankShotDisplay extends FiringDisplay implements ItemListener
      *
      * @author arlith
      */
-    public static enum FiringCommand implements PhaseCommand {
+    public enum FiringCommand implements PhaseCommand {
         FIRE_TWIST("fireTwist"),
         FIRE_FIRE("fireFire"),
         FIRE_SKIP("fireSkip"),
@@ -74,7 +73,7 @@ public class PointblankShotDisplay extends FiringDisplay implements ItemListener
          */
         public int priority;
 
-        private FiringCommand(String c) {
+        FiringCommand(String c) {
             cmd = c;
         }
 
@@ -189,238 +188,46 @@ public class PointblankShotDisplay extends FiringDisplay implements ItemListener
         }
     }
 
+    private boolean shouldPerformPointBlankKeyCommands() {
+        return clientgui.isProcessingPointblankShot()
+                && !clientgui.getBoardView().getChatterBoxActive()
+                && isVisible()
+                && !isIgnoringEvents();
+    }
+
+    private boolean shouldPerformFireKeyCommand() {
+        return shouldPerformPointBlankKeyCommands() && buttons.get(FiringCommand.FIRE_FIRE).isEnabled();
+    }
+
+    private boolean shouldPerformDoneKeyCommand() {
+        return shouldPerformPointBlankKeyCommands() && butDone.isEnabled();
+    }
+
     /**
      * Register all of the <code>CommandAction</code>s for this panel display.
      */
     @Override
     protected void registerKeyCommands() {
         MegaMekController controller = clientgui.controller;
-        final StatusBarPhaseDisplay display = this;
+        controller.registerCommandAction(KeyCommandBind.UNDO_LAST_STEP, this::shouldPerformPointBlankKeyCommands,
+                this::removeLastFiring);
 
-        // Register the action for DONE
-        clientgui.controller.registerCommandAction(KeyCommandBind.DONE.cmd,
-                new CommandAction() {
+        controller.registerCommandAction(KeyCommandBind.TWIST_LEFT, this::shouldPerformPointBlankKeyCommands,
+                this::twistLeft);
+        controller.registerCommandAction(KeyCommandBind.TWIST_RIGHT, this::shouldPerformPointBlankKeyCommands,
+                this::twistRight);
 
-                    @Override
-                    public boolean shouldPerformAction() {
-                        if (!clientgui.isProcessingPointblankShot()
-                                || clientgui.getBoardView().getChatterBoxActive()
-                                || display.isIgnoringEvents()
-                                || !display.isVisible()
-                                || !butDone.isEnabled()) {
-                            return false;
-                        } else {
-                            return true;
-                        }
-                    }
+        controller.registerCommandAction(KeyCommandBind.NEXT_WEAPON, this::shouldPerformPointBlankKeyCommands,
+                this::nextWeapon);
+        controller.registerCommandAction(KeyCommandBind.PREV_WEAPON, this::shouldPerformPointBlankKeyCommands,
+                this::prevWeapon);
 
-                    @Override
-                    public void performAction() {
-                        ready();
-                    }
-                });
+        controller.registerCommandAction(KeyCommandBind.NEXT_MODE, this, () -> changeMode(true));
+        controller.registerCommandAction(KeyCommandBind.PREV_MODE, this, () -> changeMode(false));
 
-        // Register the action for UNDO
-        controller.registerCommandAction(KeyCommandBind.UNDO_LAST_STEP.cmd,
-                new CommandAction() {
-
-                    @Override
-                    public boolean shouldPerformAction() {
-                        if (!clientgui.isProcessingPointblankShot()
-                                || clientgui.getBoardView().getChatterBoxActive()
-                                || display.isIgnoringEvents()
-                                || !display.isVisible()) {
-                            return false;
-                        } else {
-                            return true;
-                        }
-                    }
-
-                    @Override
-                    public void performAction() {
-                        removeLastFiring();
-                    }
-                });
-
-        // Register the action for TWIST_LEFT
-        controller.registerCommandAction(KeyCommandBind.TWIST_LEFT.cmd,
-                new CommandAction() {
-
-                    @Override
-                    public boolean shouldPerformAction() {
-                        if (!clientgui.isProcessingPointblankShot()
-                                || clientgui.getBoardView().getChatterBoxActive()
-                                || !display.isVisible()
-                                || display.isIgnoringEvents()) {
-                            return false;
-                        } else {
-                            return true;
-                        }
-                    }
-
-                    @Override
-                    public void performAction() {
-                        updateFlipArms(false);
-                        torsoTwist(0);
-                    }
-                });
-
-        // Register the action for TWIST_RIGHT
-        controller.registerCommandAction(KeyCommandBind.TWIST_RIGHT.cmd,
-                new CommandAction() {
-
-                    @Override
-                    public boolean shouldPerformAction() {
-                        if (!clientgui.isProcessingPointblankShot()
-                                || clientgui.getBoardView().getChatterBoxActive()
-                                || !display.isVisible()
-                                || display.isIgnoringEvents()) {
-                            return false;
-                        } else {
-                            return true;
-                        }
-                    }
-
-                    @Override
-                    public void performAction() {
-                        updateFlipArms(false);
-                        torsoTwist(1);
-                    }
-                });
-
-        // Register the action for FIRE
-        controller.registerCommandAction(KeyCommandBind.FIRE.cmd,
-                new CommandAction() {
-
-                    @Override
-                    public boolean shouldPerformAction() {
-                        if (!clientgui.isProcessingPointblankShot()
-                                || clientgui.getBoardView().getChatterBoxActive()
-                                || !display.isVisible()
-                                || display.isIgnoringEvents()
-                                || !buttons.get(FiringCommand.FIRE_FIRE)
-                                        .isEnabled()) {
-                            return false;
-                        } else {
-                            return true;
-                        }
-                    }
-
-                    @Override
-                    public void performAction() {
-                        fire();
-                    }
-                });
-
-        // Register the action for NEXT_WEAPON
-        controller.registerCommandAction(KeyCommandBind.NEXT_WEAPON.cmd,
-                new CommandAction() {
-
-                    @Override
-                    public boolean shouldPerformAction() {
-                        if (!clientgui.isProcessingPointblankShot()
-                                || clientgui.getBoardView().getChatterBoxActive()
-                                || !display.isVisible()
-                                || display.isIgnoringEvents()) {
-                            return false;
-                        } else {
-                            return true;
-                        }
-                    }
-
-                    @Override
-                    public void performAction() {
-                        nextWeapon();
-                    }
-                });
-
-        // Register the action for PREV_WEAPON
-        controller.registerCommandAction(KeyCommandBind.PREV_WEAPON.cmd,
-                new CommandAction() {
-
-                    @Override
-                    public boolean shouldPerformAction() {
-                        if (!clientgui.isProcessingPointblankShot()
-                                || clientgui.getBoardView().getChatterBoxActive()
-                                || !display.isVisible()
-                                || display.isIgnoringEvents()) {
-                            return false;
-                        } else {
-                            return true;
-                        }
-                    }
-
-                    @Override
-                    public void performAction() {
-                        prevWeapon();
-                    }
-                });
-
-        // Register the action for NEXT_MODE
-        controller.registerCommandAction(KeyCommandBind.NEXT_MODE.cmd,
-                new CommandAction() {
-
-                    @Override
-                    public boolean shouldPerformAction() {
-                        if (!clientgui.getClient().isMyTurn()
-                                || clientgui.getBoardView().getChatterBoxActive()
-                                || display.isIgnoringEvents()
-                                || !display.isVisible()) {
-                            return false;
-                        } else {
-                            return true;
-                        }
-                    }
-
-                    @Override
-                    public void performAction() {
-                        changeMode(true);
-                    }
-                });
-
-        // Register the action for PREV_MODE
-        controller.registerCommandAction(KeyCommandBind.PREV_MODE.cmd,
-                new CommandAction() {
-
-                    @Override
-                    public boolean shouldPerformAction() {
-                        if (!clientgui.getClient().isMyTurn()
-                                || clientgui.getBoardView().getChatterBoxActive()
-                                || display.isIgnoringEvents()
-                                || !display.isVisible()) {
-                            return false;
-                        } else {
-                            return true;
-                        }
-                    }
-
-                    @Override
-                    public void performAction() {
-                        changeMode(false);
-                    }
-                });
-
-        // Register the action for CLEAR
-        controller.registerCommandAction(KeyCommandBind.CANCEL.cmd,
-                new CommandAction() {
-
-                    @Override
-                    public boolean shouldPerformAction() {
-                        if (clientgui.getBoardView().getChatterBoxActive()
-                                || !display.isVisible()
-                                || display.isIgnoringEvents()) {
-                            return false;
-                        } else {
-                            return true;
-                        }
-                    }
-
-                    @Override
-                    public void performAction() {
-                        clear();
-                    }
-                });
-
+        controller.registerCommandAction(KeyCommandBind.FIRE, this::shouldPerformFireKeyCommand, this::fire);
+        controller.registerCommandAction(KeyCommandBind.CANCEL, this::shouldPerformClearKeyCommand, this::clear);
+        controller.registerCommandAction(KeyCommandBind.DONE, this::shouldPerformDoneKeyCommand, this::ready);
     }
 
     @Override

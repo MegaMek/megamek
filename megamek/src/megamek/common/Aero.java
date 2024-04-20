@@ -17,7 +17,6 @@ import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.common.cost.AeroCostCalculator;
 import megamek.common.enums.AimingMode;
 import megamek.common.options.OptionsConstants;
-import megamek.common.planetaryconditions.Light;
 import megamek.common.planetaryconditions.PlanetaryConditions;
 import org.apache.logging.log4j.LogManager;
 
@@ -2691,7 +2690,7 @@ public abstract class Aero extends Entity implements IAero, IBomber {
         // for indirect LRM fire, unless they have a recon cam, an infrared or
         // hyperspec imager, or a high-res imager and it's not night
         boolean hiresLighted = hasWorkingMisc(MiscType.F_HIRES_IMAGER)
-                && game.getPlanetaryConditions().getLight().isLighterThan(Light.FULL_MOON);
+                && game.getPlanetaryConditions().getLight().isDayOrDusk();
         return !isAirborne()
                 || hasWorkingMisc(MiscType.F_RECON_CAMERA)
                 || hasWorkingMisc(MiscType.F_INFRARED_IMAGER)

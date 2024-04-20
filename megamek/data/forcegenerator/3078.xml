@@ -25,7 +25,7 @@
 		<pctOmni>0,3,7,10,20</pctOmni>
 		<pctClan>0,0,3,6,11</pctClan>
 		<pctSL>13,27,47,56,76</pctSL>
-		<pctSL unitType='Aero'>9,21,37,46,68</pctSL>
+		<pctSL unitType='AeroSpaceFighter'>9,21,37,46,68</pctSL>
 		<pctSL unitType='Vehicle'>9,21,31,34,56</pctSL>
 		<omniMargin>2</omniMargin>
 		<techMargin>2</techMargin>
@@ -56,7 +56,7 @@
 		<techMargin>2</techMargin>
 		<weightDistribution era='3078' unitType='Mek'>2,3,3,1</weightDistribution>
 		<weightDistribution era='3078' unitType='Tank'>4,1,3,2</weightDistribution>
-		<weightDistribution era='3078' unitType='Aero'>1,1,1</weightDistribution>
+		<weightDistribution era='3078' unitType='AeroSpaceFighter'>1,1,1</weightDistribution>
 	</faction>
 	<faction key='CBS'>
 		<pctOmni>0,0,10,58,80</pctOmni>
@@ -71,9 +71,9 @@
 		<pctOmni>0,0,36,100,100</pctOmni>
 		<pctClan>88,88,94,100,100</pctClan>
 		<pctSL>12,12,6,0,0</pctSL>
-		<pctOmni unitType='Aero'>0,0,45,100,100</pctOmni>
-		<pctClan unitType='Aero'>15,15,40,100,100</pctClan>
-		<pctSL unitType='Aero'>85,85,60,0,0</pctSL>
+		<pctOmni unitType='AeroSpaceFighter'>0,0,45,100,100</pctOmni>
+		<pctClan unitType='AeroSpaceFighter'>15,15,40,100,100</pctClan>
+		<pctSL unitType='AeroSpaceFighter'>85,85,60,0,0</pctSL>
 		<pctClan unitType='Vehicle'>15,15,40,40,40</pctClan>
 		<pctSL unitType='Vehicle'>85,85,60,60,60</pctSL>
 		<techMargin>2</techMargin>
@@ -105,9 +105,9 @@
 		<pctOmni>0,0,40,80,100</pctOmni>
 		<pctClan>54,54,77,90,100</pctClan>
 		<pctSL>46,46,23,10,0</pctSL>
-		<pctOmni unitType='Aero'>0,0,20,50,80</pctOmni>
-		<pctClan unitType='Aero'>10,10,60,70,90</pctClan>
-		<pctSL unitType='Aero'>90,90,40,30,10</pctSL>
+		<pctOmni unitType='AeroSpaceFighter'>0,0,20,50,80</pctOmni>
+		<pctClan unitType='AeroSpaceFighter'>10,10,60,70,90</pctClan>
+		<pctSL unitType='AeroSpaceFighter'>90,90,40,30,10</pctSL>
 		<pctClan unitType='Vehicle'>10,10,33,33,33</pctClan>
 		<pctSL unitType='Vehicle'>90,90,65,65,65</pctSL>
 		<techMargin>2</techMargin>
@@ -153,9 +153,9 @@
 		<pctOmni>30,30,60,90,100</pctOmni>
 		<pctClan>70,70,95,100,100</pctClan>
 		<pctSL>30,30,5,0,0</pctSL>
-		<pctOmni unitType='Aero'>40,40,60,100,100</pctOmni>
-		<pctClan unitType='Aero'>80,80,100,100,100</pctClan>
-		<pctSL unitType='Aero'>20,20,0,0,0</pctSL>
+		<pctOmni unitType='AeroSpaceFighter'>40,40,60,100,100</pctOmni>
+		<pctClan unitType='AeroSpaceFighter'>80,80,100,100,100</pctClan>
+		<pctSL unitType='AeroSpaceFighter'>20,20,0,0,0</pctSL>
 		<pctClan unitType='Vehicle'>15,15,45,45,45</pctClan>
 		<pctSL unitType='Vehicle'>85,85,55,55,55</pctSL>
 		<techMargin>2</techMargin>
@@ -165,9 +165,9 @@
 		<pctOmni>15,15,20,96,100</pctOmni>
 		<pctClan>75,75,91,100,100</pctClan>
 		<pctSL>25,25,8,0,0</pctSL>
-		<pctOmni unitType='Aero'>20,20,25,100,100</pctOmni>
-		<pctClan unitType='Aero'>80,80,95,100,100</pctClan>
-		<pctSL unitType='Aero'>80,20,95,0,0</pctSL>
+		<pctOmni unitType='AeroSpaceFighter'>20,20,25,100,100</pctOmni>
+		<pctClan unitType='AeroSpaceFighter'>80,80,95,100,100</pctClan>
+		<pctSL unitType='AeroSpaceFighter'>80,20,95,0,0</pctSL>
 		<pctClan unitType='Vehicle'>15,15,45,50,50</pctClan>
 		<pctSL unitType='Vehicle'>15,85,45,50,50</pctSL>
 		<techMargin>2</techMargin>
@@ -320,7 +320,7 @@
 		<salvage pct='0'></salvage>
 		<weightDistribution era='3078' unitType='Mek'>3,4,2,1</weightDistribution>
 		<weightDistribution era='3078' unitType='Tank'>3,4,3,1</weightDistribution>
-		<weightDistribution era='3078' unitType='Aero'>1,1,1</weightDistribution>
+		<weightDistribution era='3078' unitType='AeroSpaceFighter'>1,1,1</weightDistribution>
 	</faction>
 	<faction key='KP'>
 		<omniMargin>2</omniMargin>
@@ -394,9 +394,9 @@
 		<pctOmni>0,0,0,0,5</pctOmni>
 		<pctClan>0,0,0,0,0</pctClan>
 		<pctSL>0,6,22,38,43</pctSL>
-		<pctOmni unitType='Aero'>0,0,0,2,8</pctOmni>
-		<pctClan unitType='Aero'>0,0,0,0,0</pctClan>
-		<pctSL unitType='Aero'>8,14,26,36,63</pctSL>
+		<pctOmni unitType='AeroSpaceFighter'>0,0,0,2,8</pctOmni>
+		<pctClan unitType='AeroSpaceFighter'>0,0,0,0,0</pctClan>
+		<pctSL unitType='AeroSpaceFighter'>8,14,26,36,63</pctSL>
 		<omniMargin>2</omniMargin>
 		<techMargin>2</techMargin>
 		<salvage pct='5'>FS:9,DC:7</salvage>
@@ -408,7 +408,7 @@
 		<techMargin>2</techMargin>
 		<weightDistribution era='3078' unitType='Mek'>6,5,3,1</weightDistribution>
 		<weightDistribution era='3078' unitType='Tank'>3,4,2,1</weightDistribution>
-		<weightDistribution era='3078' unitType='Aero'>1,1,1</weightDistribution>
+		<weightDistribution era='3078' unitType='AeroSpaceFighter'>1,1,1</weightDistribution>
 	</faction>
 	<faction key='PIR'>
 		<omniMargin>2</omniMargin>
@@ -485,7 +485,7 @@
 		<omniMargin>2</omniMargin>
 		<techMargin>2</techMargin>
 		<salvage pct='5'>FS:10</salvage>
-		<weightDistribution era='3078' unitType='Aero'>1,2,3</weightDistribution>
+		<weightDistribution era='3078' unitType='AeroSpaceFighter'>1,2,3</weightDistribution>
 	</faction>
 	<faction key='TP'>
 		<pctOmni>0,3,10,14,20</pctOmni>
@@ -624,7 +624,7 @@
 		<pctOmni>3</pctOmni>
 		<pctClan>0</pctClan>
 		<pctSL>63</pctSL>
-		<pctSL unitType='Aero'>26</pctSL>
+		<pctSL unitType='AeroSpaceFighter'>26</pctSL>
 		<pctSL unitType='Vehicle'>38</pctSL>
 		<omniMargin>2</omniMargin>
 		<techMargin>2</techMargin>
@@ -642,8 +642,8 @@
 		<pctOmni>20</pctOmni>
 		<pctClan>8</pctClan>
 		<pctSL>82</pctSL>
-		<pctClan unitType='Aero'>10</pctClan>
-		<pctSL unitType='Aero'>83</pctSL>
+		<pctClan unitType='AeroSpaceFighter'>10</pctClan>
+		<pctSL unitType='AeroSpaceFighter'>83</pctSL>
 		<pctClan unitType='Vehicle'>5</pctClan>
 		<pctSL unitType='Vehicle'>79</pctSL>
 		<omniMargin>2</omniMargin>
@@ -704,7 +704,7 @@
 		<pctOmni>4</pctOmni>
 		<pctClan>0</pctClan>
 		<pctSL>62</pctSL>
-		<pctSL unitType='Aero'>34</pctSL>
+		<pctSL unitType='AeroSpaceFighter'>34</pctSL>
 		<pctSL unitType='Vehicle'>40</pctSL>
 		<omniMargin>2</omniMargin>
 		<techMargin>2</techMargin>
@@ -846,9 +846,9 @@
 		<pctOmni>0</pctOmni>
 		<pctClan>0</pctClan>
 		<pctSL>0</pctSL>
-		<pctOmni unitType='Aero'>0</pctOmni>
-		<pctClan unitType='Aero'>0</pctClan>
-		<pctSL unitType='Aero'>0</pctSL>
+		<pctOmni unitType='AeroSpaceFighter'>0</pctOmni>
+		<pctClan unitType='AeroSpaceFighter'>0</pctClan>
+		<pctSL unitType='AeroSpaceFighter'>0</pctSL>
 		<pctClan unitType='Vehicle'>0</pctClan>
 		<pctSL unitType='Vehicle'>0</pctSL>
 		<techMargin>2</techMargin>
@@ -900,7 +900,7 @@
 		<pctOmni>4</pctOmni>
 		<pctClan>0</pctClan>
 		<pctSL>50</pctSL>
-		<pctSL unitType='Aero'>41</pctSL>
+		<pctSL unitType='AeroSpaceFighter'>41</pctSL>
 		<pctSL unitType='Vehicle'>31</pctSL>
 		<omniMargin>2</omniMargin>
 		<techMargin>2</techMargin>
@@ -966,8 +966,8 @@
 		<pctOmni>24</pctOmni>
 		<pctClan>9</pctClan>
 		<pctSL>73</pctSL>
-		<pctClan unitType='Aero'>8</pctClan>
-		<pctSL unitType='Aero'>92</pctSL>
+		<pctClan unitType='AeroSpaceFighter'>8</pctClan>
+		<pctSL unitType='AeroSpaceFighter'>92</pctSL>
 		<pctClan unitType='Vehicle'>6</pctClan>
 		<pctSL unitType='Vehicle'>100</pctSL>
 		<omniMargin>2</omniMargin>
@@ -1214,7 +1214,7 @@
 		<pctOmni>13</pctOmni>
 		<pctClan>7</pctClan>
 		<pctSL>85</pctSL>
-		<pctSL unitType='Aero'>53</pctSL>
+		<pctSL unitType='AeroSpaceFighter'>53</pctSL>
 		<pctSL unitType='Vehicle'>39</pctSL>
 		<omniMargin>2</omniMargin>
 		<techMargin>2</techMargin>
@@ -1232,7 +1232,7 @@
 		<pctOmni>10</pctOmni>
 		<pctClan>3</pctClan>
 		<pctSL>68</pctSL>
-		<pctSL unitType='Aero'>43</pctSL>
+		<pctSL unitType='AeroSpaceFighter'>43</pctSL>
 		<pctSL unitType='Vehicle'>31</pctSL>
 		<omniMargin>2</omniMargin>
 		<techMargin>2</techMargin>
@@ -1286,7 +1286,7 @@
 		<pctOmni>11</pctOmni>
 		<pctClan>3</pctClan>
 		<pctSL>71</pctSL>
-		<pctSL unitType='Aero'>55</pctSL>
+		<pctSL unitType='AeroSpaceFighter'>55</pctSL>
 		<pctSL unitType='Vehicle'>46</pctSL>
 		<omniMargin>2</omniMargin>
 		<techMargin>2</techMargin>
@@ -1438,7 +1438,7 @@
 			<availability>General:8</availability>
 		</model>
 	</chassis>
-	<chassis name='Ahab' unitType='Aero'>
+	<chassis name='Ahab' unitType='AeroSpaceFighter'>
 		<availability>CS:7,CLAN:1,FWL:1,NIOPS:4,WOB:7,DC:1</availability>
 		<model name='AHB-443'>
 			<availability>General:8,CLAN:6</availability>
@@ -1542,7 +1542,7 @@
 			<availability>IS:2,Periphery:2</availability>
 		</model>
 	</chassis>
-	<chassis name='Ammon' unitType='Aero'>
+	<chassis name='Ammon' unitType='AeroSpaceFighter'>
 		<availability>CSA:5,CHH:5,CDS:6,CW:5,CNC:5,CSL:5,CGS:5,CCO:5,CGB:5</availability>
 		<model name=''>
 			<availability>CLAN:8</availability>
@@ -2193,7 +2193,7 @@
 			<availability>General:5-</availability>
 		</model>
 	</chassis>
-	<chassis name='Avar' unitType='Aero' omni='Clan'>
+	<chassis name='Avar' unitType='AeroSpaceFighter' omni='Clan'>
 		<availability>CSA:3,CCC:3,CSR:2,CW:4,CLAN:3,CNC:4,BAN:5,CWIE:4</availability>
 		<model name='A'>
 			<availability>CSA:7,CSR:4,General:6</availability>
@@ -2624,7 +2624,7 @@
 			<availability>General:8</availability>
 		</model>
 	</chassis>
-	<chassis name='Bashkir' unitType='Aero' omni='Clan'>
+	<chassis name='Bashkir' unitType='AeroSpaceFighter' omni='Clan'>
 		<availability>CSR:4,CNC:6,CLAN:4,IS:2+,BAN:5</availability>
 		<model name='A'>
 			<availability>General:7,CGB:8</availability>
@@ -2844,7 +2844,7 @@
 			<availability>DC:4</availability>
 		</model>
 	</chassis>
-	<chassis name='Batu' unitType='Aero' omni='Clan'>
+	<chassis name='Batu' unitType='AeroSpaceFighter' omni='Clan'>
 		<availability>CSA:6,CHH:6,CDS:6,CW:7,CNC:6,CSL:6,CGS:6,CCO:4,CJF:7,CWIE:4,CGB:6,DC:1+</availability>
 		<model name='A'>
 			<availability>CDS:8,General:7,CGS:3</availability>
@@ -3787,7 +3787,7 @@
 			<availability>LA:3</availability>
 		</model>
 	</chassis>
-	<chassis name='Centurion' unitType='Aero'>
+	<chassis name='Centurion' unitType='AeroSpaceFighter'>
 		<availability>LA:4,WOB:3,FS:3,MERC:2,Periphery:2</availability>
 		<model name='CNT-1A'>
 			<availability>General:3</availability>
@@ -3884,7 +3884,7 @@
 			<availability>LA:1</availability>
 		</model>
 	</chassis>
-	<chassis name='Chaeronea' unitType='Aero'>
+	<chassis name='Chaeronea' unitType='AeroSpaceFighter'>
 		<availability>CSA:7,CCC:7,CW:5,CBS:8,CLAN:6,CJF:5,CGB:5</availability>
 		<model name=''>
 			<availability>CLAN:5</availability>
@@ -4025,7 +4025,7 @@
 			<availability>General:6</availability>
 		</model>
 	</chassis>
-	<chassis name='Cheetah' unitType='Aero'>
+	<chassis name='Cheetah' unitType='AeroSpaceFighter'>
 		<availability>PR:8,HL:2,DoO:10,FRR:3,DO:10,SC:10,OA:4,CGB.FRR:3,Periphery.MW:4,FWL:10,NIOPS:3,RFS:8,MOC:5,CC:3,WOB:6,DGM:10,MERC:3,CIR:4,Periphery:3,TC:5,CS:3,DTA:9,FVC:2,LA:1-,MCM:10,PG:8,ROS:5,Periphery.ME:4,TP:10,DA:8,RCM:10,DC:1-</availability>
 		<model name='F-10'>
 			<roles>recon</roles>
@@ -4090,7 +4090,7 @@
 			<availability>:0,IS:4,DC:8</availability>
 		</model>
 	</chassis>
-	<chassis name='Chippewa' unitType='Aero'>
+	<chassis name='Chippewa' unitType='AeroSpaceFighter'>
 		<availability>MOC:2,FRR:2,MERC:5,FS:5,CIR:2,CDP:6,Periphery:2,TC:6,OA:2,FVC:5,LA:8,CGB.FRR:2,ROS:5,FWL:2,DC:1,CGB:3</availability>
 		<model name='CHP-W10'>
 			<availability>FVC:4,FS:1-,CDP:4,TC:4,Periphery:1-</availability>
@@ -4564,13 +4564,13 @@
 			<availability>General:8</availability>
 		</model>
 	</chassis>
-	<chassis name='Corax' unitType='Aero'>
+	<chassis name='Corax' unitType='AeroSpaceFighter'>
 		<availability>CSR:2-</availability>
 		<model name='C'>
 			<availability>General:8</availability>
 		</model>
 	</chassis>
-	<chassis name='Corax' unitType='Aero' omni='IS'>
+	<chassis name='Corax' unitType='AeroSpaceFighter' omni='IS'>
 		<availability>OA:3+,CSR:2</availability>
 		<model name='CRX-O'>
 			<availability>General:8</availability>
@@ -4610,7 +4610,7 @@
 			<availability>General:8</availability>
 		</model>
 	</chassis>
-	<chassis name='Corsair' unitType='Aero'>
+	<chassis name='Corsair' unitType='AeroSpaceFighter'>
 		<availability>MOC:2,CC:1,FRR:2,CLAN:3,FS:8,MERC:4,CIR:2,TC:2,Periphery:2,OA:3,LA:4,CGB.FRR:2,ROS:4,DC:2</availability>
 		<model name='CSR-12D'>
 			<availability>FS:4</availability>
@@ -5001,13 +5001,13 @@
 			<availability>General:4</availability>
 		</model>
 	</chassis>
-	<chassis name='Dagger' unitType='Aero'>
+	<chassis name='Dagger' unitType='AeroSpaceFighter'>
 		<availability>FS:2</availability>
 		<model name='DAR4-XP'>
 			<availability>General:8</availability>
 		</model>
 	</chassis>
-	<chassis name='Dagger' unitType='Aero' omni='IS'>
+	<chassis name='Dagger' unitType='AeroSpaceFighter' omni='IS'>
 		<availability>WOB:4,FS:6</availability>
 		<model name='DARO-1'>
 			<availability>General:6,FS:8</availability>
@@ -5205,7 +5205,7 @@
 			<availability>General:6</availability>
 		</model>
 	</chassis>
-	<chassis name='Deathstalker' unitType='Aero'>
+	<chassis name='Deathstalker' unitType='AeroSpaceFighter'>
 		<availability>FWL:3,DA:4</availability>
 		<model name='F-77A'>
 			<availability>General:8</availability>
@@ -5214,7 +5214,7 @@
 			<availability>DA:3</availability>
 		</model>
 	</chassis>
-	<chassis name='Defiance' unitType='Aero' omni='IS'>
+	<chassis name='Defiance' unitType='AeroSpaceFighter' omni='IS'>
 		<availability>CC:4+,MOC:3+,WOB:5+</availability>
 		<model name='DFC-O'>
 			<roles>ground_support</roles>
@@ -5613,7 +5613,7 @@
 			<availability>General:8</availability>
 		</model>
 	</chassis>
-	<chassis name='Eagle' unitType='Aero'>
+	<chassis name='Eagle' unitType='AeroSpaceFighter'>
 		<availability>MOC:4,CC:3,HL:2,FRR:3,CLAN:3,IS:3,WOB:3-,FS:4,CIR:4,Periphery:3,TC:3,CS:3-,OA:2,LA:3,CGB.FRR:3,FWL:4,NIOPS:3-,DC:3</availability>
 		<model name='EGL-R10'>
 			<roles>ground_support</roles>
@@ -5681,13 +5681,13 @@
 			<availability>IS:4</availability>
 		</model>
 	</chassis>
-	<chassis name='Eisensturm' unitType='Aero'>
+	<chassis name='Eisensturm' unitType='AeroSpaceFighter'>
 		<availability>LA:4,FRR:3,CGB.FRR:3,CNC:2,MERC:3,CGB:3</availability>
 		<model name='EST-R3'>
 			<availability>General:8</availability>
 		</model>
 	</chassis>
-	<chassis name='Eisensturm' unitType='Aero' omni='IS'>
+	<chassis name='Eisensturm' unitType='AeroSpaceFighter' omni='IS'>
 		<availability>LA:4,MERC:2+</availability>
 		<model name='EST-O'>
 			<availability>General:8</availability>
@@ -7129,7 +7129,7 @@
 			<availability>CLAN:2</availability>
 		</model>
 	</chassis>
-	<chassis name='Gotha' unitType='Aero'>
+	<chassis name='Gotha' unitType='AeroSpaceFighter'>
 		<availability>DoO:7,CLAN:4,WOB:9,DO:7,DGM:7,MERC:4-,CS:8,DTA:7,SC:7,CDS:5,MCM:7,ROS:8,Periphery.MW:5,PIR:5,Periphery.ME:5,CNC:5,FWL:7,NIOPS:8,TP:7</availability>
 		<model name='GTHA-400'>
 			<availability>PIR:4-,FWL:4-,MH:4-,MERC:4-</availability>
@@ -7665,7 +7665,7 @@
 			<availability>General:4,MERC:4</availability>
 		</model>
 	</chassis>
-	<chassis name='Hammerhead' unitType='Aero'>
+	<chassis name='Hammerhead' unitType='AeroSpaceFighter'>
 		<availability>CS:7,ROS:6,CLAN:3,CNC:4,FWL:2,NIOPS:7,WOB:7,DC:1</availability>
 		<model name='HMR-HD'>
 			<availability>General:8,CNC:4</availability>
@@ -8056,7 +8056,7 @@
 			<availability>CC:6,MOC:6,MERC:6,DC:8</availability>
 		</model>
 	</chassis>
-	<chassis name='Hellcat II' unitType='Aero'>
+	<chassis name='Hellcat II' unitType='AeroSpaceFighter'>
 		<availability>CS:6,LA:1,ROS:4,CNC:2,NIOPS:6,WOB:6,FS:1,DC:1</availability>
 		<model name='HCT-212'>
 			<availability>LA:5,FS:5</availability>
@@ -8072,7 +8072,7 @@
 			<availability>CS:4,ROS:4</availability>
 		</model>
 	</chassis>
-	<chassis name='Hellcat' unitType='Aero'>
+	<chassis name='Hellcat' unitType='AeroSpaceFighter'>
 		<availability>MOC:2-,OA:5,FVC:3,CSR:2,HL:2-,LA:3-,Periphery.Deep:1-,MERC:3-,FS:1-,CDP:3,TC:2-,Periphery:3-</availability>
 		<model name='HCT-213'>
 			<availability>General:4</availability>
@@ -8616,7 +8616,7 @@
 	<chassis name='Hurricane PA (L)' unitType='BattleArmor'>
 		<availability>CS:1</availability>
 	</chassis>
-	<chassis name='Huscarl' unitType='Aero' omni='IS'>
+	<chassis name='Huscarl' unitType='AeroSpaceFighter' omni='IS'>
 		<availability>CS:3,FRR:5,CGB.FRR:5,CNC:4,CGB:4</availability>
 		<model name='HSCL-1-O'>
 			<availability>General:8</availability>
@@ -8672,7 +8672,7 @@
 			<availability>General:8</availability>
 		</model>
 	</chassis>
-	<chassis name='Hydaspes' unitType='Aero'>
+	<chassis name='Hydaspes' unitType='AeroSpaceFighter'>
 		<availability>CCC:6,CSR:3,CLAN:5</availability>
 		<model name=''>
 			<availability>CLAN:8</availability>
@@ -8902,7 +8902,7 @@
 			<availability>General:8</availability>
 		</model>
 	</chassis>
-	<chassis name='Ironsides' unitType='Aero'>
+	<chassis name='Ironsides' unitType='AeroSpaceFighter'>
 		<availability>CS:6,CLAN:1,CNC:1,NIOPS:3,WOB:6,DC:1</availability>
 		<model name='CX-19'>
 			<availability>CS:2</availability>
@@ -8928,7 +8928,7 @@
 			<availability>CHH:6</availability>
 		</model>
 	</chassis>
-	<chassis name='Issus' unitType='Aero'>
+	<chassis name='Issus' unitType='AeroSpaceFighter'>
 		<availability>CCC:6,CSR:4,CLAN:4,CGB:6</availability>
 		<model name=''>
 			<availability>CLAN:8</availability>
@@ -9056,7 +9056,7 @@
 			<availability>WOB:5</availability>
 		</model>
 	</chassis>
-	<chassis name='Jagatai' unitType='Aero' omni='Clan'>
+	<chassis name='Jagatai' unitType='AeroSpaceFighter' omni='Clan'>
 		<availability>CW:9,CLAN:7</availability>
 		<model name='A'>
 			<availability>General:7</availability>
@@ -9162,7 +9162,7 @@
 			<availability>FS:5</availability>
 		</model>
 	</chassis>
-	<chassis name='Jengiz' unitType='Aero' omni='Clan'>
+	<chassis name='Jengiz' unitType='AeroSpaceFighter' omni='Clan'>
 		<availability>CW:8,CLAN:6,CWIE:7,CGB:9</availability>
 		<model name='A'>
 			<availability>General:6</availability>
@@ -9625,7 +9625,7 @@
 			<availability>DC:7</availability>
 		</model>
 	</chassis>
-	<chassis name='Kirghiz' unitType='Aero' omni='Clan'>
+	<chassis name='Kirghiz' unitType='AeroSpaceFighter' omni='Clan'>
 		<availability>CLAN:5,CGS:7,BAN:7,CWIE:6,CGB:7</availability>
 		<model name='A'>
 			<availability>General:6</availability>
@@ -9949,7 +9949,7 @@
 			<availability>WOB:4</availability>
 		</model>
 	</chassis>
-	<chassis name='Lancer' unitType='Aero'>
+	<chassis name='Lancer' unitType='AeroSpaceFighter'>
 		<availability>PR:5,DoO:5,WOB:3,DO:5,DGM:5,DTA:5,SC:5,MCM:5,PG:5,FWL:5,TP:5,DA:5,RCM:5,RFS:5</availability>
 		<model name='LX-2'>
 			<availability>General:8</availability>
@@ -10151,7 +10151,7 @@
 			<availability>CS:8</availability>
 		</model>
 	</chassis>
-	<chassis name='Lightning' unitType='Aero'>
+	<chassis name='Lightning' unitType='AeroSpaceFighter'>
 		<availability>MOC:5,CC:4,HL:3,FRR:4,CLAN:2,IS:3,WOB:3-,FS:3,Periphery:4,TC:4,CS:3-,OA:6,LA:3,CGB.FRR:4,FWL:2,NIOPS:3-,DC:5</availability>
 		<model name='LTN-G15'>
 			<availability>General:5-</availability>
@@ -10512,7 +10512,7 @@
 			<availability>CS:8,WOB:8</availability>
 		</model>
 	</chassis>
-	<chassis name='Lucifer II' unitType='Aero'>
+	<chassis name='Lucifer II' unitType='AeroSpaceFighter'>
 		<availability>FRR:4,CGB.FRR:4,ROS:4,MERC:3,DC:4</availability>
 		<model name='LCF-R16K'>
 			<availability>General:5-</availability>
@@ -10521,7 +10521,7 @@
 			<availability>FRR:6,CGB.FRR:6,ROS:5,MERC:3,DC:6</availability>
 		</model>
 	</chassis>
-	<chassis name='Lucifer' unitType='Aero'>
+	<chassis name='Lucifer' unitType='AeroSpaceFighter'>
 		<availability>MOC:2,HL:4,FRR:3,FS:2,MERC:2,CIR:3,TC:2,Periphery:2,Periphery.R:4,OA:1,FVC:2,LA:7,Periphery.MW:3</availability>
 		<model name='LCF-R15'>
 			<availability>FVC:2-,LA:2-,General:1-,Periphery.Deep:4,MERC:5-,Periphery:2-</availability>
@@ -10734,7 +10734,7 @@
 			<availability>IS:4</availability>
 		</model>
 	</chassis>
-	<chassis name='Malaika' unitType='Aero'>
+	<chassis name='Malaika' unitType='AeroSpaceFighter'>
 		<availability>FWL:4-</availability>
 		<model name='BAM-1A1'>
 			<availability>General:8</availability>
@@ -12340,7 +12340,7 @@
 			<availability>General:8</availability>
 		</model>
 	</chassis>
-	<chassis name='Oni' unitType='Aero'>
+	<chassis name='Oni' unitType='AeroSpaceFighter'>
 		<availability>FRR:3,CGB.FRR:3,CNC:3,DC:4</availability>
 		<model name='ON-1'>
 			<availability>General:8</availability>
@@ -12510,7 +12510,7 @@
 			<availability>FS:2-,DC:2-</availability>
 		</model>
 	</chassis>
-	<chassis name='Ostrogoth' unitType='Aero' omni='Clan'>
+	<chassis name='Ostrogoth' unitType='AeroSpaceFighter' omni='Clan'>
 		<availability>CGB:2</availability>
 		<model name='A'>
 			<availability>General:6</availability>
@@ -13794,7 +13794,7 @@
 			<availability>General:8</availability>
 		</model>
 	</chassis>
-	<chassis name='Rapier' unitType='Aero'>
+	<chassis name='Rapier' unitType='AeroSpaceFighter'>
 		<availability>CS:6,LA:4,ROS:5,CLAN:3,NIOPS:6,WOB:6</availability>
 		<model name='RPR-100'>
 			<availability>CS:8,General:4,NIOPS:8,WOB:8</availability>
@@ -13987,7 +13987,7 @@
 			<availability>HL:2,IS:4,Periphery.Deep:4,Periphery:4</availability>
 		</model>
 	</chassis>
-	<chassis name='Riever' unitType='Aero'>
+	<chassis name='Riever' unitType='AeroSpaceFighter'>
 		<availability>PR:7,DoO:8,FRR:5,DO:8,FS:3,SC:8,CGB.FRR:5,Periphery.MW:3,FWL:8,RFS:7,MOC:3,CC:3,WOB:6,DGM:8,MERC:2,CIR:3,Periphery:2,TC:3,DTA:8,FVC:3,LA:1,MCM:8,ROS:5,PG:7,Periphery.ME:3,TP:8,DA:6,RCM:8,DC:4</availability>
 		<model name='F-100'>
 			<availability>CC:1-,FVC:4-,HL:1-,LA:1,FRR:1,CGB.FRR:1,FWL:3-,Periphery.Deep:8,MERC:3-,DC:1,Periphery:4-</availability>
@@ -14163,7 +14163,7 @@
 			<availability>CGB:2</availability>
 		</model>
 	</chassis>
-	<chassis name='Rogue' unitType='Aero'>
+	<chassis name='Rogue' unitType='AeroSpaceFighter'>
 		<availability>CS:4,CLAN:1,NIOPS:2,WOB:4</availability>
 		<model name='RGU-133E'>
 			<availability>CS:4,General:8,NIOPS:4,WOB:6</availability>
@@ -14246,7 +14246,7 @@
 			<availability>General:8</availability>
 		</model>
 	</chassis>
-	<chassis name='Rusalka' unitType='Aero' omni='IS'>
+	<chassis name='Rusalka' unitType='AeroSpaceFighter' omni='IS'>
 		<availability>WOB.SD:6</availability>
 		<model name='S-RSL-O Invictus'>
 			<roles>interceptor</roles>
@@ -14394,7 +14394,7 @@
 			<availability>General:8</availability>
 		</model>
 	</chassis>
-	<chassis name='Sabre' unitType='Aero'>
+	<chassis name='Sabre' unitType='AeroSpaceFighter'>
 		<availability>CC:3,MOC:3,HL:2-,CLAN:3,IS:3-,Periphery.Deep:4-,FS:3,MERC:3,Periphery:3-,OA:2-,LA:3,FWL:2-,DC:5</availability>
 		<model name='SB-27'>
 			<availability>General:5-</availability>
@@ -14413,7 +14413,7 @@
 			<availability>DC:4</availability>
 		</model>
 	</chassis>
-	<chassis name='Sabutai' unitType='Aero' omni='Clan'>
+	<chassis name='Sabutai' unitType='AeroSpaceFighter' omni='Clan'>
 		<availability>CLAN:7,CJF:8</availability>
 		<model name='A'>
 			<availability>General:7</availability>
@@ -14451,7 +14451,7 @@
 			<availability>FS:4</availability>
 		</model>
 	</chassis>
-	<chassis name='Sai' unitType='Aero'>
+	<chassis name='Sai' unitType='AeroSpaceFighter'>
 		<availability>CDS:4,CW:4,FRR:6,CGB.FRR:6,ROS:5,CNC:5,FS:4,BAN:1,CGB:4,DC:7,CWIE:4</availability>
 		<model name='S-3'>
 			<availability>DC:2-</availability>
@@ -14525,7 +14525,7 @@
 			<availability>LA:4</availability>
 		</model>
 	</chassis>
-	<chassis name='Samurai' unitType='Aero'>
+	<chassis name='Samurai' unitType='AeroSpaceFighter'>
 		<availability>CS:4,OA:1,LA:5,FRR:4,CGB.FRR:4,ROS:5,WOB:4,DC:1</availability>
 		<model name='SL-25'>
 			<roles>ground_support</roles>
@@ -14799,13 +14799,13 @@
 			<availability>CHH:3</availability>
 		</model>
 	</chassis>
-	<chassis name='Scytha' unitType='Aero'>
+	<chassis name='Scytha' unitType='AeroSpaceFighter'>
 		<availability>CSR:1</availability>
 		<model name='XR'>
 			<availability>CSR:8</availability>
 		</model>
 	</chassis>
-	<chassis name='Scytha' unitType='Aero' omni='Clan'>
+	<chassis name='Scytha' unitType='AeroSpaceFighter' omni='Clan'>
 		<availability>CSA:3,CHH:3,CCC:5,CSR:3,CW:5,CLAN:4,CNC:5,CGS:4,CJF:7,CCO:5,CWIE:5</availability>
 		<model name='A'>
 			<availability>General:6</availability>
@@ -14938,7 +14938,7 @@
 			<availability>General:4</availability>
 		</model>
 	</chassis>
-	<chassis name='Seydlitz' unitType='Aero'>
+	<chassis name='Seydlitz' unitType='AeroSpaceFighter'>
 		<availability>MOC:4,CC:3,MERC.KH:5,HL:5,FRR:2,Periphery.Deep:4,MERC:4,FS:3,CIR:3,TC:7,Periphery:6,Periphery.R:6,OA:7,FVC:3,LA:8,CGB.FRR:2,ROS:4,FWL:3-,MH:2,DC:3-</availability>
 		<model name='SYD-21'>
 			<roles>interceptor</roles>
@@ -14986,7 +14986,7 @@
 			<availability>General:4</availability>
 		</model>
 	</chassis>
-	<chassis name='Shade' unitType='Aero' omni='IS'>
+	<chassis name='Shade' unitType='AeroSpaceFighter' omni='IS'>
 		<availability>WOB.SD:5</availability>
 		<model name='S-HA-O Invictus'>
 			<availability>General:8</availability>
@@ -15167,7 +15167,7 @@
 			<availability>General:6</availability>
 		</model>
 	</chassis>
-	<chassis name='Shilone' unitType='Aero'>
+	<chassis name='Shilone' unitType='AeroSpaceFighter'>
 		<availability>Periphery.DD:4,OA:4,FVC:2,FRR:7,CGB.FRR:7,ROS:5,MERC:4,Periphery.OS:4,DC:7,Periphery:2</availability>
 		<model name='SL-17'>
 			<availability>HL:1-,ROS:0,IS:3-,Periphery.Deep:8,Periphery:4-</availability>
@@ -15182,13 +15182,13 @@
 			<availability>ROS:6,DC:7</availability>
 		</model>
 	</chassis>
-	<chassis name='Shiva' unitType='Aero'>
+	<chassis name='Shiva' unitType='AeroSpaceFighter'>
 		<availability>FWL:1</availability>
 		<model name='SHV-S'>
 			<availability>General:8</availability>
 		</model>
 	</chassis>
-	<chassis name='Shiva' unitType='Aero' omni='IS'>
+	<chassis name='Shiva' unitType='AeroSpaceFighter' omni='IS'>
 		<availability>FWL:4,WOB:4,FWL.KIS:6,FWL.FWG:5</availability>
 		<model name='SHV-O'>
 			<availability>General:8</availability>
@@ -15225,7 +15225,7 @@
 			<availability>MERC.WD:8,CLAN:5</availability>
 		</model>
 	</chassis>
-	<chassis name='Sholagar' unitType='Aero'>
+	<chassis name='Sholagar' unitType='AeroSpaceFighter'>
 		<availability>Periphery.DD:3,OA:3,LA:2,FRR:6,CGB.FRR:6,ROS:3,MERC:3,Periphery.OS:3,FS:3-,DC:7,Periphery:2</availability>
 		<model name='SL-21'>
 			<availability>HL:4,LA:2,Periphery.Deep:7,MERC:4,DC:4,Periphery:6</availability>
@@ -15341,7 +15341,7 @@
 			<availability>IS.pm:5</availability>
 		</model>
 	</chassis>
-	<chassis name='Slayer' unitType='Aero'>
+	<chassis name='Slayer' unitType='AeroSpaceFighter'>
 		<availability>MOC:2,Periphery.DD:3,FRR:7,MERC:3,Periphery.OS:3,FS:3,CIR:2,Periphery:2,TC:5,OA:5,FVC:4,LA:1,CGB.FRR:7,ROS:4,DC:7</availability>
 		<model name='SL-15'>
 			<availability>HL:1-,ROS:0,IS:3-,Periphery.Deep:8,FS:0,Periphery:4-</availability>
@@ -15432,7 +15432,7 @@
 			<availability>General:8</availability>
 		</model>
 	</chassis>
-	<chassis name='Spad' unitType='Aero'>
+	<chassis name='Spad' unitType='AeroSpaceFighter'>
 		<availability>CS:6,OA:2,ROS:5,NIOPS:6,WOB:6</availability>
 		<model name='SPD-502'>
 			<availability>General:8,CLAN:6</availability>
@@ -15444,7 +15444,7 @@
 			<availability>ROS:4,WOB:5</availability>
 		</model>
 	</chassis>
-	<chassis name='Sparrowhawk' unitType='Aero'>
+	<chassis name='Sparrowhawk' unitType='AeroSpaceFighter'>
 		<availability>MOC:2,CC:1,HL:3,FRR:5,Periphery.Deep:4,WOB:3,MERC:5,Periphery.OS:4,FS:9,CIR:2,Periphery:4,TC:2,CS:3,OA:2,FVC:8,LA:3,CGB.FRR:5,Periphery.HR:4,ROS:4,NIOPS:3</availability>
 		<model name='SPR-6D'>
 			<availability>FVC:7,LA:3,FRR:5,CGB.FRR:5,ROS:3,PIR:1,FS:8,MERC:5,CDP:1,TC:1</availability>
@@ -15685,7 +15685,7 @@
 			<availability>General:7</availability>
 		</model>
 	</chassis>
-	<chassis name='Star Dagger' unitType='Aero'>
+	<chassis name='Star Dagger' unitType='AeroSpaceFighter'>
 		<availability>CDP:5</availability>
 		<model name='S-2'>
 			<availability>Periphery:8</availability>
@@ -15703,7 +15703,7 @@
 			<availability>CLAN:7</availability>
 		</model>
 	</chassis>
-	<chassis name='Starfire' unitType='Aero'>
+	<chassis name='Starfire' unitType='AeroSpaceFighter'>
 		<availability>FS:1</availability>
 		<model name='SF-1X'>
 			<availability>FS:8</availability>
@@ -15820,7 +15820,7 @@
 			<availability>LA:4,ROS:4,MERC:2</availability>
 		</model>
 	</chassis>
-	<chassis name='Stingray' unitType='Aero'>
+	<chassis name='Stingray' unitType='AeroSpaceFighter'>
 		<availability>PR:5,DoO:6,DO:6,FS:1,SC:6,OA:1,Periphery.MW:2,FWL:6,NIOPS:3,MH:2,RFS:5,MOC:2,CC:5,IS:3,WOB:3,DGM:6,MERC:5,CIR:2,Periphery:1,TC:2,CS:3,DTA:6,LA:5,MCM:6,PG:5,Periphery.ME:2,TP:6,RCM:6,DA:5,DC:4</availability>
 		<model name='F-90'>
 			<availability>CS:2-,LA:2-,IS:4-,FS:2-,Periphery:4-</availability>
@@ -15907,7 +15907,7 @@
 			<availability>General:2</availability>
 		</model>
 	</chassis>
-	<chassis name='Striga' unitType='Aero' omni='IS'>
+	<chassis name='Striga' unitType='AeroSpaceFighter' omni='IS'>
 		<availability>WOB.SD:6,WOB:1+</availability>
 		<model name='S-STR-O Invictus'>
 			<availability>General:8</availability>
@@ -15971,7 +15971,7 @@
 			<availability>LA:5</availability>
 		</model>
 	</chassis>
-	<chassis name='Stuka' unitType='Aero'>
+	<chassis name='Stuka' unitType='AeroSpaceFighter'>
 		<availability>MOC:1,FRR:1,CLAN:4,MERC:4,Periphery.OS:2,FS:7,CIR:1,Periphery:1,TC:1,OA:2,FVC:7,LA:3,CGB.FRR:2,Periphery.HR:2,ROS:5,DC:1</availability>
 		<model name='STU-D6'>
 			<availability>FVC:5,LA:6,ROS:6,FS:6,MERC:6</availability>
@@ -16045,7 +16045,7 @@
 			<availability>General:8</availability>
 		</model>
 	</chassis>
-	<chassis name='Sulla' unitType='Aero' omni='Clan'>
+	<chassis name='Sulla' unitType='AeroSpaceFighter' omni='Clan'>
 		<availability>CSA:8,CLAN:6,BAN:6,CGB:6</availability>
 		<model name='A'>
 			<availability>CSA:7,CSR:4,CBS:6,General:2,CGB:7</availability>
@@ -16154,7 +16154,7 @@
 			<availability>General:2</availability>
 		</model>
 	</chassis>
-	<chassis name='Swift' unitType='Aero'>
+	<chassis name='Swift' unitType='AeroSpaceFighter'>
 		<availability>CS:8,ROS:6,CLAN:5,NIOPS:8,WOB:8</availability>
 		<model name='C'>
 			<availability>CCC:9,CSR:5,CLAN:8</availability>
@@ -16242,7 +16242,7 @@
 			<availability>DTA:7,SC:6,FVC:2,DoO:6,MCM:6,ROS:6,IS:2,DO:6,DGM:6,TP:6,MERC:5,DC:7</availability>
 		</model>
 	</chassis>
-	<chassis name='Tatsu' unitType='Aero' omni='IS'>
+	<chassis name='Tatsu' unitType='AeroSpaceFighter' omni='IS'>
 		<availability>FRR:4,CGB.FRR:4,CNC:4,DC:5</availability>
 		<model name='MIK-O'>
 			<availability>General:8</availability>
@@ -16494,7 +16494,7 @@
 			<availability>CHH:4</availability>
 		</model>
 	</chassis>
-	<chassis name='Thrush' unitType='Aero'>
+	<chassis name='Thrush' unitType='AeroSpaceFighter'>
 		<availability>CC:8,MOC:5,HL:2,FS:4,MERC:3,Periphery:3,TC:5,OA:3,FVC:4,Periphery.CM:4,Periphery.ME:4,FWL:5,MH:3</availability>
 		<model name='TR-7'>
 			<roles>escort,interceptor</roles>
@@ -16593,7 +16593,7 @@
 			<availability>CC:2,MOC:2,CC.LCC:3</availability>
 		</model>
 	</chassis>
-	<chassis name='Thunderbird' unitType='Aero'>
+	<chassis name='Thunderbird' unitType='AeroSpaceFighter'>
 		<availability>MOC:4,CC:4,HL:4,FRR:4,CLAN:1,IS:4,Periphery.Deep:5,WOB:4-,FS:5,CIR:4,Periphery:5,TC:5,CS:4-,OA:4,LA:6,CGB.FRR:4,FWL:4,NIOPS:4-,DC:4</availability>
 		<model name='TRB-D36'>
 			<roles>escort,ground_support</roles>
@@ -16760,7 +16760,7 @@
 			<availability>FRR:5-,CGB.FRR:5-,DC:5-</availability>
 		</model>
 	</chassis>
-	<chassis name='Tomahawk' unitType='Aero'>
+	<chassis name='Tomahawk' unitType='AeroSpaceFighter'>
 		<availability>CS:9,CW:4,ROS:7,CLAN:3,NIOPS:9,WOB:8,DC:5</availability>
 		<model name='&apos;C&apos;'>
 			<availability>CW:6,CLAN:2</availability>
@@ -16892,7 +16892,7 @@
 			<availability>General:2</availability>
 		</model>
 	</chassis>
-	<chassis name='Transgressor' unitType='Aero'>
+	<chassis name='Transgressor' unitType='AeroSpaceFighter'>
 		<availability>CC:8,MOC:5,PR:3,Periphery.CM:2,PG:3,PIR:1,FWL:3,MERC:3,RCM:3,RFS:3,TC:5</availability>
 		<model name='TR-13'>
 			<availability>CC:3-,HL:1-,IS:1-,MERC:3-,Periphery:4-</availability>
@@ -16910,7 +16910,7 @@
 			<availability>CC:7,MOC:5,PR:8,PG:8,MERC:5,RCM:8,RFS:8,TC:5</availability>
 		</model>
 	</chassis>
-	<chassis name='Transit' unitType='Aero'>
+	<chassis name='Transit' unitType='AeroSpaceFighter'>
 		<availability>CC:6,MOC:3,Periphery.CM:3,Periphery.ME:3,FWL:2,TC:3</availability>
 		<model name='TR-10'>
 			<availability>CC:4,MOC:5,General:6,TC:5</availability>
@@ -16976,7 +16976,7 @@
 			<availability>TC:3</availability>
 		</model>
 	</chassis>
-	<chassis name='Trident' unitType='Aero'>
+	<chassis name='Trident' unitType='AeroSpaceFighter'>
 		<availability>CS:7,OA:6,NIOPS:7,WOB:7</availability>
 		<model name='TRN-3T'>
 			<availability>CS:8,OA:8,CLAN:6,NIOPS:8,WOB:8,BAN:8</availability>
@@ -17039,7 +17039,7 @@
 			<availability>IS:3,DC:8</availability>
 		</model>
 	</chassis>
-	<chassis name='Troika' unitType='Aero'>
+	<chassis name='Troika' unitType='AeroSpaceFighter'>
 		<availability>CC:4,MOC:5,FVC:2,Periphery.CM:3,Periphery.ME:3,MERC:2,DA:2,TC:6,Periphery:2</availability>
 		<model name='CMT-3T'>
 			<availability>CC:8,MOC:8,TC:8</availability>
@@ -17151,7 +17151,7 @@
 			<availability>DC:3-</availability>
 		</model>
 	</chassis>
-	<chassis name='Turk' unitType='Aero' omni='Clan'>
+	<chassis name='Turk' unitType='AeroSpaceFighter' omni='Clan'>
 		<availability>CW:3,CLAN:5,CJF:3,BAN:2,CWIE:3,CGB:7</availability>
 		<model name='A'>
 			<availability>General:7</availability>
@@ -17227,7 +17227,7 @@
 			<availability>General:4,FS:6</availability>
 		</model>
 	</chassis>
-	<chassis name='Typhoon' unitType='Aero'>
+	<chassis name='Typhoon' unitType='AeroSpaceFighter'>
 		<availability>LA:4</availability>
 		<model name='TFN-5H'>
 			<roles>ground_support</roles>
@@ -17244,7 +17244,7 @@
 			<availability>IS:8</availability>
 		</model>
 	</chassis>
-	<chassis name='Tyre' unitType='Aero'>
+	<chassis name='Tyre' unitType='AeroSpaceFighter'>
 		<availability>CLAN:7</availability>
 		<model name=''>
 			<availability>CLAN:8</availability>
@@ -17515,7 +17515,7 @@
 			<availability>General:8</availability>
 		</model>
 	</chassis>
-	<chassis name='Vandal' unitType='Aero' omni='Clan'>
+	<chassis name='Vandal' unitType='AeroSpaceFighter' omni='Clan'>
 		<availability>CW:4,CLAN:3,CJF:4,BAN:4,CWIE:4</availability>
 		<model name='A'>
 			<roles>bomber</roles>
@@ -17754,7 +17754,7 @@
 			<availability>CSR:8,CLAN.IS:4</availability>
 		</model>
 	</chassis>
-	<chassis name='Visigoth' unitType='Aero' omni='Clan'>
+	<chassis name='Visigoth' unitType='AeroSpaceFighter' omni='Clan'>
 		<availability>CLAN:7,CJF:8,BAN:7</availability>
 		<model name='A'>
 			<availability>General:7</availability>
@@ -17844,7 +17844,7 @@
 			<availability>PIR:8</availability>
 		</model>
 	</chassis>
-	<chassis name='Vulcan' unitType='Aero'>
+	<chassis name='Vulcan' unitType='AeroSpaceFighter'>
 		<availability>MERC:5,CDP:2,Periphery:3,TC:2</availability>
 		<model name='VLC-5N'>
 			<availability>General:1</availability>
@@ -18444,7 +18444,7 @@
 			<availability>FWL:5</availability>
 		</model>
 	</chassis>
-	<chassis name='Xerxes' unitType='Aero'>
+	<chassis name='Xerxes' unitType='AeroSpaceFighter'>
 		<availability>CHH:7,CSR:3,CLAN:5</availability>
 		<model name=''>
 			<availability>CLAN:8</availability>
@@ -18558,7 +18558,7 @@
 			<availability>CHH:6,CLAN:4,BAN:2</availability>
 		</model>
 	</chassis>
-	<chassis name='Zero' unitType='Aero'>
+	<chassis name='Zero' unitType='AeroSpaceFighter'>
 		<availability>CS:5,ROS:4,CLAN:1,NIOPS:5,WOB:5</availability>
 		<model name='ZRO-114'>
 			<availability>CS:3-,CLAN:1,NIOPS:2-,WOB:3-</availability>

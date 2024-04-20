@@ -1,7 +1,15 @@
 MEGAMEK VERSION HISTORY:
 ----------------
-0.49.19-SNAPSHOT
-+ PR #5300:Output clanperson variable to XML
+0.49.20-SNAPSHOT
++ PR #5281, #5327, #5308, #5336, #5318: Code internals: preparatory work for supporting game types such as SBF, code cleanup for string drawing, superclass change for BoardView, Keydispatcher aka MegaMekController simplification,
+     moving BoardView shadowmap creation to its own class
++ PR #5295: MM now supports the light conditions "glare" and "solar flare" (TO:AR)
++ PR #5301: Aerospace units now show a much improved flight path indicator when planning their movement
++ PR #5321: The font used to write round reports can now be set in the client settings
++ Fix #5333: The standard G/P values of 4/5 may now be changed in the unit selector to see different BV/PV values; this functionality must be activated in the client settings
+
+ 
+0.49.19 (2024-04-19 2030 UTC)
 + Fix #5182: Fixes aerospace fighters getting a zero engine rating in TestAero
 + Fix #5168: Indirect Arty Fire under 17 hexes now correctly uses a +4 instead of +7 modifier
 + Fix #5177: Fixing an issue with MUL loading
@@ -46,10 +54,34 @@ MEGAMEK VERSION HISTORY:
 + PR #5270: The weapon panel is now split to prevent info being obscured depending on screen resolution and other factors
 + PR #5274: Update Aerospace SI damage calculation to round naturally with a minimum of 1
 + Fix #5285: MML #1461 Consider pintle weapons in the same location as in the same pintle 
-+ PR# #5278: correct issue when using multiple boards and restricting deployment
++ PR #5278: correct issue when using multiple boards and restricting deployment
 + Data: Sprite Swap Project. All shaded sprites that can be (Deadborder mostly) replaced have been.
-+ Fix #5298 Illegal Cast Exception when lowering elevation with a VTOL
-
++ Fix #5298: Illegal Cast Exception when lowering elevation with a VTOL
++ Fix #5276: Set RISC APDS Alpha Strike damage to 0
++ PR #5300: Output clanperson variable to XML
++ PR #5305: Princess Behaviour Update
++ Fix #3882 (MM part): ASFs not tracked correctly in MHQ
++ Fix #5205: Handle ConcurrentModification and NPE from opening dialogs
++ PR #5306: MM portion of fix for MHQ #3803: WOB.pm/.PM mismatch and missing parent faction check 
++ PR #5311: Unblock build by removing extraneous Java logging import in UnitTable.java
++ PR #5289: Improved MissionRole Switch Cases & Role List
++ Fix #5291: Fix for MML #135  Industrial tripod cockpit 
++ Fix #3306: Vehicle Lance Movement prevents full deployment of turrets
++ PR #5303: add client settings for report colors (Allows custom colors)
++ PR #5322: Fix reading player names from savegames 
++ Fix #5280: Fix Null Pointer Error when updating Convert Mode Button status
++ Fix MekHQ #3986: MHQ wont save, sometimes 
++ Fix #5348: Stop adding jump start step when deleting movement 
++ PR #5353: Utility update and small icon error correction 
++ Fix #5351: Null pointer when turning with shortcut keys in movement phase. 
++ Fix #5367: correct issue when using multiple boards and restricting deployment
++ PR #5366: Added Faction Logos from UCC (With Permission)
++ Fix #5215 - Secondary turret firing arc display to reflect tanks turret rotation.
++ PR #5372: Image name fixes
++ Fix #5343: Damage display in unit tooltip used intact color for damaged blocks in some cases
++ Fix #2659: Mek Quad turret firing arc reflects turret rotation changes.
++ PR #5377: Correct mek arc facing when mek is turned.
++ Fix #5375: quirks and SPAs applying twice to Air Defense Arrow IV missiles
 
 
 0.49.18 (2024-02-17 1800 UTC)

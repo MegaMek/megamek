@@ -20,6 +20,8 @@ package megamek.common;
 
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.GamePhase;
+import megamek.common.event.GameEvent;
+import megamek.common.event.GameListener;
 import megamek.common.force.Forces;
 import megamek.common.options.GameOptions;
 
@@ -37,6 +39,12 @@ public interface IGame {
     GameOptions getOptions();
 
     GamePhase getPhase();
+
+    void setPhase(GamePhase phase);
+
+    void fireGameEvent(GameEvent event);
+
+    void addGameListener(GameListener listener);
 
     /**
      * @return Whether there is an active claim for victory.
@@ -67,11 +75,21 @@ public interface IGame {
 
     /**
      * Adds the given Player to the game with the given game-unique id.
+     * // TODO : Can this be made a default method?
      *
      * @param id The game-unique id of this player
      * @param player The Player object
      */
     void addPlayer(int id, Player player);
+
+    /**
+     * Sets the given Player to the given game-unique id.
+     * // TODO : Is this method useful? Why not use addPlayer that also sets single-blind info?
+     *
+     * @param id The game-unique id of this player
+     * @param player The Player object
+     */
+    void setPlayer(int id, Player player);
 
     /**
      * Removes the player with the id from the game.
@@ -127,4 +145,29 @@ public interface IGame {
     default List<InGameObject> getInGameObjects(Collection<Integer> idList) {
         return getInGameObjects().stream().filter(o -> idList.contains(o.getId())).collect(Collectors.toList());
     }
+
+    /**
+     * This is a Client-side method to replace or add units that are sent from the server.
+     *
+     * Adds the given units to the list of units or objects in the current game. When a unit's ID is already
+     * present the currently assigned unit will be replaced with the given new one.
+     *
+     * @param units The units to add or use as a replacement for current units.
+     */
+    void replaceUnits(List<InGameObject> units);
+
+    //region Board
+
+    /**
+     * Sets the given board as the game's board with the given boardId, possibly replacing the former board
+     * of the same id. -- This method is written with the idea that a game might have more than one board.
+     * Currently, the boardId will be ignored and the given board will be the game's single board. --
+     * This method is meant as a server-side method.
+     *
+     * @param board The board to use
+     * @param boardId (currently ignored) The boardId to assing to that board
+     */
+    void setBoard(Board board, int boardId);
+
+    //endregion
 }

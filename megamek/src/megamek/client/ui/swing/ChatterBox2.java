@@ -18,7 +18,6 @@ import megamek.MMConstants;
 import megamek.client.Client;
 import megamek.client.ui.IDisplayable;
 import megamek.client.ui.swing.boardview.BoardView;
-import megamek.client.ui.swing.util.CommandAction;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.util.UIUtil;
@@ -172,25 +171,14 @@ public class ChatterBox2 implements KeyListener, IDisplayable, IPreferenceChange
     }
 
     private void registerKeyboardCommands(MegaMekController controller) {
-        if (controller == null) {
-            return;
+        if (controller != null) {
+            controller.registerCommandAction(KeyCommandBind.CANCEL, bv::getChatterBoxActive, this::performCancel);
         }
+    }
 
-        // Register the action for CLEAR
-        controller.registerCommandAction(KeyCommandBind.CANCEL.cmd,
-                new CommandAction() {
-
-                    @Override
-                    public boolean shouldPerformAction() {
-                        return bv.getChatterBoxActive();
-                    }
-
-                    @Override
-                    public void performAction() {
-                        clearMessage();
-                        slideDown();
-                    }
-                });
+    private void performCancel() {
+        clearMessage();
+        slideDown();
     }
 
     @Override
@@ -807,9 +795,8 @@ public class ChatterBox2 implements KeyListener, IDisplayable, IPreferenceChange
                 bv.setChatterBoxActive(false);
                 break;
             case KeyEvent.VK_ESCAPE:
-                clearMessage();
                 bv.setChatterBoxActive(false);
-                slideDown();
+                performCancel();
                 break;
             case KeyEvent.VK_BACK_SPACE:
                 if ((message == null) || message.isBlank()) {

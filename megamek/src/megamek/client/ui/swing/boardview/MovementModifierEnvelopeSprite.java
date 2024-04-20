@@ -1,3 +1,21 @@
+/*
+ * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ */
 package megamek.client.ui.swing.boardview;
 
 import static megamek.client.ui.swing.boardview.HexDrawUtilities.*;
@@ -6,6 +24,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Point2D;
 
+import megamek.client.ui.swing.util.StringDrawer;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.Compute;
 import megamek.common.CrewType;
@@ -19,7 +38,6 @@ import megamek.common.VTOL;
  * drawn on a single hex, one for each final facing.
  * 
  * @author Saginatio
- * 
  */
 public class MovementModifierEnvelopeSprite extends HexSprite {
     
@@ -31,20 +49,21 @@ public class MovementModifierEnvelopeSprite extends HexSprite {
     private final Color color;
     private final Facing facing;
     private final String modifier;
+    private final StringDrawer modifierText;
 
     /**
-     * @param boardView1
-     * @param mp
+     * @param boardView The BoardView
+     * @param mp The movepath to the present hex
      */
-    public MovementModifierEnvelopeSprite(BoardView boardView1, MovePath mp) {
-        super(boardView1, mp.getFinalCoords());
+    public MovementModifierEnvelopeSprite(BoardView boardView, MovePath mp) {
+        super(boardView, mp.getFinalCoords());
 
         facing = Facing.valueOfInt(mp.getFinalFacing());
         
         int modi = Compute.getTargetMovementModifier(mp.getHexesMoved(),
                 mp.isJumping(),
                 mp.getEntity() instanceof VTOL,
-                boardView1.game).getValue();
+                boardView.game).getValue();
         //Add evasion bonus for 'Mech with dual cockpit
         if (mp.getEntity().getCrew().getCrewType().equals(CrewType.DUAL)
                 && mp.getEntity().getCrew().hasDedicatedPilot()
@@ -54,13 +73,9 @@ public class MovementModifierEnvelopeSprite extends HexSprite {
         float hue = 0.7f - 0.15f * modi;
         color = new Color(Color.HSBtoRGB(hue, 1, 1));
         modifier = String.format("%+d", modi);
+        modifierText = new StringDrawer(modifier).center().color(fontColor);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see megamek.client.ui.swing.boardview.Sprite#prepare()
-     */
     @Override
     public void prepare() {
         // adjust bounds (image size) to board zoom
@@ -82,7 +97,7 @@ public class MovementModifierEnvelopeSprite extends HexSprite {
         if (fontSize * bv.scale > 4) {
             graph.setFont(graph.getFont().deriveFont(fontSize));
             Point2D.Double pos = getHexBorderAreaMid(facing.getIntValue(), borderW, inset);
-            bv.drawCenteredText(graph, modifier, (float) pos.x, (float) pos.y, fontColor, false);
+            modifierText.at((int) pos.x, (int) pos.y).draw(graph);
         }
 
         graph.dispose();

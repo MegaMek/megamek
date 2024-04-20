@@ -30,10 +30,10 @@ units attached to Mek regiments. 2840+ follows AMC organization. -->
 	
 	<toc>
 		<unitType>
-			<option ifDateBetween="3051,">null,Aero,Mek,Tank,VTOL,Infantry,BattleArmor,Conventional Fighter</option>
-			<option ifDateBetween="2840,3050">null,Aero,Mek,Tank,VTOL,Infantry,Conventional Fighter</option>
-			<option ifDateBetween="2600,2839">Mek,Tank,VTOL,Infantry,Aero,Conventional Fighter</option>
-			<option ifDateBetween=",2599">null,Mek,Tank,VTOL,Infantry,Aero,Conventional Fighter</option>
+			<option ifDateBetween="3051,">null,AeroSpaceFighter,Mek,Tank,VTOL,Infantry,BattleArmor,Conventional Fighter</option>
+			<option ifDateBetween="2840,3050">null,AeroSpaceFighter,Mek,Tank,VTOL,Infantry,Conventional Fighter</option>
+			<option ifDateBetween="2600,2839">Mek,Tank,VTOL,Infantry,AeroSpaceFighter,Conventional Fighter</option>
+			<option ifDateBetween=",2599">null,Mek,Tank,VTOL,Infantry,AeroSpaceFighter,Conventional Fighter</option>
 		</unitType>
 		
 		<eschelon>
@@ -44,7 +44,7 @@ units attached to Mek regiments. 2840+ follows AMC organization. -->
 			<option ifUnitType="Mek|Tank|VTOL">%BATTALION%,%COMPANY%,%LANCE%</option>
 			<option ifUnitType="Infantry">%REGIMENT%,%BATTALION%,%COMPANY%</option>
 			<option ifUnitType="BattleArmor">%BATTALION%,%COMPANY%,%PLATOON%</option>
-			<option ifUnitType="Aero|Conventional Fighter">%GROUP%,%WING%,%SQUADRON%,%FLIGHT%</option>
+			<option ifUnitType="AeroSpaceFighter|Conventional Fighter">%GROUP%,%WING%,%SQUADRON%,%FLIGHT%</option>
 		</eschelon>
 		
 		<rating>
@@ -52,7 +52,7 @@ units attached to Mek regiments. 2840+ follows AMC organization. -->
 		</rating>
 	</toc>
 	
-	<force eschelon="%GROUP%" eschName="Wing" ifUnitType="Aero|Conventional Fighter" ifDateBetween="2840,">
+	<force eschelon="%GROUP%" eschName="Wing" ifUnitType="AeroSpaceFighter|Conventional Fighter" ifDateBetween="2840,">
 		<co>%COLONEL%</co>
 		
 		<weightClass>
@@ -88,7 +88,7 @@ units attached to Mek regiments. 2840+ follows AMC organization. -->
 		</attachedForces>
 	</force>
 	
-	<force eschelon="%WING%" eschName="Regiment" ifUnitType="Aero|Conventional Fighter" ifDateBetween="2840,">
+	<force eschelon="%WING%" eschName="Regiment" ifUnitType="AeroSpaceFighter|Conventional Fighter" ifDateBetween="2840,">
 		<name>{ordinal} Regiment</name>
 		<co>%MAJOR%</co>
 		
@@ -99,18 +99,18 @@ units attached to Mek regiments. 2840+ follows AMC organization. -->
 		</weightClass>
 		
 		<subforces>
-			<subforceOption ifWeightClass="H" ifUnitType="Aero">
+			<subforceOption ifWeightClass="H" ifUnitType="AeroSpaceFighter">
 				<option weightClass="H,H,H">%SQUADRON%</option>
 				<option weightClass="H,H,M">%SQUADRON%</option>
 				<option weightClass="H,H,L">%SQUADRON%</option>
 			</subforceOption>
-			<subforceOption ifWeightClass="M" ifUnitType="Aero">
+			<subforceOption ifWeightClass="M" ifUnitType="AeroSpaceFighter">
 				<option weightClass="H,M,M">%SQUADRON%</option>
 				<option weightClass="M,M,M">%SQUADRON%</option>
 				<option weightClass="H,M,L">%SQUADRON%</option>
 				<option weightClass="M,M,L">%SQUADRON%</option>
 			</subforceOption>
-			<subforceOption ifWeightClass="L" ifUnitType="Aero">
+			<subforceOption ifWeightClass="L" ifUnitType="AeroSpaceFighter">
 				<option weightClass="H,L,L">%SQUADRON%</option>
 				<option weightClass="M,L,L">%SQUADRON%</option>
 				<option weightClass="L,L,L">%SQUADRON%</option>
@@ -127,7 +127,7 @@ units attached to Mek regiments. 2840+ follows AMC organization. -->
 		</attachedForces>
 	</force>
 	
-	<force eschelon="%SQUADRON%" eschName="Squadron" ifUnitType="Aero|Conventional Fighter">
+	<force eschelon="%SQUADRON%" eschName="Squadron" ifUnitType="AeroSpaceFighter|Conventional Fighter">
 		<name>{phonetic} Squadron</name>
 		<co>%CAPTAIN%</co>
 		
@@ -147,7 +147,7 @@ units attached to Mek regiments. 2840+ follows AMC organization. -->
 		</ruleGroup>
 
 		<subforces>
-			<subforceOption ifWeightClass="H" ifUnitType="Aero">
+			<subforceOption ifWeightClass="H" ifUnitType="AeroSpaceFighter">
 				<option weightClass="H,H,H">%FLIGHT%
 					</option>
 				<option weightClass="H,H,M">%FLIGHT%
@@ -155,7 +155,7 @@ units attached to Mek regiments. 2840+ follows AMC organization. -->
 				<option weightClass="H,H,L">%FLIGHT%
 					</option>
 			</subforceOption>
-			<subforceOption ifWeightClass="M" ifUnitType="Aero">
+			<subforceOption ifWeightClass="M" ifUnitType="AeroSpaceFighter">
 				<option weightClass="H,M,M">%FLIGHT%
 					</option>
 				<option weightClass="M,M,M">%FLIGHT%
@@ -165,7 +165,7 @@ units attached to Mek regiments. 2840+ follows AMC organization. -->
 				<option weightClass="M,M,L">%FLIGHT%
 					</option>
 			</subforceOption>
-			<subforceOption ifWeightClass="L" ifUnitType="Aero">
+			<subforceOption ifWeightClass="L" ifUnitType="AeroSpaceFighter">
 				<option weightClass="H,L,L">%FLIGHT%
 					</option>
 				<option weightClass="M,L,L">%FLIGHT%
@@ -178,7 +178,7 @@ units attached to Mek regiments. 2840+ follows AMC organization. -->
 		</subforces>
 	</force>
 	
-	<force eschelon="%FLIGHT%" eschName="Flight" ifUnitType="Aero|Conventional Fighter">
+	<force eschelon="%FLIGHT%" eschName="Flight" ifUnitType="AeroSpaceFighter|Conventional Fighter">
 		<name>Flight {cardinal}</name>
 		<co>%LT%</co>
 		
@@ -257,7 +257,7 @@ units attached to Mek regiments. 2840+ follows AMC organization. -->
 		</subforces>
 		
 		<attachedForces>
-			<subforce unitType="Aero">%GROUP%</subforce>
+			<subforce unitType="AeroSpaceFighter">%GROUP%</subforce>
 		</attachedForces>
 	</force>
 	

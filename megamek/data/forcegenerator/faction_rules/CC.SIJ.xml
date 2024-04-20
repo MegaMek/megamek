@@ -14,14 +14,14 @@ with a wing of aerospace support and a battalion of BattleArmor. -->
 
 	<toc>
 		<unitType>
-			<option>null,Mek,Tank,VTOL,BattleArmor,Aero,Conventional Fighter</option>
+			<option>null,Mek,Tank,VTOL,BattleArmor,AeroSpaceFighter,Conventional Fighter</option>
 		</unitType>
 		
 		<eschelon>
 			<option ifUnitType="">%REGIMENT%,%BATTALION%,%COMPANY%,%LANCE%</option>
 			<option ifUnitType="Mek|Tank|VTOL">%COMPANY%,%LANCE%</option>
 			<option ifUnitType="BattleArmor">%BATTALION%,%COMPANY%,%PLATOON%</option>
-			<option ifUnitType="Aero|Conventional Fighter">%WING%,%SQUADRON%,%FLIGHT%</option>
+			<option ifUnitType="AeroSpaceFighter|Conventional Fighter">%WING%,%SQUADRON%,%FLIGHT%</option>
 		</eschelon>
 		
 		<rating>
@@ -37,7 +37,7 @@ with a wing of aerospace support and a battalion of BattleArmor. -->
 		</subforces>
 		
 		<attachedForces>
-			<subforce unitType="Aero" name="Aerospace Support">%WING%</subforce>
+			<subforce unitType="AeroSpaceFighter" name="Aerospace Support">%WING%</subforce>
 			<subforce unitType="BattleArmor" name="Infantry Support">%BATTALION%</subforce>			
 		</attachedForces>
 	</force>

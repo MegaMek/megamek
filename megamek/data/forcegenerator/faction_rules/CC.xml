@@ -20,9 +20,9 @@ use of augmented 4 Vee/2 inf lances in independent armor regiments. -->
 
 	<toc>
 		<unitType>
-			<option ifDateBetween="3051,">Mek,Tank,VTOL,Infantry,BattleArmor,Aero,Conventional Fighter</option>
-			<option ifDateBetween="2472,">Mek,Tank,VTOL,Infantry,Aero,Conventional Fighter</option>
-			<option>Tank,VTOL,Infantry,Aero,Conventional Fighter</option>
+			<option ifDateBetween="3051,">Mek,Tank,VTOL,Infantry,BattleArmor,AeroSpaceFighter,Conventional Fighter</option>
+			<option ifDateBetween="2472,">Mek,Tank,VTOL,Infantry,AeroSpaceFighter,Conventional Fighter</option>
+			<option>Tank,VTOL,Infantry,AeroSpaceFighter,Conventional Fighter</option>
 		</unitType>
 		
 		<eschelon>
@@ -33,7 +33,7 @@ use of augmented 4 Vee/2 inf lances in independent armor regiments. -->
 			<option ifUnitType="Mek|Tank|VTOL">%REGIMENT%,%BATTALION%,%COMPANY%,%LANCE%</option>
 			<option ifUnitType="Infantry">%REGIMENT%,%BATTALION%,%COMPANY%</option>
 			<option ifUnitType="BattleArmor">%BATTALION%,%COMPANY%,%PLATOON%</option>
-			<option ifUnitType="Aero|Conventional Fighter">%REGIMENT%,%WING%+,%WING%,%SQUADRON%^,%SQUADRON%,%FLIGHT%^,%FLIGHT%</option>
+			<option ifUnitType="AeroSpaceFighter|Conventional Fighter">%REGIMENT%,%WING%+,%WING%,%SQUADRON%^,%SQUADRON%,%FLIGHT%^,%FLIGHT%</option>
 		</eschelon>
 		
 		<rating>
@@ -141,11 +141,11 @@ use of augmented 4 Vee/2 inf lances in independent armor regiments. -->
 		
 		<attachedForces ifUnitType="Mek">
 			<subforceOption>
-				<option unitType="Aero" weight="2"
+				<option unitType="AeroSpaceFighter" weight="2"
 					name="Aerospace Support">%WING%</option>
-				<option unitType="Aero" weight="2" num="2"
+				<option unitType="AeroSpaceFighter" weight="2" num="2"
 					name="Aerospace Support">%WING%</option>
-				<option unitType="Aero" num="2"
+				<option unitType="AeroSpaceFighter" num="2"
 					name="Aerospace Support">%FLIGHT%</option>
 			</subforceOption>
 			<subforceOption ifDateBetween=",3080">
@@ -165,11 +165,11 @@ use of augmented 4 Vee/2 inf lances in independent armor regiments. -->
 
 		<attachedForces ifUnitType="Tank" ifDateBetween=",2540">
 			<subforceOption>
-				<option unitType="Aero" weight="2"
+				<option unitType="AeroSpaceFighter" weight="2"
 					name="Aerospace Support">%WING%</option>
-				<option unitType="Aero" weight="2" num="2"
+				<option unitType="AeroSpaceFighter" weight="2" num="2"
 					name="Aerospace Support">%WING%</option>
-				<option unitType="Aero" num="2"
+				<option unitType="AeroSpaceFighter" num="2"
 					name="Aerospace Support">%FLIGHT%</option>
 			</subforceOption>
 			<subforceOption ifDateBetween="2472,">
@@ -911,7 +911,7 @@ use of augmented 4 Vee/2 inf lances in independent armor regiments. -->
 		</attachedForces>
 	</force>
 	
-	<force eschelon="%REGIMENT%" eschName="Fleet Regiment" ifUnitType="Aero">
+	<force eschelon="%REGIMENT%" eschName="Fleet Regiment" ifUnitType="AeroSpaceFighter">
 		<co>%COLONEL%</co>
 
 		<weightClass>
@@ -923,18 +923,18 @@ use of augmented 4 Vee/2 inf lances in independent armor regiments. -->
 		<subforces>
 			<subforce role="command" augmented="1" num="2">%FLIGHT%</subforce>
 			
-			<subforceOption ifWeightClass="H" ifUnitType="Aero">
+			<subforceOption ifWeightClass="H" ifUnitType="AeroSpaceFighter">
 				<option weightClass="H,H,H">%WING%</option>
 				<option weightClass="H,H,M">%WING%</option>
 				<option weightClass="H,H,L">%WING%</option>
 			</subforceOption>
-			<subforceOption ifWeightClass="M" ifUnitType="Aero">
+			<subforceOption ifWeightClass="M" ifUnitType="AeroSpaceFighter">
 				<option weightClass="H,M,M">%WING%</option>
 				<option weightClass="M,M,M">%WING%</option>
 				<option weightClass="H,M,L">%WING%</option>
 				<option weightClass="M,M,L">%WING%</option>
 			</subforceOption>
-			<subforceOption ifWeightClass="L" ifUnitType="Aero">
+			<subforceOption ifWeightClass="L" ifUnitType="AeroSpaceFighter">
 				<option weightClass="H,L,L">%WING%</option>
 				<option weightClass="M,L,L">%WING%</option>
 				<option weightClass="L,L,L">%WING%</option>
@@ -942,7 +942,7 @@ use of augmented 4 Vee/2 inf lances in independent armor regiments. -->
 		</subforces>
 	</force>
 	
-	<force eschelon="%WING%" eschName="Wing" ifUnitType="Aero|Conventional Fighter">
+	<force eschelon="%WING%" eschName="Wing" ifUnitType="AeroSpaceFighter|Conventional Fighter">
 		<co>%LT_COLONEL%</co>
 		
 		<weightClass>
@@ -954,18 +954,18 @@ use of augmented 4 Vee/2 inf lances in independent armor regiments. -->
 		<subforces>
 			<subforce role="command" augmented="1">%FLIGHT%</subforce>
 			
-			<subforceOption ifWeightClass="H" ifUnitType="Aero">
+			<subforceOption ifWeightClass="H" ifUnitType="AeroSpaceFighter">
 				<option weightClass="H,H,H" augmented="1">%SQUADRON%</option>
 				<option weightClass="H,H,M" augmented="1">%SQUADRON%</option>
 				<option weightClass="H,H,L" augmented="1">%SQUADRON%</option>
 			</subforceOption>
-			<subforceOption ifWeightClass="M" ifUnitType="Aero">
+			<subforceOption ifWeightClass="M" ifUnitType="AeroSpaceFighter">
 				<option weightClass="H,M,M" augmented="1">%SQUADRON%</option>
 				<option weightClass="M,M,M" augmented="1">%SQUADRON%</option>
 				<option weightClass="H,M,L" augmented="1">%SQUADRON%</option>
 				<option weightClass="M,M,L" augmented="1">%SQUADRON%</option>
 			</subforceOption>
-			<subforceOption ifWeightClass="L" ifUnitType="Aero">
+			<subforceOption ifWeightClass="L" ifUnitType="AeroSpaceFighter">
 				<option weightClass="H,L,L" augmented="1">%SQUADRON%</option>
 				<option weightClass="M,L,L" augmented="1">%SQUADRON%</option>
 				<option weightClass="L,L,L" augmented="1">%SQUADRON%</option>
@@ -974,7 +974,7 @@ use of augmented 4 Vee/2 inf lances in independent armor regiments. -->
 		</subforces>
 	</force>
 	
-	<force eschelon="%SQUADRON%" eschName="Flight" ifAugmented="1" ifUnitType="Aero|Conventional Fighter">
+	<force eschelon="%SQUADRON%" eschName="Flight" ifAugmented="1" ifUnitType="AeroSpaceFighter|Conventional Fighter">
 		<co>%MAJOR%</co>
 		
 		<weightClass>
@@ -986,16 +986,16 @@ use of augmented 4 Vee/2 inf lances in independent armor regiments. -->
 		<subforces>
 			<subforce role="command" augmented="1">%FLIGHT%</subforce>
 			
-			<subforceOption ifWeightClass="H" ifUnitType="Aero">
+			<subforceOption ifWeightClass="H" ifUnitType="AeroSpaceFighter">
 				<option weightClass="H,H" augmented="0" weight="2">%SQUADRON%</option>
 				<option weightClass="H,M" augmented="0">%SQUADRON%</option>
 			</subforceOption>
-			<subforceOption ifWeightClass="M" ifUnitType="Aero">
+			<subforceOption ifWeightClass="M" ifUnitType="AeroSpaceFighter">
 				<option weightClass="H,M" augmented="0">%SQUADRON%</option>
 				<option weightClass="M,L" augmented="0">%SQUADRON%</option>
 				<option weightClass="H,L" augmented="0">%SQUADRON%</option>
 			</subforceOption>
-			<subforceOption ifWeightClass="L" ifUnitType="Aero">
+			<subforceOption ifWeightClass="L" ifUnitType="AeroSpaceFighter">
 				<option weightClass="M,L" augmented="0">%SQUADRON%</option>
 				<option weightClass="L,L" augmented="0" weight="2">%SQUADRON%</option>
 			</subforceOption>
@@ -1011,7 +1011,7 @@ use of augmented 4 Vee/2 inf lances in independent armor regiments. -->
 		</attachedForces>
 	</force>
 	
-	<force eschelon="%SQUADRON%" eschName="Squadron" ifAugmented="0" ifUnitType="Aero|Conventional Fighter">
+	<force eschelon="%SQUADRON%" eschName="Squadron" ifAugmented="0" ifUnitType="AeroSpaceFighter|Conventional Fighter">
 		<name>{formation} Squadron</name>
 		<co>%CAPTAIN%</co>
 		
@@ -1031,7 +1031,7 @@ use of augmented 4 Vee/2 inf lances in independent armor regiments. -->
 		</ruleGroup>
 
 		<subforces>
-			<subforceOption ifWeightClass="H" ifUnitType="Aero">
+			<subforceOption ifWeightClass="H" ifUnitType="AeroSpaceFighter">
 				<option weightClass="H,H,H">%FLIGHT%</option>
 				<option weightClass="H,H,M">%FLIGHT%</option>
 				<option weightClass="H,H,L">%FLIGHT%</option>
@@ -1040,7 +1040,7 @@ use of augmented 4 Vee/2 inf lances in independent armor regiments. -->
 				<option weightClass="H,M"
 					augmented="1">%FLIGHT%</option>
 			</subforceOption>
-			<subforceOption ifWeightClass="M" ifUnitType="Aero">
+			<subforceOption ifWeightClass="M" ifUnitType="AeroSpaceFighter">
 				<option weightClass="H,M,M">%FLIGHT%</option>
 				<option weightClass="M,M,M">%FLIGHT%</option>
 				<option weightClass="H,M,L">%FLIGHT%</option>
@@ -1052,7 +1052,7 @@ use of augmented 4 Vee/2 inf lances in independent armor regiments. -->
 				<option weightClass="H,L"
 					augmented="1">%FLIGHT%</option>
 			</subforceOption>
-			<subforceOption ifWeightClass="L" ifUnitType="Aero">
+			<subforceOption ifWeightClass="L" ifUnitType="AeroSpaceFighter">
 				<option weightClass="H,L,L">%FLIGHT%</option>
 				<option weightClass="M,L,L">%FLIGHT%</option>
 				<option weightClass="L,L,L">%FLIGHT%</option>
@@ -1068,7 +1068,7 @@ use of augmented 4 Vee/2 inf lances in independent armor regiments. -->
 		</subforces>
 	</force>
 	
-	<force eschelon="%FLIGHT%" eschName="Triple" ifAugmented="1" ifUnitType="Aero|Conventional Fighter">
+	<force eschelon="%FLIGHT%" eschName="Triple" ifAugmented="1" ifUnitType="AeroSpaceFighter|Conventional Fighter">
 		<name ifRole="command">Command Element</name>
 		<name>Element {cardinal}</name>
 		<co>%LT%</co>
@@ -1084,7 +1084,7 @@ use of augmented 4 Vee/2 inf lances in independent armor regiments. -->
 		</subforces>
 	</force>
 
-	<force eschelon="%FLIGHT%" eschName="Element" ifAugmented="0" ifUnitType="Aero|Conventional Fighter">
+	<force eschelon="%FLIGHT%" eschName="Element" ifAugmented="0" ifUnitType="AeroSpaceFighter|Conventional Fighter">
 		<name>Element {cardinal}</name>
 		<co>%LT%</co>
 		

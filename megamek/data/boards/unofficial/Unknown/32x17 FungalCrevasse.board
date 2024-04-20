@@ -1,4 +1,7 @@
 size 32 17
+tag "Cliffs (Auto)"
+tag "HighHills (Auto)"
+tag "Woods (Auto)"
 hex 0101 0 "" "fungus"
 hex 0201 0 "" "fungus"
 hex 0301 0 "" "fungus"

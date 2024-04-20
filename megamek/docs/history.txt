@@ -1,7 +1,8 @@
 MEGAMEK VERSION HISTORY:
 ----------------
 0.49.20-SNAPSHOT
-+ PR #5281, #5327, #5308, #5336: Code internals: preparatory work for supporting game types such as SBF, code cleanup for string drawing, superclass change for BoardView, Keydispatcher aka MegaMekController simplification
++ PR #5281, #5327, #5308, #5336, #5318: Code internals: preparatory work for supporting game types such as SBF, code cleanup for string drawing, superclass change for BoardView, Keydispatcher aka MegaMekController simplification,
+     moving BoardView shadowmap creation to its own class
 + PR #5295: MM now supports the light conditions "glare" and "solar flare" (TO:AR)
 + PR #5301: Aerospace units now show a much improved flight path indicator when planning their movement
 + PR #5321: The font used to write round reports can now be set in the client settings

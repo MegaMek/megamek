@@ -108,7 +108,7 @@ class TerrainShadowHelper {
         // 1) create or get the hex shadow
         Image hexShadow = createBlurredShadow(boardView.getTilesetManager().getHexMask());
         if (hexShadow == null) {
-            boardView.repaint(1000);
+            boardView.getPanel().repaint(1000);
             return null;
         }
 
@@ -128,7 +128,7 @@ class TerrainShadowHelper {
 
         // Compute shadow angle based on planentary conditions.
         double[] lightDirection;
-        if (conditions.getLight().isDarkerThan(Light.FULL_MOON)) {
+        if (conditions.getLight().isMoonlessOrPitchBack()) {
             lightDirection = new double[]{0, 0};
         } else if (conditions.getLight().isDusk()) {
             // TODO: replace when made user controlled

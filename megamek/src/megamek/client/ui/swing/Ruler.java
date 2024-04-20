@@ -416,7 +416,7 @@ public class Ruler extends JDialog implements BoardViewListener, IPreferenceChan
     }
 
     @Override
-    public void secondLOSHex(BoardViewEvent b, Coords c) {
+    public void secondLOSHex(BoardViewEvent b) {
         //ignored
     }
 

@@ -14,8 +14,6 @@
 
 package megamek.client.event;
 
-import megamek.common.Coords;
-
 /**
  * Classes which implement this interface provide methods that deal with the
  * events that are generated when the BoardView is changed.
@@ -68,10 +66,10 @@ public interface BoardViewListener extends java.util.EventListener {
 
     /**
      * Sent when secondLOS is set.
-     * 
+     *
      * @param b an event
      */
-    public void secondLOSHex(BoardViewEvent b, Coords c);
+    public void secondLOSHex(BoardViewEvent b);
 
     /**
      * Sent when moving units is finished.

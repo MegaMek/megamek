@@ -26,7 +26,7 @@ import java.awt.image.ImageObserver;
  * This class represents the specialized JPanel that paints the contents of the BoardView. For its
  * drawing, it refers back to the BoardView.
  */
-public class BoardViewPanel extends JPanel {
+public class BoardViewPanel extends JPanel implements Scrollable {
 
     private final BoardView boardView;
     private Dimension preferredSize = new Dimension(0, 0);
@@ -65,5 +65,33 @@ public class BoardViewPanel extends JPanel {
         return new Dimension(
                 Math.max(boardView.getBoardSize().width + (2 * BoardView.HEX_W), preferredSize.width),
                 Math.max(boardView.getBoardSize().height + (2 * BoardView.HEX_W), preferredSize.height));
+    }
+
+    @Override
+    public Dimension getPreferredScrollableViewportSize() {
+        return getPreferredSize();
+    }
+
+    @Override
+    public int getScrollableBlockIncrement(Rectangle arg0, int arg1, int arg2) {
+        return 500;
+    }
+
+    @Override
+    public boolean getScrollableTracksViewportHeight() {
+        return false;
+    }
+
+    @Override
+    public boolean getScrollableTracksViewportWidth() {
+        return false;
+    }
+
+    @Override
+    public int getScrollableUnitIncrement(Rectangle arg0, int arg1, int arg2) {
+        if (arg1 == SwingConstants.VERTICAL) {
+            return (int) ((boardView.scale * BoardView.HEX_H) / 2.0);
+        }
+        return (int) ((boardView.scale * BoardView.HEX_W) / 2.0);
     }
 }

@@ -1491,8 +1491,7 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
         }
 
         @Override
-        public void secondLOSHex(BoardViewEvent b, Coords c) {
-            firstLOS = c;
+        public void secondLOSHex(BoardViewEvent b) {
             secondLOS = b.getCoords();
             refreshMap();
         }

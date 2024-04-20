@@ -19,7 +19,6 @@ import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.client.ui.swing.widget.*;
 import megamek.common.Configuration;
-import megamek.common.Coords;
 import megamek.common.event.*;
 import megamek.common.util.Distractable;
 import megamek.common.util.DistractableAdapter;
@@ -166,7 +165,7 @@ public abstract class AbstractPhaseDisplay extends SkinnedJPanel implements
     }
 
     @Override
-    public void secondLOSHex(BoardViewEvent b, Coords c) {
+    public void secondLOSHex(BoardViewEvent b) {
         //noaction default
     }
 

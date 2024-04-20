@@ -763,8 +763,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         try {
             boardPreviewGame.setPhase(GamePhase.LOUNGE);
             previewBV = new BoardView(boardPreviewGame, null, null);
-            previewBV.setDisplayInvalidHexInfo(false);
-            previewBV.setUseLOSTool(false);
+            previewBV.setDisplayInvalidFields(false);
+            previewBV.setUseLosTool(false);
             JButton bpButton = new JButton(Messages.getString("BoardSelectionDialog.ViewGameBoardButton"));
             bpButton.addActionListener(e -> previewGameBoard());
             JPanel bpPanel = new JPanel();
@@ -3590,7 +3590,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
 
     public void killPreviewBV() {
         if (previewBV != null) {
-            previewBV.die();
+            previewBV.dispose();
         }
     }
 }

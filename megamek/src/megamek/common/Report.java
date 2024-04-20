@@ -696,16 +696,16 @@ public class Report implements Serializable {
     }
 
     public static void setupStylesheet(StyleSheet styleSheet) {
-        Font font = UIManager.getFont("Label.font");
+        GUIPreferences GUIP = GUIPreferences.getInstance();
+        Font font = new Font(GUIP.getReportFontType(), Font.PLAIN, UIUtil.FONT_SCALE1);
         int size = UIUtil.scaleForGUI(UIUtil.FONT_SCALE1);
 
-        GUIPreferences guip = GUIPreferences.getInstance();
         styleSheet.addRule("pre { font-family: " + font.getFamily() + "; font-size: " + size + "pt; font-style:normal;}");
-        styleSheet.addRule("a { color: " + hexColor(guip.getReportLinkColor()) + " }");
-        styleSheet.addRule("span.warning { color: " + hexColor(guip.getWarningColor()) + " }");
-        styleSheet.addRule("span.success { color: " + hexColor(guip.getReportSuccessColor()) + " }");
-        styleSheet.addRule("span.miss { color: " + hexColor(guip.getReportMissColor()) + " }");
-        styleSheet.addRule("span.info { color: " + hexColor(guip.getReportInfoColor()) + " }");
+        styleSheet.addRule("a { color: " + hexColor(GUIP.getReportLinkColor()) + " }");
+        styleSheet.addRule("span.warning { color: " + hexColor(GUIP.getWarningColor()) + " }");
+        styleSheet.addRule("span.success { color: " + hexColor(GUIP.getReportSuccessColor()) + " }");
+        styleSheet.addRule("span.miss { color: " + hexColor(GUIP.getReportMissColor()) + " }");
+        styleSheet.addRule("span.info { color: " + hexColor(GUIP.getReportInfoColor()) + " }");
     }
 
     public String span(String name, String text) {

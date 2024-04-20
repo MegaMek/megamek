@@ -415,6 +415,8 @@ public class MiniReportDisplay extends JPanel implements ActionListener, Hyperli
             adaptToGUIScale();
         } else if (e.getName().equals(GUIPreferences.WARNING_COLOR)) {
             adaptToGUIScale();
+        } else if (e.getName().equals(GUIPreferences.MINI_REPORT_FONT_TYPE)) {
+            adaptToGUIScale();
         }
     }
 }

@@ -370,6 +370,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
     private ColourSelectorButton csbReportSuccessColor;
     private ColourSelectorButton csbReportMissColor;
     private ColourSelectorButton csbReportInfoColor;
+    private JComboBox<String> fontTypeChooserReportFont = new JComboBox<>();
     private final JCheckBox showReportSprites = new JCheckBox(Messages.getString("CommonSettingsDialog.showReportSprites"));
 
     private ColourSelectorButton csbUnitOverviewTextShadowColor;
@@ -1340,6 +1341,15 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         row.add(csbReportInfoColor);
         comps.add(row);
 
+        fontTypeChooserReportFont = new JComboBox<>(new Vector<>(FontHandler.getAvailableNonSymbolFonts()));
+        fontTypeChooserReportFont.setSelectedItem(GUIP.getReportFontType());
+
+        JLabel moveFontTypeLabel = new JLabel(Messages.getString("CommonSettingsDialog.reportFontType"));
+        row = new ArrayList<>();
+        row.add(moveFontTypeLabel);
+        row.add(fontTypeChooserReportFont);
+        comps.add(row);
+
         comps.add(checkboxEntry(showReportSprites, null));
         showReportSprites.setSelected(GUIP.getMiniReportShowSprites());
 
@@ -2048,6 +2058,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         csbReportSuccessColor.setColour(GUIP.getReportSuccessColor());
         csbReportMissColor.setColour(GUIP.getReportMissColor());
         csbReportInfoColor.setColour(GUIP.getReportInfoColor());
+        fontTypeChooserReportFont.setSelectedItem(GUIP.getReportFontType());
         showReportSprites.setSelected(GUIP.getMiniReportShowSprites());
 
         csbUnitOverviewTextShadowColor.setColour(GUIP.getUnitOverviewTextShadowColor());
@@ -2524,6 +2535,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         GUIP.setReportSuccessColor(csbReportSuccessColor.getColour());
         GUIP.setReportMissColor(csbReportMissColor.getColour());
         GUIP.setReportrInfoColo(csbReportInfoColor.getColour());
+        GUIP.setReportFontType(fontTypeChooserReportFont.getSelectedItem().toString());
         GUIP.setMiniReportShowSprites(showReportSprites.isSelected());
 
         GUIP.setUnitOverviewTextShadowColor(csbUnitOverviewTextShadowColor.getColour());

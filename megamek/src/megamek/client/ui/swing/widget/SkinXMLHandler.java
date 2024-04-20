@@ -49,7 +49,7 @@ public class SkinXMLHandler {
         StringBuffer sb = new StringBuffer();
         sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
         sb.append("<!--\n");
-        sb.append("  This is the default skin for Megamek\n");
+        sb.append("  This is the a skin for Megamek\n");
         sb.append("\n");
         sb.append("  New skins can be created by specifying UI_Element tags\n");
         sb.append("\n");

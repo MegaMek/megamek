@@ -68,6 +68,8 @@ public class SkinSpecEditor extends JPanel implements ListSelectionListener, Act
 
     private UnitDisplaySpecPanel udEditPanel = new UnitDisplaySpecPanel(this);
 
+    protected static final GUIPreferences GUIP = GUIPreferences.getInstance();
+
     public SkinSpecEditor(SkinEditorMainGUI mainGUI) {
         super(new GridBagLayout());
         this.mainGUI = mainGUI;
@@ -150,7 +152,7 @@ public class SkinSpecEditor extends JPanel implements ListSelectionListener, Act
         c.insets = new Insets(1, 0, 1, 0);
         add(editPanelScroll, c);
         
-        updateSkinCombo(SkinXMLHandler.defaultSkinXML);
+        updateSkinCombo(GUIP.getSkinFile());
         populateSkinSpecComponents();
         setupEditPanel();
         validate();
@@ -275,9 +277,8 @@ public class SkinSpecEditor extends JPanel implements ListSelectionListener, Act
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource().equals(currSkinCombo)) {
-            GUIPreferences gs = GUIPreferences.getInstance();
             String newSkinFile = (String) currSkinCombo.getSelectedItem();
-            String oldSkinFile = gs.getSkinFile();
+            String oldSkinFile = GUIP.getSkinFile();
             if (!oldSkinFile.equals(newSkinFile)) {
                 boolean success = SkinXMLHandler.initSkinXMLHandler(newSkinFile);
                 if (!success) {
@@ -286,7 +287,7 @@ public class SkinSpecEditor extends JPanel implements ListSelectionListener, Act
                     String msg = Messages.getString("CommonSettingsDialog.skinFileFail.msg");
                     JOptionPane.showMessageDialog(this, msg, title, JOptionPane.ERROR_MESSAGE);
                 } else {
-                    gs.setSkinFile(newSkinFile);
+                    GUIP.setSkinFile(newSkinFile);
                 }
                 mainGUI.updateBorder();
                 populateSkinSpecComponents();

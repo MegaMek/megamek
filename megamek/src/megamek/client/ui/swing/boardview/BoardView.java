@@ -4296,10 +4296,6 @@ public class BoardView implements Scrollable, BoardListener, MouseListener,
 
     }
 
-    public Dimension getBoardSize() {
-        return boardSize;
-    }
-
     private static class MovingUnit {
         public Entity entity;
 

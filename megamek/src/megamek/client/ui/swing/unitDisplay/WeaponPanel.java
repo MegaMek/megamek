@@ -2181,7 +2181,8 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         }
 
         // pass all this to the Displays
-        int arc = entity.getWeaponArc(entity.getEquipmentNum(mounted));
+        int weaponId = entity.getEquipmentNum(mounted);
+        int arc = entity.getWeaponArc(weaponId);
         int loc = mounted.getLocation();
 
         if (gui.getCurrentPanel() instanceof FiringDisplay) {
@@ -2189,6 +2190,16 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
             int facing = entity.getFacing();
             if (entity.isSecondaryArcWeapon(entity.getEquipmentNum(mounted))) {
                 facing = entity.getSecondaryFacing();
+            }
+            // If this is mech with turrets, check to see if the weapon is on a turret.
+            if ((entity instanceof Mech) && (entity.getEquipment(weaponId).isMechTurretMounted())) {
+                // facing is currently adjusted for mek toro twist and facing, adjust for turret facing.
+                facing = (mounted.getFacing() + facing) % 6;
+            }
+            // If this is a tank with dual turrets, check to see if the weapon is a second turret.
+            if ((entity instanceof Tank) &&
+                    (entity.getEquipment(weaponId).getLocation() == ((Tank) entity).getLocTurret2())) {
+                    facing = ((Tank) entity).getDualTurretFacing();
             }
             ((FiringDisplay) gui.getCurrentPanel()).setWeaponFieldOfFire(entity, ranges, arc, loc, facing);
         } else if (gui.getCurrentPanel() instanceof TargetingPhaseDisplay) {

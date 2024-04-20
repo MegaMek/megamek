@@ -35,10 +35,10 @@ import megamek.common.options.IBasicOption;
 import megamek.common.options.IOption;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryconditions.Atmosphere;
-import megamek.common.planetaryconditions.Light;
 import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.common.planetaryconditions.Wind;
 import megamek.common.preference.PreferenceManager;
+import megamek.common.service.AutosaveService;
 import megamek.common.util.*;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.verifier.*;
@@ -138,6 +138,8 @@ public class GameManager implements IGameManager {
      * Keeps track of which player made a request to become Game Master.
      */
     private Player playerRequestingGameMaster = null;
+
+    private AutosaveService asService = new AutosaveService();
 
     /**
      * Special packet queue for client feedback requests.
@@ -1081,7 +1083,7 @@ public class GameManager implements IGameManager {
             if (phase.isDeployment()) {
                 PlanetaryConditions conditions = game.getPlanetaryConditions();
                 boolean startSLOn = PreferenceManager.getClientPreferences().getStartSearchlightsOn()
-                        && conditions.getLight().isDarkerThan(Light.DAY);
+                        && conditions.getLight().isDuskOrFullMoonOrMoonlessOrPitchBack();
                 entity.setSearchlightState(startSLOn);
                 entity.setIlluminated(startSLOn);
             }
@@ -1893,6 +1895,7 @@ public class GameManager implements IGameManager {
 
                 if (!game.shouldDeployThisRound()) {
                     incrementAndSendGameRound();
+                    asService.performRollingAutosave(this);
                 }
 
                 // setIneligible(phase);
@@ -2193,6 +2196,7 @@ public class GameManager implements IGameManager {
      * Calculates the initial count and BV for all players, and thus should only be called at the
      * start of a game
      */
+    @Override
     public void calculatePlayerInitialCounts() {
         for (final Enumeration<Player> players = game.getPlayers(); players.hasMoreElements(); ) {
             final Player player = players.nextElement();

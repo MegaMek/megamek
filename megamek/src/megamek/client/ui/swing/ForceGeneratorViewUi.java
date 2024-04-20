@@ -230,7 +230,7 @@ public class ForceGeneratorViewUi implements ActionListener {
         List<Entity> entities = new ArrayList<>(modelChosen.allEntities().size());
         Client c = null;
         if (null != playerName) {
-            c = clientGui.getLocalBots().get(playerName);
+            c = (Client) clientGui.getLocalBots().get(playerName);
         }
         if (null == c) {
             c = clientGui.getClient();

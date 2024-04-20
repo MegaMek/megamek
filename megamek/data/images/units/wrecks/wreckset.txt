@@ -1,7 +1,7 @@
-Credits:
-bh-21
-Santander
-Ploppy
+# Credits:
+# bh-21
+# Santander
+# Ploppy
 
 # The format goes as follows:
 # {chassis/exact} [model] [image filename]
@@ -69,7 +69,7 @@ exact "default_fighter_squadron" "default_naval_wreck.png"
 
 # put custom pictures here:
 
-Vehicles
+# Vehicles
 #chassis "AC-2 Carrier" " .png"
 #chassis "Aikuchi" " .png"
 #chassis "Air Car" " .png"
@@ -358,7 +358,7 @@ chassis "Zhukov Heavy Tank" "Zhukov.png"
 #exact "Hi-Scout Drone (Path Track)" " .png"
 #exact "J. Edgar Light Hover Tank II" " .png"
 
-Mechs
+#Mechs
 #chassis "Adder" "adder.png"
 #chassis "Aerator" " .png"
 #chassis "Akuma" " .png"

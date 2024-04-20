@@ -261,6 +261,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String MINI_REPORT_COLOR_SUCCESS = "MiniReportColorSuccess";
     public static final String MINI_REPORT_COLOR_MISS = "MiniReportColorMiss";
     public static final String MINI_REPORT_COLOR_INFO = "MiniReportColorInfo";
+    public static final String MINI_REPORT_FONT_TYPE = "MiniReportFontType";
     public static final String MINI_ROUND_REPORT_SPRITES = "MiniRoundReportSprites";
 
     public static final String PLAYER_LIST_POS_X = "PlayerListPosX";
@@ -669,6 +670,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         setDefault(MINI_REPORT_COLOR_SUCCESS, new Color(0x008000));
         setDefault(MINI_REPORT_COLOR_MISS, new Color(0x808080));
         setDefault(MINI_REPORT_COLOR_INFO, new Color(0x0000FF));
+        setDefault(MINI_REPORT_FONT_TYPE, "Segoe UI");
         store.setDefault(MINI_ROUND_REPORT_SPRITES, true);
 
         store.setDefault(PLAYER_LIST_ENABLED, true);
@@ -2808,6 +2810,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public Color getReportInfoColor() {
         return getColor(MINI_REPORT_COLOR_INFO);
     }
+  
+    public String getReportFontType() {
+        return getString(MINI_REPORT_FONT_TYPE);
+    }
 
     public int getUnitToolTipSeenByResolution() {
         return getInt(UNIT_TOOLTIP_SEENBYRESOLUTION);
@@ -2928,6 +2934,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setReportrInfoColo(Color color) {
         store.setValue(MINI_REPORT_COLOR_INFO, getColorString(color));
+    }
+      
+    public void setReportFontType(String font) {
+        store.setValue(MINI_REPORT_FONT_TYPE, font);
     }
 
     public Color getPlanetaryConditionsColorTitle() {

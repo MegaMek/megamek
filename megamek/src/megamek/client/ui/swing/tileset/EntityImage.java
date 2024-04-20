@@ -677,7 +677,7 @@ public class EntityImage {
         if (unitElevation != 0) {
             radius = 1;
         }
-        ConvolveOp op = new ConvolveOp(getGaussKernel(2 * radius + 1, sigma), ConvolveOp.EDGE_NO_OP, null);
+        ConvolveOp op = new ConvolveOp(ImageUtil.getGaussKernel(2 * radius + 1, sigma), ConvolveOp.EDGE_NO_OP, null);
 
         // blurring requires a slightly bigger image
         BufferedImage temp = GRAPHICS_CONFIGURATION.createCompatibleImage(
@@ -702,26 +702,6 @@ public class EntityImage {
         gResult.drawImage(image, 0, 0, null);
         gResult.dispose();
         return ImageUtil.createAcceleratedImage(result);
-    }
-
-    public static Kernel getGaussKernel(int W, float sigma) {
-        float[] data = new float[W * W];
-        float mean = W / 2f;
-        float sum = 0;
-        for (int x = 0; x < W; ++x) {
-            for (int y = 0; y < W; ++y) {
-                float value = (float) (Math.exp(-0.5 * (Math.pow((x - mean) / sigma, 2.0) + Math.pow((y - mean) / sigma, 2.0)))
-                                        / (2 * Math.PI * sigma * sigma));
-                data[y * W + x] = value;
-                sum += value;
-            }
-        }
-
-        // Normalize the kernel
-        for (int i = 0; i < W * W; i++) {
-            data[i] /= sum;
-        }
-        return new Kernel(W, W, data);
     }
 
     /** 

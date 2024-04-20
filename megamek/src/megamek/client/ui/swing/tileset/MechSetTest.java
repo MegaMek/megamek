@@ -65,13 +65,13 @@ public class MechSetTest {
         System.out.println();
         System.out.println("Listing Errors for " + filename);
         try (Reader r = new BufferedReader(new FileReader(new MegaMekFile(dir, filename).getFile()))) {
-            StandardTextfileStreamTokenizer tokenizer = new StandardTextfileStreamTokenizer(r);
+            var tokenizer = new StandardTextfileStreamTokenizer(r);
             while (true) {
                 List<String> tokens = tokenizer.getLineTokens();
                 if (tokenizer.isFinished()) {
                     break;
                 } else if (isValidLine(tokens)) {
-                    if (tokens.get(0).equals(StandardTextfileStreamTokenizer.INCLUDE_KEY)) {
+                    if (StandardTextfileStreamTokenizer.isValidIncludeLine(tokens)) {
                         try {
                             testFile(dir, tokens.get(1));
                         } catch (IOException e) {

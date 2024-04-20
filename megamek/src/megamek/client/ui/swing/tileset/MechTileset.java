@@ -367,7 +367,7 @@ public class MechTileset {
                 if (tokenizer.isFinished()) {
                     break;
                 } else if (MechSetTest.isValidLine(tokens)) {
-                    if (tokens.get(0).equals(StandardTextfileStreamTokenizer.INCLUDE_KEY)) {
+                    if (StandardTextfileStreamTokenizer.isValidIncludeLine(tokens)) {
                         try {
                             loadFromFile(tokens.get(1));
                         } catch (IOException e) {

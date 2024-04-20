@@ -14,6 +14,7 @@
  */
 package megamek.client.ui.swing.skinEditor;
 
+import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.widget.SkinSpecification;
@@ -149,7 +150,7 @@ public class SkinSpecEditor extends JPanel implements ListSelectionListener, Act
         c.insets = new Insets(1, 0, 1, 0);
         add(editPanelScroll, c);
         
-        updateSkinCombo();
+        updateSkinCombo(SkinXMLHandler.defaultSkinXML);
         populateSkinSpecComponents();
         setupEditPanel();
         validate();
@@ -183,20 +184,18 @@ public class SkinSpecEditor extends JPanel implements ListSelectionListener, Act
         resetSkinButton.removeActionListener(this);
     }
 
-    private void updateSkinCombo() {
+    private void updateSkinCombo(String selected) {
         removeListeners();
         
         currSkinCombo.removeAllItems();
         String[] xmlFiles = Configuration.skinsDir().list((directory, fileName) -> fileName.endsWith(".xml"));
         for (String file : xmlFiles) {
-            if (SkinXMLHandler.validSkinSpecFile(Configuration.skinsDir() + "\\" + file)) {
+            if (SkinXMLHandler.validSkinSpecFile(Configuration.skinsDir() + "/" + file)) {
                 currSkinCombo.addItem(file);
             }
         }
         // Select the default file first
-        currSkinCombo.setSelectedItem(SkinXMLHandler.defaultSkinXML);
-        // If this select fails, the default skin will be selected
-        currSkinCombo.setSelectedItem(GUIPreferences.getInstance().getSkinFile());
+        currSkinCombo.setSelectedItem(selected);
         
         addListeners();
     }
@@ -220,6 +219,7 @@ public class SkinSpecEditor extends JPanel implements ListSelectionListener, Act
      * Update the editing panel with the currently selected SkinSpecification.
      */
     private void setupEditPanel() {
+        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         removeListeners();
         editPanel.removeAll();
         // Nothing to do if we selected nothing...
@@ -258,6 +258,7 @@ public class SkinSpecEditor extends JPanel implements ListSelectionListener, Act
         
         revalidate();
         addListeners();
+        setCursor(Cursor.getDefaultCursor());
     }
 
     @Override
@@ -298,10 +299,11 @@ public class SkinSpecEditor extends JPanel implements ListSelectionListener, Act
             setupEditPanel();
         } else if (e.getSource().equals(saveSkinButton)) {
             saveSkinButton.setEnabled(false);
-            String currComp = skinSpecCompList.getSelectedValue().getComp();
-            SkinSpecification skinSpec = SkinXMLHandler.getSkin(currComp);
+            String file = saveDialog();
+            SkinXMLHandler.writeSkinToFile(file);
+            updateSkinCombo(file);
+            SkinSpecification skinSpec = SkinXMLHandler.getSkin(file);
             skinEditPanel.updateSkinSpec(skinSpec, enableBorders.isSelected());
-            SkinXMLHandler.writeSkinToFile((String) currSkinCombo.getSelectedItem());
             mainGUI.updateBorder();
         } else if (e.getSource().equals(addCompButton)) {
             ArrayList<UIComponents> newComps = new ArrayList<>();
@@ -336,6 +338,22 @@ public class SkinSpecEditor extends JPanel implements ListSelectionListener, Act
                 notifySkinChanges(true);
             }
         }
+    }
+
+    private String saveDialog() {
+        JFileChooser fc = new JFileChooser(Configuration.skinsDir());
+        fc.setDialogTitle(Messages.getString("ClientGUI.FileSaveDialog.title"));
+        String file = "";
+
+        int returnVal = fc.showSaveDialog(mainGUI);
+        if ((returnVal != JFileChooser.APPROVE_OPTION) || (fc.getSelectedFile() == null)) {
+            // I want a file, y'know!
+            return file;
+        }
+        if (fc.getSelectedFile() != null) {
+             file = fc.getSelectedFile().getName();
+        }
+        return file;
     }
 
     /**

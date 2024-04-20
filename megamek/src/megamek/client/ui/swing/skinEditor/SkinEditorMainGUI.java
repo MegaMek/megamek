@@ -15,18 +15,10 @@
 package megamek.client.ui.swing.skinEditor;
 
 import megamek.client.TimerSingleton;
-import megamek.client.event.BoardViewEvent;
-import megamek.client.event.BoardViewListener;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.*;
-import megamek.client.ui.swing.boardview.BoardView;
-import megamek.client.ui.swing.lobby.ChatLounge;
-import megamek.client.ui.swing.unitDisplay.UnitDisplay;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.*;
-import megamek.common.enums.GamePhase;
-import megamek.common.icons.Camouflage;
-import megamek.common.util.Distractable;
 import megamek.common.util.fileUtils.MegaMekFile;
 import org.apache.logging.log4j.LogManager;
 
@@ -34,8 +26,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 
 public class SkinEditorMainGUI extends JPanel implements WindowListener {
@@ -200,44 +190,6 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener {
             frame.requestFocus();
         }
     }
-
-
-    /**
-     * Pops up a dialog box showing an alert
-     */
-    public void doAlertDialog(String title, String message) {
-        JTextPane textArea = new JTextPane();
-        Report.setupStylesheet(textArea);
-
-        textArea.setEditable(false);
-        JScrollPane scrollPane = new JScrollPane(textArea,
-                ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
-                ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        textArea.setText("<pre>" + message + "</pre>");
-        scrollPane.setPreferredSize(new Dimension(
-                (int) (getSize().getWidth() / 1.5), (int) (getSize()
-                        .getHeight() / 1.5)));
-        JOptionPane.showMessageDialog(frame, scrollPane, title,
-                JOptionPane.ERROR_MESSAGE);
-    }
-
-    /**
-     * Pops up a dialog box asking a yes/no question
-     *
-     * @param title
-     *            the <code>String</code> title of the dialog box.
-     * @param question
-     *            the <code>String</code> question that has a "Yes" or "No"
-     *            answer. The question will be split across multiple line on the
-     *            '\n' characters.
-     * @return <code>true</code> if yes
-     */
-    public boolean doYesNoDialog(String title, String question) {
-        ConfirmDialog confirm = new ConfirmDialog(frame, title, question);
-        confirm.setVisible(true);
-        return confirm.getAnswer();
-    }
-
 
     //
     // WindowListener

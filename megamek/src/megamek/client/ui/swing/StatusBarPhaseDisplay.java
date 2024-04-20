@@ -281,6 +281,7 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
         adaptToGUIScale();
     }
 
+    @Override
     public boolean shouldReceiveKeyCommands() {
         return clientgui.getClient().isMyTurn()
                 && !clientgui.getBoardView().getChatterBoxActive()

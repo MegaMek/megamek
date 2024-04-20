@@ -729,8 +729,8 @@ public class BoardView implements Scrollable, BoardListener, MouseListener,
     public boolean shouldReceiveKeyCommands() {
         return !getChatterBoxActive()
                 && boardPanel.isVisible()
-                & !game.getPhase().isLounge()
-                & !shouldIgnoreKeys;
+                && !game.getPhase().isLounge()
+                && !shouldIgnoreKeys;
     }
 
     protected final RedrawWorker redrawWorker = new RedrawWorker();

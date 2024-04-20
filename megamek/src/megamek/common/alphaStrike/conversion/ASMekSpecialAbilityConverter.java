@@ -66,7 +66,7 @@ public class ASMekSpecialAbilityConverter extends ASSpecialAbilityConverter {
         }
 
         if (mek.isIndustrial()) {
-            if (mek.getCockpitType() == Mech.COCKPIT_STANDARD) {
+            if (mek.hasAdvancedFireControl()) {
                 assign(cockpitName, AFC);
             } else {
                 assign(cockpitName, BFC);

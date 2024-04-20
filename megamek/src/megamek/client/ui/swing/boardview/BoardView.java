@@ -46,7 +46,6 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.pathfinder.BoardClusterTracker;
 import megamek.common.pathfinder.BoardClusterTracker.BoardCluster;
 import megamek.common.planetaryconditions.IlluminationLevel;
-import megamek.common.planetaryconditions.Light;
 import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.common.preference.ClientPreferences;
 import megamek.common.preference.IPreferenceChangeListener;
@@ -194,6 +193,7 @@ public class BoardView implements Scrollable, BoardListener, MouseListener,
 
     // sprite for current movement
     ArrayList<StepSprite> pathSprites = new ArrayList<>();
+    ArrayList<FlightPathIndicatorSprite> fpiSprites = new ArrayList<FlightPathIndicatorSprite>();
 
     private ArrayList<Coords> strafingCoords = new ArrayList<>(5);
 
@@ -1191,6 +1191,9 @@ public class BoardView implements Scrollable, BoardListener, MouseListener,
         // draw movement, if valid
         drawSprites(g, pathSprites);
 
+        // draw flight path indicators
+        drawSprites(g, fpiSprites);
+
         // draw firing solution sprites, but only during the firing phase
         if (game.getPhase().isFiring() || game.getPhase().isOffboard()) {
             drawSprites(g, firingSprites);
@@ -1463,7 +1466,7 @@ public class BoardView implements Scrollable, BoardListener, MouseListener,
 
         // Compute shadow angle based on planentary conditions.
         double[] lightDirection = {-19, 7};
-        if (conditions.getLight().isDarkerThan(Light.FULL_MOON)) {
+        if (conditions.getLight().isMoonlessOrPitchBack()) {
             lightDirection = new double[]{0, 0};
         } else if (conditions.getLight().isDusk()) {
             // TODO: replace when made user controlled
@@ -2284,6 +2287,9 @@ public class BoardView implements Scrollable, BoardListener, MouseListener,
             // draw movement, if valid
             drawSprites(boardGraph, pathSprites);
 
+            // draw flight path indicators
+            drawSprites(boardGraph, fpiSprites);
+
             // draw firing solution sprites, but only during the firing phase
             if (game.getPhase().isFiring() || game.getPhase().isOffboard()) {
                 drawSprites(boardGraph, firingSprites);
@@ -2658,7 +2664,7 @@ public class BoardView implements Scrollable, BoardListener, MouseListener,
         // Darken the hex for nighttime, if applicable
         if (GUIP.getDarkenMapAtNight()
                 && IlluminationLevel.determineIlluminationLevel(game, c).isNone()
-                && conditions.getLight().isDarkerThan(Light.DAY)) {
+                && conditions.getLight().isDuskOrFullMoonOrMoonlessOrPitchBack()) {
             for (int x = 0; x < hexImage.getWidth(); ++x) {
                 for (int y = 0; y < hexImage.getHeight(); ++y) {
                     hexImage.setRGB(x, y, getNightDarkenedColor(hexImage.getRGB(x, y)));
@@ -2874,7 +2880,7 @@ public class BoardView implements Scrollable, BoardListener, MouseListener,
                 PlanetaryConditions conditions = game.getPlanetaryConditions();
                 if (GUIP.getDarkenMapAtNight()
                         && IlluminationLevel.determineIlluminationLevel(game, c).isNone()
-                        && conditions.getLight().isDarkerThan(Light.DAY)) {
+                        && conditions.getLight().isDuskOrFullMoonOrMoonlessOrPitchBack()) {
                     for (int x = 0; x < scaledImage.getWidth(null); ++x) {
                         for (int y = 0; y < scaledImage.getHeight(); ++y) {
                             scaledImage.setRGB(x, y, getNightDarkenedColor(scaledImage.getRGB(x, y)));
@@ -3870,7 +3876,52 @@ public class BoardView implements Scrollable, BoardListener, MouseListener,
             pathSprites.add(new StepSprite(this, step, md.isEndStep(step)));
             previousStep = step;
         }
+
+        displayFlightPathIndicator(md);
         boardPanel.repaint(100);
+    }
+
+    /**
+     * Add Aerospace ground map flight path indicators on the last step based on how much
+     * aerodyne movement is left.  This will add sprites along the forward path for the
+     * remaining velocity and indicate what point along it's forward path the unit can turn.
+     *
+     * @param md - Current MovePath that represents the current units movement state
+     */
+    private void displayFlightPathIndicator(MovePath md) {
+        // Don't attempt displaying Flight Path Indicators if using advanced aero movement.
+        if (this.game.useVectorMove()) {
+            return;
+        }
+
+        // Don't calculate any kind of flight path indicators if the move is not legal.
+        if (md.getLastStepMovementType() == EntityMovementType.MOVE_ILLEGAL) {
+            return;
+        }
+
+        // If the unit has remaining aerodyne velocity display the flight path indicators for remaining velocity.
+        if ((md.getFinalVelocityLeft() > 0) && !md.nextForwardStepOffBoard()) {
+            List<MoveStep> fpiSteps = new Vector<MoveStep>();
+
+            // Cloning the current movement path because we don't want to change it's state.
+            MovePath fpiPath = md.clone();
+
+            // While velocity remains, add a forward step to the cloned movement path.
+            while (fpiPath.getFinalVelocityLeft() > 0) {
+                fpiPath.addStep(MoveStepType.FORWARDS);
+                fpiSteps.add(fpiPath.getLastStep());
+
+                // short circuit the flight path indicator if we are off the board.
+                if (fpiPath.nextForwardStepOffBoard()) {
+                    break;
+                }
+            }
+
+            // For each hex in the entities forward trajectory, add a flight turn indicator sprite.
+            for (MoveStep ms : fpiSteps) {
+                fpiSprites.add(new FlightPathIndicatorSprite(this, ms.getPosition(), ms, fpiPath.isEndStep(ms)));
+            }
+        }
     }
 
     /**
@@ -3878,6 +3929,7 @@ public class BoardView implements Scrollable, BoardListener, MouseListener,
      */
     public void clearMovementData() {
         pathSprites = new ArrayList<>();
+        fpiSprites = new ArrayList<>();
         movementTarget = null;
         checkFoVHexImageCacheClear();
         boardPanel.repaint();
@@ -5166,6 +5218,7 @@ public class BoardView implements Scrollable, BoardListener, MouseListener,
 
     void clearSprites() {
         pathSprites.clear();
+        fpiSprites.clear();
         firingSprites.clear();
         attackSprites.clear();
         c3Sprites.clear();
@@ -6066,8 +6119,13 @@ public class BoardView implements Scrollable, BoardListener, MouseListener,
 
         updateFontSizes();
         updateBoard();
+
         for (StepSprite sprite : pathSprites) {
             sprite.refreshZoomLevel();
+        }
+
+        for (FlightPathIndicatorSprite sprite : fpiSprites) {
+            sprite.prepare();
         }
 
         for (FiringSolutionSprite sprite : firingSprites) {
@@ -6532,7 +6590,7 @@ public class BoardView implements Scrollable, BoardListener, MouseListener,
 
         minSensorRange = 0;
 
-        if (game.getPlanetaryConditions().getLight().isDarkerThan(Light.DAY)) {
+        if (game.getPlanetaryConditions().getLight().isDuskOrFullMoonOrMoonlessOrPitchBack()) {
             maxSensorRange = Compute.getMaxVisualRange(entity, true);
         } else {
             maxSensorRange = 0;

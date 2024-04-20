@@ -572,6 +572,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                     public void performAction() {
                         clear();
                         computeMovementEnvelope(ce());
+                        updateMove();
                     }
                 });
 
@@ -806,6 +807,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         }
         clientgui.getBoardView().clearFieldOfFire();
         computeMovementEnvelope(ce);
+        updateMove();
         computeCFWarningHexes(ce);
     }
 
@@ -1360,13 +1362,9 @@ public class MovementDisplay extends ActionPhaseDisplay {
         clientgui.getBoardView().setSensorRange(ce, cmd.getFinalCoords());
 
         // set to "walk," or the equivalent
-        if (gear != MovementDisplay.GEAR_JUMP) {
-            gear = MovementDisplay.GEAR_LAND;
-            Color walkColor = GUIP.getMoveDefaultColor();
-            clientgui.getBoardView().setHighlightColor(walkColor);
-        } else if (!cmd.isJumping()) {
-            addStepToMovePath(MoveStepType.START_JUMP);
-        }
+        gear = MovementDisplay.GEAR_LAND;
+        Color walkColor = GUIP.getMoveDefaultColor();
+        clientgui.getBoardView().setHighlightColor(walkColor);
 
         // update some GUI elements
         clientgui.getBoardView().clearMovementData();
@@ -2347,7 +2345,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         if (ce == null) {
             return;
         }
-        boolean isNight = clientgui.getClient().getGame().getPlanetaryConditions().getLight().isDarkerThan(Light.DAY);
+        boolean isNight = clientgui.getClient().getGame().getPlanetaryConditions().getLight().isDuskOrFullMoonOrMoonlessOrPitchBack();
         setSearchlightEnabled(isNight && ce.hasSearchlight() && !cmd.contains(MoveStepType.SEARCHLIGHT),
                 ce.isUsingSearchlight());
     }
@@ -2782,9 +2780,13 @@ public class MovementDisplay extends ActionPhaseDisplay {
     }
 
     private void updateConvertModeButton() {
-        if (cmd.length() > 0 && cmd.getLastStep().getType() != MoveStepType.CONVERT_MODE) {
-            setModeConvertEnabled(false);
-            return;
+        // Issue #5280 NPE - make sure the move path is valid and the last step isn't null.
+        // MovePath::getLastStep() can return null.
+        if ((cmd != null) && (cmd.getLastStep() != null)) {
+            if (cmd.length() > 0 && cmd.getLastStep().getType() != MoveStepType.CONVERT_MODE) {
+                setModeConvertEnabled(false);
+                return;
+            }
         }
 
         final Entity ce = ce();
@@ -4572,6 +4574,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         // Refresh the new velocity envelope on the map.
         try {
             computeMovementEnvelope(ae);
+            updateMove();
         } catch (Exception e) {
             LogManager.getLogger().error("An error occured trying to compute the move envelope for an Aero.");
         } finally {
@@ -4652,6 +4655,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         } else if (actionCmd.equals(MoveCommand.MOVE_CANCEL.getCmd())) {
             clear();
             computeMovementEnvelope(ce);
+            updateMove();
         } else if (ev.getSource().equals(getBtn(MoveCommand.MOVE_MORE))) {
             currentButtonGroup++;
             currentButtonGroup %= numButtonGroups;

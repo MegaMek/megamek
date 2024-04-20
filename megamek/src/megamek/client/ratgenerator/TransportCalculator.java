@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package megamek.client.ratgenerator;
 
@@ -28,7 +28,7 @@ import megamek.common.loaders.EntityLoadingException;
 
 /**
  * Generates dropships and jumpships to fulfill transport requirements for a unit.
- * 
+ *
  * @author Neoancient
  *
  */
@@ -55,7 +55,7 @@ public class TransportCalculator {
 
     /**
      * Determines number of each type of unit based on transport requirements.
-     * 
+     *
      * @return The number of units of each type mapped to its UnitType.
      *         UnitType.VTOL is used for light vehicle bays and UnitType.NAVAL for superheavy vehicles.
      */
@@ -87,7 +87,7 @@ public class TransportCalculator {
             } else if (en.hasETypeFlag(Entity.ETYPE_SMALL_CRAFT)) {
                 unitCounts.merge(UnitType.SMALL_CRAFT, 1, Integer::sum);
             } else if (en.isFighter()) {
-                unitCounts.merge(UnitType.AERO, 1, Integer::sum);
+                unitCounts.merge(UnitType.AEROSPACEFIGHTER, 1, Integer::sum);
             }
         }
         return unitCounts;
@@ -95,7 +95,7 @@ public class TransportCalculator {
 
     /**
      * Generates dropships to provide enough capacity to transport the given ratio of the formation.
-     * 
+     *
      * @param ratio            The ratio of dropships to generate to the total needs of the unit
      * @return                 A list of generated dropships
      */
@@ -118,7 +118,7 @@ public class TransportCalculator {
                     break; // Could not find any transport for the unit type; skip
                 }
                 bayTypeCache.get(dropship).forEach((k, v) -> {
-                    currentCapacity.merge(k, v, Integer::sum); 
+                    currentCapacity.merge(k, v, Integer::sum);
                 });
                 retVal.add(dropship);
             }
@@ -128,7 +128,7 @@ public class TransportCalculator {
 
     /**
      * Generates jumpships to provide enough docking collars to transport the given ratio of dropships.
-     * 
+     *
      * @param ratio            The ratio of jumpships to generate to the total needs of the unit
      * @param transportCollars The number of dropships generated for transport
      * @return                 A list of generated jumpships
@@ -157,7 +157,7 @@ public class TransportCalculator {
 
     /**
      * Determines whether a potential transport has capacity for the type of unit.
-     * 
+     *
      * @param ms        A potential tranporting unit
      * @param unitType  The unit to be carried
      * @return          True if the unit can be carried by the transporting unit.
@@ -184,7 +184,7 @@ public class TransportCalculator {
 
     /**
      * Loads the entity, counts the unit type transport capacity, and adds to the cache.
-     * 
+     *
      * @param ms  The unit to load
      * @return    true if the Entity can be loaded and counted, false if there was an EntityLoadingException
      */
@@ -200,7 +200,7 @@ public class TransportCalculator {
 
     /**
      * Counts the unit type transport capacity, and adds to the cache.
-     * 
+     *
      * @param entity  The transporting unit
      * @return        true if the Entity can be loaded and counted, false if there was an EntityLoadingException
      */
@@ -222,7 +222,7 @@ public class TransportCalculator {
             } else if (bay instanceof InfantryBay) {
                 bayCount.merge(UnitType.BATTLE_ARMOR, (int) bay.getCapacity(), Integer::sum);
             } else if (bay instanceof ASFBay) {
-                bayCount.merge(UnitType.AERO, (int) bay.getCapacity(), Integer::sum);
+                bayCount.merge(UnitType.AEROSPACEFIGHTER, (int) bay.getCapacity(), Integer::sum);
             } else if (bay instanceof SmallCraftBay) {
                 bayCount.merge(UnitType.SMALL_CRAFT, (int) bay.getCapacity(), Integer::sum);
             }
@@ -232,7 +232,7 @@ public class TransportCalculator {
 
     /**
      * Loads the Entity and counts the number of docking hardpoints.
-     * 
+     *
      * @param ms The unit to load
      * @return   The number of docking hardpoints on the unit.
      */

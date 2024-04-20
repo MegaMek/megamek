@@ -10,14 +10,14 @@
 	
 	<toc>
 		<unitType>
-			<option ifDateBetween="3060,">null,Mek,ProtoMek,Tank,VTOL,Infantry,BattleArmor,Aero,Conventional Fighter</option>
-			<option ifDateBetween="2870,3059">null,Mek,Tank,VTOL,Infantry,BattleArmor,Aero,Conventional Fighter</option>
-			<option ifDateBetween=",2869">null,Mek,Tank,VTOL,Infantry,Aero,Conventional Fighter</option>
+			<option ifDateBetween="3060,">null,Mek,ProtoMek,Tank,VTOL,Infantry,BattleArmor,AeroSpaceFighter,Conventional Fighter</option>
+			<option ifDateBetween="2870,3059">null,Mek,Tank,VTOL,Infantry,BattleArmor,AeroSpaceFighter,Conventional Fighter</option>
+			<option ifDateBetween=",2869">null,Mek,Tank,VTOL,Infantry,AeroSpaceFighter,Conventional Fighter</option>
 		</unitType>
 		
 		<eschelon>
 			<option ifUnitType="">%GALAXY%,%CLUSTER%</option>
-			<option ifUnitType="Mek|Aero" ifDateBetween="2870,">%TRINARY%^,%TRINARY%,%BINARY%^,%BINARY%,%STAR%^,%STAR%</option>
+			<option ifUnitType="Mek|AeroSpaceFighter" ifDateBetween="2870,">%TRINARY%^,%TRINARY%,%BINARY%^,%BINARY%,%STAR%^,%STAR%</option>
 			<option>%TRINARY%,%BINARY%,%STAR%</option>
 		</eschelon>
 		
@@ -47,7 +47,7 @@
 					faction="CFM.P">%CLUSTER%</option>
 			</subforceOption>
 			<subforce num="1" rating="FL" faction="CFM.BG"
-				unitType="Aero">%CLUSTER%</subforce>
+				unitType="AeroSpaceFighter">%CLUSTER%</subforce>
 			<subforce num="1" rating="SL"
 				faction="CFM.BG">%CLUSTER%</subforce>
 			<subforce num="1" rating="SL" flags="binary"

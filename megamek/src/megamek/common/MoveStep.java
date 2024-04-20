@@ -23,7 +23,6 @@ import megamek.common.enums.MPBoosters;
 import megamek.common.options.OptionsConstants;
 import megamek.common.pathfinder.CachedEntityState;
 import megamek.common.planetaryconditions.Atmosphere;
-import megamek.common.planetaryconditions.Light;
 import megamek.common.planetaryconditions.PlanetaryConditions;
 import org.apache.logging.log4j.LogManager;
 
@@ -3008,11 +3007,16 @@ public class MoveStep implements Serializable {
                 default:
             }
 
-            // Light
+            // Light TO:AR 6th ed. p. 34
             if (!entity.isNightwalker()) {
                 switch (conditions.getLight()) {
                     case FULL_MOON:
                         if (!isLightSpecialist && !en.isUsingSearchlight()) {
+                            mp += 1;
+                        }
+                        break;
+                    case GLARE:
+                        if (!isLightSpecialist) {
                             mp += 1;
                         }
                         break;
@@ -3021,6 +3025,13 @@ public class MoveStep implements Serializable {
                             break;
                         }
 
+                        if (!isLightSpecialist) {
+                            mp += 2;
+                        } else {
+                            mp += 1;
+                        }
+                        break;
+                    case SOLAR_FLARE:
                         if (!isLightSpecialist) {
                             mp += 2;
                         } else {
@@ -3036,7 +3047,7 @@ public class MoveStep implements Serializable {
                         break;
                     default:
                 }
-            } else if (conditions.getLight().isDarkerThan(Light.DUSK)) {
+            } else if (conditions.getLight().isFullMoonOrGlareOrMoonlessOrSolarFlareOrPitchBack()) {
                 setRunProhibited(true);
             }
         }

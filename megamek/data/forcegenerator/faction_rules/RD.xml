@@ -34,7 +34,7 @@
 			<subforce rating="SL"
 				name="Rasalhague Galaxy">%GALAXY%</subforce>
 			<subforce rating="SL"
-			    unitType="Aero"
+			    unitType="AeroSpaceFighter"
 				name="Valkyrie Galaxy">%GALAXY%</subforce>
 			<subforce rating="SL" faction="FRR" weightClass="H"
 				name="Tundra Galaxy">%GALAXY%</subforce>

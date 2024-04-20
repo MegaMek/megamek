@@ -17,14 +17,14 @@ that all infantry units are BattleArmor. -->
 
 	<toc>
 		<unitType>
-			<option>null,Mek,Tank,VTOL,BattleArmor,Aero,Conventional Fighter</option>
+			<option>null,Mek,Tank,VTOL,BattleArmor,AeroSpaceFighter,Conventional Fighter</option>
 		</unitType>
 		
 		<eschelon>
 			<option ifUnitType="">%REGIMENT%,%BATTALION%</option>
 			<option ifUnitType="Mek|Tank|VTOL">%BATTALION%,%COMPANY%,%LANCE%</option>
 			<option ifUnitType="BattleArmor">%BATTALION%,%COMPANY%,%PLATOON%</option>
-			<option ifUnitType="Aero|Conventional Fighter">%WING%,%SQUADRON%,%FLIGHT%</option>
+			<option ifUnitType="AeroSpaceFighter|Conventional Fighter">%WING%,%SQUADRON%,%FLIGHT%</option>
 		</eschelon>
 		
 		<rating>
@@ -57,7 +57,7 @@ that all infantry units are BattleArmor. -->
 		</subforces>
 		
 		<attachedForces>
-			<subforce unitType="Aero">%WING%</subforce>
+			<subforce unitType="AeroSpaceFighter">%WING%</subforce>
 		</attachedForces>
 	</force>
 	

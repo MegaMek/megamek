@@ -188,7 +188,7 @@ public final class Player extends TurnOrdered {
         this.camouflage = camouflage;
     }
 
-    public void setGame(Game game) {
+    public void setGame(IGame game) {
         this.game = game;
     }
 

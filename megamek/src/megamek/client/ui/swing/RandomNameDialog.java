@@ -25,6 +25,7 @@ import java.util.Vector;
 
 import javax.swing.*;
 
+import megamek.client.AbstractClient;
 import megamek.client.Client;
 import megamek.client.generator.RandomGenderGenerator;
 import megamek.client.generator.RandomNameGenerator;
@@ -111,7 +112,7 @@ public class RandomNameDialog extends JDialog implements ActionListener {
         chPlayer.setEnabled(true);
         chPlayer.addItem(clientName);
 
-        for (Iterator<Client> i = clientgui.getLocalBots().values().iterator(); i.hasNext();) {
+        for (Iterator<AbstractClient> i = clientgui.getLocalBots().values().iterator(); i.hasNext();) {
             chPlayer.addItem(i.next().getName());
         }
         if (chPlayer.getItemCount() == 1) {
@@ -150,7 +151,7 @@ public class RandomNameDialog extends JDialog implements ActionListener {
             Client c = null;
             if (chPlayer.getSelectedIndex() > 0) {
                 String name = (String) chPlayer.getSelectedItem();
-                c = clientgui.getLocalBots().get(name);
+                c = (Client) clientgui.getLocalBots().get(name);
             }
             if (c == null) {
                 c = client;

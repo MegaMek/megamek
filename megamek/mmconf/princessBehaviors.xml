@@ -81,7 +81,7 @@
     <forcedWithdrawal>true</forcedWithdrawal>
     <goHome>false</goHome>
     <autoFlee>false</autoFlee>
-    <fallShameIndex>3</fallShameIndex>
+    <fallShameIndex>5</fallShameIndex>
     <hyperAggressionIndex>9</hyperAggressionIndex>
     <selfPreservationIndex>2</selfPreservationIndex>
     <herdMentalityIndex>7</herdMentalityIndex>
@@ -111,7 +111,7 @@
     <forcedWithdrawal>false</forcedWithdrawal>
     <goHome>false</goHome>
     <autoFlee>false</autoFlee>
-    <fallShameIndex>2</fallShameIndex>
+    <fallShameIndex>5</fallShameIndex>
     <hyperAggressionIndex>10</hyperAggressionIndex>
     <selfPreservationIndex>3</selfPreservationIndex>
     <herdMentalityIndex>8</herdMentalityIndex>
@@ -171,10 +171,10 @@
     <forcedWithdrawal>false</forcedWithdrawal>
     <goHome>false</goHome>
     <autoFlee>false</autoFlee>
-    <fallShameIndex>2</fallShameIndex>
+    <fallShameIndex>5</fallShameIndex>
     <hyperAggressionIndex>5</hyperAggressionIndex>
     <selfPreservationIndex>3</selfPreservationIndex>
-    <herdMentalityIndex>5</herdMentalityIndex>
+    <herdMentalityIndex>8</herdMentalityIndex>
     <braveryIndex>2</braveryIndex>
     <verbosity>WARNING</verbosity>
     <strategicBuildingTargets/>

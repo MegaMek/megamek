@@ -10,16 +10,16 @@
 
 	<toc>
 		<unitType>
-			<option ifDateBetween="3060,">null,Mek,ProtoMek,Tank,VTOL,Infantry,BattleArmor,Aero,Conventional Fighter,Warship,Dropship,Jumpship</option>
-			<option ifDateBetween="2870,3059">null,Mek,Tank,VTOL,Infantry,BattleArmor,Aero,Conventional Fighter,Warship,Dropship,Jumpship</option>
-			<option ifDateBetween=",2869">null,Mek,Tank,VTOL,Infantry,Aero,Conventional Fighter,Warship,Dropship,Jumpship</option>
+			<option ifDateBetween="3060,">null,Mek,ProtoMek,Tank,VTOL,Infantry,BattleArmor,AeroSpaceFighter,Conventional Fighter,Warship,Dropship,Jumpship</option>
+			<option ifDateBetween="2870,3059">null,Mek,Tank,VTOL,Infantry,BattleArmor,AeroSpaceFighter,Conventional Fighter,Warship,Dropship,Jumpship</option>
+			<option ifDateBetween=",2869">null,Mek,Tank,VTOL,Infantry,AeroSpaceFighter,Conventional Fighter,Warship,Dropship,Jumpship</option>
 		</unitType>
 		
 		<eschelon>
 			<option ifUnitType="">%TOUMAN%,%GALAXY%,%CLUSTER%,%TRINARY%</option>
 			<option ifUnitType="Warship">%STAR%</option>
 			<option ifUnitType="Mek" ifDateBetween="2870,">%TRINARY%^,%TRINARY%,%BINARY%^,%BINARY%,%STAR%^,%STAR%</option>
-			<option ifUnitType="Aero">%CLUSTER%,%TRINARY%,%BINARY%,%STAR%</option>
+			<option ifUnitType="AeroSpaceFighter">%CLUSTER%,%TRINARY%,%BINARY%,%STAR%</option>
 			<option>%TRINARY%,%BINARY%,%STAR%</option>
 		</eschelon>
 		
@@ -35,7 +35,7 @@
 		
 		<flags>
 			<option ifEschelon="%GALAXY%">proto:Zeta Galaxy (ProtoMek heavy)</option>
-			<option ifUnitType="!Aero" ifEschelon="%CLUSTER%">phalanx:Phalanx Cluster,stoop:Stoop Cluster,proto:Chausseurs Cluster</option>
+			<option ifUnitType="!AeroSpaceFighter" ifEschelon="%CLUSTER%">phalanx:Phalanx Cluster,stoop:Stoop Cluster,proto:Chausseurs Cluster</option>
 		</flags>
 	</toc>
 	
@@ -103,10 +103,10 @@
 		
 		<subforces ifRating="FL">
 			<subforce num="2">%CLUSTER%</subforce>
-			<subforce unitType="Aero">%CLUSTER%</subforce>
+			<subforce unitType="AeroSpaceFighter">%CLUSTER%</subforce>
 			<subforceOption>
 				<option flags="phalanx">%CLUSTER%</option>
-				<option unitType="Aero">%CLUSTER%</option>
+				<option unitType="AeroSpaceFighter">%CLUSTER%</option>
 				<option flags="stoop">%CLUSTER%</option>
 				<option>%CLUSTER%</option>
 			</subforceOption>
@@ -135,7 +135,7 @@
 	
 	<!-- Wing clusters have four ASF trinaries. -->
 	
-	<force eschelon="%CLUSTER%" eschName="Wing Cluster" ifUnitType="Aero">
+	<force eschelon="%CLUSTER%" eschName="Wing Cluster" ifUnitType="AeroSpaceFighter">
 		<name>Raven Wing</name>
 		<co>%STAR_COL%</co>
 		
@@ -244,27 +244,27 @@
 			</subforceOption>
 
 			<subforceOption ifWeightClass="H|A">
-				<option weightClass="H" unitType="Aero"
+				<option weightClass="H" unitType="AeroSpaceFighter"
 					weight="3">%TRINARY%</option>
-				<option weightClass="M" unitType="Aero"
+				<option weightClass="M" unitType="AeroSpaceFighter"
 					weight="2">%TRINARY%</option>
-				<option weightClass="L" unitType="Aero"
+				<option weightClass="L" unitType="AeroSpaceFighter"
 					weight="1">%TRINARY%</option>
 			</subforceOption>
 			<subforceOption ifWeightClass="M">
-				<option weightClass="H" unitType="Aero"
+				<option weightClass="H" unitType="AeroSpaceFighter"
 					weight="2">%TRINARY%</option>
-				<option weightClass="M" unitType="Aero"
+				<option weightClass="M" unitType="AeroSpaceFighter"
 					weight="3">%TRINARY%</option>
-				<option weightClass="L" unitType="Aero"
+				<option weightClass="L" unitType="AeroSpaceFighter"
 					weight="2">%TRINARY%</option>
 			</subforceOption>
 			<subforceOption ifWeightClass="L">
-				<option weightClass="H" unitType="Aero"
+				<option weightClass="H" unitType="AeroSpaceFighter"
 					weight="1">%TRINARY%</option>
-				<option weightClass="M" unitType="Aero"
+				<option weightClass="M" unitType="AeroSpaceFighter"
 					weight="2">%TRINARY%</option>
-				<option weightClass="L" unitType="Aero"
+				<option weightClass="L" unitType="AeroSpaceFighter"
 					weight="3">%TRINARY%</option>
 			</subforceOption>
 		</subforces>
@@ -397,21 +397,21 @@
 			</subforceOption>
 
 			<subforceOption ifWeightClass="H|A">
-				<option weightClass="H" unitType="Aero"
+				<option weightClass="H" unitType="AeroSpaceFighter"
 					weight="1">%STAR%</option>
-				<option weightClass="M" unitType="Aero"
+				<option weightClass="M" unitType="AeroSpaceFighter"
 					weight="3">%STAR%</option>
-				<option weightClass="L" unitType="Aero"
+				<option weightClass="L" unitType="AeroSpaceFighter"
 					weight="2">%STAR%</option>
 			</subforceOption>
 			<subforceOption ifWeightClass="M">
-				<option weightClass="M" unitType="Aero">%STAR%</option>
-				<option weightClass="L" unitType="Aero">%STAR%</option>
+				<option weightClass="M" unitType="AeroSpaceFighter">%STAR%</option>
+				<option weightClass="L" unitType="AeroSpaceFighter">%STAR%</option>
 			</subforceOption>
 			<subforceOption ifWeightClass="L">
-				<option weightClass="M" unitType="Aero"
+				<option weightClass="M" unitType="AeroSpaceFighter"
 					weight="2">%STAR%</option>
-				<option weightClass="L" unitType="Aero"
+				<option weightClass="L" unitType="AeroSpaceFighter"
 					weight="3">%STAR%</option>
 			</subforceOption>
 		</subforces>
@@ -506,7 +506,7 @@
 		</subforces>
 	</force>
 	
-	<force eschelon="%TRINARY%" eschName="Trinary" ifUnitType="Aero">
+	<force eschelon="%TRINARY%" eschName="Trinary" ifUnitType="AeroSpaceFighter">
 		<name>Trinary [Fighter] {phonetic:distinct}</name>
 		<co>%STAR_CAPTAIN%</co>
 		
@@ -744,7 +744,7 @@
 		</subforces>
 	</force>
 
-	<force eschelon="%STAR%" eschName="Star" ifUnitType="Aero">
+	<force eschelon="%STAR%" eschName="Star" ifUnitType="AeroSpaceFighter">
 		<name>{ordinal} {name:parent}</name>
 		<co>%STAR_CMDR%</co>
 		

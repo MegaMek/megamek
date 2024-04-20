@@ -361,8 +361,7 @@ public class MekBVCalculator extends HeatTrackingBVCalculator {
 
     @Override
     protected void processOffensiveTypeModifier() {
-        if ((mek.getCockpitType() == Mech.COCKPIT_INDUSTRIAL)
-                || (mek.getCockpitType() == Mech.COCKPIT_PRIMITIVE_INDUSTRIAL)) {
+        if (!mek.hasAdvancedFireControl()) {
             // Industrial Meks without AFC multiplay their offensive rating with 0.9
             bvReport.addLine("Fire Control Modifier:",
                     formatForReport(offensiveValue) + " x 0.9",

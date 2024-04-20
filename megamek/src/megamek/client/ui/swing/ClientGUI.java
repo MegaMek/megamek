@@ -524,7 +524,7 @@ public class ClientGUI extends JPanel implements BoardViewListener, IClientGUI,
             client.getGame().addGameListener(gameListener);
             // Create the board viewer.
             bv = new BoardView(client.getGame(), controller, this);
-            bv.setPreferredSize(getSize());
+            bv.getPanel().setPreferredSize(getSize());
             bvc = bv.getComponent();
             bvc.setName(CG_BOARDVIEW);
 
@@ -589,7 +589,7 @@ public class ClientGUI extends JPanel implements BoardViewListener, IClientGUI,
         });
         cb2 = new ChatterBox2(this, bv, controller);
         bv.addDisplayable(cb2);
-        bv.addKeyListener(cb2);
+        bv.getPanel().addKeyListener(cb2);
         uo = new UnitOverview(this);
         offBoardOverlay = new OffBoardTargetOverlay(this);
 
@@ -950,7 +950,7 @@ public class ClientGUI extends JPanel implements BoardViewListener, IClientGUI,
                 break;
             case VIEW_TOGGLE_FIELD_OF_FIRE:
                 GUIP.setShowFieldOfFire(!GUIP.getShowFieldOfFire());
-                bv.repaint();
+                bv.getPanel().repaint();
                 break;
             case VIEW_TOGGLE_SENSOR_RANGE:
                 GUIP.setShowSensorRange(!GUIP.getShowSensorRange());
@@ -2852,7 +2852,7 @@ public class ClientGUI extends JPanel implements BoardViewListener, IClientGUI,
 
     @Override
     public void componentResized(ComponentEvent evt) {
-        bv.setPreferredSize(getSize());
+        bv.getPanel().setPreferredSize(getSize());
     }
 
     @Override

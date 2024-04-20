@@ -281,8 +281,8 @@ class StepSprite extends Sprite {
             drawTMMAndRolls(step, jumped, bv.game, new Point(0, 0), graph, col, true);
         }
 
-        baseScaleImage = bv.createImage(tempImage.getSource());
-        image = bv.getScaledImage(bv.createImage(tempImage.getSource()), false);
+        baseScaleImage = bv.getPanel().createImage(tempImage.getSource());
+        image = bv.getScaledImage(bv.getPanel().createImage(tempImage.getSource()), false);
 
         graph.dispose();
         tempImage.flush();

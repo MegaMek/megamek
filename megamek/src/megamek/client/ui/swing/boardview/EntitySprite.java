@@ -236,8 +236,8 @@ class EntitySprite extends Sprite {
         // and place the label in the direction of the first free hex
         // if none are free, the label will be centered in the current hex
         labelRect = new Rectangle(
-                bv.getFontMetrics(labelFont).stringWidth(getAdjShortName()) + 4,
-                bv.getFontMetrics(labelFont).getAscent() + 2);
+                bv.getPanel().getFontMetrics(labelFont).stringWidth(getAdjShortName()) + 4,
+                bv.getPanel().getFontMetrics(labelFont).getAscent() + 2);
 
         Coords position = entity.getPosition();
         if (bv.game.getEntitiesVector(position.translated("SE"), true).isEmpty()) {
@@ -267,11 +267,11 @@ class EntitySprite extends Sprite {
         int numEntity = bv.game.getEntitiesVector(position, true).size();
 
         if ((indexEntity != -1) && (numEntity <= 4)) {
-            labelRect.y += (bv.getFontMetrics(labelFont).getAscent() + 4) * indexEntity;
+            labelRect.y += (bv.getPanel().getFontMetrics(labelFont).getAscent() + 4) * indexEntity;
         } else if (indexEntity == -1) {
-            labelRect.y += (bv.getFontMetrics(labelFont).getAscent() + 4) * numEntity;
+            labelRect.y += (bv.getPanel().getFontMetrics(labelFont).getAscent() + 4) * numEntity;
         } else {
-            labelRect.y += (bv.getFontMetrics(labelFont).getAscent() + 4);
+            labelRect.y += (bv.getPanel().getFontMetrics(labelFont).getAscent() + 4);
         }
 
         // If the label has changed, force a redraw (necessary

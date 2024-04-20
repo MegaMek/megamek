@@ -393,7 +393,7 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
             public void performAction() {
                 if (!thisKeyPressed) {
                     clientgui.getBoardView().showAllDeployment = !clientgui.getBoardView().showAllDeployment;
-                    clientgui.getBoardView().repaint();
+                    clientgui.getBoardView().getPanel().repaint();
                 }
                 thisKeyPressed = true;
             }

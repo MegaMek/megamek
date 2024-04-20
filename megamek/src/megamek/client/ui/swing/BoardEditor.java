@@ -351,7 +351,7 @@ public class BoardEditor extends JPanel
 
         // Add a mouse listener for mouse button release
         // to handle Undo
-        bv.addMouseListener(new MouseAdapter() {
+        bv.getPanel().addMouseListener(new MouseAdapter() {
             @Override
             public void mouseReleased(MouseEvent e) {
                 if (e.getButton() == MouseEvent.BUTTON1) {

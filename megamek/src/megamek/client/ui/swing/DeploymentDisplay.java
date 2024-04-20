@@ -588,7 +588,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             clientgui.getBoardView().redrawEntity(ce());
             clientgui.getBoardView().setWeaponFieldOfFire(ce().getFacing(), moveto);
             clientgui.getBoardView().setSensorRange(ce(), ce().getPosition());
-            clientgui.getBoardView().repaint();
+            clientgui.getBoardView().getPanel().repaint();
             butDone.setEnabled(true);
         }
         if (!shiftheld) {

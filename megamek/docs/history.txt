@@ -4,7 +4,6 @@ MEGAMEK VERSION HISTORY:
 + PR #5281, #5327, #5308: Code internals: preparatory work for supporting game types such as SBF, code cleanup for string drawing, superclass change for BoardView
 + PR #5295: MM now supports the light conditions "glare" and "solar flare" (TO:AR)
 + PR #5301: Aerospace units now show a much improved flight path indicator when planning their movement
-+ PR #5327, #5308: Internal code cleanup for string drawing, superclass change for BoardView
 + PR #5321: The font used to write round reports can now be set in the client settings
 + Fix #5333: The standard G/P values of 4/5 may now be changed in the unit selector to see different BV/PV values; this functionality must be activated in the client settings
 

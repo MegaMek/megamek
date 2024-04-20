@@ -62,7 +62,6 @@ import javax.swing.plaf.metal.DefaultMetalTheme;
 import javax.swing.plaf.metal.MetalTheme;
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.font.GlyphVector;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
@@ -422,6 +421,9 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
     Coords lastCoords;
 
     private GUIPreferences GUIP = GUIPreferences.getInstance();
+
+    private final StringDrawer invalidString = new StringDrawer(Messages.getString("BoardEditor.INVALID"))
+            .color(GUIP.getWarningColor()).font(FontHandler.getNotoFont().deriveFont(Font.BOLD)).center();
 
     /**
      * Construct a new board view for the specified game
@@ -1321,7 +1323,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
                 p.translate(HEX_W / 2, HEX_H / 2);
 
                 drawHexBorder(g, p, Color.yellow, 0, 3);
-                drawCenteredText(g, Integer.toString(x), p, Color.yellow, false);
+                new StringDrawer(Integer.toString(x)).at(p).center().color(Color.YELLOW).draw(g);
             }
         }
     }
@@ -2707,8 +2709,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
 
         if (getDisplayInvalidHexInfo() && !hex.isValid(null)) {
             Point hexCenter = new Point((int) (HEX_W / 2 * scale), (int) (HEX_H / 2 * scale));
-            drawCenteredText(g, Messages.getString("BoardEditor.INVALID"), hexCenter, Color.RED,
-                    false, new Font(MMConstants.FONT_SANS_SERIF, Font.BOLD, 14));
+            invalidString.at(hexCenter).fontSize(14.0f * scale).outline(Color.WHITE, scale / 2).draw(g);
         }
 
         // write terrain level / water depth / building height
@@ -4069,114 +4070,6 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         moveEnvSprites.clear();
         moveModEnvSprites.clear();
         repaint();
-    }
-
-    /**
-     * Draws the given <code>text</code> in the currently active font of the Graphics <code>g2D</code>
-     * at font size <code>fontSize</code>. The text is centered in both
-     * x and y directions around the position <code>pos</code>. The text is colored with
-     * the given <code>color</code>, made translucent if the flag is set. The outline of the text
-     * will be dark gray.
-     * @param g2D the graphics to draw to, as <code>Graphics2D</code>
-     * @param text the string to write
-     * @param pos the board pixel position
-     * @param fontSize the font size. This will be scaled by the current board zoom
-     * @param color the color to draw the text in
-     * @param translucent (optional)  makes the text translucent if set to true. Defaults to false
-     * @param cOutline (optional) the color of the outline. Defaults to Color.DARK_GRAY
-     */
-    public void drawOutlineText(Graphics2D g2D, String text, Point pos,
-                                float fontSize, Color color, boolean translucent, Color cOutline) {
-        g2D.setFont(g2D.getFont().deriveFont(fontSize));
-        FontMetrics fm = g2D.getFontMetrics(g2D.getFont());
-        // Center the text around pos
-        int cx = pos.x - (fm.stringWidth(text) / 2);
-        int cy = pos.y + (fm.getAscent() - fm.getDescent()) / 2;
-
-        // get text shape and position it
-        GlyphVector gv = g2D.getFont().createGlyphVector(g2D.getFontRenderContext(), text);
-        Shape shape = gv.getOutline();
-        shape = AffineTransform.getTranslateInstance(cx, cy).createTransformedShape(shape);
-
-        // text area fill
-        if (translucent) {
-            color = new Color(color.getRGB() & 0x00FFFFFF | 0xA0000000, true);
-        }
-        g2D.setColor(color);
-        g2D.fill(shape);
-
-        // outline
-        g2D.setStroke(new BasicStroke(0.5f));
-        Color lineColor = cOutline;
-        if (translucent) {
-            lineColor = new Color(lineColor.getRGB() & 0x00FFFFFF | 0xA0000000, true);
-        }
-        g2D.setColor(lineColor);
-        g2D.draw(shape);
-    }
-
-    public void drawOutlineText(Graphics2D g2D, String text, Point pos,
-                                float fontSize, Color color, boolean translucent) {
-        drawOutlineText(g2D, text, pos, fontSize, color, translucent, Color.DARK_GRAY);
-    }
-
-    public void drawOutlineText(Graphics2D g2D, String text, Point pos,
-                                float fontSize, Color color) {
-        drawOutlineText(g2D, text, pos, fontSize, color, false, Color.DARK_GRAY);
-    }
-
-    public void drawTextShadow(Graphics2D g2D, String text, Point pos, Font font) {
-        g2D.setFont(font);
-        // to keep the shadow always 1 px wide,
-        // counteract the current graph scaling
-        double scX = g2D.getTransform().getScaleX();
-        double scY = g2D.getTransform().getScaleY();
-
-        drawCenteredText(g2D, text, (float) pos.x + (1.0f) / (float) scX, (float) pos.y, Color.BLACK, false);
-        drawCenteredText(g2D, text, (float) pos.x - (1.0f) / (float) scX, (float) pos.y, Color.BLACK, false);
-        drawCenteredText(g2D, text, (float) pos.x, (float) pos.y + (1.0f) / (float) scY, Color.BLACK, false);
-        drawCenteredText(g2D, text, (float) pos.x, (float) pos.y - (1.0f) / (float) scY, Color.BLACK, false);
-    }
-
-    public static void drawCenteredText(Graphics2D g2D, String text, Point pos,
-                                        Color color, boolean translucent) {
-        FontMetrics fm = g2D.getFontMetrics(g2D.getFont());
-        // Center the text around pos
-        int cx = pos.x - (fm.stringWidth(text) / 2);
-        int cy = pos.y - fm.getAscent() / 2 - fm.getDescent() / 2 + fm.getAscent();
-
-        if (translucent) {
-            color = new Color(color.getRGB() & 0x00FFFFFF | 0xA0000000, true);
-        }
-        g2D.setColor(color);
-        g2D.drawString(text, cx, cy);
-    }
-
-    // This method is used to draw text shadows even when the g2D is scaled
-    public static void drawCenteredText(Graphics2D g2D, String text, float posx, float posy,
-                                        Color color, boolean translucent) {
-        FontMetrics fm = g2D.getFontMetrics(g2D.getFont());
-        // Center the text around pos
-        float cx = posx - (fm.stringWidth(text) / 2);
-        float cy = posy - fm.getAscent() / 2 - fm.getDescent() / 2 + fm.getAscent();
-
-        if (translucent) {
-            color = new Color(color.getRGB() & 0x00FFFFFF | 0xA0000000, true);
-        }
-        g2D.setColor(color);
-        g2D.drawString(text, cx, cy);
-    }
-
-    public static void drawCenteredText(Graphics2D g2D, String text, Point pos,
-                                        Color color, boolean translucent, Font font) {
-        g2D.setFont(font);
-        drawCenteredText(g2D, text, pos, color, translucent);
-    }
-
-    public static void drawCenteredText(Graphics2D g2D, String text, Point pos,
-                                        Color color, boolean translucent, int fontSize) {
-        g2D.setFont(g2D.getFont().deriveFont(fontSize));
-        drawCenteredText(g2D, text, pos, color, translucent);
     }
 
     public void setLocalPlayer(Player p) {

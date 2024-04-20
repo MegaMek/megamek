@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2023-2024 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -77,6 +77,10 @@ public final class FontHandler {
                 instance.initializeFonts();
             }
         }
+    }
+
+    public static Font getNotoFont() {
+        return new Font("Noto Sans", Font.PLAIN, 14);
     }
 
     private void initializeFonts() {

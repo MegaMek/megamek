@@ -91,6 +91,12 @@ public final class FontHandler {
         return new Font("Material Symbols Rounded", Font.PLAIN, 12);
     }
 
+    /**
+     * @return The Noto Sans font which is included with the distribution and can be safely used everywhere.
+     * It is advertised to have a wide language support.
+     *
+     * @see <a href="https://fonts.google.com/icons">(Google) Material Symbols</a>
+     */
     public static Font getNotoFont() {
         return new Font("Noto Sans", Font.PLAIN, 14);
     }

@@ -745,7 +745,8 @@ Desert Scorpion|Desert Scorpion Light Tank
 Donovan-Miter Magellan Series Four|Magellan Series Four
 Falcon Hover Tank (Standard)|Falcon Hover Tank
 Federated-Boeing Longhaul FB-335|Longhaul Cargo Aircraft FB-335
-Hover Tank (Standard)|LTV-4 Hover Tank
+Hover Tank (Standard)|Hawk Hover Tank (LTV-4)
+LTV-4 Hover Tank|Hawk Hover Tank (LTV-4)
 Iveco Burro Heavy Support Truck|Burro Heavy Support Truck
 Iveco Burro II Super Heavy Cargo Truck|Burro II Super Heavy Cargo Truck
 Kressly Dillinger Police Vehicle|Dillinger Police Vehicle

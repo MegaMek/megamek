@@ -194,6 +194,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
 
     // sprite for current movement
     ArrayList<StepSprite> pathSprites = new ArrayList<>();
+    ArrayList<FlightPathIndicatorSprite> fpiSprites = new ArrayList<FlightPathIndicatorSprite>();
 
     private ArrayList<Coords> strafingCoords = new ArrayList<>(5);
 
@@ -1194,6 +1195,9 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
 
         // draw movement, if valid
         drawSprites(g, pathSprites);
+
+        // draw flight path indicators
+        drawSprites(g, fpiSprites);
 
         // draw firing solution sprites, but only during the firing phase
         if (game.getPhase().isFiring() || game.getPhase().isOffboard()) {
@@ -2287,6 +2291,9 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
 
             // draw movement, if valid
             drawSprites(boardGraph, pathSprites);
+
+            // draw flight path indicators
+            drawSprites(boardGraph, fpiSprites);
 
             // draw firing solution sprites, but only during the firing phase
             if (game.getPhase().isFiring() || game.getPhase().isOffboard()) {
@@ -3874,7 +3881,52 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
             pathSprites.add(new StepSprite(this, step, md.isEndStep(step)));
             previousStep = step;
         }
+
+        displayFlightPathIndicator(md);
         repaint(100);
+    }
+
+    /**
+     * Add Aerospace ground map flight path indicators on the last step based on how much
+     * aerodyne movement is left.  This will add sprites along the forward path for the
+     * remaining velocity and indicate what point along it's forward path the unit can turn.
+     *
+     * @param md - Current MovePath that represents the current units movement state
+     */
+    private void displayFlightPathIndicator(MovePath md) {
+        // Don't attempt displaying Flight Path Indicators if using advanced aero movement.
+        if (this.game.useVectorMove()) {
+            return;
+        }
+
+        // Don't calculate any kind of flight path indicators if the move is not legal.
+        if (md.getLastStepMovementType() == EntityMovementType.MOVE_ILLEGAL) {
+            return;
+        }
+
+        // If the unit has remaining aerodyne velocity display the flight path indicators for remaining velocity.
+        if ((md.getFinalVelocityLeft() > 0) && !md.nextForwardStepOffBoard()) {
+            List<MoveStep> fpiSteps = new Vector<MoveStep>();
+
+            // Cloning the current movement path because we don't want to change it's state.
+            MovePath fpiPath = md.clone();
+
+            // While velocity remains, add a forward step to the cloned movement path.
+            while (fpiPath.getFinalVelocityLeft() > 0) {
+                fpiPath.addStep(MoveStepType.FORWARDS);
+                fpiSteps.add(fpiPath.getLastStep());
+
+                // short circuit the flight path indicator if we are off the board.
+                if (fpiPath.nextForwardStepOffBoard()) {
+                    break;
+                }
+            }
+
+            // For each hex in the entities forward trajectory, add a flight turn indicator sprite.
+            for (MoveStep ms : fpiSteps) {
+                fpiSprites.add(new FlightPathIndicatorSprite(this, ms.getPosition(), ms, fpiPath.isEndStep(ms)));
+            }
+        }
     }
 
     /**
@@ -3882,6 +3934,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
      */
     public void clearMovementData() {
         pathSprites = new ArrayList<>();
+        fpiSprites = new ArrayList<>();
         movementTarget = null;
         checkFoVHexImageCacheClear();
         repaint();
@@ -5170,6 +5223,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
 
     void clearSprites() {
         pathSprites.clear();
+        fpiSprites.clear();
         firingSprites.clear();
         attackSprites.clear();
         c3Sprites.clear();
@@ -6088,8 +6142,13 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
 
         updateFontSizes();
         updateBoard();
+
         for (StepSprite sprite : pathSprites) {
             sprite.refreshZoomLevel();
+        }
+
+        for (FlightPathIndicatorSprite sprite : fpiSprites) {
+            sprite.prepare();
         }
 
         for (FiringSolutionSprite sprite : firingSprites) {

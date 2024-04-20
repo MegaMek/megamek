@@ -7,6 +7,7 @@ MEGAMEK VERSION HISTORY:
 + PR #5301: Aerospace units now show a much improved flight path indicator when planning their movement
 + PR #5321: The font used to write round reports can now be set in the client settings
 + Fix #5333: The standard G/P values of 4/5 may now be changed in the unit selector to see different BV/PV values; this functionality must be activated in the client settings
++ PR #5319: Add Symbol Font Google "Material Symbols"
 
  
 0.49.19 (2024-04-19 2030 UTC)

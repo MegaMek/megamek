@@ -76,6 +76,7 @@ public abstract class AbstractBoardView implements IBoardView {
      *
      * @param listener the BoardViewListener
      */
+    @Override
     public final void addBoardViewListener(BoardViewListener listener) {
         if (!boardViewListeners.contains(listener)) {
             boardViewListeners.add(listener);
@@ -87,6 +88,7 @@ public abstract class AbstractBoardView implements IBoardView {
      *
      * @param listener the BoardViewListener
      */
+    @Override
     public final void removeBoardViewListener(BoardViewListener listener) {
         boardViewListeners.remove(listener);
     }

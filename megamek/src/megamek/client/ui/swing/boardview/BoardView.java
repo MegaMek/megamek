@@ -79,7 +79,7 @@ import static megamek.client.ui.swing.util.UIUtil.uiWhite;
  * Displays the board; lets the user scroll around and select points on it.
  */
 public class BoardView implements Scrollable, BoardListener, MouseListener,
-        MechDisplayListener, IPreferenceChangeListener {
+        MechDisplayListener, IPreferenceChangeListener, KeyBindReceiver {
 
     private static final int BOARD_HEX_CLICK = 1;
     private static final int BOARD_HEX_DOUBLECLICK = 2;

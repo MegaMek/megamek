@@ -364,7 +364,7 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
 
     private void toggleShowDeployment() {
         clientgui.getBoardView().showAllDeployment = !clientgui.getBoardView().showAllDeployment;
-        clientgui.getBoardView().repaint();
+        clientgui.getBoardView().getPanel().repaint();
     }
 
     private void registerKeyCommands() {

@@ -40,7 +40,7 @@ public class MechSetTest {
 
     private MechSetTest() { }
 
-    private static class StringCompCaseInsensitive implements Comparator<String> {
+    public static class StringCompCaseInsensitive implements Comparator<String> {
         @Override
         public int compare(String arg0, String arg1) {
             return arg0.compareToIgnoreCase(arg1);
@@ -70,20 +70,18 @@ public class MechSetTest {
                 List<String> tokens = tokenizer.getLineTokens();
                 if (tokenizer.isFinished()) {
                     break;
-                } else {
-                    if (isValidLine(tokens)) {
-                        if (tokens.get(0).equals(StandardTextfileStreamTokenizer.INCLUDE_KEY)) {
-                            try {
-                                testFile(dir, tokens.get(1));
-                            } catch (IOException e) {
-                                LogManager.getLogger().error("... failed: {}.", e.getMessage(), e);
-                            }
-                        } else {
-                            testImageName(dir, tokens.get(2), tokens.toString());
+                } else if (isValidLine(tokens)) {
+                    if (tokens.get(0).equals(StandardTextfileStreamTokenizer.INCLUDE_KEY)) {
+                        try {
+                            testFile(dir, tokens.get(1));
+                        } catch (IOException e) {
+                            LogManager.getLogger().error("... failed: {}.", e.getMessage(), e);
                         }
                     } else {
-                        System.out.println("Malformed line: " + tokens);
+                        testImageName(dir, tokens.get(2), tokens.toString());
                     }
+                } else {
+                    System.out.println("Malformed line: " + tokens);
                 }
             }
         }

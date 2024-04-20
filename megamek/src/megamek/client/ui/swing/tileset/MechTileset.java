@@ -366,22 +366,20 @@ public class MechTileset {
                 List<String> tokens = tokenizer.getLineTokens();
                 if (tokenizer.isFinished()) {
                     break;
-                } else {
-                    if (MechSetTest.isValidLine(tokens)) {
-                        if (tokens.get(0).equals(StandardTextfileStreamTokenizer.INCLUDE_KEY)) {
-                            try {
-                                loadFromFile(tokens.get(1));
-                            } catch (IOException e) {
-                                LogManager.getLogger().error("... failed: {}.", e.getMessage(), e);
-                            }
-                        } else if (tokens.get(0).equals(CHASSIS_KEY)) {
-                            chassis.put(tokens.get(1).toUpperCase(), new MechEntry(tokens.get(2)));
-                        } else {
-                            exact.put(tokens.get(1).toUpperCase(), new MechEntry(tokens.get(2)));
+                } else if (MechSetTest.isValidLine(tokens)) {
+                    if (tokens.get(0).equals(StandardTextfileStreamTokenizer.INCLUDE_KEY)) {
+                        try {
+                            loadFromFile(tokens.get(1));
+                        } catch (IOException e) {
+                            LogManager.getLogger().error("... failed: {}.", e.getMessage(), e);
                         }
+                    } else if (tokens.get(0).equals(CHASSIS_KEY)) {
+                        chassis.put(tokens.get(1).toUpperCase(), new MechEntry(tokens.get(2)));
                     } else {
-                        LogManager.getLogger().warn("Malformed line in {}: {}", filename, tokens.toString());
+                        exact.put(tokens.get(1).toUpperCase(), new MechEntry(tokens.get(2)));
                     }
+                } else {
+                    LogManager.getLogger().warn("Malformed line in {}: {}", filename, tokens.toString());
                 }
             }
         }

@@ -25,6 +25,11 @@ import java.io.StreamTokenizer;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This is a specialized StreamTokenizer that uses a configuration that many of MM's text files share.
+ * This configuration uses # for comments, double quotes for strings and information
+ * is processed line-wise. This class adds some methods to simplify line parsing.
+ */
 public final class StandardTextfileStreamTokenizer extends StreamTokenizer {
 
     public static final String INCLUDE_KEY = "include";
@@ -32,6 +37,11 @@ public final class StandardTextfileStreamTokenizer extends StreamTokenizer {
 
     private boolean isFinished = false;
 
+    /**
+     * Creates a StreamTokenizer for the given Reader.
+     *
+     * @param r The Reader to tokenize such as a {@link java.io.FileReader}
+     */
     public StandardTextfileStreamTokenizer(Reader r) {
         super(r);
         eolIsSignificant(true);
@@ -40,6 +50,11 @@ public final class StandardTextfileStreamTokenizer extends StreamTokenizer {
         wordChars('_', '_');
     }
 
+    /**
+     * Creates a StreamTokenizer for the given InputStream.
+     *
+     * @param is The InputStream to tokenize
+     */
     public StandardTextfileStreamTokenizer(InputStream is) {
         super(is);
         eolIsSignificant(true);
@@ -48,10 +63,28 @@ public final class StandardTextfileStreamTokenizer extends StreamTokenizer {
         wordChars('_', '_');
     }
 
+    /**
+     * Returns true when the line given as its tokens is a valid line giving an include file. The tokens
+     * should be obtained from {@link #getLineTokens()}. A valid include line has exactly two tokens,
+     * the first being "include" and the second a filename.
+     *
+     * @param lineTokens The tokens representing an input stream line
+     * @return True when the tokens represent a valid include statement
+     * @see #getLineTokens()
+     * @see #INCLUDE_KEY
+     */
     public static boolean isValidIncludeLine(List<String> lineTokens) {
         return (lineTokens.size() == 2) && (lineTokens.get(0).equals(INCLUDE_KEY));
     }
 
+    /**
+     * Returns a list of tokens making up the next available input stream line. Empty lines are skipped,
+     * i.e. the tokens list will normally not be empty. It may be empty when the end of the input stream
+     * is reached. Use {@link #isFinished()} to test if the stream is at its end.
+     *
+     * @return The tokens of the next available line that is not empty
+     * @see #isFinished()
+     */
     public List<String> getLineTokens() throws IOException {
         List<String> tokens = new ArrayList<>();
         while (true) {
@@ -72,6 +105,11 @@ public final class StandardTextfileStreamTokenizer extends StreamTokenizer {
         }
     }
 
+    /**
+     * @return True when the end of the input stream is reached. When this method returns true, the tokens
+     * list returned by {@link #getLineTokens()} is empty. The finished state is updated in
+     * {@link #getLineTokens()}.
+     */
     public boolean isFinished() {
         return isFinished;
     }

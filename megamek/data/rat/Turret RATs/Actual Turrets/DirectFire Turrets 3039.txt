@@ -1,0 +1,19 @@
+DirectFire Turrets 3039
+
+#Sniper Turrets
+Light Sniper Turret (2300), 44
+Medium Sniper Turret (2300), 20
+Heavy Sniper Turret (3039), 12
+Assault Sniper Turret (3039), 4
+
+#Laser Turrets
+Light Laser Turret (2300), 44
+Medium Laser Turret (3039), 20
+Heavy Laser Turret (3039), 12
+Assault Laser Turret (3039), 4
+
+#Shredder Turrets
+Light Shredder Turret (2300), 44
+Medium Shredder Turret (2300), 20
+Heavy Shredder Turret (2300), 12
+Assault Shredder Turret (2300), 4

@@ -1,0 +1,47 @@
+#Guns block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+GunEmplacement
+</UnitType>
+<Name>
+Test Sniper Turret
+</Name>
+<model>
+(3039)
+</model>
+<Year>
+3039
+</Year>
+<Type>
+IS Level 5
+</Type>
+<Turret>
+1
+</Turret>
+<Guns Equipment>
+ISAC2
+ISAC2
+ISAC2
+ISAC2
+ISUltraAC5
+ISUltraAC5
+ISMG
+ISMG
+Searchlight
+ISMG Ammo Full
+ISAC2 Ammo
+ISAC2 Ammo
+ISAC2 Ammo
+ISAC2 Ammo
+ISAC2 Ammo
+ISUltraAC5 Ammo
+ISUltraAC5 Ammo
+ISUltraAC5 Ammo
+ISUltraAC5 Ammo
+</Guns Equipment>

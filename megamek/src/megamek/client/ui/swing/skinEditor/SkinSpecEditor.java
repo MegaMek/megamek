@@ -208,10 +208,11 @@ public class SkinSpecEditor extends JPanel implements ListSelectionListener, Act
                 currSkinCombo.addItem(file);
             }
         }
+
+        addListeners();
+
         // Select the default file first
         currSkinCombo.setSelectedItem(selected);
-        
-        addListeners();
     }
     
     /**

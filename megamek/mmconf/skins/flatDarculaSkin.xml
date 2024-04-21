@@ -16,11 +16,206 @@
 <skin xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="skinSchema.xsd">
 	<UI_Element>
+		<name>defaultButton</name>
+		<no_border>true</no_border>
+		<background_image>FlatDarcula/unit/background.png</background_image>
+		<tile_background>true</tile_background>
+		<font_color>#ffffff</font_color>
+		<show_scroll_bars>false</show_scroll_bars>
+		<should_bold_mouseover>true</should_bold_mouseover>
+	</UI_Element>
+
+	<UI_Element>
+		<name>PhaseDisplayDoneButton</name>
+		<no_border>false</no_border>
+		<!-- Specification of border images -->
+		<border>
+			<!-- Corner images -->
+			<corner_top_left>FlatDarcula/unit/TLC.gif</corner_top_left>
+			<corner_top_right>FlatDarcula/unit/TRC.gif</corner_top_right>
+			<corner_bottom_left>FlatDarcula/unit/BLC.gif</corner_bottom_left>
+			<corner_bottom_right>FlatDarcula/unit/RRC.gif</corner_bottom_right>
+			<!-- Border lines: these images will be tiled -->
+			<edge>
+				<edgeIcon>
+					<icon>FlatDarcula/unit/TE.gif</icon>
+					<tiled>false</tiled>
+				</edgeIcon>
+				<edgeName>top</edgeName>
+			</edge>
+			<edge>
+				<edgeIcon>
+					<icon>FlatDarcula/unit/BE.gif</icon>
+					<tiled>false</tiled>
+				</edgeIcon>
+				<edgeName>bottom</edgeName>
+			</edge>
+			<edge>
+				<edgeIcon>
+					<icon>FlatDarcula/unit/LE.gif</icon>
+					<tiled>false</tiled>
+				</edgeIcon>
+				<edgeName>left</edgeName>
+			</edge>
+			<edge>
+				<edgeIcon>
+					<icon>FlatDarcula/unit/RE.gif</icon>
+					<tiled>false</tiled>
+				</edgeIcon>
+				<edgeName>right</edgeName>
+			</edge>
+		</border>
+		<tile_background>false</tile_background>
+		<font_color>#000000</font_color>
+		<show_scroll_bars>false</show_scroll_bars>
+		<should_bold_mouseover>true</should_bold_mouseover>
+	</UI_Element>
+
+	<UI_Element>
+		<name>PhaseDisplayBorder</name>
+		<no_border>false</no_border>
+		<!-- Specification of border images -->
+		<border>
+			<!-- Corner images -->
+			<corner_top_left>FlatDarcula/unit/TLC.gif</corner_top_left>
+			<corner_top_right>FlatDarcula/unit/TRC.gif</corner_top_right>
+			<corner_bottom_left>FlatDarcula/unit/BLC.gif</corner_bottom_left>
+			<corner_bottom_right>FlatDarcula/unit/RRC.gif</corner_bottom_right>
+			<!-- Border lines: these images will be tiled -->
+			<edge>
+				<edgeIcon>
+					<icon>FlatDarcula/unit/TE.gif</icon>
+					<tiled>false</tiled>
+				</edgeIcon>
+				<edgeName>top</edgeName>
+			</edge>
+			<edge>
+				<edgeIcon>
+					<icon>FlatDarcula/unit/BE.gif</icon>
+					<tiled>false</tiled>
+				</edgeIcon>
+				<edgeName>bottom</edgeName>
+			</edge>
+			<edge>
+				<edgeIcon>
+					<icon>FlatDarcula/unit/LE.gif</icon>
+					<tiled>false</tiled>
+				</edgeIcon>
+				<edgeName>left</edgeName>
+			</edge>
+			<edge>
+				<edgeIcon>
+					<icon>FlatDarcula/unit/RE.gif</icon>
+					<tiled>false</tiled>
+				</edgeIcon>
+				<edgeName>right</edgeName>
+			</edge>
+		</border>
+		<background_image>FlatDarcula/unit/background.png</background_image>
+		<tile_background>true</tile_background>
+		<font_color>#ffffff</font_color>
+		<show_scroll_bars>false</show_scroll_bars>
+		<should_bold_mouseover>true</should_bold_mouseover>
+	</UI_Element>
+
+	<UI_Element>
+		<name>PhaseDisplayButton</name>
+		<no_border>false</no_border>
+		<!-- Specification of border images -->
+		<border>
+			<!-- Corner images -->
+			<corner_top_left>FlatDarcula/unit/TLC.gif</corner_top_left>
+			<corner_top_right>FlatDarcula/unit/TRC.gif</corner_top_right>
+			<corner_bottom_left>FlatDarcula/unit/BLC.gif</corner_bottom_left>
+			<corner_bottom_right>FlatDarcula/unit/RRC.gif</corner_bottom_right>
+			<!-- Border lines: these images will be tiled -->
+			<edge>
+				<edgeIcon>
+					<icon>FlatDarcula/unit/TE.gif</icon>
+					<tiled>false</tiled>
+				</edgeIcon>
+				<edgeName>top</edgeName>
+			</edge>
+			<edge>
+				<edgeIcon>
+					<icon>FlatDarcula/unit/BE.gif</icon>
+					<tiled>false</tiled>
+				</edgeIcon>
+				<edgeName>bottom</edgeName>
+			</edge>
+			<edge>
+				<edgeIcon>
+					<icon>FlatDarcula/unit/LE.gif</icon>
+					<tiled>false</tiled>
+				</edgeIcon>
+				<edgeName>left</edgeName>
+			</edge>
+			<edge>
+				<edgeIcon>
+					<icon>FlatDarcula/unit/RE.gif</icon>
+					<tiled>false</tiled>
+				</edgeIcon>
+				<edgeName>right</edgeName>
+			</edge>
+		</border>
+		<tile_background>false</tile_background>
+		<font_color>#ffffff</font_color>
+		<show_scroll_bars>false</show_scroll_bars>
+		<should_bold_mouseover>true</should_bold_mouseover>
+	</UI_Element>
+
+	<UI_Element>
 		<name>BoardViewBorder</name>
 		<no_border>true</no_border>
 		<background_image>FlatDarcula/board/background.png</background_image>
 		<tile_background>true</tile_background>
 		<font_color>#ffffff</font_color>
+		<show_scroll_bars>false</show_scroll_bars>
+		<should_bold_mouseover>true</should_bold_mouseover>
+	</UI_Element>
+
+	<UI_Element>
+		<name>ChatLoungeDoneButton</name>
+		<no_border>false</no_border>
+		<!-- Specification of border images -->
+		<border>
+			<!-- Corner images -->
+			<corner_top_left>FlatDarcula/unit/TLC.gif</corner_top_left>
+			<corner_top_right>FlatDarcula/unit/TRC.gif</corner_top_right>
+			<corner_bottom_left>FlatDarcula/unit/BLC.gif</corner_bottom_left>
+			<corner_bottom_right>FlatDarcula/unit/RRC.gif</corner_bottom_right>
+			<!-- Border lines: these images will be tiled -->
+			<edge>
+				<edgeIcon>
+					<icon>FlatDarcula/unit/TE.gif</icon>
+					<tiled>false</tiled>
+				</edgeIcon>
+				<edgeName>top</edgeName>
+			</edge>
+			<edge>
+				<edgeIcon>
+					<icon>FlatDarcula/unit/BE.gif</icon>
+					<tiled>false</tiled>
+				</edgeIcon>
+				<edgeName>bottom</edgeName>
+			</edge>
+			<edge>
+				<edgeIcon>
+					<icon>FlatDarcula/unit/LE.gif</icon>
+					<tiled>false</tiled>
+				</edgeIcon>
+				<edgeName>left</edgeName>
+			</edge>
+			<edge>
+				<edgeIcon>
+					<icon>FlatDarcula/unit/RE.gif</icon>
+					<tiled>false</tiled>
+				</edgeIcon>
+				<edgeName>right</edgeName>
+			</edge>
+		</border>
+		<tile_background>false</tile_background>
+		<font_color>#000000</font_color>
 		<show_scroll_bars>false</show_scroll_bars>
 		<should_bold_mouseover>true</should_bold_mouseover>
 	</UI_Element>
@@ -40,15 +235,6 @@
 
 	<UI_Element>
 		<name>defaultElement</name>
-		<no_border>true</no_border>
-		<tile_background>false</tile_background>
-		<font_color>#000000</font_color>
-		<show_scroll_bars>false</show_scroll_bars>
-		<should_bold_mouseover>true</should_bold_mouseover>
-	</UI_Element>
-
-	<UI_Element>
-		<name>defaultButton</name>
 		<no_border>true</no_border>
 		<tile_background>false</tile_background>
 		<font_color>#000000</font_color>

@@ -670,7 +670,9 @@ public class SkinXMLHandler {
         out.write("\t\t<" + NO_BORDER + ">");
         out.write(((Boolean) skinSpec.noBorder).toString());
         out.write("</" + NO_BORDER + ">\n");
-        writeBorder(skinSpec, out);
+        if (!skinSpec.noBorder) {
+            writeBorder(skinSpec, out);
+        }
 
         // Write background
         for (String bgImg : skinSpec.backgrounds) {

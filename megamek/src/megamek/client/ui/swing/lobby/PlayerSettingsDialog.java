@@ -24,6 +24,7 @@ import megamek.client.Client;
 import megamek.client.bot.BotClient;
 import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.bot.princess.Princess;
+import megamek.client.generator.ReconfigurationParameters;
 import megamek.client.generator.TeamLoadoutGenerator;
 import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
@@ -213,6 +214,7 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
     private final JButton butAutoconfigure = new JButton(Messages.getString("PlayerSettingsDialog.autoConfig"));
     private final JButton butRandomize = new JButton(Messages.getString("PlayerSettingsDialog.randomize"));
     private Checkbox chkTrulyRandom = new Checkbox("Truly Random", false);
+    private Checkbox chkBanNukes = new Checkbox("No Nukes", false);
     private final JButton butSaveADF = new JButton(Messages.getString("PlayerSettingsDialog.saveADF"));
     private final JButton butLoadADF = new JButton(Messages.getString("PlayerSettingsDialog.loadADF"));
     private final JButton butRestoreMT = new JButton(Messages.getString("PlayerSettingsDialog.restore"));
@@ -278,6 +280,7 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
         panContent.add(butRandomize, gbc);
         butRandomize.addActionListener(listener);
         panContent.add(chkTrulyRandom, gbc);
+        panContent.add(chkBanNukes, gbc);
         panContent.add(butSaveADF, gbc);
         butSaveADF.addActionListener(listener);
         panContent.add(butLoadADF, gbc);
@@ -591,7 +594,10 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
                 butRestoreMT.setEnabled(true);
                 butAutoconfigure.setEnabled(false);
                 butRandomize.setEnabled(true);
-                munitionTree = tlg.generateMunitionTree(tlg.generateParameters(team), team);
+                // Set nuke ban state before generating the tree
+                ReconfigurationParameters rp = tlg.generateParameters(team);
+                rp.nukesBannedForMe = chkBanNukes.getState();
+                munitionTree = tlg.generateMunitionTree(rp, team);
             }
 
             if (butRandomize.equals(e.getSource())) {

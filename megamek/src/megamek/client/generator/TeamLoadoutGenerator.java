@@ -504,6 +504,12 @@ public class TeamLoadoutGenerator {
             mwc.increaseMunitions(tsmOnly);
         }
 
+        // Set nukes to lowest possible weight if user has set the to unusuable /for this team/
+        // This is a seperate mechanism from the legality check.
+        if (rp.nukesBannedForMe) {
+            mwc.zeroMunitionsWeight(new ArrayList<>(List.of("Davy Crockett-M", "AlamoMissile Ammo")));
+        }
+
         // The main event!
         // Convert MWC to MunitionsTree for loading
         applyWeightsToMunitionTree(mt, mwc);
@@ -785,49 +791,6 @@ public class TeamLoadoutGenerator {
     }
 }
 
-/**
- * Bare data class to pass around and store configuration-influencing info
- */
-class ReconfigurationParameters {
-
-    // Game settings
-    public boolean enemiesVisible = true;
-    public int allowedYear = 3151;
-
-    // Map settings
-    public boolean darkEnvironment = false;
-
-    // Enemy stats
-    public long enemyCount = 0;
-    public long enemyFliers = 0;
-    public long enemyBombers = 0;
-    public long enemyInfantry = 0;
-    public long enemyVehicles = 0;
-    public long enemyMeks = 0;
-    public long enemyEnergyBoats = 0;
-    public long enemyMissileBoats = 0;
-    public long enemyAdvancedArmorCount = 0;
-    public long enemyReflectiveArmorCount = 0;
-    public long enemyFireproofArmorCount = 0;
-    public long enemyFastMovers = 0;
-    public long enemyOffBoard = 0;
-    public long enemyECMCount = 0;
-    public HashSet<String> enemyFactions = new HashSet<String>();
-
-    // Friendly stats
-    public long friendlyCount = 0;
-    public long friendlyTAGs = 0;
-    public long friendlyNARCs = 0;
-    public long friendlyEnergyBoats = 0;
-    public long friendlyMissileBoats = 0;
-    public long friendlyOffBoard = 0;
-    public long friendlyECMCount = 0;
-
-    // Datatype for passing around game parameters the Loadout Generator cares about
-    ReconfigurationParameters() {
-    }
-}
-
 class MunitionWeightCollection {
     private HashMap<String, Double> lrmWeights;
     private HashMap<String, Double> srmWeights;
@@ -924,6 +887,15 @@ class MunitionWeightCollection {
                 )
         );
     }
+
+    public void zeroMunitionsWeight(ArrayList<String> munitions) {
+        mapTypeToWeights.entrySet().forEach(
+                e -> modifyMatchingWeights(
+                        e.getValue(), munitions, 0.0, 0.0
+                )
+        );
+    }
+
 
     public void increaseAPMunitions() {
         increaseMunitions(TeamLoadoutGenerator.AP_MUNITIONS);

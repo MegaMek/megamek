@@ -50,6 +50,7 @@ public class Crew implements Serializable {
     private final String[] names;
     private final String[] nicknames;
     private final Gender[] genders;
+    private final boolean[] clanPilots;
     private final Portrait[] portraits;
 
     private final int[] gunnery;
@@ -60,10 +61,10 @@ public class Crew implements Serializable {
 
     private final boolean[] unconscious;
     private final boolean[] dead;
-    //Allow for the possibility that the unit is fielded with less than full crew.
+    // Allow for the possibility that the unit is fielded with less than full crew.
     private final boolean[] missing;
 
-    //The following only apply to the entire crew.
+    // The following only apply to the entire crew.
     private boolean doomed; // scheduled to die at end of phase
     private boolean ejected;
 
@@ -145,6 +146,7 @@ public class Crew implements Serializable {
     public static final String MAP_BLOODNAME = "bloodname";
     public static final String MAP_PHENOTYPE = "phenotype";
     //endregion extraData inner map keys
+
     /**
      * The number of hits that a pilot can take before he dies.
      */
@@ -163,68 +165,7 @@ public class Crew implements Serializable {
      * @param crewType the crew type to use.
      */
     public Crew(CrewType crewType) {
-        this(crewType, "Unnamed", crewType.getCrewSlots(), 4, 5, Gender.FEMALE, null);
-    }
-
-    /**
-     * @param name     the name of the crew or commander.
-     * @param size     the crew size.
-     * @param gunnery  the crew's Gunnery skill.
-     * @param piloting the crew's Piloting or Driving skill.
-     * @deprecated by multi-crew cockpit support. Replaced by {@link #Crew(CrewType, String, int, int, int, Gender, Map)}.
-     *
-     * Creates a basic crew for a self-piloted unit. Using this constructor for a naval vessel will
-     * result in a secondary target modifier for additional targets past the first.
-     */
-    @Deprecated
-    public Crew(String name, int size, int gunnery, int piloting) {
-        this(CrewType.SINGLE, name, size, gunnery, gunnery, gunnery, piloting, null);
-    }
-
-    /**
-     * @param crewType the type of crew
-     * @param name     the name of the crew or commander.
-     * @param size     the crew size.
-     * @param gunnery  the crew's Gunnery skill.
-     * @param piloting the crew's Piloting or Driving skill.
-     * @deprecated by gender support. Replaced by {@link #Crew(CrewType, String, int, int, int, Gender, Map)}.
-     */
-    @Deprecated //18-Feb-2020 as part of the addition of gender to MegaMek
-    public Crew(CrewType crewType, String name, int size, int gunnery, int piloting) {
-        this(crewType, name, size, gunnery, gunnery, gunnery, piloting, null);
-    }
-
-    /**
-     * @param crewType the type of crew.
-     * @param name     the name of the crew or commander.
-     * @param size     the crew size.
-     * @param gunneryL the crew's "laser" Gunnery skill.
-     * @param gunneryM the crew's "missile" Gunnery skill.
-     * @param gunneryB the crew's "ballistic" Gunnery skill.
-     * @param piloting the crew's Piloting or Driving skill.
-     * @deprecated by gender support. Replaced by {@link #Crew(CrewType, String, int, int, int, int, int, Gender, Map)}.
-     */
-    @Deprecated //18-Feb-2020 as part of the addition of gender to MegaMek
-    public Crew(CrewType crewType, String name, int size, int gunneryL, int gunneryM, int gunneryB,
-                int piloting) {
-        this(crewType, name, size, gunneryL, gunneryM, gunneryB, piloting, null);
-    }
-
-    /**
-     * @param crewType  the type of crew.
-     * @param name      the name of the crew or commander.
-     * @param size      the crew size.
-     * @param gunneryL  the crew's "laser" Gunnery skill.
-     * @param gunneryM  the crew's "missile" Gunnery skill.
-     * @param gunneryB  the crew's "ballistic" Gunnery skill.
-     * @param piloting  the crew's Piloting or Driving skill.
-     * @param extraData any extra data passed to be stored with this Crew.
-     * @deprecated by gender support. Replaced by {@link #Crew(CrewType, String, int, int, int, int, int, Gender, Map)}.
-     */
-    @Deprecated //18-Feb-2020 as part of the addition of gender to MegaMek
-    public Crew(CrewType crewType, String name, int size, int gunneryL, int gunneryM, int gunneryB,
-                int piloting, Map<Integer, Map<String, String>> extraData) {
-        this(crewType, name, size, gunneryL, gunneryM, gunneryB, piloting, RandomGenderGenerator.generate(), extraData);
+        this(crewType, "Unnamed", crewType.getCrewSlots(), 4, 5, Gender.FEMALE, false, null);
     }
 
     /**
@@ -234,11 +175,12 @@ public class Crew implements Serializable {
      * @param gunnery   the crew's Gunnery skill.
      * @param piloting  the crew's Piloting or Driving skill.
      * @param gender    the gender of the crew or commander
+     * @param clanPilot   if the crew or commander is a clanPilot
      * @param extraData any extra data passed to be stored with this Crew.
      */
     public Crew(CrewType crewType, String name, int size, int gunnery, int piloting, Gender gender,
-                Map<Integer, Map<String, String>> extraData) {
-        this(crewType, name, size, gunnery, gunnery, gunnery, piloting, gender, extraData);
+                boolean clanPilot, Map<Integer, Map<String, String>> extraData) {
+        this(crewType, name, size, gunnery, gunnery, gunnery, piloting, gender, clanPilot, extraData);
     }
 
     /**
@@ -250,10 +192,12 @@ public class Crew implements Serializable {
      * @param gunneryB  the crew's "ballistic" Gunnery skill.
      * @param piloting  the crew's Piloting or Driving skill.
      * @param gender    the gender of the crew or commander
+     * @param clanPilot   if the crew or commander is a clanPilot
      * @param extraData any extra data passed to be stored with this Crew.
      */
     public Crew(CrewType crewType, String name, int size, int gunneryL, int gunneryM, int gunneryB,
-                int piloting, Gender gender, Map<Integer, Map<String, String>> extraData) {
+                int piloting, Gender gender, boolean clanPilot,
+                Map<Integer, Map<String, String>> extraData) {
         this.crewType = crewType;
         this.size = Math.max(size, crewType.getCrewSlots());
         this.currentSize = size;
@@ -268,6 +212,8 @@ public class Crew implements Serializable {
         genders = new Gender[slots];
         Arrays.fill(getGenders(), Gender.RANDOMIZE);
         setGender(gender, 0);
+        clanPilots = new boolean[slots];
+        Arrays.fill(getClanPilots(), clanPilot);
         portraits = new Portrait[slots];
         for (int i = 0; i < slots; i++) {
             setPortrait(new Portrait(), i);
@@ -368,6 +314,22 @@ public class Crew implements Serializable {
 
     public void setGender(final Gender gender, final int pos) {
         getGenders()[pos] = gender;
+    }
+
+    public boolean[] getClanPilots() {
+        return clanPilots;
+    }
+
+    public boolean isClanPilot() {
+        return getClanPilots()[0];
+    }
+
+    public boolean isClanPilot(final int position) {
+        return (position < getClanPilots().length) ? getClanPilots()[position] : isClanPilot();
+    }
+
+    public void setClanPilot(final boolean clanPilot, final int position) {
+        getClanPilots()[position] = clanPilot;
     }
 
     public Portrait[] getPortraits() {

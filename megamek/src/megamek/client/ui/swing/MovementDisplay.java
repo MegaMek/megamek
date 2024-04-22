@@ -23,7 +23,6 @@ import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
 import megamek.client.ui.SharedUtility;
 import megamek.client.ui.swing.boardview.AbstractBoardViewOverlay;
-import megamek.client.ui.swing.util.CommandAction;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.widget.MegamekButton;
@@ -44,6 +43,9 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.pathfinder.AbstractPathFinder;
 import megamek.common.pathfinder.LongestPathFinder;
 import megamek.common.pathfinder.ShortestPathFinder;
+import megamek.common.planetaryconditions.Atmosphere;
+import megamek.common.planetaryconditions.Light;
+import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.common.preference.PreferenceManager;
 import org.apache.logging.log4j.LogManager;
 
@@ -355,7 +357,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             clientgui.getClient().getGame().addGameListener(this);
             clientgui.getBoardView().addBoardViewListener(this);
             clientgui.getClient().getGame().setupTeams();
-            clientgui.getBoardView().addKeyListener(this);
+            clientgui.getBoardView().getPanel().addKeyListener(this);
         }
 
         setupStatusBar(Messages.getString("MovementDisplay.waitingForMovementPhase"));
@@ -388,273 +390,139 @@ public class MovementDisplay extends ActionPhaseDisplay {
         }
     }
 
+    protected boolean shouldPerformClearKeyCommand() {
+        return !clientgui.getBoardView().getChatterBoxActive()
+                && !isIgnoringEvents()
+                && isVisible();
+    }
+
+    private void turnLeft() {
+        int dir = cmd.getFinalFacing();
+        dir = (dir + 5) % 6;
+        Coords curPos = cmd.getFinalCoords();
+        Coords target = curPos.translated(dir);
+        // We need to set this to get the rotate behavior
+        shiftheld = true;
+        currentMove(target);
+        shiftheld = false;
+        updateMove();
+    }
+
+    private void turnRight() {
+        int dir = cmd.getFinalFacing();
+        dir = (dir + 7) % 6;
+        Coords curPos = cmd.getFinalCoords();
+        Coords target = curPos.translated(dir);
+        // We need to set this to get the rotate behavior
+        shiftheld = true;
+        currentMove(target);
+        shiftheld = false;
+        updateMove();
+    }
+
+    private void undoIllegalStep() {
+        // Remove all illegal steps, if none, then do normal backspace function.
+        if (!removeIllegalSteps()) {
+            removeLastStep();
+        }
+        computeEnvelope();
+    }
+
+    private void undoLastStep() {
+        removeLastStep();
+        computeEnvelope();
+    }
+
+    private void computeEnvelope() {
+        if (ce() != null && ce().isAero()) {
+            computeAeroMovementEnvelope(ce());
+        } else {
+            computeMovementEnvelope(ce());
+        }
+    }
+
+    private void cancel() {
+        clear();
+        computeMovementEnvelope(ce());
+        updateMove();
+    }
+
+    private void performToggleMovemode() {
+        final Entity ce = ce();
+        boolean isAero = ce.isAero();
+        // first check if jumping is available at all
+        if (!isAero && !ce.isImmobileForJump() && (ce.getJumpMP() > 0)
+                && !(ce.isStuck() && !ce.canUnstickByJumping())) {
+            if (gear != MovementDisplay.GEAR_JUMP) {
+                if (!((cmd.getLastStep() != null)
+                        && cmd.getLastStep().isFirstStep()
+                        && (cmd.getLastStep().getType() == MoveStepType.LAY_MINE))) {
+                    clear();
+                }
+                if (!cmd.isJumping()) {
+                    addStepToMovePath(MoveStepType.START_JUMP);
+                }
+                gear = MovementDisplay.GEAR_JUMP;
+                Color jumpColor = GUIP.getMoveJumpColor();
+                clientgui.getBoardView().setHighlightColor(jumpColor);
+            } else {
+                Color walkColor = GUIP.getMoveDefaultColor();
+                clientgui.getBoardView().setHighlightColor(walkColor);
+                gear = MovementDisplay.GEAR_LAND;
+                clear();
+            }
+        } else {
+            Color walkColor = GUIP.getMoveDefaultColor();
+            clientgui.getBoardView().setHighlightColor(walkColor);
+            gear = MovementDisplay.GEAR_LAND;
+            clear();
+        }
+        computeMovementEnvelope(ce);
+    }
+
+    private void performToggleConversionMode() {
+        final Entity ce = ce();
+        if (ce == null) {
+            LogManager.getLogger().error("Cannot execute a conversion mode command for a null entity.");
+            return;
+        }
+        EntityMovementMode nextMode = ce.nextConversionMode(cmd.getFinalConversionMode());
+        // LAMs may have to skip the next mode due to damage
+        if (ce() instanceof LandAirMech) {
+            if (!((LandAirMech) ce).canConvertTo(nextMode)) {
+                nextMode = ce.nextConversionMode(nextMode);
+            }
+
+            if (!((LandAirMech) ce).canConvertTo(nextMode)) {
+                nextMode = ce.getMovementMode();
+            }
+        }
+        adjustConvertSteps(nextMode);
+    }
+
     /**
      * Register all of the <code>CommandAction</code>s for this panel display.
      */
     private void registerKeyCommands() {
-        if (clientgui == null) {
+        if ((clientgui == null) || (clientgui.controller == null)) {
             return;
         }
 
         MegaMekController controller = clientgui.controller;
+        controller.registerCommandAction(KeyCommandBind.TURN_LEFT, this, this::turnLeft);
+        controller.registerCommandAction(KeyCommandBind.TURN_RIGHT, this, this::turnRight);
+        controller.registerCommandAction(KeyCommandBind.UNDO_LAST_STEP, this, this::undoIllegalStep);
+        controller.registerCommandAction(KeyCommandBind.UNDO_SINGLE_STEP, this, this::undoLastStep);
 
-        if (controller == null) {
-            return;
-        }
+        controller.registerCommandAction(KeyCommandBind.NEXT_UNIT, this,
+                () -> selectEntity(clientgui.getClient().getNextEntityNum(cen)));
+        controller.registerCommandAction(KeyCommandBind.PREV_UNIT, this,
+                () -> selectEntity(clientgui.getClient().getPrevEntityNum(cen)));
 
-        final StatusBarPhaseDisplay display = this;
-        // Register the action for TURN_LEFT
-        controller.registerCommandAction(KeyCommandBind.TURN_LEFT.cmd,
-                new CommandAction() {
-
-                    @Override
-                    public boolean shouldPerformAction() {
-                        if (!clientgui.getClient().isMyTurn()
-                                || clientgui.getBoardView().getChatterBoxActive()
-                                || display.isIgnoringEvents()
-                                || !display.isVisible()) {
-                            return false;
-                        }
-                        return true;
-                    }
-
-                    @Override
-                    public void performAction() {
-                        int dir = cmd.getFinalFacing();
-                        dir = (dir + 5) % 6;
-                        Coords curPos = cmd.getFinalCoords();
-                        Coords target = curPos.translated(dir);
-                        // We need to set this to get the rotate behavior
-                        shiftheld = true;
-                        currentMove(target);
-                        shiftheld = false;
-                        updateMove();
-                    }
-                });
-
-        // Register the action for TURN_RIGHT
-        controller.registerCommandAction(KeyCommandBind.TURN_RIGHT.cmd,
-                new CommandAction() {
-
-                    @Override
-                    public boolean shouldPerformAction() {
-                        if (!clientgui.getClient().isMyTurn()
-                                || clientgui.getBoardView().getChatterBoxActive()
-                                || display.isIgnoringEvents()
-                                || !display.isVisible()) {
-                            return false;
-                        }
-                        return true;
-                    }
-
-                    @Override
-                    public void performAction() {
-                        int dir = cmd.getFinalFacing();
-                        dir = (dir + 7) % 6;
-                        Coords curPos = cmd.getFinalCoords();
-                        Coords target = curPos.translated(dir);
-                        // We need to set this to get the rotate behavior
-                        shiftheld = true;
-                        currentMove(target);
-                        shiftheld = false;
-                        updateMove();
-                    }
-                });
-
-        // Register the action for UNDO
-        controller.registerCommandAction(KeyCommandBind.UNDO_LAST_STEP.cmd,
-                new CommandAction() {
-                    @Override
-                    public boolean shouldPerformAction() {
-                        return clientgui.getClient().isMyTurn()
-                                && !clientgui.getBoardView().getChatterBoxActive()
-                                && !display.isIgnoringEvents()
-                                && display.isVisible();
-                    }
-
-                    @Override
-                    public void performAction() {
-                        // Remove all illegal steps, if none, then do normal backspace function.
-                        if (!removeIllegalSteps()) {
-                            removeLastStep();
-                        }
-
-                        if (ce() != null && ce().isAero()) {
-                            computeAeroMovementEnvelope(ce());
-                        } else {
-                            computeMovementEnvelope(ce());
-                        }
-                    }
-                });
-
-        // Register the action for UNDO_ILLEGAL_STEPS
-        controller.registerCommandAction(KeyCommandBind.UNDO_SINGLE_STEP.cmd,
-                new CommandAction() {
-                    @Override
-                    public boolean shouldPerformAction() {
-                        return clientgui.getClient().isMyTurn()
-                                && !clientgui.getBoardView().getChatterBoxActive()
-                                && !display.isIgnoringEvents()
-                                && display.isVisible();
-                    }
-
-                    @Override
-                    public void performAction() {
-                        removeLastStep();
-                        if (ce() != null && ce().isAero()) {
-                            computeAeroMovementEnvelope(ce());
-                        } else {
-                            computeMovementEnvelope(ce());
-                        }
-                    }
-                });
-
-        // Register the action for NEXT_UNIT
-        controller.registerCommandAction(KeyCommandBind.NEXT_UNIT.cmd,
-                new CommandAction() {
-
-                    @Override
-                    public boolean shouldPerformAction() {
-                        if (!clientgui.getClient().isMyTurn()
-                                || clientgui.getBoardView().getChatterBoxActive()
-                                || !display.isVisible()
-                                || display.isIgnoringEvents()) {
-                            return false;
-                        }
-                        return true;
-                    }
-
-                    @Override
-                    public void performAction() {
-                        selectEntity(clientgui.getClient().getNextEntityNum(cen));
-                    }
-                });
-
-        // Register the action for PREV_UNIT
-        controller.registerCommandAction(KeyCommandBind.PREV_UNIT.cmd,
-                new CommandAction() {
-
-                    @Override
-                    public boolean shouldPerformAction() {
-                        if (!clientgui.getClient().isMyTurn()
-                                || clientgui.getBoardView().getChatterBoxActive()
-                                || !display.isVisible()
-                                || display.isIgnoringEvents()) {
-                            return false;
-                        }
-                        return true;
-                    }
-
-                    @Override
-                    public void performAction() {
-                        selectEntity(clientgui.getClient()
-                                .getPrevEntityNum(cen));
-                    }
-                });
-
-        // Register the action for CLEAR
-        controller.registerCommandAction(KeyCommandBind.CANCEL.cmd,
-                new CommandAction() {
-
-                    @Override
-                    public boolean shouldPerformAction() {
-                        if (clientgui.getBoardView().getChatterBoxActive()
-                                || !display.isVisible()
-                                || display.isIgnoringEvents()) {
-                            return false;
-                        }
-                        return true;
-                    }
-
-                    @Override
-                    public void performAction() {
-                        clear();
-                        computeMovementEnvelope(ce());
-                    }
-                });
-
-        // Command to toggle between jumping and walk/run
-        controller.registerCommandAction(KeyCommandBind.TOGGLE_MOVEMODE.cmd,
-                new CommandAction() {
-
-                    @Override
-                    public boolean shouldPerformAction() {
-                        if (!clientgui.getClient().isMyTurn()
-                                || clientgui.getBoardView().getChatterBoxActive()
-                                || !display.isVisible()
-                                || display.isIgnoringEvents()) {
-                            return false;
-                        }
-                        return true;
-                    }
-
-                    @Override
-                    public void performAction() {
-                        final Entity ce = ce();
-                        boolean isAero = ce.isAero();
-                        // first check if jumping is available at all
-                        if (!isAero && !ce.isImmobileForJump() && (ce.getJumpMP() > 0)
-                                && !(ce.isStuck() && !ce.canUnstickByJumping())) {
-                            if (gear != MovementDisplay.GEAR_JUMP) {
-                                if (!((cmd.getLastStep() != null)
-                                        && cmd.getLastStep().isFirstStep()
-                                        && (cmd.getLastStep().getType() == MoveStepType.LAY_MINE))) {
-                                    clear();
-                                }
-                                if (!cmd.isJumping()) {
-                                    addStepToMovePath(MoveStepType.START_JUMP);
-                                }
-                                gear = MovementDisplay.GEAR_JUMP;
-                                Color jumpColor = GUIP.getMoveJumpColor();
-                                clientgui.getBoardView().setHighlightColor(jumpColor);
-                            } else {
-                                Color walkColor = GUIP.getMoveDefaultColor();
-                                clientgui.getBoardView().setHighlightColor(walkColor);
-                                gear = MovementDisplay.GEAR_LAND;
-                                clear();
-                            }
-                        } else {
-                            Color walkColor = GUIP.getMoveDefaultColor();
-                            clientgui.getBoardView().setHighlightColor(walkColor);
-                            gear = MovementDisplay.GEAR_LAND;
-                            clear();
-                        }
-                        computeMovementEnvelope(ce);
-                    }
-                });
-
-        // Register the action for mode conversion
-        controller.registerCommandAction(KeyCommandBind.TOGGLE_CONVERSIONMODE.cmd,
-                new CommandAction() {
-
-                    @Override
-                    public boolean shouldPerformAction() {
-                        return clientgui.getClient().isMyTurn()
-                                && !clientgui.getBoardView().getChatterBoxActive()
-                                && !display.isIgnoringEvents() && display.isVisible();
-                    }
-
-                    @Override
-                    public void performAction() {
-                        final Entity ce = ce();
-                        if (ce == null) {
-                            LogManager.getLogger().error("Cannot execute a conversion mode command for a null entity.");
-                            return;
-                        }
-                        EntityMovementMode nextMode = ce.nextConversionMode(cmd.getFinalConversionMode());
-                        // LAMs may have to skip the next mode due to damage
-                        if (ce() instanceof LandAirMech) {
-                            if (!((LandAirMech) ce).canConvertTo(nextMode)) {
-                                nextMode = ce.nextConversionMode(nextMode);
-                            }
-
-                            if (!((LandAirMech) ce).canConvertTo(nextMode)) {
-                                nextMode = ce.getMovementMode();
-                            }
-                        }
-                        adjustConvertSteps(nextMode);
-                    }
-                });
+        controller.registerCommandAction(KeyCommandBind.CANCEL, this::shouldPerformClearKeyCommand, this::cancel);
+        controller.registerCommandAction(KeyCommandBind.TOGGLE_MOVEMODE, this, this::performToggleMovemode);
+        controller.registerCommandAction(KeyCommandBind.TOGGLE_CONVERSIONMODE, this,
+                this::performToggleConversionMode);
     }
 
     /**
@@ -804,6 +672,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         }
         clientgui.getBoardView().clearFieldOfFire();
         computeMovementEnvelope(ce);
+        updateMove();
         computeCFWarningHexes(ce);
     }
 
@@ -1097,8 +966,10 @@ public class MovementDisplay extends ActionPhaseDisplay {
             setEvadeAeroEnabled(cmd != null && !cmd.contains(MoveStepType.EVADE));
             setEjectEnabled(true);
             // no turning for spheroids in atmosphere
-            if ((((IAero) ce()).isSpheroid() || clientgui.getClient().getGame()
-                    .getPlanetaryConditions().isVacuum())
+            PlanetaryConditions conditions = clientgui.getClient().getGame().getPlanetaryConditions();
+            boolean spheroidOrLessThanThin = ((IAero) ce()).isSpheroid()
+                    || conditions.getAtmosphere().isLighterThan(Atmosphere.THIN);
+            if (spheroidOrLessThanThin
                     && !clientgui.getClient().getGame().getBoard().inSpace()) {
                 setTurnEnabled(false);
             }
@@ -1356,13 +1227,9 @@ public class MovementDisplay extends ActionPhaseDisplay {
         clientgui.getBoardView().setSensorRange(ce, cmd.getFinalCoords());
 
         // set to "walk," or the equivalent
-        if (gear != MovementDisplay.GEAR_JUMP) {
-            gear = MovementDisplay.GEAR_LAND;
-            Color walkColor = GUIP.getMoveDefaultColor();
-            clientgui.getBoardView().setHighlightColor(walkColor);
-        } else if (!cmd.isJumping()) {
-            addStepToMovePath(MoveStepType.START_JUMP);
-        }
+        gear = MovementDisplay.GEAR_LAND;
+        Color walkColor = GUIP.getMoveDefaultColor();
+        clientgui.getBoardView().setHighlightColor(walkColor);
 
         // update some GUI elements
         clientgui.getBoardView().clearMovementData();
@@ -1480,6 +1347,290 @@ public class MovementDisplay extends ActionPhaseDisplay {
         return removed;
     }
 
+    private boolean checkNags() {
+        String check = SharedUtility.doPSRCheck(cmd);
+        String thrustCheck = SharedUtility.doThrustCheck(cmd, clientgui.getClient());
+
+        if (needNagForNoAction()) {
+            if ((ce() != null)
+                    && (cmd.length() == 0)
+                    && !ce().isAirborne()) {
+                // Hmm... no movement steps, confirm this action
+                String title = Messages.getString("MovementDisplay.ConfirmNoMoveDlg.title");
+                String body = Messages.getString("MovementDisplay.ConfirmNoMoveDlg.message");
+                if (checkNagForNoAction(title, body)) {
+                    return true;
+                }
+            }
+        }
+
+        if (needNagForNoUnJamRAC()) {
+            if ((ce() != null)
+                    && ce().canUnjamRAC()
+                    && !isUnJammingRAC) {
+                // confirm this action
+                String title = Messages.getString("MovementDisplay.ConfirmUnJamRACDlg.title");
+                String body = Messages.getString("MovementDisplay.ConfirmUnJamRACDlg.message");
+                if (checkNagForNoUnJamRAC(title, body)) {
+                    return true;
+                }
+            }
+        }
+
+        if (needNagForMASC()) {
+            if ((ce() != null)
+                    && cmd.hasActiveMASC()
+                    && !(ce() instanceof VTOL)) {
+                // pop up are you sure dialog
+                String title = Messages.getString("MovementDisplay.areYouSure");
+                String body = Messages.getString("MovementDisplay.ConfirmMASCRoll", ce().getMASCTarget());
+                if (checkNagForMASC(title, body)) {
+                    return true;
+                }
+            }
+        }
+
+        if (needNagForMASC()) {
+            if ((ce() != null)
+                    && !(ce() instanceof VTOL)
+                    && cmd.hasActiveSupercharger()) {
+                String title = Messages.getString("MovementDisplay.areYouSure");
+                String body = Messages.getString("MovementDisplay.ConfirmSuperchargerRoll", ce().getSuperchargerTarget());
+                if (checkNagForMASC(title, body)) {
+                    return true;
+                }
+            }
+        }
+
+        if (needNagForSprint()) {
+            boolean sprintOrVtolSprint = cmd.getLastStepMovementType() == EntityMovementType.MOVE_SPRINT
+                    || cmd.getLastStepMovementType() == EntityMovementType.MOVE_VTOL_SPRINT;
+            boolean quadVeeVehicle = cmd.getEntity() instanceof QuadVee
+                    && cmd.getEntity().getConversionMode() == QuadVee.CONV_MODE_VEHICLE;
+            boolean tankOrQuadVee = cmd.getEntity() instanceof Tank
+                    || quadVeeVehicle;
+            // no need to nag for vehicles using overdrive if they already get a PSR nag
+            boolean psrNag = tankOrQuadVee
+                    && needNagForPSR();
+            if (sprintOrVtolSprint
+                    && !psrNag) {
+                String title = Messages.getString("MovementDisplay.areYouSure");
+                String body = Messages.getString("MovementDisplay.ConfirmSprint");
+                if (checkNagForSprint(title, body)) {
+                    return true;
+                }
+            }
+        }
+
+        if (needNagForPSR()) {
+            if (!check.isBlank()) {
+                String title = Messages.getString("MovementDisplay.areYouSure");
+                String body = Messages.getString("MovementDisplay.ConfirmPilotingRoll")  + check;
+                if (checkNagForPSR(title, body)) {
+                    return true;
+                }
+            }
+        }
+
+        // check for unsafe takeoffs
+        if (needNagForPSR()) {
+            boolean vtakeoffOrTakeoff = cmd.contains(MoveStepType.VTAKEOFF)
+                    || cmd.contains(MoveStepType.TAKEOFF);
+            if ((ce() != null)
+                    && vtakeoffOrTakeoff) {
+                boolean unsecure = false;
+                for (Entity loaded : ce().getLoadedUnits()) {
+                    if (loaded.wasLoadedThisTurn()
+                            && !(loaded instanceof Infantry)) {
+                        unsecure = true;
+                        break;
+                    }
+                }
+                if (unsecure) {
+                    String title = Messages.getString("MovementDisplay.areYouSure");
+                    String body = Messages.getString("MovementDisplay.UnsecuredTakeoff");
+                    if (checkNagForPSR(title, body)) {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        // check for G-forces
+        if (needNagForPSR()) {
+            if (!thrustCheck.isBlank()) {
+                String title = Messages.getString("MovementDisplay.areYouSure");
+                String body = Messages.getString("MovementDisplay.ConfirmPilotingRoll") + thrustCheck;
+                if (checkNagForPSR(title, body)) {
+                    return true;
+                }
+            }
+        }
+
+        // check to see if spheroids will drop elevation
+        // they will do so if they're not hovering, landing, or changing altitude voluntarily.
+        if (needNagForPSR()) {
+            if ((ce() != null)
+                    && Compute.useSpheroidAtmosphere(clientgui.getClient().getGame(), ce())
+                    && !cmd.contains(MoveStepType.HOVER)
+                    && !cmd.contains(MoveStepType.VLAND)
+                    && !cmd.contains(MoveStepType.UP)
+                    && !cmd.contains(MoveStepType.DOWN)) {
+                String title = Messages.getString("MovementDisplay.areYouSure");
+                String body = Messages.getString("MovementDisplay.SpheroidAltitudeLoss") + thrustCheck;
+                if (checkNagForPSR(title, body)) {
+                    return true;
+                }
+            }
+        }
+
+        // Should we nag about taking fall damage with mechanical jump boosters?
+        if (needNagForMechanicalJumpFallDamage()) {
+            if ((ce() != null)
+                    && cmd.shouldMechanicalJumpCauseFallDamage()) {
+                String title = Messages.getString("MovementDisplay.areYouSure");
+                String body = Messages.getString("MovementDisplay.ConfirmMechanicalJumpFallDamage",
+                        cmd.getJumpMaxElevationChange(),
+                        ce().getJumpMP(),
+                        cmd.getJumpMaxElevationChange() - ce().getJumpMP());
+                if (checkNagForMechanicalJumpFallDamage(title, body)) {
+                    return true;
+                }
+            }
+        }
+
+        if (needNagForCrushingBuildings()) {
+            if (cmd.willCrushBuildings()) {
+                String title = Messages.getString("MovementDisplay.areYouSure");
+                String body = Messages.getString("MovementDisplay.ConfirmCrushingBuildings");
+                if (checkNagForCrushingBuildings(title, body)) {
+                    return true;
+                }
+            }
+        }
+
+        if (needNagForWiGELanding()) {
+            if (cmd.automaticWiGELanding(true)) {
+                String title = Messages.getString("MovementDisplay.areYouSure");
+                String body = Messages.getString("MovementDisplay.ConfirmWiGELanding");
+                if (checkNagForWiGELanding(title, body)) {
+                    return true;
+                }
+            }
+        }
+
+        if (needNagForOther()) {
+            if ((ce() != null)
+                    && (null != cmd)
+                    && ce().isAero()) {
+                boolean airborneOrSpaceborne = ce().isAirborne()
+                        || ce().isSpaceborne();
+                boolean unusedVelocity = false;
+                if (null != cmd.getLastStep()) {
+                    unusedVelocity = cmd.getLastStep().getVelocityLeft() > 0;
+                } else {
+                    unusedVelocity = (((IAero) ce()).getCurrentVelocity() > 0)
+                            && (ce().delta_distance == 0);
+                }
+                boolean offOrReturn = cmd.contains(MoveStepType.OFF)
+                        || cmd.contains(MoveStepType.RETURN);
+                if (airborneOrSpaceborne
+                        && !clientgui.getClient().getGame().useVectorMove()
+                        && !((IAero) ce()).isOutControlTotal()
+                        && unusedVelocity
+                        && !offOrReturn
+                        && !cmd.contains(MoveStepType.LAND)
+                        && !cmd.contains(MoveStepType.EJECT)) {
+                    String title = Messages.getString("MovementDisplay.VelocityLeft.title");
+                    String body = Messages.getString("MovementDisplay.VelocityLeft.message");
+                    if (!clientgui.doYesNoDialog(title, body)) {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        // check to see if spheroids will drop an elevation
+        if (needNagForOther()) {
+            if ((ce() != null)
+                    && ce() instanceof LandAirMech
+                    && ce().isAssaultDropInProgress()
+                    && cmd.getFinalConversionMode() == EntityMovementMode.AERODYNE) {
+                String title = Messages.getString("MovementDisplay.areYouSure");
+                String body = Messages.getString("MovementDisplay.insufficientAltitudeForConversion") + thrustCheck;
+                if (!clientgui.doYesNoDialog(title, body)) {
+                    return true;
+                }
+            }
+        }
+
+        if (needNagForOther()) {
+            if (ce() != null
+                    && (ce() instanceof Infantry)
+                    && ((Infantry) ce()).hasMicrolite()
+            ) {
+                boolean finalElevation = (ce().getElevation() != cmd.getFinalElevation());
+                boolean airborneVTOLOrWIGEOrFinalElevation = ce().isAirborneVTOLorWIGE()
+                        || finalElevation;
+                int terrainLevelBuilding = ce().getGame().getBoard().getHex(cmd.getFinalCoords()).terrainLevel(Terrains.BLDG_ELEV);
+                int terrainLevelBridge = ce().getGame().getBoard().getHex(cmd.getFinalCoords()).terrainLevel(Terrains.BRIDGE_ELEV);
+                if (airborneVTOLOrWIGEOrFinalElevation
+                        && !cmd.contains(MoveStepType.FORWARDS)
+                        && !cmd.contains(MoveStepType.FLEE)
+                        && cmd.getFinalElevation() > 0
+                        && terrainLevelBuilding < cmd.getFinalElevation()
+                        && terrainLevelBridge < cmd.getFinalElevation()) {
+                    String title = Messages.getString("MovementDisplay.MicroliteMove.title");
+                    String body = Messages.getString("MovementDisplay.MicroliteMove.message");
+                    if (!clientgui.doYesNoDialog(title, body)) {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        if (needNagForOther()) {
+            boolean landOrVland = cmd.contains(MoveStepType.LAND)
+                    || cmd.contains(MoveStepType.VLAND);
+            if ((ce() != null)
+                    && landOrVland) {
+                Set<Coords> landingPath = ((IAero) ce()).getLandingCoords(cmd.contains(MoveStepType.VLAND),
+                        cmd.getFinalCoords(), cmd.getFinalFacing());
+                if (landingPath.stream().map(c -> game().getBoard().getHex(c)).filter(Objects::nonNull)
+                        .anyMatch(h -> h.containsTerrain(Terrains.ROUGH) || h.containsTerrain(Terrains.RUBBLE))) {
+                    String title = Messages.getString("MovementDisplay.areYouSure");
+                    String body = Messages.getString("MovementDisplay.ConfirmLandingGearDamage");
+                    if (!clientgui.doYesNoDialog(title, body)) {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        if (needNagForOther()) {
+            if ((ce() != null)
+                    && ce() instanceof Infantry) {
+                InfantryMount mount = ((Infantry) ce()).getMount();
+                if ((mount != null)
+                        && ce().getMovementMode().isSubmarine()
+                        && (ce().underwaterRounds >= mount.getUWEndurance())
+                        && cmd.isAllUnderwater(game())) {
+                    String title = Messages.getString("MovementDisplay.areYouSure");
+                    String body = Messages.getString("MovementDisplay.ConfirmMountSuffocation");
+                    if (!clientgui.doYesNoDialog(title, body)) {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        if (ce() == null) {
+            return true;
+        }
+
+        return false;
+    }
+
     /**
      * Sends a data packet indicating the chosen movement.
      */
@@ -1489,225 +1640,16 @@ public class MovementDisplay extends ActionPhaseDisplay {
             return;
         }
 
-        if ((ce().canUnjamRAC()) && (GUIP.getNagForNoUnJamRAC()) && (!isUnJammingRAC)) {
-            // confirm this action
-            String title = Messages.getString("MovementDisplay.ConfirmUnJamRACDlg.title");
-            String body = Messages.getString("MovementDisplay.ConfirmUnJamRACDlg.message");
-            ConfirmDialog response = clientgui.doYesNoBotherDialog(title, body);
-            if (!response.getShowAgain()) {
-                GUIP.setNagForNoUnJamRAC(false);
-            }
-
-            if (!response.getAnswer()) {
-                return;
-            }
-        }
-
         cmd.clipToPossible();
-        if ((cmd.length() == 0) && (!ce().isAirborne()) && needNagForNoAction()) {
-            // Hmm... no movement steps, confirm this action
-            String title = Messages.getString("MovementDisplay.ConfirmNoMoveDlg.title");
-            String body = Messages.getString("MovementDisplay.ConfirmNoMoveDlg.message");
-            ConfirmDialog response = clientgui.doYesNoBotherDialog(title, body);
-            if (!response.getShowAgain()) {
-                GUIP.setNagForNoAction(false);
-            }
-            if (!response.getAnswer()) {
-                return;
-            }
+
+        if (checkNags()) {
+            return;
         }
 
-        if (GUIP.getNagForMASC() && cmd.hasActiveMASC() && !(ce() instanceof VTOL)) {
-            // pop up are you sure dialog
-            ConfirmDialog nag = new ConfirmDialog(clientgui.frame,
-                    Messages.getString("MovementDisplay.areYouSure"),
-                    Messages.getString("MovementDisplay.ConfirmMASCRoll", ce().getMASCTarget()),
-                    true);
-            nag.setVisible(true);
-            if (nag.getAnswer()) {
-                // do they want to be bothered again?
-                if (!nag.getShowAgain()) {
-                    GUIP.setNagForMASC(false);
-                }
-            } else {
-                return;
-            }
-        }
+        disableButtons();
 
-        if (GUIP.getNagForMASC() && !(ce() instanceof VTOL) && cmd.hasActiveSupercharger()) {
-            ConfirmDialog nag = new ConfirmDialog(clientgui.frame,
-                    Messages.getString("MovementDisplay.areYouSure"),
-                    Messages.getString("MovementDisplay.ConfirmSuperchargerRoll", ce().getSuperchargerTarget()),
-                    true);
-            nag.setVisible(true);
-            if (nag.getAnswer()) {
-                // do they want to be bothered again?
-                if (!nag.getShowAgain()) {
-                    GUIP.setNagForMASC(false);
-                }
-            } else {
-                return;
-            }
-        }
-
-        if ((cmd.getLastStepMovementType() == EntityMovementType.MOVE_SPRINT
-                || cmd.getLastStepMovementType() == EntityMovementType.MOVE_VTOL_SPRINT)
-                && GUIP.getNagForSprint()
-                // no need to nag for vehicles using overdrive if they already get a PSR nag
-                && !((cmd.getEntity() instanceof Tank
-                || (cmd.getEntity() instanceof QuadVee
-                && cmd.getEntity().getConversionMode() == QuadVee.CONV_MODE_VEHICLE)
-                && GUIP.getNagForPSR()))) {
-            ConfirmDialog nag = new ConfirmDialog(clientgui.frame,
-                    Messages.getString("MovementDisplay.areYouSure"),
-                    Messages.getString("MovementDisplay.ConfirmSprint"), true);
-            nag.setVisible(true);
-            if (nag.getAnswer()) {
-                // do they want to be bothered again?
-                if (!nag.getShowAgain()) {
-                    GUIP.setNagForSprint(false);
-                }
-            } else {
-                return;
-            }
-        }
-        String check = SharedUtility.doPSRCheck(cmd);
-        if (!check.isBlank() && GUIP.getNagForPSR()) {
-            ConfirmDialog nag = new ConfirmDialog(clientgui.frame,
-                    Messages.getString("MovementDisplay.areYouSure"),
-                    Messages.getString("MovementDisplay.ConfirmPilotingRoll") +
-                            check, true);
-            nag.setVisible(true);
-            if (nag.getAnswer()) {
-                // do they want to be bothered again?
-                if (!nag.getShowAgain()) {
-                    GUIP.setNagForPSR(false);
-                }
-            } else {
-                return;
-            }
-        }
-
-        // Should we nag about taking fall damage with mechanical jump boosters?
-        if (cmd.shouldMechanicalJumpCauseFallDamage() && GUIP.getNagForMechanicalJumpFallDamage()) {
-            ConfirmDialog nag = new ConfirmDialog(clientgui.frame,
-                    Messages.getString("MovementDisplay.areYouSure"),
-                    Messages.getString("MovementDisplay.ConfirmMechanicalJumpFallDamage",
-                            cmd.getJumpMaxElevationChange(), ce().getJumpMP(),
-                            cmd.getJumpMaxElevationChange() - ce().getJumpMP()), true);
-            nag.setVisible(true);
-            if (nag.getAnswer()) {
-                // do they want to be bothered again?
-                if (!nag.getShowAgain()) {
-                    GUIP.setNagForMechanicalJumpFallDamage(false);
-                }
-            } else {
-                return;
-            }
-        }
-
-        // check for G-forces
-        check = SharedUtility.doThrustCheck(cmd, clientgui.getClient());
-        if (!check.isBlank() && GUIP.getNagForPSR()) {
-            ConfirmDialog nag = new ConfirmDialog(clientgui.frame,
-                    Messages.getString("MovementDisplay.areYouSure"),
-                    Messages.getString("MovementDisplay.ConfirmPilotingRoll") + check,
-                    true);
-            nag.setVisible(true);
-            if (nag.getAnswer()) {
-                // do they want to be bothered again?
-                if (!nag.getShowAgain()) {
-                    GUIP.setNagForPSR(false);
-                }
-            } else {
-                return;
-            }
-        }
-
-        // check for unsafe takeoffs
-        if (cmd.contains(MoveStepType.VTAKEOFF)
-                || cmd.contains(MoveStepType.TAKEOFF)) {
-            boolean unsecure = false;
-            for (Entity loaded : ce().getLoadedUnits()) {
-                if (loaded.wasLoadedThisTurn() && !(loaded instanceof Infantry)) {
-                    unsecure = true;
-                    break;
-                }
-            }
-            if (unsecure) {
-                ConfirmDialog nag = new ConfirmDialog(clientgui.frame,
-                        Messages.getString("MovementDisplay.areYouSure"),
-                        Messages.getString("MovementDisplay.UnsecuredTakeoff"), true);
-                nag.setVisible(true);
-                if (nag.getAnswer()) {
-                    // do they want to be bothered again?
-                    if (!nag.getShowAgain()) {
-                        GUIP.setNagForPSR(false);
-                    }
-                } else {
-                    return;
-                }
-            }
-        }
-
-        // check to see if spheroids will drop elevation
-        // they will do so if they're not hovering, landing, or changing altitude voluntarily.
-        if (Compute.useSpheroidAtmosphere(clientgui.getClient().getGame(), ce())
-                && !cmd.contains(MoveStepType.HOVER)
-                && !cmd.contains(MoveStepType.VLAND)
-                && !cmd.contains(MoveStepType.UP)
-                && !cmd.contains(MoveStepType.DOWN)) {
-            ConfirmDialog nag = new ConfirmDialog(clientgui.frame,
-                    Messages.getString("MovementDisplay.areYouSure"),
-                    Messages.getString("MovementDisplay.SpheroidAltitudeLoss") +
-
-                            check, true);
-            nag.setVisible(true);
-            if (nag.getAnswer()) {
-                // do they want to be bothered again?
-                if (!nag.getShowAgain()) {
-                    GUIP.setNagForPSR(false);
-                }
-            } else {
-                return;
-            }
-        }
-
-        if (ce().isAirborne() || ce().isSpaceborne()) {
-            if (!clientgui.getClient().getGame().useVectorMove()) {
-                if (ce().isAero() && !((IAero) ce()).isOutControlTotal()) {
-                    // check for underuse of velocity
-                    boolean unusedVelocity = false;
-                    if (null != cmd.getLastStep()) {
-                        unusedVelocity = cmd.getLastStep().getVelocityLeft() > 0;
-                    } else {
-                        unusedVelocity = (((IAero) ce()).getCurrentVelocity() > 0) &&
-                                (ce().delta_distance == 0);
-                    }
-                    boolean flyoff = false;
-                    if ((null != cmd)
-                            && (cmd.contains(MoveStepType.OFF) || cmd
-                            .contains(MoveStepType.RETURN))) {
-                        flyoff = true;
-                    }
-                    boolean landing = false;
-                    if ((null != cmd) && cmd.contains(MoveStepType.LAND)) {
-                        landing = true;
-                    }
-                    boolean ejecting = false;
-                    if ((null != cmd) && cmd.contains(MoveStepType.EJECT)) {
-                        ejecting = true;
-                    }
-                    if (unusedVelocity && !flyoff && !landing && !ejecting) {
-                        String title = Messages
-                                .getString("MovementDisplay.VelocityLeft.title");
-                        String body = Messages
-                                .getString("MovementDisplay.VelocityLeft.message");
-                        clientgui.doAlertDialog(title, body);
-                        return;
-                    }
-                }
-            }
+        if (ce().isAirborne()
+                || ce().isSpaceborne()) {
             // depending on the rules and location (i.e. space v. atmosphere),
             // Aeros might need to have additional move steps tacked on
             // This must be done after all prompts, otherwise a user who cancels
@@ -1715,104 +1657,11 @@ public class MovementDisplay extends ActionPhaseDisplay {
             cmd = SharedUtility.moveAero(cmd, clientgui.getClient());
         }
 
-        if (cmd.willCrushBuildings() && GUIP.getNagForCrushingBuildings()) {
-            ConfirmDialog nag = new ConfirmDialog(
-                    clientgui.frame,
-                    Messages.getString("MovementDisplay.areYouSure"),
-                    Messages.getString("MovementDisplay.ConfirmCrushingBuildings"),
-                    true);
-            nag.setVisible(true);
-            if (nag.getAnswer()) {
-                // do they want to be bothered again?
-                if (!nag.getShowAgain()) {
-                    GUIP.setNagForCrushingBuildings(false);
-                }
-            } else {
-                return;
-            }
-        }
-
-        // check to see if spheroids will drop an elevation
-        if (ce() instanceof LandAirMech && ce().isAssaultDropInProgress()
-                && cmd.getFinalConversionMode() == EntityMovementMode.AERODYNE) {
-            ConfirmDialog nag = new ConfirmDialog(clientgui.frame,
-                    Messages.getString("MovementDisplay.areYouSure"),
-                    Messages.getString("MovementDisplay.insufficientAltitudeForConversion") + check,
-                    false);
-            nag.setVisible(true);
-            if (!nag.getAnswer()) {
-                return;
-            }
-        }
-
-        if ((ce() instanceof Infantry) && ((Infantry) ce()).hasMicrolite()
-                && (ce().isAirborneVTOLorWIGE() || (ce().getElevation() != cmd.getFinalElevation()))
-                && !cmd.contains(MoveStepType.FORWARDS) && !cmd.contains(MoveStepType.FLEE)
-                && cmd.getFinalElevation() > 0
-                && ce().getGame().getBoard().getHex(cmd.getFinalCoords())
-                .terrainLevel(Terrains.BLDG_ELEV) < cmd.getFinalElevation()
-                && ce().getGame().getBoard().getHex(cmd.getFinalCoords())
-                .terrainLevel(Terrains.BRIDGE_ELEV) < cmd.getFinalElevation()) {
-            String title = Messages.getString("MovementDisplay.MicroliteMove.title");
-            String body = Messages.getString("MovementDisplay.MicroliteMove.message");
-            clientgui.doAlertDialog(title, body);
-            return;
-        }
-
-        if (cmd.automaticWiGELanding(true) && GUIP.getNagForWiGELanding()) {
-            ConfirmDialog nag = new ConfirmDialog(
-                    clientgui.frame,
-                    Messages.getString("MovementDisplay.areYouSure"),
-                    Messages.getString("MovementDisplay.ConfirmWiGELanding"),
-                    true);
-            nag.setVisible(true);
-            if (nag.getAnswer()) {
-                // do they want to be bothered again?
-                if (!nag.getShowAgain()) {
-                    GUIP.setNagForWiGELanding(false);
-                }
-            } else {
-                return;
-            }
-        }
-
-        if (cmd.contains(MoveStepType.LAND) || cmd.contains(MoveStepType.VLAND)) {
-            Set<Coords> landingPath = ((IAero) ce()).getLandingCoords(cmd.contains(MoveStepType.VLAND),
-                    cmd.getFinalCoords(), cmd.getFinalFacing());
-            if (landingPath.stream().map(c -> game().getBoard().getHex(c)).filter(Objects::nonNull)
-                    .anyMatch(h -> h.containsTerrain(Terrains.ROUGH) || h.containsTerrain(Terrains.RUBBLE))) {
-                ConfirmDialog nag = new ConfirmDialog(clientgui.frame,
-                        Messages.getString("MovementDisplay.areYouSure"),
-                        Messages.getString("MovementDisplay.ConfirmLandingGearDamage"),
-                        false);
-                nag.setVisible(true);
-                if (!nag.getAnswer()) {
-                    return;
-                }
-            }
-        }
-
         if (isUsingChaff) {
             addStepToMovePath(MoveStepType.CHAFF);
             isUsingChaff = false;
         }
 
-        if (ce() instanceof Infantry) {
-            InfantryMount mount = ((Infantry) ce()).getMount();
-            if ((mount != null) && ce().getMovementMode().isSubmarine() && (ce().underwaterRounds >= mount.getUWEndurance())
-                    && cmd.isAllUnderwater(game())) {
-                ConfirmDialog nag = new ConfirmDialog(clientgui.frame,
-                        Messages.getString("MovementDisplay.areYouSure"),
-                        Messages.getString("MovementDisplay.ConfirmMountSuffocation"),
-                        false);
-                nag.setVisible(true);
-                if (!nag.getAnswer()) {
-                    return;
-                }
-            }
-        }
-
-        disableButtons();
         clientgui.getBoardView().clearMovementData();
         clientgui.getBoardView().clearMovementEnvelope();
         if (ce().hasUMU()) {
@@ -2361,7 +2210,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         if (ce == null) {
             return;
         }
-        boolean isNight = clientgui.getClient().getGame().getPlanetaryConditions().isIlluminationEffective();
+        boolean isNight = clientgui.getClient().getGame().getPlanetaryConditions().getLight().isDuskOrFullMoonOrMoonlessOrPitchBack();
         setSearchlightEnabled(isNight && ce.hasSearchlight() && !cmd.contains(MoveStepType.SEARCHLIGHT),
                 ce.isUsingSearchlight());
     }
@@ -2796,9 +2645,13 @@ public class MovementDisplay extends ActionPhaseDisplay {
     }
 
     private void updateConvertModeButton() {
-        if (cmd.length() > 0 && cmd.getLastStep().getType() != MoveStepType.CONVERT_MODE) {
-            setModeConvertEnabled(false);
-            return;
+        // Issue #5280 NPE - make sure the move path is valid and the last step isn't null.
+        // MovePath::getLastStep() can return null.
+        if ((cmd != null) && (cmd.getLastStep() != null)) {
+            if (cmd.length() > 0 && cmd.getLastStep().getType() != MoveStepType.CONVERT_MODE) {
+                setModeConvertEnabled(false);
+                return;
+            }
         }
 
         final Entity ce = ce();
@@ -3780,7 +3633,8 @@ public class MovementDisplay extends ActionPhaseDisplay {
                     continue;
                 }
                 int numChoices = choiceDialog.getChoices().length;
-                if ((numChoices > currentBay.getSafeLaunchRate()) && GUIP.getNagForLaunchDoors()) {
+                if (needNagForLaunchDoors()
+                        && (numChoices > currentBay.getSafeLaunchRate())) {
                     int aerosPerDoor = numChoices / doors;
                     int remainder = numChoices % doors;
                     // Determine PSRs
@@ -3795,15 +3649,9 @@ public class MovementDisplay extends ActionPhaseDisplay {
                                 "MovementDisplay.LaunchFighterDialog.controlroll", names[choice], modifier);
                         psrs.append("\t" + damageMsg + "\n");
                     }
-                    ConfirmDialog nag = new ConfirmDialog(clientgui.frame,
-                            Messages.getString("MovementDisplay.areYouSure"),
-                            Messages.getString("MovementDisplay.ConfirmLaunch") + psrs,
-                            true);
-                    nag.setVisible(true);
-                    doIt = nag.getAnswer();
-                    if (!nag.getShowAgain()) {
-                        GUIP.setNagForLaunchDoors(false);
-                    }
+                    String title = Messages.getString("MovementDisplay.areYouSure");
+                    String body = Messages.getString("MovementDisplay.ConfirmLaunch") + psrs;
+                    doIt = checkNagLaunchDoors(title, body);
                 } else {
                     doIt = true;
                 }
@@ -4224,8 +4072,9 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
         IAero a = (IAero) ce;
         if (!clientgui.getClient().getGame().getBoard().inSpace()) {
+            PlanetaryConditions conditions = clientgui.getClient().getGame().getPlanetaryConditions();
             if (a.isSpheroid()
-                    || clientgui.getClient().getGame().getPlanetaryConditions().isVacuum()) {
+                    || conditions.getAtmosphere().isLighterThan(Atmosphere.THIN)) {
                 getBtn(MoveCommand.MOVE_ACC).setEnabled(false);
                 getBtn(MoveCommand.MOVE_DEC).setEnabled(false);
                 getBtn(MoveCommand.MOVE_ACCN).setEnabled(false);
@@ -4590,6 +4439,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         // Refresh the new velocity envelope on the map.
         try {
             computeMovementEnvelope(ae);
+            updateMove();
         } catch (Exception e) {
             LogManager.getLogger().error("An error occured trying to compute the move envelope for an Aero.");
         } finally {
@@ -4670,6 +4520,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         } else if (actionCmd.equals(MoveCommand.MOVE_CANCEL.getCmd())) {
             clear();
             computeMovementEnvelope(ce);
+            updateMove();
         } else if (ev.getSource().equals(getBtn(MoveCommand.MOVE_MORE))) {
             currentButtonGroup++;
             currentButtonGroup %= numButtonGroups;
@@ -4797,9 +4648,9 @@ public class MovementDisplay extends ActionPhaseDisplay {
             clear();
             if (!clientgui.getClient().getGame()
                     .containsMinefield(ce.getPosition())) {
-                clientgui.doAlertDialog(Messages
-                                .getString("MovementDisplay.CantClearMinefield"),
-                        Messages.getString("MovementDisplay.NoMinefield"));
+                String title = Messages.getString("MovementDisplay.CantClearMinefield");
+                String body = Messages.getString("MovementDisplay.NoMinefield");
+                clientgui.doAlertDialog(title, body);
                 return;
             }
 
@@ -4831,10 +4682,10 @@ public class MovementDisplay extends ActionPhaseDisplay {
             for (int loop = 0; loop < choices.length; loop++) {
                 choices[loop] = Minefield.getDisplayableName(mfs.get(loop).getType());
             }
-            String input = (String) JOptionPane.showInputDialog(clientgui,
-                    Messages.getString("MovementDisplay.ChooseMinefieldDialog.message"),
-                    Messages.getString("MovementDisplay.ChooseMinefieldDialog.title"),
-                    JOptionPane.QUESTION_MESSAGE, null, choices, null);
+
+            String title = Messages.getString("MovementDisplay.ChooseMinefieldDialog.title");
+            String body = Messages.getString("MovementDisplay.ChooseMinefieldDialog.message");
+            String input = (String) JOptionPane.showInputDialog(clientgui, body, title, JOptionPane.QUESTION_MESSAGE, null, choices, null);
             Minefield mf = null;
             if (input != null) {
                 for (int loop = 0; loop < choices.length; loop++) {
@@ -4844,9 +4695,9 @@ public class MovementDisplay extends ActionPhaseDisplay {
                     }
                 }
             }
-            String title = Messages.getString("MovementDisplay.ClearMinefieldDialog.title");
-            String msg = Messages.getString("MovementDisplay.ClearMinefieldDialog.message", clear, boom);
-            if ((null != mf) && clientgui.doYesNoDialog(title, msg)) {
+            title = Messages.getString("MovementDisplay.ClearMinefieldDialog.title");
+            body = Messages.getString("MovementDisplay.ClearMinefieldDialog.message", clear, boom);
+            if ((null != mf) && clientgui.doYesNoDialog(title, body)) {
                 addStepToMovePath(MoveStepType.CLEAR_MINEFIELD, mf);
                 ready();
             }
@@ -4884,10 +4735,10 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
             if (opts.booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_CAREFUL_STAND)
                     && (ce.getWalkMP() > 2)) {
-                ConfirmDialog response = clientgui.doYesNoBotherDialog(
-                        Messages.getString("MovementDisplay.CarefulStand.title"),
-                        Messages.getString("MovementDisplay.CarefulStand.message"));
-                if (response.getAnswer()) {
+                String title = Messages.getString("MovementDisplay.CarefulStand.title");
+                String body = Messages.getString("MovementDisplay.CarefulStand.message");
+                boolean response = clientgui.doYesNoDialog(title, body);
+                if (response) {
                     ce.setCarefulStand(true);
                     if (cmd.getFinalProne() || cmd.getFinalHullDown()) {
                         addStepToMovePath(MoveStepType.CAREFUL_STAND);
@@ -4925,9 +4776,10 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 }
 
                 // Dialog for choosing which location to brace
+                String title = "Choose Brace Location";
+                String body = "Choose the location to brace:";
                 String option = (String) JOptionPane.showInputDialog(clientgui.getFrame(),
-                        "Choose the location to brace:",
-                        "Choose Brace Location", JOptionPane.QUESTION_MESSAGE, null,
+                        body, title, JOptionPane.QUESTION_MESSAGE, null,
                         locationNames, locationNames[0]);
 
                 // Verify that we have a valid option...
@@ -4981,8 +4833,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                     }
                     ready();
                 }
-            } else if (clientgui
-                    .doYesNoDialog(
+            } else if (clientgui.doYesNoDialog(
                             Messages.getString("MovementDisplay.AbandonDialog1.title"),
                             Messages.getString("MovementDisplay.AbandonDialog1.message"))) {
                 clear();
@@ -5040,14 +4891,17 @@ public class MovementDisplay extends ActionPhaseDisplay {
         } else if (actionCmd.equals(MoveCommand.MOVE_RAISE_ELEVATION.getCmd())) {
             addStepToMovePath(MoveStepType.UP);
         } else if (actionCmd.equals(MoveCommand.MOVE_LOWER_ELEVATION.getCmd())) {
-            if (ce.isAero()
-                    && (null != cmd.getLastStep())
-                    && (cmd.getLastStep().getNDown() == 1)
-                    && (cmd.getLastStep().getVelocity() < 12)
-                    && !(((IAero) ce).isSpheroid() || clientgui.getClient()
-                    .getGame().getPlanetaryConditions().isVacuum())) {
-                addStepToMovePath(MoveStepType.ACC, true);
-                computeAeroMovementEnvelope(ce);
+            if (ce.isAero()) {
+                PlanetaryConditions conditions = clientgui.getClient().getGame().getPlanetaryConditions();
+                boolean spheroidOrLessThanThin = ((IAero) ce).isSpheroid()
+                        || conditions.getAtmosphere().isLighterThan(Atmosphere.THIN);
+                if ((null != cmd.getLastStep())
+                        && (cmd.getLastStep().getNDown() == 1)
+                        && (cmd.getLastStep().getVelocity() < 12)
+                        && !spheroidOrLessThanThin) {
+                    addStepToMovePath(MoveStepType.ACC, true);
+                    computeAeroMovementEnvelope(ce);
+                }
             }
             addStepToMovePath(MoveStepType.DOWN);
         } else if (actionCmd.equals(MoveCommand.MOVE_CLIMB_MODE.getCmd())) {
@@ -5244,10 +5098,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             if (ce().isAero()
                     && (null != ((IAero) ce()).hasRoomForHorizontalTakeOff())) {
                 String title = Messages.getString("MovementDisplay.NoTakeOffDialog.title");
-                String body = Messages.getString(
-                        "MovementDisplay.NoTakeOffDialog.message",
-                        new Object[]{((IAero) ce())
-                                .hasRoomForHorizontalTakeOff()});
+                String body = Messages.getString("MovementDisplay.NoTakeOffDialog.message", ((IAero) ce()).hasRoomForHorizontalTakeOff());
                 clientgui.doAlertDialog(title, body);
             } else {
                 if (clientgui.doYesNoDialog(

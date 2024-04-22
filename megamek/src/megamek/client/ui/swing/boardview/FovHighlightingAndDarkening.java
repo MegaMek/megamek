@@ -3,11 +3,11 @@ package megamek.client.ui.swing.boardview;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
-import megamek.common.enums.IlluminationLevel;
 import megamek.common.event.GameListener;
 import megamek.common.event.GameListenerAdapter;
 import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.options.OptionsConstants;
+import megamek.common.planetaryconditions.IlluminationLevel;
 import megamek.common.preference.IPreferenceChangeListener;
 import org.apache.logging.log4j.LogManager;
 

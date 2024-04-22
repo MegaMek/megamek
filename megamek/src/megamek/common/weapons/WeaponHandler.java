@@ -22,6 +22,7 @@ import megamek.common.enums.AimingMode;
 import megamek.common.enums.GamePhase;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.OptionsConstants;
+import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.server.GameManager;
 import megamek.server.Server;
 import megamek.server.SmokeCloud;
@@ -57,6 +58,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
     protected boolean bLowProfileGlancing = false;
     protected boolean nukeS2S = false;
     protected WeaponType wtype;
+    protected AmmoType atype;
     protected String typeName;
     protected WeaponMounted weapon;
     protected Entity ae;
@@ -802,8 +804,11 @@ public class WeaponHandler implements AttackHandler, Serializable {
                 if ((wtype.getAmmoType() != AmmoType.T_NA)
                         && (weapon.getLinked() != null)
                         && (weapon.getLinked().getType() instanceof AmmoType)) {
-                    AmmoType atype = (AmmoType) weapon.getLinked().getType();
-                    if (!atype.getMunitionType().contains(AmmoType.Munitions.M_STANDARD)) {
+                    if (!atype.getMunitionType().contains(AmmoType.Munitions.M_STANDARD)
+                        || atype.getAmmoType() == AmmoType.T_MML
+                        || atype.getAmmoType() == AmmoType.T_AC_LBX
+                        || atype.getAmmoType() == AmmoType.T_ATM
+                    ) {
                         r.messageId = 3116;
                         r.add(atype.getSubMunitionName());
                     }
@@ -1752,6 +1757,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
         ae = game.getEntity(waa.getEntityId());
         weapon = (WeaponMounted) ae.getEquipment(waa.getWeaponId());
         wtype = (WeaponType) weapon.getType();
+        atype = (weapon.getLinked() != null) ? (AmmoType) weapon.getLinked().getType() : null;
         typeName = wtype.getInternalName();
         target = game.getTarget(waa.getTargetType(), waa.getTargetId());
         gameManager = m;
@@ -2068,7 +2074,8 @@ public class WeaponHandler implements AttackHandler, Serializable {
             nMissilesModifier += (toHit.getMoS() / 3) * 2;
         }
 
-        if (game.getPlanetaryConditions().hasEMI()) {
+        PlanetaryConditions conditions = game.getPlanetaryConditions();
+        if (conditions.getEMI().isEMI()) {
             nMissilesModifier -= 2;
         }
 

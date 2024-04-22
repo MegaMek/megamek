@@ -22,10 +22,6 @@ import megamek.client.generator.enums.SkillGeneratorMethod;
 import megamek.common.Entity;
 
 public class ConstantSkillGenerator extends AbstractSkillGenerator {
-    //region Variable Declarations
-    private static final long serialVersionUID = -7927373286417045956L;
-    //endregion Variable Declarations
-
     //region Constructors
     public ConstantSkillGenerator() {
         this(SkillGeneratorMethod.CONSTANT);
@@ -36,16 +32,9 @@ public class ConstantSkillGenerator extends AbstractSkillGenerator {
     }
     //endregion Constructors
 
-    /**
-     * This returns the unmodified default random skill value, which is a set of constants
-     *
-     * @param entity the Entity to generate a random skill array for
-     * @param forceClan forces the type to be clan if the entity is a clan unit
-     * @return an integer array containing the (Gunnery, Piloting) skill values, or an alternative
-     * pairing if applicable [(Gunnery, Anti-'Mech) for infantry]
-     */
     @Override
-    public int[] generateRandomSkills(final Entity entity, final boolean forceClan) {
+    public int[] generateRandomSkills(final Entity entity, final boolean clanPilot,
+                                      final boolean forceClan) {
         return cleanReturn(entity, getLevel().getDefaultSkillValues());
     }
 }

@@ -25,7 +25,7 @@ would have none so I've attached a wing to each RDF. -->
 	
 	<toc>
 		<unitType>
-			<option>null,Mek,Tank,VTOL,Infantry,Aero,Conventional Fighter</option>
+			<option>null,Mek,Tank,VTOL,Infantry,AeroSpaceFighter,Conventional Fighter</option>
 		</unitType>
 		
 		<eschelon>
@@ -33,7 +33,7 @@ would have none so I've attached a wing to each RDF. -->
 			<option ifUnitType="Mek">%REGIMENT%,%BATTALION%,%COMPANY%,%LANCE%</option>
 			<option ifUnitType="Tank|VTOL">%COMPANY%,%LANCE%</option>
 			<option ifUnitType="Infantry">%COMPANY%</option>
-			<option ifUnitType="Aero|Conventional Fighter">%WING%,%SQUADRON%,%FLIGHT%</option>
+			<option ifUnitType="AeroSpaceFighter|Conventional Fighter">%WING%,%SQUADRON%,%FLIGHT%</option>
 		</eschelon>
 		
 		<rating>
@@ -54,7 +54,7 @@ would have none so I've attached a wing to each RDF. -->
 		</subforces>
 		
 		<attachedForces>
-			<subforce unitType="Aero">%WING%</subforce>
+			<subforce unitType="AeroSpaceFighter">%WING%</subforce>
 		</attachedForces>
 	</force>
 	

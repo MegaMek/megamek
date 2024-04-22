@@ -1,7 +1,8 @@
 /*
  * MegaMek -
  * Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
- * Copyright © 2013 Nicholas Walczak (walczak@cs.umn.edu)
+ * Copyright (C) 2013 Nicholas Walczak (walczak@cs.umn.edu)
+ * Copyright (C) 2024 - The MegaMek Team. All Rights Reserved.
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -23,35 +24,38 @@ package megamek.client.ui.swing.util;
  * 
  * @author arlith
  */
-public abstract class CommandAction {
+public interface CommandAction {
 
     /**
-     * Used to add a condition onto this Action: the default behavior returns
-     * true but can be overridden to check for certain conditions.  If this
-     * method returns false, then the <code>MegaMekController</code> will not
-     * consume the <code>KeyEvent</code>
-     * @return
+     * Returns true when the registered receiver of the keybind is in a state to receive the keybind and may
+     * react to it, false otherwise. This should return false when the receiver is hidden, inactive or behind
+     * a modal dialog. It should return true when it would be expected to act on a keybind, i.e. when it
+     * has the appearance of being in focus.
+     *
+     * When this method returns false, it will not be counted as having consumed the key press.
+     *
+     * @return True when the registered receiver of the keybind is in a state to receive the keybind and may
+     * react to it. False otherwise.
      */
-    public boolean shouldPerformAction() {
+    default boolean shouldReceiveAction() {
         return true;
     }
 
-    public abstract void performAction();
+    /**
+     * Called on a key press when the registered receiver of the keybind is allowed to receive a key press
+     * according to the return value of shouldReceiveAction().
+     *
+     * @see #shouldReceiveAction()
+     */
+    void performAction();
 
     /**
-     * Returns true if <code>releaseAction</code> should be called when the 
-     * bound key is released, else false.
-     * @return
+     * Called on a key release when the registered receiver of the keybind is allowed to receive it
+     * according to the return value of shouldReceiveAction(). Note that it may happen that the receiver
+     * was allowed to receive the key press but not the key release.
+     * By default, this method does nothing.
+     *
+     * @see #shouldReceiveAction()
      */
-    public boolean hasReleaseAction() {
-        return false;
-    }
-
-    /**
-     * Method that gets called when the bound key is released.  Defaults is to
-     * do nothing.
-     */
-    public void releaseAction() {
-
-    }
+    default void releaseAction() { }
 }

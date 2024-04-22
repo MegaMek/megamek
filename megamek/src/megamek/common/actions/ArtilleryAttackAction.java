@@ -110,20 +110,7 @@ public class ArtilleryAttackAction extends WeaponAttackAction implements Seriali
             // See TO p181. Cruise missile flight time is (1 + (Mapsheets / 5, round down)
             turnsTilHit = 1 + (distance / Board.DEFAULT_BOARD_HEIGHT / 5);
         } else {
-            // See indirect flight times table, TO p181
-            if (distance <= Board.DEFAULT_BOARD_HEIGHT) {
-                turnsTilHit = 0;
-            } else if (distance <= (8 * Board.DEFAULT_BOARD_HEIGHT)) {
-                turnsTilHit = 1;
-            } else if (distance <= (15 * Board.DEFAULT_BOARD_HEIGHT)) {
-                turnsTilHit = 2;
-            } else if (distance <= (21 * Board.DEFAULT_BOARD_HEIGHT)) {
-                turnsTilHit =3;
-            } else if (distance <= (26 * Board.DEFAULT_BOARD_HEIGHT)) {
-                turnsTilHit = 4;
-            } else {
-                turnsTilHit = 5;
-            }
+            turnsTilHit = Compute.turnsTilHit(distance);
         }
     }
 
@@ -134,7 +121,7 @@ public class ArtilleryAttackAction extends WeaponAttackAction implements Seriali
     public int getPlayerId() {
         return playerId;
     }
-    
+
     public void setSpotterIds(Vector<Integer> spotterIds) {
         this.spotterIds = spotterIds;
     }
@@ -146,7 +133,7 @@ public class ArtilleryAttackAction extends WeaponAttackAction implements Seriali
     public Coords getCoords() {
         return this.firingCoords;
     }
-    
+
     // For use with AMS and artillery to-hit tables
     public void setOldTargetCoords(Coords coords) {
         this.oldTargetCoords = coords;
@@ -155,31 +142,29 @@ public class ArtilleryAttackAction extends WeaponAttackAction implements Seriali
     public Coords getOldTargetCoords() {
         return this.oldTargetCoords;
     }
-    
+
     /*
      * Updates the turnsTilHit value of this aaa
      * Needed after aaa setup by bearings-only missiles, which have a variable velocity
      */
     @Override
     public void updateTurnsTilHit(Game game) {
-        int distance = Compute.effectiveDistance(game, getEntity(game), getTarget(game));
         // adjust distance for gravity
-        distance = (int) Math.floor((double) distance / game.getPlanetaryConditions().getGravity());
-        this.turnsTilHit = distance / launchVelocity;
+        this.turnsTilHit = Compute.turnsTilBOMHit(game, getEntity(game), getTarget(game), launchVelocity);
     }
-    
+
     public int getTurnsTilHit() {
         return this.turnsTilHit;
     }
-    
+
     public void setTurnsTilHit(int turnsTilHit) {
         this.turnsTilHit = turnsTilHit;
     }
-    
+
     public void decrementTurnsTilHit() {
         decrementTurnsTilHit(1);
     }
-    
+
     public void decrementTurnsTilHit(int numTurns) {
         this.turnsTilHit-=numTurns;
     }

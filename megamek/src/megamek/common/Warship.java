@@ -27,8 +27,8 @@ public class Warship extends Jumpship {
     public static final int LOC_LBS = 7;
     public static final int LOC_RBS = 8;
 
-    private static String[] LOCATION_ABBRS = { "NOS", "FLS", "FRS", "AFT", "ALS", "ARS", "HULL", "LBS", "RBS" };
-    private static String[] LOCATION_NAMES = { "Nose", "Left Front Side", "Right Front Side",
+    private static final String[] LOCATION_ABBRS = { "NOS", "FLS", "FRS", "AFT", "ALS", "ARS", "HULL", "LBS", "RBS" };
+    private static final String[] LOCATION_NAMES = { "Nose", "Left Front Side", "Right Front Side",
             "Aft", "Aft Left Side", "Aft Right Side", "Hull", "Left Broadsides", "Right Broadsides" };
 
     public Warship() {
@@ -44,7 +44,7 @@ public class Warship extends Jumpship {
 
     // ASEW Missile Effects, per location
     // Values correspond to Locations, as seen above: NOS, FLS, FRS, AFT, ALS, ARS, LBS, RBS
-    private int[] asewAffectedTurns = { 0, 0, 0, 0, 0, 0, 0, 0 };
+    private final int[] asewAffectedTurns = { 0, 0, 0, 0, 0, 0, 0, 0 };
 
     /*
      * Accessor for the asewAffectedTurns array, which may be different for inheriting classes.
@@ -108,7 +108,7 @@ public class Warship extends Jumpship {
     public int getWeaponArc(int wn) {
         final Mounted mounted = getEquipment(wn);
         
-        int arc = Compute.ARC_NOSE;
+        int arc;
         switch (mounted.getLocation()) {
             case LOC_NOSE:
                 if (mounted.isInWaypointLaunchMode()) {
@@ -277,12 +277,18 @@ public class Warship extends Jumpship {
         setSecondaryFacing(getFacing());
     }
     
-    /**
-     * Utility function that handles situations where a facing change
-     * has some kind of permanent effect on the entity.
-     */
     @Override
     public void postProcessFacingChange() {
         mpUsed += 2;
+    }
+
+    @Override
+    public boolean isJumpShip() {
+        return false;
+    }
+
+    @Override
+    public boolean isWarShip() {
+        return true;
     }
 }

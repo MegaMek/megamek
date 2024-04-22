@@ -20,6 +20,7 @@ import megamek.common.enums.GamePhase;
 import megamek.common.enums.MPBoosters;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.options.OptionsConstants;
+import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.common.weapons.flamers.VehicleFlamerWeapon;
 import megamek.common.weapons.lasers.CLChemicalLaserWeapon;
 import org.apache.logging.log4j.LogManager;
@@ -110,6 +111,8 @@ public class Tank extends Entity {
                 ToHitData.SIDE_LEFT, LOC_LEFT,
                 ToHitData.SIDE_RIGHT, LOC_RIGHT,
                 ToHitData.SIDE_REAR, LOC_REAR);
+    protected boolean hasSponsons = false;
+    protected boolean hasPintle = false;
 
     @Override
     public int getUnitType() {
@@ -274,6 +277,9 @@ public class Tank extends Entity {
         if (!hasNoDualTurret()) {
             ctl.addComponent(getDualTurretTA());
         }
+        if (hasSponsons) {
+            ctl.addComponent(EquipmentType.get(EquipmentTypeLookup.SPONSON_TURRET).getTechAdvancement());
+        }
     }
 
     @Override
@@ -292,26 +298,23 @@ public class Tank extends Entity {
         }
 
         if (!mpCalculationSetting.ignoreWeather && (null != game)) {
-            int weatherMod = game.getPlanetaryConditions().getMovementMods(this);
+            PlanetaryConditions conditions = game.getPlanetaryConditions();
+            int weatherMod = conditions.getMovementMods(this);
             mp = Math.max(mp + weatherMod, 0);
 
             if (getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_SNOW)) {
-                if ((game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_ICE_STORM)) {
+                if (conditions.getWeather().isIceStorm()) {
                     mp += 2;
                 }
 
-                if ((game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_SLEET)
-                        || (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_LIGHT_SNOW)
-                        || (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_MOD_SNOW)
-                        || (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_HEAVY_SNOW)
-                        || (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_SNOW_FLURRIES)) {
+                if (conditions.getWeather().isLightSnowOrModerateSnowOrSnowFlurriesOrHeavySnowOrSleet()) {
                     mp += 1;
                 }
             }
 
             if(getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_WIND)
-                    && (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_NONE)
-                    && (game.getPlanetaryConditions().getWindStrength() == PlanetaryConditions.WI_TORNADO_F13)) {
+                    && conditions.getWeather().isClear()
+                    && conditions.getWind().isTornadoF1ToF3()) {
                 mp += 1;
             }
         }
@@ -576,13 +579,10 @@ public class Tank extends Entity {
     @Override
     public boolean isImmobileForJump() {
         // *Can* jump unless 0 Jump MP, or 1+ Jump MP but engine is critted, or crew unconscious/dead.
-        boolean jumpImmobile = (
-                super.isImmobile(true) ||
+        return super.isImmobile(true) ||
                 super.isPermanentlyImmobilized(true) ||
                 (getJumpMP() == 0) ||
-                (isEngineHit())
-        );
-        return jumpImmobile;
+                isEngineHit();
     }
 
     @Override
@@ -1722,13 +1722,13 @@ public class Tank extends Entity {
         return true;
     }
 
-    @Override
     /**
      * Checks to see if a Tank is capable of going hull-down.  This is true if
      * hull-down rules are enabled and the Tank is in a fortified hex.
      *
      *  @return True if hull-down is enabled and the Tank is in a fortified hex.
      */
+    @Override
     public boolean canGoHullDown() {
         // MoveStep line 2179 performs this same check
         // performing it here will allow us to disable the Hulldown button
@@ -1839,6 +1839,9 @@ public class Tank extends Entity {
                 && mounted.getType().hasFlag(MiscType.F_JUMP_JET)) {
             setOriginalJumpMP(getOriginalJumpMP() + 1);
         }
+        // Track unusual turrets for tech calculations
+        hasSponsons |= mounted.isSponsonTurretMounted();
+        hasPintle |= mounted.isPintleTurretMounted();
     }
 
     /**
@@ -2897,13 +2900,7 @@ public class Tank extends Entity {
     @Override
     public void setHullDown(boolean down) {
         super.setHullDown(down);
-        if ((getMovedBackwards() == true) && (down == true)) {
-            m_bBackedIntoHullDown = true;
-        } else if ((getMovedBackwards() == false) && (down == true)) {
-            m_bBackedIntoHullDown = false;
-        } else if (down == false) {
-            m_bBackedIntoHullDown = false;
-        }
+        m_bBackedIntoHullDown = getMovedBackwards() && down;
     }
 
     /**

@@ -23,14 +23,14 @@ brigada seems reasonable. -->
 
 	<toc>
 		<unitType>
-			<option>null,Mek,Tank,VTOL,Infantry,Aero,Conventional Fighter</option>
+			<option>null,Mek,Tank,VTOL,Infantry,AeroSpaceFighter,Conventional Fighter</option>
 		</unitType>
 		
 		<eschelon>
 			<option ifUnitType="">%BRIGADE%,%REGIMENT%,%BATTALION%,%COMPANY%</option>
 			<option ifUnitType="Mek|Tank|VTOL">%LANCE%</option>
 			<option ifUnitType="Infantry">%PLATOON%</option>
-			<option ifUnitType="Aero|Conventional Fighter">%WING%,%SQUADRON%,%FLIGHT%</option>
+			<option ifUnitType="AeroSpaceFighter|Conventional Fighter">%WING%,%SQUADRON%,%FLIGHT%</option>
 		</eschelon>
 		
 		<rating>
@@ -46,7 +46,7 @@ brigada seems reasonable. -->
 		</subforces>
 		
 		<attachedForces>
-			<subforce num="2" unitType="Aero">%WING%</subforce>
+			<subforce num="2" unitType="AeroSpaceFighter">%WING%</subforce>
 		</attachedForces>
 	</force>
 

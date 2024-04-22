@@ -93,7 +93,7 @@ public class SubforcesNode extends RulesetNode {
                         } else if (vn.getContent().endsWith("-")) {
                             sub.setSizeMod(ForceDescriptor.UNDERSTRENGTH);
                             sub.setEschelon(Integer.parseInt(vn.getContent().replace("-", "")));
-                        } else  {
+                        } else {
                             sub.setEschelon(Integer.parseInt(vn.getContent()));
                         }
                         apply(sub, i);

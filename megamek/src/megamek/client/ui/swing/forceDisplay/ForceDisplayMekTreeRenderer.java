@@ -25,6 +25,7 @@ import megamek.client.ui.swing.tooltip.UnitToolTip;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.Configuration;
 import megamek.common.Entity;
+import megamek.common.EntityVisibilityUtils;
 import megamek.common.Player;
 import megamek.common.force.Force;
 import megamek.common.icons.Camouflage;
@@ -75,7 +76,7 @@ public class ForceDisplayMekTreeRenderer extends DefaultTreeCellRenderer {
             setText(ForceDisplayMekCellFormatter.formatUnitCompact(entity, clientGUI));
             int size = UIUtil.scaleForGUI(20);
             boolean showAsUnknown = owner.isEnemyOf(localPlayer)
-                    && !entity.isVisibleToEnemy();
+                    && !EntityVisibilityUtils.detectedOrHasVisual(localPlayer, clientGUI.getClient().getGame(), entity);
             if (showAsUnknown) {
                 setIcon(getToolkit().getImage(UNKNOWN_UNIT), size - 5);
             } else {

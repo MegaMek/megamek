@@ -122,6 +122,11 @@ public abstract class InfantryWeapon extends Weapon {
 
     @Override
     public int getMaxRange(Mounted<?> weapon) {
+        return getMaxRange(weapon, null);
+    }
+
+    @Override
+    public int getMaxRange(Mounted<?> weapon, AmmoMounted ammo) {
         for (int range = RangeType.RANGE_EXTREME; range >= RangeType.RANGE_SHORT; range--) {
             if (infantryRange * 3 > AIRBORNE_WEAPON_RANGES[range - 1]) {
                 return range;

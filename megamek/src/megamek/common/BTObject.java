@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2022-2024 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -17,6 +17,11 @@
  * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
 package megamek.common;
+
+import megamek.common.annotations.Nullable;
+import megamek.client.ui.swing.util.FluffImageHelper;
+
+import java.awt.*;
 
 /**
  * This interface represents any physical object that can find itself on the battlefield, including units of any sort
@@ -212,6 +217,36 @@ public interface BTObject {
     }
 
     /**
+     * Returns true when this object is a JumpShip (but not a Space Station nor a WarShip).
+     * Returns false for any type of unit group.
+     *
+     * @return True when this is a JumpShip
+     */
+    default boolean isJumpShip() {
+        return false;
+    }
+
+    /**
+     * Returns true when this object is a WarShip (but not a Space Station nor a JumpShip).
+     * Returns false for any type of unit group.
+     *
+     * @return True when this is a WarShip
+     */
+    default boolean isWarShip() {
+        return false;
+    }
+
+    /**
+     * Returns true when this object is a SpaceStation (but not a WarShip nor a JumpShip).
+     * Returns false for any type of unit group.
+     *
+     * @return True when this is a SpaceStation
+     */
+    default boolean isSpaceStation() {
+        return false;
+    }
+
+    /**
      * Returns true when this object has the distinction between aerodyne and spheroid, i.e. if it
      * is a DropShip or SmallCraft. Returns false for fighters as they are always aerodyne and do not have
      * the distinction.
@@ -341,5 +376,61 @@ public interface BTObject {
      */
     default boolean isSingleUnit() {
         return !isUnitGroup();
+    }
+
+    /**
+     * Returns the general name or type name of this unit/object. For standard individual units, this is
+     * the chassis. For other types of units or objects this can be the full designation or a general
+     * part of the designation. Much like the chassis, this can be much more narrow than the general
+     * type of unit ("Mek").
+     *
+     * @implNote The general name should not be empty and not return null. Return the chassis
+     * in Entity and AlphaStrikeElement.
+     *
+     * @return The general name / chassis
+     */
+    String generalName();
+
+    /**
+     * Returns the specific name or type name of this unit/object. For standard individual units, this is
+     * the model. For other types of units or objects this can be a part of the designation, or empty.
+     *
+     * @implNote The specific name should not return null. Return the model in Entity and AlphaStrikeElement.
+     *
+     * @return The specific name / model
+     */
+    String specificName();
+
+    /**
+     * Returns a fluff image for this unit or object to be shown e.g. in the unit summary.
+     * Important: This method returns only a fluff image that is stored in the object itself, e.g. if it
+     * was part of the unit's file or is created by the unit itself. It does not search for fluff images in
+     * the fluff images directories. For GUI, use {@link FluffImageHelper#getFluffImage(BTObject)} instead;
+     * that method will retrieve either a unit's own fluff image or an image from the fluff images
+     * directories (if there is one).
+     *
+     * @implNote The default implementation returns null. For canon units, this will return null, as they
+     * do not store fluff images in the unit files.
+     *
+     * @return A fluff image for this object/unit if it contains one as part of the object/unit
+     */
+    default @Nullable Image getFluffImage() {
+        return null;
+    }
+
+    /**
+     * Returns an icon for this unit or object for the game board. Note that this is the 84 x 72 standard
+     * size icon; icons for landed large craft are not handled by this method.
+     * Important: This method returns only an icon that is stored in the object itself, e.g. if it
+     * was part of the unit's file or is created by the unit itself. It does not search for the icon
+     * through the mechset.
+     *
+     * @implNote The default implementation returns null. For canon units, this will return null, as they
+     * do not store icon images in the unit files.
+     *
+     * @return An icon for this object/unit if it contains one as part of the object/unit
+     */
+    default @Nullable Image getIcon() {
+        return null;
     }
 }

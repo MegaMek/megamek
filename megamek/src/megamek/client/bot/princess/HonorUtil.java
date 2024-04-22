@@ -58,4 +58,9 @@ public class HonorUtil implements IHonorUtil {
     public void setEnemyDishonored(int playerId) {
         dishonoredEnemies.add(playerId);
     }
+
+    @Override
+    public Set<Integer> getDishonoredEnemies() {
+        return dishonoredEnemies;
+    }
 }

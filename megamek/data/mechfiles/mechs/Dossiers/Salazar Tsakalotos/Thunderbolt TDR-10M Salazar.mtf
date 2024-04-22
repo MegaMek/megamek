@@ -1,67 +1,65 @@
+generator:MegaMek Suite 0.49.19-SNAPSHOT on 2024-03-18
 chassis:Thunderbolt
 model:TDR-10M (Salazar)
 mul id:3234
 
 Config:Biped
-TechBase:Inner Sphere
-Era:3085
-Source: BattleTech Dossiers: Salazar Tsakalotos
-Rules Level:3
+techbase:Inner Sphere
+era:3085
+source:BattleTech Dossiers: Salazar Tsakalotos
+rules level:3
 role:Brawler
 
-
-
-quirk:multi_trac
 quirk:rugged_2
+quirk:multi_trac
 quirk:ubiquitous_is
 
+mass:65
+engine:260 XL Engine(IS)
+structure:IS Standard
+myomer:Standard
+cockpit:Standard Cockpit
+gyro:XL Gyro
 
-Mass:65
-Engine:260 XL Fusion Engine
-Structure:Standard
-Gyro:XL Gyro
-Myomer:Standard
+heat sinks:12 IS Double
+walk mp:4
+jump mp:3
 
-Heat Sinks:12 Double
-Walk MP:4
-Jump MP:3
+armor:Stealth(Inner Sphere)
+LA armor:20
+RA armor:20
+LT armor:23
+RT armor:23
+CT armor:32
+HD armor:9
+LL armor:30
+RL armor:30
+RTL armor:7
+RTR armor:7
+RTC armor:10
 
-Armor:Stealth Armor
-LA Armor:20
-RA Armor:20
-LT Armor:23
-RT Armor:23
-CT Armor:32
-HD Armor:9
-LL Armor:30
-RL Armor:30
-RTL Armor:7
-RTR Armor:7
-RTC Armor:10
-
-Weapons:8
-1 ISGuardianECM, Right Arm
-1 ISSmallVSPLaser (R), Head (R)
-1 ISFlamer, Right Torso
-1 ISMediumPulseLaser, Left Torso
-1 ISPlasmaRifle, Right Arm, Ammo:20
-1 ISSNPPC, Left Torso
-1 ISLightPPC, Left Torso
-1 ISMML5, Right Torso, Ammo:48
+Weapons:7
+Plasma Rifle, Right Arm
+Snub-Nose PPC, Left Torso
+Light PPC, Left Torso
+Medium Pulse Laser, Left Torso
+MML 5, Right Torso
+Flamer, Right Torso
+Small VSP Laser, Head
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-Stealth Armor
-Stealth Armor
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+IS Stealth
+IS Stealth
 
 Right Arm:
 Shoulder
@@ -70,54 +68,54 @@ Lower Arm Actuator
 Hand Actuator
 ISPlasmaRifle
 ISPlasmaRifle
-ISPlasmaRifle Ammo
-ISPlasmaRifle Ammo
-ISGuardianECM
-ISGuardianECM
-Stealth Armor
-Stealth Armor
+ISPlasmaRifleAmmo
+ISPlasmaRifleAmmo
+ISGuardianECMSuite
+ISGuardianECMSuite
+IS Stealth
+IS Stealth
 
 Left Torso:
-Engine
-Engine
-Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
 Jump Jet
 Jump Jet
 ISSNPPC
 ISSNPPC
-ISLightPPC
-ISLightPPC
 ISMediumPulseLaser
-Stealth Armor
-Stealth Armor
+Light PPC
+Light PPC
+IS Stealth
+IS Stealth
 
 Right Torso:
-Engine
-Engine
-Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
 Jump Jet
 ISMML5
 ISMML5
 ISMML5
-ISFlamer
-ISMML5 LRM Ammo
-ISMML5 SRM Ammo
-Stealth Armor
-Stealth Armor
+Flamer
+IS Ammo MML-5 SRM
+IS Ammo MML-5 LRM
+IS Stealth
+IS Stealth
 
 Center Torso:
-Engine
-Engine
-Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
 Gyro
 Gyro
 Gyro
 Gyro
 Gyro
 Gyro
-Engine
-Engine
-Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
 
 Head:
 Life Support
@@ -126,32 +124,55 @@ Cockpit
 ISSmallVSPLaser (R)
 Sensors
 Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Left Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Stealth Armor
-Stealth Armor
+IS Stealth
+IS Stealth
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Right Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Stealth Armor
-Stealth Armor
+IS Stealth
+IS Stealth
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
-manufacturer:Earthwerks Incorporated
-primaryfactory:Keystone,
-systemmanufacturer:CHASSIS:Earthwerks
-systemmode:CHASSIS:TDR
-systemmanufacturer:ENGINE:Magna
-systemmode:ENGINE:260
-systemmanufacturer:ARMOR:Ryerson
-systemmode:ARMOR:150
-systemmanufacturer:COMMUNICATIONS:Neil
-systemmode:COMMUNICATIONS:8000
-systemmanufacturer:TARGETING:RCA
-systemmode:TARGETING:Instatrac Mark X
+overview:The Thunderbolt commonly known as the T-Bolt, is a venerable BattleMech with a lineage dating back to 2491. As one of the pioneering designs for planetary assault, it is distinguished by its robust firepower and has become a staple across the Successor States. Despite being eclipsed by newer, larger 'Mechs, the Thunderbolt's exceptional design and formidable reputation have ensured its continuous production and operational use.
+
+capabilities:The Thunderbolt, with its inception dating back to 2491, has firmly established itself as a paragon of battlefield endurance and versatility. Renowned for its multi-faceted armament, the 'Mech is equipped with a robust array of weaponry tailored for engagements at various ranges. Its arsenal, typically comprising a balanced mix of energy weapons and missile launchers, enables the Thunderbolt to deliver substantial firepower in combat scenarios ranging from long-distance bombardment to close-quarters engagements.<p>Armor-wise, the Thunderbolt stands out for its exceptional resilience. Its thick plating, often surpassing that of 'Mechs well above its weight class, ensures it can endure severe punishment on the front lines. This durability, combined with its moderate speed, makes the Thunderbolt a formidable opponent capable of holding its ground under heavy fire.</p><p>However, the Thunderbolt's impressive offensive capability comes with the challenge of heat management. Pilots must skillfully balance the 'Mech's weapon output to prevent overheating, which could lead to shutdowns or ammunition explosions. Tactical deployment near natural cooling sources has become a standard practice to mitigate this risk, allowing the Thunderbolt to sustain its barrage of firepower effectively.</p><p>Throughout its service history, the Thunderbolt has undergone numerous iterations and upgrades, reflecting the changing dynamics of warfare. Modern variants have seen enhancements like CASE II technology integration, which secures its ammunition storage, and the introduction of advanced sensor and communication systems to improve battlefield coordination.</p><p>From the original TDR-5S to the advanced TDR-10M and TDR-12R models, the Thunderbolt's evolution continues to be driven by the need for a 'Mech that balances offensive power, defensive capability, and strategic flexibility. Its enduring presence in the arsenals of Inner Sphere and Periphery forces underscores the Thunderbolt's iconic status and persistent efficacy in combat operations.</p>
+
+deployment:The TDR-10M Salazar, customized by Salazar Tsakalotos, is a specialized variant of the TDR-10M, tailored for stealth and precision engagements. This model features Stealth Armor and a Guardian ECM, significantly enhancing its survivability by reducing its detectability on the battlefield. It replaces the Heavy PPC with a plasma rifle for versatile, high-heat damage output, and adds an experimental Small Variable Speed Pulse Laser for rear defense. Retaining the Light PPC and MML-5 from the original 10M, the Salazar variant is adept at engaging enemies with accuracy and tactical finesse, making it a formidable presence in skirmishes and covert operations.
+
+history:The Thunderbolt, a BattleMech with a service record spanning over seven centuries, has been a mainstay in the arsenals of Inner Sphere and Periphery forces. Since its introduction in 2491, the Thunderbolt has seen extensive use in various military campaigns, with Houses Steiner and Marik as its primary operators. These mercantile states have also facilitated its distribution, making it a common fixture in many other military forces.<p>The Fourth Succession War and the Andurien War significantly impacted the distribution and deployment of the Thunderbolt, particularly affecting House Liao's previously substantial numbers. However, the Taurian Concordat, hosting two Thunderbolt manufacturing facilities, has leveraged this 'Mech as the backbone of its military might.</p><p>Notably, during 3083 in Operation Golden Fortress, Capellan forces utilized Thunderbolts extensively in the defense of Tikonov, demonstrating their strategic value in urban warfare by employing LRM minefields to ensnare Republic combat vehicles, showcasing the 'Mech's adaptability to various combat situations.</p><p>In 3145, the Earthwerks Thunderbolts, specifically the TDR-12R models, played pivotal roles in the defense of Kogan Gate. Their indirect fire capabilities and subsequent melee engagements highlighted the Thunderbolt's enduring presence on the battlefield and its ability to adapt to evolving warfare dynamics.</p><p>Historical engagements like the battle of Chesterton in 2828 and the bizarre "La Guerra de Queso" on Illiushin in 2847 underline the Thunderbolt's versatile service record. In Chesterton, the Thunderbolt's durability was tested in harsh chemical warfare conditions, while on Illiushin, the 'Mech's involvement in a pirate raid gone comically awry shows its ubiquitous presence across the galaxy, even in less conventional military operations.</p>
+
+manufacturer:Field Refit
+primaryfactory:Various
+systemmanufacturer:CHASSIS:Earthwerks TDR
+systemmanufacturer:ENGINE:Magna 260 XL
+systemmanufacturer:ARMOR:Ceres Heavy Stealth
+systemmanufacturer:JUMPJET:Chilton 466
+systemmanufacturer:COMMUNICATIONS:Neil 8000 with ECM
+systemmanufacturer:TARGETING:RCA Instatrac Mark X
+

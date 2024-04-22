@@ -106,6 +106,7 @@
 	 Graysho
 	 kuronekochomusuke
 	 PakFront
+	 sleet01
 
   XML Parser:
      Tom Gibara (original URL: http://gibaradunn.srac.org/tiny/index.shtml)

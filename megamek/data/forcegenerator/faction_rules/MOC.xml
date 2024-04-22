@@ -21,15 +21,15 @@ expanding to a full wing per regiment by the Dark Age. -->
 
 	<toc>
 		<unitType>
-			<option ifDateBetween="3051,">Mek,Tank,VTOL,Infantry,BattleArmor,Aero,Conventional Fighter</option>
-			<option>Mek,Tank,VTOL,Infantry,Aero,Conventional Fighter</option>
+			<option ifDateBetween="3051,">Mek,Tank,VTOL,Infantry,BattleArmor,AeroSpaceFighter,Conventional Fighter</option>
+			<option>Mek,Tank,VTOL,Infantry,AeroSpaceFighter,Conventional Fighter</option>
 		</unitType>
 		
 		<eschelon>
 			<option ifUnitType="Mek|Tank|VTOL">%REGIMENT%,%BATTALION%,%COMPANY%,%LANCE%</option>
 			<option ifUnitType="Infantry">%REGIMENT%,%BATTALION%,%COMPANY%</option>
 			<option ifUnitType="BattleArmor">%BATTALION%,%COMPANY%,%PLATOON%</option>
-			<option ifUnitType="Aero|Conventional Fighter">%WING%,%SQUADRON%,%FLIGHT%</option>
+			<option ifUnitType="AeroSpaceFighter|Conventional Fighter">%WING%,%SQUADRON%,%FLIGHT%</option>
 		</eschelon>
 		
 		<rating>
@@ -82,28 +82,28 @@ expanding to a full wing per regiment by the Dark Age. -->
 
 		<attachedForces>
 			<subforceOption ifFaction="MOC.MRG">
-				<option unitType="Aero" ifDateBetween=",3070"
+				<option unitType="AeroSpaceFighter" ifDateBetween=",3070"
 					name="Air Guard">%FLIGHT%</option>
-				<option unitType="Aero" ifDateBetween="3056,3080"
+				<option unitType="AeroSpaceFighter" ifDateBetween="3056,3080"
 					name="Air Guard">%SQUADRON%-</option>
-				<option unitType="Aero" ifDateBetween="3060,3090"
+				<option unitType="AeroSpaceFighter" ifDateBetween="3060,3090"
 					name="Air Guard">%SQUADRON%</option>
-				<option unitType="Aero" ifDateBetween="3065,3110"
+				<option unitType="AeroSpaceFighter" ifDateBetween="3065,3110"
 					name="Air Guard">%WING%-</option>
-				<option unitType="Aero" ifDateBetween="3080,"
+				<option unitType="AeroSpaceFighter" ifDateBetween="3080,"
 					name="Air Guard">%WING%</option>
 			</subforceOption>
 			<subforceOption ifFaction="MOC.CC">
 				<option ifDateBetween=",3070"/>
-				<option unitType="Aero" ifDateBetween="3060,3075"
+				<option unitType="AeroSpaceFighter" ifDateBetween="3060,3075"
 					name="Air Guard">%FLIGHT%</option>
-				<option unitType="Aero" ifDateBetween="3066,3085"
+				<option unitType="AeroSpaceFighter" ifDateBetween="3066,3085"
 					name="Air Guard">%SQUADRON%-</option>
-				<option unitType="Aero" ifDateBetween="3071,3100"
+				<option unitType="AeroSpaceFighter" ifDateBetween="3071,3100"
 					name="Air Guard">%SQUADRON%</option>
-				<option unitType="Aero" ifDateBetween="3076,"
+				<option unitType="AeroSpaceFighter" ifDateBetween="3076,"
 					name="Air Guard">%WING%-</option>
-				<option unitType="Aero" ifDateBetween="3080,"
+				<option unitType="AeroSpaceFighter" ifDateBetween="3080,"
 					name="Air Guard">%WING%</option>
 			</subforceOption>
 			<subforceOption ifFaction="!MOC.MH">
@@ -200,7 +200,7 @@ expanding to a full wing per regiment by the Dark Age. -->
 		</subforces>
 	</force>
 
-	<force eschelon="%FLIGHT%" eschName="Air Lance" ifUnitType="Aero|Conventional Fighter">
+	<force eschelon="%FLIGHT%" eschName="Air Lance" ifUnitType="AeroSpaceFighter|Conventional Fighter">
 		<co>%LT%</co>
 		
 		<weightClass>

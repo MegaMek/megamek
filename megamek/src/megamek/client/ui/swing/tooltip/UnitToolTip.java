@@ -23,6 +23,7 @@ import megamek.common.annotations.Nullable;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
+import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.templates.TROView;
 import megamek.common.weapons.LegAttack;
@@ -682,7 +683,7 @@ public final class UnitToolTip {
                 String msg_x = Messages.getString("BoardView1.Tooltip.X");
                 String sDamage = dChar + msg_x + tensDmgd * 10;
                 sDamage += repeat(dChar, numDmgd - 10 * tensDmgd);
-                result +=  guiScaledFontHTML(colorIntact, TT_SMALLFONT_DELTA) + sDamage + "</FONT>";
+                result +=  guiScaledFontHTML(colorDamaged, TT_SMALLFONT_DELTA) + sDamage + "</FONT>";
             } else {
                 String sDamage  = repeat(dChar, numDmgd);
                 result += guiScaledFontHTML(colorDamaged, TT_SMALLFONT_DELTA) + sDamage + "</FONT>";
@@ -1243,6 +1244,7 @@ public final class UnitToolTip {
                                               boolean showBV, boolean showSensors, boolean showSeenBy) {
         Game game = entity.getGame();
         GameOptions gameOptions = game.getOptions();
+        PlanetaryConditions conditions = game.getPlanetaryConditions();
         boolean isGunEmplacement = entity instanceof GunEmplacement;
         String result = "";
 
@@ -1502,13 +1504,13 @@ public final class UnitToolTip {
             if (gameOptions.booleanOption(OptionsConstants.ADVANCED_TACOPS_SENSORS)
                     || (gameOptions.booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS)) && entity.isSpaceborne()) {
                 String visualRange = Compute.getMaxVisualRange(entity, false) + "";
-                if (game.getPlanetaryConditions().isIlluminationEffective()) {
+                if (conditions.getLight().isDuskOrFullMoonOrMoonlessOrPitchBack()) {
                     visualRange += " (" + Compute.getMaxVisualRange(entity, true) + ")";
                 }
                 result += addToTT("Sensors", BR, getSensorDesc(entity), visualRange);
             } else {
                 String visualRange = Compute.getMaxVisualRange(entity, false) + "";
-                if (game.getPlanetaryConditions().isIlluminationEffective()) {
+                if (conditions.getLight().isDuskOrFullMoonOrMoonlessOrPitchBack()) {
                     visualRange += " (" + Compute.getMaxVisualRange(entity, true) + ")";
                 }
                 result += addToTT("Visual", BR, visualRange);

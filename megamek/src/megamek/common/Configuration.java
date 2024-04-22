@@ -92,6 +92,9 @@ public final class Configuration {
     /** The default force generator directory name (under the data directory). */
     private static final String DEFAULT_DIR_NAME_FONTS = "fonts";
 
+    /** The default story arcs directory name (under the data directory). */
+    private static final String DEFAULT_DIR_NAME_STORY_ARCS = "storyarcs";
+
     // **************************************************************************
     // These are all directories that normally appear under 'data/images'.
 
@@ -484,6 +487,15 @@ public final class Configuration {
      */
     public static File portraitImagesDir() {
         return new File(imagesDir(), DEFAULT_DIR_NAME_PORTRAIT_IMAGES);
+    }
+
+    /**
+     * Return the story arcs directory, which is relative to the directory.
+     *
+     * @return {@link File} containing the path to the portrait directory.
+     */
+    public static File storyarcsDir() {
+        return new File(dataDir(), DEFAULT_DIR_NAME_STORY_ARCS);
     }
 
     /**

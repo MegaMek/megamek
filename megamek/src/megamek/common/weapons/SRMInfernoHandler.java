@@ -75,7 +75,7 @@ public class SRMInfernoHandler extends SRMHandler {
         r.indent();
         r.newlines = 0;
         r.subject = subjectId;
-        r.add(wtype.getName());
+        r.add(wtype.getName() + " (" + atype.getShortName() + ")");
         if (entityTarget != null) {
             r.addDesc(entityTarget);
         } else {
@@ -174,7 +174,7 @@ public class SRMInfernoHandler extends SRMHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * megamek.common.weapons.MissileWeaponHandler#calcHits(java.util.Vector)
      */
@@ -206,7 +206,7 @@ public class SRMInfernoHandler extends SRMHandler {
 
         // add AMS mods
         nMissilesModifier += getAMSHitsMod(vPhaseReport);
-        
+
         if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
             Entity entityTarget = (target.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) target
                     : null;

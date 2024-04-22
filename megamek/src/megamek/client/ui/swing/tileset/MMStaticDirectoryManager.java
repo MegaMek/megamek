@@ -81,6 +81,20 @@ public class MMStaticDirectoryManager {
                     DirectoryItems userDirPortraits = new DirectoryItems(portraitUserDir, new ImageFileFactory());
                     portraitDirectory.merge(userDirPortraits);
                 }
+
+                // check for portraits in story arcs subdirectories
+                File storyarcsDir = Configuration.storyarcsDir();
+                if(storyarcsDir.exists() && storyarcsDir.isDirectory()) {
+                    for (File file : storyarcsDir.listFiles()) {
+                        if (file.isDirectory()) {
+                            File storyArcPortraitDir = new File(file.getPath() + "/data/images/portraits");
+                            if (storyArcPortraitDir.exists() && storyArcPortraitDir.isDirectory()) {
+                                DirectoryItems storyArcPortraits = new DirectoryItems(storyArcPortraitDir, new ImageFileFactory());
+                                portraitDirectory.merge(storyArcPortraits);
+                            }
+                        }
+                    }
+                }
             } catch (Exception e) {
                 LogManager.getLogger().error("Could not parse the portraits directory!", e);
             }
@@ -106,6 +120,20 @@ public class MMStaticDirectoryManager {
                 if (!userDir.isBlank() && camoUserDir.isDirectory()) {
                     DirectoryItems userDirCamo = new DirectoryItems(camoUserDir, new ScaledImageFileFactory());
                     camouflageDirectory.merge(userDirCamo);
+                }
+
+                // check for camouflage in story arcs subdirectories
+                File storyarcsDir = Configuration.storyarcsDir();
+                if(storyarcsDir.exists() && storyarcsDir.isDirectory()) {
+                    for (File file : storyarcsDir.listFiles()) {
+                        if (file.isDirectory()) {
+                            File storyArcCamoDir = new File(file.getPath() + "/data/images/camo");
+                            if (storyArcCamoDir.exists() && storyArcCamoDir.isDirectory()) {
+                                DirectoryItems storyArcCamo = new DirectoryItems(storyArcCamoDir, new ScaledImageFileFactory());
+                                camouflageDirectory.merge(storyArcCamo);
+                            }
+                        }
+                    }
                 }
             } catch (Exception e) {
                 LogManager.getLogger().error("Could not parse the camo directory!", e);

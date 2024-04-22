@@ -26,6 +26,7 @@ import org.w3c.dom.Node;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.PrintWriter;
 import java.util.Objects;
 
@@ -45,17 +46,48 @@ public class Camouflage extends AbstractIcon {
     // Rotation and scaling are stored as integers to avoid the usual rounding problems with doubles (e.g.
     // when comparing camos with equals())
     /** The angle in degrees by which to rotate this camo when applying it to units. */
-    private int rotationAngle = 0;
+    protected int rotationAngle = 0;
     /** The scale times 10 (10 = no scaling) to apply to this camo when applying it to units. */
-    private int scale = 10;
+    protected int scale = 10;
 
     //region Constructors
     public Camouflage() {
         super(NO_CAMOUFLAGE);
     }
 
+    /**
+     * Constructs a new camo of the "category" (directory, ending with "/") and filename. Can only be used
+     * for camos of the directories that are parsed automatically, i.e. the MM-internal camo dir, the user dir
+     * and the story arcs directory.
+     *
+     * @param category the directory, e.g. "Clans/Wolf/Alpha Galaxy/"
+     * @param filename the filename, e.g. "Alpha Galaxy.jpg"
+     */
     public Camouflage(final @Nullable String category, final @Nullable String filename) {
         super(category, filename);
+    }
+
+    /**
+     * Constructs a new camo with the given file. Even though a file is accepted, this can only be used
+     * for camos of the directories that are parsed automatically, i.e. the MM-internal camo dir, the user dir
+     * and the story arcs directory! This method tries to parse the filename to find the camo. This requires
+     * replacing Windows backslashes with normal slashes in order to find the file in the way camos are
+     * stored (see {@link megamek.common.util.fileUtils.AbstractDirectory})
+     *
+     * @param file The File, such as a file of "Clans/Wolf/Alpha Galaxy/Alpha Galaxy.jpg"
+     */
+    public Camouflage(File file) {
+        this(getDirectory(file), file.getName());
+    }
+
+    /**
+     * Returns a new camo of the given PlayerColour.
+     *
+     * @param color A PlayerColour
+     * @return A camo of the given PlayerColour color
+     */
+    public static Camouflage of(PlayerColour color) {
+        return new Camouflage(COLOUR_CAMOUFLAGE, color.name());
     }
     //endregion Constructors
 
@@ -184,5 +216,10 @@ public class Camouflage extends AbstractIcon {
     @Override
     public int hashCode() {
         return Objects.hash(getFilename(), getCategory(), rotationAngle, scale);
+    }
+
+    private static String getDirectory(File file) {
+        String result = file.getParent().replace("\\", "/");
+        return result + (!result.endsWith("/") ? "/" : "");
     }
 }

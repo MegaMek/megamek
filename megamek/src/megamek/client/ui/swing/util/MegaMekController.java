@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
  * Copyright (c) 2013 Nicholas Walczak (walczak@cs.umn.edu)
- * Copyright (c) 2021 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2021, 2024 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -23,6 +23,8 @@ package megamek.client.ui.swing.util;
 import java.awt.KeyEventDispatcher;
 import java.awt.event.KeyEvent;
 import java.util.*;
+import java.util.function.Supplier;
+
 import megamek.client.ui.swing.*;
 
 /**
@@ -50,10 +52,22 @@ import megamek.client.ui.swing.*;
  */
 public class MegaMekController implements KeyEventDispatcher {
 
+    /**
+     * This is an interface for a parameter-less method without a return value. It is used for the methods
+     * that are called as a result of a keybind being pressed or released.
+     *
+     * There is no predefined functional interface for this in the java libraries and using the
+     * equivalent Runnable is discouraged as it is suggestive of concurrency code which this is not about.
+     */
+    @FunctionalInterface
+    public interface KeyBindAction {
+        void execute();
+    }
+
     private static final int MAX_REPEAT_RATE = 100;
 
     public BoardEditor boardEditor = null;
-    public ClientGUI clientgui = null;
+    public IClientGUI clientgui = null;
 
     /** Maps a key code to a command string. */
     protected Set<KeyCommandBind> keyCmdSet;
@@ -105,7 +119,7 @@ public class MegaMekController implements KeyEventDispatcher {
 
             for (var action : cmdActionMap.get(kcb.cmd)) {
                 // If the action is null or shouldn't be performed, skip it
-                if ((action == null) || !action.shouldPerformAction()) {
+                if ((action == null) || !action.shouldReceiveAction()) {
                     continue;
                 }
                 // If we perform at least one action, this event is consumed
@@ -128,9 +142,7 @@ public class MegaMekController implements KeyEventDispatcher {
                     if (kcb.isRepeatable) {
                         stopRepeating(kcb);
                     }
-                    if (action.hasReleaseAction()) {
-                        action.releaseAction();
-                    }
+                    action.releaseAction();
                 }
             }
         }
@@ -146,8 +158,14 @@ public class MegaMekController implements KeyEventDispatcher {
         keyCmdSet.clear();
     }
 
-    public synchronized void registerCommandAction(String cmd,
-            CommandAction action) {
+    /**
+     * Registers an action to a keybind given as the cmd parameter (e.g. KeyCommandBind.SCROLL_NORTH.cmd).
+     * For every press of the bound key, the action will be called.
+     *
+     * @param cmd The keycommand string, obtained through KeyCommandBind
+     * @param action The CommandAction
+     */
+    public synchronized void registerCommandAction(String cmd, CommandAction action) {
         ArrayList<CommandAction> actions = cmdActionMap.get(cmd);
         if (actions == null) {
             actions = new ArrayList<>();
@@ -156,6 +174,89 @@ public class MegaMekController implements KeyEventDispatcher {
         } else {
             actions.add(action);
         }
+    }
+
+    /**
+     * Registers an action to a keybind, e.g. {@link KeyCommandBind#SCROLL_NORTH}. The necessary CommandAction is
+     * constructed from the given parameters. The given performer is called when the key is
+     * pressed if the given receiver's shouldReceiveKeyCommands() method check returns true.
+     *
+     * @param commandBind The KeyCommandBind
+     * @param receiver The {@link KeyBindReceiver} that receives this keypress
+     * @param performer A method that takes action upon the keypress
+     * @see KeyCommandBind
+     * @see KeyBindReceiver
+     * @see KeyBindAction
+     */
+    public void registerCommandAction(KeyCommandBind commandBind,
+                                      KeyBindReceiver receiver, KeyBindAction performer) {
+        registerCommandAction(commandBind.cmd, new CommandAction() {
+            @Override
+            public boolean shouldReceiveAction() {
+                return receiver.shouldReceiveKeyCommands();
+            }
+
+            @Override
+            public void performAction() {
+                performer.execute();
+            }
+        });
+    }
+
+    /**
+     * Registers an action to a keybind, e.g. {@link KeyCommandBind#SCROLL_NORTH}. The necessary CommandAction is
+     * constructed from the given method references. The given performer will be called when the key is
+     * pressed if the given shouldReceive check returns true.
+     *
+     * @param commandBind The KeyCommandBind
+     * @param shouldReceive A method that should return true when the performer is allowed to take action
+     * @param performer A method that takes action upon the keypress
+     */
+    public void registerCommandAction(KeyCommandBind commandBind,
+                                      Supplier<Boolean> shouldReceive, KeyBindAction performer) {
+        registerCommandAction(commandBind.cmd, new CommandAction() {
+            @Override
+            public boolean shouldReceiveAction() {
+                return shouldReceive.get();
+            }
+
+            @Override
+            public void performAction() {
+                performer.execute();
+            }
+        });
+    }
+
+    /**
+     * Registers an action to a keybind, e.g. KeyCommandBind.SCROLL_NORTH. The necessary CommandAction is
+     * constructed from the given method references. The given performer will be called when the key is
+     * pressed if the given shouldPerform check returns true.
+     * Additionally, the given releaseAction is called when the pressed key is released again (also, only
+     * when shouldPerform allows it).
+     *
+     * @param commandBind The KeyCommandBind
+     * @param shouldPerform A method that should return true when the performer is allowed to take action
+     * @param performer A method that takes action upon the keypress
+     * @param releaseAction A method that takes action when the key is released again
+     */
+    public void registerCommandAction(KeyCommandBind commandBind, Supplier<Boolean> shouldPerform,
+                                      KeyBindAction performer, KeyBindAction releaseAction) {
+        registerCommandAction(commandBind.cmd, new CommandAction() {
+            @Override
+            public boolean shouldReceiveAction() {
+                return shouldPerform.get();
+            }
+
+            @Override
+            public void performAction() {
+                performer.execute();
+            }
+
+            @Override
+            public void releaseAction() {
+                releaseAction.execute();
+            }
+        });
     }
 
     public synchronized void removeAllActions() {

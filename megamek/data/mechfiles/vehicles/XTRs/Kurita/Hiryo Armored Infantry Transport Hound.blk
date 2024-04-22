@@ -1,17 +1,4 @@
-
-<mul id:>
-1529
-</mul id:>
-#building block data file
-<BlockVersion>
-1
-</BlockVersion>
-
-#Write the version number just in case...
-<Version>
-MAM0
-</Version>
-
+#Saved from version 0.49.19-SNAPSHOT on 2024-03-16
 <UnitType>
 Tank
 </UnitType>
@@ -20,34 +7,21 @@ Tank
 Hiryo Armored Infantry Transport
 </Name>
 
-<model>
+<Model>
 'Hound'
-</model>
+</Model>
 
-<Tonnage>
-40
-</Tonnage>
+<mul id:>
+1529
+</mul id:>
 
-<cruiseMP>
-8
-</cruiseMP>
+<year>
+3077
+</year>
 
-<Armor>
-34
-30
-30
-25
-</Armor>
-
-<Front Equipment>
-ISMediumXPulseLaser
-</Front Equipment>
-
-<Body Equipment>
-ISBloodhoundActiveProbe
-RemoteSensorDispenser
-Environmental Sealing
-</Body Equipment>
+<originalBuildYear>
+3077
+</originalBuildYear>
 
 <type>
 IS Level 4
@@ -57,30 +31,62 @@ IS Level 4
 Scout
 </role>
 
-<year>
-3077
-</year>
+<motion_type>
+WiGE
+</motion_type>
 
-<source>
-XTR: Kurita
-</source>
+<transporters>
+troopspace:4.0
+</transporters>
 
-<internal_type>
-0
-</internal_type>
-
-<armor_type>
-6
-</armor_type>
+<cruiseMP>
+8
+</cruiseMP>
 
 <engine_type>
 2
 </engine_type>
 
-<motion_type>
-WIGE
-</motion_type>
+<armor_type>
+6
+</armor_type>
 
-<transporters>
-TroopSpace:4
-</transporters>
+<armor_tech>
+7
+</armor_tech>
+
+<armor>
+34
+30
+30
+25
+</armor>
+
+<Body Equipment>
+Environmental Sealing
+ISC3Sensors
+</Body Equipment>
+
+<Front Equipment>
+ISMediumXPulseLaser
+BloodhoundActiveProbe
+ISC3RemoteSensorLauncher
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<source>
+XTR: Kurita
+</source>
+
+<tonnage>
+40.0
+</tonnage>
+

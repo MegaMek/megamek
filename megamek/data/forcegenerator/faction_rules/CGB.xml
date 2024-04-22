@@ -14,15 +14,15 @@ but have a smaller aerospace arm than most other Clans. -->
 	
 	<toc>
 		<unitType>
-			<option ifDateBetween="2870,">null,Mek,Tank,VTOL,Infantry,BattleArmor,Aero,Conventional Fighter,Warship,Dropship,Jumpship</option>
-			<option ifDateBetween=",2869">null,Mek,Tank,VTOL,Infantry,Aero,Conventional Fighter,Warship,Dropship,Jumpship</option>
+			<option ifDateBetween="2870,">null,Mek,Tank,VTOL,Infantry,BattleArmor,AeroSpaceFighter,Conventional Fighter,Warship,Dropship,Jumpship</option>
+			<option ifDateBetween=",2869">null,Mek,Tank,VTOL,Infantry,AeroSpaceFighter,Conventional Fighter,Warship,Dropship,Jumpship</option>
 		</unitType>
 		
 		<eschelon>
 			<option ifUnitType="">%TOUMAN%,%GALAXY%,%CLUSTER%</option>
 			<option ifUnitType="Warship">%CLUSTER%</option>
 			<option ifUnitType="Mek" ifDateBetween="2870,">%TRINARY%^,%TRINARY%,%BINARY%^,%BINARY%,%STAR%^,%STAR%</option>
-			<option ifUnitType="Aero" ifDateBetween="3069,">%GALAXY%,%CLUSTER%,%TRINARY%,%BINARY%,%STAR%</option>
+			<option ifUnitType="AeroSpaceFighter" ifDateBetween="3069,">%GALAXY%,%CLUSTER%,%TRINARY%,%BINARY%,%STAR%</option>
 			<option ifUnitType="BattleArmor">%CLUSTER%,%TRINARY%,%BINARY%,%STAR%</option>
 			<option>%TRINARY%,%BINARY%,%STAR%</option>
 		</eschelon>
@@ -78,7 +78,7 @@ but have a smaller aerospace arm than most other Clans. -->
 			<subforce rating="SL" ifDateBetween="3068,"
 				name="Rasalhague Galaxy">%GALAXY%</subforce>
 			<subforce rating="SL" ifDateBetween="3069,"
-			    unitType="Aero"
+			    unitType="AeroSpaceFighter"
 				name="Valkyrie Galaxy">%GALAXY%</subforce>
 			<subforce rating="SL" ifDateBetween="2950,3075"
 			    flags="zeta"
@@ -92,7 +92,7 @@ but have a smaller aerospace arm than most other Clans. -->
 	to have been reduced to two in the drive to Terra (FR:C). The two-
 	cluster size is kept in later TO&E listings.-->
 	
-	<force eschelon="%GALAXY%" eschName="Valkyrie Galaxy" ifUnitType="Aero">
+	<force eschelon="%GALAXY%" eschName="Valkyrie Galaxy" ifUnitType="AeroSpaceFighter">
 	    <name>{greek} Galaxy</name>
 	    <co>%GALAXY_CMDR%</co>
 	    
@@ -229,7 +229,7 @@ but have a smaller aerospace arm than most other Clans. -->
 		</subforces>
 	</force>
 	
-	<force eschelon="%CLUSTER%" eschName="Cluster" ifUnitType="Aero">
+	<force eschelon="%CLUSTER%" eschName="Cluster" ifUnitType="AeroSpaceFighter">
 	    <name>{ordinal} Valkyrie</name>
 	    <co>%STAR_COL%</co>
 	    
@@ -376,31 +376,31 @@ but have a smaller aerospace arm than most other Clans. -->
             resulting in many clusters having no support of their own.-->
 
 			<subforceOption ifWeightClass="H|A">
-				<option weightClass="H" unitType="Aero"
+				<option weightClass="H" unitType="AeroSpaceFighter"
 					weight="3">%BINARY%</option>
-				<option weightClass="M" unitType="Aero"
+				<option weightClass="M" unitType="AeroSpaceFighter"
 					weight="2">%BINARY%</option>
-				<option weightClass="L" unitType="Aero"
+				<option weightClass="L" unitType="AeroSpaceFighter"
 					weight="1">%BINARY%</option>
 				<option weight="3"/>
 				<option ifRating="SL|PG|Sol" weight="3"/>
 			</subforceOption>
 			<subforceOption ifWeightClass="M">
-				<option weightClass="H" unitType="Aero"
+				<option weightClass="H" unitType="AeroSpaceFighter"
 					weight="2">%BINARY%</option>
-				<option weightClass="M" unitType="Aero"
+				<option weightClass="M" unitType="AeroSpaceFighter"
 					weight="3">%BINARY%</option>
-				<option weightClass="L" unitType="Aero"
+				<option weightClass="L" unitType="AeroSpaceFighter"
 					weight="2">%BINARY%</option>
 				<option weight="3"/>
 				<option ifRating="SL|PG|Sol" weight="3"/>
 			</subforceOption>
 			<subforceOption ifWeightClass="L">
-				<option weightClass="H" unitType="Aero"
+				<option weightClass="H" unitType="AeroSpaceFighter"
 					weight="1">%BINARY%</option>
-				<option weightClass="M" unitType="Aero"
+				<option weightClass="M" unitType="AeroSpaceFighter"
 					weight="2">%BINARY%</option>
-				<option weightClass="L" unitType="Aero"
+				<option weightClass="L" unitType="AeroSpaceFighter"
 					weight="3">%BINARY%</option>
 				<option weight="3"/>
 				<option ifRating="SL|PG|Sol" weight="3"/>
@@ -474,7 +474,7 @@ but have a smaller aerospace arm than most other Clans. -->
 		
 		<attachedForces ifRating="FL">
 		    <subforceOption>
-		        <option unitType="Aero" name="Tango Fighter Star"
+		        <option unitType="AeroSpaceFighter" name="Tango Fighter Star"
 		            weight="1">%STAR%</option>
 		        <option weight="5"/>
 		    </subforceOption>
@@ -482,7 +482,7 @@ but have a smaller aerospace arm than most other Clans. -->
 
 		<attachedForces ifRating="Keshik">
 		    <subforceOption>
-		        <option unitType="Aero" name="Tango Fighter Star"
+		        <option unitType="AeroSpaceFighter" name="Tango Fighter Star"
 		            weight="2">%STAR%</option>
 		        <option unitType="Mek" name="Tango Support Star"
 		            weight="1">%STAR%</option>
@@ -535,7 +535,7 @@ but have a smaller aerospace arm than most other Clans. -->
 		</subforces>
 	</force>
 	
-	<force eschelon="%TRINARY%" eschName="Trinary" ifUnitType="Aero">
+	<force eschelon="%TRINARY%" eschName="Trinary" ifUnitType="AeroSpaceFighter">
 		<name>Fighter Trinary</name>
 		<co>%STAR_CAPTAIN%</co>
 		
@@ -585,7 +585,7 @@ but have a smaller aerospace arm than most other Clans. -->
 		</subforces>
 	</force>
 	
-	<force eschelon="%BINARY%" eschName="Binary" ifUnitType="Aero">
+	<force eschelon="%BINARY%" eschName="Binary" ifUnitType="AeroSpaceFighter">
 		<name>Fighter Binary</name>
 		<co>%STAR_CAPTAIN%</co>
 		

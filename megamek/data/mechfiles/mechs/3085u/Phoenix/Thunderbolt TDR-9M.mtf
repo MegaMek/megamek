@@ -1,42 +1,40 @@
+generator:MegaMek Suite 0.49.19-SNAPSHOT on 2024-03-17
 chassis:Thunderbolt
 model:TDR-9M
 mul id:3246
 
 Config:Biped
-TechBase:Inner Sphere
-Era:3067
-source:TRO: 3085u 
-Rules Level:2
+techbase:Inner Sphere
+era:3067
+source:TRO: 3085u
+rules level:2
 role:Skirmisher
 
-
-
-quirk:multi_trac
 quirk:rugged_2
+quirk:multi_trac
 quirk:ubiquitous_is
 
+mass:65
+engine:260 Fusion Engine(IS)
+structure:IS Endo Steel
+myomer:Standard
 
-Mass:65
-Engine:260 Fusion Engine
-Structure:Endo Steel
-Myomer:Standard
+heat sinks:10 IS Double
+walk mp:4
+jump mp:4
 
-Heat Sinks:10 Double
-Walk MP:4
-Jump MP:4
-
-Armor:Standard(Inner Sphere)
-LA Armor:19
-RA Armor:19
-LT Armor:22
-RT Armor:22
-CT Armor:28
-HD Armor:9
-LL Armor:29
-RL Armor:29
-RTL Armor:7
-RTR Armor:7
-RTC Armor:9
+armor:Standard(Inner Sphere)
+LA armor:19
+RA armor:19
+LT armor:22
+RT armor:22
+CT armor:28
+HD armor:9
+LL armor:29
+RL armor:29
+RTL armor:7
+RTR armor:7
+RTC armor:9
 
 Weapons:5
 Light Gauss Rifle, Right Arm
@@ -77,15 +75,15 @@ Left Torso:
 ISERMediumLaser
 ISERMediumLaser
 ISERMediumLaser
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Right Torso:
 LRM 15
@@ -95,11 +93,11 @@ IS Ammo LRM-15
 IS Ammo LRM-15
 IS Light Gauss Ammo
 ISCASE
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Center Torso:
 Fusion Engine
@@ -157,4 +155,20 @@ Jump Jet
 -Empty-
 -Empty-
 
+overview:The Thunderbolt commonly known as the T-Bolt, is a venerable BattleMech with a lineage dating back to 2491. As one of the pioneering designs for planetary assault, it is distinguished by its robust firepower and has become a staple across the Successor States. Despite being eclipsed by newer, larger 'Mechs, the Thunderbolt's exceptional design and formidable reputation have ensured its continuous production and operational use.
+
+capabilities:The Thunderbolt, with its inception dating back to 2491, has firmly established itself as a paragon of battlefield endurance and versatility. Renowned for its multi-faceted armament, the 'Mech is equipped with a robust array of weaponry tailored for engagements at various ranges. Its arsenal, typically comprising a balanced mix of energy weapons and missile launchers, enables the Thunderbolt to deliver substantial firepower in combat scenarios ranging from long-distance bombardment to close-quarters engagements.<p>Armor-wise, the Thunderbolt stands out for its exceptional resilience. Its thick plating, often surpassing that of 'Mechs well above its weight class, ensures it can endure severe punishment on the front lines. This durability, combined with its moderate speed, makes the Thunderbolt a formidable opponent capable of holding its ground under heavy fire.</p><p>However, the Thunderbolt's impressive offensive capability comes with the challenge of heat management. Pilots must skillfully balance the 'Mech's weapon output to prevent overheating, which could lead to shutdowns or ammunition explosions. Tactical deployment near natural cooling sources has become a standard practice to mitigate this risk, allowing the Thunderbolt to sustain its barrage of firepower effectively.</p><p>Throughout its service history, the Thunderbolt has undergone numerous iterations and upgrades, reflecting the changing dynamics of warfare. Modern variants have seen enhancements like CASE II technology integration, which secures its ammunition storage, and the introduction of advanced sensor and communication systems to improve battlefield coordination.</p><p>From the original TDR-5S to the advanced TDR-10M and TDR-12R models, the Thunderbolt's evolution continues to be driven by the need for a 'Mech that balances offensive power, defensive capability, and strategic flexibility. Its enduring presence in the arsenals of Inner Sphere and Periphery forces underscores the Thunderbolt's iconic status and persistent efficacy in combat operations.</p>
+
+deployment:The TDR-9M variant represents a significant evolution in the Thunderbolt series, introduced by Earthwerks in 3067. This model enhances long-range tactical engagements with an Imperator Automatic Light Gauss Rifle and a Delta Dart LRM-15, backed by three Diverse Optics ER medium lasers for closer threats. Constructed with an Endo Steel chassis, it features improved armor and mobility, incorporating jump jets with flight stabilizers for agile positioning. The redesign shifts the cockpit for better pilot protection, making the 9M a formidable contender in modern mech warfare, combining precision striking power with enhanced survivability.
+
+history:The Thunderbolt, a BattleMech with a service record spanning over seven centuries, has been a mainstay in the arsenals of Inner Sphere and Periphery forces. Since its introduction in 2491, the Thunderbolt has seen extensive use in various military campaigns, with Houses Steiner and Marik as its primary operators. These mercantile states have also facilitated its distribution, making it a common fixture in many other military forces.<p>The Fourth Succession War and the Andurien War significantly impacted the distribution and deployment of the Thunderbolt, particularly affecting House Liao's previously substantial numbers. However, the Taurian Concordat, hosting two Thunderbolt manufacturing facilities, has leveraged this 'Mech as the backbone of its military might.</p><p>Notably, during 3083 in Operation Golden Fortress, Capellan forces utilized Thunderbolts extensively in the defense of Tikonov, demonstrating their strategic value in urban warfare by employing LRM minefields to ensnare Republic combat vehicles, showcasing the 'Mech's adaptability to various combat situations.</p><p>In 3145, the Earthwerks Thunderbolts, specifically the TDR-12R models, played pivotal roles in the defense of Kogan Gate. Their indirect fire capabilities and subsequent melee engagements highlighted the Thunderbolt's enduring presence on the battlefield and its ability to adapt to evolving warfare dynamics.</p><p>Historical engagements like the battle of Chesterton in 2828 and the bizarre "La Guerra de Queso" on Illiushin in 2847 underline the Thunderbolt's versatile service record. In Chesterton, the Thunderbolt's durability was tested in harsh chemical warfare conditions, while on Illiushin, the 'Mech's involvement in a pirate raid gone comically awry shows its ubiquitous presence across the galaxy, even in less conventional military operations.</p>
+
+manufacturer:Earthwerks-FWL, Inc.
+primaryfactory:Keystone
+systemmanufacturer:Earthwerks TDR IIa Endo Steel
+systemmanufacturer:ENGINE:Magna 260
+systemmanufacturer:ARMOR:Ryerson 150 with CASE
+systemmanufacturer:JUMPJET:Chilton 465 Jump Jets
+systemmanufacturer:COMMUNICATIONS:Neil 8000
+systemmanufacturer:TARGETING:RCA Instatrac Mark X
 

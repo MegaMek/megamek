@@ -10,9 +10,9 @@
 	
 	<toc>
 		<unitType>
-			<option ifDateBetween="3060,">null,Mek,ProtoMek,Tank,VTOL,Infantry,BattleArmor,Aero,Conventional Fighter</option>
-			<option ifDateBetween="2870,3059">null,Mek,Tank,VTOL,Infantry,BattleArmor,Aero,Conventional Fighter</option>
-			<option ifDateBetween=",2869">null,Mek,Tank,VTOL,Infantry,Aero,Conventional Fighter</option>
+			<option ifDateBetween="3060,">null,Mek,ProtoMek,Tank,VTOL,Infantry,BattleArmor,AeroSpaceFighter,Conventional Fighter</option>
+			<option ifDateBetween="2870,3059">null,Mek,Tank,VTOL,Infantry,BattleArmor,AeroSpaceFighter,Conventional Fighter</option>
+			<option ifDateBetween=",2869">null,Mek,Tank,VTOL,Infantry,AeroSpaceFighter,Conventional Fighter</option>
 		</unitType>
 		
 		<eschelon>
@@ -30,10 +30,10 @@
 		</rating>
 		
 		<flags>
-			<option ifUnitType="null|Mek|BattleArmor|Aero" ifEschelon="%BINARY%">kindraa_command:Kindraa Command Binary</option>
+			<option ifUnitType="null|Mek|BattleArmor|AeroSpaceFighter" ifEschelon="%BINARY%">kindraa_command:Kindraa Command Binary</option>
 			<option ifUnitType="null|Mek|BattleArmor" ifEschelon="%TRINARY%|%BINARY%">mixedMekBA:Combined Mek/BA unit</option>
-			<option ifUnitType="null|Mek|Aero" ifEschelon="%BINARY%">mixed:Combined Mek/Aero unit</option>
-			<option ifUnitType="null|Mek|Aero" ifEschelon="%STAR%">mekAeroNova:Mek+Aero Nova</option>
+			<option ifUnitType="null|Mek|AeroSpaceFighter" ifEschelon="%BINARY%">mixed:Combined Mek/Aero unit</option>
+			<option ifUnitType="null|Mek|AeroSpaceFighter" ifEschelon="%STAR%">mekAeroNova:Mek+Aero Nova</option>
 		</flags>
 	</toc>
 	
@@ -162,27 +162,27 @@
 			</subforceOption>
 
 			<subforceOption ifWeightClass="H|A">
-				<option weightClass="H" unitType="Aero"
+				<option weightClass="H" unitType="AeroSpaceFighter"
 					weight="3">%BINARY%</option>
-				<option weightClass="M" unitType="Aero"
+				<option weightClass="M" unitType="AeroSpaceFighter"
 					weight="2">%BINARY%</option>
-				<option weightClass="L" unitType="Aero"
+				<option weightClass="L" unitType="AeroSpaceFighter"
 					weight="1">%BINARY%</option>
 			</subforceOption>
 			<subforceOption ifWeightClass="M">
-				<option weightClass="H" unitType="Aero"
+				<option weightClass="H" unitType="AeroSpaceFighter"
 					weight="2">%BINARY%</option>
-				<option weightClass="M" unitType="Aero"
+				<option weightClass="M" unitType="AeroSpaceFighter"
 					weight="3">%BINARY%</option>
-				<option weightClass="L" unitType="Aero"
+				<option weightClass="L" unitType="AeroSpaceFighter"
 					weight="2">%BINARY%</option>
 			</subforceOption>
 			<subforceOption ifWeightClass="L">
-				<option weightClass="H" unitType="Aero"
+				<option weightClass="H" unitType="AeroSpaceFighter"
 					weight="1">%BINARY%</option>
-				<option weightClass="M" unitType="Aero"
+				<option weightClass="M" unitType="AeroSpaceFighter"
 					weight="2">%BINARY%</option>
-				<option weightClass="L" unitType="Aero"
+				<option weightClass="L" unitType="AeroSpaceFighter"
 					weight="3">%BINARY%</option>
 			</subforceOption>
 			
@@ -297,27 +297,27 @@
 			</subforceOption>
 
 			<subforceOption ifWeightClass="H|A">
-				<option weightClass="H" unitType="Aero"
+				<option weightClass="H" unitType="AeroSpaceFighter"
 					flags="mekAeroNova" weight="3">%STAR%</option>
-				<option weightClass="M" unitType="Aero"
+				<option weightClass="M" unitType="AeroSpaceFighter"
 					flags="mekAeroNova" weight="2">%STAR%</option>
-				<option weightClass="L" unitType="Aero"
+				<option weightClass="L" unitType="AeroSpaceFighter"
 					flags="mekAeroNova" weight="1">%STAR%</option>
 			</subforceOption>
 			<subforceOption ifWeightClass="M">
-				<option weightClass="H" unitType="Aero"
+				<option weightClass="H" unitType="AeroSpaceFighter"
 					flags="mekAeroNova" weight="2">%STAR%</option>
-				<option weightClass="M" unitType="Aero"
+				<option weightClass="M" unitType="AeroSpaceFighter"
 					flags="mekAeroNova" weight="3">%STAR%</option>
-				<option weightClass="L" unitType="Aero"
+				<option weightClass="L" unitType="AeroSpaceFighter"
 					flags="mekAeroNova" weight="2">%STAR%</option>
 			</subforceOption>
 			<subforceOption ifWeightClass="L">
-				<option weightClass="H" unitType="Aero"
+				<option weightClass="H" unitType="AeroSpaceFighter"
 					flags="mekAeroNova" weight="1">%STAR%</option>
-				<option weightClass="M" unitType="Aero"
+				<option weightClass="M" unitType="AeroSpaceFighter"
 					flags="mekAeroNova" weight="2">%STAR%</option>
-				<option weightClass="L" unitType="Aero"
+				<option weightClass="L" unitType="AeroSpaceFighter"
 					flags="mekAeroNova" weight="3">%STAR%</option>
 			</subforceOption>
 		</subforces>
@@ -383,33 +383,33 @@
 			</subforceOption>
 
 			<subforceOption ifWeightClass="H|A">
-				<option ifRole="!command" weightClass="H" unitType="Aero"
+				<option ifRole="!command" weightClass="H" unitType="AeroSpaceFighter"
 					weight="3">%STAR%</option>
-				<option ifRole="!command" weightClass="M" unitType="Aero"
+				<option ifRole="!command" weightClass="M" unitType="AeroSpaceFighter"
 					weight="2">%STAR%</option>
-				<option ifRole="!command" weightClass="L" unitType="Aero"
+				<option ifRole="!command" weightClass="L" unitType="AeroSpaceFighter"
 					weight="1">%STAR%</option>
 				<option ifDateBetween="2870,"
 					ifAugmented="0" unitType="BattleArmor"
 					weight="6">%STAR%</option>
 			</subforceOption>
 			<subforceOption ifWeightClass="M">
-				<option ifRole="!command" weightClass="H" unitType="Aero"
+				<option ifRole="!command" weightClass="H" unitType="AeroSpaceFighter"
 					weight="2">%STAR%</option>
-				<option ifRole="!command" weightClass="M" unitType="Aero"
+				<option ifRole="!command" weightClass="M" unitType="AeroSpaceFighter"
 					weight="3">%STAR%</option>
-				<option ifRole="!command" weightClass="L" unitType="Aero"
+				<option ifRole="!command" weightClass="L" unitType="AeroSpaceFighter"
 					weight="2">%STAR%</option>
 				<option ifDateBetween="2870,"
 					ifAugmented="0" unitType="BattleArmor"
 					weight="6">%STAR%</option>
 			</subforceOption>
 			<subforceOption ifWeightClass="L">
-				<option ifRole="!command" weightClass="H" unitType="Aero"
+				<option ifRole="!command" weightClass="H" unitType="AeroSpaceFighter"
 					weight="1">%STAR%</option>
-				<option ifRole="!command" weightClass="M" unitType="Aero"
+				<option ifRole="!command" weightClass="M" unitType="AeroSpaceFighter"
 					weight="2">%STAR%</option>
-				<option ifRole="!command" weightClass="L" unitType="Aero"
+				<option ifRole="!command" weightClass="L" unitType="AeroSpaceFighter"
 					weight="3">%STAR%</option>
 				<option ifDateBetween="2870,"
 					ifAugmented="0" unitType="BattleArmor"

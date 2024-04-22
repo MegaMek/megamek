@@ -36,9 +36,6 @@ import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
 import java.util.*;
 
-import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
-import static megamek.client.ui.swing.util.UIUtil.uiLightViolet;
-
 public class DeploymentDisplay extends StatusBarPhaseDisplay {
 
     /**
@@ -296,18 +293,17 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         }
     }
 
-    /** Sends a deployment to the server. */
-    @Override
-    public void ready() {
+    private boolean checkNags() {
         final Game game = clientgui.getClient().getGame();
-        final Entity en = ce();
 
-        if ((en instanceof Dropship) && !en.isAirborne()) {
+        if ((ce() != null)
+                && (ce() instanceof Dropship)
+                && !ce().isAirborne()) {
             ArrayList<Coords> crushedBuildingLocs = new ArrayList<>();
             ArrayList<Coords> secondaryPositions = new ArrayList<>();
-            secondaryPositions.add(en.getPosition());
+            secondaryPositions.add(ce().getPosition());
             for (int dir = 0; dir < 6; dir++) {
-                secondaryPositions.add(en.getPosition().translated(dir));
+                secondaryPositions.add(ce().getPosition().translated(dir));
             }
             for (Coords pos : secondaryPositions) {
                 Building bld = game.getBoard().getBuildingAt(pos);
@@ -316,26 +312,48 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                 }
             }
             if (!crushedBuildingLocs.isEmpty()) {
-                JOptionPane.showMessageDialog(clientgui,
-                                Messages.getString("DeploymentDisplay.dropshipBuildingDeploy"),
-                                Messages.getString("DeploymentDisplay.alertDialog.title"),
-                                JOptionPane.ERROR_MESSAGE);
-                return;
+                String title = Messages.getString("DeploymentDisplay.alertDialog.title");
+                String body = Messages.getString("DeploymentDisplay.dropshipBuildingDeploy");
+                clientgui.doAlertDialog(title, body);
+                return true;
             }
         }
 
         // Check nag for doomed planetary conditions
-        String reason = game.getPlanetaryConditions().whyDoomed(en, game);
-        if ((reason != null) && GUIP.getNagForDoomed()) {
-            String title = Messages.getString("DeploymentDisplay.ConfirmDoomed.title");
-            String body = Messages.getString("DeploymentDisplay.ConfirmDoomed.message", new Object[] {reason});
-            ConfirmDialog response = clientgui.doYesNoBotherDialog(title, body);
-            if (!response.getShowAgain()) {
-                GUIP.setNagForDoomed(false);
+        if (GUIP.getNagForDoomed()) {
+            if (ce() != null) {
+                String reason = game.getPlanetaryConditions().whyDoomed(ce(), game);
+                if (reason != null) {
+                    String title = Messages.getString("DeploymentDisplay.ConfirmDoomed.title");
+                    String body = Messages.getString("DeploymentDisplay.ConfirmDoomed.message", reason);
+                    ConfirmDialog nag = clientgui.doYesNoBotherDialog(title, body);
+                    if (nag.getAnswer()) {
+                        // do they want to be bothered again?
+                        if (!nag.getShowAgain()) {
+                            GUIP.setNagForDoomed(false);
+                        }
+                    } else {
+                        return true;
+                    }
+                }
             }
-            if (!response.getAnswer()) {
-                return;
-            }
+        }
+
+        if (ce() == null) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /** Sends a deployment to the server. */
+    @Override
+    public void ready() {
+        final Game game = clientgui.getClient().getGame();
+        final Entity en = ce();
+
+        if (checkNags()) {
+            return;
         }
 
         disableButtons();
@@ -570,7 +588,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             clientgui.getBoardView().redrawEntity(ce());
             clientgui.getBoardView().setWeaponFieldOfFire(ce().getFacing(), moveto);
             clientgui.getBoardView().setSensorRange(ce(), ce().getPosition());
-            clientgui.getBoardView().repaint();
+            clientgui.getBoardView().getPanel().repaint();
             butDone.setEnabled(true);
         }
         if (!shiftheld) {

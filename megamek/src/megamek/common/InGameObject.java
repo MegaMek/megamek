@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2022, 2024 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -39,11 +39,26 @@ public interface InGameObject extends BTObject {
     int getId();
 
     /**
+     * Sets this InGameObject's id. The id must be unique to this InGameObject within the current game.
+     * equals() must return true for two InGameObject objects with the same id.
+     *
+     * @param newId The game-unique id of this InGameObject (Entity, AlphaStrikeElement etc.)
+     */
+    void setId(int newId);
+
+    /**
      * Returns the unique id of this InGameObject's owning player. This id may be Player.NONE.
      *
      * @return The player id of the owner of this InGameObject.
      */
     int getOwnerId();
+
+    /**
+     * Sets the unique id of this InGameObject's owning player. This id may be Player.NONE.
+     *
+     * @param newOwnerId The player id of the owner of this InGameObject.
+     */
+    void setOwnerId(int newOwnerId);
 
     /**
      * Returns true when the owner id of this InGameObject is not Player.NONE.
@@ -61,4 +76,17 @@ public interface InGameObject extends BTObject {
      * @return The current battle strength (BV/PV)
      */
     int getStrength();
+
+    /**
+     * Returns true when the current (remaining) battle strength of this unit/object should be
+     * counted for a strength sum, e.g. if it should count for the summed battle value of a player
+     * or team. This may be false when the unit is destroyed or trapped or otherwise permanently kept from
+     * acting or when it is part of a unit group and its strength will be counted through
+     * that unit group (e.g. FighterSquadrons). See {@link #getStrength()}.
+     *
+     * @return True when the strength of this should be counted in a strength sum
+     */
+    default boolean countForStrengthSum() {
+        return true;
+    }
 }

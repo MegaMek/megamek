@@ -220,7 +220,7 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
 
         try {
             bv = new BoardView(testGame, null, null);
-            bv.setPreferredSize(getSize());
+            bv.getPanel().setPreferredSize(getSize());
             bvc = bv.getComponent();
             bvc.setName("BoardView");
         } catch (Exception e) {
@@ -281,7 +281,7 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
         try {
             // Create the board viewer.
             bv = new BoardView(testGame, null, null);
-            bv.setPreferredSize(getSize());
+            bv.getPanel().setPreferredSize(getSize());
             bvc = bv.getComponent();
             bvc.setName("BoardView");
         } catch (Exception ex) {
@@ -356,7 +356,7 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
         boolean reportHandled = false;
         if (bv != null) {
             // cleanup our timers first
-            bv.die();
+            bv.dispose();
         }
         Iterator<String> names = phaseComponents.keySet().iterator();
         while (names.hasNext()) {
@@ -801,7 +801,7 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
     }
 
     @Override
-    public void secondLOSHex(BoardViewEvent evt, Coords c) {
+    public void secondLOSHex(BoardViewEvent evt) {
 
     }
 
@@ -827,7 +827,7 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
 
     @Override
     public void componentResized(ComponentEvent evt) {
-        bv.setPreferredSize(getSize());
+        bv.getPanel().setPreferredSize(getSize());
     }
 
     @Override

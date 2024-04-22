@@ -1,39 +1,39 @@
+generator:MegaMek Suite 0.49.19-SNAPSHOT on 2024-03-10
 chassis:Tundra Wolf
 model:2
 mul id:3316
 
 Config:Biped
-TechBase:Clan
-Era:3076
+techbase:Clan
+era:3076
 source:TRO: 3085
-Rules Level:2
+rules level:2
 role:Brawler
 
 quirk:easy_maintain
 quirk:weak_head_1
 
+mass:75
+engine:300 XL (Clan) Engine(IS)
+structure:Clan Endo Steel
+myomer:Standard
 
-Mass:75
-Engine:300 XL (Clan) Engine(IS)
-Structure:Endo Steel
-Myomer:Standard
+heat sinks:19 Clan Double
+walk mp:4
+jump mp:4
 
-Heat Sinks:19 Double
-Walk MP:4
-Jump MP:4
-
-Armor:Standard(Clan)
-LA Armor:23
-RA Armor:23
-LT Armor:23
-RT Armor:23
-CT Armor:34
-HD Armor:9
-LL Armor:31
-RL Armor:31
-RTL Armor:8
-RTR Armor:8
-RTC Armor:11
+armor:Standard(Inner Sphere)
+LA armor:23
+RA armor:23
+LT armor:23
+RT armor:23
+CT armor:34
+HD armor:9
+LL armor:31
+RL armor:31
+RTL armor:8
+RTR armor:8
+RTC armor:11
 
 Weapons:9
 ER PPC, Left Arm
@@ -58,7 +58,7 @@ CLERPPC
 CLERPPC
 CLERMediumLaser
 CLERMediumLaser
-Endo Steel
+Clan Endo Steel
 
 Right Arm:
 Shoulder
@@ -72,7 +72,7 @@ CLERMediumLaser
 CLERMediumLaser
 CLERMediumLaser
 CLERMediumLaser
-Endo Steel
+Clan Endo Steel
 
 Left Torso:
 Fusion Engine
@@ -99,8 +99,8 @@ CLLRM15
 CLLRM15
 Clan Ammo LRM-15
 Clan Ammo LRM-15
-Endo Steel
-Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 
 Center Torso:
 Fusion Engine
@@ -113,14 +113,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Endo Steel
-Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 
 Head:
 Life Support
 Sensors
 Cockpit
-Endo Steel
+Clan Endo Steel
 Sensors
 Life Support
 -Empty-
@@ -158,4 +158,4 @@ Jump Jet
 -Empty-
 -Empty-
 
-imagefile:.\data\images\fluff\Mech\3076Tundra Wolf.jpg
+

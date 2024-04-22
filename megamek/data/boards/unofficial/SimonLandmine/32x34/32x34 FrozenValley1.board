@@ -1,10 +1,10 @@
 size 32 34
 option exit_roads_to_pavement false
-tag "Water (Auto)"
 tag "SnowTheme (Auto)"
+tag "Water (Auto)"
 tag "Roads (Auto)"
-tag "Woods (Auto)"
 tag "LowHills (Auto)"
+tag "Woods (Auto)"
 tag "DenseForest (Auto)"
 hex 0101 2 "woods:1;foliage_elev:2" "snow"
 hex 0201 2 "" "snow"

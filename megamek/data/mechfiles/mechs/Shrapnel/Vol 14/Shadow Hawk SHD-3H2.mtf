@@ -1,7 +1,8 @@
-generator:MegaMek Suite 0.49.17-SNAPSHOT on 2023-12-31
+generator:MegaMek Suite 0.49.20-SNAPSHOT on 2024-04-21
 chassis:Shadow Hawk
 model:SHD-3H2
 mul id:9538
+
 Config:Biped
 techbase:Inner Sphere
 era:2775
@@ -39,18 +40,18 @@ RTR armor:6
 RTC armor:8
 
 Weapons:12
-Medium Laser, Right Arm
-AC/5, Left Torso
-LRM 5, Right Torso
-Machine Gun, Head
-Machine Gun, Center Torso
-SRM 4, Right Torso
-SRM 4, Right Leg
 SRM 4, Left Leg
-Small Laser, Right Arm
+SRM 4, Right Leg
 Small Laser, Left Arm
+Medium Laser, Right Arm
+Small Laser, Right Arm
+AC/5, Left Torso
 Vehicular Grenade Launcher, Left Torso
+SRM 4, Right Torso
+LRM 5, Right Torso
 Vehicular Grenade Launcher, Right Torso
+Machine Gun, Center Torso
+Machine Gun, Head
 
 Left Arm:
 Shoulder
@@ -89,7 +90,7 @@ Autocannon/5
 Autocannon/5
 ISVehicularGrenadeLauncher
 IS Ammo AC/5
-IS Ammo MG - Full
+IS Machine Gun Ammo - Half
 IS Ferro-Fibrous
 IS Ferro-Fibrous
 IS Ferro-Fibrous

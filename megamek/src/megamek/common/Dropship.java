@@ -16,6 +16,8 @@ import megamek.common.cost.DropShipCostCalculator;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.OptionsConstants;
+import megamek.common.planetaryconditions.Atmosphere;
+import megamek.common.planetaryconditions.PlanetaryConditions;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -743,7 +745,9 @@ public class Dropship extends SmallCraft {
      */
     @Override
     public boolean canLandVertically() {
-        return isSpheroid() || game.getPlanetaryConditions().isVacuum();
+        PlanetaryConditions conditions = game.getPlanetaryConditions();
+        return isSpheroid()
+                || conditions.getAtmosphere().isLighterThan(Atmosphere.THIN);
     }
 
     /**
@@ -752,6 +756,9 @@ public class Dropship extends SmallCraft {
      */
     @Override
     public boolean canTakeOffVertically() {
-        return (isSpheroid() || game.getPlanetaryConditions().isVacuum()) && (getCurrentThrust() > 2);
+        PlanetaryConditions conditions = game.getPlanetaryConditions();
+        boolean spheroidOrLessThanThin = isSpheroid()
+                || conditions.getAtmosphere().isLighterThan(Atmosphere.THIN);
+        return spheroidOrLessThanThin && (getCurrentThrust() > 2);
     }
 }

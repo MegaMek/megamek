@@ -1,3 +1,4 @@
+generator:MegaMek Suite 0.49.19-SNAPSHOT on 2024-03-16
 chassis:Marauder
 model:C
 mul id:2032
@@ -8,6 +9,12 @@ era:2827
 source:Rec Guide:ilClan #6
 rules level:4
 role:Sniper
+
+quirk:low_profile
+quirk:command_mech
+quirk:directional_torso_mount
+quirk:hyper_actuator
+weaponquirk:exposed_linkage:RT:0:CLUltraAC5
 
 mass:75
 engine:300 Fusion Engine(IS)

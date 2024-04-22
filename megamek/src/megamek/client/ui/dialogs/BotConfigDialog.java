@@ -550,9 +550,12 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
 
     /** Asks for a name and adds the current Behavior as a new Behavior Preset. */
     private void saveAsNewPreset() {
+        getFrame().setAlwaysOnTop(true);
         while (true) {
+
             String name = JOptionPane.showInputDialog(getFrame(), Messages.getString("BotConfigDialog.saveNewPrompt"));
             if (name == null || name.isBlank()) {
+                getFrame().setAlwaysOnTop(false);
                 return;
             }
             if (!behaviorSettingsFactory.getBehaviorNameList().contains(name)) {
@@ -560,6 +563,7 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
                 writePreset(name);
                 updatePresets();
                 presetsList.setSelectedValue(name, true);
+                getFrame().setAlwaysOnTop(false);
                 return;
             }
             // Incorrect name: notify the player and ask again
@@ -604,7 +608,7 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
 
     /** Copies the Configuration from another local bot player. */
     private void copyFromOtherBot(String botName) {
-        var bc = client.localBots.get(botName);
+        var bc = client.getBots().get(botName);
         if (bc instanceof Princess) {
             try {
                 princessBehavior = ((Princess) bc).getBehaviorSettings().getCopy();
@@ -727,7 +731,7 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
         // Other local bot Configurations
         if (client != null) {
             // Find if there actually are other bots
-            Set<String> otherBots = new HashSet<>(client.localBots.keySet());
+            Set<String> otherBots = new HashSet<>(client.getBots().keySet());
             if (fixedBotPlayerName != null) {
                 otherBots.remove(fixedBotPlayerName);
             }

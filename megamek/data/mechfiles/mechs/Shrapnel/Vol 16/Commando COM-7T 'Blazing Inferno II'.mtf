@@ -1,0 +1,174 @@
+generator:MegaMek Suite 0.49.19-SNAPSHOT on 2024-03-09
+chassis:Commando
+model:COM-7T 'Blazing Inferno II'
+mul id:9638
+
+Config:Biped
+techbase:Inner Sphere
+era:3062
+source:Shrapnel #16
+rules level:2
+role:Striker
+
+quirk:exp_actuator
+quirk:low_profile
+
+mass:25
+engine:150 Fusion Engine(IS)
+structure:IS Endo Steel
+myomer:Triple-Strength
+
+heat sinks:11 IS Double
+walk mp:6
+jump mp:0
+
+armor:Standard(Inner Sphere)
+LA armor:7
+RA armor:7
+LT armor:8
+RT armor:8
+CT armor:10
+HD armor:8
+LL armor:11
+RL armor:11
+RTL armor:3
+RTR armor:3
+RTC armor:4
+
+Weapons:10
+ER Small Laser, Left Leg
+ER Small Laser, Left Leg
+ER Small Laser, Right Leg
+ER Small Laser, Right Leg
+ER Medium Laser, Left Arm
+ER Medium Laser, Right Arm
+ER Medium Laser, Right Torso
+ER Small Laser, Center Torso
+Small Laser, Center Torso
+ER Medium Laser, Head
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISERMediumLaser
+Triple Strength Myomer
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISERMediumLaser
+Triple Strength Myomer
+Triple Strength Myomer
+Triple Strength Myomer
+Triple Strength Myomer
+
+Left Torso:
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+Triple Strength Myomer
+-Empty-
+
+Right Torso:
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISERMediumLaser
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISERSmallLaser
+Small Laser
+
+Head:
+Life Support
+Sensors
+Cockpit
+ISERMediumLaser
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+ISERSmallLaser
+ISERSmallLaser
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+ISERSmallLaser
+ISERSmallLaser
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+overview:Created for the Lyran Commonwealth Armed Forces and one of the first 'Mechs ever designed for reconnaissance, the Commando was much lighter and faster than its precursors, though it still utilized primitive BattleMech technology.
+capabilities:With only four tons of armor to protect itself, the Commando is not meant to participate in a stand-up fight against heavier enemies, but it excels at hit-and-run tactics and as a scout hunter.
+deployment:The COM-5S was introduced in 3050 and was the first Commando to feature Star League technology. Its new Cyclops MultiTasker 10 Targeting System links an Artemis IV Fire Control System to the Coventry 90mm SRM-6, which replaces the Shannon Six-Shooter, and exchanges the SRM-4 with a Coventry T4H Streak-2 launcher. Additionally, the chassis has been upgraded with Endo Steel, the armor has been upgraded to Ferro-Fibrous, and CASE has been added to protect the ammunition. The variant is also equipped with a new communications system called Cyclops 14.
+history:In 2463 Coventry Metal Works (then known as Coventry Defense Conglomerate) introduced their second BattleMech, the COM-1A Commando. The Commando was able to destroy much heavier Kuritan Gladiators during the first large-scale battle between BattleMechs in 2475 on Nox. The installed Large Laser caused several problems and other 'Mechs were soon introduced (like the Wasp in 2464 and the Stinger in 2479) that were better equipped for scouting and even mounted jump jets. The Commando's profile was radically changed with the introduction of the sophisticated COM-2D variant in 2486, which exchanged the laser weaponry with short range missiles and turned the machine into a striker. The Commando became popular among LCAF forces and, nearly 600 years later, is still mainly in use by Lyrans. The Commonwealth went to great pains to keep the 'Mech solely in Lyran hands, especially during the years of the Star League. It took an alliance with the Federated Suns and the creation of the Federated Commonwealth to break the stranglehold. The Commando was chosen as the standard light BattleMech for the Armed Forces of the Federated Commonwealth next to the Valkyrie, and after the upgrade to the COM-5S model in 3050, Vandenberg Mechanized Industries was allowed to produce the old COM-2D for the Taurian Defense Force. Furthermore, the Marian Hegemony deploys the Rocket Launcher-packed COM-4H, and the Word of Blake produced its own variant (the COM-7B) during its occupation of Coventry from 3068 to 3074.
+manufacturer:Coventry Metal Works
+primaryfactory:Coventry
+systemmanufacturer:CHASSIS:Foundation Ultralight Endo Steel
+systemmanufacturer:ENGINE:GM 150
+systemmanufacturer:ARMOR:Lexington Ltd. High Grade Ferro-Fibrous with CASE
+systemmanufacturer:COMMUNICATIONS:Cyclops 14
+systemmanufacturer:TARGETING:Cyclops MultiTasker 10
+
+

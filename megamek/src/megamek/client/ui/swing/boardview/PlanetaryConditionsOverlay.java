@@ -16,7 +16,7 @@ package megamek.client.ui.swing.boardview;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.KeyCommandBind;
-import megamek.common.PlanetaryConditions;
+import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.common.preference.PreferenceChangeEvent;
 
 import java.awt.*;
@@ -64,11 +64,12 @@ public class PlanetaryConditionsOverlay extends AbstractBoardViewOverlay {
             // In a game, not the Board Editor
 
             String tempColor = "";
-            int temp = currentGame.getPlanetaryConditions().getTemperature();
+            PlanetaryConditions conditions = currentGame.getPlanetaryConditions();
+            int temp = conditions.getTemperature();
 
-            if (currentGame.getPlanetaryConditions().isExtremeTemperatureHeat()) {
+            if (conditions.isExtremeTemperatureHeat()) {
                 tempColor = colorToHex(colorHot);
-            } else if (currentGame.getPlanetaryConditions().isExtremeTemperatureCold()) {
+            } else if (conditions.isExtremeTemperatureCold()) {
                 tempColor = colorToHex(colorCold);
             }
 
@@ -80,71 +81,71 @@ public class PlanetaryConditionsOverlay extends AbstractBoardViewOverlay {
 
             String tmpStr;
 
-            if (showDefaultConditions || (currentGame.getPlanetaryConditions().isExtremeTemperature())) {
+            if (showDefaultConditions || (conditions.isExtremeTemperature())) {
                 tmpStr = (showLabel ? MSG_TEMPERATURE + "  " : "");
                 tmpStr = tmpStr + (showValue ? temp + "\u00B0C  " : "");
-                tmpStr = tmpStr + (showIndicator ? (!showValue ? temp + "\u00B0C   " : "" ) + currentGame.getPlanetaryConditions().getTemperatureIndicator() : "");
+                tmpStr = tmpStr + (showIndicator ? (!showValue ? temp + "\u00B0C   " : "" ) + conditions.getTemperatureIndicator() : "");
                 result.add(tempColor + tmpStr);
             }
 
-            if (showDefaultConditions || (currentGame.getPlanetaryConditions().getGravity() != 1.0)) {
-                float grav = currentGame.getPlanetaryConditions().getGravity();
+            if (showDefaultConditions || (conditions.getGravity() != 1.0)) {
+                float grav = conditions.getGravity();
                 tmpStr = (showLabel ? MSG_GRAVITY + "  " : "");
                 tmpStr = tmpStr + (showValue ?  grav + "g   " : "");
-                tmpStr = tmpStr + (showIndicator ? (!showValue ? grav + "g  " : "") + currentGame.getPlanetaryConditions().getGravityIndicator() : "");
+                tmpStr = tmpStr + (showIndicator ? (!showValue ? grav + "g  " : "") + conditions.getGravityIndicator() : "");
                 result.add(tmpStr);
             }
 
-            if (showDefaultConditions || (currentGame.getPlanetaryConditions().getLight() != PlanetaryConditions.L_DAY)) {
+            if (showDefaultConditions || !conditions.getLight().isDay()) {
                 tmpStr = (showLabel ? MSG_LIGHT + "  " : "");
-                tmpStr = tmpStr + (showValue ? currentGame.getPlanetaryConditions().getLightDisplayableName() + "  " : "");
-                tmpStr = tmpStr + (showIndicator ? currentGame.getPlanetaryConditions().getLightIndicator() : "");
+                tmpStr = tmpStr + (showValue ? conditions.getLight().toString() + "  " : "");
+                tmpStr = tmpStr + (showIndicator ? conditions.getLight().getIndicator() : "");
                 result.add(tmpStr);
             }
 
-            if (showDefaultConditions || (currentGame.getPlanetaryConditions().getAtmosphere() != PlanetaryConditions.ATMO_STANDARD)) {
+            if (showDefaultConditions || !conditions.getAtmosphere().isStandard()) {
                 tmpStr = (showLabel ? MSG_ATMOSPHERICPREASSURE + "  " : "");
-                tmpStr = tmpStr + (showValue ? currentGame.getPlanetaryConditions().getAtmosphereDisplayableName() + "  " : "");
-                tmpStr = tmpStr + (showIndicator ? currentGame.getPlanetaryConditions().getAtmosphereIndicator() : "");
+                tmpStr = tmpStr + (showValue ? conditions.getAtmosphere().toString() + "  " : "");
+                tmpStr = tmpStr + (showIndicator ? conditions.getAtmosphere().getIndicator() : "");
                 result.add(tmpStr);
             }
 
-            if (showDefaultConditions || (currentGame.getPlanetaryConditions().hasEMI())) {
+            if (showDefaultConditions || conditions.isEMI()) {
                 tmpStr = (showLabel ? MSG_EMI + "  " : "");
-                tmpStr = tmpStr + (showValue ? currentGame.getPlanetaryConditions().getEMIDisplayableValue() + "  " : "");
-                tmpStr = tmpStr + (showIndicator ? currentGame.getPlanetaryConditions().getEMIIndicator() : "");
+                tmpStr = tmpStr + (showValue ? conditions.getEMI().toString() + "  " : "");
+                tmpStr = tmpStr + (showIndicator ? conditions.getEMI().getIndicator() : "");
                 result.add(tmpStr);
             }
 
-            if (showDefaultConditions || (currentGame.getPlanetaryConditions().getWeather() != PlanetaryConditions.WE_NONE)) {
+            if (showDefaultConditions || !conditions.getWeather().isClear()) {
                 tmpStr = (showLabel ? MSG_WEATHER + "  " : "");
-                tmpStr = tmpStr + (showValue ? currentGame.getPlanetaryConditions().getWeatherDisplayableName() + "  " : "");
-                tmpStr = tmpStr + (showIndicator ? currentGame.getPlanetaryConditions().getWeatherIndicator() : "");
+                tmpStr = tmpStr + (showValue ? conditions.getWeather().toString() + "  " : "");
+                tmpStr = tmpStr + (showIndicator ? conditions.getWeather().getIndicator() : "");
                 result.add(tmpStr);
             }
 
-            if (showDefaultConditions || (currentGame.getPlanetaryConditions().getWindStrength() != PlanetaryConditions.WI_NONE)) {
+            if (showDefaultConditions || !conditions.getWind().isCalm()) {
                 tmpStr = (showLabel ? MSG_WIND + "  " : "");
-                tmpStr = tmpStr + (showValue ? currentGame.getPlanetaryConditions().getWindDisplayableName() + "  " : "");
-                tmpStr = tmpStr + (showIndicator ? currentGame.getPlanetaryConditions().getWindStrengthIndicator() : "");
+                tmpStr = tmpStr + (showValue ? conditions.getWind().toString() + "  " : "");
+                tmpStr = tmpStr + (showIndicator ? conditions.getWind().getIndicator() : "");
                 result.add(tmpStr);
                 tmpStr = (showLabel ? MSG_DIRECTION + "  " : "");
-                tmpStr = tmpStr + (showValue ? currentGame.getPlanetaryConditions().getWindDirDisplayableName() + "  " : "");
-                tmpStr = tmpStr + (showIndicator ? currentGame.getPlanetaryConditions().getWindDirectionIndicator() : "");
+                tmpStr = tmpStr + (showValue ? conditions.getWindDirection().toString() + "  " : "");
+                tmpStr = tmpStr + (showIndicator ? conditions.getWindDirection().getIndicator() : "");
                 result.add(tmpStr);
             }
 
-            if (showDefaultConditions || (currentGame.getPlanetaryConditions().getFog() != PlanetaryConditions.FOG_NONE)) {
+            if (showDefaultConditions || conditions.isFog()) {
                 tmpStr = (showLabel ? MSG_FOG + "  " : "");
-                tmpStr = tmpStr + (showValue ? currentGame.getPlanetaryConditions().getFogDisplayableName() + "  " : "");
-                tmpStr = tmpStr + (showIndicator ? currentGame.getPlanetaryConditions().getFogIndicator() : "");
+                tmpStr = tmpStr + (showValue ? conditions.getFog().toString() + "  " : "");
+                tmpStr = tmpStr + (showIndicator ? conditions.getFog().getIndicator() : "");
                 result.add(tmpStr);
             }
 
-            if (showDefaultConditions || (currentGame.getPlanetaryConditions().isSandBlowing())) {
+            if (showDefaultConditions || conditions.isBlowingSand()) {
                 tmpStr = (showLabel ? MSG_BLOWINGSAND + "  " : "");
-                tmpStr = tmpStr + (showValue ? currentGame.getPlanetaryConditions().getSandBlowingDisplayableValue() + "  " : "");
-                tmpStr = tmpStr + (showIndicator ? currentGame.getPlanetaryConditions().getSandBlowingIndicator() : "");
+                tmpStr = tmpStr + (showValue ? conditions.getBlowingSand().toString() + "  " : "");
+                tmpStr = tmpStr + (showIndicator ? conditions.getBlowingSand().getIndicator() : "");
                 result.add(tmpStr);
             }
         }

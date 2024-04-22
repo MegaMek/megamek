@@ -1,37 +1,39 @@
+generator:MegaMek Suite 0.49.19-SNAPSHOT on 2024-03-17
 chassis:Harvester Ant
 model:KIC-3 AgroMech
 mul id:4265
 
 Config:Quad
-TechBase:Inner Sphere
-Era:2650
-Source:TRO: Vehicle Annex (Revised)
-Rules Level:2
+techbase:Inner Sphere
+era:2650
+source:TRO: Vehicle Annex (Revised)
+rules level:2
 role:Ambusher
 
-Mass:25
-Engine:75 ICE Engine(IS)
-Structure:IS Industrial
-Myomer:Standard
-Cockpit:Industrial Cockpit
-Gyro:Standard Gyro
 
-Heat Sinks:0 Single
-Walk MP:3
-Jump MP:0
+mass:25
+engine:75 ICE Engine(IS)
+structure:IS Industrial
+myomer:Standard
+cockpit:Industrial Cockpit
+gyro:Standard Gyro
 
-Armor:Commercial(Inner Sphere)
-FLL Armor:3
-FRL Armor:3
-LT Armor:7
-RT Armor:7
-CT Armor:8
-HD Armor:8
-RLL Armor:3
-RRL Armor:3
-RTL Armor:2
-RTR Armor:2
-RTC Armor:2
+heat sinks:0 Single
+walk mp:3
+jump mp:0
+
+armor:Commercial(Inner Sphere)
+FLL armor:3
+FRL armor:3
+LT armor:7
+RT armor:7
+CT armor:8
+HD armor:8
+RLL armor:3
+RRL armor:3
+RTL armor:2
+RTR armor:2
+RTC armor:2
 
 Weapons:0
 
@@ -102,8 +104,8 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Cargo (2 tons)
-Cargo (2 tons)
+Cargo:SIZE:2.0
+Cargo:SIZE:2.0
 
 Head:
 Life Support
@@ -147,4 +149,5 @@ Foot Actuator
 -Empty-
 -Empty-
 
+notes:Harvester Ant KIC-3M-B AgroMech MOD / KIC-3 (LRM) - Variant has two different designations in two separate products (TR:VA and H:OK)  
 

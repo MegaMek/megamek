@@ -38,6 +38,7 @@ public final class Team extends TurnOrdered {
 
     private final List<Player> players = new ArrayList<>();
     private final int id;
+    private String faction = "IS";
 
     public Team(int newID) {
         id = newID;
@@ -52,6 +53,10 @@ public final class Team extends TurnOrdered {
         return players.isEmpty();
     }
 
+    public boolean hasPlayer(Player player) {
+        return players.contains(player);
+    }
+
     public List<Player> players() {
         return new ArrayList<>(players);
     }
@@ -63,11 +68,6 @@ public final class Team extends TurnOrdered {
     /** @return The number of players on this team that are not observers. */
     public int getNonObserverSize() {
         return nonObserverPlayers().size();
-    }
-
-    /** Removes all players from this team. */
-    public void resetTeam() {
-        players.clear();
     }
 
     /** Adds the given player to this team. Null players will not be added. */
@@ -133,7 +133,7 @@ public final class Team extends TurnOrdered {
      *         take in a phase.
      */
     @Override
-    public int getNormalTurns(Game game) {
+    public int getNormalTurns(IGame game) {
         int normalTurns = getMultiTurns(game) + getOtherTurns();
         return (normalTurns == 0) ? getEvenTurns() : normalTurns;
     }
@@ -149,7 +149,7 @@ public final class Team extends TurnOrdered {
     }
 
     @Override
-    public int getMultiTurns(Game game) {
+    public int getMultiTurns(IGame game) {
         return players.stream().mapToInt(p -> p.getMultiTurns(game)).sum();
     }
 
@@ -177,7 +177,7 @@ public final class Team extends TurnOrdered {
     public int getSmallCraftTurns() {
         return players.stream().mapToInt(Player::getSmallCraftTurns).sum();
     }
-    
+
     @Override
     public int getTeleMissileTurns() {
         return players.stream().mapToInt(Player::getTeleMissileTurns).sum();
@@ -200,38 +200,33 @@ public final class Team extends TurnOrdered {
         final Team other = (Team) object;
         return (id == other.id) && Objects.equals(players, other.players);
     }
-    
+
     @Override
     public int hashCode() {
         return Objects.hash(id, players);
     }
-    
+
     @Override
     public String toString() {
         return (getId() == Player.TEAM_NONE) ? "No Team" : "Team " + getId();
-    }
-
-    // TODO : this is Total Warfare specific, remove from Team
-    public boolean hasTAG() {
-        return players.stream().anyMatch(Player::hasTAG);
     }
 
     /** @return The best initiative among the team's players. */
     public int getTotalInitBonus(boolean bInitiativeCompensationBonus) {
         int dynamicBonus = Integer.MIN_VALUE;
         int constantBonus = Integer.MIN_VALUE;
-        
+
         for (Player player : players) {
             dynamicBonus = Math.max(dynamicBonus, player.getTurnInitBonus());
             dynamicBonus = Math.max(dynamicBonus, player.getCommandBonus());
-            
+
             // this is a special case: it's an arbitrary bonus associated with a player
             constantBonus = Math.max(constantBonus, player.getConstantInitBonus());
         }
-        
+
         return constantBonus + dynamicBonus + getInitCompensationBonus(bInitiativeCompensationBonus);
     }
-    
+
     @Override
     public int getInitCompensationBonus() {
         return getInitCompensationBonus(true);
@@ -248,5 +243,32 @@ public final class Team extends TurnOrdered {
     @Override
     public void setInitCompensationBonus(int initCompBonus) {
         players.forEach(p -> p.setInitCompensationBonus(initCompBonus));
+    }
+
+    public void setFaction(String fac) {
+        faction = fac;
+    }
+
+    public String getFaction() {
+        return faction;
+    }
+
+    /**
+     * Determine if another team is an enemy of this team
+     * @param t
+     * @return
+     */
+    public boolean isEnemyOf(Team t) {
+        boolean enemy = true;
+        if (t.equals(this)) {
+            enemy = false;
+        } else if (t.isObserverTeam()) {
+            enemy = false;
+        } else if (players.isEmpty()) {
+            enemy = false;
+        } else if (t.players().stream().noneMatch(p -> p.isEnemyOf(players.get(0)))) {
+            enemy = false;
+        }
+        return enemy;
     }
 }

@@ -127,12 +127,11 @@ final class ASArmStrConverter {
      * Determines the Aerospace Armor Threshold, AlphaStrike Companion p.95
      */
     static int convertThreshold(ASConverter.ConversionData conversionData) {
-        Entity entity = conversionData.entity;
         CalculationReport report = conversionData.conversionReport;
         AlphaStrikeElement element = conversionData.element;
 
-        if (entity instanceof Aero) {
-            int arcs = entity.isFighter() ? 1 : 4;
+        if (element.isAero()) {
+            int arcs = element.isFighter() ? 1 : 4;
             int threshold = ASConverter.roundUp((double) element.getFullArmor() / 3 / arcs);
             report.addEmptyLine();
             report.addSubHeader("Threshold:");

@@ -17,6 +17,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -24,6 +25,7 @@ import java.util.Vector;
 
 import javax.swing.*;
 
+import megamek.client.AbstractClient;
 import megamek.client.Client;
 import megamek.client.generator.RandomGenderGenerator;
 import megamek.client.generator.RandomNameGenerator;
@@ -73,6 +75,12 @@ public class RandomNameDialog extends JDialog implements ActionListener {
         butCancel.addActionListener(this);
         chPlayer.addActionListener(this);
         setLocationRelativeTo(clientgui.frame);
+
+        String closeAction = "closeAction";
+        final KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
+        getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escape, closeAction);
+        getRootPane().getInputMap(JComponent.WHEN_FOCUSED).put(escape, closeAction);
+        getRootPane().getActionMap().put(closeAction, new CloseAction(this));
     }
 
     private void updateFactions() {
@@ -104,7 +112,7 @@ public class RandomNameDialog extends JDialog implements ActionListener {
         chPlayer.setEnabled(true);
         chPlayer.addItem(clientName);
 
-        for (Iterator<Client> i = clientgui.getLocalBots().values().iterator(); i.hasNext();) {
+        for (Iterator<AbstractClient> i = clientgui.getLocalBots().values().iterator(); i.hasNext();) {
             chPlayer.addItem(i.next().getName());
         }
         if (chPlayer.getItemCount() == 1) {
@@ -143,7 +151,7 @@ public class RandomNameDialog extends JDialog implements ActionListener {
             Client c = null;
             if (chPlayer.getSelectedIndex() > 0) {
                 String name = (String) chPlayer.getSelectedItem();
-                c = clientgui.getLocalBots().get(name);
+                c = (Client) clientgui.getLocalBots().get(name);
             }
             if (c == null) {
                 c = client;
@@ -156,10 +164,11 @@ public class RandomNameDialog extends JDialog implements ActionListener {
                         Gender gender = RandomGenderGenerator.generate();
                         ent.getCrew().setGender(gender, i);
                         if (comboHistoricalEthnicity.getSelectedIndex() == 0) {
-                            ent.getCrew().setName(RandomNameGenerator.getInstance().generate(gender), i);
+                            ent.getCrew().setName(RandomNameGenerator.getInstance().generate(gender,
+                                    ent.getCrew().isClanPilot(i)), i);
                         } else {
                             ent.getCrew().setName(RandomNameGenerator.getInstance().generateWithEthnicCode(
-                                    gender, (String) comboFaction.getSelectedItem(),
+                                    gender, ent.getCrew().isClanPilot(i),
                                     comboHistoricalEthnicity.getSelectedIndex()), i);
                         }
                     }

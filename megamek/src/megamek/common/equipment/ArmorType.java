@@ -66,7 +66,7 @@ public class ArmorType extends MiscType {
     }
 
     public static Map<Integer, String> getAllArmorCodeName() {
-        Map<Integer, String> result = new HashMap();
+        Map<Integer, String> result = new HashMap<>();
 
         for (ArmorType armorType : allTypes) {
             result.put(armorType.getArmorType(), getArmorTypeName(armorType.getArmorType()));
@@ -191,6 +191,9 @@ public class ArmorType extends MiscType {
         omniFixedOnly = true;
         spreadable = true;
         bv = 0;
+        criticals = 0;
+        tankslots = 0;
+        svslots = 0;
     }
 
     /**
@@ -910,7 +913,7 @@ public class ArmorType extends MiscType {
         armor.name = "Ferro-Lamellor";
         armor.setInternalName("Clan Ferro-Lamellor");
         armor.cost = 35000.0;
-        armor.criticals = 14;
+        armor.criticals = 12;
         armor.tankslots = 1;
         armor.svslots = 1;
         armor.figherSlots = 2;
@@ -1881,5 +1884,10 @@ public class ArmorType extends MiscType {
         armor.armorType = T_ARMOR_UNKNOWN;
 
         return armor;
+    }
+
+    @Override
+    public String toString() {
+        return "[Armor] " + internalName;
     }
 }

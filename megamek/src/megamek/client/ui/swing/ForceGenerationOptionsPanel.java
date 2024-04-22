@@ -81,7 +81,7 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
 
     private static final int[] UNIT_TYPES = {
         UnitType.MEK, UnitType.TANK, UnitType.BATTLE_ARMOR, UnitType.INFANTRY, UnitType.PROTOMEK,
-        UnitType.VTOL, UnitType.NAVAL, UnitType.CONV_FIGHTER, UnitType.AEROSPACEFIGHTER, UnitType.AERO, UnitType.SMALL_CRAFT,
+        UnitType.VTOL, UnitType.NAVAL, UnitType.CONV_FIGHTER, UnitType.AEROSPACEFIGHTER, UnitType.SMALL_CRAFT,
         UnitType.DROPSHIP, UnitType.JUMPSHIP, UnitType.WARSHIP, UnitType.SPACE_STATION
     };
     private static final int EARLIEST_YEAR = 2398;
@@ -632,7 +632,6 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
                             EntityWeightClass.WEIGHT_ASSAULT, true);
                     break;
                 case UnitType.AEROSPACEFIGHTER:
-                case UnitType.AERO:
                     addWeightClasses(panWeightClass, EntityWeightClass.WEIGHT_LIGHT,
                             EntityWeightClass.WEIGHT_HEAVY, false);
                     break;
@@ -692,7 +691,6 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
                 case UnitType.NAVAL:
                 case UnitType.CONV_FIGHTER:
                 case UnitType.AEROSPACEFIGHTER:
-                case UnitType.AERO:
                     addNetworkButton(panNetwork, c, networkButtons, Messages.getString("RandomArmyDialog.NoNetwork"),
                             ModelRecord.NETWORK_NONE);
                     addNetworkButton(panNetwork, c, networkButtons, Messages.getString("RandomArmyDialog.C3S"),

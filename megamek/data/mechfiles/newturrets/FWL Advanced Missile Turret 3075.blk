@@ -1,0 +1,53 @@
+#Guns block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+GunEmplacement
+</UnitType>
+<Name>
+FWL Advanced Missile Turret
+</Name>
+<model>
+(3075)
+</model>
+<Year>
+3075
+</Year>
+<Type>
+IS Level 3
+</Type>
+<Turret>
+1
+</Turret>
+<Guns Equipment>
+LRM 20
+LRM 20
+LRM 10
+LRM 10
+LRM 10
+ISTAG
+ISTAG
+ISERMediumLaser
+ISERMediumLaser
+ISERMediumLaser
+Searchlight
+IS Ammo LRM-20 Semi-guided
+IS Ammo LRM-20 Semi-guided
+IS Ammo LRM-20 Semi-guided
+IS Ammo LRM-20 Semi-guided
+IS Ammo LRM-20 Swarm-I
+IS Ammo LRM-20 Swarm-I
+IS Ammo LRM-20 Swarm-I
+IS Ammo LRM-20 Swarm-I
+IS Ammo LRM-10 Swarm-I
+IS Ammo LRM-10 Swarm-I
+IS Ammo LRM-10 Swarm-I
+IS Ammo LRM-10 Swarm-I
+IS Ammo LRM-10 Swarm-I
+IS Ammo LRM-10 Swarm-I
+</Guns Equipment>

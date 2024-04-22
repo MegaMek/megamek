@@ -10,38 +10,36 @@ MAM0
 GunEmplacement
 </UnitType>
 <Name>
-Test Sniper Turret
+Draconis Advanced Missile Turret
 </Name>
 <model>
-(3039)
+(3075)
 </model>
 <Year>
-3039
+3075
 </Year>
 <Type>
-IS Level 5
+IS Level 3
 </Type>
 <Turret>
 1
 </Turret>
 <Guns Equipment>
-ISAC2
-ISAC2
-ISAC2
-ISAC2
-ISUltraAC5
-ISUltraAC5
-ISMG
-ISMG
+MRM 30
+MRM 30
+MRM 30
+MRM 30
 Searchlight
-ISMG Ammo Full
-ISAC2 Ammo
-ISAC2 Ammo
-ISAC2 Ammo
-ISAC2 Ammo
-ISAC2 Ammo
-ISUltraAC5 Ammo
-ISUltraAC5 Ammo
-ISUltraAC5 Ammo
-ISUltraAC5 Ammo
+IS MRM 30 Ammo
+IS MRM 30 Ammo
+IS MRM 30 Ammo
+IS MRM 30 Ammo
+IS MRM 30 Ammo
+IS MRM 30 Ammo
+IS MRM 30 Ammo
+IS MRM 30 Ammo
+IS MRM 30 Ammo
+IS MRM 30 Ammo
+IS MRM 30 Ammo
+IS MRM 30 Ammo
 </Guns Equipment>

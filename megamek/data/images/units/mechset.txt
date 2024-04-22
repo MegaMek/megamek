@@ -8809,6 +8809,24 @@ chassis "Heavy Blaze Turret" "GunEmplacements/Blazer_Turret_Dual.png"
 
 chassis "Medium Command Tower" "GunEmplacements/AC10_Turret_Single.png"
 
+chassis "Lyran Advanced Shredder Turret" "GunEmplacements/AC20_Turret_Dual.png"
+chassis "Lyran Advanced Missile Turret" "GunEmplacements/Thunderbolt_Turret_15_Triple.png"
+
+chassis "FWL Advanced Laser Turret" "GunEmplacements/LL_Turret_Dual.png"
+chassis "FWL Advanced Missile Turret" "GunEmplacements/LRM20_Turret_Triple.png"
+
+chassis "Fed Suns Advanced Laser Turret" "GunEmplacements/LL_Turret_Dual.png"
+chassis "Fed Suns Advanced Shredder Turret" "GunEmplacements/RAC5_Turret_Triple.png"
+
+chassis "Draconis Advanced Siege Turret" "GunEmplacements/Heavy_PPC_Turret_Dual.png"
+chassis "Draconis Advanced Missile Turret" "GunEmplacements/MRM40_Turret_Triple.png"
+
+chassis "Capellan Advanced Shredder Turret" "GunEmplacements/Plasma_Rifle_Turret_Triple.png"
+chassis "Capellan Advanced Siege Turret" "GunEmplacements/Plasma_Rifle_Turret_Dual.png"
+
+chassis "Medium Air Defense Missile Emplacement" "GunEmplacements/ArrowIV_Turret.png"
+chassis "Assault Air Defense Missile Emplacement" "GunEmplacements/ArrowIV_Turret_Dual.png"
+
 
 
 # Local Server/Client moved here to support overrides of existing images!

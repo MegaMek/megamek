@@ -15,6 +15,8 @@ package megamek.common.weapons.infantry;
 
 import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.equipment.AmmoMounted;
+import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.AttackHandler;
@@ -121,12 +123,12 @@ public abstract class InfantryWeapon extends Weapon {
     }
 
     @Override
-    public int getMaxRange(Mounted<?> weapon) {
+    public int getMaxRange(WeaponMounted weapon) {
         return getMaxRange(weapon, null);
     }
 
     @Override
-    public int getMaxRange(Mounted<?> weapon, AmmoMounted ammo) {
+    public int getMaxRange(WeaponMounted weapon, AmmoMounted ammo) {
         for (int range = RangeType.RANGE_EXTREME; range >= RangeType.RANGE_SHORT; range--) {
             if (infantryRange * 3 > AIRBORNE_WEAPON_RANGES[range - 1]) {
                 return range;

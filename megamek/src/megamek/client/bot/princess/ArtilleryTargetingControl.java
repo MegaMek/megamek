@@ -194,9 +194,9 @@ public class ArtilleryTargetingControl {
 
     private boolean getAmmoTypeAvailable(Entity shooter, AmmoType.Munitions mtype) {
         boolean available = false;
-        for (Mounted weapon: shooter.getWeaponList()){
+        for (WeaponMounted weapon: shooter.getWeaponList()){
             if (weapon.getType().hasFlag(WeaponType.F_ARTILLERY)){
-                for (Mounted ammo: shooter.getAmmo(weapon)) {
+                for (AmmoMounted ammo: shooter.getAmmo(weapon)) {
                     if (((AmmoType) ammo.getType()).getMunitionType().contains(mtype)
                             && !weapon.isFired() && ammo.getUsableShotsLeft() > 0) {
                         available = true;

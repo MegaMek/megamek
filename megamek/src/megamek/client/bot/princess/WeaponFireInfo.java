@@ -17,6 +17,7 @@ import megamek.common.*;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
+import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.BombMounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.OptionsConstants;
@@ -323,7 +324,7 @@ public class WeaponFireInfo {
         this.weapon = weapon;
     }
 
-    protected void setAmmo(final Mounted ammo) {
+    protected void setAmmo(final AmmoMounted ammo) {
         this.preferredAmmo = ammo;
     }
 
@@ -339,7 +340,7 @@ public class WeaponFireInfo {
         return weapon;
     }
 
-    public Mounted getAmmo() {
+    public AmmoMounted getAmmo() {
         return preferredAmmo;
     }
 

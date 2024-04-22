@@ -56,7 +56,7 @@ public abstract class AmmoWeapon extends Weapon {
         AmmoMounted ammo = weapon.getLinkedAmmo();
         if (ammo == null || ammo.getUsableShotsLeft() < 1) {
             ae.loadWeaponWithSameAmmo(weapon);
-            ammo = weapon.getLinked();
+            ammo = weapon.getLinkedAmmo();
             // We need to make the WAA ammoId match the new ammo bin
             waa.setAmmoId(ae.getEquipmentNum(ammo));
         }

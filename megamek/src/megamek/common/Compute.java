@@ -1109,9 +1109,9 @@ public class Compute {
      *
      * @return the modifiers
      */
-    public static ToHitData getRangeMods(Game game, Entity ae, Mounted weapon, Mounted ammo,
+    public static ToHitData getRangeMods(Game game, Entity ae, WeaponMounted weapon, AmmoMounted ammo,
                                          Targetable target) {
-        WeaponType wtype = (WeaponType) weapon.getType();
+        WeaponType wtype = weapon.getType();
         int[] weaponRanges = wtype.getRanges(weapon, ammo);
         boolean isAttackerInfantry = (ae instanceof Infantry);
         boolean isAttackerBA = (ae instanceof BattleArmor);

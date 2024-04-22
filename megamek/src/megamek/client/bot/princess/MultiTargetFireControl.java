@@ -20,6 +20,8 @@ import java.util.List;
 import java.util.Map;
 
 import megamek.common.*;
+import megamek.common.equipment.AmmoMounted;
+import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.OptionsConstants;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -122,7 +124,7 @@ public class MultiTargetFireControl extends FireControl {
             if (effectivelyAmmoless(weapon.getType())) {
                 betterShot = buildWeaponFireInfo(shooter, target, weapon, null, owner.getGame(), false);
             } else {
-                ArrayList<AmmoMounted> ammos;
+                List<AmmoMounted> ammos;
                 if (weapon.getBayWeapons().isEmpty()) {
                     ammos = shooter.getAmmo(weapon);
                 } else {

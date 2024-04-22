@@ -17,6 +17,8 @@ package megamek.common;
 import java.math.BigInteger;
 
 import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.equipment.AmmoMounted;
+import megamek.common.equipment.WeaponMounted;
 import megamek.common.weapons.AlamoMissileWeapon;
 import megamek.common.weapons.AltitudeBombAttack;
 import megamek.common.weapons.DiveBombAttack;
@@ -607,7 +609,7 @@ public class WeaponType extends EquipmentType {
         return waterExtremeRange;
     }
 
-    public int getMaxRange(Mounted<?> weapon) {
+    public int getMaxRange(WeaponMounted weapon) {
         if (weapon == null) {
             return getMaxRange();
         }
@@ -618,7 +620,7 @@ public class WeaponType extends EquipmentType {
         return maxRange;
     }
 
-    public int getMaxRange(Mounted<?> weapon, AmmoMounted ammo) {
+    public int getMaxRange(WeaponMounted weapon, AmmoMounted ammo) {
         if (getAmmoType() == AmmoType.T_ATM) {
             AmmoType ammoType = ammo.getType();
             if ((ammoType.getAmmoType() == AmmoType.T_ATM)

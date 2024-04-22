@@ -2600,7 +2600,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         int maxr = WeaponType.RANGE_SHORT;
 
         for (int wId : bayWeapons) {
-            Mounted<?> m = entity.getEquipment(wId);
+            WeaponMounted m = (WeaponMounted) entity.getEquipment(wId);
             if (!m.isBreached()
                 && !m.isMissing()
                 && !m.isDestroyed()

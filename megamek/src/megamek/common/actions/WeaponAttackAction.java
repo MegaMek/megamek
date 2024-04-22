@@ -311,16 +311,10 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                                    boolean isPointblankShot, List<ECMInfo> allECMInfo, boolean evenIfAlreadyFired,
                                    int ammoId) {
         final Entity ae = game.getEntity(attackerId);
-        final WeaponMounted weapon = ae.getEquipment(weaponId);
+        final WeaponMounted weapon = (WeaponMounted) ae.getEquipment(weaponId);
         final AmmoMounted linkedAmmo = (ammoId == -1) ? weapon.getLinkedAmmo() : (AmmoMounted) ae.getEquipment(ammoId);
 
         final EquipmentType type = weapon.getType();
-
-        // No need to process anything further if we're not using a weapon somehow
-        if (!(type instanceof WeaponType)) {
-            LogManager.getLogger().error("Trying to make a weapon attack with " + weapon.getName() + " which has type " + type.getName());
-            return new ToHitData(TargetRoll.AUTOMATIC_FAIL, Messages.getString("WeaponAttackAction.NotAWeapon"));
-        }
 
         if (target == null) {
             LogManager.getLogger().error(attackerId + "Attempting to attack null target");
@@ -4016,7 +4010,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                                                     int ttype, LosEffects los, ToHitData toHit,
                                                     int toSubtract, int aimingAt,
                                                     AimingMode aimingMode, int distance,
-                                                    WeaponType wtype, Mounted weapon, AmmoType atype,
+                                                    WeaponType wtype, WeaponMounted weapon, AmmoType atype,
                                                     EnumSet<AmmoType.Munitions> munition, boolean isArtilleryDirect,
                                                     boolean isArtilleryIndirect,
                                                     boolean isAttackerInfantry,
@@ -4363,7 +4357,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
      */
     private static ToHitData compileTerrainAndLosToHitMods(Game game, Entity ae, Targetable target, int ttype, int aElev, int tElev,
                 int targEl, int distance, LosEffects los, ToHitData toHit, ToHitData losMods, int toSubtract, int eistatus,
-                WeaponType wtype, Mounted weapon, int weaponId, AmmoType atype, Mounted ammo, EnumSet<AmmoType.Munitions> munition, boolean isAttackerInfantry,
+                WeaponType wtype, WeaponMounted weapon, int weaponId, AmmoType atype, AmmoMounted ammo, EnumSet<AmmoType.Munitions> munition, boolean isAttackerInfantry,
                 boolean inSameBuilding, boolean isIndirect, boolean isPointBlankShot, boolean underWater) {
         if (ae == null || target == null) {
             // Can't handle these attacks without a valid attacker and target
@@ -4913,7 +4907,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
      * @param srt  Class that stores whether or not this WAA should return a special resolution
      */
     private static ToHitData artilleryDirectToHit(Game game, Entity ae, Targetable target, int ttype,
-        ToHitData losMods, ToHitData toHit, WeaponType wtype, Mounted weapon, AmmoType atype,
+        ToHitData losMods, ToHitData toHit, WeaponType wtype, WeaponMounted weapon, AmmoType atype,
          boolean isArtilleryFLAK, boolean usesAmmo, SpecialResolutionTracker srt) {
 
         if (null == atype) {
@@ -5079,7 +5073,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
          * @param srt  Class that stores whether or not this WAA should return a special resolution
          */
     private static ToHitData handleArtilleryAttacks(Game game, Entity ae, Targetable target, int ttype,
-                ToHitData losMods, ToHitData toHit, WeaponType wtype, Mounted weapon, AmmoType atype,
+                ToHitData losMods, ToHitData toHit, WeaponType wtype, WeaponMounted weapon, AmmoType atype,
                 boolean isArtilleryDirect, boolean isArtilleryFLAK, boolean isArtilleryIndirect, boolean isHoming,
                 boolean usesAmmo, SpecialResolutionTracker srt) {
         Entity te = null;

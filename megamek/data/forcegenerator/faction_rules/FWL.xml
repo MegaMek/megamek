@@ -12,16 +12,16 @@
 
 	<toc>
 		<unitType>
-			<option ifDateBetween="3051,">Mek,Tank,VTOL,Infantry,BattleArmor,Aero,Conventional Fighter</option>
-			<option ifDateBetween="2470,3050">Mek,Tank,VTOL,Infantry,Aero,Conventional Fighter</option>
-			<option>Tank,VTOL,Infantry,Aero,Conventional Fighter</option>
+			<option ifDateBetween="3051,">Mek,Tank,VTOL,Infantry,BattleArmor,AeroSpaceFighter,Conventional Fighter</option>
+			<option ifDateBetween="2470,3050">Mek,Tank,VTOL,Infantry,AeroSpaceFighter,Conventional Fighter</option>
+			<option>Tank,VTOL,Infantry,AeroSpaceFighter,Conventional Fighter</option>
 		</unitType>
 		
 		<eschelon>
 			<option ifUnitType="Mek|Tank|VTOL">%REGIMENT%,%BATTALION%,%COMPANY%,%LANCE%</option>
 			<option ifUnitType="Infantry">%REGIMENT%,%BATTALION%,%COMPANY%</option>
 			<option ifUnitType="BattleArmor">%BATTALION%,%COMPANY%,%PLATOON%</option>
-			<option ifUnitType="Aero|Conventional Fighter">%GROUP%,%WING%+,%WING%,%SQUADRON%,%FLIGHT%</option>
+			<option ifUnitType="AeroSpaceFighter|Conventional Fighter">%GROUP%,%WING%+,%WING%,%SQUADRON%,%FLIGHT%</option>
 		</eschelon>
 		
 		<rating>
@@ -65,7 +65,7 @@
 		</subforces>
 		
 		<attachedForces ifUnitType="Mek">
-			<subforce unitType="Aero"
+			<subforce unitType="AeroSpaceFighter"
 				name="Aerospace Support">%WING%</subforce>
 			<subforce unitType="Tank"
 				name="Armor Support">%REGIMENT%</subforce>
@@ -74,7 +74,7 @@
 		</attachedForces>
 
 		<attachedForces ifUnitType="Tank" ifDateBetween=",2520">
-			<subforce unitType="Aero"
+			<subforce unitType="AeroSpaceFighter"
 				name="Aerospace Support">%WING%</subforce>
 			<subforceOption ifDateBetween="2470,">
 				<option ifRating="D|F"/>
@@ -604,7 +604,7 @@
 		<co>%SGT%</co>
 	</force>
 
-	<force eschelon="%GROUP%" eschName="Regiment" ifUnitType="Aero">
+	<force eschelon="%GROUP%" eschName="Regiment" ifUnitType="AeroSpaceFighter">
 		<co>%COLONEL%</co>
 		
 		<weightClass>
@@ -618,7 +618,7 @@
 		</subforces>
 	</force>
 
-	<force eschelon="%FLIGHT%" eschName="Lance" ifUnitType="Aero|Conventional Fighter">
+	<force eschelon="%FLIGHT%" eschName="Lance" ifUnitType="AeroSpaceFighter|Conventional Fighter">
 		<name>Lance {cardinal}</name>
 		<co>%LT%</co>
 		

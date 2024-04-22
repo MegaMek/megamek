@@ -759,8 +759,7 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener, ListSe
                     m_bDumpAmmo.setEnabled(true);
                 }
                 int round = client.getGame().getRoundCount();
-                boolean inSquadron = ((en instanceof Aero) && ((Aero) en)
-                        .isInASquadron());
+                boolean inSquadron = en.isPartOfFighterSquadron();
                 if ((m != null) && bOwner && m.hasModes()) {
                     if (!m.isInoperable() && !m.isDumping()
                             && (en.isActive() || en.isActive(round) || inSquadron)

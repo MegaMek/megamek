@@ -72,8 +72,16 @@ public class EntityImage {
     private static final int IMG_HEIGHT = HexTileset.HEX_H;
     private static final int IMG_SIZE = IMG_WIDTH * IMG_HEIGHT;
 
+    private static final float SHADOW_INTENSITY = 0.7f; // 0 = no shadow, 1 = black shadow
+    private static final float SHADOW_OFFSET = 5f; // due to unit height
+    private static final RescaleOp BLACK_FILTER = new RescaleOp(new float[]{0, 0, 0, SHADOW_INTENSITY},
+            new float[]{0, 0, 0, 1 - SHADOW_INTENSITY}, null);
+
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
-    
+
+    private static final GraphicsConfiguration GRAPHICS_CONFIGURATION = GraphicsEnvironment
+            .getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
+
     /** Facing-dependent camo overlays (add shadows and highlighting) */ 
     private static final int[][] pOverlays = new int[6][IMG_SIZE];
     static {
@@ -132,6 +140,9 @@ public class EntityImage {
     private final boolean isSingleHex;
     /** True for tanks */
     private final boolean isTank;
+    private final int unitHeight;
+    private final int unitElevation;
+
 
     public static EntityImage createIcon(Image base, Camouflage camouflage, Component comp, Entity entity) {
         return createIcon(base, null, camouflage, comp, entity, -1, true);
@@ -185,6 +196,8 @@ public class EntityImage {
         isSingleHex = secondaryPos == -1;
         decal = getDamageDecal(entity, secondaryPos);
         smoke = getSmokeImage(entity, secondaryPos);
+        unitHeight = entity.height();
+        unitElevation = entity.getElevation();
     }
 
     /**
@@ -249,7 +262,12 @@ public class EntityImage {
             }
 
             // Generate rotated images for the unit and for a wreck
-            facings[i] = rotateImage(fImage, i);
+            fImage = rotateImage(fImage, i);
+            if (GUIP.getShadowMap() && isSingleHex) {
+                facings[i] = applyDropShadow(fImage);
+            } else {
+                facings[i] = fImage;
+            }
         }
 
         // Apply the player/unit camouflage
@@ -640,6 +658,50 @@ public class EntityImage {
             LogManager.getLogger().error("Could not load smoke/fire image.", e);
         }
         return null;
+    }
+
+    protected Image applyDropShadow(Image image) {
+        if (image == null) {
+            return null;
+        }
+
+        // Create a copy to change into a drop shadow
+        BufferedImage copy = ImageUtil.getScaledImage(image, image.getWidth(null), image.getHeight(null));
+
+        // Set the color of all pixels to black, keeping the alpha
+        BufferedImage blackedOut = BLACK_FILTER.filter(copy, null);
+
+        // Blur operation setup
+        int radius = 5;
+        float sigma = radius / 2f * (unitHeight + 1);
+        if (unitElevation != 0) {
+            radius = 1;
+        }
+        ConvolveOp op = new ConvolveOp(ImageUtil.getGaussKernel(2 * radius + 1, sigma), ConvolveOp.EDGE_NO_OP, null);
+
+        // blurring requires a slightly bigger image
+        BufferedImage temp = GRAPHICS_CONFIGURATION.createCompatibleImage(
+                IMG_WIDTH + radius * 2, IMG_HEIGHT + radius * 2, Transparency.TRANSLUCENT);
+        Graphics g = temp.getGraphics();
+        g.drawImage(blackedOut, radius, radius, null);
+        g.dispose();
+        BufferedImage shadow = op.filter(temp, null);
+
+        // reduce back to the correct image size
+        BufferedImage result = GRAPHICS_CONFIGURATION.createCompatibleImage(IMG_WIDTH, IMG_HEIGHT, Transparency.TRANSLUCENT);
+        Graphics gResult = result.getGraphics();
+        int xOffset = 0;
+        if (unitElevation == 0) {
+            xOffset = (int) (SHADOW_OFFSET * (unitHeight + 1));
+        }
+        int yOffset = xOffset * 7 / 19; // values taken from the light direction used in terrain shadows
+        gResult.drawImage(shadow, -xOffset, yOffset, IMG_WIDTH - 1 - xOffset, IMG_HEIGHT - 1 + yOffset,
+                radius, radius, IMG_WIDTH + radius - 1, IMG_HEIGHT + radius - 1, null);
+
+        // re-apply the actual icon on top of the shadow
+        gResult.drawImage(image, 0, 0, null);
+        gResult.dispose();
+        return ImageUtil.createAcceleratedImage(result);
     }
 
     /** 

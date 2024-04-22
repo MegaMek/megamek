@@ -18,6 +18,7 @@ import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
+import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.server.GameManager;
 
 import java.util.ArrayList;
@@ -218,7 +219,8 @@ public class CLIATMHandler extends ATMHandler {
         }
 
         // Affects streak too.
-        if (game.getPlanetaryConditions().hasEMI()) {
+        PlanetaryConditions conditions = game.getPlanetaryConditions();
+        if (conditions.getEMI().isEMI()) {
             nMissilesModifier -= 2;
         }
 
@@ -434,7 +436,7 @@ public class CLIATMHandler extends ATMHandler {
             r.indent();
             r.newlines = 0;
             r.subject = subjectId;
-            r.add(wtype.getName());
+            r.add(wtype.getName() + " (" + atype.getShortName() + ")");
             if (entityTarget != null) {
                 r.addDesc(entityTarget);
             } else {

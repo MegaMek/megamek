@@ -21,6 +21,7 @@ import java.util.List;
 
 import megamek.common.equipment.MiscMounted;
 import megamek.common.options.OptionsConstants;
+import megamek.common.planetaryconditions.PlanetaryConditions;
 
 public class BipedMech extends Mech {
     private static final long serialVersionUID = 4166375446709772785L;
@@ -93,7 +94,7 @@ public class BipedMech extends Mech {
         int actuatorHits = 0;
 
         //A Mech using tracks has its movement reduced by 50% per leg or track destroyed;
-        if (getMovementMode() == EntityMovementMode.TRACKED) {
+        if (getMovementMode().isTracked()) {
             for (Mounted m : getMisc()) {
                 if (m.getType().hasFlag(MiscType.F_TRACKS)) {
                     if (m.isHit() || isLocationBad(m.getLocation())) {
@@ -180,12 +181,13 @@ public class BipedMech extends Mech {
         }
 
         if (!mpCalculationSetting.ignoreWeather && (null != game)) {
-            int weatherMod = game.getPlanetaryConditions().getMovementMods(this);
+            PlanetaryConditions conditions = game.getPlanetaryConditions();
+            int weatherMod = conditions.getMovementMods(this);
             mp = Math.max(mp + weatherMod, 0);
 
             if (getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_WIND)
-                    && (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_NONE)
-                    && (game.getPlanetaryConditions().getWindStrength() == PlanetaryConditions.WI_TORNADO_F13)) {
+                    && conditions.getWeather().isClear()
+                    && conditions.getWind().isTornadoF1ToF3()) {
                 mp += 1;
             }
         }

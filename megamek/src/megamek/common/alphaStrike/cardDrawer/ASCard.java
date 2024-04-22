@@ -252,17 +252,9 @@ public class ASCard {
     /** Scales the fluff image according to control variables which may be set in overriden initialize(). */
     private void drawFluffImage(Graphics2D g) {
         if (fluffImage != null) {
-            int width = fluffWidth;
-            int height = fluffHeight;
-            if ((float) fluffImage.getWidth(null) / fluffWidth >
-                    (float) fluffImage.getHeight(null) / fluffHeight) {
-                height = fluffImage.getHeight(null) * fluffWidth / fluffImage.getWidth(null);
-            } else {
-                width = fluffImage.getWidth(null) * fluffHeight / fluffImage.getHeight(null);
-            }
-            int posX = fluffXCenter - width / 2;
-            int posY = fluffYCenter - height / 2;
-            ImageIcon icon = new ImageIcon(fluffImage.getScaledInstance(width, height, Image.SCALE_AREA_AVERAGING));
+            ImageIcon icon = new ImageIcon(ImageUtil.fitImage(fluffImage, fluffWidth, fluffHeight, ImageUtil.IMAGE_SCALE_BICUBIC));
+            int posX = fluffXCenter - icon.getIconWidth() / 2;
+            int posY = fluffYCenter - icon.getIconHeight() / 2;
             g.drawImage(icon.getImage(), posX, posY, null);
         }
     }
@@ -280,7 +272,7 @@ public class ASCard {
                 .font(chassisFont).centerY().maxWidth(770).scaleX(0.8f).draw(g);
 
         // Add BA Squad Size
-        if (element.getASUnitType().isBattleArmor()) {
+        if (element.isBattleArmor() && element.getSquadSize() != 0) {
             new StringDrawer("Squad " + element.getSquadSize()).at(36, 137).maxWidth(500).scaleX(1.3f)
                     .font(modelFont).centerY().draw(g);
         }
@@ -549,11 +541,7 @@ public class ASCard {
     }
 
     /** Get the fluff image for the given element. */
-    private Image getFluffImage(ASCardDisplayable element) {
-        if (element != null) {
-            return FluffImageHelper.loadFluffImageHeuristic(element);
-        } else {
-            return null;
-        }
+    private @Nullable Image getFluffImage(ASCardDisplayable element) {
+        return FluffImageHelper.getFluffImage(element);
     }
 }

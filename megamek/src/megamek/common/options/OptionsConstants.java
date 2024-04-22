@@ -280,6 +280,7 @@ public class OptionsConstants {
     public static final String BASE_TEAM_INITIATIVE = "team_initiative";
     public static final String BASE_AUTOSAVE_MSG = "autosave_msg";
     public static final String BASE_PARANOID_AUTOSAVE = "paranoid_autosave";
+    public static final String BASE_MAX_NUMBER_ROUND_SAVES = "max_rotating_round_saves";
     public static final String BASE_EXCLUSIVE_DB_DEPLOYMENT = "exclusive_db_deployment";
     public static final String BASE_BLIND_DROP = "blind_drop";
     public static final String BASE_REAL_BLIND_DROP = "real_blind_drop";
@@ -330,6 +331,7 @@ public class OptionsConstants {
     public static final String ALLOWED_REALLY_ALLOW_NUKES = "really_allow_nukes";
     public static final String ADVANCED_MINEFIELDS = "minefields";
     public static final String ADVANCED_HIDDEN_UNITS = "hidden_units";
+    public static final String ADVANCED_BLACK_ICE= "black_ice";
     public static final String ADVANCED_DOUBLE_BLIND = "double_blind";
     public static final String ADVANCED_SINGLE_BLIND_BOTS = "single_blind_bots";
     public static final String ADVANCED_TACOPS_SENSORS = "tacops_sensors";
@@ -406,6 +408,7 @@ public class OptionsConstants {
     public static final String ADVCOMBAT_TACOPS_WOODS_COVER = "tacops_woods_cover";
     public static final String ADVCOMBAT_TACOPS_VEHICLE_EFFECTIVE = "tacops_vehicle_effective";
     public static final String ADVCOMBAT_TACOPS_VEHICLE_ARCS = "tacops_vehicle_arcs";
+
     public static final String ADVCOMBAT_TACOPS_VTOL_ATTACKS = "tacops_vtol_attacks";
     public static final String ADVCOMBAT_TACOPS_ADVANCED_MECH_HIT_LOCATIONS = "tacops_advanced_mech_hit_locations";
     public static final String ADVCOMBAT_TACOPS_COOLANT_FAILURE = "tacops_coolant_failure";
@@ -503,7 +506,6 @@ public class OptionsConstants {
     public static final String INIT_INF_MOVE_LATER = "inf_move_later";
     public static final String INIT_INF_MOVE_MULTI = "inf_move_multi";
     public static final String INIT_PROTOS_MOVE_EVEN = "protos_move_even";
-    public static final String INIT_PROTOS_DEPLOY_EVEN = "protos_deploy_even";
     public static final String INIT_PROTOS_MOVE_LATER = "protos_move_later";
     public static final String INIT_PROTOS_MOVE_MULTI = "protos_move_multi";
     public static final String INIT_INF_PROTO_MOVE_MULTI = "inf_proto_move_multi";
@@ -524,4 +526,6 @@ public class OptionsConstants {
     public static final String RPG_CONDITIONAL_EJECTION = "conditional_ejection";
     public static final String RPG_MANUAL_SHUTDOWN = "manual_shutdown";
     public static final String RPG_BEGIN_SHUTDOWN = "begin_shutdown";
+
+    private OptionsConstants() { }
 }

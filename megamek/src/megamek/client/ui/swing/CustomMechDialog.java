@@ -22,7 +22,6 @@ import megamek.common.*;
 import megamek.common.enums.Gender;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.*;
-import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.verifier.*;
 import megamek.common.weapons.bayweapons.ArtilleryBayWeapon;
 import megamek.common.weapons.bayweapons.CapitalMissileBayWeapon;
@@ -398,6 +397,11 @@ public class CustomMechDialog extends AbstractButtonDialog implements ActionList
     @Override
     public void optionClicked(DialogOptionComponent comp, IOption option, boolean state) { }
 
+    @Override
+    public void optionSwitched(DialogOptionComponent clickedComp, IOption option, int i) {
+        // nothing implemented yet
+    }
+
     public boolean isOkay() {
         return okay;
     }
@@ -479,8 +483,10 @@ public class CustomMechDialog extends AbstractButtonDialog implements ActionList
         txtDeploymentOffset.setText(Integer.toString(entity.getStartingOffset(false)));
         txtDeploymentWidth.setText(Integer.toString(entity.getStartingWidth(false)));
 
-        int bh = clientgui.getClient().getMapSettings().getBoardHeight();
-        int bw = clientgui.getClient().getMapSettings().getBoardWidth();
+        MapSettings ms = clientgui.getClient().getMapSettings();
+        int bh = ms.getBoardHeight() * ms.getMapHeight();
+        int bw = ms.getBoardWidth() * ms.getMapWidth();
+
         int x = Math.min(entity.getStartingAnyNWx(false) + 1, bw);
         spinStartingAnyNWx.setValue(x);
         int y = Math.min(entity.getStartingAnyNWy(false) + 1, bh);
@@ -686,6 +692,7 @@ public class CustomMechDialog extends AbstractButtonDialog implements ActionList
             for (int i = 0; i < entities.get(0).getCrew().getSlotCount(); i++) {
                 String name = panCrewMember[i].getPilotName();
                 String nick = panCrewMember[i].getNickname();
+                String hits = panCrewMember[i].getHits();
                 Gender gender = panCrewMember[i].getGender();
                 if (gender == Gender.RANDOMIZE) {
                     gender = entities.get(0).getCrew().getGender(i);
@@ -784,7 +791,9 @@ public class CustomMechDialog extends AbstractButtonDialog implements ActionList
                 entity.getCrew().setToughness(tough, i);
                 entity.getCrew().setName(name, i);
                 entity.getCrew().setNickname(nick, i);
+                entity.getCrew().setHits(Integer.parseInt(hits), i);
                 entity.getCrew().setGender(gender, i);
+                entity.getCrew().setClanPilot(panCrewMember[i].isClanPilot(), i);
                 entity.getCrew().setPortrait(panCrewMember[i].getPortrait().clone(), i);
                 if (backup >= 0) {
                     if (i == entity.getCrew().getCrewType().getPilotPos()) {

@@ -15,15 +15,15 @@
 	
 	<toc>
 		<unitType>
-			<option ifDateBetween="3060,">null,Mek,ProtoMek,Tank,VTOL,Infantry,BattleArmor,Aero,Conventional Fighter,Dropship,Jumpship</option>
-			<option ifDateBetween="2870,3059">null,Mek,Tank,VTOL,Infantry,BattleArmor,Aero,Conventional Fighter,Dropship,Jumpship</option>
-			<option ifDateBetween=",2869">null,Mek,Tank,VTOL,Infantry,Aero,Conventional Fighter,Dropship,Jumpship</option>
+			<option ifDateBetween="3060,">null,Mek,ProtoMek,Tank,VTOL,Infantry,BattleArmor,AeroSpaceFighter,Conventional Fighter,Dropship,Jumpship</option>
+			<option ifDateBetween="2870,3059">null,Mek,Tank,VTOL,Infantry,BattleArmor,AeroSpaceFighter,Conventional Fighter,Dropship,Jumpship</option>
+			<option ifDateBetween=",2869">null,Mek,Tank,VTOL,Infantry,AeroSpaceFighter,Conventional Fighter,Dropship,Jumpship</option>
 		</unitType>
 		
 		<eschelon>
 			<option ifUnitType="">%TOUMAN%,%GALAXY%,%CLUSTER%</option>
 			<option ifUnitType="Dropship|Jumpship">%STAR%</option>
-			<option ifUnitType="Mek|Aero" ifDateBetween="2870,">%TRINARY%,%BINARY%,%STAR%^,%STAR%</option>
+			<option ifUnitType="Mek|AeroSpaceFighter" ifDateBetween="2870,">%TRINARY%,%BINARY%,%STAR%^,%STAR%</option>
 			<option>%TRINARY%,%BINARY%,%STAR%</option>
 		</eschelon>
 		
@@ -38,7 +38,7 @@
 		
 		<flags>
 			<option ifUnitType="null|Mek|BattleArmor" ifEschelon="%TRINARY%|%BINARY%">mixedMekBA:Combined Mek/BA unit</option>
-			<option ifUnitType="null|Mek|Aero" ifEschelon="%TRINARY%|%BINARY%">mekAeroNova:Mek+Aero Nova</option>
+			<option ifUnitType="null|Mek|AeroSpaceFighter" ifEschelon="%TRINARY%|%BINARY%">mekAeroNova:Mek+Aero Nova</option>
 		</flags>
 	</toc>
 	
@@ -132,27 +132,27 @@
 			</subforceOption>
 
 			<subforceOption ifWeightClass="H|A">
-				<option weightClass="H" unitType="Aero"
+				<option weightClass="H" unitType="AeroSpaceFighter"
 					weight="3">%TRINARY%</option>
-				<option weightClass="M" unitType="Aero"
+				<option weightClass="M" unitType="AeroSpaceFighter"
 					weight="2">%TRINARY%</option>
-				<option weightClass="L" unitType="Aero"
+				<option weightClass="L" unitType="AeroSpaceFighter"
 					weight="1">%TRINARY%</option>
 			</subforceOption>
 			<subforceOption ifWeightClass="M">
-				<option weightClass="H" unitType="Aero"
+				<option weightClass="H" unitType="AeroSpaceFighter"
 					weight="2">%TRINARY%</option>
-				<option weightClass="M" unitType="Aero"
+				<option weightClass="M" unitType="AeroSpaceFighter"
 					weight="3">%TRINARY%</option>
-				<option weightClass="L" unitType="Aero"
+				<option weightClass="L" unitType="AeroSpaceFighter"
 					weight="2">%TRINARY%</option>
 			</subforceOption>
 			<subforceOption ifWeightClass="L">
-				<option weightClass="H" unitType="Aero"
+				<option weightClass="H" unitType="AeroSpaceFighter"
 					weight="1">%TRINARY%</option>
-				<option weightClass="M" unitType="Aero"
+				<option weightClass="M" unitType="AeroSpaceFighter"
 					weight="2">%TRINARY%</option>
-				<option weightClass="L" unitType="Aero"
+				<option weightClass="L" unitType="AeroSpaceFighter"
 					weight="3">%TRINARY%</option>
 			</subforceOption>
 			
@@ -235,7 +235,7 @@
 	fighters and a star of battlearmor. There is no indication in the FM of how they
 	work together, but the Nova formation rules in Campaign Operations say the ASFs must
 	be omni, which suggests that they ride the fighters into battle and make a hot drop. -->
-	<force eschelon="%STAR%" eschName="Nova" ifAugmented="1" ifUnitType="Aero">
+	<force eschelon="%STAR%" eschName="Nova" ifAugmented="1" ifUnitType="AeroSpaceFighter">
 		<name>{phonetic} Aero Nova</name>
 		<co>%STAR_CMDR%</co>
 		
@@ -328,8 +328,8 @@
 		
 		<subforces>
 			<subforce flags="-mekAeroNova" augmented="0" unitType="Mek">%STAR%</subforce>
-			<subforce flags="-mekAeroNova" augmented="0" unitType="Aero" ifWeightClass="A" weightClass="H">%STAR%</subforce>
-			<subforce flags="-mekAeroNova" augmented="0" unitType="Aero" ifWeightClass="H|M|L">%STAR%</subforce>
+			<subforce flags="-mekAeroNova" augmented="0" unitType="AeroSpaceFighter" ifWeightClass="A" weightClass="H">%STAR%</subforce>
+			<subforce flags="-mekAeroNova" augmented="0" unitType="AeroSpaceFighter" ifWeightClass="H|M|L">%STAR%</subforce>
 		</subforces>
 	</force>
 

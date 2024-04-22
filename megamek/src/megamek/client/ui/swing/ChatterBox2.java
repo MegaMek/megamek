@@ -18,7 +18,6 @@ import megamek.MMConstants;
 import megamek.client.Client;
 import megamek.client.ui.IDisplayable;
 import megamek.client.ui.swing.boardview.BoardView;
-import megamek.client.ui.swing.util.CommandAction;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.util.UIUtil;
@@ -149,7 +148,7 @@ public class ChatterBox2 implements KeyListener, IDisplayable, IPreferenceChange
         bv = boardview;
         adaptToGUIScale();
 
-        Toolkit toolkit = bv.getToolkit();
+        Toolkit toolkit = bv.getPanel().getToolkit();
         upbutton = toolkit.getImage(new MegaMekFile(Configuration.widgetsDir(), 
                 FILENAME_BUTTON_UP).toString());
         PMUtil.setImage(upbutton, client);
@@ -172,25 +171,14 @@ public class ChatterBox2 implements KeyListener, IDisplayable, IPreferenceChange
     }
 
     private void registerKeyboardCommands(MegaMekController controller) {
-        if (controller == null) {
-            return;
+        if (controller != null) {
+            controller.registerCommandAction(KeyCommandBind.CANCEL, bv::getChatterBoxActive, this::performCancel);
         }
+    }
 
-        // Register the action for CLEAR
-        controller.registerCommandAction(KeyCommandBind.CANCEL.cmd,
-                new CommandAction() {
-
-                    @Override
-                    public boolean shouldPerformAction() {
-                        return bv.getChatterBoxActive();
-                    }
-
-                    @Override
-                    public void performAction() {
-                        clearMessage();
-                        slideDown();
-                    }
-                });
+    private void performCancel() {
+        clearMessage();
+        slideDown();
     }
 
     @Override
@@ -469,19 +457,19 @@ public class ChatterBox2 implements KeyListener, IDisplayable, IPreferenceChange
 
         // Min/max button
         if (slideOffset == getMaxSlideOffset()) {
-            graph.drawImage(maxbutton, 10 + clipBounds.x, yOffset + 3, bv);
+            graph.drawImage(maxbutton, 10 + clipBounds.x, yOffset + 3, bv.getPanel());
         } else {
-            graph.drawImage(minbutton, 10 + clipBounds.x, yOffset + 3, bv);
+            graph.drawImage(minbutton, 10 + clipBounds.x, yOffset + 3, bv.getPanel());
         }
 
         // Title
         printLine(graph, "Incoming messages...", 29 + clipBounds.x, yOffset + h);
 
         // resize button
-        graph.drawImage(resizebutton, (width - 16) + clipBounds.x, yOffset + 3, bv);
+        graph.drawImage(resizebutton, (width - 16) + clipBounds.x, yOffset + 3, bv.getPanel());
 
         // Scroll up button
-        graph.drawImage(upbutton, (width - 16) + clipBounds.x, yOffset + 16, bv);
+        graph.drawImage(upbutton, (width - 16) + clipBounds.x, yOffset + 16, bv.getPanel());
 
         // Scroll bar outer
         graph.drawRect((width - 16) + clipBounds.x, yOffset + 30, 13, getScrollbarOuterHeight());
@@ -490,7 +478,7 @@ public class ChatterBox2 implements KeyListener, IDisplayable, IPreferenceChange
         graph.drawRect((width - 14) + clipBounds.x, yOffset + 31 + scrollBarOffset, 9, scrollBarHeight);
 
         // Scroll down button
-        graph.drawImage(downbutton, (width - 16) + clipBounds.x, (yOffset + height) - 20, bv);
+        graph.drawImage(downbutton, (width - 16) + clipBounds.x, (yOffset + height) - 20, bv.getPanel());
 
         // Message box
         graph.drawRect(10 + clipBounds.x, (yOffset + height) - 21, width - 50, 17);
@@ -744,12 +732,12 @@ public class ChatterBox2 implements KeyListener, IDisplayable, IPreferenceChange
             case KeyEvent.VK_UP:
                 cb.historyBookmark++;
                 cb.fetchHistory();
-                bv.repaint();
+                bv.getPanel().repaint();
                 return;
             case KeyEvent.VK_DOWN:
                 cb.historyBookmark--;
                 cb.fetchHistory();
-                bv.repaint();
+                bv.getPanel().repaint();
                 return;
             case KeyEvent.VK_ALT:
             case KeyEvent.VK_SHIFT:
@@ -807,9 +795,8 @@ public class ChatterBox2 implements KeyListener, IDisplayable, IPreferenceChange
                 bv.setChatterBoxActive(false);
                 break;
             case KeyEvent.VK_ESCAPE:
-                clearMessage();
                 bv.setChatterBoxActive(false);
-                slideDown();
+                performCancel();
                 break;
             case KeyEvent.VK_BACK_SPACE:
                 if ((message == null) || message.isBlank()) {
@@ -899,7 +886,7 @@ public class ChatterBox2 implements KeyListener, IDisplayable, IPreferenceChange
 
     private void adaptToGUIScale() {
         FONT_CHAT = FONT_CHAT.deriveFont((float) UIUtil.scaleForGUI(UIUtil.FONT_SCALE1));
-        fm = bv.getFontMetrics(FONT_CHAT);
+        fm = bv.getPanel().getFontMetrics(FONT_CHAT);
         max_nbr_rows = (height / fm.getHeight()) - 2;
         bv.refreshDisplayables();
     }

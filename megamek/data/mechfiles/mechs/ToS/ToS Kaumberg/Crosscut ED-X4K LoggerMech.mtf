@@ -1,3 +1,4 @@
+generator:MegaMek Suite 0.49.19-SNAPSHOT on 2024-03-16
 chassis:Crosscut
 model:ED-X4K LoggerMech
 mul id:7466
@@ -8,6 +9,7 @@ era:2786
 source:Touring the Stars: Kaumberg
 rules level:2
 role:Ambusher
+
 
 mass:30
 engine:90 Fuel Cell Engine(IS)
@@ -101,8 +103,8 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Cargo:size:2.0
-Cargo:size:2.0
+Cargo:SIZE:2.0
+Cargo:SIZE:2.0
 
 Head:
 Life Support

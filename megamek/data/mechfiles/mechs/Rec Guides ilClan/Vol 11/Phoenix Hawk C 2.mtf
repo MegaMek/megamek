@@ -1,3 +1,4 @@
+generator:MegaMek Suite 0.49.19-SNAPSHOT on 2024-03-16
 chassis:Phoenix Hawk
 model:C 2
 mul id:7753
@@ -5,16 +6,22 @@ mul id:7753
 Config:Biped
 techbase:Mixed (IS Chassis)
 era:3140
+source:Rec Guide:ilClan #11
 rules level:2
 role:Striker
-source:Rec Guide:ilClan #11
+
+quirk:command_mech
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+quirk:imp_com
+weaponquirk:jettison_capable:RA:4:CLLargePulseLaser
 
 mass:45
 engine:270 XL Engine(IS)
 structure:IS Endo Steel
 myomer:Standard
 
-heat sinks:12 Double
+heat sinks:12 IS Double
 walk mp:6
 jump mp:6
 
@@ -32,11 +39,11 @@ RTR armor:4
 RTC armor:5
 
 Weapons:5
+Medium Pulse Laser, Left Arm
+AP Gauss Rifle, Left Arm
 Large Pulse Laser, Right Arm
 Medium Pulse Laser, Right Arm
-Medium Pulse Laser, Left Arm
 AP Gauss Rifle, Right Arm
-AP Gauss Rifle, Left Arm
 
 Left Arm:
 Shoulder

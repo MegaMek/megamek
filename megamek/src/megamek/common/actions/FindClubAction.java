@@ -61,7 +61,8 @@ public class FindClubAction extends AbstractEntityAction {
         }
 
         // Check game options
-        if (game.getOptions().booleanOption(OptionsConstants.ALLOWED_NO_CLAN_PHYSICAL) && entity.isClan()) {
+        if (game.getOptions().booleanOption(OptionsConstants.ALLOWED_NO_CLAN_PHYSICAL)
+                && entity.getCrew().isClanPilot()) {
             return false;
         }
 
@@ -77,7 +78,7 @@ public class FindClubAction extends AbstractEntityAction {
         }
 
         // also, need shoulders and hands
-        // Claws can subtitue as hands --Torren
+        // Claws can substitute as hands --Torren
         if (!entity.hasWorkingSystem(Mech.ACTUATOR_SHOULDER, Mech.LOC_RARM)
                 || !entity.hasWorkingSystem(Mech.ACTUATOR_SHOULDER, Mech.LOC_LARM)
                 || (!entity.hasWorkingSystem(Mech.ACTUATOR_HAND, Mech.LOC_RARM) && !((Mech) entity).hasClaw(Mech.LOC_RARM))
@@ -91,11 +92,6 @@ public class FindClubAction extends AbstractEntityAction {
         }
 
         // and last, check if you already have a club, greedy
-        if (!entity.getClubs().isEmpty()) {
-            return false;
-        }
-
-        return true;
+        return entity.getClubs().isEmpty();
     }
-
 }

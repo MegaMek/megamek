@@ -56,9 +56,11 @@ class SendQueue {
     }
 
     public void reportContents() {
-        final String sb = queue.stream()
-                .map(p -> '\n' + p.getCommand().toString()).collect(
-                        Collectors.joining("", "Contents of Send Queue:\n", ""));
-        LogManager.getLogger().warn(sb);
+        if (!queue.isEmpty()) {
+            final String sb = queue.stream()
+                    .map(p -> '\n' + p.getCommand().toString()).collect(
+                            Collectors.joining("", "Contents of Send Queue:\n", ""));
+            LogManager.getLogger().warn(sb);
+        }
     }
 }

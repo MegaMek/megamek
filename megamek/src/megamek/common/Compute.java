@@ -18,12 +18,13 @@ package megamek.common;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.actions.*;
 import megamek.common.annotations.Nullable;
-import megamek.common.enums.AimingMode;
-import megamek.common.enums.BasementType;
-import megamek.common.enums.IlluminationLevel;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.WeaponMounted;
+import megamek.common.enums.*;
 import megamek.common.options.OptionsConstants;
+import megamek.common.planetaryconditions.Atmosphere;
+import megamek.common.planetaryconditions.IlluminationLevel;
+import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.common.weapons.DiveBombAttack;
 import megamek.common.weapons.InfantryAttack;
 import megamek.common.weapons.Weapon;
@@ -96,6 +97,7 @@ public class Compute {
     public static final int ARC_AFT_WPL = 47;
     public static final int ARC_LEFT_BROADSIDE_WPL = 48;
     public static final int ARC_RIGHT_BROADSIDE_WPL = 49;
+    public static final int HOMING_RADIUS = 8;
 
     public static int DEFAULT_MAX_VISUAL_RANGE = 1;
 
@@ -615,6 +617,14 @@ public class Compute {
             return true;
         }
 
+        // Check for black ice on pavement
+        if (destHex.containsTerrain(Terrains.BLACK_ICE)
+                && !(entity.getElevation() > destHex.getLevel())
+                && isPavementStep
+                && (movementType != EntityMovementType.MOVE_JUMP)) {
+            return true;
+        }
+
         // Check for water unless we're a hovercraft or naval or using a bridge
         // or flying or QuadVee in vehicle mode.
         if ((movementType != EntityMovementType.MOVE_JUMP)
@@ -1113,11 +1123,10 @@ public class Compute {
      *
      * @return the modifiers
      */
-    public static ToHitData getRangeMods(Game game, Entity ae, int weaponId,
+    public static ToHitData getRangeMods(Game game, Entity ae, WeaponMounted weapon, AmmoMounted ammo,
                                          Targetable target) {
-        WeaponMounted weapon = (WeaponMounted) ae.getEquipment(weaponId);
-        WeaponType wtype = (WeaponType) weapon.getType();
-        int[] weaponRanges = wtype.getRanges(weapon);
+        WeaponType wtype = weapon.getType();
+        int[] weaponRanges = wtype.getRanges(weapon, ammo);
         boolean isAttackerInfantry = (ae instanceof Infantry);
         boolean isAttackerBA = (ae instanceof BattleArmor);
         boolean isWeaponInfantry = (wtype instanceof InfantryWeapon) && !wtype.hasFlag(WeaponType.F_TAG);
@@ -1324,7 +1333,7 @@ public class Compute {
                 }
             }
         }
-        int maxRange = wtype.getMaxRange(weapon);
+        int maxRange = wtype.getMaxRange(weapon, ammo);
 
         // if aero and greater than max range then swith to range_out
         if ((ae.isAirborne() || (ae.usesWeaponBays() && game.getBoard()
@@ -1873,6 +1882,92 @@ public class Compute {
     public static Entity exposed_findC3Spotter(Game game, Entity attacker,
                                                Targetable target) {
         return findC3Spotter(game, attacker, target);
+    }
+
+    /**
+     * Function that attempts to find one TAG spotter, or the best TAG spotter,
+     * @param game
+     * @param attacker should be an artillery unit
+     * @param target (if null, do not return a spotter!)
+     * @param stopAtFirst if we only want to know that there is one, not which is best
+     * @return The Spotter.
+     */
+    public static Entity findTAGSpotter(Game game, Entity attacker, Targetable target, boolean stopAtFirst) {
+        if (target == null) {
+            return null;
+        }
+        boolean debug = LogManager.getLogger().isDebugEnabled();
+        StringBuilder msg = (debug) ? new StringBuilder("Looking for TAG spotter for ")
+                .append(attacker.getDisplayName())
+                .append(" targeting ")
+                .append(target.getDisplayName())
+                : null;
+
+        Entity spotter = null;
+        int distance = -1;
+
+        // Compute friendly spotters
+        for (Entity friend : game.getPlayerEntities(attacker.getOwner(), true)) {
+
+            if (friend == null
+                    || !friend.isDeployed()
+                    || friend.isOffBoard()
+                    || (friend.getTransportId() != Entity.NONE)
+                    || friend.isAero() // Much higher bar for TAGging
+            ) {
+                continue; // useless to us...
+            }
+
+            Mounted tag = null;
+            int range = 0;
+            for (Mounted m : friend.getWeaponList()) {
+                WeaponType wtype = ((WeaponType) m.getType());
+                if (wtype.hasFlag(WeaponType.F_TAG)) {
+                    tag = m;
+                    range = wtype.getLongRange();
+                    break;
+                }
+            }
+            if (tag == null) {
+                continue;
+            }
+
+            int friendRange =  Compute.effectiveDistance(game, friend, target, false);
+            int ownRange = Compute.effectiveDistance(game, attacker, target, false);
+            // Friend has to be as close as their max running speed * flight time, + TAG range, + 8
+            int taggingRange = ((1 + Compute.turnsTilHit(ownRange)) * friend.getWalkMP()) + range + 8;
+            if (debug) {
+                msg.append("\n").append(friend.getDisplayName()).append(" has TAG at ")
+                        .append(friendRange).append(" from target; must be within ")
+                        .append(taggingRange).append(" to be able to TAG this target for us.");
+            }
+
+            // Need a target hex within 8 of the main target, and within shooting distance of the spotter.
+            if (friendRange > taggingRange) {
+                continue;
+            }
+
+            // is this guy a better spotter?
+            if ((spotter == null )
+                    || range < distance) {
+                if (debug) {
+                    msg.append("\n").append(friend.getDisplayName()).append(" is a good candidate.");
+                }
+                spotter = friend;
+                distance = friendRange;
+                if (stopAtFirst) {
+                    break;
+                }
+            }
+        }
+        if (debug) {
+            msg.append("\nFinal result: ")
+                    .append((spotter == null) ? "no TAG friendly in range" : spotter.getDisplayName())
+                    .append("!");
+            LogManager.getLogger().debug(msg.toString());
+        }
+
+        return spotter;
     }
 
     /**
@@ -2508,8 +2603,7 @@ public class Compute {
 
         if (attacker.getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_LIGHT)
                 && !target.isIlluminated()
-                && ((game.getPlanetaryConditions().getLight() == PlanetaryConditions.L_MOONLESS)
-                || (game.getPlanetaryConditions().getLight() == PlanetaryConditions.L_PITCH_BLACK))) {
+                && game.getPlanetaryConditions().getLight().isMoonlessOrSolarFlareOrPitchBack()) {
             toHit.addModifier(-1, "light specialist");
         }
 
@@ -7062,6 +7156,10 @@ public class Compute {
 
     // Taken from MekHQ, assumptions are whatever Taharqa made for there - Dylan
     public static int getTotalGunnerNeeds(Entity entity) {
+        if (entity.hasDroneOs()) {
+            return 0;
+        }
+
         if (entity instanceof SmallCraft || entity instanceof Jumpship) {
             int nStandardW = 0;
             int nCapitalW = 0;
@@ -7094,6 +7192,9 @@ public class Compute {
 
     // Taken from MekHQ, assumptions are whatever Taharqa made for there - Dylan
     public static int getAeroCrewNeeds(Entity entity) {
+        if (entity.hasDroneOs()) {
+            return 0;
+        }
         if (entity instanceof Dropship) {
             if (((Dropship) entity).isMilitary()) {
                 return 4 + (int) Math.ceil(entity.getWeight() / 5000.0);
@@ -7117,6 +7218,10 @@ public class Compute {
      * @return       The minimum base crew
      */
     public static int getSVBaseCrewNeeds(Entity entity) {
+        if (entity.hasDroneOs()) {
+            return 0;
+        }
+
         if (entity.isTrailer() && (entity.getEngine().getEngineType() == Engine.NONE)) {
             return 0;
         }
@@ -7150,6 +7255,10 @@ public class Compute {
      * @return       The number of gunners required.
      */
     public static int getSupportVehicleGunnerNeeds(Entity entity) {
+        if (entity.hasDroneOs()) {
+            return 0;
+        }
+
         final boolean advFireCon = entity.hasMisc(MiscType.F_ADVANCED_FIRECONTROL);
         final boolean basicFireCon = !advFireCon && entity.hasMisc(MiscType.F_BASIC_FIRECONTROL);
         if (entity.getWeightClass() == EntityWeightClass.WEIGHT_SMALL_SUPPORT) {
@@ -7160,19 +7269,20 @@ public class Compute {
                 // Otherwise we require one gunner per facing, with turrets and pintle mounts counting
                 // as separate facings
                 Set<Integer> facings = new HashSet<>();
-                int pintles = 0;
+                Set<Integer> pintleLocations = new HashSet<>();
                 for (Mounted m : entity.getWeaponList()) {
                     if (m.isPintleTurretMounted()) {
-                        pintles++;
+                        // We consider pintle-mounted weapons in the same location to be in the same pintle
+                        pintleLocations.add(m.getLocation());
                     } else {
                         facings.add(m.getLocation());
                     }
                 }
                 if (advFireCon) {
                     // Advanced fire control lets the driver count as a gunner, so one fewer dedicated gunners is needed.
-                    return Math.max(0, pintles + facings.size() - 1);
+                    return Math.max(0, pintleLocations.size() + facings.size() - 1);
                 } else {
-                    return pintles + facings.size();
+                    return pintleLocations.size() + facings.size();
                 }
             }
         } else {
@@ -7202,6 +7312,10 @@ public class Compute {
      * @return       The number of additional crew required
      */
     public static int getAdditionalNonGunner(Entity entity) {
+        if (entity.hasDroneOs()) {
+            return 0;
+        }
+
         int crew = 0;
         for (Mounted m : entity.getMisc()) {
             if (m.getType().hasFlag(MiscType.F_COMMUNICATIONS)) {
@@ -7214,11 +7328,19 @@ public class Compute {
                 crew += 5 * (int) m.getSize();
             }
         }
+        if (entity instanceof Mech && entity.isSuperHeavy()) {
+            // Tactical Officer
+            return 1;
+        }
         return crew;
     }
 
     // Taken from MekHQ, assumptions are whatever Taharqa made for there - Dylan
     public static int getFullCrewSize(Entity entity) {
+        if (entity.hasDroneOs()) {
+            return 0;
+        }
+
         if (entity.isSupportVehicle()) {
             int crew = getSVBaseCrewNeeds(entity) + getSupportVehicleGunnerNeeds(entity)
                     + getAdditionalNonGunner(entity);
@@ -7254,6 +7376,8 @@ public class Compute {
             return ((Infantry) entity).getSquadCount() * ((Infantry) entity).getSquadSize();
         } else if (entity instanceof Jumpship || entity instanceof SmallCraft) {
             return getAeroCrewNeeds(entity) + getTotalGunnerNeeds(entity);
+        } else if (entity.isSuperHeavy() || entity.isTripodMek()) {
+            return getTotalDriverNeeds(entity) + getTotalGunnerNeeds(entity) + getAdditionalNonGunner(entity);
         } else {
             return 1;
         }
@@ -7261,6 +7385,9 @@ public class Compute {
 
     // Taken from MekHQ, assumptions are whatever Taharqa made for there - Dylan
     public static int getTotalDriverNeeds(Entity entity) {
+        if (entity.hasDroneOs()) {
+            return 0;
+        }
         //Fix for MHQ Bug #3. Space stations have as much need for pilots as jumpships do.
         if (entity instanceof SpaceStation) {
             return 2;
@@ -7303,8 +7430,9 @@ public class Compute {
             return false;
         }
         // aerodyne's will operate like spheroids in vacuum
+        PlanetaryConditions conditions = game.getPlanetaryConditions();
         if (!((IAero) en).isSpheroid()
-                && !game.getPlanetaryConditions().isVacuum()) {
+                && !conditions.getAtmosphere().isLighterThan(Atmosphere.THIN)) {
             return false;
         }
         // are we in atmosphere?
@@ -7330,8 +7458,105 @@ public class Compute {
     }
 
     public static boolean isFlakAttack(Entity attacker, Entity target) {
-        boolean validLocation = !(attacker.isSpaceborne() || target.isSpaceborne());
+        boolean validLocation = !(attacker.isSpaceborne()
+                || target.isSpaceborne()
+                || attacker.isOffBoard()
+                || target.isOffBoard());
         return validLocation && (target.isAirborne() || target.isAirborneVTOLorWIGE());
+    }
+
+    public static int turnsTilHit(int distance) {
+        final int turnsTilHit;
+        // See indirect flight times table, TO p181
+        if (distance <= Board.DEFAULT_BOARD_HEIGHT) {
+            turnsTilHit = 0;
+        } else if (distance <= (8 * Board.DEFAULT_BOARD_HEIGHT)) {
+            turnsTilHit = 1;
+        } else if (distance <= (15 * Board.DEFAULT_BOARD_HEIGHT)) {
+            turnsTilHit = 2;
+        } else if (distance <= (21 * Board.DEFAULT_BOARD_HEIGHT)) {
+            turnsTilHit =3;
+        } else if (distance <= (26 * Board.DEFAULT_BOARD_HEIGHT)) {
+            turnsTilHit = 4;
+        } else {
+            turnsTilHit = 5;
+        }
+        return turnsTilHit;
+    }
+
+    /**
+     * Get turns for an indirect or off-board round to hit with its current velocity
+     * @param game
+     * @param ae Attacker
+     * @param target Target hex/entity
+     * @param velocity speed of round, default 50 according to WeaponAttackAction
+     * @return
+     */
+    public static int turnsTilBOMHit(Game game, Entity ae, Targetable target, int velocity) {
+        int distance = Compute.effectiveDistance(game, ae, target);
+        distance = (int) Math.floor((double) distance / game.getPlanetaryConditions().getGravity());
+        return distance / velocity;
+    }
+
+    /**
+     * @param game
+     * @param ae
+     * @param target
+     * @param homing to determine if we need the homing lead or some other value.
+     * @return Coordinates to aim at to hit this target while it's on the move (we think).
+     */
+    public static Coords calculateArtilleryLead(Game game, Entity ae, Targetable target, boolean homing) {
+        int leadAmount = 0;
+        int direction = 0;
+        int turnsTilHit = turnsTilHit(effectiveDistance(game, ae, target, true));
+
+        // Hexes can't move...
+        if (target instanceof Entity) {
+            Entity te = (Entity) target;
+            int mp = te.getPriorPosition().distance(te.getPosition()); // Assume last move presages the next
+            if (mp == 0 && game.getRoundCount() == 0) {
+                // Assume a mobile enemy will move somewhat after deploying
+                mp = te.getWalkMP();
+            }
+
+            // Try to keep the current position within the homing radius, unless they're real fast...
+            if (homing) {
+                leadAmount = (mp * (turnsTilHit)) + HOMING_RADIUS;
+            } else {
+                leadAmount = mp * (turnsTilHit + 1);
+            }
+
+            // Guess at the target's movement direction
+            if (te.movedLastRound != EntityMovementType.MOVE_NONE) {
+                // Assume they'll keep moving in approximately the same direction
+                direction = te.getPriorPosition().direction(te.getPosition());
+            } else {
+                // They'll likely move in the direction they're facing...?
+                direction = te.getFacing();
+            }
+        }
+
+        return calculateArtilleryLead(target.getPosition(), direction, leadAmount);
+    }
+
+    /**
+     * @param targetPoint
+     * @param direction
+     * @param leadAmount
+     * @return Coordinates to target given this lead and direction
+     */
+    public static Coords calculateArtilleryLead(Coords targetPoint, int direction, int leadAmount) {
+        Coords newPoint = targetPoint.translated(direction, leadAmount);
+        if (LogManager.getLogger().isDebugEnabled()) {
+            StringBuilder msg = new StringBuilder("Computed coordinates ( ")
+                    .append(newPoint.toString())
+                    .append(" ) for target point ( ").append(targetPoint.toString())
+                    .append(" ), direction ").append(direction)
+                    .append(", lead range ").append(leadAmount);
+
+            LogManager.getLogger().debug(msg.toString());
+        }
+        return newPoint;
     }
 
 } // End public class Compute

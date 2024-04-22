@@ -122,6 +122,22 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
 
     private GamePhase phase = GamePhase.UNKNOWN;
 
+    public static final int MINE_NONE = -1;
+    public static final int MINE_CONVENTIONAL = 0;
+    public static final int MINE_VIBRABOMB = 1;
+    public static final int MINE_ACTIVE = 2;
+    public static final int MINE_INFERNO = 3;
+    public static final int MINE_EMP = 4;
+    public static final int MINE_COMMAND_DETONATED = 5;
+
+    // New stuff for shields
+    protected int baseDamageAbsorptionRate = 0;
+    protected int baseDamageCapacity = 0;
+    protected int damageTaken = 0;
+
+    // New stuff for ammo switching
+    protected int switchedReason = 0;
+
     /**
      * BattleArmor use the standard locations to track troopers. On BA, this field keeps track of where
      * a piece of equipment is mounted.
@@ -1634,6 +1650,14 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
         }
     }
 
+    public int getSwitchedReason() {
+        return switchedReason;
+    }
+
+    public void setSwitchedReason(int reason) {
+        switchedReason = reason;
+    }
+
     protected List<String> bayComponentsToString() {
         return Collections.emptyList();
     }
@@ -1641,7 +1665,7 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     @Override
     public String toString() {
         List<String> locations = allLocations().stream().map(entity::getLocationAbbr).collect(Collectors.toList());
-        String intro = getType().getInternalName()
+        String intro = getType().toString()
                 + " (" + String.join("/", locations)
                 + (rearMounted ? "-R" : "")
                 + (mechTurretMounted ? "-MTu" : "")

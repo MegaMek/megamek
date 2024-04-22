@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2018 - The MegaMek Team
+ * MegaMek - Copyright (C) 2018, 2024 - The MegaMek Team
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -13,8 +13,10 @@
  */
 package megamek.common;
 
+import megamek.client.ui.Base64Image;
 import megamek.common.annotations.Nullable;
 
+import java.awt.*;
 import java.io.Serializable;
 import java.util.EnumMap;
 import java.util.List;
@@ -54,19 +56,15 @@ public class EntityFluff implements Serializable {
     private String primaryFactory = "";
     private final Map<System, String> systemManufacturers = new EnumMap<>(System.class);
     private final Map<System, String> systemModels = new EnumMap<>(System.class);
-
-    private String mmlImageFilePath = "";
     private String notes = "";
+
+    private Base64Image fluffImage = new Base64Image();
 
     // For aerospace vessels
     private String use = "";
     private String length = "";
     private String width = "";
     private String height = "";
-
-    public EntityFluff() {
-        // Constructor
-    }
 
     public String getCapabilities() {
         return capabilities;
@@ -171,14 +169,6 @@ public class EntityFluff implements Serializable {
         }
     }
 
-    public String getMMLImagePath() {
-        return mmlImageFilePath;
-    }
-
-    public void setMMLImagePath(String filePath) {
-        mmlImageFilePath = Objects.requireNonNullElse(filePath, "");
-    }
-
     public String getNotes() {
         return notes;
     }
@@ -237,5 +227,25 @@ public class EntityFluff implements Serializable {
     public List<String> createSystemModelsList() {
         return systemModels.entrySet().stream().filter(e -> !e.getValue().isBlank())
                 .map(e -> e.getKey().toString() + ":" + e.getValue()).collect(Collectors.toList());
+    }
+
+    /** Sets the encoded form of the fluff image to the given String. */
+    public void setFluffImage(String fluffImage64) {
+        fluffImage = new Base64Image(fluffImage64);
+    }
+
+    /** @return The unit's fluff image, if a fluff image was stored in the unit file; null otherwise. */
+    public @Nullable Image getFluffImage() {
+        return fluffImage.getImage();
+    }
+
+    /** @return True if a fluff image is part of the unit, i.e. stored in the unit file or set in MML. */
+    public boolean hasEmbeddedFluffImage() {
+        return !fluffImage.isEmpty();
+    }
+
+    /** @return The Base64Image holding an embedded fluff image. Empty if no fluff image was stored in the unit file. */
+    public Base64Image getBase64FluffImage() {
+        return fluffImage;
     }
 }

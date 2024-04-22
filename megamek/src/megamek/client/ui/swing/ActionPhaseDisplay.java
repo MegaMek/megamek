@@ -18,12 +18,11 @@
  */
 package megamek.client.ui.swing;
 
-import megamek.client.ui.swing.util.CommandAction;
+import megamek.client.ui.swing.boardview.TurnDetailsOverlay;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.client.ui.swing.widget.MegamekButton;
 import megamek.client.ui.swing.widget.SkinSpecification;
-import megamek.common.Report;
 import megamek.common.annotations.Nullable;
 import megamek.common.preference.PreferenceChangeEvent;
 
@@ -65,45 +64,35 @@ public abstract class ActionPhaseDisplay extends StatusBarPhaseDisplay {
                             || (clientgui.getClient().getGame().getTurn() == null)
                             || (clientgui.getClient().getGame().getPhase().isReport())) {
                         // act like Done button
-                        ignoreNoActionNag = true;
-                        ready();
-                        // When the turn is ended, we could miss a key release
-                        // event
+                        performDoneNoAction();
+                        // When the turn is ended, we could miss a key release event
                         // This will ensure no repeating keys are stuck down
                         clientgui.controller.stopAllRepeating();
                     }
                 }
             });
 
-            final AbstractPhaseDisplay display = this;
-            // Register the action for DONE
-            clientgui.controller.registerCommandAction(KeyCommandBind.DONE_NO_ACTION.cmd,
-                    new CommandAction() {
-                        @Override
-                        public boolean shouldPerformAction() {
-                            if (((!clientgui.getClient().isMyTurn()
-                                    && (clientgui.getClient().getGame().getTurn() != null)
-                                    && (!clientgui.getClient().getGame().getPhase().isReport())))
-                                    || clientgui.getBoardView().getChatterBoxActive()
-                                    || display.isIgnoringEvents()
-                                    || !display.isVisible()
-                                    || !(butDone.isEnabled() || butSkipTurn.isEnabled())) {
-                                return false;
-                            } else {
-                                return true;
-                            }
-                        }
-
-                        @Override
-                        public void performAction() {
-                            ignoreNoActionNag = true;
-                            ready();
-                        }
-                    });
+            clientgui.controller.registerCommandAction(KeyCommandBind.DONE_NO_ACTION, this::shouldReceiveDoneKeyCommand,
+                    this::performDoneNoAction);
         }
 
         updateDonePanel();
         return donePanel;
+    }
+
+    private void performDoneNoAction() {
+        ignoreNoActionNag = true;
+        ready();
+    }
+
+    public boolean shouldReceiveDoneKeyCommand() {
+        return ((clientgui.getClient().isMyTurn()
+                || (clientgui.getClient().getGame().getTurn() == null)
+                || (clientgui.getClient().getGame().getPhase().isReport())))
+                && !clientgui.getBoardView().getChatterBoxActive()
+                && !isIgnoringEvents()
+                && isVisible()
+                && (butDone.isEnabled() || butSkipTurn.isEnabled());
     }
 
     @Override
@@ -113,8 +102,7 @@ public abstract class ActionPhaseDisplay extends StatusBarPhaseDisplay {
         adaptToGUIScale();
     }
 
-    protected void initDonePanelForNewTurn()
-    {
+    protected void initDonePanelForNewTurn() {
         ignoreNoActionNag = false;
         updateDonePanel();
     }
@@ -127,10 +115,192 @@ public abstract class ActionPhaseDisplay extends StatusBarPhaseDisplay {
 
     /**
      * @return true if a nag dialog should be shown when there is no action given to current unit.
-     * This is true if user option wants a nag and they have not preemptively checked @butIgnoreNag
+     * This is true if user option wants a nag
+     * they have not preemptively checked @butIgnoreNag
+     * the turn timer is not expired
      */
     protected boolean needNagForNoAction() {
-        return GUIP.getNagForNoAction() && !ignoreNoActionNag;
+        return GUIP.getNagForNoAction() && !ignoreNoActionNag && !isTimerExpired();
+    }
+
+    protected boolean needNagForOverheat() {
+        return GUIP.getNagForOverheat() && !isTimerExpired();
+    }
+
+    protected boolean needNagForNoUnJamRAC() {
+        return GUIP.getNagForNoUnJamRAC() && !isTimerExpired();
+    }
+
+    protected boolean needNagForMASC() {
+        return GUIP.getNagForMASC() && !isTimerExpired();
+    }
+
+    protected boolean needNagForPSR() {
+        return GUIP.getNagForPSR() && !isTimerExpired();
+    }
+
+    protected boolean needNagForMechanicalJumpFallDamage() {
+        return GUIP.getNagForMechanicalJumpFallDamage() && !isTimerExpired();
+    }
+
+    protected boolean needNagForCrushingBuildings() {
+        return GUIP.getNagForCrushingBuildings() && !isTimerExpired();
+    }
+
+    protected boolean needNagForWiGELanding() {
+        return GUIP.getNagForWiGELanding() && !isTimerExpired();
+    }
+
+    protected boolean needNagForLaunchDoors() {
+        return GUIP.getNagForLaunchDoors() && !isTimerExpired();
+    }
+
+    protected boolean needNagForSprint() {
+        return GUIP.getNagForSprint() && !isTimerExpired();
+    }
+
+    protected boolean needNagForOther() {
+        return !isTimerExpired();
+    }
+
+    protected boolean checkNagForNoAction(String title, String body) {
+        ConfirmDialog nag = clientgui.doYesNoBotherDialog(title, body);
+        if (nag.getAnswer()) {
+            // do they want to be bothered again?
+            if (!nag.getShowAgain()) {
+                GUIP.setNagForNoAction(false);
+            }
+        } else {
+            return true;
+        }
+
+        return false;
+    }
+
+    protected boolean checkNagForNoUnJamRAC(String title, String body) {
+        ConfirmDialog nag = clientgui.doYesNoBotherDialog(title, body);
+        if (nag.getAnswer()) {
+            // do they want to be bothered again?
+            if (!nag.getShowAgain()) {
+                GUIP.setNagForNoUnJamRAC(false);
+            }
+        } else {
+            return true;
+        }
+
+        return false;
+    }
+
+    protected boolean checkNagForMASC(String title, String body) {
+        ConfirmDialog nag = clientgui.doYesNoBotherDialog(title, body);
+        if (nag.getAnswer()) {
+            // do they want to be bothered again?
+            if (!nag.getShowAgain()) {
+                GUIP.setNagForMASC(false);
+            }
+        } else {
+            return true;
+        }
+
+        return false;
+    }
+
+    protected boolean checkNagForSprint(String title, String body) {
+        ConfirmDialog nag = clientgui.doYesNoBotherDialog(title, body);
+        if (nag.getAnswer()) {
+            // do they want to be bothered again?
+            if (!nag.getShowAgain()) {
+                GUIP.setNagForSprint(false);
+            }
+        } else {
+            return true;
+        }
+
+        return false;
+    }
+
+    protected boolean checkNagForPSR(String title, String body) {
+        ConfirmDialog nag = clientgui.doYesNoBotherDialog(title, body);
+        if (nag.getAnswer()) {
+            // do they want to be bothered again?
+            if (!nag.getShowAgain()) {
+                GUIP.setNagForPSR(false);
+            }
+        } else {
+            return true;
+        }
+
+        return false;
+    }
+
+    protected boolean checkNagForMechanicalJumpFallDamage(String title, String body) {
+        ConfirmDialog nag = clientgui.doYesNoBotherDialog(title, body);
+        if (nag.getAnswer()) {
+            // do they want to be bothered again?
+            if (!nag.getShowAgain()) {
+                GUIP.setNagForMechanicalJumpFallDamage(false);
+            }
+        } else {
+            return true;
+        }
+
+        return false;
+    }
+
+    protected boolean checkNagForCrushingBuildings(String title, String body) {
+        ConfirmDialog nag = clientgui.doYesNoBotherDialog(title, body);
+        if (nag.getAnswer()) {
+            // do they want to be bothered again?
+            if (!nag.getShowAgain()) {
+                GUIP.setNagForCrushingBuildings(false);
+            }
+        } else {
+            return true;
+        }
+
+        return false;
+    }
+
+    protected boolean checkNagForWiGELanding(String title, String body) {
+        ConfirmDialog nag = clientgui.doYesNoBotherDialog(title, body);
+        if (nag.getAnswer()) {
+            // do they want to be bothered again?
+            if (!nag.getShowAgain()) {
+                GUIP.setNagForWiGELanding(false);
+            }
+        } else {
+            return true;
+        }
+
+        return false;
+    }
+
+    protected boolean checkNagForOverheat(String title, String body) {
+        ConfirmDialog nag = clientgui.doYesNoBotherDialog(title, body);
+        if (nag.getAnswer()) {
+            // do they want to be bothered again?
+            if (!nag.getShowAgain()) {
+                GUIP.setNagForOverheat(false);
+            }
+        } else {
+            return true;
+        }
+
+        return false;
+    }
+
+    protected boolean checkNagLaunchDoors(String title, String body) {
+        ConfirmDialog nag = clientgui.doYesNoBotherDialog(title, body);
+        if (nag.getAnswer()) {
+            // do they want to be bothered again?
+            if (!nag.getShowAgain()) {
+                GUIP.setNagForLaunchDoors(false);
+            }
+        } else {
+            return true;
+        }
+
+        return false;
     }
 
     /** set labels and enables on the done and skip buttons depending on the GUIP getNagForNoAction option
@@ -172,8 +342,9 @@ public abstract class ActionPhaseDisplay extends StatusBarPhaseDisplay {
             butSkipTurn.setEnabled(true);
         }
 
-        if (clientgui.getBoardView().turnDetailsOverlay != null) {
-            clientgui.getBoardView().turnDetailsOverlay.setLines(turnDetails);
+        TurnDetailsOverlay turnDetailsOverlay = clientgui.getBoardView().getTurnDetailsOverlay();
+        if (turnDetailsOverlay != null) {
+            turnDetailsOverlay.setLines(turnDetails);
         }
     }
 

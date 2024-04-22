@@ -36,9 +36,15 @@ public class MinefieldTarget implements Targetable {
     }
 
     @Override
+    public void setId(int newId) { }
+
+    @Override
     public int getOwnerId() {
         return Player.PLAYER_NONE;
     }
+
+    @Override
+    public void setOwnerId(int newOwnerId) { }
 
     @Override
     public int getStrength() {
@@ -129,5 +135,15 @@ public class MinefieldTarget implements Targetable {
     @Override
     public boolean isEnemyOf(Entity other) {
         return true;
+    }
+
+    @Override
+    public String generalName() {
+        return getDisplayName();
+    }
+
+    @Override
+    public String specificName() {
+        return "";
     }
 }

@@ -16,9 +16,6 @@ package megamek.client.ui.swing;
 
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
-import megamek.client.ui.swing.tooltip.UnitToolTip;
-import megamek.client.ui.swing.unitDisplay.WeaponPanel;
-import megamek.client.ui.swing.util.CommandAction;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.widget.MegamekButton;
@@ -29,7 +26,6 @@ import megamek.common.equipment.WeaponMounted;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.options.OptionsConstants;
-import megamek.common.util.FiringSolution;
 import megamek.common.weapons.Weapon;
 import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
 import megamek.common.weapons.mortars.VehicularGrenadeLauncherWeapon;
@@ -41,8 +37,6 @@ import javax.swing.event.ListSelectionListener;
 import java.awt.event.*;
 import java.util.*;
 
-import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
-
 public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, ListSelectionListener {
     private static final long serialVersionUID = -5586388490027013723L;
 
@@ -53,7 +47,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
      *
      * @author arlith
      */
-    public static enum FiringCommand implements PhaseCommand {
+    public enum FiringCommand implements PhaseCommand {
         FIRE_NEXT("fireNext"),
         FIRE_TWIST("fireTwist"),
         FIRE_FIRE("fireFire"),
@@ -215,7 +209,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
 
         setupButtonPanel();
 
-        clientgui.getBoardView().addKeyListener(this);
+        clientgui.getBoardView().getPanel().addKeyListener(this);
 
         // mech display.
         clientgui.getUnitDisplay().wPan.weaponList.addListSelectionListener(this);
@@ -253,466 +247,79 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
         }
     }
 
+    private boolean shouldPerformFireKeyCommand() {
+        return this.shouldReceiveKeyCommands() && buttons.get(FiringCommand.FIRE_FIRE).isEnabled();
+    }
+
+    protected void twistLeft() {
+        updateFlipArms(false);
+        torsoTwist(0);
+    }
+
+    protected void twistRight() {
+        updateFlipArms(false);
+        torsoTwist(1);
+    }
+
+    private void viewActingUnit() {
+        if (!Objects.equals(ce(), clientgui.getUnitDisplay().getCurrentEntity())
+                && clientgui.getUnitDisplay().isVisible()) {
+            Entity en_Target = clientgui.getUnitDisplay().getCurrentEntity();
+            // Avoided using selectEntity(), to avoid centering on active unit
+            clientgui.getUnitDisplay().displayEntity(ce());
+            clientgui.getUnitDisplay().showPanel("weapons");
+            clientgui.getUnitDisplay().wPan.selectFirstWeapon();
+            target(en_Target);
+        }
+    }
+
+    protected boolean shouldPerformClearKeyCommand() {
+        return !clientgui.getBoardView().getChatterBoxActive()
+                && !isIgnoringEvents()
+                && isVisible();
+    }
+
     /**
      * Register all of the <code>CommandAction</code>s for this panel display.
      */
     protected void registerKeyCommands() {
         MegaMekController controller = clientgui.controller;
-        final StatusBarPhaseDisplay display = this;
-        // Register the action for UNDO
-        controller.registerCommandAction(KeyCommandBind.UNDO_LAST_STEP.cmd,
-                new CommandAction() {
+        controller.registerCommandAction(KeyCommandBind.UNDO_LAST_STEP, this, this::removeLastFiring);
+        controller.registerCommandAction(KeyCommandBind.TWIST_LEFT, this, this::twistLeft);
+        controller.registerCommandAction(KeyCommandBind.TWIST_RIGHT, this, this::twistRight);
+        controller.registerCommandAction(KeyCommandBind.FIRE, this::shouldPerformFireKeyCommand, this::fire);
+        controller.registerCommandAction(KeyCommandBind.NEXT_WEAPON, this, this::nextWeapon);
+        controller.registerCommandAction(KeyCommandBind.PREV_WEAPON, this, this::prevWeapon);
 
-                    @Override
-                    public boolean shouldPerformAction() {
-                        if (!clientgui.getClient().isMyTurn()
-                                || clientgui.getBoardView().getChatterBoxActive()
-                                || display.isIgnoringEvents()
-                                || !display.isVisible()) {
-                            return false;
-                        } else {
-                            return true;
-                        }
-                    }
+        controller.registerCommandAction(KeyCommandBind.NEXT_UNIT, this,
+                () -> selectEntity(clientgui.getClient().getNextEntityNum(cen)));
+        controller.registerCommandAction(KeyCommandBind.PREV_UNIT, this,
+                () -> selectEntity(clientgui.getClient().getPrevEntityNum(cen)));
 
-                    @Override
-                    public void performAction() {
-                        removeLastFiring();
-                    }
-                });
+        controller.registerCommandAction(KeyCommandBind.NEXT_TARGET, this,
+                () -> jumpToTarget(true, false, false));
+        controller.registerCommandAction(KeyCommandBind.PREV_TARGET, this,
+                () -> jumpToTarget(false, false, false));
 
-        // Register the action for TWIST_LEFT
-        controller.registerCommandAction(KeyCommandBind.TWIST_LEFT.cmd,
-                new CommandAction() {
+        controller.registerCommandAction(KeyCommandBind.NEXT_TARGET_VALID, this,
+                () -> jumpToTarget(true, true, false));
+        controller.registerCommandAction(KeyCommandBind.PREV_TARGET_VALID, this,
+                () -> jumpToTarget(false, true, false));
 
-                    @Override
-                    public boolean shouldPerformAction() {
-                        if (!clientgui.getClient().isMyTurn()
-                                || ce().getAlreadyTwisted()
-                                || clientgui.getBoardView().getChatterBoxActive()
-                                || !display.isVisible()
-                                || display.isIgnoringEvents()) {
-                            return false;
-                        } else {
-                            return true;
-                        }
-                    }
+        controller.registerCommandAction(KeyCommandBind.NEXT_TARGET_NOALLIES, this,
+                () -> jumpToTarget(true, false, true));
+        controller.registerCommandAction(KeyCommandBind.PREV_TARGET_NOALLIES, this,
+                () -> jumpToTarget(false, false, true));
 
-                    @Override
-                    public void performAction() {
-                        updateFlipArms(false);
-                        torsoTwist(0);
-                    }
-                });
+        controller.registerCommandAction(KeyCommandBind.NEXT_TARGET_VALID_NO_ALLIES, this,
+                () -> jumpToTarget(true, true, true));
+        controller.registerCommandAction(KeyCommandBind.PREV_TARGET_VALID_NO_ALLIES, this,
+                () -> jumpToTarget(false, true, true));
 
-        // Register the action for TWIST_RIGHT
-        controller.registerCommandAction(KeyCommandBind.TWIST_RIGHT.cmd,
-                new CommandAction() {
-
-                    @Override
-                    public boolean shouldPerformAction() {
-                        if (!clientgui.getClient().isMyTurn()
-                                || ce().getAlreadyTwisted()
-                                || clientgui.getBoardView().getChatterBoxActive()
-                                || !display.isVisible()
-                                || display.isIgnoringEvents()) {
-                            return false;
-                        } else {
-                            return true;
-                        }
-                    }
-
-                    @Override
-                    public void performAction() {
-                        updateFlipArms(false);
-                        torsoTwist(1);
-                    }
-                });
-
-        // Register the action for FIRE
-        controller.registerCommandAction(KeyCommandBind.FIRE.cmd,
-                new CommandAction() {
-
-                    @Override
-                    public boolean shouldPerformAction() {
-                        if (!clientgui.getClient().isMyTurn()
-                                || clientgui.getBoardView().getChatterBoxActive()
-                                || !display.isVisible()
-                                || display.isIgnoringEvents()
-                                || !buttons.get(FiringCommand.FIRE_FIRE).isEnabled()) {
-                            return false;
-                        } else {
-                            return true;
-                        }
-                    }
-
-                    @Override
-                    public void performAction() {
-                        fire();
-                    }
-                });
-
-        // Register the action for NEXT_WEAPON
-        controller.registerCommandAction(KeyCommandBind.NEXT_WEAPON.cmd,
-                new CommandAction() {
-
-                    @Override
-                    public boolean shouldPerformAction() {
-                        if (!clientgui.getClient().isMyTurn()
-                                || clientgui.getBoardView().getChatterBoxActive()
-                                || !display.isVisible()
-                                || display.isIgnoringEvents()) {
-                            return false;
-                        } else {
-                            return true;
-                        }
-                    }
-
-                    @Override
-                    public void performAction() {
-                        nextWeapon();
-                    }
-                });
-
-        // Register the action for PREV_WEAPON
-        controller.registerCommandAction(KeyCommandBind.PREV_WEAPON.cmd,
-                new CommandAction() {
-
-                    @Override
-                    public boolean shouldPerformAction() {
-                        if (!clientgui.getClient().isMyTurn()
-                                || clientgui.getBoardView().getChatterBoxActive()
-                                || !display.isVisible()
-                                || display.isIgnoringEvents()) {
-                            return false;
-                        } else {
-                            return true;
-                        }
-                    }
-
-                    @Override
-                    public void performAction() {
-                        prevWeapon();
-                    }
-                });
-
-        // Register the action for NEXT_UNIT
-        controller.registerCommandAction(KeyCommandBind.NEXT_UNIT.cmd,
-                new CommandAction() {
-
-                    @Override
-                    public boolean shouldPerformAction() {
-                        if (!clientgui.getClient().isMyTurn()
-                                || clientgui.getBoardView().getChatterBoxActive()
-                                || !display.isVisible()
-                                || display.isIgnoringEvents()) {
-                            return false;
-                        } else {
-                            return true;
-                        }
-                    }
-
-                    @Override
-                    public void performAction() {
-                        selectEntity(clientgui.getClient()
-                                .getNextEntityNum(cen));
-                    }
-                });
-
-        // Register the action for PREV_UNIT
-        controller.registerCommandAction(KeyCommandBind.PREV_UNIT.cmd,
-                new CommandAction() {
-
-                    @Override
-                    public boolean shouldPerformAction() {
-                        if (!clientgui.getClient().isMyTurn()
-                                || clientgui.getBoardView().getChatterBoxActive()
-                                || !display.isVisible()
-                                || display.isIgnoringEvents()) {
-                            return false;
-                        } else {
-                            return true;
-                        }
-                    }
-
-                    @Override
-                    public void performAction() {
-                        selectEntity(clientgui.getClient()
-                                .getPrevEntityNum(cen));
-                    }
-                });
-
-        // Register the action for NEXT_TARGET
-        controller.registerCommandAction(KeyCommandBind.NEXT_TARGET.cmd,
-                new CommandAction() {
-
-                    @Override
-                    public boolean shouldPerformAction() {
-                        if (!clientgui.getClient().isMyTurn()
-                                || clientgui.getBoardView().getChatterBoxActive()
-                                || !display.isVisible()
-                                || display.isIgnoringEvents()) {
-                            return false;
-                        } else {
-                            return true;
-                        }
-                    }
-
-                    @Override
-                    public void performAction() {
-                        jumpToTarget(true, false, false);
-                    }
-                });
-
-        // Register the action for PREV_TARGET
-        controller.registerCommandAction(KeyCommandBind.PREV_TARGET.cmd,
-                new CommandAction() {
-
-                    @Override
-                    public boolean shouldPerformAction() {
-                        if (!clientgui.getClient().isMyTurn()
-                                || clientgui.getBoardView().getChatterBoxActive()
-                                || !display.isVisible()
-                                || display.isIgnoringEvents()) {
-                            return false;
-                        } else {
-                            return true;
-                        }
-                    }
-
-                    @Override
-                    public void performAction() {
-                        jumpToTarget(false, false, false);
-                    }
-                });
-
-        // Register the action for NEXT_TARGET
-        controller.registerCommandAction(KeyCommandBind.NEXT_TARGET_VALID.cmd,
-                new CommandAction() {
-
-                    @Override
-                    public boolean shouldPerformAction() {
-                        if (!clientgui.getClient().isMyTurn()
-                                || clientgui.getBoardView().getChatterBoxActive()
-                                || !display.isVisible()
-                                || display.isIgnoringEvents()) {
-                            return false;
-                        } else {
-                            return true;
-                        }
-                    }
-
-                    @Override
-                    public void performAction() {
-                        jumpToTarget(true, true, false);
-                    }
-                });
-
-        // Register the action for PREV_TARGET
-        controller.registerCommandAction(KeyCommandBind.PREV_TARGET_VALID.cmd,
-                new CommandAction() {
-
-                    @Override
-                    public boolean shouldPerformAction() {
-                        if (!clientgui.getClient().isMyTurn()
-                                || clientgui.getBoardView().getChatterBoxActive()
-                                || !display.isVisible()
-                                || display.isIgnoringEvents()) {
-                            return false;
-                        } else {
-                            return true;
-                        }
-                    }
-
-                    @Override
-                    public void performAction() {
-                        jumpToTarget(false, true, false);
-                    }
-                });
-
-        // Register the action for NEXT_TARGET
-        controller.registerCommandAction(KeyCommandBind.NEXT_TARGET_NOALLIES.cmd,
-                new CommandAction() {
-
-                    @Override
-                    public boolean shouldPerformAction() {
-                        if (!clientgui.getClient().isMyTurn()
-                                || clientgui.getBoardView().getChatterBoxActive()
-                                || !display.isVisible()
-                                || display.isIgnoringEvents()) {
-                            return false;
-                        } else {
-                            return true;
-                        }
-                    }
-
-                    @Override
-                    public void performAction() {
-                        jumpToTarget(true, false, true);
-                    }
-                });
-
-        // Register the action for PREV_TARGET
-        controller.registerCommandAction(KeyCommandBind.PREV_TARGET_NOALLIES.cmd,
-                new CommandAction() {
-
-                    @Override
-                    public boolean shouldPerformAction() {
-                        if (!clientgui.getClient().isMyTurn()
-                                || clientgui.getBoardView().getChatterBoxActive()
-                                || !display.isVisible()
-                                || display.isIgnoringEvents()) {
-                            return false;
-                        } else {
-                            return true;
-                        }
-                    }
-
-                    @Override
-                    public void performAction() {
-                        jumpToTarget(false, false, true);
-                    }
-                });
-
-        // Register the action for NEXT_TARGET
-        controller.registerCommandAction(KeyCommandBind.NEXT_TARGET_VALID_NO_ALLIES.cmd,
-                new CommandAction() {
-
-                    @Override
-                    public boolean shouldPerformAction() {
-                        if (!clientgui.getClient().isMyTurn()
-                                || clientgui.getBoardView().getChatterBoxActive()
-                                || !display.isVisible()
-                                || display.isIgnoringEvents()) {
-                            return false;
-                        } else {
-                            return true;
-                        }
-                    }
-
-                    @Override
-                    public void performAction() {
-                        jumpToTarget(true, true, true);
-                    }
-                });
-
-        // Register the action for PREV_TARGET
-        controller.registerCommandAction(KeyCommandBind.PREV_TARGET_VALID_NO_ALLIES.cmd,
-                new CommandAction() {
-
-                    @Override
-                    public boolean shouldPerformAction() {
-                        if (!clientgui.getClient().isMyTurn()
-                                || clientgui.getBoardView().getChatterBoxActive()
-                                || !display.isVisible()
-                                || display.isIgnoringEvents()) {
-                            return false;
-                        } else {
-                            return true;
-                        }
-                    }
-
-                    @Override
-                    public void performAction() {
-                        jumpToTarget(false, true, true);
-                    }
-                });
-
-        // Register the action for VIEW_ACTING_UNIT
-        controller.registerCommandAction(KeyCommandBind.VIEW_ACTING_UNIT.cmd,
-                new CommandAction() {
-
-                    @Override
-                    public boolean shouldPerformAction() {
-                        if (!clientgui.getClient().isMyTurn()
-                                || clientgui.getBoardView().getChatterBoxActive()
-                                || !display.isVisible()
-                                || display.isIgnoringEvents()) {
-                            return false;
-                        } else {
-                            return true;
-                        }
-                    }
-
-                    @Override
-                    public void performAction() {
-                        if (!Objects.equals(ce(), clientgui.getUnitDisplay().getCurrentEntity())
-                                && clientgui.getUnitDisplay().isVisible()) {
-                            Entity en_Target = clientgui.getUnitDisplay().getCurrentEntity();
-                            // Avoided using selectEntity(), to avoid centering on active unit
-                            clientgui.getUnitDisplay().displayEntity(ce());
-                            clientgui.getUnitDisplay().showPanel("weapons");
-                            clientgui.getUnitDisplay().wPan.selectFirstWeapon();
-                            target(en_Target);
-                        }
-                    }
-                });
-
-        // Register the action for NEXT_MODE
-        controller.registerCommandAction(KeyCommandBind.NEXT_MODE.cmd,
-                new CommandAction() {
-
-                    @Override
-                    public boolean shouldPerformAction() {
-                        if (!clientgui.getClient().isMyTurn()
-                                || clientgui.getBoardView().getChatterBoxActive()
-                                || display.isIgnoringEvents()
-                                || !display.isVisible()) {
-                            return false;
-                        } else {
-                            return true;
-                        }
-                    }
-
-                    @Override
-                    public void performAction() {
-                        changeMode(true);
-                    }
-                });
-
-        // Register the action for PREV_MODE
-        controller.registerCommandAction(KeyCommandBind.PREV_MODE.cmd,
-                new CommandAction() {
-
-                    @Override
-                    public boolean shouldPerformAction() {
-                        if (!clientgui.getClient().isMyTurn()
-                                || clientgui.getBoardView().getChatterBoxActive()
-                                || display.isIgnoringEvents()
-                                || !display.isVisible()) {
-                            return false;
-                        } else {
-                            return true;
-                        }
-                    }
-
-                    @Override
-                    public void performAction() {
-                        changeMode(false);
-                    }
-                });
-
-        // Register the action for CLEAR
-        controller.registerCommandAction(KeyCommandBind.CANCEL.cmd,
-                new CommandAction() {
-
-                    @Override
-                    public boolean shouldPerformAction() {
-                        if (clientgui.getBoardView().getChatterBoxActive()
-                                || !display.isVisible()
-                                || display.isIgnoringEvents()) {
-                            return false;
-                        } else {
-                            return true;
-                        }
-                    }
-
-                    @Override
-                    public void performAction() {
-                        clear();
-                    }
-                });
-
+        controller.registerCommandAction(KeyCommandBind.VIEW_ACTING_UNIT, this, this::viewActingUnit);
+        controller.registerCommandAction(KeyCommandBind.NEXT_MODE, this, () -> changeMode(true));
+        controller.registerCommandAction(KeyCommandBind.PREV_MODE, this, () -> changeMode(false));
+        controller.registerCommandAction(KeyCommandBind.CANCEL, this::shouldPerformClearKeyCommand, this::clear);
     }
 
     @Override
@@ -851,48 +458,10 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
         }
 
         if (GUIP.getFiringSolutions()) {
-            setFiringSolutions();
+            setFiringSolutions(ce());
         } else {
             clientgui.getBoardView().clearFiringSolutionData();
         }
-    }
-
-    public void setFiringSolutions() {
-        // If no Entity is selected, exit
-        if (cen == Entity.NONE) {
-            return;
-        }
-
-        Game game = clientgui.getClient().getGame();
-        Player localPlayer = clientgui.getClient().getLocalPlayer();
-        if (!GUIP.getFiringSolutions()) {
-            return;
-        }
-
-        // Determine which entities are spotted
-        Set<Integer> spottedEntities = new HashSet<>();
-        for (Entity target : game.getEntitiesVector()) {
-            if (!target.isEnemyOf(ce()) && target.isSpotting()) {
-                spottedEntities.add(target.getSpotTargetId());
-            }
-        }
-
-        // Calculate firing solutions
-        Map<Integer, FiringSolution> fs = new HashMap<>();
-        for (Entity target : game.getEntitiesVector()) {
-            boolean friendlyFire = game.getOptions().booleanOption(OptionsConstants.BASE_FRIENDLY_FIRE);
-            boolean enemyTarget = target.getOwner().isEnemyOf(ce().getOwner());
-            if ((target.getId() != cen)
-                    && (friendlyFire || enemyTarget)
-                    && (!enemyTarget || EntityVisibilityUtils.detectedOrHasVisual(localPlayer, game, target))
-                    && target.isTargetable()) {
-                ToHitData thd = WeaponAttackAction.toHit(game, cen, target);
-                thd.setLocation(target.getPosition());
-                thd.setRange(ce().getPosition().distance(target.getPosition()));
-                fs.put(target.getId(), new FiringSolution(thd, spottedEntities.contains(target.getId())));
-            }
-        }
-        clientgui.getBoardView().setFiringSolutions(ce(), fs);
     }
 
     /**
@@ -1188,37 +757,22 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
         target(targ);
     }
 
-    /**
-     * Called when the current entity is done firing. Send out our attack queue
-     * to the server.
-     */
-    @Override
-    public void ready() {
-        if (attacks.isEmpty() && needNagForNoAction()) {
-            // confirm this action
-            String title = Messages.getString("FiringDisplay.DontFireDialog.title");
-            String body = Messages.getString("FiringDisplay.DontFireDialog.message");
-            ConfirmDialog response = clientgui.doYesNoBotherDialog(title, body);
-            if (!response.getShowAgain()) {
-                GUIP.setNagForNoAction(false);
-            }
-
-            if (!response.getAnswer()) {
-                return;
+    private boolean checkNags() {
+        if (needNagForNoAction()) {
+            if (attacks.isEmpty()) {
+                // confirm this action
+                String title = Messages.getString("FiringDisplay.DontFireDialog.title");
+                String body = Messages.getString("FiringDisplay.DontFireDialog.message");
+                if (checkNagForNoAction(title, body)) {
+                    return true;
+                }
             }
         }
 
-        // Handle some entity bookkeeping
-        if (ce() != null) {
-            // Add internal bombs used this phase to all internal bombs used this round
-            if (ce().isBomber()) {
-                if (phaseInternalBombs > 0) {
-                    ((IBomber) ce()).increaseUsedInternalBombs(phaseInternalBombs);
-                }
-
-            }
+        if (needNagForOverheat()) {
             // We need to nag for overheat on capital fighters
-            if (ce().isCapitalFighter() && GUIP.getNagForOverheat()) {
+            if ((ce() != null)
+                    && ce().isCapitalFighter()) {
                 int totalheat = 0;
                 for (EntityAction action : attacks) {
                     if (action instanceof WeaponAttackAction) {
@@ -1231,20 +785,43 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
                     // confirm this action
                     String title = Messages.getString("FiringDisplay.OverheatNag.title");
                     String body = Messages.getString("FiringDisplay.OverheatNag.message");
-                    ConfirmDialog response = clientgui.doYesNoBotherDialog(title, body);
-                    if (!response.getShowAgain()) {
-                        GUIP.setNagForOverheat(false);
-                    }
-
-                    if (!response.getAnswer()) {
-                        return;
+                    if (checkNagForOverheat(title, body)) {
+                        return true;
                     }
                 }
             }
         }
 
+        if (ce() == null) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Called when the current entity is done firing. Send out our attack queue
+     * to the server.
+     */
+    @Override
+    public void ready() {
+        if (checkNags()) {
+            return;
+        }
+
         // stop further input (hopefully)
         disableButtons();
+
+        // Handle some entity bookkeeping
+        if (ce() != null) {
+            // Add internal bombs used this phase to all internal bombs used this round
+            if (ce().isBomber()) {
+                if (phaseInternalBombs > 0) {
+                    ((IBomber) ce()).increaseUsedInternalBombs(phaseInternalBombs);
+                }
+
+            }
+        }
 
         // remove temporary attacks from game & board
         removeTempAttacks();
@@ -2734,9 +2311,11 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
     private void incrementInternalBombs(WeaponAttackAction waa) {
         updateInternalBombs(waa, 1);
     }
+
     private void decrementInternalBombs(WeaponAttackAction waa) {
         updateInternalBombs(waa, -1);
     }
+
     private void updateInternalBombs(WeaponAttackAction waa, int amt) {
         if (ce().isBomber()) {
             if (ce().getEquipment(waa.getWeaponId()).isInternalBomb()) {

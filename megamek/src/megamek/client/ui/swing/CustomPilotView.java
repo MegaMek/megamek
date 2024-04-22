@@ -37,7 +37,7 @@ import java.util.List;
  * Controls for customizing crew in the chat lounge. For most crew types this is part of the pilot tab.
  * For multi-crew cockpits there is a separate tab for each crew member and another that shows common options
  * for the entire crew.
- * 
+ *
  * @author Neoancient
  */
 public class CustomPilotView extends JPanel {
@@ -49,6 +49,8 @@ public class CustomPilotView extends JPanel {
     private final JCheckBox chkMissing = new JCheckBox(Messages.getString("CustomMechDialog.chkMissing"));
     private final JTextField fldName = new JTextField(20);
     private final JTextField fldNick = new JTextField(20);
+    private final JTextField fldHits = new JTextField(5);
+    private final JCheckBox chkClanPilot = new JCheckBox(Messages.getString("CustomMechDialog.chkClanPilot"));
     private final JTextField fldGunnery = new JTextField(3);
     private final JTextField fldGunneryL = new JTextField(3);
     private final JTextField fldGunneryM = new JTextField(3);
@@ -61,9 +63,9 @@ public class CustomPilotView extends JPanel {
     private final JTextField fldPilotingAero = new JTextField(3);
     private final JTextField fldArtillery = new JTextField(3);
     private final JTextField fldTough = new JTextField(3);
-    
+
     private final JComboBox<String> cbBackup = new JComboBox<>();
-    
+
     private final List<Entity> entityUnitNum = new ArrayList<>();
     private final JComboBox<String> choUnitNum = new JComboBox<>();
 
@@ -73,7 +75,7 @@ public class CustomPilotView extends JPanel {
         this.entity = entity;
         setLayout(new GridBagLayout());
         JLabel label;
-        
+
         if (entity.getCrew().getSlotCount() > 1) {
             chkMissing.setActionCommand("missing");
             chkMissing.addActionListener(parent);
@@ -81,7 +83,7 @@ public class CustomPilotView extends JPanel {
             chkMissing.setSelected(entity.getCrew().isMissing(slot));
             add(chkMissing, GBC.eop());
         }
-        
+
         JButton portraitButton = new JButton();
         portraitButton.setPreferredSize(new Dimension(72, 72));
         portraitButton.setName("portrait");
@@ -96,12 +98,12 @@ public class CustomPilotView extends JPanel {
 
         portrait = entity.getCrew().getPortrait(slot);
         portraitButton.setIcon(entity.getCrew().getPortrait(slot).getImageIcon());
-        add(portraitButton, GBC.std().gridheight(2));
+        add(portraitButton, GBC.std().gridheight(4));
 
         JButton button = new JButton(Messages.getString("CustomMechDialog.RandomName"));
         button.addActionListener(e -> {
             gender = RandomGenderGenerator.generate();
-            fldName.setText(RandomNameGenerator.getInstance().generate(gender, entity.getOwner().getName()));
+            fldName.setText(RandomNameGenerator.getInstance().generate(gender, isClanPilot(), entity.getOwner().getName()));
         });
         add(button, GBC.eop());
 
@@ -122,6 +124,9 @@ public class CustomPilotView extends JPanel {
         });
         add(button, GBC.eop());
 
+        add(chkClanPilot, GBC.eop());
+        chkClanPilot.setSelected(entity.getCrew().isClanPilot(slot));
+
         label = new JLabel(Messages.getString("CustomMechDialog.labName"), SwingConstants.RIGHT);
         add(label, GBC.std());
         add(fldName, GBC.eol());
@@ -129,8 +134,13 @@ public class CustomPilotView extends JPanel {
 
         label = new JLabel(Messages.getString("CustomMechDialog.labNick"), SwingConstants.RIGHT);
         add(label, GBC.std());
-        add(fldNick, GBC.eop());
+        add(fldNick, GBC.eol());
         fldNick.setText(entity.getCrew().getNickname(slot));
+
+        label = new JLabel(Messages.getString("CustomMechDialog.labHits"), SwingConstants.RIGHT);
+        add(label, GBC.std());
+        add(fldHits, GBC.eop());
+        fldHits.setText(String.valueOf(entity.getCrew().getHits()));
 
         if (parent.getClientGUI().getClient().getGame().getOptions().booleanOption(OptionsConstants.RPG_RPG_GUNNERY)) {
             label = new JLabel(Messages.getString("CustomMechDialog.labGunneryL"), SwingConstants.RIGHT);
@@ -144,7 +154,7 @@ public class CustomPilotView extends JPanel {
             label = new JLabel(Messages.getString("CustomMechDialog.labGunneryB"), SwingConstants.RIGHT);
             add(label, GBC.std());
             add(fldGunneryB, GBC.eol());
-            
+
             if (entity.getCrew() instanceof LAMPilot) {
                 label = new JLabel(Messages.getString("CustomMechDialog.labGunneryAeroL"), SwingConstants.RIGHT);
                 add(label, GBC.std());
@@ -225,7 +235,7 @@ public class CustomPilotView extends JPanel {
             add(fldTough, GBC.eop());
         }
         fldTough.setText(Integer.toString(entity.getCrew().getToughness(slot)));
-        
+
         if (entity.getCrew().getSlotCount() > 2) {
             for (int i = 0; i < entity.getCrew().getSlotCount(); i++) {
                 if (i != slot) {
@@ -283,6 +293,8 @@ public class CustomPilotView extends JPanel {
         if (!editable) {
             fldName.setEnabled(false);
             fldNick.setEnabled(false);
+            chkClanPilot.setEnabled(false);
+            fldHits.setEnabled(false);
             fldGunnery.setEnabled(false);
             fldGunneryL.setEnabled(false);
             fldGunneryM.setEnabled(false);
@@ -299,7 +311,7 @@ public class CustomPilotView extends JPanel {
 
         missingToggled();
     }
-    
+
     /**
      * Populate the list of entities in other units from the given enumeration.
      *
@@ -330,63 +342,84 @@ public class CustomPilotView extends JPanel {
         }
         choUnitNum.setSelectedIndex(0);
     }
-    
+
     public boolean getMissing() {
         return chkMissing.isSelected();
     }
-    
+
     public String getPilotName() {
         return fldName.getText();
     }
-    
+
     public String getNickname() {
         return fldNick.getText();
+    }
+
+    public String getHits() {
+        int hits;
+        try {
+            hits = Integer.parseInt(fldHits.getText());
+            if (hits < 0) {
+                hits = 0;
+            } else if (hits > 5) {
+                hits = 6;
+            }
+        } catch (NumberFormatException e) {
+            hits = 0;
+        }
+        // Update field then return
+        fldHits.setText(String.valueOf(hits));
+        return fldHits.getText();
     }
 
     public Gender getGender() {
         return gender;
     }
-    
+
+    public boolean isClanPilot() {
+        return chkClanPilot.isSelected();
+    }
+
     public int getGunnery() {
         return Integer.parseInt(fldGunnery.getText());
     }
-    
+
     public int getGunneryL() {
         return Integer.parseInt(fldGunneryL.getText());
     }
-    
+
     public int getGunneryM() {
         return Integer.parseInt(fldGunneryM.getText());
     }
-    
+
     public int getGunneryB() {
         return Integer.parseInt(fldGunneryB.getText());
     }
-    
+
     public int getGunneryAero() {
         return Integer.parseInt(fldGunneryAero.getText());
     }
-    
+
     public int getGunneryAeroL() {
         return Integer.parseInt(fldGunneryAeroL.getText());
     }
-    
+
     public int getGunneryAeroM() {
         return Integer.parseInt(fldGunneryAeroM.getText());
     }
-    
+
     public int getGunneryAeroB() {
         return Integer.parseInt(fldGunneryAeroB.getText());
     }
-    
+
     public int getArtillery() {
         return Integer.parseInt(fldArtillery.getText());
     }
-    
+
     public int getPiloting() {
         return Integer.parseInt(fldPiloting.getText());
     }
-    
+
     public int getPilotingAero() {
         return Integer.parseInt(fldPilotingAero.getText());
     }

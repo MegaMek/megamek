@@ -768,6 +768,11 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
     }
 
     @Override
+    public void optionSwitched(DialogOptionComponent clickedComp, IOption option, int i) {
+        // tracks changes to a combobox option - nothing implemented yet
+    }
+
+    @Override
     protected void okAction() {
         if (clientGui != null) {
             send();

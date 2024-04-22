@@ -40,10 +40,6 @@ Ambusher
 IS Level 2
 </type>
 
-<role>
-Ambusher
-</role>
-
 <motion_type>
 Jump
 </motion_type>
@@ -71,20 +67,23 @@ LegAttack
 BABasicManipulatorMineClearance:LA
 BABasicManipulatorMineClearance:RA
 BA-Magnetic Clamp:LA
-ISBAMineDispenser:Body
 CLBAMG:RA
 </Squad Equipment>
 
 <Trooper 1 Equipment>
+ISBAMineDispenser:Body
 </Trooper 1 Equipment>
 
 <Trooper 2 Equipment>
+ISBAMineDispenser:Body
 </Trooper 2 Equipment>
 
 <Trooper 3 Equipment>
+ISBAMineDispenser:Body
 </Trooper 3 Equipment>
 
 <Trooper 4 Equipment>
+ISBAMineDispenser:Body
 </Trooper 4 Equipment>
 
 <source>

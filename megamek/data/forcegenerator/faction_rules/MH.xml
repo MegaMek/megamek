@@ -16,8 +16,8 @@ support wing (cohort). -->
 
 	<toc>
 		<unitType>
-			<option ifDateBetween="3051,">null,Mek,Tank,VTOL,Infantry,BattleArmor,Aero,Conventional Fighter</option>
-			<option>null,Mek,Tank,VTOL,Infantry,Aero,Conventional Fighter</option>
+			<option ifDateBetween="3051,">null,Mek,Tank,VTOL,Infantry,BattleArmor,AeroSpaceFighter,Conventional Fighter</option>
+			<option>null,Mek,Tank,VTOL,Infantry,AeroSpaceFighter,Conventional Fighter</option>
 		</unitType>
 		
 		<eschelon>
@@ -25,7 +25,7 @@ support wing (cohort). -->
 			<option ifUnitType="Mek|Tank|VTOL">%REGIMENT%,%BATTALION%,%COMPANY%,%LANCE%</option>
 			<option ifUnitType="Infantry">%REGIMENT%,%BATTALION%,%COMPANY%</option>
 			<option ifUnitType="BattleArmor">%BATTALION%,%COMPANY%,%PLATOON%</option>
-			<option ifUnitType="Aero|Conventional Fighter">%WING%,%SQUADRON%,%FLIGHT%</option>
+			<option ifUnitType="AeroSpaceFighter|Conventional Fighter">%WING%,%SQUADRON%,%FLIGHT%</option>
 		</eschelon>
 		
 		<rating>
@@ -74,7 +74,7 @@ support wing (cohort). -->
 				<option num="1" flags="+auxiliary" unitType="">%REGIMENT%</option>
 			</subforceOption>
 			<subforceOption>
-				<option weight="2" unitType="Aero">%BATTALION%</option>
+				<option weight="2" unitType="AeroSpaceFighter">%BATTALION%</option>
 				<option/>
 			</subforceOption>
 		</attachedForces>
@@ -157,7 +157,7 @@ support wing (cohort). -->
 		</attachedForces>
 	</force>
 	
-	<force eschelon="%WING%" eschName="Wing" ifUnitType="Aero|Conventional Fighter">
+	<force eschelon="%WING%" eschName="Wing" ifUnitType="AeroSpaceFighter|Conventional Fighter">
 		<name>{latin:distinct} Ala</name>
 		<co>%MAJOR%</co>
 		
@@ -168,18 +168,18 @@ support wing (cohort). -->
 		</weightClass>
 		
 		<subforces>
-			<subforceOption ifWeightClass="H" ifUnitType="Aero">
+			<subforceOption ifWeightClass="H" ifUnitType="AeroSpaceFighter">
 				<option weightClass="H,H,H">%SQUADRON%</option>
 				<option weightClass="H,H,M">%SQUADRON%</option>
 				<option weightClass="H,H,L">%SQUADRON%</option>
 			</subforceOption>
-			<subforceOption ifWeightClass="M" ifUnitType="Aero">
+			<subforceOption ifWeightClass="M" ifUnitType="AeroSpaceFighter">
 				<option weightClass="H,M,M">%SQUADRON%</option>
 				<option weightClass="M,M,M">%SQUADRON%</option>
 				<option weightClass="H,M,L">%SQUADRON%</option>
 				<option weightClass="M,M,L">%SQUADRON%</option>
 			</subforceOption>
-			<subforceOption ifWeightClass="L" ifUnitType="Aero">
+			<subforceOption ifWeightClass="L" ifUnitType="AeroSpaceFighter">
 				<option weightClass="H,L,L">%SQUADRON%</option>
 				<option weightClass="M,L,L">%SQUADRON%</option>
 				<option weightClass="L,L,L">%SQUADRON%</option>
@@ -382,7 +382,7 @@ support wing (cohort). -->
 		</subforces>
 	</force>
 	
-	<force eschelon="%SQUADRON%" eschName="Maniple" ifUnitType="Aero|Conventional Fighter">
+	<force eschelon="%SQUADRON%" eschName="Maniple" ifUnitType="AeroSpaceFighter|Conventional Fighter">
 		<name>{latin} Manipulus</name>
 		<co>%CAPTAIN%</co>
 		
@@ -393,13 +393,13 @@ support wing (cohort). -->
 		</weightClass>
 
 		<subforces>
-			<subforceOption ifWeightClass="H" ifUnitType="Aero">
+			<subforceOption ifWeightClass="H" ifUnitType="AeroSpaceFighter">
 				<option weightClass="H,H" weight="2">%FLIGHT%
 					</option>
 				<option weightClass="H,M">%FLIGHT%
 					</option>
 			</subforceOption>
-			<subforceOption ifWeightClass="M" ifUnitType="Aero">
+			<subforceOption ifWeightClass="M" ifUnitType="AeroSpaceFighter">
 				<option weightClass="H,M">%FLIGHT%
 					</option>
 				<option weightClass="M,M">%FLIGHT%
@@ -409,7 +409,7 @@ support wing (cohort). -->
 				<option weightClass="M,L">%FLIGHT%
 					</option>
 			</subforceOption>
-			<subforceOption ifWeightClass="L" ifUnitType="Aero">
+			<subforceOption ifWeightClass="L" ifUnitType="AeroSpaceFighter">
 				<option weightClass="M,L">%FLIGHT%
 					</option>
 				<option weightClass="L,L" weight="2">%FLIGHT%
@@ -693,7 +693,7 @@ support wing (cohort). -->
 	still fit the requirements of the capital fighter squadron rule in StratOps,
 	allowing the maniple to be split 5/5. -->
 	
-	<force eschelon="%FLIGHT%" eschName="Century" ifUnitType="Aero|Conventional Fighter">
+	<force eschelon="%FLIGHT%" eschName="Century" ifUnitType="AeroSpaceFighter|Conventional Fighter">
 		<name>{latin:parent} Centuria {roman}</name>
 		<co>%LT%</co>
 		
@@ -712,7 +712,7 @@ support wing (cohort). -->
 			</formation>
 		</ruleGroup>
 
-		<subforces generate="group" ifUnitType="Aero">
+		<subforces generate="group" ifUnitType="AeroSpaceFighter">
 			<subforceOption ifWeightClass="H">
 				<option weightClass="H" weight="2">%ELEMENT%</option>
 				<option weightClass="M">%ELEMENT%</option>

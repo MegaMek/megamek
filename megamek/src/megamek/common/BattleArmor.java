@@ -21,6 +21,9 @@ import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.MiscMounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.OptionsConstants;
+import megamek.common.planetaryconditions.Atmosphere;
+import megamek.common.planetaryconditions.PlanetaryConditions;
+import megamek.common.planetaryconditions.Wind;
 import megamek.common.weapons.InfantryAttack;
 import megamek.common.weapons.infantry.InfantryWeapon;
 import org.apache.logging.log4j.LogManager;
@@ -361,7 +364,7 @@ public class BattleArmor extends Infantry {
                 .setClanAdvancement(2710, DATE_NONE, 3058).setPrototypeFactions(F_TH)
                 .setReintroductionFactions(F_CS).setTechRating(RATING_D)
                 .setAvailability(RATING_F, RATING_X, RATING_E, RATING_D)
-                .setStaticTechLevel(SimpleTechLevel.STANDARD), //ultralight
+                .setStaticTechLevel(SimpleTechLevel.STANDARD), //PA(L)
             new TechAdvancement(TECH_BASE_ALL).setISAdvancement(DATE_NONE, 3050, 3050)
                 .setClanAdvancement(2865, 2870, 2900).setPrototypeFactions(F_CWF)
                 .setProductionFactions(F_CIH, F_FS, F_LC).setClanApproximate(true, false, false)
@@ -388,12 +391,22 @@ public class BattleArmor extends Infantry {
                 .setStaticTechLevel(SimpleTechLevel.STANDARD) // assault
     };
 
+    public static TechAdvancement exoskeletonTechAdvancement() {
+        return new TechAdvancement(TECH_BASE_ALL).setAdvancement(2100, DATE_NONE, 2200)
+            .setApproximate(true, false, true).setTechRating(RATING_C)
+            .setAvailability(RATING_B, RATING_B, RATING_B, RATING_B)
+            .setStaticTechLevel(SimpleTechLevel.STANDARD);
+    }
+
     public static TechAdvancement getConstructionTechAdvancement(int weightClass) {
         return new TechAdvancement(TA_BATTLEARMOR[weightClass]);
     }
 
     @Override
     public TechAdvancement getConstructionTechAdvancement() {
+        if (isExoskeleton()) {
+            return exoskeletonTechAdvancement();
+        }
         int index = getWeightClass();
         if (index < 0 || index >= TA_BATTLEARMOR.length) {
             index = EntityWeightClass.WEIGHT_MEDIUM;
@@ -433,18 +446,18 @@ public class BattleArmor extends Infantry {
         }
 
         if ((!mpCalculationSetting.ignoreWeather) && (null != game)) {
-            int weatherMod = game.getPlanetaryConditions().getMovementMods(this);
+            PlanetaryConditions conditions = game.getPlanetaryConditions();
+            int weatherMod = conditions.getMovementMods(this);
             mp = Math.max(mp + weatherMod, 0);
 
-            if ((game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_GUSTING_RAIN)
+            if (conditions.getWeather().isGustingRain()
                     && getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_RAIN)) {
                 mp += 1;
             }
 
             if (getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_WIND)
-                    && (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_NONE)
-                    && ((game.getPlanetaryConditions().getWindStrength() == PlanetaryConditions.WI_STRONG_GALE)
-                    || (game.getPlanetaryConditions().getWindStrength() == PlanetaryConditions.WI_STORM))) {
+                    && conditions.getWeather().isClear()
+                    && conditions.getWind().isStrongGaleOrStorm()) {
                 mp += 1;
             }
         }
@@ -488,13 +501,16 @@ public class BattleArmor extends Infantry {
             return 0;
         }
 
-        if (!mpCalculationSetting.ignoreWeather && (null != game)
-                && (game.getPlanetaryConditions().getWindStrength() >= PlanetaryConditions.WI_STORM)) {
-            return 0;
+        if (null != game) {
+            PlanetaryConditions conditions = game.getPlanetaryConditions();
+            if (!mpCalculationSetting.ignoreWeather
+                    && conditions.getWind().isStrongerThan(Wind.STRONG_GALE)){
+                return 0;
+            }
         }
 
         int mp = 0;
-        if (getMovementMode() != EntityMovementMode.INF_UMU) {
+        if (!getMovementMode().isUMUInfantry()) {
             mp = getOriginalJumpMP();
         }
         // if we have no normal jump jets, we get 1 jump MP from mechanical jump
@@ -503,13 +519,19 @@ public class BattleArmor extends Infantry {
             mp++;
         }
 
-        if ((mp > 0)
-                && hasWorkingMisc(MiscType.F_PARTIAL_WING)
-                && (mpCalculationSetting.ignoreWeather || (game == null) || !game.getPlanetaryConditions().isVacuum())) {
-            mp++;
+        if ((game != null)) {
+            PlanetaryConditions conditions = game.getPlanetaryConditions();
+            boolean ignoreGameLessThanThin = mpCalculationSetting.ignoreWeather
+                || !conditions.getAtmosphere().isLighterThan(Atmosphere.THIN);
+            if ((mp > 0)
+                    && hasWorkingMisc(MiscType.F_PARTIAL_WING)
+                    && ignoreGameLessThanThin) {
+                mp++;
+            }
         }
 
-        if ((mp > 0) && hasWorkingMisc(MiscType.F_JUMP_BOOSTER)) {
+        if ((mp > 0)
+                && hasWorkingMisc(MiscType.F_JUMP_BOOSTER)) {
             mp++;
         }
 
@@ -1951,5 +1973,11 @@ public class BattleArmor extends Infantry {
     @Override
     public boolean isBattleArmor() {
         return true;
+    }
+
+    // BA index 0 appears to be a dump slot
+    @Override
+    public int firstArmorIndex() {
+        return 1;
     }
 }

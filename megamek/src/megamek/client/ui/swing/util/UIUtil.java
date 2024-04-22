@@ -350,8 +350,12 @@ public final class UIUtil {
     }
     
     public static Dimension scaleForGUI(Dimension dim) {
+        return scaleForGUI(dim.width, dim.height);
+    }
+
+    public static Dimension scaleForGUI(int width, int height) {
         float scale = GUIPreferences.getInstance().getGUIScale();
-        return new Dimension((int) (scale * dim.width), (int) (scale * dim.height));
+        return new Dimension((int) (scale * width), (int) (scale * height));
     }
     
     /** 

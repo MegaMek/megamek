@@ -552,7 +552,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
         // If I cannot kick because I am a clan unit and "No physical attacks for the clans"
         // is enabled, set maximum physical damage for this path to zero.
         if (game.getOptions().booleanOption(OptionsConstants.ALLOWED_NO_CLAN_PHYSICAL)
-                && path.getEntity().isClan()) {
+                && path.getEntity().getCrew().isClanPilot()) {
             damageEstimate.physicalDamage = 0;
         }
 
@@ -625,19 +625,23 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
         for (Entity e : enemies) {
             double max_damage = 0;
             for (Entity f : friends) {
-                FiringPlanCalculationParameters guess =
-                        new FiringPlanCalculationParameters.Builder()
-                                .buildGuess(e,
+                if (f == unit){
+                    // Docstring says ignore self, so ignore self.
+                    max_damage = 0;
+                } else {
+                    FiringPlanCalculationParameters guess =
+                            new FiringPlanCalculationParameters.Builder()
+                                    .buildGuess(e,
                                             null,
                                             f,
                                             null,
                                             (e.getHeatCapacity() - e.getHeat()) + 5,
                                             null);
-                double damage = getFireControl(f).determineBestFiringPlan(guess).getExpectedDamage();
-                if (damage > max_damage) {
-                    max_damage = damage;
+                    double damage = getFireControl(f).determineBestFiringPlan(guess).getExpectedDamage();
+                    if (damage > max_damage) {
+                        max_damage = damage;
+                    }
                 }
-
             }
             bestDamageByEnemies.put(e.getId(), max_damage);
         }

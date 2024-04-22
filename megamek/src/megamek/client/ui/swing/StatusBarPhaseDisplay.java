@@ -47,7 +47,8 @@ import static megamek.client.ui.swing.util.UIUtil.uiLightViolet;
  * Control buttons are grouped and the groups can be cycled through.
  */
 public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
-        implements ActionListener, MouseListener, KeyListener, IPreferenceChangeListener {
+        implements ActionListener, MouseListener, KeyListener, IPreferenceChangeListener,
+        KeyBindReceiver {
 
     protected static final Dimension MIN_BUTTON_SIZE = new Dimension(32, 32);
     protected static final GUIPreferences GUIP = GUIPreferences.getInstance();
@@ -156,23 +157,23 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
     protected abstract void setButtonsTooltips();
 
     protected String createToolTip(String cmd, String keyPrefix, String hotKeyDesc) {
-        String h  = "";
+        String reuslt  = "";
         String ttKey = keyPrefix + cmd + ".tooltip";
-        String tt = hotKeyDesc;
-        if (!tt.isEmpty()) {
+        String toolTip = hotKeyDesc;
+        if (!toolTip.isEmpty()) {
             String title = Messages.getString(keyPrefix + cmd);
-            tt = guiScaledFontHTML(uiLightViolet()) + title + ": " + tt + "</FONT>";
-            tt += "<BR>";
+            toolTip = guiScaledFontHTML(uiLightViolet()) + title + ": " + toolTip + "</FONT>";
+            toolTip += "<BR>";
         }
         if (Messages.keyExists(ttKey)) {
             String msg_key = Messages.getString(ttKey);
-            tt += guiScaledFontHTML() + msg_key + "</FONT>";
+            toolTip += guiScaledFontHTML() + msg_key + "</FONT>";
         }
-        if (!tt.isEmpty()) {
-            String b = "<BODY>" + tt + "</BODY>";
-            h = "<HTML>" + b + "</HTML>";
+        if (!toolTip.isEmpty()) {
+            String b = "<BODY>" + toolTip + "</BODY>";
+            reuslt = "<HTML>" + b + "</HTML>";
         }
-        return h;
+        return reuslt;
     }
 
     /**
@@ -273,8 +274,6 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
             buttonsPerRow = GUIP.getButtonsPerRow();
             buttonsPerGroup = 2 * buttonsPerRow;
             setupButtonPanel();
-        } else if (e.getName().equals(GUIPreferences.GUI_SCALE)) {
-            adaptToGUIScale();
         } else if (e.getName().equals(KeyBindParser.KEYBINDS_CHANGED)) {
             setButtonsTooltips();
         }
@@ -282,33 +281,15 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
         adaptToGUIScale();
     }
 
-    /**
-     * Register all of the <code>CommandAction</code>s for this panel display.
-     */
+    @Override
+    public boolean shouldReceiveKeyCommands() {
+        return clientgui.getClient().isMyTurn()
+                && !clientgui.getBoardView().getChatterBoxActive()
+                && !isIgnoringEvents() && isVisible();
+    }
+
     protected void regKeyCommands() {
-        MegaMekController controller = clientgui.controller;
-        final StatusBarPhaseDisplay display = this;
-        // Register the action for EXTEND_TURN_TIMER
-        controller.registerCommandAction(KeyCommandBind.EXTEND_TURN_TIMER.cmd,
-                new CommandAction() {
-
-                    @Override
-                    public boolean shouldPerformAction() {
-                        if (!clientgui.getClient().isMyTurn()
-                                || clientgui.getBoardView().getChatterBoxActive()
-                                || display.isIgnoringEvents()
-                                || !display.isVisible()) {
-                            return false;
-                        } else {
-                            return true;
-                        }
-                    }
-
-                    @Override
-                    public void performAction() {
-                        extendTimer();
-                    }
-                });
+        clientgui.controller.registerCommandAction(KeyCommandBind.EXTEND_TURN_TIMER, this, this::extendTimer);
     }
 
     @Override
@@ -355,6 +336,10 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
         if (tt != null) {
             tt.setExtendTimer();
         }
+    }
+
+    public boolean isTimerExpired() {
+        return tt != null && tt.isTimerExpired();
     }
 
     public String getRemainingPlayerWithTurns() {
@@ -435,5 +420,4 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
 
         clientgui.getBoardView().setWeaponFieldOfFire(unit, cmd);
     }
-
 }

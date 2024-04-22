@@ -18,6 +18,7 @@
  */
 package megamek.client.ui.swing.lobby;
 
+import megamek.client.AbstractClient;
 import megamek.client.Client;
 import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.bot.princess.Princess;
@@ -290,10 +291,10 @@ public class LobbyActions {
         String ownerName = randomSelected.getOwner().getName();
         int ownerId = randomSelected.getOwner().getId();
 
-        boolean editable = client().localBots.get(ownerName) != null;
+        boolean editable = client().getBots().get(ownerName) != null;
         Client client;
         if (editable) {
-            client = client().localBots.get(ownerName);
+            client = (Client) client().getBots().get(ownerName);
         } else {
             editable |= ownerId == localPlayer().getId();
             client = client();
@@ -349,10 +350,10 @@ public class LobbyActions {
         if (!validateUpdate(Arrays.asList(entity))) {
             return;
         }
-        boolean editable = client().localBots.get(entity.getOwner().getName()) != null;
+        boolean editable = client().getBots().get(entity.getOwner().getName()) != null;
         Client c;
         if (editable) {
-            c = client().localBots.get(entity.getOwner().getName());
+            c = (Client) client().getBots().get(entity.getOwner().getName());
         } else {
             boolean localGM = localPlayer().isGameMaster();
             editable |= localGM || entity.getOwnerId() == localPlayer().getId();
@@ -443,7 +444,7 @@ public class LobbyActions {
         }
         for (final Entity entity : entities) {
             final Client client = lobby.getLocalClient(entity);
-            client.getSkillGenerator().setRandomSkills(entity, true);
+            client.getSkillGenerator().setRandomSkills(entity);
         }
         sendUpdates(entities);
     }
@@ -460,7 +461,7 @@ public class LobbyActions {
             for (int i = 0; i < e.getCrew().getSlotCount(); i++) {
                 Gender gender = RandomGenderGenerator.generate();
                 e.getCrew().setGender(gender, i);
-                e.getCrew().setName(RandomNameGenerator.getInstance().generate(gender, e.getOwner().getName()), i);
+                e.getCrew().setName(RandomNameGenerator.getInstance().generate(gender, e.getCrew().isClanPilot(i), e.getOwner().getName()), i);
             }
         }
         sendUpdates(entities);
@@ -570,7 +571,7 @@ public class LobbyActions {
 
     /** Adds the given entities as strategic targets for the given local bot. */
     void setPrioTarget(String botName, Collection<Entity> entities) {
-        Map<String, Client> bots = lobby.getClientgui().getLocalBots();
+        Map<String, AbstractClient> bots = lobby.getClientgui().getLocalBots();
         if (!bots.containsKey(botName) || !(bots.get(botName) instanceof Princess)) {
             return;
         }
@@ -1068,7 +1069,7 @@ public class LobbyActions {
         if (entities.stream().anyMatch(e -> e.getOwner().equals(localPlayer()))) {
             return localPlayer();
         } else {
-            for (Entry<String, Client> en: client().localBots.entrySet()) {
+            for (Entry<String, AbstractClient> en: client().getBots().entrySet()) {
                 Player bot = en.getValue().getLocalPlayer();
                 if (entities.stream().anyMatch(e -> e.getOwner().equals(bot))) {
                     return en.getValue().getLocalPlayer();
@@ -1179,14 +1180,14 @@ public class LobbyActions {
         Player owner = entity.getOwner();
         if (localPlayer().equals(owner)) {
             return client();
-        } else if (client().localBots.containsKey(owner.getName())) {
-            return client().localBots.get(owner.getName());
+        } else if (client().getBots().containsKey(owner.getName())) {
+            return (Client) client().getBots().get(owner.getName());
         } else if (!localPlayer().isEnemyOf(owner)) {
             return client();
         } else {
-            for (Client bot: client().localBots.values()) {
+            for (AbstractClient bot: client().getBots().values()) {
                 if (!bot.getLocalPlayer().isEnemyOf(owner)) {
-                    return bot;
+                    return (Client) bot;
                 }
             }
         }
@@ -1202,14 +1203,14 @@ public class LobbyActions {
         Player owner = game().getForces().getOwner(force);
         if (localPlayer().equals(owner)) {
             return client();
-        } else if (client().localBots.containsKey(owner.getName())) {
-            return client().localBots.get(owner.getName());
+        } else if (client().getBots().containsKey(owner.getName())) {
+            return (Client) client().getBots().get(owner.getName());
         } else if (!localPlayer().isEnemyOf(owner) || isEditable(force)) {
             return client();
         } else {
-            for (Client bot: client().localBots.values()) {
+            for (AbstractClient bot: client().getBots().values()) {
                 if (!bot.getLocalPlayer().isEnemyOf(owner)) {
-                    return bot;
+                    return (Client) bot;
                 }
             }
         }
@@ -1230,7 +1231,7 @@ public class LobbyActions {
     boolean isEditable(Entity entity) {
         boolean localGM = client().getLocalPlayer().isGameMaster();
         return localGM
-                || client().localBots.containsKey(entity.getOwner().getName())
+                || client().getBots().containsKey(entity.getOwner().getName())
                 || (entity.getOwnerId() == localPlayer().getId())
                 || (entity.partOfForce() && isSelfOrLocalBot(game().getForces().getOwner(entity.getForceId())))
                 || (entity.partOfForce() && isEditable(game().getForces().getForce(entity)));
@@ -1272,7 +1273,7 @@ public class LobbyActions {
     }
 
     boolean isSelfOrLocalBot(Player player) {
-        return client().localBots.containsKey(player.getName()) || localPlayer().equals(player);
+        return client().getBots().containsKey(player.getName()) || localPlayer().equals(player);
     }
 
     /** Returns true if the entity is an enemy of the local player. */

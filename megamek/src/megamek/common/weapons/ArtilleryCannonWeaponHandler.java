@@ -185,8 +185,18 @@ public class ArtilleryCannonWeaponHandler extends AmmoWeaponHandler {
                 gameManager.deliverArtillerySmoke(targetPos, vPhaseReport);
                 return false;
             } else if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_FAE)) {
-                AreaEffectHelper.processFuelAirDamage(targetPos,
-                        ammoType, ae, vPhaseReport, gameManager);
+                // Currently Artillery Cannons _can_ make Flak attacks using FAE munitions
+                // If this is an ASF Flak attack we know we hit an entity by itself in the air,
+                // so just hit it for full damage.
+                if (asfFlak) {
+                    AreaEffectHelper.artilleryDamageEntity((Entity) target, ammoType.getRackSize(), null,
+                            0, false, asfFlak, isFlak, target.getElevation(),
+                            targetPos, atype, targetPos, false, ae, null, target.getElevation(),
+                            vPhaseReport, gameManager);
+                } else {
+                    AreaEffectHelper.processFuelAirDamage(targetPos,
+                            ammoType, ae, vPhaseReport, gameManager);
+                }
 
                 return false;
             }

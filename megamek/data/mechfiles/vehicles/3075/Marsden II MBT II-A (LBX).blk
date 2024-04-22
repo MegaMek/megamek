@@ -1,13 +1,4 @@
-#building block data file
-<BlockVersion>
-1
-</BlockVersion>
-
-# Write the version number just in case...
-<Version>
-MAM0
-</Version>
-
+#Saved from version 0.49.19-SNAPSHOT on 2024-03-16
 <UnitType>
 Tank
 </UnitType>
@@ -27,6 +18,10 @@ II-A (LB-X)
 <year>
 3068
 </year>
+
+<originalBuildYear>
+3068
+</originalBuildYear>
 
 <type>
 IS Level 2
@@ -58,10 +53,10 @@ Tracked
 
 <Body Equipment>
 IS LB 10-X AC Ammo
-IS LB 10-X AC Ammo
 IS Streak SRM 2 Ammo
 IS Streak SRM 2 Ammo
-IS Machine Gun Ammo
+IS Ammo MG - Full
+IS LB 10-X Cluster Ammo
 </Body Equipment>
 
 <Front Equipment>
@@ -91,3 +86,8 @@ TRO: 3075
 <tonnage>
 60.0
 </tonnage>
+
+<fuelType>
+PETROCHEMICALS
+</fuelType>
+

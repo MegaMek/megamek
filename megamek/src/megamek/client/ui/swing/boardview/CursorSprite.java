@@ -48,7 +48,7 @@ class CursorSprite extends Sprite {
         graph.drawPolygon(BoardView.hexPoly);
 
         // create final image
-        image = bv.getScaledImage(bv.createImage(tempImage.getSource()), false);
+        image = bv.getScaledImage(bv.getPanel().createImage(tempImage.getSource()), false);
         
         graph.dispose();
         tempImage.flush();

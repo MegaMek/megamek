@@ -681,7 +681,7 @@ public class EntityListFile {
         }
     }
 
-    private static void writeEntityList(Writer output, ArrayList<Entity> list) throws IOException {
+    public static void writeEntityList(Writer output, ArrayList<Entity> list) throws IOException {
         // Walk through the list of entities.
         Iterator<Entity> items = list.iterator();
         while (items.hasNext()) {
@@ -747,15 +747,17 @@ public class EntityListFile {
                 output.write("\" " + MULParser.ATTR_QUIRKS + "=\"");
                 output.write(String.valueOf(entity.getQuirkList("::")));
             }
-            if (entity.getC3Master() != null) {
+            if ((entity.getGame() != null) && (entity.getC3Master() != null)) {
                 output.write("\" " + MULParser.ATTR_C3MASTERIS + "=\"");
                 output.write(entity.getGame()
                         .getEntity(entity.getC3Master().getId())
                         .getC3UUIDAsString());
             }
             if (entity.hasC3() || entity.hasC3i() || entity.hasNavalC3()) {
-                output.write("\" " + MULParser.ATTR_C3UUID + "=\"");
-                output.write(entity.getC3UUIDAsString());
+                if (entity.getC3UUIDAsString() != null) {
+                    output.write("\" " + MULParser.ATTR_C3UUID + "=\"");
+                    output.write(entity.getC3UUIDAsString());
+                }
             }
             if (!entity.getCamouflage().hasDefaultCategory()) {
                 output.write("\" " + MULParser.ATTR_CAMO_CATEGORY + "=\"");
@@ -1124,6 +1126,7 @@ public class EntityListFile {
         output.write("\" " + MULParser.ATTR_NICK + "=\"");
         output.write(crew.getNickname(pos).replaceAll("\"", "&quot;"));
         output.write("\" " + MULParser.ATTR_GENDER + "=\"" + crew.getGender(pos).name());
+        output.write("\" " + MULParser.ATTR_CLANPILOT + "=\"" + crew.isClanPilot(pos));
 
         if ((null != entity.getGame())
                 && entity.getGame().getOptions().booleanOption(OptionsConstants.RPG_RPG_GUNNERY)) {
@@ -1236,7 +1239,8 @@ public class EntityListFile {
             } else {
                 output.write("\" " + MULParser.ATTR_AUTOEJECT + "=\"false");
             }
-            if (entity.game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION)) {
+            if ((null != entity.getGame())
+                    && (entity.getGame().getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION))) {
                 if (((Mech) entity).isCondEjectAmmo()) {
                     output.write("\" " + MULParser.ATTR_CONDEJECTAMMO + "=\"true");
                 } else {

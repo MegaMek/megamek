@@ -18,6 +18,7 @@
  */
 package megamek.client.ui.swing;
 
+import megamek.client.AbstractClient;
 import megamek.client.Client;
 import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.bot.princess.Princess;
@@ -162,7 +163,7 @@ public class EditBotsDialog extends AbstractButtonDialog {
                 gridPanel.add(configButton(player));
                 gridPanel.add(restoreButton(player, savedSettingsExist));
             } else if (clientGui.getClient().isLocalBot(player)) {
-                Client bot = clientGui.getClient().getBotClient(player);
+                AbstractClient bot = clientGui.getClient().getBotClient(player);
                 if (bot instanceof Princess) {
                     gridPanel.add(new JLabel(LOCAL + " Princess"));
                     Princess princess = (Princess) bot;

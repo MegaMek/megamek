@@ -10,8 +10,11 @@ import java.util.Locale;
 
 import megamek.common.Game;
 import megamek.common.MechSummaryCache;
+import megamek.common.scenario.Scenario;
+import megamek.common.scenario.ScenarioLoaderException;
+import megamek.common.scenario.ScenarioV1;
 import megamek.server.GameManager;
-import megamek.server.ScenarioLoader;
+import megamek.common.scenario.ScenarioLoader;
 import megamek.server.Server;
 
 public class ScenarioLoaderTest {
@@ -20,13 +23,13 @@ public class ScenarioLoaderTest {
     private PrintStream originalOut;
     private PrintStream originalErr;
     
-    public static void main(String[] args) {
+    public static void main(String[] args) throws ScenarioLoaderException, IOException {
         ScenarioLoaderTest tester = new ScenarioLoaderTest();
         tester.runTests();
         System.exit(0);
     }
     
-    public List<String> runTests() {
+    public List<String> runTests() throws ScenarioLoaderException, IOException {
         List<String> errorAccumulator = new ArrayList<>();
         PrintStream nullPs = new PrintStream(new OutputStream() {
             @Override
@@ -74,19 +77,20 @@ public class ScenarioLoaderTest {
         return errorAccumulator;
     }
     
-    private void checkScenarioFile(File file, List<String> errorAccumulator) {
+    private void checkScenarioFile(File file, List<String> errorAccumulator) throws ScenarioLoaderException, IOException {
         int port = 7770;
         if (null == file) {
             return;
         }
         if (file.isFile() && file.getName().toLowerCase(Locale.ROOT).endsWith(".mms")) {
             ScenarioLoader loader = new ScenarioLoader(file);
+            ScenarioV1 scenario = (ScenarioV1) loader.load();
             try {
-                Game game = loader.createGame();
+                Game game = (Game) scenario.createGame();
                 GameManager gameManager = new GameManager();
                 Server server = new Server("test", port + 1, gameManager);
                 server.setGame(game);
-                loader.applyDamage(gameManager);
+                scenario.applyDamage(gameManager);
                 server.die();
             } catch (Exception ex) {
                 ex.printStackTrace();

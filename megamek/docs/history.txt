@@ -1,6 +1,92 @@
 MEGAMEK VERSION HISTORY:
 ----------------
-0.49.18-SNAPSHOT
+0.49.20-SNAPSHOT
++ PR #5281, #5327, #5308, #5336, #5318, #5383, #5369: Code internals: preparatory work for supporting game types such as SBF, code cleanup for string drawing, superclass change for BoardView, 
+     Keydispatcher aka MegaMekController simplification, moving BoardView shadowmap creation to its own class, BoardView subclassing, DialogOptionsListener update
++ PR #5295: MM now supports the light conditions "glare" and "solar flare" (TO:AR)
++ PR #5301: Aerospace units now show a much improved flight path indicator when planning their movement
++ PR #5321: The font used to write round reports can now be set in the client settings
++ Fix #5333: The standard G/P values of 4/5 may now be changed in the unit selector to see different BV/PV values; this functionality must be activated in the client settings
++ PR #5319: Add Symbol Font Google "Material Symbols"
++ PR #5386: Icons
+
+ 
+0.49.19 (2024-04-19 2030 UTC)
++ Fix #5182: Fixes aerospace fighters getting a zero engine rating in TestAero
++ Fix #5168: Indirect Arty Fire under 17 hexes now correctly uses a +4 instead of +7 modifier
++ Fix #5177: Fixing an issue with MUL loading
++ PR #4521: Adds the Black Ice terrain modification. Happy Skidding!
++ PR #5156: Internal changes to Player and Team classes
++ Fix #3498: Adding Clan Personnel Tracking to MegaMek; IS pilots in Clan Meks can now go physical!
++ Fix #5189: Weapons will no longer think themselves out of ammo when there is ammo left on the unit
++ Fix #5191: Canon units are again recognized
++ Fix #5193: Weapon bays work again at short range in atmosphere
++ PR #5188, #5246: Units on the ground (except multi-hex units) now throw shadows
++ PR #5156: MML and MM can now process unit fluff images embedded in unit files (see MML Fix #269)
++ PR #5209: Java LookAndFeels choices have been restricted to FlatLaf and the system default; the default is now FlatLaf Darcula
++ PR #5208: Off-board arty may no longer attempt Flak attacks at on-board aerospace units
++ PR #5199: Fixes superheavy and tripod crew total calculation
++ Fix #4819: Seabuster Strike Fighter (Early) is missing the floatation hull chassis mod.
++ PR #5217: Log cleanup
++ PR #5212: Updates to unit data
++ PR #5211: Instead of relying on a file chooser, MegaMek now has a dedicated dialog for choosing scenarios
++ PR #5210: We have added some fonts to the distribution: Exo, Jura, Anta and Bitter. These can be chosen for display and print in various places
++ Fix #5237: Broken Units with recent changes
++ Fix #5243: AMS Ammo Naming issue.
++ Fix #5214: Exception when loading saved game
++ Fix #5224: Infantry Firing issue
++ PR #5241: Add test to ensure every unit can load
++ PR #5244: Fixing MML #1452 Allows you to pod mount null signature system. 
++ Fix #5228: The TAG phase will no longer inadvertently reveal hidden units
++ Fix #5206: Prevent an error with the map preview in the lobby
++ PR #5240: Fix MML 1365: Sponson Turrets not being included in TechLevel calcs 
++ PR #5218: add additional zoom levels and font adjustment levels 
++ Data: Fixing #5194, #4979, #4525, #4906, #5141, #5253, #4258, #4555, #5017, #4837
++ PR #5259: Refactor code to add new units to a C3 network
++ PR #5257: Flat Darcula skin 
++ PR #5256: Bind escape to the close action on various dialogs
++ Fix #5219: Show CF Warning over isometric bridges and turrets.
++ PR #5266: Added a story arcs directory with support for loading units, camo and portraits
++ Fix #5242: Fixes some turn timer issues (skips all nags when the turn times expires; allow ESC on nags and others)
++ PR #5249: YAML serialization support for AS/SBF units
++ Fix #5204: Fixes Fighter Squadron weapon crits and group damage application
++ Fix #5268: NPE on skip movement
++ Fix MML #1446: Set crew requirements for units with Drone OS to 0
++ PR #5203: Improvements for the internal representation of planetary conditions
++ PR #5270: The weapon panel is now split to prevent info being obscured depending on screen resolution and other factors
++ PR #5274: Update Aerospace SI damage calculation to round naturally with a minimum of 1
++ Fix #5285: MML #1461 Consider pintle weapons in the same location as in the same pintle 
++ PR #5278: correct issue when using multiple boards and restricting deployment
++ Data: Sprite Swap Project. All shaded sprites that can be (Deadborder mostly) replaced have been.
++ Fix #5298: Illegal Cast Exception when lowering elevation with a VTOL
++ Fix #5276: Set RISC APDS Alpha Strike damage to 0
++ PR #5300: Output clanperson variable to XML
++ PR #5305: Princess Behaviour Update
++ Fix #3882 (MM part): ASFs not tracked correctly in MHQ
++ Fix #5205: Handle ConcurrentModification and NPE from opening dialogs
++ PR #5306: MM portion of fix for MHQ #3803: WOB.pm/.PM mismatch and missing parent faction check 
++ PR #5311: Unblock build by removing extraneous Java logging import in UnitTable.java
++ PR #5289: Improved MissionRole Switch Cases & Role List
++ Fix #5291: Fix for MML #135  Industrial tripod cockpit 
++ Fix #3306: Vehicle Lance Movement prevents full deployment of turrets
++ PR #5303: add client settings for report colors (Allows custom colors)
++ PR #5322: Fix reading player names from savegames 
++ Fix #5280: Fix Null Pointer Error when updating Convert Mode Button status
++ Fix MekHQ #3986: MHQ wont save, sometimes 
++ Fix #5348: Stop adding jump start step when deleting movement 
++ PR #5353: Utility update and small icon error correction 
++ Fix #5351: Null pointer when turning with shortcut keys in movement phase. 
++ Fix #5367: correct issue when using multiple boards and restricting deployment
++ PR #5366: Added Faction Logos from UCC (With Permission)
++ Fix #5215 - Secondary turret firing arc display to reflect tanks turret rotation.
++ PR #5372: Image name fixes
++ Fix #5343: Damage display in unit tooltip used intact color for damaged blocks in some cases
++ Fix #2659: Mek Quad turret firing arc reflects turret rotation changes.
++ PR #5377: Correct mek arc facing when mek is turned.
++ Fix #5375: quirks and SPAs applying twice to Air Defense Arrow IV missiles
+
+
+0.49.18 (2024-02-17 1800 UTC)
 + Fix #5004: Prevents an error when configuring LAMs or quadvees in the lobby
 + PR #5002, #5001: AS conversion: fix BA medium and long range damage with SSW, STOL units and aerodyne DS/SC now receive VSTOL
 + PR #4993: Alpha Strike aero support vehicles (fixced wing support) will now find and display their fluff images if there are any
@@ -52,6 +138,19 @@ MEGAMEK VERSION HISTORY:
 + PR #5126: turn timer updates
 + PR #5132: Fix Long Tom Cannon not dealing damage to flying dropship
 + Fix #5104: To-hit calculation bug when shooting at VTOLs
++ PR #5146: planetary conditions weather updates 
++ PR #5140: BA tech advancement for Exoskeltons.
++ PR #5147: Fix weather restrictions around wind 
++ Data: Implement Shrapnel #9 Laser Weapons.
++ PR #5159: Light and Heavy Machine Gun Ammo is mislabeled
++ Fix #5149, #5151: fix NPE in getHexTip(), fix NPE in doEntityDisplacement()
++ PR #5173 Add bot command for dishonored players 
++ Fix #4670: Hide entity statblocks from the hex tooltip when entity is hidden
++ PR #5170: Use IGame in TurnOrdered 
++ PR #5169: Code cleanup #5169
++ Fix #5155: Add checkbox to turn off showing player deployment on map preview
++ Fix #4952: Princess does not select alt ammo
++ Fix #5174: Quick Fix for structure not loading correctly
 
 0.49.17 (2023-12-31 1900 UTC)
 + Fix #1031: Show structure collapse warning when deploying and moving.

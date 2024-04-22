@@ -1,3 +1,4 @@
+generator:MegaMek Suite 0.49.19-SNAPSHOT on 2024-03-17
 chassis:Harvester Ant
 model:KIC-3M-B AgroMech MOD
 mul id:7153
@@ -7,6 +8,7 @@ techbase:Inner Sphere
 era:2801
 source:Record Sheets: Vehicle Annex - IndustrialMechs & Exoskeletons
 rules level:2
+
 
 mass:20
 engine:60 ICE Engine(IS)
@@ -146,4 +148,5 @@ Foot Actuator
 -Empty-
 -Empty-
 
+notes:Harvester Ant KIC-3M-B AgroMech MOD / KIC-3 (LRM) - Variant has two different designations in two separate products (TR:VA and H:OK)  
 

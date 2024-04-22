@@ -13,6 +13,7 @@
  */
 package megamek.client.bot;
 
+import megamek.client.AbstractClient;
 import megamek.client.Client;
 import megamek.client.bot.princess.CardinalEdge;
 import megamek.client.ui.swing.ClientGUI;
@@ -549,6 +550,7 @@ public abstract class BotClient extends Client {
                 sendArtyAutoHitHexes(autoHitHexes);
             } else if (game.getPhase().isTargeting() || game.getPhase().isOffboard()) {
                 // Princess implements arty targeting
+                // TODO: TAG should be handled separately.
                 calculateTargetingOffBoardTurn();
             } else if (game.getPhase().isPremovement() || game.getPhase().isPrefiring()) {
                 calculatePrephaseTurn();
@@ -1149,7 +1151,7 @@ public abstract class BotClient extends Client {
         // If we have a clientgui, it keeps track of a Name -> Client map, and
         //  we need to update that map with this name change.
         if (getClientGUI() != null) {
-            Map<String, Client> bots = getClientGUI().getLocalBots();
+            Map<String, AbstractClient> bots = getClientGUI().getLocalBots();
             String oldName = getName();
             String newName = (String) (inP.getObject(0));
             if (!this.equals(bots.get(oldName))) {

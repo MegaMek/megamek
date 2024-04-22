@@ -1,9 +1,3 @@
-Default Keyboard Commands for MegaMek
-These can be edited under
-VIEW->CLIENT SETTINGS->KEY BINDS
-
-Toggle in-game keyboard shortcuts helper----- Ctrl-K
-
 GENERAL COMMANDS
 Toggle Chat----- ` (Backquote/Grave)
 Toggle Chat Command ----- /
@@ -18,7 +12,7 @@ Scroll Map East----- D
 Scroll Map West----- A
 Center On Selected Unit----- Spacebar
 
-MOVEMENT 
+MOVEMENT
 Turn Left----- Shift-A
 Turn Right----- Shift-D
 Torso Twist Left----- Shift-A
@@ -26,7 +20,7 @@ Torso Twist Right----- Shift-D
 Toggle Walking/Jump----- J
 Change LAM/QuadVee Mode----- M
 
-COMBAT AND TARGETTING
+COMBAT AND TARGETING
 Next Target----- C
 Previous Target----- Z
 Next Valid Target ----- Shift-C
@@ -46,6 +40,7 @@ Next Unit----- Shift-E
 
 DIAGRAMS
 Show Movement Envelope----- R
+Field of Fire: R
 Toggle Field Of Fire----- Shift-R
 Toggle Iso Mode----- T
 Toggle Unit Labels-----Y
@@ -58,3 +53,35 @@ Unit Overview - Armor----- F3
 Unit Overview - Systems----- F4
 Unit Overview - Weapons----- F5
 Unit Overview - Extras----- F6
+
+GUI OPTIONS
+Increase GUI Scale: Ctrl + +
+Decrease GUI Scale: Ctrl + -
+Zoom In: +
+Zoom Out: -
+
+LOAD AND SAVE OPTIONS
+Quick Load: Ctrl + Shift + L
+Quick Save: Ctrl + Shift + S
+Local Load: Ctrl + L
+Local Save: Ctrl + S
+
+ADDITIONAL COMMANDS
+
+Toggle Draw Labels: Ctrl + B
+Toggle Hex Coordinates: Ctrl + G
+Toggle Minimap: Ctrl + M
+View Line of Sight Setting: Ctrl + Alt + L
+Toggle Unit Display: Ctrl + D
+Toggle Unit Overview: Ctrl + U
+Toggle Keybinds: Ctrl + K
+Toggle Planetary Conditions: Ctrl + P
+Toggle Turn Details: Ctrl + T
+Client Settings: Alt + C
+Round Report: Ctrl + R
+Replace Player: Ctrl + Shift + R
+View Mod Envelope: Ctrl + W
+Sensor Range: C
+Undo Single Step: Ctrl + Backspace
+Toggle Force Display: Ctrl + F
+Extend Turn Timer: Ctrl + F4

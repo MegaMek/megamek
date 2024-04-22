@@ -117,7 +117,7 @@ public abstract class PathRanker implements IPathRanker {
                         game, maxRange, fallTolerance, enemies, friends);
             }
         } catch (Exception ignored) {
-            LogManager.getLogger().error(ignored.toString());
+            LogManager.getLogger().error(ignored.getMessage(), ignored);
             return returnPaths;
         }
 
@@ -464,9 +464,12 @@ public abstract class PathRanker implements IPathRanker {
         return false;
     }
 
-    protected @Nullable Coords calcAllyCenter(int myId, @Nullable List<Entity> friends, Game game) {
+    public static @Nullable Coords calcAllyCenter(int myId, @Nullable List<Entity> friends, Game game) {
         if ((friends == null) || friends.isEmpty()) {
             return null;
+        } else if (friends.size() == 1) {
+            // Nobody here but me...
+            return friends.get(0).getPosition();
         }
 
         int xTotal = 0;

@@ -1,13 +1,4 @@
-#building block data file
-<BlockVersion>
-1
-</BlockVersion>
-
-# Write the version number just in case...
-<Version>
-MAM0
-</Version>
-
+#Saved from version 0.49.19-SNAPSHOT on 2024-02-28
 <UnitType>
 ConvFighter
 </UnitType>
@@ -40,12 +31,14 @@ IS Level 3
 Attack Fighter
 </role>
 
+<quirks>
+hard_pilot
+prototype
+</quirks>
+
 <motion_type>
 Aerodyne
 </motion_type>
-
-<transporters>
-</transporters>
 
 <SafeThrust>
 5
@@ -105,6 +98,7 @@ ISReconCamera
 
 <Fuselage Equipment>
 ISImprovedHeavyGauss Ammo
+ISFlotationHull
 </Fuselage Equipment>
 
 <source>
@@ -114,3 +108,4 @@ XTR: Periphery
 <tonnage>
 50.0
 </tonnage>
+

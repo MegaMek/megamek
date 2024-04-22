@@ -17,6 +17,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import megamek.common.options.OptionsConstants;
+import megamek.common.planetaryconditions.PlanetaryConditions;
 
 /**
  * This class will hold all the information about a particular active sensor,
@@ -180,7 +181,8 @@ public class Sensor implements Serializable {
         }
 
         if ((type != TYPE_MEK_SEISMIC) && (type != TYPE_VEE_SEISMIC)) {
-            if (game.getPlanetaryConditions().hasEMI()) {
+            PlanetaryConditions conditions = game.getPlanetaryConditions();
+            if (conditions.getEMI().isEMI()) {
                 range -= 4;
             }
             // TODO: add lightning

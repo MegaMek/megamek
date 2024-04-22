@@ -10,7 +10,7 @@
 	
 	<toc>
 		<unitType>
-			<option>Mek,ProtoMek,Tank,VTOL,Infantry,BattleArmor,Aero,Conventional Fighter</option>
+			<option>Mek,ProtoMek,Tank,VTOL,Infantry,BattleArmor,AeroSpaceFighter,Conventional Fighter</option>
 		</unitType>
 		
 		<eschelon>
@@ -84,7 +84,7 @@
 		</weightClass>
 
 		<ruleGroup>
-			<formation ifIndex="0" ifUnitType="!Aero|Conventional Fighter">
+			<formation ifIndex="0" ifUnitType="!AeroSpaceFighter|Conventional Fighter">
 				<option weight="30">Battle</option>
 				<option weight="12" ifWeightClass="H|A">Heavy Battle</option>
 				<option weight="8" ifWeightClass="M">Medium Battle</option>
@@ -97,7 +97,7 @@
 				<option weight="1" role="+urban">Urban</option>
 			</formation>
 
-			<formation ifIndex="!0" ifUnitType="!Aero|Conventional Fighter">
+			<formation ifIndex="!0" ifUnitType="!AeroSpaceFighter|Conventional Fighter">
 				<option weight="20">Fire</option>
 				<option weight="3">Fire Support</option>
 				<option weight="2">Direct Fire</option>
@@ -211,7 +211,7 @@
 		</subforces>
 	</force>
 	
-	<force eschelon="%POINT%" eschName="Un" ifUnitType="Infantry|ProtoMek|Aero|Conventional Fighter">
+	<force eschelon="%POINT%" eschName="Un" ifUnitType="Infantry|ProtoMek|AeroSpaceFighter|Conventional Fighter">
 		<co>%POINT_CMDR%</co>
 		
 		<weightClass>

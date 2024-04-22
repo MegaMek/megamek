@@ -15,7 +15,9 @@
 package megamek.client.ui.swing;
 
 import megamek.MMConstants;
+import megamek.client.AbstractClient;
 import megamek.client.Client;
+import megamek.client.IClient;
 import megamek.client.TimerSingleton;
 import megamek.client.bot.BotClient;
 import megamek.client.bot.princess.BehaviorSettings;
@@ -32,6 +34,9 @@ import megamek.client.ui.swing.audio.AudioService;
 import megamek.client.ui.swing.audio.SoundManager;
 import megamek.client.ui.swing.audio.SoundType;
 import megamek.client.ui.swing.boardview.BoardView;
+import megamek.client.ui.swing.boardview.KeyBindingsOverlay;
+import megamek.client.ui.swing.boardview.PlanetaryConditionsOverlay;
+import megamek.client.ui.swing.boardview.TurnDetailsOverlay;
 import megamek.client.ui.swing.dialog.AbstractUnitSelectorDialog;
 import megamek.client.ui.swing.dialog.MegaMekUnitSelectorDialog;
 import megamek.client.ui.swing.forceDisplay.ForceDisplayDialog;
@@ -78,7 +83,7 @@ import java.net.URL;
 import java.util.List;
 import java.util.*;
 
-public class ClientGUI extends JPanel implements BoardViewListener,
+public class ClientGUI extends JPanel implements BoardViewListener, IClientGUI,
         ActionListener, ComponentListener, IPreferenceChangeListener {
     // region Variable Declarations
     private static final long serialVersionUID = 3913466735610109147L;
@@ -281,6 +286,9 @@ public class ClientGUI extends JPanel implements BoardViewListener,
     private MiniReportDisplay miniReportDisplay;
     private MiniReportDisplayDialog miniReportDisplayDialog;
 
+    /** Boolean indicating whether client should be disconnected without a pop-up warning **/
+    private boolean disconnectQuietly = false;
+
     /**
      * The <code>JPanel</code> containing the main display area.
      */
@@ -345,10 +353,13 @@ public class ClientGUI extends JPanel implements BoardViewListener,
      * clean up after itself as much as possible, but will not call
      * System.exit().
      */
-    public ClientGUI(Client client, MegaMekController c) {
+    public ClientGUI(IClient client, MegaMekController c) {
         super(new BorderLayout());
         this.addComponentListener(this);
-        this.client = client;
+        if (!(client instanceof Client)) {
+            throw new IllegalArgumentException("TW ClientGUI must use TW Client!");
+        }
+        this.client = (Client) client;
         controller = c;
         panMain.setLayout(cardsMain);
         panSecondary.setLayout(cardsSecondary);
@@ -428,6 +439,10 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         this.playerListDialog = playerListDialog;
     }
 
+    public void setDisconnectQuietly(boolean quietly) {
+        disconnectQuietly = quietly;
+    }
+
     /**
      * Try to load the "bing" sound clip.
      */
@@ -504,23 +519,18 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         frame.validate();
     }
 
-    /**
-     * Have the client register itself as a listener wherever it's needed.
-     * <p>
-     * According to
-     * http://www-106.ibm.com/developerworks/java/library/j-jtp0618.html it is a
-     * major bad no-no to perform these registrations before the constructor
-     * finishes, so this function has to be called after the <code>Client</code>
-     * is created.
-     */
+    @Override
     public void initialize() {
         menuBar = new CommonMenuBar(getClient());
         initializeFrame();
         try {
             client.getGame().addGameListener(gameListener);
-            // Create the board viewer.
+
             bv = new BoardView(client.getGame(), controller, this);
-            bv.setPreferredSize(getSize());
+            bv.addOverlay(new KeyBindingsOverlay(bv));
+            bv.addOverlay(new PlanetaryConditionsOverlay(bv));
+            bv.addOverlay(new TurnDetailsOverlay(bv));
+            bv.getPanel().setPreferredSize(getSize());
             bvc = bv.getComponent();
             bvc.setName(CG_BOARDVIEW);
 
@@ -584,8 +594,8 @@ public class ClientGUI extends JPanel implements BoardViewListener,
             }
         });
         cb2 = new ChatterBox2(this, bv, controller);
-        bv.addDisplayable(cb2);
-        bv.addKeyListener(cb2);
+        bv.addOverlay(cb2);
+        bv.getPanel().addKeyListener(cb2);
         uo = new UnitOverview(this);
         offBoardOverlay = new OffBoardTargetOverlay(this);
 
@@ -593,8 +603,8 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         aw.setLocation(0, 0);
         aw.setSize(300, 300);
 
-        bv.addDisplayable(uo);
-        bv.addDisplayable(offBoardOverlay);
+        bv.addOverlay(uo);
+        bv.addOverlay(offBoardOverlay);
 
         setUnitDisplay(new UnitDisplay(this, controller));
         getUnitDisplay().addMechDisplayListener(bv);
@@ -946,7 +956,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                 break;
             case VIEW_TOGGLE_FIELD_OF_FIRE:
                 GUIP.setShowFieldOfFire(!GUIP.getShowFieldOfFire());
-                bv.repaint();
+                bv.getPanel().repaint();
                 break;
             case VIEW_TOGGLE_SENSOR_RANGE:
                 GUIP.setShowSensorRange(!GUIP.getShowSensorRange());
@@ -964,7 +974,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                     bv.clearFiringSolutionData();
                 } else {
                     if (curPanel instanceof FiringDisplay) {
-                        ((FiringDisplay) curPanel).setFiringSolutions();
+                        ((FiringDisplay) curPanel).setFiringSolutions(((FiringDisplay) curPanel).ce());
                     }
                 }
                 bv.refreshDisplayables();
@@ -1100,15 +1110,13 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         }
     }
 
-    /**
-     * Shuts down threads and sockets
-     */
-    void die() {
+    @Override
+    public void die() {
         // Tell all the displays to remove themselves as listeners.
         boolean reportHandled = false;
         if (bv != null) {
             // cleanup our timers first
-            bv.die();
+            bv.dispose();
         }
 
         for (String s : phaseComponents.keySet()) {
@@ -1289,7 +1297,8 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                 break;
             case EXCHANGE:
                 chatlounge.killPreviewBV();
-                component = new JLabel(Messages.getString("ClientGUI.TransmittingData"));
+                component = new ReceivingGameDataPanel();
+//                component = new JLabel(Messages.getString("ClientGUI.TransmittingData"));
                 UIUtil.scaleComp(component, UIUtil.FONT_SCALE1);
                 main = CG_EXCHANGE;
                 component.setName(main);
@@ -1445,7 +1454,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                 }
                 break;
             default:
-                component = new JLabel(Messages.getString("ClientGUI.waitingOnTheServer"));
+                component = new WaitingForServerPanel();
                 main = CG_DEFAULT;
                 secondary = main;
                 component.setName(main);
@@ -1972,70 +1981,59 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                 dlgLoadList = new JFileChooser(".");
                 dlgLoadList.setLocation(frame.getLocation().x + 150, frame.getLocation().y + 100);
                 dlgLoadList.setDialogTitle(Messages.getString("ClientGUI.openUnitListFileDialog.title"));
-                dlgLoadList.setFileFilter(new FileFilter() {
-                    @Override
-                    public boolean accept(File dir) {
-                        return (dir.getName().endsWith(CG_FILEEXTENTIONMUL) || dir.isDirectory());
-                    }
-
-                    @Override
-                    public String getDescription() {
-                        return "*" + CG_FILEEXTENTIONMUL;
-                    }
-                });
+                dlgLoadList.setFileFilter(new FileNameExtensionFilter("MUL files", "mul", "mmu"));
                 // Default to the player's name.
                 dlgLoadList.setSelectedFile(new File(player.getName() + CG_FILEEXTENTIONMUL));
             }
 
             int returnVal = dlgLoadList.showOpenDialog(frame);
             if ((returnVal != JFileChooser.APPROVE_OPTION) || (dlgLoadList.getSelectedFile() == null)) {
-                // I want a file, y'know!
                 return;
             }
 
             // Did the player select a file?
             File unitFile = dlgLoadList.getSelectedFile();
-            if (unitFile != null) {
-                try {
-                    // Read the units from the file.
-                    final Vector<Entity> loadedUnits = new MULParser(unitFile, getClient().getGame().getOptions())
-                            .getEntities();
 
-                    // in the Lounge, set default deployment to "Before Game Start", round 0
-                    // but in a game in-progress, deploy at the start of next round
-                    final int deployRound = client.getGame().getRoundCount()
-                            + ((client.getGame().getPhase() == GamePhase.LOUNGE) ? 0 : 1);
+            try {
+                // Read the units from the file.
+                final Vector<Entity> loadedUnits = new MULParser(unitFile, getClient().getGame().getOptions())
+                        .getEntities();
 
-                    // Add the units from the file.
-                    for (Entity entity : loadedUnits) {
-                        entity.setOwner(player);
-                        if (reinforce) {
-                            entity.setDeployRound(deployRound);
-                            entity.setGame(client.getGame());
-                            // Set these to true, otherwise units reinforced in
-                            // the movement turn are considered selectable
-                            entity.setDone(true);
-                            entity.setUnloaded(true);
-                            if (entity instanceof IBomber && (client.getGame().getPhase() != GamePhase.LOUNGE)) {
-                                // Only apply bombs when we're going straight into the game; doing this in the lounge
-                                // breaks the bombs completely.
-                                ((IBomber) entity).applyBombs();
-                            }
+                // in the Lounge, set default deployment to "Before Game Start", round 0
+                // but in a game in-progress, deploy at the start of next round
+                final int deployRound = client.getGame().getRoundCount()
+                        + ((client.getGame().getPhase() == GamePhase.LOUNGE) ? 0 : 1);
+
+                // Add the units from the file.
+                for (Entity entity : loadedUnits) {
+                    entity.setOwner(player);
+                    if (reinforce) {
+                        entity.setDeployRound(deployRound);
+                        entity.setGame(client.getGame());
+                        // Set these to true, otherwise units reinforced in
+                        // the movement turn are considered selectable
+                        entity.setDone(true);
+                        entity.setUnloaded(true);
+                        if (entity instanceof IBomber && (client.getGame().getPhase() != GamePhase.LOUNGE)) {
+                            // Only apply bombs when we're going straight into the game; doing this in the lounge
+                            // breaks the bombs completely.
+                            ((IBomber) entity).applyBombs();
                         }
                     }
-
-                    if (!loadedUnits.isEmpty()) {
-                        client.sendAddEntity(loadedUnits);
-                        String msg = client.getLocalPlayer() + " loaded MUL file for player: " + player.getName() + " ["
-                                + loadedUnits.size() + " units]";
-                        client.sendServerChat(Player.PLAYER_NONE, msg);
-                        addedUnits = true;
-                    }
-                } catch (Exception ex) {
-                    LogManager.getLogger().error("", ex);
-                    doAlertDialog(Messages.getString("ClientGUI.errorLoadingFile"), ex.getMessage());
                 }
+
+                if (!loadedUnits.isEmpty()) {
+                    client.sendAddEntity(loadedUnits);
+                    String msg = client.getLocalPlayer() + " loaded MUL file for player: " + player.getName() + " ["
+                            + loadedUnits.size() + " units]";
+                    client.sendServerChat(Player.PLAYER_NONE, msg);
+                    addedUnits = true;
+                }
+            } catch (Exception ex) {
+                LogManager.getLogger().error("", ex);
+                doAlertDialog(Messages.getString("ClientGUI.errorLoadingFile"), ex.getMessage());
             }
+
 
             // If we've added reinforcements, then we need to set the round deployment up
             // again.
@@ -2186,9 +2184,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         }
     }
 
-    /**
-     * @return the frame this client is displayed in
-     */
+    @Override
     public JFrame getFrame() {
         return frame;
     }
@@ -2265,8 +2261,10 @@ public class ClientGUI extends JPanel implements BoardViewListener,
 
         @Override
         public void gamePlayerDisconnected(GamePlayerDisconnectedEvent evt) {
-            doAlertDialog(Messages.getString("ClientGUI.Disconnected.message"),
-                    Messages.getString("ClientGUI.Disconnected.title"), JOptionPane.ERROR_MESSAGE);
+            if(!disconnectQuietly) {
+                doAlertDialog(Messages.getString("ClientGUI.Disconnected.message"),
+                        Messages.getString("ClientGUI.Disconnected.title"), JOptionPane.ERROR_MESSAGE);
+            }
             frame.setVisible(false);
             die();
         }
@@ -2350,9 +2348,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
             bv.clearMovementData();
             bv.clearFieldOfFire();
             bv.clearSensorsRanges();
-            for (Client client2 : getLocalBots().values()) {
-                client2.die();
-            }
+            getLocalBots().values().forEach(AbstractClient::die);
             getLocalBots().clear();
 
             // Make a list of the player's living units.
@@ -2658,8 +2654,8 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         return client;
     }
 
-    public Map<String, Client> getLocalBots() {
-        return client.localBots;
+    public Map<String, AbstractClient> getLocalBots() {
+        return client.getBots();
     }
 
     /**
@@ -2826,7 +2822,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
     }
 
     @Override
-    public void secondLOSHex(BoardViewEvent b, Coords c) {
+    public void secondLOSHex(BoardViewEvent b) {
         // ignored
     }
 
@@ -2840,13 +2836,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         // ignored
     }
 
-    /**
-     * Returns true if a dialog is visible on top of the <code>ClientGUI</code>.
-     * For example, the <code>MegaMekController</code> should ignore hotkeys
-     * if there is a dialog, like the <code>CommonSettingsDialog</code>, open.
-     *
-     * @return
-     */
+    @Override
     public boolean shouldIgnoreHotKeys() {
         return ignoreHotKeys
                 || ((gameOptionsDialog != null) && gameOptionsDialog.isVisible())
@@ -2868,7 +2858,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
 
     @Override
     public void componentResized(ComponentEvent evt) {
-        bv.setPreferredSize(getSize());
+        bv.getPanel().setPreferredSize(getSize());
     }
 
     @Override

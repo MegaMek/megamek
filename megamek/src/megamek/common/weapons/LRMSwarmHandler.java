@@ -54,7 +54,7 @@ public class LRMSwarmHandler extends LRMHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.AttackHandler#handle(int, java.util.Vector)
      */
     @Override
@@ -83,7 +83,7 @@ public class LRMSwarmHandler extends LRMHandler {
         r.indent();
         r.newlines = 0;
         r.subject = subjectId;
-        r.add(wtype.getName());
+        r.add(wtype.getName() + " (" + atype.getShortName() + ")");
         if (entityTarget != null) {
             r.addDesc(entityTarget);
             // record which launcher targeted the target
@@ -192,7 +192,7 @@ public class LRMSwarmHandler extends LRMHandler {
                 && (toHit.getThruBldg() == null)) {
             bldgAbsorbs = bldg.getAbsorbtion(target.getPosition());
         }
-        
+
         // Attacking infantry in buildings from same building
         if (targetInBuilding && (bldg != null)
                 && (toHit.getThruBldg() != null)
@@ -336,7 +336,7 @@ public class LRMSwarmHandler extends LRMHandler {
                     wtype.getInfantryDamageClass(),
                     ((Infantry) target).isMechanized(),
                     toHit.getThruBldg() != null, ae.getId(), calcDmgPerHitReport);
-            
+
             toReturn = applyGlancingBlowModifier(toReturn, true);
             return (int) toReturn;
         }
@@ -345,7 +345,7 @@ public class LRMSwarmHandler extends LRMHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * megamek.common.weapons.WeaponHandler#handleSpecialMiss(megamek.common
      * .Entity, boolean, megamek.common.Building, java.util.Vector)
@@ -418,7 +418,7 @@ public class LRMSwarmHandler extends LRMHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#calcHits(java.util.Vector)
      */
     @Override
@@ -446,8 +446,8 @@ public class LRMSwarmHandler extends LRMHandler {
             }
         }
         nMissilesModifier += amsMod;
-        
-        
+
+
 
         int swarmMissilesLeft = waa.getSwarmMissiles();
         // swarm or swarm-I shots may just hit with the remaining missiles

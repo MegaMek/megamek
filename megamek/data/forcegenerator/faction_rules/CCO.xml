@@ -21,9 +21,9 @@ ranked SL units.-->
 	
 	<toc>
 		<unitType>
-			<option ifDateBetween="3062,">null,Mek,ProtoMek,Tank,VTOL,Infantry,BattleArmor,Aero,Conventional Fighter,Warship,Dropship,Jumpship</option>
-			<option ifDateBetween="2870,3061">null,Mek,Tank,VTOL,Infantry,BattleArmor,Aero,Conventional Fighter,Warship,Dropship,Jumpship</option>
-			<option ifDateBetween=",2869">null,Mek,Tank,VTOL,Infantry,Aero,Conventional Fighter,Warship,Dropship,Jumpship</option>
+			<option ifDateBetween="3062,">null,Mek,ProtoMek,Tank,VTOL,Infantry,BattleArmor,AeroSpaceFighter,Conventional Fighter,Warship,Dropship,Jumpship</option>
+			<option ifDateBetween="2870,3061">null,Mek,Tank,VTOL,Infantry,BattleArmor,AeroSpaceFighter,Conventional Fighter,Warship,Dropship,Jumpship</option>
+			<option ifDateBetween=",2869">null,Mek,Tank,VTOL,Infantry,AeroSpaceFighter,Conventional Fighter,Warship,Dropship,Jumpship</option>
 		</unitType>
 		
 		<eschelon>
@@ -412,27 +412,27 @@ ranked SL units.-->
 			</subforceOption>		
 				
 			<subforceOption ifWeightClass="H|A">
-				<option weightClass="H" unitType="Aero"
+				<option weightClass="H" unitType="AeroSpaceFighter"
 					flags="+testTrinary" weight="3">%TRINARY%</option>
-				<option weightClass="M" unitType="Aero"
+				<option weightClass="M" unitType="AeroSpaceFighter"
 					flags="+testTrinary" weight="2">%TRINARY%</option>
-				<option weightClass="L" unitType="Aero"
+				<option weightClass="L" unitType="AeroSpaceFighter"
 					flags="+testTrinary" weight="1">%TRINARY%</option>
 			</subforceOption>
 			<subforceOption ifWeightClass="M">
-				<option weightClass="H" unitType="Aero"
+				<option weightClass="H" unitType="AeroSpaceFighter"
 					flags="+testTrinary" weight="2">%TRINARY%</option>
-				<option weightClass="M" unitType="Aero"
+				<option weightClass="M" unitType="AeroSpaceFighter"
 					flags="+testTrinary" weight="3">%TRINARY%</option>
-				<option weightClass="L" unitType="Aero"
+				<option weightClass="L" unitType="AeroSpaceFighter"
 					flags="+testTrinary" weight="2">%TRINARY%</option>
 			</subforceOption>
 			<subforceOption ifWeightClass="L">
-				<option weightClass="H" unitType="Aero"
+				<option weightClass="H" unitType="AeroSpaceFighter"
 					flags="+testTrinary" weight="1">%TRINARY%</option>
-				<option weightClass="M" unitType="Aero"
+				<option weightClass="M" unitType="AeroSpaceFighter"
 					flags="+testTrinary" weight="2">%TRINARY%</option>
-				<option weightClass="L" unitType="Aero"
+				<option weightClass="L" unitType="AeroSpaceFighter"
 					flags="+testTrinary" weight="3">%TRINARY%</option>
 			</subforceOption>
 			
@@ -591,29 +591,29 @@ ranked SL units.-->
 			</subforceOption>		
 				
 			<subforceOption ifWeightClass="H|A">
-				<option weightClass="H" unitType="Aero"
+				<option weightClass="H" unitType="AeroSpaceFighter"
 					flags="+testTrinary" weight="3">%TRINARY%</option>
-				<option weightClass="M" unitType="Aero"
+				<option weightClass="M" unitType="AeroSpaceFighter"
 					flags="+testTrinary" weight="2">%TRINARY%</option>
-				<option weightClass="L" unitType="Aero"
+				<option weightClass="L" unitType="AeroSpaceFighter"
 					flags="+testTrinary" weight="1">%TRINARY%</option>
 				<option weight="6" />
 			</subforceOption>
 			<subforceOption ifWeightClass="M">
-				<option weightClass="H" unitType="Aero"
+				<option weightClass="H" unitType="AeroSpaceFighter"
 					flags="+testTrinary" weight="2">%TRINARY%</option>
-				<option weightClass="M" unitType="Aero"
+				<option weightClass="M" unitType="AeroSpaceFighter"
 					flags="+testTrinary" weight="3">%TRINARY%</option>
-				<option weightClass="L" unitType="Aero"
+				<option weightClass="L" unitType="AeroSpaceFighter"
 					flags="+testTrinary" weight="2">%TRINARY%</option>
 				<option weight="7" />
 			</subforceOption>
 			<subforceOption ifWeightClass="L">
-				<option weightClass="H" unitType="Aero"
+				<option weightClass="H" unitType="AeroSpaceFighter"
 					flags="+testTrinary" weight="1">%TRINARY%</option>
-				<option weightClass="M" unitType="Aero"
+				<option weightClass="M" unitType="AeroSpaceFighter"
 					flags="+testTrinary" weight="2">%TRINARY%</option>
-				<option weightClass="L" unitType="Aero"
+				<option weightClass="L" unitType="AeroSpaceFighter"
 					flags="+testTrinary" weight="3">%TRINARY%</option>
 				<option weight="6" />
 			</subforceOption>

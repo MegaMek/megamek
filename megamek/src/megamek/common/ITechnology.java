@@ -14,6 +14,8 @@
 */
 package megamek.common;
 
+import java.util.List;
+
 /**
  * Implemented by any class that is subject to tech advancement (entities, equipment, systems, etc.)
  *
@@ -437,6 +439,17 @@ public interface ITechnology {
             sb.append("-").append(endNonIncl - 1);
         }
         return sb.toString();
+    }
+
+    static int getCodeFromIOAbbr(String abbr) {
+        // Returns the F_* code used at the top of this file,
+        // as they are the indices of the IO Faction Codes
+        return List.of(IO_FACTION_CODES).indexOf(abbr);
+    }
+
+    static int getCodeFromMMAbbr(String abbr) {
+        // These abbreviations may have sub-faction dot codes; strip them.
+        return List.of(MM_FACTION_CODES).indexOf((String) abbr.split("\\.")[0]);
     }
 
     default String getExperimentalRange(boolean clan) {

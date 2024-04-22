@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2021 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2014-2021, 2024 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -22,6 +22,7 @@ import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.EntityWreckHelper;
+import megamek.client.ui.swing.util.StringDrawer;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
@@ -235,8 +236,8 @@ class EntitySprite extends Sprite {
         // and place the label in the direction of the first free hex
         // if none are free, the label will be centered in the current hex
         labelRect = new Rectangle(
-                bv.getFontMetrics(labelFont).stringWidth(getAdjShortName()) + 4,
-                bv.getFontMetrics(labelFont).getAscent() + 2);
+                bv.getPanel().getFontMetrics(labelFont).stringWidth(getAdjShortName()) + 4,
+                bv.getPanel().getFontMetrics(labelFont).getAscent() + 2);
 
         Coords position = entity.getPosition();
         if (bv.game.getEntitiesVector(position.translated("SE"), true).isEmpty()) {
@@ -266,11 +267,11 @@ class EntitySprite extends Sprite {
         int numEntity = bv.game.getEntitiesVector(position, true).size();
 
         if ((indexEntity != -1) && (numEntity <= 4)) {
-            labelRect.y += (bv.getFontMetrics(labelFont).getAscent() + 4) * indexEntity;
+            labelRect.y += (bv.getPanel().getFontMetrics(labelFont).getAscent() + 4) * indexEntity;
         } else if (indexEntity == -1) {
-            labelRect.y += (bv.getFontMetrics(labelFont).getAscent() + 4) * numEntity;
+            labelRect.y += (bv.getPanel().getFontMetrics(labelFont).getAscent() + 4) * numEntity;
         } else {
-            labelRect.y += (bv.getFontMetrics(labelFont).getAscent() + 4);
+            labelRect.y += (bv.getPanel().getFontMetrics(labelFont).getAscent() + 4);
         }
 
         // If the label has changed, force a redraw (necessary
@@ -356,33 +357,27 @@ class EntitySprite extends Sprite {
                     }
 
                 } else {
-                    BoardView.drawCenteredText(g, curStatus.status,
-                            stR.x + stR.height * 0.5f - 0.5f, stR.y + stR.height * 0.5f - 2,
-                            curStatus.color, false);
+                    new StringDrawer(curStatus.status).center().color(curStatus.color)
+                            .at(stR.x + stR.height / 2, stR.y + stR.height / 2).draw(g);
                 }
             }
         }
 
-        // When zoomed far out, status wouldn't be readable, therefore
-        // draw a big "!" (and the label is red)
         if ((bv.scale < 0.55) && criticalStatus) {
+            // When zoomed far out, status wouldn't be readable, therefore draw a big "!" (and the label is red)
             Font bigFont = new Font(MMConstants.FONT_SANS_SERIF, Font.BOLD, (int) (42 * bv.scale));
-            g.setFont(bigFont);
-            Point pos = new Point(bv.hex_size.width / 2, bv.hex_size.height / 2);
-            bv.drawTextShadow(g, "!", pos, bigFont);
-            BoardView.drawCenteredText(g, "!", pos, GUIP.getWarningColor(), false);
-            return;
-        }
-
-        // Critical status text
-        Font boldFont = new Font(MMConstants.FONT_SANS_SERIF, Font.BOLD, (int) (12 * bv.scale));
-        g.setFont(boldFont);
-        int y = (int) (bv.hex_size.height * 0.6);
-        for (Status curStatus: statusStrings) {
-            if (!curStatus.small) { // Critical status
-                bv.drawTextShadow(g, curStatus.status, new Point(bv.hex_size.width / 2, y), boldFont);
-                BoardView.drawCenteredText(g, curStatus.status, bv.hex_size.width / 2, y, curStatus.color, false);
-                y -= 14 * bv.scale;
+            new StringDrawer("!").at(bv.hex_size.width / 2, bv.hex_size.height / 2)
+                    .color(GUIP.getWarningColor()).outline(Color.WHITE, 1).center().font(bigFont).draw(g);
+        } else {
+            // Critical status texts
+            Font boldFont = new Font(MMConstants.FONT_SANS_SERIF, Font.BOLD, (int) (12 * bv.scale));
+            int y = (int) (bv.hex_size.height / 2 + bv.scale * (statusStrings.size() - 1) * 7);
+            for (Status curStatus : statusStrings) {
+                if (!curStatus.small) { // Critical status
+                    new StringDrawer(curStatus.status).at(bv.hex_size.width / 2, y)
+                            .color(curStatus.color).outline(Color.BLACK, 1).center().font(boldFont).draw(g);
+                    y -= (int) (14 * bv.scale);
+                }
             }
         }
     }
@@ -694,10 +689,12 @@ class EntitySprite extends Sprite {
                 if (isSelected) {
                     textColor = GUIP.getUnitSelectedColor();
                 }
-                BoardView.drawCenteredText(graph, getAdjShortName(),
-                        labelRect.x + labelRect.width / 2,
-                        labelRect.y + labelRect.height / 2 - 1, textColor,
-                        (entity.isDone() && !onlyDetectedBySensors()));
+                if (entity.isDone() && !onlyDetectedBySensors()) {
+                    textColor = UIUtil.addAlpha(textColor, 100);
+                }
+                new StringDrawer(getAdjShortName()).center()
+                        .at(labelRect.x + labelRect.width / 2, labelRect.y + labelRect.height / 2)
+                        .color(textColor).draw(graph);
             }
 
             // Past here, everything is drawing status that shouldn't be seen

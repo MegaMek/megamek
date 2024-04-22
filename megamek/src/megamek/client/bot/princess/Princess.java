@@ -43,6 +43,7 @@ import megamek.common.weapons.AmmoWeapon;
 import megamek.common.weapons.StopSwarmAttack;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.text.DecimalFormat;
@@ -77,6 +78,7 @@ public class Princess extends BotClient {
      * Used to allocate damage more intelligently and avoid overkill.
      */
     private final ConcurrentHashMap<Integer, Double> damageMap = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<Integer, Integer> teamTagTargetsMap = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<Map.Entry<Integer, Coords>, List<WeaponMounted>> incomingGuidablesMap = new ConcurrentHashMap<>();
     private final Set<Coords> strategicBuildingTargets = new HashSet<>();
     private boolean fallBack = false;
@@ -372,7 +374,9 @@ public class Princess extends BotClient {
     @Override
     protected void initTargeting() {
         // Reset incoming guided weapon lists for each friendly unit.
+        // Reset planned TAG expected utility map
         incomingGuidablesMap.clear();
+        teamTagTargetsMap.clear();
         getArtilleryTargetingControl().initializeForTargetingPhase();
     }
 
@@ -549,11 +553,19 @@ public class Princess extends BotClient {
 
     @Override
     protected void calculateFiringTurn() {
+        final Entity shooter;
+        final Logger logger = LogManager.getLogger();
         try {
             // get the first entity that can act this turn make sure weapons
             // are loaded
-            final Entity shooter = getEntityToFire(fireControlState);
+            shooter = getEntityToFire(fireControlState);
+        } catch (Exception e) {
+            // If we fail to get the shooter, literally nothing can be done.
+            logger.error(e.getMessage(), e);
+            return;
+        }
 
+        try {
             // Forego firing if
             // a) hidden,
             // b) under "peaceful" forced withdrawal,
@@ -578,13 +590,13 @@ public class Princess extends BotClient {
                         skipFiring = true;
                     }
                 } finally {
-                    LogManager.getLogger().info(msg.toString());
+                    logger.info(msg.toString());
                 }
             }
 
             if (shooter.isHidden()) {
                 skipFiring = true;
-                LogManager.getLogger().info("Hidden unit skips firing.");
+                logger.info("Hidden unit skips firing.");
             }
 
             // calculating a firing plan is somewhat expensive, so
@@ -600,8 +612,11 @@ public class Princess extends BotClient {
                     getFireControl(shooter).loadAmmo(shooter, plan);
                     plan.sortPlan();
 
-                    LogManager.getLogger().info(shooter.getDisplayName() + " - Best Firing Plan: " +
-                            plan.getDebugDescription(LogManager.getLogger().getLevel().isLessSpecificThan(Level.DEBUG)));
+                    // Log info and debug at different levels
+                    logger.info(shooter.getDisplayName() + " - Best Firing Plan: " +
+                            plan.getDebugDescription(false));
+                    logger.debug(shooter.getDisplayName() + " - Detailed Best Firing Plan: " +
+                            plan.getDebugDescription(true));
 
                     // Add expected damage from the chosen FiringPlan to the
                     // damageMap for the target enemy.
@@ -636,7 +651,7 @@ public class Princess extends BotClient {
                     sendAttackData(shooter.getId(), actions);
                     return;
                 } else {
-                    LogManager.getLogger().info("No best firing plan for " + shooter.getDisplayName());
+                    logger.info("No best firing plan for " + shooter.getDisplayName());
                 }
             }
 
@@ -652,7 +667,7 @@ public class Princess extends BotClient {
                         .findFirst()
                         .orElse(null);
                 if (stopSwarmWeapon == null) {
-                    LogManager.getLogger().error("Failed to find a Stop Swarm Weapon while Swarming a unit, which should not be possible.");
+                    logger.error("Failed to find a Stop Swarm Weapon while Swarming a unit, which should not be possible.");
                 } else {
                     miscPlan = new Vector<>();
                     miscPlan.add(new WeaponAttackAction(shooter.getId(), shooter.getSwarmTargetId(),
@@ -688,8 +703,11 @@ public class Princess extends BotClient {
             }
 
             sendAttackData(shooter.getId(), miscPlan);
-        } catch (Exception ignored) {
-
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            // Don't lock up, just skip this entity.
+            Vector<EntityAction> fallback = new Vector<>();
+            sendAttackData(shooter.getId(), fallback);
         }
     }
 
@@ -717,7 +735,7 @@ public class Princess extends BotClient {
     }
 
     private Map<WeaponMounted, Double> calcAmmoConservation(final Entity shooter) {
-        final double aggroFactor = (10 - getBehaviorSettings().getHyperAggressionIndex()) * 2;
+        final double aggroFactor = getBehaviorSettings().getHyperAggressionIndex();
         final StringBuilder msg = new StringBuilder("\nCalculating ammo conservation for ")
                 .append(shooter.getDisplayName());
         msg.append("\nAggression Factor = ").append(aggroFactor);
@@ -758,8 +776,13 @@ public class Princess extends BotClient {
                     ammoCount += ammoCounts.get(ammoType);
                 }
                 msg.append(" has ").append(ammoCount).append(" shots left");
+                // Desired behavior:
+                // At min aggro (0 of 10), require ~50% chance to hit with > 3 shots left
+                // At normal aggro (5 of 10), require at least 10% to-hit chance with > 3 shots left
+                // At max aggro (10 of 10) require just over 0% chance to hit until at 1 round left.
                 final double toHitThreshold =
-                        Math.max(0.0, 1 - (ammoCount / aggroFactor));
+                        Math.max(0.0,
+                                (0.8/((aggroFactor) + 2) + 1.0 / ((ammoCount*ammoCount)+1)));
                 msg.append("; To Hit Threshold = ").append(new DecimalFormat("0.000").format(toHitThreshold));
                 ammoConservation.put(weapon, toHitThreshold);
             }
@@ -1271,6 +1294,9 @@ public class Princess extends BotClient {
             LogManager.getLogger().info("Best Path: " + bestpath.getPath() + "  Rank: " + bestpath.getRank());
 
             return performPathPostProcessing(bestpath);
+        } catch (Exception e) {
+            LogManager.getLogger().error("MP is now null!", e);
+            return null;
         } finally {
             precognition.unPause();
         }
@@ -1662,6 +1688,25 @@ public class Princess extends BotClient {
     }
 
     /**
+     * Reduce utility of TAGging something if we're already trying.  Update the utilty if it's better,
+     * otherwise try to dissuade the next attacker.
+     * @param te
+     * @param damage
+     * @return
+     */
+    public int computeTeamTagUtility(Targetable te, int damage) {
+        int key = te.getId();
+        if (teamTagTargetsMap.containsKey(key)) {
+            if (teamTagTargetsMap.get(key) > damage) {
+                return damage / 4;
+            }
+        } else {
+            teamTagTargetsMap.put(key, damage);
+        }
+        return damage;
+    }
+
+    /**
      * Because Aerospace units can either TAG _or_ attack with their weapons, we want every
      * friendly TAG-equipped Aero (and possibly others) to know about all the possible
      * incoming Homing or IF attacks that could take advantage of their TAGs, for later calculations.
@@ -1691,7 +1736,7 @@ public class Princess extends BotClient {
             ArtilleryAttackAction a = attacks.nextElement();
             if (a.getTurnsTilHit() == 0 && a.getAmmoMunitionType().contains(AmmoType.Munitions.M_HOMING) && (!a.getEntity(game).isEnemyOf(entityToFire))) {
                 // Must be a shot that should land within 8 hexes of the target hex
-                if (a.getCoords().distance(location) <= 8) {
+                if (a.getCoords().distance(location) <= Compute.HOMING_RADIUS) {
                     friendlyGuidedWeapons.add((WeaponMounted) a.getEntity(game).getEquipment(a.getWeaponId()));
                 }
             }
@@ -1832,7 +1877,7 @@ public class Princess extends BotClient {
                              game);
     }
 
-    IHonorUtil getHonorUtil() {
+    public IHonorUtil getHonorUtil() {
         return honorUtil;
     }
 
@@ -1985,10 +2030,10 @@ public class Princess extends BotClient {
      */
     private void turnOnSearchLight(MovePath path, boolean possibleToInflictDamage) {
         Entity pathEntity = path.getEntity();
-        if (possibleToInflictDamage &&
-                pathEntity.hasSearchlight() &&
-                !pathEntity.isUsingSearchlight() &&
-                (path.getGame().getPlanetaryConditions().getLight() >= PlanetaryConditions.L_FULL_MOON)) {
+        if (possibleToInflictDamage
+                && pathEntity.hasSearchlight()
+                && !pathEntity.isUsingSearchlight()
+                && path.getGame().getPlanetaryConditions().getLight().isDuskOrFullMoonOrMoonlessOrPitchBack()) {
             path.addStep(MoveStepType.SEARCHLIGHT);
         }
     }

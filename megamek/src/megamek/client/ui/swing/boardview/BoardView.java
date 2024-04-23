@@ -1740,11 +1740,6 @@ public class BoardView extends AbstractBoardView implements BoardListener, Mouse
         return (BufferedImage) entireBoard;
     }
 
-    @Override
-    public void centerOn(Coords coords) {
-        centerOnHex(coords);
-    }
-
     private void drawHexes(Graphics g, Rectangle view) {
         drawHexes(g, view, false);
     }
@@ -3096,9 +3091,7 @@ public class BoardView extends AbstractBoardView implements BoardListener, Mouse
         }
     }
 
-    /**
-     * Centers the board on hex c. Uses smooth centering if activated in the client settings.
-     */
+    @Override
     public void centerOnHex(@Nullable Coords c) {
         if (c == null) {
             return;
@@ -6083,12 +6076,25 @@ public class BoardView extends AbstractBoardView implements BoardListener, Mouse
         return boardPanel;
     }
 
-    Dimension getBoardSize() {
+    @Override
+    public Dimension getBoardSize() {
         return boardSize;
     }
 
-    Set<Integer> getAnimatedImages() {
+    @Override
+    public Set<Integer> getAnimatedImages() {
         return animatedImages;
+    }
+
+    @Override
+    public int getScrollableUnitIncrement(Rectangle arg0, int arg1, int arg2) {
+        return (int) (scale / 2.0) * ((arg1 == SwingConstants.VERTICAL) ? HEX_H : HEX_W);
+    }
+
+    @Override
+    public int getScrollableBlockIncrement(Rectangle arg0, int arg1, int arg2) {
+        Dimension size = scrollpane.getViewport().getSize();
+        return (arg1 == SwingConstants.VERTICAL) ? size.height : size.width;
     }
 
     @Override

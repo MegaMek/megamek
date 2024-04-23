@@ -28,7 +28,7 @@ import java.awt.image.ImageObserver;
  */
 public class BoardViewPanel extends JPanel implements Scrollable {
 
-    private final BoardView boardView;
+    private final IBoardView boardView;
     private Dimension preferredSize = new Dimension(0, 0);
 
     public BoardViewPanel(BoardView boardView) {
@@ -74,7 +74,7 @@ public class BoardViewPanel extends JPanel implements Scrollable {
 
     @Override
     public int getScrollableBlockIncrement(Rectangle arg0, int arg1, int arg2) {
-        return 500;
+        return boardView.getScrollableBlockIncrement(arg0, arg1, arg2);
     }
 
     @Override
@@ -89,9 +89,6 @@ public class BoardViewPanel extends JPanel implements Scrollable {
 
     @Override
     public int getScrollableUnitIncrement(Rectangle arg0, int arg1, int arg2) {
-        if (arg1 == SwingConstants.VERTICAL) {
-            return (int) ((boardView.scale * BoardView.HEX_H) / 2.0);
-        }
-        return (int) ((boardView.scale * BoardView.HEX_W) / 2.0);
+        return boardView.getScrollableUnitIncrement(arg0, arg1, arg2);
     }
 }

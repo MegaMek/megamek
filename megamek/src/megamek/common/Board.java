@@ -1,16 +1,22 @@
 /*
- * MegaMek - Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
- * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
+ * MegaMek - Copyright (Cc) 2000-2004 Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
+ * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
 package megamek.common;
 
@@ -74,34 +80,6 @@ public class Board implements Serializable {
     private int mapType = T_GROUND;
 
     private Hex[] data;
-
-    /**
-     * The path to the file to load as background image for this board. To avoid
-     * the Server sending a serialized image, the image isn't loaded until
-     * requested.
-     */
-    private List<String> backgroundPaths = new ArrayList<>();
-
-    /**
-     * Keeps track of how many boards were combined to create this board. These
-     * are necessary to properly index into the background image, and only need
-     * to be set if backgroundPaths are present.
-     */
-    private int numBoardsWidth, numBoardsHeight;
-
-    /**
-     * Keeps track of the size of the boards used to create this board. These
-     * are necessary to properly index into the background image, and only need
-     * to be set if backgroundPaths are present.
-     */
-    private int subBoardWidth, subBoardHeight;
-
-    /**
-     * Flags that determine if the background image should be flipped. These are
-     * necessary to properly index into the background image, and only need to
-     * be set if backgroundPaths are present.
-     */
-    private List<Boolean> flipBGHoriz = new ArrayList<>(), flipBGVert = new ArrayList<>();
 
     /**
      * Building data structures.
@@ -1004,15 +982,6 @@ public class Board implements Serializable {
                     // The coordinates in the .board file are ignored!
                     nd[index] = new Hex(elevation, args[2], args[3], new Coords(index % nw, index / nw));
                     index++;
-                } else if ((st.ttype == StreamTokenizer.TT_WORD) && st.sval.equalsIgnoreCase("background")) {
-                    st.nextToken();
-                    File bgFile = new MegaMekFile(Configuration.boardBackgroundsDir(),
-                            st.sval).getFile();
-                    if (bgFile.exists()) {
-                        backgroundPaths.add(bgFile.getPath());
-                    } else {
-                        LogManager.getLogger().error("Board specified background image, but path couldn't be found! Path: " + bgFile.getPath());
-                    }
                 } else if ((st.ttype == StreamTokenizer.TT_WORD) && st.sval.equalsIgnoreCase("description")) {
                     st.nextToken();
                     if (st.ttype == '"') {
@@ -1562,13 +1531,6 @@ public class Board implements Serializable {
         }
     }
 
-    protected Vector<BoardListener> getListeners() {
-        if (boardListeners == null) {
-            boardListeners = new Vector<>();
-        }
-        return boardListeners;
-    }
-
     /**
      * @return an <code>Hashtable</code> of <code>InfernoTrackers</code> on the board.
      */
@@ -1724,90 +1686,6 @@ public class Board implements Serializable {
     }
 
     /**
-     * @return the list of background images associated with this board. If created from a single
-     * board file, then the list should only have one element. Multiple elements exist when the
-     * board is created by combining multiple board files.
-     */
-    public List<String> getBackgroundPaths() {
-        return backgroundPaths;
-    }
-
-    /**
-     * @return the first element of the background path list, or null if it is empty.
-     */
-    public @Nullable String getBackgroundPath() {
-        return getBackgroundPaths().isEmpty() ? null : backgroundPaths.get(0);
-    }
-
-    /**
-     * @return the number of boards in width that were used to create this board. Only used when
-     * background paths are set.
-     */
-    public int getNumBoardsWidth() {
-        return numBoardsWidth;
-    }
-
-    /**
-     * @return the number of boards in height that were used to create this board. Only used when
-     * background paths are set.
-     */
-    public int getNumBoardsHeight() {
-        return numBoardsHeight;
-    }
-
-    /**
-     * Flag that determines if the board background image should be flipped horizontally. Only used
-     * when background paths are set.
-     */
-    public List<Boolean> getFlipBGHoriz() {
-        return flipBGHoriz;
-    }
-
-
-    /**
-     * Flag that determines if the board background image should be flipped vertically. Only used
-     * when background paths are set.
-     */
-    public List<Boolean> getFlipBGVert() {
-        return flipBGVert;
-    }
-
-    public int getSubBoardWidth() {
-        return subBoardWidth;
-    }
-
-    public int getSubBoardHeight() {
-        return subBoardHeight;
-    }
-
-    public void setSubBoardWidth(int width) {
-        subBoardWidth = width;
-    }
-
-    public void setSubBoardHeight(int height) {
-        subBoardHeight = height;
-    }
-
-    public void setNumBoardsWidth(int width) {
-        numBoardsWidth = width;
-    }
-
-    public void setNumBoardsHeight(int height) {
-        numBoardsHeight = height;
-    }
-
-    public void addBackgroundPath(String path, boolean flipVert, boolean flipHorz) {
-        backgroundPaths.add(path);
-
-        flipBGVert.add(flipVert);
-        flipBGHoriz.add(flipHorz);
-    }
-
-    public boolean hasBoardBackground() {
-        return (backgroundPaths != null) && !backgroundPaths.isEmpty();
-    }
-
-    /**
      * Gets the description of the map.
      * @return The description of the map, if one exists, otherwise null.
      */
@@ -1830,16 +1708,6 @@ public class Board implements Serializable {
      */
     public Map<Coords, Collection<String>> getAnnotations() {
         return Collections.unmodifiableMap(annotations);
-    }
-
-    /**
-     * Gets the annotations associated with a hex.
-     * @param x The X-Coordinate of the hex.
-     * @param y The Y-Coordinate of the hex.
-     * @return A collection of annotations for the hex.
-     */
-    public Collection<String> getAnnotations(int x, int y) {
-        return getAnnotations(new Coords(x, y));
     }
 
     /**

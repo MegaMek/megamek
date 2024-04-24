@@ -4,6 +4,7 @@ import megamek.client.Client;
 import megamek.client.ui.swing.ClientGUI;
 import megamek.common.*;
 import megamek.common.containers.MunitionTree;
+import megamek.client.generator.ReconfigurationParameters;
 import megamek.common.options.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -462,5 +463,19 @@ class TeamLoadoutGeneratorTest {
         mwc.increaseMunitions(tsmOnly);
         assertEquals(15.0, mwc.getSrmWeights().get("Anti-TSM"));
         assertEquals("Anti-TSM=15.0", mwc.getTopN(1).get("SRM").get(0));
+    }
+
+    @Test
+    void testNukeToggleDecreasesNukeWeightToZero() {
+        ReconfigurationParameters rp = new ReconfigurationParameters();
+        rp.nukesBannedForMe = true;
+        MunitionWeightCollection mwc = new MunitionWeightCollection();
+        TeamLoadoutGenerator tlg = new TeamLoadoutGenerator(cg);
+
+        // Have the Munition Tree generator use our pre-made mwc so we can get see its changes
+        MunitionTree mt = tlg.generateMunitionTree(rp, team, "", mwc);
+
+        assertEquals(0.0, mwc.getArtyWeights().get("Davy Crockett-M"));
+        assertEquals(0.0, mwc.getArtyWeights().get("AlamoMissile"));
     }
 }

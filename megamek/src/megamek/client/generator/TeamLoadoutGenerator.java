@@ -41,8 +41,6 @@ public class TeamLoadoutGenerator {
     public static final ArrayList<String> HIGH_POWER_MUNITIONS = new ArrayList<>(List.of(
             "Tandem-Charge", "Fuel-Air", "HE", "Dead-Fire", "Davy Crockett-M",
             "ASMissile Ammo", "FABombLarge Ammo", "FABombSmall Ammo", "AlamoMissile Ammo"
-
-
     ));
 
     public static final ArrayList<String> ANTI_INF_MUNITIONS = new ArrayList<>(List.of(
@@ -384,6 +382,12 @@ public class TeamLoadoutGenerator {
         return false;
     }
 
+    public static MunitionTree generateMunitionTree(ReconfigurationParameters rp, Team t, String defaultSettingsFile) {
+        // Based on various requirements from rp, set weights for some ammo types over others
+        MunitionWeightCollection mwc = new MunitionWeightCollection();
+        return generateMunitionTree(rp, t, defaultSettingsFile, mwc);
+    }
+
     /**
      * Generate the list of desired ammo load-outs for this team.
      * TODO: implement generateDetailedMunitionTree with more complex breakdowns per unit type
@@ -393,13 +397,10 @@ public class TeamLoadoutGenerator {
      * @param defaultSettingsFile
      * @return generated MunitionTree with imperatives for each weapon type
      */
-    public static MunitionTree generateMunitionTree(ReconfigurationParameters rp, Team t, String defaultSettingsFile) {
+    public static MunitionTree generateMunitionTree(ReconfigurationParameters rp, Team t, String defaultSettingsFile, MunitionWeightCollection mwc) {
 
         MunitionTree mt = (defaultSettingsFile == null | defaultSettingsFile.isBlank()) ?
                 new MunitionTree() : new MunitionTree(defaultSettingsFile);
-
-        // Based on various requirements from rp, set weights for some ammo types over others
-        MunitionWeightCollection mwc = new MunitionWeightCollection();
 
         // Modify weights for parameters
         if (rp.darkEnvironment) {

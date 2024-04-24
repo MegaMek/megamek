@@ -14,14 +14,16 @@
  */
 package megamek.client.ui.swing.skinEditor;
 
-import megamek.MMConstants;
 import megamek.client.ui.Messages;
+import megamek.client.ui.swing.CommonSettingsDialog;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.client.ui.swing.widget.SkinSpecification.UIComponents;
 import megamek.client.ui.swing.widget.SkinXMLHandler;
 import megamek.common.Configuration;
+import megamek.common.preference.PreferenceManager;
 
+import java.util.List;
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -30,7 +32,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
+import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * Panel with elements for viewing and adjusting different SkinSpecification instances.
@@ -202,12 +206,18 @@ public class SkinSpecEditor extends JPanel implements ListSelectionListener, Act
         removeListeners();
         
         currSkinCombo.removeAllItems();
-        String[] xmlFiles = Configuration.skinsDir().list((directory, fileName) -> fileName.endsWith(".xml"));
-        for (String file : xmlFiles) {
-            if (SkinXMLHandler.validSkinSpecFile(Configuration.skinsDir() + "/" + file)) {
-                currSkinCombo.addItem(file);
-            }
+        List<String> xmlFiles = new ArrayList<>(CommonSettingsDialog.filteredFiles(Configuration.skinsDir(), ".xml"));
+
+        String userDirName = PreferenceManager.getClientPreferences().getUserDir();
+        File userDir = new File(userDirName);
+        if (!userDirName.isBlank() && userDir.isDirectory()) {
+            xmlFiles.addAll(CommonSettingsDialog.filteredFilesWithSubDirs(userDir, ".xml"));
         }
+
+        xmlFiles.removeIf(file -> !SkinXMLHandler.validSkinSpecFile(file));
+        Collections.sort(xmlFiles);
+        var model = new DefaultComboBoxModel<>(xmlFiles.toArray(new String[0]));
+        currSkinCombo.setModel(model);
 
         addListeners();
 

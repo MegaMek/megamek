@@ -326,9 +326,6 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         frame.pack();
         // center window in screen
         frame.setLocationRelativeTo(null);
-
-        // Until the skinning GUI is functional again:
-        skinEditB.setEnabled(false);
     }
 
     /**

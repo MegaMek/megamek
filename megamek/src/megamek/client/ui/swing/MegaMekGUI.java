@@ -881,23 +881,23 @@ public class MegaMekGUI implements IPreferenceChangeListener {
     }
 
     /**
-     * Connect to a game and then launch the chat lounge.
+     * Connect to an existing game
      */
     void connect() {
-        ConnectDialog cd = new ConnectDialog(frame);
+        var cd = new ConnectDialog(frame);
         cd.setVisible(true);
-
-        if (!cd.dataValidation("MegaMek.ConnectDialog.title")) {
-            return;
+        if (cd.isConfirmed() && cd.dataValidation("MegaMek.ConnectDialog.title")) {
+            startClient(cd.getPlayerName(), cd.getServerAddress(), cd.getPort());
         }
-
-        startClient(cd.getPlayerName(), cd.getServerAddress(), cd.getPort());
     }
 
+    /**
+     * Connect to a game as Princess
+     */
     void connectBot() {
         var cd = new ConnectDialog(frame);
         cd.setVisible(true);
-        if (!cd.dataValidation("MegaMek.ConnectDialog.title")) {
+        if (!cd.isConfirmed() || !cd.dataValidation("MegaMek.ConnectDialog.title")) {
             return;
         }
 

@@ -195,7 +195,7 @@ public class Precognition implements Runnable {
                     receiveTurns(c);
                     break;
                 case SENDING_BOARD:
-                    receiveBoard(c);
+                    getGame().receiveBoards((Map<Integer, Board>) c.getObject(0));
                     break;
                 case SENDING_ENTITIES:
                     receiveEntities(c);
@@ -774,21 +774,20 @@ public class Precognition implements Runnable {
     @SuppressWarnings("unchecked")
     private void receiveAttack(Packet c) {
         List<EntityAction> vector = (List<EntityAction>) c.getObject(0);
-        int charge = c.getIntValue(1);
+        boolean isCharge = c.getBooleanValue(1);
         boolean addAction = true;
         for (EntityAction ea : vector) {
             int entityId = ea.getEntityId();
-            if ((ea instanceof TorsoTwistAction) && getGame().hasEntity(entityId)) {
+            if ((ea instanceof TorsoTwistAction) && game.hasEntity(entityId)) {
                 TorsoTwistAction tta = (TorsoTwistAction) ea;
-                Entity entity = getGame().getEntity(entityId);
+                Entity entity = game.getEntity(entityId);
                 entity.setSecondaryFacing(tta.getFacing());
-            } else if ((ea instanceof FlipArmsAction)
-                    && getGame().hasEntity(entityId)) {
+            } else if ((ea instanceof FlipArmsAction) && game.hasEntity(entityId)) {
                 FlipArmsAction faa = (FlipArmsAction) ea;
-                Entity entity = getGame().getEntity(entityId);
+                Entity entity = game.getEntity(entityId);
                 entity.setArmsFlipped(faa.getIsFlipped());
-            } else if ((ea instanceof DodgeAction) && getGame().hasEntity(entityId)) {
-                Entity entity = getGame().getEntity(entityId);
+            } else if ((ea instanceof DodgeAction) && game.hasEntity(entityId)) {
+                Entity entity = game.getEntity(entityId);
                 entity.dodging = true;
                 addAction = false;
             } else if (ea instanceof AttackAction) {
@@ -802,10 +801,10 @@ public class Precognition implements Runnable {
 
             if (addAction) {
                 // track in the appropriate list
-                if (charge == 0) {
-                    getGame().addAction(ea);
-                } else if ((charge == 1) && (ea instanceof AttackAction)) {
-                    getGame().addCharge((AttackAction) ea);
+                if (!isCharge) {
+                    game.addAction(ea);
+                } else {
+                    game.addCharge((AttackAction) ea);
                 }
             }
         }

@@ -18,9 +18,27 @@
  */
 package megamek.client;
 
-import megamek.common.IGame;
+import megamek.MMConstants;
+import megamek.client.bot.princess.BehaviorSettings;
+import megamek.client.bot.princess.Princess;
+import megamek.common.*;
+import megamek.common.actions.ArtilleryAttackAction;
+import megamek.common.actions.WeaponAttackAction;
+import megamek.common.enums.GamePhase;
+import megamek.common.event.*;
+import megamek.common.net.enums.PacketCommand;
 import megamek.common.net.packets.Packet;
+import megamek.common.options.GameOptions;
+import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.common.strategicBattleSystems.SBFGame;
+import megamek.server.SmokeCloud;
+import org.apache.logging.log4j.LogManager;
+
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
+import java.util.*;
 
 /**
  * This is the game client for Strategic BattleForce games, as one would think.

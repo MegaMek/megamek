@@ -26,6 +26,7 @@ import java.util.List;
  * for Total Warfare scale, but allows expansion to BattleFore or Alpha Strike.
  */
 public interface IGameManager {
+
     /**
      * @return The current {@link IGame game} instance.
      */
@@ -51,9 +52,14 @@ public interface IGameManager {
     void disconnect(Player player);
 
     /**
+     * Sends a player all information they need to update their Client game state to the GameManager's game state.
+     * This should always include units, forces, map info, active attacks, round reports, among others.
+     * This is triggered when a player first connects to the server. When the game is past the lobby phase,
+     * this also triggers generating and sending a current player turn or advancing the phase if there are
+     * no remaining turns; in other words, this sets the game in motion when the first player connects. A
+     * game starts past the lobby phase when it is loaded from a save.
+     *
      * @param connId The id of the player to update
-     * Sends a player the info they need to look at the current phase. This is
-     * triggered when a player first connects to the server.
      */
     void sendCurrentInfo(int connId);
 
@@ -63,6 +69,13 @@ public interface IGameManager {
 
     void removeAllEntitiesOwnedBy(Player player);
 
+    /**
+     * Handles all incoming packets. When overriding this, super() should normally be called to have the
+     * base implementation of AbstractGameManager handle packets.
+     *
+     * @param connId The connection ID = player ID the packet came from
+     * @param packet The packet to process
+     */
     void handlePacket(int connId, Packet packet);
 
     void handleCfrPacket(Server.ReceivedPacket rp);
@@ -81,4 +94,5 @@ public interface IGameManager {
      * losses over the course of the game can be calculated.
      */
     void calculatePlayerInitialCounts();
+
 }

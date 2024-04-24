@@ -350,7 +350,6 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         }
         SkinEditorMainGUI skinEditor = new SkinEditorMainGUI();
         skinEditor.initialize();
-        skinEditor.switchPanel(GamePhase.MOVEMENT);
         launch(skinEditor.getFrame());
     }
 

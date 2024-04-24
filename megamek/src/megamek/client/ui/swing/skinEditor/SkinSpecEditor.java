@@ -35,7 +35,6 @@ import java.awt.event.MouseMotionListener;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.logging.XMLFormatter;
 
 /**
  * Panel with elements for viewing and adjusting different SkinSpecification instances.

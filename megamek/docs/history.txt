@@ -1,14 +1,17 @@
 MEGAMEK VERSION HISTORY:
 ----------------
 0.49.20-SNAPSHOT
-+ PR #5281, #5327, #5308, #5336, #5318, #5383, #5369: Code internals: preparatory work for supporting game types such as SBF, code cleanup for string drawing, superclass change for BoardView, 
++ PR #5281, #5327, #5308, #5336, #5318, #5383, #5369, #5384: Code internals: preparatory work for supporting game types such as SBF, code cleanup for string drawing, superclass change for BoardView, 
      Keydispatcher aka MegaMekController simplification, moving BoardView shadowmap creation to its own class, BoardView subclassing, DialogOptionsListener update
 + PR #5295: MM now supports the light conditions "glare" and "solar flare" (TO:AR)
 + PR #5301: Aerospace units now show a much improved flight path indicator when planning their movement
 + PR #5321: The font used to write round reports can now be set in the client settings
 + Fix #5333: The standard G/P values of 4/5 may now be changed in the unit selector to see different BV/PV values; this functionality must be activated in the client settings
 + PR #5319: Add Symbol Font Google "Material Symbols"
-+ PR #5386: Icons
++ PR #5386, #5389, #5390: Some Unit icon corrections
++ PR #5380: Further code internals: Update mechset (icon image link) reading and icon tests
++ PR #5388: The Skin Editor has been given a rework and is now functional again
++ PR #5387: Prevent errors when ESCaping out of the main menu's Connect... and Connect as Bot dialogs
 
  
 0.49.19 (2024-04-19 2030 UTC)

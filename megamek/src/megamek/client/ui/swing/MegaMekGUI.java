@@ -54,7 +54,7 @@ import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.scenario.Scenario;
 import megamek.common.scenario.ScenarioLoader;
-import megamek.common.strategicBattleSystems.SBFGameManager;
+import megamek.server.SBFGameManager;
 import megamek.common.util.EmailService;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
@@ -350,7 +350,6 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         }
         SkinEditorMainGUI skinEditor = new SkinEditorMainGUI();
         skinEditor.initialize();
-        skinEditor.switchPanel(GamePhase.MOVEMENT);
         launch(skinEditor.getFrame());
     }
 
@@ -882,23 +881,23 @@ public class MegaMekGUI implements IPreferenceChangeListener {
     }
 
     /**
-     * Connect to a game and then launch the chat lounge.
+     * Connect to an existing game
      */
     void connect() {
-        ConnectDialog cd = new ConnectDialog(frame);
+        var cd = new ConnectDialog(frame);
         cd.setVisible(true);
-
-        if (!cd.dataValidation("MegaMek.ConnectDialog.title")) {
-            return;
+        if (cd.isConfirmed() && cd.dataValidation("MegaMek.ConnectDialog.title")) {
+            startClient(cd.getPlayerName(), cd.getServerAddress(), cd.getPort());
         }
-
-        startClient(cd.getPlayerName(), cd.getServerAddress(), cd.getPort());
     }
 
+    /**
+     * Connect to a game as Princess
+     */
     void connectBot() {
         var cd = new ConnectDialog(frame);
         cd.setVisible(true);
-        if (!cd.dataValidation("MegaMek.ConnectDialog.title")) {
+        if (!cd.isConfirmed() || !cd.dataValidation("MegaMek.ConnectDialog.title")) {
             return;
         }
 

@@ -20,7 +20,6 @@ import megamek.MMConstants;
 import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.bot.princess.Princess;
 import megamek.client.commands.*;
-import megamek.client.generator.RandomUnitGenerator;
 import megamek.client.generator.skillGenerators.AbstractSkillGenerator;
 import megamek.client.generator.skillGenerators.ModifiedTotalWarfareSkillGenerator;
 import megamek.client.ui.IClientCommandHandler;
@@ -190,52 +189,17 @@ public class Client extends AbstractClient implements IClientCommandHandler {
      * Changes the game phase, and the displays that go along with it.
      */
     public void changePhase(GamePhase phase) {
-        game.setPhase(phase);
-        // Handle phase-specific items.
+        super.changePhase(phase);
         switch (phase) {
-            case STARTING_SCENARIO:
-            case EXCHANGE:
-                sendDone(true);
-                break;
             case DEPLOYMENT:
-                // free some memory that's only needed in lounge
-                MechFileParser.dispose();
-                // We must do this last, as the name and unit generators can create
-                // a new instance if they are running
-                MechSummaryCache.dispose();
-                memDump("entering deployment phase");
-                break;
             case TARGETING:
-                memDump("entering targeting phase");
-                break;
             case MOVEMENT:
-                memDump("entering movement phase");
-                break;
             case PREMOVEMENT:
-                memDump("entering premovement phase");
-                break;
             case OFFBOARD:
-                memDump("entering offboard phase");
-                break;
             case PREFIRING:
-                memDump("entering prefiring phase");
-                break;
             case FIRING:
-                memDump("entering firing phase");
-                break;
             case PHYSICAL:
-                memDump("entering physical phase");
-                break;
-            case LOUNGE:
-                MechSummaryCache.getInstance().addListener(RandomUnitGenerator::getInstance);
-                if (MechSummaryCache.getInstance().isInitialized()) {
-                    RandomUnitGenerator.getInstance();
-                }
-                synchronized (unitNameTracker) {
-                    unitNameTracker.clear(); // reset this
-                }
-                break;
-            default:
+                memDump("entering phase " + phase);
                 break;
         }
     }
@@ -699,7 +663,7 @@ public class Client extends AbstractClient implements IClientCommandHandler {
     @SuppressWarnings("unchecked")
     protected void receiveAttack(Packet c) {
         List<EntityAction> vector = (List<EntityAction>) c.getObject(0);
-        int charge = c.getIntValue(1);
+        boolean isCharge = c.getBooleanValue(1);
         boolean addAction = true;
         for (EntityAction ea : vector) {
             int entityId = ea.getEntityId();
@@ -726,9 +690,9 @@ public class Client extends AbstractClient implements IClientCommandHandler {
 
             if (addAction) {
                 // track in the appropriate list
-                if (charge == 0) {
+                if (!isCharge) {
                     game.addAction(ea);
-                } else if (charge == 1) {
+                } else {
                     game.addCharge((AttackAction) ea);
                 }
             }
@@ -910,21 +874,11 @@ public class Client extends AbstractClient implements IClientCommandHandler {
     @SuppressWarnings("unchecked")
     @Override
     protected boolean handleGameSpecificPacket(Packet packet) throws Exception {
-        if (packet == null) {
-            LogManager.getLogger().error("Client: got null packet");
-            return false;
-        }
-
         switch (packet.getCommand()) {
             case SERVER_GREETING:
-                connected = true;
-                send(new Packet(PacketCommand.CLIENT_NAME, name, isBot()));
                 if (this instanceof Princess) {
                     ((Princess) this).sendPrincessSettings();
                 }
-                break;
-            case SERVER_CORRECT_NAME:
-                correctName(packet);
                 break;
             case PRINCESS_SETTINGS:
                 game.setBotSettings((Map<String, BehaviorSettings>) packet.getObject(0));
@@ -986,17 +940,8 @@ public class Client extends AbstractClient implements IClientCommandHandler {
             case BLDG_COLLAPSE:
                 receiveBuildingCollapse(packet);
                 break;
-            case PHASE_CHANGE:
-                changePhase((GamePhase) packet.getObject(0));
-                break;
-            case ROUND_UPDATE:
-                game.setRoundCount(packet.getIntValue(0));
-                break;
             case SENDING_TURNS:
                 receiveTurns(packet);
-                break;
-            case SENDING_BOARD:
-                receiveBoard(packet);
                 break;
             case SENDING_ENTITIES:
                 receiveEntities(packet);

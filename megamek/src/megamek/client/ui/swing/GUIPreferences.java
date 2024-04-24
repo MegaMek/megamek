@@ -550,6 +550,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(FORCE_DISPLAY_AUTO_DISPLAY_REPORT_PHASE, 2);
         store.setDefault(FORCE_DISPLAY_AUTO_DISPLAY_NONREPORT_PHASE, 2);
         store.setDefault(FORCE_DISPLAY_ENABLED, false);
+        store.setDefault(FORCE_DISPLAY_SIZE_HEIGHT, 500);
+        store.setDefault(FORCE_DISPLAY_SIZE_WIDTH, 300);
 
         store.setDefault(UNIT_DISPLAY_SIZE_HEIGHT, 500);
         store.setDefault(UNIT_DISPLAY_SIZE_WIDTH, 300);

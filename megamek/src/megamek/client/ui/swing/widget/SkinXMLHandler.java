@@ -70,7 +70,7 @@ public class SkinXMLHandler {
     /**
      * The file name for the default Skin XML file, found in the config dir.
      */
-    public static String defaultSkinXML = "defaultSkin.xml";
+    public static String defaultSkinXML = "mmconf\\skins/defaultSkin.xml";
 
     // General XML Tags
     public static String UI_ELEMENT = "UI_Element";

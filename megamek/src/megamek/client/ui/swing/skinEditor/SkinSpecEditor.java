@@ -35,6 +35,7 @@ import java.awt.event.MouseMotionListener;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.logging.XMLFormatter;
 
 /**
  * Panel with elements for viewing and adjusting different SkinSpecification instances.
@@ -305,19 +306,17 @@ public class SkinSpecEditor extends JPanel implements ListSelectionListener, Act
     public void actionPerformed(ActionEvent e) {
         if (e.getSource().equals(currSkinCombo)) {
             String newSkinFile = (String) currSkinCombo.getSelectedItem();
-            String oldSkinFile = GUIP.getSkinFile();
-            if (!oldSkinFile.equals(newSkinFile)) {
-                boolean success = SkinXMLHandler.initSkinXMLHandler(newSkinFile);
-                if (!success) {
-                    SkinXMLHandler.initSkinXMLHandler(oldSkinFile);
-                    String title = Messages.getString("CommonSettingsDialog.skinFileFail.title");
-                    String msg = Messages.getString("CommonSettingsDialog.skinFileFail.msg");
-                    JOptionPane.showMessageDialog(this, msg, title, JOptionPane.ERROR_MESSAGE);
-                }
-                mainGUI.updateBorder();
-                populateSkinSpecComponents();
-                setupEditPanel();
+
+            boolean success = SkinXMLHandler.initSkinXMLHandler(newSkinFile);
+            if (!success) {
+                SkinXMLHandler.initSkinXMLHandler(SkinXMLHandler.defaultSkinXML);
+                String title = Messages.getString("CommonSettingsDialog.skinFileFail.title");
+                String msg = Messages.getString("CommonSettingsDialog.skinFileFail.msg");
+                JOptionPane.showMessageDialog(this, msg, title, JOptionPane.ERROR_MESSAGE);
             }
+            mainGUI.updateBorder();
+            populateSkinSpecComponents();
+            setupEditPanel();
         } else if (e.getSource().equals(enablePlain)) {
             notifySkinChanges(false);
         } else if (e.getSource().equals(enableBorders)) {
@@ -372,7 +371,14 @@ public class SkinSpecEditor extends JPanel implements ListSelectionListener, Act
     }
 
     private String saveDialog() {
-        JFileChooser fc = new JFileChooser(Configuration.skinsDir());
+        String userDirName = PreferenceManager.getClientPreferences().getUserDir();
+        File userDir = new File(userDirName);
+        JFileChooser fc;
+        if (!userDirName.isBlank() && userDir.isDirectory()) {
+            fc = new JFileChooser(userDir);
+        } else {
+            fc = new JFileChooser(Configuration.skinsDir());
+        }
         fc.setDialogTitle(Messages.getString("ClientGUI.FileSaveDialog.title"));
         String file = "";
 

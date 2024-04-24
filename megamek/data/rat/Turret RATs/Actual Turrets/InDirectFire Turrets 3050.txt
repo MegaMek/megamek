@@ -1,4 +1,4 @@
-InDirectFire Turrets 3039
+InDirectFire Turrets 3050
 
 #Missile Turrets
 Light Missile Turret (3039), 50
@@ -7,7 +7,7 @@ Heavy Missile Turret (3039), 15
 Assault Missile Turret (3039), 5
 
 #Bombard Turrets
-Light Bombard Turrets (3050), 50
+Light Bombard Turret (3050), 50
 Medium Bombard Turret (3050), 25
-Heavy Bombard Turret (3039), 15
+Heavy Bombard Turret (3050), 15
 Assault Bombard Turret (3050), 5

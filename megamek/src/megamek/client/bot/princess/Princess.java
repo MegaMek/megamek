@@ -734,7 +734,7 @@ public class Princess extends BotClient {
         sendDone(true);
     }
 
-    private Map<WeaponMounted, Double> calcAmmoConservation(final Entity shooter) {
+    protected Map<WeaponMounted, Double> calcAmmoConservation(final Entity shooter) {
         final double aggroFactor = getBehaviorSettings().getHyperAggressionIndex();
         final StringBuilder msg = new StringBuilder("\nCalculating ammo conservation for ")
                 .append(shooter.getDisplayName());
@@ -763,8 +763,14 @@ public class Princess extends BotClient {
                 final WeaponType weaponType = weapon.getType();
                 msg.append("\n\t").append(weapon);
                 if (!(weaponType instanceof AmmoWeapon)) {
-                    ammoConservation.put(weapon, 0.0);
+                    // Just require a 12 or lower TN
+                    ammoConservation.put(weapon, 0.01);
                     msg.append(" doesn't use ammo.");
+                    continue;
+                } else if (weaponType.hasFlag(WeaponType.F_ONESHOT)) {
+                    // Shoot OS weapons on a 10 / 9 / 8 for Aggro 10 / 5 / 0
+                    ammoConservation.put(weapon, (40-aggroFactor)/100.0);
+                    msg.append(" One Shot weapon.");
                     continue;
                 }
 
@@ -776,13 +782,14 @@ public class Princess extends BotClient {
                     ammoCount += ammoCounts.get(ammoType);
                 }
                 msg.append(" has ").append(ammoCount).append(" shots left");
-                // Desired behavior:
-                // At min aggro (0 of 10), require ~50% chance to hit with > 3 shots left
-                // At normal aggro (5 of 10), require at least 10% to-hit chance with > 3 shots left
-                // At max aggro (10 of 10) require just over 0% chance to hit until at 1 round left.
+                // Desired behavior, with 7 / 3 / 1 rounds left:
+                // At min aggro (0 of 10), fire on TN 10, 9, 7
+                // At normal aggro (5 of 10), fire on 12, 11, 10
+                // At max aggro (10 of 10), fire on 12, 12, 10
                 final double toHitThreshold =
-                        Math.max(0.0,
-                                (0.8/((aggroFactor) + 2) + 1.0 / ((ammoCount*ammoCount)+1)));
+                        Math.max(0.01,
+                                (0.6/((8*aggroFactor) + 4)
+                                + 4.0 / (4 * (ammoCount*ammoCount) * (aggroFactor + 2) + (4 / (aggroFactor + 1)))));
                 msg.append("; To Hit Threshold = ").append(new DecimalFormat("0.000").format(toHitThreshold));
                 ammoConservation.put(weapon, toHitThreshold);
             }

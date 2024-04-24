@@ -22,6 +22,7 @@ package megamek.client.bot.princess;
 import megamek.client.bot.princess.PathRanker.PathRankerType;
 import megamek.common.*;
 import megamek.common.enums.GamePhase;
+import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import org.junit.jupiter.api.BeforeAll;
@@ -30,10 +31,9 @@ import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -45,6 +45,9 @@ import static org.mockito.Mockito.when;
  */
 public class PrincessTest {
 
+    static WeaponType mockAC5 = (WeaponType) EquipmentType.get("ISAC5");
+    static AmmoType mockAC5AmmoType = (AmmoType) EquipmentType.get("ISAC5 Ammo");
+    static WeaponType mockRL20 = (WeaponType) EquipmentType.get("RL20");
     private Princess mockPrincess;
     private BasicPathRanker mockPathRanker;
 
@@ -63,6 +66,7 @@ public class PrincessTest {
         when(mockPrincess.getPathRanker(PathRankerType.Basic)).thenReturn(mockPathRanker);
         when(mockPrincess.getPathRanker(any(Entity.class))).thenReturn(mockPathRanker);
         when(mockPrincess.getMoraleUtil()).thenReturn(mockMoralUtil);
+        when(mockPrincess.calcAmmoConservation(any(Entity.class))).thenCallRealMethod();
     }
 
     @Test
@@ -359,19 +363,19 @@ public class PrincessTest {
 
         when(mockPrincess.wantsToFallBack(any(Entity.class))).thenReturn(false);
         when(mockPrincess.isFallingBack(any(Entity.class))).thenCallRealMethod();
-       
+
         BehaviorSettings mockBehavior = mock(BehaviorSettings.class);
         when(mockBehavior.getDestinationEdge()).thenReturn(CardinalEdge.NONE);
         when(mockBehavior.isForcedWithdrawal()).thenReturn(true);
         when(mockPrincess.getBehaviorSettings()).thenReturn(mockBehavior);
-        
+
         // A normal undamaged mech.
         assertFalse(mockPrincess.isFallingBack(mockMech));
 
         // A mobile mech that wants to fall back (for any reason).
         when(mockMech.isCrippled(anyBoolean())).thenReturn(true);
         assertTrue(mockPrincess.isFallingBack(mockMech));
-        
+
         // A mech whose bot is set for a destination edge
         when(mockBehavior.getDestinationEdge()).thenReturn(CardinalEdge.NEAREST);
         assertTrue(mockPrincess.isFallingBack(mockMech));
@@ -536,5 +540,139 @@ public class PrincessTest {
         when(mockMech.isProne()).thenReturn(false);
         when(mockMech.isStuck()).thenReturn(true);
         assertTrue(mockPrincess.isImmobilized(mockMech));
+    }
+
+    @Test
+    public void testCalcAmmoForDefaultAggressionLevel() throws megamek.common.LocationFullException {
+        // Expected toHitThresholds should equate to a TN of 12, 11, and 10 for ammo values
+        // of 7+, 3+, 1.
+
+        // Set aggression to default level
+        BehaviorSettings mockBehavior = mock(BehaviorSettings.class);
+        when(mockBehavior.getHyperAggressionIndex()).thenReturn(5);
+        when(mockPrincess.getBehaviorSettings()).thenReturn(mockBehavior);
+
+        // Set up unit
+        Mech mech1 = new BipedMech();
+        Mounted bin1 = mech1.addEquipment(mockAC5AmmoType, Mech.LOC_LT);
+        Mounted wpn1 = mech1.addEquipment(mockAC5, Mech.LOC_RT);
+
+        // Check default toHitThresholds
+        // Default toHitThreshold for 7+ rounds for this level should allow firing on 12s
+        Double target = Compute.oddsAbove(12);
+        bin1.setShotsLeft(7);
+        Map<WeaponMounted, Double> conserveMap = mockPrincess.calcAmmoConservation(mech1);
+        assertTrue(conserveMap.get(wpn1) <= target);
+
+        // Default toHitThreshold for 3+ rounds for this level should allow firing on 11s
+        target = Compute.oddsAbove(11);
+        bin1.setShotsLeft(3);
+        conserveMap = mockPrincess.calcAmmoConservation(mech1);
+        assertTrue(conserveMap.get(wpn1) <= target);
+
+        // Default toHitThreshold for 1 rounds for this level should allow firing on 10s
+        target = Compute.oddsAbove(10);
+        bin1.setShotsLeft(1);
+        conserveMap = mockPrincess.calcAmmoConservation(mech1);
+        assertTrue(conserveMap.get(wpn1) <= target);
+    }
+
+    @Test
+    public void testCalcAmmoForMaxAggressionLevel() throws megamek.common.LocationFullException {
+        // Expected toHitThresholds should equate to a TN of 12, 12, and 10 for ammo values
+        // of 7+, 3+, 1.
+
+        // Set aggression to default level
+        BehaviorSettings mockBehavior = mock(BehaviorSettings.class);
+        when(mockBehavior.getHyperAggressionIndex()).thenReturn(10);
+        when(mockPrincess.getBehaviorSettings()).thenReturn(mockBehavior);
+
+        // Set up unit
+        Mech mech1 = new BipedMech();
+        Mounted bin1 = mech1.addEquipment(mockAC5AmmoType, Mech.LOC_LT);
+        Mounted wpn1 = mech1.addEquipment(mockAC5, Mech.LOC_RT);
+
+        // Check default toHitThresholds
+        // Default toHitThreshold for 7+ rounds for this level should allow firing on 12s
+        Double target = Compute.oddsAbove(12);
+        bin1.setShotsLeft(7);
+        Map<WeaponMounted, Double> conserveMap = mockPrincess.calcAmmoConservation(mech1);
+        assertTrue(conserveMap.get(wpn1) <= target);
+
+        // Default toHitThreshold for 3+ rounds for this level should allow firing on 12s
+        bin1.setShotsLeft(3);
+        conserveMap = mockPrincess.calcAmmoConservation(mech1);
+        assertTrue(conserveMap.get(wpn1) <= target);
+
+        // Default toHitThreshold for 1 rounds for this level should allow firing on 10s
+        target = Compute.oddsAbove(10);
+        bin1.setShotsLeft(1);
+        conserveMap = mockPrincess.calcAmmoConservation(mech1);
+        assertTrue(conserveMap.get(wpn1) <= target);
+    }
+
+    @Test
+    public void testCalcAmmoForZeroAggressionLevel() throws megamek.common.LocationFullException {
+        // Expected toHitThresholds should equate to a TN of 10, 9, and 7 for ammo values
+        // of 7+, 3+, 1.
+
+        // Set aggression to default level
+        BehaviorSettings mockBehavior = mock(BehaviorSettings.class);
+        when(mockBehavior.getHyperAggressionIndex()).thenReturn(0);
+        when(mockPrincess.getBehaviorSettings()).thenReturn(mockBehavior);
+
+        // Set up unit
+        Mech mech1 = new BipedMech();
+        Mounted bin1 = mech1.addEquipment(mockAC5AmmoType, Mech.LOC_LT);
+        Mounted wpn1 = mech1.addEquipment(mockAC5, Mech.LOC_RT);
+
+        // Check default toHitThresholds
+        // Default toHitThreshold for 7+ rounds for this level should allow firing on 12s
+        Double target = Compute.oddsAbove(10);
+        bin1.setShotsLeft(7);
+        Map<WeaponMounted, Double> conserveMap = mockPrincess.calcAmmoConservation(mech1);
+        assertTrue(conserveMap.get(wpn1) <= target);
+
+        // Default toHitThreshold for 3+ rounds for this level should allow firing on 11s
+        target = Compute.oddsAbove(9);
+        bin1.setShotsLeft(3);
+        conserveMap = mockPrincess.calcAmmoConservation(mech1);
+        assertTrue(conserveMap.get(wpn1) <= target);
+
+        // Default toHitThreshold for 1 rounds for this level should allow firing on 10s
+        target = Compute.oddsAbove(7);
+        bin1.setShotsLeft(1);
+        conserveMap = mockPrincess.calcAmmoConservation(mech1);
+        assertTrue(conserveMap.get(wpn1) <= target);
+    }
+
+    @Test
+    public void testCalcAmmoForOneShotWeapons() throws megamek.common.LocationFullException {
+        // Set aggression to lowest level
+        BehaviorSettings mockBehavior = mock(BehaviorSettings.class);
+        when(mockBehavior.getHyperAggressionIndex()).thenReturn(0);
+        when(mockPrincess.getBehaviorSettings()).thenReturn(mockBehavior);
+
+        // Set up unit
+        Mech mech1 = new BipedMech();
+        Mounted wpn1 = mech1.addEquipment(mockRL20, Mech.LOC_LT);
+
+        // Check default toHitThresholds
+        // For max aggro, shoot OS weapons at TN 10 or better
+        Double target = Compute.oddsAbove(10);
+        Map<WeaponMounted, Double> conserveMap = mockPrincess.calcAmmoConservation(mech1);
+        assertTrue(conserveMap.get(wpn1) <= target);
+
+        // For default aggro, shoot OS weapons at TN 9 or better
+        when(mockBehavior.getHyperAggressionIndex()).thenReturn(5);
+        target = Compute.oddsAbove(9);
+        conserveMap = mockPrincess.calcAmmoConservation(mech1);
+        assertTrue(conserveMap.get(wpn1) <= target);
+
+        // For lowest aggro, shoot OS weapons at TN 8 or better
+        when(mockBehavior.getHyperAggressionIndex()).thenReturn(10);
+        target = Compute.oddsAbove(8);
+        conserveMap = mockPrincess.calcAmmoConservation(mech1);
+        assertTrue(conserveMap.get(wpn1) <= target);
     }
 }

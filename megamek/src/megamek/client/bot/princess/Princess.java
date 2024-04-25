@@ -769,7 +769,7 @@ public class Princess extends BotClient {
                     continue;
                 } else if (weaponType.hasFlag(WeaponType.F_ONESHOT)) {
                     // Shoot OS weapons on a 10 / 9 / 8 for Aggro 10 / 5 / 0
-                    ammoConservation.put(weapon, (40-aggroFactor)/100.0);
+                    ammoConservation.put(weapon, (35 - 2.0 * aggroFactor) / 100.0);
                     msg.append(" One Shot weapon.");
                     continue;
                 }

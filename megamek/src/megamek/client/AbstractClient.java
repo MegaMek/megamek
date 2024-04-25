@@ -409,6 +409,7 @@ public abstract class AbstractClient implements IClient {
             case SERVER_GREETING:
                 connected = true;
                 send(new Packet(PacketCommand.CLIENT_NAME, name, isBot()));
+                break;
             case SERVER_CORRECT_NAME:
                 correctName(packet);
                 break;

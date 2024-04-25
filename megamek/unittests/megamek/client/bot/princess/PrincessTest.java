@@ -559,7 +559,7 @@ public class PrincessTest {
 
         // Check default toHitThresholds
         // Default toHitThreshold for 7+ rounds for this level should allow firing on 12s
-        Double target = Compute.oddsAbove(12);
+        double target = Compute.oddsAbove(12);
         bin1.setShotsLeft(7);
         Map<WeaponMounted, Double> conserveMap = mockPrincess.calcAmmoConservation(mech1);
         assertTrue(conserveMap.get(wpn1) <= target);
@@ -594,7 +594,7 @@ public class PrincessTest {
 
         // Check default toHitThresholds
         // Default toHitThreshold for 7+ rounds for this level should allow firing on 12s
-        Double target = Compute.oddsAbove(12);
+        double target = Compute.oddsAbove(12);
         bin1.setShotsLeft(7);
         Map<WeaponMounted, Double> conserveMap = mockPrincess.calcAmmoConservation(mech1);
         assertTrue(conserveMap.get(wpn1) <= target);
@@ -628,7 +628,7 @@ public class PrincessTest {
 
         // Check default toHitThresholds
         // Default toHitThreshold for 7+ rounds for this level should allow firing on 12s
-        Double target = Compute.oddsAbove(10);
+        double target = Compute.oddsAbove(10);
         bin1.setShotsLeft(7);
         Map<WeaponMounted, Double> conserveMap = mockPrincess.calcAmmoConservation(mech1);
         assertTrue(conserveMap.get(wpn1) <= target);
@@ -659,7 +659,7 @@ public class PrincessTest {
 
         // Check default toHitThresholds
         // For max aggro, shoot OS weapons at TN 10 or better
-        Double target = Compute.oddsAbove(10);
+        double target = Compute.oddsAbove(10);
         Map<WeaponMounted, Double> conserveMap = mockPrincess.calcAmmoConservation(mech1);
         assertTrue(conserveMap.get(wpn1) <= target);
 

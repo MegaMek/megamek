@@ -36,14 +36,57 @@ public interface IGame {
     @Nullable
     GameTurn getTurn();
 
+    boolean hasMoreTurns();
+
     GameOptions getOptions();
 
     GamePhase getPhase();
 
+    /**
+     * @return The current game round, with 0 typically indicating deployment and 1 the first
+     * actual game round.
+     */
+    int getCurrentRound();
+
+    /**
+     * Sets the current game round to the given round number. See {@link #getCurrentRound()}. This
+     * method can be used in both GameManager and Client.
+     *
+     * @param currentRound The new round number
+     */
+    void setCurrentRound(int currentRound);
+
+    /**
+     * Sets the current game phase to the given phase. May perform phase-dependent cleanup.
+     * This method is intended for the GameManager.
+     *
+     * @param phase The new phase
+     */
     void setPhase(GamePhase phase);
 
+    /**
+     * Sets the current game phase to the given phase. May perform phase-dependent cleanup and fire
+     * game events. This method is intended for the Client. By default, this method calls
+     * {@link #setPhase(GamePhase)}. When overridden, it'll usually make sense to call super(phase).
+     *
+     * @param phase The new phase
+     */
+    default void receivePhase(GamePhase phase) {
+        setPhase(phase);
+    }
+
+    /**
+     * Fires the given GameEvent, sending the event to all GameListener of this game.
+     *
+     * @param event the game event.
+     */
     void fireGameEvent(GameEvent event);
 
+    /**
+     * Adds a GameListener to this game. The GameListener will receive any subsequently fired GameEvents.
+     *
+     * @param listener The GameListener to add
+     */
     void addGameListener(GameListener listener);
 
     /**
@@ -160,14 +203,63 @@ public interface IGame {
 
     /**
      * Sets the given board as the game's board with the given boardId, possibly replacing the former board
-     * of the same id. -- This method is written with the idea that a game might have more than one board.
-     * Currently, the boardId will be ignored and the given board will be the game's single board. --
+     * of the same id. This method is written with the idea that a game might have more than one board.
+     * Game's legacy methods of setBoard() and getBoard() use the boardId 0.
      * This method is meant as a server-side method.
      *
-     * @param board The board to use
      * @param boardId (currently ignored) The boardId to assing to that board
+     * @param board   The board to use
      */
-    void setBoard(Board board, int boardId);
+    void setBoard(int boardId, Board board);
+
+    /**
+     * Returns the board with the given boardId or null if the game does not have a board of that boardId.
+     *
+     * @param boardId The board's ID
+     * @return The board with the given ID
+     */
+    @Nullable
+    default Board getBoard(int boardId) {
+        return getBoards().get(boardId);
+    }
+
+    /**
+     * Returns the complete map of boardIds/boards the game uses. The returned map is an unmodifiable view
+     * of the game's map, but not a deep copy, so changes to a board will affect the game.
+     *
+     * @return The game's boards and their IDs
+     */
+    Map<Integer, Board> getBoards();
+
+    /**
+     * Returns the game's board. This method internally uses the boardId 0 for every call, see {@link #getBoard(int)}.
+     * It can eventually be replaced to allow multiple maps for any type of game.
+     *
+     * @return The game's board (using ID = 0)
+     */
+    @Deprecated
+    default Board getBoard() {
+        return getBoard(0);
+    }
+
+    /**
+     * Sets the given board as the game's board with the given boardId, possibly replacing the former board
+     * of the same id. This method is written with the idea that a game might have more than one board.
+     * This method is meant as a client-side method and may fire game events.
+     *
+     * @param boardId (currently ignored) The boardId to assing to that board
+     * @param board   The board to use
+     */
+    void receiveBoard(int boardId, Board board);
+
+    /**
+     * Sets the given boards as the game's boards, replacing all previous boards.
+     * This method is written with the idea that a game might have more than one board.
+     * This method is meant as a client-side method and may fire game events.
+     *
+     * @param boards The new boards
+     */
+    void receiveBoards(Map<Integer, Board> boards);
 
     //endregion
 }

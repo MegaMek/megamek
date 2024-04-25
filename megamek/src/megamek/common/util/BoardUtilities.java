@@ -56,7 +56,6 @@ public class BoardUtilities {
 
         Hex[] resultData = new Hex[resultWidth * resultHeight];
         boolean roadsAutoExit = true;
-        boolean boardListContainsBackground = false;
         // Copy the data from the sub-boards.
         for (int i = 0; i < sheetHeight; i++) {
             for (int j = 0; j < sheetWidth; j++) {
@@ -73,7 +72,6 @@ public class BoardUtilities {
                 if (!boards[i * sheetWidth + j].getRoadsAutoExit()) {
                     roadsAutoExit = false;
                 }
-                boardListContainsBackground |= b.hasBoardBackground();
             }
         }
 
@@ -81,17 +79,6 @@ public class BoardUtilities {
         result.setRoadsAutoExit(roadsAutoExit);
         // Initialize all hexes - buildings, exits, etc
         result.newData(resultWidth, resultHeight, resultData, null);
-        if (boardListContainsBackground) {
-            result.setNumBoardsHeight(sheetHeight);
-            result.setNumBoardsWidth(sheetWidth);
-            result.setSubBoardHeight(height);
-            result.setSubBoardWidth(width);
-            ListIterator<Boolean> flipIt = isRotated.listIterator();
-            for (Board b : boards) {
-                boolean flip = flipIt.next();
-                result.addBackgroundPath(b.getBackgroundPath(), flip, flip);
-            }
-        }
 
         // assuming that the map setting and board types match
         result.setType(medium);

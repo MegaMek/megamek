@@ -463,8 +463,8 @@ public class SkinSpecPanel extends JPanel implements ListSelectionListener, Acti
      *
      * @param skinSpec
      */
-    public void updateSkinSpec(SkinSpecification skinSpec, boolean enableBorders) {
-
+    public void updateSkinSpec(SkinSpecification skinSpec, boolean enableBorders, boolean enablePlain) {
+        skinSpec.plain = enablePlain;
         skinSpec.noBorder = !enableBorders;
         skinSpec.tl_corner = tlCorner.path.get(0).getText();
         skinSpec.tr_corner = trCorner.path.get(0).getText();

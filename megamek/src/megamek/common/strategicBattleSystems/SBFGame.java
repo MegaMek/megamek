@@ -22,7 +22,6 @@ import megamek.common.*;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.GamePhase;
-import megamek.common.event.GameEvent;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryconditions.PlanetaryConditions;
@@ -36,14 +35,19 @@ import java.util.List;
  */
 public class SBFGame extends AbstractGame implements PlanetaryConditionsUsing {
 
-    private GameOptions options = new GameOptions(); //TODO: SBFGameOptions()
+    private final GameOptions options = new GameOptions(); //TODO: SBFGameOptions()
     private GamePhase phase = GamePhase.UNKNOWN; //TODO: SBFGamePhase - or possibly reuse Phase? very similar
-    private Board board = new Board();
-    private PlanetaryConditions planetaryConditions = new PlanetaryConditions();
+    private final PlanetaryConditions planetaryConditions = new PlanetaryConditions();
 
     @Override
     public GameTurn getTurn() {
         return null;
+    }
+
+    @Override
+    public boolean hasMoreTurns() {
+        // stub
+        return false;
     }
 
     @Override
@@ -59,11 +63,6 @@ public class SBFGame extends AbstractGame implements PlanetaryConditionsUsing {
     @Override
     public void setPhase(GamePhase phase) {
         this.phase = phase;
-    }
-
-    @Override
-    public void fireGameEvent(GameEvent event) {
-
     }
 
     @Override
@@ -107,11 +106,6 @@ public class SBFGame extends AbstractGame implements PlanetaryConditionsUsing {
     @Override
     public void replaceUnits(List<InGameObject> units) {
 
-    }
-
-    @Override
-    public void setBoard(Board board, int boardId) {
-        this.board = board;
     }
 
     @Override

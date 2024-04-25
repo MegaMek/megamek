@@ -3919,7 +3919,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * @return the <code>int</code> count of the amount of shots of all
      * munitions available for the given weapon.
      */
-    public int getTotalMunitionsOfType(Mounted<?> weapon) {
+    public int getTotalMunitionsOfType(WeaponMounted weapon) {
         int totalShotsLeft = 0;
 
         // specifically don't count caseless munitions as being of the same type as non-caseless

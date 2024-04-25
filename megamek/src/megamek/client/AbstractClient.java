@@ -22,7 +22,9 @@ import megamek.MMConstants;
 import megamek.MegaMek;
 import megamek.Version;
 import megamek.client.commands.ClientCommand;
+import megamek.client.generator.RandomUnitGenerator;
 import megamek.common.*;
+import megamek.common.enums.GamePhase;
 import megamek.common.event.GamePlayerChangeEvent;
 import megamek.common.event.GamePlayerChatEvent;
 import megamek.common.event.GamePlayerDisconnectedEvent;
@@ -277,7 +279,7 @@ public abstract class AbstractClient implements IClient {
         return host;
     }
 
-    protected void correctName(Packet inP) throws Exception {
+    protected void correctName(Packet inP) {
         setName((String) (inP.getObject(0)));
     }
 
@@ -384,8 +386,11 @@ public abstract class AbstractClient implements IClient {
 
     /**
      * Handles any Packets that are specific to the game type (TW, AS...). When implementing this,
-     * make sure that this doesn't handle packets again that are already handled in
-     * {@link #handleGameIndependentPacket(Packet)} except where necessary (e.g. Precognition).
+     * make sure that this doesn't do duplicate actions with {@link #handleGameIndependentPacket(Packet)}
+     * - but packets may be handled in both methods (all packets traverse both methods).
+     *
+     * When making changes, do not forget to update Precognition which is a Client clone but unfortunately
+     * not a subclass.
      *
      * @param packet The packet to handle
      * @return True when the packet has been handled
@@ -398,8 +403,16 @@ public abstract class AbstractClient implements IClient {
      * @param packet The packet to handle
      * @return True when the packet has been handled
      */
+    @SuppressWarnings("unchecked")
     protected boolean handleGameIndependentPacket(Packet packet) {
         switch (packet.getCommand()) {
+            case SERVER_GREETING:
+                connected = true;
+                send(new Packet(PacketCommand.CLIENT_NAME, name, isBot()));
+                break;
+            case SERVER_CORRECT_NAME:
+                correctName(packet);
+                break;
             case CLOSE_CONNECTION:
                 disconnected();
                 break;
@@ -442,6 +455,15 @@ public abstract class AbstractClient implements IClient {
             case ENTITY_ADD:
                 receiveUnitReplace(packet);
                 break;
+            case SENDING_BOARD:
+                getIGame().receiveBoards((Map<Integer, Board>) packet.getObject(0));
+                break;
+            case ROUND_UPDATE:
+                getIGame().setCurrentRound(packet.getIntValue(0));
+                break;
+            case PHASE_CHANGE:
+                changePhase((GamePhase) packet.getObject(0));
+                break;
             default:
                 return false;
         }
@@ -459,9 +481,37 @@ public abstract class AbstractClient implements IClient {
         }
     }
 
+    /**
+     * Changes the game phase, and the displays that go along with it.
+     */
+    public void changePhase(GamePhase phase) {
+        getIGame().receivePhase(phase);
+        switch (phase) {
+            case STARTING_SCENARIO:
+            case EXCHANGE:
+                sendDone(true);
+                break;
+            case DEPLOYMENT:
+                // free some memory that's only needed in lounge
+                MechFileParser.dispose();
+                // We must do this last, as the name and unit generators can create
+                // a new instance if they are running
+                MechSummaryCache.dispose();
+                break;
+            case LOUNGE:
+                MechSummaryCache.getInstance().addListener(RandomUnitGenerator::getInstance);
+                if (MechSummaryCache.getInstance().isInitialized()) {
+                    RandomUnitGenerator.getInstance();
+                }
+                synchronized (unitNameTracker) {
+                    unitNameTracker.clear();
+                }
+                break;
+        }
+    }
+
     @Override
     public Map<String, AbstractClient> getBots() {
-        // TODO : Make this an unmodifiable map return - but there are legacy write accesses to it
         return bots;
     }
 

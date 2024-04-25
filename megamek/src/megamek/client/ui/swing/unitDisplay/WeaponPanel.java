@@ -192,7 +192,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
          */
         @Override
         public String getElementAt(int index) {
-            final Mounted mounted = weapons.get(index);
+            final WeaponMounted mounted = weapons.get(index);
             final WeaponType wtype = (WeaponType) mounted.getType();
             Game game = null;
             if (unitDisplay.getClientGUI() != null) {

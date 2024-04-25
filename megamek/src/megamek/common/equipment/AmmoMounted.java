@@ -103,6 +103,7 @@ public class AmmoMounted extends Mounted<AmmoType> {
         setSize(capacity);
     }
 
+    @Override
     public boolean isOneShot() {
         if (getLinkedBy() != null) {
             // There should not be any circular references, but we should track where we've been just in case.

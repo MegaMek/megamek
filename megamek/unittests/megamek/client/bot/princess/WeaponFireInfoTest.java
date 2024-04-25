@@ -21,6 +21,7 @@ package megamek.client.bot.princess;
 import megamek.client.bot.princess.FireControl.FireControlType;
 import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.WeaponMounted;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -80,7 +81,7 @@ public class WeaponFireInfoTest {
 
         mockFireControl = mock(FireControl.class);
         when(mockFireControl.guessToHitModifierForWeapon(any(Entity.class), any(EntityState.class),
-                any(Targetable.class), any(EntityState.class), any(Mounted.class), any(Mounted.class), any(Game.class)))
+                any(Targetable.class), any(EntityState.class), any(WeaponMounted.class), any(AmmoMounted.class), any(Game.class)))
                 .thenReturn(mockToHitEight);
 
         mockPrincess = mock(Princess.class);

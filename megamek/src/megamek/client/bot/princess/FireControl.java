@@ -648,8 +648,8 @@ public class FireControl {
                                           @Nullable EntityState shooterState,
                                           final Targetable target,
                                           @Nullable EntityState targetState,
-                                          final Mounted weapon,
-                                          @Nullable final Mounted ammo,
+                                          final WeaponMounted weapon,
+                                          @Nullable final AmmoMounted ammo,
                                           final Game game) {
 
         if (null == shooterState) {
@@ -666,10 +666,10 @@ public class FireControl {
 
         // Make sure we have ammo.
         final WeaponType weaponType = (WeaponType) weapon.getType();
-        final Mounted firingAmmo;
+        final AmmoMounted firingAmmo;
         if (AmmoType.T_NA != weaponType.getAmmoType()) {
             // Use ammo arg if provided, else use linked ammo.
-            firingAmmo = (ammo == null) ? weapon.getLinked() : ammo;
+            firingAmmo = (ammo == null) ? weapon.getLinkedAmmo() : ammo;
             if (null == firingAmmo) {
                 return new ToHitData(TH_WEAP_NO_AMMO);
             }
@@ -1026,8 +1026,8 @@ public class FireControl {
                                                   final Targetable target,
                                                   @Nullable EntityState targetState,
                                                   final MovePath flightPath,
-                                                  final Mounted weapon,
-                                                  @Nullable final Mounted ammo,
+                                                  final WeaponMounted weapon,
+                                                  @Nullable final AmmoMounted ammo,
                                                   final Game game,
                                                   final boolean assumeUnderFlightPlan) {
 
@@ -1044,7 +1044,7 @@ public class FireControl {
         }
 
         // Is the weapon loaded?
-        Mounted firingAmmo = (ammo == null) ? weapon.getLinked() : ammo;
+        AmmoMounted firingAmmo = (ammo == null) ? weapon.getLinkedAmmo() : ammo;
         if (AmmoType.T_NA != ((WeaponType) weapon.getType()).ammoType) {
             if (null == firingAmmo) {
                 return new ToHitData(TH_WEAP_NO_AMMO);
@@ -1699,7 +1699,7 @@ public class FireControl {
 
                         if (shoot.getAmmo() != null && bestShoot != null) {
                             bestShoot.getAmmo().setSwitchedReason(
-                                    (bestShoot.getAmmo() == weapon.getLinked()) ? 0 : switchedReason
+                                    (bestShoot.getAmmo() == weapon.getLinkedAmmo()) ? 0 : switchedReason
                             );
                         }
                     }
@@ -2657,7 +2657,7 @@ public class FireControl {
                     ammos.add(weapon.getLinkedAmmo());
                 }
 
-                for (Mounted ammo: ammos) {
+                for (AmmoMounted ammo: ammos) {
                     bracket = RangeType.rangeBracket(range,
                             weaponType.getRanges(weapon, ammo),
                             useExtremeRange,
@@ -2817,7 +2817,7 @@ public class FireControl {
         Entity targetEntity = null;
         // May be null or any valid ammo that can make an attack
         AmmoMounted preferredAmmo = suggestedAmmo;
-        WeaponType weaponType = (WeaponType) weapon.getType();
+        WeaponType weaponType = weapon.getType();
 
         try {
             boolean fireResistant = false;
@@ -2842,7 +2842,7 @@ public class FireControl {
             }
             for (final AmmoMounted a : ammo) {
                 if (AmmoType.isAmmoValid(a, weaponType)
-                        && AmmoType.canSwitchToAmmo(weapon, (AmmoType) a.getType())
+                        && AmmoType.canSwitchToAmmo(weapon, a.getType())
                         && !a.equals(preferredAmmo)
                         && (!shooter.isLargeCraft()
                             || shooter.whichBay(shooter.getEquipmentNum(weapon)).ammoInBay(shooter.getEquipmentNum(a)))) {

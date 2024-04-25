@@ -21,6 +21,8 @@ import megamek.common.WeaponType;
 import megamek.common.actions.EntityAction;
 import megamek.common.actions.FlipArmsAction;
 import megamek.common.actions.TorsoTwistAction;
+import megamek.common.equipment.AmmoMounted;
+import megamek.common.equipment.WeaponMounted;
 
 import java.text.DecimalFormat;
 import java.util.*;
@@ -272,8 +274,8 @@ public class FiringPlan extends ArrayList<WeaponFireInfo> implements Comparable<
      */
     void sortPlan() {
         this.sort((o1, o2) -> {
-            Mounted weapon1 = o1.getWeapon();
-            Mounted weapon2 = o2.getWeapon();
+            WeaponMounted weapon1 = o1.getWeapon();
+            WeaponMounted weapon2 = o2.getWeapon();
 
             // Both null, both equal.
             if (weapon1 == null && weapon2 == null) {
@@ -291,14 +293,14 @@ public class FiringPlan extends ArrayList<WeaponFireInfo> implements Comparable<
             double dmg1 = -1;
             double dmg2 = -1;
 
-            WeaponType weaponType1 = (WeaponType) weapon1.getType();
-            WeaponType weaponType2 = (WeaponType) weapon2.getType();
+            WeaponType weaponType1 = weapon1.getType();
+            WeaponType weaponType2 = weapon2.getType();
 
-            Mounted ammo1 = weapon1.getLinked();
-            Mounted ammo2 = weapon2.getLinked();
+            AmmoMounted ammo1 = weapon1.getLinkedAmmo();
+            AmmoMounted ammo2 = weapon2.getLinkedAmmo();
 
-            if ((ammo1 != null) && (ammo1.getType() instanceof AmmoType)) {
-                AmmoType ammoType = (AmmoType) ammo1.getType();
+            if (ammo1 != null) {
+                AmmoType ammoType = ammo1.getType();
                 if ((WeaponType.DAMAGE_BY_CLUSTERTABLE == weaponType1.getDamage())
                         || (ammoType.getMunitionType().contains(AmmoType.Munitions.M_CLUSTER))) {
                     dmg1 = ammoType.getDamagePerShot();
@@ -309,8 +311,8 @@ public class FiringPlan extends ArrayList<WeaponFireInfo> implements Comparable<
                 dmg1 = weaponType1.getDamage();
             }
 
-            if ((ammo2 != null) && (ammo2.getType() instanceof AmmoType)) {
-                AmmoType ammoType = (AmmoType) ammo2.getType();
+            if (ammo2 != null) {
+                AmmoType ammoType = ammo2.getType();
                 if ((WeaponType.DAMAGE_BY_CLUSTERTABLE == weaponType2.getDamage())
                         || (ammoType.getMunitionType().contains(AmmoType.Munitions.M_CLUSTER))) {
                     dmg2 = ammoType.getDamagePerShot();

@@ -648,7 +648,7 @@ public class PrincessTest {
 
     @Test
     public void testCalcAmmoForOneShotWeapons() throws megamek.common.LocationFullException {
-        // Set aggression to lowest level
+        // Set aggression to the lowest level first
         BehaviorSettings mockBehavior = mock(BehaviorSettings.class);
         when(mockBehavior.getHyperAggressionIndex()).thenReturn(0);
         when(mockPrincess.getBehaviorSettings()).thenReturn(mockBehavior);

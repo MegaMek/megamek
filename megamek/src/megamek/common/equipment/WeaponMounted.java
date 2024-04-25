@@ -81,6 +81,7 @@ public class WeaponMounted extends Mounted<WeaponType> {
         return getType().getExplosionDamage();
     }
 
+    @Override
     public int getCurrentHeat() {
         int heat = getType().getHeat();
 

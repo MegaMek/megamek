@@ -20,6 +20,7 @@
 package megamek.common.actions;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 
@@ -64,6 +65,9 @@ public class TeleMissileAttackAction extends AbstractAttackAction {
      * This is for AMS assignment to manual tele-operated missiles
      */
     public List<WeaponMounted> getCounterEquipment() {
+        if (vCounterEquipment == null) {
+            vCounterEquipment = new ArrayList<>();
+        }
         return vCounterEquipment;
     }
 

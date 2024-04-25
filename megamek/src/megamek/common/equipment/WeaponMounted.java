@@ -223,7 +223,7 @@ public class WeaponMounted extends Mounted<WeaponType> {
      */
     public WeaponMounted getBayWeapon(int index) {
         if ((index >= 0) && (index < bayWeapons.size())) {
-            return (WeaponMounted) getEntity().getEquipment(index);
+            return getEntity().getWeapon(index);
         } else {
             return null;
         }
@@ -271,12 +271,7 @@ public class WeaponMounted extends Mounted<WeaponType> {
      * @return        whether the ammo is in this weapon's bay
      */
     public boolean ammoInBay(int mAmmoId) {
-        for (int nextAmmoId : bayAmmo) {
-            if (nextAmmoId == mAmmoId) {
-                return true;
-            }
-        }
-        return false;
+        return bayAmmo.contains(mAmmoId);
     }
 
     /**

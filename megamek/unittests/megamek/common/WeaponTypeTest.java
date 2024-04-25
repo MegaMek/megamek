@@ -70,7 +70,7 @@ public class WeaponTypeTest {
         WeaponMounted weapon = new WeaponMounted(mockEntity, (WeaponType) etype);
         WeaponMounted bWeapon = new WeaponMounted(mockEntity, (WeaponType) weapon.getType().getBayType());
         bWeapon.addWeaponToBay(mockEntity.getEquipmentNum(weapon));
-        when(mockEntity.getEquipment(anyInt())).thenReturn((Mounted) weapon);
+        when(mockEntity.getWeapon(anyInt())).thenReturn(weapon);
 
         return bWeapon;
     }
@@ -78,23 +78,23 @@ public class WeaponTypeTest {
     @Test
     public void testWeaponBaysGetCorrectMaxRanges() {
         WeaponMounted ppcbay = setupBayWeapon("ISERPPC");
-        WeaponType wtype = (WeaponType) ppcbay.getType();
+        WeaponType wtype = ppcbay.getType();
         assertEquals(RangeType.RANGE_LONG, wtype.getMaxRange(ppcbay));
 
         WeaponMounted erplasbay = setupBayWeapon("CLERLargePulseLaser");
-        wtype = (WeaponType) erplasbay.getType();
+        wtype = erplasbay.getType();
         assertEquals(RangeType.RANGE_LONG, wtype.getMaxRange(erplasbay ));
 
         WeaponMounted islplasbay = setupBayWeapon("ISLargePulseLaser");
-        wtype = (WeaponType) islplasbay.getType();
+        wtype = islplasbay.getType();
         assertEquals(RangeType.RANGE_MEDIUM, wtype.getMaxRange(islplasbay));
 
         WeaponMounted ersmlasbay = setupBayWeapon("CLERSmallLaser");
-        wtype = (WeaponType) ersmlasbay.getType();
+        wtype = ersmlasbay.getType();
         assertEquals(RangeType.RANGE_SHORT, wtype.getMaxRange(ersmlasbay));
 
         WeaponMounted islgaussbay = setupBayWeapon("ISLightGaussRifle");
-        wtype = (WeaponType) islgaussbay .getType();
+        wtype = islgaussbay .getType();
         assertEquals(RangeType.RANGE_EXTREME, wtype.getMaxRange(islgaussbay ));
     }
 }

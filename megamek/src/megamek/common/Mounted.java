@@ -1227,12 +1227,12 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
         return false;
     }
 
-    public List<Integer> getBayWeapons() {
-        return Collections.emptyList();
-    }
-
-    public List<Integer> getBayAmmo() {
-        return Collections.emptyList();
+    /**
+     *
+     * @return The index of this mount in the entity's equipmentlist.
+     */
+    public int getEquipmentNum() {
+        return getEntity().getEquipmentNum(this);
     }
 
     /**
@@ -1629,54 +1629,6 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
         }
         return missings.toString();
     }
-
-    /**
-     * Assign APDS systems to the most dangerous incoming missile attacks. This
-     * should only be called once per turn, or AMS will get extra attacks
-     */
-    public WeaponAttackAction assignAPDS(List<WeaponHandler> vAttacks) {
-        // Shouldn't have null entity, but if we do...
-        if (getEntity() == null) {
-            return null;
-        }
-
-        // Ensure we only target attacks in our arc & range
-        List<WeaponAttackAction> vAttacksInArc = new Vector<>(vAttacks.size());
-        for (WeaponHandler wr : vAttacks) {
-            boolean isInArc = Compute.isInArc(getEntity().getGame(),
-                    getEntity().getId(), getEntity().getEquipmentNum(this),
-                    getEntity().getGame().getEntity(wr.waa.getEntityId()));
-            boolean isInRange = getEntity().getPosition().distance(
-                    wr.getWaa().getTarget(getEntity().getGame()).getPosition()) <= 3;
-            if (isInArc && isInRange) {
-                vAttacksInArc.add(wr.waa);
-            }
-        }
-        // find the most dangerous salvo by expected damage
-        WeaponAttackAction waa = Compute.getHighestExpectedDamage(getEntity()
-                .getGame(), vAttacksInArc, true);
-        if (waa != null) {
-            waa.addCounterEquipment(this);
-            return waa;
-        }
-        return null;
-    }
-
-    /**
-     * Returns true if this Mounted is an APDS.
-     * @return
-     */
-    public boolean isAPDS() {
-        if ((getEntity() instanceof BattleArmor)
-                && getType().getInternalName().equals("ISBAAPDS")) {
-            return true;
-        } else if (getType() instanceof WeaponType) {
-            return ((WeaponType) getType()).getAmmoType() == AmmoType.T_APDS;
-        } else {
-            return false;
-        }
-    }
-
     /**
      * Returns true if this Mounted is ammunition in homing mode.
      */

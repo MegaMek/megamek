@@ -15,6 +15,7 @@ package megamek.common.weapons.infantry;
 
 import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.GameOptions;

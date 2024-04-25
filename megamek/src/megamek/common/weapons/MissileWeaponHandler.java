@@ -17,11 +17,14 @@ package megamek.common.weapons;
 import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
+import megamek.common.equipment.AmmoMounted;
+import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.OptionsConstants;
 import megamek.server.GameManager;
 
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Vector;
 
 /**
@@ -448,10 +451,10 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         int amsMod = 0;
         Entity entityTarget = (Entity) target;
         // any AMS attacks by the target?
-        ArrayList<Mounted> lCounters = waa.getCounterEquipment();
+        List<WeaponMounted> lCounters = waa.getCounterEquipment();
         if (null != lCounters) {
             // resolve AMS counter-fire
-            for (Mounted<?> counter : lCounters) {
+            for (WeaponMounted counter : lCounters) {
                 // Set up differences between different types of AMS
                 boolean isAMS = counter.getType().hasFlag(WeaponType.F_AMS);
                 boolean isAMSBay = counter.getType().hasFlag(WeaponType.F_AMSBAY);
@@ -493,9 +496,8 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
 
                 // If we're an AMSBay, heat and ammo must be calculated differently
                 if (isAMSBay) {
-                    for (int wId : counter.getBayWeapons()) {
-                        Mounted bayW = entityTarget.getEquipment(wId);
-                        Mounted bayWAmmo = bayW.getLinked();
+                    for (WeaponMounted bayW : counter.getBayWeapons()) {
+                        AmmoMounted bayWAmmo = bayW.getLinkedAmmo();
                         // For AMS bays, stop the loop if an AMS in the bay has engaged this attack
                         if (amsEngaged) {
                             break;

@@ -666,7 +666,7 @@ public class FireControl {
 
         // Make sure we have ammo.
         final WeaponType weaponType = (WeaponType) weapon.getType();
-        final AmmoMounted firingAmmo;
+        final Mounted firingAmmo;
         if (AmmoType.T_NA != weaponType.getAmmoType()) {
             // Use ammo arg if provided, else use linked ammo.
             firingAmmo = (ammo == null) ? weapon.getLinkedAmmo() : ammo;
@@ -704,7 +704,7 @@ public class FireControl {
         }
         // Bays compute arc differently
         final boolean inArc = (bayWeapon)
-                ? Compute.isInArc(game, shooter.getId(), (int) weapon.getBayWeapons().get(0), target)
+                ? Compute.isInArc(game, shooter.getId(), weapon.getBayWeapons().get(0).getEquipmentNum(), target)
                 : isInArc(shooterState.getPosition(), shooterFacing, targetState.getPosition(),
                                       shooter.getWeaponArc(shooter.getEquipmentNum(weapon)));
         if (!inArc) {

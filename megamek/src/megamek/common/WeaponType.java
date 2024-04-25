@@ -19,14 +19,7 @@ import java.math.BigInteger;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.WeaponMounted;
-import megamek.common.weapons.AlamoMissileWeapon;
-import megamek.common.weapons.AltitudeBombAttack;
-import megamek.common.weapons.DiveBombAttack;
-import megamek.common.weapons.LegAttack;
-import megamek.common.weapons.SpaceBombAttack;
-import megamek.common.weapons.StopSwarmAttack;
-import megamek.common.weapons.SwarmAttack;
-import megamek.common.weapons.SwarmWeaponAttack;
+import megamek.common.weapons.*;
 import megamek.common.weapons.artillery.*;
 import megamek.common.weapons.autocannons.*;
 import megamek.common.weapons.battlearmor.*;
@@ -641,7 +634,6 @@ public class WeaponType extends EquipmentType {
         }
         return maxRange;
     }
-
     public int getInfantryDamageClass() {
         return infDamageClass;
     }

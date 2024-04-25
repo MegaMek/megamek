@@ -21,7 +21,6 @@ import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.BayWeaponHandler;
 import megamek.common.weapons.Weapon;
 import megamek.server.GameManager;
-import megamek.server.Server;
 
 /**
  * This is my attempt to get weapon bays treated as normal weapons rather than the current hack in
@@ -73,8 +72,7 @@ public abstract class BayWeapon extends Weapon {
         int mrange = RANGE_SHORT;
         Entity ae = weapon.getEntity();
         if (null != ae) {
-            for (int wId : weapon.getBayWeapons()) {
-                WeaponMounted bayW = (WeaponMounted) ae.getEquipment(wId);
+            for (WeaponMounted bayW : weapon.getBayWeapons()) {
                 WeaponType bayWType = bayW.getType();
                 if (bayWType.getMaxRange(bayW) > mrange) {
                     mrange = bayWType.getMaxRange(bayW);

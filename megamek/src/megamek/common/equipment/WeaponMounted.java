@@ -20,11 +20,15 @@
 package megamek.common.equipment;
 
 import megamek.common.*;
+import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
+import megamek.common.weapons.WeaponHandler;
 import megamek.common.weapons.gaussrifles.GaussWeapon;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.Vector;
 import java.util.stream.Collectors;
 
 public class WeaponMounted extends Mounted<WeaponType> {
@@ -33,8 +37,8 @@ public class WeaponMounted extends Mounted<WeaponType> {
     // this bay (if the mounted is of the BayWeapon type)
     // I can also use this for weapons of the same type on a capital fighter
     // and now Machine Gun Arrays too!
-    private List<Integer> bayWeapons = new ArrayList<>();
-    private List<Integer> bayAmmo = new ArrayList<>();
+    private final List<Integer> bayWeapons = new ArrayList<>();
+    private final List<Integer> bayAmmo = new ArrayList<>();
 
     public WeaponMounted(Entity entity, WeaponType type) {
         super(entity, type);
@@ -142,16 +146,11 @@ public class WeaponMounted extends Mounted<WeaponType> {
      * Returns how many shots the weapon is using
      */
     public int getCurrentShots() {
-        WeaponType wtype = (WeaponType) getType();
-        int nShots = getNumShots(wtype, curMode(), false);
+        int nShots = getNumShots(getType(), curMode(), false);
         // sets number of shots for MG arrays
-        if (wtype.hasFlag(WeaponType.F_MGA)) {
+        if (getType().hasFlag(WeaponType.F_MGA)) {
             nShots = 0;
-            for (int eqn : getBayWeapons()) {
-                Mounted<?> m = getEntity().getEquipment(eqn);
-                if (null == m) {
-                    continue;
-                }
+            for (WeaponMounted m : getBayWeapons()) {
                 if ((m.getLocation() == getLocation())
                         && !m.isDestroyed()
                         && !m.isBreached()
@@ -170,22 +169,100 @@ public class WeaponMounted extends Mounted<WeaponType> {
         return getType().hasFlag(WeaponType.F_ONESHOT);
     }
 
-    public void addWeaponToBay(int w) {
-        bayWeapons.add(w);
+    /**
+     * Adds the weapon with the given equipment number to the bay.
+     * @param equipmentNum The equipment number of the weapon to add
+     * @see Entity#getEquipmentNum(Mounted)
+     */
+    public void addWeaponToBay(int equipmentNum) {
+        bayWeapons.add(equipmentNum);
     }
 
-    @Override
-    public List<Integer> getBayWeapons() {
-        return bayWeapons;
+    public void addWeaponToBay(WeaponMounted weapon) {
+        addWeaponToBay(weapon.getEquipmentNum());
     }
 
-    public void addAmmoToBay(int a) {
-        bayAmmo.add(a);
+    /**
+     * Removes the weapon with the given equipment number from the bay.
+     * @param equipmentNum The equipment number of the weapon to remove.
+     * @see Entity#getEquipmentNum(Mounted)
+     */
+    public void removeWeaponFromBay(int equipmentNum) {
+        bayWeapons.remove(Integer.valueOf(equipmentNum));
     }
 
-    @Override
-    public List<Integer> getBayAmmo() {
-        return bayAmmo;
+    /**
+     * Removes a weapon from the bay.
+     * @param weapon The weapon to remove.
+     */
+    public void removeWeaponFromBay(WeaponMounted weapon) {
+        removeWeaponFromBay(weapon.getEquipmentNum());
+    }
+
+    /**
+     * Removes all weapons from the bay.
+     */
+    public void clearBayWeapons() {
+        bayWeapons.clear();
+    }
+
+    /**
+     * @return All the weapon mounts in the bay.
+     */
+    public List<WeaponMounted> getBayWeapons() {
+        return bayWeapons.stream()
+                .map(i -> getEntity().getWeapon(i))
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Fetches the bay weapon at a given index in the bay weapons list.
+     * @param index The index
+     * @return      The weapon mount at that
+     */
+    public WeaponMounted getBayWeapon(int index) {
+        if ((index >= 0) && (index < bayWeapons.size())) {
+            return getEntity().getWeapon(index);
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Adds the ammo with the given equipment number to the bay.
+     * @param equipmentNum The equipment number of the ammo
+     * @see Entity#getEquipmentNum(Mounted)
+     */
+    public void addAmmoToBay(int equipmentNum) {
+        bayAmmo.add(equipmentNum);
+    }
+
+    public void addAmmoToBay(AmmoMounted ammo) {
+        bayAmmo.add(ammo.getEquipmentNum());
+    }
+
+    /**
+     * Removes the ammo with the given equipment number from the bay.
+     * @param equipmentNum The equipment number of the ammo.
+     * @see Entity#getEquipmentNum(Mounted)
+     */
+    public void removeAmmoFromBay(int equipmentNum) {
+        bayAmmo.remove(Integer.valueOf(equipmentNum));
+    }
+
+    /**
+     * Clears all ammo from the bay.
+     */
+    public void clearBayAmmo() {
+        bayAmmo.clear();
+    }
+
+    public List<AmmoMounted> getBayAmmo() {
+        return bayWeapons.stream()
+                .map(i -> getEntity().getAmmo(i))
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
     }
 
     /**
@@ -194,12 +271,44 @@ public class WeaponMounted extends Mounted<WeaponType> {
      * @return        whether the ammo is in this weapon's bay
      */
     public boolean ammoInBay(int mAmmoId) {
-        for (int nextAmmoId : bayAmmo) {
-            if (nextAmmoId == mAmmoId) {
-                return true;
-            }
-        }
-        return false;
+        return bayAmmo.contains(mAmmoId);
+    }
+
+    /**
+     * Removes the weapon or ammo with the given equipment number from the bay.
+     * @param equipmentNum The weapon or ammo equipment number
+     * @see Entity#getEquipmentNum(Mounted)
+     */
+    public void removeFromBay(int equipmentNum) {
+        bayWeapons.remove(Integer.valueOf(equipmentNum));
+        bayAmmo.remove(Integer.valueOf(equipmentNum));
+    }
+
+    /**
+     * Removes the weapon or ammo from the bay.
+     * @param mounted The weapon or ammo to remove.
+     */
+    public void removeFromBay(Mounted<?> mounted) {
+        removeFromBay(mounted.getEquipmentNum());
+    }
+
+    /**
+     * Checks whether the bay contains the given weapon or ammo.
+     * @param equipmentNum The equipment number of the weapon or ammo.
+     * @return Whether the bay contains the equipment.
+     * @see Entity#getEquipmentNum(Mounted)
+     */
+    public boolean bayContains(int equipmentNum) {
+        return bayWeapons.contains(equipmentNum) || bayAmmo.contains(equipmentNum);
+    }
+
+    /**
+     * Checks whether the bay contains the given weapon or ammo.
+     * @param mounted The weapon or ammo.
+     * @return Wehther the bay contains the equipment.
+     */
+    public boolean bayContains(Mounted<?> mounted) {
+        return bayContains(mounted.getEquipmentNum());
     }
 
     @Override
@@ -214,5 +323,50 @@ public class WeaponMounted extends Mounted<WeaponType> {
             list.add("Bay Ammo: " + String.join(", ", bayAmmoIds));
         }
         return list;
+    }
+
+
+    /**
+     * Assign APDS systems to the most dangerous incoming missile attacks. This
+     * should only be called once per turn, or AMS will get extra attacks
+     */
+    public WeaponAttackAction assignAPDS(List<WeaponHandler> vAttacks) {
+        // Shouldn't have null entity, but if we do...
+        if (getEntity() == null) {
+            return null;
+        }
+
+        // Ensure we only target attacks in our arc & range
+        List<WeaponAttackAction> vAttacksInArc = new Vector<>(vAttacks.size());
+        for (WeaponHandler wr : vAttacks) {
+            boolean isInArc = Compute.isInArc(getEntity().getGame(),
+                    getEntity().getId(), getEntity().getEquipmentNum(this),
+                    getEntity().getGame().getEntity(wr.waa.getEntityId()));
+            boolean isInRange = getEntity().getPosition().distance(
+                    wr.getWaa().getTarget(getEntity().getGame()).getPosition()) <= 3;
+            if (isInArc && isInRange) {
+                vAttacksInArc.add(wr.waa);
+            }
+        }
+        // find the most dangerous salvo by expected damage
+        WeaponAttackAction waa = Compute.getHighestExpectedDamage(getEntity()
+                .getGame(), vAttacksInArc, true);
+        if (waa != null) {
+            waa.addCounterEquipment(this);
+            return waa;
+        }
+        return null;
+    }
+
+    /**
+     * @return Whether this mount is an advanced point defense system.
+     */
+    public boolean isAPDS() {
+        if ((getEntity() instanceof BattleArmor)
+                && getType().getInternalName().equals("ISBAAPDS")) {
+            return true;
+        } else {
+            return getType().getAmmoType() == AmmoType.T_APDS;
+        }
     }
 }

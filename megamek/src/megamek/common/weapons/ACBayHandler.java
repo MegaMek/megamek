@@ -50,12 +50,7 @@ public class ACBayHandler extends AmmoBayWeaponHandler {
      */
     @Override
     protected boolean doChecks(Vector<Report> vPhaseReport) {
-        for (int wId : weapon.getBayWeapons()) {
-            WeaponMounted bayW = ae.getWeapon(wId);
-            if (bayW == null) {
-                LogManager.getLogger().error("Handler can't find the weapon!");
-                return false;
-            }
+        for (WeaponMounted bayW : weapon.getBayWeapons()) {
             WeaponType bayWType = bayW.getType();
             int ammoUsed = bayW.getCurrentShots();
             if (bayWType.getAmmoType() == AmmoType.T_AC_ROTARY) {

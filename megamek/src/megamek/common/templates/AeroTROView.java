@@ -15,9 +15,10 @@
 package megamek.common.templates;
 
 import megamek.common.*;
+import megamek.common.equipment.AmmoMounted;
+import megamek.common.equipment.WeaponMounted;
 import megamek.common.verifier.EntityVerifier;
 import megamek.common.verifier.TestAero;
-import org.apache.logging.log4j.LogManager;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -130,17 +131,17 @@ public class AeroTROView extends TROView {
      */
     protected int addWeaponBays(String[][] arcSets) {
         int nameWidth = 1;
-        final Map<String, List<Mounted>> baysByLoc = aero.getWeaponBayList().stream()
+        final Map<String, List<WeaponMounted>> baysByLoc = aero.getWeaponBayList().stream()
                 .collect(Collectors.groupingBy(this::getArcAbbr));
         final List<String> bayArcs = new ArrayList<>();
         final Map<String, Integer> heatByLoc = new HashMap<>();
         final Map<String, List<Map<String, Object>>> bayDetails = new HashMap<>();
         for (final String[] arcSet : arcSets) {
-            final List<Mounted> bayList = baysByLoc.get(arcSet[0]);
+            final List<WeaponMounted> bayList = baysByLoc.get(arcSet[0]);
             if (null != bayList) {
                 final List<Map<String, Object>> rows = new ArrayList<>();
                 int heat = 0;
-                for (final Mounted bay : bayList) {
+                for (final WeaponMounted bay : bayList) {
                     final Map<String, Object> row = createBayRow(bay);
                     heat += ((Number) row.get("heat")).intValue();
                     rows.add(row);
@@ -161,26 +162,21 @@ public class AeroTROView extends TROView {
         return nameWidth;
     }
 
-    private Map<String, Object> createBayRow(Mounted<?> bay) {
+    private Map<String, Object> createBayRow(WeaponMounted bay) {
         final Map<EquipmentKey, Integer> weaponCount = new HashMap<>();
         int heat = 0;
         int srv = 0;
         int mrv = 0;
         int lrv = 0;
         int erv = 0;
-        final int multiplier = ((WeaponType) bay.getType()).isCapital() ? 10 : 1;
-        Mounted linker = null;
+        final int multiplier = bay.getType().isCapital() ? 10 : 1;
+        Mounted<?> linker = null;
         // FIXME: Consider new AmmoType::equals / BombType::equals
-        final Map<AmmoType, Integer> shotsByAmmoType = bay.getBayAmmo().stream().map(aero::getEquipment)
-                .collect(Collectors.groupingBy(m -> (AmmoType) m.getType(),
+        final Map<AmmoType, Integer> shotsByAmmoType = bay.getBayAmmo().stream()
+                .collect(Collectors.groupingBy(AmmoMounted::getType,
                         Collectors.summingInt(Mounted::getBaseShotsLeft)));
-        for (final Integer eqNum : bay.getBayWeapons()) {
-            final Mounted wMount = aero.getEquipment(eqNum);
-            if (null == wMount) {
-                LogManager.getLogger().error("Bay " + bay.getName() + " has non-existent weapon");
-                continue;
-            }
-            final WeaponType wtype = (WeaponType) wMount.getType();
+        for (final WeaponMounted wMount : bay.getBayWeapons()) {
+            final WeaponType wtype = wMount.getType();
             if ((wMount.getLinkedBy() != null) && (wMount.getLinkedBy().getType() instanceof MiscType)) {
                 linker = wMount.getLinkedBy();
             }
@@ -221,7 +217,7 @@ public class AeroTROView extends TROView {
      *            The weapon mount
      * @return The arc abbreviation.
      */
-    protected String getArcAbbr(Mounted m) {
+    protected String getArcAbbr(Mounted<?> m) {
         return aero.getLocationAbbr(m.getLocation());
     }
 
@@ -229,10 +225,10 @@ public class AeroTROView extends TROView {
      * Adds ammo data used by large craft
      */
     protected void addAmmo() {
-        final Map<String, List<Mounted>> ammoByType = aero.getAmmo().stream()
+        final Map<String, List<AmmoMounted>> ammoByType = aero.getAmmo().stream()
                 .collect(Collectors.groupingBy(Mounted::getName));
         final List<Map<String, Object>> ammo = new ArrayList<>();
-        for (final List<Mounted> aList : ammoByType.values()) {
+        for (final List<AmmoMounted> aList : ammoByType.values()) {
             final Map<String, Object> ammoEntry = new HashMap<>();
             ammoEntry.put("name", aList.get(0).getName().replaceAll("\\s+Ammo", ""));
             ammoEntry.put("shots", aList.stream().mapToInt(Mounted::getUsableShotsLeft).sum());

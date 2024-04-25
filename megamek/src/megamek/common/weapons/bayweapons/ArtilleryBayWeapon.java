@@ -15,6 +15,8 @@ package megamek.common.weapons.bayweapons;
 
 import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.equipment.AmmoMounted;
+import megamek.common.equipment.WeaponMounted;
 import megamek.common.weapons.*;
 import megamek.server.GameManager;
 
@@ -56,10 +58,9 @@ public class ArtilleryBayWeapon extends AmmoBayWeapon {
                                               WeaponAttackAction waa, Game game, GameManager manager) {
         Entity ae = game.getEntity(waa.getEntityId());
         boolean useHoming = false;
-        for (int wId : ((Mounted<?>) ae.getEquipment(waa.getWeaponId())).getBayWeapons()) {
-            Mounted bayW = ae.getEquipment(wId);
+        for (WeaponMounted bayW : ((WeaponMounted) ae.getEquipment(waa.getWeaponId())).getBayWeapons()) {
             // check the currently loaded ammo
-            Mounted bayWAmmo = bayW.getLinked();
+            AmmoMounted bayWAmmo = bayW.getLinkedAmmo();
             waa.setAmmoId(ae.getEquipmentNum(bayWAmmo));
             waa.setAmmoMunitionType(((AmmoType) bayWAmmo.getType()).getMunitionType());
             waa.setAmmoCarrier(ae.getId());

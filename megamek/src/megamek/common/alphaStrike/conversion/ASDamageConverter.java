@@ -21,6 +21,7 @@ package megamek.common.alphaStrike.conversion;
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.common.*;
 import megamek.common.alphaStrike.*;
+import megamek.common.equipment.WeaponMounted;
 import megamek.common.weapons.missiles.MissileWeapon;
 import megamek.common.weapons.other.CLFussilade;
 
@@ -56,7 +57,7 @@ public class ASDamageConverter {
 
     private final Map<WeaponType, Double> ammoModifier = new HashMap<>();
     protected final boolean hasTargetingComputer;
-    protected List<Mounted> weaponsList;
+    protected List<WeaponMounted> weaponsList;
     protected double rawSDamage;
     protected boolean needsHeatAdjustment = false;
     protected double heatAdjustFactor = 1;

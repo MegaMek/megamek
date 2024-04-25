@@ -530,11 +530,9 @@ public class CustomMechDialog extends AbstractButtonDialog implements ActionList
                             // Artillery bays can mix and match, so limit the bay
                             // to the shortest range of the weapons in it
                             int bayShortestRange = 150; // Cruise missile/120
-                            for (int wId : wep.getBayWeapons()) {
-                                WeaponMounted bweap = (WeaponMounted) entity.getEquipment(wId);
-                                WeaponType bwtype = bweap.getType();
+                            for (WeaponMounted bweap : wep.getBayWeapons()) {
                                 // Max TO range in mapsheets - 1 for the actual play area
-                                int currentDistance = (bwtype.getLongRange() - 1);
+                                int currentDistance = (bweap.getType().getLongRange() - 1);
                                 if (currentDistance < bayShortestRange) {
                                     bayShortestRange = currentDistance;
                                 }

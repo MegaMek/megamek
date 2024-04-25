@@ -22,10 +22,12 @@ import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.common.*;
 import megamek.common.alphaStrike.ASArcs;
 import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.equipment.WeaponMounted;
 import megamek.common.weapons.bayweapons.BayWeapon;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import static megamek.common.alphaStrike.ASUnitType.*;
 import static megamek.common.alphaStrike.BattleForceSUA.*;
@@ -52,10 +54,9 @@ public class ASLargeAeroSpecialAbilityConverter extends ASSpecialAbilityConverte
         for (Mounted<?> equipment : entity.getEquipment()) {
             processArcENE(equipment);
             if (equipment.getType() instanceof BayWeapon) {
-                var bayEquipmentList = new ArrayList<>(equipment.getBayWeapons());
-                bayEquipmentList.addAll(equipment.getBayAmmo());
-                for (int index : bayEquipmentList) {
-                    Mounted bayEquipment = entity.getEquipment(index);
+                List<Mounted<?>> bayEquipmentList = new ArrayList<>(((WeaponMounted) equipment).getBayWeapons());
+                bayEquipmentList.addAll(((WeaponMounted) equipment).getBayAmmo());
+                for (Mounted<?> bayEquipment : bayEquipmentList) {
                     processArcENE(bayEquipment);
                 }
             }

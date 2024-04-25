@@ -27,6 +27,7 @@ import java.util.List;
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.filechooser.FileFilter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -372,12 +373,24 @@ public class SkinSpecEditor extends JPanel implements ListSelectionListener, Act
     private String saveDialog() {
         String userDirName = PreferenceManager.getClientPreferences().getUserDir();
         File userDir = new File(userDirName);
-        JFileChooser fc;
+        String path;
         if (!userDirName.isBlank() && userDir.isDirectory()) {
-            fc = new JFileChooser(userDir);
+            path = userDir.getPath();
         } else {
-            fc = new JFileChooser(Configuration.skinsDir());
+            path = Configuration.skinsDir().getPath();
         }
+        JFileChooser fc = new JFileChooser(path);
+        fc.setFileFilter(new FileFilter() {
+            @Override
+            public boolean accept(File dir) {
+                return (dir.getName().endsWith(".xml") || dir.isDirectory());
+            }
+
+            @Override
+            public String getDescription() {
+                return "*.xml";
+            }
+        });
         fc.setDialogTitle(Messages.getString("ClientGUI.FileSaveDialog.title"));
         String file = "";
 
@@ -387,7 +400,7 @@ public class SkinSpecEditor extends JPanel implements ListSelectionListener, Act
             return file;
         }
         if (fc.getSelectedFile() != null) {
-             file = fc.getSelectedFile().getName();
+             file = path + "/" + fc.getSelectedFile().getName();
         }
         return file;
     }

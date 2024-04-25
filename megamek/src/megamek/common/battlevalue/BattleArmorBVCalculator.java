@@ -21,6 +21,7 @@ package megamek.common.battlevalue;
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.client.ui.swing.calculationReport.DummyCalculationReport;
 import megamek.common.*;
+import megamek.common.equipment.AmmoMounted;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -207,7 +208,7 @@ public class BattleArmorBVCalculator extends BVCalculator {
     }
 
     @Override
-    protected boolean ammoCounts(Mounted ammo) {
+    protected boolean ammoCounts(AmmoMounted ammo) {
         return super.ammoCounts(ammo)
                 && ((ammo.getLocation() == BattleArmor.LOC_SQUAD) || (ammo.getLocation() == currentTrooper));
     }

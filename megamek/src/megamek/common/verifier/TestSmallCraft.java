@@ -378,7 +378,7 @@ public class TestSmallCraft extends TestAero {
             return super.printWeapon();
         }
         StringBuffer buffer = new StringBuffer();
-        for (Mounted m : getEntity().getWeaponBayList()) {
+        for (Mounted<?> m : getEntity().getWeaponBayList()) {
             buffer.append(m.getName()).append(" ")
                 .append(getLocationAbbr(m.getLocation()));
             if (m.isRearMounted()) {
@@ -520,7 +520,7 @@ public class TestSmallCraft extends TestAero {
 
         // For DropShips, make sure all bays have at least one weapon and that there are at least
         // ten shots of ammo for each ammo-using weapon in the bay.
-        for (Mounted bay : smallCraft.getWeaponBayList()) {
+        for (Mounted<?> bay : smallCraft.getWeaponBayList()) {
             if (bay.getBayWeapons().isEmpty()) {
                 buff.append("Bay ").append(bay.getName()).append(" has no weapons\n");
                 illegal = true;
@@ -529,7 +529,7 @@ public class TestSmallCraft extends TestAero {
             Map<Integer,Integer> ammoTypeCount = new HashMap<>();
             for (Integer wNum : bay.getBayWeapons()) {
                 final Mounted w = smallCraft.getEquipment(wNum);
-                if (w.isOneShotWeapon()) {
+                if (w.isOneShot()) {
                     continue;
                 }
                 if (w.getType() instanceof WeaponType) {
@@ -541,7 +541,7 @@ public class TestSmallCraft extends TestAero {
             }
 
             for (Integer aNum : bay.getBayAmmo()) {
-                final Mounted a = smallCraft.getEquipment(aNum);
+                final Mounted<?> a = smallCraft.getEquipment(aNum);
                 if (a.getType() instanceof AmmoType) {
                     ammoTypeCount.merge(((AmmoType) a.getType()).getAmmoType(), a.getUsableShotsLeft(),
                             Integer::sum);

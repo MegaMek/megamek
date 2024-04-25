@@ -4,6 +4,7 @@ import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.dialog.AbstractUnitSelectorDialog;
 import megamek.common.*;
 import megamek.common.containers.MunitionTree;
+import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.ArmorType;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
@@ -387,7 +388,7 @@ public class TeamLoadoutGenerator {
      * Generate the list of desired ammo load-outs for this team.
      * TODO: implement generateDetailedMunitionTree with more complex breakdowns per unit type
      * NOTE: if subclassing this generator, should only need to override this method.
-     * @param rc
+     * @param rp
      * @param t
      * @param defaultSettingsFile
      * @return generated MunitionTree with imperatives for each weapon type
@@ -522,7 +523,7 @@ public class TeamLoadoutGenerator {
     /**
      * Turn a selection of the computed munition weights into imperatives to load in the MunitionTree
      * @param mt
-     * @param rp
+     * @param mwc
      * @return
      */
     public static MunitionTree applyWeightsToMunitionTree(MunitionTree mt, MunitionWeightCollection mwc) {
@@ -562,7 +563,8 @@ public class TeamLoadoutGenerator {
     /**
      * Wrapper to load a file of preset munition imperatives
      * @param team
-     * @param defaultFile
+     * @param faction
+     * @param adfFile
      */
     public void reconfigureTeam(Team team, String faction, String adfFile) {
         ReconfigurationParameters rp = generateParameters(game, gameOptions, team);
@@ -590,8 +592,8 @@ public class TeamLoadoutGenerator {
 
     /**
      * Configure Bot Team with all munitions randomized
-     * @param g
      * @param team
+     * @param faction
      */
     public void randomizeBotTeamConfiguration(Team team, String faction) {
         reconfigureTeam(game, team, faction, generateRandomizedMT());
@@ -618,11 +620,11 @@ public class TeamLoadoutGenerator {
         String pilot = e.getCrew().getName(0);
 
         // Create map of bin counts in unit by type
-        HashMap<String, ArrayList<Mounted>> binLists = new HashMap<>();
+        HashMap<String, List<AmmoMounted>> binLists = new HashMap<>();
 
         // Populate map with _valid_, _available_ ammo
-        for (Mounted ammoBin: e.getAmmo()) {
-            AmmoType aType = (AmmoType) ammoBin.getType();
+        for (AmmoMounted ammoBin: e.getAmmo()) {
+            AmmoType aType = ammoBin.getType();
             String sName = ("".equals(aType.getBaseName())) ? ammoBin.getType().getShortName() : aType.getBaseName();
 
             // Store the actual bins under their types
@@ -639,7 +641,7 @@ public class TeamLoadoutGenerator {
     }
 
     private void iterativelyLoadAmmo(
-        Entity e, MunitionTree mt, ArrayList<Mounted> binList, String binName, String faction
+        Entity e, MunitionTree mt, List<AmmoMounted> binList, String binName, String faction
     ){
         String techBase = (e.isClan()) ? "CL" : "IS";
         iterativelyLoadAmmo(e, mt, binList, binName, techBase, faction);
@@ -663,7 +665,7 @@ public class TeamLoadoutGenerator {
      * @param faction Faction to outfit for, used in ammo validity checks (uses MM, not IO, faction codes)
      */
     private void iterativelyLoadAmmo(
-            Entity e, MunitionTree mt, ArrayList<Mounted> binList, String binName, String techBase, String faction
+            Entity e, MunitionTree mt, List<AmmoMounted> binList, String binName, String techBase, String faction
     ) {
         Logger logger = LogManager.getLogger();
         // Copy counts that we will update, otherwise mt entry gets edited permanently.
@@ -762,7 +764,7 @@ public class TeamLoadoutGenerator {
         }
 
         if (!(defaultType == null || binList.isEmpty())) {
-            for (Mounted bin : binList) {
+            for (AmmoMounted bin : binList) {
                 bin.changeAmmoType(defaultType);
             }
         }

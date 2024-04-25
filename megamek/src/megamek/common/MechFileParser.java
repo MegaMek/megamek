@@ -14,10 +14,12 @@
  */
 package megamek.common;
 
+import megamek.common.equipment.WeaponMounted;
 import megamek.common.loaders.*;
 import megamek.common.util.BuildingBlock;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.verifier.TestInfantry;
+import megamek.common.weapons.Weapon;
 import megamek.common.weapons.ppc.*;
 import org.apache.logging.log4j.LogManager;
 
@@ -515,14 +517,14 @@ public class MechFileParser {
         } // Check the next piece of equipment.
 
         // Walk through the list of equipment.
-        for (Mounted m : ent.getMisc()) {
+        for (Mounted<?> m : ent.getMisc()) {
 
             // Link PPC Capacitor to PPC it its location.
             if (m.getType().hasFlag(MiscType.F_PPC_CAPACITOR)
                     && (m.getLinked() == null)) {
 
                 // link up to a weapon in the same location
-                for (Mounted mWeapon : ent.getWeaponList()) {
+                for (Mounted<?> mWeapon : ent.getWeaponList()) {
                     WeaponType wtype = (WeaponType) mWeapon.getType();
 
                     //Handle weapon bays
@@ -802,7 +804,7 @@ public class MechFileParser {
      */
     static void linkMGAs(Entity entity) {
         List<Integer> usedMG = new ArrayList<>();
-        for (Mounted mga : entity.getWeaponList()) {
+        for (WeaponMounted mga : entity.getWeaponList()) {
             if (mga.getType().hasFlag(WeaponType.F_MGA)) {
                 // This may be called from MML after changing equipment location, so there
                 // may be old data that needs to be cleared

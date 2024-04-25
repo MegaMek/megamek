@@ -17,6 +17,9 @@ import megamek.common.*;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
+import megamek.common.equipment.AmmoMounted;
+import megamek.common.equipment.BombMounted;
+import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
 import megamek.common.weapons.infantry.InfantryWeapon;
@@ -42,8 +45,8 @@ public class WeaponFireInfo {
     private WeaponAttackAction action;
     private Entity shooter;
     private Targetable target;
-    private Mounted weapon;
-    private Mounted preferredAmmo;
+    private WeaponMounted weapon;
+    private AmmoMounted preferredAmmo;
     private double probabilityToHit;
     private int heat;
     private double maxDamage;
@@ -77,8 +80,8 @@ public class WeaponFireInfo {
      */
     WeaponFireInfo(final Entity shooter,
                    final Targetable target,
-                   final Mounted weapon,
-                   final Mounted ammo,
+                   final WeaponMounted weapon,
+                   final AmmoMounted ammo,
                    final Game game,
                    final boolean guess,
                    final Princess owner) {
@@ -100,8 +103,8 @@ public class WeaponFireInfo {
                    final EntityState shooterState,
                    final Targetable target,
                    final EntityState targetState,
-                   final Mounted weapon,
-                   final Mounted ammo,
+                   final WeaponMounted weapon,
+                   final AmmoMounted ammo,
                    final Game game,
                    final boolean guess,
                    final Princess owner) {
@@ -120,14 +123,14 @@ public class WeaponFireInfo {
      * @param assumeUnderFlightPath Set TRUE for aerial units performing air-to-ground attacks.
      * @param guess                 Set TRUE to estimate the chance to hit rather than doing the full calculation.
      * @param owner                 Instance of the princess owner
-     * @param bombPayload           The bomb payload, as described in WeaponAttackAction.setBombPayload
+     * @param bombPayloads          The bomb payload, as described in WeaponAttackAction.setBombPayload
      */
     WeaponFireInfo(final Entity shooter,
                    final MovePath shooterPath,
                    final Targetable target,
                    final EntityState targetState,
-                   final Mounted weapon,
-                   final Mounted ammo,
+                   final WeaponMounted weapon,
+                   final AmmoMounted ammo,
                    final Game game,
                    final boolean assumeUnderFlightPath,
                    final boolean guess,
@@ -151,15 +154,15 @@ public class WeaponFireInfo {
      * @param guess                 Set TRUE to estimate the chance to hit rather than going through the full
      *                              calculation.
      * @param owner                 Instance of the princess owner
-     * @param bombPayload           The bomb payload, as described in WeaponAttackAction.setBombPayload
+     * @param bombPayloads          The bomb payload, as described in WeaponAttackAction.setBombPayload
      */
     private WeaponFireInfo(final Entity shooter,
                            final EntityState shooterState,
                            final MovePath shooterPath,
                            final Targetable target,
                            final EntityState targetState,
-                           final Mounted weapon,
-                           final Mounted ammo,
+                           final WeaponMounted weapon,
+                           final AmmoMounted ammo,
                            final Game game,
                            final boolean assumeUnderFlightPath,
                            final boolean guess,
@@ -317,11 +320,11 @@ public class WeaponFireInfo {
         this.targetState = targetState;
     }
 
-    protected void setWeapon(final Mounted weapon) {
+    protected void setWeapon(final WeaponMounted weapon) {
         this.weapon = weapon;
     }
 
-    protected void setAmmo(final Mounted ammo) {
+    protected void setAmmo(final AmmoMounted ammo) {
         this.preferredAmmo = ammo;
     }
 
@@ -333,11 +336,11 @@ public class WeaponFireInfo {
         return heat;
     }
 
-    public Mounted getWeapon() {
+    public WeaponMounted getWeapon() {
         return weapon;
     }
 
-    public Mounted getAmmo() {
+    public AmmoMounted getAmmo() {
         return preferredAmmo;
     }
 
@@ -380,7 +383,7 @@ public class WeaponFireInfo {
         if ((null != weapon.getBayWeapons()) && !weapon.getBayWeapons().isEmpty()) {
             int bayDamage = 0;
             for (int weaponID : weapon.getBayWeapons()) {
-                Mounted bayWeapon = weapon.getEntity().getEquipment(weaponID);
+                Mounted<?> bayWeapon = weapon.getEntity().getEquipment(weaponID);
                 WeaponType weaponType = (WeaponType) bayWeapon.getType();
                 int maxRange = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE)
                         ? weaponType.getExtremeRange() : weaponType.getLongRange();
@@ -518,7 +521,7 @@ public class WeaponFireInfo {
      * @param weapon The weapon to check.
      * @return Generated heat.
      */
-    int computeHeat(Mounted weapon) {
+    int computeHeat(Mounted<?> weapon) {
         // bay weapons require special consideration, by looping through all weapons and adding up the damage
         // A bay's weapons may have different ranges, most noticeable in laser bays, where the damage potential
         // varies with distance to target.
@@ -549,8 +552,8 @@ public class WeaponFireInfo {
 
         // for dive attacks, we can pretty much assume that we're going to drop everything we've got on the poor scrubs in this hex
         if (weapon.getType().hasFlag(WeaponType.F_DIVE_BOMB)) {
-            for (final Mounted bomb : shooter.getBombs(BombType.F_GROUND_BOMB)) {
-                final int damagePerShot = ((BombType) bomb.getType()).getDamagePerShot();
+            for (final BombMounted bomb : shooter.getBombs(BombType.F_GROUND_BOMB)) {
+                final int damagePerShot = bomb.getType().getDamagePerShot();
 
                 // some bombs affect a blast radius, so we take that into account
                 final List<Coords> affectedHexes = new ArrayList<>();

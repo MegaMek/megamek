@@ -51,10 +51,10 @@ public class ArtilleryAttackAction extends WeaponAttackAction implements Seriali
         distance = (int) Math.floor((double) distance / game.getPlanetaryConditions().getGravity());
         EquipmentType eType = getEntity(game).getEquipment(weaponId).getType();
         WeaponType wType = (WeaponType) eType;
-        Mounted mounted = getEntity(game).getEquipment(weaponId);
+        Mounted<?> mounted = getEntity(game).getEquipment(weaponId);
         if (getEntity(game).usesWeaponBays() && wType.getAtClass() == WeaponType.CLASS_ARTILLERY) {
             for (int wId : game.getEntity(entityId).getEquipment(weaponId).getBayWeapons()) {
-                Mounted bayW = game.getEntity(entityId).getEquipment(wId);
+                Mounted<?> bayW = game.getEntity(entityId).getEquipment(wId);
                 WeaponType bayWType = ((WeaponType) bayW.getType());
                 if (bayWType.hasFlag(WeaponType.F_CRUISE_MISSILE)) {
                     // See TO p181. Cruise missile flight time is (1 + (Mapsheets / 5, round down)

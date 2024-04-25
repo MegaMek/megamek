@@ -17,6 +17,8 @@ import megamek.common.*;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
+import megamek.common.equipment.AmmoMounted;
+import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.OptionsConstants;
 import megamek.server.GameManager;
 import org.apache.logging.log4j.LogManager;
@@ -50,13 +52,19 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
     protected void useAmmo() {
         nweaponsHit = weapon.getBayWeapons().size();
         for (int wId : weapon.getBayWeapons()) {
-            Mounted bayW = ae.getEquipment(wId);
+            WeaponMounted bayW = ae.getWeapon(wId);
+            if (bayW == null) {
+                LogManager.getLogger().error("Handler can't find the weapon!");
+                return;
+            }
+
             // check the currently loaded ammo
-            Mounted bayWAmmo = bayW.getLinked();
+            AmmoMounted bayWAmmo = bayW.getLinkedAmmo();
 
             if (bayWAmmo == null) {// Can't happen. w/o legal ammo, the weapon
                 // *shouldn't* fire.
                 LogManager.getLogger().debug("Handler can't find any ammo! Oh no!");
+                return;
             }
 
             int shots = bayW.getCurrentShots();
@@ -75,7 +83,7 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
                             || bayWAmmo.getUsableShotsLeft() < 1) {
                         // try loading something else
                         ae.loadWeaponWithSameAmmo(bayW);
-                        bayWAmmo = bayW.getLinked();
+                        bayWAmmo = bayW.getLinkedAmmo();
                     }
                     if (null != bayWAmmo) {
                         bayWAmmo.setShotsLeft(bayWAmmo.getBaseShotsLeft() - 1);

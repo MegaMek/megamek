@@ -15,6 +15,8 @@ package megamek.common.weapons.bayweapons;
 
 import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.equipment.AmmoMounted;
+import megamek.common.equipment.WeaponMounted;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.BayWeaponHandler;
 import megamek.common.weapons.Weapon;
@@ -62,18 +64,18 @@ public abstract class BayWeapon extends Weapon {
     }
 
     @Override
-    public int getMaxRange(Mounted weapon) {
+    public int getMaxRange(WeaponMounted weapon) {
         return getMaxRange(weapon, null);
     }
 
     @Override
-    public int getMaxRange(Mounted weapon, Mounted ammo) {
+    public int getMaxRange(WeaponMounted weapon, AmmoMounted ammo) {
         int mrange = RANGE_SHORT;
         Entity ae = weapon.getEntity();
         if (null != ae) {
             for (int wId : weapon.getBayWeapons()) {
-                Mounted bayW = ae.getEquipment(wId);
-                WeaponType bayWType = (WeaponType) bayW.getType();
+                WeaponMounted bayW = (WeaponMounted) ae.getEquipment(wId);
+                WeaponType bayWType = bayW.getType();
                 if (bayWType.getMaxRange(bayW) > mrange) {
                     mrange = bayWType.getMaxRange(bayW);
                 }

@@ -16,6 +16,8 @@ package megamek.common.weapons;
 import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
+import megamek.common.equipment.AmmoMounted;
+import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.OptionsConstants;
 import megamek.server.GameManager;
 import org.apache.logging.log4j.LogManager;
@@ -268,20 +270,23 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
         int range = RangeType.rangeBracket(nRange, wtype.getATRanges(), true, false);
 
         for (int wId : weapon.getBayWeapons()) {
-            Mounted bayW = ae.getEquipment(wId);
+            WeaponMounted bayW = ae.getWeapon(wId);
+            if (bayW == null) {
+                LogManager.getLogger().error("Handler can't find the weapon!");
+                return 0;
+            }
             // check the currently loaded ammo
-            Mounted bayWAmmo = bayW.getLinked();
+            AmmoMounted bayWAmmo = bayW.getLinkedAmmo();
             if (null == bayWAmmo || bayWAmmo.getUsableShotsLeft() < 1) {
                 // try loading something else
                 ae.loadWeaponWithSameAmmo(bayW);
-                bayWAmmo = bayW.getLinked();
+                bayWAmmo = bayW.getLinkedAmmo();
             }
             if (!bayW.isBreached()
                     && !bayW.isDestroyed()
                     && !bayW.isJammed()
                     && bayWAmmo != null
-                    && ae.getTotalAmmoOfType(bayWAmmo.getType()) >= bayW
-                            .getCurrentShots()) {
+                    && ae.getTotalAmmoOfType(bayWAmmo.getType()) >= bayW.getCurrentShots()) {
                 WeaponType bayWType = ((WeaponType) bayW.getType());
                 // need to cycle through weapons and add av
                 double current_av = 0;
@@ -327,7 +332,7 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
                                 || bayWAmmo.getUsableShotsLeft() < 1) {
                             // try loading something else
                             ae.loadWeaponWithSameAmmo(bayW);
-                            bayWAmmo = bayW.getLinked();
+                            bayWAmmo = bayW.getLinkedAmmo();
                         }
                         if (null != bayWAmmo) {
                             bayWAmmo.setShotsLeft(bayWAmmo.getBaseShotsLeft() - 1);

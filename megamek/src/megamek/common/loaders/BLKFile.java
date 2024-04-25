@@ -866,7 +866,7 @@ public class BLKFile {
         for (int i = 0; i < numLocs; i++) {
             eq.add(new Vector<>());
         }
-        for (Mounted m : t.getEquipment()) {
+        for (Mounted<?> m : t.getEquipment()) {
             // Ignore Mounteds that represent a WeaponGroup
             // BA anti-personnel weapons are written just after the mount
             if (m.isWeaponGroup() || m.isAPMMounted() || (m.getType() instanceof InfantryAttack)) {

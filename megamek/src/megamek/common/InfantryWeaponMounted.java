@@ -27,7 +27,7 @@ import java.util.List;
  * This handles special features of both weapons. Infantry units that only have
  * a single weapon should use {@link Mounted}.
  */
-public class InfantryWeaponMounted extends Mounted {
+public class InfantryWeaponMounted extends Mounted<InfantryWeapon> {
 
     transient private InfantryWeapon otherWeapon;
     private final String typeName;
@@ -42,7 +42,7 @@ public class InfantryWeaponMounted extends Mounted {
      * @param rangeWeapon The weapon used to calculate range.
      * @param otherWeapon The other weapon
      */
-    public InfantryWeaponMounted(Entity entity, EquipmentType rangeWeapon, InfantryWeapon otherWeapon) {
+    public InfantryWeaponMounted(Entity entity, InfantryWeapon rangeWeapon, InfantryWeapon otherWeapon) {
         super(entity, rangeWeapon);
         this.typeName = otherWeapon.getInternalName();
         this.otherWeapon = otherWeapon;

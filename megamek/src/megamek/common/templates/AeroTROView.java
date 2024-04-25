@@ -161,7 +161,7 @@ public class AeroTROView extends TROView {
         return nameWidth;
     }
 
-    private Map<String, Object> createBayRow(Mounted bay) {
+    private Map<String, Object> createBayRow(Mounted<?> bay) {
         final Map<EquipmentKey, Integer> weaponCount = new HashMap<>();
         int heat = 0;
         int srv = 0;

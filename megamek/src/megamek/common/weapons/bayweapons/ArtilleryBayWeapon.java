@@ -56,7 +56,7 @@ public class ArtilleryBayWeapon extends AmmoBayWeapon {
                                               WeaponAttackAction waa, Game game, GameManager manager) {
         Entity ae = game.getEntity(waa.getEntityId());
         boolean useHoming = false;
-        for (int wId : ae.getEquipment(waa.getWeaponId()).getBayWeapons()) {
+        for (int wId : ((Mounted<?>) ae.getEquipment(waa.getWeaponId())).getBayWeapons()) {
             Mounted bayW = ae.getEquipment(wId);
             // check the currently loaded ammo
             Mounted bayWAmmo = bayW.getLinked();

@@ -22,7 +22,9 @@ import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.equipment.WeaponMounted;
 import megamek.server.GameManager;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * @author Jay Lawson
@@ -49,8 +51,12 @@ public class ACBayHandler extends AmmoBayWeaponHandler {
     @Override
     protected boolean doChecks(Vector<Report> vPhaseReport) {
         for (int wId : weapon.getBayWeapons()) {
-            Mounted bayW = ae.getEquipment(wId);
-            WeaponType bayWType = ((WeaponType) bayW.getType());
+            WeaponMounted bayW = ae.getWeapon(wId);
+            if (bayW == null) {
+                LogManager.getLogger().error("Handler can't find the weapon!");
+                return false;
+            }
+            WeaponType bayWType = bayW.getType();
             int ammoUsed = bayW.getCurrentShots();
             if (bayWType.getAmmoType() == AmmoType.T_AC_ROTARY) {
                 boolean jams = false;

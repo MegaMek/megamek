@@ -17,6 +17,8 @@ import megamek.client.generator.RandomNameGenerator;
 import megamek.codeUtilities.StringUtility;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.Gender;
+import megamek.common.equipment.AmmoMounted;
+import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.infantry.InfantryWeapon;
@@ -1624,13 +1626,13 @@ public class MULParser {
                     EquipmentType newLoad = EquipmentType.get(type);
                     if (newLoad instanceof AmmoType) {
                         int counter = -1;
-                        Iterator<Mounted> ammo = entity.getAmmo()
+                        Iterator<AmmoMounted> ammo = entity.getAmmo()
                                 .iterator();
                         while (ammo.hasNext()
                                 && (counter < locAmmoCount)) {
 
                             // Is this mounted in the current location?
-                            Mounted mounted = ammo.next();
+                            AmmoMounted mounted = ammo.next();
                             if (mounted.getLocation() == loc) {
 
                                 // Increment the loop counter.
@@ -1805,7 +1807,7 @@ public class MULParser {
                 mounted.setRapidfire(Boolean.parseBoolean(rfmg));
 
                 // Is the mounted a type of ammo?
-                if (mounted.getType() instanceof AmmoType) {
+                if (mounted instanceof AmmoMounted) {
                     // Get the saved ammo load.
                     EquipmentType newLoad = EquipmentType.get(type);
                     if (newLoad instanceof AmmoType) {
@@ -1831,23 +1833,23 @@ public class MULParser {
                         } else {
 
                             // Change to the saved ammo type and shots.
-                            mounted.changeAmmoType((AmmoType) newLoad);
+                            ((AmmoMounted) mounted).changeAmmoType((AmmoType) newLoad);
                             mounted.setShotsLeft(shotsVal);
 
                         } // End have-good-shots-value
                         try {
                             double capVal = Double.parseDouble(capacity);
-                            mounted.setAmmoCapacity(capVal);
+                            ((AmmoMounted) mounted).setAmmoCapacity(capVal);
                         } catch (NumberFormatException excep) {
                             // Handled by the next if test.
                         }
                         if (capacity.equals(VALUE_NA)) {
                             if (entity.hasETypeFlag(Entity.ETYPE_BATTLEARMOR)
                                     || entity.hasETypeFlag(Entity.ETYPE_PROTOMECH)) {
-                                mounted.setAmmoCapacity(mounted.getOriginalShots()
+                                ((AmmoMounted) mounted).setAmmoCapacity(mounted.getOriginalShots()
                                          * ((AmmoType) mounted.getType()).getKgPerShot() * 1000);
                             } else {
-                                mounted.setAmmoCapacity(mounted.getOriginalShots()
+                                ((AmmoMounted) mounted).setAmmoCapacity(mounted.getOriginalShots()
                                         * mounted.getTonnage()
                                         / ((AmmoType) mounted.getType()).getShots());
                             }
@@ -1893,8 +1895,7 @@ public class MULParser {
                     // Make sure munition is a type of ammo.
                     if (munType instanceof AmmoType) {
                         // Change to the saved munition type.
-                        mounted.getLinked().changeAmmoType(
-                                (AmmoType) munType);
+                        ((AmmoMounted) mounted.getLinked()).changeAmmoType((AmmoType) munType);
                     } else {
                         // Bad XML equipment.
                         warning.append("XML file expects")
@@ -2665,9 +2666,9 @@ public class MULParser {
         // 3: add the ammo to a crit slot on the bay's location
 
         int bayCritIndex = Integer.parseInt(bayIndex);
-        Mounted bay = entity.getCritical(loc, bayCritIndex - 1).getMount();
+        WeaponMounted bay = (WeaponMounted) entity.getCritical(loc, bayCritIndex - 1).getMount();
 
-        Mounted ammo = new Mounted(entity, AmmoType.get(type));
+        Mounted<?> ammo = Mounted.createMounted(entity, AmmoType.get(type));
 
         try {
             entity.addEquipment(ammo, loc, bay.isRearMounted());

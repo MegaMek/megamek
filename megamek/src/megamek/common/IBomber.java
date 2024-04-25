@@ -22,6 +22,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.IntStream;
 
+import megamek.common.equipment.BombMounted;
 import megamek.common.options.OptionsConstants;
 
 /**
@@ -152,7 +153,7 @@ public interface IBomber {
     }
 
     // For convenience
-    List<Mounted> getBombs();
+    List<BombMounted> getBombs();
 
     /**
      *
@@ -291,14 +292,14 @@ public interface IBomber {
      * @param internal mounted internally or not.
      */
     private void applyBombWeapons(int type, int loc, boolean internal){
-        Mounted m;
+        Mounted<?> m;
         try {
             EquipmentType et = EquipmentType.get(BombType.getBombWeaponName(type));
             m = ((Entity) this).addBomb(et, loc);
             m.setInternalBomb(internal);
             // Add bomb itself as single-shot ammo.
             if (type != BombType.B_TAG) {
-                Mounted ammo = new Mounted((Entity) this,
+                Mounted<?> ammo = Mounted.createMounted((Entity) this,
                         EquipmentType.get(BombType.getBombInternalName(type)));
                 ammo.setShotsLeft(1);
                 ammo.setInternalBomb(internal);

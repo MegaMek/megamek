@@ -87,22 +87,22 @@ public class InfantryBVCalculator extends BVCalculator {
         // Damage dealt by the troopers is averaged over primary and secondary weapons; therefore calculate
         // weapon damage at full strength and then multiply by the surviving trooper ratio
         if (primaryWeapon != null) {
-            Mounted primaryWeaponMounted = new Mounted(infantry, primaryWeapon);
+            Mounted<?> primaryWeaponMounted = Mounted.createMounted(infantry, primaryWeapon);
             processWeapon(primaryWeaponMounted, true, true, primaryShooterCount);
         }
         if (secondaryWeapon != null) {
-            Mounted secondaryWeaponMounted = new Mounted(infantry, secondaryWeapon);
+            Mounted<?> secondaryWeaponMounted = Mounted.createMounted(infantry, secondaryWeapon);
             processWeapon(secondaryWeaponMounted, true, true, secondaryShooterCount);
         }
 
         if (infantry.canMakeAntiMekAttacks()) {
             bvReport.addLine("Anti-Mek:", "", "");
             if (primaryWeapon != null && !primaryWeapon.hasFlag(InfantryWeapon.F_INF_ARCHAIC)) {
-                Mounted primaryWeaponMounted = new Mounted(infantry, primaryWeapon);
+                Mounted<?> primaryWeaponMounted = Mounted.createMounted(infantry, primaryWeapon);
                 processWeapon(primaryWeaponMounted, true, true, primaryShooterCount);
             }
             if (secondaryWeapon != null && !secondaryWeapon.hasFlag(InfantryWeapon.F_INF_ARCHAIC)) {
-                Mounted secondaryWeaponMounted = new Mounted(infantry, secondaryWeapon);
+                Mounted<?> secondaryWeaponMounted = Mounted.createMounted(infantry, secondaryWeapon);
                 processWeapon(secondaryWeaponMounted, true, true, secondaryShooterCount);
             }
         }

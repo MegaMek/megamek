@@ -22,11 +22,13 @@ package megamek.common;
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.common.battlevalue.BVCalculator;
 
+import megamek.common.equipment.WeaponMounted;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
@@ -48,16 +50,19 @@ public class EntityTest {
                 any(CalculationReport.class))).thenCallRealMethod();
         when(testEntity.getTotalArmor()).thenReturn(100);
         when(testEntity.getBARRating(anyInt())).thenCallRealMethod();
-        ArrayList<Mounted> equipment = new ArrayList<>(2);
+        List<Mounted<?>> equipment = new ArrayList<>(2);
+        List<WeaponMounted> weapons = new ArrayList<>(2);
         WeaponType ppcType = mock(WeaponType.class);
         when(ppcType.getBV(any(Entity.class))).thenReturn(50.0);
-        Mounted ppc = mock(Mounted.class);
+        WeaponMounted ppc = mock(WeaponMounted.class);
         when(ppc.getType()).thenReturn(ppcType);
         when(ppc.isDestroyed()).thenReturn(false);
         equipment.add(ppc);
         equipment.add(ppc);
+        weapons.add(ppc);
+        weapons.add(ppc);
         when(testEntity.getEquipment()).thenReturn(equipment);
-        when(testEntity.getWeaponList()).thenReturn(equipment);
+        when(testEntity.getWeaponList()).thenReturn(weapons);
         when(testEntity.getAmmo()).thenReturn(new ArrayList<>(0));
         return testEntity;
     }

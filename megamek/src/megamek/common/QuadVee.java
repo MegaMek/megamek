@@ -19,6 +19,7 @@
 package megamek.common;
 
 import megamek.common.enums.MPBoosters;
+import megamek.common.equipment.MiscMounted;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryconditions.PlanetaryConditions;
 
@@ -396,8 +397,8 @@ public class QuadVee extends QuadMech {
                 }
             }
         }
-        for (Mounted m : getMisc()) {
-            if (m.getType() instanceof MiscType && m.getType().hasFlag(MiscType.F_TRACKS)) {
+        for (MiscMounted m : getMisc()) {
+            if (m.getType().hasFlag(MiscType.F_TRACKS)) {
                 cost += m.getDamageTaken();
                 break;
             }

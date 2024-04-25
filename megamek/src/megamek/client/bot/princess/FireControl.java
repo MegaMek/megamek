@@ -17,6 +17,9 @@ import megamek.common.*;
 import megamek.common.actions.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.annotations.StaticWrapper;
+import megamek.common.equipment.AmmoMounted;
+import megamek.common.equipment.BombMounted;
+import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.OptionsConstants;
 import megamek.common.pathfinder.AeroGroundPathFinder;
 import megamek.common.planetaryconditions.IlluminationLevel;
@@ -645,8 +648,8 @@ public class FireControl {
                                           @Nullable EntityState shooterState,
                                           final Targetable target,
                                           @Nullable EntityState targetState,
-                                          final Mounted weapon,
-                                          @Nullable final Mounted ammo,
+                                          final WeaponMounted weapon,
+                                          @Nullable final AmmoMounted ammo,
                                           final Game game) {
 
         if (null == shooterState) {
@@ -663,10 +666,10 @@ public class FireControl {
 
         // Make sure we have ammo.
         final WeaponType weaponType = (WeaponType) weapon.getType();
-        final Mounted firingAmmo;
+        final AmmoMounted firingAmmo;
         if (AmmoType.T_NA != weaponType.getAmmoType()) {
             // Use ammo arg if provided, else use linked ammo.
-            firingAmmo = (ammo == null) ? weapon.getLinked() : ammo;
+            firingAmmo = (ammo == null) ? weapon.getLinkedAmmo() : ammo;
             if (null == firingAmmo) {
                 return new ToHitData(TH_WEAP_NO_AMMO);
             }
@@ -701,7 +704,7 @@ public class FireControl {
         }
         // Bays compute arc differently
         final boolean inArc = (bayWeapon)
-                ? Compute.isInArc(game, shooter.getId(), weapon.getBayWeapons().get(0), target)
+                ? Compute.isInArc(game, shooter.getId(), (int) weapon.getBayWeapons().get(0), target)
                 : isInArc(shooterState.getPosition(), shooterFacing, targetState.getPosition(),
                                       shooter.getWeaponArc(shooter.getEquipmentNum(weapon)));
         if (!inArc) {
@@ -1023,8 +1026,8 @@ public class FireControl {
                                                   final Targetable target,
                                                   @Nullable EntityState targetState,
                                                   final MovePath flightPath,
-                                                  final Mounted weapon,
-                                                  @Nullable final Mounted ammo,
+                                                  final WeaponMounted weapon,
+                                                  @Nullable final AmmoMounted ammo,
                                                   final Game game,
                                                   final boolean assumeUnderFlightPlan) {
 
@@ -1041,7 +1044,7 @@ public class FireControl {
         }
 
         // Is the weapon loaded?
-        Mounted firingAmmo = (ammo == null) ? weapon.getLinked() : ammo;
+        AmmoMounted firingAmmo = (ammo == null) ? weapon.getLinkedAmmo() : ammo;
         if (AmmoType.T_NA != ((WeaponType) weapon.getType()).ammoType) {
             if (null == firingAmmo) {
                 return new ToHitData(TH_WEAP_NO_AMMO);
@@ -1104,8 +1107,8 @@ public class FireControl {
      */
     private String checkGuess(final Entity shooter,
                               final Targetable target,
-                              final Mounted weapon,
-                              final Mounted ammo,
+                              final WeaponMounted weapon,
+                              final AmmoMounted ammo,
                               final Game game) {
 
         // This really should only be done for debugging purposes. Regular play should avoid the overhead.
@@ -1197,8 +1200,8 @@ public class FireControl {
         final StringBuilder ret = new StringBuilder();
         final List<Targetable> enemies = getTargetableEnemyEntities(shooter, game, owner.getFireControlState());
         for (final Targetable enemy : enemies) {
-            for (final Mounted weapon : shooter.getWeaponList()) {
-                final WeaponType wtype = (WeaponType) weapon.getType();
+            for (final WeaponMounted weapon : shooter.getWeaponList()) {
+                final WeaponType wtype = weapon.getType();
                 String shootingCheck;
 
                 // Energy / ammo-independent weapons
@@ -1209,16 +1212,16 @@ public class FireControl {
                     }
                 } else {
                     // For certain weapon types, look over all their loaded ammos
-                    ArrayList<Mounted> ammos;
+                    List<AmmoMounted> ammos;
                     if (wtype.getAmmoType() == AmmoType.T_ATM || wtype.getAmmoType() == AmmoType.T_MML) {
                         ammos = shooter.getAmmo(weapon);
                     } else {
                         // Otherwise assume the current loaded ammo is suitable representative
-                        ammos = new ArrayList<Mounted>();
-                        ammos.add(weapon.getLinked());
+                        ammos = new ArrayList<>();
+                        ammos.add(weapon.getLinkedAmmo());
                     }
 
-                    for (Mounted ammo: ammos) {
+                    for (AmmoMounted ammo: ammos) {
                         shootingCheck = checkGuess(shooter, enemy, weapon, ammo, game);
                         if (null != shootingCheck) {
                             ret.append(shootingCheck);
@@ -1499,8 +1502,8 @@ public class FireControl {
                                        final EntityState shooterState,
                                        final Targetable target,
                                        final EntityState targetState,
-                                       final Mounted weapon,
-                                       final Mounted ammo,
+                                       final WeaponMounted weapon,
+                                       final AmmoMounted ammo,
                                        final Game game,
                                        final boolean guessToHit) {
         return new WeaponFireInfo(shooter, shooterState, target, targetState,
@@ -1525,8 +1528,8 @@ public class FireControl {
                                        final MovePath flightPath,
                                        final Targetable target,
                                        final EntityState targetState,
-                                       final Mounted weapon,
-                                       final Mounted ammo,
+                                       final WeaponMounted weapon,
+                                       final AmmoMounted ammo,
                                        final Game game,
                                        final boolean assumeUnderFlightPath,
                                        final boolean guessToHit) {
@@ -1546,15 +1549,15 @@ public class FireControl {
      * @param assumeUnderFlightPath Set TRUE to assume the target is under the flight path and avoid
      *                             doing the full calculation.
      * @param guessToHit Set TRUE to estimate the odds to hit rather than doing the full calculation.
-     * @param bombPayload The bomb payload, as described in WeaponAttackAction.setBombPayload
+     * @param bombPayloads The bomb payload, as described in WeaponAttackAction.setBombPayload
      * @return The resulting {@link WeaponFireInfo}.
      */
     private WeaponFireInfo buildWeaponFireInfo(final Entity shooter,
                                                final MovePath flightPath,
                                                final Targetable target,
                                                @SuppressWarnings("SameParameterValue") final EntityState targetState,
-                                               final Mounted weapon,
-                                               final Mounted ammo,
+                                               final WeaponMounted weapon,
+                                               final AmmoMounted ammo,
                                                final Game game,
                                                final boolean assumeUnderFlightPath,
                                                final boolean guessToHit,
@@ -1575,8 +1578,8 @@ public class FireControl {
      */
     WeaponFireInfo buildWeaponFireInfo(final Entity shooter,
                                        final Targetable target,
-                                       final Mounted weapon,
-                                       final Mounted ammo,
+                                       final WeaponMounted weapon,
+                                       final AmmoMounted ammo,
                                        final Game game,
                                        final boolean guessToHit) {
         return new WeaponFireInfo(shooter, target, weapon, ammo, game, guessToHit, owner);
@@ -1641,7 +1644,7 @@ public class FireControl {
         }
 
         // cycle through my weapons
-        for (final Mounted weapon : shooter.getWeaponList()) {
+        for (final WeaponMounted weapon : shooter.getWeaponList()) {
             // respect restriction on manual AMS firing.
             if (!game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_MANUAL_AMS) &&
                     weapon.getType().hasFlag(WeaponType.F_AMS)) {
@@ -1657,17 +1660,17 @@ public class FireControl {
                 bestShoot = buildWeaponFireInfo(shooter, target, weapon, null, game, true);
             } else {
                 // For certain weapon types, look over all their loaded ammos
-                ArrayList<Mounted> ammos;
+                List<AmmoMounted> ammos;
                 if (wtype.getAmmoType() == AmmoType.T_ATM || wtype.getAmmoType() == AmmoType.T_MML) {
                     ammos = shooter.getAmmo(weapon);
                 } else {
                     // Otherwise assume the current loaded ammo is suitable representative
-                    ammos = new ArrayList<Mounted>();
-                    ammos.add(weapon.getLinked());
+                    ammos = new ArrayList<>();
+                    ammos.add(weapon.getLinkedAmmo());
                 }
 
                 WeaponFireInfo shoot;
-                for (Mounted ammo: ammos) {
+                for (AmmoMounted ammo: ammos) {
                     shoot = buildWeaponFireInfo(shooter,
                             shooterState,
                             target,
@@ -1696,7 +1699,7 @@ public class FireControl {
 
                         if (shoot.getAmmo() != null && bestShoot != null) {
                             bestShoot.getAmmo().setSwitchedReason(
-                                    (bestShoot.getAmmo() == weapon.getLinked()) ? 0 : switchedReason
+                                    (bestShoot.getAmmo() == weapon.getLinkedAmmo()) ? 0 : switchedReason
                             );
                         }
                     }
@@ -1791,7 +1794,7 @@ public class FireControl {
         }
 
         // cycle through my weapons
-        for (final Mounted weapon : shooter.getWeaponList()) {
+        for (final WeaponMounted weapon : shooter.getWeaponList()) {
             // bombing attacks have to be carried out separately from other weapon attacks, so we handle them in a special case
             if (weapon.isGroundBomb()) {
                 continue;
@@ -1806,17 +1809,17 @@ public class FireControl {
                 bestShoot = buildWeaponFireInfo(shooter, target, weapon, null, game, false);
             } else {
                 // For certain weapon types, look over all their loaded ammos
-                ArrayList<Mounted> ammos;
+                List<AmmoMounted> ammos;
                 if (wtype.getAmmoType() == AmmoType.T_ATM || wtype.getAmmoType() == AmmoType.T_MML) {
                     ammos = shooter.getAmmo(weapon);
                 } else {
                     // Otherwise assume the current loaded ammo is suitable representative
-                    ammos = new ArrayList<Mounted>();
-                    ammos.add(weapon.getLinked());
+                    ammos = new ArrayList<>();
+                    ammos.add(weapon.getLinkedAmmo());
                 }
 
                 WeaponFireInfo shoot;
-                for (Mounted ammo: ammos) {
+                for (AmmoMounted ammo: ammos) {
 
                     shoot = buildWeaponFireInfo(shooter,
                             flightPath,
@@ -1882,7 +1885,7 @@ public class FireControl {
 
         // things that cause us to avoid calculating a bomb plan:
         // not having any bombs (in the first place)
-        final Iterator<Mounted> weaponIter = shooter.getWeapons();
+        final Iterator<WeaponMounted> weaponIter = shooter.getWeapons();
         if (null == weaponIter) {
             return diveBombPlan;
         }
@@ -1893,7 +1896,7 @@ public class FireControl {
         }
 
         while (weaponIter.hasNext()) {
-            final Mounted weapon = weaponIter.next();
+            final WeaponMounted weapon = weaponIter.next();
             if (weapon.getType().hasFlag(WeaponType.F_DIVE_BOMB)) {
                 final HashMap<String, int[]> bombPayloads = new HashMap<String, int[]>();
                 bombPayloads.put("internal", new int[BombType.B_NUM]);
@@ -1901,8 +1904,8 @@ public class FireControl {
 
                 // load up all droppable bombs, yeah baby! Mix thunder bombs and infernos 'cause why the hell not.
                 // seriously, though, TODO: more intelligent bomb drops
-                for (final Mounted bomb : shooter.getBombs(BombType.F_GROUND_BOMB)) {
-                    int bType = ((BombType) bomb.getType()).getBombType();
+                for (final BombMounted bomb : shooter.getBombs(BombType.F_GROUND_BOMB)) {
+                    int bType = bomb.getType().getBombType();
                     if (bomb.isInternalBomb()) {
                         // Can only drop 6 internal bombs in one turn.
                         if (bombPayloads.get("internal")[bType] < 6) {
@@ -1941,7 +1944,7 @@ public class FireControl {
      */
     FiringPlan getFullFiringPlan(final Entity shooter,
                                  final Targetable target,
-                                 final Map<Mounted, Double> ammoConservation,
+                                 final Map<WeaponMounted, Double> ammoConservation,
                                  final Game game) {
         final NumberFormat DECF = new DecimalFormat("0.000");
         boolean debug = LogManager.getLogger().isDebugEnabled();
@@ -1960,7 +1963,7 @@ public class FireControl {
         }
 
         // cycle through my weapons; should probably filter out already-fired / IDF arty
-        for (final Mounted weapon : shooter.getWeaponList()) {
+        for (final WeaponMounted weapon : shooter.getWeaponList()) {
             if (!weapon.canFire()) {
                 continue;
             }
@@ -1981,10 +1984,10 @@ public class FireControl {
                 bestShoot = buildWeaponFireInfo(shooter, target, weapon, null, game, false);
             } else {
                 // Check _all_ ammunition for _all_ weapons here.
-                ArrayList<Mounted> ammos;
+                List<AmmoMounted> ammos;
                 ammos = shooter.getAmmo(weapon);
 
-                for (Mounted ammo: ammos) {
+                for (AmmoMounted ammo: ammos) {
                     WeaponFireInfo shoot = buildWeaponFireInfo(shooter, target, weapon, ammo, game, false);
 
                     // if we're below the threshold, try switching missile modes
@@ -2210,7 +2213,7 @@ public class FireControl {
     FiringPlan getBestFiringPlan(final Entity shooter,
                                  final Targetable target,
                                  final Game game,
-                                 final Map<Mounted, Double> ammoConservation) {
+                                 final Map<WeaponMounted, Double> ammoConservation) {
 
         // Start with an alpha strike.
         FiringPlan alphaStrike = getFullFiringPlan(shooter, target,
@@ -2339,7 +2342,7 @@ public class FireControl {
         final EntityState shooterState = params.getShooterState();
         final EntityState targetState = params.getTargetState();
         final int maxHeat = params.getMaxHeat();
-        final Map<Mounted, Double> ammoConservation = params.getAmmoConservation();
+        final Map<WeaponMounted, Double> ammoConservation = params.getAmmoConservation();
 
         // Get the best plan without any twists.
         FiringPlan noTwistPlan = null;
@@ -2568,7 +2571,7 @@ public class FireControl {
     FiringPlan getBestFiringPlan(final Entity shooter,
                                  final IHonorUtil honorUtil,
                                  final Game game,
-                                 final Map<Mounted, Double> ammoConservation) {
+                                 final Map<WeaponMounted, Double> ammoConservation) {
         FiringPlan bestPlan = null;
 
         // Get a list of potential targets.
@@ -2623,8 +2626,8 @@ public class FireControl {
         double maxDamage = 0;
 
         // cycle through my weapons
-        for (final Mounted weapon : shooter.getWeaponList()) {
-            final WeaponType weaponType = (WeaponType) weapon.getType();
+        for (final WeaponMounted weapon : shooter.getWeaponList()) {
+            final WeaponType weaponType = weapon.getType();
 
             // if the weapon has been disabled or is out of ammo, don't count it
             if (weapon.isCrippled()) {
@@ -2645,16 +2648,16 @@ public class FireControl {
                 int bracket;
 
                 // For certain weapon types, look over all their loaded ammos
-                ArrayList<Mounted> ammos;
+                List<AmmoMounted> ammos;
                 if (weaponType.getAmmoType() == AmmoType.T_ATM || weaponType.getAmmoType() == AmmoType.T_MML) {
                     ammos = shooter.getAmmo(weapon);
                 } else {
                     // Otherwise assume the current loaded ammo is suitable representative
-                    ammos = new ArrayList<Mounted>();
-                    ammos.add(weapon.getLinked());
+                    ammos = new ArrayList<>();
+                    ammos.add(weapon.getLinkedAmmo());
                 }
 
-                for (Mounted ammo: ammos) {
+                for (AmmoMounted ammo: ammos) {
                     bracket = RangeType.rangeBracket(range,
                             weaponType.getRanges(weapon, ammo),
                             useExtremeRange,
@@ -2713,7 +2716,7 @@ public class FireControl {
 
         // Loading ammo for all my weapons.
         for (final WeaponFireInfo info : plan) {
-            final Mounted currentWeapon = info.getWeapon();
+            final WeaponMounted currentWeapon = info.getWeapon();
             if (null == currentWeapon) {
                 continue;
             }
@@ -2724,8 +2727,8 @@ public class FireControl {
                 continue;
             }
 
-            final Mounted suggestedAmmo = info.getAmmo();
-            final Mounted mountedAmmo = getPreferredAmmo(shooter, info.getTarget(), currentWeapon, suggestedAmmo);
+            final AmmoMounted suggestedAmmo = info.getAmmo();
+            final AmmoMounted mountedAmmo = getPreferredAmmo(shooter, info.getTarget(), currentWeapon);
             // if we found preferred ammo but can't apply it to the weapon, log it and continue.
             if ((null != mountedAmmo) && !shooter.loadWeapon(currentWeapon, mountedAmmo)) {
                 LogManager.getLogger().warn(shooter.getDisplayName() + " tried to load "
@@ -2746,14 +2749,14 @@ public class FireControl {
         }
     }
 
-    Mounted getClusterAmmo(final List<Mounted> ammoList,
+    AmmoMounted getClusterAmmo(final List<AmmoMounted> ammoList,
                            final WeaponType weaponType,
                            final int range) {
-        Mounted returnAmmo = null;
-        Mounted mmlLrm = null;
-        Mounted mmlSrm = null;
+        AmmoMounted returnAmmo = null;
+        AmmoMounted mmlLrm = null;
+        AmmoMounted mmlSrm = null;
 
-        for (final Mounted ammo : ammoList) {
+        for (final AmmoMounted ammo : ammoList) {
             final AmmoType ammoType = (AmmoType) ammo.getType();
             if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_CLUSTER)) {
                 // MMLs have additional considerations.
@@ -2794,16 +2797,16 @@ public class FireControl {
      * @param weapon which is mounted on Shooter
      * @return
      */
-    Mounted getPreferredAmmo(final Entity shooter,
+    AmmoMounted getPreferredAmmo(final Entity shooter,
                              final Targetable target,
-                             final Mounted weapon) {
+                             final WeaponMounted weapon) {
        return getPreferredAmmo(shooter, target, weapon, null);
     }
 
-    Mounted getPreferredAmmo(final Entity shooter,
+    AmmoMounted getPreferredAmmo(final Entity shooter,
                              final Targetable target,
-                             final Mounted weapon,
-                             final Mounted suggestedAmmo) {
+                             final WeaponMounted weapon,
+                             final AmmoMounted suggestedAmmo) {
         boolean debug = LogManager.getLogger().isDebugEnabled();
         final StringBuilder msg = (debug) ? new StringBuilder("Getting ammo for ")
                 .append(weapon.getType().getShortName())
@@ -2813,8 +2816,8 @@ public class FireControl {
 
         Entity targetEntity = null;
         // May be null or any valid ammo that can make an attack
-        Mounted preferredAmmo = suggestedAmmo;
-        WeaponType weaponType = (WeaponType) weapon.getType();
+        AmmoMounted preferredAmmo = suggestedAmmo;
+        WeaponType weaponType = weapon.getType();
 
         try {
             boolean fireResistant = false;
@@ -2831,15 +2834,15 @@ public class FireControl {
             }
 
             // Find the ammo that is valid for this weapon.
-            final List<Mounted> ammo = shooter.getAmmo();
-            final List<Mounted> validAmmo = new ArrayList<>();
+            final List<AmmoMounted> ammo = shooter.getAmmo();
+            final List<AmmoMounted> validAmmo = new ArrayList<>();
             // If the Firing Plan liked a specific ammo, give it priority
             if (null != preferredAmmo) {
                 validAmmo.add(preferredAmmo);
             }
-            for (final Mounted a : ammo) {
+            for (final AmmoMounted a : ammo) {
                 if (AmmoType.isAmmoValid(a, weaponType)
-                        && AmmoType.canSwitchToAmmo(weapon, (AmmoType) a.getType())
+                        && AmmoType.canSwitchToAmmo(weapon, a.getType())
                         && !a.equals(preferredAmmo)
                         && (!shooter.isLargeCraft()
                             || shooter.whichBay(shooter.getEquipmentNum(weapon)).ammoInBay(shooter.getEquipmentNum(a)))) {
@@ -2988,17 +2991,16 @@ public class FireControl {
         }
     }
 
-    Mounted getGeneralMmlAmmo(final List<Mounted> ammoList,
+    AmmoMounted getGeneralMmlAmmo(final List<AmmoMounted> ammoList,
                               final int range) {
-        final Mounted returnAmmo;
+        final AmmoMounted returnAmmo;
 
         // Get the LRM and SRM bins if we have them.
-        Mounted mmlSrm = null;
-        Mounted mmlLrm = null;
+        AmmoMounted mmlSrm = null;
+        AmmoMounted mmlLrm = null;
         int switchedReason = 0;
-        for (final Mounted ammo : ammoList) {
-            final AmmoType type = (AmmoType) ammo.getType();
-            if ((null == mmlLrm) && type.hasFlag(AmmoType.F_MML_LRM)) {
+        for (final AmmoMounted ammo : ammoList) {
+            if ((null == mmlLrm) && ammo.getType().hasFlag(AmmoType.F_MML_LRM)) {
                 mmlLrm = ammo;
             } else if (null == mmlSrm) {
                 mmlSrm = ammo;
@@ -3033,18 +3035,18 @@ public class FireControl {
         return returnAmmo;
     }
 
-    Mounted getAtmAmmo(final List<Mounted> ammoList,
+    AmmoMounted getAtmAmmo(final List<AmmoMounted> ammoList,
                        final int range,
                        final EntityState target,
                        final boolean fireResistant) {
-        Mounted returnAmmo;
+        AmmoMounted returnAmmo;
 
         // Get the Hi-Ex, Ex-Range and Standard ammo bins if we have them.
-        Mounted heAmmo = null;
-        Mounted erAmmo = null;
-        Mounted stAmmo = null;
-        Mounted infernoAmmo = null;
-        for (final Mounted ammo : ammoList) {
+        AmmoMounted heAmmo = null;
+        AmmoMounted erAmmo = null;
+        AmmoMounted stAmmo = null;
+        AmmoMounted infernoAmmo = null;
+        for (final AmmoMounted ammo : ammoList) {
             final AmmoType type = (AmmoType) ammo.getType();
             if ((null == heAmmo) && (type.getMunitionType().contains(AmmoType.Munitions.M_HIGH_EXPLOSIVE))) {
                 heAmmo = ammo;
@@ -3112,15 +3114,15 @@ public class FireControl {
         return returnAmmo;
     }
 
-    Mounted getAntiVeeAmmo(final List<Mounted> ammoList,
+    AmmoMounted getAntiVeeAmmo(final List<AmmoMounted> ammoList,
                            final WeaponType weaponType,
                            final int range,
                            final boolean fireResistant) {
-        Mounted returnAmmo = null;
-        Mounted mmlLrm = null;
-        Mounted mmlSrm = null;
+        AmmoMounted returnAmmo = null;
+        AmmoMounted mmlLrm = null;
+        AmmoMounted mmlSrm = null;
 
-        for (final Mounted ammo : ammoList) {
+        for (final AmmoMounted ammo : ammoList) {
             final AmmoType ammoType = (AmmoType) ammo.getType();
             if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_CLUSTER)
                 || (ammoType.getMunitionType().contains(AmmoType.Munitions.M_INFERNO) && !fireResistant)
@@ -3155,14 +3157,14 @@ public class FireControl {
         return returnAmmo;
     }
 
-    Mounted getAntiInfantryAmmo(final List<Mounted> ammoList,
+    AmmoMounted getAntiInfantryAmmo(final List<AmmoMounted> ammoList,
                                 final WeaponType weaponType,
                                 final int range) {
-        Mounted returnAmmo = null;
-        Mounted mmlLrm = null;
-        Mounted mmlSrm = null;
+        AmmoMounted returnAmmo = null;
+        AmmoMounted mmlLrm = null;
+        AmmoMounted mmlSrm = null;
 
-        for (final Mounted ammo : ammoList) {
+        for (final AmmoMounted ammo : ammoList) {
             final AmmoType ammoType = (AmmoType) ammo.getType();
             if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_FLECHETTE)
                 || ammoType.getMunitionType().contains(AmmoType.Munitions.M_FRAGMENTATION)
@@ -3199,14 +3201,14 @@ public class FireControl {
         return returnAmmo;
     }
 
-    private Mounted getHeatAmmo(final List<Mounted> ammoList,
+    private AmmoMounted getHeatAmmo(final List<AmmoMounted> ammoList,
                                 final WeaponType weaponType,
                                 final int range) {
-        Mounted returnAmmo = null;
-        Mounted mmlLrm = null;
-        Mounted mmlSrm = null;
+        AmmoMounted returnAmmo = null;
+        AmmoMounted mmlLrm = null;
+        AmmoMounted mmlSrm = null;
 
-        for (final Mounted ammo : ammoList) {
+        for (final AmmoMounted ammo : ammoList) {
             final AmmoType ammoType = (AmmoType) ammo.getType();
             if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_INFERNO)
                 || ammoType.getMunitionType().contains(AmmoType.Munitions.M_INFERNO_IV)) {
@@ -3240,14 +3242,14 @@ public class FireControl {
         return returnAmmo;
     }
 
-    Mounted getIncendiaryAmmo(final List<Mounted> ammoList,
+    AmmoMounted getIncendiaryAmmo(final List<AmmoMounted> ammoList,
                               final WeaponType weaponType,
                               final int range) {
-        Mounted returnAmmo = null;
-        Mounted mmlLrm = null;
-        Mounted mmlSrm = null;
+        AmmoMounted returnAmmo = null;
+        AmmoMounted mmlLrm = null;
+        AmmoMounted mmlSrm = null;
 
-        for (final Mounted ammo : ammoList) {
+        for (final AmmoMounted ammo : ammoList) {
             final AmmoType ammoType = (AmmoType) ammo.getType();
             if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_INCENDIARY)
                 || ammoType.getMunitionType().contains(AmmoType.Munitions.M_INCENDIARY_LRM)
@@ -3284,14 +3286,14 @@ public class FireControl {
         return returnAmmo;
     }
 
-    Mounted getHardTargetAmmo(final List<Mounted> ammoList,
+    AmmoMounted getHardTargetAmmo(final List<AmmoMounted> ammoList,
                               final WeaponType weaponType,
                               final int range) {
-        Mounted returnAmmo = null;
-        Mounted mmlLrm = null;
-        Mounted mmlSrm = null;
+        AmmoMounted returnAmmo = null;
+        AmmoMounted mmlLrm = null;
+        AmmoMounted mmlSrm = null;
 
-        for (final Mounted ammo : ammoList) {
+        for (final AmmoMounted ammo : ammoList) {
             final AmmoType ammoType = (AmmoType) ammo.getType();
             if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_CLUSTER)
                 || ammoType.getMunitionType().contains(AmmoType.Munitions.M_ANTI_FLAME_FOAM)
@@ -3355,14 +3357,14 @@ public class FireControl {
         return returnAmmo;
     }
 
-    Mounted getAntiAirAmmo(final List<Mounted> ammoList,
+    AmmoMounted getAntiAirAmmo(final List<AmmoMounted> ammoList,
                            final WeaponType weaponType,
                            final int range) {
-        Mounted returnAmmo = null;
-        Mounted mmlLrm = null;
-        Mounted mmlSrm = null;
+        AmmoMounted returnAmmo = null;
+        AmmoMounted mmlLrm = null;
+        AmmoMounted mmlSrm = null;
 
-        for (final Mounted ammo : ammoList) {
+        for (final AmmoMounted ammo : ammoList) {
             final AmmoType ammoType = (AmmoType) ammo.getType();
             if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_ADA)){
                 // Air-Defense Arrow IVs are the premiere long-range AA munition.

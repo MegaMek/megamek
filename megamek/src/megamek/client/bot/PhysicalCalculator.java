@@ -40,6 +40,7 @@ import megamek.common.actions.ClubAttackAction;
 import megamek.common.actions.KickAttackAction;
 import megamek.common.actions.PunchAttackAction;
 import megamek.common.actions.PushAttackAction;
+import megamek.common.equipment.MiscMounted;
 import megamek.common.options.OptionsConstants;
 
 public final class PhysicalCalculator {
@@ -313,7 +314,7 @@ public final class PhysicalCalculator {
         int target_arc;
         int location_table;
         int bestType = PhysicalOption.NONE;
-        Mounted bestClub = null;
+        MiscMounted bestClub = null;
         boolean targetConvInfantry = false;
         boolean fromAptPiloting = from.hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING);
         boolean toAptPiloting = to.hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING);
@@ -425,7 +426,7 @@ public final class PhysicalCalculator {
         }
 
         // Check for mounted club-type weapon or carried improvised club
-        for (Mounted club : from.getClubs()) {
+        for (MiscMounted club : from.getClubs()) {
             // If the target is a Mech, must determine if it hits full body,
             // punch, or kick table
             if (to instanceof Mech) {

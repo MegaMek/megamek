@@ -13,11 +13,10 @@
  */
 package megamek.common.weapons.bayweapons;
 
-import megamek.common.Entity;
-import megamek.common.Game;
-import megamek.common.Mounted;
-import megamek.common.ToHitData;
+import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.equipment.AmmoMounted;
+import megamek.common.equipment.WeaponMounted;
 import megamek.common.weapons.AmmoBayWeaponHandler;
 import megamek.common.weapons.AttackHandler;
 import megamek.server.GameManager;
@@ -46,13 +45,12 @@ public abstract class AmmoBayWeapon extends BayWeapon {
 
     protected void checkAmmo(WeaponAttackAction waa, Game g) {
         Entity ae = waa.getEntity(g);
-        Mounted m = ae.getEquipment(waa.getWeaponId());
-        for (int wId : m.getBayWeapons()) {
-            Mounted weapon = ae.getEquipment(wId);
-            Mounted ammo = weapon.getLinked();
+        WeaponMounted bay = ae.getWeapon(waa.getWeaponId());
+        for (int wId : bay.getBayWeapons()) {
+            WeaponMounted weapon = ae.getWeapon(wId);
+            AmmoMounted ammo = weapon.getLinkedAmmo();
             if (ammo == null || ammo.getUsableShotsLeft() < 1) {
                 ae.loadWeaponWithSameAmmo(weapon);
-                ammo = weapon.getLinked();
             }
         }
     }

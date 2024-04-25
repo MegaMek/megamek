@@ -16,6 +16,7 @@ package megamek.common;
 import megamek.MMConstants;
 import megamek.client.Client;
 import megamek.codeUtilities.StringUtility;
+import megamek.common.equipment.WeaponMounted;
 import megamek.common.force.Force;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
@@ -76,7 +77,7 @@ public class EntityListFile {
      *            available to absorb additional critical hits.
      * @return a <code>String</code> describing the slot.
      */
-    private static String formatSlot(String index, Mounted mount, boolean isHit, boolean isDestroyed,
+    private static String formatSlot(String index, Mounted<?> mount, boolean isHit, boolean isDestroyed,
                                      boolean isRepairable, boolean isMissing, int indentLvl) {
         StringBuilder output = new StringBuilder();
 
@@ -259,7 +260,7 @@ public class EntityListFile {
             }
 
             //
-            Map<Mounted, Integer> baySlotMap = new HashMap<>();
+            Map<WeaponMounted, Integer> baySlotMap = new HashMap<>();
 
             // Walk through the slots in this location.
             for (int loop = 0; loop < entity.getNumberOfCriticals(loc); loop++) {
@@ -284,7 +285,7 @@ public class EntityListFile {
                 } else {
 
                     // Yup. If the equipment isn't a system, get it.
-                    Mounted mount = null;
+                    Mounted<?> mount = null;
                     if (CriticalSlot.TYPE_EQUIPMENT == slot.getType()) {
                         mount = slot.getMount();
                     }
@@ -293,7 +294,7 @@ public class EntityListFile {
                     // then let's make a note of it
                     if (entity.usesWeaponBays() && (mount != null)
                             && !mount.getBayAmmo().isEmpty()) {
-                        baySlotMap.put(slot.getMount(), loop + 1);
+                        baySlotMap.put((WeaponMounted) slot.getMount(), loop + 1);
                     }
 
                     if ((mount != null) && (mount.getType() instanceof BombType)) {
@@ -346,7 +347,7 @@ public class EntityListFile {
 
                         String bayIndex = "";
 
-                        for (Mounted bay : baySlotMap.keySet()) {
+                        for (WeaponMounted bay : baySlotMap.keySet()) {
                             if (bay.ammoInBay(entity.getEquipmentNum(mount))) {
                                 bayIndex = String.valueOf(baySlotMap.get(bay));
                             }

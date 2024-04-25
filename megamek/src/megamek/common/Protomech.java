@@ -16,6 +16,7 @@ package megamek.common;
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.common.cost.ProtoMekCostCalculator;
 import megamek.common.enums.AimingMode;
+import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.ArmorType;
 import megamek.common.planetaryconditions.Atmosphere;
 import megamek.common.preference.PreferenceManager;
@@ -858,17 +859,17 @@ public class Protomech extends Entity {
     }
 
     @Override
-    public Mounted addEquipment(EquipmentType etype, int loc,
+    public Mounted<?> addEquipment(EquipmentType etype, int loc,
             boolean rearMounted) throws LocationFullException {
-        Mounted mounted = new Mounted(this, etype);
+        Mounted<?> mounted = Mounted.createMounted(this, etype);
         addEquipment(mounted, loc, rearMounted, -1);
         return mounted;
     }
 
     @Override
-    public Mounted addEquipment(EquipmentType etype, int loc,
+    public Mounted<?> addEquipment(EquipmentType etype, int loc,
             boolean rearMounted, int shots) throws LocationFullException {
-        Mounted mounted = new Mounted(this, etype);
+        Mounted<?> mounted = Mounted.createMounted(this, etype);
         addEquipment(mounted, loc, rearMounted, shots);
         return mounted;
 
@@ -878,14 +879,14 @@ public class Protomech extends Entity {
      * Mounts the specified weapon in the specified location.
      */
     @Override
-    protected void addEquipment(Mounted mounted, int loc, boolean rearMounted,
+    protected void addEquipment(Mounted<?> mounted, int loc, boolean rearMounted,
             int shots) throws LocationFullException {
-        if (mounted.getType() instanceof AmmoType) {
+        if (mounted instanceof AmmoMounted) {
             // Damn protomech ammo; nasty hack, should be cleaner
             if (-1 != shots) {
                 mounted.setShotsLeft(shots);
                 mounted.setOriginalShots(shots);
-                mounted.setAmmoCapacity(shots * ((AmmoType) mounted.getType()).getKgPerShot() / 1000);
+                ((AmmoMounted) mounted).setAmmoCapacity(shots * ((AmmoMounted) mounted).getType().getKgPerShot() / 1000);
                 super.addEquipment(mounted, loc, rearMounted);
                 return;
             }

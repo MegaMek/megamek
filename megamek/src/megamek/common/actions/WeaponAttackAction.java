@@ -18,6 +18,8 @@ import megamek.client.Client;
 import megamek.client.ui.Messages;
 import megamek.common.*;
 import megamek.common.enums.AimingMode;
+import megamek.common.equipment.AmmoMounted;
+import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.common.planetaryconditions.Wind;
@@ -309,16 +311,10 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                                    boolean isPointblankShot, List<ECMInfo> allECMInfo, boolean evenIfAlreadyFired,
                                    int ammoId) {
         final Entity ae = game.getEntity(attackerId);
-        final Mounted weapon = ae.getEquipment(weaponId);
-        final Mounted linkedAmmo = (ammoId == -1) ? weapon.getLinked() : ae.getEquipment(ammoId);
+        final WeaponMounted weapon = (WeaponMounted) ae.getEquipment(weaponId);
+        final AmmoMounted linkedAmmo = (ammoId == -1) ? weapon.getLinkedAmmo() : (AmmoMounted) ae.getEquipment(ammoId);
 
         final EquipmentType type = weapon.getType();
-
-        // No need to process anything further if we're not using a weapon somehow
-        if (!(type instanceof WeaponType)) {
-            LogManager.getLogger().error("Trying to make a weapon attack with " + weapon.getName() + " which has type " + type.getName());
-            return new ToHitData(TargetRoll.AUTOMATIC_FAIL, Messages.getString("WeaponAttackAction.NotAWeapon"));
-        }
 
         if (target == null) {
             LogManager.getLogger().error(attackerId + "Attempting to attack null target");
@@ -354,7 +350,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
 
         final boolean usesAmmo = (wtype.getAmmoType() != AmmoType.T_NA) && !isWeaponInfantry;
 
-        final Mounted ammo = usesAmmo ? linkedAmmo : null;
+        final AmmoMounted ammo = usesAmmo ? linkedAmmo : null;
 
         final AmmoType atype = ammo == null ? null : (AmmoType) ammo.getType();
 
@@ -465,8 +461,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
 
         if (ae.usesWeaponBays()) {
             for (int wId : weapon.getBayWeapons()) {
-                Mounted bayW = ae.getEquipment(wId);
-                Mounted bayWAmmo = bayW.getLinked();
+                Mounted<?> bayW = ae.getEquipment(wId);
+                Mounted<?> bayWAmmo = bayW.getLinked();
 
                 if (bayWAmmo == null) {
                     //At present, all weapons below using mLinker use ammo, so this won't be a problem
@@ -932,7 +928,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
      */
     private static String toHitIsImpossible(Game game, Entity ae, int attackerId, Targetable target, int ttype,
             LosEffects los, ToHitData losMods, ToHitData toHit, int distance, Entity spotter,
-            WeaponType wtype, Mounted weapon, int weaponId, AmmoType atype, Mounted ammo, EnumSet<AmmoType.Munitions> munition,
+            WeaponType wtype, WeaponMounted weapon, int weaponId, AmmoType atype, AmmoMounted ammo, EnumSet<AmmoType.Munitions> munition,
             boolean isArtilleryDirect, boolean isArtilleryFLAK, boolean isArtilleryIndirect, boolean isAttackerInfantry,
             boolean isBearingsOnlyMissile, boolean isCruiseMissile, boolean exchangeSwarmTarget, boolean isHoming,
             boolean isInferno, boolean isIndirect, boolean isStrafing, boolean isTAG, boolean targetInBuilding,
@@ -1399,7 +1395,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             // first check to see if there are any usable weapons
             boolean usable = false;
             for (int wId : weapon.getBayWeapons()) {
-                Mounted m = ae.getEquipment(wId);
+                Mounted<?> m = ae.getEquipment(wId);
                 WeaponType bayWType = ((WeaponType) m.getType());
                 boolean bayWUsesAmmo = (bayWType.getAmmoType() != AmmoType.T_NA);
                 if (m.canFire()) {
@@ -1437,7 +1433,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                     continue;
                 }
                 if ((prevAttack.getEntityId() == attackerId) && (weaponId != prevAttack.getWeaponId())) {
-                    Mounted prevWeapon = ae.getEquipment(prevAttack.getWeaponId());
+                    Mounted<?> prevWeapon = ae.getEquipment(prevAttack.getWeaponId());
                     if (prevWeapon != null) {
                         int loc = prevWeapon.getLocation();
                         boolean rearMount = prevWeapon.isRearMounted();
@@ -1787,9 +1783,9 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                         if (ae.usesWeaponBays()) {
                             //For Dropships
                             for (int wId : weapon.getBayWeapons()) {
-                                Mounted bayW = ae.getEquipment(wId);
+                                Mounted<?> bayW = ae.getEquipment(wId);
                                 // check the loaded ammo for the Arrow IV flag
-                                Mounted bayWAmmo = bayW.getLinked();
+                                Mounted<?> bayWAmmo = bayW.getLinked();
                                 AmmoType bAType = (AmmoType) bayWAmmo.getType();
                                 if (bAType.getAmmoType() != AmmoType.T_ARROW_IV) {
                                     return Messages.getString("WeaponAttackAction.OnlyArrowArty");
@@ -3566,7 +3562,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
     private static ToHitData compileAeroAttackerToHitMods(Game game, Entity ae, Targetable target,
                                                           int ttype, ToHitData toHit, int aimingAt,
                                                           AimingMode aimingMode, int eistatus,
-                                                          WeaponType wtype, Mounted weapon,
+                                                          WeaponType wtype, Mounted<?> weapon,
                                                           AmmoType atype, EnumSet<AmmoType.Munitions> munition,
                                                           boolean isArtilleryIndirect,
                                                           boolean isFlakAttack,
@@ -4014,7 +4010,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                                                     int ttype, LosEffects los, ToHitData toHit,
                                                     int toSubtract, int aimingAt,
                                                     AimingMode aimingMode, int distance,
-                                                    WeaponType wtype, Mounted weapon, AmmoType atype,
+                                                    WeaponType wtype, WeaponMounted weapon, AmmoType atype,
                                                     EnumSet<AmmoType.Munitions> munition, boolean isArtilleryDirect,
                                                     boolean isArtilleryIndirect,
                                                     boolean isAttackerInfantry,
@@ -4361,7 +4357,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
      */
     private static ToHitData compileTerrainAndLosToHitMods(Game game, Entity ae, Targetable target, int ttype, int aElev, int tElev,
                 int targEl, int distance, LosEffects los, ToHitData toHit, ToHitData losMods, int toSubtract, int eistatus,
-                WeaponType wtype, Mounted weapon, int weaponId, AmmoType atype, Mounted ammo, EnumSet<AmmoType.Munitions> munition, boolean isAttackerInfantry,
+                WeaponType wtype, WeaponMounted weapon, int weaponId, AmmoType atype, AmmoMounted ammo, EnumSet<AmmoType.Munitions> munition, boolean isAttackerInfantry,
                 boolean inSameBuilding, boolean isIndirect, boolean isPointBlankShot, boolean underWater) {
         if (ae == null || target == null) {
             // Can't handle these attacks without a valid attacker and target
@@ -4911,7 +4907,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
      * @param srt  Class that stores whether or not this WAA should return a special resolution
      */
     private static ToHitData artilleryDirectToHit(Game game, Entity ae, Targetable target, int ttype,
-        ToHitData losMods, ToHitData toHit, WeaponType wtype, Mounted weapon, AmmoType atype,
+        ToHitData losMods, ToHitData toHit, WeaponType wtype, WeaponMounted weapon, AmmoType atype,
          boolean isArtilleryFLAK, boolean usesAmmo, SpecialResolutionTracker srt) {
 
         if (null == atype) {
@@ -5077,7 +5073,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
          * @param srt  Class that stores whether or not this WAA should return a special resolution
          */
     private static ToHitData handleArtilleryAttacks(Game game, Entity ae, Targetable target, int ttype,
-                ToHitData losMods, ToHitData toHit, WeaponType wtype, Mounted weapon, AmmoType atype,
+                ToHitData losMods, ToHitData toHit, WeaponType wtype, WeaponMounted weapon, AmmoType atype,
                 boolean isArtilleryDirect, boolean isArtilleryFLAK, boolean isArtilleryIndirect, boolean isHoming,
                 boolean usesAmmo, SpecialResolutionTracker srt) {
         Entity te = null;
@@ -5184,7 +5180,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         return toHit;
     }
 
-    public static ToHitData processAttackerSPAs(ToHitData toHit, Entity ae, Targetable target, Mounted weapon, Game game){
+    public static ToHitData processAttackerSPAs(ToHitData toHit, Entity ae, Targetable target, WeaponMounted weapon, Game game){
         PlanetaryConditions conditions = game.getPlanetaryConditions();
 
         // blood stalker SPA

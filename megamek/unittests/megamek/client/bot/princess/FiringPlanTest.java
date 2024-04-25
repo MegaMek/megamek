@@ -25,6 +25,8 @@ import megamek.common.Targetable;
 import megamek.common.WeaponType;
 import megamek.common.actions.EntityAction;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.equipment.AmmoMounted;
+import megamek.common.equipment.WeaponMounted;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -50,7 +52,7 @@ public class FiringPlanTest {
     private static WeaponFireInfo mockWeaponFireInfoMG;
     private static WeaponAttackAction mockWeaponAttackActionMG;
     private static WeaponFireInfo mockWeaponFireInfoPPC;
-    private static Mounted mockPPC;
+    private static WeaponMounted mockPPC;
     private static WeaponAttackAction mockWeaponAttackActionPPC;
     private static WeaponFireInfo mockWeaponFireInfoERML;
     private static WeaponAttackAction mockWeaponAttackActionERML;
@@ -65,21 +67,21 @@ public class FiringPlanTest {
 
         mockWeaponFireInfoMG = mock(WeaponFireInfo.class);
         testFiringPlan.add(mockWeaponFireInfoMG);
-        Mounted mockMG = mock(Mounted.class);
+        WeaponMounted mockMG = mock(WeaponMounted.class);
         when(mockWeaponFireInfoMG.getWeapon()).thenReturn(mockMG);
         mockWeaponAttackActionMG = mock(WeaponAttackAction.class);
         when(mockWeaponFireInfoMG.getWeaponAttackAction()).thenReturn(mockWeaponAttackActionMG);
 
         mockWeaponFireInfoPPC = mock(WeaponFireInfo.class);
         testFiringPlan.add(mockWeaponFireInfoPPC);
-        mockPPC = mock(Mounted.class);
+        mockPPC = mock(WeaponMounted.class);
         when(mockWeaponFireInfoPPC.getWeapon()).thenReturn(mockPPC);
         mockWeaponAttackActionPPC = mock(WeaponAttackAction.class);
         when(mockWeaponFireInfoPPC.getWeaponAttackAction()).thenReturn(mockWeaponAttackActionPPC);
 
         mockWeaponFireInfoERML = mock(WeaponFireInfo.class);
         testFiringPlan.add(mockWeaponFireInfoERML);
-        Mounted mockERML = mock(Mounted.class);
+        WeaponMounted mockERML = mock(WeaponMounted.class);
         when(mockWeaponFireInfoERML.getWeapon()).thenReturn(mockERML);
         mockWeaponAttackActionERML = mock(WeaponAttackAction.class);
         when(mockWeaponFireInfoERML.getWeaponAttackAction()).thenReturn(mockWeaponAttackActionERML);
@@ -175,7 +177,7 @@ public class FiringPlanTest {
     @Test
     public void testSortPlan() {
         WeaponFireInfo mockInfoLL = mock(WeaponFireInfo.class);
-        Mounted mockLL = mock(Mounted.class);
+        WeaponMounted mockLL = mock(WeaponMounted.class);
         when(mockLL.getName()).thenReturn("LL");
         when(mockLL.toString()).thenReturn("LL");
         when(mockInfoLL.getWeapon()).thenReturn(mockLL);
@@ -185,30 +187,30 @@ public class FiringPlanTest {
         when(mockLL.getLinked()).thenReturn(null);
 
         WeaponFireInfo mockInfoLRM = mock(WeaponFireInfo.class);
-        Mounted mockLRM = mock(Mounted.class);
+        WeaponMounted mockLRM = mock(WeaponMounted.class);
         when(mockLRM.getName()).thenReturn("LRM");
         when(mockLRM.toString()).thenReturn("LRM");
         when(mockInfoLRM.getWeapon()).thenReturn(mockLRM);
         WeaponType mockTypeLRM = mock(WeaponType.class);
         when(mockLRM.getType()).thenReturn(mockTypeLRM);
         when(mockTypeLRM.getDamage()).thenReturn(WeaponType.DAMAGE_BY_CLUSTERTABLE);
-        Mounted mockAmmoLRM = mock(Mounted.class);
-        when(mockLRM.getLinked()).thenReturn(mockAmmoLRM);
+        AmmoMounted mockAmmoLRM = mock(AmmoMounted.class);
+        when(mockLRM.getLinkedAmmo()).thenReturn(mockAmmoLRM);
         AmmoType mockAmmoTypeLRM = mock(AmmoType.class);
         when(mockAmmoLRM.getType()).thenReturn(mockAmmoTypeLRM);
         when(mockAmmoTypeLRM.getMunitionType()).thenReturn(EnumSet.of(AmmoType.Munitions.M_STANDARD));
         when(mockAmmoTypeLRM.getDamagePerShot()).thenReturn(1);
 
         WeaponFireInfo mockInfoLBX = mock(WeaponFireInfo.class);
-        Mounted mockLBX = mock(Mounted.class);
+        WeaponMounted mockLBX = mock(WeaponMounted.class);
         when(mockLBX.getName()).thenReturn("LBX");
         when(mockLBX.toString()).thenReturn("LBX");
         when(mockInfoLBX.getWeapon()).thenReturn(mockLBX);
         WeaponType mockTypeLBX = mock(WeaponType.class);
         when(mockLBX.getType()).thenReturn(mockTypeLBX);
         when(mockTypeLBX.getDamage()).thenReturn(10);
-        Mounted mockAmmoLBX = mock(Mounted.class);
-        when(mockLBX.getLinked()).thenReturn(mockAmmoLBX);
+        AmmoMounted mockAmmoLBX = mock(AmmoMounted.class);
+        when(mockLBX.getLinkedAmmo()).thenReturn(mockAmmoLBX);
         AmmoType mockAmmoTypeLBXCluster = mock(AmmoType.class);
         when(mockAmmoTypeLBXCluster.getMunitionType()).thenReturn(EnumSet.of(AmmoType.Munitions.M_CLUSTER));
         when(mockAmmoTypeLBXCluster.getDamagePerShot()).thenReturn(1);
@@ -217,15 +219,15 @@ public class FiringPlanTest {
         when(mockAmmoTypeLBXSlug.getDamagePerShot()).thenReturn(1);
 
         WeaponFireInfo mockInfoSRM = mock(WeaponFireInfo.class);
-        Mounted mockSRM = mock(Mounted.class);
+        WeaponMounted mockSRM = mock(WeaponMounted.class);
         when(mockSRM.getName()).thenReturn("SRM");
         when(mockSRM.toString()).thenReturn("SRM");
         when(mockInfoSRM.getWeapon()).thenReturn(mockSRM);
         WeaponType mockTypeSRM = mock(WeaponType.class);
         when(mockSRM.getType()).thenReturn(mockTypeSRM);
         when(mockTypeSRM.getDamage()).thenReturn(WeaponType.DAMAGE_BY_CLUSTERTABLE);
-        Mounted mockAmmoSRM = mock(Mounted.class);
-        when(mockSRM.getLinked()).thenReturn(mockAmmoSRM);
+        AmmoMounted mockAmmoSRM = mock(AmmoMounted.class);
+        when(mockSRM.getLinkedAmmo()).thenReturn(mockAmmoSRM);
         AmmoType mockAmmoTypeSRM = mock(AmmoType.class);
         when(mockAmmoSRM.getType()).thenReturn(mockAmmoTypeSRM);
         when(mockAmmoTypeSRM.getMunitionType()).thenReturn(EnumSet.of(AmmoType.Munitions.M_STANDARD));

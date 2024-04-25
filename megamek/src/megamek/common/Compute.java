@@ -18,6 +18,8 @@ package megamek.common;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.actions.*;
 import megamek.common.annotations.Nullable;
+import megamek.common.equipment.AmmoMounted;
+import megamek.common.equipment.WeaponMounted;
 import megamek.common.enums.*;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryconditions.Atmosphere;
@@ -1107,9 +1109,9 @@ public class Compute {
      *
      * @return the modifiers
      */
-    public static ToHitData getRangeMods(Game game, Entity ae, Mounted weapon, Mounted ammo,
+    public static ToHitData getRangeMods(Game game, Entity ae, WeaponMounted weapon, AmmoMounted ammo,
                                          Targetable target) {
-        WeaponType wtype = (WeaponType) weapon.getType();
+        WeaponType wtype = weapon.getType();
         int[] weaponRanges = wtype.getRanges(weapon, ammo);
         boolean isAttackerInfantry = (ae instanceof Infantry);
         boolean isAttackerBA = (ae instanceof BattleArmor);
@@ -3118,7 +3120,7 @@ public class Compute {
         int infShootingStrength = 0;
         double infDamagePerTrooper = 0;
 
-        Mounted weapon = attacker.getEquipment(waa.getWeaponId());
+        Mounted<?> weapon = attacker.getEquipment(waa.getWeaponId());
         Mounted lnk_guide;
 
         ToHitData hitData = waa.toHit(g, allECMInfo);
@@ -3540,7 +3542,7 @@ public class Compute {
 
         Entity shooter, target;
 
-        Mounted fabin, best_bin;
+        AmmoMounted fabin, best_bin;
         AmmoType abin_type = new AmmoType();
         AmmoType fabin_type = new AmmoType();
         WeaponType wtype = new WeaponType();
@@ -3565,11 +3567,10 @@ public class Compute {
         fabin = null;
         best_bin = null;
 
-        for (Mounted abin : shooter.getAmmo()) {
-            if (shooter.loadWeapon(shooter.getEquipment(atk.getWeaponId()),
-                                   abin)) {
+        for (AmmoMounted abin : shooter.getAmmo()) {
+            if (shooter.loadWeapon((WeaponMounted) shooter.getEquipment(atk.getWeaponId()), abin)) {
                 if (abin.getUsableShotsLeft() > 0) {
-                    abin_type = (AmmoType) abin.getType();
+                    abin_type = abin.getType();
                     if (!AmmoType.canDeliverMinefield(abin_type)) {
                         fabin = abin;
                         fabin_type = (AmmoType) fabin.getType();
@@ -3582,9 +3583,8 @@ public class Compute {
         // To save processing time, lets see if we have more than one type of
         // bin
         // Thunder-type ammos and empty bins are excluded from the list
-        for (Mounted abin : shooter.getAmmo()) {
-            if (shooter.loadWeapon(shooter.getEquipment(atk.getWeaponId()),
-                                   abin)) {
+        for (AmmoMounted abin : shooter.getAmmo()) {
+            if (shooter.loadWeapon((WeaponMounted) shooter.getEquipment(atk.getWeaponId()), abin)) {
                 if (abin.getUsableShotsLeft() > 0) {
                     abin_type = (AmmoType) abin.getType();
                     if (!AmmoType.canDeliverMinefield(abin_type)) {
@@ -3621,14 +3621,14 @@ public class Compute {
             best_bin = fabin;
 
             // For each valid ammo bin
-            for (Mounted abin : shooter.getAmmo()) {
-                if (shooter.loadWeapon(shooter.getEquipment(atk.getWeaponId()), abin)) {
+            for (AmmoMounted abin : shooter.getAmmo()) {
+                if (shooter.loadWeapon((WeaponMounted) shooter.getEquipment(atk.getWeaponId()), abin)) {
                     if (abin.getUsableShotsLeft() > 0) {
                         abin_type = (AmmoType) abin.getType();
                         if (!AmmoType.canDeliverMinefield(abin_type)) {
 
                             // Load weapon with specified bin
-                            shooter.loadWeapon(shooter.getEquipment(atk.getWeaponId()), abin);
+                            shooter.loadWeapon((WeaponMounted) shooter.getEquipment(atk.getWeaponId()), abin);
                             atk.setAmmoId(shooter.getEquipmentNum(abin));
                             atk.setAmmoMunitionType(abin_type.getMunitionType());
 
@@ -3812,7 +3812,7 @@ public class Compute {
 
             // Now that the best bin has been found, reload the weapon with
             // it
-            shooter.loadWeapon(shooter.getEquipment(atk.getWeaponId()), best_bin);
+            shooter.loadWeapon((WeaponMounted) shooter.getEquipment(atk.getWeaponId()), best_bin);
             atk.setAmmoId(shooter.getEquipmentNum(best_bin));
             atk.setAmmoMunitionType(abin_type.getMunitionType());
         }
@@ -5627,7 +5627,7 @@ public class Compute {
         // must be in control
         if (a.isOutControlTotal()) {
             reason.append("the attacker is out of control");
-        } else if (attacker.getBombs(AmmoType.F_SPACE_BOMB).size() < 1) {
+        } else if (attacker.getBombs(AmmoType.F_SPACE_BOMB).isEmpty()) {
             reason.append("the attacker has no useable bombs");
         } else if (!rightFacing) {
             reason.append("the attacker is not facing the direction of travel");
@@ -6585,13 +6585,13 @@ public class Compute {
     /**
      * @return the maximum damage that a set of weapons can generate.
      */
-    public static int computeTotalDamage(List<Mounted> weaponList){
+    public static int computeTotalDamage(List<WeaponMounted> weaponList){
         int totalDmg = 0;
-        for (Mounted weapon : weaponList) {
+        for (WeaponMounted weapon : weaponList) {
             if (!weapon.isBombMounted() && weapon.isCrippled()) {
                 continue;
             }
-            WeaponType type = (WeaponType) weapon.getType();
+            WeaponType type = weapon.getType();
             if (type.getDamage() == WeaponType.DAMAGE_VARIABLE) {
                 // Estimate rather than compute exact bay / trooper damage sum.
                 totalDmg += type.getRackSize();
@@ -7036,11 +7036,11 @@ public class Compute {
 
     }
 
-    public static boolean allowAimedShotWith(Mounted weapon, AimingMode aimingMode) {
-        WeaponType wtype = (WeaponType) weapon.getType();
+    public static boolean allowAimedShotWith(WeaponMounted weapon, AimingMode aimingMode) {
+        WeaponType wtype = weapon.getType();
         boolean isWeaponInfantry = wtype.hasFlag(WeaponType.F_INFANTRY);
         boolean usesAmmo = (wtype.getAmmoType() != AmmoType.T_NA) && !isWeaponInfantry;
-        Mounted ammo = usesAmmo ? weapon.getLinked() : null;
+        AmmoMounted ammo = usesAmmo ? weapon.getLinkedAmmo() : null;
         AmmoType atype = ammo == null ? null : (AmmoType) ammo.getType();
 
         // Leg and swarm attacks can't be aimed.

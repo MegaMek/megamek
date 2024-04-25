@@ -24,7 +24,7 @@ import megamek.common.actions.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.containers.PlayerIDandList;
 import megamek.common.enums.*;
-import megamek.common.equipment.ArmorType;
+import megamek.common.equipment.*;
 import megamek.common.event.GameVictoryEvent;
 import megamek.common.force.Force;
 import megamek.common.force.Forces;
@@ -23075,7 +23075,7 @@ public class GameManager extends AbstractGameManager {
 
                         // If there are split weapons in this location, mark it
                         // as hit, even if it took no criticals.
-                        for (Mounted m : te.getWeaponList()) {
+                        for (WeaponMounted m : te.getWeaponList()) {
                             if (m.isSplit()) {
                                 if ((m.getLocation() == hit.getLocation())
                                         || (m.getLocation() == nextHit
@@ -25216,7 +25216,7 @@ public class GameManager extends AbstractGameManager {
                 }
 
                 if (!weapons.isEmpty()) {
-                    Mounted weapon = weapons.get(Compute.randomInt(weapons.size()));
+                    Mounted<?> weapon = weapons.get(Compute.randomInt(weapons.size()));
                     // possibly check for an ammo explosion
                     // don't allow ammo explosions on fighter squadrons
                     if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_AMMO_EXPLOSIONS)
@@ -25681,7 +25681,7 @@ public class GameManager extends AbstractGameManager {
                         r.subject = aero.getId();
                         r.addDesc(aero);
                         reports.add(r);
-                        for (Mounted bomb: ((IBomber) aero).getBombs()) {
+                        for (BombMounted bomb: ((IBomber) aero).getBombs()) {
                             damageBomb(bomb);
                         }
                         aero.applyDamage();
@@ -25690,13 +25690,13 @@ public class GameManager extends AbstractGameManager {
                         // This will require firing an event to the End Phase to display a dialog;
                         // for now just randomly dump bombs just like bots'.
                         // TODO: fire event here to display dialog in end phase.
-                        for (Mounted bomb:randomlySubSelectList(((IBomber) aero).getBombs(), bombsDestroyed)) {
+                        for (BombMounted bomb : randomlySubSelectList(((IBomber) aero).getBombs(), bombsDestroyed)) {
                             damageBomb(bomb);
                         }
                         aero.applyDamage();
                     } else {
                         // This should always use the random method.
-                        for (Mounted bomb:randomlySubSelectList(((IBomber) aero).getBombs(), bombsDestroyed)) {
+                        for (BombMounted bomb:randomlySubSelectList(((IBomber) aero).getBombs(), bombsDestroyed)) {
                             damageBomb(bomb);
                         }
                         aero.applyDamage();
@@ -25712,7 +25712,7 @@ public class GameManager extends AbstractGameManager {
         }
     }
 
-    private void damageBomb(Mounted bomb) {
+    private void damageBomb(BombMounted bomb) {
         bomb.setShotsLeft(0);
         bomb.setHit(true);
         if (bomb.getLinked() != null && (bomb.getLinked().getUsableShotsLeft() > 0)) {
@@ -25721,8 +25721,8 @@ public class GameManager extends AbstractGameManager {
     }
 
     // Randomly select subset of Mounted items.
-    private ArrayList<Mounted> randomlySubSelectList(List<Mounted> list, int size) {
-        ArrayList<Mounted> subset = new ArrayList<>();
+    private <T extends Mounted<?>> List<T> randomlySubSelectList(List<T> list, int size) {
+        List<T> subset = new ArrayList<>();
         Random random_method = new Random();
         for (int i = 0; i < size; i++) {
             subset.add(list.get(random_method.nextInt(list.size())));
@@ -28548,7 +28548,7 @@ public class GameManager extends AbstractGameManager {
             }
             // also do DWP dumping
             if (entity instanceof BattleArmor) {
-                for (Mounted m : entity.getWeaponList()) {
+                for (WeaponMounted m : entity.getWeaponList()) {
                     if (m.isDWPMounted() && m.isPendingDump()) {
                         m.setMissing(true);
                         r = new Report(5116);
@@ -30093,25 +30093,15 @@ public class GameManager extends AbstractGameManager {
         }
 
         // Make sure that the entity has the given equipment.
-        Mounted mWeap = e.getEquipment(weaponId);
-        Mounted mAmmo = e.getEquipment(ammoId);
-        Mounted oldAmmo = (mWeap == null) ? null : mWeap.getLinked();
+        WeaponMounted mWeap = (WeaponMounted) e.getEquipment(weaponId);
+        AmmoMounted mAmmo = (AmmoMounted) e.getEquipment(ammoId);
+        AmmoMounted oldAmmo = (mWeap == null) ? null : mWeap.getLinkedAmmo();
         if (null == mAmmo) {
             LogManager.getLogger().error("Entity " + e.getDisplayName() + " does not have ammo #" + ammoId);
             return;
         }
-        if (!(mAmmo.getType() instanceof AmmoType)) {
-            LogManager.getLogger().error("Item #" + ammoId + " of entity " + e.getDisplayName()
-                    + " is a " + mAmmo.getName() + " and not ammo.");
-            return;
-        }
         if (null == mWeap) {
             LogManager.getLogger().error("Entity " + e.getDisplayName() + " does not have weapon #" + weaponId);
-            return;
-        }
-        if (!(mWeap.getType() instanceof WeaponType)) {
-            LogManager.getLogger().error("Item #" + weaponId + " of entity " + e.getDisplayName()
-                    + " is a " + mWeap.getName() + " and not a weapon.");
             return;
         }
         if (((WeaponType) mWeap.getType()).getAmmoType() == AmmoType.T_NA) {
@@ -34776,27 +34766,27 @@ public class GameManager extends AbstractGameManager {
      * @param mineId an <code>int</code> pointing to the mine
      */
     private void layMine(Entity entity, int mineId, Coords coords) {
-        Mounted mine = entity.getEquipment(mineId);
+        MiscMounted mine = (MiscMounted) entity.getEquipment(mineId);
         Report r;
         if (!mine.isMissing()) {
             int reportId = 0;
             switch (mine.getMineType()) {
-                case Mounted.MINE_CONVENTIONAL:
+                case MiscMounted.MINE_CONVENTIONAL:
                     deliverThunderMinefield(coords, entity.getOwnerId(), 10,
                             entity.getId());
                     reportId = 3500;
                     break;
-                case Mounted.MINE_VIBRABOMB:
+                case MiscMounted.MINE_VIBRABOMB:
                     deliverThunderVibraMinefield(coords, entity.getOwnerId(), 10,
                             mine.getVibraSetting(), entity.getId());
                     reportId = 3505;
                     break;
-                case Mounted.MINE_ACTIVE:
+                case MiscMounted.MINE_ACTIVE:
                     deliverThunderActiveMinefield(coords, entity.getOwnerId(), 10,
                             entity.getId());
                     reportId = 3510;
                     break;
-                case Mounted.MINE_INFERNO:
+                case MiscMounted.MINE_INFERNO:
                     deliverThunderInfernoMinefield(coords, entity.getOwnerId(), 10,
                             entity.getId());
                     reportId = 3515;

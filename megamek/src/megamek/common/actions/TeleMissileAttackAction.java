@@ -106,7 +106,7 @@ public class TeleMissileAttackAction extends AbstractAttackAction {
                     AttackHandler ah = i.nextElement();
                     WeaponAttackAction prevAttack = ah.getWaa();
                     if (prevAttack.getEntityId() == e.getId()) {
-                        Mounted prevWeapon = e.getEquipment(prevAttack.getWeaponId());
+                        Mounted<?> prevWeapon = e.getEquipment(prevAttack.getWeaponId());
                         for (int wId : prevWeapon.getBayWeapons()) {
                             Mounted bayW = e.getEquipment(wId);
                             totalheat += bayW.getCurrentHeat();
@@ -152,7 +152,7 @@ public class TeleMissileAttackAction extends AbstractAttackAction {
         // We need to know how much heat has been assigned to offensive weapons fire by the defender this round
         int weaponHeat = getLargeCraftHeat(entityTarget) + entityTarget.heatBuildup;
         if (null != lCounters) {
-            for (Mounted counter : lCounters) {
+            for (Mounted<?> counter : lCounters) {
                 // Point defenses only fire vs attacks against the arc they protect
                 Entity pdEnt = counter.getEntity();
 

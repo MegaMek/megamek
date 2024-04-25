@@ -14,6 +14,8 @@
  */
 package megamek.common;
 
+import megamek.common.equipment.WeaponMounted;
+
 import java.util.Comparator;
 
 /**
@@ -23,22 +25,18 @@ import java.util.Comparator;
  * 
  * @author arlith
  */
-public class WeaponComparatorCustom implements Comparator<Mounted> {
+public class WeaponComparatorCustom implements Comparator<WeaponMounted> {
     
-    private Entity entity;
+    private final Entity entity;
     
     public WeaponComparatorCustom(Entity e) {
         entity = e;
     }
 
     @Override
-    public int compare(Mounted obj1, Mounted obj2) {
-        if (obj1.getType() instanceof WeaponType
-                && obj2.getType() instanceof WeaponType) {
-            int weapNum1 = entity.getCustomWeaponOrder(obj1);
-            int weapNum2 = entity.getCustomWeaponOrder(obj2);
-            return weapNum1 - weapNum2;
-        }
-        throw new ClassCastException("Passed Mounteds are not Weapons");
+    public int compare(WeaponMounted obj1, WeaponMounted obj2) {
+        int weapNum1 = entity.getCustomWeaponOrder(obj1);
+        int weapNum2 = entity.getCustomWeaponOrder(obj2);
+        return weapNum1 - weapNum2;
     }
 }

@@ -25,6 +25,7 @@ import megamek.common.actions.EntityAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.AimingMode;
 import megamek.common.enums.GamePhase;
+import megamek.common.equipment.WeaponMounted;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.options.OptionsConstants;
@@ -524,12 +525,10 @@ public class PointblankShotDisplay extends FiringDisplay implements ItemListener
         final Game game = clientgui.getClient().getGame();
         // get the selected weaponnum
         final int weaponNum = clientgui.getUnitDisplay().wPan.getSelectedWeaponNum();
-        Mounted mounted = ce().getEquipment(weaponNum);
+        WeaponMounted mounted = (WeaponMounted) ce().getEquipment(weaponNum);
 
         // validate
-        if ((ce() == null)
-                || (mounted == null)
-                || !(mounted.getType() instanceof WeaponType)) {
+        if ((ce() == null) || (mounted == null)) {
             throw new IllegalArgumentException("current fire parameters are invalid");
         }
 
@@ -664,9 +663,8 @@ public class PointblankShotDisplay extends FiringDisplay implements ItemListener
                && (target != null) && (target.getPosition() != null) && (weaponId != -1)) {
             ToHitData toHit;
             if (!ash.getAimingMode().isNone()) {
-                Mounted weapon = ce().getEquipment(weaponId);
-                boolean aiming = ash.isAimingAtLocation()
-                        && ash.allowAimedShotWith(weapon);
+                WeaponMounted weapon = (WeaponMounted) ce().getEquipment(weaponId);
+                boolean aiming = ash.isAimingAtLocation() && ash.allowAimedShotWith(weapon);
                 ash.setEnableAll(aiming);
                 if (aiming) {
                     toHit = WeaponAttackAction.toHit(game, cen, target,

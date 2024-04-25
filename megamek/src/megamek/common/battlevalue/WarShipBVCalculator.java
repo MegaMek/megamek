@@ -19,6 +19,7 @@
 package megamek.common.battlevalue;
 
 import megamek.common.*;
+import megamek.common.equipment.WeaponMounted;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -128,9 +129,9 @@ public class WarShipBVCalculator extends JumpShipBVCalculator {
 
     @Override
     protected void processWeapons() {
-        for (Mounted weapon : entity.getTotalWeaponList()) {
+        for (WeaponMounted weapon : entity.getTotalWeaponList()) {
             if (countAsOffensiveWeapon(weapon)) {
-                Mounted key = collectedWeapons.keySet().stream()
+                WeaponMounted key = collectedWeapons.keySet().stream()
                         .filter(wp -> canBeSummed(weapon, wp)).findFirst().orElse(weapon);
                 collectedWeapons.merge(key, 1, Integer::sum);
             }

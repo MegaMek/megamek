@@ -14,6 +14,7 @@
 package megamek.common.loaders;
 
 import megamek.common.*;
+import megamek.common.equipment.WeaponMounted;
 import megamek.common.util.BuildingBlock;
 
 /**
@@ -229,12 +230,12 @@ public class BLKSpaceStationFile extends BLKFile implements IMechLoader {
             prefix = "IS ";
         }
 
-        boolean rearMount = false;
-        int nAmmo = 1;
+        boolean rearMount;
+        int nAmmo;
         // set up a new weapons bay mount
-        Mounted bayMount = null;
+        WeaponMounted bayMount = null;
         // set up a new bay type
-        boolean newBay = false;
+        boolean newBay;
         double bayDamage = 0;
         if (saEquip[0] != null) {
             for (String element : saEquip) {
@@ -277,7 +278,7 @@ public class BLKSpaceStationFile extends BLKFile implements IMechLoader {
 
                 if (etype != null) {
                     // first load the equipment
-                    Mounted newmount;
+                    Mounted<?> newmount;
                     try {
                         if (nAmmo == 1) {
                             newmount = a.addEquipment(etype, nLoc, rearMount);
@@ -298,7 +299,7 @@ public class BLKSpaceStationFile extends BLKFile implements IMechLoader {
                         WeaponType weap = (WeaponType) newmount.getType();
                         if (bayMount == null) {
                             try {
-                                bayMount = a.addEquipment(weap.getBayType(), nLoc, rearMount);
+                                bayMount = (WeaponMounted) a.addEquipment(weap.getBayType(), nLoc, rearMount);
                                 newBay = false;
                             } catch (LocationFullException ex) {
                                 throw new EntityLoadingException(ex.getMessage());
@@ -315,7 +316,7 @@ public class BLKSpaceStationFile extends BLKFile implements IMechLoader {
                             bayDamage += damage;
                         } else {
                             try {
-                                bayMount = a.addEquipment(weap.getBayType(), nLoc, rearMount);
+                                bayMount = (WeaponMounted) a.addEquipment(weap.getBayType(), nLoc, rearMount);
                             } catch (LocationFullException ex) {
                                 throw new EntityLoadingException(ex.getMessage());
                             }

@@ -269,15 +269,45 @@ public class Precognition implements Runnable {
                     GameVictoryEvent gve = new GameVictoryEvent(this, getGame());
                     getGame().processGameEvent(gve);
                     break;
+                case ENTITY_MULTIUPDATE:
+                    receiveEntitiesUpdate(c);
+                    break;
+                case SERVER_GREETING:
+                case SERVER_CORRECT_NAME:
+                case CLOSE_CONNECTION:
+                case SERVER_VERSION_CHECK:
+                case ILLEGAL_CLIENT_VERSION:
+                case LOCAL_PN:
+                case PRINCESS_SETTINGS:
+                case FORCE_UPDATE:
+                case FORCE_DELETE:
+                case SENDING_REPORTS_SPECIAL:
+                case SENDING_MAP_SETTINGS:
+                case END_OF_GAME:
+                case SEND_SAVEGAME:
+                case LOAD_SAVEGAME:
+                case SENDING_AVAILABLE_MAP_SIZES:
+                    LogManager.getLogger().debug("Intentionally ignoring PacketCommand: {}", c.getCommand().name());
+                    break;
                 default:
-                    LogManager.getLogger().error("Attempted to parse unknown PacketCommand of "
-                            + c.getCommand().name());
+                    LogManager.getLogger().error("Attempted to parse unknown PacketCommand: {}", c.getCommand().name());
                     break;
             }
         } catch (Exception ex) {
             LogManager.getLogger().error("", ex);
         } finally {
             GAME_LOCK.unlock();
+        }
+    }
+
+    /**
+     * Update multiple entities from the server. Used only in the lobby phase.
+     */
+    @SuppressWarnings("unchecked")
+    protected void receiveEntitiesUpdate(Packet c) {
+        Collection<Entity> entities = (Collection<Entity>) c.getObject(0);
+        for (Entity entity: entities) {
+            getGame().setEntity(entity.getId(), entity);
         }
     }
 

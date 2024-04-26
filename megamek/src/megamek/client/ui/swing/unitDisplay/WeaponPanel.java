@@ -2130,8 +2130,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         // Aero
         if (entity.isAirborne()) {
 
-            // prepare fresh ranges, no underwater
-            ranges[0] = new int[] { 0, 0, 0, 0, 0 };
+            // keep original ranges ranges, no underwater
             ranges[1] = new int[] { 0, 0, 0, 0, 0 };
             int maxr = WeaponType.RANGE_SHORT;
 
@@ -2145,20 +2144,6 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                     && ((mounted.getLinked() == null)
                             || (mounted.getLinked().getUsableShotsLeft() > 0))) {
                 maxr = wtype.getMaxRange(mounted);
-
-                if (atype != null) {
-                    if (atype.getAmmoType() == AmmoType.T_ATM) {
-                        if (atype.getMunitionType().contains(AmmoType.Munitions.M_EXTENDED_RANGE)) {
-                            maxr = WeaponType.RANGE_EXT;
-                        } else if (atype.getMunitionType().contains(AmmoType.Munitions.M_HIGH_EXPLOSIVE)) {
-                            maxr = WeaponType.RANGE_SHORT;
-                        }
-                    } else if (atype.getAmmoType() == AmmoType.T_MML) {
-                        if (!atype.hasFlag(AmmoType.F_MML_LRM)) {
-                            maxr = WeaponType.RANGE_SHORT;
-                        }
-                    }
-                }
 
                 // set the standard ranges, depending on capital or no
                 // boolean isCap = wtype.isCapital();

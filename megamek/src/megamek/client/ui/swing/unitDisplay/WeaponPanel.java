@@ -2086,42 +2086,25 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
             ranges[1] = new int[] { 0, 0, 0, 0, 0 };
         }
 
-        // Override for the various ATM and MML ammos
+        // Override for the MML ammos
         if (atype != null) {
-            if (atype.getAmmoType() == AmmoType.T_ATM) {
-                if (atype.getMunitionType().contains(AmmoType.Munitions.M_EXTENDED_RANGE)) {
-                    ranges[0] = new int[] { 4, 9, 18, 27, 36 };
-                } else if (atype.getMunitionType().contains(AmmoType.Munitions.M_HIGH_EXPLOSIVE)) {
-                    ranges[0] = new int[] { 0, 3, 6, 9, 12 };
-                } else {
-                    ranges[0] = new int[] { 4, 5, 10, 15, 20 };
-                }
-            } else if (atype.getAmmoType() == AmmoType.T_MML) {
+            if (atype.getAmmoType() == AmmoType.T_MML) {
                 if (atype.hasFlag(AmmoType.F_MML_LRM)) {
                     if (atype.getMunitionType().contains(AmmoType.Munitions.M_DEAD_FIRE)) {
-                        ranges[0] = new int[] { 4, 5, 10, 15, 20 };
+                        ranges[0] = new int[]{4, 5, 10, 15, 20};
                     } else {
-                        ranges[0] = new int[] { 6, 7, 14, 21, 28 };
+                        ranges[0] = new int[]{6, 7, 14, 21, 28};
                     }
                 } else {
                     if (atype.getMunitionType().contains(AmmoType.Munitions.M_DEAD_FIRE)) {
-                        ranges[0] = new int[] { 0, 2, 4, 6, 8 };
+                        ranges[0] = new int[]{0, 2, 4, 6, 8};
                     } else {
-                        ranges[0] = new int[] { 0, 3, 6, 9, 12 };
+                        ranges[0] = new int[]{0, 3, 6, 9, 12};
                     }
-                }
-            } else if (atype.getAmmoType() == AmmoType.T_IATM) {
-                if (atype.getMunitionType().contains(AmmoType.Munitions.M_EXTENDED_RANGE)) {
-                    ranges[0] = new int[] { 4, 9, 18, 27, 36 };
-                } else if (atype.getMunitionType().contains(AmmoType.Munitions.M_HIGH_EXPLOSIVE)) {
-                    ranges[0] = new int[] { 0, 3, 6, 9, 12 };
-                } else if (atype.getMunitionType().contains(AmmoType.Munitions.M_IATM_IMP)) {
-                    ranges[0] = new int[] { 0, 3, 6, 9, 12 };
-                } else {
-                    ranges[0] = new int[] { 4, 5, 10, 15, 20 };
                 }
             }
         }
+
         // No minimum range for hotload
         if ((mounted.getLinked() != null) && mounted.getLinked().isHotLoaded()) {
             ranges[0][0] = 0;

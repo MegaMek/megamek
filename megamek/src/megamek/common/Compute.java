@@ -1335,7 +1335,7 @@ public class Compute {
         }
         int maxRange = wtype.getMaxRange(weapon, ammo);
 
-        // if aero and greater than max range then swith to range_out
+        // if aero and greater than max range then switch to range_out
         if ((ae.isAirborne() || (ae.usesWeaponBays() && game.getBoard()
                 .onGround())) && (range > maxRange)) {
             range = RangeType.RANGE_OUT;
@@ -3211,18 +3211,22 @@ public class Compute {
             }
         }
 
-        if (use_table == true) {
+        if (use_table) {
             if (!(attacker instanceof BattleArmor)) {
                 if (weapon.getLinked() == null) {
                     return 0.0f;
                 }
             }
+
             AmmoType at = null;
-            if ((weapon.getLinked() != null)
+            if (waa.getAmmoId() != -1) {
+                // If a preferred ammo has been set for this WAA, use that
+                at = waa.getEntity(g).getAmmo(waa.getAmmoId()).getType();
+            } else if ((weapon.getLinked() != null)
                     && (weapon.getLinked().getType() instanceof AmmoType)) {
                 at = (AmmoType) weapon.getLinked().getType();
-                fDamage = at.getDamagePerShot();
             }
+            fDamage = (at != null) ? at.getDamagePerShot() : fDamage;
 
             float fHits = 0.0f;
             if ((wt.getRackSize() != 40) && (wt.getRackSize() != 30)) {
@@ -3230,8 +3234,10 @@ public class Compute {
             } else {
                 fHits = 2.0f * expectedHitsByRackSize[wt.getRackSize() / 2];
             }
+            // Streaks / iATMs will _all_ hit, if they hit at all.
             if (((wt.getAmmoType() == AmmoType.T_SRM_STREAK)
                     || (wt.getAmmoType() == AmmoType.T_LRM_STREAK))
+                    || (wt.getAmmoType() == AmmoType.T_IATM)
                     && !ComputeECM.isAffectedByAngelECM(attacker, attacker
                             .getPosition(), waa.getTarget(g).getPosition(),
                             allECMInfo)) {

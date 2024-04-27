@@ -17,14 +17,9 @@ package megamek.common;
 import java.math.BigInteger;
 
 import megamek.common.alphaStrike.AlphaStrikeElement;
-import megamek.common.weapons.AlamoMissileWeapon;
-import megamek.common.weapons.AltitudeBombAttack;
-import megamek.common.weapons.DiveBombAttack;
-import megamek.common.weapons.LegAttack;
-import megamek.common.weapons.SpaceBombAttack;
-import megamek.common.weapons.StopSwarmAttack;
-import megamek.common.weapons.SwarmAttack;
-import megamek.common.weapons.SwarmWeaponAttack;
+import megamek.common.equipment.AmmoMounted;
+import megamek.common.equipment.WeaponMounted;
+import megamek.common.weapons.*;
 import megamek.common.weapons.artillery.*;
 import megamek.common.weapons.autocannons.*;
 import megamek.common.weapons.battlearmor.*;
@@ -607,20 +602,20 @@ public class WeaponType extends EquipmentType {
         return waterExtremeRange;
     }
 
-    public int getMaxRange(Mounted weapon) {
+    public int getMaxRange(WeaponMounted weapon) {
         if (weapon == null) {
             return getMaxRange();
         }
-        return getMaxRange(weapon, weapon.getLinked());
+        return getMaxRange(weapon, weapon.getLinkedAmmo());
     }
 
     public int getMaxRange() {
         return maxRange;
     }
 
-    public int getMaxRange(Mounted weapon, Mounted ammo) {
+    public int getMaxRange(WeaponMounted weapon, AmmoMounted ammo) {
         if (getAmmoType() == AmmoType.T_ATM) {
-            AmmoType ammoType = (AmmoType) ammo.getType();
+            AmmoType ammoType = ammo.getType();
             if ((ammoType.getAmmoType() == AmmoType.T_ATM)
                     && (ammoType.getMunitionType().contains(AmmoType.Munitions.M_EXTENDED_RANGE))) {
                 return RANGE_EXT;
@@ -630,7 +625,7 @@ public class WeaponType extends EquipmentType {
             }
         }
         if (getAmmoType() == AmmoType.T_MML) {
-            AmmoType ammoType = (AmmoType) ammo.getType();
+            AmmoType ammoType = ammo.getType();
             if (ammoType.hasFlag(AmmoType.F_MML_LRM) || (getAmmoType() == AmmoType.T_LRM_TORPEDO)) {
                 return RANGE_LONG;
             } else {
@@ -639,7 +634,6 @@ public class WeaponType extends EquipmentType {
         }
         return maxRange;
     }
-
     public int getInfantryDamageClass() {
         return infDamageClass;
     }

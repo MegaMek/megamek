@@ -329,8 +329,6 @@ public class BoardView extends AbstractBoardView implements BoardListener, Mouse
     BufferedImage scrollPaneBgBuffer = null;
     Image scrollPaneBgImg = null;
 
-    List<Image> boardBackgrounds = new ArrayList<>();
-
     private static final int FRAMES = 24;
     private long totalTime;
     private long averageTime;
@@ -1856,16 +1854,9 @@ public class BoardView extends AbstractBoardView implements BoardListener, Mouse
         int height = Math.max(hex.terrainLevel(Terrains.BLDG_ELEV), hex.terrainLevel(Terrains.BRIDGE_ELEV));
         height = Math.max(height, hex.terrainLevel(Terrains.INDUSTRIAL));
 
-        Image boardBgHexImg = getBoardBackgroundHexImage(c, hex);
         // get the base tile image
-        Image baseImage, scaledImage;
-        if (boardBgHexImg != null) {
-            baseImage = boardBgHexImg;
-            scaledImage = boardBgHexImg;
-        } else {
-            baseImage = tileManager.baseFor(hex);
-            scaledImage = getScaledImage(baseImage, true);
-        }
+        Image baseImage = tileManager.baseFor(hex);
+        Image scaledImage = getScaledImage(baseImage, true);
 
         // Some hex images shouldn't be cached, like if they are animated
         boolean dontCache = animatedImages.contains(baseImage.hashCode());
@@ -4426,34 +4417,6 @@ public class BoardView extends AbstractBoardView implements BoardListener, Mouse
             if (b != null) {
                 b.addBoardListener(BoardView.this);
             }
-            boardBackgrounds.clear();
-            if (b.hasBoardBackground()) {
-                ListIterator<Boolean> flipItHoriz = b.getFlipBGHoriz().listIterator();
-                ListIterator<Boolean> flipItVert = b.getFlipBGVert().listIterator();
-                for (String path : b.getBackgroundPaths()) {
-                    boolean flipHoriz = flipItHoriz.next();
-                    boolean flipVert = flipItVert.next();
-                    if (path == null) {
-                        boardBackgrounds.add(null);
-                    } else {
-                        Image bgImg = ImageUtil.loadImageFromFile(path);
-                        ImageProducer prod = bgImg.getSource();
-                        if (flipHoriz || flipVert) {
-                            AffineTransform at = new AffineTransform();
-
-                            if (flipHoriz) {
-                                at.concatenate(AffineTransform.getScaleInstance(1, -1));
-                            }
-                            if (flipVert) {
-                                at.concatenate(AffineTransform.getTranslateInstance(0,
-                                        -bgImg.getHeight(null)));
-                            }
-                            ((Graphics2D) bgImg.getGraphics()).setTransform(at);
-                        }
-                        boardBackgrounds.add(Toolkit.getDefaultToolkit().createImage(prod));
-                    }
-                }
-            }
             game.getBoard().initializeAllAutomaticTerrain(GUIP.getHexInclines());
             clearHexImageCache();
             updateBoard();
@@ -5964,77 +5927,6 @@ public class BoardView extends AbstractBoardView implements BoardListener, Mouse
 
         board.setTheme(selectedTheme);
         return selectedTheme;
-    }
-
-    private Image getBoardBackgroundHexImage(Coords c, Hex hex) {
-        Board board = game.getBoard();
-        if ((hex == null) || (board == null) || (hex.getTheme() == null)
-                || !hex.getTheme().equals(HexTileset.TRANSPARENT_THEME)
-                || !board.hasBoardBackground()) {
-            return null;
-        }
-        // Determine what sub-board the hex came from
-        int boardX = (int) ((c.getX() + 0.0) / board.getSubBoardWidth());
-        int boardY = (int) ((c.getY() + 0.0) / board.getSubBoardHeight());
-        int linIdx = boardY * board.getNumBoardsWidth() + boardX;
-        if (linIdx < 0 || linIdx > boardBackgrounds.size() - 1) {
-            LogManager.getLogger().error("Error computing linear index or missing background images in BoardView1.getBoardBackgroundHexImage!");
-            return null;
-        }
-        Image bgImg = getScaledImage(boardBackgrounds.get(linIdx), true);
-        int bgImgWidth = bgImg.getWidth(null);
-        int bgImgHeight = bgImg.getHeight(null);
-
-        Point p1SRC = getHexLocationLargeTile(
-                c.getX() - (boardX * board.getSubBoardWidth()),
-                c.getY() - (boardY * board.getSubBoardHeight()));
-        p1SRC.x = p1SRC.x % bgImgWidth;
-        p1SRC.y = p1SRC.y % bgImgHeight;
-        Point p2SRC = new Point((int) (p1SRC.x + HEX_W * scale),
-                (int) (p1SRC.y + HEX_H * scale));
-        Point p2DST = new Point((int) (HEX_W * scale),
-                (int) (HEX_H * scale));
-
-        Image hexImage = new BufferedImage(HEX_W, HEX_H,
-                BufferedImage.TYPE_INT_ARGB);
-        Graphics2D g = (Graphics2D) hexImage.getGraphics();
-
-        // hex mask to limit drawing to the hex shape
-        // TODO: this is not ideal yet but at least it draws
-        // without leaving gaps at any zoom
-        Image hexMask = getScaledImage(tileManager.getHexMask(), true);
-        g.drawImage(hexMask, 0, 0, boardPanel);
-        Composite svComp = g.getComposite();
-        g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_ATOP,
-                1f));
-
-        // paint the right slice from the big pic
-        g.drawImage(bgImg, 0, 0, p2DST.x, p2DST.y, p1SRC.x, p1SRC.y,
-                p2SRC.x, p2SRC.y, null);
-
-        // Handle wrapping of the image
-        if (p2SRC.x > bgImgWidth && p2SRC.y <= bgImgHeight) {
-            g.drawImage(bgImg, bgImgWidth - p1SRC.x, 0, p2DST.x,
-                    p2DST.y, 0, p1SRC.y, p2SRC.x - bgImgWidth, p2SRC.y,
-                    null); // paint addtl slice on the left side
-        } else if (p2SRC.x <= bgImgWidth && p2SRC.y > bgImgHeight) {
-            g.drawImage(bgImg, 0, bgImgHeight - p1SRC.y, p2DST.x,
-                    p2DST.y, p1SRC.x, 0, p2SRC.x, p2SRC.y - bgImgHeight,
-                    null); // paint addtl slice on the top
-        } else if (p2SRC.x > bgImgWidth && p2SRC.y > bgImgHeight) {
-            g.drawImage(bgImg, bgImgWidth - p1SRC.x, 0, p2DST.x,
-                    p2DST.y, 0, p1SRC.y, p2SRC.x - bgImgWidth, p2SRC.y,
-                    null); // paint addtl slice on the top
-            g.drawImage(bgImg, 0, bgImgHeight - p1SRC.y, p2DST.x,
-                    p2DST.y, p1SRC.x, 0, p2SRC.x, p2SRC.y - bgImgHeight,
-                    null); // paint addtl slice on the left side
-            // paint addtl slice on the top left side
-            g.drawImage(bgImg, bgImgWidth - p1SRC.x,
-                    bgImgHeight - p1SRC.y, p2DST.x, p2DST.y, 0, 0,
-                    p2SRC.x - bgImgWidth, p2SRC.y - bgImgHeight, null);
-        }
-        g.setComposite(svComp);
-        return hexImage;
     }
 
     public Rectangle getDisplayablesRect() {

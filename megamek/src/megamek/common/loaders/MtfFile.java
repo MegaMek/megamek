@@ -842,7 +842,7 @@ public class MtfFile implements IMechLoader {
                             }
                         } else {
                             // make a new one
-                            m = new Mounted(mech, etype);
+                            m = Mounted.createMounted(mech, etype);
                             m.setFoundCrits(1);
                             m.setArmored(isArmored);
                             m.setMechTurretMounted(isTurreted);

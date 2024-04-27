@@ -22,6 +22,7 @@ import megamek.client.ui.swing.widget.MegamekButton;
 import megamek.common.*;
 import megamek.common.actions.*;
 import megamek.common.enums.AimingMode;
+import megamek.common.equipment.WeaponMounted;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.options.OptionsConstants;
@@ -1155,13 +1156,12 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
         final Game game = clientgui.getClient().getGame();
         // get the selected weaponnum
         final int weaponNum = clientgui.getUnitDisplay().wPan.getSelectedWeaponNum();
-        Mounted mounted = ce().getEquipment(weaponNum);
+        WeaponMounted mounted = (WeaponMounted) ce().getEquipment(weaponNum);
 
         // validate
         if ((ce() == null)
                 || (target == null && (!isStrafing || strafingCoords.isEmpty()))
-                || (mounted == null)
-                || !(mounted.getType() instanceof WeaponType)) {
+                || (mounted == null)) {
             throw new IllegalArgumentException("current fire parameters are invalid");
         }
         // check if we now shoot at a target in the front arc and previously
@@ -1549,7 +1549,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
             ToHitData toHit;
 
             if (!ash.getAimingMode().isNone()) {
-                Mounted weapon = ce().getEquipment(weaponId);
+                WeaponMounted weapon = (WeaponMounted) ce().getEquipment(weaponId);
                 boolean aiming = ash.isAimingAtLocation() && ash.allowAimedShotWith(weapon);
                 ash.setEnableAll(aiming);
                 if (aiming) {

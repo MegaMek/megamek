@@ -184,7 +184,9 @@ public class SkinSpecification {
      * a pressed background.
      */
     public ArrayList<String> backgrounds;
-    
+
+    public boolean plain = false;
+
     /**
      * It set, it indicates that no borders should be drawn.
      */

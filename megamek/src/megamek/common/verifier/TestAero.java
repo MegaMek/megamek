@@ -17,6 +17,7 @@ package megamek.common.verifier;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.equipment.ArmorType;
+import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.OptionsConstants;
 import megamek.common.util.StringUtil;
 import megamek.common.weapons.bayweapons.BayWeapon;
@@ -545,9 +546,9 @@ public class TestAero extends TestEntity {
         return true;
     }
 
-    public List<Mounted> checkCriticalSlotsForEquipment(Entity entity) {
-        List<Mounted> unallocated = new ArrayList<>();
-        for (Mounted m : entity.getEquipment()) {
+    public List<Mounted<?>> checkCriticalSlotsForEquipment(Entity entity) {
+        List<Mounted<?>> unallocated = new ArrayList<>();
+        for (Mounted<?> m : entity.getEquipment()) {
             if ((m.getLocation() == Entity.LOC_NONE) && !m.isOneShotAmmo() && (m.getCriticals() > 0)) {
                 unallocated.add(m);
             }
@@ -567,7 +568,7 @@ public class TestAero extends TestEntity {
     public boolean correctCriticals(StringBuffer buff) {
         boolean correct = true;
 
-        List<Mounted> unallocated = checkCriticalSlotsForEquipment(aero);
+        List<Mounted<?>> unallocated = checkCriticalSlotsForEquipment(aero);
         if (!unallocated.isEmpty()) {
             buff.append("Unallocated Equipment:\n");
             for (Mounted mount : unallocated) {
@@ -578,14 +579,14 @@ public class TestAero extends TestEntity {
         int[] numWeapons = new int[aero.locations()];
         int numBombs = 0;
 
-        for (Mounted m : aero.getWeaponList()) {
+        for (WeaponMounted m : aero.getWeaponList()) {
             if (m.getLocation() == Entity.LOC_NONE) {
                 continue;
             }
 
             // Aeros can't use special munitions except for artemis, exceptions
             //  LBX's must use clusters
-            WeaponType wt = (WeaponType) m.getType();
+            WeaponType wt = m.getType();
             boolean canHaveSpecialMunitions =
                     ((wt.getAmmoType() == AmmoType.T_MML)
                     || (wt.getAmmoType() == AmmoType.T_ATM)

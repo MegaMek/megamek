@@ -14,6 +14,7 @@
 package megamek.common.loaders;
 
 import megamek.common.*;
+import megamek.common.equipment.WeaponMounted;
 import megamek.common.util.BuildingBlock;
 
 /**
@@ -232,7 +233,7 @@ public class BLKDropshipFile extends BLKFile implements IMechLoader {
         boolean rearMount = false;
         int nAmmo = 1;
         // set up a new weapons bay mount
-        Mounted bayMount = null;
+        WeaponMounted bayMount = null;
         // set up a new bay type
         boolean newBay = false;
         double bayDamage = 0;
@@ -306,8 +307,7 @@ public class BLKDropshipFile extends BLKFile implements IMechLoader {
                         WeaponType weap = (WeaponType) newmount.getType();
                         if (bayMount == null) {
                             try {
-                                bayMount = a.addEquipment(weap.getBayType(),
-                                        nLoc, rearMount);
+                                bayMount = (WeaponMounted) a.addEquipment(weap.getBayType(), nLoc, rearMount);
                                 newBay = false;
                             } catch (LocationFullException ex) {
                                 throw new EntityLoadingException(
@@ -331,8 +331,7 @@ public class BLKDropshipFile extends BLKFile implements IMechLoader {
                             bayDamage += damage;
                         } else {
                             try {
-                                bayMount = a.addEquipment(weap.getBayType(),
-                                        nLoc, rearMount);
+                                bayMount = (WeaponMounted) a.addEquipment(weap.getBayType(), nLoc, rearMount);
                             } catch (LocationFullException ex) {
                                 throw new EntityLoadingException(
                                         ex.getMessage());

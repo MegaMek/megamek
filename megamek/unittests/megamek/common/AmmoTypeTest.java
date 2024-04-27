@@ -18,6 +18,9 @@
  */
 package megamek.common;
 
+import megamek.common.equipment.AmmoMounted;
+import megamek.common.equipment.MiscMounted;
+import megamek.common.equipment.WeaponMounted;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -37,23 +40,23 @@ import static org.mockito.Mockito.when;
 public class AmmoTypeTest {
     static WeaponType mockAC5 = mock(WeaponType.class);
     static AmmoType mockAC5AmmoType = mock(AmmoType.class);
-    static Mounted mockAmmoAC5 = mock(Mounted.class);
-    static Mounted mockAmmoAC5Empty = mock(Mounted.class);
+    static AmmoMounted mockAmmoAC5 = mock(AmmoMounted.class);
+    static AmmoMounted mockAmmoAC5Empty = mock(AmmoMounted.class);
     static AmmoType mockAC10AmmoType = mock(AmmoType.class);
-    static Mounted mockAmmoAC10 = mock(Mounted.class);
+    static AmmoMounted mockAmmoAC10 = mock(AmmoMounted.class);
 
     static WeaponType mockPPC = mock(WeaponType.class);
 
     static WeaponType mockSRM4 = mock(WeaponType.class);
     static AmmoType mockSRM4AmmoType = mock(AmmoType.class);
-    static Mounted mockAmmoSrm4 = mock(Mounted.class);
+    static AmmoMounted mockAmmoSrm4 = mock(AmmoMounted.class);
     static AmmoType mockSRM6AmmoType = mock(AmmoType.class);
-    static Mounted mockAmmoSrm6 = mock(Mounted.class);
+    static AmmoMounted mockAmmoSrm6 = mock(AmmoMounted.class);
     static AmmoType mockInferno4AmmoType = mock(AmmoType.class);
-    static Mounted mockAmmoInferno4 = mock(Mounted.class);
+    static AmmoMounted mockAmmoInferno4 = mock(AmmoMounted.class);
 
     static MiscType notAmmoType = mock(MiscType.class);
-    static Mounted mockNotAmmo = mock(Mounted.class);
+    static MiscMounted mockNotAmmo = mock(MiscMounted.class);
 
     @BeforeAll
     public static void beforeAll() {
@@ -109,7 +112,7 @@ public class AmmoTypeTest {
         assertFalse(AmmoType.isAmmoValid(mockAmmoAC5Empty, mockAC5));
 
         // Test null ammo.
-        assertFalse(AmmoType.isAmmoValid((Mounted) null, mockAC5));
+        assertFalse(AmmoType.isAmmoValid((AmmoMounted) null, mockAC5));
         assertFalse(AmmoType.isAmmoValid((AmmoType) null, mockAC5));
 
         // Test incompatible ammo.
@@ -126,8 +129,8 @@ public class AmmoTypeTest {
 
     @Test
     public void testCanSwitchToAmmo() {
-        Mounted mockWeapon = mock(Mounted.class);
-        when(mockWeapon.getLinked()).thenReturn(mockAmmoSrm4);
+        WeaponMounted mockWeapon = mock(WeaponMounted.class);
+        when(mockWeapon.getLinkedAmmo()).thenReturn(mockAmmoSrm4);
 
         assertTrue(AmmoType.canSwitchToAmmo(mockWeapon, mockInferno4AmmoType));
 

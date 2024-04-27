@@ -16,6 +16,8 @@ package megamek.common;
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.common.cost.AeroCostCalculator;
 import megamek.common.enums.AimingMode;
+import megamek.common.equipment.AmmoMounted;
+import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryconditions.PlanetaryConditions;
 import org.apache.logging.log4j.LogManager;
@@ -1803,7 +1805,7 @@ public abstract class Aero extends Entity implements IAero, IBomber {
             }
             if (explosiveFound) {
                 try {
-                    addEquipment(new Mounted(this, clCase), i, false);
+                    addEquipment(Mounted.createMounted(this, clCase), i, false);
                 } catch (LocationFullException ex) {
                     // um, that's impossible.
                 }
@@ -2607,10 +2609,10 @@ public abstract class Aero extends Entity implements IAero, IBomber {
             return false;
         }
 
-        List<Mounted> weaponList = getTotalWeaponList();
+        List<WeaponMounted> weaponList = getTotalWeaponList();
         int totalWeapons = weaponList.size();
         int totalInoperable = 0;
-        for (Mounted weap : weaponList) {
+        for (WeaponMounted weap : weaponList) {
             if (weap.isCrippled()) {
                 totalInoperable++;
             }
@@ -2994,12 +2996,11 @@ public abstract class Aero extends Entity implements IAero, IBomber {
     }
 
     @Override
-    public List<Mounted> getActiveAMS() {
+    public List<WeaponMounted> getActiveAMS() {
         //Large craft use AMS and Point Defense bays
-        if ((this instanceof Dropship) || (this instanceof Jumpship)) {
-
-            ArrayList<Mounted> ams = new ArrayList<>();
-            for (Mounted weapon : getWeaponBayList()) {
+        if (isLargeCraft()) {
+            List<WeaponMounted> ams = new ArrayList<>();
+            for (WeaponMounted weapon : getWeaponBayList()) {
                 // Skip anything that's not an AMS, AMS Bay or Point Defense Bay
                 if (!weapon.getType().hasFlag(WeaponType.F_AMS)
                         && !weapon.getType().hasFlag(WeaponType.F_AMSBAY)
@@ -3021,14 +3022,13 @@ public abstract class Aero extends Entity implements IAero, IBomber {
                 }
 
                 // Make sure ammo is loaded
-                for (int wId : weapon.getBayWeapons()) {
-                    Mounted bayW = getEquipment(wId);
-                    Mounted bayWAmmo = bayW.getLinked();
+                for (WeaponMounted bayW : weapon.getBayWeapons()) {
+                    AmmoMounted bayWAmmo = bayW.getLinkedAmmo();
                     if (!(weapon.getType().hasFlag(WeaponType.F_ENERGY))
                             && ((bayWAmmo == null) || (bayWAmmo.getUsableShotsLeft() == 0)
                             || bayWAmmo.isDumping())) {
                         loadWeapon(weapon);
-                        bayWAmmo = weapon.getLinked();
+                        bayWAmmo = weapon.getLinkedAmmo();
                     }
 
                     // try again

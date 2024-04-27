@@ -16,6 +16,8 @@ package megamek.common.weapons;
 import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
+import megamek.common.equipment.AmmoMounted;
+import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.OptionsConstants;
 import megamek.server.GameManager;
 import megamek.server.Server;
@@ -28,7 +30,7 @@ import java.util.Vector;
  */
 public class BayWeaponHandler extends WeaponHandler {
     private static final long serialVersionUID = -1618484541772117621L;
-    Mounted ammo;
+    AmmoMounted ammo;
 
     protected BayWeaponHandler() {
         // deserialization only
@@ -48,8 +50,7 @@ public class BayWeaponHandler extends WeaponHandler {
         double av = 0;
         int range = RangeType.rangeBracket(nRange, wtype.getATRanges(), true, false);
 
-        for (int wId : weapon.getBayWeapons()) {
-            Mounted m = ae.getEquipment(wId);
+        for (WeaponMounted m : weapon.getBayWeapons()) {
             if (!m.isBreached() && !m.isDestroyed() && !m.isJammed()) {
                 WeaponType bayWType = ((WeaponType) m.getType());
                 // need to cycle through weapons and add av
@@ -81,8 +82,7 @@ public class BayWeaponHandler extends WeaponHandler {
         }        
         if (!(toHit.getValue() == TargetRoll.IMPOSSIBLE)) {
             if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_HEAT_BY_BAY)) {
-                for (int wId : weapon.getBayWeapons()) {
-                    Mounted m = ae.getEquipment(wId);
+                for (WeaponMounted m : weapon.getBayWeapons()) {
                     ae.heatBuildup += m.getCurrentHeat();
                 }
             } else {
@@ -266,9 +266,8 @@ public class BayWeaponHandler extends WeaponHandler {
         int range = RangeType.rangeBracket(nRange, wtype.getATRanges(), true, false);
         int hits = 1;
         int nCluster = 1;
-        for (int wId : weapon.getBayWeapons()) {
+        for (WeaponMounted m : weapon.getBayWeapons()) {
             double av = 0;
-            Mounted m = ae.getEquipment(wId);
             if (!m.isBreached() && !m.isDestroyed() && !m.isJammed()) {
                 WeaponType bayWType = ((WeaponType) m.getType());
                 // need to cycle through weapons and add av
@@ -541,13 +540,13 @@ public class BayWeaponHandler extends WeaponHandler {
         ToHitData autoHit = new ToHitData();
         autoHit.addModifier(TargetRoll.AUTOMATIC_SUCCESS, "if the bay hits, all bay weapons hit");
         int replaceReport;
-        for (int wId : weapon.getBayWeapons()) {
-            Mounted m = ae.getEquipment(wId);
+        for (WeaponMounted m : weapon.getBayWeapons()) {
             if (!m.isBreached() && !m.isDestroyed() && !m.isJammed()) {
-                WeaponType bayWType = ((WeaponType) m.getType());
+                WeaponType bayWType = m.getType();
                 if (bayWType instanceof Weapon) {
                     replaceReport = vPhaseReport.size();
-                    WeaponAttackAction bayWaa = new WeaponAttackAction(waa.getEntityId(), waa.getTargetType(), waa.getTargetId(), wId);
+                    WeaponAttackAction bayWaa = new WeaponAttackAction(waa.getEntityId(), waa.getTargetType(),
+                            waa.getTargetId(), m.getEquipmentNum());
                     AttackHandler bayWHandler = ((Weapon) bayWType).getCorrectHandler(autoHit, bayWaa, game, gameManager);
                     bayWHandler.setAnnouncedEntityFiring(false);
                     // This should always be true

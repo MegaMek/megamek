@@ -49,7 +49,7 @@ public class SkinXMLHandler {
         StringBuffer sb = new StringBuffer();
         sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
         sb.append("<!--\n");
-        sb.append("  This is the default skin for Megamek\n");
+        sb.append("  This is the a skin for Megamek\n");
         sb.append("\n");
         sb.append("  New skins can be created by specifying UI_Element tags\n");
         sb.append("\n");
@@ -212,6 +212,9 @@ public class SkinXMLHandler {
 
                 SkinSpecification skinSpec;
                 // Parse no border
+                Element plainEle = (Element) borderList.getElementsByTagName(PLAIN).item(0);
+
+                // Parse no border
                 Element noBorderEle = (Element) borderList.getElementsByTagName(NO_BORDER).item(0);
                 boolean noBorder = false;
                 if (noBorderEle != null) {
@@ -235,6 +238,8 @@ public class SkinXMLHandler {
                     skinSpec = new SkinSpecification(name);
                     skinSpec.noBorder = noBorder;
                 }
+
+                skinSpec.plain = plainEle != null;
 
                 // Get the background specs
                 if (plainTag == null) {
@@ -666,11 +671,19 @@ public class SkinXMLHandler {
 
         SkinSpecification skinSpec = getSkin(component);
 
+        if (skinSpec.plain) {
+            out.write("\t\t<" + PLAIN + "/>\n");// Close UI_ELEMENT tag
+            out.write("\t</" + UI_ELEMENT + ">\n\n");
+            return;
+        }
+
         // Write Border
         out.write("\t\t<" + NO_BORDER + ">");
         out.write(((Boolean) skinSpec.noBorder).toString());
         out.write("</" + NO_BORDER + ">\n");
-        writeBorder(skinSpec, out);
+        if (!skinSpec.noBorder) {
+            writeBorder(skinSpec, out);
+        }
 
         // Write background
         for (String bgImg : skinSpec.backgrounds) {
@@ -710,7 +723,7 @@ public class SkinXMLHandler {
         // Write font name
         if (skinSpec.fontName != null) {
             out.write("\t\t<" + FONT_SIZE + ">");
-            out.write(skinSpec.fontSize);
+            out.write(skinSpec.fontSize + "");
             out.write("</" + FONT_SIZE + ">\n");
         }
 

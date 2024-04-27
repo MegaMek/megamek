@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.Vector;
 
+import megamek.common.equipment.WeaponMounted;
 import org.apache.commons.lang.ArrayUtils;
 
 import megamek.common.options.OptionsConstants;
@@ -14375,17 +14376,16 @@ public class AmmoType extends EquipmentType {
      * @return true/false - null arguments or linked ammo bin for the weapon result
      *         in false
      */
-    public static boolean canSwitchToAmmo(Mounted weapon, AmmoType otherAmmo) {
+    public static boolean canSwitchToAmmo(WeaponMounted weapon, AmmoType otherAmmo) {
         // no ammo switching if the weapon doesn't exist
         // or if it doesn't have an ammo bin
         // or the other ammo type doesn't exist
-        if ((weapon == null) || (weapon.getLinked() == null)
-                || (!(weapon.getLinked().getType() instanceof AmmoType))
+        if ((weapon == null) || (weapon.getLinkedAmmo() == null)
                 || (otherAmmo == null)) {
             return false;
         }
 
-        AmmoType currentAmmoType = (AmmoType) weapon.getLinked().getType();
+        AmmoType currentAmmoType = weapon.getLinkedAmmo().getType();
 
         // Ammo of the same type and rack size should be allowed
         boolean ammoOfSameType = currentAmmoType.equalsAmmoTypeOnly(otherAmmo)

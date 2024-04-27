@@ -105,7 +105,7 @@ public class ScenarioV2 implements Scenario {
         parseOptions(game);
         parsePlayers(game);
         game.setupTeams();
-        game.setBoard(createBoard(), 0);
+        game.setBoard(0, createBoard());
         if ((game instanceof PlanetaryConditionsUsing)) {
             parsePlanetaryConditions((PlanetaryConditionsUsing) game);
         }

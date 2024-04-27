@@ -22,6 +22,8 @@ package megamek.client.bot.princess;
 import megamek.client.bot.princess.PathRanker.PathRankerType;
 import megamek.codeUtilities.StringUtility;
 import megamek.common.*;
+import megamek.common.equipment.AmmoMounted;
+import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
@@ -39,6 +41,7 @@ import org.junit.jupiter.api.condition.JRE;
 import java.math.BigInteger;
 import java.util.*;
 
+import static java.util.Collections.emptyList;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
@@ -52,65 +55,65 @@ public class FireControlTest {
     private static final int MOCK_TARGET_ID = 10;
 
     // AC5
-    private Mounted mockWeaponAC5;
+    private WeaponMounted mockWeaponAC5;
     private WeaponType mockWeaponTypeAC5;
     @SuppressWarnings("FieldCanBeLocal")
     private AmmoType mockAmmoTypeAC5Std;
-    private Mounted mockAmmoAC5Std;
+    private AmmoMounted mockAmmoAC5Std;
     @SuppressWarnings("FieldCanBeLocal")
     private AmmoType mockAmmoTypeAC5Flak;
-    private Mounted mockAmmoAC5Flak;
+    private AmmoMounted mockAmmoAC5Flak;
     @SuppressWarnings("FieldCanBeLocal")
     private AmmoType mockAmmoTypeAC5Incendiary;
-    private Mounted mockAmmoAc5Incendiary;
+    private AmmoMounted mockAmmoAc5Incendiary;
     @SuppressWarnings("FieldCanBeLocal")
     private AmmoType mockAmmoTypeAc5Flechette;
-    private Mounted mockAmmoAc5Flechette;
+    private AmmoMounted mockAmmoAc5Flechette;
     private WeaponFireInfo mockAC5StdFireInfo;
     private WeaponFireInfo mockAC5IncendiaryFireInfo;
     private WeaponFireInfo mockAC5FlakFireInfo;
 
     // LB10X
-    private Mounted mockWeaponLB10X;
+    private WeaponMounted mockWeaponLB10X;
     private WeaponType mockLB10X;
     @SuppressWarnings("FieldCanBeLocal")
     private AmmoType mockAmmoTypeLB10XSlug;
-    private Mounted mockAmmoLB10XSlug;
+    private AmmoMounted mockAmmoLB10XSlug;
     @SuppressWarnings("FieldCanBeLocal")
     private AmmoType mockAmmoTypeLB10XCluster;
-    private Mounted mockAmmoLB10XCluster;
+    private AmmoMounted mockAmmoLB10XCluster;
 
     // MML
-    private Mounted mockWeaponMML5;
+    private WeaponMounted mockWeaponMML5;
     private WeaponType mockMML5;
     @SuppressWarnings("FieldCanBeLocal")
     private AmmoType mockAmmoTypeSRM5;
-    private Mounted mockAmmoSRM5;
+    private AmmoMounted mockAmmoSRM5;
     @SuppressWarnings("FieldCanBeLocal")
     private AmmoType mockAmmoTypeLRM5;
-    private Mounted mockAmmoLRM5;
+    private AmmoMounted mockAmmoLRM5;
     @SuppressWarnings("FieldCanBeLocal")
     private AmmoType mockAmmoTypeInferno5;
-    private Mounted mockAmmoInferno5;
+    private AmmoMounted mockAmmoInferno5;
     @SuppressWarnings("FieldCanBeLocal")
     private AmmoType mockAmmoTypeLrm5Frag;
-    private Mounted mockAmmoLrm5Frag;
+    private AmmoMounted mockAmmoLrm5Frag;
 
     // ATM
-    private Mounted mockAtm5Weapon;
+    private WeaponMounted mockAtm5Weapon;
     private WeaponType mockAtm5;
     @SuppressWarnings("FieldCanBeLocal")
     private AmmoType mockAmmoTypeAtm5He;
-    private Mounted mockAmmoAtm5He;
+    private AmmoMounted mockAmmoAtm5He;
     @SuppressWarnings("FieldCanBeLocal")
     private AmmoType mockAmmoTypeAtm5St;
-    private Mounted mockAmmoAtm5St;
+    private AmmoMounted mockAmmoAtm5St;
     @SuppressWarnings("FieldCanBeLocal")
     private AmmoType mockAmmoTypeAtm5Er;
-    private Mounted mockAmmoAtm5Er;
+    private AmmoMounted mockAmmoAtm5Er;
     @SuppressWarnings("FieldCanBeLocal")
     private AmmoType mockAmmoTypeAtm5Inferno;
-    private Mounted mockAmmoAtm5Inferno;
+    private AmmoMounted mockAmmoAtm5Inferno;
 
     private Entity mockTarget;
     private EntityState mockTargetState;
@@ -132,10 +135,10 @@ public class FireControlTest {
 
     private Princess mockPrincess;
 
-    private ArrayList<Mounted> shooterWeapons;
-    private Mounted mockPPC;
-    private Mounted mockML;
-    private Mounted mockLRM5;
+    private ArrayList<WeaponMounted> shooterWeapons;
+    private WeaponMounted mockPPC;
+    private WeaponMounted mockML;
+    private WeaponMounted mockLRM5;
     private WeaponFireInfo mockPPCFireInfo;
     private WeaponFireInfo mockMLFireInfo;
     private WeaponFireInfo mockLRMFireInfo;
@@ -145,7 +148,7 @@ public class FireControlTest {
     private WeaponFireInfo mockLB10XSlugFireInfo;
     private WeaponFireInfo mockLB10XClusterFireInfo;
 
-    private Map<Mounted, Double> testToHitThreshold;
+    private Map<WeaponMounted, Double> testToHitThreshold;
 
     private FireControl testFireControl;
 
@@ -225,31 +228,31 @@ public class FireControlTest {
 
         // AC5
         mockWeaponTypeAC5 = mock(WeaponType.class);
-        mockWeaponAC5 = mock(Mounted.class);
+        mockWeaponAC5 = mock(WeaponMounted.class);
         when(mockWeaponAC5.getType()).thenReturn(mockWeaponTypeAC5);
         when(mockWeaponTypeAC5.getAmmoType()).thenReturn(AmmoType.T_AC);
         mockAmmoTypeAC5Std = mock(AmmoType.class);
         when(mockAmmoTypeAC5Std.getAmmoType()).thenReturn(AmmoType.T_AC);
         when(mockAmmoTypeAC5Std.getMunitionType()).thenReturn(EnumSet.of(AmmoType.Munitions.M_STANDARD));
-        mockAmmoAC5Std = mock(Mounted.class);
+        mockAmmoAC5Std = mock(AmmoMounted.class);
         when(mockAmmoAC5Std.getType()).thenReturn(mockAmmoTypeAC5Std);
         when(mockAmmoAC5Std.isAmmoUsable()).thenReturn(true);
         mockAmmoTypeAC5Flak = mock(AmmoType.class);
         when(mockAmmoTypeAC5Flak.getAmmoType()).thenReturn(AmmoType.T_AC);
         when(mockAmmoTypeAC5Flak.getMunitionType()).thenReturn(EnumSet.of(AmmoType.Munitions.M_FLAK));
-        mockAmmoAC5Flak = mock(Mounted.class);
+        mockAmmoAC5Flak = mock(AmmoMounted.class);
         when(mockAmmoAC5Flak.getType()).thenReturn(mockAmmoTypeAC5Flak);
         when(mockAmmoAC5Flak.isAmmoUsable()).thenReturn(true);
         mockAmmoTypeAC5Incendiary = mock(AmmoType.class);
         when(mockAmmoTypeAC5Incendiary.getMunitionType()).thenReturn(EnumSet.of(AmmoType.Munitions.M_INCENDIARY_AC));
         when(mockAmmoTypeAC5Incendiary.getAmmoType()).thenReturn(AmmoType.T_AC);
-        mockAmmoAc5Incendiary = mock(Mounted.class);
+        mockAmmoAc5Incendiary = mock(AmmoMounted.class);
         when(mockAmmoAc5Incendiary.getType()).thenReturn(mockAmmoTypeAC5Incendiary);
         when(mockAmmoAc5Incendiary.isAmmoUsable()).thenReturn(true);
         mockAmmoTypeAc5Flechette = mock(AmmoType.class);
         when(mockAmmoTypeAc5Flechette.getAmmoType()).thenReturn(AmmoType.T_AC);
         when(mockAmmoTypeAc5Flechette.getMunitionType()).thenReturn(EnumSet.of(AmmoType.Munitions.M_FLECHETTE));
-        mockAmmoAc5Flechette = mock(Mounted.class);
+        mockAmmoAc5Flechette = mock(AmmoMounted.class);
         when(mockAmmoAc5Flechette.getType()).thenReturn(mockAmmoTypeAc5Flechette);
         when(mockAmmoAc5Flechette.isAmmoUsable()).thenReturn(true);
 
@@ -282,40 +285,40 @@ public class FireControlTest {
         when(mockAC5FlakFireInfo.getExpectedDamage()).thenReturn(0.8333 * 3);
         // Std AC5
         doReturn(mockAC5StdFireInfo).when(testFireControl).buildWeaponFireInfo(any(Entity.class),
-                any(EntityState.class), any(Targetable.class), any(EntityState.class), eq(mockWeaponAC5), any(Mounted.class),
+                any(EntityState.class), any(Targetable.class), any(EntityState.class), eq(mockWeaponAC5), any(AmmoMounted.class),
                 any(Game.class), anyBoolean());
         doReturn(mockAC5StdFireInfo).when(testFireControl).buildWeaponFireInfo(any(Entity.class),
-                any(MovePath.class), any(Targetable.class), any(EntityState.class), eq(mockWeaponAC5), any(Mounted.class),
+                any(MovePath.class), any(Targetable.class), any(EntityState.class), eq(mockWeaponAC5), any(AmmoMounted.class),
                 any(Game.class), anyBoolean(), anyBoolean());
         doReturn(mockAC5StdFireInfo).when(testFireControl).buildWeaponFireInfo(any(Entity.class),
-                any(Targetable.class), eq(mockWeaponAC5), any(Mounted.class), any(Game.class), anyBoolean());
+                any(Targetable.class), eq(mockWeaponAC5), any(AmmoMounted.class), any(Game.class), anyBoolean());
         // Incendiary AC5
         doReturn(mockAC5IncendiaryFireInfo).when(testFireControl).buildWeaponFireInfo(any(Entity.class),
-                any(EntityState.class), any(Targetable.class), any(EntityState.class), eq(mockWeaponAC5), any(Mounted.class),
+                any(EntityState.class), any(Targetable.class), any(EntityState.class), eq(mockWeaponAC5), any(AmmoMounted.class),
                 any(Game.class), anyBoolean());
         doReturn(mockAC5IncendiaryFireInfo).when(testFireControl).buildWeaponFireInfo(any(Entity.class),
-                any(MovePath.class), any(Targetable.class), any(EntityState.class), eq(mockWeaponAC5), any(Mounted.class),
+                any(MovePath.class), any(Targetable.class), any(EntityState.class), eq(mockWeaponAC5), any(AmmoMounted.class),
                 any(Game.class), anyBoolean(), anyBoolean());
         doReturn(mockAC5IncendiaryFireInfo).when(testFireControl).buildWeaponFireInfo(any(Entity.class),
-                any(Targetable.class), eq(mockWeaponAC5), any(Mounted.class), any(Game.class), anyBoolean());
+                any(Targetable.class), eq(mockWeaponAC5), any(AmmoMounted.class), any(Game.class), anyBoolean());
         // Flak AC5
         doReturn(mockAC5FlakFireInfo).when(testFireControl).buildWeaponFireInfo(any(Entity.class),
-                any(EntityState.class), any(Targetable.class), any(EntityState.class), eq(mockWeaponAC5), any(Mounted.class),
+                any(EntityState.class), any(Targetable.class), any(EntityState.class), eq(mockWeaponAC5), any(AmmoMounted.class),
                 any(Game.class), anyBoolean());
         doReturn(mockAC5FlakFireInfo).when(testFireControl).buildWeaponFireInfo(any(Entity.class),
-                any(MovePath.class), any(Targetable.class), any(EntityState.class), eq(mockWeaponAC5), any(Mounted.class),
+                any(MovePath.class), any(Targetable.class), any(EntityState.class), eq(mockWeaponAC5), any(AmmoMounted.class),
                 any(Game.class), anyBoolean(), anyBoolean());
         doReturn(mockAC5FlakFireInfo).when(testFireControl).buildWeaponFireInfo(any(Entity.class),
-                any(Targetable.class), eq(mockWeaponAC5), any(Mounted.class), any(Game.class), anyBoolean());
+                any(Targetable.class), eq(mockWeaponAC5), any(AmmoMounted.class), any(Game.class), anyBoolean());
 
 
         // LB10X
         mockLB10X = mock(WeaponType.class);
         mockAmmoTypeLB10XSlug = mock(AmmoType.class);
-        mockAmmoLB10XSlug = mock(Mounted.class);
+        mockAmmoLB10XSlug = mock(AmmoMounted.class);
         mockAmmoTypeLB10XCluster = mock(AmmoType.class);
-        mockAmmoLB10XCluster = mock(Mounted.class);
-        mockWeaponLB10X = mock(Mounted.class);
+        mockAmmoLB10XCluster = mock(AmmoMounted.class);
+        mockWeaponLB10X = mock(WeaponMounted.class);
         when(mockWeaponLB10X.getType()).thenReturn(mockLB10X);
         when(mockLB10X.getAmmoType()).thenReturn(AmmoType.T_AC_LBX);
         when(mockAmmoTypeLB10XSlug.getAmmoType()).thenReturn(AmmoType.T_AC_LBX);
@@ -343,13 +346,13 @@ public class FireControlTest {
 
         // Firing Cluster ammo
         doReturn(mockLB10XClusterFireInfo).when(testFireControl).buildWeaponFireInfo(any(Entity.class),
-                any(EntityState.class), any(Targetable.class), any(EntityState.class), eq(mockWeaponLB10X), any(Mounted.class),
+                any(EntityState.class), any(Targetable.class), any(EntityState.class), eq(mockWeaponLB10X), any(AmmoMounted.class),
                 any(Game.class), anyBoolean());
         doReturn(mockLB10XClusterFireInfo).when(testFireControl).buildWeaponFireInfo(any(Entity.class),
-                any(MovePath.class), any(Targetable.class), any(EntityState.class), eq(mockWeaponLB10X), any(Mounted.class),
+                any(MovePath.class), any(Targetable.class), any(EntityState.class), eq(mockWeaponLB10X), any(AmmoMounted.class),
                 any(Game.class), anyBoolean(), anyBoolean());
         doReturn(mockLB10XClusterFireInfo).when(testFireControl).buildWeaponFireInfo(any(Entity.class),
-                any(Targetable.class), eq(mockWeaponLB10X), any(Mounted.class), any(Game.class), anyBoolean());
+                any(Targetable.class), eq(mockWeaponLB10X), any(AmmoMounted.class), any(Game.class), anyBoolean());
 
         // Firing Slug ammo
         doReturn(mockLB10XSlugFireInfo).when(testFireControl).buildWeaponFireInfo(any(Entity.class),
@@ -365,14 +368,14 @@ public class FireControlTest {
         // MML
         mockMML5 = mock(MMLWeapon.class);
         mockAmmoTypeSRM5 = mock(AmmoType.class);
-        mockAmmoSRM5 = mock(Mounted.class);
+        mockAmmoSRM5 = mock(AmmoMounted.class);
         mockAmmoTypeLRM5 = mock(AmmoType.class);
-        mockAmmoLRM5 = mock(Mounted.class);
+        mockAmmoLRM5 = mock(AmmoMounted.class);
         mockAmmoTypeInferno5 = mock(AmmoType.class);
-        mockAmmoInferno5 = mock(Mounted.class);
+        mockAmmoInferno5 = mock(AmmoMounted.class);
         mockAmmoTypeLrm5Frag = mock(AmmoType.class);
-        mockAmmoLrm5Frag = mock(Mounted.class);
-        mockWeaponMML5 = mock(Mounted.class);
+        mockAmmoLrm5Frag = mock(AmmoMounted.class);
+        mockWeaponMML5 = mock(WeaponMounted.class);
         when(mockWeaponMML5.getType()).thenReturn(mockMML5);
         when(mockMML5.getAmmoType()).thenReturn(AmmoType.T_MML);
         when(mockAmmoTypeSRM5.getMunitionType()).thenReturn(EnumSet.of(AmmoType.Munitions.M_STANDARD));
@@ -413,16 +416,16 @@ public class FireControlTest {
         doReturn(true).when(mockAmmoTypeLrm5Frag).equalsAmmoTypeOnly(eq(mockAmmoTypeLrm5Frag));
 
         // ATM
-        mockAtm5Weapon = mock(Mounted.class);
+        mockAtm5Weapon = mock(WeaponMounted.class);
         mockAtm5 = mock(ATMWeapon.class);
         mockAmmoTypeAtm5He = mock(AmmoType.class);
-        mockAmmoAtm5He = mock(Mounted.class);
+        mockAmmoAtm5He = mock(AmmoMounted.class);
         mockAmmoTypeAtm5St = mock(AmmoType.class);
-        mockAmmoAtm5St = mock(Mounted.class);
+        mockAmmoAtm5St = mock(AmmoMounted.class);
         mockAmmoTypeAtm5Er = mock(AmmoType.class);
-        mockAmmoAtm5Er = mock(Mounted.class);
+        mockAmmoAtm5Er = mock(AmmoMounted.class);
         mockAmmoTypeAtm5Inferno = mock(AmmoType.class);
-        mockAmmoAtm5Inferno = mock(Mounted.class);
+        mockAmmoAtm5Inferno = mock(AmmoMounted.class);
         when(mockAtm5Weapon.getType()).thenReturn(mockAtm5);
         when(mockAtm5.getAmmoType()).thenReturn(AmmoType.T_ATM);
         when(mockAtm5.getRackSize()).thenReturn(5);
@@ -474,7 +477,7 @@ public class FireControlTest {
         when(mockEnergyWeaponType.getAmmoType()).thenReturn(AmmoType.T_NA);
         when(mockEnergyWeaponType.hasFlag(any())).thenReturn(false);
         when(mockEnergyWeaponType.hasModeType(anyString())).thenReturn(false);
-        mockPPC = mock(Mounted.class);
+        mockPPC = mock(WeaponMounted.class);
         when(mockPPC.getType()).thenReturn(mockEnergyWeaponType);
         shooterWeapons.add(mockPPC);
         mockPPCFireInfo = mock(WeaponFireInfo.class);
@@ -491,7 +494,7 @@ public class FireControlTest {
                 any(Targetable.class), eq(mockPPC), isNull(), any(Game.class), anyBoolean());
         // buildWeaponFireInfo(shooter, target, weapon, null, game, false);
 
-        mockML = mock(Mounted.class);
+        mockML = mock(WeaponMounted.class);
         shooterWeapons.add(mockML);
         when(mockML.getType()).thenReturn(mockEnergyWeaponType);
         mockMLFireInfo = mock(WeaponFireInfo.class);
@@ -505,20 +508,20 @@ public class FireControlTest {
         doReturn(mockMLFireInfo).when(testFireControl).buildWeaponFireInfo(any(Entity.class),
                 any(Targetable.class), eq(mockML), isNull(), any(Game.class), anyBoolean());
 
-        mockLRM5 = mock(Mounted.class);
+        mockLRM5 = mock(WeaponMounted.class);
         when(mockLRM5.getType()).thenReturn(mockWeaponType);
-        when(mockLRM5.getLinked()).thenReturn(mockAmmoLRM5);
+        when(mockLRM5.getLinkedAmmo()).thenReturn(mockAmmoLRM5);
         shooterWeapons.add(mockLRM5);
         mockLRMFireInfo = mock(WeaponFireInfo.class);
         when(mockLRMFireInfo.getProbabilityToHit()).thenReturn(0.6);
         doReturn(mockLRMFireInfo).when(testFireControl).buildWeaponFireInfo(any(Entity.class),
-                any(EntityState.class), any(Targetable.class), any(EntityState.class), eq(mockLRM5), any(Mounted.class),
+                any(EntityState.class), any(Targetable.class), any(EntityState.class), eq(mockLRM5), any(AmmoMounted.class),
                 any(Game.class), anyBoolean());
         doReturn(mockLRMFireInfo).when(testFireControl).buildWeaponFireInfo(any(Entity.class),
-                any(MovePath.class), any(Targetable.class), any(EntityState.class), eq(mockLRM5), any(Mounted.class),
+                any(MovePath.class), any(Targetable.class), any(EntityState.class), eq(mockLRM5), any(AmmoMounted.class),
                 any(Game.class), anyBoolean(), anyBoolean());
         doReturn(mockLRMFireInfo).when(testFireControl).buildWeaponFireInfo(any(Entity.class),
-                any(Targetable.class), eq(mockLRM5), any(Mounted.class), any(Game.class), anyBoolean());
+                any(Targetable.class), eq(mockLRM5), any(AmmoMounted.class), any(Game.class), anyBoolean());
 
         when(mockWeaponMML5.getType()).thenReturn(mockWeaponType);
         mockMMLFireInfo = mock(WeaponFireInfo.class);
@@ -532,13 +535,13 @@ public class FireControlTest {
 
         // General
         doReturn(mockMMLFireInfo).when(testFireControl).buildWeaponFireInfo(any(Entity.class),
-                any(EntityState.class), any(Targetable.class), any(EntityState.class), eq(mockWeaponMML5), any(Mounted.class),
+                any(EntityState.class), any(Targetable.class), any(EntityState.class), eq(mockWeaponMML5), any(AmmoMounted.class),
                 any(Game.class), anyBoolean());
         doReturn(mockMMLFireInfo).when(testFireControl).buildWeaponFireInfo(any(Entity.class),
-                any(MovePath.class), any(Targetable.class), any(EntityState.class), eq(mockWeaponMML5), any(Mounted.class),
+                any(MovePath.class), any(Targetable.class), any(EntityState.class), eq(mockWeaponMML5), any(AmmoMounted.class),
                 any(Game.class), anyBoolean(), anyBoolean());
         doReturn(mockMMLFireInfo).when(testFireControl).buildWeaponFireInfo(any(Entity.class),
-                any(Targetable.class), eq(mockWeaponMML5), any(Mounted.class), any(Game.class), anyBoolean());
+                any(Targetable.class), eq(mockWeaponMML5), any(AmmoMounted.class), any(Game.class), anyBoolean());
 
         // Firing LRM5 ammo
         doReturn(mockMMLLRM5FireInfo).when(testFireControl).buildWeaponFireInfo(any(Entity.class),
@@ -562,13 +565,13 @@ public class FireControlTest {
 
 
         // Mock the getAmmo(Mounted) call return value
-        ArrayList<Mounted> mockAmmoList = new ArrayList<Mounted>();
+        List<AmmoMounted> mockAmmoList = new ArrayList<>();
         mockAmmoList.add(mockAmmoLRM5);
         mockAmmoList.add(mockAmmoSRM5);
-        when(mockShooter.getAmmo(any(Mounted.class))).thenReturn(mockAmmoList);
+        when(mockShooter.getAmmo(any(WeaponMounted.class))).thenReturn(mockAmmoList);
 
         testToHitThreshold = new HashMap<>();
-        for (final Mounted weapon : mockShooter.getWeaponList()) {
+        for (final WeaponMounted weapon : mockShooter.getWeaponList()) {
             testToHitThreshold.put(weapon, 0.0);
         }
     }
@@ -576,7 +579,7 @@ public class FireControlTest {
     @Test
     public void testGetHardTargetAmmo() {
         // Test an ammo list with only 1 bin of standard ammo.
-        List<Mounted> testAmmoList = new ArrayList<>(1);
+        List<AmmoMounted> testAmmoList = new ArrayList<>(1);
         testAmmoList.add(mockAmmoAC5Std);
         final FireControl testFireControl = new FireControl(mockPrincess);
         assertEquals(mockAmmoAC5Std, testFireControl.getHardTargetAmmo(testAmmoList, mockWeaponTypeAC5, 5));
@@ -627,7 +630,7 @@ public class FireControlTest {
     @Test
     public void testGetAntiAirAmmo() {
         // Test an ammo list with only 1 bin.
-        List<Mounted> testAmmoList = new ArrayList<>(2);
+        List<AmmoMounted> testAmmoList = new ArrayList<>(2);
         testAmmoList.add(mockAmmoAC5Std);
         final FireControl testFireControl = new FireControl(mockPrincess);
         assertNull(testFireControl.getAntiAirAmmo(testAmmoList, mockWeaponTypeAC5, 5));
@@ -652,7 +655,7 @@ public class FireControlTest {
     @Test
     public void testGetClusterAmmo() {
         // Test an ammo list with only 1 bin of cluster ammo.
-        List<Mounted> testAmmoList = new ArrayList<>(2);
+        List<AmmoMounted> testAmmoList = new ArrayList<>(2);
         testAmmoList.add(mockAmmoLB10XCluster);
         FireControl testFireControl = new FireControl(mockPrincess);
         assertEquals(mockAmmoLB10XCluster, testFireControl.getClusterAmmo(testAmmoList, mockLB10X, 5));
@@ -673,7 +676,7 @@ public class FireControlTest {
     @Test
     public void testGetHeatAmmo() {
         // Test an ammo list with only 1 bin of incendiary ammo.
-        List<Mounted> testAmmoList = new ArrayList<>(1);
+        List<AmmoMounted> testAmmoList = new ArrayList<>(1);
         testAmmoList.add(mockAmmoAc5Incendiary);
         final FireControl testFireControl = new FireControl(mockPrincess);
         assertEquals(mockAmmoAc5Incendiary, testFireControl.getIncendiaryAmmo(testAmmoList, mockWeaponTypeAC5,
@@ -710,7 +713,7 @@ public class FireControlTest {
     @Test
     public void testGetAntiInfantryAmmo() {
         // Test an ammo list with only 1 bin of flechette ammo.
-        List<Mounted> testAmmoList = new ArrayList<>(1);
+        List<AmmoMounted> testAmmoList = new ArrayList<>(1);
         testAmmoList.add(mockAmmoAc5Flechette);
         final FireControl testFireControl = new FireControl(mockPrincess);
         assertEquals(mockAmmoAc5Flechette, testFireControl.getAntiInfantryAmmo(testAmmoList,
@@ -749,7 +752,7 @@ public class FireControlTest {
     @Test
     public void testGetAntiVeeAmmo() {
         // Test an ammo list with only 1 bin of standard ammo.
-        List<Mounted> testAmmoList = new ArrayList<>(1);
+        List<AmmoMounted> testAmmoList = new ArrayList<>(1);
         testAmmoList.add(mockAmmoAC5Std);
         FireControl testFireControl = new FireControl(mockPrincess);
         assertNull(testFireControl.getAntiVeeAmmo(testAmmoList, mockWeaponTypeAC5, 5, false));
@@ -790,7 +793,7 @@ public class FireControlTest {
     @Test
     public void testGetAtmAmmo() {
         // Test a list with just HE ammo.
-        List<Mounted> testAmmoList = new ArrayList<>(1);
+        List<AmmoMounted> testAmmoList = new ArrayList<>(1);
         testAmmoList.add(mockAmmoAtm5He);
         final FireControl testFireControl = new FireControl(mockPrincess);
         assertEquals(mockAmmoAtm5He, testFireControl.getAtmAmmo(testAmmoList, 5, mockTargetState, false));
@@ -870,7 +873,7 @@ public class FireControlTest {
     @Test
     public void testGetGeneralMmlAmmo() {
         // Test a list with just SRM ammo.
-        List<Mounted> testAmmoList = new ArrayList<>(1);
+        List<AmmoMounted> testAmmoList = new ArrayList<>(1);
         testAmmoList.add(mockAmmoSRM5);
         final FireControl testFireControl = new FireControl(mockPrincess);
         assertEquals(mockAmmoSRM5, testFireControl.getGeneralMmlAmmo(testAmmoList, 6));
@@ -906,7 +909,7 @@ public class FireControlTest {
         when(mockCrew.getOptions()).thenReturn(mockOptions);
         when(mockOptions.booleanOption(anyString())).thenReturn(false);
 
-        final ArrayList<Mounted> testAmmoList = new ArrayList<>(5);
+        final ArrayList<AmmoMounted> testAmmoList = new ArrayList<>(5);
         testAmmoList.add(mockAmmoAtm5He);
         testAmmoList.add(mockAmmoAtm5Er);
         testAmmoList.add(mockAmmoAtm5St);
@@ -930,7 +933,7 @@ public class FireControlTest {
         // Test shooting an AC5 at a building.
         mockTarget = mock(BuildingTarget.class);
         when(mockTarget.getPosition()).thenReturn(new Coords(10, 15));
-        when(mockWeaponAC5.getLinked()).thenReturn(mockAmmoAc5Incendiary);
+        when(mockWeaponAC5.getLinkedAmmo()).thenReturn(mockAmmoAc5Incendiary);
         assertEquals(mockAmmoAc5Incendiary, testFireControl.getPreferredAmmo(mockShooter, mockTarget, mockWeaponAC5));
 
         // Test shooting an LBX at an airborne target.
@@ -938,21 +941,21 @@ public class FireControlTest {
         when(((Entity) mockTarget).getArmorType(anyInt())).thenReturn(EquipmentType.T_ARMOR_STANDARD);
         when(mockTarget.getPosition()).thenReturn(new Coords(10, 15));
         when(mockTarget.isAirborne()).thenReturn(true);
-        when(mockWeaponLB10X.getLinked()).thenReturn(mockAmmoLB10XCluster);
+        when(mockWeaponLB10X.getLinkedAmmo()).thenReturn(mockAmmoLB10XCluster);
         assertEquals(mockAmmoLB10XCluster, testFireControl.getPreferredAmmo(mockShooter, mockTarget, mockWeaponLB10X));
 
         // Test shooting an LBX at a tank.
         mockTarget = mock(Tank.class);
         when(((Entity) mockTarget).getArmorType(anyInt())).thenReturn(EquipmentType.T_ARMOR_STANDARD);
         when(mockTarget.getPosition()).thenReturn(new Coords(10, 15));
-        when(mockWeaponLB10X.getLinked()).thenReturn(mockAmmoLB10XCluster);
+        when(mockWeaponLB10X.getLinkedAmmo()).thenReturn(mockAmmoLB10XCluster);
         assertEquals(mockAmmoLB10XCluster, testFireControl.getPreferredAmmo(mockShooter, mockTarget, mockWeaponLB10X));
 
         // Test shooting an AC at infantry.
         mockTarget = mock(Infantry.class);
         when(((Entity) mockTarget).getArmorType(anyInt())).thenReturn(EquipmentType.T_ARMOR_STANDARD);
         when(mockTarget.getPosition()).thenReturn(new Coords(10, 15));
-        when(mockWeaponAC5.getLinked()).thenReturn(mockAmmoAc5Flechette);
+        when(mockWeaponAC5.getLinkedAmmo()).thenReturn(mockAmmoAc5Flechette);
         assertTrue(
                 mockAmmoAc5Flechette.equals(testFireControl.getPreferredAmmo(mockShooter, mockTarget,
                         mockWeaponAC5))
@@ -964,25 +967,25 @@ public class FireControlTest {
         when(((Entity) mockTarget).getArmorType(anyInt())).thenReturn(EquipmentType.T_ARMOR_STANDARD);
         when(mockTarget.getPosition()).thenReturn(new Coords(10, 15));
         when(((Entity) mockTarget).getDamageLevel()).thenReturn(Entity.DMG_HEAVY);
-        when(mockWeaponLB10X.getLinked()).thenReturn(mockAmmoLB10XCluster);
+        when(mockWeaponLB10X.getLinkedAmmo()).thenReturn(mockAmmoLB10XCluster);
         assertEquals(mockAmmoLB10XCluster, testFireControl.getPreferredAmmo(mockShooter, mockTarget, mockWeaponLB10X));
 
         // Test a hot target.
         when(((Entity) mockTarget).getDamageLevel()).thenReturn(Entity.DMG_LIGHT);
         when(((Entity) mockTarget).getHeat()).thenReturn(12);
 
-        when(mockWeaponMML5.getLinked()).thenReturn(mockAmmoInferno5);
+        when(mockWeaponMML5.getLinkedAmmo()).thenReturn(mockAmmoInferno5);
         assertEquals(mockAmmoInferno5, testFireControl.getPreferredAmmo(mockShooter, mockTarget, mockWeaponMML5));
         when(((Entity) mockTarget).getArmorType(anyInt())).thenReturn(EquipmentType.T_ARMOR_HEAT_DISSIPATING);
-        when(mockWeaponMML5.getLinked()).thenReturn(mockAmmoSRM5);
+        when(mockWeaponMML5.getLinkedAmmo()).thenReturn(mockAmmoSRM5);
         assertEquals(mockAmmoSRM5, testFireControl.getPreferredAmmo(mockShooter, mockTarget, mockWeaponMML5));
         when(((Entity) mockTarget).getArmorType(anyInt())).thenReturn(EquipmentType.T_ARMOR_STANDARD);
 
         // Test a normal target.
         when(((Entity) mockTarget).getHeat()).thenReturn(4);
-        when(mockWeaponAC5.getLinked()).thenReturn(mockAmmoAC5Std);
+        when(mockWeaponAC5.getLinkedAmmo()).thenReturn(mockAmmoAC5Std);
         assertEquals(mockAmmoAC5Std, testFireControl.getPreferredAmmo(mockShooter, mockTarget, mockWeaponAC5));
-        when(mockWeaponMML5.getLinked()).thenReturn(mockAmmoSRM5);
+        when(mockWeaponMML5.getLinkedAmmo()).thenReturn(mockAmmoSRM5);
         assertEquals(mockAmmoSRM5, testFireControl.getPreferredAmmo(mockShooter, mockTarget, mockWeaponMML5));
     }
 
@@ -1617,7 +1620,7 @@ public class FireControlTest {
         when(mockTargetHex.containsTerrain(Terrains.WATER)).thenReturn(false); // todo test water
 
         final int MOCK_WEAPON_ID = 1;
-        final Mounted mockWeapon = mock(Mounted.class);
+        final WeaponMounted mockWeapon = mock(WeaponMounted.class);
         when(mockWeapon.canFire()).thenReturn(true);
         when(mockWeapon.getLocation()).thenReturn(Mech.LOC_RARM);
         when(mockShooter.getEquipmentNum(eq(mockWeapon))).thenReturn(MOCK_WEAPON_ID);
@@ -1630,8 +1633,8 @@ public class FireControlTest {
         when(mockWeaponType.getMinimumRange()).thenReturn(3);
         when(mockWeaponType.hasFlag(eq(WeaponType.F_DIRECT_FIRE))).thenReturn(true);
 
-        final Mounted mockAmmo = mock(Mounted.class);
-        when(mockWeapon.getLinked()).thenReturn(mockAmmo);
+        final AmmoMounted mockAmmo = mock(AmmoMounted.class);
+        when(mockWeapon.getLinked()).thenReturn((Mounted) mockAmmo);
         when(mockAmmo.getUsableShotsLeft()).thenReturn(10);
 
         // Test the vanilla case.
@@ -1918,18 +1921,18 @@ public class FireControlTest {
         when(mockAmmo.getUsableShotsLeft()).thenReturn(0);
         expected = new ToHitData(FireControl.TH_WEAP_NO_AMMO);
         assertToHitDataEquals(expected, testFireControl.guessToHitModifierForWeapon(mockShooter,
-                mockShooterState, mockTarget, mockTargetState, mockWeapon, mockWeapon.getLinked(), mockGame));
+                mockShooterState, mockTarget, mockTargetState, mockWeapon, mockWeapon.getLinkedAmmo(), mockGame));
         when(mockAmmo.getUsableShotsLeft()).thenReturn(10);
-        when(mockWeapon.getLinked()).thenReturn(null);
+        when(mockWeapon.getLinkedAmmo()).thenReturn(null);
         expected = new ToHitData(FireControl.TH_WEAP_NO_AMMO);
         assertToHitDataEquals(expected, testFireControl.guessToHitModifierForWeapon(mockShooter,
-                mockShooterState, mockTarget, mockTargetState, mockWeapon, mockWeapon.getLinked(), mockGame));
+                mockShooterState, mockTarget, mockTargetState, mockWeapon, mockWeapon.getLinkedAmmo(), mockGame));
 
         // Test a weapon that cannot fire.
         when(mockWeapon.canFire()).thenReturn(false);
         expected = new ToHitData(FireControl.TH_WEAP_CANNOT_FIRE);
         assertToHitDataEquals(expected, testFireControl.guessToHitModifierForWeapon(mockShooter,
-                mockShooterState, mockTarget, mockTargetState, mockWeapon, mockWeapon.getLinked(), mockGame));
+                mockShooterState, mockTarget, mockTargetState, mockWeapon, mockWeapon.getLinkedAmmo(), mockGame));
     }
 
     @Test
@@ -1945,15 +1948,15 @@ public class FireControlTest {
         doReturn(false).when(testFireControl).isTargetUnderFlightPath(eq(mockFlightPathBad),
                 any(EntityState.class));
 
-        final Mounted mockWeapon = mock(Mounted.class);
+        final WeaponMounted mockWeapon = mock(WeaponMounted.class);
         when(mockWeapon.canFire()).thenReturn(true);
 
         final WeaponType mockWeaponType = mock(WeaponType.class);
         when(mockWeapon.getType()).thenReturn(mockWeaponType);
         when(mockWeaponType.getAmmoType()).thenReturn(AmmoType.T_AC);
 
-        final Mounted mockAmmo = mock(Mounted.class);
-        when(mockWeapon.getLinked()).thenReturn(mockAmmo);
+        final AmmoMounted mockAmmo = mock(AmmoMounted.class);
+        when(mockWeapon.getLinkedAmmo()).thenReturn(mockAmmo);
         when(mockAmmo.getUsableShotsLeft()).thenReturn(10);
 
         final ConvFighter mockFighter = mock(ConvFighter.class);
@@ -2346,7 +2349,7 @@ public class FireControlTest {
         FiringPlan expected;
         when(mockShooter.getPosition()).thenReturn(mockShooterCoords);
         when(mockShooter.isOffBoard()).thenReturn(false);
-        when(mockShooter.getBombs(any(BigInteger.class))).thenReturn(new Vector<>(0));
+        when(mockShooter.getBombs(any(BigInteger.class))).thenReturn(emptyList());
         when(mockTarget.getPosition()).thenReturn(mockTargetCoords);
         when(mockTarget.isOffBoard()).thenReturn(false);
         when(mockBoard.contains(eq(mockShooterCoords))).thenReturn(true);
@@ -2379,7 +2382,7 @@ public class FireControlTest {
                 mockTargetState, mockFlightPath, mockGame, true));
     }
 
-    private void prepForFullFiringPlan(ArrayList<Mounted> wepList, ArrayList<Mounted> ammoList) {
+    private void prepForFullFiringPlan(List<WeaponMounted> wepList, List<AmmoMounted> ammoList) {
         when(mockShooter.getPosition()).thenReturn(mockShooterCoords);
         when(mockShooter.isOffBoard()).thenReturn(false);
         when(mockTarget.getPosition()).thenReturn(mockTargetCoords);
@@ -2390,15 +2393,13 @@ public class FireControlTest {
         // Set up weapons and ammo
         shooterWeapons.clear();
         testToHitThreshold.clear();
-        for (Mounted weapon: wepList) {
+        for (WeaponMounted weapon: wepList) {
             when(weapon.canFire()).thenReturn(true);
             shooterWeapons.add(weapon);
             testToHitThreshold.put(weapon, 0.0);
         }
-        ArrayList<Mounted> mockAmmoList = new ArrayList<Mounted>();
-        for (Mounted ammo: ammoList) {
-            mockAmmoList.add(ammo);
-        }
+        ArrayList<AmmoMounted> mockAmmoList = new ArrayList<>();
+        mockAmmoList.addAll(ammoList);
         when(mockShooter.getAmmo()).thenReturn(mockAmmoList);
 
         doNothing().when(testFireControl).calculateUtility(any(FiringPlan.class), anyInt(), anyBoolean());
@@ -2406,8 +2407,8 @@ public class FireControlTest {
 
     @Test
     public void testGetFullFiringPlan() {
-        ArrayList<Mounted> wepList = new ArrayList<Mounted>(Arrays.asList(mockPPC, mockLRM5));
-        ArrayList<Mounted> ammoList = new ArrayList<Mounted>(Arrays.asList(mockAmmoLRM5, mockAmmoSRM5));
+        List<WeaponMounted> wepList = new ArrayList<>(Arrays.asList(mockPPC, mockLRM5));
+        List<AmmoMounted> ammoList = new ArrayList<>(Arrays.asList(mockAmmoLRM5, mockAmmoSRM5));
         prepForFullFiringPlan(wepList, ammoList);
 
         // Test the normal case.
@@ -2443,8 +2444,8 @@ public class FireControlTest {
 
     @Test
     public void testChooseAppropriateMMLAmmoForLongRange() {
-        ArrayList<Mounted> wepList = new ArrayList<Mounted>(Arrays.asList(mockWeaponMML5));
-        ArrayList<Mounted> ammoList = new ArrayList<Mounted>(Arrays.asList(mockAmmoSRM5, mockAmmoLRM5));
+        List<WeaponMounted> wepList = new ArrayList<>(Arrays.asList(mockWeaponMML5));
+        List<AmmoMounted> ammoList = new ArrayList<>(Arrays.asList(mockAmmoSRM5, mockAmmoLRM5));
         prepForFullFiringPlan(wepList, ammoList);
 
         // Simulating longer-range engagement
@@ -2458,8 +2459,8 @@ public class FireControlTest {
 
     @Test
     public void testChooseAppropriateMMLAmmoForShortRange() {
-        ArrayList<Mounted> wepList = new ArrayList<Mounted>(Arrays.asList(mockWeaponMML5));
-        ArrayList<Mounted> ammoList = new ArrayList<Mounted>(Arrays.asList(mockAmmoLRM5, mockAmmoSRM5));
+        List<WeaponMounted> wepList = new ArrayList<>(Arrays.asList(mockWeaponMML5));
+        List<AmmoMounted> ammoList = new ArrayList<>(Arrays.asList(mockAmmoLRM5, mockAmmoSRM5));
         prepForFullFiringPlan(wepList, ammoList);
 
         // Simulating closer-range engagement
@@ -2476,8 +2477,8 @@ public class FireControlTest {
 
     @Test
     public void testChooseLBXAmmoForEngagingFlyer() {
-        ArrayList<Mounted> wepList = new ArrayList<Mounted>(Arrays.asList(mockWeaponLB10X));
-        ArrayList<Mounted> ammoList = new ArrayList<Mounted>(Arrays.asList(mockAmmoLB10XSlug, mockAmmoLB10XCluster));
+        ArrayList<WeaponMounted> wepList = new ArrayList<>(Arrays.asList(mockWeaponLB10X));
+        ArrayList<AmmoMounted> ammoList = new ArrayList<>(Arrays.asList(mockAmmoLB10XSlug, mockAmmoLB10XCluster));
         prepForFullFiringPlan(wepList, ammoList);
 
         // Should get the plan back with a Cluster shot
@@ -2490,8 +2491,8 @@ public class FireControlTest {
 
     @Test
     public void testChooseACAmmoForEngagingFlyer() {
-        ArrayList<Mounted> wepList = new ArrayList<Mounted>(Arrays.asList(mockWeaponAC5));
-        ArrayList<Mounted> ammoList = new ArrayList<Mounted>(Arrays.asList(
+        ArrayList<WeaponMounted> wepList = new ArrayList<>(Arrays.asList(mockWeaponAC5));
+        ArrayList<AmmoMounted> ammoList = new ArrayList<>(Arrays.asList(
                 mockAmmoAC5Std, mockAmmoAc5Incendiary, mockAmmoAC5Flak
         ));
         prepForFullFiringPlan(wepList, ammoList);
@@ -2540,7 +2541,7 @@ public class FireControlTest {
         when(mockLRMFireInfo.getDebugDescription()).thenReturn("mock LRM");
         alphaStrike.add(mockLRMFireInfo);
 
-        final Mounted mockMG = mock(Mounted.class);
+        final WeaponMounted mockMG = mock(WeaponMounted.class);
         shooterWeapons.add(mockMG);
         final WeaponFireInfo mockMGFireInfo = mock(WeaponFireInfo.class);
         when(mockMGFireInfo.getProbabilityToHit()).thenReturn(0.6);

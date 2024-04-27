@@ -18,6 +18,7 @@
  */
 package megamek.common;
 
+import megamek.common.equipment.WeaponMounted;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -28,10 +29,10 @@ public class MechFileParserTest {
     @Test
     public void splitMGsBetweenMGAs() throws LocationFullException {
         Mech mech = new BipedMech();
-        Mounted mga1 = mech.addEquipment(EquipmentType.get("ISMGA"), Mech.LOC_LT);
+        WeaponMounted mga1 = (WeaponMounted) mech.addEquipment(EquipmentType.get("ISMGA"), Mech.LOC_LT);
         mech.addEquipment(EquipmentType.get("ISMG"), Mech.LOC_LT);
         mech.addEquipment(EquipmentType.get("ISMG"), Mech.LOC_LT);
-        Mounted mga2 = mech.addEquipment(EquipmentType.get("ISMGA"), Mech.LOC_LT);
+        WeaponMounted mga2 = (WeaponMounted) mech.addEquipment(EquipmentType.get("ISMGA"), Mech.LOC_LT);
         mech.addEquipment(EquipmentType.get("ISMG"), Mech.LOC_LT);
         mech.addEquipment(EquipmentType.get("ISMG"), Mech.LOC_LT);
         mech.addEquipment(EquipmentType.get("ISMG"), Mech.LOC_LT);
@@ -45,12 +46,12 @@ public class MechFileParserTest {
     @Test
     public void loadMGAsFromContiguousBlocks() throws LocationFullException {
         Mech mech = new BipedMech();
-        Mounted mga1 = mech.addEquipment(EquipmentType.get("ISLMGA"), Mech.LOC_LT);
-        Mounted mga2 = mech.addEquipment(EquipmentType.get("ISMGA"), Mech.LOC_LT);
+        WeaponMounted mga1 = (WeaponMounted) mech.addEquipment(EquipmentType.get("ISLMGA"), Mech.LOC_LT);
+        WeaponMounted mga2 = (WeaponMounted) mech.addEquipment(EquipmentType.get("ISMGA"), Mech.LOC_LT);
         mech.addEquipment(EquipmentType.get("ISMG"), Mech.LOC_LT);
         mech.addEquipment(EquipmentType.get("ISLightMG"), Mech.LOC_LT);
         mech.addEquipment(EquipmentType.get("ISLightMG"), Mech.LOC_LT);
-        Mounted lastMG = mech.addEquipment(EquipmentType.get("ISMG"), Mech.LOC_LT);
+        WeaponMounted lastMG = (WeaponMounted) mech.addEquipment(EquipmentType.get("ISMG"), Mech.LOC_LT);
 
         MechFileParser.linkMGAs(mech);
 

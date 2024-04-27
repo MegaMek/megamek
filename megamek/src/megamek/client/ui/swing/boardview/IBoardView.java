@@ -21,14 +21,22 @@ package megamek.client.ui.swing.boardview;
 import megamek.client.event.BoardViewListener;
 import megamek.client.ui.IDisplayable;
 import megamek.common.Coords;
+import megamek.common.annotations.Nullable;
 
 import java.util.List;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.RenderedImage;
+import java.util.Set;
 
 interface IBoardView {
 
+    /**
+     * This method should be overridden to do the actual drawing of the board image into the provided
+     * Graphics.
+     *
+     * @param graphics The Graphics object to draw the board onto
+     */
     void draw(Graphics graphics);
 
     /**
@@ -41,8 +49,26 @@ interface IBoardView {
      */
     void zoomIn();
 
+    /**
+     * Returns the pixel size of the entire board if drawn at the current zoom level. This should not include
+     * any padding, just the board itself.
+     *
+     * @return The pixel size of the entire board at the current zoom level
+     */
+    Dimension getBoardSize();
+
+    /**
+     * @return a JScrollPane containing the board's panel.
+     */
     Component getComponent();
 
+    /**
+     * Sets this BoardView to show or hide a warning in fields (hexes) that contain invalid information such
+     * as terrains that cannot be used together in a single hex. Usually this warning is shown in the board
+     * editor but not in a game.
+     *
+     * @param displayInvalidFields True when the invaliud marker should be shown
+     */
     void setDisplayInvalidFields(boolean displayInvalidFields);
 
     default boolean displayInvalidFields() {
@@ -67,6 +93,9 @@ interface IBoardView {
 
     void setUseLosTool(boolean useLosTool);
 
+    /**
+     * @return The JPanel that contains this BoardView.
+     */
     JPanel getPanel();
 
     /**
@@ -118,7 +147,31 @@ interface IBoardView {
      */
     RenderedImage getEntireBoardImage(boolean hideUnits, boolean useBaseZoom);
 
+    /**
+     * Notifies this BoardView to center itself on the given Coords.
+     * Override this to be safe for null Coords.
+     *
+     * @param coords The coordinates to center on
+     */
     void centerOn(Coords coords);
+
+    /**
+     * @return A set of hashCodes of those image that are animated (such as animated tileset images) and
+     * therefore should prevent the hex image from being cached.
+     */
+    Set<Integer> getAnimatedImages();
+
+    /**
+     * Override this to provide a return value exactly as the Scrollable interface methodof the same name.
+     * @see Scrollable#getScrollableUnitIncrement(Rectangle, int, int)
+     */
+    int getScrollableUnitIncrement(Rectangle arg0, int arg1, int arg2);
+
+    /**
+     * Override this to provide a return value exactly as the Scrollable interface methodof the same name.
+     * @see Scrollable#getScrollableBlockIncrement(Rectangle, int, int)
+     */
+    int getScrollableBlockIncrement(Rectangle arg0, int arg1, int arg2);
 
     /**
      * @return the coords at the specified point in the BoardView's image area. The point may be given

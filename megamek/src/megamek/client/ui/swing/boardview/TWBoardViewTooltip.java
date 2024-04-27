@@ -38,7 +38,7 @@ import java.util.List;
 import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
 import static megamek.client.ui.swing.util.UIUtil.uiWhite;
 
-class TWBoardViewTooltip implements BoardViewTooltipProvider {
+public class TWBoardViewTooltip implements BoardViewTooltipProvider {
 
     private final GUIPreferences GUIP = GUIPreferences.getInstance();
 
@@ -46,7 +46,7 @@ class TWBoardViewTooltip implements BoardViewTooltipProvider {
     private final Game game;
     private final BoardView bv;
 
-    TWBoardViewTooltip(Game game, @Nullable ClientGUI clientGui, BoardView boardView) {
+    public TWBoardViewTooltip(Game game, @Nullable ClientGUI clientGui, BoardView boardView) {
         this.clientGui = clientGui;
         this.game = game;
         this.bv = boardView;

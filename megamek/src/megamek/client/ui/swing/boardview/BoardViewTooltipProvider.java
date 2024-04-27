@@ -23,7 +23,7 @@ import megamek.common.Coords;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 
-interface BoardViewTooltipProvider {
+public interface BoardViewTooltipProvider {
 
     default String getTooltip(MouseEvent event) {
         return getTooltip(event, null);

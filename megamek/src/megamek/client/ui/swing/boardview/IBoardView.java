@@ -21,15 +21,13 @@ package megamek.client.ui.swing.boardview;
 import megamek.client.event.BoardViewListener;
 import megamek.client.ui.IDisplayable;
 import megamek.common.Coords;
-import megamek.common.annotations.Nullable;
 
-import java.util.List;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.RenderedImage;
 import java.util.Set;
 
-interface IBoardView {
+public interface IBoardView {
 
     /**
      * This method should be overridden to do the actual drawing of the board image into the provided

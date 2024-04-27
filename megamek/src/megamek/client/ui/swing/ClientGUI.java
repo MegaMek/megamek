@@ -35,10 +35,7 @@ import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.swing.audio.AudioService;
 import megamek.client.ui.swing.audio.SoundManager;
 import megamek.client.ui.swing.audio.SoundType;
-import megamek.client.ui.swing.boardview.BoardView;
-import megamek.client.ui.swing.boardview.KeyBindingsOverlay;
-import megamek.client.ui.swing.boardview.PlanetaryConditionsOverlay;
-import megamek.client.ui.swing.boardview.TurnDetailsOverlay;
+import megamek.client.ui.swing.boardview.*;
 import megamek.client.ui.swing.dialog.AbstractUnitSelectorDialog;
 import megamek.client.ui.swing.dialog.MegaMekUnitSelectorDialog;
 import megamek.client.ui.swing.forceDisplay.ForceDisplayDialog;
@@ -539,6 +536,7 @@ public class ClientGUI extends JPanel implements BoardViewListener, IClientGUI,
             bv.addOverlay(new PlanetaryConditionsOverlay(bv));
             bv.addOverlay(new TurnDetailsOverlay(bv));
             bv.getPanel().setPreferredSize(getSize());
+            bv.setTooltipProvider(new TWBoardViewTooltip(client.getGame(), this, bv));
             bvc = bv.getComponent();
             bvc.setName(CG_BOARDVIEW);
 

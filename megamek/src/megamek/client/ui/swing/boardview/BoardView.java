@@ -400,7 +400,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
     private final StringDrawer invalidString = new StringDrawer(Messages.getString("BoardEditor.INVALID"))
             .color(GUIP.getWarningColor()).font(FontHandler.getNotoFont().deriveFont(Font.BOLD)).center();
 
-    BoardViewTooltipProvider boardViewToolTip;
+    BoardViewTooltipProvider boardViewToolTip = (point, movementTarget) -> null;
 
 
     /**
@@ -410,7 +410,6 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
             throws java.io.IOException {
         this.game = game;
         this.clientgui = clientgui;
-        boardViewToolTip = new TWBoardViewTooltip(game, clientgui, this);
 
         if (GUIP == null) {
             GUIP = GUIPreferences.getInstance();

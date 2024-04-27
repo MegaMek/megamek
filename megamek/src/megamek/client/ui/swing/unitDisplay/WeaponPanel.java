@@ -1480,7 +1480,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
             return;
         }
 
-        WeaponMounted mounted = (WeaponMounted) ((WeaponListModel) weaponList.getModel())
+        WeaponMounted mounted = ((WeaponListModel) weaponList.getModel())
                 .getWeaponAt(weaponList.getSelectedIndex());
         WeaponType wtype = mounted.getType();
         // The rules are a bit sparse on airborne (dropping) ground units, but it seems they should

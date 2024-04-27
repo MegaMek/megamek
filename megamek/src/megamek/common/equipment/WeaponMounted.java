@@ -223,7 +223,7 @@ public class WeaponMounted extends Mounted<WeaponType> {
      */
     public WeaponMounted getBayWeapon(int index) {
         if ((index >= 0) && (index < bayWeapons.size())) {
-            return getEntity().getWeapon(index);
+            return getEntity().getWeapon(bayWeapons.get(index));
         } else {
             return null;
         }

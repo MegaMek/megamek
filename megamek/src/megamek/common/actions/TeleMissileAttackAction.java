@@ -20,10 +20,13 @@
 package megamek.common.actions;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Enumeration;
+import java.util.List;
 
-import megamek.client.ui.Messages;
 import megamek.common.*;
+import megamek.common.equipment.AmmoMounted;
+import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.AttackHandler;
 
@@ -35,7 +38,7 @@ import megamek.common.weapons.AttackHandler;
 public class TeleMissileAttackAction extends AbstractAttackAction {
     private static final long serialVersionUID = -1054613811287285482L;
     // only used server-side for manually guided Telemissile attacks
-    private transient ArrayList<Mounted> vCounterEquipment;
+    private transient List<WeaponMounted> vCounterEquipment;
 
     // Large Craft Point Defense/AMS Bay Stuff
     public int CounterAVInt = 0;
@@ -61,7 +64,10 @@ public class TeleMissileAttackAction extends AbstractAttackAction {
      * Returns the list of Counter Equipment used against this physical attack
      * This is for AMS assignment to manual tele-operated missiles
      */
-    public ArrayList<Mounted> getCounterEquipment() {
+    public List<WeaponMounted> getCounterEquipment() {
+        if (vCounterEquipment == null) {
+            vCounterEquipment = new ArrayList<>();
+        }
         return vCounterEquipment;
     }
 
@@ -69,7 +75,7 @@ public class TeleMissileAttackAction extends AbstractAttackAction {
      * Adds 'm' to the list of Counter Equipment used against this physical attack
      * This is for AMS assignment to manual tele-operated missiles
      */
-    public void addCounterEquipment(Mounted m) {
+    public void addCounterEquipment(WeaponMounted m) {
         if (vCounterEquipment == null) {
             vCounterEquipment = new ArrayList<>();
         }
@@ -106,9 +112,8 @@ public class TeleMissileAttackAction extends AbstractAttackAction {
                     AttackHandler ah = i.nextElement();
                     WeaponAttackAction prevAttack = ah.getWaa();
                     if (prevAttack.getEntityId() == e.getId()) {
-                        Mounted prevWeapon = e.getEquipment(prevAttack.getWeaponId());
-                        for (int wId : prevWeapon.getBayWeapons()) {
-                            Mounted bayW = e.getEquipment(wId);
+                        WeaponMounted prevWeapon = (WeaponMounted) e.getEquipment(prevAttack.getWeaponId());
+                        for (WeaponMounted bayW : prevWeapon.getBayWeapons()) {
                             totalheat += bayW.getCurrentHeat();
                         }
                     }
@@ -118,7 +123,7 @@ public class TeleMissileAttackAction extends AbstractAttackAction {
                     AttackHandler ah = i.nextElement();
                     WeaponAttackAction prevAttack = ah.getWaa();
                     if (prevAttack.getEntityId() == e.getId()) {
-                        Mounted prevWeapon = e.getEquipment(prevAttack.getWeaponId());
+                        Mounted<?> prevWeapon = e.getEquipment(prevAttack.getWeaponId());
                         totalheat += prevWeapon.getCurrentHeat();
                     }
                 }
@@ -131,7 +136,7 @@ public class TeleMissileAttackAction extends AbstractAttackAction {
      * Checks to see if this point defense/AMS bay can engage a capital missile
      * This should return true. Only when handling capital missile attacks can this be false.
      */
-    protected boolean canEngageCapitalMissile(Mounted counter) {
+    protected boolean canEngageCapitalMissile(WeaponMounted counter) {
         return counter.getBayWeapons().size() >= 2;
     }
 
@@ -148,11 +153,11 @@ public class TeleMissileAttackAction extends AbstractAttackAction {
         double pdAV = 0;
         Entity entityTarget = (Entity) target;
         // any AMS bay attacks by the target?
-        ArrayList<Mounted> lCounters = getCounterEquipment();
+        List<WeaponMounted> lCounters = getCounterEquipment();
         // We need to know how much heat has been assigned to offensive weapons fire by the defender this round
         int weaponHeat = getLargeCraftHeat(entityTarget) + entityTarget.heatBuildup;
         if (null != lCounters) {
-            for (Mounted counter : lCounters) {
+            for (WeaponMounted counter : lCounters) {
                 // Point defenses only fire vs attacks against the arc they protect
                 Entity pdEnt = counter.getEntity();
 
@@ -160,7 +165,7 @@ public class TeleMissileAttackAction extends AbstractAttackAction {
                 // Telemissiles are entities. Other craft can just shoot at them.
 
                 // Point defenses can't fire if they're not ready for any other reason
-                if (!(counter.getType() instanceof WeaponType)
+                if (counter.getType() == null
                          || !counter.isReady() || counter.isMissing()
                             // shutdown means no Point defenses
                             || pdEnt.isShutDown()) {
@@ -192,9 +197,8 @@ public class TeleMissileAttackAction extends AbstractAttackAction {
                 // First, reset the temporary damage counters
                 amsAV = 0;
                 pdAV = 0;
-                for (int wId : counter.getBayWeapons()) {
-                    Mounted bayW = pdEnt.getEquipment(wId);
-                    Mounted bayWAmmo = bayW.getLinked();
+                for (WeaponMounted bayW : counter.getBayWeapons()) {
+                    AmmoMounted bayWAmmo = bayW.getLinkedAmmo();
                     WeaponType bayWType = ((WeaponType) bayW.getType());
 
                     // build up some heat

@@ -1043,11 +1043,11 @@ public class MechSummary implements Serializable, ASCardDisplayable {
      *
      * @param mountedList A collection of <code>Mounted</code> equipment
      */
-    public void setEquipment(List<Mounted> mountedList)
+    public void setEquipment(List<Mounted<?>> mountedList)
     {
         equipmentNames = new Vector<>(mountedList.size());
         equipmentQuantities = new Vector<>(mountedList.size());
-        for (Mounted mnt : mountedList)
+        for (Mounted<?> mnt : mountedList)
         {
             // Ignore weapon groups, as they aren't actually real equipment
             if (mnt.isWeaponGroup()) {
@@ -1086,7 +1086,7 @@ public class MechSummary implements Serializable, ASCardDisplayable {
 
     public void setWeaponQuirkNames(Entity entity) {
         Set<String> weaponQuirkNameList = new HashSet<>();
-        for (Mounted mounted : entity.getEquipment()) {
+        for (Mounted<?> mounted : entity.getEquipment()) {
             weaponQuirkNameList.addAll(mounted.getQuirks().getOptionsList().stream()
                     .filter(IOption::booleanValue)
                     .map(IOptionInfo::getDisplayableNameWithValue)

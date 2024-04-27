@@ -15,6 +15,8 @@ package megamek.client.ui.swing;
 
 import megamek.client.ui.Messages;
 import megamek.common.*;
+import megamek.common.equipment.AmmoMounted;
+import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.OptionsConstants;
 import org.apache.logging.log4j.LogManager;
 
@@ -45,18 +47,14 @@ public class BayMunitionsChoicePanel extends JPanel {
         gbc.anchor = GridBagConstraints.WEST;
         gbc.insets = new Insets(10, 0, 10, 0);
 
-        for (Mounted bay : entity.getWeaponBayList()) {
-            Map<List<Integer>,List<Mounted>> ammoByType = new HashMap<>();
-            for (Integer aNum : bay.getBayAmmo()) {
-                final Mounted ammo = entity.getEquipment(aNum);
-                if ((null != ammo) && (ammo.getType() instanceof AmmoType)) {
-                    AmmoType atype = (AmmoType) ammo.getType();
-                    List<Integer> key = new ArrayList<>(2);
-                    key.add(atype.getAmmoType());
-                    key.add(atype.getRackSize());
-                    ammoByType.putIfAbsent(key, new ArrayList<>());
-                    ammoByType.get(key).add(ammo);
-                }
+        for (WeaponMounted bay : entity.getWeaponBayList()) {
+            Map<List<Integer>,List<AmmoMounted>> ammoByType = new HashMap<>();
+            for (AmmoMounted ammo : bay.getBayAmmo()) {
+                List<Integer> key = new ArrayList<>(2);
+                key.add(ammo.getType().getAmmoType());
+                key.add(ammo.getType().getRackSize());
+                ammoByType.putIfAbsent(key, new ArrayList<>());
+                ammoByType.get(key).add(ammo);
             }
             for (List<Integer> key : ammoByType.keySet()) {
                 AmmoRowPanel row = new AmmoRowPanel(bay, key.get(0), key.get(1), ammoByType.get(key));
@@ -79,9 +77,9 @@ public class BayMunitionsChoicePanel extends JPanel {
             for (int i = 0; i < row.munitions.size(); i++) {
                 int shots = (Integer) row.spinners.get(i).getValue();
                 if (shots > 0) {
-                    Mounted mounted;
+                    AmmoMounted mounted;
                     if (mountIndex >= row.ammoMounts.size()) {
-                        mounted = new Mounted(entity, row.munitions.get(i));
+                        mounted = (AmmoMounted) Mounted.createMounted(entity, row.munitions.get(i));
                         try {
                             entity.addEquipment(mounted, row.bay.getLocation(), row.bay.isRearMounted());
                             row.bay.addAmmoToBay(entity.getEquipmentNum(mounted));
@@ -103,7 +101,7 @@ public class BayMunitionsChoicePanel extends JPanel {
             }
             // Zero out any remaining unused bins.
             while (mountIndex < row.ammoMounts.size()) {
-                Mounted mount = row.ammoMounts.get(mountIndex);
+                AmmoMounted mount = row.ammoMounts.get(mountIndex);
                 mount.setSize(0);
                 mount.setOriginalShots(0);
                 mount.setShotsLeft(0);
@@ -112,10 +110,9 @@ public class BayMunitionsChoicePanel extends JPanel {
             // If the unit is assigned less ammo than the capacity, assign remaining weight to first mount
             // and adjust original shots.
             if (remainingWeight > 0) {
-                Mounted m = row.ammoMounts.get(0);
-                AmmoType at = (AmmoType) m.getType();
+                AmmoMounted m = row.ammoMounts.get(0);
                 m.setSize(m.getSize() + remainingWeight);
-                m.setOriginalShots((int) Math.floor(m.getSize() / (at.getShots() * m.getTonnage())));
+                m.setOriginalShots((int) Math.floor(m.getSize() / (m.getType().getShots() * m.getTonnage())));
             }
         }
     }
@@ -128,18 +125,18 @@ public class BayMunitionsChoicePanel extends JPanel {
 
         private final JLabel lblTonnage = new JLabel();
 
-        private final Mounted bay;
+        private final WeaponMounted bay;
         private final int at;
         private final int rackSize;
         private final int techBase;
-        private final List<Mounted> ammoMounts;
+        private final List<AmmoMounted> ammoMounts;
 
         private final List<JSpinner> spinners;
         private final List<AmmoType> munitions;
 
         private double tonnage;
 
-        AmmoRowPanel(Mounted bay, int at, int rackSize, List<Mounted> ammoMounts) {
+        AmmoRowPanel(WeaponMounted bay, int at, int rackSize, List<AmmoMounted> ammoMounts) {
             this.bay = bay;
             this.at = at;
             this.rackSize = rackSize;
@@ -148,8 +145,7 @@ public class BayMunitionsChoicePanel extends JPanel {
             Dimension spinnerSize =new Dimension(55, 25);
 
             final Optional<WeaponType> wtype = bay.getBayWeapons().stream()
-                    .map(entity::getEquipment)
-                    .map(m -> (WeaponType) m.getType()).findAny();
+                    .map(Mounted::getType).findAny();
 
             // set the bay's tech base to that of any weapon in the bay
             // an assumption is made here that bays don't mix clan-only and IS-only tech base

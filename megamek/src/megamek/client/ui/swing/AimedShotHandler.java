@@ -4,6 +4,7 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.swing.widget.IndexedRadioButton;
 import megamek.common.*;
 import megamek.common.enums.AimingMode;
+import megamek.common.equipment.WeaponMounted;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -359,7 +360,7 @@ class AimedShotHandler implements ActionListener, ItemListener {
      * @param weapon
      * @return
      */
-    public boolean allowAimedShotWith(Mounted weapon) {
+    public boolean allowAimedShotWith(WeaponMounted weapon) {
         return Compute.allowAimedShotWith(weapon, aimingMode);
     }
 

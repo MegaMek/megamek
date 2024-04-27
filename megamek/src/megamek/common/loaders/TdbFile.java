@@ -396,7 +396,7 @@ public class TdbFile implements IMechLoader {
                             }
                         } else {
                             // make a new one
-                            m = new Mounted(mech, etype);
+                            m = Mounted.createMounted(mech, etype);
                             m.setFoundCrits(1);
                             vSplitWeapons.add(m);
                         }

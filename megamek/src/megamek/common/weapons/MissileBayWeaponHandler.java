@@ -31,6 +31,8 @@ import megamek.common.ToHitData;
 import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
+import megamek.common.equipment.AmmoMounted;
+import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.OptionsConstants;
 import megamek.server.GameManager;
 
@@ -73,14 +75,13 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
         int weaponarmor = 0;
         int range = RangeType.rangeBracket(nRange, wtype.getATRanges(), true, false);
 
-        for (int wId : weapon.getBayWeapons()) {
-            Mounted bayW = ae.getEquipment(wId);
+        for (WeaponMounted bayW : weapon.getBayWeapons()) {
             // check the currently loaded ammo
-            Mounted bayWAmmo = bayW.getLinked();
+            AmmoMounted bayWAmmo = bayW.getLinkedAmmo();
             if (null == bayWAmmo || bayWAmmo.getUsableShotsLeft() < 1) {
                 // try loading something else
                 ae.loadWeaponWithSameAmmo(bayW);
-                bayWAmmo = bayW.getLinked();
+                bayWAmmo = bayW.getLinkedAmmo();
             }
             if (!bayW.isBreached()
                     && !bayW.isDestroyed()
@@ -103,7 +104,7 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
                     current_av = bayWType.getExtAV();
                 }
                 current_av = updateAVforAmmo(current_av, atype, bayWType,
-                        range, wId);
+                        range, bayW.getEquipmentNum());
                 av = av + current_av;
                 //If these are thunderbolts, they'll have missile armor
                 weaponarmor += bayWType.getMissileArmor();
@@ -115,7 +116,7 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
                                 || bayWAmmo.getUsableShotsLeft() < 1) {
                             // try loading something else
                             ae.loadWeaponWithSameAmmo(bayW);
-                            bayWAmmo = bayW.getLinked();
+                            bayWAmmo = bayW.getLinkedAmmo();
                         }
                         if (null != bayWAmmo) {
                             bayWAmmo.setShotsLeft(bayWAmmo.getBaseShotsLeft() - 1);
@@ -185,12 +186,8 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
     @Override
     protected int initializeCapMissileArmor() {
         int armor = 0;
-        for (int wId : weapon.getBayWeapons()) {
-            int curr_armor = 0;
-            Mounted bayW = ae.getEquipment(wId);
-            WeaponType bayWType = ((WeaponType) bayW.getType());
-            curr_armor = bayWType.getMissileArmor();
-            armor = armor + curr_armor;
+        for (WeaponMounted bayW : weapon.getBayWeapons()) {
+            armor += bayW.getType().getMissileArmor();
         }
         return armor;
     }
@@ -439,9 +436,8 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
         int range = RangeType.rangeBracket(nRange, wtype.getATRanges(), true, false);
         int hits = 1;
         int nCluster = 1;
-        for (int wId : weapon.getBayWeapons()) {
+        for (WeaponMounted m : weapon.getBayWeapons()) {
             double av = 0;
-            Mounted m = ae.getEquipment(wId);
             if (!m.isBreached() && !m.isDestroyed() && !m.isJammed()) {
                 WeaponType bayWType = ((WeaponType) m.getType());
                 // need to cycle through weapons and add av

@@ -1,9 +1,9 @@
 package megamek.client.bot.princess;
 
 import megamek.common.Entity;
-import megamek.common.Mounted;
 import megamek.common.Targetable;
 import megamek.common.annotations.Nullable;
+import megamek.common.equipment.WeaponMounted;
 import org.apache.logging.log4j.LogManager;
 
 import java.util.HashMap;
@@ -34,7 +34,7 @@ public final class FiringPlanCalculationParameters {
     private final Targetable target;
     private final EntityState targetState;
     private final int maxHeat;
-    private final Map<Mounted, Double> ammoConservation;
+    private final Map<WeaponMounted, Double> ammoConservation;
     private final FiringPlanCalculationType calculationType;
 
     public static class Builder {
@@ -43,7 +43,7 @@ public final class FiringPlanCalculationParameters {
         private Targetable target = null;
         private EntityState targetState = null;
         private int maxHeat = Entity.DOES_NOT_TRACK_HEAT;
-        private Map<Mounted, Double> ammoConservation = new HashMap<>();
+        private Map<WeaponMounted, Double> ammoConservation = new HashMap<>();
         private FiringPlanCalculationType calculationType = GUESS;
 
         /**
@@ -103,7 +103,7 @@ public final class FiringPlanCalculationParameters {
          * Ammo conservation biases of the unit's mounted weapons.
          * Defaults to an empty map.
          */
-        public Builder setAmmoConservation(@Nullable final Map<Mounted, Double> value) {
+        public Builder setAmmoConservation(@Nullable final Map<WeaponMounted, Double> value) {
             ammoConservation = value;
             return this;
         }
@@ -133,7 +133,7 @@ public final class FiringPlanCalculationParameters {
                                                           final Targetable target,
                                                           @Nullable final EntityState targetState,
                                                           final int maxHeat,
-                                                          @Nullable final Map<Mounted, Double> ammoConservation) {
+                                                          @Nullable final Map<WeaponMounted, Double> ammoConservation) {
             return setShooter(shooter).setShooterState(shooterState)
                                       .setTarget(target)
                                       .setTargetState(targetState)
@@ -145,7 +145,7 @@ public final class FiringPlanCalculationParameters {
 
         public FiringPlanCalculationParameters buildExact(final Entity shooter,
                                                           final Targetable target,
-                                                          final Map<Mounted, Double> ammoConservation) {
+                                                          final Map<WeaponMounted, Double> ammoConservation) {
             return setShooter(shooter).setTarget(target)
                                       .setAmmoConservation(ammoConservation)
                                       .setCalculationType(GET)
@@ -160,7 +160,7 @@ public final class FiringPlanCalculationParameters {
         this.shooterState = builder.shooterState;
         this.target = builder.target;
         this.targetState = builder.targetState;
-        maxHeat = builder.maxHeat < 0 ? 0 : builder.maxHeat;
+        maxHeat = Math.max(builder.maxHeat, 0);
         this.ammoConservation = builder.ammoConservation;
         this.calculationType = builder.calculationType;
     }
@@ -188,7 +188,7 @@ public final class FiringPlanCalculationParameters {
     }
 
     @Nullable
-    Map<Mounted, Double> getAmmoConservation() {
+    Map<WeaponMounted, Double> getAmmoConservation() {
         return ammoConservation;
     }
 

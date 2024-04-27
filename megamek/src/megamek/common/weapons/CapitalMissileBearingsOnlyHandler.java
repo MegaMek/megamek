@@ -17,6 +17,8 @@ import megamek.common.*;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
+import megamek.common.equipment.AmmoMounted;
+import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.bayweapons.TeleOperatedMissileBayWeapon;
 import megamek.server.GameManager;
@@ -44,7 +46,7 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
             || weapon.curMode().equals(Weapon.MODE_CAP_MISSILE_WAYPOINT_BEARING_EXT));
 
     // Defined here so we can use it in multiple methods
-    Mounted bayWAmmo;
+    AmmoMounted bayWAmmo;
     int range;
     Coords targetCoords;
 
@@ -65,10 +67,9 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
     }
     
     protected void getMountedAmmo() {
-        for (int wId : weapon.getBayWeapons()) {
-            Mounted bayW = ae.getEquipment(wId);
+        for (WeaponMounted bayW : weapon.getBayWeapons()) {
             // check the currently loaded ammo
-            bayWAmmo = bayW.getLinked();
+            bayWAmmo = bayW.getLinkedAmmo();
 
             if (bayWAmmo == null) {// Can't happen. w/o legal ammo, the weapon
                 // *shouldn't* fire.
@@ -80,14 +81,13 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
     @Override
     protected void useAmmo() {
         getMountedAmmo();
-        Mounted bayW = bayWAmmo.getLinkedBy();        
+        WeaponMounted bayW = (WeaponMounted) bayWAmmo.getLinkedBy();
         int shots = (bayW.getCurrentShots() * weapon.getBayWeapons().size());
         for (int i = 0; i < shots; i++) {
-            if (null == bayWAmmo
-                    || bayWAmmo.getUsableShotsLeft() < 1) {
+            if ((null == bayWAmmo) || bayWAmmo.getUsableShotsLeft() < 1) {
                 // try loading something else
                 ae.loadWeaponWithSameAmmo(bayW);
-                bayWAmmo = bayW.getLinked();
+                bayWAmmo = bayW.getLinkedAmmo();
             }
             if (null != bayWAmmo) {
                 bayWAmmo.setShotsLeft(bayWAmmo.getBaseShotsLeft() - 1);
@@ -283,13 +283,13 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
             ToHitData autoHit = new ToHitData();
             autoHit.addModifier(TargetRoll.AUTOMATIC_SUCCESS, "if the bay hits, all bay weapons hit");
             int replaceReport;
-            for (int wId : weapon.getBayWeapons()) {
-                Mounted m = ae.getEquipment(wId);
+            for (WeaponMounted m : weapon.getBayWeapons()) {
                 if (!m.isBreached() && !m.isDestroyed() && !m.isJammed()) {
-                    WeaponType bayWType = ((WeaponType) m.getType());
+                    WeaponType bayWType = m.getType();
                     if (bayWType instanceof Weapon) {
                         replaceReport = vPhaseReport.size();
-                        WeaponAttackAction bayWaa = new WeaponAttackAction(waa.getEntityId(), waa.getTargetType(), waa.getTargetId(), wId);
+                        WeaponAttackAction bayWaa = new WeaponAttackAction(waa.getEntityId(), waa.getTargetType(),
+                                waa.getTargetId(), bayWAmmo.getEquipmentNum());
                         AttackHandler bayWHandler = ((Weapon) bayWType).getCorrectHandler(autoHit, bayWaa, game, gameManager);
                         bayWHandler.setAnnouncedEntityFiring(false);
                         // This should always be true. Maybe there's a better way to write this?
@@ -659,7 +659,7 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
      * This should return true. Only when handling capital missile attacks can this be false.
      */
     @Override
-    protected boolean canEngageCapitalMissile(Mounted counter) {
+    protected boolean canEngageCapitalMissile(WeaponMounted counter) {
         return counter.getBayWeapons().size() >= 2;
     }
 
@@ -688,14 +688,13 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
         // A bearings-only shot is, by definition, always going to be at extreme range...
         int range = RangeType.RANGE_EXTREME;
 
-        for (int wId : weapon.getBayWeapons()) {
-            Mounted bayW = ae.getEquipment(wId);
+        for (WeaponMounted bayW : weapon.getBayWeapons()) {
             // check the currently loaded ammo
-            Mounted bayWAmmo = bayW.getLinked();
+            AmmoMounted bayWAmmo = bayW.getLinkedAmmo();
             if (null == bayWAmmo || bayWAmmo.getUsableShotsLeft() < 1) {
                 // try loading something else
                 ae.loadWeaponWithSameAmmo(bayW);
-                bayWAmmo = bayW.getLinked();
+                bayWAmmo = bayW.getLinkedAmmo();
             }
             if (!bayW.isBreached()
                     && !bayW.isDestroyed()
@@ -736,7 +735,7 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
                 }
                 
                 current_av = updateAVforAmmo(current_av, atype, bayWType,
-                        range, wId);
+                        range, bayW.getEquipmentNum());
                 av = av + current_av;
                 armor = armor + weaponarmor;
             }
@@ -815,13 +814,12 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
     @Override
     protected int initializeCapMissileArmor() {
         int armor = 0;
-        for (int wId : weapon.getBayWeapons()) {
+        for (WeaponMounted bayW : weapon.getBayWeapons()) {
             int curr_armor = 0;
-            Mounted bayW = ae.getEquipment(wId);
             // check the currently loaded ammo
-            Mounted bayWAmmo = bayW.getLinked();
-            AmmoType atype = (AmmoType) bayWAmmo.getType();
-            WeaponType bayWType = ((WeaponType) bayW.getType());
+            AmmoMounted bayWAmmo = bayW.getLinkedAmmo();
+            AmmoType atype = bayWAmmo.getType();
+            WeaponType bayWType = bayW.getType();
             if (bayWType.getAtClass() == (WeaponType.CLASS_AR10)
                     && (atype.hasFlag(AmmoType.F_AR10_KILLER_WHALE)
                             || atype.hasFlag(AmmoType.F_PEACEMAKER))) {
@@ -844,13 +842,11 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
     @Override
     protected int getCapMisMod() {
         int mod = 0;
-        for (int wId : weapon.getBayWeapons()) {
+        for (WeaponMounted bayW : weapon.getBayWeapons()) {
             int curr_mod = 0;
-            Mounted bayW = ae.getEquipment(wId);
             // check the currently loaded ammo
-            Mounted bayWAmmo = bayW.getLinked();
-            AmmoType atype = (AmmoType) bayWAmmo.getType();
-            curr_mod = getCritMod(atype);
+            AmmoMounted bayWAmmo = bayW.getLinkedAmmo();
+            curr_mod = getCritMod(bayWAmmo.getType());
             if (curr_mod > mod) {
                 mod = curr_mod;
             }

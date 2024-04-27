@@ -18,6 +18,8 @@ import java.util.*;
 
 import megamek.common.*;
 import megamek.common.actions.ArtilleryAttackAction;
+import megamek.common.equipment.AmmoMounted;
+import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.OptionsConstants;
 
 /**
@@ -192,9 +194,9 @@ public class ArtilleryTargetingControl {
 
     private boolean getAmmoTypeAvailable(Entity shooter, AmmoType.Munitions mtype) {
         boolean available = false;
-        for (Mounted weapon: shooter.getWeaponList()){
+        for (WeaponMounted weapon: shooter.getWeaponList()){
             if (weapon.getType().hasFlag(WeaponType.F_ARTILLERY)){
-                for (Mounted ammo: shooter.getAmmo(weapon)) {
+                for (AmmoMounted ammo: shooter.getAmmo(weapon)) {
                     if (((AmmoType) ammo.getType()).getMunitionType().contains(mtype)
                             && !weapon.isFired() && ammo.getUsableShotsLeft() > 0) {
                         available = true;
@@ -367,19 +369,19 @@ public class ArtilleryTargetingControl {
         // or we have a 1+ top valued coordinates.
         // Track ADA WFIs separately.
         List<WeaponFireInfo> topValuedADAInfos = new ArrayList<>();
-        for (Mounted currentWeapon : shooter.getWeaponList()) {
+        for (WeaponMounted currentWeapon : shooter.getWeaponList()) {
             List<WeaponFireInfo> topValuedFireInfos = new ArrayList<>();
             double maxDamage = 0;
             if (currentWeapon.getType().hasFlag(WeaponType.F_ARTILLERY)) {
-                WeaponType wType = (WeaponType) currentWeapon.getType();
+                WeaponType wType = currentWeapon.getType();
                 int damage = wType.getRackSize(); // crazy, but rack size appears to correspond to given damage values for arty pieces in tacops
 
                 // Iterate over all loaded Artillery ammo so we can compare various options
-                for (final Mounted ammo : shooter.getAmmo(currentWeapon)) {
+                for (final AmmoMounted ammo : shooter.getAmmo(currentWeapon)) {
                     // for each enemy unit, evaluate damage value of firing at its hex.
                     // keep track of top target hexes with the same value and fire at them
-                    boolean isADA = ((AmmoType) ammo.getType()).getMunitionType().contains(AmmoType.Munitions.M_ADA);
-                    boolean isSmoke = ((AmmoType) ammo.getType()).getMunitionType().contains(AmmoType.Munitions.M_SMOKE);
+                    boolean isADA = ammo.getType().getMunitionType().contains(AmmoType.Munitions.M_ADA);
+                    boolean isSmoke = ammo.getType().getMunitionType().contains(AmmoType.Munitions.M_SMOKE);
                     for (Targetable target : targetSet) {
                         WeaponFireInfo wfi;
                         double damageValue = 0.0;
@@ -499,7 +501,7 @@ public class ArtilleryTargetingControl {
      * @param owner
      * @return
      */
-    private WeaponFireInfo getTAGInfo(Mounted weapon, Entity shooter, Game game, Princess owner) {
+    private WeaponFireInfo getTAGInfo(WeaponMounted weapon, Entity shooter, Game game, Princess owner) {
         WeaponFireInfo retval = null;
         double hitOdds = 0.0;
 

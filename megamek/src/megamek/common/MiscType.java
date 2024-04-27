@@ -385,14 +385,13 @@ public class MiscType extends EquipmentType {
     public static final long S_ATMOSPHERIC_LIFEBOAT = 1L << 2;
 
     // New stuff for shields
-    protected int baseDamageAbsorptionRate = 0;
-    protected int baseDamageCapacity = 0;
-    protected int damageTaken = 0;
+    private int baseDamageAbsorptionRate = 0;
+    private int baseDamageCapacity = 0;
 
     protected boolean industrial = false;
 
     // New stuff for infantry kits
-    protected double damageDivisor = 1.0;
+    private double damageDivisor = 1.0;
 
     /** Creates new MiscType */
     public MiscType() {
@@ -2358,7 +2357,6 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_MODULAR_ARMOR).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_FIGHTER_EQUIPMENT)
                 .or(F_SUPPORT_TANK_EQUIPMENT).or(F_VTOL_EQUIPMENT);
         misc.bv = BV_VARIABLE;
-        misc.damageTaken = 0;
         misc.baseDamageAbsorptionRate = 10;
         misc.baseDamageCapacity = 10;
         misc.rulesRefs = "93, TO:AUE";
@@ -3657,7 +3655,6 @@ public class MiscType extends EquipmentType {
         misc.setInstantModeSwitch(true);
         String[] modes = { S_NO_SHIELD, S_ACTIVE_SHIELD, S_PASSIVE_SHIELD };
         misc.setModes(modes);
-        misc.damageTaken = 0;
         misc.baseDamageAbsorptionRate = 3;
         misc.baseDamageCapacity = 11;
         misc.rulesRefs = "290, TO";
@@ -3686,7 +3683,6 @@ public class MiscType extends EquipmentType {
         misc.setInstantModeSwitch(true);
         String[] modes = { S_NO_SHIELD, S_ACTIVE_SHIELD, S_PASSIVE_SHIELD };
         misc.setModes(modes);
-        misc.damageTaken = 0;
         misc.baseDamageAbsorptionRate = 5;
         misc.baseDamageCapacity = 18;
         misc.rulesRefs = "290, TO";
@@ -3715,7 +3711,6 @@ public class MiscType extends EquipmentType {
         misc.setInstantModeSwitch(true);
         String[] modes = { S_NO_SHIELD, S_ACTIVE_SHIELD, S_PASSIVE_SHIELD };
         misc.setModes(modes);
-        misc.damageTaken = 0;
         misc.baseDamageAbsorptionRate = 7;
         misc.baseDamageCapacity = 25;
         misc.rulesRefs = "290, TO";

@@ -14,10 +14,12 @@
  */
 package megamek.common;
 
+import megamek.common.equipment.WeaponMounted;
 import megamek.common.loaders.*;
 import megamek.common.util.BuildingBlock;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.verifier.TestInfantry;
+import megamek.common.weapons.Weapon;
 import megamek.common.weapons.ppc.*;
 import org.apache.logging.log4j.LogManager;
 
@@ -515,21 +517,20 @@ public class MechFileParser {
         } // Check the next piece of equipment.
 
         // Walk through the list of equipment.
-        for (Mounted m : ent.getMisc()) {
+        for (Mounted<?> m : ent.getMisc()) {
 
             // Link PPC Capacitor to PPC it its location.
             if (m.getType().hasFlag(MiscType.F_PPC_CAPACITOR)
                     && (m.getLinked() == null)) {
 
                 // link up to a weapon in the same location
-                for (Mounted mWeapon : ent.getWeaponList()) {
-                    WeaponType wtype = (WeaponType) mWeapon.getType();
+                for (WeaponMounted mWeapon : ent.getWeaponList()) {
+                    WeaponType wtype = mWeapon.getType();
 
                     //Handle weapon bays
                     if (wtype.getBayType().equals(EquipmentType.get(EquipmentTypeLookup.PPC_BAY))) {
-                        for (int wId : mWeapon.getBayWeapons()) {
-                            Mounted bayMountedWeapon = ent.getEquipment(wId);
-                            WeaponType bayWeapType = (WeaponType) bayMountedWeapon.getType();
+                        for (WeaponMounted bayMountedWeapon : mWeapon.getBayWeapons()) {
+                            WeaponType bayWeapType = bayMountedWeapon.getType();
 
                             // Check for PPC that isn't crosslinked
                             if (!bayWeapType.hasFlag(WeaponType.F_PPC) ||
@@ -802,11 +803,11 @@ public class MechFileParser {
      */
     static void linkMGAs(Entity entity) {
         List<Integer> usedMG = new ArrayList<>();
-        for (Mounted mga : entity.getWeaponList()) {
+        for (WeaponMounted mga : entity.getWeaponList()) {
             if (mga.getType().hasFlag(WeaponType.F_MGA)) {
                 // This may be called from MML after changing equipment location, so there
                 // may be old data that needs to be cleared
-                mga.getBayWeapons().clear();
+                mga.clearBayWeapons();
                 for (int i = 0; i < entity.getNumberOfCriticals(mga.getLocation()); i++) {
                     CriticalSlot slot = entity.getCritical(mga.getLocation(), i);
                     if ((slot != null) && (slot.getType() == CriticalSlot.TYPE_EQUIPMENT)

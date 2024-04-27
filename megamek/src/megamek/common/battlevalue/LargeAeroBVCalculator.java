@@ -19,6 +19,8 @@
 package megamek.common.battlevalue;
 
 import megamek.common.*;
+import megamek.common.equipment.AmmoMounted;
+import megamek.common.equipment.WeaponMounted;
 import megamek.common.weapons.bayweapons.BayWeapon;
 
 import java.util.HashMap;
@@ -39,7 +41,7 @@ public abstract class LargeAeroBVCalculator extends AeroBVCalculator {
     protected int nominalNoseLocation;
     protected int nominalLeftLocation;
     protected int nominalRightLocation;
-    protected final Map<Mounted, Integer> collectedWeapons = new HashMap<>();
+    protected final Map<WeaponMounted, Integer> collectedWeapons = new HashMap<>();
 
     LargeAeroBVCalculator(Entity entity) {
         super(entity);
@@ -58,8 +60,8 @@ public abstract class LargeAeroBVCalculator extends AeroBVCalculator {
 
     @Override
     protected void assembleAmmo() {
-        for (Mounted ammo : entity.getAmmo()) {
-            AmmoType ammoType = (AmmoType) ammo.getType();
+        for (AmmoMounted ammo : entity.getAmmo()) {
+            AmmoType ammoType = ammo.getType();
 
             // don't count depleted ammo, AMS and oneshot ammo
             if (ammoCounts(ammo)) {
@@ -222,9 +224,9 @@ public abstract class LargeAeroBVCalculator extends AeroBVCalculator {
 
     @Override
     protected void processWeapons() {
-        for (Mounted weapon : entity.getTotalWeaponList()) {
+        for (WeaponMounted weapon : entity.getTotalWeaponList()) {
             if (countAsOffensiveWeapon(weapon)) {
-                Mounted key = collectedWeapons.keySet().stream()
+                WeaponMounted key = collectedWeapons.keySet().stream()
                         .filter(wp -> canBeSummed(weapon, wp)).findFirst().orElse(weapon);
                 collectedWeapons.merge(key, 1, Integer::sum);
             }
@@ -257,8 +259,8 @@ public abstract class LargeAeroBVCalculator extends AeroBVCalculator {
         bvReport.addEmptyLine();
         bvReport.addLine(arcName(bvNominalLocation) + ":", "", "");
         boolean arcEmpty = true;
-        for (Map.Entry<Mounted, Integer> weaponEntry : collectedWeapons.entrySet()) {
-            Mounted weapon = weaponEntry.getKey();
+        for (Map.Entry<WeaponMounted, Integer> weaponEntry : collectedWeapons.entrySet()) {
+            WeaponMounted weapon = weaponEntry.getKey();
             if (isNominalArc(bvNominalLocation, weapon) && countAsOffensiveWeapon(weapon)) {
                 arcHeat += weaponHeat(weapon) * weaponEntry.getValue();
                 processWeapon(weapon, true, true, weaponEntry.getValue());

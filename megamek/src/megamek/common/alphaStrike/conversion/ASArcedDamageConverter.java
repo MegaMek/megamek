@@ -23,6 +23,7 @@ import megamek.common.Entity;
 import megamek.common.Mounted;
 import megamek.common.WeaponType;
 import megamek.common.alphaStrike.*;
+import megamek.common.equipment.WeaponMounted;
 import megamek.common.weapons.bayweapons.BayWeapon;
 
 import java.util.*;
@@ -42,10 +43,10 @@ public class ASArcedDamageConverter extends ASAeroDamageConverter {
             locations[index] = new ASArcSummary();
         }
         // Flatten the weaponlist as weapon bays are not relevant for AS conversion
-        List<Mounted> flattenedWeaponList = new ArrayList<>();
-        for (Mounted weapon : entity.getWeaponList()) {
+        List<WeaponMounted> flattenedWeaponList = new ArrayList<>();
+        for (WeaponMounted weapon : entity.getWeaponList()) {
             if (weapon.getType() instanceof BayWeapon) {
-                weapon.getBayWeapons().stream().map(entity::getEquipment).forEach(flattenedWeaponList::add);
+                flattenedWeaponList.addAll(weapon.getBayWeapons());
             } else {
                 flattenedWeaponList.add(weapon);
             }

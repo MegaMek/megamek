@@ -400,7 +400,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
     private final StringDrawer invalidString = new StringDrawer(Messages.getString("BoardEditor.INVALID"))
             .color(GUIP.getWarningColor()).font(FontHandler.getNotoFont().deriveFont(Font.BOLD)).center();
 
-    TWBoardViewTooltipProvider boardViewToolTip;
+    BoardViewTooltipProvider boardViewToolTip;
 
 
     /**
@@ -410,7 +410,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
             throws java.io.IOException {
         this.game = game;
         this.clientgui = clientgui;
-        boardViewToolTip = new TWBoardViewTooltipProvider(game, clientgui, this);
+        boardViewToolTip = new TWBoardViewTooltip(game, clientgui, this);
 
         if (GUIP == null) {
             GUIP = GUIPreferences.getInstance();
@@ -701,13 +701,13 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
                 && !shouldIgnoreKeys;
     }
 
-    protected final RedrawWorker redrawWorker = new RedrawWorker();
+    private final RedrawWorker redrawWorker = new RedrawWorker();
 
     /**
      * this should only be called once!! this will cause a timer to schedule
      * constant screen updates every 20 milliseconds!
      */
-    protected TimerTask scheduleRedrawTimer() {
+    private TimerTask scheduleRedrawTimer() {
         final TimerTask redraw = new TimerTask() {
             @Override
             public void run() {
@@ -722,7 +722,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         return redraw;
     }
 
-    protected void scheduleRedraw() {
+    private void scheduleRedraw() {
         try {
             SwingUtilities.invokeLater(redrawWorker);
         } catch (Exception ie) {
@@ -2683,6 +2683,11 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         }
     }
 
+    @Override
+    public void setTooltipProvider(BoardViewTooltipProvider provider) {
+        boardViewToolTip = provider;
+    }
+
     public void redrawMovingEntity(Entity entity, Coords position, int facing, int elevation) {
         Integer entityId = entity.getId();
         List<Integer> spriteKey = getIdAndLoc(entityId, -1);
@@ -3768,14 +3773,14 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         movementSprites.clear();
     }
 
-    protected void firstLOSHex(Coords c) {
+    private void firstLOSHex(Coords c) {
         if (useLOSTool) {
             moveCursor(secondLOSSprite, null);
             moveCursor(firstLOSSprite, c);
         }
     }
 
-    protected void secondLOSHex(Coords c2, Coords c1) {
+    private void secondLOSHex(Coords c2, Coords c1) {
         if (useLOSTool) {
 
             Entity ae = chooseEntity(c1);
@@ -4516,11 +4521,11 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
      * the old redrawworker converted to a runnable which is called now and then
      * from the event thread
      */
-    protected class RedrawWorker implements Runnable {
+    private class RedrawWorker implements Runnable {
 
-        protected long lastTime = System.currentTimeMillis();
+        private long lastTime = System.currentTimeMillis();
 
-        protected long currentTime = System.currentTimeMillis();
+        private long currentTime = System.currentTimeMillis();
 
         @Override
         public void run() {

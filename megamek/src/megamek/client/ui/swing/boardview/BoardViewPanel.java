@@ -31,10 +31,7 @@ import java.awt.image.ImageObserver;
  */
 public class BoardViewPanel extends JPanel implements Scrollable {
 
-    private static final int TOOLTIP_DELTA_X = 100;
-    private static final int TOOLTIP_DELTA_Y = 100;
-
-    private final IBoardView boardView;
+    private final BoardView boardView;
     private Dimension preferredSize = new Dimension(0, 0);
 
     public BoardViewPanel(BoardView boardView) {

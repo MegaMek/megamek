@@ -153,7 +153,7 @@ interface IBoardView {
      *
      * @param coords The coordinates to center on
      */
-    void centerOn(Coords coords);
+    void centerOnHex(Coords coords);
 
     /**
      * @return A set of hashCodes of those image that are animated (such as animated tileset images) and
@@ -178,4 +178,6 @@ interface IBoardView {
      * e.g. as part of a MouseEvent.
      */
     Coords getCoordsAt(Point point);
+
+    void setTooltipProvider(BoardViewTooltipProvider provider);
 }

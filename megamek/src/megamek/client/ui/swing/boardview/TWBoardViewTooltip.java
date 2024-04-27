@@ -38,7 +38,7 @@ import java.util.List;
 import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
 import static megamek.client.ui.swing.util.UIUtil.uiWhite;
 
-class TWBoardViewTooltipProvider implements BoardViewTooltipProvider {
+class TWBoardViewTooltip implements BoardViewTooltipProvider {
 
     private final GUIPreferences GUIP = GUIPreferences.getInstance();
 
@@ -46,15 +46,13 @@ class TWBoardViewTooltipProvider implements BoardViewTooltipProvider {
     private final Game game;
     private final BoardView bv;
 
-    TWBoardViewTooltipProvider(Game game, @Nullable ClientGUI clientGui, BoardView boardView) {
+    TWBoardViewTooltip(Game game, @Nullable ClientGUI clientGui, BoardView boardView) {
         this.clientGui = clientGui;
         this.game = game;
         this.bv = boardView;
     }
 
-    /**
-     * @return HTML summarizing the terrain, units and deployment of the hex under the mouse
-     */
+    @Override
     public String getTooltip(Point point, Coords movementTarget) {
         final Coords coords = bv.getCoordsAt(point);
         if (!game.getBoard().contains(coords)) {

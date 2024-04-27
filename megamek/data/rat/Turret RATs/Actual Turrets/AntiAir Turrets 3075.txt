@@ -1,0 +1,11 @@
+AntiAir Turrets 3075
+
+#Flak Turrets
+Light Flak Turret (3050), 36
+Medium Flak Turret (3050), 16
+Heavy Flak Turret (3050), 8
+Assault Flak Turret (3025), 4
+
+#Air Defense Emplacements
+Medium Air Defense Emplacement (3075), 12
+Assault Air Defense Emplacement (3075), 4

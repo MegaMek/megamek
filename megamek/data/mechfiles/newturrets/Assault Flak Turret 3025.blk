@@ -1,0 +1,43 @@
+#Guns block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+GunEmplacement
+</UnitType>
+<Name>
+Assault Flak Turret
+</Name>
+<model>
+(3025)
+</model>
+<Year>
+3025
+</Year>
+<Type>
+IS Level 3
+</Type>
+<quirks>
+anti_air
+</quirks>
+<Turret>
+1
+</Turret>
+<Guns Equipment>
+ISLongTomArtilleryCannon
+Searchlight
+ISLongTomArtilleryCannon Ammo
+ISLongTomArtilleryCannon Ammo
+ISLongTomArtilleryCannon Ammo
+ISLongTomArtilleryCannon Ammo
+ISLongTomArtilleryCannon Ammo
+ISLongTomArtilleryCannon Ammo
+ISLongTomArtilleryCannon Ammo
+ISLongTomArtilleryCannon Ammo
+ISLongTomArtilleryCannon Ammo
+ISLongTomArtilleryCannon Ammo
+</Guns Equipment>

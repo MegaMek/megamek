@@ -1,0 +1,5 @@
+HeavyDuty Turrets 2300
+
+#Siege Turrets
+Medium Siege Turret (2300), 80
+Heavy Siege Turret (2300), 20

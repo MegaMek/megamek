@@ -1,0 +1,31 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+GunEmplacement
+</UnitType>
+<Name>
+Medium Siege Turret
+</Name>
+<Model>
+(2300)
+</Model>
+<Year>
+2300
+</Year>
+<Type>
+IS Level 2
+</Type>
+<Turret>
+1
+</Turret>
+<Guns Equipment>
+ISPPC
+ISPPC
+Searchlight
+</Guns Equipment>

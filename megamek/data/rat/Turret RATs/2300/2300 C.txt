@@ -1,0 +1,7 @@
+Turrets 2300 C
+
+@DirectFire Turrets 2300, 25
+@InDirectFire Turrets 2300, 35
+@AntiAir Turrets 2300, 25
+@Special Turrets 2300, 10
+@HeavyDuty Turrets 2300, 5

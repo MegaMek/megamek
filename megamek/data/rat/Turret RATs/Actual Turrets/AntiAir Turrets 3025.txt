@@ -1,0 +1,7 @@
+AntiAir Turrets 3025
+
+#Flak Turrets
+Light Flak Turret (2300), 44
+Medium Flak Turret (2300), 20
+Heavy Flak Turret (2300), 12
+Assault Flak Turret (3025), 4

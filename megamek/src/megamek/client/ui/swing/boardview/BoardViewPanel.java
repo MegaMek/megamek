@@ -46,7 +46,10 @@ public class BoardViewPanel extends JPanel implements Scrollable {
     public Point getToolTipLocation(MouseEvent event) {
         Coords hexCoords = boardView.getCoordsAt(event.getPoint());
         Point point = boardView.getCentreHexLocation(hexCoords);
-        point.translate(BoardView.HEX_W + TOOLTIP_DELTA_X, BoardView.HEX_H + TOOLTIP_DELTA_Y);
+        // add board padding
+        point.translate(BoardView.HEX_W, BoardView.HEX_H);
+        // move to the right of the current hex
+        point.translate((int) (BoardView.HEX_W * boardView.scale * 0.75), (int) (-BoardView.HEX_H / 4 * boardView.scale));
         return new Point(point.x, point.y);
     }
 

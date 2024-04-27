@@ -77,7 +77,7 @@ import java.util.stream.Collectors;
 /**
  * Displays the board; lets the user scroll around and select points on it.
  */
-public class BoardView extends AbstractBoardView implements BoardListener, MouseListener,
+public final class BoardView extends AbstractBoardView implements BoardListener, MouseListener,
         MechDisplayListener, IPreferenceChangeListener, KeyBindReceiver {
 
     private static final int BOARD_HEX_CLICK = 1;
@@ -164,7 +164,7 @@ public class BoardView extends AbstractBoardView implements BoardListener, Mouse
     private Queue<EntitySprite> entitySprites = new PriorityQueue<>();
     private Queue<IsometricSprite> isometricSprites = new PriorityQueue<>();
 
-    ArrayList<FlareSprite> flareSprites = new ArrayList<>();
+    private ArrayList<FlareSprite> flareSprites = new ArrayList<>();
     /**
      * A Map that maps an Entity ID and a secondary position to a Sprite. Note
      * that the key is a List where the first entry will be the Entity ID and
@@ -203,7 +203,7 @@ public class BoardView extends AbstractBoardView implements BoardListener, Mouse
     private ArrayList<MovementModifierEnvelopeSprite> moveModEnvSprites = new ArrayList<>();
 
     // vector of sprites for all firing lines
-    ArrayList<AttackSprite> attackSprites = new ArrayList<>();
+    private ArrayList<AttackSprite> attackSprites = new ArrayList<>();
 
     // vector of sprites for all movement paths (using vectored movement)
     private ArrayList<MovementSprite> movementSprites = new ArrayList<>();
@@ -286,8 +286,8 @@ public class BoardView extends AbstractBoardView implements BoardListener, Mouse
     private ArrayList<GhostEntitySprite> ghostEntitySprites = new ArrayList<>();
 
     // wreck sprites
-    ArrayList<WreckSprite> wreckSprites = new ArrayList<>();
-    ArrayList<IsometricWreckSprite> isometricWreckSprites = new ArrayList<>();
+    private ArrayList<WreckSprite> wreckSprites = new ArrayList<>();
+    private ArrayList<IsometricWreckSprite> isometricWreckSprites = new ArrayList<>();
 
     private Coords rulerStart;
     private Coords rulerEnd;
@@ -339,7 +339,7 @@ public class BoardView extends AbstractBoardView implements BoardListener, Mouse
      */
     private boolean shouldIgnoreKeys = false;
 
-    FovHighlightingAndDarkening fovHighlightingAndDarkening;
+    private FovHighlightingAndDarkening fovHighlightingAndDarkening;
 
     private String FILENAME_FLARE_IMAGE = "flare.png";
     private String FILENAME_RADAR_BLIP_IMAGE = "radarBlip.png";
@@ -400,7 +400,7 @@ public class BoardView extends AbstractBoardView implements BoardListener, Mouse
     private final StringDrawer invalidString = new StringDrawer(Messages.getString("BoardEditor.INVALID"))
             .color(GUIP.getWarningColor()).font(FontHandler.getNotoFont().deriveFont(Font.BOLD)).center();
 
-    BoardViewToolTip boardViewToolTip;
+    TWBoardViewTooltipProvider boardViewToolTip;
 
 
     /**
@@ -410,7 +410,7 @@ public class BoardView extends AbstractBoardView implements BoardListener, Mouse
             throws java.io.IOException {
         this.game = game;
         this.clientgui = clientgui;
-        boardViewToolTip = new BoardViewToolTip(game, clientgui);
+        boardViewToolTip = new TWBoardViewTooltipProvider(game, clientgui, this);
 
         if (GUIP == null) {
             GUIP = GUIPreferences.getInstance();
@@ -512,7 +512,7 @@ public class BoardView extends AbstractBoardView implements BoardListener, Mouse
                 final Coords mcoords = getCoordsAt(point);
                 if (!mcoords.equals(lastCoords) && game.getBoard().contains(mcoords)) {
                     lastCoords = mcoords;
-                    boardPanel.setToolTipText(boardViewToolTip.getHexTooltip(e, BoardView.this, movementTarget));
+                    boardPanel.setToolTipText(boardViewToolTip.getTooltip(e, movementTarget));
                 } else if (!game.getBoard().contains(mcoords)) {
                     boardPanel.setToolTipText(null);
                 } else {
@@ -523,10 +523,16 @@ public class BoardView extends AbstractBoardView implements BoardListener, Mouse
                         if (deltaMagnitude > GUIP.getTooltipDistSuppression()) {
                             prevTipX = -1;
                             prevTipY = -1;
-                            // Set the dismissal delay to 0 so that the tooltip
-                            // goes away and does not reappear until the mouse
-                            // has moved more than the suppression distance
+                            // Set the dismissal delay to 0 so that the tooltip goes away and does not reappear
+                            // until the mouse has moved more than the suppression distance
                             ToolTipManager.sharedInstance().setDismissDelay(0);
+                            // and then, when the tooltip has gone away, reset the dismiss delay
+                            SwingUtilities.invokeLater(() -> {
+                                if (GUIP.getTooltipDismissDelay() >= 0) {
+                                    ToolTipManager.sharedInstance().setDismissDelay(GUIP.getTooltipDismissDelay());
+                                } else {
+                                    ToolTipManager.sharedInstance().setDismissDelay(dismissDelay);
+                                }});
                         }
                     }
                     prevTipX = point.x;
@@ -2316,7 +2322,7 @@ public class BoardView extends AbstractBoardView implements BoardListener, Mouse
         }
     }
 
-    final boolean useIsometric() {
+    boolean useIsometric() {
         return drawIsometric;
     }
 
@@ -5632,5 +5638,25 @@ public class BoardView extends AbstractBoardView implements BoardListener, Mouse
     @Nullable
     Entity getSelectedEntity() {
         return clientgui != null ? clientgui.getSelectedUnit() : null;
+    }
+
+    FovHighlightingAndDarkening getFovHighlighting() {
+        return fovHighlightingAndDarkening;
+    }
+
+    List<FlareSprite> getFlareSprites() {
+        return flareSprites;
+    }
+
+    List<WreckSprite> getWreckSprites() {
+        return wreckSprites;
+    }
+
+    List<IsometricWreckSprite> getIsoWreckSprites() {
+        return isometricWreckSprites;
+    }
+
+    List<AttackSprite> getAttackSprites() {
+        return attackSprites;
     }
 }

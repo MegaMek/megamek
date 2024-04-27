@@ -22,11 +22,12 @@ import megamek.client.event.BoardViewListener;
 import megamek.client.ui.IDisplayable;
 import megamek.common.Coords;
 
+import java.util.List;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.RenderedImage;
 
-public interface IBoardView {
+interface IBoardView {
 
     void draw(Graphics graphics);
 

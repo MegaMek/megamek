@@ -1,3 +1,21 @@
+/*
+ * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ */
 package megamek.client.ui.swing.boardview;
 
 import megamek.client.ui.Messages;
@@ -13,44 +31,37 @@ import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.options.OptionsConstants;
 
-import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseEvent;
 import java.util.*;
 import java.util.List;
 
 import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
 import static megamek.client.ui.swing.util.UIUtil.uiWhite;
 
-class BoardViewToolTip {
+class TWBoardViewTooltipProvider implements BoardViewTooltipProvider {
 
     private final GUIPreferences GUIP = GUIPreferences.getInstance();
 
     private final ClientGUI clientGui;
     private final Game game;
+    private final BoardView bv;
 
-    BoardViewToolTip(Game game, ClientGUI clientGui) {
+    TWBoardViewTooltipProvider(Game game, @Nullable ClientGUI clientGui, BoardView boardView) {
         this.clientGui = clientGui;
         this.game = game;
-    }
-
-    String getHexTooltip(MouseEvent event, BoardView bv) {
-        return getHexTooltip(event.getPoint(), bv, null);
-    }
-
-    String getHexTooltip(MouseEvent event, BoardView bv, Coords movementTarget) {
-        return getHexTooltip(event.getPoint(), bv, movementTarget);
+        this.bv = boardView;
     }
 
     /**
      * @return HTML summarizing the terrain, units and deployment of the hex under the mouse
      */
-    String getHexTooltip(Point point, BoardView bv, Coords movementTarget) {
+    public String getTooltip(Point point, Coords movementTarget) {
         final Coords coords = bv.getCoordsAt(point);
         if (!game.getBoard().contains(coords)) {
             return null;
         }
-        Entity selectedEntity = clientGui != null ? clientGui.getSelectedUnit() : null;
+        Entity selectedEntity = (clientGui != null) ? clientGui.getSelectedUnit() : null;
+        Player localPlayer = localPlayer();
         Hex mhex = game.getBoard().getHex(coords);
 
         String result = "";
@@ -71,9 +82,9 @@ class BoardViewToolTip {
                 }
 
                 if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_SENSORS)) {
-                    LosEffects los = bv.fovHighlightingAndDarkening.getCachedLosEffects(selectedEntity.getPosition(), coords);
+                    LosEffects los = bv.getFovHighlighting().getCachedLosEffects(selectedEntity.getPosition(), coords);
                     int bracket = Compute.getSensorRangeBracket(selectedEntity, null,
-                            bv.fovHighlightingAndDarkening.cachedAllECMInfo);
+                            bv.getFovHighlighting().cachedAllECMInfo);
                     int range = Compute.getSensorRangeByBracket(game, selectedEntity, null, los);
 
                     int maxSensorRange = bracket * range;
@@ -108,7 +119,8 @@ class BoardViewToolTip {
             sTrerain = guiScaledFontHTML(GUIP.getUnitToolTipTerrainFGColor()) + sTrerain + "</FONT>";
             String col = "<TD>" + sTrerain + "</TD>";
             String row = "<TR>" + col + "</TR>";
-            String table = "<TABLE BORDER=0 BGCOLOR=" + GUIPreferences.hexColor(GUIP.getUnitToolTipTerrainBGColor()) + " width=100%>" + row + "</TABLE>";
+            String table = "<TABLE BORDER=0 BGCOLOR=" + GUIPreferences.hexColor(GUIP.getUnitToolTipTerrainBGColor())
+                    + " width=100%>" + row + "</TABLE>";
             result += table;
 
             StringBuffer sbBuildings = new StringBuffer();
@@ -133,19 +145,17 @@ class BoardViewToolTip {
         // in the artillery autohit designation phase
         if (game.getPhase().isSetArtilleryAutohitHexes() && (mhex != null)) {
             String sAttilleryAutoHix = "";
-            Enumeration<Player> allP = game.getPlayers();
             boolean foundPlayer = false;
-            // loop through all players
-            while (allP.hasMoreElements()) {
-                Player cp = allP.nextElement();
-                if (game.getBoard().isLegalDeployment(coords, cp)) {
+            for (Player player : game.getPlayersList()) {
+                // loop through all players
+                if (game.getBoard().isLegalDeployment(coords, player)) {
                     if (!foundPlayer) {
                         foundPlayer = true;
                         sAttilleryAutoHix += Messages.getString("BoardView1.Tooltip.ArtyAutoHeader") + "<BR>";
                     }
 
-                    String sName = "&nbsp;&nbsp;" + cp.getName();
-                    sName = guiScaledFontHTML(cp.getColour().getColour()) + sName + "</FONT>";
+                    String sName = "&nbsp;&nbsp;" + player.getName();
+                    sName = guiScaledFontHTML(player.getColour().getColour()) + sName + "</FONT>";
                     sAttilleryAutoHix += "<B>" + sName + "</B>";
                     sAttilleryAutoHix += "<BR>";
                 }
@@ -170,14 +180,14 @@ class BoardViewToolTip {
         }
 
         // check if it's on any flares
-        for (FlareSprite fSprite : bv.flareSprites) {
+        for (FlareSprite fSprite : bv.getFlareSprites()) {
             if (fSprite.isInside(point)) {
                 result += fSprite.getTooltip().toString();
             }
         }
 
         // Add wreck info
-        var wreckList = bv.useIsometric() ? bv.isometricWreckSprites : bv.wreckSprites;
+        var wreckList = bv.useIsometric() ? bv.getIsoWreckSprites() : bv.getWreckSprites();
         for (var wSprite : wreckList) {
             if (wSprite.getPosition().equals(coords)) {
                 String sWreck = wSprite.getTooltip().toString();
@@ -187,13 +197,15 @@ class BoardViewToolTip {
                 String rows = row;
 
                 if (!wSprite.entity.getCrew().isEjected()) {
-                    String sPilot = PilotToolTip.getPilotTipShort(wSprite.entity, GUIP.getshowPilotPortraitTT(), false).toString();
+                    String sPilot = PilotToolTip.getPilotTipShort(wSprite.entity,
+                            GUIP.getshowPilotPortraitTT(), false).toString();
                     col = "<TD>" + sPilot + "</TD>";
                     row = "<TR>" + col + "</TR>";
                     rows += row;
                 }
 
-                String table = "<TABLE BORDER=0 BGCOLOR=" + GUIPreferences.hexColor(GUIP.getUnitToolTipAltBGColor()) + " width=100%>" + rows + "</TABLE>";
+                String table = "<TABLE BORDER=0 BGCOLOR=" + GUIPreferences.hexColor(GUIP.getUnitToolTipAltBGColor())
+                        + " width=100%>" + rows + "</TABLE>";
                 result += table;
             }
         }
@@ -210,7 +222,7 @@ class BoardViewToolTip {
 
             // List only the first four units
             if (entityCount <= maxShown) {
-                if (EntityVisibilityUtils.detectedOrHasVisual(localPlayer(), game, entity)) {
+                if (EntityVisibilityUtils.detectedOrHasVisual(localPlayer, game, entity)) {
                     StringBuffer sbEntity = new StringBuffer();
                     appendEntityTooltip(sbEntity, entity);
                     result += sbEntity.toString();
@@ -232,18 +244,20 @@ class BoardViewToolTip {
             sUnitsInfo = guiScaledFontHTML(GUIP.getUnitToolTipBlockFGColor()) + sUnitsInfo + "</FONT>";
             String col = "<TD>" + sUnitsInfo + "</TD>";
             String row = "<TR>" + col + "</TR>";
-            String table = "<TABLE BORDER=0 BGCOLOR=" + GUIPreferences.hexColor(GUIP.getUnitToolTipBlockBGColor()) + " width=100%>" + row + "</TABLE>";
+            String table = "<TABLE BORDER=0 BGCOLOR=" + GUIPreferences.hexColor(GUIP.getUnitToolTipBlockBGColor())
+                    + " width=100%>" + row + "</TABLE>";
             result += table;
         }
 
         // check if it's on any attacks
-        for (AttackSprite aSprite : bv.attackSprites) {
+        for (AttackSprite aSprite : bv.getAttackSprites()) {
             if (aSprite.isInside(coords)) {
                 String sAttackSprite = aSprite.getTooltip().toString();
                 sAttackSprite = guiScaledFontHTML(GUIP.getUnitToolTipAltFGColor()) + sAttackSprite + "</FONT>";
                 String col = "<TD>" + sAttackSprite + "</TD>";
                 String row = "<TR>" + col + "</TR>";
-                String table = "<TABLE BORDER=0 BGCOLOR=" + GUIPreferences.hexColor(GUIP.getUnitToolTipAltBGColor()) + " width=100%>" + row + "</TABLE>";
+                String table = "<TABLE BORDER=0 BGCOLOR=" + GUIPreferences.hexColor(GUIP.getUnitToolTipAltBGColor())
+                        + " width=100%>" + row + "</TABLE>";
                 result += table;
             }
         }
@@ -272,7 +286,8 @@ class BoardViewToolTip {
                 msg_artilleryatack += "<BR>&nbsp;&nbsp;";
                 msg_artilleryatack += Messages.getString("BoardView1.Tooltip.ArtilleryAttackOne2", ammoName);
             } else {
-                msg_artilleryatack = Messages.getString("BoardView1.Tooltip.ArtilleryAttackN1", wpName, aaa.getTurnsTilHit());
+                msg_artilleryatack = Messages.getString("BoardView1.Tooltip.ArtilleryAttackN1",
+                        wpName, aaa.getTurnsTilHit());
                 msg_artilleryatack += "<BR>&nbsp;&nbsp;";
                 msg_artilleryatack += Messages.getString("BoardView1.Tooltip.ArtilleryAttackN2", ammoName);
             }
@@ -280,7 +295,8 @@ class BoardViewToolTip {
             msg_artilleryatack = guiScaledFontHTML(GUIP.getUnitToolTipBlockFGColor()) + msg_artilleryatack + "</FONT>";
             String col = "<TD>" + msg_artilleryatack + "</TD>";
             String row = "<TR>" + col + "</TR>";
-            String table = "<TABLE BORDER=0 BGCOLOR=" + GUIPreferences.hexColor(GUIP.getUnitToolTipBlockBGColor()) + " width=100%>" + row + "</TABLE>";
+            String table = "<TABLE BORDER=0 BGCOLOR=" + GUIPreferences.hexColor(GUIP.getUnitToolTipBlockBGColor())
+                    + " width=100%>" + row + "</TABLE>";
             result += table;
         }
 
@@ -311,7 +327,7 @@ class BoardViewToolTip {
         int round = game.getRoundCount();
         if (shdList != null) {
             String sSpecialHex = "";
-            boolean isHexAutoHit = localPlayer().getArtyAutoHitHexes().contains(coords);
+            boolean isHexAutoHit = (localPlayer != null) && localPlayer.getArtyAutoHitHexes().contains(coords);
             for (SpecialHexDisplay shd : shdList) {
                 boolean isTypeAutoHit = shd.getType() == SpecialHexDisplay.Type.ARTILLERY_AUTOHIT;
                 // Don't draw if this SHD is obscured from this player
@@ -319,11 +335,11 @@ class BoardViewToolTip {
                 // tooltips for SHDs that aren't drawn.
                 // The exception is auto hits.  There will be an icon for auto
                 // hits, so we need to draw a tooltip
-                if (!shd.isObscured(localPlayer())
-                        && (shd.drawNow(game.getPhase(), round, localPlayer())
+                if (!shd.isObscured(localPlayer)
+                        && (shd.drawNow(game.getPhase(), round, localPlayer)
                         || (isHexAutoHit && isTypeAutoHit))) {
                     if (shd.getType() == SpecialHexDisplay.Type.PLAYER_NOTE) {
-                        if (localPlayer().equals(shd.getOwner())) {
+                        if (Objects.equals(localPlayer, shd.getOwner())) {
                             sSpecialHex += "Note: ";
                         } else {
                             sSpecialHex += "Note (" + shd.getOwner().getName() + "): ";
@@ -340,22 +356,13 @@ class BoardViewToolTip {
             result += sSpecialHex;
         }
 
-        StringBuffer txt = new StringBuffer();
+        StringBuilder txt = new StringBuilder();
         String div = "<DIV WIDTH=" + UIUtil.scaleForGUI(500) + ">" + result + "</DIV>";
         txt.append(UnitToolTip.wrapWithHTML(div));
 
         // Check to see if the tool tip is completely empty
         if (result.isEmpty()) {
             return "";
-        }
-
-        // Now that a valid tooltip text seems to be present,
-        // (re)set the tooltip dismissal delay time to the preference
-        // value so that the tooltip actually appears
-        if (GUIP.getTooltipDismissDelay() >= 0) {
-            ToolTipManager.sharedInstance().setDismissDelay(GUIP.getTooltipDismissDelay());
-        } else {
-            ToolTipManager.sharedInstance().setDismissDelay(bv.dismissDelay);
         }
 
         return txt.toString();
@@ -417,12 +424,14 @@ class BoardViewToolTip {
         // Entity tooltip
         String col2 = "<TD>" + UnitToolTip.getEntityTipGame(entity, localPlayer()) + "</TD>";
         String row = "<TR>" + col1 + col2 + "</TR>";
-        String table = "<TABLE WIDTH=100% BGCOLOR=" + GUIPreferences.hexColor(GUIP.getUnitToolTipBGColor()) + ">" + row + "</TABLE>";
+        String table = "<TABLE WIDTH=100% BGCOLOR=" + GUIPreferences.hexColor(GUIP.getUnitToolTipBGColor())
+                + ">" + row + "</TABLE>";
         result += table;
 
         txt.append(result);
     }
 
+    @Nullable
     private Player localPlayer() {
         return (clientGui != null) ? clientGui.getClient().getLocalPlayer() : null;
     }
@@ -432,10 +441,10 @@ class BoardViewToolTip {
      * weapon and the unit itself is owned by the local player - null otherwise
      */
     @Nullable
-    private Mounted getSelectedArtilleryWeapon() {
+    private Mounted<?> getSelectedArtilleryWeapon() {
         if ((clientGui != null) && clientGui.hasSelectedWeapon()) {
             Entity selectedUnit = clientGui.getSelectedUnit();
-            Mounted selectedWeapon = clientGui.getSelectedWeapon();
+            Mounted<?> selectedWeapon = clientGui.getSelectedWeapon();
 
             // We don't want to display artillery auto-hit/adjusted fire hexes during
             // the artyautohithexes phase. These could be displayed if the player

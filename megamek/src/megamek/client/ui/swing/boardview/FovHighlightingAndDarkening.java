@@ -246,7 +246,7 @@ class FovHighlightingAndDarkening {
 
         LosEffects los = losCache.get(dest);
         if (los == null) {
-            los = boardView1.fovHighlightingAndDarkening.getLosEffects(src, dest);
+            los = getLosEffects(src, dest);
             if (los == null) {
                 return null;
             }

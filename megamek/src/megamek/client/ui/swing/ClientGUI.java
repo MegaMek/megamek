@@ -55,6 +55,7 @@ import megamek.common.MovePath.MoveStepType;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.GamePhase;
+import megamek.common.equipment.WeaponMounted;
 import megamek.common.event.*;
 import megamek.common.icons.Camouflage;
 import megamek.common.preference.ClientPreferences;
@@ -2996,7 +2997,7 @@ public class ClientGUI extends JPanel implements BoardViewListener, IClientGUI,
     }
 
     @Nullable
-    public Mounted getSelectedWeapon() {
+    public Mounted<?> getSelectedWeapon() {
         return hasSelectedWeapon() ? getSelectedUnit().getEquipment(selectedWeapon) : null;
     }
 

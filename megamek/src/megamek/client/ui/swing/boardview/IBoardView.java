@@ -44,6 +44,10 @@ public interface IBoardView {
 
     void setDisplayInvalidFields(boolean displayInvalidFields);
 
+    default boolean displayInvalidFields() {
+        return false;
+    }
+
     /**
      * Sets the boardview to use the given player ID as the player in whose client this boardview is shown.
      * This may affect what is shown and what is hidden in this boardview; it will also affect what is
@@ -114,4 +118,10 @@ public interface IBoardView {
     RenderedImage getEntireBoardImage(boolean hideUnits, boolean useBaseZoom);
 
     void centerOn(Coords coords);
+
+    /**
+     * @return the coords at the specified point in the BoardView's image area. The point may be given
+     * e.g. as part of a MouseEvent.
+     */
+    Coords getCoordsAt(Point point);
 }

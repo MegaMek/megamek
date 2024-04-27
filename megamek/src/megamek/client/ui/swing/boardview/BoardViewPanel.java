@@ -18,8 +18,11 @@
  */
 package megamek.client.ui.swing.boardview;
 
+import megamek.common.Coords;
+
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseEvent;
 import java.awt.image.ImageObserver;
 
 /**
@@ -28,12 +31,23 @@ import java.awt.image.ImageObserver;
  */
 public class BoardViewPanel extends JPanel implements Scrollable {
 
+    private static final int TOOLTIP_DELTA_X = 100;
+    private static final int TOOLTIP_DELTA_Y = 100;
+
     private final BoardView boardView;
     private Dimension preferredSize = new Dimension(0, 0);
 
     public BoardViewPanel(BoardView boardView) {
         super(true);
         this.boardView = boardView;
+    }
+
+    @Override
+    public Point getToolTipLocation(MouseEvent event) {
+        Coords hexCoords = boardView.getCoordsAt(event.getPoint());
+        Point point = boardView.getCentreHexLocation(hexCoords);
+        point.translate(BoardView.HEX_W + TOOLTIP_DELTA_X, BoardView.HEX_H + TOOLTIP_DELTA_Y);
+        return new Point(point.x, point.y);
     }
 
     @Override

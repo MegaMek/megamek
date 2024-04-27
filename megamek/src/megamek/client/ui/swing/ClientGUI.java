@@ -24,6 +24,8 @@ import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.bot.princess.Princess;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
+import megamek.client.event.MechDisplayEvent;
+import megamek.client.event.MechDisplayListener;
 import megamek.client.ui.Messages;
 import megamek.client.ui.dialogs.MiniReportDisplayDialog;
 import megamek.client.ui.dialogs.UnitDisplayDialog;
@@ -84,7 +86,7 @@ import java.util.List;
 import java.util.*;
 
 public class ClientGUI extends JPanel implements BoardViewListener, IClientGUI,
-        ActionListener, ComponentListener, IPreferenceChangeListener {
+        ActionListener, ComponentListener, IPreferenceChangeListener, MechDisplayListener {
     // region Variable Declarations
     private static final long serialVersionUID = 3913466735610109147L;
 
@@ -327,6 +329,11 @@ public class ClientGUI extends JPanel implements BoardViewListener, IClientGUI,
      * Current Selected entity
      */
     private int selectedEntityNum = Entity.NONE;
+
+    /**
+     * The currently selected weapon on the currently selected entity (if any), -1 otherwise
+     */
+    private int selectedWeapon = -1;
 
     /**
      * Flag that indicates whether hotkeys should be ignored or not. This is
@@ -607,7 +614,7 @@ public class ClientGUI extends JPanel implements BoardViewListener, IClientGUI,
         bv.addOverlay(offBoardOverlay);
 
         setUnitDisplay(new UnitDisplay(this, controller));
-        getUnitDisplay().addMechDisplayListener(bv);
+        getUnitDisplay().addMechDisplayListener(this);
         setUnitDisplayDialog(new UnitDisplayDialog(getFrame(), this));
         getUnitDisplayDialog().setVisible(false);
 
@@ -2670,6 +2677,7 @@ public class ClientGUI extends JPanel implements BoardViewListener, IClientGUI,
      */
     public void setSelectedEntityNum(int selectedEntityNum) {
         this.selectedEntityNum = selectedEntityNum;
+        clearSelectedWeapon();
         bv.selectEntity(client.getGame().getEntity(selectedEntityNum));
     }
 
@@ -2967,5 +2975,38 @@ public class ClientGUI extends JPanel implements BoardViewListener, IClientGUI,
         } else if (e.getName().equals(GUIPreferences.MASTER_VOLUME)) {
             audioService.setVolume();
         }
+    }
+
+    @Override
+    public void weaponSelected(MechDisplayEvent b) {
+        setSelectedEntityNum(b.getEntityId());
+        setSelectedWeapon(b.getWeaponId());
+    }
+
+    private void setSelectedWeapon(int equipmentNumber) {
+        selectedWeapon = equipmentNumber;
+    }
+
+    private void clearSelectedWeapon() {
+        selectedWeapon = -1;
+    }
+
+    public int getSelectedWeaponId() {
+        return selectedWeapon;
+    }
+
+    @Nullable
+    public Mounted getSelectedWeapon() {
+        return hasSelectedWeapon() ? getSelectedUnit().getEquipment(selectedWeapon) : null;
+    }
+
+    @Nullable
+    @Override
+    public Entity getSelectedUnit() {
+        return client.getGame().getEntity(selectedEntityNum);
+    }
+
+    public boolean hasSelectedWeapon() {
+        return (getSelectedUnit() != null) && (getSelectedUnit().getEquipment(selectedWeapon) != null);
     }
 }

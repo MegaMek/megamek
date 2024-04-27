@@ -747,10 +747,11 @@ public class EntityListFile {
                 output.write(String.valueOf(entity.getQuirkList("::")));
             }
             if ((entity.getGame() != null) && (entity.getC3Master() != null)) {
-                output.write("\" " + MULParser.ATTR_C3MASTERIS + "=\"");
-                output.write(entity.getGame()
-                        .getEntity(entity.getC3Master().getId())
-                        .getC3UUIDAsString());
+                Entity entityC3MAster = entity.getGame().getEntity(entity.getC3Master().getId());
+                if (entityC3MAster.getC3UUIDAsString() != null) {
+                    output.write("\" " + MULParser.ATTR_C3MASTERIS + "=\"");
+                    output.write(entityC3MAster.getC3UUIDAsString());
+                }
             }
             if (entity.hasC3() || entity.hasC3i() || entity.hasNavalC3()) {
                 if (entity.getC3UUIDAsString() != null) {
@@ -997,7 +998,8 @@ public class EntityListFile {
                 while (c3iList.hasNext()) {
                     final Entity C3iEntity = c3iList.next();
 
-                    if (C3iEntity.onSameC3NetworkAs(entity, true)) {
+                    if ((C3iEntity.getC3UUIDAsString() != null) &&
+                            C3iEntity.onSameC3NetworkAs(entity, true)) {
                         output.write(indentStr(indentLvl + 1) + "<" + MULParser.ELE_C3ILINK + " " + MULParser.ATTR_LINK + "=\"");
                         output.write(C3iEntity.getC3UUIDAsString());
                         output.write("\"/>\n");
@@ -1013,7 +1015,8 @@ public class EntityListFile {
                 while (NC3List.hasNext()) {
                     final Entity NC3Entity = NC3List.next();
 
-                    if (NC3Entity.onSameC3NetworkAs(entity, true)) {
+                    if ((NC3Entity.getC3UUIDAsString() != null) &&
+                            NC3Entity.onSameC3NetworkAs(entity, true)) {
                         output.write(indentStr(indentLvl + 1) + "<" + MULParser.ELE_NC3LINK + " " + MULParser.ATTR_LINK + "=\"");
                         output.write(NC3Entity.getC3UUIDAsString());
                         output.write("\"/>\n");

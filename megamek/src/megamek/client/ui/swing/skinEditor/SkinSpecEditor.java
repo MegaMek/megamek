@@ -27,6 +27,7 @@ import java.util.List;
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.filechooser.FileFilter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -166,7 +167,7 @@ public class SkinSpecEditor extends JPanel implements ListSelectionListener, Act
         c.insets = new Insets(1, 0, 1, 0);
         add(editPanelScroll, c);
         
-        updateSkinCombo(SkinXMLHandler.defaultSkinXML);
+        updateSkinCombo(Configuration.skinsDir().getPath() + SkinXMLHandler.defaultSkinXML);
         populateSkinSpecComponents();
         setupEditPanel();
         validate();
@@ -305,19 +306,17 @@ public class SkinSpecEditor extends JPanel implements ListSelectionListener, Act
     public void actionPerformed(ActionEvent e) {
         if (e.getSource().equals(currSkinCombo)) {
             String newSkinFile = (String) currSkinCombo.getSelectedItem();
-            String oldSkinFile = GUIP.getSkinFile();
-            if (!oldSkinFile.equals(newSkinFile)) {
-                boolean success = SkinXMLHandler.initSkinXMLHandler(newSkinFile);
-                if (!success) {
-                    SkinXMLHandler.initSkinXMLHandler(oldSkinFile);
-                    String title = Messages.getString("CommonSettingsDialog.skinFileFail.title");
-                    String msg = Messages.getString("CommonSettingsDialog.skinFileFail.msg");
-                    JOptionPane.showMessageDialog(this, msg, title, JOptionPane.ERROR_MESSAGE);
-                }
-                mainGUI.updateBorder();
-                populateSkinSpecComponents();
-                setupEditPanel();
+
+            boolean success = SkinXMLHandler.initSkinXMLHandler(newSkinFile);
+            if (!success) {
+                SkinXMLHandler.initSkinXMLHandler(Configuration.skinsDir().getPath() + SkinXMLHandler.defaultSkinXML);
+                String title = Messages.getString("CommonSettingsDialog.skinFileFail.title");
+                String msg = Messages.getString("CommonSettingsDialog.skinFileFail.msg");
+                JOptionPane.showMessageDialog(this, msg, title, JOptionPane.ERROR_MESSAGE);
             }
+            mainGUI.updateBorder();
+            populateSkinSpecComponents();
+            setupEditPanel();
         } else if (e.getSource().equals(enablePlain)) {
             notifySkinChanges(false);
         } else if (e.getSource().equals(enableBorders)) {
@@ -372,7 +371,26 @@ public class SkinSpecEditor extends JPanel implements ListSelectionListener, Act
     }
 
     private String saveDialog() {
-        JFileChooser fc = new JFileChooser(Configuration.skinsDir());
+        String userDirName = PreferenceManager.getClientPreferences().getUserDir();
+        File userDir = new File(userDirName);
+        String path;
+        if (!userDirName.isBlank() && userDir.isDirectory()) {
+            path = userDir.getPath();
+        } else {
+            path = Configuration.skinsDir().getPath();
+        }
+        JFileChooser fc = new JFileChooser(path);
+        fc.setFileFilter(new FileFilter() {
+            @Override
+            public boolean accept(File dir) {
+                return (dir.getName().endsWith(".xml") || dir.isDirectory());
+            }
+
+            @Override
+            public String getDescription() {
+                return "*.xml";
+            }
+        });
         fc.setDialogTitle(Messages.getString("ClientGUI.FileSaveDialog.title"));
         String file = "";
 
@@ -382,7 +400,7 @@ public class SkinSpecEditor extends JPanel implements ListSelectionListener, Act
             return file;
         }
         if (fc.getSelectedFile() != null) {
-             file = fc.getSelectedFile().getName();
+             file = path + "/" + fc.getSelectedFile().getName();
         }
         return file;
     }

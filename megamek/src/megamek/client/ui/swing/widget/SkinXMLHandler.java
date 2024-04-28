@@ -70,7 +70,7 @@ public class SkinXMLHandler {
     /**
      * The file name for the default Skin XML file, found in the config dir.
      */
-    public static String defaultSkinXML = "defaultSkin.xml";
+    public static String defaultSkinXML = "/defaultSkin.xml";
 
     // General XML Tags
     public static String UI_ELEMENT = "UI_Element";
@@ -517,7 +517,7 @@ public class SkinXMLHandler {
      * @param filename
      */
     public static void writeSkinToFile(String filename) {
-        try (FileOutputStream fos = new FileOutputStream(new MegaMekFile(Configuration.skinsDir(), filename).getFile());
+        try (FileOutputStream fos = new FileOutputStream(new MegaMekFile(filename).getFile());
              OutputStreamWriter osw = new OutputStreamWriter(fos);
              Writer output = new BufferedWriter(osw)) {
             output.write(SKIN_HEADER);

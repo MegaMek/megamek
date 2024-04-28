@@ -421,9 +421,11 @@ public class WeaponFireInfo {
         // but we'll roll an "average" cluster for the given weapon size to estimate damage.
         if ((weaponType.getDamage() == WeaponType.DAMAGE_BY_CLUSTERTABLE) ||
            (weaponType.getDamage() == WeaponType.DAMAGE_ARTILLERY)) {
-            // Assume average cluster size for this weapon
-            int rs = weaponType.getRackSize();
-            return Compute.calculateClusterHitTableAmount(7, rs);
+            // Assume average cluster size for this weapon, unless it has Streak capabilities
+            if (!List.of(AmmoType.T_SRM_STREAK, AmmoType.T_LRM_STREAK, AmmoType.T_IATM).contains(weaponType.getAmmoType())) {
+                int rs = weaponType.getRackSize();
+                return Compute.calculateClusterHitTableAmount(7, rs);
+            }
         }
 
         // infantry weapons use number of troopers multiplied by weapon damage,

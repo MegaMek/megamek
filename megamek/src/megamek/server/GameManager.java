@@ -43,6 +43,7 @@ import megamek.common.util.*;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.verifier.*;
 import megamek.common.weapons.*;
+import megamek.common.weapons.bayweapons.BayWeapon;
 import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.server.commands.*;
 import megamek.server.victory.VictoryResult;
@@ -25358,20 +25359,22 @@ public class GameManager extends AbstractGameManager {
                         }
                     }
                     // if this is a weapons bay then also hit all the other weapons
-                    for (WeaponMounted bayWeap : ((WeaponMounted) equipmentHit).getBayWeapons()) {
-                        bayWeap.setHit(true);
-                        // Taharqa : We should also damage the critical slot, or MM and MHQ
-                        // won't remember that this weapon is damaged on the MUL file
-                        for (int i = 0; i < aero.getNumberOfCriticals(loc); i++) {
-                            CriticalSlot slot1 = aero.getCritical(loc, i);
-                            if ((slot1 == null)
-                                    || (slot1.getType() == CriticalSlot.TYPE_SYSTEM)) {
-                                continue;
-                            }
-                            Mounted mounted = slot1.getMount();
-                            if (mounted.equals(bayWeap)) {
-                                aero.hitAllCriticals(loc, i);
-                                break;
+                    if (equipmentHit instanceof WeaponMounted) {
+                        for (WeaponMounted bayWeap : ((WeaponMounted) equipmentHit).getBayWeapons()) {
+                            bayWeap.setHit(true);
+                            // Taharqa : We should also damage the critical slot, or MM and MHQ
+                            // won't remember that this weapon is damaged on the MUL file
+                            for (int i = 0; i < aero.getNumberOfCriticals(loc); i++) {
+                                CriticalSlot slot1 = aero.getCritical(loc, i);
+                                if ((slot1 == null)
+                                        || (slot1.getType() == CriticalSlot.TYPE_SYSTEM)) {
+                                    continue;
+                                }
+                                Mounted mounted = slot1.getMount();
+                                if (mounted.equals(bayWeap)) {
+                                    aero.hitAllCriticals(loc, i);
+                                    break;
+                                }
                             }
                         }
                     }

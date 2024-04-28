@@ -672,7 +672,6 @@ public class Game extends AbstractGame implements Serializable, PlanetaryConditi
 
     @Override
     public void receivePhase(GamePhase phase) {
-        final GamePhase oldPhase = this.phase;
         setPhase(phase);
     }
 

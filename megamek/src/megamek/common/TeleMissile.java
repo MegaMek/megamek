@@ -162,6 +162,11 @@ public class TeleMissile extends Aero {
     }
 
     @Override
+    protected int getGenericBattleValue() {
+        return 0;
+    }
+
+    @Override
     public int getWalkMP(MPCalculationSetting mpCalculationSetting) {
         return getCurrentFuel();
     }

@@ -175,4 +175,9 @@ public class SpaceStation extends Jumpship {
     public boolean isSpaceStation() {
         return true;
     }
+
+    @Override
+    protected int getGenericBattleValue() {
+        return (int) Math.round(Math.exp(5.1322 + 0.2384*Math.log(getWeight())));
+    }
 }

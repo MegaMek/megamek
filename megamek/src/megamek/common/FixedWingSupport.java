@@ -335,4 +335,9 @@ public class FixedWingSupport extends ConvFighter {
         super.setOriginalWalkMP(walkMP);
         autoSetSI();
     }
+
+    @Override
+    protected int getGenericBattleValue() {
+        return (int) Math.round(Math.exp(1.250 + 0.886*Math.log(getWeight())));
+    }
 }

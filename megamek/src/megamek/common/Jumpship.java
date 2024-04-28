@@ -1404,4 +1404,9 @@ public class Jumpship extends Aero {
     public boolean isJumpShip() {
         return true;
     }
+
+    @Override
+    protected int getGenericBattleValue() {
+        return (int) Math.round(Math.exp(0.0619 + 0.5607*Math.log(getWeight())));
+    }
 }

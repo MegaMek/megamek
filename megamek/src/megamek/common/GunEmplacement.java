@@ -394,4 +394,10 @@ public class GunEmplacement extends Tank {
         
         return 0;
     }
+
+    @Override
+    protected int getGenericBattleValue() {
+        //FIXME: unimplemented
+        return 0;
+    }
 }

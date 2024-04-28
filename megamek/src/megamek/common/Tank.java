@@ -3052,4 +3052,9 @@ public class Tank extends Entity {
     public boolean getsAutoExternalSearchlight() {
         return true;
     }
+
+    @Override
+    protected int getGenericBattleValue() {
+        return (int) Math.round(Math.exp(2.866 + 0.987*Math.log(getWeight())));
+    }
 }

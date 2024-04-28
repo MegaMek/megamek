@@ -6924,7 +6924,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      *
      * @return The generic Battle value for this unit based on its tonnage and type
      */
-    protected abstract int getGenericBattleValue();
+    public abstract int getGenericBattleValue();
 
     /**
      * Generates a vector containing reports on all useful information about

@@ -3219,7 +3219,7 @@ public class Compute {
             }
 
             AmmoType at = null;
-            if (waa.getAmmoId() != -1) {
+            if (waa.getAmmoId() != WeaponAttackAction.UNASSIGNED) {
                 // If a preferred ammo has been set for this WAA, use that
                 at = waa.getEntity(g).getAmmo(waa.getAmmoId()).getType();
             } else if ((weapon.getLinked() != null)

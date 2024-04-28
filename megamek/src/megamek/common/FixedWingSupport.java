@@ -337,7 +337,7 @@ public class FixedWingSupport extends ConvFighter {
     }
 
     @Override
-    protected int getGenericBattleValue() {
+    public int getGenericBattleValue() {
         return (int) Math.round(Math.exp(1.250 + 0.886*Math.log(getWeight())));
     }
 }

@@ -293,7 +293,7 @@ public class Warship extends Jumpship {
     }
 
     @Override
-    protected int getGenericBattleValue() {
+    public int getGenericBattleValue() {
         return (int) Math.round(Math.exp(-1.3484 + 0.9382*Math.log(getWeight())));
     }
 }

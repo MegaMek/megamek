@@ -133,7 +133,7 @@ public class ConvFighter extends AeroSpaceFighter {
     }
 
     @Override
-    protected int getGenericBattleValue() {
+    public int getGenericBattleValue() {
         return (int) Math.round(Math.exp(2.943 + 0.795*Math.log(getWeight())));
     }
 }

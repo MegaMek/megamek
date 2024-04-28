@@ -396,7 +396,7 @@ public class GunEmplacement extends Tank {
     }
 
     @Override
-    protected int getGenericBattleValue() {
+    public int getGenericBattleValue() {
         // they have no weight so we use the mean across all GEs
         return 205;
     }

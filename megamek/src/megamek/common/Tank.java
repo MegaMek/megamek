@@ -3054,7 +3054,7 @@ public class Tank extends Entity {
     }
 
     @Override
-    protected int getGenericBattleValue() {
+    public int getGenericBattleValue() {
         return (int) Math.round(Math.exp(2.866 + 0.987*Math.log(getWeight())));
     }
 }

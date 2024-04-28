@@ -1979,7 +1979,7 @@ public class BattleArmor extends Infantry {
     }
 
     @Override
-    protected int getGenericBattleValue() {
+    public int getGenericBattleValue() {
         return (int) Math.round(Math.exp(3.157 + 1.514*Math.log(getWeight())));
     }
 }

@@ -706,7 +706,7 @@ public class VTOL extends Tank implements IBomber {
     }
 
     @Override
-    protected int getGenericBattleValue() {
+    public int getGenericBattleValue() {
         return (int) Math.round(Math.exp(2.366 + 1.177*Math.log(getWeight())));
     }
 }

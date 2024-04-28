@@ -899,7 +899,7 @@ public class SmallCraft extends Aero {
     }
 
     @Override
-    protected int getGenericBattleValue() {
+    public int getGenericBattleValue() {
         return (int) Math.round(Math.exp(-0.068 + 1.421*Math.log(getWeight())));
     }
 }

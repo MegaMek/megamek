@@ -177,7 +177,7 @@ public class SpaceStation extends Jumpship {
     }
 
     @Override
-    protected int getGenericBattleValue() {
+    public int getGenericBattleValue() {
         return (int) Math.round(Math.exp(5.1322 + 0.2384*Math.log(getWeight())));
     }
 }

@@ -162,7 +162,7 @@ public class TeleMissile extends Aero {
     }
 
     @Override
-    protected int getGenericBattleValue() {
+    public int getGenericBattleValue() {
         return 0;
     }
 

@@ -1842,7 +1842,7 @@ public class Infantry extends Entity {
     }
 
     @Override
-    protected int getGenericBattleValue() {
+    public int getGenericBattleValue() {
         return (int) Math.round(Math.exp(3.586 + 0.336*Math.log(getWeight())));
     }
 }

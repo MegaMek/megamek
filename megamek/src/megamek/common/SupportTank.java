@@ -395,7 +395,7 @@ public class SupportTank extends Tank {
     }
 
     @Override
-    protected int getGenericBattleValue() {
+    public int getGenericBattleValue() {
         return (int) Math.round(Math.exp(2.681 + 0.681*Math.log(getWeight())));
     }
 }

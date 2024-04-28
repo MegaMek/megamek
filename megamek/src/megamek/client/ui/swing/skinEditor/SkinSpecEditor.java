@@ -167,7 +167,7 @@ public class SkinSpecEditor extends JPanel implements ListSelectionListener, Act
         c.insets = new Insets(1, 0, 1, 0);
         add(editPanelScroll, c);
         
-        updateSkinCombo(SkinXMLHandler.defaultSkinXML);
+        updateSkinCombo(Configuration.skinsDir().getPath() + SkinXMLHandler.defaultSkinXML);
         populateSkinSpecComponents();
         setupEditPanel();
         validate();
@@ -309,7 +309,7 @@ public class SkinSpecEditor extends JPanel implements ListSelectionListener, Act
 
             boolean success = SkinXMLHandler.initSkinXMLHandler(newSkinFile);
             if (!success) {
-                SkinXMLHandler.initSkinXMLHandler(SkinXMLHandler.defaultSkinXML);
+                SkinXMLHandler.initSkinXMLHandler(Configuration.skinsDir().getPath() + SkinXMLHandler.defaultSkinXML);
                 String title = Messages.getString("CommonSettingsDialog.skinFileFail.title");
                 String msg = Messages.getString("CommonSettingsDialog.skinFileFail.msg");
                 JOptionPane.showMessageDialog(this, msg, title, JOptionPane.ERROR_MESSAGE);

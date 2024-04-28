@@ -13,7 +13,7 @@ MEGAMEK VERSION HISTORY:
 + PR #5388, #5410: The Skin Editor has been given a rework and is now functional again
 + PR #5387: Prevent errors when ESCaping out of the main menu's Connect... and Connect as Bot dialogs
 + PR #5409: Removed code for using a background image on boards
-+ PR #5406: Mounted rework
++ PR #5406, #5425: Mounted rework
 + PR #5412: The force display will now have a default size to prevent it from starting totally collapsed
 + PR #5418: More code internals: Princess's Precognition no longer produces unnecessary packet command log messages and processes an additional packet command
 + Fix #5408: Princess has taken part in a week-long battle workshop; she will now be less conservative with ammo (and other tweaks)

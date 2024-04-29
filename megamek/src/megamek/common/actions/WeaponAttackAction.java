@@ -5269,7 +5269,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                         toHit.addModifier(-1, Messages.getString("WeaponAttackAction.RainSpec"));
                     }
 
-                    if (conditions.getWeather().isModerateRainOrHeavyRainOrGustingRainOrDownpour()) {
+                    if (conditions.getWeather().isModerateRainOrHeavyRainOrGustingRainOrDownpourOrLightningStorm()) {
                         toHit.addModifier(-1, Messages.getString("WeaponAttackAction.RainSpec"));
                     }
                 }

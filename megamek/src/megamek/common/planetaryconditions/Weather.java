@@ -141,9 +141,10 @@ public enum Weather {
     }
 
 
-    public boolean isLightRainOrModerateRain() {
+    public boolean isLightRainOrModerateRainOrLightningStorm() {
         return isLightRain()
-                || isModerateRain();
+                || isModerateRain()
+                || isLightningStorm();
     }
 
     public boolean isModerateSnowOrSnowFlurries() {
@@ -151,9 +152,15 @@ public enum Weather {
                 || isSnowFlurries();
     }
 
-    public boolean isModerateRainOrModerateSnow() {
+    public boolean isModerateRainOrLightningStorm() {
         return isModerateRain()
-                || isModerateSnow();
+                || isLightningStorm();
+    }
+
+    public boolean isModerateRainOrModerateSnowOrLightningStorm() {
+        return isModerateRain()
+                || isModerateSnow()
+                || isLightningStorm();
     }
 
     public boolean isDownpourOrHeavySnowOrIceStorm() {
@@ -218,11 +225,12 @@ public enum Weather {
                 || isSleet();
     }
 
-    public boolean isModerateRainOrHeavyRainOrGustingRainOrDownpour() {
+    public boolean isModerateRainOrHeavyRainOrGustingRainOrDownpourOrLightningStorm() {
         return isModerateRain()
                 || isHeavyRain()
                 || isGustingRain()
-                || isDownpour();
+                || isDownpour()
+                || isLightningStorm();
     }
 
     public boolean isGustingRainOrSnowFlurriesOrIceStormOrLightningStorm() {
@@ -258,14 +266,15 @@ public enum Weather {
                 || isSnowFlurries();
     }
 
-    public boolean isModerateRainOrHeavyRainOrGustingRainOrModerateSnowOrSnowFlurriesOrHeavySnowOrSleet() {
+    public boolean isModerateRainOrHeavyRainOrGustingRainOrModerateSnowOrSnowFlurriesOrHeavySnowOrSleetOrLightningStorm() {
         return isModerateRain()
                 || isHeavyRain()
                 || isGustingRain()
                 || isModerateSnow()
                 || isSnowFlurries()
                 || isHeavySnow()
-                || isSleet();
+                || isSleet()
+                || isLightningStorm();
     }
 
     public static Weather getWeather(int i) {

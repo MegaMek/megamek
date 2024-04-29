@@ -1106,7 +1106,7 @@ public class BoardUtilities {
                 Hex hex = board.getHex(c);
 
                 //moderate rain - mud in clear hexes, depth 0 water, and dirt roads (not implemented yet)
-                if (weatherCond.isModerateRain()) {
+                if (weatherCond.isModerateRainOrLightningStorm()) {
                     if ((hex.terrainsPresent() == 0) || (hex.containsTerrain(Terrains.WATER) && (hex.depth() == 0))) {
                         hex.addTerrain(new Terrain(Terrains.MUD, 1));
                         if (hex.containsTerrain(Terrains.WATER)) {

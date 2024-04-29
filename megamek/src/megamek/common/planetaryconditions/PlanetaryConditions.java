@@ -280,7 +280,7 @@ public class PlanetaryConditions implements Serializable {
         if (getWeather().isLightRainOrLightSnow()
                 && en.isConventionalInfantry()) {
             return 1;
-        } else if (getWeather().isModerateRainOrHeavyRainOrGustingRainOrModerateSnowOrSnowFlurriesOrHeavySnowOrSleet()) {
+        } else if (getWeather().isModerateRainOrHeavyRainOrGustingRainOrModerateSnowOrSnowFlurriesOrHeavySnowOrSleetOrLightningStorm()) {
             return 1;
         } else if(getWeather().isDownpour()) {
             return 2;
@@ -402,7 +402,7 @@ public class PlanetaryConditions implements Serializable {
     public int getIgniteModifiers() {
         int mod = 0;
 
-        if (getWeather().isLightRainOrModerateRain() ) {
+        if (getWeather().isLightRainOrModerateRainOrLightningStorm() ) {
             mod += 1;
         }
 
@@ -448,6 +448,7 @@ public class PlanetaryConditions implements Serializable {
             case MOD_RAIN:
             case MOD_SNOW:
             case SNOW_FLURRIES:
+            case LIGHTNING_STORM:
                 roll = roll + 2;
                 break;
             case HEAVY_RAIN:
@@ -751,7 +752,7 @@ public class PlanetaryConditions implements Serializable {
             } else {
                 otherRange = 8;
             }
-        } else if (getWeather().isModerateRainOrModerateSnow()) {
+        } else if (getWeather().isModerateRainOrModerateSnowOrLightningStorm()) {
             if (isMechOrVee || isLowAltitudeAero) {
                 otherRange = 20;
             } else if (isAero) {
@@ -884,6 +885,7 @@ public class PlanetaryConditions implements Serializable {
         switch (weather) {
             case ICE_STORM:
             case SNOW_FLURRIES:
+            case LIGHTNING_STORM:
                 return Wind.MOD_GALE;
             case GUSTING_RAIN:
                 return Wind.STRONG_GALE;

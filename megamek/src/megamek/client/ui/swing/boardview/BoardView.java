@@ -26,14 +26,11 @@ import megamek.client.bot.princess.PathEnumerator;
 import megamek.client.bot.princess.Princess;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
-import megamek.client.event.MechDisplayEvent;
-import megamek.client.event.MechDisplayListener;
 import megamek.client.ui.IDisplayable;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.*;
 import megamek.client.ui.swing.tileset.HexTileset;
 import megamek.client.ui.swing.tileset.TilesetManager;
-import megamek.client.ui.swing.tooltip.HexTooltip;
 import megamek.client.ui.swing.util.*;
 import megamek.client.ui.swing.widget.MegamekBorder;
 import megamek.client.ui.swing.widget.SkinSpecification;
@@ -78,7 +75,7 @@ import java.util.stream.Collectors;
  * Displays the board; lets the user scroll around and select points on it.
  */
 public final class BoardView extends AbstractBoardView implements BoardListener, MouseListener,
-        MechDisplayListener, IPreferenceChangeListener, KeyBindReceiver {
+        IPreferenceChangeListener, KeyBindReceiver {
 
     private static final int BOARD_HEX_CLICK = 1;
     private static final int BOARD_HEX_DOUBLECLICK = 2;
@@ -301,9 +298,6 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
 
     /** stores the theme last selected to override all hex themes */
     private String selectedTheme = null;
-
-    // selected entity and weapon for artillery display
-    private Mounted selectedWeapon = null;
 
     // hexes with ECM effect
     private Map<Coords, Color> ecmHexes = null;
@@ -1438,6 +1432,8 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
             return null;
         }
 
+        Mounted<?> selectedWeapon = selectedWeapon();
+
         if ((getSelectedEntity() == null) || (selectedWeapon == null)) {
             return null;
         }
@@ -1457,6 +1453,11 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
 
         // otherwise, a weapon is selected, and it is artillery
         return selectedWeapon;
+    }
+
+    @Nullable
+    private Mounted<?> selectedWeapon() {
+        return (clientgui != null) ? clientgui.getSelectedWeapon() : null;
     }
 
     /**
@@ -4553,16 +4554,8 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
      */
     public synchronized void selectEntity(Entity e) {
         checkFoVHexImageCacheClear();
-        // If we don't do this, the selectedWeapon might not correspond to this entity
-        selectedWeapon = null;
         updateEcmList();
         highlightSelectedEntity();
-    }
-
-    @Override
-    public synchronized void weaponSelected(MechDisplayEvent b) {
-        selectedWeapon = b.getEquip();
-        boardPanel.repaint();
     }
 
     /**
@@ -4777,27 +4770,6 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
 
         // Return the chosen unit.
         return choice;
-    }
-
-    /**
-     * Appends HTML describing the terrain of a given hex
-     */
-    public void appendTerrainTooltip(StringBuffer txt, @Nullable Hex mhex, GUIPreferences GUIP) {
-        if (mhex == null) {
-            return;
-        }
-
-        txt.append(HexTooltip.getTerrainTip(mhex, GUIP, game));
-    }
-
-    /**
-     * Appends HTML describing the buildings and minefields in a given hex
-     */
-    public void appendBuildingsTooltip(StringBuffer txt, @Nullable Hex mhex) {
-        if ((mhex != null) && (clientgui != null)) {
-            String result = HexTooltip.getHexTip(mhex, clientgui.getClient(), GUIP);
-            txt.append(result);
-        }
     }
 
     @Override

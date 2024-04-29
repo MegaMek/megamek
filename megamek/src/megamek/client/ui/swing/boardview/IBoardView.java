@@ -177,5 +177,12 @@ public interface IBoardView {
      */
     Coords getCoordsAt(Point point);
 
+    /**
+     * Adds the given BoardViewTooltipProvider to this BoardView to provide the tooltips that are shown,
+     * replacing the previous BoardViewTooltipProvider, if any.
+     *
+     * @param provider The BoardViewTooltipProvider
+     * @see BoardViewTooltipProvider
+     */
     void setTooltipProvider(BoardViewTooltipProvider provider);
 }

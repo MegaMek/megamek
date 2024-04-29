@@ -34714,7 +34714,7 @@ public class GameManager extends AbstractGameManager {
 
         Roll roll = Compute.rollD6(1);
 
-        if (roll.getIntValue() > 0) {
+        if (roll.getIntValue() > 4) {
             Roll rollNumber = Compute.rollD6(1);
             int numberOfStrikes = Math.max(1, rollNumber.getIntValue() / 2);
             Roll rollType = Compute.rollD6(1);

@@ -371,7 +371,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
     // Tooltip Info ---
     /** Holds the final Coords for a planned movement. Set by MovementDisplay,
      *  used to display the distance in the board tooltip. */
-    Coords movementTarget;
+    private Coords movementTarget;
 
     // Used to track the previous x/y for tooltip display
     int prevTipX = -1, prevTipY = -1;
@@ -382,7 +382,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
     boolean displayInvalidHexInfo = false;
 
     /** Stores the correct tooltip dismiss delay so it can be restored when exiting the boardview */
-    int dismissDelay = ToolTipManager.sharedInstance().getDismissDelay();
+    private int dismissDelay = ToolTipManager.sharedInstance().getDismissDelay();
 
     /** The coords where the mouse was last. */
     Coords lastCoords;
@@ -395,7 +395,6 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
             .color(GUIP.getWarningColor()).font(FontHandler.getNotoFont().deriveFont(Font.BOLD)).center();
 
     BoardViewTooltipProvider boardViewToolTip = (point, movementTarget) -> null;
-
 
     /**
      * Construct a new board view for the specified game

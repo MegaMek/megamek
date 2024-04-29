@@ -68,15 +68,15 @@ public class TWBoardViewTooltip implements BoardViewTooltipProvider {
         if (GUIP.getShowMapHexPopup() && (mhex != null)) {
             StringBuffer sbTerrain = new StringBuffer();
             appendTerrainTooltip(sbTerrain, mhex, GUIP);
-            String sTrerain = sbTerrain.toString();
+            String sTerrain = sbTerrain.toString();
 
             // Distance from the selected unit and a planned movement end point
             if ((selectedEntity != null) && (selectedEntity.getPosition() != null)) {
                 int distance = selectedEntity.getPosition().distance(coords);
                 if (distance == 1) {
-                    sTrerain += Messages.getString("BoardView1.Tooltip.Distance1");
+                    sTerrain += Messages.getString("BoardView1.Tooltip.Distance1");
                 } else {
-                    sTrerain += Messages.getString("BoardView1.Tooltip.DistanceN", distance);
+                    sTerrain += Messages.getString("BoardView1.Tooltip.DistanceN", distance);
                 }
 
                 if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_SENSORS)) {
@@ -90,19 +90,19 @@ public class TWBoardViewTooltip implements BoardViewTooltipProvider {
                     if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_INCLUSIVE_SENSOR_RANGE)) {
                         minSensorRange = 0;
                     }
-                    sTrerain += "<BR>";
+                    sTerrain += "<BR>";
                     if ((distance > minSensorRange) && (distance <= maxSensorRange)) {
-                        sTrerain += Messages.getString("BoardView1.Tooltip.SensorsHexInRange");
+                        sTerrain += Messages.getString("BoardView1.Tooltip.SensorsHexInRange");
                     } else {
-                        sTrerain += Messages.getString("BoardView1.Tooltip.SensorsHexNotInRange1");
+                        sTerrain += Messages.getString("BoardView1.Tooltip.SensorsHexNotInRange1");
                         String tmp = Messages.getString("BoardView1.Tooltip.SensorsHexNotInRange2");
-                        sTrerain += guiScaledFontHTML(GUIP.getWarningColor()) + tmp + "<FONT>";
-                        sTrerain += Messages.getString("BoardView1.Tooltip.SensorsHexNotInRange3");
+                        sTerrain += guiScaledFontHTML(GUIP.getWarningColor()) + tmp + "<FONT>";
+                        sTerrain += Messages.getString("BoardView1.Tooltip.SensorsHexNotInRange3");
                     }
                 }
 
                 if (game.getPhase().isMovement() && (movementTarget != null)) {
-                    sTrerain += "<BR>";
+                    sTerrain += "<BR>";
                     int disPM = movementTarget.distance(coords);
                     String sDinstanceMove = "";
                     if (disPM == 1) {
@@ -110,12 +110,12 @@ public class TWBoardViewTooltip implements BoardViewTooltipProvider {
                     } else {
                         sDinstanceMove = Messages.getString("BoardView1.Tooltip.DistanceMoveN", disPM);
                     }
-                    sTrerain += "<I>" + sDinstanceMove + "</I>";
+                    sTerrain += "<I>" + sDinstanceMove + "</I>";
                 }
             }
 
-            sTrerain = guiScaledFontHTML(GUIP.getUnitToolTipTerrainFGColor()) + sTrerain + "</FONT>";
-            String col = "<TD>" + sTrerain + "</TD>";
+            sTerrain = guiScaledFontHTML(GUIP.getUnitToolTipTerrainFGColor()) + sTerrain + "</FONT>";
+            String col = "<TD>" + sTerrain + "</TD>";
             String row = "<TR>" + col + "</TR>";
             String table = "<TABLE BORDER=0 BGCOLOR=" + GUIPreferences.hexColor(GUIP.getUnitToolTipTerrainBGColor())
                     + " width=100%>" + row + "</TABLE>";

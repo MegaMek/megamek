@@ -96,6 +96,8 @@ public class ClientGUI extends JPanel implements BoardViewListener, IClientGUI,
     private static final String FILENAME_ICON_48X48 = "megamek-icon-48x48.png";
     private static final String FILENAME_ICON_256X256 = "megamek-icon-256x256.png";
 
+    public static final int WEAPON_NONE = -1;
+
     /** The smallest GUI scaling value; smaller will make text unreadable */
     public static final float MIN_GUISCALE = 0.7f;
     /** The highest GUI scaling value; increase this for 16K monitors */
@@ -329,9 +331,9 @@ public class ClientGUI extends JPanel implements BoardViewListener, IClientGUI,
     private int selectedEntityNum = Entity.NONE;
 
     /**
-     * The currently selected weapon on the currently selected entity (if any), -1 otherwise
+     * The currently selected weapon on the currently selected entity (if any), WEAPON_NONE otherwise
      */
-    private int selectedWeapon = -1;
+    private int selectedWeapon = WEAPON_NONE;
 
     /**
      * Flag that indicates whether hotkeys should be ignored or not. This is
@@ -2987,7 +2989,7 @@ public class ClientGUI extends JPanel implements BoardViewListener, IClientGUI,
     }
 
     private void clearSelectedWeapon() {
-        selectedWeapon = -1;
+        selectedWeapon = WEAPON_NONE;
     }
 
     public int getSelectedWeaponId() {

@@ -1997,10 +1997,7 @@ public class GameManager extends AbstractGameManager {
                 resetEntityPhase(phase);
                 clearReports();
                 resolveHeat();
-                PlanetaryConditions conditions = game.getPlanetaryConditions();
-                if (conditions.isBlowingSandActive()) {
-                    addReport(resolveBlowingSandDamage());
-                }
+                resolveWeather();
                 addReport(resolveControlRolls());
                 addReport(checkForTraitors());
                 // write End Phase header
@@ -18720,6 +18717,16 @@ public class GameManager extends AbstractGameManager {
         return psr;
     }
 
+    private void resolveWeather() {
+        PlanetaryConditions conditions = game.getPlanetaryConditions();
+        if (conditions.isBlowingSandActive()) {
+            addReport(resolveBlowingSandDamage());
+        }
+        if (conditions.getWeather().isLightningStorm()) {
+            addReport(resolveLightningStormDamage());
+        }
+    }
+
     /**
      * Each mech sinks the amount of heat appropriate to its current heat
      * capacity.
@@ -34699,6 +34706,74 @@ public class GameManager extends AbstractGameManager {
 
     public List<SmokeCloud> getSmokeCloudList() {
         return game.getSmokeCloudList();
+    }
+
+    private Vector<Report> resolveLightningStormDamage() {
+        Vector<Report> vFullReport = new Vector<>();
+        vFullReport.add(new Report(5620, Report.PUBLIC));
+
+        Roll roll = Compute.rollD6(1);
+
+        if (roll.getIntValue() > 0) {
+            Roll rollNumber = Compute.rollD6(1);
+            int numberOfStrikes = Math.max(1, rollNumber.getIntValue() / 2);
+            Roll rollType = Compute.rollD6(1);
+            int damage;
+            boolean adjacent;
+            switch (rollType.getIntValue()) {
+                case 1:
+                case 2:
+                case 3:
+                    damage = 5;
+                    adjacent = false;
+                    break;
+                case 4:
+                case 5:
+                    damage = 10;
+                    adjacent = false;
+                    break;
+                default:
+                    damage = 15;
+                    adjacent = true;
+            }
+
+            for (int i = 0; i < numberOfStrikes; i++) {
+                int x = Compute.randomInt(game.getBoard().getWidth());
+                int y = Compute.randomInt(game.getBoard().getHeight());
+                Coords location = new Coords(x, y);
+
+                lightningStormDamage(location, damage, false, vFullReport);
+
+                if (adjacent) {
+                    for (Coords locationAdjacent : location.allAdjacent()) {
+                        if (game.getBoard().getHex(locationAdjacent) != null) {
+                            lightningStormDamage(locationAdjacent, 5, adjacent, vFullReport);
+                        }
+                    }
+                }
+            }
+        }
+
+        Report.addNewline(vPhaseReport);
+        return vFullReport;
+    }
+
+    private void lightningStormDamage(Coords location, int damage, boolean adjacent, Vector<Report> vFullReport) {
+        List<Entity> hitEntities = game.getEntitiesVector().stream().filter(e -> e.getPosition().equals(location)).collect(Collectors.toList());
+
+        String adj = adjacent ? "adjacent " : "";
+
+        Report r = new Report(5621);
+        r.add(adj);
+        r.add(location.getBoardNum());
+        vFullReport.add(r);
+
+        for (Entity entity : hitEntities) {
+            ToHitData toHit = new ToHitData();
+            toHit.setSideTable(ToHitData.SIDE_RANDOM);
+            HitData hit = entity.rollHitLocation(ToHitData.HIT_NORMAL, toHit.getSideTable());
+            vFullReport.addAll(damageEntity(entity, hit, damage));
+        }
     }
 
     /**

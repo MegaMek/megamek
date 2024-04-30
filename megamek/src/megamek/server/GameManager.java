@@ -34714,7 +34714,7 @@ public class GameManager extends AbstractGameManager {
 
         Roll roll = Compute.rollD6(1);
 
-        if (roll.getIntValue() > 4) {
+        if (roll.getIntValue() > 0) {
             Roll rollNumber = Compute.rollD6(1);
             int numberOfStrikes = Math.max(1, rollNumber.getIntValue() / 2);
             Roll rollType = Compute.rollD6(1);
@@ -34738,12 +34738,12 @@ public class GameManager extends AbstractGameManager {
                 int y = Compute.randomInt(game.getBoard().getHeight());
                 Coords location = new Coords(x, y);
 
-                lightningStormDamage(location, damage, "", vFullReport);
+                lightningStormDamage(location, damage, false, vFullReport);
 
                 if (rollType.getIntValue() == 6) {
                     for (Coords locationAdjacent : location.allAdjacent()) {
                         if (game.getBoard().getHex(locationAdjacent) != null) {
-                            lightningStormDamage(locationAdjacent, 5, "adjacent ", vFullReport);
+                            lightningStormDamage(locationAdjacent, 5, true, vFullReport);
                         }
                     }
                 }
@@ -34754,11 +34754,14 @@ public class GameManager extends AbstractGameManager {
         return vFullReport;
     }
 
-    private void lightningStormDamage(Coords location, int damage, String adjacent, Vector<Report> vFullReport) {
+    private void lightningStormDamage(Coords location, int damage, boolean adjacent, Vector<Report> vFullReport) {
         List<Entity> hitEntities = game.getEntitiesVector().stream().filter(e -> e.getPosition().equals(location)).collect(Collectors.toList());
-
-        Report r = new Report(5621);
-        r.add(adjacent);
+        Report r;
+        if (!adjacent) {
+            r = new Report(5621);
+        } else {
+            r = new Report(5622);
+        }
         r.add(location.getBoardNum());
         vFullReport.add(r);
 

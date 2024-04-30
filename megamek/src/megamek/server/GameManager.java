@@ -34708,32 +34708,37 @@ public class GameManager extends AbstractGameManager {
         return game.getSmokeCloudList();
     }
 
+    /**
+     * Check to see if Lightning Storm caused damage
+     * TO:AR 6th ed. p. 57
+     * */
     private Vector<Report> resolveLightningStormDamage() {
         Vector<Report> vFullReport = new Vector<>();
         vFullReport.add(new Report(5620, Report.PUBLIC));
 
         Roll roll = Compute.rollD6(1);
 
-        if (roll.getIntValue() > 0) {
+        if (roll.getIntValue() > 4) {
             Roll rollNumber = Compute.rollD6(1);
             int numberOfStrikes = Math.max(1, rollNumber.getIntValue() / 2);
-            Roll rollType = Compute.rollD6(1);
-            int damage;
-            switch (rollType.getIntValue()) {
-                case 1:
-                case 2:
-                case 3:
-                    damage = 5;
-                    break;
-                case 4:
-                case 5:
-                    damage = 10;
-                    break;
-                default:
-                    damage = 15;
-            }
 
             for (int i = 0; i < numberOfStrikes; i++) {
+                Roll rollType = Compute.rollD6(1);
+                int damage;
+                switch (rollType.getIntValue()) {
+                    case 1:
+                    case 2:
+                    case 3:
+                        damage = 5;
+                        break;
+                    case 4:
+                    case 5:
+                        damage = 10;
+                        break;
+                    default:
+                        damage = 15;
+                }
+
                 int x = Compute.randomInt(game.getBoard().getWidth());
                 int y = Compute.randomInt(game.getBoard().getHeight());
                 Coords location = new Coords(x, y);

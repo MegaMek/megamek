@@ -393,4 +393,9 @@ public class SupportTank extends Tank {
     public boolean isTrailer() {
         return hasWorkingMisc(MiscType.F_TRAILER_MODIFICATION);
     }
+
+    @Override
+    public int getGenericBattleValue() {
+        return (int) Math.round(Math.exp(2.681 + 0.681*Math.log(getWeight())));
+    }
 }

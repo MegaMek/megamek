@@ -6427,6 +6427,11 @@ public abstract class Mech extends Entity {
     }
 
     @Override
+    public int getGenericBattleValue() {
+        return (int) Math.round(Math.exp(3.729 + 0.889*Math.log(getWeight())));
+    }
+
+    @Override
     public boolean getsAutoExternalSearchlight() {
         return true;
     }

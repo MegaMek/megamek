@@ -1488,4 +1488,9 @@ public class Protomech extends Entity {
         return jumpType;
     }
 
+    @Override
+    public int getGenericBattleValue() {
+        return (int) Math.round(Math.exp(3.385 + 1.093*Math.log(getWeight())));
+    }
+
 }

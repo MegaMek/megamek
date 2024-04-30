@@ -465,4 +465,9 @@ public class SuperHeavyTank extends Tank {
     public long getEntityType() {
         return Entity.ETYPE_TANK | Entity.ETYPE_SUPER_HEAVY_TANK;
     }
+
+    @Override
+    public int getGenericBattleValue() {
+        return (int) Math.round(Math.exp(2.681 + 0.681*Math.log(getWeight())));
+    }
 }

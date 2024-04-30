@@ -18,27 +18,25 @@
  */
 package megamek.client.ui.swing.boardview;
 
-import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.MovementDisplay;
-import megamek.common.Coords;
+import megamek.common.*;
+import megamek.common.event.*;
 
 import java.util.*;
 import java.awt.*;
-import java.util.List;
 
-public class MovementEnvelopeHandler {
+/**
+ * This class handles the sprites shown on an attached BoardView for the movement envelope (showing the hexes
+ * where a currently selected unit can move to in the movement phase).
+ */
+public class MovementEnvelopeSpriteHandler extends BoardViewSpriteHandler {
 
-    private static final GUIPreferences GUIP = GUIPreferences.getInstance();
-    private final BoardView boardView;
-    private final List<Sprite> currentSprites = new ArrayList<>();
-
-    public MovementEnvelopeHandler(BoardView boardView) {
-        this.boardView = boardView;
+    public MovementEnvelopeSpriteHandler(BoardView boardView) {
+        super(boardView);
     }
 
     public void setMovementEnvelope(Map<Coords, Integer> mvEnvData, int walk, int run, int jump, int gear) {
-        boardView.removeSprites(currentSprites);
-        currentSprites.clear();
+        clear();
 
         if (mvEnvData == null) {
             return;
@@ -98,12 +96,15 @@ public class MovementEnvelopeHandler {
             }
 
             if (spriteColor != null) {
-                MovementEnvelopeSprite mvSprite = new MovementEnvelopeSprite(
-                        boardView, spriteColor, loc, edgesToPaint);
-                currentSprites.add(mvSprite);
+                currentSprites.add(new MovementEnvelopeSprite(boardView, spriteColor, loc, edgesToPaint));
             }
         }
 
         boardView.addSprites(currentSprites);
+    }
+
+    @Override
+    public void gamePhaseChange(GamePhaseChangeEvent e) {
+        clear();
     }
 }

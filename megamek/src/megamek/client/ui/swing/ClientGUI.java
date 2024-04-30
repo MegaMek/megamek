@@ -52,7 +52,6 @@ import megamek.common.MovePath.MoveStepType;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.GamePhase;
-import megamek.common.equipment.WeaponMounted;
 import megamek.common.event.*;
 import megamek.common.icons.Camouflage;
 import megamek.common.preference.ClientPreferences;
@@ -244,7 +243,9 @@ public class ClientGUI extends JPanel implements BoardViewListener, IClientGUI,
     private ChatterBox cb;
     public ChatterBox2 cb2;
     private BoardView bv;
-    private MovementEnvelopeHandler movementEnvelopeHandler;
+    private MovementEnvelopeSpriteHandler movementEnvelopeHandler;
+    private MovementModifierSpriteHandler movementModifierSpriteHandler;
+    private FlareSpritesHandler flareSpritesHandler;
     private Component bvc;
     private JPanel panTop;
     private JSplitPane splitPaneA;
@@ -542,7 +543,12 @@ public class ClientGUI extends JPanel implements BoardViewListener, IClientGUI,
             bv.setTooltipProvider(new TWBoardViewTooltip(client.getGame(), this, bv));
             bvc = bv.getComponent();
             bvc.setName(CG_BOARDVIEW);
-            movementEnvelopeHandler = new MovementEnvelopeHandler(bv);
+            movementEnvelopeHandler = new MovementEnvelopeSpriteHandler(bv);
+            movementModifierSpriteHandler = new MovementModifierSpriteHandler(bv);
+            flareSpritesHandler = new FlareSpritesHandler(bv, client.getGame());
+            client.getGame().addGameListener(movementEnvelopeHandler);
+            client.getGame().addGameListener(movementModifierSpriteHandler);
+            client.getGame().addGameListener(flareSpritesHandler);
 
             panTop = new JPanel(new BorderLayout());
             panA1 = new JPanel();
@@ -1150,6 +1156,10 @@ public class ClientGUI extends JPanel implements BoardViewListener, IClientGUI,
         } catch (Exception ex) {
             LogManager.getLogger().error("", ex);
         }
+
+        client.getGame().removeGameListener(movementEnvelopeHandler);
+        client.getGame().removeGameListener(movementModifierSpriteHandler);
+        client.getGame().removeGameListener(flareSpritesHandler);
         client.die();
 
         TimerSingleton.getInstance().killTimer();
@@ -2981,8 +2991,20 @@ public class ClientGUI extends JPanel implements BoardViewListener, IClientGUI,
     }
 
     public void setMovementEnvelope(Entity entity, Map<Coords, Integer> mvEnvData, int walk, int run, int jump, int gear) {
-        // moveEnvHandlerFor(boardViewFor(entity))...
+        // multi boards: select the correct boardview for the entity and the correct envelopehandler from the given entity
         movementEnvelopeHandler.setMovementEnvelope(mvEnvData, walk, run, jump, gear);
+        bv.repaint();
+    }
+
+    public void clearTemporarySprites() {
+        movementEnvelopeHandler.clear();
+        movementModifierSpriteHandler.clear();
+        bv.repaint();
+    }
+
+    public void showMovementModifiers(Collection<MovePath> movePaths) {
+        movementModifierSpriteHandler.renewSprites(movePaths);
+        bv.repaint();
     }
 
     @Override

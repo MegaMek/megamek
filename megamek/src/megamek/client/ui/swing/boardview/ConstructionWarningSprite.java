@@ -92,4 +92,9 @@ public class ConstructionWarningSprite extends HexSprite {
         int fontStyle = GUIP.getMoveFontStyle();
         graph.setFont(new Font(fontName, fontStyle, TEXT_SIZE));		
     }
+
+    @Override
+    protected boolean isBehindTerrain() {
+        return false;
+    }
 }

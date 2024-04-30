@@ -178,9 +178,9 @@ public class TWBoardViewTooltip implements BoardViewTooltipProvider {
         }
 
         // check if it's on any flares
-        for (FlareSprite fSprite : bv.getFlareSprites()) {
-            if (fSprite.isInside(point)) {
-                result += fSprite.getTooltip().toString();
+        for (Sprite sprite : bv.getAllSprites()) {
+            if ((sprite instanceof FlareSprite) && sprite.isInside(point)) {
+                result += sprite.getTooltip().toString();
             }
         }
 

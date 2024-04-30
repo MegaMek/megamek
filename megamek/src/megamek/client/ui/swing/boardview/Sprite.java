@@ -1,3 +1,21 @@
+/*
+ * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ */
 package megamek.client.ui.swing.boardview;
 
 import java.awt.AlphaComposite;
@@ -116,9 +134,10 @@ abstract public class Sprite implements ImageObserver, Comparable<Sprite> {
     }
 
     /**
-     * Determines the sprites draw priority: sprites with a higher priority get
+     * Determines the sprite's draw priority: sprites with a higher priority get
      * drawn last, ensuring that they are "on top" of other sprites.
-     * @return
+     *
+     * @return this Sprite's draw priority, higher values drawing later
      */
     protected int getSpritePriority() {
         return 0;
@@ -129,6 +148,13 @@ abstract public class Sprite implements ImageObserver, Comparable<Sprite> {
      */
     @Override
     public int compareTo(Sprite o) {
-        return this.getSpritePriority() - o.getSpritePriority();
+        if (this == o) {
+            return 0;
+        } else if (getSpritePriority() == o.getSpritePriority()) {
+            // For use in a TreeSet, must not return 0 for equal priority as long as the objects aren't equal
+            return hashCode() - o.hashCode();
+        } else {
+            return this.getSpritePriority() - o.getSpritePriority();
+        }
     }
 }

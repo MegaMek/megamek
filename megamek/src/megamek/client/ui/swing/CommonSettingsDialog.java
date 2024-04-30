@@ -1008,7 +1008,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         csbUnitTooltipFGColor.setColour(GUIP.getUnitToolTipFGColor());
         row.add(csbUnitTooltipFGColor);
         csbUnitTooltipLightFGColor = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.UnitTooltipLightFGColor"));
-        csbUnitTooltipLightFGColor.setColour(GUIP.getUnitToolTipLightFGColor());
+        csbUnitTooltipLightFGColor.setColour(GUIP.getToolTipLightFGColor());
         row.add(csbUnitTooltipLightFGColor);
         csbUnitTooltipBuildingFGColor = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.UnitTooltipBuildingFGColor"));
         csbUnitTooltipBuildingFGColor.setColour(GUIP.getUnitToolTipBuildingFGColor());
@@ -1028,9 +1028,6 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         csbUnitTooltipBGColor = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.UnitTooltipBGColor"));
         csbUnitTooltipBGColor.setColour(GUIP.getUnitToolTipBGColor());
         row.add(csbUnitTooltipBGColor);
-        csbUnitTooltipLightBGColor = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.UnitTooltipLightBGColor"));
-        csbUnitTooltipLightBGColor.setColour(GUIP.getUnitToolTipLightBGColor());
-        row.add(csbUnitTooltipLightBGColor);
         csbUnitTooltipBuildingBGColor = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.UnitTooltipBuildingBGColor"));
         csbUnitTooltipBuildingBGColor.setColour(GUIP.getUnitToolTipBuildingBGColor());
         row.add(csbUnitTooltipBuildingBGColor);
@@ -2030,13 +2027,12 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
 
 
         csbUnitTooltipFGColor.setColour(GUIP.getUnitToolTipFGColor());
-        csbUnitTooltipLightFGColor.setColour(GUIP.getUnitToolTipLightFGColor());
+        csbUnitTooltipLightFGColor.setColour(GUIP.getToolTipLightFGColor());
         csbUnitTooltipBuildingFGColor.setColour(GUIP.getUnitToolTipBuildingFGColor());
         csbUnitTooltipAltFGColor.setColour(GUIP.getUnitToolTipAltFGColor());
         csbUnitTooltipBlockFGColor.setColour(GUIP.getUnitToolTipBlockFGColor());
         csbUnitTooltipTerrainFGColor.setColour(GUIP.getUnitToolTipTerrainFGColor());
         csbUnitTooltipBGColor.setColour(GUIP.getUnitToolTipBGColor());
-        csbUnitTooltipLightBGColor.setColour(GUIP.getUnitToolTipLightBGColor());
         csbUnitTooltipBuildingBGColor.setColour(GUIP.getUnitToolTipBuildingBGColor());
         csbUnitTooltipAltBGColor.setColour(GUIP.getUnitToolTipAltBGColor());
         csbUnitTooltipBlockBGColor.setColour(GUIP.getUnitToolTipBlockBGColor());
@@ -2506,7 +2502,6 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         GUIP.setUnitTooltipBlockFGColor(csbUnitTooltipBlockFGColor.getColour());
         GUIP.setUnitTooltipTerrainFGColor(csbUnitTooltipTerrainFGColor.getColour());
         GUIP.setUnitToolTipBGColor(csbUnitTooltipBGColor.getColour());
-        GUIP.setUnitTooltipLightBGColor(csbUnitTooltipLightBGColor.getColour());
         GUIP.setUnitTooltipBuildingBGColor(csbUnitTooltipBuildingBGColor.getColour());
         GUIP.setUnitTooltipAltBGColor(csbUnitTooltipAltBGColor.getColour());
         GUIP.setUnitTooltipBlockBGColor(csbUnitTooltipBlockBGColor.getColour());

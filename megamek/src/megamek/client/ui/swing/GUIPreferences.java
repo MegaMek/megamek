@@ -194,7 +194,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String UNIT_TOOLTIP_BLOCK_FGCOLOR = "UnitToolTipBlockFGColor";
     public static final String UNIT_TOOLTIP_TERRAIN_FGCOLOR = "UnitToolTipTerainFGColor";
     public static final String UNIT_TOOLTIP_BGCOLOR = "UnitToolTipBGColor";
-    public static final String UNIT_TOOLTIP_LIGHT_BGCOLOR = "UnitToolTipLightBGColor";
     public static final String UNIT_TOOLTIP_BUILDING_BGCOLOR = "UnitToolTipBuildingBGColor";
     public static final String UNIT_TOOLTIP_ALT_BGCOLOR = "UnitToolTipAltBGColor";
     public static final String UNIT_TOOLTIP_BLOCK_BGCOLOR = "UnitToolTipBlockBGColor";
@@ -606,7 +605,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
         setDefault(UNIT_TOOLTIP_BLOCK_FGCOLOR, new Color(0xEEE6D9));
         setDefault(UNIT_TOOLTIP_TERRAIN_FGCOLOR, new Color(0x000000));
         setDefault(UNIT_TOOLTIP_BGCOLOR, new Color(0x313131));
-        setDefault(UNIT_TOOLTIP_LIGHT_BGCOLOR, new Color(0x999999));
         setDefault(UNIT_TOOLTIP_BUILDING_BGCOLOR, new Color(0xCCCC99));
         setDefault(UNIT_TOOLTIP_ALT_BGCOLOR, new Color(0x003333));
         setDefault(UNIT_TOOLTIP_BLOCK_BGCOLOR, new Color(0x000060));
@@ -2851,7 +2849,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public Color getUnitToolTipFGColor() {
         return getColor(UNIT_TOOLTIP_FGCOLOR);
     }
-    public Color getUnitToolTipLightFGColor() {
+    public Color getToolTipLightFGColor() {
         return getColor(UNIT_TOOLTIP_LIGHT_FGCOLOR);
     }
 
@@ -2873,9 +2871,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public Color getUnitToolTipBGColor() {
         return getColor(UNIT_TOOLTIP_BGCOLOR);
-    }
-    public Color getUnitToolTipLightBGColor() {
-        return getColor(UNIT_TOOLTIP_LIGHT_BGCOLOR);
     }
 
     public Color getUnitToolTipBuildingBGColor() {
@@ -3087,10 +3082,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setUnitToolTipBGColor(Color c) {
         store.setValue(UNIT_TOOLTIP_BGCOLOR, getColorString(c));
-    }
-
-    public void setUnitTooltipLightBGColor(Color c) {
-        store.setValue(UNIT_TOOLTIP_LIGHT_BGCOLOR, getColorString(c));
     }
 
     public void setUnitTooltipBuildingBGColor(Color c) {

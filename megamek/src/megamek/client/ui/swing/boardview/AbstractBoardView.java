@@ -24,10 +24,11 @@ import megamek.client.ui.IDisplayable;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
+import java.util.List;
 
 public abstract class AbstractBoardView implements IBoardView {
 
-    protected final ArrayList<BoardViewListener> boardViewListeners = new ArrayList<>();
+    protected final List<BoardViewListener> boardViewListeners = new ArrayList<>();
     protected final LinkedHashSet<IDisplayable> overlays = new LinkedHashSet<>();
 
     /**
@@ -70,12 +71,6 @@ public abstract class AbstractBoardView implements IBoardView {
         }
     }
 
-    /**
-     * Adds the specified BoardViewListener to receive board events from this boardview. A listener that is
-     * already present is not added again.
-     *
-     * @param listener the BoardViewListener
-     */
     @Override
     public final void addBoardViewListener(BoardViewListener listener) {
         if (!boardViewListeners.contains(listener)) {
@@ -83,11 +78,6 @@ public abstract class AbstractBoardView implements IBoardView {
         }
     }
 
-    /**
-     * Removes the specified BoardViewListener.
-     *
-     * @param listener the BoardViewListener
-     */
     @Override
     public final void removeBoardViewListener(BoardViewListener listener) {
         boardViewListeners.remove(listener);

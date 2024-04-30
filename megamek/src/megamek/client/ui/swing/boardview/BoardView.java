@@ -26,16 +26,11 @@ import megamek.client.bot.princess.PathEnumerator;
 import megamek.client.bot.princess.Princess;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
-import megamek.client.event.MechDisplayEvent;
-import megamek.client.event.MechDisplayListener;
 import megamek.client.ui.IDisplayable;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.*;
 import megamek.client.ui.swing.tileset.HexTileset;
 import megamek.client.ui.swing.tileset.TilesetManager;
-import megamek.client.ui.swing.tooltip.HexTooltip;
-import megamek.client.ui.swing.tooltip.PilotToolTip;
-import megamek.client.ui.swing.tooltip.UnitToolTip;
 import megamek.client.ui.swing.util.*;
 import megamek.client.ui.swing.widget.MegamekBorder;
 import megamek.client.ui.swing.widget.SkinSpecification;
@@ -70,21 +65,17 @@ import java.awt.event.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
-import java.awt.image.ImageProducer;
 import java.io.File;
 import java.util.List;
 import java.util.Queue;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
-import static megamek.client.ui.swing.util.UIUtil.uiWhite;
-
 /**
  * Displays the board; lets the user scroll around and select points on it.
  */
-public class BoardView extends AbstractBoardView implements BoardListener, MouseListener,
-        MechDisplayListener, IPreferenceChangeListener, KeyBindReceiver {
+public final class BoardView extends AbstractBoardView implements BoardListener, MouseListener,
+        IPreferenceChangeListener, KeyBindReceiver {
 
     private static final int BOARD_HEX_CLICK = 1;
     private static final int BOARD_HEX_DOUBLECLICK = 2;
@@ -209,7 +200,7 @@ public class BoardView extends AbstractBoardView implements BoardListener, Mouse
     private ArrayList<MovementModifierEnvelopeSprite> moveModEnvSprites = new ArrayList<>();
 
     // vector of sprites for all firing lines
-    ArrayList<AttackSprite> attackSprites = new ArrayList<>();
+    private ArrayList<AttackSprite> attackSprites = new ArrayList<>();
 
     // vector of sprites for all movement paths (using vectored movement)
     private ArrayList<MovementSprite> movementSprites = new ArrayList<>();
@@ -308,10 +299,6 @@ public class BoardView extends AbstractBoardView implements BoardListener, Mouse
     /** stores the theme last selected to override all hex themes */
     private String selectedTheme = null;
 
-    // selected entity and weapon for artillery display
-    Entity selectedEntity = null;
-    private Mounted selectedWeapon = null;
-
     // hexes with ECM effect
     private Map<Coords, Color> ecmHexes = null;
     // hexes that are teh centers of ECM effects
@@ -346,7 +333,7 @@ public class BoardView extends AbstractBoardView implements BoardListener, Mouse
      */
     private boolean shouldIgnoreKeys = false;
 
-    FovHighlightingAndDarkening fovHighlightingAndDarkening;
+    private FovHighlightingAndDarkening fovHighlightingAndDarkening;
 
     private String FILENAME_FLARE_IMAGE = "flare.png";
     private String FILENAME_RADAR_BLIP_IMAGE = "radarBlip.png";
@@ -407,10 +394,12 @@ public class BoardView extends AbstractBoardView implements BoardListener, Mouse
     private final StringDrawer invalidString = new StringDrawer(Messages.getString("BoardEditor.INVALID"))
             .color(GUIP.getWarningColor()).font(FontHandler.getNotoFont().deriveFont(Font.BOLD)).center();
 
+    BoardViewTooltipProvider boardViewToolTip = (point, movementTarget) -> null;
+
     /**
      * Construct a new board view for the specified game
      */
-    public BoardView(final Game game, final MegaMekController controller, ClientGUI clientgui)
+    public BoardView(final Game game, final MegaMekController controller, @Nullable ClientGUI clientgui)
             throws java.io.IOException {
         this.game = game;
         this.clientgui = clientgui;
@@ -515,7 +504,7 @@ public class BoardView extends AbstractBoardView implements BoardListener, Mouse
                 final Coords mcoords = getCoordsAt(point);
                 if (!mcoords.equals(lastCoords) && game.getBoard().contains(mcoords)) {
                     lastCoords = mcoords;
-                    boardPanel.setToolTipText(getHexTooltip(e));
+                    boardPanel.setToolTipText(boardViewToolTip.getTooltip(e, movementTarget));
                 } else if (!game.getBoard().contains(mcoords)) {
                     boardPanel.setToolTipText(null);
                 } else {
@@ -526,10 +515,16 @@ public class BoardView extends AbstractBoardView implements BoardListener, Mouse
                         if (deltaMagnitude > GUIP.getTooltipDistSuppression()) {
                             prevTipX = -1;
                             prevTipY = -1;
-                            // Set the dismissal delay to 0 so that the tooltip
-                            // goes away and does not reappear until the mouse
-                            // has moved more than the suppression distance
+                            // Set the dismissal delay to 0 so that the tooltip goes away and does not reappear
+                            // until the mouse has moved more than the suppression distance
                             ToolTipManager.sharedInstance().setDismissDelay(0);
+                            // and then, when the tooltip has gone away, reset the dismiss delay
+                            SwingUtilities.invokeLater(() -> {
+                                if (GUIP.getTooltipDismissDelay() >= 0) {
+                                    ToolTipManager.sharedInstance().setDismissDelay(GUIP.getTooltipDismissDelay());
+                                } else {
+                                    ToolTipManager.sharedInstance().setDismissDelay(dismissDelay);
+                                }});
                         }
                     }
                     prevTipX = point.x;
@@ -698,13 +693,13 @@ public class BoardView extends AbstractBoardView implements BoardListener, Mouse
                 && !shouldIgnoreKeys;
     }
 
-    protected final RedrawWorker redrawWorker = new RedrawWorker();
+    private final RedrawWorker redrawWorker = new RedrawWorker();
 
     /**
      * this should only be called once!! this will cause a timer to schedule
      * constant screen updates every 20 milliseconds!
      */
-    protected TimerTask scheduleRedrawTimer() {
+    private TimerTask scheduleRedrawTimer() {
         final TimerTask redraw = new TimerTask() {
             @Override
             public void run() {
@@ -719,7 +714,7 @@ public class BoardView extends AbstractBoardView implements BoardListener, Mouse
         return redraw;
     }
 
-    protected void scheduleRedraw() {
+    private void scheduleRedraw() {
         try {
             SwingUtilities.invokeLater(redrawWorker);
         } catch (Exception ie) {
@@ -1043,13 +1038,13 @@ public class BoardView extends AbstractBoardView implements BoardListener, Mouse
      */
     @SuppressWarnings("unused")
     private void renderApproxHexDirection(Graphics2D g) {
-        if (selectedEntity == null || selected == null) {
+        if (getSelectedEntity() == null || selected == null) {
             return;
         }
 
-        int direction = selectedEntity.getPosition().approximateDirection(selected, 0, 0);
+        int direction = getSelectedEntity().getPosition().approximateDirection(selected, 0, 0);
 
-        Coords donutCoords = selectedEntity.getPosition().translated(direction);
+        Coords donutCoords = getSelectedEntity().getPosition().translated(direction);
 
         Point p = getCentreHexLocation(donutCoords.getX(), donutCoords.getY(), true);
         p.translate(HEX_W / 2, HEX_H / 2);
@@ -1063,13 +1058,13 @@ public class BoardView extends AbstractBoardView implements BoardListener, Mouse
      */
     @SuppressWarnings("unused")
     private void renderMovementBoundingBox(Graphics2D g) {
-        if (selectedEntity != null) {
+        if (getSelectedEntity() != null) {
             Princess princess = new Princess("test", MMConstants.LOCALHOST, 2020);
             princess.getGame().setBoard(this.game.getBoard());
             PathEnumerator pathEnum = new PathEnumerator(princess, this.game);
-            pathEnum.recalculateMovesFor(this.selectedEntity);
+            pathEnum.recalculateMovesFor(this.getSelectedEntity());
 
-            ConvexBoardArea cba = pathEnum.getUnitMovableAreas().get(this.selectedEntity.getId());
+            ConvexBoardArea cba = pathEnum.getUnitMovableAreas().get(this.getSelectedEntity().getId());
             for (int x = 0; x < game.getBoard().getWidth(); x++) {
                 for (int y = 0; y < game.getBoard().getHeight(); y++) {
                     Point p = getCentreHexLocation(x, y, true);
@@ -1120,7 +1115,7 @@ public class BoardView extends AbstractBoardView implements BoardListener, Mouse
     @SuppressWarnings("unused")
     private void renderClusters(Graphics2D g) {
         BoardClusterTracker bct = new BoardClusterTracker();
-        Map<Coords, BoardCluster> clusterMap = bct.generateClusters(selectedEntity, false, true);
+        Map<Coords, BoardCluster> clusterMap = bct.generateClusters(getSelectedEntity(), false, true);
 
         for (BoardCluster cluster : clusterMap.values().stream().distinct().collect(Collectors.toList())) {
             for (Coords coords : cluster.contents.keySet()) {
@@ -1436,15 +1431,17 @@ public class BoardView extends AbstractBoardView implements BoardListener, Mouse
             return null;
         }
 
-        if ((selectedEntity == null) || (selectedWeapon == null)) {
+        Mounted<?> selectedWeapon = selectedWeapon();
+
+        if ((getSelectedEntity() == null) || (selectedWeapon == null)) {
             return null;
         }
 
-        if (!selectedEntity.getOwner().equals(localPlayer)) {
+        if (!getSelectedEntity().getOwner().equals(localPlayer)) {
             return null; // Not my business to see this
         }
 
-        if (selectedEntity.getEquipmentNum(selectedWeapon) == -1) {
+        if (getSelectedEntity().getEquipmentNum(selectedWeapon) == -1) {
             return null; // inconsistent state - weapon not on entity
         }
 
@@ -1455,6 +1452,11 @@ public class BoardView extends AbstractBoardView implements BoardListener, Mouse
 
         // otherwise, a weapon is selected, and it is artillery
         return selectedWeapon;
+    }
+
+    @Nullable
+    private Mounted<?> selectedWeapon() {
+        return (clientgui != null) ? clientgui.getSelectedWeapon() : null;
     }
 
     /**
@@ -1510,7 +1512,7 @@ public class BoardView extends AbstractBoardView implements BoardListener, Mouse
         // Draw modifiers for selected entity and weapon
         if (weapon != null) {
             // Loop through all of the attack modifiers for this weapon
-            for (ArtilleryTracker.ArtilleryModifier attackMod : selectedEntity.aTracker
+            for (ArtilleryTracker.ArtilleryModifier attackMod : getSelectedEntity().aTracker
                     .getWeaponModifiers(weapon)) {
                 Coords c = attackMod.getCoords();
                 // Is the Coord within the viewing area?
@@ -1736,11 +1738,6 @@ public class BoardView extends AbstractBoardView implements BoardListener, Mouse
         zoom();
 
         return (BufferedImage) entireBoard;
-    }
-
-    @Override
-    public void centerOn(Coords coords) {
-        centerOnHex(coords);
     }
 
     private void drawHexes(Graphics g, Rectangle view) {
@@ -2319,7 +2316,7 @@ public class BoardView extends AbstractBoardView implements BoardListener, Mouse
         }
     }
 
-    final boolean useIsometric() {
+    boolean useIsometric() {
         return drawIsometric;
     }
 
@@ -2626,10 +2623,8 @@ public class BoardView extends AbstractBoardView implements BoardListener, Mouse
         return rulerEnd;
     }
 
-    /**
-     * @return the coords at the specified point
-     */
-    private Coords getCoordsAt(Point p) {
+    @Override
+    public Coords getCoordsAt(Point p) {
         // We must account for the board translation to add padding
         p.x -= HEX_W;
         p.y -= HEX_H;
@@ -2685,6 +2680,11 @@ public class BoardView extends AbstractBoardView implements BoardListener, Mouse
             // not Isometric
             return cc;
         }
+    }
+
+    @Override
+    public void setTooltipProvider(BoardViewTooltipProvider provider) {
+        boardViewToolTip = provider;
     }
 
     public void redrawMovingEntity(Entity entity, Coords position, int facing, int elevation) {
@@ -3072,7 +3072,7 @@ public class BoardView extends AbstractBoardView implements BoardListener, Mouse
      * in the client settings.
      */
     public void centerOnSelected() {
-        centerOn(selectedEntity);
+        centerOn(getSelectedEntity());
     }
 
     /**
@@ -3087,9 +3087,7 @@ public class BoardView extends AbstractBoardView implements BoardListener, Mouse
         }
     }
 
-    /**
-     * Centers the board on hex c. Uses smooth centering if activated in the client settings.
-     */
+    @Override
     public void centerOnHex(@Nullable Coords c) {
         if (c == null) {
             return;
@@ -3774,14 +3772,14 @@ public class BoardView extends AbstractBoardView implements BoardListener, Mouse
         movementSprites.clear();
     }
 
-    protected void firstLOSHex(Coords c) {
+    private void firstLOSHex(Coords c) {
         if (useLOSTool) {
             moveCursor(secondLOSSprite, null);
             moveCursor(firstLOSSprite, c);
         }
     }
 
-    protected void secondLOSHex(Coords c2, Coords c1) {
+    private void secondLOSHex(Coords c2, Coords c1) {
         if (useLOSTool) {
 
             Entity ae = chooseEntity(c1);
@@ -4066,8 +4064,7 @@ public class BoardView extends AbstractBoardView implements BoardListener, Mouse
         // value so that elements outside the boardview can
         // use tooltips
         if (GUIP.getTooltipDismissDelay() >= 0) {
-            ToolTipManager.sharedInstance().setDismissDelay(
-                    GUIP.getTooltipDismissDelay());
+            ToolTipManager.sharedInstance().setDismissDelay(GUIP.getTooltipDismissDelay());
         } else {
             ToolTipManager.sharedInstance().setDismissDelay(dismissDelay);
         }
@@ -4225,7 +4222,7 @@ public class BoardView extends AbstractBoardView implements BoardListener, Mouse
 
     public synchronized void highlightSelectedEntity() {
         for (EntitySprite sprite : entitySprites) {
-            sprite.setSelected(sprite.entity.equals(selectedEntity));
+            sprite.setSelected(sprite.entity.equals(getSelectedEntity()));
         }
     }
 
@@ -4523,11 +4520,11 @@ public class BoardView extends AbstractBoardView implements BoardListener, Mouse
      * the old redrawworker converted to a runnable which is called now and then
      * from the event thread
      */
-    protected class RedrawWorker implements Runnable {
+    private class RedrawWorker implements Runnable {
 
-        protected long lastTime = System.currentTimeMillis();
+        private long lastTime = System.currentTimeMillis();
 
-        protected long currentTime = System.currentTimeMillis();
+        private long currentTime = System.currentTimeMillis();
 
         @Override
         public void run() {
@@ -4555,20 +4552,9 @@ public class BoardView extends AbstractBoardView implements BoardListener, Mouse
      * @param e the BoardView's currently selected entity
      */
     public synchronized void selectEntity(Entity e) {
-        selectedEntity = e;
         checkFoVHexImageCacheClear();
-        // If we don't do this, the selectedWeapon might not correspond to this
-        // entity
-        selectedWeapon = null;
         updateEcmList();
         highlightSelectedEntity();
-    }
-
-    @Override
-    public synchronized void weaponSelected(MechDisplayEvent b) {
-        selectedEntity = b.getEntity();
-        selectedWeapon = b.getEquip();
-        boardPanel.repaint();
     }
 
     /**
@@ -4783,390 +4769,6 @@ public class BoardView extends AbstractBoardView implements BoardListener, Mouse
 
         // Return the chosen unit.
         return choice;
-    }
-
-
-    /**
-     * @return HTML summarizing the terrain, units and deployment of the hex under the mouse
-     */
-    public String getHexTooltip(MouseEvent e) {
-        final Point point = e.getPoint();
-        final Coords mcoords = getCoordsAt(point);
-
-        if (!game.getBoard().contains(mcoords)) {
-            return null;
-        }
-
-        Hex mhex = game.getBoard().getHex(mcoords);
-
-        String result = "";
-
-        // Hex Terrain
-        if (GUIP.getShowMapHexPopup() && (mhex != null)) {
-            StringBuffer sbTerrain = new StringBuffer();
-            appendTerrainTooltip(sbTerrain, mhex, GUIP);
-            String sTrerain = sbTerrain.toString();
-
-            // Distance from the selected unit and a planned movement end point
-            if ((selectedEntity != null) && (selectedEntity.getPosition() != null)) {
-                int distance = selectedEntity.getPosition().distance(mcoords);
-                if (distance == 1) {
-                    sTrerain += Messages.getString("BoardView1.Tooltip.Distance1");
-                } else {
-                    sTrerain += Messages.getString("BoardView1.Tooltip.DistanceN", distance);
-                }
-
-                if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_SENSORS)) {
-                    LosEffects los = fovHighlightingAndDarkening.getCachedLosEffects(selectedEntity.getPosition(), mcoords);
-                    int bracket = Compute.getSensorRangeBracket(selectedEntity, null,
-                            fovHighlightingAndDarkening.cachedAllECMInfo);
-                    int range = Compute.getSensorRangeByBracket(game, selectedEntity, null, los);
-
-                    int maxSensorRange = bracket * range;
-                    int minSensorRange = Math.max((bracket - 1) * range, 0);
-                    if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_INCLUSIVE_SENSOR_RANGE)) {
-                        minSensorRange = 0;
-                    }
-                    sTrerain += "<BR>";
-                    if ((distance > minSensorRange) && (distance <= maxSensorRange)) {
-                        sTrerain += Messages.getString("BoardView1.Tooltip.SensorsHexInRange");
-                    } else {
-                        sTrerain += Messages.getString("BoardView1.Tooltip.SensorsHexNotInRange1");
-                        String tmp = Messages.getString("BoardView1.Tooltip.SensorsHexNotInRange2");
-                        sTrerain += guiScaledFontHTML(GUIP.getWarningColor()) + tmp + "<FONT>";
-                        sTrerain += Messages.getString("BoardView1.Tooltip.SensorsHexNotInRange3");
-                    }
-                }
-
-                if (game.getPhase().isMovement() && (movementTarget != null)) {
-                    sTrerain += "<BR>";
-                    int disPM = movementTarget.distance(mcoords);
-                    String sDinstanceMove = "";
-                    if (disPM == 1) {
-                        sDinstanceMove = Messages.getString("BoardView1.Tooltip.DistanceMove1");
-                    } else {
-                        sDinstanceMove = Messages.getString("BoardView1.Tooltip.DistanceMoveN", disPM);
-                    }
-                    sTrerain += "<I>" + sDinstanceMove + "</I>";
-                }
-            }
-
-            sTrerain = guiScaledFontHTML(GUIP.getUnitToolTipTerrainFGColor()) + sTrerain + "</FONT>";
-            String col = "<TD>" + sTrerain + "</TD>";
-            String row = "<TR>" + col + "</TR>";
-            String table = "<TABLE BORDER=0 BGCOLOR=" + GUIP.hexColor(GUIP.getUnitToolTipTerrainBGColor()) + " width=100%>" + row + "</TABLE>";
-            result += table;
-
-            StringBuffer sbBuildings = new StringBuffer();
-            appendBuildingsTooltip(sbBuildings, mhex);
-            result += sbBuildings.toString();
-
-            if (displayInvalidHexInfo) {
-                StringBuffer errBuff = new StringBuffer();
-                if (!mhex.isValid(errBuff)) {
-                    String sInvalidHex = Messages.getString("BoardView1.invalidHex");
-                    sInvalidHex += "<BR>";
-                    String errors = errBuff.toString();
-                    errors = errors.replace("\n", "<BR>");
-                    sInvalidHex += errors;
-                    sInvalidHex = guiScaledFontHTML(GUIP.getUnitToolTipFGColor()) + sInvalidHex + "</FONT>";
-                    result += "<BR>" + sInvalidHex;
-                }
-            }
-        }
-
-        // Show the player(s) that may deploy here
-        // in the artillery autohit designation phase
-        if (game.getPhase().isSetArtilleryAutohitHexes() && (mhex != null)) {
-            String sAttilleryAutoHix = "";
-            Enumeration<Player> allP = game.getPlayers();
-            boolean foundPlayer = false;
-            // loop through all players
-            while (allP.hasMoreElements()) {
-                Player cp = allP.nextElement();
-                if (game.getBoard().isLegalDeployment(mcoords, cp)) {
-                    if (!foundPlayer) {
-                        foundPlayer = true;
-                        sAttilleryAutoHix += Messages.getString("BoardView1.Tooltip.ArtyAutoHeader") + "<BR>";
-                    }
-
-                    String sName = "&nbsp;&nbsp;" + cp.getName();
-                    sName = guiScaledFontHTML(cp.getColour().getColour()) + sName + "</FONT>";
-                    sAttilleryAutoHix += "<B>" + sName + "</B>";
-                    sAttilleryAutoHix += "<BR>";
-                }
-            }
-            if (foundPlayer) {
-                sAttilleryAutoHix += "<BR>";
-            }
-
-            // Add a hint with keybind that the zones can be shown graphically
-            String keybindText = KeyCommandBind.getDesc(KeyCommandBind.getBindByCmd("autoArtyDeployZone"));
-            String msg_artyautohit = Messages.getString("BoardView1.Tooltip.ArtyAutoHint1") + "<BR>";
-            msg_artyautohit += Messages.getString("BoardView1.Tooltip.ArtyAutoHint2") + "<BR>";
-            msg_artyautohit += Messages.getString("BoardView1.Tooltip.ArtyAutoHint3", keybindText);
-            sAttilleryAutoHix += "<I>" + msg_artyautohit + "</I>";
-
-            sAttilleryAutoHix = guiScaledFontHTML(uiWhite()) + sAttilleryAutoHix + "</FONT>";
-
-            String col = "<TD>" + sAttilleryAutoHix + "</TD>";
-            String row = "<TR>" + col + "</TR>";
-            String table = "<TABLE BORDER=0 width=100%>" + row + "</TABLE>";
-            result += table;
-        }
-
-        // check if it's on any flares
-        for (FlareSprite fSprite : flareSprites) {
-            if (fSprite.isInside(point)) {
-                result += fSprite.getTooltip().toString();
-            }
-        }
-
-        // Add wreck info
-        var wreckList = useIsometric() ? isometricWreckSprites : wreckSprites;
-        for (var wSprite : wreckList) {
-            if (wSprite.getPosition().equals(mcoords)) {
-                String sWreck = wSprite.getTooltip().toString();
-                sWreck = guiScaledFontHTML(GUIP.getUnitToolTipAltFGColor()) + sWreck + "</FONT>";
-                String col = "<TD>" + sWreck + "</TD>";
-                String row = "<TR>" + col + "</TR>";
-                String rows = row;
-
-                if (!wSprite.entity.getCrew().isEjected()) {
-                    String sPilot = PilotToolTip.getPilotTipShort(wSprite.entity, GUIP.getshowPilotPortraitTT(), false).toString();
-                    col = "<TD>" + sPilot + "</TD>";
-                    row = "<TR>" + col + "</TR>";
-                    rows += row;
-                }
-
-                String table = "<TABLE BORDER=0 BGCOLOR=" + GUIP.hexColor(GUIP.getUnitToolTipAltBGColor()) + " width=100%>" + rows + "</TABLE>";
-                result += table;
-            }
-        }
-
-        // Entity tooltips
-        int entityCount = 0;
-        // Maximum number of entities to show in the tooltip
-        int maxShown = 4;
-        boolean hidden = false;
-
-        Set<Entity> coordEnts = new HashSet<>(game.getEntitiesVector(mcoords, true));
-        for (Entity entity : coordEnts) {
-            entityCount++;
-
-            // List only the first four units
-            if (entityCount <= maxShown) {
-                if (EntityVisibilityUtils.detectedOrHasVisual(localPlayer, game, entity)) {
-                    StringBuffer sbEntity = new StringBuffer();
-                    appendEntityTooltip(sbEntity, entity);
-                    result += sbEntity.toString();
-                } else {
-                    hidden = true;
-                }
-            }
-        }
-        // Info block if there are more than 4 units in that hex
-        if (entityCount > maxShown && !hidden) {
-            String sUnitsInfo = "There ";
-            if (entityCount - maxShown == 1) {
-                sUnitsInfo += "is 1 more<BR>unit";
-            } else {
-                sUnitsInfo += "are " + (entityCount - maxShown) + " more<BR>units";
-            }
-            sUnitsInfo += " in this hex...";
-
-            sUnitsInfo = guiScaledFontHTML(GUIP.getUnitToolTipBlockFGColor()) + sUnitsInfo + "</FONT>";
-            String col = "<TD>" + sUnitsInfo + "</TD>";
-            String row = "<TR>" + col + "</TR>";
-            String table = "<TABLE BORDER=0 BGCOLOR=" + GUIP.hexColor(GUIP.getUnitToolTipBlockBGColor()) + " width=100%>" + row + "</TABLE>";
-            result += table;
-        }
-
-        // check if it's on any attacks
-        for (AttackSprite aSprite : attackSprites) {
-            if (aSprite.isInside(mcoords)) {
-                String sAttackSprite = aSprite.getTooltip().toString();
-                sAttackSprite = guiScaledFontHTML(GUIP.getUnitToolTipAltFGColor()) + sAttackSprite + "</FONT>";
-                String col = "<TD>" + sAttackSprite + "</TD>";
-                String row = "<TR>" + col + "</TR>";
-                String table = "<TABLE BORDER=0 BGCOLOR=" + GUIP.hexColor(GUIP.getUnitToolTipAltBGColor()) + " width=100%>" + row + "</TABLE>";
-                result += table;
-            }
-        }
-
-        // Artillery attacks
-        for (ArtilleryAttackAction aaa : getArtilleryAttacksAtLocation(mcoords)) {
-            // Default texts if no real names can be found
-            String wpName = Messages.getString("BoardView1.Artillery");
-            String ammoName = "Unknown";
-
-            // Get real weapon and ammo name
-            final Entity artyEnt = game.getEntity(aaa.getEntityId());
-            if (artyEnt != null) {
-                if (aaa.getWeaponId() > -1) {
-                    wpName = artyEnt.getEquipment(aaa.getWeaponId()).getName();
-                    if (aaa.getAmmoId() > -1) {
-                        ammoName = artyEnt.getEquipment(aaa.getAmmoId()).getName();
-                    }
-                }
-            }
-
-            String msg_artilleryatack;
-
-            if (aaa.getTurnsTilHit() == 1) {
-                msg_artilleryatack = Messages.getString("BoardView1.Tooltip.ArtilleryAttackOne1", wpName);
-                msg_artilleryatack += "<BR>&nbsp;&nbsp;";
-                msg_artilleryatack += Messages.getString("BoardView1.Tooltip.ArtilleryAttackOne2", ammoName);
-            } else {
-                msg_artilleryatack = Messages.getString("BoardView1.Tooltip.ArtilleryAttackN1", wpName, aaa.getTurnsTilHit());
-                msg_artilleryatack += "<BR>&nbsp;&nbsp;";
-                msg_artilleryatack += Messages.getString("BoardView1.Tooltip.ArtilleryAttackN2", ammoName);
-            }
-
-            msg_artilleryatack = guiScaledFontHTML(GUIP.getUnitToolTipBlockFGColor()) + msg_artilleryatack + "</FONT>";
-            String col = "<TD>" + msg_artilleryatack + "</TD>";
-            String row = "<TR>" + col + "</TR>";
-            String table = "<TABLE BORDER=0 BGCOLOR=" + GUIP.hexColor(GUIP.getUnitToolTipBlockBGColor()) + " width=100%>" + row + "</TABLE>";
-            result += table;
-        }
-
-        // Artillery fire adjustment
-        final Mounted curWeapon = getSelectedArtilleryWeapon();
-        if ((curWeapon != null) && (selectedEntity != null)) {
-            // process targeted hexes
-            int amod = 0;
-            // Check the predesignated hexes
-            if (selectedEntity.getOwner().getArtyAutoHitHexes().contains(mcoords)) {
-                amod = TargetRoll.AUTOMATIC_SUCCESS;
-            } else {
-                amod = selectedEntity.aTracker.getModifier(curWeapon, mcoords);
-            }
-
-            String msg_artilleryautohit;
-
-            if (amod == TargetRoll.AUTOMATIC_SUCCESS) {
-                msg_artilleryautohit = Messages.getString("BoardView1.ArtilleryAutohit");
-            } else {
-                msg_artilleryautohit = Messages.getString("BoardView1.ArtilleryAdjustment", amod);
-            }
-            msg_artilleryautohit = guiScaledFontHTML(UIUtil.uiWhite()) + msg_artilleryautohit + "</FONT>";
-            result += msg_artilleryautohit + "<BR>";
-        }
-
-        final Collection<SpecialHexDisplay> shdList = game.getBoard().getSpecialHexDisplay(mcoords);
-        int round = game.getRoundCount();
-        if (shdList != null) {
-            String sSpecialHex = "";
-            boolean isHexAutoHit = localPlayer.getArtyAutoHitHexes().contains(mcoords);
-            for (SpecialHexDisplay shd : shdList) {
-                boolean isTypeAutoHit = shd.getType() == SpecialHexDisplay.Type.ARTILLERY_AUTOHIT;
-                // Don't draw if this SHD is obscured from this player
-                // The SHD list may also contain stale SHDs, so don't show
-                // tooltips for SHDs that aren't drawn.
-                // The exception is auto hits.  There will be an icon for auto
-                // hits, so we need to draw a tooltip
-                if (!shd.isObscured(localPlayer)
-                        && (shd.drawNow(game.getPhase(), round, localPlayer)
-                        || (isHexAutoHit && isTypeAutoHit))) {
-                    if (shd.getType() == SpecialHexDisplay.Type.PLAYER_NOTE) {
-                        if (localPlayer.equals(shd.getOwner())) {
-                            sSpecialHex += "Note: ";
-                        } else {
-                            sSpecialHex += "Note (" + shd.getOwner().getName() + "): ";
-                        }
-                    }
-                    String buf = shd.getInfo();
-                    buf = buf.replaceAll("\\n", "<BR>");
-                    sSpecialHex += buf;
-                    sSpecialHex = guiScaledFontHTML(UIUtil.uiWhite()) + sSpecialHex + "</FONT>";
-                    sSpecialHex += "<BR>";
-                }
-            }
-
-            result += sSpecialHex;
-        }
-
-        StringBuffer txt = new StringBuffer();
-        String div = "<DIV WIDTH=" + UIUtil.scaleForGUI(500) + ">" + result + "</DIV>";
-        txt.append(UnitToolTip.wrapWithHTML(div));
-
-        // Check to see if the tool tip is completely empty
-        if (result.isEmpty()) {
-            return "";
-        }
-
-        // Now that a valid tooltip text seems to be present,
-        // (re)set the tooltip dismissal delay time to the preference
-        // value so that the tooltip actually appears
-        if (GUIP.getTooltipDismissDelay() >= 0) {
-            ToolTipManager.sharedInstance().setDismissDelay(GUIP.getTooltipDismissDelay());
-        } else {
-            ToolTipManager.sharedInstance().setDismissDelay(dismissDelay);
-        }
-
-        return txt.toString();
-    }
-
-    /**
-     * Appends HTML describing the terrain of a given hex
-     */
-    public void appendTerrainTooltip(StringBuffer txt, @Nullable Hex mhex, GUIPreferences GUIP) {
-        if (mhex == null) {
-            return;
-        }
-
-        txt.append(HexTooltip.getTerrainTip(mhex, GUIP, game));
-    }
-
-    /**
-     * Appends HTML describing the buildings and minefields in a given hex
-     */
-    public void appendBuildingsTooltip(StringBuffer txt, @Nullable Hex mhex) {
-        if ((mhex != null) && (clientgui != null)) {
-            String result = HexTooltip.getHexTip(mhex, clientgui.getClient(), GUIP);
-            txt.append(result);
-        }
-    }
-
-    /**
-     * Appends HTML describing a given Entity aka Unit
-     */
-    public void appendEntityTooltip(StringBuffer txt, @Nullable Entity entity) {
-        if (entity == null) {
-            return;
-        }
-
-        String result = "";
-
-        result += "<HR STYLE=WIDTH:90% />";
-        // Table to add a bar to the left of an entity in
-        // the player's color
-        String color = GUIP.hexColor(GUIP.getUnitToolTipFGColor());
-        if (!EntityVisibilityUtils.onlyDetectedBySensors(localPlayer, entity)) {
-            color = entity.getOwner().getColour().getHexString();
-        }
-        String col1 = "<TD BGCOLOR=#" + color + " WIDTH=6></TD>";
-        // Entity tooltip
-        String col2 = "<TD>" + UnitToolTip.getEntityTipGame(entity, getLocalPlayer()) + "</TD>";
-        String row = "<TR>" + col1 + col2 + "</TR>";
-        String table = "<TABLE WIDTH=100% BGCOLOR=" + GUIP.hexColor(GUIP.getUnitToolTipBGColor()) + ">" + row + "</TABLE>";
-        result += table;
-
-        txt.append(result);
-    }
-
-    private ArrayList<ArtilleryAttackAction> getArtilleryAttacksAtLocation(Coords c) {
-        ArrayList<ArtilleryAttackAction> v = new ArrayList<>();
-
-        for (Enumeration<ArtilleryAttackAction> attacks = game.getArtilleryAttacks(); attacks.hasMoreElements(); ) {
-            ArtilleryAttackAction a = attacks.nextElement();
-            Targetable target = a.getTarget(game);
-
-            if ((target != null) && c.equals(target.getPosition())) {
-                v.add(a);
-            }
-        }
-        return v;
     }
 
     @Override
@@ -5975,12 +5577,25 @@ public class BoardView extends AbstractBoardView implements BoardListener, Mouse
         return boardPanel;
     }
 
-    Dimension getBoardSize() {
+    @Override
+    public Dimension getBoardSize() {
         return boardSize;
     }
 
-    Set<Integer> getAnimatedImages() {
+    @Override
+    public Set<Integer> getAnimatedImages() {
         return animatedImages;
+    }
+
+    @Override
+    public int getScrollableUnitIncrement(Rectangle arg0, int arg1, int arg2) {
+        return (int) (scale / 2.0) * ((arg1 == SwingConstants.VERTICAL) ? HEX_H : HEX_W);
+    }
+
+    @Override
+    public int getScrollableBlockIncrement(Rectangle arg0, int arg1, int arg2) {
+        Dimension size = scrollpane.getViewport().getSize();
+        return (arg1 == SwingConstants.VERTICAL) ? size.height : size.width;
     }
 
     @Override
@@ -5999,5 +5614,30 @@ public class BoardView extends AbstractBoardView implements BoardListener, Mouse
         return (TurnDetailsOverlay) overlays.stream()
                 .filter(o -> o instanceof TurnDetailsOverlay)
                 .findFirst().orElse(null);
+    }
+
+    @Nullable
+    Entity getSelectedEntity() {
+        return clientgui != null ? clientgui.getSelectedUnit() : null;
+    }
+
+    FovHighlightingAndDarkening getFovHighlighting() {
+        return fovHighlightingAndDarkening;
+    }
+
+    List<FlareSprite> getFlareSprites() {
+        return flareSprites;
+    }
+
+    List<WreckSprite> getWreckSprites() {
+        return wreckSprites;
+    }
+
+    List<IsometricWreckSprite> getIsoWreckSprites() {
+        return isometricWreckSprites;
+    }
+
+    List<AttackSprite> getAttackSprites() {
+        return attackSprites;
     }
 }

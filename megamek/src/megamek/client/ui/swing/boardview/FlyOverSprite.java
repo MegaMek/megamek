@@ -226,7 +226,7 @@ class FlyOverSprite extends Sprite {
 
         g.setColor(spriteColor);
         g.fillPolygon(drawPoly);
-        if (en.equals(bv.selectedEntity) && (g instanceof Graphics2D)) {
+        if (en.equals(bv.getSelectedEntity()) && (g instanceof Graphics2D)) {
             Graphics2D g2 = (Graphics2D) g;
             Stroke oldStroke = g2.getStroke();
             g2.setStroke(new BasicStroke(1));

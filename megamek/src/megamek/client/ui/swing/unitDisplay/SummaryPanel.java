@@ -20,7 +20,7 @@ package megamek.client.ui.swing.unitDisplay;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
-import megamek.client.ui.swing.boardview.BoardView;
+import megamek.client.ui.swing.tooltip.HexTooltip;
 import megamek.client.ui.swing.tooltip.PilotToolTip;
 import megamek.client.ui.swing.tooltip.UnitToolTip;
 import megamek.client.ui.swing.widget.*;
@@ -36,8 +36,8 @@ import java.awt.*;
  */
 public class SummaryPanel extends PicMap {
 
-    private UnitDisplay unitDisplay;
-    private JLabel unitInfo;
+    private final UnitDisplay unitDisplay;
+    private final JLabel unitInfo;
 
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
 
@@ -133,21 +133,21 @@ public class SummaryPanel extends PicMap {
         } else {
             // This is html tables inside tables to maintain transparency to the bg image but
             // also allow cells do have bg colors
-            StringBuffer hexTxt = new StringBuffer("");
+            StringBuilder hexTxt = new StringBuilder();
             hexTxt.append(PilotToolTip.getPilotTipDetailed(entity, true));
             hexTxt.append(UnitToolTip.getEntityTipUnitDisplay(entity, localPlayer));
-            String col = "";
-            String row = "";
-            BoardView bv = unitDisplay.getClientGUI().getBoardView();
+            String col;
+            String row;
             Hex mhex = entity.getGame().getBoard().getHex(entity.getPosition());
 
-            if (bv != null && mhex != null) {
-                StringBuffer sb = new StringBuffer();
-                bv.appendTerrainTooltip(sb, mhex, GUIP);
+            if (mhex != null) {
+                StringBuilder sb = new StringBuilder();
+                sb.append(HexTooltip.getTerrainTip(mhex, GUIP, entity.getGame()));
                 col = "<TD>" + sb + "</TD>";
                 row = "<TR>" + col + "</TR>";
-                hexTxt.append("<TABLE BORDER=0 BGCOLOR=" + GUIP.hexColor(GUIP.getUnitToolTipTerrainBGColor()) + " width=100%>" + row + "</TABLE>");
-                bv.appendBuildingsTooltip(hexTxt, mhex);
+                hexTxt.append("<TABLE BORDER=0 BGCOLOR=" + GUIPreferences.hexColor(GUIP.getUnitToolTipTerrainBGColor())
+                        + " width=100%>" + row + "</TABLE>");
+                sb.append(HexTooltip.getHexTip(mhex, unitDisplay.getClientGUI().getClient(), GUIP));
             }
 
             String t = PilotToolTip.getCrewAdvs(entity, true).toString();

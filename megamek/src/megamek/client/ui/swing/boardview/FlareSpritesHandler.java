@@ -31,12 +31,19 @@ public class FlareSpritesHandler extends BoardViewSpriteHandler {
     public FlareSpritesHandler(BoardView boardView, Game game) {
         super(boardView);
         this.game = game;
+        game.addGameListener(this);
     }
 
     public void renewSprites(Collection<Flare> flares) {
         clear();
         flares.stream().map(flare -> new FlareSprite(boardView, flare)).forEach(currentSprites::add);
         boardView.addSprites(currentSprites);
+    }
+
+    @Override
+    void dispose() {
+        clear();
+        game.removeGameListener(this);
     }
 
     @Override

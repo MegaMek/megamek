@@ -219,8 +219,6 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
     public int fieldOfFireWpUnderwater = 0;
     private static final String[] rangeTexts = {"min", "S", "M", "L", "E"};
 
-    private ArrayList<HexSprite> sensorRangeSprites = new ArrayList<>();
-
     TilesetManager tileManager;
 
     // polygons for a few things
@@ -762,10 +760,6 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
                 clearHexImageCache();
                 boardPanel.repaint();
                 break;
-
-            case GUIPreferences.SHOW_SENSOR_RANGE:
-                boardPanel.repaint();
-                break;
         }
     }
 
@@ -873,11 +867,6 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         // draw wrecks
         if (GUIP.getShowWrecks() && !useIsometric()) {
             drawSprites(g, wreckSprites);
-        }
-
-        // Sensor Range
-        if (!useIsometric() && shouldShowSensorRange()) {
-            drawSprites(g, sensorRangeSprites);
         }
 
         // Field of Fire
@@ -1631,10 +1620,6 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
                 drawSprites(boardGraph, wreckSprites);
             }
 
-            if (!useIsometric() && shouldShowSensorRange()) {
-                drawSprites(boardGraph, sensorRangeSprites);
-            }
-
             // Field of Fire
             if (!useIsometric() && shouldShowFieldOfFire()) {
                 drawSprites(boardGraph, fieldOfFireSprites);
@@ -1762,9 +1747,6 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
                         if ((hex != null)) {
                             drawHex(c, g, saveBoardImage);
                             drawOrthograph(c, g);
-                            if (shouldShowSensorRange()) {
-                                drawHexSpritesForHex(c, g, sensorRangeSprites);
-                            }
                             if (shouldShowFieldOfFire()) {
                                 drawHexSpritesForHex(c, g, fieldOfFireSprites);
                             }
@@ -4396,7 +4378,6 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         flyOverSprites.clear();
         movementSprites.clear();
         fieldOfFireSprites.clear();
-        sensorRangeSprites.clear();
         cfWarningSprites.clear();
         super.clearSprites();
     }
@@ -4842,10 +4823,6 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
 
         allSprites.forEach(Sprite::prepare);
 
-        for (Sprite spr : sensorRangeSprites) {
-            spr.prepare();
-        }
-
         for (Sprite spr : fieldOfFireSprites) {
             spr.prepare();
         }
@@ -4985,10 +4962,6 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         allSprites.forEach(Sprite::prepare);
         hexSprites().forEach(HexSprite::updateBounds);
 
-        for (Sprite spr : sensorRangeSprites) {
-            spr.prepare();
-        }
-
         for (Sprite spr : fieldOfFireSprites) {
             spr.prepare();
         }
@@ -5089,11 +5062,6 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         fieldOfFireWpArc = -1;
         fieldOfFireUnit = null;
         fieldOfFireSprites.clear();
-        boardPanel.repaint();
-    }
-
-    public void clearSensorsRanges() {
-        sensorRangeSprites.clear();
         boardPanel.repaint();
     }
 
@@ -5251,125 +5219,6 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         boardPanel.repaint();
     }
 
-    public static class RangeHelper {
-        public int min;
-        public int max;
-
-        public RangeHelper(int min, int max) {
-            this.min = min;
-            this.max = max;
-        }
-    }
-
-    // prepares the sprites for visual and sensor ranges
-    public void setSensorRange(Entity entity, Coords c) {
-        // Do not calculate anything for offboard units
-        if (entity == null || c == null || entity.isOffBoard()) {
-            clearSensorsRanges();
-            return;
-        }
-
-        List<RangeHelper> lBrackets = new ArrayList<>(1);
-        int minSensorRange = 0;
-        int maxSensorRange = 0;
-        int minAirSensorRange = 0;
-        int maxAirSensorRange = 0;
-        GameOptions gameOptions = game.getOptions();
-
-        if (gameOptions.booleanOption(OptionsConstants.ADVANCED_TACOPS_SENSORS)
-                || (gameOptions.booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS)) && entity.isSpaceborne()) {
-            Compute.SensorRangeHelper srh = Compute.getSensorRanges(entity.getGame(), entity);
-
-            if (srh != null) {
-                if (entity.isAirborne() && entity.getGame().getBoard().onGround()) {
-                    minSensorRange = srh.minGroundSensorRange;
-                    maxSensorRange = srh.maxGroundSensorRange;
-                    minAirSensorRange = srh.minSensorRange;
-                    maxAirSensorRange = srh.maxSensorRange;
-                } else {
-                    minSensorRange = srh.minSensorRange;
-                    maxSensorRange = srh.maxSensorRange;
-                }
-            }
-        }
-
-        lBrackets.add(new RangeHelper(minSensorRange, maxSensorRange));
-        lBrackets.add(new RangeHelper(minAirSensorRange, maxAirSensorRange));
-
-        minSensorRange = 0;
-        maxSensorRange = Compute.getMaxVisualRange(entity, false);
-
-        lBrackets.add(new RangeHelper(minSensorRange, maxSensorRange));
-
-        minSensorRange = 0;
-
-        if (game.getPlanetaryConditions().getLight().isDuskOrFullMoonOrMoonlessOrPitchBack()) {
-            maxSensorRange = Compute.getMaxVisualRange(entity, true);
-        } else {
-            maxSensorRange = 0;
-        }
-
-        lBrackets.add(new RangeHelper(minSensorRange, maxSensorRange));
-
-        // create the lists of hexes
-        List<Set<Coords>> sensorRanges = new ArrayList<>(1);
-        int j = 0;
-
-        // find max range possible on map, no need to check beyond it
-        int rangeToCorner = (new Coords(0, game.getBoard().getHeight())).distance(c);
-        rangeToCorner = Math.max(rangeToCorner, (new Coords(0, 0)).distance(c));
-        rangeToCorner = Math.max(rangeToCorner, (new Coords(game.getBoard().getWidth(), 0)).distance(c));
-        rangeToCorner = Math.max(rangeToCorner, (new Coords(game.getBoard().getWidth(), game.getBoard().getHeight())).distance(c));
-
-        for (RangeHelper rangeH : lBrackets) {
-            sensorRanges.add(new HashSet<>());
-            int rangeMin = Math.min(rangeH.min, rangeToCorner);
-            int rangeMax = Math.min(rangeH.max, rangeToCorner);
-
-            if (rangeMin != rangeMax) {
-                for (int i = rangeMin; i <= rangeMax; i++) {
-                    // Add all hexes up to the range to separate lists
-                    sensorRanges.get(j).addAll(c.allAtDistance(i));
-                }
-            }
-
-            // Remove hexes that are not on the board
-            sensorRanges.get(j).removeIf(h -> !game.getBoard().contains(h));
-            j++;
-        }
-
-        // create the sprites
-        sensorRangeSprites.clear();
-
-        // for all available range
-        for (int b = 0; b < lBrackets.size(); b++) {
-            if (sensorRanges.get(b) == null) {
-                continue;
-            }
-
-            for (Coords loc : sensorRanges.get(b)) {
-                // check surrounding hexes
-                int edgesToPaint = 0;
-
-                for (int dir = 0; dir < 6; dir++) {
-                    Coords adjacentHex = loc.translated(dir);
-
-                    if (!sensorRanges.get(b).contains(adjacentHex)) {
-                        edgesToPaint += (1 << dir);
-                    }
-                }
-
-                // create sprite if there's a border to paint
-                if (edgesToPaint > 0) {
-                    SensorRangeSprite srSprite = new SensorRangeSprite(this, b, loc, edgesToPaint);
-                    sensorRangeSprites.add(srSprite);
-                }
-            }
-        }
-
-        boardPanel.repaint();
-    }
-
     /** Displays a dialog and changes the theme of all
      *  board hexes to the user-chosen theme.
      */
@@ -5425,13 +5274,6 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
 
     public boolean shouldShowFieldOfFire() {
         return GUIP.getShowFieldOfFire() &&
-                (game.getPhase().isDeployment() || game.getPhase().isMovement()
-                        || game.getPhase().isTargeting() || game.getPhase().isFiring()
-                        || game.getPhase().isOffboard());
-    }
-
-    public boolean shouldShowSensorRange() {
-        return GUIP.getShowSensorRange() &&
                 (game.getPhase().isDeployment() || game.getPhase().isMovement()
                         || game.getPhase().isTargeting() || game.getPhase().isFiring()
                         || game.getPhase().isOffboard());

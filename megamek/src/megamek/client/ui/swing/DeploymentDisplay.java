@@ -227,13 +227,13 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             clientgui.getUnitDisplay().displayEntity(ce());
             clientgui.getUnitDisplay().showPanel("movement");
             clientgui.getBoardView().setWeaponFieldOfFire(ce().getFacing(), ce().getPosition());
-            clientgui.getBoardView().setSensorRange(ce(), ce().getPosition());
+            clientgui.showSensorRanges(ce());
             computeCFWarningHexes(ce());
         } else {
             disableButtons();
             setNextEnabled(true);
             clientgui.getBoardView().clearFieldOfFire();
-            clientgui.getBoardView().clearSensorsRanges();
+            clientgui.clearTemporarySprites();
         }
     }
 
@@ -521,7 +521,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             ce().setSecondaryFacing(ce().getFacing());
             clientgui.getBoardView().redrawEntity(ce());
             clientgui.getBoardView().setWeaponFieldOfFire(ce().getFacing(), ce().getPosition());
-            clientgui.getBoardView().setSensorRange(ce(), ce().getPosition());
+            clientgui.showSensorRanges(ce());
             turnMode = false;
         } else if (ce().isBoardProhibited(board.getType())) {
             // check if this type of unit can be on the given type of map
@@ -587,7 +587,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
 
             clientgui.getBoardView().redrawEntity(ce());
             clientgui.getBoardView().setWeaponFieldOfFire(ce().getFacing(), moveto);
-            clientgui.getBoardView().setSensorRange(ce(), ce().getPosition());
+            clientgui.showSensorRanges(ce());
             clientgui.getBoardView().getPanel().repaint();
             butDone.setEnabled(true);
         }
@@ -877,7 +877,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             return;
         }
         clientgui.getBoardView().clearFieldOfFire();
-        clientgui.getBoardView().clearSensorsRanges();
+        clientgui.clearTemporarySprites();
         if (client.isMyTurn()) {
             if (client.getGame().getTurn().isValidEntity(e, client.getGame())) {
                 if (ce() != null) {

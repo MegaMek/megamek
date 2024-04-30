@@ -31,8 +31,18 @@ import java.awt.*;
  */
 public class MovementEnvelopeSpriteHandler extends BoardViewSpriteHandler {
 
-    public MovementEnvelopeSpriteHandler(BoardView boardView) {
+    private final Game game;
+
+    public MovementEnvelopeSpriteHandler(BoardView boardView, Game game) {
         super(boardView);
+        this.game = game;
+        game.addGameListener(this);
+    }
+
+    @Override
+    void dispose() {
+        clear();
+        game.removeGameListener(this);
     }
 
     public void setMovementEnvelope(Map<Coords, Integer> mvEnvData, int walk, int run, int jump, int gear) {

@@ -38,10 +38,22 @@ public abstract class BoardViewSpriteHandler implements GameListener {
         this.boardView = boardView;
     }
 
+    /**
+     * Removes any current sprites of this handler from the attached BoardView and clears this handler's
+     * internal sprite list.
+     *
+     * When overriding this, call super.clear() or remember to perform clean up in the overriding method.
+     */
     public void clear() {
         boardView.removeSprites(currentSprites);
         currentSprites.clear();
     }
+
+    /**
+     * Override this method to perform any clean up steps when this handler and its associated sprites are
+     * no longer needed, such as removing the handler as listener.
+     */
+    abstract void dispose();
 
     //region GameListener Methods
     @Override

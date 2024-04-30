@@ -245,7 +245,7 @@ public class ClientGUI extends JPanel implements BoardViewListener, IClientGUI,
     private BoardView bv;
     private MovementEnvelopeSpriteHandler movementEnvelopeHandler;
     private MovementModifierSpriteHandler movementModifierSpriteHandler;
-    private FlareSpritesHandler flareSpritesHandler;
+    private SensorRangeSpriteHandler sensorRangeSpriteHandler;
     private Component bvc;
     private JPanel panTop;
     private JSplitPane splitPaneA;
@@ -543,12 +543,10 @@ public class ClientGUI extends JPanel implements BoardViewListener, IClientGUI,
             bv.setTooltipProvider(new TWBoardViewTooltip(client.getGame(), this, bv));
             bvc = bv.getComponent();
             bvc.setName(CG_BOARDVIEW);
-            movementEnvelopeHandler = new MovementEnvelopeSpriteHandler(bv);
-            movementModifierSpriteHandler = new MovementModifierSpriteHandler(bv);
-            flareSpritesHandler = new FlareSpritesHandler(bv, client.getGame());
-            client.getGame().addGameListener(movementEnvelopeHandler);
-            client.getGame().addGameListener(movementModifierSpriteHandler);
-            client.getGame().addGameListener(flareSpritesHandler);
+            movementEnvelopeHandler = new MovementEnvelopeSpriteHandler(bv, client.getGame());
+            movementModifierSpriteHandler = new MovementModifierSpriteHandler(bv, client.getGame());
+            new FlareSpritesHandler(bv, client.getGame());
+            sensorRangeSpriteHandler = new SensorRangeSpriteHandler(bv, client.getGame());
 
             panTop = new JPanel(new BorderLayout());
             panA1 = new JPanel();
@@ -1157,9 +1155,6 @@ public class ClientGUI extends JPanel implements BoardViewListener, IClientGUI,
             LogManager.getLogger().error("", ex);
         }
 
-        client.getGame().removeGameListener(movementEnvelopeHandler);
-        client.getGame().removeGameListener(movementModifierSpriteHandler);
-        client.getGame().removeGameListener(flareSpritesHandler);
         client.die();
 
         TimerSingleton.getInstance().killTimer();
@@ -2367,7 +2362,7 @@ public class ClientGUI extends JPanel implements BoardViewListener, IClientGUI,
         public void gameEnd(GameEndEvent e) {
             bv.clearMovementData();
             bv.clearFieldOfFire();
-            bv.clearSensorsRanges();
+            clearTemporarySprites();
             getLocalBots().values().forEach(AbstractClient::die);
             getLocalBots().clear();
 
@@ -2993,18 +2988,24 @@ public class ClientGUI extends JPanel implements BoardViewListener, IClientGUI,
     public void setMovementEnvelope(Entity entity, Map<Coords, Integer> mvEnvData, int walk, int run, int jump, int gear) {
         // multi boards: select the correct boardview for the entity and the correct envelopehandler from the given entity
         movementEnvelopeHandler.setMovementEnvelope(mvEnvData, walk, run, jump, gear);
-        bv.repaint();
     }
 
     public void clearTemporarySprites() {
         movementEnvelopeHandler.clear();
         movementModifierSpriteHandler.clear();
-        bv.repaint();
+        sensorRangeSpriteHandler.clear();
     }
 
     public void showMovementModifiers(Collection<MovePath> movePaths) {
         movementModifierSpriteHandler.renewSprites(movePaths);
-        bv.repaint();
+    }
+
+    public void showSensorRanges(Entity entity) {
+        showSensorRanges(entity, entity.getPosition());
+    }
+
+    public void showSensorRanges(Entity entity, Coords assumedPosition) {
+        sensorRangeSpriteHandler.setSensorRange(entity, assumedPosition);
     }
 
     @Override

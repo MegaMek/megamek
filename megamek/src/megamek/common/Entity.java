@@ -6865,6 +6865,18 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
+     * Calculates a "generic" Battle Value that is based on the average of all units of this type and tonnage. The
+     * purpose of this generic Battle Value is to allow a comparison of this unit's actual BV to that for units of
+     * its class. This can be used to balance forces without respect to unit or pilot quality.
+     *
+     * The generic BV values are calculated by a statistical elasticity model based on all data from the MegaMek
+     * database.
+     *
+     * @return The generic Battle value for this unit based on its tonnage and type
+     */
+    public abstract int getGenericBattleValue();
+
+    /**
      * Generates a vector containing reports on all useful information about
      * this entity.
      */

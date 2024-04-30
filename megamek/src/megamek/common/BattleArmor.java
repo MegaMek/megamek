@@ -1980,4 +1980,9 @@ public class BattleArmor extends Infantry {
     public int firstArmorIndex() {
         return 1;
     }
+
+    @Override
+    public int getGenericBattleValue() {
+        return (int) Math.round(Math.exp(3.157 + 1.514*Math.log(getWeight())));
+    }
 }

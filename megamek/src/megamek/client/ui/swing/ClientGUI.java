@@ -24,6 +24,8 @@ import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.bot.princess.Princess;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
+import megamek.client.event.MechDisplayEvent;
+import megamek.client.event.MechDisplayListener;
 import megamek.client.ui.Messages;
 import megamek.client.ui.dialogs.MiniReportDisplayDialog;
 import megamek.client.ui.dialogs.UnitDisplayDialog;
@@ -50,6 +52,7 @@ import megamek.common.MovePath.MoveStepType;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.GamePhase;
+import megamek.common.equipment.WeaponMounted;
 import megamek.common.event.*;
 import megamek.common.icons.Camouflage;
 import megamek.common.preference.ClientPreferences;
@@ -81,7 +84,7 @@ import java.util.List;
 import java.util.*;
 
 public class ClientGUI extends JPanel implements BoardViewListener, IClientGUI,
-        ActionListener, ComponentListener, IPreferenceChangeListener {
+        ActionListener, ComponentListener, IPreferenceChangeListener, MechDisplayListener {
     // region Variable Declarations
     private static final long serialVersionUID = 3913466735610109147L;
 
@@ -92,6 +95,8 @@ public class ClientGUI extends JPanel implements BoardViewListener, IClientGUI,
     private static final String FILENAME_ICON_32X32 = "megamek-icon-32x32.png";
     private static final String FILENAME_ICON_48X48 = "megamek-icon-48x48.png";
     private static final String FILENAME_ICON_256X256 = "megamek-icon-256x256.png";
+
+    public static final int WEAPON_NONE = -1;
 
     /** The smallest GUI scaling value; smaller will make text unreadable */
     public static final float MIN_GUISCALE = 0.7f;
@@ -327,6 +332,11 @@ public class ClientGUI extends JPanel implements BoardViewListener, IClientGUI,
     private int selectedEntityNum = Entity.NONE;
 
     /**
+     * The currently selected weapon on the currently selected entity (if any), WEAPON_NONE otherwise
+     */
+    private int selectedWeapon = WEAPON_NONE;
+
+    /**
      * Flag that indicates whether hotkeys should be ignored or not. This is
      * used for disabling hot keys when various dialogs are displayed.
      */
@@ -529,6 +539,7 @@ public class ClientGUI extends JPanel implements BoardViewListener, IClientGUI,
             bv.addOverlay(new PlanetaryConditionsOverlay(bv));
             bv.addOverlay(new TurnDetailsOverlay(bv));
             bv.getPanel().setPreferredSize(getSize());
+            bv.setTooltipProvider(new TWBoardViewTooltip(client.getGame(), this, bv));
             bvc = bv.getComponent();
             bvc.setName(CG_BOARDVIEW);
             movementEnvelopeHandler = new MovementEnvelopeHandler(bv);
@@ -606,7 +617,7 @@ public class ClientGUI extends JPanel implements BoardViewListener, IClientGUI,
         bv.addOverlay(offBoardOverlay);
 
         setUnitDisplay(new UnitDisplay(this, controller));
-        getUnitDisplay().addMechDisplayListener(bv);
+        getUnitDisplay().addMechDisplayListener(this);
         setUnitDisplayDialog(new UnitDisplayDialog(getFrame(), this));
         getUnitDisplayDialog().setVisible(false);
 
@@ -2669,6 +2680,7 @@ public class ClientGUI extends JPanel implements BoardViewListener, IClientGUI,
      */
     public void setSelectedEntityNum(int selectedEntityNum) {
         this.selectedEntityNum = selectedEntityNum;
+        clearSelectedWeapon();
         bv.selectEntity(client.getGame().getEntity(selectedEntityNum));
     }
 
@@ -2971,5 +2983,38 @@ public class ClientGUI extends JPanel implements BoardViewListener, IClientGUI,
     public void setMovementEnvelope(Entity entity, Map<Coords, Integer> mvEnvData, int walk, int run, int jump, int gear) {
         // moveEnvHandlerFor(boardViewFor(entity))...
         movementEnvelopeHandler.setMovementEnvelope(mvEnvData, walk, run, jump, gear);
+    }
+
+    @Override
+    public void weaponSelected(MechDisplayEvent b) {
+        setSelectedEntityNum(b.getEntityId());
+        setSelectedWeapon(b.getWeaponId());
+    }
+
+    private void setSelectedWeapon(int equipmentNumber) {
+        selectedWeapon = equipmentNumber;
+    }
+
+    private void clearSelectedWeapon() {
+        selectedWeapon = WEAPON_NONE;
+    }
+
+    public int getSelectedWeaponId() {
+        return selectedWeapon;
+    }
+
+    @Nullable
+    public Mounted<?> getSelectedWeapon() {
+        return hasSelectedWeapon() ? getSelectedUnit().getEquipment(selectedWeapon) : null;
+    }
+
+    @Nullable
+    @Override
+    public Entity getSelectedUnit() {
+        return client.getGame().getEntity(selectedEntityNum);
+    }
+
+    public boolean hasSelectedWeapon() {
+        return (getSelectedUnit() != null) && (getSelectedUnit().getEquipment(selectedWeapon) != null);
     }
 }

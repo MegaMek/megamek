@@ -237,7 +237,6 @@ public interface IGame {
      *
      * @return The game's board (using ID = 0)
      */
-    @Deprecated
     default Board getBoard() {
         return getBoard(0);
     }

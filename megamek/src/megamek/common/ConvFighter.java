@@ -131,4 +131,9 @@ public class ConvFighter extends AeroSpaceFighter {
     public long getEntityType() {
         return Entity.ETYPE_AERO | Entity.ETYPE_CONV_FIGHTER;
     }
+
+    @Override
+    public int getGenericBattleValue() {
+        return (int) Math.round(Math.exp(2.943 + 0.795*Math.log(getWeight())));
+    }
 }

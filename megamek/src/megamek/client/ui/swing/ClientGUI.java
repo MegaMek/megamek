@@ -33,10 +33,7 @@ import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.swing.audio.AudioService;
 import megamek.client.ui.swing.audio.SoundManager;
 import megamek.client.ui.swing.audio.SoundType;
-import megamek.client.ui.swing.boardview.BoardView;
-import megamek.client.ui.swing.boardview.KeyBindingsOverlay;
-import megamek.client.ui.swing.boardview.PlanetaryConditionsOverlay;
-import megamek.client.ui.swing.boardview.TurnDetailsOverlay;
+import megamek.client.ui.swing.boardview.*;
 import megamek.client.ui.swing.dialog.AbstractUnitSelectorDialog;
 import megamek.client.ui.swing.dialog.MegaMekUnitSelectorDialog;
 import megamek.client.ui.swing.forceDisplay.ForceDisplayDialog;
@@ -242,6 +239,7 @@ public class ClientGUI extends JPanel implements BoardViewListener, IClientGUI,
     private ChatterBox cb;
     public ChatterBox2 cb2;
     private BoardView bv;
+    private MovementEnvelopeHandler movementEnvelopeHandler;
     private Component bvc;
     private JPanel panTop;
     private JSplitPane splitPaneA;
@@ -533,6 +531,7 @@ public class ClientGUI extends JPanel implements BoardViewListener, IClientGUI,
             bv.getPanel().setPreferredSize(getSize());
             bvc = bv.getComponent();
             bvc.setName(CG_BOARDVIEW);
+            movementEnvelopeHandler = new MovementEnvelopeHandler(bv);
 
             panTop = new JPanel(new BorderLayout());
             panA1 = new JPanel();
@@ -2967,5 +2966,10 @@ public class ClientGUI extends JPanel implements BoardViewListener, IClientGUI,
         } else if (e.getName().equals(GUIPreferences.MASTER_VOLUME)) {
             audioService.setVolume();
         }
+    }
+
+    public void setMovementEnvelope(Entity entity, Map<Coords, Integer> mvEnvData, int walk, int run, int jump, int gear) {
+        // moveEnvHandlerFor(boardViewFor(entity))...
+        movementEnvelopeHandler.setMovementEnvelope(mvEnvData, walk, run, jump, gear);
     }
 }

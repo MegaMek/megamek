@@ -166,6 +166,8 @@ public class BoardView extends AbstractBoardView implements BoardListener, Mouse
     /** True when the right mouse button was pressed to start a drag */
     private boolean shouldScroll = false;
 
+    private final TreeSet<Sprite> allSprites = new TreeSet<>();
+
     // entity sprites
     private Queue<EntitySprite> entitySprites = new PriorityQueue<>();
     private Queue<IsometricSprite> isometricSprites = new PriorityQueue<>();
@@ -903,6 +905,8 @@ public class BoardView extends AbstractBoardView implements BoardListener, Mouse
             drawSprites(g, moveEnvSprites);
             drawSprites(g, moveModEnvSprites);
         }
+
+        drawSprites(g, allSprites);
 
         // Minefield signs all over the place!
         drawMinefields(g);
@@ -3427,73 +3431,73 @@ public class BoardView extends AbstractBoardView implements BoardListener, Mouse
     public void setMovementEnvelope(Map<Coords, Integer> mvEnvData, int walk, int run, int jump, int gear) {
         clearMovementEnvelope();
 
-        if (mvEnvData == null) {
-            return;
-        }
-
-        for (Coords loc : mvEnvData.keySet()) {
-            Color spriteColor = null;
-            int mvType = -1;
-            if (gear == MovementDisplay.GEAR_JUMP || gear == MovementDisplay.GEAR_DFA) {
-                if (mvEnvData.get(loc) <= jump) {
-                    spriteColor = GUIP.getMoveJumpColor();
-                    mvType = 1;
-                }
-            } else {
-                if (mvEnvData.get(loc) <= walk) {
-                    spriteColor = GUIP.getMoveDefaultColor();
-                    mvType = 2;
-                } else if (mvEnvData.get(loc) <= run) {
-                    spriteColor = GUIP.getMoveRunColor();
-                    mvType = 3;
-                } else {
-                    spriteColor = GUIP.getMoveSprintColor();
-                    mvType = 4;
-                }
-            }
-
-            // Next: check the adjacent hexes and find
-            // those with the same movement type,
-            // send this to the Sprite so it paints only
-            // the borders of the movement type areas
-            int mvAdjType;
-            int edgesToPaint = 0;
-            // cycle through hexes
-            for (int dir = 0; dir < 6; dir++) {
-                mvAdjType = 0;
-                Coords adjacentHex = loc.translated(dir);
-                // get the movement type
-                Integer Adjmv = mvEnvData.get(adjacentHex);
-                if (Adjmv != null) {
-                    if (gear == MovementDisplay.GEAR_JUMP) {
-                        if (Adjmv <= jump) {
-                            mvAdjType = 1;
-                        }
-                    } else {
-                        if (Adjmv <= walk) {
-                            mvAdjType = 2;
-                        } else if (Adjmv <= run) {
-                            mvAdjType = 3;
-                        } else {
-                            mvAdjType = 4;
-                        }
-                    }
-                }
-
-                // other movement type: paint a border in this direction
-                if (mvAdjType != mvType) {
-                    edgesToPaint += (1 << dir);
-                }
-            }
-
-            if (spriteColor != null) {
-                MovementEnvelopeSprite mvSprite = new MovementEnvelopeSprite(
-                        this, spriteColor, loc, edgesToPaint);
-                moveEnvSprites.add(mvSprite);
-            }
-        }
-
-        boardPanel.repaint();
+//        if (mvEnvData == null) {
+//            return;
+//        }
+//
+//        for (Coords loc : mvEnvData.keySet()) {
+//            Color spriteColor = null;
+//            int mvType = -1;
+//            if (gear == MovementDisplay.GEAR_JUMP || gear == MovementDisplay.GEAR_DFA) {
+//                if (mvEnvData.get(loc) <= jump) {
+//                    spriteColor = GUIP.getMoveJumpColor();
+//                    mvType = 1;
+//                }
+//            } else {
+//                if (mvEnvData.get(loc) <= walk) {
+//                    spriteColor = GUIP.getMoveDefaultColor();
+//                    mvType = 2;
+//                } else if (mvEnvData.get(loc) <= run) {
+//                    spriteColor = GUIP.getMoveRunColor();
+//                    mvType = 3;
+//                } else {
+//                    spriteColor = GUIP.getMoveSprintColor();
+//                    mvType = 4;
+//                }
+//            }
+//
+//            // Next: check the adjacent hexes and find
+//            // those with the same movement type,
+//            // send this to the Sprite so it paints only
+//            // the borders of the movement type areas
+//            int mvAdjType;
+//            int edgesToPaint = 0;
+//            // cycle through hexes
+//            for (int dir = 0; dir < 6; dir++) {
+//                mvAdjType = 0;
+//                Coords adjacentHex = loc.translated(dir);
+//                // get the movement type
+//                Integer Adjmv = mvEnvData.get(adjacentHex);
+//                if (Adjmv != null) {
+//                    if (gear == MovementDisplay.GEAR_JUMP) {
+//                        if (Adjmv <= jump) {
+//                            mvAdjType = 1;
+//                        }
+//                    } else {
+//                        if (Adjmv <= walk) {
+//                            mvAdjType = 2;
+//                        } else if (Adjmv <= run) {
+//                            mvAdjType = 3;
+//                        } else {
+//                            mvAdjType = 4;
+//                        }
+//                    }
+//                }
+//
+//                // other movement type: paint a border in this direction
+//                if (mvAdjType != mvType) {
+//                    edgesToPaint += (1 << dir);
+//                }
+//            }
+//
+//            if (spriteColor != null) {
+//                MovementEnvelopeSprite mvSprite = new MovementEnvelopeSprite(
+//                        this, spriteColor, loc, edgesToPaint);
+//                moveEnvSprites.add(mvSprite);
+//            }
+//        }
+//
+//        boardPanel.repaint();
 
     }
 
@@ -5347,6 +5351,9 @@ public class BoardView extends AbstractBoardView implements BoardListener, Mouse
         selectedSprite.prepare();
         firstLOSSprite.prepare();
         secondLOSSprite.prepare();
+
+        allSprites.forEach(Sprite::prepare);
+
         for (Sprite spr : moveEnvSprites) {
             spr.prepare();
         }
@@ -5495,6 +5502,9 @@ public class BoardView extends AbstractBoardView implements BoardListener, Mouse
 
     public boolean toggleIsometric() {
         drawIsometric = !drawIsometric;
+        allSprites.forEach(Sprite::prepare);
+        allSprites.stream().filter(s -> s instanceof HexSprite).map(s -> (HexSprite) s).forEach(HexSprite::updateBounds);
+
         for (Sprite spr : moveEnvSprites) {
             spr.prepare();
         }
@@ -5999,5 +6009,25 @@ public class BoardView extends AbstractBoardView implements BoardListener, Mouse
         return (TurnDetailsOverlay) overlays.stream()
                 .filter(o -> o instanceof TurnDetailsOverlay)
                 .findFirst().orElse(null);
+    }
+
+    public void addSprite(Sprite sprite) {
+        allSprites.add(sprite);
+        boardPanel.repaint();
+    }
+
+    public void addSprites(Collection<Sprite> sprites) {
+        allSprites.addAll(sprites);
+        boardPanel.repaint();
+    }
+
+    public void removeSprite(Sprite sprite) {
+        allSprites.remove(sprite);
+        boardPanel.repaint();
+    }
+
+    public void removeSprites(Collection<Sprite> sprites) {
+        allSprites.removeAll(sprites);
+        boardPanel.repaint();
     }
 }

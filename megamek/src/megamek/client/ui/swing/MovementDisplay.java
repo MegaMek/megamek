@@ -4412,7 +4412,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         for (Coords c : mvEnvData.keySet()) {
             mvEnvMP.put(c, mvEnvData.get(c).countMp(mvMode == GEAR_JUMP));
         }
-        clientgui.getBoardView().setMovementEnvelope(mvEnvMP, en.getWalkMP(), en
+        clientgui.setMovementEnvelope(en, mvEnvMP, en.getWalkMP(), en
                 .getRunMP(), en.getJumpMP(), mvMode);
     }
 

@@ -50,10 +50,17 @@ public abstract class BoardViewSpriteHandler implements GameListener {
     }
 
     /**
+     * Override this method to perform start up steps such as registering it as a listener (doing this in
+     * the constructor is frowned upon). This method should be called by the BoardView when the handler is
+     * attached to it.
+     */
+    public abstract void initialize();
+
+    /**
      * Override this method to perform any clean up steps when this handler and its associated sprites are
      * no longer needed, such as removing the handler as listener.
      */
-    abstract void dispose();
+    public abstract void dispose();
 
     //region GameListener Methods
     @Override

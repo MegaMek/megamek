@@ -31,11 +31,15 @@ public class MovementModifierSpriteHandler extends BoardViewSpriteHandler {
     public MovementModifierSpriteHandler(BoardView boardView, Game game) {
         super(boardView);
         this.game = game;
+    }
+
+    @Override
+    public void initialize() {
         game.addGameListener(this);
     }
 
     @Override
-    void dispose() {
+    public void dispose() {
         clear();
         game.removeGameListener(this);
     }

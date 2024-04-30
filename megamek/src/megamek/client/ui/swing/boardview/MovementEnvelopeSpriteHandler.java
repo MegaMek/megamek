@@ -36,11 +36,15 @@ public class MovementEnvelopeSpriteHandler extends BoardViewSpriteHandler {
     public MovementEnvelopeSpriteHandler(BoardView boardView, Game game) {
         super(boardView);
         this.game = game;
+    }
+
+    @Override
+    public void initialize() {
         game.addGameListener(this);
     }
 
     @Override
-    void dispose() {
+    public void dispose() {
         clear();
         game.removeGameListener(this);
     }

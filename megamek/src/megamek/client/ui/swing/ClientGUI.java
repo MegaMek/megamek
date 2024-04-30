@@ -246,6 +246,7 @@ public class ClientGUI extends JPanel implements BoardViewListener, IClientGUI,
     private MovementEnvelopeSpriteHandler movementEnvelopeHandler;
     private MovementModifierSpriteHandler movementModifierSpriteHandler;
     private SensorRangeSpriteHandler sensorRangeSpriteHandler;
+    private final List<BoardViewSpriteHandler> spriteHandlers = new ArrayList<>();
     private Component bvc;
     private JPanel panTop;
     private JSplitPane splitPaneA;
@@ -528,6 +529,17 @@ public class ClientGUI extends JPanel implements BoardViewListener, IClientGUI,
         frame.validate();
     }
 
+    private void initializeSpriteHandlers() {
+        movementEnvelopeHandler = new MovementEnvelopeSpriteHandler(bv, client.getGame());
+        movementModifierSpriteHandler = new MovementModifierSpriteHandler(bv, client.getGame());
+        FlareSpritesHandler flareSpritesHandler = new FlareSpritesHandler(bv, client.getGame());
+        sensorRangeSpriteHandler = new SensorRangeSpriteHandler(bv, client.getGame());
+
+        spriteHandlers.addAll(List.of(movementEnvelopeHandler, movementModifierSpriteHandler,
+                sensorRangeSpriteHandler, flareSpritesHandler));
+        spriteHandlers.forEach(BoardViewSpriteHandler::initialize);
+    }
+
     @Override
     public void initialize() {
         menuBar = new CommonMenuBar(getClient());
@@ -543,10 +555,7 @@ public class ClientGUI extends JPanel implements BoardViewListener, IClientGUI,
             bv.setTooltipProvider(new TWBoardViewTooltip(client.getGame(), this, bv));
             bvc = bv.getComponent();
             bvc.setName(CG_BOARDVIEW);
-            movementEnvelopeHandler = new MovementEnvelopeSpriteHandler(bv, client.getGame());
-            movementModifierSpriteHandler = new MovementModifierSpriteHandler(bv, client.getGame());
-            new FlareSpritesHandler(bv, client.getGame());
-            sensorRangeSpriteHandler = new SensorRangeSpriteHandler(bv, client.getGame());
+            initializeSpriteHandlers();
 
             panTop = new JPanel(new BorderLayout());
             panA1 = new JPanel();

@@ -45,7 +45,6 @@ public class SensorRangeSpriteHandler extends BoardViewSpriteHandler implements 
     public SensorRangeSpriteHandler(BoardView boardView, Game game) {
         super(boardView);
         this.game = game;
-        GUIP.addPreferenceChangeListener(this);
     }
 
     private boolean shouldShowSensorRange() {
@@ -63,7 +62,12 @@ public class SensorRangeSpriteHandler extends BoardViewSpriteHandler implements 
     }
 
     @Override
-    void dispose() {
+    public void initialize() {
+        GUIP.addPreferenceChangeListener(this);
+    }
+
+    @Override
+    public void dispose() {
         clear();
         GUIP.removePreferenceChangeListener(this);
     }

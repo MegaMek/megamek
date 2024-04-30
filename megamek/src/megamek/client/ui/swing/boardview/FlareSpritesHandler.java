@@ -31,7 +31,6 @@ public class FlareSpritesHandler extends BoardViewSpriteHandler {
     public FlareSpritesHandler(BoardView boardView, Game game) {
         super(boardView);
         this.game = game;
-        game.addGameListener(this);
     }
 
     public void renewSprites(Collection<Flare> flares) {
@@ -41,7 +40,12 @@ public class FlareSpritesHandler extends BoardViewSpriteHandler {
     }
 
     @Override
-    void dispose() {
+    public void initialize() {
+        game.addGameListener(this);
+    }
+
+    @Override
+    public void dispose() {
         clear();
         game.removeGameListener(this);
     }

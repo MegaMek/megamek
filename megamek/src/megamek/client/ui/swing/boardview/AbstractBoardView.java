@@ -111,6 +111,7 @@ public abstract class AbstractBoardView implements IBoardView {
 
     /**
      * Removes all sprites from this BoardView. This includes (possibly) sprites for units, attacks etc.
+     * Note that this is not communicated to the SpriteHandlers.
      */
     public void clearSprites() {
         allSprites.clear();

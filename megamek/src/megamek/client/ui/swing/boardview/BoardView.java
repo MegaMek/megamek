@@ -879,7 +879,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
             drawSprites(g, allSprites);
         } else {
             // In iso mode, some sprites are drawn in drawHexes so they can go behind terrin; draw only the others here
-            drawSprites(g, overTerrainSprites());
+            drawSprites(g, overTerrainSprites);
         }
 
         // Minefield signs all over the place!
@@ -1628,7 +1628,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
             if (!useIsometric()) {
                 drawSprites(boardGraph, allSprites);
             } else {
-                drawSprites(boardGraph, overTerrainSprites());
+                drawSprites(boardGraph, overTerrainSprites);
             }
 
             // Minefield signs all over the place!
@@ -1750,7 +1750,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
                             if (shouldShowFieldOfFire()) {
                                 drawHexSpritesForHex(c, g, fieldOfFireSprites);
                             }
-                            drawHexSpritesForHex(c, g, behindTerrainHexSprites());
+                            drawHexSpritesForHex(c, g, behindTerrainHexSprites);
                             if ((en_Deployer != null)
                                     && board.isLegalDeployment(c, en_Deployer)) {
                                 drawHexBorder(g, getHexLocation(c), Color.YELLOW);
@@ -4379,6 +4379,11 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         movementSprites.clear();
         fieldOfFireSprites.clear();
         cfWarningSprites.clear();
+
+        overTerrainSprites.clear();
+        behindTerrainHexSprites.clear();
+        hexSprites.clear();
+
         super.clearSprites();
     }
 
@@ -4960,7 +4965,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
     public boolean toggleIsometric() {
         drawIsometric = !drawIsometric;
         allSprites.forEach(Sprite::prepare);
-        hexSprites().forEach(HexSprite::updateBounds);
+        hexSprites.forEach(HexSprite::updateBounds);
 
         for (Sprite spr : fieldOfFireSprites) {
             spr.prepare();
@@ -5352,40 +5357,39 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         return attackSprites;
     }
 
-    /**
-     * @return this BoardView's sprites that are HexSprites.
-     */
-    private TreeSet<HexSprite> hexSprites() {
-        return allSprites.stream()
-                .filter(s -> s instanceof HexSprite)
-                .map(s -> (HexSprite) s)
-                .collect(Collectors.toCollection(TreeSet::new));
-    }
-
-    /**
-     * @return this BoardView's sprites that are HexSprites and should not overlap terrain in iso mode, see
-     * {@link HexSprite#isBehindTerrain()}.
-     */
-    private TreeSet<HexSprite> behindTerrainHexSprites() {
-        return allSprites.stream()
-                .filter(s -> s instanceof HexSprite)
-                .map(s -> (HexSprite) s)
-                .filter(HexSprite::isBehindTerrain)
-                .collect(Collectors.toCollection(TreeSet::new));
-    }
-
-    /**
-     * @return this BoardView's sprites that are not HexSprites or should draw over all terrain in iso mode, see
-     * {@link HexSprite#isBehindTerrain()}. This is the opposite of {@link #behindTerrainHexSprites()}.
-     */
-    private TreeSet<Sprite> overTerrainSprites() {
-        return allSprites.stream()
-                .filter(s -> !(s instanceof HexSprite) || !((HexSprite) s).isBehindTerrain())
-                .collect(Collectors.toCollection(TreeSet::new));
-    }
-
     @Override
     public void repaint() {
         boardPanel.repaint();
     }
+
+    private final TreeSet<Sprite> overTerrainSprites = new TreeSet<>();
+    private final TreeSet<HexSprite> behindTerrainHexSprites = new TreeSet<>();
+    private final TreeSet<HexSprite> hexSprites = new TreeSet<>();
+
+    @Override
+    public void addSprites(Collection<? extends Sprite> sprites) {
+        super.addSprites(sprites);
+        sprites.stream()
+                .filter(s -> !(s instanceof HexSprite) || !((HexSprite) s).isBehindTerrain())
+                .forEach(overTerrainSprites::add);
+        sprites.stream()
+                .filter(s -> s instanceof HexSprite)
+                .map(s -> (HexSprite) s)
+                .filter(HexSprite::isBehindTerrain)
+                .forEach(behindTerrainHexSprites::add);
+        sprites.stream()
+                .filter(s -> s instanceof HexSprite)
+                .map(s -> (HexSprite) s)
+                .forEach(hexSprites::add);
+    }
+
+    @Override
+    public void removeSprites(Collection<? extends Sprite> sprites) {
+        super.removeSprites(sprites);
+        overTerrainSprites.removeAll(sprites);
+        behindTerrainHexSprites.removeAll(sprites);
+        hexSprites.removeAll(sprites);
+    }
+
+
 }

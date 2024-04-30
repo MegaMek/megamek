@@ -34719,22 +34719,18 @@ public class GameManager extends AbstractGameManager {
             int numberOfStrikes = Math.max(1, rollNumber.getIntValue() / 2);
             Roll rollType = Compute.rollD6(1);
             int damage;
-            boolean adjacent;
             switch (rollType.getIntValue()) {
                 case 1:
                 case 2:
                 case 3:
                     damage = 5;
-                    adjacent = false;
                     break;
                 case 4:
                 case 5:
                     damage = 10;
-                    adjacent = false;
                     break;
                 default:
                     damage = 15;
-                    adjacent = true;
             }
 
             for (int i = 0; i < numberOfStrikes; i++) {
@@ -34742,12 +34738,12 @@ public class GameManager extends AbstractGameManager {
                 int y = Compute.randomInt(game.getBoard().getHeight());
                 Coords location = new Coords(x, y);
 
-                lightningStormDamage(location, damage, false, vFullReport);
+                lightningStormDamage(location, damage, "", vFullReport);
 
-                if (adjacent) {
+                if (rollType.getIntValue() == 6) {
                     for (Coords locationAdjacent : location.allAdjacent()) {
                         if (game.getBoard().getHex(locationAdjacent) != null) {
-                            lightningStormDamage(locationAdjacent, 5, adjacent, vFullReport);
+                            lightningStormDamage(locationAdjacent, 5, "adjacent ", vFullReport);
                         }
                     }
                 }
@@ -34758,13 +34754,11 @@ public class GameManager extends AbstractGameManager {
         return vFullReport;
     }
 
-    private void lightningStormDamage(Coords location, int damage, boolean adjacent, Vector<Report> vFullReport) {
+    private void lightningStormDamage(Coords location, int damage, String adjacent, Vector<Report> vFullReport) {
         List<Entity> hitEntities = game.getEntitiesVector().stream().filter(e -> e.getPosition().equals(location)).collect(Collectors.toList());
 
-        String adj = adjacent ? "adjacent " : "";
-
         Report r = new Report(5621);
-        r.add(adj);
+        r.add(adjacent);
         r.add(location.getBoardNum());
         vFullReport.add(r);
 

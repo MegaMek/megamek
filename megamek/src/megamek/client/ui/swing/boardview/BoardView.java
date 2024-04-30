@@ -885,10 +885,11 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
             drawSprites(g, fieldOfFireSprites);
         }
 
-        if (!useIsometric()) { // otherwise, sprites are drawn in drawHexes
+        if (!useIsometric()) {
+            // In non-iso mode, all sprites can now be drawn according to their internal priority (draw order)
             drawSprites(g, allSprites);
         } else {
-            // In iso mode, some sprites are drawn in drawHexes so they can go behind terrin; draw the others here
+            // In iso mode, some sprites are drawn in drawHexes so they can go behind terrin; draw only the others here
             drawSprites(g, overTerrainSprites());
         }
 
@@ -1612,114 +1613,114 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         }
 
         Image entireBoard = boardPanel.createImage(boardSize.width, boardSize.height);
-        Graphics2D boardImageGraph = (Graphics2D) entireBoard.getGraphics();
-        boardImageGraph.setClip(0, 0, boardSize.width, boardSize.height);
-        UIUtil.setHighQualityRendering(boardImageGraph);
+        Graphics2D boardGraph = (Graphics2D) entireBoard.getGraphics();
+        boardGraph.setClip(0, 0, boardSize.width, boardSize.height);
+        UIUtil.setHighQualityRendering(boardGraph);
 
         if (shadowMap == null) {
             shadowMap = shadowHelper.updateShadowMap();
         }
 
         // Draw hexes
-        drawHexes(boardImageGraph, new Rectangle(boardSize), ignoreUnits);
+        drawHexes(boardGraph, new Rectangle(boardSize), ignoreUnits);
 
         // If we aren't ignoring units, draw everything else
         if (!ignoreUnits) {
             // draw wrecks
             if (GUIP.getShowWrecks() && !useIsometric()) {
-                drawSprites(boardImageGraph, wreckSprites);
+                drawSprites(boardGraph, wreckSprites);
             }
 
             if (!useIsometric() && shouldShowSensorRange()) {
-                drawSprites(boardImageGraph, sensorRangeSprites);
+                drawSprites(boardGraph, sensorRangeSprites);
             }
 
             // Field of Fire
             if (!useIsometric() && shouldShowFieldOfFire()) {
-                drawSprites(boardImageGraph, fieldOfFireSprites);
+                drawSprites(boardGraph, fieldOfFireSprites);
             }
 
-            if (!useIsometric()) { // otherwise, sprites are drawn in drawHexes
-                drawSprites(boardImageGraph, allSprites);
+            if (!useIsometric()) {
+                drawSprites(boardGraph, allSprites);
             } else {
-                drawSprites(boardImageGraph, overTerrainSprites());
+                drawSprites(boardGraph, overTerrainSprites());
             }
 
             // Minefield signs all over the place!
-            drawMinefields(boardImageGraph);
+            drawMinefields(boardGraph);
 
             // Artillery targets
-            drawArtilleryHexes(boardImageGraph);
+            drawArtilleryHexes(boardGraph);
 
             // draw highlight border
-            drawSprite(boardImageGraph, highlightSprite);
+            drawSprite(boardGraph, highlightSprite);
 
             // draw cursors
-            drawSprite(boardImageGraph, cursorSprite);
-            drawSprite(boardImageGraph, selectedSprite);
-            drawSprite(boardImageGraph, firstLOSSprite);
-            drawSprite(boardImageGraph, secondLOSSprite);
+            drawSprite(boardGraph, cursorSprite);
+            drawSprite(boardGraph, selectedSprite);
+            drawSprite(boardGraph, firstLOSSprite);
+            drawSprite(boardGraph, secondLOSSprite);
 
             // draw deployment indicators.
             // For Isometric rendering, this is done during drawHexes
             if ((en_Deployer != null) && !useIsometric()) {
-                drawDeployment(boardImageGraph);
+                drawDeployment(boardGraph);
             }
 
             if (game.getPhase().isSetArtilleryAutohitHexes() && showAllDeployment) {
-                drawAllDeployment(boardImageGraph);
+                drawAllDeployment(boardGraph);
             }
 
             // draw C3 links
-            drawSprites(boardImageGraph, c3Sprites);
+            drawSprites(boardGraph, c3Sprites);
 
             // draw flyover routes
             if (game.getBoard().onGround()) {
-                drawSprites(boardImageGraph, vtolAttackSprites);
-                drawSprites(boardImageGraph, flyOverSprites);
+                drawSprites(boardGraph, vtolAttackSprites);
+                drawSprites(boardGraph, flyOverSprites);
             }
 
             // draw onscreen entities
-            drawSprites(boardImageGraph, entitySprites);
+            drawSprites(boardGraph, entitySprites);
 
             // draw structure collapse warning sprites if in movement or deploy phase.
             // draw this before moving entities, so they show up under if overlapped.
             if (!useIsometric() && shouldShowCFWarning()) {
-                drawSprites(boardImageGraph, cfWarningSprites);
+                drawSprites(boardGraph, cfWarningSprites);
             }
 
             // draw moving onscreen entities
-            drawSprites(boardImageGraph, movingEntitySprites);
+            drawSprites(boardGraph, movingEntitySprites);
 
             // draw ghost onscreen entities
-            drawSprites(boardImageGraph, ghostEntitySprites);
+            drawSprites(boardGraph, ghostEntitySprites);
 
             // draw onscreen attacks
-            drawSprites(boardImageGraph, attackSprites);
+            drawSprites(boardGraph, attackSprites);
 
             // draw movement vectors.
             if (game.getPhase().isMovement() && game.useVectorMove()) {
-                drawSprites(boardImageGraph, movementSprites);
+                drawSprites(boardGraph, movementSprites);
             }
 
             // draw movement, if valid
-            drawSprites(boardImageGraph, pathSprites);
+            drawSprites(boardGraph, pathSprites);
 
             // draw flight path indicators
-            drawSprites(boardImageGraph, fpiSprites);
+            drawSprites(boardGraph, fpiSprites);
 
             // draw firing solution sprites, but only during the firing phase
             if (game.getPhase().isFiring() || game.getPhase().isOffboard()) {
-                drawSprites(boardImageGraph, firingSprites);
+                drawSprites(boardGraph, firingSprites);
             }
 
             if (game.getPhase().isFiring()) {
                 for (Coords c : strafingCoords) {
-                    drawHexBorder(boardImageGraph, getHexLocation(c), Color.yellow, 0, 3);
+                    drawHexBorder(boardGraph, getHexLocation(c), Color.yellow, 0, 3);
                 }
             }
         }
-        boardImageGraph.dispose();
+        boardGraph.dispose();
 
         // Restore the zoom setting
         zoomIndex = oldZoom;

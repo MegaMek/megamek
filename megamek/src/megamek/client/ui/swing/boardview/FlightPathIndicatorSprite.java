@@ -21,6 +21,7 @@ package megamek.client.ui.swing.boardview;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
 
 import megamek.MMConstants;
 import megamek.client.ui.swing.util.FontHandler;
@@ -44,10 +45,12 @@ import megamek.common.MoveStep;
  */
 public class FlightPathIndicatorSprite extends HexSprite {
 
-    private static final int TEXT_SIZE = 30;
-    private static final Color COLOR_YELLOW = new Color(255, 255, 0, 128);
-    private static final Color COLOR_GREEN = new Color(0, 255, 0, 128);
-    private static final Color COLOR_RED = new Color(255, 0, 0, 128);
+    private static final int TEXT_SIZE = 50;
+    private static final int ARROW_X_OFFSET = 14;
+    private static final int ARROW_Y_OFFSET = 4;
+    private static final Color COLOR_YELLOW = new Color(255, 255, 0, 200);
+    private static final Color COLOR_GREEN = new Color(0, 255, 0, 200);
+    private static final Color COLOR_RED = new Color(255, 0, 0, 200);
     private static final Color COLOR_OUTLINE = new Color(40, 40,40,200);
 
     private static final int HEX_CENTER_X = BoardView.HEX_W / 2;
@@ -57,51 +60,32 @@ public class FlightPathIndicatorSprite extends HexSprite {
     private final MoveStep step;
     private final boolean isLast;
 
-    private static final String EMPTY_CIRCLE = "\ue061";
-    private static final String SOLID_CIRCLE = "\ue57b";
-    private static final String EMPTY_FLAG = "\ueaf8";
-    private static final String SOLID_FLAG = "\uf06e";
-    private static final String SOLID_TWO_WAY = "\uf1ff";
+    private static final String STRAIGHT_ARROW = "\uEB95";
+    private static final String FLAG = "\uf06e";
+    private static final String FLY_OFF = "\uf700";
+    private static final String RIGHT_TURN = "\uEB9A";
+    private static final String LEFT_TURN = "\uEBA4";
 
-    private final StringDrawer.StringDrawerConfig redSymbolConfig =
+    private final StringDrawer.StringDrawerConfig symbolConfig =
             new StringDrawer.StringDrawerConfig().absoluteCenter().fontSize(TEXT_SIZE)
-                    .outline(COLOR_OUTLINE, 1.5f).color(COLOR_RED);
-
-    private final StringDrawer.StringDrawerConfig greenSymbolConfig =
-            new StringDrawer.StringDrawerConfig().absoluteCenter().fontSize(TEXT_SIZE)
-                    .outline(COLOR_OUTLINE, 1.5f).color(COLOR_GREEN);
-
-    private final StringDrawer.StringDrawerConfig yellowSymbolConfig =
-            new StringDrawer.StringDrawerConfig().absoluteCenter().fontSize(TEXT_SIZE)
-                    .outline(COLOR_OUTLINE, 1.5f).color(COLOR_YELLOW);
+                    .outline(COLOR_OUTLINE, 1.5f);
 
     // Setup 'StringDrawers' to write special characters as icons.
-    private final StringDrawer mustFlyIcon = new StringDrawer(EMPTY_CIRCLE)
-            .at(HEX_CENTER_X, HEX_CENTER_Y).useConfig(redSymbolConfig);
+    private final StringDrawer straight = new StringDrawer(STRAIGHT_ARROW)
+            .at(HEX_CENTER_X, HEX_CENTER_Y - ARROW_Y_OFFSET).useConfig(symbolConfig);
 
-    private final StringDrawer greenFlagIcon = new StringDrawer(SOLID_FLAG)
-            .at(HEX_CENTER_X, HEX_CENTER_Y).useConfig(greenSymbolConfig);
+    private final StringDrawer right = new StringDrawer(RIGHT_TURN)
+            .at(HEX_CENTER_X + ARROW_X_OFFSET, HEX_CENTER_Y + ARROW_Y_OFFSET).useConfig(symbolConfig);
 
-    private final StringDrawer redFlagIcon = new StringDrawer(EMPTY_FLAG)
-            .at(HEX_CENTER_X, HEX_CENTER_Y).useConfig(redSymbolConfig);
+    private final StringDrawer left = new StringDrawer(LEFT_TURN)
+            .at(HEX_CENTER_X - ARROW_X_OFFSET, HEX_CENTER_Y + ARROW_Y_OFFSET).useConfig(symbolConfig);
 
-    private final StringDrawer yellowFlagIcon = new StringDrawer(SOLID_FLAG)
-            .at(HEX_CENTER_X, HEX_CENTER_Y).useConfig(yellowSymbolConfig);
+    private final StringDrawer flag = new StringDrawer(FLAG)
+            .at(HEX_CENTER_X, HEX_CENTER_Y).useConfig(symbolConfig);
 
-    private final StringDrawer yellowEmptyFlagIcon = new StringDrawer(EMPTY_FLAG)
-            .at(HEX_CENTER_X, HEX_CENTER_Y).useConfig(yellowSymbolConfig);
+    private final StringDrawer flyOffIcon = new StringDrawer(FLY_OFF)
+            .at(HEX_CENTER_X, HEX_CENTER_Y).useConfig(symbolConfig);
 
-    private final StringDrawer flyOffIcon = new StringDrawer(SOLID_TWO_WAY)
-            .at(HEX_CENTER_X, HEX_CENTER_Y).useConfig(yellowSymbolConfig);
-
-    private final StringDrawer freeTurnIcon = new StringDrawer(SOLID_CIRCLE)
-            .at(HEX_CENTER_X, HEX_CENTER_Y).useConfig(greenSymbolConfig);
-
-    private final StringDrawer costTurnIcon = new StringDrawer(SOLID_CIRCLE)
-            .at(HEX_CENTER_X, HEX_CENTER_Y).useConfig(yellowSymbolConfig);
-
-    private final StringDrawer noThrustIcon = new StringDrawer(EMPTY_CIRCLE)
-            .at(HEX_CENTER_X, HEX_CENTER_Y).useConfig(yellowSymbolConfig);
 
     /**
      * @param boardView - BoardView associated with the sprite.
@@ -125,40 +109,51 @@ public class FlightPathIndicatorSprite extends HexSprite {
     /*
      * Based on the condition of the MoveStep associated with this sprite, draw a
      * green, yellow, or red flight path indicator to indicate turn status on that
-     * hex.  Draw a flag for final hex and a yellow diamond to indicate flying
+     * hex. Draw a flag for final hex and a special arrow to indicate flying
      * off the map.
      */
     private void drawSprite(Graphics2D graph) {
+        AffineTransform oldTransForm = graph.getTransform();
+        graph.rotate(angleForFacing(step.getFacing()), HEX_CENTER_X, HEX_CENTER_Y);
         if (isLastIndicator()) {
             if (step.getVelocityLeft() > 0) {
                 flyOffIcon.draw(graph);
                 drawRemainingDistance(graph, step);
             } else {
                 if (canTurnForFree()) {
-                    greenFlagIcon.draw(graph);
+                    flag.color(COLOR_GREEN).draw(graph);
                 } else if (canTurnWithThrustCost()) {
                     if (costsTooMuchToTurn()) {
-                        yellowEmptyFlagIcon.draw(graph);
+                        flag.color(COLOR_RED).draw(graph);
                     } else {
-                        yellowFlagIcon.draw(graph);
+                        flag.color(COLOR_YELLOW).draw(graph);
                     }
                 } else {
-                    redFlagIcon.draw(graph);
+                    flag.color(COLOR_RED).draw(graph);
                 }
             }
         } else {
             if (canTurnForFree()) {
-                freeTurnIcon.draw(graph);
+                left.color(COLOR_GREEN).draw(graph);
+                right.color(COLOR_GREEN).draw(graph);
+                straight.color(COLOR_GREEN).draw(graph);
             } else if (canTurnWithThrustCost()) {
                 if (costsTooMuchToTurn()) {
-                    noThrustIcon.draw(graph);
+                    straight.color(COLOR_RED).draw(graph);
                 } else {
-                    costTurnIcon.draw(graph);
+                    left.color(COLOR_YELLOW).draw(graph);
+                    right.color(COLOR_YELLOW).draw(graph);
+                    straight.color(COLOR_GREEN).draw(graph);
                 }
             } else {
-                mustFlyIcon.draw(graph);
+                straight.color(COLOR_RED).draw(graph);
             }
         }
+        graph.setTransform(oldTransForm);
+    }
+
+    double angleForFacing(int facing) {
+        return facing * Math.PI / 3;
     }
 
     /*

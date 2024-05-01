@@ -19,10 +19,9 @@
 package megamek.client.ui.swing.boardview;
 
 import java.awt.Color;
-import java.awt.Font;
 import java.awt.Graphics2D;
 
-import megamek.client.ui.swing.GUIPreferences;
+import megamek.client.ui.swing.util.FontHandler;
 import megamek.client.ui.swing.util.StringDrawer;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.Coords;
@@ -38,20 +37,19 @@ import megamek.common.Coords;
  */
 public class ConstructionWarningSprite extends HexSprite {
 
-    private static final GUIPreferences GUIP = GUIPreferences.getInstance();
-    private static final int TEXT_SIZE = 30;
+    private static final int TEXT_SIZE = BoardView.HEX_H / 2;
     private static final Color TEXT_COLOR = new Color(255, 255, 40, 128);
     private static final Color OUTLINE_COLOR = new Color(40, 40,40,200);
     
     private static final int HEX_CENTER_X = BoardView.HEX_W / 2;
     private static final int HEX_CENTER_Y = BoardView.HEX_H / 2;
 
-    //Draw a special character 'warning sign'.
-    private final StringDrawer xWriter = new StringDrawer("\u26A0")
+    // Draw a special character 'warning sign'.
+    private final StringDrawer xWriter = new StringDrawer("\ue160")
             .at(HEX_CENTER_X, HEX_CENTER_Y)
             .color(TEXT_COLOR)
             .fontSize(TEXT_SIZE)
-            .center().outline(OUTLINE_COLOR, 1.5f);
+            .center().outline(OUTLINE_COLOR, 2.5f);
 
     /**
      * @param boardView1 - parent BoardView object this sprite will be displayed on.
@@ -64,7 +62,7 @@ public class ConstructionWarningSprite extends HexSprite {
     @Override
     public void prepare() {
         Graphics2D graph = spriteSetup();
-        xWriter.draw(graph);        
+        xWriter.draw(graph);
         graph.dispose();
     }
 
@@ -78,19 +76,8 @@ public class ConstructionWarningSprite extends HexSprite {
         Graphics2D graph = (Graphics2D) image.getGraphics();
         UIUtil.setHighQualityRendering(graph);
         graph.scale(bv.scale, bv.scale);
-
-        fontSetup(graph);
-
+        graph.setFont(FontHandler.symbolFont());
         return graph;
-    }
-
-    /*
-     * Sets the font name, style, and size from configured default parameters.
-     */
-    private void fontSetup(Graphics2D graph) {
-        String fontName = GUIP.getMoveFontType();
-        int fontStyle = GUIP.getMoveFontStyle();
-        graph.setFont(new Font(fontName, fontStyle, TEXT_SIZE));		
     }
 
     @Override

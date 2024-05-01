@@ -238,14 +238,9 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
     }
 
     private void computeCFWarningHexes(Entity ce) {
-        List<Coords> warnList =
-                ConstructionFactorWarning.findCFWarningsDeployment(
-                        clientgui.getBoardView().game,
-                        ce,
-                        clientgui.getBoardView().game.getBoard());
-
-        clientgui.getBoardView().setCFWarningSprites(warnList);
-
+        Game game = clientgui.getClient().getGame();
+        List<Coords> warnList = ConstructionFactorWarning.findCFWarningsDeployment(game, ce, game.getBoard());
+        clientgui.showCollapseWarning(warnList);
     }
 
     /** Enables relevant buttons and sets up for your turn. */
@@ -271,7 +266,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         clientgui.getBoardView().cursor(null);
         clientgui.getBoardView().markDeploymentHexesFor(null);
         clientgui.setSelectedEntityNum(Entity.NONE);
-        clientgui.getBoardView().clearCFWarningData();
+        clientgui.clearTemporarySprites();
         disableButtons();
     }
 

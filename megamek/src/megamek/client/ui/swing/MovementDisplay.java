@@ -1114,7 +1114,6 @@ public class MovementDisplay extends ActionPhaseDisplay {
         clientgui.getBoardView().clearMovementData();
         clientgui.getBoardView().clearFieldOfFire();
         clientgui.clearTemporarySprites();
-        clientgui.getBoardView().clearCFWarningData();
     }
 
     /**
@@ -1224,6 +1223,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         cmd = new MovePath(clientgui.getClient().getGame(), ce);
         clientgui.getBoardView().setWeaponFieldOfFire(ce, cmd);
         clientgui.showSensorRanges(ce, cmd.getFinalCoords());
+        computeCFWarningHexes(ce);
 
         // set to "walk," or the equivalent
         gear = MovementDisplay.GEAR_LAND;
@@ -4480,13 +4480,9 @@ public class MovementDisplay extends ActionPhaseDisplay {
     }
 
     private void computeCFWarningHexes(Entity ce) {
-        List<Coords> warnList =
-                ConstructionFactorWarning.findCFWarningsMovement(
-                        clientgui.getBoardView().game,
-                        ce,
-                        clientgui.getBoardView().game.getBoard());
-
-        clientgui.getBoardView().setCFWarningSprites(warnList);
+        Game game = clientgui.getClient().getGame();
+        List<Coords> warnList = ConstructionFactorWarning.findCFWarningsMovement(game, ce, game.getBoard());
+        clientgui.showCollapseWarning(warnList);
     }
 
     //

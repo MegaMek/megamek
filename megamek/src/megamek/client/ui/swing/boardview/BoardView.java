@@ -192,8 +192,6 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
 
     private ArrayList<FiringSolutionSprite> firingSprites = new ArrayList<>();
 
-    private ArrayList<ConstructionWarningSprite> cfWarningSprites = new ArrayList<>();
-
     // vector of sprites for all firing lines
     private ArrayList<AttackSprite> attackSprites = new ArrayList<>();
 
@@ -919,12 +917,6 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
 
         // draw onscreen entities
         drawSprites(g, entitySprites);
-
-        // draw structure warning in the deployment or movement phases
-        // draw this before moving entities, so they show up under if overlapped.
-        if (!useIsometric() && shouldShowCFWarning()) {
-            drawSprites(g, cfWarningSprites);
-        }
 
         // draw moving onscreen entities
         drawSprites(g, movingEntitySprites);
@@ -1668,12 +1660,6 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
             // draw onscreen entities
             drawSprites(boardGraph, entitySprites);
 
-            // draw structure collapse warning sprites if in movement or deploy phase.
-            // draw this before moving entities, so they show up under if overlapped.
-            if (!useIsometric() && shouldShowCFWarning()) {
-                drawSprites(boardGraph, cfWarningSprites);
-            }
-
             // draw moving onscreen entities
             drawSprites(boardGraph, movingEntitySprites);
 
@@ -1769,11 +1755,6 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
                                 drawIsometricWreckSpritesForHex(c, g, isometricWreckSprites);
                             }
                             drawIsometricSpritesForHex(c, g, isometricSprites);
-
-                            // Draw CF warning here to prevent it from being rendered under bridges and turrets #5219
-                            if (shouldShowCFWarning()) {
-                                drawHexSpritesForHex(c, g, cfWarningSprites);
-                            }
                         }
                     }
                 }
@@ -3354,25 +3335,6 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         boardPanel.repaint();
     }
 
-    public void setCFWarningSprites(List<Coords> warnList) {
-        // Clear existing sprites before setting new ones.
-        clearCFWarningData();
-
-        if (warnList == null) {
-            return;
-        }
-
-        // Loops through list of coordinates, and create new CF warning sprite and add it to the sprites list.
-        for (Coords c : warnList) {
-            ConstructionWarningSprite cfws = new ConstructionWarningSprite(this, c);
-            cfWarningSprites.add(cfws);
-        }
-    }
-
-    public void clearCFWarningData() {
-        cfWarningSprites.clear();
-    }
-
     public void addStrafingCoords(Coords c) {
         strafingCoords.add(c);
     }
@@ -4378,7 +4340,6 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         flyOverSprites.clear();
         movementSprites.clear();
         fieldOfFireSprites.clear();
-        cfWarningSprites.clear();
 
         overTerrainSprites.clear();
         behindTerrainHexSprites.clear();
@@ -4847,9 +4808,6 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
             sprite.prepare();
         }
 
-        for (ConstructionWarningSprite sprite : cfWarningSprites) {
-            sprite.prepare();
-        }
         boardPanel.setSize(boardSize);
 
         clearHexImageCache();
@@ -4968,10 +4926,6 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         hexSprites.forEach(HexSprite::updateBounds);
 
         for (Sprite spr : fieldOfFireSprites) {
-            spr.prepare();
-        }
-
-        for (Sprite spr : cfWarningSprites) {
             spr.prepare();
         }
 
@@ -5284,10 +5238,6 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
                         || game.getPhase().isOffboard());
     }
 
-    public boolean shouldShowCFWarning() {
-        return ConstructionFactorWarning.shouldShow(game.getPhase(), GUIP.getShowCFWarnings());
-    }
-
     public void setShowLobbyPlayerDeployment(boolean b) {
         showLobbyPlayerDeployment = b;
     }
@@ -5390,6 +5340,4 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         behindTerrainHexSprites.removeAll(sprites);
         hexSprites.removeAll(sprites);
     }
-
-
 }

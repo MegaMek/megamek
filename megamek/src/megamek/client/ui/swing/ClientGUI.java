@@ -246,6 +246,7 @@ public class ClientGUI extends JPanel implements BoardViewListener, IClientGUI,
     private MovementEnvelopeSpriteHandler movementEnvelopeHandler;
     private MovementModifierSpriteHandler movementModifierSpriteHandler;
     private SensorRangeSpriteHandler sensorRangeSpriteHandler;
+    private CollapseWarningSpriteHandler collapseWarningSpriteHandler;
     private final List<BoardViewSpriteHandler> spriteHandlers = new ArrayList<>();
     private Component bvc;
     private JPanel panTop;
@@ -534,9 +535,10 @@ public class ClientGUI extends JPanel implements BoardViewListener, IClientGUI,
         movementModifierSpriteHandler = new MovementModifierSpriteHandler(bv, client.getGame());
         FlareSpritesHandler flareSpritesHandler = new FlareSpritesHandler(bv, client.getGame());
         sensorRangeSpriteHandler = new SensorRangeSpriteHandler(bv, client.getGame());
+        collapseWarningSpriteHandler = new CollapseWarningSpriteHandler(bv);
 
         spriteHandlers.addAll(List.of(movementEnvelopeHandler, movementModifierSpriteHandler,
-                sensorRangeSpriteHandler, flareSpritesHandler));
+                sensorRangeSpriteHandler, flareSpritesHandler, collapseWarningSpriteHandler));
         spriteHandlers.forEach(BoardViewSpriteHandler::initialize);
     }
 
@@ -1136,6 +1138,7 @@ public class ClientGUI extends JPanel implements BoardViewListener, IClientGUI,
     @Override
     public void die() {
         // Tell all the displays to remove themselves as listeners.
+        spriteHandlers.forEach(BoardViewSpriteHandler::dispose);
         boolean reportHandled = false;
         if (bv != null) {
             // cleanup our timers first
@@ -3003,6 +3006,7 @@ public class ClientGUI extends JPanel implements BoardViewListener, IClientGUI,
         movementEnvelopeHandler.clear();
         movementModifierSpriteHandler.clear();
         sensorRangeSpriteHandler.clear();
+        collapseWarningSpriteHandler.clear();
     }
 
     public void showMovementModifiers(Collection<MovePath> movePaths) {
@@ -3015,6 +3019,10 @@ public class ClientGUI extends JPanel implements BoardViewListener, IClientGUI,
 
     public void showSensorRanges(Entity entity, Coords assumedPosition) {
         sensorRangeSpriteHandler.setSensorRange(entity, assumedPosition);
+    }
+
+    public void showCollapseWarning(List<Coords> warnList) {
+        collapseWarningSpriteHandler.setCFWarningSprites(warnList);
     }
 
     @Override

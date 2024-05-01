@@ -51,8 +51,7 @@ public abstract class BoardViewSpriteHandler implements GameListener {
 
     /**
      * Override this method to perform start up steps such as registering it as a listener (doing this in
-     * the constructor is frowned upon). This method should be called by the BoardView when the handler is
-     * attached to it.
+     * the constructor is considered improper as the object is not fully constructed at that point).
      */
     public abstract void initialize();
 

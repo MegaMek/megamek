@@ -751,6 +751,22 @@ public class Building implements Serializable {
     }
 
     /**
+     * calculates damage absorbed and scaled by building at coords
+     * @param damage
+     * @param coords
+     * @return
+     */
+    public int getAbosrbedDamage(int damage, Coords coords) {
+        int bldgAbsorbs = getAbsorbtion(coords);
+        if (bldgAbsorbs > 0) {
+            damage -= bldgAbsorbs;
+        }
+        // some buildings scale remaining damage that is not absorbed
+        // TODO : this isn't quite right for castles brian
+        return (int) Math.floor(getDamageToScale() * damage);
+    }
+
+    /**
      * Returns the percentage of damage done to the building for attacks against
      * infantry in the building from other units within the building.  TW pg175.
      *

@@ -1937,6 +1937,32 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
+     * Returns hex for given location
+     * @return
+     */
+    public Hex getHex(Coords coords) {
+        return game.getBoard().getHex(coords);
+    }
+
+    /**
+     * Returns hex for current position
+     * @return
+     */
+    public Hex getHex() {
+        return getHex(getPosition());
+    }
+
+    /**
+     * checks if entity is inside building in current hex
+     * @return
+     */
+    public boolean isInsideBuilding() {
+        return (getHex().containsTerrain(Terrains.BUILDING)
+                && getElevation() < getHex().terrainLevel(Terrains.BLDG_ELEV))
+                && !isAirborne();
+    }
+
+    /**
      * Returns a set of the coords this Entity occupies
      *
      * @return

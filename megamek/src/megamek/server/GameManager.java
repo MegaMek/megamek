@@ -34714,11 +34714,11 @@ public class GameManager extends AbstractGameManager {
      * */
     private Vector<Report> resolveLightningStormDamage() {
         Vector<Report> vFullReport = new Vector<>();
-        vFullReport.add(new Report(5620, Report.PUBLIC));
-
         Roll roll = Compute.rollD6(1);
 
-        if (roll.getIntValue() > 4) {
+        if (roll.getIntValue() > 0) {
+            vFullReport.add(new Report(5620, Report.PUBLIC));
+
             Roll rollNumber = Compute.rollD6(1);
             int numberOfStrikes = Math.max(1, rollNumber.getIntValue() / 2);
 
@@ -34743,12 +34743,21 @@ public class GameManager extends AbstractGameManager {
                 int y = Compute.randomInt(game.getBoard().getHeight());
                 Coords location = new Coords(x, y);
 
-                lightningStormDamage(location, damage, false, vFullReport);
+                Report r;
+                r = new Report(5621);
+                r.add(location.getBoardNum());
+                vFullReport.add(r);
+
+                lightningStormDamage(location, damage, vFullReport);
 
                 if (rollType.getIntValue() == 6) {
                     for (Coords locationAdjacent : location.allAdjacent()) {
                         if (game.getBoard().getHex(locationAdjacent) != null) {
-                            lightningStormDamage(locationAdjacent, 5, true, vFullReport);
+                            r = new Report(5622);
+                            r.add(locationAdjacent.getBoardNum());
+                            vFullReport.add(r);
+
+                            lightningStormDamage(locationAdjacent, 5, vFullReport);
                         }
                     }
                 }
@@ -34759,22 +34768,31 @@ public class GameManager extends AbstractGameManager {
         return vFullReport;
     }
 
-    private void lightningStormDamage(Coords location, int damage, boolean adjacent, Vector<Report> vFullReport) {
-        List<Entity> hitEntities = game.getEntitiesVector().stream().filter(e -> e.getPosition().equals(location)).collect(Collectors.toList());
-        Report r;
-        if (!adjacent) {
-            r = new Report(5621);
-        } else {
-            r = new Report(5622);
+    private void lightningStormDamage(Coords location, int damage, Vector<Report> vFullReport) {
+        Vector<Report> newReports = tryClearHex(location, damage, Entity.NONE);
+        vFullReport.addAll(newReports);
+
+        Building bldg = game.getBoard().getBuildingAt(location);
+        if (bldg != null) {
+            Vector<Report> buildingReport = damageBuilding(bldg, damage, location);
+            vFullReport.addAll(buildingReport);
         }
-        r.add(location.getBoardNum());
-        vFullReport.add(r);
+
+        List<Entity> hitEntities = game.getEntitiesVector().stream().filter(e -> e.getPosition().equals(location)).collect(Collectors.toList());
 
         for (Entity entity : hitEntities) {
-            ToHitData toHit = new ToHitData();
-            toHit.setSideTable(ToHitData.SIDE_RANDOM);
-            HitData hit = entity.rollHitLocation(ToHitData.HIT_NORMAL, toHit.getSideTable());
-            vFullReport.addAll(damageEntity(entity, hit, damage));
+            int entityDamage = damage;
+            if ((bldg != null)
+                    && (entity.isInsideBuilding())) {
+                entityDamage = bldg.getAbosrbedDamage(entityDamage, location);
+            }
+            if (entityDamage > 0) {
+                ToHitData toHit = new ToHitData();
+                toHit.setSideTable(ToHitData.SIDE_RANDOM);
+                HitData hit = entity.rollHitLocation(ToHitData.HIT_NORMAL, toHit.getSideTable());
+                Vector<Report> entityReport = damageEntity(entity, hit, entityDamage);
+                vFullReport.addAll(entityReport);
+            }
         }
     }
 

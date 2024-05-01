@@ -23,7 +23,7 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 
 import megamek.MMConstants;
-import megamek.client.ui.swing.GUIPreferences;
+import megamek.client.ui.swing.util.FontHandler;
 import megamek.client.ui.swing.util.StringDrawer;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.Coords;
@@ -44,7 +44,6 @@ import megamek.common.MoveStep;
  */
 public class FlightPathIndicatorSprite extends HexSprite {
 
-    private static final GUIPreferences GUIP = GUIPreferences.getInstance();
     private static final int TEXT_SIZE = 30;
     private static final Color COLOR_YELLOW = new Color(255, 255, 0, 128);
     private static final Color COLOR_GREEN = new Color(0, 255, 0, 128);
@@ -55,70 +54,54 @@ public class FlightPathIndicatorSprite extends HexSprite {
     private static final int HEX_CENTER_Y = BoardView.HEX_H / 2;
     private static final int TEXT_Y_OFFSET = 17;
 
-    private MoveStep step = null;
-    private boolean isLast = false;
+    private final MoveStep step;
+    private final boolean isLast;
 
-    private static final String EMPTY_CIRCLE = "\u26AA";
-    private static final String SOLID_CIRCLE = "\u26AB";
-    private static final String EMPTY_FLAG = "\u2690";
-    private static final String SOLID_FLAG = "\u2691";
-    //private static final String EMPTY_TWO_WAY = "\u26D7";
-    private static final String SOLID_TWO_WAY = "\u26D6";
+    private static final String EMPTY_CIRCLE = "\ue061";
+    private static final String SOLID_CIRCLE = "\ue57b";
+    private static final String EMPTY_FLAG = "\ueaf8";
+    private static final String SOLID_FLAG = "\uf06e";
+    private static final String SOLID_TWO_WAY = "\uf1ff";
+
+    private final StringDrawer.StringDrawerConfig redSymbolConfig =
+            new StringDrawer.StringDrawerConfig().absoluteCenter().fontSize(TEXT_SIZE)
+                    .outline(COLOR_OUTLINE, 1.5f).color(COLOR_RED);
+
+    private final StringDrawer.StringDrawerConfig greenSymbolConfig =
+            new StringDrawer.StringDrawerConfig().absoluteCenter().fontSize(TEXT_SIZE)
+                    .outline(COLOR_OUTLINE, 1.5f).color(COLOR_GREEN);
+
+    private final StringDrawer.StringDrawerConfig yellowSymbolConfig =
+            new StringDrawer.StringDrawerConfig().absoluteCenter().fontSize(TEXT_SIZE)
+                    .outline(COLOR_OUTLINE, 1.5f).color(COLOR_YELLOW);
 
     // Setup 'StringDrawers' to write special characters as icons.
     private final StringDrawer mustFlyIcon = new StringDrawer(EMPTY_CIRCLE)
-            .at(HEX_CENTER_X, HEX_CENTER_Y)
-            .color(COLOR_RED)
-            .fontSize(TEXT_SIZE)
-            .center().outline(COLOR_OUTLINE, 1.5f);
+            .at(HEX_CENTER_X, HEX_CENTER_Y).useConfig(redSymbolConfig);
 
     private final StringDrawer greenFlagIcon = new StringDrawer(SOLID_FLAG)
-            .at(HEX_CENTER_X, HEX_CENTER_Y)
-            .color(COLOR_GREEN)
-            .fontSize(TEXT_SIZE)
-            .center().outline(COLOR_OUTLINE, 1.5f);
+            .at(HEX_CENTER_X, HEX_CENTER_Y).useConfig(greenSymbolConfig);
 
     private final StringDrawer redFlagIcon = new StringDrawer(EMPTY_FLAG)
-            .at(HEX_CENTER_X, HEX_CENTER_Y)
-            .color(COLOR_RED)
-            .fontSize(TEXT_SIZE)
-            .center().outline(COLOR_OUTLINE, 1.5f);
+            .at(HEX_CENTER_X, HEX_CENTER_Y).useConfig(redSymbolConfig);
 
     private final StringDrawer yellowFlagIcon = new StringDrawer(SOLID_FLAG)
-            .at(HEX_CENTER_X, HEX_CENTER_Y)
-            .color(COLOR_YELLOW)
-            .fontSize(TEXT_SIZE)
-            .center().outline(COLOR_OUTLINE, 1.5f);
+            .at(HEX_CENTER_X, HEX_CENTER_Y).useConfig(yellowSymbolConfig);
 
     private final StringDrawer yellowEmptyFlagIcon = new StringDrawer(EMPTY_FLAG)
-            .at(HEX_CENTER_X, HEX_CENTER_Y)
-            .color(COLOR_YELLOW)
-            .fontSize(TEXT_SIZE)
-            .center().outline(COLOR_OUTLINE, 1.5f);
+            .at(HEX_CENTER_X, HEX_CENTER_Y).useConfig(yellowSymbolConfig);
 
     private final StringDrawer flyOffIcon = new StringDrawer(SOLID_TWO_WAY)
-            .at(HEX_CENTER_X, HEX_CENTER_Y)
-            .color(COLOR_YELLOW)
-            .fontSize(TEXT_SIZE)
-            .center().outline(COLOR_OUTLINE, 2.0f);
+            .at(HEX_CENTER_X, HEX_CENTER_Y).useConfig(yellowSymbolConfig);
 
     private final StringDrawer freeTurnIcon = new StringDrawer(SOLID_CIRCLE)
-            .at(HEX_CENTER_X, HEX_CENTER_Y)
-            .color(COLOR_GREEN)
-            .fontSize(TEXT_SIZE)
-            .center().outline(COLOR_OUTLINE, 1.5f);
+            .at(HEX_CENTER_X, HEX_CENTER_Y).useConfig(greenSymbolConfig);
 
     private final StringDrawer costTurnIcon = new StringDrawer(SOLID_CIRCLE)
-            .at(HEX_CENTER_X, HEX_CENTER_Y)
-            .color(COLOR_YELLOW)
-            .fontSize(TEXT_SIZE)
-            .center().outline(COLOR_OUTLINE, 1.5f);
+            .at(HEX_CENTER_X, HEX_CENTER_Y).useConfig(yellowSymbolConfig);
 
     private final StringDrawer noThrustIcon = new StringDrawer(EMPTY_CIRCLE)
-            .at(HEX_CENTER_X, HEX_CENTER_Y)
-            .color(COLOR_YELLOW)
-            .fontSize(TEXT_SIZE)
-            .center().outline(COLOR_OUTLINE, 1.5f);
+            .at(HEX_CENTER_X, HEX_CENTER_Y).useConfig(yellowSymbolConfig);
 
     /**
      * @param boardView - BoardView associated with the sprite.
@@ -129,7 +112,7 @@ public class FlightPathIndicatorSprite extends HexSprite {
     public FlightPathIndicatorSprite(BoardView boardView, Coords loc, final MoveStep step, boolean last) {
         super(boardView, loc);
         this.step = step;
-        this.isLast = last;
+        isLast = last;
     }
 
     @Override
@@ -149,7 +132,7 @@ public class FlightPathIndicatorSprite extends HexSprite {
         if (isLastIndicator()) {
             if (step.getVelocityLeft() > 0) {
                 flyOffIcon.draw(graph);
-                drawRemainingDistance(graph, this.step);
+                drawRemainingDistance(graph, step);
             } else {
                 if (canTurnForFree()) {
                     greenFlagIcon.draw(graph);
@@ -176,8 +159,6 @@ public class FlightPathIndicatorSprite extends HexSprite {
                 mustFlyIcon.draw(graph);
             }
         }
-
-        return;
     }
 
     /*
@@ -223,19 +204,8 @@ public class FlightPathIndicatorSprite extends HexSprite {
         Graphics2D graph = (Graphics2D) image.getGraphics();
         UIUtil.setHighQualityRendering(graph);
         graph.scale(bv.scale, bv.scale);
-
-        fontSetup(graph);
-
+        graph.setFont(FontHandler.symbolFont());
         return graph;
-    }
-
-    /*
-     * Sets the font name, style, and size from configured default parameters.
-     */
-    private void fontSetup(Graphics2D graph) {
-        String fontName = GUIP.getMoveFontType();
-        int fontStyle = GUIP.getMoveFontStyle();
-        graph.setFont(new Font(fontName, fontStyle, TEXT_SIZE));
     }
 
     /*
@@ -272,7 +242,5 @@ public class FlightPathIndicatorSprite extends HexSprite {
         graph.drawString(remString, x_offset, y_offset);
         graph.setColor(Color.red);
         graph.drawString(remString, x_offset - 1, y_offset - 1);
-
-        return;
     }
 }

@@ -528,6 +528,10 @@ public class BattleArmor extends Infantry {
                     && ignoreGameLessThanThin) {
                 mp++;
             }
+        } else {
+            if ((mp > 0) && hasWorkingMisc(MiscType.F_PARTIAL_WING)) {
+                mp++;
+            }
         }
 
         if ((mp > 0)

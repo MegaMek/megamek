@@ -310,7 +310,6 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
         clientgui.getBoardView().select(null);
         clientgui.getBoardView().highlight(null);
         clientgui.getBoardView().cursor(null);
-        clientgui.getBoardView().clearFiringSolutionData();
         clientgui.getBoardView().clearMovementData();
         clientgui.getBoardView().clearFieldOfFire();
         clientgui.clearTemporarySprites();

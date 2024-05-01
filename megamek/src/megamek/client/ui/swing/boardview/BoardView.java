@@ -51,7 +51,6 @@ import megamek.common.preference.ClientPreferences;
 import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.preference.PreferenceManager;
-import megamek.common.util.FiringSolution;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
 import org.apache.logging.log4j.LogManager;
@@ -189,8 +188,6 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
     ArrayList<FlightPathIndicatorSprite> fpiSprites = new ArrayList<FlightPathIndicatorSprite>();
 
     private ArrayList<Coords> strafingCoords = new ArrayList<>(5);
-
-    private ArrayList<FiringSolutionSprite> firingSprites = new ArrayList<>();
 
     // vector of sprites for all firing lines
     private ArrayList<AttackSprite> attackSprites = new ArrayList<>();
@@ -879,14 +876,6 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
             drawSprites(g, fieldOfFireSprites);
         }
 
-        if (!useIsometric()) {
-            // In non-iso mode, all sprites can now be drawn according to their internal priority (draw order)
-            drawSprites(g, allSprites);
-        } else {
-            // In iso mode, some sprites are drawn in drawHexes so they can go behind terrin; draw only the others here
-            drawSprites(g, overTerrainSprites);
-        }
-
         // Minefield signs all over the place!
         drawMinefields(g);
 
@@ -945,15 +934,18 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         // draw flight path indicators
         drawSprites(g, fpiSprites);
 
-        // draw firing solution sprites, but only during the firing phase
-        if (game.getPhase().isFiring() || game.getPhase().isOffboard()) {
-            drawSprites(g, firingSprites);
-        }
-
         if (game.getPhase().isFiring()) {
             for (Coords c : strafingCoords) {
                 drawHexBorder(g, getHexLocation(c), Color.yellow, 0, 3);
             }
+        }
+
+        if (!useIsometric()) {
+            // In non-iso mode, all sprites can now be drawn according to their internal priority (draw order)
+            drawSprites(g, allSprites);
+        } else {
+            // In iso mode, some sprites are drawn in drawHexes so they can go behind terrain; draw only the others here
+            drawSprites(g, overTerrainSprites);
         }
 
         // draw the ruler line
@@ -1320,20 +1312,6 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
     }
 
     /**
-     * Darkens a hexes in the viewing area if there is no line of sight between
-     * them and the supplied source hex. Used in non-isometric view.
-     *
-     * @param p
-     *            The source hex for which line of sight originates
-     * @param g
-     *            The graphics object to draw on.
-     * @param col
-     *            The what color to use.
-     * @param outOfFOV
-     *            The destination hex for computing the line of sight
-     */
-
-    /**
      * Draw a layer of a solid color (alpha possible) on the hex at Point p no
      * padding by default
      */
@@ -1593,7 +1571,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
 
     @Override
     public BufferedImage getEntireBoardImage(boolean ignoreUnits, boolean useBaseZoom) {
-        // Set zoom to base, so we get a consist board image
+        // Set zoom to base, so we get a consistent board image
         int oldZoom = zoomIndex;
         if (useBaseZoom) {
             zoomIndex = BASE_ZOOM_INDEX;
@@ -1622,12 +1600,6 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
             // Field of Fire
             if (!useIsometric() && shouldShowFieldOfFire()) {
                 drawSprites(boardGraph, fieldOfFireSprites);
-            }
-
-            if (!useIsometric()) {
-                drawSprites(boardGraph, allSprites);
-            } else {
-                drawSprites(boardGraph, overTerrainSprites);
             }
 
             // Minefield signs all over the place!
@@ -1687,15 +1659,18 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
             // draw flight path indicators
             drawSprites(boardGraph, fpiSprites);
 
-            // draw firing solution sprites, but only during the firing phase
-            if (game.getPhase().isFiring() || game.getPhase().isOffboard()) {
-                drawSprites(boardGraph, firingSprites);
-            }
-
             if (game.getPhase().isFiring()) {
                 for (Coords c : strafingCoords) {
                     drawHexBorder(boardGraph, getHexLocation(c), Color.yellow, 0, 3);
                 }
+            }
+
+            if (!useIsometric()) {
+                // In non-iso mode, all sprites can now be drawn according to their internal priority (draw order)
+                drawSprites(boardGraph, allSprites);
+            } else {
+                // In iso mode, some sprites are drawn in drawHexes so they can go behind terrain; draw only the others here
+                drawSprites(boardGraph, overTerrainSprites);
             }
         }
         boardGraph.dispose();
@@ -3326,22 +3301,6 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         refreshMoveVectors();
     }
 
-    public void setFiringSolutions(Entity attacker, Map<Integer, FiringSolution> firingSolutions) {
-        clearFiringSolutionData();
-        if (firingSolutions == null) {
-            return;
-        }
-        for (FiringSolution sln : firingSolutions.values()) {
-            FiringSolutionSprite sprite = new FiringSolutionSprite(this, sln);
-            firingSprites.add(sprite);
-        }
-    }
-
-    public void clearFiringSolutionData() {
-        firingSprites.clear();
-        boardPanel.repaint();
-    }
-
     public void addStrafingCoords(Coords c) {
         strafingCoords.add(c);
     }
@@ -4296,7 +4255,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
             refreshAttacks();
 
             // Clear some information regardless of what phase it is
-            clearFiringSolutionData();
+            clientgui.clearTemporarySprites();
 
             switch (e.getNewPhase()) {
                 case MOVEMENT:
@@ -4340,7 +4299,6 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
     public void clearSprites() {
         pathSprites.clear();
         fpiSprites.clear();
-        firingSprites.clear();
         attackSprites.clear();
         c3Sprites.clear();
         vtolAttackSprites.clear();
@@ -4808,10 +4766,6 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         }
 
         for (FlightPathIndicatorSprite sprite : fpiSprites) {
-            sprite.prepare();
-        }
-
-        for (FiringSolutionSprite sprite : firingSprites) {
             sprite.prepare();
         }
 

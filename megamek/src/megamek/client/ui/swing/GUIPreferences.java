@@ -1048,7 +1048,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         return store.getBoolean(FOCUS);
     }
 
-    public boolean getFiringSolutions() {
+    public boolean getShowFiringSolutions() {
         return store.getBoolean(FIRING_SOLUTIONS);
     }
 
@@ -1866,7 +1866,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setValue(FOCUS, state);
     }
 
-    public void setFiringSolutions(boolean state) {
+    public void setShowFiringSolutions(boolean state) {
         store.setValue(FIRING_SOLUTIONS, state);
     }
 

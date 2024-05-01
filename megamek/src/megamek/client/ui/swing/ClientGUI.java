@@ -247,6 +247,7 @@ public class ClientGUI extends JPanel implements BoardViewListener, IClientGUI,
     private MovementModifierSpriteHandler movementModifierSpriteHandler;
     private SensorRangeSpriteHandler sensorRangeSpriteHandler;
     private CollapseWarningSpriteHandler collapseWarningSpriteHandler;
+    private FiringSolutionSpriteHandler firingSolutionSpriteHandler;
     private final List<BoardViewSpriteHandler> spriteHandlers = new ArrayList<>();
     private Component bvc;
     private JPanel panTop;
@@ -536,9 +537,11 @@ public class ClientGUI extends JPanel implements BoardViewListener, IClientGUI,
         FlareSpritesHandler flareSpritesHandler = new FlareSpritesHandler(bv, client.getGame());
         sensorRangeSpriteHandler = new SensorRangeSpriteHandler(bv, client.getGame());
         collapseWarningSpriteHandler = new CollapseWarningSpriteHandler(bv);
+        firingSolutionSpriteHandler = new FiringSolutionSpriteHandler(bv, client);
 
         spriteHandlers.addAll(List.of(movementEnvelopeHandler, movementModifierSpriteHandler,
-                sensorRangeSpriteHandler, flareSpritesHandler, collapseWarningSpriteHandler));
+                sensorRangeSpriteHandler, flareSpritesHandler, collapseWarningSpriteHandler,
+                firingSolutionSpriteHandler));
         spriteHandlers.forEach(BoardViewSpriteHandler::initialize);
     }
 
@@ -994,15 +997,15 @@ public class ClientGUI extends JPanel implements BoardViewListener, IClientGUI,
                 }
                 break;
             case VIEW_TOGGLE_FIRING_SOLUTIONS:
-                GUIP.setFiringSolutions(!GUIP.getFiringSolutions());
-                if (!GUIP.getFiringSolutions()) {
-                    bv.clearFiringSolutionData();
-                } else {
-                    if (curPanel instanceof FiringDisplay) {
-                        ((FiringDisplay) curPanel).setFiringSolutions(((FiringDisplay) curPanel).ce());
-                    }
-                }
-                bv.refreshDisplayables();
+                GUIP.setShowFiringSolutions(!GUIP.getShowFiringSolutions());
+//                if (!GUIP.getShowFiringSolutions()) {
+//                    bv.clearFiringSolutionData();
+//                } else {
+//                    if (curPanel instanceof FiringDisplay) {
+//                        ((FiringDisplay) curPanel).setFiringSolutions(((FiringDisplay) curPanel).ce());
+//                    }
+//                }
+//                bv.refreshDisplayables();
                 break;
             case VIEW_TOGGLE_CF_WARNING:
                 CollapseWarning.handleActionPerformed();
@@ -3007,6 +3010,7 @@ public class ClientGUI extends JPanel implements BoardViewListener, IClientGUI,
         movementModifierSpriteHandler.clear();
         sensorRangeSpriteHandler.clear();
         collapseWarningSpriteHandler.clear();
+        firingSolutionSpriteHandler.clear();
     }
 
     public void showMovementModifiers(Collection<MovePath> movePaths) {
@@ -3023,6 +3027,10 @@ public class ClientGUI extends JPanel implements BoardViewListener, IClientGUI,
 
     public void showCollapseWarning(List<Coords> warnList) {
         collapseWarningSpriteHandler.setCFWarningSprites(warnList);
+    }
+
+    public void showFiringSolutions(Entity entity) {
+        firingSolutionSpriteHandler.showFiringSolutions(entity);
     }
 
     @Override

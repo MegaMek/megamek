@@ -37,7 +37,8 @@ import megamek.common.enums.GamePhase;
  * can be unit tested and encapsulated from BoardView and
  * ClientGUI and other actors.
  */
-public class ConstructionFactorWarning {
+public final class CollapseWarning {
+
     /*
      * Handler for ClientGUI actionPerformed event. Encapsulates
      * as much Construction Factory Warning logic possible.
@@ -52,10 +53,6 @@ public class ConstructionFactorWarning {
      */
     public static boolean isCFWarningPhase(GamePhase gp) {
         return (gp == GamePhase.DEPLOYMENT || gp == GamePhase.MOVEMENT);
-    }
-
-    public static boolean shouldShow(GamePhase gp) {
-        return shouldShow(gp, true);
     }
 
     /*
@@ -190,7 +187,7 @@ public class ConstructionFactorWarning {
         double totalWeight = selected.getWeight();
         List<Entity> units = g.getEntitiesVector(c, true);
         for (Entity ent : units) {
-            if (ConstructionFactorWarning.isEntityPartOfWeight(selected, ent)) {
+            if (CollapseWarning.isEntityPartOfWeight(selected, ent)) {
                 totalWeight += ent.getWeight();
             }
         }
@@ -200,4 +197,6 @@ public class ConstructionFactorWarning {
     protected static boolean isEntityPartOfWeight(Entity selected, Entity inHex) {
         return ((selected != inHex) && inHex.isGround() && !inHex.isAirborneVTOLorWIGE());
     }
+
+    private CollapseWarning() { }
 }

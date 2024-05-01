@@ -385,6 +385,13 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
 
     BoardViewTooltipProvider boardViewToolTip = (point, movementTarget) -> null;
 
+    // Part of the sprites need specialized treatment; as there can be many sprites, filtering them
+    // on the spot is a noticeable performance hit (in iso mode), therefore the sprites are copied
+    // to specialized lists when created
+    private final TreeSet<Sprite> overTerrainSprites = new TreeSet<>();
+    private final TreeSet<HexSprite> behindTerrainHexSprites = new TreeSet<>();
+    private final TreeSet<HexSprite> hexSprites = new TreeSet<>();
+
     /**
      * Construct a new board view for the specified game
      */
@@ -5311,10 +5318,6 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
     public void repaint() {
         boardPanel.repaint();
     }
-
-    private final TreeSet<Sprite> overTerrainSprites = new TreeSet<>();
-    private final TreeSet<HexSprite> behindTerrainHexSprites = new TreeSet<>();
-    private final TreeSet<HexSprite> hexSprites = new TreeSet<>();
 
     @Override
     public void addSprites(Collection<? extends Sprite> sprites) {

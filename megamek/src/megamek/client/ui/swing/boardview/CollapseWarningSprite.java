@@ -35,7 +35,7 @@ import megamek.common.Coords;
  *  or bridge, it will collapse.  (Or the sum of tonnage of stacked
  *  units if multiple units occupy the hex)
  */
-public class ConstructionWarningSprite extends HexSprite {
+public class CollapseWarningSprite extends HexSprite {
 
     private static final int TEXT_SIZE = BoardView.HEX_H / 2;
     private static final Color TEXT_COLOR = new Color(255, 255, 40, 128);
@@ -55,7 +55,7 @@ public class ConstructionWarningSprite extends HexSprite {
      * @param boardView1 - parent BoardView object this sprite will be displayed on.
      * @param loc - Hex location coordinates of building or bridge where warning will be visible.
      */
-    public ConstructionWarningSprite(BoardView boardView1, Coords loc) {
+    public CollapseWarningSprite(BoardView boardView1, Coords loc) {
         super(boardView1, loc);
     }
 

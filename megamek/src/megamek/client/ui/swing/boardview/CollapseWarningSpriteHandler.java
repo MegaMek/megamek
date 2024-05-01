@@ -38,7 +38,7 @@ public class CollapseWarningSpriteHandler extends BoardViewSpriteHandler impleme
         clear();
         currentWarnList = warnList;
         if ((warnList != null) && GUIP.getShowCFWarnings()) {
-            warnList.stream().map(coords -> new ConstructionWarningSprite(boardView, coords)).forEach(currentSprites::add);
+            warnList.stream().map(coords -> new CollapseWarningSprite(boardView, coords)).forEach(currentSprites::add);
         }
         boardView.addSprites(currentSprites);
     }

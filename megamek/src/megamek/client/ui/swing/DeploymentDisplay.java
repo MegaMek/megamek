@@ -239,7 +239,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
 
     private void computeCFWarningHexes(Entity ce) {
         Game game = clientgui.getClient().getGame();
-        List<Coords> warnList = ConstructionFactorWarning.findCFWarningsDeployment(game, ce, game.getBoard());
+        List<Coords> warnList = CollapseWarning.findCFWarningsDeployment(game, ce, game.getBoard());
         clientgui.showCollapseWarning(warnList);
     }
 

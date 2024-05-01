@@ -38,7 +38,7 @@ import megamek.common.Entity;
 import megamek.common.Game;
 import megamek.common.enums.GamePhase;
 
-public class ConstructionFactorWarningTest {
+public class CollapseWarningTest {
 
     final private GUIPreferences GUIP = GUIPreferences.getInstance();
 
@@ -65,7 +65,7 @@ public class ConstructionFactorWarningTest {
         // When the action to toggle CF Warning is called, the state of the toggle should flip.
         boolean expected = !GUIP.getShowCFWarnings();
 
-        ConstructionFactorWarning.handleActionPerformed();
+        CollapseWarning.handleActionPerformed();
 
         //Expect to see the toggle state for CF Warning toggled after the handler is called.
         assertEquals(expected, GUIP.getShowCFWarnings());
@@ -74,19 +74,19 @@ public class ConstructionFactorWarningTest {
     @Test
     public void testShouldShowCFWarning () {
         // should return false if feature is disabled.
-        boolean actual = ConstructionFactorWarning.shouldShow(GamePhase.DEPLOYMENT, false);	
+        boolean actual = CollapseWarning.shouldShow(GamePhase.DEPLOYMENT, false);
         assertFalse(actual);
 
         // should return true if enabled and in the deployment phase.
-        actual = ConstructionFactorWarning.shouldShow(GamePhase.DEPLOYMENT, true);
+        actual = CollapseWarning.shouldShow(GamePhase.DEPLOYMENT, true);
         assertTrue(actual);
 
         // should return true if enabled and in the movement phase.
-        actual = ConstructionFactorWarning.shouldShow(GamePhase.MOVEMENT, true);
+        actual = CollapseWarning.shouldShow(GamePhase.MOVEMENT, true);
         assertTrue(actual);
 
         // should return false if enabled and NOT in the movement phase.
-        actual = ConstructionFactorWarning.shouldShow(GamePhase.FIRING, true);
+        actual = CollapseWarning.shouldShow(GamePhase.FIRING, true);
         assertFalse(actual);
     }
 
@@ -102,7 +102,7 @@ public class ConstructionFactorWarningTest {
 
         Board b = createMockBoardWith(buildingPosition, bld);
 
-        List<Coords> warnList = ConstructionFactorWarning.findCFWarningsMovement(g, e, b);
+        List<Coords> warnList = CollapseWarning.findCFWarningsMovement(g, e, b);
 
         assertTrue(warnList.size() > 0);
         assertEquals(buildingPosition, warnList.get(0));
@@ -121,7 +121,7 @@ public class ConstructionFactorWarningTest {
 
         Board b = createMockBoardWith(buildingPosition, bld);
 
-        List<Coords> warnList = ConstructionFactorWarning.findCFWarningsMovement(g, e, b);
+        List<Coords> warnList = CollapseWarning.findCFWarningsMovement(g, e, b);
 
         assertNotNull(warnList);
         assertEquals(0, warnList.size());
@@ -140,7 +140,7 @@ public class ConstructionFactorWarningTest {
 
         Board b = createMockBoardWith(buildingPosition, bld);
 
-        List<Coords> warnList = ConstructionFactorWarning.findCFWarningsMovement(g, e, b);
+        List<Coords> warnList = CollapseWarning.findCFWarningsMovement(g, e, b);
 
         assertNotNull(warnList);
         assertEquals(0, warnList.size());
@@ -159,7 +159,7 @@ public class ConstructionFactorWarningTest {
 
         Board b = createMockBoardWith(buildingPosition, bld);
 
-        List<Coords> warnList = ConstructionFactorWarning.findCFWarningsMovement(g, e, b);
+        List<Coords> warnList = CollapseWarning.findCFWarningsMovement(g, e, b);
 
         assertNotNull(warnList);
         assertEquals(0, warnList.size());
@@ -178,7 +178,7 @@ public class ConstructionFactorWarningTest {
 
         Board b = createMockBoardWith(buildingPosition, bld);
 
-        List<Coords> warnList = ConstructionFactorWarning.findCFWarningsMovement(g, e, b);
+        List<Coords> warnList = CollapseWarning.findCFWarningsMovement(g, e, b);
 
         assertNotNull(warnList);
         assertEquals(0, warnList.size());
@@ -201,7 +201,7 @@ public class ConstructionFactorWarningTest {
 
         Game g = mock(Game.class);
 
-        List<Coords> warnList = ConstructionFactorWarning.findCFWarningsDeployment(g, e, b);
+        List<Coords> warnList = CollapseWarning.findCFWarningsDeployment(g, e, b);
 
         assertNotNull(warnList);
         assertEquals(expectedHex, warnList.get(0));
@@ -225,7 +225,7 @@ public class ConstructionFactorWarningTest {
 
         Game g = mock(Game.class);
 
-        List<Coords> warnList = ConstructionFactorWarning.findCFWarningsDeployment(g, e, b);
+        List<Coords> warnList = CollapseWarning.findCFWarningsDeployment(g, e, b);
 
         assertNotNull(warnList);
         assertEquals(0, warnList.size());
@@ -249,7 +249,7 @@ public class ConstructionFactorWarningTest {
 
         Game g = mock(Game.class);
 
-        List<Coords> warnList = ConstructionFactorWarning.findCFWarningsDeployment(g, e, b);
+        List<Coords> warnList = CollapseWarning.findCFWarningsDeployment(g, e, b);
 
         // Entity is not a ground unit - no warning.
         assertNotNull(warnList);
@@ -274,7 +274,7 @@ public class ConstructionFactorWarningTest {
 
         Game g = mock(Game.class);
 
-        List<Coords> warnList = ConstructionFactorWarning.findCFWarningsDeployment(g, e, b);
+        List<Coords> warnList = CollapseWarning.findCFWarningsDeployment(g, e, b);
 
         // No warning for a unit lighter than the CF.
         assertNotNull(warnList);
@@ -284,7 +284,7 @@ public class ConstructionFactorWarningTest {
     @Test
     public void testConstructionFactorWarningFindDeploymentWarningsException() {
         // Test a null pointer exception occurring in the handler - return an empty list and log an error.
-        List<Coords> warnList = ConstructionFactorWarning.findCFWarningsDeployment(null, null, null);
+        List<Coords> warnList = CollapseWarning.findCFWarningsDeployment(null, null, null);
 
         // On exception return an non-null empty list so no warnings sprites are displayed.
         assertNotNull(warnList);
@@ -297,15 +297,15 @@ public class ConstructionFactorWarningTest {
 
         when(e.isGround()).thenReturn(true);
         when(e.isOffBoard()).thenReturn(false);
-        assertTrue(ConstructionFactorWarning.entityTypeIsInWhiteList(e));
+        assertTrue(CollapseWarning.entityTypeIsInWhiteList(e));
 
         when(e.isGround()).thenReturn(true);
         when(e.isOffBoard()).thenReturn(true);
-        assertFalse(ConstructionFactorWarning.entityTypeIsInWhiteList(e));
+        assertFalse(CollapseWarning.entityTypeIsInWhiteList(e));
 
         when(e.isGround()).thenReturn(false);
         when(e.isOffBoard()).thenReturn(true);
-        assertFalse(ConstructionFactorWarning.entityTypeIsInWhiteList(e));
+        assertFalse(CollapseWarning.entityTypeIsInWhiteList(e));
     }
 
     @Test
@@ -323,7 +323,7 @@ public class ConstructionFactorWarningTest {
 
         when(g.getEntitiesVector(new Coords(3, 7), true)).thenReturn(entities);
 
-        double totalWeight = ConstructionFactorWarning.calculateTotalTonnage(g, e, new Coords(3,7));
+        double totalWeight = CollapseWarning.calculateTotalTonnage(g, e, new Coords(3,7));
 
         assertEquals(entityWeight + onBuildingWeight, totalWeight);
     }
@@ -344,7 +344,7 @@ public class ConstructionFactorWarningTest {
 
         when(g.getEntitiesVector(new Coords(3, 3), true)).thenReturn(entities);
 
-        double totalWeight = ConstructionFactorWarning.calculateTotalTonnage(g, e, new Coords(3,3));
+        double totalWeight = CollapseWarning.calculateTotalTonnage(g, e, new Coords(3,3));
 
         assertEquals(entityWeight, totalWeight);
 	}
@@ -366,7 +366,7 @@ public class ConstructionFactorWarningTest {
 
         when(g.getEntitiesVector(new Coords(3, 7), true)).thenReturn(entities);
 
-        double totalWeight = ConstructionFactorWarning.calculateTotalTonnage(g, e, new Coords(3,7));
+        double totalWeight = CollapseWarning.calculateTotalTonnage(g, e, new Coords(3,7));
 
         assertEquals(entityWeight, totalWeight);
     }
@@ -387,7 +387,7 @@ public class ConstructionFactorWarningTest {
 
         when(g.getEntitiesVector(new Coords(3, 7), true)).thenReturn(entities);
 
-        double totalWeight = ConstructionFactorWarning.calculateTotalTonnage(g, e, new Coords(3,7));
+        double totalWeight = CollapseWarning.calculateTotalTonnage(g, e, new Coords(3,7));
 
         assertEquals(entityWeight, totalWeight);
     }

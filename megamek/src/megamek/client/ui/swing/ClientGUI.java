@@ -1005,7 +1005,7 @@ public class ClientGUI extends JPanel implements BoardViewListener, IClientGUI,
                 bv.refreshDisplayables();
                 break;
             case VIEW_TOGGLE_CF_WARNING:
-                ConstructionFactorWarning.handleActionPerformed();
+                CollapseWarning.handleActionPerformed();
                 break;
             case VIEW_MOVE_ENV:
                 if (curPanel instanceof MovementDisplay) {

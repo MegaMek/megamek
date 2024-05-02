@@ -34,6 +34,7 @@ import megamek.common.options.OptionsConstants;
 import java.awt.*;
 import java.util.*;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
 import static megamek.client.ui.swing.util.UIUtil.uiWhite;
@@ -178,11 +179,11 @@ public class TWBoardViewTooltip implements BoardViewTooltipProvider {
         }
 
         // check if it's on any flares
-        for (Sprite sprite : bv.getAllSprites()) {
-            if ((sprite instanceof FlareSprite) && sprite.isInside(point)) {
-                result += sprite.getTooltip().toString();
-            }
-        }
+        result += bv.getAllSprites().stream()
+                .filter(sprite -> sprite instanceof FlareSprite)
+                .filter(sprite -> sprite.isInside(point))
+                .map(Sprite::getTooltip)
+                .collect(Collectors.joining());
 
         // Add wreck info
         var wreckList = bv.useIsometric() ? bv.getIsoWreckSprites() : bv.getWreckSprites();

@@ -37,7 +37,7 @@ public class FiringSolutionSpriteHandler extends BoardViewSpriteHandler implemen
     private final Client client;
     private final Game game;
 
-    // Cache the warn list; thus, when CF warning is turned off the sprites don't have to be created
+    // Cache the entity; thus, when firing solutions are turned on the sprites can easily be created
     private Entity currentEntity;
 
     public FiringSolutionSpriteHandler(BoardView boardView, Client client) {

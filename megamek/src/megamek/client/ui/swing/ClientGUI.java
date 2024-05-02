@@ -998,14 +998,6 @@ public class ClientGUI extends JPanel implements BoardViewListener, IClientGUI,
                 break;
             case VIEW_TOGGLE_FIRING_SOLUTIONS:
                 GUIP.setShowFiringSolutions(!GUIP.getShowFiringSolutions());
-//                if (!GUIP.getShowFiringSolutions()) {
-//                    bv.clearFiringSolutionData();
-//                } else {
-//                    if (curPanel instanceof FiringDisplay) {
-//                        ((FiringDisplay) curPanel).setFiringSolutions(((FiringDisplay) curPanel).ce());
-//                    }
-//                }
-//                bv.refreshDisplayables();
                 break;
             case VIEW_TOGGLE_CF_WARNING:
                 CollapseWarning.handleActionPerformed();
@@ -3000,11 +2992,23 @@ public class ClientGUI extends JPanel implements BoardViewListener, IClientGUI,
         }
     }
 
-    public void setMovementEnvelope(Entity entity, Map<Coords, Integer> mvEnvData, int walk, int run, int jump, int gear) {
-        // multi boards: select the correct boardview for the entity and the correct envelopehandler from the given entity
-        movementEnvelopeHandler.setMovementEnvelope(mvEnvData, walk, run, jump, gear);
+    /**
+     * Shows the movement envelope in the BoardView for the given entity. The movement envelope data is
+     * a map of move end Coords to movement points used.
+     *
+     * @param entity The entity for which the movement envelope is
+     * @param mvEnvData The movement envelope data
+     * @param gear The move gear, MovementDisplay.GEAR_LAND or GEAR_JUMP
+     */
+    public void showMovementEnvelope(Entity entity, Map<Coords, Integer> mvEnvData, int gear) {
+        movementEnvelopeHandler.setMovementEnvelope(mvEnvData, entity.getWalkMP(),
+                entity.getRunMP(), entity.getJumpMP(), gear);
     }
 
+    /**
+     * Removes all temporary sprites from the board, such as pending actions, movement envelope,
+     * collapse warnings etc. Does not remove game-state sprites such as units or flares.
+     */
     public void clearTemporarySprites() {
         movementEnvelopeHandler.clear();
         movementModifierSpriteHandler.clear();
@@ -3013,22 +3017,49 @@ public class ClientGUI extends JPanel implements BoardViewListener, IClientGUI,
         firingSolutionSpriteHandler.clear();
     }
 
+    /**
+     * Shows the optimal available movement modifiers in the BoardView.
+     *
+     * @param movePaths The available longest move paths.
+     */
     public void showMovementModifiers(Collection<MovePath> movePaths) {
         movementModifierSpriteHandler.renewSprites(movePaths);
     }
 
+    /**
+     * Shows the sensor/visual ranges for the given entity on its own position in the BoardView
+     *
+     * @param entity The entity that is looking/sensing
+     */
     public void showSensorRanges(Entity entity) {
         showSensorRanges(entity, entity.getPosition());
     }
 
+    /**
+     * Shows the sensor/visual ranges for the given entity in the BoardView. The ranges are centered on
+     * the given assumedPosition rather than the entity's own position.
+     *
+     * @param entity The entity that is looking/sensing
+     * @param assumedPosition The position to center all ranges on
+     */
     public void showSensorRanges(Entity entity, Coords assumedPosition) {
         sensorRangeSpriteHandler.setSensorRange(entity, assumedPosition);
     }
 
+    /**
+     * Shows collapse warnings in the given list of Coords in the BoardView
+     *
+     * @param warnList The Coords to show the warning on
+     */
     public void showCollapseWarning(List<Coords> warnList) {
         collapseWarningSpriteHandler.setCFWarningSprites(warnList);
     }
 
+    /**
+     * Shows firing solutions from the viewpoint of the given entity on targets
+     *
+     * @param entity The attacking entity
+     */
     public void showFiringSolutions(Entity entity) {
         firingSolutionSpriteHandler.showFiringSolutions(entity);
     }

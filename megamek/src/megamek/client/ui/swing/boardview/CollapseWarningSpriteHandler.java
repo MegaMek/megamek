@@ -27,7 +27,7 @@ import java.util.List;
 
 public class CollapseWarningSpriteHandler extends BoardViewSpriteHandler implements IPreferenceChangeListener {
 
-    // Cache the warn list; thus, when CF warning is turned off the sprites don't have to be created
+    // Cache the warn list; thus, when CF warning is turned on the sprites can easily be created
     private List<Coords> currentWarnList;
 
     public CollapseWarningSpriteHandler(BoardView boardView) {

@@ -25,7 +25,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * This is a base class for Sprite Handlers that create and remove sprites in an attached BoardView.
+ * This is a base class for SpriteHandlers that create and remove sprites in an attached BoardView.
+ * Note that SpriteHandlers should not assume that the BoardView still has and displays all the
+ * sprites they added to it. The BoardView may clear sprites without giving notification to the
+ * SpriteHandlers. Thus, when sprites are to be renewed, SpriteHandlers should just remove all their
+ * sprites from the BoardView (regardless of whether the BoardView still uses them) and create new ones.
  */
 public abstract class BoardViewSpriteHandler implements GameListener {
 

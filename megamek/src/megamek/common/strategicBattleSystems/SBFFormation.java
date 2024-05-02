@@ -23,6 +23,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.client.ui.swing.calculationReport.DummyCalculationReport;
+import megamek.common.Deployable;
 import megamek.common.Entity;
 import megamek.common.ForceAssignable;
 import megamek.common.Player;
@@ -49,7 +50,8 @@ import static megamek.common.strategicBattleSystems.SBFElementType.LA;
 @JsonRootName(value = "SBFFormation")
 @JsonSerialize(using = SBFFormationSerializer.class)
 @JsonDeserialize(using = SBFFormationDeserializer.class)
-public class SBFFormation implements ASSpecialAbilityCollector, BattleForceSUAFormatter, ForceAssignable {
+public class SBFFormation implements ASSpecialAbilityCollector, BattleForceSUAFormatter, ForceAssignable,
+        Deployable {
 
     private List<SBFUnit> units = new ArrayList<>();
     private String name;
@@ -73,6 +75,8 @@ public class SBFFormation implements ASSpecialAbilityCollector, BattleForceSUAFo
     private int id = Entity.NONE;
     private int ownerId = Player.PLAYER_NONE;
 
+    private boolean isDeployed = false;
+    private int deployRound = 0;
 
     public String getName() {
         return name;
@@ -392,5 +396,32 @@ public class SBFFormation implements ASSpecialAbilityCollector, BattleForceSUAFo
                 + (trspMovement != movement || trspMovementMode != movementMode ? "; TRSP" + trspMovement + trspMovementMode.code : "")
                 + "; T" + tactics + "; M" + morale + "; " + pointValue + "@" + skill + "; " + units.size() + " units"
                 + "; " + specialAbilities.getSpecialsDisplayString(this);
+    }
+
+    @Override
+    public boolean isDeployed() {
+        return isDeployed;
+    }
+
+    @Override
+    public int getDeployRound() {
+        return deployRound;
+    }
+
+    /**
+     * The round the unit will be deployed. We will deploy at the end of a
+     * round. So if depoyRound is set to 5, we will deploy when round 5 is over.
+     *
+     * @param deployRound an int
+     */
+    public void setDeployRound(int deployRound) {
+        this.deployRound = deployRound;
+    }
+
+    /**
+     * Toggles if an entity is counted as being deployed
+     */
+    public void setDeployed(boolean deployed) {
+        isDeployed = deployed;
     }
 }

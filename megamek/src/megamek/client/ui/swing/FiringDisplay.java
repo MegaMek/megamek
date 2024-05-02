@@ -1444,7 +1444,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
      */
     protected void removeLastFiring() {
         if (!attacks.isEmpty()) {
-            Object o = attacks.lastElement();
+            EntityAction o = attacks.lastElement();
             if (o instanceof WeaponAttackAction) {
                 WeaponAttackAction waa = (WeaponAttackAction) o;
                 ce().getEquipment(waa.getWeaponId()).setUsedThisRound(false);

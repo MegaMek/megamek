@@ -49,7 +49,7 @@ import java.util.Set;
 @JsonSerialize(using = ASElementSerializer.class)
 @JsonDeserialize(using = ASElementDeserializer.class)
 public class AlphaStrikeElement implements Serializable, ASCardDisplayable, ASSpecialAbilityCollector,
-        BattleForceSUAFormatter, ForceAssignable {
+        BattleForceSUAFormatter, ForceAssignable, Deployable {
 
     static final int RANGEBANDS_SML = 3;
     static final int RANGEBANDS_SMLE = 4;
@@ -125,6 +125,8 @@ public class AlphaStrikeElement implements Serializable, ASCardDisplayable, ASSp
      * currently, the TW quirks are just reproduced here.
      */
     private Quirks quirks = new Quirks();
+
+    private boolean isDeployed = false;
 
     @Override
     public String getChassis() {
@@ -609,6 +611,17 @@ public class AlphaStrikeElement implements Serializable, ASCardDisplayable, ASSp
     @Override
     public int getStrength() {
         return getPointValue();
+    }
+
+    @Override
+    public boolean isDeployed() {
+        return isDeployed;
+    }
+
+    @Override
+    public int getDeployRound() {
+        //TODO: This is a stub
+        return 0;
     }
 
     @Override

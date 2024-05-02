@@ -24,6 +24,7 @@ import megamek.common.actions.AttackAction;
 import megamek.common.actions.EntityAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.GamePhase;
+import megamek.common.equipment.AmmoMounted;
 import megamek.common.event.*;
 import megamek.common.force.Forces;
 import megamek.common.options.GameOptions;
@@ -99,7 +100,6 @@ public class Game extends AbstractGame implements Serializable, PlanetaryConditi
     private GamePhase lastPhase = GamePhase.UNKNOWN;
 
     // phase state
-    private Vector<EntityAction> actions = new Vector<>();
     private Vector<AttackAction> pendingCharges = new Vector<>();
     private Vector<AttackAction> pendingRams = new Vector<>();
     private Vector<AttackAction> pendingTeleMissileAttacks = new Vector<>();
@@ -401,6 +401,71 @@ public class Game extends AbstractGame implements Serializable, PlanetaryConditi
     }
 
     @Override
+    public boolean isCurrentPhasePlayable() {
+        switch (phase) {
+            case INITIATIVE:
+            case END:
+                return false;
+            case DEPLOYMENT:
+            case TARGETING:
+            case PREMOVEMENT:
+            case MOVEMENT:
+            case PREFIRING:
+            case FIRING:
+            case PHYSICAL:
+            case DEPLOY_MINEFIELDS:
+            case SET_ARTILLERY_AUTOHIT_HEXES:
+                return hasMoreTurns();
+            case OFFBOARD:
+                return hasMoreTurns() && isOffboardPlayable();
+            default:
+                return true;
+        }
+    }
+
+    /**
+     * Skip offboard phase, if there is no homing / semiguided ammo in play
+     */
+    private boolean isOffboardPlayable() {
+        for (final Entity entity : getEntitiesVector()) {
+            for (final AmmoMounted mounted : entity.getAmmo()) {
+                AmmoType ammoType = mounted.getType();
+
+                // per errata, TAG will spot for LRMs and such
+                if ((ammoType.getAmmoType() == AmmoType.T_LRM)
+                        || (ammoType.getAmmoType() == AmmoType.T_LRM_IMP)
+                        || (ammoType.getAmmoType() == AmmoType.T_MML)
+                        || (ammoType.getAmmoType() == AmmoType.T_NLRM)
+                        || (ammoType.getAmmoType() == AmmoType.T_MEK_MORTAR)) {
+                    return true;
+                }
+
+                if (((ammoType.getAmmoType() == AmmoType.T_ARROW_IV)
+                        || (ammoType.getAmmoType() == AmmoType.T_LONG_TOM)
+                        || (ammoType.getAmmoType() == AmmoType.T_SNIPER)
+                        || (ammoType.getAmmoType() == AmmoType.T_THUMPER))
+                        && (ammoType.getMunitionType().contains(AmmoType.Munitions.M_HOMING))) {
+                    return true;
+                }
+            }
+
+            if (entity.getBombs().stream().anyMatch(bomb -> !bomb.isDestroyed()
+                    && (bomb.getUsableShotsLeft() > 0)
+                    && (bomb.getType().getBombType() == BombType.B_LG))) {
+                return true;
+            }
+        }
+
+        // Go through all current attacks, checking if any use homing ammunition. If so, the phase
+        // is playable. This prevents issues from aerospace homing artillery with the aerospace
+        // unit having left the field already, for example
+        return getAttacksVector().stream()
+                .map(AttackHandler::getWaa)
+                .filter(Objects::nonNull)
+                .anyMatch(waa -> waa.getAmmoMunitionType().contains(AmmoType.Munitions.M_HOMING));
+    }
+
+    @Override
     public void setPlayer(int id, Player player) {
         player.setGame(this);
         players.put(id, player);
@@ -691,10 +756,10 @@ public class Game extends AbstractGame implements Serializable, PlanetaryConditi
             case FIRING:
             case PHYSICAL:
             case DEPLOYMENT:
-                resetActions();
+                clearActions();
                 break;
             case INITIATIVE:
-                resetActions();
+                clearActions();
                 resetCharges();
                 resetRams();
                 break;
@@ -1365,7 +1430,7 @@ public class Game extends AbstractGame implements Serializable, PlanetaryConditi
         turnVector.clear();
         turnIndex = 0;
 
-        resetActions();
+        clearActions();
         resetCharges();
         resetRams();
         resetPSRs();
@@ -2208,14 +2273,6 @@ public class Game extends AbstractGame implements Serializable, PlanetaryConditi
         return turnsToRemove.size();
     }
 
-    /**
-     * Adds the specified action to the actions list for this phase.
-     */
-    public void addAction(EntityAction ea) {
-        actions.addElement(ea);
-        processGameEvent(new GameNewActionEvent(this, ea));
-    }
-
     public void setArtilleryVector(Vector<ArtilleryAttackAction> v) {
         offboardArtilleryAttacks = v;
         processGameEvent(new GameBoardChangeEvent(this));
@@ -2237,49 +2294,7 @@ public class Game extends AbstractGame implements Serializable, PlanetaryConditi
      * Returns an Enumeration of actions scheduled for this phase.
      */
     public Enumeration<EntityAction> getActions() {
-        return actions.elements();
-    }
-
-    /**
-     * Resets the actions list.
-     */
-    public void resetActions() {
-        actions.removeAllElements();
-    }
-
-    /**
-     * Removes all actions by the specified entity
-     */
-    public void removeActionsFor(int entityId) {
-        // or rather, only keeps actions NOT by that entity
-        Vector<EntityAction> toKeep = new Vector<>(actions.size());
-        for (EntityAction ea : actions) {
-            if (ea.getEntityId() != entityId) {
-                toKeep.addElement(ea);
-            }
-        }
-        actions = toKeep;
-    }
-
-    /**
-     * Remove a specified action
-     *
-     * @param o The action to remove.
-     */
-    public void removeAction(Object o) {
-        actions.removeElement(o);
-    }
-
-    public int actionsSize() {
-        return actions.size();
-    }
-
-    /**
-     * Returns the actions vector. Do not use to modify the actions; I will be
-     * angry. &gt;:[ Used for sending all actions to the client.
-     */
-    public List<EntityAction> getActionsVector() {
-        return Collections.unmodifiableList(actions);
+        return Collections.enumeration(pendingActions);
     }
 
     public void addInitiativeRerollRequest(Team t) {

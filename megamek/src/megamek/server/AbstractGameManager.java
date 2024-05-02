@@ -66,9 +66,16 @@ abstract class AbstractGameManager implements IGameManager {
             }
         }
 
-        if (!getGame().getPhase().hasTurns() && !isEmptyLobby()) {
+        if (!getGame().getPhase().usesTurns() && !isEmptyLobby()) {
             endCurrentPhase();
         }
+    }
+
+    /**
+     * Sends out the player ready stats for all players to all connections
+     */
+    protected void transmitAllPlayerDones() {
+        getGame().getPlayersList().forEach(player -> send(packetHelper.createPlayerDonePacket(player.getId())));
     }
 
     /** @return True when the game is in the lobby phase and is empty (no units present). */
@@ -88,5 +95,26 @@ abstract class AbstractGameManager implements IGameManager {
         } else {
             LogManager.getLogger().error("Tried to set done status of non-existent player!");
         }
+    }
+
+    /**
+     * Sends out the player object to all players. Private info of the given player
+     * is redacted before being sent to other players.
+     *
+     * @param player The player whose information is to be shared
+     * @see #transmitAllPlayerUpdates()
+     */
+    protected void transmitPlayerUpdate(Player player) {
+        Server.getServerInstance().transmitPlayerUpdate(player);
+    }
+
+    /**
+     * Shares all player objects with all players. Private info is redacted before being sent
+     * to other players.
+     *
+     * @see #transmitPlayerUpdate(Player)
+     */
+    protected void transmitAllPlayerUpdates() {
+        getGame().getPlayersList().forEach(this::transmitPlayerUpdate);
     }
 }

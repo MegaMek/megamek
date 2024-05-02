@@ -32,7 +32,6 @@ import megamek.common.event.GameEntityChangeEvent;
 import megamek.common.force.Force;
 import megamek.common.icons.Camouflage;
 import megamek.common.jacksonadapters.EntityDeserializer;
-import megamek.common.jacksonadapters.SBFUnitDeserializer;
 import megamek.common.options.*;
 import megamek.common.planetaryconditions.Atmosphere;
 import megamek.common.planetaryconditions.PlanetaryConditions;
@@ -61,7 +60,7 @@ import java.util.stream.IntStream;
  */
 @JsonDeserialize(using = EntityDeserializer.class)
 public abstract class Entity extends TurnOrdered implements Transporter, Targetable, RoundUpdated,
-        PhaseUpdated, ITechnology, ForceAssignable, CombatRole {
+        PhaseUpdated, ITechnology, ForceAssignable, CombatRole, Deployable {
     private static final long serialVersionUID = 1430806396279853295L;
 
     public static final int DOES_NOT_TRACK_HEAT = 999;

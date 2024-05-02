@@ -27,17 +27,19 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryconditions.PlanetaryConditions;
 import org.apache.logging.log4j.LogManager;
 
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
  * This is an SBF game's game object that holds all game information. As of 2024, this is under construction.
  */
-public class SBFGame extends AbstractGame implements PlanetaryConditionsUsing {
+public final class SBFGame extends AbstractGame implements PlanetaryConditionsUsing {
 
     private final GameOptions options = new GameOptions(); //TODO: SBFGameOptions()
     private GamePhase phase = GamePhase.UNKNOWN; //TODO: SBFGamePhase - or possibly reuse Phase? very similar
     private final PlanetaryConditions planetaryConditions = new PlanetaryConditions();
+
+    private final Map<Integer, List<InGameObject>> deploymentTable = new HashMap<>();
+    private GamePhase lastPhase = GamePhase.UNKNOWN;
 
     @Override
     public GameTurn getTurn() {
@@ -84,6 +86,29 @@ public class SBFGame extends AbstractGame implements PlanetaryConditionsUsing {
     }
 
     @Override
+    public boolean isCurrentPhasePlayable() {
+        switch (phase) {
+            case INITIATIVE:
+            case END:
+            case TARGETING:
+            case PHYSICAL:
+            case OFFBOARD:
+            case OFFBOARD_REPORT:
+                return false;
+            case DEPLOYMENT:
+            case PREMOVEMENT:
+            case MOVEMENT:
+            case PREFIRING:
+            case FIRING:
+            case DEPLOY_MINEFIELDS:
+            case SET_ARTILLERY_AUTOHIT_HEXES:
+                return hasMoreTurns();
+            default:
+                return true;
+        }
+    }
+
+    @Override
     public void setPlayer(int id, Player player) {
 
     }
@@ -124,7 +149,7 @@ public class SBFGame extends AbstractGame implements PlanetaryConditionsUsing {
 
     public void addUnit(InGameObject unit) { // This is a server-side method!
         if (!isSupportedUnitType(unit)) {
-            LogManager.getLogger().error("Tried to add unsupported object [" + unit + "] to the game!");
+            LogManager.getLogger().error("Tried to add unsupported object [{}] to the game!", unit);
             return;
         }
 
@@ -143,5 +168,41 @@ public class SBFGame extends AbstractGame implements PlanetaryConditionsUsing {
 
     private boolean isSupportedUnitType(InGameObject object) {
         return object instanceof SBFFormation || object instanceof AlphaStrikeElement || object instanceof SBFUnit;
+    }
+
+    public void setupRoundDeployment() {
+        deploymentTable.clear();
+
+        for (InGameObject unit : inGameObjects.values()) {
+            if (unit instanceof Deployable && !((Deployable) unit).isDeployed()) {
+                deploymentTable.computeIfAbsent(((Deployable) unit).getDeployRound(), k -> new ArrayList<>()).add(unit);
+            }
+        }
+    }
+
+    public int lastDeploymentRound() {
+        return deploymentTable.isEmpty() ? -1 : Collections.max(deploymentTable.keySet());
+    }
+
+    /**
+     * Check to see if we should deploy this round
+     */
+    public boolean shouldDeployThisRound() {
+        return shouldDeployForRound(currentRound);
+    }
+
+    public boolean shouldDeployForRound(int round) {
+        return deploymentTable.containsKey(round);
+    }
+
+    /**
+     * Clear this round from this list of entities to deploy
+     */
+    public void clearDeploymentThisRound() {
+        deploymentTable.remove(currentRound);
+    }
+
+    public void setLastPhase(GamePhase lastPhase) {
+        this.lastPhase = lastPhase;
     }
 }

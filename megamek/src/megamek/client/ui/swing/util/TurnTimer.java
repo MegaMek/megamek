@@ -120,7 +120,9 @@ public class TurnTimer {
             phaseDisplay.getClientgui().getMenuBar().remove(display);
         }
 
-        timer.stop();
+        if (timer != null) {
+            timer.stop();
+        }
     }
 
     public void setExtendTimer() {

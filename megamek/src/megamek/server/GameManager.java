@@ -34786,7 +34786,7 @@ public class GameManager extends AbstractGameManager {
         for (Entity entity : hitEntities) {
             int entityDamage = damage;
             if ((bldg != null)
-                    && (entity.isInsideBuilding())) {
+                    && (Compute.isInBuilding(game, entity))) {
                 entityDamage = bldg.getAbosrbedDamage(entityDamage, location);
             }
             if (entityDamage > 0) {

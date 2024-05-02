@@ -34778,7 +34778,10 @@ public class GameManager extends AbstractGameManager {
             vFullReport.addAll(buildingReport);
         }
 
-        List<Entity> hitEntities = game.getEntitiesVector().stream().filter(e -> e.getPosition().equals(location)).collect(Collectors.toList());
+        List<Entity> hitEntities = game.getEntitiesVector().stream()
+                .filter(e -> e.getPosition().equals(location)
+                        && !(e instanceof GunEmplacement))
+                .collect(Collectors.toList());
 
         for (Entity entity : hitEntities) {
             int entityDamage = damage;

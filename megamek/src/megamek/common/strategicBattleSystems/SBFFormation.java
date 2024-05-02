@@ -409,17 +409,17 @@ public class SBFFormation implements ASSpecialAbilityCollector, BattleForceSUAFo
     }
 
     /**
-     * The round the unit will be deployed. We will deploy at the end of a
-     * round. So if depoyRound is set to 5, we will deploy when round 5 is over.
+     * Returns the game round that this formation is to be deployed in. Note that deployment technically
+     * counts as happening at the end of that round.
      *
-     * @param deployRound an int
+     * @param deployRound The round this formation deploys in
      */
     public void setDeployRound(int deployRound) {
         this.deployRound = deployRound;
     }
 
     /**
-     * Toggles if an entity is counted as being deployed
+     * Sets this element's deployment status to the given status
      */
     public void setDeployed(boolean deployed) {
         isDeployed = deployed;

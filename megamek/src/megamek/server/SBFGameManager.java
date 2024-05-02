@@ -439,7 +439,7 @@ public class SBFGameManager extends AbstractGameManager {
 
         prepareForCurrentPhase();
 
-        if (game.skipCurrentPhase()) {
+        if (game.shouldSkipCurrentPhase()) {
             endCurrentPhase();
         } else {
             // tell the players about the new phase

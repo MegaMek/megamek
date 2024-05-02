@@ -21,14 +21,14 @@ package megamek.common;
 /**
  * This interface is implemented by those units (by InGameObjects) that can be deployed either
  * offboard or on a board. There are InGameObjects that are only targets (HexTarget) and may thus not
- * actually be deployable. Deployable objects could theoretically be listed in the lobby's unit list.
+ * actually be deployable. All Deployable objects could theoretically be listed in the lobby's unit list.
  */
 public interface Deployable {
 
     /**
-     * Returns true when this unit/object is deployed, i.e. it arrives in the game and may then start
-     * performing actions or be targeted by actions. Usually that means it has a fixed position on a board.
-     * Offboard units also count as undeployed as long as they cannot attack and as deployed when they
+     * Returns true when this unit/object is deployed, i.e. it has arrived in the game and may
+     * perform actions or be targeted by actions. Usually that means it has a fixed position on a board.
+     * Offboard units also count as undeployed as long as they cannot perform actions and as deployed when they
      * can.
      */
     boolean isDeployed();

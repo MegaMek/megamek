@@ -1570,7 +1570,7 @@ public class GameManager extends AbstractGameManager {
 
         prepareForPhase(phase);
 
-        if (game.skipCurrentPhase()) {
+        if (game.shouldSkipCurrentPhase()) {
             endCurrentPhase();
         } else {
             // tell the players about the new phase

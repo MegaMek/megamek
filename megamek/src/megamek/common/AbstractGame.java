@@ -205,7 +205,7 @@ public abstract class AbstractGame implements IGame {
      * The result may be different in other rounds.
      *
      * @return True when the current phase should be skipped entirely in this round
-     * @see #skipCurrentPhase()
+     * @see #shouldSkipCurrentPhase()
      */
     public abstract boolean isCurrentPhasePlayable();
 
@@ -218,7 +218,7 @@ public abstract class AbstractGame implements IGame {
      * @return True when the current phase should be skipped entirely in this round
      * @see #isCurrentPhasePlayable()
      */
-    public boolean skipCurrentPhase() {
+    public boolean shouldSkipCurrentPhase() {
         return !isCurrentPhasePlayable();
     }
 

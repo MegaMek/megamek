@@ -127,6 +127,7 @@ public class AlphaStrikeElement implements Serializable, ASCardDisplayable, ASSp
     private Quirks quirks = new Quirks();
 
     private boolean isDeployed = false;
+    private int deployRound = 0;
 
     @Override
     public String getChassis() {
@@ -656,5 +657,23 @@ public class AlphaStrikeElement implements Serializable, ASCardDisplayable, ASSp
                     + "; A" + fullArmor + "S" + fullStructure + "; PV" + pointValue + "@" + skill
                     + "; " + AlphaStrikeHelper.getSpecialsExportString(", ", this);
         }
+    }
+
+
+    /**
+     * Returns the game round that this element is to be deployed in. Note that deployment technically
+     * counts as happening at the end of that round.
+     *
+     * @param deployRound The round this element deploys in
+     */
+    public void setDeployRound(int deployRound) {
+        this.deployRound = deployRound;
+    }
+
+    /**
+     * Sets this element's deployment status to the given status
+     */
+    public void setDeployed(boolean deployed) {
+        isDeployed = deployed;
     }
 }

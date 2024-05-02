@@ -125,6 +125,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String WARNING_COLOR = "WarningColor";
     public static final String CAUTION_COLOR = "CautionColor";
     public static final String PRECAUTION_COLOR = "PrecautionColor";
+    public static final String OK_COLOR = "OkColor";
 
     public static final String CUSTOM_UNIT_HEIGHT = "CustomUnitDialogSizeHeight";
     public static final String CUSTOM_UNIT_WIDTH = "CustomUnitDialogSizeWidth";
@@ -454,6 +455,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         setDefault(WARNING_COLOR, DEFAULT_RED);
         setDefault(CAUTION_COLOR, Color.yellow);
         setDefault(PRECAUTION_COLOR, Color.orange);
+        setDefault(OK_COLOR, DEFAULT_GREEN);
 
         setDefault(PlayerColour.PLAYERCOLOUR_BLUE, new Color(0x8686BF));
         setDefault(PlayerColour.PLAYERCOLOUR_RED, new Color(0xCC6666));
@@ -481,7 +483,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         setDefault(PlayerColour.PLAYERCOLOUR_YELLOW, new Color(0xF2F261));
 
         setDefault(BOARD_MOVE_DEFAULT_CLIMB_MODE, true);
-        setDefault(BOARD_MOVE_DEFAULT_COLOR, DEFAULT_CYAN.CYAN);
+        setDefault(BOARD_MOVE_DEFAULT_COLOR, Color.CYAN);
         setDefault(BOARD_MOVE_ILLEGAL_COLOR, DEFAULT_DARK_GRAY);
         setDefault(BOARD_MOVE_JUMP_COLOR, DEFAULT_RED);
         setDefault(BOARD_MOVE_MASC_COLOR, DEFAULT_ORANGE);
@@ -2505,6 +2507,14 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setPrecautionColor(Color color) {
         store.setValue(PRECAUTION_COLOR, getColorString(color));
+    }
+
+    public Color getOkColor() {
+        return getColor(OK_COLOR);
+    }
+
+    public void setOkColor(Color color) {
+        store.setValue(OK_COLOR, getColorString(color));
     }
 
     public boolean getMoveDefaultClimbMode() {

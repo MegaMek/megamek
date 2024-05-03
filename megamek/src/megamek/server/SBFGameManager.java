@@ -33,7 +33,7 @@ import java.util.*;
 /**
  * This class manages an SBF game on the server side. As of 2024, this is under construction.
  */
-public class SBFGameManager extends AbstractGameManager {
+public final class SBFGameManager extends AbstractGameManager {
 
     private SBFGame game;
 
@@ -177,7 +177,8 @@ public class SBFGameManager extends AbstractGameManager {
             case STARTING_SCENARIO:
 //                game.addReports(vPhaseReport);
                 // IO BF p.103:
-                changePhase(GamePhase.SET_ARTILLERY_AUTOHIT_HEXES);
+//                changePhase(GamePhase.SET_ARTILLERY_AUTOHIT_HEXES);
+                changePhase(GamePhase.INITIATIVE); // <- only for testing to get past arty auto and minefields
                 break;
             case SET_ARTILLERY_AUTOHIT_HEXES:
 //                sendSpecialHexDisplayPackets();
@@ -194,15 +195,7 @@ public class SBFGameManager extends AbstractGameManager {
                 break;
             case DEPLOYMENT:
                 game.clearDeploymentThisRound();
-
-                // Completed deployment can easily be checked without caching the value:
-//                game.checkForCompleteDeployment();
-
-                // This is very specialized. Normally each unit should know where it may deploy and
-                // no adjustment to settings necessary for reinforcements
-//                game.getPlayersList().forEach(Player::adjustStartingPosForReinforcements);
-
-                if (game.getCurrentRound() < 1) {
+                if (game.getCurrentRound() == 0) {
                     changePhase(GamePhase.INITIATIVE);
                 } else {
                     // there is no separate artillery targeting phase in SBF

@@ -28,6 +28,7 @@ import megamek.common.force.Forces;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.stream.Collectors;
 
 /**
  * This is a base class to derive all types of Game (TW, AS, BF, SBF...) from. Any such game will have players, units
@@ -62,6 +63,13 @@ public abstract class AbstractGame implements IGame {
      * and should therefore not be shown.
      */
     protected Forces forces = new Forces(this);
+
+    /**
+     * This map links deployment rounds to lists of Deployables that deploy in respective rounds. It only contains
+     * units/objects that are not yet deployed or will redeploy (returning Aeros, units going from one board to
+     * another if implemented). For those, the list is updated every round.
+     */
+    private final Map<Integer, List<Deployable>> deploymentTable = new HashMap<>();
 
     protected int currentRound = 0;
 
@@ -259,5 +267,47 @@ public abstract class AbstractGame implements IGame {
     public void addAction(EntityAction action) {
         pendingActions.add(action);
         fireGameEvent(new GameNewActionEvent(this, action));
+    }
+
+    public void setupRoundDeployment() {
+        deploymentTable.clear();
+        for (Deployable unit : deployableInGameObjects()) {
+            if (!unit.isDeployed()) {
+                deploymentTable.computeIfAbsent(unit.getDeployRound(), k -> new ArrayList<>()).add(unit);
+            }
+        }
+    }
+
+    protected List<Deployable> deployableInGameObjects() {
+        return inGameObjects.values().stream()
+                .filter(unit -> unit instanceof Deployable)
+                .map(unit -> (Deployable) unit)
+                .collect(Collectors.toList());
+    }
+
+    public int lastDeploymentRound() {
+        return deploymentTable.isEmpty() ? -1 : Collections.max(deploymentTable.keySet());
+    }
+
+    public boolean isDeploymentComplete() {
+        return lastDeploymentRound() < currentRound;
+    }
+
+    /**
+     * Check to see if we should deploy this round
+     */
+    public boolean shouldDeployThisRound() {
+        return shouldDeployForRound(currentRound);
+    }
+
+    public boolean shouldDeployForRound(int round) {
+        return deploymentTable.containsKey(round);
+    }
+
+    /**
+     * Clear this round from this list of entities to deploy
+     */
+    public void clearDeploymentThisRound() {
+        deploymentTable.remove(currentRound);
     }
 }

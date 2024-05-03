@@ -38,7 +38,6 @@ public final class SBFGame extends AbstractGame implements PlanetaryConditionsUs
     private GamePhase phase = GamePhase.UNKNOWN; //TODO: SBFGamePhase - or possibly reuse Phase? very similar
     private final PlanetaryConditions planetaryConditions = new PlanetaryConditions();
 
-    private final Map<Integer, List<InGameObject>> deploymentTable = new HashMap<>();
     private GamePhase lastPhase = GamePhase.UNKNOWN;
 
     @Override
@@ -168,38 +167,6 @@ public final class SBFGame extends AbstractGame implements PlanetaryConditionsUs
 
     private boolean isSupportedUnitType(InGameObject object) {
         return object instanceof SBFFormation || object instanceof AlphaStrikeElement || object instanceof SBFUnit;
-    }
-
-    public void setupRoundDeployment() {
-        deploymentTable.clear();
-
-        for (InGameObject unit : inGameObjects.values()) {
-            if (unit instanceof Deployable && !((Deployable) unit).isDeployed()) {
-                deploymentTable.computeIfAbsent(((Deployable) unit).getDeployRound(), k -> new ArrayList<>()).add(unit);
-            }
-        }
-    }
-
-    public int lastDeploymentRound() {
-        return deploymentTable.isEmpty() ? -1 : Collections.max(deploymentTable.keySet());
-    }
-
-    /**
-     * Check to see if we should deploy this round
-     */
-    public boolean shouldDeployThisRound() {
-        return shouldDeployForRound(currentRound);
-    }
-
-    public boolean shouldDeployForRound(int round) {
-        return deploymentTable.containsKey(round);
-    }
-
-    /**
-     * Clear this round from this list of entities to deploy
-     */
-    public void clearDeploymentThisRound() {
-        deploymentTable.remove(currentRound);
     }
 
     public void setLastPhase(GamePhase lastPhase) {

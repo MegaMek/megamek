@@ -49,7 +49,7 @@ import static java.util.stream.Collectors.toList;
  * Client and the Server should have one of these objects, and it is their job to
  * keep it synched.
  */
-public class Game extends AbstractGame implements Serializable, PlanetaryConditionsUsing {
+public final class Game extends AbstractGame implements Serializable, PlanetaryConditionsUsing {
     private static final long serialVersionUID = 8376320092671792532L;
 
     /**
@@ -115,7 +115,7 @@ public class Game extends AbstractGame implements Serializable, PlanetaryConditi
     private int victoryPlayerId = Player.PLAYER_NONE;
     private int victoryTeam = Player.TEAM_NONE;
 
-    private Hashtable<Integer, Vector<Entity>> deploymentTable = new Hashtable<>();
+//    private Hashtable<Integer, Vector<Entity>> deploymentTable = new Hashtable<>();
     private int lastDeploymentRound = 0;
 
     private Hashtable<Coords, Vector<Minefield>> minefields = new Hashtable<>();
@@ -787,79 +787,6 @@ public class Game extends AbstractGame implements Serializable, PlanetaryConditi
         this.lastPhase = lastPhase;
     }
 
-    public void setDeploymentComplete(boolean deploymentComplete) {
-        this.deploymentComplete = deploymentComplete;
-    }
-
-    public boolean isDeploymentComplete() {
-        return deploymentComplete;
-    }
-
-    /**
-     * Sets up the hashtable of who deploys when
-     */
-    public void setupRoundDeployment() {
-        deploymentTable = new Hashtable<>();
-
-        for (Entity ent : inGameTWEntities()) {
-            if (ent.isDeployed()) {
-                continue;
-            }
-
-            Vector<Entity> roundVec = deploymentTable.computeIfAbsent(ent.getDeployRound(), k -> new Vector<>());
-            roundVec.addElement(ent);
-            lastDeploymentRound = Math.max(lastDeploymentRound, ent.getDeployRound());
-        }
-    }
-
-    /**
-     * Checks to see if we've past our deployment completion
-     */
-    public void checkForCompleteDeployment() {
-        setDeploymentComplete(lastDeploymentRound < getRoundCount());
-    }
-
-    /**
-     * Check to see if we should deploy this round
-     */
-    public boolean shouldDeployThisRound() {
-        return shouldDeployForRound(getRoundCount());
-    }
-
-    public boolean shouldDeployForRound(int round) {
-        Vector<Entity> vec = getEntitiesToDeployForRound(round);
-        return (null != vec) && !vec.isEmpty();
-    }
-
-    private Vector<Entity> getEntitiesToDeployForRound(int round) {
-        return deploymentTable.get(round);
-    }
-
-    /**
-     * Clear this round from this list of entities to deploy
-     */
-    public void clearDeploymentThisRound() {
-        deploymentTable.remove(getRoundCount());
-    }
-
-    /**
-     * Returns a vector of entities that have not yet deployed
-     */
-    public List<Entity> getUndeployedEntities() {
-        List<Entity> entList = new ArrayList<>();
-        Enumeration<Vector<Entity>> iter = deploymentTable.elements();
-
-        while (iter.hasMoreElements()) {
-            Vector<Entity> vecTemp = iter.nextElement();
-
-            for (int i = 0; i < vecTemp.size(); i++) {
-                entList.add(vecTemp.elementAt(i));
-            }
-        }
-
-        return Collections.unmodifiableList(entList);
-    }
-
     /**
      * @return an enumeration of all the entities in the game.
      */
@@ -1390,21 +1317,7 @@ public class Game extends AbstractGame implements Serializable, PlanetaryConditi
 
         // We also need to remove it from the list of things to be deployed...
         // we might still be in this list if we never joined the game
-        if (!deploymentTable.isEmpty()) {
-            Enumeration<Vector<Entity>> iter = deploymentTable.elements();
-
-            while (iter.hasMoreElements()) {
-                Vector<Entity> vec = iter.nextElement();
-
-                for (int i = vec.size() - 1; i >= 0; i--) {
-                    Entity en = vec.elementAt(i);
-
-                    if (en.getId() == id) {
-                        vec.removeElementAt(i);
-                    }
-                }
-            }
-        }
+        setupRoundDeployment();
         processGameEvent(new GameEntityRemoveEvent(this, toRemove));
     }
 

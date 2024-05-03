@@ -119,6 +119,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String MMSYMBOL = "MmSymbol";
     public static final String SOFTCENTER = "SoftCenter";
     public static final String AUTOCENTER = "AutoCenter";
+    public static final String AUTO_SELECT_NEXT = "AutoSelectNextUnit";
     public static final String AUTO_END_FIRING = "AutoEndFiring";
     public static final String AUTO_DECLARE_SEARCHLIGHT = "AutoDeclareSearchlight";
 
@@ -748,6 +749,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(SKIN_FILE, "BW - Default.xml");
         store.setDefault(SOFTCENTER, false);
         store.setDefault(AUTOCENTER, true);
+        store.setDefault(AUTO_SELECT_NEXT, true);
         store.setDefault(UI_THEME, "com.formdev.flatlaf.FlatDarculaLaf");
 
         store.setDefault(RAT_TECH_LEVEL, 0);
@@ -1557,6 +1559,14 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public boolean getAutoCenter() {
         return store.getBoolean(AUTOCENTER);
+    }
+
+    public boolean getAutoSelectNextUnit() {
+        return store.getBoolean(AUTO_SELECT_NEXT);
+    }
+
+    public void setAutoSelectNextUnit(boolean autoSelectNextUnit) {
+        store.setValue(AUTO_SELECT_NEXT, autoSelectNextUnit);
     }
 
     public boolean getNoSaveNag() {

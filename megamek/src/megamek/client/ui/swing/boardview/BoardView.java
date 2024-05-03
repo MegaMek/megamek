@@ -3362,7 +3362,8 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
 
             // For each hex in the entities forward trajectory, add a flight turn indicator sprite.
             for (MoveStep ms : fpiSteps) {
-                fpiSprites.add(new FlightPathIndicatorSprite(this, ms.getPosition(), ms, fpiPath.isEndStep(ms)));
+//                fpiSprites.add(new FlightPathIndicatorSprite(this, ms.getPosition(), ms, fpiPath.isEndStep(ms)));
+                fpiSprites.add(new FlightPathIndicatorSprite(this, fpiSteps, fpiSteps.indexOf(ms), fpiPath.isEndStep(ms)));
             }
         }
     }

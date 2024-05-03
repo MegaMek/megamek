@@ -167,6 +167,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
     private ColourSelectorButton csbWarningColor;
     private ColourSelectorButton csbCautionColor;
     private ColourSelectorButton csbPrecautionColor;
+    private ColourSelectorButton csbOkColor;
     private ColourSelectorButton csbMyUnitColor;
     private ColourSelectorButton csbAllyUnitColor;
     private ColourSelectorButton csbEnemyColor;
@@ -1583,6 +1584,9 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         csbPrecautionColor = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.PrecautionColor"));
         csbPrecautionColor.setColour(GUIP.getPrecautionColor());
         row.add(csbPrecautionColor);
+        csbOkColor = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.OkColor"));
+        csbOkColor.setColour(GUIP.getOkColor());
+        row.add(csbOkColor);
         comps.add(row);
 
         addLineSpacer(comps);
@@ -1929,6 +1933,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         csbWarningColor.setColour(GUIP.getWarningColor());
         csbCautionColor.setColour(GUIP.getCautionColor());
         csbPrecautionColor.setColour(GUIP.getPrecautionColor());
+        csbOkColor.setColour(GUIP.getOkColor());
 
         csbMyUnitColor.setColour(GUIP.getMyUnitColor());
         csbAllyUnitColor.setColour(GUIP.getAllyUnitColor());
@@ -2112,6 +2117,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         GUIP.setWarningColor(csbWarningColor.getColour());
         GUIP.setCautionColor(csbCautionColor.getColour());
         GUIP.setPrecautionColor(csbPrecautionColor.getColour());
+        GUIP.setOkColor(csbOkColor.getColour());
 
         GUIP.setMyUnitColor(csbMyUnitColor.getColour());
         GUIP.setAllyUnitColor(csbAllyUnitColor.getColour());

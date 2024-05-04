@@ -195,7 +195,7 @@ public final class SBFGameManager extends AbstractGameManager {
 
                 if (!game.shouldDeployThisRound()) {
 //                    incrementAndSendGameRound();
-//                    asService.performRollingAutosave(this);
+                    autoSaveService.performRollingAutosave();
                 }
 
                 // setIneligible(phase);

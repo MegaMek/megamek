@@ -39,7 +39,6 @@ import megamek.common.planetaryconditions.Wind;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.Report;
 import megamek.common.ReportMessages;
-import megamek.common.service.AutosaveService;
 import megamek.common.util.*;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.verifier.*;
@@ -51,13 +50,11 @@ import org.apache.logging.log4j.LogManager;
 
 import java.awt.*;
 import java.io.*;
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.stream.Collectors;
-import java.util.zip.GZIPOutputStream;
 
 /**
  * Manages the Game and processes player actions.
@@ -140,9 +137,7 @@ public class GameManager extends AbstractGameManager {
      */
     private Player playerRequestingGameMaster = null;
 
-    private AutosaveService asService = new AutosaveService();
-
-    private TWPhaseEndManager phaseEndManager = new TWPhaseEndManager(this);
+    private final TWPhaseEndManager phaseEndManager = new TWPhaseEndManager(this);
 
     /**
      * Special packet queue for client feedback requests.
@@ -1729,7 +1724,7 @@ public class GameManager extends AbstractGameManager {
 
                 if (!game.shouldDeployThisRound()) {
                     incrementAndSendGameRound();
-                    asService.performRollingAutosave(this);
+                    autoSaveService.performRollingAutosave();
                 }
 
                 // setIneligible(phase);

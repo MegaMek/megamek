@@ -24,7 +24,7 @@ import megamek.common.Report;
 import megamek.common.enums.GamePhase;
 import megamek.common.event.GameVictoryEvent;
 
-public class TWPhaseEndManager {
+class TWPhaseEndManager {
 
     private final GameManager gameManager;
 

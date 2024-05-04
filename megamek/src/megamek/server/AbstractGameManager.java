@@ -30,6 +30,7 @@ abstract class AbstractGameManager implements IGameManager {
 
     protected final GameManagerPacketHelper packetHelper = new GameManagerPacketHelper(this);
     protected final GameManagerSaveHelper saveHandler = new GameManagerSaveHelper(this);
+    protected final AutosaveService autoSaveService = new AutosaveService(this);
 
     protected final void send(Packet p) {
         Server.getServerInstance().send(p);

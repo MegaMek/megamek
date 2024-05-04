@@ -51,7 +51,6 @@ import megamek.common.preference.ClientPreferences;
 import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.preference.PreferenceManager;
-import megamek.common.util.FiringSolution;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
 import org.apache.logging.log4j.LogManager;
@@ -160,8 +159,6 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
     // entity sprites
     private Queue<EntitySprite> entitySprites = new PriorityQueue<>();
     private Queue<IsometricSprite> isometricSprites = new PriorityQueue<>();
-
-    private ArrayList<FlareSprite> flareSprites = new ArrayList<>();
     /**
      * A Map that maps an Entity ID and a secondary position to a Sprite. Note
      * that the key is a List where the first entry will be the Entity ID and
@@ -192,13 +189,6 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
 
     private ArrayList<Coords> strafingCoords = new ArrayList<>(5);
 
-    private ArrayList<FiringSolutionSprite> firingSprites = new ArrayList<>();
-
-    private ArrayList<ConstructionWarningSprite> cfWarningSprites = new ArrayList<>();
-
-    private ArrayList<MovementEnvelopeSprite> moveEnvSprites = new ArrayList<>();
-    private ArrayList<MovementModifierEnvelopeSprite> moveModEnvSprites = new ArrayList<>();
-
     // vector of sprites for all firing lines
     private ArrayList<AttackSprite> attackSprites = new ArrayList<>();
 
@@ -223,8 +213,6 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
     // int because it acts as an array index
     public int fieldOfFireWpUnderwater = 0;
     private static final String[] rangeTexts = {"min", "S", "M", "L", "E"};
-
-    private ArrayList<HexSprite> sensorRangeSprites = new ArrayList<>();
 
     TilesetManager tileManager;
 
@@ -335,9 +323,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
 
     private FovHighlightingAndDarkening fovHighlightingAndDarkening;
 
-    private String FILENAME_FLARE_IMAGE = "flare.png";
     private String FILENAME_RADAR_BLIP_IMAGE = "radarBlip.png";
-    private Image flareImage;
     private Image radarBlipImage;
 
     /**
@@ -395,6 +381,13 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
             .color(GUIP.getWarningColor()).font(FontHandler.getNotoFont().deriveFont(Font.BOLD)).center();
 
     BoardViewTooltipProvider boardViewToolTip = (point, movementTarget) -> null;
+
+    // Part of the sprites need specialized treatment; as there can be many sprites, filtering them
+    // on the spot is a noticeable performance hit (in iso mode), therefore the sprites are copied
+    // to specialized lists when created
+    private final TreeSet<Sprite> overTerrainSprites = new TreeSet<>();
+    private final TreeSet<HexSprite> behindTerrainHexSprites = new TreeSet<>();
+    private final TreeSet<HexSprite> hexSprites = new TreeSet<>();
 
     /**
      * Construct a new board view for the specified game
@@ -620,8 +613,6 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
 
         fovHighlightingAndDarkening = new FovHighlightingAndDarkening(this);
 
-        flareImage = ImageUtil.loadImageFromFile(
-                new MegaMekFile(Configuration.miscImagesDir(), FILENAME_FLARE_IMAGE).toString());
         radarBlipImage = ImageUtil.loadImageFromFile(
                 new MegaMekFile(Configuration.miscImagesDir(), FILENAME_RADAR_BLIP_IMAGE).toString());
     }
@@ -771,10 +762,6 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
                 clearHexImageCache();
                 boardPanel.repaint();
                 break;
-
-            case GUIPreferences.SHOW_SENSOR_RANGE:
-                boardPanel.repaint();
-                break;
         }
     }
 
@@ -884,19 +871,9 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
             drawSprites(g, wreckSprites);
         }
 
-        // Sensor Range
-        if (!useIsometric() && shouldShowSensorRange()) {
-            drawSprites(g, sensorRangeSprites);
-        }
-
         // Field of Fire
         if (!useIsometric() && shouldShowFieldOfFire()) {
             drawSprites(g, fieldOfFireSprites);
-        }
-
-        if (game.getPhase().isMovement() && !useIsometric()) {
-            drawSprites(g, moveEnvSprites);
-            drawSprites(g, moveModEnvSprites);
         }
 
         // Minefield signs all over the place!
@@ -925,9 +902,6 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
             drawAllDeployment(g);
         }
 
-        // draw Flare Sprites
-        drawSprites(g, flareSprites);
-
         // draw C3 links
         drawSprites(g, c3Sprites);
 
@@ -939,12 +913,6 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
 
         // draw onscreen entities
         drawSprites(g, entitySprites);
-
-        // draw structure warning in the deployment or movement phases
-        // draw this before moving entities, so they show up under if overlapped.
-        if (!useIsometric() && shouldShowCFWarning()) {
-            drawSprites(g, cfWarningSprites);
-        }
 
         // draw moving onscreen entities
         drawSprites(g, movingEntitySprites);
@@ -966,15 +934,18 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         // draw flight path indicators
         drawSprites(g, fpiSprites);
 
-        // draw firing solution sprites, but only during the firing phase
-        if (game.getPhase().isFiring() || game.getPhase().isOffboard()) {
-            drawSprites(g, firingSprites);
-        }
-
         if (game.getPhase().isFiring()) {
             for (Coords c : strafingCoords) {
                 drawHexBorder(g, getHexLocation(c), Color.yellow, 0, 3);
             }
+        }
+
+        if (!useIsometric()) {
+            // In non-iso mode, all sprites can now be drawn according to their internal priority (draw order)
+            drawSprites(g, allSprites);
+        } else {
+            // In iso mode, some sprites are drawn in drawHexes so they can go behind terrain; draw only the others here
+            drawSprites(g, overTerrainSprites);
         }
 
         // draw the ruler line
@@ -1153,7 +1124,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
     }
 
     private synchronized void drawHexSpritesForHex(Coords c, Graphics g,
-                                                   ArrayList<? extends HexSprite> spriteArrayList) {
+                                                   Collection<? extends HexSprite> spriteArrayList) {
         Rectangle view = g.getClipBounds();
 
         for (HexSprite sprite : spriteArrayList) {
@@ -1339,20 +1310,6 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
             }
         }
     }
-
-    /**
-     * Darkens a hexes in the viewing area if there is no line of sight between
-     * them and the supplied source hex. Used in non-isometric view.
-     *
-     * @param p
-     *            The source hex for which line of sight originates
-     * @param g
-     *            The graphics object to draw on.
-     * @param col
-     *            The what color to use.
-     * @param outOfFOV
-     *            The destination hex for computing the line of sight
-     */
 
     /**
      * Draw a layer of a solid color (alpha possible) on the hex at Point p no
@@ -1614,7 +1571,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
 
     @Override
     public BufferedImage getEntireBoardImage(boolean ignoreUnits, boolean useBaseZoom) {
-        // Set zoom to base, so we get a consist board image
+        // Set zoom to base, so we get a consistent board image
         int oldZoom = zoomIndex;
         if (useBaseZoom) {
             zoomIndex = BASE_ZOOM_INDEX;
@@ -1640,18 +1597,9 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
                 drawSprites(boardGraph, wreckSprites);
             }
 
-            if (!useIsometric() && shouldShowSensorRange()) {
-                drawSprites(boardGraph, sensorRangeSprites);
-            }
-
             // Field of Fire
             if (!useIsometric() && shouldShowFieldOfFire()) {
                 drawSprites(boardGraph, fieldOfFireSprites);
-            }
-
-            if (game.getPhase().isMovement() && !useIsometric()) {
-                drawSprites(boardGraph, moveEnvSprites);
-                drawSprites(boardGraph, moveModEnvSprites);
             }
 
             // Minefield signs all over the place!
@@ -1679,9 +1627,6 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
                 drawAllDeployment(boardGraph);
             }
 
-            // draw Flare Sprites
-            drawSprites(boardGraph, flareSprites);
-
             // draw C3 links
             drawSprites(boardGraph, c3Sprites);
 
@@ -1693,12 +1638,6 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
 
             // draw onscreen entities
             drawSprites(boardGraph, entitySprites);
-
-            // draw structure collapse warning sprites if in movement or deploy phase.
-            // draw this before moving entities, so they show up under if overlapped.
-            if (!useIsometric() && shouldShowCFWarning()) {
-                drawSprites(boardGraph, cfWarningSprites);
-            }
 
             // draw moving onscreen entities
             drawSprites(boardGraph, movingEntitySprites);
@@ -1720,15 +1659,18 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
             // draw flight path indicators
             drawSprites(boardGraph, fpiSprites);
 
-            // draw firing solution sprites, but only during the firing phase
-            if (game.getPhase().isFiring() || game.getPhase().isOffboard()) {
-                drawSprites(boardGraph, firingSprites);
-            }
-
             if (game.getPhase().isFiring()) {
                 for (Coords c : strafingCoords) {
                     drawHexBorder(boardGraph, getHexLocation(c), Color.yellow, 0, 3);
                 }
+            }
+
+            if (!useIsometric()) {
+                // In non-iso mode, all sprites can now be drawn according to their internal priority (draw order)
+                drawSprites(boardGraph, allSprites);
+            } else {
+                // In iso mode, some sprites are drawn in drawHexes so they can go behind terrain; draw only the others here
+                drawSprites(boardGraph, overTerrainSprites);
             }
         }
         boardGraph.dispose();
@@ -1773,14 +1715,10 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
                         if ((hex != null)) {
                             drawHex(c, g, saveBoardImage);
                             drawOrthograph(c, g);
-                            if (shouldShowSensorRange()) {
-                                drawHexSpritesForHex(c, g, sensorRangeSprites);
-                            }
                             if (shouldShowFieldOfFire()) {
                                 drawHexSpritesForHex(c, g, fieldOfFireSprites);
                             }
-                            drawHexSpritesForHex(c, g, moveEnvSprites);
-                            drawHexSpritesForHex(c, g, moveModEnvSprites);
+                            drawHexSpritesForHex(c, g, behindTerrainHexSprites);
                             if ((en_Deployer != null)
                                     && board.isLegalDeployment(c, en_Deployer)) {
                                 drawHexBorder(g, getHexLocation(c), Color.YELLOW);
@@ -1799,11 +1737,6 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
                                 drawIsometricWreckSpritesForHex(c, g, isometricWreckSprites);
                             }
                             drawIsometricSpritesForHex(c, g, isometricSprites);
-
-                            // Draw CF warning here to prevent it from being rendered under bridges and turrets #5219
-                            if (shouldShowCFWarning()) {
-                                drawHexSpritesForHex(c, g, cfWarningSprites);
-                            }
                         }
                     }
                 }
@@ -3041,17 +2974,6 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         scheduleRedraw();
     }
 
-    private void redrawAllFlares() {
-        flareSprites.clear();
-        for (Flare f : game.getFlares()) {
-            flareSprites.add(new FlareSprite(this, f));
-        }
-    }
-
-    public Image getFlareImage() {
-        return flareImage;
-    }
-
     /**
      * Moves the cursor to the new position, or hides it, if newPos is null
      */
@@ -3380,134 +3302,12 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         refreshMoveVectors();
     }
 
-    public void setFiringSolutions(Entity attacker, Map<Integer, FiringSolution> firingSolutions) {
-        clearFiringSolutionData();
-        if (firingSolutions == null) {
-            return;
-        }
-        for (FiringSolution sln : firingSolutions.values()) {
-            FiringSolutionSprite sprite = new FiringSolutionSprite(this, sln);
-            firingSprites.add(sprite);
-        }
-    }
-
-    public void clearFiringSolutionData() {
-        firingSprites.clear();
-        boardPanel.repaint();
-    }
-
-    public void setCFWarningSprites(List<Coords> warnList) {
-        // Clear existing sprites before setting new ones.
-        clearCFWarningData();
-
-        if (warnList == null) {
-            return;
-        }
-
-        // Loops through list of coordinates, and create new CF warning sprite and add it to the sprites list.
-        for (Coords c : warnList) {
-            ConstructionWarningSprite cfws = new ConstructionWarningSprite(this, c);
-            cfWarningSprites.add(cfws);
-        }
-    }
-
-    public void clearCFWarningData() {
-        cfWarningSprites.clear();
-    }
-
     public void addStrafingCoords(Coords c) {
         strafingCoords.add(c);
     }
 
     public void clearStrafingCoords() {
         strafingCoords.clear();
-    }
-
-    public void setMovementEnvelope(Map<Coords, Integer> mvEnvData, int walk, int run, int jump, int gear) {
-        clearMovementEnvelope();
-
-        if (mvEnvData == null) {
-            return;
-        }
-
-        for (Coords loc : mvEnvData.keySet()) {
-            Color spriteColor = null;
-            int mvType = -1;
-            if (gear == MovementDisplay.GEAR_JUMP || gear == MovementDisplay.GEAR_DFA) {
-                if (mvEnvData.get(loc) <= jump) {
-                    spriteColor = GUIP.getMoveJumpColor();
-                    mvType = 1;
-                }
-            } else {
-                if (mvEnvData.get(loc) <= walk) {
-                    spriteColor = GUIP.getMoveDefaultColor();
-                    mvType = 2;
-                } else if (mvEnvData.get(loc) <= run) {
-                    spriteColor = GUIP.getMoveRunColor();
-                    mvType = 3;
-                } else {
-                    spriteColor = GUIP.getMoveSprintColor();
-                    mvType = 4;
-                }
-            }
-
-            // Next: check the adjacent hexes and find
-            // those with the same movement type,
-            // send this to the Sprite so it paints only
-            // the borders of the movement type areas
-            int mvAdjType;
-            int edgesToPaint = 0;
-            // cycle through hexes
-            for (int dir = 0; dir < 6; dir++) {
-                mvAdjType = 0;
-                Coords adjacentHex = loc.translated(dir);
-                // get the movement type
-                Integer Adjmv = mvEnvData.get(adjacentHex);
-                if (Adjmv != null) {
-                    if (gear == MovementDisplay.GEAR_JUMP) {
-                        if (Adjmv <= jump) {
-                            mvAdjType = 1;
-                        }
-                    } else {
-                        if (Adjmv <= walk) {
-                            mvAdjType = 2;
-                        } else if (Adjmv <= run) {
-                            mvAdjType = 3;
-                        } else {
-                            mvAdjType = 4;
-                        }
-                    }
-                }
-
-                // other movement type: paint a border in this direction
-                if (mvAdjType != mvType) {
-                    edgesToPaint += (1 << dir);
-                }
-            }
-
-            if (spriteColor != null) {
-                MovementEnvelopeSprite mvSprite = new MovementEnvelopeSprite(
-                        this, spriteColor, loc, edgesToPaint);
-                moveEnvSprites.add(mvSprite);
-            }
-        }
-
-        boardPanel.repaint();
-
-    }
-
-    public void setMovementModifierEnvelope(Collection<MovePath> movePaths) {
-        moveModEnvSprites.clear();
-        for (MovePath mp : movePaths) {
-            moveModEnvSprites.add(new MovementModifierEnvelopeSprite(this, mp));
-        }
-        boardPanel.repaint();
-    }
-
-    public void clearMovementEnvelope() {
-        moveEnvSprites.clear();
-        moveModEnvSprites.clear();
-        boardPanel.repaint();
     }
 
     public void setLocalPlayer(Player p) {
@@ -4456,8 +4256,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
             refreshAttacks();
 
             // Clear some information regardless of what phase it is
-            clearFiringSolutionData();
-            clearMovementEnvelope();
+            clientgui.clearTemporarySprites();
 
             switch (e.getNewPhase()) {
                 case MOVEMENT:
@@ -4495,21 +4294,24 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
 
     synchronized void boardChanged() {
         redrawAllEntities();
-        redrawAllFlares();
     }
 
-    void clearSprites() {
+    @Override
+    public void clearSprites() {
         pathSprites.clear();
         fpiSprites.clear();
-        firingSprites.clear();
         attackSprites.clear();
         c3Sprites.clear();
         vtolAttackSprites.clear();
         flyOverSprites.clear();
         movementSprites.clear();
         fieldOfFireSprites.clear();
-        sensorRangeSprites.clear();
-        cfWarningSprites.clear();
+
+        overTerrainSprites.clear();
+        behindTerrainHexSprites.clear();
+        hexSprites.clear();
+
+        super.clearSprites();
     }
 
     public synchronized void updateBoard() {
@@ -4950,17 +4752,8 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         selectedSprite.prepare();
         firstLOSSprite.prepare();
         secondLOSSprite.prepare();
-        for (Sprite spr : moveEnvSprites) {
-            spr.prepare();
-        }
 
-        for (Sprite spr : moveModEnvSprites) {
-            spr.prepare();
-        }
-
-        for (Sprite spr : sensorRangeSprites) {
-            spr.prepare();
-        }
+        allSprites.forEach(Sprite::prepare);
 
         for (Sprite spr : fieldOfFireSprites) {
             spr.prepare();
@@ -4977,13 +4770,6 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
             sprite.prepare();
         }
 
-        for (FiringSolutionSprite sprite : firingSprites) {
-            sprite.prepare();
-        }
-
-        for (ConstructionWarningSprite sprite : cfWarningSprites) {
-            sprite.prepare();
-        }
         boardPanel.setSize(boardSize);
 
         clearHexImageCache();
@@ -5098,35 +4884,15 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
 
     public boolean toggleIsometric() {
         drawIsometric = !drawIsometric;
-        for (Sprite spr : moveEnvSprites) {
-            spr.prepare();
-        }
-
-        for (Sprite spr : moveModEnvSprites) {
-            spr.prepare();
-        }
-
-        for (Sprite spr : sensorRangeSprites) {
-            spr.prepare();
-        }
+        allSprites.forEach(Sprite::prepare);
+        hexSprites.forEach(HexSprite::updateBounds);
 
         for (Sprite spr : fieldOfFireSprites) {
             spr.prepare();
         }
 
-        for (Sprite spr : cfWarningSprites) {
-            spr.prepare();
-        }
-
         clearHexImageCache();
         updateBoard();
-        for (MovementEnvelopeSprite sprite : moveEnvSprites) {
-            sprite.updateBounds();
-        }
-
-        for (MovementModifierEnvelopeSprite sprite : moveModEnvSprites) {
-            sprite.updateBounds();
-        }
         boardPanel.repaint();
         return drawIsometric;
     }
@@ -5217,11 +4983,6 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         fieldOfFireWpArc = -1;
         fieldOfFireUnit = null;
         fieldOfFireSprites.clear();
-        boardPanel.repaint();
-    }
-
-    public void clearSensorsRanges() {
-        sensorRangeSprites.clear();
         boardPanel.repaint();
     }
 
@@ -5379,125 +5140,6 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         boardPanel.repaint();
     }
 
-    public static class RangeHelper {
-        public int min;
-        public int max;
-
-        public RangeHelper(int min, int max) {
-            this.min = min;
-            this.max = max;
-        }
-    }
-
-    // prepares the sprites for visual and sensor ranges
-    public void setSensorRange(Entity entity, Coords c) {
-        // Do not calculate anything for offboard units
-        if (entity == null || c == null || entity.isOffBoard()) {
-            clearSensorsRanges();
-            return;
-        }
-
-        List<RangeHelper> lBrackets = new ArrayList<>(1);
-        int minSensorRange = 0;
-        int maxSensorRange = 0;
-        int minAirSensorRange = 0;
-        int maxAirSensorRange = 0;
-        GameOptions gameOptions = game.getOptions();
-
-        if (gameOptions.booleanOption(OptionsConstants.ADVANCED_TACOPS_SENSORS)
-                || (gameOptions.booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS)) && entity.isSpaceborne()) {
-            Compute.SensorRangeHelper srh = Compute.getSensorRanges(entity.getGame(), entity);
-
-            if (srh != null) {
-                if (entity.isAirborne() && entity.getGame().getBoard().onGround()) {
-                    minSensorRange = srh.minGroundSensorRange;
-                    maxSensorRange = srh.maxGroundSensorRange;
-                    minAirSensorRange = srh.minSensorRange;
-                    maxAirSensorRange = srh.maxSensorRange;
-                } else {
-                    minSensorRange = srh.minSensorRange;
-                    maxSensorRange = srh.maxSensorRange;
-                }
-            }
-        }
-
-        lBrackets.add(new RangeHelper(minSensorRange, maxSensorRange));
-        lBrackets.add(new RangeHelper(minAirSensorRange, maxAirSensorRange));
-
-        minSensorRange = 0;
-        maxSensorRange = Compute.getMaxVisualRange(entity, false);
-
-        lBrackets.add(new RangeHelper(minSensorRange, maxSensorRange));
-
-        minSensorRange = 0;
-
-        if (game.getPlanetaryConditions().getLight().isDuskOrFullMoonOrMoonlessOrPitchBack()) {
-            maxSensorRange = Compute.getMaxVisualRange(entity, true);
-        } else {
-            maxSensorRange = 0;
-        }
-
-        lBrackets.add(new RangeHelper(minSensorRange, maxSensorRange));
-
-        // create the lists of hexes
-        List<Set<Coords>> sensorRanges = new ArrayList<>(1);
-        int j = 0;
-
-        // find max range possible on map, no need to check beyond it
-        int rangeToCorner = (new Coords(0, game.getBoard().getHeight())).distance(c);
-        rangeToCorner = Math.max(rangeToCorner, (new Coords(0, 0)).distance(c));
-        rangeToCorner = Math.max(rangeToCorner, (new Coords(game.getBoard().getWidth(), 0)).distance(c));
-        rangeToCorner = Math.max(rangeToCorner, (new Coords(game.getBoard().getWidth(), game.getBoard().getHeight())).distance(c));
-
-        for (RangeHelper rangeH : lBrackets) {
-            sensorRanges.add(new HashSet<>());
-            int rangeMin = Math.min(rangeH.min, rangeToCorner);
-            int rangeMax = Math.min(rangeH.max, rangeToCorner);
-
-            if (rangeMin != rangeMax) {
-                for (int i = rangeMin; i <= rangeMax; i++) {
-                    // Add all hexes up to the range to separate lists
-                    sensorRanges.get(j).addAll(c.allAtDistance(i));
-                }
-            }
-
-            // Remove hexes that are not on the board
-            sensorRanges.get(j).removeIf(h -> !game.getBoard().contains(h));
-            j++;
-        }
-
-        // create the sprites
-        sensorRangeSprites.clear();
-
-        // for all available range
-        for (int b = 0; b < lBrackets.size(); b++) {
-            if (sensorRanges.get(b) == null) {
-                continue;
-            }
-
-            for (Coords loc : sensorRanges.get(b)) {
-                // check surrounding hexes
-                int edgesToPaint = 0;
-
-                for (int dir = 0; dir < 6; dir++) {
-                    Coords adjacentHex = loc.translated(dir);
-
-                    if (!sensorRanges.get(b).contains(adjacentHex)) {
-                        edgesToPaint += (1 << dir);
-                    }
-                }
-
-                // create sprite if there's a border to paint
-                if (edgesToPaint > 0) {
-                    SensorRangeSprite srSprite = new SensorRangeSprite(this, b, loc, edgesToPaint);
-                    sensorRangeSprites.add(srSprite);
-                }
-            }
-        }
-
-        boardPanel.repaint();
-    }
-
     /** Displays a dialog and changes the theme of all
      *  board hexes to the user-chosen theme.
      */
@@ -5558,17 +5200,6 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
                         || game.getPhase().isOffboard());
     }
 
-    public boolean shouldShowSensorRange() {
-        return GUIP.getShowSensorRange() &&
-                (game.getPhase().isDeployment() || game.getPhase().isMovement()
-                        || game.getPhase().isTargeting() || game.getPhase().isFiring()
-                        || game.getPhase().isOffboard());
-    }
-
-    public boolean shouldShowCFWarning() {
-        return ConstructionFactorWarning.shouldShow(game.getPhase(), GUIP.getShowCFWarnings());
-    }
-
     public void setShowLobbyPlayerDeployment(boolean b) {
         showLobbyPlayerDeployment = b;
     }
@@ -5626,10 +5257,6 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         return fovHighlightingAndDarkening;
     }
 
-    List<FlareSprite> getFlareSprites() {
-        return flareSprites;
-    }
-
     List<WreckSprite> getWreckSprites() {
         return wreckSprites;
     }
@@ -5640,5 +5267,35 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
 
     List<AttackSprite> getAttackSprites() {
         return attackSprites;
+    }
+
+    @Override
+    public void repaint() {
+        boardPanel.repaint();
+    }
+
+    @Override
+    public void addSprites(Collection<? extends Sprite> sprites) {
+        super.addSprites(sprites);
+        sprites.stream()
+                .filter(s -> !(s instanceof HexSprite) || !((HexSprite) s).isBehindTerrain())
+                .forEach(overTerrainSprites::add);
+        sprites.stream()
+                .filter(s -> s instanceof HexSprite)
+                .map(s -> (HexSprite) s)
+                .filter(HexSprite::isBehindTerrain)
+                .forEach(behindTerrainHexSprites::add);
+        sprites.stream()
+                .filter(s -> s instanceof HexSprite)
+                .map(s -> (HexSprite) s)
+                .forEach(hexSprites::add);
+    }
+
+    @Override
+    public void removeSprites(Collection<? extends Sprite> sprites) {
+        super.removeSprites(sprites);
+        overTerrainSprites.removeAll(sprites);
+        behindTerrainHexSprites.removeAll(sprites);
+        hexSprites.removeAll(sprites);
     }
 }

@@ -457,11 +457,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
             LogManager.getLogger().error("Tried to select non-existent entity " + en);
         }
 
-        if (GUIP.getFiringSolutions()) {
-            setFiringSolutions(ce());
-        } else {
-            clientgui.getBoardView().clearFiringSolutionData();
-        }
+        clientgui.showFiringSolutions(ce());
     }
 
     /**
@@ -474,7 +470,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
             clientgui.maybeShowUnitDisplay();
         }
         clientgui.getBoardView().clearFieldOfFire();
-        clientgui.getBoardView().clearSensorsRanges();
+        clientgui.clearTemporarySprites();
 
         selectEntity(clientgui.getClient().getFirstEntityNum());
 
@@ -535,10 +531,9 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
         clientgui.getBoardView().highlight(null);
         clientgui.getBoardView().cursor(null);
         clientgui.getBoardView().clearMovementData();
-        clientgui.getBoardView().clearFiringSolutionData();
         clientgui.getBoardView().clearStrafingCoords();
         clientgui.getBoardView().clearFieldOfFire();
-        clientgui.getBoardView().clearSensorsRanges();
+        clientgui.clearTemporarySprites();
         clientgui.setSelectedEntityNum(Entity.NONE);
         disableButtons();
 

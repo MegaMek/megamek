@@ -22,9 +22,11 @@ import megamek.client.event.BoardViewListener;
 import megamek.client.ui.IDisplayable;
 import megamek.common.Coords;
 
+import java.util.List;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.RenderedImage;
+import java.util.Collection;
 import java.util.Set;
 
 public interface IBoardView {
@@ -185,4 +187,42 @@ public interface IBoardView {
      * @see BoardViewTooltipProvider
      */
     void setTooltipProvider(BoardViewTooltipProvider provider);
+
+    /**
+     * Schedules a repaint of the BoardView.
+     * @see JPanel#repaint()
+     */
+    void repaint();
+
+    /**
+     * Adds a {@link Sprite} to be shown on this BoardView to its set of sprites.
+     *
+     * @param sprite the Sprite to show
+     */
+    default void addSprite(Sprite sprite) {
+        addSprites(List.of(sprite));
+    }
+
+    /**
+     * Adds the given collection of {@link Sprite} to be shown on this BoardView to its set of sprites.
+     *
+     * @param sprites the Sprites to show
+     */
+    void addSprites(Collection<? extends Sprite> sprites);
+
+    /**
+     * Removes the given {@link Sprite} from this BoardView's set of sprites.
+     *
+     * @param sprite the Sprites to remove
+     */
+    default void removeSprite(Sprite sprite) {
+        removeSprites(List.of(sprite));
+    }
+
+    /**
+     * Removes the given collection of {@link Sprite} from this BoardView's set of sprites.
+     *
+     * @param sprites the Sprites to remove
+     */
+    void removeSprites(Collection<? extends Sprite> sprites);
 }

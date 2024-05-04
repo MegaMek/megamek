@@ -52,7 +52,6 @@ import megamek.common.MovePath.MoveStepType;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.GamePhase;
-import megamek.common.equipment.WeaponMounted;
 import megamek.common.event.*;
 import megamek.common.icons.Camouflage;
 import megamek.common.preference.ClientPreferences;
@@ -244,6 +243,12 @@ public class ClientGUI extends JPanel implements BoardViewListener, IClientGUI,
     private ChatterBox cb;
     public ChatterBox2 cb2;
     private BoardView bv;
+    private MovementEnvelopeSpriteHandler movementEnvelopeHandler;
+    private MovementModifierSpriteHandler movementModifierSpriteHandler;
+    private SensorRangeSpriteHandler sensorRangeSpriteHandler;
+    private CollapseWarningSpriteHandler collapseWarningSpriteHandler;
+    private FiringSolutionSpriteHandler firingSolutionSpriteHandler;
+    private final List<BoardViewSpriteHandler> spriteHandlers = new ArrayList<>();
     private Component bvc;
     private JPanel panTop;
     private JSplitPane splitPaneA;
@@ -526,6 +531,20 @@ public class ClientGUI extends JPanel implements BoardViewListener, IClientGUI,
         frame.validate();
     }
 
+    private void initializeSpriteHandlers() {
+        movementEnvelopeHandler = new MovementEnvelopeSpriteHandler(bv, client.getGame());
+        movementModifierSpriteHandler = new MovementModifierSpriteHandler(bv, client.getGame());
+        FlareSpritesHandler flareSpritesHandler = new FlareSpritesHandler(bv, client.getGame());
+        sensorRangeSpriteHandler = new SensorRangeSpriteHandler(bv, client.getGame());
+        collapseWarningSpriteHandler = new CollapseWarningSpriteHandler(bv);
+        firingSolutionSpriteHandler = new FiringSolutionSpriteHandler(bv, client);
+
+        spriteHandlers.addAll(List.of(movementEnvelopeHandler, movementModifierSpriteHandler,
+                sensorRangeSpriteHandler, flareSpritesHandler, collapseWarningSpriteHandler,
+                firingSolutionSpriteHandler));
+        spriteHandlers.forEach(BoardViewSpriteHandler::initialize);
+    }
+
     @Override
     public void initialize() {
         menuBar = new CommonMenuBar(getClient());
@@ -541,6 +560,7 @@ public class ClientGUI extends JPanel implements BoardViewListener, IClientGUI,
             bv.setTooltipProvider(new TWBoardViewTooltip(client.getGame(), this, bv));
             bvc = bv.getComponent();
             bvc.setName(CG_BOARDVIEW);
+            initializeSpriteHandlers();
 
             panTop = new JPanel(new BorderLayout());
             panA1 = new JPanel();
@@ -977,18 +997,10 @@ public class ClientGUI extends JPanel implements BoardViewListener, IClientGUI,
                 }
                 break;
             case VIEW_TOGGLE_FIRING_SOLUTIONS:
-                GUIP.setFiringSolutions(!GUIP.getFiringSolutions());
-                if (!GUIP.getFiringSolutions()) {
-                    bv.clearFiringSolutionData();
-                } else {
-                    if (curPanel instanceof FiringDisplay) {
-                        ((FiringDisplay) curPanel).setFiringSolutions(((FiringDisplay) curPanel).ce());
-                    }
-                }
-                bv.refreshDisplayables();
+                GUIP.setShowFiringSolutions(!GUIP.getShowFiringSolutions());
                 break;
             case VIEW_TOGGLE_CF_WARNING:
-                ConstructionFactorWarning.handleActionPerformed();
+                CollapseWarning.handleActionPerformed();
                 break;
             case VIEW_MOVE_ENV:
                 if (curPanel instanceof MovementDisplay) {
@@ -1121,6 +1133,7 @@ public class ClientGUI extends JPanel implements BoardViewListener, IClientGUI,
     @Override
     public void die() {
         // Tell all the displays to remove themselves as listeners.
+        spriteHandlers.forEach(BoardViewSpriteHandler::dispose);
         boolean reportHandled = false;
         if (bv != null) {
             // cleanup our timers first
@@ -1148,6 +1161,7 @@ public class ClientGUI extends JPanel implements BoardViewListener, IClientGUI,
         } catch (Exception ex) {
             LogManager.getLogger().error("", ex);
         }
+
         client.die();
 
         TimerSingleton.getInstance().killTimer();
@@ -2355,7 +2369,7 @@ public class ClientGUI extends JPanel implements BoardViewListener, IClientGUI,
         public void gameEnd(GameEndEvent e) {
             bv.clearMovementData();
             bv.clearFieldOfFire();
-            bv.clearSensorsRanges();
+            clearTemporarySprites();
             getLocalBots().values().forEach(AbstractClient::die);
             getLocalBots().clear();
 
@@ -2976,6 +2990,78 @@ public class ClientGUI extends JPanel implements BoardViewListener, IClientGUI,
         } else if (e.getName().equals(GUIPreferences.MASTER_VOLUME)) {
             audioService.setVolume();
         }
+    }
+
+    /**
+     * Shows the movement envelope in the BoardView for the given entity. The movement envelope data is
+     * a map of move end Coords to movement points used.
+     *
+     * @param entity The entity for which the movement envelope is
+     * @param mvEnvData The movement envelope data
+     * @param gear The move gear, MovementDisplay.GEAR_LAND or GEAR_JUMP
+     */
+    public void showMovementEnvelope(Entity entity, Map<Coords, Integer> mvEnvData, int gear) {
+        movementEnvelopeHandler.setMovementEnvelope(mvEnvData, entity.getWalkMP(),
+                entity.getRunMP(), entity.getJumpMP(), gear);
+    }
+
+    /**
+     * Removes all temporary sprites from the board, such as pending actions, movement envelope,
+     * collapse warnings etc. Does not remove game-state sprites such as units or flares.
+     */
+    public void clearTemporarySprites() {
+        movementEnvelopeHandler.clear();
+        movementModifierSpriteHandler.clear();
+        sensorRangeSpriteHandler.clear();
+        collapseWarningSpriteHandler.clear();
+        firingSolutionSpriteHandler.clear();
+    }
+
+    /**
+     * Shows the optimal available movement modifiers in the BoardView.
+     *
+     * @param movePaths The available longest move paths.
+     */
+    public void showMovementModifiers(Collection<MovePath> movePaths) {
+        movementModifierSpriteHandler.renewSprites(movePaths);
+    }
+
+    /**
+     * Shows the sensor/visual ranges for the given entity on its own position in the BoardView
+     *
+     * @param entity The entity that is looking/sensing
+     */
+    public void showSensorRanges(Entity entity) {
+        showSensorRanges(entity, entity.getPosition());
+    }
+
+    /**
+     * Shows the sensor/visual ranges for the given entity in the BoardView. The ranges are centered on
+     * the given assumedPosition rather than the entity's own position.
+     *
+     * @param entity The entity that is looking/sensing
+     * @param assumedPosition The position to center all ranges on
+     */
+    public void showSensorRanges(Entity entity, Coords assumedPosition) {
+        sensorRangeSpriteHandler.setSensorRange(entity, assumedPosition);
+    }
+
+    /**
+     * Shows collapse warnings in the given list of Coords in the BoardView
+     *
+     * @param warnList The Coords to show the warning on
+     */
+    public void showCollapseWarning(List<Coords> warnList) {
+        collapseWarningSpriteHandler.setCFWarningSprites(warnList);
+    }
+
+    /**
+     * Shows firing solutions from the viewpoint of the given entity on targets
+     *
+     * @param entity The attacking entity
+     */
+    public void showFiringSolutions(Entity entity) {
+        firingSolutionSpriteHandler.showFiringSolutions(entity);
     }
 
     @Override

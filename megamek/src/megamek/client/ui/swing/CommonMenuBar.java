@@ -311,7 +311,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         toggleFieldOfFire.setToolTipText(Messages.getString("CommonMenuBar.viewToggleFieldOfFireToolTip"));
         initMenuItem(toggleFiringSolutions, menu, VIEW_TOGGLE_FIRING_SOLUTIONS);
         toggleFiringSolutions.setToolTipText(Messages.getString("CommonMenuBar.viewToggleFiringSolutionsToolTip"));
-        toggleFiringSolutions.setSelected(GUIP.getFiringSolutions());
+        toggleFiringSolutions.setSelected(GUIP.getShowFiringSolutions());
 
         initMenuItem(toggleCFWarning, menu, VIEW_TOGGLE_CF_WARNING);
         toggleCFWarning.setToolTipText(Messages.getString("CommonMenuBar.viewToggleCFWarningToolTip"));

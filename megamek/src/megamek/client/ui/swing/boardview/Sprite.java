@@ -148,7 +148,7 @@ abstract public class Sprite implements ImageObserver, Comparable<Sprite> {
      */
     @Override
     public int compareTo(Sprite o) {
-        if (this == o) {
+        if (equals(o)) {
             return 0;
         } else if (getSpritePriority() == o.getSpritePriority()) {
             // For use in a TreeSet, must not return 0 for equal priority as long as the objects aren't equal
@@ -156,5 +156,10 @@ abstract public class Sprite implements ImageObserver, Comparable<Sprite> {
         } else {
             return this.getSpritePriority() - o.getSpritePriority();
         }
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return super.equals(obj);
     }
 }

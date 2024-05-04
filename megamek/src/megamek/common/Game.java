@@ -1316,7 +1316,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
 
         // We also need to remove it from the list of things to be deployed...
         // we might still be in this list if we never joined the game
-        setupRoundDeployment();
+        setupDeployment();
         processGameEvent(new GameEntityRemoveEvent(this, toRemove));
     }
 

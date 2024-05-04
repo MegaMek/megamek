@@ -20,7 +20,6 @@ package megamek.server;
 
 import megamek.MegaMek;
 import megamek.common.*;
-import megamek.common.enums.GamePhase;
 import megamek.common.net.enums.PacketCommand;
 import megamek.common.net.packets.Packet;
 import megamek.common.options.OptionsConstants;
@@ -36,17 +35,18 @@ import java.util.*;
 public final class SBFGameManager extends AbstractGameManager {
 
     private SBFGame game;
-    private List<Report> pendingReports = new ArrayList<>();
+    private final List<Report> pendingReports = new ArrayList<>();
+    private final SBFPhaseEndManager phaseEndManager = new SBFPhaseEndManager(this);
 
     @Override
-    public IGame getGame() {
+    public SBFGame getGame() {
         return game;
     }
 
     @Override
     public void setGame(IGame g) {
         if (!(g instanceof SBFGame)) {
-            LogManager.getLogger().error("Attempted to set game to incorrect class.");
+            LogManager.getLogger().fatal("Attempted to set game to incorrect class.");
             return;
         }
         game = (SBFGame) g;
@@ -59,16 +59,6 @@ public final class SBFGameManager extends AbstractGameManager {
 
     @Override
     public void disconnect(Player player) {
-
-    }
-
-    @Override
-    public void saveGame(String fileName) {
-
-    }
-
-    @Override
-    public void sendSaveGame(int connId, String fileName, String localPath) {
 
     }
 
@@ -169,285 +159,10 @@ public final class SBFGameManager extends AbstractGameManager {
 
     @Override
     protected void endCurrentPhase() {
-        switch (game.getPhase()) {
-            case LOUNGE:
-//                game.addReports(vPhaseReport);
-                changePhase(GamePhase.EXCHANGE);
-                break;
-            case EXCHANGE:
-            case STARTING_SCENARIO:
-//                game.addReports(vPhaseReport);
-                // IO BF p.103:
-//                changePhase(GamePhase.SET_ARTILLERY_AUTOHIT_HEXES);
-                changePhase(GamePhase.INITIATIVE); // <- only for testing to get past arty auto and minefields
-                break;
-            case SET_ARTILLERY_AUTOHIT_HEXES:
-//                sendSpecialHexDisplayPackets();
-                boolean mines = game.getPlayersList().stream().anyMatch(Player::hasMinefields);
-//                game.addReports(vPhaseReport);
-                if (mines) {
-                    changePhase(GamePhase.DEPLOY_MINEFIELDS);
-                } else {
-                    changePhase(GamePhase.INITIATIVE);
-                }
-                break;
-            case DEPLOY_MINEFIELDS:
-                changePhase(GamePhase.INITIATIVE);
-                break;
-            case DEPLOYMENT:
-                game.clearDeploymentThisRound();
-                if (game.getCurrentRound() == 0) {
-                    changePhase(GamePhase.INITIATIVE);
-                } else {
-                    // there is no separate artillery targeting phase in SBF
-                    changePhase(GamePhase.TARGETING);
-                }
-                break;
-            case INITIATIVE:
-//                resolveWhatPlayersCanSeeWhatUnits();
-//                detectSpacecraft();
-//                game.addReports(vPhaseReport);
-                changePhase(GamePhase.INITIATIVE_REPORT);
-                break;
-            case INITIATIVE_REPORT:
-                game.setupRoundDeployment();
-                if (game.shouldDeployThisRound()) {
-                    changePhase(GamePhase.DEPLOYMENT);
-                } else {
-                    changePhase(GamePhase.TARGETING);
-                }
-                break;
-            case PREMOVEMENT:
-                changePhase(GamePhase.MOVEMENT);
-                break;
-            case MOVEMENT:
-//                detectHiddenUnits();
-//                ServerHelper.detectMinefields(game, vPhaseReport, this);
-//                updateSpacecraftDetection();
-//                detectSpacecraft();
-//                resolveWhatPlayersCanSeeWhatUnits();
-//                doAllAssaultDrops();
-//                addMovementHeat();
-//                applyBuildingDamage();
-//                checkForPSRFromDamage();
-//                addReport(resolvePilotingRolls()); // Skids cause damage in
-//                // movement phase
-//                checkForFlamingDamage();
-//                checkForTeleMissileAttacks();
-//                cleanupDestroyedNarcPods();
-//                checkForFlawedCooling();
-//                resolveCallSupport();
-//                // check phase report
-//                if (vPhaseReport.size() > 1) {
-//                    game.addReports(vPhaseReport);
-//                    changePhase(GamePhase.MOVEMENT_REPORT);
-//                } else {
-//                    // just the header, so we'll add the <nothing> label
-//                    addReport(new Report(1205, Report.PUBLIC));
-//                    game.addReports(vPhaseReport);
-//                    sendReport();
-//                    changePhase(GamePhase.OFFBOARD);
-//                }
-                break;
-            case MOVEMENT_REPORT:
-                changePhase(GamePhase.OFFBOARD);
-                break;
-            case PREFIRING:
-                changePhase(GamePhase.FIRING);
-                break;
-            case FIRING:
-//                // write Weapon Attack Phase header
-//                addReport(new Report(3000, Report.PUBLIC));
-//                resolveWhatPlayersCanSeeWhatUnits();
-//                resolveAllButWeaponAttacks();
-//                resolveSelfDestructions();
-//                reportGhostTargetRolls();
-//                reportLargeCraftECCMRolls();
-//                resolveOnlyWeaponAttacks();
-//                assignAMS();
-//                handleAttacks();
-//                resolveScheduledNukes();
-//                applyBuildingDamage();
-//                checkForPSRFromDamage();
-//                cleanupDestroyedNarcPods();
-//                addReport(resolvePilotingRolls());
-//                checkForFlawedCooling();
-//                // check phase report
-//                if (vPhaseReport.size() > 1) {
-//                    game.addReports(vPhaseReport);
-//                    changePhase(GamePhase.FIRING_REPORT);
-//                } else {
-//                    // just the header, so we'll add the <nothing> label
-//                    addReport(new Report(1205, Report.PUBLIC));
-//                    sendReport();
-//                    game.addReports(vPhaseReport);
-//                    changePhase(GamePhase.PHYSICAL);
-//                }
-                break;
-            case FIRING_REPORT:
-                changePhase(GamePhase.PHYSICAL);
-                break;
-            case PHYSICAL:
-//                resolveWhatPlayersCanSeeWhatUnits();
-//                resolvePhysicalAttacks();
-//                applyBuildingDamage();
-//                checkForPSRFromDamage();
-//                addReport(resolvePilotingRolls());
-//                resolveSinkVees();
-//                cleanupDestroyedNarcPods();
-//                checkForFlawedCooling();
-//                checkForChainWhipGrappleChecks();
-//                // check phase report
-//                if (vPhaseReport.size() > 1) {
-//                    game.addReports(vPhaseReport);
-//                    changePhase(GamePhase.PHYSICAL_REPORT);
-//                } else {
-//                    // just the header, so we'll add the <nothing> label
-//                    addReport(new Report(1205, Report.PUBLIC));
-//                    game.addReports(vPhaseReport);
-//                    sendReport();
-//                    changePhase(GamePhase.END);
-//                }
-                break;
-            case PHYSICAL_REPORT:
-                changePhase(GamePhase.END);
-                break;
-            case TARGETING:
-//                vPhaseReport.addElement(new Report(1035, Report.PUBLIC));
-//                resolveAllButWeaponAttacks();
-//                resolveOnlyWeaponAttacks();
-//                handleAttacks();
-//                // check reports
-//                if (vPhaseReport.size() > 1) {
-//                    game.addReports(vPhaseReport);
-//                    changePhase(GamePhase.TARGETING_REPORT);
-//                } else {
-//                    // just the header, so we'll add the <nothing> label
-//                    vPhaseReport.addElement(new Report(1205, Report.PUBLIC));
-//                    game.addReports(vPhaseReport);
-//                    sendReport();
-//                    changePhase(GamePhase.PREMOVEMENT);
-//                }
-//
-//                sendSpecialHexDisplayPackets();
-//                for (Enumeration<Player> i = game.getPlayers(); i.hasMoreElements(); ) {
-//                    Player player = i.nextElement();
-//                    int connId = player.getId();
-//                    send(connId, createArtilleryPacket(player));
-//                }
-//
-                break;
-            case OFFBOARD:
-//                // write Offboard Attack Phase header
-//                addReport(new Report(1100, Report.PUBLIC));
-//                resolveAllButWeaponAttacks(); // torso twist or flip arms
-//                // possible
-//                resolveOnlyWeaponAttacks(); // should only be TAG at this point
-//                handleAttacks();
-//                for (Enumeration<Player> i = game.getPlayers(); i.hasMoreElements(); ) {
-//                    Player player = i.nextElement();
-//                    int connId = player.getId();
-//                    send(connId, createArtilleryPacket(player));
-//                }
-//                applyBuildingDamage();
-//                checkForPSRFromDamage();
-//                addReport(resolvePilotingRolls());
-//
-//                cleanupDestroyedNarcPods();
-//                checkForFlawedCooling();
-//
-//                sendSpecialHexDisplayPackets();
-//                sendTagInfoUpdates();
-//
-//                // check reports
-//                if (vPhaseReport.size() > 1) {
-//                    game.addReports(vPhaseReport);
-//                    changePhase(GamePhase.OFFBOARD_REPORT);
-//                } else {
-//                    // just the header, so we'll add the <nothing> label
-//                    addReport(new Report(1205, Report.PUBLIC));
-//                    game.addReports(vPhaseReport);
-//                    sendReport();
-//                    changePhase(GamePhase.PREFIRING);
-//                }
-                break;
-            case OFFBOARD_REPORT:
-//                sendSpecialHexDisplayPackets();
-                changePhase(GamePhase.PREFIRING);
-                break;
-            case TARGETING_REPORT:
-                changePhase(GamePhase.PREMOVEMENT);
-                break;
-            case END:
-//                // remove any entities that died in the heat/end phase before
-//                // checking for victory
-//                resetEntityPhase(GamePhase.END);
-//                boolean victory = victory(); // note this may add reports
-//                // check phase report
-//                // HACK: hardcoded message ID check
-//                if ((vPhaseReport.size() > 3) || ((vPhaseReport.size() > 1)
-//                        && (vPhaseReport.elementAt(1).messageId != 1205))) {
-//                    game.addReports(vPhaseReport);
-//                    changePhase(GamePhase.END_REPORT);
-//                } else {
-//                    // just the heat and end headers, so we'll add
-//                    // the <nothing> label
-//                    addReport(new Report(1205, Report.PUBLIC));
-//                    game.addReports(vPhaseReport);
-//                    sendReport();
-//                    if (victory) {
-//                        changePhase(GamePhase.VICTORY);
-//                    } else {
-//                        changePhase(GamePhase.INITIATIVE);
-//                    }
-//                }
-//                // Decrement the ASEWAffected counter
-//                decrementASEWTurns();
-
-                break;
-            case END_REPORT:
-//                if (changePlayersTeam) {
-//                    processTeamChangeRequest();
-//                }
-//                if (victory()) {
-//                    changePhase(GamePhase.VICTORY);
-//                } else {
-//                    changePhase(GamePhase.INITIATIVE);
-//                }
-                break;
-            case VICTORY:
-//                GameVictoryEvent gve = new GameVictoryEvent(this, game);
-//                game.processGameEvent(gve);
-//                transmitGameVictoryEventToAll();
-//                resetGame();
-                break;
-            default:
-                break;
-        }
+        phaseEndManager.managePhase();
     }
 
-    @Override
-    protected void changePhase(GamePhase newPhase) {
-        game.setLastPhase(game.getPhase());
-        game.setPhase(newPhase);
-
-        prepareForCurrentPhase();
-
-        if (game.shouldSkipCurrentPhase()) {
-            endCurrentPhase();
-        } else {
-            // tell the players about the new phase
-            send(packetHelper.createPhaseChangePacket());
-
-            executePhase(newPhase);
-        }
-    }
-
-    /**
-     * Prepares for the game's current phase. This typically involves resetting the states of
-     * units in the game and making sure the clients have the information they need for the new phase.
-     */
-    private void prepareForCurrentPhase() {
+    protected void prepareForCurrentPhase() {
         switch (game.getPhase()) {
             case LOUNGE:
 //                clearReports();
@@ -733,23 +448,23 @@ public final class SBFGameManager extends AbstractGameManager {
      * Do anything we seed to start the new phase, such as give a turn to the
      * first player to play.
      */
-    private void executePhase(GamePhase phase) {
-        switch (phase) {
+    protected void executeCurrentPhase() {
+        switch (game.getPhase()) {
             case EXCHANGE:
-//                resetPlayersDone();
+                resetPlayersDone();
 //                // Update initial BVs, as things may have been modified in lounge
 //                for (Entity e : game.getEntitiesVector()) {
 //                    e.setInitialBV(e.calculateBattleValue(false, false));
 //                }
-//                calculatePlayerInitialCounts();
+                calculatePlayerInitialCounts();
 //                // Build teams vector
-//                game.setupTeams();
+                game.setupTeams();
 //                applyBoardSettings();
-//                game.getPlanetaryConditions().determineWind();
-//                send(packetHelper.createPlanetaryConditionsPacket());
+                game.getPlanetaryConditions().determineWind();
+                send(packetHelper.createPlanetaryConditionsPacket());
 //                // transmit the board to everybody
-//                send(packetHelper.createBoardsPacket());
-//                game.setupRoundDeployment();
+                send(packetHelper.createBoardsPacket());
+                game.setupDeployment();
 //                game.setVictoryContext(new HashMap<>());
 //                game.createVictoryConditions();
 //                // some entities may need to be checked and updated
@@ -758,6 +473,7 @@ public final class SBFGameManager extends AbstractGameManager {
             case MOVEMENT:
                 // write Movement Phase header to report
                 addReport(new Report(2000, Report.PUBLIC));
+                // intentional fall through
             case PREMOVEMENT:
             case SET_ARTILLERY_AUTOHIT_HEXES:
             case DEPLOY_MINEFIELDS:
@@ -768,9 +484,9 @@ public final class SBFGameManager extends AbstractGameManager {
             case TARGETING:
             case OFFBOARD:
 //                changeToNextTurn(-1);
-//                if (game.getOptions().booleanOption(OptionsConstants.BASE_PARANOID_AUTOSAVE)) {
-//                    autoSave();
-//                }
+                if (game.getOptions().booleanOption(OptionsConstants.BASE_PARANOID_AUTOSAVE)) {
+                    autoSave();
+                }
                 break;
             default:
                 break;
@@ -836,5 +552,11 @@ public final class SBFGameManager extends AbstractGameManager {
         pendingReports.clear();
     }
 
+    protected List<Report> getPendingReports() {
+        return pendingReports;
+    }
 
+    void addPendingReportsToGame() {
+        game.addReports(pendingReports);
+    }
 }

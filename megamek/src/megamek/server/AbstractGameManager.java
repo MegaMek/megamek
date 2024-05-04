@@ -21,11 +21,15 @@ package megamek.server;
 import megamek.common.Player;
 import megamek.common.enums.GamePhase;
 import megamek.common.net.packets.Packet;
+import megamek.common.options.OptionsConstants;
+import megamek.common.preference.PreferenceManager;
+import megamek.common.util.StringUtil;
 import org.apache.logging.log4j.LogManager;
 
 abstract class AbstractGameManager implements IGameManager {
 
     protected final GameManagerPacketHelper packetHelper = new GameManagerPacketHelper(this);
+    protected final GameManagerSaveHelper saveHandler = new GameManagerSaveHelper(this);
 
     protected final void send(Packet p) {
         Server.getServerInstance().send(p);
@@ -46,9 +50,42 @@ abstract class AbstractGameManager implements IGameManager {
         }
     }
 
+    /**
+     * Ends this phase and moves on to the next.
+     */
     protected abstract void endCurrentPhase();
 
-    protected abstract void changePhase(GamePhase newPhase);
+    /**
+     * Do anything we need to work through the current phase, such as give a turn to the
+     * first player to play.
+     */
+    protected abstract void executeCurrentPhase();
+
+    /**
+     * Prepares for the game's current phase. This typically involves resetting the states of
+     * units in the game and making sure the clients have the information they need for the new phase.
+     */
+    protected abstract void prepareForCurrentPhase();
+
+    /**
+     * Switches to the given new Phase and preforms preparation, checks if it should be skipped
+     * and executes it.
+     */
+    protected final void changePhase(GamePhase newPhase) {
+        getGame().setLastPhase(getGame().getPhase());
+        getGame().setPhase(newPhase);
+
+        prepareForCurrentPhase();
+
+        if (getGame().shouldSkipCurrentPhase()) {
+            endCurrentPhase();
+        } else {
+            // tell the players about the new phase
+            send(packetHelper.createPhaseChangePacket());
+
+            executeCurrentPhase();
+        }
+    }
 
     /**
      * Called when a player declares that they are "done". By default, this method advances to the next phase, if
@@ -116,5 +153,44 @@ abstract class AbstractGameManager implements IGameManager {
      */
     protected void transmitAllPlayerUpdates() {
         getGame().getPlayersList().forEach(this::transmitPlayerUpdate);
+    }
+
+    /**
+     * Performs an automatic save (does not check the autosave settings - the autosave will simply be done).
+     * Depending on the settings, the "autosave" filename is appended
+     * with a timestamp and/or a chat message is sent announcing the autosave.
+     */
+    protected void autoSave() {
+        String fileName = "autosave";
+        if (PreferenceManager.getClientPreferences().stampFilenames()) {
+            fileName = StringUtil.addDateTimeStamp(fileName);
+        }
+        saveGame(fileName, getGame().getOptions().booleanOption(OptionsConstants.BASE_AUTOSAVE_MSG));
+    }
+
+    @Override
+    public void saveGame(String fileName, boolean sendChat) {
+        saveHandler.saveGame(fileName, sendChat);
+    }
+
+    @Override
+    public void sendSaveGame(int connId, String sFile, String sLocalPath) {
+        saveHandler.sendSaveGame(connId, sFile, sLocalPath);
+    }
+
+    public void sendChat(String origin, String message) {
+        Server.getServerInstance().sendChat(origin, message);
+    }
+
+    public void sendChat(int connId, String origin, String message) {
+        Server.getServerInstance().sendChat(connId, origin, message);
+    }
+
+    public void sendServerChat(String message) {
+        Server.getServerInstance().sendServerChat(message);
+    }
+
+    public void sendServerChat(int connId, String message) {
+        Server.getServerInstance().sendServerChat(connId, message);
     }
 }

@@ -64,8 +64,32 @@ public interface IGameManager {
      */
     void sendCurrentInfo(int connId);
 
-    void saveGame(String fileName);
+    /**
+     * Saves the game server-side. Will announce the save (or error) in chat.
+     *
+     * @param fileName The filename to use
+     */
+    default void saveGame(String fileName) {
+        saveGame(fileName, true);
+    }
 
+    /**
+     * Saves the game server-side. Will announce the save (or error) in chat if the given sendChat
+     * is true.
+     *
+     * @param fileName The filename to use
+     * @param sendChat When true, the saving (or error) is announced in chat
+     */
+    void saveGame(String fileName, boolean sendChat);
+
+    /**
+     * save the game and send it to the specified connection
+     *
+     * @param connId     The <code>int</code> connection id to send to
+     * @param sFile      The <code>String</code> filename to use
+     * @param sLocalPath The <code>String</code> path to the file to be used on the
+     *                   client
+     */
     void sendSaveGame(int connId, String fileName, String localPath);
 
     void removeAllEntitiesOwnedBy(Player player);

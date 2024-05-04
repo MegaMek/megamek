@@ -40,8 +40,6 @@ public interface IGame {
 
     GameOptions getOptions();
 
-    GamePhase getPhase();
-
     /**
      * @return The current game round, with 0 typically indicating deployment and 1 the first
      * actual game round.
@@ -56,6 +54,13 @@ public interface IGame {
      */
     void setCurrentRound(int currentRound);
 
+    //region Phase Management
+
+    /**
+     * @return The current phase of this game.
+     */
+    GamePhase getPhase();
+
     /**
      * Sets the current game phase to the given phase. May perform phase-dependent cleanup.
      * This method is intended for the GameManager.
@@ -63,6 +68,14 @@ public interface IGame {
      * @param phase The new phase
      */
     void setPhase(GamePhase phase);
+
+    /**
+     * Sets the previous game phase to the given phase.
+     * This method is intended for the GameManager.
+     *
+     * @param phase The phase to be remembered as the previous phase.
+     */
+    void setLastPhase(GamePhase lastPhase);
 
     /**
      * Sets the current game phase to the given phase. May perform phase-dependent cleanup and fire
@@ -74,6 +87,31 @@ public interface IGame {
     default void receivePhase(GamePhase phase) {
         setPhase(phase);
     }
+
+    /**
+     * Returns true when the current game phase should be played, meaning it is played in the current type
+     * of game and there are possible actions in it in the present game state.
+     * The result may be different in other rounds.
+     *
+     * @return True when the current phase should be skipped entirely in this round
+     * @see #shouldSkipCurrentPhase()
+     */
+    boolean isCurrentPhasePlayable();
+
+    /**
+     * Returns true when the current game phase should be skipped, either because it is not played at
+     * all in the current type of game or because the present game state dictates that there can be no
+     * actions in it. The result may be different in other rounds. This is the opposite of
+     * {@link #isCurrentPhasePlayable()}.
+     *
+     * @return True when the current phase should be skipped entirely in this round
+     * @see #isCurrentPhasePlayable()
+     */
+    default boolean shouldSkipCurrentPhase() {
+        return !isCurrentPhasePlayable();
+    }
+
+    //endregion
 
     /**
      * Fires the given GameEvent, sending the event to all GameListener of this game.

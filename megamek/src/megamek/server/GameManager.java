@@ -25,7 +25,6 @@ import megamek.common.annotations.Nullable;
 import megamek.common.containers.PlayerIDandList;
 import megamek.common.enums.*;
 import megamek.common.equipment.*;
-import megamek.common.event.GameVictoryEvent;
 import megamek.common.force.Force;
 import megamek.common.force.Forces;
 import megamek.common.net.enums.PacketCommand;
@@ -142,6 +141,8 @@ public class GameManager extends AbstractGameManager {
     private Player playerRequestingGameMaster = null;
 
     private AutosaveService asService = new AutosaveService();
+
+    private TWPhaseEndManager phaseEndManager = new TWPhaseEndManager(this);
 
     /**
      * Special packet queue for client feedback requests.
@@ -360,7 +361,7 @@ public class GameManager extends AbstractGameManager {
         return requestedTeam;
     }
 
-    private void processTeamChangeRequest() {
+    void processTeamChangeRequest() {
         if (playerChangingTeam != null) {
             playerChangingTeam.setTeam(requestedTeam);
             getGame().setupTeams();
@@ -376,100 +377,6 @@ public class GameManager extends AbstractGameManager {
         }
         changePlayersTeam = false;
     }
-
-    /**
-     * automatically save the game
-     */
-    public void autoSave() {
-        String fileName = "autosave";
-        if (PreferenceManager.getClientPreferences().stampFilenames()) {
-            fileName = StringUtil.addDateTimeStamp(fileName);
-        }
-        saveGame(fileName, getGame().getOptions().booleanOption(OptionsConstants.BASE_AUTOSAVE_MSG));
-    }
-
-    /**
-     * save the game and send it to the specified connection
-     *
-     * @param connId     The <code>int</code> connection id to send to
-     * @param sFile      The <code>String</code> filename to use
-     * @param sLocalPath The <code>String</code> path to the file to be used on the
-     *                   client
-     */
-    @Override
-    public void sendSaveGame(int connId, String sFile, String sLocalPath) {
-        saveGame(sFile, false);
-        String sFinalFile = sFile;
-        if (!sFinalFile.endsWith(MMConstants.SAVE_FILE_GZ_EXT)) {
-            if (sFinalFile.endsWith(MMConstants.SAVE_FILE_EXT)) {
-                sFinalFile = sFile + ".gz";
-            } else {
-                sFinalFile = sFile + MMConstants.SAVE_FILE_GZ_EXT;
-            }
-        }
-        sLocalPath = sLocalPath.replaceAll("\\|", " ");
-        String localFile = MMConstants.SAVEGAME_DIR + File.separator + sFinalFile;
-        try (InputStream in = new FileInputStream(localFile); InputStream bin = new BufferedInputStream(in)) {
-            List<Integer> data = new ArrayList<>();
-            int input;
-            while ((input = bin.read()) != -1) {
-                data.add(input);
-            }
-            send(connId, new Packet(PacketCommand.SEND_SAVEGAME, sFinalFile, data, sLocalPath));
-            sendChat(connId, "***Server", "Save game has been sent to you.");
-        } catch (Exception ex) {
-            LogManager.getLogger().error("Unable to load file: " + localFile, ex);
-        }
-    }
-
-    /**
-     * save the game
-     *
-     * @param sFile    The <code>String</code> filename to use
-     * @param sendChat A <code>boolean</code> value whether or not to announce the
-     *                 saving to the server chat.
-     */
-    public void saveGame(String sFile, boolean sendChat) {
-        // We need to strip the .gz if it exists,
-        // otherwise we'll double up on it.
-        if (sFile.endsWith(".gz")) {
-            sFile = sFile.replace(".gz", "");
-        }
-
-        String sFinalFile = sFile;
-        if (!sFinalFile.endsWith(MMConstants.SAVE_FILE_EXT)) {
-            sFinalFile = sFile + MMConstants.SAVE_FILE_EXT;
-        }
-        File sDir = new File(MMConstants.SAVEGAME_DIR);
-        if (!sDir.exists()) {
-            sDir.mkdir();
-        }
-
-        sFinalFile = sDir + File.separator + sFinalFile;
-
-        try (OutputStream os = new FileOutputStream(sFinalFile + ".gz");
-             OutputStream gzo = new GZIPOutputStream(os);
-             Writer writer = new OutputStreamWriter(gzo, StandardCharsets.UTF_8)) {
-            SerializationHelper.getSaveGameXStream().toXML(getGame(), writer);
-        } catch (Exception e) {
-            LogManager.getLogger().error("Unable to save file: " + sFinalFile, e);
-        }
-
-        if (sendChat) {
-            sendChat("MegaMek", "Game saved to " + sFinalFile);
-        }
-    }
-
-    /**
-     * save the game
-     *
-     * @param sFile The <code>String</code> filename to use
-     */
-    @Override
-    public void saveGame(String sFile) {
-        saveGame(sFile, true);
-    }
-
 
     @Override
     public void disconnect(Player player) {
@@ -595,22 +502,6 @@ public class GameManager extends AbstractGameManager {
             Entity entity = e.next();
             entity.newRound(game.getRoundCount());
         }
-    }
-
-    public void sendServerChat(String message) {
-        Server.getServerInstance().sendServerChat(message);
-    }
-
-    public void sendServerChat(int connId, String message) {
-        Server.getServerInstance().sendServerChat(connId, message);
-    }
-
-    public void sendChat(String origin, String message) {
-        Server.getServerInstance().sendChat(origin, message);
-    }
-
-    public void sendChat(int connId, String origin, String message) {
-        Server.getServerInstance().sendChat(connId, origin, message);
     }
 
     /**
@@ -904,7 +795,7 @@ public class GameManager extends AbstractGameManager {
                 resetPlayersDone();
                 break;
             case RESET_ROUND_DEPLOYMENT:
-                game.setupRoundDeployment();
+                game.setupDeployment();
                 break;
             case SPECIAL_HEX_DISPLAY_DELETE:
                 game.getBoard().removeSpecialHexDisplay((Coords) packet.getObject(0),
@@ -988,7 +879,7 @@ public class GameManager extends AbstractGameManager {
      * Called at the beginning of each phase. Sets and resets any entity
      * parameters that need to be reset.
      */
-    private void resetEntityPhase(GamePhase phase) {
+    void resetEntityPhase(GamePhase phase) {
         // first, mark doomed entities as destroyed and flag them
         Vector<Entity> toRemove = new Vector<>(0, 10);
 
@@ -1559,29 +1450,6 @@ public class GameManager extends AbstractGameManager {
         }
     }
 
-    /**
-     * Changes the current phase, does some bookkeeping and then tells the
-     * players.
-     *
-     * @param phase the <code>int</code> id of the phase to change to
-     */
-    @Override
-    protected void changePhase(GamePhase phase) {
-        game.setLastPhase(game.getPhase());
-        game.setPhase(phase);
-
-        prepareForPhase(phase);
-
-        if (game.shouldSkipCurrentPhase()) {
-            endCurrentPhase();
-        } else {
-            // tell the players about the new phase
-            send(packetHelper.createPhaseChangePacket());
-
-            executePhase(phase);
-        }
-    }
-
     private static class BVCountHelper {
         int bv;
         int bvInitial;
@@ -1826,14 +1694,9 @@ public class GameManager extends AbstractGameManager {
         vPhaseReport.addAll(reports);
     }
 
-    /**
-     * Prepares for, presumably, the next phase. This typically involves
-     * resetting the states of entities in the game and making sure the client
-     * has the information it needs for the new phase.
-     *
-     * @param phase the <code>int</code> id of the phase to prepare for
-     */
-    private void prepareForPhase(GamePhase phase) {
+    @Override
+    protected void prepareForCurrentPhase() {
+        GamePhase phase = game.getPhase();
         switch (phase) {
             case LOUNGE:
                 clearReports();
@@ -2115,12 +1978,9 @@ public class GameManager extends AbstractGameManager {
         }
     }
 
-    /**
-     * Do anything we seed to start the new phase, such as give a turn to the
-     * first player to play.
-     */
-    private void executePhase(GamePhase phase) {
-        switch (phase) {
+    @Override
+    protected void executeCurrentPhase() {
+        switch (game.getPhase()) {
             case EXCHANGE:
                 resetPlayersDone();
                 // Update initial BVs, as things may have been modified in lounge
@@ -2135,7 +1995,7 @@ public class GameManager extends AbstractGameManager {
                 send(packetHelper.createPlanetaryConditionsPacket());
                 // transmit the board to everybody
                 send(packetHelper.createBoardsPacket());
-                game.setupRoundDeployment();
+                game.setupDeployment();
                 game.setVictoryContext(new HashMap<>());
                 game.createVictoryConditions();
                 // some entities may need to be checked and updated
@@ -2274,302 +2134,18 @@ public class GameManager extends AbstractGameManager {
         }
     }
 
-    /**
-     * Ends this phase and moves on to the next.
-     */
     @Override
     protected void endCurrentPhase() {
-        switch (game.getPhase()) {
-            case LOUNGE:
-                game.addReports(vPhaseReport);
-                changePhase(GamePhase.EXCHANGE);
-                break;
-            case EXCHANGE:
-            case STARTING_SCENARIO:
-                game.addReports(vPhaseReport);
-                changePhase(GamePhase.SET_ARTILLERY_AUTOHIT_HEXES);
-                break;
-            case SET_ARTILLERY_AUTOHIT_HEXES:
-                sendSpecialHexDisplayPackets();
-                Enumeration<Player> e = game.getPlayers();
-                boolean mines = false;
-                while (e.hasMoreElements() && !mines) {
-                    Player p = e.nextElement();
-                    if (p.hasMinefields()) {
-                        mines = true;
-                    }
-                }
-                game.addReports(vPhaseReport);
-                if (mines) {
-                    changePhase(GamePhase.DEPLOY_MINEFIELDS);
-                } else {
-                    changePhase(GamePhase.INITIATIVE);
-                }
-                break;
-            case DEPLOY_MINEFIELDS:
-                changePhase(GamePhase.INITIATIVE);
-                break;
-            case DEPLOYMENT:
-                game.clearDeploymentThisRound();
-//                game.checkForCompleteDeployment();
-                Enumeration<Player> pls = game.getPlayers();
-                while (pls.hasMoreElements()) {
-                    Player p = pls.nextElement();
-                    p.adjustStartingPosForReinforcements();
-                }
-
-                if (game.getRoundCount() < 1) {
-                    changePhase(GamePhase.INITIATIVE);
-                } else {
-                    changePhase(GamePhase.TARGETING);
-                }
-                break;
-            case INITIATIVE:
-                resolveWhatPlayersCanSeeWhatUnits();
-                detectSpacecraft();
-                game.addReports(vPhaseReport);
-                changePhase(GamePhase.INITIATIVE_REPORT);
-                break;
-            case INITIATIVE_REPORT:
-                // NOTE: now that aeros can come and go from the battlefield, I
-                // need
-                // to update the
-                // deployment table every round. I think this it is OK to go
-                // here.
-                // (Taharqa)
-                game.setupRoundDeployment();
-                // boolean doDeploy = game.shouldDeployThisRound() &&
-                // (game.getLastPhase() != Game.Phase.DEPLOYMENT);
-                if (game.shouldDeployThisRound()) {
-                    changePhase(GamePhase.DEPLOYMENT);
-                } else {
-                    changePhase(GamePhase.TARGETING);
-                }
-                break;
-            case PREMOVEMENT:
-                changePhase(GamePhase.MOVEMENT);
-                break;
-            case MOVEMENT:
-                detectHiddenUnits();
-                ServerHelper.detectMinefields(game, vPhaseReport, this);
-                updateSpacecraftDetection();
-                detectSpacecraft();
-                resolveWhatPlayersCanSeeWhatUnits();
-                doAllAssaultDrops();
-                addMovementHeat();
-                applyBuildingDamage();
-                checkForPSRFromDamage();
-                addReport(resolvePilotingRolls()); // Skids cause damage in
-                // movement phase
-                checkForFlamingDamage();
-                checkForTeleMissileAttacks();
-                cleanupDestroyedNarcPods();
-                checkForFlawedCooling();
-                resolveCallSupport();
-                // check phase report
-                if (vPhaseReport.size() > 1) {
-                    game.addReports(vPhaseReport);
-                    changePhase(GamePhase.MOVEMENT_REPORT);
-                } else {
-                    // just the header, so we'll add the <nothing> label
-                    addReport(new Report(1205, Report.PUBLIC));
-                    game.addReports(vPhaseReport);
-                    sendReport();
-                    changePhase(GamePhase.OFFBOARD);
-                }
-                break;
-            case MOVEMENT_REPORT:
-                changePhase(GamePhase.OFFBOARD);
-                break;
-            case PREFIRING:
-                changePhase(GamePhase.FIRING);
-                break;
-            case FIRING:
-                // write Weapon Attack Phase header
-                addReport(new Report(3000, Report.PUBLIC));
-                resolveWhatPlayersCanSeeWhatUnits();
-                resolveAllButWeaponAttacks();
-                resolveSelfDestructions();
-                reportGhostTargetRolls();
-                reportLargeCraftECCMRolls();
-                resolveOnlyWeaponAttacks();
-                assignAMS();
-                handleAttacks();
-                resolveScheduledNukes();
-                applyBuildingDamage();
-                checkForPSRFromDamage();
-                cleanupDestroyedNarcPods();
-                addReport(resolvePilotingRolls());
-                checkForFlawedCooling();
-                // check phase report
-                if (vPhaseReport.size() > 1) {
-                    game.addReports(vPhaseReport);
-                    changePhase(GamePhase.FIRING_REPORT);
-                } else {
-                    // just the header, so we'll add the <nothing> label
-                    addReport(new Report(1205, Report.PUBLIC));
-                    sendReport();
-                    game.addReports(vPhaseReport);
-                    changePhase(GamePhase.PHYSICAL);
-                }
-                break;
-            case FIRING_REPORT:
-                changePhase(GamePhase.PHYSICAL);
-                break;
-            case PHYSICAL:
-                resolveWhatPlayersCanSeeWhatUnits();
-                resolvePhysicalAttacks();
-                applyBuildingDamage();
-                checkForPSRFromDamage();
-                addReport(resolvePilotingRolls());
-                resolveSinkVees();
-                cleanupDestroyedNarcPods();
-                checkForFlawedCooling();
-                checkForChainWhipGrappleChecks();
-                // check phase report
-                if (vPhaseReport.size() > 1) {
-                    game.addReports(vPhaseReport);
-                    changePhase(GamePhase.PHYSICAL_REPORT);
-                } else {
-                    // just the header, so we'll add the <nothing> label
-                    addReport(new Report(1205, Report.PUBLIC));
-                    game.addReports(vPhaseReport);
-                    sendReport();
-                    changePhase(GamePhase.END);
-                }
-                break;
-            case PHYSICAL_REPORT:
-                changePhase(GamePhase.END);
-                break;
-            case TARGETING:
-                vPhaseReport.addElement(new Report(1035, Report.PUBLIC));
-                resolveAllButWeaponAttacks();
-                resolveOnlyWeaponAttacks();
-                handleAttacks();
-                // check reports
-                if (vPhaseReport.size() > 1) {
-                    game.addReports(vPhaseReport);
-                    changePhase(GamePhase.TARGETING_REPORT);
-                } else {
-                    // just the header, so we'll add the <nothing> label
-                    vPhaseReport.addElement(new Report(1205, Report.PUBLIC));
-                    game.addReports(vPhaseReport);
-                    sendReport();
-                    changePhase(GamePhase.PREMOVEMENT);
-                }
-
-                sendSpecialHexDisplayPackets();
-                for (Enumeration<Player> i = game.getPlayers(); i.hasMoreElements(); ) {
-                    Player player = i.nextElement();
-                    int connId = player.getId();
-                    send(connId, createArtilleryPacket(player));
-                }
-
-                break;
-            case OFFBOARD:
-                // write Offboard Attack Phase header
-                addReport(new Report(1100, Report.PUBLIC));
-                resolveAllButWeaponAttacks(); // torso twist or flip arms
-                // possible
-                resolveOnlyWeaponAttacks(); // should only be TAG at this point
-                handleAttacks();
-                for (Enumeration<Player> i = game.getPlayers(); i.hasMoreElements(); ) {
-                    Player player = i.nextElement();
-                    int connId = player.getId();
-                    send(connId, createArtilleryPacket(player));
-                }
-                applyBuildingDamage();
-                checkForPSRFromDamage();
-                addReport(resolvePilotingRolls());
-
-                cleanupDestroyedNarcPods();
-                checkForFlawedCooling();
-
-                sendSpecialHexDisplayPackets();
-                sendTagInfoUpdates();
-
-                // check reports
-                if (vPhaseReport.size() > 1) {
-                    game.addReports(vPhaseReport);
-                    changePhase(GamePhase.OFFBOARD_REPORT);
-                } else {
-                    // just the header, so we'll add the <nothing> label
-                    addReport(new Report(1205, Report.PUBLIC));
-                    game.addReports(vPhaseReport);
-                    sendReport();
-                    changePhase(GamePhase.PREFIRING);
-                }
-                break;
-            case OFFBOARD_REPORT:
-                sendSpecialHexDisplayPackets();
-                changePhase(GamePhase.PREFIRING);
-                break;
-            case TARGETING_REPORT:
-                changePhase(GamePhase.PREMOVEMENT);
-                break;
-            case END:
-                // remove any entities that died in the heat/end phase before
-                // checking for victory
-                resetEntityPhase(GamePhase.END);
-                boolean victory = victory(); // note this may add reports
-                // check phase report
-                // HACK: hardcoded message ID check
-                if ((vPhaseReport.size() > 3) || ((vPhaseReport.size() > 1)
-                        && (vPhaseReport.elementAt(1).messageId != 1205))) {
-                    game.addReports(vPhaseReport);
-                    changePhase(GamePhase.END_REPORT);
-                } else {
-                    // just the heat and end headers, so we'll add
-                    // the <nothing> label
-                    addReport(new Report(1205, Report.PUBLIC));
-                    game.addReports(vPhaseReport);
-                    sendReport();
-                    if (victory) {
-                        changePhase(GamePhase.VICTORY);
-                    } else {
-                        changePhase(GamePhase.INITIATIVE);
-                    }
-                }
-                // Decrement the ASEWAffected counter
-                decrementASEWTurns();
-
-                break;
-            case END_REPORT:
-                if (changePlayersTeam) {
-                    processTeamChangeRequest();
-                }
-                if (victory()) {
-                    changePhase(GamePhase.VICTORY);
-                } else {
-                    changePhase(GamePhase.INITIATIVE);
-                }
-                break;
-            case VICTORY:
-                GameVictoryEvent gve = new GameVictoryEvent(this, game);
-                game.processGameEvent(gve);
-                transmitGameVictoryEventToAll();
-                resetGame();
-                break;
-            default:
-                break;
-        }
-
-        // Any hidden units that activated this phase, should clear their
-        // activating phase
-        for (Entity ent : game.getEntitiesVector()) {
-            if (ent.getHiddenActivationPhase() == game.getPhase()) {
-                ent.setHiddenActivationPhase(GamePhase.UNKNOWN);
-            }
-        }
+        phaseEndManager.managePhase();
     }
 
-    private void sendSpecialHexDisplayPackets() {
+    void sendSpecialHexDisplayPackets() {
         for (Player player : game.getPlayersVector()) {
             send(createSpecialHexDisplayPacket(player.getId()));
         }
     }
 
-    private void sendTagInfoUpdates() {
+    void sendTagInfoUpdates() {
         send(new Packet(PacketCommand.SENDING_TAG_INFO, getGame().getTagInfo()));
     }
 
@@ -13786,7 +13362,7 @@ public class GameManager extends AbstractGameManager {
      * Called at the start and end of movement. Determines if an entity
      * has been detected and/or had a firing solution calculated
      */
-    private void detectSpacecraft() {
+    void detectSpacecraft() {
         // Don't bother if we're not in space or if the game option isn't on
         if (!game.getBoard().inSpace()
                 || !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS)) {
@@ -13885,7 +13461,7 @@ public class GameManager extends AbstractGameManager {
      * Called at the end of movement. Determines if an entity
      * has moved beyond sensor range
      */
-    private void updateSpacecraftDetection() {
+    void updateSpacecraftDetection() {
         // Don't bother if we're not in space or if the game option isn't on
         if (!game.getBoard().inSpace()
                 || !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS)) {
@@ -13901,7 +13477,7 @@ public class GameManager extends AbstractGameManager {
     /**
      * Checks to see if any units can detected hidden units.
      */
-    private void detectHiddenUnits() {
+    void detectHiddenUnits() {
         // If hidden units aren't on, nothing to do
         if (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_HIDDEN_UNITS)) {
             return;
@@ -13917,7 +13493,7 @@ public class GameManager extends AbstractGameManager {
      * Called to what players can see what units. This is used to determine who
      * can see what in double blind reports.
      */
-    private void resolveWhatPlayersCanSeeWhatUnits() {
+    void resolveWhatPlayersCanSeeWhatUnits() {
         List<ECMInfo> allECMInfo = null;
         if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_SENSORS)) {
             allECMInfo = ComputeECM.computeAllEntitiesECMInfo(game
@@ -13943,7 +13519,7 @@ public class GameManager extends AbstractGameManager {
      * Called during the weapons fire phase. Resolves anything other than
      * weapons fire that happens. Torso twists, for example.
      */
-    private void resolveAllButWeaponAttacks() {
+    void resolveAllButWeaponAttacks() {
         Vector<EntityAction> triggerPodActions = new Vector<>();
         // loop through actions and handle everything we expect except attacks
         for (Enumeration<EntityAction> i = game.getActions(); i.hasMoreElements(); ) {
@@ -14037,7 +13613,7 @@ public class GameManager extends AbstractGameManager {
     /*
      * Called during the weapons firing phase to initiate self destruction.
      */
-    private void resolveSelfDestructions() {
+    void resolveSelfDestructions() {
         Vector<Report> vDesc = new Vector<>();
         Report r;
         for (Entity e : game.getEntitiesVector()) {
@@ -14088,7 +13664,7 @@ public class GameManager extends AbstractGameManager {
         addReport(vDesc);
     }
 
-    private void reportGhostTargetRolls() {
+    void reportGhostTargetRolls() {
         // run through an enumeration of deployed game entities. If they have
         // ghost targets, then check the roll
         // and report it
@@ -14117,7 +13693,7 @@ public class GameManager extends AbstractGameManager {
         addNewLines();
     }
 
-    private void reportLargeCraftECCMRolls() {
+    void reportLargeCraftECCMRolls() {
         // run through an enumeration of deployed game entities. If they are
         // large craft in space, then check the roll
         // and report it
@@ -14192,7 +13768,7 @@ public class GameManager extends AbstractGameManager {
     /**
      * Called during the fire phase to resolve all (and only) weapon attacks
      */
-    private void resolveOnlyWeaponAttacks() {
+    void resolveOnlyWeaponAttacks() {
         // loop through received attack actions, getting attack handlers
         for (Enumeration<EntityAction> i = game.getActions(); i.hasMoreElements(); ) {
             EntityAction ea = i.nextElement();
@@ -14828,7 +14404,7 @@ public class GameManager extends AbstractGameManager {
     /**
      * Handle all physical attacks for the round
      */
-    private void resolvePhysicalAttacks() {
+    void resolvePhysicalAttacks() {
         // Physical phase header
         addReport(new Report(4000, Report.PUBLIC));
 
@@ -19790,7 +19366,7 @@ public class GameManager extends AbstractGameManager {
         entity.setStruck(false);
     }
 
-    private void checkForFlawedCooling() {
+    void checkForFlawedCooling() {
 
         // If we're not using quirks, no need to do this check.
         if (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS)) {
@@ -19859,7 +19435,7 @@ public class GameManager extends AbstractGameManager {
      * For chain whip grapples, a roll needs to be made at the end of the
      * physical phase to maintain the grapple.
      */
-    private void checkForChainWhipGrappleChecks() {
+    void checkForChainWhipGrappleChecks() {
         for (Entity ae : game.getEntitiesVector()) {
             if ((ae.getGrappled() != Entity.NONE) && ae.isChainWhipGrappled()
                     && ae.isGrappleAttacker() && !ae.isGrappledThisRound()) {
@@ -19917,7 +19493,7 @@ public class GameManager extends AbstractGameManager {
     /**
      * Checks to see if any entity takes enough damage that requires them to make a piloting roll
      */
-    private void checkForPSRFromDamage() {
+    void checkForPSRFromDamage() {
         for (Iterator<Entity> i = game.getEntities(); i.hasNext(); ) {
             final Entity entity = i.next();
             if (entity.canFall()) {
@@ -20042,7 +19618,7 @@ public class GameManager extends AbstractGameManager {
      * Checks to see if any telemissiles are in a hex with enemy units. If so,
      * then attack one.
      */
-    private void checkForTeleMissileAttacks() {
+    void checkForTeleMissileAttacks() {
         for (Iterator<Entity> i = getGame().getEntities(); i.hasNext();) {
             final Entity entity = i.next();
             if (entity instanceof TeleMissile) {
@@ -20285,7 +19861,7 @@ public class GameManager extends AbstractGameManager {
      * Iterates over all entities and gets rid of Narc pods attached to destroyed
      * or lost locations.
      */
-    private void cleanupDestroyedNarcPods() {
+    void cleanupDestroyedNarcPods() {
         for (Iterator<Entity> i = game.getEntities(); i.hasNext(); ) {
             i.next().clearDestroyedNarcPods();
         }
@@ -20295,7 +19871,7 @@ public class GameManager extends AbstractGameManager {
      * Resolves all built up piloting skill rolls. Used at end of weapons,
      * physical phases.
      */
-    private Vector<Report> resolvePilotingRolls() {
+    Vector<Report> resolvePilotingRolls() {
         Vector<Report> vPhaseReport = new Vector<>();
 
         for (Iterator<Entity> i = game.getEntities(); i.hasNext(); ) {
@@ -23902,7 +23478,7 @@ public class GameManager extends AbstractGameManager {
     /**
      * explode any scheduled nukes
      */
-    private void resolveScheduledNukes() {
+    void resolveScheduledNukes() {
         for (int[] nuke : scheduledNukes) {
             if (nuke.length == 3) {
                 doNuclearExplosion(new Coords(nuke[0] - 1, nuke[1] - 1), nuke[2],
@@ -30331,7 +29907,7 @@ public class GameManager extends AbstractGameManager {
     /**
      * Sends out the game victory event to all connections
      */
-    private void transmitGameVictoryEventToAll() {
+    void transmitGameVictoryEventToAll() {
         send(new Packet(PacketCommand.GAME_VICTORY_EVENT));
     }
 
@@ -30605,7 +30181,7 @@ public class GameManager extends AbstractGameManager {
     /**
      * Creates a packet containing off board artillery attacks
      */
-    private Packet createArtilleryPacket(Player p) {
+    Packet createArtilleryPacket(Player p) {
         Vector<ArtilleryAttackAction> v = new Vector<>();
         int team = p.getTeam();
         for (Enumeration<AttackHandler> i = game.getAttacks(); i.hasMoreElements(); ) {
@@ -30641,7 +30217,7 @@ public class GameManager extends AbstractGameManager {
         send(new Packet(PacketCommand.ENTITY_NOVA_NETWORK_CHANGE, id, net));
     }
 
-    private void sendReport() {
+    void sendReport() {
         sendReport(false);
     }
 
@@ -31615,7 +31191,7 @@ public class GameManager extends AbstractGameManager {
      * Apply this phase's damage to all buildings. Buildings may collapse due to
      * damage.
      */
-    private void applyBuildingDamage() {
+    void applyBuildingDamage() {
 
         // Walk through the buildings in the game.
         // Build the collapse and update vectors as you go.
@@ -33510,7 +33086,7 @@ public class GameManager extends AbstractGameManager {
     /**
      * destroy all wheeled and tracked Tanks that got displaced into water
      */
-    private void resolveSinkVees() {
+    void resolveSinkVees() {
         Iterator<Entity> sinkableTanks = game.getSelectedEntities(entity -> {
             if (entity.isOffBoard() || (entity.getPosition() == null)
                     || !(entity instanceof Tank)) {
@@ -33901,7 +33477,7 @@ public class GameManager extends AbstractGameManager {
      * Add a whole lotta Reports to the players report queues as well as the
      * Master report queue vPhaseReport.
      */
-    private void addReport(Vector<Report> reports) {
+    void addReport(Vector<Report> reports) {
         vPhaseReport.addAll(reports);
     }
 
@@ -34552,7 +34128,7 @@ public class GameManager extends AbstractGameManager {
      * current phase, if so, runs them, and removes them if they don't want to
      * stay. TODO : Refactor the new entity announcement out of here.
      */
-    private void handleAttacks() {
+    void handleAttacks() {
         handleAttacks(false);
     }
 
@@ -34784,6 +34360,9 @@ public class GameManager extends AbstractGameManager {
 
     public Set<Coords> getHexUpdateSet() {
         return hexUpdateSet;
+    }
 
+    boolean changePlayersTeam() {
+        return changePlayersTeam;
     }
 }

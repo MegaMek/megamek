@@ -1,7 +1,7 @@
 Special Turrets 3025
 
 #Command Towers
-Blaze Medium Turret (3025), 40
-Blaze Heavy Turret (3025), 10
+Medium Blaze Turret (3025), 40
+Heavy Blaze Turret (3025), 10
 Medium Command Tower (2300), 20
 Calliope Turret (2800), 30

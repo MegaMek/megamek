@@ -1,5 +1,4 @@
 Turrets 2750 B
-
 @DirectFire Turrets 2300, 20
 @InDirectFire Turrets 2300, 40
 @AntiAir Turrets 2300, 20

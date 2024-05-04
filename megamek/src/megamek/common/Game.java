@@ -108,8 +108,7 @@ public class Game extends AbstractGame implements Serializable, PlanetaryConditi
     private Vector<PilotingRollData> controlRolls = new Vector<>();
     private Vector<Team> initiativeRerollRequests = new Vector<>();
 
-    // reports
-    private GameReports gameReports = new GameReports();
+    private final GameReports gameReports = new GameReports();
 
     private boolean forceVictory = false;
     private int victoryPlayerId = Player.PLAYER_NONE;
@@ -2588,7 +2587,7 @@ public class Game extends AbstractGame implements Serializable, PlanetaryConditi
      * Adds the given reports vector to the GameReport collection.
      * @param v the reports vector
      */
-    public void addReports(Vector<Report> v) {
+    public void addReports(List<Report> v) {
         if (v.isEmpty()) {
             return;
         }
@@ -2599,21 +2598,21 @@ public class Game extends AbstractGame implements Serializable, PlanetaryConditi
      * @param r Round number
      * @return a vector of reports for the given round.
      */
-    public Vector<Report> getReports(int r) {
+    public List<Report> getReports(int r) {
         return gameReports.get(r);
     }
 
     /**
      * @return a vector of all the reports.
      */
-    public Vector<Vector<Report>> getAllReports() {
+    public List<List<Report>> getAllReports() {
         return gameReports.get();
     }
 
     /**
      * Used to populate previous game reports, e.g. after a client connects to an existing game.
      */
-    public void setAllReports(Vector<Vector<Report>> v) {
+    public void setAllReports(List<List<Report>> v) {
         gameReports.set(v);
     }
 
@@ -3417,5 +3416,10 @@ public class Game extends AbstractGame implements Serializable, PlanetaryConditi
 
     private List<Entity> filterToEntity(Collection<? extends BTObject> objects) {
         return objects.stream().filter(o -> o instanceof Entity).map(o -> (Entity) o).collect(toList());
+    }
+
+    @Override
+    public ReportEntry getNewReport(int messageId) {
+        return new Report(messageId);
     }
 }

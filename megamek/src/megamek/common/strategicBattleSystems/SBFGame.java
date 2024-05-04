@@ -29,6 +29,7 @@ import org.apache.logging.log4j.LogManager;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 /**
  * This is an SBF game's game object that holds all game information. As of 2024, this is under construction.
@@ -36,8 +37,9 @@ import java.util.List;
 public class SBFGame extends AbstractGame implements PlanetaryConditionsUsing {
 
     private final GameOptions options = new GameOptions(); //TODO: SBFGameOptions()
-    private GamePhase phase = GamePhase.UNKNOWN; //TODO: SBFGamePhase - or possibly reuse Phase? very similar
+    private GamePhase phase = GamePhase.UNKNOWN;
     private final PlanetaryConditions planetaryConditions = new PlanetaryConditions();
+    private final SBFFullGameReport gameReport = new SBFFullGameReport();
 
     @Override
     public GameTurn getTurn() {
@@ -143,5 +145,32 @@ public class SBFGame extends AbstractGame implements PlanetaryConditionsUsing {
 
     private boolean isSupportedUnitType(InGameObject object) {
         return object instanceof SBFFormation || object instanceof AlphaStrikeElement || object instanceof SBFUnit;
+    }
+
+    /**
+     * Adds the given reports this game's reports.
+     *
+     * @param reports the new reports to add
+     */
+    public void addReports(List<Report> reports) {
+        gameReport.add(getCurrentRound(), reports);
+    }
+
+    @Override
+    public ReportEntry getNewReport(int messageId) {
+        return new Report(messageId);
+    }
+
+    public SBFFullGameReport getGameReport() {
+        return gameReport;
+    }
+
+    /**
+     * Replaces this game's entire reports with the given reports.
+     *
+     * @param newReports The new reports to keep as this game's reports
+     */
+    public void replaceAllReports(Map<Integer, List<Report>> newReports) {
+        gameReport.replaceAllReports(newReports);
     }
 }

@@ -40,6 +40,7 @@ import megamek.common.options.IBasicOption;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.common.preference.PreferenceManager;
+import megamek.common.Report;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.SerializationHelper;
 import megamek.common.util.StringUtil;
@@ -701,7 +702,7 @@ public class Client extends AbstractClient implements IClientCommandHandler {
 
 
     // Should be private?
-    public String receiveReport(Vector<Report> v) {
+    public String receiveReport(List<Report> v) {
         if (v == null) {
             return "[null report vector]";
         }
@@ -948,7 +949,7 @@ public class Client extends AbstractClient implements IClientCommandHandler {
                 break;
             case SENDING_REPORTS:
             case SENDING_REPORTS_TACTICAL_GENIUS:
-                phaseReport = receiveReport((Vector<Report>) packet.getObject(0));
+                phaseReport = receiveReport((List<Report>) packet.getObject(0));
                 if (keepGameLog()) {
                     if ((log == null) && (game.getRoundCount() == 1)) {
                         initGameLog();
@@ -957,7 +958,7 @@ public class Client extends AbstractClient implements IClientCommandHandler {
                         log.append(phaseReport);
                     }
                 }
-                game.addReports((Vector<Report>) packet.getObject(0));
+                game.addReports((List<Report>) packet.getObject(0));
                 roundReport = receiveReport(game.getReports(game.getRoundCount()));
                 if (packet.getCommand().isSendingReportsTacticalGenius()) {
                     game.processGameEvent(new GameReportEvent(this, roundReport));
@@ -965,17 +966,17 @@ public class Client extends AbstractClient implements IClientCommandHandler {
                 break;
             case SENDING_REPORTS_SPECIAL:
                 game.processGameEvent(new GameReportEvent(this,
-                        receiveReport((Vector<Report>) packet.getObject(0))));
+                        receiveReport((List<Report>) packet.getObject(0))));
                 break;
             case SENDING_REPORTS_ALL:
-                Vector<Vector<Report>> allReports = (Vector<Vector<Report>>) packet.getObject(0);
+                var allReports = (List<List<Report>>) packet.getObject(0);
                 game.setAllReports(allReports);
                 if (keepGameLog()) {
                     // Re-write gamelog.txt from scratch
                     initGameLog();
                     if (log != null) {
                         for (int i = 0; i < allReports.size(); i++) {
-                            log.append(receiveReport(allReports.elementAt(i)));
+                            log.append(receiveReport(allReports.get(i)));
                         }
                     }
                 }

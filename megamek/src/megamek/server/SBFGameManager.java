@@ -18,9 +18,7 @@
  */
 package megamek.server;
 
-import megamek.common.IGame;
-import megamek.common.Player;
-import megamek.common.Report;
+import megamek.common.*;
 import megamek.common.enums.GamePhase;
 import megamek.common.net.enums.PacketCommand;
 import megamek.common.net.packets.Packet;
@@ -28,8 +26,7 @@ import megamek.common.strategicBattleSystems.SBFGame;
 import megamek.server.commands.ServerCommand;
 import org.apache.logging.log4j.LogManager;
 
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
  * This class manages an SBF game on the server side. As of 2024, this is under construction.
@@ -37,6 +34,7 @@ import java.util.List;
 public class SBFGameManager extends AbstractGameManager {
 
     private SBFGame game;
+    private List<Report> pendingReports = new ArrayList<>();
 
     @Override
     public IGame getGame() {
@@ -98,8 +96,8 @@ public class SBFGameManager extends AbstractGameManager {
     }
 
     @Override
-    public void addReport(Report r) {
-
+    public void addReport(ReportEntry r) {
+        pendingReports.add((Report) r);
     }
 
     @Override
@@ -129,7 +127,7 @@ public class SBFGameManager extends AbstractGameManager {
             } else {
                 send(connId, packetHelper.createCurrentRoundNumberPacket());
                 send(connId, packetHelper.createBoardsPacket());
-//                send(connId, createAllReportsPacket(player));
+                send(connId, createAllReportsPacket(player));
 //
 //                // Send entities *before* other phase changes.
 //                if (doBlind()) {
@@ -176,4 +174,14 @@ public class SBFGameManager extends AbstractGameManager {
     protected void changePhase(GamePhase newPhase) {
         //stub
     }
+
+    private Packet createAllReportsPacket(Player recipient) {
+        return new Packet(PacketCommand.SENDING_REPORTS_ALL, game.getGameReport().createFilteredReport(recipient));
+    }
+
+    private void clearPendingReports() {
+        pendingReports.clear();
+    }
+
+
 }

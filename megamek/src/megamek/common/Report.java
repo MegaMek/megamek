@@ -28,7 +28,6 @@ import javax.swing.*;
 import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.StyleSheet;
 import java.awt.*;
-import java.io.Serializable;
 import java.util.Hashtable;
 import java.util.Vector;
 
@@ -71,7 +70,7 @@ import static megamek.client.ui.swing.util.UIUtil.uiGray;
  *
  * @author Ryan McConnell (oscarmm)
  */
-public class Report implements Serializable {
+public class Report implements ReportEntry {
     /*
      * Note: some fields are marked transient because they are only used by the
      * server (or only the client). This shaves a few bytes off the packet size,
@@ -647,6 +646,12 @@ public class Report implements Serializable {
             Report.mark(text);
         }
         return text.toString();
+    }
+
+    @Override
+    public ReportEntry addRoll(Roll roll) {
+        add(roll.getReport());
+        return this;
     }
 
     private void handleIndentation(StringBuffer sb) {

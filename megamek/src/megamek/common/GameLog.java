@@ -62,7 +62,7 @@ public class GameLog {
         }
         
         try {
-            writer.write("<pre>" + toLog + "</pre>");
+            writer.write(toLog);
             writer.newLine();
             writer.flush();
         } catch (Exception ex) {

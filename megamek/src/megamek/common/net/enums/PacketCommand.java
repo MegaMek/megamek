@@ -93,6 +93,8 @@ public enum PacketCommand {
     SENDING_REPORTS,
     SENDING_REPORTS_SPECIAL,
     SENDING_REPORTS_TACTICAL_GENIUS,
+
+    /** A packet transmitting the entire game's accumulated reports to the Client, possibly obscured. */
     SENDING_REPORTS_ALL,
 
     /** A packet having a options to share with other Clients (C -> S) or implement on the receiving Client (S -> C). */

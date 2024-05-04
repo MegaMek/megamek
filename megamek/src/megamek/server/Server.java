@@ -1386,9 +1386,13 @@ public class Server implements Runnable {
         }
     }
 
+    /**
+     * Adds a roll report to the GameManager's current pending report list.
+     *
+     * @param roll The roll to add
+     * @see GameManager#getvPhaseReport()
+     */
     public void reportRoll(Roll roll) {
-        Report r = new Report(1230);
-        r.add(roll.getReport());
-        gameManager.addReport(r);
+        gameManager.addReport(getGame().getNewReport(1230).addRoll(roll));
     }
 }

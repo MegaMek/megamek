@@ -261,4 +261,13 @@ public interface IGame {
     void receiveBoards(Map<Integer, Board> boards);
 
     //endregion
+
+    /**
+     * Returns a new ReportEntry with the given report message Id. The ReportEntry subclass returned
+     * depends on the implementation in the IGame subclass.
+     *
+     * @param messageId The message Id from report-messages.properties
+     * @return A new report of an appropriate type and message
+     */
+    ReportEntry getNewReport(int messageId);
 }

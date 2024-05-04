@@ -1,7 +1,7 @@
 MEGAMEK VERSION HISTORY:
 ----------------
 0.49.20-SNAPSHOT
-+ PR #5281, #5327, #5308, #5336, #5318, #5383, #5369, #5384: Code internals: preparatory work for supporting game types such as SBF, code cleanup for string drawing, superclass change for BoardView, 
++ PR #5281, #5327, #5308, #5336, #5318, #5383, #5369, #5384: Code internals: preparatory work for supporting game types such as SBF, code cleanup for string drawing, superclass change for BoardView,
      Keydispatcher aka MegaMekController simplification, moving BoardView shadowmap creation to its own class, BoardView subclassing, DialogOptionsListener update
 + PR #5295: MM now supports the light conditions "glare" and "solar flare" (TO:AR)
 + PR #5301, #5441: Aerospace units now show a much improved flight path indicator when planning their movement; use MM's symbol font for indicator symbols, also for Collapse Warnings
@@ -24,7 +24,11 @@ MEGAMEK VERSION HISTORY:
 + PR #5432: BoardView tooltip generation has been made modular. Using this, a specialized tooltip has been added for the Board Editor that displays much more detailed terrain info
 + PR #5431: Internal Code changes: Methods have been added to generate an average BV value for a unit of a given type and weight for use in generating forces
 + Fix #5439: BA Partial Wing bonus not properly computed outside of games with atmosphere, breaking MML Jump MP display
- 
++ Data: Thank you Derv for the updated Map, but also the restoration of the original NBT (Netbattletech) maps this adds over 400 new maps!
++ PR #5444: BoardView Sprite separation
++ PR #5442: Add null check for turn timer when stopping
+
+
 0.49.19 (2024-04-19 2030 UTC)
 + Fix #5182: Fixes aerospace fighters getting a zero engine rating in TestAero
 + Fix #5168: Indirect Arty Fire under 17 hexes now correctly uses a +4 instead of +7 modifier
@@ -50,14 +54,14 @@ MEGAMEK VERSION HISTORY:
 + Fix #5214: Exception when loading saved game
 + Fix #5224: Infantry Firing issue
 + PR #5241: Add test to ensure every unit can load
-+ PR #5244: Fixing MML #1452 Allows you to pod mount null signature system. 
++ PR #5244: Fixing MML #1452 Allows you to pod mount null signature system.
 + Fix #5228: The TAG phase will no longer inadvertently reveal hidden units
 + Fix #5206: Prevent an error with the map preview in the lobby
-+ PR #5240: Fix MML 1365: Sponson Turrets not being included in TechLevel calcs 
-+ PR #5218: add additional zoom levels and font adjustment levels 
++ PR #5240: Fix MML 1365: Sponson Turrets not being included in TechLevel calcs
++ PR #5218: add additional zoom levels and font adjustment levels
 + Data: Fixing #5194, #4979, #4525, #4906, #5141, #5253, #4258, #4555, #5017, #4837
 + PR #5259: Refactor code to add new units to a C3 network
-+ PR #5257: Flat Darcula skin 
++ PR #5257: Flat Darcula skin
 + PR #5256: Bind escape to the close action on various dialogs
 + Fix #5219: Show CF Warning over isometric bridges and turrets.
 + PR #5266: Added a story arcs directory with support for loading units, camo and portraits
@@ -69,7 +73,7 @@ MEGAMEK VERSION HISTORY:
 + PR #5203: Improvements for the internal representation of planetary conditions
 + PR #5270: The weapon panel is now split to prevent info being obscured depending on screen resolution and other factors
 + PR #5274: Update Aerospace SI damage calculation to round naturally with a minimum of 1
-+ Fix #5285: MML #1461 Consider pintle weapons in the same location as in the same pintle 
++ Fix #5285: MML #1461 Consider pintle weapons in the same location as in the same pintle
 + PR #5278: correct issue when using multiple boards and restricting deployment
 + Data: Sprite Swap Project. All shaded sprites that can be (Deadborder mostly) replaced have been.
 + Fix #5298: Illegal Cast Exception when lowering elevation with a VTOL
@@ -78,18 +82,18 @@ MEGAMEK VERSION HISTORY:
 + PR #5305: Princess Behaviour Update
 + Fix #3882 (MM part): ASFs not tracked correctly in MHQ
 + Fix #5205: Handle ConcurrentModification and NPE from opening dialogs
-+ PR #5306: MM portion of fix for MHQ #3803: WOB.pm/.PM mismatch and missing parent faction check 
++ PR #5306: MM portion of fix for MHQ #3803: WOB.pm/.PM mismatch and missing parent faction check
 + PR #5311: Unblock build by removing extraneous Java logging import in UnitTable.java
 + PR #5289: Improved MissionRole Switch Cases & Role List
-+ Fix #5291: Fix for MML #135  Industrial tripod cockpit 
++ Fix #5291: Fix for MML #135  Industrial tripod cockpit
 + Fix #3306: Vehicle Lance Movement prevents full deployment of turrets
 + PR #5303: add client settings for report colors (Allows custom colors)
-+ PR #5322: Fix reading player names from savegames 
++ PR #5322: Fix reading player names from savegames
 + Fix #5280: Fix Null Pointer Error when updating Convert Mode Button status
-+ Fix MekHQ #3986: MHQ wont save, sometimes 
-+ Fix #5348: Stop adding jump start step when deleting movement 
-+ PR #5353: Utility update and small icon error correction 
-+ Fix #5351: Null pointer when turning with shortcut keys in movement phase. 
++ Fix MekHQ #3986: MHQ wont save, sometimes
++ Fix #5348: Stop adding jump start step when deleting movement
++ PR #5353: Utility update and small icon error correction
++ Fix #5351: Null pointer when turning with shortcut keys in movement phase.
 + Fix #5367: correct issue when using multiple boards and restricting deployment
 + PR #5366: Added Faction Logos from UCC (With Permission)
 + Fix #5215 - Secondary turret firing arc display to reflect tanks turret rotation.
@@ -128,7 +132,7 @@ MEGAMEK VERSION HISTORY:
 + PR #5059: Unit tooltip pilot updates
 + PR #5057: Lobby force updates
 + PR #5041: Princess Ice & Infantry On Ice Fix
-+ PR #5069: Reset forces when resetting game 
++ PR #5069: Reset forces when resetting game
 + Fix #5064, Fix #5065: Aero movement cenvelope and acc/dec next optimizations.
 + PR #5071: MUL parser updates
 + PR #5075: Laser-guided bombs now receive a -2 bonus on tagged units
@@ -147,20 +151,20 @@ MEGAMEK VERSION HISTORY:
 + Fix #5103: Check for not dusk dawn for searchlight penalty reduction
 + PR #5121: Bot command updates
 + Fix #4878: Princess non-combat PSR reduction
-+ Fix #5103, #5030, #5072: Correct issues with BAP targeting to hit bonus 
++ Fix #5103, #5030, #5072: Correct issues with BAP targeting to hit bonus
 + Fix #5073: Brings Quirks in line with Campaign Ops 4th printing table.
 + PR #5126: turn timer updates
 + PR #5132: Fix Long Tom Cannon not dealing damage to flying dropship
 + Fix #5104: To-hit calculation bug when shooting at VTOLs
-+ PR #5146: planetary conditions weather updates 
++ PR #5146: planetary conditions weather updates
 + PR #5140: BA tech advancement for Exoskeltons.
-+ PR #5147: Fix weather restrictions around wind 
++ PR #5147: Fix weather restrictions around wind
 + Data: Implement Shrapnel #9 Laser Weapons.
 + PR #5159: Light and Heavy Machine Gun Ammo is mislabeled
 + Fix #5149, #5151: fix NPE in getHexTip(), fix NPE in doEntityDisplacement()
-+ PR #5173 Add bot command for dishonored players 
++ PR #5173 Add bot command for dishonored players
 + Fix #4670: Hide entity statblocks from the hex tooltip when entity is hidden
-+ PR #5170: Use IGame in TurnOrdered 
++ PR #5170: Use IGame in TurnOrdered
 + PR #5169: Code cleanup #5169
 + Fix #5155: Add checkbox to turn off showing player deployment on map preview
 + Fix #4952: Princess does not select alt ammo
@@ -168,7 +172,7 @@ MEGAMEK VERSION HISTORY:
 
 0.49.17 (2023-12-31 1900 UTC)
 + Fix #1031: Show structure collapse warning when deploying and moving.
-+ PR #4990: FixedWingSupport: automatically set SI when walk MPs are set 
++ PR #4990: FixedWingSupport: automatically set SI when walk MPs are set
 
 0.49.16 (2023-12-30 2200 UTC)
 + Fix #4769: BA Tube Artillery should support smoke rounds
@@ -448,7 +452,7 @@ MEGAMEK VERSION HISTORY:
 + Data: Fixing #4223, #4206, #4371, #4398, #4377, #4272, #4257, #4244 ,#4312
 + PR #4430: Highlight min/max visual and sensor ranges
 + PR #4450: When tacops sensors is not on, dont show sensor rings
-+ PR #4451: When tacops sensors is not on, show visual range in tool tip 
++ PR #4451: When tacops sensors is not on, show visual range in tool tip
 
 
 0.49.12 (2023-03-04 2200 UTC)

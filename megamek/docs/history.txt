@@ -4,7 +4,7 @@ MEGAMEK VERSION HISTORY:
 + PR #5281, #5327, #5308, #5336, #5318, #5383, #5369, #5384: Code internals: preparatory work for supporting game types such as SBF, code cleanup for string drawing, superclass change for BoardView, 
      Keydispatcher aka MegaMekController simplification, moving BoardView shadowmap creation to its own class, BoardView subclassing, DialogOptionsListener update
 + PR #5295: MM now supports the light conditions "glare" and "solar flare" (TO:AR)
-+ PR #5301: Aerospace units now show a much improved flight path indicator when planning their movement
++ PR #5301, #5441: Aerospace units now show a much improved flight path indicator when planning their movement; use MM's symbol font for indicator symbols, also for Collapse Warnings
 + PR #5321: The font used to write round reports can now be set in the client settings
 + Fix #5333: The standard G/P values of 4/5 may now be changed in the unit selector to see different BV/PV values; this functionality must be activated in the client settings
 + PR #5319: Add Symbol Font Google "Material Symbols"
@@ -23,6 +23,7 @@ MEGAMEK VERSION HISTORY:
 + PR #5433: Fixes ammo handling for one-shot weapons such as RLs
 + PR #5432: BoardView tooltip generation has been made modular. Using this, a specialized tooltip has been added for the Board Editor that displays much more detailed terrain info
 + PR #5431: Internal Code changes: Methods have been added to generate an average BV value for a unit of a given type and weight for use in generating forces
++ Fix #5439: BA Partial Wing bonus not properly computed outside of games with atmosphere, breaking MML Jump MP display
  
 0.49.19 (2024-04-19 2030 UTC)
 + Fix #5182: Fixes aerospace fighters getting a zero engine rating in TestAero

@@ -35,12 +35,12 @@ import megamek.common.Coords;
  *  or bridge, it will collapse.  (Or the sum of tonnage of stacked
  *  units if multiple units occupy the hex)
  */
-public class CollapseWarningSprite extends HexSprite {
+public class ConstructionWarningSprite extends HexSprite {
 
     private static final int TEXT_SIZE = BoardView.HEX_H / 2;
     private static final Color TEXT_COLOR = new Color(255, 255, 40, 128);
     private static final Color OUTLINE_COLOR = new Color(40, 40,40,200);
-    
+
     private static final int HEX_CENTER_X = BoardView.HEX_W / 2;
     private static final int HEX_CENTER_Y = BoardView.HEX_H / 2;
 
@@ -49,13 +49,13 @@ public class CollapseWarningSprite extends HexSprite {
             .at(HEX_CENTER_X, HEX_CENTER_Y)
             .color(TEXT_COLOR)
             .fontSize(TEXT_SIZE)
-            .center().outline(OUTLINE_COLOR, 2.5f);
+            .absoluteCenter().outline(OUTLINE_COLOR, 2.5f);
 
     /**
      * @param boardView1 - parent BoardView object this sprite will be displayed on.
      * @param loc - Hex location coordinates of building or bridge where warning will be visible.
      */
-    public CollapseWarningSprite(BoardView boardView1, Coords loc) {
+    public ConstructionWarningSprite(BoardView boardView1, Coords loc) {
         super(boardView1, loc);
     }
 
@@ -78,10 +78,5 @@ public class CollapseWarningSprite extends HexSprite {
         graph.scale(bv.scale, bv.scale);
         graph.setFont(FontHandler.symbolFont());
         return graph;
-    }
-
-    @Override
-    protected boolean isBehindTerrain() {
-        return false;
     }
 }

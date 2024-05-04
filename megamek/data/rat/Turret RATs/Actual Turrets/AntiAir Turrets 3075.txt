@@ -7,5 +7,5 @@ Heavy Flak Turret (3050), 8
 Assault Flak Turret (3025), 4
 
 #Air Defense Emplacements
-Medium Air Defense Emplacement (3075), 12
-Assault Air Defense Emplacement (3075), 4
+Medium Air Defense Missile Emplacement (3075), 12
+Assault Air Defense Missile Emplacement (3075), 4

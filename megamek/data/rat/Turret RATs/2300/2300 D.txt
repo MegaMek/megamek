@@ -1,5 +1,4 @@
 Turrets 2300 D
-
 @DirectFire Turrets 2300, 30
 @InDirectFire Turrets 2300, 30
 @AntiAir Turrets 2300, 30

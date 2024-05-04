@@ -443,11 +443,8 @@ public final class SBFGameManager extends AbstractGameManager {
     }
 
     /**
-     * Prepares for, presumably, the next phase. This typically involves
-     * resetting the states of entities in the game and making sure the client
-     * has the information it needs for the new phase.
-     *
-     * @param phase the <code>int</code> id of the phase to prepare for
+     * Prepares for the game's current phase. This typically involves resetting the states of
+     * units in the game and making sure the clients have the information they need for the new phase.
      */
     private void prepareForCurrentPhase() {
         switch (game.getPhase()) {

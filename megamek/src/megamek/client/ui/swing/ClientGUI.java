@@ -462,6 +462,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
      */
     protected void initializeFrame() {
         super.initializeFrame();
+        menuBar = new CommonMenuBar(getClient());
         frame.setJMenuBar(menuBar);
     }
 
@@ -493,7 +494,6 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
     @Override
     public void initialize() {
         super.initialize();
-        menuBar = new CommonMenuBar(getClient());
         try {
             client.getGame().addGameListener(gameListener);
 
@@ -2813,11 +2813,6 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
         return pointblankEID;
     }
 
-    /** Adapts the menu (the font size) to the current GUI scale. */
-    private void adaptToGUIScale() {
-
-    }
-
     @Override
     public void preferenceChange(PreferenceChangeEvent e) {
         if (e.getName().equals(GUIPreferences.MINI_MAP_ENABLED)) {
@@ -2840,8 +2835,6 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
         } else if (e.getName().equals(GUIPreferences.DOCK_MULTIPLE_ON_Y_AXIS)) {
             setUnitDisplayVisible(GUIP.getUnitDisplayEnabled());
             setMiniReportVisible(GUIP.getMiniReportEnabled());
-        } else if (e.getName().equals(GUIPreferences.GUI_SCALE)) {
-            adaptToGUIScale();
         } else if (e.getName().equals(GUIPreferences.DEFAULT_WEAPON_SORT_ORDER)) {
             setWeaponOrderPrefs(true);
             getUnitDisplay().displayEntity(getUnitDisplay().getCurrentEntity());

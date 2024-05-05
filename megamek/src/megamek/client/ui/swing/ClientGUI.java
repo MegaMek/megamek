@@ -352,8 +352,6 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
      * System.exit().
      */
     public ClientGUI(IClient client, MegaMekController c) {
-        clientGuiPanel.setLayout(new BorderLayout());
-        clientGuiPanel.addComponentListener(this);
         if (!(client instanceof Client)) {
             throw new IllegalArgumentException("TW ClientGUI must use TW Client!");
         }
@@ -361,10 +359,11 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
         controller = c;
         panMain.setLayout(cardsMain);
         panSecondary.setLayout(cardsSecondary);
-        JPanel panDisplay = new JPanel(new BorderLayout());
-        panDisplay.add(panMain, BorderLayout.CENTER);
-        panDisplay.add(panSecondary, BorderLayout.SOUTH);
-        clientGuiPanel.add(panDisplay, BorderLayout.CENTER);
+
+        clientGuiPanel.setLayout(new BorderLayout());
+        clientGuiPanel.addComponentListener(this);
+        clientGuiPanel.add(panMain, BorderLayout.CENTER);
+        clientGuiPanel.add(panSecondary, BorderLayout.SOUTH);
 
         audioService.loadSoundFiles();
     }

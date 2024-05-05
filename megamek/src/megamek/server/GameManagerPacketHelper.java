@@ -94,6 +94,23 @@ class GameManagerPacketHelper {
         return new Packet(SENDING_GAME_SETTINGS, game().getOptions());
     }
 
+    /**
+     * @return A packet containing the current list of player turns.
+     */
+    Packet createTurnVectorPacket() {
+        return new Packet(PacketCommand.SENDING_TURNS, game().getTurnsList());
+    }
+
+    /**
+     * @return A packet containing the current player turn index. The ID of the previous player may be
+     * {@link megamek.common.Player#PLAYER_NONE}.
+     *
+     * @param previousPlayerId The ID of the player who triggered the turn change
+     */
+    Packet createTurnIndexPacket(int previousPlayerId) {
+        return new Packet(PacketCommand.TURN, game().getTurnIndex(), previousPlayerId);
+    }
+
     private IGame game() {
         return gameManager.getGame();
     }

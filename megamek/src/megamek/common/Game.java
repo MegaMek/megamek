@@ -87,7 +87,6 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
      * The current turn list
      */
     private final Vector<GameTurn> turnVector = new Vector<>();
-    private int turnIndex = 0;
 
     /**
      * The present phase
@@ -639,21 +638,6 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     }
 
     /**
-     * Resets the turn index to -1 (awaiting first turn)
-     */
-    public void resetTurnIndex() {
-        turnIndex = -1;
-    }
-
-    /**
-     * Returns true if there is a turn after the current one
-     */
-    @Override
-    public boolean hasMoreTurns() {
-        return turnVector.size() > turnIndex;
-    }
-
-    /**
      * Inserts a turn that will come directly after the current one
      */
     public void insertNextTurn(GameTurn turn) {
@@ -693,13 +677,6 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     }
 
     /**
-     * Returns the current turn index
-     */
-    public int getTurnIndex() {
-        return turnIndex;
-    }
-
-    /**
      * Sets the current turn index
      *
      * @param turnIndex The new turn index.
@@ -712,10 +689,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
         processGameEvent(new GameTurnChangeEvent(this, getPlayer(getTurn().getPlayerNum()), prevPlayerId));
     }
 
-    /**
-     * Returns the current turn vector
-     */
-    public List<GameTurn> getTurnVector() {
+    public List<GameTurn> getTurnsList() {
         return Collections.unmodifiableList(turnVector);
     }
 

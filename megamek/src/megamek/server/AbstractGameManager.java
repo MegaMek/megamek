@@ -18,6 +18,7 @@
  */
 package megamek.server;
 
+import megamek.common.IGame;
 import megamek.common.Player;
 import megamek.common.enums.GamePhase;
 import megamek.common.net.packets.Packet;
@@ -32,10 +33,18 @@ abstract class AbstractGameManager implements IGameManager {
     protected final GameManagerSaveHelper saveHandler = new GameManagerSaveHelper(this);
     protected final AutosaveService autoSaveService = new AutosaveService(this);
 
-    protected final void send(Packet p) {
-        Server.getServerInstance().send(p);
+    /**
+     * Sends the given packet to all connections (all connected Clients = players).
+     * @see Server#send(Packet)
+     */
+    protected final void send(Packet packet) {
+        Server.getServerInstance().send(packet);
     }
 
+    /**
+     * Sends the given packet to the given connection (= player ID).
+     * @see Server#send(int, Packet)
+     */
     protected final void send(int connId, Packet p) {
         Server.getServerInstance().send(connId, p);
     }
@@ -193,5 +202,13 @@ abstract class AbstractGameManager implements IGameManager {
 
     public void sendServerChat(int connId, String message) {
         Server.getServerInstance().sendServerChat(connId, message);
+    }
+
+    /**
+     * Sends the current list of player turns as stored in the game's turn list to the Clients.
+     * @see IGame#getTurnsList()
+     */
+    void sendCurrentTurns() {
+        send(packetHelper.createTurnVectorPacket());
     }
 }

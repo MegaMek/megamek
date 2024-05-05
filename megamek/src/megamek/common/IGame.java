@@ -33,10 +33,32 @@ import java.util.stream.Collectors;
  */
 public interface IGame {
 
+    //region Player turns
+
     @Nullable
     GameTurn getTurn();
 
-    boolean hasMoreTurns();
+    /**
+     * @return True when there is at least one more player turn waiting to be played in the current game
+     * phase.
+     * //TODO this code from Game is surprising; the last available turn should be at size()-1, but apparently this works
+     */
+    default boolean hasMoreTurns() {
+        return getTurnsList().size() > getTurnIndex();
+    }
+
+    /**
+     * Returns the current turn index, i.e. the turn that should next be played by the corresponding player.
+     */
+    int getTurnIndex();
+
+    /**
+     * @return the current list of turns. If you're not the GameManager, don't even think
+     * about changing any of the turns.
+     */
+    List<GameTurn> getTurnsList();
+
+    //endregion
 
     GameOptions getOptions();
 

@@ -348,7 +348,7 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
         if (r > 0) {
             String m = "";
             int gti = clientgui.getClient().getGame().getTurnIndex();
-            List<GameTurn> gtv = clientgui.getClient().getGame().getTurnVector();
+            List<GameTurn> gtv = clientgui.getClient().getGame().getTurnsList();
             int j = 0;
             for (int i = gti + 1; i < gtv.size(); i++) {
                 GameTurn nt = gtv.get(i);

@@ -37,20 +37,15 @@ public final class SBFGame extends AbstractGame implements PlanetaryConditionsUs
 
     private final GameOptions options = new GameOptions(); //TODO: SBFGameOptions()
     private GamePhase phase = GamePhase.UNKNOWN;
+    private GamePhase lastPhase = GamePhase.UNKNOWN;
     private final PlanetaryConditions planetaryConditions = new PlanetaryConditions();
     private final SBFFullGameReport gameReport = new SBFFullGameReport();
+    private final List<GameTurn> turnList = new ArrayList<>();
 
-    private GamePhase lastPhase = GamePhase.UNKNOWN;
 
     @Override
     public GameTurn getTurn() {
         return null;
-    }
-
-    @Override
-    public boolean hasMoreTurns() {
-        // stub
-        return false;
     }
 
     @Override
@@ -200,5 +195,33 @@ public final class SBFGame extends AbstractGame implements PlanetaryConditionsUs
      */
     public void replaceAllReports(Map<Integer, List<Report>> newReports) {
         gameReport.replaceAllReports(newReports);
+    }
+
+    public void clearTurns() {
+        turnList.clear();
+    }
+
+    /**
+     * Sets the current turn vector
+     */
+    public void setTurns(List<GameTurn> newTurns) {
+        turnList.clear();
+        turnList.addAll(newTurns);
+    }
+
+    /**
+     * Returns the current list of turns. The returned list is unmodifiable but not a deep copy. If you're
+     * not the SBFGameManager, don't even think about changing any of the turns.
+     */
+    public List<GameTurn> getTurnsList() {
+        return Collections.unmodifiableList(turnList);
+    }
+
+    /**
+     * Changes to the next turn, returning it.
+     */
+    public GameTurn changeToNextTurn() {
+        turnIndex++;
+        return getTurn();
     }
 }

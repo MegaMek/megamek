@@ -1143,6 +1143,9 @@ public class Server implements Runnable {
         sendChat(ORIGIN, message);
     }
 
+    /**
+     * Sends the given packet to all connections (all connected Clients = players).
+     */
     void send(Packet packet) {
         connections.stream()
                 .filter(Objects::nonNull)
@@ -1150,7 +1153,7 @@ public class Server implements Runnable {
     }
 
     /**
-     * Send a packet to a specific connection.
+     * Sends the given packet to the given connection (= player ID).
      */
     public void send(int connId, Packet packet) {
         if (getClient(connId) != null) {

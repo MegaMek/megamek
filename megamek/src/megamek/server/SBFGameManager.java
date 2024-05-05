@@ -18,7 +18,6 @@
  */
 package megamek.server;
 
-import megamek.MegaMek;
 import megamek.common.*;
 import megamek.common.net.enums.PacketCommand;
 import megamek.common.net.packets.Packet;
@@ -37,6 +36,7 @@ public final class SBFGameManager extends AbstractGameManager {
     private SBFGame game;
     private final List<Report> pendingReports = new ArrayList<>();
     private final SBFPhaseEndManager phaseEndManager = new SBFPhaseEndManager(this);
+    private final SBFPhasePreparationManager phasePreparationManager = new SBFPhasePreparationManager(this);
 
     @Override
     public SBFGame getGame() {
@@ -53,34 +53,22 @@ public final class SBFGameManager extends AbstractGameManager {
     }
 
     @Override
-    public void resetGame() {
-
-    }
+    public void resetGame() { }
 
     @Override
-    public void disconnect(Player player) {
-
-    }
+    public void disconnect(Player player) { }
 
     @Override
-    public void removeAllEntitiesOwnedBy(Player player) {
-
-    }
+    public void removeAllEntitiesOwnedBy(Player player) { }
 
     @Override
-    public void handleCfrPacket(Server.ReceivedPacket rp) {
-
-    }
+    public void handleCfrPacket(Server.ReceivedPacket rp) { }
 
     @Override
-    public void requestGameMaster(Player player) {
-
-    }
+    public void requestGameMaster(Player player) { }
 
     @Override
-    public void requestTeamChange(int teamId, Player player) {
-
-    }
+    public void requestTeamChange(int teamId, Player player) { }
 
     @Override
     public List<ServerCommand> getCommandList(Server server) {
@@ -93,9 +81,7 @@ public final class SBFGameManager extends AbstractGameManager {
     }
 
     @Override
-    public void calculatePlayerInitialCounts() {
-
-    }
+    public void calculatePlayerInitialCounts() { }
 
     @Override
     public void sendCurrentInfo(int connId) {
@@ -162,292 +148,12 @@ public final class SBFGameManager extends AbstractGameManager {
         phaseEndManager.managePhase();
     }
 
+    @Override
     protected void prepareForCurrentPhase() {
-        switch (game.getPhase()) {
-            case LOUNGE:
-//                clearReports();
-//                MapSettings mapSettings = game.getMapSettings();
-//                mapSettings.setBoardsAvailableVector(ServerBoardHelper.scanForBoards(mapSettings));
-//                mapSettings.setNullBoards(DEFAULT_BOARD);
-//                send(createMapSettingsPacket());
-//                send(createMapSizesPacket());
-//                checkForObservers();
-//                transmitAllPlayerUpdates();
-                break;
-            case INITIATIVE:
-                // remove the last traces of last round
-//                game.handleInitiativeCompensation();
-                game.clearActions();
-//                game.resetTagInfo();
-//                sendTagInfoReset();
-//                clearReports();
-//                resetEntityRound();
-//                resetEntityPhase(phase);
-//                checkForObservers();
-//                transmitAllPlayerUpdates();
-
-                // roll 'em
-                resetActivePlayersDone();
-                rollInitiative();
-                //Cockpit command consoles that switched crew on the previous round are ineligible for force
-                // commander initiative bonus. Now that initiative is rolled, clear the flag.
-//                game.getEntities().forEachRemaining(e -> e.getCrew().resetActedFlag());
-
-                if (!game.shouldDeployThisRound()) {
-//                    incrementAndSendGameRound();
-                    autoSaveService.performRollingAutosave();
-                }
-
-                // setIneligible(phase);
-//                determineTurnOrder(phase);
-//                writeInitiativeReport(false);
-//
-//                // checks for environmental survival
-//                checkForConditionDeath();
-//
-//                checkForBlueShieldDamage();
-//                if (game.getBoard().inAtmosphere()) {
-//                    checkForAtmosphereDeath();
-//                }
-//                if (game.getBoard().inSpace()) {
-//                    checkForSpaceDeath();
-//                }
-//
-//                bvReports(true);
-
-                LogManager.getLogger().info("Round {} memory usage: {}", game.getCurrentRound(), MegaMek.getMemoryUsed());
-                break;
-            case DEPLOY_MINEFIELDS:
-//                checkForObservers();
-//                transmitAllPlayerUpdates();
-//                resetActivePlayersDone();
-//                setIneligible(phase);
-//
-//                Enumeration<Player> e = game.getPlayers();
-//                Vector<GameTurn> turns = new Vector<>();
-//                while (e.hasMoreElements()) {
-//                    Player p = e.nextElement();
-//                    if (p.hasMinefields() && game.getBoard().onGround()) {
-//                        GameTurn gt = new GameTurn(p.getId());
-//                        turns.addElement(gt);
-//                    }
-//                }
-//                game.setTurnVector(turns);
-//                game.resetTurnIndex();
-//
-//                // send turns to all players
-//                send(createTurnVectorPacket());
-                break;
-            case SET_ARTILLERY_AUTOHIT_HEXES:
-//                deployOffBoardEntities();
-//                checkForObservers();
-//                transmitAllPlayerUpdates();
-//                resetActivePlayersDone();
-//                setIneligible(phase);
-//
-//                Enumeration<Player> players = game.getPlayers();
-//                Vector<GameTurn> turn = new Vector<>();
-//
-//                // Walk through the players of the game, and add
-//                // a turn for all players with artillery weapons.
-//                while (players.hasMoreElements()) {
-//                    // Get the next player.
-//                    final Player p = players.nextElement();
-//
-//                    // Does the player have any artillery-equipped units?
-//                    EntitySelector playerArtySelector = new EntitySelector() {
-//                        private Player owner = p;
-//
-//                        @Override
-//                        public boolean accept(Entity entity) {
-//                            return owner.equals(entity.getOwner()) && entity.isEligibleForArtyAutoHitHexes();
-//                        }
-//                    };
-//
-//                    if (game.getSelectedEntities(playerArtySelector).hasNext()) {
-//                        // Yes, the player has arty-equipped units.
-//                        GameTurn gt = new GameTurn(p.getId());
-//                        turn.addElement(gt);
-//                    }
-//                }
-//                game.setTurnVector(turn);
-//                game.resetTurnIndex();
-//
-//                // send turns to all players
-//                send(createTurnVectorPacket());
-                break;
-            case PREMOVEMENT:
-            case MOVEMENT:
-            case DEPLOYMENT:
-            case PREFIRING:
-            case FIRING:
-            case PHYSICAL:
-            case TARGETING:
-            case OFFBOARD:
-//                deployOffBoardEntities();
-//
-//                // Check for activating hidden units
-//                if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_HIDDEN_UNITS)) {
-//                    for (Entity ent : game.getEntitiesVector()) {
-//                        if (ent.getHiddenActivationPhase() == phase) {
-//                            ent.setHidden(false);
-//                        }
-//                    }
-//                }
-//                // Update visibility indications if using double blind.
-//                if (doBlind()) {
-//                    updateVisibilityIndicator(null);
-//                }
-//                resetEntityPhase(phase);
-//                checkForObservers();
-//                transmitAllPlayerUpdates();
-//                resetActivePlayersDone();
-//                setIneligible(phase);
-//                determineTurnOrder(phase);
-//                entityAllUpdate();
-//                clearReports();
-//                doTryUnstuck();
-                break;
-            case END:
-//                resetEntityPhase(phase);
-//                clearReports();
-//                resolveHeat();
-//                PlanetaryConditions conditions = game.getPlanetaryConditions();
-//                if (conditions.isBlowingSandActive()) {
-//                    addReport(resolveBlowingSandDamage());
-//                }
-//                addReport(resolveControlRolls());
-//                addReport(checkForTraitors());
-//                // write End Phase header
-//                addReport(new Report(5005, Report.PUBLIC));
-//                addReport(resolveInternalBombHits());
-//                checkLayExplosives();
-//                resolveHarJelRepairs();
-//                resolveEmergencyCoolantSystem();
-//                checkForSuffocation();
-//                game.getPlanetaryConditions().determineWind();
-//                send(packetHelper.createPlanetaryConditionsPacket());
-//
-//                applyBuildingDamage();
-//                addReport(game.ageFlares());
-//                send(createFlarePacket());
-//                resolveAmmoDumps();
-//                resolveCrewWakeUp();
-//                resolveConsoleCrewSwaps();
-//                resolveSelfDestruct();
-//                resolveShutdownCrashes();
-//                checkForIndustrialEndOfTurn();
-//                resolveMechWarriorPickUp();
-//                resolveVeeINarcPodRemoval();
-//                resolveFortify();
-
-//                entityStatusReport();
-//
-//                // Moved this to the very end because it makes it difficult to see
-//                // more important updates when you have 300+ messages of smoke filling
-//                // whatever hex. Please don't move it above the other things again.
-//                // Thanks! Ralgith - 2018/03/15
-//                hexUpdateSet.clear();
-//                for (DynamicTerrainProcessor tp : terrainProcessors) {
-//                    tp.doEndPhaseChanges(vPhaseReport);
-//                }
-//                sendChangedHexes(hexUpdateSet);
-//
-//                checkForObservers();
-//                transmitAllPlayerUpdates();
-//                entityAllUpdate();
-                break;
-            case INITIATIVE_REPORT: {
-//                autoSave();
-            }
-            case TARGETING_REPORT:
-            case MOVEMENT_REPORT:
-            case OFFBOARD_REPORT:
-            case FIRING_REPORT:
-            case PHYSICAL_REPORT:
-            case END_REPORT:
-//                resetActivePlayersDone();
-//                sendReport();
-//                entityAllUpdate();
-//                if (game.getOptions().booleanOption(OptionsConstants.BASE_PARANOID_AUTOSAVE)) {
-//                    autoSave();
-//                }
-                break;
-            case VICTORY:
-//                resetPlayersDone();
-//                clearReports();
-//                send(createAllReportsPacket());
-//                prepareVictoryReport();
-//                game.addReports(vPhaseReport);
-//                // Before we send the full entities packet we need to loop
-//                // through the fighters in squadrons and damage them.
-//                for (Iterator<Entity> ents = game.getEntities(); ents.hasNext(); ) {
-//                    Entity entity = ents.next();
-//                    if ((entity.isFighter()) && !(entity instanceof FighterSquadron)) {
-//                        if (entity.isPartOfFighterSquadron() || entity.isCapitalFighter()) {
-//                            ((IAero) entity).doDisbandDamage();
-//                        }
-//                    }
-//                    // fix the armor and SI of aeros if using aero sanity rules for
-//                    // the MUL
-//                    if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)
-//                            && (entity instanceof Aero)) {
-//                        // need to rescale SI and armor
-//                        int scale = 1;
-//                        if (entity.isCapitalScale()) {
-//                            scale = 10;
-//                        }
-//                        Aero a = (Aero) entity;
-//                        int currentSI = a.getSI() / (2 * scale);
-//                        a.set0SI(a.get0SI() / (2 * scale));
-//                        if (currentSI > 0) {
-//                            a.setSI(currentSI);
-//                        }
-//                        //Fix for #587. MHQ tracks fighters at standard scale and doesn't (currently)
-//                        //track squadrons. Squadrons don't save to MUL either, so... only convert armor for JS/WS/SS?
-//                        //Do we ever need to save capital fighter armor to the final MUL or entityStatus?
-//                        if (!entity.hasETypeFlag(Entity.ETYPE_JUMPSHIP)) {
-//                            scale = 1;
-//                        }
-//                        if (scale > 1) {
-//                            for (int loc = 0; loc < entity.locations(); loc++) {
-//                                int currentArmor = entity.getArmor(loc) / scale;
-//                                if (entity.getOArmor(loc) > 0) {
-//                                    entity.initializeArmor(entity.getOArmor(loc) / scale, loc);
-//                                }
-//                                if (entity.getArmor(loc) > 0) {
-//                                    entity.setArmor(currentArmor, loc);
-//                                }
-//                            }
-//                        }
-//                    }
-//                }
-//                EmailService mailer = Server.getServerInstance().getEmailService();
-//                if (mailer != null) {
-//                    for (var player: mailer.getEmailablePlayers(game)) {
-//                        try {
-//                            var message = mailer.newReportMessage(
-//                                    game, vPhaseReport, player
-//                            );
-//                            mailer.send(message);
-//                        } catch (Exception ex) {
-//                            LogManager.getLogger().error("Error sending email" + ex);
-//                        }
-//                    }
-//                }
-//                send(createFullEntitiesPacket());
-//                send(createReportPacket(null));
-//                send(createEndOfGamePacket());
-                break;
-            default:
-                break;
-        }
+        phasePreparationManager.managePhase();
     }
 
-    /**
-     * Do anything we seed to start the new phase, such as give a turn to the
-     * first player to play.
-     */
+    @Override
     protected void executeCurrentPhase() {
         switch (game.getPhase()) {
             case EXCHANGE:
@@ -457,12 +163,10 @@ public final class SBFGameManager extends AbstractGameManager {
 //                    e.setInitialBV(e.calculateBattleValue(false, false));
 //                }
                 calculatePlayerInitialCounts();
-//                // Build teams vector
                 game.setupTeams();
 //                applyBoardSettings();
                 game.getPlanetaryConditions().determineWind();
                 send(packetHelper.createPlanetaryConditionsPacket());
-//                // transmit the board to everybody
                 send(packetHelper.createBoardsPacket());
                 game.setupDeployment();
 //                game.setVictoryContext(new HashMap<>());
@@ -483,7 +187,7 @@ public final class SBFGameManager extends AbstractGameManager {
             case PHYSICAL:
             case TARGETING:
             case OFFBOARD:
-//                changeToNextTurn(-1);
+                changeToNextTurn(-1);
                 if (game.getOptions().booleanOption(OptionsConstants.BASE_PARANOID_AUTOSAVE)) {
                     autoSave();
                 }
@@ -528,7 +232,7 @@ public final class SBFGameManager extends AbstractGameManager {
      * Called at the beginning of certain phases to make every active player not
      * ready.
      */
-    private void resetActivePlayersDone() {
+    void resetActivePlayersDone() {
         for (Player player : game.getPlayersList()) {
             //FIXME This is highly specialized and very arcane!!
             setPlayerDone(player, getGame().getEntitiesOwnedBy(player) <= 0);
@@ -539,7 +243,7 @@ public final class SBFGameManager extends AbstractGameManager {
     /**
      * Rolls initiative for all teams.
      */
-    private void rollInitiative() {
+    void rollInitiative() {
         TurnOrdered.rollInitiative(game.getTeams(), false);
         transmitAllPlayerUpdates();
     }
@@ -548,7 +252,7 @@ public final class SBFGameManager extends AbstractGameManager {
         return new Packet(PacketCommand.SENDING_REPORTS_ALL, game.getGameReport().createFilteredReport(recipient));
     }
 
-    private void clearPendingReports() {
+    public void clearPendingReports() {
         pendingReports.clear();
     }
 
@@ -558,5 +262,51 @@ public final class SBFGameManager extends AbstractGameManager {
 
     void addPendingReportsToGame() {
         game.addReports(pendingReports);
+    }
+
+    /**
+     * Tries to change to the next turn. If there are no more turns, ends the
+     * current phase. If the player whose turn it is next is not connected, we
+     * allow the other players to skip that player.
+     */
+    private void changeToNextTurn(int prevPlayerId) {
+//        boolean minefieldPhase = game.getPhase().isDeployMinefields();
+//        boolean artyPhase = game.getPhase().isSetArtilleryAutohitHexes();
+//
+//        GameTurn nextTurn = null;
+//        Entity nextEntity = null;
+//        while (game.hasMoreTurns() && (null == nextEntity)) {
+//            nextTurn = game.changeToNextTurn();
+//            nextEntity = game.getEntity(game.getFirstEntityNum(nextTurn));
+//            if (minefieldPhase || artyPhase) {
+//                break;
+//            }
+//        }
+//
+//        // if there aren't any more valid turns, end the phase
+//        // note that some phases don't use entities
+//        if (((null == nextEntity) && !minefieldPhase) || ((null == nextTurn) && minefieldPhase)) {
+//            endCurrentPhase();
+//            return;
+//        }
+//
+//        Player player = game.getPlayer(nextTurn.getPlayerNum());
+//
+//        if ((player != null) && (game.getEntitiesOwnedBy(player) == 0)) {
+//            endCurrentTurn(null);
+//            return;
+//        }
+//
+//        if (prevPlayerId != -1) {
+//            send(packetHelper.createTurnIndexPacket(prevPlayerId));
+//        } else {
+//            send(packetHelper.createTurnIndexPacket(player != null ? player.getId() : Player.PLAYER_NONE));
+//        }
+//
+//        if ((null != player) && player.isGhost()) {
+//            sendGhostSkipMessage(player);
+//        } else if ((null == game.getFirstEntity()) && (null != player) && !minefieldPhase && !artyPhase) {
+//            sendTurnErrorSkipMessage(player);
+//        }
     }
 }

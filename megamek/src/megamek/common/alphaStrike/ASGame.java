@@ -43,8 +43,8 @@ public class ASGame extends AbstractGame {
     }
 
     @Override
-    public boolean hasMoreTurns() {
-        return false;
+    public List<GameTurn> getTurnsList() {
+        return List.of();
     }
 
     @Override

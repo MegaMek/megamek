@@ -36,6 +36,8 @@ import java.util.stream.Collectors;
  */
 public abstract class AbstractGame implements IGame {
 
+    private static final int AWAITING_FIRST_TURN = -1;
+
     /** The players present in the game mapped to their id as key */
     protected final ConcurrentHashMap<Integer, Player> players = new ConcurrentHashMap<>();
 
@@ -72,6 +74,8 @@ public abstract class AbstractGame implements IGame {
     private final Map<Integer, List<Deployable>> deploymentTable = new HashMap<>();
 
     protected int currentRound = 0;
+
+    protected int turnIndex = AWAITING_FIRST_TURN;
 
     @Override
     public Forces getForces() {
@@ -292,5 +296,17 @@ public abstract class AbstractGame implements IGame {
      */
     public void clearDeploymentThisRound() {
         deploymentTable.remove(currentRound);
+    }
+
+    /**
+     * Resets the turn index to {@link #AWAITING_FIRST_TURN}
+     */
+    public void resetTurnIndex() {
+        turnIndex = AWAITING_FIRST_TURN;
+    }
+
+    @Override
+    public int getTurnIndex() {
+        return turnIndex;
     }
 }

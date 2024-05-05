@@ -1856,20 +1856,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
      * lounge. The file can record damage sustained, non- standard munitions
      * selected, and ammunition expended in a prior engagement.
      *
-     * @param c
-     */
-    protected void loadListFile(Client c) {
-        loadListFile(c.getLocalPlayer());
-    }
-
-    /**
-     * Allow the player to select a MegaMek Unit List file to load. The
-     * <code>Entity</code>s in the file will replace any that the player has
-     * already selected. As such, this method should only be called in the chat
-     * lounge. The file can record damage sustained, non- standard munitions
-     * selected, and ammunition expended in a prior engagement.
-     *
-     * @param player
+     * @param player The player to add the units to
      */
     public void loadListFile(Player player) {
         loadListFile(player, false);
@@ -1882,7 +1869,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
      * lounge. The file can record damage sustained, non-standard munitions
      * selected, and ammunition expended in a prior engagement.
      *
-     * @param player
+     * @param player The player to add the units to
      */
     protected void loadListFile(Player player, boolean reinforce) {
         if (player != null) {
@@ -2005,11 +1992,8 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
      * @param unitList - the <code>Vector</code> of <code>Entity</code>s to be saved
      *                 to a file. If this value is <code>null</code> or empty, the
      *                 "Save As" dialog will not be displayed.
+     * @param filename The filename to save to
      */
-    public void saveListFile(ArrayList<Entity> unitList) {
-        saveListFile(unitList, client.getLocalPlayer().getName());
-    }
-
     public void saveListFile(ArrayList<Entity> unitList, String filename) {
         // Handle empty lists.
         if ((unitList == null) || unitList.isEmpty()) {
@@ -2118,8 +2102,8 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
     /**
      * Loads a preview image of the unit into the BufferedPanel.
      *
-     * @param bp
-     * @param entity
+     * @param bp The JLabel to set the image as icon to
+     * @param entity The unit
      */
     public void loadPreviewImage(JLabel bp, Entity entity) {
         Player player = client.getGame().getPlayer(entity.getOwnerId());
@@ -2159,7 +2143,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
         }
     }
 
-    private GameListener gameListener = new GameListenerAdapter() {
+    private final GameListener gameListener = new GameListenerAdapter() {
         @Override
         public void gamePlayerChange(GamePlayerChangeEvent evt) {
             if (playerListDialog != null) {
@@ -2212,11 +2196,6 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
 
             clientGuiPanel.validate();
             cb.moveToEnd();
-        }
-
-        @Override
-        public void gamePlayerConnected(GamePlayerConnectedEvent e) {
-
         }
 
         @Override
@@ -2326,11 +2305,6 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
                 ChatLounge cl = (ChatLounge) curPanel;
                 cl.updateMapSettings(getClient().getMapSettings());
             }
-        }
-
-        @Override
-        public void gameMapQuery(GameMapQueryEvent evt) {
-
         }
 
         @Override
@@ -2832,7 +2806,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
     }
 
     public void setPointblankEID(int eid) {
-        this.pointblankEID = eid;
+        pointblankEID = eid;
     }
 
     public int getPointblankEID() {

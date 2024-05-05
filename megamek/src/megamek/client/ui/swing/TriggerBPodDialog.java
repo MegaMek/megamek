@@ -307,7 +307,7 @@ public class TriggerBPodDialog extends JDialog implements ActionListener {
 
         // If we have multiple choices, display a selection dialog.
         else if (targets.size() > 1) {
-            String input = (String) JOptionPane.showInputDialog(clientgui,
+            String input = (String) JOptionPane.showInputDialog(clientgui.getFrame(),
                     Messages.getString("TriggerBPodDialog.ChooseTargetDialog.message", pos.getBoardNum()),
                     Messages.getString("TriggerBPodDialog.ChooseTargetDialog.title"),
                     JOptionPane.QUESTION_MESSAGE, null, SharedUtility.getDisplayArray(targets), null);

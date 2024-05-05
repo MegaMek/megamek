@@ -686,7 +686,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
         // FIXME: occasionally getTurn() returns null. Handle that case
         // intelligently.
         this.turnIndex = turnIndex;
-        processGameEvent(new GameTurnChangeEvent(this, getPlayer(getTurn().getPlayerNum()), prevPlayerId));
+        processGameEvent(new GameTurnChangeEvent(this, getPlayer(getTurn().getPlayerId()), prevPlayerId));
     }
 
     public List<GameTurn> getTurnsList() {

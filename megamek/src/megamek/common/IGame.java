@@ -36,7 +36,7 @@ public interface IGame {
     //region Player turns
 
     @Nullable
-    GameTurn getTurn();
+    PlayerTurn getTurn();
 
     /**
      * @return True when there is at least one more player turn waiting to be played in the current game
@@ -56,7 +56,7 @@ public interface IGame {
      * @return the current list of turns. If you're not the GameManager, don't even think
      * about changing any of the turns.
      */
-    List<GameTurn> getTurnsList();
+    List<? extends PlayerTurn> getTurnsList();
 
     //endregion
 

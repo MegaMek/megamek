@@ -584,7 +584,7 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
         if ((null != client) && (null != game) && game.getPhase().isDeployment() && (dialog != null)
                 && (bv.getDeployingEntity() != null)) {
             GameTurn turn = game.getTurn();
-            if ((turn != null) && (turn.getPlayerNum() == client.getLocalPlayer().getId())) {
+            if ((turn != null) && (turn.getPlayerId() == client.getLocalPlayer().getId())) {
                 Entity deployingUnit = bv.getDeployingEntity();
                 
                 for (int j = 0; j < board.getWidth(); j++) {

@@ -309,4 +309,5 @@ public final class SBFGameManager extends AbstractGameManager {
 //            sendTurnErrorSkipMessage(player);
 //        }
     }
+
 }

@@ -352,7 +352,7 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
             int j = 0;
             for (int i = gti + 1; i < gtv.size(); i++) {
                 GameTurn nt = gtv.get(i);
-                Player p = clientgui.getClient().getGame().getPlayer(nt.getPlayerNum());
+                Player p = clientgui.getClient().getGame().getPlayer(nt.getPlayerId());
                 s += p.getName() + ", ";
                 j++;
                 if (j >= r) {

@@ -71,7 +71,7 @@ class SBFPhasePreparationManager {
                 }
 
                 // setIneligible(phase);
-//                determineTurnOrder(phase);
+//                gameManager.determineTurnOrder(gameManager.getGame().getPhase());
 //                writeInitiativeReport(false);
 //
 //                // checks for environmental survival

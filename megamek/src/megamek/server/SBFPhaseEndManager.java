@@ -40,7 +40,7 @@ public class SBFPhaseEndManager {
                 gameManager.addPendingReportsToGame();
                 // IO BF p.103: Arty auto is a thing in SBF
 //                gameManager.changePhase(GamePhase.SET_ARTILLERY_AUTOHIT_HEXES);
-                gameManager.changePhase(GamePhase.INITIATIVE); // <- only for testing to get past arty auto and minefields
+                gameManager.changePhase(GamePhase.INITIATIVE); //FIXME <- only for testing to get past arty auto and minefields
                 break;
             case SET_ARTILLERY_AUTOHIT_HEXES:
 //                sendSpecialHexDisplayPackets();

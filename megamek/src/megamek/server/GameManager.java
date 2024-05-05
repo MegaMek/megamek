@@ -1884,7 +1884,7 @@ public class GameManager extends AbstractGameManager {
         // this is the player sending the packet
         Player current = game.getPlayer(connectionId);
 
-        if (game.getTurn().getPlayerNum() != current.getId()) {
+        if (game.getTurn().getPlayerId() != current.getId()) {
             // this player is not the current player, so just ignore this
             // command!
             return;
@@ -2001,7 +2001,7 @@ public class GameManager extends AbstractGameManager {
             return;
         }
 
-        Player player = game.getPlayer(nextTurn.getPlayerNum());
+        Player player = game.getPlayer(nextTurn.getPlayerId());
 
         if ((player != null) && (game.getEntitiesOwnedBy(player) == 0)) {
             endCurrentTurn(null);
@@ -2094,7 +2094,7 @@ public class GameManager extends AbstractGameManager {
         if (null == turn) {
             return false;
         }
-        Player player = game.getPlayer(turn.getPlayerNum());
+        Player player = game.getPlayer(turn.getPlayerId());
         return (null == player) || player.isGhost() || (game.getFirstEntity() == null);
     }
 
@@ -2638,7 +2638,7 @@ public class GameManager extends AbstractGameManager {
                         addReport(r);
                     }
                 } else {
-                    Player player = game.getPlayer(t.getPlayerNum());
+                    Player player = game.getPlayer(t.getPlayerId());
                     if (null != player) {
                         r = new Report(1050, Report.PUBLIC);
                         r.add(player.getColorForPlayer());
@@ -2685,7 +2685,7 @@ public class GameManager extends AbstractGameManager {
                 boolean hasEven = false;
                 for (Enumeration<GameTurn> i = game.getTurns(); i.hasMoreElements(); ) {
                     GameTurn turn = i.nextElement();
-                    Player player = game.getPlayer(turn.getPlayerNum());
+                    Player player = game.getPlayer(turn.getPlayerId());
                     if (null != player) {
                         r.add(player.getName());
                         if (player.getEvenTurns() > 0) {
@@ -12083,7 +12083,7 @@ public class GameManager extends AbstractGameManager {
             }
             LogManager.getLogger().error(msg);
             send(connId, packetHelper.createTurnVectorPacket());
-            send(connId, packetHelper.createTurnIndexPacket(turn.getPlayerNum()));
+            send(connId, packetHelper.createTurnIndexPacket(turn.getPlayerId()));
             return;
         }
 
@@ -12441,7 +12441,7 @@ public class GameManager extends AbstractGameManager {
                     connId, ((entity == null) ? "null" : entity.getShortName()),
                     ((turn == null) ? "null" : "invalid")));
             send(connId, packetHelper.createTurnVectorPacket());
-            send(connId, packetHelper.createTurnIndexPacket((turn == null) ? Player.PLAYER_NONE : turn.getPlayerNum()));
+            send(connId, packetHelper.createTurnIndexPacket((turn == null) ? Player.PLAYER_NONE : turn.getPlayerId()));
             return;
         }
 
@@ -12483,7 +12483,7 @@ public class GameManager extends AbstractGameManager {
                     connId, ((entity == null) ? "null" : entity.getShortName()),
                     ((turn == null) ? "null" : "invalid")));
             send(connId, packetHelper.createTurnVectorPacket());
-            send(connId, packetHelper.createTurnIndexPacket((turn == null) ? Player.PLAYER_NONE : turn.getPlayerNum()));
+            send(connId, packetHelper.createTurnIndexPacket((turn == null) ? Player.PLAYER_NONE : turn.getPlayerId()));
             return;
         }
 

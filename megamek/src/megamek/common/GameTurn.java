@@ -18,7 +18,6 @@ package megamek.common;
 import megamek.common.annotations.Nullable;
 import megamek.common.options.OptionsConstants;
 
-import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.stream.IntStream;
@@ -30,7 +29,7 @@ import java.util.stream.IntStream;
  * @author Ben
  * @since September 6, 2002, 11:52 AM
  */
-public class GameTurn implements Serializable {
+public class GameTurn implements PlayerTurn {
     private static final long serialVersionUID = -8340385894504735190L;
 
     /** The constant to represent Infantry (and Battle Armor) entities. */
@@ -80,7 +79,7 @@ public class GameTurn implements Serializable {
         this.playerId = playerId;
     }
 
-    public int getPlayerNum() {
+    public int getPlayerId() {
         return playerId;
     }
 

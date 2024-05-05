@@ -1,4 +1,6 @@
 size 30 34
+tag "HighHills (Auto)"
+tag "Lava (Auto)"
 hex 0101 0 "impassable:3:0" ""
 hex 0201 0 "impassable:3:0" ""
 hex 0301 0 "impassable:3:0" ""

@@ -1,17 +1,9 @@
 size 35 35
 option exit_roads_to_pavement false
 tag "Rough (Auto)"
-tag "Water (Auto)"
 tag "Cliffs (Auto)"
-tag "SnowTheme (Auto)"
-tag "GrassTheme (Auto)"
-tag "Roads (Auto)"
+tag "DesertTheme (Auto)"
 tag "HighHills (Auto)"
-tag "IceTerrain (Auto)"
-tag "Woods (Auto)"
-tag "LowHills (Auto)"
-tag "SnowTerrain (Auto)"
-tag "MediumUrban (Auto)"
 hex 0101 0 "" "desert"
 hex 0201 0 "" "desert"
 hex 0301 0 "" "desert"

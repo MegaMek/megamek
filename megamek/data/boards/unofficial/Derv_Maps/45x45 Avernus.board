@@ -1,4 +1,8 @@
 size 45 45
+tag "LunarTheme (Auto)"
+tag "Cliffs (Auto)"
+tag "HighHills (Auto)"
+tag "Lava (Auto)"
 hex 0101 6 "" "lunar"
 hex 0201 6 "" "lunar"
 hex 0301 6 "" "lunar"

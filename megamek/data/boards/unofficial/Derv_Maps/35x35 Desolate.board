@@ -1,5 +1,7 @@
 size 35 35
 option exit_roads_to_pavement false
+tag "LunarTheme (Auto)"
+tag "LowHills (Auto)"
 hex 0101 1 "" "lunar"
 hex 0201 1 "" "lunar"
 hex 0301 1 "" "lunar"

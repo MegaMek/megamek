@@ -1,16 +1,11 @@
 size 45 45
 option exit_roads_to_pavement false
-tag "Rough (Auto)"
-tag "Water (Auto)"
-tag "Cliffs (Auto)"
-tag "SnowTheme (Auto)"
 tag "GrassTheme (Auto)"
+tag "Cliffs (Auto)"
 tag "Roads (Auto)"
 tag "HighHills (Auto)"
-tag "IceTerrain (Auto)"
+tag "Lava (Auto)"
 tag "Woods (Auto)"
-tag "SnowTerrain (Auto)"
-tag "MediumUrban (Auto)"
 hex 0101 -2 "magma:2:9" "grass"
 hex 0201 0 "" "grass"
 hex 0301 0 "" "grass"

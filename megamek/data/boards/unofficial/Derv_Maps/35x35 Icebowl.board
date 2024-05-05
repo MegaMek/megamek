@@ -1,4 +1,7 @@
 size 35 35
+tag "Rough (Auto)"
+tag "LunarTheme (Auto)"
+tag "IceTerrain (Auto)"
 hex 0101 2 "" "lunar"
 hex 0201 0 "" "lunar"
 hex 0301 0 "" "lunar"

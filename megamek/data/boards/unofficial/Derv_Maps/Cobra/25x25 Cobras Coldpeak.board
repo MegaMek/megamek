@@ -1,4 +1,7 @@
 size 25 25
+tag "GrassTheme (Auto)"
+tag "IceTerrain (Auto)"
+tag "SnowTerrain (Auto)"
 hex 0101 0 "snow:1" ""
 hex 0201 0 "snow:1" ""
 hex 0301 0 "snow:1" ""

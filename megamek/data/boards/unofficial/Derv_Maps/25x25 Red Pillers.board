@@ -1,4 +1,7 @@
 size 25 25
+tag "Cliffs (Auto)"
+tag "MarsTheme (Auto)"
+tag "HighHills (Auto)"
 hex 0101 9 "impassable:1" "mars"
 hex 0201 9 "impassable:1" "mars"
 hex 0301 0 "" "mars"

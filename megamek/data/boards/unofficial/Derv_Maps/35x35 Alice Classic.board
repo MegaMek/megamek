@@ -1,5 +1,8 @@
 size 35 35
 option exit_roads_to_pavement false
+tag "Rough (Auto)"
+tag "LunarTheme (Auto)"
+tag "IceTerrain (Auto)"
 hex 0101 0 "" "lunar"
 hex 0201 0 "" "lunar"
 hex 0301 0 "" "lunar"

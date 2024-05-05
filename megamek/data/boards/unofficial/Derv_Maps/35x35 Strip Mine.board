@@ -1,4 +1,6 @@
 size 35 35
+tag "SnowTheme (Auto)"
+tag "HighHills (Auto)"
 hex 0101 9 "" "snow"
 hex 0201 9 "" "snow"
 hex 0301 9 "" "snow"

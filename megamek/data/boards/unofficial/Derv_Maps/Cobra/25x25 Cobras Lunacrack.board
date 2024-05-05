@@ -1,4 +1,6 @@
 size 25 25
+tag "LunarTheme (Auto)"
+tag "HighHills (Auto)"
 hex 0101 4 "" "lunar"
 hex 0201 4 "" "lunar"
 hex 0301 4 "" "lunar"

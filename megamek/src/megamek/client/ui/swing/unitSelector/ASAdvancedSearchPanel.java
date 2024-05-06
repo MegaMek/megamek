@@ -32,7 +32,6 @@ import megamek.common.alphaStrike.BattleForceSUA;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -159,7 +158,7 @@ public class ASAdvancedSearchPanel extends JPanel {
     JToggleButton unitRoleTransport = new JToggleButton(UnitRole.TRANSPORT.toString());
     JToggleButton unitRoleNone = new JToggleButton(UnitRole.NONE.toString());
 
-    private JButton btnClear = new JButton(Messages.getString("MechSelectorDialog.ClearTab"));
+    private final JButton btnClear = new JButton(Messages.getString("MechSelectorDialog.ClearTab"));
 
     public ASAdvancedSearchPanel() {
         setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
@@ -251,10 +250,18 @@ public class ASAdvancedSearchPanel extends JPanel {
                 && (mechSummary.getMovement().get(moveMode) <= mvTo.getIntVal(Integer.MAX_VALUE)))) {
             return false;
         } else if (useAbility1.isSelected() &&
-                !mechSummary.getSpecialAbilities().hasSUA(ability1.getSelectedItem())) {
+                !(mechSummary.getSpecialAbilities().hasSUA(ability1.getSelectedItem())
+                        || (mechSummary.usesArcs() && (mechSummary.getLeftArc().hasSUA(ability1.getSelectedItem())
+                        || mechSummary.getRightArc().hasSUA(ability1.getSelectedItem())
+                        || mechSummary.getFrontArc().hasSUA(ability1.getSelectedItem())
+                        || mechSummary.getRearArc().hasSUA(ability1.getSelectedItem()))))) {
             return false;
         } else if (useAbility2.isSelected() &&
-                !mechSummary.getSpecialAbilities().hasSUA(ability2.getSelectedItem())) {
+                !(mechSummary.getSpecialAbilities().hasSUA(ability2.getSelectedItem())
+                        || (mechSummary.usesArcs() && (mechSummary.getLeftArc().hasSUA(ability2.getSelectedItem())
+                        || mechSummary.getRightArc().hasSUA(ability2.getSelectedItem())
+                        || mechSummary.getFrontArc().hasSUA(ability2.getSelectedItem())
+                        || mechSummary.getRearArc().hasSUA(ability2.getSelectedItem()))))) {
             return false;
         } else {
             return true;

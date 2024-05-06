@@ -120,10 +120,7 @@ public class ASDamageConverter {
     protected void processSpecialAbilities() {
         report.addEmptyLine();
         report.addSubHeader("Weapon-based Special Abilities:");
-        for (Mounted weapon : weaponsList) {
-            WeaponType weaponType = (WeaponType) weapon.getType();
-            assignSpecialAbilities(weapon, weaponType);
-        }
+        weaponsList.forEach(weapon -> assignSpecialAbilities(weapon, weapon.getType()));
         if (foundNoSpecialAbility()) {
             report.addLine("None", "", "");
         }
@@ -486,7 +483,7 @@ public class ASDamageConverter {
      */
     protected void assignToLocations(Mounted weapon, BattleForceSUA sua) {
         for (int loc = 0; loc < locations.length; loc++) {
-            if ((ASLocationMapper.damageLocationMultiplier(entity, loc, weapon) != 0)
+            if ((ASLocationMapper.damageLocationMultiplierForSpecials(entity, loc, weapon) != 0)
                     && !locations[loc].hasSUA(sua)) {
                 locations[loc].setSUA(sua);
                 reportAssignToLocations(weapon, sua, "", loc);
@@ -505,29 +502,9 @@ public class ASDamageConverter {
      */
     protected void assignToLocations(Mounted weapon, BattleForceSUA sua, int abilityValue) {
         for (int loc = 0; loc < locations.length; loc++) {
-            if (ASLocationMapper.damageLocationMultiplier(entity, loc, weapon) != 0) {
+            if (ASLocationMapper.damageLocationMultiplierForSpecials(entity, loc, weapon) != 0) {
                 locations[loc].mergeSUA(sua, abilityValue);
                 reportAssignToLocations(weapon, sua, abilityValue + "", loc);
-            }
-        }
-    }
-
-    /**
-     * Checks the location multiplier for all locations and assigns the given SUA with the given ability
-     * value to any location where the multiplier is not zero, i.e. to any location that the weapon is
-     * counted towards. If the SUA is already present, the ability value is added.
-     *
-     * @param weapon The weapon to check
-     * @param sua The special unit ability to add
-     * @param abilityValue The ability value to add
-     */
-    protected void assignToLocations(Mounted weapon, BattleForceSUA sua, double abilityValue) {
-        for (int loc = 0; loc < locations.length; loc++) {
-            if (ASLocationMapper.damageLocationMultiplier(entity, loc, weapon) != 0) {
-                // The location multiplier is always 1 except for some of the large aerospace units, where it affects only PNT
-                abilityValue *= ASLocationMapper.damageLocationMultiplier(entity, loc, weapon);
-                locations[loc].mergeSUA(sua, abilityValue);
-                reportAssignToLocations(weapon, sua, formatForReport(abilityValue), loc);
             }
         }
     }

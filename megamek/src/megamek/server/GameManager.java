@@ -28814,7 +28814,7 @@ public class GameManager extends AbstractGameManager {
      *                  in base path).
      * @param sizes     Where to store the discovered board sizes
      */
-    private void getBoardSizesInDir(final File searchDir, TreeSet<BoardDimensions> sizes) {
+    private static void getBoardSizesInDir(final File searchDir, TreeSet<BoardDimensions> sizes) {
         if (searchDir == null) {
             throw new IllegalArgumentException("must provide searchDir");
         }
@@ -28853,7 +28853,7 @@ public class GameManager extends AbstractGameManager {
      *
      * @return A Set containing all the available board sizes.
      */
-    private Set<BoardDimensions> getBoardSizes() {
+    public static Set<BoardDimensions> getBoardSizes() {
         TreeSet<BoardDimensions> board_sizes = new TreeSet<>();
 
         File boards_dir = Configuration.boardsDir();

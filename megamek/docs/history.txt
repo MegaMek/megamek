@@ -1,5 +1,12 @@
 MEGAMEK VERSION HISTORY:
 ----------------
+0.49.19.1 (2024-05-06 1744 UTC)
++ Fix #5415: Implement RFE #5408: update Princess ammo conservation values
++ Fix #5426: add null checks for getC3UUIDAsString()
++ Fix #5433: Handle one-shot ammo weapons like RLs appropriately 
++ Fix #5440: MM fix for MML issue where Partial Wing not accounted for
++ Fix #5442: add null check for turn timer when stopping
+
 0.49.19 (2024-04-19 2030 UTC)
 + Fix #5182: Fixes aerospace fighters getting a zero engine rating in TestAero
 + Fix #5168: Indirect Arty Fire under 17 hexes now correctly uses a +4 instead of +7 modifier

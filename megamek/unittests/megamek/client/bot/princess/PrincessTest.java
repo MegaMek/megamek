@@ -22,7 +22,6 @@ package megamek.client.bot.princess;
 import megamek.client.bot.princess.PathRanker.PathRankerType;
 import megamek.common.*;
 import megamek.common.enums.GamePhase;
-import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import org.junit.jupiter.api.BeforeAll;
@@ -561,7 +560,7 @@ public class PrincessTest {
         // Default toHitThreshold for 7+ rounds for this level should allow firing on 12s
         double target = Compute.oddsAbove(12) / 100.0;
         bin1.setShotsLeft(7);
-        Map<WeaponMounted, Double> conserveMap = mockPrincess.calcAmmoConservation(mech1);
+        Map<Mounted, Double> conserveMap = mockPrincess.calcAmmoConservation(mech1);
         assertTrue(conserveMap.get(wpn1) <= target);
 
         // Default toHitThreshold for 3+ rounds for this level should allow firing on 11s
@@ -596,7 +595,7 @@ public class PrincessTest {
         // Default toHitThreshold for 7+ rounds for this level should allow firing on 12s
         double target = Compute.oddsAbove(12) / 100.0;
         bin1.setShotsLeft(7);
-        Map<WeaponMounted, Double> conserveMap = mockPrincess.calcAmmoConservation(mech1);
+        Map<Mounted, Double> conserveMap = mockPrincess.calcAmmoConservation(mech1);
         assertTrue(conserveMap.get(wpn1) <= target);
 
         // Default toHitThreshold for 3+ rounds for this level should allow firing on 12s
@@ -630,7 +629,7 @@ public class PrincessTest {
         // Default toHitThreshold for 7+ rounds for this level should allow firing on 12s
         double target = Compute.oddsAbove(10) / 100.0;
         bin1.setShotsLeft(7);
-        Map<WeaponMounted, Double> conserveMap = mockPrincess.calcAmmoConservation(mech1);
+        Map<Mounted, Double> conserveMap = mockPrincess.calcAmmoConservation(mech1);
         assertTrue(conserveMap.get(wpn1) <= target);
 
         // Default toHitThreshold for 3+ rounds for this level should allow firing on 11s
@@ -660,7 +659,7 @@ public class PrincessTest {
         // Check default toHitThresholds
         // For max aggro, shoot OS weapons at TN 10 or better
         double target = Compute.oddsAbove(8) / 100.0;
-        Map<WeaponMounted, Double> conserveMap = mockPrincess.calcAmmoConservation(mech1);
+        Map<Mounted, Double> conserveMap = mockPrincess.calcAmmoConservation(mech1);
         assertTrue(conserveMap.get(wpn1) <= target);
 
         // For default aggro, shoot OS weapons at TN 9 or better

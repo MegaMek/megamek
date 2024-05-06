@@ -735,7 +735,7 @@ public class Princess extends BotClient {
         sendDone(true);
     }
 
-    private Map<Mounted, Double> calcAmmoConservation(final Entity shooter) {
+    protected Map<Mounted, Double> calcAmmoConservation(final Entity shooter) {
         final double aggroFactor = getBehaviorSettings().getHyperAggressionIndex();
         final StringBuilder msg = new StringBuilder("\nCalculating ammo conservation for ")
                 .append(shooter.getDisplayName());

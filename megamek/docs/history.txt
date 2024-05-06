@@ -27,6 +27,7 @@ MEGAMEK VERSION HISTORY:
 + Data: Thank you Derv for the updated Map, but also the restoration of the original NBT (Netbattletech) maps this adds over 400 new maps!
 + PR #5444: BoardView Sprite separation
 + PR #5442: Add null check for turn timer when stopping
++ PR #5451: Expose map settings methods for use in MekHQ
 
 
 0.49.19 (2024-04-19 2030 UTC)

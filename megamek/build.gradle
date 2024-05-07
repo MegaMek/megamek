@@ -350,7 +350,7 @@ task javadocJar(type: Jar) {
 publishing {
     publications {
         publishMMLibrary(MavenPublication) {
-            artifactId = "megamek${mmBranchTag}"
+            artifactId = "megamek"
             from components.java
             artifact sourcesJar
 //            artifact javadocJar

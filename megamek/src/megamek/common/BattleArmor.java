@@ -516,6 +516,7 @@ public class BattleArmor extends Infantry {
             mp++;
         }
 
+        // MM is concerned with in-game conditions that impact Partial Wing mp
         if ((game != null)) {
             PlanetaryConditions conditions = game.getPlanetaryConditions();
             boolean ignoreGameLessThanThin = mpCalculationSetting.ignoreWeather
@@ -523,6 +524,11 @@ public class BattleArmor extends Infantry {
             if ((mp > 0)
                     && hasWorkingMisc(MiscType.F_PARTIAL_WING)
                     && ignoreGameLessThanThin) {
+                mp++;
+            }
+        } else {
+            // MML just cares that the Partial Wing exists and is installed
+            if ((mp > 0) && hasWorkingMisc(MiscType.F_PARTIAL_WING)) {
                 mp++;
             }
         }

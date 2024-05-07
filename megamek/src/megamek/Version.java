@@ -38,6 +38,10 @@ public final class Version implements Comparable<Version>, Serializable {
     private int release;
     private int major;
     private int minor;
+
+    // Optional
+    private int revision;
+
     private boolean snapshot;
     //endregion Variable Declarations
 
@@ -49,6 +53,7 @@ public final class Version implements Comparable<Version>, Serializable {
         setRelease(0);
         setMajor(0);
         setMinor(0);
+        setRevision(-1);
         setSnapshot(false);
     }
 
@@ -88,8 +93,16 @@ public final class Version implements Comparable<Version>, Serializable {
         return minor;
     }
 
+    public int getRevision() {
+        return revision;
+    }
+
     public void setMinor(final int minor) {
         this.minor = minor;
+    }
+
+    public void setRevision(final int revision) {
+        this.revision = revision;
     }
 
     public boolean isSnapshot() {
@@ -223,7 +236,7 @@ public final class Version implements Comparable<Version>, Serializable {
 
         if ((snapshotSplit.length > 2) || (versionSplit.length < 3)) {
             final String message = String.format(
-                    "Version text %s is in an illegal version format. Versions should be in the format 'release.major.minor-SNAPSHOT', with the snapshot being an optional inclusion. This may lead to severe issues that cannot be otherwise explained.",
+                    "Version text %s is in an illegal version format. Versions should be in the format 'release.major.minor[.revision]-SNAPSHOT', with the snapshot being an optional inclusion. This may lead to severe issues that cannot be otherwise explained.",
                     text);
             LogManager.getLogger().fatal(message);
             JOptionPane.showMessageDialog(null, message, "Version Parsing Failure",
@@ -267,13 +280,20 @@ public final class Version implements Comparable<Version>, Serializable {
             return;
         }
 
+        try {
+            setRevision(Integer.parseInt(versionSplit[3]));
+        } catch (Exception e) {
+            // We don't care if the revision is not found.
+        }
+
         setSnapshot(snapshotSplit.length == 2);
     }
     //endregion File I/O
 
     @Override
     public String toString() {
-        return String.format("%d.%d.%d%s", getRelease(), getMajor(), getMinor(),
-                (isSnapshot() ? "-SNAPSHOT" : ""));
+        return (getRevision() == -1) ?
+            String.format("%d.%d.%d%s", getRelease(), getMajor(), getMinor(), (isSnapshot() ? "-SNAPSHOT" : "")) :
+            String.format("%d.%d.%d.%d%s", getRelease(), getMajor(), getMinor(), getRevision(), (isSnapshot() ? "-SNAPSHOT" : ""));
     }
 }

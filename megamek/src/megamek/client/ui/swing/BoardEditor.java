@@ -212,7 +212,7 @@ public class BoardEditor extends JPanel
     public static final int[] allDirections = { 0, 1, 2, 3, 4, 5 };
     boolean isDragging = false;
     private Component bvc;
-    private final CommonMenuBar menuBar = new CommonMenuBar(this);
+    private final CommonMenuBar menuBar = CommonMenuBar.getMenuBarForBoardEditor();
     private AbstractHelpDialog help;
     private CommonSettingsDialog setdlg;
     private JDialog minimapW;

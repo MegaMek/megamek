@@ -127,6 +127,11 @@ public class ASGame extends AbstractGame {
 
     }
 
+    @Override
+    public ReportEntry getNewReport(int messageId) {
+        return new Report(messageId);
+    }
+
     private boolean isSupportedUnitType(InGameObject object) {
         return object instanceof AlphaStrikeElement;
     }

@@ -38,6 +38,8 @@ import megamek.common.planetaryconditions.Atmosphere;
 import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.common.planetaryconditions.Wind;
 import megamek.common.preference.PreferenceManager;
+import megamek.common.Report;
+import megamek.common.ReportMessages;
 import megamek.common.service.AutosaveService;
 import megamek.common.util.*;
 import megamek.common.util.fileUtils.MegaMekFile;
@@ -29388,25 +29390,25 @@ public class GameManager extends AbstractGameManager {
      *         that round. The reports returned this way are properly filtered for
      *         double blind.
      */
-    private Vector<Vector<Report>> filterPastReports(
-            Vector<Vector<Report>> pastReports, Player p) {
+    private List<List<Report>> filterPastReports(
+            List<List<Report>> pastReports, Player p) {
         // Only actually bother with the filtering if double-blind is in effect.
         if (!doBlind()) {
             return pastReports;
         }
         // Perform filtering
-        Vector<Vector<Report>> filteredReports = new Vector<>();
-        for (Vector<Report> roundReports : pastReports) {
-            Vector<Report> filteredRoundReports = new Vector<>();
+        List<List<Report>> filteredReports = new ArrayList<>();
+        for (List<Report> roundReports : pastReports) {
+            List<Report> filteredRoundReports = new ArrayList<>();
             for (Report r : roundReports) {
                 if (r.isObscuredRecipient(p.getName())) {
                     r = filterReport(r, null, true);
                 }
                 if (r != null) {
-                    filteredRoundReports.addElement(r);
+                    filteredRoundReports.add(r);
                 }
             }
-            filteredReports.addElement(filteredRoundReports);
+            filteredReports.add(filteredRoundReports);
         }
         return filteredReports;
     }
@@ -33920,8 +33922,8 @@ public class GameManager extends AbstractGameManager {
      * vPhaseReport queue
      */
     @Override
-    public void addReport(Report report) {
-        vPhaseReport.addElement(report);
+    public void addReport(ReportEntry report) {
+        vPhaseReport.addElement((Report) report);
     }
 
     /**

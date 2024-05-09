@@ -36,6 +36,7 @@ import java.util.*;
 public final class SBFGameManager extends AbstractGameManager {
 
     private SBFGame game;
+    private List<Report> pendingReports = new ArrayList<>();
 
     @Override
     public IGame getGame() {
@@ -97,8 +98,8 @@ public final class SBFGameManager extends AbstractGameManager {
     }
 
     @Override
-    public void addReport(Report r) {
-
+    public void addReport(ReportEntry r) {
+        pendingReports.add((Report) r);
     }
 
     @Override
@@ -128,7 +129,7 @@ public final class SBFGameManager extends AbstractGameManager {
             } else {
                 send(connId, packetHelper.createCurrentRoundNumberPacket());
                 send(connId, packetHelper.createBoardsPacket());
-//                send(connId, createAllReportsPacket(player));
+                send(connId, createAllReportsPacket(player));
 //
 //                // Send entities *before* other phase changes.
 //                if (doBlind()) {
@@ -826,4 +827,14 @@ public final class SBFGameManager extends AbstractGameManager {
         TurnOrdered.rollInitiative(game.getTeams(), false);
         transmitAllPlayerUpdates();
     }
+
+    private Packet createAllReportsPacket(Player recipient) {
+        return new Packet(PacketCommand.SENDING_REPORTS_ALL, game.getGameReport().createFilteredReport(recipient));
+    }
+
+    private void clearPendingReports() {
+        pendingReports.clear();
+    }
+
+
 }

@@ -248,7 +248,6 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
 
     public JDialog minimapW;
     private MapMenu popup;
-    private UnitOverview uo;
     private Ruler ruler;
     protected JComponent curPanel;
     public ChatLounge chatlounge;
@@ -489,6 +488,9 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
 
     @Override
     public void initialize() {
+        menuBar = CommonMenuBar.getMenuBarForGame();
+
+        initializeFrame();
         super.initialize();
         try {
             client.getGame().addGameListener(gameListener);
@@ -535,14 +537,13 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
         cb2 = new ChatterBox2(this, bv, controller);
         bv.addOverlay(cb2);
         bv.getPanel().addKeyListener(cb2);
-        uo = new UnitOverview(this);
         offBoardOverlay = new OffBoardTargetOverlay(this);
 
         aw = new AccessibilityWindow(this);
         aw.setLocation(0, 0);
         aw.setSize(300, 300);
 
-        bv.addOverlay(uo);
+        bv.addOverlay(new UnitOverview(this));
         bv.addOverlay(offBoardOverlay);
 
         setUnitDisplay(new UnitDisplay(this, controller));
@@ -870,9 +871,6 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
                 break;
             case VIEW_ACCESSIBILITY_WINDOW:
                 toggleAccessibilityWindow();
-                break;
-            case VIEW_UNIT_OVERVIEW:
-                toggleUnitOverview();
                 break;
             case VIEW_LOS_SETTING:
                 showLOSSettingDialog();
@@ -1414,12 +1412,6 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
         if (aw.isVisible()) {
             frame.requestFocus();
         }
-    }
-
-    private void toggleUnitOverview() {
-        uo.setVisible(!uo.isVisible());
-        GUIP.setShowUnitOverview(uo.isVisible());
-        bv.refreshDisplayables();
     }
 
     /** Shows or hides the minimap based on the current menu setting. */

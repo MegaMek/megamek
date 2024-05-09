@@ -300,7 +300,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
      */
     private final JPanel panSecondary = new JPanel();
 
-    private ReportDisplay reportDisply;
+    private ReportDisplay reportDisplay;
 
     private StatusBarPhaseDisplay currPhaseDisplay;
 
@@ -672,16 +672,16 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
     }
 
     public void reportDisplayResetDone() {
-        if ((reportDisply != null) && (!getClient().getLocalPlayer().isDone())) {
-            reportDisply.setDoneEnabled(true);
+        if ((reportDisplay != null) && (!getClient().getLocalPlayer().isDone())) {
+            reportDisplay.setDoneEnabled(true);
         }
     }
 
     public void reportDisplayResetRerollInitiative() {
-        if ((reportDisply != null)
+        if ((reportDisplay != null)
                 && (!getClient().getLocalPlayer().isDone())
                 && (getClient().getGame().hasTacticalGenius(getClient().getLocalPlayer()))) {
-            reportDisply.resetRerollInitiativeEnabled();
+            reportDisplay.resetRerollInitiativeEnabled();
         }
     }
 
@@ -1349,17 +1349,17 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
             case VICTORY:
                 main = CG_BOARDVIEW;
                 secondary = CG_REPORTDISPLAY;
-                if (reportDisply == null) {
-                    reportDisply = new ReportDisplay(this);
-                    reportDisply.setName(secondary);
+                if (reportDisplay == null) {
+                    reportDisplay = new ReportDisplay(this);
+                    reportDisplay.setName(secondary);
                 }
                 if (!mainNames.containsValue(main)) {
                     panMain.add(panTop, main);
                 }
-                currPhaseDisplay = reportDisply;
-                component = reportDisply;
+                currPhaseDisplay = reportDisplay;
+                component = reportDisplay;
                 if (!secondaryNames.containsValue(secondary)) {
-                    panSecondary.add(reportDisply, secondary);
+                    panSecondary.add(reportDisplay, secondary);
                 }
                 break;
             default:

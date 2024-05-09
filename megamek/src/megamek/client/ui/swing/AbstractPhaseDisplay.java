@@ -22,14 +22,12 @@ import megamek.common.event.*;
 import megamek.common.util.Distractable;
 import megamek.common.util.DistractableAdapter;
 
-import javax.swing.*;
-import java.awt.event.ActionEvent;
+import java.util.Objects;
 
 import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
 
 public abstract class AbstractPhaseDisplay extends SkinnedJPanel implements
         BoardViewListener, GameListener, Distractable {
-    private static final long serialVersionUID = 4421205210788230341L;
 
     public static final int DONE_BUTTON_WIDTH = 160;
 
@@ -44,34 +42,26 @@ public abstract class AbstractPhaseDisplay extends SkinnedJPanel implements
 
     protected AbstractPhaseDisplay(IClientGUI cg, String borderSkinComp, String buttonSkinComp) {
         super(borderSkinComp, 0);
-        clientgui = cg;
+        clientgui = Objects.requireNonNull(cg);
         setBorder(new MegamekBorder(borderSkinComp));
         butDone = new MegamekButton("DONE", buttonSkinComp);
         String f = guiScaledFontHTML(UIUtil.uiLightViolet()) +  KeyCommandBind.getDesc(KeyCommandBind.DONE)+ "</FONT>";
         butDone.setToolTipText("<html><body>" + f + "</body></html>");
         butDone.setActionCommand("doneButton");
-        if (clientgui != null) {
-            butDone.addActionListener(new AbstractAction() {
-                private static final long serialVersionUID = -5034474968902280850L;
+        butDone.addActionListener(e -> {
+            if (shouldPerformKeyCommands()) {
+                done();
+            }
+        });
 
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    if (isIgnoringEvents()) {
-                        return;
-                    }
-                    if ((clientgui.getClient().isMyTurn())
-                            || (clientgui.getClient().getGame().getTurn() == null)
-                            || (clientgui.getClient().getGame().getPhase().isReport())) {
-                        ready();
-                        // When the turn is ended, we could miss a key release event
-                        // This will ensure no repeating keys are stuck down
-                        MegaMekGUI.getKeyDispatcher().stopAllRepeating();
-                    }
-                }
-            });
+        MegaMekGUI.getKeyDispatcher().registerCommandAction(KeyCommandBind.DONE, this::shouldPerformKeyCommands, this::done);
+    }
 
-            MegaMekGUI.getKeyDispatcher().registerCommandAction(KeyCommandBind.DONE, this::shouldPerformKeyCommands, this::ready);
-        }
+    private void done() {
+        // When the turn is ended, we could miss a key release event
+        // This will ensure no repeating keys are stuck down
+        MegaMekGUI.getKeyDispatcher().stopAllRepeating();
+        ready();
     }
 
     private boolean shouldPerformKeyCommands() {
@@ -85,12 +75,12 @@ public abstract class AbstractPhaseDisplay extends SkinnedJPanel implements
     }
 
     @Override
-    public boolean isIgnoringEvents() {
+    public final boolean isIgnoringEvents() {
         return distracted.isIgnoringEvents();
     }
 
     @Override
-    public void setIgnoringEvents(boolean distracted) {
+    public final void setIgnoringEvents(boolean distracted) {
         this.distracted.setIgnoringEvents(distracted);
     }
 

@@ -19,7 +19,6 @@
 package megamek.client.ui.swing;
 
 import megamek.client.SBFClient;
-import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.MegaMekController;
 import megamek.common.InGameObject;
 import megamek.common.enums.GamePhase;
@@ -81,7 +80,7 @@ public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
     private final JPanel panSecondary = new JPanel();
 
 
-    private ReportDisplay reportDisply;
+    private ReportDisplay reportDisplay;
 
     private StatusBarPhaseDisplay currPhaseDisplay;
 
@@ -108,7 +107,6 @@ public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
         this.client = client;
         frame.getContentPane().setLayout(new BorderLayout());
         frame.getContentPane().add(clientGuiPanel, BorderLayout.CENTER);
-//        frame.getContentPane().add(new UnderConstructionPanel(), BorderLayout.CENTER);
         frame.setJMenuBar(menuBar);
         menuBar.addActionListener(this);
         panMain.setLayout(cardsMain);
@@ -350,7 +348,7 @@ public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
             case VICTORY:
 //                initializeWithBoardView(phase, new JPanel(), CG_PHYSICALDISPLAY);
                 secondary = CG_REPORTDISPLAY;
-                if (reportDisply == null) {
+                if (reportDisplay == null) {
 //                    reportDisply = new JPanel();
 //                    reportDisply = new ReportDisplay(this);
 //                    reportDisply.setName(secondary);
@@ -358,8 +356,8 @@ public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
                 if (!mainNames.containsValue(main)) {
                     panMain.add(panTop, main);
                 }
-                currPhaseDisplay = reportDisply;
-                component = reportDisply;
+                currPhaseDisplay = reportDisplay;
+                component = reportDisplay;
 //                if (!secondaryNames.containsValue(secondary)) {
 //                    panSecondary.add(reportDisply, secondary);
 //                }

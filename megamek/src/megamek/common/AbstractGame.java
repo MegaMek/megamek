@@ -134,11 +134,7 @@ public abstract class AbstractGame implements IGame {
         gameListeners.add(listener);
     }
 
-    /**
-     * Removes the specified game listener.
-     *
-     * @param listener the game listener.
-     */
+    @Override
     public void removeGameListener(GameListener listener) {
         // Since gameListeners is transient, it could be null
         if (gameListeners == null) {

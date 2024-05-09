@@ -46,7 +46,6 @@ import megamek.client.ui.swing.widget.SkinnedJPanel;
 import megamek.codeUtilities.StringUtility;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
-import megamek.common.enums.GamePhase;
 import megamek.common.options.IBasicOption;
 import megamek.common.options.IOption;
 import megamek.common.preference.IPreferenceChangeListener;

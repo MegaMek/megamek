@@ -18,6 +18,7 @@
  */
 package megamek.client.ui.swing;
 
+import megamek.client.IClient;
 import megamek.common.InGameObject;
 
 import javax.swing.*;
@@ -49,4 +50,6 @@ public interface IClientGUI {
     void die();
 
     InGameObject getSelectedUnit();
+
+    IClient getIClient();
 }

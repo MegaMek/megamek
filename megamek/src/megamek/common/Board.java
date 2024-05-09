@@ -113,6 +113,9 @@ public class Board implements Serializable {
 
     /** Tags associated with this board to facilitate searching for it. */
     private Set<String> tags = new HashSet<>();
+
+    private final int boardId = 0;
+
     //endregion Variable Declarations
 
     //region Constructors
@@ -1784,5 +1787,11 @@ public class Board implements Serializable {
      */
     public Set<String> getTags() {
         return Collections.unmodifiableSet(tags);
+    }
+
+
+    /** @return The name of this map; this is meant to be displayed in the GUI. */
+    public String getMapName() {
+        return "Board #" + boardId;
     }
 }

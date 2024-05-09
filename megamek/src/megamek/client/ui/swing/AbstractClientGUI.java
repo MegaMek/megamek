@@ -18,7 +18,9 @@
  */
 package megamek.client.ui.swing;
 
+import megamek.client.IClient;
 import megamek.client.ui.Messages;
+import megamek.client.ui.swing.boardview.BoardView;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.Configuration;
 import megamek.common.preference.ClientPreferences;
@@ -30,7 +32,9 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public abstract class AbstractClientGUI implements IClientGUI {
 
@@ -43,9 +47,20 @@ public abstract class AbstractClientGUI implements IClientGUI {
     private static final String FILENAME_ICON_256X256 = "megamek-icon-256x256.png";
 
     protected final JFrame frame = new JFrame(Messages.getString("ClientGUI.title"));
+    private final IClient iClient;
 
-    public AbstractClientGUI() {
+    // BoardViews
+    protected final Map<Integer, BoardView> boardViews = new HashMap<>();
+    protected final BoardViewsContainer boardViewsContainer = new BoardViewsContainer(this);
+    protected final JPanel bvc = new JPanel();
+
+    public AbstractClientGUI(IClient iClient) {
+        this.iClient = iClient;
         initializeFrame();
+    }
+
+    public IClient getIClient() {
+        return iClient;
     }
 
     @Override
@@ -120,4 +135,8 @@ public abstract class AbstractClientGUI implements IClientGUI {
     }
 
     protected abstract boolean saveGame();
+
+    public List<BoardView> boardViews() {
+        return new ArrayList<>(boardViews.values());
+    }
 }

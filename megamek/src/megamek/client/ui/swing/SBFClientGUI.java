@@ -18,7 +18,6 @@
  */
 package megamek.client.ui.swing;
 
-import megamek.client.Client;
 import megamek.client.IClient;
 import megamek.client.SBFClient;
 import megamek.client.ui.swing.util.MegaMekController;
@@ -31,6 +30,7 @@ public class SBFClientGUI extends AbstractClientGUI {
     private final SBFClient client;
 
     public SBFClientGUI(IClient client, MegaMekController c) {
+        super(client);
         if (!(client instanceof SBFClient)) {
             throw new IllegalArgumentException("SBF ClientGUI must use SBF Client!");
         }

@@ -107,6 +107,7 @@ public class ClientGUI extends JPanel implements BoardViewListener, IClientGUI,
     // Note: anything located in menu bars is not located here but in their menu
     public static final String MAIN_SKIN_NEW = "mainSkinNew";
     public static final String MAIN_QUIT = "mainQuit";
+    // endregion
     // region file menu
     // game submenu
     public static final String FILE_GAME_NEW = "fileGameNew";

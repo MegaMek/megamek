@@ -1,0 +1,6 @@
+InDirectFire Turrets 3039
+#Missile Turrets
+Light Missile Turret (3039), 50
+Medium Missile Turret (3039), 25
+Heavy Missile Turret (3039), 15
+Assault Missile Turret (3039), 5

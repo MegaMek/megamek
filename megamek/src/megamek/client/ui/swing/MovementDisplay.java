@@ -2722,7 +2722,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
         MovePath movePath = cmd;
         if (null == movePath) {
-            movePath = new MovePath(this.getClientgui().getClient().getGame(), ce());
+            movePath = new MovePath(clientgui.getClient().getGame(), ce());
         }
 
         if (!movePath.contains(MoveStepType.BRACE) &&

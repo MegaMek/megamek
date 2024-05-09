@@ -18,20 +18,13 @@
  */
 package megamek.client;
 
-import megamek.client.ui.swing.tooltip.PilotToolTip;
-import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.*;
 import megamek.common.net.packets.Packet;
 import megamek.common.strategicBattleSystems.SBFGame;
-import megamek.common.util.ImageUtil;
 import org.apache.logging.log4j.LogManager;
 
-import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.util.*;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -60,8 +53,13 @@ public class SBFClient extends AbstractClient {
     }
 
     @Override
-    public IGame getIGame() {
+    public SBFGame getGame() {
         return game;
+    }
+
+    @Override
+    public boolean isMyTurn() {
+        return (game.getTurn() != null) && game.getTurn().isValid(localPlayerNumber, game);
     }
 
     @Override

@@ -104,7 +104,7 @@ public class BoardViewsContainer {
     }
 
     private Board board(int id) {
-        return clientGUI.getIClient().getIGame().getBoard(id);
+        return clientGUI.getClient().getGame().getBoard(id);
     }
 
     private IBoardView boardView(int id) {

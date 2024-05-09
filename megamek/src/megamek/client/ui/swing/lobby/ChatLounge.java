@@ -268,11 +268,13 @@ public class ChatLounge extends AbstractPhaseDisplay implements
 
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
 
+    protected ClientGUI clientgui;
+
     /** Creates a new chat lounge for the clientgui.getClient(). */
     public ChatLounge(ClientGUI clientgui) {
         super(clientgui, SkinSpecification.UIComponents.ChatLounge.getComp(),
                 SkinSpecification.UIComponents.ChatLoungeDoneButton.getComp());
-
+        this.clientgui = clientgui;
         setLayout(new BorderLayout());
         splitPaneMain = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
         splitPaneMain.setDividerSize(15);
@@ -3606,6 +3608,11 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         if (previewBV != null) {
             previewBV.dispose();
         }
+    }
+
+    @Override
+    public ClientGUI getClientgui() {
+        return clientgui;
     }
 }
 

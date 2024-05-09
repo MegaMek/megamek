@@ -82,7 +82,7 @@ import java.util.List;
 import java.util.*;
 
 public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
-        ActionListener, ComponentListener, IPreferenceChangeListener, MechDisplayListener {
+        ActionListener, IPreferenceChangeListener, MechDisplayListener {
 
     // region Variable Declarations
     public static final int WEAPON_NONE = -1;
@@ -357,7 +357,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
         panSecondary.setLayout(cardsSecondary);
 
         clientGuiPanel.setLayout(new BorderLayout());
-        clientGuiPanel.addComponentListener(this);
+        clientGuiPanel.addComponentListener(resizeListener);
         clientGuiPanel.add(panMain, BorderLayout.CENTER);
         clientGuiPanel.add(panSecondary, BorderLayout.SOUTH);
 
@@ -2519,6 +2519,11 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
         return client;
     }
 
+    @Override
+    public JComponent turnTimerComponent() {
+        return menuBar;
+    }
+
     public Map<String, AbstractClient> getLocalBots() {
         return client.getBots();
     }
@@ -2712,25 +2717,12 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
                 || ((aw != null) && aw.isVisible());
     }
 
-    @Override
-    public void componentHidden(ComponentEvent evt) {
-
-    }
-
-    @Override
-    public void componentMoved(ComponentEvent evt) {
-
-    }
-
-    @Override
-    public void componentResized(ComponentEvent evt) {
-        bv.getPanel().setPreferredSize(clientGuiPanel.getSize());
-    }
-
-    @Override
-    public void componentShown(ComponentEvent evt) {
-
-    }
+    private final ComponentListener resizeListener = new ComponentAdapter() {
+        @Override
+        public void componentResized(ComponentEvent evt) {
+            boardViewsContainer.getPanel().setPreferredSize(clientGuiPanel.getSize());
+        }
+    };
 
     void editBots() {
         var rpd = new EditBotsDialog(frame, this);

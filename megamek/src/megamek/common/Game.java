@@ -735,11 +735,6 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     }
 
     @Override
-    public void receivePhase(GamePhase phase) {
-        setPhase(phase);
-    }
-
-    @Override
     public void setPhase(GamePhase phase) {
         final GamePhase oldPhase = this.phase;
         this.phase = phase;

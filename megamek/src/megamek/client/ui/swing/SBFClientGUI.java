@@ -19,10 +19,8 @@
 package megamek.client.ui.swing;
 
 import megamek.client.SBFClient;
-import megamek.client.event.BoardViewListener;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.MegaMekController;
-import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.InGameObject;
 import megamek.common.enums.GamePhase;
 import megamek.common.event.GameListener;
@@ -30,8 +28,7 @@ import megamek.common.util.Distractable;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.*;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -57,8 +54,11 @@ public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
 
     private final SBFClient client;
 
+    // a frame, to show stuff in
+    private final JPanel clientGuiPanel = new JPanel();
+
     protected JComponent curPanel;
-    private JPanel panTop;
+    private final JPanel panTop = new JPanel(new BorderLayout());
 
     /**
      * The <code>JPanel</code> containing the main display area.
@@ -107,15 +107,42 @@ public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
         super(client);
         this.client = client;
         frame.getContentPane().setLayout(new BorderLayout());
-        frame.getContentPane().add(new UnderConstructionPanel(), BorderLayout.CENTER);
+        frame.getContentPane().add(clientGuiPanel, BorderLayout.CENTER);
+//        frame.getContentPane().add(new UnderConstructionPanel(), BorderLayout.CENTER);
         frame.setJMenuBar(menuBar);
         menuBar.addActionListener(this);
+        panMain.setLayout(cardsMain);
+        panSecondary.setLayout(cardsSecondary);
+
+        panMain.add("UnderConstruction", new UnderConstructionPanel());
+
+        clientGuiPanel.setLayout(new BorderLayout());
+        clientGuiPanel.addComponentListener(resizeListener);
+        clientGuiPanel.add(panMain, BorderLayout.CENTER);
+        clientGuiPanel.add(panSecondary, BorderLayout.SOUTH);
+    }
+
+    private final ComponentListener resizeListener = new ComponentAdapter() {
+        @Override
+        public void componentResized(ComponentEvent evt) {
+            boardViewsContainer.getPanel().setPreferredSize(clientGuiPanel.getSize());
+        }
+    };
+
+    @Override
+    public SBFClient getClient() {
+        return client;
+    }
+
+    @Override
+    public JComponent turnTimerComponent() {
+        return menuBar;
     }
 
     @Override
     public void initialize() {
         super.initialize();
-        client.getIGame().addGameListener(gameListener);
+        client.getGame().addGameListener(gameListener);
         frame.setVisible(true);
     }
 
@@ -128,7 +155,7 @@ public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
     @Override
     public void die() {
         super.die();
-        client.getIGame().removeGameListener(gameListener);
+        client.getGame().removeGameListener(gameListener);
     }
 
     @Override
@@ -166,25 +193,6 @@ public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
 //                cl.setBottom(cb.getComponent());
 //                getBoardView().getTilesetManager().reset();
                 break;
-            case POINTBLANK_SHOT:
-            case SET_ARTILLERY_AUTOHIT_HEXES:
-            case DEPLOY_MINEFIELDS:
-            case DEPLOYMENT:
-            case TARGETING:
-            case PREMOVEMENT:
-            case MOVEMENT:
-            case OFFBOARD:
-            case PREFIRING:
-            case FIRING:
-            case PHYSICAL:
-            case INITIATIVE_REPORT:
-            case TARGETING_REPORT:
-            case MOVEMENT_REPORT:
-            case OFFBOARD_REPORT:
-            case FIRING_REPORT:
-            case PHYSICAL_REPORT:
-            case END_REPORT:
-            case VICTORY:
             default:
                 break;
         }
@@ -225,72 +233,59 @@ public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
 //        }
     }
 
+    private void initializeSingleComponent(GamePhase phase, JComponent component, String identifier) {
+        component.setName(identifier);
+        panMain.add(component, identifier);
+        String phaseName = String.valueOf(phase);
+        phaseComponents.put(phaseName, component);
+        mainNames.put(phaseName, identifier);
+    }
+
+    private void initializeWithBoardView(GamePhase phase, StatusBarPhaseDisplay component, String secondary) {
+        String identifier = CG_BOARDVIEW;
+        String phaseName = String.valueOf(phase);
+        component.setName(identifier);
+        panMain.add(component, identifier);
+        if (!mainNames.containsValue(identifier)) {
+            panMain.add(panTop, identifier);
+        }
+        currPhaseDisplay = component;
+        panSecondary.add(component, secondary);
+        phaseComponents.put(phaseName, component);
+        mainNames.put(phaseName, identifier);
+        if (secondary != null) {
+            secondaryNames.put(phaseName, secondary);
+        }
+    }
+
     private JComponent initializePanel(GamePhase phase) {
         // Create the components for this phase.
-        String name = String.valueOf(phase);
         JComponent component = new ReceivingGameDataPanel();
-        String secondary = null;
-        String main;
+        String secondary;
+        String main = CG_BOARDVIEW;
         switch (phase) {
             case LOUNGE:
-//                component = new ChatLounge(this);
-//                chatlounge = (ChatLounge) component;
-                main = CG_CHATLOUNGE;
-                component.setName(main);
-                panMain.add(component, main);
+//                initializeSingleComponent(phase, new ChatLounge(this), CG_CHATLOUNGE);
                 break;
             case STARTING_SCENARIO:
-                component = new JLabel(Messages.getString("ClientGUI.StartingScenario"));
-                UIUtil.scaleComp(component, UIUtil.FONT_SCALE1);
-                main = CG_STARTINGSCENARIO;
-                component.setName(main);
-                panMain.add(component, main);
+                initializeSingleComponent(phase, new StartingScenarioPanel(), CG_STARTINGSCENARIO);
                 break;
             case EXCHANGE:
-//                chatlounge.killPreviewBV();
-                component = new ReceivingGameDataPanel();
-                UIUtil.scaleComp(component, UIUtil.FONT_SCALE1);
-                main = CG_EXCHANGE;
-                component.setName(main);
-                panMain.add(component, main);
+                initializeSingleComponent(phase, new ReceivingGameDataPanel(), CG_EXCHANGE);
                 break;
             case SET_ARTILLERY_AUTOHIT_HEXES:
-//                component = new SelectArtyAutoHitHexDisplay(this);
-                main = CG_BOARDVIEW;
-                secondary = CG_SELECTARTYAUTOHITHEXDISPLAY;
-                component.setName(secondary);
-                if (!mainNames.containsValue(main)) {
-                    panMain.add(panTop, main);
-                }
-                currPhaseDisplay = (StatusBarPhaseDisplay) component;
-                panSecondary.add(component, secondary);
+//                initializeWithBoardView(phase, new SelectArtyAutoHitHexDisplay(this), CG_SELECTARTYAUTOHITHEXDISPLAY);
                 break;
             case DEPLOY_MINEFIELDS:
-//                component = new DeployMinefieldDisplay(this);
-                main = CG_BOARDVIEW;
-                secondary = CG_DEPLOYMINEFIELDDISPLAY;
-                component.setName(secondary);
-                if (!mainNames.containsValue(main)) {
-                    panMain.add(panTop, main);
-                }
-                currPhaseDisplay = (StatusBarPhaseDisplay) component;
-                panSecondary.add(component, secondary);
+//                initializeWithBoardView(phase, new DeployMinefieldDisplay(this), CG_DEPLOYMINEFIELDDISPLAY);
                 break;
             case DEPLOYMENT:
-//                component = new DeploymentDisplay(this);
-                main = CG_BOARDVIEW;
-                secondary = CG_DEPLOYMENTDISPLAY;
-                component.setName(secondary);
-                if (!mainNames.containsValue(main)) {
-                    panMain.add(panTop, main);
-                }
-                currPhaseDisplay = (StatusBarPhaseDisplay) component;
-                panSecondary.add(component, secondary);
+//                initializeWithBoardView(phase, new DeploymentDisplay(this), CG_DEPLOYMINEFIELDDISPLAY);
                 break;
             case TARGETING:
+//                initializeWithBoardView(phase, new TargetingPhaseDisplay(this, false), CG_DEPLOYMINEFIELDDISPLAY);
 //                component = new TargetingPhaseDisplay(this, false);
 //                ((TargetingPhaseDisplay) component).initializeListeners();
-                main = CG_BOARDVIEW;
                 secondary = CG_TARGETINGPHASEDISPLAY;
                 component.setName(secondary);
                 if (!mainNames.containsValue(main)) {
@@ -303,7 +298,6 @@ public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
             case PREMOVEMENT:
 //                component = new PrephaseDisplay(this, GamePhase.PREMOVEMENT);
 //                ((PrephaseDisplay) component).initializeListeners();
-                main = CG_BOARDVIEW;
                 secondary = CG_PREMOVEMENTDISPLAY;
                 component.setName(secondary);
                 if (!mainNames.containsValue(main)) {
@@ -313,20 +307,11 @@ public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
                 panSecondary.add(component, secondary);
                 break;
             case MOVEMENT:
-//                component = new MovementDisplay(this);
-                main = CG_BOARDVIEW;
-                secondary = CG_MOVEMENTDISPLAY;
-                component.setName(secondary);
-                if (!mainNames.containsValue(main)) {
-                    panMain.add(panTop, main);
-                }
-                currPhaseDisplay = (StatusBarPhaseDisplay) component;
-                panSecondary.add(component, secondary);
+//                initializeWithBoardView(phase, new MovementDisplay(this), CG_MOVEMENTDISPLAY);
                 break;
             case OFFBOARD:
 //                component = new TargetingPhaseDisplay(this, true);
 //                ((TargetingPhaseDisplay) component).initializeListeners();
-                main = CG_BOARDVIEW;
                 secondary = CG_OFFBOARDDISPLAY;
                 component.setName(secondary);
                 if (!mainNames.containsValue(main)) {
@@ -338,7 +323,6 @@ public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
             case PREFIRING:
 //                component = new PrephaseDisplay(this, GamePhase.PREFIRING);
 //                ((PrephaseDisplay) component).initializeListeners();
-                main = CG_BOARDVIEW;
                 secondary = CG_PREFIRING;
                 component.setName(secondary);
                 if (!mainNames.containsValue(main)) {
@@ -348,37 +332,13 @@ public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
                 panSecondary.add(component, secondary);
                 break;
             case FIRING:
-//                component = new FiringDisplay(this);
-                main = CG_BOARDVIEW;
-                secondary = CG_FIRINGDISPLAY;
-                component.setName(secondary);
-                if (!mainNames.containsValue(main)) {
-                    panMain.add(panTop, main);
-                }
-                currPhaseDisplay = (StatusBarPhaseDisplay) component;
-                panSecondary.add(component, secondary);
+//                initializeWithBoardView(phase, new FiringDisplay(this), CG_FIRINGDISPLAY);
                 break;
             case POINTBLANK_SHOT:
-//                component = new PointblankShotDisplay(this);
-                main = CG_BOARDVIEW;
-                secondary = CG_POINTBLANKSHOTDISPLAY;
-                component.setName(secondary);
-                if (!mainNames.containsValue(main)) {
-                    panMain.add(panTop, main);
-                }
-                currPhaseDisplay = (StatusBarPhaseDisplay) component;
-                panSecondary.add(component, secondary);
+//                initializeWithBoardView(phase, new PointblankShotDisplay(this), CG_POINTBLANKSHOTDISPLAY);
                 break;
             case PHYSICAL:
-//                component = new PhysicalDisplay(this);
-                main = CG_BOARDVIEW;
-                secondary = CG_PHYSICALDISPLAY;
-                component.setName(secondary);
-                if (!mainNames.containsValue(main)) {
-                    panMain.add(panTop, main);
-                }
-                currPhaseDisplay = (StatusBarPhaseDisplay) component;
-                panSecondary.add(component, secondary);
+//                initializeWithBoardView(phase, new PhysicalDisplay(this), CG_PHYSICALDISPLAY);
                 break;
             case INITIATIVE_REPORT:
             case TARGETING_REPORT:
@@ -388,9 +348,10 @@ public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
             case PHYSICAL_REPORT:
             case END_REPORT:
             case VICTORY:
-                main = CG_BOARDVIEW;
+//                initializeWithBoardView(phase, new JPanel(), CG_PHYSICALDISPLAY);
                 secondary = CG_REPORTDISPLAY;
                 if (reportDisply == null) {
+//                    reportDisply = new JPanel();
 //                    reportDisply = new ReportDisplay(this);
 //                    reportDisply.setName(secondary);
                 }
@@ -399,24 +360,17 @@ public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
                 }
                 currPhaseDisplay = reportDisply;
                 component = reportDisply;
-                if (!secondaryNames.containsValue(secondary)) {
-                    panSecondary.add(reportDisply, secondary);
-                }
+//                if (!secondaryNames.containsValue(secondary)) {
+//                    panSecondary.add(reportDisply, secondary);
+//                }
                 break;
             default:
                 component = new WaitingForServerPanel();
                 main = CG_DEFAULT;
-                secondary = main;
                 component.setName(main);
                 panMain.add(main, component);
                 break;
         }
-        phaseComponents.put(name, component);
-        mainNames.put(name, main);
-        if (secondary != null) {
-            secondaryNames.put(name, secondary);
-        }
-
         return component;
     }
 

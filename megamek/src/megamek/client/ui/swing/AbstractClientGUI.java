@@ -64,10 +64,6 @@ public abstract class AbstractClientGUI implements IClientGUI {
         initializeFrame();
     }
 
-    public IClient getIClient() {
-        return iClient;
-    }
-
     @Override
     public JFrame getFrame() {
         return frame;

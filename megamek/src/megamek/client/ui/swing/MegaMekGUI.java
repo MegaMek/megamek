@@ -98,7 +98,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
     private IGameManager gameManager;
     private CommonSettingsDialog settingsDialog;
 
-    private MegaMekController controller;
+    private static MegaMekController controller;
 
     public void start(boolean show) {
         createGUI(show);
@@ -184,8 +184,11 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         controller = new MegaMekController();
         KeyboardFocusManager kbfm = KeyboardFocusManager.getCurrentKeyboardFocusManager();
         kbfm.addKeyEventDispatcher(controller);
-
         KeyBindParser.parseKeyBindings(controller);
+    }
+
+    public static MegaMekController getKeyDispatcher() {
+        return controller;
     }
 
     /**
@@ -908,7 +911,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         }
         client = Princess.createPrincess(bcd.getBotName(), cd.getServerAddress(), cd.getPort(),
                 bcd.getBehaviorSettings());
-        client.getIGame().addGameListener(new BotGUI(frame, (BotClient) client));
+        client.getGame().addGameListener(new BotGUI(frame, (BotClient) client));
         ClientGUI gui = new ClientGUI((Client) client, controller);
         controller.clientgui = gui;
         gui.initialize();

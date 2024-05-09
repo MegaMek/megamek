@@ -54,6 +54,7 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
     protected static final GUIPreferences GUIP = GUIPreferences.getInstance();
     private static final int BUTTON_ROWS = 2;
     private static final String SBPD_KEY_CLEARBUTTON = "clearButton";
+    protected ClientGUI clientgui;
 
     /**
      * timer that ends turn if time limit set in options is over
@@ -101,6 +102,7 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
 
     protected StatusBarPhaseDisplay(ClientGUI cg) {
         super(cg);
+        this.clientgui = cg;
         getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), SBPD_KEY_CLEARBUTTON);
         getActionMap().put(SBPD_KEY_CLEARBUTTON, new AbstractAction() {
             @Override

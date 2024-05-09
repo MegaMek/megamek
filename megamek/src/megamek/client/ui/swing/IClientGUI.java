@@ -51,5 +51,7 @@ public interface IClientGUI {
 
     InGameObject getSelectedUnit();
 
-    IClient getIClient();
+    IClient getClient();
+
+    JComponent turnTimerComponent();
 }

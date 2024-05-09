@@ -60,7 +60,7 @@ public class TurnTimer {
         int seconds = timeLimit % 60;
         int minutes = timeLimit / 60;
         remaining = new JLabel(String.format("%s:%02d", minutes, seconds));
-        phaseDisplay.getClientgui().getMenuBar().add(display);
+        phaseDisplay.getClientgui().turnTimerComponent().add(display);
         display.setLayout(new FlowLayout());
         display.add(remaining);
         display.add(progressBar);
@@ -97,7 +97,7 @@ public class TurnTimer {
                     phaseDisplay.ready();
                     timer.stop();
                     display.setVisible(false);
-                    phaseDisplay.getClientgui().getMenuBar().remove(display);
+                    phaseDisplay.getClientgui().turnTimerComponent().remove(display);
                 }
             }
         };
@@ -106,7 +106,7 @@ public class TurnTimer {
     public void startTimer() {
         SwingUtilities.invokeLater(() -> {
             timer = new Timer(1000, listener);
-            phaseDisplay.getClientgui().getMenuBar().add(display);
+            phaseDisplay.getClientgui().turnTimerComponent().add(display);
             timer.start();
             display.setVisible(true);
 
@@ -116,8 +116,8 @@ public class TurnTimer {
     public void stopTimer() {
         display.setVisible(false);
 
-        if (phaseDisplay.getClientgui().getMenuBar() != null) {
-            phaseDisplay.getClientgui().getMenuBar().remove(display);
+        if (phaseDisplay.getClientgui().turnTimerComponent() != null) {
+            phaseDisplay.getClientgui().turnTimerComponent().remove(display);
         }
 
         if (timer != null) {

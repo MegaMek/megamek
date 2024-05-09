@@ -99,15 +99,9 @@ public class Client extends AbstractClient implements IClientCommandHandler {
         }
     }
 
-    @Override
-    public IGame getIGame() {
-        return game;
-    }
-
     public Game getGame() {
         return game;
     }
-
 
     /**
      * Get hexes designated for automatic artillery hits.
@@ -205,9 +199,7 @@ public class Client extends AbstractClient implements IClientCommandHandler {
         }
     }
 
-    /**
-     * is it my turn?
-     */
+    @Override
     public boolean isMyTurn() {
         if (getGame().getPhase().isSimultaneous(getGame())) {
             return game.getTurnForPlayer(localPlayerNumber) != null;

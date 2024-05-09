@@ -1611,11 +1611,6 @@ public class Princess extends BotClient {
     }
 
     @Override
-    public Game getGame() {
-        return game;
-    }
-
-    @Override
     public void initialize() {
         try {
             if (initialized) {

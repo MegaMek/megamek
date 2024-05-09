@@ -20,7 +20,7 @@ package megamek.client.ui.swing;
 
 import megamek.client.IClient;
 import megamek.client.ui.Messages;
-import megamek.client.ui.swing.boardview.BoardView;
+import megamek.client.ui.swing.boardview.*;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.Configuration;
 import megamek.common.preference.ClientPreferences;
@@ -56,9 +56,8 @@ public abstract class AbstractClientGUI implements IClientGUI {
     private final IClient iClient;
 
     // BoardViews
-    protected final Map<Integer, BoardView> boardViews = new HashMap<>();
+    protected final Map<Integer, IBoardView> boardViews = new HashMap<>();
     protected final BoardViewsContainer boardViewsContainer = new BoardViewsContainer(this);
-    protected final JPanel bvc = new JPanel();
 
     public AbstractClientGUI(IClient iClient) {
         this.iClient = iClient;
@@ -144,7 +143,7 @@ public abstract class AbstractClientGUI implements IClientGUI {
 
     protected abstract boolean saveGame();
 
-    public List<BoardView> boardViews() {
+    public List<IBoardView> boardViews() {
         return new ArrayList<>(boardViews.values());
     }
 }

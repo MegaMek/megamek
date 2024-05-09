@@ -18,13 +18,22 @@
  */
 package megamek.client.ui.swing;
 
-import megamek.client.ui.swing.boardview.BoardView;
+import megamek.client.ui.swing.boardview.IBoardView;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.Board;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Objects;
 
+/**
+ * The BoardViewsContainer manages the JPanel that contains the BoardView(s) of a ClientGUI. When only
+ * one BoardView is present, it is shown by itself. When multiple BoardViews are present,
+ * they are arranged as tabs of a TabbedPane. The panel that holds the BoardView(s) is obtained from
+ * {@link #getPanel()}.
+ * <P>The display contents are not automatically updated. Use {@link #updateMapTabs()} after construction
+ * and later to make it reflect the current set of BoardViews.
+ */
 public class BoardViewsContainer {
 
     /** The panel that displays the BoardView(s) */
@@ -35,20 +44,30 @@ public class BoardViewsContainer {
 
     private final AbstractClientGUI clientGUI;
 
+    /**
+     * Returns a new BoardViewsContainer. Call {@link #updateMapTabs()} after construction to make it
+     * reflect the current BoardViews. Requires a non-null AbstractClientGUI as parent.
+     *
+     * @param clientGUI The AbstractClientGUI parent
+     */
     public BoardViewsContainer(AbstractClientGUI clientGUI) {
-        this.clientGUI = clientGUI;
+        this.clientGUI = Objects.requireNonNull(clientGUI);
     }
 
-    public JPanel getPanel() {
+    /**
+     * Returns the JPanel that holds the BoardView(s), either one BoardView by itself or multiple
+     * BoardViews in a tabbed pane. Add this panel to the view area of the ClientGUI.
+     *
+     * @return The panel holding all present BoardViews
+     */
+    public Component getPanel() {
         return boardViewsContainer;
     }
 
     /**
-     * Updates the map display. When there's a single map type in the game, the map is displayed without
-     * anything special (not tabs). When there's more than one map type, all maps are added to the
-     * JTabbedPane mapTabPane and this pane is displayed.
+     * Updates the BoardViewsContainer to reflect the current state of ClientGUI's BoardViews.
      */
-    private void updateMapTabs() {
+    public void updateMapTabs() {
         boardViewsContainer.removeAll();
         if (clientGUI.boardViews.size() > 1) {
             arrangeMultipleBoardViews();
@@ -61,7 +80,7 @@ public class BoardViewsContainer {
     private void arrangeMultipleBoardViews() {
         mapTabPane.removeAll();
         for (int boardId : clientGUI.boardViews.keySet()) {
-            mapTabPane.add(board(boardId).getMapName(), boardView(boardId).getComponent(true));
+            mapTabPane.add(board(boardId).getMapName(), boardView(boardId).getComponent());
             mapTabPane.setToolTipTextAt(mapTabPane.getTabCount() - 1, getBoardViewTabTooltip(boardId));
         }
         boardViewsContainer.add(mapTabPane);
@@ -70,7 +89,7 @@ public class BoardViewsContainer {
     private void arrangeSingleBoardView() {
         // The single BoardView does not use the tabbed pane
         int boardId = clientGUI.boardViews.keySet().iterator().next();
-        boardViewsContainer.add(board(boardId).getMapName(), boardView(boardId).getComponent(true));
+        boardViewsContainer.add(board(boardId).getMapName(), boardView(boardId).getComponent());
     }
 
     private String getBoardViewTabTooltip(int boardId) {
@@ -88,7 +107,11 @@ public class BoardViewsContainer {
         return clientGUI.getIClient().getIGame().getBoard(id);
     }
 
-    private BoardView boardView(int id) {
+    private IBoardView boardView(int id) {
         return clientGUI.boardViews.get(id);
+    }
+
+    public void setName(String name) {
+        boardViewsContainer.setName(name);
     }
 }

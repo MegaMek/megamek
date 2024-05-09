@@ -24,20 +24,23 @@ import megamek.common.Game;
  */
 public class GameBoardNewEvent extends GameEvent {
     private static final long serialVersionUID = -4444092727458493689L;
-    protected Board oldBoard;
-    protected Board newBoard;
+
+    private final Board oldBoard;
+    private final Board newBoard;
+    private final int boardId;
 
     /**
      * Constructs the new event with the specified old/new board objects
-     * 
+     *
      * @param source The event source
      * @param oldBoard old game board
      * @param newBoard new game board
      */
-    public GameBoardNewEvent(Object source, Board oldBoard, Board newBoard) {
+    public GameBoardNewEvent(Object source, Board oldBoard, Board newBoard, int boardId) {
         super(source);
         this.oldBoard = oldBoard;
         this.newBoard = newBoard;
+        this.boardId = boardId;
     }
 
     /**
@@ -62,5 +65,10 @@ public class GameBoardNewEvent extends GameEvent {
     @Override
     public String getEventName() {
         return "New Board";
+    }
+
+    /** @return The ID of both the old and new Board. */
+    public int getBoardId() {
+        return boardId;
     }
 }

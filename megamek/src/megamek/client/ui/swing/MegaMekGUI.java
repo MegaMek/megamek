@@ -491,9 +491,9 @@ public class MegaMekGUI implements IPreferenceChangeListener {
                 return new BFGameManager();
              */
             case SBF:
-                return new SBFClientGUI(client, controller);
+                return new SBFClientGUI((SBFClient) client, controller);
             default:
-                return new ClientGUI(client, controller);
+                return new ClientGUI((Client) client, controller);
         }
     }
 
@@ -910,7 +910,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         client = Princess.createPrincess(bcd.getBotName(), cd.getServerAddress(), cd.getPort(),
                 bcd.getBehaviorSettings());
         client.getIGame().addGameListener(new BotGUI(frame, (BotClient) client));
-        ClientGUI gui = new ClientGUI(client, controller);
+        ClientGUI gui = new ClientGUI((Client) client, controller);
         controller.clientgui = gui;
         gui.initialize();
         if (!client.connect()) {

@@ -23,7 +23,6 @@ package megamek.client.ui.swing;
 import megamek.MMConstants;
 import megamek.client.AbstractClient;
 import megamek.client.Client;
-import megamek.client.IClient;
 import megamek.client.TimerSingleton;
 import megamek.client.bot.BotClient;
 import megamek.client.bot.princess.BehaviorSettings;
@@ -236,7 +235,6 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
     private CollapseWarningSpriteHandler collapseWarningSpriteHandler;
     private FiringSolutionSpriteHandler firingSolutionSpriteHandler;
     private final List<BoardViewSpriteHandler> spriteHandlers = new ArrayList<>();
-    private Component bvc;
     private JPanel panTop;
     private JSplitPane splitPaneA;
     private JPanel panA1;
@@ -352,11 +350,9 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
      * clean up after itself as much as possible, but will not call
      * System.exit().
      */
-    public ClientGUI(IClient client, MegaMekController c) {
-        if (!(client instanceof Client)) {
-            throw new IllegalArgumentException("TW ClientGUI must use TW Client!");
-        }
-        this.client = (Client) client;
+    public ClientGUI(Client client, MegaMekController c) {
+        super(client);
+        this.client = client;
         controller = c;
         panMain.setLayout(cardsMain);
         panSecondary.setLayout(cardsSecondary);
@@ -498,13 +494,14 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
             client.getGame().addGameListener(gameListener);
 
             bv = new BoardView(client.getGame(), controller, this);
+            boardViews.put(0, bv);
             bv.addOverlay(new KeyBindingsOverlay(bv));
             bv.addOverlay(new PlanetaryConditionsOverlay(bv));
             bv.addOverlay(new TurnDetailsOverlay(bv));
             bv.getPanel().setPreferredSize(clientGuiPanel.getSize());
             bv.setTooltipProvider(new TWBoardViewTooltip(client.getGame(), this, bv));
-            bvc = bv.getComponent();
-            bvc.setName(CG_BOARDVIEW);
+            boardViewsContainer.setName(CG_BOARDVIEW);
+            boardViewsContainer.updateMapTabs();
             initializeSpriteHandlers();
 
             panTop = new JPanel(new BorderLayout());
@@ -1656,7 +1653,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
         if (GUIP.getDockOnLeft()) {
             switch (GUIP.getUnitDisplayLocaton()) {
                 case 0:
-                    panA2.add(bvc);
+                    panA2.add(boardViewsContainer.getPanel());
                     panA2.setVisible(true);
                     getUnitDisplayDialog().add(getUnitDisplay(), BorderLayout.CENTER);
                     getUnitDisplayDialog().setVisible(visible);
@@ -1665,7 +1662,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
                     hideEmptyPanel(panA1, splitPaneA, 0.0);
                     break;
                 case 1:
-                    panA2.add(bvc);
+                    panA2.add(boardViewsContainer.getPanel());
                     panA2.setVisible(true);
                     panA1.add(getUnitDisplay());
                     getUnitDisplayDialog().setVisible(false);
@@ -1677,7 +1674,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
         } else {
             switch (GUIP.getUnitDisplayLocaton()) {
                 case 0:
-                    panA1.add(bvc);
+                    panA1.add(boardViewsContainer.getPanel());
                     panA1.setVisible(true);
                     getUnitDisplayDialog().add(getUnitDisplay(), BorderLayout.CENTER);
                     getUnitDisplayDialog().setVisible(visible);
@@ -1686,7 +1683,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
                     hideEmptyPanel(panA2, splitPaneA, 1.0);
                     break;
                 case 1:
-                    panA1.add(bvc);
+                    panA1.add(boardViewsContainer.getPanel());
                     panA1.setVisible(true);
                     panA2.add(getUnitDisplay());
                     getUnitDisplayDialog().setVisible(false);
@@ -1708,7 +1705,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
         if (GUIP.getDockOnLeft()) {
             switch (GUIP.getMiniReportLocaton()) {
                 case 0:
-                    panA2.add(bvc);
+                    panA2.add(boardViewsContainer.getPanel());
                     panA2.setVisible(true);
                     getMiniReportDisplayDialog().add(getMiniReportDisplay(), BorderLayout.CENTER);
                     getMiniReportDisplayDialog().setVisible(visible);
@@ -1716,7 +1713,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
                     hideEmptyPanel(panA1, splitPaneA, 0.0);
                     break;
                 case 1:
-                    panA2.add(bvc);
+                    panA2.add(boardViewsContainer.getPanel());
                     panA2.setVisible(true);
                     panA1.add(getMiniReportDisplay());
                     getMiniReportDisplayDialog().setVisible(false);
@@ -1727,7 +1724,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
         } else {
             switch (GUIP.getMiniReportLocaton()) {
                 case 0:
-                    panA1.add(bvc);
+                    panA1.add(boardViewsContainer.getPanel());
                     panA1.setVisible(true);
                     getMiniReportDisplayDialog().add(getMiniReportDisplay(), BorderLayout.CENTER);
                     getMiniReportDisplayDialog().setVisible(visible);
@@ -1735,7 +1732,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
                     hideEmptyPanel(panA2, splitPaneA, 1.0);
                     break;
                 case 1:
-                    panA1.add(bvc);
+                    panA1.add(boardViewsContainer.getPanel());
                     panA1.setVisible(true);
                     panA2.add(getMiniReportDisplay());
                     getMiniReportDisplayDialog().setVisible(false);

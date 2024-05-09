@@ -453,15 +453,6 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
     }
 
     /**
-     * Initializes a number of things about this frame.
-     */
-    protected void initializeFrame() {
-        super.initializeFrame();
-        menuBar = new CommonMenuBar(getClient());
-        frame.setJMenuBar(menuBar);
-    }
-
-    /**
      * Lays out the frame by setting this Client object to take up the full
      * frame display area.
      */
@@ -489,7 +480,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
     @Override
     public void initialize() {
         menuBar = CommonMenuBar.getMenuBarForGame();
-
+        frame.setJMenuBar(menuBar);
         initializeFrame();
         super.initialize();
         try {
@@ -502,6 +493,13 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
             bv.addOverlay(new TurnDetailsOverlay(bv));
             bv.getPanel().setPreferredSize(clientGuiPanel.getSize());
             bv.setTooltipProvider(new TWBoardViewTooltip(client.getGame(), this, bv));
+            cb2 = new ChatterBox2(this, bv, controller);
+            bv.addOverlay(cb2);
+            bv.getPanel().addKeyListener(cb2);
+            offBoardOverlay = new OffBoardTargetOverlay(this);
+            bv.addOverlay(new UnitOverview(this));
+            bv.addOverlay(offBoardOverlay);
+
             boardViewsContainer.setName(CG_BOARDVIEW);
             boardViewsContainer.updateMapTabs();
             initializeSpriteHandlers();
@@ -534,17 +532,9 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
         layoutFrame();
         menuBar.addActionListener(this);
 
-        cb2 = new ChatterBox2(this, bv, controller);
-        bv.addOverlay(cb2);
-        bv.getPanel().addKeyListener(cb2);
-        offBoardOverlay = new OffBoardTargetOverlay(this);
-
         aw = new AccessibilityWindow(this);
         aw.setLocation(0, 0);
         aw.setSize(300, 300);
-
-        bv.addOverlay(new UnitOverview(this));
-        bv.addOverlay(offBoardOverlay);
 
         setUnitDisplay(new UnitDisplay(this, controller));
         getUnitDisplay().addMechDisplayListener(this);

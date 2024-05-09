@@ -29,6 +29,7 @@ import org.apache.logging.log4j.LogManager;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 /**
  * This is an SBF game's game object that holds all game information. As of 2024, this is under construction.
@@ -37,10 +38,9 @@ public final class SBFGame extends AbstractGame implements PlanetaryConditionsUs
 
     private final GameOptions options = new GameOptions(); //TODO: SBFGameOptions()
     private GamePhase phase = GamePhase.UNKNOWN;
+    private GamePhase lastPhase = GamePhase.UNKNOWN;
     private final PlanetaryConditions planetaryConditions = new PlanetaryConditions();
     private final SBFFullGameReport gameReport = new SBFFullGameReport();
-
-    private GamePhase lastPhase = GamePhase.UNKNOWN;
 
     @Override
     public GameTurn getTurn() {

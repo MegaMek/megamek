@@ -8,7 +8,7 @@ name: MegaMek CI with Code Coverage
 # This Action Definition should be triggered only on pushes to master
 on:
   push:
-    branches: [ master ]
+    branches: [ 0.49.19.1 ]
 
 # Setup the Build Scan "VCS" link for all gradle invocations
 env:

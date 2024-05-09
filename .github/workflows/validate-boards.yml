@@ -7,7 +7,7 @@ name: Validate Boards
 # This Action Definition should be triggered only on master being updated or Pull Requests being added or updated against master.
 on:
   push:
-    branches: [ master ]
+    branches: [ 0.49.19.1 ]
     paths:
     # This set of paths is the reasonable set which
     # should trigger a validation of the boards in MM.
@@ -19,7 +19,7 @@ on:
     - 'megamek/src/megamek/common/Terrains.java'
     - 'megamek/src/megamek/utilities/BoardsValidator.java'
   pull_request:
-    branches: [ master ]
+    branches: [ 0.49.19.1 ]
     paths:
     - '**.board'
     - 'megamek/src/megamek/common/Board.java'

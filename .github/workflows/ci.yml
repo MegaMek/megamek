@@ -8,7 +8,7 @@ name: MegaMek CI with Gradle
 # Pull Requests being added/updated against master.
 on:
   pull_request:
-    branches: [ master ]
+    branches: [ 0.49.19.1 ]
 
 # Setup the Build Scan "VCS" link for all gradle invocations
 env:

@@ -1,16 +1,16 @@
 name: Validate Name Changes List
 
-# This Action Definition should be triggered only on master being updated or Pull Requests being added or updated against master.
+# This Action Definition should be triggered only on branch being updated or Pull Requests being added or updated against branch.
 on:
   push:
-    branches: [ master ]
+    branches: [ 0.49.19.1 ]
     paths:
       # Necessary when the name_changes.txt list is updated or any unit file.
       - 'megamek/data/mechfiles/**.blk'
       - 'megamek/data/mechfiles/**.mtf'
       - 'megamek/data/mechfiles/name_changes.txt'
   pull_request:
-    branches: [ master ]
+    branches: [ 0.49.19.1 ]
     paths:
       - 'megamek/data/mechfiles/**.blk'
       - 'megamek/data/mechfiles/**.mtf'

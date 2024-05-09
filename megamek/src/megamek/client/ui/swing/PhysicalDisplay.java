@@ -846,7 +846,7 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
                         club.getName(), toHit.getValueAsString(), dmgString);
             }
 
-            String input = (String) JOptionPane.showInputDialog(clientgui,
+            String input = (String) JOptionPane.showInputDialog(clientgui.getFrame(),
                     Messages.getString("PhysicalDisplay.ChooseClubDialog.message"),
                     Messages.getString("PhysicalDisplay.ChooseClubDialog.title"),
                     JOptionPane.QUESTION_MESSAGE, null, names, null);
@@ -1052,7 +1052,7 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
             choices[1] = right;
             choices[2] = both;
 
-            String input = (String) JOptionPane.showInputDialog(clientgui,
+            String input = (String) JOptionPane.showInputDialog(clientgui.getFrame(),
                     warn.toString(), title, JOptionPane.WARNING_MESSAGE, null,
                     choices, null);
             int index = -1;
@@ -1089,7 +1089,7 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
             // If only the left arm is available, confirm that choice.
             choices = new String[1];
             choices[0] = left;
-            String input = (String) JOptionPane.showInputDialog(clientgui,
+            String input = (String) JOptionPane.showInputDialog(clientgui.getFrame(),
                     warn.toString(), title, JOptionPane.WARNING_MESSAGE, null,
                     choices, null);
             if (input != null) {
@@ -1104,7 +1104,7 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
             // If only the right arm is available, confirm that choice.
             choices = new String[1];
             choices[0] = right;
-            String input = (String) JOptionPane.showInputDialog(clientgui,
+            String input = (String) JOptionPane.showInputDialog(clientgui.getFrame(),
                     warn.toString(), title, JOptionPane.WARNING_MESSAGE, null,
                     choices, null);
             if (input != null) {

@@ -1,16 +1,22 @@
 /*
  * MegaMek - Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
  * Copyright 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
+ * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
 package megamek.client.ui.swing;
 
@@ -54,20 +60,14 @@ import megamek.common.annotations.Nullable;
 import megamek.common.enums.GamePhase;
 import megamek.common.event.*;
 import megamek.common.icons.Camouflage;
-import megamek.common.preference.ClientPreferences;
 import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
-import megamek.common.preference.PreferenceManager;
 import megamek.common.util.AddBotUtil;
 import megamek.common.util.Distractable;
 import megamek.common.util.StringUtil;
-import megamek.common.util.fileUtils.MegaMekFile;
 import org.apache.logging.log4j.LogManager;
 
 import javax.imageio.ImageIO;
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.Clip;
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -82,25 +82,11 @@ import java.net.URL;
 import java.util.List;
 import java.util.*;
 
-public class ClientGUI extends JPanel implements BoardViewListener, IClientGUI,
+public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
         ActionListener, ComponentListener, IPreferenceChangeListener, MechDisplayListener {
+
     // region Variable Declarations
-    private static final long serialVersionUID = 3913466735610109147L;
-
-    private static final GUIPreferences GUIP = GUIPreferences.getInstance();
-    private static final ClientPreferences CP = PreferenceManager.getClientPreferences();
-
-    private static final String FILENAME_ICON_16X16 = "megamek-icon-16x16.png";
-    private static final String FILENAME_ICON_32X32 = "megamek-icon-32x32.png";
-    private static final String FILENAME_ICON_48X48 = "megamek-icon-48x48.png";
-    private static final String FILENAME_ICON_256X256 = "megamek-icon-256x256.png";
-
     public static final int WEAPON_NONE = -1;
-
-    /** The smallest GUI scaling value; smaller will make text unreadable */
-    public static final float MIN_GUISCALE = 0.7f;
-    /** The highest GUI scaling value; increase this for 16K monitors */
-    public static final float MAX_GUISCALE = 2.4f;
 
     // region action commands
     // region main menu
@@ -232,7 +218,7 @@ public class ClientGUI extends JPanel implements BoardViewListener, IClientGUI,
     public static final String CG_FILEFORMATNAMEPNG = "png";
 
     // a frame, to show stuff in
-    public JFrame frame;
+    private final JPanel clientGuiPanel = new JPanel();
 
     // A menu bar to contain all actions.
     protected CommonMenuBar menuBar;
@@ -281,7 +267,7 @@ public class ClientGUI extends JPanel implements BoardViewListener, IClientGUI,
      */
     private JFileChooser dlgLoadList;
     private JFileChooser dlgSaveList;
-    private Client client;
+    private final Client client;
 
     private File curfileBoardImage;
     private File curfileBoard;
@@ -289,7 +275,7 @@ public class ClientGUI extends JPanel implements BoardViewListener, IClientGUI,
     /**
      * Map each phase to the name of the card for the main display area.
      */
-    private Map<String, String> mainNames = new HashMap<>();
+    private final Map<String, String> mainNames = new HashMap<>();
 
     private MiniReportDisplay miniReportDisplay;
     private MiniReportDisplayDialog miniReportDisplayDialog;
@@ -300,22 +286,22 @@ public class ClientGUI extends JPanel implements BoardViewListener, IClientGUI,
     /**
      * The <code>JPanel</code> containing the main display area.
      */
-    private JPanel panMain = new JPanel();
+    private final JPanel panMain = new JPanel();
 
     /**
      * The <code>CardLayout</code> of the main display area.
      */
-    private CardLayout cardsMain = new CardLayout();
+    private final CardLayout cardsMain = new CardLayout();
 
     /**
      * Map each phase to the name of the card for the secondary area.
      */
-    private Map<String, String> secondaryNames = new HashMap<>();
+    private final Map<String, String> secondaryNames = new HashMap<>();
 
     /**
      * The <code>JPanel</code> containing the secondary display area.
      */
-    private JPanel panSecondary = new JPanel();
+    private final JPanel panSecondary = new JPanel();
 
     private ReportDisplay reportDisply;
 
@@ -324,12 +310,12 @@ public class ClientGUI extends JPanel implements BoardViewListener, IClientGUI,
     /**
      * The <code>CardLayout</code> of the secondary display area.
      */
-    private CardLayout cardsSecondary = new CardLayout();
+    private final CardLayout cardsSecondary = new CardLayout();
 
     /**
      * Map phase component names to phase component objects.
      */
-    private Map<String, JComponent> phaseComponents = new HashMap<>();
+    private final Map<String, JComponent> phaseComponents = new HashMap<>();
 
     /**
      * Current Selected entity
@@ -367,8 +353,6 @@ public class ClientGUI extends JPanel implements BoardViewListener, IClientGUI,
      * System.exit().
      */
     public ClientGUI(IClient client, MegaMekController c) {
-        super(new BorderLayout());
-        this.addComponentListener(this);
         if (!(client instanceof Client)) {
             throw new IllegalArgumentException("TW ClientGUI must use TW Client!");
         }
@@ -376,10 +360,11 @@ public class ClientGUI extends JPanel implements BoardViewListener, IClientGUI,
         controller = c;
         panMain.setLayout(cardsMain);
         panSecondary.setLayout(cardsSecondary);
-        JPanel panDisplay = new JPanel(new BorderLayout());
-        panDisplay.add(panMain, BorderLayout.CENTER);
-        panDisplay.add(panSecondary, BorderLayout.SOUTH);
-        add(panDisplay, BorderLayout.CENTER);
+
+        clientGuiPanel.setLayout(new BorderLayout());
+        clientGuiPanel.addComponentListener(this);
+        clientGuiPanel.add(panMain, BorderLayout.CENTER);
+        clientGuiPanel.add(panSecondary, BorderLayout.SOUTH);
 
         audioService.loadSoundFiles();
     }
@@ -425,7 +410,7 @@ public class ClientGUI extends JPanel implements BoardViewListener, IClientGUI,
     }
 
     public void setMiniMapDialog(final JDialog miniMapDialog) {
-        this.minimapW = miniMapDialog;
+        minimapW = miniMapDialog;
     }
 
     public MiniReportDisplay getMiniReportDisplay() {
@@ -452,33 +437,14 @@ public class ClientGUI extends JPanel implements BoardViewListener, IClientGUI,
         this.playerListDialog = playerListDialog;
     }
 
+    /**
+     * Set to true to make the client disconnect without a warning popup.
+     *
+     * @param quietly When true, the client will disconnect without visible warning
+     */
+    @SuppressWarnings("unused") // Used in MHQ
     public void setDisconnectQuietly(boolean quietly) {
         disconnectQuietly = quietly;
-    }
-
-    /**
-     * Try to load the "bing" sound clip.
-     */
-    private @Nullable Clip loadSoundClip(@Nullable String filename) {
-        if (filename == null) {
-            return null;
-        }
-        final File file = new File(filename);
-        if (!file.exists()) {
-            LogManager.getLogger().error(Messages.getString("ClientGUI.failedToLoadAudioFile") + " " + filename);
-            return null;
-        }
-
-        try {
-            Clip clip = AudioSystem.getClip();
-            try (AudioInputStream ais = AudioSystem.getAudioInputStream(file)) {
-                clip.open(ais);
-                return clip;
-            }
-        } catch (Exception ex) {
-            LogManager.getLogger().error("", ex);
-            return null;
-        }
     }
 
     /**
@@ -494,31 +460,10 @@ public class ClientGUI extends JPanel implements BoardViewListener, IClientGUI,
     /**
      * Initializes a number of things about this frame.
      */
-    private void initializeFrame() {
-        frame = new JFrame(Messages.getString("ClientGUI.title"));
+    protected void initializeFrame() {
+        super.initializeFrame();
+        menuBar = new CommonMenuBar(getClient());
         frame.setJMenuBar(menuBar);
-
-        if (GUIP.getWindowSizeHeight() != 0) {
-            frame.setLocation(GUIP.getWindowPosX(), GUIP.getWindowPosY());
-            frame.setSize(GUIP.getWindowSizeWidth(), GUIP.getWindowSizeHeight());
-        } else {
-            frame.setSize(800, 600);
-        }
-        frame.setMinimumSize(new Dimension(640, 480));
-        UIUtil.updateWindowBounds(frame);
-
-        frame.setBackground(SystemColor.menu);
-        frame.setForeground(SystemColor.menuText);
-        List<Image> iconList = new ArrayList<>();
-        iconList.add(frame.getToolkit().getImage(
-                new MegaMekFile(Configuration.miscImagesDir(), FILENAME_ICON_16X16).toString()));
-        iconList.add(frame.getToolkit().getImage(
-                new MegaMekFile(Configuration.miscImagesDir(), FILENAME_ICON_32X32).toString()));
-        iconList.add(frame.getToolkit().getImage(
-                new MegaMekFile(Configuration.miscImagesDir(), FILENAME_ICON_48X48).toString()));
-        iconList.add(frame.getToolkit().getImage(
-                new MegaMekFile(Configuration.miscImagesDir(), FILENAME_ICON_256X256).toString()));
-        frame.setIconImages(iconList);
     }
 
     /**
@@ -528,7 +473,7 @@ public class ClientGUI extends JPanel implements BoardViewListener, IClientGUI,
     private void layoutFrame() {
         frame.setTitle(client.getName() + Messages.getString("ClientGUI.clientTitleSuffix"));
         frame.getContentPane().setLayout(new BorderLayout());
-        frame.getContentPane().add(this, BorderLayout.CENTER);
+        frame.getContentPane().add(clientGuiPanel, BorderLayout.CENTER);
         frame.validate();
     }
 
@@ -548,8 +493,7 @@ public class ClientGUI extends JPanel implements BoardViewListener, IClientGUI,
 
     @Override
     public void initialize() {
-        menuBar = new CommonMenuBar(getClient());
-        initializeFrame();
+        super.initialize();
         try {
             client.getGame().addGameListener(gameListener);
 
@@ -557,7 +501,7 @@ public class ClientGUI extends JPanel implements BoardViewListener, IClientGUI,
             bv.addOverlay(new KeyBindingsOverlay(bv));
             bv.addOverlay(new PlanetaryConditionsOverlay(bv));
             bv.addOverlay(new TurnDetailsOverlay(bv));
-            bv.getPanel().setPreferredSize(getSize());
+            bv.getPanel().setPreferredSize(clientGuiPanel.getSize());
             bv.setTooltipProvider(new TWBoardViewTooltip(client.getGame(), this, bv));
             bvc = bv.getComponent();
             bvc.setName(CG_BOARDVIEW);
@@ -590,38 +534,7 @@ public class ClientGUI extends JPanel implements BoardViewListener, IClientGUI,
 
         layoutFrame();
         menuBar.addActionListener(this);
-        frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
-        frame.addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent e) {
-                if (!GUIP.getNoSaveNag()) {
-                    ignoreHotKeys = true;
-                    int savePrompt = JOptionPane.showConfirmDialog(null,
-                            Messages.getString("ClientGUI.gameSaveDialogMessage"),
-                            Messages.getString("ClientGUI.gameSaveFirst"),
-                            JOptionPane.YES_NO_CANCEL_OPTION,
-                            JOptionPane.WARNING_MESSAGE);
-                    ignoreHotKeys = false;
-                    if (savePrompt == JOptionPane.YES_OPTION) {
-                        if (!saveGame()) {
-                            // When the user did not actually save the game, don't close MM
-                            return;
-                        }
-                    }
 
-                    if ((savePrompt == JOptionPane.NO_OPTION)
-                            || (savePrompt == JOptionPane.YES_OPTION)) {
-                        frame.setVisible(false);
-                        saveSettings();
-                        die();
-                    }
-                } else {
-                    frame.setVisible(false);
-                    saveSettings();
-                    die();
-                }
-            }
-        });
         cb2 = new ChatterBox2(this, bv, controller);
         bv.addOverlay(cb2);
         bv.getPanel().addKeyListener(cb2);
@@ -1088,11 +1001,7 @@ public class ClientGUI extends JPanel implements BoardViewListener, IClientGUI,
      * Saves the current settings to the cfg file.
      */
     void saveSettings() {
-        // Frame location
-        GUIP.setWindowPosX(frame.getLocation().x);
-        GUIP.setWindowPosY(frame.getLocation().y);
-        GUIP.setWindowSizeWidth(frame.getSize().width);
-        GUIP.setWindowSizeHeight(frame.getSize().height);
+        super.saveSettings();
 
         // Minimap Dialog
         if ((getMiniMapDialog() != null)
@@ -1155,14 +1064,6 @@ public class ClientGUI extends JPanel implements BoardViewListener, IClientGUI,
         }
         phaseComponents.clear();
 
-        frame.removeAll();
-        frame.setVisible(false);
-        try {
-            frame.dispose();
-        } catch (Exception ex) {
-            LogManager.getLogger().error("", ex);
-        }
-
         client.die();
 
         TimerSingleton.getInstance().killTimer();
@@ -1182,6 +1083,7 @@ public class ClientGUI extends JPanel implements BoardViewListener, IClientGUI,
         }
 
         GUIP.removePreferenceChangeListener(this);
+        super.die();
     }
 
     public GameOptionsDialog getGameOptionsDialog() {
@@ -1321,7 +1223,6 @@ public class ClientGUI extends JPanel implements BoardViewListener, IClientGUI,
             case EXCHANGE:
                 chatlounge.killPreviewBV();
                 component = new ReceivingGameDataPanel();
-//                component = new JLabel(Messages.getString("ClientGUI.TransmittingData"));
                 UIUtil.scaleComp(component, UIUtil.FONT_SCALE1);
                 main = CG_EXCHANGE;
                 component.setName(main);
@@ -1669,14 +1570,10 @@ public class ClientGUI extends JPanel implements BoardViewListener, IClientGUI,
     }
 
     /**
-     * Shows or hides the Unit Display based on the given visible. This works
-     * independently
-     * of the current menu setting, so it should be used only when the Unit Display
-     * is to
-     * be shown or hidden without regard for the user setting, e.g. hiding it in the
-     * lobby
-     * or a report phase.
-     * Does not change the menu setting.
+     * Shows or hides the Unit Display based on the given visible. This works independently
+     * of the current menu setting, so it should be used only when the Unit Display is to
+     * be shown or hidden without regard for the user setting, e.g. hiding it in the lobby
+     * or a report phase. Does not change the menu setting.
      */
     public void setUnitDisplayVisible(boolean visible) {
         // If no unit displayed, select a unit so display can be safely shown
@@ -1703,7 +1600,6 @@ public class ClientGUI extends JPanel implements BoardViewListener, IClientGUI,
     private void setsetDividerLocations() {
         splitPaneA.setDividerLocation(GUIP.getSplitPaneADividerLocaton());
     }
-
 
     public void setForceDisplayVisible(boolean visible) {
         if (getForceDisplayDialog() != null) {
@@ -1901,7 +1797,7 @@ public class ClientGUI extends JPanel implements BoardViewListener, IClientGUI,
         UIUtil.adjustContainer(scrollPane, UIUtil.FONT_SCALE1);
         textArea.setText("<pre>" + message + "</pre>");
         scrollPane.setPreferredSize(new Dimension(
-                (int) (getSize().getWidth() / 1.5), (int) (getSize().getHeight() / 1.5)));
+                (int) (clientGuiPanel.getSize().getWidth() / 1.5), (int) (clientGuiPanel.getSize().getHeight() / 1.5)));
         JOptionPane.showMessageDialog(frame, scrollPane, title, msgTyoe);
     }
 
@@ -1960,20 +1856,7 @@ public class ClientGUI extends JPanel implements BoardViewListener, IClientGUI,
      * lounge. The file can record damage sustained, non- standard munitions
      * selected, and ammunition expended in a prior engagement.
      *
-     * @param c
-     */
-    protected void loadListFile(Client c) {
-        loadListFile(c.getLocalPlayer());
-    }
-
-    /**
-     * Allow the player to select a MegaMek Unit List file to load. The
-     * <code>Entity</code>s in the file will replace any that the player has
-     * already selected. As such, this method should only be called in the chat
-     * lounge. The file can record damage sustained, non- standard munitions
-     * selected, and ammunition expended in a prior engagement.
-     *
-     * @param player
+     * @param player The player to add the units to
      */
     public void loadListFile(Player player) {
         loadListFile(player, false);
@@ -1986,7 +1869,7 @@ public class ClientGUI extends JPanel implements BoardViewListener, IClientGUI,
      * lounge. The file can record damage sustained, non-standard munitions
      * selected, and ammunition expended in a prior engagement.
      *
-     * @param player
+     * @param player The player to add the units to
      */
     protected void loadListFile(Player player, boolean reinforce) {
         if (player != null) {
@@ -2058,8 +1941,7 @@ public class ClientGUI extends JPanel implements BoardViewListener, IClientGUI,
             }
 
 
-            // If we've added reinforcements, then we need to set the round deployment up
-            // again.
+            // If we've added reinforcements, then we need to set the round deployment up again.
             if (addedUnits && reinforce) {
                 client.getGame().setupRoundDeployment();
                 client.sendResetRoundDeployment();
@@ -2070,7 +1952,7 @@ public class ClientGUI extends JPanel implements BoardViewListener, IClientGUI,
         }
     }
 
-    private boolean saveGame() {
+    public boolean saveGame() {
         ignoreHotKeys = true;
         JFileChooser fc = new JFileChooser(MMConstants.SAVEGAME_DIR);
         fc.setLocation(frame.getLocation().x + 150, frame.getLocation().y + 100);
@@ -2095,9 +1977,8 @@ public class ClientGUI extends JPanel implements BoardViewListener, IClientGUI,
     }
 
     /** Developer Utility: Save game to quicksave.sav.gz without any prompts. */
-    private boolean quickSaveGame() {
+    private void quickSaveGame() {
         client.sendChat(CG_CHATCOMMANDLOCALSAVE + " " + MMConstants.QUICKSAVE_FILE + " " + MMConstants.QUICKSAVE_PATH);
-        return true;
     }
 
     /**
@@ -2111,11 +1992,8 @@ public class ClientGUI extends JPanel implements BoardViewListener, IClientGUI,
      * @param unitList - the <code>Vector</code> of <code>Entity</code>s to be saved
      *                 to a file. If this value is <code>null</code> or empty, the
      *                 "Save As" dialog will not be displayed.
+     * @param filename The filename to save to
      */
-    public void saveListFile(ArrayList<Entity> unitList) {
-        saveListFile(unitList, client.getLocalPlayer().getName());
-    }
-
     public void saveListFile(ArrayList<Entity> unitList, String filename) {
         // Handle empty lists.
         if ((unitList == null) || unitList.isEmpty()) {
@@ -2207,11 +2085,6 @@ public class ClientGUI extends JPanel implements BoardViewListener, IClientGUI,
         }
     }
 
-    @Override
-    public JFrame getFrame() {
-        return frame;
-    }
-
     /**
      * Shows a dialog where the player can select the entity types
      * used in the LOS tool.
@@ -2229,8 +2102,8 @@ public class ClientGUI extends JPanel implements BoardViewListener, IClientGUI,
     /**
      * Loads a preview image of the unit into the BufferedPanel.
      *
-     * @param bp
-     * @param entity
+     * @param bp The JLabel to set the image as icon to
+     * @param entity The unit
      */
     public void loadPreviewImage(JLabel bp, Entity entity) {
         Player player = client.getGame().getPlayer(entity.getOwnerId());
@@ -2270,7 +2143,7 @@ public class ClientGUI extends JPanel implements BoardViewListener, IClientGUI,
         }
     }
 
-    private GameListener gameListener = new GameListenerAdapter() {
+    private final GameListener gameListener = new GameListenerAdapter() {
         @Override
         public void gamePlayerChange(GamePlayerChangeEvent evt) {
             if (playerListDialog != null) {
@@ -2321,13 +2194,8 @@ public class ClientGUI extends JPanel implements BoardViewListener, IClientGUI,
 
             menuBar.setPhase(phase);
 
-            validate();
+            clientGuiPanel.validate();
             cb.moveToEnd();
-        }
-
-        @Override
-        public void gamePlayerConnected(GamePlayerConnectedEvent e) {
-
         }
 
         @Override
@@ -2437,11 +2305,6 @@ public class ClientGUI extends JPanel implements BoardViewListener, IClientGUI,
                 ChatLounge cl = (ChatLounge) curPanel;
                 cl.updateMapSettings(getClient().getMapSettings());
             }
-        }
-
-        @Override
-        public void gameMapQuery(GameMapQueryEvent evt) {
-
         }
 
         @Override
@@ -2882,7 +2745,7 @@ public class ClientGUI extends JPanel implements BoardViewListener, IClientGUI,
 
     @Override
     public void componentResized(ComponentEvent evt) {
-        bv.getPanel().setPreferredSize(getSize());
+        bv.getPanel().setPreferredSize(clientGuiPanel.getSize());
     }
 
     @Override
@@ -2929,10 +2792,8 @@ public class ClientGUI extends JPanel implements BoardViewListener, IClientGUI,
     }
 
     /**
-     * The ClientGUI is split into the main panel (view) at the top, which takes up
-     * the majority of
-     * the view and the "current panel" which has different controls based on the
-     * phase.
+     * The ClientGUI is split into the main panel (view) at the top, which takes up the majority of
+     * the view and the "current panel" which has different controls based on the phase.
      *
      * @return the panel for the current phase
      */
@@ -2945,16 +2806,11 @@ public class ClientGUI extends JPanel implements BoardViewListener, IClientGUI,
     }
 
     public void setPointblankEID(int eid) {
-        this.pointblankEID = eid;
+        pointblankEID = eid;
     }
 
     public int getPointblankEID() {
         return pointblankEID;
-    }
-
-    /** Adapts the menu (the font size) to the current GUI scale. */
-    private void adaptToGUIScale() {
-
     }
 
     @Override
@@ -2979,8 +2835,6 @@ public class ClientGUI extends JPanel implements BoardViewListener, IClientGUI,
         } else if (e.getName().equals(GUIPreferences.DOCK_MULTIPLE_ON_Y_AXIS)) {
             setUnitDisplayVisible(GUIP.getUnitDisplayEnabled());
             setMiniReportVisible(GUIP.getMiniReportEnabled());
-        } else if (e.getName().equals(GUIPreferences.GUI_SCALE)) {
-            adaptToGUIScale();
         } else if (e.getName().equals(GUIPreferences.DEFAULT_WEAPON_SORT_ORDER)) {
             setWeaponOrderPrefs(true);
             getUnitDisplay().displayEntity(getUnitDisplay().getCurrentEntity());
@@ -3096,5 +2950,9 @@ public class ClientGUI extends JPanel implements BoardViewListener, IClientGUI,
 
     public boolean hasSelectedWeapon() {
         return (getSelectedUnit() != null) && (getSelectedUnit().getEquipment(selectedWeapon) != null);
+    }
+
+    public JPanel getMainPanel() {
+        return clientGuiPanel;
     }
 }

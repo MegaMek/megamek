@@ -351,7 +351,7 @@ public class MiniReportDisplay extends JPanel implements ActionListener, Hyperli
                 }
             } else if (evtDesc.startsWith(Report.TOOLTIP_LINK)) {
                 String desc = evtDesc.substring(Report.TOOLTIP_LINK.length());
-                JOptionPane.showMessageDialog(currentClientgui, desc,
+                JOptionPane.showMessageDialog(currentClientgui.getFrame(), desc,
                         Messages.getString("MiniReportDisplay.Details"), JOptionPane.PLAIN_MESSAGE);
             }
         } else if (evt.getEventType() == HyperlinkEvent.EventType.ENTERED) {

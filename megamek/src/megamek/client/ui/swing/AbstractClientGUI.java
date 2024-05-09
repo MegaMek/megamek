@@ -38,13 +38,19 @@ import java.util.Map;
 
 public abstract class AbstractClientGUI implements IClientGUI {
 
+    /** The smallest GUI scaling value; smaller will make text unreadable */
+    public static final float MIN_GUISCALE = 0.7f;
+
+    /** The highest GUI scaling value; increase this for 16K monitors */
+    public static final float MAX_GUISCALE = 2.4f;
+
     protected static final GUIPreferences GUIP = GUIPreferences.getInstance();
     protected static final ClientPreferences CP = PreferenceManager.getClientPreferences();
 
-    private static final String FILENAME_ICON_16X16 = "megamek-icon-16x16.png";
-    private static final String FILENAME_ICON_32X32 = "megamek-icon-32x32.png";
-    private static final String FILENAME_ICON_48X48 = "megamek-icon-48x48.png";
-    private static final String FILENAME_ICON_256X256 = "megamek-icon-256x256.png";
+    protected static final String FILENAME_ICON_16X16 = "megamek-icon-16x16.png";
+    protected static final String FILENAME_ICON_32X32 = "megamek-icon-32x32.png";
+    protected static final String FILENAME_ICON_48X48 = "megamek-icon-48x48.png";
+    protected static final String FILENAME_ICON_256X256 = "megamek-icon-256x256.png";
 
     protected final JFrame frame = new JFrame(Messages.getString("ClientGUI.title"));
     private final IClient iClient;
@@ -96,15 +102,17 @@ public abstract class AbstractClientGUI implements IClientGUI {
                 die();
             }
         });
+        initializeFrame();
     }
 
     @Override
     public void die() {
+        frame.removeAll();
+        frame.setVisible(false);
         frame.dispose();
     }
 
-    private void initializeFrame() {
-//        frame.setJMenuBar(menuBar);
+    protected void initializeFrame() {
         if (GUIP.getWindowSizeHeight() != 0) {
             frame.setLocation(GUIP.getWindowPosX(), GUIP.getWindowPosY());
             frame.setSize(GUIP.getWindowSizeWidth(), GUIP.getWindowSizeHeight());

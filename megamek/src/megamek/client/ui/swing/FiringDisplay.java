@@ -934,7 +934,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
         for (int loop = 0; loop < names.length; loop++) {
             names[loop] = weapons.get(loop).getDesc();
         }
-        String input = (String) JOptionPane.showInputDialog(clientgui,
+        String input = (String) JOptionPane.showInputDialog(clientgui.getFrame(),
                 Messages.getString("FiringDisplay.ClearWeaponJam.question"),
                 Messages.getString("FiringDisplay.ClearWeaponJam.title"),
                 JOptionPane.QUESTION_MESSAGE, null, names, null);
@@ -965,7 +965,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
         String targetString = (target != null) ?
                 String.format("\nTarget: %s", target.getDisplayName()) : "";
 
-        String input = (String) JOptionPane.showInputDialog(clientgui,
+        String input = (String) JOptionPane.showInputDialog(clientgui.getFrame(),
                 String.format("Pick a Special Pilot Ability to activate.%s", targetString),
                 "Activate Special Pilot Ability",
                 JOptionPane.QUESTION_MESSAGE, null, skillNames.keySet().toArray(), null);

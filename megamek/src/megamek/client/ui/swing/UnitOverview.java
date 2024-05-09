@@ -75,25 +75,25 @@ public class UnitOverview implements IDisplayable {
 
     public UnitOverview(ClientGUI clientgui) {
         this.clientgui = clientgui;
-        fm = clientgui.getFontMetrics(FONT);
+        fm = clientgui.getMainPanel().getFontMetrics(FONT);
 
-        Toolkit toolkit = clientgui.getToolkit();
+        Toolkit toolkit = clientgui.getMainPanel().getToolkit();
         scrollUp = toolkit.getImage(new MegaMekFile(Configuration.widgetsDir(), "scrollUp2.png").toString());
-        PMUtil.setImage(scrollUp, clientgui);
+        PMUtil.setImage(scrollUp, clientgui.getMainPanel());
         scrollDown = toolkit.getImage(new MegaMekFile(Configuration.widgetsDir(), "scrollDown2.png").toString());
-        PMUtil.setImage(scrollDown, clientgui);
+        PMUtil.setImage(scrollDown, clientgui.getMainPanel());
         pageUp = toolkit.getImage(new MegaMekFile(Configuration.widgetsDir(), "pageUp2.png").toString());
-        PMUtil.setImage(pageUp, clientgui);
+        PMUtil.setImage(pageUp, clientgui.getMainPanel());
         pageDown = toolkit.getImage(new MegaMekFile(Configuration.widgetsDir(), "pageDown2.png").toString());
-        PMUtil.setImage(pageDown, clientgui);
+        PMUtil.setImage(pageDown, clientgui.getMainPanel());
         scrollUpG = toolkit.getImage(new MegaMekFile(Configuration.widgetsDir(), "scrollUp2_G.png").toString());
-        PMUtil.setImage(scrollUp, clientgui);
+        PMUtil.setImage(scrollUp, clientgui.getMainPanel());
         scrollDownG = toolkit.getImage(new MegaMekFile(Configuration.widgetsDir(), "scrollDown2_G.png").toString());
-        PMUtil.setImage(scrollDown, clientgui);
+        PMUtil.setImage(scrollDown, clientgui.getMainPanel());
         pageUpG = toolkit.getImage(new MegaMekFile(Configuration.widgetsDir(), "pageUp2_G.png").toString());
-        PMUtil.setImage(pageUp, clientgui);
+        PMUtil.setImage(pageUp, clientgui.getMainPanel());
         pageDownG = toolkit.getImage(new MegaMekFile(Configuration.widgetsDir(), "pageDown2_G.png").toString());
-        PMUtil.setImage(pageDown, clientgui);
+        PMUtil.setImage(pageDown, clientgui.getMainPanel());
         
         visible = GUIP.getShowUnitOverview();
     }

@@ -22,6 +22,7 @@ import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.client.ui.swing.calculationReport.DummyCalculationReport;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
+import megamek.common.equipment.ArmorType;
 import megamek.common.weapons.infantry.InfantryWeapon;
 
 import java.text.NumberFormat;
@@ -78,12 +79,12 @@ public class CostCalculator {
 
         Map<String, Integer> weaponsNumberMap = new HashMap<>();
         Map<String, Long> weaponsCostMap = new HashMap<>();
-        for (Mounted mounted : entity.getEquipment()) {
+        for (Mounted<?> mounted : entity.getEquipment()) {
             if (ignoreAmmo && (mounted.getType() instanceof AmmoType)
                     && (!(((AmmoType) mounted.getType()).getAmmoType() == AmmoType.T_COOLANT_POD))) {
                 continue;
             }
-            if (mounted.isWeaponGroup()) {
+            if (mounted.isWeaponGroup() || mounted.getType() instanceof ArmorType) {
                 continue;
             }
             // BA Manipulators are considered part of the structure costs and must be excluded here

@@ -18,14 +18,17 @@
  */
 package megamek.common;
 
+import megamek.common.actions.EntityAction;
 import megamek.common.event.GameBoardNewEvent;
 import megamek.common.event.GameEvent;
 import megamek.common.event.GameListener;
+import megamek.common.event.GameNewActionEvent;
 import megamek.common.force.Forces;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.stream.Collectors;
 
 /**
  * This is a base class to derive all types of Game (TW, AS, BF, SBF...) from. Any such game will have players, units
@@ -33,22 +36,19 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 public abstract class AbstractGame implements IGame {
 
-    /**
-     * The players present in the game mapped to their id as key.
-     */
+    /** The players present in the game mapped to their id as key */
     protected final ConcurrentHashMap<Integer, Player> players = new ConcurrentHashMap<>();
 
-    /**
-     * The InGameObjects (units such as Entity and others) present in the game mapped to their id as key.
-     */
+    /** The InGameObjects (units such as Entity and others) present in the game mapped to their id as key */
     protected final ConcurrentHashMap<Integer, InGameObject> inGameObjects = new ConcurrentHashMap<>();
 
-    /**
-     * The teams present in the game.
-     */
+    /** The teams present in the game */
     protected final CopyOnWriteArrayList<Team> teams = new CopyOnWriteArrayList<>();
 
     protected transient Vector<GameListener> gameListeners = new Vector<>();
+
+    /** The currently pending actions such as attacks */
+    protected final List<EntityAction> pendingActions = new ArrayList<>();
 
     /**
      * This Map holds all game boards together with a unique ID for each.
@@ -63,6 +63,13 @@ public abstract class AbstractGame implements IGame {
      * and should therefore not be shown.
      */
     protected Forces forces = new Forces(this);
+
+    /**
+     * This map links deployment rounds to lists of Deployables that deploy in respective rounds. It only contains
+     * units/objects that are not yet deployed or will redeploy (returning Aeros, units going from one board to
+     * another if implemented). For those, the list is updated every round.
+     */
+    private final Map<Integer, List<Deployable>> deploymentTable = new HashMap<>();
 
     protected int currentRound = 0;
 
@@ -198,5 +205,109 @@ public abstract class AbstractGame implements IGame {
     @Override
     public void setCurrentRound(int currentRound) {
         this.currentRound = currentRound;
+    }
+
+    /**
+     * Returns true when the current game phase should be played, meaning it is played in the current type
+     * of game and there are possible actions in it in the present game state.
+     * The result may be different in other rounds.
+     *
+     * @return True when the current phase should be skipped entirely in this round
+     * @see #shouldSkipCurrentPhase()
+     */
+    public abstract boolean isCurrentPhasePlayable();
+
+    /**
+     * Returns true when the current game phase should be skipped, either because it is not played at
+     * all in the current type of game or because the present game state dictates that there can be no
+     * actions in it. The result may be different in other rounds. This is the opposite of
+     * {@link #isCurrentPhasePlayable()}.
+     *
+     * @return True when the current phase should be skipped entirely in this round
+     * @see #isCurrentPhasePlayable()
+     */
+    public boolean shouldSkipCurrentPhase() {
+        return !isCurrentPhasePlayable();
+    }
+
+    /**
+     * Empties the list of pending EntityActions completely.
+     * @see #getActionsVector()
+     */
+    public void clearActions() {
+        pendingActions.clear();
+    }
+
+    /**
+     * Removes all pending EntityActions by the InGameObject (Entity, unit) of the given ID from the list
+     * of pending actions.
+     */
+    public void removeActionsFor(int id) {
+        pendingActions.removeIf(action -> action.getEntityId() == id);
+    }
+
+    /**
+     * Remove the given EntityAction from the list of pending actions.
+     */
+    public void removeAction(EntityAction action) {
+        pendingActions.remove(action);
+    }
+
+    /**
+     * Returns the pending EntityActions. Do not use to modify the actions; Arlith said: I will be
+     * angry. &gt;:[
+     */
+    public List<EntityAction> getActionsVector() {
+        return Collections.unmodifiableList(pendingActions);
+    }
+
+    /**
+     * Adds the specified action to the list of pending EntityActions for this phase and fires a GameNewActionEvent.
+     */
+    public void addAction(EntityAction action) {
+        pendingActions.add(action);
+        fireGameEvent(new GameNewActionEvent(this, action));
+    }
+
+    public void setupRoundDeployment() {
+        deploymentTable.clear();
+        for (Deployable unit : deployableInGameObjects()) {
+            if (!unit.isDeployed()) {
+                deploymentTable.computeIfAbsent(unit.getDeployRound(), k -> new ArrayList<>()).add(unit);
+            }
+        }
+    }
+
+    protected List<Deployable> deployableInGameObjects() {
+        return inGameObjects.values().stream()
+                .filter(unit -> unit instanceof Deployable)
+                .map(unit -> (Deployable) unit)
+                .collect(Collectors.toList());
+    }
+
+    public int lastDeploymentRound() {
+        return deploymentTable.isEmpty() ? -1 : Collections.max(deploymentTable.keySet());
+    }
+
+    public boolean isDeploymentComplete() {
+        return lastDeploymentRound() < currentRound;
+    }
+
+    /**
+     * Check to see if we should deploy this round
+     */
+    public boolean shouldDeployThisRound() {
+        return shouldDeployForRound(currentRound);
+    }
+
+    public boolean shouldDeployForRound(int round) {
+        return deploymentTable.containsKey(round);
+    }
+
+    /**
+     * Clear this round from this list of entities to deploy
+     */
+    public void clearDeploymentThisRound() {
+        deploymentTable.remove(currentRound);
     }
 }

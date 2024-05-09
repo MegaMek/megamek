@@ -291,7 +291,7 @@ public enum GamePhase {
      * @return true if this phase has turns. If false, the phase is simply waiting for everybody
      * to declare "done".
      */
-    public boolean hasTurns() {
+    public boolean usesTurns() {
         switch (this) {
             case SET_ARTILLERY_AUTOHIT_HEXES:
             case DEPLOY_MINEFIELDS:

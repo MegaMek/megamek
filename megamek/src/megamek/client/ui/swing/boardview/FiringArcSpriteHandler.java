@@ -130,7 +130,7 @@ public class FiringArcSpriteHandler extends BoardViewSpriteHandler implements IP
     public void renewSprites() {
         clear();
         if (!GUIP.getShowFieldOfFire() || (firingEntity == null) || (firingPosition == null)
-                || firingEntity.isOffBoard()) {
+                || firingEntity.isOffBoard() || !clientGUI.hasSelectedWeapon()) {
             return;
         }
 
@@ -239,8 +239,15 @@ public class FiringArcSpriteHandler extends BoardViewSpriteHandler implements IP
 
     @Override
     public void preferenceChange(PreferenceChangeEvent evt) {
-        if (evt.getName().equals(GUIPreferences.SHOW_FIELD_OF_FIRE)) {
-            renewSprites();
+        switch (evt.getName()) {
+            case GUIPreferences.SHOW_FIELD_OF_FIRE:
+            case GUIPreferences.BOARD_FIELD_OF_FIRE_EXTREME_COLOR:
+            case GUIPreferences.BOARD_FIELD_OF_FIRE_LONG_COLOR:
+            case GUIPreferences.BOARD_FIELD_OF_FIRE_MEDIUM_COLOR:
+            case GUIPreferences.BOARD_FIELD_OF_FIRE_SHORT_COLOR:
+            case GUIPreferences.BOARD_FIELD_OF_FIRE_MIN_COLOR:
+                renewSprites();
+                break;
         }
     }
 

@@ -1,5 +1,4 @@
 Special Turrets 3039
-
 #Command Towers
 Medium Blaze Turret (3025), 40
 Heavy Blaze Turret (3025), 10

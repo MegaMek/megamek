@@ -1,7 +1,7 @@
 MEGAMEK VERSION HISTORY:
 ----------------
 0.49.20-SNAPSHOT
-+ PR #5281, #5327, #5308, #5336, #5318, #5383, #5369, #5384: Code internals: preparatory work for supporting game types such as SBF, code cleanup for string drawing, superclass change for BoardView,
++ PR #5281, #5327, #5308, #5336, #5318, #5383, #5369, #5384, #5455: Code internals: preparatory work for supporting game types such as SBF, code cleanup for string drawing, superclass change for BoardView,
      Keydispatcher aka MegaMekController simplification, moving BoardView shadowmap creation to its own class, BoardView subclassing, DialogOptionsListener update
 + PR #5295: MM now supports the light conditions "glare" and "solar flare" (TO:AR)
 + PR #5301, #5441: Aerospace units now show a much improved flight path indicator when planning their movement; use MM's symbol font for indicator symbols, also for Collapse Warnings
@@ -13,7 +13,7 @@ MEGAMEK VERSION HISTORY:
 + PR #5388, #5410, #5411: The Skin Editor has been given a rework and is now functional again; it now defaults to saving to the user directory when available
 + PR #5387: Prevent errors when ESCaping out of the main menu's Connect... and Connect as Bot dialogs
 + PR #5409: Removed code for using a background image on boards
-+ PR #5406, #5425: Mounted rework
++ PR #5406, #5425, #5461: Mounted rework
 + PR #5412: The force display will now have a default size to prevent it from starting totally collapsed
 + PR #5418: More code internals: Princess's Precognition no longer produces unnecessary packet command log messages and processes an additional packet command
 + Fix #5408: Princess has taken part in a week-long battle workshop; she will now be less conservative with ammo (and other tweaks)
@@ -28,6 +28,8 @@ MEGAMEK VERSION HISTORY:
 + PR #5444: BoardView Sprite separation
 + PR #5442: Add null check for turn timer when stopping
 + PR #5451: Expose map settings methods for use in MekHQ
++ Fix #1502: Ignore armortype slots in other-equipment cost calculation
+
 
 
 0.49.19 (2024-04-19 2030 UTC)

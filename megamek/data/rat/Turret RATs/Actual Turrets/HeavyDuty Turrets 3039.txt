@@ -1,5 +1,4 @@
 HeavyDuty Turrets 3039
-
 #Siege Turrets
 Medium Siege Turret (3039), 80
 Heavy Siege Turret (3039), 20

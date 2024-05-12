@@ -384,7 +384,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements
         if (!clientgui.getBoardView().isMovingUnits()) {
             clientgui.maybeShowUnitDisplay();
         }
-        clientgui.getBoardView().clearFieldOfFire();
+        clientgui.clearFieldOfFire();
         clientgui.clearTemporarySprites();
 
         selectEntity(clientgui.getClient().getFirstEntityNum());
@@ -444,7 +444,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements
         clientgui.getBoardView().highlight(null);
         clientgui.getBoardView().cursor(null);
         clientgui.getBoardView().clearMovementData();
-        clientgui.getBoardView().clearFieldOfFire();
+        clientgui.clearFieldOfFire();
         clientgui.clearTemporarySprites();
         clientgui.setSelectedEntityNum(Entity.NONE);
         disableButtons();

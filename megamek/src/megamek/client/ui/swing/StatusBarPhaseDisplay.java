@@ -400,26 +400,4 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
             }
         }
     }
-
-    public void setWeaponFieldOfFire(Entity unit, int[][] ranges, int arc, int loc) {
-        setWeaponFieldOfFire(unit, ranges, arc, loc, unit.getFacing());
-    }
-
-    public void setWeaponFieldOfFire(Entity unit, int[][] ranges, int arc, int loc, int facing) {
-        clientgui.getBoardView().fieldOfFireUnit = unit;
-        clientgui.getBoardView().fieldOfFireRanges = ranges;
-        clientgui.getBoardView().fieldOfFireWpArc = arc;
-        clientgui.getBoardView().fieldOfFireWpLoc = loc;
-
-        clientgui.getBoardView().setWeaponFieldOfFire(facing, unit.getPosition());
-    }
-
-    public void setWeaponFieldOfFire(Entity unit, int[][] ranges, int arc, int loc, MovePath cmd) {
-        clientgui.getBoardView().fieldOfFireUnit = unit;
-        clientgui.getBoardView().fieldOfFireRanges = ranges;
-        clientgui.getBoardView().fieldOfFireWpArc = arc;
-        clientgui.getBoardView().fieldOfFireWpLoc = loc;
-
-        clientgui.getBoardView().setWeaponFieldOfFire(unit, cmd);
-    }
 }

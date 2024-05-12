@@ -204,16 +204,6 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
     // vector of sprites for aero flyover lines
     private ArrayList<FlyOverSprite> flyOverSprites = new ArrayList<>();
 
-    // List of sprites for the weapon field of fire
-    private ArrayList<HexSprite> fieldOfFireSprites = new ArrayList<>();
-    public int[][] fieldOfFireRanges = {new int[5], new int[5]};
-    public int fieldOfFireWpArc;
-    public Entity fieldOfFireUnit;
-    public int fieldOfFireWpLoc;
-    // int because it acts as an array index
-    public int fieldOfFireWpUnderwater = 0;
-    private static final String[] rangeTexts = {"min", "S", "M", "L", "E"};
-
     TilesetManager tileManager;
 
     // polygons for a few things
@@ -869,11 +859,6 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         // draw wrecks
         if (GUIP.getShowWrecks() && !useIsometric()) {
             drawSprites(g, wreckSprites);
-        }
-
-        // Field of Fire
-        if (!useIsometric() && shouldShowFieldOfFire()) {
-            drawSprites(g, fieldOfFireSprites);
         }
 
         // Minefield signs all over the place!
@@ -1597,11 +1582,6 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
                 drawSprites(boardGraph, wreckSprites);
             }
 
-            // Field of Fire
-            if (!useIsometric() && shouldShowFieldOfFire()) {
-                drawSprites(boardGraph, fieldOfFireSprites);
-            }
-
             // Minefield signs all over the place!
             drawMinefields(boardGraph);
 
@@ -1715,9 +1695,6 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
                         if ((hex != null)) {
                             drawHex(c, g, saveBoardImage);
                             drawOrthograph(c, g);
-                            if (shouldShowFieldOfFire()) {
-                                drawHexSpritesForHex(c, g, fieldOfFireSprites);
-                            }
                             drawHexSpritesForHex(c, g, behindTerrainHexSprites);
                             if ((en_Deployer != null)
                                     && board.isLegalDeployment(c, en_Deployer)) {
@@ -4305,7 +4282,6 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         vtolAttackSprites.clear();
         flyOverSprites.clear();
         movementSprites.clear();
-        fieldOfFireSprites.clear();
 
         overTerrainSprites.clear();
         behindTerrainHexSprites.clear();
@@ -4755,10 +4731,6 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
 
         allSprites.forEach(Sprite::prepare);
 
-        for (Sprite spr : fieldOfFireSprites) {
-            spr.prepare();
-        }
-
         updateFontSizes();
         updateBoard();
 
@@ -4887,10 +4859,6 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         allSprites.forEach(Sprite::prepare);
         hexSprites.forEach(HexSprite::updateBounds);
 
-        for (Sprite spr : fieldOfFireSprites) {
-            spr.prepare();
-        }
-
         clearHexImageCache();
         updateBoard();
         boardPanel.repaint();
@@ -4977,167 +4945,6 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
 
     public Polygon getHexPoly() {
         return hexPoly;
-    }
-
-    public void clearFieldOfFire() {
-        fieldOfFireWpArc = -1;
-        fieldOfFireUnit = null;
-        fieldOfFireSprites.clear();
-        boardPanel.repaint();
-    }
-
-    // this is called from MovementDisplay and checks if
-    // the unit ends up underwater
-    public void setWeaponFieldOfFire(Entity ce, MovePath cmd) {
-        // if lack of data: clear and return
-        if ((fieldOfFireUnit == null)
-                || (ce == null)
-                || (cmd == null)) {
-            clearFieldOfFire();
-            return;
-        }
-
-        // If the field of fire is not displayed
-        // for the active unit, then don't change anything
-        if (fieldOfFireUnit.equals(ce)) {
-
-            fieldOfFireWpUnderwater = 0;
-            // check if the weapon ends up underwater
-            Hex hex = game.getBoard().getHex(cmd.getFinalCoords());
-
-            if ((hex.terrainLevel(Terrains.WATER) > 0) && !cmd.isJumping()
-                    && (cmd.getFinalElevation() < 0)) {
-                if ((fieldOfFireUnit instanceof Mech) && !fieldOfFireUnit.isProne()
-                        && (hex.terrainLevel(Terrains.WATER) == 1)) {
-                    if ((fieldOfFireWpLoc == Mech.LOC_RLEG) || (fieldOfFireWpLoc == Mech.LOC_LLEG)) {
-                        fieldOfFireWpUnderwater = 1;
-                    }
-
-                    if (fieldOfFireUnit instanceof QuadMech) {
-                        if ((fieldOfFireWpLoc == Mech.LOC_RARM)
-                                || (fieldOfFireWpLoc == Mech.LOC_LARM)) {
-                            fieldOfFireWpUnderwater = 1;
-                        }
-                    }
-                    if (fieldOfFireUnit instanceof TripodMech) {
-                        if (fieldOfFireWpLoc == Mech.LOC_CLEG) {
-                            fieldOfFireWpUnderwater = 1;
-                        }
-                    }
-                } else {
-                    fieldOfFireWpUnderwater = 1;
-                }
-            }
-            setWeaponFieldOfFire(cmd.getFinalFacing(), cmd.getFinalCoords());
-        }
-    }
-
-    // prepares the sprites for a field of fire
-    public void setWeaponFieldOfFire(int fac, Coords c) {
-        if (fieldOfFireUnit == null || c == null) {
-            clearFieldOfFire();
-            return;
-        }
-
-        // Do not display anything for offboard units
-        if (fieldOfFireUnit.isOffBoard()) {
-            clearFieldOfFire();
-            return;
-        }
-
-        // check if extreme range is used
-        int maxrange = 4;
-        if (!game.getBoard().onGround() || game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE)) {
-            maxrange = 5;
-        }
-
-        // create the lists of hexes
-        List<Set<Coords>> fieldFire = new ArrayList<>(5);
-        int range = 1;
-        // for all available range brackets Min/S/M/L/E ...
-        for (int bracket = 0; bracket < maxrange; bracket++) {
-            fieldFire.add(new HashSet<>());
-            // Add all hexes up to the weapon range to separate lists
-            while (range <= fieldOfFireRanges[fieldOfFireWpUnderwater][bracket]) {
-                fieldFire.get(bracket).addAll(c.allAtDistance(range));
-                range++;
-                if (range > 100) {
-                    break; // only to avoid hangs
-                }
-            }
-
-            // Remove hexes that are not on the board or not in the arc
-            fieldFire.get(bracket).removeIf(h -> !game.getBoard().contains(h) || !Compute.isInArc(c, fac, h, fieldOfFireWpArc));
-        }
-
-        // create the sprites
-        //
-        fieldOfFireSprites.clear();
-
-        // for all available range brackets Min/S/M/L/E ...
-        for (int bracket = 0; bracket < fieldFire.size(); bracket++) {
-            if (fieldFire.get(bracket) == null) {
-                continue;
-            }
-            for (Coords loc : fieldFire.get(bracket)) {
-                // check surrounding hexes
-                int edgesToPaint = 0;
-                for (int dir = 0; dir < 6; dir++) {
-                    Coords adjacentHex = loc.translated(dir);
-                    if (!fieldFire.get(bracket).contains(adjacentHex)) {
-                        edgesToPaint += (1 << dir);
-                    }
-                }
-                // create sprite if there's a border to paint
-                if (edgesToPaint > 0) {
-                    FieldofFireSprite ffSprite = new FieldofFireSprite(this, bracket, loc, edgesToPaint);
-                    fieldOfFireSprites.add(ffSprite);
-                }
-            }
-            // Add range markers (m, S, M, L, E)
-            // this looks for a hex in the middle of the range bracket;
-            // if outside the board, nearer hexes will be tried until
-            // the inner edge of the range bracket is reached
-            // the directions tested are those that fall between the
-            // hex facings because this makes for a better placement
-            // ... most of the time...
-
-            // The directions[][] is used to make the marker placement
-            // fairly symmetrical to the unit facing which a simple for
-            // loop over the hex facings doesn't do
-            int[][] directions = {{0, 1}, {0, 5}, {3, 2}, {3, 4}, {1, 2}, {5, 4}};
-            // don't paint too many "min" markers
-            int numMinMarkers = 0;
-            for (int[] dir : directions) {
-                // find the middle of the range bracket
-                int rangeend = Math.max(fieldOfFireRanges[fieldOfFireWpUnderwater][bracket], 0);
-                int rangebegin = 1;
-                if (bracket > 0) {
-                    rangebegin = Math.max(fieldOfFireRanges[fieldOfFireWpUnderwater][bracket - 1] + 1, 1);
-                }
-                int dist = (rangeend + rangebegin) / 2;
-                // translate to the middle of the range bracket
-                Coords mark = c.translated((dir[0] + fac) % 6, (dist + 1) / 2)
-                        .translated((dir[1] + fac) % 6, dist / 2);
-                // traverse back to the unit until a hex is onboard
-                while (!game.getBoard().contains(mark)) {
-                    mark = Coords.nextHex(mark, c);
-                }
-
-                // add a text range marker if the found position is good
-                if (game.getBoard().contains(mark) && fieldFire.get(bracket).contains(mark)
-                        && ((bracket > 0) || (numMinMarkers < 2))) {
-                    TextMarkerSprite tS = new TextMarkerSprite(this, mark,
-                            rangeTexts[bracket], FieldofFireSprite.getFieldOfFireColor(bracket));
-                    fieldOfFireSprites.add(tS);
-                    if (bracket == 0) {
-                        numMinMarkers++;
-                    }
-                }
-            }
-        }
-
-        boardPanel.repaint();
     }
 
     /** Displays a dialog and changes the theme of all

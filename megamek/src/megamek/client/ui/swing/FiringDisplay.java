@@ -469,7 +469,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
         if (!clientgui.getBoardView().isMovingUnits()) {
             clientgui.maybeShowUnitDisplay();
         }
-        clientgui.getBoardView().clearFieldOfFire();
+        clientgui.clearFieldOfFire();
         clientgui.clearTemporarySprites();
 
         selectEntity(clientgui.getClient().getFirstEntityNum());
@@ -532,7 +532,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
         clientgui.getBoardView().cursor(null);
         clientgui.getBoardView().clearMovementData();
         clientgui.getBoardView().clearStrafingCoords();
-        clientgui.getBoardView().clearFieldOfFire();
+        clientgui.clearFieldOfFire();
         clientgui.clearTemporarySprites();
         clientgui.setSelectedEntityNum(Entity.NONE);
         disableButtons();

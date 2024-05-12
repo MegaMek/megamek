@@ -57,6 +57,7 @@ import megamek.common.MovePath.MoveStepType;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.GamePhase;
+import megamek.common.equipment.WeaponMounted;
 import megamek.common.event.*;
 import megamek.common.icons.Camouflage;
 import megamek.common.preference.IPreferenceChangeListener;
@@ -234,6 +235,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
     private SensorRangeSpriteHandler sensorRangeSpriteHandler;
     private CollapseWarningSpriteHandler collapseWarningSpriteHandler;
     private FiringSolutionSpriteHandler firingSolutionSpriteHandler;
+    private FiringArcSpriteHandler firingArcSpriteHandler;
     private final List<BoardViewSpriteHandler> spriteHandlers = new ArrayList<>();
     private JPanel panTop;
     private JSplitPane splitPaneA;
@@ -470,10 +472,11 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
         sensorRangeSpriteHandler = new SensorRangeSpriteHandler(bv, client.getGame());
         collapseWarningSpriteHandler = new CollapseWarningSpriteHandler(bv);
         firingSolutionSpriteHandler = new FiringSolutionSpriteHandler(bv, client);
+        firingArcSpriteHandler = new FiringArcSpriteHandler(bv, this);
 
         spriteHandlers.addAll(List.of(movementEnvelopeHandler, movementModifierSpriteHandler,
                 sensorRangeSpriteHandler, flareSpritesHandler, collapseWarningSpriteHandler,
-                firingSolutionSpriteHandler));
+                firingSolutionSpriteHandler, firingArcSpriteHandler));
         spriteHandlers.forEach(BoardViewSpriteHandler::initialize);
     }
 
@@ -2216,7 +2219,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
         @Override
         public void gameEnd(GameEndEvent e) {
             bv.clearMovementData();
-            bv.clearFieldOfFire();
+            clearFieldOfFire();
             clearTemporarySprites();
             getLocalBots().values().forEach(AbstractClient::die);
             getLocalBots().clear();
@@ -2841,6 +2844,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
         sensorRangeSpriteHandler.clear();
         collapseWarningSpriteHandler.clear();
         firingSolutionSpriteHandler.clear();
+        firingArcSpriteHandler.clear();
     }
 
     /**
@@ -2894,6 +2898,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
     public void weaponSelected(MechDisplayEvent b) {
         setSelectedEntityNum(b.getEntityId());
         setSelectedWeapon(b.getWeaponId());
+        firingArcSpriteHandler.updateSelectedWeapon(b.getEntity(), getSelectedWeapon());
     }
 
     private void setSelectedWeapon(int equipmentNumber) {
@@ -2909,8 +2914,8 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
     }
 
     @Nullable
-    public Mounted<?> getSelectedWeapon() {
-        return hasSelectedWeapon() ? getSelectedUnit().getEquipment(selectedWeapon) : null;
+    public WeaponMounted getSelectedWeapon() {
+        return hasSelectedWeapon() ? (WeaponMounted) getSelectedUnit().getEquipment(selectedWeapon) : null;
     }
 
     @Nullable
@@ -2925,5 +2930,30 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
 
     public JPanel getMainPanel() {
         return clientGuiPanel;
+    }
+
+    public void setFiringArcPosition(Entity entity, MovePath movePath) {
+        // Only update when the selected weapon is on the unit that's moving
+        if (entity.getId() == getSelectedEntityNum()) {
+            firingArcSpriteHandler.updatePosition(movePath);
+        }
+    }
+
+    public void setFiringArcPosition(Entity entity, Coords coords) {
+        // Only update when the selected weapon is on the unit that's changing position
+        if (entity.getId() == getSelectedEntityNum()) {
+            firingArcSpriteHandler.updatePosition(coords);
+        }
+    }
+
+    public void setFiringArcFacing(Entity entity) {
+        // Only update when the selected weapon is on the unit that's changing its facing
+        if (entity.getId() == getSelectedEntityNum()) {
+            firingArcSpriteHandler.updateFacing(entity.getFacing());
+        }
+    }
+
+    public void clearFieldOfFire() {
+        firingArcSpriteHandler.clearValues();
     }
 }

@@ -288,7 +288,7 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
         setStatusBarText(Messages.getFormattedString("PrephaseDisplay.its_your_turn", phase.toString(), ""));
         butDone.setText("<html><b>" + Messages.getString("PrephaseDisplay.Done") + "</b></html>");
 
-        clientgui.getBoardView().clearFieldOfFire();
+        clientgui.clearFieldOfFire();
         clientgui.clearTemporarySprites();
 
         selectEntity(clientgui.getClient().getFirstEntityNum());
@@ -311,7 +311,7 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
         clientgui.getBoardView().highlight(null);
         clientgui.getBoardView().cursor(null);
         clientgui.getBoardView().clearMovementData();
-        clientgui.getBoardView().clearFieldOfFire();
+        clientgui.clearFieldOfFire();
         clientgui.clearTemporarySprites();
         clientgui.setSelectedEntityNum(Entity.NONE);
 

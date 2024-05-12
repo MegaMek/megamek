@@ -310,7 +310,7 @@ public class PointblankShotDisplay extends FiringDisplay implements ItemListener
     @Override
     public void beginMyTurn() {
         clientgui.maybeShowUnitDisplay();
-        clientgui.getBoardView().clearFieldOfFire();
+        clientgui.clearFieldOfFire();
         clientgui.clearTemporarySprites();
 
         butDone.setEnabled(true);
@@ -341,7 +341,7 @@ public class PointblankShotDisplay extends FiringDisplay implements ItemListener
         clientgui.getBoardView().cursor(null);
         clientgui.getBoardView().clearMovementData();
         clientgui.getBoardView().clearStrafingCoords();
-        clientgui.getBoardView().clearFieldOfFire();
+        clientgui.clearFieldOfFire();
         clientgui.clearTemporarySprites();
         clientgui.setSelectedEntityNum(Entity.NONE);
         disableButtons();

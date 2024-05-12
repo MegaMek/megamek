@@ -226,13 +226,13 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
 
             clientgui.getUnitDisplay().displayEntity(ce());
             clientgui.getUnitDisplay().showPanel("movement");
-            clientgui.getBoardView().setWeaponFieldOfFire(ce().getFacing(), ce().getPosition());
+            clientgui.setFiringArcPosition(ce(), ce().getPosition());
             clientgui.showSensorRanges(ce());
             computeCFWarningHexes(ce());
         } else {
             disableButtons();
             setNextEnabled(true);
-            clientgui.getBoardView().clearFieldOfFire();
+            clientgui.clearFieldOfFire();
             clientgui.clearTemporarySprites();
         }
     }
@@ -515,7 +515,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             ce().setFacing(ce().getPosition().direction(moveto));
             ce().setSecondaryFacing(ce().getFacing());
             clientgui.getBoardView().redrawEntity(ce());
-            clientgui.getBoardView().setWeaponFieldOfFire(ce().getFacing(), ce().getPosition());
+            clientgui.setFiringArcFacing(ce());
             clientgui.showSensorRanges(ce());
             turnMode = false;
         } else if (ce().isBoardProhibited(board.getType())) {
@@ -581,7 +581,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             ce().setPosition(moveto);
 
             clientgui.getBoardView().redrawEntity(ce());
-            clientgui.getBoardView().setWeaponFieldOfFire(ce().getFacing(), moveto);
+            clientgui.setFiringArcPosition(ce(), moveto);
             clientgui.showSensorRanges(ce());
             clientgui.getBoardView().getPanel().repaint();
             butDone.setEnabled(true);
@@ -871,7 +871,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         if (null == e) {
             return;
         }
-        clientgui.getBoardView().clearFieldOfFire();
+        clientgui.clearFieldOfFire();
         clientgui.clearTemporarySprites();
         if (client.isMyTurn()) {
             if (client.getGame().getTurn().isValidEntity(e, client.getGame())) {

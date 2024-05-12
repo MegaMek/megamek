@@ -2932,6 +2932,14 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
         return clientGuiPanel;
     }
 
+    /**
+     * Updates the position used for showing the field of fire to the end point of the given movepath. This
+     * method does nothing if the given entity is not the one viewed in the unit viewer (and therefore
+     * not the one for which a weapon field of fire is currently shown).
+     *
+     * @param entity The unit to take the facing from if it is the currently viewed unit
+     * @param movePath A planned movement path to take the end position from
+     */
     public void setFiringArcPosition(Entity entity, MovePath movePath) {
         // Only update when the selected weapon is on the unit that's moving
         if (entity.getId() == getSelectedEntityNum()) {
@@ -2939,6 +2947,14 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
         }
     }
 
+    /**
+     * Updates the position used for showing the field of fire to the given position. This
+     * method does nothing if the given entity is not the one viewed in the unit viewer (and therefore
+     * not the one for which a weapon field of fire is currently shown).
+     *
+     * @param entity The unit to take the facing from if it is the currently viewed unit
+     * @param coords The position to center the field of fire on
+     */
     public void setFiringArcPosition(Entity entity, Coords coords) {
         // Only update when the selected weapon is on the unit that's changing position
         if (entity.getId() == getSelectedEntityNum()) {
@@ -2946,6 +2962,13 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
         }
     }
 
+    /**
+     * Updates the facing used for showing the field of fire to the basic facing of the given unit. This
+     * method does nothing if the given entity is not the one viewed in the unit viewer (and therefore
+     * not the one for which a weapon field of fire is currently shown).
+     *
+     * @param entity The unit to take the facing from if it is the currently viewed unit
+     */
     public void setFiringArcFacing(Entity entity) {
         // Only update when the selected weapon is on the unit that's changing its facing
         if (entity.getId() == getSelectedEntityNum()) {
@@ -2953,6 +2976,9 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
         }
     }
 
+    /**
+     * Removes the field of fire from the BoardView and clears the cached values in the sprite handler.
+     */
     public void clearFieldOfFire() {
         firingArcSpriteHandler.clearValues();
     }

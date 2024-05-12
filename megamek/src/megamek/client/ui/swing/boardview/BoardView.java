@@ -5000,13 +5000,6 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         return GUIP.getFovDarken() && !(game.getPhase().isReport());
     }
 
-    public boolean shouldShowFieldOfFire() {
-        return GUIP.getShowFieldOfFire() &&
-                (game.getPhase().isDeployment() || game.getPhase().isMovement()
-                        || game.getPhase().isTargeting() || game.getPhase().isFiring()
-                        || game.getPhase().isOffboard());
-    }
-
     public void setShowLobbyPlayerDeployment(boolean b) {
         showLobbyPlayerDeployment = b;
     }

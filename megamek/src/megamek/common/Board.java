@@ -219,12 +219,12 @@ public class Board implements Serializable {
      * @param errBuff A buffer for storing error messages, if any.  This is allowed to be null.
      */
     public void newData(final int width, final int height, final Hex[] data,
-                        final @Nullable StringBuffer errBuff) {
+                        final @Nullable List<String> errors) {
         this.width = width;
         this.height = height;
         this.data = data;
 
-        initializeAll(errBuff);
+        initializeAll(errors);
         processBoardEvent(new BoardEvent(this, null, BoardEvent.BOARD_NEW_BOARD));
     }
 
@@ -264,7 +264,7 @@ public class Board implements Serializable {
     /**
      * Initialize all hexes
      */
-    protected void initializeAll(final @Nullable StringBuffer errBuff) {
+    protected void initializeAll(final @Nullable List<String> errors) {
         // Initialize all buildings.
         buildings.removeAllElements();
         if (bldgByCoords == null) {
@@ -296,11 +296,10 @@ public class Board implements Serializable {
                         } catch (IllegalArgumentException excep) {
                             // Log the error and remove the
                             // building from the board.
-                            if (errBuff == null) {
+                            if (errors == null) {
                                 LogManager.getLogger().error("Unable to create building.", excep);
                             } else {
-                                errBuff.append("Unable to create building at ").append(coords)
-                                        .append("!\n").append(excep.getMessage()).append("\n");
+                                errors.add("Unable to create building at " + coords + ". " + excep.getMessage());
                             }
                             curHex.removeTerrain(Terrains.BUILDING);
                         }
@@ -324,11 +323,10 @@ public class Board implements Serializable {
                             }
                         } catch (IllegalArgumentException excep) {
                             // Log the error and remove the fuel tank from the board.
-                            if (errBuff == null) {
+                            if (errors == null) {
                                 LogManager.getLogger().error("Unable to create fuel tank.", excep);
                             } else {
-                                errBuff.append("Unable to create fuel tank at ").append(coords)
-                                        .append("!\n").append(excep.getMessage()).append("\n");
+                                errors.add("Unable to create fuel tank at " + coords + ". " + excep.getMessage());
                             }
                             curHex.removeTerrain(Terrains.FUEL_TANK);
                         }
@@ -351,11 +349,10 @@ public class Board implements Serializable {
                             }
                         } catch (IllegalArgumentException excep) {
                             // Log the error and remove the bridge from the board.
-                            if (errBuff == null) {
+                            if (errors == null) {
                                 LogManager.getLogger().error("Unable to create bridge.", excep);
                             } else {
-                                errBuff.append("Unable to create bridge at ").append(coords)
-                                        .append("!\n").append(excep.getMessage()).append("\n");
+                                errors.add("Unable to create bridge at " + coords + ". " + excep.getMessage());
                             }
                             curHex.removeTerrain(Terrains.BRIDGE);
                         }
@@ -810,9 +807,8 @@ public class Board implements Serializable {
             board += ".board";
         }
 
-        StringBuffer errBuff = new StringBuffer();
         try (InputStream is = new FileInputStream(new MegaMekFile(Configuration.boardsDir(), board).getFile())) {
-            tempBoard.load(is, errBuff, false);
+            tempBoard.load(is, null, false);
         } catch (IOException ex) {
             return false;
         }
@@ -933,7 +929,7 @@ public class Board implements Serializable {
         load(is, null, false);
     }
 
-    public void load(InputStream is, StringBuffer errBuff, boolean continueLoadOnError) {
+    public void load(InputStream is, @Nullable List<String> errors, boolean continueLoadOnError) {
         int nw = 0, nh = 0, di = 0;
         Hex[] nd = new Hex[0];
         int index = 0;
@@ -1032,12 +1028,12 @@ public class Board implements Serializable {
         }
 
         // check data integrity
-        if (isValid(nd, nw, nh, errBuff) && ((nw > 1) || (nh > 1) || (di == (nw * nh)))) {
-            newData(nw, nh, nd, errBuff);
+        if (isValid(nd, nw, nh, errors) && ((nw > 1) || (nh > 1) || (di == (nw * nh)))) {
+            newData(nw, nh, nd, errors);
         } else if (continueLoadOnError && ((nw > 1) || (nh > 1) || (di == (nw * nh)))) {
             LogManager.getLogger().error("Invalid board data!");
-            newData(nw, nh, nd, errBuff);
-        } else if (errBuff == null) {
+            newData(nw, nh, nd, errors);
+        } else if (errors == null) {
             LogManager.getLogger().error("Invalid board data!");
         }
     }
@@ -1047,21 +1043,26 @@ public class Board implements Serializable {
         return isValid(data, width, height, null);
     }
 
-    public boolean isValid(StringBuffer errBuff) {
+    public boolean isValid(@Nullable List<String> errors) {
         // Search for black-listed hexes
-        return isValid(data, width, height, errBuff);
+        return isValid(data, width, height, errors);
     }
 
-    private boolean isValid(Hex[] data, int width, int height, StringBuffer errBuff) {
+    private boolean isValid(Hex[] data, int width, int height, @Nullable List<String> errors) {
+        List<String> newErrors = new ArrayList<>();
         // Search for black-listed hexes
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
                 Hex hex = data[(y * width) + x];
                 if (hex == null) {
+                    if (errors != null) {
+                        errors.add("Null hex for coordinates " + x + "; " + y + ". Breaking off validity check.");
+                    }
+                    // A null hex must never happen. No need to process the rest of the board.
                     return false;
                 }
-                StringBuffer currBuff = new StringBuffer();
-                boolean valid = hex.isValid(currBuff);
+                List<String> hexErrors = new ArrayList<>();
+                hex.isValid(hexErrors);
 
                 // Multi-hex problems
                 // A building hex must only have exits to other building hexes of the same Building Type and Class
@@ -1072,34 +1073,38 @@ public class Board implements Serializable {
                                 && adjHex.containsTerrain(Terrains.BUILDING)
                                 && hex.containsTerrainExit(Terrains.BUILDING, dir)) {
                             if (adjHex.getTerrain(Terrains.BUILDING).getLevel() != hex.getTerrain(Terrains.BUILDING).getLevel()) {
-                                valid = false;
-                                currBuff.append("Building has an exit to a building of another Building Type (Light, Medium...).\n");
+                                hexErrors.add("Building has an exit to a building of another Building Type " +
+                                        "(Light, Medium...).");
                             }
                             int thisClass = hex.containsTerrain(Terrains.BLDG_CLASS) ?
                                     hex.getTerrain(Terrains.BLDG_CLASS).getLevel() : 0;
                             int adjClass = adjHex.containsTerrain(Terrains.BLDG_CLASS) ?
                                     adjHex.getTerrain(Terrains.BLDG_CLASS).getLevel() : 0;
                             if (thisClass != adjClass) {
-                                valid = false;
-                                currBuff.append("Building has an exit in direction ").append(dir).append(" to a building of another Building Class.\n");
+                                hexErrors.add("Building has an exit in direction " + dir + " to a building of " +
+                                        "another Building Class.");
                             }
                         }
                     }
                 }
 
-                // Return early if we aren't logging errors
-                if (!valid && (errBuff == null)) {
+                if (!hexErrors.isEmpty() && (errors == null)) {
+                    // Return early if we aren't logging errors
                     return false;
-                } else if (!valid) { // Otherwise, log the error for later output
-                    if (errBuff.length() > 0) {
-                        errBuff.append("----\n");
-                    }
-                    Coords c = new Coords(x, y);
-                    errBuff.append("Hex ").append(c.getBoardNum()).append(" is invalid:\n").append(currBuff);
+                } else if (!hexErrors.isEmpty()) {
+                    // Prepend a line that gives the hex coordinate for all found errors
+                    newErrors.add("Errors in hex " + new Coords(x, y).getBoardNum() + ":");
+                    newErrors.addAll(hexErrors);
+                    hexErrors.clear();
                 }
             }
         }
-        return true;
+
+        if (errors != null) {
+            errors.addAll(newErrors);
+        }
+
+        return newErrors.isEmpty();
     }
 
     /**

@@ -81,11 +81,11 @@ public class BoardsValidator {
         }
         
         try (InputStream is = new FileInputStream(boardFile)) {
-            StringBuffer errBuff = new StringBuffer();
+            List<String> errors = new ArrayList<>();
             Board b = new Board();
 
             try {
-                b.load(is, errBuff, false);
+                b.load(is, errors, false);
             } catch (Exception e) {
                 numBoardErrors++;
                 System.err.println("Found invalid board: " + boardFile);
@@ -93,11 +93,11 @@ public class BoardsValidator {
                 return;
             }
 
-            if (errBuff.length() > 0) {
+            if (!errors.isEmpty()) {
                 numBoardErrors++;
                 System.err.println("Found invalid board: " + boardFile);
                 if (isVerbose) {
-                    System.err.println(errBuff);
+                    System.err.println(String.join("\n", errors));
                 }
             }
         }

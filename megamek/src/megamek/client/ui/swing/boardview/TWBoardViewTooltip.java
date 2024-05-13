@@ -127,13 +127,11 @@ public class TWBoardViewTooltip implements BoardViewTooltipProvider {
             result += sbBuildings.toString();
 
             if (bv.displayInvalidFields()) {
-                StringBuffer errBuff = new StringBuffer();
-                if (!mhex.isValid(errBuff)) {
+                List<String> errors = new ArrayList<>();
+                if (!mhex.isValid(errors)) {
                     String sInvalidHex = Messages.getString("BoardView1.invalidHex");
                     sInvalidHex += "<BR>";
-                    String errors = errBuff.toString();
-                    errors = errors.replace("\n", "<BR>");
-                    sInvalidHex += errors;
+                    sInvalidHex += String.join("<BR>", errors);
                     sInvalidHex = guiScaledFontHTML(GUIP.getUnitToolTipFGColor()) + sInvalidHex + "</FONT>";
                     result += "<BR>" + sInvalidHex;
                 }

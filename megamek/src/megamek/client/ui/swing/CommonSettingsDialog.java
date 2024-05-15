@@ -20,6 +20,7 @@
  */
 package megamek.client.ui.swing;
 
+import com.formdev.flatlaf.icons.FlatHelpButtonIcon;
 import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.client.ui.baseComponents.AbstractButtonDialog;
@@ -1526,7 +1527,8 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         JButton userDirChooser = new JButton("...");
         userDirChooser.addActionListener(e -> fileChooseUserDir(userDir, getFrame()));
         userDirChooser.setToolTipText(Messages.getString("CommonSettingsDialog.userDir.chooser.title"));
-        JButton userDirHelp = new JButton("Help");
+        JButton userDirHelp = new JButton(new FlatHelpButtonIcon());
+        userDirHelp.putClientProperty("JButton.buttonType", "help");
         try {
             String helpTitle = Messages.getString("UserDirHelpDialog.title");
             URL helpFile = new File(MMConstants.USER_DIR_README_FILE).toURI().toURL();

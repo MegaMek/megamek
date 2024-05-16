@@ -24,6 +24,7 @@ import megamek.common.net.packets.Packet;
 import megamek.common.net.enums.PacketCommand;
 import megamek.common.options.GameOptions;
 import megamek.common.planetaryconditions.PlanetaryConditions;
+import megamek.common.Report;
 import megamek.server.SmokeCloud;
 import org.apache.logging.log4j.LogManager;
 
@@ -202,10 +203,10 @@ public class Precognition implements Runnable {
                     break;
                 case SENDING_REPORTS:
                 case SENDING_REPORTS_TACTICAL_GENIUS:
-                    getGame().addReports((Vector<Report>) c.getObject(0));
+                    getGame().addReports((List<Report>) c.getObject(0));
                     break;
                 case SENDING_REPORTS_ALL:
-                    Vector<Vector<Report>> allReports = (Vector<Vector<Report>>) c.getObject(0);
+                    var allReports = (List<List<Report>>) c.getObject(0);
                     getGame().setAllReports(allReports);
                     break;
                 case ENTITY_ATTACK:

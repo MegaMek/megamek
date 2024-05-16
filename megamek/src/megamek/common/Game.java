@@ -24,6 +24,7 @@ import megamek.common.actions.AttackAction;
 import megamek.common.actions.EntityAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.GamePhase;
+import megamek.common.equipment.AmmoMounted;
 import megamek.common.event.*;
 import megamek.common.force.Forces;
 import megamek.common.options.GameOptions;
@@ -48,7 +49,7 @@ import static java.util.stream.Collectors.toList;
  * Client and the Server should have one of these objects, and it is their job to
  * keep it synched.
  */
-public class Game extends AbstractGame implements Serializable, PlanetaryConditionsUsing {
+public final class Game extends AbstractGame implements Serializable, PlanetaryConditionsUsing {
     private static final long serialVersionUID = 8376320092671792532L;
 
     /**
@@ -73,11 +74,6 @@ public class Game extends AbstractGame implements Serializable, PlanetaryConditi
     private final Map<Coords, HashSet<Integer>> entityPosLookup = new HashMap<>();
 
     /**
-     * have the entities been deployed?
-     */
-    private boolean deploymentComplete = false;
-
-    /**
      * how's the weather?
      */
     private PlanetaryConditions planetaryConditions = new PlanetaryConditions();
@@ -99,7 +95,6 @@ public class Game extends AbstractGame implements Serializable, PlanetaryConditi
     private GamePhase lastPhase = GamePhase.UNKNOWN;
 
     // phase state
-    private Vector<EntityAction> actions = new Vector<>();
     private Vector<AttackAction> pendingCharges = new Vector<>();
     private Vector<AttackAction> pendingRams = new Vector<>();
     private Vector<AttackAction> pendingTeleMissileAttacks = new Vector<>();
@@ -113,9 +108,6 @@ public class Game extends AbstractGame implements Serializable, PlanetaryConditi
     private boolean forceVictory = false;
     private int victoryPlayerId = Player.PLAYER_NONE;
     private int victoryTeam = Player.TEAM_NONE;
-
-    private Hashtable<Integer, Vector<Entity>> deploymentTable = new Hashtable<>();
-    private int lastDeploymentRound = 0;
 
     private Hashtable<Coords, Vector<Minefield>> minefields = new Hashtable<>();
     private Vector<Minefield> vibrabombs = new Vector<>();
@@ -397,6 +389,71 @@ public class Game extends AbstractGame implements Serializable, PlanetaryConditi
         players.put(id, player);
         setupTeams();
         updatePlayer(player);
+    }
+
+    @Override
+    public boolean isCurrentPhasePlayable() {
+        switch (phase) {
+            case INITIATIVE:
+            case END:
+                return false;
+            case DEPLOYMENT:
+            case TARGETING:
+            case PREMOVEMENT:
+            case MOVEMENT:
+            case PREFIRING:
+            case FIRING:
+            case PHYSICAL:
+            case DEPLOY_MINEFIELDS:
+            case SET_ARTILLERY_AUTOHIT_HEXES:
+                return hasMoreTurns();
+            case OFFBOARD:
+                return hasMoreTurns() && isOffboardPlayable();
+            default:
+                return true;
+        }
+    }
+
+    /**
+     * Skip offboard phase, if there is no homing / semiguided ammo in play
+     */
+    private boolean isOffboardPlayable() {
+        for (final Entity entity : getEntitiesVector()) {
+            for (final AmmoMounted mounted : entity.getAmmo()) {
+                AmmoType ammoType = mounted.getType();
+
+                // per errata, TAG will spot for LRMs and such
+                if ((ammoType.getAmmoType() == AmmoType.T_LRM)
+                        || (ammoType.getAmmoType() == AmmoType.T_LRM_IMP)
+                        || (ammoType.getAmmoType() == AmmoType.T_MML)
+                        || (ammoType.getAmmoType() == AmmoType.T_NLRM)
+                        || (ammoType.getAmmoType() == AmmoType.T_MEK_MORTAR)) {
+                    return true;
+                }
+
+                if (((ammoType.getAmmoType() == AmmoType.T_ARROW_IV)
+                        || (ammoType.getAmmoType() == AmmoType.T_LONG_TOM)
+                        || (ammoType.getAmmoType() == AmmoType.T_SNIPER)
+                        || (ammoType.getAmmoType() == AmmoType.T_THUMPER))
+                        && (ammoType.getMunitionType().contains(AmmoType.Munitions.M_HOMING))) {
+                    return true;
+                }
+            }
+
+            if (entity.getBombs().stream().anyMatch(bomb -> !bomb.isDestroyed()
+                    && (bomb.getUsableShotsLeft() > 0)
+                    && (bomb.getType().getBombType() == BombType.B_LG))) {
+                return true;
+            }
+        }
+
+        // Go through all current attacks, checking if any use homing ammunition. If so, the phase
+        // is playable. This prevents issues from aerospace homing artillery with the aerospace
+        // unit having left the field already, for example
+        return getAttacksVector().stream()
+                .map(AttackHandler::getWaa)
+                .filter(Objects::nonNull)
+                .anyMatch(waa -> waa.getAmmoMunitionType().contains(AmmoType.Munitions.M_HOMING));
     }
 
     @Override
@@ -690,10 +747,10 @@ public class Game extends AbstractGame implements Serializable, PlanetaryConditi
             case FIRING:
             case PHYSICAL:
             case DEPLOYMENT:
-                resetActions();
+                clearActions();
                 break;
             case INITIATIVE:
-                resetActions();
+                clearActions();
                 resetCharges();
                 resetRams();
                 break;
@@ -719,79 +776,6 @@ public class Game extends AbstractGame implements Serializable, PlanetaryConditi
 
     public void setLastPhase(GamePhase lastPhase) {
         this.lastPhase = lastPhase;
-    }
-
-    public void setDeploymentComplete(boolean deploymentComplete) {
-        this.deploymentComplete = deploymentComplete;
-    }
-
-    public boolean isDeploymentComplete() {
-        return deploymentComplete;
-    }
-
-    /**
-     * Sets up the hashtable of who deploys when
-     */
-    public void setupRoundDeployment() {
-        deploymentTable = new Hashtable<>();
-
-        for (Entity ent : inGameTWEntities()) {
-            if (ent.isDeployed()) {
-                continue;
-            }
-
-            Vector<Entity> roundVec = deploymentTable.computeIfAbsent(ent.getDeployRound(), k -> new Vector<>());
-            roundVec.addElement(ent);
-            lastDeploymentRound = Math.max(lastDeploymentRound, ent.getDeployRound());
-        }
-    }
-
-    /**
-     * Checks to see if we've past our deployment completion
-     */
-    public void checkForCompleteDeployment() {
-        setDeploymentComplete(lastDeploymentRound < getRoundCount());
-    }
-
-    /**
-     * Check to see if we should deploy this round
-     */
-    public boolean shouldDeployThisRound() {
-        return shouldDeployForRound(getRoundCount());
-    }
-
-    public boolean shouldDeployForRound(int round) {
-        Vector<Entity> vec = getEntitiesToDeployForRound(round);
-        return (null != vec) && !vec.isEmpty();
-    }
-
-    private Vector<Entity> getEntitiesToDeployForRound(int round) {
-        return deploymentTable.get(round);
-    }
-
-    /**
-     * Clear this round from this list of entities to deploy
-     */
-    public void clearDeploymentThisRound() {
-        deploymentTable.remove(getRoundCount());
-    }
-
-    /**
-     * Returns a vector of entities that have not yet deployed
-     */
-    public List<Entity> getUndeployedEntities() {
-        List<Entity> entList = new ArrayList<>();
-        Enumeration<Vector<Entity>> iter = deploymentTable.elements();
-
-        while (iter.hasMoreElements()) {
-            Vector<Entity> vecTemp = iter.nextElement();
-
-            for (int i = 0; i < vecTemp.size(); i++) {
-                entList.add(vecTemp.elementAt(i));
-            }
-        }
-
-        return Collections.unmodifiableList(entList);
     }
 
     /**
@@ -1324,21 +1308,7 @@ public class Game extends AbstractGame implements Serializable, PlanetaryConditi
 
         // We also need to remove it from the list of things to be deployed...
         // we might still be in this list if we never joined the game
-        if (!deploymentTable.isEmpty()) {
-            Enumeration<Vector<Entity>> iter = deploymentTable.elements();
-
-            while (iter.hasMoreElements()) {
-                Vector<Entity> vec = iter.nextElement();
-
-                for (int i = vec.size() - 1; i >= 0; i--) {
-                    Entity en = vec.elementAt(i);
-
-                    if (en.getId() == id) {
-                        vec.removeElementAt(i);
-                    }
-                }
-            }
-        }
+        setupRoundDeployment();
         processGameEvent(new GameEntityRemoveEvent(this, toRemove));
     }
 
@@ -1364,7 +1334,7 @@ public class Game extends AbstractGame implements Serializable, PlanetaryConditi
         turnVector.clear();
         turnIndex = 0;
 
-        resetActions();
+        clearActions();
         resetCharges();
         resetRams();
         resetPSRs();
@@ -2207,14 +2177,6 @@ public class Game extends AbstractGame implements Serializable, PlanetaryConditi
         return turnsToRemove.size();
     }
 
-    /**
-     * Adds the specified action to the actions list for this phase.
-     */
-    public void addAction(EntityAction ea) {
-        actions.addElement(ea);
-        processGameEvent(new GameNewActionEvent(this, ea));
-    }
-
     public void setArtilleryVector(Vector<ArtilleryAttackAction> v) {
         offboardArtilleryAttacks = v;
         processGameEvent(new GameBoardChangeEvent(this));
@@ -2236,49 +2198,7 @@ public class Game extends AbstractGame implements Serializable, PlanetaryConditi
      * Returns an Enumeration of actions scheduled for this phase.
      */
     public Enumeration<EntityAction> getActions() {
-        return actions.elements();
-    }
-
-    /**
-     * Resets the actions list.
-     */
-    public void resetActions() {
-        actions.removeAllElements();
-    }
-
-    /**
-     * Removes all actions by the specified entity
-     */
-    public void removeActionsFor(int entityId) {
-        // or rather, only keeps actions NOT by that entity
-        Vector<EntityAction> toKeep = new Vector<>(actions.size());
-        for (EntityAction ea : actions) {
-            if (ea.getEntityId() != entityId) {
-                toKeep.addElement(ea);
-            }
-        }
-        actions = toKeep;
-    }
-
-    /**
-     * Remove a specified action
-     *
-     * @param o The action to remove.
-     */
-    public void removeAction(Object o) {
-        actions.removeElement(o);
-    }
-
-    public int actionsSize() {
-        return actions.size();
-    }
-
-    /**
-     * Returns the actions vector. Do not use to modify the actions; I will be
-     * angry. &gt;:[ Used for sending all actions to the client.
-     */
-    public List<EntityAction> getActionsVector() {
-        return Collections.unmodifiableList(actions);
+        return Collections.enumeration(pendingActions);
     }
 
     public void addInitiativeRerollRequest(Team t) {

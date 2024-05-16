@@ -507,7 +507,7 @@ public class GameManager extends AbstractGameManager {
         }
 
         // make sure the game advances
-        if (getGame().getPhase().hasTurns() && (null != getGame().getTurn())) {
+        if (getGame().getPhase().usesTurns() && (null != getGame().getTurn())) {
             if (getGame().getTurn().isValid(player.getId(), getGame())) {
                 sendGhostSkipMessage(player);
             }
@@ -597,19 +597,6 @@ public class GameManager extends AbstractGameManager {
         }
     }
 
-    public void transmitPlayerUpdate(Player p) {
-        Server.getServerInstance().transmitPlayerUpdate(p);
-    }
-
-    /**
-     * Sends out the player info updates for all players to all connections
-     */
-    private void transmitAllPlayerUpdates() {
-        for (var player: getGame().getPlayersVector()) {
-            transmitPlayerUpdate(player);
-        }
-    }
-
     public void sendServerChat(String message) {
         Server.getServerInstance().sendServerChat(message);
     }
@@ -680,7 +667,7 @@ public class GameManager extends AbstractGameManager {
                 send(connId, packetHelper.createAttackPacket(getGame().getTeleMissileAttacksVector(), true));
             }
 
-            if (getGame().getPhase().hasTurns() && getGame().hasMoreTurns()) {
+            if (getGame().getPhase().usesTurns() && getGame().hasMoreTurns()) {
                 send(connId, createTurnVectorPacket());
                 send(connId, createTurnIndexPacket(connId));
             } else if (!getGame().getPhase().isLounge() && !getGame().getPhase().isStartingScenario()) {
@@ -1372,7 +1359,7 @@ public class GameManager extends AbstractGameManager {
             return; // don't end the phase yet, players need to see new report
         }
 
-        if (!getGame().getPhase().hasTurns() && !isEmptyLobby()) {
+        if (!getGame().getPhase().usesTurns() && !isEmptyLobby()) {
             endCurrentPhase();
         }
     }
@@ -1583,17 +1570,15 @@ public class GameManager extends AbstractGameManager {
         game.setLastPhase(game.getPhase());
         game.setPhase(phase);
 
-        // prepare for the phase
         prepareForPhase(phase);
 
-        if (phase.isPlayable(getGame())) {
+        if (game.shouldSkipCurrentPhase()) {
+            endCurrentPhase();
+        } else {
             // tell the players about the new phase
             send(packetHelper.createPhaseChangePacket());
 
-            // post phase change stuff
             executePhase(phase);
-        } else {
-            endCurrentPhase();
         }
     }
 
@@ -1863,7 +1848,7 @@ public class GameManager extends AbstractGameManager {
             case INITIATIVE:
                 // remove the last traces of last round
                 game.handleInitiativeCompensation();
-                game.resetActions();
+                game.clearActions();
                 game.resetTagInfo();
                 sendTagInfoReset();
                 clearReports();
@@ -2326,7 +2311,7 @@ public class GameManager extends AbstractGameManager {
                 break;
             case DEPLOYMENT:
                 game.clearDeploymentThisRound();
-                game.checkForCompleteDeployment();
+//                game.checkForCompleteDeployment();
                 Enumeration<Player> pls = game.getPlayers();
                 while (pls.hasMoreElements()) {
                     Player p = pls.nextElement();
@@ -14228,7 +14213,7 @@ public class GameManager extends AbstractGameManager {
             }
         }
         // and clear the attacks Vector
-        game.resetActions();
+        game.clearActions();
     }
 
     /**
@@ -14936,7 +14921,7 @@ public class GameManager extends AbstractGameManager {
         }
 
         // reset actions and re-add valid elements
-        game.resetActions();
+        game.clearActions();
         for (EntityAction entityAction : toKeep) {
             game.addAction(entityAction);
         }
@@ -14948,7 +14933,7 @@ public class GameManager extends AbstractGameManager {
      * even if the pilot is unconscious, so that he can fail.
      */
     private void removeDeadAttacks() {
-        Vector<EntityAction> toKeep = new Vector<>(game.actionsSize());
+        Vector<EntityAction> toKeep = new Vector<>();
 
         for (Enumeration<EntityAction> i = game.getActions(); i.hasMoreElements(); ) {
             EntityAction action = i.nextElement();
@@ -14960,7 +14945,7 @@ public class GameManager extends AbstractGameManager {
         }
 
         // reset actions and re-add valid elements
-        game.resetActions();
+        game.clearActions();
         for (EntityAction entityAction : toKeep) {
             game.addAction(entityAction);
         }
@@ -30543,13 +30528,6 @@ public class GameManager extends AbstractGameManager {
     }
 
     /**
-     * Sends out the player ready stats for all players to all connections
-     */
-    private void transmitAllPlayerDones() {
-        getGame().getPlayersList().forEach(player -> send(packetHelper.createPlayerDonePacket(player.getId())));
-    }
-
-    /**
      * Creates a packet containing a hex, and the coordinates it goes at.
      */
     private Packet createHexChangePacket(Coords coords, Hex hex) {
@@ -32189,7 +32167,7 @@ public class GameManager extends AbstractGameManager {
         } // Handle the next pending unload action
 
         // Clear the list of pending units and move to the next turn.
-        game.resetActions();
+        game.clearActions();
         changeToNextTurn(connId);
     }
 

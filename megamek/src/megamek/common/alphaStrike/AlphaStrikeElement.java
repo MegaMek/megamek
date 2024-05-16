@@ -49,7 +49,7 @@ import java.util.Set;
 @JsonSerialize(using = ASElementSerializer.class)
 @JsonDeserialize(using = ASElementDeserializer.class)
 public class AlphaStrikeElement implements Serializable, ASCardDisplayable, ASSpecialAbilityCollector,
-        BattleForceSUAFormatter, ForceAssignable {
+        BattleForceSUAFormatter, ForceAssignable, Deployable {
 
     static final int RANGEBANDS_SML = 3;
     static final int RANGEBANDS_SMLE = 4;
@@ -125,6 +125,9 @@ public class AlphaStrikeElement implements Serializable, ASCardDisplayable, ASSp
      * currently, the TW quirks are just reproduced here.
      */
     private Quirks quirks = new Quirks();
+
+    private boolean isDeployed = false;
+    private int deployRound = 0;
 
     @Override
     public String getChassis() {
@@ -612,6 +615,17 @@ public class AlphaStrikeElement implements Serializable, ASCardDisplayable, ASSp
     }
 
     @Override
+    public boolean isDeployed() {
+        return isDeployed;
+    }
+
+    @Override
+    public int getDeployRound() {
+        //TODO: This is a stub
+        return 0;
+    }
+
+    @Override
     public boolean showSUA(BattleForceSUA sua) {
         return !AlphaStrikeHelper.hideSpecial(sua, this);
     }
@@ -643,5 +657,23 @@ public class AlphaStrikeElement implements Serializable, ASCardDisplayable, ASSp
                     + "; A" + fullArmor + "S" + fullStructure + "; PV" + pointValue + "@" + skill
                     + "; " + AlphaStrikeHelper.getSpecialsExportString(", ", this);
         }
+    }
+
+
+    /**
+     * Returns the game round that this element is to be deployed in. Note that deployment technically
+     * counts as happening at the end of that round.
+     *
+     * @param deployRound The round this element deploys in
+     */
+    public void setDeployRound(int deployRound) {
+        this.deployRound = deployRound;
+    }
+
+    /**
+     * Sets this element's deployment status to the given status
+     */
+    public void setDeployed(boolean deployed) {
+        isDeployed = deployed;
     }
 }

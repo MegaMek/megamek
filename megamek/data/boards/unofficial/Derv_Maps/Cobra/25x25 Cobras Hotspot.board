@@ -1,4 +1,7 @@
 size 25 25
+tag "LunarTheme (Auto)"
+tag "Cliffs (Auto)"
+tag "Lava (Auto)"
 hex 0101 0 "magma:1" "lunar"
 hex 0201 0 "magma:1" "lunar"
 hex 0301 0 "magma:1" "lunar"

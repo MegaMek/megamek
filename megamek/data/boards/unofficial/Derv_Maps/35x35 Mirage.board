@@ -1,5 +1,7 @@
 size 35 35
 option exit_roads_to_pavement false
+tag "GrassTheme (Auto)"
+tag "LowHills (Auto)"
 hex 0101 -2 "" ""
 hex 0201 -2 "" ""
 hex 0301 -3 "" ""

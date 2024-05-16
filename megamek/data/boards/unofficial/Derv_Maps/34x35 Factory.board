@@ -1,4 +1,8 @@
 size 34 35
+tag "GrassTheme (Auto)"
+tag "Cliffs (Auto)"
+tag "Water (Auto)"
+tag "HighHills (Auto)"
 hex 0101 12 "impassable:0" ""
 hex 0201 12 "impassable:0" ""
 hex 0301 12 "impassable:0" ""

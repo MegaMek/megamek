@@ -1,4 +1,6 @@
 size 35 35
+tag "GrassTheme (Auto)"
+tag "Flat (Auto)"
 hex 0101 0 "" "grass"
 hex 0201 0 "" "grass"
 hex 0301 0 "" "grass"

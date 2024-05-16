@@ -1100,9 +1100,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                         if (boardFile.exists()) {
                             buttonBoard = new Board(16, 17);
                             buttonBoard.load(new MegaMekFile(Configuration.boardsDir(), boardForImage + CL_KEY_FILEEXTENTION_BOARD).getFile());
-                            StringBuffer errs = new StringBuffer();
                             try (InputStream is = new FileInputStream(new MegaMekFile(Configuration.boardsDir(), boardForImage + CL_KEY_FILEEXTENTION_BOARD).getFile())) {
-                                buttonBoard.load(is, errs, true);
+                                buttonBoard.load(is, null, true);
                                 BoardUtilities.flip(buttonBoard, rotateBoard, rotateBoard);
                             } catch (IOException ex) {
                                 buttonBoard = Board.createEmptyBoard(mapSettings.getBoardWidth(), mapSettings.getBoardHeight());
@@ -3293,11 +3292,11 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         private Image prepareImage(String boardName) {
             File boardFile = new MegaMekFile(Configuration.boardsDir(), boardName + CL_KEY_FILEEXTENTION_BOARD).getFile();
             Board board;
-            StringBuffer errs = new StringBuffer();
+            List<String> errors = new ArrayList<>();
             if (boardFile.exists()) {
                 board = new Board();
                 try (InputStream is = new FileInputStream(boardFile)) {
-                    board.load(is, errs, true);
+                    board.load(is, errors, true);
                 } catch (IOException ex) {
                     board = Board.createEmptyBoard(mapSettings.getBoardWidth(), mapSettings.getBoardHeight());
                 }
@@ -3337,10 +3336,10 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             // Add the board name label and the server-side board label if necessary
             String text = LobbyUtility.cleanBoardName(boardName, mapSettings);
             Graphics g = bufImage.getGraphics();
-            if (errs.length() != 0) {
+            if (!errors.isEmpty()) {
                 invalidBoards.add(boardName);
             }
-            drawMinimapLabel(text, bufImage.getWidth(), bufImage.getHeight(), g, errs.length() != 0);
+            drawMinimapLabel(text, bufImage.getWidth(), bufImage.getHeight(), g, !errors.isEmpty());
             if (!boardFile.exists() && !boardName.startsWith(MapSettings.BOARD_GENERATED)) {
                 serverBoards.add(boardName);
                 markServerSideBoard(bufImage);

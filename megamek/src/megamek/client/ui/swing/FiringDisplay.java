@@ -472,7 +472,9 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
         clientgui.getBoardView().clearFieldOfFire();
         clientgui.clearTemporarySprites();
 
-        selectEntity(clientgui.getClient().getFirstEntityNum());
+        if (GUIP.getAutoSelectNextUnit()) {
+            selectEntity(clientgui.getClient().getFirstEntityNum());
+        }
 
         GameTurn turn = clientgui.getClient().getMyTurn();
         // There's special processing for triggering AP Pods.
@@ -1729,7 +1731,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
         }
 
         if (b.getType() == BoardViewEvent.BOARD_HEX_DRAGGED) {
-            if (!ce().getAlreadyTwisted() && (shiftheld || twisting)) {
+            if ((ce() != null) && !ce().getAlreadyTwisted() && (shiftheld || twisting)) {
                 updateFlipArms(false);
                 torsoTwist(b.getCoords());
             }

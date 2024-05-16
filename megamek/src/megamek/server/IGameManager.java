@@ -16,6 +16,7 @@ package megamek.server;
 import megamek.common.IGame;
 import megamek.common.Player;
 import megamek.common.Report;
+import megamek.common.ReportEntry;
 import megamek.common.net.packets.Packet;
 import megamek.server.commands.ServerCommand;
 
@@ -86,7 +87,7 @@ public interface IGameManager {
 
     List<ServerCommand> getCommandList(Server server);
 
-    void addReport(Report r);
+    void addReport(ReportEntry r);
 
     /**
      * Calculates and sets any initial unit counts and BV/PV for all players, and thus should only be called at the

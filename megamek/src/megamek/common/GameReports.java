@@ -15,71 +15,76 @@ package megamek.common;
 
 import org.apache.logging.log4j.LogManager;
 
-import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 
 /**
  * This class is a container for the various reports created by the server
  * during a game.
  */
-public class GameReports implements Serializable {
+public class GameReports implements FullGameReport<Report> {
     private static final long serialVersionUID = -2388197938278797669L;
-    private Vector<Vector<Report>> reports;
 
-    GameReports() {
-        reports = new Vector<>();
+    private List<List<Report>> reports;
+
+    public GameReports() {
+        reports = new ArrayList<>();
     }
 
-    public void add(int round, Vector<Report> v) {
+    @Override
+    public void add(int round, List<Report> v) {
         if (round == 0) {
             // Combine round 0 (deployment) with round one's reports.
             round = 1;
         }
-        if (round > reports.size()) {
+        if (!hasReportsforRound(round)) {
             // First reports for the round.
-            reports.addElement(new Vector<>(v));
+            reports.add(new ArrayList<>(v));
         } else {
-            // Already have some reports for this round, so we'll append these
-            // new ones.
-            reports.elementAt(round - 1).addAll(new Vector<>(v));
+            // Already have some reports for this round, so we'll append these new ones.
+            reports.get(round - 1).addAll(new Vector<>(v));
         }
     }
 
-    /**
-     *  Get a single round's reports.
-     */
-    public Vector<Report> get(int round) {
+    @Override
+    public boolean hasReportsforRound(int round) {
+        return round <= reports.size();
+    }
+
+    @Override
+    public List<Report> get(int round) {
         if (round == 0) {
             // Round 0 (deployment) reports are lumped in with round one.
             round = 1;
         }
-        if (round <= reports.size()) {
-            return reports.elementAt(round - 1);
+        if (hasReportsforRound(round)) {
+            return reports.get(round - 1);
         }
 
-        LogManager.getLogger().error(
-                "GameReports.get() was asked for reports of a round [" + round + "] which it does not posses.",
-                new RuntimeException());
+        LogManager.getLogger().error("GameReports.get() was asked for reports of round {} which it does not have",
+                round, new RuntimeException());
         return null;
     }
 
     /**
-     *  Get all the reports.
+     *  Returns the full set of reports. Note that the lists are fully modifiable and no copies.
      */
-    public Vector<Vector<Report>> get() {
+    public List<List<Report>> get() {
         return reports;
     }
 
     /**
-     * Set the reports vector from outside all at once.
-     * @param v
+     * Replaces the entire contents of this FullGameReport with the given List of report lists.
+     *
+     * @param v The new contents
      */
-    public void set(Vector<Vector<Report>> v) {
+    public void set(List<List<Report>> v) {
         reports = v;
     }
 
     public void clear() {
-        reports = new Vector<>();
+        reports.clear();
     }
 
 }

@@ -167,7 +167,9 @@ public class MegamekButton extends JButton implements MouseListener {
      */
     private void initialize(String component, boolean defaultToPlain) {
         SkinSpecification skinSpec = SkinXMLHandler.getSkin(component, defaultToPlain, true);
-        setBorder(new MegamekBorder(skinSpec));
+        if (!skinSpec.noBorder) {
+            setBorder(new MegamekBorder(skinSpec));
+        }
         loadIcon(skinSpec);
         isBGTiled = skinSpec.tileBackground;
 

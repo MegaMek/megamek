@@ -24,9 +24,7 @@ import megamek.common.Configuration;
 import megamek.common.Hex;
 
 import java.io.*;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static java.util.stream.Collectors.toSet;
 import static megamek.common.Terrains.*;
@@ -159,9 +157,9 @@ public class BoardsTagger {
         Board board = new Board();
         try (InputStream is = new FileInputStream(boardFile)) {
             // Apply tags only to boards that are valid and fully functional
-            StringBuffer errors = new StringBuffer();
+            List<String> errors = new ArrayList<>();
             board.load(is, errors, true);
-            if (errors.length() > 0) {
+            if (!errors.isEmpty()) {
                 System.out.println("Board has errors: " + boardFile);
                 return;
             }

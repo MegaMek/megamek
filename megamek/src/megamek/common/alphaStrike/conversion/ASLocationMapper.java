@@ -91,6 +91,31 @@ public class ASLocationMapper {
         }
     }
 
+    /**
+     * Returns the value multiplier for the given Mounted of the given entity in the AS conversion location loc.
+     * The AS conversion location is an {@link megamek.common.alphaStrike.ASSpecialAbilityCollection} assembling
+     * the specials for the unit, a TUR ability, REAR and the arcs of large units, not the
+     * mounted's location on the entity. This multiplier is only correct for weapon-based special abilities
+     * like MHQ, C3M, NARC or ART-x abilities.
+     *
+     * @param en The entity
+     * @param loc The conversion location index, see locations[] in ASDamageConverter
+     * @param mount the weapon
+     * @return The value multiplier, 1 meaning "counts for this location", 0 meaning "doesnt count"
+     */
+    public static double damageLocationMultiplierForSpecials(Entity en, int loc, Mounted mount) {
+        if (en.isFighter() || en.isProtoMek() || en.isMek()) {
+            if ((loc == 0) && (mount.isRearMounted() || (en.isFighter() && mount.getLocation() == Aero.LOC_AFT))) {
+                // Special abilities like MHQ or ART must count for loc 0 (standard specials) even if in rear locations
+                return 1;
+            } else if (locationName(en, loc).equals("REAR")) {
+                return 0;
+            }
+        }
+        return damageLocationMultiplier(en, loc, mount);
+
+    }
+
     public static String locationName(Entity en, int index) {
         if ((en instanceof Warship) || (en instanceof SmallCraft)) {
             return en.getLocationAbbrs()[index];

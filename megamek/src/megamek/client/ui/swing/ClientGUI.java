@@ -459,6 +459,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
     /**
      * Initializes a number of things about this frame.
      */
+    @Override
     protected void initializeFrame() {
         super.initializeFrame();
         menuBar = new CommonMenuBar(getClient());
@@ -1951,6 +1952,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
         }
     }
 
+    @Override
     public boolean saveGame() {
         ignoreHotKeys = true;
         JFileChooser fc = new JFileChooser(MMConstants.SAVEGAME_DIR);

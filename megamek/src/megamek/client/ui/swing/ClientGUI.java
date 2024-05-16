@@ -461,7 +461,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
     @Override
     protected void initializeFrame() {
         super.initializeFrame();
-        menuBar = new CommonMenuBar(getClient());
+        menuBar = CommonMenuBar.getMenuBarForGame();
         frame.setJMenuBar(menuBar);
     }
 

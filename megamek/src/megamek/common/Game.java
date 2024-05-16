@@ -74,11 +74,6 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     private final Map<Coords, HashSet<Integer>> entityPosLookup = new HashMap<>();
 
     /**
-     * have the entities been deployed?
-     */
-    private boolean deploymentComplete = false;
-
-    /**
      * how's the weather?
      */
     private PlanetaryConditions planetaryConditions = new PlanetaryConditions();
@@ -114,9 +109,6 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     private boolean forceVictory = false;
     private int victoryPlayerId = Player.PLAYER_NONE;
     private int victoryTeam = Player.TEAM_NONE;
-
-//    private Hashtable<Integer, Vector<Entity>> deploymentTable = new Hashtable<>();
-    private int lastDeploymentRound = 0;
 
     private Hashtable<Coords, Vector<Minefield>> minefields = new Hashtable<>();
     private Vector<Minefield> vibrabombs = new Vector<>();

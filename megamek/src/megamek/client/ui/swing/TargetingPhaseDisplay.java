@@ -367,10 +367,8 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements
 
             setFireModeEnabled(true);
 
-            if (GUIP.getFiringSolutions() && !ce().isOffBoard()) {
-                setFiringSolutions(ce());
-            } else {
-                clientgui.getBoardView().clearFiringSolutionData();
+            if (!ce().isOffBoard()) {
+                clientgui.showFiringSolutions(ce());
             }
         } else {
             LogManager.getLogger().error("Tried to select non-existent entity: " + en);
@@ -387,14 +385,17 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements
             clientgui.maybeShowUnitDisplay();
         }
         clientgui.getBoardView().clearFieldOfFire();
-        clientgui.getBoardView().clearSensorsRanges();
+        clientgui.clearTemporarySprites();
 
-        selectEntity(clientgui.getClient().getFirstEntityNum());
+        if (GUIP.getAutoSelectNextUnit()) {
+            selectEntity(clientgui.getClient().getFirstEntityNum());
+        }
         setDisengageEnabled((ce() != null) && attacks.isEmpty() && ce().canFlee());
 
         GameTurn turn = clientgui.getClient().getMyTurn();
         // There's special processing for triggering AP Pods.
         if ((turn instanceof GameTurn.TriggerAPPodTurn) && (null != ce())) {
+            selectEntity(clientgui.getClient().getFirstEntityNum());
             disableButtons();
             TriggerAPPodDialog dialog = new TriggerAPPodDialog(clientgui.getFrame(), ce());
             dialog.setVisible(true);
@@ -405,6 +406,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements
             }
             ready();
         } else if ((turn instanceof GameTurn.TriggerBPodTurn) && (null != ce())) {
+            selectEntity(clientgui.getClient().getFirstEntityNum());
             disableButtons();
             TriggerBPodDialog dialog = new TriggerBPodDialog(clientgui, ce(),
                     ((GameTurn.TriggerBPodTurn) turn).getAttackType());
@@ -445,10 +447,9 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements
         clientgui.getBoardView().select(null);
         clientgui.getBoardView().highlight(null);
         clientgui.getBoardView().cursor(null);
-        clientgui.getBoardView().clearFiringSolutionData();
         clientgui.getBoardView().clearMovementData();
         clientgui.getBoardView().clearFieldOfFire();
-        clientgui.getBoardView().clearSensorsRanges();
+        clientgui.clearTemporarySprites();
         clientgui.setSelectedEntityNum(Entity.NONE);
         disableButtons();
     }
@@ -1033,8 +1034,10 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements
 
         if (b.getType() == BoardViewEvent.BOARD_HEX_DRAGGED) {
             if (phase.isOffboard() && (shiftheld || twisting)) {
-                updateFlipArms(false);
-                torsoTwist(b.getCoords());
+                if (ce() != null) {
+                    updateFlipArms(false);
+                    torsoTwist(b.getCoords());
+                }
             }
             clientgui.getBoardView().cursor(b.getCoords());
         } else if (b.getType() == BoardViewEvent.BOARD_HEX_CLICKED) {

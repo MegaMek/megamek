@@ -301,7 +301,7 @@ public class PointblankShotDisplay extends FiringDisplay implements ItemListener
             LogManager.getLogger().error("Tried to select non-existent entity " + en);
         }
 
-        clientgui.getBoardView().clearFiringSolutionData();
+        clientgui.clearTemporarySprites();
     }
 
     /**
@@ -311,7 +311,7 @@ public class PointblankShotDisplay extends FiringDisplay implements ItemListener
     public void beginMyTurn() {
         clientgui.maybeShowUnitDisplay();
         clientgui.getBoardView().clearFieldOfFire();
-        clientgui.getBoardView().clearSensorsRanges();
+        clientgui.clearTemporarySprites();
 
         butDone.setEnabled(true);
         if (numButtonGroups > 1) {
@@ -340,10 +340,9 @@ public class PointblankShotDisplay extends FiringDisplay implements ItemListener
         clientgui.getBoardView().highlight(null);
         clientgui.getBoardView().cursor(null);
         clientgui.getBoardView().clearMovementData();
-        clientgui.getBoardView().clearFiringSolutionData();
         clientgui.getBoardView().clearStrafingCoords();
         clientgui.getBoardView().clearFieldOfFire();
-        clientgui.getBoardView().clearSensorsRanges();
+        clientgui.clearTemporarySprites();
         clientgui.setSelectedEntityNum(Entity.NONE);
         disableButtons();
         // Return back to the movement phase display

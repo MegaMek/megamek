@@ -12,7 +12,6 @@ import megamek.common.Coords;
  * An ancestor class for all Sprites that can be enclosed within a single hex.
  * 
  * @author Saginatio
- * 
  */
 public abstract class HexSprite extends Sprite {
 
@@ -49,4 +48,14 @@ public abstract class HexSprite extends Sprite {
                 Transparency.TRANSLUCENT);
     }
 
+    /**
+     * Returns true when this Sprite should be hidden by overlapping terrain in isometric mode,
+     * i.e. hidden behind mountains.
+     * By default, this method returns true.
+     *
+     * @return True for Sprites that should be hidden by overlapping terrain in isometric mode
+     */
+    protected boolean isBehindTerrain() {
+        return true;
+    }
 }

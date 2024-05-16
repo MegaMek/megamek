@@ -119,12 +119,14 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String MMSYMBOL = "MmSymbol";
     public static final String SOFTCENTER = "SoftCenter";
     public static final String AUTOCENTER = "AutoCenter";
+    public static final String AUTO_SELECT_NEXT = "AutoSelectNextUnit";
     public static final String AUTO_END_FIRING = "AutoEndFiring";
     public static final String AUTO_DECLARE_SEARCHLIGHT = "AutoDeclareSearchlight";
 
     public static final String WARNING_COLOR = "WarningColor";
     public static final String CAUTION_COLOR = "CautionColor";
     public static final String PRECAUTION_COLOR = "PrecautionColor";
+    public static final String OK_COLOR = "OkColor";
 
     public static final String CUSTOM_UNIT_HEIGHT = "CustomUnitDialogSizeHeight";
     public static final String CUSTOM_UNIT_WIDTH = "CustomUnitDialogSizeWidth";
@@ -454,6 +456,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         setDefault(WARNING_COLOR, DEFAULT_RED);
         setDefault(CAUTION_COLOR, Color.yellow);
         setDefault(PRECAUTION_COLOR, Color.orange);
+        setDefault(OK_COLOR, DEFAULT_GREEN);
 
         setDefault(PlayerColour.PLAYERCOLOUR_BLUE, new Color(0x8686BF));
         setDefault(PlayerColour.PLAYERCOLOUR_RED, new Color(0xCC6666));
@@ -481,7 +484,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         setDefault(PlayerColour.PLAYERCOLOUR_YELLOW, new Color(0xF2F261));
 
         setDefault(BOARD_MOVE_DEFAULT_CLIMB_MODE, true);
-        setDefault(BOARD_MOVE_DEFAULT_COLOR, DEFAULT_CYAN.CYAN);
+        setDefault(BOARD_MOVE_DEFAULT_COLOR, Color.CYAN);
         setDefault(BOARD_MOVE_ILLEGAL_COLOR, DEFAULT_DARK_GRAY);
         setDefault(BOARD_MOVE_JUMP_COLOR, DEFAULT_RED);
         setDefault(BOARD_MOVE_MASC_COLOR, DEFAULT_ORANGE);
@@ -748,6 +751,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(SKIN_FILE, "BW - Default.xml");
         store.setDefault(SOFTCENTER, false);
         store.setDefault(AUTOCENTER, true);
+        store.setDefault(AUTO_SELECT_NEXT, true);
         store.setDefault(UI_THEME, "com.formdev.flatlaf.FlatDarculaLaf");
 
         store.setDefault(RAT_TECH_LEVEL, 0);
@@ -1048,7 +1052,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         return store.getBoolean(FOCUS);
     }
 
-    public boolean getFiringSolutions() {
+    public boolean getShowFiringSolutions() {
         return store.getBoolean(FIRING_SOLUTIONS);
     }
 
@@ -1559,6 +1563,14 @@ public class GUIPreferences extends PreferenceStoreProxy {
         return store.getBoolean(AUTOCENTER);
     }
 
+    public boolean getAutoSelectNextUnit() {
+        return store.getBoolean(AUTO_SELECT_NEXT);
+    }
+
+    public void setAutoSelectNextUnit(boolean autoSelectNextUnit) {
+        store.setValue(AUTO_SELECT_NEXT, autoSelectNextUnit);
+    }
+
     public boolean getNoSaveNag() {
         return store.getBoolean(ADVANCED_NO_SAVE_NAG);
     }
@@ -1866,7 +1878,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setValue(FOCUS, state);
     }
 
-    public void setFiringSolutions(boolean state) {
+    public void setShowFiringSolutions(boolean state) {
         store.setValue(FIRING_SOLUTIONS, state);
     }
 
@@ -2505,6 +2517,14 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setPrecautionColor(Color color) {
         store.setValue(PRECAUTION_COLOR, getColorString(color));
+    }
+
+    public Color getOkColor() {
+        return getColor(OK_COLOR);
+    }
+
+    public void setOkColor(Color color) {
+        store.setValue(OK_COLOR, getColorString(color));
     }
 
     public boolean getMoveDefaultClimbMode() {

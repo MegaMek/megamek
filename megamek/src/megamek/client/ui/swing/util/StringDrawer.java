@@ -53,6 +53,8 @@ import java.awt.geom.AffineTransform;
  */
 public class StringDrawer {
 
+    private static final String VERTICAL_CENTER_PLACEHOLDER = "AKMPO";
+
     private final String text;
     private int x = 0;
     private int y = 0;
@@ -63,6 +65,7 @@ public class StringDrawer {
     private float dualOutlineWidth = 0;
     private boolean centerX = false;
     private boolean centerY = false;
+    private boolean absoluteCenter = false;
     private boolean rightAlign = false;
     private Font font = null;
     private float fontSize = -1;
@@ -124,6 +127,7 @@ public class StringDrawer {
      * vertical centering works in a special fashion explained in {@link #centerY()}.
      *
      * @return The StringDrawer itself
+     * @see #absoluteCenter()
      */
     public StringDrawer center() {
         return centerX().centerY();
@@ -154,10 +158,44 @@ public class StringDrawer {
      * capital letters).
      *
      * @return The StringDrawer itself
+     * @see #absoluteCenterY()
      */
     public StringDrawer centerY() {
         centerY = true;
+        absoluteCenter = false;
         return this;
+    }
+
+    /**
+     * Sets the StringDrawer to center the text vertically on the y coordinate given by
+     * {@link #at(int, int)}.
+     * <BR><BR>
+     * Note: In contrast to {@link #centerY()}, this centers the text based on its own vertical size.
+     * This is useful when e.g. centering a single letter or symbol and when no alignment with other
+     * text is required.
+     *
+     * @return The StringDrawer itself
+     * @see #centerY()
+     * @see #absoluteCenter()
+     */
+    public StringDrawer absoluteCenterY() {
+        centerY = true;
+        absoluteCenter = true;
+        return this;
+    }
+
+    /**
+     * Sets the StringDrawer to center the text on the coordinate given by {@link #at(int, int)}.
+     * This is equivalent to calling both {@link #centerX()} and {@link #absoluteCenterY()}. Note that
+     * vertical centering works based on the text's own vertical size as explained in
+     * {@link #absoluteCenterY()}.
+     *
+     * @return The StringDrawer itself
+     * @see #center()
+     * @see #absoluteCenterY()
+     */
+    public StringDrawer absoluteCenter() {
+        return centerX().absoluteCenterY();
     }
 
     /**
@@ -297,7 +335,9 @@ public class StringDrawer {
         centerX = style.centerX;
         rightAlign = style.rightAlign;
         centerY = style.centerY;
+        absoluteCenter = style.absoluteCenter;
         angle = style.angle;
+        fontSize = style.fontSize;
         return this;
     }
 
@@ -355,11 +395,15 @@ public class StringDrawer {
         }
 
         // Use the size of a pure uppercase placeholder text for Y-centering to keep the same baseline for any text
-        GlyphVector gvUpperCase = g2D.getFont().createGlyphVector(frc, "AKMPO");
-        Rectangle boundsUpperCase = gvUpperCase.getPixelBounds(null, 0, 0);
+        // unless absoluteCentering is used
+        Rectangle centeringBounds = bounds;
+        if (!absoluteCenter) {
+            GlyphVector gvUpperCase = g2D.getFont().createGlyphVector(frc, absoluteCenter ? text : VERTICAL_CENTER_PLACEHOLDER);
+            centeringBounds = gvUpperCase.getPixelBounds(null, 0, 0);
+        }
 
         int posX = centerX ? x - bounds.width / 2 - bounds.x : x;
-        int posY = centerY ? y + boundsUpperCase.height / 2 : y;
+        int posY = centerY ? y + centeringBounds.height / 2 - centeringBounds.height - centeringBounds.y : y;
         if (rightAlign) {
             posX = x - bounds.width - bounds.x;
         }
@@ -438,7 +482,9 @@ public class StringDrawer {
         private boolean centerX = false;
         private boolean rightAlign = false;
         private boolean centerY = false;
+        private boolean absoluteCenter = false;
         private Font font = null;
+        private float fontSize = -1;
         private double angle = 0;
 
         public StringDrawerConfig color(Color color) {
@@ -448,6 +494,10 @@ public class StringDrawer {
 
         public StringDrawerConfig center() {
             return centerX().centerY();
+        }
+
+        public StringDrawerConfig absoluteCenter() {
+            return centerX().absoluteCenterY();
         }
 
         public StringDrawerConfig centerX() {
@@ -463,11 +513,23 @@ public class StringDrawer {
 
         public StringDrawerConfig centerY() {
             centerY = true;
+            absoluteCenter = false;
+            return this;
+        }
+
+        public StringDrawerConfig absoluteCenterY() {
+            centerY = true;
+            absoluteCenter = true;
             return this;
         }
 
         public StringDrawerConfig font(Font font) {
             this.font = font;
+            return this;
+        }
+
+        public StringDrawerConfig fontSize(float fontSize) {
+            this.fontSize = fontSize <= 0 ? -1 : fontSize;
             return this;
         }
 

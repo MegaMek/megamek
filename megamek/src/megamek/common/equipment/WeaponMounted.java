@@ -259,7 +259,7 @@ public class WeaponMounted extends Mounted<WeaponType> {
     }
 
     public List<AmmoMounted> getBayAmmo() {
-        return bayWeapons.stream()
+        return bayAmmo.stream()
                 .map(i -> getEntity().getAmmo(i))
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());

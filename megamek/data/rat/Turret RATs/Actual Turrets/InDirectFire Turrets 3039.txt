@@ -1,5 +1,4 @@
 InDirectFire Turrets 3039
-
 #Missile Turrets
 Light Missile Turret (3039), 50
 Medium Missile Turret (3039), 25

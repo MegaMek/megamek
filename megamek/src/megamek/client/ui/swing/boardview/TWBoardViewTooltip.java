@@ -34,6 +34,7 @@ import megamek.common.options.OptionsConstants;
 import java.awt.*;
 import java.util.*;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
 import static megamek.client.ui.swing.util.UIUtil.uiWhite;
@@ -126,13 +127,11 @@ public class TWBoardViewTooltip implements BoardViewTooltipProvider {
             result += sbBuildings.toString();
 
             if (bv.displayInvalidFields()) {
-                StringBuffer errBuff = new StringBuffer();
-                if (!mhex.isValid(errBuff)) {
+                List<String> errors = new ArrayList<>();
+                if (!mhex.isValid(errors)) {
                     String sInvalidHex = Messages.getString("BoardView1.invalidHex");
                     sInvalidHex += "<BR>";
-                    String errors = errBuff.toString();
-                    errors = errors.replace("\n", "<BR>");
-                    sInvalidHex += errors;
+                    sInvalidHex += String.join("<BR>", errors);
                     sInvalidHex = guiScaledFontHTML(GUIP.getUnitToolTipFGColor()) + sInvalidHex + "</FONT>";
                     result += "<BR>" + sInvalidHex;
                 }
@@ -178,11 +177,11 @@ public class TWBoardViewTooltip implements BoardViewTooltipProvider {
         }
 
         // check if it's on any flares
-        for (FlareSprite fSprite : bv.getFlareSprites()) {
-            if (fSprite.isInside(point)) {
-                result += fSprite.getTooltip().toString();
-            }
-        }
+        result += bv.getAllSprites().stream()
+                .filter(sprite -> sprite instanceof FlareSprite)
+                .filter(sprite -> sprite.isInside(point))
+                .map(Sprite::getTooltip)
+                .collect(Collectors.joining());
 
         // Add wreck info
         var wreckList = bv.useIsometric() ? bv.getIsoWreckSprites() : bv.getWreckSprites();

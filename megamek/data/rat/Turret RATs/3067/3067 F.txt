@@ -1,6 +1,4 @@
 Turrets 3067 F
-
 @DirectFire Turrets 3067, 40
 @InDirectFire Turrets 3050, 30
 @AntiAir Turrets 3067, 30
-

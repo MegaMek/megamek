@@ -22,14 +22,13 @@ import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
 import megamek.client.ui.IDisplayable;
 
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.List;
+import java.util.*;
 
 public abstract class AbstractBoardView implements IBoardView {
 
     protected final List<BoardViewListener> boardViewListeners = new ArrayList<>();
     protected final LinkedHashSet<IDisplayable> overlays = new LinkedHashSet<>();
+    protected final TreeSet<Sprite> allSprites = new TreeSet<>();
 
     /**
      * Notifies attached BoardViewListeners of the event.
@@ -96,5 +95,33 @@ public abstract class AbstractBoardView implements IBoardView {
     @Override
     public final void removeOverlay(IDisplayable overlay) {
         overlays.remove(overlay);
+    }
+
+    @Override
+    public void addSprites(Collection<? extends Sprite> sprites) {
+        allSprites.addAll(sprites);
+        repaint();
+    }
+
+    @Override
+    public void removeSprites(Collection<? extends Sprite> sprites) {
+        allSprites.removeAll(sprites);
+        repaint();
+    }
+
+    /**
+     * Removes all sprites from this BoardView. This includes (possibly) sprites for units, attacks etc.
+     * Note that this is not communicated to the SpriteHandlers.
+     */
+    public void clearSprites() {
+        allSprites.clear();
+        repaint();
+    }
+
+    /**
+     * Returns an unmodifiable view of this BoardView's sprites.
+     */
+    public Set<Sprite> getAllSprites() {
+        return Collections.unmodifiableSet(allSprites);
     }
 }

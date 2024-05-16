@@ -21,6 +21,8 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.swing.widget.PMUtil;
 import megamek.common.*;
 import megamek.common.options.OptionsConstants;
+import megamek.common.preference.IPreferenceChangeListener;
+import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.util.StringUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
 
@@ -28,7 +30,7 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.Vector;
 
-public class UnitOverview implements IDisplayable {
+public class UnitOverview implements IDisplayable, IPreferenceChangeListener {
     private static final int UNKNOWN_UNITS_PER_PAGE = -1;
 
     /**
@@ -47,29 +49,29 @@ public class UnitOverview implements IDisplayable {
 
     private int[] unitIds;
     private boolean isHit = false;
-    private boolean visible = true;
+    private boolean visible;
     private boolean scroll = false;
     private int unitsPerPage = UNKNOWN_UNITS_PER_PAGE;
     private int actUnitsPerPage = 0;
     private int scrollOffset = 0;
 
-    private ClientGUI clientgui;
+    private final ClientGUI clientgui;
 
-    private FontMetrics fm;
+    private final FontMetrics fm;
 
-    private Image scrollUp;
-    private Image scrollDown;
-    private Image pageUp;
-    private Image pageDown;
+    private final Image scrollUp;
+    private final Image scrollDown;
+    private final Image pageUp;
+    private final Image pageDown;
     
     public static int getUIWidth() {
         return ICON_WIDTH + DIST_SIDE;
     }
     
-    private Image scrollUpG;
-    private Image scrollDownG;
-    private Image pageUpG;
-    private Image pageDownG;
+    private final Image scrollUpG;
+    private final Image scrollDownG;
+    private final Image pageUpG;
+    private final Image pageDownG;
 
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
 
@@ -96,6 +98,7 @@ public class UnitOverview implements IDisplayable {
         PMUtil.setImage(pageDown, clientgui);
         
         visible = GUIP.getShowUnitOverview();
+        GUIP.addPreferenceChangeListener(this);
     }
 
     @Override
@@ -166,7 +169,7 @@ public class UnitOverview implements IDisplayable {
                 graph.setColor(oldColor);
             }
             
-            Entity se = clientgui == null ? null : clientgui.getClient().getEntity(clientgui.getSelectedEntityNum());
+            Entity se = clientgui.getClient().getEntity(clientgui.getSelectedEntityNum());
             if ((e == se) && (game.getTurn() != null) && game.getTurn().isValidEntity(e, game)) {
                 Color oldColor = graph.getColor();
                 graph.setColor(GUIP.getUnitSelectedColor());
@@ -260,12 +263,8 @@ public class UnitOverview implements IDisplayable {
         int xOffset = size.width - DIST_SIDE - ICON_WIDTH;
         int yOffset = DIST_TOP;
 
-        if ((x < xOffset) || (x > xOffset + ICON_WIDTH) || (y < yOffset)
-                || (y > yOffset + (unitsPerPage * (ICON_HEIGHT + PADDING)))) {
-            return false;
-        } else {
-            return true;
-        }
+        return (x >= xOffset) && (x <= xOffset + ICON_WIDTH) && (y >= yOffset)
+                && (y <= yOffset + (unitsPerPage * (ICON_HEIGHT + PADDING)));
     }
 
     @Override
@@ -279,14 +278,6 @@ public class UnitOverview implements IDisplayable {
             return true;
         }
         return false;
-    }
-
-    public void setVisible(boolean visible) {
-        this.visible = visible;
-    }
-
-    public boolean isVisible() {
-        return visible;
     }
 
     private void drawHeat(Graphics graph, Entity entity, int x, int y) {
@@ -318,8 +309,8 @@ public class UnitOverview implements IDisplayable {
     private void drawBars(Graphics graph, Entity entity, int x, int y) {
         // Lets draw our armor and internal status bars
         int baseBarLength = 23;
-        int barLength = 0;
-        double percentRemaining = 0.00;
+        int barLength;
+        double percentRemaining;
 
         percentRemaining = entity.getArmorRemainingPercent();
         if (percentRemaining != IArmorState.ARMOR_NA) {
@@ -536,5 +527,13 @@ public class UnitOverview implements IDisplayable {
             s = s.substring(0, s.length() - 1);
         }
         return s;
+    }
+
+    @Override
+    public void preferenceChange(PreferenceChangeEvent e) {
+        if (e.getName().equals(GUIPreferences.SHOW_UNIT_OVERVIEW)) {
+            visible = GUIP.getShowUnitOverview();
+            clientgui.getBoardView().refreshDisplayables();
+        }
     }
 }

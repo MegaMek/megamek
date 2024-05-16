@@ -18,6 +18,7 @@
  */
 package megamek.server;
 
+import megamek.MegaMek;
 import megamek.common.*;
 import megamek.common.enums.GamePhase;
 import megamek.common.net.enums.PacketCommand;

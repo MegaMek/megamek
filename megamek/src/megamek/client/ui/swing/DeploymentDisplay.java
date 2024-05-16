@@ -522,19 +522,19 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             // check if this type of unit can be on the given type of map
             title = Messages.getString("DeploymentDisplay.alertDialog.title");
             msg = Messages.getString("DeploymentDisplay.wrongMapType", ce().getShortName(), Board.getTypeName(board.getType()));
-            JOptionPane.showMessageDialog(clientgui, msg, title, JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(clientgui.getFrame(), msg, title, JOptionPane.WARNING_MESSAGE);
             return;
         } else if (!(board.isLegalDeployment(moveto, ce()) || assaultDropPreference)
                 || (ce().isLocationProhibited(moveto) && !isTankOnPavement)) {
             msg = Messages.getString("DeploymentDisplay.cantDeployInto", ce().getShortName(), moveto.getBoardNum());
             title = Messages.getString("DeploymentDisplay.alertDialog.title");
-            JOptionPane.showMessageDialog(clientgui.frame, msg, title, JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(clientgui.getFrame(), msg, title, JOptionPane.ERROR_MESSAGE);
             return;
         } else if (isAero && board.inAtmosphere() && (ce().getElevation() <= board.getHex(moveto).ceiling(true))) {
             // Ensure aeros don't end up at lower elevation than the current hex
             title = Messages.getString("DeploymentDisplay.alertDialog.title");
             msg = Messages.getString("DeploymentDisplay.elevationTooLow", ce().getShortName(), moveto.getBoardNum());
-            JOptionPane.showMessageDialog(clientgui.frame, msg, title, JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(clientgui.getFrame(), msg, title, JOptionPane.ERROR_MESSAGE);
             return;
         } else if ((Compute.stackingViolation(game, ce().getId(), moveto, ce().climbMode()) != null) && (bldg == null)) {
             // check if deployed unit violates stacking
@@ -627,7 +627,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         }
         String msg = Messages.getString("DeploymentDisplay.floorsDialog.message", ce().getShortName());
         String title = Messages.getString("DeploymentDisplay.floorsDialog.title");
-        String input = (String) JOptionPane.showInputDialog(clientgui, msg, title, JOptionPane.QUESTION_MESSAGE, null,
+        String input = (String) JOptionPane.showInputDialog(clientgui.getFrame(), msg, title, JOptionPane.QUESTION_MESSAGE, null,
                 floorNames.toArray(), floorNames.get(0));
         if (input != null) {
             for (int i = 0; i < floorNames.size(); i++) {
@@ -659,7 +659,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
 
         String title = Messages.getString("DeploymentDisplay.bridgeDialog.title");
         String msg = Messages.getString("DeploymentDisplay.bridgeDialog.message", ce().getShortName());
-        String input = (String) JOptionPane.showInputDialog(clientgui, msg,
+        String input = (String) JOptionPane.showInputDialog(clientgui.getFrame(), msg,
                 title, JOptionPane.QUESTION_MESSAGE, null, floors.toArray(), null);
         if (input != null) {
             if (input.equals(Messages.getString("DeploymentDisplay.topbridge"))) {
@@ -737,7 +737,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                         }
                         String title = Messages.getString("DeploymentDisplay.loadUnitBayNumberDialog.title");
                         String msg = Messages.getString("DeploymentDisplay.loadUnitBayNumberDialog.message", ce().getShortName());
-                        String bayString = (String) JOptionPane.showInputDialog(clientgui, msg, title,
+                        String bayString = (String) JOptionPane.showInputDialog(clientgui.getFrame(), msg, title,
                                 JOptionPane.QUESTION_MESSAGE, null, retVal, null);
                         int bayNum = Integer.parseInt(bayString.substring(0, bayString.indexOf(" ")));
                         other.setTargetBay(bayNum);
@@ -758,7 +758,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                                         Messages.getString("MovementDisplay.loadProtoClampMountDialog.rear") :
                                         Messages.getString("MovementDisplay.loadProtoClampMountDialog.front");
                             }
-                            String bayString = (String) JOptionPane.showInputDialog(clientgui,
+                            String bayString = (String) JOptionPane.showInputDialog(clientgui.getFrame(),
                                     Messages.getString("MovementDisplay.loadProtoClampMountDialog.message", ce().getShortName()),
                                     Messages.getString("MovementDisplay.loadProtoClampMountDialog.title"),
                                     JOptionPane.QUESTION_MESSAGE, null, retVal, null);

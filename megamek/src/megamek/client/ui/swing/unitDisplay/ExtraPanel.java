@@ -609,7 +609,7 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener, IPrefer
             return;
         }
         if ("changeSinks".equals(ae.getActionCommand()) && !dontChange) {
-            prompt = new Slider(clientgui.frame,
+            prompt = new Slider(clientgui.getFrame(),
                     Messages.getString("MechDisplay.changeSinks"),
                     Messages.getString("MechDisplay.changeSinks"), sinks,
                     0, ((Mech) clientgui.getClient().getGame().getEntity(myMechId)).getNumberOfSinks());

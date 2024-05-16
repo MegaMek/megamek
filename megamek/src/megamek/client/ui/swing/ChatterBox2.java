@@ -151,19 +151,19 @@ public class ChatterBox2 implements KeyListener, IDisplayable, IPreferenceChange
         Toolkit toolkit = bv.getPanel().getToolkit();
         upbutton = toolkit.getImage(new MegaMekFile(Configuration.widgetsDir(), 
                 FILENAME_BUTTON_UP).toString());
-        PMUtil.setImage(upbutton, client);
+        PMUtil.setImage(upbutton, client.getMainPanel());
         downbutton = toolkit.getImage(new MegaMekFile(Configuration.widgetsDir(), 
                 FILENAME_BUTTON_DOWN).toString());
-        PMUtil.setImage(downbutton, client);
+        PMUtil.setImage(downbutton, client.getMainPanel());
         minbutton = toolkit.getImage(new MegaMekFile(Configuration.widgetsDir(), 
                 FILENAME_BUTTON_MINIMISE).toString());
-        PMUtil.setImage(minbutton, client);
+        PMUtil.setImage(minbutton, client.getMainPanel());
         maxbutton = toolkit.getImage(new MegaMekFile(Configuration.widgetsDir(), 
                 FILENAME_BUTTON_MAXIMISE).toString());
-        PMUtil.setImage(maxbutton, client);
+        PMUtil.setImage(maxbutton, client.getMainPanel());
         resizebutton = toolkit.getImage(new MegaMekFile(Configuration.widgetsDir(), 
                 FILENAME_BUTTON_RESIZE).toString());
-        PMUtil.setImage(resizebutton, client);
+        PMUtil.setImage(resizebutton, client.getMainPanel());
 
         registerKeyboardCommands(controller);
 

@@ -387,12 +387,15 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements
         clientgui.clearFieldOfFire();
         clientgui.clearTemporarySprites();
 
-        selectEntity(clientgui.getClient().getFirstEntityNum());
+        if (GUIP.getAutoSelectNextUnit()) {
+            selectEntity(clientgui.getClient().getFirstEntityNum());
+        }
         setDisengageEnabled((ce() != null) && attacks.isEmpty() && ce().canFlee());
 
         GameTurn turn = clientgui.getClient().getMyTurn();
         // There's special processing for triggering AP Pods.
         if ((turn instanceof GameTurn.TriggerAPPodTurn) && (null != ce())) {
+            selectEntity(clientgui.getClient().getFirstEntityNum());
             disableButtons();
             TriggerAPPodDialog dialog = new TriggerAPPodDialog(clientgui.getFrame(), ce());
             dialog.setVisible(true);
@@ -403,6 +406,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements
             }
             ready();
         } else if ((turn instanceof GameTurn.TriggerBPodTurn) && (null != ce())) {
+            selectEntity(clientgui.getClient().getFirstEntityNum());
             disableButtons();
             TriggerBPodDialog dialog = new TriggerBPodDialog(clientgui, ce(),
                     ((GameTurn.TriggerBPodTurn) turn).getAttackType());
@@ -1030,8 +1034,10 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements
 
         if (b.getType() == BoardViewEvent.BOARD_HEX_DRAGGED) {
             if (phase.isOffboard() && (shiftheld || twisting)) {
-                updateFlipArms(false);
-                torsoTwist(b.getCoords());
+                if (ce() != null) {
+                    updateFlipArms(false);
+                    torsoTwist(b.getCoords());
+                }
             }
             clientgui.getBoardView().cursor(b.getCoords());
         } else if (b.getType() == BoardViewEvent.BOARD_HEX_CLICKED) {

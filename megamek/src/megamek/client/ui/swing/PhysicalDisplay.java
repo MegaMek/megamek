@@ -271,7 +271,9 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
             ready();
         } else {
             target(null);
-            selectEntity(clientgui.getClient().getFirstEntityNum());
+            if (GUIP.getAutoSelectNextUnit()) {
+                selectEntity(clientgui.getClient().getFirstEntityNum());
+            }
             setNextEnabled(true);
             butDone.setEnabled(true);
             if (numButtonGroups > 1) {

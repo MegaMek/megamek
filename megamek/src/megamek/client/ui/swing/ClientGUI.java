@@ -84,7 +84,6 @@ import java.util.*;
 
 public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
         ActionListener, IPreferenceChangeListener, MechDisplayListener {
-
     // region Variable Declarations
     public static final int WEAPON_NONE = -1;
 
@@ -351,15 +350,17 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
      * clean up after itself as much as possible, but will not call
      * System.exit().
      */
-    public ClientGUI(Client client, MegaMekController c) {
-        super(client);
-        this.client = client;
+    public ClientGUI(IClient client, MegaMekController c) {
+        if (!(client instanceof Client)) {
+            throw new IllegalArgumentException("TW ClientGUI must use TW Client!");
+        }
+        this.client = (Client) client;
         controller = c;
         panMain.setLayout(cardsMain);
         panSecondary.setLayout(cardsSecondary);
 
         clientGuiPanel.setLayout(new BorderLayout());
-        clientGuiPanel.addComponentListener(resizeListener);
+        clientGuiPanel.addComponentListener(this);
         clientGuiPanel.add(panMain, BorderLayout.CENTER);
         clientGuiPanel.add(panSecondary, BorderLayout.SOUTH);
 
@@ -455,6 +456,16 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
     }
 
     /**
+     * Initializes a number of things about this frame.
+     */
+    @Override
+    protected void initializeFrame() {
+        super.initializeFrame();
+        menuBar = CommonMenuBar.getMenuBarForGame();
+        frame.setJMenuBar(menuBar);
+    }
+
+    /**
      * Lays out the frame by setting this Client object to take up the full
      * frame display area.
      */
@@ -534,6 +545,11 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
 
         layoutFrame();
         menuBar.addActionListener(this);
+
+        cb2 = new ChatterBox2(this, bv, controller);
+        bv.addOverlay(cb2);
+        bv.getPanel().addKeyListener(cb2);
+        offBoardOverlay = new OffBoardTargetOverlay(this);
 
         aw = new AccessibilityWindow(this);
         aw.setLocation(0, 0);
@@ -1934,6 +1950,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
         }
     }
 
+    @Override
     public boolean saveGame() {
         ignoreHotKeys = true;
         JFileChooser fc = new JFileChooser(MMConstants.SAVEGAME_DIR);

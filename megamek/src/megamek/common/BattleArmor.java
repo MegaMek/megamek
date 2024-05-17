@@ -519,6 +519,7 @@ public class BattleArmor extends Infantry {
             mp++;
         }
 
+        // MM is concerned with in-game conditions that impact Partial Wing mp
         if ((game != null)) {
             PlanetaryConditions conditions = game.getPlanetaryConditions();
             boolean ignoreGameLessThanThin = mpCalculationSetting.ignoreWeather
@@ -526,6 +527,11 @@ public class BattleArmor extends Infantry {
             if ((mp > 0)
                     && hasWorkingMisc(MiscType.F_PARTIAL_WING)
                     && ignoreGameLessThanThin) {
+                mp++;
+            }
+        } else {
+            // MML just cares that the Partial Wing exists and is installed
+            if ((mp > 0) && hasWorkingMisc(MiscType.F_PARTIAL_WING)) {
                 mp++;
             }
         }
@@ -1979,5 +1985,10 @@ public class BattleArmor extends Infantry {
     @Override
     public int firstArmorIndex() {
         return 1;
+    }
+
+    @Override
+    public int getGenericBattleValue() {
+        return (int) Math.round(Math.exp(3.157 + 1.514*Math.log(getWeight())));
     }
 }

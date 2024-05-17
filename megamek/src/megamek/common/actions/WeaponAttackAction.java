@@ -47,16 +47,17 @@ import java.util.*;
 public class WeaponAttackAction extends AbstractAttackAction implements Serializable {
     public static int DEFAULT_VELOCITY = 50;
     private static final long serialVersionUID = -9096603813317359351L;
+    public static int UNASSIGNED = -1;
 
     public static final int STRATOPS_SENSOR_SHADOW_WEIGHT_DIFF = 100000;
 
     private int weaponId;
-    private int ammoId = -1;
+    private int ammoId = UNASSIGNED;
     private EnumSet<AmmoType.Munitions> ammoMunitionType = EnumSet.noneOf(AmmoType.Munitions.class);
-    private int ammoCarrier = -1;
+    private int ammoCarrier = UNASSIGNED;
     private int aimedLocation = Entity.LOC_NONE;
     private AimingMode aimMode = AimingMode.NONE;
-    private int otherAttackInfo = -1;
+    private int otherAttackInfo = UNASSIGNED;
     private boolean nemesisConfused;
     private boolean swarmingMissiles;
     protected int launchVelocity = DEFAULT_VELOCITY;
@@ -64,8 +65,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
      * Keeps track of the ID of the current primary target for a swarm missile
      * attack.
      */
-    private int oldTargetId = -1;
-
+    private int oldTargetId = UNASSIGNED;
     /**
      * Keeps track of the Targetable type for the current primary target for a
      * swarm missile attack.
@@ -273,14 +273,14 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
     public static ToHitData toHit(Game game, int attackerId, Targetable target, int weaponId, boolean isStrafing) {
         // Use -1 as ammoId because this method should always use the currently linked ammo for display calcs
         return toHit(game, attackerId, target, weaponId, Entity.LOC_NONE, AimingMode.NONE,
-                false, false, null, null, isStrafing, false, -1);
+                false, false, null, null, isStrafing, false, UNASSIGNED);
     }
 
     public static ToHitData toHit(Game game, int attackerId, Targetable target, int weaponId,
                                   int aimingAt, AimingMode aimingMode, boolean isStrafing) {
         // Use -1 as ammoId because this method should always use the currently linked ammo for display calcs
         return toHit(game, attackerId, target, weaponId, aimingAt, aimingMode, false,
-                false, null, null, isStrafing, false, -1);
+                false, null, null, isStrafing, false, UNASSIGNED);
     }
 
     public static ToHitData toHit(Game game, int attackerId, Targetable target, int weaponId,
@@ -312,7 +312,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                                    int ammoId) {
         final Entity ae = game.getEntity(attackerId);
         final WeaponMounted weapon = (WeaponMounted) ae.getEquipment(weaponId);
-        final AmmoMounted linkedAmmo = (ammoId == -1) ? weapon.getLinkedAmmo() : (AmmoMounted) ae.getEquipment(ammoId);
+        final AmmoMounted linkedAmmo = (ammoId == UNASSIGNED) ? weapon.getLinkedAmmo() : (AmmoMounted) ae.getEquipment(ammoId);
 
         final EquipmentType type = weapon.getType();
 
@@ -1847,7 +1847,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                     }
                 }
                 if (isHoming) {
-                    if ((te == null) || (te.getTaggedBy() == -1)) {
+                    if ((te == null) || (te.getTaggedBy() == UNASSIGNED)) {
                         // Homing missiles must target a tagged entity
                         return Messages.getString("WeaponAttackAction.MustTargetTagged");
                     }
@@ -4159,7 +4159,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                     || (atype.getAmmoType() == AmmoType.T_MML)
                     || (atype.getAmmoType() == AmmoType.T_NLRM)
                     || (atype.getAmmoType() == AmmoType.T_MEK_MORTAR))
-                    && (munition.contains(AmmoType.Munitions.M_SEMIGUIDED)) && (te.getTaggedBy() != -1)) {
+                    && (munition.contains(AmmoType.Munitions.M_SEMIGUIDED)) && (te.getTaggedBy() != UNASSIGNED)) {
                 int nAdjust = thTemp.getValue();
                 if (nAdjust > 0) {
                     toHit.append(new ToHitData(-nAdjust, Messages.getString("WeaponAttackAction.SemiGuidedTag")));

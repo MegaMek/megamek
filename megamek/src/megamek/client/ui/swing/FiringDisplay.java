@@ -457,11 +457,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
             LogManager.getLogger().error("Tried to select non-existent entity " + en);
         }
 
-        if (GUIP.getFiringSolutions()) {
-            setFiringSolutions(ce());
-        } else {
-            clientgui.getBoardView().clearFiringSolutionData();
-        }
+        clientgui.showFiringSolutions(ce());
     }
 
     /**
@@ -474,9 +470,11 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
             clientgui.maybeShowUnitDisplay();
         }
         clientgui.getBoardView().clearFieldOfFire();
-        clientgui.getBoardView().clearSensorsRanges();
+        clientgui.clearTemporarySprites();
 
-        selectEntity(clientgui.getClient().getFirstEntityNum());
+        if (GUIP.getAutoSelectNextUnit()) {
+            selectEntity(clientgui.getClient().getFirstEntityNum());
+        }
 
         GameTurn turn = clientgui.getClient().getMyTurn();
         // There's special processing for triggering AP Pods.
@@ -535,10 +533,9 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
         clientgui.getBoardView().highlight(null);
         clientgui.getBoardView().cursor(null);
         clientgui.getBoardView().clearMovementData();
-        clientgui.getBoardView().clearFiringSolutionData();
         clientgui.getBoardView().clearStrafingCoords();
         clientgui.getBoardView().clearFieldOfFire();
-        clientgui.getBoardView().clearSensorsRanges();
+        clientgui.clearTemporarySprites();
         clientgui.setSelectedEntityNum(Entity.NONE);
         disableButtons();
 
@@ -939,7 +936,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
         for (int loop = 0; loop < names.length; loop++) {
             names[loop] = weapons.get(loop).getDesc();
         }
-        String input = (String) JOptionPane.showInputDialog(clientgui,
+        String input = (String) JOptionPane.showInputDialog(clientgui.getFrame(),
                 Messages.getString("FiringDisplay.ClearWeaponJam.question"),
                 Messages.getString("FiringDisplay.ClearWeaponJam.title"),
                 JOptionPane.QUESTION_MESSAGE, null, names, null);
@@ -970,7 +967,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
         String targetString = (target != null) ?
                 String.format("\nTarget: %s", target.getDisplayName()) : "";
 
-        String input = (String) JOptionPane.showInputDialog(clientgui,
+        String input = (String) JOptionPane.showInputDialog(clientgui.getFrame(),
                 String.format("Pick a Special Pilot Ability to activate.%s", targetString),
                 "Activate Special Pilot Ability",
                 JOptionPane.QUESTION_MESSAGE, null, skillNames.keySet().toArray(), null);
@@ -1444,7 +1441,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
      */
     protected void removeLastFiring() {
         if (!attacks.isEmpty()) {
-            Object o = attacks.lastElement();
+            EntityAction o = attacks.lastElement();
             if (o instanceof WeaponAttackAction) {
                 WeaponAttackAction waa = (WeaponAttackAction) o;
                 ce().getEquipment(waa.getWeaponId()).setUsedThisRound(false);
@@ -1734,7 +1731,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
         }
 
         if (b.getType() == BoardViewEvent.BOARD_HEX_DRAGGED) {
-            if (!ce().getAlreadyTwisted() && (shiftheld || twisting)) {
+            if ((ce() != null) && !ce().getAlreadyTwisted() && (shiftheld || twisting)) {
                 updateFlipArms(false);
                 torsoTwist(b.getCoords());
             }

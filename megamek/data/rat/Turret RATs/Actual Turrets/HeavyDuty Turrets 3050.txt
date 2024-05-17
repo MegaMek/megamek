@@ -1,0 +1,5 @@
+HeavyDuty Turrets 3050
+#Siege Turrets
+Medium Siege Turret (3039), 75
+Heavy Siege Turret (3039), 20
+Assault Siege Turret (3050), 5

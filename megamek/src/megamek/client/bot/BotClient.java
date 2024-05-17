@@ -28,6 +28,7 @@ import megamek.common.net.packets.Packet;
 import megamek.common.options.OptionsConstants;
 import megamek.common.pathfinder.BoardClusterTracker;
 import megamek.common.preference.PreferenceManager;
+import megamek.common.Report;
 import megamek.common.util.BoardUtilities;
 import megamek.common.util.StringUtil;
 import org.apache.logging.log4j.LogManager;
@@ -1187,7 +1188,7 @@ public abstract class BotClient extends Client {
      * Let's save ourselves a little processing time and not deal with any of it
      */
     @Override
-    public String receiveReport(Vector<Report> v) {
+    public String receiveReport(List<Report> v) {
         return "";
     }
 

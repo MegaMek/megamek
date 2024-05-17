@@ -18,27 +18,21 @@
  */
 package megamek.client;
 
-import megamek.MMConstants;
-import megamek.client.bot.princess.BehaviorSettings;
-import megamek.client.bot.princess.Princess;
+import megamek.client.ui.swing.tooltip.PilotToolTip;
+import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.*;
-import megamek.common.actions.ArtilleryAttackAction;
-import megamek.common.actions.WeaponAttackAction;
-import megamek.common.enums.GamePhase;
-import megamek.common.event.*;
-import megamek.common.net.enums.PacketCommand;
 import megamek.common.net.packets.Packet;
-import megamek.common.options.GameOptions;
-import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.common.strategicBattleSystems.SBFGame;
-import megamek.server.SmokeCloud;
+import megamek.common.util.ImageUtil;
 import org.apache.logging.log4j.LogManager;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.OutputStream;
+import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.util.*;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * This is the game client for Strategic BattleForce games, as one would think.
@@ -71,7 +65,44 @@ public class SBFClient extends AbstractClient {
     }
 
     @Override
-    protected boolean handleGameSpecificPacket(Packet packet) throws Exception {
-        return false;
+    @SuppressWarnings("unchecked")
+    protected boolean handleGameSpecificPacket(Packet packet) {
+        LogManager.getLogger().info("Received packet: {}", packet);
+        switch (packet.getCommand()) {
+            case SENDING_REPORTS_ALL:
+                var receivedReports = (Map<Integer, List<Report>>) packet.getObject(0);
+                game.replaceAllReports(receivedReports);
+                if (keepGameLog()) {
+                    // Re-write the gamelog from scratch
+                    initGameLog();
+                    for (int round : receivedReports.keySet().stream().sorted().collect(Collectors.toList())) {
+                        possiblyWriteToLog(assembleAndAddImages(receivedReports.get(round)));
+                    }
+                }
+                roundReport = assembleAndAddImages(receivedReports.get(game.getCurrentRound()));
+                // We don't really have a copy of the phase report at this point, so I guess we'll just use the
+                // round report until the next phase actually completes.
+                phaseReport = roundReport;
+                break;
+            default:
+                return false;
+        }
+        return true;
+    }
+
+    private String assembleAndAddImages(List<Report> reports) {
+        if (reports == null) {
+            LogManager.getLogger().error("Received a null list of reports!");
+            return "";
+        }
+
+        StringBuilder assembledReport = new StringBuilder();
+        for (Report report : reports) {
+            if (report != null) {
+                assembledReport.append(report.getText());
+            }
+        }
+
+        return assembledReport.toString();
     }
 }

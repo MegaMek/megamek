@@ -3994,6 +3994,9 @@ public class MoveStep implements Serializable {
 
     public boolean dueFreeTurn() {
         Entity en = getEntity();
+        if (en.isSpaceborne()) {
+            return false;
+        }
         int straight = getNStraight();
         int vel = getVelocity();
         int thresh = 99;

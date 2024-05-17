@@ -1,0 +1,53 @@
+#Guns block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+GunEmplacement
+</UnitType>
+<Name>
+Fed Suns Advanced Shredder Turret
+</Name>
+<model>
+(3075)
+</model>
+<Year>
+3075
+</Year>
+<Type>
+IS Level 3
+</Type>
+<Turret>
+1
+</Turret>
+<Guns Equipment>
+ISRotaryAC5
+ISRotaryAC5
+ISRotaryAC2
+ISRotaryAC2
+SRM 4
+SRM 4
+Searchlight
+ISRotaryAC5 Ammo
+ISRotaryAC5 Ammo
+ISRotaryAC5 Ammo
+ISRotaryAC5 Ammo
+ISRotaryAC5 Ammo
+ISRotaryAC5 Ammo
+ISRotaryAC5 Ammo
+ISRotaryAC5 Ammo
+ISRotaryAC5 Ammo
+ISRotaryAC5 Ammo
+ISRotaryAC2 Ammo
+ISRotaryAC2 Ammo
+ISRotaryAC2 Ammo
+ISRotaryAC2 Ammo
+ISRotaryAC2 Ammo
+ISRotaryAC2 Ammo
+IS Ammo SRM-4
+IS Ammo SRM-4
+</Guns Equipment>

@@ -704,4 +704,9 @@ public class VTOL extends Tank implements IBomber {
     public int getSpriteDrawPriority() {
         return 8;
     }
+
+    @Override
+    public int getGenericBattleValue() {
+        return (int) Math.round(Math.exp(2.366 + 1.177*Math.log(getWeight())));
+    }
 }

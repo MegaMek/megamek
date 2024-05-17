@@ -15,6 +15,8 @@
 package megamek.common;
 
 import java.math.BigInteger;
+import java.util.List;
+import java.util.Set;
 
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.equipment.AmmoMounted;
@@ -614,14 +616,14 @@ public class WeaponType extends EquipmentType {
     }
 
     public int getMaxRange(WeaponMounted weapon, AmmoMounted ammo) {
-        if (getAmmoType() == AmmoType.T_ATM) {
+        if (weapon.getType().getAtClass() == CLASS_ATM) {
             AmmoType ammoType = ammo.getType();
-            if ((ammoType.getAmmoType() == AmmoType.T_ATM)
-                    && (ammoType.getMunitionType().contains(AmmoType.Munitions.M_EXTENDED_RANGE))) {
-                return RANGE_EXT;
-            } else if ((ammoType.getAmmoType() == AmmoType.T_ATM)
-                    && (ammoType.getMunitionType().contains(AmmoType.Munitions.M_HIGH_EXPLOSIVE))) {
-                return RANGE_SHORT;
+            if (List.of(AmmoType.T_ATM, AmmoType.T_IATM).contains(ammoType.getAmmoType())) {
+                if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_EXTENDED_RANGE)) {
+                    return RANGE_EXT;
+                } else if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_HIGH_EXPLOSIVE)) {
+                    return RANGE_SHORT;
+                }
             }
         }
         if (getAmmoType() == AmmoType.T_MML) {
@@ -634,6 +636,7 @@ public class WeaponType extends EquipmentType {
         }
         return maxRange;
     }
+
     public int getInfantryDamageClass() {
         return infDamageClass;
     }

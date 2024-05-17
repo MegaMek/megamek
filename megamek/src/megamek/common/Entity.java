@@ -32,7 +32,6 @@ import megamek.common.event.GameEntityChangeEvent;
 import megamek.common.force.Force;
 import megamek.common.icons.Camouflage;
 import megamek.common.jacksonadapters.EntityDeserializer;
-import megamek.common.jacksonadapters.SBFUnitDeserializer;
 import megamek.common.options.*;
 import megamek.common.planetaryconditions.Atmosphere;
 import megamek.common.planetaryconditions.PlanetaryConditions;
@@ -61,7 +60,7 @@ import java.util.stream.IntStream;
  */
 @JsonDeserialize(using = EntityDeserializer.class)
 public abstract class Entity extends TurnOrdered implements Transporter, Targetable, RoundUpdated,
-        PhaseUpdated, ITechnology, ForceAssignable, CombatRole {
+        PhaseUpdated, ITechnology, ForceAssignable, CombatRole, Deployable {
     private static final long serialVersionUID = 1430806396279853295L;
 
     public static final int DOES_NOT_TRACK_HEAT = 999;
@@ -3790,6 +3789,10 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         if (mounted instanceof MiscMounted) {
             miscList.add((MiscMounted) mounted);
         }
+        if (!(mounted instanceof AmmoMounted) && !(mounted instanceof BombMounted) && !(mounted instanceof MiscMounted)
+                && !(mounted instanceof WeaponMounted) && !(mounted instanceof InfantryWeaponMounted)) {
+            LogManager.getLogger().error("Trying to add plain Mounted class {} on {}!", mounted, this);
+        }
     }
 
     private void addOneshotAmmo(Mounted<?> mounted) throws LocationFullException {
@@ -6863,6 +6866,18 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     protected int doBattleValueCalculation(boolean ignoreC3, boolean ignoreSkill, CalculationReport calculationReport) {
         return getBvCalculator().calculateBV(ignoreC3, ignoreSkill, calculationReport);
     }
+
+    /**
+     * Calculates a "generic" Battle Value that is based on the average of all units of this type and tonnage. The
+     * purpose of this generic Battle Value is to allow a comparison of this unit's actual BV to that for units of
+     * its class. This can be used to balance forces without respect to unit or pilot quality.
+     *
+     * The generic BV values are calculated by a statistical elasticity model based on all data from the MegaMek
+     * database.
+     *
+     * @return The generic Battle value for this unit based on its tonnage and type
+     */
+    public abstract int getGenericBattleValue();
 
     /**
      * Generates a vector containing reports on all useful information about

@@ -44,7 +44,6 @@ import megamek.common.pathfinder.AbstractPathFinder;
 import megamek.common.pathfinder.LongestPathFinder;
 import megamek.common.pathfinder.ShortestPathFinder;
 import megamek.common.planetaryconditions.Atmosphere;
-import megamek.common.planetaryconditions.Light;
 import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.common.preference.PreferenceManager;
 import org.apache.logging.log4j.LogManager;
@@ -1073,7 +1072,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         setNextEnabled(true);
         setForwardIniEnabled(true);
         clientgui.getBoardView().clearFieldOfFire();
-        clientgui.getBoardView().clearSensorsRanges();
+        clientgui.clearTemporarySprites();
         if (numButtonGroups > 1) {
             getBtn(MoveCommand.MOVE_MORE).setEnabled(true);
         }
@@ -1081,7 +1080,10 @@ public class MovementDisplay extends ActionPhaseDisplay {
         if (!clientgui.getBoardView().isMovingUnits()) {
             clientgui.maybeShowUnitDisplay();
         }
-        selectEntity(clientgui.getClient().getFirstEntityNum());
+
+        if (GUIP.getAutoSelectNextUnit()) {
+            selectEntity(clientgui.getClient().getFirstEntityNum());
+        }
 
         startTimer();
     }
@@ -1114,8 +1116,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         clientgui.setSelectedEntityNum(Entity.NONE);
         clientgui.getBoardView().clearMovementData();
         clientgui.getBoardView().clearFieldOfFire();
-        clientgui.getBoardView().clearSensorsRanges();
-        clientgui.getBoardView().clearCFWarningData();
+        clientgui.clearTemporarySprites();
     }
 
     /**
@@ -1202,7 +1203,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         // clear board cursors
         clientgui.getBoardView().select(null);
         clientgui.getBoardView().cursor(null);
-        clientgui.getBoardView().clearMovementEnvelope();
+        clientgui.clearTemporarySprites();
 
         if (ce == null) {
             return;
@@ -1224,7 +1225,8 @@ public class MovementDisplay extends ActionPhaseDisplay {
         // create new current and considered paths
         cmd = new MovePath(clientgui.getClient().getGame(), ce);
         clientgui.getBoardView().setWeaponFieldOfFire(ce, cmd);
-        clientgui.getBoardView().setSensorRange(ce, cmd.getFinalCoords());
+        clientgui.showSensorRanges(ce, cmd.getFinalCoords());
+        computeCFWarningHexes(ce);
 
         // set to "walk," or the equivalent
         gear = MovementDisplay.GEAR_LAND;
@@ -1311,7 +1313,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             clientgui.getBoardView().cursor(cmd.getFinalCoords());
             clientgui.getBoardView().drawMovementData(entity, cmd);
             clientgui.getBoardView().setWeaponFieldOfFire(entity, cmd);
-            clientgui.getBoardView().setSensorRange(entity, cmd.getFinalCoords());
+            clientgui.showSensorRanges(entity, cmd.getFinalCoords());
 
             //FIXME what is this
             // Set the button's label to "Done"
@@ -1662,8 +1664,8 @@ public class MovementDisplay extends ActionPhaseDisplay {
             isUsingChaff = false;
         }
 
+        clientgui.clearTemporarySprites();
         clientgui.getBoardView().clearMovementData();
-        clientgui.getBoardView().clearMovementEnvelope();
         if (ce().hasUMU()) {
             clientgui.getClient().sendUpdateEntity(ce());
         }
@@ -1822,7 +1824,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             }
         }
 
-        clientgui.getBoardView().setSensorRange(ce(), cmd.getFinalCoords());
+        clientgui.showSensorRanges(ce(), cmd.getFinalCoords());
         clientgui.getBoardView().setWeaponFieldOfFire(ce(), cmd);
     }
 
@@ -2944,7 +2946,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             LogManager.getLogger().error("Called getMountedUnits without any mountable units.");
         } else if (mountableUnits.size() > 1) {
             // If we have multiple choices, display a selection dialog.
-            String input = (String) JOptionPane.showInputDialog(clientgui,
+            String input = (String) JOptionPane.showInputDialog(clientgui.getFrame(),
                     Messages.getString("MovementDisplay.MountUnitDialog.message", ce.getShortName()),
                     Messages.getString("MovementDisplay.MountUnitDialog.title"),
                     JOptionPane.QUESTION_MESSAGE, null, SharedUtility.getDisplayArray(mountableUnits),
@@ -2971,7 +2973,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             if (bayChoices.size() > 1) {
                 String bayString = (String) JOptionPane
                         .showInputDialog(
-                                clientgui,
+                                clientgui.getFrame(),
                                 Messages.getString(
                                         "MovementDisplay.MountUnitBayNumberDialog.message",
                                         new Object[]{choice.getShortName()}),
@@ -3015,7 +3017,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         // If we have multiple choices, display a selection dialog.
         if (choices.size() > 1) {
             String input = (String) JOptionPane
-                    .showInputDialog(clientgui,
+                    .showInputDialog(clientgui.getFrame(),
                             Messages.getString(
                                     "DeploymentDisplay.loadUnitDialog.message",
                                     new Object[]{ce().getShortName(),
@@ -3045,7 +3047,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 }
                 String bayString = (String) JOptionPane
                         .showInputDialog(
-                                clientgui,
+                                clientgui.getFrame(),
                                 Messages.getString(
                                         "MovementDisplay.loadUnitBayNumberDialog.message",
                                         new Object[]{ce().getShortName()}),
@@ -3075,7 +3077,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                     }
                     String bayString = (String) JOptionPane
                             .showInputDialog(
-                                    clientgui,
+                                    clientgui.getFrame(),
                                     Messages.getString(
                                             "MovementDisplay.loadProtoClampMountDialog.message",
                                             new Object[]{ce().getShortName()}),
@@ -3130,7 +3132,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         // If we have multiple choices, display a selection dialog.
         if (choices.size() > 1) {
             String input = (String) JOptionPane
-                    .showInputDialog(clientgui,
+                    .showInputDialog(clientgui.getFrame(),
                             Messages.getString(
                                     "DeploymentDisplay.towUnitDialog.message",
                                     new Object[]{ce().getShortName()}),
@@ -3209,7 +3211,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             for (HitchChoice hc : hitchChoices) {
                 retVal[i++] = hc.toString();
             }
-            String selection = (String) JOptionPane.showInputDialog(clientgui,
+            String selection = (String) JOptionPane.showInputDialog(clientgui.getFrame(),
                     Messages.getString("MovementDisplay.loadUnitHitchDialog.message",
                             new Object[]{ce().getShortName()}),
                     Messages.getString("MovementDisplay.loadUnitHitchDialog.title"),
@@ -3262,7 +3264,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             // If we have multiple choices, display a selection dialog.
             String input = (String) JOptionPane
                     .showInputDialog(
-                            clientgui,
+                            clientgui.getFrame(),
                             Messages.getString(
                                     "MovementDisplay.DisconnectUnitDialog.message", new Object[]{
                                             ce.getShortName(), ce.getUnusedString()}),
@@ -3296,7 +3298,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         } else if (loadedUnits.size() > 1) {
             // If we have multiple choices, display a selection dialog.
             String input = (String) JOptionPane.showInputDialog(
-                    clientgui,
+                    clientgui.getFrame(),
                     Messages.getString("MovementDisplay.UnloadUnitDialog.message", ce.getShortName(), ce.getUnusedString()),
                     Messages.getString("MovementDisplay.UnloadUnitDialog.title"),
                     JOptionPane.QUESTION_MESSAGE, null,
@@ -3362,7 +3364,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         for (Coords c : ring) {
             choices[i++] = c.toString();
         }
-        String selected = (String) JOptionPane.showInputDialog(clientgui,
+        String selected = (String) JOptionPane.showInputDialog(clientgui.getFrame(),
                 Messages.getString(
                         "MovementDisplay.ChooseHex" + ".message", new Object[]{
                                 ce.getShortName(), ce.getUnusedString()}), Messages
@@ -3413,7 +3415,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         for (Coords c : ring) {
             choices[i++] = c.toString();
         }
-        String selected = (String) JOptionPane.showInputDialog(clientgui,
+        String selected = (String) JOptionPane.showInputDialog(clientgui.getFrame(),
                 Messages.getString(
                         "MovementDisplay.ChooseEjectHex.message", new Object[]{
                                 abandoned.getShortName(), abandoned.getUnusedString()}), Messages
@@ -3923,7 +3925,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             return -1;
         }
 
-        String input = (String) JOptionPane.showInputDialog(clientgui,
+        String input = (String) JOptionPane.showInputDialog(clientgui.getFrame(),
                 Messages.getString("MovementDisplay.RecoverFighterDialog.message"),
                 Messages.getString("MovementDisplay.RecoverFighterDialog.title"),
                 JOptionPane.QUESTION_MESSAGE, null, SharedUtility.getDisplayArray(choices),
@@ -3991,7 +3993,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         }
 
         String input = (String) JOptionPane.showInputDialog(
-                clientgui,
+                clientgui.getFrame(),
                 Messages.getString("MovementDisplay.JoinSquadronDialog.message"),
                 Messages.getString("MovementDisplay.JoinSquadronDialog.title"),
                 JOptionPane.QUESTION_MESSAGE, null,
@@ -4349,12 +4351,11 @@ public class MovementDisplay extends ActionPhaseDisplay {
      * @param suggestion The suggested Entity to use to compute the movement envelope. If used, the
      *                   gear will be set to GEAR_LAND. This takes precedence over the currently
      *                   selected unit.
-     * @param suggestion
      */
     public void computeMovementEnvelope(Entity suggestion) {
         // do nothing if deactivated in the settings
         if (!GUIP.getMoveEnvelope()) {
-            clientgui.getBoardView().clearMovementEnvelope();
+            clientgui.clearTemporarySprites();
             return;
         }
 
@@ -4412,8 +4413,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         for (Coords c : mvEnvData.keySet()) {
             mvEnvMP.put(c, mvEnvData.get(c).countMp(mvMode == GEAR_JUMP));
         }
-        clientgui.getBoardView().setMovementEnvelope(mvEnvMP, en.getWalkMP(), en
-                .getRunMP(), en.getJumpMP(), mvMode);
+        clientgui.showMovementEnvelope(en, mvEnvMP, mvMode);
     }
 
     /**
@@ -4478,17 +4478,13 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 timeLimit * 10);
         lpf.addStopCondition(timeoutCondition);
         lpf.run(mp);
-        clientgui.getBoardView().setMovementModifierEnvelope(lpf.getLongestComputedPaths());
+        clientgui.showMovementModifiers(lpf.getLongestComputedPaths());
     }
 
     private void computeCFWarningHexes(Entity ce) {
-        List<Coords> warnList =
-                ConstructionFactorWarning.findCFWarningsMovement(
-                        clientgui.getBoardView().game,
-                        ce,
-                        clientgui.getBoardView().game.getBoard());
-
-        clientgui.getBoardView().setCFWarningSprites(warnList);
+        Game game = clientgui.getClient().getGame();
+        List<Coords> warnList = CollapseWarning.findCFWarningsMovement(game, ce, game.getBoard());
+        clientgui.showCollapseWarning(warnList);
     }
 
     //
@@ -4685,7 +4681,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
             String title = Messages.getString("MovementDisplay.ChooseMinefieldDialog.title");
             String body = Messages.getString("MovementDisplay.ChooseMinefieldDialog.message");
-            String input = (String) JOptionPane.showInputDialog(clientgui, body, title, JOptionPane.QUESTION_MESSAGE, null, choices, null);
+            String input = (String) JOptionPane.showInputDialog(clientgui.getFrame(), body, title, JOptionPane.QUESTION_MESSAGE, null, choices, null);
             Minefield mf = null;
             if (input != null) {
                 for (int loop = 0; loop < choices.length; loop++) {

@@ -18,6 +18,8 @@
  */
 package megamek.client.ui.swing;
 
+import megamek.common.InGameObject;
+
 import javax.swing.*;
 
 public interface IClientGUI {
@@ -45,4 +47,6 @@ public interface IClientGUI {
      * Performs shut down for threads and sockets and other things that can be disposed.
      */
     void die();
+
+    InGameObject getSelectedUnit();
 }

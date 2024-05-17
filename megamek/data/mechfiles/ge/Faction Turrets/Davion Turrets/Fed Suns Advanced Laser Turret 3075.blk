@@ -1,0 +1,42 @@
+#Guns block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+GunEmplacement
+</UnitType>
+<Name>
+Fed Suns Advanced Laser Turret
+</Name>
+<model>
+(3075)
+</model>
+<Year>
+3075
+</Year>
+<Type>
+IS Level 3
+</Type>
+<Turret>
+1
+</Turret>
+<Guns Equipment>
+ISLargeXPulseLaser
+ISLargeXPulseLaser
+ISLargeXPulseLaser
+ISLargeXPulseLaser
+ISMediumXPulseLaser
+ISMediumXPulseLaser
+ISMediumXPulseLaser
+ISMediumXPulseLaser
+Light Machine Gun
+Light Machine Gun
+Light Machine Gun
+Light Machine Gun
+Searchlight
+IS Light Machine Gun Ammo - Full
+</Guns Equipment>

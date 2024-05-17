@@ -153,7 +153,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
                 new MegaMekFile(Configuration.miscImagesDir(), FILENAME_ICON_256X256).toString()));
         frame.setIconImages(iconList);
 
-        CommonMenuBar menuBar = new CommonMenuBar(this);
+        CommonMenuBar menuBar = CommonMenuBar.getMenuBarForMainMenu();
         menuBar.addActionListener(actionListener);
         frame.setJMenuBar(menuBar);
         showMainMenu();

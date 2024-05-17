@@ -1,37 +1,4 @@
 Turrets 3145 F
-Rocket Launcher/1 Turret (Single), 1
-Rocket Launcher/2 Turret (Single), 2
-Rocket Launcher/3 Turret (Single), 3
-Rocket Launcher/4 Turret (Single), 4
-Heavy MG Turret (Single), 5
-Light MG Turret (Single), 6
-Rocket Launcher/5 Turret (Single), 7
-Small Laser Turret (Single), 8
-Light MG Turret (Dual), 9
-Heavy MG Turret (Dual), 10
-Light MG Turret (Triple), 11
-Heavy MG Turret (Triple), 12
-Small Laser Turret (Dual), 13
-Rocket Launcher/10 Turret (Single), 14
-Flamer Turret (Single), 15
-MG Turret (Single), 16
-Flamer Turret (Dual), 17
-MG Turret (Dual), 18
-MG Turret (Triple), 18
-Flamer Turret (Triple), 17
-MG Turret (Quad), 16
-Flamer Turret (Quad), 15
-Light MG Turret (Quad), 14
-Rocket Launcher/15 Turret (Single), 13
-Heavy MG Turret (Quad), 12
-Rocket Launcher/20 Turret (Single), 11
-Small Laser Turret (Triple), 10
-Small Laser Turret (Quad), 9
-Medium Laser Turret (Single), 8
-Medium Laser Turret (Dual), 7
-Large Laser Turret (Single), 6
-Medium Laser Turret (Triple), 5
-Medium Laser Turret (Quad), 4
-Large Laser Turret (Dual), 3
-Large Laser Turret (Triple), 2
-Large Laser Turret (Quad), 1
+@DirectFire Turrets 30675, 40
+@InDirectFire Turrets 3050, 30
+@AntiAir Turrets 3075, 30

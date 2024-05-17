@@ -1,0 +1,11 @@
+Faction Turrets 3075
+Lyran Advanced Shredder Turret (3075), 10
+Lyran Advanced Missile Turret (3075), 10
+FWL Advanced Laser Turret (3075), 10
+FWL Advanced Missile Turret (3075), 10
+Fed Suns Advanced Laser Turret (3075), 10
+Fed Suns Advanced Shredder Turret (3075), 10
+Draconis Advanced Siege Turret (3075), 10
+Draconis Advanced Missile Turret (3075), 10
+Capellan Advanced Shredder Turret (3075), 10
+Capellan Advanced Siege Turret (3075), 10

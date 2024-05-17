@@ -20,11 +20,8 @@ package megamek.common.alphaStrike;
 
 import megamek.common.*;
 import megamek.common.enums.GamePhase;
-import megamek.common.event.GameEvent;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
-import megamek.common.strategicBattleSystems.SBFFormation;
-import megamek.common.strategicBattleSystems.SBFUnit;
 
 import java.util.List;
 
@@ -83,6 +80,29 @@ public class ASGame extends AbstractGame {
     }
 
     @Override
+    public boolean isCurrentPhasePlayable() {
+        switch (phase) {
+            case INITIATIVE:
+            case END:
+            case TARGETING:
+                return false;
+            case PHYSICAL:
+            case OFFBOARD:
+            case OFFBOARD_REPORT:
+            case DEPLOYMENT:
+            case PREMOVEMENT:
+            case MOVEMENT:
+            case PREFIRING:
+            case FIRING:
+            case DEPLOY_MINEFIELDS:
+            case SET_ARTILLERY_AUTOHIT_HEXES:
+                return hasMoreTurns();
+            default:
+                return true;
+        }
+    }
+
+    @Override
     public void setPlayer(int id, Player player) {
 
     }
@@ -105,6 +125,11 @@ public class ASGame extends AbstractGame {
     @Override
     public void replaceUnits(List<InGameObject> units) {
 
+    }
+
+    @Override
+    public ReportEntry getNewReport(int messageId) {
+        return new Report(messageId);
     }
 
     private boolean isSupportedUnitType(InGameObject object) {

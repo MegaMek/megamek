@@ -22,6 +22,7 @@ import megamek.client.Client;
 import megamek.client.IClient;
 import megamek.client.SBFClient;
 import megamek.client.ui.swing.util.MegaMekController;
+import megamek.common.InGameObject;
 
 import java.awt.*;
 
@@ -43,5 +44,10 @@ public class SBFClientGUI extends AbstractClientGUI {
     protected boolean saveGame() {
         //TODO
         return true;
+    }
+
+    @Override
+    public InGameObject getSelectedUnit() {
+        return null;
     }
 }

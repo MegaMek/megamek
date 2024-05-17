@@ -185,7 +185,7 @@ class AttackSprite extends Sprite {
      * Cheking if attack is mutual and changing target arrow to half-arrow
      */
     private boolean isMutualAttack() {
-        for (AttackSprite sprite : this.boardView1.attackSprites) {
+        for (AttackSprite sprite : this.boardView1.getAttackSprites()) {
             if ((sprite.getEntityId() == targetId)
                     && (sprite.getTargetId() == entityId)) {
                 sprite.rebuildToHalvedPolygon();

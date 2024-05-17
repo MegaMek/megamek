@@ -34,6 +34,7 @@ import megamek.client.ui.dialogs.*;
 import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.swing.*;
 import megamek.client.ui.swing.boardview.BoardView;
+import megamek.client.ui.swing.boardview.TWBoardViewTooltip;
 import megamek.client.ui.swing.dialog.DialogButton;
 import megamek.client.ui.swing.dialog.MMConfirmDialog;
 import megamek.client.ui.swing.lobby.PlayerTable.PlayerTableModel;
@@ -436,8 +437,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         panTeam.add(panTeamOverview);
 
         // setup (but don't show) the detached team overview window
-        teamOverviewWindow = new ClientDialog(clientgui.frame, Messages.getString("ChatLounge.name.teamOverview"), false);
-        teamOverviewWindow.setSize(clientgui.frame.getWidth() / 2, clientgui.frame.getHeight() / 2);
+        teamOverviewWindow = new ClientDialog(clientgui.getFrame(), Messages.getString("ChatLounge.name.teamOverview"), false);
+        teamOverviewWindow.setSize(clientgui.getFrame().getWidth() / 2, clientgui.getFrame().getHeight() / 2);
     }
 
     /** Re-attaches the Team Overview panel to the tab when the detached window is closed. */
@@ -756,15 +757,16 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         panGroundMap.add(splGroundMap);
 
         // setup the board preview window.
-        boardPreviewW = new ClientDialog(clientgui.frame,
+        boardPreviewW = new ClientDialog(clientgui.getFrame(),
                 Messages.getString("BoardSelectionDialog.ViewGameBoard"), false);
-        boardPreviewW.setLocationRelativeTo(clientgui.frame);
+        boardPreviewW.setLocationRelativeTo(clientgui.getFrame());
 
         try {
             boardPreviewGame.setPhase(GamePhase.LOUNGE);
             previewBV = new BoardView(boardPreviewGame, null, null);
             previewBV.setDisplayInvalidFields(false);
             previewBV.setUseLosTool(false);
+            previewBV.setTooltipProvider(new TWBoardViewTooltip(boardPreviewGame, clientgui, previewBV));
             JButton bpButton = new JButton(Messages.getString("BoardSelectionDialog.ViewGameBoardButton"));
             bpButton.addActionListener(e -> previewGameBoard());
             JPanel bpPanel = new JPanel();
@@ -776,7 +778,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             bpPanel.add(topPanel);
             bpPanel.add(previewBV.getComponent(true));
             boardPreviewW.add(bpPanel);
-            boardPreviewW.setSize(clientgui.frame.getWidth() / 2, clientgui.frame.getHeight() / 2);
+            boardPreviewW.setSize(clientgui.getFrame().getWidth() / 2, clientgui.getFrame().getHeight() / 2);
 
             String closeAction = "closeAction";
             final KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
@@ -786,7 +788,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
 
             Ruler.color1 = GUIP.getRulerColor1();
             Ruler.color2 = GUIP.getRulerColor2();
-            Ruler ruler = new Ruler(clientgui.frame, client(), previewBV, boardPreviewGame);
+            Ruler ruler = new Ruler(clientgui.getFrame(), client(), previewBV, boardPreviewGame);
             ruler.setLocation(GUIP.getRulerPosX(), GUIP.getRulerPosY());
             ruler.setSize(GUIP.getRulerSizeHeight(), GUIP.getRulerSizeWidth());
             ruler.setAlwaysOnTop(true);
@@ -1098,9 +1100,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                         if (boardFile.exists()) {
                             buttonBoard = new Board(16, 17);
                             buttonBoard.load(new MegaMekFile(Configuration.boardsDir(), boardForImage + CL_KEY_FILEEXTENTION_BOARD).getFile());
-                            StringBuffer errs = new StringBuffer();
                             try (InputStream is = new FileInputStream(new MegaMekFile(Configuration.boardsDir(), boardForImage + CL_KEY_FILEEXTENTION_BOARD).getFile())) {
-                                buttonBoard.load(is, errs, true);
+                                buttonBoard.load(is, null, true);
                                 BoardUtilities.flip(buttonBoard, rotateBoard, rotateBoard);
                             } catch (IOException ex) {
                                 buttonBoard = Board.createEmptyBoard(mapSettings.getBoardWidth(), mapSettings.getBoardHeight());
@@ -1407,7 +1408,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             }
             // We can't load all of the squadrons bombs
             if (numLoadedBombs > ((IBomber) carried).getMaxBombPoints()) {
-                JOptionPane.showMessageDialog(clientgui.frame, Messages.getString("FighterSquadron.bomberror"),
+                JOptionPane.showMessageDialog(clientgui.getFrame(), Messages.getString("FighterSquadron.bomberror"),
                         Messages.getString("FighterSquadron.bomberror"), JOptionPane.ERROR_MESSAGE);
                 return;
             }
@@ -1773,7 +1774,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                 }
 
             } else if (ev.getSource() == butRandomMap) {
-                RandomMapDialog rmd = new RandomMapDialog(clientgui.frame, ChatLounge.this, clientgui.getClient(), mapSettings);
+                RandomMapDialog rmd = new RandomMapDialog(clientgui.getFrame(), ChatLounge.this, clientgui.getClient(), mapSettings);
                 rmd.activateDialog(clientgui.getBoardView().getTilesetManager().getThemes());
 
             } else if (ev.getSource().equals(butBoardPreview)) {
@@ -1863,7 +1864,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
 
             } else if (ev.getSource() == butHelp) {
                 File helpfile = new File(CL_KEY_FILEPATH_MAPASSEMBLYHELP);
-                final JDialog dialog = new ClientDialog(clientgui.frame,
+                final JDialog dialog = new ClientDialog(clientgui.getFrame(),
                         Messages.getString("ChatLounge.map.title.mapAssemblyHelp"), true, true);
                 final int height = 600;
                 final int width = 600;
@@ -1935,7 +1936,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             behavior = game().getBotSettings().get(toReplace.getName());
             botName = toReplace.getName();
         }
-        var bcd = new BotConfigDialog(clientgui.frame, botName, behavior, clientgui);
+        var bcd = new BotConfigDialog(clientgui.getFrame(), botName, behavior, clientgui);
         bcd.setVisible(true);
         if (bcd.getResult() == DialogResult.CANCELLED) {
             return;
@@ -1966,7 +1967,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         fc.setAcceptAllFileFilterUsed(false);
         fc.setFileFilter(XMLFileFilter);
 
-        int returnVal = fc.showSaveDialog(clientgui.frame);
+        int returnVal = fc.showSaveDialog(clientgui.getFrame());
         File selectedFile = fc.getSelectedFile();
         if ((returnVal != JFileChooser.APPROVE_OPTION) || (selectedFile == null)) {
             return;
@@ -1976,14 +1977,14 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         }
         if (selectedFile.exists()) {
             String msg = Messages.getString("ChatLounge.map.saveMapSetupReplace", selectedFile.getName());
-            if (!MMConfirmDialog.confirm(clientgui.frame, Messages.getString("ChatLounge.map.confirmReplace"), msg)) {
+            if (!MMConfirmDialog.confirm(clientgui.getFrame(), Messages.getString("ChatLounge.map.confirmReplace"), msg)) {
                 return;
             }
         }
         try (OutputStream os = new FileOutputStream(selectedFile)) {
             MapSetup.save(os, mapSettings);
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(clientgui.frame,
+            JOptionPane.showMessageDialog(clientgui.getFrame(),
                     Messages.getString("ChatLounge.map.problemSaving"),
                     Messages.getString("Error"), JOptionPane.ERROR_MESSAGE);
             LogManager.getLogger().error("", ex);
@@ -2002,12 +2003,12 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         fc.setAcceptAllFileFilterUsed(false);
         fc.setFileFilter(XMLFileFilter);
 
-        int returnVal = fc.showOpenDialog(clientgui.frame);
+        int returnVal = fc.showOpenDialog(clientgui.getFrame());
         if ((returnVal != JFileChooser.APPROVE_OPTION) || (fc.getSelectedFile() == null)) {
             return;
         }
         if (!fc.getSelectedFile().exists()) {
-            JOptionPane.showMessageDialog(clientgui.frame, Messages.getString("ChatLounge.fileNotFound"));
+            JOptionPane.showMessageDialog(clientgui.getFrame(), Messages.getString("ChatLounge.fileNotFound"));
             return;
         }
         try (InputStream os = new FileInputStream(fc.getSelectedFile())) {
@@ -2017,7 +2018,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             mapSettings.setBoardsSelectedVector(setup.getBoards());
             clientgui.getClient().sendMapSettings(mapSettings);
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(clientgui.frame,
+            JOptionPane.showMessageDialog(clientgui.getFrame(),
                     Messages.getString("ChatLounge.map.problemLoadMapSetup"),
                     Messages.getString("Error"), JOptionPane.ERROR_MESSAGE);
             LogManager.getLogger().error("", ex);
@@ -2027,7 +2028,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     private void removeBot() {
         Client c = getSelectedClient();
         if (!client().getBots().containsValue(c)) {
-            LobbyErrors.showOnlyOwnBot(clientgui.frame);
+            LobbyErrors.showOnlyOwnBot(clientgui.getFrame());
             return;
         }
         // Delete units first, which safely disembarks and offloads them
@@ -2039,7 +2040,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     private void doBotSettings() {
         Player player = playerModel.getPlayerAt(tablePlayers.getSelectedRow());
         Princess bot = (Princess) clientgui.getLocalBots().get(player.getName());
-        var bcd = new BotConfigDialog(clientgui.frame, bot.getLocalPlayer().getName(), bot.getBehaviorSettings(), clientgui);
+        var bcd = new BotConfigDialog(clientgui.getFrame(), bot.getLocalPlayer().getName(), bot.getBehaviorSettings(), clientgui);
         bcd.setVisible(true);
         if (bcd.getResult() == DialogResult.CONFIRMED) {
             bot.setBehaviorSettings(bcd.getBehaviorSettings());
@@ -3291,11 +3292,11 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         private Image prepareImage(String boardName) {
             File boardFile = new MegaMekFile(Configuration.boardsDir(), boardName + CL_KEY_FILEEXTENTION_BOARD).getFile();
             Board board;
-            StringBuffer errs = new StringBuffer();
+            List<String> errors = new ArrayList<>();
             if (boardFile.exists()) {
                 board = new Board();
                 try (InputStream is = new FileInputStream(boardFile)) {
-                    board.load(is, errs, true);
+                    board.load(is, errors, true);
                 } catch (IOException ex) {
                     board = Board.createEmptyBoard(mapSettings.getBoardWidth(), mapSettings.getBoardHeight());
                 }
@@ -3335,10 +3336,10 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             // Add the board name label and the server-side board label if necessary
             String text = LobbyUtility.cleanBoardName(boardName, mapSettings);
             Graphics g = bufImage.getGraphics();
-            if (errs.length() != 0) {
+            if (!errors.isEmpty()) {
                 invalidBoards.add(boardName);
             }
-            drawMinimapLabel(text, bufImage.getWidth(), bufImage.getHeight(), g, errs.length() != 0);
+            drawMinimapLabel(text, bufImage.getWidth(), bufImage.getHeight(), g, !errors.isEmpty());
             if (!boardFile.exists() && !boardName.startsWith(MapSettings.BOARD_GENERATED)) {
                 serverBoards.add(boardName);
                 markServerSideBoard(bufImage);

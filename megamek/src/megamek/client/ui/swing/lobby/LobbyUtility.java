@@ -160,7 +160,7 @@ public class LobbyUtility {
      * Draws the given text (the board name or special text) as a label on the
      * lower edge of the image for which the graphics g is given.
      */
-    static void drawMinimapLabel(String text, int w, int h, Graphics g, boolean invalid) {
+    public static void drawMinimapLabel(String text, int w, int h, Graphics g, boolean invalid) {
         if (text.isBlank()) {
             return;
         }

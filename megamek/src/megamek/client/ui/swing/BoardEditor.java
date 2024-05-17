@@ -25,10 +25,7 @@ import megamek.client.event.BoardViewListenerAdapter;
 import megamek.client.ui.Messages;
 import megamek.client.ui.dialogs.helpDialogs.AbstractHelpDialog;
 import megamek.client.ui.dialogs.helpDialogs.BoardEditorHelpDialog;
-import megamek.client.ui.swing.boardview.BoardView;
-import megamek.client.ui.swing.boardview.KeyBindingsOverlay;
-import megamek.client.ui.swing.boardview.PlanetaryConditionsOverlay;
-import megamek.client.ui.swing.boardview.TurnDetailsOverlay;
+import megamek.client.ui.swing.boardview.*;
 import megamek.client.ui.swing.dialog.FloodDialog;
 import megamek.client.ui.swing.dialog.LevelChangeDialog;
 import megamek.client.ui.swing.dialog.MMConfirmDialog;
@@ -215,7 +212,7 @@ public class BoardEditor extends JPanel
     public static final int[] allDirections = { 0, 1, 2, 3, 4, 5 };
     boolean isDragging = false;
     private Component bvc;
-    private final CommonMenuBar menuBar = new CommonMenuBar(this);
+    private final CommonMenuBar menuBar = CommonMenuBar.getMenuBarForBoardEditor();
     private AbstractHelpDialog help;
     private CommonSettingsDialog setdlg;
     private JDialog minimapW;
@@ -345,6 +342,7 @@ public class BoardEditor extends JPanel
             bv.addOverlay(new KeyBindingsOverlay(bv));
             bv.setUseLosTool(false);
             bv.setDisplayInvalidFields(true);
+            bv.setTooltipProvider(new BoardEditorTooltip(game, bv));
             bvc = bv.getComponent(true);
         } catch (IOException e) {
             JOptionPane.showMessageDialog(frame,
@@ -1737,10 +1735,10 @@ public class BoardEditor extends JPanel
      * be shown.
      */
     private void validateBoard(boolean showPositiveResult) {
-        StringBuffer errBuff = new StringBuffer();
-        board.isValid(errBuff);
-        if ((errBuff.length() > 0) || showPositiveResult) {
-            showBoardValidationReport(errBuff);
+        List<String> errors = new ArrayList<>();
+        board.isValid(errors);
+        if ((!errors.isEmpty()) || showPositiveResult) {
+            showBoardValidationReport(errors);
         }
     }
 
@@ -1748,12 +1746,12 @@ public class BoardEditor extends JPanel
      * Shows a board validation report dialog, reporting either
      * the contents of errBuff or that the board has no errors.
      */
-    private void showBoardValidationReport(StringBuffer errBuff) {
+    private void showBoardValidationReport(List<String> errors) {
         ignoreHotKeys = true;
-        if ((errBuff != null) && errBuff.length() > 0) {
+        if ((errors != null) && !errors.isEmpty()) {
             String title = Messages.getString("BoardEditor.invalidBoard.title");
             String msg = Messages.getString("BoardEditor.invalidBoard.report");
-            msg += errBuff;
+            msg += String.join("\n", errors);
             JTextArea textArea = new JTextArea(msg);
             JScrollPane scrollPane = new JScrollPane(textArea);
             textArea.setLineWrap(true);
@@ -2317,11 +2315,10 @@ public class BoardEditor extends JPanel
                 g.setColor(getForeground());
                 g.setFont(new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN, 9));
                 g.drawString(Messages.getString("BoardEditor.LEVEL") + curHex.getLevel(), 24, 70);
-                StringBuffer errBuf = new StringBuffer();
-                if (!curHex.isValid(errBuf)) {
+                List<String> errors = new ArrayList<>();
+                if (!curHex.isValid(errors)) {
                     invalidString.draw(g);
-                    String tooltip = Messages.getString("BoardEditor.invalidHex") + errBuf;
-                    tooltip = tooltip.replace("\n", "<br>");
+                    String tooltip = Messages.getString("BoardEditor.invalidHex") + String.join("<BR>", errors);
                     setToolTipText(tooltip);
                 } else {
                     setToolTipText(null);

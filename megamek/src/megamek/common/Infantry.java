@@ -1840,4 +1840,9 @@ public class Infantry extends Entity {
     public int getSpriteDrawPriority() {
         return 1;
     }
+
+    @Override
+    public int getGenericBattleValue() {
+        return (int) Math.round(Math.exp(3.586 + 0.336*Math.log(getWeight())));
+    }
 }

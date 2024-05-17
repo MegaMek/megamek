@@ -1,0 +1,41 @@
+#Guns block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+GunEmplacement
+</UnitType>
+<Name>
+Medium Command Tower
+</Name>
+<model>
+(3039)
+</model>
+<Year>
+3039
+</Year>
+<Type>
+IS Level 5
+</Type>
+<Turret>
+1
+</Turret>
+<Guns Equipment>
+ISLBXAC10
+ISMG
+ISMG
+Searchlight
+ISLBXAC10 Ammo
+ISLBXAC10 Ammo
+ISALBXC10 Ammo
+ISALBXC10 CL Ammo
+ISALBXC10 CL Ammo
+ISALBXC10 CL Ammo
+ISMG Ammo Full
+Communications Equipment:SIZE:7.0
+
+</Guns Equipment>

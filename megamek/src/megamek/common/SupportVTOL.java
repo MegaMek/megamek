@@ -138,4 +138,9 @@ public class SupportVTOL extends VTOL {
     public boolean isSupportVehicle() {
         return true;
     }
+
+    @Override
+    public int getGenericBattleValue() {
+        return (int) Math.round(Math.exp(3.336 + 0.451*Math.log(getWeight())));
+    }
 }

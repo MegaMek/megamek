@@ -761,4 +761,9 @@ public class Dropship extends SmallCraft {
                 || conditions.getAtmosphere().isLighterThan(Atmosphere.THIN);
         return spheroidOrLessThanThin && (getCurrentThrust() > 2);
     }
+
+    @Override
+    public int getGenericBattleValue() {
+        return (int) Math.round(Math.exp(6.5266 + 0.2497*Math.log(getWeight())));
+    }
 }

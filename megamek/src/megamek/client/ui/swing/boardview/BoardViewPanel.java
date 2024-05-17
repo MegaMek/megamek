@@ -18,8 +18,11 @@
  */
 package megamek.client.ui.swing.boardview;
 
+import megamek.common.Coords;
+
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseEvent;
 import java.awt.image.ImageObserver;
 
 /**
@@ -34,6 +37,17 @@ public class BoardViewPanel extends JPanel implements Scrollable {
     public BoardViewPanel(BoardView boardView) {
         super(true);
         this.boardView = boardView;
+    }
+
+    @Override
+    public Point getToolTipLocation(MouseEvent event) {
+        Coords hexCoords = boardView.getCoordsAt(event.getPoint());
+        Point point = boardView.getCentreHexLocation(hexCoords);
+        // add board padding
+        point.translate(BoardView.HEX_W, BoardView.HEX_H);
+        // move to the right of the current hex
+        point.translate((int) (BoardView.HEX_W * boardView.scale * 0.75), (int) (-BoardView.HEX_H / 4 * boardView.scale));
+        return new Point(point.x, point.y);
     }
 
     @Override
@@ -74,7 +88,7 @@ public class BoardViewPanel extends JPanel implements Scrollable {
 
     @Override
     public int getScrollableBlockIncrement(Rectangle arg0, int arg1, int arg2) {
-        return 500;
+        return boardView.getScrollableBlockIncrement(arg0, arg1, arg2);
     }
 
     @Override
@@ -89,9 +103,6 @@ public class BoardViewPanel extends JPanel implements Scrollable {
 
     @Override
     public int getScrollableUnitIncrement(Rectangle arg0, int arg1, int arg2) {
-        if (arg1 == SwingConstants.VERTICAL) {
-            return (int) ((boardView.scale * BoardView.HEX_H) / 2.0);
-        }
-        return (int) ((boardView.scale * BoardView.HEX_W) / 2.0);
+        return boardView.getScrollableUnitIncrement(arg0, arg1, arg2);
     }
 }

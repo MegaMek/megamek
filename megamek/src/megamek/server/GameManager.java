@@ -38,6 +38,8 @@ import megamek.common.planetaryconditions.Atmosphere;
 import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.common.planetaryconditions.Wind;
 import megamek.common.preference.PreferenceManager;
+import megamek.common.Report;
+import megamek.common.ReportMessages;
 import megamek.common.service.AutosaveService;
 import megamek.common.util.*;
 import megamek.common.util.fileUtils.MegaMekFile;
@@ -505,7 +507,7 @@ public class GameManager extends AbstractGameManager {
         }
 
         // make sure the game advances
-        if (getGame().getPhase().hasTurns() && (null != getGame().getTurn())) {
+        if (getGame().getPhase().usesTurns() && (null != getGame().getTurn())) {
             if (getGame().getTurn().isValid(player.getId(), getGame())) {
                 sendGhostSkipMessage(player);
             }
@@ -595,19 +597,6 @@ public class GameManager extends AbstractGameManager {
         }
     }
 
-    public void transmitPlayerUpdate(Player p) {
-        Server.getServerInstance().transmitPlayerUpdate(p);
-    }
-
-    /**
-     * Sends out the player info updates for all players to all connections
-     */
-    private void transmitAllPlayerUpdates() {
-        for (var player: getGame().getPlayersVector()) {
-            transmitPlayerUpdate(player);
-        }
-    }
-
     public void sendServerChat(String message) {
         Server.getServerInstance().sendServerChat(message);
     }
@@ -678,7 +667,7 @@ public class GameManager extends AbstractGameManager {
                 send(connId, packetHelper.createAttackPacket(getGame().getTeleMissileAttacksVector(), true));
             }
 
-            if (getGame().getPhase().hasTurns() && getGame().hasMoreTurns()) {
+            if (getGame().getPhase().usesTurns() && getGame().hasMoreTurns()) {
                 send(connId, createTurnVectorPacket());
                 send(connId, createTurnIndexPacket(connId));
             } else if (!getGame().getPhase().isLounge() && !getGame().getPhase().isStartingScenario()) {
@@ -1370,7 +1359,7 @@ public class GameManager extends AbstractGameManager {
             return; // don't end the phase yet, players need to see new report
         }
 
-        if (!getGame().getPhase().hasTurns() && !isEmptyLobby()) {
+        if (!getGame().getPhase().usesTurns() && !isEmptyLobby()) {
             endCurrentPhase();
         }
     }
@@ -1581,17 +1570,15 @@ public class GameManager extends AbstractGameManager {
         game.setLastPhase(game.getPhase());
         game.setPhase(phase);
 
-        // prepare for the phase
         prepareForPhase(phase);
 
-        if (phase.isPlayable(getGame())) {
+        if (game.shouldSkipCurrentPhase()) {
+            endCurrentPhase();
+        } else {
             // tell the players about the new phase
             send(packetHelper.createPhaseChangePacket());
 
-            // post phase change stuff
             executePhase(phase);
-        } else {
-            endCurrentPhase();
         }
     }
 
@@ -1861,7 +1848,7 @@ public class GameManager extends AbstractGameManager {
             case INITIATIVE:
                 // remove the last traces of last round
                 game.handleInitiativeCompensation();
-                game.resetActions();
+                game.clearActions();
                 game.resetTagInfo();
                 sendTagInfoReset();
                 clearReports();
@@ -2324,7 +2311,7 @@ public class GameManager extends AbstractGameManager {
                 break;
             case DEPLOYMENT:
                 game.clearDeploymentThisRound();
-                game.checkForCompleteDeployment();
+//                game.checkForCompleteDeployment();
                 Enumeration<Player> pls = game.getPlayers();
                 while (pls.hasMoreElements()) {
                     Player p = pls.nextElement();
@@ -14226,7 +14213,7 @@ public class GameManager extends AbstractGameManager {
             }
         }
         // and clear the attacks Vector
-        game.resetActions();
+        game.clearActions();
     }
 
     /**
@@ -14934,7 +14921,7 @@ public class GameManager extends AbstractGameManager {
         }
 
         // reset actions and re-add valid elements
-        game.resetActions();
+        game.clearActions();
         for (EntityAction entityAction : toKeep) {
             game.addAction(entityAction);
         }
@@ -14946,7 +14933,7 @@ public class GameManager extends AbstractGameManager {
      * even if the pilot is unconscious, so that he can fail.
      */
     private void removeDeadAttacks() {
-        Vector<EntityAction> toKeep = new Vector<>(game.actionsSize());
+        Vector<EntityAction> toKeep = new Vector<>();
 
         for (Enumeration<EntityAction> i = game.getActions(); i.hasMoreElements(); ) {
             EntityAction action = i.nextElement();
@@ -14958,7 +14945,7 @@ public class GameManager extends AbstractGameManager {
         }
 
         // reset actions and re-add valid elements
-        game.resetActions();
+        game.clearActions();
         for (EntityAction entityAction : toKeep) {
             game.addAction(entityAction);
         }
@@ -25358,20 +25345,22 @@ public class GameManager extends AbstractGameManager {
                         }
                     }
                     // if this is a weapons bay then also hit all the other weapons
-                    for (WeaponMounted bayWeap : ((WeaponMounted) equipmentHit).getBayWeapons()) {
-                        bayWeap.setHit(true);
-                        // Taharqa : We should also damage the critical slot, or MM and MHQ
-                        // won't remember that this weapon is damaged on the MUL file
-                        for (int i = 0; i < aero.getNumberOfCriticals(loc); i++) {
-                            CriticalSlot slot1 = aero.getCritical(loc, i);
-                            if ((slot1 == null)
-                                    || (slot1.getType() == CriticalSlot.TYPE_SYSTEM)) {
-                                continue;
-                            }
-                            Mounted mounted = slot1.getMount();
-                            if (mounted.equals(bayWeap)) {
-                                aero.hitAllCriticals(loc, i);
-                                break;
+                    if (equipmentHit instanceof WeaponMounted) {
+                        for (WeaponMounted bayWeap : ((WeaponMounted) equipmentHit).getBayWeapons()) {
+                            bayWeap.setHit(true);
+                            // Taharqa : We should also damage the critical slot, or MM and MHQ
+                            // won't remember that this weapon is damaged on the MUL file
+                            for (int i = 0; i < aero.getNumberOfCriticals(loc); i++) {
+                                CriticalSlot slot1 = aero.getCritical(loc, i);
+                                if ((slot1 == null)
+                                        || (slot1.getType() == CriticalSlot.TYPE_SYSTEM)) {
+                                    continue;
+                                }
+                                Mounted mounted = slot1.getMount();
+                                if (mounted.equals(bayWeap)) {
+                                    aero.hitAllCriticals(loc, i);
+                                    break;
+                                }
                             }
                         }
                     }
@@ -28811,7 +28800,7 @@ public class GameManager extends AbstractGameManager {
      *                  in base path).
      * @param sizes     Where to store the discovered board sizes
      */
-    private void getBoardSizesInDir(final File searchDir, TreeSet<BoardDimensions> sizes) {
+    private static void getBoardSizesInDir(final File searchDir, TreeSet<BoardDimensions> sizes) {
         if (searchDir == null) {
             throw new IllegalArgumentException("must provide searchDir");
         }
@@ -28850,7 +28839,7 @@ public class GameManager extends AbstractGameManager {
      *
      * @return A Set containing all the available board sizes.
      */
-    private Set<BoardDimensions> getBoardSizes() {
+    public static Set<BoardDimensions> getBoardSizes() {
         TreeSet<BoardDimensions> board_sizes = new TreeSet<>();
 
         File boards_dir = Configuration.boardsDir();
@@ -29401,25 +29390,25 @@ public class GameManager extends AbstractGameManager {
      *         that round. The reports returned this way are properly filtered for
      *         double blind.
      */
-    private Vector<Vector<Report>> filterPastReports(
-            Vector<Vector<Report>> pastReports, Player p) {
+    private List<List<Report>> filterPastReports(
+            List<List<Report>> pastReports, Player p) {
         // Only actually bother with the filtering if double-blind is in effect.
         if (!doBlind()) {
             return pastReports;
         }
         // Perform filtering
-        Vector<Vector<Report>> filteredReports = new Vector<>();
-        for (Vector<Report> roundReports : pastReports) {
-            Vector<Report> filteredRoundReports = new Vector<>();
+        List<List<Report>> filteredReports = new ArrayList<>();
+        for (List<Report> roundReports : pastReports) {
+            List<Report> filteredRoundReports = new ArrayList<>();
             for (Report r : roundReports) {
                 if (r.isObscuredRecipient(p.getName())) {
                     r = filterReport(r, null, true);
                 }
                 if (r != null) {
-                    filteredRoundReports.addElement(r);
+                    filteredRoundReports.add(r);
                 }
             }
-            filteredReports.addElement(filteredRoundReports);
+            filteredReports.add(filteredRoundReports);
         }
         return filteredReports;
     }
@@ -30536,13 +30525,6 @@ public class GameManager extends AbstractGameManager {
     private Packet createEndOfGamePacket() {
         return new Packet(PacketCommand.END_OF_GAME, getDetailedVictoryReport(),
                 getGame().getVictoryPlayerId(), getGame().getVictoryTeam());
-    }
-
-    /**
-     * Sends out the player ready stats for all players to all connections
-     */
-    private void transmitAllPlayerDones() {
-        getGame().getPlayersList().forEach(player -> send(packetHelper.createPlayerDonePacket(player.getId())));
     }
 
     /**
@@ -32185,7 +32167,7 @@ public class GameManager extends AbstractGameManager {
         } // Handle the next pending unload action
 
         // Clear the list of pending units and move to the next turn.
-        game.resetActions();
+        game.clearActions();
         changeToNextTurn(connId);
     }
 
@@ -33940,8 +33922,8 @@ public class GameManager extends AbstractGameManager {
      * vPhaseReport queue
      */
     @Override
-    public void addReport(Report report) {
-        vPhaseReport.addElement(report);
+    public void addReport(ReportEntry report) {
+        vPhaseReport.addElement((Report) report);
     }
 
     /**

@@ -129,4 +129,14 @@ class FiringSolutionSprite extends HexSprite {
 
         graph.dispose();
     }
+
+    @Override
+    protected boolean isBehindTerrain() {
+        return false;
+    }
+
+    @Override
+    protected int getSpritePriority() {
+        return 80;
+    }
 }

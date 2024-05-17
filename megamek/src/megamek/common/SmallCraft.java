@@ -899,4 +899,9 @@ public class SmallCraft extends Aero {
                     tb -> (tb instanceof CargoBay) ? (int) Math.floor(tb.getUnused()) : 0
                 ).sum();
     }
+
+    @Override
+    public int getGenericBattleValue() {
+        return (int) Math.round(Math.exp(-0.068 + 1.421*Math.log(getWeight())));
+    }
 }

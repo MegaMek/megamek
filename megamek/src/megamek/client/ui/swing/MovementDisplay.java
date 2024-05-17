@@ -1206,7 +1206,6 @@ public class MovementDisplay extends ActionPhaseDisplay {
         // clear board cursors
         clientgui.getBoardView().select(null);
         clientgui.getBoardView().cursor(null);
-//        clientgui.clearTemporarySprites();
 
         if (ce == null) {
             return;

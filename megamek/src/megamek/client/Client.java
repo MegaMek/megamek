@@ -694,13 +694,13 @@ public class Client extends AbstractClient implements IClientCommandHandler {
 
 
     // Should be private?
-    public String receiveReport(List<Report> v) {
-        if (v == null) {
+    public String receiveReport(List<Report> reports) {
+        if (reports == null) {
             return "[null report vector]";
         }
 
         StringBuffer report = new StringBuffer();
-        for (Report r : v) {
+        for (Report r : reports) {
             report.append(r.getText());
         }
 

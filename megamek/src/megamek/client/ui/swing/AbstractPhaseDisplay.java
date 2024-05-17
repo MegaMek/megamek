@@ -33,7 +33,7 @@ public abstract class AbstractPhaseDisplay extends SkinnedJPanel implements
 
     protected DistractableAdapter distracted = new DistractableAdapter();
     protected MegamekButton butDone;
-    protected IClientGUI clientgui;
+    private final IClientGUI clientgui;
 
     protected AbstractPhaseDisplay(IClientGUI cg) {
         this(cg, SkinSpecification.UIComponents.PhaseDisplay.getComp(),

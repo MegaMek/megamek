@@ -268,7 +268,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
 
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
 
-    protected ClientGUI clientgui;
+    private ClientGUI clientgui;
 
     /** Creates a new chat lounge for the clientgui.getClient(). */
     public ChatLounge(ClientGUI clientgui) {

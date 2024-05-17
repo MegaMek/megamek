@@ -350,17 +350,15 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
      * clean up after itself as much as possible, but will not call
      * System.exit().
      */
-    public ClientGUI(IClient client, MegaMekController c) {
-        if (!(client instanceof Client)) {
-            throw new IllegalArgumentException("TW ClientGUI must use TW Client!");
-        }
-        this.client = (Client) client;
+    public ClientGUI(Client client, MegaMekController c) {
+        super(client);
+        this.client = client;
         controller = c;
         panMain.setLayout(cardsMain);
         panSecondary.setLayout(cardsSecondary);
 
         clientGuiPanel.setLayout(new BorderLayout());
-        clientGuiPanel.addComponentListener(this);
+        clientGuiPanel.addComponentListener(resizeListener);
         clientGuiPanel.add(panMain, BorderLayout.CENTER);
         clientGuiPanel.add(panSecondary, BorderLayout.SOUTH);
 

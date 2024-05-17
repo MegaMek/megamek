@@ -351,7 +351,6 @@ public class MovementDisplay extends ActionPhaseDisplay {
     public MovementDisplay(final ClientGUI clientgui) {
         super(clientgui);
 
-        this.clientgui = clientgui;
         if (clientgui != null) {
             clientgui.getClient().getGame().addGameListener(this);
             clientgui.getBoardView().addBoardViewListener(this);

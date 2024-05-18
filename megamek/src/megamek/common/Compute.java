@@ -4028,10 +4028,20 @@ public class Compute {
         Vector<Coords> tPosV = new Vector<>();
         tPosV.add(target.getPosition());
         // check for secondary positions
-        if ((target instanceof Entity)
-            && (null != ((Entity) target).getSecondaryPositions())) {
-            for (int key : ((Entity) target).getSecondaryPositions().keySet()) {
-                tPosV.add(((Entity) target).getSecondaryPositions().get(key));
+        if (target instanceof Entity) {
+            Map<Integer, Coords> secondaryPositions = ((Entity) target).getSecondaryPositions();
+            if (null != secondaryPositions && !secondaryPositions.isEmpty()) {
+                // Some units fill additional hexes
+                for (Coords hex : secondaryPositions.values()) {
+                    // Some hexes may not be configured, or be invalid
+                    if (null != hex) {
+                        tPosV.add(hex);
+                    } else {
+                        LogManager.getLogger().warn(
+                                "Entity " + ((Entity) target).getDisplayName() + " has null secondary location!"
+                        );
+                    }
+                }
             }
         }
 
@@ -4068,6 +4078,11 @@ public class Compute {
         // if any of the destination coords are in the right place, then return
         // true
         for (Coords dest : destV) {
+            // Sometimes we get non-null destV containing null Coord entries.
+            if (null == dest) {
+                return true;
+            }
+
             // calculate firing angle
             int fa = src.degree(dest) - (facing * 60);
             if (fa < 0) {

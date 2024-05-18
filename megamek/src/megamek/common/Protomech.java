@@ -24,6 +24,7 @@ import org.apache.logging.log4j.LogManager;
 
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Vector;
 import java.util.stream.Collectors;
@@ -1493,4 +1494,38 @@ public class Protomech extends Entity {
         return (int) Math.round(Math.exp(3.385 + 1.093*Math.log(getWeight())));
     }
 
+    @Override
+    public int slotNumber(Mounted<?> mounted) {
+        int location = mounted.getLocation();
+        if (location != Entity.LOC_NONE) {
+            int slot = 0;
+            for (Mounted<?> equipment : getEquipment()) {
+                if (equipment.getLocation() == location) {
+                    if (equipment == mounted) {
+                        return slot;
+                    } else {
+                        slot++;
+                    }
+                }
+            }
+        }
+        return -1;
+    }
+
+    @Override
+    protected Mounted<?> getEquipmentForWeaponQuirk(QuirkEntry quirkEntry) {
+        int location = getLocationFromAbbr(quirkEntry.getLocation());
+        int slot = quirkEntry.getSlot();
+        for (Mounted<?> equipment : getEquipment()) {
+            if (equipment.getLocation() == location) {
+                if (slot == 0) {
+                    return equipment;
+                } else {
+                    slot--;
+                }
+            }
+        }
+        return null;
+
+    }
 }

@@ -14231,65 +14231,84 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     public void loadQuirks(List<QuirkEntry> quirks) {
         // Load all the unit's quirks.
-        for (QuirkEntry q : quirks) {
+        for (QuirkEntry quirkEntry : quirks) {
             // If the quirk doesn't have a location, then it is a unit quirk, not a weapon quirk.
-            if (StringUtility.isNullOrBlank(q.getLocation())) {
+            if (StringUtility.isNullOrBlank(quirkEntry.getLocation())) {
                 // Activate the unit quirk.
-                if (getQuirks().getOption(q.getQuirk()) == null) {
+                if (getQuirks().getOption(quirkEntry.getQuirk()) == null) {
                     LogManager.getLogger().warn(String.format("%s failed for %s %s - Invalid quirk!",
-                            q, getChassis(), getModel()));
+                            quirkEntry, getChassis(), getModel()));
                     continue;
                 }
-                getQuirks().getOption(q.getQuirk()).setValue(true);
-                continue;
+                getQuirks().getOption(quirkEntry.getQuirk()).setValue(true);
+            } else {
+                assignWeaponQuirk(quirkEntry);
             }
-
-            // Get the weapon in the indicated location and slot.
-            CriticalSlot cs = getCritical(getLocationFromAbbr(q.getLocation()), q.getSlot());
-            if (cs == null) {
-                LogManager.getLogger().warn(String.format("%s failed for %s %s - Critical slot (%s-%s) did not load!",
-                        q, getChassis(), getModel(), q.getLocation(), q.getSlot()));
-                continue;
-            }
-            Mounted<?> m = cs.getMount();
-            if (m == null) {
-                LogManager.getLogger().warn(String.format("%s failed for %s %s - Critical slot (%s-%s) is empty!",
-                        q, getChassis(), getModel(), q.getLocation(), q.getSlot()));
-                continue;
-            }
-
-            // Make sure this is a weapon.
-            if (!(m.getType() instanceof WeaponType) && !(m.getType().hasFlag(MiscType.F_CLUB))) {
-                LogManager.getLogger().warn(String.format("%s failed for %s %s - %s is not a weapon!",
-                        q, getChassis(), getModel(), m.getName()));
-                continue;
-            }
-
-            // Make sure it is the weapon we expect.
-            boolean matchFound = false;
-            Enumeration<String> typeNames = m.getType().getNames();
-            while (typeNames.hasMoreElements()) {
-                String typeName = typeNames.nextElement();
-                if (typeName.equals(q.getWeaponName())) {
-                    matchFound = true;
-                    break;
-                }
-            }
-
-            if (!matchFound) {
-                LogManager.getLogger().warn(String.format("%s failed for %s %s - %s != %s",
-                        q, getChassis(), getModel(), m.getType().getName(), q.getWeaponName()));
-                continue;
-            }
-
-            // Activate the weapon quirk.
-            if (m.getQuirks().getOption(q.getQuirk()) == null) {
-                LogManager.getLogger().warn(String.format("%s failed for %s %s - Invalid quirk!",
-                        q, getChassis(), getModel()));
-                continue;
-            }
-            m.getQuirks().getOption(q.getQuirk()).setValue(true);
         }
+    }
+
+    /**
+     * Returns the Mounted that is referred to by the quirkEntry (which must be a weapon quirk).
+     * //FIXME: This is very specialized code that is only needed because we need to identify a weapon
+     * in the blk/mtf file. It might be better to write the weaponquirk directly to the weapon,
+     * removing the need to find it. Note the override in ProtoMech that doesnt use crit slots.
+     * For meks, this is challenge as the specific weapon in a location must
+     * still be addressed.
+     *
+     * @param quirkEntry The weapon quirk entry
+     * @return The Mounted at the specified location
+     */
+    protected Mounted<?> getEquipmentForWeaponQuirk(QuirkEntry quirkEntry) {
+        // Get the weapon in the indicated location and slot.
+        CriticalSlot cs = getCritical(getLocationFromAbbr(quirkEntry.getLocation()), quirkEntry.getSlot());
+        if (cs != null) {
+            return cs.getMount();
+        } else {
+            LogManager.getLogger().warn(String.format("%s failed for %s %s - Critical slot (%s-%s) did not load!",
+                    quirkEntry, getChassis(), getModel(), quirkEntry.getLocation(), quirkEntry.getSlot()));
+            return null;
+        }
+    }
+
+    protected void assignWeaponQuirk(QuirkEntry quirkEntry) {
+        Mounted<?> m = getEquipmentForWeaponQuirk(quirkEntry);
+        if (m == null) {
+            LogManager.getLogger().warn(String.format("%s failed for %s %s - Critical slot (%s-%s) is empty!",
+                    quirkEntry, getChassis(), getModel(), quirkEntry.getLocation(), quirkEntry.getSlot()));
+            return;
+        }
+
+        // Make sure this is a weapon.
+        if (!(m.getType() instanceof WeaponType) && !(m.getType().hasFlag(MiscType.F_CLUB))) {
+            LogManager.getLogger().warn(String.format("%s failed for %s %s - %s is not a weapon!",
+                    quirkEntry, getChassis(), getModel(), m.getName()));
+            return;
+        }
+
+        // Make sure it is the weapon we expect.
+        boolean matchFound = false;
+        Enumeration<String> typeNames = m.getType().getNames();
+        while (typeNames.hasMoreElements()) {
+            String typeName = typeNames.nextElement();
+            if (typeName.equals(quirkEntry.getWeaponName())) {
+                matchFound = true;
+                break;
+            }
+        }
+
+        if (!matchFound) {
+            LogManager.getLogger().warn(String.format("%s failed for %s %s - %s != %s",
+                    quirkEntry, getChassis(), getModel(), m.getType().getName(), quirkEntry.getWeaponName()));
+            return;
+        }
+
+        // Activate the weapon quirk.
+        if (m.getQuirks().getOption(quirkEntry.getQuirk()) == null) {
+            LogManager.getLogger().warn(String.format("%s failed for %s %s - Invalid quirk!",
+                    quirkEntry, getChassis(), getModel()));
+            return;
+        }
+        m.getQuirks().getOption(quirkEntry.getQuirk()).setValue(true);
     }
 
     @Override

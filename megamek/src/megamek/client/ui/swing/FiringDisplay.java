@@ -1941,11 +1941,13 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
     }
 
     protected void updateSearchlight() {
-        setSearchlightEnabled((ce() != null)
+        setSearchlightEnabled(
+                (ce() != null)
                 && (target != null)
-                && ce().isUsingSearchlight()
-                && ce().getCrew().isActive()
+                && (clientgui.getClient().getGame().getBoard().contains(target.getPosition()))
                 && !ce().isHidden()
+                && ce().getCrew().isActive()
+                && ce().isUsingSearchlight()
                 && SearchlightAttackAction.isPossible(clientgui.getClient().getGame(), cen, target, null)
                 && !((ce() instanceof Tank) && (((Tank) ce()).getStunnedTurns() > 0)));
     }

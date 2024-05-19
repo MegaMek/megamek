@@ -247,7 +247,7 @@ public class AccessibilityWindow extends JDialog implements KeyListener {
                     String name = (ent.getOwner() != null) ? ent.getOwner().getName() : "[Unknown]";
                     try {
                         String actionText = ent.getDisplayName() + " from player " + name + " is doing " +
-                                e.getAction().toDisplayableString(client) + ".";
+                                e.getAction().toAccessibilityDescription(client) + ".";
                         systemEvent(actionText);
                     } catch (Exception ex) {
                         LogManager.getLogger().warn("Couldn't obtain action accessibility description", ex);

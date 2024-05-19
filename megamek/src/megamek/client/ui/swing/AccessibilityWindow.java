@@ -28,15 +28,12 @@ import org.apache.logging.log4j.LogManager;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.InputEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.util.LinkedList;
 import java.util.Objects;
 
-public class AccessibilityWindow extends JDialog implements KeyListener {
-    private static final String cleanHtmlRegex = "<[^>]*>";
+public class AccessibilityWindow extends JDialog {
+    private static final String CLEAN_HTML_REGEX = "<[^>]*>";
     public static final int MAX_HISTORY = 10;
     public static final String ACCESSIBLE_GUI_SHORTCUT = ".";
 
@@ -64,7 +61,7 @@ public class AccessibilityWindow extends JDialog implements KeyListener {
                 JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         add(scrollPane, BorderLayout.CENTER);
 
-        inputField.addKeyListener(this);
+        inputField.addKeyListener(keyListener);
         add(inputField, BorderLayout.SOUTH);
     }
 
@@ -93,7 +90,7 @@ public class AccessibilityWindow extends JDialog implements KeyListener {
     }
 
     private String cleanHtml(String str) {
-        return str.replaceAll(cleanHtmlRegex, "")
+        return str.replaceAll(CLEAN_HTML_REGEX, "")
                 .replace("&nbsp;", " ")
                 .replace("&amp;", "&");
     }
@@ -101,7 +98,7 @@ public class AccessibilityWindow extends JDialog implements KeyListener {
     /**
      * Tries to scroll down to the end of the box
      */
-    public void moveToEnd() {
+    private void moveToEnd() {
         if (chatArea.isShowing()) {
             int last = chatArea.getText().length() - 1;
             chatArea.select(last, last);
@@ -109,36 +106,38 @@ public class AccessibilityWindow extends JDialog implements KeyListener {
         }
     }
 
-    //region Key Listener
-    @Override
-    public void keyPressed(KeyEvent ev) {
-        if (ev.getKeyCode() == KeyEvent.VK_ENTER) {
-            history.addFirst(inputField.getText());
-            historyBookmark = -1;
+    //region key listener
+    private final KeyListener keyListener = new KeyAdapter() {
+        @Override
+        public void keyPressed(KeyEvent ev) {
+            if (ev.getKeyCode() == KeyEvent.VK_ENTER) {
+                history.addFirst(inputField.getText());
+                historyBookmark = -1;
 
-            if (inputField.getText().startsWith(Client.CLIENT_COMMAND)) {
-                systemEvent(client.runCommand(inputField.getText()));
-            } else if (inputField.getText().startsWith(ACCESSIBLE_GUI_SHORTCUT)) {
-                processAccessibleGUI();
-                systemEvent("Selected " + selectedTarget.toFriendlyString() + " in the GUI.");
-            } else {
-                // default to running commands in the accesibility window, added a say command for chat.
-                systemEvent(client.runCommand(Client.CLIENT_COMMAND + inputField.getText()));
-            }
-            inputField.setText("");
+                if (inputField.getText().startsWith(Client.CLIENT_COMMAND)) {
+                    systemEvent(client.runCommand(inputField.getText()));
+                } else if (inputField.getText().startsWith(ACCESSIBLE_GUI_SHORTCUT)) {
+                    processAccessibleGUI();
+                    systemEvent("Selected " + selectedTarget.toFriendlyString() + " in the GUI.");
+                } else {
+                    // default to running commands in the accesibility window, added a say command for chat.
+                    systemEvent(client.runCommand(Client.CLIENT_COMMAND + inputField.getText()));
+                }
+                inputField.setText("");
 
-            if (history.size() > MAX_HISTORY) {
-                history.removeLast();
+                if (history.size() > MAX_HISTORY) {
+                    history.removeLast();
+                }
+            } else if (ev.getKeyCode() == KeyEvent.VK_UP) {
+                historyBookmark++;
+                fetchHistory();
+            } else if (ev.getKeyCode() == KeyEvent.VK_DOWN) {
+                historyBookmark--;
+                fetchHistory();
             }
-        } else if (ev.getKeyCode() == KeyEvent.VK_UP) {
-            historyBookmark++;
-            fetchHistory();
-        } else if (ev.getKeyCode() == KeyEvent.VK_DOWN) {
-            historyBookmark--;
-            fetchHistory();
+            moveToEnd();
         }
-        moveToEnd();
-    }
+    };
 
     /**
      * Pull a bookmarked item from the history.
@@ -151,19 +150,10 @@ public class AccessibilityWindow extends JDialog implements KeyListener {
             historyBookmark = -1;
         }
     }
+    //endregion
 
-    @Override
-    public void keyReleased(KeyEvent ev) {
-        //ignored
-    }
-
-    @Override
-    public void keyTyped(KeyEvent ev) {
-        //ignored
-    }
-    //endregion Key Listener
-
-    GameListener gameListener = new GameListenerAdapter() {
+    //region game listener
+    private final GameListener gameListener = new GameListenerAdapter() {
 
         @Override
         public void gamePlayerConnected(GamePlayerConnectedEvent e) {
@@ -267,4 +257,5 @@ public class AccessibilityWindow extends JDialog implements KeyListener {
             systemEvent("Game Victory! (unneeded.)");
         }
     };
+    //endregion
 }

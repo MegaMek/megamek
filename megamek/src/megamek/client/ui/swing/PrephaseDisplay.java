@@ -269,10 +269,6 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
         butDone.setEnabled(true);
     }
 
-    /**
-     * Called when the current entity is done firing. Send out our attack queue
-     * to the server.
-     */
     @Override
     public void ready() {
         // stop further input (hopefully)

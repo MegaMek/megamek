@@ -350,9 +350,6 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
         return false;
     }
 
-    /**
-     * Called when the current entity is done with physical attacks.
-     */
     @Override
     public void ready() {
         if (checkNags()) {

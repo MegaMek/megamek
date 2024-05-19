@@ -152,9 +152,6 @@ public class ReportDisplay extends StatusBarPhaseDisplay  {
 
     }
 
-    /**
-     * Sets you as ready and disables the ready button.
-     */
     @Override
     public void ready() {
         if (!clientgui.getBoardView().isTileImagesLoaded()) {

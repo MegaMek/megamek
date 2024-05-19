@@ -1635,9 +1635,6 @@ public class MovementDisplay extends ActionPhaseDisplay {
         return false;
     }
 
-    /**
-     * Sends a data packet indicating the chosen movement.
-     */
     @Override
     public synchronized void ready() {
         if (ce() == null) {

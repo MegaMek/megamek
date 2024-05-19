@@ -531,10 +531,6 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements
         return false;
     }
 
-    /**
-     * Called when the current entity is done firing. Send out our attack queue
-     * to the server.
-     */
     @Override
     public void ready() {
         if (checkNags()) {

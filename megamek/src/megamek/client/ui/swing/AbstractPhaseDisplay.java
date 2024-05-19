@@ -32,6 +32,12 @@ import java.util.Objects;
 
 import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
 
+/**
+ * This is the base class for all the "displays" which take control during the local player's turn.
+ * Only one display is shown at each time; the ChatLounge is also a display. The ChatLounge doesn't
+ * show the boardview but most other displays do. Typically the display itself is the button bar
+ * at the bottom of the GUI.
+ */
 public abstract class AbstractPhaseDisplay extends SkinnedJPanel implements
         BoardViewListener, GameListener, Distractable {
 
@@ -42,24 +48,33 @@ public abstract class AbstractPhaseDisplay extends SkinnedJPanel implements
     private final DistractableDelegate distractableDelegate = new DistractableDelegate();
     private final IClientGUI clientgui;
 
+    /**
+     * Creates a phase display using the standard skin settings for phase displays.
+     *
+     * @param cg The IClientGUI parent of this display
+     */
     protected AbstractPhaseDisplay(IClientGUI cg) {
         this(cg, SkinSpecification.UIComponents.PhaseDisplay.getComp(),
                 SkinSpecification.UIComponents.PhaseDisplayDoneButton.getComp());
     }
 
-    protected AbstractPhaseDisplay(IClientGUI cg, String borderSkinComp, String buttonSkinComp) {
-        super(borderSkinComp, 0);
+    /**
+     * Creates a phase display using the given skin settings for the button panel and the buttons.
+     *
+     * @param cg The IClientGUI parent of this display
+     * @see SkinSpecification.UIComponents#getComp()
+     */
+    protected AbstractPhaseDisplay(IClientGUI cg, String panelSkin, String buttonSkin) {
+        super(panelSkin, 0);
         clientgui = Objects.requireNonNull(cg);
-        setBorder(new MegamekBorder(borderSkinComp));
-        butDone = new MegamekButton("DONE", buttonSkinComp);
-        setupDoneButton();
-        MegaMekGUI.getKeyDispatcher().registerCommandAction(KeyCommandBind.DONE, this::shouldPerformKeyCommands, this::done);
-    }
+        setBorder(new MegamekBorder(panelSkin));
 
-    private void setupDoneButton() {
+        butDone = new MegamekButton("DONE", buttonSkin);
         String f = guiScaledFontHTML(UIUtil.uiLightViolet()) +  KeyCommandBind.getDesc(KeyCommandBind.DONE)+ "</FONT>";
         butDone.setToolTipText("<html><body>" + f + "</body></html>");
         butDone.addActionListener(e -> done());
+
+        MegaMekGUI.getKeyDispatcher().registerCommandAction(KeyCommandBind.DONE, this::shouldPerformKeyCommands, this::done);
     }
 
     private void done() {
@@ -91,6 +106,11 @@ public abstract class AbstractPhaseDisplay extends SkinnedJPanel implements
         distractableDelegate.setIgnoringEvents(isDistracted);
     }
 
+    /**
+     * Tells the display to finish the current player turn and send all planned actions to the server.
+     * Planned actions are e.g. movement, attacks or deployment. Usually, the planned actions are all
+     * actions that, together, make up a single unit's actions, e.g. all weapon attacks of one unit.
+     */
     public abstract void ready();
 
     public IClientGUI getClientgui() {

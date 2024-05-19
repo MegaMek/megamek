@@ -341,7 +341,6 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         return false;
     }
 
-    /** Sends a deployment to the server. */
     @Override
     public void ready() {
         final Game game = clientgui.getClient().getGame();

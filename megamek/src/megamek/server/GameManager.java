@@ -2311,7 +2311,6 @@ public class GameManager extends AbstractGameManager {
                 break;
             case DEPLOYMENT:
                 game.clearDeploymentThisRound();
-//                game.checkForCompleteDeployment();
                 Enumeration<Player> pls = game.getPlayers();
                 while (pls.hasMoreElements()) {
                     Player p = pls.nextElement();

@@ -86,12 +86,15 @@ public class ReportDisplay extends StatusBarPhaseDisplay  {
     private static final String RD_REPORTDISPLAY = "ReportDisplay.";
     private static final String RD_TOOLTIP = ".tooltip";
 
+    private final ClientGUI clientgui;
+
     /**
      * Creates and lays out a new movement phase display for the specified
      * clientgui.getClient().
      */
     public ReportDisplay(ClientGUI clientgui) {
         super(clientgui);
+        this.clientgui = clientgui;
 
         if (clientgui == null) {
             return;

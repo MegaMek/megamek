@@ -351,7 +351,6 @@ public class MovementDisplay extends ActionPhaseDisplay {
     public MovementDisplay(final ClientGUI clientgui) {
         super(clientgui);
 
-        this.clientgui = clientgui;
         if (clientgui != null) {
             clientgui.getClient().getGame().addGameListener(this);
             clientgui.getBoardView().addBoardViewListener(this);
@@ -442,7 +441,11 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
     private void cancel() {
         clear();
-        computeMovementEnvelope(ce());
+        Entity currentEntity = ce();
+        if (currentEntity != null) {
+            computeMovementEnvelope(currentEntity);
+            clientgui.setFiringArcPosition(currentEntity, currentEntity.getPosition());
+        }
         updateMove();
     }
 
@@ -669,7 +672,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         } else {
             setStatusBarText(yourTurnMsg);
         }
-        clientgui.getBoardView().clearFieldOfFire();
+        clientgui.clearFieldOfFire();
         computeMovementEnvelope(ce);
         updateMove();
         computeCFWarningHexes(ce);
@@ -1071,7 +1074,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         initDonePanelForNewTurn();
         setNextEnabled(true);
         setForwardIniEnabled(true);
-        clientgui.getBoardView().clearFieldOfFire();
+        clientgui.clearFieldOfFire();
         clientgui.clearTemporarySprites();
         if (numButtonGroups > 1) {
             getBtn(MoveCommand.MOVE_MORE).setEnabled(true);
@@ -1115,7 +1118,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         clientgui.getBoardView().selectEntity(null);
         clientgui.setSelectedEntityNum(Entity.NONE);
         clientgui.getBoardView().clearMovementData();
-        clientgui.getBoardView().clearFieldOfFire();
+        clientgui.clearFieldOfFire();
         clientgui.clearTemporarySprites();
     }
 
@@ -1203,7 +1206,6 @@ public class MovementDisplay extends ActionPhaseDisplay {
         // clear board cursors
         clientgui.getBoardView().select(null);
         clientgui.getBoardView().cursor(null);
-        clientgui.clearTemporarySprites();
 
         if (ce == null) {
             return;
@@ -1224,7 +1226,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
         // create new current and considered paths
         cmd = new MovePath(clientgui.getClient().getGame(), ce);
-        clientgui.getBoardView().setWeaponFieldOfFire(ce, cmd);
+        clientgui.setFiringArcPosition(ce, cmd);
         clientgui.showSensorRanges(ce, cmd.getFinalCoords());
         computeCFWarningHexes(ce);
 
@@ -1312,7 +1314,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             clientgui.getBoardView().select(cmd.getFinalCoords());
             clientgui.getBoardView().cursor(cmd.getFinalCoords());
             clientgui.getBoardView().drawMovementData(entity, cmd);
-            clientgui.getBoardView().setWeaponFieldOfFire(entity, cmd);
+            clientgui.setFiringArcPosition(entity, cmd);
             clientgui.showSensorRanges(entity, cmd.getFinalCoords());
 
             //FIXME what is this
@@ -1825,7 +1827,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         }
 
         clientgui.showSensorRanges(ce(), cmd.getFinalCoords());
-        clientgui.getBoardView().setWeaponFieldOfFire(ce(), cmd);
+        clientgui.setFiringArcPosition(ce(), cmd);
     }
 
     //
@@ -2725,7 +2727,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
         MovePath movePath = cmd;
         if (null == movePath) {
-            movePath = new MovePath(this.getClientgui().getClient().getGame(), ce());
+            movePath = new MovePath(clientgui.getClient().getGame(), ce());
         }
 
         if (!movePath.contains(MoveStepType.BRACE) &&
@@ -4355,7 +4357,6 @@ public class MovementDisplay extends ActionPhaseDisplay {
     public void computeMovementEnvelope(Entity suggestion) {
         // do nothing if deactivated in the settings
         if (!GUIP.getMoveEnvelope()) {
-            clientgui.clearTemporarySprites();
             return;
         }
 
@@ -5709,17 +5710,6 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
         setTurnEnabled(!ce.isImmobile() && !ce.isStuck() && ((ce.getWalkMP() > 0) || (ce.getJumpMP() > 0))
                 && !(cmd.isJumping() && (ce instanceof Mech) && (ce.getJumpType() == Mech.JUMP_BOOSTER)));
-    }
-
-    @Override
-    public void setWeaponFieldOfFire(Entity unit, int[][] ranges, int arc, int loc) {
-        // If the unit is the current unit, then work with
-        // the current considered movement
-        if (unit.equals(ce())) {
-            super.setWeaponFieldOfFire(unit, ranges, arc, loc, cmd);
-        } else {
-            super.setWeaponFieldOfFire(unit, ranges, arc, loc);
-        }
     }
 
     /** Shortcut to clientgui.getClient().getGame(). */

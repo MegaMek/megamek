@@ -54,6 +54,7 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
     protected static final GUIPreferences GUIP = GUIPreferences.getInstance();
     private static final int BUTTON_ROWS = 2;
     private static final String SBPD_KEY_CLEARBUTTON = "clearButton";
+    protected final ClientGUI clientgui;
 
     /**
      * timer that ends turn if time limit set in options is over
@@ -101,6 +102,7 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
 
     protected StatusBarPhaseDisplay(ClientGUI cg) {
         super(cg);
+        this.clientgui = cg;
         getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), SBPD_KEY_CLEARBUTTON);
         getActionMap().put(SBPD_KEY_CLEARBUTTON, new AbstractAction() {
             @Override
@@ -397,27 +399,5 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
                 setStatusBarText(phase.toString() + s);
             }
         }
-    }
-
-    public void setWeaponFieldOfFire(Entity unit, int[][] ranges, int arc, int loc) {
-        setWeaponFieldOfFire(unit, ranges, arc, loc, unit.getFacing());
-    }
-
-    public void setWeaponFieldOfFire(Entity unit, int[][] ranges, int arc, int loc, int facing) {
-        clientgui.getBoardView().fieldOfFireUnit = unit;
-        clientgui.getBoardView().fieldOfFireRanges = ranges;
-        clientgui.getBoardView().fieldOfFireWpArc = arc;
-        clientgui.getBoardView().fieldOfFireWpLoc = loc;
-
-        clientgui.getBoardView().setWeaponFieldOfFire(facing, unit.getPosition());
-    }
-
-    public void setWeaponFieldOfFire(Entity unit, int[][] ranges, int arc, int loc, MovePath cmd) {
-        clientgui.getBoardView().fieldOfFireUnit = unit;
-        clientgui.getBoardView().fieldOfFireRanges = ranges;
-        clientgui.getBoardView().fieldOfFireWpArc = arc;
-        clientgui.getBoardView().fieldOfFireWpLoc = loc;
-
-        clientgui.getBoardView().setWeaponFieldOfFire(unit, cmd);
     }
 }

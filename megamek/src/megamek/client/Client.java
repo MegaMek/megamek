@@ -99,15 +99,9 @@ public class Client extends AbstractClient implements IClientCommandHandler {
         }
     }
 
-    @Override
-    public IGame getIGame() {
-        return game;
-    }
-
     public Game getGame() {
         return game;
     }
-
 
     /**
      * Get hexes designated for automatic artillery hits.
@@ -205,9 +199,7 @@ public class Client extends AbstractClient implements IClientCommandHandler {
         }
     }
 
-    /**
-     * is it my turn?
-     */
+    @Override
     public boolean isMyTurn() {
         if (getGame().getPhase().isSimultaneous(getGame())) {
             return game.getTurnForPlayer(localPlayerNumber) != null;
@@ -702,13 +694,13 @@ public class Client extends AbstractClient implements IClientCommandHandler {
 
 
     // Should be private?
-    public String receiveReport(List<Report> v) {
-        if (v == null) {
+    public String receiveReport(List<Report> reports) {
+        if (reports == null) {
             return "[null report vector]";
         }
 
         StringBuffer report = new StringBuffer();
-        for (Report r : v) {
+        for (Report r : reports) {
             report.append(r.getText());
         }
 

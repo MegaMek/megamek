@@ -1188,7 +1188,7 @@ public abstract class BotClient extends Client {
      * Let's save ourselves a little processing time and not deal with any of it
      */
     @Override
-    public String receiveReport(List<Report> v) {
+    public String receiveReport(List<Report> reports) {
         return "";
     }
 

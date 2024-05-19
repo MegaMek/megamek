@@ -24,12 +24,13 @@ import megamek.common.Game;
  */
 public class GameBoardNewEvent extends GameEvent {
     private static final long serialVersionUID = -4444092727458493689L;
-    protected Board oldBoard;
-    protected Board newBoard;
+
+    private final Board oldBoard;
+    private final Board newBoard;
 
     /**
      * Constructs the new event with the specified old/new board objects
-     * 
+     *
      * @param source The event source
      * @param oldBoard old game board
      * @param newBoard new game board

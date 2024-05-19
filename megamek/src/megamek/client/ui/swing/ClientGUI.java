@@ -23,7 +23,6 @@ package megamek.client.ui.swing;
 import megamek.MMConstants;
 import megamek.client.AbstractClient;
 import megamek.client.Client;
-import megamek.client.IClient;
 import megamek.client.TimerSingleton;
 import megamek.client.bot.BotClient;
 import megamek.client.bot.princess.BehaviorSettings;
@@ -58,6 +57,7 @@ import megamek.common.MovePath.MoveStepType;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.GamePhase;
+import megamek.common.equipment.WeaponMounted;
 import megamek.common.event.*;
 import megamek.common.icons.Camouflage;
 import megamek.common.preference.IPreferenceChangeListener;
@@ -83,8 +83,7 @@ import java.util.List;
 import java.util.*;
 
 public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
-        ActionListener, ComponentListener, IPreferenceChangeListener, MechDisplayListener {
-
+        ActionListener, IPreferenceChangeListener, MechDisplayListener {
     // region Variable Declarations
     public static final int WEAPON_NONE = -1;
 
@@ -93,6 +92,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
     // Note: anything located in menu bars is not located here but in their menu
     public static final String MAIN_SKIN_NEW = "mainSkinNew";
     public static final String MAIN_QUIT = "mainQuit";
+    // endregion
     // region file menu
     // game submenu
     public static final String FILE_GAME_NEW = "fileGameNew";
@@ -234,8 +234,8 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
     private SensorRangeSpriteHandler sensorRangeSpriteHandler;
     private CollapseWarningSpriteHandler collapseWarningSpriteHandler;
     private FiringSolutionSpriteHandler firingSolutionSpriteHandler;
+    private FiringArcSpriteHandler firingArcSpriteHandler;
     private final List<BoardViewSpriteHandler> spriteHandlers = new ArrayList<>();
-    private Component bvc;
     private JPanel panTop;
     private JSplitPane splitPaneA;
     private JPanel panA1;
@@ -301,7 +301,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
      */
     private final JPanel panSecondary = new JPanel();
 
-    private ReportDisplay reportDisply;
+    private ReportDisplay reportDisplay;
 
     private StatusBarPhaseDisplay currPhaseDisplay;
 
@@ -350,17 +350,15 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
      * clean up after itself as much as possible, but will not call
      * System.exit().
      */
-    public ClientGUI(IClient client, MegaMekController c) {
-        if (!(client instanceof Client)) {
-            throw new IllegalArgumentException("TW ClientGUI must use TW Client!");
-        }
-        this.client = (Client) client;
+    public ClientGUI(Client client, MegaMekController c) {
+        super(client);
+        this.client = client;
         controller = c;
         panMain.setLayout(cardsMain);
         panSecondary.setLayout(cardsSecondary);
 
         clientGuiPanel.setLayout(new BorderLayout());
-        clientGuiPanel.addComponentListener(this);
+        clientGuiPanel.addComponentListener(resizeListener);
         clientGuiPanel.add(panMain, BorderLayout.CENTER);
         clientGuiPanel.add(panSecondary, BorderLayout.SOUTH);
 
@@ -483,27 +481,39 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
         sensorRangeSpriteHandler = new SensorRangeSpriteHandler(bv, client.getGame());
         collapseWarningSpriteHandler = new CollapseWarningSpriteHandler(bv);
         firingSolutionSpriteHandler = new FiringSolutionSpriteHandler(bv, client);
+        firingArcSpriteHandler = new FiringArcSpriteHandler(bv, this);
 
         spriteHandlers.addAll(List.of(movementEnvelopeHandler, movementModifierSpriteHandler,
                 sensorRangeSpriteHandler, flareSpritesHandler, collapseWarningSpriteHandler,
-                firingSolutionSpriteHandler));
+                firingSolutionSpriteHandler, firingArcSpriteHandler));
         spriteHandlers.forEach(BoardViewSpriteHandler::initialize);
     }
 
     @Override
     public void initialize() {
+        menuBar = CommonMenuBar.getMenuBarForGame();
+        frame.setJMenuBar(menuBar);
+        initializeFrame();
         super.initialize();
         try {
             client.getGame().addGameListener(gameListener);
 
             bv = new BoardView(client.getGame(), controller, this);
+            boardViews.put(0, bv);
             bv.addOverlay(new KeyBindingsOverlay(bv));
             bv.addOverlay(new PlanetaryConditionsOverlay(bv));
             bv.addOverlay(new TurnDetailsOverlay(bv));
             bv.getPanel().setPreferredSize(clientGuiPanel.getSize());
             bv.setTooltipProvider(new TWBoardViewTooltip(client.getGame(), this, bv));
-            bvc = bv.getComponent();
-            bvc.setName(CG_BOARDVIEW);
+            cb2 = new ChatterBox2(this, bv, controller);
+            bv.addOverlay(cb2);
+            bv.getPanel().addKeyListener(cb2);
+            offBoardOverlay = new OffBoardTargetOverlay(this);
+            bv.addOverlay(new UnitOverview(this));
+            bv.addOverlay(offBoardOverlay);
+
+            boardViewsContainer.setName(CG_BOARDVIEW);
+            boardViewsContainer.updateMapTabs();
             initializeSpriteHandlers();
 
             panTop = new JPanel(new BorderLayout());
@@ -542,9 +552,6 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
         aw = new AccessibilityWindow(this);
         aw.setLocation(0, 0);
         aw.setSize(300, 300);
-
-        bv.addOverlay(new UnitOverview(this));
-        bv.addOverlay(offBoardOverlay);
 
         setUnitDisplay(new UnitDisplay(this, controller));
         getUnitDisplay().addMechDisplayListener(this);
@@ -682,16 +689,16 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
     }
 
     public void reportDisplayResetDone() {
-        if ((reportDisply != null) && (!getClient().getLocalPlayer().isDone())) {
-            reportDisply.setDoneEnabled(true);
+        if ((reportDisplay != null) && (!getClient().getLocalPlayer().isDone())) {
+            reportDisplay.setDoneEnabled(true);
         }
     }
 
     public void reportDisplayResetRerollInitiative() {
-        if ((reportDisply != null)
+        if ((reportDisplay != null)
                 && (!getClient().getLocalPlayer().isDone())
                 && (getClient().getGame().hasTacticalGenius(getClient().getLocalPlayer()))) {
-            reportDisply.resetRerollInitiativeEnabled();
+            reportDisplay.resetRerollInitiativeEnabled();
         }
     }
 
@@ -1359,17 +1366,17 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
             case VICTORY:
                 main = CG_BOARDVIEW;
                 secondary = CG_REPORTDISPLAY;
-                if (reportDisply == null) {
-                    reportDisply = new ReportDisplay(this);
-                    reportDisply.setName(secondary);
+                if (reportDisplay == null) {
+                    reportDisplay = new ReportDisplay(this);
+                    reportDisplay.setName(secondary);
                 }
                 if (!mainNames.containsValue(main)) {
                     panMain.add(panTop, main);
                 }
-                currPhaseDisplay = reportDisply;
-                component = reportDisply;
+                currPhaseDisplay = reportDisplay;
+                component = reportDisplay;
                 if (!secondaryNames.containsValue(secondary)) {
-                    panSecondary.add(reportDisply, secondary);
+                    panSecondary.add(reportDisplay, secondary);
                 }
                 break;
             default:
@@ -1645,7 +1652,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
         if (GUIP.getDockOnLeft()) {
             switch (GUIP.getUnitDisplayLocaton()) {
                 case 0:
-                    panA2.add(bvc);
+                    panA2.add(boardViewsContainer.getPanel());
                     panA2.setVisible(true);
                     getUnitDisplayDialog().add(getUnitDisplay(), BorderLayout.CENTER);
                     getUnitDisplayDialog().setVisible(visible);
@@ -1654,7 +1661,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
                     hideEmptyPanel(panA1, splitPaneA, 0.0);
                     break;
                 case 1:
-                    panA2.add(bvc);
+                    panA2.add(boardViewsContainer.getPanel());
                     panA2.setVisible(true);
                     panA1.add(getUnitDisplay());
                     getUnitDisplayDialog().setVisible(false);
@@ -1666,7 +1673,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
         } else {
             switch (GUIP.getUnitDisplayLocaton()) {
                 case 0:
-                    panA1.add(bvc);
+                    panA1.add(boardViewsContainer.getPanel());
                     panA1.setVisible(true);
                     getUnitDisplayDialog().add(getUnitDisplay(), BorderLayout.CENTER);
                     getUnitDisplayDialog().setVisible(visible);
@@ -1675,7 +1682,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
                     hideEmptyPanel(panA2, splitPaneA, 1.0);
                     break;
                 case 1:
-                    panA1.add(bvc);
+                    panA1.add(boardViewsContainer.getPanel());
                     panA1.setVisible(true);
                     panA2.add(getUnitDisplay());
                     getUnitDisplayDialog().setVisible(false);
@@ -1697,7 +1704,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
         if (GUIP.getDockOnLeft()) {
             switch (GUIP.getMiniReportLocaton()) {
                 case 0:
-                    panA2.add(bvc);
+                    panA2.add(boardViewsContainer.getPanel());
                     panA2.setVisible(true);
                     getMiniReportDisplayDialog().add(getMiniReportDisplay(), BorderLayout.CENTER);
                     getMiniReportDisplayDialog().setVisible(visible);
@@ -1705,7 +1712,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
                     hideEmptyPanel(panA1, splitPaneA, 0.0);
                     break;
                 case 1:
-                    panA2.add(bvc);
+                    panA2.add(boardViewsContainer.getPanel());
                     panA2.setVisible(true);
                     panA1.add(getMiniReportDisplay());
                     getMiniReportDisplayDialog().setVisible(false);
@@ -1716,7 +1723,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
         } else {
             switch (GUIP.getMiniReportLocaton()) {
                 case 0:
-                    panA1.add(bvc);
+                    panA1.add(boardViewsContainer.getPanel());
                     panA1.setVisible(true);
                     getMiniReportDisplayDialog().add(getMiniReportDisplay(), BorderLayout.CENTER);
                     getMiniReportDisplayDialog().setVisible(visible);
@@ -1724,7 +1731,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
                     hideEmptyPanel(panA2, splitPaneA, 1.0);
                     break;
                 case 1:
-                    panA1.add(bvc);
+                    panA1.add(boardViewsContainer.getPanel());
                     panA1.setVisible(true);
                     panA2.add(getMiniReportDisplay());
                     getMiniReportDisplayDialog().setVisible(false);
@@ -2227,7 +2234,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
         @Override
         public void gameEnd(GameEndEvent e) {
             bv.clearMovementData();
-            bv.clearFieldOfFire();
+            clearFieldOfFire();
             clearTemporarySprites();
             getLocalBots().values().forEach(AbstractClient::die);
             getLocalBots().clear();
@@ -2530,6 +2537,11 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
         return client;
     }
 
+    @Override
+    public JComponent turnTimerComponent() {
+        return menuBar;
+    }
+
     public Map<String, AbstractClient> getLocalBots() {
         return client.getBots();
     }
@@ -2723,25 +2735,12 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
                 || ((aw != null) && aw.isVisible());
     }
 
-    @Override
-    public void componentHidden(ComponentEvent evt) {
-
-    }
-
-    @Override
-    public void componentMoved(ComponentEvent evt) {
-
-    }
-
-    @Override
-    public void componentResized(ComponentEvent evt) {
-        bv.getPanel().setPreferredSize(clientGuiPanel.getSize());
-    }
-
-    @Override
-    public void componentShown(ComponentEvent evt) {
-
-    }
+    private final ComponentListener resizeListener = new ComponentAdapter() {
+        @Override
+        public void componentResized(ComponentEvent evt) {
+            boardViewsContainer.getPanel().setPreferredSize(clientGuiPanel.getSize());
+        }
+    };
 
     void editBots() {
         var rpd = new EditBotsDialog(frame, this);
@@ -2860,6 +2859,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
         sensorRangeSpriteHandler.clear();
         collapseWarningSpriteHandler.clear();
         firingSolutionSpriteHandler.clear();
+        firingArcSpriteHandler.clear();
     }
 
     /**
@@ -2913,6 +2913,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
     public void weaponSelected(MechDisplayEvent b) {
         setSelectedEntityNum(b.getEntityId());
         setSelectedWeapon(b.getWeaponId());
+        firingArcSpriteHandler.updateSelectedWeapon(b.getEntity(), getSelectedWeapon());
     }
 
     private void setSelectedWeapon(int equipmentNumber) {
@@ -2928,8 +2929,8 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
     }
 
     @Nullable
-    public Mounted<?> getSelectedWeapon() {
-        return hasSelectedWeapon() ? getSelectedUnit().getEquipment(selectedWeapon) : null;
+    public WeaponMounted getSelectedWeapon() {
+        return hasSelectedWeapon() ? (WeaponMounted) getSelectedUnit().getEquipment(selectedWeapon) : null;
     }
 
     @Nullable
@@ -2944,5 +2945,56 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
 
     public JPanel getMainPanel() {
         return clientGuiPanel;
+    }
+
+    /**
+     * Updates the position used for showing the field of fire to the end point of the given movepath. This
+     * method does nothing if the given entity is not the one viewed in the unit viewer (and therefore
+     * not the one for which a weapon field of fire is currently shown).
+     *
+     * @param entity The unit to take the facing from if it is the currently viewed unit
+     * @param movePath A planned movement path to take the end position from
+     */
+    public void setFiringArcPosition(Entity entity, MovePath movePath) {
+        // Only update when the selected weapon is on the unit that's moving
+        if (entity.getId() == getSelectedEntityNum()) {
+            firingArcSpriteHandler.updatePosition(movePath);
+        }
+    }
+
+    /**
+     * Updates the position used for showing the field of fire to the given position. This
+     * method does nothing if the given entity is not the one viewed in the unit viewer (and therefore
+     * not the one for which a weapon field of fire is currently shown).
+     *
+     * @param entity The unit to take the facing from if it is the currently viewed unit
+     * @param coords The position to center the field of fire on
+     */
+    public void setFiringArcPosition(Entity entity, Coords coords) {
+        // Only update when the selected weapon is on the unit that's changing position
+        if (entity.getId() == getSelectedEntityNum()) {
+            firingArcSpriteHandler.updatePosition(coords);
+        }
+    }
+
+    /**
+     * Updates the facing used for showing the field of fire to the basic facing of the given unit. This
+     * method does nothing if the given entity is not the one viewed in the unit viewer (and therefore
+     * not the one for which a weapon field of fire is currently shown).
+     *
+     * @param entity The unit to take the facing from if it is the currently viewed unit
+     */
+    public void setFiringArcFacing(Entity entity) {
+        // Only update when the selected weapon is on the unit that's changing its facing
+        if (entity.getId() == getSelectedEntityNum()) {
+            firingArcSpriteHandler.updateFacing(entity.getFacing());
+        }
+    }
+
+    /**
+     * Removes the field of fire from the BoardView and clears the cached values in the sprite handler.
+     */
+    public void clearFieldOfFire() {
+        firingArcSpriteHandler.clearValues();
     }
 }

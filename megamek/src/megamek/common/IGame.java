@@ -90,6 +90,13 @@ public interface IGame {
     void addGameListener(GameListener listener);
 
     /**
+     * Removes the specified game listener.
+     *
+     * @param listener the game listener.
+     */
+    void removeGameListener(GameListener listener);
+
+    /**
      * @return Whether there is an active claim for victory.
      */
     boolean isForceVictory();

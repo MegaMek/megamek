@@ -56,25 +56,30 @@ public interface IClient {
      *
      * @return The game of this client
      */
-    IGame getIGame();
+    IGame getGame();
 
     /** @return The in-game object associated with the given ID. */
     default Optional<InGameObject> getInGameObject(int id) {
-        return getIGame().getInGameObject(id);
+        return getGame().getInGameObject(id);
     }
 
     /** @return A list of all in-game objects of the game. This list is copied and may be safely modified. */
     default List<InGameObject> getInGameObjects() {
-        return getIGame().getInGameObjects();
+        return getGame().getInGameObjects();
     }
 
     /** @return The player with the given ID, or null if there is no such player. */
     default Player getPlayer(int id) {
-        return getIGame().getPlayer(id);
+        return getGame().getPlayer(id);
     }
 
     /** @return The ID of the player playing at this Client. */
     int getLocalPlayerNumber();
+
+    /**
+     * @return True when the currently active turn is a turn for the local player
+     */
+    boolean isMyTurn();
 
     /**
      * Sets the ID of the player playing at this Client.

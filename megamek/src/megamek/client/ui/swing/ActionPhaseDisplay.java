@@ -46,7 +46,7 @@ public abstract class ActionPhaseDisplay extends StatusBarPhaseDisplay {
     protected UIUtil.FixedXPanel setupDonePanel() {
         var donePanel = super.setupDonePanel();
         butSkipTurn = new MegamekButton("SKIP", SkinSpecification.UIComponents.PhaseDisplayDoneButton.getComp());
-        butSkipTurn.setPreferredSize(new Dimension(UIUtil.scaleForGUI(DONE_BUTTON_WIDTH), MIN_BUTTON_SIZE.height * 1));
+        butSkipTurn.setPreferredSize(new Dimension(UIUtil.scaleForGUI(DONE_BUTTON_WIDTH), MIN_BUTTON_SIZE.height));
         String f = guiScaledFontHTML(UIUtil.uiLightViolet()) +  KeyCommandBind.getDesc(KeyCommandBind.DONE_NO_ACTION)+ "</FONT>";
         butSkipTurn.setToolTipText("<html><body>" + f + "</body></html>");
         addToDonePanel(donePanel, butSkipTurn);
@@ -108,7 +108,7 @@ public abstract class ActionPhaseDisplay extends StatusBarPhaseDisplay {
     }
 
     /** called to reset, show, hide and relabel the Done panel buttons. Override to change button labels and states,
-     * being sure to call {@link #updateDonePanelButtons(String,String,boolean) UpdateDonePanelButtons}
+     * being sure to call {@link #updateDonePanelButtons(String, String, boolean, List)}
      * to set the button labels and states
      */
     abstract protected void updateDonePanel();
@@ -349,6 +349,6 @@ public abstract class ActionPhaseDisplay extends StatusBarPhaseDisplay {
     }
 
     private void adaptToGUIScale() {
-        butSkipTurn.setPreferredSize(new Dimension(UIUtil.scaleForGUI(DONE_BUTTON_WIDTH), MIN_BUTTON_SIZE.height * 1));
+        butSkipTurn.setPreferredSize(new Dimension(UIUtil.scaleForGUI(DONE_BUTTON_WIDTH), MIN_BUTTON_SIZE.height));
     }
 }

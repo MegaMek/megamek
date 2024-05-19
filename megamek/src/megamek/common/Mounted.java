@@ -1494,40 +1494,32 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     }
 
     /**
-     * Method that checks to see if our capital missile bay is in bearings-only mode
+     * @return True if our capital missile bay is in bearings-only mode
      * Only available in space games
-     * @return
      */
     public boolean isInBearingsOnlyMode() {
-        if ((curMode().equals(Weapon.MODE_CAP_MISSILE_BEARING_EXT)
-                    || curMode().equals(Weapon.MODE_CAP_MISSILE_BEARING_LONG)
-                    || curMode().equals(Weapon.MODE_CAP_MISSILE_BEARING_MED)
-                    || curMode().equals(Weapon.MODE_CAP_MISSILE_BEARING_SHORT)
-                    || curMode().equals(Weapon.MODE_CAP_MISSILE_WAYPOINT_BEARING_EXT)
-                    || curMode().equals(Weapon.MODE_CAP_MISSILE_WAYPOINT_BEARING_LONG)
-                    || curMode().equals(Weapon.MODE_CAP_MISSILE_WAYPOINT_BEARING_MED)
-                    || curMode().equals(Weapon.MODE_CAP_MISSILE_WAYPOINT_BEARING_SHORT))
-                && getEntity().isSpaceborne()) {
-            return true;
-        }
-        return false;
+        return (curMode().equals(Weapon.MODE_CAP_MISSILE_BEARING_EXT)
+                || curMode().equals(Weapon.MODE_CAP_MISSILE_BEARING_LONG)
+                || curMode().equals(Weapon.MODE_CAP_MISSILE_BEARING_MED)
+                || curMode().equals(Weapon.MODE_CAP_MISSILE_BEARING_SHORT)
+                || curMode().equals(Weapon.MODE_CAP_MISSILE_WAYPOINT_BEARING_EXT)
+                || curMode().equals(Weapon.MODE_CAP_MISSILE_WAYPOINT_BEARING_LONG)
+                || curMode().equals(Weapon.MODE_CAP_MISSILE_WAYPOINT_BEARING_MED)
+                || curMode().equals(Weapon.MODE_CAP_MISSILE_WAYPOINT_BEARING_SHORT))
+                && getEntity().isSpaceborne();
     }
 
     /**
-     * Method that checks to see if our capital missile bay is in waypoint launch mode
+     * @return True if our capital missile bay is in waypoint launch mode
      * Only available in space games
-     * @return
      */
     public boolean isInWaypointLaunchMode() {
-        if ((curMode().equals(Weapon.MODE_CAP_MISSILE_WAYPOINT_BEARING_EXT)
+        return (curMode().equals(Weapon.MODE_CAP_MISSILE_WAYPOINT_BEARING_EXT)
                 || curMode().equals(Weapon.MODE_CAP_MISSILE_WAYPOINT_BEARING_LONG)
                 || curMode().equals(Weapon.MODE_CAP_MISSILE_WAYPOINT_BEARING_MED)
                 || curMode().equals(Weapon.MODE_CAP_MISSILE_WAYPOINT_BEARING_SHORT)
                 || curMode().equals(Weapon.MODE_CAP_MISSILE_WAYPOINT))
-            && getEntity().isSpaceborne()) {
-            return true;
-        }
-        return false;
+                && getEntity().isSpaceborne();
     }
 
     /**

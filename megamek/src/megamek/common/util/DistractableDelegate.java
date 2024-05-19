@@ -19,31 +19,36 @@
  */
 package megamek.common.util;
 
-import java.util.EventListener;
+import java.io.Serializable;
 
 /**
- * This interface represents an event listener that can be "distracted" to ignore any event
- * notifications.
+ * This class implements the Distractable interface. It is intended to be the underlying implementation
+ * for any class that implements the interface.
  *
  * @author James Damour
  */
-public interface Distractable extends EventListener {
+public class DistractableDelegate implements Distractable, Serializable {
+
+    /** The current state of distraction. */
+    private boolean isDistracted;
 
     /**
-     * @return true if the listener is currently distracted, i.e. ignoring events.
+     * Creates a delegate object to handle the distraction state of another object.
      */
-    boolean isIgnoringEvents();
+    public DistractableDelegate() {
+        isDistracted = false;
+    }
 
-    /**
-     * Specify if the listener should be distracted. An event that occurs while the listener is distracted
-     * is completely ignored, i.e. it is not processed, neither when it arrives nor at any later point.
-     *
-     * @param distracted true if the listener should ignore events, false if the listener should pay attention
-     */
-    void setIgnoringEvents(boolean distracted);
+    @Override
+    public boolean isIgnoringEvents() {
+        return isDistracted;
+    }
 
-    /**
-     * Stop just ignoring events and actually stop listening to them.
-     */
-    void removeAllListeners();
+    @Override
+    public void setIgnoringEvents(boolean distracted) {
+        isDistracted = distracted;
+    }
+
+    @Override
+    public void removeAllListeners() { }
 }

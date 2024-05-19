@@ -1,15 +1,21 @@
 /*
- * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2000-2003 Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
 package megamek.client.ui.swing;
 
@@ -20,7 +26,7 @@ import megamek.client.ui.swing.util.UIUtil;
 import megamek.client.ui.swing.widget.*;
 import megamek.common.event.*;
 import megamek.common.util.Distractable;
-import megamek.common.util.DistractableAdapter;
+import megamek.common.util.DistractableDelegate;
 
 import java.util.Objects;
 
@@ -31,8 +37,9 @@ public abstract class AbstractPhaseDisplay extends SkinnedJPanel implements
 
     public static final int DONE_BUTTON_WIDTH = 160;
 
-    protected DistractableAdapter distracted = new DistractableAdapter();
-    protected MegamekButton butDone;
+    protected final MegamekButton butDone;
+
+    private final DistractableDelegate distractableDelegate = new DistractableDelegate();
     private final IClientGUI clientgui;
 
     protected AbstractPhaseDisplay(IClientGUI cg) {
@@ -45,23 +52,23 @@ public abstract class AbstractPhaseDisplay extends SkinnedJPanel implements
         clientgui = Objects.requireNonNull(cg);
         setBorder(new MegamekBorder(borderSkinComp));
         butDone = new MegamekButton("DONE", buttonSkinComp);
-        String f = guiScaledFontHTML(UIUtil.uiLightViolet()) +  KeyCommandBind.getDesc(KeyCommandBind.DONE)+ "</FONT>";
-        butDone.setToolTipText("<html><body>" + f + "</body></html>");
-        butDone.setActionCommand("doneButton");
-        butDone.addActionListener(e -> {
-            if (shouldPerformKeyCommands()) {
-                done();
-            }
-        });
-
+        setupDoneButton();
         MegaMekGUI.getKeyDispatcher().registerCommandAction(KeyCommandBind.DONE, this::shouldPerformKeyCommands, this::done);
     }
 
+    private void setupDoneButton() {
+        String f = guiScaledFontHTML(UIUtil.uiLightViolet()) +  KeyCommandBind.getDesc(KeyCommandBind.DONE)+ "</FONT>";
+        butDone.setToolTipText("<html><body>" + f + "</body></html>");
+        butDone.addActionListener(e -> done());
+    }
+
     private void done() {
-        // When the turn is ended, we could miss a key release event
-        // This will ensure no repeating keys are stuck down
-        MegaMekGUI.getKeyDispatcher().stopAllRepeating();
-        ready();
+        if (shouldPerformKeyCommands()) {
+            // When the turn is ended, we could miss a key release event
+            // This will ensure no repeating keys are stuck down
+            MegaMekGUI.getKeyDispatcher().stopAllRepeating();
+            ready();
+        }
     }
 
     private boolean shouldPerformKeyCommands() {
@@ -76,21 +83,21 @@ public abstract class AbstractPhaseDisplay extends SkinnedJPanel implements
 
     @Override
     public final boolean isIgnoringEvents() {
-        return distracted.isIgnoringEvents();
+        return distractableDelegate.isIgnoringEvents();
     }
 
     @Override
-    public final void setIgnoringEvents(boolean distracted) {
-        this.distracted.setIgnoringEvents(distracted);
+    public final void setIgnoringEvents(boolean isDistracted) {
+        distractableDelegate.setIgnoringEvents(isDistracted);
     }
 
-    public void ready() { }
+    public abstract void ready();
 
     public IClientGUI getClientgui() {
         return clientgui;
     }
 
-    // BoardListener
+    //region Empty BoardListener
 
     @Override
     public void hexMoused(BoardViewEvent b) { }
@@ -116,7 +123,9 @@ public abstract class AbstractPhaseDisplay extends SkinnedJPanel implements
     @Override
     public void unitSelected(BoardViewEvent b) { }
 
-    // GameListener
+    //endregion
+
+    //region Empty GameListener
 
     @Override
     public void gamePlayerConnected(GamePlayerConnectedEvent e) { }
@@ -174,4 +183,6 @@ public abstract class AbstractPhaseDisplay extends SkinnedJPanel implements
 
     @Override
     public void gameVictory(GameVictoryEvent e) { }
+
+    //endregion
 }

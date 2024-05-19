@@ -3280,7 +3280,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     /** @return True when the MM suite supports the given laf, currently all formdev "Flat ..." and the system default. */
     public static boolean isSupportedLookAndFeel(UIManager.LookAndFeelInfo lookAndFeelInfo) {
-        return lookAndFeelInfo.getClassName().toLowerCase().contains("formdev")
-                || UIManager.getSystemLookAndFeelClassName().equals(lookAndFeelInfo.getClassName());
+        return lookAndFeelInfo.getClassName().toLowerCase().contains("formdev");
     }
 }

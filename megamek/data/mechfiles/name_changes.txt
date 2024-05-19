@@ -4,6 +4,11 @@
 # campaign file. Each entry should be on a separate line and have the
 # format "oldname|currentname"
 
+# Note that it is allowable to have entries of the form
+#    OldNameA|OldNameB
+#    OldNameB|CurrentName
+# For both OldNameA and OldNameB the actual unit CurrentName will be found
+
 #Aerospace
 Persepolis 2 (Standard)|Persepolis 2
 MechBuster|Mechbuster
@@ -453,7 +458,7 @@ Tunnel Rat IV Mining Exoskeleton [Battle Claw/LMG]|Tunnel Rat IV Mining Exoskele
 Undine Battle Armor (Standard)|Undine Battle Armor (Sqd5)
 Undine Battle Armor (Upgrade)|Undine Battle Armor (Upgrade)(Sqd5)
 Undine Battle Armor [IS] (Standard)|Undine Battle Armor (Sqd4)
-Undine Battle Armor 'Sebastian'|Undine Battle Armor 'Sebastian'(Sqd5)
+Undine Battle Armor 'Sebastian'|Undine Battle Armor 'Sebastian'(Sqd4)
 Void Medium Battle Armor (DCA)|Void Medium Battle Armor (DCA)(Sqd4)
 Void Medium Battle Armor (Minelayer)|Void Medium Battle Armor (Minelayer)(Sqd4)
 Void Medium Battle Armor (Nova Cat)|Void Medium Battle Armor (Nova Cat)(Sqd5)
@@ -494,7 +499,7 @@ Kuan Ti (Standard)|Kuan Ti (3055)
 Lion (Clan)|Lion (2835)
 Lion (Wolf's Dragoons 3052)|Lion (3052) (WD)
 Lung Wang (Standard)|Lung Wang (3055)
-M3 Drone|M3 Drone CASPAR
+M3 Drone|Drone M-3
 Mammoth (Standard)|Mammoth (2658)
 Miraborg (Standard)|Miraborg (3053)
 Model 97 'Octopus' (Standard)|Model 97 'Octopus' (3051)
@@ -505,12 +510,10 @@ Nagumo (Standard)|Nagumo (3056)
 Noruff (Standard)|Noruff (3056)
 Okinawa (Standard)|Okinawa (3055)
 Overlord C|Overlord C (2818)
-Rose (Bara no Ryu) (Hive)|Rose (Bara no Ryu) (Hive)
 Rose (Bara no Ryu) (Standard)|Rose (Bara no Ryu) (3054)
 Sassanid (Standard)|Sassanid (2875)
 Titan (Clan)|Titan (2953)
 Union C|Union C (2829)
-Vampire II|Vampire II (Standard)
 Vengeance Danai Centrella|Vengeance (Danai Centrella)
 Vulture (Standard)|Vulture (2312)
 
@@ -519,7 +522,7 @@ Vulture (Standard)|Vulture (2312)
 Clan Motorized Combat Engineers|Clan Motorized Point (Rifle)
 Motorized Combat Engineers|Combat Engineer Royal Engineers, 1st Lyran Royal Guards RCT
 Bridge-builder Engineers Take the Time III-chi, Forty-eighth Division|Bridge-builder Engineers Take the Time III-chi; Forty-eighth Division
-Firefighter Twenty-fourth Hellfire Firefighting Battalion, 84th Avalon LI, 17th Avalon Hussars|Firefighter Twenty-fourth Hellfire Firefighting Battalion; 84th Avalon
+Firefighter Twenty-fourth Hellfire Firefighting Battalion, 84th Avalon LI, 17th Avalon Hussars|Firefighter Twenty-fourth Hellfire Firefighting Battalion; 84th Avalon LI; 17th Avalon Hussars
 Mountaineer 45th Cerulean Mountain Infantry, 3rd Davion Guards|Mountaineer 45th Cerulean Mountain Infantry; 3rd Davion Guards
 Recon Infantry Recon Battalion, 201st Pesht Assault Team, 3rd Proserpina Hussars|Recon Infantry Recon Battalion; 201st Pesht Assault Team; 3rd Proserpina Hussars
 Heavy Mountain Infantry Cavalier 'Mountain Men' Infantry Guard, Magistracy Cavaliers|Heavy Mountain Infantry Cavalier 'Mountain Men' Infantry Guard; Magistracy Cavaliers
@@ -549,17 +552,16 @@ Tramp JumpShip (Lithium-Fusion)|Tramp JumpShip (3071)
 
 #Mechs
 Atlas AS7-D(C)|Atlas C
-Baboon (Howler) (Standard)|Howler (Baboon)
-Behemoth (Stone Rhino) (Standard)|Stone Rhino (Behemoth)
-Behemoth (Stone Rhino) 4|Stone Rhino (Behemoth) 4
-Behemoth (Stone Rhino) 5|Stone Rhino (Behemoth) 5
-Behemoth (Stone Rhino) 6|Stone Rhino (Behemoth) 6
-Black Hawk (Nova) A|Nova (Black Hawk) A
-Black Hawk (Nova) B|Nova (Black Hawk) B
-Black Hawk (Nova) C|Nova (Black Hawk) C
-Black Hawk (Nova) D|Nova (Black Hawk) D
-Black Hawk (Nova) Prime|Nova (Black Hawk) Prime
-Black Hawk (Nova) S|Nova (Black Hawk) S
+Stone Rhino (Behemoth)|Behemoth (Stone Rhino) (Standard)
+Stone Rhino (Behemoth) 4|Behemoth (Stone Rhino) 4
+Stone Rhino (Behemoth) 5|Behemoth (Stone Rhino) 5
+Stone Rhino (Behemoth) 6|Behemoth (Stone Rhino) 6
+Nova (Black Hawk) A|Black Hawk (Nova) A
+Nova (Black Hawk) B|Black Hawk (Nova) B
+Nova (Black Hawk) C|Black Hawk (Nova) C
+Nova (Black Hawk) D|Black Hawk (Nova) D
+Nova (Black Hawk) Prime|Black Hawk (Nova) Prime
+Nova (Black Hawk) S|Black Hawk (Nova) S
 Black Hawk 2|Black Hawk (Standard) 2
 Black Hawk 3|Black Hawk (Standard) 3
 
@@ -574,148 +576,147 @@ Blood Asp G|Star Adder (Blood Asp) G
 Blood Asp I|Star Adder (Blood Asp) I
 Blood Asp T|Star Adder (Blood Asp) T
 
-Cauldron-Born (Ebon Jaguar) A|Ebon Jaguar (Cauldron-Born) A
-Cauldron-Born (Ebon Jaguar) B|Ebon Jaguar (Cauldron-Born) B
-Cauldron-Born (Ebon Jaguar) C|Ebon Jaguar (Cauldron-Born) C
-Cauldron-Born (Ebon Jaguar) Prime|Ebon Jaguar (Cauldron-Born) Prime
-Daishi (Dire Wolf) A|Dire Wolf (Daishi) A
-Daishi (Dire Wolf) B|Dire Wolf (Daishi) B
-Daishi (Dire Wolf) Prime|Dire Wolf (Daishi) Prime
-Daishi (Dire Wolf) S|Dire Wolf (Daishi) S
-Daishi (Dire Wolf) W|Dire Wolf (Daishi) W
-Dasher (Fire Moth) A|Fire Moth (Dasher) A
-Dasher (Fire Moth) B|Fire Moth (Dasher) B
-Dasher (Fire Moth) C|Fire Moth (Dasher) C
-Dasher (Fire Moth) D|Fire Moth (Dasher) D
-Dasher (Fire Moth) Prime|Fire Moth (Dasher) Prime
-Dragonfly (Viper) A|Viper (Dragonfly) A
-Dragonfly (Viper) B|Viper (Dragonfly) B
-Dragonfly (Viper) C|Viper (Dragonfly) C
-Dragonfly (Viper) D|Viper (Dragonfly) D
-Dragonfly (Viper) Prime|Viper (Dragonfly) Prime
-Fenris (Ice Ferret) A|Ice Ferret (Fenris) A
-Fenris (Ice Ferret) B|Ice Ferret (Fenris) B
-Fenris (Ice Ferret) C|Ice Ferret (Fenris) C
-Fenris (Ice Ferret) D|Ice Ferret (Fenris) D
-Fenris (Ice Ferret) Prime|Ice Ferret (Fenris) Prime
-Gladiator (Executioner) A|Executioner (Gladiator) A
-Gladiator (Executioner) B|Executioner (Gladiator) B
-Gladiator (Executioner) C|Executioner (Gladiator) C
-Gladiator (Executioner) D|Executioner (Gladiator) D
-Gladiator (Executioner) Prime|Executioner (Gladiator) Prime
-Goshawk (Vapor Eagle) (Standard)|Vapor Eagle (Goshawk)
-Goshawk (Vapor Eagle) 2|Vapor Eagle (Goshawk) 2
-Grendel (Mongrel) A|Mongrel (Grendel) A
-Grendel (Mongrel) B|Mongrel (Grendel) B
-Grendel (Mongrel) C|Mongrel (Grendel) C
-Grendel (Mongrel) D|Mongrel (Grendel) D
-Grendel (Mongrel) Prime|Mongrel (Grendel) Prime
-Hankyu (Arctic Cheetah) A|Arctic Cheetah (Hankyu) A
-Hankyu (Arctic Cheetah) B|Arctic Cheetah (Hankyu) B
-Hankyu (Arctic Cheetah) C|Arctic Cheetah (Hankyu) C
-Hankyu (Arctic Cheetah) D|Arctic Cheetah (Hankyu) D
-Hankyu (Arctic Cheetah) Prime|Arctic Cheetah (Hankyu) Prime
+Ebon Jaguar (Cauldron-Born) A|Cauldron-Born (Ebon Jaguar) A
+Ebon Jaguar (Cauldron-Born) B|Cauldron-Born (Ebon Jaguar) B
+Ebon Jaguar (Cauldron-Born) C|Cauldron-Born (Ebon Jaguar) C
+Ebon Jaguar (Cauldron-Born) Prime|Cauldron-Born (Ebon Jaguar) Prime
+Dire Wolf (Daishi) A|Daishi (Dire Wolf) A
+Dire Wolf (Daishi) B|Daishi (Dire Wolf) B
+Dire Wolf (Daishi) Prime|Daishi (Dire Wolf) Prime
+Dire Wolf (Daishi) S|Daishi (Dire Wolf) S
+Dire Wolf (Daishi) W|Daishi (Dire Wolf) W
+Fire Moth (Dasher) A|Dasher (Fire Moth) A
+Fire Moth (Dasher) B|Dasher (Fire Moth) B
+Fire Moth (Dasher) C|Dasher (Fire Moth) C
+Fire Moth (Dasher) D|Dasher (Fire Moth) D
+Fire Moth (Dasher) Prime|Dasher (Fire Moth) Prime
+Viper (Dragonfly) A|Dragonfly (Viper) A
+Viper (Dragonfly) B|Dragonfly (Viper) B
+Viper (Dragonfly) C|Dragonfly (Viper) C
+Viper (Dragonfly) D|Dragonfly (Viper) D
+Viper (Dragonfly) Prime|Dragonfly (Viper) Prime
+Ice Ferret (Fenris) A|Fenris (Ice Ferret) A
+Ice Ferret (Fenris) B|Fenris (Ice Ferret) B
+Ice Ferret (Fenris) C|Fenris (Ice Ferret) C
+Ice Ferret (Fenris) D|Fenris (Ice Ferret) D
+Ice Ferret (Fenris) Prime|Fenris (Ice Ferret) Prime
+Executioner (Gladiator) A|Gladiator (Executioner) A
+Executioner (Gladiator) B|Gladiator (Executioner) B
+Executioner (Gladiator) C|Gladiator (Executioner) C
+Executioner (Gladiator) D|Gladiator (Executioner) D
+Executioner (Gladiator) Prime|Gladiator (Executioner) Prime
+Vapor Eagle (Goshawk)|Goshawk (Vapor Eagle)
+Vapor Eagle (Goshawk) 2|Goshawk (Vapor Eagle) 2
+Mongrel (Grendel) A|Grendel (Mongrel) A
+Mongrel (Grendel) B|Grendel (Mongrel) B
+Mongrel (Grendel) C|Grendel (Mongrel) C
+Mongrel (Grendel) D|Grendel (Mongrel) D
+Mongrel (Grendel) Prime|Grendel (Mongrel) Prime
+Arctic Cheetah (Hankyu) A|Hankyu (Arctic Cheetah) A
+Arctic Cheetah (Hankyu) B|Hankyu (Arctic Cheetah) B
+Arctic Cheetah (Hankyu) C|Hankyu (Arctic Cheetah) C
+Arctic Cheetah (Hankyu) D|Hankyu (Arctic Cheetah) D
+Arctic Cheetah (Hankyu) Prime|Hankyu (Arctic Cheetah) Prime
 Hellhound (Conjurer) (Standard)|Conjurer (Hellhound)
-Hellhound (Conjurer) 2|Conjurer (Hellhound) 2
+Conjurer (Hellhound)|Hellhound (Conjurer)
+Hellhound (Conjurer) (Standard)|Hellhound (Conjurer)
+Conjurer (Hellhound) 2|Hellhound (Conjurer) 2
 Hunchback IIC (Standard)|Hunchback IIC
 Iron Cheetah A-NA|Iron Cheetah A
 Iron Cheetah B-NA|Iron Cheetah B
 Iron Cheetah C-NA|Iron Cheetah C
 Iron Cheetah D-NA|Iron Cheetah D
-Iron Cheetah E-NA|Iron Cheetah E
 Iron Cheetah F-NA|Iron Cheetah L
-Iron Cheetah Prime-NA|Iron Cheetah Prime.png
+Iron Cheetah Prime-NA|Iron Cheetah Prime
 Jagermech JM6-DG|JagerMech JM6-DG
 Kodiak (Standard)|Kodiak
-Koshi (Mist Lynx) A|Mist Lynx (Koshi) A
-Koshi (Mist Lynx) B|Mist Lynx (Koshi) B
-Koshi (Mist Lynx) C|Mist Lynx (Koshi) C
-Koshi (Mist Lynx) D|Mist Lynx (Koshi) D
-Koshi (Mist Lynx) Prime|Mist Lynx (Koshi) Prime
-Koshi (Standard)|Koshi (Standard)
+Mist Lynx (Koshi) A|Koshi (Mist Lynx) A
+Mist Lynx (Koshi) B|Koshi (Mist Lynx) B
+Mist Lynx (Koshi) C|Koshi (Mist Lynx) C
+Mist Lynx (Koshi) D|Koshi (Mist Lynx) D
+Mist Lynx (Koshi) Prime|Koshi (Mist Lynx) Prime
 Koshi 2|Koshi (Standard) 2
 Koshi 3|Koshi (Standard) 3
-Loki (Hellbringer) A|Hellbringer (Loki) A
-Loki (Hellbringer) B|Hellbringer (Loki) B
-Loki (Hellbringer) Prime|Hellbringer (Loki) Prime
-Mad Cat (Timber Wolf) A|Timber Wolf (Mad Cat) A
-Mad Cat (Timber Wolf) B|Timber Wolf (Mad Cat) B
-Mad Cat (Timber Wolf) C|Timber WOlf (Mad Cat) C
-Mad Cat (Timber WOlf) D|Timber Wolf (Mad Cat) D
-Mad Cat (Timber Wolf) Prime|Timber Wolf (Mad Cat) Prime
-Mad Cat (Timber Wolf) S|Timber Wolf (Mad Cat) S
-Mad Cat III (Eve)|Mad Cat III 3 (Eve)
-Man O' War (Gargoyle) A|Gargoyle (Man O' War) A
-Man O' War (Gargoyle) B|Gargoyle (Man O' War) B
-Man O' War (Gargoyle) C|Gargoyle (Man O' War) C
-Man O' War (Gargoyle) D|Gargoyle (Man O' War) D
-Man O' War (Gargoyle) Prime|Gargoyle (Man O' War) Prime
+Hellbringer (Loki) A|Loki (Hellbringer) A
+Hellbringer (Loki) B|Loki (Hellbringer) B
+Hellbringer (Loki) Prime|Loki (Hellbringer) Prime
+Timber Wolf (Mad Cat) A|Mad Cat (Timber Wolf) A
+Timber Wolf (Mad Cat) B|Mad Cat (Timber Wolf) B
+Timber WOlf (Mad Cat) C|Mad Cat (Timber Wolf) C
+Timber Wolf (Mad Cat) D|Mad Cat (Timber Wolf) D
+Timber Wolf (Mad Cat) Prime|Mad Cat (Timber Wolf) Prime
+Timber Wolf (Mad Cat) S|Mad Cat (Timber Wolf) S
+Mad Cat III 3 (Eve)|Mad Cat III (Eve)
+Gargoyle (Man O' War) A|Man O' War (Gargoyle) A
+Gargoyle (Man O' War) B|Man O' War (Gargoyle) B
+Gargoyle (Man O' War) C|Man O' War (Gargoyle) C
+Gargoyle (Man O' War) D|Man O' War (Gargoyle) D
+Gargoyle (Man O' War) Prime|Man O' War (Gargoyle) Prime
 Marauder IIC (Standard)|Marauder IIC
-Masakari (Warhawk) A|Warhawk (Masakari) A
-Masakari (Warhawk) B|Warhawk (Masakari) B
-Masakari (Warhawk) C|Warhawk (Masakari) C
-Masakari (Warhawk) Prime|Warhawk (Masakari) Prime
-Nobori-nin (Huntsman) A|Huntsman (Nobori-nin) A
-Nobori-nin (Huntsman) B|Huntsman (Nobori-nin) B
-Nobori-nin (Huntsman) C|Huntsman (Nobori-nin) C
-Nobori-nin (Huntsman) Prime|Huntsman (Nobori-nin) Prime
-'OMEGA' SHP-4X|OMEGA SHP-4X
-Peregrine (Horned Owl) (Standard)|Horned Owl (Peregrine)
-Peregrine (Horned Owl) 2|Horned Owl (Peregrine) 2
+Warhawk (Masakari) A|Masakari (Warhawk) A
+Warhawk (Masakari) B|Masakari (Warhawk) B
+Warhawk (Masakari) C|Masakari (Warhawk) C
+Warhawk (Masakari) Prime|Masakari (Warhawk) Prime
+Huntsman (Nobori-nin) A|Nobori-nin (Huntsman) A
+Huntsman (Nobori-nin) B|Nobori-nin (Huntsman) B
+Huntsman (Nobori-nin) C|Nobori-nin (Huntsman) C
+Huntsman (Nobori-nin) Prime|Nobori-nin (Huntsman) Prime
+'OMEGA' SHP-4X|Omega SHP-4X
+Peregrine (Horned Owl) (Standard)|Peregrine (Horned Owl)
+Horned Owl (Peregrine)|Peregrine (Horned Owl)
+Horned Owl (Peregrine) 2|Peregrine (Horned Owl) 2
 Phoenix Hawk LAM PXH-HK2|Phoenix Hawk LAM PHX-HK2
 Piranha (Standard)|Piranha
-Puma (Adder) A|Adder (Puma) A
-Puma (Adder) B|Adder (Puma) B
-Puma (Adder) C|Adder (Puma) C
-Puma (Adder) D|Adder (Puma) D
-Puma (Adder) Prime|Adder (Puma) Prime
+Adder (Puma) A|Puma (Adder) A
+Adder (Puma) B|Puma (Adder) B
+Adder (Puma) C|Puma (Adder) C
+Adder (Puma) D|Puma (Adder) D
+Adder (Puma) Prime|Puma (Adder) Prime
 Raijin RJN101-A|Raijin RJN-101-A
 Raijin RJN101-C|Raijin RJN-101-C
-Ryoken (Stormcrow) A|Stormcrow (Ryoken) A
-Ryoken (Stormcrow) B|Stormcrow (Ryoken) B
-Ryoken (Stormcrow) C|Stormcrow (Ryoken) C
-Ryoken (Stormcrow) D|Stormcrow (Ryoken) D
-Ryoken (Stormcrow) Prime|Stormcrow (Ryoken) Prime
+Stormcrow (Ryoken) A|Ryoken (Stormcrow) A
+Stormcrow (Ryoken) B|Ryoken (Stormcrow) B
+Stormcrow (Ryoken) C|Ryoken (Stormcrow) C
+Stormcrow (Ryoken) D|Ryoken (Stormcrow) D
+Stormcrow (Ryoken) Prime|Ryoken (Stormcrow) Prime
 Supernova (Standard)|Supernova
-Thor (Summoner) A|Summoner (Thor) A
-Thor (Summoner) B|Summoner (Thor) B
-Thor (Summoner) C|Summoner (Thor) C
-Thor (Summoner) D|Summoner (Thor) D
-Thor (Summoner) M|Summoner (Thor) M
-Thor (Summoner) Prime|Summoner (Thor) Prime
+Summoner (Thor) A|Thor (Summoner) A
+Summoner (Thor) B|Thor (Summoner) B
+Summoner (Thor) C|Thor (Summoner) C
+Summoner (Thor) D|Thor (Summoner) D
+Summoner (Thor) M|Thor (Summoner) M
+Summoner (Thor) Prime|Thor (Summoner) Prime
 Timber Wolf (Mad Cat) M|Mad Cat (Timber Wolf) M
 Timber Wolf (Mad Cat) N|Mad Cat (Timber Wolf) N
 Timber Wolf (Mad Cat) T|Mad Cat (Timber Wolf) T
 Timber Wolf (Mad Cat) W|Mad Cat (Timber Wolf) W
-Uller (Kit Fox) A|Kit Fox (Uller) A
-Uller (Kit Fox) B|Kit Fox (Uller) B
-Uller (Kit Fox) C|Kit Fox (Uller) C
-Uller (Kit Fox) D|Kit Fox (Uller) D
-Uller (Kit Fox) Prime|Kit Fox (Uller) Prime
-Uller (Kit Fox) S|Kit Fox (Uller) S
-Vixen (Incubus) (Standard)|Incubus (Vixen)
-Vixen (Incubus) 2|Incubus (Vixen) 2
-Vixen (Incubus) 3|Incubus (Vixen) 3
-Vulture (Mad Dog) A|Mad Dog (Vulture) A
-Vulture (Mad Dog) B|Mad Dog (Vulture) B
-Vulture (Mad Dog) C|Mad Dog (Vulture) C
-Vulture (Mad Dog) Prime|Mad Dog (Vulture) Prime
+Kit Fox (Uller) A|Uller (Kit Fox) A
+Kit Fox (Uller) B|Uller (Kit Fox) B
+Kit Fox (Uller) C|Uller (Kit Fox) C
+Kit Fox (Uller) D|Uller (Kit Fox) D
+Kit Fox (Uller) Prime|Uller (Kit Fox) Prime
+Kit Fox (Uller) S|Uller (Kit Fox) S
+Vixen (Incubus) (Standard)|Vixen (Incubus)
+Incubus (Vixen)|Vixen (Incubus)
+Incubus (Vixen) 2|Vixen (Incubus) 2
+Incubus (Vixen) 3|Vixen (Incubus) 3
+Mad Dog (Vulture) A|Vulture (Mad Dog) A
+Mad Dog (Vulture) B|Vulture (Mad Dog) B
+Mad Dog (Vulture) C|Vulture (Mad Dog) C
+Mad Dog (Vulture) Prime|Vulture (Mad Dog) Prime
 Warhammer IIC (Standard)|Warhammer IIC
 
 
 #Protomechs
 Boggart (Quad) 1|Boggart Ultraheavy ProtoMech (Standard)
 Boggart (Quad) 2|Boggart Ultraheavy ProtoMech 2
-Procyon (Quad)|Procyon ProtoMech (Quad)
 Procyon ProtoMech (Quad)|Procyon (Quad)
 Sprite (Standard)|Sprite Ultraheavy ProtoMech
 Sprite 2|Sprite Ultraheavy ProtoMech 2
 Sprite 3|Sprite Ultraheavy ProtoMech 3
-Sprite Ultraheavy ProtoMech|(Standard) Sprite (Standard)
-Sprite Ultraheavy ProtoMech 2|Sprite 2
-Sprite Ultraheavy ProtoMech 3|Sprite 3
+(Standard) Sprite (Standard)|Sprite Ultraheavy ProtoMech
 Svartalfa Ultra ProtoMech (Standard)|Svartalfa
-Svartalfa Ultra ProtoMech (LRM Variant)|/Svartalfa (LRM Variant)
+Svartalfa Ultra ProtoMech (LRM Variant)|Svartalfa (LRM Variant)
 Svartalfa (LRM Variant)|Svartalfa 2
 
 
@@ -723,16 +724,17 @@ Svartalfa (LRM Variant)|Svartalfa 2
 Bastion System Defense Station (Standard)|Bastion System Defense Station (2584)
 BattleSat System Defense Station (Standard|BattleSat System Defense Station (3056)
 Capitol System Defense Station (Standard)|Capitol System Defense Station (3051)
-Large Habitat (Standard)|Habitat - Large (2500)
-Large Pressurized Yard (Standard)|Pressurized Yard - Large (2400)
-Large Pressurized Yard (Standard)|Unpressurized Yard - Large (2300)
+Large Habitat (Standard)|Habitat Large (2500)
+Large Pressurized Yard (Standard)|Pressurized Yard Large (2400)
+Large Pressurized Yard (Standard)|Unpressurized Yard Large (2300)
 M9 Pavise SDS Battle Station|M9 SDS Battle Station 'Pavise'
-Medium-Large Factory (Standard)|Factory - Medium/Large (2400)
+M9 SDS Battle Station 'Pavise'|M-9 SDS Battle Station 'Pavise'
+Medium-Large Factory (Standard)|Factory Medium/Large (2400)
 Olympus Recharge Station (Standard)|Olympus Recharge Station (2663)
-Small Factory (Standard)|Factory - Small (2300)
-Small Habitat (Standard)|Habitat - Small (2400)
-Small Pressurized Yard (Standard)|Pressurized Yard - Small (2200)
-Small Unpressurized Yard (Standard)|Unpressurized Yard - Small (2100)
+Small Factory (Standard)|Factory Small (2300)
+Small Habitat (Standard)|Habitat Small (2400)
+Small Pressurized Yard (Standard)|Pressurized Yard Small (2200)
+Small Unpressurized Yard (Standard)|Unpressurized Yard Small (2100)
 Snowden Mining Station Mk I|Snowden Mining Station (MK I)
 
 #Tanks
@@ -740,7 +742,6 @@ Avanti Aerospace Airliner ACL-800|Comet Airliner ACL-800
 BFFL 'Buffalo'|Buffalo BFFL Hovertruck
 Cal-Boeing Swiftran RTC-215M (Passenger)|Swiftran RTC-215M
 Command Van (Standard)|Command Van
-Command Van|Command Van (Standard)
 Desert Scorpion|Desert Scorpion Light Tank
 Donovan-Miter Magellan Series Four|Magellan Series Four
 Falcon Hover Tank (Standard)|Falcon Hover Tank
@@ -754,7 +755,6 @@ LTV-4 Hover Tank (Standard)|Hawk Hover Tank (LTV-4)
 Mobile Long Tom Artillery (Unofficial) (+ Carriage)|Mobile Long Tom Artillery (+Carriages)(Unofficial)
 Mobile Long Tom Artillery Ammunition Trailer LT-MOB-25|Mobile Long Tom Artillery LT-MOB-25 (Ammunition Carriage)
 Mobile Long Tom Artillery Support Carriage LT-MOB-25|Mobile Long Tom Artillery LT-MOB-25 (Support Carriage)
-Nuberu Anti Aircraft Tank 2 'Numantia'|Nuberu Anti Aircraft Tank 2 'Numantia'
 O-65 'Oppie' Hazardous Materials Recovery Vehicle O-65 HMRV|HMRV (Hazardous Materials Recovery Vehicle) 'Oppie' O-65
 O-66 'Oppie' Hazardous Materials Recovery Vehicle O-66 HMRV|HMRV (Hazardous Materials Recovery Vehicle) 'Oppie' O-66
 'Oppie' (HMRV DeConAid Trailer) (Standard)|HMRV (Hazardous Materials Recovery Vehicle) DeConAid Trailer
@@ -766,8 +766,9 @@ Prime Mover|Prime Mover (LRM)
 Schildkröte Line Tank (Standard)|Schildkröte Line Tank
 Schildkrote Line Tank|Schildkröte Line Tank
 Sleipnir APC (SRM)|Sleipnir AP Tank (SRM)
+Sleipnir AP Tank (SRM)|Sleipnir APC Tank (SRM)
 Sleipnir APC|Sleipnir AP Tank
-SM Tank Destroyer SM1 'Telos'|SM Tank Destroyer SM1 'Telos'
+Sleipnir AP Tank|Sleipnir APC Tank
 SM1 Tank Destroyer SM1|SM Tank Destroyer SM1
 SM1A Tank Destroyer SM1A|SM Tank Destroyer SM1A
 SM3 Tank Destroyer SM3|SM Tank Destroyer SM3
@@ -776,12 +777,13 @@ St. Christopher Cargo Lifter C1|St. Christopher Cargo Transport C2
 SturmFeur "Kalki" Cruise Missile Launcher (Standard)|SturmFeur 'Kalki' Cruise Missile Launcher (Standard)
 Sturmfeur Heavy Tank (SRM)|SturmFeur Heavy Tank (SRM)
 Sturmfeur Heavy Tank (Standard)|SturmFeur Heavy Tank (Standard)
-Vargr APC (LRM)| Vargr APC Tank (LRM)
+Vargr APC (LRM)|Vargr APC Tank (LRM)
 Vargr APC|Vargr APC Tank
 Vector (Attack)|Vector Combat Support VTOL (Attack)
 Vector (EW)|Vector Combat Support VTOL (EW)
 Vector (Scout)|Vector Combat Support VTOL (Scout)
 Vector (Transport)|Vector Combat Support VTOL (Transport)
+Vector Combat Support VTOL (Transport)|Vector Combat Support VTOL
 
 
 
@@ -793,7 +795,7 @@ Avatar Heavy Cruiser (Standard)|Avatar Heavy Cruiser (2531)
 Baron Destroyer (Standard)|Baron Destroyer (2520)
 Black Lion Battlecruiser (2691)|Black Lion II Battlecruiser (2691)
 Black Lion Battlecruiser (Clan)|Black Lion II Battlecruiser (2843)
-Black Lion I-Battlecruiser|Black Lion I Battlecruiser 
+Black Lion I-Battlecruiser|Black Lion I Battlecruiser
 Bonaventure Corvette (Standard)|Bonaventure Corvette (2317)
 Cameron Battlecruiser (Clan)|Cameron Battlecruiser (2851)
 Carrack Transport (Merchant)|Carrack Transport (Merchant 2985)
@@ -832,7 +834,7 @@ Pinto Corvette (Standard)|Pinto Corvette (2502)
 Potemkin Troop Cruiser (Clan)|Potemkin Troop Cruiser (2875)
 Quixote Frigate (Standard)|Quixote Frigate (2350)
 Riga Frigate (Standard)|Riga Frigate (2440)
-Riga II Destroyer/Carrier (Standard)|Riga II Destroyer/Carrier (2747)
+Riga II Destroyer/Carrier (Standard)|Riga II Destroyer/Carrier
 Riga II Destroyer/Carrier|Riga II Destroyer-Carrier (2747)
 Robinson Transport Block I|Robinson Transport (Block I)
 Robinson Transport Block II|Robinson Transport (Block II)
@@ -848,9 +850,10 @@ Volga Transport (Clan)|Volga Transport (2836)
 Wagon Wheel Frigate (Standard)|Wagon Wheel Frigate (2570)
 Whirlwind Destroyer (Clan)|Whirlwind Destroyer (2901)
 Winchester Cruiser (Standard)|Winchester Cruiser (2364)
-York Destroyer Carrier (Standard)|York Destroyer Carrier (2947)
+York Destroyer Carrier (Standard)|York Destroyer-Carrier (2947)
 York Destroyer/Carrier|York Destroyer-Carrier
-York Destroyer/Carrier|York Destroyer-Carrier (2947)
+York Destroyer Carrier (2947)|York Destroyer-Carrier
+York Destroyer-Carrier|York Destroyer-Carrier (2947)
 
 #These are the units impact by the removal of the (Standard) designation that the MUL has discontinued. Done as part of 0.49.13 May 10/2023
 AC/2 Carrier (Standard)|AC/2 Carrier
@@ -932,8 +935,6 @@ BFFL 'Buffalo' (Standard)|BFFL 'Buffalo'
 Bishop Transport VTOL (Standard)|Bishop Transport VTOL
 Black Eagle (Standard)|Black Eagle
 Black Hawk (Standard) |Black Hawk (Standard)
-Black Hawk (Standard) 2|Black Hawk (Standard) 2
-Black Hawk (Standard) 3|Black Hawk (Standard) 3
 Blackstone Baronet Passenger VTOL (Standard)|Blackstone Baronet Passenger VTOL
 Blackstone Pegasus Passenger VTOL (Standard)|Blackstone Pegasus Passenger VTOL
 Blizzard Hover Transport (Standard)|Blizzard Hover Transport
@@ -948,6 +949,7 @@ Bruin (Standard)|Bruin
 Brunel Dump Truck (Standard)|Brunel Dump Truck
 Brutus Assault Tank (Standard)|Brutus Assault Tank
 Buffalo Drone Bomb (Standard)|Buffalo Drone Bomb
+Buffalo Drone Bomb|Buffalo BFFL Drone Bomb
 Buffel Engineering Support Vehicle VII (Standard)|Buffel Engineering Support Vehicle VII
 Buffel Engineering Support Vehicle VIII (Standard)|Buffel Engineering Support Vehicle VIII
 Bug-Eye Surveillance Ship (Standard)|Bug-Eye Surveillance Ship
@@ -1268,8 +1270,6 @@ Kodiak II (Standard)|Kodiak II
 Koi Heavy Transport (Standard)|Koi Heavy Transport
 Kontio (Standard)|Kontio
 Koshi (Standard) |Koshi (Standard)
-Koshi (Standard) 2|Koshi (Standard) 2
-Koshi (Standard) 3|Koshi (Standard) 3
 Kraken (Bane) (Standard)|Kraken (Bane)
 Kraken-XR (Standard)|Kraken-XR
 Kressly Dillinger Police Vehicle (Standard)|Kressly Dillinger Police Vehicle
@@ -1320,6 +1320,7 @@ Marauder IIC (Standard)|Marauder IIC
 Marksman Artillery Vehicle (Standard)|Marksman Artillery Vehicle
 Mars Assault Vehicle (Standard)|Mars Assault Vehicle
 Marsden II MBT (Standard)|Marsden II MBT
+Marsden II MBT|Marsden MBT II
 Marten Scout VTOL (Standard)|Marten Scout VTOL
 Masauwu (Standard)|Masauwu
 MASH Truck (Standard)|MASH Truck
@@ -1380,7 +1381,9 @@ Onager (Standard)|Onager
 Ontos Heavy Tank (Standard)|Ontos Heavy Tank
 Oo-Suzumebachi (Standard)|Oo-Suzumebachi
 'Oppie' (HMRV DeConAid Trailer) (Standard)|'Oppie' (HMRV DeConAid Trailer)
+'Oppie' (HMRV DeConAid Trailer)|HMRV (Hazardous Materials Recovery Vehicle) DeConAid Trailer
 'Oppie' (HMRV Salvage Bed Trailer) (Standard)|'Oppie' (HMRV Salvage Bed Trailer)
+'Oppie' (HMRV Salvage Bed Trailer)|HMRV (Hazardous Materials Recovery Vehicle) Salvage Bed
 Orc (Standard)|Orc
 Orion IIC (Standard)|Orion IIC
 Oro Heavy Tank (Standard)|Oro Heavy Tank
@@ -1482,6 +1485,7 @@ Rottweiler Battle Armor (Standard)(Sqd6)|Rottweiler Battle Armor (Sqd6)
 Routemaster Hover Shuttle (Standard)|Routemaster Hover Shuttle
 RR-3 Recovery Vehicle (Standard)|RR-3 Recovery Vehicle
 RRV 'Rock Rover' Half-Track (Standard)|RRV 'Rock Rover' Half-Track
+RRV 'Rock Rover' Half-Track|Rock Rover Half-Track RRV
 Ryoken II (Standard)|Ryoken II
 Ryu Heavy Transport (Standard)|Ryu Heavy Transport
 S 2772 Airplane (Standard)|S 2772 Airplane
@@ -1506,7 +1510,9 @@ Savior Repair Vehicle (Standard)|Savior Repair Vehicle
 Saxon APC (Standard)|Saxon APC
 Scarab Medium Drone Fighter (Standard)|Scarab Medium Drone Fighter
 ScavengerMech SC-V SalvageMech (Standard)|ScavengerMech SC-V SalvageMech
+ScavengerMech SC-V SalvageMech|Scavenger SC-V SalvageMech
 ScavengerMech SC-V-M MilitiaMech (Standard)|ScavengerMech SC-V-M MilitiaMech
+ScavengerMech SC-V-M MilitiaMech|Scavenger SC-V-M MilitiaMech
 Schildkrote Line Tank (Standard)|Schildkrote Line Tank
 Schrek AC Carrier (Standard)|Schrek AC Carrier
 Schrek II-X PPC Carrier (Standard)|Schrek II-X PPC Carrier

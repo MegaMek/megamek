@@ -28,12 +28,13 @@ import megamek.common.Report;
 import megamek.common.templates.TROView;
 import org.apache.logging.log4j.LogManager;
 
+import java.util.List;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.HyperlinkEvent;
 import java.awt.*;
-import java.awt.event.MouseWheelEvent;
-import java.awt.event.MouseWheelListener;
+import java.awt.event.*;
+import java.util.ArrayList;
 
 /**
  * @author Jay Lawson
@@ -46,6 +47,8 @@ public class MechViewPanel extends JPanel {
     private JTextPane txtMek = new JTextPane();
     private JLabel lblMek = new JLabel();
     private JScrollPane scrMek;
+    private final List<Image> fluffImageList = new ArrayList<>();
+    private int imageIndex = 0;
 
     public static final int DEFAULT_WIDTH = 360;
     public static final int DEFAULT_HEIGHT = 600;
@@ -92,6 +95,8 @@ public class MechViewPanel extends JPanel {
         setLayout(new BorderLayout());
         add(sp);
         addMouseWheelListener(wheelForwarder);
+
+        lblMek.addMouseListener(mouseListener);
     }
 
     public void setMech(Entity entity, MechView mechView) {
@@ -123,12 +128,18 @@ public class MechViewPanel extends JPanel {
     }
 
     private void setFluffImage(Entity entity) {
-        Image image = FluffImageHelper.getFluffImage(entity);
+        fluffImageList.clear();
+        fluffImageList.addAll(FluffImageHelper.getFluffImages(entity));
+        imageIndex = 0;
+        setNextFluffImage();
+    }
+
+    private void setFluffImage(Image image) {
         // Scale down to the default width if the image is wider than that
         if (null != image) {
             if (image.getWidth(this) > DEFAULT_WIDTH) {
                 image = image.getScaledInstance(DEFAULT_WIDTH, -1, Image.SCALE_SMOOTH);
-            }          
+            }
             lblMek.setIcon(new ImageIcon(image));
         } else {
             lblMek.setIcon(null);
@@ -147,4 +158,23 @@ public class MechViewPanel extends JPanel {
             listener.mouseWheelMoved(converted);
         }
     };
+
+    private final MouseListener mouseListener = new MouseAdapter() {
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            setNextFluffImage();
+        }
+    };
+
+    private void setNextFluffImage() {
+        imageIndex++;
+        if (imageIndex >= fluffImageList.size()) {
+            imageIndex = 0;
+        }
+        if (imageIndex < fluffImageList.size()) {
+            setFluffImage(fluffImageList.get(imageIndex));
+        } else {
+            setFluffImage((Image) null);
+        }
+    }
 }

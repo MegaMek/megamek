@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2000-2003 Ben Mazur (bmazur@sev.org)
- * Copyright (c) 2021 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2021, 2024 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -39,26 +39,28 @@ import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
 import static megamek.client.ui.swing.util.UIUtil.uiLightViolet;
 
 /**
- * This is a parent class for the button display for each phase.  Every phase
- * has a panel of control buttons along with a Done button. Each button
- * corresponds to a command that can be carried out in the current phase.
- * This class formats the button panel, the done button, and a status display area.
+ * This is a parent class for the button display for each phase.  Every phase has a panel of control
+ * buttons along with a Done button. Each button corresponds to a command that can be carried out in
+ * the current phase. This class formats the button panel, the done button, and a status display area.
  * Control buttons are grouped and the groups can be cycled through.
+ *
+ * @see AbstractPhaseDisplay
  */
 public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
-        implements ActionListener, MouseListener, KeyListener, IPreferenceChangeListener,
-        KeyBindReceiver {
+        implements ActionListener, IPreferenceChangeListener, KeyBindReceiver {
 
-    protected static final Dimension MIN_BUTTON_SIZE = new Dimension(32, 32);
     protected static final GUIPreferences GUIP = GUIPreferences.getInstance();
+    protected static final Dimension MIN_BUTTON_SIZE = new Dimension(32, 32);
+
     private static final int BUTTON_ROWS = 2;
     private static final String SBPD_KEY_CLEARBUTTON = "clearButton";
+
     protected final ClientGUI clientgui;
 
     /**
      * timer that ends turn if time limit set in options is over
      */
-    private TurnTimer tt;
+    private TurnTimer turnTimer;
 
     /**
      * Interface that defines what a command for a phase is.
@@ -75,8 +77,7 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
      * button order.
      * @author arlith
      */
-    public static class CommandComparator implements Comparator<PhaseCommand>
-    {
+    public static class CommandComparator implements Comparator<PhaseCommand> {
         @Override
         public int compare(PhaseCommand c1, PhaseCommand c2) {
             return c1.getPriority() - c2.getPriority();
@@ -123,9 +124,7 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
 
         panButtons.setLayout(new BoxLayout(panButtons, BoxLayout.LINE_AXIS));
         panButtons.setOpaque(false);
-        panButtons.addKeyListener(this);
         panStatus.setOpaque(false);
-        panStatus.addKeyListener(this);
 
         setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
         add(panButtons);
@@ -133,19 +132,18 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
 
         GUIP.addPreferenceChangeListener(this);
         KeyBindParser.addPreferenceChangeListener(this);
-        ToolTipManager.sharedInstance().registerComponent(this);
 
-        regKeyCommands();
+        clientgui.controller.registerCommandAction(KeyCommandBind.EXTEND_TURN_TIMER, this, this::extendTimer);
     }
 
 
     /** Returns the list of buttons that should be displayed. */
-    protected abstract ArrayList<MegamekButton> getButtonList();
+    protected abstract List<MegamekButton> getButtonList();
 
     /** set button that should be displayed. */
     protected abstract void setButtons();
 
-    protected MegamekButton createButton(String cmd, String keyPrefix){
+    protected MegamekButton createButton(String cmd, String keyPrefix) {
         String title = Messages.getString(keyPrefix + cmd);
         MegamekButton newButton = new MegamekButton(title, SkinSpecification.UIComponents.PhaseDisplayButton.getComp());
         newButton.addActionListener(this);
@@ -158,7 +156,7 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
     protected abstract void setButtonsTooltips();
 
     protected String createToolTip(String cmd, String keyPrefix, String hotKeyDesc) {
-        String reuslt  = "";
+        String result  = "";
         String ttKey = keyPrefix + cmd + ".tooltip";
         String toolTip = hotKeyDesc;
         if (!toolTip.isEmpty()) {
@@ -172,9 +170,9 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
         }
         if (!toolTip.isEmpty()) {
             String b = "<BODY>" + toolTip + "</BODY>";
-            reuslt = "<HTML>" + b + "</HTML>";
+            result = "<HTML>" + b + "</HTML>";
         }
-        return reuslt;
+        return result;
     }
 
     /**
@@ -231,10 +229,11 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
 
     protected UIUtil.FixedXPanel setupDonePanel() {
         donePanel = new UIUtil.FixedXPanel();
-        donePanel.setPreferredSize(new Dimension(UIUtil.scaleForGUI(DONE_BUTTON_WIDTH+5), MIN_BUTTON_SIZE.height*2+5));
+        donePanel.setPreferredSize(new Dimension(
+                UIUtil.scaleForGUI(DONE_BUTTON_WIDTH + 5), MIN_BUTTON_SIZE.height * 2 + 5));
         donePanel.setOpaque(false);
-        donePanel.setBackground(Color.darkGray);
-        donePanel.setBorder( new EmptyBorder(0, 10, 0, 0));
+        donePanel.setBackground(Color.DARK_GRAY);
+        donePanel.setBorder(new EmptyBorder(0, 10, 0, 0));
         donePanel.setLayout(new GridBagLayout());
         addToDonePanel(donePanel, butDone);
         return donePanel;
@@ -271,7 +270,7 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
     public void preferenceChange(PreferenceChangeEvent e) {
         if (e.getName().equals(GUIPreferences.BUTTONS_PER_ROW)) {
             buttonsPerRow = GUIP.getButtonsPerRow();
-            buttonsPerGroup = 2 * buttonsPerRow;
+            buttonsPerGroup = BUTTON_ROWS * buttonsPerRow;
             setupButtonPanel();
         } else if (e.getName().equals(KeyBindParser.KEYBINDS_CHANGED)) {
             setButtonsTooltips();
@@ -287,31 +286,29 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
                 && !isIgnoringEvents() && isVisible();
     }
 
-    protected void regKeyCommands() {
-        clientgui.controller.registerCommandAction(KeyCommandBind.EXTEND_TURN_TIMER, this, this::extendTimer);
-    }
-
     public void startTimer() {
-        // check if there should be a turn timer running
-        tt = TurnTimer.init(this, clientgui.getClient());
+        turnTimer = TurnTimer.init(this, clientgui.getClient());
     }
 
     public void stopTimer() {
-        //get rid of still running timer, if turn is concluded before time is up
-        if (tt != null) {
-            tt.stopTimer();
-            tt = null;
+        if (turnTimer != null) {
+            turnTimer.stopTimer();
+            turnTimer = null;
         }
     }
 
     public void extendTimer() {
-        if (tt != null) {
-            tt.setExtendTimer();
+        if (turnTimer != null) {
+            turnTimer.setExtendTimer();
         }
     }
 
+    /**
+     * @return True when there is a turn timer and it has expired, false when there was no turn timer or
+     * it has not yet expired.
+     */
     public boolean isTimerExpired() {
-        return tt != null && tt.isTimerExpired();
+        return (turnTimer != null) && turnTimer.isTimerExpired();
     }
 
     public String getRemainingPlayerWithTurns() {
@@ -356,39 +353,4 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
             }
         }
     }
-
-    @Override
-    public void actionPerformed(ActionEvent e) { }
-
-    //region Empty KeyListener
-
-    @Override
-    public void keyPressed(KeyEvent evt) { }
-
-    @Override
-    public void keyReleased(KeyEvent evt) { }
-
-    @Override
-    public void keyTyped(KeyEvent evt) { }
-
-    //endregion
-
-    //region Empty MouseListener
-    @Override
-    public void mouseClicked(MouseEvent e) { }
-
-    @Override
-    public void mousePressed(MouseEvent e) { }
-
-    @Override
-    public void mouseReleased(MouseEvent e) { }
-
-    @Override
-    public void mouseEntered(MouseEvent e) { }
-
-    @Override
-    public void mouseExited(MouseEvent e) { }
-
-    //endregion
-
 }

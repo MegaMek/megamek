@@ -25,9 +25,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
-import static megamek.client.ui.swing.util.UIUtil.uiLightViolet;
-
 public class ReportDisplay extends StatusBarPhaseDisplay  {
     private static final long serialVersionUID = 6185643976857892270L;
 
@@ -112,7 +109,6 @@ public class ReportDisplay extends StatusBarPhaseDisplay  {
 
         clientgui.getClient().getGame().addGameListener(this);
         clientgui.getBoardView().addBoardViewListener(this);
-        clientgui.getBoardView().getPanel().addKeyListener(this);
     }
 
     @Override
@@ -258,6 +254,5 @@ public class ReportDisplay extends StatusBarPhaseDisplay  {
     public void removeAllListeners() {
         clientgui.getClient().getGame().removeGameListener(this);
         clientgui.getBoardView().removeBoardViewListener(this);
-        clientgui.getBoardView().getPanel().removeKeyListener(this);
     }
 }

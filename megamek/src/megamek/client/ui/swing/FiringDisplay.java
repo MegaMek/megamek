@@ -209,11 +209,8 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
 
         setupButtonPanel();
 
-        clientgui.getBoardView().getPanel().addKeyListener(this);
-
         // mech display.
         clientgui.getUnitDisplay().wPan.weaponList.addListSelectionListener(this);
-        clientgui.getUnitDisplay().wPan.weaponList.addKeyListener(this);
 
         ash = new AimedShotHandler(this);
 

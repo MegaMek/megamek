@@ -43,7 +43,7 @@ import java.util.*;
  * with something else
  */
 public class TargetingPhaseDisplay extends AttackPhaseDisplay implements
-        KeyListener, ItemListener, ListSelectionListener {
+        ItemListener, ListSelectionListener {
     private static final long serialVersionUID = 3441669419807288865L;
 
     /**
@@ -282,11 +282,8 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements
         clientgui.getClient().getGame().addGameListener(this);
         clientgui.getBoardView().addBoardViewListener(this);
 
-        clientgui.getBoardView().getPanel().addKeyListener(this);
-
         // mech display.
         clientgui.getUnitDisplay().wPan.weaponList.addListSelectionListener(this);
-        clientgui.getUnitDisplay().wPan.weaponList.addKeyListener(this);
     }
 
     @Override

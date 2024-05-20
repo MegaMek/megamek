@@ -37,6 +37,11 @@ import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
  * Only one display is shown at each time; the ChatLounge is also a display. The ChatLounge doesn't
  * show the boardview but most other displays do. Typically the display itself is the button bar
  * at the bottom of the GUI.
+ *
+ * Note that a display being active does not mean that it is also the player's turn. The display
+ * should allow inspecting units and other actions even when it's another player's turn. Also,
+ * even when it's the local player's turn, a unit is not necessarily selected. The unit that is
+ * selected to act (if there is one) is not necessarily the same as the one open in the unit display.
  */
 public abstract class AbstractPhaseDisplay extends SkinnedJPanel implements
         BoardViewListener, GameListener, Distractable {

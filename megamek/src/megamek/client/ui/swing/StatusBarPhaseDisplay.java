@@ -33,7 +33,6 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.*;
 import megamek.client.ui.swing.widget.*;
 import megamek.common.*;
-import megamek.common.enums.GamePhase;
 import megamek.common.preference.*;
 
 import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
@@ -230,8 +229,7 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
         panButtons.repaint();
     }
 
-    protected UIUtil.FixedXPanel setupDonePanel()
-    {
+    protected UIUtil.FixedXPanel setupDonePanel() {
         donePanel = new UIUtil.FixedXPanel();
         donePanel.setPreferredSize(new Dimension(UIUtil.scaleForGUI(DONE_BUTTON_WIDTH+5), MIN_BUTTON_SIZE.height*2+5));
         donePanel.setOpaque(false);
@@ -266,8 +264,7 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
     private void adaptToGUIScale() {
         UIUtil.adjustContainer(panButtons, UIUtil.FONT_SCALE1);
         UIUtil.adjustContainer(panStatus, UIUtil.FONT_SCALE2);
-
-        donePanel.setPreferredSize(new Dimension(UIUtil.scaleForGUI(DONE_BUTTON_WIDTH), MIN_BUTTON_SIZE.height * 1));
+        donePanel.setPreferredSize(new Dimension(UIUtil.scaleForGUI(DONE_BUTTON_WIDTH), MIN_BUTTON_SIZE.height));
     }
 
     @Override
@@ -294,33 +291,6 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
         clientgui.controller.registerCommandAction(KeyCommandBind.EXTEND_TURN_TIMER, this, this::extendTimer);
     }
 
-    @Override
-    public void keyPressed(KeyEvent evt) { }
-
-    @Override
-    public void keyReleased(KeyEvent evt) { }
-
-    @Override
-    public void keyTyped(KeyEvent evt) { }
-
-    @Override
-    public void actionPerformed(ActionEvent e) { }
-
-    @Override
-    public void mouseClicked(MouseEvent e) { }
-
-    @Override
-    public void mousePressed(MouseEvent e) { }
-
-    @Override
-    public void mouseReleased(MouseEvent e) { }
-
-    @Override
-    public void mouseEntered(MouseEvent e) { }
-
-    @Override
-    public void mouseExited(MouseEvent e) { }
-
     public void startTimer() {
         // check if there should be a turn timer running
         tt = TurnTimer.init(this, clientgui.getClient());
@@ -345,59 +315,80 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
     }
 
     public String getRemainingPlayerWithTurns() {
-        String s = "";
-        int r = GUIP.getPlayersRemainingToShow();
-        if (r > 0) {
-            String m = "";
-            int gti = clientgui.getClient().getGame().getTurnIndex();
-            List<GameTurn> gtv = clientgui.getClient().getGame().getTurnVector();
-            int j = 0;
-            for (int i = gti + 1; i < gtv.size(); i++) {
-                GameTurn nt = gtv.get(i);
-                Player p = clientgui.getClient().getGame().getPlayer(nt.getPlayerNum());
-                s += p.getName() + ", ";
-                j++;
-                if (j >= r) {
-                    if (gtv.size() > r) {
-                        m = ",...";
-                    }
-                    break;
-                }
-            }
-            if (!s.isEmpty()) {
-                String msg_turns = Messages.getString("StatusBarPhaseDisplay.nextPlayerTurns");
-                s = "  " + msg_turns + " [" + s.substring(0, s.length() - 2) + m + "]";
-            }
+        String result = "";
+        int playerCountToShow = GUIP.getPlayersRemainingToShow();
+        Game game = clientgui.getClient().getGame();
+        List<String> nextPlayerNames = new ArrayList<>();
+        int turnIndex = game.getTurnIndex();
+        List<GameTurn> gameTurns = game.getTurnVector();
+        for (int i = turnIndex + 1; (i < gameTurns.size()) && (nextPlayerNames.size() < playerCountToShow); i++) {
+            nextPlayerNames.add(game.getPlayer(gameTurns.get(i).getPlayerNum()).getName());
         }
-        return s;
+        if (!nextPlayerNames.isEmpty()) {
+            String playerList = String.join(", ", nextPlayerNames);
+            playerList += (gameTurns.size() - turnIndex - 1 > playerCountToShow) ? ", ..." : "";
+            String msg_turns = Messages.getString("StatusBarPhaseDisplay.nextPlayerTurns");
+            result = "  " + msg_turns + " [" + playerList + "]";
+        }
+        return result;
     }
 
     public void setStatusBarWithNotDonePlayers() {
-        GamePhase phase = clientgui.getClient().getGame().getPhase();
-        if (phase.isReport()) {
-            int r = GUIP.getPlayersRemainingToShow();
-            if (r > 0) {
-                List<Player> playerList = clientgui.getClient().getGame().getPlayersList().stream().filter(p -> ((!p.isBot()) && (!p.isObserver()) && (!p.isDone()))).collect(Collectors.toList());
-                playerList.sort(Comparator.comparingInt(Player::getId));
-                String s = "";
-                String m = "";
-                int j = 0;
-                for (Player player : playerList) {
-                    s += player.getName() + ", ";
-                    j++;
-                    if (j >= r) {
-                        if (playerList.size() > r) {
-                            m = ",...";
-                        }
-                        break;
-                    }
+        Game game = clientgui.getClient().getGame();
+        if (game.getPhase().isReport()) {
+            int playerCountToShow = GUIP.getPlayersRemainingToShow();
+            List<Player> remainingPlayers = game.getPlayersList().stream()
+                    .filter(p -> !p.isBot() && !p.isObserver() && !p.isDone())
+                    .sorted(Comparator.comparingInt(Player::getId))
+                    .collect(Collectors.toList());
+            if (!remainingPlayers.isEmpty()) {
+                String playersText = remainingPlayers.stream()
+                        .limit(playerCountToShow)
+                        .map(Player::getName)
+                        .collect(Collectors.joining(", "));
+                if (remainingPlayers.size() > playerCountToShow) {
+                    playersText += ", ...";
                 }
-                if (!s.isEmpty()) {
-                    String msg_notdone = Messages.getString("StatusBarPhaseDisplay.notDone");
-                    s = "  " + msg_notdone + " [" + s.substring(0, s.length() - 2) + m + "]";
-                }
-                setStatusBarText(phase.toString() + s);
+                String msg_notdone = Messages.getString("StatusBarPhaseDisplay.notDone");
+                setStatusBarText(game.getPhase() + "  " + msg_notdone + " [" + playersText + "]");
+            } else {
+                setStatusBarText(game.getPhase().toString());
             }
         }
     }
+
+    @Override
+    public void actionPerformed(ActionEvent e) { }
+
+    //region Empty KeyListener
+
+    @Override
+    public void keyPressed(KeyEvent evt) { }
+
+    @Override
+    public void keyReleased(KeyEvent evt) { }
+
+    @Override
+    public void keyTyped(KeyEvent evt) { }
+
+    //endregion
+
+    //region Empty MouseListener
+    @Override
+    public void mouseClicked(MouseEvent e) { }
+
+    @Override
+    public void mousePressed(MouseEvent e) { }
+
+    @Override
+    public void mouseReleased(MouseEvent e) { }
+
+    @Override
+    public void mouseEntered(MouseEvent e) { }
+
+    @Override
+    public void mouseExited(MouseEvent e) { }
+
+    //endregion
+
 }

@@ -31,19 +31,20 @@ import java.awt.event.ActionListener;
  * to end the users current turn.
  */
 public class TurnTimer {
-    private Timer timer;
-    private JProgressBar progressBar;
-    private ActionListener listener;
-    private JLabel remaining;
-    private JPanel display;
-    private int timeLimit;
-    private AbstractPhaseDisplay phaseDisplay;
-    private boolean extendTimer;
-    private boolean allowExtension;
-    private boolean expired;
-    private Client client;
 
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
+
+    private final JProgressBar progressBar;
+    private final ActionListener listener;
+    private final JLabel remaining;
+    private final JPanel display;
+    private final int timeLimit;
+    private final AbstractPhaseDisplay phaseDisplay;
+    private final boolean allowExtension;
+
+    private Timer timer;
+    private boolean extendTimer;
+    private boolean expired;
 
     public TurnTimer(int limit, AbstractPhaseDisplay pD, Client client) {
         phaseDisplay = pD;
@@ -51,7 +52,6 @@ public class TurnTimer {
         timeLimit = limit;
         extendTimer = false;
         expired = false;
-        this.client = client;
 
         display = new JPanel();
         progressBar = new JProgressBar(JProgressBar.HORIZONTAL, 0, timeLimit);
@@ -109,7 +109,6 @@ public class TurnTimer {
             phaseDisplay.getClientgui().turnTimerComponent().add(display);
             timer.start();
             display.setVisible(true);
-
         });
     }
 
@@ -156,7 +155,6 @@ public class TurnTimer {
                 timerLimit = options.getOption(OptionsConstants.BASE_TURN_TIMER_PHYSICAL).intValue();
                 break;
             default:
-                timerLimit = 0;
         }
 
         if (timerLimit > 0) {
@@ -167,5 +165,4 @@ public class TurnTimer {
 
         return null;
     }
-
 }

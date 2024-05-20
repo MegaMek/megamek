@@ -1756,7 +1756,8 @@ public class WeaponHandler implements AttackHandler, Serializable {
         ae = game.getEntity(waa.getEntityId());
         weapon = (WeaponMounted) ae.getEquipment(waa.getWeaponId());
         wtype = (WeaponType) weapon.getType();
-        atype = (weapon.getLinked() != null) ? (AmmoType) weapon.getLinked().getType() : null;
+        atype = (weapon.getLinked() != null && weapon.getLinked().getType() instanceof AmmoType)
+                ? (AmmoType) weapon.getLinked().getType() : null;
         typeName = wtype.getInternalName();
         target = game.getTarget(waa.getTargetType(), waa.getTargetId());
         gameManager = m;

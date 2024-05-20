@@ -5687,9 +5687,6 @@ public class MovementDisplay extends ActionPhaseDisplay {
         clientgui.getMenuBar().setEnabled(MoveCommand.MOVE_BOMB.getCmd(), enabled);
     }
 
-    /**
-     * Stop just ignoring events and actually stop listening to them.
-     */
     @Override
     public void removeAllListeners() {
         if (clientgui != null) {

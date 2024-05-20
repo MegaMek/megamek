@@ -42,8 +42,7 @@ import java.util.*;
  * Targeting Phase Display. Breaks naming convention because TargetingDisplay is too easy to confuse
  * with something else
  */
-public class TargetingPhaseDisplay extends AttackPhaseDisplay implements
-        ItemListener, ListSelectionListener {
+public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSelectionListener {
     private static final long serialVersionUID = 3441669419807288865L;
 
     /**
@@ -1307,14 +1306,6 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements
         refreshAll();
     }
 
-    //
-    // ItemListener
-    //
-    @Override
-    public void itemStateChanged(ItemEvent evt) {
-
-    }
-
     // board view listener
     @Override
     public void finishedMovingUnits(BoardViewEvent b) {
@@ -1351,9 +1342,6 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements
         }
     }
 
-    /**
-     * Stop just ignoring events and actually stop listening to them.
-     */
     @Override
     public void removeAllListeners() {
         clientgui.getClient().getGame().removeGameListener(this);

@@ -2133,9 +2133,6 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
         }
     }
 
-    /**
-     * Stop just ignoring events and actually stop listening to them.
-     */
     @Override
     public void removeAllListeners() {
         clientgui.getClient().getGame().removeGameListener(this);

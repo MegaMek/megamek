@@ -171,7 +171,7 @@ public final class FluffImageHelper {
                 }
             }
 
-            fileCandidates.addAll(getFluffInChassisDir(unit, fluffUserDir));
+            fileCandidates.addAll(getFluffInChassisDirs(unit, fluffUserDir));
         }
 
         // Internal fluff path matches
@@ -186,7 +186,7 @@ public final class FluffImageHelper {
             fileCandidates.add(new File(fluffDir, "hud.png"));
         }
 
-        fileCandidates.addAll(getFluffInChassisDir(unit, fluffDir));
+        fileCandidates.addAll(getFluffInChassisDirs(unit, fluffDir));
 
         fileCandidates.removeIf(f -> !f.exists() || f.isDirectory());
         return fileCandidates;
@@ -205,25 +205,61 @@ public final class FluffImageHelper {
      * <BR>- In a model subdirectory fluff/[unittype]/[chassis]/[model], all files match if the
      * unit's chassis and model match [chassis] and [model]. The filename doesn't matter for matching.
      */
-    private static List<File> getFluffInChassisDir(BTObject unit, File unitTypeFluffDir) {
+    private static List<File> getFluffInChassisDirs(BTObject unit, File unitTypeFluffDir) {
         List<File> result = new ArrayList<>();
-        String sanitizedChassis = sanitize(unit.generalName());
-        var chassisDir = new File(unitTypeFluffDir, sanitizedChassis);
-        if (!chassisDir.exists()) {
-            return result;
+        for (String nameCandidate : chassisNameCandidates(unit)) {
+            var chassisDir = new File(unitTypeFluffDir, nameCandidate);
+            if (chassisDir.exists()) {
+                result.addAll(getFluffInChassisDir(unit, chassisDir));
+            }
         }
+        return result;
+    }
 
+    /**
+     * @return For the unit, returns the possible chassis lookup strings, which is simply the chassis
+     * (the list has only one entry) for all units except Clan Meks with a double name, where the list
+     * includes the four variations on Timber Wolf (Mad Cat), Mad Cat (Timber Wolf), Mad Cat and
+     * Timber Wolf. Note that a few units have X (Y) chassis that are not clan double names. Those
+     * will return only the full chassis X (Y).
+     */
+    private static List<String> chassisNameCandidates(BTObject unit) {
+        List<String> result = new ArrayList<>();
+        String sanitizedChassis = sanitize(unit.generalName());
+        result.add(sanitizedChassis);
+        if ((unit instanceof Mech) && !((Mech) unit).getClanChassisName().isBlank()) {
+            String sanitizedClanChassis = sanitize(((Mech) unit).getClanChassisName());
+            result.add(sanitizedClanChassis + " (" + sanitizedChassis + ")");
+            result.add(sanitizedChassis + " (" + sanitizedClanChassis + ")");
+            result.add(sanitizedClanChassis);
+        }
+        return result;
+    }
+
+    private static List<File> getFluffInChassisDir(BTObject unit, File chassisDir) {
         String sanitizedModel = sanitize(unit.specificName());
         if (sanitizedModel.isBlank()) {
             sanitizedModel = "---empty---";
         }
-        var modelDir = new File(chassisDir, sanitizedModel);
-        File correctFluffDir = modelDir.exists() ? modelDir : chassisDir;
+        List<File> result = new ArrayList<>();
+        for (String chassisNameCandidate : chassisNameCandidates(unit)) {
+            var modelDir = new File(chassisDir, chassisNameCandidate + " " + sanitizedModel);
+            if (modelDir.exists()) {
+                result.addAll(getFluffInDir(modelDir));
+            }
+        }
+        if (result.isEmpty()) {
+            result.addAll(getFluffInDir(chassisDir));
+        }
+        return result;
+    }
 
-        try (Stream<Path> entries = Files.walk(correctFluffDir.toPath())) {
+    private static List<File> getFluffInDir(File dir) {
+        List<File> result = new ArrayList<>();
+        try (Stream<Path> entries = Files.walk(dir.toPath())) {
             result.addAll(entries.map(Objects::toString).map(File::new).collect(toList()));
         } catch (IOException e) {
-            LogManager.getLogger().warn("Error while reading files from " + correctFluffDir, e);
+            LogManager.getLogger().warn("Error while reading files from " + dir, e);
         }
         return result;
     }

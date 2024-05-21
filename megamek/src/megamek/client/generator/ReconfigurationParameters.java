@@ -19,6 +19,7 @@ public class ReconfigurationParameters {
     public long enemyFliers = 0;
     public long enemyBombers = 0;
     public long enemyInfantry = 0;
+    public long enemyBattleArmor = 0;
     public long enemyVehicles = 0;
     public long enemyMeks = 0;
     public long enemyEnergyBoats = 0;
@@ -39,6 +40,8 @@ public class ReconfigurationParameters {
     public long friendlyMissileBoats = 0;
     public long friendlyOffBoard = 0;
     public long friendlyECMCount = 0;
+    public long friendlyInfantry = 0;
+    public long friendlyBattleArmor = 0;
 
     // User-selected directives
     // Nukes may be banned for a given team but allowed in general (boo, hiss)

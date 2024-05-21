@@ -48,6 +48,10 @@ public class TeamLoadoutGenerator {
             "FABombSmall Ammo", "ClusterBomb", "HEBomb"
     ));
 
+    public static final ArrayList<String> ANTI_BA_MUNITIONS = new ArrayList<>(List.of(
+            "Inferno", "Fuel-Air", "Anti-personnel", "Acid", "FABombSmall Ammo", "HEBomb"
+    ));
+
     public static final ArrayList<String> HEAT_MUNITIONS = new ArrayList<>(List.of(
             "Inferno", "Incendiary", "InfernoBomb"
     ));
@@ -176,7 +180,11 @@ public class TeamLoadoutGenerator {
     }
 
     private static long checkForInfantry(ArrayList<Entity> el) {
-        return el.stream().filter(e -> e.isInfantry() || e.isBattleArmor()).count();
+        return el.stream().filter(e -> e.isInfantry() && !e.isBattleArmor()).count();
+    }
+
+    private static long checkForBattleArmor(ArrayList<Entity> el) {
+        return el.stream().filter(Entity::isBattleArmor).count();
     }
 
     private static long checkForVehicles(ArrayList<Entity> el) {
@@ -299,6 +307,7 @@ public class TeamLoadoutGenerator {
                 rp.enemyFliers += checkForFliers(etEntities);
                 rp.enemyBombers += checkForBombers(etEntities);
                 rp.enemyInfantry += checkForInfantry(etEntities);
+                rp.enemyBattleArmor += checkForBattleArmor(etEntities);
                 rp.enemyVehicles += checkForVehicles(etEntities);
                 rp.enemyMeks += checkForMeks(etEntities);
                 rp.enemyEnergyBoats += checkForEnergyBoats(etEntities);
@@ -326,6 +335,8 @@ public class TeamLoadoutGenerator {
         rp.friendlyNARCs = checkForNARC(ownTeamEntities);
         rp.friendlyOffBoard = checkForOffboard(ownTeamEntities);
         rp.friendlyECMCount = checkForECM(ownTeamEntities);
+        rp.friendlyInfantry = checkForInfantry(ownTeamEntities);
+        rp.friendlyBattleArmor = checkForBattleArmor(ownTeamEntities);
 
         // General parameters
         rp.darkEnvironment = g.getPlanetaryConditions().getLight().isDuskOrFullMoonOrMoonlessOrPitchBack();
@@ -928,6 +939,14 @@ class MunitionWeightCollection {
 
     public void decreaseAntiInfMunitions() {
         decreaseMunitions(TeamLoadoutGenerator.ANTI_INF_MUNITIONS);
+    }
+
+    public void increaseAntiBAMunitions() {
+        increaseMunitions(TeamLoadoutGenerator.ANTI_BA_MUNITIONS);
+    }
+
+    public void decreaseAntiBAMunitions() {
+        decreaseMunitions(TeamLoadoutGenerator.ANTI_BA_MUNITIONS);
     }
 
     public void increaseHeatMunitions() {

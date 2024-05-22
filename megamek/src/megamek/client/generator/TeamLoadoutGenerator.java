@@ -26,6 +26,7 @@ import static java.util.Map.entry;
 
 public class TeamLoadoutGenerator {
 
+    //region Constants
     public static final ArrayList<String> AP_MUNITIONS = new ArrayList<>(List.of(
             "Armor-Piercing", "Tandem-Charge"
     ));
@@ -101,6 +102,7 @@ public class TeamLoadoutGenerator {
             entry("Bomb", MunitionTree.BOMB_MUNITION_NAMES
         )
     );
+    //endregion Constants
 
     private static ClientGUI cg;
     private static Game game;
@@ -170,7 +172,7 @@ public class TeamLoadoutGenerator {
         return trueRandom;
     }
 
-    // Section: Check for various unit types, armor types, etc.
+    //region Check for various unit types, armor types, etc.
     private static long checkForBombers(ArrayList<Entity> el) {
         return el.stream().filter(Targetable::isBomber).count();
     }
@@ -274,7 +276,9 @@ public class TeamLoadoutGenerator {
                 Entity::hasECM
         ).count();
     }
+    //endregion Check for various unit types, armor types, etc.
 
+    //region generateParameters
     public ReconfigurationParameters generateParameters(Team t) {
         return generateParameters(game, gameOptions, t);
     }
@@ -343,10 +347,7 @@ public class TeamLoadoutGenerator {
 
         return rp;
     }
-
-    public MunitionTree generateMunitionTree(ReconfigurationParameters rp, Team t) {
-        return generateMunitionTree(rp, t, "");
-    }
+    //endregion generateParameters
 
     // Set low-ammo-count AC20 carriers to use Caseless exclusively.
     private static boolean setACImperatives(Entity e, MunitionTree mt, ReconfigurationParameters rp) {
@@ -393,6 +394,11 @@ public class TeamLoadoutGenerator {
         return false;
     }
 
+    //region generateMunitionTree
+    public MunitionTree generateMunitionTree(ReconfigurationParameters rp, Team t) {
+        return generateMunitionTree(rp, t, "");
+    }
+
     public static MunitionTree generateMunitionTree(ReconfigurationParameters rp, Team t, String defaultSettingsFile) {
         // Based on various requirements from rp, set weights for some ammo types over others
         MunitionWeightCollection mwc = new MunitionWeightCollection();
@@ -417,6 +423,9 @@ public class TeamLoadoutGenerator {
         if (rp.darkEnvironment) {
             // Bump munitions that light stuff up
             mwc.increaseIllumMunitions();
+        } else {
+            // decrease weights
+            mwc.decreaseIllumMunitions();
         }
 
         // Adjust weights for enemy force composition
@@ -463,14 +472,22 @@ public class TeamLoadoutGenerator {
                 if (rp.enemyVehicles >= rp.enemyCount / 4.0) {
                     mwc.increaseHeatMunitions();
                 }
+                // BAs are proof against some dedicated Anti-Infantry weapons but not heat-generating rounds
+                if (rp.enemyBattleArmor > rp.enemyCount / 4.0) {
+                    mwc.increaseHeatMunitions();
+                    mwc.increaseAntiBAMunitions();
+                }
             } else if (rp.enemyFireproofArmorCount >= rp.enemyCount / 4.0) {
-                mwc.decreaseHeatMunitions();
                 if (rp.enemyInfantry >= rp.enemyCount / 4.0) {
                     mwc.increaseAntiInfMunitions();
                 }
+                if (rp.enemyBattleArmor > rp.enemyCount / 4.0) {
+                    mwc.increaseAntiBAMunitions();
+                }
+                mwc.decreaseHeatMunitions();
             }
 
-            // Counter EMC by swapping Seeking for Guided
+            // Counter EMC by swapping Seeking in for Guided
             if (rp.enemyECMCount > 1.0) {
                 mwc.decreaseGuidedMunitions();
                 mwc.increaseSeekingMunitions();
@@ -524,14 +541,13 @@ public class TeamLoadoutGenerator {
 
         // The main event!
         // Convert MWC to MunitionsTree for loading
-        applyWeightsToMunitionTree(mt, mwc);
+        applyWeightsToMunitionTree(mwc, mt);
 
         // Handle individual cases like Artemis LRMs, AC/20s with limited ammo, etc.
         ArrayList<Entity> ownTeamEntities = (ArrayList<Entity>) IteratorUtils.toList(game.getTeamEntities(t));
-        boolean appliedACImp = false;
         for (Entity e : ownTeamEntities) {
             // Set certain imperatives based on weapon types, due to low ammo count / low utility
-            appliedACImp = (setACImperatives(e, mt, rp)) || appliedACImp;
+            setACImperatives(e, mt, rp);
             setLRMImperatives(e, mt, rp);
         }
 
@@ -544,7 +560,7 @@ public class TeamLoadoutGenerator {
      * @param mwc
      * @return
      */
-    public static MunitionTree applyWeightsToMunitionTree(MunitionTree mt, MunitionWeightCollection mwc) {
+    public static MunitionTree applyWeightsToMunitionTree(MunitionWeightCollection mwc, MunitionTree mt) {
         // Iterate over every entry in the set of top-weighted munitions for each category
         HashMap<String, List<String>> topWeights = mwc.getTopN(4);
 
@@ -564,7 +580,9 @@ public class TeamLoadoutGenerator {
         }
         return mt;
     }
+    //endregion generateMunitionTree
 
+    //region reconfigureTeam
     /**
      * Wrapper to streamline bot team configuration using standardized defaults
      * @param team
@@ -624,7 +642,9 @@ public class TeamLoadoutGenerator {
         }
         return mt;
     }
+    //endregion reconfigureTeam
 
+    //region reconfigureEntity
     /**
      * Method to apply a MunitionTree to a specific unit.
      * Main application logic
@@ -657,7 +677,9 @@ public class TeamLoadoutGenerator {
             iterativelyLoadAmmo(e, mt, binLists.get(binName), binName, faction);
         }
     }
+    //endregion reconfigureEntity
 
+    //region iterativelyLoadAmmo
     private void iterativelyLoadAmmo(
         Entity e, MunitionTree mt, List<AmmoMounted> binList, String binName, String faction
     ){
@@ -801,8 +823,10 @@ public class TeamLoadoutGenerator {
         }
         return result;
     }
+    //endregion iterativelyLoadAmmo
 }
 
+//region MunitionWeightCollection
 class MunitionWeightCollection {
     private HashMap<String, Double> lrmWeights;
     private HashMap<String, Double> srmWeights;
@@ -1072,3 +1096,4 @@ class MunitionWeightCollection {
         return mekMortarWeights;
     }
 }
+//endregion MunitionWeightCollection

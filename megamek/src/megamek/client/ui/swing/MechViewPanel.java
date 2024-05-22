@@ -26,14 +26,14 @@ import megamek.common.Entity;
 import megamek.common.MechView;
 import megamek.common.Report;
 import megamek.common.templates.TROView;
-import org.apache.logging.log4j.LogManager;
 
+import java.util.List;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.HyperlinkEvent;
 import java.awt.*;
-import java.awt.event.MouseWheelEvent;
-import java.awt.event.MouseWheelListener;
+import java.awt.event.*;
+import java.util.ArrayList;
 
 /**
  * @author Jay Lawson
@@ -43,9 +43,12 @@ public class MechViewPanel extends JPanel {
 
     private static final long serialVersionUID = 2438490306644271135L;
 
-    private JTextPane txtMek = new JTextPane();
-    private JLabel lblMek = new JLabel();
+    private final JTextPane txtMek = new JTextPane();
     private JScrollPane scrMek;
+
+    private final JLabel fluffImageLabel = new JLabel();
+    private final List<Image> fluffImageList = new ArrayList<>();
+    private int fluffImageIndex = 0;
 
     public static final int DEFAULT_WIDTH = 360;
     public static final int DEFAULT_HEIGHT = 600;
@@ -81,7 +84,7 @@ public class MechViewPanel extends JPanel {
         var fluffPanel = new FixedXPanel();
         fluffPanel.setMinimumSize(new Dimension(width, height));
         fluffPanel.setPreferredSize(new Dimension(width, height));
-        fluffPanel.add(lblMek);
+        fluffPanel.add(fluffImageLabel);
 
         JPanel p = new JPanel();
         p.setLayout(new BoxLayout(p, BoxLayout.LINE_AXIS));
@@ -92,6 +95,8 @@ public class MechViewPanel extends JPanel {
         setLayout(new BorderLayout());
         add(sp);
         addMouseWheelListener(wheelForwarder);
+
+        fluffImageLabel.addMouseListener(mouseListener);
     }
 
     public void setMech(Entity entity, MechView mechView) {
@@ -123,28 +128,53 @@ public class MechViewPanel extends JPanel {
     }
 
     private void setFluffImage(Entity entity) {
-        Image image = FluffImageHelper.getFluffImage(entity);
+        fluffImageList.clear();
+        fluffImageList.addAll(FluffImageHelper.getFluffImages(entity));
+        fluffImageIndex = 0;
+        setNextFluffImage();
+    }
+
+    private void setFluffImage(Image image) {
         // Scale down to the default width if the image is wider than that
         if (null != image) {
             if (image.getWidth(this) > DEFAULT_WIDTH) {
                 image = image.getScaledInstance(DEFAULT_WIDTH, -1, Image.SCALE_SMOOTH);
-            }          
-            lblMek.setIcon(new ImageIcon(image));
+            }
+            fluffImageLabel.setIcon(new ImageIcon(image));
         } else {
-            lblMek.setIcon(null);
+            fluffImageLabel.setIcon(null);
         }
     }
 
     public void reset() {
         txtMek.setText("");
-        lblMek.setIcon(null);
+        fluffImageLabel.setIcon(null);
     }
 
     /** Forwards a mouse wheel scroll on the fluff image or free space to the TRO entry. */ 
-    MouseWheelListener wheelForwarder = e -> {
+    private final MouseWheelListener wheelForwarder = e -> {
         MouseWheelEvent converted = (MouseWheelEvent) SwingUtilities.convertMouseEvent(MechViewPanel.this, e, scrMek);
         for (MouseWheelListener listener : scrMek.getMouseWheelListeners()) {
             listener.mouseWheelMoved(converted);
         }
     };
+
+    private final MouseListener mouseListener = new MouseAdapter() {
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            setNextFluffImage();
+        }
+    };
+
+    private void setNextFluffImage() {
+        fluffImageIndex++;
+        if (fluffImageIndex >= fluffImageList.size()) {
+            fluffImageIndex = 0;
+        }
+        if (fluffImageIndex < fluffImageList.size()) {
+            setFluffImage(fluffImageList.get(fluffImageIndex));
+        } else {
+            setFluffImage((Image) null);
+        }
+    }
 }

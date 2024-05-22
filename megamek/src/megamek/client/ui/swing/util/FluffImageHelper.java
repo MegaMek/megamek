@@ -85,6 +85,26 @@ public final class FluffImageHelper {
         return getFluffImage(unit, false);
     }
 
+    /**
+     * Returns a list of all fluff images for the given unit/object to be shown e.g. in the
+     * unit summary.
+     *
+     * <P>If a fluff image is stored in the unit/object itself, e.g. if it was part of the
+     * unit's file or is created by the unit itself, only this is returned. Note that this
+     * is not used for canon units, but may be used in custom ones by adding a fluff
+     * image to the unit in MML.
+     *
+     * <P>Otherwise, the fluff image directories are searched. First searches the user dir,
+     * then the internal dir. Tries to match the image by chassis + model or chassis alone.
+     * Chassis and model names are cleaned from " and / characters before matching. For
+     * Meks with clan names, both names and the combinations are searched. The model
+     * alone is not used to search.
+     *
+     * Returns null if no fluff image can be found.
+     *
+     * @param unit The unit
+     * @return a fluff image or null, if no match is found
+     */
     public static @Nullable List<Image> getFluffImages(@Nullable BTObject unit) {
         return getFluffImageList(unit, false);
     }
@@ -144,26 +164,13 @@ public final class FluffImageHelper {
     private static @Nullable List<File> findFluffFiles(BTObject unit, boolean recordSheet) {
         List<File> fileCandidates = new ArrayList<>();
         var fluffDir = new File(Configuration.fluffImagesDir(), FluffImageHelper.getFluffPath(unit));
-        var rsFluffSuperDir = new File(Configuration.fluffImagesDir(), "rs");
-        var rsFluffDir = new File(rsFluffSuperDir, FluffImageHelper.getFluffPath(unit));
 
         List<String> nameCandidates = nameCandidates(unit);
 
         // UserDir matches
-        // For internal use: in [user dir]/data/images/fluff/rs/<type> images for record sheets can be placed
-        // These will be preferentially loaded when the recordSheet paremeter is true
         String userDir = PreferenceManager.getClientPreferences().getUserDir();
         if (!userDir.isBlank() && new File(userDir).isDirectory()) {
             var fluffUserDir = new File(userDir, fluffDir.toString());
-            var rsFluffUserDir = new File(userDir, rsFluffDir.toString());
-
-            if (recordSheet) {
-                for (String nameCandidate : nameCandidates) {
-                    for (String ext : EXTENSIONS_FLUFF_IMAGE_FORMATS) {
-                        fileCandidates.add(new File(rsFluffUserDir, nameCandidate + ext));
-                    }
-                }
-            }
 
             for (String nameCandidate : nameCandidates) {
                 for (String ext : EXTENSIONS_FLUFF_IMAGE_FORMATS) {
@@ -270,20 +277,11 @@ public final class FluffImageHelper {
 
     private static List<String> nameCandidates(BTObject unit) {
         List<String> nameCandidates = new ArrayList<>();
-
-        String sanitizedChassis = sanitize(unit.generalName());
         String sanitizedModel = sanitize(unit.specificName());
-        nameCandidates.add((sanitizedChassis + " " + sanitizedModel).trim());
-        if (unit instanceof Mech && !((Mech) unit).getClanChassisName().isBlank()) {
-            Mech mek = (Mech) unit;
-            String fullChassis = sanitize(mek.getFullChassis());
-            nameCandidates.add((fullChassis + " " + sanitizedModel).trim());
-            String clanChassis = sanitize(mek.getClanChassisName());
-            nameCandidates.add((clanChassis + " " + sanitizedModel).trim());
-            nameCandidates.add(fullChassis);
-            nameCandidates.add(clanChassis);
+        for (String chassisNameCandidate : chassisNameCandidates(unit)) {
+            nameCandidates.add((chassisNameCandidate + " " + sanitizedModel.trim()));
         }
-        nameCandidates.add(sanitizedChassis);
+        nameCandidates.addAll(chassisNameCandidates(unit));
         return nameCandidates;
     }
 

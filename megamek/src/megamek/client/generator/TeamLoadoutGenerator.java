@@ -2,6 +2,7 @@ package megamek.client.generator;
 
 import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.dialog.AbstractUnitSelectorDialog;
+import megamek.codeUtilities.ObjectUtility;
 import megamek.common.*;
 import megamek.common.containers.MunitionTree;
 import megamek.common.equipment.AmmoMounted;
@@ -50,7 +51,7 @@ public class TeamLoadoutGenerator {
     ));
 
     public static final ArrayList<String> ANTI_BA_MUNITIONS = new ArrayList<>(List.of(
-            "Inferno", "Fuel-Air", "Anti-personnel", "Acid", "FABombSmall Ammo", "HEBomb"
+            "Inferno", "Fuel-Air", "Tandem-Charge", "Acid", "FABombSmall Ammo", "HEBomb"
     ));
 
     public static final ArrayList<String> HEAT_MUNITIONS = new ArrayList<>(List.of(
@@ -102,6 +103,13 @@ public class TeamLoadoutGenerator {
             entry("Bomb", MunitionTree.BOMB_MUNITION_NAMES
         )
     );
+
+    // bomb types assignable to aerospace units on ground maps
+    private static final int[] validBotBombs = { BombType.B_HE, BombType.B_CLUSTER, BombType.B_RL,
+            BombType.B_INFERNO, BombType.B_THUNDER, BombType.B_FAE_SMALL, BombType.B_FAE_LARGE,
+            BombType.B_LG, BombType.B_ARROW, BombType.B_HOMING, BombType.B_TAG };
+    private static final int[] validBotAABombs = { BombType.B_RL, BombType.B_LAA, BombType.B_AAA };
+
     //endregion Constants
 
     private static ClientGUI cg;
@@ -824,6 +832,80 @@ public class TeamLoadoutGenerator {
         return result;
     }
     //endregion iterativelyLoadAmmo
+
+    //region aero / bombs
+    /**
+     * Helper function that makes some of the units in the given list of entities
+     * carry bombs.
+     * @param entityList The list of entities to process
+     * @param campaign Campaign object. In the future, may be used to check list of bombs
+     * for technological availability.
+     */
+    public static void populateAeroBombs(List<Entity> entityList, int year, boolean groundMap) {
+        int maxBombers = Compute.randomInt(entityList.size()) + 1;
+        int numBombers = 0;
+
+        int[] validBombChoices = groundMap ? validBotBombs : validBotAABombs;
+
+        for (Entity entity : entityList) {
+            if (entity.isBomber()) {
+                // if this entity has no guns (e.g. is a Boeing Jump Bomber)
+                if (entity.getIndividualWeaponList().isEmpty()) {
+                    loadBombs(entity, validBombChoices, year);
+                    continue;
+                }
+
+                if (numBombers >= maxBombers) {
+                    break;
+                }
+
+                loadBombs(entity, validBombChoices, year);
+                numBombers++;
+            }
+        }
+    }
+
+    /**
+     * Worker function that takes an entity and an array of bomb types
+     * and loads it up with as many of a mostly period-appropriate random bomb type
+     * as it's capable of holding
+     */
+    private static void loadBombs(Entity entity, int[] validBombChoices, int year) {
+        int[] bombChoices = new int[BombType.B_NUM];
+
+        // remove bomb choices if they're not era-appropriate
+        List<Integer> actualValidBombChoices = new ArrayList<>();
+        for (int x = 0; x < validBombChoices.length; x++) {
+            String typeName = BombType.getBombInternalName(validBombChoices[x]);
+
+            // hack: make rocket launcher pods available before 3055
+            if ((validBombChoices[x] == BombType.B_RL) ||
+                    BombType.get(typeName).isAvailableIn(year, false)) {
+                actualValidBombChoices.add(validBombChoices[x]);
+            }
+        }
+
+        // pick out the index in the BombType array
+        int randomBombChoiceIndex = Compute.randomInt(actualValidBombChoices.size());
+        int bombIndex = actualValidBombChoices.get(randomBombChoiceIndex);
+        int weightModifier = 0;
+
+        // hack: we only really need one "tag", so add it then pack on some more bombs
+        if (bombIndex == BombType.B_TAG) {
+            weightModifier = 5;
+            bombChoices[bombIndex] = 1;
+            actualValidBombChoices.remove(randomBombChoiceIndex);
+            bombIndex = ObjectUtility.getRandomItem(actualValidBombChoices);
+        }
+
+        // # of bombs is the unit's weight / (bomb cost * 5)
+        int numBombs = (int) Math.floor((entity.getWeight() - weightModifier) /
+                (BombType.getBombCost(bombIndex) * 5.0));
+        bombChoices[bombIndex] = numBombs;
+
+        ((IBomber) entity).setBombChoices(bombChoices);
+    }
+    //endregion aero / bombs
 }
 
 //region MunitionWeightCollection
@@ -900,7 +982,7 @@ class MunitionWeightCollection {
         for (String name: wepAL) {
             weights.put(name, 2.0);
         }
-        // Every weight list should have a Standard set as weight 2.0
+        // ATM Standard ammo is weighted lower due to overlap with HE and ER
         weights.put("Standard", 1.0);
         return weights;
     }
@@ -931,7 +1013,6 @@ class MunitionWeightCollection {
                 )
         );
     }
-
 
     public void increaseAPMunitions() {
         increaseMunitions(TeamLoadoutGenerator.AP_MUNITIONS);

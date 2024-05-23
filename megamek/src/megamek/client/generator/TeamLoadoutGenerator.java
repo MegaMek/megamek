@@ -1169,6 +1169,10 @@ class MunitionWeightCollection {
         return artyWeights;
     }
 
+    public HashMap<String, Double> getBombWeights() {
+        return bombWeights;
+    }
+
     public HashMap<String, Double> getArtyCannonWeights() {
         return artyCannonWeights;
     }

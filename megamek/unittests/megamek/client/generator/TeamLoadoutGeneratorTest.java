@@ -472,10 +472,10 @@ class TeamLoadoutGeneratorTest {
         MunitionWeightCollection mwc = new MunitionWeightCollection();
         TeamLoadoutGenerator tlg = new TeamLoadoutGenerator(cg);
 
-        // Have the Munition Tree generator use our pre-made mwc so we can get see its changes
+        // Have the Munition Tree generator use our pre-made mwc so we can see its changes
         MunitionTree mt = tlg.generateMunitionTree(rp, team, "", mwc);
 
         assertEquals(0.0, mwc.getArtyWeights().get("Davy Crockett-M"));
-        assertEquals(0.0, mwc.getArtyWeights().get("AlamoMissile"));
+        assertEquals(0.0, mwc.getBombWeights().get("AlamoMissile Ammo"));
     }
 }

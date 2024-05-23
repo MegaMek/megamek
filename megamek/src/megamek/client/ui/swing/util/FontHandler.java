@@ -97,7 +97,7 @@ public final class FontHandler {
      *
      * @see <a href="https://fonts.google.com/icons">(Google) Material Symbols</a>
      */
-    public static Font getNotoFont() {
+    public static Font notoFont() {
         return new Font("Noto Sans", Font.PLAIN, 14);
     }
 
@@ -143,10 +143,10 @@ public final class FontHandler {
             try (InputStream fis = new FileInputStream(fontFile)) {
                 Font font = Font.createFont(Font.TRUETYPE_FONT, fis);
                 if (!GraphicsEnvironment.getLocalGraphicsEnvironment().registerFont(font)) {
-                    LogManager.getLogger().error("Failed to register font " + fontFile);
+                    LogManager.getLogger().warn("Failed to register font " + fontFile);
                 }
             } catch (Exception ex) {
-                LogManager.getLogger().error("Failed to read font ", ex);
+                LogManager.getLogger().warn("Failed to read font ", ex);
             }
         }
     }

@@ -2295,7 +2295,7 @@ public class BoardEditor extends JPanel
 
         StringDrawer invalidString = new StringDrawer(Messages.getString("BoardEditor.INVALID"))
                 .at(BoardView.HEX_W / 2, BoardView.HEX_H / 2).color(guip.getWarningColor())
-                .outline(Color.WHITE, 1).font(FontHandler.getNotoFont().deriveFont(Font.BOLD)).center();
+                .outline(Color.WHITE, 1).font(FontHandler.notoFont().deriveFont(Font.BOLD)).center();
 
         @Override
         public void paintComponent(Graphics g) {

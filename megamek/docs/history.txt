@@ -44,6 +44,7 @@ MEGAMEK VERSION HISTORY:
 + PR #5481: Name Changes Updates
 + PR #5466: Move Field of Fire Sprites out of BoardView
 + PR #5472: Use FlatLaf exclusively
++ Fix 5476: Update SV armor slots to 2 or 1 for Rating E or F respectively
 
 0.49.19.1 (2024-05-14 1800 UTC)
 + Milestone Release. Backported fixes.

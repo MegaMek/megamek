@@ -69,7 +69,7 @@ jobs:
         if: always() && matrix.os == 'ubuntu-latest'
         with:
           name: mm-release-nix-mac-${{ matrix.java-distribution }}-jdk${{ matrix.java-version }}
-          path: megamek/megamek/build/distributions/*.tar
+          path: megamek/megamek/build/distributions/*.tar.gz
 
       # Put the Windows Release in an artifact
       #

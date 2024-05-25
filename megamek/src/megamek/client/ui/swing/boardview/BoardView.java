@@ -368,7 +368,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
     private final TerrainShadowHelper shadowHelper = new TerrainShadowHelper(this);
 
     private final StringDrawer invalidString = new StringDrawer(Messages.getString("BoardEditor.INVALID"))
-            .color(GUIP.getWarningColor()).font(FontHandler.getNotoFont().deriveFont(Font.BOLD)).center();
+            .color(GUIP.getWarningColor()).font(FontHandler.notoFont().deriveFont(Font.BOLD)).center();
 
     BoardViewTooltipProvider boardViewToolTip = (point, movementTarget) -> null;
 

@@ -3,7 +3,7 @@ import java.time.LocalDateTime
 plugins {
     id 'application'
     id 'maven-publish'
-    id 'edu.sc.seis.launch4j' version '2.5.4'
+    id 'edu.sc.seis.launch4j' version '3.0.5'
     id 'jacoco'
 }
 
@@ -27,22 +27,22 @@ sourceSets {
 }
 
 dependencies {
-    implementation 'com.fasterxml.jackson.core:jackson-core:2.17.0'
-    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.17.0'
-    implementation 'com.formdev:flatlaf:3.4'
+    implementation 'com.fasterxml.jackson.core:jackson-core:2.17.1'
+    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.17.1'
+    implementation 'com.formdev:flatlaf:3.4.1'
+    implementation 'com.formdev:flatlaf-extras:3.4.1'
     implementation 'com.github.ikkisoft:SerialKiller:master-SNAPSHOT'
     implementation 'com.sun.mail:jakarta.mail:2.0.1'
     implementation 'com.thoughtworks.xstream:xstream:1.4.20'
     implementation 'jakarta.xml.bind:jakarta.xml.bind-api:4.0.2'
-    implementation 'org.apache.commons:commons-text:1.11.0'
+    implementation 'org.apache.commons:commons-text:1.12.0'
     implementation 'org.apache.logging.log4j:log4j-core:2.23.1'
     implementation 'org.freemarker:freemarker:2.3.32'
-    implementation 'com.formdev:flatlaf-extras:3.4.1'
 
     runtimeOnly 'org.glassfish.jaxb:jaxb-runtime:4.0.5'
 
     testImplementation 'org.junit.jupiter:junit-jupiter:5.10.2'
-    testImplementation 'org.mockito:mockito-core:5.11.0'
+    testImplementation 'org.mockito:mockito-core:5.12.0'
 }
 
 mainClassName = 'megamek.MegaMek'
@@ -243,27 +243,171 @@ createExe {
     mainClassName = project.mainClassName
     outfile = 'MegaMek.exe'
     icon = "${projectDir}/data/images/misc/megamek.ico"
-    def iniFile = outfile.replace('.exe', '.l4j.ini')
-    jar = "${project.tasks.getByName("jar").archiveFile.get()}"
+    jarTask = project.tasks.jar
+    downloadUrl = 'https://adoptium.net/temurin/releases/?os=windows&arch=x64'
+    supportUrl = 'https://megamek.org'
+    copyright = '2024 MegaMek Development Team'
+    companyName = "MegaMek Development Team"
     outputs.file "${buildDir}/launch4j/${outfile}"
-    outputs.file "${buildDir}/launch4j/${iniFile}"
-    doLast {
-        new File("${buildDir}/${outputDir}/${iniFile}").text = """# Launch4j runtime config
-# you can add arguments here that will be processed by the JVM at runtime
-${project.ext.mmJvmOptions.join('\n')}
-"""
-    }
+    jvmOptions = project.ext.mmJvmOptions
+    jreMinVersion = '17'
+    messagesJreNotFoundError = 'Go here for instructions on installing the correct version of Java: https://github.com/MegaMek/megamek/wiki/Updating-to-Adoptium'
 }
 
 windowsDistZip {
     description = 'Creates Windows distribution packaged as a zip archive'
+    dependsOn copyFiles
+    dependsOn createImageAtlases
+    dependsOn equipmentList
+    dependsOn officialUnitList
+    dependsOn ratZip
+    dependsOn unitFilesZip
+    dependsOn unitFilesZipbattlearmor
+    dependsOn unitFilesZipconvfighter
+    dependsOn unitFilesZipdropships
+    dependsOn unitFilesZipfighters
+    dependsOn unitFilesZipge
+    dependsOn unitFilesZipinfantry
+    dependsOn unitFilesZipjumpships
+    dependsOn unitFilesZipmechs
+    dependsOn unitFilesZipprotomechs
+    dependsOn unitFilesZipsmallcraft
+    dependsOn unitFilesZipspacestation
+    dependsOn unitFilesZipvehicles
+    dependsOn unitFilesZipwarship
     dependsOn createExe
+}
+
+windowsDistTar {
+    description = 'Creates Windows distribution packaged as a tar.gz archive'
+    dependsOn copyFiles
+    dependsOn createImageAtlases
+    dependsOn equipmentList
+    dependsOn officialUnitList
+    dependsOn ratZip
+    dependsOn unitFilesZip
+    dependsOn unitFilesZipbattlearmor
+    dependsOn unitFilesZipconvfighter
+    dependsOn unitFilesZipdropships
+    dependsOn unitFilesZipfighters
+    dependsOn unitFilesZipge
+    dependsOn unitFilesZipinfantry
+    dependsOn unitFilesZipjumpships
+    dependsOn unitFilesZipmechs
+    dependsOn unitFilesZipprotomechs
+    dependsOn unitFilesZipsmallcraft
+    dependsOn unitFilesZipspacestation
+    dependsOn unitFilesZipvehicles
+    dependsOn unitFilesZipwarship
+    dependsOn createExe
+    archiveExtension = 'tar.gz'
+    compression = Compression.GZIP
+}
+
+unixDistZip {
+    description = 'Creates *nix distribution packaged as a tar ball'
+    dependsOn stageFiles
+    dependsOn startScripts
+    dependsOn createStartScripts
+    dependsOn copyFiles
+    dependsOn createImageAtlases
+    dependsOn equipmentList
+    dependsOn officialUnitList
+    dependsOn ratZip
+    dependsOn unitFilesZip
+    dependsOn unitFilesZipbattlearmor
+    dependsOn unitFilesZipconvfighter
+    dependsOn unitFilesZipdropships
+    dependsOn unitFilesZipfighters
+    dependsOn unitFilesZipge
+    dependsOn unitFilesZipinfantry
+    dependsOn unitFilesZipjumpships
+    dependsOn unitFilesZipmechs
+    dependsOn unitFilesZipprotomechs
+    dependsOn unitFilesZipsmallcraft
+    dependsOn unitFilesZipspacestation
+    dependsOn unitFilesZipvehicles
+    dependsOn unitFilesZipwarship
 }
 
 unixDistTar {
     description = 'Creates *nix distribution packaged as a tar ball'
     dependsOn stageFiles
+    dependsOn startScripts
     dependsOn createStartScripts
+    dependsOn copyFiles
+    dependsOn createImageAtlases
+    dependsOn equipmentList
+    dependsOn officialUnitList
+    dependsOn ratZip
+    dependsOn unitFilesZip
+    dependsOn unitFilesZipbattlearmor
+    dependsOn unitFilesZipconvfighter
+    dependsOn unitFilesZipdropships
+    dependsOn unitFilesZipfighters
+    dependsOn unitFilesZipge
+    dependsOn unitFilesZipinfantry
+    dependsOn unitFilesZipjumpships
+    dependsOn unitFilesZipmechs
+    dependsOn unitFilesZipprotomechs
+    dependsOn unitFilesZipsmallcraft
+    dependsOn unitFilesZipspacestation
+    dependsOn unitFilesZipvehicles
+    dependsOn unitFilesZipwarship
+    archiveExtension = 'tar.gz'
+    compression = Compression.GZIP
+}
+
+distZip {
+    description = 'Creates *nix distribution packaged as a Zip file'
+    dependsOn stageFiles
+    dependsOn startScripts
+    dependsOn createStartScripts
+    dependsOn copyFiles
+    dependsOn createImageAtlases
+    dependsOn equipmentList
+    dependsOn officialUnitList
+    dependsOn ratZip
+    dependsOn unitFilesZip
+    dependsOn unitFilesZipbattlearmor
+    dependsOn unitFilesZipconvfighter
+    dependsOn unitFilesZipdropships
+    dependsOn unitFilesZipfighters
+    dependsOn unitFilesZipge
+    dependsOn unitFilesZipinfantry
+    dependsOn unitFilesZipjumpships
+    dependsOn unitFilesZipmechs
+    dependsOn unitFilesZipprotomechs
+    dependsOn unitFilesZipsmallcraft
+    dependsOn unitFilesZipspacestation
+    dependsOn unitFilesZipvehicles
+    dependsOn unitFilesZipwarship
+}
+
+distTar {
+    description = 'Creates *nix distribution packaged as a gziped tar ball'
+    dependsOn stageFiles
+    dependsOn startScripts
+    dependsOn createStartScripts
+    dependsOn copyFiles
+    dependsOn createImageAtlases
+    dependsOn equipmentList
+    dependsOn officialUnitList
+    dependsOn ratZip
+    dependsOn unitFilesZip
+    dependsOn unitFilesZipbattlearmor
+    dependsOn unitFilesZipconvfighter
+    dependsOn unitFilesZipdropships
+    dependsOn unitFilesZipfighters
+    dependsOn unitFilesZipge
+    dependsOn unitFilesZipinfantry
+    dependsOn unitFilesZipjumpships
+    dependsOn unitFilesZipmechs
+    dependsOn unitFilesZipprotomechs
+    dependsOn unitFilesZipsmallcraft
+    dependsOn unitFilesZipspacestation
+    dependsOn unitFilesZipvehicles
+    dependsOn unitFilesZipwarship
     archiveExtension = 'tar.gz'
     compression = Compression.GZIP
 }

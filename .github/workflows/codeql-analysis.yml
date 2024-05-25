@@ -12,12 +12,12 @@ name: "CodeQL"
 
 on:
   push:
-    branches: [ master ]
+    branches: [master]
   pull_request:
     # The branches below must be a subset of the branches above
-    branches: [ master ]
+    branches: [master]
   schedule:
-    - cron: '24 16 * * 4'
+    - cron: "24 16 * * 4"
 
 jobs:
   analyze:
@@ -27,49 +27,49 @@ jobs:
     # Run this job once for each combination in the matrix below.
     strategy:
       matrix:
-        os: [ ubuntu-latest ] # For Code QL running on *nix is sufficient
-        language: [ 'java' ]
-        java-distribution: [ temurin ]
-        java-version: [ 17 ]
+        os: [ubuntu-latest] # For Code QL running on *nix is sufficient
+        language: ["java"]
+        java-distribution: [temurin]
+        java-version: [17]
       fail-fast: false
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-    # Setup the requested Java Distribution and Version from the matrix
-    - name: Set up ${{ matrix.java-distribution }} JDK ${{ matrix.java-version }}
-      uses: actions/setup-java@v3
-      with:
-        distribution: ${{ matrix.java-distribution }}
-        java-version: ${{ matrix.java-version }}
+      # Setup the requested Java Distribution and Version from the matrix
+      - name: Set up ${{ matrix.java-distribution }} JDK ${{ matrix.java-version }}
+        uses: actions/setup-java@v3
+        with:
+          distribution: ${{ matrix.java-distribution }}
+          java-version: ${{ matrix.java-version }}
 
-    # Initializes the CodeQL tools for scanning.
-    - name: Initialize CodeQL
-      uses: github/codeql-action/init@v2
-      with:
-        languages: ${{ matrix.language }}
-        # If you wish to specify custom queries, you can do so here or in a config file.
-        # By default, queries listed here will override any specified in a config file.
-        # Prefix the list here with "+" to use these queries and those in the config file.
-        # queries: ./path/to/local/query, your-org/your-repo/queries@main
-        queries: +security-and-quality
+      # Initializes the CodeQL tools for scanning.
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v2
+        with:
+          languages: ${{ matrix.language }}
+          # If you wish to specify custom queries, you can do so here or in a config file.
+          # By default, queries listed here will override any specified in a config file.
+          # Prefix the list here with "+" to use these queries and those in the config file.
+          # queries: ./path/to/local/query, your-org/your-repo/queries@main
+          queries: +security-and-quality
 
-    # Autobuild attempts to build any compiled languages  (C/C++, C#, or Java).
-    # If this step fails, then you should remove it and run the build manually (see below)
-    - name: Autobuild MegaMek
-      uses: github/codeql-action/autobuild@v2
+      # Autobuild attempts to build any compiled languages  (C/C++, C#, or Java).
+      # If this step fails, then you should remove it and run the build manually (see below)
+      - name: Autobuild MegaMek
+        uses: github/codeql-action/autobuild@v2
 
-    # ℹ️ Command-line programs to run using the OS shell.
-    # 📚 https://git.io/JvXDl
+      # ℹ️ Command-line programs to run using the OS shell.
+      # 📚 https://git.io/JvXDl
 
-    # ✏️ If the Autobuild fails above, remove it and uncomment the following three lines
-    #    and modify them (or add more) to build your code if your project
-    #    uses a compiled language
+      # ✏️ If the Autobuild fails above, remove it and uncomment the following three lines
+      #    and modify them (or add more) to build your code if your project
+      #    uses a compiled language
 
-    #- run: |
-    #   make bootstrap
-    #   make release
+      #- run: |
+      #   make bootstrap
+      #   make release
 
-    - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@v2
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v2

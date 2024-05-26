@@ -1,5 +1,5 @@
 plugins {
-    id 'org.ajoberstar.grgit' version '5.0.0'
+    id 'org.ajoberstar.grgit' version '5.2.2'
 }
 
 allprojects {

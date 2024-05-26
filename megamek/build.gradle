@@ -261,20 +261,7 @@ windowsDistZip {
     dependsOn equipmentList
     dependsOn officialUnitList
     dependsOn ratZip
-    dependsOn unitFilesZip
-    dependsOn unitFilesZipbattlearmor
-    dependsOn unitFilesZipconvfighter
-    dependsOn unitFilesZipdropships
-    dependsOn unitFilesZipfighters
-    dependsOn unitFilesZipge
-    dependsOn unitFilesZipinfantry
-    dependsOn unitFilesZipjumpships
-    dependsOn unitFilesZipmechs
-    dependsOn unitFilesZipprotomechs
-    dependsOn unitFilesZipsmallcraft
-    dependsOn unitFilesZipspacestation
-    dependsOn unitFilesZipvehicles
-    dependsOn unitFilesZipwarship
+    dependsOn stageFiles
     dependsOn createExe
 }
 
@@ -285,20 +272,7 @@ windowsDistTar {
     dependsOn equipmentList
     dependsOn officialUnitList
     dependsOn ratZip
-    dependsOn unitFilesZip
-    dependsOn unitFilesZipbattlearmor
-    dependsOn unitFilesZipconvfighter
-    dependsOn unitFilesZipdropships
-    dependsOn unitFilesZipfighters
-    dependsOn unitFilesZipge
-    dependsOn unitFilesZipinfantry
-    dependsOn unitFilesZipjumpships
-    dependsOn unitFilesZipmechs
-    dependsOn unitFilesZipprotomechs
-    dependsOn unitFilesZipsmallcraft
-    dependsOn unitFilesZipspacestation
-    dependsOn unitFilesZipvehicles
-    dependsOn unitFilesZipwarship
+    dependsOn stageFiles
     dependsOn createExe
     archiveExtension = 'tar.gz'
     compression = Compression.GZIP
@@ -314,20 +288,6 @@ unixDistZip {
     dependsOn equipmentList
     dependsOn officialUnitList
     dependsOn ratZip
-    dependsOn unitFilesZip
-    dependsOn unitFilesZipbattlearmor
-    dependsOn unitFilesZipconvfighter
-    dependsOn unitFilesZipdropships
-    dependsOn unitFilesZipfighters
-    dependsOn unitFilesZipge
-    dependsOn unitFilesZipinfantry
-    dependsOn unitFilesZipjumpships
-    dependsOn unitFilesZipmechs
-    dependsOn unitFilesZipprotomechs
-    dependsOn unitFilesZipsmallcraft
-    dependsOn unitFilesZipspacestation
-    dependsOn unitFilesZipvehicles
-    dependsOn unitFilesZipwarship
 }
 
 unixDistTar {
@@ -340,20 +300,6 @@ unixDistTar {
     dependsOn equipmentList
     dependsOn officialUnitList
     dependsOn ratZip
-    dependsOn unitFilesZip
-    dependsOn unitFilesZipbattlearmor
-    dependsOn unitFilesZipconvfighter
-    dependsOn unitFilesZipdropships
-    dependsOn unitFilesZipfighters
-    dependsOn unitFilesZipge
-    dependsOn unitFilesZipinfantry
-    dependsOn unitFilesZipjumpships
-    dependsOn unitFilesZipmechs
-    dependsOn unitFilesZipprotomechs
-    dependsOn unitFilesZipsmallcraft
-    dependsOn unitFilesZipspacestation
-    dependsOn unitFilesZipvehicles
-    dependsOn unitFilesZipwarship
     archiveExtension = 'tar.gz'
     compression = Compression.GZIP
 }
@@ -368,20 +314,6 @@ distZip {
     dependsOn equipmentList
     dependsOn officialUnitList
     dependsOn ratZip
-    dependsOn unitFilesZip
-    dependsOn unitFilesZipbattlearmor
-    dependsOn unitFilesZipconvfighter
-    dependsOn unitFilesZipdropships
-    dependsOn unitFilesZipfighters
-    dependsOn unitFilesZipge
-    dependsOn unitFilesZipinfantry
-    dependsOn unitFilesZipjumpships
-    dependsOn unitFilesZipmechs
-    dependsOn unitFilesZipprotomechs
-    dependsOn unitFilesZipsmallcraft
-    dependsOn unitFilesZipspacestation
-    dependsOn unitFilesZipvehicles
-    dependsOn unitFilesZipwarship
 }
 
 distTar {
@@ -394,20 +326,6 @@ distTar {
     dependsOn equipmentList
     dependsOn officialUnitList
     dependsOn ratZip
-    dependsOn unitFilesZip
-    dependsOn unitFilesZipbattlearmor
-    dependsOn unitFilesZipconvfighter
-    dependsOn unitFilesZipdropships
-    dependsOn unitFilesZipfighters
-    dependsOn unitFilesZipge
-    dependsOn unitFilesZipinfantry
-    dependsOn unitFilesZipjumpships
-    dependsOn unitFilesZipmechs
-    dependsOn unitFilesZipprotomechs
-    dependsOn unitFilesZipsmallcraft
-    dependsOn unitFilesZipspacestation
-    dependsOn unitFilesZipvehicles
-    dependsOn unitFilesZipwarship
     archiveExtension = 'tar.gz'
     compression = Compression.GZIP
 }

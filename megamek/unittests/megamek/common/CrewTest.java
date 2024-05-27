@@ -23,7 +23,9 @@ import megamek.common.battlevalue.BVCalculator;
 import megamek.common.options.GameOptions;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -52,7 +54,7 @@ public class CrewTest {
         inf.getCrew().setGunnery(1);
         assertFalse(inf.getCrew().isPilotingFatigued());
 
-        inf.getCrew().setFatigue(15);
+        inf.getCrew().setCrewFatigue(15, 0);
         assertTrue(inf.getCrew().isPilotingFatigued());
 
         crew = getInfantryCrewWithCombatTurns(16);
@@ -61,10 +63,10 @@ public class CrewTest {
         inf.getCrew().setPiloting(8);
         assertFalse(inf.getCrew().isPilotingFatigued());
 
-        inf.getCrew().setFatigue(4);
+        inf.getCrew().setCrewFatigue(4, 0);
         assertFalse(inf.getCrew().isPilotingFatigued());
 
-        inf.getCrew().setFatigue(5);
+        inf.getCrew().setCrewFatigue(5, 0);
         assertTrue(inf.getCrew().isPilotingFatigued());
     }
 
@@ -86,7 +88,7 @@ public class CrewTest {
         inf.getCrew().setGunnery(1);
         assertTrue(inf.getCrew().isPilotingFatigued());
 
-        inf.getCrew().setFatigue(15);
+        inf.getCrew().setCrewFatigue(15, 0);
         assertTrue(inf.getCrew().isPilotingFatigued());
 
         crew = getMekCrewWithCombatTurns(16);
@@ -95,10 +97,10 @@ public class CrewTest {
         inf.getCrew().setPiloting(8);
         assertTrue(inf.getCrew().isPilotingFatigued());
 
-        inf.getCrew().setFatigue(4);
+        inf.getCrew().setCrewFatigue(4, 0);
         assertTrue(inf.getCrew().isPilotingFatigued());
 
-        inf.getCrew().setFatigue(5);
+        inf.getCrew().setCrewFatigue(5, 0);
         assertTrue(inf.getCrew().isPilotingFatigued());
     }
 

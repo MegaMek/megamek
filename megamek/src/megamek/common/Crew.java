@@ -1103,6 +1103,16 @@ public class Crew implements Serializable {
         toughness[pos] = t;
     }
 
+    @Deprecated
+    public int getFatigue() {
+        return fatigue[0];
+    }
+
+    @Deprecated
+    public void setFatigue(int fatigue) {
+        this.fatigue[0] = fatigue;
+    }
+
     public int getCrewFatigue(int pos) {
         return fatigue[pos];
     }

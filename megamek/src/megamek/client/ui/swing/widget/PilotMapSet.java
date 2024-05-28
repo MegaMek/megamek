@@ -41,8 +41,8 @@ public class PilotMapSet implements DisplayMapSet {
     private JComponent comp;
     private PMAreasGroup content = new PMAreasGroup();
     private PMPicArea portraitArea;
-    private PMSimpleLabel nameL, nickL, pilotL, gunneryL, gunneryLL, gunneryML, gunneryBL, toughBL, initBL, commandBL;
-    private PMSimpleLabel pilotR, gunneryR, gunneryLR, gunneryMR, gunneryBR, toughBR, initBR, commandBR, hitsR;
+    private PMSimpleLabel nameL, nickL, pilotL, gunneryL, gunneryLL, gunneryML, gunneryBL, toughBL, fatigueBL, initBL, commandBL;
+    private PMSimpleLabel pilotR, gunneryR, gunneryLR, gunneryMR, gunneryBR, toughBR, fatigueBR, initBR, commandBR, hitsR;
     private PMSimpleLabel[] advantagesR;
     private Vector<BackGroundDrawer> bgDrawers = new Vector<>();
 
@@ -128,6 +128,11 @@ public class PilotMapSet implements DisplayMapSet {
         toughBR = createLabel(STAR3, fm, pilotL.getSize().width + 50 + initBL.getSize().width + 25, getYCoord());
         content.addArea(toughBR);
 
+        fatigueBL = createLabel(Messages.getString("PilotMapSet.fatigueBL"), fm, pilotL.getSize().width + 50, getYCoord());
+        content.addArea(fatigueBL);
+        fatigueBR = createLabel(STAR3, fm, pilotL.getSize().width + 50 + initBL.getSize().width + 25, getYCoord());
+        content.addArea(fatigueBR);
+
         gunneryBL = createLabel(Messages.getString("PilotMapSet.gunneryBL"), fm, 0, getNewYCoord());
         content.addArea(gunneryBL);
         gunneryBR = createLabel(STAR3, fm, pilotL.getSize().width + 25, getYCoord());
@@ -153,7 +158,7 @@ public class PilotMapSet implements DisplayMapSet {
     public void setEntity(Entity en) {
         setEntity(en, 0);
     }
-    
+
     public void setEntity(Entity en, int slot) {
         if (en instanceof Infantry) {
             pilotL.setString(Messages.getString("PilotMapSet.pilotLAntiMech"));

@@ -104,7 +104,7 @@ public class EntityListFile {
                 if (mount.getEntity().usesWeaponBays()
                         || (mount.getEntity() instanceof Dropship)) {
                     output.append("\" " + MULParser.ATTR_CAPACITY + "=\"")
-                        .append(mount.getSize());
+                            .append(mount.getSize());
                 }
             }
 
@@ -120,7 +120,7 @@ public class EntityListFile {
                 for (Mounted ammo = mount.getLinked(); ammo != null; ammo = ammo.getLinked()) {
                     if (((AmmoType) ammo.getType()).getMunitionType().contains(AmmoType.Munitions.M_INFERNO)) {
                         output.append("\" " + MULParser.ATTR_INFERNO + "=\"").append(ammo.getBaseShotsLeft())
-                            .append(":").append(ammo.getOriginalShots());
+                                .append(":").append(ammo.getOriginalShots());
                     } else {
                         output.append("\" " + MULParser.ATTR_STANDARD + "=\"").append(ammo.getBaseShotsLeft())
                                 .append(":").append(ammo.getOriginalShots());
@@ -243,7 +243,7 @@ public class EntityListFile {
 
                 if (entity.hasRearArmor(loc)
                         && (entity.getOArmor(loc, true) != entity
-                                .getArmorForReal(loc, true))) {
+                        .getArmorForReal(loc, true))) {
                     thisLoc.append(indentStr(indentLvl + 1) + "<" + MULParser.ELE_ARMOR + " " + MULParser.ATTR_POINTS + "=\"");
                     thisLoc.append(EntityListFile.formatArmor(entity
                             .getArmorForReal(loc, true)));
@@ -569,10 +569,10 @@ public class EntityListFile {
             if (entity.getOwner().getId() == client.getLocalPlayer().getId()) {
                 living.add(entity);
             } else if (entity.getOwner().isEnemyOf(client.getLocalPlayer())) {
-                 if (!entity.canEscape()) {
-                     kills.put(entity.getDisplayName(),  MULParser.VALUE_NONE);
-                 }
-                 salvage.add(entity);
+                if (!entity.canEscape()) {
+                    kills.put(entity.getDisplayName(),  MULParser.VALUE_NONE);
+                }
+                salvage.add(entity);
             } else {
                 allied.add(entity);
             }
@@ -1148,7 +1148,7 @@ public class EntityListFile {
         if (crew instanceof LAMPilot) {
             writeLAMAeroAttributes(output, (LAMPilot) crew,
                     (null != entity.getGame())
-                    && entity.getGame().getOptions().booleanOption(OptionsConstants.RPG_RPG_GUNNERY));
+                            && entity.getGame().getOptions().booleanOption(OptionsConstants.RPG_RPG_GUNNERY));
         }
         if ((null != entity.getGame())
                 && entity.getGame().getOptions().booleanOption(OptionsConstants.RPG_ARTILLERY_SKILL)) {
@@ -1159,6 +1159,11 @@ public class EntityListFile {
         if (crew.getToughness(0) != 0) {
             output.write("\" " + MULParser.ATTR_TOUGH + "=\"");
             output.write(String.valueOf(crew.getToughness(pos)));
+        }
+
+        if (crew.getCrewFatigue(0) != 0) {
+            output.write("\" " + MULParser.ATTR_FATIGUE + "=\"");
+            output.write(String.valueOf(crew.getCrewFatigue(pos)));
         }
 
         if (crew.isDead(pos) || (crew.getHits(pos) > 5)) {
@@ -1190,7 +1195,7 @@ public class EntityListFile {
     }
 
     private static void writeLAMAeroAttributes(Writer output, final LAMPilot crew,
-            boolean rpgGunnery) throws IOException {
+                                               boolean rpgGunnery) throws IOException {
         output.write("\" " + MULParser.ATTR_GUNNERYAERO + "=\"");
         output.write(String.valueOf(crew.getGunneryAero()));
         if (rpgGunnery) {

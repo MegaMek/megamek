@@ -1087,15 +1087,38 @@ public enum MissionRole {
         return avRating;
     }
 
+    /**
+     * Specialized units are those which are not intended to see direct combat. This includes
+     * non-combat military units, civilian units, and units only intended to provide long distance
+     * artillery fire.
+     * @param desiredRoles Roles which this unit should support
+     * @param mRec         Unit to check
+     * @return             true, if unit is non-combat and desired roles are combat
+     */
     private static boolean isSpecialized(Collection<MissionRole> desiredRoles,
             ModelRecord mRec) {
-        return (mRec.getRoles().contains(SUPPORT) && !desiredRoles.contains(SUPPORT)) ||
-                (mRec.getRoles().contains(CARGO) && !desiredRoles.contains(CARGO)) ||
-                (mRec.getRoles().contains(TUG) && !desiredRoles.contains(TUG)) ||
-                (mRec.getRoles().contains(CIVILIAN) && !desiredRoles.contains(CIVILIAN)) ||
-                (mRec.getRoles().contains(TRAINING) && !desiredRoles.contains(TRAINING)) ||
-                (mRec.getRoles().contains(ARTILLERY) && !desiredRoles.contains(ARTILLERY)
-                        && !desiredRoles.contains(MIXED_ARTILLERY));
+
+        // Only units with role tags can be specialized
+        if (mRec.getRoles().isEmpty()) {
+            return false;
+        }
+
+        // Non-combat SUPPORT role being requested in a combat role is considered specialised
+        if (mRec.getRoles().contains(SUPPORT) && !desiredRoles.contains(SUPPORT)) {
+            return true;
+        }
+
+        // Civilian units are always considered specialized unless specifically asked for
+        if (mRec.getRoles().contains(CIVILIAN) && !desiredRoles.contains(CIVILIAN)) {
+            return true;
+        }
+
+        // Units that only provide artillery are considered specialized enough to be non-combat.
+        // DropShips are excluded from this check as they provide additional functions even if they
+        // mount artillery.
+        return (mRec.getUnitType() != UnitType.DROPSHIP) &&
+                (mRec.getRoles().size() == 1) &&
+                (mRec.getRoles().contains(ARTILLERY) || mRec.getRoles().contains(MISSILE_ARTILLERY));
     }
 
     public static MissionRole parseRole(String role) {

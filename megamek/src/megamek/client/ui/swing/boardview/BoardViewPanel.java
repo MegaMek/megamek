@@ -32,7 +32,6 @@ import java.awt.image.ImageObserver;
 public class BoardViewPanel extends JPanel implements Scrollable {
 
     private final BoardView boardView;
-    private Dimension preferredSize = new Dimension(0, 0);
 
     public BoardViewPanel(BoardView boardView) {
         super(true);
@@ -66,19 +65,13 @@ public class BoardViewPanel extends JPanel implements Scrollable {
     }
 
     @Override
-    public void setPreferredSize(Dimension d) {
-        super.setPreferredSize(d);
-        preferredSize = new Dimension(d);
-    }
-
-    @Override
     public Dimension getPreferredSize() {
         // If the board is small, we want the preferred size to fill the whole ScrollPane viewport,
         // for purposes of drawing the tiled background icon. However, we also need the scrollable
         // client to be as big as the board plus the pad size.
         return new Dimension(
-                Math.max(boardView.getBoardSize().width + (2 * BoardView.HEX_W), preferredSize.width),
-                Math.max(boardView.getBoardSize().height + (2 * BoardView.HEX_W), preferredSize.height));
+                Math.max(boardView.getBoardSize().width + (2 * BoardView.HEX_W), boardView.getComponent().getWidth()),
+                Math.max(boardView.getBoardSize().height + (2 * BoardView.HEX_W), boardView.getComponent().getHeight()));
     }
 
     @Override

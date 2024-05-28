@@ -16,6 +16,8 @@ package megamek.client.ratgenerator;
 import java.util.Collection;
 import java.util.HashSet;
 
+import megamek.common.EntityMovementMode;
+import megamek.common.EntityWeightClass;
 import megamek.common.UnitType;
 
 /**
@@ -279,6 +281,17 @@ public enum MissionRole {
         }
     }
 
+    /**
+     * Adjusts the provided availability rating based on desired roles, the roles the provided
+     * unit has, and other factors such as unit type, movement speed, and weapon types.
+     * @param avRating     Availability rating as positive number, typically 0-10
+     * @param desiredRoles Roles that are desired or mandatory, use null for general use
+     * @param mRec         ModelRecord of specific unit to check
+     * @param year         Year to test in
+     * @param strictness   Zero or higher, larger values are more restrictive
+     * @return             Modified avRating, higher if better suited for a specific role, lower if
+     *                     less suited, or null if unit is not compatible
+     */
     public static Double adjustAvailabilityByRole(double avRating,
                                                   Collection<MissionRole> desiredRoles,
                                                   ModelRecord mRec, int year, int strictness) {
@@ -291,362 +304,619 @@ public enum MissionRole {
             avAdj[i] = (i + 1) * strictness / 3.0;
         }
 
+        double min_adjust = avAdj[0];
+        double light_adjust = avAdj[1];
+        double medium_adjust = avAdj[2];
+        double strong_adjust = avAdj[3];
+        double max_adjust = avAdj[4];
+
+        // If specific roles are desired, iterate through them. Certain cases where role
+        // requirements are highly restrictive may result in early exit.
         if (!desiredRoles.isEmpty()) {
             roleApplied = true;
+
             for (MissionRole role : desiredRoles) {
+
                 switch (role) {
-                    case ARTILLERY:
-                        if (!mRec.getRoles().contains(ARTILLERY)
-                                && !mRec.getRoles().contains(MISSILE_ARTILLERY)) {
+
+                    // Calling for recon units will exclude non-combat and civilian units.
+                    // EW_SUPPORT, SPECOPS, and SPOTTER roles ARE included at a lower priority.
+                    // Additional fast VTOL, hovercraft, and light Mech/ProtoMech units may also
+                    // be included if they do not explicitly have the role. All other units are
+                    // excluded.
+                    case RECON:
+                        if (isSpecialized(desiredRoles, mRec)) {
+                            return null;
+                        }
+                        if (mRec.getRoles().contains(RECON)) {
+                            avRating += medium_adjust;
+                        } else if (mRec.getRoles().contains(EW_SUPPORT) ||
+                                mRec.getRoles().contains(SPECOPS)) {
+                            avRating += light_adjust;
+                        } else if (mRec.getRoles().contains(SPOTTER)) {
+                            avRating += min_adjust;
+                        } else if ((mRec.getUnitType() == UnitType.MEK ||
+                                mRec.getUnitType() == UnitType.PROTOMEK) &&
+                                (mRec.getWeightClass() == EntityWeightClass.WEIGHT_LIGHT ||
+                                        mRec.getWeightClass() == EntityWeightClass.WEIGHT_MEDIUM) &&
+                                (mRec.getSpeed() >= 6)) {
+                            avRating = Math.max(avRating-strong_adjust, 1.0);
+                        } else if (mRec.getUnitType() == UnitType.VTOL ||
+                                mRec.getMovementMode() == EntityMovementMode.HOVER) {
+                            avRating = Math.max(avRating-strong_adjust, 1.0);
+                        } else {
                             return null;
                         }
                         break;
+
+                    // Calling for EW_SUPPORT (electronic warfare/support) units only return units
+                    // which include the role
+                    case EW_SUPPORT:
+                        if (!mRec.getRoles().contains(EW_SUPPORT) ||
+                                isSpecialized(desiredRoles, mRec)) {
+                            return null;
+                        }
+                        break;
+
+                    // Calling for SPOTTER returns units with TAG for precision guided weapons. Other
+                    // units, primarily infantry and battle armor, may be included at a lower
+                    // priority especially in eras where TAG does not exist.
+                    case SPOTTER:
+                        if (isSpecialized(desiredRoles, mRec)) {
+                            return null;
+                        }
+                        if (mRec.getRoles().contains(SPOTTER)) {
+                            avRating += strong_adjust;
+                        } else if (mRec.getUnitType() == UnitType.INFANTRY ||
+                                        mRec.getUnitType() == UnitType.BATTLE_ARMOR) {
+                            avRating -= medium_adjust;
+                        } else if (mRec.getRoles().contains(RECON)) {
+                            avRating -= medium_adjust;
+                        } else {
+                            avRating -= strong_adjust;
+                        }
+                        break;
+
+                    // COMMAND units may be specialized in other roles. Units with C3 master
+                    // equipment take priority, while others without the role or equipment are
+                    // reduced in priority.
+                    case COMMAND:
+                        if (mRec.getRoles().contains(COMMAND)) {
+                            avRating += medium_adjust;
+                        }
+                        if ((ModelRecord.NETWORK_COMPANY_COMMAND & mRec.getNetworkMask()) != 0) {
+                            avRating += light_adjust;
+                        } else if ((ModelRecord.NETWORK_C3_MASTER & mRec.getNetworkMask()) != 0) {
+                            avRating += min_adjust;
+                        } else {
+                            avRating -= strong_adjust;
+                        }
+                        break;
+
+                    // Calling for FIRE_SUPPORT prioritizes units with a significant percentage of
+                    // their equipment BV as long range weapons, or includes artillery. Units that
+                    // do not meet these requirements are excluded.
+                    case FIRE_SUPPORT:
+                        if (mRec.getRoles().contains(SUPPORT) ||
+                                mRec.getRoles().contains(CIVILIAN)) {
+                            return null;
+                        }
+                        if (mRec.getRoles().contains(FIRE_SUPPORT) || mRec.getLongRange() > 0.75) {
+                            avRating += medium_adjust;
+                        } else if (mRec.getLongRange() > 0.5) {
+                            avRating += light_adjust;
+                        } else if (mRec.getLongRange() > 0.2) {
+                            avRating += min_adjust;
+                        } else if (mRec.getRoles().contains(ARTILLERY) ||
+                                mRec.getRoles().contains(MISSILE_ARTILLERY) ||
+                                mRec.getRoles().contains(MIXED_ARTILLERY)) {
+                            avRating += min_adjust;
+                        } else {
+                            return null;
+                        }
+                        break;
+
+                    // Calling for SR_FIRE_SUPPORT prioritizes units that lack significant long
+                    // range weapons and artillery.
+                    case SR_FIRE_SUPPORT:
+                        if (isSpecialized(desiredRoles, mRec)) {
+                            return null;
+                        }
+                        if (mRec.getRoles().contains(SR_FIRE_SUPPORT)) {
+                            avRating += medium_adjust;
+                        } else if (!mRec.getRoles().contains(FIRE_SUPPORT) &&
+                                mRec.getLongRange() <= 0.2) {
+                            avRating += light_adjust;
+                        } else if (mRec.getLongRange() >= 0.5) {
+                            return null;
+                        }
+                        break;
+
+                    // Calling for ARTILLERY includes all units with artillery, including missile
+                    // artillery. Units without artillery are excluded.
+                    case ARTILLERY:
+                        if (!mRec.getRoles().contains(ARTILLERY) &&
+                                !mRec.getRoles().contains(MISSILE_ARTILLERY) &&
+                                !mRec.getRoles().contains(MIXED_ARTILLERY)) {
+                            return null;
+                        }
+                        break;
+
+                    // Calling for MIXED_ARTILLERY only includes units which ave the role. Other
+                    // units with artillery are considered specific-purpose, while these are
+                    // 'mixed use' i.e. both combat and artillery.
+                    case MIXED_ARTILLERY:
+                        if (!mRec.getRoles().contains(MIXED_ARTILLERY)) {
+                            return null;
+                        }
+                        break;
+
+                    // Calling for missile artillery in specific, will exclude units which do not
+                    // have this specific role.
                     case MISSILE_ARTILLERY:
                         if (!mRec.getRoles().contains(MISSILE_ARTILLERY)) {
                             return null;
                         }
                         break;
-                    case ENGINEER:
-                        if (!mRec.getRoles().contains(ENGINEER)) {
+
+                    // Calling for URBAN includes units that specialize in supporting or fighting
+                    // against conventional infantry, are focused on short range firepower, or
+                    // use wheeled propulsion. Units that specialize in long range firepower
+                    // are reduced priority.
+                    case URBAN:
+                        if (isSpecialized(desiredRoles, mRec)) {
+                            return null;
+                        }
+                        if (mRec.getRoles().contains(URBAN)) {
+                            avRating += medium_adjust;
+                        } else if (mRec.getRoles().contains(ANTI_INFANTRY) ||
+                                mRec.getRoles().contains(SR_FIRE_SUPPORT)) {
+                            avRating += light_adjust;
+                        } else if (mRec.getRoles().contains(INF_SUPPORT)) {
+                            avRating += min_adjust;
+                        } else {
+                            if (mRec.getRoles().contains(FIRE_SUPPORT)) {
+                                avRating -= min_adjust;
+                            }
+                        }
+                        if (mRec.getMovementMode() == EntityMovementMode.WHEELED) {
+                            avRating += medium_adjust;
+                        } else if (mRec.getMovementMode() == EntityMovementMode.TRACKED ||
+                                mRec.getMovementMode() == EntityMovementMode.HOVER) {
+                            avRating -= medium_adjust;
+                        }
+                        break;
+
+                    // Calling for ANTI_INFANTRY includes units without the role which have
+                    // anti-personnel weapons. Other units have reduced priority.
+                    case ANTI_INFANTRY:
+                        if (isSpecialized(desiredRoles, mRec)) {
+                            return null;
+                        }
+                        if (mRec.getRoles().contains(ANTI_INFANTRY)) {
+                            avRating += medium_adjust;
+                        } else if (mRec.hasAPWeapons()) {
+                            avRating += light_adjust;
+                        } else {
+                            avRating -= strong_adjust;
+                        }
+                        break;
+
+                    // Calling for INF_SUPPORT may include units with the APC, FIRE_SUPPORT, or
+                    // ANTI_AIRCRAFT role at a lower priority.  Units with artillery may also be
+                    // included at lower priority.
+                    case INF_SUPPORT:
+                        if (mRec.getRoles().contains(SUPPORT) ||
+                                mRec.getRoles().contains(CIVILIAN)) {
+                            return null;
+                        } else if (mRec.getRoles().contains(INF_SUPPORT)) {
+                            avRating += medium_adjust;
+                        } else if (mRec.getRoles().contains(FIRE_SUPPORT) ||
+                                mRec.getRoles().contains(ANTI_AIRCRAFT) ||
+                                mRec.getRoles().contains(MIXED_ARTILLERY)) {
+                            avRating -= min_adjust;
+                        } else if (mRec.getRoles().contains(APC) ||
+                                mRec.getRoles().contains(ANTI_AIRCRAFT) ||
+                                mRec.getRoles().contains(ARTILLERY)) {
+                            avRating -= light_adjust;
+                        } else {
+                            avRating -= max_adjust;
+                        }
+                        break;
+
+                    // Calling for armored personnel carriers should only return units which have
+                    // that role
+                    case APC:
+                        if (!mRec.getRoles().contains(APC)) {
                             return null;
                         }
                         break;
-                    case RECON:
-                        if (mRec.getRoles().contains(RECON)) {
-                            avRating += avAdj[2];
-                        } else if (mRec.getRoles().contains(EW_SUPPORT)) {
-                            avRating += avAdj[1];
-                        } else if (mRec.getRoles().contains(SPOTTER)) {
-                            avRating += avAdj[0];
+
+                    // Calling for MECHANIZED_BA should only return units which can either ride on
+                    // omni-based transport or use mag-clamps
+                    case MECHANIZED_BA:
+                        if (!mRec.canDoMechanizedBA() &&
+                                !mRec.getRoles().contains(MAG_CLAMP)) {
+                            return null;
+                        }
+                        break;
+
+                    // Calling for MAG_CLAMP should only return units equipped with
+                    // mag-clamp equipment, which includes ProtoMechs
+                    case MAG_CLAMP:
+                        if (!mRec.hasMagClamp()) {
+                            return null;
+                        }
+                        break;
+
+                    // Calling for MARINE only returns infantry or battle armor which is equipped
+                    // for space combat. All other units are excluded.
+                    case MARINE:
+                        if (!mRec.getRoles().contains(MARINE)) {
+                            return null;
+                        }
+                        break;
+
+                    // Calling for MOUNTAINEER only returns units which are equipped as such. All
+                    // other units are excluded.
+                    case MOUNTAINEER:
+                        if (!mRec.getRoles().contains(MOUNTAINEER)) {
+                            return null;
+                        }
+                        break;
+
+                    // Calling for PARATROOPER only returns units which can be air dropped. Under
+                    // most circumstances this will be foot infantry with the paratrooper
+                    // specialization, but may include jump infantry at a lower priority. Other
+                    // movement types may be considered 'airmobile' but will require the specific
+                    // role.
+                    case PARATROOPER:
+                        if (isSpecialized(desiredRoles, mRec)) {
+                            return null;
+                        }
+                        if (mRec.getRoles().contains(PARATROOPER)) {
+                            avRating += strong_adjust;
                         } else {
-                            if (isSpecialized(desiredRoles, mRec)) {
-                                return null;
-                            } else if (mRec.getUnitType() != UnitType.INFANTRY
-                                    && mRec.getUnitType() != UnitType.BATTLE_ARMOR
-                                        && mRec.getSpeed() < 4 + avAdj[2] - mRec.getWeightClass()) {
-                                return null;
+                            if (mRec.getMovementMode() == EntityMovementMode.INF_JUMP) {
+                                avRating = Math.max(avRating - medium_adjust, 1.0);
                             } else {
-                                avRating += mRec.getSpeed() - (4 + avAdj[2] - mRec.getWeightClass());
-                                if (mRec.getRoles().contains(URBAN) ||
-                                        mRec.getRoles().contains(INF_SUPPORT) ||
-                                        mRec.getRoles().contains(ANTI_INFANTRY) ||
-                                        mRec.getRoles().contains(APC) ||
-                                        mRec.getRoles().contains(MOUNTAINEER) ||
-                                        mRec.getRoles().contains(PARATROOPER) ||
-                                        mRec.getRoles().contains(MARINE) ||
-                                        mRec.getRoles().contains(XCT)) {
-                                    avRating -= avAdj[3];
-                                } else if (mRec.getRoles().contains(SPECOPS)) {
-                                    avRating -= avAdj[4];
-                                } else {
-                                    avRating -= avAdj[0];
-                                }
+                                return null;
                             }
                         }
                         break;
-                    case COMMAND:
-                        if (mRec.getRoles().contains(COMMAND)) {
-                            avRating += avAdj[2];
+
+                    // Calling for ANTI_MEK assumes infantry with the role have the appropriate
+                    // equipment. Other non-mechanized infantry may be included at a lower priority.
+                    // Infantry that cannot conduct anti-Mech attacks should be excluded.
+                    case ANTI_MEK:
+                        if (isSpecialized(desiredRoles, mRec)) {
+                            return null;
                         }
-                        if ((ModelRecord.NETWORK_COMPANY_COMMAND & mRec.getNetworkMask()) != 0) {
-                            avRating += avAdj[1];
-                        } else if ((ModelRecord.NETWORK_C3_MASTER & mRec.getNetworkMask()) != 0) {
-                            avRating += avAdj[0];
+                        if (mRec.getRoles().contains(ANTI_MEK)) {
+                            avRating += strong_adjust;
+                        } else if (mRec.getMovementMode() == EntityMovementMode.INF_LEG ||
+                                mRec.getMovementMode() == EntityMovementMode.INF_JUMP ||
+                                mRec.getMovementMode() == EntityMovementMode.INF_MOTORIZED) {
+                            avRating -= medium_adjust;
+                        } else {
+                            return null;
                         }
                         break;
+
+                    // Calling for FIELD_GUN infantry excludes units without the role
                     case FIELD_GUN:
+                        if (isSpecialized(desiredRoles, mRec)) {
+                            return null;
+                        }
                         if (!mRec.getRoles().contains(FIELD_GUN)) {
                             return null;
                         }
                         break;
-                    case FIRE_SUPPORT:
-                        if (mRec.getRoles().contains(FIRE_SUPPORT)
-                                || mRec.getLongRange() > 0.75) {
-                            avRating += avAdj[2];
-                        } else if (mRec.getLongRange() > 0.5) {
-                            avRating += avAdj[1];
-                        } else if (mRec.getLongRange() > 0.2) {
-                            avRating += avAdj[0];
-                        } else if (mRec.getRoles().contains(SR_FIRE_SUPPORT)
-                                || mRec.getRoles().contains(ANTI_AIRCRAFT)
-                                || mRec.getRoles().contains(MISSILE_ARTILLERY)) {
-                            avRating += avAdj[0];
+
+                    // Calling for XCT returns units equipped to operate in hostile atmospheres
+                    // and weather conditions. Marines are included at a lower priority. All other
+                    // units are excluded.
+                    case XCT:
+                        if (mRec.getRoles().contains(XCT)) {
+                            avRating += medium_adjust;
+                        } else if (mRec.getRoles().contains(MARINE)) {
+                            avRating = Math.max(avRating - light_adjust, 1.0);
                         } else {
                             return null;
                         }
                         break;
-                    case INF_SUPPORT:
-                        if (mRec.getRoles().contains(INF_SUPPORT)) {
-                            avRating += strictness;
-                        } else if (mRec.getRoles().contains(APC)) {
-                            avRating += avAdj[1];
-                        } else if (mRec.getRoles().contains(ANTI_INFANTRY)
-                                || mRec.getRoles().contains(URBAN)) {
-                            avRating += avAdj[0];
-                        } else {
-                            if (isSpecialized(desiredRoles, mRec)) {
-                                return null;
+
+                    // Calling for CAVALRY includes fast ground vehicle, and medium or heavy
+                    // Mechs/ProtoMechs, with a lower priority. All other units are excluded.
+                    case CAVALRY:
+                        if (isSpecialized(desiredRoles, mRec)) {
+                            return null;
+                        }
+                        if (mRec.getRoles().contains(CAVALRY)) {
+                            avRating += medium_adjust;
+                        } else if ((mRec.getUnitType() == UnitType.MEK ||
+                                mRec.getUnitType() == UnitType.PROTOMEK)) {
+                            if (mRec.getWeightClass() == EntityWeightClass.WEIGHT_MEDIUM &&
+                                    mRec.getSpeed() >= 6) {
+                                avRating -= Math.max(avRating - strong_adjust, 1.0);
+                            } else if (mRec.getWeightClass() == EntityWeightClass.WEIGHT_HEAVY &&
+                                    mRec.getSpeed() >= 5) {
+                                avRating = Math.max(avRating - strong_adjust, 1.0);
+                            } else if (mRec.getWeightClass() == EntityWeightClass.WEIGHT_LIGHT &&
+                                    mRec.getSpeed() >=5 && mRec.getSpeed() <= 7) {
+                                avRating = Math.max(avRating - strong_adjust, 1.0);
                             } else {
-                                if (mRec.getRoles().contains(MOUNTAINEER) ||
-                                        mRec.getRoles().contains(PARATROOPER)) {
-                                    avRating -= avAdj[2];
-                                } else if (mRec.getRoles().contains(INCENDIARY) ||
-                                        mRec.getRoles().contains(MARINE) ||
-                                        mRec.getRoles().contains(XCT)) {
-                                    avRating -= avAdj[3];
-                                } else if (mRec.getRoles().contains(SPECOPS)) {
-                                    avRating -= avAdj[4];
+                                return null;
+                            }
+                        } else if (mRec.getMovementMode() == EntityMovementMode.HOVER &&
+                                mRec.getWeightClass() == EntityWeightClass.WEIGHT_MEDIUM) {
+                            avRating = Math.max(avRating - strong_adjust, 1.0);
+                        } else if (mRec.getMovementMode() == EntityMovementMode.TRACKED &&
+                                mRec.getSpeed() >= 5) {
+                            if (mRec.getWeightClass() == EntityWeightClass.WEIGHT_LIGHT &&
+                                    mRec.getSpeed() <= 6) {
+                                avRating = Math.max(avRating - strong_adjust, 1.0);
+                            } else if (mRec.getWeightClass() == EntityWeightClass.WEIGHT_MEDIUM) {
+                                avRating = Math.max(avRating - strong_adjust, 1.0);
+                            } else {
+                                return null;
+                            }
+                        } else {
+                            return null;
+                        }
+                        break;
+
+                    // Calling for RAIDER includes faster and ammo-independent light, medium, or
+                    // heavy Mechs/ProtoMechs with a lower priority. All other units are excluded.
+                    case RAIDER:
+                        if (isSpecialized(desiredRoles, mRec)) {
+                            return null;
+                        }
+                        if (mRec.getRoles().contains(RAIDER)) {
+                            avRating += medium_adjust;
+                        } else {
+                            if (mRec.getUnitType() == UnitType.MEK ||
+                                    mRec.getUnitType() == UnitType.PROTOMEK) {
+                                if ((mRec.getWeightClass() == EntityWeightClass.WEIGHT_LIGHT &&
+                                        mRec.getSpeed() >= 5) ||
+                                        (mRec.getWeightClass() == EntityWeightClass.WEIGHT_MEDIUM &&
+                                                mRec.getSpeed() >= 5) ||
+                                        (mRec.getWeightClass() == EntityWeightClass.WEIGHT_HEAVY &&
+                                                mRec.getSpeed() >= 4)) {
+                                    if (mRec.getAmmoRequirement() < 0.2) {
+                                        avRating = Math.max(avRating - medium_adjust, 1.0);
+                                    } else if (mRec.getAmmoRequirement() < 0.5) {
+                                        avRating = Math.max(avRating - strong_adjust, 1.0);
+                                    }
                                 } else {
-                                    avRating -= avAdj[1];
+                                    return null;
                                 }
+                            } else {
+                                return null;
                             }
                         }
                         break;
+
+                    // Calling for ANTI_AIRCRAFT includes units with a high percentage of
+                    // flak-based weapons. Additional units with FIRE_SUPPORT or artillery may be
+                    // included at a lower priority. Other units are excluded.
+                    case ANTI_AIRCRAFT:
+                        if (mRec.getRoles().contains(SUPPORT) ||
+                                mRec.getRoles().contains(CIVILIAN)) {
+                            return null;
+                        }
+                        if (mRec.getRoles().contains(ANTI_AIRCRAFT) ||
+                                mRec.getFlak() > 0.75) {
+                            avRating += medium_adjust;
+                        } else if (mRec.getFlak() > 0.5) {
+                            avRating += light_adjust;
+                        } else if (mRec.getFlak() > 0.2) {
+                            avRating += min_adjust;
+                        } else if (mRec.getRoles().contains(ARTILLERY) ||
+                                mRec.getRoles().contains(MISSILE_ARTILLERY)) {
+                            avRating = Math.max(avRating - medium_adjust, 1.0);
+                        } else if (mRec.getUnitType() != UnitType.INFANTRY &&
+                                mRec.getRoles().contains(FIRE_SUPPORT)) {
+                            avRating = Math.max(avRating - strong_adjust, 1.0);
+                        } else {
+                            return null;
+                        }
+                        break;
+
+                    // Calling for INCENDIARY includes units with incendiary weapons at a lower
+                    // priority. Other units will be excluded.
+                    case INCENDIARY:
+                        if (isSpecialized(desiredRoles, mRec)) {
+                            return null;
+                        }
+                        if (mRec.getRoles().contains(INCENDIARY)) {
+                            avRating += medium_adjust;
+                        } else {
+                            if (mRec.hasIncendiaryWeapon()) {
+                                avRating -= light_adjust;
+                            } else {
+                                return null;
+                            }
+                        }
+                        break;
+
+                    // Calling for SPECOPS may return additional units with the RECON or RAIDER
+                    // role at a lower priority. General units may be included at a lower priority.
+                    case SPECOPS:
+                        if (isSpecialized(desiredRoles, mRec)) {
+                            return null;
+                        }
+                        if (mRec.getRoles().contains(SPECOPS)) {
+                            avRating += strong_adjust;
+                        } else if (mRec.getRoles().contains(RECON) ||
+                                mRec.getRoles().contains(RAIDER)) {
+                            avRating -= light_adjust;
+                        } else if (mRec.getUnitType() != UnitType.INFANTRY) {
+                            avRating -= medium_adjust;
+                        } else {
+                            avRating -= strong_adjust;
+                        }
+                        break;
+
+                    // Calling for OMNI will only return units with that characteristic. Unlike
+                    // other roles, this is pulled from the unit data rather than a role tag.
                     case OMNI:
                         if (isSpecialized(desiredRoles, mRec) || !mRec.isOmni()) {
                             return null;
                         }
                         break;
-                    case MECHANIZED_BA:
-                        if (mRec.getUnitType() == UnitType.BATTLE_ARMOR
-                                && !mRec.canDoMechanizedBA()) {
+
+                    // Calling for TRAINING will return other units without the role at a lower priority
+                    case TRAINING:
+                        if (isSpecialized(desiredRoles, mRec)) {
                             return null;
                         }
-                        break;
-                    case MAG_CLAMP:
-                        if (mRec.getUnitType() == UnitType.BATTLE_ARMOR
-                                && !mRec.hasMagClamp()) {
-                            return null;
-                        }
-                        break;
-                    case URBAN:
-                        if (mRec.getRoles().contains(URBAN)) {
-                            avRating += avAdj[2];
-                        } else if (mRec.getRoles().contains(ANTI_INFANTRY)) {
-                            avRating += avAdj[1];
-                        } else if (mRec.getRoles().contains(INF_SUPPORT)) {
-                            avRating += avAdj[0];
+                        if (mRec.getRoles().contains(TRAINING)) {
+                            avRating += strong_adjust;
                         } else {
-                            if (isSpecialized(desiredRoles, mRec)) {
-                                return null;
-                            }
-                            if (mRec.getRoles().contains(FIRE_SUPPORT) ||
-                                    mRec.getRoles().contains(SR_FIRE_SUPPORT) ||
-                                    mRec.getRoles().contains(ANTI_AIRCRAFT)) {
-                                avRating -= avAdj[0];
-                            }
-                            if (mRec.getRoles().contains(MARINE) ||
-                                    mRec.getRoles().contains(XCT)) {
-                                avRating -= avAdj[2];
-                            }
-                            if (mRec.getRoles().contains(MOUNTAINEER) ||
-                                    mRec.getRoles().contains(PARATROOPER) ||
-                                    mRec.getRoles().contains(SPECOPS)) {
-                                avRating -= avAdj[3];
-                            }
-                        }
-                        if (avRating > 0 && mRec.getUnitType() == UnitType.TANK) {
-                            if (mRec.getMechSummary().getUnitSubType().equals("Wheeled")) {
-                                avRating += avAdj[2];
-                            } else if (mRec.getMechSummary().getUnitSubType().equals("Tracked")) {
-                                avRating -= avAdj[2];
-                            }
-                        }
-                        break;
-                    case RAIDER:
-                        if (mRec.getRoles().contains(RAIDER)) {
-                            avRating += avAdj[2];
-                        } else {
-                            if (isSpecialized(desiredRoles, mRec)) {
-                                return null;
-                            } else if (mRec.getAmmoRequirement() < 0.2) {
-                                avRating += avAdj[0];
-                            } else if (mRec.getAmmoRequirement() < 0.5) {
-                                avRating += avAdj[1];
-                            }
-                            if (mRec.getUnitType() != UnitType.INFANTRY
-                                    && mRec.getUnitType() != UnitType.BATTLE_ARMOR
-                                        && mRec.getSpeed() < 3 + avAdj[2] - mRec.getWeightClass()) {
-                                avRating -= 2 + avAdj[2] - mRec.getWeightClass() - mRec.getSpeed();
-                            }
-                        }
-                        break;
-                    case INCENDIARY:
-                        if (mRec.getRoles().contains(INCENDIARY)) {
-                            avRating += avAdj[2];
-                        } else {
-                            if (isSpecialized(desiredRoles, mRec)) {
-                                avRating = 0;
-                            } else if (mRec.hasIncendiaryWeapon()) {
-                                avRating += avAdj[2];
-                            } else {
-                                avRating -= avAdj[2];
-                            }
-                        }
-                        break;
-                    case ANTI_AIRCRAFT:
-                        if (mRec.getRoles().contains(ANTI_AIRCRAFT) ||
-                                mRec.getFlak() > 0.75) {
-                            avRating += avAdj[2];
-                        } else if (mRec.getFlak() > 0.5) {
-                            avRating += avAdj[1];
-                        } else if (mRec.getFlak() > 0.2) {
-                            avRating += avAdj[0];
-                        } else {
-                            if (isSpecialized(desiredRoles, mRec)) {
-                                return null;
-                            } else {
-                                avRating -= avAdj[1];
-                            }
-                        }
-                        break;
-                    case ANTI_INFANTRY:
-                        if (mRec.getRoles().contains(ANTI_INFANTRY)) {
-                            avRating += avAdj[2];
-                        } else     if (isSpecialized(desiredRoles, mRec)) {
-                            return null;
-                        } else if (!mRec.hasAPWeapons()) {
-                            avRating -= avAdj[2];
+                            avRating -= medium_adjust;
                         }
                         break;
 
+                    // Calling for GROUND_SUPPORT includes other units at a lower priority
                     case GROUND_SUPPORT:
                         if (mRec.getRoles().contains(GROUND_SUPPORT)) {
-                            avRating += avAdj[2];
+                            avRating += medium_adjust;
+                        } else if (mRec.getRoles().contains(BOMBER)) {
+                            avRating -= light_adjust;
                         } else {
-                            avRating -= avAdj[2];
+                            avRating -= medium_adjust;
                         }
                         break;
+
+                    // Calling for INTERCEPTOR includes other units at a lower priority
                     case INTERCEPTOR:
                         if (mRec.getRoles().contains(INTERCEPTOR)) {
-                            avRating += avAdj[2];
+                            avRating += medium_adjust;
                         } else {
-                            avRating -= avAdj[2];
+                            avRating -= medium_adjust;
                         }
                         break;
+
+                    // Calling for BOMBER includes other units at a lower priority
                     case BOMBER:
                         if (mRec.getRoles().contains(BOMBER)) {
-                            avRating += avAdj[2];
+                            avRating += medium_adjust;
                         } else {
-                            avRating -= avAdj[2];
+                            avRating -= medium_adjust;
                         }
                         break;
+
+                    // Calling for ESCORT includes other units at a lower priority
                     case ESCORT:
                         if (mRec.getRoles().contains(ESCORT)) {
-                            avRating += avAdj[2];
+                            avRating += medium_adjust;
                         } else {
-                            avRating -= avAdj[2];
+                            avRating -= medium_adjust;
                         }
                         break;
-                    case CAVALRY:
-                        if (mRec.getUnitType() == UnitType.INFANTRY
-                                || mRec.getUnitType() == UnitType.BATTLE_ARMOR) {
-                            avRating += avAdj[2] * (mRec.getSpeed() - 3);
-                        } else {
-                            avRating += avAdj[2] * (mRec.getSpeed() - (7 - mRec.getWeightClass()));
-                        }
-                        break;
-                    // Large craft roles
-                    case CIVILIAN:
-                        if (!mRec.getRoles().contains(CIVILIAN)) {
-                            return null;
-                        }
-                        break;
-                    case CARGO:
-                        if (mRec.getRoles().contains(CARGO)) {
-                            avRating += avAdj[2];
-                        } else if (mRec.getRoles().contains(CIVILIAN)) {
-                            avRating += avAdj[1];
-                        } else {
-                            avRating -= avAdj[2];
-                        }
-                        break;
-                    case SUPPORT:
-                        if (mRec.getRoles().contains(SUPPORT)) {
-                            avRating += avAdj[2];
-                        } else if (mRec.getRoles().contains(TUG)) {
-                            avRating += avAdj[1];
-                        } else if (mRec.getRoles().contains(CARGO)
-                                    || mRec.getRoles().contains(CIVILIAN)) {
-                            avRating += avAdj[0];
-                        } else {
-                            avRating -= avAdj[2];
-                        }
-                        break;
-                    case TUG:
-                        if (!mRec.getRoles().contains(TUG)) {
-                            return null;
-                        }
-                        break;
-                    case POCKET_WARSHIP:
-                        if (mRec.getRoles().contains(POCKET_WARSHIP)) {
-                            avRating += avAdj[2];
-                        } else if (mRec.getRoles().contains(ASSAULT)) {
-                            avRating += avAdj[0];
-                        } else {
-                            return null;
-                        }
-                        break;
+
+                    // Calling for ASSAULT (assault DropShip) may include pocket warships at a
+                    // lower priority. Other units are excluded.
                     case ASSAULT:
                         if (mRec.getRoles().contains(ASSAULT)) {
-                            avRating += avAdj[2];
+                            avRating += medium_adjust;
                         } else if (mRec.getRoles().contains(POCKET_WARSHIP)) {
-                            avRating += avAdj[0];
+                            avRating -= min_adjust;
                         } else {
                             return null;
                         }
                         break;
-                    case MECH_CARRIER:
-                        if (mRec.getRoles().contains(MECH_CARRIER)) {
-                            avRating += avAdj[2];
+
+                    // Calling for VEE_CARRIER (vehicle transport) may include troop (multi-type)
+                    // transports at a lower priority. Other units are excluded.
+                    case VEE_CARRIER:
+                        if (mRec.getRoles().contains(VEE_CARRIER)) {
+                            avRating += medium_adjust;
                         } else if (mRec.getRoles().contains(TROOP_CARRIER)) {
-                            avRating += avAdj[0];
+                            avRating -= min_adjust;
                         } else {
                             return null;
                         }
                         break;
-                    case ASF_CARRIER:
-                        if (mRec.getRoles().contains(ASF_CARRIER)) {
-                            avRating += avAdj[2];
-                        } else if (mRec.getRoles().contains(ASSAULT)) {
-                            avRating += avAdj[0];
+
+                    // Calling for INFANTRY_CARRIER may include troop (multi-type) transports at a
+                    // lower priority. Other units are excluded.
+                    case INFANTRY_CARRIER:
+                        if (mRec.getRoles().contains(INFANTRY_CARRIER)) {
+                            avRating += medium_adjust;
+                        } else if (mRec.getRoles().contains(TROOP_CARRIER)) {
+                            avRating -= min_adjust;
                         } else {
                             return null;
                         }
                         break;
+
+                    // Calling for BA_CARRIER will only return units with this role
                     case BA_CARRIER:
                         if (!mRec.getRoles().contains(BA_CARRIER)) {
                             return null;
                         }
                         break;
-                    case INFANTRY_CARRIER:
-                        if (mRec.getRoles().contains(INFANTRY_CARRIER)) {
-                            avRating += avAdj[2];
+
+                    // Calling for MECH_CARRIER may include troop (multi-type) transports at a
+                    // lower priority. Other units are excluded.
+                    case MECH_CARRIER:
+                        if (mRec.getRoles().contains(MECH_CARRIER)) {
+                            avRating += medium_adjust;
                         } else if (mRec.getRoles().contains(TROOP_CARRIER)) {
-                            avRating += avAdj[0];
+                            avRating -= min_adjust;
                         } else {
                             return null;
                         }
                         break;
-                    case VEE_CARRIER:
-                        if (mRec.getRoles().contains(VEE_CARRIER)) {
-                            avRating += avAdj[2];
-                        } else if (mRec.getRoles().contains(TROOP_CARRIER)) {
-                            avRating += avAdj[0];
-                        } else {
-                            return null;
-                        }
-                        break;
+
+                    // Calling for PROTOMECH_CARRIER will only return units with this role
                     case PROTOMECH_CARRIER:
                         if (!mRec.getRoles().contains(PROTOMECH_CARRIER)) {
                             return null;
                         }
                         break;
+
+                    // Calling for TUG will only return units with this role
+                    case TUG:
+                        if (!mRec.getRoles().contains(TUG)) {
+                            return null;
+                        }
+                        break;
+
+                    // Calling for POCKET_WARSHIP may include assault DropShips at a
+                    // lower priority. Other units are excluded.
+                    case POCKET_WARSHIP:
+                        if (mRec.getRoles().contains(POCKET_WARSHIP)) {
+                            avRating += medium_adjust;
+                        } else if (mRec.getRoles().contains(ASSAULT)) {
+                            avRating -= min_adjust;
+                        } else {
+                            return null;
+                        }
+                        break;
+
+                    // Calling for ASF_CARRIER (fighter carrier) will only return units with this
+                    // role
+                    case ASF_CARRIER:
+                        if (!mRec.getRoles().contains(ASF_CARRIER)) {
+                            return null;
+                        }
+                        break;
+
+                    // Calling for TROOP_CARRIER (multi-unit transport) will only return units with
+                    // this role
                     case TROOP_CARRIER:
                         if (!mRec.getRoles().contains(TROOP_CARRIER)) {
                             return null;
                         }
                         break;
+
+                    // Calling for a WarShip role excludes all units without that specific role.
+                    // Because classes are not explicitly defined, this requires manual role
+                    // assignment.
+
                     case CORVETTE:
                         if (!mRec.getRoles().contains(CORVETTE)) {
                             return null;
@@ -672,52 +942,147 @@ public enum MissionRole {
                             return null;
                         }
                         break;
+
+                    // Calling for ENGINEER (combat engineers) may include non-engineering units
+                    // with the APC, CARGO, SUPPORT, MINELAYER, or MINESWEEPER role at a lower
+                    // priority. Units without those roles are excluded.
+                    case ENGINEER:
+                        if (mRec.getRoles().contains(ENGINEER)) {
+                            avRating += medium_adjust;
+                            if ((desiredRoles.contains(CARGO) &&
+                                    mRec.getRoles().contains(CARGO)) ||
+                                    (desiredRoles.contains(MINESWEEPER) &&
+                                            mRec.getRoles().contains(MINESWEEPER)) ||
+                                    (desiredRoles.contains(MINELAYER) &&
+                                            mRec.getRoles().contains(MINELAYER))) {
+                                avRating += light_adjust;
+                            }
+                        } else {
+                            if (mRec.getRoles().contains(APC) &&
+                                    (mRec.getMovementMode() == EntityMovementMode.WHEELED) ||
+                                    mRec.getMovementMode() == EntityMovementMode.TRACKED) {
+                                avRating -= light_adjust;
+                            } else if ((mRec.getRoles().contains(MINESWEEPER) &&
+                                    !desiredRoles.contains(MINESWEEPER)) ||
+                                    (mRec.getRoles().contains(MINELAYER)) &&
+                                            !desiredRoles.contains(MINELAYER)) {
+                                avRating -= min_adjust;
+                            } else if (mRec.getRoles().contains(SUPPORT)) {
+                                if (mRec.getRoles().contains(CARGO) &&
+                                        (mRec.getMovementMode() == EntityMovementMode.WHEELED ||
+                                                mRec.getMovementMode() == EntityMovementMode.TRACKED ||
+                                                mRec.getMovementMode() == EntityMovementMode.VTOL)) {
+                                    avRating -= min_adjust;
+                                } else if (!desiredRoles.contains(SUPPORT)) {
+                                    avRating -= light_adjust;
+                                } else {
+                                    return null;
+                                }
+                            } else {
+                                return null;
+                            }
+                        }
+                        break;
+
+                    // Calling for MINESWEEPER only returns units with that role
+                    case MINESWEEPER:
+                        if (!mRec.getRoles().contains(MINESWEEPER)) {
+                            return null;
+                        }
+                        break;
+
+                    // Calling for MINELAYER only returns units with that role
+                    case MINELAYER:
+                        if (!mRec.getRoles().contains(MINELAYER)) {
+                            return null;
+                        }
+                        break;
+
+                    // Calling for SUPPORT non-combat units may include units with the APC,
+                    // CIVILIAN, CARGO, or ENGINEER roles at a lower priority. This should filter out
+                    // all combat units, although some of the selected units may have weapons.
+                    case SUPPORT:
+                        if (mRec.getRoles().contains(SUPPORT)){
+                            avRating += medium_adjust;
+                            if (mRec.getRoles().contains(ENGINEER) ||
+                                    mRec.getRoles().contains(CARGO)) {
+                                avRating += min_adjust;
+                            }
+                        } else {
+                            if (mRec.getRoles().contains(APC) &&
+                                    (mRec.getMovementMode() == EntityMovementMode.WHEELED ||
+                                            mRec.getMovementMode() == EntityMovementMode.TRACKED ||
+                                            mRec.getMovementMode() == EntityMovementMode.VTOL)) {
+                                avRating -= light_adjust;
+                            } else if (mRec.getRoles().contains(ENGINEER) ||
+                                    (mRec.getRoles().contains(CARGO) &&
+                                            !mRec.getRoles().contains(CIVILIAN) &&
+                                            (mRec.getMovementMode() == EntityMovementMode.WHEELED ||
+                                                    mRec.getMovementMode() == EntityMovementMode.TRACKED ||
+                                                    mRec.getMovementMode() == EntityMovementMode.VTOL))) {
+                                avRating -= min_adjust;
+                            } else if (mRec.getRoles().contains(CIVILIAN) &&
+                                    mRec.getRoles().contains(CARGO)) {
+                                avRating -= light_adjust;
+                            } else {
+                                return null;
+                            }
+                        }
+                        break;
+
+                    // Calling for CARGO will exclude all units without the role. Units with
+                    // additional SUPPORT, CIVILIAN, or ENGINEER roles are handled with those
+                    // specific roles.
+                    case CARGO:
+                        if (!mRec.getRoles().contains(CARGO)) {
+                            return null;
+                        }
+                        break;
+
+                    // Calling for civilian units will exclude non-civilian units, including
+                    // SUPPORT (military non-combat) units.
+                    case CIVILIAN:
+                        if (!mRec.getRoles().contains(CIVILIAN) ||
+                                (mRec.getRoles().contains(CIVILIAN) &&
+                                        mRec.getRoles().contains(SUPPORT))) {
+                            return null;
+                        }
+                        break;
+
                     default:
                         roleApplied = false;
                 }
+
             }
         }
-        /* Reduce rating of units with certain specialized functions if the roles does not
-         * require them.
-         */
+
+        // If no roles are required, or a role was requested that was not handled, then revert to
+        // generic checking.  This is much simpler, only checking for a few exclusions otherwise
+        // using the unmodified availability values.
         if (!roleApplied) {
-            if ((mRec.getRoles().contains(SUPPORT) && !desiredRoles.contains(SUPPORT)) ||
-                    (mRec.getRoles().contains(CARGO) && !(desiredRoles.contains(CARGO) || desiredRoles.size() > 1 || mRec.getUnitType() == UnitType.WARSHIP)) ||
-                    (mRec.getRoles().contains(TUG) && !desiredRoles.contains(TUG)) ||
-                    (mRec.getRoles().contains(CIVILIAN) && !desiredRoles.contains(CIVILIAN)) ||
-                    (mRec.getRoles().contains(TRAINING) && !desiredRoles.contains(TRAINING)) ||
-                    (mRec.getRoles().contains(FIELD_GUN) && !desiredRoles.contains(FIELD_GUN)) ||
-                    (mRec.getRoles().contains(ARTILLERY) && !desiredRoles.contains(MIXED_ARTILLERY))) {
-                return null;
-            }
-            if (mRec.getRoles().contains(MISSILE_ARTILLERY) &&
-                    !desiredRoles.contains(ARTILLERY)
-                    && !desiredRoles.contains(MISSILE_ARTILLERY)
-                    && !desiredRoles.contains(FIRE_SUPPORT)
-                    && !desiredRoles.contains(MIXED_ARTILLERY)) {
-                return null;
-            }
-            if (mRec.getRoles().contains(RECON) ||
-                    mRec.getRoles().contains(EW_SUPPORT)) {
-                avRating -= avAdj[0];
-            }
-            if (mRec.getRoles().contains(URBAN) ||
-                    mRec.getRoles().contains(INF_SUPPORT) ||
-                    mRec.getRoles().contains(ANTI_INFANTRY) ||
-                    mRec.getRoles().contains(APC) ||
-                    mRec.getRoles().contains(MOUNTAINEER) ||
-                    mRec.getRoles().contains(PARATROOPER)) {
-                avRating -= avAdj[1];
-            }
-            if (mRec.getRoles().contains(INCENDIARY) ||
-                    mRec.getRoles().contains(MARINE) ||
-                    mRec.getRoles().contains(XCT)) {
-                avRating -= avAdj[2];
-            }
-            if (mRec.getRoles().contains(SPECOPS)) {
-                avRating -= avAdj[3];
+
+            // DropShips and JumpShips are excluded from non-combat and civilian role
+            // checks
+            if (mRec.getUnitType() != UnitType.DROPSHIP &&
+                    mRec.getUnitType() != UnitType.JUMPSHIP) {
+
+                // Units with the non-combat SUPPORT or CIVILIAN roles should not be used in
+                // a general context
+                if (mRec.getRoles().contains(SUPPORT) || mRec.getRoles().contains(CIVILIAN)) {
+                    return null;
+                }
+
+                // Units with only the artillery or missile artillery role should not be used in
+                // a general context
+                if (mRec.getRoles().size() == 1 &&
+                        (mRec.getRoles().contains(ARTILLERY) ||
+                                mRec.getRoles().contains(MISSILE_ARTILLERY))) {
+                    return null;
+                }
+
             }
         }
+
         return avRating;
     }
 

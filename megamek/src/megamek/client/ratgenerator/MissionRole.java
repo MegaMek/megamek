@@ -177,13 +177,14 @@ public enum MissionRole {
             case INCENDIARY:
                 return unitType <= UnitType.PROTOMEK;
 
-            // SPECOPS role applies to Mechs, ground vehicles, conventional infantry, and
+            // SPECOPS role applies to Mechs, ground vehicles, VTOLs, conventional infantry, and
             // battle armor.
             case SPECOPS:
                 return unitType == UnitType.MEK ||
                         unitType == UnitType.TANK ||
                         unitType == UnitType.INFANTRY ||
-                        unitType == UnitType.BATTLE_ARMOR;
+                        unitType == UnitType.BATTLE_ARMOR ||
+                        unitType == UnitType.VTOL;
 
             // OMNI applies to all units which are capable of being built to make use of pod-mounted
             // equipment.  This is primarily used to determine suitability for mechanized battle

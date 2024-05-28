@@ -46,6 +46,8 @@ MEGAMEK VERSION HISTORY:
 + PR #5472: Use FlatLaf exclusively
 + Fix 5489: NPE from BA AP Mount due to weapon linking to AP Mount equipment
 + Fix #5516: Added CamOps Fatigue Attribute to Crew (required for MekHQ #4101 and #4116)
++ Fix #5495: DropShips can now load other units without becoming invalid (unit crews no longer count as passengers)
++ PR #5510: Add a test for invalid canon units
 
 0.49.19.1 (2024-05-14 1800 UTC)
 + Milestone Release. Backported fixes.

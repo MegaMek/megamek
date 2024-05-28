@@ -18,11 +18,9 @@
  */
 package megamek.utilities;
 
-import megamek.common.CriticalSlot;
-import megamek.common.Entity;
-import megamek.common.Mech;
-import megamek.common.Protomech;
+import megamek.common.*;
 
+import java.util.List;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
@@ -69,6 +67,13 @@ public class DebugEntity {
                 if (entity != entity.getEquipment(i).getEntity()) {
                     result.append("Different Entity!");
                 }
+            }
+            result.append("\n");
+
+            result.append("Transports:\n");
+            List<Transporter> transports = entity.getTransports();
+            for (int i = 0; i < transports.size(); i++) {
+                result.append("[" + i + "] ").append(transports.get(i)).append("\n");
             }
             result.append("\n");
 

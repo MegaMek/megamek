@@ -33,7 +33,7 @@ public enum MissionRole {
     /* Specialized ground support roles */
     SPECOPS, ENGINEER, MINESWEEPER, MINELAYER,
     /* ASF roles */
-    BOMBER, ESCORT, INTERCEPTOR, GROUND_SUPPORT, //unused: STRIKE,
+    BOMBER, ESCORT, INTERCEPTOR, GROUND_SUPPORT,
     /* DropShip roles */
     ASSAULT, MECH_CARRIER, ASF_CARRIER, VEE_CARRIER, INFANTRY_CARRIER, BA_CARRIER, TROOP_CARRIER,
     TUG, POCKET_WARSHIP, PROTOMECH_CARRIER,
@@ -101,7 +101,6 @@ public enum MissionRole {
             case ESCORT:
             case INTERCEPTOR:
             case GROUND_SUPPORT:
-            // case STRIKE:
                 return unitType == UnitType.AEROSPACEFIGHTER || unitType == UnitType.CONV_FIGHTER;
 
             case ASSAULT:
@@ -655,8 +654,6 @@ public enum MissionRole {
                 return INTERCEPTOR;
             case "ground support":
                 return GROUND_SUPPORT;
-            // case "strike":
-                //return STRIKE;
             case "training":
                 return TRAINING;
             case "assault":

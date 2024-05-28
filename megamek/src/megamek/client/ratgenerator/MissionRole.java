@@ -469,15 +469,19 @@ public enum MissionRole {
                             return null;
                         }
                         if (mRec.getRoles().contains(URBAN)) {
-                            avRating += medium_adjust;
+                            avRating += strong_adjust;
                         } else if (mRec.getRoles().contains(ANTI_INFANTRY) ||
-                                mRec.getRoles().contains(SR_FIRE_SUPPORT)) {
+                                mRec.getRoles().contains(SR_FIRE_SUPPORT) ||
+                                mRec.getLongRange() <= 0.2) {
                             avRating += light_adjust;
                         } else if (mRec.getRoles().contains(INF_SUPPORT)) {
                             avRating += min_adjust;
                         } else {
-                            if (mRec.getRoles().contains(FIRE_SUPPORT)) {
+                            if (mRec.getRoles().contains(FIRE_SUPPORT) ||
+                                    mRec.getLongRange() >= 0.5) {
                                 avRating -= min_adjust;
+                            } else {
+                                avRating -= medium_adjust;
                             }
                         }
                         if (mRec.getMovementMode() == EntityMovementMode.WHEELED) {

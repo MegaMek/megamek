@@ -1276,6 +1276,8 @@ public enum MissionRole {
                 return ARTILLERY;
             case "missile artillery":
                 return MISSILE_ARTILLERY;
+            case "mixed artillery":
+                return  MIXED_ARTILLERY;
             case "anti aircraft":
                 return ANTI_AIRCRAFT;
             case "anti infantry":

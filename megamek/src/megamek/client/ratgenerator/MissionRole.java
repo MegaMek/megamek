@@ -196,10 +196,14 @@ public enum MissionRole {
 
             // Roles for conventional and aerospace fighters
             case BOMBER:
-            case ESCORT:
             case INTERCEPTOR:
             case GROUND_SUPPORT:
                 return unitType == UnitType.CONV_FIGHTER || unitType == UnitType.AEROSPACEFIGHTER;
+
+            case ESCORT:
+                return  unitType == UnitType.CONV_FIGHTER ||
+                        unitType == UnitType.AEROSPACEFIGHTER ||
+                        unitType == UnitType.SMALL_CRAFT;
 
             // Roles for DropShips
             case ASSAULT:

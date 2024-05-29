@@ -621,7 +621,7 @@ class EntitySprite extends Sprite {
                     stStr.add(new Status(GUIP.getCautionColor(), "ROLLED"));
                 }
 
-                if ((a.getCurrentFuel() <= 0) && entity.hasEngine() && !entity.getEngine().isSolar()) {
+                if ((a.getCurrentFuel() <= 0) && a.requiresFuel()) {
                     stStr.add(new Status(GUIP.getWarningColor(), "FUEL"));
                 }
 

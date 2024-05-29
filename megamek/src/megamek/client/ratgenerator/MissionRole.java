@@ -386,6 +386,10 @@ public enum MissionRole {
                     // equipment take priority, while others without the role or equipment are
                     // reduced in priority.
                     case COMMAND:
+                        if (mRec.getRoles().contains(CIVILIAN) &&
+                                !desiredRoles.contains(CIVILIAN)) {
+                            return null;
+                        }
                         if (mRec.getRoles().contains(COMMAND)) {
                             avRating += medium_adjust;
                         }
@@ -440,6 +444,10 @@ public enum MissionRole {
                     // Calling for ARTILLERY includes all units with artillery, including missile
                     // artillery. Units without artillery are excluded.
                     case ARTILLERY:
+                        if (mRec.getRoles().contains(CIVILIAN) &&
+                                !desiredRoles.contains(CIVILIAN)) {
+                            return null;
+                        }
                         if (!mRec.getRoles().contains(ARTILLERY) &&
                                 !mRec.getRoles().contains(MISSILE_ARTILLERY) &&
                                 !mRec.getRoles().contains(MIXED_ARTILLERY)) {
@@ -447,10 +455,14 @@ public enum MissionRole {
                         }
                         break;
 
-                    // Calling for MIXED_ARTILLERY only includes units which ave the role. Other
+                    // Calling for MIXED_ARTILLERY only includes units which have the role. Other
                     // units with artillery are considered specific-purpose, while these are
                     // 'mixed use' i.e. both combat and artillery.
                     case MIXED_ARTILLERY:
+                        if (mRec.getRoles().contains(CIVILIAN) &&
+                                !desiredRoles.contains(CIVILIAN)) {
+                            return null;
+                        }
                         if (!mRec.getRoles().contains(MIXED_ARTILLERY)) {
                             return null;
                         }
@@ -536,6 +548,14 @@ public enum MissionRole {
                     // Calling for armored personnel carriers should only return units which have
                     // that role
                     case APC:
+                        if (mRec.getRoles().contains(SUPPORT) &&
+                                !desiredRoles.contains(SUPPORT)) {
+                            return null;
+                        }
+                        if (mRec.getRoles().contains(CIVILIAN) &&
+                                !desiredRoles.contains(CIVILIAN)) {
+                            return null;
+                        }
                         if (!mRec.getRoles().contains(APC)) {
                             return null;
                         }
@@ -544,6 +564,14 @@ public enum MissionRole {
                     // Calling for MECHANIZED_BA should only return units which can either ride on
                     // omni-based transport or use mag-clamps
                     case MECHANIZED_BA:
+                        if (mRec.getRoles().contains(SUPPORT) &&
+                                !desiredRoles.contains(SUPPORT)) {
+                            return null;
+                        }
+                        if (mRec.getRoles().contains(CIVILIAN) &&
+                                !desiredRoles.contains(CIVILIAN)) {
+                            return null;
+                        }
                         if (!mRec.canDoMechanizedBA() &&
                                 !mRec.getRoles().contains(MAG_CLAMP)) {
                             return null;
@@ -553,6 +581,10 @@ public enum MissionRole {
                     // Calling for MAG_CLAMP should only return units equipped with
                     // mag-clamp equipment, which includes ProtoMechs
                     case MAG_CLAMP:
+                        if (mRec.getRoles().contains(CIVILIAN) &&
+                                !desiredRoles.contains(CIVILIAN)) {
+                            return null;
+                        }
                         if (!mRec.hasMagClamp() && !mRec.getRoles().contains(MAG_CLAMP)) {
                             return null;
                         }
@@ -561,6 +593,9 @@ public enum MissionRole {
                     // Calling for MARINE only returns infantry or battle armor which is equipped
                     // for space combat. All other units are excluded.
                     case MARINE:
+                        if (isSpecialized(desiredRoles, mRec)) {
+                            return null;
+                        }
                         if (!mRec.getRoles().contains(MARINE)) {
                             return null;
                         }
@@ -569,6 +604,9 @@ public enum MissionRole {
                     // Calling for MOUNTAINEER only returns units which are equipped as such. All
                     // other units are excluded.
                     case MOUNTAINEER:
+                        if (isSpecialized(desiredRoles, mRec)) {
+                            return null;
+                        }
                         if (!mRec.getRoles().contains(MOUNTAINEER)) {
                             return null;
                         }
@@ -626,6 +664,9 @@ public enum MissionRole {
                     // and weather conditions. Marines are included at a lower priority. All other
                     // units are excluded.
                     case XCT:
+                        if (isSpecialized(desiredRoles, mRec)) {
+                            return null;
+                        }
                         if (mRec.getRoles().contains(XCT)) {
                             avRating += medium_adjust;
                         } else if (mRec.getRoles().contains(MARINE)) {
@@ -770,14 +811,28 @@ public enum MissionRole {
                     // Calling for OMNI will only return units with that characteristic. Unlike
                     // other roles, this is pulled from the unit data rather than a role tag.
                     case OMNI:
+                        if (mRec.getRoles().contains(SUPPORT) &&
+                                !desiredRoles.contains(SUPPORT)) {
+                            return null;
+                        }
+                        if (mRec.getRoles().contains(CIVILIAN) &&
+                                !desiredRoles.contains(CIVILIAN)) {
+                            return null;
+                        }
                         if (isSpecialized(desiredRoles, mRec) || !mRec.isOmni()) {
                             return null;
                         }
                         break;
 
-                    // Calling for TRAINING will return other units without the role at a lower priority
+                    // Calling for TRAINING will return other units without the role at a lower
+                    // priority
                     case TRAINING:
-                        if (isSpecialized(desiredRoles, mRec)) {
+                        if (mRec.getRoles().contains(SUPPORT) &&
+                                !desiredRoles.contains(SUPPORT)) {
+                            return null;
+                        }
+                        if (mRec.getRoles().contains(CIVILIAN) &&
+                                !desiredRoles.contains(CIVILIAN)) {
                             return null;
                         }
                         if (mRec.getRoles().contains(TRAINING)) {
@@ -789,6 +844,9 @@ public enum MissionRole {
 
                     // Calling for GROUND_SUPPORT includes other units at a lower priority
                     case GROUND_SUPPORT:
+                        if (isSpecialized(desiredRoles, mRec)) {
+                            return null;
+                        }
                         if (mRec.getRoles().contains(GROUND_SUPPORT)) {
                             avRating += medium_adjust;
                         } else if (mRec.getRoles().contains(BOMBER)) {
@@ -800,6 +858,9 @@ public enum MissionRole {
 
                     // Calling for INTERCEPTOR includes other units at a lower priority
                     case INTERCEPTOR:
+                        if (isSpecialized(desiredRoles, mRec)) {
+                            return null;
+                        }
                         if (mRec.getRoles().contains(INTERCEPTOR)) {
                             avRating += medium_adjust;
                         } else {
@@ -809,6 +870,9 @@ public enum MissionRole {
 
                     // Calling for BOMBER includes other units at a lower priority
                     case BOMBER:
+                        if (isSpecialized(desiredRoles, mRec)) {
+                            return null;
+                        }
                         if (mRec.getRoles().contains(BOMBER)) {
                             avRating += medium_adjust;
                         } else {
@@ -818,6 +882,9 @@ public enum MissionRole {
 
                     // Calling for ESCORT includes other units at a lower priority
                     case ESCORT:
+                        if (isSpecialized(desiredRoles, mRec)) {
+                            return null;
+                        }
                         if (mRec.getRoles().contains(ESCORT)) {
                             avRating += medium_adjust;
                         } else {
@@ -828,6 +895,9 @@ public enum MissionRole {
                     // Calling for ASSAULT (assault DropShip) may include pocket warships at a
                     // lower priority. Other units are excluded.
                     case ASSAULT:
+                        if (isSpecialized(desiredRoles, mRec)) {
+                            return null;
+                        }
                         if (mRec.getRoles().contains(ASSAULT)) {
                             avRating += medium_adjust;
                         } else if (mRec.getRoles().contains(POCKET_WARSHIP)) {
@@ -840,6 +910,9 @@ public enum MissionRole {
                     // Calling for VEE_CARRIER (vehicle transport) may include troop (multi-type)
                     // transports at a lower priority. Other units are excluded.
                     case VEE_CARRIER:
+                        if (isSpecialized(desiredRoles, mRec)) {
+                            return null;
+                        }
                         if (mRec.getRoles().contains(VEE_CARRIER)) {
                             avRating += medium_adjust;
                         } else if (mRec.getRoles().contains(TROOP_CARRIER)) {
@@ -852,6 +925,9 @@ public enum MissionRole {
                     // Calling for INFANTRY_CARRIER may include troop (multi-type) transports at a
                     // lower priority. Other units are excluded.
                     case INFANTRY_CARRIER:
+                        if (isSpecialized(desiredRoles, mRec)) {
+                            return null;
+                        }
                         if (mRec.getRoles().contains(INFANTRY_CARRIER)) {
                             avRating += medium_adjust;
                         } else if (mRec.getRoles().contains(TROOP_CARRIER)) {
@@ -863,6 +939,9 @@ public enum MissionRole {
 
                     // Calling for BA_CARRIER will only return units with this role
                     case BA_CARRIER:
+                        if (isSpecialized(desiredRoles, mRec)) {
+                            return null;
+                        }
                         if (!mRec.getRoles().contains(BA_CARRIER)) {
                             return null;
                         }
@@ -871,6 +950,9 @@ public enum MissionRole {
                     // Calling for MECH_CARRIER may include troop (multi-type) transports at a
                     // lower priority. Other units are excluded.
                     case MECH_CARRIER:
+                        if (isSpecialized(desiredRoles, mRec)) {
+                            return null;
+                        }
                         if (mRec.getRoles().contains(MECH_CARRIER)) {
                             avRating += medium_adjust;
                         } else if (mRec.getRoles().contains(TROOP_CARRIER)) {
@@ -882,6 +964,9 @@ public enum MissionRole {
 
                     // Calling for PROTOMECH_CARRIER will only return units with this role
                     case PROTOMECH_CARRIER:
+                        if (isSpecialized(desiredRoles, mRec)) {
+                            return null;
+                        }
                         if (!mRec.getRoles().contains(PROTOMECH_CARRIER)) {
                             return null;
                         }
@@ -889,6 +974,9 @@ public enum MissionRole {
 
                     // Calling for TUG will only return units with this role
                     case TUG:
+                        if (isSpecialized(desiredRoles, mRec)) {
+                            return null;
+                        }
                         if (!mRec.getRoles().contains(TUG)) {
                             return null;
                         }
@@ -897,6 +985,9 @@ public enum MissionRole {
                     // Calling for POCKET_WARSHIP may include assault DropShips at a
                     // lower priority. Other units are excluded.
                     case POCKET_WARSHIP:
+                        if (isSpecialized(desiredRoles, mRec)) {
+                            return null;
+                        }
                         if (mRec.getRoles().contains(POCKET_WARSHIP)) {
                             avRating += medium_adjust;
                         } else if (mRec.getRoles().contains(ASSAULT)) {
@@ -909,6 +1000,9 @@ public enum MissionRole {
                     // Calling for ASF_CARRIER (fighter carrier) will only return units with this
                     // role
                     case ASF_CARRIER:
+                        if (isSpecialized(desiredRoles, mRec)) {
+                            return null;
+                        }
                         if (!mRec.getRoles().contains(ASF_CARRIER)) {
                             return null;
                         }
@@ -917,6 +1011,9 @@ public enum MissionRole {
                     // Calling for TROOP_CARRIER (multi-unit transport) will only return units with
                     // this role
                     case TROOP_CARRIER:
+                        if (isSpecialized(desiredRoles, mRec)) {
+                            return null;
+                        }
                         if (!mRec.getRoles().contains(TROOP_CARRIER)) {
                             return null;
                         }
@@ -995,6 +1092,10 @@ public enum MissionRole {
 
                     // Calling for MINESWEEPER only returns units with that role
                     case MINESWEEPER:
+                        if (mRec.getRoles().contains(CIVILIAN) &&
+                                !desiredRoles.contains(CIVILIAN)) {
+                            return null;
+                        }
                         if (!mRec.getRoles().contains(MINESWEEPER)) {
                             return null;
                         }
@@ -1002,6 +1103,10 @@ public enum MissionRole {
 
                     // Calling for MINELAYER only returns units with that role
                     case MINELAYER:
+                        if (mRec.getRoles().contains(CIVILIAN) &&
+                                !desiredRoles.contains(CIVILIAN)) {
+                            return null;
+                        }
                         if (!mRec.getRoles().contains(MINELAYER)) {
                             return null;
                         }
@@ -1043,6 +1148,10 @@ public enum MissionRole {
                     // additional SUPPORT, CIVILIAN, or ENGINEER roles are handled with those
                     // specific roles.
                     case CARGO:
+                        if (mRec.getRoles().contains(CIVILIAN) &&
+                                !desiredRoles.contains(CIVILIAN)) {
+                            return null;
+                        }
                         if (!mRec.getRoles().contains(CARGO)) {
                             return null;
                         }

@@ -25,7 +25,7 @@ MEGAMEK VERSION HISTORY:
 + PR #5431: Internal Code changes: Methods have been added to generate an average BV value for a unit of a given type and weight for use in generating forces
 + Fix #5439: BA Partial Wing bonus not properly computed outside of games with atmosphere, breaking MML Jump MP display
 + Data: Thank you Derv for the updated Map, but also the restoration of the original NBT (Netbattletech) maps this adds over 400 new maps!
-+ PR #5444: BoardView Sprite separation
++ PR #5444, #5522: BoardView Sprite separation
 + PR #5442: Add null check for turn timer when stopping
 + PR #5451: Expose map settings methods for use in MekHQ
 + Fix #1502: Ignore armortype slots in other-equipment cost calculation
@@ -48,6 +48,9 @@ MEGAMEK VERSION HISTORY:
 + Fix #5516: Added CamOps Fatigue Attribute to Crew (required for MekHQ #4101 and #4116)
 + Fix #5495: DropShips can now load other units without becoming invalid (unit crews no longer count as passengers)
 + PR #5510: Add a test for invalid canon units
++ Fix #5503: Add ammo null check to prevent NPEs for firing artillery bays
++ Fix #5502: Add ammo test for CI weapons on SV damage calc to prevent NPEs when firing infantry weapons from SV units
++ Fix #5515: Remove code remnant from internal bomb bay development that added cargo bays for cargo containers
 
 0.49.19.1 (2024-05-14 1800 UTC)
 + Milestone Release. Backported fixes.

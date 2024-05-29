@@ -553,7 +553,7 @@ public enum MissionRole {
                     // Calling for MAG_CLAMP should only return units equipped with
                     // mag-clamp equipment, which includes ProtoMechs
                     case MAG_CLAMP:
-                        if (!mRec.hasMagClamp()) {
+                        if (!mRec.hasMagClamp() && !mRec.getRoles().contains(MAG_CLAMP)) {
                             return null;
                         }
                         break;

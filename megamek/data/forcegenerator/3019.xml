@@ -3357,7 +3357,7 @@
 	<chassis name='Karnov UR Transport' unitType='VTOL'>
 		<availability>MERC.WD:3,HL:2,LA:4,IS:5,MERC:5,Periphery:4,DC:4</availability>
 		<model name=''>
-			<roles>cargo</roles>
+			<roles>apc,cargo</roles>
 			<availability>General:8</availability>
 		</model>
 	</chassis>
@@ -3400,7 +3400,7 @@
 	<chassis name='King Karnov Transport' unitType='Conventional Fighter'>
 		<availability>LA:3</availability>
 		<model name='KC-6'>
-			<roles>cargo</roles>
+			<roles>cargo,support</roles>
 			<availability>General:4</availability>
 		</model>
 	</chassis>

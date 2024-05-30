@@ -9535,11 +9535,11 @@
 	<chassis name='Karnov UR Transport' unitType='VTOL'>
 		<availability>CC:4,LA:4,ROS:5,PIR:2,IS:5,MH:3,SL3.CSJ:5,MERC:5,DA:3,Periphery:4,RA:4,DC:4</availability>
 		<model name=''>
-			<roles>cargo</roles>
+			<roles>apc,cargo</roles>
 			<availability>General:4</availability>
 		</model>
 		<model name='(3055 Upgrade)'>
-			<roles>cargo</roles>
+			<roles>apc,cargo</roles>
 			<availability>IS:8,MERC:8,Periphery:6,RA:6-</availability>
 		</model>
 		<model name='(AC)'>
@@ -9554,7 +9554,7 @@
 			<availability>IS:6</availability>
 		</model>
 		<model name='(Heavy Stealth)'>
-			<roles>ew_support</roles>
+			<roles>apc,ew_support,specops</roles>
 			<availability>PIR:2</availability>
 		</model>
 		<model name='(Periphery)'>
@@ -9648,11 +9648,11 @@
 	<chassis name='King Karnov Transport' unitType='Conventional Fighter'>
 		<availability>LA:4</availability>
 		<model name='KC-6'>
-			<roles>cargo</roles>
+			<roles>cargo,support</roles>
 			<availability>General:2-</availability>
 		</model>
 		<model name='KC-9'>
-			<roles>cargo</roles>
+			<roles>cargo,support</roles>
 			<availability>General:4</availability>
 		</model>
 	</chassis>

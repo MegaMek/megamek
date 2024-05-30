@@ -5161,11 +5161,11 @@
 	<chassis name='Karnov UR Transport' unitType='VTOL'>
 		<availability>MERC.KH:3,MERC.WD:3,HL:3,LA:4,IS:5,MERC:5,FC:4,Periphery:4,DC:4</availability>
 		<model name=''>
-			<roles>cargo</roles>
+			<roles>apc,cargo</roles>
 			<availability>General:8</availability>
 		</model>
 		<model name='(3055 Upgrade)'>
-			<roles>cargo</roles>
+			<roles>apc,cargo</roles>
 			<availability>IS:3+,MERC:3+,Periphery:1+</availability>
 		</model>
 		<model name='(Artillery)'>
@@ -5227,11 +5227,11 @@
 	<chassis name='King Karnov Transport' unitType='Conventional Fighter'>
 		<availability>LA:4,FC:3,FS:3</availability>
 		<model name='KC-6'>
-			<roles>cargo</roles>
+			<roles>cargo,support</roles>
 			<availability>General:4</availability>
 		</model>
 		<model name='KC-9'>
-			<roles>cargo</roles>
+			<roles>cargo,support</roles>
 			<availability>General:3</availability>
 		</model>
 	</chassis>

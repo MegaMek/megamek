@@ -2720,7 +2720,7 @@
 	<chassis name='Karnov UR Transport' unitType='VTOL'>
 		<availability>CS:6,CLAN:3-,IS:5,MERC:5,Periphery:4</availability>
 		<model name=''>
-			<roles>cargo</roles>
+			<roles>apc,cargo</roles>
 			<availability>General:8</availability>
 		</model>
 	</chassis>

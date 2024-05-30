@@ -1532,7 +1532,7 @@
 	<chassis name='Karnov UR Transport' unitType='VTOL'>
 		<availability>TH:5,SL:4,IS:3+,MERC:3+,Periphery:2</availability>
 		<model name=''>
-			<roles>cargo</roles>
+			<roles>apc,cargo</roles>
 			<availability>General:8</availability>
 		</model>
 	</chassis>

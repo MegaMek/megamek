@@ -2299,6 +2299,7 @@
 	<chassis name='Seahorse Cargo Sub' unitType='Naval'>
 		<availability>CC:4-,TH:5-,LA:4-,FWL:4-,FS:5-,DC:4-</availability>
 		<model name=''>
+			<roles>cargo,support</roles>
 			<availability>CC:2,TH:2,LA:2,FWL:2,FS:2,DC:2</availability>
 		</model>
 	</chassis>

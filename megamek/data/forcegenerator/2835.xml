@@ -4206,6 +4206,7 @@
 	<chassis name='Seahorse Cargo Sub' unitType='Naval'>
 		<availability>IS:2-,FS:3</availability>
 		<model name=''>
+			<roles>cargo,support</roles>
 			<availability>IS:2,FS:2</availability>
 		</model>
 	</chassis>

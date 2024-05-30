@@ -7943,6 +7943,7 @@
 			<availability>FRR:3,IS:2,SIC:2,MERC:3,DC:4</availability>
 		</model>
 		<model name='(Clan)'>
+			<roles>apc,ew_support</roles>
 			<availability>MERC.WD:8,CLAN:8</availability>
 		</model>
 		<model name='(Fire Support)'>

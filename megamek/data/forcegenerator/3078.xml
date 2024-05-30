@@ -11208,6 +11208,7 @@
 			<availability>IS:4</availability>
 		</model>
 		<model name='(Clan)'>
+			<roles>apc,ew_support</roles>
 			<availability>MERC.WD:8,CLAN:8</availability>
 		</model>
 		<model name='(Fire Support)'>

@@ -15635,6 +15635,7 @@
 	<chassis name='Tonbo Superheavy Transport' unitType='VTOL'>
 		<availability>IS:3,CLAN.IS:3,DC:6,Periphery:2</availability>
 		<model name=''>
+			<roles>apc,support</roles>
 			<availability>General:8</availability>
 		</model>
 	</chassis>

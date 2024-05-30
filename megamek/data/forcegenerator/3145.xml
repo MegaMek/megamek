@@ -11372,6 +11372,7 @@
 	<chassis name='MIT24 MASH Vehicle' unitType='Tank'>
 		<availability>MOC:5,IS:5,CLAN.IS:5</availability>
 		<model name=''>
+			<roles>support</roles>
 			<availability>General:8</availability>
 		</model>
 	</chassis>

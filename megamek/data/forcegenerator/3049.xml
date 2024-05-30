@@ -2479,10 +2479,11 @@
 	<chassis name='Cormorant Medium Cargo Craft' unitType='Tank'>
 		<availability>FC:6,FS:7,CLAN.HW:2</availability>
 		<model name=''>
+			<roles>cargo,support</roles>
 			<availability>General:8-</availability>
 		</model>
 		<model name='(Cargo)'>
-			<roles>civilian</roles>
+			<roles>cargo,civilian</roles>
 			<availability>FC:6-,FS:6-</availability>
 		</model>
 	</chassis>

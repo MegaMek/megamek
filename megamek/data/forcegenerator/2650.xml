@@ -766,6 +766,7 @@
 	<chassis name='Cormorant Medium Cargo Craft' unitType='Tank'>
 		<availability>SL:4-,IS:2-,Periphery:1-</availability>
 		<model name=''>
+			<roles>cargo,support</roles>
 			<availability>General:8-</availability>
 		</model>
 	</chassis>

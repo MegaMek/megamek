@@ -4934,10 +4934,11 @@
 	<chassis name='Cormorant Medium Cargo Craft' unitType='Tank'>
 		<availability>CC:4,RR:3-,ROS:7,FS:7</availability>
 		<model name=''>
+			<roles>cargo,support</roles>
 			<availability>General:8-</availability>
 		</model>
 		<model name='(Cargo)'>
-			<roles>civilian</roles>
+			<roles>cargo,civilian</roles>
 			<availability>CC:6-,RR:6-,ROS:6-,FS:6-</availability>
 		</model>
 	</chassis>

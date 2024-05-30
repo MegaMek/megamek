@@ -12677,6 +12677,7 @@
 	<chassis name='Ryu Heavy Transport' unitType='Tank'>
 		<availability>DC:3-</availability>
 		<model name=''>
+			<roles>cargo,support</roles>
 			<availability>General:6-</availability>
 		</model>
 	</chassis>

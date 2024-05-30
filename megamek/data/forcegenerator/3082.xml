@@ -5236,6 +5236,7 @@
 	<chassis name='Dromedary Water Transport' unitType='Tank'>
 		<availability>TC:3,Periphery:2</availability>
 		<model name=''>
+			<roles>cargo,support</roles>
 			<availability>General:8</availability>
 		</model>
 	</chassis>

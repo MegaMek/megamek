@@ -4616,6 +4616,7 @@
 	<chassis name='Coanda Personal Sports Craft' unitType='Tank'>
 		<availability>TamPact:2-,LA:3-,ROS:2-,CJF:2-,VesMar:2-</availability>
 		<model name=''>
+			<roles>civilian</roles>
 			<availability>General:8-</availability>
 		</model>
 	</chassis>

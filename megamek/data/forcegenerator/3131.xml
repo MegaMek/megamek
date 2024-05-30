@@ -14662,6 +14662,7 @@
 	<chassis name='Quicksilver Personal Sports Craft' unitType='Tank'>
 		<availability>LA:3-</availability>
 		<model name=''>
+			<roles>civilian</roles>
 			<availability>General:5</availability>
 		</model>
 	</chassis>

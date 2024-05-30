@@ -4563,6 +4563,23 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
+     * Returns the CriticalSlots in the given location as a list. The returned list can be empty
+     * depending on the unit and the chosen slot but not null. The entries are not filtered in
+     * any way (could be null although that is probably an error in the internal representation
+     * of the unit.)
+     *
+     * @param location The location, e.g. Mech.LOC_HEAD
+     * @return A list of CriticalSlots in that location, possibly empty
+     */
+    public List<CriticalSlot> getCriticalSlots(int location) {
+        List<CriticalSlot> result = new ArrayList<>();
+        for (int slot = 0; slot < getNumberOfCriticals(location); slot++) {
+            result.add(getCritical(location, slot));
+        }
+        return result;
+    }
+
+    /**
      * Check if the entity has an arbitrary type of weapon
      *
      * @param flag A WeaponType.F_XXX

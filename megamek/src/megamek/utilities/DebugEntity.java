@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2023, 2024 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -19,6 +19,7 @@
 package megamek.utilities;
 
 import megamek.common.*;
+import megamek.common.equipment.WeaponMounted;
 
 import java.util.List;
 import java.awt.*;
@@ -28,8 +29,8 @@ import java.awt.datatransfer.StringSelection;
 /**
  * This class is for debugging Entity with respect to the internal state of equipment.
  */
-@SuppressWarnings("unused")
-public class DebugEntity {
+@SuppressWarnings("unused") // to be used as a debugging tool, e.g. in breakpoints
+public final class DebugEntity {
 
     /**
      * Gets a full listing of the internal representation of the unit's equipment and crit slots with most
@@ -70,12 +71,32 @@ public class DebugEntity {
             }
             result.append("\n");
 
-            result.append("Transports:\n");
-            List<Transporter> transports = entity.getTransports();
-            for (int i = 0; i < transports.size(); i++) {
-                result.append("[" + i + "] ").append(transports.get(i)).append("\n");
+            if (entity.isConventionalInfantry()) {
+                result.append("Weapons:\n");
+                for (WeaponMounted weapon : entity.getTotalWeaponList()) {
+                    result.append(weapon).append("\n");
+                }
+                result.append("\n");
+
+                Infantry infantry = (Infantry) entity;
+                result.append("Infantry weapons:\n");
+                if (infantry.getPrimaryWeapon() != null) {
+                    result.append("Primary: ").append(infantry.getPrimaryWeapon()).append("\n");
+                }
+                if (infantry.getSecondaryWeapon() != null) {
+                    result.append("Secondary: ").append(infantry.getSecondaryWeapon()).append("\n");
+                }
+                result.append("\n");
             }
-            result.append("\n");
+
+            if (!entity.getTransports().isEmpty()) {
+                result.append("Transports:\n");
+                List<Transporter> transports = entity.getTransports();
+                for (int i = 0; i < transports.size(); i++) {
+                    result.append("[" + i + "] ").append(transports.get(i)).append("\n");
+                }
+                result.append("\n");
+            }
 
             result.append("Locations:\n");
             for (int location = 0; location < entity.locations(); location++) {
@@ -98,7 +119,7 @@ public class DebugEntity {
                 }
             }
         } catch (Exception e) {
-            result.append("\nAn exception was encountered here. " + e.getMessage());
+            result.append("\nAn exception was encountered here. ").append(e.getMessage());
         }
 
         return result.toString();

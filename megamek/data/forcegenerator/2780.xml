@@ -3432,10 +3432,11 @@
 	<chassis name='Stork Light Refueling Craft' unitType='Conventional Fighter'>
 		<availability>CC:4</availability>
 		<model name=''>
+			<roles>cargo,support</roles>
 			<availability>General:6</availability>
 		</model>
 		<model name='(Original)'>
-			<roles>support</roles>
+			<roles>cargo,support</roles>
 			<availability>General:5-</availability>
 		</model>
 	</chassis>

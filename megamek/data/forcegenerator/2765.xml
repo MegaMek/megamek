@@ -2823,9 +2823,11 @@
 	<chassis name='Patron LoaderMech' unitType='Mek'>
 		<availability>FWL:8</availability>
 		<model name=''>
+			<roles>support</roles>
 			<availability>General:8</availability>
 		</model>
 		<model name='PTN-1'>
+			<roles>support</roles>
 			<availability>General:2</availability>
 		</model>
 	</chassis>

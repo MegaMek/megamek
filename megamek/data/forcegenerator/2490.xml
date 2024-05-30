@@ -1220,6 +1220,7 @@
 	<chassis name='Patron LoaderMech' unitType='Mek'>
 		<availability>FWL:6</availability>
 		<model name='PTN-1'>
+			<roles>support</roles>
 			<availability>General:8</availability>
 		</model>
 	</chassis>

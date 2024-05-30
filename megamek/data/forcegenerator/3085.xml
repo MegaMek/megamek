@@ -5908,7 +5908,7 @@
 	<chassis name='Federated-Boeing Longhaul' unitType='Conventional Fighter'>
 		<availability>DTA:4,OP:4,RF:4,FWL:4,MSC:4,FS:5,DA:4,RCM:4</availability>
 		<model name='FB-335'>
-			<roles>cargo</roles>
+			<roles>cargo,support</roles>
 			<availability>General:6</availability>
 		</model>
 	</chassis>

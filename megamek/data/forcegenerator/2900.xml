@@ -744,6 +744,7 @@
 	<chassis name='Atlantia Luxury Yacht' unitType='Naval'>
 		<availability>FWL:2</availability>
 		<model name=''>
+			<roles>civilian</roles>
 			<availability>General:8</availability>
 		</model>
 	</chassis>

@@ -1987,6 +1987,7 @@
 	<chassis name='Atlantia Luxury Yacht' unitType='Naval'>
 		<availability>RF:2,FWL:2,DA:2</availability>
 		<model name=''>
+			<roles>civilian</roles>
 			<availability>General:8</availability>
 		</model>
 	</chassis>

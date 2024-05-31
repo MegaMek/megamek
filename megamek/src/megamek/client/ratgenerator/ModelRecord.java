@@ -194,9 +194,12 @@ public class ModelRecord extends AbstractUnitRecord {
 
                 }
 
-                if (((WeaponType) eq).getLongRange() >= 20) {
-                    lrBV += eq.getBV(null) * ms.getEquipmentQuantities().get(i);
+                // Total up BV for weapons capable of attacking at the longest ranges or using
+                // indirect fire. Ignore small craft, DropShips, and other space craft.
+                if (unitType < UnitType.SMALL_CRAFT) {
+                    lrBV += getLongRangeModifier(eq) * eq.getBV(null) * ms.getEquipmentQuantities().get(i);
                 }
+
                 if (eq.hasFlag(WeaponType.F_TAG)) {
                     roles.add(MissionRole.SPOTTER);
                 }
@@ -467,5 +470,49 @@ public class ModelRecord extends AbstractUnitRecord {
 
         return ineffective;
     }
+
+    /**
+     * Get a modified BV for a weapon for use at long range
+     * @param check_weapon
+     * @return   between zero (not a long ranged weapon) and weapon_bv
+     */
+    private double getLongRangeModifier(EquipmentType check_weapon) {
+
+        double fullRange = 1.0;
+        double partialRange = 0.8;
+        double minRange = 0.4;
+        double shortRange = 0.0;
+
+        // Quick and dirty check for most indirect fire weapons
+        boolean isIndirect = (check_weapon instanceof megamek.common.weapons.lrms.LRMWeapon &&
+                !(check_weapon instanceof megamek.common.weapons.lrms.StreakLRMWeapon)) ||
+                check_weapon instanceof megamek.common.weapons.missiles.MMLWeapon ||
+                check_weapon instanceof megamek.common.weapons.missiles.ThunderBoltWeapon ||
+                check_weapon instanceof megamek.common.weapons.mortars.MekMortarWeapon ||
+                check_weapon instanceof megamek.common.weapons.infantry.InfantrySupportLRMWeapon ||
+                check_weapon instanceof megamek.common.weapons.infantry.InfantrySupportMortarHeavyWeapon ||
+                check_weapon instanceof megamek.common.weapons.infantry.InfantrySupportMortarLightWeapon;
+
+        if (((WeaponType) check_weapon).getLongRange() >= 20) {
+            return fullRange;
+        } else if (((WeaponType) check_weapon).getMediumRange() >= 14) {
+            if (isIndirect) {
+                return fullRange;
+            } else {
+                return partialRange;
+            }
+        } else if (((WeaponType) check_weapon).getMediumRange() >= 12) {
+            if (isIndirect) {
+                return partialRange;
+            } else {
+                return minRange;
+            }
+        } else if (isIndirect) {
+            return minRange;
+        }
+
+        return shortRange;
+    }
+
 }
 

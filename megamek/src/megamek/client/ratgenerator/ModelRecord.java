@@ -170,11 +170,29 @@ public class ModelRecord extends AbstractUnitRecord {
                             eq instanceof megamek.common.weapons.SwarmAttack);
                 }
 
+                // Total up BV for weapons that require ammo. Streak-type missile systems get a
+                // discount. Ignore small craft, DropShips, and large space craft. Ignore infantry
+                // weapons except for field guns.
+                if (unitType < UnitType.SMALL_CRAFT) {
+                    double ammoFactor = 1.0;
 
-                if (((WeaponType) eq).getAmmoType() > megamek.common.AmmoType.T_NA) {
-                    ammoBV += eq.getBV(null) * ms.getEquipmentQuantities().get(i);
+                    if (eq instanceof megamek.common.weapons.srms.StreakSRMWeapon ||
+                            eq instanceof megamek.common.weapons.lrms.StreakLRMWeapon ||
+                            ((WeaponType) eq).getAmmoType() == AmmoType.T_IATM) {
+                        ammoFactor = 0.4;
+                    }
+
+                    if (unitType == UnitType.INFANTRY || unitType == UnitType.BATTLE_ARMOR) {
+                        if (eq instanceof megamek.common.weapons.infantry.InfantryWeapon) {
+                            ammoFactor = 0.0;
+                        }
+                    }
+
+                    if  (ammoFactor > 0.0 && ((WeaponType) eq).getAmmoType() > megamek.common.AmmoType.T_NA) {
+                        ammoBV += eq.getBV(null) * ammoFactor * ms.getEquipmentQuantities().get(i);
+                    }
+
                 }
-
 
                 if (((WeaponType) eq).getLongRange() >= 20) {
                     lrBV += eq.getBV(null) * ms.getEquipmentQuantities().get(i);

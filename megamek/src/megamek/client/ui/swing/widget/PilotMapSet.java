@@ -128,7 +128,7 @@ public class PilotMapSet implements DisplayMapSet {
         toughBR = createLabel(STAR3, fm, pilotL.getSize().width + 50 + initBL.getSize().width + 25, getYCoord());
         content.addArea(toughBR);
 
-        fatigueBL = createLabel(Messages.getString("PilotMapSet.fatigueBL"), fm, pilotL.getSize().width + 50, getYCoord());
+        fatigueBL = createLabel(Messages.getString("PilotMapSet.fatigueBL"), fm, pilotL.getSize().width + 50, getNewYCoord());
         content.addArea(fatigueBL);
         fatigueBR = createLabel(STAR3, fm, pilotL.getSize().width + 50 + initBL.getSize().width + 25, getYCoord());
         content.addArea(fatigueBR);
@@ -220,6 +220,16 @@ public class PilotMapSet implements DisplayMapSet {
             toughBL.setVisible(false);
             toughBR.setVisible(false);
         }
+
+        if ((en.getGame() != null)
+                && en.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_FATIGUE)
+                && !en.getCrew().isMissing(slot)) {
+            fatigueBR.setString(Integer.toString(en.getCrew().getCrewFatigue(slot)));
+        } else {
+            fatigueBL.setVisible(false);
+            fatigueBR.setVisible(false);
+        }
+
         if ((en.getGame() != null)
                 && en.getGame().getOptions().booleanOption(OptionsConstants.RPG_INDIVIDUAL_INITIATIVE)
                 && !en.getCrew().isMissing(slot)) {

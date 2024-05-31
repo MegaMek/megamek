@@ -24,6 +24,8 @@ import megamek.client.ui.swing.alphaStrike.ConfigurableASCardPanel;
 import megamek.client.ui.swing.calculationReport.FlexibleCalculationReport;
 import megamek.common.Entity;
 import megamek.common.GunEmplacement;
+import megamek.common.MechView;
+import megamek.common.MechView.ViewFormatting;
 import megamek.common.alphaStrike.ASCardDisplayable;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.alphaStrike.conversion.ASConverter;
@@ -86,7 +88,7 @@ public class EntityViewPane extends AbstractTabbedPane {
         if (entity == null) {
             troPanel.reset();
         } else {
-            troPanel.setMech(entity, TROView.createView(entity, true));
+            troPanel.setMech(entity, TROView.createView(entity, ViewFormatting.Html));
         }
         summaryPanel.setEntity(entity);
         cardPanel.setASElement(ASConverter.canConvert(entity) ? asUnit : null);

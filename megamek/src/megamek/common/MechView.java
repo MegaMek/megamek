@@ -24,7 +24,7 @@ import megamek.common.equipment.WeaponMounted;
 import megamek.common.eras.Era;
 import megamek.common.eras.Eras;
 import megamek.common.options.*;
-import megamek.common.util.DiscordExportUtil.DiscordFormat;
+import megamek.common.util.DiscordFormat;
 import megamek.common.verifier.*;
 import megamek.common.weapons.bayweapons.BayWeapon;
 import megamek.common.weapons.infantry.InfantryWeapon;
@@ -45,11 +45,6 @@ import java.util.stream.Collectors;
  * @since January 20, 2003
  */
 public class MechView {
-    public static enum ViewFormatting {
-        Html,
-        None,
-        Discord
-    }
 
     /**
      * Provides common interface for various ways to present data that can be formatted
@@ -101,7 +96,7 @@ public class MechView {
      * @param showDetail       If true, shows individual weapons that make up weapon bays.
      */
     public MechView(Entity entity, boolean showDetail) {
-        this(entity, showDetail, false, ViewFormatting.Html);
+        this(entity, showDetail, false, ViewFormatting.HTML);
     }
 
     /**
@@ -114,7 +109,7 @@ public class MechView {
      *                         equipment-only cost for conventional infantry for MekHQ.
      */
     public MechView(Entity entity, boolean showDetail, boolean useAlternateCost) {
-        this(entity, showDetail, useAlternateCost, ViewFormatting.Html);
+        this(entity, showDetail, useAlternateCost, ViewFormatting.HTML);
     }
 
     /**
@@ -585,13 +580,13 @@ public class MechView {
     private String getReadout(List<ViewElement> section) {
         Function<ViewElement,String> mapper;
         switch (formatting) {
-            case Html:
+            case HTML:
                 mapper = ViewElement::toHTML;
                 break;
-            case None:
+            case NONE:
                 mapper = ViewElement::toPlainText;
                 break;
-            case Discord:
+            case DISCORD:
                 mapper = ViewElement::toDiscord;
                 break;
             default:
@@ -639,7 +634,7 @@ public class MechView {
      * @return The data from the fluff section.
      */
     public String getMechReadoutFluff() {
-        if (formatting == ViewFormatting.Discord) {
+        if (formatting == ViewFormatting.DISCORD) {
             return "";
         }
         return getReadout(sFluff);
@@ -661,12 +656,12 @@ public class MechView {
         String preStart = "";
         String preEnd = "";
 
-        if (formatting == ViewFormatting.Html && (fontName != null)) {
+        if (formatting == ViewFormatting.HTML && (fontName != null)) {
             docStart = "<div style=\"font-family:" + fontName + ";\">";
             docEnd = "</div>";
             preStart = "<PRE style=\"font-family:" + fontName + ";\">";
             preEnd = "</PRE>";
-        } else if (formatting == ViewFormatting.Discord) {
+        } else if (formatting == ViewFormatting.DISCORD) {
             docStart = "```ansi\n";
             docEnd = "```";
         }
@@ -1118,7 +1113,7 @@ public class MechView {
             TableElement transportTable = new TableElement(1);
             transportTable.setColNames(Messages.getString("MechView.CarryingCapacity"));
             transportTable.setJustification(TableElement.JUSTIFIED_LEFT);
-            String separator = formatting == ViewFormatting.Html ? "<br>" : "\n";
+            String separator = formatting == ViewFormatting.HTML ? "<br>" : "\n";
             String[] transportersLines = transportersString.split(separator);
             for (String line : transportersLines) {
                 transportTable.addRow(line);
@@ -1179,19 +1174,19 @@ public class MechView {
         String cautionEnd;
 
         switch (formatting) {
-            case Html:
+            case HTML:
                 warnBegin = "<FONT " + UIUtil.colorString(GUIPreferences.getInstance().getWarningColor()) + '>';
                 warnEnd = "</FONT>";
                 cautionBegin = "<FONT " + UIUtil.colorString(GUIPreferences.getInstance().getCautionColor()) + '>';
                 cautionEnd = "</FONT>";
                 break;
-            case None:
+            case NONE:
                 warnBegin = "";
                 warnEnd = "";
                 cautionBegin = "";
                 cautionEnd = "";
                 break;
-            case Discord:
+            case DISCORD:
                 warnBegin = DiscordFormat.RED.format();
                 warnEnd = DiscordFormat.RESET.format();
                 cautionBegin = DiscordFormat.YELLOW.format();
@@ -1634,11 +1629,11 @@ public class MechView {
      */
     private String warningStart() {
         switch (formatting) {
-            case Html:
+            case HTML:
                 return "<font color=\"red\">";
-            case None:
+            case NONE:
                 return "*";
-            case Discord:
+            case DISCORD:
                 return DiscordFormat.RED.format();
             default:
                 throw new IllegalStateException("Impossible");
@@ -1651,11 +1646,11 @@ public class MechView {
      */
     private String warningEnd() {
         switch (formatting) {
-            case Html:
+            case HTML:
                 return "</font>";
-            case None:
+            case NONE:
                 return "*";
-            case Discord:
+            case DISCORD:
                 return DiscordFormat.RESET.format();
             default:
                 throw new IllegalStateException("Impossible");
@@ -1669,11 +1664,11 @@ public class MechView {
      */
     private String italicsStart() {
         switch (formatting) {
-            case Html:
+            case HTML:
                 return "<i>";
-            case None:
+            case NONE:
                 return "";
-            case Discord:
+            case DISCORD:
                 return DiscordFormat.UNDERLINE.format();
             default:
                 throw new IllegalStateException("Impossible");
@@ -1686,11 +1681,11 @@ public class MechView {
      */
     private String italicsEnd() {
         switch (formatting) {
-            case Html:
+            case HTML:
                 return "</i>";
-            case None:
+            case NONE:
                 return "";
-            case Discord:
+            case DISCORD:
                 return DiscordFormat.RESET.format();
             default:
                 throw new IllegalStateException("Impossible");

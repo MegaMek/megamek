@@ -22,7 +22,6 @@ import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.client.ui.swing.calculationReport.DummyCalculationReport;
 import megamek.codeUtilities.StringUtility;
-import megamek.common.MechView.ViewFormatting;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.actions.*;
 import megamek.common.annotations.Nullable;
@@ -38,8 +37,7 @@ import megamek.common.planetaryconditions.Atmosphere;
 import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.common.planetaryconditions.Wind;
 import megamek.common.preference.PreferenceManager;
-import megamek.common.util.DiscordExportUtil;
-import megamek.common.util.DiscordExportUtil.DiscordFormat;
+import megamek.common.util.DiscordFormat;
 import megamek.common.weapons.*;
 import megamek.common.weapons.bayweapons.AR10BayWeapon;
 import megamek.common.weapons.bayweapons.BayWeapon;
@@ -8900,7 +8898,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     @Override
     public String getUnusedString() {
-        return getUnusedString(ViewFormatting.None);
+        return getUnusedString(ViewFormatting.NONE);
     }
 
     @Override
@@ -8945,11 +8943,11 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             if ((next instanceof DockingCollar) && ((DockingCollar) next).isDamaged()) {
                 continue;
             }
-            if (formatting == ViewFormatting.Html && (next instanceof Bay) && (((Bay) next).getBayDamage() > 0)) {
+            if (formatting == ViewFormatting.HTML && (next instanceof Bay) && (((Bay) next).getBayDamage() > 0)) {
                 result.append("<font color='red'>")
                     .append(next.getUnusedString())
                     .append("</font>");
-            } else if (formatting == ViewFormatting.Discord && (next instanceof Bay) && (((Bay) next).getBayDamage() > 0)) {
+            } else if (formatting == ViewFormatting.DISCORD && (next instanceof Bay) && (((Bay) next).getBayDamage() > 0)) {
                 result.append(DiscordFormat.RED.format())
                     .append(next.getUnusedString())
                     .append(DiscordFormat.RESET.format());
@@ -8966,7 +8964,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             }
             // Add a newline character between strings.
             if (iter.hasMoreElements()) {
-                if (formatting == ViewFormatting.Html) {
+                if (formatting == ViewFormatting.HTML) {
                     result.append("<br>");
                 } else {
                     result.append("\n");

@@ -60,6 +60,7 @@ public class DebugEntity {
         try {
             result.append("Chassis: >").append(entity.getChassis()).append("<\n");
             result.append("Model: >").append(entity.getModel()).append("<\n");
+            result.append("Game ID: ").append(entity.getId()).append("\n");
 
             result.append("Equipment:\n");
             for (int i = 0; i < entity.getEquipment().size(); i++) {

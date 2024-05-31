@@ -87,6 +87,8 @@ public class ModelRecord extends AbstractUnitRecord {
         double totalBV = 0.0;
         double flakBV = 0.0;
         double lrBV = 0.0;
+        int ap_rating = 0;
+        int ap_threshold = 6;
         double ammoBV = 0.0;
         boolean losTech = false;
         for (int i = 0; i < ms.getEquipmentNames().size(); i++) {
@@ -106,6 +108,7 @@ public class ModelRecord extends AbstractUnitRecord {
                 //FIXME: needs to filter out primitive
                 losTech = true;
             }
+
             if (eq instanceof WeaponType) {
                 totalBV += eq.getBV(null) * ms.getEquipmentQuantities().get(i);
                 switch (((megamek.common.weapons.Weapon) eq).getAmmoType()) {
@@ -125,16 +128,19 @@ public class ModelRecord extends AbstractUnitRecord {
                 }
                 if (eq.hasFlag(WeaponType.F_FLAMER) || eq.hasFlag(WeaponType.F_INFERNO)) {
                     incendiary = true;
-                    apWeapons = true;
                 }
                 incendiary |= ((WeaponType) eq).getAmmoType() == AmmoType.T_SRM
                         || ((WeaponType) eq).getAmmoType() == AmmoType.T_SRM_IMP
                         || ((WeaponType) eq).getAmmoType() == AmmoType.T_MRM;
 
-                if (eq instanceof megamek.common.weapons.mgs.MGWeapon ||
-                        eq instanceof megamek.common.weapons.defensivepods.BPodWeapon) {
-                    apWeapons = true;
+                // Don't check anti-personnel weapons for conventional infantry, fixed wing
+                // aircraft, and space-going units. Also, don't bother checking if we're
+                // already high enough.
+                if (ap_rating < ap_threshold &&
+                        (unitType < UnitType.CONV_FIGHTER && unitType != UnitType.INFANTRY)) {
+                    ap_rating += getAPRating(eq);
                 }
+
                 if (((WeaponType) eq).getAmmoType() > megamek.common.AmmoType.T_NA) {
                     ammoBV += eq.getBV(null) * ms.getEquipmentQuantities().get(i);
                 }
@@ -184,6 +190,12 @@ public class ModelRecord extends AbstractUnitRecord {
             longRange = lrBV / totalBV;
             ammoRequirement = ammoBV / totalBV;
         }
+
+        // Characterize uit as anti-personnel based on total equipment levels
+        if (totalBV > 0) {
+            apWeapons = ap_rating >= ap_threshold;
+        }
+
         weightClass = ms.getWeightClass();
         if (weightClass >= EntityWeightClass.WEIGHT_SMALL_SUPPORT) {
             if (ms.getTons() <= 39) {
@@ -348,6 +360,55 @@ public class ModelRecord extends AbstractUnitRecord {
 
     public void setMagClamp(boolean magClamp) {
         this.magClamp = magClamp;
+    }
+
+    /**
+     * Evaluates weapons for how effective they are against conventional infantry.
+     * Checks are organized to promote early exit for common weapons rather than by value.
+     * @param test_weapon  Weapon to check
+     * @return             Relative value, 0 is ineffective, higher is more effective
+     */
+    private int getAPRating(EquipmentType check_weapon) {
+        int extremely_effective = 6;
+        int very_effective = 4;
+        int somewhat_effective = 2;
+        int not_effective = 1;
+
+        // Common weapons
+        if (check_weapon instanceof megamek.common.weapons.mgs.MGWeapon) {
+            return very_effective;
+        } else if (check_weapon instanceof megamek.common.weapons.srms.SRMWeapon ||
+                check_weapon instanceof megamek.common.weapons.missiles.MMLWeapon) {
+            return somewhat_effective;
+        } else if (check_weapon instanceof megamek.common.weapons.flamers.FlamerWeapon) {
+            return extremely_effective;
+        }
+
+        // Weapons found in later eras
+        if (check_weapon instanceof megamek.common.weapons.battlearmor.BAMGWeapon) {
+            return extremely_effective;
+        } else if (check_weapon instanceof megamek.common.weapons.battlearmor.BAFlamerWeapon) {
+            return extremely_effective;
+        } else if (check_weapon instanceof megamek.common.weapons.battlearmor.CLBAMGBearhunterSuperheavy) {
+            return extremely_effective;
+        } else if (check_weapon instanceof megamek.common.weapons.ppc.ISPlasmaRifle ||
+                check_weapon instanceof megamek.common.weapons.ppc.CLPlasmaCannon) {
+            return very_effective;
+        } else if (check_weapon instanceof megamek.common.weapons.gaussrifles.CLAPGaussRifle) {
+            return very_effective;
+        } else if (check_weapon instanceof megamek.common.weapons.lasers.ISPulseLaserSmall ||
+                    check_weapon instanceof megamek.common.weapons.lasers.CLPulseLaserSmall) {
+            return very_effective;
+        }
+
+        // Uncommon weapons
+        if (check_weapon instanceof megamek.common.weapons.defensivepods.BPodWeapon) {
+            return not_effective;
+        } else if (check_weapon instanceof megamek.common.weapons.mortars.MekMortarWeapon) {
+            return not_effective;
+        }
+
+        return 0;
     }
 }
 

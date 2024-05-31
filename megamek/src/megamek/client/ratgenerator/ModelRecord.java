@@ -128,12 +128,28 @@ public class ModelRecord extends AbstractUnitRecord {
                                 MissionRole.MISSILE_ARTILLERY : MissionRole.ARTILLERY);
                     }
                 }
-                if (eq.hasFlag(WeaponType.F_FLAMER) || eq.hasFlag(WeaponType.F_INFERNO)) {
-                    incendiary = true;
+
+                // Don't check incendiary weapons for conventional infantry, fixed wing aircraft,
+                // and space-going units. Also, don't bother checking if it's already set or has
+                // the role.
+                if (!roles.contains(MissionRole.INCENDIARY) &&
+                        !incendiary &&
+                        (unitType < UnitType.CONV_FIGHTER && unitType != UnitType.INFANTRY)) {
+                    if (eq instanceof megamek.common.weapons.flamers.FlamerWeapon ||
+                            eq instanceof megamek.common.weapons.battlearmor.BAFlamerWeapon ||
+                            eq instanceof megamek.common.weapons.ppc.ISPlasmaRifle ||
+                            eq instanceof megamek.common.weapons.ppc.CLPlasmaCannon) {
+                        incendiary = true;
+                    }
+                    // Some missile types are capable of being loaded with infernos, which are
+                    // highly capable of setting fires
+                    if (((WeaponType) eq).getAmmoType() == AmmoType.T_SRM ||
+                            ((WeaponType) eq).getAmmoType() == AmmoType.T_SRM_IMP ||
+                            ((WeaponType) eq).getAmmoType() == AmmoType.T_MML ||
+                            ((WeaponType) eq).getAmmoType() == AmmoType.T_IATM) {
+                        incendiary = true;
+                    }
                 }
-                incendiary |= ((WeaponType) eq).getAmmoType() == AmmoType.T_SRM
-                        || ((WeaponType) eq).getAmmoType() == AmmoType.T_SRM_IMP
-                        || ((WeaponType) eq).getAmmoType() == AmmoType.T_MRM;
 
                 // Don't check anti-personnel weapons for conventional infantry, fixed wing
                 // aircraft, and space-going units. Also, don't bother checking if we're

@@ -3790,7 +3790,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             miscList.add((MiscMounted) mounted);
         }
         if (!(mounted instanceof AmmoMounted) && !(mounted instanceof MiscMounted)
-                && !(mounted instanceof WeaponMounted) && !(mounted instanceof InfantryWeaponMounted)) {
+                && !(mounted instanceof WeaponMounted)) {
             LogManager.getLogger().error("Trying to add plain Mounted class {} on {}!", mounted, this);
         }
     }

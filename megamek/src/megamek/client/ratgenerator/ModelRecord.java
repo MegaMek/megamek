@@ -427,6 +427,7 @@ public class ModelRecord extends AbstractUnitRecord {
         int very_effective = 4;
         int somewhat_effective = 2;
         int not_effective = 1;
+        int ineffective = 0;
 
         // Common weapons
         if (check_weapon instanceof megamek.common.weapons.mgs.MGWeapon) {
@@ -438,8 +439,10 @@ public class ModelRecord extends AbstractUnitRecord {
             return extremely_effective;
         }
 
-        // Weapons found in later eras
-        if (check_weapon instanceof megamek.common.weapons.battlearmor.BAMGWeapon) {
+        // Weapons only found in later eras
+        if (check_weapon instanceof megamek.common.weapons.infantry.InfantryWeapon) {
+            return not_effective;
+        } else if (check_weapon instanceof megamek.common.weapons.battlearmor.BAMGWeapon) {
             return extremely_effective;
         } else if (check_weapon instanceof megamek.common.weapons.battlearmor.BAFlamerWeapon) {
             return extremely_effective;
@@ -462,7 +465,7 @@ public class ModelRecord extends AbstractUnitRecord {
             return not_effective;
         }
 
-        return 0;
+        return ineffective;
     }
 }
 

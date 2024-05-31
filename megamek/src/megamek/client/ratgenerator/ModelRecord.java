@@ -60,6 +60,8 @@ public class ModelRecord extends AbstractUnitRecord {
     private boolean mechanizedBA;
     private boolean magClamp;
 
+    private boolean canAntiMek = false;
+
     public ModelRecord(String chassis, String model) {
         super(chassis);
         roles = EnumSet.noneOf(MissionRole.class);
@@ -139,6 +141,14 @@ public class ModelRecord extends AbstractUnitRecord {
                 if (ap_rating < ap_threshold &&
                         (unitType < UnitType.CONV_FIGHTER && unitType != UnitType.INFANTRY)) {
                     ap_rating += getAPRating(eq);
+                }
+
+                // Check if a conventional infantry or battle armor unit can perform anti-Mech
+                // attacks
+                if (!canAntiMek &&
+                        (unitType == UnitType.INFANTRY || unitType == UnitType.BATTLE_ARMOR)) {
+                    canAntiMek = (eq instanceof megamek.common.weapons.LegAttack ||
+                            eq instanceof megamek.common.weapons.SwarmAttack);
                 }
 
                 if (((WeaponType) eq).getAmmoType() > megamek.common.AmmoType.T_NA) {
@@ -360,6 +370,10 @@ public class ModelRecord extends AbstractUnitRecord {
 
     public void setMagClamp(boolean magClamp) {
         this.magClamp = magClamp;
+    }
+
+    public boolean getAntiMek(){
+        return canAntiMek;
     }
 
     /**

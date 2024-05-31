@@ -89,8 +89,8 @@ public class ModelRecord extends AbstractUnitRecord {
         double totalBV = 0.0;
         double flakBV = 0.0;
         double lrBV = 0.0;
-        int ap_rating = 0;
-        int ap_threshold = 6;
+        int apRating = 0;
+        int apThreshold = 6;
         double ammoBV = 0.0;
         boolean losTech = false;
         for (int i = 0; i < ms.getEquipmentNames().size(); i++) {
@@ -113,12 +113,15 @@ public class ModelRecord extends AbstractUnitRecord {
 
             if (eq instanceof WeaponType) {
                 totalBV += eq.getBV(null) * ms.getEquipmentQuantities().get(i);
+
+                // Check for use against airborne targets
                 switch (((megamek.common.weapons.Weapon) eq).getAmmoType()) {
                     case AmmoType.T_AC_LBX:
                     case AmmoType.T_HAG:
                     case AmmoType.T_SBGAUSS:
                         flakBV += eq.getBV(null) * ms.getEquipmentQuantities().get(i);
                 }
+
                 // Only add an artillery role if this model does not already have MIXED_ARTILLERY
                 if (eq.hasFlag(WeaponType.F_ARTILLERY)) {
                     flakBV += eq.getBV(null) * ms.getEquipmentQuantities().get(i) / 2.0;
@@ -154,22 +157,25 @@ public class ModelRecord extends AbstractUnitRecord {
                 // Don't check anti-personnel weapons for conventional infantry, fixed wing
                 // aircraft, and space-going units. Also, don't bother checking if we're
                 // already high enough.
-                if (ap_rating < ap_threshold &&
+                if (apRating < apThreshold &&
                         (unitType < UnitType.CONV_FIGHTER && unitType != UnitType.INFANTRY)) {
-                    ap_rating += getAPRating(eq);
+                    apRating += getAPRating(eq);
                 }
 
                 // Check if a conventional infantry or battle armor unit can perform anti-Mech
-                // attacks
+                // attacks. This will also pick up battle armor that must first jettison equipment.
                 if (!canAntiMek &&
                         (unitType == UnitType.INFANTRY || unitType == UnitType.BATTLE_ARMOR)) {
                     canAntiMek = (eq instanceof megamek.common.weapons.LegAttack ||
                             eq instanceof megamek.common.weapons.SwarmAttack);
                 }
 
+
                 if (((WeaponType) eq).getAmmoType() > megamek.common.AmmoType.T_NA) {
                     ammoBV += eq.getBV(null) * ms.getEquipmentQuantities().get(i);
                 }
+
+
                 if (((WeaponType) eq).getLongRange() >= 20) {
                     lrBV += eq.getBV(null) * ms.getEquipmentQuantities().get(i);
                 }
@@ -217,9 +223,9 @@ public class ModelRecord extends AbstractUnitRecord {
             ammoRequirement = ammoBV / totalBV;
         }
 
-        // Characterize uit as anti-personnel based on total equipment levels
+        // Characterize unit as anti-personnel based on total equipment levels
         if (totalBV > 0) {
-            apWeapons = ap_rating >= ap_threshold;
+            apWeapons = apRating >= apThreshold;
         }
 
         weightClass = ms.getWeightClass();

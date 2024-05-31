@@ -23,7 +23,7 @@ import java.util.Set;
 /**
  * Specific unit variants; analyzes equipment to determine suitability for certain types
  * of missions in addition to what is formally declared in the data files.
- * 
+ *
  * @author Neoancient
  */
 public class ModelRecord extends AbstractUnitRecord {
@@ -114,10 +114,14 @@ public class ModelRecord extends AbstractUnitRecord {
                     case AmmoType.T_SBGAUSS:
                         flakBV += eq.getBV(null) * ms.getEquipmentQuantities().get(i);
                 }
+                // Only add an artillery role if this model does not already have MIXED_ARTILLERY
                 if (eq.hasFlag(WeaponType.F_ARTILLERY)) {
                     flakBV += eq.getBV(null) * ms.getEquipmentQuantities().get(i) / 2.0;
-                    roles.add(((WeaponType) eq).getAmmoType() == AmmoType.T_ARROW_IV?
-                            MissionRole.MISSILE_ARTILLERY : MissionRole.ARTILLERY);
+
+                    if (!roles.contains(MissionRole.MIXED_ARTILLERY)) {
+                        roles.add(((WeaponType) eq).getAmmoType() == AmmoType.T_ARROW_IV ?
+                                MissionRole.MISSILE_ARTILLERY : MissionRole.ARTILLERY);
+                    }
                 }
                 if (eq.hasFlag(WeaponType.F_FLAMER) || eq.hasFlag(WeaponType.F_INFERNO)) {
                     incendiary = true;

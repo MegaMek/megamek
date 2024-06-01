@@ -234,7 +234,7 @@ public class CriticalSlot implements Serializable {
         if (mount != null) state.add("[" + mount.equipmentIndex() + "] " + mount.getType().getInternalName()
                 + (mount.isWeaponGroup() ? " -Group-" : ""));
         if (mount2 != null) state.add("Mount 2: [" + mount2.equipmentIndex() + "] " + mount2.getType().getInternalName()
-                + (mount.isWeaponGroup() ? " -Group-" : ""));
+                + (mount2.isWeaponGroup() ? " -Group-" : ""));
         if (destroyed) state.add("Destroyed");
         if (hit) state.add("Hit");
         if (!hittable) state.add("Not hittable");

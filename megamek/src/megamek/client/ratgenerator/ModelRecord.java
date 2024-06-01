@@ -433,11 +433,17 @@ public class ModelRecord extends AbstractUnitRecord {
         if (unitType == UnitType.MEK) {
             //TODO: id quads and tripods
             movementMode = EntityMovementMode.BIPED;
-            omni = ms.getUnitSubType().equals("Omni");
         } else {
             movementMode = EntityMovementMode.parseFromString(ms.getUnitSubType().toLowerCase());
         }
 
+        if (unitType == UnitType.MEK ||
+                unitType == UnitType.TANK ||
+                unitType == UnitType.VTOL ||
+                unitType == UnitType.CONV_FIGHTER ||
+                unitType == UnitType.AEROSPACEFIGHTER) {
+            omni = ms.getOmni();
+        }
 
     }
 

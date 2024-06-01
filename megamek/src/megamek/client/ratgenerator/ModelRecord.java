@@ -83,196 +83,6 @@ public class ModelRecord extends AbstractUnitRecord {
 
         analyzeModel(ms);
 
-
-        double totalBV = 0.0;
-        double flakBV = 0.0;
-        double lrBV = 0.0;
-        double srBV = 0.0;
-        int apRating = 0;
-        int apThreshold = 6;
-        double ammoBV = 0.0;
-        boolean losTech = false;
-        for (int i = 0; i < ms.getEquipmentNames().size(); i++) {
-            //EquipmentType.get is throwing an NPE intermittently, and the only possibility I can see
-            //is that there is a null equipment name.
-            if (null == ms.getEquipmentNames().get(i)) {
-                LogManager.getLogger().error(
-                        "RATGenerator ModelRecord encountered null equipment name in MechSummary for "
-                        + ms.getName() + ", index " + i);
-                continue;
-            }
-            EquipmentType eq = EquipmentType.get(ms.getEquipmentNames().get(i));
-            if (eq == null) {
-                continue;
-            }
-            if (!eq.isAvailableIn(3000, false)) {
-                //FIXME: needs to filter out primitive
-                losTech = true;
-            }
-
-            if (eq instanceof WeaponType) {
-                totalBV += eq.getBV(null) * ms.getEquipmentQuantities().get(i);
-
-                // Check for use against airborne targets
-                if (!(eq instanceof megamek.common.weapons.SwarmAttack) &&
-                        !(eq instanceof megamek.common.weapons.SwarmWeaponAttack) &&
-                        !(eq instanceof megamek.common.weapons.LegAttack) &&
-                        !(eq instanceof megamek.common.weapons.StopSwarmAttack)) {
-                    flakBV += getFlakBVModifier(eq) * eq.getBV(null) * ms.getEquipmentQuantities().get(i);
-                }
-
-                // Don't check incendiary weapons for conventional infantry, fixed wing aircraft,
-                // and space-going units
-                if (!incendiary &&
-                        (unitType < UnitType.CONV_FIGHTER && unitType != UnitType.INFANTRY)) {
-                    if (eq instanceof megamek.common.weapons.flamers.FlamerWeapon ||
-                            eq instanceof megamek.common.weapons.battlearmor.BAFlamerWeapon ||
-                            eq instanceof megamek.common.weapons.ppc.ISPlasmaRifle ||
-                            eq instanceof megamek.common.weapons.ppc.CLPlasmaCannon) {
-                        incendiary = true;
-                    }
-                    // Some missile types are capable of being loaded with infernos, which are
-                    // highly capable of setting fires
-                    if (((WeaponType) eq).getAmmoType() == AmmoType.T_SRM ||
-                            ((WeaponType) eq).getAmmoType() == AmmoType.T_SRM_IMP ||
-                            ((WeaponType) eq).getAmmoType() == AmmoType.T_MML ||
-                            ((WeaponType) eq).getAmmoType() == AmmoType.T_IATM) {
-                        incendiary = true;
-                    }
-                }
-
-                // Don't check anti-personnel weapons for conventional infantry, fixed wing
-                // aircraft, and space-going units. Also, don't bother checking if we're
-                // already high enough.
-                if (apRating < apThreshold &&
-                        (unitType < UnitType.CONV_FIGHTER && unitType != UnitType.INFANTRY)) {
-                    apRating += getAPRating(eq);
-                }
-
-                // Check if a conventional infantry or battle armor unit can perform anti-Mech
-                // attacks. This will also pick up battle armor that must first jettison equipment.
-                if (!canAntiMek &&
-                        (unitType == UnitType.INFANTRY || unitType == UnitType.BATTLE_ARMOR)) {
-                    canAntiMek = (eq instanceof megamek.common.weapons.LegAttack ||
-                            eq instanceof megamek.common.weapons.SwarmAttack);
-                }
-
-                // Total up BV for weapons that require ammo. Streak-type missile systems get a
-                // discount. Ignore small craft, DropShips, and large space craft. Ignore infantry
-                // weapons except for field guns.
-                if (unitType < UnitType.SMALL_CRAFT) {
-                    double ammoFactor = 1.0;
-
-                    if (eq instanceof megamek.common.weapons.srms.StreakSRMWeapon ||
-                            eq instanceof megamek.common.weapons.lrms.StreakLRMWeapon ||
-                            ((WeaponType) eq).getAmmoType() == AmmoType.T_IATM) {
-                        ammoFactor = 0.4;
-                    }
-
-                    if (unitType == UnitType.INFANTRY || unitType == UnitType.BATTLE_ARMOR) {
-                        if (eq instanceof megamek.common.weapons.infantry.InfantryWeapon) {
-                            ammoFactor = 0.0;
-                        }
-                    }
-
-                    if  (ammoFactor > 0.0 && ((WeaponType) eq).getAmmoType() > megamek.common.AmmoType.T_NA) {
-                        ammoBV += eq.getBV(null) * ammoFactor * ms.getEquipmentQuantities().get(i);
-                    }
-
-                }
-
-                // Total up BV for weapons capable of attacking at the longest ranges or using
-                // indirect fire. Ignore small craft, DropShips, and other space craft.
-                if (unitType < UnitType.SMALL_CRAFT) {
-                    lrBV += getLongRangeModifier(eq) * eq.getBV(null) * ms.getEquipmentQuantities().get(i);
-                }
-
-                // Total up BV of weapons suitable for attacking at close range. Ignore small craft,
-                // DropShips, and other space craft. Also skip anti-Mech attacks.
-                if (unitType < UnitType.SMALL_CRAFT &&
-                        !(eq instanceof megamek.common.weapons.artillery.ArtilleryWeapon) &&
-                        !(eq instanceof megamek.common.weapons.SwarmAttack) &&
-                        !(eq instanceof megamek.common.weapons.SwarmWeaponAttack) &&
-                        !(eq instanceof megamek.common.weapons.LegAttack) &&
-                        !(eq instanceof megamek.common.weapons.StopSwarmAttack)) {
-                    srBV += getShortRangeModifier(eq) * eq.getBV(null) * ms.getEquipmentQuantities().get(i);
-                }
-
-                if (eq.hasFlag(WeaponType.F_TAG)) {
-                    roles.add(MissionRole.SPOTTER);
-                }
-                if (eq.hasFlag(WeaponType.F_C3M)) {
-                    networkMask |= NETWORK_C3_MASTER;
-                    if (ms.getEquipmentQuantities().get(i) > 1) {
-                        networkMask |= NETWORK_COMPANY_COMMAND;
-                    }
-                }
-                if (eq.hasFlag(WeaponType.F_C3MBS)) {
-                    networkMask |= NETWORK_BOOSTED_MASTER;
-                    if (ms.getEquipmentQuantities().get(i) > 1) {
-                        networkMask |= NETWORK_COMPANY_COMMAND;
-                    }
-                }
-            } else if (eq instanceof MiscType) {
-                if (eq.hasFlag(MiscType.F_UMU)) {
-                movementMode = EntityMovementMode.BIPED_SWIM;
-                } else if (eq.hasFlag(MiscType.F_C3S)) {
-                    networkMask |= NETWORK_C3_SLAVE;
-                } else if (eq.hasFlag(MiscType.F_C3I)) {
-                    networkMask |= NETWORK_C3I;
-                } else if (eq.hasFlag(MiscType.F_C3SBS)) {
-                    networkMask |= NETWORK_BOOSTED_SLAVE;
-                } else if (eq.hasFlag(MiscType.F_NOVA)) {
-                    networkMask |= NETWORK_NOVA;
-                } else if (eq.hasFlag(MiscType.F_MAGNETIC_CLAMP)) {
-                    magClamp = true;
-                }
-            }
-        }
-        if (totalBV > 0 &&
-                (ms.getUnitType().equals("Mek") ||
-                        ms.getUnitType().equals("Tank") ||
-                        ms.getUnitType().equals("BattleArmor") ||
-                        ms.getUnitType().equals("Infantry") ||
-                        ms.getUnitType().equals("ProtoMek") ||
-                        ms.getUnitType().equals("Naval") ||
-                        ms.getUnitType().equals("Gun Emplacement"))) {
-            flak = flakBV / totalBV;
-            longRange = lrBV / totalBV;
-            srBVProportion = srBV / totalBV;
-            ammoRequirement = ammoBV / totalBV;
-        }
-
-        // Characterize unit as anti-personnel based on total equipment levels
-        if (totalBV > 0) {
-            apWeapons = apRating >= apThreshold;
-        }
-
-        weightClass = ms.getWeightClass();
-        if (weightClass >= EntityWeightClass.WEIGHT_SMALL_SUPPORT) {
-            if (ms.getTons() <= 39) {
-                weightClass = EntityWeightClass.WEIGHT_LIGHT;
-            } else if (ms.getTons() <= 59) {
-                weightClass = EntityWeightClass.WEIGHT_MEDIUM;
-            } else if (ms.getTons() <= 79) {
-                weightClass = EntityWeightClass.WEIGHT_HEAVY;
-            } else if (ms.getTons() <= 100) {
-                weightClass = EntityWeightClass.WEIGHT_ASSAULT;
-            } else {
-                weightClass = EntityWeightClass.WEIGHT_COLOSSAL;
-            }
-        }
-        clan = ms.isClan();
-        if (megamek.common.Engine.getEngineTypeByString(ms.getEngineName()) == megamek.common.Engine.XL_ENGINE
-                || ms.getArmorType().contains(EquipmentType.T_ARMOR_FERRO_FIBROUS)
-                || ms.getInternalsType() == EquipmentType.T_STRUCTURE_ENDO_STEEL) {
-            losTech = true;
-        }
-        starLeague = losTech && !clan;
-        speed = ms.getWalkMp();
-        if (ms.getJumpMp() > 0) {
-            speed++;
-        }
     }
 
     public String getModel() {
@@ -443,6 +253,197 @@ public class ModelRecord extends AbstractUnitRecord {
                 unitType == UnitType.CONV_FIGHTER ||
                 unitType == UnitType.AEROSPACEFIGHTER) {
             omni = ms.getOmni();
+        }
+
+        double totalBV = 0.0;
+        double flakBV = 0.0;
+        double lrBV = 0.0;
+        double srBV = 0.0;
+        int apRating = 0;
+        int apThreshold = 6;
+        double ammoBV = 0.0;
+        boolean losTech = false;
+        for (int i = 0; i < ms.getEquipmentNames().size(); i++) {
+            //EquipmentType.get is throwing an NPE intermittently, and the only possibility I can see
+            //is that there is a null equipment name.
+            if (null == ms.getEquipmentNames().get(i)) {
+                LogManager.getLogger().error(
+                        "RATGenerator ModelRecord encountered null equipment name in MechSummary for "
+                                + ms.getName() + ", index " + i);
+                continue;
+            }
+            EquipmentType eq = EquipmentType.get(ms.getEquipmentNames().get(i));
+            if (eq == null) {
+                continue;
+            }
+            if (!eq.isAvailableIn(3000, false)) {
+                //FIXME: needs to filter out primitive
+                losTech = true;
+            }
+
+            if (eq instanceof WeaponType) {
+                totalBV += eq.getBV(null) * ms.getEquipmentQuantities().get(i);
+
+                // Check for use against airborne targets
+                if (!(eq instanceof megamek.common.weapons.SwarmAttack) &&
+                        !(eq instanceof megamek.common.weapons.SwarmWeaponAttack) &&
+                        !(eq instanceof megamek.common.weapons.LegAttack) &&
+                        !(eq instanceof megamek.common.weapons.StopSwarmAttack)) {
+                    flakBV += getFlakBVModifier(eq) * eq.getBV(null) * ms.getEquipmentQuantities().get(i);
+                }
+
+                // Don't check incendiary weapons for conventional infantry, fixed wing aircraft,
+                // and space-going units
+                if (!incendiary &&
+                        (unitType < UnitType.CONV_FIGHTER && unitType != UnitType.INFANTRY)) {
+                    if (eq instanceof megamek.common.weapons.flamers.FlamerWeapon ||
+                            eq instanceof megamek.common.weapons.battlearmor.BAFlamerWeapon ||
+                            eq instanceof megamek.common.weapons.ppc.ISPlasmaRifle ||
+                            eq instanceof megamek.common.weapons.ppc.CLPlasmaCannon) {
+                        incendiary = true;
+                    }
+                    // Some missile types are capable of being loaded with infernos, which are
+                    // highly capable of setting fires
+                    if (((WeaponType) eq).getAmmoType() == AmmoType.T_SRM ||
+                            ((WeaponType) eq).getAmmoType() == AmmoType.T_SRM_IMP ||
+                            ((WeaponType) eq).getAmmoType() == AmmoType.T_MML ||
+                            ((WeaponType) eq).getAmmoType() == AmmoType.T_IATM) {
+                        incendiary = true;
+                    }
+                }
+
+                // Don't check anti-personnel weapons for conventional infantry, fixed wing
+                // aircraft, and space-going units. Also, don't bother checking if we're
+                // already high enough.
+                if (apRating < apThreshold &&
+                        (unitType < UnitType.CONV_FIGHTER && unitType != UnitType.INFANTRY)) {
+                    apRating += getAPRating(eq);
+                }
+
+                // Check if a conventional infantry or battle armor unit can perform anti-Mech
+                // attacks. This will also pick up battle armor that must first jettison equipment.
+                if (!canAntiMek &&
+                        (unitType == UnitType.INFANTRY || unitType == UnitType.BATTLE_ARMOR)) {
+                    canAntiMek = (eq instanceof megamek.common.weapons.LegAttack ||
+                            eq instanceof megamek.common.weapons.SwarmAttack);
+                }
+
+                // Total up BV for weapons that require ammo. Streak-type missile systems get a
+                // discount. Ignore small craft, DropShips, and large space craft. Ignore infantry
+                // weapons except for field guns.
+                if (unitType < UnitType.SMALL_CRAFT) {
+                    double ammoFactor = 1.0;
+
+                    if (eq instanceof megamek.common.weapons.srms.StreakSRMWeapon ||
+                            eq instanceof megamek.common.weapons.lrms.StreakLRMWeapon ||
+                            ((WeaponType) eq).getAmmoType() == AmmoType.T_IATM) {
+                        ammoFactor = 0.4;
+                    }
+
+                    if (unitType == UnitType.INFANTRY || unitType == UnitType.BATTLE_ARMOR) {
+                        if (eq instanceof megamek.common.weapons.infantry.InfantryWeapon) {
+                            ammoFactor = 0.0;
+                        }
+                    }
+
+                    if  (ammoFactor > 0.0 && ((WeaponType) eq).getAmmoType() > megamek.common.AmmoType.T_NA) {
+                        ammoBV += eq.getBV(null) * ammoFactor * ms.getEquipmentQuantities().get(i);
+                    }
+
+                }
+
+                // Total up BV for weapons capable of attacking at the longest ranges or using
+                // indirect fire. Ignore small craft, DropShips, and other space craft.
+                if (unitType < UnitType.SMALL_CRAFT) {
+                    lrBV += getLongRangeModifier(eq) * eq.getBV(null) * ms.getEquipmentQuantities().get(i);
+                }
+
+                // Total up BV of weapons suitable for attacking at close range. Ignore small craft,
+                // DropShips, and other space craft. Also skip anti-Mech attacks.
+                if (unitType < UnitType.SMALL_CRAFT &&
+                        !(eq instanceof megamek.common.weapons.artillery.ArtilleryWeapon) &&
+                        !(eq instanceof megamek.common.weapons.SwarmAttack) &&
+                        !(eq instanceof megamek.common.weapons.SwarmWeaponAttack) &&
+                        !(eq instanceof megamek.common.weapons.LegAttack) &&
+                        !(eq instanceof megamek.common.weapons.StopSwarmAttack)) {
+                    srBV += getShortRangeModifier(eq) * eq.getBV(null) * ms.getEquipmentQuantities().get(i);
+                }
+
+                if (eq.hasFlag(WeaponType.F_TAG)) {
+                    roles.add(MissionRole.SPOTTER);
+                }
+                if (eq.hasFlag(WeaponType.F_C3M)) {
+                    networkMask |= NETWORK_C3_MASTER;
+                    if (ms.getEquipmentQuantities().get(i) > 1) {
+                        networkMask |= NETWORK_COMPANY_COMMAND;
+                    }
+                }
+                if (eq.hasFlag(WeaponType.F_C3MBS)) {
+                    networkMask |= NETWORK_BOOSTED_MASTER;
+                    if (ms.getEquipmentQuantities().get(i) > 1) {
+                        networkMask |= NETWORK_COMPANY_COMMAND;
+                    }
+                }
+            } else if (eq instanceof MiscType) {
+                if (eq.hasFlag(MiscType.F_UMU)) {
+                    movementMode = EntityMovementMode.BIPED_SWIM;
+                } else if (eq.hasFlag(MiscType.F_C3S)) {
+                    networkMask |= NETWORK_C3_SLAVE;
+                } else if (eq.hasFlag(MiscType.F_C3I)) {
+                    networkMask |= NETWORK_C3I;
+                } else if (eq.hasFlag(MiscType.F_C3SBS)) {
+                    networkMask |= NETWORK_BOOSTED_SLAVE;
+                } else if (eq.hasFlag(MiscType.F_NOVA)) {
+                    networkMask |= NETWORK_NOVA;
+                } else if (eq.hasFlag(MiscType.F_MAGNETIC_CLAMP)) {
+                    magClamp = true;
+                }
+            }
+        }
+
+        if (totalBV > 0 &&
+                (ms.getUnitType().equals("Mek") ||
+                        ms.getUnitType().equals("Tank") ||
+                        ms.getUnitType().equals("BattleArmor") ||
+                        ms.getUnitType().equals("Infantry") ||
+                        ms.getUnitType().equals("ProtoMek") ||
+                        ms.getUnitType().equals("Naval") ||
+                        ms.getUnitType().equals("Gun Emplacement"))) {
+            flak = flakBV / totalBV;
+            longRange = lrBV / totalBV;
+            srBVProportion = srBV / totalBV;
+            ammoRequirement = ammoBV / totalBV;
+        }
+
+        // Characterize unit as anti-personnel based on total equipment levels
+        if (totalBV > 0) {
+            apWeapons = apRating >= apThreshold;
+        }
+
+        weightClass = ms.getWeightClass();
+        if (weightClass >= EntityWeightClass.WEIGHT_SMALL_SUPPORT) {
+            if (ms.getTons() <= 39) {
+                weightClass = EntityWeightClass.WEIGHT_LIGHT;
+            } else if (ms.getTons() <= 59) {
+                weightClass = EntityWeightClass.WEIGHT_MEDIUM;
+            } else if (ms.getTons() <= 79) {
+                weightClass = EntityWeightClass.WEIGHT_HEAVY;
+            } else if (ms.getTons() <= 100) {
+                weightClass = EntityWeightClass.WEIGHT_ASSAULT;
+            } else {
+                weightClass = EntityWeightClass.WEIGHT_COLOSSAL;
+            }
+        }
+        clan = ms.isClan();
+        if (megamek.common.Engine.getEngineTypeByString(ms.getEngineName()) == megamek.common.Engine.XL_ENGINE
+                || ms.getArmorType().contains(EquipmentType.T_ARMOR_FERRO_FIBROUS)
+                || ms.getInternalsType() == EquipmentType.T_STRUCTURE_ENDO_STEEL) {
+            losTech = true;
+        }
+        starLeague = losTech && !clan;
+        speed = ms.getWalkMp();
+        if (ms.getJumpMp() > 0) {
+            speed++;
         }
 
     }

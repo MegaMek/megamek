@@ -118,17 +118,15 @@ public class ModelRecord extends AbstractUnitRecord {
                 totalBV += eq.getBV(null) * ms.getEquipmentQuantities().get(i);
 
                 // Check for use against airborne targets
-                switch (((megamek.common.weapons.Weapon) eq).getAmmoType()) {
-                    case AmmoType.T_AC_LBX:
-                    case AmmoType.T_HAG:
-                    case AmmoType.T_SBGAUSS:
-                        flakBV += eq.getBV(null) * ms.getEquipmentQuantities().get(i);
+                if (!(eq instanceof megamek.common.weapons.SwarmAttack) &&
+                        !(eq instanceof megamek.common.weapons.SwarmWeaponAttack) &&
+                        !(eq instanceof megamek.common.weapons.LegAttack) &&
+                        !(eq instanceof megamek.common.weapons.StopSwarmAttack)) {
+                    flakBV += getFlakBVModifier(eq) * eq.getBV(null) * ms.getEquipmentQuantities().get(i);
                 }
 
                 // Only add an artillery role if this model does not already have MIXED_ARTILLERY
                 if (eq.hasFlag(WeaponType.F_ARTILLERY)) {
-                    flakBV += eq.getBV(null) * ms.getEquipmentQuantities().get(i) / 2.0;
-
                     if (!roles.contains(MissionRole.MIXED_ARTILLERY)) {
                         roles.add(((WeaponType) eq).getAmmoType() == AmmoType.T_ARROW_IV ?
                                 MissionRole.MISSILE_ARTILLERY : MissionRole.ARTILLERY);
@@ -436,6 +434,37 @@ public class ModelRecord extends AbstractUnitRecord {
 
     public boolean getAntiMek(){
         return canAntiMek;
+    }
+
+    /**
+     * Get a BV modifier for a weapon for use against airborne targets
+     * @param check_weapon
+     * @return   Relative value from zero (not useful) to 1
+     */
+    private double getFlakBVModifier(EquipmentType check_weapon) {
+
+        double very_effective = 1.0;
+        double somewhat_effective = 0.5;
+        double not_effective = 0.2;
+        double ineffective = 0.0;
+
+        if (check_weapon instanceof megamek.common.weapons.artillery.ArtilleryWeapon) {
+            return somewhat_effective;
+        }
+        if (((megamek.common.weapons.Weapon) check_weapon).getAmmoType() == AmmoType.T_AC_LBX ||
+                ((megamek.common.weapons.Weapon) check_weapon).getAmmoType() == AmmoType.T_HAG ||
+                ((megamek.common.weapons.Weapon) check_weapon).getAmmoType() == AmmoType.T_SBGAUSS ||
+                check_weapon instanceof megamek.common.weapons.infantry.InfantrySupportMk2PortableAAWeapon) {
+            return very_effective;
+        } else if (check_weapon instanceof megamek.common.weapons.infantry.InfantryWeapon) {
+            return ineffective;
+        } else if (((WeaponType) check_weapon).getLongRange() >= 16) {
+            return somewhat_effective;
+        } else if (((WeaponType) check_weapon).getMediumRange() >= 8) {
+            return not_effective;
+        }
+
+        return ineffective;
     }
 
     /**

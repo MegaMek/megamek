@@ -27,6 +27,7 @@ import megamek.client.ui.swing.util.FontHandler;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.Entity;
 import megamek.common.MechView;
+import megamek.common.ViewFormatting;
 import megamek.common.annotations.Nullable;
 
 import javax.swing.*;
@@ -62,8 +63,10 @@ public class ConfigurableMechViewPanel extends JPanel {
         fontChooser.addActionListener(ev -> updateFont());
         fontChooser.setSelectedItem(GUIPreferences.getInstance().getSummaryFont());
 
-        copyHtmlButton.addActionListener(ev -> copyToClipboard(true));
-        copyTextButton.addActionListener(ev -> copyToClipboard(false));
+        copyHtmlButton.addActionListener(ev -> copyToClipboard(ViewFormatting.HTML));
+        copyTextButton.addActionListener(ev -> copyToClipboard(ViewFormatting.NONE));
+        // todo: create a copyDiscordButton
+        // The implementer of the Discord export cared only about the MML UI.
 
         mulButton.addActionListener(ev -> UIUtil.showMUL(mulId, this));
         mulButton.setToolTipText("Show the Master Unit List entry for this unit. Opens a browser window.");
@@ -123,9 +126,9 @@ public class ConfigurableMechViewPanel extends JPanel {
         mechViewPanel.reset();
     }
 
-    private void copyToClipboard(boolean asHtml) {
+    private void copyToClipboard(ViewFormatting formatting) {
         if (entity != null) {
-            MechView mechView = new MechView(entity, false, false, asHtml);
+            MechView mechView = new MechView(entity, false, false, formatting);
             StringSelection stringSelection = new StringSelection(mechView.getMechReadout());
             Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
             clipboard.setContents(stringSelection, null);

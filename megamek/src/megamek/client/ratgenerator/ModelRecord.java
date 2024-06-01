@@ -567,14 +567,7 @@ public class ModelRecord extends AbstractUnitRecord {
         }
 
         // Quick and dirty check for most indirect fire weapons
-        boolean isIndirect = (check_weapon instanceof megamek.common.weapons.lrms.LRMWeapon &&
-                !(check_weapon instanceof megamek.common.weapons.lrms.StreakLRMWeapon)) ||
-                check_weapon instanceof megamek.common.weapons.missiles.MMLWeapon ||
-                check_weapon instanceof megamek.common.weapons.missiles.ThunderBoltWeapon ||
-                check_weapon instanceof megamek.common.weapons.mortars.MekMortarWeapon ||
-                check_weapon instanceof megamek.common.weapons.infantry.InfantrySupportLRMWeapon ||
-                check_weapon instanceof megamek.common.weapons.infantry.InfantrySupportMortarHeavyWeapon ||
-                check_weapon instanceof megamek.common.weapons.infantry.InfantrySupportMortarLightWeapon;
+        boolean isIndirect = ((WeaponType) check_weapon).hasIndirectFire();
 
         if (((WeaponType) check_weapon).getLongRange() >= 20 ||
                 check_weapon instanceof megamek.common.weapons.artillery.ArtilleryWeapon) {

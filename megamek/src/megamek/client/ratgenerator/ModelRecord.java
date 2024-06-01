@@ -125,15 +125,6 @@ public class ModelRecord extends AbstractUnitRecord {
                     flakBV += getFlakBVModifier(eq) * eq.getBV(null) * ms.getEquipmentQuantities().get(i);
                 }
 
-                // If the unit has an artillery weapon but does not have an artillery role
-                // assume it is tactical support, and give it the MIXED_ARTILLERY role
-                if (eq.hasFlag(WeaponType.F_ARTILLERY) &&
-                        !roles.contains(MissionRole.ARTILLERY) &&
-                        !roles.contains(MissionRole.MISSILE_ARTILLERY) &&
-                        !roles.contains(MissionRole.MIXED_ARTILLERY)) {
-                    roles.add(MissionRole.MIXED_ARTILLERY);
-                }
-
                 // Don't check incendiary weapons for conventional infantry, fixed wing aircraft,
                 // and space-going units. Also, don't bother checking if it's already set or has
                 // the role.
@@ -436,6 +427,7 @@ public class ModelRecord extends AbstractUnitRecord {
     public boolean getAntiMek(){
         return canAntiMek;
     }
+
 
     /**
      * Get a BV modifier for a weapon for use against airborne targets

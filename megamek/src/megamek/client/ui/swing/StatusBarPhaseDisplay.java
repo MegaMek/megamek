@@ -133,7 +133,7 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
         GUIP.addPreferenceChangeListener(this);
         KeyBindParser.addPreferenceChangeListener(this);
 
-        clientgui.controller.registerCommandAction(KeyCommandBind.EXTEND_TURN_TIMER, this, this::extendTimer);
+        MegaMekGUI.getKeyDispatcher().registerCommandAction(KeyCommandBind.EXTEND_TURN_TIMER, this, this::extendTimer);
     }
 
 
@@ -331,7 +331,7 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
     }
 
     public void setStatusBarWithNotDonePlayers() {
-        Game game = clientgui.getClient().getGame();
+        IGame game = clientgui.getClient().getGame();
         if (game.getPhase().isReport()) {
             int playerCountToShow = GUIP.getPlayersRemainingToShow();
             List<Player> remainingPlayers = game.getPlayersList().stream()

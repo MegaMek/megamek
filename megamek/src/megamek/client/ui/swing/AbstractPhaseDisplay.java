@@ -113,9 +113,8 @@ public abstract class AbstractPhaseDisplay extends SkinnedJPanel implements
 
     /**
      * Tells the display to finish the current player turn and send all planned actions to the server.
-     * This is usually called by pressing h
      * Planned actions are e.g. movement, attacks or deployment. Usually, the planned actions are all
-     * actions that, together, make up a single unit's actions, e.g. all weapon attacks of one unit.
+     * actions that, together, make up a single unit's turn, e.g. all weapon attacks of one unit.
      */
     public abstract void ready();
 

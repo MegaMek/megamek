@@ -570,7 +570,9 @@ public class ModelRecord extends AbstractUnitRecord {
         boolean isIndirect = ((WeaponType) check_weapon).hasIndirectFire();
 
         if (((WeaponType) check_weapon).getLongRange() >= 20 ||
-                check_weapon instanceof megamek.common.weapons.artillery.ArtilleryWeapon) {
+                check_weapon instanceof megamek.common.weapons.artillery.ArtilleryWeapon ||
+                check_weapon instanceof megamek.common.weapons.missiles.MMLWeapon ||
+                check_weapon instanceof megamek.common.weapons.missiles.ATMWeapon) {
             return fullRange;
         } else if (((WeaponType) check_weapon).getMediumRange() >= 14) {
             if (isIndirect) {
@@ -621,7 +623,9 @@ public class ModelRecord extends AbstractUnitRecord {
                     return mediumRange;
                 }
             }
-            if (((WeaponType) check_weapon).getLongRange() <= 15) {
+            if (((WeaponType) check_weapon).getLongRange() <= 15 ||
+                    check_weapon instanceof megamek.common.weapons.missiles.MMLWeapon ||
+                    check_weapon instanceof megamek.common.weapons.missiles.ATMWeapon) {
                 return shortRange;
             }
         } else if (((WeaponType) check_weapon).getMinimumRange() <= 3) {

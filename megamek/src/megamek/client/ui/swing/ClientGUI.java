@@ -543,8 +543,6 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
 
         layoutFrame();
         menuBar.addActionListener(this);
-
-        bv.getPanel().addKeyListener(cb2);
         offBoardOverlay = new OffBoardTargetOverlay(this);
 
         aw = new AccessibilityWindow(this);

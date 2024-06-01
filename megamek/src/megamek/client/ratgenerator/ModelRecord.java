@@ -51,7 +51,9 @@ public class ModelRecord extends AbstractUnitRecord {
     private ArrayList<String> excludedFactions;
     private int networkMask;
     private double flak; //proportion of weapon BV that can fire flak ammo
-    private double longRange; //proportion of weapon BV with range >= 20 hexes
+    private double longRange; // Proportion of weapons BV with long range and/or indirect fire
+
+    private double srBVProportion; // Proportion of weapons BV with short range
     private int speed;
     private double ammoRequirement; //used to determine suitability for raider role
     private boolean incendiary; //used to determine suitability for incindiary role
@@ -89,6 +91,7 @@ public class ModelRecord extends AbstractUnitRecord {
         double totalBV = 0.0;
         double flakBV = 0.0;
         double lrBV = 0.0;
+        double srBV = 0.0;
         int apRating = 0;
         int apThreshold = 6;
         double ammoBV = 0.0;
@@ -200,6 +203,17 @@ public class ModelRecord extends AbstractUnitRecord {
                     lrBV += getLongRangeModifier(eq) * eq.getBV(null) * ms.getEquipmentQuantities().get(i);
                 }
 
+                // Total up BV of weapons suitable for attacking at close range. Ignore small craft,
+                // DropShips, and other space craft. Also skip anti-Mech attacks.
+                if (unitType < UnitType.SMALL_CRAFT &&
+                        !(eq instanceof megamek.common.weapons.artillery.ArtilleryWeapon) &&
+                        !(eq instanceof megamek.common.weapons.SwarmAttack) &&
+                        !(eq instanceof megamek.common.weapons.SwarmWeaponAttack) &&
+                        !(eq instanceof megamek.common.weapons.LegAttack) &&
+                        !(eq instanceof megamek.common.weapons.StopSwarmAttack)) {
+                    srBV += getShortRangeModifier(eq) * eq.getBV(null) * ms.getEquipmentQuantities().get(i);
+                }
+
                 if (eq.hasFlag(WeaponType.F_TAG)) {
                     roles.add(MissionRole.SPOTTER);
                 }
@@ -241,6 +255,7 @@ public class ModelRecord extends AbstractUnitRecord {
                         ms.getUnitType().equals("Gun Emplacement"))) {
             flak = flakBV / totalBV;
             longRange = lrBV / totalBV;
+            srBVProportion = srBV / totalBV;
             ammoRequirement = ammoBV / totalBV;
         }
 
@@ -324,6 +339,10 @@ public class ModelRecord extends AbstractUnitRecord {
 
     public double getLongRange() {
         return longRange;
+    }
+
+    public double getSRProportion() {
+        return srBVProportion;
     }
 
     public int getSpeed() {
@@ -472,9 +491,9 @@ public class ModelRecord extends AbstractUnitRecord {
     }
 
     /**
-     * Get a modified BV for a weapon for use at long range
+     * Get a BV modifier for a weapon for use at long range
      * @param check_weapon
-     * @return   between zero (not a long ranged weapon) and weapon_bv
+     * @return   between zero (not a long ranged weapon) and 1
      */
     private double getLongRangeModifier(EquipmentType check_weapon) {
 
@@ -512,6 +531,38 @@ public class ModelRecord extends AbstractUnitRecord {
         }
 
         return shortRange;
+    }
+
+    /**
+     * Get a BV modifier for a weapon for use at short range
+     * @param check_weapon
+     * @return   between zero (not a short ranged weapon) and 1
+     */
+    private  double getShortRangeModifier (EquipmentType check_weapon) {
+
+        double shortRange = 1.0;
+        double mediumRange = 0.6;
+        double longRange = 0.0;
+
+        if (((WeaponType) check_weapon).getMinimumRange() <= 0)
+        {
+            if (check_weapon instanceof megamek.common.weapons.infantry.InfantryWeapon) {
+                if (((WeaponType) check_weapon).getLongRange() <= 6){
+                    return shortRange;
+                } else if (((WeaponType) check_weapon).getLongRange() <= 12) {
+                    return mediumRange;
+                }
+            }
+            if (((WeaponType) check_weapon).getLongRange() <= 15) {
+                return shortRange;
+            }
+        } else if (((WeaponType) check_weapon).getMinimumRange() <= 3) {
+            if (((WeaponType) check_weapon).getLongRange() <= 15) {
+                return mediumRange;
+            }
+        }
+
+        return longRange;
     }
 
 }

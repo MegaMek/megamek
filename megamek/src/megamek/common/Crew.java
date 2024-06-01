@@ -1,21 +1,20 @@
 /*
-* MegaMek -
-* Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
-* Copyright (C) 2018 - The MegaMek Team. All Rights Reserved.
-*
-* This program is free software; you can redistribute it and/or modify it under
-* the terms of the GNU General Public License as published by the Free Software
-* Foundation; either version 2 of the License, or (at your option) any later
-* version.
-*
-* This program is distributed in the hope that it will be useful, but WITHOUT
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
-* details.
-*/
+ * MegaMek -
+ * Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2018 - The MegaMek Team. All Rights Reserved.
+ *
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later
+ * version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ */
 package megamek.common;
 
-import megamek.client.generator.RandomGenderGenerator;
 import megamek.client.ui.swing.tooltip.PilotToolTip;
 import megamek.codeUtilities.MathUtility;
 import megamek.common.enums.Gender;
@@ -69,7 +68,7 @@ public class Crew implements Serializable {
     private boolean ejected;
 
     // StratOps fatigue points
-    private int fatiguePoints;
+    private final int[] fatigue;
     // also need to track turns for fatigue by pilot because some may have later deployment
     private int fatigueTurnCount;
 
@@ -240,8 +239,8 @@ public class Crew implements Serializable {
         dead = new boolean[slots];
         missing = new boolean[slots];
         koThisRound = new boolean[slots];
-        fatiguePoints = 0;
         toughness = new int[slots];
+        fatigue = new int[slots];
 
         options.initialize();
 
@@ -367,7 +366,7 @@ public class Crew implements Serializable {
     public int getSize() {
         return size;
     }
-    
+
     /**
      * The currentsize of this crew.
      *
@@ -514,7 +513,7 @@ public class Crew implements Serializable {
     public int getHits() {
         return Arrays.stream(hits).min().orElse(0);
     }
-    
+
     /**
      * Uses the table on TO p206 to calculate the number of crew hits based on percentage
      * of total casualties. Used for ejection, boarding actions and such
@@ -563,7 +562,7 @@ public class Crew implements Serializable {
     public void setSize(int newSize) {
         size = newSize;
     }
-    
+
     /**
      * Accessor method to set the current crew size.
      *
@@ -1022,9 +1021,20 @@ public class Crew implements Serializable {
         return fatigueTurnCount >= getGunneryFatigueTurn();
     }
 
-    /** Returns the modifier for the TO:AR p.166 fatigue turn thresholds from CamOps p.219 fatigue points. */
+    /**
+     * Returns the modifier for the TO:AR p.166 fatigue turn thresholds from CamOps p.219 fatigue points.
+     * For multi-crewed Units, we average the fatigue modifier
+     *
+     * @return The fatigue modifier for the unit.
+     */
     private int CamOpsFatigueTurnModifier() {
-        return -MathUtility.clamp((fatiguePoints - 1) / 4, 0, 4);
+        int fatigueModifier = 0;
+
+        for (int i = 0; i < getSlotCount(); i++) {
+            fatigueModifier = MathUtility.clamp((fatigue[i] - 1) / 4, 0, 4);
+        }
+
+        return -(fatigueModifier / getSlotCount());
     }
 
     /** Returns the rating used for TO:AR p.166 fatigue. */
@@ -1093,12 +1103,22 @@ public class Crew implements Serializable {
         toughness[pos] = t;
     }
 
+    @Deprecated
     public int getFatigue() {
-        return fatiguePoints;
+        return fatigue[0];
     }
 
-    public void setFatigue(int i) {
-        fatiguePoints = i;
+    @Deprecated
+    public void setFatigue(int fatigue) {
+        this.fatigue[0] = fatigue;
+    }
+
+    public int getCrewFatigue(int pos) {
+        return fatigue[pos];
+    }
+
+    public void setCrewFatigue(int fatigue, int position) {
+        this.fatigue[position] = fatigue;
     }
 
     public void incrementFatigueCount() {

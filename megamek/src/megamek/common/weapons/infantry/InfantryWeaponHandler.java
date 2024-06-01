@@ -204,7 +204,8 @@ public class InfantryWeaponHandler extends WeaponHandler {
             return ((Infantry) ae).getDamagePerTrooper();
         } else if (ae.isSupportVehicle()) {
             // Damage for some weapons depends on what type of ammo is being used
-            if (((AmmoType) weapon.getLinked().getType()).getMunitionType().contains(AmmoType.Munitions.M_INFERNO)) {
+            if ((weapon.getLinked() != null)
+                    && ((AmmoType) weapon.getLinked().getType()).getMunitionType().contains(AmmoType.Munitions.M_INFERNO)) {
                 return ((InfantryWeapon) wtype).getInfernoVariant().getInfantryDamage();
             } else {
                 return ((InfantryWeapon) wtype).getNonInfernoVariant().getInfantryDamage();

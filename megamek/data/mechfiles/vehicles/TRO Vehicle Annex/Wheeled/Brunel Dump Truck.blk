@@ -1,13 +1,4 @@
-#building block data file
-<BlockVersion>
-1
-</BlockVersion>
-
-##Write the version number just in case...
-<Version>
-MAM0
-</Version>
-
+#Saved from version 0.49.19.1 on 2024-05-26
 <UnitType>
 LargeSupportTank
 </UnitType>
@@ -45,6 +36,7 @@ Wheeled
 </motion_type>
 
 <transporters>
+cargobay:50.0:1:0::-1:0
 </transporters>
 
 <cruiseMP>
@@ -54,6 +46,14 @@ Wheeled
 <engine_type>
 1
 </engine_type>
+
+<armor_type>
+47
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
 
 <armor>
 21
@@ -86,7 +86,6 @@ Backhoe
 
 <Rear Equipment>
 Dumper (Rear)
-Cargo:SIZE:50.0
 </Rear Equipment>
 
 <barrating>

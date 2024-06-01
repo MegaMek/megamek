@@ -512,7 +512,8 @@ public class ModelRecord extends AbstractUnitRecord {
                 check_weapon instanceof megamek.common.weapons.infantry.InfantrySupportMortarHeavyWeapon ||
                 check_weapon instanceof megamek.common.weapons.infantry.InfantrySupportMortarLightWeapon;
 
-        if (((WeaponType) check_weapon).getLongRange() >= 20) {
+        if (((WeaponType) check_weapon).getLongRange() >= 20 ||
+                check_weapon instanceof megamek.common.weapons.artillery.ArtilleryWeapon) {
             return fullRange;
         } else if (((WeaponType) check_weapon).getMediumRange() >= 14) {
             if (isIndirect) {

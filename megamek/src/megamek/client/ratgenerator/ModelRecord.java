@@ -384,21 +384,25 @@ public class ModelRecord extends AbstractUnitRecord {
                     srBV += getShortRangeModifier(eq) * eq.getBV(null) * ms.getEquipmentQuantities().get(i);
                 }
 
+                // Add the spotter role to all units which carry TAG
                 if (eq.hasFlag(WeaponType.F_TAG)) {
                     roles.add(MissionRole.SPOTTER);
                 }
+
+                // Check for C3 master units. These are bit-masked values.
                 if (eq.hasFlag(WeaponType.F_C3M)) {
                     networkMask |= NETWORK_C3_MASTER;
                     if (ms.getEquipmentQuantities().get(i) > 1) {
                         networkMask |= NETWORK_COMPANY_COMMAND;
                     }
-                }
-                if (eq.hasFlag(WeaponType.F_C3MBS)) {
+                } else if (eq.hasFlag(WeaponType.F_C3MBS)) {
                     networkMask |= NETWORK_BOOSTED_MASTER;
                     if (ms.getEquipmentQuantities().get(i) > 1) {
                         networkMask |= NETWORK_COMPANY_COMMAND;
                     }
                 }
+
+            // Various non-weapon equipment
             } else if (eq instanceof MiscType) {
                 if (eq.hasFlag(MiscType.F_UMU)) {
                     movementMode = EntityMovementMode.BIPED_SWIM;

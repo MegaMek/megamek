@@ -80,13 +80,9 @@ public class ModelRecord extends AbstractUnitRecord {
         mechSummary = ms;
         unitType = parseUnitType(ms.getUnitType());
         introYear = ms.getYear();
-        if (unitType == UnitType.MEK) {
-            //TODO: id quads and tripods
-            movementMode = EntityMovementMode.BIPED;
-            omni = ms.getUnitSubType().equals("Omni");
-        } else {
-            movementMode = EntityMovementMode.parseFromString(ms.getUnitSubType().toLowerCase());
-        }
+
+        analyzeModel(ms);
+
 
         double totalBV = 0.0;
         double flakBV = 0.0;
@@ -126,10 +122,8 @@ public class ModelRecord extends AbstractUnitRecord {
                 }
 
                 // Don't check incendiary weapons for conventional infantry, fixed wing aircraft,
-                // and space-going units. Also, don't bother checking if it's already set or has
-                // the role.
-                if (!roles.contains(MissionRole.INCENDIARY) &&
-                        !incendiary &&
+                // and space-going units
+                if (!incendiary &&
                         (unitType < UnitType.CONV_FIGHTER && unitType != UnitType.INFANTRY)) {
                     if (eq instanceof megamek.common.weapons.flamers.FlamerWeapon ||
                             eq instanceof megamek.common.weapons.battlearmor.BAFlamerWeapon ||
@@ -428,6 +422,24 @@ public class ModelRecord extends AbstractUnitRecord {
         return canAntiMek;
     }
 
+
+    /**
+     * Checks the equipment carried by this unit and summarizes it in a variety of easy to access
+     * data
+     * @param ms   Data for unit
+     */
+    private void analyzeModel (MechSummary ms) {
+
+        if (unitType == UnitType.MEK) {
+            //TODO: id quads and tripods
+            movementMode = EntityMovementMode.BIPED;
+            omni = ms.getUnitSubType().equals("Omni");
+        } else {
+            movementMode = EntityMovementMode.parseFromString(ms.getUnitSubType().toLowerCase());
+        }
+
+
+    }
 
     /**
      * Get a BV modifier for a weapon for use against airborne targets

@@ -1,13 +1,4 @@
-#building block data file
-<BlockVersion>
-1
-</BlockVersion>
-
-##Write the version number just in case...
-<Version>
-MAM0
-</Version>
-
+#Saved from version 0.49.19.1 on 2024-05-26
 <UnitType>
 Tank
 </UnitType>
@@ -45,6 +36,7 @@ Wheeled
 </motion_type>
 
 <transporters>
+cargobay:0.5:1:0::-1:0
 </transporters>
 
 <cruiseMP>
@@ -63,7 +55,6 @@ Wheeled
 </armor>
 
 <Body Equipment>
-Cargo:SIZE:0.5
 </Body Equipment>
 
 <Front Equipment>

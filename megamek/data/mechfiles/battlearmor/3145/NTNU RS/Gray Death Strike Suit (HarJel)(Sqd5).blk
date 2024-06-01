@@ -1,12 +1,7 @@
-#building block data file
+#Saved from version 0.49.17 on 2024-02-13
 <BlockVersion>
 1
 </BlockVersion>
-
-# Write the version number just in case...
-<Version>
-MAM0
-</Version>
 
 <UnitType>
 BattleArmor
@@ -28,13 +23,17 @@ Gray Death Strike Suit
 3107
 </year>
 
+<originalBuildYear>
+3107
+</originalBuildYear>
+
 <type>
-IS Level 2
+Mixed (Clan Chassis)
 </type>
 
-<role>
-Ambusher
-</role>
+<quirks>
+distracting
+</quirks>
 
 <motion_type>
 Leg
@@ -49,13 +48,12 @@ Leg
 </armor_type>
 
 <armor_tech>
-11
+1
 </armor_tech>
 
-<Squad Equipment>
+<Point Equipment>
 ISBAFireDrakeNeedler:RA
-ISBALightTAG:LA
-ISBASRM3:Body
+CLBALightTAG:LA
 BA-SRM3 Ammo:Body:Shots4#
 BABasicManipulator:LA
 BABasicManipulator:RA
@@ -63,44 +61,36 @@ SwarmMek
 SwarmWeaponMek
 StopSwarm
 LegAttack
-IS BA Advanced:LA
-IS BA Advanced:LA
-IS BA Advanced:RA
-IS BA Advanced:RA
-IS BA Advanced:Body
-</Squad Equipment>
+BA Advanced:Body
+BA Advanced:RA
+BA Advanced:RA
+BA Advanced:LA
+BA Advanced:LA
+CLBASRM3:Body
+</Point Equipment>
 
-<source>
-Record Sheets: 3145 New Tech New Upgrades
-</source>
+<Trooper 1 Equipment>
+</Trooper 1 Equipment>
 
-<chassis>
-biped
-</chassis>
+<Trooper 2 Equipment>
+</Trooper 2 Equipment>
 
-<jumpingMP>
-0
-</jumpingMP>
+<Trooper 3 Equipment>
+</Trooper 3 Equipment>
 
-<armor>
-9
-</armor>
+<Trooper 4 Equipment>
+</Trooper 4 Equipment>
 
-<Trooper Count>
-4
-</Trooper Count>
-
-<weightclass>
-2
-</weightclass>
-
-<overview>
-Gray Death Strike battle armor is a production version of the prototype. 
-</overview>
+<Trooper 5 Equipment>
+</Trooper 5 Equipment>
 
 <capabilities>
 Defiance Industries wasn't able to secure a source of the advanced Clan Improved SRM Launcher used on the prototype. As a result, Defiance used a single SRM-3 with two reloads. To make room for this the Gray Death Strike Suit replaced the Battle Claws of the prototype with Basic Manipulators. The launcher can be jettisoned as well, allowing the unit to move slightly more quickly. The Light TAG system mounted in the arm allows armor that has jettisoned the SRM launcher to remain useful on the battlefield, designating enemy units for artillery and missile strikes.
 </capabilities>
+
+<overview>
+Gray Death Strike battle armor is a production version of the prototype.
+</overview>
 
 <deployment>
 This Dark Age era variant of Gray Death Strike Suit uses the same armor and equipment as the standard Gray Death Strike Suit, but is also equipped with HarJel to protect the user. A Firedrake Needler is also present for anti-infantry work.
@@ -109,10 +99,6 @@ This Dark Age era variant of Gray Death Strike Suit uses the same armor and equi
 <history>
 The Jihad stopped production at the Gray Death Technologies plants, and then Defiance Industries took over production. Defiance then moved production of the battle armor to Furillo, which slowed production even more. After the Gray Death Technology plant was destroyed in 3074, it would be six years before Defiance produced a new Gray Death Strike suit.
 </history>
-
-<notes>
-BA Harjel not coded. Unit included for completeness
-</notes>
 
 <manufacturer>
 Defiance Industries
@@ -131,7 +117,31 @@ COMMUNICATIONS:Unknown
 TARGETING:Unknown
 </systemManufacturers>
 
-<quirks>
-distracting
-</quirks>
+<notes>
+BA Harjel not coded. Unit included for completeness
+</notes>
+
+<source>
+Record Sheets: 3145 New Tech New Upgrades
+</source>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+0
+</jumpingMP>
+
+<armor>
+9
+</armor>
+
+<Trooper Count>
+5
+</Trooper Count>
+
+<weightclass>
+2
+</weightclass>
 

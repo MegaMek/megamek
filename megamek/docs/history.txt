@@ -54,6 +54,7 @@ MEGAMEK VERSION HISTORY:
 + PR #5525: Force generator data updates to basic APCs, recovery vehicles, and some civilian units to make them no longer appear in combat OpFor units
 + PR #5531: Harjel can now be added to support vehicles in accordance with the rules
 + PR #5533: Units can now be copied to clipboard with discord-formatting applied
++ Data: Fixes for #5514, #5469, #5460, #5223, #5194 (again), #5162
 
 0.49.19.1 (2024-05-14 1800 UTC)
 + Milestone Release. Backported fixes.

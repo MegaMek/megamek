@@ -1,13 +1,4 @@
-#building block data file
-<BlockVersion>
-1
-</BlockVersion>
-
-# Write the version number just in case...
-<Version>
-MAM0
-</Version>
-
+#Saved from version 0.49.19.1 on 2024-05-26
 <UnitType>
 Tank
 </UnitType>
@@ -17,6 +8,7 @@ Tenmaku Command Trailer
 </Name>
 
 <Model>
+
 </Model>
 
 <mul id:>
@@ -26,6 +18,10 @@ Tenmaku Command Trailer
 <year>
 3086
 </year>
+
+<originalBuildYear>
+3086
+</originalBuildYear>
 
 <type>
 IS Level 3
@@ -37,6 +33,7 @@ Wheeled
 
 <transporters>
 troopspace:8.0
+cargobay:5.0:1:0::-1:0
 </transporters>
 
 <cruiseMP>
@@ -67,9 +64,8 @@ troopspace:8.0
 ISC3MasterUnit
 ISC3MasterUnit
 ISGuardianECMSuite
-Communications Equipment (10 ton)
+Communications Equipment:SIZE:10.0
 ISCASE
-Cargo (5 tons)
 ISAMS Ammo
 ISAMS Ammo
 ISAMS Ammo
@@ -111,3 +107,4 @@ TRO: 3085 Supplemental
 <trailer>
 1
 </trailer>
+

@@ -1,15 +1,14 @@
-#Saved from version 0.49.16-SNAPSHOT on 2023-12-16
-Version:1.1
-Loki Mk II (Hel)
-D
+generator:MegaMek Suite 0.49.20-SNAPSHOT on 2024-06-01
+chassis:Loki Mk II (Hel)
+model:D
+mul id:9572
 
 Config:Biped Omnimech
 techbase:Clan
 era:3132
+source:Rec Guide:ilClan #33
 rules level:2
 role:Skirmisher
-source:Rec Guide:ilClan #33
-mul id:9572
 
 
 mass:65
@@ -39,11 +38,11 @@ RTC armor:7
 
 Weapons:7
 Improved Heavy Medium Laser, Left Arm
-Plasma Cannon, Left Arm
 LRM 15, Left Arm
+Plasma Cannon, Left Arm
 Improved Heavy Medium Laser, Right Arm
-Plasma Cannon, Right Arm
 LRM 15, Right Arm
+Plasma Cannon, Right Arm
 ER Large Laser, Right Torso
 
 Left Arm:

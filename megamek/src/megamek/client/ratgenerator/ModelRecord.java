@@ -420,23 +420,15 @@ public class ModelRecord extends AbstractUnitRecord {
             }
         }
 
-        if (totalBV > 0 &&
-                (ms.getUnitType().equals("Mek") ||
-                        ms.getUnitType().equals("Tank") ||
-                        ms.getUnitType().equals("BattleArmor") ||
-                        ms.getUnitType().equals("Infantry") ||
-                        ms.getUnitType().equals("ProtoMek") ||
-                        ms.getUnitType().equals("Naval") ||
-                        ms.getUnitType().equals("Gun Emplacement"))) {
+        // Calculate BV proportions for all ground units, VTOL, blue water naval, and
+        // fixed wing aircraft. Exclude Small craft, DropShips, and large space craft.
+        if (totalBV > 0 && unitType <= UnitType.AEROSPACEFIGHTER) {
             flak = flakBV / totalBV;
             artilleryBVProportion = artilleryBV/totalBV;
             longRange = lrBV / totalBV;
             srBVProportion = srBV / totalBV;
             ammoRequirement = ammoBV / totalBV;
-        }
 
-        // Characterize unit as anti-personnel based on total equipment levels
-        if (totalBV > 0) {
             apWeapons = apRating >= apThreshold;
         }
 

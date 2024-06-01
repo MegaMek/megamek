@@ -547,7 +547,7 @@ public class ModelRecord extends AbstractUnitRecord {
 
     /**
      * Get a BV modifier for a weapon for use at long range
-     * @param check_weapon
+     * @param check_weapon   Weapon to check
      * @return   between zero (not a long ranged weapon) and 1
      */
     private double getLongRangeModifier(EquipmentType check_weapon) {
@@ -556,6 +556,15 @@ public class ModelRecord extends AbstractUnitRecord {
         double partialRange = 0.8;
         double minRange = 0.4;
         double shortRange = 0.0;
+
+        if (unitType == UnitType.CONV_FIGHTER || unitType == UnitType.AEROSPACEFIGHTER) {
+            if (((WeaponType) check_weapon).getExtAV() > 0 ||
+                    ((WeaponType) check_weapon).getLongAV() > 0) {
+                return fullRange;
+            } else {
+                return shortRange;
+            }
+        }
 
         // Quick and dirty check for most indirect fire weapons
         boolean isIndirect = (check_weapon instanceof megamek.common.weapons.lrms.LRMWeapon &&
@@ -591,7 +600,7 @@ public class ModelRecord extends AbstractUnitRecord {
 
     /**
      * Get a BV modifier for a weapon for use at short range
-     * @param check_weapon
+     * @param check_weapon   Weapon to check
      * @return   between zero (not a short ranged weapon) and 1
      */
     private  double getShortRangeModifier (EquipmentType check_weapon) {
@@ -599,6 +608,16 @@ public class ModelRecord extends AbstractUnitRecord {
         double shortRange = 1.0;
         double mediumRange = 0.6;
         double longRange = 0.0;
+
+        if (unitType == UnitType.CONV_FIGHTER || unitType == UnitType.AEROSPACEFIGHTER) {
+            if (((WeaponType) check_weapon).getMedAV() == 0) {
+                return shortRange;
+            } else if (((WeaponType) check_weapon).getLongAV() == 0) {
+                return mediumRange;
+            } else {
+                return longRange;
+            }
+        }
 
         if (((WeaponType) check_weapon).getMinimumRange() <= 0)
         {

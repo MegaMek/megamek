@@ -2931,6 +2931,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
 
     @Nullable
     @Override
+    //FIXME: rename this. it's the viewed unit, not the selected unit
     public Entity getSelectedUnit() {
         return client.getGame().getEntity(selectedEntityNum);
     }

@@ -51,6 +51,8 @@ public class ModelRecord extends AbstractUnitRecord {
     private ArrayList<String> excludedFactions;
     private int networkMask;
     private double flak; //proportion of weapon BV that can fire flak ammo
+
+    private double artilleryBVProportion;
     private double longRange; // Proportion of weapons BV with long range and/or indirect fire
 
     private double srBVProportion; // Proportion of weapons BV with short range
@@ -129,6 +131,10 @@ public class ModelRecord extends AbstractUnitRecord {
     }
     public void setFlak(double flak) {
         this.flak = flak;
+    }
+
+    public double getArtilleryProportion () {
+        return artilleryBVProportion;
     }
 
     public double getLongRange() {
@@ -257,13 +263,16 @@ public class ModelRecord extends AbstractUnitRecord {
 
         double totalBV = 0.0;
         double flakBV = 0.0;
+        double artilleryBV = 0.0;
         double lrBV = 0.0;
         double srBV = 0.0;
         int apRating = 0;
         int apThreshold = 6;
         double ammoBV = 0.0;
         boolean losTech = false;
+
         for (int i = 0; i < ms.getEquipmentNames().size(); i++) {
+
             //EquipmentType.get is throwing an NPE intermittently, and the only possibility I can see
             //is that there is a null equipment name.
             if (null == ms.getEquipmentNames().get(i)) {
@@ -276,6 +285,7 @@ public class ModelRecord extends AbstractUnitRecord {
             if (eq == null) {
                 continue;
             }
+
             if (!eq.isAvailableIn(3000, false)) {
                 //FIXME: needs to filter out primitive
                 losTech = true;
@@ -290,6 +300,11 @@ public class ModelRecord extends AbstractUnitRecord {
                         !(eq instanceof megamek.common.weapons.LegAttack) &&
                         !(eq instanceof megamek.common.weapons.StopSwarmAttack)) {
                     flakBV += getFlakBVModifier(eq) * eq.getBV(null) * ms.getEquipmentQuantities().get(i);
+                }
+
+                // Check for artillery weapons
+                if ((eq instanceof megamek.common.weapons.artillery.ArtilleryWeapon)) {
+                    artilleryBV += eq.getBV(null) * ms.getEquipmentQuantities().get(i);
                 }
 
                 // Don't check incendiary weapons for conventional infantry, fixed wing aircraft,
@@ -410,6 +425,7 @@ public class ModelRecord extends AbstractUnitRecord {
                         ms.getUnitType().equals("Naval") ||
                         ms.getUnitType().equals("Gun Emplacement"))) {
             flak = flakBV / totalBV;
+            artilleryBVProportion = artilleryBV/totalBV;
             longRange = lrBV / totalBV;
             srBVProportion = srBV / totalBV;
             ammoRequirement = ammoBV / totalBV;

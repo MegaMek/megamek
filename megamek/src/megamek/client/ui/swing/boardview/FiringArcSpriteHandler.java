@@ -61,10 +61,9 @@ public class FiringArcSpriteHandler extends BoardViewSpriteHandler implements IP
      * Updates the facing that is used for aligning the field of fire.
      * Does not change the assumed unit, position weapon and arc.
      *
-     * @param facing The unit's facing
      */
-    public void updateFacing(int facing) {
-        this.facing = facing;
+    public void updateWeaponFacing(WeaponMounted weapon) {
+        updateFacing(weapon);
         renewSprites();
     }
 
@@ -88,7 +87,7 @@ public class FiringArcSpriteHandler extends BoardViewSpriteHandler implements IP
     public void updatePosition(MovePath movePath) {
         firingPosition = movePath.getFinalCoords();
         facing = movePath.getFinalFacing();
-        isUnderWater=testUnderWater(movePath);
+        isUnderWater = testUnderWater(movePath);
         renewSprites();
     }
 
@@ -104,9 +103,9 @@ public class FiringArcSpriteHandler extends BoardViewSpriteHandler implements IP
         this.firingEntity = firingEntity;
         arc = firingEntity.getWeaponArc(clientGUI.getSelectedWeaponId());
         findRanges(weapon);
-        updateFacing(weapon);
         if (firingPosition == null) {
             firingPosition = firingEntity.getPosition();
+            updateFacing(weapon);
         }
         renewSprites();
     }

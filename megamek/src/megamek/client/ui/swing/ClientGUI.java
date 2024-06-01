@@ -2974,16 +2974,17 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
     }
 
     /**
-     * Updates the facing used for showing the field of fire to the basic facing of the given unit. This
-     * method does nothing if the given entity is not the one viewed in the unit viewer (and therefore
-     * not the one for which a weapon field of fire is currently shown).
+     * Updates the facing used for showing the field of fire to either the basic facing of the given unit
+     * or the secondary facing, depending on the currently selected weapon.
+     * This method does nothing if the given entity is not the one viewed in the unit viewer (and therefore
+     * not the one for which a weapon field of fire is currently shown) or if there is no weapon selected.
      *
      * @param entity The unit to take the facing from if it is the currently viewed unit
      */
     public void setFiringArcFacing(Entity entity) {
         // Only update when the selected weapon is on the unit that's changing its facing
-        if (entity.getId() == getSelectedEntityNum()) {
-            firingArcSpriteHandler.updateFacing(entity.getFacing());
+        if ((entity.getId() == getSelectedEntityNum()) && hasSelectedWeapon()) {
+            firingArcSpriteHandler.updateWeaponFacing(getSelectedWeapon());
         }
     }
 

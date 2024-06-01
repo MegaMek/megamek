@@ -294,8 +294,10 @@ public class ModelRecord extends AbstractUnitRecord {
             if (eq instanceof WeaponType) {
                 totalBV += eq.getBV(null) * ms.getEquipmentQuantities().get(i);
 
-                // Check for use against airborne targets
-                if (!(eq instanceof megamek.common.weapons.SwarmAttack) &&
+                // Check for use against airborne targets. Ignore small craft, DropShips, and other
+                // large space craft.
+                if (unitType < UnitType.SMALL_CRAFT &&
+                        !(eq instanceof megamek.common.weapons.SwarmAttack) &&
                         !(eq instanceof megamek.common.weapons.SwarmWeaponAttack) &&
                         !(eq instanceof megamek.common.weapons.LegAttack) &&
                         !(eq instanceof megamek.common.weapons.StopSwarmAttack)) {
@@ -474,6 +476,16 @@ public class ModelRecord extends AbstractUnitRecord {
         double not_effective = 0.2;
         double ineffective = 0.0;
 
+        if (unitType == UnitType.CONV_FIGHTER || unitType == UnitType.AEROSPACEFIGHTER) {
+            if (((megamek.common.weapons.Weapon) check_weapon).getAmmoType() == AmmoType.T_AC_LBX ||
+                    ((megamek.common.weapons.Weapon) check_weapon).getAmmoType() == AmmoType.T_HAG ||
+                    ((megamek.common.weapons.Weapon) check_weapon).getAmmoType() == AmmoType.T_SBGAUSS) {
+                return very_effective;
+            } else {
+                return ineffective;
+            }
+        }
+
         if (check_weapon instanceof megamek.common.weapons.artillery.ArtilleryWeapon) {
             return somewhat_effective;
         }
@@ -559,7 +571,9 @@ public class ModelRecord extends AbstractUnitRecord {
 
         if (unitType == UnitType.CONV_FIGHTER || unitType == UnitType.AEROSPACEFIGHTER) {
             if (((WeaponType) check_weapon).getExtAV() > 0 ||
-                    ((WeaponType) check_weapon).getLongAV() > 0) {
+                    ((WeaponType) check_weapon).getLongAV() > 0 ||
+                    check_weapon instanceof megamek.common.weapons.missiles.MMLWeapon ||
+                    check_weapon instanceof megamek.common.weapons.missiles.ATMWeapon) {
                 return fullRange;
             } else {
                 return shortRange;
@@ -605,7 +619,9 @@ public class ModelRecord extends AbstractUnitRecord {
         double longRange = 0.0;
 
         if (unitType == UnitType.CONV_FIGHTER || unitType == UnitType.AEROSPACEFIGHTER) {
-            if (((WeaponType) check_weapon).getMedAV() == 0) {
+            if (((WeaponType) check_weapon).getMedAV() == 0 ||
+                    check_weapon instanceof megamek.common.weapons.missiles.MMLWeapon ||
+                    check_weapon instanceof megamek.common.weapons.missiles.ATMWeapon) {
                 return shortRange;
             } else if (((WeaponType) check_weapon).getLongAV() == 0) {
                 return mediumRange;

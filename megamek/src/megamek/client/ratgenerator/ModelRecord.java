@@ -302,8 +302,10 @@ public class ModelRecord extends AbstractUnitRecord {
                     flakBV += getFlakBVModifier(eq) * eq.getBV(null) * ms.getEquipmentQuantities().get(i);
                 }
 
-                // Check for artillery weapons
-                if ((eq instanceof megamek.common.weapons.artillery.ArtilleryWeapon)) {
+                // Check for artillery weapons. Ignore aerospace fighters, small craft, and large
+                // space craft.
+                if (unitType <= UnitType.CONV_FIGHTER &&
+                        eq instanceof megamek.common.weapons.artillery.ArtilleryWeapon) {
                     artilleryBV += eq.getBV(null) * ms.getEquipmentQuantities().get(i);
                 }
 

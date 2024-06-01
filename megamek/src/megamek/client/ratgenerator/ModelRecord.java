@@ -481,6 +481,8 @@ public class ModelRecord extends AbstractUnitRecord {
                     ((megamek.common.weapons.Weapon) check_weapon).getAmmoType() == AmmoType.T_HAG ||
                     ((megamek.common.weapons.Weapon) check_weapon).getAmmoType() == AmmoType.T_SBGAUSS) {
                 return very_effective;
+            } else if (((WeaponType) check_weapon).getMedAV() >= 10) {
+                return somewhat_effective;
             } else {
                 return ineffective;
             }

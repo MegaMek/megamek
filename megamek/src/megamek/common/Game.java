@@ -73,11 +73,6 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     private final Map<Coords, HashSet<Integer>> entityPosLookup = new HashMap<>();
 
     /**
-     * have the entities been deployed?
-     */
-    private boolean deploymentComplete = false;
-
-    /**
      * how's the weather?
      */
     private PlanetaryConditions planetaryConditions = new PlanetaryConditions();

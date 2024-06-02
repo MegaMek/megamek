@@ -15,7 +15,6 @@ package megamek.server;
 
 import megamek.common.IGame;
 import megamek.common.Player;
-import megamek.common.Report;
 import megamek.common.ReportEntry;
 import megamek.common.net.packets.Packet;
 import megamek.server.commands.ServerCommand;
@@ -39,7 +38,8 @@ public interface IGameManager {
     void setGame(IGame g);
 
     /**
-     * Resets the {@link IGame game} instance.
+     * Resets the {@link IGame game} instance. Resetting the game removes all content and returns to
+     * the lobby but keeps connected players.
      */
     void resetGame();
 
@@ -102,6 +102,11 @@ public interface IGameManager {
      */
     void handlePacket(int connId, Packet packet);
 
+    /**
+     * Handle CFR packets.
+     * //TODO: This concerns multi-threaded code and should be centralized!
+     * @param rp the CFR packet returned from a client
+     */
     void handleCfrPacket(Server.ReceivedPacket rp);
 
     void requestGameMaster(Player player);

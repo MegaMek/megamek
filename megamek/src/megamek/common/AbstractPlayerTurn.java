@@ -18,6 +18,10 @@
  */
 package megamek.common;
 
+/**
+ * This is a basic implementation of PlayerTurn to extend other turn types from. It is suitable for
+ * all game types.
+ */
 public abstract class AbstractPlayerTurn implements PlayerTurn {
 
     private final int playerId;

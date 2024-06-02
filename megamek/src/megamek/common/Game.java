@@ -2027,8 +2027,8 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
                         if (nextTurn instanceof EntityClassTurn) {
                             EntityClassTurn ect =
                                     (EntityClassTurn) nextTurn;
-                            if (ect.isValidClass(GameTurn.CLASS_INFANTRY)
-                                    && !ect.isValidClass(~GameTurn.CLASS_INFANTRY)) {
+                            if (ect.isValidClass(EntityClassTurn.CLASS_INFANTRY)
+                                    && !ect.isValidClass(~EntityClassTurn.CLASS_INFANTRY)) {
                                 turnVector.removeElementAt(turnIndex + 1);
                             }
                         }
@@ -2050,8 +2050,8 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
                         if (nextTurn instanceof EntityClassTurn) {
                             EntityClassTurn ect =
                                     (EntityClassTurn) nextTurn;
-                            if (ect.isValidClass(GameTurn.CLASS_PROTOMECH)
-                                    && !ect.isValidClass(~GameTurn.CLASS_PROTOMECH)) {
+                            if (ect.isValidClass(EntityClassTurn.CLASS_PROTOMECH)
+                                    && !ect.isValidClass(~EntityClassTurn.CLASS_PROTOMECH)) {
                                 turnVector.removeElementAt(turnIndex + 1);
                             }
                         }
@@ -2074,8 +2074,8 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
                         if (nextTurn instanceof EntityClassTurn) {
                             EntityClassTurn ect =
                                     (EntityClassTurn) nextTurn;
-                            if (ect.isValidClass(GameTurn.CLASS_TANK)
-                                    && !ect.isValidClass(~GameTurn.CLASS_TANK)) {
+                            if (ect.isValidClass(EntityClassTurn.CLASS_TANK)
+                                    && !ect.isValidClass(~EntityClassTurn.CLASS_TANK)) {
                                 turnVector.removeElementAt(turnIndex + 1);
                             }
                         }
@@ -2098,8 +2098,8 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
                         if (nextTurn instanceof EntityClassTurn) {
                             EntityClassTurn ect =
                                     (EntityClassTurn) nextTurn;
-                            if (ect.isValidClass(GameTurn.CLASS_MECH)
-                                    && !ect.isValidClass(~GameTurn.CLASS_MECH)) {
+                            if (ect.isValidClass(EntityClassTurn.CLASS_MECH)
+                                    && !ect.isValidClass(~EntityClassTurn.CLASS_MECH)) {
                                 turnVector.removeElementAt(turnIndex + 1);
                             }
                         }

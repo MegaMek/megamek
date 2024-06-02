@@ -430,29 +430,43 @@ public class ModelRecord extends AbstractUnitRecord {
                     if (ms.getEquipmentQuantities().get(i) > 1) {
                         networkMask |= NETWORK_COMPANY_COMMAND;
                     }
+                    losTech = true;
                 } else if (eq.hasFlag(WeaponType.F_C3MBS)) {
                     networkMask |= NETWORK_BOOSTED_MASTER;
                     if (ms.getEquipmentQuantities().get(i) > 1) {
                         networkMask |= NETWORK_COMPANY_COMMAND;
                     }
+                    losTech = true;
                 }
 
             // Various non-weapon equipment
             } else if (eq instanceof MiscType) {
 
-                if (eq.hasFlag(MiscType.F_UMU)) {
-                    movementMode = EntityMovementMode.BIPED_SWIM;
-                } else if (eq.hasFlag(MiscType.F_C3S)) {
+                if (eq.hasFlag(MiscType.F_C3S)) {
                     networkMask |= NETWORK_C3_SLAVE;
+                    losTech = true;
                 } else if (eq.hasFlag(MiscType.F_C3I)) {
                     networkMask |= NETWORK_C3I;
+                    losTech = true;
+                } else if (eq.hasFlag(MiscType.F_ECM) ||
+                        eq.hasFlag(MiscType.F_ANGEL_ECM) ||
+                        eq.hasFlag(MiscType.F_BAP) ||
+                        eq.hasFlag(MiscType.F_BLOODHOUND)) {
+                    losTech = true;
                 } else if (eq.hasFlag(MiscType.F_C3SBS)) {
                     networkMask |= NETWORK_BOOSTED_SLAVE;
+                    losTech = true;
                 } else if (eq.hasFlag(MiscType.F_NOVA)) {
                     networkMask |= NETWORK_NOVA;
+                    losTech = true;
                 } else if (eq.hasFlag(MiscType.F_MAGNETIC_CLAMP)) {
                     magClamp = true;
+                } else if (eq.hasFlag(MiscType.F_UMU)) {
+                    movementMode = EntityMovementMode.BIPED_SWIM;
                 }
+
+
+
 
             }
         }

@@ -42,6 +42,7 @@ public class ModelRecord extends AbstractUnitRecord {
     private MechSummary mechSummary;
 
     private boolean primitive;
+    private boolean retrotech;
     private boolean starLeague;
     private int weightClass;
     private EntityMovementMode movementMode;
@@ -111,6 +112,15 @@ public class ModelRecord extends AbstractUnitRecord {
      */
     public boolean isPrimitive() {
         return primitive;
+    }
+
+    /**
+     * Unit consists of at least some primitive technology and some advanced/Star League/Clan
+     * technology. Testing is not extensive, there may be units that are not properly flagged.
+     * @return   true, if unit contains both primitive and advanced tech
+     */
+    public boolean isRetrotech () {
+        return retrotech;
     }
 
     public boolean isSL() {
@@ -462,12 +472,11 @@ public class ModelRecord extends AbstractUnitRecord {
                     losTech = true;
                 } else if (eq.hasFlag(MiscType.F_MAGNETIC_CLAMP)) {
                     magClamp = true;
+                } else if (eq.hasFlag(MiscType.F_ACTUATOR_ENHANCEMENT_SYSTEM)) {
+                    losTech = true;
                 } else if (eq.hasFlag(MiscType.F_UMU)) {
                     movementMode = EntityMovementMode.BIPED_SWIM;
                 }
-
-
-
 
             }
         }
@@ -499,7 +508,10 @@ public class ModelRecord extends AbstractUnitRecord {
             }
         }
 
+        // Categorize by technology type
         starLeague = losTech && !clan;
+        primitive = base_primitive && !losTech && !clan;
+        retrotech = base_primitive && (losTech || clan);
 
         speed = ms.getWalkMp();
         if (ms.getJumpMp() > 0) {

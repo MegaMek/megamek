@@ -25,6 +25,7 @@ import megamek.common.weapons.srms.SRMWeapon;
 
 import org.apache.logging.log4j.LogManager;
 
+import megamek.codeUtilities.MathUtility;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.HashSet;
@@ -66,7 +67,7 @@ public class ModelRecord extends AbstractUnitRecord {
     private ArrayList<String> requiredUnits;
     private ArrayList<String> excludedFactions;
     private int networkMask;
-    private double flak; //proportion of weapon BV that can fire flak ammo
+    private double flakBVProportion; //proportion of weapon BV that can fire flak ammo
 
     private double artilleryBVProportion;
     private double longRange; // Proportion of weapons BV with long range and/or indirect fire
@@ -93,7 +94,7 @@ public class ModelRecord extends AbstractUnitRecord {
         requiredUnits = new ArrayList<>();
         excludedFactions = new ArrayList<>();
         networkMask = NETWORK_NONE;
-        flak = 0.0;
+        flakBVProportion = 0.0;
         longRange = 0.0;
     }
 
@@ -117,11 +118,11 @@ public class ModelRecord extends AbstractUnitRecord {
         return movementMode;
     }
 
-    public boolean getIsQuad() {
+    public boolean isQuadMech() {
         return isQuad;
     }
 
-    public boolean getIsTripod () {
+    public boolean isTripodMech () {
         return isTripod;
     }
 
@@ -171,10 +172,10 @@ public class ModelRecord extends AbstractUnitRecord {
         this.networkMask = network;
     }
     public double getFlak() {
-        return flak;
+        return flakBVProportion;
     }
-    public void setFlak(double flak) {
-        this.flak = flak;
+    public void setFlak(double newProportion) {
+        flakBVProportion = MathUtility.clamp(newProportion, 0, 1);
     }
 
     public double getArtilleryProportion () {
@@ -579,7 +580,7 @@ public class ModelRecord extends AbstractUnitRecord {
         // Calculate BV proportions for all ground units, VTOL, blue water naval, gun emplacements
         // and fixed wing aircraft. Exclude Small craft, DropShips, and large space craft.
         if (totalBV > 0 && unitType <= UnitType.AEROSPACEFIGHTER) {
-            flak = flakBV / totalBV;
+            flakBVProportion = flakBV / totalBV;
             artilleryBVProportion = artilleryBV/totalBV;
             longRange = lrBV / totalBV;
             srBVProportion = srBV / totalBV;

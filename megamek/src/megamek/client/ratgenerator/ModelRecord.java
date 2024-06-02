@@ -292,6 +292,22 @@ public class ModelRecord extends AbstractUnitRecord {
             speed++;
         }
 
+        weightClass = ms.getWeightClass();
+        // Adjust weight class for support vehicles
+        if (weightClass >= EntityWeightClass.WEIGHT_SMALL_SUPPORT) {
+            if (ms.getTons() <= 39) {
+                weightClass = EntityWeightClass.WEIGHT_LIGHT;
+            } else if (ms.getTons() <= 59) {
+                weightClass = EntityWeightClass.WEIGHT_MEDIUM;
+            } else if (ms.getTons() <= 79) {
+                weightClass = EntityWeightClass.WEIGHT_HEAVY;
+            } else if (ms.getTons() <= 100) {
+                weightClass = EntityWeightClass.WEIGHT_ASSAULT;
+            } else {
+                weightClass = EntityWeightClass.WEIGHT_COLOSSAL;
+            }
+        }
+
         double totalBV = 0.0;
         double flakBV = 0.0;
         double artilleryBV = 0.0;
@@ -520,21 +536,6 @@ public class ModelRecord extends AbstractUnitRecord {
             ammoRequirement = ammoBV / totalBV;
 
             apWeapons = apRating >= apThreshold;
-        }
-
-        weightClass = ms.getWeightClass();
-        if (weightClass >= EntityWeightClass.WEIGHT_SMALL_SUPPORT) {
-            if (ms.getTons() <= 39) {
-                weightClass = EntityWeightClass.WEIGHT_LIGHT;
-            } else if (ms.getTons() <= 59) {
-                weightClass = EntityWeightClass.WEIGHT_MEDIUM;
-            } else if (ms.getTons() <= 79) {
-                weightClass = EntityWeightClass.WEIGHT_HEAVY;
-            } else if (ms.getTons() <= 100) {
-                weightClass = EntityWeightClass.WEIGHT_ASSAULT;
-            } else {
-                weightClass = EntityWeightClass.WEIGHT_COLOSSAL;
-            }
         }
 
         // Categorize by technology type

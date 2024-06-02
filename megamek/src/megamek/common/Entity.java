@@ -9408,7 +9408,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     @Override
     public String toString() {
-        return "Entity [" + getDisplayName() + ", " + getId() + "]";
+        return "Entity [" + getDisplayName() + ", ID: " + getId() + "]";
     }
 
     /**

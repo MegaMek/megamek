@@ -465,16 +465,23 @@ public class ModelRecord extends AbstractUnitRecord {
             // Various non-weapon equipment
             } else if (eq instanceof MiscType) {
 
+                if (eq.hasFlag(MiscType.F_DOUBLE_HEAT_SINK) ||
+                        eq.hasFlag(MiscType.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE) ||
+                        eq.hasFlag(MiscType.F_LASER_HEAT_SINK) ||
+                        eq.hasFlag(MiscType.F_COMPACT_HEAT_SINK) ||
+                        eq.hasFlag(MiscType.F_RADICAL_HEATSINK) ||
+                        eq.hasFlag(MiscType.F_ECM) ||
+                        eq.hasFlag(MiscType.F_ANGEL_ECM) ||
+                        eq.hasFlag(MiscType.F_BAP) ||
+                        eq.hasFlag(MiscType.F_BLOODHOUND) ||
+                        eq.hasFlag(MiscType.F_ACTUATOR_ENHANCEMENT_SYSTEM)) {
+                    losTech = true;
+                }
                 if (eq.hasFlag(MiscType.F_C3S)) {
                     networkMask |= NETWORK_C3_SLAVE;
                     losTech = true;
                 } else if (eq.hasFlag(MiscType.F_C3I)) {
                     networkMask |= NETWORK_C3I;
-                    losTech = true;
-                } else if (eq.hasFlag(MiscType.F_ECM) ||
-                        eq.hasFlag(MiscType.F_ANGEL_ECM) ||
-                        eq.hasFlag(MiscType.F_BAP) ||
-                        eq.hasFlag(MiscType.F_BLOODHOUND)) {
                     losTech = true;
                 } else if (eq.hasFlag(MiscType.F_C3SBS)) {
                     networkMask |= NETWORK_BOOSTED_SLAVE;
@@ -484,10 +491,10 @@ public class ModelRecord extends AbstractUnitRecord {
                     losTech = true;
                 } else if (eq.hasFlag(MiscType.F_MAGNETIC_CLAMP)) {
                     magClamp = true;
-                } else if (eq.hasFlag(MiscType.F_ACTUATOR_ENHANCEMENT_SYSTEM)) {
                     losTech = true;
                 } else if (eq.hasFlag(MiscType.F_UMU)) {
                     movementMode = EntityMovementMode.BIPED_SWIM;
+                    losTech = true;
                 }
 
             }
@@ -549,6 +556,9 @@ public class ModelRecord extends AbstractUnitRecord {
         // Primitive engines are not identified, so check for use of advanced types
         int engine_type = ms.getEngineType();
         if (unitType != UnitType.GUN_EMPLACEMENT &&
+                unitType != UnitType.SMALL_CRAFT &&
+                unitType != UnitType.DROPSHIP &&
+                unitType != UnitType.JUMPSHIP &&
                 (engine_type == Engine.XL_ENGINE ||
                 engine_type == Engine.LIGHT_ENGINE ||
                 engine_type == Engine.XXL_ENGINE ||
@@ -558,8 +568,7 @@ public class ModelRecord extends AbstractUnitRecord {
 
         // Primitive gyros are not identified, so check for use of advanced types
         if (unitType == UnitType.MEK) {
-            int gyro_type = ms.getGyroType();
-            if (gyro_type >= Mech.GYRO_COMPACT) {
+            if (ms.getGyroType() >= Mech.GYRO_COMPACT) {
                 return false;
             }
         }
@@ -581,8 +590,11 @@ public class ModelRecord extends AbstractUnitRecord {
                 !armor_type.contains(EquipmentType.T_ARMOR_HEAVY_INDUSTRIAL)) {
             return false;
         } else if ((unitType == UnitType.CONV_FIGHTER ||
-                unitType == UnitType.AEROSPACEFIGHTER) &&
+                unitType == UnitType.AEROSPACEFIGHTER ||
+                unitType == UnitType.SMALL_CRAFT ||
+                unitType == UnitType.DROPSHIP) &&
                 !armor_type.contains(EquipmentType.T_ARMOR_STANDARD) &&
+                !armor_type.contains(EquipmentType.T_ARMOR_AEROSPACE) &&
                 !armor_type.contains(EquipmentType.T_ARMOR_PRIMITIVE_FIGHTER) &&
                 !armor_type.contains(EquipmentType.T_ARMOR_PRIMITIVE_AERO)) {
             return false;
@@ -640,8 +652,8 @@ public class ModelRecord extends AbstractUnitRecord {
         int engine_type = ms.getEngineType();
         if (unitType == UnitType.MEK &&
                 (engine_type == Engine.COMBUSTION_ENGINE ||
-                engine_type == Engine.FISSION
-                || engine_type == Engine.BATTERY)) {
+                        engine_type == Engine.FISSION ||
+                        engine_type == Engine.BATTERY)) {
             return true;
         } else if ((unitType == UnitType.TANK ||
                 unitType == UnitType.CONV_FIGHTER ||
@@ -715,8 +727,7 @@ public class ModelRecord extends AbstractUnitRecord {
 
         // Gyro. Star League has no advanced gyro types.
         if (unitType == UnitType.MEK && !sl_only) {
-            int gyro_type = ms.getGyroType();
-            if (gyro_type >= Mech.GYRO_COMPACT) {
+            if (ms.getGyroType() >= Mech.GYRO_COMPACT) {
                 return true;
             }
         }
